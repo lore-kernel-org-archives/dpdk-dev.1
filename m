@@ -2,67 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC275C54F54
-	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Jul 2026 14:22:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 411D4C53219
+	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Jul 2026 14:23:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D7E464069D;
-	Tue, 28 Jul 2026 16:21:55 +0200 (CEST)
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com
- [209.85.216.52]) by mails.dpdk.org (Postfix) with ESMTP id CAC9640A70
- for <dev@dpdk.org>; Tue, 28 Jul 2026 16:21:53 +0200 (CEST)
-Received: by mail-pj1-f52.google.com with SMTP id
- 98e67ed59e1d1-38e3efab7e0so904182a91.0
- for <dev@dpdk.org>; Tue, 28 Jul 2026 07:21:53 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0857740A87;
+	Tue, 28 Jul 2026 16:22:02 +0200 (CEST)
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com
+ [209.85.215.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 600CC40A7F
+ for <dev@dpdk.org>; Tue, 28 Jul 2026 16:21:58 +0200 (CEST)
+Received: by mail-pg1-f174.google.com with SMTP id
+ 41be03b00d2f7-c9d1fff21edso2378223a12.1
+ for <dev@dpdk.org>; Tue, 28 Jul 2026 07:21:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785248513;
- x=1785853313; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785248517;
+ x=1785853317; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=TDcgjxooqY94KNqj9DEd2fTSox6vvrln/7+w/vZ8Mt4=;
- b=kx+XHj5ditGLXx4RXegDfxncrAwj1N0k+AdjtMvyBL9qz3Ql91FdLa2Z1v6wpF9RJd
- b0MOl8rMd1Z4gd+e+XxYZTgFLpFKBR+AamPd11co9Bk3pcTUQKHx9HI1Z0/K62qpyFNZ
- IxprcXXcxFl3mw32g/gwodzVKvSebJEbOVktI6hHpfhAVBKtgsmA4i75L3n4iHuvLUkB
- JD6W9ytakBUcaZ0sLTkKZOKWFsl43SfEfUfdqXFnRKJ9OwDm4YOHaocIzymkp4k3Ba67
- IjKd/NRPB/vPeN0cACVR2XXR8kVfo/8gl1a/xyXFH+wenWJ61gF61BLqDQuIKy/6+C46
- KeKg==
+ bh=c0hVjZCf/Vu5wBzHU2DwJp8GP1ay454rBBWKTnOSGpU=;
+ b=h11xSacBk880J6dr9ReqFPO30i7/A3LNuUBCxK49tsYpkfOlSo16E1Uxq06NK5G1q/
+ Raz7oaX7WH108NlRTx0RghnZXo1E3enBLCbH1KKqpVU+x5gukzmqBz/U25MbHyW+hbHq
+ gZGNa2ML9VWZMzxNnFdxJYMtpefuaavLnxjqrdJTv8uyzdTW0524IWIH9K2P9SA6fIi1
+ FOqiFyObA8zZi8AuHR+fqd+L3f2ZO6fSAzEa4fxI5r52P+lFCiRm6qflwJNcNaVJn9Fy
+ TjenrICHMw4QV0mUOljcoNW/A034zFctiHn8rXxfRouKJXu58m6G3QrMonocrOv9T0b1
+ pCtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785248513; x=1785853313;
+ d=1e100.net; s=20251104; t=1785248517; x=1785853317;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=TDcgjxooqY94KNqj9DEd2fTSox6vvrln/7+w/vZ8Mt4=;
- b=brTofP2D48jufAwz9mATKV7pcgqLN3O/a32/l8zzbGK3/o0oDt0HT7b0Gvvl3F/Xgh
- lSp73xnUKu/dKSKHh/75n0y6GlnEaucM6OJGMx5DIBHGs17FmakNY3p1Foj3HTIQ2mKp
- M1b30CpoCcC20dihNA2cyxKv9NAV+/tSv0gh3D6eooARJqxsPhgEK/xbl05fYzEJ8q4n
- pBKk2rUhDjaC3ESXh8K67iLlirTVPlUFw8QugWA17+mcvXT04/6ErssM3bmasPFcNxyS
- YRGpHbNWerilo3XZ9FkRSRL5y1E9kjUJopPEl+yl75bIM2diAR23qpXbUghcR83Irt+M
- wmCg==
-X-Gm-Message-State: AOJu0YyuWobpo3elxE+rETtnUXLOaW2KMHCOJMl5laIr3e5d2gHrUpRQ
- yY9jVebZtx4nnENMqUwBQOJD+TIfumPXYzYhaVahy4bcfuuY/l1YOKyp2l85DmasJgpdQ8rQIec
- XcHyG
-X-Gm-Gg: AR+sD10+JRIVuMRShkJOMAl0tgZfuJoav+rnXlQF5+LtiCIXxKePmAu/DGEAvIGNjmJ
- lEoW/gOFfMyMxdA/ey/KFZaUItLm66cC0kEbNT8jYF/WhOH59idHB6/QSSu+uCwbV/L+/bWnmNh
- YkuPHp0RE42jP6BkRXFyokKn4bON6UzxnGIbKY4PzfXcaFxEqiw9V+4kHCMAVsI/zXEKfbe+YOg
- QvUnDIzhuKia7cxNX9xnAs2Q2pX2h2tTX9wBC+XD1s/yEC5aXDtSk6kGA5P5Xgj+f6E4lNdEJss
- YAqD87IVjxo/F0DCVQwlHqpf+jDAvZ4EYjV1VFF174bg+/NduEZmhNJqW5XFwSIkSIOoC+cTSC0
- Gaw3UECuVKYdWj6PSrNirxNy8WVomGR9H4HCvX/PbXUNkRsPl60x9qp+SsRxP5hADro2XU16RD9
- Ewh/e9gZJ8+s140HRLF5xqnv+/ucFMD/A0VLETRlsh
-X-Received: by 2002:a17:90b:4988:b0:380:8bb9:aba9 with SMTP id
- 98e67ed59e1d1-38f6a200a1bmr3075223a91.3.1785248510132; 
- Tue, 28 Jul 2026 07:21:50 -0700 (PDT)
+ bh=c0hVjZCf/Vu5wBzHU2DwJp8GP1ay454rBBWKTnOSGpU=;
+ b=dAY1wRZcVm/wjF1Jcn3AWWJmZL3uT2TFjG8qOGioCy1LU4Eka8Sp7xm77HFR8LNrIw
+ +MFj7mzlmtYBsuepnGInLZpVx8/mI3Q6K0v0jj3t2MxFK9jRcjjOgxAQuR6TstSedgN+
+ iMj4AF7X3x1ZntoaA3/IJdpJBdEWLdWXJz5n9wdDsuVPyO+K5Zfd4/9Qdl+YOLwUrJhE
+ 5jvjxEf60lh2KnDreloIJn0a1MITXx1jp6nadYPePWmF5B7zGeRFVRyz8kliYjJaTodL
+ VTdjlBzjFJy1gdgS/RTJf60biAV0PnovZBRm1G6RF1b3HKz5DpEWMuwu5Z1UWO0CJNg8
+ gfLQ==
+X-Gm-Message-State: AOJu0Yx+58CkVxThiCfHeMvHqkQLyhxgedFMq2AEezgZ2HKFmP6tkS7B
+ PxJob5aiiuYBURC8m8bPVPibp3oPVrYK3XTOyqyhJy5SvxLHRkGRfUy2C/41VOEPzTFOoUKpYbL
+ Rh/dX
+X-Gm-Gg: AR+sD12pEabzk981zaQwCqO22zoRrvO5/HM4jFMTewyOthExth6pHMHI65UqwO5ldLx
+ z4r7dxZiq708pGBp+rciNzRM9GBgCJvBMX1lZKGf8fQlcz31s4RBOONj83+tDFiuHyJy+IG38rC
+ qhwUgUXXEl065vZOCZBJM85Uttm11hSL1elTmzlMHogfw2+cjgR1bQSSisBCnss+sFlZPk5piTq
+ LSNbjRvSe59fD1PKkBiaJpEFremcFUTDF9lMdWWaOGMFAFlNNxzRO2V41Tmw1Z2ewcTzRQe594r
+ VyI9cnyS+6iWb/dQMjWTStcG3afTB3z9pWVcGZMUkatmdEy/wN4KtAEU/DhJuDniCaM29GYlwGT
+ FqMbDD6gHzg845kRFKmHtS1xiPSHW3RYGeihisGMIj9+fURRvqHLtUSxpAwTaTqsl3S2g6A+cc3
+ M3y6m/ZCFkbihoWIRRPc1OsgvWWl+2e8Bfik08EI5lmyaV6fFvISM=
+X-Received: by 2002:a05:6a21:6da8:b0:3c1:fbf:1e2e with SMTP id
+ adf61e73a8af0-3c8aaf7b0a3mr3699854637.10.1785248516022; 
+ Tue, 28 Jul 2026 07:21:56 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-314bc549cacsm44346475eec.16.2026.07.28.07.21.47
+ 5a478bee46e88-314bc549cacsm44346475eec.16.2026.07.28.07.21.54
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 28 Jul 2026 07:21:48 -0700 (PDT)
+ Tue, 28 Jul 2026 07:21:55 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Cristian Dumitrescu <cristian.dumitrescu@intel.com>
-Subject: [PATCH v3 4/6] pipeline: remove legacy API
-Date: Tue, 28 Jul 2026 07:20:30 -0700
-Message-ID: <20260728142135.106054-5-stephen@networkplumber.org>
+Subject: [PATCH v3 6/6] port: remove legacy API
+Date: Tue, 28 Jul 2026 07:20:32 -0700
+Message-ID: <20260728142135.106054-7-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260728142135.106054-1-stephen@networkplumber.org>
 References: <20260724164520.192203-1-stephen@networkplumber.org>
@@ -82,8337 +83,6077 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove the legacy pipeline API (rte_pipeline_*) together with the
-port and table action APIs built on top of it, as announced for
-removal in the 24.11 release. The SWX pipeline API remains.
+Remove the legacy port library API (rte_port_*) as announced for
+removal in the 24.11 release. The SWX port API remains.
 
-The sched dependency was only used by the table action API,
-so drop it.
+The sched, ip_frag, cryptodev and eventdev dependencies were only
+used by the legacy port types, so drop them. The pcap dependency
+is kept for the SWX source/sink port.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- devtools/cocci/nullfree.cocci              |   12 -
- doc/api/doxy-api-index.md                  |    3 -
- doc/guides/prog_guide/packet_framework.rst |  203 --
- doc/guides/rel_notes/deprecation.rst       |    5 -
- doc/guides/rel_notes/release_26_11.rst     |    4 +
- lib/pipeline/meson.build                   |    8 +-
- lib/pipeline/rte_pipeline.c                | 1640 ---------
- lib/pipeline/rte_pipeline.h                |  840 -----
- lib/pipeline/rte_port_in_action.c          |  539 ---
- lib/pipeline/rte_port_in_action.h          |  311 --
- lib/pipeline/rte_table_action.c            | 3483 --------------------
- lib/pipeline/rte_table_action.h            | 1137 -------
- 12 files changed, 5 insertions(+), 8180 deletions(-)
- delete mode 100644 lib/pipeline/rte_pipeline.c
- delete mode 100644 lib/pipeline/rte_pipeline.h
- delete mode 100644 lib/pipeline/rte_port_in_action.c
- delete mode 100644 lib/pipeline/rte_port_in_action.h
- delete mode 100644 lib/pipeline/rte_table_action.c
- delete mode 100644 lib/pipeline/rte_table_action.h
+ doc/api/doxy-api-index.md                  |   7 -
+ doc/guides/prog_guide/img/figure32.png     | Bin 11603 -> 0 bytes
+ doc/guides/prog_guide/packet_framework.rst | 132 +---
+ doc/guides/rel_notes/deprecation.rst       |   5 -
+ doc/guides/rel_notes/release_26_11.rst     |   3 +
+ lib/port/meson.build                       |  22 +-
+ lib/port/port_log.c                        |   7 -
+ lib/port/port_log.h                        |  11 -
+ lib/port/rte_port.h                        | 223 ------
+ lib/port/rte_port_ethdev.c                 | 530 --------------
+ lib/port/rte_port_ethdev.h                 |  75 --
+ lib/port/rte_port_eventdev.c               | 590 ---------------
+ lib/port/rte_port_eventdev.h               |  94 ---
+ lib/port/rte_port_fd.c                     | 524 --------------
+ lib/port/rte_port_fd.h                     |  74 --
+ lib/port/rte_port_frag.c                   | 280 --------
+ lib/port/rte_port_frag.h                   |  70 --
+ lib/port/rte_port_ras.c                    | 336 ---------
+ lib/port/rte_port_ras.h                    |  58 --
+ lib/port/rte_port_ring.c                   | 796 ---------------------
+ lib/port/rte_port_ring.h                   |  91 ---
+ lib/port/rte_port_sched.c                  | 298 --------
+ lib/port/rte_port_sched.h                  |  52 --
+ lib/port/rte_port_source_sink.c            | 616 ----------------
+ lib/port/rte_port_source_sink.h            |  57 --
+ lib/port/rte_port_sym_crypto.c             | 558 ---------------
+ lib/port/rte_port_sym_crypto.h             |  92 ---
+ 27 files changed, 10 insertions(+), 5591 deletions(-)
+ delete mode 100644 doc/guides/prog_guide/img/figure32.png
+ delete mode 100644 lib/port/port_log.c
+ delete mode 100644 lib/port/port_log.h
+ delete mode 100644 lib/port/rte_port.h
+ delete mode 100644 lib/port/rte_port_ethdev.c
+ delete mode 100644 lib/port/rte_port_ethdev.h
+ delete mode 100644 lib/port/rte_port_eventdev.c
+ delete mode 100644 lib/port/rte_port_eventdev.h
+ delete mode 100644 lib/port/rte_port_fd.c
+ delete mode 100644 lib/port/rte_port_fd.h
+ delete mode 100644 lib/port/rte_port_frag.c
+ delete mode 100644 lib/port/rte_port_frag.h
+ delete mode 100644 lib/port/rte_port_ras.c
+ delete mode 100644 lib/port/rte_port_ras.h
+ delete mode 100644 lib/port/rte_port_ring.c
+ delete mode 100644 lib/port/rte_port_ring.h
+ delete mode 100644 lib/port/rte_port_sched.c
+ delete mode 100644 lib/port/rte_port_sched.h
+ delete mode 100644 lib/port/rte_port_source_sink.c
+ delete mode 100644 lib/port/rte_port_source_sink.h
+ delete mode 100644 lib/port/rte_port_sym_crypto.c
+ delete mode 100644 lib/port/rte_port_sym_crypto.h
 
-diff --git a/devtools/cocci/nullfree.cocci b/devtools/cocci/nullfree.cocci
-index e7417b69ff..acf26f45f6 100644
---- a/devtools/cocci/nullfree.cocci
-+++ b/devtools/cocci/nullfree.cocci
-@@ -91,12 +91,6 @@ expression E;
- - if (E != NULL) rte_ring_free(E);
- + rte_ring_free(E);
- |
--- if (E != NULL) rte_port_in_action_free(E);
--+ rte_port_in_action_free(E);
--|
--- if (E != NULL) rte_port_in_action_profile_free(E);
--+ rte_port_in_action_profile_free(E);
--|
- - if (E != NULL) rte_sched_port_free(E);
- + rte_sched_port_free(E);
- |
-@@ -118,12 +112,6 @@ expression E;
- - if (E != NULL) rte_swx_table_selector_free(E);
- + rte_swx_table_selector_free(E);
- |
--- if (E != NULL) rte_table_action_free(E);
--+ rte_table_action_free(E);
--|
--- if (E != NULL) rte_table_action_profile_free(E);
--+ rte_table_action_profile_free(E);
--|
- - if (E != NULL) rte_tel_data_free(E);
- + rte_tel_data_free(E);
- |
 diff --git a/doc/api/doxy-api-index.md b/doc/api/doxy-api-index.md
-index 9296042119..17c15027b8 100644
+index 760b770d6f..16827a602b 100644
 --- a/doc/api/doxy-api-index.md
 +++ b/doc/api/doxy-api-index.md
-@@ -196,9 +196,6 @@ The public API headers are grouped by topics:
-     [hash](@ref rte_table_hash.h),
-     [array](@ref rte_table_array.h),
-     [stub](@ref rte_table_stub.h)
--  * [pipeline](@ref rte_pipeline.h)
--    [port_in_action](@ref rte_port_in_action.h)
--    [table_action](@ref rte_table_action.h)
+@@ -182,13 +182,6 @@ The public API headers are grouped by topics:
+   [bitmap](@ref rte_bitmap.h)
+ 
+ - **packet framework**:
+-  * [port](@ref rte_port.h):
+-    [ethdev](@ref rte_port_ethdev.h),
+-    [ring](@ref rte_port_ring.h),
+-    [frag](@ref rte_port_frag.h),
+-    [reass](@ref rte_port_ras.h),
+-    [sched](@ref rte_port_sched.h),
+-    [src/sink](@ref rte_port_source_sink.h)
    * SWX pipeline:
      [control](@ref rte_swx_ctl.h),
      [extern](@ref rte_swx_extern.h),
+diff --git a/doc/guides/prog_guide/img/figure32.png b/doc/guides/prog_guide/img/figure32.png
+deleted file mode 100644
+index 5215113fd9d533ff56526e21e1832bc7a6cabd04..0000000000000000000000000000000000000000
+GIT binary patch
+literal 0
+HcmV?d00001
+
+literal 11603
+zcmb`NcQjn>+wX^H;XwrP=pv62BJya7P9hP}dz2v}+Ni<kgODykB8WD68G-~e!w5nO
+z(aVh9qs=Iz_j2yZ^S<Z&-nQ0R>zqHVF*BRJ_r0(Cy1w7fb-ge$&}L@jVT3>+%sRKV
+zOdt?yBm_c5!$1c<dE_W330|oDOth~<$~yUo;0=w7roJWw@+pq#(18}bKkakd$`1lz
+z`9}GnN|a>bg+MMX=xAx01=%f+AzqmgrcTzrmcMSKUXPE8MBf)Td?dm2=at5Fjs^{p
+zmUZoz(+mM?*;G`#MM7u|@ptDg6`lEVUE{oi8$0qob>5pNw>g*%t&O?<x+J2KSD?a>
+zBO-q|=XcGeMp?O5Synl8XMAW!vZiJyy~b~+Q>Hy^d(^Mf(_gj`Tp0wubW$S^UX2PF
+zz&$}2XdBtVOSVuDH3TBWL1PHsJdT<?4S_@&ol$x8UeSLc-VI;$Mlt-bx&-C%{Uv9B
+zAOw>0c=Gh)mS;bTlelG_t5w|twn*k!^Q+q{W9~|UE4JZYOk9`!;~<cD{wT3CIpcMq
+zyknJ((!Q&cjqB^v-(x(X2vZFKIoEiriU%)L%X@oGWJ9+-n#3Sk7T}^JtZIDoFG@(r
+zT+oiKazck)zWedZQ*d1sH&<zdU4Q*}J)2yE9{=R{EOZ9brFPK%N<bACCJ5yzk0tM<
+zbRN48l*!Z5(w6zRb!XpLwl2+vKpsR-p4NI5m2rKl9&xbb<ON*`KU`~;WESPQ>Xq*K
+z2(M;ZXn;=s(UqxA7AU=)+!7NL(^2C$zjWMiaztJ}COl~gCD#pjQbFQ*X$*z#<5~SX
+zQsoPvwE>tV=|D+2y2N+y1`$rZc{%}gPHpFES#SZ%smw)fNm7#PbAz88^&K3t6@4Zn
+zr3!t!RClVSAP`^51;t;EInZ6Uo&iS$EX%w1w|kD|2&KHFqtnS$L$t;fIxY5>&b1~=
+zZhtcCM5-=gAdnVju$+H0W+aFiDx@iRRwRE%&s_J}{A_O*LKN9?b#m!Ue`v!gLT?9w
+z^imdUE+cUKQ)%+COo;j0`86{p=Z(1zC=qiRiW`KBO1(ci*tx15%l9zfCV)KdsRSoI
+zu(?kKX`yRmfBrs}UpduKZSNZkhsjBMv1lSI3(NY!D<1jQvglL=PgsFrrWaR3L#*n<
+z>2DJBT*M%rp%uXa>mx0B@zan<4>pxY&r@VwV)ur+!kve)-rmygSdXDzOr$8*nbf<-
+zZm8mL;0}wA-}jYxP>|zj@cv5n=gj#?s#8n;I_BtNm`30FY+GAgIl7hS9SuYS!!u^4
+zEe%34B&S3<TqqAmZ@#7Nk9Qlcy?3=J6{knwj1Yi*S*=XbqLl(con<HPL%Q`R4wqY-
+z>(+z89V~p(b3G}>vCc-tLi-di${D69bkwty!oQ0Xm^CW0FPr?_P!!u}=wiEYYtYYV
+z^+R#31tR-9*cXot&b#fdP6dR{cV^6%rZe7c*!?cOv|UTCcOM|G%0}UDelT7zvlM|p
+zEH2|T)s(G{Te)7ChQM!r_7^w0Q@od|`a}<2x87h#YyM=4nO8xppoD{Rg+l%#7*E-Q
+z9dh{@rJKo5;a{0l=e(EGiqVGf`X{C%PEJk%Ht@#&pEJudzZU+E;OiQ2E4_&oKUZpA
+zo|()dxc%0<f2vE>oT-4cS*=d*S+de5-B1-ns`{(%7}uB4RCt1boqL;;BU~A>1+$5z
+zjuHbKJ;QoM&PT>P!eBya!8<)0afJ6llJJZ~EY^F%3wtCIIx%2!AU-4U7-iQSJo84|
+z!-#!LilEkbWqz^B!abkW%X;z8dUaUArYyl1r90W^cbcvnJmb`c!&&J9%W}H_!8(lk
+z$zGSjb9du05Vm9E*gd~H^^56rZ%M&#vUQh1W^pi~v8oTNku*<Y$PZv!PUf?EyJ)g}
+zp}6lYgEJ<bArG?@5g>ebxT4?A7g~%k(HYlPH-(Fch+sYp^fg38gtFwoSK%))Tj^Ty
+z0rJ?t$jR-Qx#}280y)3Fdm7}db!*|U#EHY}QXf(W?p|FiVmkKyOvmXKZzy~z_0cK%
+zVcj`gPxIm4Mw?AA8Y$!SvXs@Xen4MEt`w?Zf)>&~P059i4Fa#%`p&+TG%w(F+tnr3
+z^k?6o$0mk?e-%}@Z%Z<%NmmZ+EKBfKUTQmj=r)E!kF?qrhvyn!U!?(wwC}Zy+(&Uv
+z^l`?uhfSLcJzohk7Vt+{jNFww4t^kQSYfUEpOQyNM6|?=_V48T*dSXk+Ro&4cmE_0
+zw@T1QsMth}ek`BjG{%cKUROI(d?|QhYjI#?gk9H{DR0+!$!`5ifyXYD>CX$Jh?)Xo
+z5)5{<)iqHUiiL)Tl;ZrL531`asXaSY4T0m|&7r!&!<Vah?dHv!m`+x@w|?`TLrTl#
+zM^$ljL>k9ef-Sj@#A_k3MFug*-1+@Xq97N)Zj8Xd#?dG9?WksketHpgu@u3DU-sqF
+z^z>)V<)6ELeaakQUx%4_q;0nvq*Q+b6=l6vY^Wy`*HRm{S5fCr^&sbF%(?B(^N<{U
+zDdhL>-{)q2CSX(^w470%HCitfKxY=P;eyt3JR28>(IpunEj!s9TP0>p_9YgjOF{zt
+zHxh7S)F}wtQ!nwodz*cR$*c-zp~IGvC7qh;5r?~Lb3es0<zmiBNlZxZZn$(IGb)~#
+z%=3pCNGNGbDaCd=wZH$HGZyVLb$z5s*{%04OTU<c`ym@0SKI8rg5ooFfs;0_+@iM-
+z86shV?f5H5czv!j!+m>s#D(sUKPO?4sl+zzm|F?duGL|ydMv(0f;5I&$S4;d<~+yl
+zEKTRmbVVA&tVb7uZZSp2Kp-09y(*~$W|iyJlzJ-UjbatIRLcSR{hta-1%aGlr0hS)
+zbxlfqXo&xJWp}iO;Z1W!O#JK2<ITeD<7R#(e;@gtd_}qxmopkSG-AXeKX2BN5nY})
+zM~Hoe9iM|YY)?bhd8LrgRjgIsysjQCL6FDm6oQi8y{qPd)MTC53{e)?jZmB@=~SST
+zAUd~L-Vl)A4#KEQ&TDiqah<i1{f+jjmI4D(<15-@NTzl);^e4I6j5l9A#>Gh^a>Q`
+z|4^QIus!0vya95RyEVpx2<r=+YND0(7`#&HPc*Sih+qKcj}of@H^x&o9OkVD(rT4!
+zk8sI+Qet8XD7C2_X;)pghAP94LJm^0;Pp9i|79U=>m(n?38<3pptUK>^C_E31w2`q
+zWNG^V`6As^rkbp*FC6F2&HWX5R)q?p;o(}G&8oKhCHC$BM2OmT%w!d>f$|)|%>LW=
+zAO7H1!qXXaFla(bLr>BD;bT+KPxX%SFz)9AVc^vUmNTBz|8<DYXl_kwMs=fI*7;z2
+zc`jCY#YbMFqs+d+YdmC8YGcqbt|rx02^4K^wXka9P-S5Wl@a^V$?@t}RwzoiqY+gj
+z2dB@f?)X*n;OE(mR>^WRhJNELWkm!K7G>{-i;Q#Iaqz_@a+wl{o^f*cj<VnOl9g=u
+zVUXo1yhrQ1i*x7!yO=|o^_*1{6+5JNgIJiE3LaEVuP37_MUI?g;<@C!8co@oxwyE}
+zK%&K^x(-&l#HFZ5)PvO2jp7Z++n|>Nk8%EF!)4=q<WtGZftRV{6`^wk5xXw>&YA8%
+zn<u%yD{~RIbEQA8MoEq(=}c}e{GzPI_nnJo8fL3KM?IVz=C@W7lag?yHXPUD_!RGB
+zyv9-=UOi6<+2@>F2Vy=?Z;YM8H(f%XP8Xo0$8S%gjC6EPKa%~cHek8p6dJ~RP4)M|
+z%*;H(K2Kc+KRPJ>+o6z)7Z>Kw{-ZDNDT!zyGkb;8P*UAKe`lQS_8}fjZxZ{gI!-=^
+z?fLe7u&Vrk3<cq(TuS-90w-4&y5r?{e7M)5U-(WJEFw7j5KyVi$ptpOVd+EFKx5U(
+zngAJOtM9z>dBXr~@QG@ZIl17^`{r|!QDVYzlP^5Zs89)o{Jv+3oc+JsjQ>dk|H~gW
+z)(x`-<FpUx1;g$=W#K1*Tv2LU)BC}$E;STA{|E$F3ed8BwSnH2rbBxh^Bsf|OMM_6
+zpv;lt!XVGQeEG7y3|gxPR?e2$sFEUH50A(ZS1Dx^%1nx8eQoYGQIB|if@S4bda%Dq
+zbYu}wx$CrR`|19Z6qVqLpWiKc&Yvq%rX(b5m1uV%{%AU88Na#q?C+IGe)aIt_H@O*
+z#8*Q&cnNW$p@CAHq*%FSzUigP{q(XFX`dv<ncltYit!klhEdHhBEW*cZ<Rh}^a+3C
+z)RvT(?9Q0sVBEH}(39)AKw}gLGF9a5ZV@lE7Yxct`z>|*v`LJ+(m^IDfBs8@J!OR9
+z(^+1WRo%Md;5+^8h4Yt4D(A*1TFk`!D{k4*Tr4MuT)VoEL~<oa#yhv2>S_JHJ!f-U
+zE>9Zz9>dj_%va<H7F(mvL^5}Ox)^SfJR$$5+t0Tmn0%RqFON>mtxkOn5Zu~HR}Brw
+zM|>8`4C}?*ql-fw1uhLvZ9|L%DHj-$-~Z#2V{?){Y~Z=CV(9h<XefzyxXR76cA1|0
+z;w#a<hjPz}jr4+5%^S`5tO8k=&gwb{o*sm3mfc?4G>)&VZQ44oApWkoy&gL2<=n%q
+z=DwUan;>&x<ESXPA6#GRRd3|pOoE|DNuJ;`GFH0bu-7yH9G@zg3;lt*Nd5OQO2O-S
+z#GYL3Jtu#3WI;|Eb<nWO$??(Lcqkbzk2QyL+jXHxgODal6~IgC3zw^<@a$FwlI>)}
+zc71kk-vqv<lKpc@SHZS%X2+Wg+Bj`VYao>}68gyHj_z8Y8~(`DdxYPiH`gsbXHORo
+zVgRDyikGgms&p>%j}d({@zEjLsv*2?sQO_pB}XhL4Aq4O9#n4+Z1`WS|L~z*tzZ&(
+z8iRxCqFGbyz?Oge+qY-^W?I;4PbhL$!E@Mb*7FMI?P!E1dRHcLbSf$3xr$fH3lE<*
+zJ;-wb>;L!7BPGig+*hD4JA(DTx-%A-SwaQd?$H)Z0ZW~Ba?o(%C%;w&Dv{sbx|1b!
+zudG88O&?HRmein_zGyLBHGBT&m3xukk1zqt*0tXhgD6ENDvDYbPBNq9RIqWjH+)w{
+zYs%=Jvw-d26%n+4{-xd@JaR4VDYDIf@LlUBe2a@J?6h|mf`&N@xBh=h3q@C-vGB_P
+z!z-7o9fyg*{C1JAlV7llB{i@}@m}?k8z_VN#XX(hUHi3d8vsHV_K!RuJ&7^~PH$;@
+zX{d79m)I-P2TJCv8-2hodk&T`F*Ye-sG;!wGN}7b-{O0qR;}tn(4ZUz88pqm<dpOf
+zFMrYGm3$exRFkgg_k(bY{vY)!l@X_YTs>5es0}9OC+h)Suv`(ecE1v2*@L^HQkl)M
+z{IWJ!FL?eau<Gfm+aO0l^$DO@IomgbP1iATynVGY;v~G%b3|dsb$dK`p5JeEQq%H|
+zezxCe^~3EQE^`ojkTbaH>HB>sQ!!cJncJ3rBjE0qtsQjn`zYOJ&EgHIbQp8k7Qu2E
+zLy9U*2p=Jr|0;sx`y7i|pW50NqPH^?JX1>tthb1m9~k$6&a!gbn)?GeUsN4`ym~h;
+z3?tyzIE9b8dczs(t<4HW63^dwI_RT95p(RS|D634J<Fg)hZ)6;?(dMj)%F)I*z}7y
+zLX}udGQ6kE&TKTVCod@nu6VQ!7Zw$@&|M>Nad5oXjHVlch%>^5wM$cx<$cyrDkNgt
+z%BCD0`*+alJsSf{;E<QC=d*sn7rL{XYQ(RF!U*X=M%U?;BUWnW1vW+|j{A?*s*1dN
+za&CH&Uvl_w)yBwB>K{YKWlhOQ^L+SXKSl1AnW@rVj<^)@Q|&fFVBmw5<065l2!i#U
+zy|d%G#WCZ*XM5<h>Hjr@oPbKYZG5fY$tNRPohwny5a}VfV~~E$Az)?H>e!kiXX~JQ
+zy6quw^AN}ze6hJC)?688^#_lv^Q#)5@FZuG8u-e6s)52XH8Hs#{mI*5d7wNK8d|?3
+znB3IV)Pl8jj-kk(>xDjWu-Pq(^^$Q3ryTiq+t$1rjxfM`Y2K=S{m&8gu_SB?toXe8
+z<Q&+S=tckC@OQ+b%c}*wAFO1t=CTorYJ0xb1<&8kyjcVPzx+;_b;Kg?@2Fcr6(TDZ
+zgE!{P88Tra_()#nk84w<p*t%9rOk&*HTHSrXDKj7(PiGSGHUYU)9fBrN9wbn09LwZ
+z#0Y+0+1t2A$=ohCl1B)w2gB~=i4At8_ThU@He~HDmN!cqGQ-wiNPg$~C&D#Ls;clT
+zLMAae`#06rTP`RtP!Lh)Jdx;&zE!aJ_wv>I-xw+#zS8Y1NQLP2$uj?W<%@vWpo`3|
+zZ7C=0NX~$yi*j^3)>R!Zv6NOGGnV1M5glD+=)(~rD#rtz>H+7Lzqe3|9rq12(?@8^
+zFWfFKEpEKYBVYat#-{&w{<6O)l2tc1?X(x~^E^;EQ@HGc8WSToiN4ldNLA>?aJ)>e
+zMeO20c`c8SYQsLETtZ)+!wHtZ*~d+kftzneTu&}Q$5}IR+9vE+PMT$HOnorUy%jK1
+zJx514#^q%c!+SELqfkvnvA?i&lU;@)1V59tW*zwD5WV?K65o+~8BzW(reie{So@+I
+z+HnHt<TrR7wb;!^9okw)7bPVtrBtm?5mS`|y`I2t%tyPt6EpX|U5#hKpMPR7CZSKo
+z0f~GXJ9!$<_C!A-!j9GmqOt2QCKSPBfLD(aGt!Q7NU$)36bX{zQpyuPHM4=UoNDYh
+zhyx#L+yFA2q){BNQvwQT_Jts7#iU|%UoL?i(j5<|4<FOhw#>sBu>xQK1K6xpsUXbU
+zjqEMiAU(dvc#aIeXp=vgwLjUnRDQIVubaG7;WdU^4?S}V(%lVcBcI8FZH=!}Ywc_i
+z!E}etpq~B;Ah7>JDC4#9v)YIbcuC9t-G$~@5=DHpTp+E3s?ImkrLyES`Q_0ZKu0Tj
+zk*z!;<KkDx6e9WhG=$MA?|?H(4KiM&6=d5g1l2J7jXQImJE#_%{SG{UL^9WfO!SMP
+zan2)|$HQp%x&5uh0{t|FGEv#U@!-O}xioLvi+<oVa=`rh<sY)wOe%(Kx>f?W(^uo?
+zV#&@w-<5eaK~&#Y#L*fJbGjAF=azg0*tiy!dz5`j9Q>3UyiY8=uy;V+$d118+j(K_
+z4uG4h1cDM=vVNs=M@2{(PEjvIiO`-ZFF7mJm%21wH{$#nxVG9<mApxA5vBZSdRClC
+z(AmaGX8;u?^9wfC=L?;HgTbgE_WiNi%N(4XLyi{O^Qg=kumM6@_J<^rfx1^cBeK79
+zCk#?+a=1|UWZ#d3N2O6}up|{xheo{?PmdTU`jyuc<^tmxVy)CIPh3W-+!D6P_r`GW
+ztL%>k64%)gDjAN=u_>iCSe(gL$j*u<7usJmDu;q_DR4McE|fxEDF`wjj|`sUuDsVs
+zEgP_OH<TrYOIjgA30|>r6EJ2itC{G+%XN}?&(Z20FT?a}pRTv`VMqiqM+#dG{qc&M
+zb9)HDU4&gcsj7S-xV(P9c+4Ur$v=8Vb!XIZ0FWlMdrv+{m$A8-X(|rYBy?BP6Q;I^
+zr2d?ZZj69#!4V~W{+8!nJ)`lA4ZwTXY%XIbaHXTq!&c2CXP&cN@CZs%4aK+(Rpb+U
+z^JAD(bG{TJp0WyhwGC?rK0m#ZYoUb}r9*XMeIyoCk9U6s*mMoNb<5P*qGzKWRzvK+
+zXW>^G{Kdh+F{mcZh((64P>5!iAFy@XHN%$v0>j}XRH27r%QKsk%FlBhX|;g)uBSzv
+zxiJ5=(tY4E5aI7D-74-sL_r-q02A8oT?ZxHV+^Spx-=ZRJ>;_dMR2(iXd#=zgZqWK
+z05mIzzifDgWTCZzZm&!<L<AcVYKk2z)VWH{k-!%qMi+Z>pVjG=u?+6-9lMZJs!DOi
+zSK=8U-A3}j?JF#}LfELPR@@#R0SM-C!}>C{>!qkd)+fCbnQXAaG*oJH6$^J4Jn}8G
+zt(k`T>PqEVhqdK;>l0@Ei2u8sfErv~+P;@$3xV(m%dflsh(91VWJ0W)IX0VLaXVrO
+zS(YP^*2$bpptb<hBWr{4I9*3u0dh4U=iRHjsFxhqPG`Z%^#?0{Hdwr9<Sj1&!w%jc
+zN>@O)OX5Ix!0w|#>2s1PcUUaVj`7JID2b&WKcmEK2Qa-Y+V9+cra3_^HM9hAupQ9(
+zW0KFAlv&(H%~*_kj3mkHm~SD~>u>ea&$DcuD#Y_s^)#s<i<mnmP+jO``|u$GM83~9
+zK4ju>iZ#MVeyS%h!}>yH%2yfo%<z4;R&wh(DeJ*tIRdMh6nv=Nsrbb_Jlz9Xa#9IS
+zCZBfIyAyWVv}3}`*49JpP25?yclvJ|t^mV}k8sLlMC^P%jU>5H^mS;;*t6S$n_;V_
+zy4luZ@=CVRao-xkBKS_y&0vhkY3;&>t$v$rTYoFtQ<>ISFHalo{NhN|JnVYV*3pNT
+z>h<bL5mG-LxOy~JwLD#^J@k{ezno&N=E-t~<pnK$YHsKC{yYV1%KiHsj1T3GtL%Oz
+z7`||a^P-%@Au7#gG^)_KD0nu}QV(cOsJ`67Q+dIN!%rYjtk!sqDIL_7Bt^NrTX-k;
+zH?GiEIIpHxs!?gVq$2Zn-N%pJWeH;U2WFOz*S^u$WJE%p$Rt7u#!grGo5eNyu9FWW
+zSK&bZ3qhBy7k81QxAqCUe!a&^6K02N=-pq^p#G}9Eb95I=>@Bx<x9c32BV1g8UjN_
+z9W%s-*<BV0HQHpY$xr16z4^N6ef}$t!km=KXC|=rXCH0M0kboTl#j6$G(-pN_un>F
+z+{2gy0U3c*sxL;HAf)A&jn+Lc!MUxakRi6EkMGPW#TNGK5WI)0ezKfnw8QN9+cnPT
+zP1~3qb*&$19A$~?Y^7=?G#v~~YR`#nG)EjPW83T(b*1ZO1ZW{bCy3*{d9OtaCKqAx
+zRIP=|(s%Nh>hq2$uaOeIM27T$mo0iY3$4pR605W~tbMJ_l1aYRB$H+G#i~6G6yh)-
+zo>a_p$&6Bw)g=kR#r4I0ABgfn$Gh^&^bn1DV|5E^mmt6r=P?zm=>oaKznRr!{J!zo
+zYhSbb4PILoc}{NL7gRZ#CHvb5gKxv!s&Kau?BLtUl$bBX?`lELzI&iu2qE?@9NN+t
+z#Qg^6|K6s1K1#E$q2@pxjDNasL6os9M(ITs@4o1&Oo6D{yWY7jg-diUkaH#ec+JaM
+z5TKV#r$*cZcuZc(2IG$=*7{6EaVvPdx5D|ON`3<0n#IDVVhnm(pg|TKqZUz_ue?<S
+zBeW*U^yTTWZ)^?N*P6`vH;XW5wOam%gI|c}{s)w|E)iq^;GZ2&yT4oi2dmb7oUN~-
+z*g1eZ`DV;l0pO{y!g^&aCnWt`&lNms*>2R`x(koFg;YIU{d!Tb#H;5yR?@Ppx)StP
+zUH=3^<^QnLmv?EphTFe`rfQ_?^P8(-fb!^TYCammc&3#AGNUp2O*kl4P<@<FH3Sbh
+z;aLsv;eCm7ji!Mss|;CS8P_<{8gJsJ!p{KJ0}-;57%M>l>F&I<GFHaH|BO{o!5*=d
+z2!Pt@AyDxgkwMd^DbCX}4GEM<N}{Btg{zf*GXN3GVd><$9b}14+)C|X_YKw*0o9Od
+zo|%%9!+G_9mHvq1jm$DpJO9e)yf}u(MIh;Qa*l#U1kQ8`JPeG3GojcVIMdiWjT;+X
+z>Q}ig+xp}$1OZ9V!DSydb%&FZs8x1G{kA^?JINC>IRyG0l@EX2vWyPPPuin+<eiC#
+z3Bos~#>#MFWsdhm{kAGip6)4MkWalv;%T(>^C!8@!E>$(6lGk0wDFzGzAAZ|^BSkX
+zuQMw2%sdas_Z}Y>puT`=<U)SMsZG<hpWnrZxa{`tGDzdyx16{_YL_ei5<aB*B}OmZ
+z<jbY_6H0fuhdpMJNYBc44J_`o<he#aAUJ3Yz$1Adb92=e>&5>F93?b&pH0Q4%5@4f
+zDj{bqKmF$1&l?8y3g5Bl=i<wt%F4+uq7(!M?%!K1yX$emLtOX~F8F9`0IDA%H?aV?
+z-+KcT6+ne}y1t9&dG!h(i?@|bqH5(hxVUOf_KyK88)4fB9D^s9=yXM#9N2G+1x}<0
+z9!}B&at*5FY}r|62#{Brzvb2QiqDKl4g8sZkMRE-wErE5r+CYM>3{zV`}-g0y@nRr
+zwWkTF*6(sK{PQOw%TD8;g9~mvV_AXHXfXl5A`Bil$a-^N-9OpX@6GY@hIeMFXRfam
+zNdpTj2bx<K1!KO-fSB94Or7%tII)%*^Ad}ciVB&HLiMAc1PHhzNW9}j_<?8eq#2|R
+z?BOvw2(X+&g;5T&e_p4Gr2I{anI=WFQxI*uEb6*wDG~zEJVZ#WnCX302=$rYzlT)=
+z)KHiad%J37pj;3fa_RTSpuBn*WGFd-p40vLFC3*45hn=c%=u_mHP=((kxwc9vE{`)
+zGPJB!d9KQHq~8Em=EImZCH&ux4E)z6;~CTQ8F};Z{&z-MAes9>AON`x>XWQ@{a%42
+zci-n=KiLN@@ga(q8EwEL=wZFaDAWQfmE#OvoWXj|`tkhG&%O0p@0*(NnF|lYPyP++
+z6ov_h;rS7n{3=1+e98gsNwtAwfsu&=u;Dtu*0uflURw}>_g@(uN^E*~xchJ;F5>X3
+z*Ww(raT~)M_qB8&ofH8Bk$j?kV#HWSxF{uso}Wi-_GlM?s_zUyNm)U_=2KNL0wHOx
+zKR*oIqO8~GHNVL(RF+H-jn4}QAYz^8W|Kj$;)e=oB`AC#e$va^P(?~TapbqTdc7#N
+zKDn*6bqPc53OG$WfTA8X7<|03>3DY+&)@eSkM#!w1m1kfwz@m%!VM{;agOPo!`WYV
+zrYKF)qai|1un75AW->!tnP{j|Y^-GlKz6nE4h|012f5+I3CXqOTFLK*>j(TTTImz&
+z`w=B44MocP<M>btJ1(2UfDZ7%;BUUu(Yq(mm2`4kelhbe@Gr55g8<6}RRq}`Ww0LF
+ze_|lBr`nHh*;(6+aM*2lfR`w0P*G8xJ83d@&&F(VY5E8f7K1gz?R)Im$e%Z2DSABh
+zxOff!N~+Pq`pDxSEgp6$BJ9Yvp%lHKQUxX0%kQ^cS-YhGRNzA}Z}P2+(hdn(oBkfa
+zFBfqfRyz)Q8PI{b&{6LL^6(7V$v#uU#<ld&7$~eov_)NbfYPDU3NT!QX#6|2&G)fn
+zzqp8H3I>2uc+kvcMz!39m!4)?YC)u4OzI?}Zw<(m4oafNh_AW{%1cu;Nx#T(Nb$$G
+z%i1M-%D3T-ZF4_4Rx7fvzC_jnU}9sTfu9XJDqP+46Vp$9V4s{i%^vZhTHC93v8;B~
+z;${eYUm-i>Odw1P45RqwzmyBe0gV|2R~^s#W^|YR@j936y)O`(?TI$E)jdA8KV0fB
+z4;FElC39=WUF=$rsRP)$zbsnr$6x%%HOF_~Oj@g5xKYUAQD9-E-&UV;ZB6teyk2qW
+zsv~_G=}4{KP1$@S)EBCxzj^FJD>BZ<NjiICyd)AOl#xbKT`u?a?ZcAb0>oDTh{r$@
+zxVB6m9#5Hsj+GFVF9o?N5(51x9dj)>nCU2A%_t$?%j7)_480Qi*FgTTSmF#~Q@{i&
+zj34$@;?^uz+~t$rJ-BVD(1mjU^xi<{LNn;1z_3RQzUuoOynrl?;LwKC`WD%4%E@7}
+z*jp2TYSe~(t2lnE_;C91-d1^pXB)Cpe=B4(O$iR$a|f;tu08R!kvw{uUGzN|PQjUY
+z?X|7p&Xx?Zoqbdt_R$Q-eV*-{yDE=e@;unxFrc+(U^(Z#=hr+yi(;f$Iph~friN_#
+zhV(YrNIwqH0HdNuEpZUTo7p<dhVb)ax&-vvWHjrr?iR^f%)yxkinAPeygY(^rj}u<
+zzpfCpAATOL=`Ab;CWbz&asg<gR<X=Z4fI&g7cSadv#`a?xy=tu1lsXo6Q%;0CNOa$
+z*}lPVajTo$iLH_-)Y2cPF;t({lcUz_=nt10sM{HL9|-@J+TVEeoy^NeNV<4r-h(nN
+zywhw4Mw3d*iRCQvrSxJ*ASdnjblZRC61G%7XlldQwk$c^4^+z#(OuAr2Rgy-#dJHj
+zKYssvZ!p}*+tXUaJ&n!39$>9}AjrE>kF<CmEZbP;ih4&C-om1~^7qYMo6L@Sk9eJc
+zCE6A=zc98{Eo#5xZPeAU24IA<m<{tby5$>i01gw~$F@~=wE?BUK;4cBm@fjpuq<0V
+z@22zJP;g4H+-+Y3OljSo=z*=_MI25tP-J_Ac3WqL^0Kw>nrhknLXFbX>&t-Ide&Ks
+zaQYMO6g9&yqZa1f6;g-8=KDo2h=-9U8Yb#7#iIE;xdY1n3-{v4$&*EU`{!yVQ3Vbs
+zb8Lz5Hk1%Sq+u#a%EtM?_9fi`%{*=2?CRHNtZ6Qpi2kG<&`}THNShe^6%_IdC4CFX
+zw!O8u2-_(>6#{K$!pmc&zK4gr13Rafk3|wl@-I4v>;rCxBTx(1;Di%eNF=U6w{bsq
+zb7F!NTI1Fyy0KDAwpeJj7$HAImyxP-x(keWRgP2T-CG+X2#`FoBfoOctI4j2h3scb
+zN>=NBZ}St_%&t1Ma#-T@8%h8-8J_655T`N?lkDwcJvPV@_uYYYy|ac8notpc%we_g
+z3*~w%gxIGqL(vx)H`UDkj3MREKNa<+=K>{7$oe16e!HWU6#@~~<UVh{qkxYaq&M6m
+z8f^rBEC<RpQv3p5?mpktl!-DB5&vzw|M`&$QWNyH6#%q@=Wjwk2lcQR;C{s_+v@LA
+zs&M_$wvFYT%oT|&+P&AoDn0Rk$BB_*>XYHxUp)YO|2h{13M4MIUCyodTNuzyW$$VL
+zGe`ydsoLcDXUXK=s9)DmE%$?cXT^Y}_j|zVx~>3uXqkWnJ%PbPa>R*bL!BjVQ}Fuv
+zJwRXm<XeEQmwP~Ch))K<E`_2yfTy1z<dI{f>#s~8cAyr0a-@SJJjztz8EDS*5(>xw
+zwm5@E-}dN+xgD+HnDZUMv&a25L{figTAfZrf#4O~#3CrZ?O<eX9@cAWVd1Qf-<;D5
+zzYvsj9{kj|XDDNvl-O|twbp!<!DaOmKuo$Tc#o$OLS2sbx3)uXEQZ|_{8t?YBz|#u
+z^u88lLQ#b$FR|mxaxwTUDJf}~rHSON3895#P4z+qm<5DcAK#E&1zhGmVBhI9-M~D6
+zJe|DFT%gHAV+6RxWqrq8&<u>Hzn;Uk4^W;gm~Cj&fxN!Cx&%1K2u|Lzkh<trj<gNt
+zQi-A*#hx+qE4`ybopH;n2Xuo6c!{40rS4@V6y#e!MR6E%d_Z}^ZLqv~3|Vk70<(7o
+zb5`Qq8eTnB)FCdFvKs)xYE6_dHT40eqXXm~$G_uTfU@a0#i}w1i!a}#D%t@PD9TX%
+z&!fTf8JuO;ASvBhkAXV+kvM%blMI_|nOAQ4HUuzW$3JeLIH4!yzrSQs@Y4*@`JX2c
+zhy{uSZh6={;JBc#Ph2Eu4Uc-Ov^v0E?`SyQlC~_qZNDU4znjBc2=+uQxN*=arZf#p
+zG}Zd(pO5E0+}xYb9Fevc;tiS5US^VmhD<CT#kuZ-L7a{}odjE=!V@IOg~KITBqkp0
+zB<jU4%D5zGu>sxy<YjYvruqc9+XXx`mw#;+&&8l0n$!AOk+u#xVMSxMIDcZtH+y_Q
+zrq;E(l-nZ#%Iq&#f208wT=uTs;p@|}u-&O=(2JBY6x`77?jHn_GKhn_KT*kg70;k{
+zRT_$WAUJ?Y^7t#ty}ygF6H1wbY~{%LBli-!e5-Zizc2+m;tLQ*N3+~ZmDvqB><u)b
+zZ8}FzISnvi8^2~5FXtrbpsOyj7CkX>nn4zz|1beaz$f*aAcTnarK7~$sgg6m@kIJk
+zJ(A@kVJ7|VdQum1#Z00a4JhU(OK9`>fXsgFMg<^x%0?xaM}5Ez;l(dfgKm(~IU%2?
+z+6m3`!agCu3H>%ptFubc-~SQK#}XaCxWVXLB?z5u3+ohdFzwo<eiHVhqa{_@EMc(z
+zcz>}>RFx-R-M#<PhzlnKGLy6)fmA~bcTyoyvu(*~&K;>vTegS>cL8HWvx}b_0J39q
+zV6rVhtt%|ive7i5tjrqSn%G;2O05S&tZATr;8Hg!Ib`%<Gk@8;6c9;+haesMgF+E6
+ziF=a!<LQH6fP7<&QU7pn+%Fr?mBIX<zX;_r_Os@{hnM_&nkjzpf0!1gNPlX_WAzQC
+XpF?WbPu~YeLUe8#Xq8>R7xljYKq0l$
+
 diff --git a/doc/guides/prog_guide/packet_framework.rst b/doc/guides/prog_guide/packet_framework.rst
-index ac302938dc..9eb2c5d3de 100644
+index 98cf3be109..3b5ede7dc2 100644
 --- a/doc/guides/prog_guide/packet_framework.rst
 +++ b/doc/guides/prog_guide/packet_framework.rst
-@@ -942,209 +942,6 @@ Additional notes:
-     This does not impact the performance of the key lookup operation,
-     as the probability of having the bucket in extended state is relatively small.
+@@ -4,132 +4,12 @@
+ Packet Framework Library
+ ========================
  
--Pipeline Library Design
-------------------------
--
--A pipeline is defined by:
--
--#.  The set of input ports;
--
--#.  The set of output ports;
--
--#.  The set of tables;
--
--#.  The set of actions.
--
--The input ports are connected with the output ports through tree-like topologies of interconnected tables.
--The table entries contain the actions defining the operations to be executed on the input packets and the packet flow within the pipeline.
--
--Connectivity of Ports and Tables
--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
--
--To avoid any dependencies on the order in which pipeline elements are created,
--the connectivity of pipeline elements is defined after all the pipeline input ports,
--output ports and tables have been created.
--
--General connectivity rules:
--
--#.  Each input port is connected to a single table. No input port should be left unconnected;
--
--#.  The table connectivity to other tables or to output ports is regulated by the next hop actions of each table entry and the default table entry.
--    The table connectivity is fluid, as the table entries and the default table entry can be updated during run-time.
--
--    *   A table can have multiple entries (including the default entry) connected to the same output port.
--        A table can have different entries connected to different output ports.
--        Different tables can have entries (including default table entry) connected to the same output port.
--
--    *   A table can have multiple entries (including the default entry) connected to another table,
--        in which case all these entries have to point to the same table.
--        This constraint is enforced by the API and prevents tree-like topologies from being created (allowing table chaining only),
--        with the purpose of simplifying the implementation of the pipeline run-time execution engine.
--
--Port Actions
--~~~~~~~~~~~~
--
--Port Action Handler
--^^^^^^^^^^^^^^^^^^^
--
--An action handler can be assigned to each input/output port to define actions to be executed on each input packet that is received by the port.
--Defining the action handler for a specific input/output port is optional (i.e. the action handler can be disabled).
--
--For input ports, the action handler is executed after RX function. For output ports, the action handler is executed before the TX function.
--
--The action handler can decide to drop packets.
--
--Table Actions
--~~~~~~~~~~~~~
--
--Table Action Handler
--^^^^^^^^^^^^^^^^^^^^
--
--An action handler to be executed on each input packet can be assigned to each table.
--Defining the action handler for a specific table is optional (i.e. the action handler can be disabled).
--
--The action handler is executed after the table lookup operation is performed and the table entry associated with each input packet is identified.
--The action handler can only handle the user-defined actions, while the reserved actions (e.g. the next hop actions) are handled by the Packet Framework.
--The action handler can decide to drop the input packet.
--
--Reserved Actions
--^^^^^^^^^^^^^^^^
--
--The reserved actions are handled directly by the Packet Framework without the user being able to change their meaning
--through the table action handler configuration.
--A special category of the reserved actions is represented by the next hop actions, which regulate the packet flow between input ports,
--tables and output ports through the pipeline.
--:numref:`packet_framework_table_qos_33` lists the next hop actions.
--
--.. _packet_framework_table_qos_33:
--
--.. table:: Next Hop Actions (Reserved)
--
--   +---+---------------------+-----------------------------------------------------------------------------------+
--   | # | Next hop action     | Description                                                                       |
--   |   |                     |                                                                                   |
--   +===+=====================+===================================================================================+
--   | 1 | Drop                | Drop the current packet.                                                          |
--   |   |                     |                                                                                   |
--   +---+---------------------+-----------------------------------------------------------------------------------+
--   | 2 | Send to output port | Send the current packet to specified output port. The output port ID is metadata  |
--   |   |                     | stored in the same table entry.                                                   |
--   |   |                     |                                                                                   |
--   +---+---------------------+-----------------------------------------------------------------------------------+
--   | 3 | Send to table       | Send the current packet to specified table. The table ID is metadata stored in    |
--   |   |                     | the same table entry.                                                             |
--   |   |                     |                                                                                   |
--   +---+---------------------+-----------------------------------------------------------------------------------+
--
--User Actions
--^^^^^^^^^^^^
--
--For each table, the meaning of user actions is defined through the configuration of the table action handler.
--Different tables can be configured with different action handlers, therefore the meaning of the user actions
--and their associated meta-data is private to each table.
--Within the same table, all the table entries (including the table default entry) share the same definition
--for the user actions and their associated meta-data,
--with each table entry having its own set of enabled user actions and its own copy of the action meta-data.
--:numref:`packet_framework_table_qos_34` contains a non-exhaustive list of user action examples.
--
--.. _packet_framework_table_qos_34:
--
--.. table:: User Action Examples
--
--   +---+-----------------------------------+---------------------------------------------------------------------+
--   | # | User action                       | Description                                                         |
--   |   |                                   |                                                                     |
--   +===+===================================+=====================================================================+
--   | 1 | Metering                          | Per flow traffic metering using the srTCM and trTCM algorithms.     |
--   |   |                                   |                                                                     |
--   +---+-----------------------------------+---------------------------------------------------------------------+
--   | 2 | Statistics                        | Update the statistics counters maintained per flow.                 |
--   |   |                                   |                                                                     |
--   +---+-----------------------------------+---------------------------------------------------------------------+
--   | 3 | App ID                            | Per flow state machine fed by variable length sequence of packets   |
--   |   |                                   | at the flow initialization with the purpose of identifying the      |
--   |   |                                   | traffic type and application.                                       |
--   |   |                                   |                                                                     |
--   +---+-----------------------------------+---------------------------------------------------------------------+
--   | 4 | Push/pop labels                   | Push/pop VLAN/MPLS labels to/from the current packet.               |
--   |   |                                   |                                                                     |
--   +---+-----------------------------------+---------------------------------------------------------------------+
--   | 5 | Network Address Translation (NAT) | Translate between the internal (LAN) and external (WAN) IP          |
--   |   |                                   | destination/source address and/or L4 protocol destination/source    |
--   |   |                                   | port.                                                               |
--   |   |                                   |                                                                     |
--   +---+-----------------------------------+---------------------------------------------------------------------+
--   | 6 | TTL update                        | Decrement IP TTL and, in case of IPv4 packets, update the IP        |
--   |   |                                   | checksum.                                                           |
--   |   |                                   |                                                                     |
--   +---+-----------------------------------+---------------------------------------------------------------------+
--   | 7 | Sym Crypto                        | Generate Cryptodev session based on the user-specified algorithm    |
--   |   |                                   | and key(s), and assemble the cryptodev operation based on the       |
--   |   |                                   | predefined offsets.                                                 |
--   |   |                                   |                                                                     |
--   +---+-----------------------------------+---------------------------------------------------------------------+
--
--Multicore Scaling
+-Design Objectives
 ------------------
 -
--A complex application is typically split across multiple cores, with cores communicating through SW queues.
--There is usually a performance limit on the number of table lookups
--and actions that can be fitted on the same CPU core due to HW constraints like:
--available CPU cycles, cache memory size, cache transfer BW, memory transfer BW, etc.
+-The main design objectives for the DPDK Packet Framework are:
 -
--As the application is split across multiple CPU cores, the Packet Framework facilitates the creation of several pipelines,
--the assignment of each such pipeline to a different CPU core
--and the interconnection of all CPU core-level pipelines into a single application-level complex pipeline.
--For example, if CPU core A is assigned to run pipeline P1 and CPU core B pipeline P2,
--then the interconnection of P1 with P2 could be achieved by having the same set of SW queues act like output ports
--for P1 and input ports for P2.
+-*   Provide standard methodology to build complex packet processing pipelines.
+-    Provide reusable and extensible templates for the commonly used pipeline functional blocks;
 -
--This approach enables the application development using the pipeline, run-to-completion (clustered) or hybrid (mixed) models.
+-*   Provide capability to switch between pure software and hardware-accelerated implementations for the same pipeline functional block;
 -
--It is allowed for the same core to run several pipelines, but it is not allowed for several cores to run the same pipeline.
+-*   Provide the best trade-off between flexibility and performance.
+-    Hardcoded pipelines usually provide the best performance, but are not flexible,
+-    while developing flexible frameworks is never a problem, but performance is usually low;
 -
--Shared Data Structures
--~~~~~~~~~~~~~~~~~~~~~~
+-*   Provide a framework that is logically similar to Open Flow.
 -
--The threads performing table lookup are actually table writers rather than just readers.
--Even if the specific table lookup algorithm is thread-safe for multiple readers
--(e. g. read-only access of the search algorithm data structures is enough to conduct the lookup operation),
--once the table entry for the current packet is identified, the thread is typically expected to update the action meta-data stored in the table entry
--(e.g. increment the counter tracking the number of packets that hit this table entry), and thus modify the table entry.
--During the time this thread is accessing this table entry (either writing or reading; duration is application specific),
--for data consistency reasons, no other threads (threads performing table lookup or entry add/delete operations) are allowed to modify this table entry.
+-Overview
+---------
 -
--Mechanisms to share the same table between multiple threads:
+-Packet processing applications are frequently structured as pipelines of multiple stages,
+-with the logic of each stage glued around a lookup table.
+-For each incoming packet, the table defines the set of actions to be applied to the packet,
+-as well as the next stage to send the packet to.
 -
--#.  **Multiple writer threads.**
--    Threads need to use synchronization primitives like semaphores (distinct semaphore per table entry) or atomic instructions.
--    The cost of semaphores is usually high, even when the semaphore is free.
--    The cost of atomic instructions is normally higher than the cost of regular instructions.
+-The DPDK Packet Framework minimizes the development effort required to build packet processing pipelines
+-by defining a standard methodology for pipeline development,
+-as well as providing libraries of reusable templates for the commonly used pipeline blocks.
 -
--#.  **Multiple writer threads, with single thread performing table lookup operations and multiple threads performing table entry add/delete operations.**
--    The threads performing table entry add/delete operations send table update requests to the reader (typically through message passing queues),
--    which does the actual table updates and then sends the response back to the request initiator.
+-The pipeline is constructed by connecting the set of input ports with the set of output ports
+-through the set of tables in a tree-like topology.
+-As a result of lookup operation for the current packet in the current table,
+-one of the table entries (on lookup hit) or the default table entry (on lookup miss)
+-provides the set of actions to be applied on the current packet,
+-as well as the next hop for the packet, which can be either another table, an output port or packet drop.
 -
--#.  **Single writer thread performing table entry add/delete operations and multiple reader threads that perform table lookup operations with read-only access to the table entries.**
--    The reader threads use the main table copy while the writer is updating the mirror copy.
--    Once the writer update is done, the writer can signal to the readers and busy wait until all readers swap between the main copy (which now becomes the mirror copy) and
--    the mirror copy (which now becomes the main copy).
+-An example of packet processing pipeline is presented in :numref:`packet_framework_figure_32`:
 -
--Interfacing with Accelerators
-------------------------------
+-.. _packet_framework_figure_32:
 -
--The presence of accelerators is usually detected during the initialization phase by inspecting the HW devices that are part of the system (e.g. by PCI bus enumeration).
--Typical devices with acceleration capabilities are:
+-.. figure:: img/figure32.*
 -
--*   Inline accelerators: NICs, switches, FPGAs, etc;
+-   Example of Packet Processing Pipeline where Input Ports 0 and 1
+-   are Connected with Output Ports 0, 1 and 2 through Tables 0 and 1
 -
--*   Look-aside accelerators: chipsets, FPGAs, Intel QuickAssist, etc.
 -
--Usually, to support a specific functional block, specific implementation of Packet Framework tables and/or ports and/or actions has to be provided for each accelerator,
--with all the implementations sharing the same API: pure SW implementation (no acceleration), implementation using accelerator A, implementation using accelerator B, etc.
--The selection between these implementations could be done at build time or at run-time (recommended), based on which accelerators are present in the system,
--with no application changes required.
+-Port Library Design
+--------------------
 -
+-Port Types
+-~~~~~~~~~~
+-
+-:numref:`packet_framework_table_qos_19` is a non-exhaustive list of ports
+-that can be implemented with the Packet Framework.
+-
+-.. _packet_framework_table_qos_19:
+-
+-.. table:: Port Types
+-
+-   +---+------------------+---------------------------------------------------------------------------------------+
+-   | # | Port type        | Description                                                                           |
+-   |   |                  |                                                                                       |
+-   +===+==================+=======================================================================================+
+-   | 1 | SW ring          | SW circular buffer used for message passing between the application threads. Uses     |
+-   |   |                  | the DPDK rte_ring primitive. Expected to be the most commonly used type of            |
+-   |   |                  | port.                                                                                 |
+-   |   |                  |                                                                                       |
+-   +---+------------------+---------------------------------------------------------------------------------------+
+-   | 2 | HW ring          | Queue of buffer descriptors used to interact with NIC, switch or accelerator ports.   |
+-   |   |                  | For NIC ports, it uses the DPDK rte_eth_rx_queue or rte_eth_tx_queue                  |
+-   |   |                  | primitives.                                                                           |
+-   |   |                  |                                                                                       |
+-   +---+------------------+---------------------------------------------------------------------------------------+
+-   | 3 | IP reassembly    | Input packets are either IP fragments or complete IP datagrams. Output packets are    |
+-   |   |                  | complete IP datagrams.                                                                |
+-   |   |                  |                                                                                       |
+-   +---+------------------+---------------------------------------------------------------------------------------+
+-   | 4 | IP fragmentation | Input packets are jumbo (IP datagrams with length bigger than MTU) or non-jumbo       |
+-   |   |                  | packets. Output packets are non-jumbo packets.                                        |
+-   |   |                  |                                                                                       |
+-   +---+------------------+---------------------------------------------------------------------------------------+
+-   | 5 | Traffic manager  | Traffic manager attached to a specific NIC output port, performing congestion         |
+-   |   |                  | management and hierarchical scheduling according to pre-defined SLAs.                 |
+-   |   |                  |                                                                                       |
+-   +---+------------------+---------------------------------------------------------------------------------------+
+-   | 6 | Source           | Input port used as packet generator. Similar to Linux kernel /dev/zero character      |
+-   |   |                  | device.                                                                               |
+-   |   |                  |                                                                                       |
+-   +---+------------------+---------------------------------------------------------------------------------------+
+-   | 7 | Sink             | Output port used to drop all input packets. Similar to Linux kernel /dev/null         |
+-   |   |                  | character device.                                                                     |
+-   |   |                  |                                                                                       |
+-   +---+------------------+---------------------------------------------------------------------------------------+
+-   | 8 | Sym_crypto       | Output port used to extract DPDK Cryptodev operations from a fixed offset of the      |
+-   |   |                  | packet and then enqueue to the Cryptodev PMD. Input port used to dequeue the          |
+-   |   |                  | Cryptodev operations from the Cryptodev PMD and then retrieve the packets from them.  |
+-   +---+------------------+---------------------------------------------------------------------------------------+
+-
+-Port Interface
+-~~~~~~~~~~~~~~
+-
+-Each port is unidirectional, i.e. either input port or output port.
+-Each input/output port is required to implement an abstract interface that
+-defines the initialization and run-time operation of the port.
+-The port abstract interface is described below.
+-
+-.. table:: 20 Port Abstract Interface
+-
+-   +---+----------------+-----------------------------------------------------------------------------------------+
+-   | # | Port Operation | Description                                                                             |
+-   |   |                |                                                                                         |
+-   +===+================+=========================================================================================+
+-   | 1 | Create         | Create the low-level port object (e.g. queue). Can internally allocate memory.          |
+-   |   |                |                                                                                         |
+-   +---+----------------+-----------------------------------------------------------------------------------------+
+-   | 2 | Free           | Free the resources (e.g. memory) used by the low-level port object.                     |
+-   |   |                |                                                                                         |
+-   +---+----------------+-----------------------------------------------------------------------------------------+
+-   | 3 | RX             | Read a burst of input packets. Non-blocking operation. Only defined for input ports.    |
+-   |   |                |                                                                                         |
+-   +---+----------------+-----------------------------------------------------------------------------------------+
+-   | 4 | TX             | Write a burst of input packets. Non-blocking operation. Only defined for output ports.  |
+-   |   |                |                                                                                         |
+-   +---+----------------+-----------------------------------------------------------------------------------------+
+-   | 5 | Flush          | Flush the output buffer. Only defined for output ports.                                 |
+-   |   |                |                                                                                         |
+-   +---+----------------+-----------------------------------------------------------------------------------------+
++The Packet Framework is a set of libraries (port, table and pipeline)
++for building flexible packet processing pipelines:
++the pipeline is constructed by connecting a set of input ports
++with a set of output ports through a set of match-action tables.
++The current framework API is the Software Switch (SWX) pipeline
++described below.
+ 
  The Software Switch (SWX) Pipeline
  ----------------------------------
- 
 diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
-index 6ad7698c6b..758652a492 100644
+index 9dcf86098f..75b56b0e10 100644
 --- a/doc/guides/rel_notes/deprecation.rst
 +++ b/doc/guides/rel_notes/deprecation.rst
 @@ -148,11 +148,6 @@ Deprecation Notices
    The graph walk functions will process nodes in topological order
    using bitmap scanning instead of the circular buffer.
  
--* pipeline: The pipeline library legacy API (functions rte_pipeline_*)
+-* port: The port library legacy API (functions rte_port_*)
 -  will be deprecated and subsequently removed in DPDK 24.11 release.
--  Before this, the new pipeline library API (functions rte_swx_pipeline_*)
+-  Before this, the new port library API (functions rte_swx_port_*)
 -  will gradually transition from experimental to stable status.
 -
- * table: The table library legacy API (functions rte_table_*)
-   will be deprecated and subsequently removed in DPDK 24.11 release.
-   Before this, the new table library API (functions rte_swx_table_*)
+ * bus/vmbus: Starting DPDK 25.11, all the vmbus API defined in
+   ``drivers/bus/vmbus/rte_bus_vmbus.h`` will become internal to DPDK.
+   Those API functions are used internally by DPDK core and netvsc PMD.
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index fc84ba367e..f7d34aa1ee 100644
+index 50b0d3ac06..31b075b3cc 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -84,6 +84,10 @@ Removed Items
-   the legacy pipeline library API.
-   The ``pipeline`` example application covers the SWX pipeline API.
+@@ -91,6 +91,9 @@ Removed Items
+ * Removed the legacy table library API (``rte_table_*`` functions).
+   The SWX table API (``rte_swx_table_*``) remains.
  
-+* Removed the legacy pipeline library API: ``rte_pipeline_*``,
-+  ``rte_port_in_action_*`` and ``rte_table_action_*`` functions.
-+  The SWX pipeline API (``rte_swx_pipeline_*``) remains.
++* Removed the legacy port library API (``rte_port_*`` functions).
++  The SWX port API (``rte_swx_port_*``) remains.
 +
  
  API Changes
  -----------
-diff --git a/lib/pipeline/meson.build b/lib/pipeline/meson.build
-index 823c7929a7..997ded6792 100644
---- a/lib/pipeline/meson.build
-+++ b/lib/pipeline/meson.build
-@@ -10,21 +10,15 @@ endif
- cflags += no_wvla_cflag
+diff --git a/lib/port/meson.build b/lib/port/meson.build
+index b597772872..ef88b917a3 100644
+--- a/lib/port/meson.build
++++ b/lib/port/meson.build
+@@ -8,39 +8,19 @@ if is_windows
+ endif
  
  sources = files(
--        'rte_pipeline.c',
--        'rte_port_in_action.c',
--        'rte_table_action.c',
-         'rte_swx_ipsec.c',
-         'rte_swx_pipeline.c',
-         'rte_swx_pipeline_spec.c',
-         'rte_swx_ctl.c',
+-        'port_log.c',
+-        'rte_port_ethdev.c',
+-        'rte_port_fd.c',
+-        'rte_port_frag.c',
+-        'rte_port_ras.c',
+-        'rte_port_ring.c',
+-        'rte_port_sched.c',
+-        'rte_port_source_sink.c',
+-        'rte_port_sym_crypto.c',
+-        'rte_port_eventdev.c',
+         'rte_swx_port_ethdev.c',
+         'rte_swx_port_fd.c',
+         'rte_swx_port_ring.c',
+         'rte_swx_port_source_sink.c',
  )
  headers = files(
--        'rte_pipeline.h',
--        'rte_port_in_action.h',
--        'rte_table_action.h',
-         'rte_swx_ipsec.h',
-         'rte_swx_pipeline.h',
-         'rte_swx_extern.h',
-         'rte_swx_ctl.h',
+-        'rte_port_ethdev.h',
+-        'rte_port_fd.h',
+-        'rte_port_frag.h',
+-        'rte_port_ras.h',
+-        'rte_port.h',
+-        'rte_port_ring.h',
+-        'rte_port_sched.h',
+-        'rte_port_source_sink.h',
+-        'rte_port_sym_crypto.h',
+-        'rte_port_eventdev.h',
+         'rte_swx_port.h',
+         'rte_swx_port_ethdev.h',
+         'rte_swx_port_fd.h',
+         'rte_swx_port_ring.h',
+         'rte_swx_port_source_sink.h',
  )
--deps += ['port', 'table', 'meter', 'sched', 'cryptodev', 'ipsec']
-+deps += ['port', 'table', 'meter', 'cryptodev', 'ipsec']
-diff --git a/lib/pipeline/rte_pipeline.c b/lib/pipeline/rte_pipeline.c
+-deps += ['ethdev', 'sched', 'ip_frag', 'cryptodev', 'eventdev']
++deps += ['ethdev']
+ 
+ if dpdk_conf.has('RTE_HAS_LIBPCAP')
+     dpdk_conf.set('RTE_PORT_PCAP', 1)
+diff --git a/lib/port/port_log.c b/lib/port/port_log.c
 deleted file mode 100644
-index fa3c8b77ee..0000000000
---- a/lib/pipeline/rte_pipeline.c
+index e7a10d80ef..0000000000
+--- a/lib/port/port_log.c
 +++ /dev/null
-@@ -1,1640 +0,0 @@
+@@ -1,7 +0,0 @@
 -/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2016 Intel Corporation
+- * Copyright (c) 2024 Stephen Hemminger <stephen@networkplumber.org>
 - */
 -
+-#include <rte_log.h>
+-
+-RTE_LOG_REGISTER_DEFAULT(port_logtype, INFO);
+diff --git a/lib/port/port_log.h b/lib/port/port_log.h
+deleted file mode 100644
+index 28d75ee48b..0000000000
+--- a/lib/port/port_log.h
++++ /dev/null
+@@ -1,11 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright (c) 2023 Red Hat, Inc.
+- */
+-
+-#include <rte_log.h>
+-
+-extern int port_logtype;
+-#define RTE_LOGTYPE_PORT port_logtype
+-
+-#define PORT_LOG(level, ...) \
+-	RTE_LOG_LINE(level, PORT, "" __VA_ARGS__)
+diff --git a/lib/port/rte_port.h b/lib/port/rte_port.h
+deleted file mode 100644
+index 81f57c41a5..0000000000
+--- a/lib/port/rte_port.h
++++ /dev/null
+@@ -1,223 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_PORT_H__
+-#define __INCLUDE_RTE_PORT_H__
+-
+-/**
+- * @file
+- * RTE Port
+- *
+- * This tool is part of the DPDK Packet Framework tool suite and provides
+- * a standard interface to implement different types of packet ports.
+- */
+-
+-#include <stdint.h>
+-#include <rte_mbuf.h>
+-
+-/**@{
+- * Macros to allow accessing metadata stored in the mbuf headroom
+- * just beyond the end of the mbuf data structure returned by a port
+- */
+-#define RTE_MBUF_METADATA_UINT8_PTR(mbuf, offset)          \
+-	(&((uint8_t *)(mbuf))[offset])
+-#define RTE_MBUF_METADATA_UINT16_PTR(mbuf, offset)         \
+-	((uint16_t *) RTE_MBUF_METADATA_UINT8_PTR(mbuf, offset))
+-#define RTE_MBUF_METADATA_UINT32_PTR(mbuf, offset)         \
+-	((uint32_t *) RTE_MBUF_METADATA_UINT8_PTR(mbuf, offset))
+-#define RTE_MBUF_METADATA_UINT64_PTR(mbuf, offset)         \
+-	((uint64_t *) RTE_MBUF_METADATA_UINT8_PTR(mbuf, offset))
+-
+-#define RTE_MBUF_METADATA_UINT8(mbuf, offset)              \
+-	(*RTE_MBUF_METADATA_UINT8_PTR(mbuf, offset))
+-#define RTE_MBUF_METADATA_UINT16(mbuf, offset)             \
+-	(*RTE_MBUF_METADATA_UINT16_PTR(mbuf, offset))
+-#define RTE_MBUF_METADATA_UINT32(mbuf, offset)             \
+-	(*RTE_MBUF_METADATA_UINT32_PTR(mbuf, offset))
+-#define RTE_MBUF_METADATA_UINT64(mbuf, offset)             \
+-	(*RTE_MBUF_METADATA_UINT64_PTR(mbuf, offset))
+-/**@}*/
+-
+-/*
+- * Port IN
+- */
+-/** Maximum number of packets read from any input port in a single burst.
+-Cannot be changed. */
+-#define RTE_PORT_IN_BURST_SIZE_MAX                         64
+-
+-/** Input port statistics */
+-struct rte_port_in_stats {
+-	uint64_t n_pkts_in;
+-	uint64_t n_pkts_drop;
+-};
+-
+-/**
+- * Input port create
+- *
+- * @param params
+- *   Parameters for input port creation
+- * @param socket_id
+- *   CPU socket ID (e.g. for memory allocation purpose)
+- * @return
+- *   Handle to input port instance
+- */
+-typedef void* (*rte_port_in_op_create)(void *params, int socket_id);
+-
+-/**
+- * Input port free
+- *
+- * @param port
+- *   Handle to input port instance
+- * @return
+- *   0 on success, error code otherwise
+- */
+-typedef int (*rte_port_in_op_free)(void *port);
+-
+-/**
+- * Input port packet burst RX
+- *
+- * @param port
+- *   Handle to input port instance
+- * @param pkts
+- *   Burst of input packets
+- * @param n_pkts
+- *   Number of packets in the input burst
+- * @return
+- *   0 on success, error code otherwise
+- */
+-typedef int (*rte_port_in_op_rx)(
+-	void *port,
+-	struct rte_mbuf **pkts,
+-	uint32_t n_pkts);
+-
+-/**
+- * Input port stats get
+- *
+- * @param port
+- *   Handle to output port instance
+- * @param stats
+- *   Handle to port_in stats struct to copy data
+- * @param clear
+- *   Flag indicating that stats should be cleared after read
+- *
+- * @return
+- *   Error code or 0 on success.
+- */
+-typedef int (*rte_port_in_op_stats_read)(
+-		void *port,
+-		struct rte_port_in_stats *stats,
+-		int clear);
+-
+-/** Input port interface defining the input port operation */
+-struct rte_port_in_ops {
+-	rte_port_in_op_create f_create;      /**< Create */
+-	rte_port_in_op_free f_free;          /**< Free */
+-	rte_port_in_op_rx f_rx;              /**< Packet RX (packet burst) */
+-	rte_port_in_op_stats_read f_stats;   /**< Stats */
+-};
+-
+-/*
+- * Port OUT
+- */
+-/** Output port statistics */
+-struct rte_port_out_stats {
+-	uint64_t n_pkts_in;
+-	uint64_t n_pkts_drop;
+-};
+-
+-/**
+- * Output port create
+- *
+- * @param params
+- *   Parameters for output port creation
+- * @param socket_id
+- *   CPU socket ID (e.g. for memory allocation purpose)
+- * @return
+- *   Handle to output port instance
+- */
+-typedef void* (*rte_port_out_op_create)(void *params, int socket_id);
+-
+-/**
+- * Output port free
+- *
+- * @param port
+- *   Handle to output port instance
+- * @return
+- *   0 on success, error code otherwise
+- */
+-typedef int (*rte_port_out_op_free)(void *port);
+-
+-/**
+- * Output port single packet TX
+- *
+- * @param port
+- *   Handle to output port instance
+- * @param pkt
+- *   Input packet
+- * @return
+- *   0 on success, error code otherwise
+- */
+-typedef int (*rte_port_out_op_tx)(
+-	void *port,
+-	struct rte_mbuf *pkt);
+-
+-/**
+- * Output port packet burst TX
+- *
+- * @param port
+- *   Handle to output port instance
+- * @param pkts
+- *   Burst of input packets specified as array of up to 64 pointers to struct
+- *   rte_mbuf
+- * @param pkts_mask
+- *   64-bit bitmask specifying which packets in the input burst are valid. When
+- *   pkts_mask bit n is set, then element n of pkts array is pointing to a
+- *   valid packet. Otherwise, element n of pkts array will not be accessed.
+- * @return
+- *   0 on success, error code otherwise
+- */
+-typedef int (*rte_port_out_op_tx_bulk)(
+-	void *port,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask);
+-
+-/**
+- * Output port flush
+- *
+- * @param port
+- *   Handle to output port instance
+- * @return
+- *   0 on success, error code otherwise
+- */
+-typedef int (*rte_port_out_op_flush)(void *port);
+-
+-/**
+- * Output port stats read
+- *
+- * @param port
+- *   Handle to output port instance
+- * @param stats
+- *   Handle to port_out stats struct to copy data
+- * @param clear
+- *   Flag indicating that stats should be cleared after read
+- *
+- * @return
+- *   Error code or 0 on success.
+- */
+-typedef int (*rte_port_out_op_stats_read)(
+-		void *port,
+-		struct rte_port_out_stats *stats,
+-		int clear);
+-
+-/** Output port interface defining the output port operation */
+-struct rte_port_out_ops {
+-	rte_port_out_op_create f_create;      /**< Create */
+-	rte_port_out_op_free f_free;          /**< Free */
+-	rte_port_out_op_tx f_tx;              /**< Packet TX (single packet) */
+-	rte_port_out_op_tx_bulk f_tx_bulk;    /**< Packet TX (packet burst) */
+-	rte_port_out_op_flush f_flush;        /**< Flush */
+-	rte_port_out_op_stats_read f_stats;   /**< Stats */
+-};
+-
+-#endif
+diff --git a/lib/port/rte_port_ethdev.c b/lib/port/rte_port_ethdev.c
+deleted file mode 100644
+index bdab2fbf6c..0000000000
+--- a/lib/port/rte_port_ethdev.c
++++ /dev/null
+@@ -1,530 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
 -#include <string.h>
--#include <stdio.h>
+-#include <stdint.h>
 -
 -#include <eal_export.h>
--#include <rte_common.h>
 -#include <rte_mbuf.h>
+-#include <rte_ethdev.h>
 -#include <rte_malloc.h>
--#include <rte_string_fns.h>
 -
--#include "rte_pipeline.h"
+-#include "rte_port_ethdev.h"
 -
--RTE_LOG_REGISTER_DEFAULT(pipeline_logtype, INFO);
--#define RTE_LOGTYPE_PIPELINE pipeline_logtype
+-#include "port_log.h"
 -
--#define PIPELINE_LOG(level, ...) \
--	RTE_LOG_LINE(level, PIPELINE, "" __VA_ARGS__)
+-/*
+- * Port ETHDEV Reader
+- */
+-#ifdef RTE_PORT_STATS_COLLECT
 -
--#define RTE_TABLE_INVALID                                 UINT32_MAX
--
--#ifdef RTE_PIPELINE_STATS_COLLECT
--
--#define RTE_PIPELINE_STATS_AH_DROP_WRITE(p, mask)			\
--	__extension__ ({ (p)->n_pkts_ah_drop = rte_popcount64(mask); })
--
--#define RTE_PIPELINE_STATS_AH_DROP_READ(p, counter)			\
--	__extension__ ({ (counter) += (p)->n_pkts_ah_drop; (p)->n_pkts_ah_drop = 0; })
--
--#define RTE_PIPELINE_STATS_TABLE_DROP0(p)				\
--	__extension__ ({ (p)->pkts_drop_mask = (p)->action_mask0[RTE_PIPELINE_ACTION_DROP]; })
--
--#define RTE_PIPELINE_STATS_TABLE_DROP1(p, counter)			\
--__extension__ ({							\
--	uint64_t mask = (p)->action_mask0[RTE_PIPELINE_ACTION_DROP];	\
--	mask ^= (p)->pkts_drop_mask;					\
--	(counter) += rte_popcount64(mask);			\
--})
+-#define RTE_PORT_ETHDEV_READER_STATS_PKTS_IN_ADD(port, val) \
+-	port->stats.n_pkts_in += val
+-#define RTE_PORT_ETHDEV_READER_STATS_PKTS_DROP_ADD(port, val) \
+-	port->stats.n_pkts_drop += val
 -
 -#else
 -
--#define RTE_PIPELINE_STATS_AH_DROP_WRITE(p, mask)
--#define RTE_PIPELINE_STATS_AH_DROP_READ(p, counter)
--#define RTE_PIPELINE_STATS_TABLE_DROP0(p)
--#define RTE_PIPELINE_STATS_TABLE_DROP1(p, counter)
+-#define RTE_PORT_ETHDEV_READER_STATS_PKTS_IN_ADD(port, val)
+-#define RTE_PORT_ETHDEV_READER_STATS_PKTS_DROP_ADD(port, val)
 -
 -#endif
 -
--struct rte_port_in {
--	/* Input parameters */
--	struct rte_port_in_ops ops;
--	rte_pipeline_port_in_action_handler f_action;
--	void *arg_ah;
--	uint32_t burst_size;
+-struct rte_port_ethdev_reader {
+-	struct rte_port_in_stats stats;
 -
--	/* The table to which this port is connected */
--	uint32_t table_id;
--
--	/* Handle to low-level port */
--	void *h_port;
--
--	/* List of enabled ports */
--	struct rte_port_in *next;
--
--	/* Statistics */
--	uint64_t n_pkts_dropped_by_ah;
+-	uint16_t queue_id;
+-	uint16_t port_id;
 -};
 -
--struct rte_port_out {
--	/* Input parameters */
--	struct rte_port_out_ops ops;
--	rte_pipeline_port_out_action_handler f_action;
--	void *arg_ah;
--
--	/* Handle to low-level port */
--	void *h_port;
--
--	/* Statistics */
--	uint64_t n_pkts_dropped_by_ah;
--};
--
--struct rte_table {
--	/* Input parameters */
--	struct rte_table_ops ops;
--	rte_pipeline_table_action_handler_hit f_action_hit;
--	rte_pipeline_table_action_handler_miss f_action_miss;
--	void *arg_ah;
--	struct rte_pipeline_table_entry *default_entry;
--	uint32_t entry_size;
--
--	uint32_t table_next_id;
--	uint32_t table_next_id_valid;
--
--	/* Handle to the low-level table object */
--	void *h_table;
--
--	/* Statistics */
--	uint64_t n_pkts_dropped_by_lkp_hit_ah;
--	uint64_t n_pkts_dropped_by_lkp_miss_ah;
--	uint64_t n_pkts_dropped_lkp_hit;
--	uint64_t n_pkts_dropped_lkp_miss;
--};
--
--#define RTE_PIPELINE_MAX_NAME_SZ                           124
--
--struct __rte_cache_aligned rte_pipeline {
--	/* Input parameters */
--	char name[RTE_PIPELINE_MAX_NAME_SZ];
--	int socket_id;
--	uint32_t offset_port_id;
--
--	/* Internal tables */
--	struct rte_port_in ports_in[RTE_PIPELINE_PORT_IN_MAX];
--	struct rte_port_out ports_out[RTE_PIPELINE_PORT_OUT_MAX];
--	struct rte_table tables[RTE_PIPELINE_TABLE_MAX];
--
--	/* Occupancy of internal tables */
--	uint32_t num_ports_in;
--	uint32_t num_ports_out;
--	uint32_t num_tables;
--
--	/* List of enabled ports */
--	uint64_t enabled_port_in_mask;
--	struct rte_port_in *port_in_next;
--
--	/* Pipeline run structures */
--	struct rte_mbuf *pkts[RTE_PORT_IN_BURST_SIZE_MAX];
--	struct rte_pipeline_table_entry *entries[RTE_PORT_IN_BURST_SIZE_MAX];
--	uint64_t action_mask0[RTE_PIPELINE_ACTIONS];
--	uint64_t action_mask1[RTE_PIPELINE_ACTIONS];
--	uint64_t pkts_mask;
--	uint64_t n_pkts_ah_drop;
--	uint64_t pkts_drop_mask;
--};
--
--static inline uint32_t
--rte_mask_get_next(uint64_t mask, uint32_t pos)
+-static void *
+-rte_port_ethdev_reader_create(void *params, int socket_id)
 -{
--	uint64_t mask_rot = (mask << ((63 - pos) & 0x3F)) |
--			(mask >> ((pos + 1) & 0x3F));
--	return (rte_ctz64(mask_rot) - (63 - pos)) & 0x3F;
--}
--
--static inline uint32_t
--rte_mask_get_prev(uint64_t mask, uint32_t pos)
--{
--	uint64_t mask_rot = (mask >> (pos & 0x3F)) |
--			(mask << ((64 - pos) & 0x3F));
--	return ((63 - rte_clz64(mask_rot)) + pos) & 0x3F;
--}
--
--static void
--rte_pipeline_table_free(struct rte_table *table);
--
--static void
--rte_pipeline_port_in_free(struct rte_port_in *port);
--
--static void
--rte_pipeline_port_out_free(struct rte_port_out *port);
--
--/*
-- * Pipeline
-- */
--static int
--rte_pipeline_check_params(struct rte_pipeline_params *params)
--{
--	if (params == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: Incorrect value for parameter params", __func__);
--		return -EINVAL;
--	}
--
--	/* name */
--	if (params->name == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: Incorrect value for parameter name", __func__);
--		return -EINVAL;
--	}
--
--	/* socket */
--	if (params->socket_id < 0) {
--		PIPELINE_LOG(ERR,
--			"%s: Incorrect value for parameter socket_id",
--			__func__);
--		return -EINVAL;
--	}
--
--	return 0;
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_create)
--struct rte_pipeline *
--rte_pipeline_create(struct rte_pipeline_params *params)
--{
--	struct rte_pipeline *p;
--	int status;
+-	struct rte_port_ethdev_reader_params *conf =
+-			params;
+-	struct rte_port_ethdev_reader *port;
 -
 -	/* Check input parameters */
--	status = rte_pipeline_check_params(params);
--	if (status != 0) {
--		PIPELINE_LOG(ERR,
--			"%s: Pipeline params check failed (%d)",
--			__func__, status);
+-	if (conf == NULL) {
+-		PORT_LOG(ERR, "%s: params is NULL", __func__);
 -		return NULL;
 -	}
 -
--	/* Allocate memory for the pipeline on requested socket */
--	p = rte_zmalloc_socket("PIPELINE", sizeof(struct rte_pipeline),
--			RTE_CACHE_LINE_SIZE, params->socket_id);
--
--	if (p == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: Pipeline memory allocation failed", __func__);
+-	/* Memory allocation */
+-	port = rte_zmalloc_socket("PORT", sizeof(*port),
+-			RTE_CACHE_LINE_SIZE, socket_id);
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
 -		return NULL;
 -	}
 -
--	/* Save input parameters */
--	strlcpy(p->name, params->name, RTE_PIPELINE_MAX_NAME_SZ);
--	p->socket_id = params->socket_id;
--	p->offset_port_id = params->offset_port_id;
+-	/* Initialization */
+-	port->port_id = conf->port_id;
+-	port->queue_id = conf->queue_id;
 -
--	/* Initialize pipeline internal data structure */
--	p->num_ports_in = 0;
--	p->num_ports_out = 0;
--	p->num_tables = 0;
--	p->enabled_port_in_mask = 0;
--	p->port_in_next = NULL;
--	p->pkts_mask = 0;
--	p->n_pkts_ah_drop = 0;
--
--	return p;
+-	return port;
 -}
 -
--RTE_EXPORT_SYMBOL(rte_pipeline_free)
--int
--rte_pipeline_free(struct rte_pipeline *p)
+-static int
+-rte_port_ethdev_reader_rx(void *port, struct rte_mbuf **pkts, uint32_t n_pkts)
 -{
--	uint32_t i;
+-	struct rte_port_ethdev_reader *p =
+-		port;
+-	uint16_t rx_pkt_cnt;
+-
+-	rx_pkt_cnt = rte_eth_rx_burst(p->port_id, p->queue_id, pkts, n_pkts);
+-	RTE_PORT_ETHDEV_READER_STATS_PKTS_IN_ADD(p, rx_pkt_cnt);
+-	return rx_pkt_cnt;
+-}
+-
+-static int
+-rte_port_ethdev_reader_free(void *port)
+-{
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: port is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	rte_free(port);
+-
+-	return 0;
+-}
+-
+-static int rte_port_ethdev_reader_stats_read(void *port,
+-		struct rte_port_in_stats *stats, int clear)
+-{
+-	struct rte_port_ethdev_reader *p =
+-			port;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &p->stats, sizeof(p->stats));
+-
+-	if (clear)
+-		memset(&p->stats, 0, sizeof(p->stats));
+-
+-	return 0;
+-}
+-
+-/*
+- * Port ETHDEV Writer
+- */
+-#ifdef RTE_PORT_STATS_COLLECT
+-
+-#define RTE_PORT_ETHDEV_WRITER_STATS_PKTS_IN_ADD(port, val) \
+-	port->stats.n_pkts_in += val
+-#define RTE_PORT_ETHDEV_WRITER_STATS_PKTS_DROP_ADD(port, val) \
+-	port->stats.n_pkts_drop += val
+-
+-#else
+-
+-#define RTE_PORT_ETHDEV_WRITER_STATS_PKTS_IN_ADD(port, val)
+-#define RTE_PORT_ETHDEV_WRITER_STATS_PKTS_DROP_ADD(port, val)
+-
+-#endif
+-
+-struct rte_port_ethdev_writer {
+-	struct rte_port_out_stats stats;
+-
+-	struct rte_mbuf *tx_buf[2 * RTE_PORT_IN_BURST_SIZE_MAX];
+-	uint32_t tx_burst_sz;
+-	uint16_t tx_buf_count;
+-	uint64_t bsz_mask;
+-	uint16_t queue_id;
+-	uint16_t port_id;
+-};
+-
+-static void *
+-rte_port_ethdev_writer_create(void *params, int socket_id)
+-{
+-	struct rte_port_ethdev_writer_params *conf =
+-			params;
+-	struct rte_port_ethdev_writer *port;
 -
 -	/* Check input parameters */
--	if (p == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: rte_pipeline parameter is NULL", __func__);
--		return -EINVAL;
--	}
--
--	/* Free input ports */
--	for (i = 0; i < p->num_ports_in; i++) {
--		struct rte_port_in *port = &p->ports_in[i];
--
--		rte_pipeline_port_in_free(port);
--	}
--
--	/* Free tables */
--	for (i = 0; i < p->num_tables; i++) {
--		struct rte_table *table = &p->tables[i];
--
--		rte_pipeline_table_free(table);
--	}
--
--	/* Free output ports */
--	for (i = 0; i < p->num_ports_out; i++) {
--		struct rte_port_out *port = &p->ports_out[i];
--
--		rte_pipeline_port_out_free(port);
--	}
--
--	/* Free pipeline memory */
--	rte_free(p);
--
--	return 0;
--}
--
--/*
-- * Table
-- */
--static int
--rte_table_check_params(struct rte_pipeline *p,
--		struct rte_pipeline_table_params *params,
--		uint32_t *table_id)
--{
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter is NULL",
--			__func__);
--		return -EINVAL;
--	}
--	if (params == NULL) {
--		PIPELINE_LOG(ERR, "%s: params parameter is NULL",
--			__func__);
--		return -EINVAL;
--	}
--	if (table_id == NULL) {
--		PIPELINE_LOG(ERR, "%s: table_id parameter is NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	/* ops */
--	if (params->ops == NULL) {
--		PIPELINE_LOG(ERR, "%s: params->ops is NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (params->ops->f_create == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: f_create function pointer is NULL", __func__);
--		return -EINVAL;
--	}
--
--	if (params->ops->f_lookup == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: f_lookup function pointer is NULL", __func__);
--		return -EINVAL;
--	}
--
--	/* De we have room for one more table? */
--	if (p->num_tables == RTE_PIPELINE_TABLE_MAX) {
--		PIPELINE_LOG(ERR,
--			"%s: Incorrect value for num_tables parameter",
--			__func__);
--		return -EINVAL;
--	}
--
--	return 0;
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_table_create)
--int
--rte_pipeline_table_create(struct rte_pipeline *p,
--		struct rte_pipeline_table_params *params,
--		uint32_t *table_id)
--{
--	struct rte_table *table;
--	struct rte_pipeline_table_entry *default_entry;
--	void *h_table;
--	uint32_t entry_size, id;
--	int status;
--
--	/* Check input arguments */
--	status = rte_table_check_params(p, params, table_id);
--	if (status != 0)
--		return status;
--
--	id = p->num_tables;
--	table = &p->tables[id];
--
--	/* Allocate space for the default table entry */
--	entry_size = sizeof(struct rte_pipeline_table_entry) +
--		params->action_data_size;
--	default_entry = rte_zmalloc_socket(
--		"PIPELINE", entry_size, RTE_CACHE_LINE_SIZE, p->socket_id);
--	if (default_entry == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: Failed to allocate default entry", __func__);
--		return -EINVAL;
--	}
--
--	/* Create the table */
--	h_table = params->ops->f_create(params->arg_create, p->socket_id,
--		entry_size);
--	if (h_table == NULL) {
--		rte_free(default_entry);
--		PIPELINE_LOG(ERR, "%s: Table creation failed", __func__);
--		return -EINVAL;
--	}
--
--	/* Commit current table to the pipeline */
--	p->num_tables++;
--	*table_id = id;
--
--	/* Save input parameters */
--	table->ops = *params->ops;
--	table->f_action_hit = params->f_action_hit;
--	table->f_action_miss = params->f_action_miss;
--	table->arg_ah = params->arg_ah;
--	table->entry_size = entry_size;
--
--	/* Clear the lookup miss actions (to be set later through API) */
--	table->default_entry = default_entry;
--	table->default_entry->action = RTE_PIPELINE_ACTION_DROP;
--
--	/* Initialize table internal data structure */
--	table->h_table = h_table;
--	table->table_next_id = 0;
--	table->table_next_id_valid = 0;
--
--	return 0;
--}
--
--void
--rte_pipeline_table_free(struct rte_table *table)
--{
--	if (table->ops.f_free != NULL)
--		table->ops.f_free(table->h_table);
--
--	rte_free(table->default_entry);
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_table_default_entry_add)
--int
--rte_pipeline_table_default_entry_add(struct rte_pipeline *p,
--	uint32_t table_id,
--	struct rte_pipeline_table_entry *default_entry,
--	struct rte_pipeline_table_entry **default_entry_ptr)
--{
--	struct rte_table *table;
--
--	/* Check input arguments */
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter is NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (default_entry == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: default_entry parameter is NULL", __func__);
--		return -EINVAL;
--	}
--
--	if (table_id >= p->num_tables) {
--		PIPELINE_LOG(ERR,
--			"%s: table_id %d out of range", __func__, table_id);
--		return -EINVAL;
--	}
--
--	table = &p->tables[table_id];
--
--	if ((default_entry->action == RTE_PIPELINE_ACTION_TABLE) &&
--		table->table_next_id_valid &&
--		(default_entry->table_id != table->table_next_id)) {
--		PIPELINE_LOG(ERR,
--			"%s: Tree-like topologies not allowed", __func__);
--		return -EINVAL;
--	}
--
--	/* Set the lookup miss actions */
--	if ((default_entry->action == RTE_PIPELINE_ACTION_TABLE) &&
--		(table->table_next_id_valid == 0)) {
--		table->table_next_id = default_entry->table_id;
--		table->table_next_id_valid = 1;
--	}
--
--	memcpy(table->default_entry, default_entry, table->entry_size);
--
--	*default_entry_ptr = table->default_entry;
--	return 0;
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_table_default_entry_delete)
--int
--rte_pipeline_table_default_entry_delete(struct rte_pipeline *p,
--		uint32_t table_id,
--		struct rte_pipeline_table_entry *entry)
--{
--	struct rte_table *table;
--
--	/* Check input arguments */
--	if (p == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: pipeline parameter is NULL", __func__);
--		return -EINVAL;
--	}
--
--	if (table_id >= p->num_tables) {
--		PIPELINE_LOG(ERR,
--			"%s: table_id %d out of range", __func__, table_id);
--		return -EINVAL;
--	}
--
--	table = &p->tables[table_id];
--
--	/* Save the current contents of the default entry */
--	if (entry)
--		memcpy(entry, table->default_entry, table->entry_size);
--
--	/* Clear the lookup miss actions */
--	memset(table->default_entry, 0, table->entry_size);
--	table->default_entry->action = RTE_PIPELINE_ACTION_DROP;
--
--	return 0;
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_table_entry_add)
--int
--rte_pipeline_table_entry_add(struct rte_pipeline *p,
--		uint32_t table_id,
--		void *key,
--		struct rte_pipeline_table_entry *entry,
--		int *key_found,
--		struct rte_pipeline_table_entry **entry_ptr)
--{
--	struct rte_table *table;
--
--	/* Check input arguments */
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter is NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (key == NULL) {
--		PIPELINE_LOG(ERR, "%s: key parameter is NULL", __func__);
--		return -EINVAL;
--	}
--
--	if (entry == NULL) {
--		PIPELINE_LOG(ERR, "%s: entry parameter is NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (table_id >= p->num_tables) {
--		PIPELINE_LOG(ERR,
--			"%s: table_id %d out of range", __func__, table_id);
--		return -EINVAL;
--	}
--
--	table = &p->tables[table_id];
--
--	if (table->ops.f_add == NULL) {
--		PIPELINE_LOG(ERR, "%s: f_add function pointer NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if ((entry->action == RTE_PIPELINE_ACTION_TABLE) &&
--		table->table_next_id_valid &&
--		(entry->table_id != table->table_next_id)) {
--		PIPELINE_LOG(ERR,
--			"%s: Tree-like topologies not allowed", __func__);
--		return -EINVAL;
--	}
--
--	/* Add entry */
--	if ((entry->action == RTE_PIPELINE_ACTION_TABLE) &&
--		(table->table_next_id_valid == 0)) {
--		table->table_next_id = entry->table_id;
--		table->table_next_id_valid = 1;
--	}
--
--	return (table->ops.f_add)(table->h_table, key, (void *) entry,
--		key_found, (void **) entry_ptr);
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_table_entry_delete)
--int
--rte_pipeline_table_entry_delete(struct rte_pipeline *p,
--		uint32_t table_id,
--		void *key,
--		int *key_found,
--		struct rte_pipeline_table_entry *entry)
--{
--	struct rte_table *table;
--
--	/* Check input arguments */
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (key == NULL) {
--		PIPELINE_LOG(ERR, "%s: key parameter is NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (table_id >= p->num_tables) {
--		PIPELINE_LOG(ERR,
--			"%s: table_id %d out of range", __func__, table_id);
--		return -EINVAL;
--	}
--
--	table = &p->tables[table_id];
--
--	if (table->ops.f_delete == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: f_delete function pointer NULL", __func__);
--		return -EINVAL;
--	}
--
--	return (table->ops.f_delete)(table->h_table, key, key_found, entry);
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_table_entry_add_bulk)
--int rte_pipeline_table_entry_add_bulk(struct rte_pipeline *p,
--	uint32_t table_id,
--	void **keys,
--	struct rte_pipeline_table_entry **entries,
--	uint32_t n_keys,
--	int *key_found,
--	struct rte_pipeline_table_entry **entries_ptr)
--{
--	struct rte_table *table;
--	uint32_t i;
--
--	/* Check input arguments */
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter is NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (keys == NULL) {
--		PIPELINE_LOG(ERR, "%s: keys parameter is NULL", __func__);
--		return -EINVAL;
--	}
--
--	if (entries == NULL) {
--		PIPELINE_LOG(ERR, "%s: entries parameter is NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (table_id >= p->num_tables) {
--		PIPELINE_LOG(ERR,
--			"%s: table_id %d out of range", __func__, table_id);
--		return -EINVAL;
--	}
--
--	table = &p->tables[table_id];
--
--	if (table->ops.f_add_bulk == NULL) {
--		PIPELINE_LOG(ERR, "%s: f_add_bulk function pointer NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	for (i = 0; i < n_keys; i++) {
--		if ((entries[i]->action == RTE_PIPELINE_ACTION_TABLE) &&
--			table->table_next_id_valid &&
--			(entries[i]->table_id != table->table_next_id)) {
--			PIPELINE_LOG(ERR,
--				"%s: Tree-like topologies not allowed", __func__);
--			return -EINVAL;
--		}
--	}
--
--	/* Add entry */
--	for (i = 0; i < n_keys; i++) {
--		if ((entries[i]->action == RTE_PIPELINE_ACTION_TABLE) &&
--			(table->table_next_id_valid == 0)) {
--			table->table_next_id = entries[i]->table_id;
--			table->table_next_id_valid = 1;
--		}
--	}
--
--	return (table->ops.f_add_bulk)(table->h_table, keys, (void **) entries,
--		n_keys, key_found, (void **) entries_ptr);
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_table_entry_delete_bulk)
--int rte_pipeline_table_entry_delete_bulk(struct rte_pipeline *p,
--	uint32_t table_id,
--	void **keys,
--	uint32_t n_keys,
--	int *key_found,
--	struct rte_pipeline_table_entry **entries)
--{
--	struct rte_table *table;
--
--	/* Check input arguments */
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (keys == NULL) {
--		PIPELINE_LOG(ERR, "%s: key parameter is NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (table_id >= p->num_tables) {
--		PIPELINE_LOG(ERR,
--			"%s: table_id %d out of range", __func__, table_id);
--		return -EINVAL;
--	}
--
--	table = &p->tables[table_id];
--
--	if (table->ops.f_delete_bulk == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: f_delete function pointer NULL", __func__);
--		return -EINVAL;
--	}
--
--	return (table->ops.f_delete_bulk)(table->h_table, keys, n_keys, key_found,
--			(void **) entries);
--}
--
--/*
-- * Port
-- */
--static int
--rte_pipeline_port_in_check_params(struct rte_pipeline *p,
--		struct rte_pipeline_port_in_params *params,
--		uint32_t *port_id)
--{
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
--			__func__);
--		return -EINVAL;
--	}
--	if (params == NULL) {
--		PIPELINE_LOG(ERR, "%s: params parameter NULL", __func__);
--		return -EINVAL;
--	}
--	if (port_id == NULL) {
--		PIPELINE_LOG(ERR, "%s: port_id parameter NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	/* ops */
--	if (params->ops == NULL) {
--		PIPELINE_LOG(ERR, "%s: params->ops parameter NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (params->ops->f_create == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: f_create function pointer NULL", __func__);
--		return -EINVAL;
--	}
--
--	if (params->ops->f_rx == NULL) {
--		PIPELINE_LOG(ERR, "%s: f_rx function pointer NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	/* burst_size */
--	if ((params->burst_size == 0) ||
--		(params->burst_size > RTE_PORT_IN_BURST_SIZE_MAX)) {
--		PIPELINE_LOG(ERR, "%s: invalid value for burst_size",
--			__func__);
--		return -EINVAL;
--	}
--
--	/* Do we have room for one more port? */
--	if (p->num_ports_in == RTE_PIPELINE_PORT_IN_MAX) {
--		PIPELINE_LOG(ERR,
--			"%s: invalid value for num_ports_in", __func__);
--		return -EINVAL;
--	}
--
--	return 0;
--}
--
--static int
--rte_pipeline_port_out_check_params(struct rte_pipeline *p,
--		struct rte_pipeline_port_out_params *params,
--		uint32_t *port_id)
--{
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (params == NULL) {
--		PIPELINE_LOG(ERR, "%s: params parameter NULL", __func__);
--		return -EINVAL;
--	}
--
--	if (port_id == NULL) {
--		PIPELINE_LOG(ERR, "%s: port_id parameter NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	/* ops */
--	if (params->ops == NULL) {
--		PIPELINE_LOG(ERR, "%s: params->ops parameter NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (params->ops->f_create == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: f_create function pointer NULL", __func__);
--		return -EINVAL;
--	}
--
--	if (params->ops->f_tx == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: f_tx function pointer NULL", __func__);
--		return -EINVAL;
--	}
--
--	if (params->ops->f_tx_bulk == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: f_tx_bulk function pointer NULL", __func__);
--		return -EINVAL;
--	}
--
--	/* Do we have room for one more port? */
--	if (p->num_ports_out == RTE_PIPELINE_PORT_OUT_MAX) {
--		PIPELINE_LOG(ERR,
--			"%s: invalid value for num_ports_out", __func__);
--		return -EINVAL;
--	}
--
--	return 0;
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_port_in_create)
--int
--rte_pipeline_port_in_create(struct rte_pipeline *p,
--		struct rte_pipeline_port_in_params *params,
--		uint32_t *port_id)
--{
--	struct rte_port_in *port;
--	void *h_port;
--	uint32_t id;
--	int status;
--
--	/* Check input arguments */
--	status = rte_pipeline_port_in_check_params(p, params, port_id);
--	if (status != 0)
--		return status;
--
--	id = p->num_ports_in;
--	port = &p->ports_in[id];
--
--	/* Create the port */
--	h_port = params->ops->f_create(params->arg_create, p->socket_id);
--	if (h_port == NULL) {
--		PIPELINE_LOG(ERR, "%s: Port creation failed", __func__);
--		return -EINVAL;
--	}
--
--	/* Commit current table to the pipeline */
--	p->num_ports_in++;
--	*port_id = id;
--
--	/* Save input parameters */
--	port->ops = *params->ops;
--	port->f_action = params->f_action;
--	port->arg_ah = params->arg_ah;
--	port->burst_size = params->burst_size;
--
--	/* Initialize port internal data structure */
--	port->table_id = RTE_TABLE_INVALID;
--	port->h_port = h_port;
--	port->next = NULL;
--
--	return 0;
--}
--
--void
--rte_pipeline_port_in_free(struct rte_port_in *port)
--{
--	if (port->ops.f_free != NULL)
--		port->ops.f_free(port->h_port);
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_port_out_create)
--int
--rte_pipeline_port_out_create(struct rte_pipeline *p,
--		struct rte_pipeline_port_out_params *params,
--		uint32_t *port_id)
--{
--	struct rte_port_out *port;
--	void *h_port;
--	uint32_t id;
--	int status;
--
--	/* Check input arguments */
--	status = rte_pipeline_port_out_check_params(p, params, port_id);
--	if (status != 0)
--		return status;
--
--	id = p->num_ports_out;
--	port = &p->ports_out[id];
--
--	/* Create the port */
--	h_port = params->ops->f_create(params->arg_create, p->socket_id);
--	if (h_port == NULL) {
--		PIPELINE_LOG(ERR, "%s: Port creation failed", __func__);
--		return -EINVAL;
--	}
--
--	/* Commit current table to the pipeline */
--	p->num_ports_out++;
--	*port_id = id;
--
--	/* Save input parameters */
--	port->ops = *params->ops;
--	port->f_action = params->f_action;
--	port->arg_ah = params->arg_ah;
--
--	/* Initialize port internal data structure */
--	port->h_port = h_port;
--
--	return 0;
--}
--
--void
--rte_pipeline_port_out_free(struct rte_port_out *port)
--{
--	if (port->ops.f_free != NULL)
--		port->ops.f_free(port->h_port);
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_port_in_connect_to_table)
--int
--rte_pipeline_port_in_connect_to_table(struct rte_pipeline *p,
--		uint32_t port_id,
--		uint32_t table_id)
--{
--	struct rte_port_in *port;
--
--	/* Check input arguments */
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (port_id >= p->num_ports_in) {
--		PIPELINE_LOG(ERR,
--			"%s: port IN ID %u is out of range",
--			__func__, port_id);
--		return -EINVAL;
--	}
--
--	if (table_id >= p->num_tables) {
--		PIPELINE_LOG(ERR,
--			"%s: Table ID %u is out of range",
--			__func__, table_id);
--		return -EINVAL;
--	}
--
--	port = &p->ports_in[port_id];
--	port->table_id = table_id;
--
--	return 0;
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_port_in_enable)
--int
--rte_pipeline_port_in_enable(struct rte_pipeline *p, uint32_t port_id)
--{
--	struct rte_port_in *port, *port_prev, *port_next;
--	uint64_t port_mask;
--	uint32_t port_prev_id, port_next_id;
--
--	/* Check input arguments */
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (port_id >= p->num_ports_in) {
--		PIPELINE_LOG(ERR,
--			"%s: port IN ID %u is out of range",
--			__func__, port_id);
--		return -EINVAL;
--	}
--
--	port = &p->ports_in[port_id];
--
--	/* Return if current input port is already enabled */
--	port_mask = 1LLU << port_id;
--	if (p->enabled_port_in_mask & port_mask)
--		return 0;
--
--	p->enabled_port_in_mask |= port_mask;
--
--	/* Add current input port to the pipeline chain of enabled ports */
--	port_prev_id = rte_mask_get_prev(p->enabled_port_in_mask, port_id);
--	port_next_id = rte_mask_get_next(p->enabled_port_in_mask, port_id);
--
--	port_prev = &p->ports_in[port_prev_id];
--	port_next = &p->ports_in[port_next_id];
--
--	port_prev->next = port;
--	port->next = port_next;
--
--	/* Check if list of enabled ports was previously empty */
--	if (p->enabled_port_in_mask == port_mask)
--		p->port_in_next = port;
--
--	return 0;
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_port_in_disable)
--int
--rte_pipeline_port_in_disable(struct rte_pipeline *p, uint32_t port_id)
--{
--	struct rte_port_in *port, *port_prev, *port_next;
--	uint64_t port_mask;
--	uint32_t port_prev_id, port_next_id;
--
--	/* Check input arguments */
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
--		__func__);
--		return -EINVAL;
--	}
--
--	if (port_id >= p->num_ports_in) {
--		PIPELINE_LOG(ERR, "%s: port IN ID %u is out of range",
--			__func__, port_id);
--		return -EINVAL;
--	}
--
--	port = &p->ports_in[port_id];
--
--	/* Return if current input port is already disabled */
--	port_mask = 1LLU << port_id;
--	if ((p->enabled_port_in_mask & port_mask) == 0)
--		return 0;
--
--	p->enabled_port_in_mask &= ~port_mask;
--
--	/* Return if no other enabled ports */
--	if (p->enabled_port_in_mask == 0) {
--		p->port_in_next = NULL;
--
--		return 0;
--	}
--
--	/* Add current input port to the pipeline chain of enabled ports */
--	port_prev_id = rte_mask_get_prev(p->enabled_port_in_mask, port_id);
--	port_next_id = rte_mask_get_next(p->enabled_port_in_mask, port_id);
--
--	port_prev = &p->ports_in[port_prev_id];
--	port_next = &p->ports_in[port_next_id];
--
--	port_prev->next = port_next;
--
--	/* Check if the port which has just been disabled is next to serve */
--	if (port == p->port_in_next)
--		p->port_in_next = port_next;
--
--	return 0;
--}
--
--/*
-- * Pipeline run-time
-- */
--RTE_EXPORT_SYMBOL(rte_pipeline_check)
--int
--rte_pipeline_check(struct rte_pipeline *p)
--{
--	uint32_t port_in_id;
--
--	/* Check input arguments */
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	/* Check that pipeline has at least one input port, one table and one
--	output port */
--	if (p->num_ports_in == 0) {
--		PIPELINE_LOG(ERR, "%s: must have at least 1 input port",
--			__func__);
--		return -EINVAL;
--	}
--	if (p->num_tables == 0) {
--		PIPELINE_LOG(ERR, "%s: must have at least 1 table",
--			__func__);
--		return -EINVAL;
--	}
--	if (p->num_ports_out == 0) {
--		PIPELINE_LOG(ERR, "%s: must have at least 1 output port",
--			__func__);
--		return -EINVAL;
--	}
--
--	/* Check that all input ports are connected */
--	for (port_in_id = 0; port_in_id < p->num_ports_in; port_in_id++) {
--		struct rte_port_in *port_in = &p->ports_in[port_in_id];
--
--		if (port_in->table_id == RTE_TABLE_INVALID) {
--			PIPELINE_LOG(ERR,
--				"%s: Port IN ID %u is not connected",
--				__func__, port_in_id);
--			return -EINVAL;
--		}
--	}
--
--	return 0;
+-	if ((conf == NULL) ||
+-		(conf->tx_burst_sz == 0) ||
+-		(conf->tx_burst_sz > RTE_PORT_IN_BURST_SIZE_MAX) ||
+-		(!rte_is_power_of_2(conf->tx_burst_sz))) {
+-		PORT_LOG(ERR, "%s: Invalid input parameters", __func__);
+-		return NULL;
+-	}
+-
+-	/* Memory allocation */
+-	port = rte_zmalloc_socket("PORT", sizeof(*port),
+-			RTE_CACHE_LINE_SIZE, socket_id);
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
+-		return NULL;
+-	}
+-
+-	/* Initialization */
+-	port->port_id = conf->port_id;
+-	port->queue_id = conf->queue_id;
+-	port->tx_burst_sz = conf->tx_burst_sz;
+-	port->tx_buf_count = 0;
+-	port->bsz_mask = 1LLU << (conf->tx_burst_sz - 1);
+-
+-	return port;
 -}
 -
 -static inline void
--rte_pipeline_compute_masks(struct rte_pipeline *p, uint64_t pkts_mask)
+-send_burst(struct rte_port_ethdev_writer *p)
 -{
--	p->action_mask1[RTE_PIPELINE_ACTION_DROP] = 0;
--	p->action_mask1[RTE_PIPELINE_ACTION_PORT] = 0;
--	p->action_mask1[RTE_PIPELINE_ACTION_PORT_META] = 0;
--	p->action_mask1[RTE_PIPELINE_ACTION_TABLE] = 0;
+-	uint32_t nb_tx;
 -
--	if ((pkts_mask & (pkts_mask + 1)) == 0) {
+-	nb_tx = rte_eth_tx_burst(p->port_id, p->queue_id,
+-			 p->tx_buf, p->tx_buf_count);
+-
+-	RTE_PORT_ETHDEV_WRITER_STATS_PKTS_DROP_ADD(p, p->tx_buf_count - nb_tx);
+-	for ( ; nb_tx < p->tx_buf_count; nb_tx++)
+-		rte_pktmbuf_free(p->tx_buf[nb_tx]);
+-
+-	p->tx_buf_count = 0;
+-}
+-
+-static int
+-rte_port_ethdev_writer_tx(void *port, struct rte_mbuf *pkt)
+-{
+-	struct rte_port_ethdev_writer *p =
+-		port;
+-
+-	p->tx_buf[p->tx_buf_count++] = pkt;
+-	RTE_PORT_ETHDEV_WRITER_STATS_PKTS_IN_ADD(p, 1);
+-	if (p->tx_buf_count >= p->tx_burst_sz)
+-		send_burst(p);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_ethdev_writer_tx_bulk(void *port,
+-		struct rte_mbuf **pkts,
+-		uint64_t pkts_mask)
+-{
+-	struct rte_port_ethdev_writer *p =
+-		port;
+-	uint64_t bsz_mask = p->bsz_mask;
+-	uint32_t tx_buf_count = p->tx_buf_count;
+-	uint64_t expr = (pkts_mask & (pkts_mask + 1)) |
+-			((pkts_mask & bsz_mask) ^ bsz_mask);
+-
+-	if (expr == 0) {
 -		uint64_t n_pkts = rte_popcount64(pkts_mask);
--		uint32_t i;
+-		uint32_t n_pkts_ok;
 -
--		for (i = 0; i < n_pkts; i++) {
--			uint64_t pkt_mask = 1LLU << i;
--			uint32_t pos = p->entries[i]->action;
+-		if (tx_buf_count)
+-			send_burst(p);
 -
--			p->action_mask1[pos] |= pkt_mask;
+-		RTE_PORT_ETHDEV_WRITER_STATS_PKTS_IN_ADD(p, n_pkts);
+-		n_pkts_ok = rte_eth_tx_burst(p->port_id, p->queue_id, pkts,
+-			n_pkts);
+-
+-		RTE_PORT_ETHDEV_WRITER_STATS_PKTS_DROP_ADD(p, n_pkts - n_pkts_ok);
+-		for ( ; n_pkts_ok < n_pkts; n_pkts_ok++) {
+-			struct rte_mbuf *pkt = pkts[n_pkts_ok];
+-
+-			rte_pktmbuf_free(pkt);
 -		}
 -	} else {
--		uint32_t i;
+-		for ( ; pkts_mask; ) {
+-			uint32_t pkt_index = rte_ctz64(pkts_mask);
+-			uint64_t pkt_mask = 1LLU << pkt_index;
+-			struct rte_mbuf *pkt = pkts[pkt_index];
 -
--		for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++) {
--			uint64_t pkt_mask = 1LLU << i;
--			uint32_t pos;
+-			p->tx_buf[tx_buf_count++] = pkt;
+-			RTE_PORT_ETHDEV_WRITER_STATS_PKTS_IN_ADD(p, 1);
+-			pkts_mask &= ~pkt_mask;
+-		}
 -
--			if ((pkt_mask & pkts_mask) == 0)
--				continue;
+-		p->tx_buf_count = tx_buf_count;
+-		if (tx_buf_count >= p->tx_burst_sz)
+-			send_burst(p);
+-	}
 -
--			pos = p->entries[i]->action;
--			p->action_mask1[pos] |= pkt_mask;
+-	return 0;
+-}
+-
+-static int
+-rte_port_ethdev_writer_flush(void *port)
+-{
+-	struct rte_port_ethdev_writer *p =
+-		port;
+-
+-	if (p->tx_buf_count > 0)
+-		send_burst(p);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_ethdev_writer_free(void *port)
+-{
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Port is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	rte_port_ethdev_writer_flush(port);
+-	rte_free(port);
+-
+-	return 0;
+-}
+-
+-static int rte_port_ethdev_writer_stats_read(void *port,
+-		struct rte_port_out_stats *stats, int clear)
+-{
+-	struct rte_port_ethdev_writer *p =
+-		port;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &p->stats, sizeof(p->stats));
+-
+-	if (clear)
+-		memset(&p->stats, 0, sizeof(p->stats));
+-
+-	return 0;
+-}
+-
+-/*
+- * Port ETHDEV Writer Nodrop
+- */
+-#ifdef RTE_PORT_STATS_COLLECT
+-
+-#define RTE_PORT_ETHDEV_WRITER_NODROP_STATS_PKTS_IN_ADD(port, val) \
+-	port->stats.n_pkts_in += val
+-#define RTE_PORT_ETHDEV_WRITER_NODROP_STATS_PKTS_DROP_ADD(port, val) \
+-	port->stats.n_pkts_drop += val
+-
+-#else
+-
+-#define RTE_PORT_ETHDEV_WRITER_NODROP_STATS_PKTS_IN_ADD(port, val)
+-#define RTE_PORT_ETHDEV_WRITER_NODROP_STATS_PKTS_DROP_ADD(port, val)
+-
+-#endif
+-
+-struct rte_port_ethdev_writer_nodrop {
+-	struct rte_port_out_stats stats;
+-
+-	struct rte_mbuf *tx_buf[2 * RTE_PORT_IN_BURST_SIZE_MAX];
+-	uint32_t tx_burst_sz;
+-	uint16_t tx_buf_count;
+-	uint64_t bsz_mask;
+-	uint64_t n_retries;
+-	uint16_t queue_id;
+-	uint16_t port_id;
+-};
+-
+-static void *
+-rte_port_ethdev_writer_nodrop_create(void *params, int socket_id)
+-{
+-	struct rte_port_ethdev_writer_nodrop_params *conf =
+-			params;
+-	struct rte_port_ethdev_writer_nodrop *port;
+-
+-	/* Check input parameters */
+-	if ((conf == NULL) ||
+-		(conf->tx_burst_sz == 0) ||
+-		(conf->tx_burst_sz > RTE_PORT_IN_BURST_SIZE_MAX) ||
+-		(!rte_is_power_of_2(conf->tx_burst_sz))) {
+-		PORT_LOG(ERR, "%s: Invalid input parameters", __func__);
+-		return NULL;
+-	}
+-
+-	/* Memory allocation */
+-	port = rte_zmalloc_socket("PORT", sizeof(*port),
+-			RTE_CACHE_LINE_SIZE, socket_id);
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
+-		return NULL;
+-	}
+-
+-	/* Initialization */
+-	port->port_id = conf->port_id;
+-	port->queue_id = conf->queue_id;
+-	port->tx_burst_sz = conf->tx_burst_sz;
+-	port->tx_buf_count = 0;
+-	port->bsz_mask = 1LLU << (conf->tx_burst_sz - 1);
+-
+-	/*
+-	 * When n_retries is 0 it means that we should wait for every packet to
+-	 * send no matter how many retries should it take. To limit number of
+-	 * branches in fast path, we use UINT64_MAX instead of branching.
+-	 */
+-	port->n_retries = (conf->n_retries == 0) ? UINT64_MAX : conf->n_retries;
+-
+-	return port;
+-}
+-
+-static inline void
+-send_burst_nodrop(struct rte_port_ethdev_writer_nodrop *p)
+-{
+-	uint32_t nb_tx = 0, i;
+-
+-	nb_tx = rte_eth_tx_burst(p->port_id, p->queue_id, p->tx_buf,
+-			p->tx_buf_count);
+-
+-	/* We sent all the packets in a first try */
+-	if (nb_tx >= p->tx_buf_count) {
+-		p->tx_buf_count = 0;
+-		return;
+-	}
+-
+-	for (i = 0; i < p->n_retries; i++) {
+-		nb_tx += rte_eth_tx_burst(p->port_id, p->queue_id,
+-							 p->tx_buf + nb_tx, p->tx_buf_count - nb_tx);
+-
+-		/* We sent all the packets in more than one try */
+-		if (nb_tx >= p->tx_buf_count) {
+-			p->tx_buf_count = 0;
+-			return;
 -		}
 -	}
+-
+-	/* We didn't send the packets in maximum allowed attempts */
+-	RTE_PORT_ETHDEV_WRITER_NODROP_STATS_PKTS_DROP_ADD(p, p->tx_buf_count - nb_tx);
+-	for ( ; nb_tx < p->tx_buf_count; nb_tx++)
+-		rte_pktmbuf_free(p->tx_buf[nb_tx]);
+-
+-	p->tx_buf_count = 0;
 -}
 -
--static inline void
--rte_pipeline_action_handler_port_bulk(struct rte_pipeline *p,
--	uint64_t pkts_mask, uint32_t port_id)
+-static int
+-rte_port_ethdev_writer_nodrop_tx(void *port, struct rte_mbuf *pkt)
 -{
--	struct rte_port_out *port_out = &p->ports_out[port_id];
+-	struct rte_port_ethdev_writer_nodrop *p =
+-		port;
 -
--	p->pkts_mask = pkts_mask;
+-	p->tx_buf[p->tx_buf_count++] = pkt;
+-	RTE_PORT_ETHDEV_WRITER_NODROP_STATS_PKTS_IN_ADD(p, 1);
+-	if (p->tx_buf_count >= p->tx_burst_sz)
+-		send_burst_nodrop(p);
 -
--	/* Output port user actions */
--	if (port_out->f_action != NULL) {
--		port_out->f_action(p, p->pkts, pkts_mask, port_out->arg_ah);
--
--		RTE_PIPELINE_STATS_AH_DROP_READ(p,
--			port_out->n_pkts_dropped_by_ah);
--	}
--
--	/* Output port TX */
--	if (p->pkts_mask != 0)
--		port_out->ops.f_tx_bulk(port_out->h_port,
--			p->pkts,
--			p->pkts_mask);
+-	return 0;
 -}
 -
--static inline void
--rte_pipeline_action_handler_port(struct rte_pipeline *p, uint64_t pkts_mask)
+-static int
+-rte_port_ethdev_writer_nodrop_tx_bulk(void *port,
+-		struct rte_mbuf **pkts,
+-		uint64_t pkts_mask)
 -{
--	p->pkts_mask = pkts_mask;
+-	struct rte_port_ethdev_writer_nodrop *p =
+-		port;
 -
--	if ((pkts_mask & (pkts_mask + 1)) == 0) {
+-	uint64_t bsz_mask = p->bsz_mask;
+-	uint32_t tx_buf_count = p->tx_buf_count;
+-	uint64_t expr = (pkts_mask & (pkts_mask + 1)) |
+-			((pkts_mask & bsz_mask) ^ bsz_mask);
+-
+-	if (expr == 0) {
 -		uint64_t n_pkts = rte_popcount64(pkts_mask);
--		uint32_t i;
+-		uint32_t n_pkts_ok;
 -
--		for (i = 0; i < n_pkts; i++) {
--			struct rte_mbuf *pkt = p->pkts[i];
--			uint32_t port_out_id = p->entries[i]->port_id;
--			struct rte_port_out *port_out =
--				&p->ports_out[port_out_id];
+-		if (tx_buf_count)
+-			send_burst_nodrop(p);
 -
--			/* Output port user actions */
--			if (port_out->f_action == NULL) /* Output port TX */
--				port_out->ops.f_tx(port_out->h_port, pkt);
--			else {
--				uint64_t pkt_mask = 1LLU << i;
+-		RTE_PORT_ETHDEV_WRITER_NODROP_STATS_PKTS_IN_ADD(p, n_pkts);
+-		n_pkts_ok = rte_eth_tx_burst(p->port_id, p->queue_id, pkts,
+-			n_pkts);
 -
--				port_out->f_action(p,
--					p->pkts,
--					pkt_mask,
--					port_out->arg_ah);
+-		if (n_pkts_ok >= n_pkts)
+-			return 0;
 -
--				RTE_PIPELINE_STATS_AH_DROP_READ(p,
--					port_out->n_pkts_dropped_by_ah);
--
--				/* Output port TX */
--				if (pkt_mask & p->pkts_mask)
--					port_out->ops.f_tx(port_out->h_port,
--						pkt);
--			}
+-		/*
+-		 * If we did not manage to send all packets in single burst,
+-		 * move remaining packets to the buffer and call send burst.
+-		 */
+-		for (; n_pkts_ok < n_pkts; n_pkts_ok++) {
+-			struct rte_mbuf *pkt = pkts[n_pkts_ok];
+-			p->tx_buf[p->tx_buf_count++] = pkt;
 -		}
+-		send_burst_nodrop(p);
 -	} else {
--		uint32_t i;
+-		for ( ; pkts_mask; ) {
+-			uint32_t pkt_index = rte_ctz64(pkts_mask);
+-			uint64_t pkt_mask = 1LLU << pkt_index;
+-			struct rte_mbuf *pkt = pkts[pkt_index];
 -
--		for (i = 0;  i < RTE_PORT_IN_BURST_SIZE_MAX; i++) {
--			uint64_t pkt_mask = 1LLU << i;
--			struct rte_mbuf *pkt;
--			struct rte_port_out *port_out;
--			uint32_t port_out_id;
--
--			if ((pkt_mask & pkts_mask) == 0)
--				continue;
--
--			pkt = p->pkts[i];
--			port_out_id = p->entries[i]->port_id;
--			port_out = &p->ports_out[port_out_id];
--
--			/* Output port user actions */
--			if (port_out->f_action == NULL) /* Output port TX */
--				port_out->ops.f_tx(port_out->h_port, pkt);
--			else {
--				port_out->f_action(p,
--					p->pkts,
--					pkt_mask,
--					port_out->arg_ah);
--
--				RTE_PIPELINE_STATS_AH_DROP_READ(p,
--					port_out->n_pkts_dropped_by_ah);
--
--				/* Output port TX */
--				if (pkt_mask & p->pkts_mask)
--					port_out->ops.f_tx(port_out->h_port,
--						pkt);
--			}
+-			p->tx_buf[tx_buf_count++] = pkt;
+-			RTE_PORT_ETHDEV_WRITER_NODROP_STATS_PKTS_IN_ADD(p, 1);
+-			pkts_mask &= ~pkt_mask;
 -		}
+-
+-		p->tx_buf_count = tx_buf_count;
+-		if (tx_buf_count >= p->tx_burst_sz)
+-			send_burst_nodrop(p);
 -	}
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_ethdev_writer_nodrop_flush(void *port)
+-{
+-	struct rte_port_ethdev_writer_nodrop *p =
+-		port;
+-
+-	if (p->tx_buf_count > 0)
+-		send_burst_nodrop(p);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_ethdev_writer_nodrop_free(void *port)
+-{
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Port is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	rte_port_ethdev_writer_nodrop_flush(port);
+-	rte_free(port);
+-
+-	return 0;
+-}
+-
+-static int rte_port_ethdev_writer_nodrop_stats_read(void *port,
+-		struct rte_port_out_stats *stats, int clear)
+-{
+-	struct rte_port_ethdev_writer_nodrop *p =
+-		port;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &p->stats, sizeof(p->stats));
+-
+-	if (clear)
+-		memset(&p->stats, 0, sizeof(p->stats));
+-
+-	return 0;
+-}
+-
+-/*
+- * Summary of port operations
+- */
+-RTE_EXPORT_SYMBOL(rte_port_ethdev_reader_ops)
+-struct rte_port_in_ops rte_port_ethdev_reader_ops = {
+-	.f_create = rte_port_ethdev_reader_create,
+-	.f_free = rte_port_ethdev_reader_free,
+-	.f_rx = rte_port_ethdev_reader_rx,
+-	.f_stats = rte_port_ethdev_reader_stats_read,
+-};
+-
+-RTE_EXPORT_SYMBOL(rte_port_ethdev_writer_ops)
+-struct rte_port_out_ops rte_port_ethdev_writer_ops = {
+-	.f_create = rte_port_ethdev_writer_create,
+-	.f_free = rte_port_ethdev_writer_free,
+-	.f_tx = rte_port_ethdev_writer_tx,
+-	.f_tx_bulk = rte_port_ethdev_writer_tx_bulk,
+-	.f_flush = rte_port_ethdev_writer_flush,
+-	.f_stats = rte_port_ethdev_writer_stats_read,
+-};
+-
+-RTE_EXPORT_SYMBOL(rte_port_ethdev_writer_nodrop_ops)
+-struct rte_port_out_ops rte_port_ethdev_writer_nodrop_ops = {
+-	.f_create = rte_port_ethdev_writer_nodrop_create,
+-	.f_free = rte_port_ethdev_writer_nodrop_free,
+-	.f_tx = rte_port_ethdev_writer_nodrop_tx,
+-	.f_tx_bulk = rte_port_ethdev_writer_nodrop_tx_bulk,
+-	.f_flush = rte_port_ethdev_writer_nodrop_flush,
+-	.f_stats = rte_port_ethdev_writer_nodrop_stats_read,
+-};
+diff --git a/lib/port/rte_port_ethdev.h b/lib/port/rte_port_ethdev.h
+deleted file mode 100644
+index 7729ff0da3..0000000000
+--- a/lib/port/rte_port_ethdev.h
++++ /dev/null
+@@ -1,75 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_PORT_ETHDEV_H__
+-#define __INCLUDE_RTE_PORT_ETHDEV_H__
+-
+-/**
+- * @file
+- * RTE Port Ethernet Device
+- *
+- * ethdev_reader: input port built on top of pre-initialized NIC RX queue
+- * ethdev_writer: output port built on top of pre-initialized NIC TX queue
+- */
+-
+-#include <stdint.h>
+-
+-#include "rte_port.h"
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-/** ethdev_reader port parameters */
+-struct rte_port_ethdev_reader_params {
+-	/** NIC RX port ID */
+-	uint16_t port_id;
+-
+-	/** NIC RX queue ID */
+-	uint16_t queue_id;
+-};
+-
+-/** ethdev_reader port operations */
+-extern struct rte_port_in_ops rte_port_ethdev_reader_ops;
+-
+-/** ethdev_writer port parameters */
+-struct rte_port_ethdev_writer_params {
+-	/** NIC RX port ID */
+-	uint16_t port_id;
+-
+-	/** NIC RX queue ID */
+-	uint16_t queue_id;
+-
+-	/** Recommended burst size to NIC TX queue. The actual burst size can be
+-	bigger or smaller than this value. */
+-	uint32_t tx_burst_sz;
+-};
+-
+-/** ethdev_writer port operations */
+-extern struct rte_port_out_ops rte_port_ethdev_writer_ops;
+-
+-/** ethdev_writer_nodrop port parameters */
+-struct rte_port_ethdev_writer_nodrop_params {
+-	/** NIC RX port ID */
+-	uint16_t port_id;
+-
+-	/** NIC RX queue ID */
+-	uint16_t queue_id;
+-
+-	/** Recommended burst size to NIC TX queue. The actual burst size can be
+-	bigger or smaller than this value. */
+-	uint32_t tx_burst_sz;
+-
+-	/** Maximum number of retries, 0 for no limit */
+-	uint32_t n_retries;
+-};
+-
+-/** ethdev_writer_nodrop port operations */
+-extern struct rte_port_out_ops rte_port_ethdev_writer_nodrop_ops;
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif
+diff --git a/lib/port/rte_port_eventdev.c b/lib/port/rte_port_eventdev.c
+deleted file mode 100644
+index c3a287b834..0000000000
+--- a/lib/port/rte_port_eventdev.c
++++ /dev/null
+@@ -1,590 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2019 Intel Corporation
+- */
+-
+-#include <string.h>
+-#include <stdint.h>
+-
+-#include <eal_export.h>
+-#include <rte_mbuf.h>
+-#include <rte_malloc.h>
+-
+-#include "rte_port_eventdev.h"
+-
+-#include "port_log.h"
+-
+-/*
+- * Port EVENTDEV Reader
+- */
+-#ifdef RTE_PORT_STATS_COLLECT
+-
+-#define RTE_PORT_EVENTDEV_READER_STATS_PKTS_IN_ADD(port, val) \
+-	do {port->stats.n_pkts_in += val;} while (0)
+-#define RTE_PORT_EVENTDEV_READER_STATS_PKTS_DROP_ADD(port, val) \
+-	do {port->stats.n_pkts_drop += val;} while (0)
+-
+-#else
+-
+-#define RTE_PORT_EVENTDEV_READER_STATS_PKTS_IN_ADD(port, val)
+-#define RTE_PORT_EVENTDEV_READER_STATS_PKTS_DROP_ADD(port, val)
+-
+-#endif
+-
+-struct rte_port_eventdev_reader {
+-	struct rte_port_in_stats stats;
+-
+-	uint8_t  eventdev_id;
+-	uint16_t port_id;
+-
+-	struct rte_event ev[RTE_PORT_IN_BURST_SIZE_MAX];
+-};
+-
+-static void *
+-rte_port_eventdev_reader_create(void *params, int socket_id)
+-{
+-	struct rte_port_eventdev_reader_params *conf =
+-			params;
+-	struct rte_port_eventdev_reader *port;
+-
+-	/* Check input parameters */
+-	if (conf == NULL) {
+-		PORT_LOG(ERR, "%s: params is NULL", __func__);
+-		return NULL;
+-	}
+-
+-	/* Memory allocation */
+-	port = rte_zmalloc_socket("PORT", sizeof(*port),
+-		RTE_CACHE_LINE_SIZE, socket_id);
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
+-		return NULL;
+-	}
+-
+-	/* Initialization */
+-	port->eventdev_id = conf->eventdev_id;
+-	port->port_id = conf->port_id;
+-
+-	return port;
+-}
+-
+-static int
+-rte_port_eventdev_reader_rx(void *port, struct rte_mbuf **pkts, uint32_t n_pkts)
+-{
+-	struct rte_port_eventdev_reader *p = port;
+-	uint16_t rx_evts_cnt, i;
+-
+-	rx_evts_cnt = rte_event_dequeue_burst(p->eventdev_id, p->port_id,
+-			p->ev, n_pkts, 0);
+-
+-	for (i = 0; i < rx_evts_cnt; i++)
+-		pkts[i] = p->ev[i].mbuf;
+-
+-	RTE_PORT_EVENTDEV_READER_STATS_PKTS_IN_ADD(p, rx_evts_cnt);
+-
+-	return rx_evts_cnt;
+-}
+-
+-static int
+-rte_port_eventdev_reader_free(void *port)
+-{
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: port is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	rte_free(port);
+-
+-	return 0;
+-}
+-
+-static int rte_port_eventdev_reader_stats_read(void *port,
+-	struct rte_port_in_stats *stats, int clear)
+-{
+-	struct rte_port_eventdev_reader *p =
+-			port;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &p->stats, sizeof(p->stats));
+-
+-	if (clear)
+-		memset(&p->stats, 0, sizeof(p->stats));
+-
+-	return 0;
+-}
+-
+-/*
+- * Port EVENTDEV Writer
+- */
+-#ifdef RTE_PORT_STATS_COLLECT
+-
+-#define RTE_PORT_EVENTDEV_WRITER_STATS_PKTS_IN_ADD(port, val) \
+-	do {port->stats.n_pkts_in += val;} while (0)
+-#define RTE_PORT_EVENTDEV_WRITER_STATS_PKTS_DROP_ADD(port, val) \
+-	do {port->stats.n_pkts_drop += val;} while (0)
+-
+-#else
+-
+-#define RTE_PORT_EVENTDEV_WRITER_STATS_PKTS_IN_ADD(port, val)
+-#define RTE_PORT_EVENTDEV_WRITER_STATS_PKTS_DROP_ADD(port, val)
+-
+-#endif
+-
+-struct rte_port_eventdev_writer {
+-	struct rte_port_out_stats stats;
+-
+-	struct rte_event ev[2 * RTE_PORT_IN_BURST_SIZE_MAX];
+-
+-	uint32_t enq_burst_sz;
+-	uint32_t enq_buf_count;
+-	uint64_t bsz_mask;
+-
+-	uint8_t eventdev_id;
+-	uint8_t port_id;
+-	uint8_t queue_id;
+-	uint8_t sched_type;
+-	uint8_t evt_op;
+-};
+-
+-static void *
+-rte_port_eventdev_writer_create(void *params, int socket_id)
+-{
+-	struct rte_port_eventdev_writer_params *conf =
+-			params;
+-	struct rte_port_eventdev_writer *port;
+-	unsigned int i;
+-
+-	/* Check input parameters */
+-	if ((conf == NULL) ||
+-		(conf->enq_burst_sz == 0) ||
+-		(conf->enq_burst_sz > RTE_PORT_IN_BURST_SIZE_MAX) ||
+-		(!rte_is_power_of_2(conf->enq_burst_sz))) {
+-		PORT_LOG(ERR, "%s: Invalid input parameters", __func__);
+-		return NULL;
+-	}
+-
+-	/* Memory allocation */
+-	port = rte_zmalloc_socket("PORT", sizeof(*port),
+-		RTE_CACHE_LINE_SIZE, socket_id);
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
+-		return NULL;
+-	}
+-
+-	/* Initialization */
+-	port->enq_burst_sz = conf->enq_burst_sz;
+-	port->enq_buf_count = 0;
+-	port->bsz_mask = 1LLU << (conf->enq_burst_sz - 1);
+-
+-	port->eventdev_id = conf->eventdev_id;
+-	port->port_id = conf->port_id;
+-	port->queue_id = conf->queue_id;
+-	port->sched_type = conf->sched_type;
+-	port->evt_op = conf->evt_op;
+-	memset(&port->ev, 0, sizeof(port->ev));
+-
+-	for (i = 0; i < RTE_DIM(port->ev); i++) {
+-		port->ev[i].queue_id = port->queue_id;
+-		port->ev[i].sched_type = port->sched_type;
+-		port->ev[i].op = port->evt_op;
+-	}
+-
+-	return port;
 -}
 -
 -static inline void
--rte_pipeline_action_handler_port_meta(struct rte_pipeline *p,
+-send_burst(struct rte_port_eventdev_writer *p)
+-{
+-	uint32_t nb_enq;
+-
+-	nb_enq = rte_event_enqueue_burst(p->eventdev_id, p->port_id,
+-			p->ev, p->enq_buf_count);
+-
+-	RTE_PORT_EVENTDEV_WRITER_STATS_PKTS_DROP_ADD(p, p->enq_buf_count -
+-			nb_enq);
+-
+-	for (; nb_enq < p->enq_buf_count; nb_enq++)
+-		rte_pktmbuf_free(p->ev[nb_enq].mbuf);
+-
+-	p->enq_buf_count = 0;
+-}
+-
+-static int
+-rte_port_eventdev_writer_tx(void *port, struct rte_mbuf *pkt)
+-{
+-	struct rte_port_eventdev_writer *p = port;
+-
+-	p->ev[p->enq_buf_count++].mbuf  = pkt;
+-	RTE_PORT_EVENTDEV_WRITER_STATS_PKTS_IN_ADD(p, 1);
+-	if (p->enq_buf_count >= p->enq_burst_sz)
+-		send_burst(p);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_eventdev_writer_tx_bulk(void *port,
+-	struct rte_mbuf **pkts,
 -	uint64_t pkts_mask)
 -{
--	p->pkts_mask = pkts_mask;
+-	struct rte_port_eventdev_writer *p =
+-			port;
+-	uint64_t bsz_mask = p->bsz_mask;
+-	uint32_t enq_buf_count = p->enq_buf_count;
+-	uint64_t expr = (pkts_mask & (pkts_mask + 1)) |
+-					((pkts_mask & bsz_mask) ^ bsz_mask);
 -
--	if ((pkts_mask & (pkts_mask + 1)) == 0) {
+-	if (expr == 0) {
 -		uint64_t n_pkts = rte_popcount64(pkts_mask);
--		uint32_t i;
+-		uint32_t i, n_enq_ok;
 -
+-		if (enq_buf_count)
+-			send_burst(p);
+-
+-		RTE_PORT_EVENTDEV_WRITER_STATS_PKTS_IN_ADD(p, n_pkts);
+-
+-		struct rte_event events[2 * RTE_PORT_IN_BURST_SIZE_MAX] = {};
 -		for (i = 0; i < n_pkts; i++) {
--			struct rte_mbuf *pkt = p->pkts[i];
--			uint32_t port_out_id =
--				RTE_MBUF_METADATA_UINT32(pkt,
--					p->offset_port_id);
--			struct rte_port_out *port_out = &p->ports_out[
--				port_out_id];
--
--			/* Output port user actions */
--			if (port_out->f_action == NULL) /* Output port TX */
--				port_out->ops.f_tx(port_out->h_port, pkt);
--			else {
--				uint64_t pkt_mask = 1LLU << i;
--
--				port_out->f_action(p,
--					p->pkts,
--					pkt_mask,
--					port_out->arg_ah);
--
--				RTE_PIPELINE_STATS_AH_DROP_READ(p,
--					port_out->n_pkts_dropped_by_ah);
--
--				/* Output port TX */
--				if (pkt_mask & p->pkts_mask)
--					port_out->ops.f_tx(port_out->h_port,
--						pkt);
--			}
+-			events[i].mbuf = pkts[i];
+-			events[i].queue_id = p->queue_id;
+-			events[i].sched_type = p->sched_type;
+-			events[i].op = p->evt_op;
 -		}
+-
+-		n_enq_ok = rte_event_enqueue_burst(p->eventdev_id, p->port_id,
+-				events, n_pkts);
+-
+-		RTE_PORT_EVENTDEV_WRITER_STATS_PKTS_DROP_ADD(p,
+-				n_pkts - n_enq_ok);
+-		for (; n_enq_ok < n_pkts; n_enq_ok++)
+-			rte_pktmbuf_free(pkts[n_enq_ok]);
+-
 -	} else {
--		uint32_t i;
+-		for (; pkts_mask;) {
+-			uint32_t pkt_index = rte_ctz64(pkts_mask);
+-			uint64_t pkt_mask = 1LLU << pkt_index;
 -
--		for (i = 0;  i < RTE_PORT_IN_BURST_SIZE_MAX; i++) {
--			uint64_t pkt_mask = 1LLU << i;
--			struct rte_mbuf *pkt;
--			struct rte_port_out *port_out;
--			uint32_t port_out_id;
+-			p->ev[enq_buf_count++].mbuf = pkts[pkt_index];
 -
--			if ((pkt_mask & pkts_mask) == 0)
--				continue;
--
--			pkt = p->pkts[i];
--			port_out_id = RTE_MBUF_METADATA_UINT32(pkt,
--				p->offset_port_id);
--			port_out = &p->ports_out[port_out_id];
--
--			/* Output port user actions */
--			if (port_out->f_action == NULL) /* Output port TX */
--				port_out->ops.f_tx(port_out->h_port, pkt);
--			else {
--				port_out->f_action(p,
--					p->pkts,
--					pkt_mask,
--					port_out->arg_ah);
--
--				RTE_PIPELINE_STATS_AH_DROP_READ(p,
--					port_out->n_pkts_dropped_by_ah);
--
--				/* Output port TX */
--				if (pkt_mask & p->pkts_mask)
--					port_out->ops.f_tx(port_out->h_port,
--						pkt);
--			}
+-			RTE_PORT_EVENTDEV_WRITER_STATS_PKTS_IN_ADD(p, 1);
+-			pkts_mask &= ~pkt_mask;
 -		}
+-
+-		p->enq_buf_count = enq_buf_count;
+-		if (enq_buf_count >= p->enq_burst_sz)
+-			send_burst(p);
 -	}
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_eventdev_writer_flush(void *port)
+-{
+-	struct rte_port_eventdev_writer *p =
+-			port;
+-
+-	if (p->enq_buf_count > 0)
+-		send_burst(p);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_eventdev_writer_free(void *port)
+-{
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Port is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	rte_port_eventdev_writer_flush(port);
+-	rte_free(port);
+-
+-	return 0;
+-}
+-
+-static int rte_port_eventdev_writer_stats_read(void *port,
+-	struct rte_port_out_stats *stats, int clear)
+-{
+-	struct rte_port_eventdev_writer *p =
+-			port;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &p->stats, sizeof(p->stats));
+-
+-	if (clear)
+-		memset(&p->stats, 0, sizeof(p->stats));
+-
+-	return 0;
+-}
+-
+-/*
+- * Port EVENTDEV Writer Nodrop
+- */
+-#ifdef RTE_PORT_STATS_COLLECT
+-
+-#define RTE_PORT_EVENTDEV_WRITER_NODROP_STATS_PKTS_IN_ADD(port, val) \
+-	do {port->stats.n_pkts_in += val;} while (0)
+-#define RTE_PORT_EVENTDEV_WRITER_NODROP_STATS_PKTS_DROP_ADD(port, val) \
+-	do {port->stats.n_pkts_drop += val;} while (0)
+-
+-#else
+-
+-#define RTE_PORT_EVENTDEV_WRITER_NODROP_STATS_PKTS_IN_ADD(port, val)
+-#define RTE_PORT_EVENTDEV_WRITER_NODROP_STATS_PKTS_DROP_ADD(port, val)
+-
+-#endif
+-
+-struct rte_port_eventdev_writer_nodrop {
+-	struct rte_port_out_stats stats;
+-
+-	struct rte_event ev[2 * RTE_PORT_IN_BURST_SIZE_MAX];
+-
+-	uint32_t enq_burst_sz;
+-	uint32_t enq_buf_count;
+-	uint64_t bsz_mask;
+-	uint64_t n_retries;
+-	uint8_t eventdev_id;
+-	uint8_t port_id;
+-	uint8_t queue_id;
+-	uint8_t sched_type;
+-	uint8_t evt_op;
+-};
+-
+-
+-static void *
+-rte_port_eventdev_writer_nodrop_create(void *params, int socket_id)
+-{
+-	struct rte_port_eventdev_writer_nodrop_params *conf =
+-			params;
+-	struct rte_port_eventdev_writer_nodrop *port;
+-	unsigned int i;
+-
+-	/* Check input parameters */
+-	if ((conf == NULL) ||
+-		(conf->enq_burst_sz == 0) ||
+-		(conf->enq_burst_sz > RTE_PORT_IN_BURST_SIZE_MAX) ||
+-		(!rte_is_power_of_2(conf->enq_burst_sz))) {
+-		PORT_LOG(ERR, "%s: Invalid input parameters", __func__);
+-		return NULL;
+-	}
+-
+-	/* Memory allocation */
+-	port = rte_zmalloc_socket("PORT", sizeof(*port),
+-		RTE_CACHE_LINE_SIZE, socket_id);
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
+-		return NULL;
+-	}
+-
+-	/* Initialization */
+-	port->enq_burst_sz = conf->enq_burst_sz;
+-	port->enq_buf_count = 0;
+-	port->bsz_mask = 1LLU << (conf->enq_burst_sz - 1);
+-
+-	port->eventdev_id = conf->eventdev_id;
+-	port->port_id = conf->port_id;
+-	port->queue_id = conf->queue_id;
+-	port->sched_type = conf->sched_type;
+-	port->evt_op = conf->evt_op;
+-	memset(&port->ev, 0, sizeof(port->ev));
+-
+-	for (i = 0; i < RTE_DIM(port->ev); i++) {
+-		port->ev[i].queue_id = port->queue_id;
+-		port->ev[i].sched_type = port->sched_type;
+-		port->ev[i].op = port->evt_op;
+-	}
+-	/*
+-	 * When n_retries is 0 it means that we should wait for every event to
+-	 * send no matter how many retries should it take. To limit number of
+-	 * branches in fast path, we use UINT64_MAX instead of branching.
+-	 */
+-	port->n_retries = (conf->n_retries == 0) ? UINT64_MAX : conf->n_retries;
+-
+-	return port;
 -}
 -
 -static inline void
--rte_pipeline_action_handler_drop(struct rte_pipeline *p, uint64_t pkts_mask)
+-send_burst_nodrop(struct rte_port_eventdev_writer_nodrop *p)
 -{
+-	uint32_t nb_enq, i;
+-
+-	nb_enq = rte_event_enqueue_burst(p->eventdev_id, p->port_id,
+-			p->ev, p->enq_buf_count);
+-
+-	/* We sent all the packets in a first try */
+-	if (nb_enq >= p->enq_buf_count) {
+-		p->enq_buf_count = 0;
+-		return;
+-	}
+-
+-	for (i = 0; i < p->n_retries; i++) {
+-		nb_enq += rte_event_enqueue_burst(p->eventdev_id, p->port_id,
+-							p->ev + nb_enq,
+-							p->enq_buf_count - nb_enq);
+-
+-		/* We sent all the events in more than one try */
+-		if (nb_enq >= p->enq_buf_count) {
+-			p->enq_buf_count = 0;
+-			return;
+-		}
+-	}
+-	/* We didn't send the events in maximum allowed attempts */
+-	RTE_PORT_EVENTDEV_WRITER_NODROP_STATS_PKTS_DROP_ADD(p,
+-			p->enq_buf_count - nb_enq);
+-	for (; nb_enq < p->enq_buf_count; nb_enq++)
+-		rte_pktmbuf_free(p->ev[nb_enq].mbuf);
+-
+-	p->enq_buf_count = 0;
+-}
+-
+-static int
+-rte_port_eventdev_writer_nodrop_tx(void *port, struct rte_mbuf *pkt)
+-{
+-	struct rte_port_eventdev_writer_nodrop *p = port;
+-
+-	p->ev[p->enq_buf_count++].mbuf = pkt;
+-
+-	RTE_PORT_EVENTDEV_WRITER_NODROP_STATS_PKTS_IN_ADD(p, 1);
+-	if (p->enq_buf_count >= p->enq_burst_sz)
+-		send_burst_nodrop(p);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_eventdev_writer_nodrop_tx_bulk(void *port,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask)
+-{
+-	struct rte_port_eventdev_writer_nodrop *p =
+-			port;
+-
+-	uint64_t bsz_mask = p->bsz_mask;
+-	uint32_t enq_buf_count = p->enq_buf_count;
+-	uint64_t expr = (pkts_mask & (pkts_mask + 1)) |
+-					((pkts_mask & bsz_mask) ^ bsz_mask);
+-
+-	if (expr == 0) {
+-		uint64_t n_pkts = rte_popcount64(pkts_mask);
+-		uint32_t i, n_enq_ok;
+-
+-		if (enq_buf_count)
+-			send_burst_nodrop(p);
+-
+-		RTE_PORT_EVENTDEV_WRITER_NODROP_STATS_PKTS_IN_ADD(p, n_pkts);
+-
+-		struct rte_event events[RTE_PORT_IN_BURST_SIZE_MAX] = {};
+-
+-		for (i = 0; i < n_pkts; i++) {
+-			events[i].mbuf = pkts[i];
+-			events[i].queue_id = p->queue_id;
+-			events[i].sched_type = p->sched_type;
+-			events[i].op = p->evt_op;
+-		}
+-
+-		n_enq_ok = rte_event_enqueue_burst(p->eventdev_id, p->port_id,
+-				events, n_pkts);
+-
+-		if (n_enq_ok >= n_pkts)
+-			return 0;
+-
+-		/*
+-		 * If we did not manage to enqueue all events in single burst,
+-		 * move remaining events to the buffer and call send burst.
+-		 */
+-		for (; n_enq_ok < n_pkts; n_enq_ok++) {
+-			struct rte_mbuf *pkt = pkts[n_enq_ok];
+-			p->ev[p->enq_buf_count++].mbuf = pkt;
+-		}
+-		send_burst_nodrop(p);
+-	} else {
+-		for (; pkts_mask;) {
+-			uint32_t pkt_index = rte_ctz64(pkts_mask);
+-			uint64_t pkt_mask = 1LLU << pkt_index;
+-
+-			p->ev[enq_buf_count++].mbuf = pkts[pkt_index];
+-
+-			RTE_PORT_EVENTDEV_WRITER_STATS_PKTS_IN_ADD(p, 1);
+-			pkts_mask &= ~pkt_mask;
+-		}
+-
+-		p->enq_buf_count = enq_buf_count;
+-		if (enq_buf_count >= p->enq_burst_sz)
+-			send_burst_nodrop(p);
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_eventdev_writer_nodrop_flush(void *port)
+-{
+-	struct rte_port_eventdev_writer_nodrop *p =
+-			port;
+-
+-	if (p->enq_buf_count > 0)
+-		send_burst_nodrop(p);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_eventdev_writer_nodrop_free(void *port)
+-{
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Port is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	rte_port_eventdev_writer_nodrop_flush(port);
+-	rte_free(port);
+-
+-	return 0;
+-}
+-
+-static int rte_port_eventdev_writer_nodrop_stats_read(void *port,
+-	struct rte_port_out_stats *stats, int clear)
+-{
+-	struct rte_port_eventdev_writer_nodrop *p =
+-			port;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &p->stats, sizeof(p->stats));
+-
+-	if (clear)
+-		memset(&p->stats, 0, sizeof(p->stats));
+-
+-	return 0;
+-}
+-
+-/*
+- * Summary of port operations
+- */
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_eventdev_reader_ops, 19.11)
+-struct rte_port_in_ops rte_port_eventdev_reader_ops = {
+-	.f_create = rte_port_eventdev_reader_create,
+-	.f_free = rte_port_eventdev_reader_free,
+-	.f_rx = rte_port_eventdev_reader_rx,
+-	.f_stats = rte_port_eventdev_reader_stats_read,
+-};
+-
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_eventdev_writer_ops, 19.11)
+-struct rte_port_out_ops rte_port_eventdev_writer_ops = {
+-	.f_create = rte_port_eventdev_writer_create,
+-	.f_free = rte_port_eventdev_writer_free,
+-	.f_tx = rte_port_eventdev_writer_tx,
+-	.f_tx_bulk = rte_port_eventdev_writer_tx_bulk,
+-	.f_flush = rte_port_eventdev_writer_flush,
+-	.f_stats = rte_port_eventdev_writer_stats_read,
+-};
+-
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_eventdev_writer_nodrop_ops, 19.11)
+-struct rte_port_out_ops rte_port_eventdev_writer_nodrop_ops = {
+-	.f_create = rte_port_eventdev_writer_nodrop_create,
+-	.f_free = rte_port_eventdev_writer_nodrop_free,
+-	.f_tx = rte_port_eventdev_writer_nodrop_tx,
+-	.f_tx_bulk = rte_port_eventdev_writer_nodrop_tx_bulk,
+-	.f_flush = rte_port_eventdev_writer_nodrop_flush,
+-	.f_stats = rte_port_eventdev_writer_nodrop_stats_read,
+-};
+diff --git a/lib/port/rte_port_eventdev.h b/lib/port/rte_port_eventdev.h
+deleted file mode 100644
+index d9eccf07d4..0000000000
+--- a/lib/port/rte_port_eventdev.h
++++ /dev/null
+@@ -1,94 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2019 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_PORT_EVENTDEV_H__
+-#define __INCLUDE_RTE_PORT_EVENTDEV_H__
+-
+-/**
+- * @file
+- * RTE Port Eventdev Interface
+- *
+- * eventdev_reader: input port built on top of pre-initialized eventdev
+- * interface
+- * eventdev_writer: output port built on top of pre-initialized eventdev
+- * interface
+- */
+-
+-#include <stdint.h>
+-#include <rte_eventdev.h>
+-
+-#include "rte_port.h"
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-/** Eventdev_reader port parameters */
+-struct rte_port_eventdev_reader_params {
+-	/** Eventdev Device ID */
+-	uint8_t eventdev_id;
+-
+-	/** Eventdev Port ID */
+-	uint8_t port_id;
+-};
+-
+-/** Eventdev_reader port operations. */
+-extern struct rte_port_in_ops rte_port_eventdev_reader_ops;
+-
+-/** Eventdev_writer port parameters. */
+-struct rte_port_eventdev_writer_params {
+-	/** Eventdev Device ID. */
+-	uint8_t eventdev_id;
+-
+-	/** Eventdev Port ID. */
+-	uint8_t port_id;
+-
+-	/** Eventdev Queue ID. */
+-	uint8_t queue_id;
+-
+-	/** Burst size to eventdev interface. */
+-	uint32_t enq_burst_sz;
+-
+-	/** Scheduler synchronization type (RTE_SCHED_TYPE_*)*/
+-	uint8_t sched_type;
+-
+-	/** The type of eventdev enqueue operation - new/forward/release */
+-	uint8_t evt_op;
+-};
+-
+-/** Eventdev_writer port operations. */
+-extern struct rte_port_out_ops rte_port_eventdev_writer_ops;
+-
+-/** Event_writer_nodrop port parameters. */
+-struct rte_port_eventdev_writer_nodrop_params {
+-	/** Eventdev Device ID. */
+-	uint8_t eventdev_id;
+-
+-	/** Eventdev Port ID. */
+-	uint16_t port_id;
+-
+-	/** Eventdev Queue ID. */
+-	uint16_t queue_id;
+-
+-	/** Burst size to eventdev interface. */
+-	uint32_t enq_burst_sz;
+-
+-	/** Scheduler synchronization type (RTE_SCHED_TYPE_*)*/
+-	uint8_t sched_type;
+-
+-	/** The type of eventdev enqueue operation - new/forward/release */
+-	uint8_t evt_op;
+-
+-	/** Maximum number of retries, 0 for no limit. */
+-	uint32_t n_retries;
+-};
+-
+-/** Eventdev_writer_nodrop port operations. */
+-extern struct rte_port_out_ops rte_port_eventdev_writer_nodrop_ops;
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif
+diff --git a/lib/port/rte_port_fd.c b/lib/port/rte_port_fd.c
+deleted file mode 100644
+index dbc9efef1b..0000000000
+--- a/lib/port/rte_port_fd.c
++++ /dev/null
+@@ -1,524 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2016 Intel Corporation
+- */
+-#include <string.h>
+-#include <stdint.h>
+-#include <unistd.h>
+-
+-#include <eal_export.h>
+-#include <rte_mbuf.h>
+-#include <rte_malloc.h>
+-
+-#include "rte_port_fd.h"
+-
+-#include "port_log.h"
+-
+-/*
+- * Port FD Reader
+- */
+-#ifdef RTE_PORT_STATS_COLLECT
+-
+-#define RTE_PORT_FD_READER_STATS_PKTS_IN_ADD(port, val) \
+-	do { port->stats.n_pkts_in += val; } while (0)
+-#define RTE_PORT_FD_READER_STATS_PKTS_DROP_ADD(port, val) \
+-	do { port->stats.n_pkts_drop += val; } while (0)
+-
+-#else
+-
+-#define RTE_PORT_FD_READER_STATS_PKTS_IN_ADD(port, val)
+-#define RTE_PORT_FD_READER_STATS_PKTS_DROP_ADD(port, val)
+-
+-#endif
+-
+-struct rte_port_fd_reader {
+-	struct rte_port_in_stats stats;
+-	int fd;
+-	uint32_t mtu;
+-	struct rte_mempool *mempool;
+-};
+-
+-static void *
+-rte_port_fd_reader_create(void *params, int socket_id)
+-{
+-	struct rte_port_fd_reader_params *conf =
+-			params;
+-	struct rte_port_fd_reader *port;
+-
+-	/* Check input parameters */
+-	if (conf == NULL) {
+-		PORT_LOG(ERR, "%s: params is NULL", __func__);
+-		return NULL;
+-	}
+-	if (conf->fd < 0) {
+-		PORT_LOG(ERR, "%s: Invalid file descriptor", __func__);
+-		return NULL;
+-	}
+-	if (conf->mtu == 0) {
+-		PORT_LOG(ERR, "%s: Invalid MTU", __func__);
+-		return NULL;
+-	}
+-	if (conf->mempool == NULL) {
+-		PORT_LOG(ERR, "%s: Invalid mempool", __func__);
+-		return NULL;
+-	}
+-
+-	/* Memory allocation */
+-	port = rte_zmalloc_socket("PORT", sizeof(*port),
+-			RTE_CACHE_LINE_SIZE, socket_id);
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
+-		return NULL;
+-	}
+-
+-	/* Initialization */
+-	port->fd = conf->fd;
+-	port->mtu = conf->mtu;
+-	port->mempool = conf->mempool;
+-
+-	return port;
+-}
+-
+-static int
+-rte_port_fd_reader_rx(void *port, struct rte_mbuf **pkts, uint32_t n_pkts)
+-{
+-	struct rte_port_fd_reader *p = port;
+-	uint32_t i, j;
+-
+-	if (rte_pktmbuf_alloc_bulk(p->mempool, pkts, n_pkts) != 0)
+-		return 0;
+-
+-	for (i = 0; i < n_pkts; i++) {
+-		struct rte_mbuf *pkt = pkts[i];
+-		void *pkt_data = rte_pktmbuf_mtod(pkt, void *);
+-		ssize_t n_bytes;
+-
+-		n_bytes = read(p->fd, pkt_data, (size_t) p->mtu);
+-		if (n_bytes <= 0)
+-			break;
+-
+-		pkt->data_len = n_bytes;
+-		pkt->pkt_len = n_bytes;
+-	}
+-
+-	for (j = i; j < n_pkts; j++)
+-		rte_pktmbuf_free(pkts[j]);
+-
+-	RTE_PORT_FD_READER_STATS_PKTS_IN_ADD(p, i);
+-
+-	return i;
+-}
+-
+-static int
+-rte_port_fd_reader_free(void *port)
+-{
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: port is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	rte_free(port);
+-
+-	return 0;
+-}
+-
+-static int rte_port_fd_reader_stats_read(void *port,
+-		struct rte_port_in_stats *stats, int clear)
+-{
+-	struct rte_port_fd_reader *p =
+-			port;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &p->stats, sizeof(p->stats));
+-
+-	if (clear)
+-		memset(&p->stats, 0, sizeof(p->stats));
+-
+-	return 0;
+-}
+-
+-/*
+- * Port FD Writer
+- */
+-#ifdef RTE_PORT_STATS_COLLECT
+-
+-#define RTE_PORT_FD_WRITER_STATS_PKTS_IN_ADD(port, val) \
+-	do { port->stats.n_pkts_in += val; } while (0)
+-#define RTE_PORT_FD_WRITER_STATS_PKTS_DROP_ADD(port, val) \
+-	do { port->stats.n_pkts_drop += val; } while (0)
+-
+-#else
+-
+-#define RTE_PORT_FD_WRITER_STATS_PKTS_IN_ADD(port, val)
+-#define RTE_PORT_FD_WRITER_STATS_PKTS_DROP_ADD(port, val)
+-
+-#endif
+-
+-struct rte_port_fd_writer {
+-	struct rte_port_out_stats stats;
+-
+-	struct rte_mbuf *tx_buf[2 * RTE_PORT_IN_BURST_SIZE_MAX];
+-	uint32_t tx_burst_sz;
+-	uint16_t tx_buf_count;
+-	uint32_t fd;
+-};
+-
+-static void *
+-rte_port_fd_writer_create(void *params, int socket_id)
+-{
+-	struct rte_port_fd_writer_params *conf =
+-		params;
+-	struct rte_port_fd_writer *port;
+-
+-	/* Check input parameters */
+-	if ((conf == NULL) ||
+-		(conf->tx_burst_sz == 0) ||
+-		(conf->tx_burst_sz > RTE_PORT_IN_BURST_SIZE_MAX) ||
+-		(!rte_is_power_of_2(conf->tx_burst_sz))) {
+-		PORT_LOG(ERR, "%s: Invalid input parameters", __func__);
+-		return NULL;
+-	}
+-
+-	/* Memory allocation */
+-	port = rte_zmalloc_socket("PORT", sizeof(*port),
+-		RTE_CACHE_LINE_SIZE, socket_id);
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
+-		return NULL;
+-	}
+-
+-	/* Initialization */
+-	port->fd = conf->fd;
+-	port->tx_burst_sz = conf->tx_burst_sz;
+-	port->tx_buf_count = 0;
+-
+-	return port;
+-}
+-
+-static inline void
+-send_burst(struct rte_port_fd_writer *p)
+-{
+-	uint32_t i;
+-
+-	for (i = 0; i < p->tx_buf_count; i++) {
+-		struct rte_mbuf *pkt = p->tx_buf[i];
+-		void *pkt_data = rte_pktmbuf_mtod(pkt, void*);
+-		size_t n_bytes = rte_pktmbuf_data_len(pkt);
+-		ssize_t ret;
+-
+-		ret = write(p->fd, pkt_data, n_bytes);
+-		if (ret < 0)
+-			break;
+-	}
+-
+-	RTE_PORT_FD_WRITER_STATS_PKTS_DROP_ADD(p, p->tx_buf_count - i);
+-
+-	for (i = 0; i < p->tx_buf_count; i++)
+-		rte_pktmbuf_free(p->tx_buf[i]);
+-
+-	p->tx_buf_count = 0;
+-}
+-
+-static int
+-rte_port_fd_writer_tx(void *port, struct rte_mbuf *pkt)
+-{
+-	struct rte_port_fd_writer *p =
+-		port;
+-
+-	p->tx_buf[p->tx_buf_count++] = pkt;
+-	RTE_PORT_FD_WRITER_STATS_PKTS_IN_ADD(p, 1);
+-	if (p->tx_buf_count >= p->tx_burst_sz)
+-		send_burst(p);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_fd_writer_tx_bulk(void *port,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask)
+-{
+-	struct rte_port_fd_writer *p =
+-		port;
+-	uint32_t tx_buf_count = p->tx_buf_count;
+-
 -	if ((pkts_mask & (pkts_mask + 1)) == 0) {
 -		uint64_t n_pkts = rte_popcount64(pkts_mask);
 -		uint32_t i;
 -
 -		for (i = 0; i < n_pkts; i++)
--			rte_pktmbuf_free(p->pkts[i]);
--	} else {
--		uint32_t i;
+-			p->tx_buf[tx_buf_count++] = pkts[i];
+-		RTE_PORT_FD_WRITER_STATS_PKTS_IN_ADD(p, n_pkts);
+-	} else
+-		for ( ; pkts_mask; ) {
+-			uint32_t pkt_index = rte_ctz64(pkts_mask);
+-			uint64_t pkt_mask = 1LLU << pkt_index;
+-			struct rte_mbuf *pkt = pkts[pkt_index];
 -
--		for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++) {
--			uint64_t pkt_mask = 1LLU << i;
--
--			if ((pkt_mask & pkts_mask) == 0)
--				continue;
--
--			rte_pktmbuf_free(p->pkts[i]);
+-			p->tx_buf[tx_buf_count++] = pkt;
+-			RTE_PORT_FD_WRITER_STATS_PKTS_IN_ADD(p, 1);
+-			pkts_mask &= ~pkt_mask;
 -		}
--	}
+-
+-	p->tx_buf_count = tx_buf_count;
+-	if (tx_buf_count >= p->tx_burst_sz)
+-		send_burst(p);
+-
+-	return 0;
 -}
 -
--RTE_EXPORT_SYMBOL(rte_pipeline_run)
--int
--rte_pipeline_run(struct rte_pipeline *p)
+-static int
+-rte_port_fd_writer_flush(void *port)
 -{
--	struct rte_port_in *port_in = p->port_in_next;
--	uint32_t n_pkts, table_id;
+-	struct rte_port_fd_writer *p =
+-		port;
 -
--	if (port_in == NULL)
--		return 0;
+-	if (p->tx_buf_count > 0)
+-		send_burst(p);
 -
--	/* Input port RX */
--	n_pkts = port_in->ops.f_rx(port_in->h_port, p->pkts,
--		port_in->burst_size);
--	if (n_pkts == 0) {
--		p->port_in_next = port_in->next;
--		return 0;
--	}
--
--	p->pkts_mask = RTE_LEN2MASK(n_pkts, uint64_t);
--	p->action_mask0[RTE_PIPELINE_ACTION_DROP] = 0;
--	p->action_mask0[RTE_PIPELINE_ACTION_PORT] = 0;
--	p->action_mask0[RTE_PIPELINE_ACTION_PORT_META] = 0;
--	p->action_mask0[RTE_PIPELINE_ACTION_TABLE] = 0;
--
--	/* Input port user actions */
--	if (port_in->f_action != NULL) {
--		port_in->f_action(p, p->pkts, n_pkts, port_in->arg_ah);
--
--		RTE_PIPELINE_STATS_AH_DROP_READ(p,
--			port_in->n_pkts_dropped_by_ah);
--	}
--
--	/* Table */
--	for (table_id = port_in->table_id; p->pkts_mask != 0; ) {
--		struct rte_table *table;
--		uint64_t lookup_hit_mask, lookup_miss_mask;
--
--		/* Lookup */
--		table = &p->tables[table_id];
--		table->ops.f_lookup(table->h_table, p->pkts, p->pkts_mask,
--			&lookup_hit_mask, (void **) p->entries);
--		lookup_miss_mask = p->pkts_mask & (~lookup_hit_mask);
--
--		/* Lookup miss */
--		if (lookup_miss_mask != 0) {
--			struct rte_pipeline_table_entry *default_entry =
--				table->default_entry;
--
--			p->pkts_mask = lookup_miss_mask;
--
--			/* Table user actions */
--			if (table->f_action_miss != NULL) {
--				table->f_action_miss(p,
--					p->pkts,
--					lookup_miss_mask,
--					default_entry,
--					table->arg_ah);
--
--				RTE_PIPELINE_STATS_AH_DROP_READ(p,
--					table->n_pkts_dropped_by_lkp_miss_ah);
--			}
--
--			/* Table reserved actions */
--			if ((default_entry->action == RTE_PIPELINE_ACTION_PORT) &&
--				(p->pkts_mask != 0))
--				rte_pipeline_action_handler_port_bulk(p,
--					p->pkts_mask,
--					default_entry->port_id);
--			else {
--				uint32_t pos = default_entry->action;
--
--				RTE_PIPELINE_STATS_TABLE_DROP0(p);
--
--				p->action_mask0[pos] |= p->pkts_mask;
--
--				RTE_PIPELINE_STATS_TABLE_DROP1(p,
--					table->n_pkts_dropped_lkp_miss);
--			}
--		}
--
--		/* Lookup hit */
--		if (lookup_hit_mask != 0) {
--			p->pkts_mask = lookup_hit_mask;
--
--			/* Table user actions */
--			if (table->f_action_hit != NULL) {
--				table->f_action_hit(p,
--					p->pkts,
--					lookup_hit_mask,
--					p->entries,
--					table->arg_ah);
--
--				RTE_PIPELINE_STATS_AH_DROP_READ(p,
--					table->n_pkts_dropped_by_lkp_hit_ah);
--			}
--
--			/* Table reserved actions */
--			RTE_PIPELINE_STATS_TABLE_DROP0(p);
--			rte_pipeline_compute_masks(p, p->pkts_mask);
--			p->action_mask0[RTE_PIPELINE_ACTION_DROP] |=
--				p->action_mask1[
--					RTE_PIPELINE_ACTION_DROP];
--			p->action_mask0[RTE_PIPELINE_ACTION_PORT] |=
--				p->action_mask1[
--					RTE_PIPELINE_ACTION_PORT];
--			p->action_mask0[RTE_PIPELINE_ACTION_PORT_META] |=
--				p->action_mask1[
--					RTE_PIPELINE_ACTION_PORT_META];
--			p->action_mask0[RTE_PIPELINE_ACTION_TABLE] |=
--				p->action_mask1[
--					RTE_PIPELINE_ACTION_TABLE];
--
--			RTE_PIPELINE_STATS_TABLE_DROP1(p,
--				table->n_pkts_dropped_lkp_hit);
--		}
--
--		/* Prepare for next iteration */
--		p->pkts_mask = p->action_mask0[RTE_PIPELINE_ACTION_TABLE];
--		table_id = table->table_next_id;
--		p->action_mask0[RTE_PIPELINE_ACTION_TABLE] = 0;
--	}
--
--	/* Table reserved action PORT */
--	rte_pipeline_action_handler_port(p,
--		p->action_mask0[RTE_PIPELINE_ACTION_PORT]);
--
--	/* Table reserved action PORT META */
--	rte_pipeline_action_handler_port_meta(p,
--		p->action_mask0[RTE_PIPELINE_ACTION_PORT_META]);
--
--	/* Table reserved action DROP */
--	rte_pipeline_action_handler_drop(p,
--		p->action_mask0[RTE_PIPELINE_ACTION_DROP]);
--
--	/* Pick candidate for next port IN to serve */
--	p->port_in_next = port_in->next;
--
--	return (int) n_pkts;
+-	return 0;
 -}
 -
--RTE_EXPORT_SYMBOL(rte_pipeline_flush)
--int
--rte_pipeline_flush(struct rte_pipeline *p)
+-static int
+-rte_port_fd_writer_free(void *port)
 -{
--	uint32_t port_id;
--
--	/* Check input arguments */
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
--			__func__);
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Port is NULL", __func__);
 -		return -EINVAL;
 -	}
 -
--	for (port_id = 0; port_id < p->num_ports_out; port_id++) {
--		struct rte_port_out *port = &p->ports_out[port_id];
--
--		if (port->ops.f_flush != NULL)
--			port->ops.f_flush(port->h_port);
--	}
+-	rte_port_fd_writer_flush(port);
+-	rte_free(port);
 -
 -	return 0;
 -}
 -
--RTE_EXPORT_SYMBOL(rte_pipeline_port_out_packet_insert)
--int
--rte_pipeline_port_out_packet_insert(struct rte_pipeline *p,
--	uint32_t port_id, struct rte_mbuf *pkt)
+-static int rte_port_fd_writer_stats_read(void *port,
+-		struct rte_port_out_stats *stats, int clear)
 -{
--	struct rte_port_out *port_out = &p->ports_out[port_id];
--
--	port_out->ops.f_tx(port_out->h_port, pkt); /* Output port TX */
--
--	return 0;
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_ah_packet_hijack)
--int rte_pipeline_ah_packet_hijack(struct rte_pipeline *p,
--	uint64_t pkts_mask)
--{
--	pkts_mask &= p->pkts_mask;
--	p->pkts_mask &= ~pkts_mask;
--
--	return 0;
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_ah_packet_drop)
--int rte_pipeline_ah_packet_drop(struct rte_pipeline *p,
--	uint64_t pkts_mask)
--{
--	pkts_mask &= p->pkts_mask;
--	p->pkts_mask &= ~pkts_mask;
--	p->action_mask0[RTE_PIPELINE_ACTION_DROP] |= pkts_mask;
--
--	RTE_PIPELINE_STATS_AH_DROP_WRITE(p, pkts_mask);
--	return 0;
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_port_in_stats_read)
--int rte_pipeline_port_in_stats_read(struct rte_pipeline *p, uint32_t port_id,
--	struct rte_pipeline_port_in_stats *stats, int clear)
--{
--	struct rte_port_in *port;
--	int retval;
--
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (port_id >= p->num_ports_in) {
--		PIPELINE_LOG(ERR,
--			"%s: port IN ID %u is out of range",
--			__func__, port_id);
--		return -EINVAL;
--	}
--
--	port = &p->ports_in[port_id];
--
--	if (port->ops.f_stats != NULL) {
--		retval = port->ops.f_stats(port->h_port, &stats->stats, clear);
--		if (retval)
--			return retval;
--	} else if (stats != NULL)
--		memset(&stats->stats, 0, sizeof(stats->stats));
+-	struct rte_port_fd_writer *p =
+-		port;
 -
 -	if (stats != NULL)
--		stats->n_pkts_dropped_by_ah = port->n_pkts_dropped_by_ah;
+-		memcpy(stats, &p->stats, sizeof(p->stats));
 -
--	if (clear != 0)
--		port->n_pkts_dropped_by_ah = 0;
--
--	return 0;
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_port_out_stats_read)
--int rte_pipeline_port_out_stats_read(struct rte_pipeline *p, uint32_t port_id,
--	struct rte_pipeline_port_out_stats *stats, int clear)
--{
--	struct rte_port_out *port;
--	int retval;
--
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL", __func__);
--		return -EINVAL;
--	}
--
--	if (port_id >= p->num_ports_out) {
--		PIPELINE_LOG(ERR,
--			"%s: port OUT ID %u is out of range", __func__, port_id);
--		return -EINVAL;
--	}
--
--	port = &p->ports_out[port_id];
--	if (port->ops.f_stats != NULL) {
--		retval = port->ops.f_stats(port->h_port, &stats->stats, clear);
--		if (retval != 0)
--			return retval;
--	} else if (stats != NULL)
--		memset(&stats->stats, 0, sizeof(stats->stats));
--
--	if (stats != NULL)
--		stats->n_pkts_dropped_by_ah = port->n_pkts_dropped_by_ah;
--
--	if (clear != 0)
--		port->n_pkts_dropped_by_ah = 0;
+-	if (clear)
+-		memset(&p->stats, 0, sizeof(p->stats));
 -
 -	return 0;
 -}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_table_stats_read)
--int rte_pipeline_table_stats_read(struct rte_pipeline *p, uint32_t table_id,
--	struct rte_pipeline_table_stats *stats, int clear)
--{
--	struct rte_table *table;
--	int retval;
--
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (table_id >= p->num_tables) {
--		PIPELINE_LOG(ERR,
--				"%s: table %u is out of range", __func__, table_id);
--		return -EINVAL;
--	}
--
--	table = &p->tables[table_id];
--	if (table->ops.f_stats != NULL) {
--		retval = table->ops.f_stats(table->h_table, &stats->stats, clear);
--		if (retval != 0)
--			return retval;
--	} else if (stats != NULL)
--		memset(&stats->stats, 0, sizeof(stats->stats));
--
--	if (stats != NULL) {
--		stats->n_pkts_dropped_by_lkp_hit_ah =
--			table->n_pkts_dropped_by_lkp_hit_ah;
--		stats->n_pkts_dropped_by_lkp_miss_ah =
--			table->n_pkts_dropped_by_lkp_miss_ah;
--		stats->n_pkts_dropped_lkp_hit = table->n_pkts_dropped_lkp_hit;
--		stats->n_pkts_dropped_lkp_miss = table->n_pkts_dropped_lkp_miss;
--	}
--
--	if (clear != 0) {
--		table->n_pkts_dropped_by_lkp_hit_ah = 0;
--		table->n_pkts_dropped_by_lkp_miss_ah = 0;
--		table->n_pkts_dropped_lkp_hit = 0;
--		table->n_pkts_dropped_lkp_miss = 0;
--	}
--
--	return 0;
--}
-diff --git a/lib/pipeline/rte_pipeline.h b/lib/pipeline/rte_pipeline.h
-deleted file mode 100644
-index c9e7172453..0000000000
---- a/lib/pipeline/rte_pipeline.h
-+++ /dev/null
-@@ -1,840 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2016 Intel Corporation
-- */
--
--#ifndef __INCLUDE_RTE_PIPELINE_H__
--#define __INCLUDE_RTE_PIPELINE_H__
--
--/**
-- * @file
-- * RTE Pipeline
-- *
-- * This tool is part of the DPDK Packet Framework tool suite and provides
-- * a standard methodology (logically similar to OpenFlow) for rapid development
-- * of complex packet processing pipelines out of ports, tables and actions.
-- *
-- * <B>Basic operation.</B> A pipeline is constructed by connecting its input
-- * ports to its output ports through a chain of lookup tables. As result of
-- * lookup operation into the current table, one of the table entries (or the
-- * default table entry, in case of lookup miss) is identified to provide the
-- * actions to be executed on the current packet and the associated action
-- * meta-data. The behavior of user actions is defined through the configurable
-- * table action handler, while the reserved actions define the next hop for the
-- * current packet (either another table, an output port or packet drop) and are
-- * handled transparently by the framework.
-- *
-- * <B>Initialization and run-time flows.</B> Once all the pipeline elements
-- * (input ports, tables, output ports) have been created, input ports connected
-- * to tables, table action handlers configured, tables populated with the
-- * initial set of entries (actions and action meta-data) and input ports
-- * enabled, the pipeline runs automatically, pushing packets from input ports
-- * to tables and output ports. At each table, the identified user actions are
-- * being executed, resulting in action meta-data (stored in the table entry)
-- * and packet meta-data (stored with the packet descriptor) being updated. The
-- * pipeline tables can have further updates and input ports can be disabled or
-- * enabled later on as required.
-- *
-- * <B>Multi-core scaling.</B> Typically, each CPU core will run its own
-- * pipeline instance. Complex application-level pipelines can be implemented by
-- * interconnecting multiple CPU core-level pipelines in tree-like topologies,
-- * as the same port devices (e.g. SW rings) can serve as output ports for the
-- * pipeline running on CPU core A, as well as input ports for the pipeline
-- * running on CPU core B. This approach enables the application development
-- * using the pipeline (CPU cores connected serially), cluster/run-to-completion
-- * (CPU cores connected in parallel) or mixed (pipeline of CPU core clusters)
-- * programming models.
-- *
-- * <B>Thread safety.</B> It is possible to have multiple pipelines running on
-- * the same CPU core, but it is not allowed (for thread safety reasons) to have
-- * multiple CPU cores running the same pipeline instance.
-- */
--
--#include <stdint.h>
--
--#include <rte_port.h>
--#include <rte_table.h>
--#include <rte_common.h>
--
--#ifdef __cplusplus
--extern "C" {
--#endif
--
--struct rte_mbuf;
 -
 -/*
-- * Pipeline
+- * Port FD Writer Nodrop
 - */
--/** Opaque data type for pipeline */
--struct rte_pipeline;
+-#ifdef RTE_PORT_STATS_COLLECT
 -
--/** Parameters for pipeline creation  */
--struct rte_pipeline_params {
--	/** Pipeline name */
--	const char *name;
+-#define RTE_PORT_FD_WRITER_NODROP_STATS_PKTS_IN_ADD(port, val) \
+-	do { port->stats.n_pkts_in += val; } while (0)
+-#define RTE_PORT_FD_WRITER_NODROP_STATS_PKTS_DROP_ADD(port, val) \
+-	do { port->stats.n_pkts_drop += val; } while (0)
 -
--	/** CPU socket ID where memory for the pipeline and its elements (ports
--	and tables) should be allocated */
--	int socket_id;
+-#else
 -
--	/** Offset within packet meta-data to port_id to be used by action
--	"Send packet to output port read from packet meta-data". Has to be
--	4-byte aligned. */
--	uint32_t offset_port_id;
--};
+-#define RTE_PORT_FD_WRITER_NODROP_STATS_PKTS_IN_ADD(port, val)
+-#define RTE_PORT_FD_WRITER_NODROP_STATS_PKTS_DROP_ADD(port, val)
 -
--/** Pipeline port in stats. */
--struct rte_pipeline_port_in_stats {
--	/** Port in stats. */
--	struct rte_port_in_stats stats;
+-#endif
 -
--	/** Number of packets dropped by action handler. */
--	uint64_t n_pkts_dropped_by_ah;
--
--};
--
--/** Pipeline port out stats. */
--struct rte_pipeline_port_out_stats {
--	/** Port out stats. */
+-struct rte_port_fd_writer_nodrop {
 -	struct rte_port_out_stats stats;
 -
--	/** Number of packets dropped by action handler. */
--	uint64_t n_pkts_dropped_by_ah;
+-	struct rte_mbuf *tx_buf[2 * RTE_PORT_IN_BURST_SIZE_MAX];
+-	uint32_t tx_burst_sz;
+-	uint16_t tx_buf_count;
+-	uint64_t n_retries;
+-	uint32_t fd;
 -};
 -
--/** Pipeline table stats. */
--struct rte_pipeline_table_stats {
--	/** Table stats. */
--	struct rte_table_stats stats;
--
--	/** Number of packets dropped by lookup hit action handler. */
--	uint64_t n_pkts_dropped_by_lkp_hit_ah;
--
--	/** Number of packets dropped by lookup miss action handler. */
--	uint64_t n_pkts_dropped_by_lkp_miss_ah;
--
--	/** Number of packets dropped by pipeline in behalf of this
--	 * table based on action specified in table entry. */
--	uint64_t n_pkts_dropped_lkp_hit;
--
--	/** Number of packets dropped by pipeline in behalf of this
--	 *  table based on action specified in table entry. */
--	uint64_t n_pkts_dropped_lkp_miss;
--};
--
--/**
-- * Pipeline create
-- *
-- * @param params
-- *   Parameters for pipeline creation
-- * @return
-- *   Handle to pipeline instance on success or NULL otherwise
-- */
--struct rte_pipeline *rte_pipeline_create(struct rte_pipeline_params *params);
--
--/**
-- * Pipeline free
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_free(struct rte_pipeline *p);
--
--/**
-- * Pipeline consistency check
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_check(struct rte_pipeline *p);
--
--/**
-- * Pipeline run
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @return
-- *   Number of packets read and processed
-- */
--int rte_pipeline_run(struct rte_pipeline *p);
--
--/**
-- * Pipeline flush
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_flush(struct rte_pipeline *p);
--
--/*
-- * Actions
-- */
--/** Reserved actions */
--enum rte_pipeline_action {
--	/** Drop the packet */
--	RTE_PIPELINE_ACTION_DROP = 0,
--
--	/** Send packet to output port */
--	RTE_PIPELINE_ACTION_PORT,
--
--	/** Send packet to output port read from packet meta-data */
--	RTE_PIPELINE_ACTION_PORT_META,
--
--	/** Send packet to table */
--	RTE_PIPELINE_ACTION_TABLE,
--
--	/** Number of reserved actions */
--	RTE_PIPELINE_ACTIONS
--};
--
--/*
-- * Table
-- */
--/** Maximum number of tables allowed for any given pipeline instance. The
--	value of this parameter cannot be changed. */
--#define RTE_PIPELINE_TABLE_MAX                                     64
--
--/**
-- * Head format for the table entry of any pipeline table. For any given
-- * pipeline table, all table entries should have the same size and format. For
-- * any given pipeline table, the table entry has to start with a head of this
-- * structure, which contains the reserved actions and their associated
-- * meta-data, and then optionally continues with user actions and their
-- * associated meta-data. As all the currently defined reserved actions are
-- * mutually exclusive, only one reserved action can be set per table entry.
-- */
--struct rte_pipeline_table_entry {
--	/** Reserved action */
--	enum rte_pipeline_action action;
--
--	union {
--		/** Output port ID (meta-data for "Send packet to output port"
--		action) */
--		uint32_t port_id;
--		/** Table ID (meta-data for "Send packet to table" action) */
--		uint32_t table_id;
--	};
--	/** Start of table entry area for user defined actions and meta-data */
--	uint8_t action_data[];
--};
--
--/**
-- * Pipeline table action handler on lookup hit
-- *
-- * The action handler can decide to drop packets by resetting the associated
-- * packet bit in the pkts_mask parameter. In this case, the action handler is
-- * required not to free the packet buffer, which will be freed eventually by
-- * the pipeline.
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param pkts
-- *   Burst of input packets specified as array of up to 64 pointers to struct
-- *   rte_mbuf
-- * @param pkts_mask
-- *   64-bit bitmask specifying which packets in the input burst are valid. When
-- *   pkts_mask bit n is set, then element n of pkts array is pointing to a
-- *   valid packet and element n of entries array is pointing to a valid table
-- *   entry associated with the packet, with the association typically done by
-- *   the table lookup operation. Otherwise, element n of pkts array and element
-- *   n of entries array will not be accessed.
-- * @param entries
-- *   Set of table entries specified as array of up to 64 pointers to struct
-- *   rte_pipeline_table_entry
-- * @param arg
-- *   Opaque parameter registered by the user at the pipeline table creation
-- *   time
-- * @return
-- *   0 on success, error code otherwise
-- */
--typedef int (*rte_pipeline_table_action_handler_hit)(
--	struct rte_pipeline *p,
--	struct rte_mbuf **pkts,
--	uint64_t pkts_mask,
--	struct rte_pipeline_table_entry **entries,
--	void *arg);
--
--/**
-- * Pipeline table action handler on lookup miss
-- *
-- * The action handler can decide to drop packets by resetting the associated
-- * packet bit in the pkts_mask parameter. In this case, the action handler is
-- * required not to free the packet buffer, which will be freed eventually by
-- * the pipeline.
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param pkts
-- *   Burst of input packets specified as array of up to 64 pointers to struct
-- *   rte_mbuf
-- * @param pkts_mask
-- *   64-bit bitmask specifying which packets in the input burst are valid. When
-- *   pkts_mask bit n is set, then element n of pkts array is pointing to a
-- *   valid packet. Otherwise, element n of pkts array will not be accessed.
-- * @param entry
-- *   Single table entry associated with all the valid packets from the input
-- *   burst, specified as pointer to struct rte_pipeline_table_entry.
-- *   This entry is the pipeline table default entry that is associated by the
-- *   table lookup operation with the input packets that have resulted in lookup
-- *   miss.
-- * @param arg
-- *   Opaque parameter registered by the user at the pipeline table creation
-- *   time
-- * @return
-- *   0 on success, error code otherwise
-- */
--typedef int (*rte_pipeline_table_action_handler_miss)(
--	struct rte_pipeline *p,
--	struct rte_mbuf **pkts,
--	uint64_t pkts_mask,
--	struct rte_pipeline_table_entry *entry,
--	void *arg);
--
--/** Parameters for pipeline table creation. Action handlers have to be either
--    both enabled or both disabled (they can be disabled by setting them to
--    NULL). */
--struct rte_pipeline_table_params {
--	/** Table operations (specific to each table type) */
--	struct rte_table_ops *ops;
--	/** Opaque param to be passed to the table create operation when
--	invoked */
--	void *arg_create;
--	/** Callback function to execute the user actions on input packets in
--	case of lookup hit */
--	rte_pipeline_table_action_handler_hit f_action_hit;
--	/** Callback function to execute the user actions on input packets in
--	case of lookup miss */
--	rte_pipeline_table_action_handler_miss f_action_miss;
--
--	/** Opaque parameter to be passed to lookup hit and/or lookup miss
--	action handlers when invoked */
--	void *arg_ah;
--	/** Memory size to be reserved per table entry for storing the user
--	actions and their meta-data */
--	uint32_t action_data_size;
--};
--
--/**
-- * Pipeline table create
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param params
-- *   Parameters for pipeline table creation
-- * @param table_id
-- *   Table ID. Valid only within the scope of table IDs of the current
-- *   pipeline. Only returned after a successful invocation.
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_table_create(struct rte_pipeline *p,
--	struct rte_pipeline_table_params *params,
--	uint32_t *table_id);
--
--/**
-- * Pipeline table default entry add
-- *
-- * The contents of the table default entry is updated with the provided actions
-- * and meta-data. When the default entry is not configured (by using this
-- * function), the built-in default entry has the action "Drop" and meta-data
-- * set to all-zeros.
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param table_id
-- *   Table ID (returned by previous invocation of pipeline table create)
-- * @param default_entry
-- *   New contents for the table default entry
-- * @param default_entry_ptr
-- *   On successful invocation, pointer to the default table entry which can be
-- *   used for further read-write accesses to this table entry. This pointer
-- *   is valid until the default entry is deleted or re-added.
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_table_default_entry_add(struct rte_pipeline *p,
--	uint32_t table_id,
--	struct rte_pipeline_table_entry *default_entry,
--	struct rte_pipeline_table_entry **default_entry_ptr);
--
--/**
-- * Pipeline table default entry delete
-- *
-- * The new contents of the table default entry is set to reserved action "Drop
-- * the packet" with meta-data cleared (i.e. set to all-zeros).
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param table_id
-- *   Table ID (returned by previous invocation of pipeline table create)
-- * @param entry
-- *   On successful invocation, when entry points to a valid buffer, the
-- *   previous contents of the table default entry (as it was just before the
-- *   delete operation) is copied to this buffer
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_table_default_entry_delete(struct rte_pipeline *p,
--	uint32_t table_id,
--	struct rte_pipeline_table_entry *entry);
--
--/**
-- * Pipeline table entry add
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param table_id
-- *   Table ID (returned by previous invocation of pipeline table create)
-- * @param key
-- *   Table entry key
-- * @param entry
-- *   New contents for the table entry identified by key
-- * @param key_found
-- *   On successful invocation, set to TRUE (value different than 0) if key was
-- *   already present in the table before the add operation and to FALSE (value
-- *   0) if not
-- * @param entry_ptr
-- *   On successful invocation, pointer to the table entry associated with key.
-- *   This can be used for further read-write accesses to this table entry and
-- *   is valid until the key is deleted from the table or re-added (usually for
-- *   associating different actions and/or action meta-data to the current key)
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_table_entry_add(struct rte_pipeline *p,
--	uint32_t table_id,
--	void *key,
--	struct rte_pipeline_table_entry *entry,
--	int *key_found,
--	struct rte_pipeline_table_entry **entry_ptr);
--
--/**
-- * Pipeline table entry delete
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param table_id
-- *   Table ID (returned by previous invocation of pipeline table create)
-- * @param key
-- *   Table entry key
-- * @param key_found
-- *   On successful invocation, set to TRUE (value different than 0) if key was
-- *   found in the table before the delete operation and to FALSE (value 0) if
-- *   not
-- * @param entry
-- *   On successful invocation, when key is found in the table and entry points
-- *   to a valid buffer, the table entry contents (as it was before the delete
-- *   was performed) is copied to this buffer
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_table_entry_delete(struct rte_pipeline *p,
--	uint32_t table_id,
--	void *key,
--	int *key_found,
--	struct rte_pipeline_table_entry *entry);
--
--/**
-- * Pipeline table entry add bulk
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param table_id
-- *   Table ID (returned by previous invocation of pipeline table create)
-- * @param keys
-- *   Array containing table entry keys
-- * @param entries
-- *   Array containing new contents for every table entry identified by key
-- * @param n_keys
-- *   Number of keys to add
-- * @param key_found
-- *   On successful invocation, key_found for every item in the array is set to
-- *   TRUE (value different than 0) if key was already present in the table
-- *   before the add operation and to FALSE (value 0) if not
-- * @param entries_ptr
-- *   On successful invocation, array *entries_ptr stores pointer to every table
-- *   entry associated with key. This can be used for further read-write accesses
-- *   to this table entry and is valid until the key is deleted from the table or
-- *   re-added (usually for associating different actions and/or action meta-data
-- *   to the current key)
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_table_entry_add_bulk(struct rte_pipeline *p,
--	uint32_t table_id,
--	void **keys,
--	struct rte_pipeline_table_entry **entries,
--	uint32_t n_keys,
--	int *key_found,
--	struct rte_pipeline_table_entry **entries_ptr);
--
--/**
-- * Pipeline table entry delete bulk
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param table_id
-- *   Table ID (returned by previous invocation of pipeline table create)
-- * @param keys
-- *   Array containing table entry keys
-- * @param n_keys
-- *   Number of keys to delete
-- * @param key_found
-- *   On successful invocation, key_found for every item in the array is set to
-- *   TRUE (value different than 0) if key was found in the table before the
-- *   delete operation and to FALSE (value 0) if not
-- * @param entries
-- *   If entries pointer is NULL, this pointer is ignored for every entry found.
-- *   Else, after successful invocation, if specific key is found in the table
-- *   and entry points to a valid buffer, the table entry contents (as it was
-- *   before the delete was performed) is copied to this buffer.
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_table_entry_delete_bulk(struct rte_pipeline *p,
--	uint32_t table_id,
--	void **keys,
--	uint32_t n_keys,
--	int *key_found,
--	struct rte_pipeline_table_entry **entries);
--
--/**
-- * Read pipeline table stats.
-- *
-- * This function reads table statistics identified by *table_id* of given
-- * pipeline *p*.
-- *
-- * @param p
-- *   Handle to pipeline instance.
-- * @param table_id
-- *   Port ID what stats will be returned.
-- * @param stats
-- *   Statistics buffer.
-- * @param clear
-- *   If not 0 clear stats after reading.
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_table_stats_read(struct rte_pipeline *p, uint32_t table_id,
--	struct rte_pipeline_table_stats *stats, int clear);
--
--/*
-- * Port IN
-- */
--/** Maximum number of input ports allowed for any given pipeline instance. The
--	value of this parameter cannot be changed. */
--#define RTE_PIPELINE_PORT_IN_MAX                                    64
--
--/**
-- * Pipeline input port action handler
-- *
-- * The action handler can decide to drop packets by resetting the associated
-- * packet bit in the pkts_mask parameter. In this case, the action handler is
-- * required not to free the packet buffer, which will be freed eventually by
-- * the pipeline.
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param pkts
-- *   Burst of input packets specified as array of up to 64 pointers to struct
-- *   rte_mbuf
-- * @param n
-- *   Number of packets in the input burst. This parameter specifies that
-- *   elements 0 to (n-1) of pkts array are valid.
-- * @param arg
-- *   Opaque parameter registered by the user at the pipeline table creation
-- *   time
-- * @return
-- *   0 on success, error code otherwise
-- */
--typedef int (*rte_pipeline_port_in_action_handler)(
--	struct rte_pipeline *p,
--	struct rte_mbuf **pkts,
--	uint32_t n,
--	void *arg);
--
--/** Parameters for pipeline input port creation */
--struct rte_pipeline_port_in_params {
--	/** Input port operations (specific to each table type) */
--	struct rte_port_in_ops *ops;
--	/** Opaque parameter to be passed to create operation when invoked */
--	void *arg_create;
--
--	/** Callback function to execute the user actions on input packets.
--		Disabled if set to NULL. */
--	rte_pipeline_port_in_action_handler f_action;
--	/** Opaque parameter to be passed to the action handler when invoked */
--	void *arg_ah;
--
--	/** Recommended burst size for the RX operation(in number of pkts) */
--	uint32_t burst_size;
--};
--
--/**
-- * Pipeline input port create
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param params
-- *   Parameters for pipeline input port creation
-- * @param port_id
-- *   Input port ID. Valid only within the scope of input port IDs of the
-- *   current pipeline. Only returned after a successful invocation.
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_port_in_create(struct rte_pipeline *p,
--	struct rte_pipeline_port_in_params *params,
--	uint32_t *port_id);
--
--/**
-- * Pipeline input port connect to table
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param port_id
-- *   Port ID (returned by previous invocation of pipeline input port create)
-- * @param table_id
-- *   Table ID (returned by previous invocation of pipeline table create)
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_port_in_connect_to_table(struct rte_pipeline *p,
--	uint32_t port_id,
--	uint32_t table_id);
--
--/**
-- * Pipeline input port enable
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param port_id
-- *   Port ID (returned by previous invocation of pipeline input port create)
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_port_in_enable(struct rte_pipeline *p,
--	uint32_t port_id);
--
--/**
-- * Pipeline input port disable
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param port_id
-- *   Port ID (returned by previous invocation of pipeline input port create)
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_port_in_disable(struct rte_pipeline *p,
--	uint32_t port_id);
--
--/**
-- * Read pipeline port in stats.
-- *
-- * This function reads port in statistics identified by *port_id* of given
-- * pipeline *p*.
-- *
-- * @param p
-- *   Handle to pipeline instance.
-- * @param port_id
-- *   Port ID what stats will be returned.
-- * @param stats
-- *   Statistics buffer.
-- * @param clear
-- *   If not 0 clear stats after reading.
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_port_in_stats_read(struct rte_pipeline *p, uint32_t port_id,
--	struct rte_pipeline_port_in_stats *stats, int clear);
--
--/*
-- * Port OUT
-- */
--/** Maximum number of output ports allowed for any given pipeline instance. The
--	value of this parameter cannot be changed. */
--#define RTE_PIPELINE_PORT_OUT_MAX                                   64
--
--/**
-- * Pipeline output port action handler
-- *
-- * The action handler can decide to drop packets by resetting the associated
-- * packet bit in the pkts_mask parameter. In this case, the action handler is
-- * required not to free the packet buffer, which will be freed eventually by
-- * the pipeline.
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param pkts
-- *   Burst of input packets specified as array of up to 64 pointers to struct
-- *   rte_mbuf
-- * @param pkts_mask
-- *   64-bit bitmask specifying which packets in the input burst are valid. When
-- *   pkts_mask bit n is set, then element n of pkts array is pointing to a
-- *   valid packet. Otherwise, element n of pkts array will not be accessed.
-- * @param arg
-- *   Opaque parameter registered by the user at the pipeline table creation
-- *   time
-- * @return
-- *   0 on success, error code otherwise
-- */
--typedef int (*rte_pipeline_port_out_action_handler)(
--	struct rte_pipeline *p,
--	struct rte_mbuf **pkts,
--	uint64_t pkts_mask,
--	void *arg);
--
--/** Parameters for pipeline output port creation. The action handlers have to
--be either both enabled or both disabled (by setting them to NULL). When
--enabled, the pipeline selects between them at different moments, based on the
--number of packets that have to be sent to the same output port. */
--struct rte_pipeline_port_out_params {
--	/** Output port operations (specific to each table type) */
--	struct rte_port_out_ops *ops;
--	/** Opaque parameter to be passed to create operation when invoked */
--	void *arg_create;
--
--	/** Callback function executing the user actions on bust of input
--	packets */
--	rte_pipeline_port_out_action_handler f_action;
--	/** Opaque parameter to be passed to the action handler when invoked */
--	void *arg_ah;
--};
--
--/**
-- * Pipeline output port create
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param params
-- *   Parameters for pipeline output port creation
-- * @param port_id
-- *   Output port ID. Valid only within the scope of output port IDs of the
-- *   current pipeline. Only returned after a successful invocation.
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_port_out_create(struct rte_pipeline *p,
--	struct rte_pipeline_port_out_params *params,
--	uint32_t *port_id);
--
--/**
-- * Read pipeline port out stats.
-- *
-- * This function reads port out statistics identified by *port_id* of given
-- * pipeline *p*.
-- *
-- * @param p
-- *   Handle to pipeline instance.
-- * @param port_id
-- *   Port ID what stats will be returned.
-- * @param stats
-- *   Statistics buffer.
-- * @param clear
-- *   If not 0 clear stats after reading.
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_port_out_stats_read(struct rte_pipeline *p, uint32_t port_id,
--	struct rte_pipeline_port_out_stats *stats, int clear);
--
--/*
-- * Functions to be called as part of the port IN/OUT or table action handlers
-- */
--/**
-- * Action handler packet insert to output port
-- *
-- * This function can be called by any input/output port or table action handler
-- * to send a packet out through one of the pipeline output ports. This packet is
-- * generated by the action handler, i.e. this packet is not part of the burst of
-- * packets read from one of the pipeline input ports and currently processed by
-- * the pipeline (this packet is not an element of the pkts array input parameter
-- * of the action handler).
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param port_id
-- *   Output port ID (returned by previous invocation of pipeline output port
-- *   create) to send the packet specified by pkt
-- * @param pkt
-- *   New packet generated by the action handler
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_port_out_packet_insert(struct rte_pipeline *p,
--	uint32_t port_id,
--	struct rte_mbuf *pkt);
--
--#define rte_pipeline_ah_port_out_packet_insert \
--	rte_pipeline_port_out_packet_insert
--
--/**
-- * Action handler packet hijack
-- *
-- * This function can be called by any input/output port or table action handler
-- * to hijack selected packets from the burst of packets read from one of the
-- * pipeline input ports and currently processed by the pipeline. The hijacked
-- * packets are removed from any further pipeline processing, with the action
-- * handler now having the full ownership for these packets.
-- *
-- * The action handler can further send the hijacked packets out through any
-- * pipeline output port by calling the rte_pipeline_ah_port_out_packet_insert()
-- * function. The action handler can also drop these packets by calling the
-- * rte_pktmbuf_free() function, although a better alternative is provided by
-- * the action handler using the rte_pipeline_ah_packet_drop() function.
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param pkts_mask
-- *   64-bit bitmask specifying which of the packets handed over for processing
-- *   to the action handler is to be hijacked by the action handler. When
-- *   pkts_mask bit n is set, then element n of the pkts array (input argument to
-- *   the action handler) is hijacked.
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_ah_packet_hijack(struct rte_pipeline *p,
--	uint64_t pkts_mask);
--
--/**
-- * Action handler packet drop
-- *
-- * This function is called by the pipeline action handlers (port in/out, table)
-- * to drop the packets selected using packet mask.
-- *
-- * This function can be called by any input/output port or table action handler
-- * to drop selected packets from the burst of packets read from one of the
-- * pipeline input ports and currently processed by the pipeline. The dropped
-- * packets are removed from any further pipeline processing and the packet
-- * buffers are eventually freed to their buffer pool.
-- *
-- * This function updates the drop statistics counters correctly, therefore the
-- * recommended approach for dropping packets by the action handlers is to call
-- * this function as opposed to the action handler hijacking the packets first
-- * and then dropping them invisibly to the pipeline (by using the
-- * rte_pktmbuf_free() function).
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param pkts_mask
-- *   64-bit bitmask specifying which of the packets handed over for processing
-- *   to the action handler is to be dropped by the action handler. When
-- *   pkts_mask bit n is set, then element n of the pkts array (input argument to
-- *   the action handler) is dropped.
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_ah_packet_drop(struct rte_pipeline *p,
--	uint64_t pkts_mask);
--
--#ifdef __cplusplus
--}
--#endif
--
--#endif
-diff --git a/lib/pipeline/rte_port_in_action.c b/lib/pipeline/rte_port_in_action.c
-deleted file mode 100644
-index 2378e64de9..0000000000
---- a/lib/pipeline/rte_port_in_action.c
-+++ /dev/null
-@@ -1,539 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2018 Intel Corporation
-- */
--
--#include <stdalign.h>
--#include <stdlib.h>
--#include <string.h>
--
--#include <eal_export.h>
--#include <rte_common.h>
--#include <rte_malloc.h>
--
--#include "rte_port_in_action.h"
--
--/**
-- * RTE_PORT_IN_ACTION_FLTR
-- */
--static int
--fltr_cfg_check(struct rte_port_in_action_fltr_config *cfg)
+-static void *
+-rte_port_fd_writer_nodrop_create(void *params, int socket_id)
 -{
--	if (cfg == NULL)
--		return -1;
+-	struct rte_port_fd_writer_nodrop_params *conf =
+-			params;
+-	struct rte_port_fd_writer_nodrop *port;
 -
--	return 0;
--}
--
--struct fltr_data {
--	uint32_t port_id;
--};
--
--static void
--fltr_init(struct fltr_data *data,
--	struct rte_port_in_action_fltr_config *cfg)
--{
--	data->port_id = cfg->port_id;
--}
--
--static int
--fltr_apply(struct fltr_data *data,
--	struct rte_port_in_action_fltr_params *p)
--{
--	/* Check input arguments */
--	if (p == NULL)
--		return -1;
--
--	data->port_id = p->port_id;
--
--	return 0;
--}
--
--/**
-- * RTE_PORT_IN_ACTION_LB
-- */
--static int
--lb_cfg_check(struct rte_port_in_action_lb_config *cfg)
--{
--	if ((cfg == NULL) ||
--		(cfg->key_size < RTE_PORT_IN_ACTION_LB_KEY_SIZE_MIN) ||
--		(cfg->key_size > RTE_PORT_IN_ACTION_LB_KEY_SIZE_MAX) ||
--		(!rte_is_power_of_2(cfg->key_size)) ||
--		(cfg->f_hash == NULL))
--		return -1;
--
--	return 0;
--}
--
--struct lb_data {
--	uint32_t port_id[RTE_PORT_IN_ACTION_LB_TABLE_SIZE];
--};
--
--static void
--lb_init(struct lb_data *data,
--	struct rte_port_in_action_lb_config *cfg)
--{
--	memcpy(data->port_id, cfg->port_id, sizeof(cfg->port_id));
--}
--
--static int
--lb_apply(struct lb_data *data,
--	struct rte_port_in_action_lb_params *p)
--{
--	/* Check input arguments */
--	if (p == NULL)
--		return -1;
--
--	memcpy(data->port_id, p->port_id, sizeof(p->port_id));
--
--	return 0;
--}
--
--/**
-- * Action profile
-- */
--static int
--action_valid(enum rte_port_in_action_type action)
--{
--	switch (action) {
--	case RTE_PORT_IN_ACTION_FLTR:
--	case RTE_PORT_IN_ACTION_LB:
--		return 1;
--	default:
--		return 0;
--	}
--}
--
--#define RTE_PORT_IN_ACTION_MAX                             64
--
--struct ap_config {
--	uint64_t action_mask;
--	struct rte_port_in_action_fltr_config fltr;
--	struct rte_port_in_action_lb_config lb;
--};
--
--static size_t
--action_cfg_size(enum rte_port_in_action_type action)
--{
--	switch (action) {
--	case RTE_PORT_IN_ACTION_FLTR:
--		return sizeof(struct rte_port_in_action_fltr_config);
--	case RTE_PORT_IN_ACTION_LB:
--		return sizeof(struct rte_port_in_action_lb_config);
--	default:
--		return 0;
--	}
--}
--
--static void*
--action_cfg_get(struct ap_config *ap_config,
--	enum rte_port_in_action_type type)
--{
--	switch (type) {
--	case RTE_PORT_IN_ACTION_FLTR:
--		return &ap_config->fltr;
--
--	case RTE_PORT_IN_ACTION_LB:
--		return &ap_config->lb;
--
--	default:
+-	/* Check input parameters */
+-	if ((conf == NULL) ||
+-		(conf->fd < 0) ||
+-		(conf->tx_burst_sz == 0) ||
+-		(conf->tx_burst_sz > RTE_PORT_IN_BURST_SIZE_MAX) ||
+-		(!rte_is_power_of_2(conf->tx_burst_sz))) {
+-		PORT_LOG(ERR, "%s: Invalid input parameters", __func__);
 -		return NULL;
 -	}
--}
--
--static void
--action_cfg_set(struct ap_config *ap_config,
--	enum rte_port_in_action_type type,
--	void *action_cfg)
--{
--	void *dst = action_cfg_get(ap_config, type);
--
--	if (dst)
--		memcpy(dst, action_cfg, action_cfg_size(type));
--
--	ap_config->action_mask |= 1LLU << type;
--}
--
--struct ap_data {
--	size_t offset[RTE_PORT_IN_ACTION_MAX];
--	size_t total_size;
--};
--
--static size_t
--action_data_size(enum rte_port_in_action_type action,
--	struct ap_config *ap_config __rte_unused)
--{
--	switch (action) {
--	case RTE_PORT_IN_ACTION_FLTR:
--		return sizeof(struct fltr_data);
--
--	case RTE_PORT_IN_ACTION_LB:
--		return sizeof(struct lb_data);
--
--	default:
--		return 0;
--	}
--}
--
--static void
--action_data_offset_set(struct ap_data *ap_data,
--	struct ap_config *ap_config)
--{
--	uint64_t action_mask = ap_config->action_mask;
--	size_t offset;
--	uint32_t action;
--
--	memset(ap_data->offset, 0, sizeof(ap_data->offset));
--
--	offset = 0;
--	for (action = 0; action < RTE_PORT_IN_ACTION_MAX; action++)
--		if (action_mask & (1LLU << action)) {
--			ap_data->offset[action] = offset;
--			offset += action_data_size((enum rte_port_in_action_type)action,
--				ap_config);
--		}
--
--	ap_data->total_size = offset;
--}
--
--struct rte_port_in_action_profile {
--	struct ap_config cfg;
--	struct ap_data data;
--	int frozen;
--};
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_in_action_profile_create, 18.05)
--struct rte_port_in_action_profile *
--rte_port_in_action_profile_create(uint32_t socket_id)
--{
--	struct rte_port_in_action_profile *ap;
 -
 -	/* Memory allocation */
--	ap = rte_zmalloc_socket(NULL,
--		sizeof(struct rte_port_in_action_profile),
--		RTE_CACHE_LINE_SIZE,
--		socket_id);
--	if (ap == NULL)
+-	port = rte_zmalloc_socket("PORT", sizeof(*port),
+-		RTE_CACHE_LINE_SIZE, socket_id);
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
 -		return NULL;
--
--	return ap;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_in_action_profile_action_register, 18.05)
--int
--rte_port_in_action_profile_action_register(struct rte_port_in_action_profile *profile,
--	enum rte_port_in_action_type type,
--	void *action_config)
--{
--	int status;
--
--	/* Check input arguments */
--	if ((profile == NULL) ||
--		profile->frozen ||
--		(action_valid(type) == 0) ||
--		(profile->cfg.action_mask & (1LLU << type)) ||
--		((action_cfg_size(type) == 0) && action_config) ||
--		(action_cfg_size(type) && (action_config == NULL)))
--		return -EINVAL;
--
--	switch (type) {
--	case RTE_PORT_IN_ACTION_FLTR:
--		status = fltr_cfg_check(action_config);
--		break;
--
--	case RTE_PORT_IN_ACTION_LB:
--		status = lb_cfg_check(action_config);
--		break;
--
--	default:
--		status = 0;
--		break;
 -	}
--
--	if (status)
--		return status;
--
--	/* Action enable */
--	action_cfg_set(&profile->cfg, type, action_config);
--
--	return 0;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_in_action_profile_freeze, 18.05)
--int
--rte_port_in_action_profile_freeze(struct rte_port_in_action_profile *profile)
--{
--	if (profile->frozen)
--		return -EBUSY;
--
--	action_data_offset_set(&profile->data, &profile->cfg);
--	profile->frozen = 1;
--
--	return 0;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_in_action_profile_free, 18.05)
--int
--rte_port_in_action_profile_free(struct rte_port_in_action_profile *profile)
--{
--	if (profile == NULL)
--		return 0;
--
--	free(profile);
--	return 0;
--}
--
--/**
-- * Action
-- */
--struct rte_port_in_action {
--	struct ap_config cfg;
--	struct ap_data data;
--	alignas(RTE_CACHE_LINE_SIZE) uint8_t memory[];
--};
--
--static __rte_always_inline void *
--action_data_get(struct rte_port_in_action *action,
--	enum rte_port_in_action_type type)
--{
--	size_t offset = action->data.offset[type];
--
--	return &action->memory[offset];
--}
--
--static void
--action_data_init(struct rte_port_in_action *action,
--	enum rte_port_in_action_type type)
--{
--	void *data = action_data_get(action, type);
--
--	switch (type) {
--	case RTE_PORT_IN_ACTION_FLTR:
--		fltr_init(data, &action->cfg.fltr);
--		return;
--
--	case RTE_PORT_IN_ACTION_LB:
--		lb_init(data, &action->cfg.lb);
--		return;
--
--	default:
--		return;
--	}
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_in_action_create, 18.05)
--struct rte_port_in_action *
--rte_port_in_action_create(struct rte_port_in_action_profile *profile,
--	uint32_t socket_id)
--{
--	struct rte_port_in_action *action;
--	size_t size;
--	uint32_t i;
--
--	/* Check input arguments */
--	if ((profile == NULL) ||
--		(profile->frozen == 0))
--		return NULL;
--
--	/* Memory allocation */
--	size = sizeof(struct rte_port_in_action) + profile->data.total_size;
--	size = RTE_CACHE_LINE_ROUNDUP(size);
--
--	action = rte_zmalloc_socket(NULL,
--		size,
--		RTE_CACHE_LINE_SIZE,
--		socket_id);
--	if (action == NULL)
--		return NULL;
 -
 -	/* Initialization */
--	memcpy(&action->cfg, &profile->cfg, sizeof(profile->cfg));
--	memcpy(&action->data, &profile->data, sizeof(profile->data));
+-	port->fd = conf->fd;
+-	port->tx_burst_sz = conf->tx_burst_sz;
+-	port->tx_buf_count = 0;
 -
--	for (i = 0; i < RTE_PORT_IN_ACTION_MAX; i++)
--		if (action->cfg.action_mask & (1LLU << i))
--			action_data_init(action,
--				(enum rte_port_in_action_type)i);
+-	/*
+-	 * When n_retries is 0 it means that we should wait for every packet to
+-	 * send no matter how many retries should it take. To limit number of
+-	 * branches in fast path, we use UINT64_MAX instead of branching.
+-	 */
+-	port->n_retries = (conf->n_retries == 0) ? UINT64_MAX : conf->n_retries;
 -
--	return action;
+-	return port;
 -}
 -
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_in_action_apply, 18.05)
--int
--rte_port_in_action_apply(struct rte_port_in_action *action,
--	enum rte_port_in_action_type type,
--	void *action_params)
+-static inline void
+-send_burst_nodrop(struct rte_port_fd_writer_nodrop *p)
 -{
--	void *action_data;
+-	uint64_t n_retries;
+-	uint32_t i;
 -
--	/* Check input arguments */
--	if ((action == NULL) ||
--		(action_valid(type) == 0) ||
--		((action->cfg.action_mask & (1LLU << type)) == 0) ||
--		(action_params == NULL))
--		return -EINVAL;
+-	n_retries = 0;
+-	for (i = 0; (i < p->tx_buf_count) && (n_retries < p->n_retries); i++) {
+-		struct rte_mbuf *pkt = p->tx_buf[i];
+-		void *pkt_data = rte_pktmbuf_mtod(pkt, void*);
+-		size_t n_bytes = rte_pktmbuf_data_len(pkt);
 -
--	/* Data update */
--	action_data = action_data_get(action, type);
+-		for ( ; n_retries < p->n_retries; n_retries++) {
+-			ssize_t ret;
 -
--	switch (type) {
--	case RTE_PORT_IN_ACTION_FLTR:
--		return fltr_apply(action_data,
--			action_params);
--
--	case RTE_PORT_IN_ACTION_LB:
--		return lb_apply(action_data,
--			action_params);
--
--	default:
--		return -EINVAL;
+-			ret = write(p->fd, pkt_data, n_bytes);
+-			if (ret)
+-				break;
+-		}
 -	}
+-
+-	RTE_PORT_FD_WRITER_NODROP_STATS_PKTS_DROP_ADD(p, p->tx_buf_count - i);
+-
+-	for (i = 0; i < p->tx_buf_count; i++)
+-		rte_pktmbuf_free(p->tx_buf[i]);
+-
+-	p->tx_buf_count = 0;
 -}
 -
 -static int
--ah_filter_on_match(struct rte_pipeline *p,
+-rte_port_fd_writer_nodrop_tx(void *port, struct rte_mbuf *pkt)
+-{
+-	struct rte_port_fd_writer_nodrop *p =
+-		port;
+-
+-	p->tx_buf[p->tx_buf_count++] = pkt;
+-	RTE_PORT_FD_WRITER_NODROP_STATS_PKTS_IN_ADD(p, 1);
+-	if (p->tx_buf_count >= p->tx_burst_sz)
+-		send_burst_nodrop(p);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_fd_writer_nodrop_tx_bulk(void *port,
 -	struct rte_mbuf **pkts,
--	uint32_t n_pkts,
--	void *arg)
--{
--	struct rte_port_in_action *action = arg;
--	struct rte_port_in_action_fltr_config *cfg = &action->cfg.fltr;
--	uint64_t *key_mask = (uint64_t *) cfg->key_mask;
--	uint64_t *key = (uint64_t *) cfg->key;
--	uint32_t key_offset = cfg->key_offset;
--	struct fltr_data *data = action_data_get(action,
--						RTE_PORT_IN_ACTION_FLTR);
--	uint32_t i;
--
--	for (i = 0; i < n_pkts; i++) {
--		struct rte_mbuf *pkt = pkts[i];
--		uint64_t *pkt_key = RTE_MBUF_METADATA_UINT64_PTR(pkt,
--					key_offset);
--
--		uint64_t xor0 = (pkt_key[0] & key_mask[0]) ^ key[0];
--		uint64_t xor1 = (pkt_key[1] & key_mask[1]) ^ key[1];
--		uint64_t or = xor0 | xor1;
--
--		if (or == 0) {
--			rte_pipeline_ah_packet_hijack(p, 1LLU << i);
--			rte_pipeline_port_out_packet_insert(p,
--				data->port_id, pkt);
--		}
--	}
--
--	return 0;
--}
--
--static int
--ah_filter_on_mismatch(struct rte_pipeline *p,
--	struct rte_mbuf **pkts,
--	uint32_t n_pkts,
--	void *arg)
--{
--	struct rte_port_in_action *action = arg;
--	struct rte_port_in_action_fltr_config *cfg = &action->cfg.fltr;
--	uint64_t *key_mask = (uint64_t *) cfg->key_mask;
--	uint64_t *key = (uint64_t *) cfg->key;
--	uint32_t key_offset = cfg->key_offset;
--	struct fltr_data *data = action_data_get(action,
--						RTE_PORT_IN_ACTION_FLTR);
--	uint32_t i;
--
--	for (i = 0; i < n_pkts; i++) {
--		struct rte_mbuf *pkt = pkts[i];
--		uint64_t *pkt_key = RTE_MBUF_METADATA_UINT64_PTR(pkt,
--						key_offset);
--
--		uint64_t xor0 = (pkt_key[0] & key_mask[0]) ^ key[0];
--		uint64_t xor1 = (pkt_key[1] & key_mask[1]) ^ key[1];
--		uint64_t or = xor0 | xor1;
--
--		if (or) {
--			rte_pipeline_ah_packet_hijack(p, 1LLU << i);
--			rte_pipeline_port_out_packet_insert(p,
--				data->port_id, pkt);
--		}
--	}
--
--	return 0;
--}
--
--static int
--ah_lb(struct rte_pipeline *p,
--	struct rte_mbuf **pkts,
--	uint32_t n_pkts,
--	void *arg)
--{
--	struct rte_port_in_action *action = arg;
--	struct rte_port_in_action_lb_config *cfg = &action->cfg.lb;
--	struct lb_data *data = action_data_get(action, RTE_PORT_IN_ACTION_LB);
--	uint64_t pkt_mask = RTE_LEN2MASK(n_pkts, uint64_t);
--	uint32_t i;
--
--	rte_pipeline_ah_packet_hijack(p, pkt_mask);
--
--	for (i = 0; i < n_pkts; i++) {
--		struct rte_mbuf *pkt = pkts[i];
--		uint8_t *pkt_key = RTE_MBUF_METADATA_UINT8_PTR(pkt,
--					cfg->key_offset);
--
--		uint64_t digest = cfg->f_hash(pkt_key,
--			cfg->key_mask,
--			cfg->key_size,
--			cfg->seed);
--		uint64_t pos = digest & (RTE_PORT_IN_ACTION_LB_TABLE_SIZE - 1);
--		uint32_t port_id = data->port_id[pos];
--
--		rte_pipeline_port_out_packet_insert(p, port_id, pkt);
--	}
--
--	return 0;
--}
--
--static rte_pipeline_port_in_action_handler
--ah_selector(struct rte_port_in_action *action)
--{
--	if (action->cfg.action_mask == 0)
--		return NULL;
--
--	if (action->cfg.action_mask == 1LLU << RTE_PORT_IN_ACTION_FLTR)
--		return (action->cfg.fltr.filter_on_match) ?
--			ah_filter_on_match : ah_filter_on_mismatch;
--
--	if (action->cfg.action_mask == 1LLU << RTE_PORT_IN_ACTION_LB)
--		return ah_lb;
--
--	return NULL;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_in_action_params_get, 18.05)
--int
--rte_port_in_action_params_get(struct rte_port_in_action *action,
--	struct rte_pipeline_port_in_params *params)
--{
--	rte_pipeline_port_in_action_handler f_action;
--
--	/* Check input arguments */
--	if ((action == NULL) ||
--		(params == NULL))
--		return -EINVAL;
--
--	f_action = ah_selector(action);
--
--	/* Fill in params */
--	params->f_action = f_action;
--	params->arg_ah = (f_action) ? action : NULL;
--
--	return 0;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_in_action_free, 18.05)
--int
--rte_port_in_action_free(struct rte_port_in_action *action)
--{
--	if (action == NULL)
--		return 0;
--
--	rte_free(action);
--
--	return 0;
--}
-diff --git a/lib/pipeline/rte_port_in_action.h b/lib/pipeline/rte_port_in_action.h
-deleted file mode 100644
-index 9d17bae988..0000000000
---- a/lib/pipeline/rte_port_in_action.h
-+++ /dev/null
-@@ -1,311 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2018 Intel Corporation
-- */
--
--#ifndef __INCLUDE_RTE_PORT_IN_ACTION_H__
--#define __INCLUDE_RTE_PORT_IN_ACTION_H__
--
--/**
-- * @file
-- * RTE Pipeline Input Port Actions
-- *
-- * This API provides a common set of actions for pipeline input ports to speed
-- * up application development.
-- *
-- * Each pipeline input port can be assigned an action handler to be executed
-- * on every input packet during the pipeline execution. The pipeline library
-- * allows the user to define his own input port actions by providing customized
-- * input port action handler. While the user can still follow this process, this
-- * API is intended to provide a quicker development alternative for a set of
-- * predefined actions.
-- *
-- * The typical steps to use this API are:
-- *  - Define an input port action profile. This is a configuration template that
-- *    can potentially be shared by multiple input ports from the same or
-- *    different pipelines, with different input ports from the same pipeline
-- *    able to use different action profiles. For every input port using a given
-- *    action profile, the profile defines the set of actions and the action
-- *    configuration to be executed by the input port. API functions:
-- *    rte_port_in_action_profile_create(),
-- *    rte_port_in_action_profile_action_register(),
-- *    rte_port_in_action_profile_freeze().
-- *
-- *  - Instantiate the input port action profile to create input port action
-- *    objects. Each pipeline input port has its own action object.
-- *    API functions: rte_port_in_action_create().
-- *
-- *  - Use the input port action object to generate the input port action handler
-- *    invoked by the pipeline. API functions:
-- *    rte_port_in_action_params_get().
-- *
-- *  - Use the input port action object to generate the internal data structures
-- *    used by the input port action handler based on given action parameters.
-- *    API functions: rte_port_in_action_apply().
-- *
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice
-- */
--
--#include <stdint.h>
--
--#include <rte_compat.h>
--#include <rte_table_hash.h>
--
--#include "rte_pipeline.h"
--
--#ifdef __cplusplus
--extern "C" {
--#endif
--
--/** Input port actions. */
--enum rte_port_in_action_type {
--	/** Filter selected input packets. */
--	RTE_PORT_IN_ACTION_FLTR = 0,
--
--	/**  Load balance. */
--	RTE_PORT_IN_ACTION_LB,
--};
--
--/**
-- * RTE_PORT_IN_ACTION_FLTR
-- */
--/** Filter key size (number of bytes) */
--#define RTE_PORT_IN_ACTION_FLTR_KEY_SIZE                   16
--
--/** Filter action configuration (per action profile). */
--struct rte_port_in_action_fltr_config {
--	/** Key offset within the input packet buffer. Offset 0 points to the
--	 * first byte of the MBUF structure.
--	 */
--	uint32_t key_offset;
--
--	/** Key mask. */
--	uint8_t key_mask[RTE_PORT_IN_ACTION_FLTR_KEY_SIZE];
--
--	/** Key value. */
--	uint8_t key[RTE_PORT_IN_ACTION_FLTR_KEY_SIZE];
--
--	/** When non-zero, all the input packets that match the *key* (with the
--	 * *key_mask* applied) are sent to the pipeline output port *port_id*.
--	 * When zero, all the input packets that do NOT match the *key* (with
--	 * *key_mask* applied) are sent to the pipeline output port *port_id*.
--	 */
--	int filter_on_match;
--
--	/** Pipeline output port ID to send the filtered input packets to.
--	 * Can be updated later.
--	 *
--	 * @see struct rte_port_in_action_fltr_params
--	 */
--	uint32_t port_id;
--};
--
--/** Filter action parameters (per action). */
--struct rte_port_in_action_fltr_params {
--	/** Pipeline output port ID to send the filtered input packets to. */
--	uint32_t port_id;
--};
--
--/**
-- * RTE_PORT_IN_ACTION_LB
-- */
--/** Load balance key size min (number of bytes). */
--#define RTE_PORT_IN_ACTION_LB_KEY_SIZE_MIN                    8
--
--/** Load balance key size max (number of bytes). */
--#define RTE_PORT_IN_ACTION_LB_KEY_SIZE_MAX                    64
--
--/** Load balance table size. */
--#define RTE_PORT_IN_ACTION_LB_TABLE_SIZE                   16
--
--/** Load balance action configuration (per action profile). */
--struct rte_port_in_action_lb_config {
--	/** Key size (number of bytes). */
--	uint32_t key_size;
--
--	/** Key offset within the input packet buffer. Offset 0 points to the
--	 * first byte of the MBUF structure.
--	 */
--	uint32_t key_offset;
--
--	/** Key mask(*key_size* bytes are valid). */
--	uint8_t key_mask[RTE_PORT_IN_ACTION_LB_KEY_SIZE_MAX];
--
--	/** Hash function. */
--	rte_table_hash_op_hash f_hash;
--
--	/** Seed value for *f_hash*. */
--	uint64_t seed;
--
--	/** Table defining the weight of each pipeline output port. The weights
--	 * are set in 1/RTE_PORT_IN_ACTION_LB_TABLE_SIZE increments. To assign a
--	 * weight of N/RTE_PORT_IN_ACTION_LB_TABLE_SIZE to a given output port
--	 * (0 <= N <= RTE_PORT_IN_ACTION_LB_TABLE_SIZE), the output port needs
--	 * to show up exactly N times in this table. Can be updated later.
--	 *
--	 * @see struct rte_port_in_action_lb_params
--	 */
--	uint32_t port_id[RTE_PORT_IN_ACTION_LB_TABLE_SIZE];
--};
--
--/** Load balance action parameters (per action). */
--struct rte_port_in_action_lb_params {
--	/** Table defining the weight of each pipeline output port. The weights
--	 * are set in 1/RTE_PORT_IN_ACTION_LB_TABLE_SIZE increments. To assign a
--	 * weight of N/RTE_PORT_IN_ACTION_LB_TABLE_SIZE to a given output port
--	 * (0 <= N <= RTE_PORT_IN_ACTION_LB_TABLE_SIZE), the output port needs
--	 * to show up exactly N times in this table.
--	 */
--	uint32_t port_id[RTE_PORT_IN_ACTION_LB_TABLE_SIZE];
--};
--
--/**
-- * Input port action profile.
-- */
--struct rte_port_in_action_profile;
--
--/**
-- * Input port action profile create.
-- *
-- * @param[in] socket_id
-- *   CPU socket ID for the internal data structures memory allocation.
-- * @return
-- *   Input port action profile handle on success, NULL otherwise.
-- */
--__rte_experimental
--struct rte_port_in_action_profile *
--rte_port_in_action_profile_create(uint32_t socket_id);
--
--/**
-- * Input port action profile free.
-- *
-- * @param[in] profile
-- *   Input port action profile handle (needs to be valid).
-- *   If profile is NULL, no operation is performed.
-- * @return
-- *   Always zero.
-- */
--__rte_experimental
--int
--rte_port_in_action_profile_free(struct rte_port_in_action_profile *profile);
--
--/**
-- * Input port action profile action register.
-- *
-- * @param[in] profile
-- *   Input port action profile handle (needs to be valid and not in frozen
-- *   state).
-- * @param[in] type
-- *   Specific input port action to be registered for *profile*.
-- * @param[in] action_config
-- *   Configuration for the *type* action.
-- *   If struct rte_port_in_action_*type*_config is defined, it needs to point to
-- *   a valid instance of this structure, otherwise it needs to be set to NULL.
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_port_in_action_profile_action_register(
--	struct rte_port_in_action_profile *profile,
--	enum rte_port_in_action_type type,
--	void *action_config);
--
--/**
-- * Input port action profile freeze.
-- *
-- * Once this function is called successfully, the given profile enters the
-- * frozen state with the following immediate effects: no more actions can be
-- * registered for this profile, so the profile can be instantiated to create
-- * input port action objects.
-- *
-- * @param[in] profile
-- *   Input port profile action handle (needs to be valid and not in frozen
-- *   state).
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- *
-- * @see rte_port_in_action_create()
-- */
--__rte_experimental
--int
--rte_port_in_action_profile_freeze(struct rte_port_in_action_profile *profile);
--
--/**
-- * Input port action.
-- */
--struct rte_port_in_action;
--
--/**
-- * Input port action create.
-- *
-- * Instantiates the given input port action profile to create an input port
-- * action object.
-- *
-- * @param[in] profile
-- *   Input port profile action handle (needs to be valid and in frozen state).
-- * @param[in] socket_id
-- *   CPU socket ID where the internal data structures required by the new input
-- *   port action object should be allocated.
-- * @return
-- *   Handle to input port action object on success, NULL on error.
-- */
--__rte_experimental
--struct rte_port_in_action *
--rte_port_in_action_create(struct rte_port_in_action_profile *profile,
--	uint32_t socket_id);
--
--/**
-- * Input port action free.
-- *
-- * @param[in] action
-- *   Handle to input port action object (needs to be valid).
-- *   If action is NULL, no operation is performed.
-- * @return
-- *   Always zero.
-- */
--__rte_experimental
--int
--rte_port_in_action_free(struct rte_port_in_action *action);
--
--/**
-- * Input port params get.
-- *
-- * @param[in] action
-- *   Handle to input port action object (needs to be valid).
-- * @param[inout] params
-- *   Pipeline input port parameters (needs to be pre-allocated).
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_port_in_action_params_get(struct rte_port_in_action *action,
--	struct rte_pipeline_port_in_params *params);
--
--/**
-- * Input port action apply.
-- *
-- * @param[in] action
-- *   Handle to input port action object (needs to be valid).
-- * @param[in] type
-- *   Specific input port action previously registered for the input port action
-- *   profile of the *action* object.
-- * @param[in] action_params
-- *   Parameters for the *type* action.
-- *   If struct rte_port_in_action_*type*_params is defined, it needs to point to
-- *   a valid instance of this structure, otherwise it needs to be set to NULL.
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_port_in_action_apply(struct rte_port_in_action *action,
--	enum rte_port_in_action_type type,
--	void *action_params);
--
--#ifdef __cplusplus
--}
--#endif
--
--#endif /* __INCLUDE_RTE_PORT_IN_ACTION_H__ */
-diff --git a/lib/pipeline/rte_table_action.c b/lib/pipeline/rte_table_action.c
-deleted file mode 100644
-index c990d7eb56..0000000000
---- a/lib/pipeline/rte_table_action.c
-+++ /dev/null
-@@ -1,3483 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2018 Intel Corporation
-- */
--#include <stdlib.h>
--#include <string.h>
--
--#include <eal_export.h>
--#include <rte_common.h>
--#include <rte_byteorder.h>
--#include <rte_cycles.h>
--#include <rte_malloc.h>
--#include <rte_memcpy.h>
--#include <rte_ether.h>
--#include <rte_ip.h>
--#include <rte_tcp.h>
--#include <rte_udp.h>
--#include <rte_vxlan.h>
--#include <rte_cryptodev.h>
--
--#include "rte_table_action.h"
--
--#define rte_htons rte_cpu_to_be_16
--#define rte_htonl rte_cpu_to_be_32
--
--#define rte_ntohs rte_be_to_cpu_16
--#define rte_ntohl rte_be_to_cpu_32
--
--/**
-- * RTE_TABLE_ACTION_FWD
-- */
--#define fwd_data rte_pipeline_table_entry
--
--static int
--fwd_apply(struct fwd_data *data,
--	struct rte_table_action_fwd_params *p)
--{
--	data->action = p->action;
--
--	if (p->action == RTE_PIPELINE_ACTION_PORT)
--		data->port_id = p->id;
--
--	if (p->action == RTE_PIPELINE_ACTION_TABLE)
--		data->table_id = p->id;
--
--	return 0;
--}
--
--/**
-- * RTE_TABLE_ACTION_LB
-- */
--static int
--lb_cfg_check(struct rte_table_action_lb_config *cfg)
--{
--	if ((cfg == NULL) ||
--		(cfg->key_size < RTE_TABLE_ACTION_LB_KEY_SIZE_MIN) ||
--		(cfg->key_size > RTE_TABLE_ACTION_LB_KEY_SIZE_MAX) ||
--		(!rte_is_power_of_2(cfg->key_size)) ||
--		(cfg->f_hash == NULL))
--		return -1;
--
--	return 0;
--}
--
--struct __rte_packed_begin lb_data {
--	uint32_t out[RTE_TABLE_ACTION_LB_TABLE_SIZE];
--} __rte_packed_end;
--
--static int
--lb_apply(struct lb_data *data,
--	struct rte_table_action_lb_params *p)
--{
--	memcpy(data->out, p->out, sizeof(data->out));
--
--	return 0;
--}
--
--static __rte_always_inline void
--pkt_work_lb(struct rte_mbuf *mbuf,
--	struct lb_data *data,
--	struct rte_table_action_lb_config *cfg)
--{
--	uint8_t *pkt_key = RTE_MBUF_METADATA_UINT8_PTR(mbuf, cfg->key_offset);
--	uint32_t *out = RTE_MBUF_METADATA_UINT32_PTR(mbuf, cfg->out_offset);
--	uint64_t digest, pos;
--	uint32_t out_val;
--
--	digest = cfg->f_hash(pkt_key,
--		cfg->key_mask,
--		cfg->key_size,
--		cfg->seed);
--	pos = digest & (RTE_TABLE_ACTION_LB_TABLE_SIZE - 1);
--	out_val = data->out[pos];
--
--	*out = out_val;
--}
--
--/**
-- * RTE_TABLE_ACTION_MTR
-- */
--static int
--mtr_cfg_check(struct rte_table_action_mtr_config *mtr)
--{
--	if ((mtr->alg == RTE_TABLE_ACTION_METER_SRTCM) ||
--		((mtr->n_tc != 1) && (mtr->n_tc != 4)) ||
--		(mtr->n_bytes_enabled != 0))
--		return -ENOTSUP;
--	return 0;
--}
--
--struct mtr_trtcm_data {
--	struct rte_meter_trtcm trtcm;
--	uint64_t stats[RTE_COLORS];
--};
--
--#define MTR_TRTCM_DATA_METER_PROFILE_ID_GET(data)          \
--	(((data)->stats[RTE_COLOR_GREEN] & 0xF8LLU) >> 3)
--
--static void
--mtr_trtcm_data_meter_profile_id_set(struct mtr_trtcm_data *data,
--	uint32_t profile_id)
--{
--	data->stats[RTE_COLOR_GREEN] &= ~0xF8LLU;
--	data->stats[RTE_COLOR_GREEN] |= (profile_id % 32) << 3;
--}
--
--#define MTR_TRTCM_DATA_POLICER_ACTION_DROP_GET(data, color)\
--	(((data)->stats[(color)] & 4LLU) >> 2)
--
--#define MTR_TRTCM_DATA_POLICER_ACTION_COLOR_GET(data, color)\
--	((enum rte_color)((data)->stats[(color)] & 3LLU))
--
--static void
--mtr_trtcm_data_policer_action_set(struct mtr_trtcm_data *data,
--	enum rte_color color,
--	enum rte_table_action_policer action)
--{
--	if (action == RTE_TABLE_ACTION_POLICER_DROP) {
--		data->stats[color] |= 4LLU;
--	} else {
--		data->stats[color] &= ~7LLU;
--		data->stats[color] |= color & 3LLU;
--	}
--}
--
--static uint64_t
--mtr_trtcm_data_stats_get(struct mtr_trtcm_data *data,
--	enum rte_color color)
--{
--	return data->stats[color] >> 8;
--}
--
--static void
--mtr_trtcm_data_stats_reset(struct mtr_trtcm_data *data,
--	enum rte_color color)
--{
--	data->stats[color] &= 0xFFLU;
--}
--
--#define MTR_TRTCM_DATA_STATS_INC(data, color)              \
--	((data)->stats[(color)] += (1LLU << 8))
--
--static size_t
--mtr_data_size(struct rte_table_action_mtr_config *mtr)
--{
--	return mtr->n_tc * sizeof(struct mtr_trtcm_data);
--}
--
--struct dscp_table_entry_data {
--	enum rte_color color;
--	uint16_t tc;
--	uint16_t tc_queue;
--};
--
--struct dscp_table_data {
--	struct dscp_table_entry_data entry[64];
--};
--
--struct meter_profile_data {
--	struct rte_meter_trtcm_profile profile;
--	uint32_t profile_id;
--	int valid;
--};
--
--static struct meter_profile_data *
--meter_profile_data_find(struct meter_profile_data *mp,
--	uint32_t mp_size,
--	uint32_t profile_id)
--{
--	uint32_t i;
--
--	for (i = 0; i < mp_size; i++) {
--		struct meter_profile_data *mp_data = &mp[i];
--
--		if (mp_data->valid && (mp_data->profile_id == profile_id))
--			return mp_data;
--	}
--
--	return NULL;
--}
--
--static struct meter_profile_data *
--meter_profile_data_find_unused(struct meter_profile_data *mp,
--	uint32_t mp_size)
--{
--	uint32_t i;
--
--	for (i = 0; i < mp_size; i++) {
--		struct meter_profile_data *mp_data = &mp[i];
--
--		if (!mp_data->valid)
--			return mp_data;
--	}
--
--	return NULL;
--}
--
--static int
--mtr_apply_check(struct rte_table_action_mtr_params *p,
--	struct rte_table_action_mtr_config *cfg,
--	struct meter_profile_data *mp,
--	uint32_t mp_size)
--{
--	uint32_t i;
--
--	if (p->tc_mask > RTE_LEN2MASK(cfg->n_tc, uint32_t))
--		return -EINVAL;
--
--	for (i = 0; i < RTE_TABLE_ACTION_TC_MAX; i++) {
--		struct rte_table_action_mtr_tc_params *p_tc = &p->mtr[i];
--		struct meter_profile_data *mp_data;
--
--		if ((p->tc_mask & (1LLU << i)) == 0)
--			continue;
--
--		mp_data = meter_profile_data_find(mp,
--			mp_size,
--			p_tc->meter_profile_id);
--		if (!mp_data)
--			return -EINVAL;
--	}
--
--	return 0;
--}
--
--static int
--mtr_apply(struct mtr_trtcm_data *data,
--	struct rte_table_action_mtr_params *p,
--	struct rte_table_action_mtr_config *cfg,
--	struct meter_profile_data *mp,
--	uint32_t mp_size)
--{
--	uint32_t i;
--	int status;
--
--	/* Check input arguments */
--	status = mtr_apply_check(p, cfg, mp, mp_size);
--	if (status)
--		return status;
--
--	/* Apply */
--	for (i = 0; i < RTE_TABLE_ACTION_TC_MAX; i++) {
--		struct rte_table_action_mtr_tc_params *p_tc = &p->mtr[i];
--		struct mtr_trtcm_data *data_tc = &data[i];
--		struct meter_profile_data *mp_data;
--
--		if ((p->tc_mask & (1LLU << i)) == 0)
--			continue;
--
--		/* Find profile */
--		mp_data = meter_profile_data_find(mp,
--			mp_size,
--			p_tc->meter_profile_id);
--		if (!mp_data)
--			return -EINVAL;
--
--		memset(data_tc, 0, sizeof(*data_tc));
--
--		/* Meter object */
--		status = rte_meter_trtcm_config(&data_tc->trtcm,
--			&mp_data->profile);
--		if (status)
--			return status;
--
--		/* Meter profile */
--		mtr_trtcm_data_meter_profile_id_set(data_tc,
--			mp_data - mp);
--
--		/* Policer actions */
--		mtr_trtcm_data_policer_action_set(data_tc,
--			RTE_COLOR_GREEN,
--			p_tc->policer[RTE_COLOR_GREEN]);
--
--		mtr_trtcm_data_policer_action_set(data_tc,
--			RTE_COLOR_YELLOW,
--			p_tc->policer[RTE_COLOR_YELLOW]);
--
--		mtr_trtcm_data_policer_action_set(data_tc,
--			RTE_COLOR_RED,
--			p_tc->policer[RTE_COLOR_RED]);
--	}
--
--	return 0;
--}
--
--static __rte_always_inline uint64_t
--pkt_work_mtr(struct rte_mbuf *mbuf,
--	struct mtr_trtcm_data *data,
--	struct dscp_table_data *dscp_table,
--	struct meter_profile_data *mp,
--	uint64_t time,
--	uint32_t dscp,
--	uint16_t total_length)
--{
--	uint64_t drop_mask;
--	struct dscp_table_entry_data *dscp_entry = &dscp_table->entry[dscp];
--	enum rte_color color_in, color_meter, color_policer;
--	uint32_t tc, mp_id;
--
--	tc = dscp_entry->tc;
--	color_in = dscp_entry->color;
--	data += tc;
--	mp_id = MTR_TRTCM_DATA_METER_PROFILE_ID_GET(data);
--
--	/* Meter */
--	color_meter = rte_meter_trtcm_color_aware_check(
--		&data->trtcm,
--		&mp[mp_id].profile,
--		time,
--		total_length,
--		color_in);
--
--	/* Stats */
--	MTR_TRTCM_DATA_STATS_INC(data, color_meter);
--
--	/* Police */
--	drop_mask = MTR_TRTCM_DATA_POLICER_ACTION_DROP_GET(data, color_meter);
--	color_policer =
--		MTR_TRTCM_DATA_POLICER_ACTION_COLOR_GET(data, color_meter);
--	rte_mbuf_sched_color_set(mbuf, (uint8_t)color_policer);
--
--	return drop_mask;
--}
--
--/**
-- * RTE_TABLE_ACTION_TM
-- */
--static int
--tm_cfg_check(struct rte_table_action_tm_config *tm)
--{
--	if ((tm->n_subports_per_port == 0) ||
--		(rte_is_power_of_2(tm->n_subports_per_port) == 0) ||
--		(tm->n_subports_per_port > UINT16_MAX) ||
--		(tm->n_pipes_per_subport == 0) ||
--		(rte_is_power_of_2(tm->n_pipes_per_subport) == 0))
--		return -ENOTSUP;
--
--	return 0;
--}
--
--struct __rte_packed_begin tm_data {
--	uint32_t queue_id;
--	uint32_t reserved;
--} __rte_packed_end;
--
--static int
--tm_apply_check(struct rte_table_action_tm_params *p,
--	struct rte_table_action_tm_config *cfg)
--{
--	if ((p->subport_id >= cfg->n_subports_per_port) ||
--		(p->pipe_id >= cfg->n_pipes_per_subport))
--		return -EINVAL;
--
--	return 0;
--}
--
--static int
--tm_apply(struct tm_data *data,
--	struct rte_table_action_tm_params *p,
--	struct rte_table_action_tm_config *cfg)
--{
--	int status;
--
--	/* Check input arguments */
--	status = tm_apply_check(p, cfg);
--	if (status)
--		return status;
--
--	/* Apply */
--	data->queue_id = p->subport_id <<
--				(rte_ctz32(cfg->n_pipes_per_subport) + 4) |
--				p->pipe_id << 4;
--
--	return 0;
--}
--
--static __rte_always_inline void
--pkt_work_tm(struct rte_mbuf *mbuf,
--	struct tm_data *data,
--	struct dscp_table_data *dscp_table,
--	uint32_t dscp)
--{
--	struct dscp_table_entry_data *dscp_entry = &dscp_table->entry[dscp];
--	uint32_t queue_id = data->queue_id |
--				dscp_entry->tc_queue;
--	rte_mbuf_sched_set(mbuf, queue_id, dscp_entry->tc,
--				(uint8_t)dscp_entry->color);
--}
--
--/**
-- * RTE_TABLE_ACTION_ENCAP
-- */
--static int
--encap_valid(enum rte_table_action_encap_type encap)
--{
--	switch (encap) {
--	case RTE_TABLE_ACTION_ENCAP_ETHER:
--	case RTE_TABLE_ACTION_ENCAP_VLAN:
--	case RTE_TABLE_ACTION_ENCAP_QINQ:
--	case RTE_TABLE_ACTION_ENCAP_MPLS:
--	case RTE_TABLE_ACTION_ENCAP_PPPOE:
--	case RTE_TABLE_ACTION_ENCAP_VXLAN:
--	case RTE_TABLE_ACTION_ENCAP_QINQ_PPPOE:
--		return 1;
--	default:
--		return 0;
--	}
--}
--
--static int
--encap_cfg_check(struct rte_table_action_encap_config *encap)
--{
--	if ((encap->encap_mask == 0) ||
--		(rte_popcount64(encap->encap_mask) != 1))
--		return -ENOTSUP;
--
--	return 0;
--}
--
--struct encap_ether_data {
--	struct rte_ether_hdr ether;
--};
--
--#define VLAN(pcp, dei, vid)                                \
--	((uint16_t)((((uint64_t)(pcp)) & 0x7LLU) << 13) |  \
--	((((uint64_t)(dei)) & 0x1LLU) << 12) |             \
--	(((uint64_t)(vid)) & 0xFFFLLU))                    \
--
--struct encap_vlan_data {
--	struct rte_ether_hdr ether;
--	struct rte_vlan_hdr vlan;
--};
--
--struct encap_qinq_data {
--	struct rte_ether_hdr ether;
--	struct rte_vlan_hdr svlan;
--	struct rte_vlan_hdr cvlan;
--};
--
--#define ETHER_TYPE_MPLS_UNICAST                            0x8847
--
--#define ETHER_TYPE_MPLS_MULTICAST                          0x8848
--
--#define MPLS(label, tc, s, ttl)                            \
--	((uint32_t)(((((uint64_t)(label)) & 0xFFFFFLLU) << 12) |\
--	((((uint64_t)(tc)) & 0x7LLU) << 9) |               \
--	((((uint64_t)(s)) & 0x1LLU) << 8) |                \
--	(((uint64_t)(ttl)) & 0xFFLLU)))
--
--struct __rte_aligned(2) __rte_packed_begin encap_mpls_data {
--	struct rte_ether_hdr ether;
--	uint32_t mpls[RTE_TABLE_ACTION_MPLS_LABELS_MAX];
--	uint32_t mpls_count;
--} __rte_packed_end;
--
--#define PPP_PROTOCOL_IP                                    0x0021
--
--struct pppoe_ppp_hdr {
--	uint16_t ver_type_code;
--	uint16_t session_id;
--	uint16_t length;
--	uint16_t protocol;
--};
--
--struct encap_pppoe_data {
--	struct rte_ether_hdr ether;
--	struct pppoe_ppp_hdr pppoe_ppp;
--};
--
--#define IP_PROTO_UDP                                       17
--
--struct __rte_aligned(2) __rte_packed_begin encap_vxlan_ipv4_data {
--	struct rte_ether_hdr ether;
--	struct rte_ipv4_hdr ipv4;
--	struct rte_udp_hdr udp;
--	struct rte_vxlan_hdr vxlan;
--} __rte_packed_end;
--
--struct __rte_aligned(2) __rte_packed_begin encap_vxlan_ipv4_vlan_data {
--	struct rte_ether_hdr ether;
--	struct rte_vlan_hdr vlan;
--	struct rte_ipv4_hdr ipv4;
--	struct rte_udp_hdr udp;
--	struct rte_vxlan_hdr vxlan;
--} __rte_packed_end;
--
--struct __rte_aligned(2) __rte_packed_begin encap_vxlan_ipv6_data {
--	struct rte_ether_hdr ether;
--	struct rte_ipv6_hdr ipv6;
--	struct rte_udp_hdr udp;
--	struct rte_vxlan_hdr vxlan;
--} __rte_packed_end;
--
--struct __rte_aligned(2) __rte_packed_begin encap_vxlan_ipv6_vlan_data {
--	struct rte_ether_hdr ether;
--	struct rte_vlan_hdr vlan;
--	struct rte_ipv6_hdr ipv6;
--	struct rte_udp_hdr udp;
--	struct rte_vxlan_hdr vxlan;
--} __rte_packed_end;
--
--struct __rte_aligned(2) __rte_packed_begin encap_qinq_pppoe_data {
--	struct rte_ether_hdr ether;
--	struct rte_vlan_hdr svlan;
--	struct rte_vlan_hdr cvlan;
--	struct pppoe_ppp_hdr pppoe_ppp;
--} __rte_packed_end;
--
--static size_t
--encap_data_size(struct rte_table_action_encap_config *encap)
--{
--	switch (encap->encap_mask) {
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_ETHER:
--		return sizeof(struct encap_ether_data);
--
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_VLAN:
--		return sizeof(struct encap_vlan_data);
--
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_QINQ:
--		return sizeof(struct encap_qinq_data);
--
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_MPLS:
--		return sizeof(struct encap_mpls_data);
--
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_PPPOE:
--		return sizeof(struct encap_pppoe_data);
--
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_VXLAN:
--		if (encap->vxlan.ip_version)
--			if (encap->vxlan.vlan)
--				return sizeof(struct encap_vxlan_ipv4_vlan_data);
--			else
--				return sizeof(struct encap_vxlan_ipv4_data);
--		else
--			if (encap->vxlan.vlan)
--				return sizeof(struct encap_vxlan_ipv6_vlan_data);
--			else
--				return sizeof(struct encap_vxlan_ipv6_data);
--
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_QINQ_PPPOE:
--			return sizeof(struct encap_qinq_pppoe_data);
--
--	default:
--		return 0;
--	}
--}
--
--static int
--encap_apply_check(struct rte_table_action_encap_params *p,
--	struct rte_table_action_encap_config *cfg)
--{
--	if ((encap_valid(p->type) == 0) ||
--		((cfg->encap_mask & (1LLU << p->type)) == 0))
--		return -EINVAL;
--
--	switch (p->type) {
--	case RTE_TABLE_ACTION_ENCAP_ETHER:
--		return 0;
--
--	case RTE_TABLE_ACTION_ENCAP_VLAN:
--		return 0;
--
--	case RTE_TABLE_ACTION_ENCAP_QINQ:
--		return 0;
--
--	case RTE_TABLE_ACTION_ENCAP_MPLS:
--		if ((p->mpls.mpls_count == 0) ||
--			(p->mpls.mpls_count > RTE_TABLE_ACTION_MPLS_LABELS_MAX))
--			return -EINVAL;
--
--		return 0;
--
--	case RTE_TABLE_ACTION_ENCAP_PPPOE:
--		return 0;
--
--	case RTE_TABLE_ACTION_ENCAP_VXLAN:
--		return 0;
--
--	case RTE_TABLE_ACTION_ENCAP_QINQ_PPPOE:
--		return 0;
--
--	default:
--		return -EINVAL;
--	}
--}
--
--static int
--encap_ether_apply(void *data,
--	struct rte_table_action_encap_params *p,
--	struct rte_table_action_common_config *common_cfg)
--{
--	struct encap_ether_data *d = data;
--	uint16_t ethertype = (common_cfg->ip_version) ?
--		RTE_ETHER_TYPE_IPV4 :
--		RTE_ETHER_TYPE_IPV6;
--
--	/* Ethernet */
--	rte_ether_addr_copy(&p->ether.ether.da, &d->ether.dst_addr);
--	rte_ether_addr_copy(&p->ether.ether.sa, &d->ether.src_addr);
--	d->ether.ether_type = rte_htons(ethertype);
--
--	return 0;
--}
--
--static int
--encap_vlan_apply(void *data,
--	struct rte_table_action_encap_params *p,
--	struct rte_table_action_common_config *common_cfg)
--{
--	struct encap_vlan_data *d = data;
--	uint16_t ethertype = (common_cfg->ip_version) ?
--		RTE_ETHER_TYPE_IPV4 :
--		RTE_ETHER_TYPE_IPV6;
--
--	/* Ethernet */
--	rte_ether_addr_copy(&p->vlan.ether.da, &d->ether.dst_addr);
--	rte_ether_addr_copy(&p->vlan.ether.sa, &d->ether.src_addr);
--	d->ether.ether_type = rte_htons(RTE_ETHER_TYPE_VLAN);
--
--	/* VLAN */
--	d->vlan.vlan_tci = rte_htons(VLAN(p->vlan.vlan.pcp,
--		p->vlan.vlan.dei,
--		p->vlan.vlan.vid));
--	d->vlan.eth_proto = rte_htons(ethertype);
--
--	return 0;
--}
--
--static int
--encap_qinq_apply(void *data,
--	struct rte_table_action_encap_params *p,
--	struct rte_table_action_common_config *common_cfg)
--{
--	struct encap_qinq_data *d = data;
--	uint16_t ethertype = (common_cfg->ip_version) ?
--		RTE_ETHER_TYPE_IPV4 :
--		RTE_ETHER_TYPE_IPV6;
--
--	/* Ethernet */
--	rte_ether_addr_copy(&p->qinq.ether.da, &d->ether.dst_addr);
--	rte_ether_addr_copy(&p->qinq.ether.sa, &d->ether.src_addr);
--	d->ether.ether_type = rte_htons(RTE_ETHER_TYPE_QINQ);
--
--	/* SVLAN */
--	d->svlan.vlan_tci = rte_htons(VLAN(p->qinq.svlan.pcp,
--		p->qinq.svlan.dei,
--		p->qinq.svlan.vid));
--	d->svlan.eth_proto = rte_htons(RTE_ETHER_TYPE_VLAN);
--
--	/* CVLAN */
--	d->cvlan.vlan_tci = rte_htons(VLAN(p->qinq.cvlan.pcp,
--		p->qinq.cvlan.dei,
--		p->qinq.cvlan.vid));
--	d->cvlan.eth_proto = rte_htons(ethertype);
--
--	return 0;
--}
--
--static int
--encap_qinq_pppoe_apply(void *data,
--	struct rte_table_action_encap_params *p)
--{
--	struct encap_qinq_pppoe_data *d = data;
--
--	/* Ethernet */
--	rte_ether_addr_copy(&p->qinq.ether.da, &d->ether.dst_addr);
--	rte_ether_addr_copy(&p->qinq.ether.sa, &d->ether.src_addr);
--	d->ether.ether_type = rte_htons(RTE_ETHER_TYPE_VLAN);
--
--	/* SVLAN */
--	d->svlan.vlan_tci = rte_htons(VLAN(p->qinq.svlan.pcp,
--		p->qinq.svlan.dei,
--		p->qinq.svlan.vid));
--	d->svlan.eth_proto = rte_htons(RTE_ETHER_TYPE_VLAN);
--
--	/* CVLAN */
--	d->cvlan.vlan_tci = rte_htons(VLAN(p->qinq.cvlan.pcp,
--		p->qinq.cvlan.dei,
--		p->qinq.cvlan.vid));
--	d->cvlan.eth_proto = rte_htons(RTE_ETHER_TYPE_PPPOE_SESSION);
--
--	/* PPPoE and PPP*/
--	d->pppoe_ppp.ver_type_code = rte_htons(0x1100);
--	d->pppoe_ppp.session_id = rte_htons(p->qinq_pppoe.pppoe.session_id);
--	d->pppoe_ppp.length = 0; /* not pre-computed */
--	d->pppoe_ppp.protocol = rte_htons(PPP_PROTOCOL_IP);
--
--	return 0;
--}
--
--static int
--encap_mpls_apply(void *data,
--	struct rte_table_action_encap_params *p)
--{
--	struct encap_mpls_data *d = data;
--	uint16_t ethertype = (p->mpls.unicast) ?
--		ETHER_TYPE_MPLS_UNICAST :
--		ETHER_TYPE_MPLS_MULTICAST;
--	uint32_t i;
--
--	/* Ethernet */
--	rte_ether_addr_copy(&p->mpls.ether.da, &d->ether.dst_addr);
--	rte_ether_addr_copy(&p->mpls.ether.sa, &d->ether.src_addr);
--	d->ether.ether_type = rte_htons(ethertype);
--
--	/* MPLS */
--	for (i = 0; i < p->mpls.mpls_count - 1; i++)
--		d->mpls[i] = rte_htonl(MPLS(p->mpls.mpls[i].label,
--			p->mpls.mpls[i].tc,
--			0,
--			p->mpls.mpls[i].ttl));
--
--	d->mpls[i] = rte_htonl(MPLS(p->mpls.mpls[i].label,
--		p->mpls.mpls[i].tc,
--		1,
--		p->mpls.mpls[i].ttl));
--
--	d->mpls_count = p->mpls.mpls_count;
--	return 0;
--}
--
--static int
--encap_pppoe_apply(void *data,
--	struct rte_table_action_encap_params *p)
--{
--	struct encap_pppoe_data *d = data;
--
--	/* Ethernet */
--	rte_ether_addr_copy(&p->pppoe.ether.da, &d->ether.dst_addr);
--	rte_ether_addr_copy(&p->pppoe.ether.sa, &d->ether.src_addr);
--	d->ether.ether_type = rte_htons(RTE_ETHER_TYPE_PPPOE_SESSION);
--
--	/* PPPoE and PPP*/
--	d->pppoe_ppp.ver_type_code = rte_htons(0x1100);
--	d->pppoe_ppp.session_id = rte_htons(p->pppoe.pppoe.session_id);
--	d->pppoe_ppp.length = 0; /* not pre-computed */
--	d->pppoe_ppp.protocol = rte_htons(PPP_PROTOCOL_IP);
--
--	return 0;
--}
--
--static int
--encap_vxlan_apply(void *data,
--	struct rte_table_action_encap_params *p,
--	struct rte_table_action_encap_config *cfg)
--{
--	if ((p->vxlan.vxlan.vni > 0xFFFFFF) ||
--		(cfg->vxlan.ip_version && (p->vxlan.ipv4.dscp > 0x3F)) ||
--		(!cfg->vxlan.ip_version && (p->vxlan.ipv6.flow_label > 0xFFFFF)) ||
--		(!cfg->vxlan.ip_version && (p->vxlan.ipv6.dscp > 0x3F)) ||
--		(cfg->vxlan.vlan && (p->vxlan.vlan.vid > 0xFFF)))
--		return -1;
--
--	if (cfg->vxlan.ip_version)
--		if (cfg->vxlan.vlan) {
--			struct encap_vxlan_ipv4_vlan_data *d = data;
--
--			/* Ethernet */
--			rte_ether_addr_copy(&p->vxlan.ether.da,
--					&d->ether.dst_addr);
--			rte_ether_addr_copy(&p->vxlan.ether.sa,
--					&d->ether.src_addr);
--			d->ether.ether_type = rte_htons(RTE_ETHER_TYPE_VLAN);
--
--			/* VLAN */
--			d->vlan.vlan_tci = rte_htons(VLAN(p->vxlan.vlan.pcp,
--				p->vxlan.vlan.dei,
--				p->vxlan.vlan.vid));
--			d->vlan.eth_proto = rte_htons(RTE_ETHER_TYPE_IPV4);
--
--			/* IPv4*/
--			d->ipv4.version_ihl = 0x45;
--			d->ipv4.type_of_service = p->vxlan.ipv4.dscp << 2;
--			d->ipv4.total_length = 0; /* not pre-computed */
--			d->ipv4.packet_id = 0;
--			d->ipv4.fragment_offset = 0;
--			d->ipv4.time_to_live = p->vxlan.ipv4.ttl;
--			d->ipv4.next_proto_id = IP_PROTO_UDP;
--			d->ipv4.hdr_checksum = 0;
--			d->ipv4.src_addr = rte_htonl(p->vxlan.ipv4.sa);
--			d->ipv4.dst_addr = rte_htonl(p->vxlan.ipv4.da);
--
--			d->ipv4.hdr_checksum = rte_ipv4_cksum(&d->ipv4);
--
--			/* UDP */
--			d->udp.src_port = rte_htons(p->vxlan.udp.sp);
--			d->udp.dst_port = rte_htons(p->vxlan.udp.dp);
--			d->udp.dgram_len = 0; /* not pre-computed */
--			d->udp.dgram_cksum = 0;
--
--			/* VXLAN */
--			d->vxlan.vx_flags = rte_htonl(0x08000000);
--			d->vxlan.vx_vni = rte_htonl(p->vxlan.vxlan.vni << 8);
--
--			return 0;
--		} else {
--			struct encap_vxlan_ipv4_data *d = data;
--
--			/* Ethernet */
--			rte_ether_addr_copy(&p->vxlan.ether.da,
--					&d->ether.dst_addr);
--			rte_ether_addr_copy(&p->vxlan.ether.sa,
--					&d->ether.src_addr);
--			d->ether.ether_type = rte_htons(RTE_ETHER_TYPE_IPV4);
--
--			/* IPv4*/
--			d->ipv4.version_ihl = 0x45;
--			d->ipv4.type_of_service = p->vxlan.ipv4.dscp << 2;
--			d->ipv4.total_length = 0; /* not pre-computed */
--			d->ipv4.packet_id = 0;
--			d->ipv4.fragment_offset = 0;
--			d->ipv4.time_to_live = p->vxlan.ipv4.ttl;
--			d->ipv4.next_proto_id = IP_PROTO_UDP;
--			d->ipv4.hdr_checksum = 0;
--			d->ipv4.src_addr = rte_htonl(p->vxlan.ipv4.sa);
--			d->ipv4.dst_addr = rte_htonl(p->vxlan.ipv4.da);
--
--			d->ipv4.hdr_checksum = rte_ipv4_cksum(&d->ipv4);
--
--			/* UDP */
--			d->udp.src_port = rte_htons(p->vxlan.udp.sp);
--			d->udp.dst_port = rte_htons(p->vxlan.udp.dp);
--			d->udp.dgram_len = 0; /* not pre-computed */
--			d->udp.dgram_cksum = 0;
--
--			/* VXLAN */
--			d->vxlan.vx_flags = rte_htonl(0x08000000);
--			d->vxlan.vx_vni = rte_htonl(p->vxlan.vxlan.vni << 8);
--
--			return 0;
--		}
--	else
--		if (cfg->vxlan.vlan) {
--			struct encap_vxlan_ipv6_vlan_data *d = data;
--
--			/* Ethernet */
--			rte_ether_addr_copy(&p->vxlan.ether.da,
--					&d->ether.dst_addr);
--			rte_ether_addr_copy(&p->vxlan.ether.sa,
--					&d->ether.src_addr);
--			d->ether.ether_type = rte_htons(RTE_ETHER_TYPE_VLAN);
--
--			/* VLAN */
--			d->vlan.vlan_tci = rte_htons(VLAN(p->vxlan.vlan.pcp,
--				p->vxlan.vlan.dei,
--				p->vxlan.vlan.vid));
--			d->vlan.eth_proto = rte_htons(RTE_ETHER_TYPE_IPV6);
--
--			/* IPv6*/
--			d->ipv6.vtc_flow = rte_htonl((6 << 28) |
--				(p->vxlan.ipv6.dscp << 22) |
--				p->vxlan.ipv6.flow_label);
--			d->ipv6.payload_len = 0; /* not pre-computed */
--			d->ipv6.proto = IP_PROTO_UDP;
--			d->ipv6.hop_limits = p->vxlan.ipv6.hop_limit;
--			d->ipv6.src_addr = p->vxlan.ipv6.sa;
--			d->ipv6.dst_addr = p->vxlan.ipv6.da;
--
--			/* UDP */
--			d->udp.src_port = rte_htons(p->vxlan.udp.sp);
--			d->udp.dst_port = rte_htons(p->vxlan.udp.dp);
--			d->udp.dgram_len = 0; /* not pre-computed */
--			d->udp.dgram_cksum = 0;
--
--			/* VXLAN */
--			d->vxlan.vx_flags = rte_htonl(0x08000000);
--			d->vxlan.vx_vni = rte_htonl(p->vxlan.vxlan.vni << 8);
--
--			return 0;
--		} else {
--			struct encap_vxlan_ipv6_data *d = data;
--
--			/* Ethernet */
--			rte_ether_addr_copy(&p->vxlan.ether.da,
--					&d->ether.dst_addr);
--			rte_ether_addr_copy(&p->vxlan.ether.sa,
--					&d->ether.src_addr);
--			d->ether.ether_type = rte_htons(RTE_ETHER_TYPE_IPV6);
--
--			/* IPv6*/
--			d->ipv6.vtc_flow = rte_htonl((6 << 28) |
--				(p->vxlan.ipv6.dscp << 22) |
--				p->vxlan.ipv6.flow_label);
--			d->ipv6.payload_len = 0; /* not pre-computed */
--			d->ipv6.proto = IP_PROTO_UDP;
--			d->ipv6.hop_limits = p->vxlan.ipv6.hop_limit;
--			d->ipv6.src_addr = p->vxlan.ipv6.sa;
--			d->ipv6.dst_addr = p->vxlan.ipv6.da;
--
--			/* UDP */
--			d->udp.src_port = rte_htons(p->vxlan.udp.sp);
--			d->udp.dst_port = rte_htons(p->vxlan.udp.dp);
--			d->udp.dgram_len = 0; /* not pre-computed */
--			d->udp.dgram_cksum = 0;
--
--			/* VXLAN */
--			d->vxlan.vx_flags = rte_htonl(0x08000000);
--			d->vxlan.vx_vni = rte_htonl(p->vxlan.vxlan.vni << 8);
--
--			return 0;
--		}
--}
--
--static int
--encap_apply(void *data,
--	struct rte_table_action_encap_params *p,
--	struct rte_table_action_encap_config *cfg,
--	struct rte_table_action_common_config *common_cfg)
--{
--	int status;
--
--	/* Check input arguments */
--	status = encap_apply_check(p, cfg);
--	if (status)
--		return status;
--
--	switch (p->type) {
--	case RTE_TABLE_ACTION_ENCAP_ETHER:
--		return encap_ether_apply(data, p, common_cfg);
--
--	case RTE_TABLE_ACTION_ENCAP_VLAN:
--		return encap_vlan_apply(data, p, common_cfg);
--
--	case RTE_TABLE_ACTION_ENCAP_QINQ:
--		return encap_qinq_apply(data, p, common_cfg);
--
--	case RTE_TABLE_ACTION_ENCAP_MPLS:
--		return encap_mpls_apply(data, p);
--
--	case RTE_TABLE_ACTION_ENCAP_PPPOE:
--		return encap_pppoe_apply(data, p);
--
--	case RTE_TABLE_ACTION_ENCAP_VXLAN:
--		return encap_vxlan_apply(data, p, cfg);
--
--	case RTE_TABLE_ACTION_ENCAP_QINQ_PPPOE:
--		return encap_qinq_pppoe_apply(data, p);
--
--	default:
--		return -EINVAL;
--	}
--}
--
--static __rte_always_inline uint16_t
--encap_vxlan_ipv4_checksum_update(uint16_t cksum0,
--	uint16_t total_length)
--{
--	int32_t cksum1;
--
--	cksum1 = cksum0;
--	cksum1 = ~cksum1 & 0xFFFF;
--
--	/* Add total length (one's complement logic) */
--	cksum1 += total_length;
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--
--	return (uint16_t)(~cksum1);
--}
--
--static __rte_always_inline void *
--encap(void *dst, const void *src, size_t n)
--{
--	dst = ((uint8_t *) dst) - n;
--	return rte_memcpy(dst, src, n);
--}
--
--static __rte_always_inline void
--pkt_work_encap_vxlan_ipv4(struct rte_mbuf *mbuf,
--	struct encap_vxlan_ipv4_data *vxlan_tbl,
--	struct rte_table_action_encap_config *cfg)
--{
--	uint32_t ether_offset = cfg->vxlan.data_offset;
--	void *ether = RTE_MBUF_METADATA_UINT32_PTR(mbuf, ether_offset);
--	struct encap_vxlan_ipv4_data *vxlan_pkt;
--	uint16_t ether_length, ipv4_total_length, ipv4_hdr_cksum, udp_length;
--
--	ether_length = (uint16_t)mbuf->pkt_len;
--	ipv4_total_length = ether_length +
--		(sizeof(struct rte_vxlan_hdr) +
--		sizeof(struct rte_udp_hdr) +
--		sizeof(struct rte_ipv4_hdr));
--	ipv4_hdr_cksum = encap_vxlan_ipv4_checksum_update(vxlan_tbl->ipv4.hdr_checksum,
--		rte_htons(ipv4_total_length));
--	udp_length = ether_length +
--		(sizeof(struct rte_vxlan_hdr) +
--		sizeof(struct rte_udp_hdr));
--
--	vxlan_pkt = encap(ether, vxlan_tbl, sizeof(*vxlan_tbl));
--	vxlan_pkt->ipv4.total_length = rte_htons(ipv4_total_length);
--	vxlan_pkt->ipv4.hdr_checksum = ipv4_hdr_cksum;
--	vxlan_pkt->udp.dgram_len = rte_htons(udp_length);
--
--	mbuf->data_off = ether_offset - (sizeof(struct rte_mbuf) + sizeof(*vxlan_pkt));
--	mbuf->pkt_len = mbuf->data_len = ether_length + sizeof(*vxlan_pkt);
--}
--
--static __rte_always_inline void
--pkt_work_encap_vxlan_ipv4_vlan(struct rte_mbuf *mbuf,
--	struct encap_vxlan_ipv4_vlan_data *vxlan_tbl,
--	struct rte_table_action_encap_config *cfg)
--{
--	uint32_t ether_offset = cfg->vxlan.data_offset;
--	void *ether = RTE_MBUF_METADATA_UINT32_PTR(mbuf, ether_offset);
--	struct encap_vxlan_ipv4_vlan_data *vxlan_pkt;
--	uint16_t ether_length, ipv4_total_length, ipv4_hdr_cksum, udp_length;
--
--	ether_length = (uint16_t)mbuf->pkt_len;
--	ipv4_total_length = ether_length +
--		(sizeof(struct rte_vxlan_hdr) +
--		sizeof(struct rte_udp_hdr) +
--		sizeof(struct rte_ipv4_hdr));
--	ipv4_hdr_cksum = encap_vxlan_ipv4_checksum_update(vxlan_tbl->ipv4.hdr_checksum,
--		rte_htons(ipv4_total_length));
--	udp_length = ether_length +
--		(sizeof(struct rte_vxlan_hdr) +
--		sizeof(struct rte_udp_hdr));
--
--	vxlan_pkt = encap(ether, vxlan_tbl, sizeof(*vxlan_tbl));
--	vxlan_pkt->ipv4.total_length = rte_htons(ipv4_total_length);
--	vxlan_pkt->ipv4.hdr_checksum = ipv4_hdr_cksum;
--	vxlan_pkt->udp.dgram_len = rte_htons(udp_length);
--
--	mbuf->data_off = ether_offset - (sizeof(struct rte_mbuf) + sizeof(*vxlan_pkt));
--	mbuf->pkt_len = mbuf->data_len = ether_length + sizeof(*vxlan_pkt);
--}
--
--static __rte_always_inline void
--pkt_work_encap_vxlan_ipv6(struct rte_mbuf *mbuf,
--	struct encap_vxlan_ipv6_data *vxlan_tbl,
--	struct rte_table_action_encap_config *cfg)
--{
--	uint32_t ether_offset = cfg->vxlan.data_offset;
--	void *ether = RTE_MBUF_METADATA_UINT32_PTR(mbuf, ether_offset);
--	struct encap_vxlan_ipv6_data *vxlan_pkt;
--	uint16_t ether_length, ipv6_payload_length, udp_length;
--
--	ether_length = (uint16_t)mbuf->pkt_len;
--	ipv6_payload_length = ether_length +
--		(sizeof(struct rte_vxlan_hdr) +
--		sizeof(struct rte_udp_hdr));
--	udp_length = ether_length +
--		(sizeof(struct rte_vxlan_hdr) +
--		sizeof(struct rte_udp_hdr));
--
--	vxlan_pkt = encap(ether, vxlan_tbl, sizeof(*vxlan_tbl));
--	vxlan_pkt->ipv6.payload_len = rte_htons(ipv6_payload_length);
--	vxlan_pkt->udp.dgram_len = rte_htons(udp_length);
--
--	mbuf->data_off = ether_offset - (sizeof(struct rte_mbuf) + sizeof(*vxlan_pkt));
--	mbuf->pkt_len = mbuf->data_len = ether_length + sizeof(*vxlan_pkt);
--}
--
--static __rte_always_inline void
--pkt_work_encap_vxlan_ipv6_vlan(struct rte_mbuf *mbuf,
--	struct encap_vxlan_ipv6_vlan_data *vxlan_tbl,
--	struct rte_table_action_encap_config *cfg)
--{
--	uint32_t ether_offset = cfg->vxlan.data_offset;
--	void *ether = RTE_MBUF_METADATA_UINT32_PTR(mbuf, ether_offset);
--	struct encap_vxlan_ipv6_vlan_data *vxlan_pkt;
--	uint16_t ether_length, ipv6_payload_length, udp_length;
--
--	ether_length = (uint16_t)mbuf->pkt_len;
--	ipv6_payload_length = ether_length +
--		(sizeof(struct rte_vxlan_hdr) +
--		sizeof(struct rte_udp_hdr));
--	udp_length = ether_length +
--		(sizeof(struct rte_vxlan_hdr) +
--		sizeof(struct rte_udp_hdr));
--
--	vxlan_pkt = encap(ether, vxlan_tbl, sizeof(*vxlan_tbl));
--	vxlan_pkt->ipv6.payload_len = rte_htons(ipv6_payload_length);
--	vxlan_pkt->udp.dgram_len = rte_htons(udp_length);
--
--	mbuf->data_off = ether_offset - (sizeof(struct rte_mbuf) + sizeof(*vxlan_pkt));
--	mbuf->pkt_len = mbuf->data_len = ether_length + sizeof(*vxlan_pkt);
--}
--
--static __rte_always_inline void
--pkt_work_encap(struct rte_mbuf *mbuf,
--	void *data,
--	struct rte_table_action_encap_config *cfg,
--	void *ip,
--	uint16_t total_length,
--	uint32_t ip_offset)
--{
--	switch (cfg->encap_mask) {
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_ETHER:
--		encap(ip, data, sizeof(struct encap_ether_data));
--		mbuf->data_off = ip_offset - (sizeof(struct rte_mbuf) +
--			sizeof(struct encap_ether_data));
--		mbuf->pkt_len = mbuf->data_len = total_length +
--			sizeof(struct encap_ether_data);
--		break;
--
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_VLAN:
--		encap(ip, data, sizeof(struct encap_vlan_data));
--		mbuf->data_off = ip_offset - (sizeof(struct rte_mbuf) +
--			sizeof(struct encap_vlan_data));
--		mbuf->pkt_len = mbuf->data_len = total_length +
--			sizeof(struct encap_vlan_data);
--		break;
--
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_QINQ:
--		encap(ip, data, sizeof(struct encap_qinq_data));
--		mbuf->data_off = ip_offset - (sizeof(struct rte_mbuf) +
--			sizeof(struct encap_qinq_data));
--		mbuf->pkt_len = mbuf->data_len = total_length +
--			sizeof(struct encap_qinq_data);
--		break;
--
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_MPLS:
--	{
--		struct encap_mpls_data *mpls = data;
--		size_t size = sizeof(struct rte_ether_hdr) +
--			mpls->mpls_count * 4;
--
--		encap(ip, data, size);
--		mbuf->data_off = ip_offset - (sizeof(struct rte_mbuf) + size);
--		mbuf->pkt_len = mbuf->data_len = total_length + size;
--		break;
--	}
--
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_PPPOE:
--	{
--		struct encap_pppoe_data *pppoe =
--			encap(ip, data, sizeof(struct encap_pppoe_data));
--		pppoe->pppoe_ppp.length = rte_htons(total_length + 2);
--		mbuf->data_off = ip_offset - (sizeof(struct rte_mbuf) +
--			sizeof(struct encap_pppoe_data));
--		mbuf->pkt_len = mbuf->data_len = total_length +
--			sizeof(struct encap_pppoe_data);
--		break;
--	}
--
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_QINQ_PPPOE:
--	{
--		struct encap_qinq_pppoe_data *qinq_pppoe =
--			encap(ip, data, sizeof(struct encap_qinq_pppoe_data));
--		qinq_pppoe->pppoe_ppp.length = rte_htons(total_length + 2);
--		mbuf->data_off = ip_offset - (sizeof(struct rte_mbuf) +
--			sizeof(struct encap_qinq_pppoe_data));
--		mbuf->pkt_len = mbuf->data_len = total_length +
--			sizeof(struct encap_qinq_pppoe_data);
--		break;
--	}
--
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_VXLAN:
--	{
--		if (cfg->vxlan.ip_version)
--			if (cfg->vxlan.vlan)
--				pkt_work_encap_vxlan_ipv4_vlan(mbuf, data, cfg);
--			else
--				pkt_work_encap_vxlan_ipv4(mbuf, data, cfg);
--		else
--			if (cfg->vxlan.vlan)
--				pkt_work_encap_vxlan_ipv6_vlan(mbuf, data, cfg);
--			else
--				pkt_work_encap_vxlan_ipv6(mbuf, data, cfg);
--	}
--
--	default:
--		break;
--	}
--}
--
--/**
-- * RTE_TABLE_ACTION_NAT
-- */
--static int
--nat_cfg_check(struct rte_table_action_nat_config *nat)
--{
--	if ((nat->proto != 0x06) &&
--		(nat->proto != 0x11))
--		return -ENOTSUP;
--
--	return 0;
--}
--
--struct __rte_packed_begin nat_ipv4_data {
--	uint32_t addr;
--	uint16_t port;
--} __rte_packed_end;
--
--struct __rte_packed_begin nat_ipv6_data {
--	struct rte_ipv6_addr addr;
--	uint16_t port;
--} __rte_packed_end;
--
--static size_t
--nat_data_size(struct rte_table_action_nat_config *nat __rte_unused,
--	struct rte_table_action_common_config *common)
--{
--	int ip_version = common->ip_version;
--
--	return (ip_version) ?
--		sizeof(struct nat_ipv4_data) :
--		sizeof(struct nat_ipv6_data);
--}
--
--static int
--nat_apply_check(struct rte_table_action_nat_params *p,
--	struct rte_table_action_common_config *cfg)
--{
--	if ((p->ip_version && (cfg->ip_version == 0)) ||
--		((p->ip_version == 0) && cfg->ip_version))
--		return -EINVAL;
--
--	return 0;
--}
--
--static int
--nat_apply(void *data,
--	struct rte_table_action_nat_params *p,
--	struct rte_table_action_common_config *cfg)
--{
--	int status;
--
--	/* Check input arguments */
--	status = nat_apply_check(p, cfg);
--	if (status)
--		return status;
--
--	/* Apply */
--	if (p->ip_version) {
--		struct nat_ipv4_data *d = data;
--
--		d->addr = rte_htonl(p->addr.ipv4);
--		d->port = rte_htons(p->port);
--	} else {
--		struct nat_ipv6_data *d = data;
--
--		d->addr = p->addr.ipv6;
--		d->port = rte_htons(p->port);
--	}
--
--	return 0;
--}
--
--static __rte_always_inline uint16_t
--nat_ipv4_checksum_update(uint16_t cksum0,
--	uint32_t ip0,
--	uint32_t ip1)
--{
--	int32_t cksum1;
--
--	cksum1 = cksum0;
--	cksum1 = ~cksum1 & 0xFFFF;
--
--	/* Subtract ip0 (one's complement logic) */
--	cksum1 -= (ip0 >> 16) + (ip0 & 0xFFFF);
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--
--	/* Add ip1 (one's complement logic) */
--	cksum1 += (ip1 >> 16) + (ip1 & 0xFFFF);
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--
--	return (uint16_t)(~cksum1);
--}
--
--static __rte_always_inline uint16_t
--nat_ipv4_tcp_udp_checksum_update(uint16_t cksum0,
--	uint32_t ip0,
--	uint32_t ip1,
--	uint16_t port0,
--	uint16_t port1)
--{
--	int32_t cksum1;
--
--	cksum1 = cksum0;
--	cksum1 = ~cksum1 & 0xFFFF;
--
--	/* Subtract ip0 and port 0 (one's complement logic) */
--	cksum1 -= (ip0 >> 16) + (ip0 & 0xFFFF) + port0;
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--
--	/* Add ip1 and port1 (one's complement logic) */
--	cksum1 += (ip1 >> 16) + (ip1 & 0xFFFF) + port1;
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--
--	return (uint16_t)(~cksum1);
--}
--
--static __rte_always_inline uint16_t
--nat_ipv6_tcp_udp_checksum_update(uint16_t cksum0,
--	uint16_t *ip0,
--	uint16_t *ip1,
--	uint16_t port0,
--	uint16_t port1)
--{
--	int32_t cksum1;
--
--	cksum1 = cksum0;
--	cksum1 = ~cksum1 & 0xFFFF;
--
--	/* Subtract ip0 and port 0 (one's complement logic) */
--	cksum1 -= ip0[0] + ip0[1] + ip0[2] + ip0[3] +
--		ip0[4] + ip0[5] + ip0[6] + ip0[7] + port0;
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--
--	/* Add ip1 and port1 (one's complement logic) */
--	cksum1 += ip1[0] + ip1[1] + ip1[2] + ip1[3] +
--		ip1[4] + ip1[5] + ip1[6] + ip1[7] + port1;
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--
--	return (uint16_t)(~cksum1);
--}
--
--static __rte_always_inline void
--pkt_ipv4_work_nat(struct rte_ipv4_hdr *ip,
--	struct nat_ipv4_data *data,
--	struct rte_table_action_nat_config *cfg)
--{
--	if (cfg->source_nat) {
--		if (cfg->proto == 0x6) {
--			struct rte_tcp_hdr *tcp = (struct rte_tcp_hdr *) &ip[1];
--			uint16_t ip_cksum, tcp_cksum;
--
--			ip_cksum = nat_ipv4_checksum_update(ip->hdr_checksum,
--				ip->src_addr,
--				data->addr);
--
--			tcp_cksum = nat_ipv4_tcp_udp_checksum_update(tcp->cksum,
--				ip->src_addr,
--				data->addr,
--				tcp->src_port,
--				data->port);
--
--			ip->src_addr = data->addr;
--			ip->hdr_checksum = ip_cksum;
--			tcp->src_port = data->port;
--			tcp->cksum = tcp_cksum;
--		} else {
--			struct rte_udp_hdr *udp = (struct rte_udp_hdr *) &ip[1];
--			uint16_t ip_cksum, udp_cksum;
--
--			ip_cksum = nat_ipv4_checksum_update(ip->hdr_checksum,
--				ip->src_addr,
--				data->addr);
--
--			udp_cksum = nat_ipv4_tcp_udp_checksum_update(udp->dgram_cksum,
--				ip->src_addr,
--				data->addr,
--				udp->src_port,
--				data->port);
--
--			ip->src_addr = data->addr;
--			ip->hdr_checksum = ip_cksum;
--			udp->src_port = data->port;
--			if (udp->dgram_cksum)
--				udp->dgram_cksum = udp_cksum;
--		}
--	} else {
--		if (cfg->proto == 0x6) {
--			struct rte_tcp_hdr *tcp = (struct rte_tcp_hdr *) &ip[1];
--			uint16_t ip_cksum, tcp_cksum;
--
--			ip_cksum = nat_ipv4_checksum_update(ip->hdr_checksum,
--				ip->dst_addr,
--				data->addr);
--
--			tcp_cksum = nat_ipv4_tcp_udp_checksum_update(tcp->cksum,
--				ip->dst_addr,
--				data->addr,
--				tcp->dst_port,
--				data->port);
--
--			ip->dst_addr = data->addr;
--			ip->hdr_checksum = ip_cksum;
--			tcp->dst_port = data->port;
--			tcp->cksum = tcp_cksum;
--		} else {
--			struct rte_udp_hdr *udp = (struct rte_udp_hdr *) &ip[1];
--			uint16_t ip_cksum, udp_cksum;
--
--			ip_cksum = nat_ipv4_checksum_update(ip->hdr_checksum,
--				ip->dst_addr,
--				data->addr);
--
--			udp_cksum = nat_ipv4_tcp_udp_checksum_update(udp->dgram_cksum,
--				ip->dst_addr,
--				data->addr,
--				udp->dst_port,
--				data->port);
--
--			ip->dst_addr = data->addr;
--			ip->hdr_checksum = ip_cksum;
--			udp->dst_port = data->port;
--			if (udp->dgram_cksum)
--				udp->dgram_cksum = udp_cksum;
--		}
--	}
--}
--
--static __rte_always_inline void
--pkt_ipv6_work_nat(struct rte_ipv6_hdr *ip,
--	struct nat_ipv6_data *data,
--	struct rte_table_action_nat_config *cfg)
--{
--	if (cfg->source_nat) {
--		if (cfg->proto == 0x6) {
--			struct rte_tcp_hdr *tcp = (struct rte_tcp_hdr *) &ip[1];
--			uint16_t tcp_cksum;
--
--			tcp_cksum = nat_ipv6_tcp_udp_checksum_update(tcp->cksum,
--				(uint16_t *)&ip->src_addr,
--				(uint16_t *)&data->addr,
--				tcp->src_port,
--				data->port);
--
--			ip->src_addr = data->addr;
--			tcp->src_port = data->port;
--			tcp->cksum = tcp_cksum;
--		} else {
--			struct rte_udp_hdr *udp = (struct rte_udp_hdr *) &ip[1];
--			uint16_t udp_cksum;
--
--			udp_cksum = nat_ipv6_tcp_udp_checksum_update(udp->dgram_cksum,
--				(uint16_t *)&ip->src_addr,
--				(uint16_t *)&data->addr,
--				udp->src_port,
--				data->port);
--
--			ip->src_addr = data->addr;
--			udp->src_port = data->port;
--			udp->dgram_cksum = udp_cksum;
--		}
--	} else {
--		if (cfg->proto == 0x6) {
--			struct rte_tcp_hdr *tcp = (struct rte_tcp_hdr *) &ip[1];
--			uint16_t tcp_cksum;
--
--			tcp_cksum = nat_ipv6_tcp_udp_checksum_update(tcp->cksum,
--				(uint16_t *)&ip->dst_addr,
--				(uint16_t *)&data->addr,
--				tcp->dst_port,
--				data->port);
--
--			ip->dst_addr = data->addr;
--			tcp->dst_port = data->port;
--			tcp->cksum = tcp_cksum;
--		} else {
--			struct rte_udp_hdr *udp = (struct rte_udp_hdr *) &ip[1];
--			uint16_t udp_cksum;
--
--			udp_cksum = nat_ipv6_tcp_udp_checksum_update(udp->dgram_cksum,
--				(uint16_t *)&ip->dst_addr,
--				(uint16_t *)&data->addr,
--				udp->dst_port,
--				data->port);
--
--			ip->dst_addr = data->addr;
--			udp->dst_port = data->port;
--			udp->dgram_cksum = udp_cksum;
--		}
--	}
--}
--
--/**
-- * RTE_TABLE_ACTION_TTL
-- */
--static int
--ttl_cfg_check(struct rte_table_action_ttl_config *ttl)
--{
--	if (ttl->drop == 0)
--		return -ENOTSUP;
--
--	return 0;
--}
--
--struct __rte_packed_begin ttl_data {
--	uint32_t n_packets;
--} __rte_packed_end;
--
--#define TTL_INIT(data, decrement)                         \
--	((data)->n_packets = (decrement) ? 1 : 0)
--
--#define TTL_DEC_GET(data)                                  \
--	((uint8_t)((data)->n_packets & 1))
--
--#define TTL_STATS_RESET(data)                             \
--	((data)->n_packets = ((data)->n_packets & 1))
--
--#define TTL_STATS_READ(data)                               \
--	((data)->n_packets >> 1)
--
--#define TTL_STATS_ADD(data, value)                        \
--	((data)->n_packets =                                  \
--		(((((data)->n_packets >> 1) + (value)) << 1) |    \
--		((data)->n_packets & 1)))
--
--static int
--ttl_apply(void *data,
--	struct rte_table_action_ttl_params *p)
--{
--	struct ttl_data *d = data;
--
--	TTL_INIT(d, p->decrement);
--
--	return 0;
--}
--
--static __rte_always_inline uint64_t
--pkt_ipv4_work_ttl(struct rte_ipv4_hdr *ip,
--	struct ttl_data *data)
--{
--	uint32_t drop;
--	uint16_t cksum = ip->hdr_checksum;
--	uint8_t ttl = ip->time_to_live;
--	uint8_t ttl_diff = TTL_DEC_GET(data);
--
--	cksum += ttl_diff;
--	ttl -= ttl_diff;
--
--	ip->hdr_checksum = cksum;
--	ip->time_to_live = ttl;
--
--	drop = (ttl == 0) ? 1 : 0;
--	TTL_STATS_ADD(data, drop);
--
--	return drop;
--}
--
--static __rte_always_inline uint64_t
--pkt_ipv6_work_ttl(struct rte_ipv6_hdr *ip,
--	struct ttl_data *data)
--{
--	uint32_t drop;
--	uint8_t ttl = ip->hop_limits;
--	uint8_t ttl_diff = TTL_DEC_GET(data);
--
--	ttl -= ttl_diff;
--
--	ip->hop_limits = ttl;
--
--	drop = (ttl == 0) ? 1 : 0;
--	TTL_STATS_ADD(data, drop);
--
--	return drop;
--}
--
--/**
-- * RTE_TABLE_ACTION_STATS
-- */
--static int
--stats_cfg_check(struct rte_table_action_stats_config *stats)
--{
--	if ((stats->n_packets_enabled == 0) && (stats->n_bytes_enabled == 0))
--		return -EINVAL;
--
--	return 0;
--}
--
--struct __rte_packed_begin stats_data {
--	uint64_t n_packets;
--	uint64_t n_bytes;
--} __rte_packed_end;
--
--static int
--stats_apply(struct stats_data *data,
--	struct rte_table_action_stats_params *p)
--{
--	data->n_packets = p->n_packets;
--	data->n_bytes = p->n_bytes;
--
--	return 0;
--}
--
--static __rte_always_inline void
--pkt_work_stats(struct stats_data *data,
--	uint16_t total_length)
--{
--	data->n_packets++;
--	data->n_bytes += total_length;
--}
--
--/**
-- * RTE_TABLE_ACTION_TIME
-- */
--struct __rte_packed_begin time_data {
--	uint64_t time;
--} __rte_packed_end;
--
--static int
--time_apply(struct time_data *data,
--	struct rte_table_action_time_params *p)
--{
--	data->time = p->time;
--	return 0;
--}
--
--static __rte_always_inline void
--pkt_work_time(struct time_data *data,
--	uint64_t time)
--{
--	data->time = time;
--}
--
--
--/**
-- * RTE_TABLE_ACTION_CRYPTO
-- */
--
--#define CRYPTO_OP_MASK_CIPHER	0x1
--#define CRYPTO_OP_MASK_AUTH	0x2
--#define CRYPTO_OP_MASK_AEAD	0x4
--
--struct crypto_op_sym_iv_aad {
--	struct rte_crypto_op op;
--	struct rte_crypto_sym_op sym_op;
--	union {
--		struct {
--			uint8_t cipher_iv[
--				RTE_TABLE_ACTION_SYM_CRYPTO_IV_SIZE_MAX];
--			uint8_t auth_iv[
--				RTE_TABLE_ACTION_SYM_CRYPTO_IV_SIZE_MAX];
--		} cipher_auth;
--
--		struct {
--			uint8_t iv[RTE_TABLE_ACTION_SYM_CRYPTO_IV_SIZE_MAX];
--			uint8_t aad[RTE_TABLE_ACTION_SYM_CRYPTO_AAD_SIZE_MAX];
--		} aead_iv_aad;
--
--	} iv_aad;
--};
--
--struct __rte_packed_begin sym_crypto_data {
--
--	union {
--		struct {
--
--			/** Length of cipher iv. */
--			uint16_t cipher_iv_len;
--
--			/** Offset from start of IP header to the cipher iv. */
--			uint16_t cipher_iv_data_offset;
--
--			/** Length of cipher iv to be updated in the mbuf. */
--			uint16_t cipher_iv_update_len;
--
--			/** Offset from start of IP header to the auth iv. */
--			uint16_t auth_iv_data_offset;
--
--			/** Length of auth iv in the mbuf. */
--			uint16_t auth_iv_len;
--
--			/** Length of auth iv to be updated in the mbuf. */
--			uint16_t auth_iv_update_len;
--
--		} cipher_auth;
--		struct {
--
--			/** Length of iv. */
--			uint16_t iv_len;
--
--			/** Offset from start of IP header to the aead iv. */
--			uint16_t iv_data_offset;
--
--			/** Length of iv to be updated in the mbuf. */
--			uint16_t iv_update_len;
--
--			/** Length of aad */
--			uint16_t aad_len;
--
--			/** Offset from start of IP header to the aad. */
--			uint16_t aad_data_offset;
--
--			/** Length of aad to updated in the mbuf. */
--			uint16_t aad_update_len;
--
--		} aead;
--	};
--
--	/** Offset from start of IP header to the data. */
--	uint16_t data_offset;
--
--	/** Digest length. */
--	uint16_t digest_len;
--
--	/** block size */
--	uint16_t block_size;
--
--	/** Mask of crypto operation */
--	uint16_t op_mask;
--
--	/** Session pointer. */
--	struct rte_cryptodev_sym_session *session;
--
--	/** Direction of crypto, encrypt or decrypt */
--	uint16_t direction;
--
--	/** Private data size to store cipher iv / aad. */
--	uint8_t iv_aad_data[32];
--
--} __rte_packed_end;
--
--static int
--sym_crypto_cfg_check(struct rte_table_action_sym_crypto_config *cfg)
--{
--	if (!rte_cryptodev_is_valid_dev(cfg->cryptodev_id))
--		return -EINVAL;
--	if (cfg->mp_create == NULL || cfg->mp_init == NULL)
--		return -EINVAL;
--
--	return 0;
--}
--
--static int
--get_block_size(const struct rte_crypto_sym_xform *xform, uint8_t cdev_id)
--{
--	struct rte_cryptodev_info dev_info;
--	const struct rte_cryptodev_capabilities *cap;
--	uint32_t i;
--
--	rte_cryptodev_info_get(cdev_id, &dev_info);
--
--	for (i = 0; dev_info.capabilities[i].op != RTE_CRYPTO_OP_TYPE_UNDEFINED;
--			i++) {
--		cap = &dev_info.capabilities[i];
--
--		if (cap->sym.xform_type != xform->type)
--			continue;
--
--		if ((xform->type == RTE_CRYPTO_SYM_XFORM_CIPHER) &&
--				(cap->sym.cipher.algo == xform->cipher.algo))
--			return cap->sym.cipher.block_size;
--
--		if ((xform->type == RTE_CRYPTO_SYM_XFORM_AEAD) &&
--				(cap->sym.aead.algo == xform->aead.algo))
--			return cap->sym.aead.block_size;
--
--		if (xform->type == RTE_CRYPTO_SYM_XFORM_NOT_SPECIFIED)
--			break;
--	}
--
--	return -1;
--}
--
--static int
--sym_crypto_apply(struct sym_crypto_data *data,
--	struct rte_table_action_sym_crypto_config *cfg,
--	struct rte_table_action_sym_crypto_params *p)
--{
--	const struct rte_crypto_cipher_xform *cipher_xform = NULL;
--	const struct rte_crypto_auth_xform *auth_xform = NULL;
--	const struct rte_crypto_aead_xform *aead_xform = NULL;
--	struct rte_crypto_sym_xform *xform = p->xform;
--	struct rte_cryptodev_sym_session *session;
--	int ret;
--
--	memset(data, 0, sizeof(*data));
--
--	while (xform) {
--		if (xform->type == RTE_CRYPTO_SYM_XFORM_CIPHER) {
--			cipher_xform = &xform->cipher;
--
--			if (cipher_xform->iv.length >
--				RTE_TABLE_ACTION_SYM_CRYPTO_IV_SIZE_MAX)
--				return -ENOMEM;
--			if (cipher_xform->iv.offset !=
--					RTE_TABLE_ACTION_SYM_CRYPTO_IV_OFFSET)
--				return -EINVAL;
--
--			ret = get_block_size(xform, cfg->cryptodev_id);
--			if (ret < 0)
--				return -1;
--			data->block_size = (uint16_t)ret;
--			data->op_mask |= CRYPTO_OP_MASK_CIPHER;
--
--			data->cipher_auth.cipher_iv_len =
--					cipher_xform->iv.length;
--			data->cipher_auth.cipher_iv_data_offset = (uint16_t)
--					p->cipher_auth.cipher_iv_update.offset;
--			data->cipher_auth.cipher_iv_update_len = (uint16_t)
--					p->cipher_auth.cipher_iv_update.length;
--
--			rte_memcpy(data->iv_aad_data,
--					p->cipher_auth.cipher_iv.val,
--					p->cipher_auth.cipher_iv.length);
--
--			data->direction = cipher_xform->op;
--
--		} else if (xform->type == RTE_CRYPTO_SYM_XFORM_AUTH) {
--			auth_xform = &xform->auth;
--			if (auth_xform->iv.length >
--				RTE_TABLE_ACTION_SYM_CRYPTO_IV_SIZE_MAX)
--				return -ENOMEM;
--			data->op_mask |= CRYPTO_OP_MASK_AUTH;
--
--			data->cipher_auth.auth_iv_len = auth_xform->iv.length;
--			data->cipher_auth.auth_iv_data_offset = (uint16_t)
--					p->cipher_auth.auth_iv_update.offset;
--			data->cipher_auth.auth_iv_update_len = (uint16_t)
--					p->cipher_auth.auth_iv_update.length;
--			data->digest_len = auth_xform->digest_length;
--
--			data->direction = (auth_xform->op ==
--					RTE_CRYPTO_AUTH_OP_GENERATE) ?
--					RTE_CRYPTO_CIPHER_OP_ENCRYPT :
--					RTE_CRYPTO_CIPHER_OP_DECRYPT;
--
--		} else if (xform->type == RTE_CRYPTO_SYM_XFORM_AEAD) {
--			aead_xform = &xform->aead;
--
--			if ((aead_xform->iv.length >
--				RTE_TABLE_ACTION_SYM_CRYPTO_IV_SIZE_MAX) || (
--				aead_xform->aad_length >
--				RTE_TABLE_ACTION_SYM_CRYPTO_AAD_SIZE_MAX))
--				return -EINVAL;
--			if (aead_xform->iv.offset !=
--					RTE_TABLE_ACTION_SYM_CRYPTO_IV_OFFSET)
--				return -EINVAL;
--
--			ret = get_block_size(xform, cfg->cryptodev_id);
--			if (ret < 0)
--				return -1;
--			data->block_size = (uint16_t)ret;
--			data->op_mask |= CRYPTO_OP_MASK_AEAD;
--
--			data->digest_len = aead_xform->digest_length;
--			data->aead.iv_len = aead_xform->iv.length;
--			data->aead.aad_len = aead_xform->aad_length;
--
--			data->aead.iv_data_offset = (uint16_t)
--					p->aead.iv_update.offset;
--			data->aead.iv_update_len = (uint16_t)
--					p->aead.iv_update.length;
--			data->aead.aad_data_offset = (uint16_t)
--					p->aead.aad_update.offset;
--			data->aead.aad_update_len = (uint16_t)
--					p->aead.aad_update.length;
--
--			rte_memcpy(data->iv_aad_data,
--					p->aead.iv.val,
--					p->aead.iv.length);
--
--			rte_memcpy(data->iv_aad_data + p->aead.iv.length,
--					p->aead.aad.val,
--					p->aead.aad.length);
--
--			data->direction = (aead_xform->op ==
--					RTE_CRYPTO_AEAD_OP_ENCRYPT) ?
--					RTE_CRYPTO_CIPHER_OP_ENCRYPT :
--					RTE_CRYPTO_CIPHER_OP_DECRYPT;
--		} else
--			return -EINVAL;
--
--		xform = xform->next;
--	}
--
--	if (auth_xform && auth_xform->iv.length) {
--		if (cipher_xform) {
--			if (auth_xform->iv.offset !=
--					RTE_TABLE_ACTION_SYM_CRYPTO_IV_OFFSET +
--					cipher_xform->iv.length)
--				return -EINVAL;
--
--			rte_memcpy(data->iv_aad_data + cipher_xform->iv.length,
--					p->cipher_auth.auth_iv.val,
--					p->cipher_auth.auth_iv.length);
--		} else {
--			rte_memcpy(data->iv_aad_data,
--					p->cipher_auth.auth_iv.val,
--					p->cipher_auth.auth_iv.length);
--		}
--	}
--
--	session = rte_cryptodev_sym_session_create(cfg->cryptodev_id,
--			p->xform, cfg->mp_create);
--	if (!session)
--		return -ENOMEM;
--
--	data->data_offset = (uint16_t)p->data_offset;
--	data->session = session;
--
--	return 0;
--}
--
--static __rte_always_inline uint64_t
--pkt_work_sym_crypto(struct rte_mbuf *mbuf, struct sym_crypto_data *data,
--		struct rte_table_action_sym_crypto_config *cfg,
--		uint16_t ip_offset)
--{
--	struct crypto_op_sym_iv_aad *crypto_op = (struct crypto_op_sym_iv_aad *)
--			RTE_MBUF_METADATA_UINT8_PTR(mbuf, cfg->op_offset);
--	struct rte_crypto_op *op = &crypto_op->op;
--	struct rte_crypto_sym_op *sym = op->sym;
--	uint32_t pkt_offset = sizeof(*mbuf) + mbuf->data_off;
--	uint32_t payload_len = pkt_offset + mbuf->data_len - data->data_offset;
--
--	op->type = RTE_CRYPTO_OP_TYPE_SYMMETRIC;
--	op->sess_type = RTE_CRYPTO_OP_WITH_SESSION;
--	op->phys_addr = rte_mbuf_iova_get(mbuf) + cfg->op_offset - sizeof(*mbuf);
--	op->status = RTE_CRYPTO_OP_STATUS_NOT_PROCESSED;
--	sym->m_src = mbuf;
--	sym->m_dst = NULL;
--	sym->session = data->session;
--
--	/** pad the packet */
--	if (data->direction == RTE_CRYPTO_CIPHER_OP_ENCRYPT) {
--		uint32_t append_len = RTE_ALIGN_CEIL(payload_len,
--				data->block_size) - payload_len;
--
--		if (unlikely(rte_pktmbuf_append(mbuf, append_len +
--				data->digest_len) == NULL))
--			return 1;
--
--		payload_len += append_len;
--	} else
--		payload_len -= data->digest_len;
--
--	if (data->op_mask & CRYPTO_OP_MASK_CIPHER) {
--		/** prepare cipher op */
--		uint8_t *iv = crypto_op->iv_aad.cipher_auth.cipher_iv;
--
--		sym->cipher.data.length = payload_len;
--		sym->cipher.data.offset = data->data_offset - pkt_offset;
--
--		if (data->cipher_auth.cipher_iv_update_len) {
--			uint8_t *pkt_iv = RTE_MBUF_METADATA_UINT8_PTR(mbuf,
--				data->cipher_auth.cipher_iv_data_offset
--				+ ip_offset);
--
--			/** For encryption, update the pkt iv field, otherwise
--			 *  update the iv_aad_field
--			 */
--			if (data->direction == RTE_CRYPTO_CIPHER_OP_ENCRYPT)
--				rte_memcpy(pkt_iv, data->iv_aad_data,
--					data->cipher_auth.cipher_iv_update_len);
--			else
--				rte_memcpy(data->iv_aad_data, pkt_iv,
--					data->cipher_auth.cipher_iv_update_len);
--		}
--
--		/** write iv */
--		rte_memcpy(iv, data->iv_aad_data,
--				data->cipher_auth.cipher_iv_len);
--	}
--
--	if (data->op_mask & CRYPTO_OP_MASK_AUTH) {
--		/** authentication always start from IP header. */
--		sym->auth.data.offset = ip_offset - pkt_offset;
--		sym->auth.data.length = mbuf->data_len - sym->auth.data.offset -
--				data->digest_len;
--		sym->auth.digest.data = rte_pktmbuf_mtod_offset(mbuf,
--				uint8_t *, rte_pktmbuf_pkt_len(mbuf) -
--				data->digest_len);
--		sym->auth.digest.phys_addr = rte_pktmbuf_iova_offset(mbuf,
--				rte_pktmbuf_pkt_len(mbuf) - data->digest_len);
--
--		if (data->cipher_auth.auth_iv_update_len) {
--			uint8_t *pkt_iv = RTE_MBUF_METADATA_UINT8_PTR(mbuf,
--					data->cipher_auth.auth_iv_data_offset
--					+ ip_offset);
--			uint8_t *data_iv = data->iv_aad_data +
--					data->cipher_auth.cipher_iv_len;
--
--			if (data->direction == RTE_CRYPTO_CIPHER_OP_ENCRYPT)
--				rte_memcpy(pkt_iv, data_iv,
--					data->cipher_auth.auth_iv_update_len);
--			else
--				rte_memcpy(data_iv, pkt_iv,
--					data->cipher_auth.auth_iv_update_len);
--		}
--
--		if (data->cipher_auth.auth_iv_len) {
--			/** prepare cipher op */
--			uint8_t *iv = crypto_op->iv_aad.cipher_auth.auth_iv;
--
--			rte_memcpy(iv, data->iv_aad_data +
--					data->cipher_auth.cipher_iv_len,
--					data->cipher_auth.auth_iv_len);
--		}
--	}
--
--	if (data->op_mask & CRYPTO_OP_MASK_AEAD) {
--		uint8_t *iv = crypto_op->iv_aad.aead_iv_aad.iv;
--		uint8_t *aad = crypto_op->iv_aad.aead_iv_aad.aad;
--
--		sym->aead.aad.data = aad;
--		sym->aead.aad.phys_addr = rte_pktmbuf_iova_offset(mbuf,
--				aad - rte_pktmbuf_mtod(mbuf, uint8_t *));
--		sym->aead.digest.data = rte_pktmbuf_mtod_offset(mbuf,
--				uint8_t *, rte_pktmbuf_pkt_len(mbuf) -
--				data->digest_len);
--		sym->aead.digest.phys_addr = rte_pktmbuf_iova_offset(mbuf,
--				rte_pktmbuf_pkt_len(mbuf) - data->digest_len);
--		sym->aead.data.offset = data->data_offset - pkt_offset;
--		sym->aead.data.length = payload_len;
--
--		if (data->aead.iv_update_len) {
--			uint8_t *pkt_iv = RTE_MBUF_METADATA_UINT8_PTR(mbuf,
--					data->aead.iv_data_offset + ip_offset);
--			uint8_t *data_iv = data->iv_aad_data;
--
--			if (data->direction == RTE_CRYPTO_CIPHER_OP_ENCRYPT)
--				rte_memcpy(pkt_iv, data_iv,
--						data->aead.iv_update_len);
--			else
--				rte_memcpy(data_iv, pkt_iv,
--					data->aead.iv_update_len);
--		}
--
--		rte_memcpy(iv, data->iv_aad_data, data->aead.iv_len);
--
--		if (data->aead.aad_update_len) {
--			uint8_t *pkt_aad = RTE_MBUF_METADATA_UINT8_PTR(mbuf,
--					data->aead.aad_data_offset + ip_offset);
--			uint8_t *data_aad = data->iv_aad_data +
--					data->aead.iv_len;
--
--			if (data->direction == RTE_CRYPTO_CIPHER_OP_ENCRYPT)
--				rte_memcpy(pkt_aad, data_aad,
--						data->aead.iv_update_len);
--			else
--				rte_memcpy(data_aad, pkt_aad,
--					data->aead.iv_update_len);
--		}
--
--		rte_memcpy(aad, data->iv_aad_data + data->aead.iv_len,
--					data->aead.aad_len);
--	}
--
--	return 0;
--}
--
--/**
-- * RTE_TABLE_ACTION_TAG
-- */
--struct __rte_packed_begin tag_data {
--	uint32_t tag;
--} __rte_packed_end;
--
--static int
--tag_apply(struct tag_data *data,
--	struct rte_table_action_tag_params *p)
--{
--	data->tag = p->tag;
--	return 0;
--}
--
--static __rte_always_inline void
--pkt_work_tag(struct rte_mbuf *mbuf,
--	struct tag_data *data)
--{
--	mbuf->hash.fdir.hi = data->tag;
--	mbuf->ol_flags |= RTE_MBUF_F_RX_FDIR | RTE_MBUF_F_RX_FDIR_ID;
--}
--
--static __rte_always_inline void
--pkt4_work_tag(struct rte_mbuf *mbuf0,
--	struct rte_mbuf *mbuf1,
--	struct rte_mbuf *mbuf2,
--	struct rte_mbuf *mbuf3,
--	struct tag_data *data0,
--	struct tag_data *data1,
--	struct tag_data *data2,
--	struct tag_data *data3)
--{
--	mbuf0->hash.fdir.hi = data0->tag;
--	mbuf1->hash.fdir.hi = data1->tag;
--	mbuf2->hash.fdir.hi = data2->tag;
--	mbuf3->hash.fdir.hi = data3->tag;
--
--	mbuf0->ol_flags |= RTE_MBUF_F_RX_FDIR | RTE_MBUF_F_RX_FDIR_ID;
--	mbuf1->ol_flags |= RTE_MBUF_F_RX_FDIR | RTE_MBUF_F_RX_FDIR_ID;
--	mbuf2->ol_flags |= RTE_MBUF_F_RX_FDIR | RTE_MBUF_F_RX_FDIR_ID;
--	mbuf3->ol_flags |= RTE_MBUF_F_RX_FDIR | RTE_MBUF_F_RX_FDIR_ID;
--}
--
--/**
-- * RTE_TABLE_ACTION_DECAP
-- */
--struct __rte_packed_begin decap_data {
--	uint16_t n;
--} __rte_packed_end;
--
--static int
--decap_apply(struct decap_data *data,
--	struct rte_table_action_decap_params *p)
--{
--	data->n = p->n;
--	return 0;
--}
--
--static __rte_always_inline void
--pkt_work_decap(struct rte_mbuf *mbuf,
--	struct decap_data *data)
--{
--	uint16_t data_off = mbuf->data_off;
--	uint16_t data_len = mbuf->data_len;
--	uint32_t pkt_len = mbuf->pkt_len;
--	uint16_t n = data->n;
--
--	mbuf->data_off = data_off + n;
--	mbuf->data_len = data_len - n;
--	mbuf->pkt_len = pkt_len - n;
--}
--
--static __rte_always_inline void
--pkt4_work_decap(struct rte_mbuf *mbuf0,
--	struct rte_mbuf *mbuf1,
--	struct rte_mbuf *mbuf2,
--	struct rte_mbuf *mbuf3,
--	struct decap_data *data0,
--	struct decap_data *data1,
--	struct decap_data *data2,
--	struct decap_data *data3)
--{
--	uint16_t data_off0 = mbuf0->data_off;
--	uint16_t data_len0 = mbuf0->data_len;
--	uint32_t pkt_len0 = mbuf0->pkt_len;
--
--	uint16_t data_off1 = mbuf1->data_off;
--	uint16_t data_len1 = mbuf1->data_len;
--	uint32_t pkt_len1 = mbuf1->pkt_len;
--
--	uint16_t data_off2 = mbuf2->data_off;
--	uint16_t data_len2 = mbuf2->data_len;
--	uint32_t pkt_len2 = mbuf2->pkt_len;
--
--	uint16_t data_off3 = mbuf3->data_off;
--	uint16_t data_len3 = mbuf3->data_len;
--	uint32_t pkt_len3 = mbuf3->pkt_len;
--
--	uint16_t n0 = data0->n;
--	uint16_t n1 = data1->n;
--	uint16_t n2 = data2->n;
--	uint16_t n3 = data3->n;
--
--	mbuf0->data_off = data_off0 + n0;
--	mbuf0->data_len = data_len0 - n0;
--	mbuf0->pkt_len = pkt_len0 - n0;
--
--	mbuf1->data_off = data_off1 + n1;
--	mbuf1->data_len = data_len1 - n1;
--	mbuf1->pkt_len = pkt_len1 - n1;
--
--	mbuf2->data_off = data_off2 + n2;
--	mbuf2->data_len = data_len2 - n2;
--	mbuf2->pkt_len = pkt_len2 - n2;
--
--	mbuf3->data_off = data_off3 + n3;
--	mbuf3->data_len = data_len3 - n3;
--	mbuf3->pkt_len = pkt_len3 - n3;
--}
--
--/**
-- * Action profile
-- */
--static int
--action_valid(enum rte_table_action_type action)
--{
--	switch (action) {
--	case RTE_TABLE_ACTION_FWD:
--	case RTE_TABLE_ACTION_LB:
--	case RTE_TABLE_ACTION_MTR:
--	case RTE_TABLE_ACTION_TM:
--	case RTE_TABLE_ACTION_ENCAP:
--	case RTE_TABLE_ACTION_NAT:
--	case RTE_TABLE_ACTION_TTL:
--	case RTE_TABLE_ACTION_STATS:
--	case RTE_TABLE_ACTION_TIME:
--	case RTE_TABLE_ACTION_SYM_CRYPTO:
--	case RTE_TABLE_ACTION_TAG:
--	case RTE_TABLE_ACTION_DECAP:
--		return 1;
--	default:
--		return 0;
--	}
--}
--
--
--#define RTE_TABLE_ACTION_MAX                      64
--
--struct ap_config {
--	uint64_t action_mask;
--	struct rte_table_action_common_config common;
--	struct rte_table_action_lb_config lb;
--	struct rte_table_action_mtr_config mtr;
--	struct rte_table_action_tm_config tm;
--	struct rte_table_action_encap_config encap;
--	struct rte_table_action_nat_config nat;
--	struct rte_table_action_ttl_config ttl;
--	struct rte_table_action_stats_config stats;
--	struct rte_table_action_sym_crypto_config sym_crypto;
--};
--
--static size_t
--action_cfg_size(enum rte_table_action_type action)
--{
--	switch (action) {
--	case RTE_TABLE_ACTION_LB:
--		return sizeof(struct rte_table_action_lb_config);
--	case RTE_TABLE_ACTION_MTR:
--		return sizeof(struct rte_table_action_mtr_config);
--	case RTE_TABLE_ACTION_TM:
--		return sizeof(struct rte_table_action_tm_config);
--	case RTE_TABLE_ACTION_ENCAP:
--		return sizeof(struct rte_table_action_encap_config);
--	case RTE_TABLE_ACTION_NAT:
--		return sizeof(struct rte_table_action_nat_config);
--	case RTE_TABLE_ACTION_TTL:
--		return sizeof(struct rte_table_action_ttl_config);
--	case RTE_TABLE_ACTION_STATS:
--		return sizeof(struct rte_table_action_stats_config);
--	case RTE_TABLE_ACTION_SYM_CRYPTO:
--		return sizeof(struct rte_table_action_sym_crypto_config);
--	default:
--		return 0;
--	}
--}
--
--static void*
--action_cfg_get(struct ap_config *ap_config,
--	enum rte_table_action_type type)
--{
--	switch (type) {
--	case RTE_TABLE_ACTION_LB:
--		return &ap_config->lb;
--
--	case RTE_TABLE_ACTION_MTR:
--		return &ap_config->mtr;
--
--	case RTE_TABLE_ACTION_TM:
--		return &ap_config->tm;
--
--	case RTE_TABLE_ACTION_ENCAP:
--		return &ap_config->encap;
--
--	case RTE_TABLE_ACTION_NAT:
--		return &ap_config->nat;
--
--	case RTE_TABLE_ACTION_TTL:
--		return &ap_config->ttl;
--
--	case RTE_TABLE_ACTION_STATS:
--		return &ap_config->stats;
--
--	case RTE_TABLE_ACTION_SYM_CRYPTO:
--		return &ap_config->sym_crypto;
--	default:
--		return NULL;
--	}
--}
--
--static void
--action_cfg_set(struct ap_config *ap_config,
--	enum rte_table_action_type type,
--	void *action_cfg)
--{
--	void *dst = action_cfg_get(ap_config, type);
--
--	if (dst)
--		memcpy(dst, action_cfg, action_cfg_size(type));
--
--	ap_config->action_mask |= 1LLU << type;
--}
--
--struct ap_data {
--	size_t offset[RTE_TABLE_ACTION_MAX];
--	size_t total_size;
--};
--
--static size_t
--action_data_size(enum rte_table_action_type action,
--	struct ap_config *ap_config)
--{
--	switch (action) {
--	case RTE_TABLE_ACTION_FWD:
--		return sizeof(struct fwd_data);
--
--	case RTE_TABLE_ACTION_LB:
--		return sizeof(struct lb_data);
--
--	case RTE_TABLE_ACTION_MTR:
--		return mtr_data_size(&ap_config->mtr);
--
--	case RTE_TABLE_ACTION_TM:
--		return sizeof(struct tm_data);
--
--	case RTE_TABLE_ACTION_ENCAP:
--		return encap_data_size(&ap_config->encap);
--
--	case RTE_TABLE_ACTION_NAT:
--		return nat_data_size(&ap_config->nat,
--			&ap_config->common);
--
--	case RTE_TABLE_ACTION_TTL:
--		return sizeof(struct ttl_data);
--
--	case RTE_TABLE_ACTION_STATS:
--		return sizeof(struct stats_data);
--
--	case RTE_TABLE_ACTION_TIME:
--		return sizeof(struct time_data);
--
--	case RTE_TABLE_ACTION_SYM_CRYPTO:
--		return (sizeof(struct sym_crypto_data));
--
--	case RTE_TABLE_ACTION_TAG:
--		return sizeof(struct tag_data);
--
--	case RTE_TABLE_ACTION_DECAP:
--		return sizeof(struct decap_data);
--
--	default:
--		return 0;
--	}
--}
--
--
--static void
--action_data_offset_set(struct ap_data *ap_data,
--	struct ap_config *ap_config)
--{
--	uint64_t action_mask = ap_config->action_mask;
--	size_t offset;
--	uint32_t action;
--
--	memset(ap_data->offset, 0, sizeof(ap_data->offset));
--
--	offset = 0;
--	for (action = 0; action < RTE_TABLE_ACTION_MAX; action++)
--		if (action_mask & (1LLU << action)) {
--			ap_data->offset[action] = offset;
--			offset += action_data_size((enum rte_table_action_type)action,
--				ap_config);
--		}
--
--	ap_data->total_size = offset;
--}
--
--struct rte_table_action_profile {
--	struct ap_config cfg;
--	struct ap_data data;
--	int frozen;
--};
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_profile_create, 18.05)
--struct rte_table_action_profile *
--rte_table_action_profile_create(struct rte_table_action_common_config *common)
--{
--	struct rte_table_action_profile *ap;
--
--	/* Check input arguments */
--	if (common == NULL)
--		return NULL;
--
--	/* Memory allocation */
--	ap = calloc(1, sizeof(struct rte_table_action_profile));
--	if (ap == NULL)
--		return NULL;
--
--	/* Initialization */
--	memcpy(&ap->cfg.common, common, sizeof(*common));
--
--	return ap;
--}
--
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_profile_action_register, 18.05)
--int
--rte_table_action_profile_action_register(struct rte_table_action_profile *profile,
--	enum rte_table_action_type type,
--	void *action_config)
--{
--	int status;
--
--	/* Check input arguments */
--	if ((profile == NULL) ||
--		profile->frozen ||
--		(action_valid(type) == 0) ||
--		(profile->cfg.action_mask & (1LLU << type)) ||
--		((action_cfg_size(type) == 0) && action_config) ||
--		(action_cfg_size(type) && (action_config == NULL)))
--		return -EINVAL;
--
--	switch (type) {
--	case RTE_TABLE_ACTION_LB:
--		status = lb_cfg_check(action_config);
--		break;
--
--	case RTE_TABLE_ACTION_MTR:
--		status = mtr_cfg_check(action_config);
--		break;
--
--	case RTE_TABLE_ACTION_TM:
--		status = tm_cfg_check(action_config);
--		break;
--
--	case RTE_TABLE_ACTION_ENCAP:
--		status = encap_cfg_check(action_config);
--		break;
--
--	case RTE_TABLE_ACTION_NAT:
--		status = nat_cfg_check(action_config);
--		break;
--
--	case RTE_TABLE_ACTION_TTL:
--		status = ttl_cfg_check(action_config);
--		break;
--
--	case RTE_TABLE_ACTION_STATS:
--		status = stats_cfg_check(action_config);
--		break;
--
--	case RTE_TABLE_ACTION_SYM_CRYPTO:
--		status = sym_crypto_cfg_check(action_config);
--		break;
--
--	default:
--		status = 0;
--		break;
--	}
--
--	if (status)
--		return status;
--
--	/* Action enable */
--	action_cfg_set(&profile->cfg, type, action_config);
--
--	return 0;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_profile_freeze, 18.05)
--int
--rte_table_action_profile_freeze(struct rte_table_action_profile *profile)
--{
--	if (profile->frozen)
--		return -EBUSY;
--
--	profile->cfg.action_mask |= 1LLU << RTE_TABLE_ACTION_FWD;
--	action_data_offset_set(&profile->data, &profile->cfg);
--	profile->frozen = 1;
--
--	return 0;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_profile_free, 18.05)
--int
--rte_table_action_profile_free(struct rte_table_action_profile *profile)
--{
--	if (profile == NULL)
--		return 0;
--
--	free(profile);
--	return 0;
--}
--
--/**
-- * Action
-- */
--#define METER_PROFILES_MAX                                 32
--
--struct rte_table_action {
--	struct ap_config cfg;
--	struct ap_data data;
--	struct dscp_table_data dscp_table;
--	struct meter_profile_data mp[METER_PROFILES_MAX];
--};
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_create, 18.05)
--struct rte_table_action *
--rte_table_action_create(struct rte_table_action_profile *profile,
--	uint32_t socket_id)
--{
--	struct rte_table_action *action;
--
--	/* Check input arguments */
--	if ((profile == NULL) ||
--		(profile->frozen == 0))
--		return NULL;
--
--	/* Memory allocation */
--	action = rte_zmalloc_socket(NULL,
--		sizeof(struct rte_table_action),
--		RTE_CACHE_LINE_SIZE,
--		socket_id);
--	if (action == NULL)
--		return NULL;
--
--	/* Initialization */
--	memcpy(&action->cfg, &profile->cfg, sizeof(profile->cfg));
--	memcpy(&action->data, &profile->data, sizeof(profile->data));
--
--	return action;
--}
--
--static __rte_always_inline void *
--action_data_get(void *data,
--	struct rte_table_action *action,
--	enum rte_table_action_type type)
--{
--	size_t offset = action->data.offset[type];
--	uint8_t *data_bytes = data;
--
--	return &data_bytes[offset];
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_apply, 18.05)
--int
--rte_table_action_apply(struct rte_table_action *action,
--	void *data,
--	enum rte_table_action_type type,
--	void *action_params)
--{
--	void *action_data;
--
--	/* Check input arguments */
--	if ((action == NULL) ||
--		(data == NULL) ||
--		(action_valid(type) == 0) ||
--		((action->cfg.action_mask & (1LLU << type)) == 0) ||
--		(action_params == NULL))
--		return -EINVAL;
--
--	/* Data update */
--	action_data = action_data_get(data, action, type);
--
--	switch (type) {
--	case RTE_TABLE_ACTION_FWD:
--		return fwd_apply(action_data,
--			action_params);
--
--	case RTE_TABLE_ACTION_LB:
--		return lb_apply(action_data,
--			action_params);
--
--	case RTE_TABLE_ACTION_MTR:
--		return mtr_apply(action_data,
--			action_params,
--			&action->cfg.mtr,
--			action->mp,
--			RTE_DIM(action->mp));
--
--	case RTE_TABLE_ACTION_TM:
--		return tm_apply(action_data,
--			action_params,
--			&action->cfg.tm);
--
--	case RTE_TABLE_ACTION_ENCAP:
--		return encap_apply(action_data,
--			action_params,
--			&action->cfg.encap,
--			&action->cfg.common);
--
--	case RTE_TABLE_ACTION_NAT:
--		return nat_apply(action_data,
--			action_params,
--			&action->cfg.common);
--
--	case RTE_TABLE_ACTION_TTL:
--		return ttl_apply(action_data,
--			action_params);
--
--	case RTE_TABLE_ACTION_STATS:
--		return stats_apply(action_data,
--			action_params);
--
--	case RTE_TABLE_ACTION_TIME:
--		return time_apply(action_data,
--			action_params);
--
--	case RTE_TABLE_ACTION_SYM_CRYPTO:
--		return sym_crypto_apply(action_data,
--				&action->cfg.sym_crypto,
--				action_params);
--
--	case RTE_TABLE_ACTION_TAG:
--		return tag_apply(action_data,
--			action_params);
--
--	case RTE_TABLE_ACTION_DECAP:
--		return decap_apply(action_data,
--			action_params);
--
--	default:
--		return -EINVAL;
--	}
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_dscp_table_update, 18.05)
--int
--rte_table_action_dscp_table_update(struct rte_table_action *action,
--	uint64_t dscp_mask,
--	struct rte_table_action_dscp_table *table)
--{
--	uint32_t i;
--
--	/* Check input arguments */
--	if ((action == NULL) ||
--		((action->cfg.action_mask & ((1LLU << RTE_TABLE_ACTION_MTR) |
--		(1LLU << RTE_TABLE_ACTION_TM))) == 0) ||
--		(dscp_mask == 0) ||
--		(table == NULL))
--		return -EINVAL;
--
--	for (i = 0; i < RTE_DIM(table->entry); i++) {
--		struct dscp_table_entry_data *data =
--			&action->dscp_table.entry[i];
--		struct rte_table_action_dscp_table_entry *entry =
--			&table->entry[i];
--
--		if ((dscp_mask & (1LLU << i)) == 0)
--			continue;
--
--		data->color = entry->color;
--		data->tc = entry->tc_id;
--		data->tc_queue = entry->tc_queue_id;
--	}
--
--	return 0;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_meter_profile_add, 18.05)
--int
--rte_table_action_meter_profile_add(struct rte_table_action *action,
--	uint32_t meter_profile_id,
--	struct rte_table_action_meter_profile *profile)
--{
--	struct meter_profile_data *mp_data;
--	uint32_t status;
--
--	/* Check input arguments */
--	if ((action == NULL) ||
--		((action->cfg.action_mask & (1LLU << RTE_TABLE_ACTION_MTR)) == 0) ||
--		(profile == NULL))
--		return -EINVAL;
--
--	if (profile->alg != RTE_TABLE_ACTION_METER_TRTCM)
--		return -ENOTSUP;
--
--	mp_data = meter_profile_data_find(action->mp,
--		RTE_DIM(action->mp),
--		meter_profile_id);
--	if (mp_data)
--		return -EEXIST;
--
--	mp_data = meter_profile_data_find_unused(action->mp,
--		RTE_DIM(action->mp));
--	if (!mp_data)
--		return -ENOSPC;
--
--	/* Install new profile */
--	status = rte_meter_trtcm_profile_config(&mp_data->profile,
--		&profile->trtcm);
--	if (status)
--		return status;
--
--	mp_data->profile_id = meter_profile_id;
--	mp_data->valid = 1;
--
--	return 0;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_meter_profile_delete, 18.05)
--int
--rte_table_action_meter_profile_delete(struct rte_table_action *action,
--	uint32_t meter_profile_id)
--{
--	struct meter_profile_data *mp_data;
--
--	/* Check input arguments */
--	if ((action == NULL) ||
--		((action->cfg.action_mask & (1LLU << RTE_TABLE_ACTION_MTR)) == 0))
--		return -EINVAL;
--
--	mp_data = meter_profile_data_find(action->mp,
--		RTE_DIM(action->mp),
--		meter_profile_id);
--	if (!mp_data)
--		return 0;
--
--	/* Uninstall profile */
--	mp_data->valid = 0;
--
--	return 0;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_meter_read, 18.05)
--int
--rte_table_action_meter_read(struct rte_table_action *action,
--	void *data,
--	uint32_t tc_mask,
--	struct rte_table_action_mtr_counters *stats,
--	int clear)
--{
--	struct mtr_trtcm_data *mtr_data;
--	uint32_t i;
--
--	/* Check input arguments */
--	if ((action == NULL) ||
--		((action->cfg.action_mask & (1LLU << RTE_TABLE_ACTION_MTR)) == 0) ||
--		(data == NULL) ||
--		(tc_mask > RTE_LEN2MASK(action->cfg.mtr.n_tc, uint32_t)))
--		return -EINVAL;
--
--	mtr_data = action_data_get(data, action, RTE_TABLE_ACTION_MTR);
--
--	/* Read */
--	if (stats) {
--		for (i = 0; i < RTE_TABLE_ACTION_TC_MAX; i++) {
--			struct rte_table_action_mtr_counters_tc *dst =
--				&stats->stats[i];
--			struct mtr_trtcm_data *src = &mtr_data[i];
--
--			if ((tc_mask & (1 << i)) == 0)
--				continue;
--
--			dst->n_packets[RTE_COLOR_GREEN] =
--				mtr_trtcm_data_stats_get(src, RTE_COLOR_GREEN);
--
--			dst->n_packets[RTE_COLOR_YELLOW] =
--				mtr_trtcm_data_stats_get(src, RTE_COLOR_YELLOW);
--
--			dst->n_packets[RTE_COLOR_RED] =
--				mtr_trtcm_data_stats_get(src, RTE_COLOR_RED);
--
--			dst->n_packets_valid = 1;
--			dst->n_bytes_valid = 0;
--		}
--
--		stats->tc_mask = tc_mask;
--	}
--
--	/* Clear */
--	if (clear)
--		for (i = 0; i < RTE_TABLE_ACTION_TC_MAX; i++) {
--			struct mtr_trtcm_data *src = &mtr_data[i];
--
--			if ((tc_mask & (1 << i)) == 0)
--				continue;
--
--			mtr_trtcm_data_stats_reset(src, RTE_COLOR_GREEN);
--			mtr_trtcm_data_stats_reset(src, RTE_COLOR_YELLOW);
--			mtr_trtcm_data_stats_reset(src, RTE_COLOR_RED);
--		}
--
--
--	return 0;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_ttl_read, 18.05)
--int
--rte_table_action_ttl_read(struct rte_table_action *action,
--	void *data,
--	struct rte_table_action_ttl_counters *stats,
--	int clear)
--{
--	struct ttl_data *ttl_data;
--
--	/* Check input arguments */
--	if ((action == NULL) ||
--		((action->cfg.action_mask &
--		(1LLU << RTE_TABLE_ACTION_TTL)) == 0) ||
--		(data == NULL))
--		return -EINVAL;
--
--	ttl_data = action_data_get(data, action, RTE_TABLE_ACTION_TTL);
--
--	/* Read */
--	if (stats)
--		stats->n_packets = TTL_STATS_READ(ttl_data);
--
--	/* Clear */
--	if (clear)
--		TTL_STATS_RESET(ttl_data);
--
--	return 0;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_stats_read, 18.05)
--int
--rte_table_action_stats_read(struct rte_table_action *action,
--	void *data,
--	struct rte_table_action_stats_counters *stats,
--	int clear)
--{
--	struct stats_data *stats_data;
--
--	/* Check input arguments */
--	if ((action == NULL) ||
--		((action->cfg.action_mask &
--		(1LLU << RTE_TABLE_ACTION_STATS)) == 0) ||
--		(data == NULL))
--		return -EINVAL;
--
--	stats_data = action_data_get(data, action,
--		RTE_TABLE_ACTION_STATS);
--
--	/* Read */
--	if (stats) {
--		stats->n_packets = stats_data->n_packets;
--		stats->n_bytes = stats_data->n_bytes;
--		stats->n_packets_valid = 1;
--		stats->n_bytes_valid = 1;
--	}
--
--	/* Clear */
--	if (clear) {
--		stats_data->n_packets = 0;
--		stats_data->n_bytes = 0;
--	}
--
--	return 0;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_time_read, 18.05)
--int
--rte_table_action_time_read(struct rte_table_action *action,
--	void *data,
--	uint64_t *timestamp)
--{
--	struct time_data *time_data;
--
--	/* Check input arguments */
--	if ((action == NULL) ||
--		((action->cfg.action_mask &
--		(1LLU << RTE_TABLE_ACTION_TIME)) == 0) ||
--		(data == NULL) ||
--		(timestamp == NULL))
--		return -EINVAL;
--
--	time_data = action_data_get(data, action, RTE_TABLE_ACTION_TIME);
--
--	/* Read */
--	*timestamp = time_data->time;
--
--	return 0;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_crypto_sym_session_get, 18.11)
--struct rte_cryptodev_sym_session *
--rte_table_action_crypto_sym_session_get(struct rte_table_action *action,
--	void *data)
--{
--	struct sym_crypto_data *sym_crypto_data;
--
--	/* Check input arguments */
--	if ((action == NULL) ||
--		((action->cfg.action_mask &
--		(1LLU << RTE_TABLE_ACTION_SYM_CRYPTO)) == 0) ||
--		(data == NULL))
--		return NULL;
--
--	sym_crypto_data = action_data_get(data, action,
--			RTE_TABLE_ACTION_SYM_CRYPTO);
--
--	return sym_crypto_data->session;
--}
--
--static __rte_always_inline uint64_t
--pkt_work(struct rte_mbuf *mbuf,
--	struct rte_pipeline_table_entry *table_entry,
--	uint64_t time,
--	struct rte_table_action *action,
--	struct ap_config *cfg)
--{
--	uint64_t drop_mask = 0;
--
--	uint32_t ip_offset = action->cfg.common.ip_offset;
--	void *ip = RTE_MBUF_METADATA_UINT32_PTR(mbuf, ip_offset);
--
--	uint32_t dscp;
--	uint16_t total_length;
--
--	if (cfg->common.ip_version) {
--		struct rte_ipv4_hdr *hdr = ip;
--
--		dscp = hdr->type_of_service >> 2;
--		total_length = rte_ntohs(hdr->total_length);
--	} else {
--		struct rte_ipv6_hdr *hdr = ip;
--
--		dscp = (rte_ntohl(hdr->vtc_flow) & 0x0F600000) >> 18;
--		total_length = rte_ntohs(hdr->payload_len) +
--			sizeof(struct rte_ipv6_hdr);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_LB)) {
--		void *data =
--			action_data_get(table_entry, action, RTE_TABLE_ACTION_LB);
--
--		pkt_work_lb(mbuf,
--			data,
--			&cfg->lb);
--	}
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_MTR)) {
--		void *data =
--			action_data_get(table_entry, action, RTE_TABLE_ACTION_MTR);
--
--		drop_mask |= pkt_work_mtr(mbuf,
--			data,
--			&action->dscp_table,
--			action->mp,
--			time,
--			dscp,
--			total_length);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_TM)) {
--		void *data =
--			action_data_get(table_entry, action, RTE_TABLE_ACTION_TM);
--
--		pkt_work_tm(mbuf,
--			data,
--			&action->dscp_table,
--			dscp);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_DECAP)) {
--		void *data = action_data_get(table_entry,
--			action,
--			RTE_TABLE_ACTION_DECAP);
--
--		pkt_work_decap(mbuf, data);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_ENCAP)) {
--		void *data =
--			action_data_get(table_entry, action, RTE_TABLE_ACTION_ENCAP);
--
--		pkt_work_encap(mbuf,
--			data,
--			&cfg->encap,
--			ip,
--			total_length,
--			ip_offset);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_NAT)) {
--		void *data =
--			action_data_get(table_entry, action, RTE_TABLE_ACTION_NAT);
--
--		if (cfg->common.ip_version)
--			pkt_ipv4_work_nat(ip, data, &cfg->nat);
--		else
--			pkt_ipv6_work_nat(ip, data, &cfg->nat);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_TTL)) {
--		void *data =
--			action_data_get(table_entry, action, RTE_TABLE_ACTION_TTL);
--
--		if (cfg->common.ip_version)
--			drop_mask |= pkt_ipv4_work_ttl(ip, data);
--		else
--			drop_mask |= pkt_ipv6_work_ttl(ip, data);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_STATS)) {
--		void *data =
--			action_data_get(table_entry, action, RTE_TABLE_ACTION_STATS);
--
--		pkt_work_stats(data, total_length);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_TIME)) {
--		void *data =
--			action_data_get(table_entry, action, RTE_TABLE_ACTION_TIME);
--
--		pkt_work_time(data, time);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_SYM_CRYPTO)) {
--		void *data = action_data_get(table_entry, action,
--				RTE_TABLE_ACTION_SYM_CRYPTO);
--
--		drop_mask |= pkt_work_sym_crypto(mbuf, data, &cfg->sym_crypto,
--				ip_offset);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_TAG)) {
--		void *data = action_data_get(table_entry,
--			action,
--			RTE_TABLE_ACTION_TAG);
--
--		pkt_work_tag(mbuf, data);
--	}
--
--	return drop_mask;
--}
--
--static __rte_always_inline uint64_t
--pkt4_work(struct rte_mbuf **mbufs,
--	struct rte_pipeline_table_entry **table_entries,
--	uint64_t time,
--	struct rte_table_action *action,
--	struct ap_config *cfg)
--{
--	uint64_t drop_mask0 = 0;
--	uint64_t drop_mask1 = 0;
--	uint64_t drop_mask2 = 0;
--	uint64_t drop_mask3 = 0;
--
--	struct rte_mbuf *mbuf0 = mbufs[0];
--	struct rte_mbuf *mbuf1 = mbufs[1];
--	struct rte_mbuf *mbuf2 = mbufs[2];
--	struct rte_mbuf *mbuf3 = mbufs[3];
--
--	struct rte_pipeline_table_entry *table_entry0 = table_entries[0];
--	struct rte_pipeline_table_entry *table_entry1 = table_entries[1];
--	struct rte_pipeline_table_entry *table_entry2 = table_entries[2];
--	struct rte_pipeline_table_entry *table_entry3 = table_entries[3];
--
--	uint32_t ip_offset = action->cfg.common.ip_offset;
--	void *ip0 = RTE_MBUF_METADATA_UINT32_PTR(mbuf0, ip_offset);
--	void *ip1 = RTE_MBUF_METADATA_UINT32_PTR(mbuf1, ip_offset);
--	void *ip2 = RTE_MBUF_METADATA_UINT32_PTR(mbuf2, ip_offset);
--	void *ip3 = RTE_MBUF_METADATA_UINT32_PTR(mbuf3, ip_offset);
--
--	uint32_t dscp0, dscp1, dscp2, dscp3;
--	uint16_t total_length0, total_length1, total_length2, total_length3;
--
--	if (cfg->common.ip_version) {
--		struct rte_ipv4_hdr *hdr0 = ip0;
--		struct rte_ipv4_hdr *hdr1 = ip1;
--		struct rte_ipv4_hdr *hdr2 = ip2;
--		struct rte_ipv4_hdr *hdr3 = ip3;
--
--		dscp0 = hdr0->type_of_service >> 2;
--		dscp1 = hdr1->type_of_service >> 2;
--		dscp2 = hdr2->type_of_service >> 2;
--		dscp3 = hdr3->type_of_service >> 2;
--
--		total_length0 = rte_ntohs(hdr0->total_length);
--		total_length1 = rte_ntohs(hdr1->total_length);
--		total_length2 = rte_ntohs(hdr2->total_length);
--		total_length3 = rte_ntohs(hdr3->total_length);
--	} else {
--		struct rte_ipv6_hdr *hdr0 = ip0;
--		struct rte_ipv6_hdr *hdr1 = ip1;
--		struct rte_ipv6_hdr *hdr2 = ip2;
--		struct rte_ipv6_hdr *hdr3 = ip3;
--
--		dscp0 = (rte_ntohl(hdr0->vtc_flow) & 0x0F600000) >> 18;
--		dscp1 = (rte_ntohl(hdr1->vtc_flow) & 0x0F600000) >> 18;
--		dscp2 = (rte_ntohl(hdr2->vtc_flow) & 0x0F600000) >> 18;
--		dscp3 = (rte_ntohl(hdr3->vtc_flow) & 0x0F600000) >> 18;
--
--		total_length0 = rte_ntohs(hdr0->payload_len) +
--			sizeof(struct rte_ipv6_hdr);
--		total_length1 = rte_ntohs(hdr1->payload_len) +
--			sizeof(struct rte_ipv6_hdr);
--		total_length2 = rte_ntohs(hdr2->payload_len) +
--			sizeof(struct rte_ipv6_hdr);
--		total_length3 = rte_ntohs(hdr3->payload_len) +
--			sizeof(struct rte_ipv6_hdr);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_LB)) {
--		void *data0 =
--			action_data_get(table_entry0, action, RTE_TABLE_ACTION_LB);
--		void *data1 =
--			action_data_get(table_entry1, action, RTE_TABLE_ACTION_LB);
--		void *data2 =
--			action_data_get(table_entry2, action, RTE_TABLE_ACTION_LB);
--		void *data3 =
--			action_data_get(table_entry3, action, RTE_TABLE_ACTION_LB);
--
--		pkt_work_lb(mbuf0,
--			data0,
--			&cfg->lb);
--
--		pkt_work_lb(mbuf1,
--			data1,
--			&cfg->lb);
--
--		pkt_work_lb(mbuf2,
--			data2,
--			&cfg->lb);
--
--		pkt_work_lb(mbuf3,
--			data3,
--			&cfg->lb);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_MTR)) {
--		void *data0 =
--			action_data_get(table_entry0, action, RTE_TABLE_ACTION_MTR);
--		void *data1 =
--			action_data_get(table_entry1, action, RTE_TABLE_ACTION_MTR);
--		void *data2 =
--			action_data_get(table_entry2, action, RTE_TABLE_ACTION_MTR);
--		void *data3 =
--			action_data_get(table_entry3, action, RTE_TABLE_ACTION_MTR);
--
--		drop_mask0 |= pkt_work_mtr(mbuf0,
--			data0,
--			&action->dscp_table,
--			action->mp,
--			time,
--			dscp0,
--			total_length0);
--
--		drop_mask1 |= pkt_work_mtr(mbuf1,
--			data1,
--			&action->dscp_table,
--			action->mp,
--			time,
--			dscp1,
--			total_length1);
--
--		drop_mask2 |= pkt_work_mtr(mbuf2,
--			data2,
--			&action->dscp_table,
--			action->mp,
--			time,
--			dscp2,
--			total_length2);
--
--		drop_mask3 |= pkt_work_mtr(mbuf3,
--			data3,
--			&action->dscp_table,
--			action->mp,
--			time,
--			dscp3,
--			total_length3);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_TM)) {
--		void *data0 =
--			action_data_get(table_entry0, action, RTE_TABLE_ACTION_TM);
--		void *data1 =
--			action_data_get(table_entry1, action, RTE_TABLE_ACTION_TM);
--		void *data2 =
--			action_data_get(table_entry2, action, RTE_TABLE_ACTION_TM);
--		void *data3 =
--			action_data_get(table_entry3, action, RTE_TABLE_ACTION_TM);
--
--		pkt_work_tm(mbuf0,
--			data0,
--			&action->dscp_table,
--			dscp0);
--
--		pkt_work_tm(mbuf1,
--			data1,
--			&action->dscp_table,
--			dscp1);
--
--		pkt_work_tm(mbuf2,
--			data2,
--			&action->dscp_table,
--			dscp2);
--
--		pkt_work_tm(mbuf3,
--			data3,
--			&action->dscp_table,
--			dscp3);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_DECAP)) {
--		void *data0 = action_data_get(table_entry0,
--			action,
--			RTE_TABLE_ACTION_DECAP);
--		void *data1 = action_data_get(table_entry1,
--			action,
--			RTE_TABLE_ACTION_DECAP);
--		void *data2 = action_data_get(table_entry2,
--			action,
--			RTE_TABLE_ACTION_DECAP);
--		void *data3 = action_data_get(table_entry3,
--			action,
--			RTE_TABLE_ACTION_DECAP);
--
--		pkt4_work_decap(mbuf0, mbuf1, mbuf2, mbuf3,
--			data0, data1, data2, data3);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_ENCAP)) {
--		void *data0 =
--			action_data_get(table_entry0, action, RTE_TABLE_ACTION_ENCAP);
--		void *data1 =
--			action_data_get(table_entry1, action, RTE_TABLE_ACTION_ENCAP);
--		void *data2 =
--			action_data_get(table_entry2, action, RTE_TABLE_ACTION_ENCAP);
--		void *data3 =
--			action_data_get(table_entry3, action, RTE_TABLE_ACTION_ENCAP);
--
--		pkt_work_encap(mbuf0,
--			data0,
--			&cfg->encap,
--			ip0,
--			total_length0,
--			ip_offset);
--
--		pkt_work_encap(mbuf1,
--			data1,
--			&cfg->encap,
--			ip1,
--			total_length1,
--			ip_offset);
--
--		pkt_work_encap(mbuf2,
--			data2,
--			&cfg->encap,
--			ip2,
--			total_length2,
--			ip_offset);
--
--		pkt_work_encap(mbuf3,
--			data3,
--			&cfg->encap,
--			ip3,
--			total_length3,
--			ip_offset);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_NAT)) {
--		void *data0 =
--			action_data_get(table_entry0, action, RTE_TABLE_ACTION_NAT);
--		void *data1 =
--			action_data_get(table_entry1, action, RTE_TABLE_ACTION_NAT);
--		void *data2 =
--			action_data_get(table_entry2, action, RTE_TABLE_ACTION_NAT);
--		void *data3 =
--			action_data_get(table_entry3, action, RTE_TABLE_ACTION_NAT);
--
--		if (cfg->common.ip_version) {
--			pkt_ipv4_work_nat(ip0, data0, &cfg->nat);
--			pkt_ipv4_work_nat(ip1, data1, &cfg->nat);
--			pkt_ipv4_work_nat(ip2, data2, &cfg->nat);
--			pkt_ipv4_work_nat(ip3, data3, &cfg->nat);
--		} else {
--			pkt_ipv6_work_nat(ip0, data0, &cfg->nat);
--			pkt_ipv6_work_nat(ip1, data1, &cfg->nat);
--			pkt_ipv6_work_nat(ip2, data2, &cfg->nat);
--			pkt_ipv6_work_nat(ip3, data3, &cfg->nat);
--		}
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_TTL)) {
--		void *data0 =
--			action_data_get(table_entry0, action, RTE_TABLE_ACTION_TTL);
--		void *data1 =
--			action_data_get(table_entry1, action, RTE_TABLE_ACTION_TTL);
--		void *data2 =
--			action_data_get(table_entry2, action, RTE_TABLE_ACTION_TTL);
--		void *data3 =
--			action_data_get(table_entry3, action, RTE_TABLE_ACTION_TTL);
--
--		if (cfg->common.ip_version) {
--			drop_mask0 |= pkt_ipv4_work_ttl(ip0, data0);
--			drop_mask1 |= pkt_ipv4_work_ttl(ip1, data1);
--			drop_mask2 |= pkt_ipv4_work_ttl(ip2, data2);
--			drop_mask3 |= pkt_ipv4_work_ttl(ip3, data3);
--		} else {
--			drop_mask0 |= pkt_ipv6_work_ttl(ip0, data0);
--			drop_mask1 |= pkt_ipv6_work_ttl(ip1, data1);
--			drop_mask2 |= pkt_ipv6_work_ttl(ip2, data2);
--			drop_mask3 |= pkt_ipv6_work_ttl(ip3, data3);
--		}
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_STATS)) {
--		void *data0 =
--			action_data_get(table_entry0, action, RTE_TABLE_ACTION_STATS);
--		void *data1 =
--			action_data_get(table_entry1, action, RTE_TABLE_ACTION_STATS);
--		void *data2 =
--			action_data_get(table_entry2, action, RTE_TABLE_ACTION_STATS);
--		void *data3 =
--			action_data_get(table_entry3, action, RTE_TABLE_ACTION_STATS);
--
--		pkt_work_stats(data0, total_length0);
--		pkt_work_stats(data1, total_length1);
--		pkt_work_stats(data2, total_length2);
--		pkt_work_stats(data3, total_length3);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_TIME)) {
--		void *data0 =
--			action_data_get(table_entry0, action, RTE_TABLE_ACTION_TIME);
--		void *data1 =
--			action_data_get(table_entry1, action, RTE_TABLE_ACTION_TIME);
--		void *data2 =
--			action_data_get(table_entry2, action, RTE_TABLE_ACTION_TIME);
--		void *data3 =
--			action_data_get(table_entry3, action, RTE_TABLE_ACTION_TIME);
--
--		pkt_work_time(data0, time);
--		pkt_work_time(data1, time);
--		pkt_work_time(data2, time);
--		pkt_work_time(data3, time);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_SYM_CRYPTO)) {
--		void *data0 = action_data_get(table_entry0, action,
--				RTE_TABLE_ACTION_SYM_CRYPTO);
--		void *data1 = action_data_get(table_entry1, action,
--				RTE_TABLE_ACTION_SYM_CRYPTO);
--		void *data2 = action_data_get(table_entry2, action,
--				RTE_TABLE_ACTION_SYM_CRYPTO);
--		void *data3 = action_data_get(table_entry3, action,
--				RTE_TABLE_ACTION_SYM_CRYPTO);
--
--		drop_mask0 |= pkt_work_sym_crypto(mbuf0, data0, &cfg->sym_crypto,
--				ip_offset);
--		drop_mask1 |= pkt_work_sym_crypto(mbuf1, data1, &cfg->sym_crypto,
--				ip_offset);
--		drop_mask2 |= pkt_work_sym_crypto(mbuf2, data2, &cfg->sym_crypto,
--				ip_offset);
--		drop_mask3 |= pkt_work_sym_crypto(mbuf3, data3, &cfg->sym_crypto,
--				ip_offset);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_TAG)) {
--		void *data0 = action_data_get(table_entry0,
--			action,
--			RTE_TABLE_ACTION_TAG);
--		void *data1 = action_data_get(table_entry1,
--			action,
--			RTE_TABLE_ACTION_TAG);
--		void *data2 = action_data_get(table_entry2,
--			action,
--			RTE_TABLE_ACTION_TAG);
--		void *data3 = action_data_get(table_entry3,
--			action,
--			RTE_TABLE_ACTION_TAG);
--
--		pkt4_work_tag(mbuf0, mbuf1, mbuf2, mbuf3,
--			data0, data1, data2, data3);
--	}
--
--	return drop_mask0 |
--		(drop_mask1 << 1) |
--		(drop_mask2 << 2) |
--		(drop_mask3 << 3);
--}
--
--static __rte_always_inline int
--ah(struct rte_pipeline *p,
--	struct rte_mbuf **pkts,
--	uint64_t pkts_mask,
--	struct rte_pipeline_table_entry **entries,
--	struct rte_table_action *action,
--	struct ap_config *cfg)
--{
--	uint64_t pkts_drop_mask = 0;
--	uint64_t time = 0;
--
--	if (cfg->action_mask & ((1LLU << RTE_TABLE_ACTION_MTR) |
--		(1LLU << RTE_TABLE_ACTION_TIME)))
--		time = rte_rdtsc();
+-	uint64_t pkts_mask)
+-{
+-	struct rte_port_fd_writer_nodrop *p =
+-		port;
+-	uint32_t tx_buf_count = p->tx_buf_count;
 -
 -	if ((pkts_mask & (pkts_mask + 1)) == 0) {
 -		uint64_t n_pkts = rte_popcount64(pkts_mask);
 -		uint32_t i;
 -
--		for (i = 0; i < (n_pkts & (~0x3LLU)); i += 4) {
--			uint64_t drop_mask;
--
--			drop_mask = pkt4_work(&pkts[i],
--				&entries[i],
--				time,
--				action,
--				cfg);
--
--			pkts_drop_mask |= drop_mask << i;
--		}
--
--		for ( ; i < n_pkts; i++) {
--			uint64_t drop_mask;
--
--			drop_mask = pkt_work(pkts[i],
--				entries[i],
--				time,
--				action,
--				cfg);
--
--			pkts_drop_mask |= drop_mask << i;
--		}
+-		for (i = 0; i < n_pkts; i++)
+-			p->tx_buf[tx_buf_count++] = pkts[i];
+-		RTE_PORT_FD_WRITER_NODROP_STATS_PKTS_IN_ADD(p, n_pkts);
 -	} else
 -		for ( ; pkts_mask; ) {
--			uint32_t pos = rte_ctz64(pkts_mask);
--			uint64_t pkt_mask = 1LLU << pos;
--			uint64_t drop_mask;
+-			uint32_t pkt_index = rte_ctz64(pkts_mask);
+-			uint64_t pkt_mask = 1LLU << pkt_index;
+-			struct rte_mbuf *pkt = pkts[pkt_index];
 -
--			drop_mask = pkt_work(pkts[pos],
--				entries[pos],
--				time,
--				action,
--				cfg);
--
+-			p->tx_buf[tx_buf_count++] = pkt;
+-			RTE_PORT_FD_WRITER_NODROP_STATS_PKTS_IN_ADD(p, 1);
 -			pkts_mask &= ~pkt_mask;
--			pkts_drop_mask |= drop_mask << pos;
 -		}
 -
--	rte_pipeline_ah_packet_drop(p, pkts_drop_mask);
+-	p->tx_buf_count = tx_buf_count;
+-	if (tx_buf_count >= p->tx_burst_sz)
+-		send_burst_nodrop(p);
 -
 -	return 0;
 -}
 -
 -static int
--ah_default(struct rte_pipeline *p,
--	struct rte_mbuf **pkts,
--	uint64_t pkts_mask,
--	struct rte_pipeline_table_entry **entries,
--	void *arg)
+-rte_port_fd_writer_nodrop_flush(void *port)
 -{
--	struct rte_table_action *action = arg;
+-	struct rte_port_fd_writer_nodrop *p =
+-		port;
 -
--	return ah(p,
--		pkts,
--		pkts_mask,
--		entries,
--		action,
--		&action->cfg);
+-	if (p->tx_buf_count > 0)
+-		send_burst_nodrop(p);
+-
+-	return 0;
 -}
 -
--static rte_pipeline_table_action_handler_hit
--ah_selector(struct rte_table_action *action)
+-static int
+-rte_port_fd_writer_nodrop_free(void *port)
 -{
--	if (action->cfg.action_mask == (1LLU << RTE_TABLE_ACTION_FWD))
--		return NULL;
--
--	return ah_default;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_table_params_get, 18.05)
--int
--rte_table_action_table_params_get(struct rte_table_action *action,
--	struct rte_pipeline_table_params *params)
--{
--	rte_pipeline_table_action_handler_hit f_action_hit;
--	uint32_t total_size;
--
--	/* Check input arguments */
--	if ((action == NULL) ||
--		(params == NULL))
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Port is NULL", __func__);
 -		return -EINVAL;
+-	}
 -
--	f_action_hit = ah_selector(action);
--	total_size = rte_align32pow2(action->data.total_size);
+-	rte_port_fd_writer_nodrop_flush(port);
+-	rte_free(port);
 -
--	/* Fill in params */
--	params->f_action_hit = f_action_hit;
--	params->f_action_miss = NULL;
--	params->arg_ah = (f_action_hit) ? action : NULL;
--	params->action_data_size = total_size -
--		sizeof(struct rte_pipeline_table_entry);
--
--	return 0;
+-return 0;
 -}
 -
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_free, 18.05)
--int
--rte_table_action_free(struct rte_table_action *action)
+-static int rte_port_fd_writer_nodrop_stats_read(void *port,
+-		struct rte_port_out_stats *stats, int clear)
 -{
--	if (action == NULL)
--		return 0;
+-	struct rte_port_fd_writer_nodrop *p =
+-		port;
 -
--	rte_free(action);
+-	if (stats != NULL)
+-		memcpy(stats, &p->stats, sizeof(p->stats));
+-
+-	if (clear)
+-		memset(&p->stats, 0, sizeof(p->stats));
 -
 -	return 0;
 -}
-diff --git a/lib/pipeline/rte_table_action.h b/lib/pipeline/rte_table_action.h
+-
+-/*
+- * Summary of port operations
+- */
+-RTE_EXPORT_SYMBOL(rte_port_fd_reader_ops)
+-struct rte_port_in_ops rte_port_fd_reader_ops = {
+-	.f_create = rte_port_fd_reader_create,
+-	.f_free = rte_port_fd_reader_free,
+-	.f_rx = rte_port_fd_reader_rx,
+-	.f_stats = rte_port_fd_reader_stats_read,
+-};
+-
+-RTE_EXPORT_SYMBOL(rte_port_fd_writer_ops)
+-struct rte_port_out_ops rte_port_fd_writer_ops = {
+-	.f_create = rte_port_fd_writer_create,
+-	.f_free = rte_port_fd_writer_free,
+-	.f_tx = rte_port_fd_writer_tx,
+-	.f_tx_bulk = rte_port_fd_writer_tx_bulk,
+-	.f_flush = rte_port_fd_writer_flush,
+-	.f_stats = rte_port_fd_writer_stats_read,
+-};
+-
+-RTE_EXPORT_SYMBOL(rte_port_fd_writer_nodrop_ops)
+-struct rte_port_out_ops rte_port_fd_writer_nodrop_ops = {
+-	.f_create = rte_port_fd_writer_nodrop_create,
+-	.f_free = rte_port_fd_writer_nodrop_free,
+-	.f_tx = rte_port_fd_writer_nodrop_tx,
+-	.f_tx_bulk = rte_port_fd_writer_nodrop_tx_bulk,
+-	.f_flush = rte_port_fd_writer_nodrop_flush,
+-	.f_stats = rte_port_fd_writer_nodrop_stats_read,
+-};
+diff --git a/lib/port/rte_port_fd.h b/lib/port/rte_port_fd.h
 deleted file mode 100644
-index 47a7bdfc01..0000000000
---- a/lib/pipeline/rte_table_action.h
+index 40a5e4a426..0000000000
+--- a/lib/port/rte_port_fd.h
 +++ /dev/null
-@@ -1,1137 +0,0 @@
+@@ -1,74 +0,0 @@
 -/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2018 Intel Corporation
+- * Copyright(c) 2016 Intel Corporation
 - */
 -
--#ifndef __INCLUDE_RTE_TABLE_ACTION_H__
--#define __INCLUDE_RTE_TABLE_ACTION_H__
+-#ifndef __INCLUDE_RTE_PORT_FD_H__
+-#define __INCLUDE_RTE_PORT_FD_H__
 -
 -/**
 - * @file
-- * RTE Pipeline Table Actions
+- * RTE Port FD Device
 - *
-- * This API provides a common set of actions for pipeline tables to speed up
-- * application development.
-- *
-- * Each match-action rule added to a pipeline table has associated data that
-- * stores the action context. This data is input to the table action handler
-- * called for every input packet that hits the rule as part of the table lookup
-- * during the pipeline execution. The pipeline library allows the user to define
-- * his own table actions by providing customized table action handlers (table
-- * lookup) and complete freedom of setting the rules and their data (table rule
-- * add/delete). While the user can still follow this process, this API is
-- * intended to provide a quicker development alternative for a set of predefined
-- * actions.
-- *
-- * The typical steps to use this API are:
-- *  - Define a table action profile. This is a configuration template that can
-- *    potentially be shared by multiple tables from the same or different
-- *    pipelines, with different tables from the same pipeline likely to use
-- *    different action profiles. For every table using a given action profile,
-- *    the profile defines the set of actions and the action configuration to be
-- *    implemented for all the table rules. API functions:
-- *    rte_table_action_profile_create(),
-- *    rte_table_action_profile_action_register(),
-- *    rte_table_action_profile_freeze().
-- *
-- *  - Instantiate the table action profile to create table action objects. Each
-- *    pipeline table has its own table action object. API functions:
-- *    rte_table_action_create().
-- *
-- *  - Use the table action object to generate the pipeline table action handlers
-- *    (invoked by the pipeline table lookup operation). API functions:
-- *    rte_table_action_table_params_get().
-- *
-- *  - Use the table action object to generate the rule data (for the pipeline
-- *    table rule add operation) based on given action parameters. API functions:
-- *    rte_table_action_apply().
-- *
-- *  - Use the table action object to read action data (e.g. stats counters) for
-- *    any given rule. API functions: rte_table_action_XYZ_read().
-- *
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice
+- * fd_reader: input port built on top of valid non-blocking file descriptor
+- * fd_writer: output port built on top of valid non-blocking file descriptor
 - */
 -
 -#include <stdint.h>
 -
--#include <rte_compat.h>
--#include <rte_ether.h>
--#include <rte_ip6.h>
--#include <rte_meter.h>
--#include <rte_table_hash.h>
--
--#include "rte_pipeline.h"
+-#include "rte_port.h"
 -
 -#ifdef __cplusplus
 -extern "C" {
 -#endif
 -
--/** Table actions. */
--enum rte_table_action_type {
--	/** Forward to next pipeline table, output port or drop. */
--	RTE_TABLE_ACTION_FWD = 0,
+-/** fd_reader port parameters */
+-struct rte_port_fd_reader_params {
+-	/** File descriptor */
+-	int fd;
 -
--	/**  Load balance. */
--	RTE_TABLE_ACTION_LB,
+-	/** Maximum Transfer Unit (MTU) */
+-	uint32_t mtu;
 -
--	/**  Traffic Metering and Policing. */
--	RTE_TABLE_ACTION_MTR,
--
--	/**  Traffic Management. */
--	RTE_TABLE_ACTION_TM,
--
--	/** Packet encapsulations. */
--	RTE_TABLE_ACTION_ENCAP,
--
--	/** Network Address Translation (NAT). */
--	RTE_TABLE_ACTION_NAT,
--
--	/** Time to Live (TTL) update. */
--	RTE_TABLE_ACTION_TTL,
--
--	/** Statistics. */
--	RTE_TABLE_ACTION_STATS,
--
--	/** Timestamp. */
--	RTE_TABLE_ACTION_TIME,
--
--	/** Crypto. */
--	RTE_TABLE_ACTION_SYM_CRYPTO,
--
--	/** Tag. */
--	RTE_TABLE_ACTION_TAG,
--
--	/** Packet decapsulations. */
--	RTE_TABLE_ACTION_DECAP,
+-	/** Pre-initialized buffer pool */
+-	struct rte_mempool *mempool;
 -};
 -
--/** Common action configuration (per table action profile). */
--struct rte_table_action_common_config {
--	/** Input packet Internet Protocol (IP) version. Non-zero for IPv4, zero
--	 * for IPv6.
+-/** fd_reader port operations */
+-extern struct rte_port_in_ops rte_port_fd_reader_ops;
+-
+-/** fd_writer port parameters */
+-struct rte_port_fd_writer_params {
+-	/** File descriptor */
+-	int fd;
+-
+-	/**< Recommended write burst size. The actual burst size can be
+-	 * bigger or smaller than this value.
 -	 */
--	int ip_version;
+-	uint32_t tx_burst_sz;
+-};
 -
--	/** IP header offset within the input packet buffer. Offset 0 points to
--	 * the first byte of the MBUF structure.
+-/** fd_writer port operations */
+-extern struct rte_port_out_ops rte_port_fd_writer_ops;
+-
+-/** fd_writer_nodrop port parameters */
+-struct rte_port_fd_writer_nodrop_params {
+-	/** File descriptor */
+-	int fd;
+-
+-	/**< Recommended write burst size. The actual burst size can be
+-	 * bigger or smaller than this value.
 -	 */
--	uint32_t ip_offset;
+-	uint32_t tx_burst_sz;
+-
+-	/** Maximum number of retries, 0 for no limit */
+-	uint32_t n_retries;
 -};
 -
--/**
-- * RTE_TABLE_ACTION_FWD
-- */
--/** Forward action parameters (per table rule). */
--struct rte_table_action_fwd_params {
--	/** Forward action. */
--	enum rte_pipeline_action action;
--
--	/** Pipeline table ID or output port ID. */
--	uint32_t id;
--};
--
--/**
-- * RTE_TABLE_ACTION_LB
-- */
--/** Load balance key size min (number of bytes). */
--#define RTE_TABLE_ACTION_LB_KEY_SIZE_MIN                    8
--
--/** Load balance key size max (number of bytes). */
--#define RTE_TABLE_ACTION_LB_KEY_SIZE_MAX                    64
--
--/** Load balance table size. */
--#define RTE_TABLE_ACTION_LB_TABLE_SIZE                      8
--
--/** Load balance action configuration (per table action profile). */
--struct rte_table_action_lb_config {
--	/** Key size (number of bytes). */
--	uint32_t key_size;
--
--	/** Key offset within the input packet buffer. Offset 0 points to the
--	 * first byte of the MBUF structure.
--	 */
--	uint32_t key_offset;
--
--	/** Key mask (*key_size* bytes are valid). */
--	uint8_t key_mask[RTE_TABLE_ACTION_LB_KEY_SIZE_MAX];
--
--	/** Hash function. */
--	rte_table_hash_op_hash f_hash;
--
--	/** Seed value for *f_hash*. */
--	uint64_t seed;
--
--	/** Output value offset within the input packet buffer. Offset 0 points
--	 * to the first byte of the MBUF structure.
--	 */
--	uint32_t out_offset;
--};
--
--/** Load balance action parameters (per table rule). */
--struct rte_table_action_lb_params {
--	/** Table defining the output values and their weights. The weights are
--	 * set in 1/RTE_TABLE_ACTION_LB_TABLE_SIZE increments. To assign a
--	 * weight of N/RTE_TABLE_ACTION_LB_TABLE_SIZE to a given output value
--	 * (0 <= N <= RTE_TABLE_ACTION_LB_TABLE_SIZE), the same output value
--	 * needs to show up exactly N times in this table.
--	 */
--	uint32_t out[RTE_TABLE_ACTION_LB_TABLE_SIZE];
--};
--
--/**
-- * RTE_TABLE_ACTION_MTR
-- */
--/** Max number of traffic classes (TCs). */
--#define RTE_TABLE_ACTION_TC_MAX                                  16
--
--/** Max number of queues per traffic class. */
--#define RTE_TABLE_ACTION_TC_QUEUE_MAX                            16
--
--/** Differentiated Services Code Point (DSCP) translation table entry. */
--struct rte_table_action_dscp_table_entry {
--	/** Traffic class. Used by the meter or the traffic management actions.
--	 * Has to be strictly smaller than *RTE_TABLE_ACTION_TC_MAX*. Traffic
--	 * class 0 is the highest priority.
--	 */
--	uint32_t tc_id;
--
--	/** Traffic class queue. Used by the traffic management action. Has to
--	 * be strictly smaller than *RTE_TABLE_ACTION_TC_QUEUE_MAX*.
--	 */
--	uint32_t tc_queue_id;
--
--	/** Packet color. Used by the meter action as the packet input color
--	 * for the color aware mode of the traffic metering algorithm.
--	 */
--	enum rte_color color;
--};
--
--/** DSCP translation table. */
--struct rte_table_action_dscp_table {
--	/** Array of DSCP table entries */
--	struct rte_table_action_dscp_table_entry entry[64];
--};
--
--/** Supported traffic metering algorithms. */
--enum rte_table_action_meter_algorithm {
--	/** Single Rate Three Color Marker (srTCM) - IETF RFC 2697. */
--	RTE_TABLE_ACTION_METER_SRTCM,
--
--	/** Two Rate Three Color Marker (trTCM) - IETF RFC 2698. */
--	RTE_TABLE_ACTION_METER_TRTCM,
--};
--
--/** Traffic metering profile (configuration template). */
--struct rte_table_action_meter_profile {
--	/** Traffic metering algorithm. */
--	enum rte_table_action_meter_algorithm alg;
--
--	union {
--		/** Only valid when *alg* is set to srTCM - IETF RFC 2697. */
--		struct rte_meter_srtcm_params srtcm;
--
--		/** Only valid when *alg* is set to trTCM - IETF RFC 2698. */
--		struct rte_meter_trtcm_params trtcm;
--	};
--};
--
--/** Policer actions. */
--enum rte_table_action_policer {
--	/** Recolor the packet as green. */
--	RTE_TABLE_ACTION_POLICER_COLOR_GREEN = 0,
--
--	/** Recolor the packet as yellow. */
--	RTE_TABLE_ACTION_POLICER_COLOR_YELLOW,
--
--	/** Recolor the packet as red. */
--	RTE_TABLE_ACTION_POLICER_COLOR_RED,
--
--	/** Drop the packet. */
--	RTE_TABLE_ACTION_POLICER_DROP,
--
--	/** Number of policer actions. */
--	RTE_TABLE_ACTION_POLICER_MAX
--};
--
--/** Meter action configuration per traffic class. */
--struct rte_table_action_mtr_tc_params {
--	/** Meter profile ID. */
--	uint32_t meter_profile_id;
--
--	/** Policer actions. */
--	enum rte_table_action_policer policer[RTE_COLORS];
--};
--
--/** Meter action statistics counters per traffic class. */
--struct rte_table_action_mtr_counters_tc {
--	/** Number of packets per color at the output of the traffic metering
--	 * and before the policer actions are executed. Only valid when
--	 * *n_packets_valid* is non-zero.
--	 */
--	uint64_t n_packets[RTE_COLORS];
--
--	/** Number of packet bytes per color at the output of the traffic
--	 * metering and before the policer actions are executed. Only valid when
--	 * *n_bytes_valid* is non-zero.
--	 */
--	uint64_t n_bytes[RTE_COLORS];
--
--	/** When non-zero, the *n_packets* field is valid. */
--	int n_packets_valid;
--
--	/** When non-zero, the *n_bytes* field is valid. */
--	int n_bytes_valid;
--};
--
--/** Meter action configuration (per table action profile). */
--struct rte_table_action_mtr_config {
--	/** Meter algorithm. */
--	enum rte_table_action_meter_algorithm alg;
--
--	/** Number of traffic classes. Each traffic class has its own traffic
--	 * meter and policer instances. Needs to be equal to either 1 or to
--	 * *RTE_TABLE_ACTION_TC_MAX*.
--	 */
--	uint32_t n_tc;
--
--	/** When non-zero, the *n_packets* meter stats counter is enabled,
--	 * otherwise it is disabled.
--	 *
--	 * @see struct rte_table_action_mtr_counters_tc
--	 */
--	int n_packets_enabled;
--
--	/** When non-zero, the *n_bytes* meter stats counter is enabled,
--	 * otherwise it is disabled.
--	 *
--	 * @see struct rte_table_action_mtr_counters_tc
--	 */
--	int n_bytes_enabled;
--};
--
--/** Meter action parameters (per table rule). */
--struct rte_table_action_mtr_params {
--	/** Traffic meter and policer parameters for each of the *tc_mask*
--	 * traffic classes.
--	 */
--	struct rte_table_action_mtr_tc_params mtr[RTE_TABLE_ACTION_TC_MAX];
--
--	/** Bit mask defining which traffic class parameters are valid in *mtr*.
--	 * If bit N is set in *tc_mask*, then parameters for traffic class N are
--	 * valid in *mtr*.
--	 */
--	uint32_t tc_mask;
--};
--
--/** Meter action statistics counters (per table rule). */
--struct rte_table_action_mtr_counters {
--	/** Stats counters for each of the *tc_mask* traffic classes. */
--	struct rte_table_action_mtr_counters_tc stats[RTE_TABLE_ACTION_TC_MAX];
--
--	/** Bit mask defining which traffic class parameters are valid in *mtr*.
--	 * If bit N is set in *tc_mask*, then parameters for traffic class N are
--	 * valid in *mtr*.
--	 */
--	uint32_t tc_mask;
--};
--
--/**
-- * RTE_TABLE_ACTION_TM
-- */
--/** Traffic management action configuration (per table action profile). */
--struct rte_table_action_tm_config {
--	/** Number of subports per port. */
--	uint32_t n_subports_per_port;
--
--	/** Number of pipes per subport. */
--	uint32_t n_pipes_per_subport;
--};
--
--/** Traffic management action parameters (per table rule). */
--struct rte_table_action_tm_params {
--	/** Subport ID. */
--	uint32_t subport_id;
--
--	/** Pipe ID. */
--	uint32_t pipe_id;
--};
--
--/**
-- * RTE_TABLE_ACTION_ENCAP
-- */
--/** Supported packet encapsulation types. */
--enum rte_table_action_encap_type {
--	/** IP -> { Ether | IP } */
--	RTE_TABLE_ACTION_ENCAP_ETHER = 0,
--
--	/** IP -> { Ether | VLAN | IP } */
--	RTE_TABLE_ACTION_ENCAP_VLAN,
--
--	/** IP -> { Ether | S-VLAN | C-VLAN | IP } */
--	RTE_TABLE_ACTION_ENCAP_QINQ,
--
--	/** IP -> { Ether | MPLS | IP } */
--	RTE_TABLE_ACTION_ENCAP_MPLS,
--
--	/** IP -> { Ether | PPPoE | PPP | IP } */
--	RTE_TABLE_ACTION_ENCAP_PPPOE,
--
--	/** Ether -> { Ether | IP | UDP | VXLAN | Ether }
--	 * Ether -> { Ether | VLAN | IP | UDP | VXLAN | Ether }
--	 */
--	RTE_TABLE_ACTION_ENCAP_VXLAN,
--
--	/** IP -> { Ether | S-VLAN | C-VLAN | PPPoE | PPP | IP } */
--	RTE_TABLE_ACTION_ENCAP_QINQ_PPPOE,
--};
--
--/** Pre-computed Ethernet header fields for encapsulation action. */
--struct rte_table_action_ether_hdr {
--	struct rte_ether_addr da; /**< Destination address. */
--	struct rte_ether_addr sa; /**< Source address. */
--};
--
--/** Pre-computed VLAN header fields for encapsulation action. */
--struct rte_table_action_vlan_hdr {
--	uint8_t pcp; /**< Priority Code Point (PCP). */
--	uint8_t dei; /**< Drop Eligibility Indicator (DEI). */
--	uint16_t vid; /**< VLAN Identifier (VID). */
--};
--
--/** Pre-computed MPLS header fields for encapsulation action. */
--struct rte_table_action_mpls_hdr {
--	uint32_t label; /**< Label. */
--	uint8_t tc; /**< Traffic Class (TC). */
--	uint8_t ttl; /**< Time to Live (TTL). */
--};
--
--/** Pre-computed PPPoE header fields for encapsulation action. */
--struct rte_table_action_pppoe_hdr {
--	uint16_t session_id; /**< Session ID. */
--};
--
--/** Pre-computed IPv4 header fields for encapsulation action. */
--struct rte_table_action_ipv4_header {
--	uint32_t sa; /**< Source address. */
--	uint32_t da; /**< Destination address. */
--	uint8_t dscp; /**< DiffServ Code Point (DSCP). */
--	uint8_t ttl; /**< Time To Live (TTL). */
--};
--
--/** Pre-computed IPv6 header fields for encapsulation action. */
--struct rte_table_action_ipv6_header {
--	struct rte_ipv6_addr sa; /**< Source address. */
--	struct rte_ipv6_addr da; /**< Destination address. */
--	uint32_t flow_label; /**< Flow label. */
--	uint8_t dscp; /**< DiffServ Code Point (DSCP). */
--	uint8_t hop_limit; /**< Hop Limit (HL). */
--};
--
--/** Pre-computed UDP header fields for encapsulation action. */
--struct rte_table_action_udp_header {
--	uint16_t sp; /**< Source port. */
--	uint16_t dp; /**< Destination port. */
--};
--
--/** Pre-computed VXLAN header fields for encapsulation action. */
--struct rte_table_action_vxlan_hdr {
--	uint32_t vni; /**< VXLAN Network Identifier (VNI). */
--};
--
--/** Ether encap parameters. */
--struct rte_table_action_encap_ether_params {
--	struct rte_table_action_ether_hdr ether; /**< Ethernet header. */
--};
--
--/** VLAN encap parameters. */
--struct rte_table_action_encap_vlan_params {
--	struct rte_table_action_ether_hdr ether; /**< Ethernet header. */
--	struct rte_table_action_vlan_hdr vlan; /**< VLAN header. */
--};
--
--/** QinQ encap parameters. */
--struct rte_table_action_encap_qinq_params {
--	struct rte_table_action_ether_hdr ether; /**< Ethernet header. */
--	struct rte_table_action_vlan_hdr svlan; /**< Service VLAN header. */
--	struct rte_table_action_vlan_hdr cvlan; /**< Customer VLAN header. */
--};
--
--/** Max number of MPLS labels per output packet for MPLS encapsulation. */
--#ifndef RTE_TABLE_ACTION_MPLS_LABELS_MAX
--#define RTE_TABLE_ACTION_MPLS_LABELS_MAX                   4
--#endif
--
--/** MPLS encap parameters. */
--struct rte_table_action_encap_mpls_params {
--	/** Ethernet header. */
--	struct rte_table_action_ether_hdr ether;
--
--	/** MPLS header. */
--	struct rte_table_action_mpls_hdr mpls[RTE_TABLE_ACTION_MPLS_LABELS_MAX];
--
--	/** Number of MPLS labels in MPLS header. */
--	uint32_t mpls_count;
--
--	/** Non-zero for MPLS unicast, zero for MPLS multicast. */
--	int unicast;
--};
--
--/** PPPoE encap parameters. */
--struct rte_table_action_encap_pppoe_params {
--	struct rte_table_action_ether_hdr ether; /**< Ethernet header. */
--	struct rte_table_action_pppoe_hdr pppoe; /**< PPPoE/PPP headers. */
--};
--
--/** VXLAN encap parameters. */
--struct rte_table_action_encap_vxlan_params {
--	struct rte_table_action_ether_hdr ether; /**< Ethernet header. */
--	struct rte_table_action_vlan_hdr vlan; /**< VLAN header. */
--
--	union {
--		struct rte_table_action_ipv4_header ipv4; /**< IPv4 header. */
--		struct rte_table_action_ipv6_header ipv6; /**< IPv6 header. */
--	};
--
--	struct rte_table_action_udp_header udp; /**< UDP header. */
--	struct rte_table_action_vxlan_hdr vxlan; /**< VXLAN header. */
--};
--
--/** Encap action configuration (per table action profile). */
--struct rte_table_action_encap_config {
--	/** Bit mask defining the set of packet encapsulations enabled for the
--	 * current table action profile. If bit (1 << N) is set in *encap_mask*,
--	 * then packet encapsulation N is enabled, otherwise it is disabled.
--	 *
--	 * @see enum rte_table_action_encap_type
--	 */
--	uint64_t encap_mask;
--
--	/** Encapsulation type specific configuration. */
--	union {
--		struct {
--			/** Input packet to be encapsulated: offset within the
--			 * input packet buffer to the start of the Ethernet
--			 * frame to be encapsulated. Offset 0 points to the
--			 * first byte of the MBUF structure.
--			 */
--			uint32_t data_offset;
--
--			/** Encapsulation header: non-zero when encapsulation
--			 * header includes a VLAN tag, zero otherwise.
--			 */
--			int vlan;
--
--			/** Encapsulation header: IP version of the IP header
--			 * within the encapsulation header. Non-zero for IPv4,
--			 * zero for IPv6.
--			 */
--			int ip_version;
--		} vxlan; /**< VXLAN specific configuration. */
--	};
--};
--
--/** QinQ_PPPoE encap parameters. */
--struct rte_table_encap_ether_qinq_pppoe {
--
--	/** Only valid when *type* is set to QinQ. */
--	struct rte_table_action_ether_hdr ether;
--	struct rte_table_action_vlan_hdr svlan; /**< Service VLAN header. */
--	struct rte_table_action_vlan_hdr cvlan; /**< Customer VLAN header. */
--	struct rte_table_action_pppoe_hdr pppoe; /**< PPPoE/PPP headers. */
--};
--
--/** Encap action parameters (per table rule). */
--struct rte_table_action_encap_params {
--	/** Encapsulation type. */
--	enum rte_table_action_encap_type type;
--
--	union {
--		/** Only valid when *type* is set to Ether. */
--		struct rte_table_action_encap_ether_params ether;
--
--		/** Only valid when *type* is set to VLAN. */
--		struct rte_table_action_encap_vlan_params vlan;
--
--		/** Only valid when *type* is set to QinQ. */
--		struct rte_table_action_encap_qinq_params qinq;
--
--		/** Only valid when *type* is set to MPLS. */
--		struct rte_table_action_encap_mpls_params mpls;
--
--		/** Only valid when *type* is set to PPPoE. */
--		struct rte_table_action_encap_pppoe_params pppoe;
--
--		/** Only valid when *type* is set to VXLAN. */
--		struct rte_table_action_encap_vxlan_params vxlan;
--
--		/** Only valid when *type* is set to QinQ_PPPoE. */
--		struct rte_table_encap_ether_qinq_pppoe qinq_pppoe;
--	};
--};
--
--/**
-- * RTE_TABLE_ACTION_NAT
-- */
--/** NAT action configuration (per table action profile). */
--struct rte_table_action_nat_config {
--	/** When non-zero, the IP source address and L4 protocol source port are
--	 * translated. When zero, the IP destination address and L4 protocol
--	 * destination port are translated.
--	 */
--	int source_nat;
--
--	/** Layer 4 protocol, for example TCP (0x06) or UDP (0x11). The checksum
--	 * field is computed differently and placed at different header offset
--	 * by each layer 4 protocol.
--	 */
--	uint8_t proto;
--};
--
--/** NAT action parameters (per table rule). */
--struct rte_table_action_nat_params {
--	/** IP version for *addr*: non-zero for IPv4, zero for IPv6. */
--	int ip_version;
--
--	/** IP address. */
--	union {
--		/** IPv4 address; only valid when *ip_version* is non-zero. */
--		uint32_t ipv4;
--
--		/** IPv6 address; only valid when *ip_version* is set to 0. */
--		struct rte_ipv6_addr ipv6;
--	} addr;
--
--	/** Port. */
--	uint16_t port;
--};
--
--/**
-- * RTE_TABLE_ACTION_TTL
-- */
--/** TTL action configuration (per table action profile). */
--struct rte_table_action_ttl_config {
--	/** When non-zero, the input packets whose updated IPv4 Time to Live
--	 * (TTL) field or IPv6 Hop Limit (HL) field is zero are dropped.
--	 * When zero, the input packets whose updated IPv4 TTL field or IPv6 HL
--	 * field is zero are forwarded as usual (typically for debugging
--	 * purpose).
--	 */
--	int drop;
--
--	/** When non-zero, the *n_packets* stats counter for TTL action is
--	 * enabled, otherwise disabled.
--	 *
--	 * @see struct rte_table_action_ttl_counters
--	 */
--	int n_packets_enabled;
--};
--
--/** TTL action parameters (per table rule). */
--struct rte_table_action_ttl_params {
--	/** When non-zero, decrement the IPv4 TTL field and update the checksum
--	 * field, or decrement the IPv6 HL field. When zero, the IPv4 TTL field
--	 * or the IPv6 HL field is not changed.
--	 */
--	int decrement;
--};
--
--/** TTL action statistics packets (per table rule). */
--struct rte_table_action_ttl_counters {
--	/** Number of IPv4 packets whose updated TTL field is zero or IPv6
--	 * packets whose updated HL field is zero.
--	 */
--	uint64_t n_packets;
--};
--
--/**
-- * RTE_TABLE_ACTION_STATS
-- */
--/** Stats action configuration (per table action profile). */
--struct rte_table_action_stats_config {
--	/** When non-zero, the *n_packets* stats counter is enabled, otherwise
--	 * disabled.
--	 *
--	 * @see struct rte_table_action_stats_counters
--	 */
--	int n_packets_enabled;
--
--	/** When non-zero, the *n_bytes* stats counter is enabled, otherwise
--	 * disabled.
--	 *
--	 * @see struct rte_table_action_stats_counters
--	 */
--	int n_bytes_enabled;
--};
--
--/** Stats action parameters (per table rule). */
--struct rte_table_action_stats_params {
--	/** Initial value for the *n_packets* stats counter. Typically set to 0.
--	 *
--	 * @see struct rte_table_action_stats_counters
--	 */
--	uint64_t n_packets;
--
--	/** Initial value for the *n_bytes* stats counter. Typically set to 0.
--	 *
--	 * @see struct rte_table_action_stats_counters
--	 */
--	uint64_t n_bytes;
--};
--
--/** Stats action counters (per table rule). */
--struct rte_table_action_stats_counters {
--	/** Number of packets. Valid only when *n_packets_valid* is non-zero. */
--	uint64_t n_packets;
--
--	/** Number of bytes. Valid only when *n_bytes_valid* is non-zero. */
--	uint64_t n_bytes;
--
--	/** When non-zero, the *n_packets* field is valid, otherwise invalid. */
--	int n_packets_valid;
--
--	/** When non-zero, the *n_bytes* field is valid, otherwise invalid. */
--	int n_bytes_valid;
--};
--
--/**
-- * RTE_TABLE_ACTION_TIME
-- */
--/** Timestamp action parameters (per table rule). */
--struct rte_table_action_time_params {
--	/** Initial timestamp value. Typically set to current time. */
--	uint64_t time;
--};
--
--/**
-- * RTE_TABLE_ACTION_CRYPTO
-- */
--#ifndef RTE_TABLE_ACTION_SYM_CRYPTO_IV_SIZE_MAX
--#define RTE_TABLE_ACTION_SYM_CRYPTO_IV_SIZE_MAX		(16)
--#endif
--
--#ifndef RTE_TABLE_ACTION_SYM_CRYPTO_AAD_SIZE_MAX
--#define RTE_TABLE_ACTION_SYM_CRYPTO_AAD_SIZE_MAX	(16)
--#endif
--
--#ifndef RTE_TABLE_ACTION_SYM_CRYPTO_IV_OFFSET
--#define RTE_TABLE_ACTION_SYM_CRYPTO_IV_OFFSET				\
--	(sizeof(struct rte_crypto_op) + sizeof(struct rte_crypto_sym_op))
--#endif
--
--/** Common action structure to store the data's value, length, and offset */
--struct rte_table_action_vlo {
--	uint8_t *val;
--	uint32_t length;
--	uint32_t offset;
--};
--
--/** Symmetric crypto action configuration (per table action profile). */
--struct rte_table_action_sym_crypto_config {
--	/** Target Cryptodev ID. */
--	uint8_t cryptodev_id;
--
--	/**
--	 * Offset to rte_crypto_op structure within the input packet buffer.
--	 * Offset 0 points to the first byte of the MBUF structure.
--	 */
--	uint32_t op_offset;
--
--	/** The mempool for creating cryptodev sessions. */
--	struct rte_mempool *mp_create;
--
--	/** The mempool for initializing cryptodev sessions. */
--	struct rte_mempool *mp_init;
--};
--
--/** Symmetric Crypto action parameters (per table rule). */
--struct rte_table_action_sym_crypto_params {
--
--	/** Xform pointer contains all relevant information */
--	struct rte_crypto_sym_xform *xform;
--
--	/**
--	 * Offset within the input packet buffer to the first byte of data
--	 * to be processed by the crypto unit. Offset 0 points to the first
--	 * byte of the MBUF structure.
--	 */
--	uint32_t data_offset;
--
--	union {
--		struct {
--			/** Cipher iv data. */
--			struct rte_table_action_vlo cipher_iv;
--
--			/** Cipher iv data. */
--			struct rte_table_action_vlo cipher_iv_update;
--
--			/** Auth iv data. */
--			struct rte_table_action_vlo auth_iv;
--
--			/** Auth iv data. */
--			struct rte_table_action_vlo auth_iv_update;
--
--		} cipher_auth;
--
--		struct {
--			/** AEAD AAD data. */
--			struct rte_table_action_vlo aad;
--
--			/** AEAD iv data. */
--			struct rte_table_action_vlo iv;
--
--			/** AEAD AAD data. */
--			struct rte_table_action_vlo aad_update;
--
--			/** AEAD iv data. */
--			struct rte_table_action_vlo iv_update;
--
--		} aead;
--	};
--};
--
--/**
-- * RTE_TABLE_ACTION_TAG
-- */
--/** Tag action parameters (per table rule). */
--struct rte_table_action_tag_params {
--	/** Tag to be attached to the input packet. */
--	uint32_t tag;
--};
--
--/**
-- * RTE_TABLE_ACTION_DECAP
-- */
--/** Decap action parameters (per table rule). */
--struct rte_table_action_decap_params {
--	/** Number of bytes to be removed from the start of the packet. */
--	uint16_t n;
--};
--
--/**
-- * Table action profile.
-- */
--struct rte_table_action_profile;
--
--/**
-- * Table action profile create.
-- *
-- * @param[in] common
-- *   Common action configuration.
-- * @return
-- *   Table action profile handle on success, NULL otherwise.
-- */
--__rte_experimental
--struct rte_table_action_profile *
--rte_table_action_profile_create(struct rte_table_action_common_config *common);
--
--/**
-- * Table action profile free.
-- *
-- * @param[in] profile
-- *   Table profile action handle (needs to be valid).
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_table_action_profile_free(struct rte_table_action_profile *profile);
--
--/**
-- * Table action profile action register.
-- *
-- * @param[in] profile
-- *   Table profile action handle (needs to be valid and not in frozen state).
-- * @param[in] type
-- *   Specific table action to be registered for *profile*.
-- * @param[in] action_config
-- *   Configuration for the *type* action.
-- *   If struct rte_table_action_*type*_config is defined by the Table Action
-- *   API, it needs to point to a valid instance of this structure, otherwise it
-- *   needs to be set to NULL.
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_table_action_profile_action_register(struct rte_table_action_profile *profile,
--	enum rte_table_action_type type,
--	void *action_config);
--
--/**
-- * Table action profile freeze.
-- *
-- * Once this function is called successfully, the given profile enters the
-- * frozen state with the following immediate effects: no more actions can be
-- * registered for this profile, so the profile can be instantiated to create
-- * table action objects.
-- *
-- * @param[in] profile
-- *   Table profile action handle (needs to be valid and not in frozen state).
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- *
-- * @see rte_table_action_create()
-- */
--__rte_experimental
--int
--rte_table_action_profile_freeze(struct rte_table_action_profile *profile);
--
--/**
-- * Table action.
-- */
--struct rte_table_action;
--
--/**
-- * Table action create.
-- *
-- * Instantiates the given table action profile to create a table action object.
-- *
-- * @param[in] profile
-- *   Table profile action handle (needs to be valid and in frozen state).
-- * @param[in] socket_id
-- *   CPU socket ID where the internal data structures required by the new table
-- *   action object should be allocated.
-- * @return
-- *   Handle to table action object on success, NULL on error.
-- *
-- * @see rte_table_action_create()
-- */
--__rte_experimental
--struct rte_table_action *
--rte_table_action_create(struct rte_table_action_profile *profile,
--	uint32_t socket_id);
--
--/**
-- * Table action free.
-- *
-- * @param[in] action
-- *   Handle to table action object (needs to be valid).
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_table_action_free(struct rte_table_action *action);
--
--/**
-- * Table action table params get.
-- *
-- * @param[in] action
-- *   Handle to table action object (needs to be valid).
-- * @param[inout] params
-- *   Pipeline table parameters (needs to be pre-allocated).
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_table_action_table_params_get(struct rte_table_action *action,
--	struct rte_pipeline_table_params *params);
--
--/**
-- * Table action apply.
-- *
-- * @param[in] action
-- *   Handle to table action object (needs to be valid).
-- * @param[in] data
-- *   Data byte array (typically table rule data) to apply action *type* on.
-- * @param[in] type
-- *   Specific table action previously registered for the table action profile of
-- *   the *action* object.
-- * @param[in] action_params
-- *   Parameters for the *type* action.
-- *   If struct rte_table_action_*type*_params is defined by the Table Action
-- *   API, it needs to point to a valid instance of this structure, otherwise it
-- *   needs to be set to NULL.
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_table_action_apply(struct rte_table_action *action,
--	void *data,
--	enum rte_table_action_type type,
--	void *action_params);
--
--/**
-- * Table action DSCP table update.
-- *
-- * @param[in] action
-- *   Handle to table action object (needs to be valid).
-- * @param[in] dscp_mask
-- *   64-bit mask defining the DSCP table entries to be updated. If bit N is set
-- *   in this bit mask, then DSCP table entry N is to be updated, otherwise not.
-- * @param[in] table
-- *   DSCP table.
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_table_action_dscp_table_update(struct rte_table_action *action,
--	uint64_t dscp_mask,
--	struct rte_table_action_dscp_table *table);
--
--/**
-- * Table action meter profile add.
-- *
-- * @param[in] action
-- *   Handle to table action object (needs to be valid).
-- * @param[in] meter_profile_id
-- *   Meter profile ID to be used for the *profile* once it is successfully added
-- *   to the *action* object (needs to be unused by the set of meter profiles
-- *   currently registered for the *action* object).
-- * @param[in] profile
-- *   Meter profile to be added.
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_table_action_meter_profile_add(struct rte_table_action *action,
--	uint32_t meter_profile_id,
--	struct rte_table_action_meter_profile *profile);
--
--/**
-- * Table action meter profile delete.
-- *
-- * @param[in] action
-- *   Handle to table action object (needs to be valid).
-- * @param[in] meter_profile_id
-- *   Meter profile ID of the meter profile to be deleted from the *action*
-- *   object (needs to be valid for the *action* object).
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_table_action_meter_profile_delete(struct rte_table_action *action,
--	uint32_t meter_profile_id);
--
--/**
-- * Table action meter read.
-- *
-- * @param[in] action
-- *   Handle to table action object (needs to be valid).
-- * @param[in] data
-- *   Data byte array (typically table rule data) with meter action previously
-- *   applied on it.
-- * @param[in] tc_mask
-- *   Bit mask defining which traffic classes should have the meter stats
-- *   counters read from *data* and stored into *stats*. If bit N is set in this
-- *   bit mask, then traffic class N is part of this operation, otherwise it is
-- *   not. If bit N is set in this bit mask, then traffic class N must be one of
-- *   the traffic classes that are enabled for the meter action in the table
-- *   action profile used by the *action* object.
-- * @param[inout] stats
-- *   When non-NULL, it points to the area where the meter stats counters read
-- *   from *data* are saved. Only the meter stats counters for the *tc_mask*
-- *   traffic classes are read and stored to *stats*.
-- * @param[in] clear
-- *   When non-zero, the meter stats counters are cleared (i.e. set to zero),
-- *   otherwise the counters are not modified. When the read operation is enabled
-- *   (*stats* is non-NULL), the clear operation is performed after the read
-- *   operation is completed.
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_table_action_meter_read(struct rte_table_action *action,
--	void *data,
--	uint32_t tc_mask,
--	struct rte_table_action_mtr_counters *stats,
--	int clear);
--
--/**
-- * Table action TTL read.
-- *
-- * @param[in] action
-- *   Handle to table action object (needs to be valid).
-- * @param[in] data
-- *   Data byte array (typically table rule data) with TTL action previously
-- *   applied on it.
-- * @param[inout] stats
-- *   When non-NULL, it points to the area where the TTL stats counters read from
-- *   *data* are saved.
-- * @param[in] clear
-- *   When non-zero, the TTL stats counters are cleared (i.e. set to zero),
-- *   otherwise the counters are not modified. When the read operation is enabled
-- *   (*stats* is non-NULL), the clear operation is performed after the read
-- *   operation is completed.
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_table_action_ttl_read(struct rte_table_action *action,
--	void *data,
--	struct rte_table_action_ttl_counters *stats,
--	int clear);
--
--/**
-- * Table action stats read.
-- *
-- * @param[in] action
-- *   Handle to table action object (needs to be valid).
-- * @param[in] data
-- *   Data byte array (typically table rule data) with stats action previously
-- *   applied on it.
-- * @param[inout] stats
-- *   When non-NULL, it points to the area where the stats counters read from
-- *   *data* are saved.
-- * @param[in] clear
-- *   When non-zero, the stats counters are cleared (i.e. set to zero), otherwise
-- *   the counters are not modified. When the read operation is enabled (*stats*
-- *   is non-NULL), the clear operation is performed after the read operation is
-- *   completed.
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_table_action_stats_read(struct rte_table_action *action,
--	void *data,
--	struct rte_table_action_stats_counters *stats,
--	int clear);
--
--/**
-- * Table action timestamp read.
-- *
-- * @param[in] action
-- *   Handle to table action object (needs to be valid).
-- * @param[in] data
-- *   Data byte array (typically table rule data) with timestamp action
-- *   previously applied on it.
-- * @param[inout] timestamp
-- *   Pre-allocated memory where the timestamp read from *data* is saved (has to
-- *   be non-NULL).
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_table_action_time_read(struct rte_table_action *action,
--	void *data,
--	uint64_t *timestamp);
--
--/**
-- * Table action cryptodev symmetric session get.
-- *
-- * @param[in] action
-- *   Handle to table action object (needs to be valid).
-- * @param[in] data
-- *   Data byte array (typically table rule data) with sym crypto action.
-- * @return
-- *   The pointer to the session on success, NULL otherwise.
-- */
--__rte_experimental
--struct rte_cryptodev_sym_session *
--rte_table_action_crypto_sym_session_get(struct rte_table_action *action,
--	void *data);
+-/** fd_writer_nodrop port operations */
+-extern struct rte_port_out_ops rte_port_fd_writer_nodrop_ops;
 -
 -#ifdef __cplusplus
 -}
 -#endif
 -
--#endif /* __INCLUDE_RTE_TABLE_ACTION_H__ */
+-#endif
+diff --git a/lib/port/rte_port_frag.c b/lib/port/rte_port_frag.c
+deleted file mode 100644
+index 9444f5939c..0000000000
+--- a/lib/port/rte_port_frag.c
++++ /dev/null
+@@ -1,280 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-#include <string.h>
+-
+-#include <eal_export.h>
+-#include <rte_ip_frag.h>
+-
+-#include "rte_port_frag.h"
+-
+-#include "port_log.h"
+-
+-/* Max number of fragments per packet allowed */
+-#define	RTE_PORT_FRAG_MAX_FRAGS_PER_PACKET 0x80
+-
+-#ifdef RTE_PORT_STATS_COLLECT
+-
+-#define RTE_PORT_RING_READER_FRAG_STATS_PKTS_IN_ADD(port, val) \
+-	port->stats.n_pkts_in += val
+-#define RTE_PORT_RING_READER_FRAG_STATS_PKTS_DROP_ADD(port, val) \
+-	port->stats.n_pkts_drop += val
+-
+-#else
+-
+-#define RTE_PORT_RING_READER_FRAG_STATS_PKTS_IN_ADD(port, val)
+-#define RTE_PORT_RING_READER_FRAG_STATS_PKTS_DROP_ADD(port, val)
+-
+-#endif
+-
+-typedef int32_t
+-		(*frag_op)(struct rte_mbuf *pkt_in,
+-			struct rte_mbuf **pkts_out,
+-			uint16_t nb_pkts_out,
+-			uint16_t mtu_size,
+-			struct rte_mempool *pool_direct,
+-			struct rte_mempool *pool_indirect);
+-
+-struct __rte_cache_aligned rte_port_ring_reader_frag {
+-	struct rte_port_in_stats stats;
+-
+-	/* Input parameters */
+-	struct rte_ring *ring;
+-	uint32_t mtu;
+-	uint32_t metadata_size;
+-	struct rte_mempool *pool_direct;
+-	struct rte_mempool *pool_indirect;
+-
+-	/* Internal buffers */
+-	struct rte_mbuf *pkts[RTE_PORT_IN_BURST_SIZE_MAX];
+-	struct rte_mbuf *frags[RTE_PORT_FRAG_MAX_FRAGS_PER_PACKET];
+-	uint32_t n_pkts;
+-	uint32_t pos_pkts;
+-	uint32_t n_frags;
+-	uint32_t pos_frags;
+-
+-	frag_op f_frag;
+-};
+-
+-static void *
+-rte_port_ring_reader_frag_create(void *params, int socket_id, int is_ipv4)
+-{
+-	struct rte_port_ring_reader_frag_params *conf =
+-			params;
+-	struct rte_port_ring_reader_frag *port;
+-
+-	/* Check input parameters */
+-	if (conf == NULL) {
+-		PORT_LOG(ERR, "%s: Parameter conf is NULL", __func__);
+-		return NULL;
+-	}
+-	if (conf->ring == NULL) {
+-		PORT_LOG(ERR, "%s: Parameter ring is NULL", __func__);
+-		return NULL;
+-	}
+-	if (conf->mtu == 0) {
+-		PORT_LOG(ERR, "%s: Parameter mtu is invalid", __func__);
+-		return NULL;
+-	}
+-	if (conf->pool_direct == NULL) {
+-		PORT_LOG(ERR, "%s: Parameter pool_direct is NULL",
+-			__func__);
+-		return NULL;
+-	}
+-	if (conf->pool_indirect == NULL) {
+-		PORT_LOG(ERR, "%s: Parameter pool_indirect is NULL",
+-			__func__);
+-		return NULL;
+-	}
+-
+-	/* Memory allocation */
+-	port = rte_zmalloc_socket("PORT", sizeof(*port), RTE_CACHE_LINE_SIZE,
+-		socket_id);
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: port is NULL", __func__);
+-		return NULL;
+-	}
+-
+-	/* Initialization */
+-	port->ring = conf->ring;
+-	port->mtu = conf->mtu;
+-	port->metadata_size = conf->metadata_size;
+-	port->pool_direct = conf->pool_direct;
+-	port->pool_indirect = conf->pool_indirect;
+-
+-	port->n_pkts = 0;
+-	port->pos_pkts = 0;
+-	port->n_frags = 0;
+-	port->pos_frags = 0;
+-
+-	port->f_frag = (is_ipv4) ?
+-			rte_ipv4_fragment_packet : rte_ipv6_fragment_packet;
+-
+-	return port;
+-}
+-
+-static void *
+-rte_port_ring_reader_ipv4_frag_create(void *params, int socket_id)
+-{
+-	return rte_port_ring_reader_frag_create(params, socket_id, 1);
+-}
+-
+-static void *
+-rte_port_ring_reader_ipv6_frag_create(void *params, int socket_id)
+-{
+-	return rte_port_ring_reader_frag_create(params, socket_id, 0);
+-}
+-
+-static int
+-rte_port_ring_reader_frag_rx(void *port,
+-		struct rte_mbuf **pkts,
+-		uint32_t n_pkts)
+-{
+-	struct rte_port_ring_reader_frag *p =
+-			port;
+-	uint32_t n_pkts_out;
+-
+-	n_pkts_out = 0;
+-
+-	/* Get packets from the "frag" buffer */
+-	if (p->n_frags >= n_pkts) {
+-		memcpy(pkts, &p->frags[p->pos_frags], n_pkts * sizeof(void *));
+-		p->pos_frags += n_pkts;
+-		p->n_frags -= n_pkts;
+-
+-		return n_pkts;
+-	}
+-
+-	memcpy(pkts, &p->frags[p->pos_frags], p->n_frags * sizeof(void *));
+-	n_pkts_out = p->n_frags;
+-	p->n_frags = 0;
+-
+-	/* Look to "pkts" buffer to get more packets */
+-	for ( ; ; ) {
+-		struct rte_mbuf *pkt;
+-		uint32_t n_pkts_to_provide, i;
+-		int status;
+-
+-		/* If "pkts" buffer is empty, read packet burst from ring */
+-		if (p->n_pkts == 0) {
+-			p->n_pkts = rte_ring_sc_dequeue_burst(p->ring,
+-				(void **) p->pkts, RTE_PORT_IN_BURST_SIZE_MAX,
+-				NULL);
+-			RTE_PORT_RING_READER_FRAG_STATS_PKTS_IN_ADD(p, p->n_pkts);
+-			if (p->n_pkts == 0)
+-				return n_pkts_out;
+-			p->pos_pkts = 0;
+-		}
+-
+-		/* Read next packet from "pkts" buffer */
+-		pkt = p->pkts[p->pos_pkts++];
+-		p->n_pkts--;
+-
+-		/* If not jumbo, pass current packet to output */
+-		if (pkt->pkt_len <= p->mtu) {
+-			pkts[n_pkts_out++] = pkt;
+-
+-			n_pkts_to_provide = n_pkts - n_pkts_out;
+-			if (n_pkts_to_provide == 0)
+-				return n_pkts;
+-
+-			continue;
+-		}
+-
+-		/* Fragment current packet into the "frags" buffer */
+-		status = p->f_frag(
+-			pkt,
+-			p->frags,
+-			RTE_PORT_FRAG_MAX_FRAGS_PER_PACKET,
+-			p->mtu,
+-			p->pool_direct,
+-			p->pool_indirect
+-		);
+-
+-		if (status < 0) {
+-			rte_pktmbuf_free(pkt);
+-			RTE_PORT_RING_READER_FRAG_STATS_PKTS_DROP_ADD(p, 1);
+-			continue;
+-		}
+-
+-		p->n_frags = (uint32_t) status;
+-		p->pos_frags = 0;
+-
+-		/* Copy meta-data from input jumbo packet to its fragments */
+-		for (i = 0; i < p->n_frags; i++) {
+-			uint8_t *src =
+-			  RTE_MBUF_METADATA_UINT8_PTR(pkt, sizeof(struct rte_mbuf));
+-			uint8_t *dst =
+-			  RTE_MBUF_METADATA_UINT8_PTR(p->frags[i], sizeof(struct rte_mbuf));
+-
+-			memcpy(dst, src, p->metadata_size);
+-		}
+-
+-		/* Free input jumbo packet */
+-		rte_pktmbuf_free(pkt);
+-
+-		/* Get packets from "frag" buffer */
+-		n_pkts_to_provide = n_pkts - n_pkts_out;
+-		if (p->n_frags >= n_pkts_to_provide) {
+-			memcpy(&pkts[n_pkts_out], p->frags,
+-				n_pkts_to_provide * sizeof(void *));
+-			p->n_frags -= n_pkts_to_provide;
+-			p->pos_frags += n_pkts_to_provide;
+-
+-			return n_pkts;
+-		}
+-
+-		memcpy(&pkts[n_pkts_out], p->frags,
+-			p->n_frags * sizeof(void *));
+-		n_pkts_out += p->n_frags;
+-		p->n_frags = 0;
+-	}
+-}
+-
+-static int
+-rte_port_ring_reader_frag_free(void *port)
+-{
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Parameter port is NULL", __func__);
+-		return -1;
+-	}
+-
+-	rte_free(port);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_frag_reader_stats_read(void *port,
+-		struct rte_port_in_stats *stats, int clear)
+-{
+-	struct rte_port_ring_reader_frag *p =
+-		port;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &p->stats, sizeof(p->stats));
+-
+-	if (clear)
+-		memset(&p->stats, 0, sizeof(p->stats));
+-
+-	return 0;
+-}
+-
+-/*
+- * Summary of port operations
+- */
+-RTE_EXPORT_SYMBOL(rte_port_ring_reader_ipv4_frag_ops)
+-struct rte_port_in_ops rte_port_ring_reader_ipv4_frag_ops = {
+-	.f_create = rte_port_ring_reader_ipv4_frag_create,
+-	.f_free = rte_port_ring_reader_frag_free,
+-	.f_rx = rte_port_ring_reader_frag_rx,
+-	.f_stats = rte_port_frag_reader_stats_read,
+-};
+-
+-RTE_EXPORT_SYMBOL(rte_port_ring_reader_ipv6_frag_ops)
+-struct rte_port_in_ops rte_port_ring_reader_ipv6_frag_ops = {
+-	.f_create = rte_port_ring_reader_ipv6_frag_create,
+-	.f_free = rte_port_ring_reader_frag_free,
+-	.f_rx = rte_port_ring_reader_frag_rx,
+-	.f_stats = rte_port_frag_reader_stats_read,
+-};
+diff --git a/lib/port/rte_port_frag.h b/lib/port/rte_port_frag.h
+deleted file mode 100644
+index 9a10f10523..0000000000
+--- a/lib/port/rte_port_frag.h
++++ /dev/null
+@@ -1,70 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_PORT_IP_FRAG_H__
+-#define __INCLUDE_RTE_PORT_IP_FRAG_H__
+-
+-/**
+- * @file
+- * RTE Port for IPv4 Fragmentation
+- *
+- * This port is built on top of pre-initialized single consumer rte_ring. In
+- * order to minimize the amount of packets stored in the ring at any given
+- * time, the IP fragmentation functionality is executed on ring read operation,
+- * hence this port is implemented as an input port. A regular ring_writer port
+- * can be created to write to the same ring.
+- *
+- * The packets written to the ring are either complete IP datagrams or jumbo
+- * frames (i.e. IP packets with length bigger than provided MTU value). The
+- * packets read from the ring are all non-jumbo frames. The complete IP
+- * datagrams written to the ring are not changed. The jumbo frames are
+- * fragmented into several IP packets with length less or equal to MTU.
+- */
+-
+-#include <stdint.h>
+-
+-
+-#include "rte_port.h"
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-/** ring_reader_ipv4_frag port parameters */
+-struct rte_port_ring_reader_frag_params {
+-	/** Underlying single consumer ring that has to be pre-initialized. */
+-	struct rte_ring *ring;
+-
+-	/** Maximum Transfer Unit (MTU). Maximum IP packet size (in bytes). */
+-	uint32_t mtu;
+-
+-	/** Size of application dependent meta-data stored per each input packet
+-	    that has to be copied to each of the fragments originating from the
+-	    same input IP datagram. */
+-	uint32_t metadata_size;
+-
+-	/** Pre-initialized buffer pool used for allocating direct buffers for
+-	    the output fragments. */
+-	struct rte_mempool *pool_direct;
+-
+-	/** Pre-initialized buffer pool used for allocating indirect buffers for
+-	    the output fragments. */
+-	struct rte_mempool *pool_indirect;
+-};
+-
+-#define rte_port_ring_reader_ipv4_frag_params rte_port_ring_reader_frag_params
+-
+-#define rte_port_ring_reader_ipv6_frag_params rte_port_ring_reader_frag_params
+-
+-/** ring_reader_ipv4_frag port operations */
+-extern struct rte_port_in_ops rte_port_ring_reader_ipv4_frag_ops;
+-
+-/** ring_reader_ipv6_frag port operations */
+-extern struct rte_port_in_ops rte_port_ring_reader_ipv6_frag_ops;
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif
+diff --git a/lib/port/rte_port_ras.c b/lib/port/rte_port_ras.c
+deleted file mode 100644
+index 58ab7a1c5b..0000000000
+--- a/lib/port/rte_port_ras.c
++++ /dev/null
+@@ -1,336 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-#include <string.h>
+-
+-#include <eal_export.h>
+-#include <rte_ip_frag.h>
+-#include <rte_cycles.h>
+-#include <rte_log.h>
+-
+-#include "rte_port_ras.h"
+-
+-#include "port_log.h"
+-
+-#ifndef RTE_PORT_RAS_N_BUCKETS
+-#define RTE_PORT_RAS_N_BUCKETS                                 4094
+-#endif
+-
+-#ifndef RTE_PORT_RAS_N_ENTRIES_PER_BUCKET
+-#define RTE_PORT_RAS_N_ENTRIES_PER_BUCKET                      8
+-#endif
+-
+-#ifndef RTE_PORT_RAS_N_ENTRIES
+-#define RTE_PORT_RAS_N_ENTRIES (RTE_PORT_RAS_N_BUCKETS * RTE_PORT_RAS_N_ENTRIES_PER_BUCKET)
+-#endif
+-
+-#ifdef RTE_PORT_STATS_COLLECT
+-
+-#define RTE_PORT_RING_WRITER_RAS_STATS_PKTS_IN_ADD(port, val) \
+-	port->stats.n_pkts_in += val
+-#define RTE_PORT_RING_WRITER_RAS_STATS_PKTS_DROP_ADD(port, val) \
+-	port->stats.n_pkts_drop += val
+-
+-#else
+-
+-#define RTE_PORT_RING_WRITER_RAS_STATS_PKTS_IN_ADD(port, val)
+-#define RTE_PORT_RING_WRITER_RAS_STATS_PKTS_DROP_ADD(port, val)
+-
+-#endif
+-
+-struct rte_port_ring_writer_ras;
+-
+-typedef void (*ras_op)(
+-		struct rte_port_ring_writer_ras *p,
+-		struct rte_mbuf *pkt);
+-
+-static void
+-process_ipv4(struct rte_port_ring_writer_ras *p, struct rte_mbuf *pkt);
+-static void
+-process_ipv6(struct rte_port_ring_writer_ras *p, struct rte_mbuf *pkt);
+-
+-struct rte_port_ring_writer_ras {
+-	struct rte_port_out_stats stats;
+-
+-	struct rte_mbuf *tx_buf[RTE_PORT_IN_BURST_SIZE_MAX];
+-	struct rte_ring *ring;
+-	uint32_t tx_burst_sz;
+-	uint32_t tx_buf_count;
+-	struct rte_ip_frag_tbl *frag_tbl;
+-	struct rte_ip_frag_death_row death_row;
+-
+-	ras_op f_ras;
+-};
+-
+-static void *
+-rte_port_ring_writer_ras_create(void *params, int socket_id, int is_ipv4)
+-{
+-	struct rte_port_ring_writer_ras_params *conf =
+-			params;
+-	struct rte_port_ring_writer_ras *port;
+-	uint64_t frag_cycles;
+-
+-	/* Check input parameters */
+-	if (conf == NULL) {
+-		PORT_LOG(ERR, "%s: Parameter conf is NULL", __func__);
+-		return NULL;
+-	}
+-	if (conf->ring == NULL) {
+-		PORT_LOG(ERR, "%s: Parameter ring is NULL", __func__);
+-		return NULL;
+-	}
+-	if ((conf->tx_burst_sz == 0) ||
+-	    (conf->tx_burst_sz > RTE_PORT_IN_BURST_SIZE_MAX)) {
+-		PORT_LOG(ERR, "%s: Parameter tx_burst_sz is invalid",
+-			__func__);
+-		return NULL;
+-	}
+-
+-	/* Memory allocation */
+-	port = rte_zmalloc_socket("PORT", sizeof(*port),
+-			RTE_CACHE_LINE_SIZE, socket_id);
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Failed to allocate socket", __func__);
+-		return NULL;
+-	}
+-
+-	/* Create fragmentation table */
+-	frag_cycles = (rte_get_tsc_hz() + MS_PER_S - 1) / MS_PER_S * MS_PER_S;
+-	frag_cycles *= 100;
+-
+-	port->frag_tbl = rte_ip_frag_table_create(
+-		RTE_PORT_RAS_N_BUCKETS,
+-		RTE_PORT_RAS_N_ENTRIES_PER_BUCKET,
+-		RTE_PORT_RAS_N_ENTRIES,
+-		frag_cycles,
+-		socket_id);
+-
+-	if (port->frag_tbl == NULL) {
+-		PORT_LOG(ERR, "%s: rte_ip_frag_table_create failed",
+-			__func__);
+-		rte_free(port);
+-		return NULL;
+-	}
+-
+-	/* Initialization */
+-	port->ring = conf->ring;
+-	port->tx_burst_sz = conf->tx_burst_sz;
+-	port->tx_buf_count = 0;
+-
+-	port->f_ras = (is_ipv4 == 1) ? process_ipv4 : process_ipv6;
+-
+-	return port;
+-}
+-
+-static void *
+-rte_port_ring_writer_ipv4_ras_create(void *params, int socket_id)
+-{
+-	return rte_port_ring_writer_ras_create(params, socket_id, 1);
+-}
+-
+-static void *
+-rte_port_ring_writer_ipv6_ras_create(void *params, int socket_id)
+-{
+-	return rte_port_ring_writer_ras_create(params, socket_id, 0);
+-}
+-
+-static inline void
+-send_burst(struct rte_port_ring_writer_ras *p)
+-{
+-	uint32_t nb_tx;
+-
+-	nb_tx = rte_ring_sp_enqueue_burst(p->ring, (void **)p->tx_buf,
+-			p->tx_buf_count, NULL);
+-
+-	RTE_PORT_RING_WRITER_RAS_STATS_PKTS_DROP_ADD(p, p->tx_buf_count - nb_tx);
+-	for ( ; nb_tx < p->tx_buf_count; nb_tx++)
+-		rte_pktmbuf_free(p->tx_buf[nb_tx]);
+-
+-	p->tx_buf_count = 0;
+-}
+-
+-static void
+-process_ipv4(struct rte_port_ring_writer_ras *p, struct rte_mbuf *pkt)
+-{
+-	/* Assume there is no ethernet header */
+-	struct rte_ipv4_hdr *pkt_hdr =
+-		rte_pktmbuf_mtod(pkt, struct rte_ipv4_hdr *);
+-
+-	/* Get "More fragments" flag and fragment offset */
+-	uint16_t frag_field = rte_be_to_cpu_16(pkt_hdr->fragment_offset);
+-	uint16_t frag_offset = (uint16_t)(frag_field & RTE_IPV4_HDR_OFFSET_MASK);
+-	uint16_t frag_flag = (uint16_t)(frag_field & RTE_IPV4_HDR_MF_FLAG);
+-
+-	/* If it is a fragmented packet, then try to reassemble */
+-	if ((frag_flag == 0) && (frag_offset == 0))
+-		p->tx_buf[p->tx_buf_count++] = pkt;
+-	else {
+-		struct rte_mbuf *mo;
+-		struct rte_ip_frag_tbl *tbl = p->frag_tbl;
+-		struct rte_ip_frag_death_row *dr = &p->death_row;
+-
+-		pkt->l3_len = sizeof(*pkt_hdr);
+-
+-		/* Process this fragment */
+-		mo = rte_ipv4_frag_reassemble_packet(tbl, dr, pkt, rte_rdtsc(),
+-				pkt_hdr);
+-		if (mo != NULL)
+-			p->tx_buf[p->tx_buf_count++] = mo;
+-
+-		rte_ip_frag_free_death_row(&p->death_row, 3);
+-	}
+-}
+-
+-static void
+-process_ipv6(struct rte_port_ring_writer_ras *p, struct rte_mbuf *pkt)
+-{
+-	/* Assume there is no ethernet header */
+-	struct rte_ipv6_hdr *pkt_hdr =
+-		rte_pktmbuf_mtod(pkt, struct rte_ipv6_hdr *);
+-
+-	struct rte_ipv6_fragment_ext *frag_hdr;
+-	uint16_t frag_data = 0;
+-	frag_hdr = rte_ipv6_frag_get_ipv6_fragment_header(pkt_hdr);
+-	if (frag_hdr != NULL)
+-		frag_data = rte_be_to_cpu_16(frag_hdr->frag_data);
+-
+-	/* If it is a fragmented packet, then try to reassemble */
+-	if ((frag_data & RTE_IPV6_FRAG_USED_MASK) == 0)
+-		p->tx_buf[p->tx_buf_count++] = pkt;
+-	else {
+-		struct rte_mbuf *mo;
+-		struct rte_ip_frag_tbl *tbl = p->frag_tbl;
+-		struct rte_ip_frag_death_row *dr = &p->death_row;
+-
+-		pkt->l3_len = sizeof(*pkt_hdr) + sizeof(*frag_hdr);
+-
+-		/* Process this fragment */
+-		mo = rte_ipv6_frag_reassemble_packet(tbl, dr, pkt, rte_rdtsc(), pkt_hdr,
+-				frag_hdr);
+-		if (mo != NULL)
+-			p->tx_buf[p->tx_buf_count++] = mo;
+-
+-		rte_ip_frag_free_death_row(&p->death_row, 3);
+-	}
+-}
+-
+-static int
+-rte_port_ring_writer_ras_tx(void *port, struct rte_mbuf *pkt)
+-{
+-	struct rte_port_ring_writer_ras *p =
+-			port;
+-
+-	RTE_PORT_RING_WRITER_RAS_STATS_PKTS_IN_ADD(p, 1);
+-	p->f_ras(p, pkt);
+-	if (p->tx_buf_count >= p->tx_burst_sz)
+-		send_burst(p);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_ring_writer_ras_tx_bulk(void *port,
+-		struct rte_mbuf **pkts,
+-		uint64_t pkts_mask)
+-{
+-	struct rte_port_ring_writer_ras *p =
+-			port;
+-
+-	if ((pkts_mask & (pkts_mask + 1)) == 0) {
+-		uint64_t n_pkts = rte_popcount64(pkts_mask);
+-		uint32_t i;
+-
+-		for (i = 0; i < n_pkts; i++) {
+-			struct rte_mbuf *pkt = pkts[i];
+-
+-			RTE_PORT_RING_WRITER_RAS_STATS_PKTS_IN_ADD(p, 1);
+-			p->f_ras(p, pkt);
+-			if (p->tx_buf_count >= p->tx_burst_sz)
+-				send_burst(p);
+-		}
+-	} else {
+-		for ( ; pkts_mask; ) {
+-			uint32_t pkt_index = rte_ctz64(pkts_mask);
+-			uint64_t pkt_mask = 1LLU << pkt_index;
+-			struct rte_mbuf *pkt = pkts[pkt_index];
+-
+-			RTE_PORT_RING_WRITER_RAS_STATS_PKTS_IN_ADD(p, 1);
+-			p->f_ras(p, pkt);
+-			if (p->tx_buf_count >= p->tx_burst_sz)
+-				send_burst(p);
+-
+-			pkts_mask &= ~pkt_mask;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_ring_writer_ras_flush(void *port)
+-{
+-	struct rte_port_ring_writer_ras *p =
+-			port;
+-
+-	if (p->tx_buf_count > 0)
+-		send_burst(p);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_ring_writer_ras_free(void *port)
+-{
+-	struct rte_port_ring_writer_ras *p =
+-			port;
+-
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Parameter port is NULL", __func__);
+-		return -1;
+-	}
+-
+-	rte_port_ring_writer_ras_flush(port);
+-	rte_ip_frag_table_destroy(p->frag_tbl);
+-	rte_free(port);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_ras_writer_stats_read(void *port,
+-		struct rte_port_out_stats *stats, int clear)
+-{
+-	struct rte_port_ring_writer_ras *p =
+-		port;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &p->stats, sizeof(p->stats));
+-
+-	if (clear)
+-		memset(&p->stats, 0, sizeof(p->stats));
+-
+-	return 0;
+-}
+-
+-/*
+- * Summary of port operations
+- */
+-RTE_EXPORT_SYMBOL(rte_port_ring_writer_ipv4_ras_ops)
+-struct rte_port_out_ops rte_port_ring_writer_ipv4_ras_ops = {
+-	.f_create = rte_port_ring_writer_ipv4_ras_create,
+-	.f_free = rte_port_ring_writer_ras_free,
+-	.f_tx = rte_port_ring_writer_ras_tx,
+-	.f_tx_bulk = rte_port_ring_writer_ras_tx_bulk,
+-	.f_flush = rte_port_ring_writer_ras_flush,
+-	.f_stats = rte_port_ras_writer_stats_read,
+-};
+-
+-RTE_EXPORT_SYMBOL(rte_port_ring_writer_ipv6_ras_ops)
+-struct rte_port_out_ops rte_port_ring_writer_ipv6_ras_ops = {
+-	.f_create = rte_port_ring_writer_ipv6_ras_create,
+-	.f_free = rte_port_ring_writer_ras_free,
+-	.f_tx = rte_port_ring_writer_ras_tx,
+-	.f_tx_bulk = rte_port_ring_writer_ras_tx_bulk,
+-	.f_flush = rte_port_ring_writer_ras_flush,
+-	.f_stats = rte_port_ras_writer_stats_read,
+-};
+diff --git a/lib/port/rte_port_ras.h b/lib/port/rte_port_ras.h
+deleted file mode 100644
+index 86e36f5362..0000000000
+--- a/lib/port/rte_port_ras.h
++++ /dev/null
+@@ -1,58 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_PORT_RAS_H__
+-#define __INCLUDE_RTE_PORT_RAS_H__
+-
+-/**
+- * @file
+- * RTE Port for IPv4 Reassembly
+- *
+- * This port is built on top of pre-initialized single producer rte_ring. In
+- * order to minimize the amount of packets stored in the ring at any given
+- * time, the IP reassembly functionality is executed on ring write operation,
+- * hence this port is implemented as an output port. A regular ring_reader port
+- * can be created to read from the same ring.
+- *
+- * The packets written to the ring are either complete IP datagrams or IP
+- * fragments. The packets read from the ring are all complete IP datagrams,
+- * either jumbo frames (i.e. IP packets with length bigger than MTU) or not.
+- * The complete IP datagrams written to the ring are not changed. The IP
+- * fragments written to the ring are first reassembled and into complete IP
+- * datagrams or dropped on error or IP reassembly time-out.
+- */
+-
+-#include <stdint.h>
+-
+-#include "rte_port.h"
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-/** ring_writer_ipv4_ras port parameters */
+-struct rte_port_ring_writer_ras_params {
+-	/** Underlying single consumer ring that has to be pre-initialized. */
+-	struct rte_ring *ring;
+-
+-	/** Recommended burst size to ring. The actual burst size can be bigger
+-	or smaller than this value. */
+-	uint32_t tx_burst_sz;
+-};
+-
+-#define rte_port_ring_writer_ipv4_ras_params rte_port_ring_writer_ras_params
+-
+-#define rte_port_ring_writer_ipv6_ras_params rte_port_ring_writer_ras_params
+-
+-/** ring_writer_ipv4_ras port operations */
+-extern struct rte_port_out_ops rte_port_ring_writer_ipv4_ras_ops;
+-
+-/** ring_writer_ipv6_ras port operations */
+-extern struct rte_port_out_ops rte_port_ring_writer_ipv6_ras_ops;
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif
+diff --git a/lib/port/rte_port_ring.c b/lib/port/rte_port_ring.c
+deleted file mode 100644
+index 307a576d65..0000000000
+--- a/lib/port/rte_port_ring.c
++++ /dev/null
+@@ -1,796 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-#include <string.h>
+-#include <stdint.h>
+-
+-#include <eal_export.h>
+-#include <rte_mbuf.h>
+-#include <rte_ring.h>
+-#include <rte_malloc.h>
+-
+-#include "rte_port_ring.h"
+-
+-#include "port_log.h"
+-
+-/*
+- * Port RING Reader
+- */
+-#ifdef RTE_PORT_STATS_COLLECT
+-
+-#define RTE_PORT_RING_READER_STATS_PKTS_IN_ADD(port, val) \
+-	port->stats.n_pkts_in += val
+-#define RTE_PORT_RING_READER_STATS_PKTS_DROP_ADD(port, val) \
+-	port->stats.n_pkts_drop += val
+-
+-#else
+-
+-#define RTE_PORT_RING_READER_STATS_PKTS_IN_ADD(port, val)
+-#define RTE_PORT_RING_READER_STATS_PKTS_DROP_ADD(port, val)
+-
+-#endif
+-
+-struct rte_port_ring_reader {
+-	struct rte_port_in_stats stats;
+-
+-	struct rte_ring *ring;
+-};
+-
+-static void *
+-rte_port_ring_reader_create_internal(void *params, int socket_id,
+-	uint32_t is_multi)
+-{
+-	struct rte_port_ring_reader_params *conf =
+-			params;
+-	struct rte_port_ring_reader *port;
+-
+-	/* Check input parameters */
+-	if ((conf == NULL) ||
+-		(conf->ring == NULL) ||
+-		(rte_ring_is_cons_single(conf->ring) && is_multi) ||
+-		(!rte_ring_is_cons_single(conf->ring) && !is_multi)) {
+-		PORT_LOG(ERR, "%s: Invalid Parameters", __func__);
+-		return NULL;
+-	}
+-
+-	/* Memory allocation */
+-	port = rte_zmalloc_socket("PORT", sizeof(*port),
+-			RTE_CACHE_LINE_SIZE, socket_id);
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
+-		return NULL;
+-	}
+-
+-	/* Initialization */
+-	port->ring = conf->ring;
+-
+-	return port;
+-}
+-
+-static void *
+-rte_port_ring_reader_create(void *params, int socket_id)
+-{
+-	return rte_port_ring_reader_create_internal(params, socket_id, 0);
+-}
+-
+-static void *
+-rte_port_ring_multi_reader_create(void *params, int socket_id)
+-{
+-	return rte_port_ring_reader_create_internal(params, socket_id, 1);
+-}
+-
+-static int
+-rte_port_ring_reader_rx(void *port, struct rte_mbuf **pkts, uint32_t n_pkts)
+-{
+-	struct rte_port_ring_reader *p = port;
+-	uint32_t nb_rx;
+-
+-	nb_rx = rte_ring_sc_dequeue_burst(p->ring, (void **) pkts,
+-			n_pkts, NULL);
+-	RTE_PORT_RING_READER_STATS_PKTS_IN_ADD(p, nb_rx);
+-
+-	return nb_rx;
+-}
+-
+-static int
+-rte_port_ring_multi_reader_rx(void *port, struct rte_mbuf **pkts,
+-	uint32_t n_pkts)
+-{
+-	struct rte_port_ring_reader *p = port;
+-	uint32_t nb_rx;
+-
+-	nb_rx = rte_ring_mc_dequeue_burst(p->ring, (void **) pkts,
+-			n_pkts, NULL);
+-	RTE_PORT_RING_READER_STATS_PKTS_IN_ADD(p, nb_rx);
+-
+-	return nb_rx;
+-}
+-
+-static int
+-rte_port_ring_reader_free(void *port)
+-{
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: port is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	rte_free(port);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_ring_reader_stats_read(void *port,
+-		struct rte_port_in_stats *stats, int clear)
+-{
+-	struct rte_port_ring_reader *p =
+-		port;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &p->stats, sizeof(p->stats));
+-
+-	if (clear)
+-		memset(&p->stats, 0, sizeof(p->stats));
+-
+-	return 0;
+-}
+-
+-/*
+- * Port RING Writer
+- */
+-#ifdef RTE_PORT_STATS_COLLECT
+-
+-#define RTE_PORT_RING_WRITER_STATS_PKTS_IN_ADD(port, val) \
+-	port->stats.n_pkts_in += val
+-#define RTE_PORT_RING_WRITER_STATS_PKTS_DROP_ADD(port, val) \
+-	port->stats.n_pkts_drop += val
+-
+-#else
+-
+-#define RTE_PORT_RING_WRITER_STATS_PKTS_IN_ADD(port, val)
+-#define RTE_PORT_RING_WRITER_STATS_PKTS_DROP_ADD(port, val)
+-
+-#endif
+-
+-struct rte_port_ring_writer {
+-	struct rte_port_out_stats stats;
+-
+-	struct rte_mbuf *tx_buf[2 * RTE_PORT_IN_BURST_SIZE_MAX];
+-	struct rte_ring *ring;
+-	uint32_t tx_burst_sz;
+-	uint32_t tx_buf_count;
+-	uint64_t bsz_mask;
+-	uint32_t is_multi;
+-};
+-
+-static void *
+-rte_port_ring_writer_create_internal(void *params, int socket_id,
+-	uint32_t is_multi)
+-{
+-	struct rte_port_ring_writer_params *conf =
+-			params;
+-	struct rte_port_ring_writer *port;
+-
+-	/* Check input parameters */
+-	if ((conf == NULL) ||
+-		(conf->ring == NULL) ||
+-		(rte_ring_is_prod_single(conf->ring) && is_multi) ||
+-		(!rte_ring_is_prod_single(conf->ring) && !is_multi) ||
+-		(conf->tx_burst_sz > RTE_PORT_IN_BURST_SIZE_MAX)) {
+-		PORT_LOG(ERR, "%s: Invalid Parameters", __func__);
+-		return NULL;
+-	}
+-
+-	/* Memory allocation */
+-	port = rte_zmalloc_socket("PORT", sizeof(*port),
+-			RTE_CACHE_LINE_SIZE, socket_id);
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
+-		return NULL;
+-	}
+-
+-	/* Initialization */
+-	port->ring = conf->ring;
+-	port->tx_burst_sz = conf->tx_burst_sz;
+-	port->tx_buf_count = 0;
+-	port->bsz_mask = 1LLU << (conf->tx_burst_sz - 1);
+-	port->is_multi = is_multi;
+-
+-	return port;
+-}
+-
+-static void *
+-rte_port_ring_writer_create(void *params, int socket_id)
+-{
+-	return rte_port_ring_writer_create_internal(params, socket_id, 0);
+-}
+-
+-static void *
+-rte_port_ring_multi_writer_create(void *params, int socket_id)
+-{
+-	return rte_port_ring_writer_create_internal(params, socket_id, 1);
+-}
+-
+-static inline void
+-send_burst(struct rte_port_ring_writer *p)
+-{
+-	uint32_t nb_tx;
+-
+-	nb_tx = rte_ring_sp_enqueue_burst(p->ring, (void **)p->tx_buf,
+-			p->tx_buf_count, NULL);
+-
+-	RTE_PORT_RING_WRITER_STATS_PKTS_DROP_ADD(p, p->tx_buf_count - nb_tx);
+-	for ( ; nb_tx < p->tx_buf_count; nb_tx++)
+-		rte_pktmbuf_free(p->tx_buf[nb_tx]);
+-
+-	p->tx_buf_count = 0;
+-}
+-
+-static inline void
+-send_burst_mp(struct rte_port_ring_writer *p)
+-{
+-	uint32_t nb_tx;
+-
+-	nb_tx = rte_ring_mp_enqueue_burst(p->ring, (void **)p->tx_buf,
+-			p->tx_buf_count, NULL);
+-
+-	RTE_PORT_RING_WRITER_STATS_PKTS_DROP_ADD(p, p->tx_buf_count - nb_tx);
+-	for ( ; nb_tx < p->tx_buf_count; nb_tx++)
+-		rte_pktmbuf_free(p->tx_buf[nb_tx]);
+-
+-	p->tx_buf_count = 0;
+-}
+-
+-static int
+-rte_port_ring_writer_tx(void *port, struct rte_mbuf *pkt)
+-{
+-	struct rte_port_ring_writer *p = port;
+-
+-	p->tx_buf[p->tx_buf_count++] = pkt;
+-	RTE_PORT_RING_WRITER_STATS_PKTS_IN_ADD(p, 1);
+-	if (p->tx_buf_count >= p->tx_burst_sz)
+-		send_burst(p);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_ring_multi_writer_tx(void *port, struct rte_mbuf *pkt)
+-{
+-	struct rte_port_ring_writer *p = port;
+-
+-	p->tx_buf[p->tx_buf_count++] = pkt;
+-	RTE_PORT_RING_WRITER_STATS_PKTS_IN_ADD(p, 1);
+-	if (p->tx_buf_count >= p->tx_burst_sz)
+-		send_burst_mp(p);
+-
+-	return 0;
+-}
+-
+-static __rte_always_inline int
+-rte_port_ring_writer_tx_bulk_internal(void *port,
+-		struct rte_mbuf **pkts,
+-		uint64_t pkts_mask,
+-		uint32_t is_multi)
+-{
+-	struct rte_port_ring_writer *p =
+-		port;
+-
+-	uint64_t bsz_mask = p->bsz_mask;
+-	uint32_t tx_buf_count = p->tx_buf_count;
+-	uint64_t expr = (pkts_mask & (pkts_mask + 1)) |
+-			((pkts_mask & bsz_mask) ^ bsz_mask);
+-
+-	if (expr == 0) {
+-		uint64_t n_pkts = rte_popcount64(pkts_mask);
+-		uint32_t n_pkts_ok;
+-
+-		if (tx_buf_count) {
+-			if (is_multi)
+-				send_burst_mp(p);
+-			else
+-				send_burst(p);
+-		}
+-
+-		RTE_PORT_RING_WRITER_STATS_PKTS_IN_ADD(p, n_pkts);
+-		if (is_multi)
+-			n_pkts_ok = rte_ring_mp_enqueue_burst(p->ring,
+-					(void **)pkts, n_pkts, NULL);
+-		else
+-			n_pkts_ok = rte_ring_sp_enqueue_burst(p->ring,
+-					(void **)pkts, n_pkts, NULL);
+-
+-		RTE_PORT_RING_WRITER_STATS_PKTS_DROP_ADD(p, n_pkts - n_pkts_ok);
+-		for ( ; n_pkts_ok < n_pkts; n_pkts_ok++) {
+-			struct rte_mbuf *pkt = pkts[n_pkts_ok];
+-
+-			rte_pktmbuf_free(pkt);
+-		}
+-	} else {
+-		for ( ; pkts_mask; ) {
+-			uint32_t pkt_index = rte_ctz64(pkts_mask);
+-			uint64_t pkt_mask = 1LLU << pkt_index;
+-			struct rte_mbuf *pkt = pkts[pkt_index];
+-
+-			p->tx_buf[tx_buf_count++] = pkt;
+-			RTE_PORT_RING_WRITER_STATS_PKTS_IN_ADD(p, 1);
+-			pkts_mask &= ~pkt_mask;
+-		}
+-
+-		p->tx_buf_count = tx_buf_count;
+-		if (tx_buf_count >= p->tx_burst_sz) {
+-			if (is_multi)
+-				send_burst_mp(p);
+-			else
+-				send_burst(p);
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_ring_writer_tx_bulk(void *port,
+-		struct rte_mbuf **pkts,
+-		uint64_t pkts_mask)
+-{
+-	return rte_port_ring_writer_tx_bulk_internal(port, pkts, pkts_mask, 0);
+-}
+-
+-static int
+-rte_port_ring_multi_writer_tx_bulk(void *port,
+-		struct rte_mbuf **pkts,
+-		uint64_t pkts_mask)
+-{
+-	return rte_port_ring_writer_tx_bulk_internal(port, pkts, pkts_mask, 1);
+-}
+-
+-static int
+-rte_port_ring_writer_flush(void *port)
+-{
+-	struct rte_port_ring_writer *p = port;
+-
+-	if (p->tx_buf_count > 0)
+-		send_burst(p);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_ring_multi_writer_flush(void *port)
+-{
+-	struct rte_port_ring_writer *p = port;
+-
+-	if (p->tx_buf_count > 0)
+-		send_burst_mp(p);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_ring_writer_free(void *port)
+-{
+-	struct rte_port_ring_writer *p = port;
+-
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Port is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	if (p->is_multi)
+-		rte_port_ring_multi_writer_flush(port);
+-	else
+-		rte_port_ring_writer_flush(port);
+-
+-	rte_free(port);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_ring_writer_stats_read(void *port,
+-		struct rte_port_out_stats *stats, int clear)
+-{
+-	struct rte_port_ring_writer *p =
+-		port;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &p->stats, sizeof(p->stats));
+-
+-	if (clear)
+-		memset(&p->stats, 0, sizeof(p->stats));
+-
+-	return 0;
+-}
+-
+-/*
+- * Port RING Writer Nodrop
+- */
+-#ifdef RTE_PORT_STATS_COLLECT
+-
+-#define RTE_PORT_RING_WRITER_NODROP_STATS_PKTS_IN_ADD(port, val) \
+-	port->stats.n_pkts_in += val
+-#define RTE_PORT_RING_WRITER_NODROP_STATS_PKTS_DROP_ADD(port, val) \
+-	port->stats.n_pkts_drop += val
+-
+-#else
+-
+-#define RTE_PORT_RING_WRITER_NODROP_STATS_PKTS_IN_ADD(port, val)
+-#define RTE_PORT_RING_WRITER_NODROP_STATS_PKTS_DROP_ADD(port, val)
+-
+-#endif
+-
+-struct rte_port_ring_writer_nodrop {
+-	struct rte_port_out_stats stats;
+-
+-	struct rte_mbuf *tx_buf[2 * RTE_PORT_IN_BURST_SIZE_MAX];
+-	struct rte_ring *ring;
+-	uint32_t tx_burst_sz;
+-	uint32_t tx_buf_count;
+-	uint64_t bsz_mask;
+-	uint64_t n_retries;
+-	uint32_t is_multi;
+-};
+-
+-static void *
+-rte_port_ring_writer_nodrop_create_internal(void *params, int socket_id,
+-	uint32_t is_multi)
+-{
+-	struct rte_port_ring_writer_nodrop_params *conf =
+-			params;
+-	struct rte_port_ring_writer_nodrop *port;
+-
+-	/* Check input parameters */
+-	if ((conf == NULL) ||
+-		(conf->ring == NULL) ||
+-		(rte_ring_is_prod_single(conf->ring) && is_multi) ||
+-		(!rte_ring_is_prod_single(conf->ring) && !is_multi) ||
+-		(conf->tx_burst_sz > RTE_PORT_IN_BURST_SIZE_MAX)) {
+-		PORT_LOG(ERR, "%s: Invalid Parameters", __func__);
+-		return NULL;
+-	}
+-
+-	/* Memory allocation */
+-	port = rte_zmalloc_socket("PORT", sizeof(*port),
+-			RTE_CACHE_LINE_SIZE, socket_id);
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
+-		return NULL;
+-	}
+-
+-	/* Initialization */
+-	port->ring = conf->ring;
+-	port->tx_burst_sz = conf->tx_burst_sz;
+-	port->tx_buf_count = 0;
+-	port->bsz_mask = 1LLU << (conf->tx_burst_sz - 1);
+-	port->is_multi = is_multi;
+-
+-	/*
+-	 * When n_retries is 0 it means that we should wait for every packet to
+-	 * send no matter how many retries should it take. To limit number of
+-	 * branches in fast path, we use UINT64_MAX instead of branching.
+-	 */
+-	port->n_retries = (conf->n_retries == 0) ? UINT64_MAX : conf->n_retries;
+-
+-	return port;
+-}
+-
+-static void *
+-rte_port_ring_writer_nodrop_create(void *params, int socket_id)
+-{
+-	return rte_port_ring_writer_nodrop_create_internal(params, socket_id, 0);
+-}
+-
+-static void *
+-rte_port_ring_multi_writer_nodrop_create(void *params, int socket_id)
+-{
+-	return rte_port_ring_writer_nodrop_create_internal(params, socket_id, 1);
+-}
+-
+-static inline void
+-send_burst_nodrop(struct rte_port_ring_writer_nodrop *p)
+-{
+-	uint32_t nb_tx = 0, i;
+-
+-	nb_tx = rte_ring_sp_enqueue_burst(p->ring, (void **)p->tx_buf,
+-				p->tx_buf_count, NULL);
+-
+-	/* We sent all the packets in a first try */
+-	if (nb_tx >= p->tx_buf_count) {
+-		p->tx_buf_count = 0;
+-		return;
+-	}
+-
+-	for (i = 0; i < p->n_retries; i++) {
+-		nb_tx += rte_ring_sp_enqueue_burst(p->ring,
+-				(void **) (p->tx_buf + nb_tx),
+-				p->tx_buf_count - nb_tx, NULL);
+-
+-		/* We sent all the packets in more than one try */
+-		if (nb_tx >= p->tx_buf_count) {
+-			p->tx_buf_count = 0;
+-			return;
+-		}
+-	}
+-
+-	/* We didn't send the packets in maximum allowed attempts */
+-	RTE_PORT_RING_WRITER_NODROP_STATS_PKTS_DROP_ADD(p, p->tx_buf_count - nb_tx);
+-	for ( ; nb_tx < p->tx_buf_count; nb_tx++)
+-		rte_pktmbuf_free(p->tx_buf[nb_tx]);
+-
+-	p->tx_buf_count = 0;
+-}
+-
+-static inline void
+-send_burst_mp_nodrop(struct rte_port_ring_writer_nodrop *p)
+-{
+-	uint32_t nb_tx = 0, i;
+-
+-	nb_tx = rte_ring_mp_enqueue_burst(p->ring, (void **)p->tx_buf,
+-				p->tx_buf_count, NULL);
+-
+-	/* We sent all the packets in a first try */
+-	if (nb_tx >= p->tx_buf_count) {
+-		p->tx_buf_count = 0;
+-		return;
+-	}
+-
+-	for (i = 0; i < p->n_retries; i++) {
+-		nb_tx += rte_ring_mp_enqueue_burst(p->ring,
+-				(void **) (p->tx_buf + nb_tx),
+-				p->tx_buf_count - nb_tx, NULL);
+-
+-		/* We sent all the packets in more than one try */
+-		if (nb_tx >= p->tx_buf_count) {
+-			p->tx_buf_count = 0;
+-			return;
+-		}
+-	}
+-
+-	/* We didn't send the packets in maximum allowed attempts */
+-	RTE_PORT_RING_WRITER_NODROP_STATS_PKTS_DROP_ADD(p, p->tx_buf_count - nb_tx);
+-	for ( ; nb_tx < p->tx_buf_count; nb_tx++)
+-		rte_pktmbuf_free(p->tx_buf[nb_tx]);
+-
+-	p->tx_buf_count = 0;
+-}
+-
+-static int
+-rte_port_ring_writer_nodrop_tx(void *port, struct rte_mbuf *pkt)
+-{
+-	struct rte_port_ring_writer_nodrop *p =
+-			port;
+-
+-	p->tx_buf[p->tx_buf_count++] = pkt;
+-	RTE_PORT_RING_WRITER_NODROP_STATS_PKTS_IN_ADD(p, 1);
+-	if (p->tx_buf_count >= p->tx_burst_sz)
+-		send_burst_nodrop(p);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_ring_multi_writer_nodrop_tx(void *port, struct rte_mbuf *pkt)
+-{
+-	struct rte_port_ring_writer_nodrop *p =
+-			port;
+-
+-	p->tx_buf[p->tx_buf_count++] = pkt;
+-	RTE_PORT_RING_WRITER_NODROP_STATS_PKTS_IN_ADD(p, 1);
+-	if (p->tx_buf_count >= p->tx_burst_sz)
+-		send_burst_mp_nodrop(p);
+-
+-	return 0;
+-}
+-
+-static __rte_always_inline int
+-rte_port_ring_writer_nodrop_tx_bulk_internal(void *port,
+-		struct rte_mbuf **pkts,
+-		uint64_t pkts_mask,
+-		uint32_t is_multi)
+-{
+-	struct rte_port_ring_writer_nodrop *p =
+-		port;
+-
+-	uint64_t bsz_mask = p->bsz_mask;
+-	uint32_t tx_buf_count = p->tx_buf_count;
+-	uint64_t expr = (pkts_mask & (pkts_mask + 1)) |
+-			((pkts_mask & bsz_mask) ^ bsz_mask);
+-
+-	if (expr == 0) {
+-		uint64_t n_pkts = rte_popcount64(pkts_mask);
+-		uint32_t n_pkts_ok;
+-
+-		if (tx_buf_count) {
+-			if (is_multi)
+-				send_burst_mp_nodrop(p);
+-			else
+-				send_burst_nodrop(p);
+-		}
+-
+-		RTE_PORT_RING_WRITER_NODROP_STATS_PKTS_IN_ADD(p, n_pkts);
+-		if (is_multi)
+-			n_pkts_ok =
+-				rte_ring_mp_enqueue_burst(p->ring,
+-						(void **)pkts, n_pkts, NULL);
+-		else
+-			n_pkts_ok =
+-				rte_ring_sp_enqueue_burst(p->ring,
+-						(void **)pkts, n_pkts, NULL);
+-
+-		if (n_pkts_ok >= n_pkts)
+-			return 0;
+-
+-		/*
+-		 * If we didn't manage to send all packets in single burst, move
+-		 * remaining packets to the buffer and call send burst.
+-		 */
+-		for (; n_pkts_ok < n_pkts; n_pkts_ok++) {
+-			struct rte_mbuf *pkt = pkts[n_pkts_ok];
+-
+-			p->tx_buf[p->tx_buf_count++] = pkt;
+-		}
+-		if (is_multi)
+-			send_burst_mp_nodrop(p);
+-		else
+-			send_burst_nodrop(p);
+-	} else {
+-		for ( ; pkts_mask; ) {
+-			uint32_t pkt_index = rte_ctz64(pkts_mask);
+-			uint64_t pkt_mask = 1LLU << pkt_index;
+-			struct rte_mbuf *pkt = pkts[pkt_index];
+-
+-			p->tx_buf[tx_buf_count++] = pkt;
+-			RTE_PORT_RING_WRITER_NODROP_STATS_PKTS_IN_ADD(p, 1);
+-			pkts_mask &= ~pkt_mask;
+-		}
+-
+-		p->tx_buf_count = tx_buf_count;
+-		if (tx_buf_count >= p->tx_burst_sz) {
+-			if (is_multi)
+-				send_burst_mp_nodrop(p);
+-			else
+-				send_burst_nodrop(p);
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_ring_writer_nodrop_tx_bulk(void *port,
+-		struct rte_mbuf **pkts,
+-		uint64_t pkts_mask)
+-{
+-	return
+-		rte_port_ring_writer_nodrop_tx_bulk_internal(port, pkts, pkts_mask, 0);
+-}
+-
+-static int
+-rte_port_ring_multi_writer_nodrop_tx_bulk(void *port,
+-		struct rte_mbuf **pkts,
+-		uint64_t pkts_mask)
+-{
+-	return
+-		rte_port_ring_writer_nodrop_tx_bulk_internal(port, pkts, pkts_mask, 1);
+-}
+-
+-static int
+-rte_port_ring_writer_nodrop_flush(void *port)
+-{
+-	struct rte_port_ring_writer_nodrop *p =
+-			port;
+-
+-	if (p->tx_buf_count > 0)
+-		send_burst_nodrop(p);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_ring_multi_writer_nodrop_flush(void *port)
+-{
+-	struct rte_port_ring_writer_nodrop *p =
+-			port;
+-
+-	if (p->tx_buf_count > 0)
+-		send_burst_mp_nodrop(p);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_ring_writer_nodrop_free(void *port)
+-{
+-	struct rte_port_ring_writer_nodrop *p =
+-			port;
+-
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Port is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	if (p->is_multi)
+-		rte_port_ring_multi_writer_nodrop_flush(port);
+-	else
+-		rte_port_ring_writer_nodrop_flush(port);
+-
+-	rte_free(port);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_ring_writer_nodrop_stats_read(void *port,
+-		struct rte_port_out_stats *stats, int clear)
+-{
+-	struct rte_port_ring_writer_nodrop *p =
+-		port;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &p->stats, sizeof(p->stats));
+-
+-	if (clear)
+-		memset(&p->stats, 0, sizeof(p->stats));
+-
+-	return 0;
+-}
+-
+-/*
+- * Summary of port operations
+- */
+-RTE_EXPORT_SYMBOL(rte_port_ring_reader_ops)
+-struct rte_port_in_ops rte_port_ring_reader_ops = {
+-	.f_create = rte_port_ring_reader_create,
+-	.f_free = rte_port_ring_reader_free,
+-	.f_rx = rte_port_ring_reader_rx,
+-	.f_stats = rte_port_ring_reader_stats_read,
+-};
+-
+-RTE_EXPORT_SYMBOL(rte_port_ring_writer_ops)
+-struct rte_port_out_ops rte_port_ring_writer_ops = {
+-	.f_create = rte_port_ring_writer_create,
+-	.f_free = rte_port_ring_writer_free,
+-	.f_tx = rte_port_ring_writer_tx,
+-	.f_tx_bulk = rte_port_ring_writer_tx_bulk,
+-	.f_flush = rte_port_ring_writer_flush,
+-	.f_stats = rte_port_ring_writer_stats_read,
+-};
+-
+-RTE_EXPORT_SYMBOL(rte_port_ring_writer_nodrop_ops)
+-struct rte_port_out_ops rte_port_ring_writer_nodrop_ops = {
+-	.f_create = rte_port_ring_writer_nodrop_create,
+-	.f_free = rte_port_ring_writer_nodrop_free,
+-	.f_tx = rte_port_ring_writer_nodrop_tx,
+-	.f_tx_bulk = rte_port_ring_writer_nodrop_tx_bulk,
+-	.f_flush = rte_port_ring_writer_nodrop_flush,
+-	.f_stats = rte_port_ring_writer_nodrop_stats_read,
+-};
+-
+-RTE_EXPORT_SYMBOL(rte_port_ring_multi_reader_ops)
+-struct rte_port_in_ops rte_port_ring_multi_reader_ops = {
+-	.f_create = rte_port_ring_multi_reader_create,
+-	.f_free = rte_port_ring_reader_free,
+-	.f_rx = rte_port_ring_multi_reader_rx,
+-	.f_stats = rte_port_ring_reader_stats_read,
+-};
+-
+-RTE_EXPORT_SYMBOL(rte_port_ring_multi_writer_ops)
+-struct rte_port_out_ops rte_port_ring_multi_writer_ops = {
+-	.f_create = rte_port_ring_multi_writer_create,
+-	.f_free = rte_port_ring_writer_free,
+-	.f_tx = rte_port_ring_multi_writer_tx,
+-	.f_tx_bulk = rte_port_ring_multi_writer_tx_bulk,
+-	.f_flush = rte_port_ring_multi_writer_flush,
+-	.f_stats = rte_port_ring_writer_stats_read,
+-};
+-
+-RTE_EXPORT_SYMBOL(rte_port_ring_multi_writer_nodrop_ops)
+-struct rte_port_out_ops rte_port_ring_multi_writer_nodrop_ops = {
+-	.f_create = rte_port_ring_multi_writer_nodrop_create,
+-	.f_free = rte_port_ring_writer_nodrop_free,
+-	.f_tx = rte_port_ring_multi_writer_nodrop_tx,
+-	.f_tx_bulk = rte_port_ring_multi_writer_nodrop_tx_bulk,
+-	.f_flush = rte_port_ring_multi_writer_nodrop_flush,
+-	.f_stats = rte_port_ring_writer_nodrop_stats_read,
+-};
+diff --git a/lib/port/rte_port_ring.h b/lib/port/rte_port_ring.h
+deleted file mode 100644
+index 2089d0889b..0000000000
+--- a/lib/port/rte_port_ring.h
++++ /dev/null
+@@ -1,91 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_PORT_RING_H__
+-#define __INCLUDE_RTE_PORT_RING_H__
+-
+-/**
+- * @file
+- * RTE Port Ring
+- *
+- * ring_reader:
+- *      input port built on top of pre-initialized single consumer ring
+- * ring_writer:
+- *      output port built on top of pre-initialized single producer ring
+- * ring_multi_reader:
+- *      input port built on top of pre-initialized multi consumers ring
+- * ring_multi_writer:
+- *      output port built on top of pre-initialized multi producers ring
+- */
+-
+-#include <stdint.h>
+-
+-#include "rte_port.h"
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-/** ring_reader port parameters */
+-struct rte_port_ring_reader_params {
+-	/** Underlying consumer ring that has to be pre-initialized */
+-	struct rte_ring *ring;
+-};
+-
+-/** ring_reader port operations */
+-extern struct rte_port_in_ops rte_port_ring_reader_ops;
+-
+-/** ring_writer port parameters */
+-struct rte_port_ring_writer_params {
+-	/** Underlying producer ring that has to be pre-initialized */
+-	struct rte_ring *ring;
+-
+-	/** Recommended burst size to ring. The actual burst size can be
+-		bigger or smaller than this value. */
+-	uint32_t tx_burst_sz;
+-};
+-
+-/** ring_writer port operations */
+-extern struct rte_port_out_ops rte_port_ring_writer_ops;
+-
+-/** ring_writer_nodrop port parameters */
+-struct rte_port_ring_writer_nodrop_params {
+-	/** Underlying producer ring that has to be pre-initialized */
+-	struct rte_ring *ring;
+-
+-	/** Recommended burst size to ring. The actual burst size can be
+-		bigger or smaller than this value. */
+-	uint32_t tx_burst_sz;
+-
+-	/** Maximum number of retries, 0 for no limit */
+-	uint32_t n_retries;
+-};
+-
+-/** ring_writer_nodrop port operations */
+-extern struct rte_port_out_ops rte_port_ring_writer_nodrop_ops;
+-
+-/** ring_multi_reader port parameters */
+-#define rte_port_ring_multi_reader_params rte_port_ring_reader_params
+-
+-/** ring_multi_reader port operations */
+-extern struct rte_port_in_ops rte_port_ring_multi_reader_ops;
+-
+-/** ring_multi_writer port parameters */
+-#define rte_port_ring_multi_writer_params rte_port_ring_writer_params
+-
+-/** ring_multi_writer port operations */
+-extern struct rte_port_out_ops rte_port_ring_multi_writer_ops;
+-
+-/** ring_multi_writer_nodrop port parameters */
+-#define rte_port_ring_multi_writer_nodrop_params \
+-	rte_port_ring_writer_nodrop_params
+-
+-/** ring_multi_writer_nodrop port operations */
+-extern struct rte_port_out_ops rte_port_ring_multi_writer_nodrop_ops;
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif
+diff --git a/lib/port/rte_port_sched.c b/lib/port/rte_port_sched.c
+deleted file mode 100644
+index 3091078aa1..0000000000
+--- a/lib/port/rte_port_sched.c
++++ /dev/null
+@@ -1,298 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-#include <string.h>
+-
+-#include <eal_export.h>
+-#include <rte_malloc.h>
+-
+-#include "rte_port_sched.h"
+-
+-#include "port_log.h"
+-
+-/*
+- * Reader
+- */
+-#ifdef RTE_PORT_STATS_COLLECT
+-
+-#define RTE_PORT_SCHED_READER_PKTS_IN_ADD(port, val) \
+-	port->stats.n_pkts_in += val
+-#define RTE_PORT_SCHED_READER_PKTS_DROP_ADD(port, val) \
+-	port->stats.n_pkts_drop += val
+-
+-#else
+-
+-#define RTE_PORT_SCHED_READER_PKTS_IN_ADD(port, val)
+-#define RTE_PORT_SCHED_READER_PKTS_DROP_ADD(port, val)
+-
+-#endif
+-
+-struct rte_port_sched_reader {
+-	struct rte_port_in_stats stats;
+-
+-	struct rte_sched_port *sched;
+-};
+-
+-static void *
+-rte_port_sched_reader_create(void *params, int socket_id)
+-{
+-	struct rte_port_sched_reader_params *conf =
+-			params;
+-	struct rte_port_sched_reader *port;
+-
+-	/* Check input parameters */
+-	if ((conf == NULL) ||
+-	    (conf->sched == NULL)) {
+-		PORT_LOG(ERR, "%s: Invalid params", __func__);
+-		return NULL;
+-	}
+-
+-	/* Memory allocation */
+-	port = rte_zmalloc_socket("PORT", sizeof(*port),
+-			RTE_CACHE_LINE_SIZE, socket_id);
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
+-		return NULL;
+-	}
+-
+-	/* Initialization */
+-	port->sched = conf->sched;
+-
+-	return port;
+-}
+-
+-static int
+-rte_port_sched_reader_rx(void *port, struct rte_mbuf **pkts, uint32_t n_pkts)
+-{
+-	struct rte_port_sched_reader *p = port;
+-	uint32_t nb_rx;
+-
+-	nb_rx = rte_sched_port_dequeue(p->sched, pkts, n_pkts);
+-	RTE_PORT_SCHED_READER_PKTS_IN_ADD(p, nb_rx);
+-
+-	return nb_rx;
+-}
+-
+-static int
+-rte_port_sched_reader_free(void *port)
+-{
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: port is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	rte_free(port);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_sched_reader_stats_read(void *port,
+-		struct rte_port_in_stats *stats, int clear)
+-{
+-	struct rte_port_sched_reader *p =
+-		port;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &p->stats, sizeof(p->stats));
+-
+-	if (clear)
+-		memset(&p->stats, 0, sizeof(p->stats));
+-
+-	return 0;
+-}
+-
+-/*
+- * Writer
+- */
+-#ifdef RTE_PORT_STATS_COLLECT
+-
+-#define RTE_PORT_SCHED_WRITER_STATS_PKTS_IN_ADD(port, val) \
+-	port->stats.n_pkts_in += val
+-#define RTE_PORT_SCHED_WRITER_STATS_PKTS_DROP_ADD(port, val) \
+-	port->stats.n_pkts_drop += val
+-
+-#else
+-
+-#define RTE_PORT_SCHED_WRITER_STATS_PKTS_IN_ADD(port, val)
+-#define RTE_PORT_SCHED_WRITER_STATS_PKTS_DROP_ADD(port, val)
+-
+-#endif
+-
+-struct rte_port_sched_writer {
+-	struct rte_port_out_stats stats;
+-
+-	struct rte_mbuf *tx_buf[2 * RTE_PORT_IN_BURST_SIZE_MAX];
+-	struct rte_sched_port *sched;
+-	uint32_t tx_burst_sz;
+-	uint32_t tx_buf_count;
+-	uint64_t bsz_mask;
+-};
+-
+-static void *
+-rte_port_sched_writer_create(void *params, int socket_id)
+-{
+-	struct rte_port_sched_writer_params *conf =
+-			params;
+-	struct rte_port_sched_writer *port;
+-
+-	/* Check input parameters */
+-	if ((conf == NULL) ||
+-	    (conf->sched == NULL) ||
+-	    (conf->tx_burst_sz == 0) ||
+-	    (conf->tx_burst_sz > RTE_PORT_IN_BURST_SIZE_MAX) ||
+-		(!rte_is_power_of_2(conf->tx_burst_sz))) {
+-		PORT_LOG(ERR, "%s: Invalid params", __func__);
+-		return NULL;
+-	}
+-
+-	/* Memory allocation */
+-	port = rte_zmalloc_socket("PORT", sizeof(*port),
+-			RTE_CACHE_LINE_SIZE, socket_id);
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
+-		return NULL;
+-	}
+-
+-	/* Initialization */
+-	port->sched = conf->sched;
+-	port->tx_burst_sz = conf->tx_burst_sz;
+-	port->tx_buf_count = 0;
+-	port->bsz_mask = 1LLU << (conf->tx_burst_sz - 1);
+-
+-	return port;
+-}
+-
+-static int
+-rte_port_sched_writer_tx(void *port, struct rte_mbuf *pkt)
+-{
+-	struct rte_port_sched_writer *p = (struct rte_port_sched_writer *) port;
+-
+-	p->tx_buf[p->tx_buf_count++] = pkt;
+-	RTE_PORT_SCHED_WRITER_STATS_PKTS_IN_ADD(p, 1);
+-	if (p->tx_buf_count >= p->tx_burst_sz) {
+-		__rte_unused uint32_t nb_tx;
+-
+-		nb_tx = rte_sched_port_enqueue(p->sched, p->tx_buf, p->tx_buf_count);
+-		RTE_PORT_SCHED_WRITER_STATS_PKTS_DROP_ADD(p, p->tx_buf_count - nb_tx);
+-		p->tx_buf_count = 0;
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_sched_writer_tx_bulk(void *port,
+-		struct rte_mbuf **pkts,
+-		uint64_t pkts_mask)
+-{
+-	struct rte_port_sched_writer *p = (struct rte_port_sched_writer *) port;
+-	uint64_t bsz_mask = p->bsz_mask;
+-	uint32_t tx_buf_count = p->tx_buf_count;
+-	uint64_t expr = (pkts_mask & (pkts_mask + 1)) |
+-			((pkts_mask & bsz_mask) ^ bsz_mask);
+-
+-	if (expr == 0) {
+-		__rte_unused uint32_t nb_tx;
+-		uint64_t n_pkts = rte_popcount64(pkts_mask);
+-
+-		if (tx_buf_count) {
+-			nb_tx = rte_sched_port_enqueue(p->sched, p->tx_buf,
+-				tx_buf_count);
+-			RTE_PORT_SCHED_WRITER_STATS_PKTS_DROP_ADD(p, tx_buf_count - nb_tx);
+-			p->tx_buf_count = 0;
+-		}
+-
+-		nb_tx = rte_sched_port_enqueue(p->sched, pkts, n_pkts);
+-		RTE_PORT_SCHED_WRITER_STATS_PKTS_DROP_ADD(p, n_pkts - nb_tx);
+-	} else {
+-		for ( ; pkts_mask; ) {
+-			uint32_t pkt_index = rte_ctz64(pkts_mask);
+-			uint64_t pkt_mask = 1LLU << pkt_index;
+-			struct rte_mbuf *pkt = pkts[pkt_index];
+-
+-			p->tx_buf[tx_buf_count++] = pkt;
+-			RTE_PORT_SCHED_WRITER_STATS_PKTS_IN_ADD(p, 1);
+-			pkts_mask &= ~pkt_mask;
+-		}
+-		p->tx_buf_count = tx_buf_count;
+-
+-		if (tx_buf_count >= p->tx_burst_sz) {
+-			__rte_unused uint32_t nb_tx;
+-
+-			nb_tx = rte_sched_port_enqueue(p->sched, p->tx_buf,
+-				tx_buf_count);
+-			RTE_PORT_SCHED_WRITER_STATS_PKTS_DROP_ADD(p, tx_buf_count - nb_tx);
+-			p->tx_buf_count = 0;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_sched_writer_flush(void *port)
+-{
+-	struct rte_port_sched_writer *p = (struct rte_port_sched_writer *) port;
+-
+-	if (p->tx_buf_count) {
+-		__rte_unused uint32_t nb_tx;
+-
+-		nb_tx = rte_sched_port_enqueue(p->sched, p->tx_buf, p->tx_buf_count);
+-		RTE_PORT_SCHED_WRITER_STATS_PKTS_DROP_ADD(p, p->tx_buf_count - nb_tx);
+-		p->tx_buf_count = 0;
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_sched_writer_free(void *port)
+-{
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: port is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	rte_port_sched_writer_flush(port);
+-	rte_free(port);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_sched_writer_stats_read(void *port,
+-		struct rte_port_out_stats *stats, int clear)
+-{
+-	struct rte_port_sched_writer *p =
+-		port;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &p->stats, sizeof(p->stats));
+-
+-	if (clear)
+-		memset(&p->stats, 0, sizeof(p->stats));
+-
+-	return 0;
+-}
+-
+-/*
+- * Summary of port operations
+- */
+-RTE_EXPORT_SYMBOL(rte_port_sched_reader_ops)
+-struct rte_port_in_ops rte_port_sched_reader_ops = {
+-	.f_create = rte_port_sched_reader_create,
+-	.f_free = rte_port_sched_reader_free,
+-	.f_rx = rte_port_sched_reader_rx,
+-	.f_stats = rte_port_sched_reader_stats_read,
+-};
+-
+-RTE_EXPORT_SYMBOL(rte_port_sched_writer_ops)
+-struct rte_port_out_ops rte_port_sched_writer_ops = {
+-	.f_create = rte_port_sched_writer_create,
+-	.f_free = rte_port_sched_writer_free,
+-	.f_tx = rte_port_sched_writer_tx,
+-	.f_tx_bulk = rte_port_sched_writer_tx_bulk,
+-	.f_flush = rte_port_sched_writer_flush,
+-	.f_stats = rte_port_sched_writer_stats_read,
+-};
+diff --git a/lib/port/rte_port_sched.h b/lib/port/rte_port_sched.h
+deleted file mode 100644
+index 1bf08ae6a9..0000000000
+--- a/lib/port/rte_port_sched.h
++++ /dev/null
+@@ -1,52 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_PORT_SCHED_H__
+-#define __INCLUDE_RTE_PORT_SCHED_H__
+-
+-/**
+- * @file
+- * RTE Port Hierarchical Scheduler
+- *
+- * sched_reader: input port built on top of pre-initialized rte_sched_port
+- * sched_writer: output port built on top of pre-initialized rte_sched_port
+- */
+-
+-#include <stdint.h>
+-
+-#include <rte_sched.h>
+-
+-#include "rte_port.h"
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-/** sched_reader port parameters */
+-struct rte_port_sched_reader_params {
+-	/** Underlying pre-initialized rte_sched_port */
+-	struct rte_sched_port *sched;
+-};
+-
+-/** sched_reader port operations */
+-extern struct rte_port_in_ops rte_port_sched_reader_ops;
+-
+-/** sched_writer port parameters */
+-struct rte_port_sched_writer_params {
+-	/** Underlying pre-initialized rte_sched_port */
+-	struct rte_sched_port *sched;
+-
+-	/** Recommended burst size. The actual burst size can be bigger or
+-	smaller than this value. */
+-	uint32_t tx_burst_sz;
+-};
+-
+-/** sched_writer port operations */
+-extern struct rte_port_out_ops rte_port_sched_writer_ops;
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif
+diff --git a/lib/port/rte_port_source_sink.c b/lib/port/rte_port_source_sink.c
+deleted file mode 100644
+index 0557e12506..0000000000
+--- a/lib/port/rte_port_source_sink.c
++++ /dev/null
+@@ -1,616 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2016 Intel Corporation
+- */
+-#include <stdint.h>
+-#include <string.h>
+-
+-#include <eal_export.h>
+-#include <rte_mbuf.h>
+-#include <rte_malloc.h>
+-#include <rte_memcpy.h>
+-
+-#ifdef RTE_PORT_PCAP
+-#include <rte_ether.h>
+-#include <pcap.h>
+-#endif
+-
+-#include "rte_port_source_sink.h"
+-
+-#include "port_log.h"
+-
+-/*
+- * Port SOURCE
+- */
+-#ifdef RTE_PORT_STATS_COLLECT
+-
+-#define RTE_PORT_SOURCE_STATS_PKTS_IN_ADD(port, val) \
+-	port->stats.n_pkts_in += val
+-#define RTE_PORT_SOURCE_STATS_PKTS_DROP_ADD(port, val) \
+-	port->stats.n_pkts_drop += val
+-
+-#else
+-
+-#define RTE_PORT_SOURCE_STATS_PKTS_IN_ADD(port, val)
+-#define RTE_PORT_SOURCE_STATS_PKTS_DROP_ADD(port, val)
+-
+-#endif
+-
+-struct rte_port_source {
+-	struct rte_port_in_stats stats;
+-
+-	struct rte_mempool *mempool;
+-
+-	/* PCAP buffers and indices */
+-	uint8_t **pkts;
+-	uint8_t *pkt_buff;
+-	uint32_t *pkt_len;
+-	uint32_t n_pkts;
+-	uint32_t pkt_index;
+-};
+-
+-#ifdef RTE_PORT_PCAP
+-
+-static int
+-pcap_source_load(struct rte_port_source *port,
+-		const char *file_name,
+-		uint32_t n_bytes_per_pkt,
+-		int socket_id)
+-{
+-	uint32_t n_pkts = 0;
+-	uint32_t i;
+-	uint32_t *pkt_len_aligns = NULL;
+-	size_t total_buff_len = 0;
+-	pcap_t *pcap_handle;
+-	char pcap_errbuf[PCAP_ERRBUF_SIZE];
+-	uint32_t max_len;
+-	struct pcap_pkthdr pcap_hdr;
+-	const uint8_t *pkt;
+-	uint8_t *buff = NULL;
+-	uint32_t pktmbuf_maxlen = (uint32_t)
+-			(rte_pktmbuf_data_room_size(port->mempool) -
+-			RTE_PKTMBUF_HEADROOM);
+-
+-	if (n_bytes_per_pkt == 0)
+-		max_len = pktmbuf_maxlen;
+-	else
+-		max_len = RTE_MIN(n_bytes_per_pkt, pktmbuf_maxlen);
+-
+-	/* first time open, get packet number */
+-	pcap_handle = pcap_open_offline(file_name, pcap_errbuf);
+-	if (pcap_handle == NULL) {
+-		PORT_LOG(ERR, "Failed to open pcap file "
+-			"'%s' for reading", file_name);
+-		goto error_exit;
+-	}
+-
+-	while ((pkt = pcap_next(pcap_handle, &pcap_hdr)) != NULL)
+-		n_pkts++;
+-
+-	pcap_close(pcap_handle);
+-
+-	port->pkt_len = rte_zmalloc_socket("PCAP",
+-		(sizeof(*port->pkt_len) * n_pkts), 0, socket_id);
+-	if (port->pkt_len == NULL) {
+-		PORT_LOG(ERR, "No enough memory");
+-		goto error_exit;
+-	}
+-
+-	pkt_len_aligns = rte_malloc("PCAP",
+-		(sizeof(*pkt_len_aligns) * n_pkts), 0);
+-	if (pkt_len_aligns == NULL) {
+-		PORT_LOG(ERR, "No enough memory");
+-		goto error_exit;
+-	}
+-
+-	port->pkts = rte_zmalloc_socket("PCAP",
+-		(sizeof(*port->pkts) * n_pkts), 0, socket_id);
+-	if (port->pkts == NULL) {
+-		PORT_LOG(ERR, "No enough memory");
+-		goto error_exit;
+-	}
+-
+-	/* open 2nd time, get pkt_len */
+-	pcap_handle = pcap_open_offline(file_name, pcap_errbuf);
+-	if (pcap_handle == NULL) {
+-		PORT_LOG(ERR, "Failed to open pcap file "
+-			"'%s' for reading", file_name);
+-		goto error_exit;
+-	}
+-
+-	for (i = 0; i < n_pkts; i++) {
+-		pcap_next(pcap_handle, &pcap_hdr);
+-		port->pkt_len[i] = RTE_MIN(max_len, pcap_hdr.len);
+-		pkt_len_aligns[i] = RTE_CACHE_LINE_ROUNDUP(
+-			port->pkt_len[i]);
+-		total_buff_len += pkt_len_aligns[i];
+-	}
+-
+-	pcap_close(pcap_handle);
+-
+-	/* allocate a big trunk of data for pcap file load */
+-	buff = rte_zmalloc_socket("PCAP",
+-		total_buff_len, 0, socket_id);
+-	if (buff == NULL) {
+-		PORT_LOG(ERR, "No enough memory");
+-		goto error_exit;
+-	}
+-
+-	port->pkt_buff = buff;
+-
+-	/* open file one last time to copy the pkt content */
+-	pcap_handle = pcap_open_offline(file_name, pcap_errbuf);
+-	if (pcap_handle == NULL) {
+-		PORT_LOG(ERR, "Failed to open pcap file "
+-			"'%s' for reading", file_name);
+-		goto error_exit;
+-	}
+-
+-	for (i = 0; i < n_pkts; i++) {
+-		pkt = pcap_next(pcap_handle, &pcap_hdr);
+-		rte_memcpy(buff, pkt, port->pkt_len[i]);
+-		port->pkts[i] = buff;
+-		buff += pkt_len_aligns[i];
+-	}
+-
+-	pcap_close(pcap_handle);
+-
+-	port->n_pkts = n_pkts;
+-
+-	rte_free(pkt_len_aligns);
+-
+-	PORT_LOG(INFO, "Successfully load pcap file "
+-		"'%s' with %u pkts",
+-		file_name, port->n_pkts);
+-
+-	return 0;
+-
+-error_exit:
+-	rte_free(pkt_len_aligns);
+-	rte_free(port->pkt_len);
+-	rte_free(port->pkts);
+-	rte_free(port->pkt_buff);
+-
+-	return -1;
+-}
+-
+-#define PCAP_SOURCE_LOAD(port, file_name, n_bytes, socket_id)	\
+-	pcap_source_load(port, file_name, n_bytes, socket_id)
+-
+-#else /* RTE_PORT_PCAP */
+-
+-#define PCAP_SOURCE_LOAD(port, file_name, n_bytes, socket_id)	\
+-__extension__ ({						\
+-	int _ret = 0;						\
+-								\
+-	if (file_name) {					\
+-		PORT_LOG(ERR, "Source port field "		\
+-			"\"file_name\" is not NULL.");	\
+-		_ret = -1;					\
+-	}							\
+-								\
+-	_ret;							\
+-})
+-
+-#endif /* RTE_PORT_PCAP */
+-
+-static void *
+-rte_port_source_create(void *params, int socket_id)
+-{
+-	struct rte_port_source_params *p =
+-			params;
+-	struct rte_port_source *port;
+-
+-	/* Check input arguments*/
+-	if ((p == NULL) || (p->mempool == NULL)) {
+-		PORT_LOG(ERR, "%s: Invalid params", __func__);
+-		return NULL;
+-	}
+-
+-	/* Memory allocation */
+-	port = rte_zmalloc_socket("PORT", sizeof(*port),
+-			RTE_CACHE_LINE_SIZE, socket_id);
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
+-		return NULL;
+-	}
+-
+-	/* Initialization */
+-	port->mempool = (struct rte_mempool *) p->mempool;
+-
+-	if (p->file_name) {
+-		int status = PCAP_SOURCE_LOAD(port, p->file_name,
+-			p->n_bytes_per_pkt, socket_id);
+-
+-		if (status < 0) {
+-			rte_free(port);
+-			port = NULL;
+-		}
+-	}
+-
+-	return port;
+-}
+-
+-static int
+-rte_port_source_free(void *port)
+-{
+-	struct rte_port_source *p =
+-			port;
+-
+-	/* Check input parameters */
+-	if (p == NULL)
+-		return 0;
+-
+-	rte_free(p->pkt_len);
+-	rte_free(p->pkts);
+-	rte_free(p->pkt_buff);
+-
+-	rte_free(p);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_source_rx(void *port, struct rte_mbuf **pkts, uint32_t n_pkts)
+-{
+-	struct rte_port_source *p = port;
+-	uint32_t i;
+-
+-	if (rte_pktmbuf_alloc_bulk(p->mempool, pkts, n_pkts) != 0)
+-		return 0;
+-
+-	if (p->pkt_buff != NULL) {
+-		for (i = 0; i < n_pkts; i++) {
+-			uint8_t *pkt_data = rte_pktmbuf_mtod(pkts[i],
+-				uint8_t *);
+-
+-			rte_memcpy(pkt_data, p->pkts[p->pkt_index],
+-					p->pkt_len[p->pkt_index]);
+-			pkts[i]->data_len = p->pkt_len[p->pkt_index];
+-			pkts[i]->pkt_len = pkts[i]->data_len;
+-
+-			p->pkt_index++;
+-			if (p->pkt_index >= p->n_pkts)
+-				p->pkt_index = 0;
+-		}
+-	}
+-
+-	RTE_PORT_SOURCE_STATS_PKTS_IN_ADD(p, n_pkts);
+-
+-	return n_pkts;
+-}
+-
+-static int
+-rte_port_source_stats_read(void *port,
+-		struct rte_port_in_stats *stats, int clear)
+-{
+-	struct rte_port_source *p =
+-		port;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &p->stats, sizeof(p->stats));
+-
+-	if (clear)
+-		memset(&p->stats, 0, sizeof(p->stats));
+-
+-	return 0;
+-}
+-
+-/*
+- * Port SINK
+- */
+-#ifdef RTE_PORT_STATS_COLLECT
+-
+-#define RTE_PORT_SINK_STATS_PKTS_IN_ADD(port, val) \
+-	(port->stats.n_pkts_in += val)
+-#define RTE_PORT_SINK_STATS_PKTS_DROP_ADD(port, val) \
+-	(port->stats.n_pkts_drop += val)
+-
+-#else
+-
+-#define RTE_PORT_SINK_STATS_PKTS_IN_ADD(port, val)
+-#define RTE_PORT_SINK_STATS_PKTS_DROP_ADD(port, val)
+-
+-#endif
+-
+-struct rte_port_sink {
+-	struct rte_port_out_stats stats;
+-
+-	/* PCAP dumper handle and pkts number */
+-	void *dumper;
+-	uint32_t max_pkts;
+-	uint32_t pkt_index;
+-	uint32_t dump_finish;
+-};
+-
+-#ifdef RTE_PORT_PCAP
+-
+-static int
+-pcap_sink_open(struct rte_port_sink *port,
+-	const char *file_name,
+-	uint32_t max_n_pkts)
+-{
+-	pcap_t *tx_pcap;
+-	pcap_dumper_t *pcap_dumper;
+-
+-	/** Open a dead pcap handler for opening dumper file */
+-	tx_pcap = pcap_open_dead(DLT_EN10MB, 65535);
+-	if (tx_pcap == NULL) {
+-		PORT_LOG(ERR, "Cannot open pcap dead handler");
+-		return -1;
+-	}
+-
+-	/* The dumper is created using the previous pcap_t reference */
+-	pcap_dumper = pcap_dump_open(tx_pcap, file_name);
+-	if (pcap_dumper == NULL) {
+-		PORT_LOG(ERR, "Failed to open pcap file "
+-			"\"%s\" for writing", file_name);
+-		return -1;
+-	}
+-
+-	port->dumper = pcap_dumper;
+-	port->max_pkts = max_n_pkts;
+-	port->pkt_index = 0;
+-	port->dump_finish = 0;
+-
+-	PORT_LOG(INFO, "Ready to dump packets to file \"%s\"",
+-		file_name);
+-
+-	return 0;
+-}
+-
+-static void
+-pcap_sink_write_pkt(struct rte_port_sink *port, struct rte_mbuf *mbuf)
+-{
+-	uint8_t *pcap_dumper = (port->dumper);
+-	struct pcap_pkthdr pcap_hdr;
+-	uint8_t jumbo_pkt_buf[RTE_ETHER_MAX_JUMBO_FRAME_LEN];
+-	uint8_t *pkt;
+-
+-	/* Maximum num packets already reached */
+-	if (port->dump_finish)
+-		return;
+-
+-	pkt = rte_pktmbuf_mtod(mbuf, uint8_t *);
+-
+-	pcap_hdr.len = mbuf->pkt_len;
+-	pcap_hdr.caplen = pcap_hdr.len;
+-	gettimeofday(&(pcap_hdr.ts), NULL);
+-
+-	if (mbuf->nb_segs > 1) {
+-		struct rte_mbuf *jumbo_mbuf;
+-		uint32_t pkt_index = 0;
+-
+-		/* if packet size longer than RTE_ETHER_MAX_JUMBO_FRAME_LEN,
+-		 * ignore it.
+-		 */
+-		if (mbuf->pkt_len > RTE_ETHER_MAX_JUMBO_FRAME_LEN)
+-			return;
+-
+-		for (jumbo_mbuf = mbuf; jumbo_mbuf != NULL;
+-				jumbo_mbuf = jumbo_mbuf->next) {
+-			rte_memcpy(&jumbo_pkt_buf[pkt_index],
+-				rte_pktmbuf_mtod(jumbo_mbuf, uint8_t *),
+-				jumbo_mbuf->data_len);
+-			pkt_index += jumbo_mbuf->data_len;
+-		}
+-
+-		jumbo_pkt_buf[pkt_index] = '\0';
+-
+-		pkt = jumbo_pkt_buf;
+-	}
+-
+-	pcap_dump(pcap_dumper, &pcap_hdr, pkt);
+-
+-	port->pkt_index++;
+-
+-	if ((port->max_pkts != 0) && (port->pkt_index >= port->max_pkts)) {
+-		port->dump_finish = 1;
+-		PORT_LOG(INFO, "Dumped %u packets to file",
+-				port->pkt_index);
+-	}
+-
+-}
+-
+-#define PCAP_SINK_OPEN(port, file_name, max_n_pkts)		\
+-	pcap_sink_open(port, file_name, max_n_pkts)
+-
+-#define PCAP_SINK_WRITE_PKT(port, mbuf)				\
+-	pcap_sink_write_pkt(port, mbuf)
+-
+-#define PCAP_SINK_FLUSH_PKT(dumper)				\
+-do {								\
+-	if (dumper)						\
+-		pcap_dump_flush((pcap_dumper_t *)dumper);	\
+-} while (0)
+-
+-#define PCAP_SINK_CLOSE(dumper)					\
+-do {								\
+-	if (dumper)						\
+-		pcap_dump_close((pcap_dumper_t *)dumper);	\
+-} while (0)
+-
+-#else
+-
+-#define PCAP_SINK_OPEN(port, file_name, max_n_pkts)		\
+-__extension__ ({						\
+-	int _ret = 0;						\
+-								\
+-	if (file_name) {					\
+-		PORT_LOG(ERR, "Sink port field "		\
+-			"\"file_name\" is not NULL.");	\
+-		_ret = -1;					\
+-	}							\
+-								\
+-	_ret;							\
+-})
+-
+-#define PCAP_SINK_WRITE_PKT(port, mbuf) {}
+-
+-#define PCAP_SINK_FLUSH_PKT(dumper)
+-
+-#define PCAP_SINK_CLOSE(dumper)
+-
+-#endif
+-
+-static void *
+-rte_port_sink_create(void *params, int socket_id)
+-{
+-	struct rte_port_sink *port;
+-	struct rte_port_sink_params *p = params;
+-
+-	/* Memory allocation */
+-	port = rte_zmalloc_socket("PORT", sizeof(*port),
+-			RTE_CACHE_LINE_SIZE, socket_id);
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
+-		return NULL;
+-	}
+-
+-	if (!p)
+-		return port;
+-
+-	if (p->file_name) {
+-		int status = PCAP_SINK_OPEN(port, p->file_name,
+-			p->max_n_pkts);
+-
+-		if (status < 0) {
+-			rte_free(port);
+-			port = NULL;
+-		}
+-	}
+-
+-	return port;
+-}
+-
+-static int
+-rte_port_sink_tx(void *port, struct rte_mbuf *pkt)
+-{
+-	struct rte_port_sink *p = port;
+-
+-	RTE_PORT_SINK_STATS_PKTS_IN_ADD(p, 1);
+-	if (p->dumper != NULL)
+-		PCAP_SINK_WRITE_PKT(p, pkt);
+-	rte_pktmbuf_free(pkt);
+-	RTE_PORT_SINK_STATS_PKTS_DROP_ADD(p, 1);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_sink_tx_bulk(void *port, struct rte_mbuf **pkts,
+-	uint64_t pkts_mask)
+-{
+-	struct rte_port_sink *p = port;
+-
+-	if ((pkts_mask & (pkts_mask + 1)) == 0) {
+-		uint64_t n_pkts = rte_popcount64(pkts_mask);
+-		uint32_t i;
+-
+-		RTE_PORT_SINK_STATS_PKTS_IN_ADD(p, n_pkts);
+-		RTE_PORT_SINK_STATS_PKTS_DROP_ADD(p, n_pkts);
+-
+-		if (p->dumper) {
+-			for (i = 0; i < n_pkts; i++)
+-				PCAP_SINK_WRITE_PKT(p, pkts[i]);
+-		}
+-
+-		for (i = 0; i < n_pkts; i++) {
+-			struct rte_mbuf *pkt = pkts[i];
+-
+-			rte_pktmbuf_free(pkt);
+-		}
+-
+-	} else {
+-		if (p->dumper) {
+-			uint64_t dump_pkts_mask = pkts_mask;
+-			uint32_t pkt_index;
+-
+-			for ( ; dump_pkts_mask; ) {
+-				pkt_index = rte_ctz64(
+-					dump_pkts_mask);
+-				PCAP_SINK_WRITE_PKT(p, pkts[pkt_index]);
+-				dump_pkts_mask &= ~(1LLU << pkt_index);
+-			}
+-		}
+-
+-		for ( ; pkts_mask; ) {
+-			uint32_t pkt_index = rte_ctz64(pkts_mask);
+-			uint64_t pkt_mask = 1LLU << pkt_index;
+-			struct rte_mbuf *pkt = pkts[pkt_index];
+-
+-			RTE_PORT_SINK_STATS_PKTS_IN_ADD(p, 1);
+-			RTE_PORT_SINK_STATS_PKTS_DROP_ADD(p, 1);
+-			rte_pktmbuf_free(pkt);
+-			pkts_mask &= ~pkt_mask;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_sink_flush(void *port)
+-{
+-	struct rte_port_sink *p =
+-			port;
+-
+-	if (p == NULL)
+-		return 0;
+-
+-	PCAP_SINK_FLUSH_PKT(p->dumper);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_sink_free(void *port)
+-{
+-	struct rte_port_sink *p =
+-			port;
+-
+-	if (p == NULL)
+-		return 0;
+-
+-	PCAP_SINK_CLOSE(p->dumper);
+-
+-	rte_free(p);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_sink_stats_read(void *port, struct rte_port_out_stats *stats,
+-		int clear)
+-{
+-	struct rte_port_sink *p =
+-		port;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &p->stats, sizeof(p->stats));
+-
+-	if (clear)
+-		memset(&p->stats, 0, sizeof(p->stats));
+-
+-	return 0;
+-}
+-
+-/*
+- * Summary of port operations
+- */
+-RTE_EXPORT_SYMBOL(rte_port_source_ops)
+-struct rte_port_in_ops rte_port_source_ops = {
+-	.f_create = rte_port_source_create,
+-	.f_free = rte_port_source_free,
+-	.f_rx = rte_port_source_rx,
+-	.f_stats = rte_port_source_stats_read,
+-};
+-
+-RTE_EXPORT_SYMBOL(rte_port_sink_ops)
+-struct rte_port_out_ops rte_port_sink_ops = {
+-	.f_create = rte_port_sink_create,
+-	.f_free = rte_port_sink_free,
+-	.f_tx = rte_port_sink_tx,
+-	.f_tx_bulk = rte_port_sink_tx_bulk,
+-	.f_flush = rte_port_sink_flush,
+-	.f_stats = rte_port_sink_stats_read,
+-};
+diff --git a/lib/port/rte_port_source_sink.h b/lib/port/rte_port_source_sink.h
+deleted file mode 100644
+index 3122dd5038..0000000000
+--- a/lib/port/rte_port_source_sink.h
++++ /dev/null
+@@ -1,57 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2016 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_PORT_SOURCE_SINK_H__
+-#define __INCLUDE_RTE_PORT_SOURCE_SINK_H__
+-
+-/**
+- * @file
+- * RTE Port Source/Sink
+- *
+- * source: input port that can be used to generate packets
+- * sink: output port that drops all packets written to it
+- */
+-
+-#include "rte_port.h"
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-/** source port parameters */
+-struct rte_port_source_params {
+-	/** Pre-initialized buffer pool */
+-	struct rte_mempool *mempool;
+-
+-	/** The full path of the pcap file to read packets from */
+-	const char *file_name;
+-	/** The number of bytes to be read from each packet in the
+-	 *  pcap file. If this value is 0, the whole packet is read;
+-	 *  if it is bigger than packet size, the generated packets
+-	 *  will contain the whole packet */
+-	uint32_t n_bytes_per_pkt;
+-};
+-
+-/** source port operations */
+-extern struct rte_port_in_ops rte_port_source_ops;
+-
+-/** sink port parameters */
+-struct rte_port_sink_params {
+-	/** The full path of the pcap file to write the packets to */
+-	const char *file_name;
+-	/** The maximum number of packets write to the pcap file.
+-	 *  If this value is 0, the "infinite" write will be carried
+-	 *  out.
+-	 */
+-	uint32_t max_n_pkts;
+-};
+-
+-/** sink port operations */
+-extern struct rte_port_out_ops rte_port_sink_ops;
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif
+diff --git a/lib/port/rte_port_sym_crypto.c b/lib/port/rte_port_sym_crypto.c
+deleted file mode 100644
+index 30c9d1283e..0000000000
+--- a/lib/port/rte_port_sym_crypto.c
++++ /dev/null
+@@ -1,558 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2018 Intel Corporation
+- */
+-#include <string.h>
+-
+-#include <eal_export.h>
+-#include <rte_common.h>
+-#include <rte_malloc.h>
+-
+-#include "rte_port_sym_crypto.h"
+-
+-#include "port_log.h"
+-
+-/*
+- * Port Crypto Reader
+- */
+-#ifdef RTE_PORT_STATS_COLLECT
+-
+-#define RTE_PORT_SYM_CRYPTO_READER_STATS_PKTS_IN_ADD(port, val) \
+-	(port)->stats.n_pkts_in += (val)
+-#define RTE_PORT_SYM_CRYPTO_READER_STATS_PKTS_DROP_ADD(port, val) \
+-	(port)->stats.n_pkts_drop += (val)
+-
+-#else
+-
+-#define RTE_PORT_SYM_CRYPTO_READER_STATS_PKTS_IN_ADD(port, val)
+-#define RTE_PORT_SYM_CRYPTO_READER_STATS_PKTS_DROP_ADD(port, val)
+-
+-#endif
+-
+-struct rte_port_sym_crypto_reader {
+-	struct rte_port_in_stats stats;
+-
+-	uint8_t cryptodev_id;
+-	uint16_t queue_id;
+-	struct rte_crypto_op *ops[RTE_PORT_IN_BURST_SIZE_MAX];
+-	rte_port_sym_crypto_reader_callback_fn f_callback;
+-	void *arg_callback;
+-};
+-
+-static void *
+-rte_port_sym_crypto_reader_create(void *params, int socket_id)
+-{
+-	struct rte_port_sym_crypto_reader_params *conf =
+-			params;
+-	struct rte_port_sym_crypto_reader *port;
+-
+-	/* Check input parameters */
+-	if (conf == NULL) {
+-		PORT_LOG(ERR, "%s: params is NULL", __func__);
+-		return NULL;
+-	}
+-
+-	/* Memory allocation */
+-	port = rte_zmalloc_socket("PORT", sizeof(*port),
+-		RTE_CACHE_LINE_SIZE, socket_id);
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
+-		return NULL;
+-	}
+-
+-	/* Initialization */
+-	port->cryptodev_id = conf->cryptodev_id;
+-	port->queue_id = conf->queue_id;
+-	port->f_callback = conf->f_callback;
+-	port->arg_callback = conf->arg_callback;
+-
+-	return port;
+-}
+-
+-static int
+-rte_port_sym_crypto_reader_rx(void *port, struct rte_mbuf **pkts, uint32_t n_pkts)
+-{
+-	struct rte_port_sym_crypto_reader *p =
+-			port;
+-	uint16_t rx_ops_cnt, i, n = 0;
+-
+-	rx_ops_cnt = rte_cryptodev_dequeue_burst(p->cryptodev_id, p->queue_id,
+-			p->ops, n_pkts);
+-
+-	for (i = 0; i < rx_ops_cnt; i++) {
+-		struct rte_crypto_op *op = p->ops[i];
+-
+-		/** Drop failed pkts */
+-		if (unlikely(op->status != RTE_CRYPTO_OP_STATUS_SUCCESS)) {
+-			rte_pktmbuf_free(op->sym->m_src);
+-			continue;
+-		}
+-
+-		pkts[n++] = op->sym->m_src;
+-	}
+-
+-	if (p->f_callback)
+-		(*p->f_callback)(pkts, n, p->arg_callback);
+-
+-	RTE_PORT_SYM_CRYPTO_READER_STATS_PKTS_IN_ADD(p, n);
+-	RTE_PORT_SYM_CRYPTO_READER_STATS_PKTS_DROP_ADD(p, rx_ops_cnt - n);
+-
+-	return n;
+-}
+-
+-static int
+-rte_port_sym_crypto_reader_free(void *port)
+-{
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: port is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	rte_free(port);
+-
+-	return 0;
+-}
+-
+-static int rte_port_sym_crypto_reader_stats_read(void *port,
+-	struct rte_port_in_stats *stats, int clear)
+-{
+-	struct rte_port_sym_crypto_reader *p =
+-			port;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &p->stats, sizeof(p->stats));
+-
+-	if (clear)
+-		memset(&p->stats, 0, sizeof(p->stats));
+-
+-	return 0;
+-}
+-
+-/*
+- * Port crypto Writer
+- */
+-#ifdef RTE_PORT_STATS_COLLECT
+-
+-#define RTE_PORT_SYM_CRYPTO_WRITER_STATS_PKTS_IN_ADD(port, val) \
+-	(port)->stats.n_pkts_in += (val)
+-#define RTE_PORT_SYM_CRYPTO_WRITER_STATS_PKTS_DROP_ADD(port, val) \
+-	(port)->stats.n_pkts_drop += (val)
+-
+-#else
+-
+-#define RTE_PORT_SYM_CRYPTO_WRITER_STATS_PKTS_IN_ADD(port, val)
+-#define RTE_PORT_SYM_CRYPTO_WRITER_STATS_PKTS_DROP_ADD(port, val)
+-
+-#endif
+-
+-struct rte_port_sym_crypto_writer {
+-	struct rte_port_out_stats stats;
+-
+-	struct rte_crypto_op *tx_buf[2 * RTE_PORT_IN_BURST_SIZE_MAX];
+-
+-	uint32_t tx_burst_sz;
+-	uint32_t tx_buf_count;
+-	uint64_t bsz_mask;
+-
+-	uint8_t cryptodev_id;
+-	uint16_t queue_id;
+-	uint16_t crypto_op_offset;
+-};
+-
+-static void *
+-rte_port_sym_crypto_writer_create(void *params, int socket_id)
+-{
+-	struct rte_port_sym_crypto_writer_params *conf =
+-			params;
+-	struct rte_port_sym_crypto_writer *port;
+-
+-	/* Check input parameters */
+-	if ((conf == NULL) ||
+-		(conf->tx_burst_sz == 0) ||
+-		(conf->tx_burst_sz > RTE_PORT_IN_BURST_SIZE_MAX) ||
+-		(!rte_is_power_of_2(conf->tx_burst_sz))) {
+-		PORT_LOG(ERR, "%s: Invalid input parameters", __func__);
+-		return NULL;
+-	}
+-
+-	/* Memory allocation */
+-	port = rte_zmalloc_socket("PORT", sizeof(*port),
+-		RTE_CACHE_LINE_SIZE, socket_id);
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
+-		return NULL;
+-	}
+-
+-	/* Initialization */
+-	port->tx_burst_sz = conf->tx_burst_sz;
+-	port->tx_buf_count = 0;
+-	port->bsz_mask = 1LLU << (conf->tx_burst_sz - 1);
+-
+-	port->cryptodev_id = conf->cryptodev_id;
+-	port->queue_id = conf->queue_id;
+-	port->crypto_op_offset = conf->crypto_op_offset;
+-
+-	return port;
+-}
+-
+-static inline void
+-send_burst(struct rte_port_sym_crypto_writer *p)
+-{
+-	uint32_t nb_tx;
+-
+-	nb_tx = rte_cryptodev_enqueue_burst(p->cryptodev_id, p->queue_id,
+-			p->tx_buf, p->tx_buf_count);
+-
+-	RTE_PORT_SYM_CRYPTO_WRITER_STATS_PKTS_DROP_ADD(p, p->tx_buf_count -
+-			nb_tx);
+-	for (; nb_tx < p->tx_buf_count; nb_tx++)
+-		rte_pktmbuf_free(p->tx_buf[nb_tx]->sym->m_src);
+-
+-	p->tx_buf_count = 0;
+-}
+-
+-static int
+-rte_port_sym_crypto_writer_tx(void *port, struct rte_mbuf *pkt)
+-{
+-	struct rte_port_sym_crypto_writer *p =
+-			port;
+-
+-	p->tx_buf[p->tx_buf_count++] = (struct rte_crypto_op *)
+-			RTE_MBUF_METADATA_UINT8_PTR(pkt, p->crypto_op_offset);
+-	RTE_PORT_SYM_CRYPTO_WRITER_STATS_PKTS_IN_ADD(p, 1);
+-	if (p->tx_buf_count >= p->tx_burst_sz)
+-		send_burst(p);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_sym_crypto_writer_tx_bulk(void *port,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask)
+-{
+-	struct rte_port_sym_crypto_writer *p =
+-			port;
+-	uint64_t bsz_mask = p->bsz_mask;
+-	uint32_t tx_buf_count = p->tx_buf_count;
+-	uint64_t expr = (pkts_mask & (pkts_mask + 1)) |
+-					((pkts_mask & bsz_mask) ^ bsz_mask);
+-
+-	if (expr == 0) {
+-		uint64_t n_pkts = rte_popcount64(pkts_mask);
+-		uint32_t i;
+-
+-		RTE_PORT_SYM_CRYPTO_WRITER_STATS_PKTS_IN_ADD(p, n_pkts);
+-
+-		for (i = 0; i < n_pkts; i++)
+-			p->tx_buf[p->tx_buf_count++] = (struct rte_crypto_op *)
+-					RTE_MBUF_METADATA_UINT8_PTR(pkts[i],
+-							p->crypto_op_offset);
+-
+-		if (p->tx_buf_count >= p->tx_burst_sz)
+-			send_burst(p);
+-	} else {
+-		for (; pkts_mask;) {
+-			uint32_t pkt_index = rte_ctz64(pkts_mask);
+-			uint64_t pkt_mask = 1LLU << pkt_index;
+-			struct rte_mbuf *pkt = pkts[pkt_index];
+-
+-			p->tx_buf[tx_buf_count++] = (struct rte_crypto_op *)
+-					RTE_MBUF_METADATA_UINT8_PTR(pkt,
+-							p->crypto_op_offset);
+-
+-			RTE_PORT_SYM_CRYPTO_WRITER_STATS_PKTS_IN_ADD(p, 1);
+-			pkts_mask &= ~pkt_mask;
+-		}
+-
+-		p->tx_buf_count = tx_buf_count;
+-		if (tx_buf_count >= p->tx_burst_sz)
+-			send_burst(p);
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_sym_crypto_writer_flush(void *port)
+-{
+-	struct rte_port_sym_crypto_writer *p =
+-			port;
+-
+-	if (p->tx_buf_count > 0)
+-		send_burst(p);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_sym_crypto_writer_free(void *port)
+-{
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Port is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	rte_port_sym_crypto_writer_flush(port);
+-	rte_free(port);
+-
+-	return 0;
+-}
+-
+-static int rte_port_sym_crypto_writer_stats_read(void *port,
+-	struct rte_port_out_stats *stats, int clear)
+-{
+-	struct rte_port_sym_crypto_writer *p =
+-			port;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &p->stats, sizeof(p->stats));
+-
+-	if (clear)
+-		memset(&p->stats, 0, sizeof(p->stats));
+-
+-	return 0;
+-}
+-
+-/*
+- * Port crypto Writer Nodrop
+- */
+-#ifdef RTE_PORT_STATS_COLLECT
+-
+-#define RTE_PORT_SYM_CRYPTO_WRITER_NODROP_STATS_PKTS_IN_ADD(port, val) \
+-	(port)->stats.n_pkts_in += (val)
+-#define RTE_PORT_SYM_CRYPTO_WRITER_NODROP_STATS_PKTS_DROP_ADD(port, val) \
+-	(port)->stats.n_pkts_drop += (val)
+-
+-#else
+-
+-#define RTE_PORT_SYM_CRYPTO_WRITER_NODROP_STATS_PKTS_IN_ADD(port, val)
+-#define RTE_PORT_SYM_CRYPTO_WRITER_NODROP_STATS_PKTS_DROP_ADD(port, val)
+-
+-#endif
+-
+-struct rte_port_sym_crypto_writer_nodrop {
+-	struct rte_port_out_stats stats;
+-
+-	struct rte_crypto_op *tx_buf[2 * RTE_PORT_IN_BURST_SIZE_MAX];
+-	uint32_t tx_burst_sz;
+-	uint32_t tx_buf_count;
+-	uint64_t bsz_mask;
+-	uint64_t n_retries;
+-
+-	uint8_t cryptodev_id;
+-	uint16_t queue_id;
+-	uint16_t crypto_op_offset;
+-};
+-
+-static void *
+-rte_port_sym_crypto_writer_nodrop_create(void *params, int socket_id)
+-{
+-	struct rte_port_sym_crypto_writer_nodrop_params *conf =
+-		params;
+-	struct rte_port_sym_crypto_writer_nodrop *port;
+-
+-	/* Check input parameters */
+-	if ((conf == NULL) ||
+-		(conf->tx_burst_sz == 0) ||
+-		(conf->tx_burst_sz > RTE_PORT_IN_BURST_SIZE_MAX) ||
+-		(!rte_is_power_of_2(conf->tx_burst_sz))) {
+-		PORT_LOG(ERR, "%s: Invalid input parameters", __func__);
+-		return NULL;
+-	}
+-
+-	/* Memory allocation */
+-	port = rte_zmalloc_socket("PORT", sizeof(*port),
+-		RTE_CACHE_LINE_SIZE, socket_id);
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Failed to allocate port", __func__);
+-		return NULL;
+-	}
+-
+-	/* Initialization */
+-	port->cryptodev_id = conf->cryptodev_id;
+-	port->queue_id = conf->queue_id;
+-	port->crypto_op_offset = conf->crypto_op_offset;
+-	port->tx_burst_sz = conf->tx_burst_sz;
+-	port->tx_buf_count = 0;
+-	port->bsz_mask = 1LLU << (conf->tx_burst_sz - 1);
+-
+-	/*
+-	 * When n_retries is 0 it means that we should wait for every packet to
+-	 * send no matter how many retries should it take. To limit number of
+-	 * branches in fast path, we use UINT64_MAX instead of branching.
+-	 */
+-	port->n_retries = (conf->n_retries == 0) ? UINT64_MAX : conf->n_retries;
+-
+-	return port;
+-}
+-
+-static inline void
+-send_burst_nodrop(struct rte_port_sym_crypto_writer_nodrop *p)
+-{
+-	uint32_t nb_tx = 0, i;
+-
+-	nb_tx = rte_cryptodev_enqueue_burst(p->cryptodev_id, p->queue_id,
+-			p->tx_buf, p->tx_buf_count);
+-
+-	/* We sent all the packets in a first try */
+-	if (nb_tx >= p->tx_buf_count) {
+-		p->tx_buf_count = 0;
+-		return;
+-	}
+-
+-	for (i = 0; i < p->n_retries; i++) {
+-		nb_tx += rte_cryptodev_enqueue_burst(p->cryptodev_id,
+-				p->queue_id, p->tx_buf + nb_tx,
+-				p->tx_buf_count - nb_tx);
+-
+-		/* We sent all the packets in more than one try */
+-		if (nb_tx >= p->tx_buf_count) {
+-			p->tx_buf_count = 0;
+-			return;
+-		}
+-	}
+-
+-	/* We didn't send the packets in maximum allowed attempts */
+-	RTE_PORT_SYM_CRYPTO_WRITER_NODROP_STATS_PKTS_DROP_ADD(p,
+-			p->tx_buf_count - nb_tx);
+-	for ( ; nb_tx < p->tx_buf_count; nb_tx++)
+-		rte_pktmbuf_free(p->tx_buf[nb_tx]->sym->m_src);
+-
+-	p->tx_buf_count = 0;
+-}
+-
+-static int
+-rte_port_sym_crypto_writer_nodrop_tx(void *port, struct rte_mbuf *pkt)
+-{
+-	struct rte_port_sym_crypto_writer_nodrop *p =
+-			port;
+-
+-	p->tx_buf[p->tx_buf_count++] = (struct rte_crypto_op *)
+-			RTE_MBUF_METADATA_UINT8_PTR(pkt, p->crypto_op_offset);
+-	RTE_PORT_SYM_CRYPTO_WRITER_STATS_PKTS_IN_ADD(p, 1);
+-	if (p->tx_buf_count >= p->tx_burst_sz)
+-		send_burst_nodrop(p);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_sym_crypto_writer_nodrop_tx_bulk(void *port,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask)
+-{
+-	struct rte_port_sym_crypto_writer_nodrop *p =
+-			port;
+-
+-	uint64_t bsz_mask = p->bsz_mask;
+-	uint32_t tx_buf_count = p->tx_buf_count;
+-	uint64_t expr = (pkts_mask & (pkts_mask + 1)) |
+-					((pkts_mask & bsz_mask) ^ bsz_mask);
+-
+-	if (expr == 0) {
+-		uint64_t n_pkts = rte_popcount64(pkts_mask);
+-		uint32_t i;
+-
+-		RTE_PORT_SYM_CRYPTO_WRITER_NODROP_STATS_PKTS_IN_ADD(p, n_pkts);
+-
+-		for (i = 0; i < n_pkts; i++)
+-			p->tx_buf[p->tx_buf_count++] = (struct rte_crypto_op *)
+-					RTE_MBUF_METADATA_UINT8_PTR(pkts[i],
+-							p->crypto_op_offset);
+-
+-		if (p->tx_buf_count >= p->tx_burst_sz)
+-			send_burst_nodrop(p);
+-	} else {
+-		for ( ; pkts_mask; ) {
+-			uint32_t pkt_index = rte_ctz64(pkts_mask);
+-			uint64_t pkt_mask = 1LLU << pkt_index;
+-			struct rte_mbuf *pkt = pkts[pkt_index];
+-
+-			p->tx_buf[tx_buf_count++] = (struct rte_crypto_op *)
+-					RTE_MBUF_METADATA_UINT8_PTR(pkt,
+-							p->crypto_op_offset);
+-			RTE_PORT_SYM_CRYPTO_WRITER_NODROP_STATS_PKTS_IN_ADD(p,
+-					1);
+-			pkts_mask &= ~pkt_mask;
+-		}
+-
+-		p->tx_buf_count = tx_buf_count;
+-		if (tx_buf_count >= p->tx_burst_sz)
+-			send_burst_nodrop(p);
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_sym_crypto_writer_nodrop_flush(void *port)
+-{
+-	struct rte_port_sym_crypto_writer_nodrop *p =
+-		port;
+-
+-	if (p->tx_buf_count > 0)
+-		send_burst_nodrop(p);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_port_sym_crypto_writer_nodrop_free(void *port)
+-{
+-	if (port == NULL) {
+-		PORT_LOG(ERR, "%s: Port is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	rte_port_sym_crypto_writer_nodrop_flush(port);
+-	rte_free(port);
+-
+-	return 0;
+-}
+-
+-static int rte_port_sym_crypto_writer_nodrop_stats_read(void *port,
+-	struct rte_port_out_stats *stats, int clear)
+-{
+-	struct rte_port_sym_crypto_writer_nodrop *p =
+-			port;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &p->stats, sizeof(p->stats));
+-
+-	if (clear)
+-		memset(&p->stats, 0, sizeof(p->stats));
+-
+-	return 0;
+-}
+-
+-
+-/*
+- * Summary of port operations
+- */
+-RTE_EXPORT_SYMBOL(rte_port_sym_crypto_reader_ops)
+-struct rte_port_in_ops rte_port_sym_crypto_reader_ops = {
+-	.f_create = rte_port_sym_crypto_reader_create,
+-	.f_free = rte_port_sym_crypto_reader_free,
+-	.f_rx = rte_port_sym_crypto_reader_rx,
+-	.f_stats = rte_port_sym_crypto_reader_stats_read,
+-};
+-
+-RTE_EXPORT_SYMBOL(rte_port_sym_crypto_writer_ops)
+-struct rte_port_out_ops rte_port_sym_crypto_writer_ops = {
+-	.f_create = rte_port_sym_crypto_writer_create,
+-	.f_free = rte_port_sym_crypto_writer_free,
+-	.f_tx = rte_port_sym_crypto_writer_tx,
+-	.f_tx_bulk = rte_port_sym_crypto_writer_tx_bulk,
+-	.f_flush = rte_port_sym_crypto_writer_flush,
+-	.f_stats = rte_port_sym_crypto_writer_stats_read,
+-};
+-
+-RTE_EXPORT_SYMBOL(rte_port_sym_crypto_writer_nodrop_ops)
+-struct rte_port_out_ops rte_port_sym_crypto_writer_nodrop_ops = {
+-	.f_create = rte_port_sym_crypto_writer_nodrop_create,
+-	.f_free = rte_port_sym_crypto_writer_nodrop_free,
+-	.f_tx = rte_port_sym_crypto_writer_nodrop_tx,
+-	.f_tx_bulk = rte_port_sym_crypto_writer_nodrop_tx_bulk,
+-	.f_flush = rte_port_sym_crypto_writer_nodrop_flush,
+-	.f_stats = rte_port_sym_crypto_writer_nodrop_stats_read,
+-};
+diff --git a/lib/port/rte_port_sym_crypto.h b/lib/port/rte_port_sym_crypto.h
+deleted file mode 100644
+index d03cdc1e8b..0000000000
+--- a/lib/port/rte_port_sym_crypto.h
++++ /dev/null
+@@ -1,92 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2018 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_PORT_SYM_CRYPTO_H__
+-#define __INCLUDE_RTE_PORT_SYM_CRYPTO_H__
+-
+-/**
+- * @file
+- * RTE Port sym crypto Interface
+- *
+- * crypto_reader: input port built on top of pre-initialized crypto interface
+- * crypto_writer: output port built on top of pre-initialized crypto interface
+- */
+-
+-#include <stdint.h>
+-
+-#include <rte_cryptodev.h>
+-
+-#include "rte_port.h"
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-/** Function prototype for reader post action. */
+-typedef void (*rte_port_sym_crypto_reader_callback_fn)(struct rte_mbuf **pkts,
+-		uint16_t n_pkts, void *arg);
+-
+-/** Crypto_reader port parameters */
+-struct rte_port_sym_crypto_reader_params {
+-	/** Target cryptodev ID. */
+-	uint8_t cryptodev_id;
+-
+-	/** Target cryptodev Queue Pair ID. */
+-	uint16_t queue_id;
+-
+-	/** Crypto reader post callback function. */
+-	rte_port_sym_crypto_reader_callback_fn f_callback;
+-
+-	/** Crypto reader post callback function arguments. */
+-	void *arg_callback;
+-};
+-
+-/** Crypto_reader port operations. */
+-extern struct rte_port_in_ops rte_port_sym_crypto_reader_ops;
+-
+-
+-/** Crypto_writer port parameters. */
+-struct rte_port_sym_crypto_writer_params {
+-	/** Target cryptodev ID. */
+-	uint8_t cryptodev_id;
+-
+-	/** Target cryptodev Queue Pair ID. */
+-	uint16_t queue_id;
+-
+-	/** offset to rte_crypto_op in the mbufs. */
+-	uint16_t crypto_op_offset;
+-
+-	/** Burst size to crypto interface. */
+-	uint32_t tx_burst_sz;
+-};
+-
+-/** Crypto_writer port operations. */
+-extern struct rte_port_out_ops rte_port_sym_crypto_writer_ops;
+-
+-/** Crypto_writer_nodrop port parameters. */
+-struct rte_port_sym_crypto_writer_nodrop_params {
+-	/** Target cryptodev ID. */
+-	uint8_t cryptodev_id;
+-
+-	/** Target cryptodev queue pair id. */
+-	uint16_t queue_id;
+-
+-	/** Offset to rte_crypto_op in the mbufs. */
+-	uint16_t crypto_op_offset;
+-
+-	/** Burst size to crypto interface. */
+-	uint32_t tx_burst_sz;
+-
+-	/** Maximum number of retries, 0 for no limit. */
+-	uint32_t n_retries;
+-};
+-
+-/** Crypto_writer_nodrop port operations. */
+-extern struct rte_port_out_ops rte_port_sym_crypto_writer_nodrop_ops;
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif
 -- 
 2.53.0
 
