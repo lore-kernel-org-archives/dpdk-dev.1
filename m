@@ -2,73 +2,143 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3466BC531C9
-	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Jul 2026 23:30:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECBFCC531C9
+	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Jul 2026 00:20:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 57E7F40279;
-	Tue, 28 Jul 2026 01:30:13 +0200 (CEST)
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
- [209.85.214.169])
- by mails.dpdk.org (Postfix) with ESMTP id 53CB1400EF
- for <dev@dpdk.org>; Tue, 28 Jul 2026 01:30:12 +0200 (CEST)
-Received: by mail-pl1-f169.google.com with SMTP id
- d9443c01a7336-2cc891373e0so33924145ad.2
- for <dev@dpdk.org>; Mon, 27 Jul 2026 16:30:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785195011;
- x=1785799811; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=oNPBxOe+3gwjz1R1ofMOPS1i/fvaSS+YMkSlM2NkLjo=;
- b=T/fFmpO42Bend8ACVfKCGnBu1iFaSOxXALmj7yRJOxy/UDYW2dkMynDK77lLR2z8wr
- npvYW8X+slQQibB8hdudBD6cySHcBO8N2ttQGXwMwAz7MofMz3vG2GfH2P1YGtjBwI8R
- 1Ra4pH8QST2Zh43tuKsUeAt5jrj+LtJjkEYIdsZ+tCOz2EerCwJ+aI5uQ5cEHngiCImL
- v30BFawJLNlyfOrUtykwilNMRnhfL3hTSyGBMkTzjX6zkEqIy/k5eddTvFwL5AVCL26G
- sDSb4c5vSnIRzdbhhTxfdrtTNBw2Qh188g4ltO8o1oYsExqLEjJDfyYC7fqccO6rqw+Y
- TEdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785195011; x=1785799811;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=oNPBxOe+3gwjz1R1ofMOPS1i/fvaSS+YMkSlM2NkLjo=;
- b=FoXadUhkCRole8auyu5Jms3vr8de333MKKgZkoFGysAOzEAi4zstpYClUjyHFs5gZ8
- HEUbB1+ljI9eImqEnJTA4N7MW3HPW6VrroyvPz0BUoE5IEECxxQSTbQvozwUQSGY0V6j
- 2tUJQo62r1ImdjXeLfAmVFMJYfYTUoNzPwkgYpgduVHzk6b2wEaWBGQhey8KFH0Y597r
- ixr/KnLKg9Fhm8u129bRFYaqs0Qd4FBqS6u8i3yjFuHcOnf4mdgSSDoicRVZT1qNMcpy
- NHf/iL7ro4G3FXIdk/CUIRH/xa2gKozLDD5F0haywqI80FBhQe3aiMzQFOl6c4tzQ4bY
- WS1w==
-X-Gm-Message-State: AOJu0YxSpgccvG7VaW3BIUQNHOrb2l41qnH1k+6M68d4qnFNW0FbDvsl
- gTqBvsgqygrZRVPsBDkY2KdI+vBiCeSzl8/PBd+8RORjT2flQ18D2uhxK5OtWBgt9Qs=
-X-Gm-Gg: AR+sD1237iXzNkTBNX4DTJ2roZ0uSKmIhLcDkgB7+2wPovQgQwZcNt5qexO5LUJB/sI
- eBNTNOwjkFqdNi/gfbX1q17FRHQP/lAdx3VW6op6MFf9ySr0Io6NL7oPTUUq9Qk0JMEZCTlzGx5
- fe8ZQFK/AW3Fv8U6c6xkayL61ruXTGU99uNoWmAzVqZIZm04SmUEUyoq6VrKpLrS4kOPPSSowwv
- t8g4tNmtGzmHlBhIbOEEe98DuhAJfK4AGz+oCadla7h8JxcdOg8OAtLdvSgnP7P3vTbOQcL7R9e
- rMYMdW2x0ueldp5DT3A4oKf3ulX0i6paNamXOkZaWbTRtzaqE8p7Nrdmu60mtTv55zkd1hK8/VV
- EBxCTzrvyDeLIpk/zDzGlk+Jc99UGOXPdy0y+3gli3PfQ5wCcbfa1hkO5Li5piH2TDzFn1HNIdT
- bohCJUmlnKwI60NQgYn04oiCQmF7jyYLrG7IDlgMXM034=
-X-Received: by 2002:a05:6a21:48f:b0:3c3:ad17:edf7 with SMTP id
- adf61e73a8af0-3c8ba600088mr2803637.63.1785195011048; 
- Mon, 27 Jul 2026 16:30:11 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-314bc5c53f3sm33394283eec.30.2026.07.27.16.30.10
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 27 Jul 2026 16:30:10 -0700 (PDT)
-Date: Mon, 27 Jul 2026 16:30:07 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH 00/39] Rework EAL configuration
-Message-ID: <20260727163007.60e4a2dc@phoenix.local>
-In-Reply-To: <20260721094555.2188496-1-bruce.richardson@intel.com>
-References: <20260429165845.2136843-1-bruce.richardson@intel.com>
- <20260721094555.2188496-1-bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id BB9D840279;
+	Tue, 28 Jul 2026 02:20:23 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+ by mails.dpdk.org (Postfix) with ESMTP id 34C3A400EF
+ for <dev@dpdk.org>; Tue, 28 Jul 2026 02:20:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1785198022; x=1816734022;
+ h=from:to:subject:date:message-id:references:in-reply-to:
+ content-transfer-encoding:mime-version;
+ bh=wvP95ULe7+7SQJIAEGcF4CbGF8VM8u0TqBhYlogTGNA=;
+ b=h4wLwESLa5BZW3fD0znaf2yVHe5j2KMEt20STz32+8sNHMIFaFzJjlam
+ qCA8CdGrgoNC/JaSeYP4Ep9OeC+AbQRMSv3pbWancpxppGu5eDFKbXMDS
+ 8dX5TT1Z7W0ulRR+viI49CChg04Z64Ir+110rvWT8JX42p7cL5+ijDbm7
+ CXKYQXskkMgkW3kylXDTKcT2t3y+bcUihApnDb0ZkxI9w7PAMAZIH+efD
+ zWtMwvQYzv1k+wCXgnVZBKMoOIzd8p/QcyHElqyKlxvbZEXlhagJ7GuCh
+ MjRmQnMhzTRG92CKRVb4OM2EOV7ThjGv5TTZIMdbsVKiSPyLq4F9TehsN A==;
+X-CSE-ConnectionGUID: ZPAV/uv4QciF0ghiJNKsLQ==
+X-CSE-MsgGUID: UBb5C5o2S0Ow1bErtBvEnA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11858"; a="108570756"
+X-IronPort-AV: E=Sophos;i="6.25,189,1779174000"; d="scan'208";a="108570756"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+ by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 27 Jul 2026 17:20:21 -0700
+X-CSE-ConnectionGUID: RG/g3odfSUezmtdiyYqkqQ==
+X-CSE-MsgGUID: 4c2AmeskT/6CvuUHN1Ja8w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,189,1779174000"; d="scan'208";a="256879672"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+ by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 27 Jul 2026 17:20:21 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43; Mon, 27 Jul 2026 17:20:20 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43 via Frontend Transport; Mon, 27 Jul 2026 17:20:20 -0700
+Received: from PH8PR06CU001.outbound.protection.outlook.com (40.107.209.65) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.43; Mon, 27 Jul 2026 17:20:19 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BYqplAnE5/qg1VBsFnPUcjlUjHtI4azyX9KYgOV7US0ce7Y026sPsaNb0lfFNnWkCEu2LtBlTfxW4/uIh+LjD2v6+z2N5UteOD5mfkk+rWCeXURA27d+Cvj0mJWYpXRRu+VZNWDSS+K85kK6xFYCWdulm7ZQdFRHk62EQxlqQre2PcGgkJ94D7SVZQEuO79ey6Z/zv5ljLvra7KuWE4HJYSd1JWNvsZ9EbNkjeotZv6wIOv9UE1xMgzLz64SvqJf//hq+jioZNDsu54CDEqgnYJz3YkRErIBiOkrD9NnfZx5d6IwcQ1ALfhMveqH3lh0JiAcH/5O+YAvxqWxLjyXZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tkirm4ec1cBdeqLL2gp4KqNaO4o3F9cbLZ1hnG2RNw0=;
+ b=coLwAPPLOwQFI2B9Kd4t6iAuGkkADNA0j7TJbKX8wm2Ge4G3MSV5l/aYyHfXUmE6JCf05ZiqwJOB/6ZHtXl8jpDyZyWYpitjU4yuSLfdmVMuHQQd+aqOjhYwCy/pWMXIT2suTh1UQ38f4JLBe59+O6QQyafg7YoqXsYORacLSJWLnFPlgPfepiSn0eVNcRl2JdtviMXkw6bGbymWFXHu9n2/xmtr0yL8uANcgINN2MprHH1d7Al71qZNkv+kYK+vTgKwf+MD7xj8TL6Xk6PWt56DTXhCgnW4gJ0JmZ3XY+CCqJTaKBMXOMwVcNZGHbLOoGqVr4TKqAI4GB57qkhGMg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SA1PR11MB6782.namprd11.prod.outlook.com (2603:10b6:806:25e::11)
+ by SAWPR11MB9924.namprd11.prod.outlook.com (2603:10b6:806:54d::17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.245.13; Tue, 28 Jul
+ 2026 00:20:13 +0000
+Received: from SA1PR11MB6782.namprd11.prod.outlook.com
+ ([fe80::cd29:ea71:32e6:ff0b]) by SA1PR11MB6782.namprd11.prod.outlook.com
+ ([fe80::cd29:ea71:32e6:ff0b%5]) with mapi id 15.21.0245.012; Tue, 28 Jul 2026
+ 00:20:13 +0000
+From: "Mandal, Anurag" <anurag.mandal@intel.com>
+To: "dev@dpdk.org" <dev@dpdk.org>
+Subject: RE: [PATCH] net/idpf: add clock read support
+Thread-Topic: [PATCH] net/idpf: add clock read support
+Thread-Index: AQHdHe2mOnaPDpl0jUC70oYWV6WHvraCEa2w
+Date: Tue, 28 Jul 2026 00:20:12 +0000
+Message-ID: <SA1PR11MB6782931E9768BBFE43A2F3BFE4CB2@SA1PR11MB6782.namprd11.prod.outlook.com>
+References: <20260727172946.824267-1-anurag.mandal@intel.com>
+In-Reply-To: <20260727172946.824267-1-anurag.mandal@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR11MB6782:EE_|SAWPR11MB9924:EE_
+x-ms-office365-filtering-correlation-id: 967b686f-a46f-4993-a0bd-08deec3dfdd5
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|1800799024|23010399003|366016|376014|11063799006|10067099003|56012099006|22082099003|18002099003|38070700021;
+x-microsoft-antispam-message-info: Y+ne7R2g1M4OvqI4RWQmYBglW5sEZegYxkM0AelfVSp4Ay+q9QkgVcNnFe8t36DHDH+/NVUdOMmNH7vWlfgQ++tFP3ZHguLkCegZYueXXtYgjALC8tGSpuytBPyAgPGl9e2LPPW7jvvigWnwz9Z4nx7X3j1vUt2jSaSvyB7F+Ge8xCjLnE1/xl46Plx+R2hCYOstwLP4bEv6sYjEcYFJCOo90NjDrJzwTazUXVk+gJY4YCfI6e7apV6+1trWtFdKqVYfVryK9aBDrw5RSdVrOnAivZkVBf0ZUg6q5ffiYnmFZaIVFOOHX2HvN9/1tfqZhWm1fh6Ts3mEmIQf9pWM43kIsR+rKVQg4t+7T5AXYi0JCH8bp0M//rjx79mbOjZXATfiRCziNJF13vgPhdYOu471oUstor/ka3nIlb1qUFvKa3UkL/QwHW25mqh01T7PhC0LDXnCOnil14cW/qC41UAKDTuBmd1juwEuoYXkmaKEsj8DfKVX4Nf3ISxO3736y79wEHmowliVk2GS1uPYEfeMKaKdlg6Msz6s+v41pi9q5GHsXuI4CQ/avRJ095NNyb1raya/zMAjNJd3102i3hT1VG0WB2KTzUZ1LgP7TvFrS2Td3zoDikxkYbsRisrjDtcUjLltSjKBWLHuUFIwEFDE8Krk2fQLekbFmDRQXZO46NBkbEuNLnjm3icqBQjjob2w3T+fFtW16WmJTR5eGA==
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SA1PR11MB6782.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(23010399003)(366016)(376014)(11063799006)(10067099003)(56012099006)(22082099003)(18002099003)(38070700021);
+ DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?LLCJl2JGe+SLPBvoiP1ntSIOqjeZAb7VPz/Bu316zs2NnXOelgLRnULvCtgW?=
+ =?us-ascii?Q?WBYZQAl9Eq+k2t5Sbm0h3FvDKmDQ2ygK702AyIYgzarZLT7NCkCkM1HxEslX?=
+ =?us-ascii?Q?e1KCTu202L/7pjUq5zSj+6et5PiHkjCHGn48hKKc1JsKsJzhJc4U1IrFiRx1?=
+ =?us-ascii?Q?6Ev0+H9xaLoC+xcBULMWxlMX3xHoi2O4KUTt0bBISmiwvDE+MuEgZ0ND7LSq?=
+ =?us-ascii?Q?8gAbpYgTQi07+kKcUoysjNFFTc9w2lcBZU2t+TSFhDEbEVXvcFpdqf7tgg9z?=
+ =?us-ascii?Q?cs11XWk1XilkqNR/RBzo3s/8LIk90RKvzlOcfnTrXnFmJ2D+XqXtwqjSSBbx?=
+ =?us-ascii?Q?V+lgcpyBqnglZmrqR5RspJOU9eipGh7T5pnxsGlSST+d6yNDGb3XjhTcj7fM?=
+ =?us-ascii?Q?I/qKXv+/LxKdcITxyghmEC6cHGd/eAX3g0UeQ+cfS9aZ5v9DBfY2yVclEH3r?=
+ =?us-ascii?Q?wjpx77JPke0mmSYsKGOa6A3R/AsCkEIiENzkRR58KZ2B8rkQp+2zVMid+91H?=
+ =?us-ascii?Q?/ru+kpt5LQu0PzbqR1rQD0Z+FWBKrCxW0rM2PIG7xi0g9EJE5phcz7fcxG68?=
+ =?us-ascii?Q?F6pa6jqi9hFcmoDMQnw18fAhuXdreETXHyE13fro1mJDUzHceH7qQIi7xblX?=
+ =?us-ascii?Q?akkRiZP/S5dIFQjUG+zKIFMEkTwatIZeMbFUvb5zJDZVJyVOHQYcLIkQSPyr?=
+ =?us-ascii?Q?kCfqhQuQvPCOcHj99St+5mRhNUK+VtFZYfau9VosILWgNXDGxDsc262ZISPN?=
+ =?us-ascii?Q?a0nXK/7pj13Yk8QTUqtigIjjGe/NmwKPzbLrOYzc4oPiIu4D3DayTwryq2fw?=
+ =?us-ascii?Q?j6PpPQcTxdNWE2hFq0wnh+GQzSsW2Qi0vQ6mcdhtEq5VJaDBv7n+R1SyABpU?=
+ =?us-ascii?Q?YnECujGqbmGhEYqFzy5KJpZs3xVp6heh26na97J3vL8M44/g7h4VWsuQi8ju?=
+ =?us-ascii?Q?MqDu8cNoKrurzrP1XdxEBebz/uVcV9y/T7bPk6XXiUQiqJoDbFP1c0kWK8wm?=
+ =?us-ascii?Q?TD4j9qhaa3ZBiCz+PhbAFRRs6lGGILPoqvmtcZW3C49djRPAtP0HAVEEm28B?=
+ =?us-ascii?Q?MGqf7MLdb+N3TLiDwtBTLrNDqpxsWYWNuJfGK20/r63yYvB8QPp5dwQApvpa?=
+ =?us-ascii?Q?LxCSrxdJcBaWG7nyLvHYuqy/vSfCAP8gI6f5uwEhcAcrDS3PyMryGzZ0XexO?=
+ =?us-ascii?Q?M0bfmtSFpSQLGIgabLj+dT2qouF36HjIE93Usdwn45Q7PuKxsmzx8iqcSC3b?=
+ =?us-ascii?Q?kranqfyFX8u8r4FLiQqP51aTUZz3Pwoc340ACOCgI+oWKHNFf2tyTilZwL/5?=
+ =?us-ascii?Q?0Rrjy/EvjoE827PrAW8Gs3wSHuiUk2OrKYuGYLSGdogZUsIt0GQm8N7geMVl?=
+ =?us-ascii?Q?4C4nJWuVUgiwuhcTb9ii0psBvrVgkzv/0d8w6EP03GrEeQx8TSRBiSxVzX5r?=
+ =?us-ascii?Q?vLGIKhtxjY4gwLRVN448VldP62dSk83vQpJPQtH4ixgYoJI4BEC2Kl60lpIw?=
+ =?us-ascii?Q?aWooPp9+8+TClQjU+tpD247ySNMdaqWJeSRWbuUoIivRaiJOs0o2k8p3rEax?=
+ =?us-ascii?Q?BVrsufrDoSPb+OF4WBbP6gw49n57LLGfuZHN5H6s7bmOetdz+mG+DGyrHyj8?=
+ =?us-ascii?Q?AB3aYSuqPSzDOQcrTki7o8m5ODwjn2tcnEJ7yW+qOgJfvdYfPdnYhxvq02fl?=
+ =?us-ascii?Q?VUWc7tdmDE18tUeew4DsbPuFSAy0NDhSq6UoG6CYgSQreGyuYt970f0ucq77?=
+ =?us-ascii?Q?AERa596BPw=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Exchange-RoutingPolicyChecked: IssKyqLaF8z/fJU8DrR0LlgellENjUeRdU9Dzpsxknfs/sCD8EZVE4etlgH5XS7lL8zlLzqbzo4RbvAQ4AEaXY86HSZavf98GrHqfP1HSygQDKR2qt/gvsesZgSs8FBwSNT8gcQiHE3506TeyPSsWppUsGhh68T2sZqMZW4C7ozln0LzHvcMvi5YlpD8K2XJrCl/eepc4nfGjXAjItdTC/7ubFej8gFt4zDmH5nykSiXHGI2ZQMQpA5C9otROOh477PXawrvKnhJLF0V+qdCgcWpnYrb6uibQPl2hDWO/WyOaQCi6CN4EoePU/mrhi0Lv4bZpxHXgJMKUkR3eptoeg==
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6782.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 967b686f-a46f-4993-a0bd-08deec3dfdd5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jul 2026 00:20:12.8865 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zM32eWuQao8VCfL+VYRkDpeazKc40Y5nhD5rPjzJyHrGS7jv+IaQhcmFZBasEs/SRXGa3za1SV/2YpFOmt4wfw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SAWPR11MB9924
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,330 +152,59 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 21 Jul 2026 10:45:08 +0100
-Bruce Richardson <bruce.richardson@intel.com> wrote:
+Recheck-request: rebase=3Dnext-net-intel, iol-testing
 
-> This patchset reworks how configuration is stored and managed in EAL.
-> The existing "internal_config", "rte_config", "lcore_config" structures,
-> which sometimes have arbitrary separation between them (especially the
-> first two) are replaced by three new structures with clearly defined
-> roles:
-> 
-> - eal_platform_info - contains the raw HW info for the system, details
->   of CPUs and hugepage mounts. This is initialized on first use - even
->   before EAL init is called - and is then immutable, since our HW should
->   not change much underneath us. Its early availability means that it
->   can be used to sanity check the contents of the other structs as they
->   are being built up.
-> 
-> - eal_user_cfg - contains the config settings passed in by the user. For
->   existing rte_eal_init, this is built up in the arg parse stage, and
->   it's contents verified against the platform info, e.g. to check core
->   masks are valid etc. Once argument parsing is completed, is also
->   immutable.
-> 
-> - runtime_cfg - basically all the runtime settings that need to be there
->   for DPDK to run, or which change over time. Largely combined content
->   of the old rte_config, internal_config and lcore_config structs. This
->   is initialized from the other two structs by eal initialization and
->   can be modified by EAL at any time.
-> 
-> Once that is done, we have a clean separation between user provided
-> configuration and the rest of EAL, we can split EAL init into two parts,
-> the first of which parses cmdline arguments and then calls the second
-> which takes the eal_user_cfg struct result of that parse and does the
-> actual initialization. The longer-term objective is to have other
-> first-stage functions that prepare the user_cfg struct for
-> initialization, so that we can move away from argc/argv as the only
-> method of configuring DPDK initialization.
-> 
-> Bruce Richardson (39):
->   telemetry: make cpuset init parameter const
->   argparse: check for range overflow in CPU lists
->   eal: define new functionally distinct config structs
->   eal: move memory request fields to user config
->   eal: move NUMA request fields to user config
->   eal: move hugepage policy fields to user config
->   eal: move process policy fields to user config
->   eal: move hugepage limit fields to new config structs
->   eal: move advanced user config options to user cfg struct
->   eal: move hugepage size info to platform info struct
->   eal: move runtime state to appropriate structure
->   eal: record details of all cpus in platform info
->   eal: use platform info for lcore lookups
->   eal: add macro for lowest set CPU bit in a set
->   eal: store lcore configuration in runtime data
->   eal: move core indices bitset to runtime state
->   eal: cleanup CPU init function
->   eal: move NUMA node information to platform info struct
->   eal: move lcore role and count to runtime state
->   eal: make lcore role a field in lcore config struct
->   eal: move main lcore setting to runtime config struct
->   eal: move IOVA mode and process type to runtime cfg
->   eal: move memory config pointer to runtime state struct
->   eal: remove rte_config structure
->   eal: separate runtime state update from arg parsing
->   eal: move device options staging list into user cfg
->   eal: separate plugin paths from loaded plugin objects
->   eal: simplify internal driver path iteration APIs
->   eal: move trace config into user config struct
->   eal: record service cores in user config struct
->   eal: store user-provided lcore info in user config struct
->   eal: clarify docs on params taking lcore IDs
->   eal: remove internal config reset function
->   eal: move functions setting runtime state
->   eal: initialize platform info on first use
->   eal: remove duplicated scan of sysfs for hugepage details
->   eal: add utilities for working with user config struct
->   eal: split EAL init into two stages
->   eal: provide hooks for init with externally supplied config
-> 
->  app/test/process.h                        |   4 +-
->  app/test/test_argparse.c                  |  10 +
->  doc/guides/linux_gsg/eal_args.include.rst |  38 +-
->  lib/argparse/rte_argparse.c               |   5 +
->  lib/eal/common/eal_common_bus.c           |   4 +-
->  lib/eal/common/eal_common_config.c        | 264 ++++++-
->  lib/eal/common/eal_common_dev.c           |  10 +-
->  lib/eal/common/eal_common_dynmem.c        |  70 +-
->  lib/eal/common/eal_common_fbarray.c       |  10 +-
->  lib/eal/common/eal_common_launch.c        |  25 +-
->  lib/eal/common/eal_common_lcore.c         | 267 ++++---
->  lib/eal/common/eal_common_mcfg.c          |  44 +-
->  lib/eal/common/eal_common_memalloc.c      |   5 +-
->  lib/eal/common/eal_common_memory.c        | 104 ++-
->  lib/eal/common/eal_common_memzone.c       |  24 +-
->  lib/eal/common/eal_common_options.c       | 899 ++++++++--------------
->  lib/eal/common/eal_common_proc.c          |  43 +-
->  lib/eal/common/eal_common_tailqs.c        |   6 +-
->  lib/eal/common/eal_common_thread.c        |  67 +-
->  lib/eal/common/eal_common_timer.c         |   2 +-
->  lib/eal/common/eal_common_trace.c         |  30 +-
->  lib/eal/common/eal_common_trace_utils.c   | 104 ---
->  lib/eal/common/eal_hugepages.h            |   8 +
->  lib/eal/common/eal_internal_cfg.h         | 386 ++++++++--
->  lib/eal/common/eal_memcfg.h               |   3 +
->  lib/eal/common/eal_option_list.h          |   6 +-
->  lib/eal/common/eal_options.h              |   8 +-
->  lib/eal/common/eal_private.h              | 121 ++-
->  lib/eal/common/eal_trace.h                |  11 -
->  lib/eal/common/malloc_elem.c              |  15 +-
->  lib/eal/common/malloc_heap.c              |  41 +-
->  lib/eal/common/malloc_mp.c                |   2 +-
->  lib/eal/common/rte_malloc.c               |  14 +-
->  lib/eal/common/rte_service.c              |  17 +-
->  lib/eal/freebsd/eal.c                     | 287 ++++---
->  lib/eal/freebsd/eal_hugepage_info.c       |  78 +-
->  lib/eal/freebsd/eal_lcore.c               |  16 +-
->  lib/eal/freebsd/eal_memory.c              |  46 +-
->  lib/eal/freebsd/include/rte_os.h          |   2 +
->  lib/eal/include/rte_eal.h                 |  35 +-
->  lib/eal/include/rte_memzone.h             |  10 +-
->  lib/eal/include/rte_tailq.h               |   2 +-
->  lib/eal/linux/eal.c                       | 296 ++++---
->  lib/eal/linux/eal_hugepage_info.c         | 231 +++---
->  lib/eal/linux/eal_lcore.c                 |  43 ++
->  lib/eal/linux/eal_memalloc.c              | 168 ++--
->  lib/eal/linux/eal_memory.c                | 168 ++--
->  lib/eal/linux/eal_timer_hpet.c            |  21 +-
->  lib/eal/linux/eal_vfio.c                  |  11 +-
->  lib/eal/linux/include/rte_os.h            |  10 +
->  lib/eal/unix/eal_unix_thread.c            |  11 +-
->  lib/eal/windows/eal.c                     | 193 +++--
->  lib/eal/windows/eal_hugepages.c           |  60 +-
->  lib/eal/windows/eal_lcore.c               |   6 +
->  lib/eal/windows/eal_memalloc.c            |  37 +-
->  lib/eal/windows/eal_memory.c              |  14 +-
->  lib/eal/windows/eal_thread.c              |  11 +-
->  lib/eal/windows/eal_windows.h             |   8 -
->  lib/eal/windows/include/rte_os.h          |   1 +
->  lib/eal/windows/include/sched.h           |  10 +
->  lib/telemetry/telemetry.c                 |   4 +-
->  lib/telemetry/telemetry_internal.h        |   2 +-
->  62 files changed, 2499 insertions(+), 1949 deletions(-)
-> 
+Thank you.
+
+Regards,
+Anurag M
+
+> -----Original Message-----
+> From: Mandal, Anurag <anurag.mandal@intel.com>
+> Sent: 27 July 2026 23:00
+> To: dev@dpdk.org
+> Cc: Richardson, Bruce <bruce.richardson@intel.com>; Wu, Jingjing
+> <jingjing.wu@intel.com>; Shetty, Praveen <praveen.shetty@intel.com>;
+> Mandal, Anurag <anurag.mandal@intel.com>
+> Subject: [PATCH] net/idpf: add clock read support
+>=20
+> Implemented read_clock ethdev operation by adding
+> idpf_dev_read_clock() feature to get current time in nanoseconds for
+> scheduling packets based on transmit time.
+>=20
+> Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
+> ---
+>  drivers/net/intel/idpf/idpf_ethdev.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>=20
+> diff --git a/drivers/net/intel/idpf/idpf_ethdev.c
+> b/drivers/net/intel/idpf/idpf_ethdev.c
+> index c13505416a..224a649f53 100644
+> --- a/drivers/net/intel/idpf/idpf_ethdev.c
+> +++ b/drivers/net/intel/idpf/idpf_ethdev.c
+> @@ -1124,6 +1124,15 @@ idpf_timesync_disable(struct rte_eth_dev *dev)
+>  	return 0;
+>  }
+>=20
+> +static int
+> +idpf_dev_read_clock(struct rte_eth_dev *dev, uint64_t *clock) {
+> +	struct idpf_vport *vport =3D dev->data->dev_private;
+> +	struct idpf_adapter *adapter =3D vport->adapter;
+> +
+> +	return idpf_ptp_read_src_clk_reg(adapter, clock); }
+> +
+>=20
+>  static const struct eth_dev_ops idpf_eth_dev_ops =3D {
+>  	.dev_configure			=3D idpf_dev_configure,
+> @@ -1159,6 +1168,7 @@ static const struct eth_dev_ops idpf_eth_dev_ops =
+=3D {
+>  	.timesync_read_time           =3D idpf_timesync_read_time,
+>  	.timesync_write_time          =3D idpf_timesync_write_time,
+>  	.timesync_disable             =3D idpf_timesync_disable,
+> +	.read_clock                   =3D idpf_dev_read_clock,
+>  };
+>=20
+>  static int
 > --
-> 2.53.0
-> 
+> 2.34.1
 
-Ran deeper AI review on this and it found a couple small things:
-
-Review of "eal: rework EAL initialization" (39 patches)
-
-Series applies cleanly to main (9231dc7). All 39 commits build individually
-with -Dwerror=true, so bisect is safe. Findings verified against the merged
-tree rather than the diffs alone.
-
-
-Patch 02/39 - argparse: check for range overflow in CPU lists
-
-Warning: missing Fixes: and Cc: stable.
-
-This is an out-of-bounds write, not a cleanup - CPU_SET(min, cpuset) with
-min >= CPU_SETSIZE writes past the end of rte_cpuset_t. The introducing
-commit is in v25.11, so it needs backporting:
-
-  Fixes: d78103fb9488 ("argparse: support core lists")
-  Cc: stable@dpdk.org
-
-The fix itself is correct and complete: all three branches assign max before
-the new check, min >= 0 is guaranteed by the isdigit() gate, and min <= max
-holds in every branch, so the CPU_SET loop is fully bounded.
-
-
-Patch 33/39 - eal: remove internal config reset function
-
-Error: removing eal_reset_internal_config() drops the lock_descriptor = -1
-preset, which can lead to close(0) on stdin. Linux only.
-
-The deleted function did:
-
-    for (i = 0; i < MAX_HUGEPAGE_SIZES; i++) {
-        memset(&internal_cfg->hugepage_info[i], 0, ...);
-        internal_cfg->hugepage_info[i].lock_descriptor = -1;
-    }
-
-That -1 was the invariant eal_hugedirs_unlock() relied on. hugepage_info[]
-now lives in eal_runtime_state, which is a static initialised only with
-.mem_config, so every lock_descriptor starts at 0 - a valid fd.
-
-This patch compensates by widening the guard:
-
-    if (hugepage_info[i].hugepage_sz == 0 ||
-            hugepage_info[i].lock_descriptor < 0)
-        continue;
-
-but hugepage_sz == 0 is not a sufficient proxy. In hugepage_info_init()
-(lib/eal/linux/eal_hugepage_info.c) hpi->hugepage_sz is assigned *before*
-the mountpoint check, and the no-mountpoint path continues without ever
-assigning lock_descriptor:
-
-    hpi = &rs->hugepage_info[num_sizes];
-    hpi->hugepage_sz = hps->size;          /* set first */
-
-    if (get_hugepage_dir(...) < 0) {
-        if (user_cfg->in_memory) {
-            calc_num_pages(hpi, hps, 0);
-            num_sizes++;                   /* entry accepted */
-        }
-        continue;                          /* lock_descriptor never set */
-    }
-
-    hpi->lock_descriptor = open(hpi->hugedir, O_RDONLY);
-
-Two reachable cases:
-
-  (a) --in-memory with a reserved-but-unmounted size (e.g. 1G reserved,
-      only 2M mounted). The entry is accepted with hugepage_sz != 0 and
-      lock_descriptor == 0.
-
-  (b) Default mode where the *last* size has no mountpoint. num_sizes is
-      not incremented, so slot [num_sizes] keeps a nonzero hugepage_sz with
-      lock_descriptor == 0. eal_hugedirs_unlock() iterates to
-      MAX_HUGEPAGE_SIZES, not num_hugepage_sizes, so it still visits it.
-
-In both, the guard passes and the code runs flock(0, LOCK_UN) followed by
-close(0) on the normal init path (lib/eal/linux/eal.c:831, unconditional
-after rte_eal_memory_init()). Confirmed with a standalone harness
-reproducing the two functions' control flow.
-
-FreeBSD is unaffected (single entry, fd assigned unconditionally, no
-unlock loop); Windows sets -1 explicitly in eal_hugepages.c.
-
-Simplest fix is to restore the invariant rather than widen the guard - set
-lock_descriptor = -1 for all MAX_HUGEPAGE_SIZES entries when runtime state
-is set up, or initialise the entry immediately after hugepage_sz is
-assigned in hugepage_info_init(). Bounding the unlock loop by
-num_hugepage_sizes would fix (b) but not (a).
-
-The other non-zero defaults from the deleted function are all preserved
-correctly: hugepage_file.unlink_existing, no_hpet, and
-max_simd_bitwidth.bitwidth are in EAL_USER_CFG_INITIALIZER, and
-RTE_IOVA_DC / RTE_INTR_MODE_NONE / RTE_PROC_PRIMARY are all genuinely 0.
-lock_descriptor is the only one lost.
-
-
-Patch 29/39 - eal: move trace config into user config struct
-
-Warning: --trace-dir accumulate semantics changed, plus a leak on repeat.
-
-The old path went through trace_dir_update(), which concatenated onto any
-existing value:
-
-    asprintf(&dir, "%s%s", trace->dir != NULL ? trace->dir : "", str);
-
-The new code does a plain asprintf into user_cfg->trace_dir. Passing
---trace-dir more than once now replaces rather than appends, and the
-earlier allocation leaks since trace_dir is overwritten without a free.
-If the replace behaviour is intended, worth saying so in the commit
-message; otherwise free the previous value first.
-
-
-Patch 39/39 - eal: provide hooks for init with externally supplied config
-
-Error: rte_eal_runtime_init() returns -1 without setting rte_errno on the
-platform-info path. Identical in all three platform copies:
-
-    if (rte_eal_get_platform_info() == NULL) {
-        rte_eal_init_alert("Platform information is not available.");
-        return -1;              /* rte_errno not set */
-    }
-
-The other two error paths in the same function set EINVAL and EALREADY,
-and the equivalent path in rte_eal_init() sets ENOTSUP. A caller checking
-rte_errno gets a stale value. Suggest rte_errno = ENOTSUP to match.
-
-Warning: the stated purpose is not reachable as posted.
-
-The commit message says the hooks let "other libraries init EAL by passing
-in that structure pre-configured", but struct eal_user_cfg and both new
-prototypes live in lib/eal/common/eal_internal_cfg.h. lib/meson.build:143
-only adds eal/common to the include path when RTE_LIB_EAL is not yet set,
-i.e. for EAL's own sub-build; afterwards dependent libraries get
-deps += ['eal'], which exposes only EAL's public include dirs. No in-tree
-library can declare the type or call the function without the explicit
-include_directories() hack used by drivers/common/mlx5/linux/meson.build.
-Either make the header reachable or note that a follow-up is required.
-
-Warning: both new __rte_internal symbols have no in-tree consumer and no
-test, so the deep-copy path in eal_user_cfg_copy() is never exercised by
-anything. A test driving rte_eal_runtime_init() with a hand-populated
-config would be worth adding alongside.
-
-Info: eal_internal_cfg.h uses #include "rte_compat.h" while every other
-public RTE header in the same file uses angle brackets.
-
-
-Checked and found correct
-
-Recording these so they are not re-reviewed:
-
-- eal_user_cfg_copy() deep copy is sound. device_option uses a flexible
-  char arg[], so calloc(1, sizeof(*copy) + arglen) is right;
-  eal_plugin_path uses a fixed char name[PATH_MAX], so malloc(sizeof(*p))
-  plus memcpy(..., sizeof(name)) is right. Both lists, trace patterns, all
-  four heap strings and the per-lcore cpusets are deep-copied, so cleaning
-  up both user_cfg_from_args and the global config is not a double free.
-  The error path calls eal_user_cfg_cleanup(dst), which is idempotent, so
-  the later eal_cleanup_config() in eal_runtime_init()'s err_out is safe.
-
-- EAL_USER_CFG_INITIALIZER(self): the self-referencing
-  TAILQ_HEAD_INITIALIZER((self).devopt_list) is legal - the object's scope
-  begins after its declarator, and tqh_last correctly points at the final
-  object rather than the compound-literal temporary.
-
-- rte_eal_get_platform_info() double-checked locking has correct
-  acquire/release pairing under a spinlock.
-
-- rte_eal_cpu_init() error paths all free and NULL both cpu_info and
-  numa_nodes, so the caller's fail label cannot double-free. No leak on the
-  numa_node_count > RTE_MAX_NUMA_NODES path.
-
-- eal_expand_cpuset_to_map() and the --lcores parser both NULL entries as
-  they free, so the later eal_user_cfg_cleanup() is safe.
-
-- Every added malloc/calloc/strdup/asprintf checks its return.
-  sprintf(pattern, "%s*", ...) into calloc(1, len + 2) is exactly sized.
-
-- No public ABI change; the only new exports are two
-  RTE_EXPORT_INTERNAL_SYMBOLs and no version.map is hand-edited.
