@@ -2,42 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D8CAC54F4C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Jul 2026 12:05:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 665B4C53219
+	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Jul 2026 12:05:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5636D40269;
-	Tue, 28 Jul 2026 14:05:07 +0200 (CEST)
-Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com
- [113.46.200.223])
- by mails.dpdk.org (Postfix) with ESMTP id 6880B4014F
- for <dev@dpdk.org>; Tue, 28 Jul 2026 14:05:06 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2FB2E4060A;
+	Tue, 28 Jul 2026 14:05:11 +0200 (CEST)
+Received: from canpmsgout05.his.huawei.com (canpmsgout05.his.huawei.com
+ [113.46.200.220])
+ by mails.dpdk.org (Postfix) with ESMTP id B68F04060B
+ for <dev@dpdk.org>; Tue, 28 Jul 2026 14:05:09 +0200 (CEST)
 dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=ZWyfjgPU1/oIE0CF3uDQIJyLtZxDUtm66yxjRHr3+8E=;
- b=NJczpr/mHXgHrFnMJg+7bIoj+yZZPcnPa8r8EO8Oi/tsZZ40ijCMEA6wEJ/CGs+CIOiwFmGHM
- IMNmKcoXummRC2PB6n7hu3nYFwJjWr6DvgVa83/m8daPKou+0KwXd875rWk684J2rFWJpqClQDQ
- DOrhkW8mqN7Mn2dkfQ3Uf9c=
-Received: from mail.maildlp.com (unknown [172.19.162.92])
- by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4h8YnN3RnxzmVWf;
- Tue, 28 Jul 2026 19:55:36 +0800 (CST)
+ bh=afKTR6BUja3a51KGoKL6PBIuuxaQyizcQyMhxeTnbHw=;
+ b=E2juRF0bQR3B9MDBEQ2l9dWcHaYHlPxXxRjdHnUxTJ2brTw//EeYjSB3OT2oVqXZaTx229035
+ TAjDtXBEDWtHH4YgfzKAszjiqWXRLFY/a05FI4JsS2Pe9ejIs+MeWaOnZrlxktFxfXPL4jYu3gU
+ XVMKJKRPX6KNpRiod7whmaQ=
+Received: from mail.maildlp.com (unknown [172.19.162.223])
+ by canpmsgout05.his.huawei.com (SkyGuard) with ESMTPS id 4h8YnP6BSvz12LDV;
+ Tue, 28 Jul 2026 19:55:37 +0800 (CST)
 Received: from kwepemo100005.china.huawei.com (unknown [7.202.195.212])
- by mail.maildlp.com (Postfix) with ESMTPS id 16EC440565;
- Tue, 28 Jul 2026 20:05:03 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 3F7D440575;
+ Tue, 28 Jul 2026 20:05:08 +0800 (CST)
 Received: from localhost.localdomain (10.90.31.46) by
  kwepemo100005.china.huawei.com (7.202.195.212) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Tue, 28 Jul 2026 20:05:02 +0800
+ 15.2.1544.36; Tue, 28 Jul 2026 20:05:07 +0800
 From: Huisong Li <lihuisong@huawei.com>
 To: <anatoly.burakov@intel.com>, <sivaprasad.tummala@amd.com>
 CC: <dev@dpdk.org>, <thomas@monjalon.net>, <stephen@networkplumber.org>,
  <fengchengwen@huawei.com>, <yangxingui@huawei.com>, <zhanjie9@hisilicon.com>, 
  <lihuisong@huawei.com>
-Subject: [PATCH v3 0/6] power: uncore power improvements and auto-detection
-Date: Tue, 28 Jul 2026 20:02:02 +0800
-Message-ID: <20260728120208.1858832-1-lihuisong@huawei.com>
+Subject: [PATCH v3 2/6] examples/l3fwd-power: enable power QoS for all modes
+Date: Tue, 28 Jul 2026 20:02:04 +0800
+Message-ID: <20260728120208.1858832-3-lihuisong@huawei.com>
 X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20260526081138.1434947-1-lihuisong@huawei.com>
+In-Reply-To: <20260728120208.1858832-1-lihuisong@huawei.com>
 References: <20260526081138.1434947-1-lihuisong@huawei.com>
+ <20260728120208.1858832-1-lihuisong@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -57,44 +58,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This series improves the uncore power management in l3fwd-power
-and adds automatic detection of uncore drivers in the power library.
+Power QoS feature doesn't depend on app mode, here open it for all.
 
-- Fix uncore deinitialization for non-legacy modes.
-- Enable power QoS for all modes (not just legacy).
-- Fix uncore help text and log messages.
-- Relocate uncore initialization from arg parsing to init_power_library().
-- Support automatic probing of uncore drivers in AUTO_DETECT and delete
-  useless code for auto-detection uncore environment.
-
+Signed-off-by: Huisong Li <lihuisong@huawei.com>
 ---
- v3:
- - update feature to release_26_11.rst.
- - add a new patch to delte useless for automatic detection environment.
- v2 link:
-  https://inbox.dpdk.org/dev/20260526081138.1434947-1-lihuisong@huawei.com/
+ examples/l3fwd-power/main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- v2:
- - Remove the patch which add global uncore init and deinit interface.
- - Remove the last patch in l3fwd-power about these new interface.
-   Will send them after this series.
- v1 link:
-  https://inbox.dpdk.org/dev/20260512023513.460169-1-lihuisong@huawei.com/
-
-Huisong Li (6):
-  examples/l3fwd-power: fix uncore deinit for non-legacy
-  examples/l3fwd-power: enable power QoS for all modes
-  examples/l3fwd-power: fix uncore help and log info
-  examples/l3fwd-power: relocate uncore initialization
-  power: support automatic detection of uncore driver
-  power: remove unused auto-detection uncore
-
- doc/guides/rel_notes/release_26_11.rst        |   6 +
- .../sample_app_ug/l3_forward_power_man.rst    |   2 +-
- examples/l3fwd-power/main.c                   | 256 +++++++++---------
- lib/power/rte_power_uncore.c                  |  78 +++---
- 4 files changed, 185 insertions(+), 157 deletions(-)
-
+diff --git a/examples/l3fwd-power/main.c b/examples/l3fwd-power/main.c
+index 4b0128eeaa..3af10c629a 100644
+--- a/examples/l3fwd-power/main.c
++++ b/examples/l3fwd-power/main.c
+@@ -2294,7 +2294,7 @@ init_power_library(void)
+ 		}
+ 	}
+ 
+-	if (app_mode == APP_MODE_LEGACY && cpu_resume_latency != -1) {
++	if (cpu_resume_latency != -1) {
+ 		RTE_LCORE_FOREACH(lcore_id) {
+ 			/* Back old CPU resume latency. */
+ 			ret = rte_power_qos_get_cpu_resume_latency(lcore_id);
+@@ -2365,7 +2365,7 @@ deinit_power_library(void)
+ 		}
+ 	}
+ 
+-	if (app_mode == APP_MODE_LEGACY && cpu_resume_latency != -1) {
++	if (cpu_resume_latency != -1) {
+ 		RTE_LCORE_FOREACH(lcore_id) {
+ 			/* Restore the original value. */
+ 			rte_power_qos_set_cpu_resume_latency(lcore_id,
 -- 
 2.33.0
 
