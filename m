@@ -2,71 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B69DC531F9
-	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Jul 2026 16:38:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8607CC54F5D
+	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Jul 2026 16:38:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 89C9B406BB;
-	Tue, 28 Jul 2026 18:38:15 +0200 (CEST)
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com
- [209.85.215.177])
- by mails.dpdk.org (Postfix) with ESMTP id 0873E40A73
+	by mails.dpdk.org (Postfix) with ESMTP id 8684540A67;
+	Tue, 28 Jul 2026 18:38:16 +0200 (CEST)
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com
+ [209.85.210.175])
+ by mails.dpdk.org (Postfix) with ESMTP id 7047340A6E
  for <dev@dpdk.org>; Tue, 28 Jul 2026 18:38:11 +0200 (CEST)
-Received: by mail-pg1-f177.google.com with SMTP id
- 41be03b00d2f7-ca2fad0ae38so2900818a12.3
+Received: by mail-pf1-f175.google.com with SMTP id
+ d2e1a72fcca58-8487088510aso63609b3a.0
  for <dev@dpdk.org>; Tue, 28 Jul 2026 09:38:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785256691;
- x=1785861491; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=TRXXFrPywKuv5t++MaJeH/BlZCW/9cnsO9kIzwOeZGs=;
- b=bDn2oFdUFHPQopmJhQoFuTnMZ0L8EU7W+OGQQU7c/QuURdBDJ2/OhOV9Igb3X72E5L
- ekwii+AZ+wRQ/7U2Is03ZdCXMWRlVC1yjzyAarwvmLESVhteN0nMqnAuB03pBrfkRMdz
- /1rArJdNP02yay21Bg1WGS6Fid+xxe8/lIp5dOyyuqjjFyTea3bozFT4UxEtc0vuHbvq
- KlLWy+/i3kkcJAhj3VCo8vXjdBvrkDSLkte8hTC4jfhAsCbBo+vhEoA9HmOG+7FJgs2u
- M5XSL1bKfOJyVE1BEZMzpwpfTpRtuj1U/XuTBR1YInn5M8BHnhsLAOo4AmpS2GQvNerG
- q/qg==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785256690;
+ x=1785861490; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=AOclQUzM7BC1wdmTQD/dKtmDWEHkwPcqM1sIIavLxTc=;
+ b=vn0EGGrHW4W1QbjG3I7iskZCXLjisXgOqKjQxzmn6AOV47DmhWudyzmjmxMIWtlHYY
+ iqpfBijMraJN5iunfUnSCw+zAkYsJWKN2F7WVEIj8bYuzh1nLamnVbMrXVzGc/nk+NWc
+ h2SOjcNk85zqsF8FwBEc5XZ3s4DIWkotdum4O7u5XEApjeQzGynnjxS727+Uiz0UtnRU
+ r8ovmOjUoewSlRb5qQOUoYXkJCQQDi6hSrsWU20Xz+G6ZB8EZ6sbpxwd65mtRp/9eEWA
+ dM1fIvb4XAh4rzMe18NMaArSNcE46g0xwlQzybDyx2qtfMwNpmteEMBDOKeMqat5h8Nl
+ q+/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785256691; x=1785861491;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=TRXXFrPywKuv5t++MaJeH/BlZCW/9cnsO9kIzwOeZGs=;
- b=ShBHHejkCVT2k3n1N1SMPocqOaB0Nx4WFlVu+qFNYPTWw6ml7GxzjQr2UsncgyaFG/
- 4Mu/N+LYFLYeb4fJ+90brg7JmghxkMAYIquv+M0349/K7ORoPI8E01zE6EXJ0JjlIiKx
- fHCgD9UgCfwjU2+a93ELq+7tn1vpQ5dAMEOC5whQ1Rqzs2t9roeH4gWe4VEhQMhVZ7Nq
- NPBWwNecWOJJSuqP94eoF+SGKmohmuyg9LDMNi8xAqH8gpXL1NmHDOzZd0vdmSosoG/h
- Q/VU66qLizxLRGwDdnVzWthYifl/Px020Ym7t1p4J2tpcj4Bv1lFMe+GdSJaVcPXpu/F
- dzFQ==
-X-Gm-Message-State: AOJu0YzCDkQFArJZh3r9JiCpH0Kph60k3toaDyQbIHZ6d2hIBH6tS29K
- eNfZ6OF/v1G44LpWVLcd8s1WBPP7UHmuNT2NXZ5a4UImJCCrRZtMXATd6UdMaYcDHSVKyzKVJUf
- YZkyx
-X-Gm-Gg: AR+sD11T3u0kANt6RDN4jiCNX4JMigifBsumf1XkkVRU7GjasTVxlVnZlRForI8lNvv
- s++75/SxtfKd5i5AXRJxW3Cks3DA9gFIsSwYEf8ClumZXEg9Y6V0dlVMgE60J1RKzNzTh5Jw428
- oOIGUoarlfo84tXr3hjaf0PlZuJvSkqG2oDaQNdzrrEJXZcENg3l45TjsTl9DoHSvWcCXyC2rxH
- BBttTbEBSyedfpYpquGXS0ih4McKLmihhHJEc8Th/LvYPCDySr+2eCxyONhDmoWeV1PvWC4zioq
- pQ0QCsJaz7IxIy2P5KzKEzdkESIhK+Or0GRorjp4ipifQ1mjmI3EYRqF9fOcdTZBHf+642HlyvW
- BkZTlcO+EwmUbJTJPE9CfavNvqv4z/FIJkZvLp0Z1ZzC9PW5953VxYHz7Sghm0kbMv98ih7LsuP
- iJGNgui4vxjvT7G8kv7pRoAYgnMXqO64s6HMzJUpAC
-X-Received: by 2002:a05:6a20:2588:b0:3c6:61b9:917c with SMTP id
- adf61e73a8af0-3c8aaf7ae84mr3635946637.11.1785256691097; 
- Tue, 28 Jul 2026 09:38:11 -0700 (PDT)
+ d=1e100.net; s=20251104; t=1785256690; x=1785861490;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=AOclQUzM7BC1wdmTQD/dKtmDWEHkwPcqM1sIIavLxTc=;
+ b=M9s0uy12ltRdGmruJk+zeZNUiciJITYHCSKzSzSp8Gp4RX7yV/tYhtza7qQlKMx4YR
+ ATzzMPEABQBoN2HtKOWvF8vO3IM9/jYrNm396Z5bplvQ/3azBMhej7dV6M6tTWDG08Pe
+ qF5CIRBPLuOtQ5Ohe2PZNk7N5Oemw35dPagd1/6QMgsD5gUAcEB5be651oPTitlzLfkB
+ N7trfwuTTyTyD/g2iHnYF1nG3e9xXKn0Qcv1+68jGZ3rpLh086JYXB8NKU0SUMuUJAN/
+ i993/Bs4l1zyfFXUt3B7FyHhW3XYL0QpC9Rm4BhKUa5GpON7wYQwMBdOwNtjk5jXZSgc
+ DscA==
+X-Gm-Message-State: AOJu0YyJlt2mTo/9xMGC8LDBXJ81n1/712kNfyrIfZz9QEkj5bhPH/Vf
+ N/tFs1PwVfGt01BZH6/0BRK9BpG7B78h0JRuosyEMipu0P1a7n3Bx35DuTpT1GttgaIKgjlhdV4
+ VFz1g
+X-Gm-Gg: AR+sD109XP2Wd5SykkI6g9vgmoXKmGS+NqmHgImYEjzxRtJgcgbFNXxYsa3enBExH9y
+ ZDgJf6ZOihskz6FqFwVRyHfkWj3SJJAlp7+xuRJEQMmX1m/DPkfJgftCteBR50exsy5WSMhDHDd
+ joHB8B3TeG934ajaOX6+A1wOVNSre9ky7XPQRROu5ejojLiizl09c7iGG+j+c8sXJK1szvqTnTX
+ BTi33vq69pZr0vAGe4liVEaRbh9jZ/GqSPDMU7OwluvV2Jug7dr/zFTuL+kzBSDsjz1Vcj5ejmV
+ s+Q/TwH5ic5DZFsbb7Yj3SzeEcoz/rMGrjf0LWX1KDMtPrjQP2t+xu/AuFbfK/dbd+MC5eGA+ws
+ +VFYBOAknBZo5530ZL/Fdv7m2HNaRKkXcYcm+XuLKLeigGXkeZ9sLQY4mpkTKKJiaDcBEepqBHT
+ fKvOs/PJMR/l06YN8e0aXEEkj4SsyE/AEhKfNPQUpk
+X-Received: by 2002:a05:6a21:398b:b0:3bf:a0e5:99a0 with SMTP id
+ adf61e73a8af0-3c8ba5bab9emr3773737637.47.1785256688451; 
+ Tue, 28 Jul 2026 09:38:08 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-31504cc63f3sm334754eec.16.2026.07.28.09.38.10
+ 5a478bee46e88-31504cc63f3sm334754eec.16.2026.07.28.09.38.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 28 Jul 2026 09:38:10 -0700 (PDT)
+ Tue, 28 Jul 2026 09:38:07 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v4 7/7] doc: remove packet framework images
-Date: Tue, 28 Jul 2026 09:35:15 -0700
-Message-ID: <20260728163713.364168-8-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Cristian Dumitrescu <cristian.dumitrescu@intel.com>,
+ Wathsala Vithanage <wathsala.vithanage@arm.com>
+Subject: [PATCH v4 5/7] table: remove legacy API
+Date: Tue, 28 Jul 2026 09:35:13 -0700
+Message-ID: <20260728163713.364168-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260724164520.192203-1-stephen@networkplumber.org>
 References: <20260724164520.192203-1-stephen@networkplumber.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -81,62 +85,10051 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove no longer used documentation images.
-Split out as standalone patch to workaround patchwork encoding
-issues.
+Remove the legacy table library API (rte_table_*) as announced
+for removal in the 24.11 release. The SWX table API remains.
+
+The lpm and port dependencies were only used by the legacy API,
+so drop them. The hash and acl dependencies are still needed by
+the SWX exact match and wildcard match tables.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/prog_guide/img/figure32.png          | Bin 11603 -> 0 bytes
- doc/guides/prog_guide/img/figure33.png          | Bin 65216 -> 0 bytes
- doc/guides/prog_guide/img/figure34.png          | Bin 11581 -> 0 bytes
- doc/guides/prog_guide/img/figure35.png          | Bin 75012 -> 0 bytes
- doc/guides/prog_guide/img/figure37.png          | Bin 6934 -> 0 bytes
- doc/guides/prog_guide/img/figure38.png          | Bin 7372 -> 0 bytes
- doc/guides/prog_guide/img/figure39.png          | Bin 55986 -> 0 bytes
- .../sample_app_ug/img/test_pipeline_app.png     | Bin 67410 -> 0 bytes
- 8 files changed, 0 insertions(+), 0 deletions(-)
- delete mode 100644 doc/guides/prog_guide/img/figure32.png
- delete mode 100644 doc/guides/prog_guide/img/figure33.png
- delete mode 100644 doc/guides/prog_guide/img/figure34.png
- delete mode 100644 doc/guides/prog_guide/img/figure35.png
- delete mode 100644 doc/guides/prog_guide/img/figure37.png
- delete mode 100644 doc/guides/prog_guide/img/figure38.png
- delete mode 100644 doc/guides/prog_guide/img/figure39.png
- delete mode 100644 doc/guides/sample_app_ug/img/test_pipeline_app.png
+ doc/api/doxy-api-index.md                  |    7 -
+ doc/guides/prog_guide/packet_framework.rst |  811 -------------
+ doc/guides/rel_notes/deprecation.rst       |    5 -
+ doc/guides/rel_notes/release_26_11.rst     |    3 +
+ lib/table/meson.build                      |   30 +-
+ lib/table/rte_lru.h                        |   85 --
+ lib/table/rte_lru_arm64.h                  |   61 -
+ lib/table/rte_lru_x86.h                    |   96 --
+ lib/table/rte_table.h                      |  263 -----
+ lib/table/rte_table_acl.c                  |  795 -------------
+ lib/table/rte_table_acl.h                  |   65 --
+ lib/table/rte_table_array.c                |  210 ----
+ lib/table/rte_table_array.h                |   46 -
+ lib/table/rte_table_hash.h                 |  106 --
+ lib/table/rte_table_hash_cuckoo.c          |  327 ------
+ lib/table/rte_table_hash_cuckoo.h          |   57 -
+ lib/table/rte_table_hash_ext.c             | 1011 ----------------
+ lib/table/rte_table_hash_func.h            |  263 -----
+ lib/table/rte_table_hash_func_arm64.h      |   21 -
+ lib/table/rte_table_hash_key16.c           | 1190 -------------------
+ lib/table/rte_table_hash_key32.c           | 1223 --------------------
+ lib/table/rte_table_hash_key8.c            | 1157 ------------------
+ lib/table/rte_table_hash_lru.c             |  959 ---------------
+ lib/table/rte_table_lpm.c                  |  369 ------
+ lib/table/rte_table_lpm.h                  |   94 --
+ lib/table/rte_table_lpm_ipv6.c             |  370 ------
+ lib/table/rte_table_stub.c                 |   95 --
+ lib/table/rte_table_stub.h                 |   30 -
+ lib/table/table_log.c                      |    7 -
+ lib/table/table_log.h                      |   11 -
+ 30 files changed, 4 insertions(+), 9763 deletions(-)
+ delete mode 100644 lib/table/rte_lru.h
+ delete mode 100644 lib/table/rte_lru_arm64.h
+ delete mode 100644 lib/table/rte_lru_x86.h
+ delete mode 100644 lib/table/rte_table.h
+ delete mode 100644 lib/table/rte_table_acl.c
+ delete mode 100644 lib/table/rte_table_acl.h
+ delete mode 100644 lib/table/rte_table_array.c
+ delete mode 100644 lib/table/rte_table_array.h
+ delete mode 100644 lib/table/rte_table_hash.h
+ delete mode 100644 lib/table/rte_table_hash_cuckoo.c
+ delete mode 100644 lib/table/rte_table_hash_cuckoo.h
+ delete mode 100644 lib/table/rte_table_hash_ext.c
+ delete mode 100644 lib/table/rte_table_hash_func.h
+ delete mode 100644 lib/table/rte_table_hash_func_arm64.h
+ delete mode 100644 lib/table/rte_table_hash_key16.c
+ delete mode 100644 lib/table/rte_table_hash_key32.c
+ delete mode 100644 lib/table/rte_table_hash_key8.c
+ delete mode 100644 lib/table/rte_table_hash_lru.c
+ delete mode 100644 lib/table/rte_table_lpm.c
+ delete mode 100644 lib/table/rte_table_lpm.h
+ delete mode 100644 lib/table/rte_table_lpm_ipv6.c
+ delete mode 100644 lib/table/rte_table_stub.c
+ delete mode 100644 lib/table/rte_table_stub.h
+ delete mode 100644 lib/table/table_log.c
+ delete mode 100644 lib/table/table_log.h
 
-diff --git a/doc/guides/prog_guide/img/figure32.png b/doc/guides/prog_guide/img/figure32.png
+diff --git a/doc/api/doxy-api-index.md b/doc/api/doxy-api-index.md
+index 17c15027b8bd3aae13b992b4bfd038ef8b2bb5cd..760b770d6f8ac636e56541b4db609768e6558e11 100644
+--- a/doc/api/doxy-api-index.md
++++ b/doc/api/doxy-api-index.md
+@@ -189,13 +189,6 @@ The public API headers are grouped by topics:
+     [reass](@ref rte_port_ras.h),
+     [sched](@ref rte_port_sched.h),
+     [src/sink](@ref rte_port_source_sink.h)
+-  * [table](@ref rte_table.h):
+-    [lpm IPv4](@ref rte_table_lpm.h),
+-    [lpm IPv6](@ref rte_table_lpm_ipv6.h),
+-    [ACL](@ref rte_table_acl.h),
+-    [hash](@ref rte_table_hash.h),
+-    [array](@ref rte_table_array.h),
+-    [stub](@ref rte_table_stub.h)
+   * SWX pipeline:
+     [control](@ref rte_swx_ctl.h),
+     [extern](@ref rte_swx_extern.h),
+diff --git a/doc/guides/prog_guide/packet_framework.rst b/doc/guides/prog_guide/packet_framework.rst
+index 9eb2c5d3de31fa88fd0f1b8246e7482f144ac011..98cf3be1099d88f78665b207beb982bd5c534c86 100644
+--- a/doc/guides/prog_guide/packet_framework.rst
++++ b/doc/guides/prog_guide/packet_framework.rst
+@@ -131,817 +131,6 @@ The port abstract interface is described below.
+    |   |                |                                                                                         |
+    +---+----------------+-----------------------------------------------------------------------------------------+
+ 
+-Table Library Design
+---------------------
+-
+-Table Types
+-~~~~~~~~~~~
+-
+-:numref:`packet_framework_table_qos_21` is a non-exhaustive list of types of tables
+-that can be implemented with the Packet Framework.
+-
+-.. _packet_framework_table_qos_21:
+-
+-.. table:: Table Types
+-
+-   +---+----------------------------+-----------------------------------------------------------------------------+
+-   | # | Table Type                 | Description                                                                 |
+-   |   |                            |                                                                             |
+-   +===+============================+=============================================================================+
+-   | 1 | Hash table                 | Lookup key is n-tuple based.                                                |
+-   |   |                            |                                                                             |
+-   |   |                            | Typically, the lookup key is hashed to produce a signature that is used to  |
+-   |   |                            | identify a bucket of entries where the lookup key is searched next.         |
+-   |   |                            |                                                                             |
+-   |   |                            | The signature associated with the lookup key of each input packet is either |
+-   |   |                            | read from the packet descriptor (pre-computed signature) or computed at     |
+-   |   |                            | table lookup time.                                                          |
+-   |   |                            |                                                                             |
+-   |   |                            | The table lookup, add entry and delete entry operations, as well as any     |
+-   |   |                            | other pipeline block that pre-computes the signature all have to use the    |
+-   |   |                            | same hashing algorithm to generate the signature.                           |
+-   |   |                            |                                                                             |
+-   |   |                            | Typically used to implement flow classification tables, ARP caches, routing |
+-   |   |                            | table for tunnelling protocols, etc.                                        |
+-   |   |                            |                                                                             |
+-   +---+----------------------------+-----------------------------------------------------------------------------+
+-   | 2 | Longest Prefix Match (LPM) | Lookup key is the IP address.                                               |
+-   |   |                            |                                                                             |
+-   |   |                            | Each table entries has an associated IP prefix (IP and depth).              |
+-   |   |                            |                                                                             |
+-   |   |                            | The table lookup operation selects the IP prefix that is matched by the     |
+-   |   |                            | lookup key; in case of multiple matches, the entry with the longest prefix  |
+-   |   |                            | depth wins.                                                                 |
+-   |   |                            |                                                                             |
+-   |   |                            | Typically used to implement IP routing tables.                              |
+-   |   |                            |                                                                             |
+-   +---+----------------------------+-----------------------------------------------------------------------------+
+-   | 3 | Access Control List (ACLs) | Lookup key is 7-tuple of two VLAN/MPLS labels, IP destination address,      |
+-   |   |                            | IP source addresses, L4 protocol, L4 destination port, L4 source port.      |
+-   |   |                            |                                                                             |
+-   |   |                            | Each table entry has an associated ACL and priority. The ACL contains bit   |
+-   |   |                            | masks for the VLAN/MPLS labels, IP prefix for IP destination address, IP    |
+-   |   |                            | prefix for IP source addresses, L4 protocol and bitmask, L4 destination     |
+-   |   |                            | port and bit mask, L4 source port and bit mask.                             |
+-   |   |                            |                                                                             |
+-   |   |                            | The table lookup operation selects the ACL that is matched by the lookup    |
+-   |   |                            | key; in case of multiple matches, the entry with the highest priority wins. |
+-   |   |                            |                                                                             |
+-   |   |                            | Typically used to implement rule databases for firewalls, etc.              |
+-   |   |                            |                                                                             |
+-   +---+----------------------------+-----------------------------------------------------------------------------+
+-   | 4 | Pattern matching search    | Lookup key is the packet payload.                                           |
+-   |   |                            |                                                                             |
+-   |   |                            | Table is a database of patterns, with each pattern having a priority        |
+-   |   |                            | assigned.                                                                   |
+-   |   |                            |                                                                             |
+-   |   |                            | The table lookup operation selects the patterns that is matched by the      |
+-   |   |                            | input packet; in case of multiple matches, the matching pattern with the    |
+-   |   |                            | highest priority wins.                                                      |
+-   |   |                            |                                                                             |
+-   +---+----------------------------+-----------------------------------------------------------------------------+
+-   | 5 | Array                      | Lookup key is the table entry index itself.                                 |
+-   |   |                            |                                                                             |
+-   +---+----------------------------+-----------------------------------------------------------------------------+
+-
+-Table Interface
+-~~~~~~~~~~~~~~~
+-
+-Each table is required to implement an abstract interface that defines the initialization
+-and run-time operation of the table.
+-The table abstract interface is described in :numref:`packet_framework_table_qos_29_1`.
+-
+-.. _packet_framework_table_qos_29_1:
+-
+-.. table:: Table Abstract Interface
+-
+-   +---+-----------------+----------------------------------------------------------------------------------------+
+-   | # | Table operation | Description                                                                            |
+-   |   |                 |                                                                                        |
+-   +===+=================+========================================================================================+
+-   | 1 | Create          | Create the low-level data structures of the lookup table. Can internally allocate      |
+-   |   |                 | memory.                                                                                |
+-   |   |                 |                                                                                        |
+-   +---+-----------------+----------------------------------------------------------------------------------------+
+-   | 2 | Free            | Free up all the resources used by the lookup table.                                    |
+-   |   |                 |                                                                                        |
+-   +---+-----------------+----------------------------------------------------------------------------------------+
+-   | 3 | Add entry       | Add new entry to the lookup table.                                                     |
+-   |   |                 |                                                                                        |
+-   +---+-----------------+----------------------------------------------------------------------------------------+
+-   | 4 | Delete entry    | Delete specific entry from the lookup table.                                           |
+-   |   |                 |                                                                                        |
+-   +---+-----------------+----------------------------------------------------------------------------------------+
+-   | 5 | Lookup          | Look up a burst of input packets and return a bit mask specifying the result of the    |
+-   |   |                 | lookup operation for each packet: a set bit signifies lookup hit for the corresponding |
+-   |   |                 | packet, while a cleared bit a lookup miss.                                             |
+-   |   |                 |                                                                                        |
+-   |   |                 | For each lookup hit packet, the lookup operation also returns a pointer to the table   |
+-   |   |                 | entry that was hit, which contains the actions to be applied on the packet and any     |
+-   |   |                 | associated metadata.                                                                   |
+-   |   |                 |                                                                                        |
+-   |   |                 | For each lookup miss packet, the actions to be applied on the packet and any           |
+-   |   |                 | associated metadata are specified by the default table entry preconfigured for lookup  |
+-   |   |                 | miss.                                                                                  |
+-   |   |                 |                                                                                        |
+-   +---+-----------------+----------------------------------------------------------------------------------------+
+-
+-
+-Hash Table Design
+-~~~~~~~~~~~~~~~~~
+-
+-Hash Table Overview
+-^^^^^^^^^^^^^^^^^^^
+-
+-Hash tables are important because the key lookup operation is optimized for speed:
+-instead of having to linearly search the lookup key through all the keys in the table,
+-the search is limited to only the keys stored in a single table bucket.
+-
+-**Associative Arrays**
+-
+-An associative array is a function that can be specified as a set of (key, value) pairs,
+-with each key from the possible set of input keys present at most once.
+-For a given associative array, the possible operations are:
+-
+-#.  *add (key, value)*: When no value is currently associated with *key*, then the (key, *value* ) association is created.
+-    When *key* is already associated value *value0*, then the association (*key*, *value0*) is removed
+-    and association *(key, value)* is created;
+-
+-#.  *delete key*: When no value is currently associated with *key*, this operation has no effect.
+-    When *key* is already associated  *value*, then association  *(key, value)* is removed;
+-
+-#.  *lookup key*: When no value is currently associated with  *key*, then this operation returns void value (lookup miss).
+-    When *key* is associated with *value*, then this operation returns *value*.
+-    The *(key, value)* association is not changed.
+-
+-The matching criterion used to compare the input key against the keys in the associative array is *exact match*,
+-as the key size (number of bytes) and the key value (array of bytes) have to match exactly for the two keys under comparison.
+-
+-**Hash Function**
+-
+-A hash function deterministically maps data of variable length (key) to data of fixed size (hash value or key signature).
+-Typically, the size of the key is bigger than the size of the key signature.
+-The hash function basically compresses a long key into a short signature.
+-Several keys can share the same signature (collisions).
+-
+-High quality hash functions have uniform distribution.
+-For large number of keys, when dividing the space of signature values into a fixed number of equal intervals (buckets),
+-it is desirable to have the key signatures evenly distributed across these intervals (uniform distribution),
+-as opposed to most of the signatures going into only a few of the intervals
+-and the rest of the intervals being largely unused (non-uniform distribution).
+-
+-**Hash Table**
+-
+-A hash table is an associative array that uses a hash function for its operation.
+-The reason for using a hash function is to optimize the performance of the lookup operation
+-by minimizing the number of table keys that have to be compared against the input key.
+-
+-Instead of storing the (key, value) pairs in a single list, the hash table maintains multiple lists (buckets).
+-For any given key, there is a single bucket where that key might exist, and this bucket is uniquely identified based on the key signature.
+-Once the key signature is computed and the hash table bucket identified,
+-the key is either located in this bucket or it is not present in the hash table at all,
+-so the key search can be narrowed down from the full set of keys currently in the table
+-to just the set of keys currently in the identified table bucket.
+-
+-The performance of the hash table lookup operation is greatly improved,
+-provided that the table keys are evenly distributed among the hash table buckets,
+-which can be achieved by using a hash function with uniform distribution.
+-The rule to map a key to its bucket can simply be to use the key signature (modulo the number of table buckets) as the table bucket ID:
+-
+-    *bucket_id = f_hash(key) % n_buckets;*
+-
+-By selecting the number of buckets to be a power of two, the modulo operator can be replaced by a bitwise AND logical operation:
+-
+-    *bucket_id = f_hash(key) & (n_buckets - 1);*
+-
+-considering *n_bits* as the number of bits set in *bucket_mask = n_buckets - 1*,
+-this means that all the keys that end up in the same hash table bucket have the lower *n_bits* of their signature identical.
+-In order to reduce the number of keys in the same bucket (collisions), the number of hash table buckets needs to be increased.
+-
+-In packet processing context, the sequence of operations involved in hash table operations
+-is described in :numref:`packet_framework_figure_33`:
+-
+-.. _packet_framework_figure_33:
+-
+-.. figure:: img/figure33.*
+-
+-   Sequence of Steps for Hash Table Operations in a Packet Processing Context
+-
+-
+-
+-Hash Table Use Cases
+-^^^^^^^^^^^^^^^^^^^^
+-
+-**Flow Classification**
+-
+-*Description:* The flow classification is executed at least once for each input packet.
+-This operation maps each incoming packet against one of the known traffic flows in the flow database that typically contains millions of flows.
+-
+-*Hash table name:* Flow classification table
+-
+-*Number of keys:* Millions
+-
+-*Key format:* n-tuple of packet fields that uniquely identify a traffic flow/connection.
+-Example: DiffServ 5-tuple of (Source IP address, Destination IP address, L4 protocol, L4 protocol source port, L4 protocol destination port).
+-For IPv4 protocol and L4 protocols like TCP, UDP or SCTP, the size of the DiffServ 5-tuple is 13 bytes, while for IPv6 it is 37 bytes.
+-
+-*Key value (key data):* actions and action meta-data describing what processing to be applied for the packets of the current flow.
+-The size of the data associated with each traffic flow can vary from 8 bytes to kilobytes.
+-
+-**Address Resolution Protocol (ARP)**
+-
+-*Description:* Once a route has been identified for an IP packet (so the output interface and the IP address of the next hop station are known),
+-the MAC address of the next hop station is needed in order to send this packet onto the next leg of the journey
+-towards its destination (as identified by its destination IP address).
+-The MAC address of the next hop station becomes the destination MAC address of the outgoing Ethernet frame.
+-
+-*Hash table name:* ARP table
+-
+-*Number of keys:* Thousands
+-
+-*Key format:* The pair of (Output interface, Next Hop IP address), which is typically 5 bytes for IPv4 and 17 bytes for IPv6.
+-
+-*Key value (key data):* MAC address of the next hop station (6 bytes).
+-
+-Hash Table Types
+-^^^^^^^^^^^^^^^^
+-
+-:numref:`packet_framework_table_qos_22` lists the hash table configuration parameters
+-shared by all different hash table types.
+-
+-.. _packet_framework_table_qos_22:
+-
+-.. table:: Configuration Parameters Common for All Hash Table Types
+-
+-   +---+---------------------------+------------------------------------------------------------------------------+
+-   | # | Parameter                 | Details                                                                      |
+-   |   |                           |                                                                              |
+-   +===+===========================+==============================================================================+
+-   | 1 | Key size                  | Measured as number of bytes. All keys have the same size.                    |
+-   |   |                           |                                                                              |
+-   +---+---------------------------+------------------------------------------------------------------------------+
+-   | 2 | Key value (key data) size | Measured as number of bytes.                                                 |
+-   |   |                           |                                                                              |
+-   +---+---------------------------+------------------------------------------------------------------------------+
+-   | 3 | Number of buckets         | Needs to be a power of two.                                                  |
+-   |   |                           |                                                                              |
+-   +---+---------------------------+------------------------------------------------------------------------------+
+-   | 4 | Maximum number of keys    | Needs to be a power of two.                                                  |
+-   |   |                           |                                                                              |
+-   +---+---------------------------+------------------------------------------------------------------------------+
+-   | 5 | Hash function             | Examples: jhash, CRC hash, etc.                                              |
+-   |   |                           |                                                                              |
+-   +---+---------------------------+------------------------------------------------------------------------------+
+-   | 6 | Hash function seed        | Parameter to be passed to the hash function.                                 |
+-   |   |                           |                                                                              |
+-   +---+---------------------------+------------------------------------------------------------------------------+
+-   | 7 | Key offset                | Offset of the lookup key byte array within the packet meta-data stored in    |
+-   |   |                           | the packet buffer.                                                           |
+-   |   |                           |                                                                              |
+-   +---+---------------------------+------------------------------------------------------------------------------+
+-
+-Bucket Full Problem
+-"""""""""""""""""""
+-
+-On initialization, each hash table bucket is allocated space for exactly 4 keys.
+-As keys are added to the table, it can happen that a given bucket already has 4 keys when a new key has to be added to this bucket.
+-The possible options are:
+-
+-#.  **Least Recently Used (LRU) Hash Table.**
+-    One of the existing keys in the bucket is deleted and the new key is added in its place.
+-    The number of keys in each bucket never grows bigger than 4. The logic to pick the key to be dropped from the bucket is LRU.
+-    The hash table lookup operation maintains the order in which the keys in the same bucket are hit, so every time a key is hit,
+-    it becomes the new Most Recently Used (MRU) key, i.e. the last candidate for drop.
+-    When a key is added to the bucket, it also becomes the new MRU key.
+-    When a key needs to be picked and dropped, the first candidate for drop, i.e. the current LRU key, is always picked.
+-    The LRU logic requires maintaining specific data structures per each bucket.
+-
+-#.  **Extendable Bucket Hash Table.**
+-    The bucket is extended with space for 4 more keys.
+-    This is done by allocating additional memory at table initialization time,
+-    which is used to create a pool of free keys (the size of this pool is configurable and always a multiple of 4).
+-    On key add operation, the allocation of a group of 4 keys only happens successfully within the limit of free keys,
+-    otherwise the key add operation fails.
+-    On key delete operation, a group of 4 keys is freed back to the pool of free keys
+-    when the key to be deleted is the only key that was used within its group of 4 keys at that time.
+-    On key lookup operation, if the current bucket is in extended state and a match is not found in the first group of 4 keys,
+-    the search continues beyond the first group of 4 keys, potentially until all keys in this bucket are examined.
+-    The extendable bucket logic requires maintaining specific data structures per table and per each bucket.
+-
+-.. table:: Configuration Parameters Specific to Extendable Bucket Hash Table
+-
+-   +---+---------------------------+--------------------------------------------------+
+-   | # | Parameter                 | Details                                          |
+-   |   |                           |                                                  |
+-   +===+===========================+==================================================+
+-   | 1 | Number of additional keys | Needs to be a power of two, at least equal to 4. |
+-   |   |                           |                                                  |
+-   +---+---------------------------+--------------------------------------------------+
+-
+-
+-Signature Computation
+-"""""""""""""""""""""
+-
+-The possible options for key signature computation are:
+-
+-#.  **Pre-computed key signature.**
+-    The key lookup operation is split between two CPU cores.
+-    The first CPU core (typically the CPU core that performs packet RX) extracts the key from the input packet,
+-    computes the key signature and saves both the key and the key signature in the packet buffer as packet meta-data.
+-    The second CPU core reads both the key and the key signature from the packet meta-data
+-    and performs the bucket search step of the key lookup operation.
+-
+-#.  **Key signature computed on lookup ("do-sig" version).**
+-    The same CPU core reads the key from the packet meta-data, uses it to compute the key signature
+-    and also performs the bucket search step of the key lookup operation.
+-
+-.. table:: Configuration Parameters Specific to Pre-computed Key Signature Hash Table
+-
+-   +---+------------------+-----------------------------------------------------------------------+
+-   | # | Parameter        | Details                                                               |
+-   |   |                  |                                                                       |
+-   +===+==================+=======================================================================+
+-   | 1 | Signature offset | Offset of the pre-computed key signature within the packet meta-data. |
+-   |   |                  |                                                                       |
+-   +---+------------------+-----------------------------------------------------------------------+
+-
+-Key Size Optimized Hash Tables
+-""""""""""""""""""""""""""""""
+-
+-For specific key sizes, the data structures and algorithm of key lookup operation can be specially handcrafted for further performance improvements,
+-so following options are possible:
+-
+-#.  **Implementation supporting configurable key size.**
+-
+-#.  **Implementation supporting a single key size.**
+-    Typical key sizes are 8 bytes and 16 bytes.
+-
+-Bucket Search Logic for Configurable Key Size Hash Tables
+-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-
+-The performance of the bucket search logic is one of the main factors influencing the performance of the key lookup operation.
+-The data structures and algorithm are designed to make the best use of Intel CPU architecture resources like:
+-cache memory space, cache memory bandwidth, external memory bandwidth, multiple execution units working in parallel,
+-out of order instruction execution, special CPU instructions, etc.
+-
+-The bucket search logic handles multiple input packets in parallel.
+-It is built as a pipeline of several stages (3 or 4), with each pipeline stage handling two different packets from the burst of input packets.
+-On each pipeline iteration, the packets are pushed to the next pipeline stage: for the 4-stage pipeline,
+-two packets (that just completed stage 3) exit the pipeline,
+-two packets (that just completed stage 2) are now executing stage 3, two packets (that just completed stage 1) are now executing stage 2,
+-two packets (that just completed stage 0) are now executing stage 1 and two packets (next two packets to read from the burst of input packets)
+-are entering the pipeline to execute stage 0.
+-The pipeline iterations continue until all packets from the burst of input packets execute the last stage of the pipeline.
+-
+-The bucket search logic is broken into pipeline stages at the boundary of the next memory access.
+-Each pipeline stage uses data structures that are stored (with high probability) into the L1 or L2 cache memory of the current CPU core and
+-breaks just before the next memory access required by the algorithm.
+-The current pipeline stage finalizes by prefetching the data structures required by the next pipeline stage,
+-so given enough time for the prefetch to complete,
+-when the next pipeline stage eventually gets executed for the same packets,
+-it will read the data structures it needs from L1 or L2 cache memory and thus avoid the significant penalty incurred by L2 or L3 cache memory miss.
+-
+-By prefetching the data structures required by the next pipeline stage in advance (before they are used)
+-and switching to executing another pipeline stage for different packets,
+-the number of L2 or L3 cache memory misses is greatly reduced, hence one of the main reasons for improved performance.
+-This is because the cost of L2/L3 cache memory miss on memory read accesses is high, as usually due to data dependency between instructions,
+-the CPU execution units have to stall until the read operation is completed from L3 cache memory or external DRAM memory.
+-By using prefetch instructions, the latency of memory read accesses is hidden,
+-provided that it is performed early enough before the respective data structure is actually used.
+-
+-By splitting the processing into several stages that are executed on different packets (the packets from the input burst are interlaced),
+-enough work is created to allow the prefetch instructions to complete successfully (before the prefetched data structures are actually accessed) and
+-also the data dependency between instructions is loosened.
+-For example, for the 4-stage pipeline, stage 0 is executed on packets 0 and 1 and then,
+-before same packets 0 and 1 are used (i.e. before stage 1 is executed on packets 0 and 1),
+-different packets are used: packets 2 and 3 (executing stage 1), packets 4 and 5 (executing stage 2) and packets 6 and 7 (executing stage 3).
+-By executing useful work while the data structures are brought into the L1 or L2 cache memory, the latency of the read memory accesses is hidden.
+-By increasing the gap between two consecutive accesses to the same data structure, the data dependency between instructions is loosened;
+-this allows making the best use of the super-scalar and out-of-order execution CPU architecture,
+-as the number of CPU core execution units that are active (rather than idle or stalled due to data dependency constraints between instructions) is maximized.
+-
+-The bucket search logic is also implemented without using any branch instructions.
+-This avoids the important cost associated with flushing the CPU core execution pipeline on every instance of branch misprediction.
+-
+-Configurable Key Size Hash Table
+-""""""""""""""""""""""""""""""""
+-
+-:numref:`packet_framework_figure_34`, :numref:`packet_framework_table_qos_25`
+-and :numref:`packet_framework_table_qos_26`
+-detail the main data structures used to implement configurable key size hash tables
+-(either LRU or extendable bucket, either with pre-computed signature or "do-sig").
+-
+-.. _packet_framework_figure_34:
+-
+-.. figure:: img/figure34.*
+-
+-   Data Structures for Configurable Key Size Hash Tables
+-
+-
+-.. _packet_framework_table_qos_25:
+-
+-.. table:: Main Large Data Structures (Arrays) used for Configurable Key Size Hash Tables
+-
+-   +---+-------------------------+------------------------------+---------------------------+-------------------------------+
+-   | # | Array name              | Number of entries            | Entry size (bytes)        | Description                   |
+-   |   |                         |                              |                           |                               |
+-   +===+=========================+==============================+===========================+===============================+
+-   | 1 | Bucket array            | n_buckets (configurable)     | 32                        | Buckets of the hash table.    |
+-   |   |                         |                              |                           |                               |
+-   +---+-------------------------+------------------------------+---------------------------+-------------------------------+
+-   | 2 | Bucket extensions array | n_buckets_ext (configurable) | 32                        | This array is only created    |
+-   |   |                         |                              |                           | for extendable bucket tables. |
+-   |   |                         |                              |                           |                               |
+-   +---+-------------------------+------------------------------+---------------------------+-------------------------------+
+-   | 3 | Key array               | n_keys                       | key_size (configurable)   | Keys added to the hash table. |
+-   |   |                         |                              |                           |                               |
+-   +---+-------------------------+------------------------------+---------------------------+-------------------------------+
+-   | 4 | Data array              | n_keys                       | entry_size (configurable) | Key values (key data)         |
+-   |   |                         |                              |                           | associated with the hash      |
+-   |   |                         |                              |                           | table keys.                   |
+-   |   |                         |                              |                           |                               |
+-   +---+-------------------------+------------------------------+---------------------------+-------------------------------+
+-
+-.. _packet_framework_table_qos_26:
+-
+-.. table:: Field Description for Bucket Array Entry (Configurable Key Size Hash Tables)
+-
+-   +---+------------------+--------------------+------------------------------------------------------------------+
+-   | # | Field name       | Field size (bytes) | Description                                                      |
+-   |   |                  |                    |                                                                  |
+-   +===+==================+====================+==================================================================+
+-   | 1 | Next Ptr/LRU     | 8                  | For LRU tables, this fields represents the LRU list for the      |
+-   |   |                  |                    | current bucket stored as array of 4 entries of 2 bytes each.     |
+-   |   |                  |                    | Entry 0 stores the index (0 .. 3) of the MRU key, while entry 3  |
+-   |   |                  |                    | stores the index of the LRU key.                                 |
+-   |   |                  |                    |                                                                  |
+-   |   |                  |                    | For extendable bucket tables, this field represents the next     |
+-   |   |                  |                    | pointer (i.e. the pointer to the next group of 4 keys linked to  |
+-   |   |                  |                    | the current bucket). The next pointer is not NULL if the bucket  |
+-   |   |                  |                    | is currently extended or NULL otherwise.                         |
+-   |   |                  |                    | To help the branchless implementation, bit 0 (least significant  |
+-   |   |                  |                    | bit) of this field is set to 1 if the next pointer is not NULL   |
+-   |   |                  |                    | and to 0 otherwise.                                              |
+-   |   |                  |                    |                                                                  |
+-   +---+------------------+--------------------+------------------------------------------------------------------+
+-   | 2 | Sig[0 .. 3]      | 4 x 2              | If key X (X = 0 .. 3) is valid, then sig X bits 15 .. 1 store    |
+-   |   |                  |                    | the most significant 15 bits of key X signature and sig X bit 0  |
+-   |   |                  |                    | is set to 1.                                                     |
+-   |   |                  |                    |                                                                  |
+-   |   |                  |                    | If key X is not valid, then sig X is set to zero.                |
+-   |   |                  |                    |                                                                  |
+-   +---+------------------+--------------------+------------------------------------------------------------------+
+-   | 3 | Key Pos [0 .. 3] | 4 x 4              | If key X is valid (X = 0 .. 3), then Key Pos X represents the    |
+-   |   |                  |                    | index into the key array where key X is stored, as well as the   |
+-   |   |                  |                    | index into the data array where the value associated with key X  |
+-   |   |                  |                    | is stored.                                                       |
+-   |   |                  |                    |                                                                  |
+-   |   |                  |                    | If key X is not valid, then the value of Key Pos X is undefined. |
+-   |   |                  |                    |                                                                  |
+-   +---+------------------+--------------------+------------------------------------------------------------------+
+-
+-
+-:numref:`packet_framework_figure_35` and :numref:`packet_framework_table_qos_27`
+-detail the bucket search pipeline stages
+-(either LRU or extendable bucket, either with pre-computed signature or "do-sig").
+-For each pipeline stage, the described operations are applied to each of the two packets handled by that stage.
+-
+-.. _packet_framework_figure_35:
+-
+-.. figure:: img/figure35.*
+-
+-   Bucket Search Pipeline for Key Lookup Operation (Configurable Key Size Hash
+-   Tables)
+-
+-
+-.. _packet_framework_table_qos_27:
+-
+-.. table:: Description of the Bucket Search Pipeline Stages (Configurable Key Size Hash Tables)
+-
+-   +---+---------------------------+------------------------------------------------------------------------------+
+-   | # | Stage name                | Description                                                                  |
+-   |   |                           |                                                                              |
+-   +===+===========================+==============================================================================+
+-   | 0 | Prefetch packet meta-data | Select next two packets from the burst of input packets.                     |
+-   |   |                           |                                                                              |
+-   |   |                           | Prefetch packet meta-data containing the key and key signature.              |
+-   |   |                           |                                                                              |
+-   +---+---------------------------+------------------------------------------------------------------------------+
+-   | 1 | Prefetch table bucket     | Read the key signature from the packet meta-data (for extendable bucket hash |
+-   |   |                           | tables) or read the key from the packet meta-data and compute key signature  |
+-   |   |                           | (for LRU tables).                                                            |
+-   |   |                           |                                                                              |
+-   |   |                           | Identify the bucket ID using the key signature.                              |
+-   |   |                           |                                                                              |
+-   |   |                           | Set bit 0 of the signature to 1 (to match only signatures of valid keys from |
+-   |   |                           | the table).                                                                  |
+-   |   |                           |                                                                              |
+-   |   |                           | Prefetch the bucket.                                                         |
+-   |   |                           |                                                                              |
+-   +---+---------------------------+------------------------------------------------------------------------------+
+-   | 2 | Prefetch table key        | Read the key signatures from the bucket.                                     |
+-   |   |                           |                                                                              |
+-   |   |                           | Compare the signature of the input key against the 4 key signatures from the |
+-   |   |                           | packet. As result, the following is obtained:                                |
+-   |   |                           |                                                                              |
+-   |   |                           | *match*                                                                      |
+-   |   |                           | = equal to TRUE if there was at least one signature match and to FALSE in    |
+-   |   |                           | the case of no signature match;                                              |
+-   |   |                           |                                                                              |
+-   |   |                           | *match_many*                                                                 |
+-   |   |                           | = equal to TRUE is there were more than one signature matches (can be up to  |
+-   |   |                           | 4 signature matches in the worst case scenario) and to FALSE otherwise;      |
+-   |   |                           |                                                                              |
+-   |   |                           | *match_pos*                                                                  |
+-   |   |                           | = the index of the first key that produced signature match (only valid if    |
+-   |   |                           | match is true).                                                              |
+-   |   |                           |                                                                              |
+-   |   |                           | For extendable bucket hash tables only, set                                  |
+-   |   |                           | *match_many*                                                                 |
+-   |   |                           | to TRUE if next pointer is valid.                                            |
+-   |   |                           |                                                                              |
+-   |   |                           | Prefetch the bucket key indicated by                                         |
+-   |   |                           | *match_pos*                                                                  |
+-   |   |                           | (even if                                                                     |
+-   |   |                           | *match_pos*                                                                  |
+-   |   |                           | does not point to valid key valid).                                          |
+-   |   |                           |                                                                              |
+-   +---+---------------------------+------------------------------------------------------------------------------+
+-   | 3 | Prefetch table data       | Read the bucket key indicated by                                             |
+-   |   |                           | *match_pos*.                                                                 |
+-   |   |                           |                                                                              |
+-   |   |                           | Compare the bucket key against the input key. As result, the following is    |
+-   |   |                           | obtained:                                                                    |
+-   |   |                           | *match_key*                                                                  |
+-   |   |                           | = equal to TRUE if the two keys match and to FALSE otherwise.                |
+-   |   |                           |                                                                              |
+-   |   |                           | Report input key as lookup hit only when both                                |
+-   |   |                           | *match*                                                                      |
+-   |   |                           | and                                                                          |
+-   |   |                           | *match_key*                                                                  |
+-   |   |                           | are equal to TRUE and as lookup miss otherwise.                              |
+-   |   |                           |                                                                              |
+-   |   |                           | For LRU tables only, use branchless logic to update the bucket LRU list      |
+-   |   |                           | (the current key becomes the new MRU) only on lookup hit.                    |
+-   |   |                           |                                                                              |
+-   |   |                           | Prefetch the key value (key data) associated with the current key (to avoid  |
+-   |   |                           | branches, this is done on both lookup hit and miss).                         |
+-   |   |                           |                                                                              |
+-   +---+---------------------------+------------------------------------------------------------------------------+
+-
+-
+-Additional notes:
+-
+-#.  The pipelined version of the bucket search algorithm is executed only if there are at least 7 packets in the burst of input packets.
+-    If there are less than 7 packets in the burst of input packets,
+-    a non-optimized implementation of the bucket search algorithm is executed.
+-
+-#.  Once the pipelined version of the bucket search algorithm has been executed for all the packets in the burst of input packets,
+-    the non-optimized implementation of the bucket search algorithm is also executed for any packets that did not produce a lookup hit,
+-    but have the *match_many* flag set.
+-    As result of executing the non-optimized version, some of these packets may produce a lookup hit or lookup miss.
+-    This does not impact the performance of the key lookup operation,
+-    as the probability of matching more than one signature in the same group of 4 keys or of having the bucket in extended state
+-    (for extendable bucket hash tables only) is relatively small.
+-
+-**Key Signature Comparison Logic**
+-
+-The key signature comparison logic is described in :numref:`packet_framework_table_qos_28`.
+-
+-.. _packet_framework_table_qos_28:
+-
+-.. table:: Lookup Tables for Match, Match_Many and Match_Pos
+-
+-   +----+------+---------------+--------------------+--------------------+
+-   | #  | mask | match (1 bit) | match_many (1 bit) | match_pos (2 bits) |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 0  | 0000 | 0             | 0                  | 00                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 1  | 0001 | 1             | 0                  | 00                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 2  | 0010 | 1             | 0                  | 01                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 3  | 0011 | 1             | 1                  | 00                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 4  | 0100 | 1             | 0                  | 10                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 5  | 0101 | 1             | 1                  | 00                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 6  | 0110 | 1             | 1                  | 01                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 7  | 0111 | 1             | 1                  | 00                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 8  | 1000 | 1             | 0                  | 11                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 9  | 1001 | 1             | 1                  | 00                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 10 | 1010 | 1             | 1                  | 01                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 11 | 1011 | 1             | 1                  | 00                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 12 | 1100 | 1             | 1                  | 10                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 13 | 1101 | 1             | 1                  | 00                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 14 | 1110 | 1             | 1                  | 01                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 15 | 1111 | 1             | 1                  | 00                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-
+-The input *mask* hash bit X (X = 0 .. 3) set to 1 if input signature is equal to bucket signature X and set to 0 otherwise.
+-The outputs *match*, *match_many* and *match_pos* are 1 bit, 1 bit and 2 bits in size respectively and their meaning has been explained above.
+-
+-As displayed in :numref:`packet_framework_table_qos_29`,
+-the lookup tables for *match* and *match_many* can be collapsed into a single 32-bit value
+-and the lookup table for *match_pos* can be collapsed into a 64-bit value.
+-Given the input *mask*, the values for *match*, *match_many* and *match_pos* can be obtained by indexing their respective bit array to extract 1 bit,
+-1 bit and 2 bits respectively with branchless logic.
+-
+-.. _packet_framework_table_qos_29:
+-
+-.. table:: Collapsed Lookup Tables for Match, Match_Many and Match_Pos
+-
+-   +------------+------------------------------------------+-------------------+
+-   |            | Bit array                                | Hexadecimal value |
+-   |            |                                          |                   |
+-   +------------+------------------------------------------+-------------------+
+-   | match      | 1111_1111_1111_1110                      | 0xFFFELLU         |
+-   |            |                                          |                   |
+-   +------------+------------------------------------------+-------------------+
+-   | match_many | 1111_1110_1110_1000                      | 0xFEE8LLU         |
+-   |            |                                          |                   |
+-   +------------+------------------------------------------+-------------------+
+-   | match_pos  | 0001_0010_0001_0011__0001_0010_0001_0000 | 0x12131210LLU     |
+-   |            |                                          |                   |
+-   +------------+------------------------------------------+-------------------+
+-
+-
+-The pseudo-code for match, match_many and match_pos is::
+-
+-    match = (0xFFFELLU >> mask) & 1;
+-
+-    match_many = (0xFEE8LLU >> mask) & 1;
+-
+-    match_pos = (0x12131210LLU >> (mask << 1)) & 3;
+-
+-Single Key Size Hash Tables
+-"""""""""""""""""""""""""""
+-
+-:numref:`packet_framework_figure_37`, :numref:`packet_framework_figure_38`,
+-:numref:`packet_framework_table_qos_30` and :numref:`packet_framework_table_qos_31`
+-detail the main data structures used to implement 8-byte and 16-byte key hash tables
+-(either LRU or extendable bucket, either with pre-computed signature or "do-sig").
+-
+-.. _packet_framework_figure_37:
+-
+-.. figure:: img/figure37.*
+-
+-   Data Structures for 8-byte Key Hash Tables
+-
+-
+-.. _packet_framework_figure_38:
+-
+-.. figure:: img/figure38.*
+-
+-   Data Structures for 16-byte Key Hash Tables
+-
+-
+-.. _packet_framework_table_qos_30:
+-
+-.. table:: Main Large Data Structures (Arrays) used for 8-byte and 16-byte Key Size Hash Tables
+-
+-   +---+-------------------------+------------------------------+----------------------+------------------------------------+
+-   | # | Array name              | Number of entries            | Entry size (bytes)   | Description                        |
+-   |   |                         |                              |                      |                                    |
+-   +===+=========================+==============================+======================+====================================+
+-   | 1 | Bucket array            | n_buckets (configurable)     | *8-byte key size:*   | Buckets of the hash table.         |
+-   |   |                         |                              |                      |                                    |
+-   |   |                         |                              | 64 + 4 x entry_size  |                                    |
+-   |   |                         |                              |                      |                                    |
+-   |   |                         |                              |                      |                                    |
+-   |   |                         |                              | *16-byte key size:*  |                                    |
+-   |   |                         |                              |                      |                                    |
+-   |   |                         |                              | 128 + 4 x entry_size |                                    |
+-   |   |                         |                              |                      |                                    |
+-   +---+-------------------------+------------------------------+----------------------+------------------------------------+
+-   | 2 | Bucket extensions array | n_buckets_ext (configurable) | *8-byte key size:*   | This array is only created for     |
+-   |   |                         |                              |                      | extendable bucket tables.          |
+-   |   |                         |                              |                      |                                    |
+-   |   |                         |                              | 64 + 4 x entry_size  |                                    |
+-   |   |                         |                              |                      |                                    |
+-   |   |                         |                              |                      |                                    |
+-   |   |                         |                              | *16-byte key size:*  |                                    |
+-   |   |                         |                              |                      |                                    |
+-   |   |                         |                              | 128 + 4 x entry_size |                                    |
+-   |   |                         |                              |                      |                                    |
+-   +---+-------------------------+------------------------------+----------------------+------------------------------------+
+-
+-.. _packet_framework_table_qos_31:
+-
+-.. table:: Field Description for Bucket Array Entry (8-byte and 16-byte Key Hash Tables)
+-
+-   +---+---------------+--------------------+-------------------------------------------------------------------------------+
+-   | # | Field name    | Field size (bytes) | Description                                                                   |
+-   |   |               |                    |                                                                               |
+-   +===+===============+====================+===============================================================================+
+-   | 1 | Valid         | 8                  | Bit X (X = 0 .. 3) is set to 1 if key X is valid or to 0 otherwise.           |
+-   |   |               |                    |                                                                               |
+-   |   |               |                    | Bit 4 is only used for extendable bucket tables to help with the              |
+-   |   |               |                    | implementation of the branchless logic. In this case, bit 4 is set to 1 if    |
+-   |   |               |                    | next pointer is valid (not NULL) or to 0 otherwise.                           |
+-   |   |               |                    |                                                                               |
+-   +---+---------------+--------------------+-------------------------------------------------------------------------------+
+-   | 2 | Next Ptr/LRU  | 8                  | For LRU tables, this fields represents the LRU list for the current bucket    |
+-   |   |               |                    | stored as array of 4 entries of 2 bytes each. Entry 0 stores the index        |
+-   |   |               |                    | (0 .. 3) of the MRU key, while entry 3 stores the index of the LRU key.       |
+-   |   |               |                    |                                                                               |
+-   |   |               |                    | For extendable bucket tables, this field represents the next pointer (i.e.    |
+-   |   |               |                    | the pointer to the next group of 4 keys linked to the current bucket). The    |
+-   |   |               |                    | next pointer is not NULL if the bucket is currently extended or NULL          |
+-   |   |               |                    | otherwise.                                                                    |
+-   |   |               |                    |                                                                               |
+-   +---+---------------+--------------------+-------------------------------------------------------------------------------+
+-   | 3 | Key [0 .. 3]  | 4 x key_size       | Full keys.                                                                    |
+-   |   |               |                    |                                                                               |
+-   +---+---------------+--------------------+-------------------------------------------------------------------------------+
+-   | 4 | Data [0 .. 3] | 4 x entry_size     | Full key values (key data) associated with keys 0 .. 3.                       |
+-   |   |               |                    |                                                                               |
+-   +---+---------------+--------------------+-------------------------------------------------------------------------------+
+-
+-and detail the bucket search pipeline used to implement 8-byte and 16-byte key hash tables (either LRU or extendable bucket,
+-either with pre-computed signature or "do-sig").
+-For each pipeline stage, the described operations are applied to each of the two packets handled by that stage.
+-
+-.. figure:: img/figure39.*
+-
+-   Bucket Search Pipeline for Key Lookup Operation (Single Key Size Hash
+-   Tables)
+-
+-.. table:: Description of the Bucket Search Pipeline Stages (8-byte and 16-byte Key Hash Tables)
+-
+-   +---+---------------------------+-----------------------------------------------------------------------------+
+-   | # | Stage name                | Description                                                                 |
+-   |   |                           |                                                                             |
+-   +===+===========================+=============================================================================+
+-   | 0 | Prefetch packet meta-data | #.  Select next two packets from the burst of input packets.                |
+-   |   |                           |                                                                             |
+-   |   |                           | #.  Prefetch packet meta-data containing the key and key signature.         |
+-   |   |                           |                                                                             |
+-   +---+---------------------------+-----------------------------------------------------------------------------+
+-   | 1 | Prefetch table bucket     | #.  Read the key signature from the packet meta-data (for extendable bucket |
+-   |   |                           |     hash tables) or read the key from the packet meta-data and compute key  |
+-   |   |                           |     signature (for LRU tables).                                             |
+-   |   |                           |                                                                             |
+-   |   |                           | #.  Identify the bucket ID using the key signature.                         |
+-   |   |                           |                                                                             |
+-   |   |                           | #.  Prefetch the bucket.                                                    |
+-   |   |                           |                                                                             |
+-   +---+---------------------------+-----------------------------------------------------------------------------+
+-   | 2 | Prefetch table data       | #.  Read the bucket.                                                        |
+-   |   |                           |                                                                             |
+-   |   |                           | #.  Compare all 4 bucket keys against the input key.                        |
+-   |   |                           |                                                                             |
+-   |   |                           | #.  Report input key as lookup hit only when a match is identified (more    |
+-   |   |                           |     than one key match is not possible)                                     |
+-   |   |                           |                                                                             |
+-   |   |                           | #.  For LRU tables only, use branchless logic to update the bucket LRU list |
+-   |   |                           |     (the current key becomes the new MRU) only on lookup hit.               |
+-   |   |                           |                                                                             |
+-   |   |                           | #.  Prefetch the key value (key data) associated with the matched key (to   |
+-   |   |                           |     avoid branches, this is done on both lookup hit and miss).              |
+-   |   |                           |                                                                             |
+-   +---+---------------------------+-----------------------------------------------------------------------------+
+-
+-Additional notes:
+-
+-#.  The pipelined version of the bucket search algorithm is executed only if there are at least 5 packets in the burst of input packets.
+-    If there are less than 5 packets in the burst of input packets, a non-optimized implementation of the bucket search algorithm is executed.
+-
+-#.  For extendable bucket hash tables only,
+-    once the pipelined version of the bucket search algorithm has been executed for all the packets in the burst of input packets,
+-    the non-optimized implementation of the bucket search algorithm is also executed for any packets that did not produce a lookup hit,
+-    but have the bucket in extended state.
+-    As result of executing the non-optimized version, some of these packets may produce a lookup hit or lookup miss.
+-    This does not impact the performance of the key lookup operation,
+-    as the probability of having the bucket in extended state is relatively small.
+-
+ The Software Switch (SWX) Pipeline
+ ----------------------------------
+ 
+diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
+index 758652a492e600b267feba131ddcf943106c8c8b..9dcf86098f0d391a44ee1887ba823a1dd04ac295 100644
+--- a/doc/guides/rel_notes/deprecation.rst
++++ b/doc/guides/rel_notes/deprecation.rst
+@@ -148,11 +148,6 @@ Deprecation Notices
+   The graph walk functions will process nodes in topological order
+   using bitmap scanning instead of the circular buffer.
+ 
+-* table: The table library legacy API (functions rte_table_*)
+-  will be deprecated and subsequently removed in DPDK 24.11 release.
+-  Before this, the new table library API (functions rte_swx_table_*)
+-  will gradually transition from experimental to stable status.
+-
+ * port: The port library legacy API (functions rte_port_*)
+   will be deprecated and subsequently removed in DPDK 24.11 release.
+   Before this, the new port library API (functions rte_swx_port_*)
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index f7d34aa1ee7fd363f456ecf27effdbfb65efbad5..50b0d3ac06e35b8fd5b86baafd85723d7539cb5d 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -88,6 +88,9 @@ Removed Items
+   ``rte_port_in_action_*`` and ``rte_table_action_*`` functions.
+   The SWX pipeline API (``rte_swx_pipeline_*``) remains.
+ 
++* Removed the legacy table library API (``rte_table_*`` functions).
++  The SWX table API (``rte_swx_table_*``) remains.
++
+ 
+ API Changes
+ -----------
+diff --git a/lib/table/meson.build b/lib/table/meson.build
+index e27957fe8995a2ffb3aca4d2b514f0be6b8d6968..620c20e594bba4aea99a1f0115a874334ea701cc 100644
+--- a/lib/table/meson.build
++++ b/lib/table/meson.build
+@@ -9,42 +9,14 @@ sources = files(
+         'rte_swx_table_learner.c',
+         'rte_swx_table_selector.c',
+         'rte_swx_table_wm.c',
+-        'rte_table_acl.c',
+-        'rte_table_array.c',
+-        'rte_table_hash_cuckoo.c',
+-        'rte_table_hash_ext.c',
+-        'rte_table_hash_key8.c',
+-        'rte_table_hash_key16.c',
+-        'rte_table_hash_key32.c',
+-        'rte_table_hash_lru.c',
+-        'rte_table_lpm.c',
+-        'rte_table_lpm_ipv6.c',
+-        'rte_table_stub.c',
+-        'table_log.c',
+ )
+ 
+ headers = files(
+-        'rte_lru.h',
+         'rte_swx_hash_func.h',
+         'rte_swx_table.h',
+         'rte_swx_table_em.h',
+         'rte_swx_table_learner.h',
+         'rte_swx_table_selector.h',
+         'rte_swx_table_wm.h',
+-        'rte_table.h',
+-        'rte_table_acl.h',
+-        'rte_table_array.h',
+-        'rte_table_hash.h',
+-        'rte_table_hash_cuckoo.h',
+-        'rte_table_hash_func.h',
+-        'rte_table_lpm.h',
+-        'rte_table_lpm_ipv6.h',
+-        'rte_table_stub.h',
+-)
+-deps += ['mbuf', 'port', 'lpm', 'hash', 'acl']
+-
+-indirect_headers += files(
+-        'rte_lru_arm64.h',
+-        'rte_lru_x86.h',
+-        'rte_table_hash_func_arm64.h',
+ )
++deps += ['mbuf', 'hash', 'acl']
+diff --git a/lib/table/rte_lru.h b/lib/table/rte_lru.h
 deleted file mode 100644
-index 5215113fd9d533ff56526e21e1832bc7a6cabd04..0000000000000000000000000000000000000000
-Binary files a/doc/guides/prog_guide/img/figure32.png and /dev/null differ
-diff --git a/doc/guides/prog_guide/img/figure33.png b/doc/guides/prog_guide/img/figure33.png
+index 1436425e162b9212a1b192f13414d1b372a80413..0000000000000000000000000000000000000000
+--- a/lib/table/rte_lru.h
++++ /dev/null
+@@ -1,85 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_LRU_H__
+-#define __INCLUDE_RTE_LRU_H__
+-
+-#include <rte_config.h>
+-#ifdef RTE_ARCH_X86_64
+-#include "rte_lru_x86.h"
+-#elif defined(RTE_ARCH_ARM64)
+-#include "rte_lru_arm64.h"
+-#else
+-#undef RTE_TABLE_HASH_LRU_STRATEGY
+-#define RTE_TABLE_HASH_LRU_STRATEGY                        1
+-#endif
+-
+-#if RTE_TABLE_HASH_LRU_STRATEGY == 0
+-
+-#define lru_init(bucket)						\
+-do									\
+-	bucket = bucket;						\
+-while (0)
+-
+-#define lru_pos(bucket) (bucket->lru_list & 0xFFFFLLU)
+-
+-#define lru_update(bucket, mru_val)					\
+-do {									\
+-	bucket = bucket;						\
+-	mru_val = mru_val;						\
+-} while (0)
+-
+-#elif RTE_TABLE_HASH_LRU_STRATEGY == 1
+-
+-#define lru_init(bucket)						\
+-do									\
+-	bucket->lru_list = 0x0000000100020003LLU;			\
+-while (0)
+-
+-#define lru_pos(bucket) (bucket->lru_list & 0xFFFFLLU)
+-
+-#define lru_update(bucket, mru_val)					\
+-do {									\
+-	uint64_t _x, _pos, _x0, _x1, _x2, _mask;			\
+-									\
+-	_x = bucket->lru_list;						\
+-									\
+-	_pos = 4;							\
+-	if ((_x >> 48) == ((uint64_t) mru_val))			\
+-		_pos = 3;						\
+-									\
+-	if (((_x >> 32) & 0xFFFFLLU) == ((uint64_t) mru_val))		\
+-		_pos = 2;						\
+-									\
+-	if (((_x >> 16) & 0xFFFFLLU) == ((uint64_t) mru_val))		\
+-		_pos = 1;						\
+-									\
+-	if ((_x & 0xFFFFLLU) == ((uint64_t) mru_val))			\
+-		_pos = 0;						\
+-									\
+-									\
+-	_pos <<= 4;							\
+-	_mask = (~0LLU) << _pos;					\
+-	_x0 = _x & (~_mask);						\
+-	_x1 = (_x >> 16) & _mask;					\
+-	_x2 = (_x << (48 - _pos)) & (0xFFFFLLU << 48);			\
+-	_x = _x0 | _x1 | _x2;						\
+-									\
+-	if (_pos != 64)							\
+-		bucket->lru_list = _x;					\
+-} while (0)
+-
+-#elif (RTE_TABLE_HASH_LRU_STRATEGY == 2) || (RTE_TABLE_HASH_LRU_STRATEGY == 3)
+-
+-/**
+- * These strategies are implemented in architecture specific header files.
+- */
+-
+-#else
+-
+-#error "Incorrect value for RTE_TABLE_HASH_LRU_STRATEGY"
+-
+-#endif
+-
+-#endif
+diff --git a/lib/table/rte_lru_arm64.h b/lib/table/rte_lru_arm64.h
 deleted file mode 100644
-index f0670eb0053da643e1ee932ee3f30fdd0aa973e6..0000000000000000000000000000000000000000
-Binary files a/doc/guides/prog_guide/img/figure33.png and /dev/null differ
-diff --git a/doc/guides/prog_guide/img/figure34.png b/doc/guides/prog_guide/img/figure34.png
+index 817b791b6e47866c788b35ef66edb40df112796e..0000000000000000000000000000000000000000
+--- a/lib/table/rte_lru_arm64.h
++++ /dev/null
+@@ -1,61 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2017 Cavium, Inc
+- */
+-
+-#ifndef __RTE_LRU_ARM64_H__
+-#define __RTE_LRU_ARM64_H__
+-
+-#include <stdint.h>
+-#include <rte_vect.h>
+-#include <rte_bitops.h>
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-#ifndef RTE_TABLE_HASH_LRU_STRATEGY
+-#ifdef __ARM_NEON
+-#define RTE_TABLE_HASH_LRU_STRATEGY                        3
+-#else /* if no NEON, use simple scalar version */
+-#define RTE_TABLE_HASH_LRU_STRATEGY                        1
+-#endif
+-#endif
+-
+-#if RTE_TABLE_HASH_LRU_STRATEGY == 3
+-
+-#define lru_init(bucket)						\
+-	{ bucket->lru_list = ~0LLU; }
+-
+-static inline int
+-f_lru_pos(uint64_t lru_list)
+-{
+-	/* Compare the vector to zero vector */
+-	uint16x4_t lru_vec = vld1_u16((uint16_t *)&lru_list);
+-	uint16x4_t min_vec = vmov_n_u16(vminv_u16(lru_vec));
+-	uint64_t mask = vget_lane_u64(vreinterpret_u64_u16(
+-			vceq_u16(min_vec, lru_vec)), 0);
+-	return rte_clz64(mask) >> 4;
+-}
+-#define lru_pos(bucket) f_lru_pos(bucket->lru_list)
+-
+-#define lru_update(bucket, mru_val)					\
+-do {									\
+-	const uint64_t _orvals[] = {0xFFFFLLU, 0xFFFFLLU << 16,		\
+-		0xFFFFLLU << 32, 0xFFFFLLU << 48, 0LLU};		\
+-	const uint64_t _decs[] = {0x1000100010001LLU, 0};		\
+-	uint64x1_t _lru = vdup_n_u64(bucket->lru_list);			\
+-	uint64x1_t _vdec = vdup_n_u64(_decs[mru_val>>2]);			\
+-	bucket->lru_list = vget_lane_u64(vreinterpret_u64_u16(		\
+-				vsub_u16(vreinterpret_u16_u64(_lru),	\
+-					vreinterpret_u16_u64(_vdec))),	\
+-				0);					\
+-	bucket->lru_list |= _orvals[mru_val];				\
+-} while (0)
+-
+-#endif
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif
+diff --git a/lib/table/rte_lru_x86.h b/lib/table/rte_lru_x86.h
 deleted file mode 100644
-index caa2517a4013acbfc7c405866abfa180dbcacb63..0000000000000000000000000000000000000000
-Binary files a/doc/guides/prog_guide/img/figure34.png and /dev/null differ
-diff --git a/doc/guides/prog_guide/img/figure35.png b/doc/guides/prog_guide/img/figure35.png
+index de7451365347b512e2c4e8506d698eb8ac138430..0000000000000000000000000000000000000000
+--- a/lib/table/rte_lru_x86.h
++++ /dev/null
+@@ -1,96 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_LRU_X86_H__
+-#define __INCLUDE_RTE_LRU_X86_H__
+-
+-#include <stdint.h>
+-
+-#include <rte_config.h>
+-#include <rte_common.h>
+-
+-#ifndef RTE_TABLE_HASH_LRU_STRATEGY
+-#define RTE_TABLE_HASH_LRU_STRATEGY                        2
+-#endif
+-
+-#if RTE_TABLE_HASH_LRU_STRATEGY == 2
+-
+-#if RTE_CC_IS_GNU
+-#include <x86intrin.h>
+-#else
+-#include <emmintrin.h>
+-#include <smmintrin.h>
+-#include <xmmintrin.h>
+-#endif
+-
+-#define lru_init(bucket)						\
+-	{ bucket->lru_list = 0x0000000100020003LLU; }
+-
+-#define lru_pos(bucket) (bucket->lru_list & 0xFFFFLLU)
+-
+-#define lru_update(bucket, mru_val)					\
+-do {									\
+-	/* set up the masks for all possible shuffles, depends on pos */\
+-	static uint64_t masks[10] = {					\
+-		/* Shuffle order; Make Zero (see _mm_shuffle_epi8 manual) */\
+-		0x0100070605040302, 0x8080808080808080,			\
+-		0x0302070605040100, 0x8080808080808080,			\
+-		0x0504070603020100, 0x8080808080808080,			\
+-		0x0706050403020100, 0x8080808080808080,			\
+-		0x0706050403020100, 0x8080808080808080};		\
+-	/* load up one register with repeats of mru-val  */		\
+-	uint64_t mru2 = mru_val;					\
+-	uint64_t mru3 = mru2 | (mru2 << 16);				\
+-	uint64_t lru = bucket->lru_list;				\
+-	/* XOR to cause the word we're looking for to go to zero */	\
+-	uint64_t mru = lru ^ ((mru3 << 32) | mru3);			\
+-	__m128i c = _mm_cvtsi64_si128(mru);				\
+-	__m128i b = _mm_cvtsi64_si128(lru);				\
+-	/* Find the minimum value (first zero word, if it's in there) */\
+-	__m128i d = _mm_minpos_epu16(c);				\
+-	/* Second word is the index to found word (first word is the value) */\
+-	unsigned int _pos = _mm_extract_epi16(d, 1);			\
+-	/* move the recently used location to top of list */		\
+-	__m128i k = _mm_shuffle_epi8(b, *((__m128i *) &masks[2 * _pos]));\
+-	/* Finally, update the original list with the reordered data */	\
+-	bucket->lru_list = _mm_extract_epi64(k, 0);			\
+-	/* Phwew! */							\
+-} while (0)
+-
+-#elif RTE_TABLE_HASH_LRU_STRATEGY == 3
+-
+-#if RTE_CC_IS_GNU
+-#include <x86intrin.h>
+-#else
+-#include <emmintrin.h>
+-#include <smmintrin.h>
+-#include <xmmintrin.h>
+-#endif
+-
+-#define lru_init(bucket)						\
+-	{ bucket->lru_list = ~0LLU; }
+-
+-static inline int
+-f_lru_pos(uint64_t lru_list)
+-{
+-	__m128i lst = _mm_set_epi64x((uint64_t)-1, lru_list);
+-	__m128i min = _mm_minpos_epu16(lst);
+-	return _mm_extract_epi16(min, 1);
+-}
+-#define lru_pos(bucket) f_lru_pos(bucket->lru_list)
+-
+-#define lru_update(bucket, mru_val)					\
+-do {									\
+-	const uint64_t orvals[] = {0xFFFFLLU, 0xFFFFLLU << 16,		\
+-		0xFFFFLLU << 32, 0xFFFFLLU << 48, 0LLU};		\
+-	const uint64_t decs[] = {0x1000100010001LLU, 0};		\
+-	__m128i lru = _mm_cvtsi64_si128(bucket->lru_list);		\
+-	__m128i vdec = _mm_cvtsi64_si128(decs[mru_val>>2]);		\
+-	lru = _mm_subs_epu16(lru, vdec);				\
+-	bucket->lru_list = _mm_extract_epi64(lru, 0) | orvals[mru_val];	\
+-} while (0)
+-
+-#endif
+-
+-#endif
+diff --git a/lib/table/rte_table.h b/lib/table/rte_table.h
 deleted file mode 100644
-index 42053f006745dbe7e02869817995e2b38dc56932..0000000000000000000000000000000000000000
-Binary files a/doc/guides/prog_guide/img/figure35.png and /dev/null differ
-diff --git a/doc/guides/prog_guide/img/figure37.png b/doc/guides/prog_guide/img/figure37.png
+index 2743070b3200ffff1f346bbc623648c6469e828e..0000000000000000000000000000000000000000
+--- a/lib/table/rte_table.h
++++ /dev/null
+@@ -1,263 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_TABLE_H__
+-#define __INCLUDE_RTE_TABLE_H__
+-
+-/**
+- * @file
+- * RTE Table
+- *
+- * This tool is part of the DPDK Packet Framework tool suite and provides
+- * a standard interface to implement different types of lookup tables for data
+- * plane processing.
+- *
+- * Virtually any search algorithm that can uniquely associate data to a lookup
+- * key can be fitted under this lookup table abstraction. For the flow table
+- * use-case, the lookup key is an n-tuple of packet fields that uniquely
+- * identifies a traffic flow, while data represents actions and action
+- * meta-data associated with the same traffic flow.
+- */
+-
+-#include <stdint.h>
+-#include <rte_port.h>
+-
+-struct rte_mbuf;
+-
+-/** Lookup table statistics */
+-struct rte_table_stats {
+-	uint64_t n_pkts_in;
+-	uint64_t n_pkts_lookup_miss;
+-};
+-
+-/**
+- * Lookup table create
+- *
+- * @param params
+- *   Parameters for lookup table creation. The underlying data structure is
+- *   different for each lookup table type.
+- * @param socket_id
+- *   CPU socket ID (e.g. for memory allocation purpose)
+- * @param entry_size
+- *   Data size of each lookup table entry (measured in bytes)
+- * @return
+- *   Handle to lookup table instance
+- */
+-typedef void* (*rte_table_op_create)(void *params, int socket_id,
+-	uint32_t entry_size);
+-
+-/**
+- * Lookup table free
+- *
+- * @param table
+- *   Handle to lookup table instance
+- * @return
+- *   0 on success, error code otherwise
+- */
+-typedef int (*rte_table_op_free)(void *table);
+-
+-/**
+- * Lookup table entry add
+- *
+- * @param table
+- *   Handle to lookup table instance
+- * @param key
+- *   Lookup key
+- * @param entry
+- *   Data to be associated with the current key. This parameter has to point to
+- *   a valid memory buffer where the first entry_size bytes (table create
+- *   parameter) are populated with the data.
+- * @param key_found
+- *   After successful invocation, *key_found is set to a value different than 0
+- *   if the current key is already present in the table and to 0 if not. This
+- *   pointer has to be set to a valid memory location before the table entry add
+- *   function is called.
+- * @param entry_ptr
+- *   After successful invocation, *entry_ptr stores the handle to the table
+- *   entry containing the data associated with the current key. This handle can
+- *   be used to perform further read-write accesses to this entry. This handle
+- *   is valid until the key is deleted from the table or the same key is
+- *   re-added to the table, typically to associate it with different data. This
+- *   pointer has to be set to a valid memory location before the function is
+- *   called.
+- * @return
+- *   0 on success, error code otherwise
+- */
+-typedef int (*rte_table_op_entry_add)(
+-	void *table,
+-	void *key,
+-	void *entry,
+-	int *key_found,
+-	void **entry_ptr);
+-
+-/**
+- * Lookup table entry delete
+- *
+- * @param table
+- *   Handle to lookup table instance
+- * @param key
+- *   Lookup key
+- * @param key_found
+- *   After successful invocation, *key_found is set to a value different than 0
+- *   if the current key was present in the table before the delete operation
+- *   was performed and to 0 if not. This pointer has to be set to a valid
+- *   memory location before the table entry delete function is called.
+- * @param entry
+- *   After successful invocation, if the key is found in the table (*key found
+- *   is different than 0 after function call is completed) and entry points to
+- *   a valid buffer (entry is set to a value different than NULL before the
+- *   function is called), then the first entry_size bytes (table create
+- *   parameter) in *entry store a copy of table entry that contained the data
+- *   associated with the current key before the key was deleted.
+- * @return
+- *   0 on success, error code otherwise
+- */
+-typedef int (*rte_table_op_entry_delete)(
+-	void *table,
+-	void *key,
+-	int *key_found,
+-	void *entry);
+-
+-/**
+- * Lookup table entry add bulk
+- *
+- * @param table
+- *   Handle to lookup table instance
+- * @param keys
+- *   Array containing lookup keys
+- * @param entries
+- *   Array containing data to be associated with each key. Every item in the
+- *   array has to point to a valid memory buffer where the first entry_size
+- *   bytes (table create parameter) are populated with the data.
+- * @param n_keys
+- *   Number of keys to add
+- * @param key_found
+- *   After successful invocation, key_found for every item in the array is set
+- *   to a value different than 0 if the current key is already present in the
+- *   table and to 0 if not. This pointer has to be set to a valid memory
+- *   location before the table entry add function is called.
+- * @param entries_ptr
+- *   After successful invocation, array *entries_ptr stores the handle to the
+- *   table entry containing the data associated with every key. This handle can
+- *   be used to perform further read-write accesses to this entry. This handle
+- *   is valid until the key is deleted from the table or the same key is
+- *   re-added to the table, typically to associate it with different data. This
+- *   pointer has to be set to a valid memory location before the function is
+- *   called.
+- * @return
+- *   0 on success, error code otherwise
+- */
+-typedef int (*rte_table_op_entry_add_bulk)(
+-	void *table,
+-	void **keys,
+-	void **entries,
+-	uint32_t n_keys,
+-	int *key_found,
+-	void **entries_ptr);
+-
+-/**
+- * Lookup table entry delete bulk
+- *
+- * @param table
+- *   Handle to lookup table instance
+- * @param keys
+- *   Array containing lookup keys
+- * @param n_keys
+- *   Number of keys to delete
+- * @param key_found
+- *   After successful invocation, key_found for every item in the array is set
+- *   to a value different than 0if the current key was present in the table
+- *   before the delete operation was performed and to 0 if not. This pointer
+- *   has to be set to a valid memory location before the table entry delete
+- *   function is called.
+- * @param entries
+- *   If entries pointer is NULL, this pointer is ignored for every entry found.
+- *   Else, after successful invocation, if specific key is found in the table
+- *   (key_found is different than 0 for this item after function call is
+- *   completed) and item of entry array points to a valid buffer (entry is set
+- *   to a value different than NULL before the function is called), then the
+- *   first entry_size bytes (table create parameter) in *entry store a copy of
+- *   table entry that contained the data associated with the current key before
+- *   the key was deleted.
+- * @return
+- *   0 on success, error code otherwise
+- */
+-typedef int (*rte_table_op_entry_delete_bulk)(
+-	void *table,
+-	void **keys,
+-	uint32_t n_keys,
+-	int *key_found,
+-	void **entries);
+-
+-/**
+- * Lookup table lookup
+- *
+- * @param table
+- *   Handle to lookup table instance
+- * @param pkts
+- *   Burst of input packets specified as array of up to 64 pointers to struct
+- *   rte_mbuf
+- * @param pkts_mask
+- *   64-bit bitmask specifying which packets in the input burst are valid. When
+- *   pkts_mask bit n is set, then element n of pkts array is pointing to a
+- *   valid packet. Otherwise, element n of pkts array does not point to a valid
+- *   packet, therefore it will not be accessed.
+- * @param lookup_hit_mask
+- *   Once the table lookup operation is completed, this 64-bit bitmask
+- *   specifies which of the valid packets in the input burst resulted in lookup
+- *   hit. For each valid input packet (pkts_mask bit n is set), the following
+- *   are true on lookup hit: lookup_hit_mask bit n is set, element n of entries
+- *   array is valid and it points to the lookup table entry that was hit. For
+- *   each valid input packet (pkts_mask bit n is set), the following are true
+- *   on lookup miss: lookup_hit_mask bit n is not set and element n of entries
+- *   array is not valid.
+- * @param entries
+- *   Once the table lookup operation is completed, this array provides the
+- *   lookup table entries that were hit, as described above. It is required
+- *   that this array is always pre-allocated by the caller of this function
+- *   with exactly 64 elements. The implementation is allowed to speculatively
+- *   modify the elements of this array, so elements marked as invalid in
+- *   lookup_hit_mask once the table lookup operation is completed might have
+- *   been modified by this function.
+- * @return
+- *   0 on success, error code otherwise
+- */
+-typedef int (*rte_table_op_lookup)(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries);
+-
+-/**
+- * Lookup table stats read
+- *
+- * @param table
+- *   Handle to lookup table instance
+- * @param stats
+- *   Handle to table stats struct to copy data
+- * @param clear
+- *   Flag indicating that stats should be cleared after read
+- *
+- * @return
+- *   Error code or 0 on success.
+- */
+-typedef int (*rte_table_op_stats_read)(
+-	void *table,
+-	struct rte_table_stats *stats,
+-	int clear);
+-
+-/** Lookup table interface defining the lookup table operation */
+-struct rte_table_ops {
+-	rte_table_op_create f_create;                 /**< Create */
+-	rte_table_op_free f_free;                     /**< Free */
+-	rte_table_op_entry_add f_add;                 /**< Entry add */
+-	rte_table_op_entry_delete f_delete;           /**< Entry delete */
+-	rte_table_op_entry_add_bulk f_add_bulk;       /**< Add entry bulk */
+-	rte_table_op_entry_delete_bulk f_delete_bulk; /**< Delete entry bulk */
+-	rte_table_op_lookup f_lookup;                 /**< Lookup */
+-	rte_table_op_stats_read f_stats;              /**< Stats */
+-};
+-
+-#endif
+diff --git a/lib/table/rte_table_acl.c b/lib/table/rte_table_acl.c
 deleted file mode 100644
-index 20be4aaa6de8040339e0db4200a5e800816f14b7..0000000000000000000000000000000000000000
-Binary files a/doc/guides/prog_guide/img/figure37.png and /dev/null differ
-diff --git a/doc/guides/prog_guide/img/figure38.png b/doc/guides/prog_guide/img/figure38.png
+index 74fa0145d890638e17fbb862e67245a3caf55416..0000000000000000000000000000000000000000
+--- a/lib/table/rte_table_acl.c
++++ /dev/null
+@@ -1,795 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#include <stdalign.h>
+-#include <stdio.h>
+-#include <string.h>
+-
+-#include <eal_export.h>
+-#include <rte_common.h>
+-#include <rte_malloc.h>
+-#include <rte_log.h>
+-
+-#include "rte_table_acl.h"
+-
+-#include "table_log.h"
+-
+-#ifdef RTE_TABLE_STATS_COLLECT
+-
+-#define RTE_TABLE_ACL_STATS_PKTS_IN_ADD(table, val) \
+-	table->stats.n_pkts_in += val
+-#define RTE_TABLE_ACL_STATS_PKTS_LOOKUP_MISS(table, val) \
+-	table->stats.n_pkts_lookup_miss += val
+-
+-#else
+-
+-#define RTE_TABLE_ACL_STATS_PKTS_IN_ADD(table, val)
+-#define RTE_TABLE_ACL_STATS_PKTS_LOOKUP_MISS(table, val)
+-
+-#endif
+-
+-struct rte_table_acl {
+-	struct rte_table_stats stats;
+-
+-	/* Low-level ACL table */
+-	char name[2][RTE_ACL_NAMESIZE];
+-	struct rte_acl_param acl_params; /* for creating low level acl table */
+-	struct rte_acl_config cfg; /* Holds the field definitions (metadata) */
+-	struct rte_acl_ctx *ctx;
+-	uint32_t name_id;
+-
+-	/* Input parameters */
+-	uint32_t n_rules;
+-	uint32_t entry_size;
+-
+-	/* Internal tables */
+-	uint8_t *action_table;
+-	struct rte_acl_rule **acl_rule_list; /* Array of pointers to rules */
+-	uint8_t *acl_rule_memory; /* Memory to store the rules */
+-
+-	/* Memory to store the action table and stack of free entries */
+-	alignas(RTE_CACHE_LINE_SIZE) uint8_t memory[];
+-};
+-
+-
+-static void *
+-rte_table_acl_create(
+-	void *params,
+-	int socket_id,
+-	uint32_t entry_size)
+-{
+-	struct rte_table_acl_params *p = params;
+-	struct rte_table_acl *acl;
+-	uint32_t action_table_size, acl_rule_list_size, acl_rule_memory_size;
+-	uint32_t total_size;
+-
+-	RTE_BUILD_BUG_ON(((sizeof(struct rte_table_acl) % RTE_CACHE_LINE_SIZE)
+-		!= 0));
+-
+-	/* Check input parameters */
+-	if (p == NULL) {
+-		TABLE_LOG(ERR, "%s: Invalid value for params", __func__);
+-		return NULL;
+-	}
+-	if (p->name == NULL) {
+-		TABLE_LOG(ERR, "%s: Invalid value for name", __func__);
+-		return NULL;
+-	}
+-	if (p->n_rules == 0) {
+-		TABLE_LOG(ERR, "%s: Invalid value for n_rules",
+-			__func__);
+-		return NULL;
+-	}
+-	if ((p->n_rule_fields == 0) ||
+-	    (p->n_rule_fields > RTE_ACL_MAX_FIELDS)) {
+-		TABLE_LOG(ERR, "%s: Invalid value for n_rule_fields",
+-			__func__);
+-		return NULL;
+-	}
+-
+-	entry_size = RTE_ALIGN(entry_size, sizeof(uint64_t));
+-
+-	/* Memory allocation */
+-	action_table_size = RTE_CACHE_LINE_ROUNDUP(p->n_rules * entry_size);
+-	acl_rule_list_size =
+-		RTE_CACHE_LINE_ROUNDUP(p->n_rules * sizeof(struct rte_acl_rule *));
+-	acl_rule_memory_size = RTE_CACHE_LINE_ROUNDUP(p->n_rules *
+-		RTE_ACL_RULE_SZ(p->n_rule_fields));
+-	total_size = sizeof(struct rte_table_acl) + action_table_size +
+-		acl_rule_list_size + acl_rule_memory_size;
+-
+-	acl = rte_zmalloc_socket("TABLE", total_size, RTE_CACHE_LINE_SIZE,
+-		socket_id);
+-	if (acl == NULL) {
+-		TABLE_LOG(ERR,
+-			"%s: Cannot allocate %u bytes for ACL table",
+-			__func__, total_size);
+-		return NULL;
+-	}
+-
+-	acl->action_table = &acl->memory[0];
+-	acl->acl_rule_list =
+-		(struct rte_acl_rule **) &acl->memory[action_table_size];
+-	acl->acl_rule_memory = (uint8_t *)
+-		&acl->memory[action_table_size + acl_rule_list_size];
+-
+-	/* Initialization of internal fields */
+-	snprintf(acl->name[0], RTE_ACL_NAMESIZE, "%s_a", p->name);
+-	snprintf(acl->name[1], RTE_ACL_NAMESIZE, "%s_b", p->name);
+-	acl->name_id = 1;
+-
+-	acl->acl_params.name = acl->name[acl->name_id];
+-	acl->acl_params.socket_id = socket_id;
+-	acl->acl_params.rule_size = RTE_ACL_RULE_SZ(p->n_rule_fields);
+-	acl->acl_params.max_rule_num = p->n_rules;
+-
+-	acl->cfg.num_categories = 1;
+-	acl->cfg.num_fields = p->n_rule_fields;
+-	memcpy(&acl->cfg.defs[0], &p->field_format[0],
+-		p->n_rule_fields * sizeof(struct rte_acl_field_def));
+-
+-	acl->ctx = NULL;
+-
+-	acl->n_rules = p->n_rules;
+-	acl->entry_size = entry_size;
+-
+-	return acl;
+-}
+-
+-static int
+-rte_table_acl_free(void *table)
+-{
+-	struct rte_table_acl *acl = table;
+-
+-	/* Check input parameters */
+-	if (table == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* Free previously allocated resources */
+-	rte_acl_free(acl->ctx);
+-
+-	rte_free(acl);
+-
+-	return 0;
+-}
+-
+-RTE_ACL_RULE_DEF(rte_pipeline_acl_rule, RTE_ACL_MAX_FIELDS);
+-
+-static int
+-rte_table_acl_build(struct rte_table_acl *acl, struct rte_acl_ctx **acl_ctx)
+-{
+-	struct rte_acl_ctx *ctx = NULL;
+-	uint32_t n_rules, i;
+-	int status;
+-
+-	/* Create low level ACL table */
+-	ctx = rte_acl_create(&acl->acl_params);
+-	if (ctx == NULL) {
+-		TABLE_LOG(ERR, "%s: Cannot create low level ACL table",
+-			__func__);
+-		return -1;
+-	}
+-
+-	/* Add rules to low level ACL table */
+-	n_rules = 0;
+-	for (i = 1; i < acl->n_rules; i++) {
+-		if (acl->acl_rule_list[i] != NULL) {
+-			status = rte_acl_add_rules(ctx, acl->acl_rule_list[i],
+-				1);
+-			if (status != 0) {
+-				TABLE_LOG(ERR,
+-				"%s: Cannot add rule to low level ACL table",
+-					__func__);
+-				rte_acl_free(ctx);
+-				return -1;
+-			}
+-
+-			n_rules++;
+-		}
+-	}
+-
+-	if (n_rules == 0) {
+-		rte_acl_free(ctx);
+-		*acl_ctx = NULL;
+-		return 0;
+-	}
+-
+-	/* Build low level ACl table */
+-	status = rte_acl_build(ctx, &acl->cfg);
+-	if (status != 0) {
+-		TABLE_LOG(ERR,
+-			"%s: Cannot build the low level ACL table",
+-			__func__);
+-		rte_acl_free(ctx);
+-		return -1;
+-	}
+-
+-	*acl_ctx = ctx;
+-	return 0;
+-}
+-
+-static int
+-rte_table_acl_entry_add(
+-	void *table,
+-	void *key,
+-	void *entry,
+-	int *key_found,
+-	void **entry_ptr)
+-{
+-	struct rte_table_acl *acl = table;
+-	struct rte_table_acl_rule_add_params *rule =
+-		key;
+-	struct rte_pipeline_acl_rule acl_rule;
+-	struct rte_acl_rule *rule_location;
+-	struct rte_acl_ctx *ctx;
+-	uint32_t free_pos, free_pos_valid, i;
+-	int status;
+-
+-	/* Check input parameters */
+-	if (table == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (key == NULL) {
+-		TABLE_LOG(ERR, "%s: key parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (entry == NULL) {
+-		TABLE_LOG(ERR, "%s: entry parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (key_found == NULL) {
+-		TABLE_LOG(ERR, "%s: key_found parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-	if (entry_ptr == NULL) {
+-		TABLE_LOG(ERR, "%s: entry_ptr parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-	if (rule->priority > RTE_ACL_MAX_PRIORITY) {
+-		TABLE_LOG(ERR, "%s: Priority is too high", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* Setup rule data structure */
+-	memset(&acl_rule, 0, sizeof(acl_rule));
+-	acl_rule.data.category_mask = 1;
+-	acl_rule.data.priority = RTE_ACL_MAX_PRIORITY - rule->priority;
+-	acl_rule.data.userdata = 0; /* To be set up later */
+-	memcpy(&acl_rule.field[0],
+-		&rule->field_value[0],
+-		acl->cfg.num_fields * sizeof(struct rte_acl_field));
+-
+-	/* Look to see if the rule exists already in the table */
+-	free_pos = 0;
+-	free_pos_valid = 0;
+-	for (i = 1; i < acl->n_rules; i++) {
+-		if (acl->acl_rule_list[i] == NULL) {
+-			if (free_pos_valid == 0) {
+-				free_pos = i;
+-				free_pos_valid = 1;
+-			}
+-
+-			continue;
+-		}
+-
+-		/* Compare the key fields */
+-		status = memcmp(&acl->acl_rule_list[i]->field[0],
+-			&rule->field_value[0],
+-			acl->cfg.num_fields * sizeof(struct rte_acl_field));
+-
+-		/* Rule found: update data associated with the rule */
+-		if (status == 0) {
+-			*key_found = 1;
+-			*entry_ptr = &acl->memory[i * acl->entry_size];
+-			memcpy(*entry_ptr, entry, acl->entry_size);
+-
+-			return 0;
+-		}
+-	}
+-
+-	/* Return if max rules */
+-	if (free_pos_valid == 0) {
+-		TABLE_LOG(ERR, "%s: Max number of rules reached",
+-			__func__);
+-		return -ENOSPC;
+-	}
+-
+-	/* Add the new rule to the rule set */
+-	acl_rule.data.userdata = free_pos;
+-	rule_location = (struct rte_acl_rule *)
+-		&acl->acl_rule_memory[free_pos * acl->acl_params.rule_size];
+-	memcpy(rule_location, &acl_rule, acl->acl_params.rule_size);
+-	acl->acl_rule_list[free_pos] = rule_location;
+-
+-	/* Build low level ACL table */
+-	acl->name_id ^= 1;
+-	acl->acl_params.name = acl->name[acl->name_id];
+-	status = rte_table_acl_build(acl, &ctx);
+-	if (status != 0) {
+-		/* Roll back changes */
+-		acl->acl_rule_list[free_pos] = NULL;
+-		acl->name_id ^= 1;
+-
+-		return -EINVAL;
+-	}
+-
+-	/* Commit changes */
+-	rte_acl_free(acl->ctx);
+-	acl->ctx = ctx;
+-	*key_found = 0;
+-	*entry_ptr = &acl->memory[free_pos * acl->entry_size];
+-	memcpy(*entry_ptr, entry, acl->entry_size);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_acl_entry_delete(
+-	void *table,
+-	void *key,
+-	int *key_found,
+-	void *entry)
+-{
+-	struct rte_table_acl *acl = table;
+-	struct rte_table_acl_rule_delete_params *rule =
+-		key;
+-	struct rte_acl_rule *deleted_rule = NULL;
+-	struct rte_acl_ctx *ctx;
+-	uint32_t pos, pos_valid, i;
+-	int status;
+-
+-	/* Check input parameters */
+-	if (table == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (key == NULL) {
+-		TABLE_LOG(ERR, "%s: key parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (key_found == NULL) {
+-		TABLE_LOG(ERR, "%s: key_found parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	/* Look for the rule in the table */
+-	pos = 0;
+-	pos_valid = 0;
+-	for (i = 1; i < acl->n_rules; i++) {
+-		if (acl->acl_rule_list[i] != NULL) {
+-			/* Compare the key fields */
+-			status = memcmp(&acl->acl_rule_list[i]->field[0],
+-				&rule->field_value[0], acl->cfg.num_fields *
+-				sizeof(struct rte_acl_field));
+-
+-			/* Rule found: remove from table */
+-			if (status == 0) {
+-				pos = i;
+-				pos_valid = 1;
+-
+-				deleted_rule = acl->acl_rule_list[i];
+-				acl->acl_rule_list[i] = NULL;
+-			}
+-		}
+-	}
+-
+-	/* Return if rule not found */
+-	if (pos_valid == 0) {
+-		*key_found = 0;
+-		return 0;
+-	}
+-
+-	/* Build low level ACL table */
+-	acl->name_id ^= 1;
+-	acl->acl_params.name = acl->name[acl->name_id];
+-	status = rte_table_acl_build(acl, &ctx);
+-	if (status != 0) {
+-		/* Roll back changes */
+-		acl->acl_rule_list[pos] = deleted_rule;
+-		acl->name_id ^= 1;
+-
+-		return -EINVAL;
+-	}
+-
+-	/* Commit changes */
+-	rte_acl_free(acl->ctx);
+-
+-	acl->ctx = ctx;
+-	*key_found = 1;
+-	if (entry != NULL)
+-		memcpy(entry, &acl->memory[pos * acl->entry_size],
+-			acl->entry_size);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_acl_entry_add_bulk(
+-	void *table,
+-	void **keys,
+-	void **entries,
+-	uint32_t n_keys,
+-	int *key_found,
+-	void **entries_ptr)
+-{
+-	struct rte_table_acl *acl = table;
+-	struct rte_acl_ctx *ctx;
+-	uint32_t rule_pos[n_keys];
+-	uint32_t i;
+-	int err = 0, build = 0;
+-	int status;
+-
+-	/* Check input parameters */
+-	if (table == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (keys == NULL) {
+-		TABLE_LOG(ERR, "%s: keys parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (entries == NULL) {
+-		TABLE_LOG(ERR, "%s: entries parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (n_keys == 0) {
+-		TABLE_LOG(ERR, "%s: 0 rules to add", __func__);
+-		return -EINVAL;
+-	}
+-	if (key_found == NULL) {
+-		TABLE_LOG(ERR, "%s: key_found parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-	if (entries_ptr == NULL) {
+-		TABLE_LOG(ERR, "%s: entries_ptr parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	/* Check input parameters in arrays */
+-	for (i = 0; i < n_keys; i++) {
+-		struct rte_table_acl_rule_add_params *rule;
+-
+-		if (keys[i] == NULL) {
+-			TABLE_LOG(ERR, "%s: keys[%" PRIu32 "] parameter is NULL",
+-					__func__, i);
+-			return -EINVAL;
+-		}
+-
+-		if (entries[i] == NULL) {
+-			TABLE_LOG(ERR, "%s: entries[%" PRIu32 "] parameter is NULL",
+-					__func__, i);
+-			return -EINVAL;
+-		}
+-
+-		rule = keys[i];
+-		if (rule->priority > RTE_ACL_MAX_PRIORITY) {
+-			TABLE_LOG(ERR, "%s: Priority is too high", __func__);
+-			return -EINVAL;
+-		}
+-	}
+-
+-	memset(rule_pos, 0, n_keys * sizeof(uint32_t));
+-	memset(key_found, 0, n_keys * sizeof(int));
+-	for (i = 0; i < n_keys; i++) {
+-		struct rte_table_acl_rule_add_params *rule =
+-				keys[i];
+-		struct rte_pipeline_acl_rule acl_rule;
+-		struct rte_acl_rule *rule_location;
+-		uint32_t free_pos, free_pos_valid, j;
+-
+-		/* Setup rule data structure */
+-		memset(&acl_rule, 0, sizeof(acl_rule));
+-		acl_rule.data.category_mask = 1;
+-		acl_rule.data.priority = RTE_ACL_MAX_PRIORITY - rule->priority;
+-		acl_rule.data.userdata = 0; /* To be set up later */
+-		memcpy(&acl_rule.field[0],
+-			&rule->field_value[0],
+-			acl->cfg.num_fields * sizeof(struct rte_acl_field));
+-
+-		/* Look to see if the rule exists already in the table */
+-		free_pos = 0;
+-		free_pos_valid = 0;
+-		for (j = 1; j < acl->n_rules; j++) {
+-			if (acl->acl_rule_list[j] == NULL) {
+-				if (free_pos_valid == 0) {
+-					free_pos = j;
+-					free_pos_valid = 1;
+-				}
+-
+-				continue;
+-			}
+-
+-			/* Compare the key fields */
+-			status = memcmp(&acl->acl_rule_list[j]->field[0],
+-				&rule->field_value[0],
+-				acl->cfg.num_fields * sizeof(struct rte_acl_field));
+-
+-			/* Rule found: update data associated with the rule */
+-			if (status == 0) {
+-				key_found[i] = 1;
+-				entries_ptr[i] = &acl->memory[j * acl->entry_size];
+-				memcpy(entries_ptr[i], entries[i], acl->entry_size);
+-
+-				break;
+-			}
+-		}
+-
+-		/* Key already in the table */
+-		if (key_found[i] != 0)
+-			continue;
+-
+-		/* Maximum number of rules reached */
+-		if (free_pos_valid == 0) {
+-			err = 1;
+-			break;
+-		}
+-
+-		/* Add the new rule to the rule set */
+-		acl_rule.data.userdata = free_pos;
+-		rule_location = (struct rte_acl_rule *)
+-			&acl->acl_rule_memory[free_pos * acl->acl_params.rule_size];
+-		memcpy(rule_location, &acl_rule, acl->acl_params.rule_size);
+-		acl->acl_rule_list[free_pos] = rule_location;
+-		rule_pos[i] = free_pos;
+-		build = 1;
+-	}
+-
+-	if (err != 0) {
+-		for (i = 0; i < n_keys; i++) {
+-			if (rule_pos[i] == 0)
+-				continue;
+-
+-			acl->acl_rule_list[rule_pos[i]] = NULL;
+-		}
+-
+-		return -ENOSPC;
+-	}
+-
+-	if (build == 0)
+-		return 0;
+-
+-	/* Build low level ACL table */
+-	acl->name_id ^= 1;
+-	acl->acl_params.name = acl->name[acl->name_id];
+-	status = rte_table_acl_build(acl, &ctx);
+-	if (status != 0) {
+-		/* Roll back changes */
+-		for (i = 0; i < n_keys; i++) {
+-			if (rule_pos[i] == 0)
+-				continue;
+-
+-			acl->acl_rule_list[rule_pos[i]] = NULL;
+-		}
+-		acl->name_id ^= 1;
+-
+-		return -EINVAL;
+-	}
+-
+-	/* Commit changes */
+-	rte_acl_free(acl->ctx);
+-	acl->ctx = ctx;
+-
+-	for (i = 0; i < n_keys; i++) {
+-		if (rule_pos[i] == 0)
+-			continue;
+-
+-		key_found[i] = 0;
+-		entries_ptr[i] = &acl->memory[rule_pos[i] * acl->entry_size];
+-		memcpy(entries_ptr[i], entries[i], acl->entry_size);
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_acl_entry_delete_bulk(
+-	void *table,
+-	void **keys,
+-	uint32_t n_keys,
+-	int *key_found,
+-	void **entries)
+-{
+-	struct rte_table_acl *acl = table;
+-	struct rte_acl_rule *deleted_rules[n_keys];
+-	uint32_t rule_pos[n_keys];
+-	struct rte_acl_ctx *ctx;
+-	uint32_t i;
+-	int status;
+-	int build = 0;
+-
+-	/* Check input parameters */
+-	if (table == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (keys == NULL) {
+-		TABLE_LOG(ERR, "%s: key parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (n_keys == 0) {
+-		TABLE_LOG(ERR, "%s: 0 rules to delete", __func__);
+-		return -EINVAL;
+-	}
+-	if (key_found == NULL) {
+-		TABLE_LOG(ERR, "%s: key_found parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	for (i = 0; i < n_keys; i++) {
+-		if (keys[i] == NULL) {
+-			TABLE_LOG(ERR, "%s: keys[%" PRIu32 "] parameter is NULL",
+-					__func__, i);
+-			return -EINVAL;
+-		}
+-	}
+-
+-	memset(deleted_rules, 0, n_keys * sizeof(struct rte_acl_rule *));
+-	memset(rule_pos, 0, n_keys * sizeof(uint32_t));
+-	for (i = 0; i < n_keys; i++) {
+-		struct rte_table_acl_rule_delete_params *rule =
+-			keys[i];
+-		uint32_t pos_valid, j;
+-
+-		/* Look for the rule in the table */
+-		pos_valid = 0;
+-		for (j = 1; j < acl->n_rules; j++) {
+-			if (acl->acl_rule_list[j] == NULL)
+-				continue;
+-
+-			/* Compare the key fields */
+-			status = memcmp(&acl->acl_rule_list[j]->field[0],
+-					&rule->field_value[0],
+-					acl->cfg.num_fields * sizeof(struct rte_acl_field));
+-
+-			/* Rule found: remove from table */
+-			if (status == 0) {
+-				pos_valid = 1;
+-
+-				deleted_rules[i] = acl->acl_rule_list[j];
+-				acl->acl_rule_list[j] = NULL;
+-				rule_pos[i] = j;
+-
+-				build = 1;
+-			}
+-		}
+-
+-		if (pos_valid == 0) {
+-			key_found[i] = 0;
+-			continue;
+-		}
+-	}
+-
+-	/* Return if no changes to acl table */
+-	if (build == 0) {
+-		return 0;
+-	}
+-
+-	/* Build low level ACL table */
+-	acl->name_id ^= 1;
+-	acl->acl_params.name = acl->name[acl->name_id];
+-	status = rte_table_acl_build(acl, &ctx);
+-	if (status != 0) {
+-		/* Roll back changes */
+-		for (i = 0; i < n_keys; i++) {
+-			if (rule_pos[i] == 0)
+-				continue;
+-
+-			acl->acl_rule_list[rule_pos[i]] = deleted_rules[i];
+-		}
+-
+-		acl->name_id ^= 1;
+-
+-		return -EINVAL;
+-	}
+-
+-	/* Commit changes */
+-	rte_acl_free(acl->ctx);
+-
+-	acl->ctx = ctx;
+-	for (i = 0; i < n_keys; i++) {
+-		if (rule_pos[i] == 0)
+-			continue;
+-
+-		key_found[i] = 1;
+-		if (entries != NULL && entries[i] != NULL)
+-			memcpy(entries[i], &acl->memory[rule_pos[i] * acl->entry_size],
+-					acl->entry_size);
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_acl_lookup(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_acl *acl = (struct rte_table_acl *) table;
+-	const uint8_t *pkts_data[RTE_PORT_IN_BURST_SIZE_MAX];
+-	uint32_t results[RTE_PORT_IN_BURST_SIZE_MAX];
+-	uint64_t pkts_out_mask;
+-	uint32_t n_pkts, i, j;
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-	RTE_TABLE_ACL_STATS_PKTS_IN_ADD(acl, n_pkts_in);
+-
+-	/* Input conversion */
+-	for (i = 0, j = 0; i < (uint32_t)(RTE_PORT_IN_BURST_SIZE_MAX -
+-		rte_clz64(pkts_mask)); i++) {
+-		uint64_t pkt_mask = 1LLU << i;
+-
+-		if (pkt_mask & pkts_mask) {
+-			pkts_data[j] = rte_pktmbuf_mtod(pkts[i], uint8_t *);
+-			j++;
+-		}
+-	}
+-	n_pkts = j;
+-
+-	/* Low-level ACL table lookup */
+-	if (acl->ctx != NULL)
+-		rte_acl_classify(acl->ctx, pkts_data, results, n_pkts, 1);
+-	else
+-		n_pkts = 0;
+-
+-	/* Output conversion */
+-	pkts_out_mask = 0;
+-	for (i = 0; i < n_pkts; i++) {
+-		uint32_t action_table_pos = results[i];
+-		uint32_t pkt_pos = rte_ctz64(pkts_mask);
+-		uint64_t pkt_mask = 1LLU << pkt_pos;
+-
+-		pkts_mask &= ~pkt_mask;
+-
+-		if (action_table_pos != 0) {
+-			pkts_out_mask |= pkt_mask;
+-			entries[pkt_pos] = (void *)
+-				&acl->memory[action_table_pos *
+-				acl->entry_size];
+-			rte_prefetch0(entries[pkt_pos]);
+-		}
+-	}
+-
+-	*lookup_hit_mask = pkts_out_mask;
+-	RTE_TABLE_ACL_STATS_PKTS_LOOKUP_MISS(acl, n_pkts_in - rte_popcount64(pkts_out_mask));
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_acl_stats_read(void *table, struct rte_table_stats *stats, int clear)
+-{
+-	struct rte_table_acl *acl = table;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &acl->stats, sizeof(acl->stats));
+-
+-	if (clear)
+-		memset(&acl->stats, 0, sizeof(acl->stats));
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_table_acl_ops)
+-struct rte_table_ops rte_table_acl_ops = {
+-	.f_create = rte_table_acl_create,
+-	.f_free = rte_table_acl_free,
+-	.f_add = rte_table_acl_entry_add,
+-	.f_delete = rte_table_acl_entry_delete,
+-	.f_add_bulk = rte_table_acl_entry_add_bulk,
+-	.f_delete_bulk = rte_table_acl_entry_delete_bulk,
+-	.f_lookup = rte_table_acl_lookup,
+-	.f_stats = rte_table_acl_stats_read,
+-};
+diff --git a/lib/table/rte_table_acl.h b/lib/table/rte_table_acl.h
 deleted file mode 100644
-index 261c561f98a98d572c9247b7187b33f7e03002ce..0000000000000000000000000000000000000000
-Binary files a/doc/guides/prog_guide/img/figure38.png and /dev/null differ
-diff --git a/doc/guides/prog_guide/img/figure39.png b/doc/guides/prog_guide/img/figure39.png
+index 61af7b88e4c3473ef6cdf1b0273e11af5628706d..0000000000000000000000000000000000000000
+--- a/lib/table/rte_table_acl.h
++++ /dev/null
+@@ -1,65 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_TABLE_ACL_H__
+-#define __INCLUDE_RTE_TABLE_ACL_H__
+-
+-/**
+- * @file
+- * RTE Table ACL
+- *
+- * This table uses the Access Control List (ACL) algorithm to uniquely
+- * associate data to lookup keys.
+- *
+- * Use-cases: Firewall rule database, etc.
+- */
+-
+-#include <stdint.h>
+-
+-#include "rte_acl.h"
+-
+-#include "rte_table.h"
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-/** ACL table parameters */
+-struct rte_table_acl_params {
+-	/** Name */
+-	const char *name;
+-
+-	/** Maximum number of ACL rules in the table */
+-	uint32_t n_rules;
+-
+-	/** Number of fields in the ACL rule specification */
+-	uint32_t n_rule_fields;
+-
+-	/** Format specification of the fields of the ACL rule */
+-	struct rte_acl_field_def field_format[RTE_ACL_MAX_FIELDS];
+-};
+-
+-/** ACL rule specification for entry add operation */
+-struct rte_table_acl_rule_add_params {
+-	/** ACL rule priority, with 0 as the highest priority */
+-	int32_t  priority;
+-
+-	/** Values for the fields of the ACL rule to be added to the table */
+-	struct rte_acl_field field_value[RTE_ACL_MAX_FIELDS];
+-};
+-
+-/** ACL rule specification for entry delete operation */
+-struct rte_table_acl_rule_delete_params {
+-	/** Values for the fields of the ACL rule to be deleted from table */
+-	struct rte_acl_field field_value[RTE_ACL_MAX_FIELDS];
+-};
+-
+-/** ACL table operations */
+-extern struct rte_table_ops rte_table_acl_ops;
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif
+diff --git a/lib/table/rte_table_array.c b/lib/table/rte_table_array.c
 deleted file mode 100644
-index d2db6a499a0f764b9e661b905b0f136ea871b457..0000000000000000000000000000000000000000
-Binary files a/doc/guides/prog_guide/img/figure39.png and /dev/null differ
-diff --git a/doc/guides/sample_app_ug/img/test_pipeline_app.png b/doc/guides/sample_app_ug/img/test_pipeline_app.png
+index 55356e59998a547f0bd422bb248d3ac432b90881..0000000000000000000000000000000000000000
+--- a/lib/table/rte_table_array.c
++++ /dev/null
+@@ -1,210 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#include <stdalign.h>
+-#include <stdio.h>
+-#include <string.h>
+-
+-#include <eal_export.h>
+-#include <rte_common.h>
+-#include <rte_malloc.h>
+-#include <rte_log.h>
+-
+-#include "rte_table_array.h"
+-
+-#include "table_log.h"
+-
+-#ifdef RTE_TABLE_STATS_COLLECT
+-
+-#define RTE_TABLE_ARRAY_STATS_PKTS_IN_ADD(table, val) \
+-	table->stats.n_pkts_in += val
+-#define RTE_TABLE_ARRAY_STATS_PKTS_LOOKUP_MISS(table, val) \
+-	table->stats.n_pkts_lookup_miss += val
+-
+-#else
+-
+-#define RTE_TABLE_ARRAY_STATS_PKTS_IN_ADD(table, val)
+-#define RTE_TABLE_ARRAY_STATS_PKTS_LOOKUP_MISS(table, val)
+-
+-#endif
+-
+-struct __rte_cache_aligned rte_table_array {
+-	struct rte_table_stats stats;
+-
+-	/* Input parameters */
+-	uint32_t entry_size;
+-	uint32_t n_entries;
+-	uint32_t offset;
+-
+-	/* Internal fields */
+-	uint32_t entry_pos_mask;
+-
+-	/* Internal table */
+-	alignas(RTE_CACHE_LINE_SIZE) uint8_t array[];
+-};
+-
+-static void *
+-rte_table_array_create(void *params, int socket_id, uint32_t entry_size)
+-{
+-	struct rte_table_array_params *p = params;
+-	struct rte_table_array *t;
+-	uint32_t total_cl_size, total_size;
+-
+-	/* Check input parameters */
+-	if ((p == NULL) ||
+-	    (p->n_entries == 0) ||
+-		(!rte_is_power_of_2(p->n_entries)))
+-		return NULL;
+-
+-	/* Memory allocation */
+-	total_cl_size = (sizeof(struct rte_table_array) +
+-			RTE_CACHE_LINE_SIZE) / RTE_CACHE_LINE_SIZE;
+-	total_cl_size += (p->n_entries * entry_size +
+-			RTE_CACHE_LINE_SIZE) / RTE_CACHE_LINE_SIZE;
+-	total_size = total_cl_size * RTE_CACHE_LINE_SIZE;
+-	t = rte_zmalloc_socket("TABLE", total_size, RTE_CACHE_LINE_SIZE, socket_id);
+-	if (t == NULL) {
+-		TABLE_LOG(ERR,
+-			"%s: Cannot allocate %u bytes for array table",
+-			__func__, total_size);
+-		return NULL;
+-	}
+-
+-	/* Memory initialization */
+-	t->entry_size = entry_size;
+-	t->n_entries = p->n_entries;
+-	t->offset = p->offset;
+-	t->entry_pos_mask = t->n_entries - 1;
+-
+-	return t;
+-}
+-
+-static int
+-rte_table_array_free(void *table)
+-{
+-	struct rte_table_array *t = table;
+-
+-	/* Check input parameters */
+-	if (t == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* Free previously allocated resources */
+-	rte_free(t);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_array_entry_add(
+-	void *table,
+-	void *key,
+-	void *entry,
+-	int *key_found,
+-	void **entry_ptr)
+-{
+-	struct rte_table_array *t = table;
+-	struct rte_table_array_key *k = key;
+-	uint8_t *table_entry;
+-
+-	/* Check input parameters */
+-	if (table == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (key == NULL) {
+-		TABLE_LOG(ERR, "%s: key parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (entry == NULL) {
+-		TABLE_LOG(ERR, "%s: entry parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (key_found == NULL) {
+-		TABLE_LOG(ERR, "%s: key_found parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-	if (entry_ptr == NULL) {
+-		TABLE_LOG(ERR, "%s: entry_ptr parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	table_entry = &t->array[k->pos * t->entry_size];
+-	memcpy(table_entry, entry, t->entry_size);
+-	*key_found = 1;
+-	*entry_ptr = (void *) table_entry;
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_array_lookup(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_array *t = (struct rte_table_array *) table;
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-	RTE_TABLE_ARRAY_STATS_PKTS_IN_ADD(t, n_pkts_in);
+-	*lookup_hit_mask = pkts_mask;
+-
+-	if ((pkts_mask & (pkts_mask + 1)) == 0) {
+-		uint64_t n_pkts = rte_popcount64(pkts_mask);
+-		uint32_t i;
+-
+-		for (i = 0; i < n_pkts; i++) {
+-			struct rte_mbuf *pkt = pkts[i];
+-			uint32_t entry_pos = RTE_MBUF_METADATA_UINT32(pkt,
+-				t->offset) & t->entry_pos_mask;
+-
+-			entries[i] = (void *) &t->array[entry_pos *
+-				t->entry_size];
+-		}
+-	} else {
+-		for ( ; pkts_mask; ) {
+-			uint32_t pkt_index = rte_ctz64(pkts_mask);
+-			uint64_t pkt_mask = 1LLU << pkt_index;
+-			struct rte_mbuf *pkt = pkts[pkt_index];
+-			uint32_t entry_pos = RTE_MBUF_METADATA_UINT32(pkt,
+-				t->offset) & t->entry_pos_mask;
+-
+-			entries[pkt_index] = (void *) &t->array[entry_pos *
+-				t->entry_size];
+-			pkts_mask &= ~pkt_mask;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_array_stats_read(void *table, struct rte_table_stats *stats, int clear)
+-{
+-	struct rte_table_array *array = table;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &array->stats, sizeof(array->stats));
+-
+-	if (clear)
+-		memset(&array->stats, 0, sizeof(array->stats));
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_table_array_ops)
+-struct rte_table_ops rte_table_array_ops = {
+-	.f_create = rte_table_array_create,
+-	.f_free = rte_table_array_free,
+-	.f_add = rte_table_array_entry_add,
+-	.f_delete = NULL,
+-	.f_add_bulk = NULL,
+-	.f_delete_bulk = NULL,
+-	.f_lookup = rte_table_array_lookup,
+-	.f_stats = rte_table_array_stats_read,
+-};
+diff --git a/lib/table/rte_table_array.h b/lib/table/rte_table_array.h
 deleted file mode 100644
-index d322a9e46e5e714126988a76456c9eae41635879..0000000000000000000000000000000000000000
-Binary files a/doc/guides/sample_app_ug/img/test_pipeline_app.png and /dev/null differ
+index b2a7b95d68b57399bacf229ea4972287c03c5102..0000000000000000000000000000000000000000
+--- a/lib/table/rte_table_array.h
++++ /dev/null
+@@ -1,46 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_TABLE_ARRAY_H__
+-#define __INCLUDE_RTE_TABLE_ARRAY_H__
+-
+-/**
+- * @file
+- * RTE Table Array
+- *
+- * Simple array indexing. Lookup key is the array entry index.
+- */
+-
+-#include <stdint.h>
+-
+-#include "rte_table.h"
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-/** Array table parameters */
+-struct rte_table_array_params {
+-	/** Number of array entries. Has to be a power of two. */
+-	uint32_t n_entries;
+-
+-	/** Byte offset within input packet meta-data where lookup key (i.e. the
+-	    array entry index) is located. */
+-	uint32_t offset;
+-};
+-
+-/** Array table key format */
+-struct rte_table_array_key {
+-	/** Array entry index */
+-	uint32_t pos;
+-};
+-
+-/** Array table operations */
+-extern struct rte_table_ops rte_table_array_ops;
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif
+diff --git a/lib/table/rte_table_hash.h b/lib/table/rte_table_hash.h
+deleted file mode 100644
+index ff8fc9e9cef5fdd0cf9b9c10d800169ca83699d3..0000000000000000000000000000000000000000
+--- a/lib/table/rte_table_hash.h
++++ /dev/null
+@@ -1,106 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2017 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_TABLE_HASH_H__
+-#define __INCLUDE_RTE_TABLE_HASH_H__
+-
+-/**
+- * @file
+- * RTE Table Hash
+- *
+- * These tables use the exact match criterion to uniquely associate data to
+- * lookup keys.
+- *
+- * Hash table types:
+- * 1. Entry add strategy on bucket full:
+- *     a. Least Recently Used (LRU): One of the existing keys in the bucket is
+- *        deleted and the new key is added in its place. The number of keys in
+- *        each bucket never grows bigger than 4. The logic to pick the key to
+- *        be dropped from the bucket is LRU. The hash table lookup operation
+- *        maintains the order in which the keys in the same bucket are hit, so
+- *        every time a key is hit, it becomes the new Most Recently Used (MRU)
+- *        key, i.e. the most unlikely candidate for drop. When a key is added
+- *        to the bucket, it also becomes the new MRU key. When a key needs to
+- *        be picked and dropped, the most likely candidate for drop, i.e. the
+- *        current LRU key, is always picked. The LRU logic requires maintaining
+- *        specific data structures per each bucket. Use-cases: flow cache, etc.
+- *     b. Extendable bucket (ext): The bucket is extended with space for 4 more
+- *        keys. This is done by allocating additional memory at table init time,
+- *        which is used to create a pool of free keys (the size of this pool is
+- *        configurable and always a multiple of 4). On key add operation, the
+- *        allocation of a group of 4 keys only happens successfully within the
+- *        limit of free keys, otherwise the key add operation fails. On key
+- *        delete operation, a group of 4 keys is freed back to the pool of free
+- *        keys when the key to be deleted is the only key that was used within
+- *        its group of 4 keys at that time. On key lookup operation, if the
+- *        current bucket is in extended state and a match is not found in the
+- *        first group of 4 keys, the search continues beyond the first group of
+- *        4 keys, potentially until all keys in this bucket are examined. The
+- *        extendable bucket logic requires maintaining specific data structures
+- *        per table and per each bucket. Use-cases: flow table, etc.
+- * 2. Key size:
+- *     a. Configurable key size
+- *     b. Single key size (8-byte, 16-byte or 32-byte key size)
+- */
+-
+-#include <stdint.h>
+-
+-#include "rte_table.h"
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-/** Hash function */
+-typedef uint64_t (*rte_table_hash_op_hash)(
+-	void *key,
+-	void *key_mask,
+-	uint32_t key_size,
+-	uint64_t seed);
+-
+-/** Hash table parameters */
+-struct rte_table_hash_params {
+-	/** Name */
+-	const char *name;
+-
+-	/** Key size (number of bytes) */
+-	uint32_t key_size;
+-
+-	/** Byte offset within packet meta-data where the key is located */
+-	uint32_t key_offset;
+-
+-	/** Key mask */
+-	uint8_t *key_mask;
+-
+-	/** Number of keys */
+-	uint32_t n_keys;
+-
+-	/** Number of buckets */
+-	uint32_t n_buckets;
+-
+-	/** Hash function */
+-	rte_table_hash_op_hash f_hash;
+-
+-	/** Seed value for the hash function */
+-	uint64_t seed;
+-};
+-
+-/** Extendable bucket hash table operations */
+-extern struct rte_table_ops rte_table_hash_ext_ops;
+-extern struct rte_table_ops rte_table_hash_key8_ext_ops;
+-extern struct rte_table_ops rte_table_hash_key16_ext_ops;
+-extern struct rte_table_ops rte_table_hash_key32_ext_ops;
+-
+-/** LRU hash table operations */
+-extern struct rte_table_ops rte_table_hash_lru_ops;
+-
+-extern struct rte_table_ops rte_table_hash_key8_lru_ops;
+-extern struct rte_table_ops rte_table_hash_key16_lru_ops;
+-extern struct rte_table_ops rte_table_hash_key32_lru_ops;
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif
+diff --git a/lib/table/rte_table_hash_cuckoo.c b/lib/table/rte_table_hash_cuckoo.c
+deleted file mode 100644
+index a2b920fa92f77ed66fbedee1417090a56dbc8a2e..0000000000000000000000000000000000000000
+--- a/lib/table/rte_table_hash_cuckoo.c
++++ /dev/null
+@@ -1,327 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2017 Intel Corporation
+- */
+-
+-#include <stdalign.h>
+-#include <stdio.h>
+-#include <string.h>
+-
+-#include <eal_export.h>
+-#include <rte_common.h>
+-#include <rte_malloc.h>
+-#include <rte_log.h>
+-
+-#include "rte_table_hash_cuckoo.h"
+-
+-#include "table_log.h"
+-
+-#ifdef RTE_TABLE_STATS_COLLECT
+-
+-#define RTE_TABLE_HASH_CUCKOO_STATS_PKTS_IN_ADD(table, val) \
+-	(table->stats.n_pkts_in += val)
+-#define RTE_TABLE_HASH_CUCKOO_STATS_PKTS_LOOKUP_MISS(table, val) \
+-	(table->stats.n_pkts_lookup_miss += val)
+-
+-#else
+-
+-#define RTE_TABLE_HASH_CUCKOO_STATS_PKTS_IN_ADD(table, val)
+-#define RTE_TABLE_HASH_CUCKOO_STATS_PKTS_LOOKUP_MISS(table, val)
+-
+-#endif
+-
+-
+-struct rte_table_hash {
+-	struct rte_table_stats stats;
+-
+-	/* Input parameters */
+-	uint32_t key_size;
+-	uint32_t entry_size;
+-	uint32_t n_keys;
+-	rte_hash_function f_hash;
+-	uint32_t seed;
+-	uint32_t key_offset;
+-
+-	/* cuckoo hash table object */
+-	struct rte_hash *h_table;
+-
+-	/* Lookup table */
+-	alignas(RTE_CACHE_LINE_SIZE) uint8_t memory[];
+-};
+-
+-static int
+-check_params_create_hash_cuckoo(struct rte_table_hash_cuckoo_params *params)
+-{
+-	if (params == NULL) {
+-		TABLE_LOG(ERR, "NULL Input Parameters.");
+-		return -EINVAL;
+-	}
+-
+-	if (params->name == NULL) {
+-		TABLE_LOG(ERR, "Table name is NULL.");
+-		return -EINVAL;
+-	}
+-
+-	if (params->key_size == 0) {
+-		TABLE_LOG(ERR, "Invalid key_size.");
+-		return -EINVAL;
+-	}
+-
+-	if (params->n_keys == 0) {
+-		TABLE_LOG(ERR, "Invalid n_keys.");
+-		return -EINVAL;
+-	}
+-
+-	if (params->f_hash == NULL) {
+-		TABLE_LOG(ERR, "f_hash is NULL.");
+-		return -EINVAL;
+-	}
+-
+-	return 0;
+-}
+-
+-static void *
+-rte_table_hash_cuckoo_create(void *params,
+-			int socket_id,
+-			uint32_t entry_size)
+-{
+-	struct rte_table_hash_cuckoo_params *p = params;
+-	struct rte_hash *h_table;
+-	struct rte_table_hash *t;
+-	uint32_t total_size;
+-
+-	/* Check input parameters */
+-	if (check_params_create_hash_cuckoo(params))
+-		return NULL;
+-
+-	/* Memory allocation */
+-	total_size = sizeof(struct rte_table_hash) +
+-		RTE_CACHE_LINE_ROUNDUP(p->n_keys * entry_size);
+-
+-	t = rte_zmalloc_socket(p->name, total_size, RTE_CACHE_LINE_SIZE, socket_id);
+-	if (t == NULL) {
+-		TABLE_LOG(ERR,
+-			"%s: Cannot allocate %u bytes for cuckoo hash table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-
+-	/* Create cuckoo hash table */
+-	struct rte_hash_parameters hash_cuckoo_params = {
+-		.entries = p->n_keys,
+-		.key_len = p->key_size,
+-		.hash_func = p->f_hash,
+-		.hash_func_init_val = p->seed,
+-		.socket_id = socket_id,
+-		.name = p->name
+-	};
+-
+-	h_table = rte_hash_find_existing(p->name);
+-	if (h_table == NULL) {
+-		h_table = rte_hash_create(&hash_cuckoo_params);
+-		if (h_table == NULL) {
+-			TABLE_LOG(ERR,
+-				"%s: failed to create cuckoo hash table %s",
+-				__func__, p->name);
+-			rte_free(t);
+-			return NULL;
+-		}
+-	}
+-
+-	/* initialize the cuckoo hash parameters */
+-	t->key_size = p->key_size;
+-	t->entry_size = entry_size;
+-	t->n_keys = p->n_keys;
+-	t->f_hash = p->f_hash;
+-	t->seed = p->seed;
+-	t->key_offset = p->key_offset;
+-	t->h_table = h_table;
+-
+-	TABLE_LOG(INFO,
+-		"%s: Cuckoo hash table %s memory footprint is %u bytes",
+-		__func__, p->name, total_size);
+-	return t;
+-}
+-
+-static int
+-rte_table_hash_cuckoo_free(void *table) {
+-	struct rte_table_hash *t = table;
+-
+-	if (table == NULL)
+-		return -EINVAL;
+-
+-	rte_hash_free(t->h_table);
+-	rte_free(t);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_hash_cuckoo_entry_add(void *table, void *key, void *entry,
+-	int *key_found, void **entry_ptr)
+-{
+-	struct rte_table_hash *t = table;
+-	int pos = 0;
+-
+-	/* Check input parameters */
+-	if ((table == NULL) ||
+-		(key == NULL) ||
+-		(entry == NULL) ||
+-		(key_found == NULL) ||
+-		(entry_ptr == NULL))
+-		return -EINVAL;
+-
+-	/*  Find Existing entries */
+-	pos = rte_hash_lookup(t->h_table, key);
+-	if (pos >= 0) {
+-		uint8_t *existing_entry;
+-
+-		*key_found = 1;
+-		existing_entry = &t->memory[pos * t->entry_size];
+-		memcpy(existing_entry, entry, t->entry_size);
+-		*entry_ptr = existing_entry;
+-
+-		return 0;
+-	}
+-
+-	if (pos == -ENOENT) {
+-		/* Entry not found. Adding new entry */
+-		uint8_t *new_entry;
+-
+-		pos = rte_hash_add_key(t->h_table, key);
+-		if (pos < 0)
+-			return pos;
+-
+-		new_entry = &t->memory[pos * t->entry_size];
+-		memcpy(new_entry, entry, t->entry_size);
+-
+-		*key_found = 0;
+-		*entry_ptr = new_entry;
+-		return 0;
+-	}
+-
+-	return pos;
+-}
+-
+-static int
+-rte_table_hash_cuckoo_entry_delete(void *table, void *key,
+-	int *key_found, void *entry)
+-{
+-	struct rte_table_hash *t = table;
+-	int pos = 0;
+-
+-	/* Check input parameters */
+-	if ((table == NULL) ||
+-		(key == NULL) ||
+-		(key_found == NULL))
+-		return -EINVAL;
+-
+-	pos = rte_hash_del_key(t->h_table, key);
+-	if (pos >= 0) {
+-		*key_found = 1;
+-		uint8_t *entry_ptr = &t->memory[pos * t->entry_size];
+-
+-		if (entry)
+-			memcpy(entry, entry_ptr, t->entry_size);
+-
+-		memset(&t->memory[pos * t->entry_size], 0, t->entry_size);
+-		return 0;
+-	}
+-
+-	*key_found = 0;
+-	return pos;
+-}
+-
+-static int
+-rte_table_hash_cuckoo_lookup(void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_hash *t = table;
+-	uint64_t pkts_mask_out = 0;
+-	uint32_t i;
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-
+-	RTE_TABLE_HASH_CUCKOO_STATS_PKTS_IN_ADD(t, n_pkts_in);
+-
+-	if ((pkts_mask & (pkts_mask + 1)) == 0) {
+-		const uint8_t *keys[RTE_PORT_IN_BURST_SIZE_MAX];
+-		int32_t positions[RTE_PORT_IN_BURST_SIZE_MAX], status;
+-
+-		/* Keys for bulk lookup */
+-		for (i = 0; i < n_pkts_in; i++)
+-			keys[i] = RTE_MBUF_METADATA_UINT8_PTR(pkts[i],
+-				t->key_offset);
+-
+-		/* Bulk Lookup */
+-		status = rte_hash_lookup_bulk(t->h_table,
+-				(const void **) keys,
+-				n_pkts_in,
+-				positions);
+-		if (status == 0) {
+-			for (i = 0; i < n_pkts_in; i++) {
+-				if (likely(positions[i] >= 0)) {
+-					uint64_t pkt_mask = 1LLU << i;
+-
+-					entries[i] = &t->memory[positions[i]
+-						* t->entry_size];
+-					pkts_mask_out |= pkt_mask;
+-				}
+-			}
+-		}
+-	} else
+-		for (i = 0; i < (uint32_t)(RTE_PORT_IN_BURST_SIZE_MAX
+-					- rte_clz64(pkts_mask)); i++) {
+-			uint64_t pkt_mask = 1LLU << i;
+-
+-			if (pkt_mask & pkts_mask) {
+-				struct rte_mbuf *pkt = pkts[i];
+-				uint8_t *key = RTE_MBUF_METADATA_UINT8_PTR(pkt,
+-						t->key_offset);
+-				int pos;
+-
+-				pos = rte_hash_lookup(t->h_table, key);
+-				if (likely(pos >= 0)) {
+-					entries[i] = &t->memory[pos
+-						* t->entry_size];
+-					pkts_mask_out |= pkt_mask;
+-				}
+-			}
+-		}
+-
+-	*lookup_hit_mask = pkts_mask_out;
+-	RTE_TABLE_HASH_CUCKOO_STATS_PKTS_LOOKUP_MISS(t,
+-			n_pkts_in - rte_popcount64(pkts_mask_out));
+-
+-	return 0;
+-
+-}
+-
+-static int
+-rte_table_hash_cuckoo_stats_read(void *table, struct rte_table_stats *stats,
+-	int clear)
+-{
+-	struct rte_table_hash *t = table;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &t->stats, sizeof(t->stats));
+-
+-	if (clear)
+-		memset(&t->stats, 0, sizeof(t->stats));
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_table_hash_cuckoo_ops)
+-struct rte_table_ops rte_table_hash_cuckoo_ops = {
+-	.f_create = rte_table_hash_cuckoo_create,
+-	.f_free = rte_table_hash_cuckoo_free,
+-	.f_add = rte_table_hash_cuckoo_entry_add,
+-	.f_delete = rte_table_hash_cuckoo_entry_delete,
+-	.f_add_bulk = NULL,
+-	.f_delete_bulk = NULL,
+-	.f_lookup = rte_table_hash_cuckoo_lookup,
+-	.f_stats = rte_table_hash_cuckoo_stats_read,
+-};
+diff --git a/lib/table/rte_table_hash_cuckoo.h b/lib/table/rte_table_hash_cuckoo.h
+deleted file mode 100644
+index 55aa12216aa7b8f38f7b04fabc40da0e57a0c284..0000000000000000000000000000000000000000
+--- a/lib/table/rte_table_hash_cuckoo.h
++++ /dev/null
+@@ -1,57 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2018 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_TABLE_HASH_CUCKOO_H__
+-#define __INCLUDE_RTE_TABLE_HASH_CUCKOO_H__
+-
+-/**
+- * @file
+- * RTE Table Hash Cuckoo
+- */
+-
+-#include <stdint.h>
+-
+-#include <rte_hash.h>
+-
+-#include "rte_table.h"
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-/** Hash table parameters */
+-struct rte_table_hash_cuckoo_params {
+-	/** Name */
+-	const char *name;
+-
+-	/** Key size (number of bytes) */
+-	uint32_t key_size;
+-
+-	/** Byte offset within packet meta-data where the key is located */
+-	uint32_t key_offset;
+-
+-	/** Key mask */
+-	uint8_t *key_mask;
+-
+-	/** Number of keys */
+-	uint32_t n_keys;
+-
+-	/** Number of buckets */
+-	uint32_t n_buckets;
+-
+-	/** Hash function */
+-	rte_hash_function f_hash;
+-
+-	/** Seed value for the hash function */
+-	uint32_t seed;
+-};
+-
+-/** Cuckoo hash table operations */
+-extern struct rte_table_ops rte_table_hash_cuckoo_ops;
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif
+diff --git a/lib/table/rte_table_hash_ext.c b/lib/table/rte_table_hash_ext.c
+deleted file mode 100644
+index 86e8eeb4c82053841f653e78b31760af0fb64e34..0000000000000000000000000000000000000000
+--- a/lib/table/rte_table_hash_ext.c
++++ /dev/null
+@@ -1,1011 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2017 Intel Corporation
+- */
+-
+-#include <stdalign.h>
+-#include <stdio.h>
+-#include <string.h>
+-
+-#include <eal_export.h>
+-#include <rte_common.h>
+-#include <rte_malloc.h>
+-#include <rte_log.h>
+-
+-#include "rte_table_hash.h"
+-
+-#include "table_log.h"
+-
+-#define KEYS_PER_BUCKET	4
+-
+-struct bucket {
+-	union {
+-		uintptr_t next;
+-		uint64_t lru_list;
+-	};
+-	uint16_t sig[KEYS_PER_BUCKET];
+-	uint32_t key_pos[KEYS_PER_BUCKET];
+-};
+-
+-#define BUCKET_NEXT(bucket)						\
+-	((void *) ((bucket)->next & (~1LU)))
+-
+-#define BUCKET_NEXT_VALID(bucket)					\
+-	((bucket)->next & 1LU)
+-
+-#define BUCKET_NEXT_SET(bucket, bucket_next)				\
+-do									\
+-	(bucket)->next = (((uintptr_t) ((void *) (bucket_next))) | 1LU);\
+-while (0)
+-
+-#define BUCKET_NEXT_SET_NULL(bucket)					\
+-do									\
+-	(bucket)->next = 0;						\
+-while (0)
+-
+-#define BUCKET_NEXT_COPY(bucket, bucket2)				\
+-do									\
+-	(bucket)->next = (bucket2)->next;				\
+-while (0)
+-
+-#ifdef RTE_TABLE_STATS_COLLECT
+-
+-#define RTE_TABLE_HASH_EXT_STATS_PKTS_IN_ADD(table, val) \
+-	table->stats.n_pkts_in += val
+-#define RTE_TABLE_HASH_EXT_STATS_PKTS_LOOKUP_MISS(table, val) \
+-	table->stats.n_pkts_lookup_miss += val
+-
+-#else
+-
+-#define RTE_TABLE_HASH_EXT_STATS_PKTS_IN_ADD(table, val)
+-#define RTE_TABLE_HASH_EXT_STATS_PKTS_LOOKUP_MISS(table, val)
+-
+-#endif
+-
+-struct grinder {
+-	struct bucket *bkt;
+-	uint64_t sig;
+-	uint64_t match;
+-	uint32_t key_index;
+-};
+-
+-struct rte_table_hash {
+-	struct rte_table_stats stats;
+-
+-	/* Input parameters */
+-	uint32_t key_size;
+-	uint32_t entry_size;
+-	uint32_t n_keys;
+-	uint32_t n_buckets;
+-	uint32_t n_buckets_ext;
+-	rte_table_hash_op_hash f_hash;
+-	uint64_t seed;
+-	uint32_t key_offset;
+-
+-	/* Internal */
+-	uint64_t bucket_mask;
+-	uint32_t key_size_shl;
+-	uint32_t data_size_shl;
+-	uint32_t key_stack_tos;
+-	uint32_t bkt_ext_stack_tos;
+-
+-	/* Grinder */
+-	struct grinder grinders[RTE_PORT_IN_BURST_SIZE_MAX];
+-
+-	/* Tables */
+-	uint64_t *key_mask;
+-	struct bucket *buckets;
+-	struct bucket *buckets_ext;
+-	uint8_t *key_mem;
+-	uint8_t *data_mem;
+-	uint32_t *key_stack;
+-	uint32_t *bkt_ext_stack;
+-
+-	/* Table memory */
+-	alignas(RTE_CACHE_LINE_SIZE) uint8_t memory[];
+-};
+-
+-static int
+-keycmp(void *a, void *b, void *b_mask, uint32_t n_bytes)
+-{
+-	uint64_t *a64 = a, *b64 = b, *b_mask64 = b_mask;
+-	uint32_t i;
+-
+-	for (i = 0; i < n_bytes / sizeof(uint64_t); i++)
+-		if (a64[i] != (b64[i] & b_mask64[i]))
+-			return 1;
+-
+-	return 0;
+-}
+-
+-static void
+-keycpy(void *dst, void *src, void *src_mask, uint32_t n_bytes)
+-{
+-	uint64_t *dst64 = dst, *src64 = src, *src_mask64 = src_mask;
+-	uint32_t i;
+-
+-	for (i = 0; i < n_bytes / sizeof(uint64_t); i++)
+-		dst64[i] = src64[i] & src_mask64[i];
+-}
+-
+-static int
+-check_params_create(struct rte_table_hash_params *params)
+-{
+-	/* name */
+-	if (params->name == NULL) {
+-		TABLE_LOG(ERR, "%s: name invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* key_size */
+-	if ((params->key_size < sizeof(uint64_t)) ||
+-		(!rte_is_power_of_2(params->key_size))) {
+-		TABLE_LOG(ERR, "%s: key_size invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* n_keys */
+-	if (params->n_keys == 0) {
+-		TABLE_LOG(ERR, "%s: n_keys invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* n_buckets */
+-	if ((params->n_buckets == 0) ||
+-		(!rte_is_power_of_2(params->n_buckets))) {
+-		TABLE_LOG(ERR, "%s: n_buckets invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* f_hash */
+-	if (params->f_hash == NULL) {
+-		TABLE_LOG(ERR, "%s: f_hash invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	return 0;
+-}
+-
+-static void *
+-rte_table_hash_ext_create(void *params, int socket_id, uint32_t entry_size)
+-{
+-	struct rte_table_hash_params *p = params;
+-	struct rte_table_hash *t;
+-	uint64_t table_meta_sz, key_mask_sz, bucket_sz, bucket_ext_sz, key_sz;
+-	uint64_t key_stack_sz, bkt_ext_stack_sz, data_sz, total_size;
+-	uint64_t key_mask_offset, bucket_offset, bucket_ext_offset, key_offset;
+-	uint64_t key_stack_offset, bkt_ext_stack_offset, data_offset;
+-	uint32_t n_buckets_ext, i;
+-
+-	/* Check input parameters */
+-	if ((check_params_create(p) != 0) ||
+-		(!rte_is_power_of_2(entry_size)) ||
+-		((sizeof(struct rte_table_hash) % RTE_CACHE_LINE_SIZE) != 0) ||
+-		(sizeof(struct bucket) != (RTE_CACHE_LINE_SIZE / 2)))
+-		return NULL;
+-
+-	/*
+-	 * Table dimensioning
+-	 *
+-	 * Objective: Pick the number of bucket extensions (n_buckets_ext) so that
+-	 * it is guaranteed that n_keys keys can be stored in the table at any time.
+-	 *
+-	 * The worst case scenario takes place when all the n_keys keys fall into
+-	 * the same bucket. Actually, due to the KEYS_PER_BUCKET scheme, the worst
+-	 * case takes place when (n_keys - KEYS_PER_BUCKET + 1) keys fall into the
+-	 * same bucket, while the remaining (KEYS_PER_BUCKET - 1) keys each fall
+-	 * into a different bucket. This case defeats the purpose of the hash table.
+-	 * It indicates unsuitable f_hash or n_keys to n_buckets ratio.
+-	 *
+-	 * n_buckets_ext = n_keys / KEYS_PER_BUCKET + KEYS_PER_BUCKET - 1
+-	 */
+-	n_buckets_ext = p->n_keys / KEYS_PER_BUCKET + KEYS_PER_BUCKET - 1;
+-
+-	/* Memory allocation */
+-	table_meta_sz = RTE_CACHE_LINE_ROUNDUP(sizeof(struct rte_table_hash));
+-	key_mask_sz = RTE_CACHE_LINE_ROUNDUP(p->key_size);
+-	bucket_sz = RTE_CACHE_LINE_ROUNDUP(p->n_buckets * sizeof(struct bucket));
+-	bucket_ext_sz =
+-		RTE_CACHE_LINE_ROUNDUP(n_buckets_ext * sizeof(struct bucket));
+-	key_sz = RTE_CACHE_LINE_ROUNDUP(p->n_keys * p->key_size);
+-	key_stack_sz = RTE_CACHE_LINE_ROUNDUP(p->n_keys * sizeof(uint32_t));
+-	bkt_ext_stack_sz =
+-		RTE_CACHE_LINE_ROUNDUP(n_buckets_ext * sizeof(uint32_t));
+-	data_sz = RTE_CACHE_LINE_ROUNDUP(p->n_keys * entry_size);
+-	total_size = table_meta_sz + key_mask_sz + bucket_sz + bucket_ext_sz +
+-		key_sz + key_stack_sz + bkt_ext_stack_sz + data_sz;
+-
+-	if (total_size > SIZE_MAX) {
+-		TABLE_LOG(ERR, "%s: Cannot allocate %" PRIu64 " bytes"
+-			" for hash table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-
+-	t = rte_zmalloc_socket(p->name,
+-		(size_t)total_size,
+-		RTE_CACHE_LINE_SIZE,
+-		socket_id);
+-	if (t == NULL) {
+-		TABLE_LOG(ERR, "%s: Cannot allocate %" PRIu64 " bytes"
+-			" for hash table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-	TABLE_LOG(INFO, "%s (%u-byte key): Hash table %s memory "
+-		"footprint is %" PRIu64 " bytes",
+-		__func__, p->key_size, p->name, total_size);
+-
+-	/* Memory initialization */
+-	t->key_size = p->key_size;
+-	t->entry_size = entry_size;
+-	t->n_keys = p->n_keys;
+-	t->n_buckets = p->n_buckets;
+-	t->n_buckets_ext = n_buckets_ext;
+-	t->f_hash = p->f_hash;
+-	t->seed = p->seed;
+-	t->key_offset = p->key_offset;
+-
+-	/* Internal */
+-	t->bucket_mask = t->n_buckets - 1;
+-	t->key_size_shl = rte_ctz32(p->key_size);
+-	t->data_size_shl = rte_ctz32(entry_size);
+-
+-	/* Tables */
+-	key_mask_offset = 0;
+-	bucket_offset = key_mask_offset + key_mask_sz;
+-	bucket_ext_offset = bucket_offset + bucket_sz;
+-	key_offset = bucket_ext_offset + bucket_ext_sz;
+-	key_stack_offset = key_offset + key_sz;
+-	bkt_ext_stack_offset = key_stack_offset + key_stack_sz;
+-	data_offset = bkt_ext_stack_offset + bkt_ext_stack_sz;
+-
+-	t->key_mask = (uint64_t *) &t->memory[key_mask_offset];
+-	t->buckets = (struct bucket *) &t->memory[bucket_offset];
+-	t->buckets_ext = (struct bucket *) &t->memory[bucket_ext_offset];
+-	t->key_mem = &t->memory[key_offset];
+-	t->key_stack = (uint32_t *) &t->memory[key_stack_offset];
+-	t->bkt_ext_stack = (uint32_t *) &t->memory[bkt_ext_stack_offset];
+-	t->data_mem = &t->memory[data_offset];
+-
+-	/* Key mask */
+-	if (p->key_mask == NULL)
+-		memset(t->key_mask, 0xFF, p->key_size);
+-	else
+-		memcpy(t->key_mask, p->key_mask, p->key_size);
+-
+-	/* Key stack */
+-	for (i = 0; i < t->n_keys; i++)
+-		t->key_stack[i] = t->n_keys - 1 - i;
+-	t->key_stack_tos = t->n_keys;
+-
+-	/* Bucket ext stack */
+-	for (i = 0; i < t->n_buckets_ext; i++)
+-		t->bkt_ext_stack[i] = t->n_buckets_ext - 1 - i;
+-	t->bkt_ext_stack_tos = t->n_buckets_ext;
+-
+-	return t;
+-}
+-
+-static int
+-rte_table_hash_ext_free(void *table)
+-{
+-	struct rte_table_hash *t = table;
+-
+-	/* Check input parameters */
+-	if (t == NULL)
+-		return -EINVAL;
+-
+-	rte_free(t);
+-	return 0;
+-}
+-
+-static int
+-rte_table_hash_ext_entry_add(void *table, void *key, void *entry,
+-	int *key_found, void **entry_ptr)
+-{
+-	struct rte_table_hash *t = table;
+-	struct bucket *bkt0, *bkt, *bkt_prev;
+-	uint64_t sig;
+-	uint32_t bkt_index, i;
+-
+-	sig = t->f_hash(key, t->key_mask, t->key_size, t->seed);
+-	bkt_index = sig & t->bucket_mask;
+-	bkt0 = &t->buckets[bkt_index];
+-	sig = (sig >> 16) | 1LLU;
+-
+-	/* Key is present in the bucket */
+-	for (bkt = bkt0; bkt != NULL; bkt = BUCKET_NEXT(bkt))
+-		for (i = 0; i < KEYS_PER_BUCKET; i++) {
+-			uint64_t bkt_sig = (uint64_t) bkt->sig[i];
+-			uint32_t bkt_key_index = bkt->key_pos[i];
+-			uint8_t *bkt_key =
+-				&t->key_mem[bkt_key_index << t->key_size_shl];
+-
+-			if ((sig == bkt_sig) && (keycmp(bkt_key, key, t->key_mask,
+-				t->key_size) == 0)) {
+-				uint8_t *data = &t->data_mem[bkt_key_index <<
+-					t->data_size_shl];
+-
+-				memcpy(data, entry, t->entry_size);
+-				*key_found = 1;
+-				*entry_ptr = (void *) data;
+-				return 0;
+-			}
+-		}
+-
+-	/* Key is not present in the bucket */
+-	for (bkt_prev = NULL, bkt = bkt0; bkt != NULL; bkt_prev = bkt,
+-		bkt = BUCKET_NEXT(bkt))
+-		for (i = 0; i < KEYS_PER_BUCKET; i++) {
+-			uint64_t bkt_sig = (uint64_t) bkt->sig[i];
+-
+-			if (bkt_sig == 0) {
+-				uint32_t bkt_key_index;
+-				uint8_t *bkt_key, *data;
+-
+-				/* Allocate new key */
+-				if (t->key_stack_tos == 0) /* No free keys */
+-					return -ENOSPC;
+-
+-				bkt_key_index = t->key_stack[
+-					--t->key_stack_tos];
+-
+-				/* Install new key */
+-				bkt_key = &t->key_mem[bkt_key_index <<
+-					t->key_size_shl];
+-				data = &t->data_mem[bkt_key_index <<
+-					t->data_size_shl];
+-
+-				bkt->sig[i] = (uint16_t) sig;
+-				bkt->key_pos[i] = bkt_key_index;
+-				keycpy(bkt_key, key, t->key_mask, t->key_size);
+-				memcpy(data, entry, t->entry_size);
+-
+-				*key_found = 0;
+-				*entry_ptr = (void *) data;
+-				return 0;
+-			}
+-		}
+-
+-	/* Bucket full: extend bucket */
+-	if ((t->bkt_ext_stack_tos > 0) && (t->key_stack_tos > 0)) {
+-		uint32_t bkt_key_index;
+-		uint8_t *bkt_key, *data;
+-
+-		/* Allocate new bucket ext */
+-		bkt_index = t->bkt_ext_stack[--t->bkt_ext_stack_tos];
+-		bkt = &t->buckets_ext[bkt_index];
+-
+-		/* Chain the new bucket ext */
+-		BUCKET_NEXT_SET(bkt_prev, bkt);
+-		BUCKET_NEXT_SET_NULL(bkt);
+-
+-		/* Allocate new key */
+-		bkt_key_index = t->key_stack[--t->key_stack_tos];
+-		bkt_key = &t->key_mem[bkt_key_index << t->key_size_shl];
+-
+-		data = &t->data_mem[bkt_key_index << t->data_size_shl];
+-
+-		/* Install new key into bucket */
+-		bkt->sig[0] = (uint16_t) sig;
+-		bkt->key_pos[0] = bkt_key_index;
+-		keycpy(bkt_key, key, t->key_mask, t->key_size);
+-		memcpy(data, entry, t->entry_size);
+-
+-		*key_found = 0;
+-		*entry_ptr = (void *) data;
+-		return 0;
+-	}
+-
+-	return -ENOSPC;
+-}
+-
+-static int
+-rte_table_hash_ext_entry_delete(void *table, void *key, int *key_found,
+-void *entry)
+-{
+-	struct rte_table_hash *t = table;
+-	struct bucket *bkt0, *bkt, *bkt_prev;
+-	uint64_t sig;
+-	uint32_t bkt_index, i;
+-
+-	sig = t->f_hash(key, t->key_mask, t->key_size, t->seed);
+-	bkt_index = sig & t->bucket_mask;
+-	bkt0 = &t->buckets[bkt_index];
+-	sig = (sig >> 16) | 1LLU;
+-
+-	/* Key is present in the bucket */
+-	for (bkt_prev = NULL, bkt = bkt0; bkt != NULL; bkt_prev = bkt,
+-		bkt = BUCKET_NEXT(bkt))
+-		for (i = 0; i < KEYS_PER_BUCKET; i++) {
+-			uint64_t bkt_sig = (uint64_t) bkt->sig[i];
+-			uint32_t bkt_key_index = bkt->key_pos[i];
+-			uint8_t *bkt_key = &t->key_mem[bkt_key_index <<
+-				t->key_size_shl];
+-
+-			if ((sig == bkt_sig) && (keycmp(bkt_key, key, t->key_mask,
+-				t->key_size) == 0)) {
+-				uint8_t *data = &t->data_mem[bkt_key_index <<
+-					t->data_size_shl];
+-
+-				/* Uninstall key from bucket */
+-				bkt->sig[i] = 0;
+-				*key_found = 1;
+-				if (entry)
+-					memcpy(entry, data, t->entry_size);
+-
+-				/* Free key */
+-				t->key_stack[t->key_stack_tos++] =
+-					bkt_key_index;
+-
+-				/*Check if bucket is unused */
+-				if ((bkt_prev != NULL) &&
+-				    (bkt->sig[0] == 0) && (bkt->sig[1] == 0) &&
+-				    (bkt->sig[2] == 0) && (bkt->sig[3] == 0)) {
+-					/* Unchain bucket */
+-					BUCKET_NEXT_COPY(bkt_prev, bkt);
+-
+-					/* Clear bucket */
+-					memset(bkt, 0, sizeof(struct bucket));
+-
+-					/* Free bucket back to buckets ext */
+-					bkt_index = bkt - t->buckets_ext;
+-					t->bkt_ext_stack[t->bkt_ext_stack_tos++]
+-						= bkt_index;
+-				}
+-
+-				return 0;
+-			}
+-		}
+-
+-	/* Key is not present in the bucket */
+-	*key_found = 0;
+-	return 0;
+-}
+-
+-static int rte_table_hash_ext_lookup_unoptimized(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_hash *t = (struct rte_table_hash *) table;
+-	uint64_t pkts_mask_out = 0;
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-
+-	for ( ; pkts_mask; ) {
+-		struct bucket *bkt0, *bkt;
+-		struct rte_mbuf *pkt;
+-		uint8_t *key;
+-		uint64_t pkt_mask, sig;
+-		uint32_t pkt_index, bkt_index, i;
+-
+-		pkt_index = rte_ctz64(pkts_mask);
+-		pkt_mask = 1LLU << pkt_index;
+-		pkts_mask &= ~pkt_mask;
+-
+-		pkt = pkts[pkt_index];
+-		key = RTE_MBUF_METADATA_UINT8_PTR(pkt, t->key_offset);
+-		sig = (uint64_t) t->f_hash(key, t->key_mask, t->key_size, t->seed);
+-
+-		bkt_index = sig & t->bucket_mask;
+-		bkt0 = &t->buckets[bkt_index];
+-		sig = (sig >> 16) | 1LLU;
+-
+-		/* Key is present in the bucket */
+-		for (bkt = bkt0; bkt != NULL; bkt = BUCKET_NEXT(bkt))
+-			for (i = 0; i < KEYS_PER_BUCKET; i++) {
+-				uint64_t bkt_sig = (uint64_t) bkt->sig[i];
+-				uint32_t bkt_key_index = bkt->key_pos[i];
+-				uint8_t *bkt_key = &t->key_mem[bkt_key_index <<
+-					t->key_size_shl];
+-
+-				if ((sig == bkt_sig) && (keycmp(bkt_key, key,
+-					t->key_mask, t->key_size) == 0)) {
+-					uint8_t *data = &t->data_mem[
+-					bkt_key_index << t->data_size_shl];
+-
+-					pkts_mask_out |= pkt_mask;
+-					entries[pkt_index] = (void *) data;
+-					break;
+-				}
+-			}
+-	}
+-
+-	*lookup_hit_mask = pkts_mask_out;
+-	return 0;
+-}
+-
+-/*
+- * mask = match bitmask
+- * match = at least one match
+- * match_many = more than one match
+- * match_pos = position of first match
+- *
+- *----------------------------------------
+- * mask		 match	 match_many	  match_pos
+- *----------------------------------------
+- * 0000		 0		 0			  00
+- * 0001		 1		 0			  00
+- * 0010		 1		 0			  01
+- * 0011		 1		 1			  00
+- *----------------------------------------
+- * 0100		 1		 0			  10
+- * 0101		 1		 1			  00
+- * 0110		 1		 1			  01
+- * 0111		 1		 1			  00
+- *----------------------------------------
+- * 1000		 1		 0			  11
+- * 1001		 1		 1			  00
+- * 1010		 1		 1			  01
+- * 1011		 1		 1			  00
+- *----------------------------------------
+- * 1100		 1		 1			  10
+- * 1101		 1		 1			  00
+- * 1110		 1		 1			  01
+- * 1111		 1		 1			  00
+- *----------------------------------------
+- *
+- * match = 1111_1111_1111_1110
+- * match_many = 1111_1110_1110_1000
+- * match_pos = 0001_0010_0001_0011__0001_0010_0001_0000
+- *
+- * match = 0xFFFELLU
+- * match_many = 0xFEE8LLU
+- * match_pos = 0x12131210LLU
+- */
+-
+-#define LUT_MATCH						0xFFFELLU
+-#define LUT_MATCH_MANY						0xFEE8LLU
+-#define LUT_MATCH_POS						0x12131210LLU
+-
+-#define lookup_cmp_sig(mbuf_sig, bucket, match, match_many, match_pos)	\
+-{									\
+-	uint64_t bucket_sig[4], mask[4], mask_all;			\
+-									\
+-	bucket_sig[0] = bucket->sig[0];					\
+-	bucket_sig[1] = bucket->sig[1];					\
+-	bucket_sig[2] = bucket->sig[2];					\
+-	bucket_sig[3] = bucket->sig[3];					\
+-									\
+-	bucket_sig[0] ^= mbuf_sig;					\
+-	bucket_sig[1] ^= mbuf_sig;					\
+-	bucket_sig[2] ^= mbuf_sig;					\
+-	bucket_sig[3] ^= mbuf_sig;					\
+-									\
+-	mask[0] = 0;							\
+-	mask[1] = 0;							\
+-	mask[2] = 0;							\
+-	mask[3] = 0;							\
+-									\
+-	if (bucket_sig[0] == 0)						\
+-		mask[0] = 1;						\
+-	if (bucket_sig[1] == 0)						\
+-		mask[1] = 2;						\
+-	if (bucket_sig[2] == 0)						\
+-		mask[2] = 4;						\
+-	if (bucket_sig[3] == 0)						\
+-		mask[3] = 8;						\
+-									\
+-	mask_all = (mask[0] | mask[1]) | (mask[2] | mask[3]);		\
+-									\
+-	match = (LUT_MATCH >> mask_all) & 1;				\
+-	match_many = (LUT_MATCH_MANY >> mask_all) & 1;			\
+-	match_pos = (LUT_MATCH_POS >> (mask_all << 1)) & 3;		\
+-}
+-
+-#define lookup_cmp_key(mbuf, key, match_key, f)				\
+-{									\
+-	uint64_t *pkt_key = RTE_MBUF_METADATA_UINT64_PTR(mbuf, f->key_offset);\
+-	uint64_t *bkt_key = (uint64_t *) key;				\
+-	uint64_t *key_mask = f->key_mask;					\
+-									\
+-	switch (f->key_size) {						\
+-	case 8:								\
+-	{								\
+-		uint64_t xor = (pkt_key[0] & key_mask[0]) ^ bkt_key[0];	\
+-		match_key = 0;						\
+-		if (xor == 0)						\
+-			match_key = 1;					\
+-	}								\
+-	break;								\
+-									\
+-	case 16:							\
+-	{								\
+-		uint64_t xor[2], or;					\
+-									\
+-		xor[0] = (pkt_key[0] & key_mask[0]) ^ bkt_key[0];		\
+-		xor[1] = (pkt_key[1] & key_mask[1]) ^ bkt_key[1];		\
+-		or = xor[0] | xor[1];					\
+-		match_key = 0;						\
+-		if (or == 0)						\
+-			match_key = 1;					\
+-	}								\
+-	break;								\
+-									\
+-	case 32:							\
+-	{								\
+-		uint64_t xor[4], or;					\
+-									\
+-		xor[0] = (pkt_key[0] & key_mask[0]) ^ bkt_key[0];		\
+-		xor[1] = (pkt_key[1] & key_mask[1]) ^ bkt_key[1];		\
+-		xor[2] = (pkt_key[2] & key_mask[2]) ^ bkt_key[2];		\
+-		xor[3] = (pkt_key[3] & key_mask[3]) ^ bkt_key[3];		\
+-		or = xor[0] | xor[1] | xor[2] | xor[3];			\
+-		match_key = 0;						\
+-		if (or == 0)						\
+-			match_key = 1;					\
+-	}								\
+-	break;								\
+-									\
+-	case 64:							\
+-	{								\
+-		uint64_t xor[8], or;					\
+-									\
+-		xor[0] = (pkt_key[0] & key_mask[0]) ^ bkt_key[0];		\
+-		xor[1] = (pkt_key[1] & key_mask[1]) ^ bkt_key[1];		\
+-		xor[2] = (pkt_key[2] & key_mask[2]) ^ bkt_key[2];		\
+-		xor[3] = (pkt_key[3] & key_mask[3]) ^ bkt_key[3];		\
+-		xor[4] = (pkt_key[4] & key_mask[4]) ^ bkt_key[4];		\
+-		xor[5] = (pkt_key[5] & key_mask[5]) ^ bkt_key[5];		\
+-		xor[6] = (pkt_key[6] & key_mask[6]) ^ bkt_key[6];		\
+-		xor[7] = (pkt_key[7] & key_mask[7]) ^ bkt_key[7];		\
+-		or = xor[0] | xor[1] | xor[2] | xor[3] |		\
+-			xor[4] | xor[5] | xor[6] | xor[7];		\
+-		match_key = 0;						\
+-		if (or == 0)						\
+-			match_key = 1;					\
+-	}								\
+-	break;								\
+-									\
+-	default:							\
+-		match_key = 0;						\
+-		if (keycmp(bkt_key, pkt_key, key_mask, f->key_size) == 0)	\
+-			match_key = 1;					\
+-	}								\
+-}
+-
+-#define lookup2_stage0(t, g, pkts, pkts_mask, pkt00_index, pkt01_index)	\
+-{									\
+-	uint64_t pkt00_mask, pkt01_mask;				\
+-	struct rte_mbuf *mbuf00, *mbuf01;				\
+-	uint32_t key_offset = t->key_offset;			\
+-									\
+-	pkt00_index = rte_ctz64(pkts_mask);			\
+-	pkt00_mask = 1LLU << pkt00_index;				\
+-	pkts_mask &= ~pkt00_mask;					\
+-	mbuf00 = pkts[pkt00_index];					\
+-									\
+-	pkt01_index = rte_ctz64(pkts_mask);			\
+-	pkt01_mask = 1LLU << pkt01_index;				\
+-	pkts_mask &= ~pkt01_mask;					\
+-	mbuf01 = pkts[pkt01_index];					\
+-									\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf00, key_offset));\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf01, key_offset));\
+-}
+-
+-#define lookup2_stage0_with_odd_support(t, g, pkts, pkts_mask, pkt00_index, \
+-	pkt01_index)							\
+-{									\
+-	uint64_t pkt00_mask, pkt01_mask;				\
+-	struct rte_mbuf *mbuf00, *mbuf01;				\
+-	uint32_t key_offset = t->key_offset;			\
+-									\
+-	pkt00_index = rte_ctz64(pkts_mask);			\
+-	pkt00_mask = 1LLU << pkt00_index;				\
+-	pkts_mask &= ~pkt00_mask;					\
+-	mbuf00 = pkts[pkt00_index];					\
+-									\
+-	pkt01_index = rte_ctz64(pkts_mask);			\
+-	if (pkts_mask == 0)						\
+-		pkt01_index = pkt00_index;				\
+-	pkt01_mask = 1LLU << pkt01_index;				\
+-	pkts_mask &= ~pkt01_mask;					\
+-	mbuf01 = pkts[pkt01_index];					\
+-									\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf00, key_offset));\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf01, key_offset));\
+-}
+-
+-#define lookup2_stage1(t, g, pkts, pkt10_index, pkt11_index)	\
+-{									\
+-	struct grinder *g10, *g11;					\
+-	uint64_t sig10, sig11, bkt10_index, bkt11_index;		\
+-	struct rte_mbuf *mbuf10, *mbuf11;				\
+-	struct bucket *bkt10, *bkt11, *buckets = t->buckets;		\
+-	uint8_t *key10, *key11;						\
+-	uint64_t bucket_mask = t->bucket_mask;				\
+-	rte_table_hash_op_hash f_hash = t->f_hash;			\
+-	uint64_t seed = t->seed;					\
+-	uint32_t key_size = t->key_size;				\
+-	uint32_t key_offset = t->key_offset;				\
+-									\
+-	mbuf10 = pkts[pkt10_index];					\
+-	key10 = RTE_MBUF_METADATA_UINT8_PTR(mbuf10, key_offset);	\
+-	sig10 = (uint64_t) f_hash(key10, t->key_mask, key_size, seed);	\
+-	bkt10_index = sig10 & bucket_mask;				\
+-	bkt10 = &buckets[bkt10_index];					\
+-									\
+-	mbuf11 = pkts[pkt11_index];					\
+-	key11 = RTE_MBUF_METADATA_UINT8_PTR(mbuf11, key_offset);	\
+-	sig11 = (uint64_t) f_hash(key11, t->key_mask, key_size, seed);	\
+-	bkt11_index = sig11 & bucket_mask;				\
+-	bkt11 = &buckets[bkt11_index];					\
+-									\
+-	rte_prefetch0(bkt10);						\
+-	rte_prefetch0(bkt11);						\
+-									\
+-	g10 = &g[pkt10_index];						\
+-	g10->sig = sig10;						\
+-	g10->bkt = bkt10;						\
+-									\
+-	g11 = &g[pkt11_index];						\
+-	g11->sig = sig11;						\
+-	g11->bkt = bkt11;						\
+-}
+-
+-#define lookup2_stage2(t, g, pkt20_index, pkt21_index, pkts_mask_match_many)\
+-{									\
+-	struct grinder *g20, *g21;					\
+-	uint64_t sig20, sig21;						\
+-	struct bucket *bkt20, *bkt21;					\
+-	uint8_t *key20, *key21, *key_mem = t->key_mem;			\
+-	uint64_t match20, match21, match_many20, match_many21;		\
+-	uint64_t match_pos20, match_pos21;				\
+-	uint32_t key20_index, key21_index, key_size_shl = t->key_size_shl;\
+-									\
+-	g20 = &g[pkt20_index];						\
+-	sig20 = g20->sig;						\
+-	bkt20 = g20->bkt;						\
+-	sig20 = (sig20 >> 16) | 1LLU;					\
+-	lookup_cmp_sig(sig20, bkt20, match20, match_many20, match_pos20);\
+-	match20 <<= pkt20_index;					\
+-	match_many20 |= BUCKET_NEXT_VALID(bkt20);			\
+-	match_many20 <<= pkt20_index;					\
+-	key20_index = bkt20->key_pos[match_pos20];			\
+-	key20 = &key_mem[key20_index << key_size_shl];			\
+-									\
+-	g21 = &g[pkt21_index];						\
+-	sig21 = g21->sig;						\
+-	bkt21 = g21->bkt;						\
+-	sig21 = (sig21 >> 16) | 1LLU;					\
+-	lookup_cmp_sig(sig21, bkt21, match21, match_many21, match_pos21);\
+-	match21 <<= pkt21_index;					\
+-	match_many21 |= BUCKET_NEXT_VALID(bkt21);			\
+-	match_many21 <<= pkt21_index;					\
+-	key21_index = bkt21->key_pos[match_pos21];			\
+-	key21 = &key_mem[key21_index << key_size_shl];			\
+-									\
+-	rte_prefetch0(key20);						\
+-	rte_prefetch0(key21);						\
+-									\
+-	pkts_mask_match_many |= match_many20 | match_many21;		\
+-									\
+-	g20->match = match20;						\
+-	g20->key_index = key20_index;					\
+-									\
+-	g21->match = match21;						\
+-	g21->key_index = key21_index;					\
+-}
+-
+-#define lookup2_stage3(t, g, pkts, pkt30_index, pkt31_index, pkts_mask_out, \
+-	entries)							\
+-{									\
+-	struct grinder *g30, *g31;					\
+-	struct rte_mbuf *mbuf30, *mbuf31;				\
+-	uint8_t *key30, *key31, *key_mem = t->key_mem;			\
+-	uint8_t *data30, *data31, *data_mem = t->data_mem;		\
+-	uint64_t match30, match31, match_key30, match_key31, match_keys;\
+-	uint32_t key30_index, key31_index;				\
+-	uint32_t key_size_shl = t->key_size_shl;			\
+-	uint32_t data_size_shl = t->data_size_shl;			\
+-									\
+-	mbuf30 = pkts[pkt30_index];					\
+-	g30 = &g[pkt30_index];						\
+-	match30 = g30->match;						\
+-	key30_index = g30->key_index;					\
+-	key30 = &key_mem[key30_index << key_size_shl];			\
+-	lookup_cmp_key(mbuf30, key30, match_key30, t);			\
+-	match_key30 <<= pkt30_index;					\
+-	match_key30 &= match30;						\
+-	data30 = &data_mem[key30_index << data_size_shl];		\
+-	entries[pkt30_index] = data30;					\
+-									\
+-	mbuf31 = pkts[pkt31_index];					\
+-	g31 = &g[pkt31_index];						\
+-	match31 = g31->match;						\
+-	key31_index = g31->key_index;					\
+-	key31 = &key_mem[key31_index << key_size_shl];			\
+-	lookup_cmp_key(mbuf31, key31, match_key31, t);			\
+-	match_key31 <<= pkt31_index;					\
+-	match_key31 &= match31;						\
+-	data31 = &data_mem[key31_index << data_size_shl];		\
+-	entries[pkt31_index] = data31;					\
+-									\
+-	rte_prefetch0(data30);						\
+-	rte_prefetch0(data31);						\
+-									\
+-	match_keys = match_key30 | match_key31;				\
+-	pkts_mask_out |= match_keys;					\
+-}
+-
+-/*
+- * The lookup function implements a 4-stage pipeline, with each stage processing
+- * two different packets. The purpose of pipelined implementation is to hide the
+- * latency of prefetching the data structures and loosen the data dependency
+- * between instructions.
+- *
+- *  p00  _______   p10  _______   p20  _______   p30  _______
+- *----->|       |----->|       |----->|       |----->|       |----->
+- *      |   0   |      |   1   |      |   2   |      |   3   |
+- *----->|_______|----->|_______|----->|_______|----->|_______|----->
+- *  p01            p11            p21            p31
+- *
+- * The naming convention is:
+- *    pXY = packet Y of stage X, X = 0 .. 3, Y = 0 .. 1
+- */
+-static int rte_table_hash_ext_lookup(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_hash *t = (struct rte_table_hash *) table;
+-	struct grinder *g = t->grinders;
+-	uint64_t pkt00_index, pkt01_index, pkt10_index, pkt11_index;
+-	uint64_t pkt20_index, pkt21_index, pkt30_index, pkt31_index;
+-	uint64_t pkts_mask_out = 0, pkts_mask_match_many = 0;
+-	int status = 0;
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-	RTE_TABLE_HASH_EXT_STATS_PKTS_IN_ADD(t, n_pkts_in);
+-
+-	/* Cannot run the pipeline with less than 7 packets */
+-	if (rte_popcount64(pkts_mask) < 7) {
+-		status = rte_table_hash_ext_lookup_unoptimized(table, pkts,
+-			pkts_mask, lookup_hit_mask, entries);
+-		RTE_TABLE_HASH_EXT_STATS_PKTS_LOOKUP_MISS(t, n_pkts_in -
+-				rte_popcount64(*lookup_hit_mask));
+-		return status;
+-	}
+-
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(t, g, pkts, pkts_mask, pkt00_index, pkt01_index);
+-
+-	/* Pipeline feed */
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(t, g, pkts, pkts_mask, pkt00_index, pkt01_index);
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(t, g, pkts, pkt10_index, pkt11_index);
+-
+-	/* Pipeline feed */
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(t, g, pkts, pkts_mask, pkt00_index, pkt01_index);
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(t, g, pkts, pkt10_index, pkt11_index);
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2(t, g, pkt20_index, pkt21_index, pkts_mask_match_many);
+-
+-	/*
+-	* Pipeline run
+-	*
+-	*/
+-	for ( ; pkts_mask; ) {
+-		/* Pipeline feed */
+-		pkt30_index = pkt20_index;
+-		pkt31_index = pkt21_index;
+-		pkt20_index = pkt10_index;
+-		pkt21_index = pkt11_index;
+-		pkt10_index = pkt00_index;
+-		pkt11_index = pkt01_index;
+-
+-		/* Pipeline stage 0 */
+-		lookup2_stage0_with_odd_support(t, g, pkts, pkts_mask,
+-			pkt00_index, pkt01_index);
+-
+-		/* Pipeline stage 1 */
+-		lookup2_stage1(t, g, pkts, pkt10_index, pkt11_index);
+-
+-		/* Pipeline stage 2 */
+-		lookup2_stage2(t, g, pkt20_index, pkt21_index,
+-			pkts_mask_match_many);
+-
+-		/* Pipeline stage 3 */
+-		lookup2_stage3(t, g, pkts, pkt30_index, pkt31_index,
+-			pkts_mask_out, entries);
+-	}
+-
+-	/* Pipeline feed */
+-	pkt30_index = pkt20_index;
+-	pkt31_index = pkt21_index;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(t, g, pkts, pkt10_index, pkt11_index);
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2(t, g, pkt20_index, pkt21_index, pkts_mask_match_many);
+-
+-	/* Pipeline stage 3 */
+-	lookup2_stage3(t, g, pkts, pkt30_index, pkt31_index, pkts_mask_out,
+-		entries);
+-
+-	/* Pipeline feed */
+-	pkt30_index = pkt20_index;
+-	pkt31_index = pkt21_index;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2(t, g, pkt20_index, pkt21_index, pkts_mask_match_many);
+-
+-	/* Pipeline stage 3 */
+-	lookup2_stage3(t, g, pkts, pkt30_index, pkt31_index, pkts_mask_out,
+-		entries);
+-
+-	/* Pipeline feed */
+-	pkt30_index = pkt20_index;
+-	pkt31_index = pkt21_index;
+-
+-	/* Pipeline stage 3 */
+-	lookup2_stage3(t, g, pkts, pkt30_index, pkt31_index, pkts_mask_out,
+-		entries);
+-
+-	/* Slow path */
+-	pkts_mask_match_many &= ~pkts_mask_out;
+-	if (pkts_mask_match_many) {
+-		uint64_t pkts_mask_out_slow = 0;
+-
+-		status = rte_table_hash_ext_lookup_unoptimized(table, pkts,
+-			pkts_mask_match_many, &pkts_mask_out_slow, entries);
+-		pkts_mask_out |= pkts_mask_out_slow;
+-	}
+-
+-	*lookup_hit_mask = pkts_mask_out;
+-	RTE_TABLE_HASH_EXT_STATS_PKTS_LOOKUP_MISS(t, n_pkts_in - rte_popcount64(pkts_mask_out));
+-	return status;
+-}
+-
+-static int
+-rte_table_hash_ext_stats_read(void *table, struct rte_table_stats *stats, int clear)
+-{
+-	struct rte_table_hash *t = table;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &t->stats, sizeof(t->stats));
+-
+-	if (clear)
+-		memset(&t->stats, 0, sizeof(t->stats));
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_table_hash_ext_ops)
+-struct rte_table_ops rte_table_hash_ext_ops	 = {
+-	.f_create = rte_table_hash_ext_create,
+-	.f_free = rte_table_hash_ext_free,
+-	.f_add = rte_table_hash_ext_entry_add,
+-	.f_delete = rte_table_hash_ext_entry_delete,
+-	.f_add_bulk = NULL,
+-	.f_delete_bulk = NULL,
+-	.f_lookup = rte_table_hash_ext_lookup,
+-	.f_stats = rte_table_hash_ext_stats_read,
+-};
+diff --git a/lib/table/rte_table_hash_func.h b/lib/table/rte_table_hash_func.h
+deleted file mode 100644
+index ca56e6c8850e4cf6cb920699becfef8dee98102a..0000000000000000000000000000000000000000
+--- a/lib/table/rte_table_hash_func.h
++++ /dev/null
+@@ -1,263 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2018 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_TABLE_HASH_FUNC_H__
+-#define __INCLUDE_RTE_TABLE_HASH_FUNC_H__
+-
+-#include <stdint.h>
+-
+-#include <rte_compat.h>
+-#include <rte_common.h>
+-
+-#if defined(RTE_ARCH_X86_64)
+-
+-#include <x86intrin.h>
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-static inline uint64_t
+-rte_crc32_u64(uint64_t crc, uint64_t v)
+-{
+-	return _mm_crc32_u64(crc, v);
+-}
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#elif defined(RTE_ARCH_ARM64) && defined(__ARM_FEATURE_CRC32)
+-#include "rte_table_hash_func_arm64.h"
+-#else
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-static inline uint64_t
+-rte_crc32_u64(uint64_t crc, uint64_t v)
+-{
+-	int i;
+-
+-	crc = (crc & 0xFFFFFFFFLLU) ^ v;
+-	for (i = 63; i >= 0; i--) {
+-		uint64_t mask;
+-
+-		mask = -(crc & 1LLU);
+-		crc = (crc >> 1LLU) ^ (0x82F63B78LLU & mask);
+-	}
+-
+-	return crc;
+-}
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-__rte_experimental
+-static inline uint64_t
+-rte_table_hash_crc_key8(void *key, void *mask, __rte_unused uint32_t key_size,
+-	uint64_t seed)
+-{
+-	uint64_t *k = (uint64_t *)key;
+-	uint64_t *m = (uint64_t *)mask;
+-	uint64_t crc0;
+-
+-	crc0 = rte_crc32_u64(seed, k[0] & m[0]);
+-
+-	return crc0;
+-}
+-
+-__rte_experimental
+-static inline uint64_t
+-rte_table_hash_crc_key16(void *key, void *mask, __rte_unused uint32_t key_size,
+-	uint64_t seed)
+-{
+-	uint64_t *k = (uint64_t *)key;
+-	uint64_t *m = (uint64_t *)mask;
+-	uint64_t k0, crc0, crc1;
+-
+-	k0 = k[0] & m[0];
+-
+-	crc0 = rte_crc32_u64(k0, seed);
+-	crc1 = rte_crc32_u64(k0 >> 32, k[1] & m[1]);
+-
+-	crc0 ^= crc1;
+-
+-	return crc0;
+-}
+-
+-__rte_experimental
+-static inline uint64_t
+-rte_table_hash_crc_key24(void *key, void *mask, __rte_unused uint32_t key_size,
+-	uint64_t seed)
+-{
+-	uint64_t *k = (uint64_t *)key;
+-	uint64_t *m = (uint64_t *)mask;
+-	uint64_t k0, k2, crc0, crc1;
+-
+-	k0 = k[0] & m[0];
+-	k2 = k[2] & m[2];
+-
+-	crc0 = rte_crc32_u64(k0, seed);
+-	crc1 = rte_crc32_u64(k0 >> 32, k[1] & m[1]);
+-
+-	crc0 = rte_crc32_u64(crc0, k2);
+-
+-	crc0 ^= crc1;
+-
+-	return crc0;
+-}
+-
+-__rte_experimental
+-static inline uint64_t
+-rte_table_hash_crc_key32(void *key, void *mask, __rte_unused uint32_t key_size,
+-	uint64_t seed)
+-{
+-	uint64_t *k = (uint64_t *)key;
+-	uint64_t *m = (uint64_t *)mask;
+-	uint64_t k0, k2, crc0, crc1, crc2, crc3;
+-
+-	k0 = k[0] & m[0];
+-	k2 = k[2] & m[2];
+-
+-	crc0 = rte_crc32_u64(k0, seed);
+-	crc1 = rte_crc32_u64(k0 >> 32, k[1] & m[1]);
+-
+-	crc2 = rte_crc32_u64(k2, k[3] & m[3]);
+-	crc3 = k2 >> 32;
+-
+-	crc0 = rte_crc32_u64(crc0, crc1);
+-	crc1 = rte_crc32_u64(crc2, crc3);
+-
+-	crc0 ^= crc1;
+-
+-	return crc0;
+-}
+-
+-__rte_experimental
+-static inline uint64_t
+-rte_table_hash_crc_key40(void *key, void *mask, __rte_unused uint32_t key_size,
+-	uint64_t seed)
+-{
+-	uint64_t *k = (uint64_t *)key;
+-	uint64_t *m = (uint64_t *)mask;
+-	uint64_t k0, k2, crc0, crc1, crc2, crc3;
+-
+-	k0 = k[0] & m[0];
+-	k2 = k[2] & m[2];
+-
+-	crc0 = rte_crc32_u64(k0, seed);
+-	crc1 = rte_crc32_u64(k0 >> 32, k[1] & m[1]);
+-
+-	crc2 = rte_crc32_u64(k2, k[3] & m[3]);
+-	crc3 = rte_crc32_u64(k2 >> 32, k[4] & m[4]);
+-
+-	crc0 = rte_crc32_u64(crc0, crc1);
+-	crc1 = rte_crc32_u64(crc2, crc3);
+-
+-	crc0 ^= crc1;
+-
+-	return crc0;
+-}
+-
+-__rte_experimental
+-static inline uint64_t
+-rte_table_hash_crc_key48(void *key, void *mask, __rte_unused uint32_t key_size,
+-	uint64_t seed)
+-{
+-	uint64_t *k = (uint64_t *)key;
+-	uint64_t *m = (uint64_t *)mask;
+-	uint64_t k0, k2, k5, crc0, crc1, crc2, crc3;
+-
+-	k0 = k[0] & m[0];
+-	k2 = k[2] & m[2];
+-	k5 = k[5] & m[5];
+-
+-	crc0 = rte_crc32_u64(k0, seed);
+-	crc1 = rte_crc32_u64(k0 >> 32, k[1] & m[1]);
+-
+-	crc2 = rte_crc32_u64(k2, k[3] & m[3]);
+-	crc3 = rte_crc32_u64(k2 >> 32, k[4] & m[4]);
+-
+-	crc0 = rte_crc32_u64(crc0, (crc1 << 32) ^ crc2);
+-	crc1 = rte_crc32_u64(crc3, k5);
+-
+-	crc0 ^= crc1;
+-
+-	return crc0;
+-}
+-
+-__rte_experimental
+-static inline uint64_t
+-rte_table_hash_crc_key56(void *key, void *mask, __rte_unused uint32_t key_size,
+-	uint64_t seed)
+-{
+-	uint64_t *k = (uint64_t *)key;
+-	uint64_t *m = (uint64_t *)mask;
+-	uint64_t k0, k2, k5, crc0, crc1, crc2, crc3, crc4, crc5;
+-
+-	k0 = k[0] & m[0];
+-	k2 = k[2] & m[2];
+-	k5 = k[5] & m[5];
+-
+-	crc0 = rte_crc32_u64(k0, seed);
+-	crc1 = rte_crc32_u64(k0 >> 32, k[1] & m[1]);
+-
+-	crc2 = rte_crc32_u64(k2, k[3] & m[3]);
+-	crc3 = rte_crc32_u64(k2 >> 32, k[4] & m[4]);
+-
+-	crc4 = rte_crc32_u64(k5, k[6] & m[6]);
+-	crc5 = k5 >> 32;
+-
+-	crc0 = rte_crc32_u64(crc0, (crc1 << 32) ^ crc2);
+-	crc1 = rte_crc32_u64(crc3, (crc4 << 32) ^ crc5);
+-
+-	crc0 ^= crc1;
+-
+-	return crc0;
+-}
+-
+-__rte_experimental
+-static inline uint64_t
+-rte_table_hash_crc_key64(void *key, void *mask, __rte_unused uint32_t key_size,
+-	uint64_t seed)
+-{
+-	uint64_t *k = (uint64_t *)key;
+-	uint64_t *m = (uint64_t *)mask;
+-	uint64_t k0, k2, k5, crc0, crc1, crc2, crc3, crc4, crc5;
+-
+-	k0 = k[0] & m[0];
+-	k2 = k[2] & m[2];
+-	k5 = k[5] & m[5];
+-
+-	crc0 = rte_crc32_u64(k0, seed);
+-	crc1 = rte_crc32_u64(k0 >> 32, k[1] & m[1]);
+-
+-	crc2 = rte_crc32_u64(k2, k[3] & m[3]);
+-	crc3 = rte_crc32_u64(k2 >> 32, k[4] & m[4]);
+-
+-	crc4 = rte_crc32_u64(k5, k[6] & m[6]);
+-	crc5 = rte_crc32_u64(k5 >> 32, k[7] & m[7]);
+-
+-	crc0 = rte_crc32_u64(crc0, (crc1 << 32) ^ crc2);
+-	crc1 = rte_crc32_u64(crc3, (crc4 << 32) ^ crc5);
+-
+-	crc0 ^= crc1;
+-
+-	return crc0;
+-}
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif
+diff --git a/lib/table/rte_table_hash_func_arm64.h b/lib/table/rte_table_hash_func_arm64.h
+deleted file mode 100644
+index eb04c1ff54f7e930ef8b6e9028a51d5a4ecce6f6..0000000000000000000000000000000000000000
+--- a/lib/table/rte_table_hash_func_arm64.h
++++ /dev/null
+@@ -1,21 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2017-2018 Linaro Limited
+- */
+-
+-#ifndef __INCLUDE_RTE_TABLE_HASH_FUNC_ARM64_H__
+-#define __INCLUDE_RTE_TABLE_HASH_FUNC_ARM64_H__
+-
+-#define _CRC32CX(crc, val)	\
+-	__asm__("crc32cx %w[c], %w[c], %x[v]":[c] "+r" (crc):[v] "r" (val))
+-
+-static inline uint64_t
+-rte_crc32_u64(uint64_t crc, uint64_t v)
+-{
+-	uint32_t crc32 = crc;
+-
+-	_CRC32CX(crc32, v);
+-
+-	return crc32;
+-}
+-
+-#endif
+diff --git a/lib/table/rte_table_hash_key16.c b/lib/table/rte_table_hash_key16.c
+deleted file mode 100644
+index 5b69106dd7e68fd519b0e9a420dcf8d4715d85b4..0000000000000000000000000000000000000000
+--- a/lib/table/rte_table_hash_key16.c
++++ /dev/null
+@@ -1,1190 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2017 Intel Corporation
+- */
+-
+-#include <stdalign.h>
+-#include <stdio.h>
+-#include <string.h>
+-
+-#include <eal_export.h>
+-#include <rte_common.h>
+-#include <rte_malloc.h>
+-#include <rte_log.h>
+-
+-#include "rte_table_hash.h"
+-#include "rte_lru.h"
+-
+-#include "table_log.h"
+-
+-#define KEY_SIZE						16
+-
+-#define KEYS_PER_BUCKET					4
+-
+-#define RTE_BUCKET_ENTRY_VALID						0x1LLU
+-
+-#ifdef RTE_TABLE_STATS_COLLECT
+-
+-#define RTE_TABLE_HASH_KEY16_STATS_PKTS_IN_ADD(table, val) \
+-	table->stats.n_pkts_in += val
+-#define RTE_TABLE_HASH_KEY16_STATS_PKTS_LOOKUP_MISS(table, val) \
+-	table->stats.n_pkts_lookup_miss += val
+-
+-#else
+-
+-#define RTE_TABLE_HASH_KEY16_STATS_PKTS_IN_ADD(table, val)
+-#define RTE_TABLE_HASH_KEY16_STATS_PKTS_LOOKUP_MISS(table, val)
+-
+-#endif
+-
+-#ifdef RTE_ARCH_64
+-struct rte_bucket_4_16 {
+-	/* Cache line 0 */
+-	uint64_t signature[4 + 1];
+-	uint64_t lru_list;
+-	struct rte_bucket_4_16 *next;
+-	uint64_t next_valid;
+-
+-	/* Cache line 1 */
+-	uint64_t key[4][2];
+-
+-	/* Cache line 2 */
+-	uint8_t data[];
+-};
+-#else
+-struct rte_bucket_4_16 {
+-	/* Cache line 0 */
+-	uint64_t signature[4 + 1];
+-	uint64_t lru_list;
+-	struct rte_bucket_4_16 *next;
+-	uint32_t pad;
+-	uint64_t next_valid;
+-
+-	/* Cache line 1 */
+-	uint64_t key[4][2];
+-
+-	/* Cache line 2 */
+-	uint8_t data[];
+-};
+-#endif
+-
+-struct rte_table_hash {
+-	struct rte_table_stats stats;
+-
+-	/* Input parameters */
+-	uint32_t n_buckets;
+-	uint32_t key_size;
+-	uint32_t entry_size;
+-	uint32_t bucket_size;
+-	uint32_t key_offset;
+-	uint64_t key_mask[2];
+-	rte_table_hash_op_hash f_hash;
+-	uint64_t seed;
+-
+-	/* Extendible buckets */
+-	uint32_t n_buckets_ext;
+-	uint32_t stack_pos;
+-	uint32_t *stack;
+-
+-	/* Lookup table */
+-	alignas(RTE_CACHE_LINE_SIZE) uint8_t memory[];
+-};
+-
+-static int
+-keycmp(void *a, void *b, void *b_mask)
+-{
+-	uint64_t *a64 = a, *b64 = b, *b_mask64 = b_mask;
+-
+-	return (a64[0] != (b64[0] & b_mask64[0])) ||
+-		(a64[1] != (b64[1] & b_mask64[1]));
+-}
+-
+-static void
+-keycpy(void *dst, void *src, void *src_mask)
+-{
+-	uint64_t *dst64 = dst, *src64 = src, *src_mask64 = src_mask;
+-
+-	dst64[0] = src64[0] & src_mask64[0];
+-	dst64[1] = src64[1] & src_mask64[1];
+-}
+-
+-static int
+-check_params_create(struct rte_table_hash_params *params)
+-{
+-	/* name */
+-	if (params->name == NULL) {
+-		TABLE_LOG(ERR, "%s: name invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* key_size */
+-	if (params->key_size != KEY_SIZE) {
+-		TABLE_LOG(ERR, "%s: key_size invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* n_keys */
+-	if (params->n_keys == 0) {
+-		TABLE_LOG(ERR, "%s: n_keys is zero", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* n_buckets */
+-	if ((params->n_buckets == 0) ||
+-		(!rte_is_power_of_2(params->n_buckets))) {
+-		TABLE_LOG(ERR, "%s: n_buckets invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* f_hash */
+-	if (params->f_hash == NULL) {
+-		TABLE_LOG(ERR, "%s: f_hash function pointer is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	return 0;
+-}
+-
+-static void *
+-rte_table_hash_create_key16_lru(void *params,
+-		int socket_id,
+-		uint32_t entry_size)
+-{
+-	struct rte_table_hash_params *p = params;
+-	struct rte_table_hash *f;
+-	uint64_t bucket_size, total_size;
+-	uint32_t n_buckets, i;
+-
+-	/* Check input parameters */
+-	if ((check_params_create(p) != 0) ||
+-		((sizeof(struct rte_table_hash) % RTE_CACHE_LINE_SIZE) != 0) ||
+-		((sizeof(struct rte_bucket_4_16) % 64) != 0))
+-		return NULL;
+-
+-	/*
+-	 * Table dimensioning
+-	 *
+-	 * Objective: Pick the number of buckets (n_buckets) so that there a chance
+-	 * to store n_keys keys in the table.
+-	 *
+-	 * Note: Since the buckets do not get extended, it is not possible to
+-	 * guarantee that n_keys keys can be stored in the table at any time. In the
+-	 * worst case scenario when all the n_keys fall into the same bucket, only
+-	 * a maximum of KEYS_PER_BUCKET keys will be stored in the table. This case
+-	 * defeats the purpose of the hash table. It indicates unsuitable f_hash or
+-	 * n_keys to n_buckets ratio.
+-	 *
+-	 * MIN(n_buckets) = (n_keys + KEYS_PER_BUCKET - 1) / KEYS_PER_BUCKET
+-	 */
+-	n_buckets = rte_align32pow2(
+-		(p->n_keys + KEYS_PER_BUCKET - 1) / KEYS_PER_BUCKET);
+-	n_buckets = RTE_MAX(n_buckets, p->n_buckets);
+-
+-	/* Memory allocation */
+-	bucket_size = RTE_CACHE_LINE_ROUNDUP(sizeof(struct rte_bucket_4_16) +
+-		KEYS_PER_BUCKET * entry_size);
+-	total_size = sizeof(struct rte_table_hash) + n_buckets * bucket_size;
+-
+-	if (total_size > SIZE_MAX) {
+-		TABLE_LOG(ERR, "%s: Cannot allocate %" PRIu64 " bytes "
+-		"for hash table %s",
+-		__func__, total_size, p->name);
+-		return NULL;
+-	}
+-
+-	f = rte_zmalloc_socket(p->name,
+-		(size_t)total_size,
+-		RTE_CACHE_LINE_SIZE,
+-		socket_id);
+-	if (f == NULL) {
+-		TABLE_LOG(ERR, "%s: Cannot allocate %" PRIu64 " bytes "
+-		"for hash table %s",
+-		__func__, total_size, p->name);
+-		return NULL;
+-	}
+-	TABLE_LOG(INFO, "%s: Hash table %s memory footprint "
+-		"is %" PRIu64 " bytes",
+-		__func__, p->name, total_size);
+-
+-	/* Memory initialization */
+-	f->n_buckets = n_buckets;
+-	f->key_size = KEY_SIZE;
+-	f->entry_size = entry_size;
+-	f->bucket_size = bucket_size;
+-	f->key_offset = p->key_offset;
+-	f->f_hash = p->f_hash;
+-	f->seed = p->seed;
+-
+-	if (p->key_mask != NULL) {
+-		f->key_mask[0] = ((uint64_t *)p->key_mask)[0];
+-		f->key_mask[1] = ((uint64_t *)p->key_mask)[1];
+-	} else {
+-		f->key_mask[0] = 0xFFFFFFFFFFFFFFFFLLU;
+-		f->key_mask[1] = 0xFFFFFFFFFFFFFFFFLLU;
+-	}
+-
+-	for (i = 0; i < n_buckets; i++) {
+-		struct rte_bucket_4_16 *bucket;
+-
+-		bucket = (struct rte_bucket_4_16 *) &f->memory[i *
+-			f->bucket_size];
+-		lru_init(bucket);
+-	}
+-
+-	return f;
+-}
+-
+-static int
+-rte_table_hash_free_key16_lru(void *table)
+-{
+-	struct rte_table_hash *f = table;
+-
+-	/* Check input parameters */
+-	if (f == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	rte_free(f);
+-	return 0;
+-}
+-
+-static int
+-rte_table_hash_entry_add_key16_lru(
+-	void *table,
+-	void *key,
+-	void *entry,
+-	int *key_found,
+-	void **entry_ptr)
+-{
+-	struct rte_table_hash *f = table;
+-	struct rte_bucket_4_16 *bucket;
+-	uint64_t signature, pos;
+-	uint32_t bucket_index, i;
+-
+-	signature = f->f_hash(key, f->key_mask, f->key_size, f->seed);
+-	bucket_index = signature & (f->n_buckets - 1);
+-	bucket = (struct rte_bucket_4_16 *)
+-		&f->memory[bucket_index * f->bucket_size];
+-	signature |= RTE_BUCKET_ENTRY_VALID;
+-
+-	/* Key is present in the bucket */
+-	for (i = 0; i < 4; i++) {
+-		uint64_t bucket_signature = bucket->signature[i];
+-		uint8_t *bucket_key = (uint8_t *) &bucket->key[i];
+-
+-		if ((bucket_signature == signature) &&
+-			(keycmp(bucket_key, key, f->key_mask) == 0)) {
+-			uint8_t *bucket_data = &bucket->data[i * f->entry_size];
+-
+-			memcpy(bucket_data, entry, f->entry_size);
+-			lru_update(bucket, i);
+-			*key_found = 1;
+-			*entry_ptr = (void *) bucket_data;
+-			return 0;
+-		}
+-	}
+-
+-	/* Key is not present in the bucket */
+-	for (i = 0; i < 4; i++) {
+-		uint64_t bucket_signature = bucket->signature[i];
+-		uint8_t *bucket_key = (uint8_t *) &bucket->key[i];
+-
+-		if (bucket_signature == 0) {
+-			uint8_t *bucket_data = &bucket->data[i * f->entry_size];
+-
+-			bucket->signature[i] = signature;
+-			keycpy(bucket_key, key, f->key_mask);
+-			memcpy(bucket_data, entry, f->entry_size);
+-			lru_update(bucket, i);
+-			*key_found = 0;
+-			*entry_ptr = (void *) bucket_data;
+-
+-			return 0;
+-		}
+-	}
+-
+-	/* Bucket full: replace LRU entry */
+-	pos = lru_pos(bucket);
+-	bucket->signature[pos] = signature;
+-	keycpy(&bucket->key[pos], key, f->key_mask);
+-	memcpy(&bucket->data[pos * f->entry_size], entry, f->entry_size);
+-	lru_update(bucket, pos);
+-	*key_found = 0;
+-	*entry_ptr = (void *) &bucket->data[pos * f->entry_size];
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_hash_entry_delete_key16_lru(
+-	void *table,
+-	void *key,
+-	int *key_found,
+-	void *entry)
+-{
+-	struct rte_table_hash *f = table;
+-	struct rte_bucket_4_16 *bucket;
+-	uint64_t signature;
+-	uint32_t bucket_index, i;
+-
+-	signature = f->f_hash(key, f->key_mask, f->key_size, f->seed);
+-	bucket_index = signature & (f->n_buckets - 1);
+-	bucket = (struct rte_bucket_4_16 *)
+-		&f->memory[bucket_index * f->bucket_size];
+-	signature |= RTE_BUCKET_ENTRY_VALID;
+-
+-	/* Key is present in the bucket */
+-	for (i = 0; i < 4; i++) {
+-		uint64_t bucket_signature = bucket->signature[i];
+-		uint8_t *bucket_key = (uint8_t *) &bucket->key[i];
+-
+-		if ((bucket_signature == signature) &&
+-			(keycmp(bucket_key, key, f->key_mask) == 0)) {
+-			uint8_t *bucket_data = &bucket->data[i * f->entry_size];
+-
+-			bucket->signature[i] = 0;
+-			*key_found = 1;
+-			if (entry)
+-				memcpy(entry, bucket_data, f->entry_size);
+-			return 0;
+-		}
+-	}
+-
+-	/* Key is not present in the bucket */
+-	*key_found = 0;
+-	return 0;
+-}
+-
+-static void *
+-rte_table_hash_create_key16_ext(void *params,
+-		int socket_id,
+-		uint32_t entry_size)
+-{
+-	struct rte_table_hash_params *p = params;
+-	struct rte_table_hash *f;
+-	uint64_t bucket_size, stack_size, total_size;
+-	uint32_t n_buckets_ext, i;
+-
+-	/* Check input parameters */
+-	if ((check_params_create(p) != 0) ||
+-		((sizeof(struct rte_table_hash) % RTE_CACHE_LINE_SIZE) != 0) ||
+-		((sizeof(struct rte_bucket_4_16) % 64) != 0))
+-		return NULL;
+-
+-	/*
+-	 * Table dimensioning
+-	 *
+-	 * Objective: Pick the number of bucket extensions (n_buckets_ext) so that
+-	 * it is guaranteed that n_keys keys can be stored in the table at any time.
+-	 *
+-	 * The worst case scenario takes place when all the n_keys keys fall into
+-	 * the same bucket. Actually, due to the KEYS_PER_BUCKET scheme, the worst
+-	 * case takes place when (n_keys - KEYS_PER_BUCKET + 1) keys fall into the
+-	 * same bucket, while the remaining (KEYS_PER_BUCKET - 1) keys each fall
+-	 * into a different bucket. This case defeats the purpose of the hash table.
+-	 * It indicates unsuitable f_hash or n_keys to n_buckets ratio.
+-	 *
+-	 * n_buckets_ext = n_keys / KEYS_PER_BUCKET + KEYS_PER_BUCKET - 1
+-	 */
+-	n_buckets_ext = p->n_keys / KEYS_PER_BUCKET + KEYS_PER_BUCKET - 1;
+-
+-	/* Memory allocation */
+-	bucket_size = RTE_CACHE_LINE_ROUNDUP(sizeof(struct rte_bucket_4_16) +
+-		KEYS_PER_BUCKET * entry_size);
+-	stack_size = RTE_CACHE_LINE_ROUNDUP(n_buckets_ext * sizeof(uint32_t));
+-	total_size = sizeof(struct rte_table_hash) +
+-		(p->n_buckets + n_buckets_ext) * bucket_size + stack_size;
+-	if (total_size > SIZE_MAX) {
+-		TABLE_LOG(ERR, "%s: Cannot allocate %" PRIu64 " bytes "
+-			"for hash table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-
+-	f = rte_zmalloc_socket(p->name,
+-		(size_t)total_size,
+-		RTE_CACHE_LINE_SIZE,
+-		socket_id);
+-	if (f == NULL) {
+-		TABLE_LOG(ERR, "%s: Cannot allocate %" PRIu64 " bytes "
+-			"for hash table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-	TABLE_LOG(INFO, "%s: Hash table %s memory footprint "
+-		"is %" PRIu64 " bytes",
+-		__func__, p->name, total_size);
+-
+-	/* Memory initialization */
+-	f->n_buckets = p->n_buckets;
+-	f->key_size = KEY_SIZE;
+-	f->entry_size = entry_size;
+-	f->bucket_size = bucket_size;
+-	f->key_offset = p->key_offset;
+-	f->f_hash = p->f_hash;
+-	f->seed = p->seed;
+-
+-	f->n_buckets_ext = n_buckets_ext;
+-	f->stack_pos = n_buckets_ext;
+-	f->stack = (uint32_t *)
+-		&f->memory[(p->n_buckets + n_buckets_ext) * f->bucket_size];
+-
+-	if (p->key_mask != NULL) {
+-		f->key_mask[0] = (((uint64_t *)p->key_mask)[0]);
+-		f->key_mask[1] = (((uint64_t *)p->key_mask)[1]);
+-	} else {
+-		f->key_mask[0] = 0xFFFFFFFFFFFFFFFFLLU;
+-		f->key_mask[1] = 0xFFFFFFFFFFFFFFFFLLU;
+-	}
+-
+-	for (i = 0; i < n_buckets_ext; i++)
+-		f->stack[i] = i;
+-
+-	return f;
+-}
+-
+-static int
+-rte_table_hash_free_key16_ext(void *table)
+-{
+-	struct rte_table_hash *f = table;
+-
+-	/* Check input parameters */
+-	if (f == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	rte_free(f);
+-	return 0;
+-}
+-
+-static int
+-rte_table_hash_entry_add_key16_ext(
+-	void *table,
+-	void *key,
+-	void *entry,
+-	int *key_found,
+-	void **entry_ptr)
+-{
+-	struct rte_table_hash *f = table;
+-	struct rte_bucket_4_16 *bucket0, *bucket, *bucket_prev;
+-	uint64_t signature;
+-	uint32_t bucket_index, i;
+-
+-	signature = f->f_hash(key, f->key_mask, f->key_size, f->seed);
+-	bucket_index = signature & (f->n_buckets - 1);
+-	bucket0 = (struct rte_bucket_4_16 *)
+-		&f->memory[bucket_index * f->bucket_size];
+-	signature |= RTE_BUCKET_ENTRY_VALID;
+-
+-	/* Key is present in the bucket */
+-	for (bucket = bucket0; bucket != NULL; bucket = bucket->next)
+-		for (i = 0; i < 4; i++) {
+-			uint64_t bucket_signature = bucket->signature[i];
+-			uint8_t *bucket_key = (uint8_t *) &bucket->key[i];
+-
+-			if ((bucket_signature == signature) &&
+-				(keycmp(bucket_key, key, f->key_mask) == 0)) {
+-				uint8_t *bucket_data = &bucket->data[i *
+-					f->entry_size];
+-
+-				memcpy(bucket_data, entry, f->entry_size);
+-				*key_found = 1;
+-				*entry_ptr = (void *) bucket_data;
+-				return 0;
+-			}
+-		}
+-
+-	/* Key is not present in the bucket */
+-	for (bucket_prev = NULL, bucket = bucket0; bucket != NULL;
+-		bucket_prev = bucket, bucket = bucket->next)
+-		for (i = 0; i < 4; i++) {
+-			uint64_t bucket_signature = bucket->signature[i];
+-			uint8_t *bucket_key = (uint8_t *) &bucket->key[i];
+-
+-			if (bucket_signature == 0) {
+-				uint8_t *bucket_data = &bucket->data[i *
+-					f->entry_size];
+-
+-				bucket->signature[i] = signature;
+-				keycpy(bucket_key, key, f->key_mask);
+-				memcpy(bucket_data, entry, f->entry_size);
+-				*key_found = 0;
+-				*entry_ptr = (void *) bucket_data;
+-
+-				return 0;
+-			}
+-		}
+-
+-	/* Bucket full: extend bucket */
+-	if (f->stack_pos > 0) {
+-		bucket_index = f->stack[--f->stack_pos];
+-
+-		bucket = (struct rte_bucket_4_16 *) &f->memory[(f->n_buckets +
+-			bucket_index) * f->bucket_size];
+-		bucket_prev->next = bucket;
+-		bucket_prev->next_valid = 1;
+-
+-		bucket->signature[0] = signature;
+-		keycpy(&bucket->key[0], key, f->key_mask);
+-		memcpy(&bucket->data[0], entry, f->entry_size);
+-		*key_found = 0;
+-		*entry_ptr = (void *) &bucket->data[0];
+-		return 0;
+-	}
+-
+-	return -ENOSPC;
+-}
+-
+-static int
+-rte_table_hash_entry_delete_key16_ext(
+-	void *table,
+-	void *key,
+-	int *key_found,
+-	void *entry)
+-{
+-	struct rte_table_hash *f = table;
+-	struct rte_bucket_4_16 *bucket0, *bucket, *bucket_prev;
+-	uint64_t signature;
+-	uint32_t bucket_index, i;
+-
+-	signature = f->f_hash(key, f->key_mask, f->key_size, f->seed);
+-	bucket_index = signature & (f->n_buckets - 1);
+-	bucket0 = (struct rte_bucket_4_16 *)
+-		&f->memory[bucket_index * f->bucket_size];
+-	signature |= RTE_BUCKET_ENTRY_VALID;
+-
+-	/* Key is present in the bucket */
+-	for (bucket_prev = NULL, bucket = bucket0; bucket != NULL;
+-		bucket_prev = bucket, bucket = bucket->next)
+-		for (i = 0; i < 4; i++) {
+-			uint64_t bucket_signature = bucket->signature[i];
+-			uint8_t *bucket_key = (uint8_t *) &bucket->key[i];
+-
+-			if ((bucket_signature == signature) &&
+-				(keycmp(bucket_key, key, f->key_mask) == 0)) {
+-				uint8_t *bucket_data = &bucket->data[i *
+-					f->entry_size];
+-
+-				bucket->signature[i] = 0;
+-				*key_found = 1;
+-				if (entry)
+-					memcpy(entry, bucket_data, f->entry_size);
+-
+-				if ((bucket->signature[0] == 0) &&
+-					(bucket->signature[1] == 0) &&
+-					(bucket->signature[2] == 0) &&
+-					(bucket->signature[3] == 0) &&
+-					(bucket_prev != NULL)) {
+-					bucket_prev->next = bucket->next;
+-					bucket_prev->next_valid =
+-						bucket->next_valid;
+-
+-					memset(bucket, 0,
+-						sizeof(struct rte_bucket_4_16));
+-					bucket_index = (((uint8_t *)bucket -
+-						(uint8_t *)f->memory)/f->bucket_size) - f->n_buckets;
+-					f->stack[f->stack_pos++] = bucket_index;
+-				}
+-
+-				return 0;
+-			}
+-		}
+-
+-	/* Key is not present in the bucket */
+-	*key_found = 0;
+-	return 0;
+-}
+-
+-#define lookup_key16_cmp(key_in, bucket, pos, f)			\
+-{								\
+-	uint64_t xor[4][2], or[4], signature[4], k[2];		\
+-								\
+-	k[0] = key_in[0] & f->key_mask[0];				\
+-	k[1] = key_in[1] & f->key_mask[1];				\
+-	signature[0] = (~bucket->signature[0]) & 1;		\
+-	signature[1] = (~bucket->signature[1]) & 1;		\
+-	signature[2] = (~bucket->signature[2]) & 1;		\
+-	signature[3] = (~bucket->signature[3]) & 1;		\
+-								\
+-	xor[0][0] = k[0] ^ bucket->key[0][0];			\
+-	xor[0][1] = k[1] ^ bucket->key[0][1];			\
+-								\
+-	xor[1][0] = k[0] ^ bucket->key[1][0];			\
+-	xor[1][1] = k[1] ^ bucket->key[1][1];			\
+-								\
+-	xor[2][0] = k[0] ^ bucket->key[2][0];			\
+-	xor[2][1] = k[1] ^ bucket->key[2][1];			\
+-								\
+-	xor[3][0] = k[0] ^ bucket->key[3][0];			\
+-	xor[3][1] = k[1] ^ bucket->key[3][1];			\
+-								\
+-	or[0] = xor[0][0] | xor[0][1] | signature[0];		\
+-	or[1] = xor[1][0] | xor[1][1] | signature[1];		\
+-	or[2] = xor[2][0] | xor[2][1] | signature[2];		\
+-	or[3] = xor[3][0] | xor[3][1] | signature[3];		\
+-								\
+-	pos = 4;						\
+-	if (or[0] == 0)						\
+-		pos = 0;					\
+-	if (or[1] == 0)						\
+-		pos = 1;					\
+-	if (or[2] == 0)						\
+-		pos = 2;					\
+-	if (or[3] == 0)						\
+-		pos = 3;					\
+-}
+-
+-#define lookup1_stage0(pkt0_index, mbuf0, pkts, pkts_mask, f)	\
+-{								\
+-	uint64_t pkt_mask;					\
+-	uint32_t key_offset = f->key_offset;\
+-								\
+-	pkt0_index = rte_ctz64(pkts_mask);		\
+-	pkt_mask = 1LLU << pkt0_index;				\
+-	pkts_mask &= ~pkt_mask;					\
+-								\
+-	mbuf0 = pkts[pkt0_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf0, key_offset));\
+-}
+-
+-#define lookup1_stage1(mbuf1, bucket1, f)			\
+-{								\
+-	uint64_t *key;						\
+-	uint64_t signature = 0;				\
+-	uint32_t bucket_index;				\
+-								\
+-	key = RTE_MBUF_METADATA_UINT64_PTR(mbuf1, f->key_offset);\
+-	signature = f->f_hash(key, f->key_mask, KEY_SIZE, f->seed);	\
+-								\
+-	bucket_index = signature & (f->n_buckets - 1);		\
+-	bucket1 = (struct rte_bucket_4_16 *)			\
+-		&f->memory[bucket_index * f->bucket_size];	\
+-	rte_prefetch0(bucket1);					\
+-	rte_prefetch0((void *)(((uintptr_t) bucket1) + RTE_CACHE_LINE_SIZE));\
+-}
+-
+-#define lookup1_stage2_lru(pkt2_index, mbuf2, bucket2,		\
+-		pkts_mask_out, entries, f)			\
+-{								\
+-	void *a;						\
+-	uint64_t pkt_mask;					\
+-	uint64_t *key;						\
+-	uint32_t pos;						\
+-								\
+-	key = RTE_MBUF_METADATA_UINT64_PTR(mbuf2, f->key_offset);\
+-	lookup_key16_cmp(key, bucket2, pos, f);			\
+-								\
+-	pkt_mask = (bucket2->signature[pos] & 1LLU) << pkt2_index;\
+-	pkts_mask_out |= pkt_mask;				\
+-								\
+-	a = (void *) &bucket2->data[pos * f->entry_size];	\
+-	rte_prefetch0(a);					\
+-	entries[pkt2_index] = a;				\
+-	lru_update(bucket2, pos);				\
+-}
+-
+-#define lookup1_stage2_ext(pkt2_index, mbuf2, bucket2, pkts_mask_out, entries, \
+-	buckets_mask, buckets, keys, f)				\
+-{								\
+-	struct rte_bucket_4_16 *bucket_next;			\
+-	void *a;						\
+-	uint64_t pkt_mask, bucket_mask;				\
+-	uint64_t *key;						\
+-	uint32_t pos;						\
+-								\
+-	key = RTE_MBUF_METADATA_UINT64_PTR(mbuf2, f->key_offset);\
+-	lookup_key16_cmp(key, bucket2, pos, f);			\
+-								\
+-	pkt_mask = (bucket2->signature[pos] & 1LLU) << pkt2_index;\
+-	pkts_mask_out |= pkt_mask;				\
+-								\
+-	a = (void *) &bucket2->data[pos * f->entry_size];	\
+-	rte_prefetch0(a);					\
+-	entries[pkt2_index] = a;				\
+-								\
+-	bucket_mask = (~pkt_mask) & (bucket2->next_valid << pkt2_index);\
+-	buckets_mask |= bucket_mask;				\
+-	bucket_next = bucket2->next;				\
+-	buckets[pkt2_index] = bucket_next;			\
+-	keys[pkt2_index] = key;					\
+-}
+-
+-#define lookup_grinder(pkt_index, buckets, keys, pkts_mask_out, entries,\
+-	buckets_mask, f)					\
+-{								\
+-	struct rte_bucket_4_16 *bucket, *bucket_next;		\
+-	void *a;						\
+-	uint64_t pkt_mask, bucket_mask;				\
+-	uint64_t *key;						\
+-	uint32_t pos;						\
+-								\
+-	bucket = buckets[pkt_index];				\
+-	key = keys[pkt_index];					\
+-	lookup_key16_cmp(key, bucket, pos, f);			\
+-								\
+-	pkt_mask = (bucket->signature[pos] & 1LLU) << pkt_index;\
+-	pkts_mask_out |= pkt_mask;				\
+-								\
+-	a = (void *) &bucket->data[pos * f->entry_size];	\
+-	rte_prefetch0(a);					\
+-	entries[pkt_index] = a;					\
+-								\
+-	bucket_mask = (~pkt_mask) & (bucket->next_valid << pkt_index);\
+-	buckets_mask |= bucket_mask;				\
+-	bucket_next = bucket->next;				\
+-	rte_prefetch0(bucket_next);				\
+-	rte_prefetch0((void *)(((uintptr_t) bucket_next) + RTE_CACHE_LINE_SIZE));\
+-	buckets[pkt_index] = bucket_next;			\
+-	keys[pkt_index] = key;					\
+-}
+-
+-#define lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01,\
+-		pkts, pkts_mask, f)				\
+-{								\
+-	uint64_t pkt00_mask, pkt01_mask;			\
+-	uint32_t key_offset = f->key_offset;		\
+-								\
+-	pkt00_index = rte_ctz64(pkts_mask);		\
+-	pkt00_mask = 1LLU << pkt00_index;			\
+-	pkts_mask &= ~pkt00_mask;				\
+-								\
+-	mbuf00 = pkts[pkt00_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf00, key_offset));\
+-								\
+-	pkt01_index = rte_ctz64(pkts_mask);		\
+-	pkt01_mask = 1LLU << pkt01_index;			\
+-	pkts_mask &= ~pkt01_mask;				\
+-								\
+-	mbuf01 = pkts[pkt01_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf01, key_offset));\
+-}
+-
+-#define lookup2_stage0_with_odd_support(pkt00_index, pkt01_index,\
+-		mbuf00, mbuf01, pkts, pkts_mask, f)		\
+-{								\
+-	uint64_t pkt00_mask, pkt01_mask;			\
+-	uint32_t key_offset = f->key_offset;		\
+-								\
+-	pkt00_index = rte_ctz64(pkts_mask);		\
+-	pkt00_mask = 1LLU << pkt00_index;			\
+-	pkts_mask &= ~pkt00_mask;				\
+-								\
+-	mbuf00 = pkts[pkt00_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf00, key_offset));	\
+-								\
+-	pkt01_index = rte_ctz64(pkts_mask);		\
+-	if (pkts_mask == 0)					\
+-		pkt01_index = pkt00_index;			\
+-	pkt01_mask = 1LLU << pkt01_index;			\
+-	pkts_mask &= ~pkt01_mask;				\
+-								\
+-	mbuf01 = pkts[pkt01_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf01, key_offset));	\
+-}
+-
+-#define lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f)	\
+-{								\
+-	uint64_t *key10, *key11;					\
+-	uint64_t signature10, signature11;			\
+-	uint32_t bucket10_index, bucket11_index;	\
+-								\
+-	key10 = RTE_MBUF_METADATA_UINT64_PTR(mbuf10, f->key_offset);\
+-	signature10 = f->f_hash(key10, f->key_mask,	 KEY_SIZE, f->seed);\
+-	bucket10_index = signature10 & (f->n_buckets - 1);	\
+-	bucket10 = (struct rte_bucket_4_16 *)				\
+-		&f->memory[bucket10_index * f->bucket_size];	\
+-	rte_prefetch0(bucket10);				\
+-	rte_prefetch0((void *)(((uintptr_t) bucket10) + RTE_CACHE_LINE_SIZE));\
+-								\
+-	key11 = RTE_MBUF_METADATA_UINT64_PTR(mbuf11, f->key_offset);\
+-	signature11 = f->f_hash(key11, f->key_mask,	 KEY_SIZE, f->seed);\
+-	bucket11_index = signature11 & (f->n_buckets - 1);	\
+-	bucket11 = (struct rte_bucket_4_16 *)			\
+-		&f->memory[bucket11_index * f->bucket_size];	\
+-	rte_prefetch0(bucket11);				\
+-	rte_prefetch0((void *)(((uintptr_t) bucket11) + RTE_CACHE_LINE_SIZE));\
+-}
+-
+-#define lookup2_stage2_lru(pkt20_index, pkt21_index, mbuf20, mbuf21,\
+-		bucket20, bucket21, pkts_mask_out, entries, f)	\
+-{								\
+-	void *a20, *a21;					\
+-	uint64_t pkt20_mask, pkt21_mask;			\
+-	uint64_t *key20, *key21;				\
+-	uint32_t pos20, pos21;					\
+-								\
+-	key20 = RTE_MBUF_METADATA_UINT64_PTR(mbuf20, f->key_offset);\
+-	key21 = RTE_MBUF_METADATA_UINT64_PTR(mbuf21, f->key_offset);\
+-								\
+-	lookup_key16_cmp(key20, bucket20, pos20, f);		\
+-	lookup_key16_cmp(key21, bucket21, pos21, f);		\
+-								\
+-	pkt20_mask = (bucket20->signature[pos20] & 1LLU) << pkt20_index;\
+-	pkt21_mask = (bucket21->signature[pos21] & 1LLU) << pkt21_index;\
+-	pkts_mask_out |= pkt20_mask | pkt21_mask;			\
+-								\
+-	a20 = (void *) &bucket20->data[pos20 * f->entry_size];	\
+-	a21 = (void *) &bucket21->data[pos21 * f->entry_size];	\
+-	rte_prefetch0(a20);					\
+-	rte_prefetch0(a21);					\
+-	entries[pkt20_index] = a20;				\
+-	entries[pkt21_index] = a21;				\
+-	lru_update(bucket20, pos20);				\
+-	lru_update(bucket21, pos21);				\
+-}
+-
+-#define lookup2_stage2_ext(pkt20_index, pkt21_index, mbuf20, mbuf21, bucket20, \
+-	bucket21, pkts_mask_out, entries, buckets_mask, buckets, keys, f) \
+-{								\
+-	struct rte_bucket_4_16 *bucket20_next, *bucket21_next;	\
+-	void *a20, *a21;					\
+-	uint64_t pkt20_mask, pkt21_mask, bucket20_mask, bucket21_mask;\
+-	uint64_t *key20, *key21;				\
+-	uint32_t pos20, pos21;					\
+-								\
+-	key20 = RTE_MBUF_METADATA_UINT64_PTR(mbuf20, f->key_offset);\
+-	key21 = RTE_MBUF_METADATA_UINT64_PTR(mbuf21, f->key_offset);\
+-								\
+-	lookup_key16_cmp(key20, bucket20, pos20, f);	\
+-	lookup_key16_cmp(key21, bucket21, pos21, f);	\
+-								\
+-	pkt20_mask = (bucket20->signature[pos20] & 1LLU) << pkt20_index;\
+-	pkt21_mask = (bucket21->signature[pos21] & 1LLU) << pkt21_index;\
+-	pkts_mask_out |= pkt20_mask | pkt21_mask;		\
+-								\
+-	a20 = (void *) &bucket20->data[pos20 * f->entry_size];	\
+-	a21 = (void *) &bucket21->data[pos21 * f->entry_size];	\
+-	rte_prefetch0(a20);					\
+-	rte_prefetch0(a21);					\
+-	entries[pkt20_index] = a20;				\
+-	entries[pkt21_index] = a21;				\
+-								\
+-	bucket20_mask = (~pkt20_mask) & (bucket20->next_valid << pkt20_index);\
+-	bucket21_mask = (~pkt21_mask) & (bucket21->next_valid << pkt21_index);\
+-	buckets_mask |= bucket20_mask | bucket21_mask;		\
+-	bucket20_next = bucket20->next;				\
+-	bucket21_next = bucket21->next;				\
+-	buckets[pkt20_index] = bucket20_next;			\
+-	buckets[pkt21_index] = bucket21_next;			\
+-	keys[pkt20_index] = key20;				\
+-	keys[pkt21_index] = key21;				\
+-}
+-
+-static int
+-rte_table_hash_lookup_key16_lru(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_hash *f = (struct rte_table_hash *) table;
+-	struct rte_bucket_4_16 *bucket10, *bucket11, *bucket20, *bucket21;
+-	struct rte_mbuf *mbuf00, *mbuf01, *mbuf10, *mbuf11, *mbuf20, *mbuf21;
+-	uint32_t pkt00_index, pkt01_index, pkt10_index;
+-	uint32_t pkt11_index, pkt20_index, pkt21_index;
+-	uint64_t pkts_mask_out = 0;
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-
+-	RTE_TABLE_HASH_KEY16_STATS_PKTS_IN_ADD(f, n_pkts_in);
+-
+-	/* Cannot run the pipeline with less than 5 packets */
+-	if (rte_popcount64(pkts_mask) < 5) {
+-		for ( ; pkts_mask; ) {
+-			struct rte_bucket_4_16 *bucket;
+-			struct rte_mbuf *mbuf;
+-			uint32_t pkt_index;
+-
+-			lookup1_stage0(pkt_index, mbuf, pkts, pkts_mask, f);
+-			lookup1_stage1(mbuf, bucket, f);
+-			lookup1_stage2_lru(pkt_index, mbuf, bucket,
+-				pkts_mask_out, entries, f);
+-		}
+-
+-		*lookup_hit_mask = pkts_mask_out;
+-		RTE_TABLE_HASH_KEY16_STATS_PKTS_LOOKUP_MISS(f, n_pkts_in -
+-			rte_popcount64(pkts_mask_out));
+-		return 0;
+-	}
+-
+-	/*
+-	 * Pipeline fill
+-	 *
+-	 */
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01, pkts,
+-		pkts_mask, f);
+-
+-	/* Pipeline feed */
+-	mbuf10 = mbuf00;
+-	mbuf11 = mbuf01;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01, pkts,
+-		pkts_mask, f);
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-	/*
+-	 * Pipeline run
+-	 *
+-	 */
+-	for ( ; pkts_mask; ) {
+-		/* Pipeline feed */
+-		bucket20 = bucket10;
+-		bucket21 = bucket11;
+-		mbuf20 = mbuf10;
+-		mbuf21 = mbuf11;
+-		mbuf10 = mbuf00;
+-		mbuf11 = mbuf01;
+-		pkt20_index = pkt10_index;
+-		pkt21_index = pkt11_index;
+-		pkt10_index = pkt00_index;
+-		pkt11_index = pkt01_index;
+-
+-		/* Pipeline stage 0 */
+-		lookup2_stage0_with_odd_support(pkt00_index, pkt01_index,
+-			mbuf00, mbuf01, pkts, pkts_mask, f);
+-
+-		/* Pipeline stage 1 */
+-		lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-		/* Pipeline stage 2 */
+-		lookup2_stage2_lru(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-			bucket20, bucket21, pkts_mask_out, entries, f);
+-	}
+-
+-	/*
+-	 * Pipeline flush
+-	 *
+-	 */
+-	/* Pipeline feed */
+-	bucket20 = bucket10;
+-	bucket21 = bucket11;
+-	mbuf20 = mbuf10;
+-	mbuf21 = mbuf11;
+-	mbuf10 = mbuf00;
+-	mbuf11 = mbuf01;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2_lru(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-		bucket20, bucket21, pkts_mask_out, entries, f);
+-
+-	/* Pipeline feed */
+-	bucket20 = bucket10;
+-	bucket21 = bucket11;
+-	mbuf20 = mbuf10;
+-	mbuf21 = mbuf11;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2_lru(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-		bucket20, bucket21, pkts_mask_out, entries, f);
+-
+-	*lookup_hit_mask = pkts_mask_out;
+-	RTE_TABLE_HASH_KEY16_STATS_PKTS_LOOKUP_MISS(f, n_pkts_in -
+-		rte_popcount64(pkts_mask_out));
+-	return 0;
+-} /* lookup LRU */
+-
+-static int
+-rte_table_hash_lookup_key16_ext(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_hash *f = (struct rte_table_hash *) table;
+-	struct rte_bucket_4_16 *bucket10, *bucket11, *bucket20, *bucket21;
+-	struct rte_mbuf *mbuf00, *mbuf01, *mbuf10, *mbuf11, *mbuf20, *mbuf21;
+-	uint32_t pkt00_index, pkt01_index, pkt10_index;
+-	uint32_t pkt11_index, pkt20_index, pkt21_index;
+-	uint64_t pkts_mask_out = 0, buckets_mask = 0;
+-	struct rte_bucket_4_16 *buckets[RTE_PORT_IN_BURST_SIZE_MAX];
+-	uint64_t *keys[RTE_PORT_IN_BURST_SIZE_MAX];
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-
+-	RTE_TABLE_HASH_KEY16_STATS_PKTS_IN_ADD(f, n_pkts_in);
+-
+-	/* Cannot run the pipeline with less than 5 packets */
+-	if (rte_popcount64(pkts_mask) < 5) {
+-		for ( ; pkts_mask; ) {
+-			struct rte_bucket_4_16 *bucket;
+-			struct rte_mbuf *mbuf;
+-			uint32_t pkt_index;
+-
+-			lookup1_stage0(pkt_index, mbuf, pkts, pkts_mask, f);
+-			lookup1_stage1(mbuf, bucket, f);
+-			lookup1_stage2_ext(pkt_index, mbuf, bucket,
+-				pkts_mask_out, entries, buckets_mask,
+-				buckets, keys, f);
+-		}
+-
+-		goto grind_next_buckets;
+-	}
+-
+-	/*
+-	 * Pipeline fill
+-	 *
+-	 */
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01, pkts,
+-		pkts_mask, f);
+-
+-	/* Pipeline feed */
+-	mbuf10 = mbuf00;
+-	mbuf11 = mbuf01;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01, pkts,
+-		pkts_mask, f);
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-	/*
+-	 * Pipeline run
+-	 *
+-	 */
+-	for ( ; pkts_mask; ) {
+-		/* Pipeline feed */
+-		bucket20 = bucket10;
+-		bucket21 = bucket11;
+-		mbuf20 = mbuf10;
+-		mbuf21 = mbuf11;
+-		mbuf10 = mbuf00;
+-		mbuf11 = mbuf01;
+-		pkt20_index = pkt10_index;
+-		pkt21_index = pkt11_index;
+-		pkt10_index = pkt00_index;
+-		pkt11_index = pkt01_index;
+-
+-		/* Pipeline stage 0 */
+-		lookup2_stage0_with_odd_support(pkt00_index, pkt01_index,
+-			mbuf00, mbuf01, pkts, pkts_mask, f);
+-
+-		/* Pipeline stage 1 */
+-		lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-		/* Pipeline stage 2 */
+-		lookup2_stage2_ext(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-			bucket20, bucket21, pkts_mask_out, entries,
+-			buckets_mask, buckets, keys, f);
+-	}
+-
+-	/*
+-	 * Pipeline flush
+-	 *
+-	 */
+-	/* Pipeline feed */
+-	bucket20 = bucket10;
+-	bucket21 = bucket11;
+-	mbuf20 = mbuf10;
+-	mbuf21 = mbuf11;
+-	mbuf10 = mbuf00;
+-	mbuf11 = mbuf01;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2_ext(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-		bucket20, bucket21, pkts_mask_out, entries,
+-		buckets_mask, buckets, keys, f);
+-
+-	/* Pipeline feed */
+-	bucket20 = bucket10;
+-	bucket21 = bucket11;
+-	mbuf20 = mbuf10;
+-	mbuf21 = mbuf11;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2_ext(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-		bucket20, bucket21, pkts_mask_out, entries,
+-		buckets_mask, buckets, keys, f);
+-
+-grind_next_buckets:
+-	/* Grind next buckets */
+-	for ( ; buckets_mask; ) {
+-		uint64_t buckets_mask_next = 0;
+-
+-		for ( ; buckets_mask; ) {
+-			uint32_t pkt_index;
+-
+-			pkt_index = rte_ctz64(buckets_mask);
+-			buckets_mask &= ~(1LLU << pkt_index);
+-
+-			lookup_grinder(pkt_index, buckets, keys, pkts_mask_out,
+-				entries, buckets_mask_next, f);
+-		}
+-
+-		buckets_mask = buckets_mask_next;
+-	}
+-
+-	*lookup_hit_mask = pkts_mask_out;
+-	RTE_TABLE_HASH_KEY16_STATS_PKTS_LOOKUP_MISS(f, n_pkts_in -
+-		rte_popcount64(pkts_mask_out));
+-	return 0;
+-} /* lookup EXT */
+-
+-static int
+-rte_table_hash_key16_stats_read(void *table, struct rte_table_stats *stats, int clear)
+-{
+-	struct rte_table_hash *t = table;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &t->stats, sizeof(t->stats));
+-
+-	if (clear)
+-		memset(&t->stats, 0, sizeof(t->stats));
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_table_hash_key16_lru_ops)
+-struct rte_table_ops rte_table_hash_key16_lru_ops = {
+-	.f_create = rte_table_hash_create_key16_lru,
+-	.f_free = rte_table_hash_free_key16_lru,
+-	.f_add = rte_table_hash_entry_add_key16_lru,
+-	.f_delete = rte_table_hash_entry_delete_key16_lru,
+-	.f_add_bulk = NULL,
+-	.f_delete_bulk = NULL,
+-	.f_lookup = rte_table_hash_lookup_key16_lru,
+-	.f_stats = rte_table_hash_key16_stats_read,
+-};
+-
+-RTE_EXPORT_SYMBOL(rte_table_hash_key16_ext_ops)
+-struct rte_table_ops rte_table_hash_key16_ext_ops = {
+-	.f_create = rte_table_hash_create_key16_ext,
+-	.f_free = rte_table_hash_free_key16_ext,
+-	.f_add = rte_table_hash_entry_add_key16_ext,
+-	.f_delete = rte_table_hash_entry_delete_key16_ext,
+-	.f_add_bulk = NULL,
+-	.f_delete_bulk = NULL,
+-	.f_lookup = rte_table_hash_lookup_key16_ext,
+-	.f_stats = rte_table_hash_key16_stats_read,
+-};
+diff --git a/lib/table/rte_table_hash_key32.c b/lib/table/rte_table_hash_key32.c
+deleted file mode 100644
+index 0963f57828dd3e4420c8134496bfa2aa2ec53065..0000000000000000000000000000000000000000
+--- a/lib/table/rte_table_hash_key32.c
++++ /dev/null
+@@ -1,1223 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2017 Intel Corporation
+- */
+-
+-#include <stdalign.h>
+-#include <stdio.h>
+-#include <string.h>
+-
+-#include <eal_export.h>
+-#include <rte_common.h>
+-#include <rte_malloc.h>
+-#include <rte_log.h>
+-
+-#include "rte_table_hash.h"
+-#include "rte_lru.h"
+-
+-#include "table_log.h"
+-
+-#define KEY_SIZE						32
+-
+-#define KEYS_PER_BUCKET					4
+-
+-#define RTE_BUCKET_ENTRY_VALID						0x1LLU
+-
+-#ifdef RTE_TABLE_STATS_COLLECT
+-
+-#define RTE_TABLE_HASH_KEY32_STATS_PKTS_IN_ADD(table, val) \
+-	table->stats.n_pkts_in += val
+-#define RTE_TABLE_HASH_KEY32_STATS_PKTS_LOOKUP_MISS(table, val) \
+-	table->stats.n_pkts_lookup_miss += val
+-
+-#else
+-
+-#define RTE_TABLE_HASH_KEY32_STATS_PKTS_IN_ADD(table, val)
+-#define RTE_TABLE_HASH_KEY32_STATS_PKTS_LOOKUP_MISS(table, val)
+-
+-#endif
+-
+-#ifdef RTE_ARCH_64
+-struct rte_bucket_4_32 {
+-	/* Cache line 0 */
+-	uint64_t signature[4 + 1];
+-	uint64_t lru_list;
+-	struct rte_bucket_4_32 *next;
+-	uint64_t next_valid;
+-
+-	/* Cache lines 1 and 2 */
+-	uint64_t key[4][4];
+-
+-	/* Cache line 3 */
+-	uint8_t data[];
+-};
+-#else
+-struct rte_bucket_4_32 {
+-	/* Cache line 0 */
+-	uint64_t signature[4 + 1];
+-	uint64_t lru_list;
+-	struct rte_bucket_4_32 *next;
+-	uint32_t pad;
+-	uint64_t next_valid;
+-
+-	/* Cache lines 1 and 2 */
+-	uint64_t key[4][4];
+-
+-	/* Cache line 3 */
+-	uint8_t data[];
+-};
+-#endif
+-
+-struct rte_table_hash {
+-	struct rte_table_stats stats;
+-
+-	/* Input parameters */
+-	uint32_t n_buckets;
+-	uint32_t key_size;
+-	uint32_t entry_size;
+-	uint32_t bucket_size;
+-	uint32_t key_offset;
+-	uint64_t key_mask[4];
+-	rte_table_hash_op_hash f_hash;
+-	uint64_t seed;
+-
+-	/* Extendible buckets */
+-	uint32_t n_buckets_ext;
+-	uint32_t stack_pos;
+-	uint32_t *stack;
+-
+-	/* Lookup table */
+-	alignas(RTE_CACHE_LINE_SIZE) uint8_t memory[];
+-};
+-
+-static int
+-keycmp(void *a, void *b, void *b_mask)
+-{
+-	uint64_t *a64 = a, *b64 = b, *b_mask64 = b_mask;
+-
+-	return (a64[0] != (b64[0] & b_mask64[0])) ||
+-		(a64[1] != (b64[1] & b_mask64[1])) ||
+-		(a64[2] != (b64[2] & b_mask64[2])) ||
+-		(a64[3] != (b64[3] & b_mask64[3]));
+-}
+-
+-static void
+-keycpy(void *dst, void *src, void *src_mask)
+-{
+-	uint64_t *dst64 = dst, *src64 = src, *src_mask64 = src_mask;
+-
+-	dst64[0] = src64[0] & src_mask64[0];
+-	dst64[1] = src64[1] & src_mask64[1];
+-	dst64[2] = src64[2] & src_mask64[2];
+-	dst64[3] = src64[3] & src_mask64[3];
+-}
+-
+-static int
+-check_params_create(struct rte_table_hash_params *params)
+-{
+-	/* name */
+-	if (params->name == NULL) {
+-		TABLE_LOG(ERR, "%s: name invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* key_size */
+-	if (params->key_size != KEY_SIZE) {
+-		TABLE_LOG(ERR, "%s: key_size invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* n_keys */
+-	if (params->n_keys == 0) {
+-		TABLE_LOG(ERR, "%s: n_keys is zero", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* n_buckets */
+-	if ((params->n_buckets == 0) ||
+-		(!rte_is_power_of_2(params->n_buckets))) {
+-		TABLE_LOG(ERR, "%s: n_buckets invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* f_hash */
+-	if (params->f_hash == NULL) {
+-		TABLE_LOG(ERR, "%s: f_hash function pointer is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	return 0;
+-}
+-
+-static void *
+-rte_table_hash_create_key32_lru(void *params,
+-		int socket_id,
+-		uint32_t entry_size)
+-{
+-	struct rte_table_hash_params *p = params;
+-	struct rte_table_hash *f;
+-	uint64_t bucket_size, total_size;
+-	uint32_t n_buckets, i;
+-
+-	/* Check input parameters */
+-	if ((check_params_create(p) != 0) ||
+-		((sizeof(struct rte_table_hash) % RTE_CACHE_LINE_SIZE) != 0) ||
+-		((sizeof(struct rte_bucket_4_32) % 64) != 0))
+-		return NULL;
+-
+-	/*
+-	 * Table dimensioning
+-	 *
+-	 * Objective: Pick the number of buckets (n_buckets) so that there a chance
+-	 * to store n_keys keys in the table.
+-	 *
+-	 * Note: Since the buckets do not get extended, it is not possible to
+-	 * guarantee that n_keys keys can be stored in the table at any time. In the
+-	 * worst case scenario when all the n_keys fall into the same bucket, only
+-	 * a maximum of KEYS_PER_BUCKET keys will be stored in the table. This case
+-	 * defeats the purpose of the hash table. It indicates unsuitable f_hash or
+-	 * n_keys to n_buckets ratio.
+-	 *
+-	 * MIN(n_buckets) = (n_keys + KEYS_PER_BUCKET - 1) / KEYS_PER_BUCKET
+-	 */
+-	n_buckets = rte_align32pow2(
+-		(p->n_keys + KEYS_PER_BUCKET - 1) / KEYS_PER_BUCKET);
+-	n_buckets = RTE_MAX(n_buckets, p->n_buckets);
+-
+-	/* Memory allocation */
+-	bucket_size = RTE_CACHE_LINE_ROUNDUP(sizeof(struct rte_bucket_4_32) +
+-		KEYS_PER_BUCKET * entry_size);
+-	total_size = sizeof(struct rte_table_hash) + n_buckets * bucket_size;
+-	if (total_size > SIZE_MAX) {
+-		TABLE_LOG(ERR, "%s: Cannot allocate %" PRIu64 " bytes "
+-			"for hash table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-
+-	f = rte_zmalloc_socket(p->name,
+-		(size_t)total_size,
+-		RTE_CACHE_LINE_SIZE,
+-		socket_id);
+-	if (f == NULL) {
+-		TABLE_LOG(ERR, "%s: Cannot allocate %" PRIu64 " bytes "
+-			"for hash table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-	TABLE_LOG(INFO,
+-		"%s: Hash table %s memory footprint "
+-		"is %" PRIu64 " bytes",
+-		__func__, p->name, total_size);
+-
+-	/* Memory initialization */
+-	f->n_buckets = n_buckets;
+-	f->key_size = KEY_SIZE;
+-	f->entry_size = entry_size;
+-	f->bucket_size = bucket_size;
+-	f->key_offset = p->key_offset;
+-	f->f_hash = p->f_hash;
+-	f->seed = p->seed;
+-
+-	if (p->key_mask != NULL) {
+-		f->key_mask[0] = ((uint64_t *)p->key_mask)[0];
+-		f->key_mask[1] = ((uint64_t *)p->key_mask)[1];
+-		f->key_mask[2] = ((uint64_t *)p->key_mask)[2];
+-		f->key_mask[3] = ((uint64_t *)p->key_mask)[3];
+-	} else {
+-		f->key_mask[0] = 0xFFFFFFFFFFFFFFFFLLU;
+-		f->key_mask[1] = 0xFFFFFFFFFFFFFFFFLLU;
+-		f->key_mask[2] = 0xFFFFFFFFFFFFFFFFLLU;
+-		f->key_mask[3] = 0xFFFFFFFFFFFFFFFFLLU;
+-	}
+-
+-	for (i = 0; i < n_buckets; i++) {
+-		struct rte_bucket_4_32 *bucket;
+-
+-		bucket = (struct rte_bucket_4_32 *) &f->memory[i *
+-			f->bucket_size];
+-		bucket->lru_list = 0x0000000100020003LLU;
+-	}
+-
+-	return f;
+-}
+-
+-static int
+-rte_table_hash_free_key32_lru(void *table)
+-{
+-	struct rte_table_hash *f = table;
+-
+-	/* Check input parameters */
+-	if (f == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	rte_free(f);
+-	return 0;
+-}
+-
+-static int
+-rte_table_hash_entry_add_key32_lru(
+-	void *table,
+-	void *key,
+-	void *entry,
+-	int *key_found,
+-	void **entry_ptr)
+-{
+-	struct rte_table_hash *f = table;
+-	struct rte_bucket_4_32 *bucket;
+-	uint64_t signature, pos;
+-	uint32_t bucket_index, i;
+-
+-	signature = f->f_hash(key, f->key_mask, f->key_size, f->seed);
+-	bucket_index = signature & (f->n_buckets - 1);
+-	bucket = (struct rte_bucket_4_32 *)
+-		&f->memory[bucket_index * f->bucket_size];
+-	signature |= RTE_BUCKET_ENTRY_VALID;
+-
+-	/* Key is present in the bucket */
+-	for (i = 0; i < 4; i++) {
+-		uint64_t bucket_signature = bucket->signature[i];
+-		uint8_t *bucket_key = (uint8_t *) &bucket->key[i];
+-
+-		if ((bucket_signature == signature) &&
+-			(keycmp(bucket_key, key, f->key_mask) == 0)) {
+-			uint8_t *bucket_data = &bucket->data[i * f->entry_size];
+-
+-			memcpy(bucket_data, entry, f->entry_size);
+-			lru_update(bucket, i);
+-			*key_found = 1;
+-			*entry_ptr = (void *) bucket_data;
+-			return 0;
+-		}
+-	}
+-
+-	/* Key is not present in the bucket */
+-	for (i = 0; i < 4; i++) {
+-		uint64_t bucket_signature = bucket->signature[i];
+-		uint8_t *bucket_key = (uint8_t *) &bucket->key[i];
+-
+-		if (bucket_signature == 0) {
+-			uint8_t *bucket_data = &bucket->data[i * f->entry_size];
+-
+-			bucket->signature[i] = signature;
+-			keycpy(bucket_key, key, f->key_mask);
+-			memcpy(bucket_data, entry, f->entry_size);
+-			lru_update(bucket, i);
+-			*key_found = 0;
+-			*entry_ptr = (void *) bucket_data;
+-
+-			return 0;
+-		}
+-	}
+-
+-	/* Bucket full: replace LRU entry */
+-	pos = lru_pos(bucket);
+-	bucket->signature[pos] = signature;
+-	keycpy(&bucket->key[pos], key, f->key_mask);
+-	memcpy(&bucket->data[pos * f->entry_size], entry, f->entry_size);
+-	lru_update(bucket, pos);
+-	*key_found = 0;
+-	*entry_ptr = (void *) &bucket->data[pos * f->entry_size];
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_hash_entry_delete_key32_lru(
+-	void *table,
+-	void *key,
+-	int *key_found,
+-	void *entry)
+-{
+-	struct rte_table_hash *f = table;
+-	struct rte_bucket_4_32 *bucket;
+-	uint64_t signature;
+-	uint32_t bucket_index, i;
+-
+-	signature = f->f_hash(key, f->key_mask, f->key_size, f->seed);
+-	bucket_index = signature & (f->n_buckets - 1);
+-	bucket = (struct rte_bucket_4_32 *)
+-		&f->memory[bucket_index * f->bucket_size];
+-	signature |= RTE_BUCKET_ENTRY_VALID;
+-
+-	/* Key is present in the bucket */
+-	for (i = 0; i < 4; i++) {
+-		uint64_t bucket_signature = bucket->signature[i];
+-		uint8_t *bucket_key = (uint8_t *) &bucket->key[i];
+-
+-		if ((bucket_signature == signature) &&
+-			(keycmp(bucket_key, key, f->key_mask) == 0)) {
+-			uint8_t *bucket_data = &bucket->data[i * f->entry_size];
+-
+-			bucket->signature[i] = 0;
+-			*key_found = 1;
+-			if (entry)
+-				memcpy(entry, bucket_data, f->entry_size);
+-
+-			return 0;
+-		}
+-	}
+-
+-	/* Key is not present in the bucket */
+-	*key_found = 0;
+-	return 0;
+-}
+-
+-static void *
+-rte_table_hash_create_key32_ext(void *params,
+-	int socket_id,
+-	uint32_t entry_size)
+-{
+-	struct rte_table_hash_params *p = params;
+-	struct rte_table_hash *f;
+-	uint64_t bucket_size, stack_size, total_size;
+-	uint32_t n_buckets_ext, i;
+-
+-	/* Check input parameters */
+-	if ((check_params_create(p) != 0) ||
+-		((sizeof(struct rte_table_hash) % RTE_CACHE_LINE_SIZE) != 0) ||
+-		((sizeof(struct rte_bucket_4_32) % 64) != 0))
+-		return NULL;
+-
+-	/*
+-	 * Table dimensioning
+-	 *
+-	 * Objective: Pick the number of bucket extensions (n_buckets_ext) so that
+-	 * it is guaranteed that n_keys keys can be stored in the table at any time.
+-	 *
+-	 * The worst case scenario takes place when all the n_keys keys fall into
+-	 * the same bucket. Actually, due to the KEYS_PER_BUCKET scheme, the worst
+-	 * case takes place when (n_keys - KEYS_PER_BUCKET + 1) keys fall into the
+-	 * same bucket, while the remaining (KEYS_PER_BUCKET - 1) keys each fall
+-	 * into a different bucket. This case defeats the purpose of the hash table.
+-	 * It indicates unsuitable f_hash or n_keys to n_buckets ratio.
+-	 *
+-	 * n_buckets_ext = n_keys / KEYS_PER_BUCKET + KEYS_PER_BUCKET - 1
+-	 */
+-	n_buckets_ext = p->n_keys / KEYS_PER_BUCKET + KEYS_PER_BUCKET - 1;
+-
+-	/* Memory allocation */
+-	bucket_size = RTE_CACHE_LINE_ROUNDUP(sizeof(struct rte_bucket_4_32) +
+-		KEYS_PER_BUCKET * entry_size);
+-	stack_size = RTE_CACHE_LINE_ROUNDUP(n_buckets_ext * sizeof(uint32_t));
+-	total_size = sizeof(struct rte_table_hash) +
+-		(p->n_buckets + n_buckets_ext) * bucket_size + stack_size;
+-	if (total_size > SIZE_MAX) {
+-		TABLE_LOG(ERR, "%s: Cannot allocate %" PRIu64 " bytes "
+-			"for hash table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-
+-	f = rte_zmalloc_socket(p->name,
+-		(size_t)total_size,
+-		RTE_CACHE_LINE_SIZE,
+-		socket_id);
+-	if (f == NULL) {
+-		TABLE_LOG(ERR, "%s: Cannot allocate %" PRIu64 " bytes "
+-			"for hash table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-	TABLE_LOG(INFO,
+-		"%s: Hash table %s memory footprint "
+-		"is %" PRIu64" bytes",
+-		__func__, p->name, total_size);
+-
+-	/* Memory initialization */
+-	f->n_buckets = p->n_buckets;
+-	f->key_size = KEY_SIZE;
+-	f->entry_size = entry_size;
+-	f->bucket_size = bucket_size;
+-	f->key_offset = p->key_offset;
+-	f->f_hash = p->f_hash;
+-	f->seed = p->seed;
+-
+-	f->n_buckets_ext = n_buckets_ext;
+-	f->stack_pos = n_buckets_ext;
+-	f->stack = (uint32_t *)
+-		&f->memory[(p->n_buckets + n_buckets_ext) * f->bucket_size];
+-
+-	if (p->key_mask != NULL) {
+-		f->key_mask[0] = (((uint64_t *)p->key_mask)[0]);
+-		f->key_mask[1] = (((uint64_t *)p->key_mask)[1]);
+-		f->key_mask[2] = (((uint64_t *)p->key_mask)[2]);
+-		f->key_mask[3] = (((uint64_t *)p->key_mask)[3]);
+-	} else {
+-		f->key_mask[0] = 0xFFFFFFFFFFFFFFFFLLU;
+-		f->key_mask[1] = 0xFFFFFFFFFFFFFFFFLLU;
+-		f->key_mask[2] = 0xFFFFFFFFFFFFFFFFLLU;
+-		f->key_mask[3] = 0xFFFFFFFFFFFFFFFFLLU;
+-	}
+-
+-	for (i = 0; i < n_buckets_ext; i++)
+-		f->stack[i] = i;
+-
+-	return f;
+-}
+-
+-static int
+-rte_table_hash_free_key32_ext(void *table)
+-{
+-	struct rte_table_hash *f = table;
+-
+-	/* Check input parameters */
+-	if (f == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	rte_free(f);
+-	return 0;
+-}
+-
+-static int
+-rte_table_hash_entry_add_key32_ext(
+-	void *table,
+-	void *key,
+-	void *entry,
+-	int *key_found,
+-	void **entry_ptr)
+-{
+-	struct rte_table_hash *f = table;
+-	struct rte_bucket_4_32 *bucket0, *bucket, *bucket_prev;
+-	uint64_t signature;
+-	uint32_t bucket_index, i;
+-
+-	signature = f->f_hash(key, f->key_mask, f->key_size, f->seed);
+-	bucket_index = signature & (f->n_buckets - 1);
+-	bucket0 = (struct rte_bucket_4_32 *)
+-			&f->memory[bucket_index * f->bucket_size];
+-	signature |= RTE_BUCKET_ENTRY_VALID;
+-
+-	/* Key is present in the bucket */
+-	for (bucket = bucket0; bucket != NULL; bucket = bucket->next) {
+-		for (i = 0; i < 4; i++) {
+-			uint64_t bucket_signature = bucket->signature[i];
+-			uint8_t *bucket_key = (uint8_t *) &bucket->key[i];
+-
+-			if ((bucket_signature == signature) &&
+-				(keycmp(bucket_key, key, f->key_mask) == 0)) {
+-				uint8_t *bucket_data = &bucket->data[i *
+-					f->entry_size];
+-
+-				memcpy(bucket_data, entry, f->entry_size);
+-				*key_found = 1;
+-				*entry_ptr = (void *) bucket_data;
+-
+-				return 0;
+-			}
+-		}
+-	}
+-
+-	/* Key is not present in the bucket */
+-	for (bucket_prev = NULL, bucket = bucket0; bucket != NULL;
+-		bucket_prev = bucket, bucket = bucket->next)
+-		for (i = 0; i < 4; i++) {
+-			uint64_t bucket_signature = bucket->signature[i];
+-			uint8_t *bucket_key = (uint8_t *) &bucket->key[i];
+-
+-			if (bucket_signature == 0) {
+-				uint8_t *bucket_data = &bucket->data[i *
+-					f->entry_size];
+-
+-				bucket->signature[i] = signature;
+-				keycpy(bucket_key, key, f->key_mask);
+-				memcpy(bucket_data, entry, f->entry_size);
+-				*key_found = 0;
+-				*entry_ptr = (void *) bucket_data;
+-
+-				return 0;
+-			}
+-		}
+-
+-	/* Bucket full: extend bucket */
+-	if (f->stack_pos > 0) {
+-		bucket_index = f->stack[--f->stack_pos];
+-
+-		bucket = (struct rte_bucket_4_32 *)
+-			&f->memory[(f->n_buckets + bucket_index) *
+-			f->bucket_size];
+-		bucket_prev->next = bucket;
+-		bucket_prev->next_valid = 1;
+-
+-		bucket->signature[0] = signature;
+-		keycpy(&bucket->key[0], key, f->key_mask);
+-		memcpy(&bucket->data[0], entry, f->entry_size);
+-		*key_found = 0;
+-		*entry_ptr = (void *) &bucket->data[0];
+-		return 0;
+-	}
+-
+-	return -ENOSPC;
+-}
+-
+-static int
+-rte_table_hash_entry_delete_key32_ext(
+-	void *table,
+-	void *key,
+-	int *key_found,
+-	void *entry)
+-{
+-	struct rte_table_hash *f = table;
+-	struct rte_bucket_4_32 *bucket0, *bucket, *bucket_prev;
+-	uint64_t signature;
+-	uint32_t bucket_index, i;
+-
+-	signature = f->f_hash(key, f->key_mask, f->key_size, f->seed);
+-	bucket_index = signature & (f->n_buckets - 1);
+-	bucket0 = (struct rte_bucket_4_32 *)
+-		&f->memory[bucket_index * f->bucket_size];
+-	signature |= RTE_BUCKET_ENTRY_VALID;
+-
+-	/* Key is present in the bucket */
+-	for (bucket_prev = NULL, bucket = bucket0; bucket != NULL;
+-		bucket_prev = bucket, bucket = bucket->next)
+-		for (i = 0; i < 4; i++) {
+-			uint64_t bucket_signature = bucket->signature[i];
+-			uint8_t *bucket_key = (uint8_t *) &bucket->key[i];
+-
+-			if ((bucket_signature == signature) &&
+-				(keycmp(bucket_key, key, f->key_mask) == 0)) {
+-				uint8_t *bucket_data = &bucket->data[i *
+-					f->entry_size];
+-
+-				bucket->signature[i] = 0;
+-				*key_found = 1;
+-				if (entry)
+-					memcpy(entry, bucket_data, f->entry_size);
+-
+-				if ((bucket->signature[0] == 0) &&
+-					(bucket->signature[1] == 0) &&
+-					(bucket->signature[2] == 0) &&
+-					(bucket->signature[3] == 0) &&
+-					(bucket_prev != NULL)) {
+-					bucket_prev->next = bucket->next;
+-					bucket_prev->next_valid =
+-						bucket->next_valid;
+-
+-					memset(bucket, 0,
+-						sizeof(struct rte_bucket_4_32));
+-					bucket_index = (((uint8_t *)bucket -
+-						(uint8_t *)f->memory)/f->bucket_size) - f->n_buckets;
+-					f->stack[f->stack_pos++] = bucket_index;
+-				}
+-
+-				return 0;
+-			}
+-		}
+-
+-	/* Key is not present in the bucket */
+-	*key_found = 0;
+-	return 0;
+-}
+-
+-#define lookup_key32_cmp(key_in, bucket, pos, f)			\
+-{								\
+-	uint64_t xor[4][4], or[4], signature[4], k[4];		\
+-								\
+-	k[0] = key_in[0] & f->key_mask[0];				\
+-	k[1] = key_in[1] & f->key_mask[1];				\
+-	k[2] = key_in[2] & f->key_mask[2];				\
+-	k[3] = key_in[3] & f->key_mask[3];				\
+-								\
+-	signature[0] = ((~bucket->signature[0]) & 1);		\
+-	signature[1] = ((~bucket->signature[1]) & 1);		\
+-	signature[2] = ((~bucket->signature[2]) & 1);		\
+-	signature[3] = ((~bucket->signature[3]) & 1);		\
+-								\
+-	xor[0][0] = k[0] ^ bucket->key[0][0];			\
+-	xor[0][1] = k[1] ^ bucket->key[0][1];			\
+-	xor[0][2] = k[2] ^ bucket->key[0][2];			\
+-	xor[0][3] = k[3] ^ bucket->key[0][3];			\
+-								\
+-	xor[1][0] = k[0] ^ bucket->key[1][0];			\
+-	xor[1][1] = k[1] ^ bucket->key[1][1];			\
+-	xor[1][2] = k[2] ^ bucket->key[1][2];			\
+-	xor[1][3] = k[3] ^ bucket->key[1][3];			\
+-								\
+-	xor[2][0] = k[0] ^ bucket->key[2][0];			\
+-	xor[2][1] = k[1] ^ bucket->key[2][1];			\
+-	xor[2][2] = k[2] ^ bucket->key[2][2];			\
+-	xor[2][3] = k[3] ^ bucket->key[2][3];			\
+-								\
+-	xor[3][0] = k[0] ^ bucket->key[3][0];			\
+-	xor[3][1] = k[1] ^ bucket->key[3][1];			\
+-	xor[3][2] = k[2] ^ bucket->key[3][2];			\
+-	xor[3][3] = k[3] ^ bucket->key[3][3];			\
+-								\
+-	or[0] = xor[0][0] | xor[0][1] | xor[0][2] | xor[0][3] | signature[0];\
+-	or[1] = xor[1][0] | xor[1][1] | xor[1][2] | xor[1][3] | signature[1];\
+-	or[2] = xor[2][0] | xor[2][1] | xor[2][2] | xor[2][3] | signature[2];\
+-	or[3] = xor[3][0] | xor[3][1] | xor[3][2] | xor[3][3] | signature[3];\
+-								\
+-	pos = 4;						\
+-	if (or[0] == 0)						\
+-		pos = 0;					\
+-	if (or[1] == 0)						\
+-		pos = 1;					\
+-	if (or[2] == 0)						\
+-		pos = 2;					\
+-	if (or[3] == 0)						\
+-		pos = 3;					\
+-}
+-
+-#define lookup1_stage0(pkt0_index, mbuf0, pkts, pkts_mask, f)	\
+-{								\
+-	uint64_t pkt_mask;					\
+-	uint32_t key_offset = f->key_offset;	\
+-								\
+-	pkt0_index = rte_ctz64(pkts_mask);		\
+-	pkt_mask = 1LLU << pkt0_index;				\
+-	pkts_mask &= ~pkt_mask;					\
+-								\
+-	mbuf0 = pkts[pkt0_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf0, key_offset));\
+-}
+-
+-#define lookup1_stage1(mbuf1, bucket1, f)				\
+-{								\
+-	uint64_t *key;						\
+-	uint64_t signature;					\
+-	uint32_t bucket_index;					\
+-								\
+-	key = RTE_MBUF_METADATA_UINT64_PTR(mbuf1, f->key_offset);	\
+-	signature = f->f_hash(key, f->key_mask, KEY_SIZE, f->seed);	\
+-								\
+-	bucket_index = signature & (f->n_buckets - 1);		\
+-	bucket1 = (struct rte_bucket_4_32 *)			\
+-		&f->memory[bucket_index * f->bucket_size];	\
+-	rte_prefetch0(bucket1);					\
+-	rte_prefetch0((void *)(((uintptr_t) bucket1) + RTE_CACHE_LINE_SIZE));\
+-	rte_prefetch0((void *)(((uintptr_t) bucket1) + 2 * RTE_CACHE_LINE_SIZE));\
+-}
+-
+-#define lookup1_stage2_lru(pkt2_index, mbuf2, bucket2,		\
+-	pkts_mask_out, entries, f)				\
+-{								\
+-	void *a;						\
+-	uint64_t pkt_mask;					\
+-	uint64_t *key;						\
+-	uint32_t pos;						\
+-								\
+-	key = RTE_MBUF_METADATA_UINT64_PTR(mbuf2, f->key_offset);\
+-	lookup_key32_cmp(key, bucket2, pos, f);			\
+-								\
+-	pkt_mask = (bucket2->signature[pos] & 1LLU) << pkt2_index;\
+-	pkts_mask_out |= pkt_mask;				\
+-								\
+-	a = (void *) &bucket2->data[pos * f->entry_size];	\
+-	rte_prefetch0(a);					\
+-	entries[pkt2_index] = a;				\
+-	lru_update(bucket2, pos);				\
+-}
+-
+-#define lookup1_stage2_ext(pkt2_index, mbuf2, bucket2, pkts_mask_out,\
+-	entries, buckets_mask, buckets, keys, f)		\
+-{								\
+-	struct rte_bucket_4_32 *bucket_next;			\
+-	void *a;						\
+-	uint64_t pkt_mask, bucket_mask;				\
+-	uint64_t *key;						\
+-	uint32_t pos;						\
+-								\
+-	key = RTE_MBUF_METADATA_UINT64_PTR(mbuf2, f->key_offset);\
+-	lookup_key32_cmp(key, bucket2, pos, f);			\
+-								\
+-	pkt_mask = (bucket2->signature[pos] & 1LLU) << pkt2_index;\
+-	pkts_mask_out |= pkt_mask;				\
+-								\
+-	a = (void *) &bucket2->data[pos * f->entry_size];	\
+-	rte_prefetch0(a);					\
+-	entries[pkt2_index] = a;				\
+-								\
+-	bucket_mask = (~pkt_mask) & (bucket2->next_valid << pkt2_index);\
+-	buckets_mask |= bucket_mask;				\
+-	bucket_next = bucket2->next;				\
+-	buckets[pkt2_index] = bucket_next;			\
+-	keys[pkt2_index] = key;					\
+-}
+-
+-#define lookup_grinder(pkt_index, buckets, keys, pkts_mask_out,	\
+-	entries, buckets_mask, f)				\
+-{								\
+-	struct rte_bucket_4_32 *bucket, *bucket_next;		\
+-	void *a;						\
+-	uint64_t pkt_mask, bucket_mask;				\
+-	uint64_t *key;						\
+-	uint32_t pos;						\
+-								\
+-	bucket = buckets[pkt_index];				\
+-	key = keys[pkt_index];					\
+-								\
+-	lookup_key32_cmp(key, bucket, pos, f);			\
+-								\
+-	pkt_mask = (bucket->signature[pos] & 1LLU) << pkt_index;\
+-	pkts_mask_out |= pkt_mask;				\
+-								\
+-	a = (void *) &bucket->data[pos * f->entry_size];	\
+-	rte_prefetch0(a);					\
+-	entries[pkt_index] = a;					\
+-								\
+-	bucket_mask = (~pkt_mask) & (bucket->next_valid << pkt_index);\
+-	buckets_mask |= bucket_mask;				\
+-	bucket_next = bucket->next;				\
+-	rte_prefetch0(bucket_next);				\
+-	rte_prefetch0((void *)(((uintptr_t) bucket_next) + RTE_CACHE_LINE_SIZE));\
+-	rte_prefetch0((void *)(((uintptr_t) bucket_next) +	\
+-		2 * RTE_CACHE_LINE_SIZE));				\
+-	buckets[pkt_index] = bucket_next;			\
+-	keys[pkt_index] = key;					\
+-}
+-
+-#define lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01,\
+-	pkts, pkts_mask, f)					\
+-{								\
+-	uint64_t pkt00_mask, pkt01_mask;			\
+-	uint32_t key_offset = f->key_offset;		\
+-								\
+-	pkt00_index = rte_ctz64(pkts_mask);		\
+-	pkt00_mask = 1LLU << pkt00_index;			\
+-	pkts_mask &= ~pkt00_mask;				\
+-								\
+-	mbuf00 = pkts[pkt00_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf00, key_offset));\
+-								\
+-	pkt01_index = rte_ctz64(pkts_mask);		\
+-	pkt01_mask = 1LLU << pkt01_index;			\
+-	pkts_mask &= ~pkt01_mask;				\
+-								\
+-	mbuf01 = pkts[pkt01_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf01, key_offset));\
+-}
+-
+-#define lookup2_stage0_with_odd_support(pkt00_index, pkt01_index,\
+-	mbuf00, mbuf01, pkts, pkts_mask, f)			\
+-{								\
+-	uint64_t pkt00_mask, pkt01_mask;			\
+-	uint32_t key_offset = f->key_offset;		\
+-								\
+-	pkt00_index = rte_ctz64(pkts_mask);		\
+-	pkt00_mask = 1LLU << pkt00_index;			\
+-	pkts_mask &= ~pkt00_mask;				\
+-								\
+-	mbuf00 = pkts[pkt00_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf00, key_offset));	\
+-								\
+-	pkt01_index = rte_ctz64(pkts_mask);		\
+-	if (pkts_mask == 0)					\
+-		pkt01_index = pkt00_index;			\
+-								\
+-	pkt01_mask = 1LLU << pkt01_index;			\
+-	pkts_mask &= ~pkt01_mask;				\
+-								\
+-	mbuf01 = pkts[pkt01_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf01, key_offset));	\
+-}
+-
+-#define lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f)	\
+-{								\
+-	uint64_t *key10, *key11;					\
+-	uint64_t signature10, signature11;				\
+-	uint32_t bucket10_index, bucket11_index;			\
+-								\
+-	key10 = RTE_MBUF_METADATA_UINT64_PTR(mbuf10, f->key_offset);	\
+-	signature10 = f->f_hash(key10, f->key_mask,	 KEY_SIZE, f->seed); \
+-								\
+-	bucket10_index = signature10 & (f->n_buckets - 1);		\
+-	bucket10 = (struct rte_bucket_4_32 *)			\
+-		&f->memory[bucket10_index * f->bucket_size];	\
+-	rte_prefetch0(bucket10);					\
+-	rte_prefetch0((void *)(((uintptr_t) bucket10) + RTE_CACHE_LINE_SIZE));\
+-	rte_prefetch0((void *)(((uintptr_t) bucket10) + 2 * RTE_CACHE_LINE_SIZE));\
+-								\
+-	key11 = RTE_MBUF_METADATA_UINT64_PTR(mbuf11, f->key_offset);	\
+-	signature11 = f->f_hash(key11, f->key_mask, KEY_SIZE, f->seed);\
+-								\
+-	bucket11_index = signature11 & (f->n_buckets - 1);		\
+-	bucket11 = (struct rte_bucket_4_32 *)			\
+-		&f->memory[bucket11_index * f->bucket_size];	\
+-	rte_prefetch0(bucket11);					\
+-	rte_prefetch0((void *)(((uintptr_t) bucket11) + RTE_CACHE_LINE_SIZE));\
+-	rte_prefetch0((void *)(((uintptr_t) bucket11) + 2 * RTE_CACHE_LINE_SIZE));\
+-}
+-
+-#define lookup2_stage2_lru(pkt20_index, pkt21_index, mbuf20, mbuf21,\
+-	bucket20, bucket21, pkts_mask_out, entries, f)		\
+-{								\
+-	void *a20, *a21;					\
+-	uint64_t pkt20_mask, pkt21_mask;			\
+-	uint64_t *key20, *key21;				\
+-	uint32_t pos20, pos21;					\
+-								\
+-	key20 = RTE_MBUF_METADATA_UINT64_PTR(mbuf20, f->key_offset);\
+-	key21 = RTE_MBUF_METADATA_UINT64_PTR(mbuf21, f->key_offset);\
+-								\
+-	lookup_key32_cmp(key20, bucket20, pos20, f);		\
+-	lookup_key32_cmp(key21, bucket21, pos21, f);		\
+-								\
+-	pkt20_mask = (bucket20->signature[pos20] & 1LLU) << pkt20_index;\
+-	pkt21_mask = (bucket21->signature[pos21] & 1LLU) << pkt21_index;\
+-	pkts_mask_out |= pkt20_mask | pkt21_mask;		\
+-								\
+-	a20 = (void *) &bucket20->data[pos20 * f->entry_size];	\
+-	a21 = (void *) &bucket21->data[pos21 * f->entry_size];	\
+-	rte_prefetch0(a20);					\
+-	rte_prefetch0(a21);					\
+-	entries[pkt20_index] = a20;				\
+-	entries[pkt21_index] = a21;				\
+-	lru_update(bucket20, pos20);				\
+-	lru_update(bucket21, pos21);				\
+-}
+-
+-#define lookup2_stage2_ext(pkt20_index, pkt21_index, mbuf20, mbuf21, bucket20, \
+-	bucket21, pkts_mask_out, entries, buckets_mask, buckets, keys, f)\
+-{								\
+-	struct rte_bucket_4_32 *bucket20_next, *bucket21_next;	\
+-	void *a20, *a21;					\
+-	uint64_t pkt20_mask, pkt21_mask, bucket20_mask, bucket21_mask;\
+-	uint64_t *key20, *key21;				\
+-	uint32_t pos20, pos21;					\
+-								\
+-	key20 = RTE_MBUF_METADATA_UINT64_PTR(mbuf20, f->key_offset);\
+-	key21 = RTE_MBUF_METADATA_UINT64_PTR(mbuf21, f->key_offset);\
+-								\
+-	lookup_key32_cmp(key20, bucket20, pos20, f);		\
+-	lookup_key32_cmp(key21, bucket21, pos21, f);		\
+-								\
+-	pkt20_mask = (bucket20->signature[pos20] & 1LLU) << pkt20_index;\
+-	pkt21_mask = (bucket21->signature[pos21] & 1LLU) << pkt21_index;\
+-	pkts_mask_out |= pkt20_mask | pkt21_mask;		\
+-								\
+-	a20 = (void *) &bucket20->data[pos20 * f->entry_size];	\
+-	a21 = (void *) &bucket21->data[pos21 * f->entry_size];	\
+-	rte_prefetch0(a20);					\
+-	rte_prefetch0(a21);					\
+-	entries[pkt20_index] = a20;				\
+-	entries[pkt21_index] = a21;				\
+-								\
+-	bucket20_mask = (~pkt20_mask) & (bucket20->next_valid << pkt20_index);\
+-	bucket21_mask = (~pkt21_mask) & (bucket21->next_valid << pkt21_index);\
+-	buckets_mask |= bucket20_mask | bucket21_mask;		\
+-	bucket20_next = bucket20->next;				\
+-	bucket21_next = bucket21->next;				\
+-	buckets[pkt20_index] = bucket20_next;			\
+-	buckets[pkt21_index] = bucket21_next;			\
+-	keys[pkt20_index] = key20;				\
+-	keys[pkt21_index] = key21;				\
+-}
+-
+-static int
+-rte_table_hash_lookup_key32_lru(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_hash *f = (struct rte_table_hash *) table;
+-	struct rte_bucket_4_32 *bucket10, *bucket11, *bucket20, *bucket21;
+-	struct rte_mbuf *mbuf00, *mbuf01, *mbuf10, *mbuf11, *mbuf20, *mbuf21;
+-	uint32_t pkt00_index, pkt01_index, pkt10_index;
+-	uint32_t pkt11_index, pkt20_index, pkt21_index;
+-	uint64_t pkts_mask_out = 0;
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-	RTE_TABLE_HASH_KEY32_STATS_PKTS_IN_ADD(f, n_pkts_in);
+-
+-	/* Cannot run the pipeline with less than 5 packets */
+-	if (rte_popcount64(pkts_mask) < 5) {
+-		for ( ; pkts_mask; ) {
+-			struct rte_bucket_4_32 *bucket;
+-			struct rte_mbuf *mbuf;
+-			uint32_t pkt_index;
+-
+-			lookup1_stage0(pkt_index, mbuf, pkts, pkts_mask, f);
+-			lookup1_stage1(mbuf, bucket, f);
+-			lookup1_stage2_lru(pkt_index, mbuf, bucket,
+-					pkts_mask_out, entries, f);
+-		}
+-
+-		*lookup_hit_mask = pkts_mask_out;
+-		RTE_TABLE_HASH_KEY32_STATS_PKTS_LOOKUP_MISS(f, n_pkts_in - rte_popcount64(pkts_mask_out));
+-		return 0;
+-	}
+-
+-	/*
+-	 * Pipeline fill
+-	 *
+-	 */
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01, pkts,
+-		pkts_mask, f);
+-
+-	/* Pipeline feed */
+-	mbuf10 = mbuf00;
+-	mbuf11 = mbuf01;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01, pkts,
+-		pkts_mask, f);
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-	/*
+-	 * Pipeline run
+-	 *
+-	 */
+-	for ( ; pkts_mask; ) {
+-		/* Pipeline feed */
+-		bucket20 = bucket10;
+-		bucket21 = bucket11;
+-		mbuf20 = mbuf10;
+-		mbuf21 = mbuf11;
+-		mbuf10 = mbuf00;
+-		mbuf11 = mbuf01;
+-		pkt20_index = pkt10_index;
+-		pkt21_index = pkt11_index;
+-		pkt10_index = pkt00_index;
+-		pkt11_index = pkt01_index;
+-
+-		/* Pipeline stage 0 */
+-		lookup2_stage0_with_odd_support(pkt00_index, pkt01_index,
+-			mbuf00, mbuf01, pkts, pkts_mask, f);
+-
+-		/* Pipeline stage 1 */
+-		lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-		/* Pipeline stage 2 */
+-		lookup2_stage2_lru(pkt20_index, pkt21_index,
+-			mbuf20, mbuf21, bucket20, bucket21, pkts_mask_out,
+-			entries, f);
+-	}
+-
+-	/*
+-	 * Pipeline flush
+-	 *
+-	 */
+-	/* Pipeline feed */
+-	bucket20 = bucket10;
+-	bucket21 = bucket11;
+-	mbuf20 = mbuf10;
+-	mbuf21 = mbuf11;
+-	mbuf10 = mbuf00;
+-	mbuf11 = mbuf01;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2_lru(pkt20_index, pkt21_index,
+-		mbuf20, mbuf21, bucket20, bucket21, pkts_mask_out, entries, f);
+-
+-	/* Pipeline feed */
+-	bucket20 = bucket10;
+-	bucket21 = bucket11;
+-	mbuf20 = mbuf10;
+-	mbuf21 = mbuf11;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2_lru(pkt20_index, pkt21_index,
+-		mbuf20, mbuf21, bucket20, bucket21, pkts_mask_out, entries, f);
+-
+-	*lookup_hit_mask = pkts_mask_out;
+-	RTE_TABLE_HASH_KEY32_STATS_PKTS_LOOKUP_MISS(f, n_pkts_in - rte_popcount64(pkts_mask_out));
+-	return 0;
+-} /* rte_table_hash_lookup_key32_lru() */
+-
+-static int
+-rte_table_hash_lookup_key32_ext(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_hash *f = (struct rte_table_hash *) table;
+-	struct rte_bucket_4_32 *bucket10, *bucket11, *bucket20, *bucket21;
+-	struct rte_mbuf *mbuf00, *mbuf01, *mbuf10, *mbuf11, *mbuf20, *mbuf21;
+-	uint32_t pkt00_index, pkt01_index, pkt10_index;
+-	uint32_t pkt11_index, pkt20_index, pkt21_index;
+-	uint64_t pkts_mask_out = 0, buckets_mask = 0;
+-	struct rte_bucket_4_32 *buckets[RTE_PORT_IN_BURST_SIZE_MAX];
+-	uint64_t *keys[RTE_PORT_IN_BURST_SIZE_MAX];
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-	RTE_TABLE_HASH_KEY32_STATS_PKTS_IN_ADD(f, n_pkts_in);
+-
+-	/* Cannot run the pipeline with less than 5 packets */
+-	if (rte_popcount64(pkts_mask) < 5) {
+-		for ( ; pkts_mask; ) {
+-			struct rte_bucket_4_32 *bucket;
+-			struct rte_mbuf *mbuf;
+-			uint32_t pkt_index;
+-
+-			lookup1_stage0(pkt_index, mbuf, pkts, pkts_mask, f);
+-			lookup1_stage1(mbuf, bucket, f);
+-			lookup1_stage2_ext(pkt_index, mbuf, bucket,
+-				pkts_mask_out, entries, buckets_mask, buckets,
+-				keys, f);
+-		}
+-
+-		goto grind_next_buckets;
+-	}
+-
+-	/*
+-	 * Pipeline fill
+-	 *
+-	 */
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01, pkts,
+-		pkts_mask, f);
+-
+-	/* Pipeline feed */
+-	mbuf10 = mbuf00;
+-	mbuf11 = mbuf01;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01, pkts,
+-		pkts_mask, f);
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-	/*
+-	 * Pipeline run
+-	 *
+-	 */
+-	for ( ; pkts_mask; ) {
+-		/* Pipeline feed */
+-		bucket20 = bucket10;
+-		bucket21 = bucket11;
+-		mbuf20 = mbuf10;
+-		mbuf21 = mbuf11;
+-		mbuf10 = mbuf00;
+-		mbuf11 = mbuf01;
+-		pkt20_index = pkt10_index;
+-		pkt21_index = pkt11_index;
+-		pkt10_index = pkt00_index;
+-		pkt11_index = pkt01_index;
+-
+-		/* Pipeline stage 0 */
+-		lookup2_stage0_with_odd_support(pkt00_index, pkt01_index,
+-			mbuf00, mbuf01, pkts, pkts_mask, f);
+-
+-		/* Pipeline stage 1 */
+-		lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-		/* Pipeline stage 2 */
+-		lookup2_stage2_ext(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-			bucket20, bucket21, pkts_mask_out, entries,
+-			buckets_mask, buckets, keys, f);
+-	}
+-
+-	/*
+-	 * Pipeline flush
+-	 *
+-	 */
+-	/* Pipeline feed */
+-	bucket20 = bucket10;
+-	bucket21 = bucket11;
+-	mbuf20 = mbuf10;
+-	mbuf21 = mbuf11;
+-	mbuf10 = mbuf00;
+-	mbuf11 = mbuf01;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2_ext(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-		bucket20, bucket21, pkts_mask_out, entries,
+-		buckets_mask, buckets, keys, f);
+-
+-	/* Pipeline feed */
+-	bucket20 = bucket10;
+-	bucket21 = bucket11;
+-	mbuf20 = mbuf10;
+-	mbuf21 = mbuf11;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2_ext(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-		bucket20, bucket21, pkts_mask_out, entries,
+-		buckets_mask, buckets, keys, f);
+-
+-grind_next_buckets:
+-	/* Grind next buckets */
+-	for ( ; buckets_mask; ) {
+-		uint64_t buckets_mask_next = 0;
+-
+-		for ( ; buckets_mask; ) {
+-			uint32_t pkt_index;
+-
+-			pkt_index = rte_ctz64(buckets_mask);
+-			buckets_mask &= ~(1LLU << pkt_index);
+-
+-			lookup_grinder(pkt_index, buckets, keys, pkts_mask_out,
+-				entries, buckets_mask_next, f);
+-		}
+-
+-		buckets_mask = buckets_mask_next;
+-	}
+-
+-	*lookup_hit_mask = pkts_mask_out;
+-	RTE_TABLE_HASH_KEY32_STATS_PKTS_LOOKUP_MISS(f, n_pkts_in - rte_popcount64(pkts_mask_out));
+-	return 0;
+-} /* rte_table_hash_lookup_key32_ext() */
+-
+-static int
+-rte_table_hash_key32_stats_read(void *table, struct rte_table_stats *stats, int clear)
+-{
+-	struct rte_table_hash *t = table;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &t->stats, sizeof(t->stats));
+-
+-	if (clear)
+-		memset(&t->stats, 0, sizeof(t->stats));
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_table_hash_key32_lru_ops)
+-struct rte_table_ops rte_table_hash_key32_lru_ops = {
+-	.f_create = rte_table_hash_create_key32_lru,
+-	.f_free = rte_table_hash_free_key32_lru,
+-	.f_add = rte_table_hash_entry_add_key32_lru,
+-	.f_delete = rte_table_hash_entry_delete_key32_lru,
+-	.f_add_bulk = NULL,
+-	.f_delete_bulk = NULL,
+-	.f_lookup = rte_table_hash_lookup_key32_lru,
+-	.f_stats = rte_table_hash_key32_stats_read,
+-};
+-
+-RTE_EXPORT_SYMBOL(rte_table_hash_key32_ext_ops)
+-struct rte_table_ops rte_table_hash_key32_ext_ops = {
+-	.f_create = rte_table_hash_create_key32_ext,
+-	.f_free = rte_table_hash_free_key32_ext,
+-	.f_add = rte_table_hash_entry_add_key32_ext,
+-	.f_delete = rte_table_hash_entry_delete_key32_ext,
+-	.f_add_bulk = NULL,
+-	.f_delete_bulk = NULL,
+-	.f_lookup = rte_table_hash_lookup_key32_ext,
+-	.f_stats = rte_table_hash_key32_stats_read,
+-};
+diff --git a/lib/table/rte_table_hash_key8.c b/lib/table/rte_table_hash_key8.c
+deleted file mode 100644
+index 5e9dcf10ee3e6ce2c545a1a7dcf1d210f425f9b0..0000000000000000000000000000000000000000
+--- a/lib/table/rte_table_hash_key8.c
++++ /dev/null
+@@ -1,1157 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2017 Intel Corporation
+- */
+-
+-#include <stdalign.h>
+-#include <stdio.h>
+-#include <string.h>
+-
+-#include <eal_export.h>
+-#include <rte_common.h>
+-#include <rte_malloc.h>
+-#include <rte_log.h>
+-
+-#include "rte_table_hash.h"
+-#include "rte_lru.h"
+-
+-#include "table_log.h"
+-
+-#define KEY_SIZE						8
+-
+-#define KEYS_PER_BUCKET					4
+-
+-#ifdef RTE_TABLE_STATS_COLLECT
+-
+-#define RTE_TABLE_HASH_KEY8_STATS_PKTS_IN_ADD(table, val) \
+-	table->stats.n_pkts_in += val
+-#define RTE_TABLE_HASH_KEY8_STATS_PKTS_LOOKUP_MISS(table, val) \
+-	table->stats.n_pkts_lookup_miss += val
+-
+-#else
+-
+-#define RTE_TABLE_HASH_KEY8_STATS_PKTS_IN_ADD(table, val)
+-#define RTE_TABLE_HASH_KEY8_STATS_PKTS_LOOKUP_MISS(table, val)
+-
+-#endif
+-
+-#ifdef RTE_ARCH_64
+-struct rte_bucket_4_8 {
+-	/* Cache line 0 */
+-	uint64_t signature;
+-	uint64_t lru_list;
+-	struct rte_bucket_4_8 *next;
+-	uint64_t next_valid;
+-
+-	uint64_t key[4];
+-
+-	/* Cache line 1 */
+-	uint8_t data[];
+-};
+-#else
+-struct rte_bucket_4_8 {
+-	/* Cache line 0 */
+-	uint64_t signature;
+-	uint64_t lru_list;
+-	struct rte_bucket_4_8 *next;
+-	uint32_t pad;
+-	uint64_t next_valid;
+-
+-	uint64_t key[4];
+-
+-	/* Cache line 1 */
+-	uint8_t data[];
+-};
+-#endif
+-
+-struct rte_table_hash {
+-	struct rte_table_stats stats;
+-
+-	/* Input parameters */
+-	uint32_t n_buckets;
+-	uint32_t key_size;
+-	uint32_t entry_size;
+-	uint32_t bucket_size;
+-	uint32_t key_offset;
+-	uint64_t key_mask;
+-	rte_table_hash_op_hash f_hash;
+-	uint64_t seed;
+-
+-	/* Extendible buckets */
+-	uint32_t n_buckets_ext;
+-	uint32_t stack_pos;
+-	uint32_t *stack;
+-
+-	/* Lookup table */
+-	alignas(RTE_CACHE_LINE_SIZE) uint8_t memory[];
+-};
+-
+-static int
+-keycmp(void *a, void *b, void *b_mask)
+-{
+-	uint64_t *a64 = a, *b64 = b, *b_mask64 = b_mask;
+-
+-	return a64[0] != (b64[0] & b_mask64[0]);
+-}
+-
+-static void
+-keycpy(void *dst, void *src, void *src_mask)
+-{
+-	uint64_t *dst64 = dst, *src64 = src, *src_mask64 = src_mask;
+-
+-	dst64[0] = src64[0] & src_mask64[0];
+-}
+-
+-static int
+-check_params_create(struct rte_table_hash_params *params)
+-{
+-	/* name */
+-	if (params->name == NULL) {
+-		TABLE_LOG(ERR, "%s: name invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* key_size */
+-	if (params->key_size != KEY_SIZE) {
+-		TABLE_LOG(ERR, "%s: key_size invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* n_keys */
+-	if (params->n_keys == 0) {
+-		TABLE_LOG(ERR, "%s: n_keys is zero", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* n_buckets */
+-	if ((params->n_buckets == 0) ||
+-		(!rte_is_power_of_2(params->n_buckets))) {
+-		TABLE_LOG(ERR, "%s: n_buckets invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* f_hash */
+-	if (params->f_hash == NULL) {
+-		TABLE_LOG(ERR, "%s: f_hash function pointer is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	return 0;
+-}
+-
+-static void *
+-rte_table_hash_create_key8_lru(void *params, int socket_id, uint32_t entry_size)
+-{
+-	struct rte_table_hash_params *p = params;
+-	struct rte_table_hash *f;
+-	uint64_t bucket_size, total_size;
+-	uint32_t n_buckets, i;
+-
+-	/* Check input parameters */
+-	if ((check_params_create(p) != 0) ||
+-		((sizeof(struct rte_table_hash) % RTE_CACHE_LINE_SIZE) != 0) ||
+-		((sizeof(struct rte_bucket_4_8) % 64) != 0))
+-		return NULL;
+-
+-	/*
+-	 * Table dimensioning
+-	 *
+-	 * Objective: Pick the number of buckets (n_buckets) so that there a chance
+-	 * to store n_keys keys in the table.
+-	 *
+-	 * Note: Since the buckets do not get extended, it is not possible to
+-	 * guarantee that n_keys keys can be stored in the table at any time. In the
+-	 * worst case scenario when all the n_keys fall into the same bucket, only
+-	 * a maximum of KEYS_PER_BUCKET keys will be stored in the table. This case
+-	 * defeats the purpose of the hash table. It indicates unsuitable f_hash or
+-	 * n_keys to n_buckets ratio.
+-	 *
+-	 * MIN(n_buckets) = (n_keys + KEYS_PER_BUCKET - 1) / KEYS_PER_BUCKET
+-	 */
+-	n_buckets = rte_align32pow2(
+-		(p->n_keys + KEYS_PER_BUCKET - 1) / KEYS_PER_BUCKET);
+-	n_buckets = RTE_MAX(n_buckets, p->n_buckets);
+-
+-	/* Memory allocation */
+-	bucket_size = RTE_CACHE_LINE_ROUNDUP(sizeof(struct rte_bucket_4_8) +
+-		KEYS_PER_BUCKET * entry_size);
+-	total_size = sizeof(struct rte_table_hash) + n_buckets * bucket_size;
+-
+-	if (total_size > SIZE_MAX) {
+-		TABLE_LOG(ERR, "%s: Cannot allocate %" PRIu64 " bytes"
+-			" for hash table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-
+-	f = rte_zmalloc_socket(p->name,
+-		(size_t)total_size,
+-		RTE_CACHE_LINE_SIZE,
+-		socket_id);
+-	if (f == NULL) {
+-		TABLE_LOG(ERR, "%s: Cannot allocate %" PRIu64 " bytes"
+-			" for hash table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-
+-	TABLE_LOG(INFO, "%s: Hash table %s memory footprint "
+-		"is %" PRIu64 " bytes",
+-		__func__, p->name, total_size);
+-
+-	/* Memory initialization */
+-	f->n_buckets = n_buckets;
+-	f->key_size = KEY_SIZE;
+-	f->entry_size = entry_size;
+-	f->bucket_size = bucket_size;
+-	f->key_offset = p->key_offset;
+-	f->f_hash = p->f_hash;
+-	f->seed = p->seed;
+-
+-	if (p->key_mask != NULL)
+-		f->key_mask = ((uint64_t *)p->key_mask)[0];
+-	else
+-		f->key_mask = 0xFFFFFFFFFFFFFFFFLLU;
+-
+-	for (i = 0; i < n_buckets; i++) {
+-		struct rte_bucket_4_8 *bucket;
+-
+-		bucket = (struct rte_bucket_4_8 *) &f->memory[i *
+-			f->bucket_size];
+-		bucket->lru_list = 0x0000000100020003LLU;
+-	}
+-
+-	return f;
+-}
+-
+-static int
+-rte_table_hash_free_key8_lru(void *table)
+-{
+-	struct rte_table_hash *f = table;
+-
+-	/* Check input parameters */
+-	if (f == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	rte_free(f);
+-	return 0;
+-}
+-
+-static int
+-rte_table_hash_entry_add_key8_lru(
+-	void *table,
+-	void *key,
+-	void *entry,
+-	int *key_found,
+-	void **entry_ptr)
+-{
+-	struct rte_table_hash *f = table;
+-	struct rte_bucket_4_8 *bucket;
+-	uint64_t signature, mask, pos;
+-	uint32_t bucket_index, i;
+-
+-	signature = f->f_hash(key, &f->key_mask, f->key_size, f->seed);
+-	bucket_index = signature & (f->n_buckets - 1);
+-	bucket = (struct rte_bucket_4_8 *)
+-		&f->memory[bucket_index * f->bucket_size];
+-
+-	/* Key is present in the bucket */
+-	for (i = 0, mask = 1LLU; i < 4; i++, mask <<= 1) {
+-		uint64_t bucket_signature = bucket->signature;
+-		uint64_t *bucket_key = &bucket->key[i];
+-
+-		if ((bucket_signature & mask) &&
+-			(keycmp(bucket_key, key, &f->key_mask) == 0)) {
+-			uint8_t *bucket_data = &bucket->data[i * f->entry_size];
+-
+-			memcpy(bucket_data, entry, f->entry_size);
+-			lru_update(bucket, i);
+-			*key_found = 1;
+-			*entry_ptr = (void *) bucket_data;
+-			return 0;
+-		}
+-	}
+-
+-	/* Key is not present in the bucket */
+-	for (i = 0, mask = 1LLU; i < 4; i++, mask <<= 1) {
+-		uint64_t bucket_signature = bucket->signature;
+-
+-		if ((bucket_signature & mask) == 0) {
+-			uint8_t *bucket_data = &bucket->data[i * f->entry_size];
+-
+-			bucket->signature |= mask;
+-			keycpy(&bucket->key[i], key, &f->key_mask);
+-			memcpy(bucket_data, entry, f->entry_size);
+-			lru_update(bucket, i);
+-			*key_found = 0;
+-			*entry_ptr = (void *) bucket_data;
+-
+-			return 0;
+-		}
+-	}
+-
+-	/* Bucket full: replace LRU entry */
+-	pos = lru_pos(bucket);
+-	keycpy(&bucket->key[pos], key, &f->key_mask);
+-	memcpy(&bucket->data[pos * f->entry_size], entry, f->entry_size);
+-	lru_update(bucket, pos);
+-	*key_found = 0;
+-	*entry_ptr = (void *) &bucket->data[pos * f->entry_size];
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_hash_entry_delete_key8_lru(
+-	void *table,
+-	void *key,
+-	int *key_found,
+-	void *entry)
+-{
+-	struct rte_table_hash *f = table;
+-	struct rte_bucket_4_8 *bucket;
+-	uint64_t signature, mask;
+-	uint32_t bucket_index, i;
+-
+-	signature = f->f_hash(key, &f->key_mask, f->key_size, f->seed);
+-	bucket_index = signature & (f->n_buckets - 1);
+-	bucket = (struct rte_bucket_4_8 *)
+-		&f->memory[bucket_index * f->bucket_size];
+-
+-	/* Key is present in the bucket */
+-	for (i = 0, mask = 1LLU; i < 4; i++, mask <<= 1) {
+-		uint64_t bucket_signature = bucket->signature;
+-		uint64_t *bucket_key = &bucket->key[i];
+-
+-		if ((bucket_signature & mask) &&
+-			(keycmp(bucket_key, key, &f->key_mask) == 0)) {
+-			uint8_t *bucket_data = &bucket->data[i * f->entry_size];
+-
+-			bucket->signature &= ~mask;
+-			*key_found = 1;
+-			if (entry)
+-				memcpy(entry, bucket_data, f->entry_size);
+-
+-			return 0;
+-		}
+-	}
+-
+-	/* Key is not present in the bucket */
+-	*key_found = 0;
+-	return 0;
+-}
+-
+-static void *
+-rte_table_hash_create_key8_ext(void *params, int socket_id, uint32_t entry_size)
+-{
+-	struct rte_table_hash_params *p = params;
+-	struct rte_table_hash *f;
+-	uint64_t bucket_size, stack_size, total_size;
+-	uint32_t n_buckets_ext, i;
+-
+-	/* Check input parameters */
+-	if ((check_params_create(p) != 0) ||
+-		((sizeof(struct rte_table_hash) % RTE_CACHE_LINE_SIZE) != 0) ||
+-		((sizeof(struct rte_bucket_4_8) % 64) != 0))
+-		return NULL;
+-
+-	/*
+-	 * Table dimensioning
+-	 *
+-	 * Objective: Pick the number of bucket extensions (n_buckets_ext) so that
+-	 * it is guaranteed that n_keys keys can be stored in the table at any time.
+-	 *
+-	 * The worst case scenario takes place when all the n_keys keys fall into
+-	 * the same bucket. Actually, due to the KEYS_PER_BUCKET scheme, the worst
+-	 * case takes place when (n_keys - KEYS_PER_BUCKET + 1) keys fall into the
+-	 * same bucket, while the remaining (KEYS_PER_BUCKET - 1) keys each fall
+-	 * into a different bucket. This case defeats the purpose of the hash table.
+-	 * It indicates unsuitable f_hash or n_keys to n_buckets ratio.
+-	 *
+-	 * n_buckets_ext = n_keys / KEYS_PER_BUCKET + KEYS_PER_BUCKET - 1
+-	 */
+-	n_buckets_ext = p->n_keys / KEYS_PER_BUCKET + KEYS_PER_BUCKET - 1;
+-
+-	/* Memory allocation */
+-	bucket_size = RTE_CACHE_LINE_ROUNDUP(sizeof(struct rte_bucket_4_8) +
+-		KEYS_PER_BUCKET * entry_size);
+-	stack_size = RTE_CACHE_LINE_ROUNDUP(n_buckets_ext * sizeof(uint32_t));
+-	total_size = sizeof(struct rte_table_hash) +
+-		(p->n_buckets + n_buckets_ext) * bucket_size + stack_size;
+-
+-	if (total_size > SIZE_MAX) {
+-		TABLE_LOG(ERR, "%s: Cannot allocate %" PRIu64 " bytes "
+-			"for hash table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-
+-	f = rte_zmalloc_socket(p->name,
+-		(size_t)total_size,
+-		RTE_CACHE_LINE_SIZE,
+-		socket_id);
+-	if (f == NULL) {
+-		TABLE_LOG(ERR,
+-			"%s: Cannot allocate %" PRIu64 " bytes "
+-			"for hash table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-	TABLE_LOG(INFO, "%s: Hash table %s memory footprint "
+-		"is %" PRIu64 " bytes",
+-		__func__, p->name, total_size);
+-
+-	/* Memory initialization */
+-	f->n_buckets = p->n_buckets;
+-	f->key_size = KEY_SIZE;
+-	f->entry_size = entry_size;
+-	f->bucket_size = bucket_size;
+-	f->key_offset = p->key_offset;
+-	f->f_hash = p->f_hash;
+-	f->seed = p->seed;
+-
+-	f->n_buckets_ext = n_buckets_ext;
+-	f->stack_pos = n_buckets_ext;
+-	f->stack = (uint32_t *)
+-		&f->memory[(p->n_buckets + n_buckets_ext) * f->bucket_size];
+-
+-	if (p->key_mask != NULL)
+-		f->key_mask = ((uint64_t *)p->key_mask)[0];
+-	else
+-		f->key_mask = 0xFFFFFFFFFFFFFFFFLLU;
+-
+-	for (i = 0; i < n_buckets_ext; i++)
+-		f->stack[i] = i;
+-
+-	return f;
+-}
+-
+-static int
+-rte_table_hash_free_key8_ext(void *table)
+-{
+-	struct rte_table_hash *f = table;
+-
+-	/* Check input parameters */
+-	if (f == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	rte_free(f);
+-	return 0;
+-}
+-
+-static int
+-rte_table_hash_entry_add_key8_ext(
+-	void *table,
+-	void *key,
+-	void *entry,
+-	int *key_found,
+-	void **entry_ptr)
+-{
+-	struct rte_table_hash *f = table;
+-	struct rte_bucket_4_8 *bucket0, *bucket, *bucket_prev;
+-	uint64_t signature;
+-	uint32_t bucket_index, i;
+-
+-	signature = f->f_hash(key, &f->key_mask, f->key_size, f->seed);
+-	bucket_index = signature & (f->n_buckets - 1);
+-	bucket0 = (struct rte_bucket_4_8 *)
+-		&f->memory[bucket_index * f->bucket_size];
+-
+-	/* Key is present in the bucket */
+-	for (bucket = bucket0; bucket != NULL; bucket = bucket->next) {
+-		uint64_t mask;
+-
+-		for (i = 0, mask = 1LLU; i < 4; i++, mask <<= 1) {
+-			uint64_t bucket_signature = bucket->signature;
+-			uint64_t *bucket_key = &bucket->key[i];
+-
+-			if ((bucket_signature & mask) &&
+-				(keycmp(bucket_key, key, &f->key_mask) == 0)) {
+-				uint8_t *bucket_data = &bucket->data[i *
+-					f->entry_size];
+-
+-				memcpy(bucket_data, entry, f->entry_size);
+-				*key_found = 1;
+-				*entry_ptr = (void *) bucket_data;
+-				return 0;
+-			}
+-		}
+-	}
+-
+-	/* Key is not present in the bucket */
+-	for (bucket_prev = NULL, bucket = bucket0;
+-		bucket != NULL; bucket_prev = bucket, bucket = bucket->next) {
+-		uint64_t mask;
+-
+-		for (i = 0, mask = 1LLU; i < 4; i++, mask <<= 1) {
+-			uint64_t bucket_signature = bucket->signature;
+-
+-			if ((bucket_signature & mask) == 0) {
+-				uint8_t *bucket_data = &bucket->data[i *
+-					f->entry_size];
+-
+-				bucket->signature |= mask;
+-				keycpy(&bucket->key[i], key, &f->key_mask);
+-				memcpy(bucket_data, entry, f->entry_size);
+-				*key_found = 0;
+-				*entry_ptr = (void *) bucket_data;
+-
+-				return 0;
+-			}
+-		}
+-	}
+-
+-	/* Bucket full: extend bucket */
+-	if (f->stack_pos > 0) {
+-		bucket_index = f->stack[--f->stack_pos];
+-
+-		bucket = (struct rte_bucket_4_8 *) &f->memory[(f->n_buckets +
+-			bucket_index) * f->bucket_size];
+-		bucket_prev->next = bucket;
+-		bucket_prev->next_valid = 1;
+-
+-		bucket->signature = 1;
+-		keycpy(&bucket->key[0], key, &f->key_mask);
+-		memcpy(&bucket->data[0], entry, f->entry_size);
+-		*key_found = 0;
+-		*entry_ptr = (void *) &bucket->data[0];
+-		return 0;
+-	}
+-
+-	return -ENOSPC;
+-}
+-
+-static int
+-rte_table_hash_entry_delete_key8_ext(
+-	void *table,
+-	void *key,
+-	int *key_found,
+-	void *entry)
+-{
+-	struct rte_table_hash *f = table;
+-	struct rte_bucket_4_8 *bucket0, *bucket, *bucket_prev;
+-	uint64_t signature;
+-	uint32_t bucket_index, i;
+-
+-	signature = f->f_hash(key, &f->key_mask, f->key_size, f->seed);
+-	bucket_index = signature & (f->n_buckets - 1);
+-	bucket0 = (struct rte_bucket_4_8 *)
+-		&f->memory[bucket_index * f->bucket_size];
+-
+-	/* Key is present in the bucket */
+-	for (bucket_prev = NULL, bucket = bucket0; bucket != NULL;
+-		bucket_prev = bucket, bucket = bucket->next) {
+-		uint64_t mask;
+-
+-		for (i = 0, mask = 1LLU; i < 4; i++, mask <<= 1) {
+-			uint64_t bucket_signature = bucket->signature;
+-			uint64_t *bucket_key = &bucket->key[i];
+-
+-			if ((bucket_signature & mask) &&
+-				(keycmp(bucket_key, key, &f->key_mask) == 0)) {
+-				uint8_t *bucket_data = &bucket->data[i *
+-					f->entry_size];
+-
+-				bucket->signature &= ~mask;
+-				*key_found = 1;
+-				if (entry)
+-					memcpy(entry, bucket_data,
+-						f->entry_size);
+-
+-				if ((bucket->signature == 0) &&
+-				    (bucket_prev != NULL)) {
+-					bucket_prev->next = bucket->next;
+-					bucket_prev->next_valid =
+-						bucket->next_valid;
+-
+-					memset(bucket, 0,
+-						sizeof(struct rte_bucket_4_8));
+-					bucket_index = (((uint8_t *)bucket -
+-						(uint8_t *)f->memory)/f->bucket_size) - f->n_buckets;
+-					f->stack[f->stack_pos++] = bucket_index;
+-				}
+-
+-				return 0;
+-			}
+-		}
+-	}
+-
+-	/* Key is not present in the bucket */
+-	*key_found = 0;
+-	return 0;
+-}
+-
+-#define lookup_key8_cmp(key_in, bucket, pos, f)			\
+-{								\
+-	uint64_t xor[4], signature, k;				\
+-								\
+-	signature = ~bucket->signature;				\
+-								\
+-	k = key_in[0] & f->key_mask;				\
+-	xor[0] = (k ^ bucket->key[0]) | (signature & 1);		\
+-	xor[1] = (k ^ bucket->key[1]) | (signature & 2);		\
+-	xor[2] = (k ^ bucket->key[2]) | (signature & 4);		\
+-	xor[3] = (k ^ bucket->key[3]) | (signature & 8);		\
+-								\
+-	pos = 4;						\
+-	if (xor[0] == 0)					\
+-		pos = 0;					\
+-	if (xor[1] == 0)					\
+-		pos = 1;					\
+-	if (xor[2] == 0)					\
+-		pos = 2;					\
+-	if (xor[3] == 0)					\
+-		pos = 3;					\
+-}
+-
+-#define lookup1_stage0(pkt0_index, mbuf0, pkts, pkts_mask, f)	\
+-{								\
+-	uint64_t pkt_mask;					\
+-	uint32_t key_offset = f->key_offset;\
+-								\
+-	pkt0_index = rte_ctz64(pkts_mask);		\
+-	pkt_mask = 1LLU << pkt0_index;				\
+-	pkts_mask &= ~pkt_mask;					\
+-								\
+-	mbuf0 = pkts[pkt0_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf0, key_offset));	\
+-}
+-
+-#define lookup1_stage1(mbuf1, bucket1, f)			\
+-{								\
+-	uint64_t *key;						\
+-	uint64_t signature;					\
+-	uint32_t bucket_index;					\
+-								\
+-	key = RTE_MBUF_METADATA_UINT64_PTR(mbuf1, f->key_offset);\
+-	signature = f->f_hash(key, &f->key_mask, KEY_SIZE, f->seed);	\
+-	bucket_index = signature & (f->n_buckets - 1);		\
+-	bucket1 = (struct rte_bucket_4_8 *)			\
+-		&f->memory[bucket_index * f->bucket_size];	\
+-	rte_prefetch0(bucket1);					\
+-}
+-
+-#define lookup1_stage2_lru(pkt2_index, mbuf2, bucket2,		\
+-	pkts_mask_out, entries, f)				\
+-{								\
+-	void *a;						\
+-	uint64_t pkt_mask;					\
+-	uint64_t *key;						\
+-	uint32_t pos;						\
+-								\
+-	key = RTE_MBUF_METADATA_UINT64_PTR(mbuf2, f->key_offset);\
+-	lookup_key8_cmp(key, bucket2, pos, f);	\
+-								\
+-	pkt_mask = ((bucket2->signature >> pos) & 1LLU) << pkt2_index;\
+-	pkts_mask_out |= pkt_mask;				\
+-								\
+-	a = (void *) &bucket2->data[pos * f->entry_size];	\
+-	rte_prefetch0(a);					\
+-	entries[pkt2_index] = a;				\
+-	lru_update(bucket2, pos);				\
+-}
+-
+-#define lookup1_stage2_ext(pkt2_index, mbuf2, bucket2, pkts_mask_out,\
+-	entries, buckets_mask, buckets, keys, f)		\
+-{								\
+-	struct rte_bucket_4_8 *bucket_next;			\
+-	void *a;						\
+-	uint64_t pkt_mask, bucket_mask;				\
+-	uint64_t *key;						\
+-	uint32_t pos;						\
+-								\
+-	key = RTE_MBUF_METADATA_UINT64_PTR(mbuf2, f->key_offset);\
+-	lookup_key8_cmp(key, bucket2, pos, f);	\
+-								\
+-	pkt_mask = ((bucket2->signature >> pos) & 1LLU) << pkt2_index;\
+-	pkts_mask_out |= pkt_mask;				\
+-								\
+-	a = (void *) &bucket2->data[pos * f->entry_size];	\
+-	rte_prefetch0(a);					\
+-	entries[pkt2_index] = a;				\
+-								\
+-	bucket_mask = (~pkt_mask) & (bucket2->next_valid << pkt2_index);\
+-	buckets_mask |= bucket_mask;				\
+-	bucket_next = bucket2->next;				\
+-	buckets[pkt2_index] = bucket_next;			\
+-	keys[pkt2_index] = key;					\
+-}
+-
+-#define lookup_grinder(pkt_index, buckets, keys, pkts_mask_out, entries,\
+-	buckets_mask, f)					\
+-{								\
+-	struct rte_bucket_4_8 *bucket, *bucket_next;		\
+-	void *a;						\
+-	uint64_t pkt_mask, bucket_mask;				\
+-	uint64_t *key;						\
+-	uint32_t pos;						\
+-								\
+-	bucket = buckets[pkt_index];				\
+-	key = keys[pkt_index];					\
+-	lookup_key8_cmp(key, bucket, pos, f);			\
+-								\
+-	pkt_mask = ((bucket->signature >> pos) & 1LLU) << pkt_index;\
+-	pkts_mask_out |= pkt_mask;				\
+-								\
+-	a = (void *) &bucket->data[pos * f->entry_size];	\
+-	rte_prefetch0(a);					\
+-	entries[pkt_index] = a;					\
+-								\
+-	bucket_mask = (~pkt_mask) & (bucket->next_valid << pkt_index);\
+-	buckets_mask |= bucket_mask;				\
+-	bucket_next = bucket->next;				\
+-	rte_prefetch0(bucket_next);				\
+-	buckets[pkt_index] = bucket_next;			\
+-	keys[pkt_index] = key;					\
+-}
+-
+-#define lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01,\
+-	pkts, pkts_mask, f)					\
+-{								\
+-	uint64_t pkt00_mask, pkt01_mask;			\
+-	uint32_t key_offset = f->key_offset;		\
+-								\
+-	pkt00_index = rte_ctz64(pkts_mask);		\
+-	pkt00_mask = 1LLU << pkt00_index;			\
+-	pkts_mask &= ~pkt00_mask;				\
+-								\
+-	mbuf00 = pkts[pkt00_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf00, key_offset));\
+-								\
+-	pkt01_index = rte_ctz64(pkts_mask);		\
+-	pkt01_mask = 1LLU << pkt01_index;			\
+-	pkts_mask &= ~pkt01_mask;				\
+-								\
+-	mbuf01 = pkts[pkt01_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf01, key_offset));\
+-}
+-
+-#define lookup2_stage0_with_odd_support(pkt00_index, pkt01_index,\
+-	mbuf00, mbuf01, pkts, pkts_mask, f)			\
+-{								\
+-	uint64_t pkt00_mask, pkt01_mask;			\
+-	uint32_t key_offset = f->key_offset;		\
+-								\
+-	pkt00_index = rte_ctz64(pkts_mask);		\
+-	pkt00_mask = 1LLU << pkt00_index;			\
+-	pkts_mask &= ~pkt00_mask;				\
+-								\
+-	mbuf00 = pkts[pkt00_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf00, key_offset));\
+-								\
+-	pkt01_index = rte_ctz64(pkts_mask);		\
+-	if (pkts_mask == 0)					\
+-		pkt01_index = pkt00_index;			\
+-								\
+-	pkt01_mask = 1LLU << pkt01_index;			\
+-	pkts_mask &= ~pkt01_mask;				\
+-								\
+-	mbuf01 = pkts[pkt01_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf01, key_offset));\
+-}
+-
+-#define lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f)\
+-{								\
+-	uint64_t *key10, *key11;				\
+-	uint64_t signature10, signature11;			\
+-	uint32_t bucket10_index, bucket11_index;		\
+-	rte_table_hash_op_hash f_hash = f->f_hash;		\
+-	uint64_t seed = f->seed;				\
+-	uint32_t key_offset = f->key_offset;			\
+-								\
+-	key10 = RTE_MBUF_METADATA_UINT64_PTR(mbuf10, key_offset);\
+-	key11 = RTE_MBUF_METADATA_UINT64_PTR(mbuf11, key_offset);\
+-								\
+-	signature10 = f_hash(key10, &f->key_mask, KEY_SIZE, seed);	\
+-	bucket10_index = signature10 & (f->n_buckets - 1);	\
+-	bucket10 = (struct rte_bucket_4_8 *)			\
+-		&f->memory[bucket10_index * f->bucket_size];	\
+-	rte_prefetch0(bucket10);				\
+-								\
+-	signature11 = f_hash(key11, &f->key_mask, KEY_SIZE, seed);	\
+-	bucket11_index = signature11 & (f->n_buckets - 1);	\
+-	bucket11 = (struct rte_bucket_4_8 *)			\
+-		&f->memory[bucket11_index * f->bucket_size];	\
+-	rte_prefetch0(bucket11);				\
+-}
+-
+-#define lookup2_stage2_lru(pkt20_index, pkt21_index, mbuf20, mbuf21,\
+-	bucket20, bucket21, pkts_mask_out, entries, f)		\
+-{								\
+-	void *a20, *a21;					\
+-	uint64_t pkt20_mask, pkt21_mask;			\
+-	uint64_t *key20, *key21;				\
+-	uint32_t pos20, pos21;					\
+-								\
+-	key20 = RTE_MBUF_METADATA_UINT64_PTR(mbuf20, f->key_offset);\
+-	key21 = RTE_MBUF_METADATA_UINT64_PTR(mbuf21, f->key_offset);\
+-								\
+-	lookup_key8_cmp(key20, bucket20, pos20, f);			\
+-	lookup_key8_cmp(key21, bucket21, pos21, f);			\
+-								\
+-	pkt20_mask = ((bucket20->signature >> pos20) & 1LLU) << pkt20_index;\
+-	pkt21_mask = ((bucket21->signature >> pos21) & 1LLU) << pkt21_index;\
+-	pkts_mask_out |= pkt20_mask | pkt21_mask;		\
+-								\
+-	a20 = (void *) &bucket20->data[pos20 * f->entry_size];	\
+-	a21 = (void *) &bucket21->data[pos21 * f->entry_size];	\
+-	rte_prefetch0(a20);					\
+-	rte_prefetch0(a21);					\
+-	entries[pkt20_index] = a20;				\
+-	entries[pkt21_index] = a21;				\
+-	lru_update(bucket20, pos20);				\
+-	lru_update(bucket21, pos21);				\
+-}
+-
+-#define lookup2_stage2_ext(pkt20_index, pkt21_index, mbuf20, mbuf21, bucket20, \
+-	bucket21, pkts_mask_out, entries, buckets_mask, buckets, keys, f)\
+-{								\
+-	struct rte_bucket_4_8 *bucket20_next, *bucket21_next;	\
+-	void *a20, *a21;					\
+-	uint64_t pkt20_mask, pkt21_mask, bucket20_mask, bucket21_mask;\
+-	uint64_t *key20, *key21;				\
+-	uint32_t pos20, pos21;					\
+-								\
+-	key20 = RTE_MBUF_METADATA_UINT64_PTR(mbuf20, f->key_offset);\
+-	key21 = RTE_MBUF_METADATA_UINT64_PTR(mbuf21, f->key_offset);\
+-								\
+-	lookup_key8_cmp(key20, bucket20, pos20, f);			\
+-	lookup_key8_cmp(key21, bucket21, pos21, f);			\
+-								\
+-	pkt20_mask = ((bucket20->signature >> pos20) & 1LLU) << pkt20_index;\
+-	pkt21_mask = ((bucket21->signature >> pos21) & 1LLU) << pkt21_index;\
+-	pkts_mask_out |= pkt20_mask | pkt21_mask;		\
+-								\
+-	a20 = (void *) &bucket20->data[pos20 * f->entry_size];	\
+-	a21 = (void *) &bucket21->data[pos21 * f->entry_size];	\
+-	rte_prefetch0(a20);					\
+-	rte_prefetch0(a21);					\
+-	entries[pkt20_index] = a20;				\
+-	entries[pkt21_index] = a21;				\
+-								\
+-	bucket20_mask = (~pkt20_mask) & (bucket20->next_valid << pkt20_index);\
+-	bucket21_mask = (~pkt21_mask) & (bucket21->next_valid << pkt21_index);\
+-	buckets_mask |= bucket20_mask | bucket21_mask;		\
+-	bucket20_next = bucket20->next;				\
+-	bucket21_next = bucket21->next;				\
+-	buckets[pkt20_index] = bucket20_next;			\
+-	buckets[pkt21_index] = bucket21_next;			\
+-	keys[pkt20_index] = key20;				\
+-	keys[pkt21_index] = key21;				\
+-}
+-
+-static int
+-rte_table_hash_lookup_key8_lru(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_hash *f = (struct rte_table_hash *) table;
+-	struct rte_bucket_4_8 *bucket10, *bucket11, *bucket20, *bucket21;
+-	struct rte_mbuf *mbuf00, *mbuf01, *mbuf10, *mbuf11, *mbuf20, *mbuf21;
+-	uint32_t pkt00_index, pkt01_index, pkt10_index;
+-	uint32_t pkt11_index, pkt20_index, pkt21_index;
+-	uint64_t pkts_mask_out = 0;
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-	RTE_TABLE_HASH_KEY8_STATS_PKTS_IN_ADD(f, n_pkts_in);
+-
+-	/* Cannot run the pipeline with less than 5 packets */
+-	if (rte_popcount64(pkts_mask) < 5) {
+-		for ( ; pkts_mask; ) {
+-			struct rte_bucket_4_8 *bucket;
+-			struct rte_mbuf *mbuf;
+-			uint32_t pkt_index;
+-
+-			lookup1_stage0(pkt_index, mbuf, pkts, pkts_mask, f);
+-			lookup1_stage1(mbuf, bucket, f);
+-			lookup1_stage2_lru(pkt_index, mbuf, bucket,
+-				pkts_mask_out, entries, f);
+-		}
+-
+-		*lookup_hit_mask = pkts_mask_out;
+-		RTE_TABLE_HASH_KEY8_STATS_PKTS_LOOKUP_MISS(f, n_pkts_in - rte_popcount64(pkts_mask_out));
+-		return 0;
+-	}
+-
+-	/*
+-	 * Pipeline fill
+-	 *
+-	 */
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01, pkts,
+-		pkts_mask, f);
+-
+-	/* Pipeline feed */
+-	mbuf10 = mbuf00;
+-	mbuf11 = mbuf01;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01, pkts,
+-		pkts_mask, f);
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-	/*
+-	 * Pipeline run
+-	 *
+-	 */
+-	for ( ; pkts_mask; ) {
+-		/* Pipeline feed */
+-		bucket20 = bucket10;
+-		bucket21 = bucket11;
+-		mbuf20 = mbuf10;
+-		mbuf21 = mbuf11;
+-		mbuf10 = mbuf00;
+-		mbuf11 = mbuf01;
+-		pkt20_index = pkt10_index;
+-		pkt21_index = pkt11_index;
+-		pkt10_index = pkt00_index;
+-		pkt11_index = pkt01_index;
+-
+-		/* Pipeline stage 0 */
+-		lookup2_stage0_with_odd_support(pkt00_index, pkt01_index,
+-			mbuf00, mbuf01, pkts, pkts_mask, f);
+-
+-		/* Pipeline stage 1 */
+-		lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-		/* Pipeline stage 2 */
+-		lookup2_stage2_lru(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-			bucket20, bucket21, pkts_mask_out, entries, f);
+-	}
+-
+-	/*
+-	 * Pipeline flush
+-	 *
+-	 */
+-	/* Pipeline feed */
+-	bucket20 = bucket10;
+-	bucket21 = bucket11;
+-	mbuf20 = mbuf10;
+-	mbuf21 = mbuf11;
+-	mbuf10 = mbuf00;
+-	mbuf11 = mbuf01;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2_lru(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-		bucket20, bucket21, pkts_mask_out, entries, f);
+-
+-	/* Pipeline feed */
+-	bucket20 = bucket10;
+-	bucket21 = bucket11;
+-	mbuf20 = mbuf10;
+-	mbuf21 = mbuf11;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2_lru(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-		bucket20, bucket21, pkts_mask_out, entries, f);
+-
+-	*lookup_hit_mask = pkts_mask_out;
+-	RTE_TABLE_HASH_KEY8_STATS_PKTS_LOOKUP_MISS(f, n_pkts_in - rte_popcount64(pkts_mask_out));
+-	return 0;
+-} /* lookup LRU */
+-
+-static int
+-rte_table_hash_lookup_key8_ext(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_hash *f = (struct rte_table_hash *) table;
+-	struct rte_bucket_4_8 *bucket10, *bucket11, *bucket20, *bucket21;
+-	struct rte_mbuf *mbuf00, *mbuf01, *mbuf10, *mbuf11, *mbuf20, *mbuf21;
+-	uint32_t pkt00_index, pkt01_index, pkt10_index;
+-	uint32_t pkt11_index, pkt20_index, pkt21_index;
+-	uint64_t pkts_mask_out = 0, buckets_mask = 0;
+-	struct rte_bucket_4_8 *buckets[RTE_PORT_IN_BURST_SIZE_MAX];
+-	uint64_t *keys[RTE_PORT_IN_BURST_SIZE_MAX];
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-	RTE_TABLE_HASH_KEY8_STATS_PKTS_IN_ADD(f, n_pkts_in);
+-
+-	/* Cannot run the pipeline with less than 5 packets */
+-	if (rte_popcount64(pkts_mask) < 5) {
+-		for ( ; pkts_mask; ) {
+-			struct rte_bucket_4_8 *bucket;
+-			struct rte_mbuf *mbuf;
+-			uint32_t pkt_index;
+-
+-			lookup1_stage0(pkt_index, mbuf, pkts, pkts_mask, f);
+-			lookup1_stage1(mbuf, bucket, f);
+-			lookup1_stage2_ext(pkt_index, mbuf, bucket,
+-				pkts_mask_out, entries, buckets_mask,
+-				buckets, keys, f);
+-		}
+-
+-		goto grind_next_buckets;
+-	}
+-
+-	/*
+-	 * Pipeline fill
+-	 *
+-	 */
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01, pkts,
+-		pkts_mask, f);
+-
+-	/* Pipeline feed */
+-	mbuf10 = mbuf00;
+-	mbuf11 = mbuf01;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01, pkts,
+-		pkts_mask, f);
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-	/*
+-	 * Pipeline run
+-	 *
+-	 */
+-	for ( ; pkts_mask; ) {
+-		/* Pipeline feed */
+-		bucket20 = bucket10;
+-		bucket21 = bucket11;
+-		mbuf20 = mbuf10;
+-		mbuf21 = mbuf11;
+-		mbuf10 = mbuf00;
+-		mbuf11 = mbuf01;
+-		pkt20_index = pkt10_index;
+-		pkt21_index = pkt11_index;
+-		pkt10_index = pkt00_index;
+-		pkt11_index = pkt01_index;
+-
+-		/* Pipeline stage 0 */
+-		lookup2_stage0_with_odd_support(pkt00_index, pkt01_index,
+-			mbuf00, mbuf01, pkts, pkts_mask, f);
+-
+-		/* Pipeline stage 1 */
+-		lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-		/* Pipeline stage 2 */
+-		lookup2_stage2_ext(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-			bucket20, bucket21, pkts_mask_out, entries,
+-			buckets_mask, buckets, keys, f);
+-	}
+-
+-	/*
+-	 * Pipeline flush
+-	 *
+-	 */
+-	/* Pipeline feed */
+-	bucket20 = bucket10;
+-	bucket21 = bucket11;
+-	mbuf20 = mbuf10;
+-	mbuf21 = mbuf11;
+-	mbuf10 = mbuf00;
+-	mbuf11 = mbuf01;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2_ext(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-		bucket20, bucket21, pkts_mask_out, entries,
+-		buckets_mask, buckets, keys, f);
+-
+-	/* Pipeline feed */
+-	bucket20 = bucket10;
+-	bucket21 = bucket11;
+-	mbuf20 = mbuf10;
+-	mbuf21 = mbuf11;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2_ext(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-		bucket20, bucket21, pkts_mask_out, entries,
+-		buckets_mask, buckets, keys, f);
+-
+-grind_next_buckets:
+-	/* Grind next buckets */
+-	for ( ; buckets_mask; ) {
+-		uint64_t buckets_mask_next = 0;
+-
+-		for ( ; buckets_mask; ) {
+-			uint32_t pkt_index;
+-
+-			pkt_index = rte_ctz64(buckets_mask);
+-			buckets_mask &= ~(1LLU << pkt_index);
+-
+-			lookup_grinder(pkt_index, buckets, keys, pkts_mask_out,
+-				entries, buckets_mask_next, f);
+-		}
+-
+-		buckets_mask = buckets_mask_next;
+-	}
+-
+-	*lookup_hit_mask = pkts_mask_out;
+-	RTE_TABLE_HASH_KEY8_STATS_PKTS_LOOKUP_MISS(f, n_pkts_in - rte_popcount64(pkts_mask_out));
+-	return 0;
+-} /* lookup EXT */
+-
+-static int
+-rte_table_hash_key8_stats_read(void *table, struct rte_table_stats *stats, int clear)
+-{
+-	struct rte_table_hash *t = table;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &t->stats, sizeof(t->stats));
+-
+-	if (clear)
+-		memset(&t->stats, 0, sizeof(t->stats));
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_table_hash_key8_lru_ops)
+-struct rte_table_ops rte_table_hash_key8_lru_ops = {
+-	.f_create = rte_table_hash_create_key8_lru,
+-	.f_free = rte_table_hash_free_key8_lru,
+-	.f_add = rte_table_hash_entry_add_key8_lru,
+-	.f_delete = rte_table_hash_entry_delete_key8_lru,
+-	.f_add_bulk = NULL,
+-	.f_delete_bulk = NULL,
+-	.f_lookup = rte_table_hash_lookup_key8_lru,
+-	.f_stats = rte_table_hash_key8_stats_read,
+-};
+-
+-RTE_EXPORT_SYMBOL(rte_table_hash_key8_ext_ops)
+-struct rte_table_ops rte_table_hash_key8_ext_ops = {
+-	.f_create = rte_table_hash_create_key8_ext,
+-	.f_free = rte_table_hash_free_key8_ext,
+-	.f_add = rte_table_hash_entry_add_key8_ext,
+-	.f_delete = rte_table_hash_entry_delete_key8_ext,
+-	.f_add_bulk = NULL,
+-	.f_delete_bulk = NULL,
+-	.f_lookup = rte_table_hash_lookup_key8_ext,
+-	.f_stats = rte_table_hash_key8_stats_read,
+-};
+diff --git a/lib/table/rte_table_hash_lru.c b/lib/table/rte_table_hash_lru.c
+deleted file mode 100644
+index 548f5eebf29cea7cf9767ae4345a3fda374ab4cd..0000000000000000000000000000000000000000
+--- a/lib/table/rte_table_hash_lru.c
++++ /dev/null
+@@ -1,959 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2017 Intel Corporation
+- */
+-
+-#include <stdalign.h>
+-#include <stdio.h>
+-#include <string.h>
+-
+-#include <eal_export.h>
+-#include <rte_common.h>
+-#include <rte_malloc.h>
+-#include <rte_log.h>
+-
+-#include "rte_table_hash.h"
+-#include "rte_lru.h"
+-
+-#include "table_log.h"
+-
+-#define KEYS_PER_BUCKET	4
+-
+-#ifdef RTE_TABLE_STATS_COLLECT
+-
+-#define RTE_TABLE_HASH_LRU_STATS_PKTS_IN_ADD(table, val) \
+-	table->stats.n_pkts_in += val
+-#define RTE_TABLE_HASH_LRU_STATS_PKTS_LOOKUP_MISS(table, val) \
+-	table->stats.n_pkts_lookup_miss += val
+-
+-#else
+-
+-#define RTE_TABLE_HASH_LRU_STATS_PKTS_IN_ADD(table, val)
+-#define RTE_TABLE_HASH_LRU_STATS_PKTS_LOOKUP_MISS(table, val)
+-
+-#endif
+-
+-struct bucket {
+-	union {
+-		struct bucket *next;
+-		uint64_t lru_list;
+-	};
+-	uint16_t sig[KEYS_PER_BUCKET];
+-	uint32_t key_pos[KEYS_PER_BUCKET];
+-};
+-
+-struct grinder {
+-	struct bucket *bkt;
+-	uint64_t sig;
+-	uint64_t match;
+-	uint64_t match_pos;
+-	uint32_t key_index;
+-};
+-
+-struct rte_table_hash {
+-	struct rte_table_stats stats;
+-
+-	/* Input parameters */
+-	uint32_t key_size;
+-	uint32_t entry_size;
+-	uint32_t n_keys;
+-	uint32_t n_buckets;
+-	rte_table_hash_op_hash f_hash;
+-	uint64_t seed;
+-	uint32_t key_offset;
+-
+-	/* Internal */
+-	uint64_t bucket_mask;
+-	uint32_t key_size_shl;
+-	uint32_t data_size_shl;
+-	uint32_t key_stack_tos;
+-
+-	/* Grinder */
+-	struct grinder grinders[RTE_PORT_IN_BURST_SIZE_MAX];
+-
+-	/* Tables */
+-	uint64_t *key_mask;
+-	struct bucket *buckets;
+-	uint8_t *key_mem;
+-	uint8_t *data_mem;
+-	uint32_t *key_stack;
+-
+-	/* Table memory */
+-	alignas(RTE_CACHE_LINE_SIZE) uint8_t memory[];
+-};
+-
+-static int
+-keycmp(void *a, void *b, void *b_mask, uint32_t n_bytes)
+-{
+-	uint64_t *a64 = a, *b64 = b, *b_mask64 = b_mask;
+-	uint32_t i;
+-
+-	for (i = 0; i < n_bytes / sizeof(uint64_t); i++)
+-		if (a64[i] != (b64[i] & b_mask64[i]))
+-			return 1;
+-
+-	return 0;
+-}
+-
+-static void
+-keycpy(void *dst, void *src, void *src_mask, uint32_t n_bytes)
+-{
+-	uint64_t *dst64 = dst, *src64 = src, *src_mask64 = src_mask;
+-	uint32_t i;
+-
+-	for (i = 0; i < n_bytes / sizeof(uint64_t); i++)
+-		dst64[i] = src64[i] & src_mask64[i];
+-}
+-
+-static int
+-check_params_create(struct rte_table_hash_params *params)
+-{
+-	/* name */
+-	if (params->name == NULL) {
+-		TABLE_LOG(ERR, "%s: name invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* key_size */
+-	if ((params->key_size < sizeof(uint64_t)) ||
+-		(!rte_is_power_of_2(params->key_size))) {
+-		TABLE_LOG(ERR, "%s: key_size invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* n_keys */
+-	if (params->n_keys == 0) {
+-		TABLE_LOG(ERR, "%s: n_keys invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* n_buckets */
+-	if ((params->n_buckets == 0) ||
+-		(!rte_is_power_of_2(params->n_buckets))) {
+-		TABLE_LOG(ERR, "%s: n_buckets invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* f_hash */
+-	if (params->f_hash == NULL) {
+-		TABLE_LOG(ERR, "%s: f_hash invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	return 0;
+-}
+-
+-static void *
+-rte_table_hash_lru_create(void *params, int socket_id, uint32_t entry_size)
+-{
+-	struct rte_table_hash_params *p = params;
+-	struct rte_table_hash *t;
+-	uint64_t table_meta_sz, key_mask_sz, bucket_sz, key_sz, key_stack_sz;
+-	uint64_t data_sz, total_size;
+-	uint64_t key_mask_offset, bucket_offset, key_offset, key_stack_offset;
+-	uint64_t data_offset;
+-	uint32_t n_buckets, i;
+-
+-	/* Check input parameters */
+-	if ((check_params_create(p) != 0) ||
+-		(!rte_is_power_of_2(entry_size)) ||
+-		((sizeof(struct rte_table_hash) % RTE_CACHE_LINE_SIZE) != 0) ||
+-		(sizeof(struct bucket) != (RTE_CACHE_LINE_SIZE / 2))) {
+-		return NULL;
+-	}
+-
+-	/*
+-	 * Table dimensioning
+-	 *
+-	 * Objective: Pick the number of buckets (n_buckets) so that there a chance
+-	 * to store n_keys keys in the table.
+-	 *
+-	 * Note: Since the buckets do not get extended, it is not possible to
+-	 * guarantee that n_keys keys can be stored in the table at any time. In the
+-	 * worst case scenario when all the n_keys fall into the same bucket, only
+-	 * a maximum of KEYS_PER_BUCKET keys will be stored in the table. This case
+-	 * defeats the purpose of the hash table. It indicates unsuitable f_hash or
+-	 * n_keys to n_buckets ratio.
+-	 *
+-	 * MIN(n_buckets) = (n_keys + KEYS_PER_BUCKET - 1) / KEYS_PER_BUCKET
+-	 */
+-	n_buckets = rte_align32pow2(
+-		(p->n_keys + KEYS_PER_BUCKET - 1) / KEYS_PER_BUCKET);
+-	n_buckets = RTE_MAX(n_buckets, p->n_buckets);
+-
+-	/* Memory allocation */
+-	table_meta_sz = RTE_CACHE_LINE_ROUNDUP(sizeof(struct rte_table_hash));
+-	key_mask_sz = RTE_CACHE_LINE_ROUNDUP(p->key_size);
+-	bucket_sz = RTE_CACHE_LINE_ROUNDUP(n_buckets * sizeof(struct bucket));
+-	key_sz = RTE_CACHE_LINE_ROUNDUP(p->n_keys * p->key_size);
+-	key_stack_sz = RTE_CACHE_LINE_ROUNDUP(p->n_keys * sizeof(uint32_t));
+-	data_sz = RTE_CACHE_LINE_ROUNDUP(p->n_keys * entry_size);
+-	total_size = table_meta_sz + key_mask_sz + bucket_sz + key_sz +
+-		key_stack_sz + data_sz;
+-
+-	if (total_size > SIZE_MAX) {
+-		TABLE_LOG(ERR,
+-			"%s: Cannot allocate %" PRIu64 " bytes for hash "
+-			"table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-
+-	t = rte_zmalloc_socket(p->name,
+-		(size_t)total_size,
+-		RTE_CACHE_LINE_SIZE,
+-		socket_id);
+-	if (t == NULL) {
+-		TABLE_LOG(ERR,
+-			"%s: Cannot allocate %" PRIu64 " bytes for hash "
+-			"table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-	TABLE_LOG(INFO, "%s (%u-byte key): Hash table %s memory footprint"
+-		" is %" PRIu64 " bytes",
+-		__func__, p->key_size, p->name, total_size);
+-
+-	/* Memory initialization */
+-	t->key_size = p->key_size;
+-	t->entry_size = entry_size;
+-	t->n_keys = p->n_keys;
+-	t->n_buckets = n_buckets;
+-	t->f_hash = p->f_hash;
+-	t->seed = p->seed;
+-	t->key_offset = p->key_offset;
+-
+-	/* Internal */
+-	t->bucket_mask = t->n_buckets - 1;
+-	t->key_size_shl = rte_ctz32(p->key_size);
+-	t->data_size_shl = rte_ctz32(entry_size);
+-
+-	/* Tables */
+-	key_mask_offset = 0;
+-	bucket_offset = key_mask_offset + key_mask_sz;
+-	key_offset = bucket_offset + bucket_sz;
+-	key_stack_offset = key_offset + key_sz;
+-	data_offset = key_stack_offset + key_stack_sz;
+-
+-	t->key_mask = (uint64_t *) &t->memory[key_mask_offset];
+-	t->buckets = (struct bucket *) &t->memory[bucket_offset];
+-	t->key_mem = &t->memory[key_offset];
+-	t->key_stack = (uint32_t *) &t->memory[key_stack_offset];
+-	t->data_mem = &t->memory[data_offset];
+-
+-	/* Key mask */
+-	if (p->key_mask == NULL)
+-		memset(t->key_mask, 0xFF, p->key_size);
+-	else
+-		memcpy(t->key_mask, p->key_mask, p->key_size);
+-
+-	/* Key stack */
+-	for (i = 0; i < t->n_keys; i++)
+-		t->key_stack[i] = t->n_keys - 1 - i;
+-	t->key_stack_tos = t->n_keys;
+-
+-	/* LRU */
+-	for (i = 0; i < t->n_buckets; i++) {
+-		struct bucket *bkt = &t->buckets[i];
+-
+-		lru_init(bkt);
+-	}
+-
+-	return t;
+-}
+-
+-static int
+-rte_table_hash_lru_free(void *table)
+-{
+-	struct rte_table_hash *t = table;
+-
+-	/* Check input parameters */
+-	if (t == NULL)
+-		return -EINVAL;
+-
+-	rte_free(t);
+-	return 0;
+-}
+-
+-static int
+-rte_table_hash_lru_entry_add(void *table, void *key, void *entry,
+-	int *key_found, void **entry_ptr)
+-{
+-	struct rte_table_hash *t = table;
+-	struct bucket *bkt;
+-	uint64_t sig;
+-	uint32_t bkt_index, i;
+-
+-	sig = t->f_hash(key, t->key_mask, t->key_size, t->seed);
+-	bkt_index = sig & t->bucket_mask;
+-	bkt = &t->buckets[bkt_index];
+-	sig = (sig >> 16) | 1LLU;
+-
+-	/* Key is present in the bucket */
+-	for (i = 0; i < KEYS_PER_BUCKET; i++) {
+-		uint64_t bkt_sig = (uint64_t) bkt->sig[i];
+-		uint32_t bkt_key_index = bkt->key_pos[i];
+-		uint8_t *bkt_key = &t->key_mem[bkt_key_index <<
+-			t->key_size_shl];
+-
+-		if ((sig == bkt_sig) && (keycmp(bkt_key, key, t->key_mask,
+-			t->key_size) == 0)) {
+-			uint8_t *data = &t->data_mem[bkt_key_index <<
+-				t->data_size_shl];
+-
+-			memcpy(data, entry, t->entry_size);
+-			lru_update(bkt, i);
+-			*key_found = 1;
+-			*entry_ptr = (void *) data;
+-			return 0;
+-		}
+-	}
+-
+-	/* Key is not present in the bucket */
+-	for (i = 0; i < KEYS_PER_BUCKET; i++) {
+-		uint64_t bkt_sig = (uint64_t) bkt->sig[i];
+-
+-		if (bkt_sig == 0) {
+-			uint32_t bkt_key_index;
+-			uint8_t *bkt_key, *data;
+-
+-			/* Allocate new key */
+-			if (t->key_stack_tos == 0) {
+-				/* No keys available */
+-				return -ENOSPC;
+-			}
+-			bkt_key_index = t->key_stack[--t->key_stack_tos];
+-
+-			/* Install new key */
+-			bkt_key = &t->key_mem[bkt_key_index << t->key_size_shl];
+-			data = &t->data_mem[bkt_key_index << t->data_size_shl];
+-
+-			bkt->sig[i] = (uint16_t) sig;
+-			bkt->key_pos[i] = bkt_key_index;
+-			keycpy(bkt_key, key, t->key_mask, t->key_size);
+-			memcpy(data, entry, t->entry_size);
+-			lru_update(bkt, i);
+-
+-			*key_found = 0;
+-			*entry_ptr = (void *) data;
+-			return 0;
+-		}
+-	}
+-
+-	/* Bucket full */
+-	{
+-		uint64_t pos = lru_pos(bkt);
+-		uint32_t bkt_key_index = bkt->key_pos[pos];
+-		uint8_t *bkt_key = &t->key_mem[bkt_key_index <<
+-			t->key_size_shl];
+-		uint8_t *data = &t->data_mem[bkt_key_index << t->data_size_shl];
+-
+-		bkt->sig[pos] = (uint16_t) sig;
+-		keycpy(bkt_key, key, t->key_mask, t->key_size);
+-		memcpy(data, entry, t->entry_size);
+-		lru_update(bkt, pos);
+-
+-		*key_found = 0;
+-		*entry_ptr = (void *) data;
+-		return 0;
+-	}
+-}
+-
+-static int
+-rte_table_hash_lru_entry_delete(void *table, void *key, int *key_found,
+-	void *entry)
+-{
+-	struct rte_table_hash *t = table;
+-	struct bucket *bkt;
+-	uint64_t sig;
+-	uint32_t bkt_index, i;
+-
+-	sig = t->f_hash(key, t->key_mask, t->key_size, t->seed);
+-	bkt_index = sig & t->bucket_mask;
+-	bkt = &t->buckets[bkt_index];
+-	sig = (sig >> 16) | 1LLU;
+-
+-	/* Key is present in the bucket */
+-	for (i = 0; i < KEYS_PER_BUCKET; i++) {
+-		uint64_t bkt_sig = (uint64_t) bkt->sig[i];
+-		uint32_t bkt_key_index = bkt->key_pos[i];
+-		uint8_t *bkt_key = &t->key_mem[bkt_key_index <<
+-			t->key_size_shl];
+-
+-		if ((sig == bkt_sig) &&
+-			(keycmp(bkt_key, key, t->key_mask, t->key_size) == 0)) {
+-			uint8_t *data = &t->data_mem[bkt_key_index <<
+-				t->data_size_shl];
+-
+-			bkt->sig[i] = 0;
+-			t->key_stack[t->key_stack_tos++] = bkt_key_index;
+-			*key_found = 1;
+-			if (entry)
+-				memcpy(entry, data, t->entry_size);
+-			return 0;
+-		}
+-	}
+-
+-	/* Key is not present in the bucket */
+-	*key_found = 0;
+-	return 0;
+-}
+-
+-static int rte_table_hash_lru_lookup_unoptimized(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_hash *t = (struct rte_table_hash *) table;
+-	uint64_t pkts_mask_out = 0;
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-	RTE_TABLE_HASH_LRU_STATS_PKTS_IN_ADD(t, n_pkts_in);
+-
+-	for ( ; pkts_mask; ) {
+-		struct bucket *bkt;
+-		struct rte_mbuf *pkt;
+-		uint8_t *key;
+-		uint64_t pkt_mask, sig;
+-		uint32_t pkt_index, bkt_index, i;
+-
+-		pkt_index = rte_ctz64(pkts_mask);
+-		pkt_mask = 1LLU << pkt_index;
+-		pkts_mask &= ~pkt_mask;
+-
+-		pkt = pkts[pkt_index];
+-		key = RTE_MBUF_METADATA_UINT8_PTR(pkt, t->key_offset);
+-		sig = (uint64_t) t->f_hash(key, t->key_mask, t->key_size, t->seed);
+-
+-		bkt_index = sig & t->bucket_mask;
+-		bkt = &t->buckets[bkt_index];
+-		sig = (sig >> 16) | 1LLU;
+-
+-		/* Key is present in the bucket */
+-		for (i = 0; i < KEYS_PER_BUCKET; i++) {
+-			uint64_t bkt_sig = (uint64_t) bkt->sig[i];
+-			uint32_t bkt_key_index = bkt->key_pos[i];
+-			uint8_t *bkt_key = &t->key_mem[bkt_key_index <<
+-				t->key_size_shl];
+-
+-			if ((sig == bkt_sig) && (keycmp(bkt_key, key, t->key_mask,
+-				t->key_size) == 0)) {
+-				uint8_t *data = &t->data_mem[bkt_key_index <<
+-					t->data_size_shl];
+-
+-				lru_update(bkt, i);
+-				pkts_mask_out |= pkt_mask;
+-				entries[pkt_index] = (void *) data;
+-				break;
+-			}
+-		}
+-	}
+-
+-	*lookup_hit_mask = pkts_mask_out;
+-	RTE_TABLE_HASH_LRU_STATS_PKTS_LOOKUP_MISS(t, n_pkts_in - rte_popcount64(pkts_mask_out));
+-	return 0;
+-}
+-
+-/*
+- * mask = match bitmask
+- * match = at least one match
+- * match_many = more than one match
+- * match_pos = position of first match
+- *
+- * ----------------------------------------
+- * mask		 match	 match_many	  match_pos
+- * ----------------------------------------
+- * 0000		 0		 0			  00
+- * 0001		 1		 0			  00
+- * 0010		 1		 0			  01
+- * 0011		 1		 1			  00
+- * ----------------------------------------
+- * 0100		 1		 0			  10
+- * 0101		 1		 1			  00
+- * 0110		 1		 1			  01
+- * 0111		 1		 1			  00
+- * ----------------------------------------
+- * 1000		 1		 0			  11
+- * 1001		 1		 1			  00
+- * 1010		 1		 1			  01
+- * 1011		 1		 1			  00
+- * ----------------------------------------
+- * 1100		 1		 1			  10
+- * 1101		 1		 1			  00
+- * 1110		 1		 1			  01
+- * 1111		 1		 1			  00
+- * ----------------------------------------
+- *
+- * match = 1111_1111_1111_1110
+- * match_many = 1111_1110_1110_1000
+- * match_pos = 0001_0010_0001_0011__0001_0010_0001_0000
+- *
+- * match = 0xFFFELLU
+- * match_many = 0xFEE8LLU
+- * match_pos = 0x12131210LLU
+- */
+-
+-#define LUT_MATCH						0xFFFELLU
+-#define LUT_MATCH_MANY						0xFEE8LLU
+-#define LUT_MATCH_POS						0x12131210LLU
+-
+-#define lookup_cmp_sig(mbuf_sig, bucket, match, match_many, match_pos)\
+-{								\
+-	uint64_t bucket_sig[4], mask[4], mask_all;		\
+-								\
+-	bucket_sig[0] = bucket->sig[0];				\
+-	bucket_sig[1] = bucket->sig[1];				\
+-	bucket_sig[2] = bucket->sig[2];				\
+-	bucket_sig[3] = bucket->sig[3];				\
+-								\
+-	bucket_sig[0] ^= mbuf_sig;				\
+-	bucket_sig[1] ^= mbuf_sig;				\
+-	bucket_sig[2] ^= mbuf_sig;				\
+-	bucket_sig[3] ^= mbuf_sig;				\
+-								\
+-	mask[0] = 0;						\
+-	mask[1] = 0;						\
+-	mask[2] = 0;						\
+-	mask[3] = 0;						\
+-								\
+-	if (bucket_sig[0] == 0)					\
+-		mask[0] = 1;					\
+-	if (bucket_sig[1] == 0)					\
+-		mask[1] = 2;					\
+-	if (bucket_sig[2] == 0)					\
+-		mask[2] = 4;					\
+-	if (bucket_sig[3] == 0)					\
+-		mask[3] = 8;					\
+-								\
+-	mask_all = (mask[0] | mask[1]) | (mask[2] | mask[3]);	\
+-								\
+-	match = (LUT_MATCH >> mask_all) & 1;			\
+-	match_many = (LUT_MATCH_MANY >> mask_all) & 1;		\
+-	match_pos = (LUT_MATCH_POS >> (mask_all << 1)) & 3;	\
+-}
+-
+-#define lookup_cmp_key(mbuf, key, match_key, f)				\
+-{									\
+-	uint64_t *pkt_key = RTE_MBUF_METADATA_UINT64_PTR(mbuf, f->key_offset);\
+-	uint64_t *bkt_key = (uint64_t *) key;				\
+-	uint64_t *key_mask = f->key_mask;					\
+-									\
+-	switch (f->key_size) {						\
+-	case 8:								\
+-	{								\
+-		uint64_t xor = (pkt_key[0] & key_mask[0]) ^ bkt_key[0];	\
+-		match_key = 0;						\
+-		if (xor == 0)						\
+-			match_key = 1;					\
+-	}								\
+-	break;								\
+-									\
+-	case 16:							\
+-	{								\
+-		uint64_t xor[2], or;					\
+-									\
+-		xor[0] = (pkt_key[0] & key_mask[0]) ^ bkt_key[0];		\
+-		xor[1] = (pkt_key[1] & key_mask[1]) ^ bkt_key[1];		\
+-		or = xor[0] | xor[1];					\
+-		match_key = 0;						\
+-		if (or == 0)						\
+-			match_key = 1;					\
+-	}								\
+-	break;								\
+-									\
+-	case 32:							\
+-	{								\
+-		uint64_t xor[4], or;					\
+-									\
+-		xor[0] = (pkt_key[0] & key_mask[0]) ^ bkt_key[0];		\
+-		xor[1] = (pkt_key[1] & key_mask[1]) ^ bkt_key[1];		\
+-		xor[2] = (pkt_key[2] & key_mask[2]) ^ bkt_key[2];		\
+-		xor[3] = (pkt_key[3] & key_mask[3]) ^ bkt_key[3];		\
+-		or = xor[0] | xor[1] | xor[2] | xor[3];			\
+-		match_key = 0;						\
+-		if (or == 0)						\
+-			match_key = 1;					\
+-	}								\
+-	break;								\
+-									\
+-	case 64:							\
+-	{								\
+-		uint64_t xor[8], or;					\
+-									\
+-		xor[0] = (pkt_key[0] & key_mask[0]) ^ bkt_key[0];		\
+-		xor[1] = (pkt_key[1] & key_mask[1]) ^ bkt_key[1];		\
+-		xor[2] = (pkt_key[2] & key_mask[2]) ^ bkt_key[2];		\
+-		xor[3] = (pkt_key[3] & key_mask[3]) ^ bkt_key[3];		\
+-		xor[4] = (pkt_key[4] & key_mask[4]) ^ bkt_key[4];		\
+-		xor[5] = (pkt_key[5] & key_mask[5]) ^ bkt_key[5];		\
+-		xor[6] = (pkt_key[6] & key_mask[6]) ^ bkt_key[6];		\
+-		xor[7] = (pkt_key[7] & key_mask[7]) ^ bkt_key[7];		\
+-		or = xor[0] | xor[1] | xor[2] | xor[3] |		\
+-			xor[4] | xor[5] | xor[6] | xor[7];		\
+-		match_key = 0;						\
+-		if (or == 0)						\
+-			match_key = 1;					\
+-	}								\
+-	break;								\
+-									\
+-	default:							\
+-		match_key = 0;						\
+-		if (keycmp(bkt_key, pkt_key, key_mask, f->key_size) == 0)	\
+-			match_key = 1;					\
+-	}								\
+-}
+-
+-#define lookup2_stage0(t, g, pkts, pkts_mask, pkt00_index, pkt01_index)\
+-{								\
+-	uint64_t pkt00_mask, pkt01_mask;			\
+-	struct rte_mbuf *mbuf00, *mbuf01;			\
+-	uint32_t key_offset = t->key_offset;		\
+-								\
+-	pkt00_index = rte_ctz64(pkts_mask);		\
+-	pkt00_mask = 1LLU << pkt00_index;			\
+-	pkts_mask &= ~pkt00_mask;				\
+-	mbuf00 = pkts[pkt00_index];				\
+-								\
+-	pkt01_index = rte_ctz64(pkts_mask);		\
+-	pkt01_mask = 1LLU << pkt01_index;			\
+-	pkts_mask &= ~pkt01_mask;				\
+-	mbuf01 = pkts[pkt01_index];				\
+-								\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf00, key_offset));\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf01, key_offset));\
+-}
+-
+-#define lookup2_stage0_with_odd_support(t, g, pkts, pkts_mask, pkt00_index, \
+-	pkt01_index)						\
+-{								\
+-	uint64_t pkt00_mask, pkt01_mask;			\
+-	struct rte_mbuf *mbuf00, *mbuf01;			\
+-	uint32_t key_offset = t->key_offset;		\
+-								\
+-	pkt00_index = rte_ctz64(pkts_mask);		\
+-	pkt00_mask = 1LLU << pkt00_index;			\
+-	pkts_mask &= ~pkt00_mask;				\
+-	mbuf00 = pkts[pkt00_index];				\
+-								\
+-	pkt01_index = rte_ctz64(pkts_mask);		\
+-	if (pkts_mask == 0)					\
+-		pkt01_index = pkt00_index;			\
+-								\
+-	pkt01_mask = 1LLU << pkt01_index;			\
+-	pkts_mask &= ~pkt01_mask;				\
+-	mbuf01 = pkts[pkt01_index];				\
+-								\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf00, key_offset));\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf01, key_offset));\
+-}
+-
+-#define lookup2_stage1(t, g, pkts, pkt10_index, pkt11_index)\
+-{								\
+-	struct grinder *g10, *g11;				\
+-	uint64_t sig10, sig11, bkt10_index, bkt11_index;	\
+-	struct rte_mbuf *mbuf10, *mbuf11;			\
+-	struct bucket *bkt10, *bkt11, *buckets = t->buckets;	\
+-	uint8_t *key10, *key11;					\
+-	uint64_t bucket_mask = t->bucket_mask;			\
+-	rte_table_hash_op_hash f_hash = t->f_hash;		\
+-	uint64_t seed = t->seed;				\
+-	uint32_t key_size = t->key_size;			\
+-	uint32_t key_offset = t->key_offset;			\
+-								\
+-	mbuf10 = pkts[pkt10_index];				\
+-	key10 = RTE_MBUF_METADATA_UINT8_PTR(mbuf10, key_offset);\
+-	sig10 = (uint64_t) f_hash(key10, t->key_mask, key_size, seed);\
+-	bkt10_index = sig10 & bucket_mask;			\
+-	bkt10 = &buckets[bkt10_index];				\
+-								\
+-	mbuf11 = pkts[pkt11_index];				\
+-	key11 = RTE_MBUF_METADATA_UINT8_PTR(mbuf11, key_offset);\
+-	sig11 = (uint64_t) f_hash(key11, t->key_mask, key_size, seed);\
+-	bkt11_index = sig11 & bucket_mask;			\
+-	bkt11 = &buckets[bkt11_index];				\
+-								\
+-	rte_prefetch0(bkt10);					\
+-	rte_prefetch0(bkt11);					\
+-								\
+-	g10 = &g[pkt10_index];					\
+-	g10->sig = sig10;					\
+-	g10->bkt = bkt10;					\
+-								\
+-	g11 = &g[pkt11_index];					\
+-	g11->sig = sig11;					\
+-	g11->bkt = bkt11;					\
+-}
+-
+-#define lookup2_stage2(t, g, pkt20_index, pkt21_index, pkts_mask_match_many)\
+-{								\
+-	struct grinder *g20, *g21;				\
+-	uint64_t sig20, sig21;					\
+-	struct bucket *bkt20, *bkt21;				\
+-	uint8_t *key20, *key21, *key_mem = t->key_mem;		\
+-	uint64_t match20, match21, match_many20, match_many21;	\
+-	uint64_t match_pos20, match_pos21;			\
+-	uint32_t key20_index, key21_index, key_size_shl = t->key_size_shl;\
+-								\
+-	g20 = &g[pkt20_index];					\
+-	sig20 = g20->sig;					\
+-	bkt20 = g20->bkt;					\
+-	sig20 = (sig20 >> 16) | 1LLU;				\
+-	lookup_cmp_sig(sig20, bkt20, match20, match_many20, match_pos20);\
+-	match20 <<= pkt20_index;				\
+-	match_many20 <<= pkt20_index;				\
+-	key20_index = bkt20->key_pos[match_pos20];		\
+-	key20 = &key_mem[key20_index << key_size_shl];		\
+-								\
+-	g21 = &g[pkt21_index];					\
+-	sig21 = g21->sig;					\
+-	bkt21 = g21->bkt;					\
+-	sig21 = (sig21 >> 16) | 1LLU;				\
+-	lookup_cmp_sig(sig21, bkt21, match21, match_many21, match_pos21);\
+-	match21 <<= pkt21_index;				\
+-	match_many21 <<= pkt21_index;				\
+-	key21_index = bkt21->key_pos[match_pos21];		\
+-	key21 = &key_mem[key21_index << key_size_shl];		\
+-								\
+-	rte_prefetch0(key20);					\
+-	rte_prefetch0(key21);					\
+-								\
+-	pkts_mask_match_many |= match_many20 | match_many21;	\
+-								\
+-	g20->match = match20;					\
+-	g20->match_pos = match_pos20;				\
+-	g20->key_index = key20_index;				\
+-								\
+-	g21->match = match21;					\
+-	g21->match_pos = match_pos21;				\
+-	g21->key_index = key21_index;				\
+-}
+-
+-#define lookup2_stage3(t, g, pkts, pkt30_index, pkt31_index, pkts_mask_out, \
+-	entries)						\
+-{								\
+-	struct grinder *g30, *g31;				\
+-	struct rte_mbuf *mbuf30, *mbuf31;			\
+-	struct bucket *bkt30, *bkt31;				\
+-	uint8_t *key30, *key31, *key_mem = t->key_mem;		\
+-	uint8_t *data30, *data31, *data_mem = t->data_mem;	\
+-	uint64_t match30, match31, match_pos30, match_pos31;	\
+-	uint64_t match_key30, match_key31, match_keys;		\
+-	uint32_t key30_index, key31_index;			\
+-	uint32_t key_size_shl = t->key_size_shl;		\
+-	uint32_t data_size_shl = t->data_size_shl;		\
+-								\
+-	mbuf30 = pkts[pkt30_index];				\
+-	g30 = &g[pkt30_index];					\
+-	bkt30 = g30->bkt;					\
+-	match30 = g30->match;					\
+-	match_pos30 = g30->match_pos;				\
+-	key30_index = g30->key_index;				\
+-	key30 = &key_mem[key30_index << key_size_shl];		\
+-	lookup_cmp_key(mbuf30, key30, match_key30, t);		\
+-	match_key30 <<= pkt30_index;				\
+-	match_key30 &= match30;					\
+-	data30 = &data_mem[key30_index << data_size_shl];	\
+-	entries[pkt30_index] = data30;				\
+-								\
+-	mbuf31 = pkts[pkt31_index];				\
+-	g31 = &g[pkt31_index];					\
+-	bkt31 = g31->bkt;					\
+-	match31 = g31->match;					\
+-	match_pos31 = g31->match_pos;				\
+-	key31_index = g31->key_index;				\
+-	key31 = &key_mem[key31_index << key_size_shl];		\
+-	lookup_cmp_key(mbuf31, key31, match_key31, t);		\
+-	match_key31 <<= pkt31_index;				\
+-	match_key31 &= match31;					\
+-	data31 = &data_mem[key31_index << data_size_shl];	\
+-	entries[pkt31_index] = data31;				\
+-								\
+-	rte_prefetch0(data30);					\
+-	rte_prefetch0(data31);					\
+-								\
+-	match_keys = match_key30 | match_key31;			\
+-	pkts_mask_out |= match_keys;				\
+-								\
+-	if (match_key30 == 0)					\
+-		match_pos30 = 4;				\
+-	lru_update(bkt30, match_pos30);				\
+-								\
+-	if (match_key31 == 0)					\
+-		match_pos31 = 4;				\
+-	lru_update(bkt31, match_pos31);				\
+-}
+-
+-/*
+- * The lookup function implements a 4-stage pipeline, with each stage processing
+- * two different packets. The purpose of pipelined implementation is to hide the
+- * latency of prefetching the data structures and loosen the data dependency
+- * between instructions.
+- *
+- *   p00  _______   p10  _______   p20  _______   p30  _______
+- * ----->|       |----->|       |----->|       |----->|       |----->
+- *       |   0   |      |   1   |      |   2   |      |   3   |
+- * ----->|_______|----->|_______|----->|_______|----->|_______|----->
+- *   p01            p11            p21            p31
+- *
+- * The naming convention is:
+- *	  pXY = packet Y of stage X, X = 0 .. 3, Y = 0 .. 1
+- */
+-static int rte_table_hash_lru_lookup(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_hash *t = (struct rte_table_hash *) table;
+-	struct grinder *g = t->grinders;
+-	uint64_t pkt00_index, pkt01_index, pkt10_index, pkt11_index;
+-	uint64_t pkt20_index, pkt21_index, pkt30_index, pkt31_index;
+-	uint64_t pkts_mask_out = 0, pkts_mask_match_many = 0;
+-	int status = 0;
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-	RTE_TABLE_HASH_LRU_STATS_PKTS_IN_ADD(t, n_pkts_in);
+-
+-	/* Cannot run the pipeline with less than 7 packets */
+-	if (rte_popcount64(pkts_mask) < 7)
+-		return rte_table_hash_lru_lookup_unoptimized(table, pkts,
+-			pkts_mask, lookup_hit_mask, entries);
+-
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(t, g, pkts, pkts_mask, pkt00_index, pkt01_index);
+-
+-	/* Pipeline feed */
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(t, g, pkts, pkts_mask, pkt00_index, pkt01_index);
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(t, g, pkts, pkt10_index, pkt11_index);
+-
+-	/* Pipeline feed */
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(t, g, pkts, pkts_mask, pkt00_index, pkt01_index);
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(t, g, pkts, pkt10_index, pkt11_index);
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2(t, g, pkt20_index, pkt21_index, pkts_mask_match_many);
+-
+-	/*
+-	* Pipeline run
+-	*
+-	*/
+-	for ( ; pkts_mask; ) {
+-		/* Pipeline feed */
+-		pkt30_index = pkt20_index;
+-		pkt31_index = pkt21_index;
+-		pkt20_index = pkt10_index;
+-		pkt21_index = pkt11_index;
+-		pkt10_index = pkt00_index;
+-		pkt11_index = pkt01_index;
+-
+-		/* Pipeline stage 0 */
+-		lookup2_stage0_with_odd_support(t, g, pkts, pkts_mask,
+-			pkt00_index, pkt01_index);
+-
+-		/* Pipeline stage 1 */
+-		lookup2_stage1(t, g, pkts, pkt10_index, pkt11_index);
+-
+-		/* Pipeline stage 2 */
+-		lookup2_stage2(t, g, pkt20_index, pkt21_index,
+-			pkts_mask_match_many);
+-
+-		/* Pipeline stage 3 */
+-		lookup2_stage3(t, g, pkts, pkt30_index, pkt31_index,
+-			pkts_mask_out, entries);
+-	}
+-
+-	/* Pipeline feed */
+-	pkt30_index = pkt20_index;
+-	pkt31_index = pkt21_index;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(t, g, pkts, pkt10_index, pkt11_index);
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2(t, g, pkt20_index, pkt21_index, pkts_mask_match_many);
+-
+-	/* Pipeline stage 3 */
+-	lookup2_stage3(t, g, pkts, pkt30_index, pkt31_index, pkts_mask_out,
+-		entries);
+-
+-	/* Pipeline feed */
+-	pkt30_index = pkt20_index;
+-	pkt31_index = pkt21_index;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2(t, g, pkt20_index, pkt21_index, pkts_mask_match_many);
+-
+-	/* Pipeline stage 3 */
+-	lookup2_stage3(t, g, pkts, pkt30_index, pkt31_index, pkts_mask_out,
+-		entries);
+-
+-	/* Pipeline feed */
+-	pkt30_index = pkt20_index;
+-	pkt31_index = pkt21_index;
+-
+-	/* Pipeline stage 3 */
+-	lookup2_stage3(t, g, pkts, pkt30_index, pkt31_index, pkts_mask_out,
+-		entries);
+-
+-	/* Slow path */
+-	pkts_mask_match_many &= ~pkts_mask_out;
+-	if (pkts_mask_match_many) {
+-		uint64_t pkts_mask_out_slow = 0;
+-
+-		status = rte_table_hash_lru_lookup_unoptimized(table, pkts,
+-			pkts_mask_match_many, &pkts_mask_out_slow, entries);
+-		pkts_mask_out |= pkts_mask_out_slow;
+-	}
+-
+-	*lookup_hit_mask = pkts_mask_out;
+-	RTE_TABLE_HASH_LRU_STATS_PKTS_LOOKUP_MISS(t, n_pkts_in - rte_popcount64(pkts_mask_out));
+-	return status;
+-}
+-
+-static int
+-rte_table_hash_lru_stats_read(void *table, struct rte_table_stats *stats, int clear)
+-{
+-	struct rte_table_hash *t = table;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &t->stats, sizeof(t->stats));
+-
+-	if (clear)
+-		memset(&t->stats, 0, sizeof(t->stats));
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_table_hash_lru_ops)
+-struct rte_table_ops rte_table_hash_lru_ops = {
+-	.f_create = rte_table_hash_lru_create,
+-	.f_free = rte_table_hash_lru_free,
+-	.f_add = rte_table_hash_lru_entry_add,
+-	.f_delete = rte_table_hash_lru_entry_delete,
+-	.f_add_bulk = NULL,
+-	.f_delete_bulk = NULL,
+-	.f_lookup = rte_table_hash_lru_lookup,
+-	.f_stats = rte_table_hash_lru_stats_read,
+-};
+diff --git a/lib/table/rte_table_lpm.c b/lib/table/rte_table_lpm.c
+deleted file mode 100644
+index 6fd0c30f85af6e398ee25257e016262815a94a28..0000000000000000000000000000000000000000
+--- a/lib/table/rte_table_lpm.c
++++ /dev/null
+@@ -1,369 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#include <stdalign.h>
+-#include <stdio.h>
+-#include <string.h>
+-
+-#include <eal_export.h>
+-#include <rte_common.h>
+-#include <rte_malloc.h>
+-#include <rte_byteorder.h>
+-#include <rte_log.h>
+-#include <rte_lpm.h>
+-
+-#include "rte_table_lpm.h"
+-
+-#include "table_log.h"
+-
+-#ifndef RTE_TABLE_LPM_MAX_NEXT_HOPS
+-#define RTE_TABLE_LPM_MAX_NEXT_HOPS                        65536
+-#endif
+-
+-#ifdef RTE_TABLE_STATS_COLLECT
+-
+-#define RTE_TABLE_LPM_STATS_PKTS_IN_ADD(table, val) \
+-	table->stats.n_pkts_in += val
+-#define RTE_TABLE_LPM_STATS_PKTS_LOOKUP_MISS(table, val) \
+-	table->stats.n_pkts_lookup_miss += val
+-
+-#else
+-
+-#define RTE_TABLE_LPM_STATS_PKTS_IN_ADD(table, val)
+-#define RTE_TABLE_LPM_STATS_PKTS_LOOKUP_MISS(table, val)
+-
+-#endif
+-
+-struct rte_table_lpm {
+-	struct rte_table_stats stats;
+-
+-	/* Input parameters */
+-	uint32_t entry_size;
+-	uint32_t entry_unique_size;
+-	uint32_t n_rules;
+-	uint32_t offset;
+-
+-	/* Handle to low-level LPM table */
+-	struct rte_lpm *lpm;
+-
+-	/* Next Hop Table (NHT) */
+-	uint32_t nht_users[RTE_TABLE_LPM_MAX_NEXT_HOPS];
+-	alignas(RTE_CACHE_LINE_SIZE) uint8_t nht[];
+-};
+-
+-static void *
+-rte_table_lpm_create(void *params, int socket_id, uint32_t entry_size)
+-{
+-	struct rte_table_lpm_params *p = params;
+-	struct rte_table_lpm *lpm;
+-	struct rte_lpm_config lpm_config;
+-
+-	uint32_t total_size, nht_size;
+-
+-	/* Check input parameters */
+-	if (p == NULL) {
+-		TABLE_LOG(ERR, "%s: NULL input parameters", __func__);
+-		return NULL;
+-	}
+-	if (p->n_rules == 0) {
+-		TABLE_LOG(ERR, "%s: Invalid n_rules", __func__);
+-		return NULL;
+-	}
+-	if (p->number_tbl8s == 0) {
+-		TABLE_LOG(ERR, "%s: Invalid number_tbl8s", __func__);
+-		return NULL;
+-	}
+-	if (p->entry_unique_size == 0) {
+-		TABLE_LOG(ERR, "%s: Invalid entry_unique_size",
+-			__func__);
+-		return NULL;
+-	}
+-	if (p->entry_unique_size > entry_size) {
+-		TABLE_LOG(ERR, "%s: Invalid entry_unique_size",
+-			__func__);
+-		return NULL;
+-	}
+-	if (p->name == NULL) {
+-		TABLE_LOG(ERR, "%s: Table name is NULL",
+-			__func__);
+-		return NULL;
+-	}
+-	entry_size = RTE_ALIGN(entry_size, sizeof(uint64_t));
+-
+-	/* Memory allocation */
+-	nht_size = RTE_TABLE_LPM_MAX_NEXT_HOPS * entry_size;
+-	total_size = sizeof(struct rte_table_lpm) + nht_size;
+-	lpm = rte_zmalloc_socket("TABLE", total_size, RTE_CACHE_LINE_SIZE,
+-		socket_id);
+-	if (lpm == NULL) {
+-		TABLE_LOG(ERR,
+-			"%s: Cannot allocate %u bytes for LPM table",
+-			__func__, total_size);
+-		return NULL;
+-	}
+-
+-	/* LPM low-level table creation */
+-	lpm_config.max_rules = p->n_rules;
+-	lpm_config.number_tbl8s = p->number_tbl8s;
+-	lpm_config.flags = p->flags;
+-	lpm->lpm = rte_lpm_create(p->name, socket_id, &lpm_config);
+-
+-	if (lpm->lpm == NULL) {
+-		rte_free(lpm);
+-		TABLE_LOG(ERR, "Unable to create low-level LPM table");
+-		return NULL;
+-	}
+-
+-	/* Memory initialization */
+-	lpm->entry_size = entry_size;
+-	lpm->entry_unique_size = p->entry_unique_size;
+-	lpm->n_rules = p->n_rules;
+-	lpm->offset = p->offset;
+-
+-	return lpm;
+-}
+-
+-static int
+-rte_table_lpm_free(void *table)
+-{
+-	struct rte_table_lpm *lpm = table;
+-
+-	/* Check input parameters */
+-	if (lpm == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* Free previously allocated resources */
+-	rte_lpm_free(lpm->lpm);
+-	rte_free(lpm);
+-
+-	return 0;
+-}
+-
+-static int
+-nht_find_free(struct rte_table_lpm *lpm, uint32_t *pos)
+-{
+-	uint32_t i;
+-
+-	for (i = 0; i < RTE_TABLE_LPM_MAX_NEXT_HOPS; i++) {
+-		if (lpm->nht_users[i] == 0) {
+-			*pos = i;
+-			return 1;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-nht_find_existing(struct rte_table_lpm *lpm, void *entry, uint32_t *pos)
+-{
+-	uint32_t i;
+-
+-	for (i = 0; i < RTE_TABLE_LPM_MAX_NEXT_HOPS; i++) {
+-		uint8_t *nht_entry = &lpm->nht[i * lpm->entry_size];
+-
+-		if ((lpm->nht_users[i] > 0) && (memcmp(nht_entry, entry,
+-			lpm->entry_unique_size) == 0)) {
+-			*pos = i;
+-			return 1;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_lpm_entry_add(
+-	void *table,
+-	void *key,
+-	void *entry,
+-	int *key_found,
+-	void **entry_ptr)
+-{
+-	struct rte_table_lpm *lpm = table;
+-	struct rte_table_lpm_key *ip_prefix = key;
+-	uint32_t nht_pos, nht_pos0_valid;
+-	int status;
+-	uint32_t nht_pos0 = 0;
+-
+-	/* Check input parameters */
+-	if (lpm == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (ip_prefix == NULL) {
+-		TABLE_LOG(ERR, "%s: ip_prefix parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-	if (entry == NULL) {
+-		TABLE_LOG(ERR, "%s: entry parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	if ((ip_prefix->depth == 0) || (ip_prefix->depth > 32)) {
+-		TABLE_LOG(ERR, "%s: invalid depth (%d)",
+-			__func__, ip_prefix->depth);
+-		return -EINVAL;
+-	}
+-
+-	/* Check if rule is already present in the table */
+-	status = rte_lpm_is_rule_present(lpm->lpm, ip_prefix->ip,
+-		ip_prefix->depth, &nht_pos0);
+-	nht_pos0_valid = status > 0;
+-
+-	/* Find existing or free NHT entry */
+-	if (nht_find_existing(lpm, entry, &nht_pos) == 0) {
+-		uint8_t *nht_entry;
+-
+-		if (nht_find_free(lpm, &nht_pos) == 0) {
+-			TABLE_LOG(ERR, "%s: NHT full", __func__);
+-			return -1;
+-		}
+-
+-		nht_entry = &lpm->nht[nht_pos * lpm->entry_size];
+-		memcpy(nht_entry, entry, lpm->entry_size);
+-	}
+-
+-	/* Add rule to low level LPM table */
+-	if (rte_lpm_add(lpm->lpm, ip_prefix->ip, ip_prefix->depth, nht_pos) < 0) {
+-		TABLE_LOG(ERR, "%s: LPM rule add failed", __func__);
+-		return -1;
+-	}
+-
+-	/* Commit NHT changes */
+-	lpm->nht_users[nht_pos]++;
+-	lpm->nht_users[nht_pos0] -= nht_pos0_valid;
+-
+-	*key_found = nht_pos0_valid;
+-	*entry_ptr = (void *) &lpm->nht[nht_pos * lpm->entry_size];
+-	return 0;
+-}
+-
+-static int
+-rte_table_lpm_entry_delete(
+-	void *table,
+-	void *key,
+-	int *key_found,
+-	void *entry)
+-{
+-	struct rte_table_lpm *lpm = table;
+-	struct rte_table_lpm_key *ip_prefix = key;
+-	uint32_t nht_pos;
+-	int status;
+-
+-	/* Check input parameters */
+-	if (lpm == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (ip_prefix == NULL) {
+-		TABLE_LOG(ERR, "%s: ip_prefix parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-	if ((ip_prefix->depth == 0) || (ip_prefix->depth > 32)) {
+-		TABLE_LOG(ERR, "%s: invalid depth (%d)", __func__,
+-			ip_prefix->depth);
+-		return -EINVAL;
+-	}
+-
+-	/* Return if rule is not present in the table */
+-	status = rte_lpm_is_rule_present(lpm->lpm, ip_prefix->ip,
+-		ip_prefix->depth, &nht_pos);
+-	if (status < 0) {
+-		TABLE_LOG(ERR, "%s: LPM algorithmic error", __func__);
+-		return -1;
+-	}
+-	if (status == 0) {
+-		*key_found = 0;
+-		return 0;
+-	}
+-
+-	/* Delete rule from the low-level LPM table */
+-	status = rte_lpm_delete(lpm->lpm, ip_prefix->ip, ip_prefix->depth);
+-	if (status) {
+-		TABLE_LOG(ERR, "%s: LPM rule delete failed", __func__);
+-		return -1;
+-	}
+-
+-	/* Commit NHT changes */
+-	lpm->nht_users[nht_pos]--;
+-
+-	*key_found = 1;
+-	if (entry)
+-		memcpy(entry, &lpm->nht[nht_pos * lpm->entry_size],
+-			lpm->entry_size);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_lpm_lookup(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_lpm *lpm = (struct rte_table_lpm *) table;
+-	uint64_t pkts_out_mask = 0;
+-	uint32_t i;
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-	RTE_TABLE_LPM_STATS_PKTS_IN_ADD(lpm, n_pkts_in);
+-
+-	pkts_out_mask = 0;
+-	for (i = 0; i < (uint32_t)(RTE_PORT_IN_BURST_SIZE_MAX -
+-		rte_clz64(pkts_mask)); i++) {
+-		uint64_t pkt_mask = 1LLU << i;
+-
+-		if (pkt_mask & pkts_mask) {
+-			struct rte_mbuf *pkt = pkts[i];
+-			uint32_t ip = rte_bswap32(
+-				RTE_MBUF_METADATA_UINT32(pkt, lpm->offset));
+-			int status;
+-			uint32_t nht_pos;
+-
+-			status = rte_lpm_lookup(lpm->lpm, ip, &nht_pos);
+-			if (status == 0) {
+-				pkts_out_mask |= pkt_mask;
+-				entries[i] = (void *) &lpm->nht[nht_pos *
+-					lpm->entry_size];
+-			}
+-		}
+-	}
+-
+-	*lookup_hit_mask = pkts_out_mask;
+-	RTE_TABLE_LPM_STATS_PKTS_LOOKUP_MISS(lpm, n_pkts_in - rte_popcount64(pkts_out_mask));
+-	return 0;
+-}
+-
+-static int
+-rte_table_lpm_stats_read(void *table, struct rte_table_stats *stats, int clear)
+-{
+-	struct rte_table_lpm *t = table;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &t->stats, sizeof(t->stats));
+-
+-	if (clear)
+-		memset(&t->stats, 0, sizeof(t->stats));
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_table_lpm_ops)
+-struct rte_table_ops rte_table_lpm_ops = {
+-	.f_create = rte_table_lpm_create,
+-	.f_free = rte_table_lpm_free,
+-	.f_add = rte_table_lpm_entry_add,
+-	.f_delete = rte_table_lpm_entry_delete,
+-	.f_add_bulk = NULL,
+-	.f_delete_bulk = NULL,
+-	.f_lookup = rte_table_lpm_lookup,
+-	.f_stats = rte_table_lpm_stats_read,
+-};
+diff --git a/lib/table/rte_table_lpm.h b/lib/table/rte_table_lpm.h
+deleted file mode 100644
+index 59b9bdee89087e5ddfa8c7138dc89c1008f72d10..0000000000000000000000000000000000000000
+--- a/lib/table/rte_table_lpm.h
++++ /dev/null
+@@ -1,94 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_TABLE_LPM_H__
+-#define __INCLUDE_RTE_TABLE_LPM_H__
+-
+-/**
+- * @file
+- * RTE Table LPM for IPv4
+- *
+- * This table uses the Longest Prefix Match (LPM) algorithm to uniquely
+- * associate data to lookup keys.
+- *
+- * Use-case: IP routing table. Routes that are added to the table associate a
+- * next hop to an IP prefix. The IP prefix is specified as IP address and depth
+- * and cover for a multitude of lookup keys (i.e. destination IP addresses)
+- * that all share the same data (i.e. next hop). The next hop information
+- * typically contains the output interface ID, the IP address of the next hop
+- * station (which is part of the same IP network the output interface is
+- * connected to) and other flags and counters.
+- *
+- * The LPM primitive only allows associating an 8-bit number (next hop ID) to
+- * an IP prefix, while a routing table can potentially contain thousands of
+- * routes or even more. This means that the same next hop ID (and next hop
+- * information) has to be shared by multiple routes, which makes sense, as
+- * multiple remote networks could be reached through the same next hop.
+- * Therefore, when a route is added or updated, the LPM table has to check
+- * whether the same next hop is already in use before using a new next hop ID
+- * for this route.
+- *
+- * The comparison between different next hops is done for the first
+- * “entry_unique_size” bytes of the next hop information (configurable
+- * parameter), which have to uniquely identify the next hop, therefore the user
+- * has to carefully manage the format of the LPM table entry (i.e.  the next
+- * hop information) so that any next hop data that changes value during
+- * run-time (e.g. counters) is placed outside of this area.
+- */
+-
+-#include <stdint.h>
+-
+-#include "rte_table.h"
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-/** LPM table parameters */
+-struct rte_table_lpm_params {
+-	/** Table name */
+-	const char *name;
+-
+-	/** Maximum number of LPM rules (i.e. IP routes) */
+-	uint32_t n_rules;
+-
+-	/**< Number of tbl8s to allocate. */
+-	uint32_t number_tbl8s;
+-
+-	/**< This field is currently unused. */
+-	int flags;
+-
+-	/** Number of bytes at the start of the table entry that uniquely
+-	identify the entry. Cannot be bigger than table entry size. */
+-	uint32_t entry_unique_size;
+-
+-	/** Byte offset within input packet meta-data where lookup key (i.e.
+-	the destination IP address) is located. */
+-	uint32_t offset;
+-};
+-
+-/** LPM table rule (i.e. route), specified as IP prefix. While the key used by
+-the lookup operation is the destination IP address (read from the input packet
+-meta-data), the entry add and entry delete operations work with LPM rules, with
+-each rule covering for a multitude of lookup keys (destination IP addresses)
+-that share the same data (next hop). */
+-struct rte_table_lpm_key {
+-	/** IP address */
+-	uint32_t ip;
+-
+-	/** IP address depth. The most significant "depth" bits of the IP
+-	address specify the network part of the IP address, while the rest of
+-	the bits specify the host part of the address and are ignored for the
+-	purpose of route specification. */
+-	uint8_t depth;
+-};
+-
+-/** LPM table operations */
+-extern struct rte_table_ops rte_table_lpm_ops;
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif
+diff --git a/lib/table/rte_table_lpm_ipv6.c b/lib/table/rte_table_lpm_ipv6.c
+deleted file mode 100644
+index 9159784dfa3cba76aeea159866607fde833f9c24..0000000000000000000000000000000000000000
+--- a/lib/table/rte_table_lpm_ipv6.c
++++ /dev/null
+@@ -1,370 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#include <stdalign.h>
+-#include <stdio.h>
+-#include <string.h>
+-
+-#include <eal_export.h>
+-#include <rte_common.h>
+-#include <rte_malloc.h>
+-#include <rte_log.h>
+-#include <rte_lpm6.h>
+-
+-#include "rte_table_lpm_ipv6.h"
+-
+-#include "table_log.h"
+-
+-#define RTE_TABLE_LPM_MAX_NEXT_HOPS                        256
+-
+-#ifdef RTE_TABLE_STATS_COLLECT
+-
+-#define RTE_TABLE_LPM_IPV6_STATS_PKTS_IN_ADD(table, val) \
+-	table->stats.n_pkts_in += val
+-#define RTE_TABLE_LPM_IPV6_STATS_PKTS_LOOKUP_MISS(table, val) \
+-	table->stats.n_pkts_lookup_miss += val
+-
+-#else
+-
+-#define RTE_TABLE_LPM_IPV6_STATS_PKTS_IN_ADD(table, val)
+-#define RTE_TABLE_LPM_IPV6_STATS_PKTS_LOOKUP_MISS(table, val)
+-
+-#endif
+-
+-struct rte_table_lpm_ipv6 {
+-	struct rte_table_stats stats;
+-
+-	/* Input parameters */
+-	uint32_t entry_size;
+-	uint32_t entry_unique_size;
+-	uint32_t n_rules;
+-	uint32_t offset;
+-
+-	/* Handle to low-level LPM table */
+-	struct rte_lpm6 *lpm;
+-
+-	/* Next Hop Table (NHT) */
+-	uint32_t nht_users[RTE_TABLE_LPM_MAX_NEXT_HOPS];
+-	alignas(RTE_CACHE_LINE_SIZE) uint8_t nht[];
+-};
+-
+-static void *
+-rte_table_lpm_ipv6_create(void *params, int socket_id, uint32_t entry_size)
+-{
+-	struct rte_table_lpm_ipv6_params *p =
+-		params;
+-	struct rte_table_lpm_ipv6 *lpm;
+-	struct rte_lpm6_config lpm6_config;
+-	uint32_t total_size, nht_size;
+-
+-	/* Check input parameters */
+-	if (p == NULL) {
+-		TABLE_LOG(ERR, "%s: NULL input parameters", __func__);
+-		return NULL;
+-	}
+-	if (p->n_rules == 0) {
+-		TABLE_LOG(ERR, "%s: Invalid n_rules", __func__);
+-		return NULL;
+-	}
+-	if (p->number_tbl8s == 0) {
+-		TABLE_LOG(ERR, "%s: Invalid n_rules", __func__);
+-		return NULL;
+-	}
+-	if (p->entry_unique_size == 0) {
+-		TABLE_LOG(ERR, "%s: Invalid entry_unique_size",
+-			__func__);
+-		return NULL;
+-	}
+-	if (p->entry_unique_size > entry_size) {
+-		TABLE_LOG(ERR, "%s: Invalid entry_unique_size",
+-			__func__);
+-		return NULL;
+-	}
+-	if (p->name == NULL) {
+-		TABLE_LOG(ERR, "%s: Table name is NULL",
+-			__func__);
+-		return NULL;
+-	}
+-	entry_size = RTE_ALIGN(entry_size, sizeof(uint64_t));
+-
+-	/* Memory allocation */
+-	nht_size = RTE_TABLE_LPM_MAX_NEXT_HOPS * entry_size;
+-	total_size = sizeof(struct rte_table_lpm_ipv6) + nht_size;
+-	lpm = rte_zmalloc_socket("TABLE", total_size, RTE_CACHE_LINE_SIZE,
+-		socket_id);
+-	if (lpm == NULL) {
+-		TABLE_LOG(ERR,
+-			"%s: Cannot allocate %u bytes for LPM IPv6 table",
+-			__func__, total_size);
+-		return NULL;
+-	}
+-
+-	/* LPM low-level table creation */
+-	lpm6_config.max_rules = p->n_rules;
+-	lpm6_config.number_tbl8s = p->number_tbl8s;
+-	lpm6_config.flags = 0;
+-	lpm->lpm = rte_lpm6_create(p->name, socket_id, &lpm6_config);
+-	if (lpm->lpm == NULL) {
+-		rte_free(lpm);
+-		TABLE_LOG(ERR,
+-			"Unable to create low-level LPM IPv6 table");
+-		return NULL;
+-	}
+-
+-	/* Memory initialization */
+-	lpm->entry_size = entry_size;
+-	lpm->entry_unique_size = p->entry_unique_size;
+-	lpm->n_rules = p->n_rules;
+-	lpm->offset = p->offset;
+-
+-	return lpm;
+-}
+-
+-static int
+-rte_table_lpm_ipv6_free(void *table)
+-{
+-	struct rte_table_lpm_ipv6 *lpm = table;
+-
+-	/* Check input parameters */
+-	if (lpm == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* Free previously allocated resources */
+-	rte_lpm6_free(lpm->lpm);
+-	rte_free(lpm);
+-
+-	return 0;
+-}
+-
+-static int
+-nht_find_free(struct rte_table_lpm_ipv6 *lpm, uint32_t *pos)
+-{
+-	uint32_t i;
+-
+-	for (i = 0; i < RTE_TABLE_LPM_MAX_NEXT_HOPS; i++) {
+-		if (lpm->nht_users[i] == 0) {
+-			*pos = i;
+-			return 1;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-nht_find_existing(struct rte_table_lpm_ipv6 *lpm, void *entry, uint32_t *pos)
+-{
+-	uint32_t i;
+-
+-	for (i = 0; i < RTE_TABLE_LPM_MAX_NEXT_HOPS; i++) {
+-		uint8_t *nht_entry = &lpm->nht[i * lpm->entry_size];
+-
+-		if ((lpm->nht_users[i] > 0) && (memcmp(nht_entry, entry,
+-			lpm->entry_unique_size) == 0)) {
+-			*pos = i;
+-			return 1;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_lpm_ipv6_entry_add(
+-	void *table,
+-	void *key,
+-	void *entry,
+-	int *key_found,
+-	void **entry_ptr)
+-{
+-	struct rte_table_lpm_ipv6 *lpm = table;
+-	struct rte_table_lpm_ipv6_key *ip_prefix =
+-		key;
+-	uint32_t nht_pos = 0, nht_pos0 = 0, nht_pos0_valid = 0;
+-	int status;
+-
+-	/* Check input parameters */
+-	if (lpm == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (ip_prefix == NULL) {
+-		TABLE_LOG(ERR, "%s: ip_prefix parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-	if (entry == NULL) {
+-		TABLE_LOG(ERR, "%s: entry parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	if ((ip_prefix->depth == 0) || (ip_prefix->depth > 128)) {
+-		TABLE_LOG(ERR, "%s: invalid depth (%d)", __func__,
+-			ip_prefix->depth);
+-		return -EINVAL;
+-	}
+-
+-	/* Check if rule is already present in the table */
+-	status = rte_lpm6_is_rule_present(lpm->lpm, &ip_prefix->ip,
+-		ip_prefix->depth, &nht_pos0);
+-	nht_pos0_valid = status > 0;
+-
+-	/* Find existing or free NHT entry */
+-	if (nht_find_existing(lpm, entry, &nht_pos) == 0) {
+-		uint8_t *nht_entry;
+-
+-		if (nht_find_free(lpm, &nht_pos) == 0) {
+-			TABLE_LOG(ERR, "%s: NHT full", __func__);
+-			return -1;
+-		}
+-
+-		nht_entry = &lpm->nht[nht_pos * lpm->entry_size];
+-		memcpy(nht_entry, entry, lpm->entry_size);
+-	}
+-
+-	/* Add rule to low level LPM table */
+-	if (rte_lpm6_add(lpm->lpm, &ip_prefix->ip, ip_prefix->depth,
+-		nht_pos) < 0) {
+-		TABLE_LOG(ERR, "%s: LPM IPv6 rule add failed", __func__);
+-		return -1;
+-	}
+-
+-	/* Commit NHT changes */
+-	lpm->nht_users[nht_pos]++;
+-	lpm->nht_users[nht_pos0] -= nht_pos0_valid;
+-
+-	*key_found = nht_pos0_valid;
+-	*entry_ptr = (void *) &lpm->nht[nht_pos * lpm->entry_size];
+-	return 0;
+-}
+-
+-static int
+-rte_table_lpm_ipv6_entry_delete(
+-	void *table,
+-	void *key,
+-	int *key_found,
+-	void *entry)
+-{
+-	struct rte_table_lpm_ipv6 *lpm = table;
+-	struct rte_table_lpm_ipv6_key *ip_prefix =
+-		key;
+-	uint32_t nht_pos;
+-	int status;
+-
+-	/* Check input parameters */
+-	if (lpm == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (ip_prefix == NULL) {
+-		TABLE_LOG(ERR, "%s: ip_prefix parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-	if ((ip_prefix->depth == 0) || (ip_prefix->depth > 128)) {
+-		TABLE_LOG(ERR, "%s: invalid depth (%d)", __func__,
+-			ip_prefix->depth);
+-		return -EINVAL;
+-	}
+-
+-	/* Return if rule is not present in the table */
+-	status = rte_lpm6_is_rule_present(lpm->lpm, &ip_prefix->ip,
+-		ip_prefix->depth, &nht_pos);
+-	if (status < 0) {
+-		TABLE_LOG(ERR, "%s: LPM IPv6 algorithmic error",
+-			__func__);
+-		return -1;
+-	}
+-	if (status == 0) {
+-		*key_found = 0;
+-		return 0;
+-	}
+-
+-	/* Delete rule from the low-level LPM table */
+-	status = rte_lpm6_delete(lpm->lpm, &ip_prefix->ip, ip_prefix->depth);
+-	if (status) {
+-		TABLE_LOG(ERR, "%s: LPM IPv6 rule delete failed",
+-			__func__);
+-		return -1;
+-	}
+-
+-	/* Commit NHT changes */
+-	lpm->nht_users[nht_pos]--;
+-
+-	*key_found = 1;
+-	if (entry)
+-		memcpy(entry, &lpm->nht[nht_pos * lpm->entry_size],
+-			lpm->entry_size);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_lpm_ipv6_lookup(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_lpm_ipv6 *lpm = (struct rte_table_lpm_ipv6 *) table;
+-	uint64_t pkts_out_mask = 0;
+-	uint32_t i;
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-	RTE_TABLE_LPM_IPV6_STATS_PKTS_IN_ADD(lpm, n_pkts_in);
+-
+-	pkts_out_mask = 0;
+-	for (i = 0; i < (uint32_t)(RTE_PORT_IN_BURST_SIZE_MAX -
+-		rte_clz64(pkts_mask)); i++) {
+-		uint64_t pkt_mask = 1LLU << i;
+-
+-		if (pkt_mask & pkts_mask) {
+-			struct rte_mbuf *pkt = pkts[i];
+-			const struct rte_ipv6_addr *ip;
+-			int status;
+-			uint32_t nht_pos;
+-
+-			ip = (struct rte_ipv6_addr *)RTE_MBUF_METADATA_UINT8_PTR(pkt, lpm->offset);
+-			status = rte_lpm6_lookup(lpm->lpm, ip, &nht_pos);
+-			if (status == 0) {
+-				pkts_out_mask |= pkt_mask;
+-				entries[i] = (void *) &lpm->nht[nht_pos *
+-					lpm->entry_size];
+-			}
+-		}
+-	}
+-
+-	*lookup_hit_mask = pkts_out_mask;
+-	RTE_TABLE_LPM_IPV6_STATS_PKTS_LOOKUP_MISS(lpm, n_pkts_in - rte_popcount64(pkts_out_mask));
+-	return 0;
+-}
+-
+-static int
+-rte_table_lpm_ipv6_stats_read(void *table, struct rte_table_stats *stats, int clear)
+-{
+-	struct rte_table_lpm_ipv6 *t = table;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &t->stats, sizeof(t->stats));
+-
+-	if (clear)
+-		memset(&t->stats, 0, sizeof(t->stats));
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_table_lpm_ipv6_ops)
+-struct rte_table_ops rte_table_lpm_ipv6_ops = {
+-	.f_create = rte_table_lpm_ipv6_create,
+-	.f_free = rte_table_lpm_ipv6_free,
+-	.f_add = rte_table_lpm_ipv6_entry_add,
+-	.f_delete = rte_table_lpm_ipv6_entry_delete,
+-	.f_add_bulk = NULL,
+-	.f_delete_bulk = NULL,
+-	.f_lookup = rte_table_lpm_ipv6_lookup,
+-	.f_stats = rte_table_lpm_ipv6_stats_read,
+-};
+diff --git a/lib/table/rte_table_stub.c b/lib/table/rte_table_stub.c
+deleted file mode 100644
+index 3d2ac55c49daea8585c488d94d21960a51049e24..0000000000000000000000000000000000000000
+--- a/lib/table/rte_table_stub.c
++++ /dev/null
+@@ -1,95 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#include <string.h>
+-
+-#include <eal_export.h>
+-#include <rte_malloc.h>
+-
+-#include "rte_table_stub.h"
+-
+-#include "table_log.h"
+-
+-#ifdef RTE_TABLE_STATS_COLLECT
+-
+-#define RTE_TABLE_LPM_STATS_PKTS_IN_ADD(table, val) \
+-	table->stats.n_pkts_in += val
+-#define RTE_TABLE_LPM_STATS_PKTS_LOOKUP_MISS(table, val) \
+-	table->stats.n_pkts_lookup_miss += val
+-
+-#else
+-
+-#define RTE_TABLE_LPM_STATS_PKTS_IN_ADD(table, val)
+-#define RTE_TABLE_LPM_STATS_PKTS_LOOKUP_MISS(table, val)
+-
+-#endif
+-
+-struct rte_table_stub {
+-	struct rte_table_stats stats;
+-};
+-
+-static void *
+-rte_table_stub_create(__rte_unused void *params,
+-		__rte_unused int socket_id,
+-		__rte_unused uint32_t entry_size)
+-{
+-	struct rte_table_stub *stub;
+-	uint32_t size;
+-
+-	size = sizeof(struct rte_table_stub);
+-	stub = rte_zmalloc_socket("TABLE", size, RTE_CACHE_LINE_SIZE,
+-		socket_id);
+-	if (stub == NULL) {
+-		TABLE_LOG(ERR,
+-			"%s: Cannot allocate %u bytes for stub table",
+-			__func__, size);
+-		return NULL;
+-	}
+-
+-	return stub;
+-}
+-
+-static int
+-rte_table_stub_lookup(
+-	__rte_unused void *table,
+-	__rte_unused struct rte_mbuf **pkts,
+-	__rte_unused uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	__rte_unused void **entries)
+-{
+-	__rte_unused struct rte_table_stub *stub = (struct rte_table_stub *) table;
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-
+-	RTE_TABLE_LPM_STATS_PKTS_IN_ADD(stub, n_pkts_in);
+-	*lookup_hit_mask = 0;
+-	RTE_TABLE_LPM_STATS_PKTS_LOOKUP_MISS(stub, n_pkts_in);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_stub_stats_read(void *table, struct rte_table_stats *stats, int clear)
+-{
+-	struct rte_table_stub *t = table;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &t->stats, sizeof(t->stats));
+-
+-	if (clear)
+-		memset(&t->stats, 0, sizeof(t->stats));
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_table_stub_ops)
+-struct rte_table_ops rte_table_stub_ops = {
+-	.f_create = rte_table_stub_create,
+-	.f_free = NULL,
+-	.f_add = NULL,
+-	.f_delete = NULL,
+-	.f_add_bulk = NULL,
+-	.f_delete_bulk = NULL,
+-	.f_lookup = rte_table_stub_lookup,
+-	.f_stats = rte_table_stub_stats_read,
+-};
+diff --git a/lib/table/rte_table_stub.h b/lib/table/rte_table_stub.h
+deleted file mode 100644
+index f7e589df16f77f0aca839232b32747b4856936f6..0000000000000000000000000000000000000000
+--- a/lib/table/rte_table_stub.h
++++ /dev/null
+@@ -1,30 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_TABLE_STUB_H__
+-#define __INCLUDE_RTE_TABLE_STUB_H__
+-
+-/**
+- * @file
+- * RTE Table Stub
+- *
+- * The stub table lookup operation produces lookup miss for all input packets.
+- */
+-
+-#include "rte_table.h"
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-/** Stub table parameters: NONE */
+-
+-/** Stub table operations */
+-extern struct rte_table_ops rte_table_stub_ops;
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif
+diff --git a/lib/table/table_log.c b/lib/table/table_log.c
+deleted file mode 100644
+index b329edd2e69f8035d25c05582aeeb97d210a2f9c..0000000000000000000000000000000000000000
+--- a/lib/table/table_log.c
++++ /dev/null
+@@ -1,7 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright (c) 2024 Stephen Hemminger <stephen@networkplumber.org>
+- */
+-
+-#include <rte_log.h>
+-
+-RTE_LOG_REGISTER_DEFAULT(table_logtype, INFO);
+diff --git a/lib/table/table_log.h b/lib/table/table_log.h
+deleted file mode 100644
+index b24b8614c227be014cd8f3139da712570957ff7d..0000000000000000000000000000000000000000
+--- a/lib/table/table_log.h
++++ /dev/null
+@@ -1,11 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright (c) 2023 Red Hat, Inc.
+- */
+-
+-#include <rte_log.h>
+-
+-extern int table_logtype;
+-#define RTE_LOGTYPE_TABLE table_logtype
+-
+-#define TABLE_LOG(level, ...) \
+-	RTE_LOG_LINE(level, TABLE, "" __VA_ARGS__)
 -- 
 2.53.0
 
