@@ -2,68 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88249C54F4C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Jul 2026 14:12:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B82AFC54F4C
+	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Jul 2026 14:12:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D1BAB4064A;
-	Tue, 28 Jul 2026 16:12:37 +0200 (CEST)
-Received: from mail-yx1-f49.google.com (mail-yx1-f49.google.com
- [74.125.224.49]) by mails.dpdk.org (Postfix) with ESMTP id 3B9CB40615
- for <dev@dpdk.org>; Tue, 28 Jul 2026 16:12:37 +0200 (CEST)
-Received: by mail-yx1-f49.google.com with SMTP id
- 956f58d0204a3-664db84f074so5109402d50.0
- for <dev@dpdk.org>; Tue, 28 Jul 2026 07:12:37 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id C55D0402E3;
+	Tue, 28 Jul 2026 16:12:40 +0200 (CEST)
+Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com
+ [74.125.224.44]) by mails.dpdk.org (Postfix) with ESMTP id 0EBD34014F
+ for <dev@dpdk.org>; Tue, 28 Jul 2026 16:12:38 +0200 (CEST)
+Received: by mail-yx1-f44.google.com with SMTP id
+ 956f58d0204a3-667bae10ba3so3713582d50.2
+ for <dev@dpdk.org>; Tue, 28 Jul 2026 07:12:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785247956;
- x=1785852756; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785247958;
+ x=1785852758; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=q0d8QHEACQPCOnqFLiNaCi/kihGdqxWXGeutgymXOJY=;
- b=Si36dUM4C3FsD/c3SvkH5+Hm5VOOdT/cAK6DZoducG/tarWNVOVNLs3UTNn1b8jM2V
- S/wRi+RY9h97yiChNL/rwKfF3/7R/NGFJfxs5DnqZJUIK291IKGt0tvtEOecRqFKG07J
- WrkmoKSVJ/VapCx7mrQ8wSkDH0ATRt4qT1fM182B5sy4YIjK0krWu1J43SUky8TEEi16
- Q1jMWwVBjr5LE6+rdqPA/ce6sTRao6JPT561ZzG6jaFNWilOHuPJb2GxlGfQ/JUH+Cuz
- Iz9b6Fdn6DSELjdFEmXvNLOhcnMqwF6kaw5708XNxaOWlObob40P9F2UwMtT8x9zY9Sd
- d3Xw==
+ bh=bL3hWrWYeUCELeJKAjhoGAU4Rrce3e+1Dgy4+1pWmPw=;
+ b=QH0NBkKymr5EsBpzvgBgx/j7BXRGYfbcdAQtzAs6WCYGlJ3zDb93ek7ebOjjzzqXoC
+ JbgZWruWWY1MlYSNOObKBluE6J10F57wVbYbllB+3cVfqeS/2yBRD0zU981prkHuucUP
+ IB6ChlcgPmVPNQH7MaHPpT3cFkc5QfqgW3+PbuKhxtcMAwI8cF7fw/dDbGROr/Y9J7JP
+ cgwYpv7SyC5Y102aGTxnMloRa0z7T7f1AMXRy2wyJWIJmn9trUAhmTFxL3Oba+do8G3f
+ 74/XoWa9I6w22EeVMw3x4/t4BewFxEL1NGs5oOUyEldWFG4NbsDuaQOTz+093Dz7/lFd
+ GnZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785247956; x=1785852756;
+ d=1e100.net; s=20251104; t=1785247958; x=1785852758;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=q0d8QHEACQPCOnqFLiNaCi/kihGdqxWXGeutgymXOJY=;
- b=ApCi1mAyG8dFSaMaqhGMcZdbeCW/Bulisz13E0uNsTv+5R/Yrv6qCjT233Ni7QImKy
- BkJKjwyzfIri0Bw8I7A3Z2D3hlPzweU9adWmVe4gWDQk0zaLb+ci3YzJgsS8NKR2jE+d
- StoLe+3biYPedygIzxdasFREdqjhrDXdJUnXk1zr5Z4S5ktJ4vHz83pCshn1G2LiJOjQ
- otNT4skZzKTumcRUjP7YwbP2lgmOSd181+Le6umbRTLxD9laz0BfeHVFG4/otkD/kG5r
- g3fRKQjinAYMFsV1nyR4InA18HX7fLf7UrVzdg4gRI9cYBvIkXr0A7irxMZBC6IfeZve
- Cjww==
-X-Gm-Message-State: AOJu0YxbSMTfxgmj0iM8pbtn0gxDgVG1CytPWmrzoHXvXUnM+0zjjcPd
- xMaV72Mc1sWXzyChaGnLv5hgbOtqBcSl7Qc2Wf6PqNG5OznxN6GBRXZAAjaBDQzpQVzkSF1M8mk
- bgIvl
-X-Gm-Gg: AR+sD1310poT8QGZ9abqVTP56xTtG9sqmIv3Za+hQJ0cTfLEKMJpWfjEjUYBV08pZDO
- q8NzrVvZ51KLNBoyxC7B+EwmmWVM/O6nT3LfxOi1ojN5RqGl1W1ZzY48oNKHwOck4pd6LpOu62b
- cRYvjhVLkgoHWkqa21RjTRqwJRLVDwz0eWmlrNbUrr66yNzR/6QKoNE5TDWlTpt1jYz1PjmJRm1
- WLL2IAuJQlp/AAGsp5eUanKlKb8/QfnGvMmroA6kcHxPWQzmfkwwEb0Vad7HlQo3qkpjvxpHiHs
- 5Q/tM0F9MrIz9Nedy8J0MZteB0i5O2C31/UjgqEO5rwrbq3Jspq0cjZz5ZZOBN1yxR3/gNwecf4
- 5vQmLi3LkfIpYwAEylppkUt9ditpAMZuj3qo80yn+Z+XxgJFMSME0KOcXCItRCHfHxVdB+qPsEZ
- cJeacHQzKnY9bMw7qrxcxPGhijKD3gdIlg6YLMgzqUF8igsB/X/ao=
-X-Received: by 2002:a05:690e:4550:20b0:667:b8df:c65b with SMTP id
- 956f58d0204a3-6690582868cmr628145d50.86.1785247956602; 
- Tue, 28 Jul 2026 07:12:36 -0700 (PDT)
+ bh=bL3hWrWYeUCELeJKAjhoGAU4Rrce3e+1Dgy4+1pWmPw=;
+ b=jG4fhYqsS++Wu/YWcEbQmxfX3edKt2kn6JORcfAnZts9zFIlmAM8WR2IAFOVD0rm0N
+ ApAn62Tt86hbLoeS/VouGI7E99pKP0O5sXNjj2IjBoBfI6uPJoi5D5EYGpKKLV0qtUOc
+ k98p5qPZ3gYRxb/u2R8l4W8PuLeP1aAqQfwab2EoQySGsUJzOhiOikywLm9s3xH0JT1i
+ gqIi3GpqDEpRJ0xaA0s1XGKhk5RqFmKyKIYpCgDbulnP9hlmtMxCR+1CZD/6TW6sNZ67
+ kMnyxiOdQDMmfj4jhEluVF3fwwvChY3wCxikiBm6530EafhrMRTOcO5KGXtETS6WK8Dw
+ nryQ==
+X-Gm-Message-State: AOJu0YxJe35fvQaQGd4UsUfw10V9tL7+2ewpxM0TtvMiPTliOAPxDFmJ
+ OrYUQauzCSNmw3mB9AkZQhEXj135tsp8Z60UDrq32O1RUdunPISOhJSbkdLWGFin9kx3EETUt2h
+ EusdJ
+X-Gm-Gg: AR+sD12tIEnswRuuTtXCWpat0lhzU0yF18VuU9uE5mpzGSevvn3UWqkxMUUyjsddmrs
+ ylyhKB8Ptdm+FKqMUJ5srVR9uoWdHW76t5j6PjFYv6KiseWLOPfPZ5RHt+BAZIfIEFNkx+BvRE8
+ 9mNcGA6sIGIcZQnERGy4nZPe+KVgUwLAsBWo7OLGDGcnnK8Mew55jQNdp4hnLh0SEJfBKbgF4GV
+ 2HCT4+xA1XZxGCjc46qCAbW8PjKDpJKyhltIOnUJYZBJKTOZJwzm/T6Bf4s04Z1jrh5nELrtu/h
+ dedz33g37iQwdtQlIf9yTT8wUbI5Xl8ACl3PAD/2ceVX9DrBM+5oFRcurSUbKJzvU2d76wAW8JU
+ YDccVX3Jj+p6gljkWBAXpzN3Bad/YFTA6EpQxlWFJGgF5OddS4XGq6oDwHedOEZkvpJ0elg60fo
+ 0JKTCdi23N6urNXATPyO8+CY7wNNI2CHVCKuSiz/nv
+X-Received: by 2002:a53:de09:0:b0:667:af05:2e89 with SMTP id
+ 956f58d0204a3-6690580fcf7mr615274d50.74.1785247958196; 
+ Tue, 28 Jul 2026 07:12:38 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 956f58d0204a3-668c6f6aea3sm5065610d50.12.2026.07.28.07.12.35
+ 956f58d0204a3-668c6f6aea3sm5065610d50.12.2026.07.28.07.12.36
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 28 Jul 2026 07:12:35 -0700 (PDT)
+ Tue, 28 Jul 2026 07:12:37 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Jeroen de Borst <jeroendb@google.com>,
- Joshua Washington <joshwash@google.com>
-Subject: [PATCH 2/3] net/gve: remove unnecessary check for NULL
-Date: Tue, 28 Jul 2026 07:11:44 -0700
-Message-ID: <20260728141229.93878-3-stephen@networkplumber.org>
+ Srikanth Yalavarthi <syalavarthi@marvell.com>
+Subject: [PATCH 3/3] ml/cnxk: remove unnecessary NULL check
+Date: Tue, 28 Jul 2026 07:11:45 -0700
+Message-ID: <20260728141229.93878-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260728141229.93878-1-stephen@networkplumber.org>
 References: <20260728141229.93878-1-stephen@networkplumber.org>
@@ -82,29 +81,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Checking for NULL before calling rte_free is unnecessary.
+No need to check for NULL before calling rte_free.
 Found by cocci/nullfree.cocci script.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/gve/gve_rx.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/ml/cnxk/tvmrt_ml_model.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/gve/gve_rx.c b/drivers/net/gve/gve_rx.c
-index 567b82d020..932293ddad 100644
---- a/drivers/net/gve/gve_rx.c
-+++ b/drivers/net/gve/gve_rx.c
-@@ -205,8 +205,9 @@ gve_rx_burst(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
- 		if (gve_rx(rxq, rxd, rx_id)) {
- 			if (!ctx->drop_pkt)
- 				rx_pkts[nb_rx++] = ctx->mbuf_head;
--			else if (ctx->mbuf_head != NULL)
-+			else {
- 				rte_pktmbuf_free(ctx->mbuf_head);
-+			}
- 			rxq->nb_avail += ctx->total_frags;
- 			gve_rx_ctx_clear(ctx);
- 		}
+diff --git a/drivers/ml/cnxk/tvmrt_ml_model.c b/drivers/ml/cnxk/tvmrt_ml_model.c
+index 319c53a05b..90bb286822 100644
+--- a/drivers/ml/cnxk/tvmrt_ml_model.c
++++ b/drivers/ml/cnxk/tvmrt_ml_model.c
+@@ -133,10 +133,8 @@ tvmrt_ml_model_blob_parse(struct rte_ml_model_params *params, struct tvmrt_ml_mo
+ 	goto cleanup;
+ 
+ error:
+-	for (i = 0; i < ML_TVMRT_MODEL_OBJECT_MAX; i++) {
+-		if (object[i].buffer != NULL)
+-			rte_free(object[i].buffer);
+-	}
++	for (i = 0; i < ML_TVMRT_MODEL_OBJECT_MAX; i++)
++		rte_free(object[i].buffer);
+ 
+ cleanup:
+ 	archive_read_close(a);
 -- 
 2.53.0
 
