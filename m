@@ -2,73 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C2EEC54F51
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Jul 2026 15:25:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2243CC53200
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Jul 2026 15:25:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3B6BB406BB;
-	Wed, 29 Jul 2026 17:24:36 +0200 (CEST)
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com
- [209.85.216.42]) by mails.dpdk.org (Postfix) with ESMTP id 365CD40616
- for <dev@dpdk.org>; Wed, 29 Jul 2026 17:24:34 +0200 (CEST)
-Received: by mail-pj1-f42.google.com with SMTP id
- 98e67ed59e1d1-381216921aaso1003561a91.1
- for <dev@dpdk.org>; Wed, 29 Jul 2026 08:24:34 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E0B8D40A72;
+	Wed, 29 Jul 2026 17:24:37 +0200 (CEST)
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com
+ [209.85.215.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 0D5C2406B6
+ for <dev@dpdk.org>; Wed, 29 Jul 2026 17:24:36 +0200 (CEST)
+Received: by mail-pg1-f178.google.com with SMTP id
+ 41be03b00d2f7-c9d1fff21edso626749a12.1
+ for <dev@dpdk.org>; Wed, 29 Jul 2026 08:24:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785338673;
- x=1785943473; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=wYB2QGil1LJ2xA6vk2GlfGo0+1JsCD+Z6KrLKRLj75I=;
- b=X+y7Oj4yHa3DDMr0Rx7rs4Sdx38ha+jW9B64d1RLdwQMjNCQhq5eQ7UvQ4DwsYwzG2
- pY/YxXGrfqN4HexOn2POoEyUJbDOmyJEC8GLNvw+Xq7v6fDo3tJtb6qGlqvZogGAKvdz
- G9w7kzJePYKR9TKbcHXN63UQQ1UM/6BS7P2xED51ZA6QD6CwsuvFqmj1USDeytlJLWPN
- TTNuViY+X/m91EO2cNGJH22wK+8hxZyRlZbqcnkB54bBEkDXBMHxaesHxKYcxuFoFoM+
- UJN37FEGydcIO7XJX1Mxe82/KH3RiYWuHuYfdKmtc3VB3/FwujOHuKesHwfPi737aZlm
- z6xQ==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785338675;
+ x=1785943475; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=JeKDU3DDwREXcFgiOPqfJvuBb4FXLK2nyNRqlx9QOJg=;
+ b=GKz0B2Ax84i1SgJUIOpHmrJtSpZlXjhrNLCaRsuJkgVgGkiSULexqmz/DpZL83mC+q
+ 3RXRumvEVqUOLTUN15GY8+kDu6ADQBOow43NuxaVqiBAxOKWR+3xv4oukwP9gYhGIJqU
+ qPQPcgjTVF5CyqZ6YfOVvDkBpJK1tT/r5IKL4v2bPQZYU+ZEl7AuDWgOR7BqQDVte7A7
+ PyK1+SCSc0MOhCuvD0W4lLjH1owwdqmH24hRu+OCFm9M71wtYR99xJeq95Xjc2JAZFQL
+ ONUXXTGOHlam/bbE2je1/eUiuSv6K2mg+cEJQWKgIfTvzAuSUt1qrgrZDck2TPKPAUyd
+ QXLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785338673; x=1785943473;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=wYB2QGil1LJ2xA6vk2GlfGo0+1JsCD+Z6KrLKRLj75I=;
- b=Xb5K4imERf7CWqACbkNbaQbbgpUx80pBUnOetHfDF3OE2KyJqxFQPjb4xYCGHpKO/i
- l2XpFq8EpKD0seEvf0aBIY3eemDwJQShZ6zC0Egzk750A/KtkhZTnT7I6HyTa1JO7UFn
- 4GAtqSPfNqGNhLXKrhz31zCuDswgmjVlE0Y9A4uX8/rk4neUGm9NSqc/YGH5CnnRMxAm
- fq9rMLABqlmet2sQoRiWTaKgL01JUaypT7/9r+umo1yoz9iKEPbi8kZS/qhdOgcxciEz
- pG3fvJMK1IkaHN3PWIyV8a24L+YKhj8v4gSSpsxeDHiC1VMFU2EqBeFMMbo0guhQOczM
- NiZw==
-X-Gm-Message-State: AOJu0YxWKM7IZPP0ha0YKxxFROwsyV2wCxSdWxdQattNzOeTCAYohCUs
- 3Wtu6eppBjRDKJ29JUPUhYn2WrkkK+Sbx32wmzWMHmnropQ0KT1LbNfGMT/8LFFPBUTwaTlBvnD
- xTyyw
-X-Gm-Gg: AR+sD12xFMJCGTxXVMIkOP+BjAlxqQQ9TuPexuxXFxxxG++kT/ESR80G1bxUqwXGzyY
- BU94QmrGywSpVQ9SHe3OjqDU88hQSnf1lPl0JyZHJt5DZXwDyzqYUeWpDHbwVaEaQqkzCt9oO6o
- 7X1TDyA2addJDo0hrKAD2QynRMZhU6YdMadrOuJhQBxSwofC/s6o3qujBTIN2L9Z1t9VH5pfqie
- 9Vjrfne7EW4iK9U3eRRJVQL3RD2DsOWUlZyILuvix7Ohz6Eb+7Y+yZb2+dJsFg9ybgS2q38zx9p
- PYAzGP2E7ejn/h+mItj+ntNLEFDsGUy0SHpdlqtzQzrxtZQ4slp2OPa6LT+vBWQ1u2W9IF+GU2F
- ub2RfFTlirKK4rNoxbrrPsgZ6olMuuWTIPBdavOCPF3QLhmLzyWNyxFA/7b+eRTszQKYgtC20WD
- ywRC8Et5Lky7/DHXY85INCqUh6nWz4/Cu6b0XeofmupBRjLEMRlCANV5nhFIut6XM2Pof0H3qgV
- pJ3BSClEqFCFN0IqKjUdu6aQlI=
-X-Received: by 2002:a17:90b:2b8b:b0:389:8f6c:4d58 with SMTP id
- 98e67ed59e1d1-38f6a45d39bmr7457783a91.34.1785338671068; 
- Wed, 29 Jul 2026 08:24:31 -0700 (PDT)
+ d=1e100.net; s=20251104; t=1785338675; x=1785943475;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=JeKDU3DDwREXcFgiOPqfJvuBb4FXLK2nyNRqlx9QOJg=;
+ b=d53//0HwXxnmZFzXMtRCOrzRlWxuSwkDo5XGs9BfWbFOqZJi7KO1JymkEKt4OYcDa+
+ 4L/PHp6qUZa+MwAoh9gAw9++ELG8wvUbuiCBTjRK8MR71T3XXp/Yg9BWq2mzRP3J3dWC
+ LwQi9cEKr6udawqKE5Ambpucm7plsSTLhhVNDy+GKrWNXGzwVoXlCX5T82+4SzCeRzb4
+ 9Wh7k8D1NOOMhHx4RU5JU/7gXsimf2qXujzMViUJlp9KvxrXjrbBIpSytDjA16IOQ/2m
+ 3YO/HBS9UiNGUOEboztjBVgtEvUvIiDgMTJ/byTFMmcybx138EH2xHwiXxdBmlXQ0VPe
+ ILtQ==
+X-Gm-Message-State: AOJu0YzgTZEGuD78AwE4e3EfwhbiEy6YioHOTcDuY63XGLCpEBV2YUvH
+ PxRtjrgq+YoAYru7ix7mF4+EK4W4YnG5+ac0w3Z9X4zFxfdZmcr1onGGTnA7VgwCQ8HigtmK/MM
+ sGxxv
+X-Gm-Gg: AR+sD11ny2KRgbckzvdM/pqqwtZpOrK4w/FfobhMb8fxUlmX3GKGtcyD+dvJM8G+ACH
+ RR/01QEKOrnuwWFDM0d2N/h7GkL7+ESOgLcg1tQESVeBEuIX9dBiMfIo5lJdulxm1g2YAiJLelj
+ BqU7N+Q/DBCLoTpquJvui2F7VOGs4CwgO4EPo92t/BgiPmM7OmGryZupJrDsRfbRgkG1Z7TBDcZ
+ F5wgt1zsEUBcZvwkPPc6dhNXBwQdxIHD2yolsrt7gnOmNkbABhiTc91muRbffNdwQz3AsDPkysV
+ sm9JshfGkwlEqRZxHbzueBPr5rEa9tb/b3kq+xc2jh195Lf28unFHTROIlA5UwRm9ANxlGTRYPo
+ LMolf9X46MMpHXCqOXHEOVbrm2mn+LRejoyPRgTSxjZkkYa+A5lFgrLntv5MRD3581UvdPN0Rqu
+ kf7fFJ2Ktp18IOlkn0PzoAz4HRnAXfaPvf4IN/JE1vZq6SuZRTEFGqtZ2VSPWKnV5QTCWVPtClc
+ aT02+3n9RyrGiP3tpZtEC7swrQ=
+X-Received: by 2002:a05:6a21:9984:b0:3bf:bfd0:2a11 with SMTP id
+ adf61e73a8af0-3c8ba5bab28mr8287435637.43.1785338673399; 
+ Wed, 29 Jul 2026 08:24:33 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-31504b10cdcsm11495602eec.3.2026.07.29.08.24.29
+ 5a478bee46e88-31504b10cdcsm11495602eec.3.2026.07.29.08.24.31
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 29 Jul 2026 08:24:30 -0700 (PDT)
+ Wed, 29 Jul 2026 08:24:32 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Cristian Dumitrescu <cristian.dumitrescu@intel.com>
-Subject: [PATCH v5 4/6] pipeline: remove legacy API
-Date: Wed, 29 Jul 2026 08:22:22 -0700
-Message-ID: <20260729152420.23736-5-stephen@networkplumber.org>
+ Cristian Dumitrescu <cristian.dumitrescu@intel.com>,
+ Wathsala Vithanage <wathsala.vithanage@arm.com>
+Subject: [PATCH v5 5/6] table: remove legacy API
+Date: Wed, 29 Jul 2026 08:22:23 -0700
+Message-ID: <20260729152420.23736-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260729152420.23736-1-stephen@networkplumber.org>
 References: <20260724164520.192203-1-stephen@networkplumber.org>
  <20260729152420.23736-1-stephen@networkplumber.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -83,8306 +87,10051 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove the legacy pipeline API (rte_pipeline_*) together with the
-port and table action APIs built on top of it, as announced for
-removal in the 24.11 release. The SWX pipeline API remains.
+Remove the legacy table library API (rte_table_*) as announced
+for removal in the 24.11 release. The SWX table API remains.
 
-The sched dependency was only used by the table action API,
-so drop it.
+The lpm and port dependencies were only used by the legacy API,
+so drop them. The hash and acl dependencies are still needed by
+the SWX exact match and wildcard match tables.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/api/doxy-api-index.md                  |    3 -
- doc/guides/prog_guide/packet_framework.rst |  203 --
+ doc/api/doxy-api-index.md                  |    7 -
+ doc/guides/prog_guide/packet_framework.rst |  811 -------------
  doc/guides/rel_notes/deprecation.rst       |    5 -
- doc/guides/rel_notes/release_26_11.rst     |    4 +
- lib/pipeline/meson.build                   |    8 +-
- lib/pipeline/rte_pipeline.c                | 1640 ---------
- lib/pipeline/rte_pipeline.h                |  840 -----
- lib/pipeline/rte_port_in_action.c          |  539 ---
- lib/pipeline/rte_port_in_action.h          |  311 --
- lib/pipeline/rte_table_action.c            | 3483 --------------------
- lib/pipeline/rte_table_action.h            | 1137 -------
- 11 files changed, 5 insertions(+), 8168 deletions(-)
- delete mode 100644 lib/pipeline/rte_pipeline.c
- delete mode 100644 lib/pipeline/rte_pipeline.h
- delete mode 100644 lib/pipeline/rte_port_in_action.c
- delete mode 100644 lib/pipeline/rte_port_in_action.h
- delete mode 100644 lib/pipeline/rte_table_action.c
- delete mode 100644 lib/pipeline/rte_table_action.h
+ doc/guides/rel_notes/release_26_11.rst     |    3 +
+ lib/table/meson.build                      |   30 +-
+ lib/table/rte_lru.h                        |   85 --
+ lib/table/rte_lru_arm64.h                  |   61 -
+ lib/table/rte_lru_x86.h                    |   96 --
+ lib/table/rte_table.h                      |  263 -----
+ lib/table/rte_table_acl.c                  |  795 -------------
+ lib/table/rte_table_acl.h                  |   65 --
+ lib/table/rte_table_array.c                |  210 ----
+ lib/table/rte_table_array.h                |   46 -
+ lib/table/rte_table_hash.h                 |  106 --
+ lib/table/rte_table_hash_cuckoo.c          |  327 ------
+ lib/table/rte_table_hash_cuckoo.h          |   57 -
+ lib/table/rte_table_hash_ext.c             | 1011 ----------------
+ lib/table/rte_table_hash_func.h            |  263 -----
+ lib/table/rte_table_hash_func_arm64.h      |   21 -
+ lib/table/rte_table_hash_key16.c           | 1190 -------------------
+ lib/table/rte_table_hash_key32.c           | 1223 --------------------
+ lib/table/rte_table_hash_key8.c            | 1157 ------------------
+ lib/table/rte_table_hash_lru.c             |  959 ---------------
+ lib/table/rte_table_lpm.c                  |  369 ------
+ lib/table/rte_table_lpm.h                  |   94 --
+ lib/table/rte_table_lpm_ipv6.c             |  370 ------
+ lib/table/rte_table_stub.c                 |   95 --
+ lib/table/rte_table_stub.h                 |   30 -
+ lib/table/table_log.c                      |    7 -
+ lib/table/table_log.h                      |   11 -
+ 30 files changed, 4 insertions(+), 9763 deletions(-)
+ delete mode 100644 lib/table/rte_lru.h
+ delete mode 100644 lib/table/rte_lru_arm64.h
+ delete mode 100644 lib/table/rte_lru_x86.h
+ delete mode 100644 lib/table/rte_table.h
+ delete mode 100644 lib/table/rte_table_acl.c
+ delete mode 100644 lib/table/rte_table_acl.h
+ delete mode 100644 lib/table/rte_table_array.c
+ delete mode 100644 lib/table/rte_table_array.h
+ delete mode 100644 lib/table/rte_table_hash.h
+ delete mode 100644 lib/table/rte_table_hash_cuckoo.c
+ delete mode 100644 lib/table/rte_table_hash_cuckoo.h
+ delete mode 100644 lib/table/rte_table_hash_ext.c
+ delete mode 100644 lib/table/rte_table_hash_func.h
+ delete mode 100644 lib/table/rte_table_hash_func_arm64.h
+ delete mode 100644 lib/table/rte_table_hash_key16.c
+ delete mode 100644 lib/table/rte_table_hash_key32.c
+ delete mode 100644 lib/table/rte_table_hash_key8.c
+ delete mode 100644 lib/table/rte_table_hash_lru.c
+ delete mode 100644 lib/table/rte_table_lpm.c
+ delete mode 100644 lib/table/rte_table_lpm.h
+ delete mode 100644 lib/table/rte_table_lpm_ipv6.c
+ delete mode 100644 lib/table/rte_table_stub.c
+ delete mode 100644 lib/table/rte_table_stub.h
+ delete mode 100644 lib/table/table_log.c
+ delete mode 100644 lib/table/table_log.h
 
 diff --git a/doc/api/doxy-api-index.md b/doc/api/doxy-api-index.md
-index 9296042119..17c15027b8 100644
+index 17c15027b8..760b770d6f 100644
 --- a/doc/api/doxy-api-index.md
 +++ b/doc/api/doxy-api-index.md
-@@ -196,9 +196,6 @@ The public API headers are grouped by topics:
-     [hash](@ref rte_table_hash.h),
-     [array](@ref rte_table_array.h),
-     [stub](@ref rte_table_stub.h)
--  * [pipeline](@ref rte_pipeline.h)
--    [port_in_action](@ref rte_port_in_action.h)
--    [table_action](@ref rte_table_action.h)
+@@ -189,13 +189,6 @@ The public API headers are grouped by topics:
+     [reass](@ref rte_port_ras.h),
+     [sched](@ref rte_port_sched.h),
+     [src/sink](@ref rte_port_source_sink.h)
+-  * [table](@ref rte_table.h):
+-    [lpm IPv4](@ref rte_table_lpm.h),
+-    [lpm IPv6](@ref rte_table_lpm_ipv6.h),
+-    [ACL](@ref rte_table_acl.h),
+-    [hash](@ref rte_table_hash.h),
+-    [array](@ref rte_table_array.h),
+-    [stub](@ref rte_table_stub.h)
    * SWX pipeline:
      [control](@ref rte_swx_ctl.h),
      [extern](@ref rte_swx_extern.h),
 diff --git a/doc/guides/prog_guide/packet_framework.rst b/doc/guides/prog_guide/packet_framework.rst
-index ac302938dc..9eb2c5d3de 100644
+index 9eb2c5d3de..98cf3be109 100644
 --- a/doc/guides/prog_guide/packet_framework.rst
 +++ b/doc/guides/prog_guide/packet_framework.rst
-@@ -942,209 +942,6 @@ Additional notes:
-     This does not impact the performance of the key lookup operation,
-     as the probability of having the bucket in extended state is relatively small.
+@@ -131,817 +131,6 @@ The port abstract interface is described below.
+    |   |                |                                                                                         |
+    +---+----------------+-----------------------------------------------------------------------------------------+
  
--Pipeline Library Design
-------------------------
+-Table Library Design
+---------------------
 -
--A pipeline is defined by:
+-Table Types
+-~~~~~~~~~~~
 -
--#.  The set of input ports;
+-:numref:`packet_framework_table_qos_21` is a non-exhaustive list of types of tables
+-that can be implemented with the Packet Framework.
 -
--#.  The set of output ports;
+-.. _packet_framework_table_qos_21:
 -
--#.  The set of tables;
+-.. table:: Table Types
 -
--#.  The set of actions.
+-   +---+----------------------------+-----------------------------------------------------------------------------+
+-   | # | Table Type                 | Description                                                                 |
+-   |   |                            |                                                                             |
+-   +===+============================+=============================================================================+
+-   | 1 | Hash table                 | Lookup key is n-tuple based.                                                |
+-   |   |                            |                                                                             |
+-   |   |                            | Typically, the lookup key is hashed to produce a signature that is used to  |
+-   |   |                            | identify a bucket of entries where the lookup key is searched next.         |
+-   |   |                            |                                                                             |
+-   |   |                            | The signature associated with the lookup key of each input packet is either |
+-   |   |                            | read from the packet descriptor (pre-computed signature) or computed at     |
+-   |   |                            | table lookup time.                                                          |
+-   |   |                            |                                                                             |
+-   |   |                            | The table lookup, add entry and delete entry operations, as well as any     |
+-   |   |                            | other pipeline block that pre-computes the signature all have to use the    |
+-   |   |                            | same hashing algorithm to generate the signature.                           |
+-   |   |                            |                                                                             |
+-   |   |                            | Typically used to implement flow classification tables, ARP caches, routing |
+-   |   |                            | table for tunnelling protocols, etc.                                        |
+-   |   |                            |                                                                             |
+-   +---+----------------------------+-----------------------------------------------------------------------------+
+-   | 2 | Longest Prefix Match (LPM) | Lookup key is the IP address.                                               |
+-   |   |                            |                                                                             |
+-   |   |                            | Each table entries has an associated IP prefix (IP and depth).              |
+-   |   |                            |                                                                             |
+-   |   |                            | The table lookup operation selects the IP prefix that is matched by the     |
+-   |   |                            | lookup key; in case of multiple matches, the entry with the longest prefix  |
+-   |   |                            | depth wins.                                                                 |
+-   |   |                            |                                                                             |
+-   |   |                            | Typically used to implement IP routing tables.                              |
+-   |   |                            |                                                                             |
+-   +---+----------------------------+-----------------------------------------------------------------------------+
+-   | 3 | Access Control List (ACLs) | Lookup key is 7-tuple of two VLAN/MPLS labels, IP destination address,      |
+-   |   |                            | IP source addresses, L4 protocol, L4 destination port, L4 source port.      |
+-   |   |                            |                                                                             |
+-   |   |                            | Each table entry has an associated ACL and priority. The ACL contains bit   |
+-   |   |                            | masks for the VLAN/MPLS labels, IP prefix for IP destination address, IP    |
+-   |   |                            | prefix for IP source addresses, L4 protocol and bitmask, L4 destination     |
+-   |   |                            | port and bit mask, L4 source port and bit mask.                             |
+-   |   |                            |                                                                             |
+-   |   |                            | The table lookup operation selects the ACL that is matched by the lookup    |
+-   |   |                            | key; in case of multiple matches, the entry with the highest priority wins. |
+-   |   |                            |                                                                             |
+-   |   |                            | Typically used to implement rule databases for firewalls, etc.              |
+-   |   |                            |                                                                             |
+-   +---+----------------------------+-----------------------------------------------------------------------------+
+-   | 4 | Pattern matching search    | Lookup key is the packet payload.                                           |
+-   |   |                            |                                                                             |
+-   |   |                            | Table is a database of patterns, with each pattern having a priority        |
+-   |   |                            | assigned.                                                                   |
+-   |   |                            |                                                                             |
+-   |   |                            | The table lookup operation selects the patterns that is matched by the      |
+-   |   |                            | input packet; in case of multiple matches, the matching pattern with the    |
+-   |   |                            | highest priority wins.                                                      |
+-   |   |                            |                                                                             |
+-   +---+----------------------------+-----------------------------------------------------------------------------+
+-   | 5 | Array                      | Lookup key is the table entry index itself.                                 |
+-   |   |                            |                                                                             |
+-   +---+----------------------------+-----------------------------------------------------------------------------+
 -
--The input ports are connected with the output ports through tree-like topologies of interconnected tables.
--The table entries contain the actions defining the operations to be executed on the input packets and the packet flow within the pipeline.
+-Table Interface
+-~~~~~~~~~~~~~~~
 -
--Connectivity of Ports and Tables
--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-Each table is required to implement an abstract interface that defines the initialization
+-and run-time operation of the table.
+-The table abstract interface is described in :numref:`packet_framework_table_qos_29_1`.
 -
--To avoid any dependencies on the order in which pipeline elements are created,
--the connectivity of pipeline elements is defined after all the pipeline input ports,
--output ports and tables have been created.
+-.. _packet_framework_table_qos_29_1:
 -
--General connectivity rules:
+-.. table:: Table Abstract Interface
 -
--#.  Each input port is connected to a single table. No input port should be left unconnected;
+-   +---+-----------------+----------------------------------------------------------------------------------------+
+-   | # | Table operation | Description                                                                            |
+-   |   |                 |                                                                                        |
+-   +===+=================+========================================================================================+
+-   | 1 | Create          | Create the low-level data structures of the lookup table. Can internally allocate      |
+-   |   |                 | memory.                                                                                |
+-   |   |                 |                                                                                        |
+-   +---+-----------------+----------------------------------------------------------------------------------------+
+-   | 2 | Free            | Free up all the resources used by the lookup table.                                    |
+-   |   |                 |                                                                                        |
+-   +---+-----------------+----------------------------------------------------------------------------------------+
+-   | 3 | Add entry       | Add new entry to the lookup table.                                                     |
+-   |   |                 |                                                                                        |
+-   +---+-----------------+----------------------------------------------------------------------------------------+
+-   | 4 | Delete entry    | Delete specific entry from the lookup table.                                           |
+-   |   |                 |                                                                                        |
+-   +---+-----------------+----------------------------------------------------------------------------------------+
+-   | 5 | Lookup          | Look up a burst of input packets and return a bit mask specifying the result of the    |
+-   |   |                 | lookup operation for each packet: a set bit signifies lookup hit for the corresponding |
+-   |   |                 | packet, while a cleared bit a lookup miss.                                             |
+-   |   |                 |                                                                                        |
+-   |   |                 | For each lookup hit packet, the lookup operation also returns a pointer to the table   |
+-   |   |                 | entry that was hit, which contains the actions to be applied on the packet and any     |
+-   |   |                 | associated metadata.                                                                   |
+-   |   |                 |                                                                                        |
+-   |   |                 | For each lookup miss packet, the actions to be applied on the packet and any           |
+-   |   |                 | associated metadata are specified by the default table entry preconfigured for lookup  |
+-   |   |                 | miss.                                                                                  |
+-   |   |                 |                                                                                        |
+-   +---+-----------------+----------------------------------------------------------------------------------------+
 -
--#.  The table connectivity to other tables or to output ports is regulated by the next hop actions of each table entry and the default table entry.
--    The table connectivity is fluid, as the table entries and the default table entry can be updated during run-time.
 -
--    *   A table can have multiple entries (including the default entry) connected to the same output port.
--        A table can have different entries connected to different output ports.
--        Different tables can have entries (including default table entry) connected to the same output port.
+-Hash Table Design
+-~~~~~~~~~~~~~~~~~
 -
--    *   A table can have multiple entries (including the default entry) connected to another table,
--        in which case all these entries have to point to the same table.
--        This constraint is enforced by the API and prevents tree-like topologies from being created (allowing table chaining only),
--        with the purpose of simplifying the implementation of the pipeline run-time execution engine.
--
--Port Actions
--~~~~~~~~~~~~
--
--Port Action Handler
+-Hash Table Overview
 -^^^^^^^^^^^^^^^^^^^
 -
--An action handler can be assigned to each input/output port to define actions to be executed on each input packet that is received by the port.
--Defining the action handler for a specific input/output port is optional (i.e. the action handler can be disabled).
+-Hash tables are important because the key lookup operation is optimized for speed:
+-instead of having to linearly search the lookup key through all the keys in the table,
+-the search is limited to only the keys stored in a single table bucket.
 -
--For input ports, the action handler is executed after RX function. For output ports, the action handler is executed before the TX function.
+-**Associative Arrays**
 -
--The action handler can decide to drop packets.
+-An associative array is a function that can be specified as a set of (key, value) pairs,
+-with each key from the possible set of input keys present at most once.
+-For a given associative array, the possible operations are:
 -
--Table Actions
--~~~~~~~~~~~~~
+-#.  *add (key, value)*: When no value is currently associated with *key*, then the (key, *value* ) association is created.
+-    When *key* is already associated value *value0*, then the association (*key*, *value0*) is removed
+-    and association *(key, value)* is created;
 -
--Table Action Handler
+-#.  *delete key*: When no value is currently associated with *key*, this operation has no effect.
+-    When *key* is already associated  *value*, then association  *(key, value)* is removed;
+-
+-#.  *lookup key*: When no value is currently associated with  *key*, then this operation returns void value (lookup miss).
+-    When *key* is associated with *value*, then this operation returns *value*.
+-    The *(key, value)* association is not changed.
+-
+-The matching criterion used to compare the input key against the keys in the associative array is *exact match*,
+-as the key size (number of bytes) and the key value (array of bytes) have to match exactly for the two keys under comparison.
+-
+-**Hash Function**
+-
+-A hash function deterministically maps data of variable length (key) to data of fixed size (hash value or key signature).
+-Typically, the size of the key is bigger than the size of the key signature.
+-The hash function basically compresses a long key into a short signature.
+-Several keys can share the same signature (collisions).
+-
+-High quality hash functions have uniform distribution.
+-For large number of keys, when dividing the space of signature values into a fixed number of equal intervals (buckets),
+-it is desirable to have the key signatures evenly distributed across these intervals (uniform distribution),
+-as opposed to most of the signatures going into only a few of the intervals
+-and the rest of the intervals being largely unused (non-uniform distribution).
+-
+-**Hash Table**
+-
+-A hash table is an associative array that uses a hash function for its operation.
+-The reason for using a hash function is to optimize the performance of the lookup operation
+-by minimizing the number of table keys that have to be compared against the input key.
+-
+-Instead of storing the (key, value) pairs in a single list, the hash table maintains multiple lists (buckets).
+-For any given key, there is a single bucket where that key might exist, and this bucket is uniquely identified based on the key signature.
+-Once the key signature is computed and the hash table bucket identified,
+-the key is either located in this bucket or it is not present in the hash table at all,
+-so the key search can be narrowed down from the full set of keys currently in the table
+-to just the set of keys currently in the identified table bucket.
+-
+-The performance of the hash table lookup operation is greatly improved,
+-provided that the table keys are evenly distributed among the hash table buckets,
+-which can be achieved by using a hash function with uniform distribution.
+-The rule to map a key to its bucket can simply be to use the key signature (modulo the number of table buckets) as the table bucket ID:
+-
+-    *bucket_id = f_hash(key) % n_buckets;*
+-
+-By selecting the number of buckets to be a power of two, the modulo operator can be replaced by a bitwise AND logical operation:
+-
+-    *bucket_id = f_hash(key) & (n_buckets - 1);*
+-
+-considering *n_bits* as the number of bits set in *bucket_mask = n_buckets - 1*,
+-this means that all the keys that end up in the same hash table bucket have the lower *n_bits* of their signature identical.
+-In order to reduce the number of keys in the same bucket (collisions), the number of hash table buckets needs to be increased.
+-
+-In packet processing context, the sequence of operations involved in hash table operations
+-is described in :numref:`packet_framework_figure_33`:
+-
+-.. _packet_framework_figure_33:
+-
+-.. figure:: img/figure33.*
+-
+-   Sequence of Steps for Hash Table Operations in a Packet Processing Context
+-
+-
+-
+-Hash Table Use Cases
 -^^^^^^^^^^^^^^^^^^^^
 -
--An action handler to be executed on each input packet can be assigned to each table.
--Defining the action handler for a specific table is optional (i.e. the action handler can be disabled).
+-**Flow Classification**
 -
--The action handler is executed after the table lookup operation is performed and the table entry associated with each input packet is identified.
--The action handler can only handle the user-defined actions, while the reserved actions (e.g. the next hop actions) are handled by the Packet Framework.
--The action handler can decide to drop the input packet.
+-*Description:* The flow classification is executed at least once for each input packet.
+-This operation maps each incoming packet against one of the known traffic flows in the flow database that typically contains millions of flows.
 -
--Reserved Actions
+-*Hash table name:* Flow classification table
+-
+-*Number of keys:* Millions
+-
+-*Key format:* n-tuple of packet fields that uniquely identify a traffic flow/connection.
+-Example: DiffServ 5-tuple of (Source IP address, Destination IP address, L4 protocol, L4 protocol source port, L4 protocol destination port).
+-For IPv4 protocol and L4 protocols like TCP, UDP or SCTP, the size of the DiffServ 5-tuple is 13 bytes, while for IPv6 it is 37 bytes.
+-
+-*Key value (key data):* actions and action meta-data describing what processing to be applied for the packets of the current flow.
+-The size of the data associated with each traffic flow can vary from 8 bytes to kilobytes.
+-
+-**Address Resolution Protocol (ARP)**
+-
+-*Description:* Once a route has been identified for an IP packet (so the output interface and the IP address of the next hop station are known),
+-the MAC address of the next hop station is needed in order to send this packet onto the next leg of the journey
+-towards its destination (as identified by its destination IP address).
+-The MAC address of the next hop station becomes the destination MAC address of the outgoing Ethernet frame.
+-
+-*Hash table name:* ARP table
+-
+-*Number of keys:* Thousands
+-
+-*Key format:* The pair of (Output interface, Next Hop IP address), which is typically 5 bytes for IPv4 and 17 bytes for IPv6.
+-
+-*Key value (key data):* MAC address of the next hop station (6 bytes).
+-
+-Hash Table Types
 -^^^^^^^^^^^^^^^^
 -
--The reserved actions are handled directly by the Packet Framework without the user being able to change their meaning
--through the table action handler configuration.
--A special category of the reserved actions is represented by the next hop actions, which regulate the packet flow between input ports,
--tables and output ports through the pipeline.
--:numref:`packet_framework_table_qos_33` lists the next hop actions.
+-:numref:`packet_framework_table_qos_22` lists the hash table configuration parameters
+-shared by all different hash table types.
 -
--.. _packet_framework_table_qos_33:
+-.. _packet_framework_table_qos_22:
 -
--.. table:: Next Hop Actions (Reserved)
+-.. table:: Configuration Parameters Common for All Hash Table Types
 -
--   +---+---------------------+-----------------------------------------------------------------------------------+
--   | # | Next hop action     | Description                                                                       |
--   |   |                     |                                                                                   |
--   +===+=====================+===================================================================================+
--   | 1 | Drop                | Drop the current packet.                                                          |
--   |   |                     |                                                                                   |
--   +---+---------------------+-----------------------------------------------------------------------------------+
--   | 2 | Send to output port | Send the current packet to specified output port. The output port ID is metadata  |
--   |   |                     | stored in the same table entry.                                                   |
--   |   |                     |                                                                                   |
--   +---+---------------------+-----------------------------------------------------------------------------------+
--   | 3 | Send to table       | Send the current packet to specified table. The table ID is metadata stored in    |
--   |   |                     | the same table entry.                                                             |
--   |   |                     |                                                                                   |
--   +---+---------------------+-----------------------------------------------------------------------------------+
+-   +---+---------------------------+------------------------------------------------------------------------------+
+-   | # | Parameter                 | Details                                                                      |
+-   |   |                           |                                                                              |
+-   +===+===========================+==============================================================================+
+-   | 1 | Key size                  | Measured as number of bytes. All keys have the same size.                    |
+-   |   |                           |                                                                              |
+-   +---+---------------------------+------------------------------------------------------------------------------+
+-   | 2 | Key value (key data) size | Measured as number of bytes.                                                 |
+-   |   |                           |                                                                              |
+-   +---+---------------------------+------------------------------------------------------------------------------+
+-   | 3 | Number of buckets         | Needs to be a power of two.                                                  |
+-   |   |                           |                                                                              |
+-   +---+---------------------------+------------------------------------------------------------------------------+
+-   | 4 | Maximum number of keys    | Needs to be a power of two.                                                  |
+-   |   |                           |                                                                              |
+-   +---+---------------------------+------------------------------------------------------------------------------+
+-   | 5 | Hash function             | Examples: jhash, CRC hash, etc.                                              |
+-   |   |                           |                                                                              |
+-   +---+---------------------------+------------------------------------------------------------------------------+
+-   | 6 | Hash function seed        | Parameter to be passed to the hash function.                                 |
+-   |   |                           |                                                                              |
+-   +---+---------------------------+------------------------------------------------------------------------------+
+-   | 7 | Key offset                | Offset of the lookup key byte array within the packet meta-data stored in    |
+-   |   |                           | the packet buffer.                                                           |
+-   |   |                           |                                                                              |
+-   +---+---------------------------+------------------------------------------------------------------------------+
 -
--User Actions
--^^^^^^^^^^^^
+-Bucket Full Problem
+-"""""""""""""""""""
 -
--For each table, the meaning of user actions is defined through the configuration of the table action handler.
--Different tables can be configured with different action handlers, therefore the meaning of the user actions
--and their associated meta-data is private to each table.
--Within the same table, all the table entries (including the table default entry) share the same definition
--for the user actions and their associated meta-data,
--with each table entry having its own set of enabled user actions and its own copy of the action meta-data.
--:numref:`packet_framework_table_qos_34` contains a non-exhaustive list of user action examples.
+-On initialization, each hash table bucket is allocated space for exactly 4 keys.
+-As keys are added to the table, it can happen that a given bucket already has 4 keys when a new key has to be added to this bucket.
+-The possible options are:
 -
--.. _packet_framework_table_qos_34:
+-#.  **Least Recently Used (LRU) Hash Table.**
+-    One of the existing keys in the bucket is deleted and the new key is added in its place.
+-    The number of keys in each bucket never grows bigger than 4. The logic to pick the key to be dropped from the bucket is LRU.
+-    The hash table lookup operation maintains the order in which the keys in the same bucket are hit, so every time a key is hit,
+-    it becomes the new Most Recently Used (MRU) key, i.e. the last candidate for drop.
+-    When a key is added to the bucket, it also becomes the new MRU key.
+-    When a key needs to be picked and dropped, the first candidate for drop, i.e. the current LRU key, is always picked.
+-    The LRU logic requires maintaining specific data structures per each bucket.
 -
--.. table:: User Action Examples
+-#.  **Extendable Bucket Hash Table.**
+-    The bucket is extended with space for 4 more keys.
+-    This is done by allocating additional memory at table initialization time,
+-    which is used to create a pool of free keys (the size of this pool is configurable and always a multiple of 4).
+-    On key add operation, the allocation of a group of 4 keys only happens successfully within the limit of free keys,
+-    otherwise the key add operation fails.
+-    On key delete operation, a group of 4 keys is freed back to the pool of free keys
+-    when the key to be deleted is the only key that was used within its group of 4 keys at that time.
+-    On key lookup operation, if the current bucket is in extended state and a match is not found in the first group of 4 keys,
+-    the search continues beyond the first group of 4 keys, potentially until all keys in this bucket are examined.
+-    The extendable bucket logic requires maintaining specific data structures per table and per each bucket.
 -
--   +---+-----------------------------------+---------------------------------------------------------------------+
--   | # | User action                       | Description                                                         |
--   |   |                                   |                                                                     |
--   +===+===================================+=====================================================================+
--   | 1 | Metering                          | Per flow traffic metering using the srTCM and trTCM algorithms.     |
--   |   |                                   |                                                                     |
--   +---+-----------------------------------+---------------------------------------------------------------------+
--   | 2 | Statistics                        | Update the statistics counters maintained per flow.                 |
--   |   |                                   |                                                                     |
--   +---+-----------------------------------+---------------------------------------------------------------------+
--   | 3 | App ID                            | Per flow state machine fed by variable length sequence of packets   |
--   |   |                                   | at the flow initialization with the purpose of identifying the      |
--   |   |                                   | traffic type and application.                                       |
--   |   |                                   |                                                                     |
--   +---+-----------------------------------+---------------------------------------------------------------------+
--   | 4 | Push/pop labels                   | Push/pop VLAN/MPLS labels to/from the current packet.               |
--   |   |                                   |                                                                     |
--   +---+-----------------------------------+---------------------------------------------------------------------+
--   | 5 | Network Address Translation (NAT) | Translate between the internal (LAN) and external (WAN) IP          |
--   |   |                                   | destination/source address and/or L4 protocol destination/source    |
--   |   |                                   | port.                                                               |
--   |   |                                   |                                                                     |
--   +---+-----------------------------------+---------------------------------------------------------------------+
--   | 6 | TTL update                        | Decrement IP TTL and, in case of IPv4 packets, update the IP        |
--   |   |                                   | checksum.                                                           |
--   |   |                                   |                                                                     |
--   +---+-----------------------------------+---------------------------------------------------------------------+
--   | 7 | Sym Crypto                        | Generate Cryptodev session based on the user-specified algorithm    |
--   |   |                                   | and key(s), and assemble the cryptodev operation based on the       |
--   |   |                                   | predefined offsets.                                                 |
--   |   |                                   |                                                                     |
--   +---+-----------------------------------+---------------------------------------------------------------------+
+-.. table:: Configuration Parameters Specific to Extendable Bucket Hash Table
 -
--Multicore Scaling
-------------------
+-   +---+---------------------------+--------------------------------------------------+
+-   | # | Parameter                 | Details                                          |
+-   |   |                           |                                                  |
+-   +===+===========================+==================================================+
+-   | 1 | Number of additional keys | Needs to be a power of two, at least equal to 4. |
+-   |   |                           |                                                  |
+-   +---+---------------------------+--------------------------------------------------+
 -
--A complex application is typically split across multiple cores, with cores communicating through SW queues.
--There is usually a performance limit on the number of table lookups
--and actions that can be fitted on the same CPU core due to HW constraints like:
--available CPU cycles, cache memory size, cache transfer BW, memory transfer BW, etc.
 -
--As the application is split across multiple CPU cores, the Packet Framework facilitates the creation of several pipelines,
--the assignment of each such pipeline to a different CPU core
--and the interconnection of all CPU core-level pipelines into a single application-level complex pipeline.
--For example, if CPU core A is assigned to run pipeline P1 and CPU core B pipeline P2,
--then the interconnection of P1 with P2 could be achieved by having the same set of SW queues act like output ports
--for P1 and input ports for P2.
+-Signature Computation
+-"""""""""""""""""""""
 -
--This approach enables the application development using the pipeline, run-to-completion (clustered) or hybrid (mixed) models.
+-The possible options for key signature computation are:
 -
--It is allowed for the same core to run several pipelines, but it is not allowed for several cores to run the same pipeline.
+-#.  **Pre-computed key signature.**
+-    The key lookup operation is split between two CPU cores.
+-    The first CPU core (typically the CPU core that performs packet RX) extracts the key from the input packet,
+-    computes the key signature and saves both the key and the key signature in the packet buffer as packet meta-data.
+-    The second CPU core reads both the key and the key signature from the packet meta-data
+-    and performs the bucket search step of the key lookup operation.
 -
--Shared Data Structures
--~~~~~~~~~~~~~~~~~~~~~~
+-#.  **Key signature computed on lookup ("do-sig" version).**
+-    The same CPU core reads the key from the packet meta-data, uses it to compute the key signature
+-    and also performs the bucket search step of the key lookup operation.
 -
--The threads performing table lookup are actually table writers rather than just readers.
--Even if the specific table lookup algorithm is thread-safe for multiple readers
--(e. g. read-only access of the search algorithm data structures is enough to conduct the lookup operation),
--once the table entry for the current packet is identified, the thread is typically expected to update the action meta-data stored in the table entry
--(e.g. increment the counter tracking the number of packets that hit this table entry), and thus modify the table entry.
--During the time this thread is accessing this table entry (either writing or reading; duration is application specific),
--for data consistency reasons, no other threads (threads performing table lookup or entry add/delete operations) are allowed to modify this table entry.
+-.. table:: Configuration Parameters Specific to Pre-computed Key Signature Hash Table
 -
--Mechanisms to share the same table between multiple threads:
+-   +---+------------------+-----------------------------------------------------------------------+
+-   | # | Parameter        | Details                                                               |
+-   |   |                  |                                                                       |
+-   +===+==================+=======================================================================+
+-   | 1 | Signature offset | Offset of the pre-computed key signature within the packet meta-data. |
+-   |   |                  |                                                                       |
+-   +---+------------------+-----------------------------------------------------------------------+
 -
--#.  **Multiple writer threads.**
--    Threads need to use synchronization primitives like semaphores (distinct semaphore per table entry) or atomic instructions.
--    The cost of semaphores is usually high, even when the semaphore is free.
--    The cost of atomic instructions is normally higher than the cost of regular instructions.
+-Key Size Optimized Hash Tables
+-""""""""""""""""""""""""""""""
 -
--#.  **Multiple writer threads, with single thread performing table lookup operations and multiple threads performing table entry add/delete operations.**
--    The threads performing table entry add/delete operations send table update requests to the reader (typically through message passing queues),
--    which does the actual table updates and then sends the response back to the request initiator.
+-For specific key sizes, the data structures and algorithm of key lookup operation can be specially handcrafted for further performance improvements,
+-so following options are possible:
 -
--#.  **Single writer thread performing table entry add/delete operations and multiple reader threads that perform table lookup operations with read-only access to the table entries.**
--    The reader threads use the main table copy while the writer is updating the mirror copy.
--    Once the writer update is done, the writer can signal to the readers and busy wait until all readers swap between the main copy (which now becomes the mirror copy) and
--    the mirror copy (which now becomes the main copy).
+-#.  **Implementation supporting configurable key size.**
 -
--Interfacing with Accelerators
-------------------------------
+-#.  **Implementation supporting a single key size.**
+-    Typical key sizes are 8 bytes and 16 bytes.
 -
--The presence of accelerators is usually detected during the initialization phase by inspecting the HW devices that are part of the system (e.g. by PCI bus enumeration).
--Typical devices with acceleration capabilities are:
+-Bucket Search Logic for Configurable Key Size Hash Tables
+-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 -
--*   Inline accelerators: NICs, switches, FPGAs, etc;
+-The performance of the bucket search logic is one of the main factors influencing the performance of the key lookup operation.
+-The data structures and algorithm are designed to make the best use of Intel CPU architecture resources like:
+-cache memory space, cache memory bandwidth, external memory bandwidth, multiple execution units working in parallel,
+-out of order instruction execution, special CPU instructions, etc.
 -
--*   Look-aside accelerators: chipsets, FPGAs, Intel QuickAssist, etc.
+-The bucket search logic handles multiple input packets in parallel.
+-It is built as a pipeline of several stages (3 or 4), with each pipeline stage handling two different packets from the burst of input packets.
+-On each pipeline iteration, the packets are pushed to the next pipeline stage: for the 4-stage pipeline,
+-two packets (that just completed stage 3) exit the pipeline,
+-two packets (that just completed stage 2) are now executing stage 3, two packets (that just completed stage 1) are now executing stage 2,
+-two packets (that just completed stage 0) are now executing stage 1 and two packets (next two packets to read from the burst of input packets)
+-are entering the pipeline to execute stage 0.
+-The pipeline iterations continue until all packets from the burst of input packets execute the last stage of the pipeline.
 -
--Usually, to support a specific functional block, specific implementation of Packet Framework tables and/or ports and/or actions has to be provided for each accelerator,
--with all the implementations sharing the same API: pure SW implementation (no acceleration), implementation using accelerator A, implementation using accelerator B, etc.
--The selection between these implementations could be done at build time or at run-time (recommended), based on which accelerators are present in the system,
--with no application changes required.
+-The bucket search logic is broken into pipeline stages at the boundary of the next memory access.
+-Each pipeline stage uses data structures that are stored (with high probability) into the L1 or L2 cache memory of the current CPU core and
+-breaks just before the next memory access required by the algorithm.
+-The current pipeline stage finalizes by prefetching the data structures required by the next pipeline stage,
+-so given enough time for the prefetch to complete,
+-when the next pipeline stage eventually gets executed for the same packets,
+-it will read the data structures it needs from L1 or L2 cache memory and thus avoid the significant penalty incurred by L2 or L3 cache memory miss.
+-
+-By prefetching the data structures required by the next pipeline stage in advance (before they are used)
+-and switching to executing another pipeline stage for different packets,
+-the number of L2 or L3 cache memory misses is greatly reduced, hence one of the main reasons for improved performance.
+-This is because the cost of L2/L3 cache memory miss on memory read accesses is high, as usually due to data dependency between instructions,
+-the CPU execution units have to stall until the read operation is completed from L3 cache memory or external DRAM memory.
+-By using prefetch instructions, the latency of memory read accesses is hidden,
+-provided that it is performed early enough before the respective data structure is actually used.
+-
+-By splitting the processing into several stages that are executed on different packets (the packets from the input burst are interlaced),
+-enough work is created to allow the prefetch instructions to complete successfully (before the prefetched data structures are actually accessed) and
+-also the data dependency between instructions is loosened.
+-For example, for the 4-stage pipeline, stage 0 is executed on packets 0 and 1 and then,
+-before same packets 0 and 1 are used (i.e. before stage 1 is executed on packets 0 and 1),
+-different packets are used: packets 2 and 3 (executing stage 1), packets 4 and 5 (executing stage 2) and packets 6 and 7 (executing stage 3).
+-By executing useful work while the data structures are brought into the L1 or L2 cache memory, the latency of the read memory accesses is hidden.
+-By increasing the gap between two consecutive accesses to the same data structure, the data dependency between instructions is loosened;
+-this allows making the best use of the super-scalar and out-of-order execution CPU architecture,
+-as the number of CPU core execution units that are active (rather than idle or stalled due to data dependency constraints between instructions) is maximized.
+-
+-The bucket search logic is also implemented without using any branch instructions.
+-This avoids the important cost associated with flushing the CPU core execution pipeline on every instance of branch misprediction.
+-
+-Configurable Key Size Hash Table
+-""""""""""""""""""""""""""""""""
+-
+-:numref:`packet_framework_figure_34`, :numref:`packet_framework_table_qos_25`
+-and :numref:`packet_framework_table_qos_26`
+-detail the main data structures used to implement configurable key size hash tables
+-(either LRU or extendable bucket, either with pre-computed signature or "do-sig").
+-
+-.. _packet_framework_figure_34:
+-
+-.. figure:: img/figure34.*
+-
+-   Data Structures for Configurable Key Size Hash Tables
+-
+-
+-.. _packet_framework_table_qos_25:
+-
+-.. table:: Main Large Data Structures (Arrays) used for Configurable Key Size Hash Tables
+-
+-   +---+-------------------------+------------------------------+---------------------------+-------------------------------+
+-   | # | Array name              | Number of entries            | Entry size (bytes)        | Description                   |
+-   |   |                         |                              |                           |                               |
+-   +===+=========================+==============================+===========================+===============================+
+-   | 1 | Bucket array            | n_buckets (configurable)     | 32                        | Buckets of the hash table.    |
+-   |   |                         |                              |                           |                               |
+-   +---+-------------------------+------------------------------+---------------------------+-------------------------------+
+-   | 2 | Bucket extensions array | n_buckets_ext (configurable) | 32                        | This array is only created    |
+-   |   |                         |                              |                           | for extendable bucket tables. |
+-   |   |                         |                              |                           |                               |
+-   +---+-------------------------+------------------------------+---------------------------+-------------------------------+
+-   | 3 | Key array               | n_keys                       | key_size (configurable)   | Keys added to the hash table. |
+-   |   |                         |                              |                           |                               |
+-   +---+-------------------------+------------------------------+---------------------------+-------------------------------+
+-   | 4 | Data array              | n_keys                       | entry_size (configurable) | Key values (key data)         |
+-   |   |                         |                              |                           | associated with the hash      |
+-   |   |                         |                              |                           | table keys.                   |
+-   |   |                         |                              |                           |                               |
+-   +---+-------------------------+------------------------------+---------------------------+-------------------------------+
+-
+-.. _packet_framework_table_qos_26:
+-
+-.. table:: Field Description for Bucket Array Entry (Configurable Key Size Hash Tables)
+-
+-   +---+------------------+--------------------+------------------------------------------------------------------+
+-   | # | Field name       | Field size (bytes) | Description                                                      |
+-   |   |                  |                    |                                                                  |
+-   +===+==================+====================+==================================================================+
+-   | 1 | Next Ptr/LRU     | 8                  | For LRU tables, this fields represents the LRU list for the      |
+-   |   |                  |                    | current bucket stored as array of 4 entries of 2 bytes each.     |
+-   |   |                  |                    | Entry 0 stores the index (0 .. 3) of the MRU key, while entry 3  |
+-   |   |                  |                    | stores the index of the LRU key.                                 |
+-   |   |                  |                    |                                                                  |
+-   |   |                  |                    | For extendable bucket tables, this field represents the next     |
+-   |   |                  |                    | pointer (i.e. the pointer to the next group of 4 keys linked to  |
+-   |   |                  |                    | the current bucket). The next pointer is not NULL if the bucket  |
+-   |   |                  |                    | is currently extended or NULL otherwise.                         |
+-   |   |                  |                    | To help the branchless implementation, bit 0 (least significant  |
+-   |   |                  |                    | bit) of this field is set to 1 if the next pointer is not NULL   |
+-   |   |                  |                    | and to 0 otherwise.                                              |
+-   |   |                  |                    |                                                                  |
+-   +---+------------------+--------------------+------------------------------------------------------------------+
+-   | 2 | Sig[0 .. 3]      | 4 x 2              | If key X (X = 0 .. 3) is valid, then sig X bits 15 .. 1 store    |
+-   |   |                  |                    | the most significant 15 bits of key X signature and sig X bit 0  |
+-   |   |                  |                    | is set to 1.                                                     |
+-   |   |                  |                    |                                                                  |
+-   |   |                  |                    | If key X is not valid, then sig X is set to zero.                |
+-   |   |                  |                    |                                                                  |
+-   +---+------------------+--------------------+------------------------------------------------------------------+
+-   | 3 | Key Pos [0 .. 3] | 4 x 4              | If key X is valid (X = 0 .. 3), then Key Pos X represents the    |
+-   |   |                  |                    | index into the key array where key X is stored, as well as the   |
+-   |   |                  |                    | index into the data array where the value associated with key X  |
+-   |   |                  |                    | is stored.                                                       |
+-   |   |                  |                    |                                                                  |
+-   |   |                  |                    | If key X is not valid, then the value of Key Pos X is undefined. |
+-   |   |                  |                    |                                                                  |
+-   +---+------------------+--------------------+------------------------------------------------------------------+
+-
+-
+-:numref:`packet_framework_figure_35` and :numref:`packet_framework_table_qos_27`
+-detail the bucket search pipeline stages
+-(either LRU or extendable bucket, either with pre-computed signature or "do-sig").
+-For each pipeline stage, the described operations are applied to each of the two packets handled by that stage.
+-
+-.. _packet_framework_figure_35:
+-
+-.. figure:: img/figure35.*
+-
+-   Bucket Search Pipeline for Key Lookup Operation (Configurable Key Size Hash
+-   Tables)
+-
+-
+-.. _packet_framework_table_qos_27:
+-
+-.. table:: Description of the Bucket Search Pipeline Stages (Configurable Key Size Hash Tables)
+-
+-   +---+---------------------------+------------------------------------------------------------------------------+
+-   | # | Stage name                | Description                                                                  |
+-   |   |                           |                                                                              |
+-   +===+===========================+==============================================================================+
+-   | 0 | Prefetch packet meta-data | Select next two packets from the burst of input packets.                     |
+-   |   |                           |                                                                              |
+-   |   |                           | Prefetch packet meta-data containing the key and key signature.              |
+-   |   |                           |                                                                              |
+-   +---+---------------------------+------------------------------------------------------------------------------+
+-   | 1 | Prefetch table bucket     | Read the key signature from the packet meta-data (for extendable bucket hash |
+-   |   |                           | tables) or read the key from the packet meta-data and compute key signature  |
+-   |   |                           | (for LRU tables).                                                            |
+-   |   |                           |                                                                              |
+-   |   |                           | Identify the bucket ID using the key signature.                              |
+-   |   |                           |                                                                              |
+-   |   |                           | Set bit 0 of the signature to 1 (to match only signatures of valid keys from |
+-   |   |                           | the table).                                                                  |
+-   |   |                           |                                                                              |
+-   |   |                           | Prefetch the bucket.                                                         |
+-   |   |                           |                                                                              |
+-   +---+---------------------------+------------------------------------------------------------------------------+
+-   | 2 | Prefetch table key        | Read the key signatures from the bucket.                                     |
+-   |   |                           |                                                                              |
+-   |   |                           | Compare the signature of the input key against the 4 key signatures from the |
+-   |   |                           | packet. As result, the following is obtained:                                |
+-   |   |                           |                                                                              |
+-   |   |                           | *match*                                                                      |
+-   |   |                           | = equal to TRUE if there was at least one signature match and to FALSE in    |
+-   |   |                           | the case of no signature match;                                              |
+-   |   |                           |                                                                              |
+-   |   |                           | *match_many*                                                                 |
+-   |   |                           | = equal to TRUE is there were more than one signature matches (can be up to  |
+-   |   |                           | 4 signature matches in the worst case scenario) and to FALSE otherwise;      |
+-   |   |                           |                                                                              |
+-   |   |                           | *match_pos*                                                                  |
+-   |   |                           | = the index of the first key that produced signature match (only valid if    |
+-   |   |                           | match is true).                                                              |
+-   |   |                           |                                                                              |
+-   |   |                           | For extendable bucket hash tables only, set                                  |
+-   |   |                           | *match_many*                                                                 |
+-   |   |                           | to TRUE if next pointer is valid.                                            |
+-   |   |                           |                                                                              |
+-   |   |                           | Prefetch the bucket key indicated by                                         |
+-   |   |                           | *match_pos*                                                                  |
+-   |   |                           | (even if                                                                     |
+-   |   |                           | *match_pos*                                                                  |
+-   |   |                           | does not point to valid key valid).                                          |
+-   |   |                           |                                                                              |
+-   +---+---------------------------+------------------------------------------------------------------------------+
+-   | 3 | Prefetch table data       | Read the bucket key indicated by                                             |
+-   |   |                           | *match_pos*.                                                                 |
+-   |   |                           |                                                                              |
+-   |   |                           | Compare the bucket key against the input key. As result, the following is    |
+-   |   |                           | obtained:                                                                    |
+-   |   |                           | *match_key*                                                                  |
+-   |   |                           | = equal to TRUE if the two keys match and to FALSE otherwise.                |
+-   |   |                           |                                                                              |
+-   |   |                           | Report input key as lookup hit only when both                                |
+-   |   |                           | *match*                                                                      |
+-   |   |                           | and                                                                          |
+-   |   |                           | *match_key*                                                                  |
+-   |   |                           | are equal to TRUE and as lookup miss otherwise.                              |
+-   |   |                           |                                                                              |
+-   |   |                           | For LRU tables only, use branchless logic to update the bucket LRU list      |
+-   |   |                           | (the current key becomes the new MRU) only on lookup hit.                    |
+-   |   |                           |                                                                              |
+-   |   |                           | Prefetch the key value (key data) associated with the current key (to avoid  |
+-   |   |                           | branches, this is done on both lookup hit and miss).                         |
+-   |   |                           |                                                                              |
+-   +---+---------------------------+------------------------------------------------------------------------------+
+-
+-
+-Additional notes:
+-
+-#.  The pipelined version of the bucket search algorithm is executed only if there are at least 7 packets in the burst of input packets.
+-    If there are less than 7 packets in the burst of input packets,
+-    a non-optimized implementation of the bucket search algorithm is executed.
+-
+-#.  Once the pipelined version of the bucket search algorithm has been executed for all the packets in the burst of input packets,
+-    the non-optimized implementation of the bucket search algorithm is also executed for any packets that did not produce a lookup hit,
+-    but have the *match_many* flag set.
+-    As result of executing the non-optimized version, some of these packets may produce a lookup hit or lookup miss.
+-    This does not impact the performance of the key lookup operation,
+-    as the probability of matching more than one signature in the same group of 4 keys or of having the bucket in extended state
+-    (for extendable bucket hash tables only) is relatively small.
+-
+-**Key Signature Comparison Logic**
+-
+-The key signature comparison logic is described in :numref:`packet_framework_table_qos_28`.
+-
+-.. _packet_framework_table_qos_28:
+-
+-.. table:: Lookup Tables for Match, Match_Many and Match_Pos
+-
+-   +----+------+---------------+--------------------+--------------------+
+-   | #  | mask | match (1 bit) | match_many (1 bit) | match_pos (2 bits) |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 0  | 0000 | 0             | 0                  | 00                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 1  | 0001 | 1             | 0                  | 00                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 2  | 0010 | 1             | 0                  | 01                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 3  | 0011 | 1             | 1                  | 00                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 4  | 0100 | 1             | 0                  | 10                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 5  | 0101 | 1             | 1                  | 00                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 6  | 0110 | 1             | 1                  | 01                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 7  | 0111 | 1             | 1                  | 00                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 8  | 1000 | 1             | 0                  | 11                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 9  | 1001 | 1             | 1                  | 00                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 10 | 1010 | 1             | 1                  | 01                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 11 | 1011 | 1             | 1                  | 00                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 12 | 1100 | 1             | 1                  | 10                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 13 | 1101 | 1             | 1                  | 00                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 14 | 1110 | 1             | 1                  | 01                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-   | 15 | 1111 | 1             | 1                  | 00                 |
+-   |    |      |               |                    |                    |
+-   +----+------+---------------+--------------------+--------------------+
+-
+-The input *mask* hash bit X (X = 0 .. 3) set to 1 if input signature is equal to bucket signature X and set to 0 otherwise.
+-The outputs *match*, *match_many* and *match_pos* are 1 bit, 1 bit and 2 bits in size respectively and their meaning has been explained above.
+-
+-As displayed in :numref:`packet_framework_table_qos_29`,
+-the lookup tables for *match* and *match_many* can be collapsed into a single 32-bit value
+-and the lookup table for *match_pos* can be collapsed into a 64-bit value.
+-Given the input *mask*, the values for *match*, *match_many* and *match_pos* can be obtained by indexing their respective bit array to extract 1 bit,
+-1 bit and 2 bits respectively with branchless logic.
+-
+-.. _packet_framework_table_qos_29:
+-
+-.. table:: Collapsed Lookup Tables for Match, Match_Many and Match_Pos
+-
+-   +------------+------------------------------------------+-------------------+
+-   |            | Bit array                                | Hexadecimal value |
+-   |            |                                          |                   |
+-   +------------+------------------------------------------+-------------------+
+-   | match      | 1111_1111_1111_1110                      | 0xFFFELLU         |
+-   |            |                                          |                   |
+-   +------------+------------------------------------------+-------------------+
+-   | match_many | 1111_1110_1110_1000                      | 0xFEE8LLU         |
+-   |            |                                          |                   |
+-   +------------+------------------------------------------+-------------------+
+-   | match_pos  | 0001_0010_0001_0011__0001_0010_0001_0000 | 0x12131210LLU     |
+-   |            |                                          |                   |
+-   +------------+------------------------------------------+-------------------+
+-
+-
+-The pseudo-code for match, match_many and match_pos is::
+-
+-    match = (0xFFFELLU >> mask) & 1;
+-
+-    match_many = (0xFEE8LLU >> mask) & 1;
+-
+-    match_pos = (0x12131210LLU >> (mask << 1)) & 3;
+-
+-Single Key Size Hash Tables
+-"""""""""""""""""""""""""""
+-
+-:numref:`packet_framework_figure_37`, :numref:`packet_framework_figure_38`,
+-:numref:`packet_framework_table_qos_30` and :numref:`packet_framework_table_qos_31`
+-detail the main data structures used to implement 8-byte and 16-byte key hash tables
+-(either LRU or extendable bucket, either with pre-computed signature or "do-sig").
+-
+-.. _packet_framework_figure_37:
+-
+-.. figure:: img/figure37.*
+-
+-   Data Structures for 8-byte Key Hash Tables
+-
+-
+-.. _packet_framework_figure_38:
+-
+-.. figure:: img/figure38.*
+-
+-   Data Structures for 16-byte Key Hash Tables
+-
+-
+-.. _packet_framework_table_qos_30:
+-
+-.. table:: Main Large Data Structures (Arrays) used for 8-byte and 16-byte Key Size Hash Tables
+-
+-   +---+-------------------------+------------------------------+----------------------+------------------------------------+
+-   | # | Array name              | Number of entries            | Entry size (bytes)   | Description                        |
+-   |   |                         |                              |                      |                                    |
+-   +===+=========================+==============================+======================+====================================+
+-   | 1 | Bucket array            | n_buckets (configurable)     | *8-byte key size:*   | Buckets of the hash table.         |
+-   |   |                         |                              |                      |                                    |
+-   |   |                         |                              | 64 + 4 x entry_size  |                                    |
+-   |   |                         |                              |                      |                                    |
+-   |   |                         |                              |                      |                                    |
+-   |   |                         |                              | *16-byte key size:*  |                                    |
+-   |   |                         |                              |                      |                                    |
+-   |   |                         |                              | 128 + 4 x entry_size |                                    |
+-   |   |                         |                              |                      |                                    |
+-   +---+-------------------------+------------------------------+----------------------+------------------------------------+
+-   | 2 | Bucket extensions array | n_buckets_ext (configurable) | *8-byte key size:*   | This array is only created for     |
+-   |   |                         |                              |                      | extendable bucket tables.          |
+-   |   |                         |                              |                      |                                    |
+-   |   |                         |                              | 64 + 4 x entry_size  |                                    |
+-   |   |                         |                              |                      |                                    |
+-   |   |                         |                              |                      |                                    |
+-   |   |                         |                              | *16-byte key size:*  |                                    |
+-   |   |                         |                              |                      |                                    |
+-   |   |                         |                              | 128 + 4 x entry_size |                                    |
+-   |   |                         |                              |                      |                                    |
+-   +---+-------------------------+------------------------------+----------------------+------------------------------------+
+-
+-.. _packet_framework_table_qos_31:
+-
+-.. table:: Field Description for Bucket Array Entry (8-byte and 16-byte Key Hash Tables)
+-
+-   +---+---------------+--------------------+-------------------------------------------------------------------------------+
+-   | # | Field name    | Field size (bytes) | Description                                                                   |
+-   |   |               |                    |                                                                               |
+-   +===+===============+====================+===============================================================================+
+-   | 1 | Valid         | 8                  | Bit X (X = 0 .. 3) is set to 1 if key X is valid or to 0 otherwise.           |
+-   |   |               |                    |                                                                               |
+-   |   |               |                    | Bit 4 is only used for extendable bucket tables to help with the              |
+-   |   |               |                    | implementation of the branchless logic. In this case, bit 4 is set to 1 if    |
+-   |   |               |                    | next pointer is valid (not NULL) or to 0 otherwise.                           |
+-   |   |               |                    |                                                                               |
+-   +---+---------------+--------------------+-------------------------------------------------------------------------------+
+-   | 2 | Next Ptr/LRU  | 8                  | For LRU tables, this fields represents the LRU list for the current bucket    |
+-   |   |               |                    | stored as array of 4 entries of 2 bytes each. Entry 0 stores the index        |
+-   |   |               |                    | (0 .. 3) of the MRU key, while entry 3 stores the index of the LRU key.       |
+-   |   |               |                    |                                                                               |
+-   |   |               |                    | For extendable bucket tables, this field represents the next pointer (i.e.    |
+-   |   |               |                    | the pointer to the next group of 4 keys linked to the current bucket). The    |
+-   |   |               |                    | next pointer is not NULL if the bucket is currently extended or NULL          |
+-   |   |               |                    | otherwise.                                                                    |
+-   |   |               |                    |                                                                               |
+-   +---+---------------+--------------------+-------------------------------------------------------------------------------+
+-   | 3 | Key [0 .. 3]  | 4 x key_size       | Full keys.                                                                    |
+-   |   |               |                    |                                                                               |
+-   +---+---------------+--------------------+-------------------------------------------------------------------------------+
+-   | 4 | Data [0 .. 3] | 4 x entry_size     | Full key values (key data) associated with keys 0 .. 3.                       |
+-   |   |               |                    |                                                                               |
+-   +---+---------------+--------------------+-------------------------------------------------------------------------------+
+-
+-and detail the bucket search pipeline used to implement 8-byte and 16-byte key hash tables (either LRU or extendable bucket,
+-either with pre-computed signature or "do-sig").
+-For each pipeline stage, the described operations are applied to each of the two packets handled by that stage.
+-
+-.. figure:: img/figure39.*
+-
+-   Bucket Search Pipeline for Key Lookup Operation (Single Key Size Hash
+-   Tables)
+-
+-.. table:: Description of the Bucket Search Pipeline Stages (8-byte and 16-byte Key Hash Tables)
+-
+-   +---+---------------------------+-----------------------------------------------------------------------------+
+-   | # | Stage name                | Description                                                                 |
+-   |   |                           |                                                                             |
+-   +===+===========================+=============================================================================+
+-   | 0 | Prefetch packet meta-data | #.  Select next two packets from the burst of input packets.                |
+-   |   |                           |                                                                             |
+-   |   |                           | #.  Prefetch packet meta-data containing the key and key signature.         |
+-   |   |                           |                                                                             |
+-   +---+---------------------------+-----------------------------------------------------------------------------+
+-   | 1 | Prefetch table bucket     | #.  Read the key signature from the packet meta-data (for extendable bucket |
+-   |   |                           |     hash tables) or read the key from the packet meta-data and compute key  |
+-   |   |                           |     signature (for LRU tables).                                             |
+-   |   |                           |                                                                             |
+-   |   |                           | #.  Identify the bucket ID using the key signature.                         |
+-   |   |                           |                                                                             |
+-   |   |                           | #.  Prefetch the bucket.                                                    |
+-   |   |                           |                                                                             |
+-   +---+---------------------------+-----------------------------------------------------------------------------+
+-   | 2 | Prefetch table data       | #.  Read the bucket.                                                        |
+-   |   |                           |                                                                             |
+-   |   |                           | #.  Compare all 4 bucket keys against the input key.                        |
+-   |   |                           |                                                                             |
+-   |   |                           | #.  Report input key as lookup hit only when a match is identified (more    |
+-   |   |                           |     than one key match is not possible)                                     |
+-   |   |                           |                                                                             |
+-   |   |                           | #.  For LRU tables only, use branchless logic to update the bucket LRU list |
+-   |   |                           |     (the current key becomes the new MRU) only on lookup hit.               |
+-   |   |                           |                                                                             |
+-   |   |                           | #.  Prefetch the key value (key data) associated with the matched key (to   |
+-   |   |                           |     avoid branches, this is done on both lookup hit and miss).              |
+-   |   |                           |                                                                             |
+-   +---+---------------------------+-----------------------------------------------------------------------------+
+-
+-Additional notes:
+-
+-#.  The pipelined version of the bucket search algorithm is executed only if there are at least 5 packets in the burst of input packets.
+-    If there are less than 5 packets in the burst of input packets, a non-optimized implementation of the bucket search algorithm is executed.
+-
+-#.  For extendable bucket hash tables only,
+-    once the pipelined version of the bucket search algorithm has been executed for all the packets in the burst of input packets,
+-    the non-optimized implementation of the bucket search algorithm is also executed for any packets that did not produce a lookup hit,
+-    but have the bucket in extended state.
+-    As result of executing the non-optimized version, some of these packets may produce a lookup hit or lookup miss.
+-    This does not impact the performance of the key lookup operation,
+-    as the probability of having the bucket in extended state is relatively small.
 -
  The Software Switch (SWX) Pipeline
  ----------------------------------
  
 diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
-index 6ad7698c6b..758652a492 100644
+index 758652a492..9dcf86098f 100644
 --- a/doc/guides/rel_notes/deprecation.rst
 +++ b/doc/guides/rel_notes/deprecation.rst
 @@ -148,11 +148,6 @@ Deprecation Notices
    The graph walk functions will process nodes in topological order
    using bitmap scanning instead of the circular buffer.
  
--* pipeline: The pipeline library legacy API (functions rte_pipeline_*)
+-* table: The table library legacy API (functions rte_table_*)
 -  will be deprecated and subsequently removed in DPDK 24.11 release.
--  Before this, the new pipeline library API (functions rte_swx_pipeline_*)
+-  Before this, the new table library API (functions rte_swx_table_*)
 -  will gradually transition from experimental to stable status.
 -
- * table: The table library legacy API (functions rte_table_*)
+ * port: The port library legacy API (functions rte_port_*)
    will be deprecated and subsequently removed in DPDK 24.11 release.
-   Before this, the new table library API (functions rte_swx_table_*)
+   Before this, the new port library API (functions rte_swx_port_*)
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index fc84ba367e..f7d34aa1ee 100644
+index f7d34aa1ee..50b0d3ac06 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -84,6 +84,10 @@ Removed Items
-   the legacy pipeline library API.
-   The ``pipeline`` example application covers the SWX pipeline API.
+@@ -88,6 +88,9 @@ Removed Items
+   ``rte_port_in_action_*`` and ``rte_table_action_*`` functions.
+   The SWX pipeline API (``rte_swx_pipeline_*``) remains.
  
-+* Removed the legacy pipeline library API: ``rte_pipeline_*``,
-+  ``rte_port_in_action_*`` and ``rte_table_action_*`` functions.
-+  The SWX pipeline API (``rte_swx_pipeline_*``) remains.
++* Removed the legacy table library API (``rte_table_*`` functions).
++  The SWX table API (``rte_swx_table_*``) remains.
 +
  
  API Changes
  -----------
-diff --git a/lib/pipeline/meson.build b/lib/pipeline/meson.build
-index 823c7929a7..997ded6792 100644
---- a/lib/pipeline/meson.build
-+++ b/lib/pipeline/meson.build
-@@ -10,21 +10,15 @@ endif
- cflags += no_wvla_cflag
+diff --git a/lib/table/meson.build b/lib/table/meson.build
+index e27957fe89..620c20e594 100644
+--- a/lib/table/meson.build
++++ b/lib/table/meson.build
+@@ -9,42 +9,14 @@ sources = files(
+         'rte_swx_table_learner.c',
+         'rte_swx_table_selector.c',
+         'rte_swx_table_wm.c',
+-        'rte_table_acl.c',
+-        'rte_table_array.c',
+-        'rte_table_hash_cuckoo.c',
+-        'rte_table_hash_ext.c',
+-        'rte_table_hash_key8.c',
+-        'rte_table_hash_key16.c',
+-        'rte_table_hash_key32.c',
+-        'rte_table_hash_lru.c',
+-        'rte_table_lpm.c',
+-        'rte_table_lpm_ipv6.c',
+-        'rte_table_stub.c',
+-        'table_log.c',
+ )
  
- sources = files(
--        'rte_pipeline.c',
--        'rte_port_in_action.c',
--        'rte_table_action.c',
-         'rte_swx_ipsec.c',
-         'rte_swx_pipeline.c',
-         'rte_swx_pipeline_spec.c',
-         'rte_swx_ctl.c',
- )
  headers = files(
--        'rte_pipeline.h',
--        'rte_port_in_action.h',
--        'rte_table_action.h',
-         'rte_swx_ipsec.h',
-         'rte_swx_pipeline.h',
-         'rte_swx_extern.h',
-         'rte_swx_ctl.h',
+-        'rte_lru.h',
+         'rte_swx_hash_func.h',
+         'rte_swx_table.h',
+         'rte_swx_table_em.h',
+         'rte_swx_table_learner.h',
+         'rte_swx_table_selector.h',
+         'rte_swx_table_wm.h',
+-        'rte_table.h',
+-        'rte_table_acl.h',
+-        'rte_table_array.h',
+-        'rte_table_hash.h',
+-        'rte_table_hash_cuckoo.h',
+-        'rte_table_hash_func.h',
+-        'rte_table_lpm.h',
+-        'rte_table_lpm_ipv6.h',
+-        'rte_table_stub.h',
+-)
+-deps += ['mbuf', 'port', 'lpm', 'hash', 'acl']
+-
+-indirect_headers += files(
+-        'rte_lru_arm64.h',
+-        'rte_lru_x86.h',
+-        'rte_table_hash_func_arm64.h',
  )
--deps += ['port', 'table', 'meter', 'sched', 'cryptodev', 'ipsec']
-+deps += ['port', 'table', 'meter', 'cryptodev', 'ipsec']
-diff --git a/lib/pipeline/rte_pipeline.c b/lib/pipeline/rte_pipeline.c
++deps += ['mbuf', 'hash', 'acl']
+diff --git a/lib/table/rte_lru.h b/lib/table/rte_lru.h
 deleted file mode 100644
-index fa3c8b77ee..0000000000
---- a/lib/pipeline/rte_pipeline.c
+index 1436425e16..0000000000
+--- a/lib/table/rte_lru.h
 +++ /dev/null
-@@ -1,1640 +0,0 @@
+@@ -1,85 +0,0 @@
 -/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2016 Intel Corporation
+- * Copyright(c) 2010-2014 Intel Corporation
 - */
 -
--#include <string.h>
--#include <stdio.h>
+-#ifndef __INCLUDE_RTE_LRU_H__
+-#define __INCLUDE_RTE_LRU_H__
 -
--#include <eal_export.h>
--#include <rte_common.h>
--#include <rte_mbuf.h>
--#include <rte_malloc.h>
--#include <rte_string_fns.h>
+-#include <rte_config.h>
+-#ifdef RTE_ARCH_X86_64
+-#include "rte_lru_x86.h"
+-#elif defined(RTE_ARCH_ARM64)
+-#include "rte_lru_arm64.h"
+-#else
+-#undef RTE_TABLE_HASH_LRU_STRATEGY
+-#define RTE_TABLE_HASH_LRU_STRATEGY                        1
+-#endif
 -
--#include "rte_pipeline.h"
+-#if RTE_TABLE_HASH_LRU_STRATEGY == 0
 -
--RTE_LOG_REGISTER_DEFAULT(pipeline_logtype, INFO);
--#define RTE_LOGTYPE_PIPELINE pipeline_logtype
+-#define lru_init(bucket)						\
+-do									\
+-	bucket = bucket;						\
+-while (0)
 -
--#define PIPELINE_LOG(level, ...) \
--	RTE_LOG_LINE(level, PIPELINE, "" __VA_ARGS__)
+-#define lru_pos(bucket) (bucket->lru_list & 0xFFFFLLU)
 -
--#define RTE_TABLE_INVALID                                 UINT32_MAX
+-#define lru_update(bucket, mru_val)					\
+-do {									\
+-	bucket = bucket;						\
+-	mru_val = mru_val;						\
+-} while (0)
 -
--#ifdef RTE_PIPELINE_STATS_COLLECT
+-#elif RTE_TABLE_HASH_LRU_STRATEGY == 1
 -
--#define RTE_PIPELINE_STATS_AH_DROP_WRITE(p, mask)			\
--	__extension__ ({ (p)->n_pkts_ah_drop = rte_popcount64(mask); })
+-#define lru_init(bucket)						\
+-do									\
+-	bucket->lru_list = 0x0000000100020003LLU;			\
+-while (0)
 -
--#define RTE_PIPELINE_STATS_AH_DROP_READ(p, counter)			\
--	__extension__ ({ (counter) += (p)->n_pkts_ah_drop; (p)->n_pkts_ah_drop = 0; })
+-#define lru_pos(bucket) (bucket->lru_list & 0xFFFFLLU)
 -
--#define RTE_PIPELINE_STATS_TABLE_DROP0(p)				\
--	__extension__ ({ (p)->pkts_drop_mask = (p)->action_mask0[RTE_PIPELINE_ACTION_DROP]; })
+-#define lru_update(bucket, mru_val)					\
+-do {									\
+-	uint64_t _x, _pos, _x0, _x1, _x2, _mask;			\
+-									\
+-	_x = bucket->lru_list;						\
+-									\
+-	_pos = 4;							\
+-	if ((_x >> 48) == ((uint64_t) mru_val))			\
+-		_pos = 3;						\
+-									\
+-	if (((_x >> 32) & 0xFFFFLLU) == ((uint64_t) mru_val))		\
+-		_pos = 2;						\
+-									\
+-	if (((_x >> 16) & 0xFFFFLLU) == ((uint64_t) mru_val))		\
+-		_pos = 1;						\
+-									\
+-	if ((_x & 0xFFFFLLU) == ((uint64_t) mru_val))			\
+-		_pos = 0;						\
+-									\
+-									\
+-	_pos <<= 4;							\
+-	_mask = (~0LLU) << _pos;					\
+-	_x0 = _x & (~_mask);						\
+-	_x1 = (_x >> 16) & _mask;					\
+-	_x2 = (_x << (48 - _pos)) & (0xFFFFLLU << 48);			\
+-	_x = _x0 | _x1 | _x2;						\
+-									\
+-	if (_pos != 64)							\
+-		bucket->lru_list = _x;					\
+-} while (0)
 -
--#define RTE_PIPELINE_STATS_TABLE_DROP1(p, counter)			\
--__extension__ ({							\
--	uint64_t mask = (p)->action_mask0[RTE_PIPELINE_ACTION_DROP];	\
--	mask ^= (p)->pkts_drop_mask;					\
--	(counter) += rte_popcount64(mask);			\
--})
+-#elif (RTE_TABLE_HASH_LRU_STRATEGY == 2) || (RTE_TABLE_HASH_LRU_STRATEGY == 3)
+-
+-/**
+- * These strategies are implemented in architecture specific header files.
+- */
 -
 -#else
 -
--#define RTE_PIPELINE_STATS_AH_DROP_WRITE(p, mask)
--#define RTE_PIPELINE_STATS_AH_DROP_READ(p, counter)
--#define RTE_PIPELINE_STATS_TABLE_DROP0(p)
--#define RTE_PIPELINE_STATS_TABLE_DROP1(p, counter)
+-#error "Incorrect value for RTE_TABLE_HASH_LRU_STRATEGY"
 -
 -#endif
 -
--struct rte_port_in {
--	/* Input parameters */
--	struct rte_port_in_ops ops;
--	rte_pipeline_port_in_action_handler f_action;
--	void *arg_ah;
--	uint32_t burst_size;
--
--	/* The table to which this port is connected */
--	uint32_t table_id;
--
--	/* Handle to low-level port */
--	void *h_port;
--
--	/* List of enabled ports */
--	struct rte_port_in *next;
--
--	/* Statistics */
--	uint64_t n_pkts_dropped_by_ah;
--};
--
--struct rte_port_out {
--	/* Input parameters */
--	struct rte_port_out_ops ops;
--	rte_pipeline_port_out_action_handler f_action;
--	void *arg_ah;
--
--	/* Handle to low-level port */
--	void *h_port;
--
--	/* Statistics */
--	uint64_t n_pkts_dropped_by_ah;
--};
--
--struct rte_table {
--	/* Input parameters */
--	struct rte_table_ops ops;
--	rte_pipeline_table_action_handler_hit f_action_hit;
--	rte_pipeline_table_action_handler_miss f_action_miss;
--	void *arg_ah;
--	struct rte_pipeline_table_entry *default_entry;
--	uint32_t entry_size;
--
--	uint32_t table_next_id;
--	uint32_t table_next_id_valid;
--
--	/* Handle to the low-level table object */
--	void *h_table;
--
--	/* Statistics */
--	uint64_t n_pkts_dropped_by_lkp_hit_ah;
--	uint64_t n_pkts_dropped_by_lkp_miss_ah;
--	uint64_t n_pkts_dropped_lkp_hit;
--	uint64_t n_pkts_dropped_lkp_miss;
--};
--
--#define RTE_PIPELINE_MAX_NAME_SZ                           124
--
--struct __rte_cache_aligned rte_pipeline {
--	/* Input parameters */
--	char name[RTE_PIPELINE_MAX_NAME_SZ];
--	int socket_id;
--	uint32_t offset_port_id;
--
--	/* Internal tables */
--	struct rte_port_in ports_in[RTE_PIPELINE_PORT_IN_MAX];
--	struct rte_port_out ports_out[RTE_PIPELINE_PORT_OUT_MAX];
--	struct rte_table tables[RTE_PIPELINE_TABLE_MAX];
--
--	/* Occupancy of internal tables */
--	uint32_t num_ports_in;
--	uint32_t num_ports_out;
--	uint32_t num_tables;
--
--	/* List of enabled ports */
--	uint64_t enabled_port_in_mask;
--	struct rte_port_in *port_in_next;
--
--	/* Pipeline run structures */
--	struct rte_mbuf *pkts[RTE_PORT_IN_BURST_SIZE_MAX];
--	struct rte_pipeline_table_entry *entries[RTE_PORT_IN_BURST_SIZE_MAX];
--	uint64_t action_mask0[RTE_PIPELINE_ACTIONS];
--	uint64_t action_mask1[RTE_PIPELINE_ACTIONS];
--	uint64_t pkts_mask;
--	uint64_t n_pkts_ah_drop;
--	uint64_t pkts_drop_mask;
--};
--
--static inline uint32_t
--rte_mask_get_next(uint64_t mask, uint32_t pos)
--{
--	uint64_t mask_rot = (mask << ((63 - pos) & 0x3F)) |
--			(mask >> ((pos + 1) & 0x3F));
--	return (rte_ctz64(mask_rot) - (63 - pos)) & 0x3F;
--}
--
--static inline uint32_t
--rte_mask_get_prev(uint64_t mask, uint32_t pos)
--{
--	uint64_t mask_rot = (mask >> (pos & 0x3F)) |
--			(mask << ((64 - pos) & 0x3F));
--	return ((63 - rte_clz64(mask_rot)) + pos) & 0x3F;
--}
--
--static void
--rte_pipeline_table_free(struct rte_table *table);
--
--static void
--rte_pipeline_port_in_free(struct rte_port_in *port);
--
--static void
--rte_pipeline_port_out_free(struct rte_port_out *port);
--
--/*
-- * Pipeline
-- */
--static int
--rte_pipeline_check_params(struct rte_pipeline_params *params)
--{
--	if (params == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: Incorrect value for parameter params", __func__);
--		return -EINVAL;
--	}
--
--	/* name */
--	if (params->name == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: Incorrect value for parameter name", __func__);
--		return -EINVAL;
--	}
--
--	/* socket */
--	if (params->socket_id < 0) {
--		PIPELINE_LOG(ERR,
--			"%s: Incorrect value for parameter socket_id",
--			__func__);
--		return -EINVAL;
--	}
--
--	return 0;
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_create)
--struct rte_pipeline *
--rte_pipeline_create(struct rte_pipeline_params *params)
--{
--	struct rte_pipeline *p;
--	int status;
--
--	/* Check input parameters */
--	status = rte_pipeline_check_params(params);
--	if (status != 0) {
--		PIPELINE_LOG(ERR,
--			"%s: Pipeline params check failed (%d)",
--			__func__, status);
--		return NULL;
--	}
--
--	/* Allocate memory for the pipeline on requested socket */
--	p = rte_zmalloc_socket("PIPELINE", sizeof(struct rte_pipeline),
--			RTE_CACHE_LINE_SIZE, params->socket_id);
--
--	if (p == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: Pipeline memory allocation failed", __func__);
--		return NULL;
--	}
--
--	/* Save input parameters */
--	strlcpy(p->name, params->name, RTE_PIPELINE_MAX_NAME_SZ);
--	p->socket_id = params->socket_id;
--	p->offset_port_id = params->offset_port_id;
--
--	/* Initialize pipeline internal data structure */
--	p->num_ports_in = 0;
--	p->num_ports_out = 0;
--	p->num_tables = 0;
--	p->enabled_port_in_mask = 0;
--	p->port_in_next = NULL;
--	p->pkts_mask = 0;
--	p->n_pkts_ah_drop = 0;
--
--	return p;
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_free)
--int
--rte_pipeline_free(struct rte_pipeline *p)
--{
--	uint32_t i;
--
--	/* Check input parameters */
--	if (p == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: rte_pipeline parameter is NULL", __func__);
--		return -EINVAL;
--	}
--
--	/* Free input ports */
--	for (i = 0; i < p->num_ports_in; i++) {
--		struct rte_port_in *port = &p->ports_in[i];
--
--		rte_pipeline_port_in_free(port);
--	}
--
--	/* Free tables */
--	for (i = 0; i < p->num_tables; i++) {
--		struct rte_table *table = &p->tables[i];
--
--		rte_pipeline_table_free(table);
--	}
--
--	/* Free output ports */
--	for (i = 0; i < p->num_ports_out; i++) {
--		struct rte_port_out *port = &p->ports_out[i];
--
--		rte_pipeline_port_out_free(port);
--	}
--
--	/* Free pipeline memory */
--	rte_free(p);
--
--	return 0;
--}
--
--/*
-- * Table
-- */
--static int
--rte_table_check_params(struct rte_pipeline *p,
--		struct rte_pipeline_table_params *params,
--		uint32_t *table_id)
--{
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter is NULL",
--			__func__);
--		return -EINVAL;
--	}
--	if (params == NULL) {
--		PIPELINE_LOG(ERR, "%s: params parameter is NULL",
--			__func__);
--		return -EINVAL;
--	}
--	if (table_id == NULL) {
--		PIPELINE_LOG(ERR, "%s: table_id parameter is NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	/* ops */
--	if (params->ops == NULL) {
--		PIPELINE_LOG(ERR, "%s: params->ops is NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (params->ops->f_create == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: f_create function pointer is NULL", __func__);
--		return -EINVAL;
--	}
--
--	if (params->ops->f_lookup == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: f_lookup function pointer is NULL", __func__);
--		return -EINVAL;
--	}
--
--	/* De we have room for one more table? */
--	if (p->num_tables == RTE_PIPELINE_TABLE_MAX) {
--		PIPELINE_LOG(ERR,
--			"%s: Incorrect value for num_tables parameter",
--			__func__);
--		return -EINVAL;
--	}
--
--	return 0;
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_table_create)
--int
--rte_pipeline_table_create(struct rte_pipeline *p,
--		struct rte_pipeline_table_params *params,
--		uint32_t *table_id)
--{
--	struct rte_table *table;
--	struct rte_pipeline_table_entry *default_entry;
--	void *h_table;
--	uint32_t entry_size, id;
--	int status;
--
--	/* Check input arguments */
--	status = rte_table_check_params(p, params, table_id);
--	if (status != 0)
--		return status;
--
--	id = p->num_tables;
--	table = &p->tables[id];
--
--	/* Allocate space for the default table entry */
--	entry_size = sizeof(struct rte_pipeline_table_entry) +
--		params->action_data_size;
--	default_entry = rte_zmalloc_socket(
--		"PIPELINE", entry_size, RTE_CACHE_LINE_SIZE, p->socket_id);
--	if (default_entry == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: Failed to allocate default entry", __func__);
--		return -EINVAL;
--	}
--
--	/* Create the table */
--	h_table = params->ops->f_create(params->arg_create, p->socket_id,
--		entry_size);
--	if (h_table == NULL) {
--		rte_free(default_entry);
--		PIPELINE_LOG(ERR, "%s: Table creation failed", __func__);
--		return -EINVAL;
--	}
--
--	/* Commit current table to the pipeline */
--	p->num_tables++;
--	*table_id = id;
--
--	/* Save input parameters */
--	table->ops = *params->ops;
--	table->f_action_hit = params->f_action_hit;
--	table->f_action_miss = params->f_action_miss;
--	table->arg_ah = params->arg_ah;
--	table->entry_size = entry_size;
--
--	/* Clear the lookup miss actions (to be set later through API) */
--	table->default_entry = default_entry;
--	table->default_entry->action = RTE_PIPELINE_ACTION_DROP;
--
--	/* Initialize table internal data structure */
--	table->h_table = h_table;
--	table->table_next_id = 0;
--	table->table_next_id_valid = 0;
--
--	return 0;
--}
--
--void
--rte_pipeline_table_free(struct rte_table *table)
--{
--	if (table->ops.f_free != NULL)
--		table->ops.f_free(table->h_table);
--
--	rte_free(table->default_entry);
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_table_default_entry_add)
--int
--rte_pipeline_table_default_entry_add(struct rte_pipeline *p,
--	uint32_t table_id,
--	struct rte_pipeline_table_entry *default_entry,
--	struct rte_pipeline_table_entry **default_entry_ptr)
--{
--	struct rte_table *table;
--
--	/* Check input arguments */
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter is NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (default_entry == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: default_entry parameter is NULL", __func__);
--		return -EINVAL;
--	}
--
--	if (table_id >= p->num_tables) {
--		PIPELINE_LOG(ERR,
--			"%s: table_id %d out of range", __func__, table_id);
--		return -EINVAL;
--	}
--
--	table = &p->tables[table_id];
--
--	if ((default_entry->action == RTE_PIPELINE_ACTION_TABLE) &&
--		table->table_next_id_valid &&
--		(default_entry->table_id != table->table_next_id)) {
--		PIPELINE_LOG(ERR,
--			"%s: Tree-like topologies not allowed", __func__);
--		return -EINVAL;
--	}
--
--	/* Set the lookup miss actions */
--	if ((default_entry->action == RTE_PIPELINE_ACTION_TABLE) &&
--		(table->table_next_id_valid == 0)) {
--		table->table_next_id = default_entry->table_id;
--		table->table_next_id_valid = 1;
--	}
--
--	memcpy(table->default_entry, default_entry, table->entry_size);
--
--	*default_entry_ptr = table->default_entry;
--	return 0;
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_table_default_entry_delete)
--int
--rte_pipeline_table_default_entry_delete(struct rte_pipeline *p,
--		uint32_t table_id,
--		struct rte_pipeline_table_entry *entry)
--{
--	struct rte_table *table;
--
--	/* Check input arguments */
--	if (p == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: pipeline parameter is NULL", __func__);
--		return -EINVAL;
--	}
--
--	if (table_id >= p->num_tables) {
--		PIPELINE_LOG(ERR,
--			"%s: table_id %d out of range", __func__, table_id);
--		return -EINVAL;
--	}
--
--	table = &p->tables[table_id];
--
--	/* Save the current contents of the default entry */
--	if (entry)
--		memcpy(entry, table->default_entry, table->entry_size);
--
--	/* Clear the lookup miss actions */
--	memset(table->default_entry, 0, table->entry_size);
--	table->default_entry->action = RTE_PIPELINE_ACTION_DROP;
--
--	return 0;
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_table_entry_add)
--int
--rte_pipeline_table_entry_add(struct rte_pipeline *p,
--		uint32_t table_id,
--		void *key,
--		struct rte_pipeline_table_entry *entry,
--		int *key_found,
--		struct rte_pipeline_table_entry **entry_ptr)
--{
--	struct rte_table *table;
--
--	/* Check input arguments */
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter is NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (key == NULL) {
--		PIPELINE_LOG(ERR, "%s: key parameter is NULL", __func__);
--		return -EINVAL;
--	}
--
--	if (entry == NULL) {
--		PIPELINE_LOG(ERR, "%s: entry parameter is NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (table_id >= p->num_tables) {
--		PIPELINE_LOG(ERR,
--			"%s: table_id %d out of range", __func__, table_id);
--		return -EINVAL;
--	}
--
--	table = &p->tables[table_id];
--
--	if (table->ops.f_add == NULL) {
--		PIPELINE_LOG(ERR, "%s: f_add function pointer NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if ((entry->action == RTE_PIPELINE_ACTION_TABLE) &&
--		table->table_next_id_valid &&
--		(entry->table_id != table->table_next_id)) {
--		PIPELINE_LOG(ERR,
--			"%s: Tree-like topologies not allowed", __func__);
--		return -EINVAL;
--	}
--
--	/* Add entry */
--	if ((entry->action == RTE_PIPELINE_ACTION_TABLE) &&
--		(table->table_next_id_valid == 0)) {
--		table->table_next_id = entry->table_id;
--		table->table_next_id_valid = 1;
--	}
--
--	return (table->ops.f_add)(table->h_table, key, (void *) entry,
--		key_found, (void **) entry_ptr);
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_table_entry_delete)
--int
--rte_pipeline_table_entry_delete(struct rte_pipeline *p,
--		uint32_t table_id,
--		void *key,
--		int *key_found,
--		struct rte_pipeline_table_entry *entry)
--{
--	struct rte_table *table;
--
--	/* Check input arguments */
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (key == NULL) {
--		PIPELINE_LOG(ERR, "%s: key parameter is NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (table_id >= p->num_tables) {
--		PIPELINE_LOG(ERR,
--			"%s: table_id %d out of range", __func__, table_id);
--		return -EINVAL;
--	}
--
--	table = &p->tables[table_id];
--
--	if (table->ops.f_delete == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: f_delete function pointer NULL", __func__);
--		return -EINVAL;
--	}
--
--	return (table->ops.f_delete)(table->h_table, key, key_found, entry);
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_table_entry_add_bulk)
--int rte_pipeline_table_entry_add_bulk(struct rte_pipeline *p,
--	uint32_t table_id,
--	void **keys,
--	struct rte_pipeline_table_entry **entries,
--	uint32_t n_keys,
--	int *key_found,
--	struct rte_pipeline_table_entry **entries_ptr)
--{
--	struct rte_table *table;
--	uint32_t i;
--
--	/* Check input arguments */
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter is NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (keys == NULL) {
--		PIPELINE_LOG(ERR, "%s: keys parameter is NULL", __func__);
--		return -EINVAL;
--	}
--
--	if (entries == NULL) {
--		PIPELINE_LOG(ERR, "%s: entries parameter is NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (table_id >= p->num_tables) {
--		PIPELINE_LOG(ERR,
--			"%s: table_id %d out of range", __func__, table_id);
--		return -EINVAL;
--	}
--
--	table = &p->tables[table_id];
--
--	if (table->ops.f_add_bulk == NULL) {
--		PIPELINE_LOG(ERR, "%s: f_add_bulk function pointer NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	for (i = 0; i < n_keys; i++) {
--		if ((entries[i]->action == RTE_PIPELINE_ACTION_TABLE) &&
--			table->table_next_id_valid &&
--			(entries[i]->table_id != table->table_next_id)) {
--			PIPELINE_LOG(ERR,
--				"%s: Tree-like topologies not allowed", __func__);
--			return -EINVAL;
--		}
--	}
--
--	/* Add entry */
--	for (i = 0; i < n_keys; i++) {
--		if ((entries[i]->action == RTE_PIPELINE_ACTION_TABLE) &&
--			(table->table_next_id_valid == 0)) {
--			table->table_next_id = entries[i]->table_id;
--			table->table_next_id_valid = 1;
--		}
--	}
--
--	return (table->ops.f_add_bulk)(table->h_table, keys, (void **) entries,
--		n_keys, key_found, (void **) entries_ptr);
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_table_entry_delete_bulk)
--int rte_pipeline_table_entry_delete_bulk(struct rte_pipeline *p,
--	uint32_t table_id,
--	void **keys,
--	uint32_t n_keys,
--	int *key_found,
--	struct rte_pipeline_table_entry **entries)
--{
--	struct rte_table *table;
--
--	/* Check input arguments */
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (keys == NULL) {
--		PIPELINE_LOG(ERR, "%s: key parameter is NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (table_id >= p->num_tables) {
--		PIPELINE_LOG(ERR,
--			"%s: table_id %d out of range", __func__, table_id);
--		return -EINVAL;
--	}
--
--	table = &p->tables[table_id];
--
--	if (table->ops.f_delete_bulk == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: f_delete function pointer NULL", __func__);
--		return -EINVAL;
--	}
--
--	return (table->ops.f_delete_bulk)(table->h_table, keys, n_keys, key_found,
--			(void **) entries);
--}
--
--/*
-- * Port
-- */
--static int
--rte_pipeline_port_in_check_params(struct rte_pipeline *p,
--		struct rte_pipeline_port_in_params *params,
--		uint32_t *port_id)
--{
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
--			__func__);
--		return -EINVAL;
--	}
--	if (params == NULL) {
--		PIPELINE_LOG(ERR, "%s: params parameter NULL", __func__);
--		return -EINVAL;
--	}
--	if (port_id == NULL) {
--		PIPELINE_LOG(ERR, "%s: port_id parameter NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	/* ops */
--	if (params->ops == NULL) {
--		PIPELINE_LOG(ERR, "%s: params->ops parameter NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (params->ops->f_create == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: f_create function pointer NULL", __func__);
--		return -EINVAL;
--	}
--
--	if (params->ops->f_rx == NULL) {
--		PIPELINE_LOG(ERR, "%s: f_rx function pointer NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	/* burst_size */
--	if ((params->burst_size == 0) ||
--		(params->burst_size > RTE_PORT_IN_BURST_SIZE_MAX)) {
--		PIPELINE_LOG(ERR, "%s: invalid value for burst_size",
--			__func__);
--		return -EINVAL;
--	}
--
--	/* Do we have room for one more port? */
--	if (p->num_ports_in == RTE_PIPELINE_PORT_IN_MAX) {
--		PIPELINE_LOG(ERR,
--			"%s: invalid value for num_ports_in", __func__);
--		return -EINVAL;
--	}
--
--	return 0;
--}
--
--static int
--rte_pipeline_port_out_check_params(struct rte_pipeline *p,
--		struct rte_pipeline_port_out_params *params,
--		uint32_t *port_id)
--{
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (params == NULL) {
--		PIPELINE_LOG(ERR, "%s: params parameter NULL", __func__);
--		return -EINVAL;
--	}
--
--	if (port_id == NULL) {
--		PIPELINE_LOG(ERR, "%s: port_id parameter NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	/* ops */
--	if (params->ops == NULL) {
--		PIPELINE_LOG(ERR, "%s: params->ops parameter NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (params->ops->f_create == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: f_create function pointer NULL", __func__);
--		return -EINVAL;
--	}
--
--	if (params->ops->f_tx == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: f_tx function pointer NULL", __func__);
--		return -EINVAL;
--	}
--
--	if (params->ops->f_tx_bulk == NULL) {
--		PIPELINE_LOG(ERR,
--			"%s: f_tx_bulk function pointer NULL", __func__);
--		return -EINVAL;
--	}
--
--	/* Do we have room for one more port? */
--	if (p->num_ports_out == RTE_PIPELINE_PORT_OUT_MAX) {
--		PIPELINE_LOG(ERR,
--			"%s: invalid value for num_ports_out", __func__);
--		return -EINVAL;
--	}
--
--	return 0;
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_port_in_create)
--int
--rte_pipeline_port_in_create(struct rte_pipeline *p,
--		struct rte_pipeline_port_in_params *params,
--		uint32_t *port_id)
--{
--	struct rte_port_in *port;
--	void *h_port;
--	uint32_t id;
--	int status;
--
--	/* Check input arguments */
--	status = rte_pipeline_port_in_check_params(p, params, port_id);
--	if (status != 0)
--		return status;
--
--	id = p->num_ports_in;
--	port = &p->ports_in[id];
--
--	/* Create the port */
--	h_port = params->ops->f_create(params->arg_create, p->socket_id);
--	if (h_port == NULL) {
--		PIPELINE_LOG(ERR, "%s: Port creation failed", __func__);
--		return -EINVAL;
--	}
--
--	/* Commit current table to the pipeline */
--	p->num_ports_in++;
--	*port_id = id;
--
--	/* Save input parameters */
--	port->ops = *params->ops;
--	port->f_action = params->f_action;
--	port->arg_ah = params->arg_ah;
--	port->burst_size = params->burst_size;
--
--	/* Initialize port internal data structure */
--	port->table_id = RTE_TABLE_INVALID;
--	port->h_port = h_port;
--	port->next = NULL;
--
--	return 0;
--}
--
--void
--rte_pipeline_port_in_free(struct rte_port_in *port)
--{
--	if (port->ops.f_free != NULL)
--		port->ops.f_free(port->h_port);
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_port_out_create)
--int
--rte_pipeline_port_out_create(struct rte_pipeline *p,
--		struct rte_pipeline_port_out_params *params,
--		uint32_t *port_id)
--{
--	struct rte_port_out *port;
--	void *h_port;
--	uint32_t id;
--	int status;
--
--	/* Check input arguments */
--	status = rte_pipeline_port_out_check_params(p, params, port_id);
--	if (status != 0)
--		return status;
--
--	id = p->num_ports_out;
--	port = &p->ports_out[id];
--
--	/* Create the port */
--	h_port = params->ops->f_create(params->arg_create, p->socket_id);
--	if (h_port == NULL) {
--		PIPELINE_LOG(ERR, "%s: Port creation failed", __func__);
--		return -EINVAL;
--	}
--
--	/* Commit current table to the pipeline */
--	p->num_ports_out++;
--	*port_id = id;
--
--	/* Save input parameters */
--	port->ops = *params->ops;
--	port->f_action = params->f_action;
--	port->arg_ah = params->arg_ah;
--
--	/* Initialize port internal data structure */
--	port->h_port = h_port;
--
--	return 0;
--}
--
--void
--rte_pipeline_port_out_free(struct rte_port_out *port)
--{
--	if (port->ops.f_free != NULL)
--		port->ops.f_free(port->h_port);
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_port_in_connect_to_table)
--int
--rte_pipeline_port_in_connect_to_table(struct rte_pipeline *p,
--		uint32_t port_id,
--		uint32_t table_id)
--{
--	struct rte_port_in *port;
--
--	/* Check input arguments */
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (port_id >= p->num_ports_in) {
--		PIPELINE_LOG(ERR,
--			"%s: port IN ID %u is out of range",
--			__func__, port_id);
--		return -EINVAL;
--	}
--
--	if (table_id >= p->num_tables) {
--		PIPELINE_LOG(ERR,
--			"%s: Table ID %u is out of range",
--			__func__, table_id);
--		return -EINVAL;
--	}
--
--	port = &p->ports_in[port_id];
--	port->table_id = table_id;
--
--	return 0;
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_port_in_enable)
--int
--rte_pipeline_port_in_enable(struct rte_pipeline *p, uint32_t port_id)
--{
--	struct rte_port_in *port, *port_prev, *port_next;
--	uint64_t port_mask;
--	uint32_t port_prev_id, port_next_id;
--
--	/* Check input arguments */
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (port_id >= p->num_ports_in) {
--		PIPELINE_LOG(ERR,
--			"%s: port IN ID %u is out of range",
--			__func__, port_id);
--		return -EINVAL;
--	}
--
--	port = &p->ports_in[port_id];
--
--	/* Return if current input port is already enabled */
--	port_mask = 1LLU << port_id;
--	if (p->enabled_port_in_mask & port_mask)
--		return 0;
--
--	p->enabled_port_in_mask |= port_mask;
--
--	/* Add current input port to the pipeline chain of enabled ports */
--	port_prev_id = rte_mask_get_prev(p->enabled_port_in_mask, port_id);
--	port_next_id = rte_mask_get_next(p->enabled_port_in_mask, port_id);
--
--	port_prev = &p->ports_in[port_prev_id];
--	port_next = &p->ports_in[port_next_id];
--
--	port_prev->next = port;
--	port->next = port_next;
--
--	/* Check if list of enabled ports was previously empty */
--	if (p->enabled_port_in_mask == port_mask)
--		p->port_in_next = port;
--
--	return 0;
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_port_in_disable)
--int
--rte_pipeline_port_in_disable(struct rte_pipeline *p, uint32_t port_id)
--{
--	struct rte_port_in *port, *port_prev, *port_next;
--	uint64_t port_mask;
--	uint32_t port_prev_id, port_next_id;
--
--	/* Check input arguments */
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
--		__func__);
--		return -EINVAL;
--	}
--
--	if (port_id >= p->num_ports_in) {
--		PIPELINE_LOG(ERR, "%s: port IN ID %u is out of range",
--			__func__, port_id);
--		return -EINVAL;
--	}
--
--	port = &p->ports_in[port_id];
--
--	/* Return if current input port is already disabled */
--	port_mask = 1LLU << port_id;
--	if ((p->enabled_port_in_mask & port_mask) == 0)
--		return 0;
--
--	p->enabled_port_in_mask &= ~port_mask;
--
--	/* Return if no other enabled ports */
--	if (p->enabled_port_in_mask == 0) {
--		p->port_in_next = NULL;
--
--		return 0;
--	}
--
--	/* Add current input port to the pipeline chain of enabled ports */
--	port_prev_id = rte_mask_get_prev(p->enabled_port_in_mask, port_id);
--	port_next_id = rte_mask_get_next(p->enabled_port_in_mask, port_id);
--
--	port_prev = &p->ports_in[port_prev_id];
--	port_next = &p->ports_in[port_next_id];
--
--	port_prev->next = port_next;
--
--	/* Check if the port which has just been disabled is next to serve */
--	if (port == p->port_in_next)
--		p->port_in_next = port_next;
--
--	return 0;
--}
--
--/*
-- * Pipeline run-time
-- */
--RTE_EXPORT_SYMBOL(rte_pipeline_check)
--int
--rte_pipeline_check(struct rte_pipeline *p)
--{
--	uint32_t port_in_id;
--
--	/* Check input arguments */
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	/* Check that pipeline has at least one input port, one table and one
--	output port */
--	if (p->num_ports_in == 0) {
--		PIPELINE_LOG(ERR, "%s: must have at least 1 input port",
--			__func__);
--		return -EINVAL;
--	}
--	if (p->num_tables == 0) {
--		PIPELINE_LOG(ERR, "%s: must have at least 1 table",
--			__func__);
--		return -EINVAL;
--	}
--	if (p->num_ports_out == 0) {
--		PIPELINE_LOG(ERR, "%s: must have at least 1 output port",
--			__func__);
--		return -EINVAL;
--	}
--
--	/* Check that all input ports are connected */
--	for (port_in_id = 0; port_in_id < p->num_ports_in; port_in_id++) {
--		struct rte_port_in *port_in = &p->ports_in[port_in_id];
--
--		if (port_in->table_id == RTE_TABLE_INVALID) {
--			PIPELINE_LOG(ERR,
--				"%s: Port IN ID %u is not connected",
--				__func__, port_in_id);
--			return -EINVAL;
--		}
--	}
--
--	return 0;
--}
--
--static inline void
--rte_pipeline_compute_masks(struct rte_pipeline *p, uint64_t pkts_mask)
--{
--	p->action_mask1[RTE_PIPELINE_ACTION_DROP] = 0;
--	p->action_mask1[RTE_PIPELINE_ACTION_PORT] = 0;
--	p->action_mask1[RTE_PIPELINE_ACTION_PORT_META] = 0;
--	p->action_mask1[RTE_PIPELINE_ACTION_TABLE] = 0;
--
--	if ((pkts_mask & (pkts_mask + 1)) == 0) {
--		uint64_t n_pkts = rte_popcount64(pkts_mask);
--		uint32_t i;
--
--		for (i = 0; i < n_pkts; i++) {
--			uint64_t pkt_mask = 1LLU << i;
--			uint32_t pos = p->entries[i]->action;
--
--			p->action_mask1[pos] |= pkt_mask;
--		}
--	} else {
--		uint32_t i;
--
--		for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++) {
--			uint64_t pkt_mask = 1LLU << i;
--			uint32_t pos;
--
--			if ((pkt_mask & pkts_mask) == 0)
--				continue;
--
--			pos = p->entries[i]->action;
--			p->action_mask1[pos] |= pkt_mask;
--		}
--	}
--}
--
--static inline void
--rte_pipeline_action_handler_port_bulk(struct rte_pipeline *p,
--	uint64_t pkts_mask, uint32_t port_id)
--{
--	struct rte_port_out *port_out = &p->ports_out[port_id];
--
--	p->pkts_mask = pkts_mask;
--
--	/* Output port user actions */
--	if (port_out->f_action != NULL) {
--		port_out->f_action(p, p->pkts, pkts_mask, port_out->arg_ah);
--
--		RTE_PIPELINE_STATS_AH_DROP_READ(p,
--			port_out->n_pkts_dropped_by_ah);
--	}
--
--	/* Output port TX */
--	if (p->pkts_mask != 0)
--		port_out->ops.f_tx_bulk(port_out->h_port,
--			p->pkts,
--			p->pkts_mask);
--}
--
--static inline void
--rte_pipeline_action_handler_port(struct rte_pipeline *p, uint64_t pkts_mask)
--{
--	p->pkts_mask = pkts_mask;
--
--	if ((pkts_mask & (pkts_mask + 1)) == 0) {
--		uint64_t n_pkts = rte_popcount64(pkts_mask);
--		uint32_t i;
--
--		for (i = 0; i < n_pkts; i++) {
--			struct rte_mbuf *pkt = p->pkts[i];
--			uint32_t port_out_id = p->entries[i]->port_id;
--			struct rte_port_out *port_out =
--				&p->ports_out[port_out_id];
--
--			/* Output port user actions */
--			if (port_out->f_action == NULL) /* Output port TX */
--				port_out->ops.f_tx(port_out->h_port, pkt);
--			else {
--				uint64_t pkt_mask = 1LLU << i;
--
--				port_out->f_action(p,
--					p->pkts,
--					pkt_mask,
--					port_out->arg_ah);
--
--				RTE_PIPELINE_STATS_AH_DROP_READ(p,
--					port_out->n_pkts_dropped_by_ah);
--
--				/* Output port TX */
--				if (pkt_mask & p->pkts_mask)
--					port_out->ops.f_tx(port_out->h_port,
--						pkt);
--			}
--		}
--	} else {
--		uint32_t i;
--
--		for (i = 0;  i < RTE_PORT_IN_BURST_SIZE_MAX; i++) {
--			uint64_t pkt_mask = 1LLU << i;
--			struct rte_mbuf *pkt;
--			struct rte_port_out *port_out;
--			uint32_t port_out_id;
--
--			if ((pkt_mask & pkts_mask) == 0)
--				continue;
--
--			pkt = p->pkts[i];
--			port_out_id = p->entries[i]->port_id;
--			port_out = &p->ports_out[port_out_id];
--
--			/* Output port user actions */
--			if (port_out->f_action == NULL) /* Output port TX */
--				port_out->ops.f_tx(port_out->h_port, pkt);
--			else {
--				port_out->f_action(p,
--					p->pkts,
--					pkt_mask,
--					port_out->arg_ah);
--
--				RTE_PIPELINE_STATS_AH_DROP_READ(p,
--					port_out->n_pkts_dropped_by_ah);
--
--				/* Output port TX */
--				if (pkt_mask & p->pkts_mask)
--					port_out->ops.f_tx(port_out->h_port,
--						pkt);
--			}
--		}
--	}
--}
--
--static inline void
--rte_pipeline_action_handler_port_meta(struct rte_pipeline *p,
--	uint64_t pkts_mask)
--{
--	p->pkts_mask = pkts_mask;
--
--	if ((pkts_mask & (pkts_mask + 1)) == 0) {
--		uint64_t n_pkts = rte_popcount64(pkts_mask);
--		uint32_t i;
--
--		for (i = 0; i < n_pkts; i++) {
--			struct rte_mbuf *pkt = p->pkts[i];
--			uint32_t port_out_id =
--				RTE_MBUF_METADATA_UINT32(pkt,
--					p->offset_port_id);
--			struct rte_port_out *port_out = &p->ports_out[
--				port_out_id];
--
--			/* Output port user actions */
--			if (port_out->f_action == NULL) /* Output port TX */
--				port_out->ops.f_tx(port_out->h_port, pkt);
--			else {
--				uint64_t pkt_mask = 1LLU << i;
--
--				port_out->f_action(p,
--					p->pkts,
--					pkt_mask,
--					port_out->arg_ah);
--
--				RTE_PIPELINE_STATS_AH_DROP_READ(p,
--					port_out->n_pkts_dropped_by_ah);
--
--				/* Output port TX */
--				if (pkt_mask & p->pkts_mask)
--					port_out->ops.f_tx(port_out->h_port,
--						pkt);
--			}
--		}
--	} else {
--		uint32_t i;
--
--		for (i = 0;  i < RTE_PORT_IN_BURST_SIZE_MAX; i++) {
--			uint64_t pkt_mask = 1LLU << i;
--			struct rte_mbuf *pkt;
--			struct rte_port_out *port_out;
--			uint32_t port_out_id;
--
--			if ((pkt_mask & pkts_mask) == 0)
--				continue;
--
--			pkt = p->pkts[i];
--			port_out_id = RTE_MBUF_METADATA_UINT32(pkt,
--				p->offset_port_id);
--			port_out = &p->ports_out[port_out_id];
--
--			/* Output port user actions */
--			if (port_out->f_action == NULL) /* Output port TX */
--				port_out->ops.f_tx(port_out->h_port, pkt);
--			else {
--				port_out->f_action(p,
--					p->pkts,
--					pkt_mask,
--					port_out->arg_ah);
--
--				RTE_PIPELINE_STATS_AH_DROP_READ(p,
--					port_out->n_pkts_dropped_by_ah);
--
--				/* Output port TX */
--				if (pkt_mask & p->pkts_mask)
--					port_out->ops.f_tx(port_out->h_port,
--						pkt);
--			}
--		}
--	}
--}
--
--static inline void
--rte_pipeline_action_handler_drop(struct rte_pipeline *p, uint64_t pkts_mask)
--{
--	if ((pkts_mask & (pkts_mask + 1)) == 0) {
--		uint64_t n_pkts = rte_popcount64(pkts_mask);
--		uint32_t i;
--
--		for (i = 0; i < n_pkts; i++)
--			rte_pktmbuf_free(p->pkts[i]);
--	} else {
--		uint32_t i;
--
--		for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++) {
--			uint64_t pkt_mask = 1LLU << i;
--
--			if ((pkt_mask & pkts_mask) == 0)
--				continue;
--
--			rte_pktmbuf_free(p->pkts[i]);
--		}
--	}
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_run)
--int
--rte_pipeline_run(struct rte_pipeline *p)
--{
--	struct rte_port_in *port_in = p->port_in_next;
--	uint32_t n_pkts, table_id;
--
--	if (port_in == NULL)
--		return 0;
--
--	/* Input port RX */
--	n_pkts = port_in->ops.f_rx(port_in->h_port, p->pkts,
--		port_in->burst_size);
--	if (n_pkts == 0) {
--		p->port_in_next = port_in->next;
--		return 0;
--	}
--
--	p->pkts_mask = RTE_LEN2MASK(n_pkts, uint64_t);
--	p->action_mask0[RTE_PIPELINE_ACTION_DROP] = 0;
--	p->action_mask0[RTE_PIPELINE_ACTION_PORT] = 0;
--	p->action_mask0[RTE_PIPELINE_ACTION_PORT_META] = 0;
--	p->action_mask0[RTE_PIPELINE_ACTION_TABLE] = 0;
--
--	/* Input port user actions */
--	if (port_in->f_action != NULL) {
--		port_in->f_action(p, p->pkts, n_pkts, port_in->arg_ah);
--
--		RTE_PIPELINE_STATS_AH_DROP_READ(p,
--			port_in->n_pkts_dropped_by_ah);
--	}
--
--	/* Table */
--	for (table_id = port_in->table_id; p->pkts_mask != 0; ) {
--		struct rte_table *table;
--		uint64_t lookup_hit_mask, lookup_miss_mask;
--
--		/* Lookup */
--		table = &p->tables[table_id];
--		table->ops.f_lookup(table->h_table, p->pkts, p->pkts_mask,
--			&lookup_hit_mask, (void **) p->entries);
--		lookup_miss_mask = p->pkts_mask & (~lookup_hit_mask);
--
--		/* Lookup miss */
--		if (lookup_miss_mask != 0) {
--			struct rte_pipeline_table_entry *default_entry =
--				table->default_entry;
--
--			p->pkts_mask = lookup_miss_mask;
--
--			/* Table user actions */
--			if (table->f_action_miss != NULL) {
--				table->f_action_miss(p,
--					p->pkts,
--					lookup_miss_mask,
--					default_entry,
--					table->arg_ah);
--
--				RTE_PIPELINE_STATS_AH_DROP_READ(p,
--					table->n_pkts_dropped_by_lkp_miss_ah);
--			}
--
--			/* Table reserved actions */
--			if ((default_entry->action == RTE_PIPELINE_ACTION_PORT) &&
--				(p->pkts_mask != 0))
--				rte_pipeline_action_handler_port_bulk(p,
--					p->pkts_mask,
--					default_entry->port_id);
--			else {
--				uint32_t pos = default_entry->action;
--
--				RTE_PIPELINE_STATS_TABLE_DROP0(p);
--
--				p->action_mask0[pos] |= p->pkts_mask;
--
--				RTE_PIPELINE_STATS_TABLE_DROP1(p,
--					table->n_pkts_dropped_lkp_miss);
--			}
--		}
--
--		/* Lookup hit */
--		if (lookup_hit_mask != 0) {
--			p->pkts_mask = lookup_hit_mask;
--
--			/* Table user actions */
--			if (table->f_action_hit != NULL) {
--				table->f_action_hit(p,
--					p->pkts,
--					lookup_hit_mask,
--					p->entries,
--					table->arg_ah);
--
--				RTE_PIPELINE_STATS_AH_DROP_READ(p,
--					table->n_pkts_dropped_by_lkp_hit_ah);
--			}
--
--			/* Table reserved actions */
--			RTE_PIPELINE_STATS_TABLE_DROP0(p);
--			rte_pipeline_compute_masks(p, p->pkts_mask);
--			p->action_mask0[RTE_PIPELINE_ACTION_DROP] |=
--				p->action_mask1[
--					RTE_PIPELINE_ACTION_DROP];
--			p->action_mask0[RTE_PIPELINE_ACTION_PORT] |=
--				p->action_mask1[
--					RTE_PIPELINE_ACTION_PORT];
--			p->action_mask0[RTE_PIPELINE_ACTION_PORT_META] |=
--				p->action_mask1[
--					RTE_PIPELINE_ACTION_PORT_META];
--			p->action_mask0[RTE_PIPELINE_ACTION_TABLE] |=
--				p->action_mask1[
--					RTE_PIPELINE_ACTION_TABLE];
--
--			RTE_PIPELINE_STATS_TABLE_DROP1(p,
--				table->n_pkts_dropped_lkp_hit);
--		}
--
--		/* Prepare for next iteration */
--		p->pkts_mask = p->action_mask0[RTE_PIPELINE_ACTION_TABLE];
--		table_id = table->table_next_id;
--		p->action_mask0[RTE_PIPELINE_ACTION_TABLE] = 0;
--	}
--
--	/* Table reserved action PORT */
--	rte_pipeline_action_handler_port(p,
--		p->action_mask0[RTE_PIPELINE_ACTION_PORT]);
--
--	/* Table reserved action PORT META */
--	rte_pipeline_action_handler_port_meta(p,
--		p->action_mask0[RTE_PIPELINE_ACTION_PORT_META]);
--
--	/* Table reserved action DROP */
--	rte_pipeline_action_handler_drop(p,
--		p->action_mask0[RTE_PIPELINE_ACTION_DROP]);
--
--	/* Pick candidate for next port IN to serve */
--	p->port_in_next = port_in->next;
--
--	return (int) n_pkts;
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_flush)
--int
--rte_pipeline_flush(struct rte_pipeline *p)
--{
--	uint32_t port_id;
--
--	/* Check input arguments */
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	for (port_id = 0; port_id < p->num_ports_out; port_id++) {
--		struct rte_port_out *port = &p->ports_out[port_id];
--
--		if (port->ops.f_flush != NULL)
--			port->ops.f_flush(port->h_port);
--	}
--
--	return 0;
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_port_out_packet_insert)
--int
--rte_pipeline_port_out_packet_insert(struct rte_pipeline *p,
--	uint32_t port_id, struct rte_mbuf *pkt)
--{
--	struct rte_port_out *port_out = &p->ports_out[port_id];
--
--	port_out->ops.f_tx(port_out->h_port, pkt); /* Output port TX */
--
--	return 0;
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_ah_packet_hijack)
--int rte_pipeline_ah_packet_hijack(struct rte_pipeline *p,
--	uint64_t pkts_mask)
--{
--	pkts_mask &= p->pkts_mask;
--	p->pkts_mask &= ~pkts_mask;
--
--	return 0;
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_ah_packet_drop)
--int rte_pipeline_ah_packet_drop(struct rte_pipeline *p,
--	uint64_t pkts_mask)
--{
--	pkts_mask &= p->pkts_mask;
--	p->pkts_mask &= ~pkts_mask;
--	p->action_mask0[RTE_PIPELINE_ACTION_DROP] |= pkts_mask;
--
--	RTE_PIPELINE_STATS_AH_DROP_WRITE(p, pkts_mask);
--	return 0;
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_port_in_stats_read)
--int rte_pipeline_port_in_stats_read(struct rte_pipeline *p, uint32_t port_id,
--	struct rte_pipeline_port_in_stats *stats, int clear)
--{
--	struct rte_port_in *port;
--	int retval;
--
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (port_id >= p->num_ports_in) {
--		PIPELINE_LOG(ERR,
--			"%s: port IN ID %u is out of range",
--			__func__, port_id);
--		return -EINVAL;
--	}
--
--	port = &p->ports_in[port_id];
--
--	if (port->ops.f_stats != NULL) {
--		retval = port->ops.f_stats(port->h_port, &stats->stats, clear);
--		if (retval)
--			return retval;
--	} else if (stats != NULL)
--		memset(&stats->stats, 0, sizeof(stats->stats));
--
--	if (stats != NULL)
--		stats->n_pkts_dropped_by_ah = port->n_pkts_dropped_by_ah;
--
--	if (clear != 0)
--		port->n_pkts_dropped_by_ah = 0;
--
--	return 0;
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_port_out_stats_read)
--int rte_pipeline_port_out_stats_read(struct rte_pipeline *p, uint32_t port_id,
--	struct rte_pipeline_port_out_stats *stats, int clear)
--{
--	struct rte_port_out *port;
--	int retval;
--
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL", __func__);
--		return -EINVAL;
--	}
--
--	if (port_id >= p->num_ports_out) {
--		PIPELINE_LOG(ERR,
--			"%s: port OUT ID %u is out of range", __func__, port_id);
--		return -EINVAL;
--	}
--
--	port = &p->ports_out[port_id];
--	if (port->ops.f_stats != NULL) {
--		retval = port->ops.f_stats(port->h_port, &stats->stats, clear);
--		if (retval != 0)
--			return retval;
--	} else if (stats != NULL)
--		memset(&stats->stats, 0, sizeof(stats->stats));
--
--	if (stats != NULL)
--		stats->n_pkts_dropped_by_ah = port->n_pkts_dropped_by_ah;
--
--	if (clear != 0)
--		port->n_pkts_dropped_by_ah = 0;
--
--	return 0;
--}
--
--RTE_EXPORT_SYMBOL(rte_pipeline_table_stats_read)
--int rte_pipeline_table_stats_read(struct rte_pipeline *p, uint32_t table_id,
--	struct rte_pipeline_table_stats *stats, int clear)
--{
--	struct rte_table *table;
--	int retval;
--
--	if (p == NULL) {
--		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
--			__func__);
--		return -EINVAL;
--	}
--
--	if (table_id >= p->num_tables) {
--		PIPELINE_LOG(ERR,
--				"%s: table %u is out of range", __func__, table_id);
--		return -EINVAL;
--	}
--
--	table = &p->tables[table_id];
--	if (table->ops.f_stats != NULL) {
--		retval = table->ops.f_stats(table->h_table, &stats->stats, clear);
--		if (retval != 0)
--			return retval;
--	} else if (stats != NULL)
--		memset(&stats->stats, 0, sizeof(stats->stats));
--
--	if (stats != NULL) {
--		stats->n_pkts_dropped_by_lkp_hit_ah =
--			table->n_pkts_dropped_by_lkp_hit_ah;
--		stats->n_pkts_dropped_by_lkp_miss_ah =
--			table->n_pkts_dropped_by_lkp_miss_ah;
--		stats->n_pkts_dropped_lkp_hit = table->n_pkts_dropped_lkp_hit;
--		stats->n_pkts_dropped_lkp_miss = table->n_pkts_dropped_lkp_miss;
--	}
--
--	if (clear != 0) {
--		table->n_pkts_dropped_by_lkp_hit_ah = 0;
--		table->n_pkts_dropped_by_lkp_miss_ah = 0;
--		table->n_pkts_dropped_lkp_hit = 0;
--		table->n_pkts_dropped_lkp_miss = 0;
--	}
--
--	return 0;
--}
-diff --git a/lib/pipeline/rte_pipeline.h b/lib/pipeline/rte_pipeline.h
+-#endif
+diff --git a/lib/table/rte_lru_arm64.h b/lib/table/rte_lru_arm64.h
 deleted file mode 100644
-index c9e7172453..0000000000
---- a/lib/pipeline/rte_pipeline.h
+index 817b791b6e..0000000000
+--- a/lib/table/rte_lru_arm64.h
 +++ /dev/null
-@@ -1,840 +0,0 @@
+@@ -1,61 +0,0 @@
 -/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2016 Intel Corporation
+- * Copyright(c) 2017 Cavium, Inc
 - */
 -
--#ifndef __INCLUDE_RTE_PIPELINE_H__
--#define __INCLUDE_RTE_PIPELINE_H__
--
--/**
-- * @file
-- * RTE Pipeline
-- *
-- * This tool is part of the DPDK Packet Framework tool suite and provides
-- * a standard methodology (logically similar to OpenFlow) for rapid development
-- * of complex packet processing pipelines out of ports, tables and actions.
-- *
-- * <B>Basic operation.</B> A pipeline is constructed by connecting its input
-- * ports to its output ports through a chain of lookup tables. As result of
-- * lookup operation into the current table, one of the table entries (or the
-- * default table entry, in case of lookup miss) is identified to provide the
-- * actions to be executed on the current packet and the associated action
-- * meta-data. The behavior of user actions is defined through the configurable
-- * table action handler, while the reserved actions define the next hop for the
-- * current packet (either another table, an output port or packet drop) and are
-- * handled transparently by the framework.
-- *
-- * <B>Initialization and run-time flows.</B> Once all the pipeline elements
-- * (input ports, tables, output ports) have been created, input ports connected
-- * to tables, table action handlers configured, tables populated with the
-- * initial set of entries (actions and action meta-data) and input ports
-- * enabled, the pipeline runs automatically, pushing packets from input ports
-- * to tables and output ports. At each table, the identified user actions are
-- * being executed, resulting in action meta-data (stored in the table entry)
-- * and packet meta-data (stored with the packet descriptor) being updated. The
-- * pipeline tables can have further updates and input ports can be disabled or
-- * enabled later on as required.
-- *
-- * <B>Multi-core scaling.</B> Typically, each CPU core will run its own
-- * pipeline instance. Complex application-level pipelines can be implemented by
-- * interconnecting multiple CPU core-level pipelines in tree-like topologies,
-- * as the same port devices (e.g. SW rings) can serve as output ports for the
-- * pipeline running on CPU core A, as well as input ports for the pipeline
-- * running on CPU core B. This approach enables the application development
-- * using the pipeline (CPU cores connected serially), cluster/run-to-completion
-- * (CPU cores connected in parallel) or mixed (pipeline of CPU core clusters)
-- * programming models.
-- *
-- * <B>Thread safety.</B> It is possible to have multiple pipelines running on
-- * the same CPU core, but it is not allowed (for thread safety reasons) to have
-- * multiple CPU cores running the same pipeline instance.
-- */
+-#ifndef __RTE_LRU_ARM64_H__
+-#define __RTE_LRU_ARM64_H__
 -
 -#include <stdint.h>
--
--#include <rte_port.h>
--#include <rte_table.h>
--#include <rte_common.h>
+-#include <rte_vect.h>
+-#include <rte_bitops.h>
 -
 -#ifdef __cplusplus
 -extern "C" {
 -#endif
+-
+-#ifndef RTE_TABLE_HASH_LRU_STRATEGY
+-#ifdef __ARM_NEON
+-#define RTE_TABLE_HASH_LRU_STRATEGY                        3
+-#else /* if no NEON, use simple scalar version */
+-#define RTE_TABLE_HASH_LRU_STRATEGY                        1
+-#endif
+-#endif
+-
+-#if RTE_TABLE_HASH_LRU_STRATEGY == 3
+-
+-#define lru_init(bucket)						\
+-	{ bucket->lru_list = ~0LLU; }
+-
+-static inline int
+-f_lru_pos(uint64_t lru_list)
+-{
+-	/* Compare the vector to zero vector */
+-	uint16x4_t lru_vec = vld1_u16((uint16_t *)&lru_list);
+-	uint16x4_t min_vec = vmov_n_u16(vminv_u16(lru_vec));
+-	uint64_t mask = vget_lane_u64(vreinterpret_u64_u16(
+-			vceq_u16(min_vec, lru_vec)), 0);
+-	return rte_clz64(mask) >> 4;
+-}
+-#define lru_pos(bucket) f_lru_pos(bucket->lru_list)
+-
+-#define lru_update(bucket, mru_val)					\
+-do {									\
+-	const uint64_t _orvals[] = {0xFFFFLLU, 0xFFFFLLU << 16,		\
+-		0xFFFFLLU << 32, 0xFFFFLLU << 48, 0LLU};		\
+-	const uint64_t _decs[] = {0x1000100010001LLU, 0};		\
+-	uint64x1_t _lru = vdup_n_u64(bucket->lru_list);			\
+-	uint64x1_t _vdec = vdup_n_u64(_decs[mru_val>>2]);			\
+-	bucket->lru_list = vget_lane_u64(vreinterpret_u64_u16(		\
+-				vsub_u16(vreinterpret_u16_u64(_lru),	\
+-					vreinterpret_u16_u64(_vdec))),	\
+-				0);					\
+-	bucket->lru_list |= _orvals[mru_val];				\
+-} while (0)
+-
+-#endif
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif
+diff --git a/lib/table/rte_lru_x86.h b/lib/table/rte_lru_x86.h
+deleted file mode 100644
+index de74513653..0000000000
+--- a/lib/table/rte_lru_x86.h
++++ /dev/null
+@@ -1,96 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_LRU_X86_H__
+-#define __INCLUDE_RTE_LRU_X86_H__
+-
+-#include <stdint.h>
+-
+-#include <rte_config.h>
+-#include <rte_common.h>
+-
+-#ifndef RTE_TABLE_HASH_LRU_STRATEGY
+-#define RTE_TABLE_HASH_LRU_STRATEGY                        2
+-#endif
+-
+-#if RTE_TABLE_HASH_LRU_STRATEGY == 2
+-
+-#if RTE_CC_IS_GNU
+-#include <x86intrin.h>
+-#else
+-#include <emmintrin.h>
+-#include <smmintrin.h>
+-#include <xmmintrin.h>
+-#endif
+-
+-#define lru_init(bucket)						\
+-	{ bucket->lru_list = 0x0000000100020003LLU; }
+-
+-#define lru_pos(bucket) (bucket->lru_list & 0xFFFFLLU)
+-
+-#define lru_update(bucket, mru_val)					\
+-do {									\
+-	/* set up the masks for all possible shuffles, depends on pos */\
+-	static uint64_t masks[10] = {					\
+-		/* Shuffle order; Make Zero (see _mm_shuffle_epi8 manual) */\
+-		0x0100070605040302, 0x8080808080808080,			\
+-		0x0302070605040100, 0x8080808080808080,			\
+-		0x0504070603020100, 0x8080808080808080,			\
+-		0x0706050403020100, 0x8080808080808080,			\
+-		0x0706050403020100, 0x8080808080808080};		\
+-	/* load up one register with repeats of mru-val  */		\
+-	uint64_t mru2 = mru_val;					\
+-	uint64_t mru3 = mru2 | (mru2 << 16);				\
+-	uint64_t lru = bucket->lru_list;				\
+-	/* XOR to cause the word we're looking for to go to zero */	\
+-	uint64_t mru = lru ^ ((mru3 << 32) | mru3);			\
+-	__m128i c = _mm_cvtsi64_si128(mru);				\
+-	__m128i b = _mm_cvtsi64_si128(lru);				\
+-	/* Find the minimum value (first zero word, if it's in there) */\
+-	__m128i d = _mm_minpos_epu16(c);				\
+-	/* Second word is the index to found word (first word is the value) */\
+-	unsigned int _pos = _mm_extract_epi16(d, 1);			\
+-	/* move the recently used location to top of list */		\
+-	__m128i k = _mm_shuffle_epi8(b, *((__m128i *) &masks[2 * _pos]));\
+-	/* Finally, update the original list with the reordered data */	\
+-	bucket->lru_list = _mm_extract_epi64(k, 0);			\
+-	/* Phwew! */							\
+-} while (0)
+-
+-#elif RTE_TABLE_HASH_LRU_STRATEGY == 3
+-
+-#if RTE_CC_IS_GNU
+-#include <x86intrin.h>
+-#else
+-#include <emmintrin.h>
+-#include <smmintrin.h>
+-#include <xmmintrin.h>
+-#endif
+-
+-#define lru_init(bucket)						\
+-	{ bucket->lru_list = ~0LLU; }
+-
+-static inline int
+-f_lru_pos(uint64_t lru_list)
+-{
+-	__m128i lst = _mm_set_epi64x((uint64_t)-1, lru_list);
+-	__m128i min = _mm_minpos_epu16(lst);
+-	return _mm_extract_epi16(min, 1);
+-}
+-#define lru_pos(bucket) f_lru_pos(bucket->lru_list)
+-
+-#define lru_update(bucket, mru_val)					\
+-do {									\
+-	const uint64_t orvals[] = {0xFFFFLLU, 0xFFFFLLU << 16,		\
+-		0xFFFFLLU << 32, 0xFFFFLLU << 48, 0LLU};		\
+-	const uint64_t decs[] = {0x1000100010001LLU, 0};		\
+-	__m128i lru = _mm_cvtsi64_si128(bucket->lru_list);		\
+-	__m128i vdec = _mm_cvtsi64_si128(decs[mru_val>>2]);		\
+-	lru = _mm_subs_epu16(lru, vdec);				\
+-	bucket->lru_list = _mm_extract_epi64(lru, 0) | orvals[mru_val];	\
+-} while (0)
+-
+-#endif
+-
+-#endif
+diff --git a/lib/table/rte_table.h b/lib/table/rte_table.h
+deleted file mode 100644
+index 2743070b32..0000000000
+--- a/lib/table/rte_table.h
++++ /dev/null
+@@ -1,263 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_TABLE_H__
+-#define __INCLUDE_RTE_TABLE_H__
+-
+-/**
+- * @file
+- * RTE Table
+- *
+- * This tool is part of the DPDK Packet Framework tool suite and provides
+- * a standard interface to implement different types of lookup tables for data
+- * plane processing.
+- *
+- * Virtually any search algorithm that can uniquely associate data to a lookup
+- * key can be fitted under this lookup table abstraction. For the flow table
+- * use-case, the lookup key is an n-tuple of packet fields that uniquely
+- * identifies a traffic flow, while data represents actions and action
+- * meta-data associated with the same traffic flow.
+- */
+-
+-#include <stdint.h>
+-#include <rte_port.h>
 -
 -struct rte_mbuf;
 -
--/*
-- * Pipeline
-- */
--/** Opaque data type for pipeline */
--struct rte_pipeline;
--
--/** Parameters for pipeline creation  */
--struct rte_pipeline_params {
--	/** Pipeline name */
--	const char *name;
--
--	/** CPU socket ID where memory for the pipeline and its elements (ports
--	and tables) should be allocated */
--	int socket_id;
--
--	/** Offset within packet meta-data to port_id to be used by action
--	"Send packet to output port read from packet meta-data". Has to be
--	4-byte aligned. */
--	uint32_t offset_port_id;
--};
--
--/** Pipeline port in stats. */
--struct rte_pipeline_port_in_stats {
--	/** Port in stats. */
--	struct rte_port_in_stats stats;
--
--	/** Number of packets dropped by action handler. */
--	uint64_t n_pkts_dropped_by_ah;
--
--};
--
--/** Pipeline port out stats. */
--struct rte_pipeline_port_out_stats {
--	/** Port out stats. */
--	struct rte_port_out_stats stats;
--
--	/** Number of packets dropped by action handler. */
--	uint64_t n_pkts_dropped_by_ah;
--};
--
--/** Pipeline table stats. */
--struct rte_pipeline_table_stats {
--	/** Table stats. */
--	struct rte_table_stats stats;
--
--	/** Number of packets dropped by lookup hit action handler. */
--	uint64_t n_pkts_dropped_by_lkp_hit_ah;
--
--	/** Number of packets dropped by lookup miss action handler. */
--	uint64_t n_pkts_dropped_by_lkp_miss_ah;
--
--	/** Number of packets dropped by pipeline in behalf of this
--	 * table based on action specified in table entry. */
--	uint64_t n_pkts_dropped_lkp_hit;
--
--	/** Number of packets dropped by pipeline in behalf of this
--	 *  table based on action specified in table entry. */
--	uint64_t n_pkts_dropped_lkp_miss;
+-/** Lookup table statistics */
+-struct rte_table_stats {
+-	uint64_t n_pkts_in;
+-	uint64_t n_pkts_lookup_miss;
 -};
 -
 -/**
-- * Pipeline create
+- * Lookup table create
 - *
 - * @param params
-- *   Parameters for pipeline creation
+- *   Parameters for lookup table creation. The underlying data structure is
+- *   different for each lookup table type.
+- * @param socket_id
+- *   CPU socket ID (e.g. for memory allocation purpose)
+- * @param entry_size
+- *   Data size of each lookup table entry (measured in bytes)
 - * @return
-- *   Handle to pipeline instance on success or NULL otherwise
+- *   Handle to lookup table instance
 - */
--struct rte_pipeline *rte_pipeline_create(struct rte_pipeline_params *params);
+-typedef void* (*rte_table_op_create)(void *params, int socket_id,
+-	uint32_t entry_size);
 -
 -/**
-- * Pipeline free
+- * Lookup table free
 - *
-- * @param p
-- *   Handle to pipeline instance
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_free(struct rte_pipeline *p);
--
--/**
-- * Pipeline consistency check
-- *
-- * @param p
-- *   Handle to pipeline instance
+- * @param table
+- *   Handle to lookup table instance
 - * @return
 - *   0 on success, error code otherwise
 - */
--int rte_pipeline_check(struct rte_pipeline *p);
+-typedef int (*rte_table_op_free)(void *table);
 -
 -/**
-- * Pipeline run
+- * Lookup table entry add
 - *
-- * @param p
-- *   Handle to pipeline instance
-- * @return
-- *   Number of packets read and processed
-- */
--int rte_pipeline_run(struct rte_pipeline *p);
--
--/**
-- * Pipeline flush
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_flush(struct rte_pipeline *p);
--
--/*
-- * Actions
-- */
--/** Reserved actions */
--enum rte_pipeline_action {
--	/** Drop the packet */
--	RTE_PIPELINE_ACTION_DROP = 0,
--
--	/** Send packet to output port */
--	RTE_PIPELINE_ACTION_PORT,
--
--	/** Send packet to output port read from packet meta-data */
--	RTE_PIPELINE_ACTION_PORT_META,
--
--	/** Send packet to table */
--	RTE_PIPELINE_ACTION_TABLE,
--
--	/** Number of reserved actions */
--	RTE_PIPELINE_ACTIONS
--};
--
--/*
-- * Table
-- */
--/** Maximum number of tables allowed for any given pipeline instance. The
--	value of this parameter cannot be changed. */
--#define RTE_PIPELINE_TABLE_MAX                                     64
--
--/**
-- * Head format for the table entry of any pipeline table. For any given
-- * pipeline table, all table entries should have the same size and format. For
-- * any given pipeline table, the table entry has to start with a head of this
-- * structure, which contains the reserved actions and their associated
-- * meta-data, and then optionally continues with user actions and their
-- * associated meta-data. As all the currently defined reserved actions are
-- * mutually exclusive, only one reserved action can be set per table entry.
-- */
--struct rte_pipeline_table_entry {
--	/** Reserved action */
--	enum rte_pipeline_action action;
--
--	union {
--		/** Output port ID (meta-data for "Send packet to output port"
--		action) */
--		uint32_t port_id;
--		/** Table ID (meta-data for "Send packet to table" action) */
--		uint32_t table_id;
--	};
--	/** Start of table entry area for user defined actions and meta-data */
--	uint8_t action_data[];
--};
--
--/**
-- * Pipeline table action handler on lookup hit
-- *
-- * The action handler can decide to drop packets by resetting the associated
-- * packet bit in the pkts_mask parameter. In this case, the action handler is
-- * required not to free the packet buffer, which will be freed eventually by
-- * the pipeline.
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param pkts
-- *   Burst of input packets specified as array of up to 64 pointers to struct
-- *   rte_mbuf
-- * @param pkts_mask
-- *   64-bit bitmask specifying which packets in the input burst are valid. When
-- *   pkts_mask bit n is set, then element n of pkts array is pointing to a
-- *   valid packet and element n of entries array is pointing to a valid table
-- *   entry associated with the packet, with the association typically done by
-- *   the table lookup operation. Otherwise, element n of pkts array and element
-- *   n of entries array will not be accessed.
-- * @param entries
-- *   Set of table entries specified as array of up to 64 pointers to struct
-- *   rte_pipeline_table_entry
-- * @param arg
-- *   Opaque parameter registered by the user at the pipeline table creation
-- *   time
-- * @return
-- *   0 on success, error code otherwise
-- */
--typedef int (*rte_pipeline_table_action_handler_hit)(
--	struct rte_pipeline *p,
--	struct rte_mbuf **pkts,
--	uint64_t pkts_mask,
--	struct rte_pipeline_table_entry **entries,
--	void *arg);
--
--/**
-- * Pipeline table action handler on lookup miss
-- *
-- * The action handler can decide to drop packets by resetting the associated
-- * packet bit in the pkts_mask parameter. In this case, the action handler is
-- * required not to free the packet buffer, which will be freed eventually by
-- * the pipeline.
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param pkts
-- *   Burst of input packets specified as array of up to 64 pointers to struct
-- *   rte_mbuf
-- * @param pkts_mask
-- *   64-bit bitmask specifying which packets in the input burst are valid. When
-- *   pkts_mask bit n is set, then element n of pkts array is pointing to a
-- *   valid packet. Otherwise, element n of pkts array will not be accessed.
-- * @param entry
-- *   Single table entry associated with all the valid packets from the input
-- *   burst, specified as pointer to struct rte_pipeline_table_entry.
-- *   This entry is the pipeline table default entry that is associated by the
-- *   table lookup operation with the input packets that have resulted in lookup
-- *   miss.
-- * @param arg
-- *   Opaque parameter registered by the user at the pipeline table creation
-- *   time
-- * @return
-- *   0 on success, error code otherwise
-- */
--typedef int (*rte_pipeline_table_action_handler_miss)(
--	struct rte_pipeline *p,
--	struct rte_mbuf **pkts,
--	uint64_t pkts_mask,
--	struct rte_pipeline_table_entry *entry,
--	void *arg);
--
--/** Parameters for pipeline table creation. Action handlers have to be either
--    both enabled or both disabled (they can be disabled by setting them to
--    NULL). */
--struct rte_pipeline_table_params {
--	/** Table operations (specific to each table type) */
--	struct rte_table_ops *ops;
--	/** Opaque param to be passed to the table create operation when
--	invoked */
--	void *arg_create;
--	/** Callback function to execute the user actions on input packets in
--	case of lookup hit */
--	rte_pipeline_table_action_handler_hit f_action_hit;
--	/** Callback function to execute the user actions on input packets in
--	case of lookup miss */
--	rte_pipeline_table_action_handler_miss f_action_miss;
--
--	/** Opaque parameter to be passed to lookup hit and/or lookup miss
--	action handlers when invoked */
--	void *arg_ah;
--	/** Memory size to be reserved per table entry for storing the user
--	actions and their meta-data */
--	uint32_t action_data_size;
--};
--
--/**
-- * Pipeline table create
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param params
-- *   Parameters for pipeline table creation
-- * @param table_id
-- *   Table ID. Valid only within the scope of table IDs of the current
-- *   pipeline. Only returned after a successful invocation.
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_table_create(struct rte_pipeline *p,
--	struct rte_pipeline_table_params *params,
--	uint32_t *table_id);
--
--/**
-- * Pipeline table default entry add
-- *
-- * The contents of the table default entry is updated with the provided actions
-- * and meta-data. When the default entry is not configured (by using this
-- * function), the built-in default entry has the action "Drop" and meta-data
-- * set to all-zeros.
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param table_id
-- *   Table ID (returned by previous invocation of pipeline table create)
-- * @param default_entry
-- *   New contents for the table default entry
-- * @param default_entry_ptr
-- *   On successful invocation, pointer to the default table entry which can be
-- *   used for further read-write accesses to this table entry. This pointer
-- *   is valid until the default entry is deleted or re-added.
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_table_default_entry_add(struct rte_pipeline *p,
--	uint32_t table_id,
--	struct rte_pipeline_table_entry *default_entry,
--	struct rte_pipeline_table_entry **default_entry_ptr);
--
--/**
-- * Pipeline table default entry delete
-- *
-- * The new contents of the table default entry is set to reserved action "Drop
-- * the packet" with meta-data cleared (i.e. set to all-zeros).
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param table_id
-- *   Table ID (returned by previous invocation of pipeline table create)
-- * @param entry
-- *   On successful invocation, when entry points to a valid buffer, the
-- *   previous contents of the table default entry (as it was just before the
-- *   delete operation) is copied to this buffer
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_table_default_entry_delete(struct rte_pipeline *p,
--	uint32_t table_id,
--	struct rte_pipeline_table_entry *entry);
--
--/**
-- * Pipeline table entry add
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param table_id
-- *   Table ID (returned by previous invocation of pipeline table create)
+- * @param table
+- *   Handle to lookup table instance
 - * @param key
-- *   Table entry key
+- *   Lookup key
 - * @param entry
-- *   New contents for the table entry identified by key
+- *   Data to be associated with the current key. This parameter has to point to
+- *   a valid memory buffer where the first entry_size bytes (table create
+- *   parameter) are populated with the data.
 - * @param key_found
-- *   On successful invocation, set to TRUE (value different than 0) if key was
-- *   already present in the table before the add operation and to FALSE (value
-- *   0) if not
+- *   After successful invocation, *key_found is set to a value different than 0
+- *   if the current key is already present in the table and to 0 if not. This
+- *   pointer has to be set to a valid memory location before the table entry add
+- *   function is called.
 - * @param entry_ptr
-- *   On successful invocation, pointer to the table entry associated with key.
-- *   This can be used for further read-write accesses to this table entry and
-- *   is valid until the key is deleted from the table or re-added (usually for
-- *   associating different actions and/or action meta-data to the current key)
+- *   After successful invocation, *entry_ptr stores the handle to the table
+- *   entry containing the data associated with the current key. This handle can
+- *   be used to perform further read-write accesses to this entry. This handle
+- *   is valid until the key is deleted from the table or the same key is
+- *   re-added to the table, typically to associate it with different data. This
+- *   pointer has to be set to a valid memory location before the function is
+- *   called.
 - * @return
 - *   0 on success, error code otherwise
 - */
--int rte_pipeline_table_entry_add(struct rte_pipeline *p,
--	uint32_t table_id,
+-typedef int (*rte_table_op_entry_add)(
+-	void *table,
 -	void *key,
--	struct rte_pipeline_table_entry *entry,
+-	void *entry,
 -	int *key_found,
--	struct rte_pipeline_table_entry **entry_ptr);
+-	void **entry_ptr);
 -
 -/**
-- * Pipeline table entry delete
+- * Lookup table entry delete
 - *
-- * @param p
-- *   Handle to pipeline instance
-- * @param table_id
-- *   Table ID (returned by previous invocation of pipeline table create)
+- * @param table
+- *   Handle to lookup table instance
 - * @param key
-- *   Table entry key
+- *   Lookup key
 - * @param key_found
-- *   On successful invocation, set to TRUE (value different than 0) if key was
-- *   found in the table before the delete operation and to FALSE (value 0) if
-- *   not
+- *   After successful invocation, *key_found is set to a value different than 0
+- *   if the current key was present in the table before the delete operation
+- *   was performed and to 0 if not. This pointer has to be set to a valid
+- *   memory location before the table entry delete function is called.
 - * @param entry
-- *   On successful invocation, when key is found in the table and entry points
-- *   to a valid buffer, the table entry contents (as it was before the delete
-- *   was performed) is copied to this buffer
+- *   After successful invocation, if the key is found in the table (*key found
+- *   is different than 0 after function call is completed) and entry points to
+- *   a valid buffer (entry is set to a value different than NULL before the
+- *   function is called), then the first entry_size bytes (table create
+- *   parameter) in *entry store a copy of table entry that contained the data
+- *   associated with the current key before the key was deleted.
 - * @return
 - *   0 on success, error code otherwise
 - */
--int rte_pipeline_table_entry_delete(struct rte_pipeline *p,
--	uint32_t table_id,
+-typedef int (*rte_table_op_entry_delete)(
+-	void *table,
 -	void *key,
 -	int *key_found,
--	struct rte_pipeline_table_entry *entry);
+-	void *entry);
 -
 -/**
-- * Pipeline table entry add bulk
+- * Lookup table entry add bulk
 - *
-- * @param p
-- *   Handle to pipeline instance
-- * @param table_id
-- *   Table ID (returned by previous invocation of pipeline table create)
+- * @param table
+- *   Handle to lookup table instance
 - * @param keys
-- *   Array containing table entry keys
+- *   Array containing lookup keys
 - * @param entries
-- *   Array containing new contents for every table entry identified by key
+- *   Array containing data to be associated with each key. Every item in the
+- *   array has to point to a valid memory buffer where the first entry_size
+- *   bytes (table create parameter) are populated with the data.
 - * @param n_keys
 - *   Number of keys to add
 - * @param key_found
-- *   On successful invocation, key_found for every item in the array is set to
-- *   TRUE (value different than 0) if key was already present in the table
-- *   before the add operation and to FALSE (value 0) if not
+- *   After successful invocation, key_found for every item in the array is set
+- *   to a value different than 0 if the current key is already present in the
+- *   table and to 0 if not. This pointer has to be set to a valid memory
+- *   location before the table entry add function is called.
 - * @param entries_ptr
-- *   On successful invocation, array *entries_ptr stores pointer to every table
-- *   entry associated with key. This can be used for further read-write accesses
-- *   to this table entry and is valid until the key is deleted from the table or
-- *   re-added (usually for associating different actions and/or action meta-data
-- *   to the current key)
+- *   After successful invocation, array *entries_ptr stores the handle to the
+- *   table entry containing the data associated with every key. This handle can
+- *   be used to perform further read-write accesses to this entry. This handle
+- *   is valid until the key is deleted from the table or the same key is
+- *   re-added to the table, typically to associate it with different data. This
+- *   pointer has to be set to a valid memory location before the function is
+- *   called.
 - * @return
 - *   0 on success, error code otherwise
 - */
--int rte_pipeline_table_entry_add_bulk(struct rte_pipeline *p,
--	uint32_t table_id,
+-typedef int (*rte_table_op_entry_add_bulk)(
+-	void *table,
 -	void **keys,
--	struct rte_pipeline_table_entry **entries,
+-	void **entries,
 -	uint32_t n_keys,
 -	int *key_found,
--	struct rte_pipeline_table_entry **entries_ptr);
+-	void **entries_ptr);
 -
 -/**
-- * Pipeline table entry delete bulk
+- * Lookup table entry delete bulk
 - *
-- * @param p
-- *   Handle to pipeline instance
-- * @param table_id
-- *   Table ID (returned by previous invocation of pipeline table create)
+- * @param table
+- *   Handle to lookup table instance
 - * @param keys
-- *   Array containing table entry keys
+- *   Array containing lookup keys
 - * @param n_keys
 - *   Number of keys to delete
 - * @param key_found
-- *   On successful invocation, key_found for every item in the array is set to
-- *   TRUE (value different than 0) if key was found in the table before the
-- *   delete operation and to FALSE (value 0) if not
+- *   After successful invocation, key_found for every item in the array is set
+- *   to a value different than 0if the current key was present in the table
+- *   before the delete operation was performed and to 0 if not. This pointer
+- *   has to be set to a valid memory location before the table entry delete
+- *   function is called.
 - * @param entries
 - *   If entries pointer is NULL, this pointer is ignored for every entry found.
 - *   Else, after successful invocation, if specific key is found in the table
-- *   and entry points to a valid buffer, the table entry contents (as it was
-- *   before the delete was performed) is copied to this buffer.
+- *   (key_found is different than 0 for this item after function call is
+- *   completed) and item of entry array points to a valid buffer (entry is set
+- *   to a value different than NULL before the function is called), then the
+- *   first entry_size bytes (table create parameter) in *entry store a copy of
+- *   table entry that contained the data associated with the current key before
+- *   the key was deleted.
 - * @return
 - *   0 on success, error code otherwise
 - */
--int rte_pipeline_table_entry_delete_bulk(struct rte_pipeline *p,
--	uint32_t table_id,
+-typedef int (*rte_table_op_entry_delete_bulk)(
+-	void *table,
 -	void **keys,
 -	uint32_t n_keys,
 -	int *key_found,
--	struct rte_pipeline_table_entry **entries);
+-	void **entries);
 -
 -/**
-- * Read pipeline table stats.
+- * Lookup table lookup
 - *
-- * This function reads table statistics identified by *table_id* of given
-- * pipeline *p*.
-- *
-- * @param p
-- *   Handle to pipeline instance.
-- * @param table_id
-- *   Port ID what stats will be returned.
-- * @param stats
-- *   Statistics buffer.
-- * @param clear
-- *   If not 0 clear stats after reading.
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_table_stats_read(struct rte_pipeline *p, uint32_t table_id,
--	struct rte_pipeline_table_stats *stats, int clear);
--
--/*
-- * Port IN
-- */
--/** Maximum number of input ports allowed for any given pipeline instance. The
--	value of this parameter cannot be changed. */
--#define RTE_PIPELINE_PORT_IN_MAX                                    64
--
--/**
-- * Pipeline input port action handler
-- *
-- * The action handler can decide to drop packets by resetting the associated
-- * packet bit in the pkts_mask parameter. In this case, the action handler is
-- * required not to free the packet buffer, which will be freed eventually by
-- * the pipeline.
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param pkts
-- *   Burst of input packets specified as array of up to 64 pointers to struct
-- *   rte_mbuf
-- * @param n
-- *   Number of packets in the input burst. This parameter specifies that
-- *   elements 0 to (n-1) of pkts array are valid.
-- * @param arg
-- *   Opaque parameter registered by the user at the pipeline table creation
-- *   time
-- * @return
-- *   0 on success, error code otherwise
-- */
--typedef int (*rte_pipeline_port_in_action_handler)(
--	struct rte_pipeline *p,
--	struct rte_mbuf **pkts,
--	uint32_t n,
--	void *arg);
--
--/** Parameters for pipeline input port creation */
--struct rte_pipeline_port_in_params {
--	/** Input port operations (specific to each table type) */
--	struct rte_port_in_ops *ops;
--	/** Opaque parameter to be passed to create operation when invoked */
--	void *arg_create;
--
--	/** Callback function to execute the user actions on input packets.
--		Disabled if set to NULL. */
--	rte_pipeline_port_in_action_handler f_action;
--	/** Opaque parameter to be passed to the action handler when invoked */
--	void *arg_ah;
--
--	/** Recommended burst size for the RX operation(in number of pkts) */
--	uint32_t burst_size;
--};
--
--/**
-- * Pipeline input port create
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param params
-- *   Parameters for pipeline input port creation
-- * @param port_id
-- *   Input port ID. Valid only within the scope of input port IDs of the
-- *   current pipeline. Only returned after a successful invocation.
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_port_in_create(struct rte_pipeline *p,
--	struct rte_pipeline_port_in_params *params,
--	uint32_t *port_id);
--
--/**
-- * Pipeline input port connect to table
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param port_id
-- *   Port ID (returned by previous invocation of pipeline input port create)
-- * @param table_id
-- *   Table ID (returned by previous invocation of pipeline table create)
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_port_in_connect_to_table(struct rte_pipeline *p,
--	uint32_t port_id,
--	uint32_t table_id);
--
--/**
-- * Pipeline input port enable
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param port_id
-- *   Port ID (returned by previous invocation of pipeline input port create)
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_port_in_enable(struct rte_pipeline *p,
--	uint32_t port_id);
--
--/**
-- * Pipeline input port disable
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param port_id
-- *   Port ID (returned by previous invocation of pipeline input port create)
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_port_in_disable(struct rte_pipeline *p,
--	uint32_t port_id);
--
--/**
-- * Read pipeline port in stats.
-- *
-- * This function reads port in statistics identified by *port_id* of given
-- * pipeline *p*.
-- *
-- * @param p
-- *   Handle to pipeline instance.
-- * @param port_id
-- *   Port ID what stats will be returned.
-- * @param stats
-- *   Statistics buffer.
-- * @param clear
-- *   If not 0 clear stats after reading.
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_port_in_stats_read(struct rte_pipeline *p, uint32_t port_id,
--	struct rte_pipeline_port_in_stats *stats, int clear);
--
--/*
-- * Port OUT
-- */
--/** Maximum number of output ports allowed for any given pipeline instance. The
--	value of this parameter cannot be changed. */
--#define RTE_PIPELINE_PORT_OUT_MAX                                   64
--
--/**
-- * Pipeline output port action handler
-- *
-- * The action handler can decide to drop packets by resetting the associated
-- * packet bit in the pkts_mask parameter. In this case, the action handler is
-- * required not to free the packet buffer, which will be freed eventually by
-- * the pipeline.
-- *
-- * @param p
-- *   Handle to pipeline instance
+- * @param table
+- *   Handle to lookup table instance
 - * @param pkts
 - *   Burst of input packets specified as array of up to 64 pointers to struct
 - *   rte_mbuf
 - * @param pkts_mask
 - *   64-bit bitmask specifying which packets in the input burst are valid. When
 - *   pkts_mask bit n is set, then element n of pkts array is pointing to a
-- *   valid packet. Otherwise, element n of pkts array will not be accessed.
-- * @param arg
-- *   Opaque parameter registered by the user at the pipeline table creation
-- *   time
+- *   valid packet. Otherwise, element n of pkts array does not point to a valid
+- *   packet, therefore it will not be accessed.
+- * @param lookup_hit_mask
+- *   Once the table lookup operation is completed, this 64-bit bitmask
+- *   specifies which of the valid packets in the input burst resulted in lookup
+- *   hit. For each valid input packet (pkts_mask bit n is set), the following
+- *   are true on lookup hit: lookup_hit_mask bit n is set, element n of entries
+- *   array is valid and it points to the lookup table entry that was hit. For
+- *   each valid input packet (pkts_mask bit n is set), the following are true
+- *   on lookup miss: lookup_hit_mask bit n is not set and element n of entries
+- *   array is not valid.
+- * @param entries
+- *   Once the table lookup operation is completed, this array provides the
+- *   lookup table entries that were hit, as described above. It is required
+- *   that this array is always pre-allocated by the caller of this function
+- *   with exactly 64 elements. The implementation is allowed to speculatively
+- *   modify the elements of this array, so elements marked as invalid in
+- *   lookup_hit_mask once the table lookup operation is completed might have
+- *   been modified by this function.
 - * @return
 - *   0 on success, error code otherwise
 - */
--typedef int (*rte_pipeline_port_out_action_handler)(
--	struct rte_pipeline *p,
+-typedef int (*rte_table_op_lookup)(
+-	void *table,
 -	struct rte_mbuf **pkts,
 -	uint64_t pkts_mask,
--	void *arg);
+-	uint64_t *lookup_hit_mask,
+-	void **entries);
 -
--/** Parameters for pipeline output port creation. The action handlers have to
--be either both enabled or both disabled (by setting them to NULL). When
--enabled, the pipeline selects between them at different moments, based on the
--number of packets that have to be sent to the same output port. */
--struct rte_pipeline_port_out_params {
--	/** Output port operations (specific to each table type) */
--	struct rte_port_out_ops *ops;
--	/** Opaque parameter to be passed to create operation when invoked */
--	void *arg_create;
+-/**
+- * Lookup table stats read
+- *
+- * @param table
+- *   Handle to lookup table instance
+- * @param stats
+- *   Handle to table stats struct to copy data
+- * @param clear
+- *   Flag indicating that stats should be cleared after read
+- *
+- * @return
+- *   Error code or 0 on success.
+- */
+-typedef int (*rte_table_op_stats_read)(
+-	void *table,
+-	struct rte_table_stats *stats,
+-	int clear);
 -
--	/** Callback function executing the user actions on bust of input
--	packets */
--	rte_pipeline_port_out_action_handler f_action;
--	/** Opaque parameter to be passed to the action handler when invoked */
--	void *arg_ah;
+-/** Lookup table interface defining the lookup table operation */
+-struct rte_table_ops {
+-	rte_table_op_create f_create;                 /**< Create */
+-	rte_table_op_free f_free;                     /**< Free */
+-	rte_table_op_entry_add f_add;                 /**< Entry add */
+-	rte_table_op_entry_delete f_delete;           /**< Entry delete */
+-	rte_table_op_entry_add_bulk f_add_bulk;       /**< Add entry bulk */
+-	rte_table_op_entry_delete_bulk f_delete_bulk; /**< Delete entry bulk */
+-	rte_table_op_lookup f_lookup;                 /**< Lookup */
+-	rte_table_op_stats_read f_stats;              /**< Stats */
 -};
 -
--/**
-- * Pipeline output port create
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param params
-- *   Parameters for pipeline output port creation
-- * @param port_id
-- *   Output port ID. Valid only within the scope of output port IDs of the
-- *   current pipeline. Only returned after a successful invocation.
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_port_out_create(struct rte_pipeline *p,
--	struct rte_pipeline_port_out_params *params,
--	uint32_t *port_id);
--
--/**
-- * Read pipeline port out stats.
-- *
-- * This function reads port out statistics identified by *port_id* of given
-- * pipeline *p*.
-- *
-- * @param p
-- *   Handle to pipeline instance.
-- * @param port_id
-- *   Port ID what stats will be returned.
-- * @param stats
-- *   Statistics buffer.
-- * @param clear
-- *   If not 0 clear stats after reading.
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_port_out_stats_read(struct rte_pipeline *p, uint32_t port_id,
--	struct rte_pipeline_port_out_stats *stats, int clear);
--
--/*
-- * Functions to be called as part of the port IN/OUT or table action handlers
-- */
--/**
-- * Action handler packet insert to output port
-- *
-- * This function can be called by any input/output port or table action handler
-- * to send a packet out through one of the pipeline output ports. This packet is
-- * generated by the action handler, i.e. this packet is not part of the burst of
-- * packets read from one of the pipeline input ports and currently processed by
-- * the pipeline (this packet is not an element of the pkts array input parameter
-- * of the action handler).
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param port_id
-- *   Output port ID (returned by previous invocation of pipeline output port
-- *   create) to send the packet specified by pkt
-- * @param pkt
-- *   New packet generated by the action handler
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_port_out_packet_insert(struct rte_pipeline *p,
--	uint32_t port_id,
--	struct rte_mbuf *pkt);
--
--#define rte_pipeline_ah_port_out_packet_insert \
--	rte_pipeline_port_out_packet_insert
--
--/**
-- * Action handler packet hijack
-- *
-- * This function can be called by any input/output port or table action handler
-- * to hijack selected packets from the burst of packets read from one of the
-- * pipeline input ports and currently processed by the pipeline. The hijacked
-- * packets are removed from any further pipeline processing, with the action
-- * handler now having the full ownership for these packets.
-- *
-- * The action handler can further send the hijacked packets out through any
-- * pipeline output port by calling the rte_pipeline_ah_port_out_packet_insert()
-- * function. The action handler can also drop these packets by calling the
-- * rte_pktmbuf_free() function, although a better alternative is provided by
-- * the action handler using the rte_pipeline_ah_packet_drop() function.
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param pkts_mask
-- *   64-bit bitmask specifying which of the packets handed over for processing
-- *   to the action handler is to be hijacked by the action handler. When
-- *   pkts_mask bit n is set, then element n of the pkts array (input argument to
-- *   the action handler) is hijacked.
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_ah_packet_hijack(struct rte_pipeline *p,
--	uint64_t pkts_mask);
--
--/**
-- * Action handler packet drop
-- *
-- * This function is called by the pipeline action handlers (port in/out, table)
-- * to drop the packets selected using packet mask.
-- *
-- * This function can be called by any input/output port or table action handler
-- * to drop selected packets from the burst of packets read from one of the
-- * pipeline input ports and currently processed by the pipeline. The dropped
-- * packets are removed from any further pipeline processing and the packet
-- * buffers are eventually freed to their buffer pool.
-- *
-- * This function updates the drop statistics counters correctly, therefore the
-- * recommended approach for dropping packets by the action handlers is to call
-- * this function as opposed to the action handler hijacking the packets first
-- * and then dropping them invisibly to the pipeline (by using the
-- * rte_pktmbuf_free() function).
-- *
-- * @param p
-- *   Handle to pipeline instance
-- * @param pkts_mask
-- *   64-bit bitmask specifying which of the packets handed over for processing
-- *   to the action handler is to be dropped by the action handler. When
-- *   pkts_mask bit n is set, then element n of the pkts array (input argument to
-- *   the action handler) is dropped.
-- * @return
-- *   0 on success, error code otherwise
-- */
--int rte_pipeline_ah_packet_drop(struct rte_pipeline *p,
--	uint64_t pkts_mask);
--
--#ifdef __cplusplus
--}
 -#endif
--
--#endif
-diff --git a/lib/pipeline/rte_port_in_action.c b/lib/pipeline/rte_port_in_action.c
+diff --git a/lib/table/rte_table_acl.c b/lib/table/rte_table_acl.c
 deleted file mode 100644
-index 2378e64de9..0000000000
---- a/lib/pipeline/rte_port_in_action.c
+index 74fa0145d8..0000000000
+--- a/lib/table/rte_table_acl.c
 +++ /dev/null
-@@ -1,539 +0,0 @@
+@@ -1,795 +0,0 @@
 -/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2018 Intel Corporation
+- * Copyright(c) 2010-2014 Intel Corporation
 - */
 -
 -#include <stdalign.h>
--#include <stdlib.h>
+-#include <stdio.h>
 -#include <string.h>
 -
 -#include <eal_export.h>
 -#include <rte_common.h>
 -#include <rte_malloc.h>
+-#include <rte_log.h>
 -
--#include "rte_port_in_action.h"
+-#include "rte_table_acl.h"
 -
--/**
-- * RTE_PORT_IN_ACTION_FLTR
-- */
--static int
--fltr_cfg_check(struct rte_port_in_action_fltr_config *cfg)
--{
--	if (cfg == NULL)
--		return -1;
+-#include "table_log.h"
 -
--	return 0;
--}
+-#ifdef RTE_TABLE_STATS_COLLECT
 -
--struct fltr_data {
--	uint32_t port_id;
--};
+-#define RTE_TABLE_ACL_STATS_PKTS_IN_ADD(table, val) \
+-	table->stats.n_pkts_in += val
+-#define RTE_TABLE_ACL_STATS_PKTS_LOOKUP_MISS(table, val) \
+-	table->stats.n_pkts_lookup_miss += val
 -
--static void
--fltr_init(struct fltr_data *data,
--	struct rte_port_in_action_fltr_config *cfg)
--{
--	data->port_id = cfg->port_id;
--}
+-#else
 -
--static int
--fltr_apply(struct fltr_data *data,
--	struct rte_port_in_action_fltr_params *p)
--{
--	/* Check input arguments */
--	if (p == NULL)
--		return -1;
+-#define RTE_TABLE_ACL_STATS_PKTS_IN_ADD(table, val)
+-#define RTE_TABLE_ACL_STATS_PKTS_LOOKUP_MISS(table, val)
 -
--	data->port_id = p->port_id;
+-#endif
 -
--	return 0;
--}
+-struct rte_table_acl {
+-	struct rte_table_stats stats;
 -
--/**
-- * RTE_PORT_IN_ACTION_LB
-- */
--static int
--lb_cfg_check(struct rte_port_in_action_lb_config *cfg)
--{
--	if ((cfg == NULL) ||
--		(cfg->key_size < RTE_PORT_IN_ACTION_LB_KEY_SIZE_MIN) ||
--		(cfg->key_size > RTE_PORT_IN_ACTION_LB_KEY_SIZE_MAX) ||
--		(!rte_is_power_of_2(cfg->key_size)) ||
--		(cfg->f_hash == NULL))
--		return -1;
+-	/* Low-level ACL table */
+-	char name[2][RTE_ACL_NAMESIZE];
+-	struct rte_acl_param acl_params; /* for creating low level acl table */
+-	struct rte_acl_config cfg; /* Holds the field definitions (metadata) */
+-	struct rte_acl_ctx *ctx;
+-	uint32_t name_id;
 -
--	return 0;
--}
+-	/* Input parameters */
+-	uint32_t n_rules;
+-	uint32_t entry_size;
 -
--struct lb_data {
--	uint32_t port_id[RTE_PORT_IN_ACTION_LB_TABLE_SIZE];
--};
+-	/* Internal tables */
+-	uint8_t *action_table;
+-	struct rte_acl_rule **acl_rule_list; /* Array of pointers to rules */
+-	uint8_t *acl_rule_memory; /* Memory to store the rules */
 -
--static void
--lb_init(struct lb_data *data,
--	struct rte_port_in_action_lb_config *cfg)
--{
--	memcpy(data->port_id, cfg->port_id, sizeof(cfg->port_id));
--}
--
--static int
--lb_apply(struct lb_data *data,
--	struct rte_port_in_action_lb_params *p)
--{
--	/* Check input arguments */
--	if (p == NULL)
--		return -1;
--
--	memcpy(data->port_id, p->port_id, sizeof(p->port_id));
--
--	return 0;
--}
--
--/**
-- * Action profile
-- */
--static int
--action_valid(enum rte_port_in_action_type action)
--{
--	switch (action) {
--	case RTE_PORT_IN_ACTION_FLTR:
--	case RTE_PORT_IN_ACTION_LB:
--		return 1;
--	default:
--		return 0;
--	}
--}
--
--#define RTE_PORT_IN_ACTION_MAX                             64
--
--struct ap_config {
--	uint64_t action_mask;
--	struct rte_port_in_action_fltr_config fltr;
--	struct rte_port_in_action_lb_config lb;
--};
--
--static size_t
--action_cfg_size(enum rte_port_in_action_type action)
--{
--	switch (action) {
--	case RTE_PORT_IN_ACTION_FLTR:
--		return sizeof(struct rte_port_in_action_fltr_config);
--	case RTE_PORT_IN_ACTION_LB:
--		return sizeof(struct rte_port_in_action_lb_config);
--	default:
--		return 0;
--	}
--}
--
--static void*
--action_cfg_get(struct ap_config *ap_config,
--	enum rte_port_in_action_type type)
--{
--	switch (type) {
--	case RTE_PORT_IN_ACTION_FLTR:
--		return &ap_config->fltr;
--
--	case RTE_PORT_IN_ACTION_LB:
--		return &ap_config->lb;
--
--	default:
--		return NULL;
--	}
--}
--
--static void
--action_cfg_set(struct ap_config *ap_config,
--	enum rte_port_in_action_type type,
--	void *action_cfg)
--{
--	void *dst = action_cfg_get(ap_config, type);
--
--	if (dst)
--		memcpy(dst, action_cfg, action_cfg_size(type));
--
--	ap_config->action_mask |= 1LLU << type;
--}
--
--struct ap_data {
--	size_t offset[RTE_PORT_IN_ACTION_MAX];
--	size_t total_size;
--};
--
--static size_t
--action_data_size(enum rte_port_in_action_type action,
--	struct ap_config *ap_config __rte_unused)
--{
--	switch (action) {
--	case RTE_PORT_IN_ACTION_FLTR:
--		return sizeof(struct fltr_data);
--
--	case RTE_PORT_IN_ACTION_LB:
--		return sizeof(struct lb_data);
--
--	default:
--		return 0;
--	}
--}
--
--static void
--action_data_offset_set(struct ap_data *ap_data,
--	struct ap_config *ap_config)
--{
--	uint64_t action_mask = ap_config->action_mask;
--	size_t offset;
--	uint32_t action;
--
--	memset(ap_data->offset, 0, sizeof(ap_data->offset));
--
--	offset = 0;
--	for (action = 0; action < RTE_PORT_IN_ACTION_MAX; action++)
--		if (action_mask & (1LLU << action)) {
--			ap_data->offset[action] = offset;
--			offset += action_data_size((enum rte_port_in_action_type)action,
--				ap_config);
--		}
--
--	ap_data->total_size = offset;
--}
--
--struct rte_port_in_action_profile {
--	struct ap_config cfg;
--	struct ap_data data;
--	int frozen;
--};
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_in_action_profile_create, 18.05)
--struct rte_port_in_action_profile *
--rte_port_in_action_profile_create(uint32_t socket_id)
--{
--	struct rte_port_in_action_profile *ap;
--
--	/* Memory allocation */
--	ap = rte_zmalloc_socket(NULL,
--		sizeof(struct rte_port_in_action_profile),
--		RTE_CACHE_LINE_SIZE,
--		socket_id);
--	if (ap == NULL)
--		return NULL;
--
--	return ap;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_in_action_profile_action_register, 18.05)
--int
--rte_port_in_action_profile_action_register(struct rte_port_in_action_profile *profile,
--	enum rte_port_in_action_type type,
--	void *action_config)
--{
--	int status;
--
--	/* Check input arguments */
--	if ((profile == NULL) ||
--		profile->frozen ||
--		(action_valid(type) == 0) ||
--		(profile->cfg.action_mask & (1LLU << type)) ||
--		((action_cfg_size(type) == 0) && action_config) ||
--		(action_cfg_size(type) && (action_config == NULL)))
--		return -EINVAL;
--
--	switch (type) {
--	case RTE_PORT_IN_ACTION_FLTR:
--		status = fltr_cfg_check(action_config);
--		break;
--
--	case RTE_PORT_IN_ACTION_LB:
--		status = lb_cfg_check(action_config);
--		break;
--
--	default:
--		status = 0;
--		break;
--	}
--
--	if (status)
--		return status;
--
--	/* Action enable */
--	action_cfg_set(&profile->cfg, type, action_config);
--
--	return 0;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_in_action_profile_freeze, 18.05)
--int
--rte_port_in_action_profile_freeze(struct rte_port_in_action_profile *profile)
--{
--	if (profile->frozen)
--		return -EBUSY;
--
--	action_data_offset_set(&profile->data, &profile->cfg);
--	profile->frozen = 1;
--
--	return 0;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_in_action_profile_free, 18.05)
--int
--rte_port_in_action_profile_free(struct rte_port_in_action_profile *profile)
--{
--	if (profile == NULL)
--		return 0;
--
--	free(profile);
--	return 0;
--}
--
--/**
-- * Action
-- */
--struct rte_port_in_action {
--	struct ap_config cfg;
--	struct ap_data data;
+-	/* Memory to store the action table and stack of free entries */
 -	alignas(RTE_CACHE_LINE_SIZE) uint8_t memory[];
 -};
 -
--static __rte_always_inline void *
--action_data_get(struct rte_port_in_action *action,
--	enum rte_port_in_action_type type)
+-
+-static void *
+-rte_table_acl_create(
+-	void *params,
+-	int socket_id,
+-	uint32_t entry_size)
 -{
--	size_t offset = action->data.offset[type];
+-	struct rte_table_acl_params *p = params;
+-	struct rte_table_acl *acl;
+-	uint32_t action_table_size, acl_rule_list_size, acl_rule_memory_size;
+-	uint32_t total_size;
 -
--	return &action->memory[offset];
--}
+-	RTE_BUILD_BUG_ON(((sizeof(struct rte_table_acl) % RTE_CACHE_LINE_SIZE)
+-		!= 0));
 -
--static void
--action_data_init(struct rte_port_in_action *action,
--	enum rte_port_in_action_type type)
--{
--	void *data = action_data_get(action, type);
--
--	switch (type) {
--	case RTE_PORT_IN_ACTION_FLTR:
--		fltr_init(data, &action->cfg.fltr);
--		return;
--
--	case RTE_PORT_IN_ACTION_LB:
--		lb_init(data, &action->cfg.lb);
--		return;
--
--	default:
--		return;
--	}
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_in_action_create, 18.05)
--struct rte_port_in_action *
--rte_port_in_action_create(struct rte_port_in_action_profile *profile,
--	uint32_t socket_id)
--{
--	struct rte_port_in_action *action;
--	size_t size;
--	uint32_t i;
--
--	/* Check input arguments */
--	if ((profile == NULL) ||
--		(profile->frozen == 0))
+-	/* Check input parameters */
+-	if (p == NULL) {
+-		TABLE_LOG(ERR, "%s: Invalid value for params", __func__);
 -		return NULL;
+-	}
+-	if (p->name == NULL) {
+-		TABLE_LOG(ERR, "%s: Invalid value for name", __func__);
+-		return NULL;
+-	}
+-	if (p->n_rules == 0) {
+-		TABLE_LOG(ERR, "%s: Invalid value for n_rules",
+-			__func__);
+-		return NULL;
+-	}
+-	if ((p->n_rule_fields == 0) ||
+-	    (p->n_rule_fields > RTE_ACL_MAX_FIELDS)) {
+-		TABLE_LOG(ERR, "%s: Invalid value for n_rule_fields",
+-			__func__);
+-		return NULL;
+-	}
+-
+-	entry_size = RTE_ALIGN(entry_size, sizeof(uint64_t));
 -
 -	/* Memory allocation */
--	size = sizeof(struct rte_port_in_action) + profile->data.total_size;
--	size = RTE_CACHE_LINE_ROUNDUP(size);
+-	action_table_size = RTE_CACHE_LINE_ROUNDUP(p->n_rules * entry_size);
+-	acl_rule_list_size =
+-		RTE_CACHE_LINE_ROUNDUP(p->n_rules * sizeof(struct rte_acl_rule *));
+-	acl_rule_memory_size = RTE_CACHE_LINE_ROUNDUP(p->n_rules *
+-		RTE_ACL_RULE_SZ(p->n_rule_fields));
+-	total_size = sizeof(struct rte_table_acl) + action_table_size +
+-		acl_rule_list_size + acl_rule_memory_size;
 -
--	action = rte_zmalloc_socket(NULL,
--		size,
--		RTE_CACHE_LINE_SIZE,
+-	acl = rte_zmalloc_socket("TABLE", total_size, RTE_CACHE_LINE_SIZE,
 -		socket_id);
--	if (action == NULL)
+-	if (acl == NULL) {
+-		TABLE_LOG(ERR,
+-			"%s: Cannot allocate %u bytes for ACL table",
+-			__func__, total_size);
 -		return NULL;
--
--	/* Initialization */
--	memcpy(&action->cfg, &profile->cfg, sizeof(profile->cfg));
--	memcpy(&action->data, &profile->data, sizeof(profile->data));
--
--	for (i = 0; i < RTE_PORT_IN_ACTION_MAX; i++)
--		if (action->cfg.action_mask & (1LLU << i))
--			action_data_init(action,
--				(enum rte_port_in_action_type)i);
--
--	return action;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_in_action_apply, 18.05)
--int
--rte_port_in_action_apply(struct rte_port_in_action *action,
--	enum rte_port_in_action_type type,
--	void *action_params)
--{
--	void *action_data;
--
--	/* Check input arguments */
--	if ((action == NULL) ||
--		(action_valid(type) == 0) ||
--		((action->cfg.action_mask & (1LLU << type)) == 0) ||
--		(action_params == NULL))
--		return -EINVAL;
--
--	/* Data update */
--	action_data = action_data_get(action, type);
--
--	switch (type) {
--	case RTE_PORT_IN_ACTION_FLTR:
--		return fltr_apply(action_data,
--			action_params);
--
--	case RTE_PORT_IN_ACTION_LB:
--		return lb_apply(action_data,
--			action_params);
--
--	default:
--		return -EINVAL;
 -	}
+-
+-	acl->action_table = &acl->memory[0];
+-	acl->acl_rule_list =
+-		(struct rte_acl_rule **) &acl->memory[action_table_size];
+-	acl->acl_rule_memory = (uint8_t *)
+-		&acl->memory[action_table_size + acl_rule_list_size];
+-
+-	/* Initialization of internal fields */
+-	snprintf(acl->name[0], RTE_ACL_NAMESIZE, "%s_a", p->name);
+-	snprintf(acl->name[1], RTE_ACL_NAMESIZE, "%s_b", p->name);
+-	acl->name_id = 1;
+-
+-	acl->acl_params.name = acl->name[acl->name_id];
+-	acl->acl_params.socket_id = socket_id;
+-	acl->acl_params.rule_size = RTE_ACL_RULE_SZ(p->n_rule_fields);
+-	acl->acl_params.max_rule_num = p->n_rules;
+-
+-	acl->cfg.num_categories = 1;
+-	acl->cfg.num_fields = p->n_rule_fields;
+-	memcpy(&acl->cfg.defs[0], &p->field_format[0],
+-		p->n_rule_fields * sizeof(struct rte_acl_field_def));
+-
+-	acl->ctx = NULL;
+-
+-	acl->n_rules = p->n_rules;
+-	acl->entry_size = entry_size;
+-
+-	return acl;
 -}
 -
 -static int
--ah_filter_on_match(struct rte_pipeline *p,
--	struct rte_mbuf **pkts,
--	uint32_t n_pkts,
--	void *arg)
+-rte_table_acl_free(void *table)
 -{
--	struct rte_port_in_action *action = arg;
--	struct rte_port_in_action_fltr_config *cfg = &action->cfg.fltr;
--	uint64_t *key_mask = (uint64_t *) cfg->key_mask;
--	uint64_t *key = (uint64_t *) cfg->key;
--	uint32_t key_offset = cfg->key_offset;
--	struct fltr_data *data = action_data_get(action,
--						RTE_PORT_IN_ACTION_FLTR);
--	uint32_t i;
+-	struct rte_table_acl *acl = table;
 -
--	for (i = 0; i < n_pkts; i++) {
--		struct rte_mbuf *pkt = pkts[i];
--		uint64_t *pkt_key = RTE_MBUF_METADATA_UINT64_PTR(pkt,
--					key_offset);
+-	/* Check input parameters */
+-	if (table == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
 -
--		uint64_t xor0 = (pkt_key[0] & key_mask[0]) ^ key[0];
--		uint64_t xor1 = (pkt_key[1] & key_mask[1]) ^ key[1];
--		uint64_t or = xor0 | xor1;
+-	/* Free previously allocated resources */
+-	rte_acl_free(acl->ctx);
 -
--		if (or == 0) {
--			rte_pipeline_ah_packet_hijack(p, 1LLU << i);
--			rte_pipeline_port_out_packet_insert(p,
--				data->port_id, pkt);
+-	rte_free(acl);
+-
+-	return 0;
+-}
+-
+-RTE_ACL_RULE_DEF(rte_pipeline_acl_rule, RTE_ACL_MAX_FIELDS);
+-
+-static int
+-rte_table_acl_build(struct rte_table_acl *acl, struct rte_acl_ctx **acl_ctx)
+-{
+-	struct rte_acl_ctx *ctx = NULL;
+-	uint32_t n_rules, i;
+-	int status;
+-
+-	/* Create low level ACL table */
+-	ctx = rte_acl_create(&acl->acl_params);
+-	if (ctx == NULL) {
+-		TABLE_LOG(ERR, "%s: Cannot create low level ACL table",
+-			__func__);
+-		return -1;
+-	}
+-
+-	/* Add rules to low level ACL table */
+-	n_rules = 0;
+-	for (i = 1; i < acl->n_rules; i++) {
+-		if (acl->acl_rule_list[i] != NULL) {
+-			status = rte_acl_add_rules(ctx, acl->acl_rule_list[i],
+-				1);
+-			if (status != 0) {
+-				TABLE_LOG(ERR,
+-				"%s: Cannot add rule to low level ACL table",
+-					__func__);
+-				rte_acl_free(ctx);
+-				return -1;
+-			}
+-
+-			n_rules++;
 -		}
 -	}
 -
+-	if (n_rules == 0) {
+-		rte_acl_free(ctx);
+-		*acl_ctx = NULL;
+-		return 0;
+-	}
+-
+-	/* Build low level ACl table */
+-	status = rte_acl_build(ctx, &acl->cfg);
+-	if (status != 0) {
+-		TABLE_LOG(ERR,
+-			"%s: Cannot build the low level ACL table",
+-			__func__);
+-		rte_acl_free(ctx);
+-		return -1;
+-	}
+-
+-	*acl_ctx = ctx;
 -	return 0;
 -}
 -
 -static int
--ah_filter_on_mismatch(struct rte_pipeline *p,
--	struct rte_mbuf **pkts,
--	uint32_t n_pkts,
--	void *arg)
+-rte_table_acl_entry_add(
+-	void *table,
+-	void *key,
+-	void *entry,
+-	int *key_found,
+-	void **entry_ptr)
 -{
--	struct rte_port_in_action *action = arg;
--	struct rte_port_in_action_fltr_config *cfg = &action->cfg.fltr;
--	uint64_t *key_mask = (uint64_t *) cfg->key_mask;
--	uint64_t *key = (uint64_t *) cfg->key;
--	uint32_t key_offset = cfg->key_offset;
--	struct fltr_data *data = action_data_get(action,
--						RTE_PORT_IN_ACTION_FLTR);
--	uint32_t i;
+-	struct rte_table_acl *acl = table;
+-	struct rte_table_acl_rule_add_params *rule =
+-		key;
+-	struct rte_pipeline_acl_rule acl_rule;
+-	struct rte_acl_rule *rule_location;
+-	struct rte_acl_ctx *ctx;
+-	uint32_t free_pos, free_pos_valid, i;
+-	int status;
 -
--	for (i = 0; i < n_pkts; i++) {
--		struct rte_mbuf *pkt = pkts[i];
--		uint64_t *pkt_key = RTE_MBUF_METADATA_UINT64_PTR(pkt,
--						key_offset);
+-	/* Check input parameters */
+-	if (table == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (key == NULL) {
+-		TABLE_LOG(ERR, "%s: key parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (entry == NULL) {
+-		TABLE_LOG(ERR, "%s: entry parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (key_found == NULL) {
+-		TABLE_LOG(ERR, "%s: key_found parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-	if (entry_ptr == NULL) {
+-		TABLE_LOG(ERR, "%s: entry_ptr parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-	if (rule->priority > RTE_ACL_MAX_PRIORITY) {
+-		TABLE_LOG(ERR, "%s: Priority is too high", __func__);
+-		return -EINVAL;
+-	}
 -
--		uint64_t xor0 = (pkt_key[0] & key_mask[0]) ^ key[0];
--		uint64_t xor1 = (pkt_key[1] & key_mask[1]) ^ key[1];
--		uint64_t or = xor0 | xor1;
+-	/* Setup rule data structure */
+-	memset(&acl_rule, 0, sizeof(acl_rule));
+-	acl_rule.data.category_mask = 1;
+-	acl_rule.data.priority = RTE_ACL_MAX_PRIORITY - rule->priority;
+-	acl_rule.data.userdata = 0; /* To be set up later */
+-	memcpy(&acl_rule.field[0],
+-		&rule->field_value[0],
+-		acl->cfg.num_fields * sizeof(struct rte_acl_field));
 -
--		if (or) {
--			rte_pipeline_ah_packet_hijack(p, 1LLU << i);
--			rte_pipeline_port_out_packet_insert(p,
--				data->port_id, pkt);
+-	/* Look to see if the rule exists already in the table */
+-	free_pos = 0;
+-	free_pos_valid = 0;
+-	for (i = 1; i < acl->n_rules; i++) {
+-		if (acl->acl_rule_list[i] == NULL) {
+-			if (free_pos_valid == 0) {
+-				free_pos = i;
+-				free_pos_valid = 1;
+-			}
+-
+-			continue;
+-		}
+-
+-		/* Compare the key fields */
+-		status = memcmp(&acl->acl_rule_list[i]->field[0],
+-			&rule->field_value[0],
+-			acl->cfg.num_fields * sizeof(struct rte_acl_field));
+-
+-		/* Rule found: update data associated with the rule */
+-		if (status == 0) {
+-			*key_found = 1;
+-			*entry_ptr = &acl->memory[i * acl->entry_size];
+-			memcpy(*entry_ptr, entry, acl->entry_size);
+-
+-			return 0;
 -		}
 -	}
 -
+-	/* Return if max rules */
+-	if (free_pos_valid == 0) {
+-		TABLE_LOG(ERR, "%s: Max number of rules reached",
+-			__func__);
+-		return -ENOSPC;
+-	}
+-
+-	/* Add the new rule to the rule set */
+-	acl_rule.data.userdata = free_pos;
+-	rule_location = (struct rte_acl_rule *)
+-		&acl->acl_rule_memory[free_pos * acl->acl_params.rule_size];
+-	memcpy(rule_location, &acl_rule, acl->acl_params.rule_size);
+-	acl->acl_rule_list[free_pos] = rule_location;
+-
+-	/* Build low level ACL table */
+-	acl->name_id ^= 1;
+-	acl->acl_params.name = acl->name[acl->name_id];
+-	status = rte_table_acl_build(acl, &ctx);
+-	if (status != 0) {
+-		/* Roll back changes */
+-		acl->acl_rule_list[free_pos] = NULL;
+-		acl->name_id ^= 1;
+-
+-		return -EINVAL;
+-	}
+-
+-	/* Commit changes */
+-	rte_acl_free(acl->ctx);
+-	acl->ctx = ctx;
+-	*key_found = 0;
+-	*entry_ptr = &acl->memory[free_pos * acl->entry_size];
+-	memcpy(*entry_ptr, entry, acl->entry_size);
+-
 -	return 0;
 -}
 -
 -static int
--ah_lb(struct rte_pipeline *p,
--	struct rte_mbuf **pkts,
--	uint32_t n_pkts,
--	void *arg)
+-rte_table_acl_entry_delete(
+-	void *table,
+-	void *key,
+-	int *key_found,
+-	void *entry)
 -{
--	struct rte_port_in_action *action = arg;
--	struct rte_port_in_action_lb_config *cfg = &action->cfg.lb;
--	struct lb_data *data = action_data_get(action, RTE_PORT_IN_ACTION_LB);
--	uint64_t pkt_mask = RTE_LEN2MASK(n_pkts, uint64_t);
--	uint32_t i;
+-	struct rte_table_acl *acl = table;
+-	struct rte_table_acl_rule_delete_params *rule =
+-		key;
+-	struct rte_acl_rule *deleted_rule = NULL;
+-	struct rte_acl_ctx *ctx;
+-	uint32_t pos, pos_valid, i;
+-	int status;
 -
--	rte_pipeline_ah_packet_hijack(p, pkt_mask);
--
--	for (i = 0; i < n_pkts; i++) {
--		struct rte_mbuf *pkt = pkts[i];
--		uint8_t *pkt_key = RTE_MBUF_METADATA_UINT8_PTR(pkt,
--					cfg->key_offset);
--
--		uint64_t digest = cfg->f_hash(pkt_key,
--			cfg->key_mask,
--			cfg->key_size,
--			cfg->seed);
--		uint64_t pos = digest & (RTE_PORT_IN_ACTION_LB_TABLE_SIZE - 1);
--		uint32_t port_id = data->port_id[pos];
--
--		rte_pipeline_port_out_packet_insert(p, port_id, pkt);
+-	/* Check input parameters */
+-	if (table == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (key == NULL) {
+-		TABLE_LOG(ERR, "%s: key parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (key_found == NULL) {
+-		TABLE_LOG(ERR, "%s: key_found parameter is NULL",
+-			__func__);
+-		return -EINVAL;
 -	}
 -
--	return 0;
--}
+-	/* Look for the rule in the table */
+-	pos = 0;
+-	pos_valid = 0;
+-	for (i = 1; i < acl->n_rules; i++) {
+-		if (acl->acl_rule_list[i] != NULL) {
+-			/* Compare the key fields */
+-			status = memcmp(&acl->acl_rule_list[i]->field[0],
+-				&rule->field_value[0], acl->cfg.num_fields *
+-				sizeof(struct rte_acl_field));
 -
--static rte_pipeline_port_in_action_handler
--ah_selector(struct rte_port_in_action *action)
--{
--	if (action->cfg.action_mask == 0)
--		return NULL;
+-			/* Rule found: remove from table */
+-			if (status == 0) {
+-				pos = i;
+-				pos_valid = 1;
 -
--	if (action->cfg.action_mask == 1LLU << RTE_PORT_IN_ACTION_FLTR)
--		return (action->cfg.fltr.filter_on_match) ?
--			ah_filter_on_match : ah_filter_on_mismatch;
+-				deleted_rule = acl->acl_rule_list[i];
+-				acl->acl_rule_list[i] = NULL;
+-			}
+-		}
+-	}
 -
--	if (action->cfg.action_mask == 1LLU << RTE_PORT_IN_ACTION_LB)
--		return ah_lb;
+-	/* Return if rule not found */
+-	if (pos_valid == 0) {
+-		*key_found = 0;
+-		return 0;
+-	}
 -
--	return NULL;
--}
+-	/* Build low level ACL table */
+-	acl->name_id ^= 1;
+-	acl->acl_params.name = acl->name[acl->name_id];
+-	status = rte_table_acl_build(acl, &ctx);
+-	if (status != 0) {
+-		/* Roll back changes */
+-		acl->acl_rule_list[pos] = deleted_rule;
+-		acl->name_id ^= 1;
 -
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_in_action_params_get, 18.05)
--int
--rte_port_in_action_params_get(struct rte_port_in_action *action,
--	struct rte_pipeline_port_in_params *params)
--{
--	rte_pipeline_port_in_action_handler f_action;
--
--	/* Check input arguments */
--	if ((action == NULL) ||
--		(params == NULL))
 -		return -EINVAL;
+-	}
 -
--	f_action = ah_selector(action);
+-	/* Commit changes */
+-	rte_acl_free(acl->ctx);
 -
--	/* Fill in params */
--	params->f_action = f_action;
--	params->arg_ah = (f_action) ? action : NULL;
+-	acl->ctx = ctx;
+-	*key_found = 1;
+-	if (entry != NULL)
+-		memcpy(entry, &acl->memory[pos * acl->entry_size],
+-			acl->entry_size);
 -
 -	return 0;
 -}
 -
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_in_action_free, 18.05)
--int
--rte_port_in_action_free(struct rte_port_in_action *action)
+-static int
+-rte_table_acl_entry_add_bulk(
+-	void *table,
+-	void **keys,
+-	void **entries,
+-	uint32_t n_keys,
+-	int *key_found,
+-	void **entries_ptr)
 -{
--	if (action == NULL)
+-	struct rte_table_acl *acl = table;
+-	struct rte_acl_ctx *ctx;
+-	uint32_t rule_pos[n_keys];
+-	uint32_t i;
+-	int err = 0, build = 0;
+-	int status;
+-
+-	/* Check input parameters */
+-	if (table == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (keys == NULL) {
+-		TABLE_LOG(ERR, "%s: keys parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (entries == NULL) {
+-		TABLE_LOG(ERR, "%s: entries parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (n_keys == 0) {
+-		TABLE_LOG(ERR, "%s: 0 rules to add", __func__);
+-		return -EINVAL;
+-	}
+-	if (key_found == NULL) {
+-		TABLE_LOG(ERR, "%s: key_found parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-	if (entries_ptr == NULL) {
+-		TABLE_LOG(ERR, "%s: entries_ptr parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	/* Check input parameters in arrays */
+-	for (i = 0; i < n_keys; i++) {
+-		struct rte_table_acl_rule_add_params *rule;
+-
+-		if (keys[i] == NULL) {
+-			TABLE_LOG(ERR, "%s: keys[%" PRIu32 "] parameter is NULL",
+-					__func__, i);
+-			return -EINVAL;
+-		}
+-
+-		if (entries[i] == NULL) {
+-			TABLE_LOG(ERR, "%s: entries[%" PRIu32 "] parameter is NULL",
+-					__func__, i);
+-			return -EINVAL;
+-		}
+-
+-		rule = keys[i];
+-		if (rule->priority > RTE_ACL_MAX_PRIORITY) {
+-			TABLE_LOG(ERR, "%s: Priority is too high", __func__);
+-			return -EINVAL;
+-		}
+-	}
+-
+-	memset(rule_pos, 0, n_keys * sizeof(uint32_t));
+-	memset(key_found, 0, n_keys * sizeof(int));
+-	for (i = 0; i < n_keys; i++) {
+-		struct rte_table_acl_rule_add_params *rule =
+-				keys[i];
+-		struct rte_pipeline_acl_rule acl_rule;
+-		struct rte_acl_rule *rule_location;
+-		uint32_t free_pos, free_pos_valid, j;
+-
+-		/* Setup rule data structure */
+-		memset(&acl_rule, 0, sizeof(acl_rule));
+-		acl_rule.data.category_mask = 1;
+-		acl_rule.data.priority = RTE_ACL_MAX_PRIORITY - rule->priority;
+-		acl_rule.data.userdata = 0; /* To be set up later */
+-		memcpy(&acl_rule.field[0],
+-			&rule->field_value[0],
+-			acl->cfg.num_fields * sizeof(struct rte_acl_field));
+-
+-		/* Look to see if the rule exists already in the table */
+-		free_pos = 0;
+-		free_pos_valid = 0;
+-		for (j = 1; j < acl->n_rules; j++) {
+-			if (acl->acl_rule_list[j] == NULL) {
+-				if (free_pos_valid == 0) {
+-					free_pos = j;
+-					free_pos_valid = 1;
+-				}
+-
+-				continue;
+-			}
+-
+-			/* Compare the key fields */
+-			status = memcmp(&acl->acl_rule_list[j]->field[0],
+-				&rule->field_value[0],
+-				acl->cfg.num_fields * sizeof(struct rte_acl_field));
+-
+-			/* Rule found: update data associated with the rule */
+-			if (status == 0) {
+-				key_found[i] = 1;
+-				entries_ptr[i] = &acl->memory[j * acl->entry_size];
+-				memcpy(entries_ptr[i], entries[i], acl->entry_size);
+-
+-				break;
+-			}
+-		}
+-
+-		/* Key already in the table */
+-		if (key_found[i] != 0)
+-			continue;
+-
+-		/* Maximum number of rules reached */
+-		if (free_pos_valid == 0) {
+-			err = 1;
+-			break;
+-		}
+-
+-		/* Add the new rule to the rule set */
+-		acl_rule.data.userdata = free_pos;
+-		rule_location = (struct rte_acl_rule *)
+-			&acl->acl_rule_memory[free_pos * acl->acl_params.rule_size];
+-		memcpy(rule_location, &acl_rule, acl->acl_params.rule_size);
+-		acl->acl_rule_list[free_pos] = rule_location;
+-		rule_pos[i] = free_pos;
+-		build = 1;
+-	}
+-
+-	if (err != 0) {
+-		for (i = 0; i < n_keys; i++) {
+-			if (rule_pos[i] == 0)
+-				continue;
+-
+-			acl->acl_rule_list[rule_pos[i]] = NULL;
+-		}
+-
+-		return -ENOSPC;
+-	}
+-
+-	if (build == 0)
 -		return 0;
 -
--	rte_free(action);
+-	/* Build low level ACL table */
+-	acl->name_id ^= 1;
+-	acl->acl_params.name = acl->name[acl->name_id];
+-	status = rte_table_acl_build(acl, &ctx);
+-	if (status != 0) {
+-		/* Roll back changes */
+-		for (i = 0; i < n_keys; i++) {
+-			if (rule_pos[i] == 0)
+-				continue;
+-
+-			acl->acl_rule_list[rule_pos[i]] = NULL;
+-		}
+-		acl->name_id ^= 1;
+-
+-		return -EINVAL;
+-	}
+-
+-	/* Commit changes */
+-	rte_acl_free(acl->ctx);
+-	acl->ctx = ctx;
+-
+-	for (i = 0; i < n_keys; i++) {
+-		if (rule_pos[i] == 0)
+-			continue;
+-
+-		key_found[i] = 0;
+-		entries_ptr[i] = &acl->memory[rule_pos[i] * acl->entry_size];
+-		memcpy(entries_ptr[i], entries[i], acl->entry_size);
+-	}
 -
 -	return 0;
 -}
-diff --git a/lib/pipeline/rte_port_in_action.h b/lib/pipeline/rte_port_in_action.h
+-
+-static int
+-rte_table_acl_entry_delete_bulk(
+-	void *table,
+-	void **keys,
+-	uint32_t n_keys,
+-	int *key_found,
+-	void **entries)
+-{
+-	struct rte_table_acl *acl = table;
+-	struct rte_acl_rule *deleted_rules[n_keys];
+-	uint32_t rule_pos[n_keys];
+-	struct rte_acl_ctx *ctx;
+-	uint32_t i;
+-	int status;
+-	int build = 0;
+-
+-	/* Check input parameters */
+-	if (table == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (keys == NULL) {
+-		TABLE_LOG(ERR, "%s: key parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (n_keys == 0) {
+-		TABLE_LOG(ERR, "%s: 0 rules to delete", __func__);
+-		return -EINVAL;
+-	}
+-	if (key_found == NULL) {
+-		TABLE_LOG(ERR, "%s: key_found parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	for (i = 0; i < n_keys; i++) {
+-		if (keys[i] == NULL) {
+-			TABLE_LOG(ERR, "%s: keys[%" PRIu32 "] parameter is NULL",
+-					__func__, i);
+-			return -EINVAL;
+-		}
+-	}
+-
+-	memset(deleted_rules, 0, n_keys * sizeof(struct rte_acl_rule *));
+-	memset(rule_pos, 0, n_keys * sizeof(uint32_t));
+-	for (i = 0; i < n_keys; i++) {
+-		struct rte_table_acl_rule_delete_params *rule =
+-			keys[i];
+-		uint32_t pos_valid, j;
+-
+-		/* Look for the rule in the table */
+-		pos_valid = 0;
+-		for (j = 1; j < acl->n_rules; j++) {
+-			if (acl->acl_rule_list[j] == NULL)
+-				continue;
+-
+-			/* Compare the key fields */
+-			status = memcmp(&acl->acl_rule_list[j]->field[0],
+-					&rule->field_value[0],
+-					acl->cfg.num_fields * sizeof(struct rte_acl_field));
+-
+-			/* Rule found: remove from table */
+-			if (status == 0) {
+-				pos_valid = 1;
+-
+-				deleted_rules[i] = acl->acl_rule_list[j];
+-				acl->acl_rule_list[j] = NULL;
+-				rule_pos[i] = j;
+-
+-				build = 1;
+-			}
+-		}
+-
+-		if (pos_valid == 0) {
+-			key_found[i] = 0;
+-			continue;
+-		}
+-	}
+-
+-	/* Return if no changes to acl table */
+-	if (build == 0) {
+-		return 0;
+-	}
+-
+-	/* Build low level ACL table */
+-	acl->name_id ^= 1;
+-	acl->acl_params.name = acl->name[acl->name_id];
+-	status = rte_table_acl_build(acl, &ctx);
+-	if (status != 0) {
+-		/* Roll back changes */
+-		for (i = 0; i < n_keys; i++) {
+-			if (rule_pos[i] == 0)
+-				continue;
+-
+-			acl->acl_rule_list[rule_pos[i]] = deleted_rules[i];
+-		}
+-
+-		acl->name_id ^= 1;
+-
+-		return -EINVAL;
+-	}
+-
+-	/* Commit changes */
+-	rte_acl_free(acl->ctx);
+-
+-	acl->ctx = ctx;
+-	for (i = 0; i < n_keys; i++) {
+-		if (rule_pos[i] == 0)
+-			continue;
+-
+-		key_found[i] = 1;
+-		if (entries != NULL && entries[i] != NULL)
+-			memcpy(entries[i], &acl->memory[rule_pos[i] * acl->entry_size],
+-					acl->entry_size);
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_acl_lookup(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_acl *acl = (struct rte_table_acl *) table;
+-	const uint8_t *pkts_data[RTE_PORT_IN_BURST_SIZE_MAX];
+-	uint32_t results[RTE_PORT_IN_BURST_SIZE_MAX];
+-	uint64_t pkts_out_mask;
+-	uint32_t n_pkts, i, j;
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-	RTE_TABLE_ACL_STATS_PKTS_IN_ADD(acl, n_pkts_in);
+-
+-	/* Input conversion */
+-	for (i = 0, j = 0; i < (uint32_t)(RTE_PORT_IN_BURST_SIZE_MAX -
+-		rte_clz64(pkts_mask)); i++) {
+-		uint64_t pkt_mask = 1LLU << i;
+-
+-		if (pkt_mask & pkts_mask) {
+-			pkts_data[j] = rte_pktmbuf_mtod(pkts[i], uint8_t *);
+-			j++;
+-		}
+-	}
+-	n_pkts = j;
+-
+-	/* Low-level ACL table lookup */
+-	if (acl->ctx != NULL)
+-		rte_acl_classify(acl->ctx, pkts_data, results, n_pkts, 1);
+-	else
+-		n_pkts = 0;
+-
+-	/* Output conversion */
+-	pkts_out_mask = 0;
+-	for (i = 0; i < n_pkts; i++) {
+-		uint32_t action_table_pos = results[i];
+-		uint32_t pkt_pos = rte_ctz64(pkts_mask);
+-		uint64_t pkt_mask = 1LLU << pkt_pos;
+-
+-		pkts_mask &= ~pkt_mask;
+-
+-		if (action_table_pos != 0) {
+-			pkts_out_mask |= pkt_mask;
+-			entries[pkt_pos] = (void *)
+-				&acl->memory[action_table_pos *
+-				acl->entry_size];
+-			rte_prefetch0(entries[pkt_pos]);
+-		}
+-	}
+-
+-	*lookup_hit_mask = pkts_out_mask;
+-	RTE_TABLE_ACL_STATS_PKTS_LOOKUP_MISS(acl, n_pkts_in - rte_popcount64(pkts_out_mask));
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_acl_stats_read(void *table, struct rte_table_stats *stats, int clear)
+-{
+-	struct rte_table_acl *acl = table;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &acl->stats, sizeof(acl->stats));
+-
+-	if (clear)
+-		memset(&acl->stats, 0, sizeof(acl->stats));
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_table_acl_ops)
+-struct rte_table_ops rte_table_acl_ops = {
+-	.f_create = rte_table_acl_create,
+-	.f_free = rte_table_acl_free,
+-	.f_add = rte_table_acl_entry_add,
+-	.f_delete = rte_table_acl_entry_delete,
+-	.f_add_bulk = rte_table_acl_entry_add_bulk,
+-	.f_delete_bulk = rte_table_acl_entry_delete_bulk,
+-	.f_lookup = rte_table_acl_lookup,
+-	.f_stats = rte_table_acl_stats_read,
+-};
+diff --git a/lib/table/rte_table_acl.h b/lib/table/rte_table_acl.h
 deleted file mode 100644
-index 9d17bae988..0000000000
---- a/lib/pipeline/rte_port_in_action.h
+index 61af7b88e4..0000000000
+--- a/lib/table/rte_table_acl.h
 +++ /dev/null
-@@ -1,311 +0,0 @@
+@@ -1,65 +0,0 @@
 -/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2018 Intel Corporation
+- * Copyright(c) 2010-2014 Intel Corporation
 - */
 -
--#ifndef __INCLUDE_RTE_PORT_IN_ACTION_H__
--#define __INCLUDE_RTE_PORT_IN_ACTION_H__
+-#ifndef __INCLUDE_RTE_TABLE_ACL_H__
+-#define __INCLUDE_RTE_TABLE_ACL_H__
 -
 -/**
 - * @file
-- * RTE Pipeline Input Port Actions
+- * RTE Table ACL
 - *
-- * This API provides a common set of actions for pipeline input ports to speed
-- * up application development.
+- * This table uses the Access Control List (ACL) algorithm to uniquely
+- * associate data to lookup keys.
 - *
-- * Each pipeline input port can be assigned an action handler to be executed
-- * on every input packet during the pipeline execution. The pipeline library
-- * allows the user to define his own input port actions by providing customized
-- * input port action handler. While the user can still follow this process, this
-- * API is intended to provide a quicker development alternative for a set of
-- * predefined actions.
-- *
-- * The typical steps to use this API are:
-- *  - Define an input port action profile. This is a configuration template that
-- *    can potentially be shared by multiple input ports from the same or
-- *    different pipelines, with different input ports from the same pipeline
-- *    able to use different action profiles. For every input port using a given
-- *    action profile, the profile defines the set of actions and the action
-- *    configuration to be executed by the input port. API functions:
-- *    rte_port_in_action_profile_create(),
-- *    rte_port_in_action_profile_action_register(),
-- *    rte_port_in_action_profile_freeze().
-- *
-- *  - Instantiate the input port action profile to create input port action
-- *    objects. Each pipeline input port has its own action object.
-- *    API functions: rte_port_in_action_create().
-- *
-- *  - Use the input port action object to generate the input port action handler
-- *    invoked by the pipeline. API functions:
-- *    rte_port_in_action_params_get().
-- *
-- *  - Use the input port action object to generate the internal data structures
-- *    used by the input port action handler based on given action parameters.
-- *    API functions: rte_port_in_action_apply().
-- *
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice
+- * Use-cases: Firewall rule database, etc.
 - */
 -
 -#include <stdint.h>
 -
--#include <rte_compat.h>
--#include <rte_table_hash.h>
+-#include "rte_acl.h"
 -
--#include "rte_pipeline.h"
+-#include "rte_table.h"
 -
 -#ifdef __cplusplus
 -extern "C" {
 -#endif
 -
--/** Input port actions. */
--enum rte_port_in_action_type {
--	/** Filter selected input packets. */
--	RTE_PORT_IN_ACTION_FLTR = 0,
+-/** ACL table parameters */
+-struct rte_table_acl_params {
+-	/** Name */
+-	const char *name;
 -
--	/**  Load balance. */
--	RTE_PORT_IN_ACTION_LB,
+-	/** Maximum number of ACL rules in the table */
+-	uint32_t n_rules;
+-
+-	/** Number of fields in the ACL rule specification */
+-	uint32_t n_rule_fields;
+-
+-	/** Format specification of the fields of the ACL rule */
+-	struct rte_acl_field_def field_format[RTE_ACL_MAX_FIELDS];
 -};
 -
--/**
-- * RTE_PORT_IN_ACTION_FLTR
-- */
--/** Filter key size (number of bytes) */
--#define RTE_PORT_IN_ACTION_FLTR_KEY_SIZE                   16
+-/** ACL rule specification for entry add operation */
+-struct rte_table_acl_rule_add_params {
+-	/** ACL rule priority, with 0 as the highest priority */
+-	int32_t  priority;
 -
--/** Filter action configuration (per action profile). */
--struct rte_port_in_action_fltr_config {
--	/** Key offset within the input packet buffer. Offset 0 points to the
--	 * first byte of the MBUF structure.
--	 */
--	uint32_t key_offset;
--
--	/** Key mask. */
--	uint8_t key_mask[RTE_PORT_IN_ACTION_FLTR_KEY_SIZE];
--
--	/** Key value. */
--	uint8_t key[RTE_PORT_IN_ACTION_FLTR_KEY_SIZE];
--
--	/** When non-zero, all the input packets that match the *key* (with the
--	 * *key_mask* applied) are sent to the pipeline output port *port_id*.
--	 * When zero, all the input packets that do NOT match the *key* (with
--	 * *key_mask* applied) are sent to the pipeline output port *port_id*.
--	 */
--	int filter_on_match;
--
--	/** Pipeline output port ID to send the filtered input packets to.
--	 * Can be updated later.
--	 *
--	 * @see struct rte_port_in_action_fltr_params
--	 */
--	uint32_t port_id;
+-	/** Values for the fields of the ACL rule to be added to the table */
+-	struct rte_acl_field field_value[RTE_ACL_MAX_FIELDS];
 -};
 -
--/** Filter action parameters (per action). */
--struct rte_port_in_action_fltr_params {
--	/** Pipeline output port ID to send the filtered input packets to. */
--	uint32_t port_id;
+-/** ACL rule specification for entry delete operation */
+-struct rte_table_acl_rule_delete_params {
+-	/** Values for the fields of the ACL rule to be deleted from table */
+-	struct rte_acl_field field_value[RTE_ACL_MAX_FIELDS];
 -};
 -
--/**
-- * RTE_PORT_IN_ACTION_LB
-- */
--/** Load balance key size min (number of bytes). */
--#define RTE_PORT_IN_ACTION_LB_KEY_SIZE_MIN                    8
--
--/** Load balance key size max (number of bytes). */
--#define RTE_PORT_IN_ACTION_LB_KEY_SIZE_MAX                    64
--
--/** Load balance table size. */
--#define RTE_PORT_IN_ACTION_LB_TABLE_SIZE                   16
--
--/** Load balance action configuration (per action profile). */
--struct rte_port_in_action_lb_config {
--	/** Key size (number of bytes). */
--	uint32_t key_size;
--
--	/** Key offset within the input packet buffer. Offset 0 points to the
--	 * first byte of the MBUF structure.
--	 */
--	uint32_t key_offset;
--
--	/** Key mask(*key_size* bytes are valid). */
--	uint8_t key_mask[RTE_PORT_IN_ACTION_LB_KEY_SIZE_MAX];
--
--	/** Hash function. */
--	rte_table_hash_op_hash f_hash;
--
--	/** Seed value for *f_hash*. */
--	uint64_t seed;
--
--	/** Table defining the weight of each pipeline output port. The weights
--	 * are set in 1/RTE_PORT_IN_ACTION_LB_TABLE_SIZE increments. To assign a
--	 * weight of N/RTE_PORT_IN_ACTION_LB_TABLE_SIZE to a given output port
--	 * (0 <= N <= RTE_PORT_IN_ACTION_LB_TABLE_SIZE), the output port needs
--	 * to show up exactly N times in this table. Can be updated later.
--	 *
--	 * @see struct rte_port_in_action_lb_params
--	 */
--	uint32_t port_id[RTE_PORT_IN_ACTION_LB_TABLE_SIZE];
--};
--
--/** Load balance action parameters (per action). */
--struct rte_port_in_action_lb_params {
--	/** Table defining the weight of each pipeline output port. The weights
--	 * are set in 1/RTE_PORT_IN_ACTION_LB_TABLE_SIZE increments. To assign a
--	 * weight of N/RTE_PORT_IN_ACTION_LB_TABLE_SIZE to a given output port
--	 * (0 <= N <= RTE_PORT_IN_ACTION_LB_TABLE_SIZE), the output port needs
--	 * to show up exactly N times in this table.
--	 */
--	uint32_t port_id[RTE_PORT_IN_ACTION_LB_TABLE_SIZE];
--};
--
--/**
-- * Input port action profile.
-- */
--struct rte_port_in_action_profile;
--
--/**
-- * Input port action profile create.
-- *
-- * @param[in] socket_id
-- *   CPU socket ID for the internal data structures memory allocation.
-- * @return
-- *   Input port action profile handle on success, NULL otherwise.
-- */
--__rte_experimental
--struct rte_port_in_action_profile *
--rte_port_in_action_profile_create(uint32_t socket_id);
--
--/**
-- * Input port action profile free.
-- *
-- * @param[in] profile
-- *   Input port action profile handle (needs to be valid).
-- *   If profile is NULL, no operation is performed.
-- * @return
-- *   Always zero.
-- */
--__rte_experimental
--int
--rte_port_in_action_profile_free(struct rte_port_in_action_profile *profile);
--
--/**
-- * Input port action profile action register.
-- *
-- * @param[in] profile
-- *   Input port action profile handle (needs to be valid and not in frozen
-- *   state).
-- * @param[in] type
-- *   Specific input port action to be registered for *profile*.
-- * @param[in] action_config
-- *   Configuration for the *type* action.
-- *   If struct rte_port_in_action_*type*_config is defined, it needs to point to
-- *   a valid instance of this structure, otherwise it needs to be set to NULL.
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_port_in_action_profile_action_register(
--	struct rte_port_in_action_profile *profile,
--	enum rte_port_in_action_type type,
--	void *action_config);
--
--/**
-- * Input port action profile freeze.
-- *
-- * Once this function is called successfully, the given profile enters the
-- * frozen state with the following immediate effects: no more actions can be
-- * registered for this profile, so the profile can be instantiated to create
-- * input port action objects.
-- *
-- * @param[in] profile
-- *   Input port profile action handle (needs to be valid and not in frozen
-- *   state).
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- *
-- * @see rte_port_in_action_create()
-- */
--__rte_experimental
--int
--rte_port_in_action_profile_freeze(struct rte_port_in_action_profile *profile);
--
--/**
-- * Input port action.
-- */
--struct rte_port_in_action;
--
--/**
-- * Input port action create.
-- *
-- * Instantiates the given input port action profile to create an input port
-- * action object.
-- *
-- * @param[in] profile
-- *   Input port profile action handle (needs to be valid and in frozen state).
-- * @param[in] socket_id
-- *   CPU socket ID where the internal data structures required by the new input
-- *   port action object should be allocated.
-- * @return
-- *   Handle to input port action object on success, NULL on error.
-- */
--__rte_experimental
--struct rte_port_in_action *
--rte_port_in_action_create(struct rte_port_in_action_profile *profile,
--	uint32_t socket_id);
--
--/**
-- * Input port action free.
-- *
-- * @param[in] action
-- *   Handle to input port action object (needs to be valid).
-- *   If action is NULL, no operation is performed.
-- * @return
-- *   Always zero.
-- */
--__rte_experimental
--int
--rte_port_in_action_free(struct rte_port_in_action *action);
--
--/**
-- * Input port params get.
-- *
-- * @param[in] action
-- *   Handle to input port action object (needs to be valid).
-- * @param[inout] params
-- *   Pipeline input port parameters (needs to be pre-allocated).
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_port_in_action_params_get(struct rte_port_in_action *action,
--	struct rte_pipeline_port_in_params *params);
--
--/**
-- * Input port action apply.
-- *
-- * @param[in] action
-- *   Handle to input port action object (needs to be valid).
-- * @param[in] type
-- *   Specific input port action previously registered for the input port action
-- *   profile of the *action* object.
-- * @param[in] action_params
-- *   Parameters for the *type* action.
-- *   If struct rte_port_in_action_*type*_params is defined, it needs to point to
-- *   a valid instance of this structure, otherwise it needs to be set to NULL.
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_port_in_action_apply(struct rte_port_in_action *action,
--	enum rte_port_in_action_type type,
--	void *action_params);
+-/** ACL table operations */
+-extern struct rte_table_ops rte_table_acl_ops;
 -
 -#ifdef __cplusplus
 -}
 -#endif
 -
--#endif /* __INCLUDE_RTE_PORT_IN_ACTION_H__ */
-diff --git a/lib/pipeline/rte_table_action.c b/lib/pipeline/rte_table_action.c
+-#endif
+diff --git a/lib/table/rte_table_array.c b/lib/table/rte_table_array.c
 deleted file mode 100644
-index c990d7eb56..0000000000
---- a/lib/pipeline/rte_table_action.c
+index 55356e5999..0000000000
+--- a/lib/table/rte_table_array.c
 +++ /dev/null
-@@ -1,3483 +0,0 @@
+@@ -1,210 +0,0 @@
 -/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2018 Intel Corporation
+- * Copyright(c) 2010-2014 Intel Corporation
 - */
--#include <stdlib.h>
+-
+-#include <stdalign.h>
+-#include <stdio.h>
 -#include <string.h>
 -
 -#include <eal_export.h>
 -#include <rte_common.h>
--#include <rte_byteorder.h>
--#include <rte_cycles.h>
 -#include <rte_malloc.h>
--#include <rte_memcpy.h>
--#include <rte_ether.h>
--#include <rte_ip.h>
--#include <rte_tcp.h>
--#include <rte_udp.h>
--#include <rte_vxlan.h>
--#include <rte_cryptodev.h>
+-#include <rte_log.h>
 -
--#include "rte_table_action.h"
+-#include "rte_table_array.h"
 -
--#define rte_htons rte_cpu_to_be_16
--#define rte_htonl rte_cpu_to_be_32
+-#include "table_log.h"
 -
--#define rte_ntohs rte_be_to_cpu_16
--#define rte_ntohl rte_be_to_cpu_32
+-#ifdef RTE_TABLE_STATS_COLLECT
 -
--/**
-- * RTE_TABLE_ACTION_FWD
-- */
--#define fwd_data rte_pipeline_table_entry
+-#define RTE_TABLE_ARRAY_STATS_PKTS_IN_ADD(table, val) \
+-	table->stats.n_pkts_in += val
+-#define RTE_TABLE_ARRAY_STATS_PKTS_LOOKUP_MISS(table, val) \
+-	table->stats.n_pkts_lookup_miss += val
 -
--static int
--fwd_apply(struct fwd_data *data,
--	struct rte_table_action_fwd_params *p)
--{
--	data->action = p->action;
+-#else
 -
--	if (p->action == RTE_PIPELINE_ACTION_PORT)
--		data->port_id = p->id;
+-#define RTE_TABLE_ARRAY_STATS_PKTS_IN_ADD(table, val)
+-#define RTE_TABLE_ARRAY_STATS_PKTS_LOOKUP_MISS(table, val)
 -
--	if (p->action == RTE_PIPELINE_ACTION_TABLE)
--		data->table_id = p->id;
+-#endif
 -
--	return 0;
--}
+-struct __rte_cache_aligned rte_table_array {
+-	struct rte_table_stats stats;
 -
--/**
-- * RTE_TABLE_ACTION_LB
-- */
--static int
--lb_cfg_check(struct rte_table_action_lb_config *cfg)
--{
--	if ((cfg == NULL) ||
--		(cfg->key_size < RTE_TABLE_ACTION_LB_KEY_SIZE_MIN) ||
--		(cfg->key_size > RTE_TABLE_ACTION_LB_KEY_SIZE_MAX) ||
--		(!rte_is_power_of_2(cfg->key_size)) ||
--		(cfg->f_hash == NULL))
--		return -1;
+-	/* Input parameters */
+-	uint32_t entry_size;
+-	uint32_t n_entries;
+-	uint32_t offset;
 -
--	return 0;
--}
+-	/* Internal fields */
+-	uint32_t entry_pos_mask;
 -
--struct __rte_packed_begin lb_data {
--	uint32_t out[RTE_TABLE_ACTION_LB_TABLE_SIZE];
--} __rte_packed_end;
--
--static int
--lb_apply(struct lb_data *data,
--	struct rte_table_action_lb_params *p)
--{
--	memcpy(data->out, p->out, sizeof(data->out));
--
--	return 0;
--}
--
--static __rte_always_inline void
--pkt_work_lb(struct rte_mbuf *mbuf,
--	struct lb_data *data,
--	struct rte_table_action_lb_config *cfg)
--{
--	uint8_t *pkt_key = RTE_MBUF_METADATA_UINT8_PTR(mbuf, cfg->key_offset);
--	uint32_t *out = RTE_MBUF_METADATA_UINT32_PTR(mbuf, cfg->out_offset);
--	uint64_t digest, pos;
--	uint32_t out_val;
--
--	digest = cfg->f_hash(pkt_key,
--		cfg->key_mask,
--		cfg->key_size,
--		cfg->seed);
--	pos = digest & (RTE_TABLE_ACTION_LB_TABLE_SIZE - 1);
--	out_val = data->out[pos];
--
--	*out = out_val;
--}
--
--/**
-- * RTE_TABLE_ACTION_MTR
-- */
--static int
--mtr_cfg_check(struct rte_table_action_mtr_config *mtr)
--{
--	if ((mtr->alg == RTE_TABLE_ACTION_METER_SRTCM) ||
--		((mtr->n_tc != 1) && (mtr->n_tc != 4)) ||
--		(mtr->n_bytes_enabled != 0))
--		return -ENOTSUP;
--	return 0;
--}
--
--struct mtr_trtcm_data {
--	struct rte_meter_trtcm trtcm;
--	uint64_t stats[RTE_COLORS];
+-	/* Internal table */
+-	alignas(RTE_CACHE_LINE_SIZE) uint8_t array[];
 -};
 -
--#define MTR_TRTCM_DATA_METER_PROFILE_ID_GET(data)          \
--	(((data)->stats[RTE_COLOR_GREEN] & 0xF8LLU) >> 3)
--
--static void
--mtr_trtcm_data_meter_profile_id_set(struct mtr_trtcm_data *data,
--	uint32_t profile_id)
--{
--	data->stats[RTE_COLOR_GREEN] &= ~0xF8LLU;
--	data->stats[RTE_COLOR_GREEN] |= (profile_id % 32) << 3;
--}
--
--#define MTR_TRTCM_DATA_POLICER_ACTION_DROP_GET(data, color)\
--	(((data)->stats[(color)] & 4LLU) >> 2)
--
--#define MTR_TRTCM_DATA_POLICER_ACTION_COLOR_GET(data, color)\
--	((enum rte_color)((data)->stats[(color)] & 3LLU))
--
--static void
--mtr_trtcm_data_policer_action_set(struct mtr_trtcm_data *data,
--	enum rte_color color,
--	enum rte_table_action_policer action)
--{
--	if (action == RTE_TABLE_ACTION_POLICER_DROP) {
--		data->stats[color] |= 4LLU;
--	} else {
--		data->stats[color] &= ~7LLU;
--		data->stats[color] |= color & 3LLU;
--	}
--}
--
--static uint64_t
--mtr_trtcm_data_stats_get(struct mtr_trtcm_data *data,
--	enum rte_color color)
--{
--	return data->stats[color] >> 8;
--}
--
--static void
--mtr_trtcm_data_stats_reset(struct mtr_trtcm_data *data,
--	enum rte_color color)
--{
--	data->stats[color] &= 0xFFLU;
--}
--
--#define MTR_TRTCM_DATA_STATS_INC(data, color)              \
--	((data)->stats[(color)] += (1LLU << 8))
--
--static size_t
--mtr_data_size(struct rte_table_action_mtr_config *mtr)
--{
--	return mtr->n_tc * sizeof(struct mtr_trtcm_data);
--}
--
--struct dscp_table_entry_data {
--	enum rte_color color;
--	uint16_t tc;
--	uint16_t tc_queue;
--};
--
--struct dscp_table_data {
--	struct dscp_table_entry_data entry[64];
--};
--
--struct meter_profile_data {
--	struct rte_meter_trtcm_profile profile;
--	uint32_t profile_id;
--	int valid;
--};
--
--static struct meter_profile_data *
--meter_profile_data_find(struct meter_profile_data *mp,
--	uint32_t mp_size,
--	uint32_t profile_id)
--{
--	uint32_t i;
--
--	for (i = 0; i < mp_size; i++) {
--		struct meter_profile_data *mp_data = &mp[i];
--
--		if (mp_data->valid && (mp_data->profile_id == profile_id))
--			return mp_data;
--	}
--
--	return NULL;
--}
--
--static struct meter_profile_data *
--meter_profile_data_find_unused(struct meter_profile_data *mp,
--	uint32_t mp_size)
--{
--	uint32_t i;
--
--	for (i = 0; i < mp_size; i++) {
--		struct meter_profile_data *mp_data = &mp[i];
--
--		if (!mp_data->valid)
--			return mp_data;
--	}
--
--	return NULL;
--}
--
--static int
--mtr_apply_check(struct rte_table_action_mtr_params *p,
--	struct rte_table_action_mtr_config *cfg,
--	struct meter_profile_data *mp,
--	uint32_t mp_size)
--{
--	uint32_t i;
--
--	if (p->tc_mask > RTE_LEN2MASK(cfg->n_tc, uint32_t))
--		return -EINVAL;
--
--	for (i = 0; i < RTE_TABLE_ACTION_TC_MAX; i++) {
--		struct rte_table_action_mtr_tc_params *p_tc = &p->mtr[i];
--		struct meter_profile_data *mp_data;
--
--		if ((p->tc_mask & (1LLU << i)) == 0)
--			continue;
--
--		mp_data = meter_profile_data_find(mp,
--			mp_size,
--			p_tc->meter_profile_id);
--		if (!mp_data)
--			return -EINVAL;
--	}
--
--	return 0;
--}
--
--static int
--mtr_apply(struct mtr_trtcm_data *data,
--	struct rte_table_action_mtr_params *p,
--	struct rte_table_action_mtr_config *cfg,
--	struct meter_profile_data *mp,
--	uint32_t mp_size)
--{
--	uint32_t i;
--	int status;
--
--	/* Check input arguments */
--	status = mtr_apply_check(p, cfg, mp, mp_size);
--	if (status)
--		return status;
--
--	/* Apply */
--	for (i = 0; i < RTE_TABLE_ACTION_TC_MAX; i++) {
--		struct rte_table_action_mtr_tc_params *p_tc = &p->mtr[i];
--		struct mtr_trtcm_data *data_tc = &data[i];
--		struct meter_profile_data *mp_data;
--
--		if ((p->tc_mask & (1LLU << i)) == 0)
--			continue;
--
--		/* Find profile */
--		mp_data = meter_profile_data_find(mp,
--			mp_size,
--			p_tc->meter_profile_id);
--		if (!mp_data)
--			return -EINVAL;
--
--		memset(data_tc, 0, sizeof(*data_tc));
--
--		/* Meter object */
--		status = rte_meter_trtcm_config(&data_tc->trtcm,
--			&mp_data->profile);
--		if (status)
--			return status;
--
--		/* Meter profile */
--		mtr_trtcm_data_meter_profile_id_set(data_tc,
--			mp_data - mp);
--
--		/* Policer actions */
--		mtr_trtcm_data_policer_action_set(data_tc,
--			RTE_COLOR_GREEN,
--			p_tc->policer[RTE_COLOR_GREEN]);
--
--		mtr_trtcm_data_policer_action_set(data_tc,
--			RTE_COLOR_YELLOW,
--			p_tc->policer[RTE_COLOR_YELLOW]);
--
--		mtr_trtcm_data_policer_action_set(data_tc,
--			RTE_COLOR_RED,
--			p_tc->policer[RTE_COLOR_RED]);
--	}
--
--	return 0;
--}
--
--static __rte_always_inline uint64_t
--pkt_work_mtr(struct rte_mbuf *mbuf,
--	struct mtr_trtcm_data *data,
--	struct dscp_table_data *dscp_table,
--	struct meter_profile_data *mp,
--	uint64_t time,
--	uint32_t dscp,
--	uint16_t total_length)
--{
--	uint64_t drop_mask;
--	struct dscp_table_entry_data *dscp_entry = &dscp_table->entry[dscp];
--	enum rte_color color_in, color_meter, color_policer;
--	uint32_t tc, mp_id;
--
--	tc = dscp_entry->tc;
--	color_in = dscp_entry->color;
--	data += tc;
--	mp_id = MTR_TRTCM_DATA_METER_PROFILE_ID_GET(data);
--
--	/* Meter */
--	color_meter = rte_meter_trtcm_color_aware_check(
--		&data->trtcm,
--		&mp[mp_id].profile,
--		time,
--		total_length,
--		color_in);
--
--	/* Stats */
--	MTR_TRTCM_DATA_STATS_INC(data, color_meter);
--
--	/* Police */
--	drop_mask = MTR_TRTCM_DATA_POLICER_ACTION_DROP_GET(data, color_meter);
--	color_policer =
--		MTR_TRTCM_DATA_POLICER_ACTION_COLOR_GET(data, color_meter);
--	rte_mbuf_sched_color_set(mbuf, (uint8_t)color_policer);
--
--	return drop_mask;
--}
--
--/**
-- * RTE_TABLE_ACTION_TM
-- */
--static int
--tm_cfg_check(struct rte_table_action_tm_config *tm)
--{
--	if ((tm->n_subports_per_port == 0) ||
--		(rte_is_power_of_2(tm->n_subports_per_port) == 0) ||
--		(tm->n_subports_per_port > UINT16_MAX) ||
--		(tm->n_pipes_per_subport == 0) ||
--		(rte_is_power_of_2(tm->n_pipes_per_subport) == 0))
--		return -ENOTSUP;
--
--	return 0;
--}
--
--struct __rte_packed_begin tm_data {
--	uint32_t queue_id;
--	uint32_t reserved;
--} __rte_packed_end;
--
--static int
--tm_apply_check(struct rte_table_action_tm_params *p,
--	struct rte_table_action_tm_config *cfg)
--{
--	if ((p->subport_id >= cfg->n_subports_per_port) ||
--		(p->pipe_id >= cfg->n_pipes_per_subport))
--		return -EINVAL;
--
--	return 0;
--}
--
--static int
--tm_apply(struct tm_data *data,
--	struct rte_table_action_tm_params *p,
--	struct rte_table_action_tm_config *cfg)
--{
--	int status;
--
--	/* Check input arguments */
--	status = tm_apply_check(p, cfg);
--	if (status)
--		return status;
--
--	/* Apply */
--	data->queue_id = p->subport_id <<
--				(rte_ctz32(cfg->n_pipes_per_subport) + 4) |
--				p->pipe_id << 4;
--
--	return 0;
--}
--
--static __rte_always_inline void
--pkt_work_tm(struct rte_mbuf *mbuf,
--	struct tm_data *data,
--	struct dscp_table_data *dscp_table,
--	uint32_t dscp)
--{
--	struct dscp_table_entry_data *dscp_entry = &dscp_table->entry[dscp];
--	uint32_t queue_id = data->queue_id |
--				dscp_entry->tc_queue;
--	rte_mbuf_sched_set(mbuf, queue_id, dscp_entry->tc,
--				(uint8_t)dscp_entry->color);
--}
--
--/**
-- * RTE_TABLE_ACTION_ENCAP
-- */
--static int
--encap_valid(enum rte_table_action_encap_type encap)
--{
--	switch (encap) {
--	case RTE_TABLE_ACTION_ENCAP_ETHER:
--	case RTE_TABLE_ACTION_ENCAP_VLAN:
--	case RTE_TABLE_ACTION_ENCAP_QINQ:
--	case RTE_TABLE_ACTION_ENCAP_MPLS:
--	case RTE_TABLE_ACTION_ENCAP_PPPOE:
--	case RTE_TABLE_ACTION_ENCAP_VXLAN:
--	case RTE_TABLE_ACTION_ENCAP_QINQ_PPPOE:
--		return 1;
--	default:
--		return 0;
--	}
--}
--
--static int
--encap_cfg_check(struct rte_table_action_encap_config *encap)
--{
--	if ((encap->encap_mask == 0) ||
--		(rte_popcount64(encap->encap_mask) != 1))
--		return -ENOTSUP;
--
--	return 0;
--}
--
--struct encap_ether_data {
--	struct rte_ether_hdr ether;
--};
--
--#define VLAN(pcp, dei, vid)                                \
--	((uint16_t)((((uint64_t)(pcp)) & 0x7LLU) << 13) |  \
--	((((uint64_t)(dei)) & 0x1LLU) << 12) |             \
--	(((uint64_t)(vid)) & 0xFFFLLU))                    \
--
--struct encap_vlan_data {
--	struct rte_ether_hdr ether;
--	struct rte_vlan_hdr vlan;
--};
--
--struct encap_qinq_data {
--	struct rte_ether_hdr ether;
--	struct rte_vlan_hdr svlan;
--	struct rte_vlan_hdr cvlan;
--};
--
--#define ETHER_TYPE_MPLS_UNICAST                            0x8847
--
--#define ETHER_TYPE_MPLS_MULTICAST                          0x8848
--
--#define MPLS(label, tc, s, ttl)                            \
--	((uint32_t)(((((uint64_t)(label)) & 0xFFFFFLLU) << 12) |\
--	((((uint64_t)(tc)) & 0x7LLU) << 9) |               \
--	((((uint64_t)(s)) & 0x1LLU) << 8) |                \
--	(((uint64_t)(ttl)) & 0xFFLLU)))
--
--struct __rte_aligned(2) __rte_packed_begin encap_mpls_data {
--	struct rte_ether_hdr ether;
--	uint32_t mpls[RTE_TABLE_ACTION_MPLS_LABELS_MAX];
--	uint32_t mpls_count;
--} __rte_packed_end;
--
--#define PPP_PROTOCOL_IP                                    0x0021
--
--struct pppoe_ppp_hdr {
--	uint16_t ver_type_code;
--	uint16_t session_id;
--	uint16_t length;
--	uint16_t protocol;
--};
--
--struct encap_pppoe_data {
--	struct rte_ether_hdr ether;
--	struct pppoe_ppp_hdr pppoe_ppp;
--};
--
--#define IP_PROTO_UDP                                       17
--
--struct __rte_aligned(2) __rte_packed_begin encap_vxlan_ipv4_data {
--	struct rte_ether_hdr ether;
--	struct rte_ipv4_hdr ipv4;
--	struct rte_udp_hdr udp;
--	struct rte_vxlan_hdr vxlan;
--} __rte_packed_end;
--
--struct __rte_aligned(2) __rte_packed_begin encap_vxlan_ipv4_vlan_data {
--	struct rte_ether_hdr ether;
--	struct rte_vlan_hdr vlan;
--	struct rte_ipv4_hdr ipv4;
--	struct rte_udp_hdr udp;
--	struct rte_vxlan_hdr vxlan;
--} __rte_packed_end;
--
--struct __rte_aligned(2) __rte_packed_begin encap_vxlan_ipv6_data {
--	struct rte_ether_hdr ether;
--	struct rte_ipv6_hdr ipv6;
--	struct rte_udp_hdr udp;
--	struct rte_vxlan_hdr vxlan;
--} __rte_packed_end;
--
--struct __rte_aligned(2) __rte_packed_begin encap_vxlan_ipv6_vlan_data {
--	struct rte_ether_hdr ether;
--	struct rte_vlan_hdr vlan;
--	struct rte_ipv6_hdr ipv6;
--	struct rte_udp_hdr udp;
--	struct rte_vxlan_hdr vxlan;
--} __rte_packed_end;
--
--struct __rte_aligned(2) __rte_packed_begin encap_qinq_pppoe_data {
--	struct rte_ether_hdr ether;
--	struct rte_vlan_hdr svlan;
--	struct rte_vlan_hdr cvlan;
--	struct pppoe_ppp_hdr pppoe_ppp;
--} __rte_packed_end;
--
--static size_t
--encap_data_size(struct rte_table_action_encap_config *encap)
--{
--	switch (encap->encap_mask) {
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_ETHER:
--		return sizeof(struct encap_ether_data);
--
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_VLAN:
--		return sizeof(struct encap_vlan_data);
--
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_QINQ:
--		return sizeof(struct encap_qinq_data);
--
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_MPLS:
--		return sizeof(struct encap_mpls_data);
--
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_PPPOE:
--		return sizeof(struct encap_pppoe_data);
--
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_VXLAN:
--		if (encap->vxlan.ip_version)
--			if (encap->vxlan.vlan)
--				return sizeof(struct encap_vxlan_ipv4_vlan_data);
--			else
--				return sizeof(struct encap_vxlan_ipv4_data);
--		else
--			if (encap->vxlan.vlan)
--				return sizeof(struct encap_vxlan_ipv6_vlan_data);
--			else
--				return sizeof(struct encap_vxlan_ipv6_data);
--
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_QINQ_PPPOE:
--			return sizeof(struct encap_qinq_pppoe_data);
--
--	default:
--		return 0;
--	}
--}
--
--static int
--encap_apply_check(struct rte_table_action_encap_params *p,
--	struct rte_table_action_encap_config *cfg)
--{
--	if ((encap_valid(p->type) == 0) ||
--		((cfg->encap_mask & (1LLU << p->type)) == 0))
--		return -EINVAL;
--
--	switch (p->type) {
--	case RTE_TABLE_ACTION_ENCAP_ETHER:
--		return 0;
--
--	case RTE_TABLE_ACTION_ENCAP_VLAN:
--		return 0;
--
--	case RTE_TABLE_ACTION_ENCAP_QINQ:
--		return 0;
--
--	case RTE_TABLE_ACTION_ENCAP_MPLS:
--		if ((p->mpls.mpls_count == 0) ||
--			(p->mpls.mpls_count > RTE_TABLE_ACTION_MPLS_LABELS_MAX))
--			return -EINVAL;
--
--		return 0;
--
--	case RTE_TABLE_ACTION_ENCAP_PPPOE:
--		return 0;
--
--	case RTE_TABLE_ACTION_ENCAP_VXLAN:
--		return 0;
--
--	case RTE_TABLE_ACTION_ENCAP_QINQ_PPPOE:
--		return 0;
--
--	default:
--		return -EINVAL;
--	}
--}
--
--static int
--encap_ether_apply(void *data,
--	struct rte_table_action_encap_params *p,
--	struct rte_table_action_common_config *common_cfg)
--{
--	struct encap_ether_data *d = data;
--	uint16_t ethertype = (common_cfg->ip_version) ?
--		RTE_ETHER_TYPE_IPV4 :
--		RTE_ETHER_TYPE_IPV6;
--
--	/* Ethernet */
--	rte_ether_addr_copy(&p->ether.ether.da, &d->ether.dst_addr);
--	rte_ether_addr_copy(&p->ether.ether.sa, &d->ether.src_addr);
--	d->ether.ether_type = rte_htons(ethertype);
--
--	return 0;
--}
--
--static int
--encap_vlan_apply(void *data,
--	struct rte_table_action_encap_params *p,
--	struct rte_table_action_common_config *common_cfg)
--{
--	struct encap_vlan_data *d = data;
--	uint16_t ethertype = (common_cfg->ip_version) ?
--		RTE_ETHER_TYPE_IPV4 :
--		RTE_ETHER_TYPE_IPV6;
--
--	/* Ethernet */
--	rte_ether_addr_copy(&p->vlan.ether.da, &d->ether.dst_addr);
--	rte_ether_addr_copy(&p->vlan.ether.sa, &d->ether.src_addr);
--	d->ether.ether_type = rte_htons(RTE_ETHER_TYPE_VLAN);
--
--	/* VLAN */
--	d->vlan.vlan_tci = rte_htons(VLAN(p->vlan.vlan.pcp,
--		p->vlan.vlan.dei,
--		p->vlan.vlan.vid));
--	d->vlan.eth_proto = rte_htons(ethertype);
--
--	return 0;
--}
--
--static int
--encap_qinq_apply(void *data,
--	struct rte_table_action_encap_params *p,
--	struct rte_table_action_common_config *common_cfg)
--{
--	struct encap_qinq_data *d = data;
--	uint16_t ethertype = (common_cfg->ip_version) ?
--		RTE_ETHER_TYPE_IPV4 :
--		RTE_ETHER_TYPE_IPV6;
--
--	/* Ethernet */
--	rte_ether_addr_copy(&p->qinq.ether.da, &d->ether.dst_addr);
--	rte_ether_addr_copy(&p->qinq.ether.sa, &d->ether.src_addr);
--	d->ether.ether_type = rte_htons(RTE_ETHER_TYPE_QINQ);
--
--	/* SVLAN */
--	d->svlan.vlan_tci = rte_htons(VLAN(p->qinq.svlan.pcp,
--		p->qinq.svlan.dei,
--		p->qinq.svlan.vid));
--	d->svlan.eth_proto = rte_htons(RTE_ETHER_TYPE_VLAN);
--
--	/* CVLAN */
--	d->cvlan.vlan_tci = rte_htons(VLAN(p->qinq.cvlan.pcp,
--		p->qinq.cvlan.dei,
--		p->qinq.cvlan.vid));
--	d->cvlan.eth_proto = rte_htons(ethertype);
--
--	return 0;
--}
--
--static int
--encap_qinq_pppoe_apply(void *data,
--	struct rte_table_action_encap_params *p)
--{
--	struct encap_qinq_pppoe_data *d = data;
--
--	/* Ethernet */
--	rte_ether_addr_copy(&p->qinq.ether.da, &d->ether.dst_addr);
--	rte_ether_addr_copy(&p->qinq.ether.sa, &d->ether.src_addr);
--	d->ether.ether_type = rte_htons(RTE_ETHER_TYPE_VLAN);
--
--	/* SVLAN */
--	d->svlan.vlan_tci = rte_htons(VLAN(p->qinq.svlan.pcp,
--		p->qinq.svlan.dei,
--		p->qinq.svlan.vid));
--	d->svlan.eth_proto = rte_htons(RTE_ETHER_TYPE_VLAN);
--
--	/* CVLAN */
--	d->cvlan.vlan_tci = rte_htons(VLAN(p->qinq.cvlan.pcp,
--		p->qinq.cvlan.dei,
--		p->qinq.cvlan.vid));
--	d->cvlan.eth_proto = rte_htons(RTE_ETHER_TYPE_PPPOE_SESSION);
--
--	/* PPPoE and PPP*/
--	d->pppoe_ppp.ver_type_code = rte_htons(0x1100);
--	d->pppoe_ppp.session_id = rte_htons(p->qinq_pppoe.pppoe.session_id);
--	d->pppoe_ppp.length = 0; /* not pre-computed */
--	d->pppoe_ppp.protocol = rte_htons(PPP_PROTOCOL_IP);
--
--	return 0;
--}
--
--static int
--encap_mpls_apply(void *data,
--	struct rte_table_action_encap_params *p)
--{
--	struct encap_mpls_data *d = data;
--	uint16_t ethertype = (p->mpls.unicast) ?
--		ETHER_TYPE_MPLS_UNICAST :
--		ETHER_TYPE_MPLS_MULTICAST;
--	uint32_t i;
--
--	/* Ethernet */
--	rte_ether_addr_copy(&p->mpls.ether.da, &d->ether.dst_addr);
--	rte_ether_addr_copy(&p->mpls.ether.sa, &d->ether.src_addr);
--	d->ether.ether_type = rte_htons(ethertype);
--
--	/* MPLS */
--	for (i = 0; i < p->mpls.mpls_count - 1; i++)
--		d->mpls[i] = rte_htonl(MPLS(p->mpls.mpls[i].label,
--			p->mpls.mpls[i].tc,
--			0,
--			p->mpls.mpls[i].ttl));
--
--	d->mpls[i] = rte_htonl(MPLS(p->mpls.mpls[i].label,
--		p->mpls.mpls[i].tc,
--		1,
--		p->mpls.mpls[i].ttl));
--
--	d->mpls_count = p->mpls.mpls_count;
--	return 0;
--}
--
--static int
--encap_pppoe_apply(void *data,
--	struct rte_table_action_encap_params *p)
--{
--	struct encap_pppoe_data *d = data;
--
--	/* Ethernet */
--	rte_ether_addr_copy(&p->pppoe.ether.da, &d->ether.dst_addr);
--	rte_ether_addr_copy(&p->pppoe.ether.sa, &d->ether.src_addr);
--	d->ether.ether_type = rte_htons(RTE_ETHER_TYPE_PPPOE_SESSION);
--
--	/* PPPoE and PPP*/
--	d->pppoe_ppp.ver_type_code = rte_htons(0x1100);
--	d->pppoe_ppp.session_id = rte_htons(p->pppoe.pppoe.session_id);
--	d->pppoe_ppp.length = 0; /* not pre-computed */
--	d->pppoe_ppp.protocol = rte_htons(PPP_PROTOCOL_IP);
--
--	return 0;
--}
--
--static int
--encap_vxlan_apply(void *data,
--	struct rte_table_action_encap_params *p,
--	struct rte_table_action_encap_config *cfg)
--{
--	if ((p->vxlan.vxlan.vni > 0xFFFFFF) ||
--		(cfg->vxlan.ip_version && (p->vxlan.ipv4.dscp > 0x3F)) ||
--		(!cfg->vxlan.ip_version && (p->vxlan.ipv6.flow_label > 0xFFFFF)) ||
--		(!cfg->vxlan.ip_version && (p->vxlan.ipv6.dscp > 0x3F)) ||
--		(cfg->vxlan.vlan && (p->vxlan.vlan.vid > 0xFFF)))
--		return -1;
--
--	if (cfg->vxlan.ip_version)
--		if (cfg->vxlan.vlan) {
--			struct encap_vxlan_ipv4_vlan_data *d = data;
--
--			/* Ethernet */
--			rte_ether_addr_copy(&p->vxlan.ether.da,
--					&d->ether.dst_addr);
--			rte_ether_addr_copy(&p->vxlan.ether.sa,
--					&d->ether.src_addr);
--			d->ether.ether_type = rte_htons(RTE_ETHER_TYPE_VLAN);
--
--			/* VLAN */
--			d->vlan.vlan_tci = rte_htons(VLAN(p->vxlan.vlan.pcp,
--				p->vxlan.vlan.dei,
--				p->vxlan.vlan.vid));
--			d->vlan.eth_proto = rte_htons(RTE_ETHER_TYPE_IPV4);
--
--			/* IPv4*/
--			d->ipv4.version_ihl = 0x45;
--			d->ipv4.type_of_service = p->vxlan.ipv4.dscp << 2;
--			d->ipv4.total_length = 0; /* not pre-computed */
--			d->ipv4.packet_id = 0;
--			d->ipv4.fragment_offset = 0;
--			d->ipv4.time_to_live = p->vxlan.ipv4.ttl;
--			d->ipv4.next_proto_id = IP_PROTO_UDP;
--			d->ipv4.hdr_checksum = 0;
--			d->ipv4.src_addr = rte_htonl(p->vxlan.ipv4.sa);
--			d->ipv4.dst_addr = rte_htonl(p->vxlan.ipv4.da);
--
--			d->ipv4.hdr_checksum = rte_ipv4_cksum(&d->ipv4);
--
--			/* UDP */
--			d->udp.src_port = rte_htons(p->vxlan.udp.sp);
--			d->udp.dst_port = rte_htons(p->vxlan.udp.dp);
--			d->udp.dgram_len = 0; /* not pre-computed */
--			d->udp.dgram_cksum = 0;
--
--			/* VXLAN */
--			d->vxlan.vx_flags = rte_htonl(0x08000000);
--			d->vxlan.vx_vni = rte_htonl(p->vxlan.vxlan.vni << 8);
--
--			return 0;
--		} else {
--			struct encap_vxlan_ipv4_data *d = data;
--
--			/* Ethernet */
--			rte_ether_addr_copy(&p->vxlan.ether.da,
--					&d->ether.dst_addr);
--			rte_ether_addr_copy(&p->vxlan.ether.sa,
--					&d->ether.src_addr);
--			d->ether.ether_type = rte_htons(RTE_ETHER_TYPE_IPV4);
--
--			/* IPv4*/
--			d->ipv4.version_ihl = 0x45;
--			d->ipv4.type_of_service = p->vxlan.ipv4.dscp << 2;
--			d->ipv4.total_length = 0; /* not pre-computed */
--			d->ipv4.packet_id = 0;
--			d->ipv4.fragment_offset = 0;
--			d->ipv4.time_to_live = p->vxlan.ipv4.ttl;
--			d->ipv4.next_proto_id = IP_PROTO_UDP;
--			d->ipv4.hdr_checksum = 0;
--			d->ipv4.src_addr = rte_htonl(p->vxlan.ipv4.sa);
--			d->ipv4.dst_addr = rte_htonl(p->vxlan.ipv4.da);
--
--			d->ipv4.hdr_checksum = rte_ipv4_cksum(&d->ipv4);
--
--			/* UDP */
--			d->udp.src_port = rte_htons(p->vxlan.udp.sp);
--			d->udp.dst_port = rte_htons(p->vxlan.udp.dp);
--			d->udp.dgram_len = 0; /* not pre-computed */
--			d->udp.dgram_cksum = 0;
--
--			/* VXLAN */
--			d->vxlan.vx_flags = rte_htonl(0x08000000);
--			d->vxlan.vx_vni = rte_htonl(p->vxlan.vxlan.vni << 8);
--
--			return 0;
--		}
--	else
--		if (cfg->vxlan.vlan) {
--			struct encap_vxlan_ipv6_vlan_data *d = data;
--
--			/* Ethernet */
--			rte_ether_addr_copy(&p->vxlan.ether.da,
--					&d->ether.dst_addr);
--			rte_ether_addr_copy(&p->vxlan.ether.sa,
--					&d->ether.src_addr);
--			d->ether.ether_type = rte_htons(RTE_ETHER_TYPE_VLAN);
--
--			/* VLAN */
--			d->vlan.vlan_tci = rte_htons(VLAN(p->vxlan.vlan.pcp,
--				p->vxlan.vlan.dei,
--				p->vxlan.vlan.vid));
--			d->vlan.eth_proto = rte_htons(RTE_ETHER_TYPE_IPV6);
--
--			/* IPv6*/
--			d->ipv6.vtc_flow = rte_htonl((6 << 28) |
--				(p->vxlan.ipv6.dscp << 22) |
--				p->vxlan.ipv6.flow_label);
--			d->ipv6.payload_len = 0; /* not pre-computed */
--			d->ipv6.proto = IP_PROTO_UDP;
--			d->ipv6.hop_limits = p->vxlan.ipv6.hop_limit;
--			d->ipv6.src_addr = p->vxlan.ipv6.sa;
--			d->ipv6.dst_addr = p->vxlan.ipv6.da;
--
--			/* UDP */
--			d->udp.src_port = rte_htons(p->vxlan.udp.sp);
--			d->udp.dst_port = rte_htons(p->vxlan.udp.dp);
--			d->udp.dgram_len = 0; /* not pre-computed */
--			d->udp.dgram_cksum = 0;
--
--			/* VXLAN */
--			d->vxlan.vx_flags = rte_htonl(0x08000000);
--			d->vxlan.vx_vni = rte_htonl(p->vxlan.vxlan.vni << 8);
--
--			return 0;
--		} else {
--			struct encap_vxlan_ipv6_data *d = data;
--
--			/* Ethernet */
--			rte_ether_addr_copy(&p->vxlan.ether.da,
--					&d->ether.dst_addr);
--			rte_ether_addr_copy(&p->vxlan.ether.sa,
--					&d->ether.src_addr);
--			d->ether.ether_type = rte_htons(RTE_ETHER_TYPE_IPV6);
--
--			/* IPv6*/
--			d->ipv6.vtc_flow = rte_htonl((6 << 28) |
--				(p->vxlan.ipv6.dscp << 22) |
--				p->vxlan.ipv6.flow_label);
--			d->ipv6.payload_len = 0; /* not pre-computed */
--			d->ipv6.proto = IP_PROTO_UDP;
--			d->ipv6.hop_limits = p->vxlan.ipv6.hop_limit;
--			d->ipv6.src_addr = p->vxlan.ipv6.sa;
--			d->ipv6.dst_addr = p->vxlan.ipv6.da;
--
--			/* UDP */
--			d->udp.src_port = rte_htons(p->vxlan.udp.sp);
--			d->udp.dst_port = rte_htons(p->vxlan.udp.dp);
--			d->udp.dgram_len = 0; /* not pre-computed */
--			d->udp.dgram_cksum = 0;
--
--			/* VXLAN */
--			d->vxlan.vx_flags = rte_htonl(0x08000000);
--			d->vxlan.vx_vni = rte_htonl(p->vxlan.vxlan.vni << 8);
--
--			return 0;
--		}
--}
--
--static int
--encap_apply(void *data,
--	struct rte_table_action_encap_params *p,
--	struct rte_table_action_encap_config *cfg,
--	struct rte_table_action_common_config *common_cfg)
--{
--	int status;
--
--	/* Check input arguments */
--	status = encap_apply_check(p, cfg);
--	if (status)
--		return status;
--
--	switch (p->type) {
--	case RTE_TABLE_ACTION_ENCAP_ETHER:
--		return encap_ether_apply(data, p, common_cfg);
--
--	case RTE_TABLE_ACTION_ENCAP_VLAN:
--		return encap_vlan_apply(data, p, common_cfg);
--
--	case RTE_TABLE_ACTION_ENCAP_QINQ:
--		return encap_qinq_apply(data, p, common_cfg);
--
--	case RTE_TABLE_ACTION_ENCAP_MPLS:
--		return encap_mpls_apply(data, p);
--
--	case RTE_TABLE_ACTION_ENCAP_PPPOE:
--		return encap_pppoe_apply(data, p);
--
--	case RTE_TABLE_ACTION_ENCAP_VXLAN:
--		return encap_vxlan_apply(data, p, cfg);
--
--	case RTE_TABLE_ACTION_ENCAP_QINQ_PPPOE:
--		return encap_qinq_pppoe_apply(data, p);
--
--	default:
--		return -EINVAL;
--	}
--}
--
--static __rte_always_inline uint16_t
--encap_vxlan_ipv4_checksum_update(uint16_t cksum0,
--	uint16_t total_length)
--{
--	int32_t cksum1;
--
--	cksum1 = cksum0;
--	cksum1 = ~cksum1 & 0xFFFF;
--
--	/* Add total length (one's complement logic) */
--	cksum1 += total_length;
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--
--	return (uint16_t)(~cksum1);
--}
--
--static __rte_always_inline void *
--encap(void *dst, const void *src, size_t n)
--{
--	dst = ((uint8_t *) dst) - n;
--	return rte_memcpy(dst, src, n);
--}
--
--static __rte_always_inline void
--pkt_work_encap_vxlan_ipv4(struct rte_mbuf *mbuf,
--	struct encap_vxlan_ipv4_data *vxlan_tbl,
--	struct rte_table_action_encap_config *cfg)
--{
--	uint32_t ether_offset = cfg->vxlan.data_offset;
--	void *ether = RTE_MBUF_METADATA_UINT32_PTR(mbuf, ether_offset);
--	struct encap_vxlan_ipv4_data *vxlan_pkt;
--	uint16_t ether_length, ipv4_total_length, ipv4_hdr_cksum, udp_length;
--
--	ether_length = (uint16_t)mbuf->pkt_len;
--	ipv4_total_length = ether_length +
--		(sizeof(struct rte_vxlan_hdr) +
--		sizeof(struct rte_udp_hdr) +
--		sizeof(struct rte_ipv4_hdr));
--	ipv4_hdr_cksum = encap_vxlan_ipv4_checksum_update(vxlan_tbl->ipv4.hdr_checksum,
--		rte_htons(ipv4_total_length));
--	udp_length = ether_length +
--		(sizeof(struct rte_vxlan_hdr) +
--		sizeof(struct rte_udp_hdr));
--
--	vxlan_pkt = encap(ether, vxlan_tbl, sizeof(*vxlan_tbl));
--	vxlan_pkt->ipv4.total_length = rte_htons(ipv4_total_length);
--	vxlan_pkt->ipv4.hdr_checksum = ipv4_hdr_cksum;
--	vxlan_pkt->udp.dgram_len = rte_htons(udp_length);
--
--	mbuf->data_off = ether_offset - (sizeof(struct rte_mbuf) + sizeof(*vxlan_pkt));
--	mbuf->pkt_len = mbuf->data_len = ether_length + sizeof(*vxlan_pkt);
--}
--
--static __rte_always_inline void
--pkt_work_encap_vxlan_ipv4_vlan(struct rte_mbuf *mbuf,
--	struct encap_vxlan_ipv4_vlan_data *vxlan_tbl,
--	struct rte_table_action_encap_config *cfg)
--{
--	uint32_t ether_offset = cfg->vxlan.data_offset;
--	void *ether = RTE_MBUF_METADATA_UINT32_PTR(mbuf, ether_offset);
--	struct encap_vxlan_ipv4_vlan_data *vxlan_pkt;
--	uint16_t ether_length, ipv4_total_length, ipv4_hdr_cksum, udp_length;
--
--	ether_length = (uint16_t)mbuf->pkt_len;
--	ipv4_total_length = ether_length +
--		(sizeof(struct rte_vxlan_hdr) +
--		sizeof(struct rte_udp_hdr) +
--		sizeof(struct rte_ipv4_hdr));
--	ipv4_hdr_cksum = encap_vxlan_ipv4_checksum_update(vxlan_tbl->ipv4.hdr_checksum,
--		rte_htons(ipv4_total_length));
--	udp_length = ether_length +
--		(sizeof(struct rte_vxlan_hdr) +
--		sizeof(struct rte_udp_hdr));
--
--	vxlan_pkt = encap(ether, vxlan_tbl, sizeof(*vxlan_tbl));
--	vxlan_pkt->ipv4.total_length = rte_htons(ipv4_total_length);
--	vxlan_pkt->ipv4.hdr_checksum = ipv4_hdr_cksum;
--	vxlan_pkt->udp.dgram_len = rte_htons(udp_length);
--
--	mbuf->data_off = ether_offset - (sizeof(struct rte_mbuf) + sizeof(*vxlan_pkt));
--	mbuf->pkt_len = mbuf->data_len = ether_length + sizeof(*vxlan_pkt);
--}
--
--static __rte_always_inline void
--pkt_work_encap_vxlan_ipv6(struct rte_mbuf *mbuf,
--	struct encap_vxlan_ipv6_data *vxlan_tbl,
--	struct rte_table_action_encap_config *cfg)
--{
--	uint32_t ether_offset = cfg->vxlan.data_offset;
--	void *ether = RTE_MBUF_METADATA_UINT32_PTR(mbuf, ether_offset);
--	struct encap_vxlan_ipv6_data *vxlan_pkt;
--	uint16_t ether_length, ipv6_payload_length, udp_length;
--
--	ether_length = (uint16_t)mbuf->pkt_len;
--	ipv6_payload_length = ether_length +
--		(sizeof(struct rte_vxlan_hdr) +
--		sizeof(struct rte_udp_hdr));
--	udp_length = ether_length +
--		(sizeof(struct rte_vxlan_hdr) +
--		sizeof(struct rte_udp_hdr));
--
--	vxlan_pkt = encap(ether, vxlan_tbl, sizeof(*vxlan_tbl));
--	vxlan_pkt->ipv6.payload_len = rte_htons(ipv6_payload_length);
--	vxlan_pkt->udp.dgram_len = rte_htons(udp_length);
--
--	mbuf->data_off = ether_offset - (sizeof(struct rte_mbuf) + sizeof(*vxlan_pkt));
--	mbuf->pkt_len = mbuf->data_len = ether_length + sizeof(*vxlan_pkt);
--}
--
--static __rte_always_inline void
--pkt_work_encap_vxlan_ipv6_vlan(struct rte_mbuf *mbuf,
--	struct encap_vxlan_ipv6_vlan_data *vxlan_tbl,
--	struct rte_table_action_encap_config *cfg)
--{
--	uint32_t ether_offset = cfg->vxlan.data_offset;
--	void *ether = RTE_MBUF_METADATA_UINT32_PTR(mbuf, ether_offset);
--	struct encap_vxlan_ipv6_vlan_data *vxlan_pkt;
--	uint16_t ether_length, ipv6_payload_length, udp_length;
--
--	ether_length = (uint16_t)mbuf->pkt_len;
--	ipv6_payload_length = ether_length +
--		(sizeof(struct rte_vxlan_hdr) +
--		sizeof(struct rte_udp_hdr));
--	udp_length = ether_length +
--		(sizeof(struct rte_vxlan_hdr) +
--		sizeof(struct rte_udp_hdr));
--
--	vxlan_pkt = encap(ether, vxlan_tbl, sizeof(*vxlan_tbl));
--	vxlan_pkt->ipv6.payload_len = rte_htons(ipv6_payload_length);
--	vxlan_pkt->udp.dgram_len = rte_htons(udp_length);
--
--	mbuf->data_off = ether_offset - (sizeof(struct rte_mbuf) + sizeof(*vxlan_pkt));
--	mbuf->pkt_len = mbuf->data_len = ether_length + sizeof(*vxlan_pkt);
--}
--
--static __rte_always_inline void
--pkt_work_encap(struct rte_mbuf *mbuf,
--	void *data,
--	struct rte_table_action_encap_config *cfg,
--	void *ip,
--	uint16_t total_length,
--	uint32_t ip_offset)
--{
--	switch (cfg->encap_mask) {
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_ETHER:
--		encap(ip, data, sizeof(struct encap_ether_data));
--		mbuf->data_off = ip_offset - (sizeof(struct rte_mbuf) +
--			sizeof(struct encap_ether_data));
--		mbuf->pkt_len = mbuf->data_len = total_length +
--			sizeof(struct encap_ether_data);
--		break;
--
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_VLAN:
--		encap(ip, data, sizeof(struct encap_vlan_data));
--		mbuf->data_off = ip_offset - (sizeof(struct rte_mbuf) +
--			sizeof(struct encap_vlan_data));
--		mbuf->pkt_len = mbuf->data_len = total_length +
--			sizeof(struct encap_vlan_data);
--		break;
--
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_QINQ:
--		encap(ip, data, sizeof(struct encap_qinq_data));
--		mbuf->data_off = ip_offset - (sizeof(struct rte_mbuf) +
--			sizeof(struct encap_qinq_data));
--		mbuf->pkt_len = mbuf->data_len = total_length +
--			sizeof(struct encap_qinq_data);
--		break;
--
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_MPLS:
--	{
--		struct encap_mpls_data *mpls = data;
--		size_t size = sizeof(struct rte_ether_hdr) +
--			mpls->mpls_count * 4;
--
--		encap(ip, data, size);
--		mbuf->data_off = ip_offset - (sizeof(struct rte_mbuf) + size);
--		mbuf->pkt_len = mbuf->data_len = total_length + size;
--		break;
--	}
--
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_PPPOE:
--	{
--		struct encap_pppoe_data *pppoe =
--			encap(ip, data, sizeof(struct encap_pppoe_data));
--		pppoe->pppoe_ppp.length = rte_htons(total_length + 2);
--		mbuf->data_off = ip_offset - (sizeof(struct rte_mbuf) +
--			sizeof(struct encap_pppoe_data));
--		mbuf->pkt_len = mbuf->data_len = total_length +
--			sizeof(struct encap_pppoe_data);
--		break;
--	}
--
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_QINQ_PPPOE:
--	{
--		struct encap_qinq_pppoe_data *qinq_pppoe =
--			encap(ip, data, sizeof(struct encap_qinq_pppoe_data));
--		qinq_pppoe->pppoe_ppp.length = rte_htons(total_length + 2);
--		mbuf->data_off = ip_offset - (sizeof(struct rte_mbuf) +
--			sizeof(struct encap_qinq_pppoe_data));
--		mbuf->pkt_len = mbuf->data_len = total_length +
--			sizeof(struct encap_qinq_pppoe_data);
--		break;
--	}
--
--	case 1LLU << RTE_TABLE_ACTION_ENCAP_VXLAN:
--	{
--		if (cfg->vxlan.ip_version)
--			if (cfg->vxlan.vlan)
--				pkt_work_encap_vxlan_ipv4_vlan(mbuf, data, cfg);
--			else
--				pkt_work_encap_vxlan_ipv4(mbuf, data, cfg);
--		else
--			if (cfg->vxlan.vlan)
--				pkt_work_encap_vxlan_ipv6_vlan(mbuf, data, cfg);
--			else
--				pkt_work_encap_vxlan_ipv6(mbuf, data, cfg);
--	}
--
--	default:
--		break;
--	}
--}
--
--/**
-- * RTE_TABLE_ACTION_NAT
-- */
--static int
--nat_cfg_check(struct rte_table_action_nat_config *nat)
--{
--	if ((nat->proto != 0x06) &&
--		(nat->proto != 0x11))
--		return -ENOTSUP;
--
--	return 0;
--}
--
--struct __rte_packed_begin nat_ipv4_data {
--	uint32_t addr;
--	uint16_t port;
--} __rte_packed_end;
--
--struct __rte_packed_begin nat_ipv6_data {
--	struct rte_ipv6_addr addr;
--	uint16_t port;
--} __rte_packed_end;
--
--static size_t
--nat_data_size(struct rte_table_action_nat_config *nat __rte_unused,
--	struct rte_table_action_common_config *common)
--{
--	int ip_version = common->ip_version;
--
--	return (ip_version) ?
--		sizeof(struct nat_ipv4_data) :
--		sizeof(struct nat_ipv6_data);
--}
--
--static int
--nat_apply_check(struct rte_table_action_nat_params *p,
--	struct rte_table_action_common_config *cfg)
--{
--	if ((p->ip_version && (cfg->ip_version == 0)) ||
--		((p->ip_version == 0) && cfg->ip_version))
--		return -EINVAL;
--
--	return 0;
--}
--
--static int
--nat_apply(void *data,
--	struct rte_table_action_nat_params *p,
--	struct rte_table_action_common_config *cfg)
--{
--	int status;
--
--	/* Check input arguments */
--	status = nat_apply_check(p, cfg);
--	if (status)
--		return status;
--
--	/* Apply */
--	if (p->ip_version) {
--		struct nat_ipv4_data *d = data;
--
--		d->addr = rte_htonl(p->addr.ipv4);
--		d->port = rte_htons(p->port);
--	} else {
--		struct nat_ipv6_data *d = data;
--
--		d->addr = p->addr.ipv6;
--		d->port = rte_htons(p->port);
--	}
--
--	return 0;
--}
--
--static __rte_always_inline uint16_t
--nat_ipv4_checksum_update(uint16_t cksum0,
--	uint32_t ip0,
--	uint32_t ip1)
--{
--	int32_t cksum1;
--
--	cksum1 = cksum0;
--	cksum1 = ~cksum1 & 0xFFFF;
--
--	/* Subtract ip0 (one's complement logic) */
--	cksum1 -= (ip0 >> 16) + (ip0 & 0xFFFF);
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--
--	/* Add ip1 (one's complement logic) */
--	cksum1 += (ip1 >> 16) + (ip1 & 0xFFFF);
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--
--	return (uint16_t)(~cksum1);
--}
--
--static __rte_always_inline uint16_t
--nat_ipv4_tcp_udp_checksum_update(uint16_t cksum0,
--	uint32_t ip0,
--	uint32_t ip1,
--	uint16_t port0,
--	uint16_t port1)
--{
--	int32_t cksum1;
--
--	cksum1 = cksum0;
--	cksum1 = ~cksum1 & 0xFFFF;
--
--	/* Subtract ip0 and port 0 (one's complement logic) */
--	cksum1 -= (ip0 >> 16) + (ip0 & 0xFFFF) + port0;
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--
--	/* Add ip1 and port1 (one's complement logic) */
--	cksum1 += (ip1 >> 16) + (ip1 & 0xFFFF) + port1;
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--
--	return (uint16_t)(~cksum1);
--}
--
--static __rte_always_inline uint16_t
--nat_ipv6_tcp_udp_checksum_update(uint16_t cksum0,
--	uint16_t *ip0,
--	uint16_t *ip1,
--	uint16_t port0,
--	uint16_t port1)
--{
--	int32_t cksum1;
--
--	cksum1 = cksum0;
--	cksum1 = ~cksum1 & 0xFFFF;
--
--	/* Subtract ip0 and port 0 (one's complement logic) */
--	cksum1 -= ip0[0] + ip0[1] + ip0[2] + ip0[3] +
--		ip0[4] + ip0[5] + ip0[6] + ip0[7] + port0;
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--
--	/* Add ip1 and port1 (one's complement logic) */
--	cksum1 += ip1[0] + ip1[1] + ip1[2] + ip1[3] +
--		ip1[4] + ip1[5] + ip1[6] + ip1[7] + port1;
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
--
--	return (uint16_t)(~cksum1);
--}
--
--static __rte_always_inline void
--pkt_ipv4_work_nat(struct rte_ipv4_hdr *ip,
--	struct nat_ipv4_data *data,
--	struct rte_table_action_nat_config *cfg)
--{
--	if (cfg->source_nat) {
--		if (cfg->proto == 0x6) {
--			struct rte_tcp_hdr *tcp = (struct rte_tcp_hdr *) &ip[1];
--			uint16_t ip_cksum, tcp_cksum;
--
--			ip_cksum = nat_ipv4_checksum_update(ip->hdr_checksum,
--				ip->src_addr,
--				data->addr);
--
--			tcp_cksum = nat_ipv4_tcp_udp_checksum_update(tcp->cksum,
--				ip->src_addr,
--				data->addr,
--				tcp->src_port,
--				data->port);
--
--			ip->src_addr = data->addr;
--			ip->hdr_checksum = ip_cksum;
--			tcp->src_port = data->port;
--			tcp->cksum = tcp_cksum;
--		} else {
--			struct rte_udp_hdr *udp = (struct rte_udp_hdr *) &ip[1];
--			uint16_t ip_cksum, udp_cksum;
--
--			ip_cksum = nat_ipv4_checksum_update(ip->hdr_checksum,
--				ip->src_addr,
--				data->addr);
--
--			udp_cksum = nat_ipv4_tcp_udp_checksum_update(udp->dgram_cksum,
--				ip->src_addr,
--				data->addr,
--				udp->src_port,
--				data->port);
--
--			ip->src_addr = data->addr;
--			ip->hdr_checksum = ip_cksum;
--			udp->src_port = data->port;
--			if (udp->dgram_cksum)
--				udp->dgram_cksum = udp_cksum;
--		}
--	} else {
--		if (cfg->proto == 0x6) {
--			struct rte_tcp_hdr *tcp = (struct rte_tcp_hdr *) &ip[1];
--			uint16_t ip_cksum, tcp_cksum;
--
--			ip_cksum = nat_ipv4_checksum_update(ip->hdr_checksum,
--				ip->dst_addr,
--				data->addr);
--
--			tcp_cksum = nat_ipv4_tcp_udp_checksum_update(tcp->cksum,
--				ip->dst_addr,
--				data->addr,
--				tcp->dst_port,
--				data->port);
--
--			ip->dst_addr = data->addr;
--			ip->hdr_checksum = ip_cksum;
--			tcp->dst_port = data->port;
--			tcp->cksum = tcp_cksum;
--		} else {
--			struct rte_udp_hdr *udp = (struct rte_udp_hdr *) &ip[1];
--			uint16_t ip_cksum, udp_cksum;
--
--			ip_cksum = nat_ipv4_checksum_update(ip->hdr_checksum,
--				ip->dst_addr,
--				data->addr);
--
--			udp_cksum = nat_ipv4_tcp_udp_checksum_update(udp->dgram_cksum,
--				ip->dst_addr,
--				data->addr,
--				udp->dst_port,
--				data->port);
--
--			ip->dst_addr = data->addr;
--			ip->hdr_checksum = ip_cksum;
--			udp->dst_port = data->port;
--			if (udp->dgram_cksum)
--				udp->dgram_cksum = udp_cksum;
--		}
--	}
--}
--
--static __rte_always_inline void
--pkt_ipv6_work_nat(struct rte_ipv6_hdr *ip,
--	struct nat_ipv6_data *data,
--	struct rte_table_action_nat_config *cfg)
--{
--	if (cfg->source_nat) {
--		if (cfg->proto == 0x6) {
--			struct rte_tcp_hdr *tcp = (struct rte_tcp_hdr *) &ip[1];
--			uint16_t tcp_cksum;
--
--			tcp_cksum = nat_ipv6_tcp_udp_checksum_update(tcp->cksum,
--				(uint16_t *)&ip->src_addr,
--				(uint16_t *)&data->addr,
--				tcp->src_port,
--				data->port);
--
--			ip->src_addr = data->addr;
--			tcp->src_port = data->port;
--			tcp->cksum = tcp_cksum;
--		} else {
--			struct rte_udp_hdr *udp = (struct rte_udp_hdr *) &ip[1];
--			uint16_t udp_cksum;
--
--			udp_cksum = nat_ipv6_tcp_udp_checksum_update(udp->dgram_cksum,
--				(uint16_t *)&ip->src_addr,
--				(uint16_t *)&data->addr,
--				udp->src_port,
--				data->port);
--
--			ip->src_addr = data->addr;
--			udp->src_port = data->port;
--			udp->dgram_cksum = udp_cksum;
--		}
--	} else {
--		if (cfg->proto == 0x6) {
--			struct rte_tcp_hdr *tcp = (struct rte_tcp_hdr *) &ip[1];
--			uint16_t tcp_cksum;
--
--			tcp_cksum = nat_ipv6_tcp_udp_checksum_update(tcp->cksum,
--				(uint16_t *)&ip->dst_addr,
--				(uint16_t *)&data->addr,
--				tcp->dst_port,
--				data->port);
--
--			ip->dst_addr = data->addr;
--			tcp->dst_port = data->port;
--			tcp->cksum = tcp_cksum;
--		} else {
--			struct rte_udp_hdr *udp = (struct rte_udp_hdr *) &ip[1];
--			uint16_t udp_cksum;
--
--			udp_cksum = nat_ipv6_tcp_udp_checksum_update(udp->dgram_cksum,
--				(uint16_t *)&ip->dst_addr,
--				(uint16_t *)&data->addr,
--				udp->dst_port,
--				data->port);
--
--			ip->dst_addr = data->addr;
--			udp->dst_port = data->port;
--			udp->dgram_cksum = udp_cksum;
--		}
--	}
--}
--
--/**
-- * RTE_TABLE_ACTION_TTL
-- */
--static int
--ttl_cfg_check(struct rte_table_action_ttl_config *ttl)
--{
--	if (ttl->drop == 0)
--		return -ENOTSUP;
--
--	return 0;
--}
--
--struct __rte_packed_begin ttl_data {
--	uint32_t n_packets;
--} __rte_packed_end;
--
--#define TTL_INIT(data, decrement)                         \
--	((data)->n_packets = (decrement) ? 1 : 0)
--
--#define TTL_DEC_GET(data)                                  \
--	((uint8_t)((data)->n_packets & 1))
--
--#define TTL_STATS_RESET(data)                             \
--	((data)->n_packets = ((data)->n_packets & 1))
--
--#define TTL_STATS_READ(data)                               \
--	((data)->n_packets >> 1)
--
--#define TTL_STATS_ADD(data, value)                        \
--	((data)->n_packets =                                  \
--		(((((data)->n_packets >> 1) + (value)) << 1) |    \
--		((data)->n_packets & 1)))
--
--static int
--ttl_apply(void *data,
--	struct rte_table_action_ttl_params *p)
--{
--	struct ttl_data *d = data;
--
--	TTL_INIT(d, p->decrement);
--
--	return 0;
--}
--
--static __rte_always_inline uint64_t
--pkt_ipv4_work_ttl(struct rte_ipv4_hdr *ip,
--	struct ttl_data *data)
--{
--	uint32_t drop;
--	uint16_t cksum = ip->hdr_checksum;
--	uint8_t ttl = ip->time_to_live;
--	uint8_t ttl_diff = TTL_DEC_GET(data);
--
--	cksum += ttl_diff;
--	ttl -= ttl_diff;
--
--	ip->hdr_checksum = cksum;
--	ip->time_to_live = ttl;
--
--	drop = (ttl == 0) ? 1 : 0;
--	TTL_STATS_ADD(data, drop);
--
--	return drop;
--}
--
--static __rte_always_inline uint64_t
--pkt_ipv6_work_ttl(struct rte_ipv6_hdr *ip,
--	struct ttl_data *data)
--{
--	uint32_t drop;
--	uint8_t ttl = ip->hop_limits;
--	uint8_t ttl_diff = TTL_DEC_GET(data);
--
--	ttl -= ttl_diff;
--
--	ip->hop_limits = ttl;
--
--	drop = (ttl == 0) ? 1 : 0;
--	TTL_STATS_ADD(data, drop);
--
--	return drop;
--}
--
--/**
-- * RTE_TABLE_ACTION_STATS
-- */
--static int
--stats_cfg_check(struct rte_table_action_stats_config *stats)
--{
--	if ((stats->n_packets_enabled == 0) && (stats->n_bytes_enabled == 0))
--		return -EINVAL;
--
--	return 0;
--}
--
--struct __rte_packed_begin stats_data {
--	uint64_t n_packets;
--	uint64_t n_bytes;
--} __rte_packed_end;
--
--static int
--stats_apply(struct stats_data *data,
--	struct rte_table_action_stats_params *p)
--{
--	data->n_packets = p->n_packets;
--	data->n_bytes = p->n_bytes;
--
--	return 0;
--}
--
--static __rte_always_inline void
--pkt_work_stats(struct stats_data *data,
--	uint16_t total_length)
--{
--	data->n_packets++;
--	data->n_bytes += total_length;
--}
--
--/**
-- * RTE_TABLE_ACTION_TIME
-- */
--struct __rte_packed_begin time_data {
--	uint64_t time;
--} __rte_packed_end;
--
--static int
--time_apply(struct time_data *data,
--	struct rte_table_action_time_params *p)
--{
--	data->time = p->time;
--	return 0;
--}
--
--static __rte_always_inline void
--pkt_work_time(struct time_data *data,
--	uint64_t time)
--{
--	data->time = time;
--}
--
--
--/**
-- * RTE_TABLE_ACTION_CRYPTO
-- */
--
--#define CRYPTO_OP_MASK_CIPHER	0x1
--#define CRYPTO_OP_MASK_AUTH	0x2
--#define CRYPTO_OP_MASK_AEAD	0x4
--
--struct crypto_op_sym_iv_aad {
--	struct rte_crypto_op op;
--	struct rte_crypto_sym_op sym_op;
--	union {
--		struct {
--			uint8_t cipher_iv[
--				RTE_TABLE_ACTION_SYM_CRYPTO_IV_SIZE_MAX];
--			uint8_t auth_iv[
--				RTE_TABLE_ACTION_SYM_CRYPTO_IV_SIZE_MAX];
--		} cipher_auth;
--
--		struct {
--			uint8_t iv[RTE_TABLE_ACTION_SYM_CRYPTO_IV_SIZE_MAX];
--			uint8_t aad[RTE_TABLE_ACTION_SYM_CRYPTO_AAD_SIZE_MAX];
--		} aead_iv_aad;
--
--	} iv_aad;
--};
--
--struct __rte_packed_begin sym_crypto_data {
--
--	union {
--		struct {
--
--			/** Length of cipher iv. */
--			uint16_t cipher_iv_len;
--
--			/** Offset from start of IP header to the cipher iv. */
--			uint16_t cipher_iv_data_offset;
--
--			/** Length of cipher iv to be updated in the mbuf. */
--			uint16_t cipher_iv_update_len;
--
--			/** Offset from start of IP header to the auth iv. */
--			uint16_t auth_iv_data_offset;
--
--			/** Length of auth iv in the mbuf. */
--			uint16_t auth_iv_len;
--
--			/** Length of auth iv to be updated in the mbuf. */
--			uint16_t auth_iv_update_len;
--
--		} cipher_auth;
--		struct {
--
--			/** Length of iv. */
--			uint16_t iv_len;
--
--			/** Offset from start of IP header to the aead iv. */
--			uint16_t iv_data_offset;
--
--			/** Length of iv to be updated in the mbuf. */
--			uint16_t iv_update_len;
--
--			/** Length of aad */
--			uint16_t aad_len;
--
--			/** Offset from start of IP header to the aad. */
--			uint16_t aad_data_offset;
--
--			/** Length of aad to updated in the mbuf. */
--			uint16_t aad_update_len;
--
--		} aead;
--	};
--
--	/** Offset from start of IP header to the data. */
--	uint16_t data_offset;
--
--	/** Digest length. */
--	uint16_t digest_len;
--
--	/** block size */
--	uint16_t block_size;
--
--	/** Mask of crypto operation */
--	uint16_t op_mask;
--
--	/** Session pointer. */
--	struct rte_cryptodev_sym_session *session;
--
--	/** Direction of crypto, encrypt or decrypt */
--	uint16_t direction;
--
--	/** Private data size to store cipher iv / aad. */
--	uint8_t iv_aad_data[32];
--
--} __rte_packed_end;
--
--static int
--sym_crypto_cfg_check(struct rte_table_action_sym_crypto_config *cfg)
--{
--	if (!rte_cryptodev_is_valid_dev(cfg->cryptodev_id))
--		return -EINVAL;
--	if (cfg->mp_create == NULL || cfg->mp_init == NULL)
--		return -EINVAL;
--
--	return 0;
--}
--
--static int
--get_block_size(const struct rte_crypto_sym_xform *xform, uint8_t cdev_id)
--{
--	struct rte_cryptodev_info dev_info;
--	const struct rte_cryptodev_capabilities *cap;
--	uint32_t i;
--
--	rte_cryptodev_info_get(cdev_id, &dev_info);
--
--	for (i = 0; dev_info.capabilities[i].op != RTE_CRYPTO_OP_TYPE_UNDEFINED;
--			i++) {
--		cap = &dev_info.capabilities[i];
--
--		if (cap->sym.xform_type != xform->type)
--			continue;
--
--		if ((xform->type == RTE_CRYPTO_SYM_XFORM_CIPHER) &&
--				(cap->sym.cipher.algo == xform->cipher.algo))
--			return cap->sym.cipher.block_size;
--
--		if ((xform->type == RTE_CRYPTO_SYM_XFORM_AEAD) &&
--				(cap->sym.aead.algo == xform->aead.algo))
--			return cap->sym.aead.block_size;
--
--		if (xform->type == RTE_CRYPTO_SYM_XFORM_NOT_SPECIFIED)
--			break;
--	}
--
--	return -1;
--}
--
--static int
--sym_crypto_apply(struct sym_crypto_data *data,
--	struct rte_table_action_sym_crypto_config *cfg,
--	struct rte_table_action_sym_crypto_params *p)
--{
--	const struct rte_crypto_cipher_xform *cipher_xform = NULL;
--	const struct rte_crypto_auth_xform *auth_xform = NULL;
--	const struct rte_crypto_aead_xform *aead_xform = NULL;
--	struct rte_crypto_sym_xform *xform = p->xform;
--	struct rte_cryptodev_sym_session *session;
--	int ret;
--
--	memset(data, 0, sizeof(*data));
--
--	while (xform) {
--		if (xform->type == RTE_CRYPTO_SYM_XFORM_CIPHER) {
--			cipher_xform = &xform->cipher;
--
--			if (cipher_xform->iv.length >
--				RTE_TABLE_ACTION_SYM_CRYPTO_IV_SIZE_MAX)
--				return -ENOMEM;
--			if (cipher_xform->iv.offset !=
--					RTE_TABLE_ACTION_SYM_CRYPTO_IV_OFFSET)
--				return -EINVAL;
--
--			ret = get_block_size(xform, cfg->cryptodev_id);
--			if (ret < 0)
--				return -1;
--			data->block_size = (uint16_t)ret;
--			data->op_mask |= CRYPTO_OP_MASK_CIPHER;
--
--			data->cipher_auth.cipher_iv_len =
--					cipher_xform->iv.length;
--			data->cipher_auth.cipher_iv_data_offset = (uint16_t)
--					p->cipher_auth.cipher_iv_update.offset;
--			data->cipher_auth.cipher_iv_update_len = (uint16_t)
--					p->cipher_auth.cipher_iv_update.length;
--
--			rte_memcpy(data->iv_aad_data,
--					p->cipher_auth.cipher_iv.val,
--					p->cipher_auth.cipher_iv.length);
--
--			data->direction = cipher_xform->op;
--
--		} else if (xform->type == RTE_CRYPTO_SYM_XFORM_AUTH) {
--			auth_xform = &xform->auth;
--			if (auth_xform->iv.length >
--				RTE_TABLE_ACTION_SYM_CRYPTO_IV_SIZE_MAX)
--				return -ENOMEM;
--			data->op_mask |= CRYPTO_OP_MASK_AUTH;
--
--			data->cipher_auth.auth_iv_len = auth_xform->iv.length;
--			data->cipher_auth.auth_iv_data_offset = (uint16_t)
--					p->cipher_auth.auth_iv_update.offset;
--			data->cipher_auth.auth_iv_update_len = (uint16_t)
--					p->cipher_auth.auth_iv_update.length;
--			data->digest_len = auth_xform->digest_length;
--
--			data->direction = (auth_xform->op ==
--					RTE_CRYPTO_AUTH_OP_GENERATE) ?
--					RTE_CRYPTO_CIPHER_OP_ENCRYPT :
--					RTE_CRYPTO_CIPHER_OP_DECRYPT;
--
--		} else if (xform->type == RTE_CRYPTO_SYM_XFORM_AEAD) {
--			aead_xform = &xform->aead;
--
--			if ((aead_xform->iv.length >
--				RTE_TABLE_ACTION_SYM_CRYPTO_IV_SIZE_MAX) || (
--				aead_xform->aad_length >
--				RTE_TABLE_ACTION_SYM_CRYPTO_AAD_SIZE_MAX))
--				return -EINVAL;
--			if (aead_xform->iv.offset !=
--					RTE_TABLE_ACTION_SYM_CRYPTO_IV_OFFSET)
--				return -EINVAL;
--
--			ret = get_block_size(xform, cfg->cryptodev_id);
--			if (ret < 0)
--				return -1;
--			data->block_size = (uint16_t)ret;
--			data->op_mask |= CRYPTO_OP_MASK_AEAD;
--
--			data->digest_len = aead_xform->digest_length;
--			data->aead.iv_len = aead_xform->iv.length;
--			data->aead.aad_len = aead_xform->aad_length;
--
--			data->aead.iv_data_offset = (uint16_t)
--					p->aead.iv_update.offset;
--			data->aead.iv_update_len = (uint16_t)
--					p->aead.iv_update.length;
--			data->aead.aad_data_offset = (uint16_t)
--					p->aead.aad_update.offset;
--			data->aead.aad_update_len = (uint16_t)
--					p->aead.aad_update.length;
--
--			rte_memcpy(data->iv_aad_data,
--					p->aead.iv.val,
--					p->aead.iv.length);
--
--			rte_memcpy(data->iv_aad_data + p->aead.iv.length,
--					p->aead.aad.val,
--					p->aead.aad.length);
--
--			data->direction = (aead_xform->op ==
--					RTE_CRYPTO_AEAD_OP_ENCRYPT) ?
--					RTE_CRYPTO_CIPHER_OP_ENCRYPT :
--					RTE_CRYPTO_CIPHER_OP_DECRYPT;
--		} else
--			return -EINVAL;
--
--		xform = xform->next;
--	}
--
--	if (auth_xform && auth_xform->iv.length) {
--		if (cipher_xform) {
--			if (auth_xform->iv.offset !=
--					RTE_TABLE_ACTION_SYM_CRYPTO_IV_OFFSET +
--					cipher_xform->iv.length)
--				return -EINVAL;
--
--			rte_memcpy(data->iv_aad_data + cipher_xform->iv.length,
--					p->cipher_auth.auth_iv.val,
--					p->cipher_auth.auth_iv.length);
--		} else {
--			rte_memcpy(data->iv_aad_data,
--					p->cipher_auth.auth_iv.val,
--					p->cipher_auth.auth_iv.length);
--		}
--	}
--
--	session = rte_cryptodev_sym_session_create(cfg->cryptodev_id,
--			p->xform, cfg->mp_create);
--	if (!session)
--		return -ENOMEM;
--
--	data->data_offset = (uint16_t)p->data_offset;
--	data->session = session;
--
--	return 0;
--}
--
--static __rte_always_inline uint64_t
--pkt_work_sym_crypto(struct rte_mbuf *mbuf, struct sym_crypto_data *data,
--		struct rte_table_action_sym_crypto_config *cfg,
--		uint16_t ip_offset)
--{
--	struct crypto_op_sym_iv_aad *crypto_op = (struct crypto_op_sym_iv_aad *)
--			RTE_MBUF_METADATA_UINT8_PTR(mbuf, cfg->op_offset);
--	struct rte_crypto_op *op = &crypto_op->op;
--	struct rte_crypto_sym_op *sym = op->sym;
--	uint32_t pkt_offset = sizeof(*mbuf) + mbuf->data_off;
--	uint32_t payload_len = pkt_offset + mbuf->data_len - data->data_offset;
--
--	op->type = RTE_CRYPTO_OP_TYPE_SYMMETRIC;
--	op->sess_type = RTE_CRYPTO_OP_WITH_SESSION;
--	op->phys_addr = rte_mbuf_iova_get(mbuf) + cfg->op_offset - sizeof(*mbuf);
--	op->status = RTE_CRYPTO_OP_STATUS_NOT_PROCESSED;
--	sym->m_src = mbuf;
--	sym->m_dst = NULL;
--	sym->session = data->session;
--
--	/** pad the packet */
--	if (data->direction == RTE_CRYPTO_CIPHER_OP_ENCRYPT) {
--		uint32_t append_len = RTE_ALIGN_CEIL(payload_len,
--				data->block_size) - payload_len;
--
--		if (unlikely(rte_pktmbuf_append(mbuf, append_len +
--				data->digest_len) == NULL))
--			return 1;
--
--		payload_len += append_len;
--	} else
--		payload_len -= data->digest_len;
--
--	if (data->op_mask & CRYPTO_OP_MASK_CIPHER) {
--		/** prepare cipher op */
--		uint8_t *iv = crypto_op->iv_aad.cipher_auth.cipher_iv;
--
--		sym->cipher.data.length = payload_len;
--		sym->cipher.data.offset = data->data_offset - pkt_offset;
--
--		if (data->cipher_auth.cipher_iv_update_len) {
--			uint8_t *pkt_iv = RTE_MBUF_METADATA_UINT8_PTR(mbuf,
--				data->cipher_auth.cipher_iv_data_offset
--				+ ip_offset);
--
--			/** For encryption, update the pkt iv field, otherwise
--			 *  update the iv_aad_field
--			 */
--			if (data->direction == RTE_CRYPTO_CIPHER_OP_ENCRYPT)
--				rte_memcpy(pkt_iv, data->iv_aad_data,
--					data->cipher_auth.cipher_iv_update_len);
--			else
--				rte_memcpy(data->iv_aad_data, pkt_iv,
--					data->cipher_auth.cipher_iv_update_len);
--		}
--
--		/** write iv */
--		rte_memcpy(iv, data->iv_aad_data,
--				data->cipher_auth.cipher_iv_len);
--	}
--
--	if (data->op_mask & CRYPTO_OP_MASK_AUTH) {
--		/** authentication always start from IP header. */
--		sym->auth.data.offset = ip_offset - pkt_offset;
--		sym->auth.data.length = mbuf->data_len - sym->auth.data.offset -
--				data->digest_len;
--		sym->auth.digest.data = rte_pktmbuf_mtod_offset(mbuf,
--				uint8_t *, rte_pktmbuf_pkt_len(mbuf) -
--				data->digest_len);
--		sym->auth.digest.phys_addr = rte_pktmbuf_iova_offset(mbuf,
--				rte_pktmbuf_pkt_len(mbuf) - data->digest_len);
--
--		if (data->cipher_auth.auth_iv_update_len) {
--			uint8_t *pkt_iv = RTE_MBUF_METADATA_UINT8_PTR(mbuf,
--					data->cipher_auth.auth_iv_data_offset
--					+ ip_offset);
--			uint8_t *data_iv = data->iv_aad_data +
--					data->cipher_auth.cipher_iv_len;
--
--			if (data->direction == RTE_CRYPTO_CIPHER_OP_ENCRYPT)
--				rte_memcpy(pkt_iv, data_iv,
--					data->cipher_auth.auth_iv_update_len);
--			else
--				rte_memcpy(data_iv, pkt_iv,
--					data->cipher_auth.auth_iv_update_len);
--		}
--
--		if (data->cipher_auth.auth_iv_len) {
--			/** prepare cipher op */
--			uint8_t *iv = crypto_op->iv_aad.cipher_auth.auth_iv;
--
--			rte_memcpy(iv, data->iv_aad_data +
--					data->cipher_auth.cipher_iv_len,
--					data->cipher_auth.auth_iv_len);
--		}
--	}
--
--	if (data->op_mask & CRYPTO_OP_MASK_AEAD) {
--		uint8_t *iv = crypto_op->iv_aad.aead_iv_aad.iv;
--		uint8_t *aad = crypto_op->iv_aad.aead_iv_aad.aad;
--
--		sym->aead.aad.data = aad;
--		sym->aead.aad.phys_addr = rte_pktmbuf_iova_offset(mbuf,
--				aad - rte_pktmbuf_mtod(mbuf, uint8_t *));
--		sym->aead.digest.data = rte_pktmbuf_mtod_offset(mbuf,
--				uint8_t *, rte_pktmbuf_pkt_len(mbuf) -
--				data->digest_len);
--		sym->aead.digest.phys_addr = rte_pktmbuf_iova_offset(mbuf,
--				rte_pktmbuf_pkt_len(mbuf) - data->digest_len);
--		sym->aead.data.offset = data->data_offset - pkt_offset;
--		sym->aead.data.length = payload_len;
--
--		if (data->aead.iv_update_len) {
--			uint8_t *pkt_iv = RTE_MBUF_METADATA_UINT8_PTR(mbuf,
--					data->aead.iv_data_offset + ip_offset);
--			uint8_t *data_iv = data->iv_aad_data;
--
--			if (data->direction == RTE_CRYPTO_CIPHER_OP_ENCRYPT)
--				rte_memcpy(pkt_iv, data_iv,
--						data->aead.iv_update_len);
--			else
--				rte_memcpy(data_iv, pkt_iv,
--					data->aead.iv_update_len);
--		}
--
--		rte_memcpy(iv, data->iv_aad_data, data->aead.iv_len);
--
--		if (data->aead.aad_update_len) {
--			uint8_t *pkt_aad = RTE_MBUF_METADATA_UINT8_PTR(mbuf,
--					data->aead.aad_data_offset + ip_offset);
--			uint8_t *data_aad = data->iv_aad_data +
--					data->aead.iv_len;
--
--			if (data->direction == RTE_CRYPTO_CIPHER_OP_ENCRYPT)
--				rte_memcpy(pkt_aad, data_aad,
--						data->aead.iv_update_len);
--			else
--				rte_memcpy(data_aad, pkt_aad,
--					data->aead.iv_update_len);
--		}
--
--		rte_memcpy(aad, data->iv_aad_data + data->aead.iv_len,
--					data->aead.aad_len);
--	}
--
--	return 0;
--}
--
--/**
-- * RTE_TABLE_ACTION_TAG
-- */
--struct __rte_packed_begin tag_data {
--	uint32_t tag;
--} __rte_packed_end;
--
--static int
--tag_apply(struct tag_data *data,
--	struct rte_table_action_tag_params *p)
--{
--	data->tag = p->tag;
--	return 0;
--}
--
--static __rte_always_inline void
--pkt_work_tag(struct rte_mbuf *mbuf,
--	struct tag_data *data)
--{
--	mbuf->hash.fdir.hi = data->tag;
--	mbuf->ol_flags |= RTE_MBUF_F_RX_FDIR | RTE_MBUF_F_RX_FDIR_ID;
--}
--
--static __rte_always_inline void
--pkt4_work_tag(struct rte_mbuf *mbuf0,
--	struct rte_mbuf *mbuf1,
--	struct rte_mbuf *mbuf2,
--	struct rte_mbuf *mbuf3,
--	struct tag_data *data0,
--	struct tag_data *data1,
--	struct tag_data *data2,
--	struct tag_data *data3)
--{
--	mbuf0->hash.fdir.hi = data0->tag;
--	mbuf1->hash.fdir.hi = data1->tag;
--	mbuf2->hash.fdir.hi = data2->tag;
--	mbuf3->hash.fdir.hi = data3->tag;
--
--	mbuf0->ol_flags |= RTE_MBUF_F_RX_FDIR | RTE_MBUF_F_RX_FDIR_ID;
--	mbuf1->ol_flags |= RTE_MBUF_F_RX_FDIR | RTE_MBUF_F_RX_FDIR_ID;
--	mbuf2->ol_flags |= RTE_MBUF_F_RX_FDIR | RTE_MBUF_F_RX_FDIR_ID;
--	mbuf3->ol_flags |= RTE_MBUF_F_RX_FDIR | RTE_MBUF_F_RX_FDIR_ID;
--}
--
--/**
-- * RTE_TABLE_ACTION_DECAP
-- */
--struct __rte_packed_begin decap_data {
--	uint16_t n;
--} __rte_packed_end;
--
--static int
--decap_apply(struct decap_data *data,
--	struct rte_table_action_decap_params *p)
--{
--	data->n = p->n;
--	return 0;
--}
--
--static __rte_always_inline void
--pkt_work_decap(struct rte_mbuf *mbuf,
--	struct decap_data *data)
--{
--	uint16_t data_off = mbuf->data_off;
--	uint16_t data_len = mbuf->data_len;
--	uint32_t pkt_len = mbuf->pkt_len;
--	uint16_t n = data->n;
--
--	mbuf->data_off = data_off + n;
--	mbuf->data_len = data_len - n;
--	mbuf->pkt_len = pkt_len - n;
--}
--
--static __rte_always_inline void
--pkt4_work_decap(struct rte_mbuf *mbuf0,
--	struct rte_mbuf *mbuf1,
--	struct rte_mbuf *mbuf2,
--	struct rte_mbuf *mbuf3,
--	struct decap_data *data0,
--	struct decap_data *data1,
--	struct decap_data *data2,
--	struct decap_data *data3)
--{
--	uint16_t data_off0 = mbuf0->data_off;
--	uint16_t data_len0 = mbuf0->data_len;
--	uint32_t pkt_len0 = mbuf0->pkt_len;
--
--	uint16_t data_off1 = mbuf1->data_off;
--	uint16_t data_len1 = mbuf1->data_len;
--	uint32_t pkt_len1 = mbuf1->pkt_len;
--
--	uint16_t data_off2 = mbuf2->data_off;
--	uint16_t data_len2 = mbuf2->data_len;
--	uint32_t pkt_len2 = mbuf2->pkt_len;
--
--	uint16_t data_off3 = mbuf3->data_off;
--	uint16_t data_len3 = mbuf3->data_len;
--	uint32_t pkt_len3 = mbuf3->pkt_len;
--
--	uint16_t n0 = data0->n;
--	uint16_t n1 = data1->n;
--	uint16_t n2 = data2->n;
--	uint16_t n3 = data3->n;
--
--	mbuf0->data_off = data_off0 + n0;
--	mbuf0->data_len = data_len0 - n0;
--	mbuf0->pkt_len = pkt_len0 - n0;
--
--	mbuf1->data_off = data_off1 + n1;
--	mbuf1->data_len = data_len1 - n1;
--	mbuf1->pkt_len = pkt_len1 - n1;
--
--	mbuf2->data_off = data_off2 + n2;
--	mbuf2->data_len = data_len2 - n2;
--	mbuf2->pkt_len = pkt_len2 - n2;
--
--	mbuf3->data_off = data_off3 + n3;
--	mbuf3->data_len = data_len3 - n3;
--	mbuf3->pkt_len = pkt_len3 - n3;
--}
--
--/**
-- * Action profile
-- */
--static int
--action_valid(enum rte_table_action_type action)
--{
--	switch (action) {
--	case RTE_TABLE_ACTION_FWD:
--	case RTE_TABLE_ACTION_LB:
--	case RTE_TABLE_ACTION_MTR:
--	case RTE_TABLE_ACTION_TM:
--	case RTE_TABLE_ACTION_ENCAP:
--	case RTE_TABLE_ACTION_NAT:
--	case RTE_TABLE_ACTION_TTL:
--	case RTE_TABLE_ACTION_STATS:
--	case RTE_TABLE_ACTION_TIME:
--	case RTE_TABLE_ACTION_SYM_CRYPTO:
--	case RTE_TABLE_ACTION_TAG:
--	case RTE_TABLE_ACTION_DECAP:
--		return 1;
--	default:
--		return 0;
--	}
--}
--
--
--#define RTE_TABLE_ACTION_MAX                      64
--
--struct ap_config {
--	uint64_t action_mask;
--	struct rte_table_action_common_config common;
--	struct rte_table_action_lb_config lb;
--	struct rte_table_action_mtr_config mtr;
--	struct rte_table_action_tm_config tm;
--	struct rte_table_action_encap_config encap;
--	struct rte_table_action_nat_config nat;
--	struct rte_table_action_ttl_config ttl;
--	struct rte_table_action_stats_config stats;
--	struct rte_table_action_sym_crypto_config sym_crypto;
--};
--
--static size_t
--action_cfg_size(enum rte_table_action_type action)
--{
--	switch (action) {
--	case RTE_TABLE_ACTION_LB:
--		return sizeof(struct rte_table_action_lb_config);
--	case RTE_TABLE_ACTION_MTR:
--		return sizeof(struct rte_table_action_mtr_config);
--	case RTE_TABLE_ACTION_TM:
--		return sizeof(struct rte_table_action_tm_config);
--	case RTE_TABLE_ACTION_ENCAP:
--		return sizeof(struct rte_table_action_encap_config);
--	case RTE_TABLE_ACTION_NAT:
--		return sizeof(struct rte_table_action_nat_config);
--	case RTE_TABLE_ACTION_TTL:
--		return sizeof(struct rte_table_action_ttl_config);
--	case RTE_TABLE_ACTION_STATS:
--		return sizeof(struct rte_table_action_stats_config);
--	case RTE_TABLE_ACTION_SYM_CRYPTO:
--		return sizeof(struct rte_table_action_sym_crypto_config);
--	default:
--		return 0;
--	}
--}
--
--static void*
--action_cfg_get(struct ap_config *ap_config,
--	enum rte_table_action_type type)
--{
--	switch (type) {
--	case RTE_TABLE_ACTION_LB:
--		return &ap_config->lb;
--
--	case RTE_TABLE_ACTION_MTR:
--		return &ap_config->mtr;
--
--	case RTE_TABLE_ACTION_TM:
--		return &ap_config->tm;
--
--	case RTE_TABLE_ACTION_ENCAP:
--		return &ap_config->encap;
--
--	case RTE_TABLE_ACTION_NAT:
--		return &ap_config->nat;
--
--	case RTE_TABLE_ACTION_TTL:
--		return &ap_config->ttl;
--
--	case RTE_TABLE_ACTION_STATS:
--		return &ap_config->stats;
--
--	case RTE_TABLE_ACTION_SYM_CRYPTO:
--		return &ap_config->sym_crypto;
--	default:
--		return NULL;
--	}
--}
--
--static void
--action_cfg_set(struct ap_config *ap_config,
--	enum rte_table_action_type type,
--	void *action_cfg)
--{
--	void *dst = action_cfg_get(ap_config, type);
--
--	if (dst)
--		memcpy(dst, action_cfg, action_cfg_size(type));
--
--	ap_config->action_mask |= 1LLU << type;
--}
--
--struct ap_data {
--	size_t offset[RTE_TABLE_ACTION_MAX];
--	size_t total_size;
--};
--
--static size_t
--action_data_size(enum rte_table_action_type action,
--	struct ap_config *ap_config)
--{
--	switch (action) {
--	case RTE_TABLE_ACTION_FWD:
--		return sizeof(struct fwd_data);
--
--	case RTE_TABLE_ACTION_LB:
--		return sizeof(struct lb_data);
--
--	case RTE_TABLE_ACTION_MTR:
--		return mtr_data_size(&ap_config->mtr);
--
--	case RTE_TABLE_ACTION_TM:
--		return sizeof(struct tm_data);
--
--	case RTE_TABLE_ACTION_ENCAP:
--		return encap_data_size(&ap_config->encap);
--
--	case RTE_TABLE_ACTION_NAT:
--		return nat_data_size(&ap_config->nat,
--			&ap_config->common);
--
--	case RTE_TABLE_ACTION_TTL:
--		return sizeof(struct ttl_data);
--
--	case RTE_TABLE_ACTION_STATS:
--		return sizeof(struct stats_data);
--
--	case RTE_TABLE_ACTION_TIME:
--		return sizeof(struct time_data);
--
--	case RTE_TABLE_ACTION_SYM_CRYPTO:
--		return (sizeof(struct sym_crypto_data));
--
--	case RTE_TABLE_ACTION_TAG:
--		return sizeof(struct tag_data);
--
--	case RTE_TABLE_ACTION_DECAP:
--		return sizeof(struct decap_data);
--
--	default:
--		return 0;
--	}
--}
--
--
--static void
--action_data_offset_set(struct ap_data *ap_data,
--	struct ap_config *ap_config)
--{
--	uint64_t action_mask = ap_config->action_mask;
--	size_t offset;
--	uint32_t action;
--
--	memset(ap_data->offset, 0, sizeof(ap_data->offset));
--
--	offset = 0;
--	for (action = 0; action < RTE_TABLE_ACTION_MAX; action++)
--		if (action_mask & (1LLU << action)) {
--			ap_data->offset[action] = offset;
--			offset += action_data_size((enum rte_table_action_type)action,
--				ap_config);
--		}
--
--	ap_data->total_size = offset;
--}
--
--struct rte_table_action_profile {
--	struct ap_config cfg;
--	struct ap_data data;
--	int frozen;
--};
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_profile_create, 18.05)
--struct rte_table_action_profile *
--rte_table_action_profile_create(struct rte_table_action_common_config *common)
--{
--	struct rte_table_action_profile *ap;
--
--	/* Check input arguments */
--	if (common == NULL)
+-static void *
+-rte_table_array_create(void *params, int socket_id, uint32_t entry_size)
+-{
+-	struct rte_table_array_params *p = params;
+-	struct rte_table_array *t;
+-	uint32_t total_cl_size, total_size;
+-
+-	/* Check input parameters */
+-	if ((p == NULL) ||
+-	    (p->n_entries == 0) ||
+-		(!rte_is_power_of_2(p->n_entries)))
 -		return NULL;
 -
 -	/* Memory allocation */
--	ap = calloc(1, sizeof(struct rte_table_action_profile));
--	if (ap == NULL)
+-	total_cl_size = (sizeof(struct rte_table_array) +
+-			RTE_CACHE_LINE_SIZE) / RTE_CACHE_LINE_SIZE;
+-	total_cl_size += (p->n_entries * entry_size +
+-			RTE_CACHE_LINE_SIZE) / RTE_CACHE_LINE_SIZE;
+-	total_size = total_cl_size * RTE_CACHE_LINE_SIZE;
+-	t = rte_zmalloc_socket("TABLE", total_size, RTE_CACHE_LINE_SIZE, socket_id);
+-	if (t == NULL) {
+-		TABLE_LOG(ERR,
+-			"%s: Cannot allocate %u bytes for array table",
+-			__func__, total_size);
 -		return NULL;
--
--	/* Initialization */
--	memcpy(&ap->cfg.common, common, sizeof(*common));
--
--	return ap;
--}
--
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_profile_action_register, 18.05)
--int
--rte_table_action_profile_action_register(struct rte_table_action_profile *profile,
--	enum rte_table_action_type type,
--	void *action_config)
--{
--	int status;
--
--	/* Check input arguments */
--	if ((profile == NULL) ||
--		profile->frozen ||
--		(action_valid(type) == 0) ||
--		(profile->cfg.action_mask & (1LLU << type)) ||
--		((action_cfg_size(type) == 0) && action_config) ||
--		(action_cfg_size(type) && (action_config == NULL)))
--		return -EINVAL;
--
--	switch (type) {
--	case RTE_TABLE_ACTION_LB:
--		status = lb_cfg_check(action_config);
--		break;
--
--	case RTE_TABLE_ACTION_MTR:
--		status = mtr_cfg_check(action_config);
--		break;
--
--	case RTE_TABLE_ACTION_TM:
--		status = tm_cfg_check(action_config);
--		break;
--
--	case RTE_TABLE_ACTION_ENCAP:
--		status = encap_cfg_check(action_config);
--		break;
--
--	case RTE_TABLE_ACTION_NAT:
--		status = nat_cfg_check(action_config);
--		break;
--
--	case RTE_TABLE_ACTION_TTL:
--		status = ttl_cfg_check(action_config);
--		break;
--
--	case RTE_TABLE_ACTION_STATS:
--		status = stats_cfg_check(action_config);
--		break;
--
--	case RTE_TABLE_ACTION_SYM_CRYPTO:
--		status = sym_crypto_cfg_check(action_config);
--		break;
--
--	default:
--		status = 0;
--		break;
 -	}
 -
--	if (status)
--		return status;
+-	/* Memory initialization */
+-	t->entry_size = entry_size;
+-	t->n_entries = p->n_entries;
+-	t->offset = p->offset;
+-	t->entry_pos_mask = t->n_entries - 1;
 -
--	/* Action enable */
--	action_cfg_set(&profile->cfg, type, action_config);
+-	return t;
+-}
+-
+-static int
+-rte_table_array_free(void *table)
+-{
+-	struct rte_table_array *t = table;
+-
+-	/* Check input parameters */
+-	if (t == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* Free previously allocated resources */
+-	rte_free(t);
 -
 -	return 0;
 -}
 -
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_profile_freeze, 18.05)
--int
--rte_table_action_profile_freeze(struct rte_table_action_profile *profile)
+-static int
+-rte_table_array_entry_add(
+-	void *table,
+-	void *key,
+-	void *entry,
+-	int *key_found,
+-	void **entry_ptr)
 -{
--	if (profile->frozen)
--		return -EBUSY;
+-	struct rte_table_array *t = table;
+-	struct rte_table_array_key *k = key;
+-	uint8_t *table_entry;
 -
--	profile->cfg.action_mask |= 1LLU << RTE_TABLE_ACTION_FWD;
--	action_data_offset_set(&profile->data, &profile->cfg);
--	profile->frozen = 1;
+-	/* Check input parameters */
+-	if (table == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (key == NULL) {
+-		TABLE_LOG(ERR, "%s: key parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (entry == NULL) {
+-		TABLE_LOG(ERR, "%s: entry parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (key_found == NULL) {
+-		TABLE_LOG(ERR, "%s: key_found parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-	if (entry_ptr == NULL) {
+-		TABLE_LOG(ERR, "%s: entry_ptr parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	table_entry = &t->array[k->pos * t->entry_size];
+-	memcpy(table_entry, entry, t->entry_size);
+-	*key_found = 1;
+-	*entry_ptr = (void *) table_entry;
 -
 -	return 0;
 -}
 -
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_profile_free, 18.05)
--int
--rte_table_action_profile_free(struct rte_table_action_profile *profile)
--{
--	if (profile == NULL)
--		return 0;
--
--	free(profile);
--	return 0;
--}
--
--/**
-- * Action
-- */
--#define METER_PROFILES_MAX                                 32
--
--struct rte_table_action {
--	struct ap_config cfg;
--	struct ap_data data;
--	struct dscp_table_data dscp_table;
--	struct meter_profile_data mp[METER_PROFILES_MAX];
--};
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_create, 18.05)
--struct rte_table_action *
--rte_table_action_create(struct rte_table_action_profile *profile,
--	uint32_t socket_id)
--{
--	struct rte_table_action *action;
--
--	/* Check input arguments */
--	if ((profile == NULL) ||
--		(profile->frozen == 0))
--		return NULL;
--
--	/* Memory allocation */
--	action = rte_zmalloc_socket(NULL,
--		sizeof(struct rte_table_action),
--		RTE_CACHE_LINE_SIZE,
--		socket_id);
--	if (action == NULL)
--		return NULL;
--
--	/* Initialization */
--	memcpy(&action->cfg, &profile->cfg, sizeof(profile->cfg));
--	memcpy(&action->data, &profile->data, sizeof(profile->data));
--
--	return action;
--}
--
--static __rte_always_inline void *
--action_data_get(void *data,
--	struct rte_table_action *action,
--	enum rte_table_action_type type)
--{
--	size_t offset = action->data.offset[type];
--	uint8_t *data_bytes = data;
--
--	return &data_bytes[offset];
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_apply, 18.05)
--int
--rte_table_action_apply(struct rte_table_action *action,
--	void *data,
--	enum rte_table_action_type type,
--	void *action_params)
--{
--	void *action_data;
--
--	/* Check input arguments */
--	if ((action == NULL) ||
--		(data == NULL) ||
--		(action_valid(type) == 0) ||
--		((action->cfg.action_mask & (1LLU << type)) == 0) ||
--		(action_params == NULL))
--		return -EINVAL;
--
--	/* Data update */
--	action_data = action_data_get(data, action, type);
--
--	switch (type) {
--	case RTE_TABLE_ACTION_FWD:
--		return fwd_apply(action_data,
--			action_params);
--
--	case RTE_TABLE_ACTION_LB:
--		return lb_apply(action_data,
--			action_params);
--
--	case RTE_TABLE_ACTION_MTR:
--		return mtr_apply(action_data,
--			action_params,
--			&action->cfg.mtr,
--			action->mp,
--			RTE_DIM(action->mp));
--
--	case RTE_TABLE_ACTION_TM:
--		return tm_apply(action_data,
--			action_params,
--			&action->cfg.tm);
--
--	case RTE_TABLE_ACTION_ENCAP:
--		return encap_apply(action_data,
--			action_params,
--			&action->cfg.encap,
--			&action->cfg.common);
--
--	case RTE_TABLE_ACTION_NAT:
--		return nat_apply(action_data,
--			action_params,
--			&action->cfg.common);
--
--	case RTE_TABLE_ACTION_TTL:
--		return ttl_apply(action_data,
--			action_params);
--
--	case RTE_TABLE_ACTION_STATS:
--		return stats_apply(action_data,
--			action_params);
--
--	case RTE_TABLE_ACTION_TIME:
--		return time_apply(action_data,
--			action_params);
--
--	case RTE_TABLE_ACTION_SYM_CRYPTO:
--		return sym_crypto_apply(action_data,
--				&action->cfg.sym_crypto,
--				action_params);
--
--	case RTE_TABLE_ACTION_TAG:
--		return tag_apply(action_data,
--			action_params);
--
--	case RTE_TABLE_ACTION_DECAP:
--		return decap_apply(action_data,
--			action_params);
--
--	default:
--		return -EINVAL;
--	}
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_dscp_table_update, 18.05)
--int
--rte_table_action_dscp_table_update(struct rte_table_action *action,
--	uint64_t dscp_mask,
--	struct rte_table_action_dscp_table *table)
--{
--	uint32_t i;
--
--	/* Check input arguments */
--	if ((action == NULL) ||
--		((action->cfg.action_mask & ((1LLU << RTE_TABLE_ACTION_MTR) |
--		(1LLU << RTE_TABLE_ACTION_TM))) == 0) ||
--		(dscp_mask == 0) ||
--		(table == NULL))
--		return -EINVAL;
--
--	for (i = 0; i < RTE_DIM(table->entry); i++) {
--		struct dscp_table_entry_data *data =
--			&action->dscp_table.entry[i];
--		struct rte_table_action_dscp_table_entry *entry =
--			&table->entry[i];
--
--		if ((dscp_mask & (1LLU << i)) == 0)
--			continue;
--
--		data->color = entry->color;
--		data->tc = entry->tc_id;
--		data->tc_queue = entry->tc_queue_id;
--	}
--
--	return 0;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_meter_profile_add, 18.05)
--int
--rte_table_action_meter_profile_add(struct rte_table_action *action,
--	uint32_t meter_profile_id,
--	struct rte_table_action_meter_profile *profile)
--{
--	struct meter_profile_data *mp_data;
--	uint32_t status;
--
--	/* Check input arguments */
--	if ((action == NULL) ||
--		((action->cfg.action_mask & (1LLU << RTE_TABLE_ACTION_MTR)) == 0) ||
--		(profile == NULL))
--		return -EINVAL;
--
--	if (profile->alg != RTE_TABLE_ACTION_METER_TRTCM)
--		return -ENOTSUP;
--
--	mp_data = meter_profile_data_find(action->mp,
--		RTE_DIM(action->mp),
--		meter_profile_id);
--	if (mp_data)
--		return -EEXIST;
--
--	mp_data = meter_profile_data_find_unused(action->mp,
--		RTE_DIM(action->mp));
--	if (!mp_data)
--		return -ENOSPC;
--
--	/* Install new profile */
--	status = rte_meter_trtcm_profile_config(&mp_data->profile,
--		&profile->trtcm);
--	if (status)
--		return status;
--
--	mp_data->profile_id = meter_profile_id;
--	mp_data->valid = 1;
--
--	return 0;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_meter_profile_delete, 18.05)
--int
--rte_table_action_meter_profile_delete(struct rte_table_action *action,
--	uint32_t meter_profile_id)
--{
--	struct meter_profile_data *mp_data;
--
--	/* Check input arguments */
--	if ((action == NULL) ||
--		((action->cfg.action_mask & (1LLU << RTE_TABLE_ACTION_MTR)) == 0))
--		return -EINVAL;
--
--	mp_data = meter_profile_data_find(action->mp,
--		RTE_DIM(action->mp),
--		meter_profile_id);
--	if (!mp_data)
--		return 0;
--
--	/* Uninstall profile */
--	mp_data->valid = 0;
--
--	return 0;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_meter_read, 18.05)
--int
--rte_table_action_meter_read(struct rte_table_action *action,
--	void *data,
--	uint32_t tc_mask,
--	struct rte_table_action_mtr_counters *stats,
--	int clear)
--{
--	struct mtr_trtcm_data *mtr_data;
--	uint32_t i;
--
--	/* Check input arguments */
--	if ((action == NULL) ||
--		((action->cfg.action_mask & (1LLU << RTE_TABLE_ACTION_MTR)) == 0) ||
--		(data == NULL) ||
--		(tc_mask > RTE_LEN2MASK(action->cfg.mtr.n_tc, uint32_t)))
--		return -EINVAL;
--
--	mtr_data = action_data_get(data, action, RTE_TABLE_ACTION_MTR);
--
--	/* Read */
--	if (stats) {
--		for (i = 0; i < RTE_TABLE_ACTION_TC_MAX; i++) {
--			struct rte_table_action_mtr_counters_tc *dst =
--				&stats->stats[i];
--			struct mtr_trtcm_data *src = &mtr_data[i];
--
--			if ((tc_mask & (1 << i)) == 0)
--				continue;
--
--			dst->n_packets[RTE_COLOR_GREEN] =
--				mtr_trtcm_data_stats_get(src, RTE_COLOR_GREEN);
--
--			dst->n_packets[RTE_COLOR_YELLOW] =
--				mtr_trtcm_data_stats_get(src, RTE_COLOR_YELLOW);
--
--			dst->n_packets[RTE_COLOR_RED] =
--				mtr_trtcm_data_stats_get(src, RTE_COLOR_RED);
--
--			dst->n_packets_valid = 1;
--			dst->n_bytes_valid = 0;
--		}
--
--		stats->tc_mask = tc_mask;
--	}
--
--	/* Clear */
--	if (clear)
--		for (i = 0; i < RTE_TABLE_ACTION_TC_MAX; i++) {
--			struct mtr_trtcm_data *src = &mtr_data[i];
--
--			if ((tc_mask & (1 << i)) == 0)
--				continue;
--
--			mtr_trtcm_data_stats_reset(src, RTE_COLOR_GREEN);
--			mtr_trtcm_data_stats_reset(src, RTE_COLOR_YELLOW);
--			mtr_trtcm_data_stats_reset(src, RTE_COLOR_RED);
--		}
--
--
--	return 0;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_ttl_read, 18.05)
--int
--rte_table_action_ttl_read(struct rte_table_action *action,
--	void *data,
--	struct rte_table_action_ttl_counters *stats,
--	int clear)
--{
--	struct ttl_data *ttl_data;
--
--	/* Check input arguments */
--	if ((action == NULL) ||
--		((action->cfg.action_mask &
--		(1LLU << RTE_TABLE_ACTION_TTL)) == 0) ||
--		(data == NULL))
--		return -EINVAL;
--
--	ttl_data = action_data_get(data, action, RTE_TABLE_ACTION_TTL);
--
--	/* Read */
--	if (stats)
--		stats->n_packets = TTL_STATS_READ(ttl_data);
--
--	/* Clear */
--	if (clear)
--		TTL_STATS_RESET(ttl_data);
--
--	return 0;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_stats_read, 18.05)
--int
--rte_table_action_stats_read(struct rte_table_action *action,
--	void *data,
--	struct rte_table_action_stats_counters *stats,
--	int clear)
--{
--	struct stats_data *stats_data;
--
--	/* Check input arguments */
--	if ((action == NULL) ||
--		((action->cfg.action_mask &
--		(1LLU << RTE_TABLE_ACTION_STATS)) == 0) ||
--		(data == NULL))
--		return -EINVAL;
--
--	stats_data = action_data_get(data, action,
--		RTE_TABLE_ACTION_STATS);
--
--	/* Read */
--	if (stats) {
--		stats->n_packets = stats_data->n_packets;
--		stats->n_bytes = stats_data->n_bytes;
--		stats->n_packets_valid = 1;
--		stats->n_bytes_valid = 1;
--	}
--
--	/* Clear */
--	if (clear) {
--		stats_data->n_packets = 0;
--		stats_data->n_bytes = 0;
--	}
--
--	return 0;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_time_read, 18.05)
--int
--rte_table_action_time_read(struct rte_table_action *action,
--	void *data,
--	uint64_t *timestamp)
--{
--	struct time_data *time_data;
--
--	/* Check input arguments */
--	if ((action == NULL) ||
--		((action->cfg.action_mask &
--		(1LLU << RTE_TABLE_ACTION_TIME)) == 0) ||
--		(data == NULL) ||
--		(timestamp == NULL))
--		return -EINVAL;
--
--	time_data = action_data_get(data, action, RTE_TABLE_ACTION_TIME);
--
--	/* Read */
--	*timestamp = time_data->time;
--
--	return 0;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_crypto_sym_session_get, 18.11)
--struct rte_cryptodev_sym_session *
--rte_table_action_crypto_sym_session_get(struct rte_table_action *action,
--	void *data)
--{
--	struct sym_crypto_data *sym_crypto_data;
--
--	/* Check input arguments */
--	if ((action == NULL) ||
--		((action->cfg.action_mask &
--		(1LLU << RTE_TABLE_ACTION_SYM_CRYPTO)) == 0) ||
--		(data == NULL))
--		return NULL;
--
--	sym_crypto_data = action_data_get(data, action,
--			RTE_TABLE_ACTION_SYM_CRYPTO);
--
--	return sym_crypto_data->session;
--}
--
--static __rte_always_inline uint64_t
--pkt_work(struct rte_mbuf *mbuf,
--	struct rte_pipeline_table_entry *table_entry,
--	uint64_t time,
--	struct rte_table_action *action,
--	struct ap_config *cfg)
--{
--	uint64_t drop_mask = 0;
--
--	uint32_t ip_offset = action->cfg.common.ip_offset;
--	void *ip = RTE_MBUF_METADATA_UINT32_PTR(mbuf, ip_offset);
--
--	uint32_t dscp;
--	uint16_t total_length;
--
--	if (cfg->common.ip_version) {
--		struct rte_ipv4_hdr *hdr = ip;
--
--		dscp = hdr->type_of_service >> 2;
--		total_length = rte_ntohs(hdr->total_length);
--	} else {
--		struct rte_ipv6_hdr *hdr = ip;
--
--		dscp = (rte_ntohl(hdr->vtc_flow) & 0x0F600000) >> 18;
--		total_length = rte_ntohs(hdr->payload_len) +
--			sizeof(struct rte_ipv6_hdr);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_LB)) {
--		void *data =
--			action_data_get(table_entry, action, RTE_TABLE_ACTION_LB);
--
--		pkt_work_lb(mbuf,
--			data,
--			&cfg->lb);
--	}
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_MTR)) {
--		void *data =
--			action_data_get(table_entry, action, RTE_TABLE_ACTION_MTR);
--
--		drop_mask |= pkt_work_mtr(mbuf,
--			data,
--			&action->dscp_table,
--			action->mp,
--			time,
--			dscp,
--			total_length);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_TM)) {
--		void *data =
--			action_data_get(table_entry, action, RTE_TABLE_ACTION_TM);
--
--		pkt_work_tm(mbuf,
--			data,
--			&action->dscp_table,
--			dscp);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_DECAP)) {
--		void *data = action_data_get(table_entry,
--			action,
--			RTE_TABLE_ACTION_DECAP);
--
--		pkt_work_decap(mbuf, data);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_ENCAP)) {
--		void *data =
--			action_data_get(table_entry, action, RTE_TABLE_ACTION_ENCAP);
--
--		pkt_work_encap(mbuf,
--			data,
--			&cfg->encap,
--			ip,
--			total_length,
--			ip_offset);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_NAT)) {
--		void *data =
--			action_data_get(table_entry, action, RTE_TABLE_ACTION_NAT);
--
--		if (cfg->common.ip_version)
--			pkt_ipv4_work_nat(ip, data, &cfg->nat);
--		else
--			pkt_ipv6_work_nat(ip, data, &cfg->nat);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_TTL)) {
--		void *data =
--			action_data_get(table_entry, action, RTE_TABLE_ACTION_TTL);
--
--		if (cfg->common.ip_version)
--			drop_mask |= pkt_ipv4_work_ttl(ip, data);
--		else
--			drop_mask |= pkt_ipv6_work_ttl(ip, data);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_STATS)) {
--		void *data =
--			action_data_get(table_entry, action, RTE_TABLE_ACTION_STATS);
--
--		pkt_work_stats(data, total_length);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_TIME)) {
--		void *data =
--			action_data_get(table_entry, action, RTE_TABLE_ACTION_TIME);
--
--		pkt_work_time(data, time);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_SYM_CRYPTO)) {
--		void *data = action_data_get(table_entry, action,
--				RTE_TABLE_ACTION_SYM_CRYPTO);
--
--		drop_mask |= pkt_work_sym_crypto(mbuf, data, &cfg->sym_crypto,
--				ip_offset);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_TAG)) {
--		void *data = action_data_get(table_entry,
--			action,
--			RTE_TABLE_ACTION_TAG);
--
--		pkt_work_tag(mbuf, data);
--	}
--
--	return drop_mask;
--}
--
--static __rte_always_inline uint64_t
--pkt4_work(struct rte_mbuf **mbufs,
--	struct rte_pipeline_table_entry **table_entries,
--	uint64_t time,
--	struct rte_table_action *action,
--	struct ap_config *cfg)
--{
--	uint64_t drop_mask0 = 0;
--	uint64_t drop_mask1 = 0;
--	uint64_t drop_mask2 = 0;
--	uint64_t drop_mask3 = 0;
--
--	struct rte_mbuf *mbuf0 = mbufs[0];
--	struct rte_mbuf *mbuf1 = mbufs[1];
--	struct rte_mbuf *mbuf2 = mbufs[2];
--	struct rte_mbuf *mbuf3 = mbufs[3];
--
--	struct rte_pipeline_table_entry *table_entry0 = table_entries[0];
--	struct rte_pipeline_table_entry *table_entry1 = table_entries[1];
--	struct rte_pipeline_table_entry *table_entry2 = table_entries[2];
--	struct rte_pipeline_table_entry *table_entry3 = table_entries[3];
--
--	uint32_t ip_offset = action->cfg.common.ip_offset;
--	void *ip0 = RTE_MBUF_METADATA_UINT32_PTR(mbuf0, ip_offset);
--	void *ip1 = RTE_MBUF_METADATA_UINT32_PTR(mbuf1, ip_offset);
--	void *ip2 = RTE_MBUF_METADATA_UINT32_PTR(mbuf2, ip_offset);
--	void *ip3 = RTE_MBUF_METADATA_UINT32_PTR(mbuf3, ip_offset);
--
--	uint32_t dscp0, dscp1, dscp2, dscp3;
--	uint16_t total_length0, total_length1, total_length2, total_length3;
--
--	if (cfg->common.ip_version) {
--		struct rte_ipv4_hdr *hdr0 = ip0;
--		struct rte_ipv4_hdr *hdr1 = ip1;
--		struct rte_ipv4_hdr *hdr2 = ip2;
--		struct rte_ipv4_hdr *hdr3 = ip3;
--
--		dscp0 = hdr0->type_of_service >> 2;
--		dscp1 = hdr1->type_of_service >> 2;
--		dscp2 = hdr2->type_of_service >> 2;
--		dscp3 = hdr3->type_of_service >> 2;
--
--		total_length0 = rte_ntohs(hdr0->total_length);
--		total_length1 = rte_ntohs(hdr1->total_length);
--		total_length2 = rte_ntohs(hdr2->total_length);
--		total_length3 = rte_ntohs(hdr3->total_length);
--	} else {
--		struct rte_ipv6_hdr *hdr0 = ip0;
--		struct rte_ipv6_hdr *hdr1 = ip1;
--		struct rte_ipv6_hdr *hdr2 = ip2;
--		struct rte_ipv6_hdr *hdr3 = ip3;
--
--		dscp0 = (rte_ntohl(hdr0->vtc_flow) & 0x0F600000) >> 18;
--		dscp1 = (rte_ntohl(hdr1->vtc_flow) & 0x0F600000) >> 18;
--		dscp2 = (rte_ntohl(hdr2->vtc_flow) & 0x0F600000) >> 18;
--		dscp3 = (rte_ntohl(hdr3->vtc_flow) & 0x0F600000) >> 18;
--
--		total_length0 = rte_ntohs(hdr0->payload_len) +
--			sizeof(struct rte_ipv6_hdr);
--		total_length1 = rte_ntohs(hdr1->payload_len) +
--			sizeof(struct rte_ipv6_hdr);
--		total_length2 = rte_ntohs(hdr2->payload_len) +
--			sizeof(struct rte_ipv6_hdr);
--		total_length3 = rte_ntohs(hdr3->payload_len) +
--			sizeof(struct rte_ipv6_hdr);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_LB)) {
--		void *data0 =
--			action_data_get(table_entry0, action, RTE_TABLE_ACTION_LB);
--		void *data1 =
--			action_data_get(table_entry1, action, RTE_TABLE_ACTION_LB);
--		void *data2 =
--			action_data_get(table_entry2, action, RTE_TABLE_ACTION_LB);
--		void *data3 =
--			action_data_get(table_entry3, action, RTE_TABLE_ACTION_LB);
--
--		pkt_work_lb(mbuf0,
--			data0,
--			&cfg->lb);
--
--		pkt_work_lb(mbuf1,
--			data1,
--			&cfg->lb);
--
--		pkt_work_lb(mbuf2,
--			data2,
--			&cfg->lb);
--
--		pkt_work_lb(mbuf3,
--			data3,
--			&cfg->lb);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_MTR)) {
--		void *data0 =
--			action_data_get(table_entry0, action, RTE_TABLE_ACTION_MTR);
--		void *data1 =
--			action_data_get(table_entry1, action, RTE_TABLE_ACTION_MTR);
--		void *data2 =
--			action_data_get(table_entry2, action, RTE_TABLE_ACTION_MTR);
--		void *data3 =
--			action_data_get(table_entry3, action, RTE_TABLE_ACTION_MTR);
--
--		drop_mask0 |= pkt_work_mtr(mbuf0,
--			data0,
--			&action->dscp_table,
--			action->mp,
--			time,
--			dscp0,
--			total_length0);
--
--		drop_mask1 |= pkt_work_mtr(mbuf1,
--			data1,
--			&action->dscp_table,
--			action->mp,
--			time,
--			dscp1,
--			total_length1);
--
--		drop_mask2 |= pkt_work_mtr(mbuf2,
--			data2,
--			&action->dscp_table,
--			action->mp,
--			time,
--			dscp2,
--			total_length2);
--
--		drop_mask3 |= pkt_work_mtr(mbuf3,
--			data3,
--			&action->dscp_table,
--			action->mp,
--			time,
--			dscp3,
--			total_length3);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_TM)) {
--		void *data0 =
--			action_data_get(table_entry0, action, RTE_TABLE_ACTION_TM);
--		void *data1 =
--			action_data_get(table_entry1, action, RTE_TABLE_ACTION_TM);
--		void *data2 =
--			action_data_get(table_entry2, action, RTE_TABLE_ACTION_TM);
--		void *data3 =
--			action_data_get(table_entry3, action, RTE_TABLE_ACTION_TM);
--
--		pkt_work_tm(mbuf0,
--			data0,
--			&action->dscp_table,
--			dscp0);
--
--		pkt_work_tm(mbuf1,
--			data1,
--			&action->dscp_table,
--			dscp1);
--
--		pkt_work_tm(mbuf2,
--			data2,
--			&action->dscp_table,
--			dscp2);
--
--		pkt_work_tm(mbuf3,
--			data3,
--			&action->dscp_table,
--			dscp3);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_DECAP)) {
--		void *data0 = action_data_get(table_entry0,
--			action,
--			RTE_TABLE_ACTION_DECAP);
--		void *data1 = action_data_get(table_entry1,
--			action,
--			RTE_TABLE_ACTION_DECAP);
--		void *data2 = action_data_get(table_entry2,
--			action,
--			RTE_TABLE_ACTION_DECAP);
--		void *data3 = action_data_get(table_entry3,
--			action,
--			RTE_TABLE_ACTION_DECAP);
--
--		pkt4_work_decap(mbuf0, mbuf1, mbuf2, mbuf3,
--			data0, data1, data2, data3);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_ENCAP)) {
--		void *data0 =
--			action_data_get(table_entry0, action, RTE_TABLE_ACTION_ENCAP);
--		void *data1 =
--			action_data_get(table_entry1, action, RTE_TABLE_ACTION_ENCAP);
--		void *data2 =
--			action_data_get(table_entry2, action, RTE_TABLE_ACTION_ENCAP);
--		void *data3 =
--			action_data_get(table_entry3, action, RTE_TABLE_ACTION_ENCAP);
--
--		pkt_work_encap(mbuf0,
--			data0,
--			&cfg->encap,
--			ip0,
--			total_length0,
--			ip_offset);
--
--		pkt_work_encap(mbuf1,
--			data1,
--			&cfg->encap,
--			ip1,
--			total_length1,
--			ip_offset);
--
--		pkt_work_encap(mbuf2,
--			data2,
--			&cfg->encap,
--			ip2,
--			total_length2,
--			ip_offset);
--
--		pkt_work_encap(mbuf3,
--			data3,
--			&cfg->encap,
--			ip3,
--			total_length3,
--			ip_offset);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_NAT)) {
--		void *data0 =
--			action_data_get(table_entry0, action, RTE_TABLE_ACTION_NAT);
--		void *data1 =
--			action_data_get(table_entry1, action, RTE_TABLE_ACTION_NAT);
--		void *data2 =
--			action_data_get(table_entry2, action, RTE_TABLE_ACTION_NAT);
--		void *data3 =
--			action_data_get(table_entry3, action, RTE_TABLE_ACTION_NAT);
--
--		if (cfg->common.ip_version) {
--			pkt_ipv4_work_nat(ip0, data0, &cfg->nat);
--			pkt_ipv4_work_nat(ip1, data1, &cfg->nat);
--			pkt_ipv4_work_nat(ip2, data2, &cfg->nat);
--			pkt_ipv4_work_nat(ip3, data3, &cfg->nat);
--		} else {
--			pkt_ipv6_work_nat(ip0, data0, &cfg->nat);
--			pkt_ipv6_work_nat(ip1, data1, &cfg->nat);
--			pkt_ipv6_work_nat(ip2, data2, &cfg->nat);
--			pkt_ipv6_work_nat(ip3, data3, &cfg->nat);
--		}
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_TTL)) {
--		void *data0 =
--			action_data_get(table_entry0, action, RTE_TABLE_ACTION_TTL);
--		void *data1 =
--			action_data_get(table_entry1, action, RTE_TABLE_ACTION_TTL);
--		void *data2 =
--			action_data_get(table_entry2, action, RTE_TABLE_ACTION_TTL);
--		void *data3 =
--			action_data_get(table_entry3, action, RTE_TABLE_ACTION_TTL);
--
--		if (cfg->common.ip_version) {
--			drop_mask0 |= pkt_ipv4_work_ttl(ip0, data0);
--			drop_mask1 |= pkt_ipv4_work_ttl(ip1, data1);
--			drop_mask2 |= pkt_ipv4_work_ttl(ip2, data2);
--			drop_mask3 |= pkt_ipv4_work_ttl(ip3, data3);
--		} else {
--			drop_mask0 |= pkt_ipv6_work_ttl(ip0, data0);
--			drop_mask1 |= pkt_ipv6_work_ttl(ip1, data1);
--			drop_mask2 |= pkt_ipv6_work_ttl(ip2, data2);
--			drop_mask3 |= pkt_ipv6_work_ttl(ip3, data3);
--		}
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_STATS)) {
--		void *data0 =
--			action_data_get(table_entry0, action, RTE_TABLE_ACTION_STATS);
--		void *data1 =
--			action_data_get(table_entry1, action, RTE_TABLE_ACTION_STATS);
--		void *data2 =
--			action_data_get(table_entry2, action, RTE_TABLE_ACTION_STATS);
--		void *data3 =
--			action_data_get(table_entry3, action, RTE_TABLE_ACTION_STATS);
--
--		pkt_work_stats(data0, total_length0);
--		pkt_work_stats(data1, total_length1);
--		pkt_work_stats(data2, total_length2);
--		pkt_work_stats(data3, total_length3);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_TIME)) {
--		void *data0 =
--			action_data_get(table_entry0, action, RTE_TABLE_ACTION_TIME);
--		void *data1 =
--			action_data_get(table_entry1, action, RTE_TABLE_ACTION_TIME);
--		void *data2 =
--			action_data_get(table_entry2, action, RTE_TABLE_ACTION_TIME);
--		void *data3 =
--			action_data_get(table_entry3, action, RTE_TABLE_ACTION_TIME);
--
--		pkt_work_time(data0, time);
--		pkt_work_time(data1, time);
--		pkt_work_time(data2, time);
--		pkt_work_time(data3, time);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_SYM_CRYPTO)) {
--		void *data0 = action_data_get(table_entry0, action,
--				RTE_TABLE_ACTION_SYM_CRYPTO);
--		void *data1 = action_data_get(table_entry1, action,
--				RTE_TABLE_ACTION_SYM_CRYPTO);
--		void *data2 = action_data_get(table_entry2, action,
--				RTE_TABLE_ACTION_SYM_CRYPTO);
--		void *data3 = action_data_get(table_entry3, action,
--				RTE_TABLE_ACTION_SYM_CRYPTO);
--
--		drop_mask0 |= pkt_work_sym_crypto(mbuf0, data0, &cfg->sym_crypto,
--				ip_offset);
--		drop_mask1 |= pkt_work_sym_crypto(mbuf1, data1, &cfg->sym_crypto,
--				ip_offset);
--		drop_mask2 |= pkt_work_sym_crypto(mbuf2, data2, &cfg->sym_crypto,
--				ip_offset);
--		drop_mask3 |= pkt_work_sym_crypto(mbuf3, data3, &cfg->sym_crypto,
--				ip_offset);
--	}
--
--	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_TAG)) {
--		void *data0 = action_data_get(table_entry0,
--			action,
--			RTE_TABLE_ACTION_TAG);
--		void *data1 = action_data_get(table_entry1,
--			action,
--			RTE_TABLE_ACTION_TAG);
--		void *data2 = action_data_get(table_entry2,
--			action,
--			RTE_TABLE_ACTION_TAG);
--		void *data3 = action_data_get(table_entry3,
--			action,
--			RTE_TABLE_ACTION_TAG);
--
--		pkt4_work_tag(mbuf0, mbuf1, mbuf2, mbuf3,
--			data0, data1, data2, data3);
--	}
--
--	return drop_mask0 |
--		(drop_mask1 << 1) |
--		(drop_mask2 << 2) |
--		(drop_mask3 << 3);
--}
--
--static __rte_always_inline int
--ah(struct rte_pipeline *p,
+-static int
+-rte_table_array_lookup(
+-	void *table,
 -	struct rte_mbuf **pkts,
 -	uint64_t pkts_mask,
--	struct rte_pipeline_table_entry **entries,
--	struct rte_table_action *action,
--	struct ap_config *cfg)
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
 -{
--	uint64_t pkts_drop_mask = 0;
--	uint64_t time = 0;
--
--	if (cfg->action_mask & ((1LLU << RTE_TABLE_ACTION_MTR) |
--		(1LLU << RTE_TABLE_ACTION_TIME)))
--		time = rte_rdtsc();
+-	struct rte_table_array *t = (struct rte_table_array *) table;
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-	RTE_TABLE_ARRAY_STATS_PKTS_IN_ADD(t, n_pkts_in);
+-	*lookup_hit_mask = pkts_mask;
 -
 -	if ((pkts_mask & (pkts_mask + 1)) == 0) {
 -		uint64_t n_pkts = rte_popcount64(pkts_mask);
 -		uint32_t i;
 -
--		for (i = 0; i < (n_pkts & (~0x3LLU)); i += 4) {
--			uint64_t drop_mask;
+-		for (i = 0; i < n_pkts; i++) {
+-			struct rte_mbuf *pkt = pkts[i];
+-			uint32_t entry_pos = RTE_MBUF_METADATA_UINT32(pkt,
+-				t->offset) & t->entry_pos_mask;
 -
--			drop_mask = pkt4_work(&pkts[i],
--				&entries[i],
--				time,
--				action,
--				cfg);
--
--			pkts_drop_mask |= drop_mask << i;
+-			entries[i] = (void *) &t->array[entry_pos *
+-				t->entry_size];
 -		}
--
--		for ( ; i < n_pkts; i++) {
--			uint64_t drop_mask;
--
--			drop_mask = pkt_work(pkts[i],
--				entries[i],
--				time,
--				action,
--				cfg);
--
--			pkts_drop_mask |= drop_mask << i;
--		}
--	} else
+-	} else {
 -		for ( ; pkts_mask; ) {
--			uint32_t pos = rte_ctz64(pkts_mask);
--			uint64_t pkt_mask = 1LLU << pos;
--			uint64_t drop_mask;
+-			uint32_t pkt_index = rte_ctz64(pkts_mask);
+-			uint64_t pkt_mask = 1LLU << pkt_index;
+-			struct rte_mbuf *pkt = pkts[pkt_index];
+-			uint32_t entry_pos = RTE_MBUF_METADATA_UINT32(pkt,
+-				t->offset) & t->entry_pos_mask;
 -
--			drop_mask = pkt_work(pkts[pos],
--				entries[pos],
--				time,
--				action,
--				cfg);
--
+-			entries[pkt_index] = (void *) &t->array[entry_pos *
+-				t->entry_size];
 -			pkts_mask &= ~pkt_mask;
--			pkts_drop_mask |= drop_mask << pos;
 -		}
--
--	rte_pipeline_ah_packet_drop(p, pkts_drop_mask);
+-	}
 -
 -	return 0;
 -}
 -
 -static int
--ah_default(struct rte_pipeline *p,
--	struct rte_mbuf **pkts,
--	uint64_t pkts_mask,
--	struct rte_pipeline_table_entry **entries,
--	void *arg)
+-rte_table_array_stats_read(void *table, struct rte_table_stats *stats, int clear)
 -{
--	struct rte_table_action *action = arg;
+-	struct rte_table_array *array = table;
 -
--	return ah(p,
--		pkts,
--		pkts_mask,
--		entries,
--		action,
--		&action->cfg);
--}
+-	if (stats != NULL)
+-		memcpy(stats, &array->stats, sizeof(array->stats));
 -
--static rte_pipeline_table_action_handler_hit
--ah_selector(struct rte_table_action *action)
--{
--	if (action->cfg.action_mask == (1LLU << RTE_TABLE_ACTION_FWD))
--		return NULL;
--
--	return ah_default;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_table_params_get, 18.05)
--int
--rte_table_action_table_params_get(struct rte_table_action *action,
--	struct rte_pipeline_table_params *params)
--{
--	rte_pipeline_table_action_handler_hit f_action_hit;
--	uint32_t total_size;
--
--	/* Check input arguments */
--	if ((action == NULL) ||
--		(params == NULL))
--		return -EINVAL;
--
--	f_action_hit = ah_selector(action);
--	total_size = rte_align32pow2(action->data.total_size);
--
--	/* Fill in params */
--	params->f_action_hit = f_action_hit;
--	params->f_action_miss = NULL;
--	params->arg_ah = (f_action_hit) ? action : NULL;
--	params->action_data_size = total_size -
--		sizeof(struct rte_pipeline_table_entry);
+-	if (clear)
+-		memset(&array->stats, 0, sizeof(array->stats));
 -
 -	return 0;
 -}
 -
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_free, 18.05)
--int
--rte_table_action_free(struct rte_table_action *action)
--{
--	if (action == NULL)
--		return 0;
--
--	rte_free(action);
--
--	return 0;
--}
-diff --git a/lib/pipeline/rte_table_action.h b/lib/pipeline/rte_table_action.h
+-RTE_EXPORT_SYMBOL(rte_table_array_ops)
+-struct rte_table_ops rte_table_array_ops = {
+-	.f_create = rte_table_array_create,
+-	.f_free = rte_table_array_free,
+-	.f_add = rte_table_array_entry_add,
+-	.f_delete = NULL,
+-	.f_add_bulk = NULL,
+-	.f_delete_bulk = NULL,
+-	.f_lookup = rte_table_array_lookup,
+-	.f_stats = rte_table_array_stats_read,
+-};
+diff --git a/lib/table/rte_table_array.h b/lib/table/rte_table_array.h
 deleted file mode 100644
-index 47a7bdfc01..0000000000
---- a/lib/pipeline/rte_table_action.h
+index b2a7b95d68..0000000000
+--- a/lib/table/rte_table_array.h
 +++ /dev/null
-@@ -1,1137 +0,0 @@
+@@ -1,46 +0,0 @@
 -/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2018 Intel Corporation
+- * Copyright(c) 2010-2014 Intel Corporation
 - */
 -
--#ifndef __INCLUDE_RTE_TABLE_ACTION_H__
--#define __INCLUDE_RTE_TABLE_ACTION_H__
+-#ifndef __INCLUDE_RTE_TABLE_ARRAY_H__
+-#define __INCLUDE_RTE_TABLE_ARRAY_H__
 -
 -/**
 - * @file
-- * RTE Pipeline Table Actions
+- * RTE Table Array
 - *
-- * This API provides a common set of actions for pipeline tables to speed up
-- * application development.
-- *
-- * Each match-action rule added to a pipeline table has associated data that
-- * stores the action context. This data is input to the table action handler
-- * called for every input packet that hits the rule as part of the table lookup
-- * during the pipeline execution. The pipeline library allows the user to define
-- * his own table actions by providing customized table action handlers (table
-- * lookup) and complete freedom of setting the rules and their data (table rule
-- * add/delete). While the user can still follow this process, this API is
-- * intended to provide a quicker development alternative for a set of predefined
-- * actions.
-- *
-- * The typical steps to use this API are:
-- *  - Define a table action profile. This is a configuration template that can
-- *    potentially be shared by multiple tables from the same or different
-- *    pipelines, with different tables from the same pipeline likely to use
-- *    different action profiles. For every table using a given action profile,
-- *    the profile defines the set of actions and the action configuration to be
-- *    implemented for all the table rules. API functions:
-- *    rte_table_action_profile_create(),
-- *    rte_table_action_profile_action_register(),
-- *    rte_table_action_profile_freeze().
-- *
-- *  - Instantiate the table action profile to create table action objects. Each
-- *    pipeline table has its own table action object. API functions:
-- *    rte_table_action_create().
-- *
-- *  - Use the table action object to generate the pipeline table action handlers
-- *    (invoked by the pipeline table lookup operation). API functions:
-- *    rte_table_action_table_params_get().
-- *
-- *  - Use the table action object to generate the rule data (for the pipeline
-- *    table rule add operation) based on given action parameters. API functions:
-- *    rte_table_action_apply().
-- *
-- *  - Use the table action object to read action data (e.g. stats counters) for
-- *    any given rule. API functions: rte_table_action_XYZ_read().
-- *
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice
+- * Simple array indexing. Lookup key is the array entry index.
 - */
 -
 -#include <stdint.h>
 -
--#include <rte_compat.h>
--#include <rte_ether.h>
--#include <rte_ip6.h>
--#include <rte_meter.h>
--#include <rte_table_hash.h>
--
--#include "rte_pipeline.h"
+-#include "rte_table.h"
 -
 -#ifdef __cplusplus
 -extern "C" {
 -#endif
 -
--/** Table actions. */
--enum rte_table_action_type {
--	/** Forward to next pipeline table, output port or drop. */
--	RTE_TABLE_ACTION_FWD = 0,
--
--	/**  Load balance. */
--	RTE_TABLE_ACTION_LB,
--
--	/**  Traffic Metering and Policing. */
--	RTE_TABLE_ACTION_MTR,
--
--	/**  Traffic Management. */
--	RTE_TABLE_ACTION_TM,
--
--	/** Packet encapsulations. */
--	RTE_TABLE_ACTION_ENCAP,
--
--	/** Network Address Translation (NAT). */
--	RTE_TABLE_ACTION_NAT,
--
--	/** Time to Live (TTL) update. */
--	RTE_TABLE_ACTION_TTL,
--
--	/** Statistics. */
--	RTE_TABLE_ACTION_STATS,
--
--	/** Timestamp. */
--	RTE_TABLE_ACTION_TIME,
--
--	/** Crypto. */
--	RTE_TABLE_ACTION_SYM_CRYPTO,
--
--	/** Tag. */
--	RTE_TABLE_ACTION_TAG,
--
--	/** Packet decapsulations. */
--	RTE_TABLE_ACTION_DECAP,
--};
--
--/** Common action configuration (per table action profile). */
--struct rte_table_action_common_config {
--	/** Input packet Internet Protocol (IP) version. Non-zero for IPv4, zero
--	 * for IPv6.
--	 */
--	int ip_version;
--
--	/** IP header offset within the input packet buffer. Offset 0 points to
--	 * the first byte of the MBUF structure.
--	 */
--	uint32_t ip_offset;
--};
--
--/**
-- * RTE_TABLE_ACTION_FWD
-- */
--/** Forward action parameters (per table rule). */
--struct rte_table_action_fwd_params {
--	/** Forward action. */
--	enum rte_pipeline_action action;
--
--	/** Pipeline table ID or output port ID. */
--	uint32_t id;
--};
--
--/**
-- * RTE_TABLE_ACTION_LB
-- */
--/** Load balance key size min (number of bytes). */
--#define RTE_TABLE_ACTION_LB_KEY_SIZE_MIN                    8
--
--/** Load balance key size max (number of bytes). */
--#define RTE_TABLE_ACTION_LB_KEY_SIZE_MAX                    64
--
--/** Load balance table size. */
--#define RTE_TABLE_ACTION_LB_TABLE_SIZE                      8
--
--/** Load balance action configuration (per table action profile). */
--struct rte_table_action_lb_config {
--	/** Key size (number of bytes). */
--	uint32_t key_size;
--
--	/** Key offset within the input packet buffer. Offset 0 points to the
--	 * first byte of the MBUF structure.
--	 */
--	uint32_t key_offset;
--
--	/** Key mask (*key_size* bytes are valid). */
--	uint8_t key_mask[RTE_TABLE_ACTION_LB_KEY_SIZE_MAX];
--
--	/** Hash function. */
--	rte_table_hash_op_hash f_hash;
--
--	/** Seed value for *f_hash*. */
--	uint64_t seed;
--
--	/** Output value offset within the input packet buffer. Offset 0 points
--	 * to the first byte of the MBUF structure.
--	 */
--	uint32_t out_offset;
--};
--
--/** Load balance action parameters (per table rule). */
--struct rte_table_action_lb_params {
--	/** Table defining the output values and their weights. The weights are
--	 * set in 1/RTE_TABLE_ACTION_LB_TABLE_SIZE increments. To assign a
--	 * weight of N/RTE_TABLE_ACTION_LB_TABLE_SIZE to a given output value
--	 * (0 <= N <= RTE_TABLE_ACTION_LB_TABLE_SIZE), the same output value
--	 * needs to show up exactly N times in this table.
--	 */
--	uint32_t out[RTE_TABLE_ACTION_LB_TABLE_SIZE];
--};
--
--/**
-- * RTE_TABLE_ACTION_MTR
-- */
--/** Max number of traffic classes (TCs). */
--#define RTE_TABLE_ACTION_TC_MAX                                  16
--
--/** Max number of queues per traffic class. */
--#define RTE_TABLE_ACTION_TC_QUEUE_MAX                            16
--
--/** Differentiated Services Code Point (DSCP) translation table entry. */
--struct rte_table_action_dscp_table_entry {
--	/** Traffic class. Used by the meter or the traffic management actions.
--	 * Has to be strictly smaller than *RTE_TABLE_ACTION_TC_MAX*. Traffic
--	 * class 0 is the highest priority.
--	 */
--	uint32_t tc_id;
--
--	/** Traffic class queue. Used by the traffic management action. Has to
--	 * be strictly smaller than *RTE_TABLE_ACTION_TC_QUEUE_MAX*.
--	 */
--	uint32_t tc_queue_id;
--
--	/** Packet color. Used by the meter action as the packet input color
--	 * for the color aware mode of the traffic metering algorithm.
--	 */
--	enum rte_color color;
--};
--
--/** DSCP translation table. */
--struct rte_table_action_dscp_table {
--	/** Array of DSCP table entries */
--	struct rte_table_action_dscp_table_entry entry[64];
--};
--
--/** Supported traffic metering algorithms. */
--enum rte_table_action_meter_algorithm {
--	/** Single Rate Three Color Marker (srTCM) - IETF RFC 2697. */
--	RTE_TABLE_ACTION_METER_SRTCM,
--
--	/** Two Rate Three Color Marker (trTCM) - IETF RFC 2698. */
--	RTE_TABLE_ACTION_METER_TRTCM,
--};
--
--/** Traffic metering profile (configuration template). */
--struct rte_table_action_meter_profile {
--	/** Traffic metering algorithm. */
--	enum rte_table_action_meter_algorithm alg;
--
--	union {
--		/** Only valid when *alg* is set to srTCM - IETF RFC 2697. */
--		struct rte_meter_srtcm_params srtcm;
--
--		/** Only valid when *alg* is set to trTCM - IETF RFC 2698. */
--		struct rte_meter_trtcm_params trtcm;
--	};
--};
--
--/** Policer actions. */
--enum rte_table_action_policer {
--	/** Recolor the packet as green. */
--	RTE_TABLE_ACTION_POLICER_COLOR_GREEN = 0,
--
--	/** Recolor the packet as yellow. */
--	RTE_TABLE_ACTION_POLICER_COLOR_YELLOW,
--
--	/** Recolor the packet as red. */
--	RTE_TABLE_ACTION_POLICER_COLOR_RED,
--
--	/** Drop the packet. */
--	RTE_TABLE_ACTION_POLICER_DROP,
--
--	/** Number of policer actions. */
--	RTE_TABLE_ACTION_POLICER_MAX
--};
--
--/** Meter action configuration per traffic class. */
--struct rte_table_action_mtr_tc_params {
--	/** Meter profile ID. */
--	uint32_t meter_profile_id;
--
--	/** Policer actions. */
--	enum rte_table_action_policer policer[RTE_COLORS];
--};
--
--/** Meter action statistics counters per traffic class. */
--struct rte_table_action_mtr_counters_tc {
--	/** Number of packets per color at the output of the traffic metering
--	 * and before the policer actions are executed. Only valid when
--	 * *n_packets_valid* is non-zero.
--	 */
--	uint64_t n_packets[RTE_COLORS];
--
--	/** Number of packet bytes per color at the output of the traffic
--	 * metering and before the policer actions are executed. Only valid when
--	 * *n_bytes_valid* is non-zero.
--	 */
--	uint64_t n_bytes[RTE_COLORS];
--
--	/** When non-zero, the *n_packets* field is valid. */
--	int n_packets_valid;
--
--	/** When non-zero, the *n_bytes* field is valid. */
--	int n_bytes_valid;
--};
--
--/** Meter action configuration (per table action profile). */
--struct rte_table_action_mtr_config {
--	/** Meter algorithm. */
--	enum rte_table_action_meter_algorithm alg;
--
--	/** Number of traffic classes. Each traffic class has its own traffic
--	 * meter and policer instances. Needs to be equal to either 1 or to
--	 * *RTE_TABLE_ACTION_TC_MAX*.
--	 */
--	uint32_t n_tc;
--
--	/** When non-zero, the *n_packets* meter stats counter is enabled,
--	 * otherwise it is disabled.
--	 *
--	 * @see struct rte_table_action_mtr_counters_tc
--	 */
--	int n_packets_enabled;
--
--	/** When non-zero, the *n_bytes* meter stats counter is enabled,
--	 * otherwise it is disabled.
--	 *
--	 * @see struct rte_table_action_mtr_counters_tc
--	 */
--	int n_bytes_enabled;
--};
--
--/** Meter action parameters (per table rule). */
--struct rte_table_action_mtr_params {
--	/** Traffic meter and policer parameters for each of the *tc_mask*
--	 * traffic classes.
--	 */
--	struct rte_table_action_mtr_tc_params mtr[RTE_TABLE_ACTION_TC_MAX];
--
--	/** Bit mask defining which traffic class parameters are valid in *mtr*.
--	 * If bit N is set in *tc_mask*, then parameters for traffic class N are
--	 * valid in *mtr*.
--	 */
--	uint32_t tc_mask;
--};
--
--/** Meter action statistics counters (per table rule). */
--struct rte_table_action_mtr_counters {
--	/** Stats counters for each of the *tc_mask* traffic classes. */
--	struct rte_table_action_mtr_counters_tc stats[RTE_TABLE_ACTION_TC_MAX];
--
--	/** Bit mask defining which traffic class parameters are valid in *mtr*.
--	 * If bit N is set in *tc_mask*, then parameters for traffic class N are
--	 * valid in *mtr*.
--	 */
--	uint32_t tc_mask;
--};
--
--/**
-- * RTE_TABLE_ACTION_TM
-- */
--/** Traffic management action configuration (per table action profile). */
--struct rte_table_action_tm_config {
--	/** Number of subports per port. */
--	uint32_t n_subports_per_port;
--
--	/** Number of pipes per subport. */
--	uint32_t n_pipes_per_subport;
--};
--
--/** Traffic management action parameters (per table rule). */
--struct rte_table_action_tm_params {
--	/** Subport ID. */
--	uint32_t subport_id;
--
--	/** Pipe ID. */
--	uint32_t pipe_id;
--};
--
--/**
-- * RTE_TABLE_ACTION_ENCAP
-- */
--/** Supported packet encapsulation types. */
--enum rte_table_action_encap_type {
--	/** IP -> { Ether | IP } */
--	RTE_TABLE_ACTION_ENCAP_ETHER = 0,
--
--	/** IP -> { Ether | VLAN | IP } */
--	RTE_TABLE_ACTION_ENCAP_VLAN,
--
--	/** IP -> { Ether | S-VLAN | C-VLAN | IP } */
--	RTE_TABLE_ACTION_ENCAP_QINQ,
--
--	/** IP -> { Ether | MPLS | IP } */
--	RTE_TABLE_ACTION_ENCAP_MPLS,
--
--	/** IP -> { Ether | PPPoE | PPP | IP } */
--	RTE_TABLE_ACTION_ENCAP_PPPOE,
--
--	/** Ether -> { Ether | IP | UDP | VXLAN | Ether }
--	 * Ether -> { Ether | VLAN | IP | UDP | VXLAN | Ether }
--	 */
--	RTE_TABLE_ACTION_ENCAP_VXLAN,
--
--	/** IP -> { Ether | S-VLAN | C-VLAN | PPPoE | PPP | IP } */
--	RTE_TABLE_ACTION_ENCAP_QINQ_PPPOE,
--};
--
--/** Pre-computed Ethernet header fields for encapsulation action. */
--struct rte_table_action_ether_hdr {
--	struct rte_ether_addr da; /**< Destination address. */
--	struct rte_ether_addr sa; /**< Source address. */
--};
--
--/** Pre-computed VLAN header fields for encapsulation action. */
--struct rte_table_action_vlan_hdr {
--	uint8_t pcp; /**< Priority Code Point (PCP). */
--	uint8_t dei; /**< Drop Eligibility Indicator (DEI). */
--	uint16_t vid; /**< VLAN Identifier (VID). */
--};
--
--/** Pre-computed MPLS header fields for encapsulation action. */
--struct rte_table_action_mpls_hdr {
--	uint32_t label; /**< Label. */
--	uint8_t tc; /**< Traffic Class (TC). */
--	uint8_t ttl; /**< Time to Live (TTL). */
--};
--
--/** Pre-computed PPPoE header fields for encapsulation action. */
--struct rte_table_action_pppoe_hdr {
--	uint16_t session_id; /**< Session ID. */
--};
--
--/** Pre-computed IPv4 header fields for encapsulation action. */
--struct rte_table_action_ipv4_header {
--	uint32_t sa; /**< Source address. */
--	uint32_t da; /**< Destination address. */
--	uint8_t dscp; /**< DiffServ Code Point (DSCP). */
--	uint8_t ttl; /**< Time To Live (TTL). */
--};
--
--/** Pre-computed IPv6 header fields for encapsulation action. */
--struct rte_table_action_ipv6_header {
--	struct rte_ipv6_addr sa; /**< Source address. */
--	struct rte_ipv6_addr da; /**< Destination address. */
--	uint32_t flow_label; /**< Flow label. */
--	uint8_t dscp; /**< DiffServ Code Point (DSCP). */
--	uint8_t hop_limit; /**< Hop Limit (HL). */
--};
--
--/** Pre-computed UDP header fields for encapsulation action. */
--struct rte_table_action_udp_header {
--	uint16_t sp; /**< Source port. */
--	uint16_t dp; /**< Destination port. */
--};
--
--/** Pre-computed VXLAN header fields for encapsulation action. */
--struct rte_table_action_vxlan_hdr {
--	uint32_t vni; /**< VXLAN Network Identifier (VNI). */
--};
--
--/** Ether encap parameters. */
--struct rte_table_action_encap_ether_params {
--	struct rte_table_action_ether_hdr ether; /**< Ethernet header. */
--};
--
--/** VLAN encap parameters. */
--struct rte_table_action_encap_vlan_params {
--	struct rte_table_action_ether_hdr ether; /**< Ethernet header. */
--	struct rte_table_action_vlan_hdr vlan; /**< VLAN header. */
--};
--
--/** QinQ encap parameters. */
--struct rte_table_action_encap_qinq_params {
--	struct rte_table_action_ether_hdr ether; /**< Ethernet header. */
--	struct rte_table_action_vlan_hdr svlan; /**< Service VLAN header. */
--	struct rte_table_action_vlan_hdr cvlan; /**< Customer VLAN header. */
--};
--
--/** Max number of MPLS labels per output packet for MPLS encapsulation. */
--#ifndef RTE_TABLE_ACTION_MPLS_LABELS_MAX
--#define RTE_TABLE_ACTION_MPLS_LABELS_MAX                   4
--#endif
--
--/** MPLS encap parameters. */
--struct rte_table_action_encap_mpls_params {
--	/** Ethernet header. */
--	struct rte_table_action_ether_hdr ether;
--
--	/** MPLS header. */
--	struct rte_table_action_mpls_hdr mpls[RTE_TABLE_ACTION_MPLS_LABELS_MAX];
--
--	/** Number of MPLS labels in MPLS header. */
--	uint32_t mpls_count;
--
--	/** Non-zero for MPLS unicast, zero for MPLS multicast. */
--	int unicast;
--};
--
--/** PPPoE encap parameters. */
--struct rte_table_action_encap_pppoe_params {
--	struct rte_table_action_ether_hdr ether; /**< Ethernet header. */
--	struct rte_table_action_pppoe_hdr pppoe; /**< PPPoE/PPP headers. */
--};
--
--/** VXLAN encap parameters. */
--struct rte_table_action_encap_vxlan_params {
--	struct rte_table_action_ether_hdr ether; /**< Ethernet header. */
--	struct rte_table_action_vlan_hdr vlan; /**< VLAN header. */
--
--	union {
--		struct rte_table_action_ipv4_header ipv4; /**< IPv4 header. */
--		struct rte_table_action_ipv6_header ipv6; /**< IPv6 header. */
--	};
--
--	struct rte_table_action_udp_header udp; /**< UDP header. */
--	struct rte_table_action_vxlan_hdr vxlan; /**< VXLAN header. */
--};
--
--/** Encap action configuration (per table action profile). */
--struct rte_table_action_encap_config {
--	/** Bit mask defining the set of packet encapsulations enabled for the
--	 * current table action profile. If bit (1 << N) is set in *encap_mask*,
--	 * then packet encapsulation N is enabled, otherwise it is disabled.
--	 *
--	 * @see enum rte_table_action_encap_type
--	 */
--	uint64_t encap_mask;
--
--	/** Encapsulation type specific configuration. */
--	union {
--		struct {
--			/** Input packet to be encapsulated: offset within the
--			 * input packet buffer to the start of the Ethernet
--			 * frame to be encapsulated. Offset 0 points to the
--			 * first byte of the MBUF structure.
--			 */
--			uint32_t data_offset;
--
--			/** Encapsulation header: non-zero when encapsulation
--			 * header includes a VLAN tag, zero otherwise.
--			 */
--			int vlan;
--
--			/** Encapsulation header: IP version of the IP header
--			 * within the encapsulation header. Non-zero for IPv4,
--			 * zero for IPv6.
--			 */
--			int ip_version;
--		} vxlan; /**< VXLAN specific configuration. */
--	};
--};
--
--/** QinQ_PPPoE encap parameters. */
--struct rte_table_encap_ether_qinq_pppoe {
--
--	/** Only valid when *type* is set to QinQ. */
--	struct rte_table_action_ether_hdr ether;
--	struct rte_table_action_vlan_hdr svlan; /**< Service VLAN header. */
--	struct rte_table_action_vlan_hdr cvlan; /**< Customer VLAN header. */
--	struct rte_table_action_pppoe_hdr pppoe; /**< PPPoE/PPP headers. */
--};
--
--/** Encap action parameters (per table rule). */
--struct rte_table_action_encap_params {
--	/** Encapsulation type. */
--	enum rte_table_action_encap_type type;
--
--	union {
--		/** Only valid when *type* is set to Ether. */
--		struct rte_table_action_encap_ether_params ether;
--
--		/** Only valid when *type* is set to VLAN. */
--		struct rte_table_action_encap_vlan_params vlan;
--
--		/** Only valid when *type* is set to QinQ. */
--		struct rte_table_action_encap_qinq_params qinq;
--
--		/** Only valid when *type* is set to MPLS. */
--		struct rte_table_action_encap_mpls_params mpls;
--
--		/** Only valid when *type* is set to PPPoE. */
--		struct rte_table_action_encap_pppoe_params pppoe;
--
--		/** Only valid when *type* is set to VXLAN. */
--		struct rte_table_action_encap_vxlan_params vxlan;
--
--		/** Only valid when *type* is set to QinQ_PPPoE. */
--		struct rte_table_encap_ether_qinq_pppoe qinq_pppoe;
--	};
--};
--
--/**
-- * RTE_TABLE_ACTION_NAT
-- */
--/** NAT action configuration (per table action profile). */
--struct rte_table_action_nat_config {
--	/** When non-zero, the IP source address and L4 protocol source port are
--	 * translated. When zero, the IP destination address and L4 protocol
--	 * destination port are translated.
--	 */
--	int source_nat;
--
--	/** Layer 4 protocol, for example TCP (0x06) or UDP (0x11). The checksum
--	 * field is computed differently and placed at different header offset
--	 * by each layer 4 protocol.
--	 */
--	uint8_t proto;
--};
--
--/** NAT action parameters (per table rule). */
--struct rte_table_action_nat_params {
--	/** IP version for *addr*: non-zero for IPv4, zero for IPv6. */
--	int ip_version;
--
--	/** IP address. */
--	union {
--		/** IPv4 address; only valid when *ip_version* is non-zero. */
--		uint32_t ipv4;
--
--		/** IPv6 address; only valid when *ip_version* is set to 0. */
--		struct rte_ipv6_addr ipv6;
--	} addr;
--
--	/** Port. */
--	uint16_t port;
--};
--
--/**
-- * RTE_TABLE_ACTION_TTL
-- */
--/** TTL action configuration (per table action profile). */
--struct rte_table_action_ttl_config {
--	/** When non-zero, the input packets whose updated IPv4 Time to Live
--	 * (TTL) field or IPv6 Hop Limit (HL) field is zero are dropped.
--	 * When zero, the input packets whose updated IPv4 TTL field or IPv6 HL
--	 * field is zero are forwarded as usual (typically for debugging
--	 * purpose).
--	 */
--	int drop;
--
--	/** When non-zero, the *n_packets* stats counter for TTL action is
--	 * enabled, otherwise disabled.
--	 *
--	 * @see struct rte_table_action_ttl_counters
--	 */
--	int n_packets_enabled;
--};
--
--/** TTL action parameters (per table rule). */
--struct rte_table_action_ttl_params {
--	/** When non-zero, decrement the IPv4 TTL field and update the checksum
--	 * field, or decrement the IPv6 HL field. When zero, the IPv4 TTL field
--	 * or the IPv6 HL field is not changed.
--	 */
--	int decrement;
--};
--
--/** TTL action statistics packets (per table rule). */
--struct rte_table_action_ttl_counters {
--	/** Number of IPv4 packets whose updated TTL field is zero or IPv6
--	 * packets whose updated HL field is zero.
--	 */
--	uint64_t n_packets;
--};
--
--/**
-- * RTE_TABLE_ACTION_STATS
-- */
--/** Stats action configuration (per table action profile). */
--struct rte_table_action_stats_config {
--	/** When non-zero, the *n_packets* stats counter is enabled, otherwise
--	 * disabled.
--	 *
--	 * @see struct rte_table_action_stats_counters
--	 */
--	int n_packets_enabled;
--
--	/** When non-zero, the *n_bytes* stats counter is enabled, otherwise
--	 * disabled.
--	 *
--	 * @see struct rte_table_action_stats_counters
--	 */
--	int n_bytes_enabled;
--};
--
--/** Stats action parameters (per table rule). */
--struct rte_table_action_stats_params {
--	/** Initial value for the *n_packets* stats counter. Typically set to 0.
--	 *
--	 * @see struct rte_table_action_stats_counters
--	 */
--	uint64_t n_packets;
--
--	/** Initial value for the *n_bytes* stats counter. Typically set to 0.
--	 *
--	 * @see struct rte_table_action_stats_counters
--	 */
--	uint64_t n_bytes;
--};
--
--/** Stats action counters (per table rule). */
--struct rte_table_action_stats_counters {
--	/** Number of packets. Valid only when *n_packets_valid* is non-zero. */
--	uint64_t n_packets;
--
--	/** Number of bytes. Valid only when *n_bytes_valid* is non-zero. */
--	uint64_t n_bytes;
--
--	/** When non-zero, the *n_packets* field is valid, otherwise invalid. */
--	int n_packets_valid;
--
--	/** When non-zero, the *n_bytes* field is valid, otherwise invalid. */
--	int n_bytes_valid;
--};
--
--/**
-- * RTE_TABLE_ACTION_TIME
-- */
--/** Timestamp action parameters (per table rule). */
--struct rte_table_action_time_params {
--	/** Initial timestamp value. Typically set to current time. */
--	uint64_t time;
--};
--
--/**
-- * RTE_TABLE_ACTION_CRYPTO
-- */
--#ifndef RTE_TABLE_ACTION_SYM_CRYPTO_IV_SIZE_MAX
--#define RTE_TABLE_ACTION_SYM_CRYPTO_IV_SIZE_MAX		(16)
--#endif
--
--#ifndef RTE_TABLE_ACTION_SYM_CRYPTO_AAD_SIZE_MAX
--#define RTE_TABLE_ACTION_SYM_CRYPTO_AAD_SIZE_MAX	(16)
--#endif
--
--#ifndef RTE_TABLE_ACTION_SYM_CRYPTO_IV_OFFSET
--#define RTE_TABLE_ACTION_SYM_CRYPTO_IV_OFFSET				\
--	(sizeof(struct rte_crypto_op) + sizeof(struct rte_crypto_sym_op))
--#endif
--
--/** Common action structure to store the data's value, length, and offset */
--struct rte_table_action_vlo {
--	uint8_t *val;
--	uint32_t length;
+-/** Array table parameters */
+-struct rte_table_array_params {
+-	/** Number of array entries. Has to be a power of two. */
+-	uint32_t n_entries;
+-
+-	/** Byte offset within input packet meta-data where lookup key (i.e. the
+-	    array entry index) is located. */
 -	uint32_t offset;
 -};
 -
--/** Symmetric crypto action configuration (per table action profile). */
--struct rte_table_action_sym_crypto_config {
--	/** Target Cryptodev ID. */
--	uint8_t cryptodev_id;
--
--	/**
--	 * Offset to rte_crypto_op structure within the input packet buffer.
--	 * Offset 0 points to the first byte of the MBUF structure.
--	 */
--	uint32_t op_offset;
--
--	/** The mempool for creating cryptodev sessions. */
--	struct rte_mempool *mp_create;
--
--	/** The mempool for initializing cryptodev sessions. */
--	struct rte_mempool *mp_init;
+-/** Array table key format */
+-struct rte_table_array_key {
+-	/** Array entry index */
+-	uint32_t pos;
 -};
 -
--/** Symmetric Crypto action parameters (per table rule). */
--struct rte_table_action_sym_crypto_params {
--
--	/** Xform pointer contains all relevant information */
--	struct rte_crypto_sym_xform *xform;
--
--	/**
--	 * Offset within the input packet buffer to the first byte of data
--	 * to be processed by the crypto unit. Offset 0 points to the first
--	 * byte of the MBUF structure.
--	 */
--	uint32_t data_offset;
--
--	union {
--		struct {
--			/** Cipher iv data. */
--			struct rte_table_action_vlo cipher_iv;
--
--			/** Cipher iv data. */
--			struct rte_table_action_vlo cipher_iv_update;
--
--			/** Auth iv data. */
--			struct rte_table_action_vlo auth_iv;
--
--			/** Auth iv data. */
--			struct rte_table_action_vlo auth_iv_update;
--
--		} cipher_auth;
--
--		struct {
--			/** AEAD AAD data. */
--			struct rte_table_action_vlo aad;
--
--			/** AEAD iv data. */
--			struct rte_table_action_vlo iv;
--
--			/** AEAD AAD data. */
--			struct rte_table_action_vlo aad_update;
--
--			/** AEAD iv data. */
--			struct rte_table_action_vlo iv_update;
--
--		} aead;
--	};
--};
--
--/**
-- * RTE_TABLE_ACTION_TAG
-- */
--/** Tag action parameters (per table rule). */
--struct rte_table_action_tag_params {
--	/** Tag to be attached to the input packet. */
--	uint32_t tag;
--};
--
--/**
-- * RTE_TABLE_ACTION_DECAP
-- */
--/** Decap action parameters (per table rule). */
--struct rte_table_action_decap_params {
--	/** Number of bytes to be removed from the start of the packet. */
--	uint16_t n;
--};
--
--/**
-- * Table action profile.
-- */
--struct rte_table_action_profile;
--
--/**
-- * Table action profile create.
-- *
-- * @param[in] common
-- *   Common action configuration.
-- * @return
-- *   Table action profile handle on success, NULL otherwise.
-- */
--__rte_experimental
--struct rte_table_action_profile *
--rte_table_action_profile_create(struct rte_table_action_common_config *common);
--
--/**
-- * Table action profile free.
-- *
-- * @param[in] profile
-- *   Table profile action handle (needs to be valid).
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_table_action_profile_free(struct rte_table_action_profile *profile);
--
--/**
-- * Table action profile action register.
-- *
-- * @param[in] profile
-- *   Table profile action handle (needs to be valid and not in frozen state).
-- * @param[in] type
-- *   Specific table action to be registered for *profile*.
-- * @param[in] action_config
-- *   Configuration for the *type* action.
-- *   If struct rte_table_action_*type*_config is defined by the Table Action
-- *   API, it needs to point to a valid instance of this structure, otherwise it
-- *   needs to be set to NULL.
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_table_action_profile_action_register(struct rte_table_action_profile *profile,
--	enum rte_table_action_type type,
--	void *action_config);
--
--/**
-- * Table action profile freeze.
-- *
-- * Once this function is called successfully, the given profile enters the
-- * frozen state with the following immediate effects: no more actions can be
-- * registered for this profile, so the profile can be instantiated to create
-- * table action objects.
-- *
-- * @param[in] profile
-- *   Table profile action handle (needs to be valid and not in frozen state).
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- *
-- * @see rte_table_action_create()
-- */
--__rte_experimental
--int
--rte_table_action_profile_freeze(struct rte_table_action_profile *profile);
--
--/**
-- * Table action.
-- */
--struct rte_table_action;
--
--/**
-- * Table action create.
-- *
-- * Instantiates the given table action profile to create a table action object.
-- *
-- * @param[in] profile
-- *   Table profile action handle (needs to be valid and in frozen state).
-- * @param[in] socket_id
-- *   CPU socket ID where the internal data structures required by the new table
-- *   action object should be allocated.
-- * @return
-- *   Handle to table action object on success, NULL on error.
-- *
-- * @see rte_table_action_create()
-- */
--__rte_experimental
--struct rte_table_action *
--rte_table_action_create(struct rte_table_action_profile *profile,
--	uint32_t socket_id);
--
--/**
-- * Table action free.
-- *
-- * @param[in] action
-- *   Handle to table action object (needs to be valid).
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_table_action_free(struct rte_table_action *action);
--
--/**
-- * Table action table params get.
-- *
-- * @param[in] action
-- *   Handle to table action object (needs to be valid).
-- * @param[inout] params
-- *   Pipeline table parameters (needs to be pre-allocated).
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_table_action_table_params_get(struct rte_table_action *action,
--	struct rte_pipeline_table_params *params);
--
--/**
-- * Table action apply.
-- *
-- * @param[in] action
-- *   Handle to table action object (needs to be valid).
-- * @param[in] data
-- *   Data byte array (typically table rule data) to apply action *type* on.
-- * @param[in] type
-- *   Specific table action previously registered for the table action profile of
-- *   the *action* object.
-- * @param[in] action_params
-- *   Parameters for the *type* action.
-- *   If struct rte_table_action_*type*_params is defined by the Table Action
-- *   API, it needs to point to a valid instance of this structure, otherwise it
-- *   needs to be set to NULL.
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_table_action_apply(struct rte_table_action *action,
--	void *data,
--	enum rte_table_action_type type,
--	void *action_params);
--
--/**
-- * Table action DSCP table update.
-- *
-- * @param[in] action
-- *   Handle to table action object (needs to be valid).
-- * @param[in] dscp_mask
-- *   64-bit mask defining the DSCP table entries to be updated. If bit N is set
-- *   in this bit mask, then DSCP table entry N is to be updated, otherwise not.
-- * @param[in] table
-- *   DSCP table.
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_table_action_dscp_table_update(struct rte_table_action *action,
--	uint64_t dscp_mask,
--	struct rte_table_action_dscp_table *table);
--
--/**
-- * Table action meter profile add.
-- *
-- * @param[in] action
-- *   Handle to table action object (needs to be valid).
-- * @param[in] meter_profile_id
-- *   Meter profile ID to be used for the *profile* once it is successfully added
-- *   to the *action* object (needs to be unused by the set of meter profiles
-- *   currently registered for the *action* object).
-- * @param[in] profile
-- *   Meter profile to be added.
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_table_action_meter_profile_add(struct rte_table_action *action,
--	uint32_t meter_profile_id,
--	struct rte_table_action_meter_profile *profile);
--
--/**
-- * Table action meter profile delete.
-- *
-- * @param[in] action
-- *   Handle to table action object (needs to be valid).
-- * @param[in] meter_profile_id
-- *   Meter profile ID of the meter profile to be deleted from the *action*
-- *   object (needs to be valid for the *action* object).
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_table_action_meter_profile_delete(struct rte_table_action *action,
--	uint32_t meter_profile_id);
--
--/**
-- * Table action meter read.
-- *
-- * @param[in] action
-- *   Handle to table action object (needs to be valid).
-- * @param[in] data
-- *   Data byte array (typically table rule data) with meter action previously
-- *   applied on it.
-- * @param[in] tc_mask
-- *   Bit mask defining which traffic classes should have the meter stats
-- *   counters read from *data* and stored into *stats*. If bit N is set in this
-- *   bit mask, then traffic class N is part of this operation, otherwise it is
-- *   not. If bit N is set in this bit mask, then traffic class N must be one of
-- *   the traffic classes that are enabled for the meter action in the table
-- *   action profile used by the *action* object.
-- * @param[inout] stats
-- *   When non-NULL, it points to the area where the meter stats counters read
-- *   from *data* are saved. Only the meter stats counters for the *tc_mask*
-- *   traffic classes are read and stored to *stats*.
-- * @param[in] clear
-- *   When non-zero, the meter stats counters are cleared (i.e. set to zero),
-- *   otherwise the counters are not modified. When the read operation is enabled
-- *   (*stats* is non-NULL), the clear operation is performed after the read
-- *   operation is completed.
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_table_action_meter_read(struct rte_table_action *action,
--	void *data,
--	uint32_t tc_mask,
--	struct rte_table_action_mtr_counters *stats,
--	int clear);
--
--/**
-- * Table action TTL read.
-- *
-- * @param[in] action
-- *   Handle to table action object (needs to be valid).
-- * @param[in] data
-- *   Data byte array (typically table rule data) with TTL action previously
-- *   applied on it.
-- * @param[inout] stats
-- *   When non-NULL, it points to the area where the TTL stats counters read from
-- *   *data* are saved.
-- * @param[in] clear
-- *   When non-zero, the TTL stats counters are cleared (i.e. set to zero),
-- *   otherwise the counters are not modified. When the read operation is enabled
-- *   (*stats* is non-NULL), the clear operation is performed after the read
-- *   operation is completed.
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_table_action_ttl_read(struct rte_table_action *action,
--	void *data,
--	struct rte_table_action_ttl_counters *stats,
--	int clear);
--
--/**
-- * Table action stats read.
-- *
-- * @param[in] action
-- *   Handle to table action object (needs to be valid).
-- * @param[in] data
-- *   Data byte array (typically table rule data) with stats action previously
-- *   applied on it.
-- * @param[inout] stats
-- *   When non-NULL, it points to the area where the stats counters read from
-- *   *data* are saved.
-- * @param[in] clear
-- *   When non-zero, the stats counters are cleared (i.e. set to zero), otherwise
-- *   the counters are not modified. When the read operation is enabled (*stats*
-- *   is non-NULL), the clear operation is performed after the read operation is
-- *   completed.
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_table_action_stats_read(struct rte_table_action *action,
--	void *data,
--	struct rte_table_action_stats_counters *stats,
--	int clear);
--
--/**
-- * Table action timestamp read.
-- *
-- * @param[in] action
-- *   Handle to table action object (needs to be valid).
-- * @param[in] data
-- *   Data byte array (typically table rule data) with timestamp action
-- *   previously applied on it.
-- * @param[inout] timestamp
-- *   Pre-allocated memory where the timestamp read from *data* is saved (has to
-- *   be non-NULL).
-- * @return
-- *   Zero on success, non-zero error code otherwise.
-- */
--__rte_experimental
--int
--rte_table_action_time_read(struct rte_table_action *action,
--	void *data,
--	uint64_t *timestamp);
--
--/**
-- * Table action cryptodev symmetric session get.
-- *
-- * @param[in] action
-- *   Handle to table action object (needs to be valid).
-- * @param[in] data
-- *   Data byte array (typically table rule data) with sym crypto action.
-- * @return
-- *   The pointer to the session on success, NULL otherwise.
-- */
--__rte_experimental
--struct rte_cryptodev_sym_session *
--rte_table_action_crypto_sym_session_get(struct rte_table_action *action,
--	void *data);
+-/** Array table operations */
+-extern struct rte_table_ops rte_table_array_ops;
 -
 -#ifdef __cplusplus
 -}
 -#endif
 -
--#endif /* __INCLUDE_RTE_TABLE_ACTION_H__ */
+-#endif
+diff --git a/lib/table/rte_table_hash.h b/lib/table/rte_table_hash.h
+deleted file mode 100644
+index ff8fc9e9ce..0000000000
+--- a/lib/table/rte_table_hash.h
++++ /dev/null
+@@ -1,106 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2017 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_TABLE_HASH_H__
+-#define __INCLUDE_RTE_TABLE_HASH_H__
+-
+-/**
+- * @file
+- * RTE Table Hash
+- *
+- * These tables use the exact match criterion to uniquely associate data to
+- * lookup keys.
+- *
+- * Hash table types:
+- * 1. Entry add strategy on bucket full:
+- *     a. Least Recently Used (LRU): One of the existing keys in the bucket is
+- *        deleted and the new key is added in its place. The number of keys in
+- *        each bucket never grows bigger than 4. The logic to pick the key to
+- *        be dropped from the bucket is LRU. The hash table lookup operation
+- *        maintains the order in which the keys in the same bucket are hit, so
+- *        every time a key is hit, it becomes the new Most Recently Used (MRU)
+- *        key, i.e. the most unlikely candidate for drop. When a key is added
+- *        to the bucket, it also becomes the new MRU key. When a key needs to
+- *        be picked and dropped, the most likely candidate for drop, i.e. the
+- *        current LRU key, is always picked. The LRU logic requires maintaining
+- *        specific data structures per each bucket. Use-cases: flow cache, etc.
+- *     b. Extendable bucket (ext): The bucket is extended with space for 4 more
+- *        keys. This is done by allocating additional memory at table init time,
+- *        which is used to create a pool of free keys (the size of this pool is
+- *        configurable and always a multiple of 4). On key add operation, the
+- *        allocation of a group of 4 keys only happens successfully within the
+- *        limit of free keys, otherwise the key add operation fails. On key
+- *        delete operation, a group of 4 keys is freed back to the pool of free
+- *        keys when the key to be deleted is the only key that was used within
+- *        its group of 4 keys at that time. On key lookup operation, if the
+- *        current bucket is in extended state and a match is not found in the
+- *        first group of 4 keys, the search continues beyond the first group of
+- *        4 keys, potentially until all keys in this bucket are examined. The
+- *        extendable bucket logic requires maintaining specific data structures
+- *        per table and per each bucket. Use-cases: flow table, etc.
+- * 2. Key size:
+- *     a. Configurable key size
+- *     b. Single key size (8-byte, 16-byte or 32-byte key size)
+- */
+-
+-#include <stdint.h>
+-
+-#include "rte_table.h"
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-/** Hash function */
+-typedef uint64_t (*rte_table_hash_op_hash)(
+-	void *key,
+-	void *key_mask,
+-	uint32_t key_size,
+-	uint64_t seed);
+-
+-/** Hash table parameters */
+-struct rte_table_hash_params {
+-	/** Name */
+-	const char *name;
+-
+-	/** Key size (number of bytes) */
+-	uint32_t key_size;
+-
+-	/** Byte offset within packet meta-data where the key is located */
+-	uint32_t key_offset;
+-
+-	/** Key mask */
+-	uint8_t *key_mask;
+-
+-	/** Number of keys */
+-	uint32_t n_keys;
+-
+-	/** Number of buckets */
+-	uint32_t n_buckets;
+-
+-	/** Hash function */
+-	rte_table_hash_op_hash f_hash;
+-
+-	/** Seed value for the hash function */
+-	uint64_t seed;
+-};
+-
+-/** Extendable bucket hash table operations */
+-extern struct rte_table_ops rte_table_hash_ext_ops;
+-extern struct rte_table_ops rte_table_hash_key8_ext_ops;
+-extern struct rte_table_ops rte_table_hash_key16_ext_ops;
+-extern struct rte_table_ops rte_table_hash_key32_ext_ops;
+-
+-/** LRU hash table operations */
+-extern struct rte_table_ops rte_table_hash_lru_ops;
+-
+-extern struct rte_table_ops rte_table_hash_key8_lru_ops;
+-extern struct rte_table_ops rte_table_hash_key16_lru_ops;
+-extern struct rte_table_ops rte_table_hash_key32_lru_ops;
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif
+diff --git a/lib/table/rte_table_hash_cuckoo.c b/lib/table/rte_table_hash_cuckoo.c
+deleted file mode 100644
+index a2b920fa92..0000000000
+--- a/lib/table/rte_table_hash_cuckoo.c
++++ /dev/null
+@@ -1,327 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2017 Intel Corporation
+- */
+-
+-#include <stdalign.h>
+-#include <stdio.h>
+-#include <string.h>
+-
+-#include <eal_export.h>
+-#include <rte_common.h>
+-#include <rte_malloc.h>
+-#include <rte_log.h>
+-
+-#include "rte_table_hash_cuckoo.h"
+-
+-#include "table_log.h"
+-
+-#ifdef RTE_TABLE_STATS_COLLECT
+-
+-#define RTE_TABLE_HASH_CUCKOO_STATS_PKTS_IN_ADD(table, val) \
+-	(table->stats.n_pkts_in += val)
+-#define RTE_TABLE_HASH_CUCKOO_STATS_PKTS_LOOKUP_MISS(table, val) \
+-	(table->stats.n_pkts_lookup_miss += val)
+-
+-#else
+-
+-#define RTE_TABLE_HASH_CUCKOO_STATS_PKTS_IN_ADD(table, val)
+-#define RTE_TABLE_HASH_CUCKOO_STATS_PKTS_LOOKUP_MISS(table, val)
+-
+-#endif
+-
+-
+-struct rte_table_hash {
+-	struct rte_table_stats stats;
+-
+-	/* Input parameters */
+-	uint32_t key_size;
+-	uint32_t entry_size;
+-	uint32_t n_keys;
+-	rte_hash_function f_hash;
+-	uint32_t seed;
+-	uint32_t key_offset;
+-
+-	/* cuckoo hash table object */
+-	struct rte_hash *h_table;
+-
+-	/* Lookup table */
+-	alignas(RTE_CACHE_LINE_SIZE) uint8_t memory[];
+-};
+-
+-static int
+-check_params_create_hash_cuckoo(struct rte_table_hash_cuckoo_params *params)
+-{
+-	if (params == NULL) {
+-		TABLE_LOG(ERR, "NULL Input Parameters.");
+-		return -EINVAL;
+-	}
+-
+-	if (params->name == NULL) {
+-		TABLE_LOG(ERR, "Table name is NULL.");
+-		return -EINVAL;
+-	}
+-
+-	if (params->key_size == 0) {
+-		TABLE_LOG(ERR, "Invalid key_size.");
+-		return -EINVAL;
+-	}
+-
+-	if (params->n_keys == 0) {
+-		TABLE_LOG(ERR, "Invalid n_keys.");
+-		return -EINVAL;
+-	}
+-
+-	if (params->f_hash == NULL) {
+-		TABLE_LOG(ERR, "f_hash is NULL.");
+-		return -EINVAL;
+-	}
+-
+-	return 0;
+-}
+-
+-static void *
+-rte_table_hash_cuckoo_create(void *params,
+-			int socket_id,
+-			uint32_t entry_size)
+-{
+-	struct rte_table_hash_cuckoo_params *p = params;
+-	struct rte_hash *h_table;
+-	struct rte_table_hash *t;
+-	uint32_t total_size;
+-
+-	/* Check input parameters */
+-	if (check_params_create_hash_cuckoo(params))
+-		return NULL;
+-
+-	/* Memory allocation */
+-	total_size = sizeof(struct rte_table_hash) +
+-		RTE_CACHE_LINE_ROUNDUP(p->n_keys * entry_size);
+-
+-	t = rte_zmalloc_socket(p->name, total_size, RTE_CACHE_LINE_SIZE, socket_id);
+-	if (t == NULL) {
+-		TABLE_LOG(ERR,
+-			"%s: Cannot allocate %u bytes for cuckoo hash table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-
+-	/* Create cuckoo hash table */
+-	struct rte_hash_parameters hash_cuckoo_params = {
+-		.entries = p->n_keys,
+-		.key_len = p->key_size,
+-		.hash_func = p->f_hash,
+-		.hash_func_init_val = p->seed,
+-		.socket_id = socket_id,
+-		.name = p->name
+-	};
+-
+-	h_table = rte_hash_find_existing(p->name);
+-	if (h_table == NULL) {
+-		h_table = rte_hash_create(&hash_cuckoo_params);
+-		if (h_table == NULL) {
+-			TABLE_LOG(ERR,
+-				"%s: failed to create cuckoo hash table %s",
+-				__func__, p->name);
+-			rte_free(t);
+-			return NULL;
+-		}
+-	}
+-
+-	/* initialize the cuckoo hash parameters */
+-	t->key_size = p->key_size;
+-	t->entry_size = entry_size;
+-	t->n_keys = p->n_keys;
+-	t->f_hash = p->f_hash;
+-	t->seed = p->seed;
+-	t->key_offset = p->key_offset;
+-	t->h_table = h_table;
+-
+-	TABLE_LOG(INFO,
+-		"%s: Cuckoo hash table %s memory footprint is %u bytes",
+-		__func__, p->name, total_size);
+-	return t;
+-}
+-
+-static int
+-rte_table_hash_cuckoo_free(void *table) {
+-	struct rte_table_hash *t = table;
+-
+-	if (table == NULL)
+-		return -EINVAL;
+-
+-	rte_hash_free(t->h_table);
+-	rte_free(t);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_hash_cuckoo_entry_add(void *table, void *key, void *entry,
+-	int *key_found, void **entry_ptr)
+-{
+-	struct rte_table_hash *t = table;
+-	int pos = 0;
+-
+-	/* Check input parameters */
+-	if ((table == NULL) ||
+-		(key == NULL) ||
+-		(entry == NULL) ||
+-		(key_found == NULL) ||
+-		(entry_ptr == NULL))
+-		return -EINVAL;
+-
+-	/*  Find Existing entries */
+-	pos = rte_hash_lookup(t->h_table, key);
+-	if (pos >= 0) {
+-		uint8_t *existing_entry;
+-
+-		*key_found = 1;
+-		existing_entry = &t->memory[pos * t->entry_size];
+-		memcpy(existing_entry, entry, t->entry_size);
+-		*entry_ptr = existing_entry;
+-
+-		return 0;
+-	}
+-
+-	if (pos == -ENOENT) {
+-		/* Entry not found. Adding new entry */
+-		uint8_t *new_entry;
+-
+-		pos = rte_hash_add_key(t->h_table, key);
+-		if (pos < 0)
+-			return pos;
+-
+-		new_entry = &t->memory[pos * t->entry_size];
+-		memcpy(new_entry, entry, t->entry_size);
+-
+-		*key_found = 0;
+-		*entry_ptr = new_entry;
+-		return 0;
+-	}
+-
+-	return pos;
+-}
+-
+-static int
+-rte_table_hash_cuckoo_entry_delete(void *table, void *key,
+-	int *key_found, void *entry)
+-{
+-	struct rte_table_hash *t = table;
+-	int pos = 0;
+-
+-	/* Check input parameters */
+-	if ((table == NULL) ||
+-		(key == NULL) ||
+-		(key_found == NULL))
+-		return -EINVAL;
+-
+-	pos = rte_hash_del_key(t->h_table, key);
+-	if (pos >= 0) {
+-		*key_found = 1;
+-		uint8_t *entry_ptr = &t->memory[pos * t->entry_size];
+-
+-		if (entry)
+-			memcpy(entry, entry_ptr, t->entry_size);
+-
+-		memset(&t->memory[pos * t->entry_size], 0, t->entry_size);
+-		return 0;
+-	}
+-
+-	*key_found = 0;
+-	return pos;
+-}
+-
+-static int
+-rte_table_hash_cuckoo_lookup(void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_hash *t = table;
+-	uint64_t pkts_mask_out = 0;
+-	uint32_t i;
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-
+-	RTE_TABLE_HASH_CUCKOO_STATS_PKTS_IN_ADD(t, n_pkts_in);
+-
+-	if ((pkts_mask & (pkts_mask + 1)) == 0) {
+-		const uint8_t *keys[RTE_PORT_IN_BURST_SIZE_MAX];
+-		int32_t positions[RTE_PORT_IN_BURST_SIZE_MAX], status;
+-
+-		/* Keys for bulk lookup */
+-		for (i = 0; i < n_pkts_in; i++)
+-			keys[i] = RTE_MBUF_METADATA_UINT8_PTR(pkts[i],
+-				t->key_offset);
+-
+-		/* Bulk Lookup */
+-		status = rte_hash_lookup_bulk(t->h_table,
+-				(const void **) keys,
+-				n_pkts_in,
+-				positions);
+-		if (status == 0) {
+-			for (i = 0; i < n_pkts_in; i++) {
+-				if (likely(positions[i] >= 0)) {
+-					uint64_t pkt_mask = 1LLU << i;
+-
+-					entries[i] = &t->memory[positions[i]
+-						* t->entry_size];
+-					pkts_mask_out |= pkt_mask;
+-				}
+-			}
+-		}
+-	} else
+-		for (i = 0; i < (uint32_t)(RTE_PORT_IN_BURST_SIZE_MAX
+-					- rte_clz64(pkts_mask)); i++) {
+-			uint64_t pkt_mask = 1LLU << i;
+-
+-			if (pkt_mask & pkts_mask) {
+-				struct rte_mbuf *pkt = pkts[i];
+-				uint8_t *key = RTE_MBUF_METADATA_UINT8_PTR(pkt,
+-						t->key_offset);
+-				int pos;
+-
+-				pos = rte_hash_lookup(t->h_table, key);
+-				if (likely(pos >= 0)) {
+-					entries[i] = &t->memory[pos
+-						* t->entry_size];
+-					pkts_mask_out |= pkt_mask;
+-				}
+-			}
+-		}
+-
+-	*lookup_hit_mask = pkts_mask_out;
+-	RTE_TABLE_HASH_CUCKOO_STATS_PKTS_LOOKUP_MISS(t,
+-			n_pkts_in - rte_popcount64(pkts_mask_out));
+-
+-	return 0;
+-
+-}
+-
+-static int
+-rte_table_hash_cuckoo_stats_read(void *table, struct rte_table_stats *stats,
+-	int clear)
+-{
+-	struct rte_table_hash *t = table;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &t->stats, sizeof(t->stats));
+-
+-	if (clear)
+-		memset(&t->stats, 0, sizeof(t->stats));
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_table_hash_cuckoo_ops)
+-struct rte_table_ops rte_table_hash_cuckoo_ops = {
+-	.f_create = rte_table_hash_cuckoo_create,
+-	.f_free = rte_table_hash_cuckoo_free,
+-	.f_add = rte_table_hash_cuckoo_entry_add,
+-	.f_delete = rte_table_hash_cuckoo_entry_delete,
+-	.f_add_bulk = NULL,
+-	.f_delete_bulk = NULL,
+-	.f_lookup = rte_table_hash_cuckoo_lookup,
+-	.f_stats = rte_table_hash_cuckoo_stats_read,
+-};
+diff --git a/lib/table/rte_table_hash_cuckoo.h b/lib/table/rte_table_hash_cuckoo.h
+deleted file mode 100644
+index 55aa12216a..0000000000
+--- a/lib/table/rte_table_hash_cuckoo.h
++++ /dev/null
+@@ -1,57 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2018 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_TABLE_HASH_CUCKOO_H__
+-#define __INCLUDE_RTE_TABLE_HASH_CUCKOO_H__
+-
+-/**
+- * @file
+- * RTE Table Hash Cuckoo
+- */
+-
+-#include <stdint.h>
+-
+-#include <rte_hash.h>
+-
+-#include "rte_table.h"
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-/** Hash table parameters */
+-struct rte_table_hash_cuckoo_params {
+-	/** Name */
+-	const char *name;
+-
+-	/** Key size (number of bytes) */
+-	uint32_t key_size;
+-
+-	/** Byte offset within packet meta-data where the key is located */
+-	uint32_t key_offset;
+-
+-	/** Key mask */
+-	uint8_t *key_mask;
+-
+-	/** Number of keys */
+-	uint32_t n_keys;
+-
+-	/** Number of buckets */
+-	uint32_t n_buckets;
+-
+-	/** Hash function */
+-	rte_hash_function f_hash;
+-
+-	/** Seed value for the hash function */
+-	uint32_t seed;
+-};
+-
+-/** Cuckoo hash table operations */
+-extern struct rte_table_ops rte_table_hash_cuckoo_ops;
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif
+diff --git a/lib/table/rte_table_hash_ext.c b/lib/table/rte_table_hash_ext.c
+deleted file mode 100644
+index 86e8eeb4c8..0000000000
+--- a/lib/table/rte_table_hash_ext.c
++++ /dev/null
+@@ -1,1011 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2017 Intel Corporation
+- */
+-
+-#include <stdalign.h>
+-#include <stdio.h>
+-#include <string.h>
+-
+-#include <eal_export.h>
+-#include <rte_common.h>
+-#include <rte_malloc.h>
+-#include <rte_log.h>
+-
+-#include "rte_table_hash.h"
+-
+-#include "table_log.h"
+-
+-#define KEYS_PER_BUCKET	4
+-
+-struct bucket {
+-	union {
+-		uintptr_t next;
+-		uint64_t lru_list;
+-	};
+-	uint16_t sig[KEYS_PER_BUCKET];
+-	uint32_t key_pos[KEYS_PER_BUCKET];
+-};
+-
+-#define BUCKET_NEXT(bucket)						\
+-	((void *) ((bucket)->next & (~1LU)))
+-
+-#define BUCKET_NEXT_VALID(bucket)					\
+-	((bucket)->next & 1LU)
+-
+-#define BUCKET_NEXT_SET(bucket, bucket_next)				\
+-do									\
+-	(bucket)->next = (((uintptr_t) ((void *) (bucket_next))) | 1LU);\
+-while (0)
+-
+-#define BUCKET_NEXT_SET_NULL(bucket)					\
+-do									\
+-	(bucket)->next = 0;						\
+-while (0)
+-
+-#define BUCKET_NEXT_COPY(bucket, bucket2)				\
+-do									\
+-	(bucket)->next = (bucket2)->next;				\
+-while (0)
+-
+-#ifdef RTE_TABLE_STATS_COLLECT
+-
+-#define RTE_TABLE_HASH_EXT_STATS_PKTS_IN_ADD(table, val) \
+-	table->stats.n_pkts_in += val
+-#define RTE_TABLE_HASH_EXT_STATS_PKTS_LOOKUP_MISS(table, val) \
+-	table->stats.n_pkts_lookup_miss += val
+-
+-#else
+-
+-#define RTE_TABLE_HASH_EXT_STATS_PKTS_IN_ADD(table, val)
+-#define RTE_TABLE_HASH_EXT_STATS_PKTS_LOOKUP_MISS(table, val)
+-
+-#endif
+-
+-struct grinder {
+-	struct bucket *bkt;
+-	uint64_t sig;
+-	uint64_t match;
+-	uint32_t key_index;
+-};
+-
+-struct rte_table_hash {
+-	struct rte_table_stats stats;
+-
+-	/* Input parameters */
+-	uint32_t key_size;
+-	uint32_t entry_size;
+-	uint32_t n_keys;
+-	uint32_t n_buckets;
+-	uint32_t n_buckets_ext;
+-	rte_table_hash_op_hash f_hash;
+-	uint64_t seed;
+-	uint32_t key_offset;
+-
+-	/* Internal */
+-	uint64_t bucket_mask;
+-	uint32_t key_size_shl;
+-	uint32_t data_size_shl;
+-	uint32_t key_stack_tos;
+-	uint32_t bkt_ext_stack_tos;
+-
+-	/* Grinder */
+-	struct grinder grinders[RTE_PORT_IN_BURST_SIZE_MAX];
+-
+-	/* Tables */
+-	uint64_t *key_mask;
+-	struct bucket *buckets;
+-	struct bucket *buckets_ext;
+-	uint8_t *key_mem;
+-	uint8_t *data_mem;
+-	uint32_t *key_stack;
+-	uint32_t *bkt_ext_stack;
+-
+-	/* Table memory */
+-	alignas(RTE_CACHE_LINE_SIZE) uint8_t memory[];
+-};
+-
+-static int
+-keycmp(void *a, void *b, void *b_mask, uint32_t n_bytes)
+-{
+-	uint64_t *a64 = a, *b64 = b, *b_mask64 = b_mask;
+-	uint32_t i;
+-
+-	for (i = 0; i < n_bytes / sizeof(uint64_t); i++)
+-		if (a64[i] != (b64[i] & b_mask64[i]))
+-			return 1;
+-
+-	return 0;
+-}
+-
+-static void
+-keycpy(void *dst, void *src, void *src_mask, uint32_t n_bytes)
+-{
+-	uint64_t *dst64 = dst, *src64 = src, *src_mask64 = src_mask;
+-	uint32_t i;
+-
+-	for (i = 0; i < n_bytes / sizeof(uint64_t); i++)
+-		dst64[i] = src64[i] & src_mask64[i];
+-}
+-
+-static int
+-check_params_create(struct rte_table_hash_params *params)
+-{
+-	/* name */
+-	if (params->name == NULL) {
+-		TABLE_LOG(ERR, "%s: name invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* key_size */
+-	if ((params->key_size < sizeof(uint64_t)) ||
+-		(!rte_is_power_of_2(params->key_size))) {
+-		TABLE_LOG(ERR, "%s: key_size invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* n_keys */
+-	if (params->n_keys == 0) {
+-		TABLE_LOG(ERR, "%s: n_keys invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* n_buckets */
+-	if ((params->n_buckets == 0) ||
+-		(!rte_is_power_of_2(params->n_buckets))) {
+-		TABLE_LOG(ERR, "%s: n_buckets invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* f_hash */
+-	if (params->f_hash == NULL) {
+-		TABLE_LOG(ERR, "%s: f_hash invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	return 0;
+-}
+-
+-static void *
+-rte_table_hash_ext_create(void *params, int socket_id, uint32_t entry_size)
+-{
+-	struct rte_table_hash_params *p = params;
+-	struct rte_table_hash *t;
+-	uint64_t table_meta_sz, key_mask_sz, bucket_sz, bucket_ext_sz, key_sz;
+-	uint64_t key_stack_sz, bkt_ext_stack_sz, data_sz, total_size;
+-	uint64_t key_mask_offset, bucket_offset, bucket_ext_offset, key_offset;
+-	uint64_t key_stack_offset, bkt_ext_stack_offset, data_offset;
+-	uint32_t n_buckets_ext, i;
+-
+-	/* Check input parameters */
+-	if ((check_params_create(p) != 0) ||
+-		(!rte_is_power_of_2(entry_size)) ||
+-		((sizeof(struct rte_table_hash) % RTE_CACHE_LINE_SIZE) != 0) ||
+-		(sizeof(struct bucket) != (RTE_CACHE_LINE_SIZE / 2)))
+-		return NULL;
+-
+-	/*
+-	 * Table dimensioning
+-	 *
+-	 * Objective: Pick the number of bucket extensions (n_buckets_ext) so that
+-	 * it is guaranteed that n_keys keys can be stored in the table at any time.
+-	 *
+-	 * The worst case scenario takes place when all the n_keys keys fall into
+-	 * the same bucket. Actually, due to the KEYS_PER_BUCKET scheme, the worst
+-	 * case takes place when (n_keys - KEYS_PER_BUCKET + 1) keys fall into the
+-	 * same bucket, while the remaining (KEYS_PER_BUCKET - 1) keys each fall
+-	 * into a different bucket. This case defeats the purpose of the hash table.
+-	 * It indicates unsuitable f_hash or n_keys to n_buckets ratio.
+-	 *
+-	 * n_buckets_ext = n_keys / KEYS_PER_BUCKET + KEYS_PER_BUCKET - 1
+-	 */
+-	n_buckets_ext = p->n_keys / KEYS_PER_BUCKET + KEYS_PER_BUCKET - 1;
+-
+-	/* Memory allocation */
+-	table_meta_sz = RTE_CACHE_LINE_ROUNDUP(sizeof(struct rte_table_hash));
+-	key_mask_sz = RTE_CACHE_LINE_ROUNDUP(p->key_size);
+-	bucket_sz = RTE_CACHE_LINE_ROUNDUP(p->n_buckets * sizeof(struct bucket));
+-	bucket_ext_sz =
+-		RTE_CACHE_LINE_ROUNDUP(n_buckets_ext * sizeof(struct bucket));
+-	key_sz = RTE_CACHE_LINE_ROUNDUP(p->n_keys * p->key_size);
+-	key_stack_sz = RTE_CACHE_LINE_ROUNDUP(p->n_keys * sizeof(uint32_t));
+-	bkt_ext_stack_sz =
+-		RTE_CACHE_LINE_ROUNDUP(n_buckets_ext * sizeof(uint32_t));
+-	data_sz = RTE_CACHE_LINE_ROUNDUP(p->n_keys * entry_size);
+-	total_size = table_meta_sz + key_mask_sz + bucket_sz + bucket_ext_sz +
+-		key_sz + key_stack_sz + bkt_ext_stack_sz + data_sz;
+-
+-	if (total_size > SIZE_MAX) {
+-		TABLE_LOG(ERR, "%s: Cannot allocate %" PRIu64 " bytes"
+-			" for hash table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-
+-	t = rte_zmalloc_socket(p->name,
+-		(size_t)total_size,
+-		RTE_CACHE_LINE_SIZE,
+-		socket_id);
+-	if (t == NULL) {
+-		TABLE_LOG(ERR, "%s: Cannot allocate %" PRIu64 " bytes"
+-			" for hash table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-	TABLE_LOG(INFO, "%s (%u-byte key): Hash table %s memory "
+-		"footprint is %" PRIu64 " bytes",
+-		__func__, p->key_size, p->name, total_size);
+-
+-	/* Memory initialization */
+-	t->key_size = p->key_size;
+-	t->entry_size = entry_size;
+-	t->n_keys = p->n_keys;
+-	t->n_buckets = p->n_buckets;
+-	t->n_buckets_ext = n_buckets_ext;
+-	t->f_hash = p->f_hash;
+-	t->seed = p->seed;
+-	t->key_offset = p->key_offset;
+-
+-	/* Internal */
+-	t->bucket_mask = t->n_buckets - 1;
+-	t->key_size_shl = rte_ctz32(p->key_size);
+-	t->data_size_shl = rte_ctz32(entry_size);
+-
+-	/* Tables */
+-	key_mask_offset = 0;
+-	bucket_offset = key_mask_offset + key_mask_sz;
+-	bucket_ext_offset = bucket_offset + bucket_sz;
+-	key_offset = bucket_ext_offset + bucket_ext_sz;
+-	key_stack_offset = key_offset + key_sz;
+-	bkt_ext_stack_offset = key_stack_offset + key_stack_sz;
+-	data_offset = bkt_ext_stack_offset + bkt_ext_stack_sz;
+-
+-	t->key_mask = (uint64_t *) &t->memory[key_mask_offset];
+-	t->buckets = (struct bucket *) &t->memory[bucket_offset];
+-	t->buckets_ext = (struct bucket *) &t->memory[bucket_ext_offset];
+-	t->key_mem = &t->memory[key_offset];
+-	t->key_stack = (uint32_t *) &t->memory[key_stack_offset];
+-	t->bkt_ext_stack = (uint32_t *) &t->memory[bkt_ext_stack_offset];
+-	t->data_mem = &t->memory[data_offset];
+-
+-	/* Key mask */
+-	if (p->key_mask == NULL)
+-		memset(t->key_mask, 0xFF, p->key_size);
+-	else
+-		memcpy(t->key_mask, p->key_mask, p->key_size);
+-
+-	/* Key stack */
+-	for (i = 0; i < t->n_keys; i++)
+-		t->key_stack[i] = t->n_keys - 1 - i;
+-	t->key_stack_tos = t->n_keys;
+-
+-	/* Bucket ext stack */
+-	for (i = 0; i < t->n_buckets_ext; i++)
+-		t->bkt_ext_stack[i] = t->n_buckets_ext - 1 - i;
+-	t->bkt_ext_stack_tos = t->n_buckets_ext;
+-
+-	return t;
+-}
+-
+-static int
+-rte_table_hash_ext_free(void *table)
+-{
+-	struct rte_table_hash *t = table;
+-
+-	/* Check input parameters */
+-	if (t == NULL)
+-		return -EINVAL;
+-
+-	rte_free(t);
+-	return 0;
+-}
+-
+-static int
+-rte_table_hash_ext_entry_add(void *table, void *key, void *entry,
+-	int *key_found, void **entry_ptr)
+-{
+-	struct rte_table_hash *t = table;
+-	struct bucket *bkt0, *bkt, *bkt_prev;
+-	uint64_t sig;
+-	uint32_t bkt_index, i;
+-
+-	sig = t->f_hash(key, t->key_mask, t->key_size, t->seed);
+-	bkt_index = sig & t->bucket_mask;
+-	bkt0 = &t->buckets[bkt_index];
+-	sig = (sig >> 16) | 1LLU;
+-
+-	/* Key is present in the bucket */
+-	for (bkt = bkt0; bkt != NULL; bkt = BUCKET_NEXT(bkt))
+-		for (i = 0; i < KEYS_PER_BUCKET; i++) {
+-			uint64_t bkt_sig = (uint64_t) bkt->sig[i];
+-			uint32_t bkt_key_index = bkt->key_pos[i];
+-			uint8_t *bkt_key =
+-				&t->key_mem[bkt_key_index << t->key_size_shl];
+-
+-			if ((sig == bkt_sig) && (keycmp(bkt_key, key, t->key_mask,
+-				t->key_size) == 0)) {
+-				uint8_t *data = &t->data_mem[bkt_key_index <<
+-					t->data_size_shl];
+-
+-				memcpy(data, entry, t->entry_size);
+-				*key_found = 1;
+-				*entry_ptr = (void *) data;
+-				return 0;
+-			}
+-		}
+-
+-	/* Key is not present in the bucket */
+-	for (bkt_prev = NULL, bkt = bkt0; bkt != NULL; bkt_prev = bkt,
+-		bkt = BUCKET_NEXT(bkt))
+-		for (i = 0; i < KEYS_PER_BUCKET; i++) {
+-			uint64_t bkt_sig = (uint64_t) bkt->sig[i];
+-
+-			if (bkt_sig == 0) {
+-				uint32_t bkt_key_index;
+-				uint8_t *bkt_key, *data;
+-
+-				/* Allocate new key */
+-				if (t->key_stack_tos == 0) /* No free keys */
+-					return -ENOSPC;
+-
+-				bkt_key_index = t->key_stack[
+-					--t->key_stack_tos];
+-
+-				/* Install new key */
+-				bkt_key = &t->key_mem[bkt_key_index <<
+-					t->key_size_shl];
+-				data = &t->data_mem[bkt_key_index <<
+-					t->data_size_shl];
+-
+-				bkt->sig[i] = (uint16_t) sig;
+-				bkt->key_pos[i] = bkt_key_index;
+-				keycpy(bkt_key, key, t->key_mask, t->key_size);
+-				memcpy(data, entry, t->entry_size);
+-
+-				*key_found = 0;
+-				*entry_ptr = (void *) data;
+-				return 0;
+-			}
+-		}
+-
+-	/* Bucket full: extend bucket */
+-	if ((t->bkt_ext_stack_tos > 0) && (t->key_stack_tos > 0)) {
+-		uint32_t bkt_key_index;
+-		uint8_t *bkt_key, *data;
+-
+-		/* Allocate new bucket ext */
+-		bkt_index = t->bkt_ext_stack[--t->bkt_ext_stack_tos];
+-		bkt = &t->buckets_ext[bkt_index];
+-
+-		/* Chain the new bucket ext */
+-		BUCKET_NEXT_SET(bkt_prev, bkt);
+-		BUCKET_NEXT_SET_NULL(bkt);
+-
+-		/* Allocate new key */
+-		bkt_key_index = t->key_stack[--t->key_stack_tos];
+-		bkt_key = &t->key_mem[bkt_key_index << t->key_size_shl];
+-
+-		data = &t->data_mem[bkt_key_index << t->data_size_shl];
+-
+-		/* Install new key into bucket */
+-		bkt->sig[0] = (uint16_t) sig;
+-		bkt->key_pos[0] = bkt_key_index;
+-		keycpy(bkt_key, key, t->key_mask, t->key_size);
+-		memcpy(data, entry, t->entry_size);
+-
+-		*key_found = 0;
+-		*entry_ptr = (void *) data;
+-		return 0;
+-	}
+-
+-	return -ENOSPC;
+-}
+-
+-static int
+-rte_table_hash_ext_entry_delete(void *table, void *key, int *key_found,
+-void *entry)
+-{
+-	struct rte_table_hash *t = table;
+-	struct bucket *bkt0, *bkt, *bkt_prev;
+-	uint64_t sig;
+-	uint32_t bkt_index, i;
+-
+-	sig = t->f_hash(key, t->key_mask, t->key_size, t->seed);
+-	bkt_index = sig & t->bucket_mask;
+-	bkt0 = &t->buckets[bkt_index];
+-	sig = (sig >> 16) | 1LLU;
+-
+-	/* Key is present in the bucket */
+-	for (bkt_prev = NULL, bkt = bkt0; bkt != NULL; bkt_prev = bkt,
+-		bkt = BUCKET_NEXT(bkt))
+-		for (i = 0; i < KEYS_PER_BUCKET; i++) {
+-			uint64_t bkt_sig = (uint64_t) bkt->sig[i];
+-			uint32_t bkt_key_index = bkt->key_pos[i];
+-			uint8_t *bkt_key = &t->key_mem[bkt_key_index <<
+-				t->key_size_shl];
+-
+-			if ((sig == bkt_sig) && (keycmp(bkt_key, key, t->key_mask,
+-				t->key_size) == 0)) {
+-				uint8_t *data = &t->data_mem[bkt_key_index <<
+-					t->data_size_shl];
+-
+-				/* Uninstall key from bucket */
+-				bkt->sig[i] = 0;
+-				*key_found = 1;
+-				if (entry)
+-					memcpy(entry, data, t->entry_size);
+-
+-				/* Free key */
+-				t->key_stack[t->key_stack_tos++] =
+-					bkt_key_index;
+-
+-				/*Check if bucket is unused */
+-				if ((bkt_prev != NULL) &&
+-				    (bkt->sig[0] == 0) && (bkt->sig[1] == 0) &&
+-				    (bkt->sig[2] == 0) && (bkt->sig[3] == 0)) {
+-					/* Unchain bucket */
+-					BUCKET_NEXT_COPY(bkt_prev, bkt);
+-
+-					/* Clear bucket */
+-					memset(bkt, 0, sizeof(struct bucket));
+-
+-					/* Free bucket back to buckets ext */
+-					bkt_index = bkt - t->buckets_ext;
+-					t->bkt_ext_stack[t->bkt_ext_stack_tos++]
+-						= bkt_index;
+-				}
+-
+-				return 0;
+-			}
+-		}
+-
+-	/* Key is not present in the bucket */
+-	*key_found = 0;
+-	return 0;
+-}
+-
+-static int rte_table_hash_ext_lookup_unoptimized(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_hash *t = (struct rte_table_hash *) table;
+-	uint64_t pkts_mask_out = 0;
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-
+-	for ( ; pkts_mask; ) {
+-		struct bucket *bkt0, *bkt;
+-		struct rte_mbuf *pkt;
+-		uint8_t *key;
+-		uint64_t pkt_mask, sig;
+-		uint32_t pkt_index, bkt_index, i;
+-
+-		pkt_index = rte_ctz64(pkts_mask);
+-		pkt_mask = 1LLU << pkt_index;
+-		pkts_mask &= ~pkt_mask;
+-
+-		pkt = pkts[pkt_index];
+-		key = RTE_MBUF_METADATA_UINT8_PTR(pkt, t->key_offset);
+-		sig = (uint64_t) t->f_hash(key, t->key_mask, t->key_size, t->seed);
+-
+-		bkt_index = sig & t->bucket_mask;
+-		bkt0 = &t->buckets[bkt_index];
+-		sig = (sig >> 16) | 1LLU;
+-
+-		/* Key is present in the bucket */
+-		for (bkt = bkt0; bkt != NULL; bkt = BUCKET_NEXT(bkt))
+-			for (i = 0; i < KEYS_PER_BUCKET; i++) {
+-				uint64_t bkt_sig = (uint64_t) bkt->sig[i];
+-				uint32_t bkt_key_index = bkt->key_pos[i];
+-				uint8_t *bkt_key = &t->key_mem[bkt_key_index <<
+-					t->key_size_shl];
+-
+-				if ((sig == bkt_sig) && (keycmp(bkt_key, key,
+-					t->key_mask, t->key_size) == 0)) {
+-					uint8_t *data = &t->data_mem[
+-					bkt_key_index << t->data_size_shl];
+-
+-					pkts_mask_out |= pkt_mask;
+-					entries[pkt_index] = (void *) data;
+-					break;
+-				}
+-			}
+-	}
+-
+-	*lookup_hit_mask = pkts_mask_out;
+-	return 0;
+-}
+-
+-/*
+- * mask = match bitmask
+- * match = at least one match
+- * match_many = more than one match
+- * match_pos = position of first match
+- *
+- *----------------------------------------
+- * mask		 match	 match_many	  match_pos
+- *----------------------------------------
+- * 0000		 0		 0			  00
+- * 0001		 1		 0			  00
+- * 0010		 1		 0			  01
+- * 0011		 1		 1			  00
+- *----------------------------------------
+- * 0100		 1		 0			  10
+- * 0101		 1		 1			  00
+- * 0110		 1		 1			  01
+- * 0111		 1		 1			  00
+- *----------------------------------------
+- * 1000		 1		 0			  11
+- * 1001		 1		 1			  00
+- * 1010		 1		 1			  01
+- * 1011		 1		 1			  00
+- *----------------------------------------
+- * 1100		 1		 1			  10
+- * 1101		 1		 1			  00
+- * 1110		 1		 1			  01
+- * 1111		 1		 1			  00
+- *----------------------------------------
+- *
+- * match = 1111_1111_1111_1110
+- * match_many = 1111_1110_1110_1000
+- * match_pos = 0001_0010_0001_0011__0001_0010_0001_0000
+- *
+- * match = 0xFFFELLU
+- * match_many = 0xFEE8LLU
+- * match_pos = 0x12131210LLU
+- */
+-
+-#define LUT_MATCH						0xFFFELLU
+-#define LUT_MATCH_MANY						0xFEE8LLU
+-#define LUT_MATCH_POS						0x12131210LLU
+-
+-#define lookup_cmp_sig(mbuf_sig, bucket, match, match_many, match_pos)	\
+-{									\
+-	uint64_t bucket_sig[4], mask[4], mask_all;			\
+-									\
+-	bucket_sig[0] = bucket->sig[0];					\
+-	bucket_sig[1] = bucket->sig[1];					\
+-	bucket_sig[2] = bucket->sig[2];					\
+-	bucket_sig[3] = bucket->sig[3];					\
+-									\
+-	bucket_sig[0] ^= mbuf_sig;					\
+-	bucket_sig[1] ^= mbuf_sig;					\
+-	bucket_sig[2] ^= mbuf_sig;					\
+-	bucket_sig[3] ^= mbuf_sig;					\
+-									\
+-	mask[0] = 0;							\
+-	mask[1] = 0;							\
+-	mask[2] = 0;							\
+-	mask[3] = 0;							\
+-									\
+-	if (bucket_sig[0] == 0)						\
+-		mask[0] = 1;						\
+-	if (bucket_sig[1] == 0)						\
+-		mask[1] = 2;						\
+-	if (bucket_sig[2] == 0)						\
+-		mask[2] = 4;						\
+-	if (bucket_sig[3] == 0)						\
+-		mask[3] = 8;						\
+-									\
+-	mask_all = (mask[0] | mask[1]) | (mask[2] | mask[3]);		\
+-									\
+-	match = (LUT_MATCH >> mask_all) & 1;				\
+-	match_many = (LUT_MATCH_MANY >> mask_all) & 1;			\
+-	match_pos = (LUT_MATCH_POS >> (mask_all << 1)) & 3;		\
+-}
+-
+-#define lookup_cmp_key(mbuf, key, match_key, f)				\
+-{									\
+-	uint64_t *pkt_key = RTE_MBUF_METADATA_UINT64_PTR(mbuf, f->key_offset);\
+-	uint64_t *bkt_key = (uint64_t *) key;				\
+-	uint64_t *key_mask = f->key_mask;					\
+-									\
+-	switch (f->key_size) {						\
+-	case 8:								\
+-	{								\
+-		uint64_t xor = (pkt_key[0] & key_mask[0]) ^ bkt_key[0];	\
+-		match_key = 0;						\
+-		if (xor == 0)						\
+-			match_key = 1;					\
+-	}								\
+-	break;								\
+-									\
+-	case 16:							\
+-	{								\
+-		uint64_t xor[2], or;					\
+-									\
+-		xor[0] = (pkt_key[0] & key_mask[0]) ^ bkt_key[0];		\
+-		xor[1] = (pkt_key[1] & key_mask[1]) ^ bkt_key[1];		\
+-		or = xor[0] | xor[1];					\
+-		match_key = 0;						\
+-		if (or == 0)						\
+-			match_key = 1;					\
+-	}								\
+-	break;								\
+-									\
+-	case 32:							\
+-	{								\
+-		uint64_t xor[4], or;					\
+-									\
+-		xor[0] = (pkt_key[0] & key_mask[0]) ^ bkt_key[0];		\
+-		xor[1] = (pkt_key[1] & key_mask[1]) ^ bkt_key[1];		\
+-		xor[2] = (pkt_key[2] & key_mask[2]) ^ bkt_key[2];		\
+-		xor[3] = (pkt_key[3] & key_mask[3]) ^ bkt_key[3];		\
+-		or = xor[0] | xor[1] | xor[2] | xor[3];			\
+-		match_key = 0;						\
+-		if (or == 0)						\
+-			match_key = 1;					\
+-	}								\
+-	break;								\
+-									\
+-	case 64:							\
+-	{								\
+-		uint64_t xor[8], or;					\
+-									\
+-		xor[0] = (pkt_key[0] & key_mask[0]) ^ bkt_key[0];		\
+-		xor[1] = (pkt_key[1] & key_mask[1]) ^ bkt_key[1];		\
+-		xor[2] = (pkt_key[2] & key_mask[2]) ^ bkt_key[2];		\
+-		xor[3] = (pkt_key[3] & key_mask[3]) ^ bkt_key[3];		\
+-		xor[4] = (pkt_key[4] & key_mask[4]) ^ bkt_key[4];		\
+-		xor[5] = (pkt_key[5] & key_mask[5]) ^ bkt_key[5];		\
+-		xor[6] = (pkt_key[6] & key_mask[6]) ^ bkt_key[6];		\
+-		xor[7] = (pkt_key[7] & key_mask[7]) ^ bkt_key[7];		\
+-		or = xor[0] | xor[1] | xor[2] | xor[3] |		\
+-			xor[4] | xor[5] | xor[6] | xor[7];		\
+-		match_key = 0;						\
+-		if (or == 0)						\
+-			match_key = 1;					\
+-	}								\
+-	break;								\
+-									\
+-	default:							\
+-		match_key = 0;						\
+-		if (keycmp(bkt_key, pkt_key, key_mask, f->key_size) == 0)	\
+-			match_key = 1;					\
+-	}								\
+-}
+-
+-#define lookup2_stage0(t, g, pkts, pkts_mask, pkt00_index, pkt01_index)	\
+-{									\
+-	uint64_t pkt00_mask, pkt01_mask;				\
+-	struct rte_mbuf *mbuf00, *mbuf01;				\
+-	uint32_t key_offset = t->key_offset;			\
+-									\
+-	pkt00_index = rte_ctz64(pkts_mask);			\
+-	pkt00_mask = 1LLU << pkt00_index;				\
+-	pkts_mask &= ~pkt00_mask;					\
+-	mbuf00 = pkts[pkt00_index];					\
+-									\
+-	pkt01_index = rte_ctz64(pkts_mask);			\
+-	pkt01_mask = 1LLU << pkt01_index;				\
+-	pkts_mask &= ~pkt01_mask;					\
+-	mbuf01 = pkts[pkt01_index];					\
+-									\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf00, key_offset));\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf01, key_offset));\
+-}
+-
+-#define lookup2_stage0_with_odd_support(t, g, pkts, pkts_mask, pkt00_index, \
+-	pkt01_index)							\
+-{									\
+-	uint64_t pkt00_mask, pkt01_mask;				\
+-	struct rte_mbuf *mbuf00, *mbuf01;				\
+-	uint32_t key_offset = t->key_offset;			\
+-									\
+-	pkt00_index = rte_ctz64(pkts_mask);			\
+-	pkt00_mask = 1LLU << pkt00_index;				\
+-	pkts_mask &= ~pkt00_mask;					\
+-	mbuf00 = pkts[pkt00_index];					\
+-									\
+-	pkt01_index = rte_ctz64(pkts_mask);			\
+-	if (pkts_mask == 0)						\
+-		pkt01_index = pkt00_index;				\
+-	pkt01_mask = 1LLU << pkt01_index;				\
+-	pkts_mask &= ~pkt01_mask;					\
+-	mbuf01 = pkts[pkt01_index];					\
+-									\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf00, key_offset));\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf01, key_offset));\
+-}
+-
+-#define lookup2_stage1(t, g, pkts, pkt10_index, pkt11_index)	\
+-{									\
+-	struct grinder *g10, *g11;					\
+-	uint64_t sig10, sig11, bkt10_index, bkt11_index;		\
+-	struct rte_mbuf *mbuf10, *mbuf11;				\
+-	struct bucket *bkt10, *bkt11, *buckets = t->buckets;		\
+-	uint8_t *key10, *key11;						\
+-	uint64_t bucket_mask = t->bucket_mask;				\
+-	rte_table_hash_op_hash f_hash = t->f_hash;			\
+-	uint64_t seed = t->seed;					\
+-	uint32_t key_size = t->key_size;				\
+-	uint32_t key_offset = t->key_offset;				\
+-									\
+-	mbuf10 = pkts[pkt10_index];					\
+-	key10 = RTE_MBUF_METADATA_UINT8_PTR(mbuf10, key_offset);	\
+-	sig10 = (uint64_t) f_hash(key10, t->key_mask, key_size, seed);	\
+-	bkt10_index = sig10 & bucket_mask;				\
+-	bkt10 = &buckets[bkt10_index];					\
+-									\
+-	mbuf11 = pkts[pkt11_index];					\
+-	key11 = RTE_MBUF_METADATA_UINT8_PTR(mbuf11, key_offset);	\
+-	sig11 = (uint64_t) f_hash(key11, t->key_mask, key_size, seed);	\
+-	bkt11_index = sig11 & bucket_mask;				\
+-	bkt11 = &buckets[bkt11_index];					\
+-									\
+-	rte_prefetch0(bkt10);						\
+-	rte_prefetch0(bkt11);						\
+-									\
+-	g10 = &g[pkt10_index];						\
+-	g10->sig = sig10;						\
+-	g10->bkt = bkt10;						\
+-									\
+-	g11 = &g[pkt11_index];						\
+-	g11->sig = sig11;						\
+-	g11->bkt = bkt11;						\
+-}
+-
+-#define lookup2_stage2(t, g, pkt20_index, pkt21_index, pkts_mask_match_many)\
+-{									\
+-	struct grinder *g20, *g21;					\
+-	uint64_t sig20, sig21;						\
+-	struct bucket *bkt20, *bkt21;					\
+-	uint8_t *key20, *key21, *key_mem = t->key_mem;			\
+-	uint64_t match20, match21, match_many20, match_many21;		\
+-	uint64_t match_pos20, match_pos21;				\
+-	uint32_t key20_index, key21_index, key_size_shl = t->key_size_shl;\
+-									\
+-	g20 = &g[pkt20_index];						\
+-	sig20 = g20->sig;						\
+-	bkt20 = g20->bkt;						\
+-	sig20 = (sig20 >> 16) | 1LLU;					\
+-	lookup_cmp_sig(sig20, bkt20, match20, match_many20, match_pos20);\
+-	match20 <<= pkt20_index;					\
+-	match_many20 |= BUCKET_NEXT_VALID(bkt20);			\
+-	match_many20 <<= pkt20_index;					\
+-	key20_index = bkt20->key_pos[match_pos20];			\
+-	key20 = &key_mem[key20_index << key_size_shl];			\
+-									\
+-	g21 = &g[pkt21_index];						\
+-	sig21 = g21->sig;						\
+-	bkt21 = g21->bkt;						\
+-	sig21 = (sig21 >> 16) | 1LLU;					\
+-	lookup_cmp_sig(sig21, bkt21, match21, match_many21, match_pos21);\
+-	match21 <<= pkt21_index;					\
+-	match_many21 |= BUCKET_NEXT_VALID(bkt21);			\
+-	match_many21 <<= pkt21_index;					\
+-	key21_index = bkt21->key_pos[match_pos21];			\
+-	key21 = &key_mem[key21_index << key_size_shl];			\
+-									\
+-	rte_prefetch0(key20);						\
+-	rte_prefetch0(key21);						\
+-									\
+-	pkts_mask_match_many |= match_many20 | match_many21;		\
+-									\
+-	g20->match = match20;						\
+-	g20->key_index = key20_index;					\
+-									\
+-	g21->match = match21;						\
+-	g21->key_index = key21_index;					\
+-}
+-
+-#define lookup2_stage3(t, g, pkts, pkt30_index, pkt31_index, pkts_mask_out, \
+-	entries)							\
+-{									\
+-	struct grinder *g30, *g31;					\
+-	struct rte_mbuf *mbuf30, *mbuf31;				\
+-	uint8_t *key30, *key31, *key_mem = t->key_mem;			\
+-	uint8_t *data30, *data31, *data_mem = t->data_mem;		\
+-	uint64_t match30, match31, match_key30, match_key31, match_keys;\
+-	uint32_t key30_index, key31_index;				\
+-	uint32_t key_size_shl = t->key_size_shl;			\
+-	uint32_t data_size_shl = t->data_size_shl;			\
+-									\
+-	mbuf30 = pkts[pkt30_index];					\
+-	g30 = &g[pkt30_index];						\
+-	match30 = g30->match;						\
+-	key30_index = g30->key_index;					\
+-	key30 = &key_mem[key30_index << key_size_shl];			\
+-	lookup_cmp_key(mbuf30, key30, match_key30, t);			\
+-	match_key30 <<= pkt30_index;					\
+-	match_key30 &= match30;						\
+-	data30 = &data_mem[key30_index << data_size_shl];		\
+-	entries[pkt30_index] = data30;					\
+-									\
+-	mbuf31 = pkts[pkt31_index];					\
+-	g31 = &g[pkt31_index];						\
+-	match31 = g31->match;						\
+-	key31_index = g31->key_index;					\
+-	key31 = &key_mem[key31_index << key_size_shl];			\
+-	lookup_cmp_key(mbuf31, key31, match_key31, t);			\
+-	match_key31 <<= pkt31_index;					\
+-	match_key31 &= match31;						\
+-	data31 = &data_mem[key31_index << data_size_shl];		\
+-	entries[pkt31_index] = data31;					\
+-									\
+-	rte_prefetch0(data30);						\
+-	rte_prefetch0(data31);						\
+-									\
+-	match_keys = match_key30 | match_key31;				\
+-	pkts_mask_out |= match_keys;					\
+-}
+-
+-/*
+- * The lookup function implements a 4-stage pipeline, with each stage processing
+- * two different packets. The purpose of pipelined implementation is to hide the
+- * latency of prefetching the data structures and loosen the data dependency
+- * between instructions.
+- *
+- *  p00  _______   p10  _______   p20  _______   p30  _______
+- *----->|       |----->|       |----->|       |----->|       |----->
+- *      |   0   |      |   1   |      |   2   |      |   3   |
+- *----->|_______|----->|_______|----->|_______|----->|_______|----->
+- *  p01            p11            p21            p31
+- *
+- * The naming convention is:
+- *    pXY = packet Y of stage X, X = 0 .. 3, Y = 0 .. 1
+- */
+-static int rte_table_hash_ext_lookup(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_hash *t = (struct rte_table_hash *) table;
+-	struct grinder *g = t->grinders;
+-	uint64_t pkt00_index, pkt01_index, pkt10_index, pkt11_index;
+-	uint64_t pkt20_index, pkt21_index, pkt30_index, pkt31_index;
+-	uint64_t pkts_mask_out = 0, pkts_mask_match_many = 0;
+-	int status = 0;
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-	RTE_TABLE_HASH_EXT_STATS_PKTS_IN_ADD(t, n_pkts_in);
+-
+-	/* Cannot run the pipeline with less than 7 packets */
+-	if (rte_popcount64(pkts_mask) < 7) {
+-		status = rte_table_hash_ext_lookup_unoptimized(table, pkts,
+-			pkts_mask, lookup_hit_mask, entries);
+-		RTE_TABLE_HASH_EXT_STATS_PKTS_LOOKUP_MISS(t, n_pkts_in -
+-				rte_popcount64(*lookup_hit_mask));
+-		return status;
+-	}
+-
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(t, g, pkts, pkts_mask, pkt00_index, pkt01_index);
+-
+-	/* Pipeline feed */
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(t, g, pkts, pkts_mask, pkt00_index, pkt01_index);
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(t, g, pkts, pkt10_index, pkt11_index);
+-
+-	/* Pipeline feed */
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(t, g, pkts, pkts_mask, pkt00_index, pkt01_index);
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(t, g, pkts, pkt10_index, pkt11_index);
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2(t, g, pkt20_index, pkt21_index, pkts_mask_match_many);
+-
+-	/*
+-	* Pipeline run
+-	*
+-	*/
+-	for ( ; pkts_mask; ) {
+-		/* Pipeline feed */
+-		pkt30_index = pkt20_index;
+-		pkt31_index = pkt21_index;
+-		pkt20_index = pkt10_index;
+-		pkt21_index = pkt11_index;
+-		pkt10_index = pkt00_index;
+-		pkt11_index = pkt01_index;
+-
+-		/* Pipeline stage 0 */
+-		lookup2_stage0_with_odd_support(t, g, pkts, pkts_mask,
+-			pkt00_index, pkt01_index);
+-
+-		/* Pipeline stage 1 */
+-		lookup2_stage1(t, g, pkts, pkt10_index, pkt11_index);
+-
+-		/* Pipeline stage 2 */
+-		lookup2_stage2(t, g, pkt20_index, pkt21_index,
+-			pkts_mask_match_many);
+-
+-		/* Pipeline stage 3 */
+-		lookup2_stage3(t, g, pkts, pkt30_index, pkt31_index,
+-			pkts_mask_out, entries);
+-	}
+-
+-	/* Pipeline feed */
+-	pkt30_index = pkt20_index;
+-	pkt31_index = pkt21_index;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(t, g, pkts, pkt10_index, pkt11_index);
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2(t, g, pkt20_index, pkt21_index, pkts_mask_match_many);
+-
+-	/* Pipeline stage 3 */
+-	lookup2_stage3(t, g, pkts, pkt30_index, pkt31_index, pkts_mask_out,
+-		entries);
+-
+-	/* Pipeline feed */
+-	pkt30_index = pkt20_index;
+-	pkt31_index = pkt21_index;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2(t, g, pkt20_index, pkt21_index, pkts_mask_match_many);
+-
+-	/* Pipeline stage 3 */
+-	lookup2_stage3(t, g, pkts, pkt30_index, pkt31_index, pkts_mask_out,
+-		entries);
+-
+-	/* Pipeline feed */
+-	pkt30_index = pkt20_index;
+-	pkt31_index = pkt21_index;
+-
+-	/* Pipeline stage 3 */
+-	lookup2_stage3(t, g, pkts, pkt30_index, pkt31_index, pkts_mask_out,
+-		entries);
+-
+-	/* Slow path */
+-	pkts_mask_match_many &= ~pkts_mask_out;
+-	if (pkts_mask_match_many) {
+-		uint64_t pkts_mask_out_slow = 0;
+-
+-		status = rte_table_hash_ext_lookup_unoptimized(table, pkts,
+-			pkts_mask_match_many, &pkts_mask_out_slow, entries);
+-		pkts_mask_out |= pkts_mask_out_slow;
+-	}
+-
+-	*lookup_hit_mask = pkts_mask_out;
+-	RTE_TABLE_HASH_EXT_STATS_PKTS_LOOKUP_MISS(t, n_pkts_in - rte_popcount64(pkts_mask_out));
+-	return status;
+-}
+-
+-static int
+-rte_table_hash_ext_stats_read(void *table, struct rte_table_stats *stats, int clear)
+-{
+-	struct rte_table_hash *t = table;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &t->stats, sizeof(t->stats));
+-
+-	if (clear)
+-		memset(&t->stats, 0, sizeof(t->stats));
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_table_hash_ext_ops)
+-struct rte_table_ops rte_table_hash_ext_ops	 = {
+-	.f_create = rte_table_hash_ext_create,
+-	.f_free = rte_table_hash_ext_free,
+-	.f_add = rte_table_hash_ext_entry_add,
+-	.f_delete = rte_table_hash_ext_entry_delete,
+-	.f_add_bulk = NULL,
+-	.f_delete_bulk = NULL,
+-	.f_lookup = rte_table_hash_ext_lookup,
+-	.f_stats = rte_table_hash_ext_stats_read,
+-};
+diff --git a/lib/table/rte_table_hash_func.h b/lib/table/rte_table_hash_func.h
+deleted file mode 100644
+index ca56e6c885..0000000000
+--- a/lib/table/rte_table_hash_func.h
++++ /dev/null
+@@ -1,263 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2018 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_TABLE_HASH_FUNC_H__
+-#define __INCLUDE_RTE_TABLE_HASH_FUNC_H__
+-
+-#include <stdint.h>
+-
+-#include <rte_compat.h>
+-#include <rte_common.h>
+-
+-#if defined(RTE_ARCH_X86_64)
+-
+-#include <x86intrin.h>
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-static inline uint64_t
+-rte_crc32_u64(uint64_t crc, uint64_t v)
+-{
+-	return _mm_crc32_u64(crc, v);
+-}
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#elif defined(RTE_ARCH_ARM64) && defined(__ARM_FEATURE_CRC32)
+-#include "rte_table_hash_func_arm64.h"
+-#else
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-static inline uint64_t
+-rte_crc32_u64(uint64_t crc, uint64_t v)
+-{
+-	int i;
+-
+-	crc = (crc & 0xFFFFFFFFLLU) ^ v;
+-	for (i = 63; i >= 0; i--) {
+-		uint64_t mask;
+-
+-		mask = -(crc & 1LLU);
+-		crc = (crc >> 1LLU) ^ (0x82F63B78LLU & mask);
+-	}
+-
+-	return crc;
+-}
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-__rte_experimental
+-static inline uint64_t
+-rte_table_hash_crc_key8(void *key, void *mask, __rte_unused uint32_t key_size,
+-	uint64_t seed)
+-{
+-	uint64_t *k = (uint64_t *)key;
+-	uint64_t *m = (uint64_t *)mask;
+-	uint64_t crc0;
+-
+-	crc0 = rte_crc32_u64(seed, k[0] & m[0]);
+-
+-	return crc0;
+-}
+-
+-__rte_experimental
+-static inline uint64_t
+-rte_table_hash_crc_key16(void *key, void *mask, __rte_unused uint32_t key_size,
+-	uint64_t seed)
+-{
+-	uint64_t *k = (uint64_t *)key;
+-	uint64_t *m = (uint64_t *)mask;
+-	uint64_t k0, crc0, crc1;
+-
+-	k0 = k[0] & m[0];
+-
+-	crc0 = rte_crc32_u64(k0, seed);
+-	crc1 = rte_crc32_u64(k0 >> 32, k[1] & m[1]);
+-
+-	crc0 ^= crc1;
+-
+-	return crc0;
+-}
+-
+-__rte_experimental
+-static inline uint64_t
+-rte_table_hash_crc_key24(void *key, void *mask, __rte_unused uint32_t key_size,
+-	uint64_t seed)
+-{
+-	uint64_t *k = (uint64_t *)key;
+-	uint64_t *m = (uint64_t *)mask;
+-	uint64_t k0, k2, crc0, crc1;
+-
+-	k0 = k[0] & m[0];
+-	k2 = k[2] & m[2];
+-
+-	crc0 = rte_crc32_u64(k0, seed);
+-	crc1 = rte_crc32_u64(k0 >> 32, k[1] & m[1]);
+-
+-	crc0 = rte_crc32_u64(crc0, k2);
+-
+-	crc0 ^= crc1;
+-
+-	return crc0;
+-}
+-
+-__rte_experimental
+-static inline uint64_t
+-rte_table_hash_crc_key32(void *key, void *mask, __rte_unused uint32_t key_size,
+-	uint64_t seed)
+-{
+-	uint64_t *k = (uint64_t *)key;
+-	uint64_t *m = (uint64_t *)mask;
+-	uint64_t k0, k2, crc0, crc1, crc2, crc3;
+-
+-	k0 = k[0] & m[0];
+-	k2 = k[2] & m[2];
+-
+-	crc0 = rte_crc32_u64(k0, seed);
+-	crc1 = rte_crc32_u64(k0 >> 32, k[1] & m[1]);
+-
+-	crc2 = rte_crc32_u64(k2, k[3] & m[3]);
+-	crc3 = k2 >> 32;
+-
+-	crc0 = rte_crc32_u64(crc0, crc1);
+-	crc1 = rte_crc32_u64(crc2, crc3);
+-
+-	crc0 ^= crc1;
+-
+-	return crc0;
+-}
+-
+-__rte_experimental
+-static inline uint64_t
+-rte_table_hash_crc_key40(void *key, void *mask, __rte_unused uint32_t key_size,
+-	uint64_t seed)
+-{
+-	uint64_t *k = (uint64_t *)key;
+-	uint64_t *m = (uint64_t *)mask;
+-	uint64_t k0, k2, crc0, crc1, crc2, crc3;
+-
+-	k0 = k[0] & m[0];
+-	k2 = k[2] & m[2];
+-
+-	crc0 = rte_crc32_u64(k0, seed);
+-	crc1 = rte_crc32_u64(k0 >> 32, k[1] & m[1]);
+-
+-	crc2 = rte_crc32_u64(k2, k[3] & m[3]);
+-	crc3 = rte_crc32_u64(k2 >> 32, k[4] & m[4]);
+-
+-	crc0 = rte_crc32_u64(crc0, crc1);
+-	crc1 = rte_crc32_u64(crc2, crc3);
+-
+-	crc0 ^= crc1;
+-
+-	return crc0;
+-}
+-
+-__rte_experimental
+-static inline uint64_t
+-rte_table_hash_crc_key48(void *key, void *mask, __rte_unused uint32_t key_size,
+-	uint64_t seed)
+-{
+-	uint64_t *k = (uint64_t *)key;
+-	uint64_t *m = (uint64_t *)mask;
+-	uint64_t k0, k2, k5, crc0, crc1, crc2, crc3;
+-
+-	k0 = k[0] & m[0];
+-	k2 = k[2] & m[2];
+-	k5 = k[5] & m[5];
+-
+-	crc0 = rte_crc32_u64(k0, seed);
+-	crc1 = rte_crc32_u64(k0 >> 32, k[1] & m[1]);
+-
+-	crc2 = rte_crc32_u64(k2, k[3] & m[3]);
+-	crc3 = rte_crc32_u64(k2 >> 32, k[4] & m[4]);
+-
+-	crc0 = rte_crc32_u64(crc0, (crc1 << 32) ^ crc2);
+-	crc1 = rte_crc32_u64(crc3, k5);
+-
+-	crc0 ^= crc1;
+-
+-	return crc0;
+-}
+-
+-__rte_experimental
+-static inline uint64_t
+-rte_table_hash_crc_key56(void *key, void *mask, __rte_unused uint32_t key_size,
+-	uint64_t seed)
+-{
+-	uint64_t *k = (uint64_t *)key;
+-	uint64_t *m = (uint64_t *)mask;
+-	uint64_t k0, k2, k5, crc0, crc1, crc2, crc3, crc4, crc5;
+-
+-	k0 = k[0] & m[0];
+-	k2 = k[2] & m[2];
+-	k5 = k[5] & m[5];
+-
+-	crc0 = rte_crc32_u64(k0, seed);
+-	crc1 = rte_crc32_u64(k0 >> 32, k[1] & m[1]);
+-
+-	crc2 = rte_crc32_u64(k2, k[3] & m[3]);
+-	crc3 = rte_crc32_u64(k2 >> 32, k[4] & m[4]);
+-
+-	crc4 = rte_crc32_u64(k5, k[6] & m[6]);
+-	crc5 = k5 >> 32;
+-
+-	crc0 = rte_crc32_u64(crc0, (crc1 << 32) ^ crc2);
+-	crc1 = rte_crc32_u64(crc3, (crc4 << 32) ^ crc5);
+-
+-	crc0 ^= crc1;
+-
+-	return crc0;
+-}
+-
+-__rte_experimental
+-static inline uint64_t
+-rte_table_hash_crc_key64(void *key, void *mask, __rte_unused uint32_t key_size,
+-	uint64_t seed)
+-{
+-	uint64_t *k = (uint64_t *)key;
+-	uint64_t *m = (uint64_t *)mask;
+-	uint64_t k0, k2, k5, crc0, crc1, crc2, crc3, crc4, crc5;
+-
+-	k0 = k[0] & m[0];
+-	k2 = k[2] & m[2];
+-	k5 = k[5] & m[5];
+-
+-	crc0 = rte_crc32_u64(k0, seed);
+-	crc1 = rte_crc32_u64(k0 >> 32, k[1] & m[1]);
+-
+-	crc2 = rte_crc32_u64(k2, k[3] & m[3]);
+-	crc3 = rte_crc32_u64(k2 >> 32, k[4] & m[4]);
+-
+-	crc4 = rte_crc32_u64(k5, k[6] & m[6]);
+-	crc5 = rte_crc32_u64(k5 >> 32, k[7] & m[7]);
+-
+-	crc0 = rte_crc32_u64(crc0, (crc1 << 32) ^ crc2);
+-	crc1 = rte_crc32_u64(crc3, (crc4 << 32) ^ crc5);
+-
+-	crc0 ^= crc1;
+-
+-	return crc0;
+-}
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif
+diff --git a/lib/table/rte_table_hash_func_arm64.h b/lib/table/rte_table_hash_func_arm64.h
+deleted file mode 100644
+index eb04c1ff54..0000000000
+--- a/lib/table/rte_table_hash_func_arm64.h
++++ /dev/null
+@@ -1,21 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2017-2018 Linaro Limited
+- */
+-
+-#ifndef __INCLUDE_RTE_TABLE_HASH_FUNC_ARM64_H__
+-#define __INCLUDE_RTE_TABLE_HASH_FUNC_ARM64_H__
+-
+-#define _CRC32CX(crc, val)	\
+-	__asm__("crc32cx %w[c], %w[c], %x[v]":[c] "+r" (crc):[v] "r" (val))
+-
+-static inline uint64_t
+-rte_crc32_u64(uint64_t crc, uint64_t v)
+-{
+-	uint32_t crc32 = crc;
+-
+-	_CRC32CX(crc32, v);
+-
+-	return crc32;
+-}
+-
+-#endif
+diff --git a/lib/table/rte_table_hash_key16.c b/lib/table/rte_table_hash_key16.c
+deleted file mode 100644
+index 5b69106dd7..0000000000
+--- a/lib/table/rte_table_hash_key16.c
++++ /dev/null
+@@ -1,1190 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2017 Intel Corporation
+- */
+-
+-#include <stdalign.h>
+-#include <stdio.h>
+-#include <string.h>
+-
+-#include <eal_export.h>
+-#include <rte_common.h>
+-#include <rte_malloc.h>
+-#include <rte_log.h>
+-
+-#include "rte_table_hash.h"
+-#include "rte_lru.h"
+-
+-#include "table_log.h"
+-
+-#define KEY_SIZE						16
+-
+-#define KEYS_PER_BUCKET					4
+-
+-#define RTE_BUCKET_ENTRY_VALID						0x1LLU
+-
+-#ifdef RTE_TABLE_STATS_COLLECT
+-
+-#define RTE_TABLE_HASH_KEY16_STATS_PKTS_IN_ADD(table, val) \
+-	table->stats.n_pkts_in += val
+-#define RTE_TABLE_HASH_KEY16_STATS_PKTS_LOOKUP_MISS(table, val) \
+-	table->stats.n_pkts_lookup_miss += val
+-
+-#else
+-
+-#define RTE_TABLE_HASH_KEY16_STATS_PKTS_IN_ADD(table, val)
+-#define RTE_TABLE_HASH_KEY16_STATS_PKTS_LOOKUP_MISS(table, val)
+-
+-#endif
+-
+-#ifdef RTE_ARCH_64
+-struct rte_bucket_4_16 {
+-	/* Cache line 0 */
+-	uint64_t signature[4 + 1];
+-	uint64_t lru_list;
+-	struct rte_bucket_4_16 *next;
+-	uint64_t next_valid;
+-
+-	/* Cache line 1 */
+-	uint64_t key[4][2];
+-
+-	/* Cache line 2 */
+-	uint8_t data[];
+-};
+-#else
+-struct rte_bucket_4_16 {
+-	/* Cache line 0 */
+-	uint64_t signature[4 + 1];
+-	uint64_t lru_list;
+-	struct rte_bucket_4_16 *next;
+-	uint32_t pad;
+-	uint64_t next_valid;
+-
+-	/* Cache line 1 */
+-	uint64_t key[4][2];
+-
+-	/* Cache line 2 */
+-	uint8_t data[];
+-};
+-#endif
+-
+-struct rte_table_hash {
+-	struct rte_table_stats stats;
+-
+-	/* Input parameters */
+-	uint32_t n_buckets;
+-	uint32_t key_size;
+-	uint32_t entry_size;
+-	uint32_t bucket_size;
+-	uint32_t key_offset;
+-	uint64_t key_mask[2];
+-	rte_table_hash_op_hash f_hash;
+-	uint64_t seed;
+-
+-	/* Extendible buckets */
+-	uint32_t n_buckets_ext;
+-	uint32_t stack_pos;
+-	uint32_t *stack;
+-
+-	/* Lookup table */
+-	alignas(RTE_CACHE_LINE_SIZE) uint8_t memory[];
+-};
+-
+-static int
+-keycmp(void *a, void *b, void *b_mask)
+-{
+-	uint64_t *a64 = a, *b64 = b, *b_mask64 = b_mask;
+-
+-	return (a64[0] != (b64[0] & b_mask64[0])) ||
+-		(a64[1] != (b64[1] & b_mask64[1]));
+-}
+-
+-static void
+-keycpy(void *dst, void *src, void *src_mask)
+-{
+-	uint64_t *dst64 = dst, *src64 = src, *src_mask64 = src_mask;
+-
+-	dst64[0] = src64[0] & src_mask64[0];
+-	dst64[1] = src64[1] & src_mask64[1];
+-}
+-
+-static int
+-check_params_create(struct rte_table_hash_params *params)
+-{
+-	/* name */
+-	if (params->name == NULL) {
+-		TABLE_LOG(ERR, "%s: name invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* key_size */
+-	if (params->key_size != KEY_SIZE) {
+-		TABLE_LOG(ERR, "%s: key_size invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* n_keys */
+-	if (params->n_keys == 0) {
+-		TABLE_LOG(ERR, "%s: n_keys is zero", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* n_buckets */
+-	if ((params->n_buckets == 0) ||
+-		(!rte_is_power_of_2(params->n_buckets))) {
+-		TABLE_LOG(ERR, "%s: n_buckets invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* f_hash */
+-	if (params->f_hash == NULL) {
+-		TABLE_LOG(ERR, "%s: f_hash function pointer is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	return 0;
+-}
+-
+-static void *
+-rte_table_hash_create_key16_lru(void *params,
+-		int socket_id,
+-		uint32_t entry_size)
+-{
+-	struct rte_table_hash_params *p = params;
+-	struct rte_table_hash *f;
+-	uint64_t bucket_size, total_size;
+-	uint32_t n_buckets, i;
+-
+-	/* Check input parameters */
+-	if ((check_params_create(p) != 0) ||
+-		((sizeof(struct rte_table_hash) % RTE_CACHE_LINE_SIZE) != 0) ||
+-		((sizeof(struct rte_bucket_4_16) % 64) != 0))
+-		return NULL;
+-
+-	/*
+-	 * Table dimensioning
+-	 *
+-	 * Objective: Pick the number of buckets (n_buckets) so that there a chance
+-	 * to store n_keys keys in the table.
+-	 *
+-	 * Note: Since the buckets do not get extended, it is not possible to
+-	 * guarantee that n_keys keys can be stored in the table at any time. In the
+-	 * worst case scenario when all the n_keys fall into the same bucket, only
+-	 * a maximum of KEYS_PER_BUCKET keys will be stored in the table. This case
+-	 * defeats the purpose of the hash table. It indicates unsuitable f_hash or
+-	 * n_keys to n_buckets ratio.
+-	 *
+-	 * MIN(n_buckets) = (n_keys + KEYS_PER_BUCKET - 1) / KEYS_PER_BUCKET
+-	 */
+-	n_buckets = rte_align32pow2(
+-		(p->n_keys + KEYS_PER_BUCKET - 1) / KEYS_PER_BUCKET);
+-	n_buckets = RTE_MAX(n_buckets, p->n_buckets);
+-
+-	/* Memory allocation */
+-	bucket_size = RTE_CACHE_LINE_ROUNDUP(sizeof(struct rte_bucket_4_16) +
+-		KEYS_PER_BUCKET * entry_size);
+-	total_size = sizeof(struct rte_table_hash) + n_buckets * bucket_size;
+-
+-	if (total_size > SIZE_MAX) {
+-		TABLE_LOG(ERR, "%s: Cannot allocate %" PRIu64 " bytes "
+-		"for hash table %s",
+-		__func__, total_size, p->name);
+-		return NULL;
+-	}
+-
+-	f = rte_zmalloc_socket(p->name,
+-		(size_t)total_size,
+-		RTE_CACHE_LINE_SIZE,
+-		socket_id);
+-	if (f == NULL) {
+-		TABLE_LOG(ERR, "%s: Cannot allocate %" PRIu64 " bytes "
+-		"for hash table %s",
+-		__func__, total_size, p->name);
+-		return NULL;
+-	}
+-	TABLE_LOG(INFO, "%s: Hash table %s memory footprint "
+-		"is %" PRIu64 " bytes",
+-		__func__, p->name, total_size);
+-
+-	/* Memory initialization */
+-	f->n_buckets = n_buckets;
+-	f->key_size = KEY_SIZE;
+-	f->entry_size = entry_size;
+-	f->bucket_size = bucket_size;
+-	f->key_offset = p->key_offset;
+-	f->f_hash = p->f_hash;
+-	f->seed = p->seed;
+-
+-	if (p->key_mask != NULL) {
+-		f->key_mask[0] = ((uint64_t *)p->key_mask)[0];
+-		f->key_mask[1] = ((uint64_t *)p->key_mask)[1];
+-	} else {
+-		f->key_mask[0] = 0xFFFFFFFFFFFFFFFFLLU;
+-		f->key_mask[1] = 0xFFFFFFFFFFFFFFFFLLU;
+-	}
+-
+-	for (i = 0; i < n_buckets; i++) {
+-		struct rte_bucket_4_16 *bucket;
+-
+-		bucket = (struct rte_bucket_4_16 *) &f->memory[i *
+-			f->bucket_size];
+-		lru_init(bucket);
+-	}
+-
+-	return f;
+-}
+-
+-static int
+-rte_table_hash_free_key16_lru(void *table)
+-{
+-	struct rte_table_hash *f = table;
+-
+-	/* Check input parameters */
+-	if (f == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	rte_free(f);
+-	return 0;
+-}
+-
+-static int
+-rte_table_hash_entry_add_key16_lru(
+-	void *table,
+-	void *key,
+-	void *entry,
+-	int *key_found,
+-	void **entry_ptr)
+-{
+-	struct rte_table_hash *f = table;
+-	struct rte_bucket_4_16 *bucket;
+-	uint64_t signature, pos;
+-	uint32_t bucket_index, i;
+-
+-	signature = f->f_hash(key, f->key_mask, f->key_size, f->seed);
+-	bucket_index = signature & (f->n_buckets - 1);
+-	bucket = (struct rte_bucket_4_16 *)
+-		&f->memory[bucket_index * f->bucket_size];
+-	signature |= RTE_BUCKET_ENTRY_VALID;
+-
+-	/* Key is present in the bucket */
+-	for (i = 0; i < 4; i++) {
+-		uint64_t bucket_signature = bucket->signature[i];
+-		uint8_t *bucket_key = (uint8_t *) &bucket->key[i];
+-
+-		if ((bucket_signature == signature) &&
+-			(keycmp(bucket_key, key, f->key_mask) == 0)) {
+-			uint8_t *bucket_data = &bucket->data[i * f->entry_size];
+-
+-			memcpy(bucket_data, entry, f->entry_size);
+-			lru_update(bucket, i);
+-			*key_found = 1;
+-			*entry_ptr = (void *) bucket_data;
+-			return 0;
+-		}
+-	}
+-
+-	/* Key is not present in the bucket */
+-	for (i = 0; i < 4; i++) {
+-		uint64_t bucket_signature = bucket->signature[i];
+-		uint8_t *bucket_key = (uint8_t *) &bucket->key[i];
+-
+-		if (bucket_signature == 0) {
+-			uint8_t *bucket_data = &bucket->data[i * f->entry_size];
+-
+-			bucket->signature[i] = signature;
+-			keycpy(bucket_key, key, f->key_mask);
+-			memcpy(bucket_data, entry, f->entry_size);
+-			lru_update(bucket, i);
+-			*key_found = 0;
+-			*entry_ptr = (void *) bucket_data;
+-
+-			return 0;
+-		}
+-	}
+-
+-	/* Bucket full: replace LRU entry */
+-	pos = lru_pos(bucket);
+-	bucket->signature[pos] = signature;
+-	keycpy(&bucket->key[pos], key, f->key_mask);
+-	memcpy(&bucket->data[pos * f->entry_size], entry, f->entry_size);
+-	lru_update(bucket, pos);
+-	*key_found = 0;
+-	*entry_ptr = (void *) &bucket->data[pos * f->entry_size];
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_hash_entry_delete_key16_lru(
+-	void *table,
+-	void *key,
+-	int *key_found,
+-	void *entry)
+-{
+-	struct rte_table_hash *f = table;
+-	struct rte_bucket_4_16 *bucket;
+-	uint64_t signature;
+-	uint32_t bucket_index, i;
+-
+-	signature = f->f_hash(key, f->key_mask, f->key_size, f->seed);
+-	bucket_index = signature & (f->n_buckets - 1);
+-	bucket = (struct rte_bucket_4_16 *)
+-		&f->memory[bucket_index * f->bucket_size];
+-	signature |= RTE_BUCKET_ENTRY_VALID;
+-
+-	/* Key is present in the bucket */
+-	for (i = 0; i < 4; i++) {
+-		uint64_t bucket_signature = bucket->signature[i];
+-		uint8_t *bucket_key = (uint8_t *) &bucket->key[i];
+-
+-		if ((bucket_signature == signature) &&
+-			(keycmp(bucket_key, key, f->key_mask) == 0)) {
+-			uint8_t *bucket_data = &bucket->data[i * f->entry_size];
+-
+-			bucket->signature[i] = 0;
+-			*key_found = 1;
+-			if (entry)
+-				memcpy(entry, bucket_data, f->entry_size);
+-			return 0;
+-		}
+-	}
+-
+-	/* Key is not present in the bucket */
+-	*key_found = 0;
+-	return 0;
+-}
+-
+-static void *
+-rte_table_hash_create_key16_ext(void *params,
+-		int socket_id,
+-		uint32_t entry_size)
+-{
+-	struct rte_table_hash_params *p = params;
+-	struct rte_table_hash *f;
+-	uint64_t bucket_size, stack_size, total_size;
+-	uint32_t n_buckets_ext, i;
+-
+-	/* Check input parameters */
+-	if ((check_params_create(p) != 0) ||
+-		((sizeof(struct rte_table_hash) % RTE_CACHE_LINE_SIZE) != 0) ||
+-		((sizeof(struct rte_bucket_4_16) % 64) != 0))
+-		return NULL;
+-
+-	/*
+-	 * Table dimensioning
+-	 *
+-	 * Objective: Pick the number of bucket extensions (n_buckets_ext) so that
+-	 * it is guaranteed that n_keys keys can be stored in the table at any time.
+-	 *
+-	 * The worst case scenario takes place when all the n_keys keys fall into
+-	 * the same bucket. Actually, due to the KEYS_PER_BUCKET scheme, the worst
+-	 * case takes place when (n_keys - KEYS_PER_BUCKET + 1) keys fall into the
+-	 * same bucket, while the remaining (KEYS_PER_BUCKET - 1) keys each fall
+-	 * into a different bucket. This case defeats the purpose of the hash table.
+-	 * It indicates unsuitable f_hash or n_keys to n_buckets ratio.
+-	 *
+-	 * n_buckets_ext = n_keys / KEYS_PER_BUCKET + KEYS_PER_BUCKET - 1
+-	 */
+-	n_buckets_ext = p->n_keys / KEYS_PER_BUCKET + KEYS_PER_BUCKET - 1;
+-
+-	/* Memory allocation */
+-	bucket_size = RTE_CACHE_LINE_ROUNDUP(sizeof(struct rte_bucket_4_16) +
+-		KEYS_PER_BUCKET * entry_size);
+-	stack_size = RTE_CACHE_LINE_ROUNDUP(n_buckets_ext * sizeof(uint32_t));
+-	total_size = sizeof(struct rte_table_hash) +
+-		(p->n_buckets + n_buckets_ext) * bucket_size + stack_size;
+-	if (total_size > SIZE_MAX) {
+-		TABLE_LOG(ERR, "%s: Cannot allocate %" PRIu64 " bytes "
+-			"for hash table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-
+-	f = rte_zmalloc_socket(p->name,
+-		(size_t)total_size,
+-		RTE_CACHE_LINE_SIZE,
+-		socket_id);
+-	if (f == NULL) {
+-		TABLE_LOG(ERR, "%s: Cannot allocate %" PRIu64 " bytes "
+-			"for hash table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-	TABLE_LOG(INFO, "%s: Hash table %s memory footprint "
+-		"is %" PRIu64 " bytes",
+-		__func__, p->name, total_size);
+-
+-	/* Memory initialization */
+-	f->n_buckets = p->n_buckets;
+-	f->key_size = KEY_SIZE;
+-	f->entry_size = entry_size;
+-	f->bucket_size = bucket_size;
+-	f->key_offset = p->key_offset;
+-	f->f_hash = p->f_hash;
+-	f->seed = p->seed;
+-
+-	f->n_buckets_ext = n_buckets_ext;
+-	f->stack_pos = n_buckets_ext;
+-	f->stack = (uint32_t *)
+-		&f->memory[(p->n_buckets + n_buckets_ext) * f->bucket_size];
+-
+-	if (p->key_mask != NULL) {
+-		f->key_mask[0] = (((uint64_t *)p->key_mask)[0]);
+-		f->key_mask[1] = (((uint64_t *)p->key_mask)[1]);
+-	} else {
+-		f->key_mask[0] = 0xFFFFFFFFFFFFFFFFLLU;
+-		f->key_mask[1] = 0xFFFFFFFFFFFFFFFFLLU;
+-	}
+-
+-	for (i = 0; i < n_buckets_ext; i++)
+-		f->stack[i] = i;
+-
+-	return f;
+-}
+-
+-static int
+-rte_table_hash_free_key16_ext(void *table)
+-{
+-	struct rte_table_hash *f = table;
+-
+-	/* Check input parameters */
+-	if (f == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	rte_free(f);
+-	return 0;
+-}
+-
+-static int
+-rte_table_hash_entry_add_key16_ext(
+-	void *table,
+-	void *key,
+-	void *entry,
+-	int *key_found,
+-	void **entry_ptr)
+-{
+-	struct rte_table_hash *f = table;
+-	struct rte_bucket_4_16 *bucket0, *bucket, *bucket_prev;
+-	uint64_t signature;
+-	uint32_t bucket_index, i;
+-
+-	signature = f->f_hash(key, f->key_mask, f->key_size, f->seed);
+-	bucket_index = signature & (f->n_buckets - 1);
+-	bucket0 = (struct rte_bucket_4_16 *)
+-		&f->memory[bucket_index * f->bucket_size];
+-	signature |= RTE_BUCKET_ENTRY_VALID;
+-
+-	/* Key is present in the bucket */
+-	for (bucket = bucket0; bucket != NULL; bucket = bucket->next)
+-		for (i = 0; i < 4; i++) {
+-			uint64_t bucket_signature = bucket->signature[i];
+-			uint8_t *bucket_key = (uint8_t *) &bucket->key[i];
+-
+-			if ((bucket_signature == signature) &&
+-				(keycmp(bucket_key, key, f->key_mask) == 0)) {
+-				uint8_t *bucket_data = &bucket->data[i *
+-					f->entry_size];
+-
+-				memcpy(bucket_data, entry, f->entry_size);
+-				*key_found = 1;
+-				*entry_ptr = (void *) bucket_data;
+-				return 0;
+-			}
+-		}
+-
+-	/* Key is not present in the bucket */
+-	for (bucket_prev = NULL, bucket = bucket0; bucket != NULL;
+-		bucket_prev = bucket, bucket = bucket->next)
+-		for (i = 0; i < 4; i++) {
+-			uint64_t bucket_signature = bucket->signature[i];
+-			uint8_t *bucket_key = (uint8_t *) &bucket->key[i];
+-
+-			if (bucket_signature == 0) {
+-				uint8_t *bucket_data = &bucket->data[i *
+-					f->entry_size];
+-
+-				bucket->signature[i] = signature;
+-				keycpy(bucket_key, key, f->key_mask);
+-				memcpy(bucket_data, entry, f->entry_size);
+-				*key_found = 0;
+-				*entry_ptr = (void *) bucket_data;
+-
+-				return 0;
+-			}
+-		}
+-
+-	/* Bucket full: extend bucket */
+-	if (f->stack_pos > 0) {
+-		bucket_index = f->stack[--f->stack_pos];
+-
+-		bucket = (struct rte_bucket_4_16 *) &f->memory[(f->n_buckets +
+-			bucket_index) * f->bucket_size];
+-		bucket_prev->next = bucket;
+-		bucket_prev->next_valid = 1;
+-
+-		bucket->signature[0] = signature;
+-		keycpy(&bucket->key[0], key, f->key_mask);
+-		memcpy(&bucket->data[0], entry, f->entry_size);
+-		*key_found = 0;
+-		*entry_ptr = (void *) &bucket->data[0];
+-		return 0;
+-	}
+-
+-	return -ENOSPC;
+-}
+-
+-static int
+-rte_table_hash_entry_delete_key16_ext(
+-	void *table,
+-	void *key,
+-	int *key_found,
+-	void *entry)
+-{
+-	struct rte_table_hash *f = table;
+-	struct rte_bucket_4_16 *bucket0, *bucket, *bucket_prev;
+-	uint64_t signature;
+-	uint32_t bucket_index, i;
+-
+-	signature = f->f_hash(key, f->key_mask, f->key_size, f->seed);
+-	bucket_index = signature & (f->n_buckets - 1);
+-	bucket0 = (struct rte_bucket_4_16 *)
+-		&f->memory[bucket_index * f->bucket_size];
+-	signature |= RTE_BUCKET_ENTRY_VALID;
+-
+-	/* Key is present in the bucket */
+-	for (bucket_prev = NULL, bucket = bucket0; bucket != NULL;
+-		bucket_prev = bucket, bucket = bucket->next)
+-		for (i = 0; i < 4; i++) {
+-			uint64_t bucket_signature = bucket->signature[i];
+-			uint8_t *bucket_key = (uint8_t *) &bucket->key[i];
+-
+-			if ((bucket_signature == signature) &&
+-				(keycmp(bucket_key, key, f->key_mask) == 0)) {
+-				uint8_t *bucket_data = &bucket->data[i *
+-					f->entry_size];
+-
+-				bucket->signature[i] = 0;
+-				*key_found = 1;
+-				if (entry)
+-					memcpy(entry, bucket_data, f->entry_size);
+-
+-				if ((bucket->signature[0] == 0) &&
+-					(bucket->signature[1] == 0) &&
+-					(bucket->signature[2] == 0) &&
+-					(bucket->signature[3] == 0) &&
+-					(bucket_prev != NULL)) {
+-					bucket_prev->next = bucket->next;
+-					bucket_prev->next_valid =
+-						bucket->next_valid;
+-
+-					memset(bucket, 0,
+-						sizeof(struct rte_bucket_4_16));
+-					bucket_index = (((uint8_t *)bucket -
+-						(uint8_t *)f->memory)/f->bucket_size) - f->n_buckets;
+-					f->stack[f->stack_pos++] = bucket_index;
+-				}
+-
+-				return 0;
+-			}
+-		}
+-
+-	/* Key is not present in the bucket */
+-	*key_found = 0;
+-	return 0;
+-}
+-
+-#define lookup_key16_cmp(key_in, bucket, pos, f)			\
+-{								\
+-	uint64_t xor[4][2], or[4], signature[4], k[2];		\
+-								\
+-	k[0] = key_in[0] & f->key_mask[0];				\
+-	k[1] = key_in[1] & f->key_mask[1];				\
+-	signature[0] = (~bucket->signature[0]) & 1;		\
+-	signature[1] = (~bucket->signature[1]) & 1;		\
+-	signature[2] = (~bucket->signature[2]) & 1;		\
+-	signature[3] = (~bucket->signature[3]) & 1;		\
+-								\
+-	xor[0][0] = k[0] ^ bucket->key[0][0];			\
+-	xor[0][1] = k[1] ^ bucket->key[0][1];			\
+-								\
+-	xor[1][0] = k[0] ^ bucket->key[1][0];			\
+-	xor[1][1] = k[1] ^ bucket->key[1][1];			\
+-								\
+-	xor[2][0] = k[0] ^ bucket->key[2][0];			\
+-	xor[2][1] = k[1] ^ bucket->key[2][1];			\
+-								\
+-	xor[3][0] = k[0] ^ bucket->key[3][0];			\
+-	xor[3][1] = k[1] ^ bucket->key[3][1];			\
+-								\
+-	or[0] = xor[0][0] | xor[0][1] | signature[0];		\
+-	or[1] = xor[1][0] | xor[1][1] | signature[1];		\
+-	or[2] = xor[2][0] | xor[2][1] | signature[2];		\
+-	or[3] = xor[3][0] | xor[3][1] | signature[3];		\
+-								\
+-	pos = 4;						\
+-	if (or[0] == 0)						\
+-		pos = 0;					\
+-	if (or[1] == 0)						\
+-		pos = 1;					\
+-	if (or[2] == 0)						\
+-		pos = 2;					\
+-	if (or[3] == 0)						\
+-		pos = 3;					\
+-}
+-
+-#define lookup1_stage0(pkt0_index, mbuf0, pkts, pkts_mask, f)	\
+-{								\
+-	uint64_t pkt_mask;					\
+-	uint32_t key_offset = f->key_offset;\
+-								\
+-	pkt0_index = rte_ctz64(pkts_mask);		\
+-	pkt_mask = 1LLU << pkt0_index;				\
+-	pkts_mask &= ~pkt_mask;					\
+-								\
+-	mbuf0 = pkts[pkt0_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf0, key_offset));\
+-}
+-
+-#define lookup1_stage1(mbuf1, bucket1, f)			\
+-{								\
+-	uint64_t *key;						\
+-	uint64_t signature = 0;				\
+-	uint32_t bucket_index;				\
+-								\
+-	key = RTE_MBUF_METADATA_UINT64_PTR(mbuf1, f->key_offset);\
+-	signature = f->f_hash(key, f->key_mask, KEY_SIZE, f->seed);	\
+-								\
+-	bucket_index = signature & (f->n_buckets - 1);		\
+-	bucket1 = (struct rte_bucket_4_16 *)			\
+-		&f->memory[bucket_index * f->bucket_size];	\
+-	rte_prefetch0(bucket1);					\
+-	rte_prefetch0((void *)(((uintptr_t) bucket1) + RTE_CACHE_LINE_SIZE));\
+-}
+-
+-#define lookup1_stage2_lru(pkt2_index, mbuf2, bucket2,		\
+-		pkts_mask_out, entries, f)			\
+-{								\
+-	void *a;						\
+-	uint64_t pkt_mask;					\
+-	uint64_t *key;						\
+-	uint32_t pos;						\
+-								\
+-	key = RTE_MBUF_METADATA_UINT64_PTR(mbuf2, f->key_offset);\
+-	lookup_key16_cmp(key, bucket2, pos, f);			\
+-								\
+-	pkt_mask = (bucket2->signature[pos] & 1LLU) << pkt2_index;\
+-	pkts_mask_out |= pkt_mask;				\
+-								\
+-	a = (void *) &bucket2->data[pos * f->entry_size];	\
+-	rte_prefetch0(a);					\
+-	entries[pkt2_index] = a;				\
+-	lru_update(bucket2, pos);				\
+-}
+-
+-#define lookup1_stage2_ext(pkt2_index, mbuf2, bucket2, pkts_mask_out, entries, \
+-	buckets_mask, buckets, keys, f)				\
+-{								\
+-	struct rte_bucket_4_16 *bucket_next;			\
+-	void *a;						\
+-	uint64_t pkt_mask, bucket_mask;				\
+-	uint64_t *key;						\
+-	uint32_t pos;						\
+-								\
+-	key = RTE_MBUF_METADATA_UINT64_PTR(mbuf2, f->key_offset);\
+-	lookup_key16_cmp(key, bucket2, pos, f);			\
+-								\
+-	pkt_mask = (bucket2->signature[pos] & 1LLU) << pkt2_index;\
+-	pkts_mask_out |= pkt_mask;				\
+-								\
+-	a = (void *) &bucket2->data[pos * f->entry_size];	\
+-	rte_prefetch0(a);					\
+-	entries[pkt2_index] = a;				\
+-								\
+-	bucket_mask = (~pkt_mask) & (bucket2->next_valid << pkt2_index);\
+-	buckets_mask |= bucket_mask;				\
+-	bucket_next = bucket2->next;				\
+-	buckets[pkt2_index] = bucket_next;			\
+-	keys[pkt2_index] = key;					\
+-}
+-
+-#define lookup_grinder(pkt_index, buckets, keys, pkts_mask_out, entries,\
+-	buckets_mask, f)					\
+-{								\
+-	struct rte_bucket_4_16 *bucket, *bucket_next;		\
+-	void *a;						\
+-	uint64_t pkt_mask, bucket_mask;				\
+-	uint64_t *key;						\
+-	uint32_t pos;						\
+-								\
+-	bucket = buckets[pkt_index];				\
+-	key = keys[pkt_index];					\
+-	lookup_key16_cmp(key, bucket, pos, f);			\
+-								\
+-	pkt_mask = (bucket->signature[pos] & 1LLU) << pkt_index;\
+-	pkts_mask_out |= pkt_mask;				\
+-								\
+-	a = (void *) &bucket->data[pos * f->entry_size];	\
+-	rte_prefetch0(a);					\
+-	entries[pkt_index] = a;					\
+-								\
+-	bucket_mask = (~pkt_mask) & (bucket->next_valid << pkt_index);\
+-	buckets_mask |= bucket_mask;				\
+-	bucket_next = bucket->next;				\
+-	rte_prefetch0(bucket_next);				\
+-	rte_prefetch0((void *)(((uintptr_t) bucket_next) + RTE_CACHE_LINE_SIZE));\
+-	buckets[pkt_index] = bucket_next;			\
+-	keys[pkt_index] = key;					\
+-}
+-
+-#define lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01,\
+-		pkts, pkts_mask, f)				\
+-{								\
+-	uint64_t pkt00_mask, pkt01_mask;			\
+-	uint32_t key_offset = f->key_offset;		\
+-								\
+-	pkt00_index = rte_ctz64(pkts_mask);		\
+-	pkt00_mask = 1LLU << pkt00_index;			\
+-	pkts_mask &= ~pkt00_mask;				\
+-								\
+-	mbuf00 = pkts[pkt00_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf00, key_offset));\
+-								\
+-	pkt01_index = rte_ctz64(pkts_mask);		\
+-	pkt01_mask = 1LLU << pkt01_index;			\
+-	pkts_mask &= ~pkt01_mask;				\
+-								\
+-	mbuf01 = pkts[pkt01_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf01, key_offset));\
+-}
+-
+-#define lookup2_stage0_with_odd_support(pkt00_index, pkt01_index,\
+-		mbuf00, mbuf01, pkts, pkts_mask, f)		\
+-{								\
+-	uint64_t pkt00_mask, pkt01_mask;			\
+-	uint32_t key_offset = f->key_offset;		\
+-								\
+-	pkt00_index = rte_ctz64(pkts_mask);		\
+-	pkt00_mask = 1LLU << pkt00_index;			\
+-	pkts_mask &= ~pkt00_mask;				\
+-								\
+-	mbuf00 = pkts[pkt00_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf00, key_offset));	\
+-								\
+-	pkt01_index = rte_ctz64(pkts_mask);		\
+-	if (pkts_mask == 0)					\
+-		pkt01_index = pkt00_index;			\
+-	pkt01_mask = 1LLU << pkt01_index;			\
+-	pkts_mask &= ~pkt01_mask;				\
+-								\
+-	mbuf01 = pkts[pkt01_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf01, key_offset));	\
+-}
+-
+-#define lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f)	\
+-{								\
+-	uint64_t *key10, *key11;					\
+-	uint64_t signature10, signature11;			\
+-	uint32_t bucket10_index, bucket11_index;	\
+-								\
+-	key10 = RTE_MBUF_METADATA_UINT64_PTR(mbuf10, f->key_offset);\
+-	signature10 = f->f_hash(key10, f->key_mask,	 KEY_SIZE, f->seed);\
+-	bucket10_index = signature10 & (f->n_buckets - 1);	\
+-	bucket10 = (struct rte_bucket_4_16 *)				\
+-		&f->memory[bucket10_index * f->bucket_size];	\
+-	rte_prefetch0(bucket10);				\
+-	rte_prefetch0((void *)(((uintptr_t) bucket10) + RTE_CACHE_LINE_SIZE));\
+-								\
+-	key11 = RTE_MBUF_METADATA_UINT64_PTR(mbuf11, f->key_offset);\
+-	signature11 = f->f_hash(key11, f->key_mask,	 KEY_SIZE, f->seed);\
+-	bucket11_index = signature11 & (f->n_buckets - 1);	\
+-	bucket11 = (struct rte_bucket_4_16 *)			\
+-		&f->memory[bucket11_index * f->bucket_size];	\
+-	rte_prefetch0(bucket11);				\
+-	rte_prefetch0((void *)(((uintptr_t) bucket11) + RTE_CACHE_LINE_SIZE));\
+-}
+-
+-#define lookup2_stage2_lru(pkt20_index, pkt21_index, mbuf20, mbuf21,\
+-		bucket20, bucket21, pkts_mask_out, entries, f)	\
+-{								\
+-	void *a20, *a21;					\
+-	uint64_t pkt20_mask, pkt21_mask;			\
+-	uint64_t *key20, *key21;				\
+-	uint32_t pos20, pos21;					\
+-								\
+-	key20 = RTE_MBUF_METADATA_UINT64_PTR(mbuf20, f->key_offset);\
+-	key21 = RTE_MBUF_METADATA_UINT64_PTR(mbuf21, f->key_offset);\
+-								\
+-	lookup_key16_cmp(key20, bucket20, pos20, f);		\
+-	lookup_key16_cmp(key21, bucket21, pos21, f);		\
+-								\
+-	pkt20_mask = (bucket20->signature[pos20] & 1LLU) << pkt20_index;\
+-	pkt21_mask = (bucket21->signature[pos21] & 1LLU) << pkt21_index;\
+-	pkts_mask_out |= pkt20_mask | pkt21_mask;			\
+-								\
+-	a20 = (void *) &bucket20->data[pos20 * f->entry_size];	\
+-	a21 = (void *) &bucket21->data[pos21 * f->entry_size];	\
+-	rte_prefetch0(a20);					\
+-	rte_prefetch0(a21);					\
+-	entries[pkt20_index] = a20;				\
+-	entries[pkt21_index] = a21;				\
+-	lru_update(bucket20, pos20);				\
+-	lru_update(bucket21, pos21);				\
+-}
+-
+-#define lookup2_stage2_ext(pkt20_index, pkt21_index, mbuf20, mbuf21, bucket20, \
+-	bucket21, pkts_mask_out, entries, buckets_mask, buckets, keys, f) \
+-{								\
+-	struct rte_bucket_4_16 *bucket20_next, *bucket21_next;	\
+-	void *a20, *a21;					\
+-	uint64_t pkt20_mask, pkt21_mask, bucket20_mask, bucket21_mask;\
+-	uint64_t *key20, *key21;				\
+-	uint32_t pos20, pos21;					\
+-								\
+-	key20 = RTE_MBUF_METADATA_UINT64_PTR(mbuf20, f->key_offset);\
+-	key21 = RTE_MBUF_METADATA_UINT64_PTR(mbuf21, f->key_offset);\
+-								\
+-	lookup_key16_cmp(key20, bucket20, pos20, f);	\
+-	lookup_key16_cmp(key21, bucket21, pos21, f);	\
+-								\
+-	pkt20_mask = (bucket20->signature[pos20] & 1LLU) << pkt20_index;\
+-	pkt21_mask = (bucket21->signature[pos21] & 1LLU) << pkt21_index;\
+-	pkts_mask_out |= pkt20_mask | pkt21_mask;		\
+-								\
+-	a20 = (void *) &bucket20->data[pos20 * f->entry_size];	\
+-	a21 = (void *) &bucket21->data[pos21 * f->entry_size];	\
+-	rte_prefetch0(a20);					\
+-	rte_prefetch0(a21);					\
+-	entries[pkt20_index] = a20;				\
+-	entries[pkt21_index] = a21;				\
+-								\
+-	bucket20_mask = (~pkt20_mask) & (bucket20->next_valid << pkt20_index);\
+-	bucket21_mask = (~pkt21_mask) & (bucket21->next_valid << pkt21_index);\
+-	buckets_mask |= bucket20_mask | bucket21_mask;		\
+-	bucket20_next = bucket20->next;				\
+-	bucket21_next = bucket21->next;				\
+-	buckets[pkt20_index] = bucket20_next;			\
+-	buckets[pkt21_index] = bucket21_next;			\
+-	keys[pkt20_index] = key20;				\
+-	keys[pkt21_index] = key21;				\
+-}
+-
+-static int
+-rte_table_hash_lookup_key16_lru(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_hash *f = (struct rte_table_hash *) table;
+-	struct rte_bucket_4_16 *bucket10, *bucket11, *bucket20, *bucket21;
+-	struct rte_mbuf *mbuf00, *mbuf01, *mbuf10, *mbuf11, *mbuf20, *mbuf21;
+-	uint32_t pkt00_index, pkt01_index, pkt10_index;
+-	uint32_t pkt11_index, pkt20_index, pkt21_index;
+-	uint64_t pkts_mask_out = 0;
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-
+-	RTE_TABLE_HASH_KEY16_STATS_PKTS_IN_ADD(f, n_pkts_in);
+-
+-	/* Cannot run the pipeline with less than 5 packets */
+-	if (rte_popcount64(pkts_mask) < 5) {
+-		for ( ; pkts_mask; ) {
+-			struct rte_bucket_4_16 *bucket;
+-			struct rte_mbuf *mbuf;
+-			uint32_t pkt_index;
+-
+-			lookup1_stage0(pkt_index, mbuf, pkts, pkts_mask, f);
+-			lookup1_stage1(mbuf, bucket, f);
+-			lookup1_stage2_lru(pkt_index, mbuf, bucket,
+-				pkts_mask_out, entries, f);
+-		}
+-
+-		*lookup_hit_mask = pkts_mask_out;
+-		RTE_TABLE_HASH_KEY16_STATS_PKTS_LOOKUP_MISS(f, n_pkts_in -
+-			rte_popcount64(pkts_mask_out));
+-		return 0;
+-	}
+-
+-	/*
+-	 * Pipeline fill
+-	 *
+-	 */
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01, pkts,
+-		pkts_mask, f);
+-
+-	/* Pipeline feed */
+-	mbuf10 = mbuf00;
+-	mbuf11 = mbuf01;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01, pkts,
+-		pkts_mask, f);
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-	/*
+-	 * Pipeline run
+-	 *
+-	 */
+-	for ( ; pkts_mask; ) {
+-		/* Pipeline feed */
+-		bucket20 = bucket10;
+-		bucket21 = bucket11;
+-		mbuf20 = mbuf10;
+-		mbuf21 = mbuf11;
+-		mbuf10 = mbuf00;
+-		mbuf11 = mbuf01;
+-		pkt20_index = pkt10_index;
+-		pkt21_index = pkt11_index;
+-		pkt10_index = pkt00_index;
+-		pkt11_index = pkt01_index;
+-
+-		/* Pipeline stage 0 */
+-		lookup2_stage0_with_odd_support(pkt00_index, pkt01_index,
+-			mbuf00, mbuf01, pkts, pkts_mask, f);
+-
+-		/* Pipeline stage 1 */
+-		lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-		/* Pipeline stage 2 */
+-		lookup2_stage2_lru(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-			bucket20, bucket21, pkts_mask_out, entries, f);
+-	}
+-
+-	/*
+-	 * Pipeline flush
+-	 *
+-	 */
+-	/* Pipeline feed */
+-	bucket20 = bucket10;
+-	bucket21 = bucket11;
+-	mbuf20 = mbuf10;
+-	mbuf21 = mbuf11;
+-	mbuf10 = mbuf00;
+-	mbuf11 = mbuf01;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2_lru(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-		bucket20, bucket21, pkts_mask_out, entries, f);
+-
+-	/* Pipeline feed */
+-	bucket20 = bucket10;
+-	bucket21 = bucket11;
+-	mbuf20 = mbuf10;
+-	mbuf21 = mbuf11;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2_lru(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-		bucket20, bucket21, pkts_mask_out, entries, f);
+-
+-	*lookup_hit_mask = pkts_mask_out;
+-	RTE_TABLE_HASH_KEY16_STATS_PKTS_LOOKUP_MISS(f, n_pkts_in -
+-		rte_popcount64(pkts_mask_out));
+-	return 0;
+-} /* lookup LRU */
+-
+-static int
+-rte_table_hash_lookup_key16_ext(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_hash *f = (struct rte_table_hash *) table;
+-	struct rte_bucket_4_16 *bucket10, *bucket11, *bucket20, *bucket21;
+-	struct rte_mbuf *mbuf00, *mbuf01, *mbuf10, *mbuf11, *mbuf20, *mbuf21;
+-	uint32_t pkt00_index, pkt01_index, pkt10_index;
+-	uint32_t pkt11_index, pkt20_index, pkt21_index;
+-	uint64_t pkts_mask_out = 0, buckets_mask = 0;
+-	struct rte_bucket_4_16 *buckets[RTE_PORT_IN_BURST_SIZE_MAX];
+-	uint64_t *keys[RTE_PORT_IN_BURST_SIZE_MAX];
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-
+-	RTE_TABLE_HASH_KEY16_STATS_PKTS_IN_ADD(f, n_pkts_in);
+-
+-	/* Cannot run the pipeline with less than 5 packets */
+-	if (rte_popcount64(pkts_mask) < 5) {
+-		for ( ; pkts_mask; ) {
+-			struct rte_bucket_4_16 *bucket;
+-			struct rte_mbuf *mbuf;
+-			uint32_t pkt_index;
+-
+-			lookup1_stage0(pkt_index, mbuf, pkts, pkts_mask, f);
+-			lookup1_stage1(mbuf, bucket, f);
+-			lookup1_stage2_ext(pkt_index, mbuf, bucket,
+-				pkts_mask_out, entries, buckets_mask,
+-				buckets, keys, f);
+-		}
+-
+-		goto grind_next_buckets;
+-	}
+-
+-	/*
+-	 * Pipeline fill
+-	 *
+-	 */
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01, pkts,
+-		pkts_mask, f);
+-
+-	/* Pipeline feed */
+-	mbuf10 = mbuf00;
+-	mbuf11 = mbuf01;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01, pkts,
+-		pkts_mask, f);
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-	/*
+-	 * Pipeline run
+-	 *
+-	 */
+-	for ( ; pkts_mask; ) {
+-		/* Pipeline feed */
+-		bucket20 = bucket10;
+-		bucket21 = bucket11;
+-		mbuf20 = mbuf10;
+-		mbuf21 = mbuf11;
+-		mbuf10 = mbuf00;
+-		mbuf11 = mbuf01;
+-		pkt20_index = pkt10_index;
+-		pkt21_index = pkt11_index;
+-		pkt10_index = pkt00_index;
+-		pkt11_index = pkt01_index;
+-
+-		/* Pipeline stage 0 */
+-		lookup2_stage0_with_odd_support(pkt00_index, pkt01_index,
+-			mbuf00, mbuf01, pkts, pkts_mask, f);
+-
+-		/* Pipeline stage 1 */
+-		lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-		/* Pipeline stage 2 */
+-		lookup2_stage2_ext(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-			bucket20, bucket21, pkts_mask_out, entries,
+-			buckets_mask, buckets, keys, f);
+-	}
+-
+-	/*
+-	 * Pipeline flush
+-	 *
+-	 */
+-	/* Pipeline feed */
+-	bucket20 = bucket10;
+-	bucket21 = bucket11;
+-	mbuf20 = mbuf10;
+-	mbuf21 = mbuf11;
+-	mbuf10 = mbuf00;
+-	mbuf11 = mbuf01;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2_ext(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-		bucket20, bucket21, pkts_mask_out, entries,
+-		buckets_mask, buckets, keys, f);
+-
+-	/* Pipeline feed */
+-	bucket20 = bucket10;
+-	bucket21 = bucket11;
+-	mbuf20 = mbuf10;
+-	mbuf21 = mbuf11;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2_ext(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-		bucket20, bucket21, pkts_mask_out, entries,
+-		buckets_mask, buckets, keys, f);
+-
+-grind_next_buckets:
+-	/* Grind next buckets */
+-	for ( ; buckets_mask; ) {
+-		uint64_t buckets_mask_next = 0;
+-
+-		for ( ; buckets_mask; ) {
+-			uint32_t pkt_index;
+-
+-			pkt_index = rte_ctz64(buckets_mask);
+-			buckets_mask &= ~(1LLU << pkt_index);
+-
+-			lookup_grinder(pkt_index, buckets, keys, pkts_mask_out,
+-				entries, buckets_mask_next, f);
+-		}
+-
+-		buckets_mask = buckets_mask_next;
+-	}
+-
+-	*lookup_hit_mask = pkts_mask_out;
+-	RTE_TABLE_HASH_KEY16_STATS_PKTS_LOOKUP_MISS(f, n_pkts_in -
+-		rte_popcount64(pkts_mask_out));
+-	return 0;
+-} /* lookup EXT */
+-
+-static int
+-rte_table_hash_key16_stats_read(void *table, struct rte_table_stats *stats, int clear)
+-{
+-	struct rte_table_hash *t = table;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &t->stats, sizeof(t->stats));
+-
+-	if (clear)
+-		memset(&t->stats, 0, sizeof(t->stats));
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_table_hash_key16_lru_ops)
+-struct rte_table_ops rte_table_hash_key16_lru_ops = {
+-	.f_create = rte_table_hash_create_key16_lru,
+-	.f_free = rte_table_hash_free_key16_lru,
+-	.f_add = rte_table_hash_entry_add_key16_lru,
+-	.f_delete = rte_table_hash_entry_delete_key16_lru,
+-	.f_add_bulk = NULL,
+-	.f_delete_bulk = NULL,
+-	.f_lookup = rte_table_hash_lookup_key16_lru,
+-	.f_stats = rte_table_hash_key16_stats_read,
+-};
+-
+-RTE_EXPORT_SYMBOL(rte_table_hash_key16_ext_ops)
+-struct rte_table_ops rte_table_hash_key16_ext_ops = {
+-	.f_create = rte_table_hash_create_key16_ext,
+-	.f_free = rte_table_hash_free_key16_ext,
+-	.f_add = rte_table_hash_entry_add_key16_ext,
+-	.f_delete = rte_table_hash_entry_delete_key16_ext,
+-	.f_add_bulk = NULL,
+-	.f_delete_bulk = NULL,
+-	.f_lookup = rte_table_hash_lookup_key16_ext,
+-	.f_stats = rte_table_hash_key16_stats_read,
+-};
+diff --git a/lib/table/rte_table_hash_key32.c b/lib/table/rte_table_hash_key32.c
+deleted file mode 100644
+index 0963f57828..0000000000
+--- a/lib/table/rte_table_hash_key32.c
++++ /dev/null
+@@ -1,1223 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2017 Intel Corporation
+- */
+-
+-#include <stdalign.h>
+-#include <stdio.h>
+-#include <string.h>
+-
+-#include <eal_export.h>
+-#include <rte_common.h>
+-#include <rte_malloc.h>
+-#include <rte_log.h>
+-
+-#include "rte_table_hash.h"
+-#include "rte_lru.h"
+-
+-#include "table_log.h"
+-
+-#define KEY_SIZE						32
+-
+-#define KEYS_PER_BUCKET					4
+-
+-#define RTE_BUCKET_ENTRY_VALID						0x1LLU
+-
+-#ifdef RTE_TABLE_STATS_COLLECT
+-
+-#define RTE_TABLE_HASH_KEY32_STATS_PKTS_IN_ADD(table, val) \
+-	table->stats.n_pkts_in += val
+-#define RTE_TABLE_HASH_KEY32_STATS_PKTS_LOOKUP_MISS(table, val) \
+-	table->stats.n_pkts_lookup_miss += val
+-
+-#else
+-
+-#define RTE_TABLE_HASH_KEY32_STATS_PKTS_IN_ADD(table, val)
+-#define RTE_TABLE_HASH_KEY32_STATS_PKTS_LOOKUP_MISS(table, val)
+-
+-#endif
+-
+-#ifdef RTE_ARCH_64
+-struct rte_bucket_4_32 {
+-	/* Cache line 0 */
+-	uint64_t signature[4 + 1];
+-	uint64_t lru_list;
+-	struct rte_bucket_4_32 *next;
+-	uint64_t next_valid;
+-
+-	/* Cache lines 1 and 2 */
+-	uint64_t key[4][4];
+-
+-	/* Cache line 3 */
+-	uint8_t data[];
+-};
+-#else
+-struct rte_bucket_4_32 {
+-	/* Cache line 0 */
+-	uint64_t signature[4 + 1];
+-	uint64_t lru_list;
+-	struct rte_bucket_4_32 *next;
+-	uint32_t pad;
+-	uint64_t next_valid;
+-
+-	/* Cache lines 1 and 2 */
+-	uint64_t key[4][4];
+-
+-	/* Cache line 3 */
+-	uint8_t data[];
+-};
+-#endif
+-
+-struct rte_table_hash {
+-	struct rte_table_stats stats;
+-
+-	/* Input parameters */
+-	uint32_t n_buckets;
+-	uint32_t key_size;
+-	uint32_t entry_size;
+-	uint32_t bucket_size;
+-	uint32_t key_offset;
+-	uint64_t key_mask[4];
+-	rte_table_hash_op_hash f_hash;
+-	uint64_t seed;
+-
+-	/* Extendible buckets */
+-	uint32_t n_buckets_ext;
+-	uint32_t stack_pos;
+-	uint32_t *stack;
+-
+-	/* Lookup table */
+-	alignas(RTE_CACHE_LINE_SIZE) uint8_t memory[];
+-};
+-
+-static int
+-keycmp(void *a, void *b, void *b_mask)
+-{
+-	uint64_t *a64 = a, *b64 = b, *b_mask64 = b_mask;
+-
+-	return (a64[0] != (b64[0] & b_mask64[0])) ||
+-		(a64[1] != (b64[1] & b_mask64[1])) ||
+-		(a64[2] != (b64[2] & b_mask64[2])) ||
+-		(a64[3] != (b64[3] & b_mask64[3]));
+-}
+-
+-static void
+-keycpy(void *dst, void *src, void *src_mask)
+-{
+-	uint64_t *dst64 = dst, *src64 = src, *src_mask64 = src_mask;
+-
+-	dst64[0] = src64[0] & src_mask64[0];
+-	dst64[1] = src64[1] & src_mask64[1];
+-	dst64[2] = src64[2] & src_mask64[2];
+-	dst64[3] = src64[3] & src_mask64[3];
+-}
+-
+-static int
+-check_params_create(struct rte_table_hash_params *params)
+-{
+-	/* name */
+-	if (params->name == NULL) {
+-		TABLE_LOG(ERR, "%s: name invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* key_size */
+-	if (params->key_size != KEY_SIZE) {
+-		TABLE_LOG(ERR, "%s: key_size invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* n_keys */
+-	if (params->n_keys == 0) {
+-		TABLE_LOG(ERR, "%s: n_keys is zero", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* n_buckets */
+-	if ((params->n_buckets == 0) ||
+-		(!rte_is_power_of_2(params->n_buckets))) {
+-		TABLE_LOG(ERR, "%s: n_buckets invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* f_hash */
+-	if (params->f_hash == NULL) {
+-		TABLE_LOG(ERR, "%s: f_hash function pointer is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	return 0;
+-}
+-
+-static void *
+-rte_table_hash_create_key32_lru(void *params,
+-		int socket_id,
+-		uint32_t entry_size)
+-{
+-	struct rte_table_hash_params *p = params;
+-	struct rte_table_hash *f;
+-	uint64_t bucket_size, total_size;
+-	uint32_t n_buckets, i;
+-
+-	/* Check input parameters */
+-	if ((check_params_create(p) != 0) ||
+-		((sizeof(struct rte_table_hash) % RTE_CACHE_LINE_SIZE) != 0) ||
+-		((sizeof(struct rte_bucket_4_32) % 64) != 0))
+-		return NULL;
+-
+-	/*
+-	 * Table dimensioning
+-	 *
+-	 * Objective: Pick the number of buckets (n_buckets) so that there a chance
+-	 * to store n_keys keys in the table.
+-	 *
+-	 * Note: Since the buckets do not get extended, it is not possible to
+-	 * guarantee that n_keys keys can be stored in the table at any time. In the
+-	 * worst case scenario when all the n_keys fall into the same bucket, only
+-	 * a maximum of KEYS_PER_BUCKET keys will be stored in the table. This case
+-	 * defeats the purpose of the hash table. It indicates unsuitable f_hash or
+-	 * n_keys to n_buckets ratio.
+-	 *
+-	 * MIN(n_buckets) = (n_keys + KEYS_PER_BUCKET - 1) / KEYS_PER_BUCKET
+-	 */
+-	n_buckets = rte_align32pow2(
+-		(p->n_keys + KEYS_PER_BUCKET - 1) / KEYS_PER_BUCKET);
+-	n_buckets = RTE_MAX(n_buckets, p->n_buckets);
+-
+-	/* Memory allocation */
+-	bucket_size = RTE_CACHE_LINE_ROUNDUP(sizeof(struct rte_bucket_4_32) +
+-		KEYS_PER_BUCKET * entry_size);
+-	total_size = sizeof(struct rte_table_hash) + n_buckets * bucket_size;
+-	if (total_size > SIZE_MAX) {
+-		TABLE_LOG(ERR, "%s: Cannot allocate %" PRIu64 " bytes "
+-			"for hash table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-
+-	f = rte_zmalloc_socket(p->name,
+-		(size_t)total_size,
+-		RTE_CACHE_LINE_SIZE,
+-		socket_id);
+-	if (f == NULL) {
+-		TABLE_LOG(ERR, "%s: Cannot allocate %" PRIu64 " bytes "
+-			"for hash table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-	TABLE_LOG(INFO,
+-		"%s: Hash table %s memory footprint "
+-		"is %" PRIu64 " bytes",
+-		__func__, p->name, total_size);
+-
+-	/* Memory initialization */
+-	f->n_buckets = n_buckets;
+-	f->key_size = KEY_SIZE;
+-	f->entry_size = entry_size;
+-	f->bucket_size = bucket_size;
+-	f->key_offset = p->key_offset;
+-	f->f_hash = p->f_hash;
+-	f->seed = p->seed;
+-
+-	if (p->key_mask != NULL) {
+-		f->key_mask[0] = ((uint64_t *)p->key_mask)[0];
+-		f->key_mask[1] = ((uint64_t *)p->key_mask)[1];
+-		f->key_mask[2] = ((uint64_t *)p->key_mask)[2];
+-		f->key_mask[3] = ((uint64_t *)p->key_mask)[3];
+-	} else {
+-		f->key_mask[0] = 0xFFFFFFFFFFFFFFFFLLU;
+-		f->key_mask[1] = 0xFFFFFFFFFFFFFFFFLLU;
+-		f->key_mask[2] = 0xFFFFFFFFFFFFFFFFLLU;
+-		f->key_mask[3] = 0xFFFFFFFFFFFFFFFFLLU;
+-	}
+-
+-	for (i = 0; i < n_buckets; i++) {
+-		struct rte_bucket_4_32 *bucket;
+-
+-		bucket = (struct rte_bucket_4_32 *) &f->memory[i *
+-			f->bucket_size];
+-		bucket->lru_list = 0x0000000100020003LLU;
+-	}
+-
+-	return f;
+-}
+-
+-static int
+-rte_table_hash_free_key32_lru(void *table)
+-{
+-	struct rte_table_hash *f = table;
+-
+-	/* Check input parameters */
+-	if (f == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	rte_free(f);
+-	return 0;
+-}
+-
+-static int
+-rte_table_hash_entry_add_key32_lru(
+-	void *table,
+-	void *key,
+-	void *entry,
+-	int *key_found,
+-	void **entry_ptr)
+-{
+-	struct rte_table_hash *f = table;
+-	struct rte_bucket_4_32 *bucket;
+-	uint64_t signature, pos;
+-	uint32_t bucket_index, i;
+-
+-	signature = f->f_hash(key, f->key_mask, f->key_size, f->seed);
+-	bucket_index = signature & (f->n_buckets - 1);
+-	bucket = (struct rte_bucket_4_32 *)
+-		&f->memory[bucket_index * f->bucket_size];
+-	signature |= RTE_BUCKET_ENTRY_VALID;
+-
+-	/* Key is present in the bucket */
+-	for (i = 0; i < 4; i++) {
+-		uint64_t bucket_signature = bucket->signature[i];
+-		uint8_t *bucket_key = (uint8_t *) &bucket->key[i];
+-
+-		if ((bucket_signature == signature) &&
+-			(keycmp(bucket_key, key, f->key_mask) == 0)) {
+-			uint8_t *bucket_data = &bucket->data[i * f->entry_size];
+-
+-			memcpy(bucket_data, entry, f->entry_size);
+-			lru_update(bucket, i);
+-			*key_found = 1;
+-			*entry_ptr = (void *) bucket_data;
+-			return 0;
+-		}
+-	}
+-
+-	/* Key is not present in the bucket */
+-	for (i = 0; i < 4; i++) {
+-		uint64_t bucket_signature = bucket->signature[i];
+-		uint8_t *bucket_key = (uint8_t *) &bucket->key[i];
+-
+-		if (bucket_signature == 0) {
+-			uint8_t *bucket_data = &bucket->data[i * f->entry_size];
+-
+-			bucket->signature[i] = signature;
+-			keycpy(bucket_key, key, f->key_mask);
+-			memcpy(bucket_data, entry, f->entry_size);
+-			lru_update(bucket, i);
+-			*key_found = 0;
+-			*entry_ptr = (void *) bucket_data;
+-
+-			return 0;
+-		}
+-	}
+-
+-	/* Bucket full: replace LRU entry */
+-	pos = lru_pos(bucket);
+-	bucket->signature[pos] = signature;
+-	keycpy(&bucket->key[pos], key, f->key_mask);
+-	memcpy(&bucket->data[pos * f->entry_size], entry, f->entry_size);
+-	lru_update(bucket, pos);
+-	*key_found = 0;
+-	*entry_ptr = (void *) &bucket->data[pos * f->entry_size];
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_hash_entry_delete_key32_lru(
+-	void *table,
+-	void *key,
+-	int *key_found,
+-	void *entry)
+-{
+-	struct rte_table_hash *f = table;
+-	struct rte_bucket_4_32 *bucket;
+-	uint64_t signature;
+-	uint32_t bucket_index, i;
+-
+-	signature = f->f_hash(key, f->key_mask, f->key_size, f->seed);
+-	bucket_index = signature & (f->n_buckets - 1);
+-	bucket = (struct rte_bucket_4_32 *)
+-		&f->memory[bucket_index * f->bucket_size];
+-	signature |= RTE_BUCKET_ENTRY_VALID;
+-
+-	/* Key is present in the bucket */
+-	for (i = 0; i < 4; i++) {
+-		uint64_t bucket_signature = bucket->signature[i];
+-		uint8_t *bucket_key = (uint8_t *) &bucket->key[i];
+-
+-		if ((bucket_signature == signature) &&
+-			(keycmp(bucket_key, key, f->key_mask) == 0)) {
+-			uint8_t *bucket_data = &bucket->data[i * f->entry_size];
+-
+-			bucket->signature[i] = 0;
+-			*key_found = 1;
+-			if (entry)
+-				memcpy(entry, bucket_data, f->entry_size);
+-
+-			return 0;
+-		}
+-	}
+-
+-	/* Key is not present in the bucket */
+-	*key_found = 0;
+-	return 0;
+-}
+-
+-static void *
+-rte_table_hash_create_key32_ext(void *params,
+-	int socket_id,
+-	uint32_t entry_size)
+-{
+-	struct rte_table_hash_params *p = params;
+-	struct rte_table_hash *f;
+-	uint64_t bucket_size, stack_size, total_size;
+-	uint32_t n_buckets_ext, i;
+-
+-	/* Check input parameters */
+-	if ((check_params_create(p) != 0) ||
+-		((sizeof(struct rte_table_hash) % RTE_CACHE_LINE_SIZE) != 0) ||
+-		((sizeof(struct rte_bucket_4_32) % 64) != 0))
+-		return NULL;
+-
+-	/*
+-	 * Table dimensioning
+-	 *
+-	 * Objective: Pick the number of bucket extensions (n_buckets_ext) so that
+-	 * it is guaranteed that n_keys keys can be stored in the table at any time.
+-	 *
+-	 * The worst case scenario takes place when all the n_keys keys fall into
+-	 * the same bucket. Actually, due to the KEYS_PER_BUCKET scheme, the worst
+-	 * case takes place when (n_keys - KEYS_PER_BUCKET + 1) keys fall into the
+-	 * same bucket, while the remaining (KEYS_PER_BUCKET - 1) keys each fall
+-	 * into a different bucket. This case defeats the purpose of the hash table.
+-	 * It indicates unsuitable f_hash or n_keys to n_buckets ratio.
+-	 *
+-	 * n_buckets_ext = n_keys / KEYS_PER_BUCKET + KEYS_PER_BUCKET - 1
+-	 */
+-	n_buckets_ext = p->n_keys / KEYS_PER_BUCKET + KEYS_PER_BUCKET - 1;
+-
+-	/* Memory allocation */
+-	bucket_size = RTE_CACHE_LINE_ROUNDUP(sizeof(struct rte_bucket_4_32) +
+-		KEYS_PER_BUCKET * entry_size);
+-	stack_size = RTE_CACHE_LINE_ROUNDUP(n_buckets_ext * sizeof(uint32_t));
+-	total_size = sizeof(struct rte_table_hash) +
+-		(p->n_buckets + n_buckets_ext) * bucket_size + stack_size;
+-	if (total_size > SIZE_MAX) {
+-		TABLE_LOG(ERR, "%s: Cannot allocate %" PRIu64 " bytes "
+-			"for hash table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-
+-	f = rte_zmalloc_socket(p->name,
+-		(size_t)total_size,
+-		RTE_CACHE_LINE_SIZE,
+-		socket_id);
+-	if (f == NULL) {
+-		TABLE_LOG(ERR, "%s: Cannot allocate %" PRIu64 " bytes "
+-			"for hash table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-	TABLE_LOG(INFO,
+-		"%s: Hash table %s memory footprint "
+-		"is %" PRIu64" bytes",
+-		__func__, p->name, total_size);
+-
+-	/* Memory initialization */
+-	f->n_buckets = p->n_buckets;
+-	f->key_size = KEY_SIZE;
+-	f->entry_size = entry_size;
+-	f->bucket_size = bucket_size;
+-	f->key_offset = p->key_offset;
+-	f->f_hash = p->f_hash;
+-	f->seed = p->seed;
+-
+-	f->n_buckets_ext = n_buckets_ext;
+-	f->stack_pos = n_buckets_ext;
+-	f->stack = (uint32_t *)
+-		&f->memory[(p->n_buckets + n_buckets_ext) * f->bucket_size];
+-
+-	if (p->key_mask != NULL) {
+-		f->key_mask[0] = (((uint64_t *)p->key_mask)[0]);
+-		f->key_mask[1] = (((uint64_t *)p->key_mask)[1]);
+-		f->key_mask[2] = (((uint64_t *)p->key_mask)[2]);
+-		f->key_mask[3] = (((uint64_t *)p->key_mask)[3]);
+-	} else {
+-		f->key_mask[0] = 0xFFFFFFFFFFFFFFFFLLU;
+-		f->key_mask[1] = 0xFFFFFFFFFFFFFFFFLLU;
+-		f->key_mask[2] = 0xFFFFFFFFFFFFFFFFLLU;
+-		f->key_mask[3] = 0xFFFFFFFFFFFFFFFFLLU;
+-	}
+-
+-	for (i = 0; i < n_buckets_ext; i++)
+-		f->stack[i] = i;
+-
+-	return f;
+-}
+-
+-static int
+-rte_table_hash_free_key32_ext(void *table)
+-{
+-	struct rte_table_hash *f = table;
+-
+-	/* Check input parameters */
+-	if (f == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	rte_free(f);
+-	return 0;
+-}
+-
+-static int
+-rte_table_hash_entry_add_key32_ext(
+-	void *table,
+-	void *key,
+-	void *entry,
+-	int *key_found,
+-	void **entry_ptr)
+-{
+-	struct rte_table_hash *f = table;
+-	struct rte_bucket_4_32 *bucket0, *bucket, *bucket_prev;
+-	uint64_t signature;
+-	uint32_t bucket_index, i;
+-
+-	signature = f->f_hash(key, f->key_mask, f->key_size, f->seed);
+-	bucket_index = signature & (f->n_buckets - 1);
+-	bucket0 = (struct rte_bucket_4_32 *)
+-			&f->memory[bucket_index * f->bucket_size];
+-	signature |= RTE_BUCKET_ENTRY_VALID;
+-
+-	/* Key is present in the bucket */
+-	for (bucket = bucket0; bucket != NULL; bucket = bucket->next) {
+-		for (i = 0; i < 4; i++) {
+-			uint64_t bucket_signature = bucket->signature[i];
+-			uint8_t *bucket_key = (uint8_t *) &bucket->key[i];
+-
+-			if ((bucket_signature == signature) &&
+-				(keycmp(bucket_key, key, f->key_mask) == 0)) {
+-				uint8_t *bucket_data = &bucket->data[i *
+-					f->entry_size];
+-
+-				memcpy(bucket_data, entry, f->entry_size);
+-				*key_found = 1;
+-				*entry_ptr = (void *) bucket_data;
+-
+-				return 0;
+-			}
+-		}
+-	}
+-
+-	/* Key is not present in the bucket */
+-	for (bucket_prev = NULL, bucket = bucket0; bucket != NULL;
+-		bucket_prev = bucket, bucket = bucket->next)
+-		for (i = 0; i < 4; i++) {
+-			uint64_t bucket_signature = bucket->signature[i];
+-			uint8_t *bucket_key = (uint8_t *) &bucket->key[i];
+-
+-			if (bucket_signature == 0) {
+-				uint8_t *bucket_data = &bucket->data[i *
+-					f->entry_size];
+-
+-				bucket->signature[i] = signature;
+-				keycpy(bucket_key, key, f->key_mask);
+-				memcpy(bucket_data, entry, f->entry_size);
+-				*key_found = 0;
+-				*entry_ptr = (void *) bucket_data;
+-
+-				return 0;
+-			}
+-		}
+-
+-	/* Bucket full: extend bucket */
+-	if (f->stack_pos > 0) {
+-		bucket_index = f->stack[--f->stack_pos];
+-
+-		bucket = (struct rte_bucket_4_32 *)
+-			&f->memory[(f->n_buckets + bucket_index) *
+-			f->bucket_size];
+-		bucket_prev->next = bucket;
+-		bucket_prev->next_valid = 1;
+-
+-		bucket->signature[0] = signature;
+-		keycpy(&bucket->key[0], key, f->key_mask);
+-		memcpy(&bucket->data[0], entry, f->entry_size);
+-		*key_found = 0;
+-		*entry_ptr = (void *) &bucket->data[0];
+-		return 0;
+-	}
+-
+-	return -ENOSPC;
+-}
+-
+-static int
+-rte_table_hash_entry_delete_key32_ext(
+-	void *table,
+-	void *key,
+-	int *key_found,
+-	void *entry)
+-{
+-	struct rte_table_hash *f = table;
+-	struct rte_bucket_4_32 *bucket0, *bucket, *bucket_prev;
+-	uint64_t signature;
+-	uint32_t bucket_index, i;
+-
+-	signature = f->f_hash(key, f->key_mask, f->key_size, f->seed);
+-	bucket_index = signature & (f->n_buckets - 1);
+-	bucket0 = (struct rte_bucket_4_32 *)
+-		&f->memory[bucket_index * f->bucket_size];
+-	signature |= RTE_BUCKET_ENTRY_VALID;
+-
+-	/* Key is present in the bucket */
+-	for (bucket_prev = NULL, bucket = bucket0; bucket != NULL;
+-		bucket_prev = bucket, bucket = bucket->next)
+-		for (i = 0; i < 4; i++) {
+-			uint64_t bucket_signature = bucket->signature[i];
+-			uint8_t *bucket_key = (uint8_t *) &bucket->key[i];
+-
+-			if ((bucket_signature == signature) &&
+-				(keycmp(bucket_key, key, f->key_mask) == 0)) {
+-				uint8_t *bucket_data = &bucket->data[i *
+-					f->entry_size];
+-
+-				bucket->signature[i] = 0;
+-				*key_found = 1;
+-				if (entry)
+-					memcpy(entry, bucket_data, f->entry_size);
+-
+-				if ((bucket->signature[0] == 0) &&
+-					(bucket->signature[1] == 0) &&
+-					(bucket->signature[2] == 0) &&
+-					(bucket->signature[3] == 0) &&
+-					(bucket_prev != NULL)) {
+-					bucket_prev->next = bucket->next;
+-					bucket_prev->next_valid =
+-						bucket->next_valid;
+-
+-					memset(bucket, 0,
+-						sizeof(struct rte_bucket_4_32));
+-					bucket_index = (((uint8_t *)bucket -
+-						(uint8_t *)f->memory)/f->bucket_size) - f->n_buckets;
+-					f->stack[f->stack_pos++] = bucket_index;
+-				}
+-
+-				return 0;
+-			}
+-		}
+-
+-	/* Key is not present in the bucket */
+-	*key_found = 0;
+-	return 0;
+-}
+-
+-#define lookup_key32_cmp(key_in, bucket, pos, f)			\
+-{								\
+-	uint64_t xor[4][4], or[4], signature[4], k[4];		\
+-								\
+-	k[0] = key_in[0] & f->key_mask[0];				\
+-	k[1] = key_in[1] & f->key_mask[1];				\
+-	k[2] = key_in[2] & f->key_mask[2];				\
+-	k[3] = key_in[3] & f->key_mask[3];				\
+-								\
+-	signature[0] = ((~bucket->signature[0]) & 1);		\
+-	signature[1] = ((~bucket->signature[1]) & 1);		\
+-	signature[2] = ((~bucket->signature[2]) & 1);		\
+-	signature[3] = ((~bucket->signature[3]) & 1);		\
+-								\
+-	xor[0][0] = k[0] ^ bucket->key[0][0];			\
+-	xor[0][1] = k[1] ^ bucket->key[0][1];			\
+-	xor[0][2] = k[2] ^ bucket->key[0][2];			\
+-	xor[0][3] = k[3] ^ bucket->key[0][3];			\
+-								\
+-	xor[1][0] = k[0] ^ bucket->key[1][0];			\
+-	xor[1][1] = k[1] ^ bucket->key[1][1];			\
+-	xor[1][2] = k[2] ^ bucket->key[1][2];			\
+-	xor[1][3] = k[3] ^ bucket->key[1][3];			\
+-								\
+-	xor[2][0] = k[0] ^ bucket->key[2][0];			\
+-	xor[2][1] = k[1] ^ bucket->key[2][1];			\
+-	xor[2][2] = k[2] ^ bucket->key[2][2];			\
+-	xor[2][3] = k[3] ^ bucket->key[2][3];			\
+-								\
+-	xor[3][0] = k[0] ^ bucket->key[3][0];			\
+-	xor[3][1] = k[1] ^ bucket->key[3][1];			\
+-	xor[3][2] = k[2] ^ bucket->key[3][2];			\
+-	xor[3][3] = k[3] ^ bucket->key[3][3];			\
+-								\
+-	or[0] = xor[0][0] | xor[0][1] | xor[0][2] | xor[0][3] | signature[0];\
+-	or[1] = xor[1][0] | xor[1][1] | xor[1][2] | xor[1][3] | signature[1];\
+-	or[2] = xor[2][0] | xor[2][1] | xor[2][2] | xor[2][3] | signature[2];\
+-	or[3] = xor[3][0] | xor[3][1] | xor[3][2] | xor[3][3] | signature[3];\
+-								\
+-	pos = 4;						\
+-	if (or[0] == 0)						\
+-		pos = 0;					\
+-	if (or[1] == 0)						\
+-		pos = 1;					\
+-	if (or[2] == 0)						\
+-		pos = 2;					\
+-	if (or[3] == 0)						\
+-		pos = 3;					\
+-}
+-
+-#define lookup1_stage0(pkt0_index, mbuf0, pkts, pkts_mask, f)	\
+-{								\
+-	uint64_t pkt_mask;					\
+-	uint32_t key_offset = f->key_offset;	\
+-								\
+-	pkt0_index = rte_ctz64(pkts_mask);		\
+-	pkt_mask = 1LLU << pkt0_index;				\
+-	pkts_mask &= ~pkt_mask;					\
+-								\
+-	mbuf0 = pkts[pkt0_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf0, key_offset));\
+-}
+-
+-#define lookup1_stage1(mbuf1, bucket1, f)				\
+-{								\
+-	uint64_t *key;						\
+-	uint64_t signature;					\
+-	uint32_t bucket_index;					\
+-								\
+-	key = RTE_MBUF_METADATA_UINT64_PTR(mbuf1, f->key_offset);	\
+-	signature = f->f_hash(key, f->key_mask, KEY_SIZE, f->seed);	\
+-								\
+-	bucket_index = signature & (f->n_buckets - 1);		\
+-	bucket1 = (struct rte_bucket_4_32 *)			\
+-		&f->memory[bucket_index * f->bucket_size];	\
+-	rte_prefetch0(bucket1);					\
+-	rte_prefetch0((void *)(((uintptr_t) bucket1) + RTE_CACHE_LINE_SIZE));\
+-	rte_prefetch0((void *)(((uintptr_t) bucket1) + 2 * RTE_CACHE_LINE_SIZE));\
+-}
+-
+-#define lookup1_stage2_lru(pkt2_index, mbuf2, bucket2,		\
+-	pkts_mask_out, entries, f)				\
+-{								\
+-	void *a;						\
+-	uint64_t pkt_mask;					\
+-	uint64_t *key;						\
+-	uint32_t pos;						\
+-								\
+-	key = RTE_MBUF_METADATA_UINT64_PTR(mbuf2, f->key_offset);\
+-	lookup_key32_cmp(key, bucket2, pos, f);			\
+-								\
+-	pkt_mask = (bucket2->signature[pos] & 1LLU) << pkt2_index;\
+-	pkts_mask_out |= pkt_mask;				\
+-								\
+-	a = (void *) &bucket2->data[pos * f->entry_size];	\
+-	rte_prefetch0(a);					\
+-	entries[pkt2_index] = a;				\
+-	lru_update(bucket2, pos);				\
+-}
+-
+-#define lookup1_stage2_ext(pkt2_index, mbuf2, bucket2, pkts_mask_out,\
+-	entries, buckets_mask, buckets, keys, f)		\
+-{								\
+-	struct rte_bucket_4_32 *bucket_next;			\
+-	void *a;						\
+-	uint64_t pkt_mask, bucket_mask;				\
+-	uint64_t *key;						\
+-	uint32_t pos;						\
+-								\
+-	key = RTE_MBUF_METADATA_UINT64_PTR(mbuf2, f->key_offset);\
+-	lookup_key32_cmp(key, bucket2, pos, f);			\
+-								\
+-	pkt_mask = (bucket2->signature[pos] & 1LLU) << pkt2_index;\
+-	pkts_mask_out |= pkt_mask;				\
+-								\
+-	a = (void *) &bucket2->data[pos * f->entry_size];	\
+-	rte_prefetch0(a);					\
+-	entries[pkt2_index] = a;				\
+-								\
+-	bucket_mask = (~pkt_mask) & (bucket2->next_valid << pkt2_index);\
+-	buckets_mask |= bucket_mask;				\
+-	bucket_next = bucket2->next;				\
+-	buckets[pkt2_index] = bucket_next;			\
+-	keys[pkt2_index] = key;					\
+-}
+-
+-#define lookup_grinder(pkt_index, buckets, keys, pkts_mask_out,	\
+-	entries, buckets_mask, f)				\
+-{								\
+-	struct rte_bucket_4_32 *bucket, *bucket_next;		\
+-	void *a;						\
+-	uint64_t pkt_mask, bucket_mask;				\
+-	uint64_t *key;						\
+-	uint32_t pos;						\
+-								\
+-	bucket = buckets[pkt_index];				\
+-	key = keys[pkt_index];					\
+-								\
+-	lookup_key32_cmp(key, bucket, pos, f);			\
+-								\
+-	pkt_mask = (bucket->signature[pos] & 1LLU) << pkt_index;\
+-	pkts_mask_out |= pkt_mask;				\
+-								\
+-	a = (void *) &bucket->data[pos * f->entry_size];	\
+-	rte_prefetch0(a);					\
+-	entries[pkt_index] = a;					\
+-								\
+-	bucket_mask = (~pkt_mask) & (bucket->next_valid << pkt_index);\
+-	buckets_mask |= bucket_mask;				\
+-	bucket_next = bucket->next;				\
+-	rte_prefetch0(bucket_next);				\
+-	rte_prefetch0((void *)(((uintptr_t) bucket_next) + RTE_CACHE_LINE_SIZE));\
+-	rte_prefetch0((void *)(((uintptr_t) bucket_next) +	\
+-		2 * RTE_CACHE_LINE_SIZE));				\
+-	buckets[pkt_index] = bucket_next;			\
+-	keys[pkt_index] = key;					\
+-}
+-
+-#define lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01,\
+-	pkts, pkts_mask, f)					\
+-{								\
+-	uint64_t pkt00_mask, pkt01_mask;			\
+-	uint32_t key_offset = f->key_offset;		\
+-								\
+-	pkt00_index = rte_ctz64(pkts_mask);		\
+-	pkt00_mask = 1LLU << pkt00_index;			\
+-	pkts_mask &= ~pkt00_mask;				\
+-								\
+-	mbuf00 = pkts[pkt00_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf00, key_offset));\
+-								\
+-	pkt01_index = rte_ctz64(pkts_mask);		\
+-	pkt01_mask = 1LLU << pkt01_index;			\
+-	pkts_mask &= ~pkt01_mask;				\
+-								\
+-	mbuf01 = pkts[pkt01_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf01, key_offset));\
+-}
+-
+-#define lookup2_stage0_with_odd_support(pkt00_index, pkt01_index,\
+-	mbuf00, mbuf01, pkts, pkts_mask, f)			\
+-{								\
+-	uint64_t pkt00_mask, pkt01_mask;			\
+-	uint32_t key_offset = f->key_offset;		\
+-								\
+-	pkt00_index = rte_ctz64(pkts_mask);		\
+-	pkt00_mask = 1LLU << pkt00_index;			\
+-	pkts_mask &= ~pkt00_mask;				\
+-								\
+-	mbuf00 = pkts[pkt00_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf00, key_offset));	\
+-								\
+-	pkt01_index = rte_ctz64(pkts_mask);		\
+-	if (pkts_mask == 0)					\
+-		pkt01_index = pkt00_index;			\
+-								\
+-	pkt01_mask = 1LLU << pkt01_index;			\
+-	pkts_mask &= ~pkt01_mask;				\
+-								\
+-	mbuf01 = pkts[pkt01_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf01, key_offset));	\
+-}
+-
+-#define lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f)	\
+-{								\
+-	uint64_t *key10, *key11;					\
+-	uint64_t signature10, signature11;				\
+-	uint32_t bucket10_index, bucket11_index;			\
+-								\
+-	key10 = RTE_MBUF_METADATA_UINT64_PTR(mbuf10, f->key_offset);	\
+-	signature10 = f->f_hash(key10, f->key_mask,	 KEY_SIZE, f->seed); \
+-								\
+-	bucket10_index = signature10 & (f->n_buckets - 1);		\
+-	bucket10 = (struct rte_bucket_4_32 *)			\
+-		&f->memory[bucket10_index * f->bucket_size];	\
+-	rte_prefetch0(bucket10);					\
+-	rte_prefetch0((void *)(((uintptr_t) bucket10) + RTE_CACHE_LINE_SIZE));\
+-	rte_prefetch0((void *)(((uintptr_t) bucket10) + 2 * RTE_CACHE_LINE_SIZE));\
+-								\
+-	key11 = RTE_MBUF_METADATA_UINT64_PTR(mbuf11, f->key_offset);	\
+-	signature11 = f->f_hash(key11, f->key_mask, KEY_SIZE, f->seed);\
+-								\
+-	bucket11_index = signature11 & (f->n_buckets - 1);		\
+-	bucket11 = (struct rte_bucket_4_32 *)			\
+-		&f->memory[bucket11_index * f->bucket_size];	\
+-	rte_prefetch0(bucket11);					\
+-	rte_prefetch0((void *)(((uintptr_t) bucket11) + RTE_CACHE_LINE_SIZE));\
+-	rte_prefetch0((void *)(((uintptr_t) bucket11) + 2 * RTE_CACHE_LINE_SIZE));\
+-}
+-
+-#define lookup2_stage2_lru(pkt20_index, pkt21_index, mbuf20, mbuf21,\
+-	bucket20, bucket21, pkts_mask_out, entries, f)		\
+-{								\
+-	void *a20, *a21;					\
+-	uint64_t pkt20_mask, pkt21_mask;			\
+-	uint64_t *key20, *key21;				\
+-	uint32_t pos20, pos21;					\
+-								\
+-	key20 = RTE_MBUF_METADATA_UINT64_PTR(mbuf20, f->key_offset);\
+-	key21 = RTE_MBUF_METADATA_UINT64_PTR(mbuf21, f->key_offset);\
+-								\
+-	lookup_key32_cmp(key20, bucket20, pos20, f);		\
+-	lookup_key32_cmp(key21, bucket21, pos21, f);		\
+-								\
+-	pkt20_mask = (bucket20->signature[pos20] & 1LLU) << pkt20_index;\
+-	pkt21_mask = (bucket21->signature[pos21] & 1LLU) << pkt21_index;\
+-	pkts_mask_out |= pkt20_mask | pkt21_mask;		\
+-								\
+-	a20 = (void *) &bucket20->data[pos20 * f->entry_size];	\
+-	a21 = (void *) &bucket21->data[pos21 * f->entry_size];	\
+-	rte_prefetch0(a20);					\
+-	rte_prefetch0(a21);					\
+-	entries[pkt20_index] = a20;				\
+-	entries[pkt21_index] = a21;				\
+-	lru_update(bucket20, pos20);				\
+-	lru_update(bucket21, pos21);				\
+-}
+-
+-#define lookup2_stage2_ext(pkt20_index, pkt21_index, mbuf20, mbuf21, bucket20, \
+-	bucket21, pkts_mask_out, entries, buckets_mask, buckets, keys, f)\
+-{								\
+-	struct rte_bucket_4_32 *bucket20_next, *bucket21_next;	\
+-	void *a20, *a21;					\
+-	uint64_t pkt20_mask, pkt21_mask, bucket20_mask, bucket21_mask;\
+-	uint64_t *key20, *key21;				\
+-	uint32_t pos20, pos21;					\
+-								\
+-	key20 = RTE_MBUF_METADATA_UINT64_PTR(mbuf20, f->key_offset);\
+-	key21 = RTE_MBUF_METADATA_UINT64_PTR(mbuf21, f->key_offset);\
+-								\
+-	lookup_key32_cmp(key20, bucket20, pos20, f);		\
+-	lookup_key32_cmp(key21, bucket21, pos21, f);		\
+-								\
+-	pkt20_mask = (bucket20->signature[pos20] & 1LLU) << pkt20_index;\
+-	pkt21_mask = (bucket21->signature[pos21] & 1LLU) << pkt21_index;\
+-	pkts_mask_out |= pkt20_mask | pkt21_mask;		\
+-								\
+-	a20 = (void *) &bucket20->data[pos20 * f->entry_size];	\
+-	a21 = (void *) &bucket21->data[pos21 * f->entry_size];	\
+-	rte_prefetch0(a20);					\
+-	rte_prefetch0(a21);					\
+-	entries[pkt20_index] = a20;				\
+-	entries[pkt21_index] = a21;				\
+-								\
+-	bucket20_mask = (~pkt20_mask) & (bucket20->next_valid << pkt20_index);\
+-	bucket21_mask = (~pkt21_mask) & (bucket21->next_valid << pkt21_index);\
+-	buckets_mask |= bucket20_mask | bucket21_mask;		\
+-	bucket20_next = bucket20->next;				\
+-	bucket21_next = bucket21->next;				\
+-	buckets[pkt20_index] = bucket20_next;			\
+-	buckets[pkt21_index] = bucket21_next;			\
+-	keys[pkt20_index] = key20;				\
+-	keys[pkt21_index] = key21;				\
+-}
+-
+-static int
+-rte_table_hash_lookup_key32_lru(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_hash *f = (struct rte_table_hash *) table;
+-	struct rte_bucket_4_32 *bucket10, *bucket11, *bucket20, *bucket21;
+-	struct rte_mbuf *mbuf00, *mbuf01, *mbuf10, *mbuf11, *mbuf20, *mbuf21;
+-	uint32_t pkt00_index, pkt01_index, pkt10_index;
+-	uint32_t pkt11_index, pkt20_index, pkt21_index;
+-	uint64_t pkts_mask_out = 0;
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-	RTE_TABLE_HASH_KEY32_STATS_PKTS_IN_ADD(f, n_pkts_in);
+-
+-	/* Cannot run the pipeline with less than 5 packets */
+-	if (rte_popcount64(pkts_mask) < 5) {
+-		for ( ; pkts_mask; ) {
+-			struct rte_bucket_4_32 *bucket;
+-			struct rte_mbuf *mbuf;
+-			uint32_t pkt_index;
+-
+-			lookup1_stage0(pkt_index, mbuf, pkts, pkts_mask, f);
+-			lookup1_stage1(mbuf, bucket, f);
+-			lookup1_stage2_lru(pkt_index, mbuf, bucket,
+-					pkts_mask_out, entries, f);
+-		}
+-
+-		*lookup_hit_mask = pkts_mask_out;
+-		RTE_TABLE_HASH_KEY32_STATS_PKTS_LOOKUP_MISS(f, n_pkts_in - rte_popcount64(pkts_mask_out));
+-		return 0;
+-	}
+-
+-	/*
+-	 * Pipeline fill
+-	 *
+-	 */
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01, pkts,
+-		pkts_mask, f);
+-
+-	/* Pipeline feed */
+-	mbuf10 = mbuf00;
+-	mbuf11 = mbuf01;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01, pkts,
+-		pkts_mask, f);
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-	/*
+-	 * Pipeline run
+-	 *
+-	 */
+-	for ( ; pkts_mask; ) {
+-		/* Pipeline feed */
+-		bucket20 = bucket10;
+-		bucket21 = bucket11;
+-		mbuf20 = mbuf10;
+-		mbuf21 = mbuf11;
+-		mbuf10 = mbuf00;
+-		mbuf11 = mbuf01;
+-		pkt20_index = pkt10_index;
+-		pkt21_index = pkt11_index;
+-		pkt10_index = pkt00_index;
+-		pkt11_index = pkt01_index;
+-
+-		/* Pipeline stage 0 */
+-		lookup2_stage0_with_odd_support(pkt00_index, pkt01_index,
+-			mbuf00, mbuf01, pkts, pkts_mask, f);
+-
+-		/* Pipeline stage 1 */
+-		lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-		/* Pipeline stage 2 */
+-		lookup2_stage2_lru(pkt20_index, pkt21_index,
+-			mbuf20, mbuf21, bucket20, bucket21, pkts_mask_out,
+-			entries, f);
+-	}
+-
+-	/*
+-	 * Pipeline flush
+-	 *
+-	 */
+-	/* Pipeline feed */
+-	bucket20 = bucket10;
+-	bucket21 = bucket11;
+-	mbuf20 = mbuf10;
+-	mbuf21 = mbuf11;
+-	mbuf10 = mbuf00;
+-	mbuf11 = mbuf01;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2_lru(pkt20_index, pkt21_index,
+-		mbuf20, mbuf21, bucket20, bucket21, pkts_mask_out, entries, f);
+-
+-	/* Pipeline feed */
+-	bucket20 = bucket10;
+-	bucket21 = bucket11;
+-	mbuf20 = mbuf10;
+-	mbuf21 = mbuf11;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2_lru(pkt20_index, pkt21_index,
+-		mbuf20, mbuf21, bucket20, bucket21, pkts_mask_out, entries, f);
+-
+-	*lookup_hit_mask = pkts_mask_out;
+-	RTE_TABLE_HASH_KEY32_STATS_PKTS_LOOKUP_MISS(f, n_pkts_in - rte_popcount64(pkts_mask_out));
+-	return 0;
+-} /* rte_table_hash_lookup_key32_lru() */
+-
+-static int
+-rte_table_hash_lookup_key32_ext(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_hash *f = (struct rte_table_hash *) table;
+-	struct rte_bucket_4_32 *bucket10, *bucket11, *bucket20, *bucket21;
+-	struct rte_mbuf *mbuf00, *mbuf01, *mbuf10, *mbuf11, *mbuf20, *mbuf21;
+-	uint32_t pkt00_index, pkt01_index, pkt10_index;
+-	uint32_t pkt11_index, pkt20_index, pkt21_index;
+-	uint64_t pkts_mask_out = 0, buckets_mask = 0;
+-	struct rte_bucket_4_32 *buckets[RTE_PORT_IN_BURST_SIZE_MAX];
+-	uint64_t *keys[RTE_PORT_IN_BURST_SIZE_MAX];
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-	RTE_TABLE_HASH_KEY32_STATS_PKTS_IN_ADD(f, n_pkts_in);
+-
+-	/* Cannot run the pipeline with less than 5 packets */
+-	if (rte_popcount64(pkts_mask) < 5) {
+-		for ( ; pkts_mask; ) {
+-			struct rte_bucket_4_32 *bucket;
+-			struct rte_mbuf *mbuf;
+-			uint32_t pkt_index;
+-
+-			lookup1_stage0(pkt_index, mbuf, pkts, pkts_mask, f);
+-			lookup1_stage1(mbuf, bucket, f);
+-			lookup1_stage2_ext(pkt_index, mbuf, bucket,
+-				pkts_mask_out, entries, buckets_mask, buckets,
+-				keys, f);
+-		}
+-
+-		goto grind_next_buckets;
+-	}
+-
+-	/*
+-	 * Pipeline fill
+-	 *
+-	 */
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01, pkts,
+-		pkts_mask, f);
+-
+-	/* Pipeline feed */
+-	mbuf10 = mbuf00;
+-	mbuf11 = mbuf01;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01, pkts,
+-		pkts_mask, f);
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-	/*
+-	 * Pipeline run
+-	 *
+-	 */
+-	for ( ; pkts_mask; ) {
+-		/* Pipeline feed */
+-		bucket20 = bucket10;
+-		bucket21 = bucket11;
+-		mbuf20 = mbuf10;
+-		mbuf21 = mbuf11;
+-		mbuf10 = mbuf00;
+-		mbuf11 = mbuf01;
+-		pkt20_index = pkt10_index;
+-		pkt21_index = pkt11_index;
+-		pkt10_index = pkt00_index;
+-		pkt11_index = pkt01_index;
+-
+-		/* Pipeline stage 0 */
+-		lookup2_stage0_with_odd_support(pkt00_index, pkt01_index,
+-			mbuf00, mbuf01, pkts, pkts_mask, f);
+-
+-		/* Pipeline stage 1 */
+-		lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-		/* Pipeline stage 2 */
+-		lookup2_stage2_ext(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-			bucket20, bucket21, pkts_mask_out, entries,
+-			buckets_mask, buckets, keys, f);
+-	}
+-
+-	/*
+-	 * Pipeline flush
+-	 *
+-	 */
+-	/* Pipeline feed */
+-	bucket20 = bucket10;
+-	bucket21 = bucket11;
+-	mbuf20 = mbuf10;
+-	mbuf21 = mbuf11;
+-	mbuf10 = mbuf00;
+-	mbuf11 = mbuf01;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2_ext(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-		bucket20, bucket21, pkts_mask_out, entries,
+-		buckets_mask, buckets, keys, f);
+-
+-	/* Pipeline feed */
+-	bucket20 = bucket10;
+-	bucket21 = bucket11;
+-	mbuf20 = mbuf10;
+-	mbuf21 = mbuf11;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2_ext(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-		bucket20, bucket21, pkts_mask_out, entries,
+-		buckets_mask, buckets, keys, f);
+-
+-grind_next_buckets:
+-	/* Grind next buckets */
+-	for ( ; buckets_mask; ) {
+-		uint64_t buckets_mask_next = 0;
+-
+-		for ( ; buckets_mask; ) {
+-			uint32_t pkt_index;
+-
+-			pkt_index = rte_ctz64(buckets_mask);
+-			buckets_mask &= ~(1LLU << pkt_index);
+-
+-			lookup_grinder(pkt_index, buckets, keys, pkts_mask_out,
+-				entries, buckets_mask_next, f);
+-		}
+-
+-		buckets_mask = buckets_mask_next;
+-	}
+-
+-	*lookup_hit_mask = pkts_mask_out;
+-	RTE_TABLE_HASH_KEY32_STATS_PKTS_LOOKUP_MISS(f, n_pkts_in - rte_popcount64(pkts_mask_out));
+-	return 0;
+-} /* rte_table_hash_lookup_key32_ext() */
+-
+-static int
+-rte_table_hash_key32_stats_read(void *table, struct rte_table_stats *stats, int clear)
+-{
+-	struct rte_table_hash *t = table;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &t->stats, sizeof(t->stats));
+-
+-	if (clear)
+-		memset(&t->stats, 0, sizeof(t->stats));
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_table_hash_key32_lru_ops)
+-struct rte_table_ops rte_table_hash_key32_lru_ops = {
+-	.f_create = rte_table_hash_create_key32_lru,
+-	.f_free = rte_table_hash_free_key32_lru,
+-	.f_add = rte_table_hash_entry_add_key32_lru,
+-	.f_delete = rte_table_hash_entry_delete_key32_lru,
+-	.f_add_bulk = NULL,
+-	.f_delete_bulk = NULL,
+-	.f_lookup = rte_table_hash_lookup_key32_lru,
+-	.f_stats = rte_table_hash_key32_stats_read,
+-};
+-
+-RTE_EXPORT_SYMBOL(rte_table_hash_key32_ext_ops)
+-struct rte_table_ops rte_table_hash_key32_ext_ops = {
+-	.f_create = rte_table_hash_create_key32_ext,
+-	.f_free = rte_table_hash_free_key32_ext,
+-	.f_add = rte_table_hash_entry_add_key32_ext,
+-	.f_delete = rte_table_hash_entry_delete_key32_ext,
+-	.f_add_bulk = NULL,
+-	.f_delete_bulk = NULL,
+-	.f_lookup = rte_table_hash_lookup_key32_ext,
+-	.f_stats = rte_table_hash_key32_stats_read,
+-};
+diff --git a/lib/table/rte_table_hash_key8.c b/lib/table/rte_table_hash_key8.c
+deleted file mode 100644
+index 5e9dcf10ee..0000000000
+--- a/lib/table/rte_table_hash_key8.c
++++ /dev/null
+@@ -1,1157 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2017 Intel Corporation
+- */
+-
+-#include <stdalign.h>
+-#include <stdio.h>
+-#include <string.h>
+-
+-#include <eal_export.h>
+-#include <rte_common.h>
+-#include <rte_malloc.h>
+-#include <rte_log.h>
+-
+-#include "rte_table_hash.h"
+-#include "rte_lru.h"
+-
+-#include "table_log.h"
+-
+-#define KEY_SIZE						8
+-
+-#define KEYS_PER_BUCKET					4
+-
+-#ifdef RTE_TABLE_STATS_COLLECT
+-
+-#define RTE_TABLE_HASH_KEY8_STATS_PKTS_IN_ADD(table, val) \
+-	table->stats.n_pkts_in += val
+-#define RTE_TABLE_HASH_KEY8_STATS_PKTS_LOOKUP_MISS(table, val) \
+-	table->stats.n_pkts_lookup_miss += val
+-
+-#else
+-
+-#define RTE_TABLE_HASH_KEY8_STATS_PKTS_IN_ADD(table, val)
+-#define RTE_TABLE_HASH_KEY8_STATS_PKTS_LOOKUP_MISS(table, val)
+-
+-#endif
+-
+-#ifdef RTE_ARCH_64
+-struct rte_bucket_4_8 {
+-	/* Cache line 0 */
+-	uint64_t signature;
+-	uint64_t lru_list;
+-	struct rte_bucket_4_8 *next;
+-	uint64_t next_valid;
+-
+-	uint64_t key[4];
+-
+-	/* Cache line 1 */
+-	uint8_t data[];
+-};
+-#else
+-struct rte_bucket_4_8 {
+-	/* Cache line 0 */
+-	uint64_t signature;
+-	uint64_t lru_list;
+-	struct rte_bucket_4_8 *next;
+-	uint32_t pad;
+-	uint64_t next_valid;
+-
+-	uint64_t key[4];
+-
+-	/* Cache line 1 */
+-	uint8_t data[];
+-};
+-#endif
+-
+-struct rte_table_hash {
+-	struct rte_table_stats stats;
+-
+-	/* Input parameters */
+-	uint32_t n_buckets;
+-	uint32_t key_size;
+-	uint32_t entry_size;
+-	uint32_t bucket_size;
+-	uint32_t key_offset;
+-	uint64_t key_mask;
+-	rte_table_hash_op_hash f_hash;
+-	uint64_t seed;
+-
+-	/* Extendible buckets */
+-	uint32_t n_buckets_ext;
+-	uint32_t stack_pos;
+-	uint32_t *stack;
+-
+-	/* Lookup table */
+-	alignas(RTE_CACHE_LINE_SIZE) uint8_t memory[];
+-};
+-
+-static int
+-keycmp(void *a, void *b, void *b_mask)
+-{
+-	uint64_t *a64 = a, *b64 = b, *b_mask64 = b_mask;
+-
+-	return a64[0] != (b64[0] & b_mask64[0]);
+-}
+-
+-static void
+-keycpy(void *dst, void *src, void *src_mask)
+-{
+-	uint64_t *dst64 = dst, *src64 = src, *src_mask64 = src_mask;
+-
+-	dst64[0] = src64[0] & src_mask64[0];
+-}
+-
+-static int
+-check_params_create(struct rte_table_hash_params *params)
+-{
+-	/* name */
+-	if (params->name == NULL) {
+-		TABLE_LOG(ERR, "%s: name invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* key_size */
+-	if (params->key_size != KEY_SIZE) {
+-		TABLE_LOG(ERR, "%s: key_size invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* n_keys */
+-	if (params->n_keys == 0) {
+-		TABLE_LOG(ERR, "%s: n_keys is zero", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* n_buckets */
+-	if ((params->n_buckets == 0) ||
+-		(!rte_is_power_of_2(params->n_buckets))) {
+-		TABLE_LOG(ERR, "%s: n_buckets invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* f_hash */
+-	if (params->f_hash == NULL) {
+-		TABLE_LOG(ERR, "%s: f_hash function pointer is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	return 0;
+-}
+-
+-static void *
+-rte_table_hash_create_key8_lru(void *params, int socket_id, uint32_t entry_size)
+-{
+-	struct rte_table_hash_params *p = params;
+-	struct rte_table_hash *f;
+-	uint64_t bucket_size, total_size;
+-	uint32_t n_buckets, i;
+-
+-	/* Check input parameters */
+-	if ((check_params_create(p) != 0) ||
+-		((sizeof(struct rte_table_hash) % RTE_CACHE_LINE_SIZE) != 0) ||
+-		((sizeof(struct rte_bucket_4_8) % 64) != 0))
+-		return NULL;
+-
+-	/*
+-	 * Table dimensioning
+-	 *
+-	 * Objective: Pick the number of buckets (n_buckets) so that there a chance
+-	 * to store n_keys keys in the table.
+-	 *
+-	 * Note: Since the buckets do not get extended, it is not possible to
+-	 * guarantee that n_keys keys can be stored in the table at any time. In the
+-	 * worst case scenario when all the n_keys fall into the same bucket, only
+-	 * a maximum of KEYS_PER_BUCKET keys will be stored in the table. This case
+-	 * defeats the purpose of the hash table. It indicates unsuitable f_hash or
+-	 * n_keys to n_buckets ratio.
+-	 *
+-	 * MIN(n_buckets) = (n_keys + KEYS_PER_BUCKET - 1) / KEYS_PER_BUCKET
+-	 */
+-	n_buckets = rte_align32pow2(
+-		(p->n_keys + KEYS_PER_BUCKET - 1) / KEYS_PER_BUCKET);
+-	n_buckets = RTE_MAX(n_buckets, p->n_buckets);
+-
+-	/* Memory allocation */
+-	bucket_size = RTE_CACHE_LINE_ROUNDUP(sizeof(struct rte_bucket_4_8) +
+-		KEYS_PER_BUCKET * entry_size);
+-	total_size = sizeof(struct rte_table_hash) + n_buckets * bucket_size;
+-
+-	if (total_size > SIZE_MAX) {
+-		TABLE_LOG(ERR, "%s: Cannot allocate %" PRIu64 " bytes"
+-			" for hash table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-
+-	f = rte_zmalloc_socket(p->name,
+-		(size_t)total_size,
+-		RTE_CACHE_LINE_SIZE,
+-		socket_id);
+-	if (f == NULL) {
+-		TABLE_LOG(ERR, "%s: Cannot allocate %" PRIu64 " bytes"
+-			" for hash table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-
+-	TABLE_LOG(INFO, "%s: Hash table %s memory footprint "
+-		"is %" PRIu64 " bytes",
+-		__func__, p->name, total_size);
+-
+-	/* Memory initialization */
+-	f->n_buckets = n_buckets;
+-	f->key_size = KEY_SIZE;
+-	f->entry_size = entry_size;
+-	f->bucket_size = bucket_size;
+-	f->key_offset = p->key_offset;
+-	f->f_hash = p->f_hash;
+-	f->seed = p->seed;
+-
+-	if (p->key_mask != NULL)
+-		f->key_mask = ((uint64_t *)p->key_mask)[0];
+-	else
+-		f->key_mask = 0xFFFFFFFFFFFFFFFFLLU;
+-
+-	for (i = 0; i < n_buckets; i++) {
+-		struct rte_bucket_4_8 *bucket;
+-
+-		bucket = (struct rte_bucket_4_8 *) &f->memory[i *
+-			f->bucket_size];
+-		bucket->lru_list = 0x0000000100020003LLU;
+-	}
+-
+-	return f;
+-}
+-
+-static int
+-rte_table_hash_free_key8_lru(void *table)
+-{
+-	struct rte_table_hash *f = table;
+-
+-	/* Check input parameters */
+-	if (f == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	rte_free(f);
+-	return 0;
+-}
+-
+-static int
+-rte_table_hash_entry_add_key8_lru(
+-	void *table,
+-	void *key,
+-	void *entry,
+-	int *key_found,
+-	void **entry_ptr)
+-{
+-	struct rte_table_hash *f = table;
+-	struct rte_bucket_4_8 *bucket;
+-	uint64_t signature, mask, pos;
+-	uint32_t bucket_index, i;
+-
+-	signature = f->f_hash(key, &f->key_mask, f->key_size, f->seed);
+-	bucket_index = signature & (f->n_buckets - 1);
+-	bucket = (struct rte_bucket_4_8 *)
+-		&f->memory[bucket_index * f->bucket_size];
+-
+-	/* Key is present in the bucket */
+-	for (i = 0, mask = 1LLU; i < 4; i++, mask <<= 1) {
+-		uint64_t bucket_signature = bucket->signature;
+-		uint64_t *bucket_key = &bucket->key[i];
+-
+-		if ((bucket_signature & mask) &&
+-			(keycmp(bucket_key, key, &f->key_mask) == 0)) {
+-			uint8_t *bucket_data = &bucket->data[i * f->entry_size];
+-
+-			memcpy(bucket_data, entry, f->entry_size);
+-			lru_update(bucket, i);
+-			*key_found = 1;
+-			*entry_ptr = (void *) bucket_data;
+-			return 0;
+-		}
+-	}
+-
+-	/* Key is not present in the bucket */
+-	for (i = 0, mask = 1LLU; i < 4; i++, mask <<= 1) {
+-		uint64_t bucket_signature = bucket->signature;
+-
+-		if ((bucket_signature & mask) == 0) {
+-			uint8_t *bucket_data = &bucket->data[i * f->entry_size];
+-
+-			bucket->signature |= mask;
+-			keycpy(&bucket->key[i], key, &f->key_mask);
+-			memcpy(bucket_data, entry, f->entry_size);
+-			lru_update(bucket, i);
+-			*key_found = 0;
+-			*entry_ptr = (void *) bucket_data;
+-
+-			return 0;
+-		}
+-	}
+-
+-	/* Bucket full: replace LRU entry */
+-	pos = lru_pos(bucket);
+-	keycpy(&bucket->key[pos], key, &f->key_mask);
+-	memcpy(&bucket->data[pos * f->entry_size], entry, f->entry_size);
+-	lru_update(bucket, pos);
+-	*key_found = 0;
+-	*entry_ptr = (void *) &bucket->data[pos * f->entry_size];
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_hash_entry_delete_key8_lru(
+-	void *table,
+-	void *key,
+-	int *key_found,
+-	void *entry)
+-{
+-	struct rte_table_hash *f = table;
+-	struct rte_bucket_4_8 *bucket;
+-	uint64_t signature, mask;
+-	uint32_t bucket_index, i;
+-
+-	signature = f->f_hash(key, &f->key_mask, f->key_size, f->seed);
+-	bucket_index = signature & (f->n_buckets - 1);
+-	bucket = (struct rte_bucket_4_8 *)
+-		&f->memory[bucket_index * f->bucket_size];
+-
+-	/* Key is present in the bucket */
+-	for (i = 0, mask = 1LLU; i < 4; i++, mask <<= 1) {
+-		uint64_t bucket_signature = bucket->signature;
+-		uint64_t *bucket_key = &bucket->key[i];
+-
+-		if ((bucket_signature & mask) &&
+-			(keycmp(bucket_key, key, &f->key_mask) == 0)) {
+-			uint8_t *bucket_data = &bucket->data[i * f->entry_size];
+-
+-			bucket->signature &= ~mask;
+-			*key_found = 1;
+-			if (entry)
+-				memcpy(entry, bucket_data, f->entry_size);
+-
+-			return 0;
+-		}
+-	}
+-
+-	/* Key is not present in the bucket */
+-	*key_found = 0;
+-	return 0;
+-}
+-
+-static void *
+-rte_table_hash_create_key8_ext(void *params, int socket_id, uint32_t entry_size)
+-{
+-	struct rte_table_hash_params *p = params;
+-	struct rte_table_hash *f;
+-	uint64_t bucket_size, stack_size, total_size;
+-	uint32_t n_buckets_ext, i;
+-
+-	/* Check input parameters */
+-	if ((check_params_create(p) != 0) ||
+-		((sizeof(struct rte_table_hash) % RTE_CACHE_LINE_SIZE) != 0) ||
+-		((sizeof(struct rte_bucket_4_8) % 64) != 0))
+-		return NULL;
+-
+-	/*
+-	 * Table dimensioning
+-	 *
+-	 * Objective: Pick the number of bucket extensions (n_buckets_ext) so that
+-	 * it is guaranteed that n_keys keys can be stored in the table at any time.
+-	 *
+-	 * The worst case scenario takes place when all the n_keys keys fall into
+-	 * the same bucket. Actually, due to the KEYS_PER_BUCKET scheme, the worst
+-	 * case takes place when (n_keys - KEYS_PER_BUCKET + 1) keys fall into the
+-	 * same bucket, while the remaining (KEYS_PER_BUCKET - 1) keys each fall
+-	 * into a different bucket. This case defeats the purpose of the hash table.
+-	 * It indicates unsuitable f_hash or n_keys to n_buckets ratio.
+-	 *
+-	 * n_buckets_ext = n_keys / KEYS_PER_BUCKET + KEYS_PER_BUCKET - 1
+-	 */
+-	n_buckets_ext = p->n_keys / KEYS_PER_BUCKET + KEYS_PER_BUCKET - 1;
+-
+-	/* Memory allocation */
+-	bucket_size = RTE_CACHE_LINE_ROUNDUP(sizeof(struct rte_bucket_4_8) +
+-		KEYS_PER_BUCKET * entry_size);
+-	stack_size = RTE_CACHE_LINE_ROUNDUP(n_buckets_ext * sizeof(uint32_t));
+-	total_size = sizeof(struct rte_table_hash) +
+-		(p->n_buckets + n_buckets_ext) * bucket_size + stack_size;
+-
+-	if (total_size > SIZE_MAX) {
+-		TABLE_LOG(ERR, "%s: Cannot allocate %" PRIu64 " bytes "
+-			"for hash table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-
+-	f = rte_zmalloc_socket(p->name,
+-		(size_t)total_size,
+-		RTE_CACHE_LINE_SIZE,
+-		socket_id);
+-	if (f == NULL) {
+-		TABLE_LOG(ERR,
+-			"%s: Cannot allocate %" PRIu64 " bytes "
+-			"for hash table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-	TABLE_LOG(INFO, "%s: Hash table %s memory footprint "
+-		"is %" PRIu64 " bytes",
+-		__func__, p->name, total_size);
+-
+-	/* Memory initialization */
+-	f->n_buckets = p->n_buckets;
+-	f->key_size = KEY_SIZE;
+-	f->entry_size = entry_size;
+-	f->bucket_size = bucket_size;
+-	f->key_offset = p->key_offset;
+-	f->f_hash = p->f_hash;
+-	f->seed = p->seed;
+-
+-	f->n_buckets_ext = n_buckets_ext;
+-	f->stack_pos = n_buckets_ext;
+-	f->stack = (uint32_t *)
+-		&f->memory[(p->n_buckets + n_buckets_ext) * f->bucket_size];
+-
+-	if (p->key_mask != NULL)
+-		f->key_mask = ((uint64_t *)p->key_mask)[0];
+-	else
+-		f->key_mask = 0xFFFFFFFFFFFFFFFFLLU;
+-
+-	for (i = 0; i < n_buckets_ext; i++)
+-		f->stack[i] = i;
+-
+-	return f;
+-}
+-
+-static int
+-rte_table_hash_free_key8_ext(void *table)
+-{
+-	struct rte_table_hash *f = table;
+-
+-	/* Check input parameters */
+-	if (f == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	rte_free(f);
+-	return 0;
+-}
+-
+-static int
+-rte_table_hash_entry_add_key8_ext(
+-	void *table,
+-	void *key,
+-	void *entry,
+-	int *key_found,
+-	void **entry_ptr)
+-{
+-	struct rte_table_hash *f = table;
+-	struct rte_bucket_4_8 *bucket0, *bucket, *bucket_prev;
+-	uint64_t signature;
+-	uint32_t bucket_index, i;
+-
+-	signature = f->f_hash(key, &f->key_mask, f->key_size, f->seed);
+-	bucket_index = signature & (f->n_buckets - 1);
+-	bucket0 = (struct rte_bucket_4_8 *)
+-		&f->memory[bucket_index * f->bucket_size];
+-
+-	/* Key is present in the bucket */
+-	for (bucket = bucket0; bucket != NULL; bucket = bucket->next) {
+-		uint64_t mask;
+-
+-		for (i = 0, mask = 1LLU; i < 4; i++, mask <<= 1) {
+-			uint64_t bucket_signature = bucket->signature;
+-			uint64_t *bucket_key = &bucket->key[i];
+-
+-			if ((bucket_signature & mask) &&
+-				(keycmp(bucket_key, key, &f->key_mask) == 0)) {
+-				uint8_t *bucket_data = &bucket->data[i *
+-					f->entry_size];
+-
+-				memcpy(bucket_data, entry, f->entry_size);
+-				*key_found = 1;
+-				*entry_ptr = (void *) bucket_data;
+-				return 0;
+-			}
+-		}
+-	}
+-
+-	/* Key is not present in the bucket */
+-	for (bucket_prev = NULL, bucket = bucket0;
+-		bucket != NULL; bucket_prev = bucket, bucket = bucket->next) {
+-		uint64_t mask;
+-
+-		for (i = 0, mask = 1LLU; i < 4; i++, mask <<= 1) {
+-			uint64_t bucket_signature = bucket->signature;
+-
+-			if ((bucket_signature & mask) == 0) {
+-				uint8_t *bucket_data = &bucket->data[i *
+-					f->entry_size];
+-
+-				bucket->signature |= mask;
+-				keycpy(&bucket->key[i], key, &f->key_mask);
+-				memcpy(bucket_data, entry, f->entry_size);
+-				*key_found = 0;
+-				*entry_ptr = (void *) bucket_data;
+-
+-				return 0;
+-			}
+-		}
+-	}
+-
+-	/* Bucket full: extend bucket */
+-	if (f->stack_pos > 0) {
+-		bucket_index = f->stack[--f->stack_pos];
+-
+-		bucket = (struct rte_bucket_4_8 *) &f->memory[(f->n_buckets +
+-			bucket_index) * f->bucket_size];
+-		bucket_prev->next = bucket;
+-		bucket_prev->next_valid = 1;
+-
+-		bucket->signature = 1;
+-		keycpy(&bucket->key[0], key, &f->key_mask);
+-		memcpy(&bucket->data[0], entry, f->entry_size);
+-		*key_found = 0;
+-		*entry_ptr = (void *) &bucket->data[0];
+-		return 0;
+-	}
+-
+-	return -ENOSPC;
+-}
+-
+-static int
+-rte_table_hash_entry_delete_key8_ext(
+-	void *table,
+-	void *key,
+-	int *key_found,
+-	void *entry)
+-{
+-	struct rte_table_hash *f = table;
+-	struct rte_bucket_4_8 *bucket0, *bucket, *bucket_prev;
+-	uint64_t signature;
+-	uint32_t bucket_index, i;
+-
+-	signature = f->f_hash(key, &f->key_mask, f->key_size, f->seed);
+-	bucket_index = signature & (f->n_buckets - 1);
+-	bucket0 = (struct rte_bucket_4_8 *)
+-		&f->memory[bucket_index * f->bucket_size];
+-
+-	/* Key is present in the bucket */
+-	for (bucket_prev = NULL, bucket = bucket0; bucket != NULL;
+-		bucket_prev = bucket, bucket = bucket->next) {
+-		uint64_t mask;
+-
+-		for (i = 0, mask = 1LLU; i < 4; i++, mask <<= 1) {
+-			uint64_t bucket_signature = bucket->signature;
+-			uint64_t *bucket_key = &bucket->key[i];
+-
+-			if ((bucket_signature & mask) &&
+-				(keycmp(bucket_key, key, &f->key_mask) == 0)) {
+-				uint8_t *bucket_data = &bucket->data[i *
+-					f->entry_size];
+-
+-				bucket->signature &= ~mask;
+-				*key_found = 1;
+-				if (entry)
+-					memcpy(entry, bucket_data,
+-						f->entry_size);
+-
+-				if ((bucket->signature == 0) &&
+-				    (bucket_prev != NULL)) {
+-					bucket_prev->next = bucket->next;
+-					bucket_prev->next_valid =
+-						bucket->next_valid;
+-
+-					memset(bucket, 0,
+-						sizeof(struct rte_bucket_4_8));
+-					bucket_index = (((uint8_t *)bucket -
+-						(uint8_t *)f->memory)/f->bucket_size) - f->n_buckets;
+-					f->stack[f->stack_pos++] = bucket_index;
+-				}
+-
+-				return 0;
+-			}
+-		}
+-	}
+-
+-	/* Key is not present in the bucket */
+-	*key_found = 0;
+-	return 0;
+-}
+-
+-#define lookup_key8_cmp(key_in, bucket, pos, f)			\
+-{								\
+-	uint64_t xor[4], signature, k;				\
+-								\
+-	signature = ~bucket->signature;				\
+-								\
+-	k = key_in[0] & f->key_mask;				\
+-	xor[0] = (k ^ bucket->key[0]) | (signature & 1);		\
+-	xor[1] = (k ^ bucket->key[1]) | (signature & 2);		\
+-	xor[2] = (k ^ bucket->key[2]) | (signature & 4);		\
+-	xor[3] = (k ^ bucket->key[3]) | (signature & 8);		\
+-								\
+-	pos = 4;						\
+-	if (xor[0] == 0)					\
+-		pos = 0;					\
+-	if (xor[1] == 0)					\
+-		pos = 1;					\
+-	if (xor[2] == 0)					\
+-		pos = 2;					\
+-	if (xor[3] == 0)					\
+-		pos = 3;					\
+-}
+-
+-#define lookup1_stage0(pkt0_index, mbuf0, pkts, pkts_mask, f)	\
+-{								\
+-	uint64_t pkt_mask;					\
+-	uint32_t key_offset = f->key_offset;\
+-								\
+-	pkt0_index = rte_ctz64(pkts_mask);		\
+-	pkt_mask = 1LLU << pkt0_index;				\
+-	pkts_mask &= ~pkt_mask;					\
+-								\
+-	mbuf0 = pkts[pkt0_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf0, key_offset));	\
+-}
+-
+-#define lookup1_stage1(mbuf1, bucket1, f)			\
+-{								\
+-	uint64_t *key;						\
+-	uint64_t signature;					\
+-	uint32_t bucket_index;					\
+-								\
+-	key = RTE_MBUF_METADATA_UINT64_PTR(mbuf1, f->key_offset);\
+-	signature = f->f_hash(key, &f->key_mask, KEY_SIZE, f->seed);	\
+-	bucket_index = signature & (f->n_buckets - 1);		\
+-	bucket1 = (struct rte_bucket_4_8 *)			\
+-		&f->memory[bucket_index * f->bucket_size];	\
+-	rte_prefetch0(bucket1);					\
+-}
+-
+-#define lookup1_stage2_lru(pkt2_index, mbuf2, bucket2,		\
+-	pkts_mask_out, entries, f)				\
+-{								\
+-	void *a;						\
+-	uint64_t pkt_mask;					\
+-	uint64_t *key;						\
+-	uint32_t pos;						\
+-								\
+-	key = RTE_MBUF_METADATA_UINT64_PTR(mbuf2, f->key_offset);\
+-	lookup_key8_cmp(key, bucket2, pos, f);	\
+-								\
+-	pkt_mask = ((bucket2->signature >> pos) & 1LLU) << pkt2_index;\
+-	pkts_mask_out |= pkt_mask;				\
+-								\
+-	a = (void *) &bucket2->data[pos * f->entry_size];	\
+-	rte_prefetch0(a);					\
+-	entries[pkt2_index] = a;				\
+-	lru_update(bucket2, pos);				\
+-}
+-
+-#define lookup1_stage2_ext(pkt2_index, mbuf2, bucket2, pkts_mask_out,\
+-	entries, buckets_mask, buckets, keys, f)		\
+-{								\
+-	struct rte_bucket_4_8 *bucket_next;			\
+-	void *a;						\
+-	uint64_t pkt_mask, bucket_mask;				\
+-	uint64_t *key;						\
+-	uint32_t pos;						\
+-								\
+-	key = RTE_MBUF_METADATA_UINT64_PTR(mbuf2, f->key_offset);\
+-	lookup_key8_cmp(key, bucket2, pos, f);	\
+-								\
+-	pkt_mask = ((bucket2->signature >> pos) & 1LLU) << pkt2_index;\
+-	pkts_mask_out |= pkt_mask;				\
+-								\
+-	a = (void *) &bucket2->data[pos * f->entry_size];	\
+-	rte_prefetch0(a);					\
+-	entries[pkt2_index] = a;				\
+-								\
+-	bucket_mask = (~pkt_mask) & (bucket2->next_valid << pkt2_index);\
+-	buckets_mask |= bucket_mask;				\
+-	bucket_next = bucket2->next;				\
+-	buckets[pkt2_index] = bucket_next;			\
+-	keys[pkt2_index] = key;					\
+-}
+-
+-#define lookup_grinder(pkt_index, buckets, keys, pkts_mask_out, entries,\
+-	buckets_mask, f)					\
+-{								\
+-	struct rte_bucket_4_8 *bucket, *bucket_next;		\
+-	void *a;						\
+-	uint64_t pkt_mask, bucket_mask;				\
+-	uint64_t *key;						\
+-	uint32_t pos;						\
+-								\
+-	bucket = buckets[pkt_index];				\
+-	key = keys[pkt_index];					\
+-	lookup_key8_cmp(key, bucket, pos, f);			\
+-								\
+-	pkt_mask = ((bucket->signature >> pos) & 1LLU) << pkt_index;\
+-	pkts_mask_out |= pkt_mask;				\
+-								\
+-	a = (void *) &bucket->data[pos * f->entry_size];	\
+-	rte_prefetch0(a);					\
+-	entries[pkt_index] = a;					\
+-								\
+-	bucket_mask = (~pkt_mask) & (bucket->next_valid << pkt_index);\
+-	buckets_mask |= bucket_mask;				\
+-	bucket_next = bucket->next;				\
+-	rte_prefetch0(bucket_next);				\
+-	buckets[pkt_index] = bucket_next;			\
+-	keys[pkt_index] = key;					\
+-}
+-
+-#define lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01,\
+-	pkts, pkts_mask, f)					\
+-{								\
+-	uint64_t pkt00_mask, pkt01_mask;			\
+-	uint32_t key_offset = f->key_offset;		\
+-								\
+-	pkt00_index = rte_ctz64(pkts_mask);		\
+-	pkt00_mask = 1LLU << pkt00_index;			\
+-	pkts_mask &= ~pkt00_mask;				\
+-								\
+-	mbuf00 = pkts[pkt00_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf00, key_offset));\
+-								\
+-	pkt01_index = rte_ctz64(pkts_mask);		\
+-	pkt01_mask = 1LLU << pkt01_index;			\
+-	pkts_mask &= ~pkt01_mask;				\
+-								\
+-	mbuf01 = pkts[pkt01_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf01, key_offset));\
+-}
+-
+-#define lookup2_stage0_with_odd_support(pkt00_index, pkt01_index,\
+-	mbuf00, mbuf01, pkts, pkts_mask, f)			\
+-{								\
+-	uint64_t pkt00_mask, pkt01_mask;			\
+-	uint32_t key_offset = f->key_offset;		\
+-								\
+-	pkt00_index = rte_ctz64(pkts_mask);		\
+-	pkt00_mask = 1LLU << pkt00_index;			\
+-	pkts_mask &= ~pkt00_mask;				\
+-								\
+-	mbuf00 = pkts[pkt00_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf00, key_offset));\
+-								\
+-	pkt01_index = rte_ctz64(pkts_mask);		\
+-	if (pkts_mask == 0)					\
+-		pkt01_index = pkt00_index;			\
+-								\
+-	pkt01_mask = 1LLU << pkt01_index;			\
+-	pkts_mask &= ~pkt01_mask;				\
+-								\
+-	mbuf01 = pkts[pkt01_index];				\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf01, key_offset));\
+-}
+-
+-#define lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f)\
+-{								\
+-	uint64_t *key10, *key11;				\
+-	uint64_t signature10, signature11;			\
+-	uint32_t bucket10_index, bucket11_index;		\
+-	rte_table_hash_op_hash f_hash = f->f_hash;		\
+-	uint64_t seed = f->seed;				\
+-	uint32_t key_offset = f->key_offset;			\
+-								\
+-	key10 = RTE_MBUF_METADATA_UINT64_PTR(mbuf10, key_offset);\
+-	key11 = RTE_MBUF_METADATA_UINT64_PTR(mbuf11, key_offset);\
+-								\
+-	signature10 = f_hash(key10, &f->key_mask, KEY_SIZE, seed);	\
+-	bucket10_index = signature10 & (f->n_buckets - 1);	\
+-	bucket10 = (struct rte_bucket_4_8 *)			\
+-		&f->memory[bucket10_index * f->bucket_size];	\
+-	rte_prefetch0(bucket10);				\
+-								\
+-	signature11 = f_hash(key11, &f->key_mask, KEY_SIZE, seed);	\
+-	bucket11_index = signature11 & (f->n_buckets - 1);	\
+-	bucket11 = (struct rte_bucket_4_8 *)			\
+-		&f->memory[bucket11_index * f->bucket_size];	\
+-	rte_prefetch0(bucket11);				\
+-}
+-
+-#define lookup2_stage2_lru(pkt20_index, pkt21_index, mbuf20, mbuf21,\
+-	bucket20, bucket21, pkts_mask_out, entries, f)		\
+-{								\
+-	void *a20, *a21;					\
+-	uint64_t pkt20_mask, pkt21_mask;			\
+-	uint64_t *key20, *key21;				\
+-	uint32_t pos20, pos21;					\
+-								\
+-	key20 = RTE_MBUF_METADATA_UINT64_PTR(mbuf20, f->key_offset);\
+-	key21 = RTE_MBUF_METADATA_UINT64_PTR(mbuf21, f->key_offset);\
+-								\
+-	lookup_key8_cmp(key20, bucket20, pos20, f);			\
+-	lookup_key8_cmp(key21, bucket21, pos21, f);			\
+-								\
+-	pkt20_mask = ((bucket20->signature >> pos20) & 1LLU) << pkt20_index;\
+-	pkt21_mask = ((bucket21->signature >> pos21) & 1LLU) << pkt21_index;\
+-	pkts_mask_out |= pkt20_mask | pkt21_mask;		\
+-								\
+-	a20 = (void *) &bucket20->data[pos20 * f->entry_size];	\
+-	a21 = (void *) &bucket21->data[pos21 * f->entry_size];	\
+-	rte_prefetch0(a20);					\
+-	rte_prefetch0(a21);					\
+-	entries[pkt20_index] = a20;				\
+-	entries[pkt21_index] = a21;				\
+-	lru_update(bucket20, pos20);				\
+-	lru_update(bucket21, pos21);				\
+-}
+-
+-#define lookup2_stage2_ext(pkt20_index, pkt21_index, mbuf20, mbuf21, bucket20, \
+-	bucket21, pkts_mask_out, entries, buckets_mask, buckets, keys, f)\
+-{								\
+-	struct rte_bucket_4_8 *bucket20_next, *bucket21_next;	\
+-	void *a20, *a21;					\
+-	uint64_t pkt20_mask, pkt21_mask, bucket20_mask, bucket21_mask;\
+-	uint64_t *key20, *key21;				\
+-	uint32_t pos20, pos21;					\
+-								\
+-	key20 = RTE_MBUF_METADATA_UINT64_PTR(mbuf20, f->key_offset);\
+-	key21 = RTE_MBUF_METADATA_UINT64_PTR(mbuf21, f->key_offset);\
+-								\
+-	lookup_key8_cmp(key20, bucket20, pos20, f);			\
+-	lookup_key8_cmp(key21, bucket21, pos21, f);			\
+-								\
+-	pkt20_mask = ((bucket20->signature >> pos20) & 1LLU) << pkt20_index;\
+-	pkt21_mask = ((bucket21->signature >> pos21) & 1LLU) << pkt21_index;\
+-	pkts_mask_out |= pkt20_mask | pkt21_mask;		\
+-								\
+-	a20 = (void *) &bucket20->data[pos20 * f->entry_size];	\
+-	a21 = (void *) &bucket21->data[pos21 * f->entry_size];	\
+-	rte_prefetch0(a20);					\
+-	rte_prefetch0(a21);					\
+-	entries[pkt20_index] = a20;				\
+-	entries[pkt21_index] = a21;				\
+-								\
+-	bucket20_mask = (~pkt20_mask) & (bucket20->next_valid << pkt20_index);\
+-	bucket21_mask = (~pkt21_mask) & (bucket21->next_valid << pkt21_index);\
+-	buckets_mask |= bucket20_mask | bucket21_mask;		\
+-	bucket20_next = bucket20->next;				\
+-	bucket21_next = bucket21->next;				\
+-	buckets[pkt20_index] = bucket20_next;			\
+-	buckets[pkt21_index] = bucket21_next;			\
+-	keys[pkt20_index] = key20;				\
+-	keys[pkt21_index] = key21;				\
+-}
+-
+-static int
+-rte_table_hash_lookup_key8_lru(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_hash *f = (struct rte_table_hash *) table;
+-	struct rte_bucket_4_8 *bucket10, *bucket11, *bucket20, *bucket21;
+-	struct rte_mbuf *mbuf00, *mbuf01, *mbuf10, *mbuf11, *mbuf20, *mbuf21;
+-	uint32_t pkt00_index, pkt01_index, pkt10_index;
+-	uint32_t pkt11_index, pkt20_index, pkt21_index;
+-	uint64_t pkts_mask_out = 0;
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-	RTE_TABLE_HASH_KEY8_STATS_PKTS_IN_ADD(f, n_pkts_in);
+-
+-	/* Cannot run the pipeline with less than 5 packets */
+-	if (rte_popcount64(pkts_mask) < 5) {
+-		for ( ; pkts_mask; ) {
+-			struct rte_bucket_4_8 *bucket;
+-			struct rte_mbuf *mbuf;
+-			uint32_t pkt_index;
+-
+-			lookup1_stage0(pkt_index, mbuf, pkts, pkts_mask, f);
+-			lookup1_stage1(mbuf, bucket, f);
+-			lookup1_stage2_lru(pkt_index, mbuf, bucket,
+-				pkts_mask_out, entries, f);
+-		}
+-
+-		*lookup_hit_mask = pkts_mask_out;
+-		RTE_TABLE_HASH_KEY8_STATS_PKTS_LOOKUP_MISS(f, n_pkts_in - rte_popcount64(pkts_mask_out));
+-		return 0;
+-	}
+-
+-	/*
+-	 * Pipeline fill
+-	 *
+-	 */
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01, pkts,
+-		pkts_mask, f);
+-
+-	/* Pipeline feed */
+-	mbuf10 = mbuf00;
+-	mbuf11 = mbuf01;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01, pkts,
+-		pkts_mask, f);
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-	/*
+-	 * Pipeline run
+-	 *
+-	 */
+-	for ( ; pkts_mask; ) {
+-		/* Pipeline feed */
+-		bucket20 = bucket10;
+-		bucket21 = bucket11;
+-		mbuf20 = mbuf10;
+-		mbuf21 = mbuf11;
+-		mbuf10 = mbuf00;
+-		mbuf11 = mbuf01;
+-		pkt20_index = pkt10_index;
+-		pkt21_index = pkt11_index;
+-		pkt10_index = pkt00_index;
+-		pkt11_index = pkt01_index;
+-
+-		/* Pipeline stage 0 */
+-		lookup2_stage0_with_odd_support(pkt00_index, pkt01_index,
+-			mbuf00, mbuf01, pkts, pkts_mask, f);
+-
+-		/* Pipeline stage 1 */
+-		lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-		/* Pipeline stage 2 */
+-		lookup2_stage2_lru(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-			bucket20, bucket21, pkts_mask_out, entries, f);
+-	}
+-
+-	/*
+-	 * Pipeline flush
+-	 *
+-	 */
+-	/* Pipeline feed */
+-	bucket20 = bucket10;
+-	bucket21 = bucket11;
+-	mbuf20 = mbuf10;
+-	mbuf21 = mbuf11;
+-	mbuf10 = mbuf00;
+-	mbuf11 = mbuf01;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2_lru(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-		bucket20, bucket21, pkts_mask_out, entries, f);
+-
+-	/* Pipeline feed */
+-	bucket20 = bucket10;
+-	bucket21 = bucket11;
+-	mbuf20 = mbuf10;
+-	mbuf21 = mbuf11;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2_lru(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-		bucket20, bucket21, pkts_mask_out, entries, f);
+-
+-	*lookup_hit_mask = pkts_mask_out;
+-	RTE_TABLE_HASH_KEY8_STATS_PKTS_LOOKUP_MISS(f, n_pkts_in - rte_popcount64(pkts_mask_out));
+-	return 0;
+-} /* lookup LRU */
+-
+-static int
+-rte_table_hash_lookup_key8_ext(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_hash *f = (struct rte_table_hash *) table;
+-	struct rte_bucket_4_8 *bucket10, *bucket11, *bucket20, *bucket21;
+-	struct rte_mbuf *mbuf00, *mbuf01, *mbuf10, *mbuf11, *mbuf20, *mbuf21;
+-	uint32_t pkt00_index, pkt01_index, pkt10_index;
+-	uint32_t pkt11_index, pkt20_index, pkt21_index;
+-	uint64_t pkts_mask_out = 0, buckets_mask = 0;
+-	struct rte_bucket_4_8 *buckets[RTE_PORT_IN_BURST_SIZE_MAX];
+-	uint64_t *keys[RTE_PORT_IN_BURST_SIZE_MAX];
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-	RTE_TABLE_HASH_KEY8_STATS_PKTS_IN_ADD(f, n_pkts_in);
+-
+-	/* Cannot run the pipeline with less than 5 packets */
+-	if (rte_popcount64(pkts_mask) < 5) {
+-		for ( ; pkts_mask; ) {
+-			struct rte_bucket_4_8 *bucket;
+-			struct rte_mbuf *mbuf;
+-			uint32_t pkt_index;
+-
+-			lookup1_stage0(pkt_index, mbuf, pkts, pkts_mask, f);
+-			lookup1_stage1(mbuf, bucket, f);
+-			lookup1_stage2_ext(pkt_index, mbuf, bucket,
+-				pkts_mask_out, entries, buckets_mask,
+-				buckets, keys, f);
+-		}
+-
+-		goto grind_next_buckets;
+-	}
+-
+-	/*
+-	 * Pipeline fill
+-	 *
+-	 */
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01, pkts,
+-		pkts_mask, f);
+-
+-	/* Pipeline feed */
+-	mbuf10 = mbuf00;
+-	mbuf11 = mbuf01;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(pkt00_index, pkt01_index, mbuf00, mbuf01, pkts,
+-		pkts_mask, f);
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-	/*
+-	 * Pipeline run
+-	 *
+-	 */
+-	for ( ; pkts_mask; ) {
+-		/* Pipeline feed */
+-		bucket20 = bucket10;
+-		bucket21 = bucket11;
+-		mbuf20 = mbuf10;
+-		mbuf21 = mbuf11;
+-		mbuf10 = mbuf00;
+-		mbuf11 = mbuf01;
+-		pkt20_index = pkt10_index;
+-		pkt21_index = pkt11_index;
+-		pkt10_index = pkt00_index;
+-		pkt11_index = pkt01_index;
+-
+-		/* Pipeline stage 0 */
+-		lookup2_stage0_with_odd_support(pkt00_index, pkt01_index,
+-			mbuf00, mbuf01, pkts, pkts_mask, f);
+-
+-		/* Pipeline stage 1 */
+-		lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-		/* Pipeline stage 2 */
+-		lookup2_stage2_ext(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-			bucket20, bucket21, pkts_mask_out, entries,
+-			buckets_mask, buckets, keys, f);
+-	}
+-
+-	/*
+-	 * Pipeline flush
+-	 *
+-	 */
+-	/* Pipeline feed */
+-	bucket20 = bucket10;
+-	bucket21 = bucket11;
+-	mbuf20 = mbuf10;
+-	mbuf21 = mbuf11;
+-	mbuf10 = mbuf00;
+-	mbuf11 = mbuf01;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(mbuf10, mbuf11, bucket10, bucket11, f);
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2_ext(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-		bucket20, bucket21, pkts_mask_out, entries,
+-		buckets_mask, buckets, keys, f);
+-
+-	/* Pipeline feed */
+-	bucket20 = bucket10;
+-	bucket21 = bucket11;
+-	mbuf20 = mbuf10;
+-	mbuf21 = mbuf11;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2_ext(pkt20_index, pkt21_index, mbuf20, mbuf21,
+-		bucket20, bucket21, pkts_mask_out, entries,
+-		buckets_mask, buckets, keys, f);
+-
+-grind_next_buckets:
+-	/* Grind next buckets */
+-	for ( ; buckets_mask; ) {
+-		uint64_t buckets_mask_next = 0;
+-
+-		for ( ; buckets_mask; ) {
+-			uint32_t pkt_index;
+-
+-			pkt_index = rte_ctz64(buckets_mask);
+-			buckets_mask &= ~(1LLU << pkt_index);
+-
+-			lookup_grinder(pkt_index, buckets, keys, pkts_mask_out,
+-				entries, buckets_mask_next, f);
+-		}
+-
+-		buckets_mask = buckets_mask_next;
+-	}
+-
+-	*lookup_hit_mask = pkts_mask_out;
+-	RTE_TABLE_HASH_KEY8_STATS_PKTS_LOOKUP_MISS(f, n_pkts_in - rte_popcount64(pkts_mask_out));
+-	return 0;
+-} /* lookup EXT */
+-
+-static int
+-rte_table_hash_key8_stats_read(void *table, struct rte_table_stats *stats, int clear)
+-{
+-	struct rte_table_hash *t = table;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &t->stats, sizeof(t->stats));
+-
+-	if (clear)
+-		memset(&t->stats, 0, sizeof(t->stats));
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_table_hash_key8_lru_ops)
+-struct rte_table_ops rte_table_hash_key8_lru_ops = {
+-	.f_create = rte_table_hash_create_key8_lru,
+-	.f_free = rte_table_hash_free_key8_lru,
+-	.f_add = rte_table_hash_entry_add_key8_lru,
+-	.f_delete = rte_table_hash_entry_delete_key8_lru,
+-	.f_add_bulk = NULL,
+-	.f_delete_bulk = NULL,
+-	.f_lookup = rte_table_hash_lookup_key8_lru,
+-	.f_stats = rte_table_hash_key8_stats_read,
+-};
+-
+-RTE_EXPORT_SYMBOL(rte_table_hash_key8_ext_ops)
+-struct rte_table_ops rte_table_hash_key8_ext_ops = {
+-	.f_create = rte_table_hash_create_key8_ext,
+-	.f_free = rte_table_hash_free_key8_ext,
+-	.f_add = rte_table_hash_entry_add_key8_ext,
+-	.f_delete = rte_table_hash_entry_delete_key8_ext,
+-	.f_add_bulk = NULL,
+-	.f_delete_bulk = NULL,
+-	.f_lookup = rte_table_hash_lookup_key8_ext,
+-	.f_stats = rte_table_hash_key8_stats_read,
+-};
+diff --git a/lib/table/rte_table_hash_lru.c b/lib/table/rte_table_hash_lru.c
+deleted file mode 100644
+index 548f5eebf2..0000000000
+--- a/lib/table/rte_table_hash_lru.c
++++ /dev/null
+@@ -1,959 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2017 Intel Corporation
+- */
+-
+-#include <stdalign.h>
+-#include <stdio.h>
+-#include <string.h>
+-
+-#include <eal_export.h>
+-#include <rte_common.h>
+-#include <rte_malloc.h>
+-#include <rte_log.h>
+-
+-#include "rte_table_hash.h"
+-#include "rte_lru.h"
+-
+-#include "table_log.h"
+-
+-#define KEYS_PER_BUCKET	4
+-
+-#ifdef RTE_TABLE_STATS_COLLECT
+-
+-#define RTE_TABLE_HASH_LRU_STATS_PKTS_IN_ADD(table, val) \
+-	table->stats.n_pkts_in += val
+-#define RTE_TABLE_HASH_LRU_STATS_PKTS_LOOKUP_MISS(table, val) \
+-	table->stats.n_pkts_lookup_miss += val
+-
+-#else
+-
+-#define RTE_TABLE_HASH_LRU_STATS_PKTS_IN_ADD(table, val)
+-#define RTE_TABLE_HASH_LRU_STATS_PKTS_LOOKUP_MISS(table, val)
+-
+-#endif
+-
+-struct bucket {
+-	union {
+-		struct bucket *next;
+-		uint64_t lru_list;
+-	};
+-	uint16_t sig[KEYS_PER_BUCKET];
+-	uint32_t key_pos[KEYS_PER_BUCKET];
+-};
+-
+-struct grinder {
+-	struct bucket *bkt;
+-	uint64_t sig;
+-	uint64_t match;
+-	uint64_t match_pos;
+-	uint32_t key_index;
+-};
+-
+-struct rte_table_hash {
+-	struct rte_table_stats stats;
+-
+-	/* Input parameters */
+-	uint32_t key_size;
+-	uint32_t entry_size;
+-	uint32_t n_keys;
+-	uint32_t n_buckets;
+-	rte_table_hash_op_hash f_hash;
+-	uint64_t seed;
+-	uint32_t key_offset;
+-
+-	/* Internal */
+-	uint64_t bucket_mask;
+-	uint32_t key_size_shl;
+-	uint32_t data_size_shl;
+-	uint32_t key_stack_tos;
+-
+-	/* Grinder */
+-	struct grinder grinders[RTE_PORT_IN_BURST_SIZE_MAX];
+-
+-	/* Tables */
+-	uint64_t *key_mask;
+-	struct bucket *buckets;
+-	uint8_t *key_mem;
+-	uint8_t *data_mem;
+-	uint32_t *key_stack;
+-
+-	/* Table memory */
+-	alignas(RTE_CACHE_LINE_SIZE) uint8_t memory[];
+-};
+-
+-static int
+-keycmp(void *a, void *b, void *b_mask, uint32_t n_bytes)
+-{
+-	uint64_t *a64 = a, *b64 = b, *b_mask64 = b_mask;
+-	uint32_t i;
+-
+-	for (i = 0; i < n_bytes / sizeof(uint64_t); i++)
+-		if (a64[i] != (b64[i] & b_mask64[i]))
+-			return 1;
+-
+-	return 0;
+-}
+-
+-static void
+-keycpy(void *dst, void *src, void *src_mask, uint32_t n_bytes)
+-{
+-	uint64_t *dst64 = dst, *src64 = src, *src_mask64 = src_mask;
+-	uint32_t i;
+-
+-	for (i = 0; i < n_bytes / sizeof(uint64_t); i++)
+-		dst64[i] = src64[i] & src_mask64[i];
+-}
+-
+-static int
+-check_params_create(struct rte_table_hash_params *params)
+-{
+-	/* name */
+-	if (params->name == NULL) {
+-		TABLE_LOG(ERR, "%s: name invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* key_size */
+-	if ((params->key_size < sizeof(uint64_t)) ||
+-		(!rte_is_power_of_2(params->key_size))) {
+-		TABLE_LOG(ERR, "%s: key_size invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* n_keys */
+-	if (params->n_keys == 0) {
+-		TABLE_LOG(ERR, "%s: n_keys invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* n_buckets */
+-	if ((params->n_buckets == 0) ||
+-		(!rte_is_power_of_2(params->n_buckets))) {
+-		TABLE_LOG(ERR, "%s: n_buckets invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* f_hash */
+-	if (params->f_hash == NULL) {
+-		TABLE_LOG(ERR, "%s: f_hash invalid value", __func__);
+-		return -EINVAL;
+-	}
+-
+-	return 0;
+-}
+-
+-static void *
+-rte_table_hash_lru_create(void *params, int socket_id, uint32_t entry_size)
+-{
+-	struct rte_table_hash_params *p = params;
+-	struct rte_table_hash *t;
+-	uint64_t table_meta_sz, key_mask_sz, bucket_sz, key_sz, key_stack_sz;
+-	uint64_t data_sz, total_size;
+-	uint64_t key_mask_offset, bucket_offset, key_offset, key_stack_offset;
+-	uint64_t data_offset;
+-	uint32_t n_buckets, i;
+-
+-	/* Check input parameters */
+-	if ((check_params_create(p) != 0) ||
+-		(!rte_is_power_of_2(entry_size)) ||
+-		((sizeof(struct rte_table_hash) % RTE_CACHE_LINE_SIZE) != 0) ||
+-		(sizeof(struct bucket) != (RTE_CACHE_LINE_SIZE / 2))) {
+-		return NULL;
+-	}
+-
+-	/*
+-	 * Table dimensioning
+-	 *
+-	 * Objective: Pick the number of buckets (n_buckets) so that there a chance
+-	 * to store n_keys keys in the table.
+-	 *
+-	 * Note: Since the buckets do not get extended, it is not possible to
+-	 * guarantee that n_keys keys can be stored in the table at any time. In the
+-	 * worst case scenario when all the n_keys fall into the same bucket, only
+-	 * a maximum of KEYS_PER_BUCKET keys will be stored in the table. This case
+-	 * defeats the purpose of the hash table. It indicates unsuitable f_hash or
+-	 * n_keys to n_buckets ratio.
+-	 *
+-	 * MIN(n_buckets) = (n_keys + KEYS_PER_BUCKET - 1) / KEYS_PER_BUCKET
+-	 */
+-	n_buckets = rte_align32pow2(
+-		(p->n_keys + KEYS_PER_BUCKET - 1) / KEYS_PER_BUCKET);
+-	n_buckets = RTE_MAX(n_buckets, p->n_buckets);
+-
+-	/* Memory allocation */
+-	table_meta_sz = RTE_CACHE_LINE_ROUNDUP(sizeof(struct rte_table_hash));
+-	key_mask_sz = RTE_CACHE_LINE_ROUNDUP(p->key_size);
+-	bucket_sz = RTE_CACHE_LINE_ROUNDUP(n_buckets * sizeof(struct bucket));
+-	key_sz = RTE_CACHE_LINE_ROUNDUP(p->n_keys * p->key_size);
+-	key_stack_sz = RTE_CACHE_LINE_ROUNDUP(p->n_keys * sizeof(uint32_t));
+-	data_sz = RTE_CACHE_LINE_ROUNDUP(p->n_keys * entry_size);
+-	total_size = table_meta_sz + key_mask_sz + bucket_sz + key_sz +
+-		key_stack_sz + data_sz;
+-
+-	if (total_size > SIZE_MAX) {
+-		TABLE_LOG(ERR,
+-			"%s: Cannot allocate %" PRIu64 " bytes for hash "
+-			"table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-
+-	t = rte_zmalloc_socket(p->name,
+-		(size_t)total_size,
+-		RTE_CACHE_LINE_SIZE,
+-		socket_id);
+-	if (t == NULL) {
+-		TABLE_LOG(ERR,
+-			"%s: Cannot allocate %" PRIu64 " bytes for hash "
+-			"table %s",
+-			__func__, total_size, p->name);
+-		return NULL;
+-	}
+-	TABLE_LOG(INFO, "%s (%u-byte key): Hash table %s memory footprint"
+-		" is %" PRIu64 " bytes",
+-		__func__, p->key_size, p->name, total_size);
+-
+-	/* Memory initialization */
+-	t->key_size = p->key_size;
+-	t->entry_size = entry_size;
+-	t->n_keys = p->n_keys;
+-	t->n_buckets = n_buckets;
+-	t->f_hash = p->f_hash;
+-	t->seed = p->seed;
+-	t->key_offset = p->key_offset;
+-
+-	/* Internal */
+-	t->bucket_mask = t->n_buckets - 1;
+-	t->key_size_shl = rte_ctz32(p->key_size);
+-	t->data_size_shl = rte_ctz32(entry_size);
+-
+-	/* Tables */
+-	key_mask_offset = 0;
+-	bucket_offset = key_mask_offset + key_mask_sz;
+-	key_offset = bucket_offset + bucket_sz;
+-	key_stack_offset = key_offset + key_sz;
+-	data_offset = key_stack_offset + key_stack_sz;
+-
+-	t->key_mask = (uint64_t *) &t->memory[key_mask_offset];
+-	t->buckets = (struct bucket *) &t->memory[bucket_offset];
+-	t->key_mem = &t->memory[key_offset];
+-	t->key_stack = (uint32_t *) &t->memory[key_stack_offset];
+-	t->data_mem = &t->memory[data_offset];
+-
+-	/* Key mask */
+-	if (p->key_mask == NULL)
+-		memset(t->key_mask, 0xFF, p->key_size);
+-	else
+-		memcpy(t->key_mask, p->key_mask, p->key_size);
+-
+-	/* Key stack */
+-	for (i = 0; i < t->n_keys; i++)
+-		t->key_stack[i] = t->n_keys - 1 - i;
+-	t->key_stack_tos = t->n_keys;
+-
+-	/* LRU */
+-	for (i = 0; i < t->n_buckets; i++) {
+-		struct bucket *bkt = &t->buckets[i];
+-
+-		lru_init(bkt);
+-	}
+-
+-	return t;
+-}
+-
+-static int
+-rte_table_hash_lru_free(void *table)
+-{
+-	struct rte_table_hash *t = table;
+-
+-	/* Check input parameters */
+-	if (t == NULL)
+-		return -EINVAL;
+-
+-	rte_free(t);
+-	return 0;
+-}
+-
+-static int
+-rte_table_hash_lru_entry_add(void *table, void *key, void *entry,
+-	int *key_found, void **entry_ptr)
+-{
+-	struct rte_table_hash *t = table;
+-	struct bucket *bkt;
+-	uint64_t sig;
+-	uint32_t bkt_index, i;
+-
+-	sig = t->f_hash(key, t->key_mask, t->key_size, t->seed);
+-	bkt_index = sig & t->bucket_mask;
+-	bkt = &t->buckets[bkt_index];
+-	sig = (sig >> 16) | 1LLU;
+-
+-	/* Key is present in the bucket */
+-	for (i = 0; i < KEYS_PER_BUCKET; i++) {
+-		uint64_t bkt_sig = (uint64_t) bkt->sig[i];
+-		uint32_t bkt_key_index = bkt->key_pos[i];
+-		uint8_t *bkt_key = &t->key_mem[bkt_key_index <<
+-			t->key_size_shl];
+-
+-		if ((sig == bkt_sig) && (keycmp(bkt_key, key, t->key_mask,
+-			t->key_size) == 0)) {
+-			uint8_t *data = &t->data_mem[bkt_key_index <<
+-				t->data_size_shl];
+-
+-			memcpy(data, entry, t->entry_size);
+-			lru_update(bkt, i);
+-			*key_found = 1;
+-			*entry_ptr = (void *) data;
+-			return 0;
+-		}
+-	}
+-
+-	/* Key is not present in the bucket */
+-	for (i = 0; i < KEYS_PER_BUCKET; i++) {
+-		uint64_t bkt_sig = (uint64_t) bkt->sig[i];
+-
+-		if (bkt_sig == 0) {
+-			uint32_t bkt_key_index;
+-			uint8_t *bkt_key, *data;
+-
+-			/* Allocate new key */
+-			if (t->key_stack_tos == 0) {
+-				/* No keys available */
+-				return -ENOSPC;
+-			}
+-			bkt_key_index = t->key_stack[--t->key_stack_tos];
+-
+-			/* Install new key */
+-			bkt_key = &t->key_mem[bkt_key_index << t->key_size_shl];
+-			data = &t->data_mem[bkt_key_index << t->data_size_shl];
+-
+-			bkt->sig[i] = (uint16_t) sig;
+-			bkt->key_pos[i] = bkt_key_index;
+-			keycpy(bkt_key, key, t->key_mask, t->key_size);
+-			memcpy(data, entry, t->entry_size);
+-			lru_update(bkt, i);
+-
+-			*key_found = 0;
+-			*entry_ptr = (void *) data;
+-			return 0;
+-		}
+-	}
+-
+-	/* Bucket full */
+-	{
+-		uint64_t pos = lru_pos(bkt);
+-		uint32_t bkt_key_index = bkt->key_pos[pos];
+-		uint8_t *bkt_key = &t->key_mem[bkt_key_index <<
+-			t->key_size_shl];
+-		uint8_t *data = &t->data_mem[bkt_key_index << t->data_size_shl];
+-
+-		bkt->sig[pos] = (uint16_t) sig;
+-		keycpy(bkt_key, key, t->key_mask, t->key_size);
+-		memcpy(data, entry, t->entry_size);
+-		lru_update(bkt, pos);
+-
+-		*key_found = 0;
+-		*entry_ptr = (void *) data;
+-		return 0;
+-	}
+-}
+-
+-static int
+-rte_table_hash_lru_entry_delete(void *table, void *key, int *key_found,
+-	void *entry)
+-{
+-	struct rte_table_hash *t = table;
+-	struct bucket *bkt;
+-	uint64_t sig;
+-	uint32_t bkt_index, i;
+-
+-	sig = t->f_hash(key, t->key_mask, t->key_size, t->seed);
+-	bkt_index = sig & t->bucket_mask;
+-	bkt = &t->buckets[bkt_index];
+-	sig = (sig >> 16) | 1LLU;
+-
+-	/* Key is present in the bucket */
+-	for (i = 0; i < KEYS_PER_BUCKET; i++) {
+-		uint64_t bkt_sig = (uint64_t) bkt->sig[i];
+-		uint32_t bkt_key_index = bkt->key_pos[i];
+-		uint8_t *bkt_key = &t->key_mem[bkt_key_index <<
+-			t->key_size_shl];
+-
+-		if ((sig == bkt_sig) &&
+-			(keycmp(bkt_key, key, t->key_mask, t->key_size) == 0)) {
+-			uint8_t *data = &t->data_mem[bkt_key_index <<
+-				t->data_size_shl];
+-
+-			bkt->sig[i] = 0;
+-			t->key_stack[t->key_stack_tos++] = bkt_key_index;
+-			*key_found = 1;
+-			if (entry)
+-				memcpy(entry, data, t->entry_size);
+-			return 0;
+-		}
+-	}
+-
+-	/* Key is not present in the bucket */
+-	*key_found = 0;
+-	return 0;
+-}
+-
+-static int rte_table_hash_lru_lookup_unoptimized(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_hash *t = (struct rte_table_hash *) table;
+-	uint64_t pkts_mask_out = 0;
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-	RTE_TABLE_HASH_LRU_STATS_PKTS_IN_ADD(t, n_pkts_in);
+-
+-	for ( ; pkts_mask; ) {
+-		struct bucket *bkt;
+-		struct rte_mbuf *pkt;
+-		uint8_t *key;
+-		uint64_t pkt_mask, sig;
+-		uint32_t pkt_index, bkt_index, i;
+-
+-		pkt_index = rte_ctz64(pkts_mask);
+-		pkt_mask = 1LLU << pkt_index;
+-		pkts_mask &= ~pkt_mask;
+-
+-		pkt = pkts[pkt_index];
+-		key = RTE_MBUF_METADATA_UINT8_PTR(pkt, t->key_offset);
+-		sig = (uint64_t) t->f_hash(key, t->key_mask, t->key_size, t->seed);
+-
+-		bkt_index = sig & t->bucket_mask;
+-		bkt = &t->buckets[bkt_index];
+-		sig = (sig >> 16) | 1LLU;
+-
+-		/* Key is present in the bucket */
+-		for (i = 0; i < KEYS_PER_BUCKET; i++) {
+-			uint64_t bkt_sig = (uint64_t) bkt->sig[i];
+-			uint32_t bkt_key_index = bkt->key_pos[i];
+-			uint8_t *bkt_key = &t->key_mem[bkt_key_index <<
+-				t->key_size_shl];
+-
+-			if ((sig == bkt_sig) && (keycmp(bkt_key, key, t->key_mask,
+-				t->key_size) == 0)) {
+-				uint8_t *data = &t->data_mem[bkt_key_index <<
+-					t->data_size_shl];
+-
+-				lru_update(bkt, i);
+-				pkts_mask_out |= pkt_mask;
+-				entries[pkt_index] = (void *) data;
+-				break;
+-			}
+-		}
+-	}
+-
+-	*lookup_hit_mask = pkts_mask_out;
+-	RTE_TABLE_HASH_LRU_STATS_PKTS_LOOKUP_MISS(t, n_pkts_in - rte_popcount64(pkts_mask_out));
+-	return 0;
+-}
+-
+-/*
+- * mask = match bitmask
+- * match = at least one match
+- * match_many = more than one match
+- * match_pos = position of first match
+- *
+- * ----------------------------------------
+- * mask		 match	 match_many	  match_pos
+- * ----------------------------------------
+- * 0000		 0		 0			  00
+- * 0001		 1		 0			  00
+- * 0010		 1		 0			  01
+- * 0011		 1		 1			  00
+- * ----------------------------------------
+- * 0100		 1		 0			  10
+- * 0101		 1		 1			  00
+- * 0110		 1		 1			  01
+- * 0111		 1		 1			  00
+- * ----------------------------------------
+- * 1000		 1		 0			  11
+- * 1001		 1		 1			  00
+- * 1010		 1		 1			  01
+- * 1011		 1		 1			  00
+- * ----------------------------------------
+- * 1100		 1		 1			  10
+- * 1101		 1		 1			  00
+- * 1110		 1		 1			  01
+- * 1111		 1		 1			  00
+- * ----------------------------------------
+- *
+- * match = 1111_1111_1111_1110
+- * match_many = 1111_1110_1110_1000
+- * match_pos = 0001_0010_0001_0011__0001_0010_0001_0000
+- *
+- * match = 0xFFFELLU
+- * match_many = 0xFEE8LLU
+- * match_pos = 0x12131210LLU
+- */
+-
+-#define LUT_MATCH						0xFFFELLU
+-#define LUT_MATCH_MANY						0xFEE8LLU
+-#define LUT_MATCH_POS						0x12131210LLU
+-
+-#define lookup_cmp_sig(mbuf_sig, bucket, match, match_many, match_pos)\
+-{								\
+-	uint64_t bucket_sig[4], mask[4], mask_all;		\
+-								\
+-	bucket_sig[0] = bucket->sig[0];				\
+-	bucket_sig[1] = bucket->sig[1];				\
+-	bucket_sig[2] = bucket->sig[2];				\
+-	bucket_sig[3] = bucket->sig[3];				\
+-								\
+-	bucket_sig[0] ^= mbuf_sig;				\
+-	bucket_sig[1] ^= mbuf_sig;				\
+-	bucket_sig[2] ^= mbuf_sig;				\
+-	bucket_sig[3] ^= mbuf_sig;				\
+-								\
+-	mask[0] = 0;						\
+-	mask[1] = 0;						\
+-	mask[2] = 0;						\
+-	mask[3] = 0;						\
+-								\
+-	if (bucket_sig[0] == 0)					\
+-		mask[0] = 1;					\
+-	if (bucket_sig[1] == 0)					\
+-		mask[1] = 2;					\
+-	if (bucket_sig[2] == 0)					\
+-		mask[2] = 4;					\
+-	if (bucket_sig[3] == 0)					\
+-		mask[3] = 8;					\
+-								\
+-	mask_all = (mask[0] | mask[1]) | (mask[2] | mask[3]);	\
+-								\
+-	match = (LUT_MATCH >> mask_all) & 1;			\
+-	match_many = (LUT_MATCH_MANY >> mask_all) & 1;		\
+-	match_pos = (LUT_MATCH_POS >> (mask_all << 1)) & 3;	\
+-}
+-
+-#define lookup_cmp_key(mbuf, key, match_key, f)				\
+-{									\
+-	uint64_t *pkt_key = RTE_MBUF_METADATA_UINT64_PTR(mbuf, f->key_offset);\
+-	uint64_t *bkt_key = (uint64_t *) key;				\
+-	uint64_t *key_mask = f->key_mask;					\
+-									\
+-	switch (f->key_size) {						\
+-	case 8:								\
+-	{								\
+-		uint64_t xor = (pkt_key[0] & key_mask[0]) ^ bkt_key[0];	\
+-		match_key = 0;						\
+-		if (xor == 0)						\
+-			match_key = 1;					\
+-	}								\
+-	break;								\
+-									\
+-	case 16:							\
+-	{								\
+-		uint64_t xor[2], or;					\
+-									\
+-		xor[0] = (pkt_key[0] & key_mask[0]) ^ bkt_key[0];		\
+-		xor[1] = (pkt_key[1] & key_mask[1]) ^ bkt_key[1];		\
+-		or = xor[0] | xor[1];					\
+-		match_key = 0;						\
+-		if (or == 0)						\
+-			match_key = 1;					\
+-	}								\
+-	break;								\
+-									\
+-	case 32:							\
+-	{								\
+-		uint64_t xor[4], or;					\
+-									\
+-		xor[0] = (pkt_key[0] & key_mask[0]) ^ bkt_key[0];		\
+-		xor[1] = (pkt_key[1] & key_mask[1]) ^ bkt_key[1];		\
+-		xor[2] = (pkt_key[2] & key_mask[2]) ^ bkt_key[2];		\
+-		xor[3] = (pkt_key[3] & key_mask[3]) ^ bkt_key[3];		\
+-		or = xor[0] | xor[1] | xor[2] | xor[3];			\
+-		match_key = 0;						\
+-		if (or == 0)						\
+-			match_key = 1;					\
+-	}								\
+-	break;								\
+-									\
+-	case 64:							\
+-	{								\
+-		uint64_t xor[8], or;					\
+-									\
+-		xor[0] = (pkt_key[0] & key_mask[0]) ^ bkt_key[0];		\
+-		xor[1] = (pkt_key[1] & key_mask[1]) ^ bkt_key[1];		\
+-		xor[2] = (pkt_key[2] & key_mask[2]) ^ bkt_key[2];		\
+-		xor[3] = (pkt_key[3] & key_mask[3]) ^ bkt_key[3];		\
+-		xor[4] = (pkt_key[4] & key_mask[4]) ^ bkt_key[4];		\
+-		xor[5] = (pkt_key[5] & key_mask[5]) ^ bkt_key[5];		\
+-		xor[6] = (pkt_key[6] & key_mask[6]) ^ bkt_key[6];		\
+-		xor[7] = (pkt_key[7] & key_mask[7]) ^ bkt_key[7];		\
+-		or = xor[0] | xor[1] | xor[2] | xor[3] |		\
+-			xor[4] | xor[5] | xor[6] | xor[7];		\
+-		match_key = 0;						\
+-		if (or == 0)						\
+-			match_key = 1;					\
+-	}								\
+-	break;								\
+-									\
+-	default:							\
+-		match_key = 0;						\
+-		if (keycmp(bkt_key, pkt_key, key_mask, f->key_size) == 0)	\
+-			match_key = 1;					\
+-	}								\
+-}
+-
+-#define lookup2_stage0(t, g, pkts, pkts_mask, pkt00_index, pkt01_index)\
+-{								\
+-	uint64_t pkt00_mask, pkt01_mask;			\
+-	struct rte_mbuf *mbuf00, *mbuf01;			\
+-	uint32_t key_offset = t->key_offset;		\
+-								\
+-	pkt00_index = rte_ctz64(pkts_mask);		\
+-	pkt00_mask = 1LLU << pkt00_index;			\
+-	pkts_mask &= ~pkt00_mask;				\
+-	mbuf00 = pkts[pkt00_index];				\
+-								\
+-	pkt01_index = rte_ctz64(pkts_mask);		\
+-	pkt01_mask = 1LLU << pkt01_index;			\
+-	pkts_mask &= ~pkt01_mask;				\
+-	mbuf01 = pkts[pkt01_index];				\
+-								\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf00, key_offset));\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf01, key_offset));\
+-}
+-
+-#define lookup2_stage0_with_odd_support(t, g, pkts, pkts_mask, pkt00_index, \
+-	pkt01_index)						\
+-{								\
+-	uint64_t pkt00_mask, pkt01_mask;			\
+-	struct rte_mbuf *mbuf00, *mbuf01;			\
+-	uint32_t key_offset = t->key_offset;		\
+-								\
+-	pkt00_index = rte_ctz64(pkts_mask);		\
+-	pkt00_mask = 1LLU << pkt00_index;			\
+-	pkts_mask &= ~pkt00_mask;				\
+-	mbuf00 = pkts[pkt00_index];				\
+-								\
+-	pkt01_index = rte_ctz64(pkts_mask);		\
+-	if (pkts_mask == 0)					\
+-		pkt01_index = pkt00_index;			\
+-								\
+-	pkt01_mask = 1LLU << pkt01_index;			\
+-	pkts_mask &= ~pkt01_mask;				\
+-	mbuf01 = pkts[pkt01_index];				\
+-								\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf00, key_offset));\
+-	rte_prefetch0(RTE_MBUF_METADATA_UINT8_PTR(mbuf01, key_offset));\
+-}
+-
+-#define lookup2_stage1(t, g, pkts, pkt10_index, pkt11_index)\
+-{								\
+-	struct grinder *g10, *g11;				\
+-	uint64_t sig10, sig11, bkt10_index, bkt11_index;	\
+-	struct rte_mbuf *mbuf10, *mbuf11;			\
+-	struct bucket *bkt10, *bkt11, *buckets = t->buckets;	\
+-	uint8_t *key10, *key11;					\
+-	uint64_t bucket_mask = t->bucket_mask;			\
+-	rte_table_hash_op_hash f_hash = t->f_hash;		\
+-	uint64_t seed = t->seed;				\
+-	uint32_t key_size = t->key_size;			\
+-	uint32_t key_offset = t->key_offset;			\
+-								\
+-	mbuf10 = pkts[pkt10_index];				\
+-	key10 = RTE_MBUF_METADATA_UINT8_PTR(mbuf10, key_offset);\
+-	sig10 = (uint64_t) f_hash(key10, t->key_mask, key_size, seed);\
+-	bkt10_index = sig10 & bucket_mask;			\
+-	bkt10 = &buckets[bkt10_index];				\
+-								\
+-	mbuf11 = pkts[pkt11_index];				\
+-	key11 = RTE_MBUF_METADATA_UINT8_PTR(mbuf11, key_offset);\
+-	sig11 = (uint64_t) f_hash(key11, t->key_mask, key_size, seed);\
+-	bkt11_index = sig11 & bucket_mask;			\
+-	bkt11 = &buckets[bkt11_index];				\
+-								\
+-	rte_prefetch0(bkt10);					\
+-	rte_prefetch0(bkt11);					\
+-								\
+-	g10 = &g[pkt10_index];					\
+-	g10->sig = sig10;					\
+-	g10->bkt = bkt10;					\
+-								\
+-	g11 = &g[pkt11_index];					\
+-	g11->sig = sig11;					\
+-	g11->bkt = bkt11;					\
+-}
+-
+-#define lookup2_stage2(t, g, pkt20_index, pkt21_index, pkts_mask_match_many)\
+-{								\
+-	struct grinder *g20, *g21;				\
+-	uint64_t sig20, sig21;					\
+-	struct bucket *bkt20, *bkt21;				\
+-	uint8_t *key20, *key21, *key_mem = t->key_mem;		\
+-	uint64_t match20, match21, match_many20, match_many21;	\
+-	uint64_t match_pos20, match_pos21;			\
+-	uint32_t key20_index, key21_index, key_size_shl = t->key_size_shl;\
+-								\
+-	g20 = &g[pkt20_index];					\
+-	sig20 = g20->sig;					\
+-	bkt20 = g20->bkt;					\
+-	sig20 = (sig20 >> 16) | 1LLU;				\
+-	lookup_cmp_sig(sig20, bkt20, match20, match_many20, match_pos20);\
+-	match20 <<= pkt20_index;				\
+-	match_many20 <<= pkt20_index;				\
+-	key20_index = bkt20->key_pos[match_pos20];		\
+-	key20 = &key_mem[key20_index << key_size_shl];		\
+-								\
+-	g21 = &g[pkt21_index];					\
+-	sig21 = g21->sig;					\
+-	bkt21 = g21->bkt;					\
+-	sig21 = (sig21 >> 16) | 1LLU;				\
+-	lookup_cmp_sig(sig21, bkt21, match21, match_many21, match_pos21);\
+-	match21 <<= pkt21_index;				\
+-	match_many21 <<= pkt21_index;				\
+-	key21_index = bkt21->key_pos[match_pos21];		\
+-	key21 = &key_mem[key21_index << key_size_shl];		\
+-								\
+-	rte_prefetch0(key20);					\
+-	rte_prefetch0(key21);					\
+-								\
+-	pkts_mask_match_many |= match_many20 | match_many21;	\
+-								\
+-	g20->match = match20;					\
+-	g20->match_pos = match_pos20;				\
+-	g20->key_index = key20_index;				\
+-								\
+-	g21->match = match21;					\
+-	g21->match_pos = match_pos21;				\
+-	g21->key_index = key21_index;				\
+-}
+-
+-#define lookup2_stage3(t, g, pkts, pkt30_index, pkt31_index, pkts_mask_out, \
+-	entries)						\
+-{								\
+-	struct grinder *g30, *g31;				\
+-	struct rte_mbuf *mbuf30, *mbuf31;			\
+-	struct bucket *bkt30, *bkt31;				\
+-	uint8_t *key30, *key31, *key_mem = t->key_mem;		\
+-	uint8_t *data30, *data31, *data_mem = t->data_mem;	\
+-	uint64_t match30, match31, match_pos30, match_pos31;	\
+-	uint64_t match_key30, match_key31, match_keys;		\
+-	uint32_t key30_index, key31_index;			\
+-	uint32_t key_size_shl = t->key_size_shl;		\
+-	uint32_t data_size_shl = t->data_size_shl;		\
+-								\
+-	mbuf30 = pkts[pkt30_index];				\
+-	g30 = &g[pkt30_index];					\
+-	bkt30 = g30->bkt;					\
+-	match30 = g30->match;					\
+-	match_pos30 = g30->match_pos;				\
+-	key30_index = g30->key_index;				\
+-	key30 = &key_mem[key30_index << key_size_shl];		\
+-	lookup_cmp_key(mbuf30, key30, match_key30, t);		\
+-	match_key30 <<= pkt30_index;				\
+-	match_key30 &= match30;					\
+-	data30 = &data_mem[key30_index << data_size_shl];	\
+-	entries[pkt30_index] = data30;				\
+-								\
+-	mbuf31 = pkts[pkt31_index];				\
+-	g31 = &g[pkt31_index];					\
+-	bkt31 = g31->bkt;					\
+-	match31 = g31->match;					\
+-	match_pos31 = g31->match_pos;				\
+-	key31_index = g31->key_index;				\
+-	key31 = &key_mem[key31_index << key_size_shl];		\
+-	lookup_cmp_key(mbuf31, key31, match_key31, t);		\
+-	match_key31 <<= pkt31_index;				\
+-	match_key31 &= match31;					\
+-	data31 = &data_mem[key31_index << data_size_shl];	\
+-	entries[pkt31_index] = data31;				\
+-								\
+-	rte_prefetch0(data30);					\
+-	rte_prefetch0(data31);					\
+-								\
+-	match_keys = match_key30 | match_key31;			\
+-	pkts_mask_out |= match_keys;				\
+-								\
+-	if (match_key30 == 0)					\
+-		match_pos30 = 4;				\
+-	lru_update(bkt30, match_pos30);				\
+-								\
+-	if (match_key31 == 0)					\
+-		match_pos31 = 4;				\
+-	lru_update(bkt31, match_pos31);				\
+-}
+-
+-/*
+- * The lookup function implements a 4-stage pipeline, with each stage processing
+- * two different packets. The purpose of pipelined implementation is to hide the
+- * latency of prefetching the data structures and loosen the data dependency
+- * between instructions.
+- *
+- *   p00  _______   p10  _______   p20  _______   p30  _______
+- * ----->|       |----->|       |----->|       |----->|       |----->
+- *       |   0   |      |   1   |      |   2   |      |   3   |
+- * ----->|_______|----->|_______|----->|_______|----->|_______|----->
+- *   p01            p11            p21            p31
+- *
+- * The naming convention is:
+- *	  pXY = packet Y of stage X, X = 0 .. 3, Y = 0 .. 1
+- */
+-static int rte_table_hash_lru_lookup(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_hash *t = (struct rte_table_hash *) table;
+-	struct grinder *g = t->grinders;
+-	uint64_t pkt00_index, pkt01_index, pkt10_index, pkt11_index;
+-	uint64_t pkt20_index, pkt21_index, pkt30_index, pkt31_index;
+-	uint64_t pkts_mask_out = 0, pkts_mask_match_many = 0;
+-	int status = 0;
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-	RTE_TABLE_HASH_LRU_STATS_PKTS_IN_ADD(t, n_pkts_in);
+-
+-	/* Cannot run the pipeline with less than 7 packets */
+-	if (rte_popcount64(pkts_mask) < 7)
+-		return rte_table_hash_lru_lookup_unoptimized(table, pkts,
+-			pkts_mask, lookup_hit_mask, entries);
+-
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(t, g, pkts, pkts_mask, pkt00_index, pkt01_index);
+-
+-	/* Pipeline feed */
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(t, g, pkts, pkts_mask, pkt00_index, pkt01_index);
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(t, g, pkts, pkt10_index, pkt11_index);
+-
+-	/* Pipeline feed */
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 0 */
+-	lookup2_stage0(t, g, pkts, pkts_mask, pkt00_index, pkt01_index);
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(t, g, pkts, pkt10_index, pkt11_index);
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2(t, g, pkt20_index, pkt21_index, pkts_mask_match_many);
+-
+-	/*
+-	* Pipeline run
+-	*
+-	*/
+-	for ( ; pkts_mask; ) {
+-		/* Pipeline feed */
+-		pkt30_index = pkt20_index;
+-		pkt31_index = pkt21_index;
+-		pkt20_index = pkt10_index;
+-		pkt21_index = pkt11_index;
+-		pkt10_index = pkt00_index;
+-		pkt11_index = pkt01_index;
+-
+-		/* Pipeline stage 0 */
+-		lookup2_stage0_with_odd_support(t, g, pkts, pkts_mask,
+-			pkt00_index, pkt01_index);
+-
+-		/* Pipeline stage 1 */
+-		lookup2_stage1(t, g, pkts, pkt10_index, pkt11_index);
+-
+-		/* Pipeline stage 2 */
+-		lookup2_stage2(t, g, pkt20_index, pkt21_index,
+-			pkts_mask_match_many);
+-
+-		/* Pipeline stage 3 */
+-		lookup2_stage3(t, g, pkts, pkt30_index, pkt31_index,
+-			pkts_mask_out, entries);
+-	}
+-
+-	/* Pipeline feed */
+-	pkt30_index = pkt20_index;
+-	pkt31_index = pkt21_index;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-	pkt10_index = pkt00_index;
+-	pkt11_index = pkt01_index;
+-
+-	/* Pipeline stage 1 */
+-	lookup2_stage1(t, g, pkts, pkt10_index, pkt11_index);
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2(t, g, pkt20_index, pkt21_index, pkts_mask_match_many);
+-
+-	/* Pipeline stage 3 */
+-	lookup2_stage3(t, g, pkts, pkt30_index, pkt31_index, pkts_mask_out,
+-		entries);
+-
+-	/* Pipeline feed */
+-	pkt30_index = pkt20_index;
+-	pkt31_index = pkt21_index;
+-	pkt20_index = pkt10_index;
+-	pkt21_index = pkt11_index;
+-
+-	/* Pipeline stage 2 */
+-	lookup2_stage2(t, g, pkt20_index, pkt21_index, pkts_mask_match_many);
+-
+-	/* Pipeline stage 3 */
+-	lookup2_stage3(t, g, pkts, pkt30_index, pkt31_index, pkts_mask_out,
+-		entries);
+-
+-	/* Pipeline feed */
+-	pkt30_index = pkt20_index;
+-	pkt31_index = pkt21_index;
+-
+-	/* Pipeline stage 3 */
+-	lookup2_stage3(t, g, pkts, pkt30_index, pkt31_index, pkts_mask_out,
+-		entries);
+-
+-	/* Slow path */
+-	pkts_mask_match_many &= ~pkts_mask_out;
+-	if (pkts_mask_match_many) {
+-		uint64_t pkts_mask_out_slow = 0;
+-
+-		status = rte_table_hash_lru_lookup_unoptimized(table, pkts,
+-			pkts_mask_match_many, &pkts_mask_out_slow, entries);
+-		pkts_mask_out |= pkts_mask_out_slow;
+-	}
+-
+-	*lookup_hit_mask = pkts_mask_out;
+-	RTE_TABLE_HASH_LRU_STATS_PKTS_LOOKUP_MISS(t, n_pkts_in - rte_popcount64(pkts_mask_out));
+-	return status;
+-}
+-
+-static int
+-rte_table_hash_lru_stats_read(void *table, struct rte_table_stats *stats, int clear)
+-{
+-	struct rte_table_hash *t = table;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &t->stats, sizeof(t->stats));
+-
+-	if (clear)
+-		memset(&t->stats, 0, sizeof(t->stats));
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_table_hash_lru_ops)
+-struct rte_table_ops rte_table_hash_lru_ops = {
+-	.f_create = rte_table_hash_lru_create,
+-	.f_free = rte_table_hash_lru_free,
+-	.f_add = rte_table_hash_lru_entry_add,
+-	.f_delete = rte_table_hash_lru_entry_delete,
+-	.f_add_bulk = NULL,
+-	.f_delete_bulk = NULL,
+-	.f_lookup = rte_table_hash_lru_lookup,
+-	.f_stats = rte_table_hash_lru_stats_read,
+-};
+diff --git a/lib/table/rte_table_lpm.c b/lib/table/rte_table_lpm.c
+deleted file mode 100644
+index 6fd0c30f85..0000000000
+--- a/lib/table/rte_table_lpm.c
++++ /dev/null
+@@ -1,369 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#include <stdalign.h>
+-#include <stdio.h>
+-#include <string.h>
+-
+-#include <eal_export.h>
+-#include <rte_common.h>
+-#include <rte_malloc.h>
+-#include <rte_byteorder.h>
+-#include <rte_log.h>
+-#include <rte_lpm.h>
+-
+-#include "rte_table_lpm.h"
+-
+-#include "table_log.h"
+-
+-#ifndef RTE_TABLE_LPM_MAX_NEXT_HOPS
+-#define RTE_TABLE_LPM_MAX_NEXT_HOPS                        65536
+-#endif
+-
+-#ifdef RTE_TABLE_STATS_COLLECT
+-
+-#define RTE_TABLE_LPM_STATS_PKTS_IN_ADD(table, val) \
+-	table->stats.n_pkts_in += val
+-#define RTE_TABLE_LPM_STATS_PKTS_LOOKUP_MISS(table, val) \
+-	table->stats.n_pkts_lookup_miss += val
+-
+-#else
+-
+-#define RTE_TABLE_LPM_STATS_PKTS_IN_ADD(table, val)
+-#define RTE_TABLE_LPM_STATS_PKTS_LOOKUP_MISS(table, val)
+-
+-#endif
+-
+-struct rte_table_lpm {
+-	struct rte_table_stats stats;
+-
+-	/* Input parameters */
+-	uint32_t entry_size;
+-	uint32_t entry_unique_size;
+-	uint32_t n_rules;
+-	uint32_t offset;
+-
+-	/* Handle to low-level LPM table */
+-	struct rte_lpm *lpm;
+-
+-	/* Next Hop Table (NHT) */
+-	uint32_t nht_users[RTE_TABLE_LPM_MAX_NEXT_HOPS];
+-	alignas(RTE_CACHE_LINE_SIZE) uint8_t nht[];
+-};
+-
+-static void *
+-rte_table_lpm_create(void *params, int socket_id, uint32_t entry_size)
+-{
+-	struct rte_table_lpm_params *p = params;
+-	struct rte_table_lpm *lpm;
+-	struct rte_lpm_config lpm_config;
+-
+-	uint32_t total_size, nht_size;
+-
+-	/* Check input parameters */
+-	if (p == NULL) {
+-		TABLE_LOG(ERR, "%s: NULL input parameters", __func__);
+-		return NULL;
+-	}
+-	if (p->n_rules == 0) {
+-		TABLE_LOG(ERR, "%s: Invalid n_rules", __func__);
+-		return NULL;
+-	}
+-	if (p->number_tbl8s == 0) {
+-		TABLE_LOG(ERR, "%s: Invalid number_tbl8s", __func__);
+-		return NULL;
+-	}
+-	if (p->entry_unique_size == 0) {
+-		TABLE_LOG(ERR, "%s: Invalid entry_unique_size",
+-			__func__);
+-		return NULL;
+-	}
+-	if (p->entry_unique_size > entry_size) {
+-		TABLE_LOG(ERR, "%s: Invalid entry_unique_size",
+-			__func__);
+-		return NULL;
+-	}
+-	if (p->name == NULL) {
+-		TABLE_LOG(ERR, "%s: Table name is NULL",
+-			__func__);
+-		return NULL;
+-	}
+-	entry_size = RTE_ALIGN(entry_size, sizeof(uint64_t));
+-
+-	/* Memory allocation */
+-	nht_size = RTE_TABLE_LPM_MAX_NEXT_HOPS * entry_size;
+-	total_size = sizeof(struct rte_table_lpm) + nht_size;
+-	lpm = rte_zmalloc_socket("TABLE", total_size, RTE_CACHE_LINE_SIZE,
+-		socket_id);
+-	if (lpm == NULL) {
+-		TABLE_LOG(ERR,
+-			"%s: Cannot allocate %u bytes for LPM table",
+-			__func__, total_size);
+-		return NULL;
+-	}
+-
+-	/* LPM low-level table creation */
+-	lpm_config.max_rules = p->n_rules;
+-	lpm_config.number_tbl8s = p->number_tbl8s;
+-	lpm_config.flags = p->flags;
+-	lpm->lpm = rte_lpm_create(p->name, socket_id, &lpm_config);
+-
+-	if (lpm->lpm == NULL) {
+-		rte_free(lpm);
+-		TABLE_LOG(ERR, "Unable to create low-level LPM table");
+-		return NULL;
+-	}
+-
+-	/* Memory initialization */
+-	lpm->entry_size = entry_size;
+-	lpm->entry_unique_size = p->entry_unique_size;
+-	lpm->n_rules = p->n_rules;
+-	lpm->offset = p->offset;
+-
+-	return lpm;
+-}
+-
+-static int
+-rte_table_lpm_free(void *table)
+-{
+-	struct rte_table_lpm *lpm = table;
+-
+-	/* Check input parameters */
+-	if (lpm == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* Free previously allocated resources */
+-	rte_lpm_free(lpm->lpm);
+-	rte_free(lpm);
+-
+-	return 0;
+-}
+-
+-static int
+-nht_find_free(struct rte_table_lpm *lpm, uint32_t *pos)
+-{
+-	uint32_t i;
+-
+-	for (i = 0; i < RTE_TABLE_LPM_MAX_NEXT_HOPS; i++) {
+-		if (lpm->nht_users[i] == 0) {
+-			*pos = i;
+-			return 1;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-nht_find_existing(struct rte_table_lpm *lpm, void *entry, uint32_t *pos)
+-{
+-	uint32_t i;
+-
+-	for (i = 0; i < RTE_TABLE_LPM_MAX_NEXT_HOPS; i++) {
+-		uint8_t *nht_entry = &lpm->nht[i * lpm->entry_size];
+-
+-		if ((lpm->nht_users[i] > 0) && (memcmp(nht_entry, entry,
+-			lpm->entry_unique_size) == 0)) {
+-			*pos = i;
+-			return 1;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_lpm_entry_add(
+-	void *table,
+-	void *key,
+-	void *entry,
+-	int *key_found,
+-	void **entry_ptr)
+-{
+-	struct rte_table_lpm *lpm = table;
+-	struct rte_table_lpm_key *ip_prefix = key;
+-	uint32_t nht_pos, nht_pos0_valid;
+-	int status;
+-	uint32_t nht_pos0 = 0;
+-
+-	/* Check input parameters */
+-	if (lpm == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (ip_prefix == NULL) {
+-		TABLE_LOG(ERR, "%s: ip_prefix parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-	if (entry == NULL) {
+-		TABLE_LOG(ERR, "%s: entry parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	if ((ip_prefix->depth == 0) || (ip_prefix->depth > 32)) {
+-		TABLE_LOG(ERR, "%s: invalid depth (%d)",
+-			__func__, ip_prefix->depth);
+-		return -EINVAL;
+-	}
+-
+-	/* Check if rule is already present in the table */
+-	status = rte_lpm_is_rule_present(lpm->lpm, ip_prefix->ip,
+-		ip_prefix->depth, &nht_pos0);
+-	nht_pos0_valid = status > 0;
+-
+-	/* Find existing or free NHT entry */
+-	if (nht_find_existing(lpm, entry, &nht_pos) == 0) {
+-		uint8_t *nht_entry;
+-
+-		if (nht_find_free(lpm, &nht_pos) == 0) {
+-			TABLE_LOG(ERR, "%s: NHT full", __func__);
+-			return -1;
+-		}
+-
+-		nht_entry = &lpm->nht[nht_pos * lpm->entry_size];
+-		memcpy(nht_entry, entry, lpm->entry_size);
+-	}
+-
+-	/* Add rule to low level LPM table */
+-	if (rte_lpm_add(lpm->lpm, ip_prefix->ip, ip_prefix->depth, nht_pos) < 0) {
+-		TABLE_LOG(ERR, "%s: LPM rule add failed", __func__);
+-		return -1;
+-	}
+-
+-	/* Commit NHT changes */
+-	lpm->nht_users[nht_pos]++;
+-	lpm->nht_users[nht_pos0] -= nht_pos0_valid;
+-
+-	*key_found = nht_pos0_valid;
+-	*entry_ptr = (void *) &lpm->nht[nht_pos * lpm->entry_size];
+-	return 0;
+-}
+-
+-static int
+-rte_table_lpm_entry_delete(
+-	void *table,
+-	void *key,
+-	int *key_found,
+-	void *entry)
+-{
+-	struct rte_table_lpm *lpm = table;
+-	struct rte_table_lpm_key *ip_prefix = key;
+-	uint32_t nht_pos;
+-	int status;
+-
+-	/* Check input parameters */
+-	if (lpm == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (ip_prefix == NULL) {
+-		TABLE_LOG(ERR, "%s: ip_prefix parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-	if ((ip_prefix->depth == 0) || (ip_prefix->depth > 32)) {
+-		TABLE_LOG(ERR, "%s: invalid depth (%d)", __func__,
+-			ip_prefix->depth);
+-		return -EINVAL;
+-	}
+-
+-	/* Return if rule is not present in the table */
+-	status = rte_lpm_is_rule_present(lpm->lpm, ip_prefix->ip,
+-		ip_prefix->depth, &nht_pos);
+-	if (status < 0) {
+-		TABLE_LOG(ERR, "%s: LPM algorithmic error", __func__);
+-		return -1;
+-	}
+-	if (status == 0) {
+-		*key_found = 0;
+-		return 0;
+-	}
+-
+-	/* Delete rule from the low-level LPM table */
+-	status = rte_lpm_delete(lpm->lpm, ip_prefix->ip, ip_prefix->depth);
+-	if (status) {
+-		TABLE_LOG(ERR, "%s: LPM rule delete failed", __func__);
+-		return -1;
+-	}
+-
+-	/* Commit NHT changes */
+-	lpm->nht_users[nht_pos]--;
+-
+-	*key_found = 1;
+-	if (entry)
+-		memcpy(entry, &lpm->nht[nht_pos * lpm->entry_size],
+-			lpm->entry_size);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_lpm_lookup(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_lpm *lpm = (struct rte_table_lpm *) table;
+-	uint64_t pkts_out_mask = 0;
+-	uint32_t i;
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-	RTE_TABLE_LPM_STATS_PKTS_IN_ADD(lpm, n_pkts_in);
+-
+-	pkts_out_mask = 0;
+-	for (i = 0; i < (uint32_t)(RTE_PORT_IN_BURST_SIZE_MAX -
+-		rte_clz64(pkts_mask)); i++) {
+-		uint64_t pkt_mask = 1LLU << i;
+-
+-		if (pkt_mask & pkts_mask) {
+-			struct rte_mbuf *pkt = pkts[i];
+-			uint32_t ip = rte_bswap32(
+-				RTE_MBUF_METADATA_UINT32(pkt, lpm->offset));
+-			int status;
+-			uint32_t nht_pos;
+-
+-			status = rte_lpm_lookup(lpm->lpm, ip, &nht_pos);
+-			if (status == 0) {
+-				pkts_out_mask |= pkt_mask;
+-				entries[i] = (void *) &lpm->nht[nht_pos *
+-					lpm->entry_size];
+-			}
+-		}
+-	}
+-
+-	*lookup_hit_mask = pkts_out_mask;
+-	RTE_TABLE_LPM_STATS_PKTS_LOOKUP_MISS(lpm, n_pkts_in - rte_popcount64(pkts_out_mask));
+-	return 0;
+-}
+-
+-static int
+-rte_table_lpm_stats_read(void *table, struct rte_table_stats *stats, int clear)
+-{
+-	struct rte_table_lpm *t = table;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &t->stats, sizeof(t->stats));
+-
+-	if (clear)
+-		memset(&t->stats, 0, sizeof(t->stats));
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_table_lpm_ops)
+-struct rte_table_ops rte_table_lpm_ops = {
+-	.f_create = rte_table_lpm_create,
+-	.f_free = rte_table_lpm_free,
+-	.f_add = rte_table_lpm_entry_add,
+-	.f_delete = rte_table_lpm_entry_delete,
+-	.f_add_bulk = NULL,
+-	.f_delete_bulk = NULL,
+-	.f_lookup = rte_table_lpm_lookup,
+-	.f_stats = rte_table_lpm_stats_read,
+-};
+diff --git a/lib/table/rte_table_lpm.h b/lib/table/rte_table_lpm.h
+deleted file mode 100644
+index 59b9bdee89..0000000000
+--- a/lib/table/rte_table_lpm.h
++++ /dev/null
+@@ -1,94 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_TABLE_LPM_H__
+-#define __INCLUDE_RTE_TABLE_LPM_H__
+-
+-/**
+- * @file
+- * RTE Table LPM for IPv4
+- *
+- * This table uses the Longest Prefix Match (LPM) algorithm to uniquely
+- * associate data to lookup keys.
+- *
+- * Use-case: IP routing table. Routes that are added to the table associate a
+- * next hop to an IP prefix. The IP prefix is specified as IP address and depth
+- * and cover for a multitude of lookup keys (i.e. destination IP addresses)
+- * that all share the same data (i.e. next hop). The next hop information
+- * typically contains the output interface ID, the IP address of the next hop
+- * station (which is part of the same IP network the output interface is
+- * connected to) and other flags and counters.
+- *
+- * The LPM primitive only allows associating an 8-bit number (next hop ID) to
+- * an IP prefix, while a routing table can potentially contain thousands of
+- * routes or even more. This means that the same next hop ID (and next hop
+- * information) has to be shared by multiple routes, which makes sense, as
+- * multiple remote networks could be reached through the same next hop.
+- * Therefore, when a route is added or updated, the LPM table has to check
+- * whether the same next hop is already in use before using a new next hop ID
+- * for this route.
+- *
+- * The comparison between different next hops is done for the first
+- * “entry_unique_size” bytes of the next hop information (configurable
+- * parameter), which have to uniquely identify the next hop, therefore the user
+- * has to carefully manage the format of the LPM table entry (i.e.  the next
+- * hop information) so that any next hop data that changes value during
+- * run-time (e.g. counters) is placed outside of this area.
+- */
+-
+-#include <stdint.h>
+-
+-#include "rte_table.h"
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-/** LPM table parameters */
+-struct rte_table_lpm_params {
+-	/** Table name */
+-	const char *name;
+-
+-	/** Maximum number of LPM rules (i.e. IP routes) */
+-	uint32_t n_rules;
+-
+-	/**< Number of tbl8s to allocate. */
+-	uint32_t number_tbl8s;
+-
+-	/**< This field is currently unused. */
+-	int flags;
+-
+-	/** Number of bytes at the start of the table entry that uniquely
+-	identify the entry. Cannot be bigger than table entry size. */
+-	uint32_t entry_unique_size;
+-
+-	/** Byte offset within input packet meta-data where lookup key (i.e.
+-	the destination IP address) is located. */
+-	uint32_t offset;
+-};
+-
+-/** LPM table rule (i.e. route), specified as IP prefix. While the key used by
+-the lookup operation is the destination IP address (read from the input packet
+-meta-data), the entry add and entry delete operations work with LPM rules, with
+-each rule covering for a multitude of lookup keys (destination IP addresses)
+-that share the same data (next hop). */
+-struct rte_table_lpm_key {
+-	/** IP address */
+-	uint32_t ip;
+-
+-	/** IP address depth. The most significant "depth" bits of the IP
+-	address specify the network part of the IP address, while the rest of
+-	the bits specify the host part of the address and are ignored for the
+-	purpose of route specification. */
+-	uint8_t depth;
+-};
+-
+-/** LPM table operations */
+-extern struct rte_table_ops rte_table_lpm_ops;
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif
+diff --git a/lib/table/rte_table_lpm_ipv6.c b/lib/table/rte_table_lpm_ipv6.c
+deleted file mode 100644
+index 9159784dfa..0000000000
+--- a/lib/table/rte_table_lpm_ipv6.c
++++ /dev/null
+@@ -1,370 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#include <stdalign.h>
+-#include <stdio.h>
+-#include <string.h>
+-
+-#include <eal_export.h>
+-#include <rte_common.h>
+-#include <rte_malloc.h>
+-#include <rte_log.h>
+-#include <rte_lpm6.h>
+-
+-#include "rte_table_lpm_ipv6.h"
+-
+-#include "table_log.h"
+-
+-#define RTE_TABLE_LPM_MAX_NEXT_HOPS                        256
+-
+-#ifdef RTE_TABLE_STATS_COLLECT
+-
+-#define RTE_TABLE_LPM_IPV6_STATS_PKTS_IN_ADD(table, val) \
+-	table->stats.n_pkts_in += val
+-#define RTE_TABLE_LPM_IPV6_STATS_PKTS_LOOKUP_MISS(table, val) \
+-	table->stats.n_pkts_lookup_miss += val
+-
+-#else
+-
+-#define RTE_TABLE_LPM_IPV6_STATS_PKTS_IN_ADD(table, val)
+-#define RTE_TABLE_LPM_IPV6_STATS_PKTS_LOOKUP_MISS(table, val)
+-
+-#endif
+-
+-struct rte_table_lpm_ipv6 {
+-	struct rte_table_stats stats;
+-
+-	/* Input parameters */
+-	uint32_t entry_size;
+-	uint32_t entry_unique_size;
+-	uint32_t n_rules;
+-	uint32_t offset;
+-
+-	/* Handle to low-level LPM table */
+-	struct rte_lpm6 *lpm;
+-
+-	/* Next Hop Table (NHT) */
+-	uint32_t nht_users[RTE_TABLE_LPM_MAX_NEXT_HOPS];
+-	alignas(RTE_CACHE_LINE_SIZE) uint8_t nht[];
+-};
+-
+-static void *
+-rte_table_lpm_ipv6_create(void *params, int socket_id, uint32_t entry_size)
+-{
+-	struct rte_table_lpm_ipv6_params *p =
+-		params;
+-	struct rte_table_lpm_ipv6 *lpm;
+-	struct rte_lpm6_config lpm6_config;
+-	uint32_t total_size, nht_size;
+-
+-	/* Check input parameters */
+-	if (p == NULL) {
+-		TABLE_LOG(ERR, "%s: NULL input parameters", __func__);
+-		return NULL;
+-	}
+-	if (p->n_rules == 0) {
+-		TABLE_LOG(ERR, "%s: Invalid n_rules", __func__);
+-		return NULL;
+-	}
+-	if (p->number_tbl8s == 0) {
+-		TABLE_LOG(ERR, "%s: Invalid n_rules", __func__);
+-		return NULL;
+-	}
+-	if (p->entry_unique_size == 0) {
+-		TABLE_LOG(ERR, "%s: Invalid entry_unique_size",
+-			__func__);
+-		return NULL;
+-	}
+-	if (p->entry_unique_size > entry_size) {
+-		TABLE_LOG(ERR, "%s: Invalid entry_unique_size",
+-			__func__);
+-		return NULL;
+-	}
+-	if (p->name == NULL) {
+-		TABLE_LOG(ERR, "%s: Table name is NULL",
+-			__func__);
+-		return NULL;
+-	}
+-	entry_size = RTE_ALIGN(entry_size, sizeof(uint64_t));
+-
+-	/* Memory allocation */
+-	nht_size = RTE_TABLE_LPM_MAX_NEXT_HOPS * entry_size;
+-	total_size = sizeof(struct rte_table_lpm_ipv6) + nht_size;
+-	lpm = rte_zmalloc_socket("TABLE", total_size, RTE_CACHE_LINE_SIZE,
+-		socket_id);
+-	if (lpm == NULL) {
+-		TABLE_LOG(ERR,
+-			"%s: Cannot allocate %u bytes for LPM IPv6 table",
+-			__func__, total_size);
+-		return NULL;
+-	}
+-
+-	/* LPM low-level table creation */
+-	lpm6_config.max_rules = p->n_rules;
+-	lpm6_config.number_tbl8s = p->number_tbl8s;
+-	lpm6_config.flags = 0;
+-	lpm->lpm = rte_lpm6_create(p->name, socket_id, &lpm6_config);
+-	if (lpm->lpm == NULL) {
+-		rte_free(lpm);
+-		TABLE_LOG(ERR,
+-			"Unable to create low-level LPM IPv6 table");
+-		return NULL;
+-	}
+-
+-	/* Memory initialization */
+-	lpm->entry_size = entry_size;
+-	lpm->entry_unique_size = p->entry_unique_size;
+-	lpm->n_rules = p->n_rules;
+-	lpm->offset = p->offset;
+-
+-	return lpm;
+-}
+-
+-static int
+-rte_table_lpm_ipv6_free(void *table)
+-{
+-	struct rte_table_lpm_ipv6 *lpm = table;
+-
+-	/* Check input parameters */
+-	if (lpm == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* Free previously allocated resources */
+-	rte_lpm6_free(lpm->lpm);
+-	rte_free(lpm);
+-
+-	return 0;
+-}
+-
+-static int
+-nht_find_free(struct rte_table_lpm_ipv6 *lpm, uint32_t *pos)
+-{
+-	uint32_t i;
+-
+-	for (i = 0; i < RTE_TABLE_LPM_MAX_NEXT_HOPS; i++) {
+-		if (lpm->nht_users[i] == 0) {
+-			*pos = i;
+-			return 1;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-nht_find_existing(struct rte_table_lpm_ipv6 *lpm, void *entry, uint32_t *pos)
+-{
+-	uint32_t i;
+-
+-	for (i = 0; i < RTE_TABLE_LPM_MAX_NEXT_HOPS; i++) {
+-		uint8_t *nht_entry = &lpm->nht[i * lpm->entry_size];
+-
+-		if ((lpm->nht_users[i] > 0) && (memcmp(nht_entry, entry,
+-			lpm->entry_unique_size) == 0)) {
+-			*pos = i;
+-			return 1;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_lpm_ipv6_entry_add(
+-	void *table,
+-	void *key,
+-	void *entry,
+-	int *key_found,
+-	void **entry_ptr)
+-{
+-	struct rte_table_lpm_ipv6 *lpm = table;
+-	struct rte_table_lpm_ipv6_key *ip_prefix =
+-		key;
+-	uint32_t nht_pos = 0, nht_pos0 = 0, nht_pos0_valid = 0;
+-	int status;
+-
+-	/* Check input parameters */
+-	if (lpm == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (ip_prefix == NULL) {
+-		TABLE_LOG(ERR, "%s: ip_prefix parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-	if (entry == NULL) {
+-		TABLE_LOG(ERR, "%s: entry parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	if ((ip_prefix->depth == 0) || (ip_prefix->depth > 128)) {
+-		TABLE_LOG(ERR, "%s: invalid depth (%d)", __func__,
+-			ip_prefix->depth);
+-		return -EINVAL;
+-	}
+-
+-	/* Check if rule is already present in the table */
+-	status = rte_lpm6_is_rule_present(lpm->lpm, &ip_prefix->ip,
+-		ip_prefix->depth, &nht_pos0);
+-	nht_pos0_valid = status > 0;
+-
+-	/* Find existing or free NHT entry */
+-	if (nht_find_existing(lpm, entry, &nht_pos) == 0) {
+-		uint8_t *nht_entry;
+-
+-		if (nht_find_free(lpm, &nht_pos) == 0) {
+-			TABLE_LOG(ERR, "%s: NHT full", __func__);
+-			return -1;
+-		}
+-
+-		nht_entry = &lpm->nht[nht_pos * lpm->entry_size];
+-		memcpy(nht_entry, entry, lpm->entry_size);
+-	}
+-
+-	/* Add rule to low level LPM table */
+-	if (rte_lpm6_add(lpm->lpm, &ip_prefix->ip, ip_prefix->depth,
+-		nht_pos) < 0) {
+-		TABLE_LOG(ERR, "%s: LPM IPv6 rule add failed", __func__);
+-		return -1;
+-	}
+-
+-	/* Commit NHT changes */
+-	lpm->nht_users[nht_pos]++;
+-	lpm->nht_users[nht_pos0] -= nht_pos0_valid;
+-
+-	*key_found = nht_pos0_valid;
+-	*entry_ptr = (void *) &lpm->nht[nht_pos * lpm->entry_size];
+-	return 0;
+-}
+-
+-static int
+-rte_table_lpm_ipv6_entry_delete(
+-	void *table,
+-	void *key,
+-	int *key_found,
+-	void *entry)
+-{
+-	struct rte_table_lpm_ipv6 *lpm = table;
+-	struct rte_table_lpm_ipv6_key *ip_prefix =
+-		key;
+-	uint32_t nht_pos;
+-	int status;
+-
+-	/* Check input parameters */
+-	if (lpm == NULL) {
+-		TABLE_LOG(ERR, "%s: table parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (ip_prefix == NULL) {
+-		TABLE_LOG(ERR, "%s: ip_prefix parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-	if ((ip_prefix->depth == 0) || (ip_prefix->depth > 128)) {
+-		TABLE_LOG(ERR, "%s: invalid depth (%d)", __func__,
+-			ip_prefix->depth);
+-		return -EINVAL;
+-	}
+-
+-	/* Return if rule is not present in the table */
+-	status = rte_lpm6_is_rule_present(lpm->lpm, &ip_prefix->ip,
+-		ip_prefix->depth, &nht_pos);
+-	if (status < 0) {
+-		TABLE_LOG(ERR, "%s: LPM IPv6 algorithmic error",
+-			__func__);
+-		return -1;
+-	}
+-	if (status == 0) {
+-		*key_found = 0;
+-		return 0;
+-	}
+-
+-	/* Delete rule from the low-level LPM table */
+-	status = rte_lpm6_delete(lpm->lpm, &ip_prefix->ip, ip_prefix->depth);
+-	if (status) {
+-		TABLE_LOG(ERR, "%s: LPM IPv6 rule delete failed",
+-			__func__);
+-		return -1;
+-	}
+-
+-	/* Commit NHT changes */
+-	lpm->nht_users[nht_pos]--;
+-
+-	*key_found = 1;
+-	if (entry)
+-		memcpy(entry, &lpm->nht[nht_pos * lpm->entry_size],
+-			lpm->entry_size);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_lpm_ipv6_lookup(
+-	void *table,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	void **entries)
+-{
+-	struct rte_table_lpm_ipv6 *lpm = (struct rte_table_lpm_ipv6 *) table;
+-	uint64_t pkts_out_mask = 0;
+-	uint32_t i;
+-
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-	RTE_TABLE_LPM_IPV6_STATS_PKTS_IN_ADD(lpm, n_pkts_in);
+-
+-	pkts_out_mask = 0;
+-	for (i = 0; i < (uint32_t)(RTE_PORT_IN_BURST_SIZE_MAX -
+-		rte_clz64(pkts_mask)); i++) {
+-		uint64_t pkt_mask = 1LLU << i;
+-
+-		if (pkt_mask & pkts_mask) {
+-			struct rte_mbuf *pkt = pkts[i];
+-			const struct rte_ipv6_addr *ip;
+-			int status;
+-			uint32_t nht_pos;
+-
+-			ip = (struct rte_ipv6_addr *)RTE_MBUF_METADATA_UINT8_PTR(pkt, lpm->offset);
+-			status = rte_lpm6_lookup(lpm->lpm, ip, &nht_pos);
+-			if (status == 0) {
+-				pkts_out_mask |= pkt_mask;
+-				entries[i] = (void *) &lpm->nht[nht_pos *
+-					lpm->entry_size];
+-			}
+-		}
+-	}
+-
+-	*lookup_hit_mask = pkts_out_mask;
+-	RTE_TABLE_LPM_IPV6_STATS_PKTS_LOOKUP_MISS(lpm, n_pkts_in - rte_popcount64(pkts_out_mask));
+-	return 0;
+-}
+-
+-static int
+-rte_table_lpm_ipv6_stats_read(void *table, struct rte_table_stats *stats, int clear)
+-{
+-	struct rte_table_lpm_ipv6 *t = table;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &t->stats, sizeof(t->stats));
+-
+-	if (clear)
+-		memset(&t->stats, 0, sizeof(t->stats));
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_table_lpm_ipv6_ops)
+-struct rte_table_ops rte_table_lpm_ipv6_ops = {
+-	.f_create = rte_table_lpm_ipv6_create,
+-	.f_free = rte_table_lpm_ipv6_free,
+-	.f_add = rte_table_lpm_ipv6_entry_add,
+-	.f_delete = rte_table_lpm_ipv6_entry_delete,
+-	.f_add_bulk = NULL,
+-	.f_delete_bulk = NULL,
+-	.f_lookup = rte_table_lpm_ipv6_lookup,
+-	.f_stats = rte_table_lpm_ipv6_stats_read,
+-};
+diff --git a/lib/table/rte_table_stub.c b/lib/table/rte_table_stub.c
+deleted file mode 100644
+index 3d2ac55c49..0000000000
+--- a/lib/table/rte_table_stub.c
++++ /dev/null
+@@ -1,95 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#include <string.h>
+-
+-#include <eal_export.h>
+-#include <rte_malloc.h>
+-
+-#include "rte_table_stub.h"
+-
+-#include "table_log.h"
+-
+-#ifdef RTE_TABLE_STATS_COLLECT
+-
+-#define RTE_TABLE_LPM_STATS_PKTS_IN_ADD(table, val) \
+-	table->stats.n_pkts_in += val
+-#define RTE_TABLE_LPM_STATS_PKTS_LOOKUP_MISS(table, val) \
+-	table->stats.n_pkts_lookup_miss += val
+-
+-#else
+-
+-#define RTE_TABLE_LPM_STATS_PKTS_IN_ADD(table, val)
+-#define RTE_TABLE_LPM_STATS_PKTS_LOOKUP_MISS(table, val)
+-
+-#endif
+-
+-struct rte_table_stub {
+-	struct rte_table_stats stats;
+-};
+-
+-static void *
+-rte_table_stub_create(__rte_unused void *params,
+-		__rte_unused int socket_id,
+-		__rte_unused uint32_t entry_size)
+-{
+-	struct rte_table_stub *stub;
+-	uint32_t size;
+-
+-	size = sizeof(struct rte_table_stub);
+-	stub = rte_zmalloc_socket("TABLE", size, RTE_CACHE_LINE_SIZE,
+-		socket_id);
+-	if (stub == NULL) {
+-		TABLE_LOG(ERR,
+-			"%s: Cannot allocate %u bytes for stub table",
+-			__func__, size);
+-		return NULL;
+-	}
+-
+-	return stub;
+-}
+-
+-static int
+-rte_table_stub_lookup(
+-	__rte_unused void *table,
+-	__rte_unused struct rte_mbuf **pkts,
+-	__rte_unused uint64_t pkts_mask,
+-	uint64_t *lookup_hit_mask,
+-	__rte_unused void **entries)
+-{
+-	__rte_unused struct rte_table_stub *stub = (struct rte_table_stub *) table;
+-	__rte_unused uint32_t n_pkts_in = rte_popcount64(pkts_mask);
+-
+-	RTE_TABLE_LPM_STATS_PKTS_IN_ADD(stub, n_pkts_in);
+-	*lookup_hit_mask = 0;
+-	RTE_TABLE_LPM_STATS_PKTS_LOOKUP_MISS(stub, n_pkts_in);
+-
+-	return 0;
+-}
+-
+-static int
+-rte_table_stub_stats_read(void *table, struct rte_table_stats *stats, int clear)
+-{
+-	struct rte_table_stub *t = table;
+-
+-	if (stats != NULL)
+-		memcpy(stats, &t->stats, sizeof(t->stats));
+-
+-	if (clear)
+-		memset(&t->stats, 0, sizeof(t->stats));
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_table_stub_ops)
+-struct rte_table_ops rte_table_stub_ops = {
+-	.f_create = rte_table_stub_create,
+-	.f_free = NULL,
+-	.f_add = NULL,
+-	.f_delete = NULL,
+-	.f_add_bulk = NULL,
+-	.f_delete_bulk = NULL,
+-	.f_lookup = rte_table_stub_lookup,
+-	.f_stats = rte_table_stub_stats_read,
+-};
+diff --git a/lib/table/rte_table_stub.h b/lib/table/rte_table_stub.h
+deleted file mode 100644
+index f7e589df16..0000000000
+--- a/lib/table/rte_table_stub.h
++++ /dev/null
+@@ -1,30 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2014 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_TABLE_STUB_H__
+-#define __INCLUDE_RTE_TABLE_STUB_H__
+-
+-/**
+- * @file
+- * RTE Table Stub
+- *
+- * The stub table lookup operation produces lookup miss for all input packets.
+- */
+-
+-#include "rte_table.h"
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-/** Stub table parameters: NONE */
+-
+-/** Stub table operations */
+-extern struct rte_table_ops rte_table_stub_ops;
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif
+diff --git a/lib/table/table_log.c b/lib/table/table_log.c
+deleted file mode 100644
+index b329edd2e6..0000000000
+--- a/lib/table/table_log.c
++++ /dev/null
+@@ -1,7 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright (c) 2024 Stephen Hemminger <stephen@networkplumber.org>
+- */
+-
+-#include <rte_log.h>
+-
+-RTE_LOG_REGISTER_DEFAULT(table_logtype, INFO);
+diff --git a/lib/table/table_log.h b/lib/table/table_log.h
+deleted file mode 100644
+index b24b8614c2..0000000000
+--- a/lib/table/table_log.h
++++ /dev/null
+@@ -1,11 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright (c) 2023 Red Hat, Inc.
+- */
+-
+-#include <rte_log.h>
+-
+-extern int table_logtype;
+-#define RTE_LOGTYPE_TABLE table_logtype
+-
+-#define TABLE_LOG(level, ...) \
+-	RTE_LOG_LINE(level, TABLE, "" __VA_ARGS__)
 -- 
 2.53.0
 
