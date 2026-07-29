@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7265EC53200
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Jul 2026 17:59:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D993C53219
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Jul 2026 17:59:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 945A640E20;
-	Wed, 29 Jul 2026 19:57:53 +0200 (CEST)
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
- [209.85.214.176])
- by mails.dpdk.org (Postfix) with ESMTP id E030E40A72
- for <dev@dpdk.org>; Wed, 29 Jul 2026 19:57:45 +0200 (CEST)
-Received: by mail-pl1-f176.google.com with SMTP id
- d9443c01a7336-2cedda2ce6fso11312935ad.1
- for <dev@dpdk.org>; Wed, 29 Jul 2026 10:57:45 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2A24A40E2C;
+	Wed, 29 Jul 2026 19:57:55 +0200 (CEST)
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com
+ [209.85.214.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 03D2C40A72
+ for <dev@dpdk.org>; Wed, 29 Jul 2026 19:57:47 +0200 (CEST)
+Received: by mail-pl1-f181.google.com with SMTP id
+ d9443c01a7336-2cfbbdfa60bso12947925ad.3
+ for <dev@dpdk.org>; Wed, 29 Jul 2026 10:57:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785347865;
- x=1785952665; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785347866;
+ x=1785952666; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=9SRYJA6kGluYRuHR+7eOHy9YKHPYkjSgvmYyE4dZVz0=;
- b=ruFxa66NAXGT/gxs6hwYj4CjQDXDbfCSlemXi7raCZPYCSDZ4O5T5Htiwrd039I+II
- iQ+ReAlBfN7DpLlOly/WyrItd5IG1GPqqZCXpZQv4zejdVUcStn97vxai7OHUKywSxhK
- ZiBqU9fqOIzxTP3NUTG8z3D+GkTWskRDNTrYws2Ihn26L8DaogL/FKyMt8NeTLYnBEgw
- 1ohT8iErAV0r0N51vyz2slaq4eqGLZi0W0eGURKvqZ4iCLHc+ytCU93kmFpzNCO2shNh
- CnCnjCZziKDuGa0uyugar42vpmFXCfrt6cGaAeZiP2Io9zpYxWkArqqWtfoJ2pcr7yMo
- VuNA==
+ bh=b9Yi6lN7wQoSN/Gyv4lYo23zWVZE4Tyl7A3PnPqhYZE=;
+ b=nnaIfQ8XRpC65UNQdqtBwLdc9powzYhrZh/zqtOT1msSEiGCgJ5r7dkRXKl164+PX2
+ lxw6obCTAq3j2j1zda2+isGPzFkswtFvgITnYY9kKDDNdDqg2HQfJq53DxleQbp+o3DA
+ +hcGnqCRfOcXicF930LmHcsCPqik/XndBKxgCDIc8/+KqXoqxrdFMD05S21bH8MF4Tgs
+ PmrkAeaztDLKnPJF5St9TLihPkpmppFQgqt0xBolFyK0FnzORpH9ih60DiEJg6Nx+OSL
+ uQAY8xfejwymLBOcw78+65NlPvtPQCcpXcFs4olC0OVMoeIvBdFThnC/SRLB9N+KLPRP
+ /igA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785347865; x=1785952665;
+ d=1e100.net; s=20251104; t=1785347866; x=1785952666;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=9SRYJA6kGluYRuHR+7eOHy9YKHPYkjSgvmYyE4dZVz0=;
- b=d4fV3qUPY400B1V4QZuefVwk1BhNM8d87BNzocJXRHSERTNMSE9+4uiV2Pn4/JBG1S
- s0LLGN/08rXQHZVmqQlWlv77+gG11WxNyoSQk/mApHPIjzA/P9Lx4EihqRcswGbykizV
- EWlwT+8/N8+VpogUYBNH8I4O+R7vzEqxiuan/HLDV1a7kjwQxfL0TJyin+5+v4H/ooo1
- x2I6yrygP3HOsjyB0dY2MuGX15gy8S021KhTuNoQU/3aESC0BwrETNRouEPHWe5jAU84
- 9QyrMNZJ1lOdTE2RQruS9sJHtmoniXsIyGoKaSquSU5flnteVIn+2nmPRGtR+SvaKBWw
- 0WYw==
-X-Gm-Message-State: AOJu0Yxs1kZZ61rvK+lLOhMsZa8StMqJhmEt4SmpgiqIQoiqqOhurW0z
- qKZ5/+3SQnB1s7oAIrmu3L49OmJKZ3Zq/zde/ihlFz64JX+QuvIk/ZaSYnJolFyBJ+SKDOF32cB
- jRihn
-X-Gm-Gg: AR+sD11x82mmuNsg95PsOITTbA1doAhvrPOFmzVidZ5nPoqgVWcAgiFOzBIhE3nyFQi
- uznHVKCn0CZllhBqhI3957nStsi9HELcB0y7v5PYYk495JvYgBYPfmLUOKaSNlA4VY7LJJ5ayHE
- TKB8vyQqdJUtgDoNO3FomuGCmeeqMm2wZTy9TJPCPFEbmVPGmmPFq+RQVpRqq7e+fdN6Bzg+b8B
- 9XnyuE8T1w5Xl2R2dB/EVYLc/MWiUIIb16WMWVqu+DTZh0tY31DYbkYpl+/fG8efjf1c4wotDWM
- a2W/bnkLAlC+1WWiYRfSxQG+ncmQd+bP8AnAIe2AU+Vgkgb5ZRFY+yuFSsBd/np7IZ74cvaTKyB
- qu/KCIi9J46vNpseQMn4VY5ATdSWmgg0UfO0Up/R1VtphkZPnuQpw8JBZ4rMuywU7BxyRwufs7w
- 30wxe35FXutCGMXOR5H/1QHRaSi7Mpz/NErJDZSQggOnNHpFaI9XALHUBzXyOGyaFWV/HqZ8IH6
- 6zOWIUVZrDoepBckfj3RaCN7zg=
-X-Received: by 2002:a17:902:f78e:b0:2ca:d151:383a with SMTP id
- d9443c01a7336-2d015a996dcmr90987565ad.20.1785347865048; 
- Wed, 29 Jul 2026 10:57:45 -0700 (PDT)
+ bh=b9Yi6lN7wQoSN/Gyv4lYo23zWVZE4Tyl7A3PnPqhYZE=;
+ b=TpRHoRRzPzwq4HiiRTPXVVnzaC6leDfEF+vOPPomVEDsrduVavgehjh6dTr67phC6D
+ RJBz9m2VADv7cEc7LkI9YTDsUHdDk36r4mGH4uKIA7GeblJvgWA7BGZvy+7eHR0sb95w
+ 3W0g1TzYbT1iQ5wv1op+z1Uv0yY8+kF1VXB8U1gNN0sNLD/FYis92hRuGw3uxZLZrOtV
+ mqiLxG6yPYI9xO6qKAxTx0iUgzjF24AzpDotN43msgaULe4Y2uWTGZpHKaQyXNmBBBPF
+ v1h/aLxYxtXVcSUvpIqFcEJC9tOCg+C7VrD92Xhdzv28l7aGOILpbCAEgFGA0S941hQv
+ 8h2Q==
+X-Gm-Message-State: AOJu0Yy2MNjihKCnGLM0OCQsXmTXp3KL8BAxh2QnQUkTnnm1HTeXysZj
+ 7g1dZ0wpnF+jwptrmlCdleLj+xF/yYlkN6Cg6T/dRHzI7gzj4m+43A7mXAoUfPK/bUEm5jxC5EC
+ GCz63
+X-Gm-Gg: AR+sD12leu6qjryxf4+UiBB+2Xmv5nFt0gsQLEeMTQmUTwsHqDnpcgsmTP6tZYtGH4A
+ k6pf5iLmGqL6LPsToswHBYYSrRvdCZYq0A/EXukZ6YalCRIGPJx3k6aDp47WYnePcPXoIVwFh3o
+ wjT2mkz2WXKFQFTCOpNMjSYL7UquuGx2kiefl9/6r+Pb8lVAI4WywFSfr1ntHqYy1/bEa2y6Ujf
+ D7DpHwyZfFdyW7qc7gx6XTKGGDP/o7Z4cjLcz+eYp7nIjgNlyze5anspjbGm9wZpUiTUxaRt0cA
+ RMdsUnS/W5JdlAm9xaL55k1GbLqtJlSzlXF8qxpgWS2TKacZHVtKYOpHYwpwbVK/Gblqmj+YUM5
+ sUKDxrLUHegUCbq670C/CRHHrCvDDkxx5q/prS6jBSWAQ/hVYv2IdM4qHfSRSh4bql3htwG4EBc
+ lzzPdKEqdWs+RS3dMWai4F0fXXAzTHQeY+IWkCeS0u8BwZ9EksPjuvzQxABR73jmvK+mhxWKdr5
+ gD5RR83vuqjxBZ5H/tBI6AKrmk=
+X-Received: by 2002:a05:6a21:7706:b0:3bf:7498:9cd1 with SMTP id
+ adf61e73a8af0-3c8ba5d8aecmr9399378637.45.1785347866159; 
+ Wed, 29 Jul 2026 10:57:46 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-31504b15f77sm13111562eec.4.2026.07.29.10.57.44
+ 5a478bee46e88-31504b15f77sm13111562eec.4.2026.07.29.10.57.45
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 29 Jul 2026 10:57:44 -0700 (PDT)
+ Wed, 29 Jul 2026 10:57:45 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Liang Ma <liangma@bytedance.com>, Peter Mccarthy <peter.mccarthy@intel.com>
-Subject: [RFC 25/32] event/opdl: replace SMP barriers with C11 atomics
-Date: Wed, 29 Jul 2026 10:54:18 -0700
-Message-ID: <20260729175715.165120-26-stephen@networkplumber.org>
+ Long Li <longli@microsoft.com>, Wei Hu <weh@microsoft.com>
+Subject: [RFC 26/32] net/netvsc: replace SMP barrier in RNDIS response
+Date: Wed, 29 Jul 2026 10:54:19 -0700
+Message-ID: <20260729175715.165120-27-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260729175715.165120-1-stephen@networkplumber.org>
 References: <20260729175715.165120-1-stephen@networkplumber.org>
@@ -83,40 +83,29 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Publishing the port becomes a release store of the configured flag;
-the barrier after clearing started becomes a release fence. Both
-are control path.
+Publishing the copied response before clearing the pending id is
+release ordering. The following cmpset is a full barrier today, but
+keep the explicit fence so the ordering survives when cmpset is
+converted to a release compare exchange.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/event/opdl/opdl_evdev.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/net/netvsc/hn_rndis.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/event/opdl/opdl_evdev.c b/drivers/event/opdl/opdl_evdev.c
-index ffa65ef930..1450fa5ae8 100644
---- a/drivers/event/opdl/opdl_evdev.c
-+++ b/drivers/event/opdl/opdl_evdev.c
-@@ -200,8 +200,9 @@ opdl_port_setup(struct rte_eventdev *dev,
- 	p->queue_id = OPDL_INVALID_QID;
- 	p->external_qid = OPDL_INVALID_QID;
- 	dev->data->ports[port_id] = p;
--	rte_smp_wmb();
--	p->configured = 1;
-+	/* Release publishes port setup before the configured flag */
-+	rte_atomic_store_explicit((uint8_t __rte_atomic *)&p->configured, 1,
-+				  rte_memory_order_release);
- 	device->nb_ports++;
- 	return 0;
- }
-@@ -477,7 +478,7 @@ opdl_stop(struct rte_eventdev *dev)
+diff --git a/drivers/net/netvsc/hn_rndis.c b/drivers/net/netvsc/hn_rndis.c
+index 7c54eebcef..d1142fa1dd 100644
+--- a/drivers/net/netvsc/hn_rndis.c
++++ b/drivers/net/netvsc/hn_rndis.c
+@@ -357,7 +357,7 @@ void hn_rndis_receive_response(struct hn_data *hv,
+ 	memcpy(hv->rndis_resp, data, len);
  
- 	device->started = 0;
- 
+ 	/* make sure response copied before update */
 -	rte_smp_wmb();
 +	rte_atomic_thread_fence(rte_memory_order_release);
- }
  
- static int
+ 	if (rte_atomic32_cmpset(&hv->rndis_pending, hdr->rid, 0) == 0) {
+ 		PMD_DRV_LOG(NOTICE,
 -- 
 2.53.0
 
