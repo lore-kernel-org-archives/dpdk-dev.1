@@ -2,69 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BABCAC53219
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Jul 2026 17:58:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05543C53219
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Jul 2026 17:58:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 07AF640BA5;
-	Wed, 29 Jul 2026 19:57:40 +0200 (CEST)
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com
- [209.85.215.181])
- by mails.dpdk.org (Postfix) with ESMTP id D8A9C40A76
- for <dev@dpdk.org>; Wed, 29 Jul 2026 19:57:33 +0200 (CEST)
-Received: by mail-pg1-f181.google.com with SMTP id
- 41be03b00d2f7-caf45fc5202so1022708a12.1
- for <dev@dpdk.org>; Wed, 29 Jul 2026 10:57:33 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 90A2740DCF;
+	Wed, 29 Jul 2026 19:57:41 +0200 (CEST)
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com
+ [209.85.216.43]) by mails.dpdk.org (Postfix) with ESMTP id 0054340A77
+ for <dev@dpdk.org>; Wed, 29 Jul 2026 19:57:34 +0200 (CEST)
+Received: by mail-pj1-f43.google.com with SMTP id
+ 98e67ed59e1d1-38a0c7e841fso1514865a91.2
+ for <dev@dpdk.org>; Wed, 29 Jul 2026 10:57:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785347853;
- x=1785952653; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785347854;
+ x=1785952654; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=j+6++tilbNRJ6kg26GjuFzl8xP9OUNprHsnbNrRi+O0=;
- b=nDekkWY4L1OKu8Oq8T7en352OHa6Tt3/CwJYAnhASzzQBjerNYGmZEGNFkyN53672A
- Ip487aB6trpnLuUsTDulI5xXFoaVFL7CUSTtB8/E3nLCXxK1CtPwLF4AwPaCurbLi6oY
- cz88kZBcH0NzrUDitVHKUCdv72AA+6MmZSu3RFcItdDpfz8huTeTCjFp1SJrTXQ6qtfG
- f9zvqLrefAcv1KNkdGGjFv2XNLGMu4rWhhYEHuANXgYUZYM5NgdTGejXD5rBQg+8wuEy
- 4+2GARPtcuC1E1FgoS0NpCdZ2U0SFk7CzG7hCT4gSQi/q9apXxcWNL4gCJ9wb64UwNc7
- 4NXA==
+ bh=itJu7z9VhR+JTTjH94afMzC5NopkgNPKksLSUQGu/60=;
+ b=vwBbXEeKuNbHlHoDUI52KEnhDNXgaMmWXCHsIr0iXJ71UZO66ACvn5lKDxoQUosE6Y
+ lwCi5PGZS915CUXGb0SfG28+Sw3QKMXwApXgKB6bGFHUYfwJICTNlO10m7SKoBRBIPTb
+ lKXOTL6vOTgU3hIApk3H9mq1Jnlk3CxAtfwDVs1fiK8zz7xt7D7yrQ0ObSINam3tiApf
+ I0clKQR6Cdq0p3U8xyI6joIq7rl1hnEpfZUIfHaPoJ7Jl+V3hNs3D6U5mbZ/e8rNjuKs
+ pP9JL6kAoFGzJnsZ3RUZFmWWSjYRenmrG+WOHtHkCnL1/9PgIX6sB9QBnFeIoEuCYLad
+ G4KQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785347853; x=1785952653;
+ d=1e100.net; s=20251104; t=1785347854; x=1785952654;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=j+6++tilbNRJ6kg26GjuFzl8xP9OUNprHsnbNrRi+O0=;
- b=hP/fADzUrGPfZK3DWN6Fn2k+CRPzUPoEyKaH+bYrkQlA6Efd1DgHdy6q1wW2M1eowN
- w6LZ96I7qSG/7hMSKTeH6t3zB8ZjEr7QocsSoDS1selqfpIfzX36+6lHwF16byG6NNwH
- c621bIp6eZJrlhw3Z1HcDlbSjXuiqueM7kKUaD3C1Ew2GsP4Ad77jvd8Svi8GjX17exd
- LfalarS2W9lX+yx0C62065vzDXOiRPTVbXNhtsuVu+VyYDDiVD0/Eoo9EAEAD8m0Waio
- tTz8AWtEBtTC+bZzYtMbiL2Jvo+bQgagY811R4Hf1A9B2SuBe2gCUCAxrKtB3Itr2GP9
- ptGA==
-X-Gm-Message-State: AOJu0YxkJ62GMUhupXHuAUGZ0bVsVPrVF0d5sXtM6gaXqvzKFLvhB/RY
- b9Dn5wpWz1GvLjVoGiRYwWslv58Nj+cI9GuqEov28bcXGinPlmELoZL8T6HcnuZVEjYjrWJPtE1
- bmrlx
-X-Gm-Gg: AR+sD13fepWjRqW+xKTXn2hwVkOdXhETYXsFZENHEEWVTaYaQS8/D9dKO0xAHF7RY7F
- XhHhgdZoDPRsVFgSx0Yz1GFQDkhl8dfzvEsqz4WFGyiDAjaxZWLqp2n6xPLR/q6Ibpn+C5heBSN
- SOkR3XqBaPWsOnYB2hxBB+3R1gwH5DwZNKjutMKRVt5JIKdMs3MEasUGpb4fxfCIhdZSpuc961E
- wGf3aAcsgJyY9CMWSMAN1ayPKiFFwj9LOG1KQ8dI9sJ7DrE3/Ryk6Eq/96pL1Pd8KlgRilovlGv
- +73FjUHZ8kTij6/2wbTnvcl5c1Wu5by2bqA1YXHmCqRfv4hWA/IWCqOxRfpLYVumXpmlhNQKJNT
- BpC79IyYxzPpZ5qDdsHN38U/ye15QdZSFlmcZsyNT64dEPtL716ut41U71OJvKXRZIDpXGo/Lc5
- hCiQLeTZivBAkblGAmRfmAAFxm3lC80dwSOmZKH1QWb5lsl/e8TPYwD/b/Wy0hxHxytV0swUJur
- ZjqONfRn9uhT3Z00YlvLBm+L5/n
-X-Received: by 2002:a05:6a20:a122:b0:3c0:9c18:d5a7 with SMTP id
- adf61e73a8af0-3c8ba6c55ddmr9288069637.68.1785347852991; 
- Wed, 29 Jul 2026 10:57:32 -0700 (PDT)
+ bh=itJu7z9VhR+JTTjH94afMzC5NopkgNPKksLSUQGu/60=;
+ b=Ch9pZiG2Z+SLbo+zI1ya57mhGdUFhPxUCUSGcvKgoYmXrXstmqJjw4a9e7RXmZmwkS
+ +NYUCiKhfz16VBqchzhzQ2SKyVzwWYh/CrOLVAdiN/cbkzXri5CX7aIZJwZS30ZxtMyT
+ hqvl4PBNr6ej4Z4E6yThS9cQbrKIH3EeURqDxsrn/XDvrLVWaQ848VMc6ZPpFVfwsb3j
+ rpx3NEALsfco6LaXrC5FRDuJ1dVV5fD/xMuHII/EiRCRfhhWfHlQ1AvME1/Yrg4Jy5R2
+ zrhMvfPpTUEOwIfsP9OYVyg3ypp8PmrC8G7jTG/bLUHpDBIF+KhQ2RNdRduPP41OhdkX
+ cfyQ==
+X-Gm-Message-State: AOJu0Yy0kvssPhKtU3Daj7ZxOqBNlwBEdKUPk5PZjTm2JWfyS4tC2G1r
+ iuU1wkdTmVlJm5mrVWD8dvNT8r5DNN5WH6mIrz3TMrNTR+y2X5o0fC+og+gg1D+KoK/zGktSLtk
+ i/AoC
+X-Gm-Gg: AR+sD12RSZule0BCCcU+uSIW6gyyUTKrlY8+Wlk4DUbxRHjk99/5NVKwdyl6+ccX1Yo
+ 8Ig2BK9iCV0Zvoe91DPxrbPa0TYBRf1z18uoTW67cU62elHCJWuUt7r1heZNFKMsuYh7k6c/UNt
+ VGHof7r9++/Fq2mDdo1TEBy0aoX+0cXP4jD20bHLlMwnYDpW904D6J884C8Oo+gadZ6Y3Tdpjg6
+ 1xABuWUbmZA8xIx0CyrRdwUjy7pyaovma3ZKGHShbbTPoGkckMVjA8bRuAVAHvB9c79XyWQAoLm
+ tPwsGg9ZUst629zrR4uQKWN5/YKrfK38wka/AuGvmP5gLSypD5Loa20v6gJOofUh603TYQO0PIX
+ xsAcifo5jGD3wcXtZAVEqHzEJ7WZo0VcnySocY46RD6EoxcEVUe2piC78kSfAWV4Lk5jU9OgqDd
+ 2oP3c0PYP8L/pJ1urkF5LkUpazozMkOEXNYXgLKWnu8VgMk8OBJzwvgY9gULdkp7Kkm7FVCQqJQ
+ VvbZSSQBo4fcIuMGRmw1gniS14=
+X-Received: by 2002:a17:90b:1645:b0:38f:5801:cd76 with SMTP id
+ 98e67ed59e1d1-38f6a3d55ffmr7271404a91.3.1785347854120; 
+ Wed, 29 Jul 2026 10:57:34 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-31504b15f77sm13111562eec.4.2026.07.29.10.57.32
+ 5a478bee46e88-31504b15f77sm13111562eec.4.2026.07.29.10.57.33
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 29 Jul 2026 10:57:32 -0700 (PDT)
+ Wed, 29 Jul 2026 10:57:33 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Jay Zhou <jianjay.zhou@huawei.com>
-Subject: [RFC 14/32] crypto/virtio: update comment reference to rte_smp_rmb
-Date: Wed, 29 Jul 2026 10:54:07 -0700
-Message-ID: <20260729175715.165120-15-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Harry van Haaren <harry.van.haaren@intel.com>
+Subject: [RFC 15/32] event/sw: fix unlinks in progress counter races
+Date: Wed, 29 Jul 2026 10:54:08 -0700
+Message-ID: <20260729175715.165120-16-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260729175715.165120-1-stephen@networkplumber.org>
 References: <20260729175715.165120-1-stephen@networkplumber.org>
@@ -83,26 +82,92 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The rte_smp_rmb helper is no longer used.
+The counter is written by both the application thread (increment on
+unlink) and the scheduler (clear on ack) as a plain uint8_t. An
+increment is lost if it lands between the scheduler's test and clear,
+making rte_event_port_unlinks_in_progress() report completion before
+the scheduler has seen the unlink. Nothing orders the scheduler's
+later cq map reads against the counter test on a weakly ordered CPU
+either.
+
+Make the counter atomic: release fetch-add on unlink, acquire
+exchange to clear. The exchange cannot lose a concurrent increment,
+and the acquire guarantees the scheduler only acks unlinks whose cq
+map update it can observe, replacing the full barrier in unlink.
+
+Fixes: bd5ac24fea88 ("event/sw: implement unlinks in progress function")
+Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/crypto/virtio/virtqueue.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/event/sw/sw_evdev.c           |  8 +++++---
+ drivers/event/sw/sw_evdev.h           |  2 +-
+ drivers/event/sw/sw_evdev_scheduler.c | 13 ++++++++++---
+ 3 files changed, 16 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/crypto/virtio/virtqueue.h b/drivers/crypto/virtio/virtqueue.h
-index 97a3ace48c..23c001a8e6 100644
---- a/drivers/crypto/virtio/virtqueue.h
-+++ b/drivers/crypto/virtio/virtqueue.h
-@@ -302,7 +302,7 @@ virtqueue_nused(const struct virtqueue *vq)
+diff --git a/drivers/event/sw/sw_evdev.c b/drivers/event/sw/sw_evdev.c
+index 3ad82e94ac..bb6f50e03b 100644
+--- a/drivers/event/sw/sw_evdev.c
++++ b/drivers/event/sw/sw_evdev.c
+@@ -119,8 +119,9 @@ sw_port_unlink(struct rte_eventdev *dev, void *port, uint8_t queues[],
+ 		}
+ 	}
  
- 	if (vq->hw->weak_barriers) {
+-	p->unlinks_in_progress += unlinked;
+-	rte_smp_mb();
++	/* Pairs with the acquire exchange in the scheduler */
++	rte_atomic_fetch_add_explicit(&p->unlinks_in_progress, unlinked,
++				      rte_memory_order_release);
+ 
+ 	return unlinked;
+ }
+@@ -130,7 +131,8 @@ sw_port_unlinks_in_progress(struct rte_eventdev *dev, void *port)
+ {
+ 	RTE_SET_USED(dev);
+ 	struct sw_port *p = port;
+-	return p->unlinks_in_progress;
++	return rte_atomic_load_explicit(&p->unlinks_in_progress,
++					rte_memory_order_relaxed);
+ }
+ 
+ static int
+diff --git a/drivers/event/sw/sw_evdev.h b/drivers/event/sw/sw_evdev.h
+index c159be21be..8b9118bf91 100644
+--- a/drivers/event/sw/sw_evdev.h
++++ b/drivers/event/sw/sw_evdev.h
+@@ -160,7 +160,7 @@ struct sw_port {
+ 	 * progress is read by the scheduler, no more events will be pushed to
+ 	 * the port - hence the scheduler core can just assign zero.
+ 	 */
+-	uint8_t unlinks_in_progress;
++	RTE_ATOMIC(uint8_t) unlinks_in_progress;
+ 
+ 	int16_t is_directed; /** Takes from a single directed QID */
  	/**
--	 * x86 prefers to using rte_smp_rmb over rte_atomic_load_explicit as it
-+	 * x86 prefers to using virtio_rmb over rte_atomic_load_explicit as it
- 	 * reports a slightly better perf, which comes from the saved
- 	 * branch by the compiler.
- 	 * The if and else branches are identical with the smp and io
+diff --git a/drivers/event/sw/sw_evdev_scheduler.c b/drivers/event/sw/sw_evdev_scheduler.c
+index a5fdcf301b..f4bce2cbb8 100644
+--- a/drivers/event/sw/sw_evdev_scheduler.c
++++ b/drivers/event/sw/sw_evdev_scheduler.c
+@@ -523,9 +523,16 @@ sw_event_schedule(struct rte_eventdev *dev)
+ 		do {
+ 			in_pkts = 0;
+ 			for (i = 0; i < sw->port_count; i++) {
+-				/* ack the unlinks in progress as done */
+-				if (sw->ports[i].unlinks_in_progress)
+-					sw->ports[i].unlinks_in_progress = 0;
++				/* Ack the unlinks in progress as done. The
++				 * acquire exchange orders the cq map reads
++				 * below after the unlinker's map update.
++				 */
++				if (rte_atomic_load_explicit(
++						&sw->ports[i].unlinks_in_progress,
++						rte_memory_order_relaxed))
++					rte_atomic_exchange_explicit(
++						&sw->ports[i].unlinks_in_progress,
++						0, rte_memory_order_acquire);
+ 
+ 				if (sw->ports[i].is_directed)
+ 					in_pkts += sw_schedule_pull_port_dir(sw, i);
 -- 
 2.53.0
 
