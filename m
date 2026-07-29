@@ -2,74 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C1C9C53200
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Jul 2026 09:46:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DF9C54F51
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Jul 2026 10:32:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C89E74026D;
-	Wed, 29 Jul 2026 11:46:38 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 98B7A40269
- for <dev@dpdk.org>; Wed, 29 Jul 2026 11:46:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1785318396;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=mU3VJsmxpAsdW0hFPUMe+wVtTK96zp598IGt0BkGSvE=;
- b=NfHRLCiIi4hknBsji0Yk3C3m7Vt23kFz34SGUY0APgqAp06sfbFc3JchsXNmbIgu0fYzwB
- le2cp+Jhh3GYvFbGngm+hvowYQU9NFwZXzuHleuHdIe2CcsLqgpkAXIZFi5NzObRCl/gWR
- /6EMdxvLai6a1++13Kq4Kr/MX7SXplE=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-10-syB_VI-dMUSwzA2I7lui7A-1; Wed, 29 Jul 2026 05:46:34 -0400
-X-MC-Unique: syB_VI-dMUSwzA2I7lui7A-1
-X-Mimecast-MFC-AGG-ID: syB_VI-dMUSwzA2I7lui7A_1785318393
-Received: by mail-lf1-f69.google.com with SMTP id
- 2adb3069b0e04-5b2a9f6b0b2so421825e87.2
- for <dev@dpdk.org>; Wed, 29 Jul 2026 02:46:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785318392; x=1785923192;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=mU3VJsmxpAsdW0hFPUMe+wVtTK96zp598IGt0BkGSvE=;
- b=PzBKFVFb+dX17ZBWhKtqPAZ/8zzAaMXvE1EOV6uau0PSAoeCBl2P6XQgasQbbBudNH
- OPJCm63T/fAvj95i95RMDDGmefZzcYWXXyrZ1oozDQCFpaFennBnMN4Js9SRNqYLsDht
- lnRylzOck2VP9cfhtK8AlqAtrbnnl+X2WMmI5doP/7K6r1S7Wo2JJIxAPoSeObo+HfOB
- c53cEYh2YvIgUbFdyTUwOappT4+FgITRfWt5H+PU0U8gE/c1cVQorZXab8n7MKbxJgEb
- lZ+o2hAVx9l/KEGGjBln1K2yhkzNuk2g0YLTo37fH6CfKc2KDHrkmC5owm6XkaaIF9Ch
- 2F5w==
-X-Gm-Message-State: AOJu0YwUz1xTcA0SXisEN9ngeXB1eoHiY2ZhpiA1jThHvKIGDep2AulR
- sn5VFJJMQp1RosTKqhCxWT328lQdI09Hfp/hi9BNaDA3dOI+RgtHAmz7Gd7amwr3rrtJiFO4osc
- F5WtfqHo210tKmOAgoSp/qkLNYMpX3H55l0f4wBQY6SzY3cB6VGfP144w4GF2OwxLSdBexp+i1M
- szsZLG08LfXd634o89gck=
-X-Gm-Gg: AR+sD13sR077KUw+FwJkZUV4TpecMrRTJXHiNNuRXL7TLeKCLAwIdfa1xX01R1ibsPv
- kI2reY3lR6Ogn1/nRRmfel5clnx3cy3x9k8BG2BhLYGJl0zPSY8OalIXX8au54L32aRqr7GYa9Q
- l+XJDbragnOs1t4IJiZHv6b4FiMM+ncm8diYY8eMKMLIGqtaCBGNNqCjriDTJ5BLrr4GeLxFddn
- kZhTkuJze990PyaW8RSoKXw8n4bdMEUdWti/82gqqnBjhSN
-X-Received: by 2002:a05:6512:2386:b0:5ae:a702:6528 with SMTP id
- 2adb3069b0e04-5b2d021cadfmr1102918e87.26.1785318392357; 
- Wed, 29 Jul 2026 02:46:32 -0700 (PDT)
-X-Received: by 2002:a05:6512:2386:b0:5ae:a702:6528 with SMTP id
- 2adb3069b0e04-5b2d021cadfmr1102911e87.26.1785318391882; Wed, 29 Jul 2026
- 02:46:31 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B94534026D;
+	Wed, 29 Jul 2026 12:32:42 +0200 (CEST)
+Received: from mx0b-003cac02.pphosted.com (mx0b-003cac02.pphosted.com
+ [205.220.181.234])
+ by mails.dpdk.org (Postfix) with ESMTP id 459F140269;
+ Wed, 29 Jul 2026 12:32:41 +0200 (CEST)
+Received: from pps.filterd (m0314250.ppops.net [127.0.0.1])
+ by mx0b-003cac02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 66T81MXt3354840; Wed, 29 Jul 2026 10:32:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=keysight.com; h=
+ cc:content-transfer-encoding:date:from:message-id:mime-version
+ :subject:to; s=keysight-0815; bh=XrAZQAf0nwJXZXAAataSpVeUewgPae/
+ jRcPoRyZU1+k=; b=u1K9fGepG41PNZfl+Fp22aBzax8j98+0QxrgaXqMViYZpCz
+ ItR2Gsr4S1iovy4hd2hbrLFuvI72VU43OS+dMw0B7DADi6hhGsS7DlZxFPFs+wxP
+ GMpgLumVyXlIFuUX0oTfSnpEl4YyxvZuSyHaJmTUWQCkAf66uCTs+DENoup6neSx
+ 4kXOlo+Qe3bsNHbAaYn5oaM5VqsMBbFNGz0T6KgO3NM5mjsUJpDPpUqfSDyYavAt
+ aDsVRSuXlhNaolyaQK8Bq51LzYUoYdHPlwy+Y7ceNP++RDX7dfdLJKv2+5k609wc
+ c2oHjSIC6Q9hMFFczq7dbxhC899rcvagqp66eEQ==
+Received: from smtp-us.ser.proofpoint.com (pmta-use.ser.proofpoint.com
+ [3.215.31.156])
+ by mx0b-003cac02.pphosted.com (PPS) with ESMTPS id 4fn9x5wpjw-1
+ (version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT);
+ Wed, 29 Jul 2026 10:32:40 +0000 (GMT)
+Received: from ppserconnector3.cos.dmz.keysight.com ([192.25.5.34])
+ by cmsmtp with ESMTPSA
+ id p1ZkwPio2VWzXp1aawEyxT; Wed, 29 Jul 2026 10:32:40 +0000
+X-Mailer: SER-9da617c0781f77b24d454c2ffca1e7acced358b813e950646219cc1f5ae32690
+X-Cloudmark-MID: p1ZkwPio2VWzXp1aawEyxT
+pfptstatus: 1568ac97-559f-432f-801f-22d134b402f7@pfpt
+X-Proofpoint-CID: 3612b050-454b-3384-9099-49ecf78b7412
+Received: from eda-dev1.buh.is.keysight.com ([10.38.132.129])
+ by ppserconnector3.cos.dmz.keysight.com with ESMTP
+ id p1aYw4OEwzt35p1aYw9Pij; Wed, 29 Jul 2026 10:32:40 +0000
+ser_con_authuser: ??
+From: Dragos Tarcatu <dragos.tarcatu@keysight.com>
+To: dev@dpdk.org
+Cc: skori@marvell.com, pbhagavatula@marvell.com, stable@dpdk.org,
+ Dragos Tarcatu <dragos.tarcatu@keysight.com>
+Subject: [PATCH] examples/l2fwd-event: fix memset of port statistics array
+Date: Wed, 29 Jul 2026 10:32:36 +0000
+Message-Id: <20260729103236.3878391-1-dragos.tarcatu@keysight.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20260724164520.192203-1-stephen@networkplumber.org>
- <20260728163713.364168-1-stephen@networkplumber.org>
-In-Reply-To: <20260728163713.364168-1-stephen@networkplumber.org>
-From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 29 Jul 2026 11:46:18 +0200
-X-Gm-Features: AUfX_mzLO7OPVPt6o-VZiYzK6qvMaw6jQ9oGVD1jNdUs0LtF0MDmOIPRZBwJ1Ug
-Message-ID: <CAJFAV8ww9-q_QGuYaVhT4dMbYJ7fS_yTbqr05s4CzRrpUvt8Uw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/7] remove deprecated packet framework
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: JOrCYIP90xpO5pxh-K8yYPKqwgiZnmO1BsJvpRg0T3w_1785318393
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,27 +62,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 28 Jul 2026 at 18:37, Stephen Hemminger
-<stephen@networkplumber.org> wrote:
->
-> The packet framework was marked as deprecated in 24.11.
-> This patch series completes the removal of the libraries, documentation,
-> and tests.
->
-> Stephen Hemminger (7):
->   app/test: remove packet framework tests
->   app/test-pipeline: remove application
->   examples/ip_pipeline: remove example
->   pipeline: remove legacy API
->   table: remove legacy API
->   port: remove legacy API
->   doc: remove packet framework images
+port_stats is declared as struct l2fwd_port_statistics[RTE_MAX_ETHPORTS],
+but the memset passed sizeof(struct l2fwd_port_statistics) -- the size
+of a single element -- leaving ports 1 through RTE_MAX_ETHPORTS-1 with
+uninitialized stats. Use sizeof(rsrc->port_stats) to clear the whole
+array regardless of RTE_MAX_ETHPORTS.
 
-So it seems we have a bug in patchwork wrt binary content in patches.
+Surfaced as a -Wmemset-elt-size warning when building with
+-Dmax_ethports=64 -Dexamples=all.
 
-Please send the series without the last patch, so that the CI can do a pass.
+Fixes: 4ff457986f76 ("examples/l2fwd-event: add default poll mode routines")
+Cc: stable@dpdk.org
 
+Signed-off-by: Dragos Tarcatu <dragos.tarcatu@keysight.com>
+---
+ examples/l2fwd-event/main.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/examples/l2fwd-event/main.c b/examples/l2fwd-event/main.c
+index 2d31d4c6ad..eff2bee503 100644
+--- a/examples/l2fwd-event/main.c
++++ b/examples/l2fwd-event/main.c
+@@ -696,8 +696,7 @@ main(int argc, char **argv)
+ 		l2fwd_poll_resource_setup(rsrc);
+ 
+ 	/* initialize port stats */
+-	memset(&rsrc->port_stats, 0,
+-					sizeof(struct l2fwd_port_statistics));
++	memset(rsrc->port_stats, 0, sizeof(rsrc->port_stats));
+ 
+ 	/* All settings are done. Now enable eth devices */
+ 	RTE_ETH_FOREACH_DEV(port_id) {
 -- 
-David Marchand
+2.34.1
 
