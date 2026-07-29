@@ -2,73 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63E22C53219
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Jul 2026 18:00:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 682C4C53219
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Jul 2026 18:00:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B5E8140E24;
-	Wed, 29 Jul 2026 19:57:59 +0200 (CEST)
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
- [209.85.214.170])
- by mails.dpdk.org (Postfix) with ESMTP id 6B3C440DCE
- for <dev@dpdk.org>; Wed, 29 Jul 2026 19:57:51 +0200 (CEST)
-Received: by mail-pl1-f170.google.com with SMTP id
- d9443c01a7336-2cf6d65d8a7so18392775ad.0
- for <dev@dpdk.org>; Wed, 29 Jul 2026 10:57:51 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2786440E4A;
+	Wed, 29 Jul 2026 19:58:01 +0200 (CEST)
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com
+ [209.85.216.45]) by mails.dpdk.org (Postfix) with ESMTP id 93BDA40E1C
+ for <dev@dpdk.org>; Wed, 29 Jul 2026 19:57:52 +0200 (CEST)
+Received: by mail-pj1-f45.google.com with SMTP id
+ 98e67ed59e1d1-38e3617ba36so1484696a91.3
+ for <dev@dpdk.org>; Wed, 29 Jul 2026 10:57:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785347870;
- x=1785952670; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785347872;
+ x=1785952672; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=7QnGSaGyl6x8n9ADCN/TSaIY+fe4o6GcdsZNvRUrQSQ=;
- b=DaCLsIcsHquHgtkaiIYptn1l9nQQJjPM8rhYmVSmk+gxdwVhEjrZ0YGpN6rUCfDfEd
- /LS6wJsRFnP6ZPxh/x2fnDnTaa9/bfgk4FlE9baACZ9b3Wb3pCmKb5a43N2pEfWMZGiD
- 285Ny29FLsD6DSTKC6liQlNr2pbUqsMU9DRiO/jWvzvkLpmS5z7bb5FOE3AoDD+ufDd0
- TMHxxHfBwhnLT+K1hPgyeMcO+B9ugW7xT4x6579U/V3VzmFmtT+rLDVwETHShKyft9RA
- r4cSCBcXSh1VOfaxaLhZGjYix//Ka+pLWcLUQ1COmNWkun09r1caR5wfG4CRsbjyAMMI
- BUfQ==
+ bh=CrpwQ8i4fl71NDcI6nMJQybK8wjxaXtksuSUEGn1T4U=;
+ b=IqTsKZpy+kvTCMIGK9Q9+M2XRnLx7d1HgoHpn9W5lY6HcccH2Q3bHEW0MtslsnVa/M
+ ypeVE7Q+jSlvZPwU/d1dDap5kUX9/+jpWDlAk+8dxDfuQ7GDnwS52HpJ9i2mpx/V9qWm
+ jv1Yn/DVjfejvpQXsaWKIMyjOM6es6FDoBaM0SWi1DQt86rfJJsMnul9Ve2csjsNowGh
+ lRumdS6o9y8Ef5+51HAuEDb5VIFOrjjNwZX+Hl4YtqQWjVBKnE3GUgSptalCRxQQ3A1D
+ DGN75u+ZD0gsFDKLF3vDkcUdsRvMTBQOiEKHAevRLEKdfBIOasbl9Ccwu2PJDdZSqkVU
+ yUQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785347870; x=1785952670;
+ d=1e100.net; s=20251104; t=1785347872; x=1785952672;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=7QnGSaGyl6x8n9ADCN/TSaIY+fe4o6GcdsZNvRUrQSQ=;
- b=iLRls1etgMcNLuqzedFLLnfM6Tk6cILZuONw9yTJ2qlYyPdsxH+hsDrevj+j9gwzuT
- pHZY3RySYsypKnuVzZvBSy7mZNz+0UGrb6ra8kzxYXdhC0cSXnpXHQh0dkXAuNrV31fc
- pDygELiuypzWkx8UpoX+RxtzAM+lj57pucgTDu6qaKpIZuyqanChIN0RBsekMx6ThsLB
- 3eFESAvBCQ7fnYLmliXeOEwZ72yn6gK2V6p/xpu+W0VjuSkqhqz2Q6EKyX5BHCayMXwo
- oTDjrYA0lHe2yrd5HCBYVuWnfbalI6c7aTDLgGp9IZEAhM6SFpSa6dsXOJuSU2UZV8ET
- OAiw==
-X-Gm-Message-State: AOJu0YyBYAY7Ym7mQ8xnx2j5VbnqYtJPmVDw9DXoFP3f6QuRzycWVYTR
- NgTnFvS2t4ObwmAwrBx2JQQ8trGcHoHz40H+1QltliXkADayNFrfNESuj6nTZzUCOn6n8ZRVNMO
- xdGKw
-X-Gm-Gg: AR+sD13f3SVqtyj+coE8NaGjw/jKdN1fOXjLbRWkhXd0LWjQxIQ2JTfvQ1uN6uz/T7W
- /YKMjE1cZ39lOtZAtdb0TBeO6iNLJUUenCYpo1GD23D6MTVL/SQr3XJhF71ErlOv0xX1x+3QPK8
- Dwo+4RMPE8njiWQ782Rpvkfue+QL89XgCLPju+BSOjObuZvEVIWEItZr73Xo8ysXh0YmTbqwYIM
- /KdksUoVMlGObj4IZ/OpijvUl9BiOcfiyLxnbWVUEhdvBkx9YrNGOVsbZQJiAM2mIDs+akOS3kK
- tjt81beoYSGmGJkdg7xQ6rZWdVPSSQTOsQbrv2usZLCyQp32gFLkxUeZf+gWbtCpBlm9gtl157Z
- jLrcXoTj7i+d0tUcWUghG78m/jew0AJXC58n4xC67nhDDNr+0F0D6AiTuh2UjJDoG27U6lmrEZm
- 3qtgMuRYHkXvyor7bi8Tvnm88lrnWH5tYIKyR74/yys0D5dLB9nlG50NgpvHCBRTEQOhg6PPplw
- M1noSGYWKteIj9g2+lTon+Aboc=
-X-Received: by 2002:a05:6a21:3398:b0:3c3:6c90:65b1 with SMTP id
- adf61e73a8af0-3c8b0ca960amr9312886637.25.1785347870593; 
- Wed, 29 Jul 2026 10:57:50 -0700 (PDT)
+ bh=CrpwQ8i4fl71NDcI6nMJQybK8wjxaXtksuSUEGn1T4U=;
+ b=oIXRYWnYLv9oHjouALhT6363y6qePQRHsMGh1PMJuqadhvAdDWFp/Bni+8pbjGBMGS
+ d8vI1RARwfEJBQow6e/EAcR8Ja6immewaZWIuvgvCs/4FqFhNh00ayb7PsQnPpDv3jN7
+ 4Ei9aCenSKy54di43wP+gFk2S/O7I+Ac4ZLm5cfDFo0UkaE/7i3X1GDq/yxN9CsxPAe1
+ +FKaFl/4bTOJjdrYhFu1XmqpWyKBoM9y1vMBj8u3Q4DzvhzU/2nu+Dd3LkEbg4ziNNwO
+ iSWrVGRLzjcM2KIgFOTF6FaG6VEYohRWI0c/y7PR7uPoPbBlp2U/FiuHdlnJnDeCDD0c
+ hjyw==
+X-Gm-Message-State: AOJu0Yw+QIj/Pnph1vTJOJbQYzUXeM+qWHwbZAwBHjsf0CH7IXi5Jecn
+ zWxw7QEXCHZWA6bL/75eh9qZDOkGBCw3OPGGY4arU1yjHgidFaXZxF0TQ6VnQbS6J2n0udsc/XB
+ gSVgp
+X-Gm-Gg: AR+sD10hKuoc4kBRDBJOGjN/hsXlqCgbpa4SmT+Ak0piTBnGv3k/l6GqWmwN/vqHhln
+ QIKia/BOYeoFUH+VaiHrj+FpTPZWy+q9782DDrZXrABN56URWJWhNU08IiIpWja4znS1eQXmhad
+ hMunyCU7akHTLtaXpMqd7zFmmWMCpRi8nKTupGgC8nBOr5vY5NHDJOZrij9EXTZaEAexaPRlHjg
+ Wd++r03g7O3s66xtder1PXlrw6qzqBiJ44TVLxDPAYFeSeg2XOXUTGHBTp8kErdZEVeSwmyE5MF
+ KTOs2HWRgc0BljjhpDNNiY6cDeeMzR7ud87ABITqBeKk01D9Z2yl9F0emGZtcgIyAkirbpUIySF
+ ClJu3bmS3GYR7/7CXsNBajvGczR2dDYLGH7ZweMIuldTtbM3gXTtYAdAoi9or934uFApUjGmqQD
+ eWJSDFdBjZaLhRJmx3Jycj/aVWmUFkcvX0hEhWhb2GSfTHs49Ag+lJeWo1XSgvWfk2NShLqgjlk
+ mYnYkJ0zkvKKZU16atzPyTjCvQ=
+X-Received: by 2002:a17:90b:5106:b0:381:50ab:1594 with SMTP id
+ 98e67ed59e1d1-38f6a45f70bmr8084208a91.27.1785347871670; 
+ Wed, 29 Jul 2026 10:57:51 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-31504b15f77sm13111562eec.4.2026.07.29.10.57.49
+ 5a478bee46e88-31504b15f77sm13111562eec.4.2026.07.29.10.57.50
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 29 Jul 2026 10:57:50 -0700 (PDT)
+ Wed, 29 Jul 2026 10:57:51 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>,
- Bibo Mao <maobibo@loongson.cn>, David Christensen <drc@linux.ibm.com>,
- Sun Yuechi <sunyuechi@iscas.ac.cn>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Subject: [RFC 30/32] eal: remove rte_smp_XX
-Date: Wed, 29 Jul 2026 10:54:23 -0700
-Message-ID: <20260729175715.165120-31-stephen@networkplumber.org>
+ Thomas Monjalon <thomas@monjalon.net>
+Subject: [RFC 31/32] checkpatches: no longer warn about rte_smp_XX
+Date: Wed, 29 Jul 2026 10:54:24 -0700
+Message-ID: <20260729175715.165120-32-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260729175715.165120-1-stephen@networkplumber.org>
 References: <20260729175715.165120-1-stephen@networkplumber.org>
@@ -87,192 +82,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-These functions were marked for deprecation and no longer used.
-Drop from EAL.
+These macros/functions are now removed.
+Any new use will be detected as compile errors.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/eal/arm/include/rte_atomic_32.h    |  6 ---
- lib/eal/arm/include/rte_atomic_64.h    |  6 ---
- lib/eal/include/generic/rte_atomic.h   | 61 --------------------------
- lib/eal/loongarch/include/rte_atomic.h |  6 ---
- lib/eal/ppc/include/rte_atomic.h       |  6 ---
- lib/eal/riscv/include/rte_atomic.h     |  6 ---
- lib/eal/x86/include/rte_atomic.h       |  4 --
- 7 files changed, 95 deletions(-)
+ devtools/checkpatches.sh | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/lib/eal/arm/include/rte_atomic_32.h b/lib/eal/arm/include/rte_atomic_32.h
-index 0b9a0dfa30..3809ddefb7 100644
---- a/lib/eal/arm/include/rte_atomic_32.h
-+++ b/lib/eal/arm/include/rte_atomic_32.h
-@@ -21,12 +21,6 @@ extern "C" {
+diff --git a/devtools/checkpatches.sh b/devtools/checkpatches.sh
+index 18bd825372..3649645488 100755
+--- a/devtools/checkpatches.sh
++++ b/devtools/checkpatches.sh
+@@ -129,14 +129,6 @@ check_forbidden_additions() { # <patch>
+ 		-f $(dirname $(readlink -f $0))/check-forbidden-tokens.awk \
+ 		"$1" || res=1
  
- #define	rte_rmb() __sync_synchronize()
- 
--#define rte_smp_mb() rte_mb()
+-	# refrain from new additions of rte_smp_[r/w]mb()
+-	awk -v FOLDERS="lib drivers app examples" \
+-		-v EXPRESSIONS="rte_smp_(r|w)?mb\\\(" \
+-		-v RET_ON_FAIL=1 \
+-		-v MESSAGE='Using rte_smp_[r/w]mb' \
+-		-f $(dirname $(readlink -f $0))/check-forbidden-tokens.awk \
+-		"$1" || res=1
 -
--#define rte_smp_wmb() rte_wmb()
--
--#define rte_smp_rmb() rte_rmb()
--
- #define rte_io_mb() rte_mb()
- 
- #define rte_io_wmb() rte_wmb()
-diff --git a/lib/eal/arm/include/rte_atomic_64.h b/lib/eal/arm/include/rte_atomic_64.h
-index 181bb60929..c9b41f6212 100644
---- a/lib/eal/arm/include/rte_atomic_64.h
-+++ b/lib/eal/arm/include/rte_atomic_64.h
-@@ -24,12 +24,6 @@ extern "C" {
- 
- #define rte_rmb() asm volatile("dmb oshld" : : : "memory")
- 
--#define rte_smp_mb() asm volatile("dmb ish" : : : "memory")
--
--#define rte_smp_wmb() asm volatile("dmb ishst" : : : "memory")
--
--#define rte_smp_rmb() asm volatile("dmb ishld" : : : "memory")
--
- #define rte_io_mb() rte_mb()
- 
- #define rte_io_wmb() rte_wmb()
-diff --git a/lib/eal/include/generic/rte_atomic.h b/lib/eal/include/generic/rte_atomic.h
-index 0a4f3f8528..937d344c89 100644
---- a/lib/eal/include/generic/rte_atomic.h
-+++ b/lib/eal/include/generic/rte_atomic.h
-@@ -51,67 +51,6 @@ static inline void rte_wmb(void);
- static inline void rte_rmb(void);
- ///@}
- 
--/** @name SMP Memory Barrier
-- */
--///@{
--/**
-- * General memory barrier between lcores
-- *
-- * Guarantees that the LOAD and STORE operations that precede the
-- * rte_smp_mb() call are globally visible across the lcores
-- * before the LOAD and STORE operations that follows it.
-- *
-- * @note
-- *  This function is deprecated.
-- *  It provides similar synchronization primitive as atomic fence,
-- *  but has different syntax and memory ordering semantic. Hence
-- *  deprecated for the simplicity of memory ordering semantics in use.
-- *
-- *  rte_atomic_thread_fence(rte_memory_order_acq_rel) should be used instead.
-- */
--static inline void rte_smp_mb(void);
--
--/**
-- * Write memory barrier between lcores
-- *
-- * Guarantees that the STORE operations that precede the
-- * rte_smp_wmb() call are globally visible across the lcores
-- * before the STORE operations that follows it.
-- *
-- * @note
-- *  This function is deprecated.
-- *  It provides similar synchronization primitive as atomic fence,
-- *  but has different syntax and memory ordering semantic. Hence
-- *  deprecated for the simplicity of memory ordering semantics in use.
-- *
-- *  rte_atomic_thread_fence(rte_memory_order_release) should be used instead.
-- *  The fence also guarantees LOAD operations that precede the call
-- *  are globally visible across the lcores before the STORE operations
-- *  that follows it.
-- */
--static inline void rte_smp_wmb(void);
--
--/**
-- * Read memory barrier between lcores
-- *
-- * Guarantees that the LOAD operations that precede the
-- * rte_smp_rmb() call are globally visible across the lcores
-- * before the LOAD operations that follows it.
-- *
-- * @note
-- *  This function is deprecated.
-- *  It provides similar synchronization primitive as atomic fence,
-- *  but has different syntax and memory ordering semantic. Hence
-- *  deprecated for the simplicity of memory ordering semantics in use.
-- *
-- *  rte_atomic_thread_fence(rte_memory_order_acquire) should be used instead.
-- *  The fence also guarantees LOAD operations that precede the call
-- *  are globally visible across the lcores before the STORE operations
-- *  that follows it.
-- */
--static inline void rte_smp_rmb(void);
--///@}
--
- /** @name I/O Memory Barrier
-  */
- ///@{
-diff --git a/lib/eal/loongarch/include/rte_atomic.h b/lib/eal/loongarch/include/rte_atomic.h
-index c8066a4612..49e0c67020 100644
---- a/lib/eal/loongarch/include/rte_atomic.h
-+++ b/lib/eal/loongarch/include/rte_atomic.h
-@@ -22,12 +22,6 @@ extern "C" {
- 
- #define rte_rmb()	rte_mb()
- 
--#define rte_smp_mb()	rte_mb()
--
--#define rte_smp_wmb()	rte_mb()
--
--#define rte_smp_rmb()	rte_mb()
--
- #define rte_io_mb()	rte_mb()
- 
- #define rte_io_wmb()	rte_mb()
-diff --git a/lib/eal/ppc/include/rte_atomic.h b/lib/eal/ppc/include/rte_atomic.h
-index 10acc238f9..1da5afccbf 100644
---- a/lib/eal/ppc/include/rte_atomic.h
-+++ b/lib/eal/ppc/include/rte_atomic.h
-@@ -24,12 +24,6 @@ extern "C" {
- 
- #define	rte_rmb() asm volatile("sync" : : : "memory")
- 
--#define rte_smp_mb() rte_mb()
--
--#define rte_smp_wmb() rte_wmb()
--
--#define rte_smp_rmb() rte_rmb()
--
- #define rte_io_mb() rte_mb()
- 
- #define rte_io_wmb() rte_wmb()
-diff --git a/lib/eal/riscv/include/rte_atomic.h b/lib/eal/riscv/include/rte_atomic.h
-index 66346ad474..dd10ad5127 100644
---- a/lib/eal/riscv/include/rte_atomic.h
-+++ b/lib/eal/riscv/include/rte_atomic.h
-@@ -27,12 +27,6 @@ extern "C" {
- 
- #define rte_rmb()	asm volatile("fence r, r" : : : "memory")
- 
--#define rte_smp_mb()	rte_mb()
--
--#define rte_smp_wmb()	rte_wmb()
--
--#define rte_smp_rmb()	rte_rmb()
--
- #define rte_io_mb()	asm volatile("fence iorw, iorw" : : : "memory")
- 
- #define rte_io_wmb()	asm volatile("fence orw, ow" : : : "memory")
-diff --git a/lib/eal/x86/include/rte_atomic.h b/lib/eal/x86/include/rte_atomic.h
-index 780fdce871..826b5033d1 100644
---- a/lib/eal/x86/include/rte_atomic.h
-+++ b/lib/eal/x86/include/rte_atomic.h
-@@ -23,10 +23,6 @@
- 
- #define	rte_rmb() _mm_lfence()
- 
--#define rte_smp_wmb() rte_compiler_barrier()
--
--#define rte_smp_rmb() rte_compiler_barrier()
--
- #ifdef __cplusplus
- extern "C" {
- #endif
+ 	# refrain from using compiler __sync_xxx builtins
+ 	awk -v FOLDERS="lib drivers app examples" \
+ 		-v EXPRESSIONS="__sync_.*\\\(" \
 -- 
 2.53.0
 
