@@ -2,69 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DDC6C53219
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Jul 2026 15:24:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C2EEC54F51
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Jul 2026 15:25:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CAF7A4060F;
-	Wed, 29 Jul 2026 17:24:33 +0200 (CEST)
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com
- [209.85.216.43]) by mails.dpdk.org (Postfix) with ESMTP id E80CC402A3
- for <dev@dpdk.org>; Wed, 29 Jul 2026 17:24:31 +0200 (CEST)
-Received: by mail-pj1-f43.google.com with SMTP id
- 98e67ed59e1d1-38e42560ebcso836347a91.1
- for <dev@dpdk.org>; Wed, 29 Jul 2026 08:24:31 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3B6BB406BB;
+	Wed, 29 Jul 2026 17:24:36 +0200 (CEST)
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com
+ [209.85.216.42]) by mails.dpdk.org (Postfix) with ESMTP id 365CD40616
+ for <dev@dpdk.org>; Wed, 29 Jul 2026 17:24:34 +0200 (CEST)
+Received: by mail-pj1-f42.google.com with SMTP id
+ 98e67ed59e1d1-381216921aaso1003561a91.1
+ for <dev@dpdk.org>; Wed, 29 Jul 2026 08:24:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785338671;
- x=1785943471; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785338673;
+ x=1785943473; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=IToB9K9AOHVcmFrrhgGHxxjjrsfzyj4msR9122+p8/E=;
- b=Z6WLhRgQuO32g2adjs4TbATEc658l1dKcEvPYSZ6+uf3Ki3+8MHw6BPZxfvhRnJGHe
- gMGmdtXUBkAM8zjKNwxjRrXZUq+pvMlq9coc9lUIZDl0MtEd5n8UUWgxKwWz0wXS+g6R
- +uwH/d4JohEMq9aVMWucsPHeemtkuWkGEGCsAITlCrJ37IwI4q1h9LUp4ZPtNZepWsQ1
- 5WN+jIooUGXTKktPLtnYt6vtC9YKrK+AhMEsu5znDI7Go0veFGAYDSwtx5stiD67YSpI
- LVwIAOY5tv8+ofbjeE2UMlaWwBobDhgk3vhJFrKtQdHdjQwUpssYYkChN/2Xwtgc3F/2
- u2Aw==
+ bh=wYB2QGil1LJ2xA6vk2GlfGo0+1JsCD+Z6KrLKRLj75I=;
+ b=X+y7Oj4yHa3DDMr0Rx7rs4Sdx38ha+jW9B64d1RLdwQMjNCQhq5eQ7UvQ4DwsYwzG2
+ pY/YxXGrfqN4HexOn2POoEyUJbDOmyJEC8GLNvw+Xq7v6fDo3tJtb6qGlqvZogGAKvdz
+ G9w7kzJePYKR9TKbcHXN63UQQ1UM/6BS7P2xED51ZA6QD6CwsuvFqmj1USDeytlJLWPN
+ TTNuViY+X/m91EO2cNGJH22wK+8hxZyRlZbqcnkB54bBEkDXBMHxaesHxKYcxuFoFoM+
+ UJN37FEGydcIO7XJX1Mxe82/KH3RiYWuHuYfdKmtc3VB3/FwujOHuKesHwfPi737aZlm
+ z6xQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785338671; x=1785943471;
+ d=1e100.net; s=20251104; t=1785338673; x=1785943473;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=IToB9K9AOHVcmFrrhgGHxxjjrsfzyj4msR9122+p8/E=;
- b=c6QOWhkHCDHriBJBMEVgve2WblZPB2vwx8QnHR4qqgheDOvUxmidYlnf8h1zMy0+pf
- BxLPcqYI4FiXlfh5vqzPUlzgILJ4iHq/qFE4E30Xihnbpkzu2MuGkcmuh5FDzvzpUBVJ
- rFNe09C9L1/xWxCMDMJD5Q2LpKKWB0h77Mef74naGJkNkReB/Hk7C+VZyyXDQCxRDZD0
- rjcMZGSMLaxoUgAHhvvuwPuYD9GjFCSBpRyB6mwnonNpHGg7lCI3y1F8E2Cz++bdkDPO
- seIMedSPnJSmpJRoIPyJqiMPRZqCgPfnOjEbjIUPTd5ELqCRwkfdnHS3YkgIJTHgTBkO
- 0FcQ==
-X-Gm-Message-State: AOJu0YxixXxPGED8C/jX3g278N8RcJfnaVWgixoGL0OEYKcWXVgYeSH/
- MNFgQDnLzWTnou6f41vSHCrfBR3tERALPAQy0uoomoEkUrYVF9kutQZ1jLsrKjKAlmuR94YQahw
- 2pehy
-X-Gm-Gg: AR+sD11jNKrRBErklyig4Qy64TDHj/QzXaMFU8FafP0kuREL39RiE8DKEw5djXv44Yk
- 6hmCSMm3WkLIhFRk/hZB0ed4MbcjIGvtK6/j2uC/O764WyCuYIBxJcUa87m/G1wR+VMDSN4iQpY
- Ou4Zzz3gfGhcj5jR6yQyD1Pk6q6OJWxAF6IhRAMvG2EMSV7D3Ds2YY1Rd+jI8xtNRflthvXG4Mm
- 9O4qfiZQuB4kqF3HujD95WIOEC5NAxuCg8YI1v+HD1sQ+ACOlgmrjJ93Hc4bCrhmupTeG7hYvZy
- n3pIFGuFsnZ4h74yKEa5tMBzEqgbsI6oQ8pDQ5xMyUIjJnMRWmyxIXQnGLO++WiEEmw6nZtxDVW
- bqqkkHOkLLEC+w4kmupR4TCHu/GfqLWcqlEQNmNikE29f1SUCRnHc3PFoZDg3ZhgZ6/MeAHQRUA
- Kd93ny3/iBqn/QYUDvCpC9LBkpVH1y+pyeBcbcqADp10kl5F021K4UB0F7hWv6m3BQ8DTu34VDf
- V5eYe8m8oZ9pDWfc6N9wpnzB8NSS2l2GDnDVw==
-X-Received: by 2002:a17:90b:4987:b0:37f:b0a9:1a68 with SMTP id
- 98e67ed59e1d1-38f6a2ce9b7mr7029641a91.7.1785338669273; 
- Wed, 29 Jul 2026 08:24:29 -0700 (PDT)
+ bh=wYB2QGil1LJ2xA6vk2GlfGo0+1JsCD+Z6KrLKRLj75I=;
+ b=Xb5K4imERf7CWqACbkNbaQbbgpUx80pBUnOetHfDF3OE2KyJqxFQPjb4xYCGHpKO/i
+ l2XpFq8EpKD0seEvf0aBIY3eemDwJQShZ6zC0Egzk750A/KtkhZTnT7I6HyTa1JO7UFn
+ 4GAtqSPfNqGNhLXKrhz31zCuDswgmjVlE0Y9A4uX8/rk4neUGm9NSqc/YGH5CnnRMxAm
+ fq9rMLABqlmet2sQoRiWTaKgL01JUaypT7/9r+umo1yoz9iKEPbi8kZS/qhdOgcxciEz
+ pG3fvJMK1IkaHN3PWIyV8a24L+YKhj8v4gSSpsxeDHiC1VMFU2EqBeFMMbo0guhQOczM
+ NiZw==
+X-Gm-Message-State: AOJu0YxWKM7IZPP0ha0YKxxFROwsyV2wCxSdWxdQattNzOeTCAYohCUs
+ 3Wtu6eppBjRDKJ29JUPUhYn2WrkkK+Sbx32wmzWMHmnropQ0KT1LbNfGMT/8LFFPBUTwaTlBvnD
+ xTyyw
+X-Gm-Gg: AR+sD12xFMJCGTxXVMIkOP+BjAlxqQQ9TuPexuxXFxxxG++kT/ESR80G1bxUqwXGzyY
+ BU94QmrGywSpVQ9SHe3OjqDU88hQSnf1lPl0JyZHJt5DZXwDyzqYUeWpDHbwVaEaQqkzCt9oO6o
+ 7X1TDyA2addJDo0hrKAD2QynRMZhU6YdMadrOuJhQBxSwofC/s6o3qujBTIN2L9Z1t9VH5pfqie
+ 9Vjrfne7EW4iK9U3eRRJVQL3RD2DsOWUlZyILuvix7Ohz6Eb+7Y+yZb2+dJsFg9ybgS2q38zx9p
+ PYAzGP2E7ejn/h+mItj+ntNLEFDsGUy0SHpdlqtzQzrxtZQ4slp2OPa6LT+vBWQ1u2W9IF+GU2F
+ ub2RfFTlirKK4rNoxbrrPsgZ6olMuuWTIPBdavOCPF3QLhmLzyWNyxFA/7b+eRTszQKYgtC20WD
+ ywRC8Et5Lky7/DHXY85INCqUh6nWz4/Cu6b0XeofmupBRjLEMRlCANV5nhFIut6XM2Pof0H3qgV
+ pJ3BSClEqFCFN0IqKjUdu6aQlI=
+X-Received: by 2002:a17:90b:2b8b:b0:389:8f6c:4d58 with SMTP id
+ 98e67ed59e1d1-38f6a45d39bmr7457783a91.34.1785338671068; 
+ Wed, 29 Jul 2026 08:24:31 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-31504b10cdcsm11495602eec.3.2026.07.29.08.24.26
+ 5a478bee46e88-31504b10cdcsm11495602eec.3.2026.07.29.08.24.29
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 29 Jul 2026 08:24:28 -0700 (PDT)
+ Wed, 29 Jul 2026 08:24:30 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Thomas Monjalon <thomas@monjalon.net>,
  Cristian Dumitrescu <cristian.dumitrescu@intel.com>
-Subject: [PATCH v5 3/6] examples/ip_pipeline: remove example
-Date: Wed, 29 Jul 2026 08:22:21 -0700
-Message-ID: <20260729152420.23736-4-stephen@networkplumber.org>
+Subject: [PATCH v5 4/6] pipeline: remove legacy API
+Date: Wed, 29 Jul 2026 08:22:22 -0700
+Message-ID: <20260729152420.23736-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260729152420.23736-1-stephen@networkplumber.org>
 References: <20260724164520.192203-1-stephen@networkplumber.org>
@@ -84,1201 +83,5882 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The ip_pipeline example is built on the legacy pipeline library
-API (rte_pipeline_*) and the associated port and table action
-APIs, which were announced for removal in the 24.11 release.
-The pipeline example covers the SWX pipeline API.
+Remove the legacy pipeline API (rte_pipeline_*) together with the
+port and table action APIs built on top of it, as announced for
+removal in the 24.11 release. The SWX pipeline API remains.
+
+The sched dependency was only used by the table action API,
+so drop it.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- MAINTAINERS                                   |    2 -
- doc/guides/nics/softnic.rst                   |    3 +-
- doc/guides/rel_notes/release_26_11.rst        |    4 +
- doc/guides/sample_app_ug/index.rst            |    1 -
- doc/guides/sample_app_ug/ip_pipeline.rst      |  531 --
- examples/ip_pipeline/Makefile                 |   60 -
- examples/ip_pipeline/action.c                 |  391 -
- examples/ip_pipeline/action.h                 |   78 -
- examples/ip_pipeline/cli.c                    | 6791 -----------------
- examples/ip_pipeline/cli.h                    |   18 -
- examples/ip_pipeline/common.h                 |   12 -
- examples/ip_pipeline/conn.c                   |  330 -
- examples/ip_pipeline/conn.h                   |   47 -
- examples/ip_pipeline/cryptodev.c              |  160 -
- examples/ip_pipeline/cryptodev.h              |   46 -
- examples/ip_pipeline/examples/firewall.cli    |   59 -
- examples/ip_pipeline/examples/flow.cli        |   60 -
- examples/ip_pipeline/examples/flow_crypto.cli |   57 -
- examples/ip_pipeline/examples/l2fwd.cli       |   51 -
- examples/ip_pipeline/examples/route.cli       |   60 -
- examples/ip_pipeline/examples/route_ecmp.cli  |   57 -
- examples/ip_pipeline/examples/rss.cli         |  112 -
- examples/ip_pipeline/examples/tap.cli         |   66 -
- examples/ip_pipeline/link.c                   |  270 -
- examples/ip_pipeline/link.h                   |   66 -
- examples/ip_pipeline/main.c                   |  260 -
- examples/ip_pipeline/mempool.c                |   82 -
- examples/ip_pipeline/mempool.h                |   40 -
- examples/ip_pipeline/meson.build              |   30 -
- examples/ip_pipeline/parser.c                 |  506 --
- examples/ip_pipeline/parser.h                 |   56 -
- examples/ip_pipeline/pipeline.c               | 1078 ---
- examples/ip_pipeline/pipeline.h               |  425 --
- examples/ip_pipeline/swq.c                    |   76 -
- examples/ip_pipeline/swq.h                    |   37 -
- examples/ip_pipeline/tap.c                    |  102 -
- examples/ip_pipeline/tap.h                    |   29 -
- examples/ip_pipeline/thread.c                 | 3137 --------
- examples/ip_pipeline/thread.h                 |   24 -
- examples/ip_pipeline/tmgr.c                   |  248 -
- examples/ip_pipeline/tmgr.h                   |   74 -
- examples/meson.build                          |    1 -
- 42 files changed, 5 insertions(+), 15532 deletions(-)
- delete mode 100644 doc/guides/sample_app_ug/ip_pipeline.rst
- delete mode 100644 examples/ip_pipeline/Makefile
- delete mode 100644 examples/ip_pipeline/action.c
- delete mode 100644 examples/ip_pipeline/action.h
- delete mode 100644 examples/ip_pipeline/cli.c
- delete mode 100644 examples/ip_pipeline/cli.h
- delete mode 100644 examples/ip_pipeline/common.h
- delete mode 100644 examples/ip_pipeline/conn.c
- delete mode 100644 examples/ip_pipeline/conn.h
- delete mode 100644 examples/ip_pipeline/cryptodev.c
- delete mode 100644 examples/ip_pipeline/cryptodev.h
- delete mode 100644 examples/ip_pipeline/examples/firewall.cli
- delete mode 100644 examples/ip_pipeline/examples/flow.cli
- delete mode 100644 examples/ip_pipeline/examples/flow_crypto.cli
- delete mode 100644 examples/ip_pipeline/examples/l2fwd.cli
- delete mode 100644 examples/ip_pipeline/examples/route.cli
- delete mode 100644 examples/ip_pipeline/examples/route_ecmp.cli
- delete mode 100644 examples/ip_pipeline/examples/rss.cli
- delete mode 100644 examples/ip_pipeline/examples/tap.cli
- delete mode 100644 examples/ip_pipeline/link.c
- delete mode 100644 examples/ip_pipeline/link.h
- delete mode 100644 examples/ip_pipeline/main.c
- delete mode 100644 examples/ip_pipeline/mempool.c
- delete mode 100644 examples/ip_pipeline/mempool.h
- delete mode 100644 examples/ip_pipeline/meson.build
- delete mode 100644 examples/ip_pipeline/parser.c
- delete mode 100644 examples/ip_pipeline/parser.h
- delete mode 100644 examples/ip_pipeline/pipeline.c
- delete mode 100644 examples/ip_pipeline/pipeline.h
- delete mode 100644 examples/ip_pipeline/swq.c
- delete mode 100644 examples/ip_pipeline/swq.h
- delete mode 100644 examples/ip_pipeline/tap.c
- delete mode 100644 examples/ip_pipeline/tap.h
- delete mode 100644 examples/ip_pipeline/thread.c
- delete mode 100644 examples/ip_pipeline/thread.h
- delete mode 100644 examples/ip_pipeline/tmgr.c
- delete mode 100644 examples/ip_pipeline/tmgr.h
+ doc/api/doxy-api-index.md                  |    3 -
+ doc/guides/prog_guide/packet_framework.rst |  203 --
+ doc/guides/rel_notes/deprecation.rst       |    5 -
+ doc/guides/rel_notes/release_26_11.rst     |    4 +
+ lib/pipeline/meson.build                   |    8 +-
+ lib/pipeline/rte_pipeline.c                | 1640 ---------
+ lib/pipeline/rte_pipeline.h                |  840 -----
+ lib/pipeline/rte_port_in_action.c          |  539 ---
+ lib/pipeline/rte_port_in_action.h          |  311 --
+ lib/pipeline/rte_table_action.c            | 3483 --------------------
+ lib/pipeline/rte_table_action.h            | 1137 -------
+ 11 files changed, 5 insertions(+), 8168 deletions(-)
+ delete mode 100644 lib/pipeline/rte_pipeline.c
+ delete mode 100644 lib/pipeline/rte_pipeline.h
+ delete mode 100644 lib/pipeline/rte_port_in_action.c
+ delete mode 100644 lib/pipeline/rte_port_in_action.h
+ delete mode 100644 lib/pipeline/rte_table_action.c
+ delete mode 100644 lib/pipeline/rte_table_action.h
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4c06f85706..ae84e7f289 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1739,9 +1739,7 @@ F: lib/pipeline/
- F: lib/port/
- F: lib/table/
- F: doc/guides/prog_guide/packet_framework.rst
--F: examples/ip_pipeline/
- F: examples/pipeline/
--F: doc/guides/sample_app_ug/ip_pipeline.rst
+diff --git a/doc/api/doxy-api-index.md b/doc/api/doxy-api-index.md
+index 9296042119..17c15027b8 100644
+--- a/doc/api/doxy-api-index.md
++++ b/doc/api/doxy-api-index.md
+@@ -196,9 +196,6 @@ The public API headers are grouped by topics:
+     [hash](@ref rte_table_hash.h),
+     [array](@ref rte_table_array.h),
+     [stub](@ref rte_table_stub.h)
+-  * [pipeline](@ref rte_pipeline.h)
+-    [port_in_action](@ref rte_port_in_action.h)
+-    [table_action](@ref rte_table_action.h)
+   * SWX pipeline:
+     [control](@ref rte_swx_ctl.h),
+     [extern](@ref rte_swx_extern.h),
+diff --git a/doc/guides/prog_guide/packet_framework.rst b/doc/guides/prog_guide/packet_framework.rst
+index ac302938dc..9eb2c5d3de 100644
+--- a/doc/guides/prog_guide/packet_framework.rst
++++ b/doc/guides/prog_guide/packet_framework.rst
+@@ -942,209 +942,6 @@ Additional notes:
+     This does not impact the performance of the key lookup operation,
+     as the probability of having the bucket in extended state is relatively small.
  
+-Pipeline Library Design
+------------------------
+-
+-A pipeline is defined by:
+-
+-#.  The set of input ports;
+-
+-#.  The set of output ports;
+-
+-#.  The set of tables;
+-
+-#.  The set of actions.
+-
+-The input ports are connected with the output ports through tree-like topologies of interconnected tables.
+-The table entries contain the actions defining the operations to be executed on the input packets and the packet flow within the pipeline.
+-
+-Connectivity of Ports and Tables
+-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-
+-To avoid any dependencies on the order in which pipeline elements are created,
+-the connectivity of pipeline elements is defined after all the pipeline input ports,
+-output ports and tables have been created.
+-
+-General connectivity rules:
+-
+-#.  Each input port is connected to a single table. No input port should be left unconnected;
+-
+-#.  The table connectivity to other tables or to output ports is regulated by the next hop actions of each table entry and the default table entry.
+-    The table connectivity is fluid, as the table entries and the default table entry can be updated during run-time.
+-
+-    *   A table can have multiple entries (including the default entry) connected to the same output port.
+-        A table can have different entries connected to different output ports.
+-        Different tables can have entries (including default table entry) connected to the same output port.
+-
+-    *   A table can have multiple entries (including the default entry) connected to another table,
+-        in which case all these entries have to point to the same table.
+-        This constraint is enforced by the API and prevents tree-like topologies from being created (allowing table chaining only),
+-        with the purpose of simplifying the implementation of the pipeline run-time execution engine.
+-
+-Port Actions
+-~~~~~~~~~~~~
+-
+-Port Action Handler
+-^^^^^^^^^^^^^^^^^^^
+-
+-An action handler can be assigned to each input/output port to define actions to be executed on each input packet that is received by the port.
+-Defining the action handler for a specific input/output port is optional (i.e. the action handler can be disabled).
+-
+-For input ports, the action handler is executed after RX function. For output ports, the action handler is executed before the TX function.
+-
+-The action handler can decide to drop packets.
+-
+-Table Actions
+-~~~~~~~~~~~~~
+-
+-Table Action Handler
+-^^^^^^^^^^^^^^^^^^^^
+-
+-An action handler to be executed on each input packet can be assigned to each table.
+-Defining the action handler for a specific table is optional (i.e. the action handler can be disabled).
+-
+-The action handler is executed after the table lookup operation is performed and the table entry associated with each input packet is identified.
+-The action handler can only handle the user-defined actions, while the reserved actions (e.g. the next hop actions) are handled by the Packet Framework.
+-The action handler can decide to drop the input packet.
+-
+-Reserved Actions
+-^^^^^^^^^^^^^^^^
+-
+-The reserved actions are handled directly by the Packet Framework without the user being able to change their meaning
+-through the table action handler configuration.
+-A special category of the reserved actions is represented by the next hop actions, which regulate the packet flow between input ports,
+-tables and output ports through the pipeline.
+-:numref:`packet_framework_table_qos_33` lists the next hop actions.
+-
+-.. _packet_framework_table_qos_33:
+-
+-.. table:: Next Hop Actions (Reserved)
+-
+-   +---+---------------------+-----------------------------------------------------------------------------------+
+-   | # | Next hop action     | Description                                                                       |
+-   |   |                     |                                                                                   |
+-   +===+=====================+===================================================================================+
+-   | 1 | Drop                | Drop the current packet.                                                          |
+-   |   |                     |                                                                                   |
+-   +---+---------------------+-----------------------------------------------------------------------------------+
+-   | 2 | Send to output port | Send the current packet to specified output port. The output port ID is metadata  |
+-   |   |                     | stored in the same table entry.                                                   |
+-   |   |                     |                                                                                   |
+-   +---+---------------------+-----------------------------------------------------------------------------------+
+-   | 3 | Send to table       | Send the current packet to specified table. The table ID is metadata stored in    |
+-   |   |                     | the same table entry.                                                             |
+-   |   |                     |                                                                                   |
+-   +---+---------------------+-----------------------------------------------------------------------------------+
+-
+-User Actions
+-^^^^^^^^^^^^
+-
+-For each table, the meaning of user actions is defined through the configuration of the table action handler.
+-Different tables can be configured with different action handlers, therefore the meaning of the user actions
+-and their associated meta-data is private to each table.
+-Within the same table, all the table entries (including the table default entry) share the same definition
+-for the user actions and their associated meta-data,
+-with each table entry having its own set of enabled user actions and its own copy of the action meta-data.
+-:numref:`packet_framework_table_qos_34` contains a non-exhaustive list of user action examples.
+-
+-.. _packet_framework_table_qos_34:
+-
+-.. table:: User Action Examples
+-
+-   +---+-----------------------------------+---------------------------------------------------------------------+
+-   | # | User action                       | Description                                                         |
+-   |   |                                   |                                                                     |
+-   +===+===================================+=====================================================================+
+-   | 1 | Metering                          | Per flow traffic metering using the srTCM and trTCM algorithms.     |
+-   |   |                                   |                                                                     |
+-   +---+-----------------------------------+---------------------------------------------------------------------+
+-   | 2 | Statistics                        | Update the statistics counters maintained per flow.                 |
+-   |   |                                   |                                                                     |
+-   +---+-----------------------------------+---------------------------------------------------------------------+
+-   | 3 | App ID                            | Per flow state machine fed by variable length sequence of packets   |
+-   |   |                                   | at the flow initialization with the purpose of identifying the      |
+-   |   |                                   | traffic type and application.                                       |
+-   |   |                                   |                                                                     |
+-   +---+-----------------------------------+---------------------------------------------------------------------+
+-   | 4 | Push/pop labels                   | Push/pop VLAN/MPLS labels to/from the current packet.               |
+-   |   |                                   |                                                                     |
+-   +---+-----------------------------------+---------------------------------------------------------------------+
+-   | 5 | Network Address Translation (NAT) | Translate between the internal (LAN) and external (WAN) IP          |
+-   |   |                                   | destination/source address and/or L4 protocol destination/source    |
+-   |   |                                   | port.                                                               |
+-   |   |                                   |                                                                     |
+-   +---+-----------------------------------+---------------------------------------------------------------------+
+-   | 6 | TTL update                        | Decrement IP TTL and, in case of IPv4 packets, update the IP        |
+-   |   |                                   | checksum.                                                           |
+-   |   |                                   |                                                                     |
+-   +---+-----------------------------------+---------------------------------------------------------------------+
+-   | 7 | Sym Crypto                        | Generate Cryptodev session based on the user-specified algorithm    |
+-   |   |                                   | and key(s), and assemble the cryptodev operation based on the       |
+-   |   |                                   | predefined offsets.                                                 |
+-   |   |                                   |                                                                     |
+-   +---+-----------------------------------+---------------------------------------------------------------------+
+-
+-Multicore Scaling
+------------------
+-
+-A complex application is typically split across multiple cores, with cores communicating through SW queues.
+-There is usually a performance limit on the number of table lookups
+-and actions that can be fitted on the same CPU core due to HW constraints like:
+-available CPU cycles, cache memory size, cache transfer BW, memory transfer BW, etc.
+-
+-As the application is split across multiple CPU cores, the Packet Framework facilitates the creation of several pipelines,
+-the assignment of each such pipeline to a different CPU core
+-and the interconnection of all CPU core-level pipelines into a single application-level complex pipeline.
+-For example, if CPU core A is assigned to run pipeline P1 and CPU core B pipeline P2,
+-then the interconnection of P1 with P2 could be achieved by having the same set of SW queues act like output ports
+-for P1 and input ports for P2.
+-
+-This approach enables the application development using the pipeline, run-to-completion (clustered) or hybrid (mixed) models.
+-
+-It is allowed for the same core to run several pipelines, but it is not allowed for several cores to run the same pipeline.
+-
+-Shared Data Structures
+-~~~~~~~~~~~~~~~~~~~~~~
+-
+-The threads performing table lookup are actually table writers rather than just readers.
+-Even if the specific table lookup algorithm is thread-safe for multiple readers
+-(e. g. read-only access of the search algorithm data structures is enough to conduct the lookup operation),
+-once the table entry for the current packet is identified, the thread is typically expected to update the action meta-data stored in the table entry
+-(e.g. increment the counter tracking the number of packets that hit this table entry), and thus modify the table entry.
+-During the time this thread is accessing this table entry (either writing or reading; duration is application specific),
+-for data consistency reasons, no other threads (threads performing table lookup or entry add/delete operations) are allowed to modify this table entry.
+-
+-Mechanisms to share the same table between multiple threads:
+-
+-#.  **Multiple writer threads.**
+-    Threads need to use synchronization primitives like semaphores (distinct semaphore per table entry) or atomic instructions.
+-    The cost of semaphores is usually high, even when the semaphore is free.
+-    The cost of atomic instructions is normally higher than the cost of regular instructions.
+-
+-#.  **Multiple writer threads, with single thread performing table lookup operations and multiple threads performing table entry add/delete operations.**
+-    The threads performing table entry add/delete operations send table update requests to the reader (typically through message passing queues),
+-    which does the actual table updates and then sends the response back to the request initiator.
+-
+-#.  **Single writer thread performing table entry add/delete operations and multiple reader threads that perform table lookup operations with read-only access to the table entries.**
+-    The reader threads use the main table copy while the writer is updating the mirror copy.
+-    Once the writer update is done, the writer can signal to the readers and busy wait until all readers swap between the main copy (which now becomes the mirror copy) and
+-    the mirror copy (which now becomes the main copy).
+-
+-Interfacing with Accelerators
+------------------------------
+-
+-The presence of accelerators is usually detected during the initialization phase by inspecting the HW devices that are part of the system (e.g. by PCI bus enumeration).
+-Typical devices with acceleration capabilities are:
+-
+-*   Inline accelerators: NICs, switches, FPGAs, etc;
+-
+-*   Look-aside accelerators: chipsets, FPGAs, Intel QuickAssist, etc.
+-
+-Usually, to support a specific functional block, specific implementation of Packet Framework tables and/or ports and/or actions has to be provided for each accelerator,
+-with all the implementations sharing the same API: pure SW implementation (no acceleration), implementation using accelerator A, implementation using accelerator B, etc.
+-The selection between these implementations could be done at build time or at run-time (recommended), based on which accelerators are present in the system,
+-with no application changes required.
+-
+ The Software Switch (SWX) Pipeline
+ ----------------------------------
  
- Algorithms
-diff --git a/doc/guides/nics/softnic.rst b/doc/guides/nics/softnic.rst
-index 603fdb49c4..87f3e5adc0 100644
---- a/doc/guides/nics/softnic.rst
-+++ b/doc/guides/nics/softnic.rst
-@@ -10,8 +10,7 @@ is DIY and reconfigurable through ``firmware`` (DPDK Packet Framework script).
- The Soft NIC leverages the DPDK Packet Framework libraries (librte_port,
- librte_table and librte_pipeline) to make it modular, flexible and extensible
- with new functionality.
--Please refer to :doc:`/prog_guide/packet_framework` and
--:doc:`/sample_app_ug/ip_pipeline` for more details.
-+Please refer to :doc:`/prog_guide/packet_framework` for more details.
+diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
+index 6ad7698c6b..758652a492 100644
+--- a/doc/guides/rel_notes/deprecation.rst
++++ b/doc/guides/rel_notes/deprecation.rst
+@@ -148,11 +148,6 @@ Deprecation Notices
+   The graph walk functions will process nodes in topological order
+   using bitmap scanning instead of the circular buffer.
  
- The Soft NIC is configured through the standard DPDK ethdev API (ethdev, flow,
- QoS, security). The internal framework is not externally visible.
+-* pipeline: The pipeline library legacy API (functions rte_pipeline_*)
+-  will be deprecated and subsequently removed in DPDK 24.11 release.
+-  Before this, the new pipeline library API (functions rte_swx_pipeline_*)
+-  will gradually transition from experimental to stable status.
+-
+ * table: The table library legacy API (functions rte_table_*)
+   will be deprecated and subsequently removed in DPDK 24.11 release.
+   Before this, the new table library API (functions rte_swx_table_*)
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 6ad0cf6eec..fc84ba367e 100644
+index fc84ba367e..f7d34aa1ee 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -80,6 +80,10 @@ Removed Items
- * Removed the ``dpdk-test-pipeline`` application, which was based on
+@@ -84,6 +84,10 @@ Removed Items
    the legacy pipeline library API.
+   The ``pipeline`` example application covers the SWX pipeline API.
  
-+* Removed the ``ip_pipeline`` example application, which was based on
-+  the legacy pipeline library API.
-+  The ``pipeline`` example application covers the SWX pipeline API.
++* Removed the legacy pipeline library API: ``rte_pipeline_*``,
++  ``rte_port_in_action_*`` and ``rte_table_action_*`` functions.
++  The SWX pipeline API (``rte_swx_pipeline_*``) remains.
 +
  
  API Changes
  -----------
-diff --git a/doc/guides/sample_app_ug/index.rst b/doc/guides/sample_app_ug/index.rst
-index c8b50b801c..28c4c9a5b2 100644
---- a/doc/guides/sample_app_ug/index.rst
-+++ b/doc/guides/sample_app_ug/index.rst
-@@ -44,7 +44,6 @@ Sample Applications User Guides
-     vhost_blk
-     vhost_crypto
-     vdpa
--    ip_pipeline
-     pipeline
-     eventdev_pipeline
-     dist_app
-diff --git a/doc/guides/sample_app_ug/ip_pipeline.rst b/doc/guides/sample_app_ug/ip_pipeline.rst
+diff --git a/lib/pipeline/meson.build b/lib/pipeline/meson.build
+index 823c7929a7..997ded6792 100644
+--- a/lib/pipeline/meson.build
++++ b/lib/pipeline/meson.build
+@@ -10,21 +10,15 @@ endif
+ cflags += no_wvla_cflag
+ 
+ sources = files(
+-        'rte_pipeline.c',
+-        'rte_port_in_action.c',
+-        'rte_table_action.c',
+         'rte_swx_ipsec.c',
+         'rte_swx_pipeline.c',
+         'rte_swx_pipeline_spec.c',
+         'rte_swx_ctl.c',
+ )
+ headers = files(
+-        'rte_pipeline.h',
+-        'rte_port_in_action.h',
+-        'rte_table_action.h',
+         'rte_swx_ipsec.h',
+         'rte_swx_pipeline.h',
+         'rte_swx_extern.h',
+         'rte_swx_ctl.h',
+ )
+-deps += ['port', 'table', 'meter', 'sched', 'cryptodev', 'ipsec']
++deps += ['port', 'table', 'meter', 'cryptodev', 'ipsec']
+diff --git a/lib/pipeline/rte_pipeline.c b/lib/pipeline/rte_pipeline.c
 deleted file mode 100644
-index 9a5cb517a2..0000000000
---- a/doc/guides/sample_app_ug/ip_pipeline.rst
+index fa3c8b77ee..0000000000
+--- a/lib/pipeline/rte_pipeline.c
 +++ /dev/null
-@@ -1,531 +0,0 @@
--..  SPDX-License-Identifier: BSD-3-Clause
--    Copyright(c) 2015-2018 Intel Corporation.
--
--Internet Protocol (IP) Pipeline Application
--===========================================
--
--Application overview
----------------------
--
--The *Internet Protocol (IP) Pipeline* application is intended to be a vehicle for rapid development of packet processing
--applications on multi-core CPUs.
--
--Following OpenFlow and P4 design principles, the application can be used to create functional blocks called pipelines out
--of input/output ports, tables and actions in a modular way. Multiple pipelines can be inter-connected through packet queues
--to create complete applications (super-pipelines).
--
--The pipelines are mapped to application threads, with each pipeline executed by a single thread and each thread able to run
--one or several pipelines. The possibilities of creating pipelines out of ports, tables and actions, connecting multiple
--pipelines together and mapping the pipelines to execution threads are endless, therefore this application can be seen as
--a true application generator.
--
--Pipelines are created and managed through Command Line Interface (CLI):
--
-- * Any standard TCP client (e.g. telnet, netcat, custom script, etc) is typically able to connect to the application, send
--   commands through the network and wait for the response before pushing the next command.
--
-- * All the application objects are created and managed through CLI commands:
--    * 'Primitive' objects used to create pipeline ports: memory pools, links (i.e. network interfaces), SW queues, traffic managers, etc.
--    * Action profiles: used to define the actions to be executed by pipeline input/output ports and tables.
--    * Pipeline components: input/output ports, tables, pipelines, mapping of pipelines to execution threads.
--
--Running the application
-------------------------
--
--The application startup command line is::
--
--   dpdk-ip_pipeline [EAL_ARGS] -- [-s SCRIPT_FILE] [-h HOST] [-p PORT]
--
--The application startup arguments are:
--
--``-s SCRIPT_FILE``
--
-- * Optional: Yes
--
-- * Default: Not present
--
-- * Argument: Path to the CLI script file to be run at application startup.
--   No CLI script file will run at startup if this argument is not present.
--
--``-h HOST``
--
-- * Optional: Yes
--
-- * Default: ``0.0.0.0``
--
-- * Argument: IP Address of the host running ip pipeline application to be used by
--   remote TCP based client (telnet, netcat, etc.) for connection.
--
--``-p PORT``
--
-- * Optional: Yes
--
-- * Default: ``8086``
--
-- * Argument: TCP port number at which the ip pipeline is running.
--   This port number should be used by remote TCP client (such as telnet, netcat, etc.) to connect to host application.
--
--Refer to *DPDK Getting Started Guide* for general information on running applications and the Environment Abstraction Layer (EAL) options.
--
--The following is an example command to run ip pipeline application configured for layer 2 forwarding:
--
--.. code-block:: console
--
--    $ ./<build_dir>/examples/dpdk-ip_pipeline -l 0,1 -- -s examples/route_ecmp.cli
--
--The application should start successfully and display as follows:
--
--.. code-block:: console
--
--    EAL: Detected 40 lcore(s)
--    EAL: Detected 2 NUMA nodes
--    EAL: Multi-process socket /var/run/.rte_unix
--    EAL: Probing VFIO support...
--    EAL: PCI device 0000:02:00.0 on NUMA socket 0
--    EAL:   probe driver: 8086:10fb net_ixgbe
--    ...
--
--To run remote client (e.g. telnet) to communicate with the ip pipeline application:
--
--.. code-block:: console
--
--    $ telnet 127.0.0.1 8086
--
--When running a telnet client as above, command prompt is displayed:
--
--.. code-block:: console
--
--    Trying 127.0.0.1...
--    Connected to 127.0.0.1.
--    Escape character is '^]'.
--
--    Welcome to IP Pipeline!
--
--    pipeline>
--
--Once application and telnet client start running, messages can be sent from client to application.
--At any stage, telnet client can be terminated using the quit command.
--
--
--Application stages
--------------------
--
--Initialization
--~~~~~~~~~~~~~~
--
--During this stage, EAL layer is initialised and application specific arguments are parsed. Furthermore, the data structures
--(i.e. linked lists) for application objects are initialized. In case of any initialization error, an error message
--is displayed and the application is terminated.
--
--Run-time
--~~~~~~~~
--
--The main thread is creating and managing all the application objects based on CLI input.
--
--Each data plane thread runs one or several pipelines previously assigned to it in round-robin order. Each data plane thread
--executes two tasks in time-sharing mode:
--
--#. *Packet processing task*: Process bursts of input packets read from the pipeline input ports.
--
--#. *Message handling task*: Periodically, the data plane thread pauses the packet processing task and polls for request
--   messages send by the main thread. Examples: add/remove pipeline to/from current data plane thread, add/delete rules
--   to/from given table of a specific pipeline owned by the current data plane thread, read statistics, etc.
--
--Examples
----------
--
--.. tabularcolumns:: |p{3cm}|p{5cm}|p{4cm}|p{4cm}|
--
--.. table:: Pipeline examples provided with the application
--
--   +-----------------------+----------------------+----------------+------------------------------------+
--   | Name                  | Table(s)             | Actions        | Messages                           |
--   +=======================+======================+================+====================================+
--   | L2fwd                 | Stub                 | Forward        | 1. Mempool create                  |
--   |                       |                      |                | 2. Link create                     |
--   | Note: Implemented     |                      |                | 3. Pipeline create                 |
--   | using pipeline with   |                      |                | 4. Pipeline port in/out            |
--   | a simple pass-through |                      |                | 5. Pipeline table                  |
--   | connection between    |                      |                | 6. Pipeline port in table          |
--   | input and output      |                      |                | 7. Pipeline enable                 |
--   | ports.                |                      |                | 8. Pipeline table rule add         |
--   +-----------------------+----------------------+----------------+------------------------------------+
--   | Flow classification   | Exact match          | Forward        | 1. Mempool create                  |
--   |                       |                      |                | 2. Link create                     |
--   |                       | * Key = byte array   |                | 3. Pipeline create                 |
--   |                       |    (16 bytes)        |                | 4. Pipeline port in/out            |
--   |                       | * Offset = 278       |                | 5. Pipeline table                  |
--   |                       | * Table size = 64K   |                | 6. Pipeline port in table          |
--   |                       |                      |                | 7. Pipeline enable                 |
--   |                       |                      |                | 8. Pipeline table rule add default |
--   |                       |                      |                | 9. Pipeline table rule add         |
--   +-----------------------+----------------------+----------------+------------------------------------+
--   | Firewall              | ACL                  | Allow/Drop     | 1. Mempool create                  |
--   |                       |                      |                | 2. Link create                     |
--   |                       | * Key = n-tuple      |                | 3. Pipeline create                 |
--   |                       | * Offset = 270       |                | 4. Pipeline port in/out            |
--   |                       | * Table size = 4K    |                | 5. Pipeline table                  |
--   |                       |                      |                | 6. Pipeline port in table          |
--   |                       |                      |                | 7. Pipeline enable                 |
--   |                       |                      |                | 8. Pipeline table rule add default |
--   |                       |                      |                | 9. Pipeline table rule add         |
--   +-----------------------+----------------------+----------------+------------------------------------+
--   | IP routing            | LPM (IPv4)           | Forward        | 1. Mempool Create                  |
--   |                       |                      |                | 2. Link create                     |
--   |                       | * Key = IP dest addr |                | 3. Pipeline create                 |
--   |                       | * Offset = 286       |                | 4. Pipeline port in/out            |
--   |                       | * Table size = 4K    |                | 5. Pipeline table                  |
--   |                       |                      |                | 6. Pipeline port in table          |
--   |                       |                      |                | 7. Pipeline enable                 |
--   |                       |                      |                | 8. Pipeline table rule add default |
--   |                       |                      |                | 9. Pipeline table rule add         |
--   +-----------------------+----------------------+----------------+------------------------------------+
--   | Equal-cost multi-path | LPM (IPv4)           | Forward,       | 1. Mempool Create                  |
--   | routing (ECMP)        |                      | load balance,  | 2. Link create                     |
--   |                       | * Key = IP dest addr | encap ether    | 3. Pipeline create                 |
--   |                       | * Offset = 286       |                | 4. Pipeline port in/out            |
--   |                       | * Table size = 4K    |                | 5. Pipeline table (LPM)            |
--   |                       |                      |                | 6. Pipeline table (Array)          |
--   |                       |                      |                | 7. Pipeline port in table (LPM)    |
--   |                       | Array                |                | 8. Pipeline enable                 |
--   |                       |                      |                | 9. Pipeline table rule add default |
--   |                       | * Key = Array index  |                | 10. Pipeline table rule add(LPM)   |
--   |                       | * Offset = 256       |                | 11. Pipeline table rule add(Array) |
--   |                       | * Size = 64K         |                |                                    |
--   |                       |                      |                |                                    |
--   +-----------------------+----------------------+----------------+------------------------------------+
--
--Command Line Interface (CLI)
------------------------------
--
--Link
--~~~~
--
-- Link configuration ::
--
--   link <link_name>
--    dev <device_name>|port <port_id>
--    rxq <n_queues> <queue_size> <mempool_name>
--    txq <n_queues> <queue_size> promiscuous on | off
--    [rss <qid_0> ... <qid_n>]
--
-- Note: The PCI device name must be specified in the Domain:Bus:Device.Function format.
--
--
--Mempool
--~~~~~~~
--
-- Mempool create ::
--
--   mempool <mempool_name> buffer <buffer_size>
--   pool <pool_size> cache <cache_size> cpu <cpu_id>
--
--
--Software queue
--~~~~~~~~~~~~~~
--
--  Create software queue ::
--
--   swq <swq_name> size <size> cpu <cpu_id>
--
--
--Traffic manager
--~~~~~~~~~~~~~~~
--
-- Add traffic manager subport profile ::
--
--  tmgr subport profile
--   <tb_rate> <tb_size>
--   <tc0_rate> <tc1_rate> <tc2_rate> <tc3_rate> <tc4_rate>
--   <tc5_rate> <tc6_rate> <tc7_rate> <tc8_rate>
--   <tc9_rate> <tc10_rate> <tc11_rate> <tc12_rate>
--   <tc_period>
--
-- Add traffic manager pipe profile ::
--
--  tmgr pipe profile
--   <tb_rate> <tb_size>
--   <tc0_rate> <tc1_rate> <tc2_rate> <tc3_rate> <tc4_rate>
--   <tc5_rate> <tc6_rate> <tc7_rate> <tc8_rate>
--   <tc9_rate> <tc10_rate> <tc11_rate> <tc12_rate>
--   <tc_period>
--   <tc_ov_weight>
--   <wrr_weight0..3>
--
-- Create traffic manager port ::
--
--  tmgr <tmgr_name>
--   rate <rate>
--   spp <n_subports_per_port>
--   pps <n_pipes_per_subport>
--   fo <frame_overhead>
--   mtu <mtu>
--   cpu <cpu_id>
--
-- Configure traffic manager subport ::
--
--  tmgr <tmgr_name>
--   subport <subport_id>
--   profile <subport_profile_id>
--
-- Configure traffic manager pipe ::
--
--  tmgr <tmgr_name>
--   subport <subport_id>
--   pipe from <pipe_id_first> to <pipe_id_last>
--   profile <pipe_profile_id>
--
--
--Tap
--~~~
--
-- Create tap port ::
--
--  tap <name>
--
--
--Cryptodev
--~~~~~~~~~
--
--  Create cryptodev port ::
--
--   cryptodev <cryptodev_name>
--    dev <DPDK Cryptodev PMD name>
--    queue <n_queues> <queue_size>
--
--Action profile
--~~~~~~~~~~~~~~
--
-- Create action profile for pipeline input port ::
--
--  port in action profile <profile_name>
--   [filter match | mismatch offset <key_offset> mask <key_mask> key <key_value> port <port_id>]
--   [balance offset <key_offset> mask <key_mask> port <port_id0> ... <port_id15>]
--
-- Create action profile for the pipeline table ::
--
--  table action profile <profile_name>
--   ipv4 | ipv6
--   offset <ip_offset>
--   fwd
--   [balance offset <key_offset> mask <key_mask> outoffset <out_offset>]
--   [meter srtcm | trtcm
--       tc <n_tc>
--       stats none | pkts | bytes | both]
--   [tm spp <n_subports_per_port> pps <n_pipes_per_subport>]
--   [encap ether | vlan | qinq | mpls | pppoe]
--   [nat src | dst
--       proto udp | tcp]
--   [ttl drop | fwd
--       stats none | pkts]
--   [stats pkts | bytes | both]
--   [sym_crypto cryptodev <cryptodev_name>
--       mempool_create <mempool_name> mempool_init <mempool_name>]
--   [time]
--
--
--Pipeline
--~~~~~~~~
--
--Create pipeline ::
--
--  pipeline <pipeline_name>
--   period <timer_period_ms>
--   offset_port_id <offset_port_id>
--   cpu <cpu_id>
--
--Create pipeline input port ::
--
--  pipeline <pipeline_name> port in
--   bsz <burst_size>
--   link <link_name> rxq <queue_id>
--   | swq <swq_name>
--   | tmgr <tmgr_name>
--   | tap <tap_name> mempool <mempool_name> mtu <mtu>
--   | source mempool <mempool_name> file <file_name> bpp <n_bytes_per_pkt>
--   [action <port_in_action_profile_name>]
--   [disabled]
--
--Create pipeline output port ::
--
--  pipeline <pipeline_name> port out
--   bsz <burst_size>
--   link <link_name> txq <txq_id>
--   | swq <swq_name>
--   | tmgr <tmgr_name>
--   | tap <tap_name>
--   | sink [file <file_name> pkts <max_n_pkts>]
--
--Create pipeline table ::
--
--  pipeline <pipeline_name> table
--       match
--       acl
--           ipv4 | ipv6
--           offset <ip_header_offset>
--           size <n_rules>
--       | array
--           offset <key_offset>
--           size <n_keys>
--       | hash
--           ext | lru
--           key <key_size>
--           mask <key_mask>
--           offset <key_offset>
--           buckets <n_buckets>
--           size <n_keys>
--       | lpm
--           ipv4 | ipv6
--           offset <ip_header_offset>
--           size <n_rules>
--       | stub
--   [action <table_action_profile_name>]
--
--Connect pipeline input port to table ::
--
--  pipeline <pipeline_name> port in <port_id> table <table_id>
--
--Display statistics for specific pipeline input port, output port
--or table ::
--
--  pipeline <pipeline_name> port in <port_id> stats read [clear]
--  pipeline <pipeline_name> port out <port_id> stats read [clear]
--  pipeline <pipeline_name> table <table_id> stats read [clear]
--
--Enable given input port for specific pipeline instance ::
--
--  pipeline <pipeline_name> port out <port_id> disable
--
--Disable given input port for specific pipeline instance ::
--
--  pipeline <pipeline_name> port out <port_id> disable
--
--Add default rule to table for specific pipeline instance ::
--
--  pipeline <pipeline_name> table <table_id> rule add
--     match
--        default
--     action
--        fwd
--           drop
--           | port <port_id>
--           | meta
--           | table <table_id>
--
--Add rule to table for specific pipeline instance ::
--
--  pipeline <pipeline_name> table <table_id> rule add
--
--  match
--     acl
--        priority <priority>
--        ipv4 | ipv6 <sa> <sa_depth> <da> <da_depth>
--        <sp0> <sp1> <dp0> <dp1> <proto>
--     | array <pos>
--     | hash
--        raw <key>
--        | ipv4_5tuple <sa> <da> <sp> <dp> <proto>
--        | ipv6_5tuple <sa> <da> <sp> <dp> <proto>
--        | ipv4_addr <addr>
--        | ipv6_addr <addr>
--        | qinq <svlan> <cvlan>
--     | lpm
--        ipv4 | ipv6 <addr> <depth>
--
--  action
--     fwd
--        drop
--        | port <port_id>
--        | meta
--        | table <table_id>
--     [balance <out0> ... <out7>]
--     [meter
--        tc0 meter <meter_profile_id> policer g <pa> y <pa> r <pa>
--        [tc1 meter <meter_profile_id> policer g <pa> y <pa> r <pa>
--        tc2 meter <meter_profile_id> policer g <pa> y <pa> r <pa>
--        tc3 meter <meter_profile_id> policer g <pa> y <pa> r <pa>]]
--     [tm subport <subport_id> pipe <pipe_id>]
--     [encap
--        ether <da> <sa>
--        | vlan <da> <sa> <pcp> <dei> <vid>
--        | qinq <da> <sa> <pcp> <dei> <vid> <pcp> <dei> <vid>
--        | mpls unicast | multicast
--           <da> <sa>
--           label0 <label> <tc> <ttl>
--           [label1 <label> <tc> <ttl>
--           [label2 <label> <tc> <ttl>
--           [label3 <label> <tc> <ttl>]]]
--        | pppoe <da> <sa> <session_id>]
--     [nat ipv4 | ipv6 <addr> <port>]
--     [ttl dec | keep]
--     [stats]
--     [time]
--     [sym_crypto
--        encrypt | decrypt
--        type
--        | cipher
--           cipher_algo <algo> cipher_key <key> cipher_iv <iv>
--        | cipher_auth
--           cipher_algo <algo> cipher_key <key> cipher_iv <iv>
--           auth_algo <algo> auth_key <key> digest_size <size>
--        | aead
--           aead_algo <algo> aead_key <key> aead_iv <iv> aead_aad <aad>
--           digest_size <size>
--        data_offset <data_offset>]
--
--  where:
--     <pa> ::= g | y | r | drop
--
--Add bulk rules to table for specific pipeline instance ::
--
--  pipeline <pipeline_name> table <table_id> rule add bulk <file_name> <n_rules>
--
--  Where:
--  - file_name = path to file
--  - File line format = match <match> action <action>
--
--Delete table rule for specific pipeline instance ::
--
--  pipeline <pipeline_name> table <table_id> rule delete
--     match <match>
--
--Delete default table rule for specific pipeline instance ::
--
--  pipeline <pipeline_name> table <table_id> rule delete
--     match
--        default
--
--Add meter profile to the table for specific pipeline instance ::
--
--  pipeline <pipeline_name> table <table_id> meter profile <meter_profile_id>
--   add srtcm cir <cir> cbs <cbs> ebs <ebs>
--   | trtcm cir <cir> pir <pir> cbs <cbs> pbs <pbs>
--
--Delete meter profile from the table for specific pipeline instance ::
--
--  pipeline <pipeline_name> table <table_id>
--   meter profile <meter_profile_id> delete
--
--
--Update the dscp table for meter or traffic manager action for specific
--pipeline instance ::
--
--   pipeline <pipeline_name> table <table_id> dscp <file_name>
--
--   Where:
--      - file_name = path to file
--      - exactly 64 lines
--      - File line format = <tc_id> <tc_queue_id> <color>, with <color> as: g | y | r
--
--
--Pipeline enable/disable
--~~~~~~~~~~~~~~~~~~~~~~~
--
--   Enable given pipeline instance for specific data plane thread ::
--
--    thread <thread_id> pipeline <pipeline_name> enable
--
--
--   Disable given pipeline instance for specific data plane thread ::
--
--    thread <thread_id> pipeline <pipeline_name> disable
-diff --git a/examples/ip_pipeline/Makefile b/examples/ip_pipeline/Makefile
-deleted file mode 100644
-index 438aa6b37f..0000000000
---- a/examples/ip_pipeline/Makefile
-+++ /dev/null
-@@ -1,60 +0,0 @@
--# SPDX-License-Identifier: BSD-3-Clause
--# Copyright(c) 2010-2018 Intel Corporation
--
--# binary name
--APP = ip_pipeline
--
--# all source are stored in SRCS-y
--SRCS-y := action.c
--SRCS-y += cli.c
--SRCS-y += conn.c
--SRCS-y += link.c
--SRCS-y += main.c
--SRCS-y += mempool.c
--SRCS-y += parser.c
--SRCS-y += pipeline.c
--SRCS-y += swq.c
--SRCS-y += tap.c
--SRCS-y += thread.c
--SRCS-y += tmgr.c
--SRCS-y += cryptodev.c
--
--PKGCONF ?= pkg-config
--
--# Build using pkg-config variables if possible
--ifneq ($(shell $(PKGCONF) --exists libdpdk && echo 0),0)
--$(error "no installation of DPDK found")
--endif
--
--all: shared
--.PHONY: shared static
--shared: build/$(APP)-shared
--	ln -sf $(APP)-shared build/$(APP)
--static: build/$(APP)-static
--	ln -sf $(APP)-static build/$(APP)
--
--PC_FILE := $(shell $(PKGCONF) --path libdpdk 2>/dev/null)
--CFLAGS += -O3 $(shell $(PKGCONF) --cflags libdpdk)
--LDFLAGS_SHARED = $(shell $(PKGCONF) --libs libdpdk)
--LDFLAGS_STATIC = $(shell $(PKGCONF) --static --libs libdpdk)
--
--CFLAGS += -I. -DALLOW_EXPERIMENTAL_API -D_GNU_SOURCE
--
--OBJS := $(patsubst %.c,build/%.o,$(SRCS-y))
--
--build/%.o: %.c Makefile $(PC_FILE) | build
--	$(CC) $(CFLAGS) -c $< -o $@
--
--build/$(APP)-shared: $(OBJS)
--	$(CC) $(OBJS) -o $@ $(LDFLAGS) $(LDFLAGS_SHARED)
--
--build/$(APP)-static: $(OBJS)
--	$(CC) $(OBJS) -o $@ $(LDFLAGS) $(LDFLAGS_STATIC)
--
--build:
--	@mkdir -p $@
--
--.PHONY: clean
--clean:
--	rm -f build/$(APP)* build/*.o
--	test -d build && rmdir -p build || true
-diff --git a/examples/ip_pipeline/action.c b/examples/ip_pipeline/action.c
-deleted file mode 100644
-index d2104aad6e..0000000000
---- a/examples/ip_pipeline/action.c
-+++ /dev/null
-@@ -1,391 +0,0 @@
+@@ -1,1640 +0,0 @@
 -/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2018 Intel Corporation
+- * Copyright(c) 2010-2016 Intel Corporation
+- */
+-
+-#include <string.h>
+-#include <stdio.h>
+-
+-#include <eal_export.h>
+-#include <rte_common.h>
+-#include <rte_mbuf.h>
+-#include <rte_malloc.h>
+-#include <rte_string_fns.h>
+-
+-#include "rte_pipeline.h"
+-
+-RTE_LOG_REGISTER_DEFAULT(pipeline_logtype, INFO);
+-#define RTE_LOGTYPE_PIPELINE pipeline_logtype
+-
+-#define PIPELINE_LOG(level, ...) \
+-	RTE_LOG_LINE(level, PIPELINE, "" __VA_ARGS__)
+-
+-#define RTE_TABLE_INVALID                                 UINT32_MAX
+-
+-#ifdef RTE_PIPELINE_STATS_COLLECT
+-
+-#define RTE_PIPELINE_STATS_AH_DROP_WRITE(p, mask)			\
+-	__extension__ ({ (p)->n_pkts_ah_drop = rte_popcount64(mask); })
+-
+-#define RTE_PIPELINE_STATS_AH_DROP_READ(p, counter)			\
+-	__extension__ ({ (counter) += (p)->n_pkts_ah_drop; (p)->n_pkts_ah_drop = 0; })
+-
+-#define RTE_PIPELINE_STATS_TABLE_DROP0(p)				\
+-	__extension__ ({ (p)->pkts_drop_mask = (p)->action_mask0[RTE_PIPELINE_ACTION_DROP]; })
+-
+-#define RTE_PIPELINE_STATS_TABLE_DROP1(p, counter)			\
+-__extension__ ({							\
+-	uint64_t mask = (p)->action_mask0[RTE_PIPELINE_ACTION_DROP];	\
+-	mask ^= (p)->pkts_drop_mask;					\
+-	(counter) += rte_popcount64(mask);			\
+-})
+-
+-#else
+-
+-#define RTE_PIPELINE_STATS_AH_DROP_WRITE(p, mask)
+-#define RTE_PIPELINE_STATS_AH_DROP_READ(p, counter)
+-#define RTE_PIPELINE_STATS_TABLE_DROP0(p)
+-#define RTE_PIPELINE_STATS_TABLE_DROP1(p, counter)
+-
+-#endif
+-
+-struct rte_port_in {
+-	/* Input parameters */
+-	struct rte_port_in_ops ops;
+-	rte_pipeline_port_in_action_handler f_action;
+-	void *arg_ah;
+-	uint32_t burst_size;
+-
+-	/* The table to which this port is connected */
+-	uint32_t table_id;
+-
+-	/* Handle to low-level port */
+-	void *h_port;
+-
+-	/* List of enabled ports */
+-	struct rte_port_in *next;
+-
+-	/* Statistics */
+-	uint64_t n_pkts_dropped_by_ah;
+-};
+-
+-struct rte_port_out {
+-	/* Input parameters */
+-	struct rte_port_out_ops ops;
+-	rte_pipeline_port_out_action_handler f_action;
+-	void *arg_ah;
+-
+-	/* Handle to low-level port */
+-	void *h_port;
+-
+-	/* Statistics */
+-	uint64_t n_pkts_dropped_by_ah;
+-};
+-
+-struct rte_table {
+-	/* Input parameters */
+-	struct rte_table_ops ops;
+-	rte_pipeline_table_action_handler_hit f_action_hit;
+-	rte_pipeline_table_action_handler_miss f_action_miss;
+-	void *arg_ah;
+-	struct rte_pipeline_table_entry *default_entry;
+-	uint32_t entry_size;
+-
+-	uint32_t table_next_id;
+-	uint32_t table_next_id_valid;
+-
+-	/* Handle to the low-level table object */
+-	void *h_table;
+-
+-	/* Statistics */
+-	uint64_t n_pkts_dropped_by_lkp_hit_ah;
+-	uint64_t n_pkts_dropped_by_lkp_miss_ah;
+-	uint64_t n_pkts_dropped_lkp_hit;
+-	uint64_t n_pkts_dropped_lkp_miss;
+-};
+-
+-#define RTE_PIPELINE_MAX_NAME_SZ                           124
+-
+-struct __rte_cache_aligned rte_pipeline {
+-	/* Input parameters */
+-	char name[RTE_PIPELINE_MAX_NAME_SZ];
+-	int socket_id;
+-	uint32_t offset_port_id;
+-
+-	/* Internal tables */
+-	struct rte_port_in ports_in[RTE_PIPELINE_PORT_IN_MAX];
+-	struct rte_port_out ports_out[RTE_PIPELINE_PORT_OUT_MAX];
+-	struct rte_table tables[RTE_PIPELINE_TABLE_MAX];
+-
+-	/* Occupancy of internal tables */
+-	uint32_t num_ports_in;
+-	uint32_t num_ports_out;
+-	uint32_t num_tables;
+-
+-	/* List of enabled ports */
+-	uint64_t enabled_port_in_mask;
+-	struct rte_port_in *port_in_next;
+-
+-	/* Pipeline run structures */
+-	struct rte_mbuf *pkts[RTE_PORT_IN_BURST_SIZE_MAX];
+-	struct rte_pipeline_table_entry *entries[RTE_PORT_IN_BURST_SIZE_MAX];
+-	uint64_t action_mask0[RTE_PIPELINE_ACTIONS];
+-	uint64_t action_mask1[RTE_PIPELINE_ACTIONS];
+-	uint64_t pkts_mask;
+-	uint64_t n_pkts_ah_drop;
+-	uint64_t pkts_drop_mask;
+-};
+-
+-static inline uint32_t
+-rte_mask_get_next(uint64_t mask, uint32_t pos)
+-{
+-	uint64_t mask_rot = (mask << ((63 - pos) & 0x3F)) |
+-			(mask >> ((pos + 1) & 0x3F));
+-	return (rte_ctz64(mask_rot) - (63 - pos)) & 0x3F;
+-}
+-
+-static inline uint32_t
+-rte_mask_get_prev(uint64_t mask, uint32_t pos)
+-{
+-	uint64_t mask_rot = (mask >> (pos & 0x3F)) |
+-			(mask << ((64 - pos) & 0x3F));
+-	return ((63 - rte_clz64(mask_rot)) + pos) & 0x3F;
+-}
+-
+-static void
+-rte_pipeline_table_free(struct rte_table *table);
+-
+-static void
+-rte_pipeline_port_in_free(struct rte_port_in *port);
+-
+-static void
+-rte_pipeline_port_out_free(struct rte_port_out *port);
+-
+-/*
+- * Pipeline
+- */
+-static int
+-rte_pipeline_check_params(struct rte_pipeline_params *params)
+-{
+-	if (params == NULL) {
+-		PIPELINE_LOG(ERR,
+-			"%s: Incorrect value for parameter params", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* name */
+-	if (params->name == NULL) {
+-		PIPELINE_LOG(ERR,
+-			"%s: Incorrect value for parameter name", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* socket */
+-	if (params->socket_id < 0) {
+-		PIPELINE_LOG(ERR,
+-			"%s: Incorrect value for parameter socket_id",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_pipeline_create)
+-struct rte_pipeline *
+-rte_pipeline_create(struct rte_pipeline_params *params)
+-{
+-	struct rte_pipeline *p;
+-	int status;
+-
+-	/* Check input parameters */
+-	status = rte_pipeline_check_params(params);
+-	if (status != 0) {
+-		PIPELINE_LOG(ERR,
+-			"%s: Pipeline params check failed (%d)",
+-			__func__, status);
+-		return NULL;
+-	}
+-
+-	/* Allocate memory for the pipeline on requested socket */
+-	p = rte_zmalloc_socket("PIPELINE", sizeof(struct rte_pipeline),
+-			RTE_CACHE_LINE_SIZE, params->socket_id);
+-
+-	if (p == NULL) {
+-		PIPELINE_LOG(ERR,
+-			"%s: Pipeline memory allocation failed", __func__);
+-		return NULL;
+-	}
+-
+-	/* Save input parameters */
+-	strlcpy(p->name, params->name, RTE_PIPELINE_MAX_NAME_SZ);
+-	p->socket_id = params->socket_id;
+-	p->offset_port_id = params->offset_port_id;
+-
+-	/* Initialize pipeline internal data structure */
+-	p->num_ports_in = 0;
+-	p->num_ports_out = 0;
+-	p->num_tables = 0;
+-	p->enabled_port_in_mask = 0;
+-	p->port_in_next = NULL;
+-	p->pkts_mask = 0;
+-	p->n_pkts_ah_drop = 0;
+-
+-	return p;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_pipeline_free)
+-int
+-rte_pipeline_free(struct rte_pipeline *p)
+-{
+-	uint32_t i;
+-
+-	/* Check input parameters */
+-	if (p == NULL) {
+-		PIPELINE_LOG(ERR,
+-			"%s: rte_pipeline parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* Free input ports */
+-	for (i = 0; i < p->num_ports_in; i++) {
+-		struct rte_port_in *port = &p->ports_in[i];
+-
+-		rte_pipeline_port_in_free(port);
+-	}
+-
+-	/* Free tables */
+-	for (i = 0; i < p->num_tables; i++) {
+-		struct rte_table *table = &p->tables[i];
+-
+-		rte_pipeline_table_free(table);
+-	}
+-
+-	/* Free output ports */
+-	for (i = 0; i < p->num_ports_out; i++) {
+-		struct rte_port_out *port = &p->ports_out[i];
+-
+-		rte_pipeline_port_out_free(port);
+-	}
+-
+-	/* Free pipeline memory */
+-	rte_free(p);
+-
+-	return 0;
+-}
+-
+-/*
+- * Table
+- */
+-static int
+-rte_table_check_params(struct rte_pipeline *p,
+-		struct rte_pipeline_table_params *params,
+-		uint32_t *table_id)
+-{
+-	if (p == NULL) {
+-		PIPELINE_LOG(ERR, "%s: pipeline parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-	if (params == NULL) {
+-		PIPELINE_LOG(ERR, "%s: params parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-	if (table_id == NULL) {
+-		PIPELINE_LOG(ERR, "%s: table_id parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	/* ops */
+-	if (params->ops == NULL) {
+-		PIPELINE_LOG(ERR, "%s: params->ops is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	if (params->ops->f_create == NULL) {
+-		PIPELINE_LOG(ERR,
+-			"%s: f_create function pointer is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	if (params->ops->f_lookup == NULL) {
+-		PIPELINE_LOG(ERR,
+-			"%s: f_lookup function pointer is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* De we have room for one more table? */
+-	if (p->num_tables == RTE_PIPELINE_TABLE_MAX) {
+-		PIPELINE_LOG(ERR,
+-			"%s: Incorrect value for num_tables parameter",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_pipeline_table_create)
+-int
+-rte_pipeline_table_create(struct rte_pipeline *p,
+-		struct rte_pipeline_table_params *params,
+-		uint32_t *table_id)
+-{
+-	struct rte_table *table;
+-	struct rte_pipeline_table_entry *default_entry;
+-	void *h_table;
+-	uint32_t entry_size, id;
+-	int status;
+-
+-	/* Check input arguments */
+-	status = rte_table_check_params(p, params, table_id);
+-	if (status != 0)
+-		return status;
+-
+-	id = p->num_tables;
+-	table = &p->tables[id];
+-
+-	/* Allocate space for the default table entry */
+-	entry_size = sizeof(struct rte_pipeline_table_entry) +
+-		params->action_data_size;
+-	default_entry = rte_zmalloc_socket(
+-		"PIPELINE", entry_size, RTE_CACHE_LINE_SIZE, p->socket_id);
+-	if (default_entry == NULL) {
+-		PIPELINE_LOG(ERR,
+-			"%s: Failed to allocate default entry", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* Create the table */
+-	h_table = params->ops->f_create(params->arg_create, p->socket_id,
+-		entry_size);
+-	if (h_table == NULL) {
+-		rte_free(default_entry);
+-		PIPELINE_LOG(ERR, "%s: Table creation failed", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* Commit current table to the pipeline */
+-	p->num_tables++;
+-	*table_id = id;
+-
+-	/* Save input parameters */
+-	table->ops = *params->ops;
+-	table->f_action_hit = params->f_action_hit;
+-	table->f_action_miss = params->f_action_miss;
+-	table->arg_ah = params->arg_ah;
+-	table->entry_size = entry_size;
+-
+-	/* Clear the lookup miss actions (to be set later through API) */
+-	table->default_entry = default_entry;
+-	table->default_entry->action = RTE_PIPELINE_ACTION_DROP;
+-
+-	/* Initialize table internal data structure */
+-	table->h_table = h_table;
+-	table->table_next_id = 0;
+-	table->table_next_id_valid = 0;
+-
+-	return 0;
+-}
+-
+-void
+-rte_pipeline_table_free(struct rte_table *table)
+-{
+-	if (table->ops.f_free != NULL)
+-		table->ops.f_free(table->h_table);
+-
+-	rte_free(table->default_entry);
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_pipeline_table_default_entry_add)
+-int
+-rte_pipeline_table_default_entry_add(struct rte_pipeline *p,
+-	uint32_t table_id,
+-	struct rte_pipeline_table_entry *default_entry,
+-	struct rte_pipeline_table_entry **default_entry_ptr)
+-{
+-	struct rte_table *table;
+-
+-	/* Check input arguments */
+-	if (p == NULL) {
+-		PIPELINE_LOG(ERR, "%s: pipeline parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	if (default_entry == NULL) {
+-		PIPELINE_LOG(ERR,
+-			"%s: default_entry parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	if (table_id >= p->num_tables) {
+-		PIPELINE_LOG(ERR,
+-			"%s: table_id %d out of range", __func__, table_id);
+-		return -EINVAL;
+-	}
+-
+-	table = &p->tables[table_id];
+-
+-	if ((default_entry->action == RTE_PIPELINE_ACTION_TABLE) &&
+-		table->table_next_id_valid &&
+-		(default_entry->table_id != table->table_next_id)) {
+-		PIPELINE_LOG(ERR,
+-			"%s: Tree-like topologies not allowed", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* Set the lookup miss actions */
+-	if ((default_entry->action == RTE_PIPELINE_ACTION_TABLE) &&
+-		(table->table_next_id_valid == 0)) {
+-		table->table_next_id = default_entry->table_id;
+-		table->table_next_id_valid = 1;
+-	}
+-
+-	memcpy(table->default_entry, default_entry, table->entry_size);
+-
+-	*default_entry_ptr = table->default_entry;
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_pipeline_table_default_entry_delete)
+-int
+-rte_pipeline_table_default_entry_delete(struct rte_pipeline *p,
+-		uint32_t table_id,
+-		struct rte_pipeline_table_entry *entry)
+-{
+-	struct rte_table *table;
+-
+-	/* Check input arguments */
+-	if (p == NULL) {
+-		PIPELINE_LOG(ERR,
+-			"%s: pipeline parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	if (table_id >= p->num_tables) {
+-		PIPELINE_LOG(ERR,
+-			"%s: table_id %d out of range", __func__, table_id);
+-		return -EINVAL;
+-	}
+-
+-	table = &p->tables[table_id];
+-
+-	/* Save the current contents of the default entry */
+-	if (entry)
+-		memcpy(entry, table->default_entry, table->entry_size);
+-
+-	/* Clear the lookup miss actions */
+-	memset(table->default_entry, 0, table->entry_size);
+-	table->default_entry->action = RTE_PIPELINE_ACTION_DROP;
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_pipeline_table_entry_add)
+-int
+-rte_pipeline_table_entry_add(struct rte_pipeline *p,
+-		uint32_t table_id,
+-		void *key,
+-		struct rte_pipeline_table_entry *entry,
+-		int *key_found,
+-		struct rte_pipeline_table_entry **entry_ptr)
+-{
+-	struct rte_table *table;
+-
+-	/* Check input arguments */
+-	if (p == NULL) {
+-		PIPELINE_LOG(ERR, "%s: pipeline parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	if (key == NULL) {
+-		PIPELINE_LOG(ERR, "%s: key parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	if (entry == NULL) {
+-		PIPELINE_LOG(ERR, "%s: entry parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	if (table_id >= p->num_tables) {
+-		PIPELINE_LOG(ERR,
+-			"%s: table_id %d out of range", __func__, table_id);
+-		return -EINVAL;
+-	}
+-
+-	table = &p->tables[table_id];
+-
+-	if (table->ops.f_add == NULL) {
+-		PIPELINE_LOG(ERR, "%s: f_add function pointer NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	if ((entry->action == RTE_PIPELINE_ACTION_TABLE) &&
+-		table->table_next_id_valid &&
+-		(entry->table_id != table->table_next_id)) {
+-		PIPELINE_LOG(ERR,
+-			"%s: Tree-like topologies not allowed", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* Add entry */
+-	if ((entry->action == RTE_PIPELINE_ACTION_TABLE) &&
+-		(table->table_next_id_valid == 0)) {
+-		table->table_next_id = entry->table_id;
+-		table->table_next_id_valid = 1;
+-	}
+-
+-	return (table->ops.f_add)(table->h_table, key, (void *) entry,
+-		key_found, (void **) entry_ptr);
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_pipeline_table_entry_delete)
+-int
+-rte_pipeline_table_entry_delete(struct rte_pipeline *p,
+-		uint32_t table_id,
+-		void *key,
+-		int *key_found,
+-		struct rte_pipeline_table_entry *entry)
+-{
+-	struct rte_table *table;
+-
+-	/* Check input arguments */
+-	if (p == NULL) {
+-		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	if (key == NULL) {
+-		PIPELINE_LOG(ERR, "%s: key parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	if (table_id >= p->num_tables) {
+-		PIPELINE_LOG(ERR,
+-			"%s: table_id %d out of range", __func__, table_id);
+-		return -EINVAL;
+-	}
+-
+-	table = &p->tables[table_id];
+-
+-	if (table->ops.f_delete == NULL) {
+-		PIPELINE_LOG(ERR,
+-			"%s: f_delete function pointer NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	return (table->ops.f_delete)(table->h_table, key, key_found, entry);
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_pipeline_table_entry_add_bulk)
+-int rte_pipeline_table_entry_add_bulk(struct rte_pipeline *p,
+-	uint32_t table_id,
+-	void **keys,
+-	struct rte_pipeline_table_entry **entries,
+-	uint32_t n_keys,
+-	int *key_found,
+-	struct rte_pipeline_table_entry **entries_ptr)
+-{
+-	struct rte_table *table;
+-	uint32_t i;
+-
+-	/* Check input arguments */
+-	if (p == NULL) {
+-		PIPELINE_LOG(ERR, "%s: pipeline parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	if (keys == NULL) {
+-		PIPELINE_LOG(ERR, "%s: keys parameter is NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	if (entries == NULL) {
+-		PIPELINE_LOG(ERR, "%s: entries parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	if (table_id >= p->num_tables) {
+-		PIPELINE_LOG(ERR,
+-			"%s: table_id %d out of range", __func__, table_id);
+-		return -EINVAL;
+-	}
+-
+-	table = &p->tables[table_id];
+-
+-	if (table->ops.f_add_bulk == NULL) {
+-		PIPELINE_LOG(ERR, "%s: f_add_bulk function pointer NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	for (i = 0; i < n_keys; i++) {
+-		if ((entries[i]->action == RTE_PIPELINE_ACTION_TABLE) &&
+-			table->table_next_id_valid &&
+-			(entries[i]->table_id != table->table_next_id)) {
+-			PIPELINE_LOG(ERR,
+-				"%s: Tree-like topologies not allowed", __func__);
+-			return -EINVAL;
+-		}
+-	}
+-
+-	/* Add entry */
+-	for (i = 0; i < n_keys; i++) {
+-		if ((entries[i]->action == RTE_PIPELINE_ACTION_TABLE) &&
+-			(table->table_next_id_valid == 0)) {
+-			table->table_next_id = entries[i]->table_id;
+-			table->table_next_id_valid = 1;
+-		}
+-	}
+-
+-	return (table->ops.f_add_bulk)(table->h_table, keys, (void **) entries,
+-		n_keys, key_found, (void **) entries_ptr);
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_pipeline_table_entry_delete_bulk)
+-int rte_pipeline_table_entry_delete_bulk(struct rte_pipeline *p,
+-	uint32_t table_id,
+-	void **keys,
+-	uint32_t n_keys,
+-	int *key_found,
+-	struct rte_pipeline_table_entry **entries)
+-{
+-	struct rte_table *table;
+-
+-	/* Check input arguments */
+-	if (p == NULL) {
+-		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	if (keys == NULL) {
+-		PIPELINE_LOG(ERR, "%s: key parameter is NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	if (table_id >= p->num_tables) {
+-		PIPELINE_LOG(ERR,
+-			"%s: table_id %d out of range", __func__, table_id);
+-		return -EINVAL;
+-	}
+-
+-	table = &p->tables[table_id];
+-
+-	if (table->ops.f_delete_bulk == NULL) {
+-		PIPELINE_LOG(ERR,
+-			"%s: f_delete function pointer NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	return (table->ops.f_delete_bulk)(table->h_table, keys, n_keys, key_found,
+-			(void **) entries);
+-}
+-
+-/*
+- * Port
+- */
+-static int
+-rte_pipeline_port_in_check_params(struct rte_pipeline *p,
+-		struct rte_pipeline_port_in_params *params,
+-		uint32_t *port_id)
+-{
+-	if (p == NULL) {
+-		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-	if (params == NULL) {
+-		PIPELINE_LOG(ERR, "%s: params parameter NULL", __func__);
+-		return -EINVAL;
+-	}
+-	if (port_id == NULL) {
+-		PIPELINE_LOG(ERR, "%s: port_id parameter NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	/* ops */
+-	if (params->ops == NULL) {
+-		PIPELINE_LOG(ERR, "%s: params->ops parameter NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	if (params->ops->f_create == NULL) {
+-		PIPELINE_LOG(ERR,
+-			"%s: f_create function pointer NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	if (params->ops->f_rx == NULL) {
+-		PIPELINE_LOG(ERR, "%s: f_rx function pointer NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	/* burst_size */
+-	if ((params->burst_size == 0) ||
+-		(params->burst_size > RTE_PORT_IN_BURST_SIZE_MAX)) {
+-		PIPELINE_LOG(ERR, "%s: invalid value for burst_size",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	/* Do we have room for one more port? */
+-	if (p->num_ports_in == RTE_PIPELINE_PORT_IN_MAX) {
+-		PIPELINE_LOG(ERR,
+-			"%s: invalid value for num_ports_in", __func__);
+-		return -EINVAL;
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-rte_pipeline_port_out_check_params(struct rte_pipeline *p,
+-		struct rte_pipeline_port_out_params *params,
+-		uint32_t *port_id)
+-{
+-	if (p == NULL) {
+-		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	if (params == NULL) {
+-		PIPELINE_LOG(ERR, "%s: params parameter NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	if (port_id == NULL) {
+-		PIPELINE_LOG(ERR, "%s: port_id parameter NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	/* ops */
+-	if (params->ops == NULL) {
+-		PIPELINE_LOG(ERR, "%s: params->ops parameter NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	if (params->ops->f_create == NULL) {
+-		PIPELINE_LOG(ERR,
+-			"%s: f_create function pointer NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	if (params->ops->f_tx == NULL) {
+-		PIPELINE_LOG(ERR,
+-			"%s: f_tx function pointer NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	if (params->ops->f_tx_bulk == NULL) {
+-		PIPELINE_LOG(ERR,
+-			"%s: f_tx_bulk function pointer NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* Do we have room for one more port? */
+-	if (p->num_ports_out == RTE_PIPELINE_PORT_OUT_MAX) {
+-		PIPELINE_LOG(ERR,
+-			"%s: invalid value for num_ports_out", __func__);
+-		return -EINVAL;
+-	}
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_pipeline_port_in_create)
+-int
+-rte_pipeline_port_in_create(struct rte_pipeline *p,
+-		struct rte_pipeline_port_in_params *params,
+-		uint32_t *port_id)
+-{
+-	struct rte_port_in *port;
+-	void *h_port;
+-	uint32_t id;
+-	int status;
+-
+-	/* Check input arguments */
+-	status = rte_pipeline_port_in_check_params(p, params, port_id);
+-	if (status != 0)
+-		return status;
+-
+-	id = p->num_ports_in;
+-	port = &p->ports_in[id];
+-
+-	/* Create the port */
+-	h_port = params->ops->f_create(params->arg_create, p->socket_id);
+-	if (h_port == NULL) {
+-		PIPELINE_LOG(ERR, "%s: Port creation failed", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* Commit current table to the pipeline */
+-	p->num_ports_in++;
+-	*port_id = id;
+-
+-	/* Save input parameters */
+-	port->ops = *params->ops;
+-	port->f_action = params->f_action;
+-	port->arg_ah = params->arg_ah;
+-	port->burst_size = params->burst_size;
+-
+-	/* Initialize port internal data structure */
+-	port->table_id = RTE_TABLE_INVALID;
+-	port->h_port = h_port;
+-	port->next = NULL;
+-
+-	return 0;
+-}
+-
+-void
+-rte_pipeline_port_in_free(struct rte_port_in *port)
+-{
+-	if (port->ops.f_free != NULL)
+-		port->ops.f_free(port->h_port);
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_pipeline_port_out_create)
+-int
+-rte_pipeline_port_out_create(struct rte_pipeline *p,
+-		struct rte_pipeline_port_out_params *params,
+-		uint32_t *port_id)
+-{
+-	struct rte_port_out *port;
+-	void *h_port;
+-	uint32_t id;
+-	int status;
+-
+-	/* Check input arguments */
+-	status = rte_pipeline_port_out_check_params(p, params, port_id);
+-	if (status != 0)
+-		return status;
+-
+-	id = p->num_ports_out;
+-	port = &p->ports_out[id];
+-
+-	/* Create the port */
+-	h_port = params->ops->f_create(params->arg_create, p->socket_id);
+-	if (h_port == NULL) {
+-		PIPELINE_LOG(ERR, "%s: Port creation failed", __func__);
+-		return -EINVAL;
+-	}
+-
+-	/* Commit current table to the pipeline */
+-	p->num_ports_out++;
+-	*port_id = id;
+-
+-	/* Save input parameters */
+-	port->ops = *params->ops;
+-	port->f_action = params->f_action;
+-	port->arg_ah = params->arg_ah;
+-
+-	/* Initialize port internal data structure */
+-	port->h_port = h_port;
+-
+-	return 0;
+-}
+-
+-void
+-rte_pipeline_port_out_free(struct rte_port_out *port)
+-{
+-	if (port->ops.f_free != NULL)
+-		port->ops.f_free(port->h_port);
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_pipeline_port_in_connect_to_table)
+-int
+-rte_pipeline_port_in_connect_to_table(struct rte_pipeline *p,
+-		uint32_t port_id,
+-		uint32_t table_id)
+-{
+-	struct rte_port_in *port;
+-
+-	/* Check input arguments */
+-	if (p == NULL) {
+-		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	if (port_id >= p->num_ports_in) {
+-		PIPELINE_LOG(ERR,
+-			"%s: port IN ID %u is out of range",
+-			__func__, port_id);
+-		return -EINVAL;
+-	}
+-
+-	if (table_id >= p->num_tables) {
+-		PIPELINE_LOG(ERR,
+-			"%s: Table ID %u is out of range",
+-			__func__, table_id);
+-		return -EINVAL;
+-	}
+-
+-	port = &p->ports_in[port_id];
+-	port->table_id = table_id;
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_pipeline_port_in_enable)
+-int
+-rte_pipeline_port_in_enable(struct rte_pipeline *p, uint32_t port_id)
+-{
+-	struct rte_port_in *port, *port_prev, *port_next;
+-	uint64_t port_mask;
+-	uint32_t port_prev_id, port_next_id;
+-
+-	/* Check input arguments */
+-	if (p == NULL) {
+-		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	if (port_id >= p->num_ports_in) {
+-		PIPELINE_LOG(ERR,
+-			"%s: port IN ID %u is out of range",
+-			__func__, port_id);
+-		return -EINVAL;
+-	}
+-
+-	port = &p->ports_in[port_id];
+-
+-	/* Return if current input port is already enabled */
+-	port_mask = 1LLU << port_id;
+-	if (p->enabled_port_in_mask & port_mask)
+-		return 0;
+-
+-	p->enabled_port_in_mask |= port_mask;
+-
+-	/* Add current input port to the pipeline chain of enabled ports */
+-	port_prev_id = rte_mask_get_prev(p->enabled_port_in_mask, port_id);
+-	port_next_id = rte_mask_get_next(p->enabled_port_in_mask, port_id);
+-
+-	port_prev = &p->ports_in[port_prev_id];
+-	port_next = &p->ports_in[port_next_id];
+-
+-	port_prev->next = port;
+-	port->next = port_next;
+-
+-	/* Check if list of enabled ports was previously empty */
+-	if (p->enabled_port_in_mask == port_mask)
+-		p->port_in_next = port;
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_pipeline_port_in_disable)
+-int
+-rte_pipeline_port_in_disable(struct rte_pipeline *p, uint32_t port_id)
+-{
+-	struct rte_port_in *port, *port_prev, *port_next;
+-	uint64_t port_mask;
+-	uint32_t port_prev_id, port_next_id;
+-
+-	/* Check input arguments */
+-	if (p == NULL) {
+-		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
+-		__func__);
+-		return -EINVAL;
+-	}
+-
+-	if (port_id >= p->num_ports_in) {
+-		PIPELINE_LOG(ERR, "%s: port IN ID %u is out of range",
+-			__func__, port_id);
+-		return -EINVAL;
+-	}
+-
+-	port = &p->ports_in[port_id];
+-
+-	/* Return if current input port is already disabled */
+-	port_mask = 1LLU << port_id;
+-	if ((p->enabled_port_in_mask & port_mask) == 0)
+-		return 0;
+-
+-	p->enabled_port_in_mask &= ~port_mask;
+-
+-	/* Return if no other enabled ports */
+-	if (p->enabled_port_in_mask == 0) {
+-		p->port_in_next = NULL;
+-
+-		return 0;
+-	}
+-
+-	/* Add current input port to the pipeline chain of enabled ports */
+-	port_prev_id = rte_mask_get_prev(p->enabled_port_in_mask, port_id);
+-	port_next_id = rte_mask_get_next(p->enabled_port_in_mask, port_id);
+-
+-	port_prev = &p->ports_in[port_prev_id];
+-	port_next = &p->ports_in[port_next_id];
+-
+-	port_prev->next = port_next;
+-
+-	/* Check if the port which has just been disabled is next to serve */
+-	if (port == p->port_in_next)
+-		p->port_in_next = port_next;
+-
+-	return 0;
+-}
+-
+-/*
+- * Pipeline run-time
+- */
+-RTE_EXPORT_SYMBOL(rte_pipeline_check)
+-int
+-rte_pipeline_check(struct rte_pipeline *p)
+-{
+-	uint32_t port_in_id;
+-
+-	/* Check input arguments */
+-	if (p == NULL) {
+-		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	/* Check that pipeline has at least one input port, one table and one
+-	output port */
+-	if (p->num_ports_in == 0) {
+-		PIPELINE_LOG(ERR, "%s: must have at least 1 input port",
+-			__func__);
+-		return -EINVAL;
+-	}
+-	if (p->num_tables == 0) {
+-		PIPELINE_LOG(ERR, "%s: must have at least 1 table",
+-			__func__);
+-		return -EINVAL;
+-	}
+-	if (p->num_ports_out == 0) {
+-		PIPELINE_LOG(ERR, "%s: must have at least 1 output port",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	/* Check that all input ports are connected */
+-	for (port_in_id = 0; port_in_id < p->num_ports_in; port_in_id++) {
+-		struct rte_port_in *port_in = &p->ports_in[port_in_id];
+-
+-		if (port_in->table_id == RTE_TABLE_INVALID) {
+-			PIPELINE_LOG(ERR,
+-				"%s: Port IN ID %u is not connected",
+-				__func__, port_in_id);
+-			return -EINVAL;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static inline void
+-rte_pipeline_compute_masks(struct rte_pipeline *p, uint64_t pkts_mask)
+-{
+-	p->action_mask1[RTE_PIPELINE_ACTION_DROP] = 0;
+-	p->action_mask1[RTE_PIPELINE_ACTION_PORT] = 0;
+-	p->action_mask1[RTE_PIPELINE_ACTION_PORT_META] = 0;
+-	p->action_mask1[RTE_PIPELINE_ACTION_TABLE] = 0;
+-
+-	if ((pkts_mask & (pkts_mask + 1)) == 0) {
+-		uint64_t n_pkts = rte_popcount64(pkts_mask);
+-		uint32_t i;
+-
+-		for (i = 0; i < n_pkts; i++) {
+-			uint64_t pkt_mask = 1LLU << i;
+-			uint32_t pos = p->entries[i]->action;
+-
+-			p->action_mask1[pos] |= pkt_mask;
+-		}
+-	} else {
+-		uint32_t i;
+-
+-		for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++) {
+-			uint64_t pkt_mask = 1LLU << i;
+-			uint32_t pos;
+-
+-			if ((pkt_mask & pkts_mask) == 0)
+-				continue;
+-
+-			pos = p->entries[i]->action;
+-			p->action_mask1[pos] |= pkt_mask;
+-		}
+-	}
+-}
+-
+-static inline void
+-rte_pipeline_action_handler_port_bulk(struct rte_pipeline *p,
+-	uint64_t pkts_mask, uint32_t port_id)
+-{
+-	struct rte_port_out *port_out = &p->ports_out[port_id];
+-
+-	p->pkts_mask = pkts_mask;
+-
+-	/* Output port user actions */
+-	if (port_out->f_action != NULL) {
+-		port_out->f_action(p, p->pkts, pkts_mask, port_out->arg_ah);
+-
+-		RTE_PIPELINE_STATS_AH_DROP_READ(p,
+-			port_out->n_pkts_dropped_by_ah);
+-	}
+-
+-	/* Output port TX */
+-	if (p->pkts_mask != 0)
+-		port_out->ops.f_tx_bulk(port_out->h_port,
+-			p->pkts,
+-			p->pkts_mask);
+-}
+-
+-static inline void
+-rte_pipeline_action_handler_port(struct rte_pipeline *p, uint64_t pkts_mask)
+-{
+-	p->pkts_mask = pkts_mask;
+-
+-	if ((pkts_mask & (pkts_mask + 1)) == 0) {
+-		uint64_t n_pkts = rte_popcount64(pkts_mask);
+-		uint32_t i;
+-
+-		for (i = 0; i < n_pkts; i++) {
+-			struct rte_mbuf *pkt = p->pkts[i];
+-			uint32_t port_out_id = p->entries[i]->port_id;
+-			struct rte_port_out *port_out =
+-				&p->ports_out[port_out_id];
+-
+-			/* Output port user actions */
+-			if (port_out->f_action == NULL) /* Output port TX */
+-				port_out->ops.f_tx(port_out->h_port, pkt);
+-			else {
+-				uint64_t pkt_mask = 1LLU << i;
+-
+-				port_out->f_action(p,
+-					p->pkts,
+-					pkt_mask,
+-					port_out->arg_ah);
+-
+-				RTE_PIPELINE_STATS_AH_DROP_READ(p,
+-					port_out->n_pkts_dropped_by_ah);
+-
+-				/* Output port TX */
+-				if (pkt_mask & p->pkts_mask)
+-					port_out->ops.f_tx(port_out->h_port,
+-						pkt);
+-			}
+-		}
+-	} else {
+-		uint32_t i;
+-
+-		for (i = 0;  i < RTE_PORT_IN_BURST_SIZE_MAX; i++) {
+-			uint64_t pkt_mask = 1LLU << i;
+-			struct rte_mbuf *pkt;
+-			struct rte_port_out *port_out;
+-			uint32_t port_out_id;
+-
+-			if ((pkt_mask & pkts_mask) == 0)
+-				continue;
+-
+-			pkt = p->pkts[i];
+-			port_out_id = p->entries[i]->port_id;
+-			port_out = &p->ports_out[port_out_id];
+-
+-			/* Output port user actions */
+-			if (port_out->f_action == NULL) /* Output port TX */
+-				port_out->ops.f_tx(port_out->h_port, pkt);
+-			else {
+-				port_out->f_action(p,
+-					p->pkts,
+-					pkt_mask,
+-					port_out->arg_ah);
+-
+-				RTE_PIPELINE_STATS_AH_DROP_READ(p,
+-					port_out->n_pkts_dropped_by_ah);
+-
+-				/* Output port TX */
+-				if (pkt_mask & p->pkts_mask)
+-					port_out->ops.f_tx(port_out->h_port,
+-						pkt);
+-			}
+-		}
+-	}
+-}
+-
+-static inline void
+-rte_pipeline_action_handler_port_meta(struct rte_pipeline *p,
+-	uint64_t pkts_mask)
+-{
+-	p->pkts_mask = pkts_mask;
+-
+-	if ((pkts_mask & (pkts_mask + 1)) == 0) {
+-		uint64_t n_pkts = rte_popcount64(pkts_mask);
+-		uint32_t i;
+-
+-		for (i = 0; i < n_pkts; i++) {
+-			struct rte_mbuf *pkt = p->pkts[i];
+-			uint32_t port_out_id =
+-				RTE_MBUF_METADATA_UINT32(pkt,
+-					p->offset_port_id);
+-			struct rte_port_out *port_out = &p->ports_out[
+-				port_out_id];
+-
+-			/* Output port user actions */
+-			if (port_out->f_action == NULL) /* Output port TX */
+-				port_out->ops.f_tx(port_out->h_port, pkt);
+-			else {
+-				uint64_t pkt_mask = 1LLU << i;
+-
+-				port_out->f_action(p,
+-					p->pkts,
+-					pkt_mask,
+-					port_out->arg_ah);
+-
+-				RTE_PIPELINE_STATS_AH_DROP_READ(p,
+-					port_out->n_pkts_dropped_by_ah);
+-
+-				/* Output port TX */
+-				if (pkt_mask & p->pkts_mask)
+-					port_out->ops.f_tx(port_out->h_port,
+-						pkt);
+-			}
+-		}
+-	} else {
+-		uint32_t i;
+-
+-		for (i = 0;  i < RTE_PORT_IN_BURST_SIZE_MAX; i++) {
+-			uint64_t pkt_mask = 1LLU << i;
+-			struct rte_mbuf *pkt;
+-			struct rte_port_out *port_out;
+-			uint32_t port_out_id;
+-
+-			if ((pkt_mask & pkts_mask) == 0)
+-				continue;
+-
+-			pkt = p->pkts[i];
+-			port_out_id = RTE_MBUF_METADATA_UINT32(pkt,
+-				p->offset_port_id);
+-			port_out = &p->ports_out[port_out_id];
+-
+-			/* Output port user actions */
+-			if (port_out->f_action == NULL) /* Output port TX */
+-				port_out->ops.f_tx(port_out->h_port, pkt);
+-			else {
+-				port_out->f_action(p,
+-					p->pkts,
+-					pkt_mask,
+-					port_out->arg_ah);
+-
+-				RTE_PIPELINE_STATS_AH_DROP_READ(p,
+-					port_out->n_pkts_dropped_by_ah);
+-
+-				/* Output port TX */
+-				if (pkt_mask & p->pkts_mask)
+-					port_out->ops.f_tx(port_out->h_port,
+-						pkt);
+-			}
+-		}
+-	}
+-}
+-
+-static inline void
+-rte_pipeline_action_handler_drop(struct rte_pipeline *p, uint64_t pkts_mask)
+-{
+-	if ((pkts_mask & (pkts_mask + 1)) == 0) {
+-		uint64_t n_pkts = rte_popcount64(pkts_mask);
+-		uint32_t i;
+-
+-		for (i = 0; i < n_pkts; i++)
+-			rte_pktmbuf_free(p->pkts[i]);
+-	} else {
+-		uint32_t i;
+-
+-		for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++) {
+-			uint64_t pkt_mask = 1LLU << i;
+-
+-			if ((pkt_mask & pkts_mask) == 0)
+-				continue;
+-
+-			rte_pktmbuf_free(p->pkts[i]);
+-		}
+-	}
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_pipeline_run)
+-int
+-rte_pipeline_run(struct rte_pipeline *p)
+-{
+-	struct rte_port_in *port_in = p->port_in_next;
+-	uint32_t n_pkts, table_id;
+-
+-	if (port_in == NULL)
+-		return 0;
+-
+-	/* Input port RX */
+-	n_pkts = port_in->ops.f_rx(port_in->h_port, p->pkts,
+-		port_in->burst_size);
+-	if (n_pkts == 0) {
+-		p->port_in_next = port_in->next;
+-		return 0;
+-	}
+-
+-	p->pkts_mask = RTE_LEN2MASK(n_pkts, uint64_t);
+-	p->action_mask0[RTE_PIPELINE_ACTION_DROP] = 0;
+-	p->action_mask0[RTE_PIPELINE_ACTION_PORT] = 0;
+-	p->action_mask0[RTE_PIPELINE_ACTION_PORT_META] = 0;
+-	p->action_mask0[RTE_PIPELINE_ACTION_TABLE] = 0;
+-
+-	/* Input port user actions */
+-	if (port_in->f_action != NULL) {
+-		port_in->f_action(p, p->pkts, n_pkts, port_in->arg_ah);
+-
+-		RTE_PIPELINE_STATS_AH_DROP_READ(p,
+-			port_in->n_pkts_dropped_by_ah);
+-	}
+-
+-	/* Table */
+-	for (table_id = port_in->table_id; p->pkts_mask != 0; ) {
+-		struct rte_table *table;
+-		uint64_t lookup_hit_mask, lookup_miss_mask;
+-
+-		/* Lookup */
+-		table = &p->tables[table_id];
+-		table->ops.f_lookup(table->h_table, p->pkts, p->pkts_mask,
+-			&lookup_hit_mask, (void **) p->entries);
+-		lookup_miss_mask = p->pkts_mask & (~lookup_hit_mask);
+-
+-		/* Lookup miss */
+-		if (lookup_miss_mask != 0) {
+-			struct rte_pipeline_table_entry *default_entry =
+-				table->default_entry;
+-
+-			p->pkts_mask = lookup_miss_mask;
+-
+-			/* Table user actions */
+-			if (table->f_action_miss != NULL) {
+-				table->f_action_miss(p,
+-					p->pkts,
+-					lookup_miss_mask,
+-					default_entry,
+-					table->arg_ah);
+-
+-				RTE_PIPELINE_STATS_AH_DROP_READ(p,
+-					table->n_pkts_dropped_by_lkp_miss_ah);
+-			}
+-
+-			/* Table reserved actions */
+-			if ((default_entry->action == RTE_PIPELINE_ACTION_PORT) &&
+-				(p->pkts_mask != 0))
+-				rte_pipeline_action_handler_port_bulk(p,
+-					p->pkts_mask,
+-					default_entry->port_id);
+-			else {
+-				uint32_t pos = default_entry->action;
+-
+-				RTE_PIPELINE_STATS_TABLE_DROP0(p);
+-
+-				p->action_mask0[pos] |= p->pkts_mask;
+-
+-				RTE_PIPELINE_STATS_TABLE_DROP1(p,
+-					table->n_pkts_dropped_lkp_miss);
+-			}
+-		}
+-
+-		/* Lookup hit */
+-		if (lookup_hit_mask != 0) {
+-			p->pkts_mask = lookup_hit_mask;
+-
+-			/* Table user actions */
+-			if (table->f_action_hit != NULL) {
+-				table->f_action_hit(p,
+-					p->pkts,
+-					lookup_hit_mask,
+-					p->entries,
+-					table->arg_ah);
+-
+-				RTE_PIPELINE_STATS_AH_DROP_READ(p,
+-					table->n_pkts_dropped_by_lkp_hit_ah);
+-			}
+-
+-			/* Table reserved actions */
+-			RTE_PIPELINE_STATS_TABLE_DROP0(p);
+-			rte_pipeline_compute_masks(p, p->pkts_mask);
+-			p->action_mask0[RTE_PIPELINE_ACTION_DROP] |=
+-				p->action_mask1[
+-					RTE_PIPELINE_ACTION_DROP];
+-			p->action_mask0[RTE_PIPELINE_ACTION_PORT] |=
+-				p->action_mask1[
+-					RTE_PIPELINE_ACTION_PORT];
+-			p->action_mask0[RTE_PIPELINE_ACTION_PORT_META] |=
+-				p->action_mask1[
+-					RTE_PIPELINE_ACTION_PORT_META];
+-			p->action_mask0[RTE_PIPELINE_ACTION_TABLE] |=
+-				p->action_mask1[
+-					RTE_PIPELINE_ACTION_TABLE];
+-
+-			RTE_PIPELINE_STATS_TABLE_DROP1(p,
+-				table->n_pkts_dropped_lkp_hit);
+-		}
+-
+-		/* Prepare for next iteration */
+-		p->pkts_mask = p->action_mask0[RTE_PIPELINE_ACTION_TABLE];
+-		table_id = table->table_next_id;
+-		p->action_mask0[RTE_PIPELINE_ACTION_TABLE] = 0;
+-	}
+-
+-	/* Table reserved action PORT */
+-	rte_pipeline_action_handler_port(p,
+-		p->action_mask0[RTE_PIPELINE_ACTION_PORT]);
+-
+-	/* Table reserved action PORT META */
+-	rte_pipeline_action_handler_port_meta(p,
+-		p->action_mask0[RTE_PIPELINE_ACTION_PORT_META]);
+-
+-	/* Table reserved action DROP */
+-	rte_pipeline_action_handler_drop(p,
+-		p->action_mask0[RTE_PIPELINE_ACTION_DROP]);
+-
+-	/* Pick candidate for next port IN to serve */
+-	p->port_in_next = port_in->next;
+-
+-	return (int) n_pkts;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_pipeline_flush)
+-int
+-rte_pipeline_flush(struct rte_pipeline *p)
+-{
+-	uint32_t port_id;
+-
+-	/* Check input arguments */
+-	if (p == NULL) {
+-		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	for (port_id = 0; port_id < p->num_ports_out; port_id++) {
+-		struct rte_port_out *port = &p->ports_out[port_id];
+-
+-		if (port->ops.f_flush != NULL)
+-			port->ops.f_flush(port->h_port);
+-	}
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_pipeline_port_out_packet_insert)
+-int
+-rte_pipeline_port_out_packet_insert(struct rte_pipeline *p,
+-	uint32_t port_id, struct rte_mbuf *pkt)
+-{
+-	struct rte_port_out *port_out = &p->ports_out[port_id];
+-
+-	port_out->ops.f_tx(port_out->h_port, pkt); /* Output port TX */
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_pipeline_ah_packet_hijack)
+-int rte_pipeline_ah_packet_hijack(struct rte_pipeline *p,
+-	uint64_t pkts_mask)
+-{
+-	pkts_mask &= p->pkts_mask;
+-	p->pkts_mask &= ~pkts_mask;
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_pipeline_ah_packet_drop)
+-int rte_pipeline_ah_packet_drop(struct rte_pipeline *p,
+-	uint64_t pkts_mask)
+-{
+-	pkts_mask &= p->pkts_mask;
+-	p->pkts_mask &= ~pkts_mask;
+-	p->action_mask0[RTE_PIPELINE_ACTION_DROP] |= pkts_mask;
+-
+-	RTE_PIPELINE_STATS_AH_DROP_WRITE(p, pkts_mask);
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_pipeline_port_in_stats_read)
+-int rte_pipeline_port_in_stats_read(struct rte_pipeline *p, uint32_t port_id,
+-	struct rte_pipeline_port_in_stats *stats, int clear)
+-{
+-	struct rte_port_in *port;
+-	int retval;
+-
+-	if (p == NULL) {
+-		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	if (port_id >= p->num_ports_in) {
+-		PIPELINE_LOG(ERR,
+-			"%s: port IN ID %u is out of range",
+-			__func__, port_id);
+-		return -EINVAL;
+-	}
+-
+-	port = &p->ports_in[port_id];
+-
+-	if (port->ops.f_stats != NULL) {
+-		retval = port->ops.f_stats(port->h_port, &stats->stats, clear);
+-		if (retval)
+-			return retval;
+-	} else if (stats != NULL)
+-		memset(&stats->stats, 0, sizeof(stats->stats));
+-
+-	if (stats != NULL)
+-		stats->n_pkts_dropped_by_ah = port->n_pkts_dropped_by_ah;
+-
+-	if (clear != 0)
+-		port->n_pkts_dropped_by_ah = 0;
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_pipeline_port_out_stats_read)
+-int rte_pipeline_port_out_stats_read(struct rte_pipeline *p, uint32_t port_id,
+-	struct rte_pipeline_port_out_stats *stats, int clear)
+-{
+-	struct rte_port_out *port;
+-	int retval;
+-
+-	if (p == NULL) {
+-		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL", __func__);
+-		return -EINVAL;
+-	}
+-
+-	if (port_id >= p->num_ports_out) {
+-		PIPELINE_LOG(ERR,
+-			"%s: port OUT ID %u is out of range", __func__, port_id);
+-		return -EINVAL;
+-	}
+-
+-	port = &p->ports_out[port_id];
+-	if (port->ops.f_stats != NULL) {
+-		retval = port->ops.f_stats(port->h_port, &stats->stats, clear);
+-		if (retval != 0)
+-			return retval;
+-	} else if (stats != NULL)
+-		memset(&stats->stats, 0, sizeof(stats->stats));
+-
+-	if (stats != NULL)
+-		stats->n_pkts_dropped_by_ah = port->n_pkts_dropped_by_ah;
+-
+-	if (clear != 0)
+-		port->n_pkts_dropped_by_ah = 0;
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_pipeline_table_stats_read)
+-int rte_pipeline_table_stats_read(struct rte_pipeline *p, uint32_t table_id,
+-	struct rte_pipeline_table_stats *stats, int clear)
+-{
+-	struct rte_table *table;
+-	int retval;
+-
+-	if (p == NULL) {
+-		PIPELINE_LOG(ERR, "%s: pipeline parameter NULL",
+-			__func__);
+-		return -EINVAL;
+-	}
+-
+-	if (table_id >= p->num_tables) {
+-		PIPELINE_LOG(ERR,
+-				"%s: table %u is out of range", __func__, table_id);
+-		return -EINVAL;
+-	}
+-
+-	table = &p->tables[table_id];
+-	if (table->ops.f_stats != NULL) {
+-		retval = table->ops.f_stats(table->h_table, &stats->stats, clear);
+-		if (retval != 0)
+-			return retval;
+-	} else if (stats != NULL)
+-		memset(&stats->stats, 0, sizeof(stats->stats));
+-
+-	if (stats != NULL) {
+-		stats->n_pkts_dropped_by_lkp_hit_ah =
+-			table->n_pkts_dropped_by_lkp_hit_ah;
+-		stats->n_pkts_dropped_by_lkp_miss_ah =
+-			table->n_pkts_dropped_by_lkp_miss_ah;
+-		stats->n_pkts_dropped_lkp_hit = table->n_pkts_dropped_lkp_hit;
+-		stats->n_pkts_dropped_lkp_miss = table->n_pkts_dropped_lkp_miss;
+-	}
+-
+-	if (clear != 0) {
+-		table->n_pkts_dropped_by_lkp_hit_ah = 0;
+-		table->n_pkts_dropped_by_lkp_miss_ah = 0;
+-		table->n_pkts_dropped_lkp_hit = 0;
+-		table->n_pkts_dropped_lkp_miss = 0;
+-	}
+-
+-	return 0;
+-}
+diff --git a/lib/pipeline/rte_pipeline.h b/lib/pipeline/rte_pipeline.h
+deleted file mode 100644
+index c9e7172453..0000000000
+--- a/lib/pipeline/rte_pipeline.h
++++ /dev/null
+@@ -1,840 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2016 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_PIPELINE_H__
+-#define __INCLUDE_RTE_PIPELINE_H__
+-
+-/**
+- * @file
+- * RTE Pipeline
+- *
+- * This tool is part of the DPDK Packet Framework tool suite and provides
+- * a standard methodology (logically similar to OpenFlow) for rapid development
+- * of complex packet processing pipelines out of ports, tables and actions.
+- *
+- * <B>Basic operation.</B> A pipeline is constructed by connecting its input
+- * ports to its output ports through a chain of lookup tables. As result of
+- * lookup operation into the current table, one of the table entries (or the
+- * default table entry, in case of lookup miss) is identified to provide the
+- * actions to be executed on the current packet and the associated action
+- * meta-data. The behavior of user actions is defined through the configurable
+- * table action handler, while the reserved actions define the next hop for the
+- * current packet (either another table, an output port or packet drop) and are
+- * handled transparently by the framework.
+- *
+- * <B>Initialization and run-time flows.</B> Once all the pipeline elements
+- * (input ports, tables, output ports) have been created, input ports connected
+- * to tables, table action handlers configured, tables populated with the
+- * initial set of entries (actions and action meta-data) and input ports
+- * enabled, the pipeline runs automatically, pushing packets from input ports
+- * to tables and output ports. At each table, the identified user actions are
+- * being executed, resulting in action meta-data (stored in the table entry)
+- * and packet meta-data (stored with the packet descriptor) being updated. The
+- * pipeline tables can have further updates and input ports can be disabled or
+- * enabled later on as required.
+- *
+- * <B>Multi-core scaling.</B> Typically, each CPU core will run its own
+- * pipeline instance. Complex application-level pipelines can be implemented by
+- * interconnecting multiple CPU core-level pipelines in tree-like topologies,
+- * as the same port devices (e.g. SW rings) can serve as output ports for the
+- * pipeline running on CPU core A, as well as input ports for the pipeline
+- * running on CPU core B. This approach enables the application development
+- * using the pipeline (CPU cores connected serially), cluster/run-to-completion
+- * (CPU cores connected in parallel) or mixed (pipeline of CPU core clusters)
+- * programming models.
+- *
+- * <B>Thread safety.</B> It is possible to have multiple pipelines running on
+- * the same CPU core, but it is not allowed (for thread safety reasons) to have
+- * multiple CPU cores running the same pipeline instance.
 - */
 -
 -#include <stdint.h>
--#include <stdlib.h>
--#include <string.h>
 -
--#include <rte_string_fns.h>
--#include <rte_table_hash_func.h>
+-#include <rte_port.h>
+-#include <rte_table.h>
+-#include <rte_common.h>
 -
--#include "action.h"
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
 -
--/**
-- * Input port
+-struct rte_mbuf;
+-
+-/*
+- * Pipeline
 - */
--static struct port_in_action_profile_list port_in_action_profile_list;
+-/** Opaque data type for pipeline */
+-struct rte_pipeline;
 -
--int
--port_in_action_profile_init(void)
--{
--	TAILQ_INIT(&port_in_action_profile_list);
+-/** Parameters for pipeline creation  */
+-struct rte_pipeline_params {
+-	/** Pipeline name */
+-	const char *name;
 -
--	return 0;
--}
+-	/** CPU socket ID where memory for the pipeline and its elements (ports
+-	and tables) should be allocated */
+-	int socket_id;
 -
--struct port_in_action_profile *
--port_in_action_profile_find(const char *name)
--{
--	struct port_in_action_profile *profile;
+-	/** Offset within packet meta-data to port_id to be used by action
+-	"Send packet to output port read from packet meta-data". Has to be
+-	4-byte aligned. */
+-	uint32_t offset_port_id;
+-};
 -
--	if (name == NULL)
--		return NULL;
+-/** Pipeline port in stats. */
+-struct rte_pipeline_port_in_stats {
+-	/** Port in stats. */
+-	struct rte_port_in_stats stats;
 -
--	TAILQ_FOREACH(profile, &port_in_action_profile_list, node)
--		if (strcmp(profile->name, name) == 0)
--			return profile;
+-	/** Number of packets dropped by action handler. */
+-	uint64_t n_pkts_dropped_by_ah;
 -
--	return NULL;
--}
+-};
 -
--struct port_in_action_profile *
--port_in_action_profile_create(const char *name,
--	struct port_in_action_profile_params *params)
--{
--	struct port_in_action_profile *profile;
--	struct rte_port_in_action_profile *ap;
--	int status;
+-/** Pipeline port out stats. */
+-struct rte_pipeline_port_out_stats {
+-	/** Port out stats. */
+-	struct rte_port_out_stats stats;
 -
--	/* Check input params */
--	if ((name == NULL) ||
--		port_in_action_profile_find(name) ||
--		(params == NULL))
--		return NULL;
+-	/** Number of packets dropped by action handler. */
+-	uint64_t n_pkts_dropped_by_ah;
+-};
 -
--	if ((params->action_mask & (1LLU << RTE_PORT_IN_ACTION_LB)) &&
--		(params->lb.f_hash == NULL)) {
--		switch (params->lb.key_size) {
--		case  8:
--			params->lb.f_hash = rte_table_hash_crc_key8;
--			break;
+-/** Pipeline table stats. */
+-struct rte_pipeline_table_stats {
+-	/** Table stats. */
+-	struct rte_table_stats stats;
 -
--		case 16:
--			params->lb.f_hash = rte_table_hash_crc_key16;
--			break;
+-	/** Number of packets dropped by lookup hit action handler. */
+-	uint64_t n_pkts_dropped_by_lkp_hit_ah;
 -
--		case 24:
--			params->lb.f_hash = rte_table_hash_crc_key24;
--			break;
+-	/** Number of packets dropped by lookup miss action handler. */
+-	uint64_t n_pkts_dropped_by_lkp_miss_ah;
 -
--		case 32:
--			params->lb.f_hash = rte_table_hash_crc_key32;
--			break;
+-	/** Number of packets dropped by pipeline in behalf of this
+-	 * table based on action specified in table entry. */
+-	uint64_t n_pkts_dropped_lkp_hit;
 -
--		case 40:
--			params->lb.f_hash = rte_table_hash_crc_key40;
--			break;
--
--		case 48:
--			params->lb.f_hash = rte_table_hash_crc_key48;
--			break;
--
--		case 56:
--			params->lb.f_hash = rte_table_hash_crc_key56;
--			break;
--
--		case 64:
--			params->lb.f_hash = rte_table_hash_crc_key64;
--			break;
--
--		default:
--			return NULL;
--		}
--
--		params->lb.seed = 0;
--	}
--	/* Resource */
--	ap = rte_port_in_action_profile_create(0);
--	if (ap == NULL)
--		return NULL;
--
--	if (params->action_mask & (1LLU << RTE_PORT_IN_ACTION_FLTR)) {
--		status = rte_port_in_action_profile_action_register(ap,
--			RTE_PORT_IN_ACTION_FLTR,
--			&params->fltr);
--
--		if (status) {
--			rte_port_in_action_profile_free(ap);
--			return NULL;
--		}
--	}
--
--	if (params->action_mask & (1LLU << RTE_PORT_IN_ACTION_LB)) {
--		status = rte_port_in_action_profile_action_register(ap,
--			RTE_PORT_IN_ACTION_LB,
--			&params->lb);
--
--		if (status) {
--			rte_port_in_action_profile_free(ap);
--			return NULL;
--		}
--	}
--
--	status = rte_port_in_action_profile_freeze(ap);
--	if (status) {
--		rte_port_in_action_profile_free(ap);
--		return NULL;
--	}
--
--	/* Node allocation */
--	profile = calloc(1, sizeof(struct port_in_action_profile));
--	if (profile == NULL) {
--		rte_port_in_action_profile_free(ap);
--		return NULL;
--	}
--
--	/* Node fill in */
--	strlcpy(profile->name, name, sizeof(profile->name));
--	memcpy(&profile->params, params, sizeof(*params));
--	profile->ap = ap;
--
--	/* Node add to list */
--	TAILQ_INSERT_TAIL(&port_in_action_profile_list, profile, node);
--
--	return profile;
--}
+-	/** Number of packets dropped by pipeline in behalf of this
+-	 *  table based on action specified in table entry. */
+-	uint64_t n_pkts_dropped_lkp_miss;
+-};
 -
 -/**
+- * Pipeline create
+- *
+- * @param params
+- *   Parameters for pipeline creation
+- * @return
+- *   Handle to pipeline instance on success or NULL otherwise
+- */
+-struct rte_pipeline *rte_pipeline_create(struct rte_pipeline_params *params);
+-
+-/**
+- * Pipeline free
+- *
+- * @param p
+- *   Handle to pipeline instance
+- * @return
+- *   0 on success, error code otherwise
+- */
+-int rte_pipeline_free(struct rte_pipeline *p);
+-
+-/**
+- * Pipeline consistency check
+- *
+- * @param p
+- *   Handle to pipeline instance
+- * @return
+- *   0 on success, error code otherwise
+- */
+-int rte_pipeline_check(struct rte_pipeline *p);
+-
+-/**
+- * Pipeline run
+- *
+- * @param p
+- *   Handle to pipeline instance
+- * @return
+- *   Number of packets read and processed
+- */
+-int rte_pipeline_run(struct rte_pipeline *p);
+-
+-/**
+- * Pipeline flush
+- *
+- * @param p
+- *   Handle to pipeline instance
+- * @return
+- *   0 on success, error code otherwise
+- */
+-int rte_pipeline_flush(struct rte_pipeline *p);
+-
+-/*
+- * Actions
+- */
+-/** Reserved actions */
+-enum rte_pipeline_action {
+-	/** Drop the packet */
+-	RTE_PIPELINE_ACTION_DROP = 0,
+-
+-	/** Send packet to output port */
+-	RTE_PIPELINE_ACTION_PORT,
+-
+-	/** Send packet to output port read from packet meta-data */
+-	RTE_PIPELINE_ACTION_PORT_META,
+-
+-	/** Send packet to table */
+-	RTE_PIPELINE_ACTION_TABLE,
+-
+-	/** Number of reserved actions */
+-	RTE_PIPELINE_ACTIONS
+-};
+-
+-/*
 - * Table
 - */
--static struct table_action_profile_list table_action_profile_list;
+-/** Maximum number of tables allowed for any given pipeline instance. The
+-	value of this parameter cannot be changed. */
+-#define RTE_PIPELINE_TABLE_MAX                                     64
 -
--int
--table_action_profile_init(void)
--{
--	TAILQ_INIT(&table_action_profile_list);
+-/**
+- * Head format for the table entry of any pipeline table. For any given
+- * pipeline table, all table entries should have the same size and format. For
+- * any given pipeline table, the table entry has to start with a head of this
+- * structure, which contains the reserved actions and their associated
+- * meta-data, and then optionally continues with user actions and their
+- * associated meta-data. As all the currently defined reserved actions are
+- * mutually exclusive, only one reserved action can be set per table entry.
+- */
+-struct rte_pipeline_table_entry {
+-	/** Reserved action */
+-	enum rte_pipeline_action action;
 -
--	return 0;
+-	union {
+-		/** Output port ID (meta-data for "Send packet to output port"
+-		action) */
+-		uint32_t port_id;
+-		/** Table ID (meta-data for "Send packet to table" action) */
+-		uint32_t table_id;
+-	};
+-	/** Start of table entry area for user defined actions and meta-data */
+-	uint8_t action_data[];
+-};
+-
+-/**
+- * Pipeline table action handler on lookup hit
+- *
+- * The action handler can decide to drop packets by resetting the associated
+- * packet bit in the pkts_mask parameter. In this case, the action handler is
+- * required not to free the packet buffer, which will be freed eventually by
+- * the pipeline.
+- *
+- * @param p
+- *   Handle to pipeline instance
+- * @param pkts
+- *   Burst of input packets specified as array of up to 64 pointers to struct
+- *   rte_mbuf
+- * @param pkts_mask
+- *   64-bit bitmask specifying which packets in the input burst are valid. When
+- *   pkts_mask bit n is set, then element n of pkts array is pointing to a
+- *   valid packet and element n of entries array is pointing to a valid table
+- *   entry associated with the packet, with the association typically done by
+- *   the table lookup operation. Otherwise, element n of pkts array and element
+- *   n of entries array will not be accessed.
+- * @param entries
+- *   Set of table entries specified as array of up to 64 pointers to struct
+- *   rte_pipeline_table_entry
+- * @param arg
+- *   Opaque parameter registered by the user at the pipeline table creation
+- *   time
+- * @return
+- *   0 on success, error code otherwise
+- */
+-typedef int (*rte_pipeline_table_action_handler_hit)(
+-	struct rte_pipeline *p,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	struct rte_pipeline_table_entry **entries,
+-	void *arg);
+-
+-/**
+- * Pipeline table action handler on lookup miss
+- *
+- * The action handler can decide to drop packets by resetting the associated
+- * packet bit in the pkts_mask parameter. In this case, the action handler is
+- * required not to free the packet buffer, which will be freed eventually by
+- * the pipeline.
+- *
+- * @param p
+- *   Handle to pipeline instance
+- * @param pkts
+- *   Burst of input packets specified as array of up to 64 pointers to struct
+- *   rte_mbuf
+- * @param pkts_mask
+- *   64-bit bitmask specifying which packets in the input burst are valid. When
+- *   pkts_mask bit n is set, then element n of pkts array is pointing to a
+- *   valid packet. Otherwise, element n of pkts array will not be accessed.
+- * @param entry
+- *   Single table entry associated with all the valid packets from the input
+- *   burst, specified as pointer to struct rte_pipeline_table_entry.
+- *   This entry is the pipeline table default entry that is associated by the
+- *   table lookup operation with the input packets that have resulted in lookup
+- *   miss.
+- * @param arg
+- *   Opaque parameter registered by the user at the pipeline table creation
+- *   time
+- * @return
+- *   0 on success, error code otherwise
+- */
+-typedef int (*rte_pipeline_table_action_handler_miss)(
+-	struct rte_pipeline *p,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	struct rte_pipeline_table_entry *entry,
+-	void *arg);
+-
+-/** Parameters for pipeline table creation. Action handlers have to be either
+-    both enabled or both disabled (they can be disabled by setting them to
+-    NULL). */
+-struct rte_pipeline_table_params {
+-	/** Table operations (specific to each table type) */
+-	struct rte_table_ops *ops;
+-	/** Opaque param to be passed to the table create operation when
+-	invoked */
+-	void *arg_create;
+-	/** Callback function to execute the user actions on input packets in
+-	case of lookup hit */
+-	rte_pipeline_table_action_handler_hit f_action_hit;
+-	/** Callback function to execute the user actions on input packets in
+-	case of lookup miss */
+-	rte_pipeline_table_action_handler_miss f_action_miss;
+-
+-	/** Opaque parameter to be passed to lookup hit and/or lookup miss
+-	action handlers when invoked */
+-	void *arg_ah;
+-	/** Memory size to be reserved per table entry for storing the user
+-	actions and their meta-data */
+-	uint32_t action_data_size;
+-};
+-
+-/**
+- * Pipeline table create
+- *
+- * @param p
+- *   Handle to pipeline instance
+- * @param params
+- *   Parameters for pipeline table creation
+- * @param table_id
+- *   Table ID. Valid only within the scope of table IDs of the current
+- *   pipeline. Only returned after a successful invocation.
+- * @return
+- *   0 on success, error code otherwise
+- */
+-int rte_pipeline_table_create(struct rte_pipeline *p,
+-	struct rte_pipeline_table_params *params,
+-	uint32_t *table_id);
+-
+-/**
+- * Pipeline table default entry add
+- *
+- * The contents of the table default entry is updated with the provided actions
+- * and meta-data. When the default entry is not configured (by using this
+- * function), the built-in default entry has the action "Drop" and meta-data
+- * set to all-zeros.
+- *
+- * @param p
+- *   Handle to pipeline instance
+- * @param table_id
+- *   Table ID (returned by previous invocation of pipeline table create)
+- * @param default_entry
+- *   New contents for the table default entry
+- * @param default_entry_ptr
+- *   On successful invocation, pointer to the default table entry which can be
+- *   used for further read-write accesses to this table entry. This pointer
+- *   is valid until the default entry is deleted or re-added.
+- * @return
+- *   0 on success, error code otherwise
+- */
+-int rte_pipeline_table_default_entry_add(struct rte_pipeline *p,
+-	uint32_t table_id,
+-	struct rte_pipeline_table_entry *default_entry,
+-	struct rte_pipeline_table_entry **default_entry_ptr);
+-
+-/**
+- * Pipeline table default entry delete
+- *
+- * The new contents of the table default entry is set to reserved action "Drop
+- * the packet" with meta-data cleared (i.e. set to all-zeros).
+- *
+- * @param p
+- *   Handle to pipeline instance
+- * @param table_id
+- *   Table ID (returned by previous invocation of pipeline table create)
+- * @param entry
+- *   On successful invocation, when entry points to a valid buffer, the
+- *   previous contents of the table default entry (as it was just before the
+- *   delete operation) is copied to this buffer
+- * @return
+- *   0 on success, error code otherwise
+- */
+-int rte_pipeline_table_default_entry_delete(struct rte_pipeline *p,
+-	uint32_t table_id,
+-	struct rte_pipeline_table_entry *entry);
+-
+-/**
+- * Pipeline table entry add
+- *
+- * @param p
+- *   Handle to pipeline instance
+- * @param table_id
+- *   Table ID (returned by previous invocation of pipeline table create)
+- * @param key
+- *   Table entry key
+- * @param entry
+- *   New contents for the table entry identified by key
+- * @param key_found
+- *   On successful invocation, set to TRUE (value different than 0) if key was
+- *   already present in the table before the add operation and to FALSE (value
+- *   0) if not
+- * @param entry_ptr
+- *   On successful invocation, pointer to the table entry associated with key.
+- *   This can be used for further read-write accesses to this table entry and
+- *   is valid until the key is deleted from the table or re-added (usually for
+- *   associating different actions and/or action meta-data to the current key)
+- * @return
+- *   0 on success, error code otherwise
+- */
+-int rte_pipeline_table_entry_add(struct rte_pipeline *p,
+-	uint32_t table_id,
+-	void *key,
+-	struct rte_pipeline_table_entry *entry,
+-	int *key_found,
+-	struct rte_pipeline_table_entry **entry_ptr);
+-
+-/**
+- * Pipeline table entry delete
+- *
+- * @param p
+- *   Handle to pipeline instance
+- * @param table_id
+- *   Table ID (returned by previous invocation of pipeline table create)
+- * @param key
+- *   Table entry key
+- * @param key_found
+- *   On successful invocation, set to TRUE (value different than 0) if key was
+- *   found in the table before the delete operation and to FALSE (value 0) if
+- *   not
+- * @param entry
+- *   On successful invocation, when key is found in the table and entry points
+- *   to a valid buffer, the table entry contents (as it was before the delete
+- *   was performed) is copied to this buffer
+- * @return
+- *   0 on success, error code otherwise
+- */
+-int rte_pipeline_table_entry_delete(struct rte_pipeline *p,
+-	uint32_t table_id,
+-	void *key,
+-	int *key_found,
+-	struct rte_pipeline_table_entry *entry);
+-
+-/**
+- * Pipeline table entry add bulk
+- *
+- * @param p
+- *   Handle to pipeline instance
+- * @param table_id
+- *   Table ID (returned by previous invocation of pipeline table create)
+- * @param keys
+- *   Array containing table entry keys
+- * @param entries
+- *   Array containing new contents for every table entry identified by key
+- * @param n_keys
+- *   Number of keys to add
+- * @param key_found
+- *   On successful invocation, key_found for every item in the array is set to
+- *   TRUE (value different than 0) if key was already present in the table
+- *   before the add operation and to FALSE (value 0) if not
+- * @param entries_ptr
+- *   On successful invocation, array *entries_ptr stores pointer to every table
+- *   entry associated with key. This can be used for further read-write accesses
+- *   to this table entry and is valid until the key is deleted from the table or
+- *   re-added (usually for associating different actions and/or action meta-data
+- *   to the current key)
+- * @return
+- *   0 on success, error code otherwise
+- */
+-int rte_pipeline_table_entry_add_bulk(struct rte_pipeline *p,
+-	uint32_t table_id,
+-	void **keys,
+-	struct rte_pipeline_table_entry **entries,
+-	uint32_t n_keys,
+-	int *key_found,
+-	struct rte_pipeline_table_entry **entries_ptr);
+-
+-/**
+- * Pipeline table entry delete bulk
+- *
+- * @param p
+- *   Handle to pipeline instance
+- * @param table_id
+- *   Table ID (returned by previous invocation of pipeline table create)
+- * @param keys
+- *   Array containing table entry keys
+- * @param n_keys
+- *   Number of keys to delete
+- * @param key_found
+- *   On successful invocation, key_found for every item in the array is set to
+- *   TRUE (value different than 0) if key was found in the table before the
+- *   delete operation and to FALSE (value 0) if not
+- * @param entries
+- *   If entries pointer is NULL, this pointer is ignored for every entry found.
+- *   Else, after successful invocation, if specific key is found in the table
+- *   and entry points to a valid buffer, the table entry contents (as it was
+- *   before the delete was performed) is copied to this buffer.
+- * @return
+- *   0 on success, error code otherwise
+- */
+-int rte_pipeline_table_entry_delete_bulk(struct rte_pipeline *p,
+-	uint32_t table_id,
+-	void **keys,
+-	uint32_t n_keys,
+-	int *key_found,
+-	struct rte_pipeline_table_entry **entries);
+-
+-/**
+- * Read pipeline table stats.
+- *
+- * This function reads table statistics identified by *table_id* of given
+- * pipeline *p*.
+- *
+- * @param p
+- *   Handle to pipeline instance.
+- * @param table_id
+- *   Port ID what stats will be returned.
+- * @param stats
+- *   Statistics buffer.
+- * @param clear
+- *   If not 0 clear stats after reading.
+- * @return
+- *   0 on success, error code otherwise
+- */
+-int rte_pipeline_table_stats_read(struct rte_pipeline *p, uint32_t table_id,
+-	struct rte_pipeline_table_stats *stats, int clear);
+-
+-/*
+- * Port IN
+- */
+-/** Maximum number of input ports allowed for any given pipeline instance. The
+-	value of this parameter cannot be changed. */
+-#define RTE_PIPELINE_PORT_IN_MAX                                    64
+-
+-/**
+- * Pipeline input port action handler
+- *
+- * The action handler can decide to drop packets by resetting the associated
+- * packet bit in the pkts_mask parameter. In this case, the action handler is
+- * required not to free the packet buffer, which will be freed eventually by
+- * the pipeline.
+- *
+- * @param p
+- *   Handle to pipeline instance
+- * @param pkts
+- *   Burst of input packets specified as array of up to 64 pointers to struct
+- *   rte_mbuf
+- * @param n
+- *   Number of packets in the input burst. This parameter specifies that
+- *   elements 0 to (n-1) of pkts array are valid.
+- * @param arg
+- *   Opaque parameter registered by the user at the pipeline table creation
+- *   time
+- * @return
+- *   0 on success, error code otherwise
+- */
+-typedef int (*rte_pipeline_port_in_action_handler)(
+-	struct rte_pipeline *p,
+-	struct rte_mbuf **pkts,
+-	uint32_t n,
+-	void *arg);
+-
+-/** Parameters for pipeline input port creation */
+-struct rte_pipeline_port_in_params {
+-	/** Input port operations (specific to each table type) */
+-	struct rte_port_in_ops *ops;
+-	/** Opaque parameter to be passed to create operation when invoked */
+-	void *arg_create;
+-
+-	/** Callback function to execute the user actions on input packets.
+-		Disabled if set to NULL. */
+-	rte_pipeline_port_in_action_handler f_action;
+-	/** Opaque parameter to be passed to the action handler when invoked */
+-	void *arg_ah;
+-
+-	/** Recommended burst size for the RX operation(in number of pkts) */
+-	uint32_t burst_size;
+-};
+-
+-/**
+- * Pipeline input port create
+- *
+- * @param p
+- *   Handle to pipeline instance
+- * @param params
+- *   Parameters for pipeline input port creation
+- * @param port_id
+- *   Input port ID. Valid only within the scope of input port IDs of the
+- *   current pipeline. Only returned after a successful invocation.
+- * @return
+- *   0 on success, error code otherwise
+- */
+-int rte_pipeline_port_in_create(struct rte_pipeline *p,
+-	struct rte_pipeline_port_in_params *params,
+-	uint32_t *port_id);
+-
+-/**
+- * Pipeline input port connect to table
+- *
+- * @param p
+- *   Handle to pipeline instance
+- * @param port_id
+- *   Port ID (returned by previous invocation of pipeline input port create)
+- * @param table_id
+- *   Table ID (returned by previous invocation of pipeline table create)
+- * @return
+- *   0 on success, error code otherwise
+- */
+-int rte_pipeline_port_in_connect_to_table(struct rte_pipeline *p,
+-	uint32_t port_id,
+-	uint32_t table_id);
+-
+-/**
+- * Pipeline input port enable
+- *
+- * @param p
+- *   Handle to pipeline instance
+- * @param port_id
+- *   Port ID (returned by previous invocation of pipeline input port create)
+- * @return
+- *   0 on success, error code otherwise
+- */
+-int rte_pipeline_port_in_enable(struct rte_pipeline *p,
+-	uint32_t port_id);
+-
+-/**
+- * Pipeline input port disable
+- *
+- * @param p
+- *   Handle to pipeline instance
+- * @param port_id
+- *   Port ID (returned by previous invocation of pipeline input port create)
+- * @return
+- *   0 on success, error code otherwise
+- */
+-int rte_pipeline_port_in_disable(struct rte_pipeline *p,
+-	uint32_t port_id);
+-
+-/**
+- * Read pipeline port in stats.
+- *
+- * This function reads port in statistics identified by *port_id* of given
+- * pipeline *p*.
+- *
+- * @param p
+- *   Handle to pipeline instance.
+- * @param port_id
+- *   Port ID what stats will be returned.
+- * @param stats
+- *   Statistics buffer.
+- * @param clear
+- *   If not 0 clear stats after reading.
+- * @return
+- *   0 on success, error code otherwise
+- */
+-int rte_pipeline_port_in_stats_read(struct rte_pipeline *p, uint32_t port_id,
+-	struct rte_pipeline_port_in_stats *stats, int clear);
+-
+-/*
+- * Port OUT
+- */
+-/** Maximum number of output ports allowed for any given pipeline instance. The
+-	value of this parameter cannot be changed. */
+-#define RTE_PIPELINE_PORT_OUT_MAX                                   64
+-
+-/**
+- * Pipeline output port action handler
+- *
+- * The action handler can decide to drop packets by resetting the associated
+- * packet bit in the pkts_mask parameter. In this case, the action handler is
+- * required not to free the packet buffer, which will be freed eventually by
+- * the pipeline.
+- *
+- * @param p
+- *   Handle to pipeline instance
+- * @param pkts
+- *   Burst of input packets specified as array of up to 64 pointers to struct
+- *   rte_mbuf
+- * @param pkts_mask
+- *   64-bit bitmask specifying which packets in the input burst are valid. When
+- *   pkts_mask bit n is set, then element n of pkts array is pointing to a
+- *   valid packet. Otherwise, element n of pkts array will not be accessed.
+- * @param arg
+- *   Opaque parameter registered by the user at the pipeline table creation
+- *   time
+- * @return
+- *   0 on success, error code otherwise
+- */
+-typedef int (*rte_pipeline_port_out_action_handler)(
+-	struct rte_pipeline *p,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	void *arg);
+-
+-/** Parameters for pipeline output port creation. The action handlers have to
+-be either both enabled or both disabled (by setting them to NULL). When
+-enabled, the pipeline selects between them at different moments, based on the
+-number of packets that have to be sent to the same output port. */
+-struct rte_pipeline_port_out_params {
+-	/** Output port operations (specific to each table type) */
+-	struct rte_port_out_ops *ops;
+-	/** Opaque parameter to be passed to create operation when invoked */
+-	void *arg_create;
+-
+-	/** Callback function executing the user actions on bust of input
+-	packets */
+-	rte_pipeline_port_out_action_handler f_action;
+-	/** Opaque parameter to be passed to the action handler when invoked */
+-	void *arg_ah;
+-};
+-
+-/**
+- * Pipeline output port create
+- *
+- * @param p
+- *   Handle to pipeline instance
+- * @param params
+- *   Parameters for pipeline output port creation
+- * @param port_id
+- *   Output port ID. Valid only within the scope of output port IDs of the
+- *   current pipeline. Only returned after a successful invocation.
+- * @return
+- *   0 on success, error code otherwise
+- */
+-int rte_pipeline_port_out_create(struct rte_pipeline *p,
+-	struct rte_pipeline_port_out_params *params,
+-	uint32_t *port_id);
+-
+-/**
+- * Read pipeline port out stats.
+- *
+- * This function reads port out statistics identified by *port_id* of given
+- * pipeline *p*.
+- *
+- * @param p
+- *   Handle to pipeline instance.
+- * @param port_id
+- *   Port ID what stats will be returned.
+- * @param stats
+- *   Statistics buffer.
+- * @param clear
+- *   If not 0 clear stats after reading.
+- * @return
+- *   0 on success, error code otherwise
+- */
+-int rte_pipeline_port_out_stats_read(struct rte_pipeline *p, uint32_t port_id,
+-	struct rte_pipeline_port_out_stats *stats, int clear);
+-
+-/*
+- * Functions to be called as part of the port IN/OUT or table action handlers
+- */
+-/**
+- * Action handler packet insert to output port
+- *
+- * This function can be called by any input/output port or table action handler
+- * to send a packet out through one of the pipeline output ports. This packet is
+- * generated by the action handler, i.e. this packet is not part of the burst of
+- * packets read from one of the pipeline input ports and currently processed by
+- * the pipeline (this packet is not an element of the pkts array input parameter
+- * of the action handler).
+- *
+- * @param p
+- *   Handle to pipeline instance
+- * @param port_id
+- *   Output port ID (returned by previous invocation of pipeline output port
+- *   create) to send the packet specified by pkt
+- * @param pkt
+- *   New packet generated by the action handler
+- * @return
+- *   0 on success, error code otherwise
+- */
+-int rte_pipeline_port_out_packet_insert(struct rte_pipeline *p,
+-	uint32_t port_id,
+-	struct rte_mbuf *pkt);
+-
+-#define rte_pipeline_ah_port_out_packet_insert \
+-	rte_pipeline_port_out_packet_insert
+-
+-/**
+- * Action handler packet hijack
+- *
+- * This function can be called by any input/output port or table action handler
+- * to hijack selected packets from the burst of packets read from one of the
+- * pipeline input ports and currently processed by the pipeline. The hijacked
+- * packets are removed from any further pipeline processing, with the action
+- * handler now having the full ownership for these packets.
+- *
+- * The action handler can further send the hijacked packets out through any
+- * pipeline output port by calling the rte_pipeline_ah_port_out_packet_insert()
+- * function. The action handler can also drop these packets by calling the
+- * rte_pktmbuf_free() function, although a better alternative is provided by
+- * the action handler using the rte_pipeline_ah_packet_drop() function.
+- *
+- * @param p
+- *   Handle to pipeline instance
+- * @param pkts_mask
+- *   64-bit bitmask specifying which of the packets handed over for processing
+- *   to the action handler is to be hijacked by the action handler. When
+- *   pkts_mask bit n is set, then element n of the pkts array (input argument to
+- *   the action handler) is hijacked.
+- * @return
+- *   0 on success, error code otherwise
+- */
+-int rte_pipeline_ah_packet_hijack(struct rte_pipeline *p,
+-	uint64_t pkts_mask);
+-
+-/**
+- * Action handler packet drop
+- *
+- * This function is called by the pipeline action handlers (port in/out, table)
+- * to drop the packets selected using packet mask.
+- *
+- * This function can be called by any input/output port or table action handler
+- * to drop selected packets from the burst of packets read from one of the
+- * pipeline input ports and currently processed by the pipeline. The dropped
+- * packets are removed from any further pipeline processing and the packet
+- * buffers are eventually freed to their buffer pool.
+- *
+- * This function updates the drop statistics counters correctly, therefore the
+- * recommended approach for dropping packets by the action handlers is to call
+- * this function as opposed to the action handler hijacking the packets first
+- * and then dropping them invisibly to the pipeline (by using the
+- * rte_pktmbuf_free() function).
+- *
+- * @param p
+- *   Handle to pipeline instance
+- * @param pkts_mask
+- *   64-bit bitmask specifying which of the packets handed over for processing
+- *   to the action handler is to be dropped by the action handler. When
+- *   pkts_mask bit n is set, then element n of the pkts array (input argument to
+- *   the action handler) is dropped.
+- * @return
+- *   0 on success, error code otherwise
+- */
+-int rte_pipeline_ah_packet_drop(struct rte_pipeline *p,
+-	uint64_t pkts_mask);
+-
+-#ifdef __cplusplus
 -}
+-#endif
 -
--struct table_action_profile *
--table_action_profile_find(const char *name)
--{
--	struct table_action_profile *profile;
--
--	if (name == NULL)
--		return NULL;
--
--	TAILQ_FOREACH(profile, &table_action_profile_list, node)
--		if (strcmp(profile->name, name) == 0)
--			return profile;
--
--	return NULL;
--}
--
--struct table_action_profile *
--table_action_profile_create(const char *name,
--	struct table_action_profile_params *params)
--{
--	struct table_action_profile *profile;
--	struct rte_table_action_profile *ap;
--	int status;
--
--	/* Check input params */
--	if ((name == NULL) ||
--		table_action_profile_find(name) ||
--		(params == NULL) ||
--		((params->action_mask & (1LLU << RTE_TABLE_ACTION_FWD)) == 0))
--		return NULL;
--
--	if ((params->action_mask & (1LLU << RTE_TABLE_ACTION_LB)) &&
--		(params->lb.f_hash == NULL)) {
--		switch (params->lb.key_size) {
--		case 8:
--			params->lb.f_hash = rte_table_hash_crc_key8;
--			break;
--
--		case 16:
--			params->lb.f_hash = rte_table_hash_crc_key16;
--			break;
--
--		case 24:
--			params->lb.f_hash = rte_table_hash_crc_key24;
--			break;
--
--		case 32:
--			params->lb.f_hash = rte_table_hash_crc_key32;
--			break;
--
--		case 40:
--			params->lb.f_hash = rte_table_hash_crc_key40;
--			break;
--
--		case 48:
--			params->lb.f_hash = rte_table_hash_crc_key48;
--			break;
--
--		case 56:
--			params->lb.f_hash = rte_table_hash_crc_key56;
--			break;
--
--		case 64:
--			params->lb.f_hash = rte_table_hash_crc_key64;
--			break;
--
--		default:
--			return NULL;
--		}
--
--		params->lb.seed = 0;
--	}
--
--	/* Resource */
--	ap = rte_table_action_profile_create(&params->common);
--	if (ap == NULL)
--		return NULL;
--
--	if (params->action_mask & (1LLU << RTE_TABLE_ACTION_FWD)) {
--		status = rte_table_action_profile_action_register(ap,
--			RTE_TABLE_ACTION_FWD,
--			NULL);
--
--		if (status) {
--			rte_table_action_profile_free(ap);
--			return NULL;
--		}
--	}
--
--	if (params->action_mask & (1LLU << RTE_TABLE_ACTION_LB)) {
--		status = rte_table_action_profile_action_register(ap,
--			RTE_TABLE_ACTION_LB,
--			&params->lb);
--
--		if (status) {
--			rte_table_action_profile_free(ap);
--			return NULL;
--		}
--	}
--
--	if (params->action_mask & (1LLU << RTE_TABLE_ACTION_MTR)) {
--		status = rte_table_action_profile_action_register(ap,
--			RTE_TABLE_ACTION_MTR,
--			&params->mtr);
--
--		if (status) {
--			rte_table_action_profile_free(ap);
--			return NULL;
--		}
--	}
--
--	if (params->action_mask & (1LLU << RTE_TABLE_ACTION_TM)) {
--		status = rte_table_action_profile_action_register(ap,
--			RTE_TABLE_ACTION_TM,
--			&params->tm);
--
--		if (status) {
--			rte_table_action_profile_free(ap);
--			return NULL;
--		}
--	}
--
--	if (params->action_mask & (1LLU << RTE_TABLE_ACTION_ENCAP)) {
--		status = rte_table_action_profile_action_register(ap,
--			RTE_TABLE_ACTION_ENCAP,
--			&params->encap);
--
--		if (status) {
--			rte_table_action_profile_free(ap);
--			return NULL;
--		}
--	}
--
--	if (params->action_mask & (1LLU << RTE_TABLE_ACTION_NAT)) {
--		status = rte_table_action_profile_action_register(ap,
--			RTE_TABLE_ACTION_NAT,
--			&params->nat);
--
--		if (status) {
--			rte_table_action_profile_free(ap);
--			return NULL;
--		}
--	}
--
--	if (params->action_mask & (1LLU << RTE_TABLE_ACTION_TTL)) {
--		status = rte_table_action_profile_action_register(ap,
--			RTE_TABLE_ACTION_TTL,
--			&params->ttl);
--
--		if (status) {
--			rte_table_action_profile_free(ap);
--			return NULL;
--		}
--	}
--
--	if (params->action_mask & (1LLU << RTE_TABLE_ACTION_STATS)) {
--		status = rte_table_action_profile_action_register(ap,
--			RTE_TABLE_ACTION_STATS,
--			&params->stats);
--
--		if (status) {
--			rte_table_action_profile_free(ap);
--			return NULL;
--		}
--	}
--	if (params->action_mask & (1LLU << RTE_TABLE_ACTION_TIME)) {
--		status = rte_table_action_profile_action_register(ap,
--			RTE_TABLE_ACTION_TIME,
--			NULL);
--
--		if (status) {
--			rte_table_action_profile_free(ap);
--			return NULL;
--		}
--	}
--
--	if (params->action_mask & (1LLU << RTE_TABLE_ACTION_SYM_CRYPTO)) {
--		status = rte_table_action_profile_action_register(ap,
--			RTE_TABLE_ACTION_SYM_CRYPTO,
--			&params->sym_crypto);
--
--		if (status) {
--			rte_table_action_profile_free(ap);
--			return NULL;
--		}
--	}
--
--	if (params->action_mask & (1LLU << RTE_TABLE_ACTION_TAG)) {
--		status = rte_table_action_profile_action_register(ap,
--			RTE_TABLE_ACTION_TAG,
--			NULL);
--
--		if (status) {
--			rte_table_action_profile_free(ap);
--			return NULL;
--		}
--	}
--
--	if (params->action_mask & (1LLU << RTE_TABLE_ACTION_DECAP)) {
--		status = rte_table_action_profile_action_register(ap,
--			RTE_TABLE_ACTION_DECAP,
--			NULL);
--
--		if (status) {
--			rte_table_action_profile_free(ap);
--			return NULL;
--		}
--	}
--
--	status = rte_table_action_profile_freeze(ap);
--	if (status) {
--		rte_table_action_profile_free(ap);
--		return NULL;
--	}
--
--	/* Node allocation */
--	profile = calloc(1, sizeof(struct table_action_profile));
--	if (profile == NULL) {
--		rte_table_action_profile_free(ap);
--		return NULL;
--	}
--
--	/* Node fill in */
--	strlcpy(profile->name, name, sizeof(profile->name));
--	memcpy(&profile->params, params, sizeof(*params));
--	profile->ap = ap;
--
--	/* Node add to list */
--	TAILQ_INSERT_TAIL(&table_action_profile_list, profile, node);
--
--	return profile;
--}
-diff --git a/examples/ip_pipeline/action.h b/examples/ip_pipeline/action.h
+-#endif
+diff --git a/lib/pipeline/rte_port_in_action.c b/lib/pipeline/rte_port_in_action.c
 deleted file mode 100644
-index cde17e69a3..0000000000
---- a/examples/ip_pipeline/action.h
+index 2378e64de9..0000000000
+--- a/lib/pipeline/rte_port_in_action.c
 +++ /dev/null
-@@ -1,78 +0,0 @@
+@@ -1,539 +0,0 @@
 -/* SPDX-License-Identifier: BSD-3-Clause
 - * Copyright(c) 2010-2018 Intel Corporation
 - */
 -
--#ifndef _INCLUDE_ACTION_H_
--#define _INCLUDE_ACTION_H_
+-#include <stdalign.h>
+-#include <stdlib.h>
+-#include <string.h>
 -
--#include <sys/queue.h>
+-#include <eal_export.h>
+-#include <rte_common.h>
+-#include <rte_malloc.h>
 -
--#include <rte_port_in_action.h>
--#include <rte_table_action.h>
--
--#include "common.h"
+-#include "rte_port_in_action.h"
 -
 -/**
-- * Input port action
+- * RTE_PORT_IN_ACTION_FLTR
 - */
--struct port_in_action_profile_params {
+-static int
+-fltr_cfg_check(struct rte_port_in_action_fltr_config *cfg)
+-{
+-	if (cfg == NULL)
+-		return -1;
+-
+-	return 0;
+-}
+-
+-struct fltr_data {
+-	uint32_t port_id;
+-};
+-
+-static void
+-fltr_init(struct fltr_data *data,
+-	struct rte_port_in_action_fltr_config *cfg)
+-{
+-	data->port_id = cfg->port_id;
+-}
+-
+-static int
+-fltr_apply(struct fltr_data *data,
+-	struct rte_port_in_action_fltr_params *p)
+-{
+-	/* Check input arguments */
+-	if (p == NULL)
+-		return -1;
+-
+-	data->port_id = p->port_id;
+-
+-	return 0;
+-}
+-
+-/**
+- * RTE_PORT_IN_ACTION_LB
+- */
+-static int
+-lb_cfg_check(struct rte_port_in_action_lb_config *cfg)
+-{
+-	if ((cfg == NULL) ||
+-		(cfg->key_size < RTE_PORT_IN_ACTION_LB_KEY_SIZE_MIN) ||
+-		(cfg->key_size > RTE_PORT_IN_ACTION_LB_KEY_SIZE_MAX) ||
+-		(!rte_is_power_of_2(cfg->key_size)) ||
+-		(cfg->f_hash == NULL))
+-		return -1;
+-
+-	return 0;
+-}
+-
+-struct lb_data {
+-	uint32_t port_id[RTE_PORT_IN_ACTION_LB_TABLE_SIZE];
+-};
+-
+-static void
+-lb_init(struct lb_data *data,
+-	struct rte_port_in_action_lb_config *cfg)
+-{
+-	memcpy(data->port_id, cfg->port_id, sizeof(cfg->port_id));
+-}
+-
+-static int
+-lb_apply(struct lb_data *data,
+-	struct rte_port_in_action_lb_params *p)
+-{
+-	/* Check input arguments */
+-	if (p == NULL)
+-		return -1;
+-
+-	memcpy(data->port_id, p->port_id, sizeof(p->port_id));
+-
+-	return 0;
+-}
+-
+-/**
+- * Action profile
+- */
+-static int
+-action_valid(enum rte_port_in_action_type action)
+-{
+-	switch (action) {
+-	case RTE_PORT_IN_ACTION_FLTR:
+-	case RTE_PORT_IN_ACTION_LB:
+-		return 1;
+-	default:
+-		return 0;
+-	}
+-}
+-
+-#define RTE_PORT_IN_ACTION_MAX                             64
+-
+-struct ap_config {
 -	uint64_t action_mask;
 -	struct rte_port_in_action_fltr_config fltr;
 -	struct rte_port_in_action_lb_config lb;
 -};
 -
--struct port_in_action_profile {
--	TAILQ_ENTRY(port_in_action_profile) node;
--	char name[NAME_SIZE];
--	struct port_in_action_profile_params params;
--	struct rte_port_in_action_profile *ap;
+-static size_t
+-action_cfg_size(enum rte_port_in_action_type action)
+-{
+-	switch (action) {
+-	case RTE_PORT_IN_ACTION_FLTR:
+-		return sizeof(struct rte_port_in_action_fltr_config);
+-	case RTE_PORT_IN_ACTION_LB:
+-		return sizeof(struct rte_port_in_action_lb_config);
+-	default:
+-		return 0;
+-	}
+-}
+-
+-static void*
+-action_cfg_get(struct ap_config *ap_config,
+-	enum rte_port_in_action_type type)
+-{
+-	switch (type) {
+-	case RTE_PORT_IN_ACTION_FLTR:
+-		return &ap_config->fltr;
+-
+-	case RTE_PORT_IN_ACTION_LB:
+-		return &ap_config->lb;
+-
+-	default:
+-		return NULL;
+-	}
+-}
+-
+-static void
+-action_cfg_set(struct ap_config *ap_config,
+-	enum rte_port_in_action_type type,
+-	void *action_cfg)
+-{
+-	void *dst = action_cfg_get(ap_config, type);
+-
+-	if (dst)
+-		memcpy(dst, action_cfg, action_cfg_size(type));
+-
+-	ap_config->action_mask |= 1LLU << type;
+-}
+-
+-struct ap_data {
+-	size_t offset[RTE_PORT_IN_ACTION_MAX];
+-	size_t total_size;
 -};
 -
--TAILQ_HEAD(port_in_action_profile_list, port_in_action_profile);
+-static size_t
+-action_data_size(enum rte_port_in_action_type action,
+-	struct ap_config *ap_config __rte_unused)
+-{
+-	switch (action) {
+-	case RTE_PORT_IN_ACTION_FLTR:
+-		return sizeof(struct fltr_data);
 -
+-	case RTE_PORT_IN_ACTION_LB:
+-		return sizeof(struct lb_data);
+-
+-	default:
+-		return 0;
+-	}
+-}
+-
+-static void
+-action_data_offset_set(struct ap_data *ap_data,
+-	struct ap_config *ap_config)
+-{
+-	uint64_t action_mask = ap_config->action_mask;
+-	size_t offset;
+-	uint32_t action;
+-
+-	memset(ap_data->offset, 0, sizeof(ap_data->offset));
+-
+-	offset = 0;
+-	for (action = 0; action < RTE_PORT_IN_ACTION_MAX; action++)
+-		if (action_mask & (1LLU << action)) {
+-			ap_data->offset[action] = offset;
+-			offset += action_data_size((enum rte_port_in_action_type)action,
+-				ap_config);
+-		}
+-
+-	ap_data->total_size = offset;
+-}
+-
+-struct rte_port_in_action_profile {
+-	struct ap_config cfg;
+-	struct ap_data data;
+-	int frozen;
+-};
+-
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_in_action_profile_create, 18.05)
+-struct rte_port_in_action_profile *
+-rte_port_in_action_profile_create(uint32_t socket_id)
+-{
+-	struct rte_port_in_action_profile *ap;
+-
+-	/* Memory allocation */
+-	ap = rte_zmalloc_socket(NULL,
+-		sizeof(struct rte_port_in_action_profile),
+-		RTE_CACHE_LINE_SIZE,
+-		socket_id);
+-	if (ap == NULL)
+-		return NULL;
+-
+-	return ap;
+-}
+-
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_in_action_profile_action_register, 18.05)
 -int
--port_in_action_profile_init(void);
+-rte_port_in_action_profile_action_register(struct rte_port_in_action_profile *profile,
+-	enum rte_port_in_action_type type,
+-	void *action_config)
+-{
+-	int status;
 -
--struct port_in_action_profile *
--port_in_action_profile_find(const char *name);
+-	/* Check input arguments */
+-	if ((profile == NULL) ||
+-		profile->frozen ||
+-		(action_valid(type) == 0) ||
+-		(profile->cfg.action_mask & (1LLU << type)) ||
+-		((action_cfg_size(type) == 0) && action_config) ||
+-		(action_cfg_size(type) && (action_config == NULL)))
+-		return -EINVAL;
 -
--struct port_in_action_profile *
--port_in_action_profile_create(const char *name,
--	struct port_in_action_profile_params *params);
+-	switch (type) {
+-	case RTE_PORT_IN_ACTION_FLTR:
+-		status = fltr_cfg_check(action_config);
+-		break;
+-
+-	case RTE_PORT_IN_ACTION_LB:
+-		status = lb_cfg_check(action_config);
+-		break;
+-
+-	default:
+-		status = 0;
+-		break;
+-	}
+-
+-	if (status)
+-		return status;
+-
+-	/* Action enable */
+-	action_cfg_set(&profile->cfg, type, action_config);
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_in_action_profile_freeze, 18.05)
+-int
+-rte_port_in_action_profile_freeze(struct rte_port_in_action_profile *profile)
+-{
+-	if (profile->frozen)
+-		return -EBUSY;
+-
+-	action_data_offset_set(&profile->data, &profile->cfg);
+-	profile->frozen = 1;
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_in_action_profile_free, 18.05)
+-int
+-rte_port_in_action_profile_free(struct rte_port_in_action_profile *profile)
+-{
+-	if (profile == NULL)
+-		return 0;
+-
+-	free(profile);
+-	return 0;
+-}
 -
 -/**
-- * Table action
+- * Action
 - */
--struct table_action_profile_params {
+-struct rte_port_in_action {
+-	struct ap_config cfg;
+-	struct ap_data data;
+-	alignas(RTE_CACHE_LINE_SIZE) uint8_t memory[];
+-};
+-
+-static __rte_always_inline void *
+-action_data_get(struct rte_port_in_action *action,
+-	enum rte_port_in_action_type type)
+-{
+-	size_t offset = action->data.offset[type];
+-
+-	return &action->memory[offset];
+-}
+-
+-static void
+-action_data_init(struct rte_port_in_action *action,
+-	enum rte_port_in_action_type type)
+-{
+-	void *data = action_data_get(action, type);
+-
+-	switch (type) {
+-	case RTE_PORT_IN_ACTION_FLTR:
+-		fltr_init(data, &action->cfg.fltr);
+-		return;
+-
+-	case RTE_PORT_IN_ACTION_LB:
+-		lb_init(data, &action->cfg.lb);
+-		return;
+-
+-	default:
+-		return;
+-	}
+-}
+-
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_in_action_create, 18.05)
+-struct rte_port_in_action *
+-rte_port_in_action_create(struct rte_port_in_action_profile *profile,
+-	uint32_t socket_id)
+-{
+-	struct rte_port_in_action *action;
+-	size_t size;
+-	uint32_t i;
+-
+-	/* Check input arguments */
+-	if ((profile == NULL) ||
+-		(profile->frozen == 0))
+-		return NULL;
+-
+-	/* Memory allocation */
+-	size = sizeof(struct rte_port_in_action) + profile->data.total_size;
+-	size = RTE_CACHE_LINE_ROUNDUP(size);
+-
+-	action = rte_zmalloc_socket(NULL,
+-		size,
+-		RTE_CACHE_LINE_SIZE,
+-		socket_id);
+-	if (action == NULL)
+-		return NULL;
+-
+-	/* Initialization */
+-	memcpy(&action->cfg, &profile->cfg, sizeof(profile->cfg));
+-	memcpy(&action->data, &profile->data, sizeof(profile->data));
+-
+-	for (i = 0; i < RTE_PORT_IN_ACTION_MAX; i++)
+-		if (action->cfg.action_mask & (1LLU << i))
+-			action_data_init(action,
+-				(enum rte_port_in_action_type)i);
+-
+-	return action;
+-}
+-
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_in_action_apply, 18.05)
+-int
+-rte_port_in_action_apply(struct rte_port_in_action *action,
+-	enum rte_port_in_action_type type,
+-	void *action_params)
+-{
+-	void *action_data;
+-
+-	/* Check input arguments */
+-	if ((action == NULL) ||
+-		(action_valid(type) == 0) ||
+-		((action->cfg.action_mask & (1LLU << type)) == 0) ||
+-		(action_params == NULL))
+-		return -EINVAL;
+-
+-	/* Data update */
+-	action_data = action_data_get(action, type);
+-
+-	switch (type) {
+-	case RTE_PORT_IN_ACTION_FLTR:
+-		return fltr_apply(action_data,
+-			action_params);
+-
+-	case RTE_PORT_IN_ACTION_LB:
+-		return lb_apply(action_data,
+-			action_params);
+-
+-	default:
+-		return -EINVAL;
+-	}
+-}
+-
+-static int
+-ah_filter_on_match(struct rte_pipeline *p,
+-	struct rte_mbuf **pkts,
+-	uint32_t n_pkts,
+-	void *arg)
+-{
+-	struct rte_port_in_action *action = arg;
+-	struct rte_port_in_action_fltr_config *cfg = &action->cfg.fltr;
+-	uint64_t *key_mask = (uint64_t *) cfg->key_mask;
+-	uint64_t *key = (uint64_t *) cfg->key;
+-	uint32_t key_offset = cfg->key_offset;
+-	struct fltr_data *data = action_data_get(action,
+-						RTE_PORT_IN_ACTION_FLTR);
+-	uint32_t i;
+-
+-	for (i = 0; i < n_pkts; i++) {
+-		struct rte_mbuf *pkt = pkts[i];
+-		uint64_t *pkt_key = RTE_MBUF_METADATA_UINT64_PTR(pkt,
+-					key_offset);
+-
+-		uint64_t xor0 = (pkt_key[0] & key_mask[0]) ^ key[0];
+-		uint64_t xor1 = (pkt_key[1] & key_mask[1]) ^ key[1];
+-		uint64_t or = xor0 | xor1;
+-
+-		if (or == 0) {
+-			rte_pipeline_ah_packet_hijack(p, 1LLU << i);
+-			rte_pipeline_port_out_packet_insert(p,
+-				data->port_id, pkt);
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-ah_filter_on_mismatch(struct rte_pipeline *p,
+-	struct rte_mbuf **pkts,
+-	uint32_t n_pkts,
+-	void *arg)
+-{
+-	struct rte_port_in_action *action = arg;
+-	struct rte_port_in_action_fltr_config *cfg = &action->cfg.fltr;
+-	uint64_t *key_mask = (uint64_t *) cfg->key_mask;
+-	uint64_t *key = (uint64_t *) cfg->key;
+-	uint32_t key_offset = cfg->key_offset;
+-	struct fltr_data *data = action_data_get(action,
+-						RTE_PORT_IN_ACTION_FLTR);
+-	uint32_t i;
+-
+-	for (i = 0; i < n_pkts; i++) {
+-		struct rte_mbuf *pkt = pkts[i];
+-		uint64_t *pkt_key = RTE_MBUF_METADATA_UINT64_PTR(pkt,
+-						key_offset);
+-
+-		uint64_t xor0 = (pkt_key[0] & key_mask[0]) ^ key[0];
+-		uint64_t xor1 = (pkt_key[1] & key_mask[1]) ^ key[1];
+-		uint64_t or = xor0 | xor1;
+-
+-		if (or) {
+-			rte_pipeline_ah_packet_hijack(p, 1LLU << i);
+-			rte_pipeline_port_out_packet_insert(p,
+-				data->port_id, pkt);
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-ah_lb(struct rte_pipeline *p,
+-	struct rte_mbuf **pkts,
+-	uint32_t n_pkts,
+-	void *arg)
+-{
+-	struct rte_port_in_action *action = arg;
+-	struct rte_port_in_action_lb_config *cfg = &action->cfg.lb;
+-	struct lb_data *data = action_data_get(action, RTE_PORT_IN_ACTION_LB);
+-	uint64_t pkt_mask = RTE_LEN2MASK(n_pkts, uint64_t);
+-	uint32_t i;
+-
+-	rte_pipeline_ah_packet_hijack(p, pkt_mask);
+-
+-	for (i = 0; i < n_pkts; i++) {
+-		struct rte_mbuf *pkt = pkts[i];
+-		uint8_t *pkt_key = RTE_MBUF_METADATA_UINT8_PTR(pkt,
+-					cfg->key_offset);
+-
+-		uint64_t digest = cfg->f_hash(pkt_key,
+-			cfg->key_mask,
+-			cfg->key_size,
+-			cfg->seed);
+-		uint64_t pos = digest & (RTE_PORT_IN_ACTION_LB_TABLE_SIZE - 1);
+-		uint32_t port_id = data->port_id[pos];
+-
+-		rte_pipeline_port_out_packet_insert(p, port_id, pkt);
+-	}
+-
+-	return 0;
+-}
+-
+-static rte_pipeline_port_in_action_handler
+-ah_selector(struct rte_port_in_action *action)
+-{
+-	if (action->cfg.action_mask == 0)
+-		return NULL;
+-
+-	if (action->cfg.action_mask == 1LLU << RTE_PORT_IN_ACTION_FLTR)
+-		return (action->cfg.fltr.filter_on_match) ?
+-			ah_filter_on_match : ah_filter_on_mismatch;
+-
+-	if (action->cfg.action_mask == 1LLU << RTE_PORT_IN_ACTION_LB)
+-		return ah_lb;
+-
+-	return NULL;
+-}
+-
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_in_action_params_get, 18.05)
+-int
+-rte_port_in_action_params_get(struct rte_port_in_action *action,
+-	struct rte_pipeline_port_in_params *params)
+-{
+-	rte_pipeline_port_in_action_handler f_action;
+-
+-	/* Check input arguments */
+-	if ((action == NULL) ||
+-		(params == NULL))
+-		return -EINVAL;
+-
+-	f_action = ah_selector(action);
+-
+-	/* Fill in params */
+-	params->f_action = f_action;
+-	params->arg_ah = (f_action) ? action : NULL;
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_port_in_action_free, 18.05)
+-int
+-rte_port_in_action_free(struct rte_port_in_action *action)
+-{
+-	if (action == NULL)
+-		return 0;
+-
+-	rte_free(action);
+-
+-	return 0;
+-}
+diff --git a/lib/pipeline/rte_port_in_action.h b/lib/pipeline/rte_port_in_action.h
+deleted file mode 100644
+index 9d17bae988..0000000000
+--- a/lib/pipeline/rte_port_in_action.h
++++ /dev/null
+@@ -1,311 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2018 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_PORT_IN_ACTION_H__
+-#define __INCLUDE_RTE_PORT_IN_ACTION_H__
+-
+-/**
+- * @file
+- * RTE Pipeline Input Port Actions
+- *
+- * This API provides a common set of actions for pipeline input ports to speed
+- * up application development.
+- *
+- * Each pipeline input port can be assigned an action handler to be executed
+- * on every input packet during the pipeline execution. The pipeline library
+- * allows the user to define his own input port actions by providing customized
+- * input port action handler. While the user can still follow this process, this
+- * API is intended to provide a quicker development alternative for a set of
+- * predefined actions.
+- *
+- * The typical steps to use this API are:
+- *  - Define an input port action profile. This is a configuration template that
+- *    can potentially be shared by multiple input ports from the same or
+- *    different pipelines, with different input ports from the same pipeline
+- *    able to use different action profiles. For every input port using a given
+- *    action profile, the profile defines the set of actions and the action
+- *    configuration to be executed by the input port. API functions:
+- *    rte_port_in_action_profile_create(),
+- *    rte_port_in_action_profile_action_register(),
+- *    rte_port_in_action_profile_freeze().
+- *
+- *  - Instantiate the input port action profile to create input port action
+- *    objects. Each pipeline input port has its own action object.
+- *    API functions: rte_port_in_action_create().
+- *
+- *  - Use the input port action object to generate the input port action handler
+- *    invoked by the pipeline. API functions:
+- *    rte_port_in_action_params_get().
+- *
+- *  - Use the input port action object to generate the internal data structures
+- *    used by the input port action handler based on given action parameters.
+- *    API functions: rte_port_in_action_apply().
+- *
+- * @warning
+- * @b EXPERIMENTAL: this API may change without prior notice
+- */
+-
+-#include <stdint.h>
+-
+-#include <rte_compat.h>
+-#include <rte_table_hash.h>
+-
+-#include "rte_pipeline.h"
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-/** Input port actions. */
+-enum rte_port_in_action_type {
+-	/** Filter selected input packets. */
+-	RTE_PORT_IN_ACTION_FLTR = 0,
+-
+-	/**  Load balance. */
+-	RTE_PORT_IN_ACTION_LB,
+-};
+-
+-/**
+- * RTE_PORT_IN_ACTION_FLTR
+- */
+-/** Filter key size (number of bytes) */
+-#define RTE_PORT_IN_ACTION_FLTR_KEY_SIZE                   16
+-
+-/** Filter action configuration (per action profile). */
+-struct rte_port_in_action_fltr_config {
+-	/** Key offset within the input packet buffer. Offset 0 points to the
+-	 * first byte of the MBUF structure.
+-	 */
+-	uint32_t key_offset;
+-
+-	/** Key mask. */
+-	uint8_t key_mask[RTE_PORT_IN_ACTION_FLTR_KEY_SIZE];
+-
+-	/** Key value. */
+-	uint8_t key[RTE_PORT_IN_ACTION_FLTR_KEY_SIZE];
+-
+-	/** When non-zero, all the input packets that match the *key* (with the
+-	 * *key_mask* applied) are sent to the pipeline output port *port_id*.
+-	 * When zero, all the input packets that do NOT match the *key* (with
+-	 * *key_mask* applied) are sent to the pipeline output port *port_id*.
+-	 */
+-	int filter_on_match;
+-
+-	/** Pipeline output port ID to send the filtered input packets to.
+-	 * Can be updated later.
+-	 *
+-	 * @see struct rte_port_in_action_fltr_params
+-	 */
+-	uint32_t port_id;
+-};
+-
+-/** Filter action parameters (per action). */
+-struct rte_port_in_action_fltr_params {
+-	/** Pipeline output port ID to send the filtered input packets to. */
+-	uint32_t port_id;
+-};
+-
+-/**
+- * RTE_PORT_IN_ACTION_LB
+- */
+-/** Load balance key size min (number of bytes). */
+-#define RTE_PORT_IN_ACTION_LB_KEY_SIZE_MIN                    8
+-
+-/** Load balance key size max (number of bytes). */
+-#define RTE_PORT_IN_ACTION_LB_KEY_SIZE_MAX                    64
+-
+-/** Load balance table size. */
+-#define RTE_PORT_IN_ACTION_LB_TABLE_SIZE                   16
+-
+-/** Load balance action configuration (per action profile). */
+-struct rte_port_in_action_lb_config {
+-	/** Key size (number of bytes). */
+-	uint32_t key_size;
+-
+-	/** Key offset within the input packet buffer. Offset 0 points to the
+-	 * first byte of the MBUF structure.
+-	 */
+-	uint32_t key_offset;
+-
+-	/** Key mask(*key_size* bytes are valid). */
+-	uint8_t key_mask[RTE_PORT_IN_ACTION_LB_KEY_SIZE_MAX];
+-
+-	/** Hash function. */
+-	rte_table_hash_op_hash f_hash;
+-
+-	/** Seed value for *f_hash*. */
+-	uint64_t seed;
+-
+-	/** Table defining the weight of each pipeline output port. The weights
+-	 * are set in 1/RTE_PORT_IN_ACTION_LB_TABLE_SIZE increments. To assign a
+-	 * weight of N/RTE_PORT_IN_ACTION_LB_TABLE_SIZE to a given output port
+-	 * (0 <= N <= RTE_PORT_IN_ACTION_LB_TABLE_SIZE), the output port needs
+-	 * to show up exactly N times in this table. Can be updated later.
+-	 *
+-	 * @see struct rte_port_in_action_lb_params
+-	 */
+-	uint32_t port_id[RTE_PORT_IN_ACTION_LB_TABLE_SIZE];
+-};
+-
+-/** Load balance action parameters (per action). */
+-struct rte_port_in_action_lb_params {
+-	/** Table defining the weight of each pipeline output port. The weights
+-	 * are set in 1/RTE_PORT_IN_ACTION_LB_TABLE_SIZE increments. To assign a
+-	 * weight of N/RTE_PORT_IN_ACTION_LB_TABLE_SIZE to a given output port
+-	 * (0 <= N <= RTE_PORT_IN_ACTION_LB_TABLE_SIZE), the output port needs
+-	 * to show up exactly N times in this table.
+-	 */
+-	uint32_t port_id[RTE_PORT_IN_ACTION_LB_TABLE_SIZE];
+-};
+-
+-/**
+- * Input port action profile.
+- */
+-struct rte_port_in_action_profile;
+-
+-/**
+- * Input port action profile create.
+- *
+- * @param[in] socket_id
+- *   CPU socket ID for the internal data structures memory allocation.
+- * @return
+- *   Input port action profile handle on success, NULL otherwise.
+- */
+-__rte_experimental
+-struct rte_port_in_action_profile *
+-rte_port_in_action_profile_create(uint32_t socket_id);
+-
+-/**
+- * Input port action profile free.
+- *
+- * @param[in] profile
+- *   Input port action profile handle (needs to be valid).
+- *   If profile is NULL, no operation is performed.
+- * @return
+- *   Always zero.
+- */
+-__rte_experimental
+-int
+-rte_port_in_action_profile_free(struct rte_port_in_action_profile *profile);
+-
+-/**
+- * Input port action profile action register.
+- *
+- * @param[in] profile
+- *   Input port action profile handle (needs to be valid and not in frozen
+- *   state).
+- * @param[in] type
+- *   Specific input port action to be registered for *profile*.
+- * @param[in] action_config
+- *   Configuration for the *type* action.
+- *   If struct rte_port_in_action_*type*_config is defined, it needs to point to
+- *   a valid instance of this structure, otherwise it needs to be set to NULL.
+- * @return
+- *   Zero on success, non-zero error code otherwise.
+- */
+-__rte_experimental
+-int
+-rte_port_in_action_profile_action_register(
+-	struct rte_port_in_action_profile *profile,
+-	enum rte_port_in_action_type type,
+-	void *action_config);
+-
+-/**
+- * Input port action profile freeze.
+- *
+- * Once this function is called successfully, the given profile enters the
+- * frozen state with the following immediate effects: no more actions can be
+- * registered for this profile, so the profile can be instantiated to create
+- * input port action objects.
+- *
+- * @param[in] profile
+- *   Input port profile action handle (needs to be valid and not in frozen
+- *   state).
+- * @return
+- *   Zero on success, non-zero error code otherwise.
+- *
+- * @see rte_port_in_action_create()
+- */
+-__rte_experimental
+-int
+-rte_port_in_action_profile_freeze(struct rte_port_in_action_profile *profile);
+-
+-/**
+- * Input port action.
+- */
+-struct rte_port_in_action;
+-
+-/**
+- * Input port action create.
+- *
+- * Instantiates the given input port action profile to create an input port
+- * action object.
+- *
+- * @param[in] profile
+- *   Input port profile action handle (needs to be valid and in frozen state).
+- * @param[in] socket_id
+- *   CPU socket ID where the internal data structures required by the new input
+- *   port action object should be allocated.
+- * @return
+- *   Handle to input port action object on success, NULL on error.
+- */
+-__rte_experimental
+-struct rte_port_in_action *
+-rte_port_in_action_create(struct rte_port_in_action_profile *profile,
+-	uint32_t socket_id);
+-
+-/**
+- * Input port action free.
+- *
+- * @param[in] action
+- *   Handle to input port action object (needs to be valid).
+- *   If action is NULL, no operation is performed.
+- * @return
+- *   Always zero.
+- */
+-__rte_experimental
+-int
+-rte_port_in_action_free(struct rte_port_in_action *action);
+-
+-/**
+- * Input port params get.
+- *
+- * @param[in] action
+- *   Handle to input port action object (needs to be valid).
+- * @param[inout] params
+- *   Pipeline input port parameters (needs to be pre-allocated).
+- * @return
+- *   Zero on success, non-zero error code otherwise.
+- */
+-__rte_experimental
+-int
+-rte_port_in_action_params_get(struct rte_port_in_action *action,
+-	struct rte_pipeline_port_in_params *params);
+-
+-/**
+- * Input port action apply.
+- *
+- * @param[in] action
+- *   Handle to input port action object (needs to be valid).
+- * @param[in] type
+- *   Specific input port action previously registered for the input port action
+- *   profile of the *action* object.
+- * @param[in] action_params
+- *   Parameters for the *type* action.
+- *   If struct rte_port_in_action_*type*_params is defined, it needs to point to
+- *   a valid instance of this structure, otherwise it needs to be set to NULL.
+- * @return
+- *   Zero on success, non-zero error code otherwise.
+- */
+-__rte_experimental
+-int
+-rte_port_in_action_apply(struct rte_port_in_action *action,
+-	enum rte_port_in_action_type type,
+-	void *action_params);
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif /* __INCLUDE_RTE_PORT_IN_ACTION_H__ */
+diff --git a/lib/pipeline/rte_table_action.c b/lib/pipeline/rte_table_action.c
+deleted file mode 100644
+index c990d7eb56..0000000000
+--- a/lib/pipeline/rte_table_action.c
++++ /dev/null
+@@ -1,3483 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2010-2018 Intel Corporation
+- */
+-#include <stdlib.h>
+-#include <string.h>
+-
+-#include <eal_export.h>
+-#include <rte_common.h>
+-#include <rte_byteorder.h>
+-#include <rte_cycles.h>
+-#include <rte_malloc.h>
+-#include <rte_memcpy.h>
+-#include <rte_ether.h>
+-#include <rte_ip.h>
+-#include <rte_tcp.h>
+-#include <rte_udp.h>
+-#include <rte_vxlan.h>
+-#include <rte_cryptodev.h>
+-
+-#include "rte_table_action.h"
+-
+-#define rte_htons rte_cpu_to_be_16
+-#define rte_htonl rte_cpu_to_be_32
+-
+-#define rte_ntohs rte_be_to_cpu_16
+-#define rte_ntohl rte_be_to_cpu_32
+-
+-/**
+- * RTE_TABLE_ACTION_FWD
+- */
+-#define fwd_data rte_pipeline_table_entry
+-
+-static int
+-fwd_apply(struct fwd_data *data,
+-	struct rte_table_action_fwd_params *p)
+-{
+-	data->action = p->action;
+-
+-	if (p->action == RTE_PIPELINE_ACTION_PORT)
+-		data->port_id = p->id;
+-
+-	if (p->action == RTE_PIPELINE_ACTION_TABLE)
+-		data->table_id = p->id;
+-
+-	return 0;
+-}
+-
+-/**
+- * RTE_TABLE_ACTION_LB
+- */
+-static int
+-lb_cfg_check(struct rte_table_action_lb_config *cfg)
+-{
+-	if ((cfg == NULL) ||
+-		(cfg->key_size < RTE_TABLE_ACTION_LB_KEY_SIZE_MIN) ||
+-		(cfg->key_size > RTE_TABLE_ACTION_LB_KEY_SIZE_MAX) ||
+-		(!rte_is_power_of_2(cfg->key_size)) ||
+-		(cfg->f_hash == NULL))
+-		return -1;
+-
+-	return 0;
+-}
+-
+-struct __rte_packed_begin lb_data {
+-	uint32_t out[RTE_TABLE_ACTION_LB_TABLE_SIZE];
+-} __rte_packed_end;
+-
+-static int
+-lb_apply(struct lb_data *data,
+-	struct rte_table_action_lb_params *p)
+-{
+-	memcpy(data->out, p->out, sizeof(data->out));
+-
+-	return 0;
+-}
+-
+-static __rte_always_inline void
+-pkt_work_lb(struct rte_mbuf *mbuf,
+-	struct lb_data *data,
+-	struct rte_table_action_lb_config *cfg)
+-{
+-	uint8_t *pkt_key = RTE_MBUF_METADATA_UINT8_PTR(mbuf, cfg->key_offset);
+-	uint32_t *out = RTE_MBUF_METADATA_UINT32_PTR(mbuf, cfg->out_offset);
+-	uint64_t digest, pos;
+-	uint32_t out_val;
+-
+-	digest = cfg->f_hash(pkt_key,
+-		cfg->key_mask,
+-		cfg->key_size,
+-		cfg->seed);
+-	pos = digest & (RTE_TABLE_ACTION_LB_TABLE_SIZE - 1);
+-	out_val = data->out[pos];
+-
+-	*out = out_val;
+-}
+-
+-/**
+- * RTE_TABLE_ACTION_MTR
+- */
+-static int
+-mtr_cfg_check(struct rte_table_action_mtr_config *mtr)
+-{
+-	if ((mtr->alg == RTE_TABLE_ACTION_METER_SRTCM) ||
+-		((mtr->n_tc != 1) && (mtr->n_tc != 4)) ||
+-		(mtr->n_bytes_enabled != 0))
+-		return -ENOTSUP;
+-	return 0;
+-}
+-
+-struct mtr_trtcm_data {
+-	struct rte_meter_trtcm trtcm;
+-	uint64_t stats[RTE_COLORS];
+-};
+-
+-#define MTR_TRTCM_DATA_METER_PROFILE_ID_GET(data)          \
+-	(((data)->stats[RTE_COLOR_GREEN] & 0xF8LLU) >> 3)
+-
+-static void
+-mtr_trtcm_data_meter_profile_id_set(struct mtr_trtcm_data *data,
+-	uint32_t profile_id)
+-{
+-	data->stats[RTE_COLOR_GREEN] &= ~0xF8LLU;
+-	data->stats[RTE_COLOR_GREEN] |= (profile_id % 32) << 3;
+-}
+-
+-#define MTR_TRTCM_DATA_POLICER_ACTION_DROP_GET(data, color)\
+-	(((data)->stats[(color)] & 4LLU) >> 2)
+-
+-#define MTR_TRTCM_DATA_POLICER_ACTION_COLOR_GET(data, color)\
+-	((enum rte_color)((data)->stats[(color)] & 3LLU))
+-
+-static void
+-mtr_trtcm_data_policer_action_set(struct mtr_trtcm_data *data,
+-	enum rte_color color,
+-	enum rte_table_action_policer action)
+-{
+-	if (action == RTE_TABLE_ACTION_POLICER_DROP) {
+-		data->stats[color] |= 4LLU;
+-	} else {
+-		data->stats[color] &= ~7LLU;
+-		data->stats[color] |= color & 3LLU;
+-	}
+-}
+-
+-static uint64_t
+-mtr_trtcm_data_stats_get(struct mtr_trtcm_data *data,
+-	enum rte_color color)
+-{
+-	return data->stats[color] >> 8;
+-}
+-
+-static void
+-mtr_trtcm_data_stats_reset(struct mtr_trtcm_data *data,
+-	enum rte_color color)
+-{
+-	data->stats[color] &= 0xFFLU;
+-}
+-
+-#define MTR_TRTCM_DATA_STATS_INC(data, color)              \
+-	((data)->stats[(color)] += (1LLU << 8))
+-
+-static size_t
+-mtr_data_size(struct rte_table_action_mtr_config *mtr)
+-{
+-	return mtr->n_tc * sizeof(struct mtr_trtcm_data);
+-}
+-
+-struct dscp_table_entry_data {
+-	enum rte_color color;
+-	uint16_t tc;
+-	uint16_t tc_queue;
+-};
+-
+-struct dscp_table_data {
+-	struct dscp_table_entry_data entry[64];
+-};
+-
+-struct meter_profile_data {
+-	struct rte_meter_trtcm_profile profile;
+-	uint32_t profile_id;
+-	int valid;
+-};
+-
+-static struct meter_profile_data *
+-meter_profile_data_find(struct meter_profile_data *mp,
+-	uint32_t mp_size,
+-	uint32_t profile_id)
+-{
+-	uint32_t i;
+-
+-	for (i = 0; i < mp_size; i++) {
+-		struct meter_profile_data *mp_data = &mp[i];
+-
+-		if (mp_data->valid && (mp_data->profile_id == profile_id))
+-			return mp_data;
+-	}
+-
+-	return NULL;
+-}
+-
+-static struct meter_profile_data *
+-meter_profile_data_find_unused(struct meter_profile_data *mp,
+-	uint32_t mp_size)
+-{
+-	uint32_t i;
+-
+-	for (i = 0; i < mp_size; i++) {
+-		struct meter_profile_data *mp_data = &mp[i];
+-
+-		if (!mp_data->valid)
+-			return mp_data;
+-	}
+-
+-	return NULL;
+-}
+-
+-static int
+-mtr_apply_check(struct rte_table_action_mtr_params *p,
+-	struct rte_table_action_mtr_config *cfg,
+-	struct meter_profile_data *mp,
+-	uint32_t mp_size)
+-{
+-	uint32_t i;
+-
+-	if (p->tc_mask > RTE_LEN2MASK(cfg->n_tc, uint32_t))
+-		return -EINVAL;
+-
+-	for (i = 0; i < RTE_TABLE_ACTION_TC_MAX; i++) {
+-		struct rte_table_action_mtr_tc_params *p_tc = &p->mtr[i];
+-		struct meter_profile_data *mp_data;
+-
+-		if ((p->tc_mask & (1LLU << i)) == 0)
+-			continue;
+-
+-		mp_data = meter_profile_data_find(mp,
+-			mp_size,
+-			p_tc->meter_profile_id);
+-		if (!mp_data)
+-			return -EINVAL;
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-mtr_apply(struct mtr_trtcm_data *data,
+-	struct rte_table_action_mtr_params *p,
+-	struct rte_table_action_mtr_config *cfg,
+-	struct meter_profile_data *mp,
+-	uint32_t mp_size)
+-{
+-	uint32_t i;
+-	int status;
+-
+-	/* Check input arguments */
+-	status = mtr_apply_check(p, cfg, mp, mp_size);
+-	if (status)
+-		return status;
+-
+-	/* Apply */
+-	for (i = 0; i < RTE_TABLE_ACTION_TC_MAX; i++) {
+-		struct rte_table_action_mtr_tc_params *p_tc = &p->mtr[i];
+-		struct mtr_trtcm_data *data_tc = &data[i];
+-		struct meter_profile_data *mp_data;
+-
+-		if ((p->tc_mask & (1LLU << i)) == 0)
+-			continue;
+-
+-		/* Find profile */
+-		mp_data = meter_profile_data_find(mp,
+-			mp_size,
+-			p_tc->meter_profile_id);
+-		if (!mp_data)
+-			return -EINVAL;
+-
+-		memset(data_tc, 0, sizeof(*data_tc));
+-
+-		/* Meter object */
+-		status = rte_meter_trtcm_config(&data_tc->trtcm,
+-			&mp_data->profile);
+-		if (status)
+-			return status;
+-
+-		/* Meter profile */
+-		mtr_trtcm_data_meter_profile_id_set(data_tc,
+-			mp_data - mp);
+-
+-		/* Policer actions */
+-		mtr_trtcm_data_policer_action_set(data_tc,
+-			RTE_COLOR_GREEN,
+-			p_tc->policer[RTE_COLOR_GREEN]);
+-
+-		mtr_trtcm_data_policer_action_set(data_tc,
+-			RTE_COLOR_YELLOW,
+-			p_tc->policer[RTE_COLOR_YELLOW]);
+-
+-		mtr_trtcm_data_policer_action_set(data_tc,
+-			RTE_COLOR_RED,
+-			p_tc->policer[RTE_COLOR_RED]);
+-	}
+-
+-	return 0;
+-}
+-
+-static __rte_always_inline uint64_t
+-pkt_work_mtr(struct rte_mbuf *mbuf,
+-	struct mtr_trtcm_data *data,
+-	struct dscp_table_data *dscp_table,
+-	struct meter_profile_data *mp,
+-	uint64_t time,
+-	uint32_t dscp,
+-	uint16_t total_length)
+-{
+-	uint64_t drop_mask;
+-	struct dscp_table_entry_data *dscp_entry = &dscp_table->entry[dscp];
+-	enum rte_color color_in, color_meter, color_policer;
+-	uint32_t tc, mp_id;
+-
+-	tc = dscp_entry->tc;
+-	color_in = dscp_entry->color;
+-	data += tc;
+-	mp_id = MTR_TRTCM_DATA_METER_PROFILE_ID_GET(data);
+-
+-	/* Meter */
+-	color_meter = rte_meter_trtcm_color_aware_check(
+-		&data->trtcm,
+-		&mp[mp_id].profile,
+-		time,
+-		total_length,
+-		color_in);
+-
+-	/* Stats */
+-	MTR_TRTCM_DATA_STATS_INC(data, color_meter);
+-
+-	/* Police */
+-	drop_mask = MTR_TRTCM_DATA_POLICER_ACTION_DROP_GET(data, color_meter);
+-	color_policer =
+-		MTR_TRTCM_DATA_POLICER_ACTION_COLOR_GET(data, color_meter);
+-	rte_mbuf_sched_color_set(mbuf, (uint8_t)color_policer);
+-
+-	return drop_mask;
+-}
+-
+-/**
+- * RTE_TABLE_ACTION_TM
+- */
+-static int
+-tm_cfg_check(struct rte_table_action_tm_config *tm)
+-{
+-	if ((tm->n_subports_per_port == 0) ||
+-		(rte_is_power_of_2(tm->n_subports_per_port) == 0) ||
+-		(tm->n_subports_per_port > UINT16_MAX) ||
+-		(tm->n_pipes_per_subport == 0) ||
+-		(rte_is_power_of_2(tm->n_pipes_per_subport) == 0))
+-		return -ENOTSUP;
+-
+-	return 0;
+-}
+-
+-struct __rte_packed_begin tm_data {
+-	uint32_t queue_id;
+-	uint32_t reserved;
+-} __rte_packed_end;
+-
+-static int
+-tm_apply_check(struct rte_table_action_tm_params *p,
+-	struct rte_table_action_tm_config *cfg)
+-{
+-	if ((p->subport_id >= cfg->n_subports_per_port) ||
+-		(p->pipe_id >= cfg->n_pipes_per_subport))
+-		return -EINVAL;
+-
+-	return 0;
+-}
+-
+-static int
+-tm_apply(struct tm_data *data,
+-	struct rte_table_action_tm_params *p,
+-	struct rte_table_action_tm_config *cfg)
+-{
+-	int status;
+-
+-	/* Check input arguments */
+-	status = tm_apply_check(p, cfg);
+-	if (status)
+-		return status;
+-
+-	/* Apply */
+-	data->queue_id = p->subport_id <<
+-				(rte_ctz32(cfg->n_pipes_per_subport) + 4) |
+-				p->pipe_id << 4;
+-
+-	return 0;
+-}
+-
+-static __rte_always_inline void
+-pkt_work_tm(struct rte_mbuf *mbuf,
+-	struct tm_data *data,
+-	struct dscp_table_data *dscp_table,
+-	uint32_t dscp)
+-{
+-	struct dscp_table_entry_data *dscp_entry = &dscp_table->entry[dscp];
+-	uint32_t queue_id = data->queue_id |
+-				dscp_entry->tc_queue;
+-	rte_mbuf_sched_set(mbuf, queue_id, dscp_entry->tc,
+-				(uint8_t)dscp_entry->color);
+-}
+-
+-/**
+- * RTE_TABLE_ACTION_ENCAP
+- */
+-static int
+-encap_valid(enum rte_table_action_encap_type encap)
+-{
+-	switch (encap) {
+-	case RTE_TABLE_ACTION_ENCAP_ETHER:
+-	case RTE_TABLE_ACTION_ENCAP_VLAN:
+-	case RTE_TABLE_ACTION_ENCAP_QINQ:
+-	case RTE_TABLE_ACTION_ENCAP_MPLS:
+-	case RTE_TABLE_ACTION_ENCAP_PPPOE:
+-	case RTE_TABLE_ACTION_ENCAP_VXLAN:
+-	case RTE_TABLE_ACTION_ENCAP_QINQ_PPPOE:
+-		return 1;
+-	default:
+-		return 0;
+-	}
+-}
+-
+-static int
+-encap_cfg_check(struct rte_table_action_encap_config *encap)
+-{
+-	if ((encap->encap_mask == 0) ||
+-		(rte_popcount64(encap->encap_mask) != 1))
+-		return -ENOTSUP;
+-
+-	return 0;
+-}
+-
+-struct encap_ether_data {
+-	struct rte_ether_hdr ether;
+-};
+-
+-#define VLAN(pcp, dei, vid)                                \
+-	((uint16_t)((((uint64_t)(pcp)) & 0x7LLU) << 13) |  \
+-	((((uint64_t)(dei)) & 0x1LLU) << 12) |             \
+-	(((uint64_t)(vid)) & 0xFFFLLU))                    \
+-
+-struct encap_vlan_data {
+-	struct rte_ether_hdr ether;
+-	struct rte_vlan_hdr vlan;
+-};
+-
+-struct encap_qinq_data {
+-	struct rte_ether_hdr ether;
+-	struct rte_vlan_hdr svlan;
+-	struct rte_vlan_hdr cvlan;
+-};
+-
+-#define ETHER_TYPE_MPLS_UNICAST                            0x8847
+-
+-#define ETHER_TYPE_MPLS_MULTICAST                          0x8848
+-
+-#define MPLS(label, tc, s, ttl)                            \
+-	((uint32_t)(((((uint64_t)(label)) & 0xFFFFFLLU) << 12) |\
+-	((((uint64_t)(tc)) & 0x7LLU) << 9) |               \
+-	((((uint64_t)(s)) & 0x1LLU) << 8) |                \
+-	(((uint64_t)(ttl)) & 0xFFLLU)))
+-
+-struct __rte_aligned(2) __rte_packed_begin encap_mpls_data {
+-	struct rte_ether_hdr ether;
+-	uint32_t mpls[RTE_TABLE_ACTION_MPLS_LABELS_MAX];
+-	uint32_t mpls_count;
+-} __rte_packed_end;
+-
+-#define PPP_PROTOCOL_IP                                    0x0021
+-
+-struct pppoe_ppp_hdr {
+-	uint16_t ver_type_code;
+-	uint16_t session_id;
+-	uint16_t length;
+-	uint16_t protocol;
+-};
+-
+-struct encap_pppoe_data {
+-	struct rte_ether_hdr ether;
+-	struct pppoe_ppp_hdr pppoe_ppp;
+-};
+-
+-#define IP_PROTO_UDP                                       17
+-
+-struct __rte_aligned(2) __rte_packed_begin encap_vxlan_ipv4_data {
+-	struct rte_ether_hdr ether;
+-	struct rte_ipv4_hdr ipv4;
+-	struct rte_udp_hdr udp;
+-	struct rte_vxlan_hdr vxlan;
+-} __rte_packed_end;
+-
+-struct __rte_aligned(2) __rte_packed_begin encap_vxlan_ipv4_vlan_data {
+-	struct rte_ether_hdr ether;
+-	struct rte_vlan_hdr vlan;
+-	struct rte_ipv4_hdr ipv4;
+-	struct rte_udp_hdr udp;
+-	struct rte_vxlan_hdr vxlan;
+-} __rte_packed_end;
+-
+-struct __rte_aligned(2) __rte_packed_begin encap_vxlan_ipv6_data {
+-	struct rte_ether_hdr ether;
+-	struct rte_ipv6_hdr ipv6;
+-	struct rte_udp_hdr udp;
+-	struct rte_vxlan_hdr vxlan;
+-} __rte_packed_end;
+-
+-struct __rte_aligned(2) __rte_packed_begin encap_vxlan_ipv6_vlan_data {
+-	struct rte_ether_hdr ether;
+-	struct rte_vlan_hdr vlan;
+-	struct rte_ipv6_hdr ipv6;
+-	struct rte_udp_hdr udp;
+-	struct rte_vxlan_hdr vxlan;
+-} __rte_packed_end;
+-
+-struct __rte_aligned(2) __rte_packed_begin encap_qinq_pppoe_data {
+-	struct rte_ether_hdr ether;
+-	struct rte_vlan_hdr svlan;
+-	struct rte_vlan_hdr cvlan;
+-	struct pppoe_ppp_hdr pppoe_ppp;
+-} __rte_packed_end;
+-
+-static size_t
+-encap_data_size(struct rte_table_action_encap_config *encap)
+-{
+-	switch (encap->encap_mask) {
+-	case 1LLU << RTE_TABLE_ACTION_ENCAP_ETHER:
+-		return sizeof(struct encap_ether_data);
+-
+-	case 1LLU << RTE_TABLE_ACTION_ENCAP_VLAN:
+-		return sizeof(struct encap_vlan_data);
+-
+-	case 1LLU << RTE_TABLE_ACTION_ENCAP_QINQ:
+-		return sizeof(struct encap_qinq_data);
+-
+-	case 1LLU << RTE_TABLE_ACTION_ENCAP_MPLS:
+-		return sizeof(struct encap_mpls_data);
+-
+-	case 1LLU << RTE_TABLE_ACTION_ENCAP_PPPOE:
+-		return sizeof(struct encap_pppoe_data);
+-
+-	case 1LLU << RTE_TABLE_ACTION_ENCAP_VXLAN:
+-		if (encap->vxlan.ip_version)
+-			if (encap->vxlan.vlan)
+-				return sizeof(struct encap_vxlan_ipv4_vlan_data);
+-			else
+-				return sizeof(struct encap_vxlan_ipv4_data);
+-		else
+-			if (encap->vxlan.vlan)
+-				return sizeof(struct encap_vxlan_ipv6_vlan_data);
+-			else
+-				return sizeof(struct encap_vxlan_ipv6_data);
+-
+-	case 1LLU << RTE_TABLE_ACTION_ENCAP_QINQ_PPPOE:
+-			return sizeof(struct encap_qinq_pppoe_data);
+-
+-	default:
+-		return 0;
+-	}
+-}
+-
+-static int
+-encap_apply_check(struct rte_table_action_encap_params *p,
+-	struct rte_table_action_encap_config *cfg)
+-{
+-	if ((encap_valid(p->type) == 0) ||
+-		((cfg->encap_mask & (1LLU << p->type)) == 0))
+-		return -EINVAL;
+-
+-	switch (p->type) {
+-	case RTE_TABLE_ACTION_ENCAP_ETHER:
+-		return 0;
+-
+-	case RTE_TABLE_ACTION_ENCAP_VLAN:
+-		return 0;
+-
+-	case RTE_TABLE_ACTION_ENCAP_QINQ:
+-		return 0;
+-
+-	case RTE_TABLE_ACTION_ENCAP_MPLS:
+-		if ((p->mpls.mpls_count == 0) ||
+-			(p->mpls.mpls_count > RTE_TABLE_ACTION_MPLS_LABELS_MAX))
+-			return -EINVAL;
+-
+-		return 0;
+-
+-	case RTE_TABLE_ACTION_ENCAP_PPPOE:
+-		return 0;
+-
+-	case RTE_TABLE_ACTION_ENCAP_VXLAN:
+-		return 0;
+-
+-	case RTE_TABLE_ACTION_ENCAP_QINQ_PPPOE:
+-		return 0;
+-
+-	default:
+-		return -EINVAL;
+-	}
+-}
+-
+-static int
+-encap_ether_apply(void *data,
+-	struct rte_table_action_encap_params *p,
+-	struct rte_table_action_common_config *common_cfg)
+-{
+-	struct encap_ether_data *d = data;
+-	uint16_t ethertype = (common_cfg->ip_version) ?
+-		RTE_ETHER_TYPE_IPV4 :
+-		RTE_ETHER_TYPE_IPV6;
+-
+-	/* Ethernet */
+-	rte_ether_addr_copy(&p->ether.ether.da, &d->ether.dst_addr);
+-	rte_ether_addr_copy(&p->ether.ether.sa, &d->ether.src_addr);
+-	d->ether.ether_type = rte_htons(ethertype);
+-
+-	return 0;
+-}
+-
+-static int
+-encap_vlan_apply(void *data,
+-	struct rte_table_action_encap_params *p,
+-	struct rte_table_action_common_config *common_cfg)
+-{
+-	struct encap_vlan_data *d = data;
+-	uint16_t ethertype = (common_cfg->ip_version) ?
+-		RTE_ETHER_TYPE_IPV4 :
+-		RTE_ETHER_TYPE_IPV6;
+-
+-	/* Ethernet */
+-	rte_ether_addr_copy(&p->vlan.ether.da, &d->ether.dst_addr);
+-	rte_ether_addr_copy(&p->vlan.ether.sa, &d->ether.src_addr);
+-	d->ether.ether_type = rte_htons(RTE_ETHER_TYPE_VLAN);
+-
+-	/* VLAN */
+-	d->vlan.vlan_tci = rte_htons(VLAN(p->vlan.vlan.pcp,
+-		p->vlan.vlan.dei,
+-		p->vlan.vlan.vid));
+-	d->vlan.eth_proto = rte_htons(ethertype);
+-
+-	return 0;
+-}
+-
+-static int
+-encap_qinq_apply(void *data,
+-	struct rte_table_action_encap_params *p,
+-	struct rte_table_action_common_config *common_cfg)
+-{
+-	struct encap_qinq_data *d = data;
+-	uint16_t ethertype = (common_cfg->ip_version) ?
+-		RTE_ETHER_TYPE_IPV4 :
+-		RTE_ETHER_TYPE_IPV6;
+-
+-	/* Ethernet */
+-	rte_ether_addr_copy(&p->qinq.ether.da, &d->ether.dst_addr);
+-	rte_ether_addr_copy(&p->qinq.ether.sa, &d->ether.src_addr);
+-	d->ether.ether_type = rte_htons(RTE_ETHER_TYPE_QINQ);
+-
+-	/* SVLAN */
+-	d->svlan.vlan_tci = rte_htons(VLAN(p->qinq.svlan.pcp,
+-		p->qinq.svlan.dei,
+-		p->qinq.svlan.vid));
+-	d->svlan.eth_proto = rte_htons(RTE_ETHER_TYPE_VLAN);
+-
+-	/* CVLAN */
+-	d->cvlan.vlan_tci = rte_htons(VLAN(p->qinq.cvlan.pcp,
+-		p->qinq.cvlan.dei,
+-		p->qinq.cvlan.vid));
+-	d->cvlan.eth_proto = rte_htons(ethertype);
+-
+-	return 0;
+-}
+-
+-static int
+-encap_qinq_pppoe_apply(void *data,
+-	struct rte_table_action_encap_params *p)
+-{
+-	struct encap_qinq_pppoe_data *d = data;
+-
+-	/* Ethernet */
+-	rte_ether_addr_copy(&p->qinq.ether.da, &d->ether.dst_addr);
+-	rte_ether_addr_copy(&p->qinq.ether.sa, &d->ether.src_addr);
+-	d->ether.ether_type = rte_htons(RTE_ETHER_TYPE_VLAN);
+-
+-	/* SVLAN */
+-	d->svlan.vlan_tci = rte_htons(VLAN(p->qinq.svlan.pcp,
+-		p->qinq.svlan.dei,
+-		p->qinq.svlan.vid));
+-	d->svlan.eth_proto = rte_htons(RTE_ETHER_TYPE_VLAN);
+-
+-	/* CVLAN */
+-	d->cvlan.vlan_tci = rte_htons(VLAN(p->qinq.cvlan.pcp,
+-		p->qinq.cvlan.dei,
+-		p->qinq.cvlan.vid));
+-	d->cvlan.eth_proto = rte_htons(RTE_ETHER_TYPE_PPPOE_SESSION);
+-
+-	/* PPPoE and PPP*/
+-	d->pppoe_ppp.ver_type_code = rte_htons(0x1100);
+-	d->pppoe_ppp.session_id = rte_htons(p->qinq_pppoe.pppoe.session_id);
+-	d->pppoe_ppp.length = 0; /* not pre-computed */
+-	d->pppoe_ppp.protocol = rte_htons(PPP_PROTOCOL_IP);
+-
+-	return 0;
+-}
+-
+-static int
+-encap_mpls_apply(void *data,
+-	struct rte_table_action_encap_params *p)
+-{
+-	struct encap_mpls_data *d = data;
+-	uint16_t ethertype = (p->mpls.unicast) ?
+-		ETHER_TYPE_MPLS_UNICAST :
+-		ETHER_TYPE_MPLS_MULTICAST;
+-	uint32_t i;
+-
+-	/* Ethernet */
+-	rte_ether_addr_copy(&p->mpls.ether.da, &d->ether.dst_addr);
+-	rte_ether_addr_copy(&p->mpls.ether.sa, &d->ether.src_addr);
+-	d->ether.ether_type = rte_htons(ethertype);
+-
+-	/* MPLS */
+-	for (i = 0; i < p->mpls.mpls_count - 1; i++)
+-		d->mpls[i] = rte_htonl(MPLS(p->mpls.mpls[i].label,
+-			p->mpls.mpls[i].tc,
+-			0,
+-			p->mpls.mpls[i].ttl));
+-
+-	d->mpls[i] = rte_htonl(MPLS(p->mpls.mpls[i].label,
+-		p->mpls.mpls[i].tc,
+-		1,
+-		p->mpls.mpls[i].ttl));
+-
+-	d->mpls_count = p->mpls.mpls_count;
+-	return 0;
+-}
+-
+-static int
+-encap_pppoe_apply(void *data,
+-	struct rte_table_action_encap_params *p)
+-{
+-	struct encap_pppoe_data *d = data;
+-
+-	/* Ethernet */
+-	rte_ether_addr_copy(&p->pppoe.ether.da, &d->ether.dst_addr);
+-	rte_ether_addr_copy(&p->pppoe.ether.sa, &d->ether.src_addr);
+-	d->ether.ether_type = rte_htons(RTE_ETHER_TYPE_PPPOE_SESSION);
+-
+-	/* PPPoE and PPP*/
+-	d->pppoe_ppp.ver_type_code = rte_htons(0x1100);
+-	d->pppoe_ppp.session_id = rte_htons(p->pppoe.pppoe.session_id);
+-	d->pppoe_ppp.length = 0; /* not pre-computed */
+-	d->pppoe_ppp.protocol = rte_htons(PPP_PROTOCOL_IP);
+-
+-	return 0;
+-}
+-
+-static int
+-encap_vxlan_apply(void *data,
+-	struct rte_table_action_encap_params *p,
+-	struct rte_table_action_encap_config *cfg)
+-{
+-	if ((p->vxlan.vxlan.vni > 0xFFFFFF) ||
+-		(cfg->vxlan.ip_version && (p->vxlan.ipv4.dscp > 0x3F)) ||
+-		(!cfg->vxlan.ip_version && (p->vxlan.ipv6.flow_label > 0xFFFFF)) ||
+-		(!cfg->vxlan.ip_version && (p->vxlan.ipv6.dscp > 0x3F)) ||
+-		(cfg->vxlan.vlan && (p->vxlan.vlan.vid > 0xFFF)))
+-		return -1;
+-
+-	if (cfg->vxlan.ip_version)
+-		if (cfg->vxlan.vlan) {
+-			struct encap_vxlan_ipv4_vlan_data *d = data;
+-
+-			/* Ethernet */
+-			rte_ether_addr_copy(&p->vxlan.ether.da,
+-					&d->ether.dst_addr);
+-			rte_ether_addr_copy(&p->vxlan.ether.sa,
+-					&d->ether.src_addr);
+-			d->ether.ether_type = rte_htons(RTE_ETHER_TYPE_VLAN);
+-
+-			/* VLAN */
+-			d->vlan.vlan_tci = rte_htons(VLAN(p->vxlan.vlan.pcp,
+-				p->vxlan.vlan.dei,
+-				p->vxlan.vlan.vid));
+-			d->vlan.eth_proto = rte_htons(RTE_ETHER_TYPE_IPV4);
+-
+-			/* IPv4*/
+-			d->ipv4.version_ihl = 0x45;
+-			d->ipv4.type_of_service = p->vxlan.ipv4.dscp << 2;
+-			d->ipv4.total_length = 0; /* not pre-computed */
+-			d->ipv4.packet_id = 0;
+-			d->ipv4.fragment_offset = 0;
+-			d->ipv4.time_to_live = p->vxlan.ipv4.ttl;
+-			d->ipv4.next_proto_id = IP_PROTO_UDP;
+-			d->ipv4.hdr_checksum = 0;
+-			d->ipv4.src_addr = rte_htonl(p->vxlan.ipv4.sa);
+-			d->ipv4.dst_addr = rte_htonl(p->vxlan.ipv4.da);
+-
+-			d->ipv4.hdr_checksum = rte_ipv4_cksum(&d->ipv4);
+-
+-			/* UDP */
+-			d->udp.src_port = rte_htons(p->vxlan.udp.sp);
+-			d->udp.dst_port = rte_htons(p->vxlan.udp.dp);
+-			d->udp.dgram_len = 0; /* not pre-computed */
+-			d->udp.dgram_cksum = 0;
+-
+-			/* VXLAN */
+-			d->vxlan.vx_flags = rte_htonl(0x08000000);
+-			d->vxlan.vx_vni = rte_htonl(p->vxlan.vxlan.vni << 8);
+-
+-			return 0;
+-		} else {
+-			struct encap_vxlan_ipv4_data *d = data;
+-
+-			/* Ethernet */
+-			rte_ether_addr_copy(&p->vxlan.ether.da,
+-					&d->ether.dst_addr);
+-			rte_ether_addr_copy(&p->vxlan.ether.sa,
+-					&d->ether.src_addr);
+-			d->ether.ether_type = rte_htons(RTE_ETHER_TYPE_IPV4);
+-
+-			/* IPv4*/
+-			d->ipv4.version_ihl = 0x45;
+-			d->ipv4.type_of_service = p->vxlan.ipv4.dscp << 2;
+-			d->ipv4.total_length = 0; /* not pre-computed */
+-			d->ipv4.packet_id = 0;
+-			d->ipv4.fragment_offset = 0;
+-			d->ipv4.time_to_live = p->vxlan.ipv4.ttl;
+-			d->ipv4.next_proto_id = IP_PROTO_UDP;
+-			d->ipv4.hdr_checksum = 0;
+-			d->ipv4.src_addr = rte_htonl(p->vxlan.ipv4.sa);
+-			d->ipv4.dst_addr = rte_htonl(p->vxlan.ipv4.da);
+-
+-			d->ipv4.hdr_checksum = rte_ipv4_cksum(&d->ipv4);
+-
+-			/* UDP */
+-			d->udp.src_port = rte_htons(p->vxlan.udp.sp);
+-			d->udp.dst_port = rte_htons(p->vxlan.udp.dp);
+-			d->udp.dgram_len = 0; /* not pre-computed */
+-			d->udp.dgram_cksum = 0;
+-
+-			/* VXLAN */
+-			d->vxlan.vx_flags = rte_htonl(0x08000000);
+-			d->vxlan.vx_vni = rte_htonl(p->vxlan.vxlan.vni << 8);
+-
+-			return 0;
+-		}
+-	else
+-		if (cfg->vxlan.vlan) {
+-			struct encap_vxlan_ipv6_vlan_data *d = data;
+-
+-			/* Ethernet */
+-			rte_ether_addr_copy(&p->vxlan.ether.da,
+-					&d->ether.dst_addr);
+-			rte_ether_addr_copy(&p->vxlan.ether.sa,
+-					&d->ether.src_addr);
+-			d->ether.ether_type = rte_htons(RTE_ETHER_TYPE_VLAN);
+-
+-			/* VLAN */
+-			d->vlan.vlan_tci = rte_htons(VLAN(p->vxlan.vlan.pcp,
+-				p->vxlan.vlan.dei,
+-				p->vxlan.vlan.vid));
+-			d->vlan.eth_proto = rte_htons(RTE_ETHER_TYPE_IPV6);
+-
+-			/* IPv6*/
+-			d->ipv6.vtc_flow = rte_htonl((6 << 28) |
+-				(p->vxlan.ipv6.dscp << 22) |
+-				p->vxlan.ipv6.flow_label);
+-			d->ipv6.payload_len = 0; /* not pre-computed */
+-			d->ipv6.proto = IP_PROTO_UDP;
+-			d->ipv6.hop_limits = p->vxlan.ipv6.hop_limit;
+-			d->ipv6.src_addr = p->vxlan.ipv6.sa;
+-			d->ipv6.dst_addr = p->vxlan.ipv6.da;
+-
+-			/* UDP */
+-			d->udp.src_port = rte_htons(p->vxlan.udp.sp);
+-			d->udp.dst_port = rte_htons(p->vxlan.udp.dp);
+-			d->udp.dgram_len = 0; /* not pre-computed */
+-			d->udp.dgram_cksum = 0;
+-
+-			/* VXLAN */
+-			d->vxlan.vx_flags = rte_htonl(0x08000000);
+-			d->vxlan.vx_vni = rte_htonl(p->vxlan.vxlan.vni << 8);
+-
+-			return 0;
+-		} else {
+-			struct encap_vxlan_ipv6_data *d = data;
+-
+-			/* Ethernet */
+-			rte_ether_addr_copy(&p->vxlan.ether.da,
+-					&d->ether.dst_addr);
+-			rte_ether_addr_copy(&p->vxlan.ether.sa,
+-					&d->ether.src_addr);
+-			d->ether.ether_type = rte_htons(RTE_ETHER_TYPE_IPV6);
+-
+-			/* IPv6*/
+-			d->ipv6.vtc_flow = rte_htonl((6 << 28) |
+-				(p->vxlan.ipv6.dscp << 22) |
+-				p->vxlan.ipv6.flow_label);
+-			d->ipv6.payload_len = 0; /* not pre-computed */
+-			d->ipv6.proto = IP_PROTO_UDP;
+-			d->ipv6.hop_limits = p->vxlan.ipv6.hop_limit;
+-			d->ipv6.src_addr = p->vxlan.ipv6.sa;
+-			d->ipv6.dst_addr = p->vxlan.ipv6.da;
+-
+-			/* UDP */
+-			d->udp.src_port = rte_htons(p->vxlan.udp.sp);
+-			d->udp.dst_port = rte_htons(p->vxlan.udp.dp);
+-			d->udp.dgram_len = 0; /* not pre-computed */
+-			d->udp.dgram_cksum = 0;
+-
+-			/* VXLAN */
+-			d->vxlan.vx_flags = rte_htonl(0x08000000);
+-			d->vxlan.vx_vni = rte_htonl(p->vxlan.vxlan.vni << 8);
+-
+-			return 0;
+-		}
+-}
+-
+-static int
+-encap_apply(void *data,
+-	struct rte_table_action_encap_params *p,
+-	struct rte_table_action_encap_config *cfg,
+-	struct rte_table_action_common_config *common_cfg)
+-{
+-	int status;
+-
+-	/* Check input arguments */
+-	status = encap_apply_check(p, cfg);
+-	if (status)
+-		return status;
+-
+-	switch (p->type) {
+-	case RTE_TABLE_ACTION_ENCAP_ETHER:
+-		return encap_ether_apply(data, p, common_cfg);
+-
+-	case RTE_TABLE_ACTION_ENCAP_VLAN:
+-		return encap_vlan_apply(data, p, common_cfg);
+-
+-	case RTE_TABLE_ACTION_ENCAP_QINQ:
+-		return encap_qinq_apply(data, p, common_cfg);
+-
+-	case RTE_TABLE_ACTION_ENCAP_MPLS:
+-		return encap_mpls_apply(data, p);
+-
+-	case RTE_TABLE_ACTION_ENCAP_PPPOE:
+-		return encap_pppoe_apply(data, p);
+-
+-	case RTE_TABLE_ACTION_ENCAP_VXLAN:
+-		return encap_vxlan_apply(data, p, cfg);
+-
+-	case RTE_TABLE_ACTION_ENCAP_QINQ_PPPOE:
+-		return encap_qinq_pppoe_apply(data, p);
+-
+-	default:
+-		return -EINVAL;
+-	}
+-}
+-
+-static __rte_always_inline uint16_t
+-encap_vxlan_ipv4_checksum_update(uint16_t cksum0,
+-	uint16_t total_length)
+-{
+-	int32_t cksum1;
+-
+-	cksum1 = cksum0;
+-	cksum1 = ~cksum1 & 0xFFFF;
+-
+-	/* Add total length (one's complement logic) */
+-	cksum1 += total_length;
+-	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
+-	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
+-
+-	return (uint16_t)(~cksum1);
+-}
+-
+-static __rte_always_inline void *
+-encap(void *dst, const void *src, size_t n)
+-{
+-	dst = ((uint8_t *) dst) - n;
+-	return rte_memcpy(dst, src, n);
+-}
+-
+-static __rte_always_inline void
+-pkt_work_encap_vxlan_ipv4(struct rte_mbuf *mbuf,
+-	struct encap_vxlan_ipv4_data *vxlan_tbl,
+-	struct rte_table_action_encap_config *cfg)
+-{
+-	uint32_t ether_offset = cfg->vxlan.data_offset;
+-	void *ether = RTE_MBUF_METADATA_UINT32_PTR(mbuf, ether_offset);
+-	struct encap_vxlan_ipv4_data *vxlan_pkt;
+-	uint16_t ether_length, ipv4_total_length, ipv4_hdr_cksum, udp_length;
+-
+-	ether_length = (uint16_t)mbuf->pkt_len;
+-	ipv4_total_length = ether_length +
+-		(sizeof(struct rte_vxlan_hdr) +
+-		sizeof(struct rte_udp_hdr) +
+-		sizeof(struct rte_ipv4_hdr));
+-	ipv4_hdr_cksum = encap_vxlan_ipv4_checksum_update(vxlan_tbl->ipv4.hdr_checksum,
+-		rte_htons(ipv4_total_length));
+-	udp_length = ether_length +
+-		(sizeof(struct rte_vxlan_hdr) +
+-		sizeof(struct rte_udp_hdr));
+-
+-	vxlan_pkt = encap(ether, vxlan_tbl, sizeof(*vxlan_tbl));
+-	vxlan_pkt->ipv4.total_length = rte_htons(ipv4_total_length);
+-	vxlan_pkt->ipv4.hdr_checksum = ipv4_hdr_cksum;
+-	vxlan_pkt->udp.dgram_len = rte_htons(udp_length);
+-
+-	mbuf->data_off = ether_offset - (sizeof(struct rte_mbuf) + sizeof(*vxlan_pkt));
+-	mbuf->pkt_len = mbuf->data_len = ether_length + sizeof(*vxlan_pkt);
+-}
+-
+-static __rte_always_inline void
+-pkt_work_encap_vxlan_ipv4_vlan(struct rte_mbuf *mbuf,
+-	struct encap_vxlan_ipv4_vlan_data *vxlan_tbl,
+-	struct rte_table_action_encap_config *cfg)
+-{
+-	uint32_t ether_offset = cfg->vxlan.data_offset;
+-	void *ether = RTE_MBUF_METADATA_UINT32_PTR(mbuf, ether_offset);
+-	struct encap_vxlan_ipv4_vlan_data *vxlan_pkt;
+-	uint16_t ether_length, ipv4_total_length, ipv4_hdr_cksum, udp_length;
+-
+-	ether_length = (uint16_t)mbuf->pkt_len;
+-	ipv4_total_length = ether_length +
+-		(sizeof(struct rte_vxlan_hdr) +
+-		sizeof(struct rte_udp_hdr) +
+-		sizeof(struct rte_ipv4_hdr));
+-	ipv4_hdr_cksum = encap_vxlan_ipv4_checksum_update(vxlan_tbl->ipv4.hdr_checksum,
+-		rte_htons(ipv4_total_length));
+-	udp_length = ether_length +
+-		(sizeof(struct rte_vxlan_hdr) +
+-		sizeof(struct rte_udp_hdr));
+-
+-	vxlan_pkt = encap(ether, vxlan_tbl, sizeof(*vxlan_tbl));
+-	vxlan_pkt->ipv4.total_length = rte_htons(ipv4_total_length);
+-	vxlan_pkt->ipv4.hdr_checksum = ipv4_hdr_cksum;
+-	vxlan_pkt->udp.dgram_len = rte_htons(udp_length);
+-
+-	mbuf->data_off = ether_offset - (sizeof(struct rte_mbuf) + sizeof(*vxlan_pkt));
+-	mbuf->pkt_len = mbuf->data_len = ether_length + sizeof(*vxlan_pkt);
+-}
+-
+-static __rte_always_inline void
+-pkt_work_encap_vxlan_ipv6(struct rte_mbuf *mbuf,
+-	struct encap_vxlan_ipv6_data *vxlan_tbl,
+-	struct rte_table_action_encap_config *cfg)
+-{
+-	uint32_t ether_offset = cfg->vxlan.data_offset;
+-	void *ether = RTE_MBUF_METADATA_UINT32_PTR(mbuf, ether_offset);
+-	struct encap_vxlan_ipv6_data *vxlan_pkt;
+-	uint16_t ether_length, ipv6_payload_length, udp_length;
+-
+-	ether_length = (uint16_t)mbuf->pkt_len;
+-	ipv6_payload_length = ether_length +
+-		(sizeof(struct rte_vxlan_hdr) +
+-		sizeof(struct rte_udp_hdr));
+-	udp_length = ether_length +
+-		(sizeof(struct rte_vxlan_hdr) +
+-		sizeof(struct rte_udp_hdr));
+-
+-	vxlan_pkt = encap(ether, vxlan_tbl, sizeof(*vxlan_tbl));
+-	vxlan_pkt->ipv6.payload_len = rte_htons(ipv6_payload_length);
+-	vxlan_pkt->udp.dgram_len = rte_htons(udp_length);
+-
+-	mbuf->data_off = ether_offset - (sizeof(struct rte_mbuf) + sizeof(*vxlan_pkt));
+-	mbuf->pkt_len = mbuf->data_len = ether_length + sizeof(*vxlan_pkt);
+-}
+-
+-static __rte_always_inline void
+-pkt_work_encap_vxlan_ipv6_vlan(struct rte_mbuf *mbuf,
+-	struct encap_vxlan_ipv6_vlan_data *vxlan_tbl,
+-	struct rte_table_action_encap_config *cfg)
+-{
+-	uint32_t ether_offset = cfg->vxlan.data_offset;
+-	void *ether = RTE_MBUF_METADATA_UINT32_PTR(mbuf, ether_offset);
+-	struct encap_vxlan_ipv6_vlan_data *vxlan_pkt;
+-	uint16_t ether_length, ipv6_payload_length, udp_length;
+-
+-	ether_length = (uint16_t)mbuf->pkt_len;
+-	ipv6_payload_length = ether_length +
+-		(sizeof(struct rte_vxlan_hdr) +
+-		sizeof(struct rte_udp_hdr));
+-	udp_length = ether_length +
+-		(sizeof(struct rte_vxlan_hdr) +
+-		sizeof(struct rte_udp_hdr));
+-
+-	vxlan_pkt = encap(ether, vxlan_tbl, sizeof(*vxlan_tbl));
+-	vxlan_pkt->ipv6.payload_len = rte_htons(ipv6_payload_length);
+-	vxlan_pkt->udp.dgram_len = rte_htons(udp_length);
+-
+-	mbuf->data_off = ether_offset - (sizeof(struct rte_mbuf) + sizeof(*vxlan_pkt));
+-	mbuf->pkt_len = mbuf->data_len = ether_length + sizeof(*vxlan_pkt);
+-}
+-
+-static __rte_always_inline void
+-pkt_work_encap(struct rte_mbuf *mbuf,
+-	void *data,
+-	struct rte_table_action_encap_config *cfg,
+-	void *ip,
+-	uint16_t total_length,
+-	uint32_t ip_offset)
+-{
+-	switch (cfg->encap_mask) {
+-	case 1LLU << RTE_TABLE_ACTION_ENCAP_ETHER:
+-		encap(ip, data, sizeof(struct encap_ether_data));
+-		mbuf->data_off = ip_offset - (sizeof(struct rte_mbuf) +
+-			sizeof(struct encap_ether_data));
+-		mbuf->pkt_len = mbuf->data_len = total_length +
+-			sizeof(struct encap_ether_data);
+-		break;
+-
+-	case 1LLU << RTE_TABLE_ACTION_ENCAP_VLAN:
+-		encap(ip, data, sizeof(struct encap_vlan_data));
+-		mbuf->data_off = ip_offset - (sizeof(struct rte_mbuf) +
+-			sizeof(struct encap_vlan_data));
+-		mbuf->pkt_len = mbuf->data_len = total_length +
+-			sizeof(struct encap_vlan_data);
+-		break;
+-
+-	case 1LLU << RTE_TABLE_ACTION_ENCAP_QINQ:
+-		encap(ip, data, sizeof(struct encap_qinq_data));
+-		mbuf->data_off = ip_offset - (sizeof(struct rte_mbuf) +
+-			sizeof(struct encap_qinq_data));
+-		mbuf->pkt_len = mbuf->data_len = total_length +
+-			sizeof(struct encap_qinq_data);
+-		break;
+-
+-	case 1LLU << RTE_TABLE_ACTION_ENCAP_MPLS:
+-	{
+-		struct encap_mpls_data *mpls = data;
+-		size_t size = sizeof(struct rte_ether_hdr) +
+-			mpls->mpls_count * 4;
+-
+-		encap(ip, data, size);
+-		mbuf->data_off = ip_offset - (sizeof(struct rte_mbuf) + size);
+-		mbuf->pkt_len = mbuf->data_len = total_length + size;
+-		break;
+-	}
+-
+-	case 1LLU << RTE_TABLE_ACTION_ENCAP_PPPOE:
+-	{
+-		struct encap_pppoe_data *pppoe =
+-			encap(ip, data, sizeof(struct encap_pppoe_data));
+-		pppoe->pppoe_ppp.length = rte_htons(total_length + 2);
+-		mbuf->data_off = ip_offset - (sizeof(struct rte_mbuf) +
+-			sizeof(struct encap_pppoe_data));
+-		mbuf->pkt_len = mbuf->data_len = total_length +
+-			sizeof(struct encap_pppoe_data);
+-		break;
+-	}
+-
+-	case 1LLU << RTE_TABLE_ACTION_ENCAP_QINQ_PPPOE:
+-	{
+-		struct encap_qinq_pppoe_data *qinq_pppoe =
+-			encap(ip, data, sizeof(struct encap_qinq_pppoe_data));
+-		qinq_pppoe->pppoe_ppp.length = rte_htons(total_length + 2);
+-		mbuf->data_off = ip_offset - (sizeof(struct rte_mbuf) +
+-			sizeof(struct encap_qinq_pppoe_data));
+-		mbuf->pkt_len = mbuf->data_len = total_length +
+-			sizeof(struct encap_qinq_pppoe_data);
+-		break;
+-	}
+-
+-	case 1LLU << RTE_TABLE_ACTION_ENCAP_VXLAN:
+-	{
+-		if (cfg->vxlan.ip_version)
+-			if (cfg->vxlan.vlan)
+-				pkt_work_encap_vxlan_ipv4_vlan(mbuf, data, cfg);
+-			else
+-				pkt_work_encap_vxlan_ipv4(mbuf, data, cfg);
+-		else
+-			if (cfg->vxlan.vlan)
+-				pkt_work_encap_vxlan_ipv6_vlan(mbuf, data, cfg);
+-			else
+-				pkt_work_encap_vxlan_ipv6(mbuf, data, cfg);
+-	}
+-
+-	default:
+-		break;
+-	}
+-}
+-
+-/**
+- * RTE_TABLE_ACTION_NAT
+- */
+-static int
+-nat_cfg_check(struct rte_table_action_nat_config *nat)
+-{
+-	if ((nat->proto != 0x06) &&
+-		(nat->proto != 0x11))
+-		return -ENOTSUP;
+-
+-	return 0;
+-}
+-
+-struct __rte_packed_begin nat_ipv4_data {
+-	uint32_t addr;
+-	uint16_t port;
+-} __rte_packed_end;
+-
+-struct __rte_packed_begin nat_ipv6_data {
+-	struct rte_ipv6_addr addr;
+-	uint16_t port;
+-} __rte_packed_end;
+-
+-static size_t
+-nat_data_size(struct rte_table_action_nat_config *nat __rte_unused,
+-	struct rte_table_action_common_config *common)
+-{
+-	int ip_version = common->ip_version;
+-
+-	return (ip_version) ?
+-		sizeof(struct nat_ipv4_data) :
+-		sizeof(struct nat_ipv6_data);
+-}
+-
+-static int
+-nat_apply_check(struct rte_table_action_nat_params *p,
+-	struct rte_table_action_common_config *cfg)
+-{
+-	if ((p->ip_version && (cfg->ip_version == 0)) ||
+-		((p->ip_version == 0) && cfg->ip_version))
+-		return -EINVAL;
+-
+-	return 0;
+-}
+-
+-static int
+-nat_apply(void *data,
+-	struct rte_table_action_nat_params *p,
+-	struct rte_table_action_common_config *cfg)
+-{
+-	int status;
+-
+-	/* Check input arguments */
+-	status = nat_apply_check(p, cfg);
+-	if (status)
+-		return status;
+-
+-	/* Apply */
+-	if (p->ip_version) {
+-		struct nat_ipv4_data *d = data;
+-
+-		d->addr = rte_htonl(p->addr.ipv4);
+-		d->port = rte_htons(p->port);
+-	} else {
+-		struct nat_ipv6_data *d = data;
+-
+-		d->addr = p->addr.ipv6;
+-		d->port = rte_htons(p->port);
+-	}
+-
+-	return 0;
+-}
+-
+-static __rte_always_inline uint16_t
+-nat_ipv4_checksum_update(uint16_t cksum0,
+-	uint32_t ip0,
+-	uint32_t ip1)
+-{
+-	int32_t cksum1;
+-
+-	cksum1 = cksum0;
+-	cksum1 = ~cksum1 & 0xFFFF;
+-
+-	/* Subtract ip0 (one's complement logic) */
+-	cksum1 -= (ip0 >> 16) + (ip0 & 0xFFFF);
+-	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
+-	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
+-
+-	/* Add ip1 (one's complement logic) */
+-	cksum1 += (ip1 >> 16) + (ip1 & 0xFFFF);
+-	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
+-	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
+-
+-	return (uint16_t)(~cksum1);
+-}
+-
+-static __rte_always_inline uint16_t
+-nat_ipv4_tcp_udp_checksum_update(uint16_t cksum0,
+-	uint32_t ip0,
+-	uint32_t ip1,
+-	uint16_t port0,
+-	uint16_t port1)
+-{
+-	int32_t cksum1;
+-
+-	cksum1 = cksum0;
+-	cksum1 = ~cksum1 & 0xFFFF;
+-
+-	/* Subtract ip0 and port 0 (one's complement logic) */
+-	cksum1 -= (ip0 >> 16) + (ip0 & 0xFFFF) + port0;
+-	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
+-	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
+-
+-	/* Add ip1 and port1 (one's complement logic) */
+-	cksum1 += (ip1 >> 16) + (ip1 & 0xFFFF) + port1;
+-	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
+-	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
+-
+-	return (uint16_t)(~cksum1);
+-}
+-
+-static __rte_always_inline uint16_t
+-nat_ipv6_tcp_udp_checksum_update(uint16_t cksum0,
+-	uint16_t *ip0,
+-	uint16_t *ip1,
+-	uint16_t port0,
+-	uint16_t port1)
+-{
+-	int32_t cksum1;
+-
+-	cksum1 = cksum0;
+-	cksum1 = ~cksum1 & 0xFFFF;
+-
+-	/* Subtract ip0 and port 0 (one's complement logic) */
+-	cksum1 -= ip0[0] + ip0[1] + ip0[2] + ip0[3] +
+-		ip0[4] + ip0[5] + ip0[6] + ip0[7] + port0;
+-	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
+-	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
+-
+-	/* Add ip1 and port1 (one's complement logic) */
+-	cksum1 += ip1[0] + ip1[1] + ip1[2] + ip1[3] +
+-		ip1[4] + ip1[5] + ip1[6] + ip1[7] + port1;
+-	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
+-	cksum1 = (cksum1 & 0xFFFF) + (cksum1 >> 16);
+-
+-	return (uint16_t)(~cksum1);
+-}
+-
+-static __rte_always_inline void
+-pkt_ipv4_work_nat(struct rte_ipv4_hdr *ip,
+-	struct nat_ipv4_data *data,
+-	struct rte_table_action_nat_config *cfg)
+-{
+-	if (cfg->source_nat) {
+-		if (cfg->proto == 0x6) {
+-			struct rte_tcp_hdr *tcp = (struct rte_tcp_hdr *) &ip[1];
+-			uint16_t ip_cksum, tcp_cksum;
+-
+-			ip_cksum = nat_ipv4_checksum_update(ip->hdr_checksum,
+-				ip->src_addr,
+-				data->addr);
+-
+-			tcp_cksum = nat_ipv4_tcp_udp_checksum_update(tcp->cksum,
+-				ip->src_addr,
+-				data->addr,
+-				tcp->src_port,
+-				data->port);
+-
+-			ip->src_addr = data->addr;
+-			ip->hdr_checksum = ip_cksum;
+-			tcp->src_port = data->port;
+-			tcp->cksum = tcp_cksum;
+-		} else {
+-			struct rte_udp_hdr *udp = (struct rte_udp_hdr *) &ip[1];
+-			uint16_t ip_cksum, udp_cksum;
+-
+-			ip_cksum = nat_ipv4_checksum_update(ip->hdr_checksum,
+-				ip->src_addr,
+-				data->addr);
+-
+-			udp_cksum = nat_ipv4_tcp_udp_checksum_update(udp->dgram_cksum,
+-				ip->src_addr,
+-				data->addr,
+-				udp->src_port,
+-				data->port);
+-
+-			ip->src_addr = data->addr;
+-			ip->hdr_checksum = ip_cksum;
+-			udp->src_port = data->port;
+-			if (udp->dgram_cksum)
+-				udp->dgram_cksum = udp_cksum;
+-		}
+-	} else {
+-		if (cfg->proto == 0x6) {
+-			struct rte_tcp_hdr *tcp = (struct rte_tcp_hdr *) &ip[1];
+-			uint16_t ip_cksum, tcp_cksum;
+-
+-			ip_cksum = nat_ipv4_checksum_update(ip->hdr_checksum,
+-				ip->dst_addr,
+-				data->addr);
+-
+-			tcp_cksum = nat_ipv4_tcp_udp_checksum_update(tcp->cksum,
+-				ip->dst_addr,
+-				data->addr,
+-				tcp->dst_port,
+-				data->port);
+-
+-			ip->dst_addr = data->addr;
+-			ip->hdr_checksum = ip_cksum;
+-			tcp->dst_port = data->port;
+-			tcp->cksum = tcp_cksum;
+-		} else {
+-			struct rte_udp_hdr *udp = (struct rte_udp_hdr *) &ip[1];
+-			uint16_t ip_cksum, udp_cksum;
+-
+-			ip_cksum = nat_ipv4_checksum_update(ip->hdr_checksum,
+-				ip->dst_addr,
+-				data->addr);
+-
+-			udp_cksum = nat_ipv4_tcp_udp_checksum_update(udp->dgram_cksum,
+-				ip->dst_addr,
+-				data->addr,
+-				udp->dst_port,
+-				data->port);
+-
+-			ip->dst_addr = data->addr;
+-			ip->hdr_checksum = ip_cksum;
+-			udp->dst_port = data->port;
+-			if (udp->dgram_cksum)
+-				udp->dgram_cksum = udp_cksum;
+-		}
+-	}
+-}
+-
+-static __rte_always_inline void
+-pkt_ipv6_work_nat(struct rte_ipv6_hdr *ip,
+-	struct nat_ipv6_data *data,
+-	struct rte_table_action_nat_config *cfg)
+-{
+-	if (cfg->source_nat) {
+-		if (cfg->proto == 0x6) {
+-			struct rte_tcp_hdr *tcp = (struct rte_tcp_hdr *) &ip[1];
+-			uint16_t tcp_cksum;
+-
+-			tcp_cksum = nat_ipv6_tcp_udp_checksum_update(tcp->cksum,
+-				(uint16_t *)&ip->src_addr,
+-				(uint16_t *)&data->addr,
+-				tcp->src_port,
+-				data->port);
+-
+-			ip->src_addr = data->addr;
+-			tcp->src_port = data->port;
+-			tcp->cksum = tcp_cksum;
+-		} else {
+-			struct rte_udp_hdr *udp = (struct rte_udp_hdr *) &ip[1];
+-			uint16_t udp_cksum;
+-
+-			udp_cksum = nat_ipv6_tcp_udp_checksum_update(udp->dgram_cksum,
+-				(uint16_t *)&ip->src_addr,
+-				(uint16_t *)&data->addr,
+-				udp->src_port,
+-				data->port);
+-
+-			ip->src_addr = data->addr;
+-			udp->src_port = data->port;
+-			udp->dgram_cksum = udp_cksum;
+-		}
+-	} else {
+-		if (cfg->proto == 0x6) {
+-			struct rte_tcp_hdr *tcp = (struct rte_tcp_hdr *) &ip[1];
+-			uint16_t tcp_cksum;
+-
+-			tcp_cksum = nat_ipv6_tcp_udp_checksum_update(tcp->cksum,
+-				(uint16_t *)&ip->dst_addr,
+-				(uint16_t *)&data->addr,
+-				tcp->dst_port,
+-				data->port);
+-
+-			ip->dst_addr = data->addr;
+-			tcp->dst_port = data->port;
+-			tcp->cksum = tcp_cksum;
+-		} else {
+-			struct rte_udp_hdr *udp = (struct rte_udp_hdr *) &ip[1];
+-			uint16_t udp_cksum;
+-
+-			udp_cksum = nat_ipv6_tcp_udp_checksum_update(udp->dgram_cksum,
+-				(uint16_t *)&ip->dst_addr,
+-				(uint16_t *)&data->addr,
+-				udp->dst_port,
+-				data->port);
+-
+-			ip->dst_addr = data->addr;
+-			udp->dst_port = data->port;
+-			udp->dgram_cksum = udp_cksum;
+-		}
+-	}
+-}
+-
+-/**
+- * RTE_TABLE_ACTION_TTL
+- */
+-static int
+-ttl_cfg_check(struct rte_table_action_ttl_config *ttl)
+-{
+-	if (ttl->drop == 0)
+-		return -ENOTSUP;
+-
+-	return 0;
+-}
+-
+-struct __rte_packed_begin ttl_data {
+-	uint32_t n_packets;
+-} __rte_packed_end;
+-
+-#define TTL_INIT(data, decrement)                         \
+-	((data)->n_packets = (decrement) ? 1 : 0)
+-
+-#define TTL_DEC_GET(data)                                  \
+-	((uint8_t)((data)->n_packets & 1))
+-
+-#define TTL_STATS_RESET(data)                             \
+-	((data)->n_packets = ((data)->n_packets & 1))
+-
+-#define TTL_STATS_READ(data)                               \
+-	((data)->n_packets >> 1)
+-
+-#define TTL_STATS_ADD(data, value)                        \
+-	((data)->n_packets =                                  \
+-		(((((data)->n_packets >> 1) + (value)) << 1) |    \
+-		((data)->n_packets & 1)))
+-
+-static int
+-ttl_apply(void *data,
+-	struct rte_table_action_ttl_params *p)
+-{
+-	struct ttl_data *d = data;
+-
+-	TTL_INIT(d, p->decrement);
+-
+-	return 0;
+-}
+-
+-static __rte_always_inline uint64_t
+-pkt_ipv4_work_ttl(struct rte_ipv4_hdr *ip,
+-	struct ttl_data *data)
+-{
+-	uint32_t drop;
+-	uint16_t cksum = ip->hdr_checksum;
+-	uint8_t ttl = ip->time_to_live;
+-	uint8_t ttl_diff = TTL_DEC_GET(data);
+-
+-	cksum += ttl_diff;
+-	ttl -= ttl_diff;
+-
+-	ip->hdr_checksum = cksum;
+-	ip->time_to_live = ttl;
+-
+-	drop = (ttl == 0) ? 1 : 0;
+-	TTL_STATS_ADD(data, drop);
+-
+-	return drop;
+-}
+-
+-static __rte_always_inline uint64_t
+-pkt_ipv6_work_ttl(struct rte_ipv6_hdr *ip,
+-	struct ttl_data *data)
+-{
+-	uint32_t drop;
+-	uint8_t ttl = ip->hop_limits;
+-	uint8_t ttl_diff = TTL_DEC_GET(data);
+-
+-	ttl -= ttl_diff;
+-
+-	ip->hop_limits = ttl;
+-
+-	drop = (ttl == 0) ? 1 : 0;
+-	TTL_STATS_ADD(data, drop);
+-
+-	return drop;
+-}
+-
+-/**
+- * RTE_TABLE_ACTION_STATS
+- */
+-static int
+-stats_cfg_check(struct rte_table_action_stats_config *stats)
+-{
+-	if ((stats->n_packets_enabled == 0) && (stats->n_bytes_enabled == 0))
+-		return -EINVAL;
+-
+-	return 0;
+-}
+-
+-struct __rte_packed_begin stats_data {
+-	uint64_t n_packets;
+-	uint64_t n_bytes;
+-} __rte_packed_end;
+-
+-static int
+-stats_apply(struct stats_data *data,
+-	struct rte_table_action_stats_params *p)
+-{
+-	data->n_packets = p->n_packets;
+-	data->n_bytes = p->n_bytes;
+-
+-	return 0;
+-}
+-
+-static __rte_always_inline void
+-pkt_work_stats(struct stats_data *data,
+-	uint16_t total_length)
+-{
+-	data->n_packets++;
+-	data->n_bytes += total_length;
+-}
+-
+-/**
+- * RTE_TABLE_ACTION_TIME
+- */
+-struct __rte_packed_begin time_data {
+-	uint64_t time;
+-} __rte_packed_end;
+-
+-static int
+-time_apply(struct time_data *data,
+-	struct rte_table_action_time_params *p)
+-{
+-	data->time = p->time;
+-	return 0;
+-}
+-
+-static __rte_always_inline void
+-pkt_work_time(struct time_data *data,
+-	uint64_t time)
+-{
+-	data->time = time;
+-}
+-
+-
+-/**
+- * RTE_TABLE_ACTION_CRYPTO
+- */
+-
+-#define CRYPTO_OP_MASK_CIPHER	0x1
+-#define CRYPTO_OP_MASK_AUTH	0x2
+-#define CRYPTO_OP_MASK_AEAD	0x4
+-
+-struct crypto_op_sym_iv_aad {
+-	struct rte_crypto_op op;
+-	struct rte_crypto_sym_op sym_op;
+-	union {
+-		struct {
+-			uint8_t cipher_iv[
+-				RTE_TABLE_ACTION_SYM_CRYPTO_IV_SIZE_MAX];
+-			uint8_t auth_iv[
+-				RTE_TABLE_ACTION_SYM_CRYPTO_IV_SIZE_MAX];
+-		} cipher_auth;
+-
+-		struct {
+-			uint8_t iv[RTE_TABLE_ACTION_SYM_CRYPTO_IV_SIZE_MAX];
+-			uint8_t aad[RTE_TABLE_ACTION_SYM_CRYPTO_AAD_SIZE_MAX];
+-		} aead_iv_aad;
+-
+-	} iv_aad;
+-};
+-
+-struct __rte_packed_begin sym_crypto_data {
+-
+-	union {
+-		struct {
+-
+-			/** Length of cipher iv. */
+-			uint16_t cipher_iv_len;
+-
+-			/** Offset from start of IP header to the cipher iv. */
+-			uint16_t cipher_iv_data_offset;
+-
+-			/** Length of cipher iv to be updated in the mbuf. */
+-			uint16_t cipher_iv_update_len;
+-
+-			/** Offset from start of IP header to the auth iv. */
+-			uint16_t auth_iv_data_offset;
+-
+-			/** Length of auth iv in the mbuf. */
+-			uint16_t auth_iv_len;
+-
+-			/** Length of auth iv to be updated in the mbuf. */
+-			uint16_t auth_iv_update_len;
+-
+-		} cipher_auth;
+-		struct {
+-
+-			/** Length of iv. */
+-			uint16_t iv_len;
+-
+-			/** Offset from start of IP header to the aead iv. */
+-			uint16_t iv_data_offset;
+-
+-			/** Length of iv to be updated in the mbuf. */
+-			uint16_t iv_update_len;
+-
+-			/** Length of aad */
+-			uint16_t aad_len;
+-
+-			/** Offset from start of IP header to the aad. */
+-			uint16_t aad_data_offset;
+-
+-			/** Length of aad to updated in the mbuf. */
+-			uint16_t aad_update_len;
+-
+-		} aead;
+-	};
+-
+-	/** Offset from start of IP header to the data. */
+-	uint16_t data_offset;
+-
+-	/** Digest length. */
+-	uint16_t digest_len;
+-
+-	/** block size */
+-	uint16_t block_size;
+-
+-	/** Mask of crypto operation */
+-	uint16_t op_mask;
+-
+-	/** Session pointer. */
+-	struct rte_cryptodev_sym_session *session;
+-
+-	/** Direction of crypto, encrypt or decrypt */
+-	uint16_t direction;
+-
+-	/** Private data size to store cipher iv / aad. */
+-	uint8_t iv_aad_data[32];
+-
+-} __rte_packed_end;
+-
+-static int
+-sym_crypto_cfg_check(struct rte_table_action_sym_crypto_config *cfg)
+-{
+-	if (!rte_cryptodev_is_valid_dev(cfg->cryptodev_id))
+-		return -EINVAL;
+-	if (cfg->mp_create == NULL || cfg->mp_init == NULL)
+-		return -EINVAL;
+-
+-	return 0;
+-}
+-
+-static int
+-get_block_size(const struct rte_crypto_sym_xform *xform, uint8_t cdev_id)
+-{
+-	struct rte_cryptodev_info dev_info;
+-	const struct rte_cryptodev_capabilities *cap;
+-	uint32_t i;
+-
+-	rte_cryptodev_info_get(cdev_id, &dev_info);
+-
+-	for (i = 0; dev_info.capabilities[i].op != RTE_CRYPTO_OP_TYPE_UNDEFINED;
+-			i++) {
+-		cap = &dev_info.capabilities[i];
+-
+-		if (cap->sym.xform_type != xform->type)
+-			continue;
+-
+-		if ((xform->type == RTE_CRYPTO_SYM_XFORM_CIPHER) &&
+-				(cap->sym.cipher.algo == xform->cipher.algo))
+-			return cap->sym.cipher.block_size;
+-
+-		if ((xform->type == RTE_CRYPTO_SYM_XFORM_AEAD) &&
+-				(cap->sym.aead.algo == xform->aead.algo))
+-			return cap->sym.aead.block_size;
+-
+-		if (xform->type == RTE_CRYPTO_SYM_XFORM_NOT_SPECIFIED)
+-			break;
+-	}
+-
+-	return -1;
+-}
+-
+-static int
+-sym_crypto_apply(struct sym_crypto_data *data,
+-	struct rte_table_action_sym_crypto_config *cfg,
+-	struct rte_table_action_sym_crypto_params *p)
+-{
+-	const struct rte_crypto_cipher_xform *cipher_xform = NULL;
+-	const struct rte_crypto_auth_xform *auth_xform = NULL;
+-	const struct rte_crypto_aead_xform *aead_xform = NULL;
+-	struct rte_crypto_sym_xform *xform = p->xform;
+-	struct rte_cryptodev_sym_session *session;
+-	int ret;
+-
+-	memset(data, 0, sizeof(*data));
+-
+-	while (xform) {
+-		if (xform->type == RTE_CRYPTO_SYM_XFORM_CIPHER) {
+-			cipher_xform = &xform->cipher;
+-
+-			if (cipher_xform->iv.length >
+-				RTE_TABLE_ACTION_SYM_CRYPTO_IV_SIZE_MAX)
+-				return -ENOMEM;
+-			if (cipher_xform->iv.offset !=
+-					RTE_TABLE_ACTION_SYM_CRYPTO_IV_OFFSET)
+-				return -EINVAL;
+-
+-			ret = get_block_size(xform, cfg->cryptodev_id);
+-			if (ret < 0)
+-				return -1;
+-			data->block_size = (uint16_t)ret;
+-			data->op_mask |= CRYPTO_OP_MASK_CIPHER;
+-
+-			data->cipher_auth.cipher_iv_len =
+-					cipher_xform->iv.length;
+-			data->cipher_auth.cipher_iv_data_offset = (uint16_t)
+-					p->cipher_auth.cipher_iv_update.offset;
+-			data->cipher_auth.cipher_iv_update_len = (uint16_t)
+-					p->cipher_auth.cipher_iv_update.length;
+-
+-			rte_memcpy(data->iv_aad_data,
+-					p->cipher_auth.cipher_iv.val,
+-					p->cipher_auth.cipher_iv.length);
+-
+-			data->direction = cipher_xform->op;
+-
+-		} else if (xform->type == RTE_CRYPTO_SYM_XFORM_AUTH) {
+-			auth_xform = &xform->auth;
+-			if (auth_xform->iv.length >
+-				RTE_TABLE_ACTION_SYM_CRYPTO_IV_SIZE_MAX)
+-				return -ENOMEM;
+-			data->op_mask |= CRYPTO_OP_MASK_AUTH;
+-
+-			data->cipher_auth.auth_iv_len = auth_xform->iv.length;
+-			data->cipher_auth.auth_iv_data_offset = (uint16_t)
+-					p->cipher_auth.auth_iv_update.offset;
+-			data->cipher_auth.auth_iv_update_len = (uint16_t)
+-					p->cipher_auth.auth_iv_update.length;
+-			data->digest_len = auth_xform->digest_length;
+-
+-			data->direction = (auth_xform->op ==
+-					RTE_CRYPTO_AUTH_OP_GENERATE) ?
+-					RTE_CRYPTO_CIPHER_OP_ENCRYPT :
+-					RTE_CRYPTO_CIPHER_OP_DECRYPT;
+-
+-		} else if (xform->type == RTE_CRYPTO_SYM_XFORM_AEAD) {
+-			aead_xform = &xform->aead;
+-
+-			if ((aead_xform->iv.length >
+-				RTE_TABLE_ACTION_SYM_CRYPTO_IV_SIZE_MAX) || (
+-				aead_xform->aad_length >
+-				RTE_TABLE_ACTION_SYM_CRYPTO_AAD_SIZE_MAX))
+-				return -EINVAL;
+-			if (aead_xform->iv.offset !=
+-					RTE_TABLE_ACTION_SYM_CRYPTO_IV_OFFSET)
+-				return -EINVAL;
+-
+-			ret = get_block_size(xform, cfg->cryptodev_id);
+-			if (ret < 0)
+-				return -1;
+-			data->block_size = (uint16_t)ret;
+-			data->op_mask |= CRYPTO_OP_MASK_AEAD;
+-
+-			data->digest_len = aead_xform->digest_length;
+-			data->aead.iv_len = aead_xform->iv.length;
+-			data->aead.aad_len = aead_xform->aad_length;
+-
+-			data->aead.iv_data_offset = (uint16_t)
+-					p->aead.iv_update.offset;
+-			data->aead.iv_update_len = (uint16_t)
+-					p->aead.iv_update.length;
+-			data->aead.aad_data_offset = (uint16_t)
+-					p->aead.aad_update.offset;
+-			data->aead.aad_update_len = (uint16_t)
+-					p->aead.aad_update.length;
+-
+-			rte_memcpy(data->iv_aad_data,
+-					p->aead.iv.val,
+-					p->aead.iv.length);
+-
+-			rte_memcpy(data->iv_aad_data + p->aead.iv.length,
+-					p->aead.aad.val,
+-					p->aead.aad.length);
+-
+-			data->direction = (aead_xform->op ==
+-					RTE_CRYPTO_AEAD_OP_ENCRYPT) ?
+-					RTE_CRYPTO_CIPHER_OP_ENCRYPT :
+-					RTE_CRYPTO_CIPHER_OP_DECRYPT;
+-		} else
+-			return -EINVAL;
+-
+-		xform = xform->next;
+-	}
+-
+-	if (auth_xform && auth_xform->iv.length) {
+-		if (cipher_xform) {
+-			if (auth_xform->iv.offset !=
+-					RTE_TABLE_ACTION_SYM_CRYPTO_IV_OFFSET +
+-					cipher_xform->iv.length)
+-				return -EINVAL;
+-
+-			rte_memcpy(data->iv_aad_data + cipher_xform->iv.length,
+-					p->cipher_auth.auth_iv.val,
+-					p->cipher_auth.auth_iv.length);
+-		} else {
+-			rte_memcpy(data->iv_aad_data,
+-					p->cipher_auth.auth_iv.val,
+-					p->cipher_auth.auth_iv.length);
+-		}
+-	}
+-
+-	session = rte_cryptodev_sym_session_create(cfg->cryptodev_id,
+-			p->xform, cfg->mp_create);
+-	if (!session)
+-		return -ENOMEM;
+-
+-	data->data_offset = (uint16_t)p->data_offset;
+-	data->session = session;
+-
+-	return 0;
+-}
+-
+-static __rte_always_inline uint64_t
+-pkt_work_sym_crypto(struct rte_mbuf *mbuf, struct sym_crypto_data *data,
+-		struct rte_table_action_sym_crypto_config *cfg,
+-		uint16_t ip_offset)
+-{
+-	struct crypto_op_sym_iv_aad *crypto_op = (struct crypto_op_sym_iv_aad *)
+-			RTE_MBUF_METADATA_UINT8_PTR(mbuf, cfg->op_offset);
+-	struct rte_crypto_op *op = &crypto_op->op;
+-	struct rte_crypto_sym_op *sym = op->sym;
+-	uint32_t pkt_offset = sizeof(*mbuf) + mbuf->data_off;
+-	uint32_t payload_len = pkt_offset + mbuf->data_len - data->data_offset;
+-
+-	op->type = RTE_CRYPTO_OP_TYPE_SYMMETRIC;
+-	op->sess_type = RTE_CRYPTO_OP_WITH_SESSION;
+-	op->phys_addr = rte_mbuf_iova_get(mbuf) + cfg->op_offset - sizeof(*mbuf);
+-	op->status = RTE_CRYPTO_OP_STATUS_NOT_PROCESSED;
+-	sym->m_src = mbuf;
+-	sym->m_dst = NULL;
+-	sym->session = data->session;
+-
+-	/** pad the packet */
+-	if (data->direction == RTE_CRYPTO_CIPHER_OP_ENCRYPT) {
+-		uint32_t append_len = RTE_ALIGN_CEIL(payload_len,
+-				data->block_size) - payload_len;
+-
+-		if (unlikely(rte_pktmbuf_append(mbuf, append_len +
+-				data->digest_len) == NULL))
+-			return 1;
+-
+-		payload_len += append_len;
+-	} else
+-		payload_len -= data->digest_len;
+-
+-	if (data->op_mask & CRYPTO_OP_MASK_CIPHER) {
+-		/** prepare cipher op */
+-		uint8_t *iv = crypto_op->iv_aad.cipher_auth.cipher_iv;
+-
+-		sym->cipher.data.length = payload_len;
+-		sym->cipher.data.offset = data->data_offset - pkt_offset;
+-
+-		if (data->cipher_auth.cipher_iv_update_len) {
+-			uint8_t *pkt_iv = RTE_MBUF_METADATA_UINT8_PTR(mbuf,
+-				data->cipher_auth.cipher_iv_data_offset
+-				+ ip_offset);
+-
+-			/** For encryption, update the pkt iv field, otherwise
+-			 *  update the iv_aad_field
+-			 */
+-			if (data->direction == RTE_CRYPTO_CIPHER_OP_ENCRYPT)
+-				rte_memcpy(pkt_iv, data->iv_aad_data,
+-					data->cipher_auth.cipher_iv_update_len);
+-			else
+-				rte_memcpy(data->iv_aad_data, pkt_iv,
+-					data->cipher_auth.cipher_iv_update_len);
+-		}
+-
+-		/** write iv */
+-		rte_memcpy(iv, data->iv_aad_data,
+-				data->cipher_auth.cipher_iv_len);
+-	}
+-
+-	if (data->op_mask & CRYPTO_OP_MASK_AUTH) {
+-		/** authentication always start from IP header. */
+-		sym->auth.data.offset = ip_offset - pkt_offset;
+-		sym->auth.data.length = mbuf->data_len - sym->auth.data.offset -
+-				data->digest_len;
+-		sym->auth.digest.data = rte_pktmbuf_mtod_offset(mbuf,
+-				uint8_t *, rte_pktmbuf_pkt_len(mbuf) -
+-				data->digest_len);
+-		sym->auth.digest.phys_addr = rte_pktmbuf_iova_offset(mbuf,
+-				rte_pktmbuf_pkt_len(mbuf) - data->digest_len);
+-
+-		if (data->cipher_auth.auth_iv_update_len) {
+-			uint8_t *pkt_iv = RTE_MBUF_METADATA_UINT8_PTR(mbuf,
+-					data->cipher_auth.auth_iv_data_offset
+-					+ ip_offset);
+-			uint8_t *data_iv = data->iv_aad_data +
+-					data->cipher_auth.cipher_iv_len;
+-
+-			if (data->direction == RTE_CRYPTO_CIPHER_OP_ENCRYPT)
+-				rte_memcpy(pkt_iv, data_iv,
+-					data->cipher_auth.auth_iv_update_len);
+-			else
+-				rte_memcpy(data_iv, pkt_iv,
+-					data->cipher_auth.auth_iv_update_len);
+-		}
+-
+-		if (data->cipher_auth.auth_iv_len) {
+-			/** prepare cipher op */
+-			uint8_t *iv = crypto_op->iv_aad.cipher_auth.auth_iv;
+-
+-			rte_memcpy(iv, data->iv_aad_data +
+-					data->cipher_auth.cipher_iv_len,
+-					data->cipher_auth.auth_iv_len);
+-		}
+-	}
+-
+-	if (data->op_mask & CRYPTO_OP_MASK_AEAD) {
+-		uint8_t *iv = crypto_op->iv_aad.aead_iv_aad.iv;
+-		uint8_t *aad = crypto_op->iv_aad.aead_iv_aad.aad;
+-
+-		sym->aead.aad.data = aad;
+-		sym->aead.aad.phys_addr = rte_pktmbuf_iova_offset(mbuf,
+-				aad - rte_pktmbuf_mtod(mbuf, uint8_t *));
+-		sym->aead.digest.data = rte_pktmbuf_mtod_offset(mbuf,
+-				uint8_t *, rte_pktmbuf_pkt_len(mbuf) -
+-				data->digest_len);
+-		sym->aead.digest.phys_addr = rte_pktmbuf_iova_offset(mbuf,
+-				rte_pktmbuf_pkt_len(mbuf) - data->digest_len);
+-		sym->aead.data.offset = data->data_offset - pkt_offset;
+-		sym->aead.data.length = payload_len;
+-
+-		if (data->aead.iv_update_len) {
+-			uint8_t *pkt_iv = RTE_MBUF_METADATA_UINT8_PTR(mbuf,
+-					data->aead.iv_data_offset + ip_offset);
+-			uint8_t *data_iv = data->iv_aad_data;
+-
+-			if (data->direction == RTE_CRYPTO_CIPHER_OP_ENCRYPT)
+-				rte_memcpy(pkt_iv, data_iv,
+-						data->aead.iv_update_len);
+-			else
+-				rte_memcpy(data_iv, pkt_iv,
+-					data->aead.iv_update_len);
+-		}
+-
+-		rte_memcpy(iv, data->iv_aad_data, data->aead.iv_len);
+-
+-		if (data->aead.aad_update_len) {
+-			uint8_t *pkt_aad = RTE_MBUF_METADATA_UINT8_PTR(mbuf,
+-					data->aead.aad_data_offset + ip_offset);
+-			uint8_t *data_aad = data->iv_aad_data +
+-					data->aead.iv_len;
+-
+-			if (data->direction == RTE_CRYPTO_CIPHER_OP_ENCRYPT)
+-				rte_memcpy(pkt_aad, data_aad,
+-						data->aead.iv_update_len);
+-			else
+-				rte_memcpy(data_aad, pkt_aad,
+-					data->aead.iv_update_len);
+-		}
+-
+-		rte_memcpy(aad, data->iv_aad_data + data->aead.iv_len,
+-					data->aead.aad_len);
+-	}
+-
+-	return 0;
+-}
+-
+-/**
+- * RTE_TABLE_ACTION_TAG
+- */
+-struct __rte_packed_begin tag_data {
+-	uint32_t tag;
+-} __rte_packed_end;
+-
+-static int
+-tag_apply(struct tag_data *data,
+-	struct rte_table_action_tag_params *p)
+-{
+-	data->tag = p->tag;
+-	return 0;
+-}
+-
+-static __rte_always_inline void
+-pkt_work_tag(struct rte_mbuf *mbuf,
+-	struct tag_data *data)
+-{
+-	mbuf->hash.fdir.hi = data->tag;
+-	mbuf->ol_flags |= RTE_MBUF_F_RX_FDIR | RTE_MBUF_F_RX_FDIR_ID;
+-}
+-
+-static __rte_always_inline void
+-pkt4_work_tag(struct rte_mbuf *mbuf0,
+-	struct rte_mbuf *mbuf1,
+-	struct rte_mbuf *mbuf2,
+-	struct rte_mbuf *mbuf3,
+-	struct tag_data *data0,
+-	struct tag_data *data1,
+-	struct tag_data *data2,
+-	struct tag_data *data3)
+-{
+-	mbuf0->hash.fdir.hi = data0->tag;
+-	mbuf1->hash.fdir.hi = data1->tag;
+-	mbuf2->hash.fdir.hi = data2->tag;
+-	mbuf3->hash.fdir.hi = data3->tag;
+-
+-	mbuf0->ol_flags |= RTE_MBUF_F_RX_FDIR | RTE_MBUF_F_RX_FDIR_ID;
+-	mbuf1->ol_flags |= RTE_MBUF_F_RX_FDIR | RTE_MBUF_F_RX_FDIR_ID;
+-	mbuf2->ol_flags |= RTE_MBUF_F_RX_FDIR | RTE_MBUF_F_RX_FDIR_ID;
+-	mbuf3->ol_flags |= RTE_MBUF_F_RX_FDIR | RTE_MBUF_F_RX_FDIR_ID;
+-}
+-
+-/**
+- * RTE_TABLE_ACTION_DECAP
+- */
+-struct __rte_packed_begin decap_data {
+-	uint16_t n;
+-} __rte_packed_end;
+-
+-static int
+-decap_apply(struct decap_data *data,
+-	struct rte_table_action_decap_params *p)
+-{
+-	data->n = p->n;
+-	return 0;
+-}
+-
+-static __rte_always_inline void
+-pkt_work_decap(struct rte_mbuf *mbuf,
+-	struct decap_data *data)
+-{
+-	uint16_t data_off = mbuf->data_off;
+-	uint16_t data_len = mbuf->data_len;
+-	uint32_t pkt_len = mbuf->pkt_len;
+-	uint16_t n = data->n;
+-
+-	mbuf->data_off = data_off + n;
+-	mbuf->data_len = data_len - n;
+-	mbuf->pkt_len = pkt_len - n;
+-}
+-
+-static __rte_always_inline void
+-pkt4_work_decap(struct rte_mbuf *mbuf0,
+-	struct rte_mbuf *mbuf1,
+-	struct rte_mbuf *mbuf2,
+-	struct rte_mbuf *mbuf3,
+-	struct decap_data *data0,
+-	struct decap_data *data1,
+-	struct decap_data *data2,
+-	struct decap_data *data3)
+-{
+-	uint16_t data_off0 = mbuf0->data_off;
+-	uint16_t data_len0 = mbuf0->data_len;
+-	uint32_t pkt_len0 = mbuf0->pkt_len;
+-
+-	uint16_t data_off1 = mbuf1->data_off;
+-	uint16_t data_len1 = mbuf1->data_len;
+-	uint32_t pkt_len1 = mbuf1->pkt_len;
+-
+-	uint16_t data_off2 = mbuf2->data_off;
+-	uint16_t data_len2 = mbuf2->data_len;
+-	uint32_t pkt_len2 = mbuf2->pkt_len;
+-
+-	uint16_t data_off3 = mbuf3->data_off;
+-	uint16_t data_len3 = mbuf3->data_len;
+-	uint32_t pkt_len3 = mbuf3->pkt_len;
+-
+-	uint16_t n0 = data0->n;
+-	uint16_t n1 = data1->n;
+-	uint16_t n2 = data2->n;
+-	uint16_t n3 = data3->n;
+-
+-	mbuf0->data_off = data_off0 + n0;
+-	mbuf0->data_len = data_len0 - n0;
+-	mbuf0->pkt_len = pkt_len0 - n0;
+-
+-	mbuf1->data_off = data_off1 + n1;
+-	mbuf1->data_len = data_len1 - n1;
+-	mbuf1->pkt_len = pkt_len1 - n1;
+-
+-	mbuf2->data_off = data_off2 + n2;
+-	mbuf2->data_len = data_len2 - n2;
+-	mbuf2->pkt_len = pkt_len2 - n2;
+-
+-	mbuf3->data_off = data_off3 + n3;
+-	mbuf3->data_len = data_len3 - n3;
+-	mbuf3->pkt_len = pkt_len3 - n3;
+-}
+-
+-/**
+- * Action profile
+- */
+-static int
+-action_valid(enum rte_table_action_type action)
+-{
+-	switch (action) {
+-	case RTE_TABLE_ACTION_FWD:
+-	case RTE_TABLE_ACTION_LB:
+-	case RTE_TABLE_ACTION_MTR:
+-	case RTE_TABLE_ACTION_TM:
+-	case RTE_TABLE_ACTION_ENCAP:
+-	case RTE_TABLE_ACTION_NAT:
+-	case RTE_TABLE_ACTION_TTL:
+-	case RTE_TABLE_ACTION_STATS:
+-	case RTE_TABLE_ACTION_TIME:
+-	case RTE_TABLE_ACTION_SYM_CRYPTO:
+-	case RTE_TABLE_ACTION_TAG:
+-	case RTE_TABLE_ACTION_DECAP:
+-		return 1;
+-	default:
+-		return 0;
+-	}
+-}
+-
+-
+-#define RTE_TABLE_ACTION_MAX                      64
+-
+-struct ap_config {
 -	uint64_t action_mask;
 -	struct rte_table_action_common_config common;
 -	struct rte_table_action_lb_config lb;
@@ -1291,14702 +5971,2418 @@ index cde17e69a3..0000000000
 -	struct rte_table_action_sym_crypto_config sym_crypto;
 -};
 -
--struct table_action_profile {
--	TAILQ_ENTRY(table_action_profile) node;
--	char name[NAME_SIZE];
--	struct table_action_profile_params params;
--	struct rte_table_action_profile *ap;
--};
--
--TAILQ_HEAD(table_action_profile_list, table_action_profile);
--
--int
--table_action_profile_init(void);
--
--struct table_action_profile *
--table_action_profile_find(const char *name);
--
--struct table_action_profile *
--table_action_profile_create(const char *name,
--	struct table_action_profile_params *params);
--
--#endif /* _INCLUDE_ACTION_H_ */
-diff --git a/examples/ip_pipeline/cli.c b/examples/ip_pipeline/cli.c
-deleted file mode 100644
-index 935c9b39d5..0000000000
---- a/examples/ip_pipeline/cli.c
-+++ /dev/null
-@@ -1,6791 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2018 Intel Corporation
-- */
--
--#include <stdio.h>
--#include <stdint.h>
--#include <stdlib.h>
--#include <string.h>
--
--#include <rte_common.h>
--#include <rte_cycles.h>
--#include <rte_ethdev.h>
--
--#include "cli.h"
--
--#include "cryptodev.h"
--#include "link.h"
--#include "mempool.h"
--#include "parser.h"
--#include "pipeline.h"
--#include "swq.h"
--#include "tap.h"
--#include "thread.h"
--#include "tmgr.h"
--
--#ifndef CMD_MAX_TOKENS
--#define CMD_MAX_TOKENS     256
--#endif
--
--#define MSG_OUT_OF_MEMORY   "Not enough memory.\n"
--#define MSG_CMD_UNKNOWN     "Unknown command \"%s\".\n"
--#define MSG_CMD_UNIMPLEM    "Command \"%s\" not implemented.\n"
--#define MSG_ARG_NOT_ENOUGH  "Not enough arguments for command \"%s\".\n"
--#define MSG_ARG_TOO_MANY    "Too many arguments for command \"%s\".\n"
--#define MSG_ARG_MISMATCH    "Wrong number of arguments for command \"%s\".\n"
--#define MSG_ARG_NOT_FOUND   "Argument \"%s\" not found.\n"
--#define MSG_ARG_INVALID     "Invalid value for argument \"%s\".\n"
--#define MSG_FILE_ERR        "Error in file \"%s\" at line %u.\n"
--#define MSG_FILE_NOT_ENOUGH "Not enough rules in file \"%s\".\n"
--#define MSG_CMD_FAIL        "Command \"%s\" failed.\n"
--
--static int
--is_comment(char *in)
+-static size_t
+-action_cfg_size(enum rte_table_action_type action)
 -{
--	if ((strlen(in) && index("!#%;", in[0])) ||
--		(strncmp(in, "//", 2) == 0) ||
--		(strncmp(in, "--", 2) == 0))
--		return 1;
--
--	return 0;
--}
--
--static const char cmd_mempool_help[] =
--"mempool <mempool_name>\n"
--"   buffer <buffer_size>\n"
--"   pool <pool_size>\n"
--"   cache <cache_size>\n"
--"   cpu <cpu_id>\n";
--
--static void
--cmd_mempool(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	struct mempool_params p;
--	char *name;
--	struct mempool *mempool;
--
--	if (n_tokens != 10) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	name = tokens[1];
--
--	if (strcmp(tokens[2], "buffer") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "buffer");
--		return;
--	}
--
--	if (parser_read_uint32(&p.buffer_size, tokens[3]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "buffer_size");
--		return;
--	}
--
--	if (strcmp(tokens[4], "pool") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "pool");
--		return;
--	}
--
--	if (parser_read_uint32(&p.pool_size, tokens[5]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "pool_size");
--		return;
--	}
--
--	if (strcmp(tokens[6], "cache") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "cache");
--		return;
--	}
--
--	if (parser_read_uint32(&p.cache_size, tokens[7]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "cache_size");
--		return;
--	}
--
--	if (strcmp(tokens[8], "cpu") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "cpu");
--		return;
--	}
--
--	if (parser_read_uint32(&p.cpu_id, tokens[9]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "cpu_id");
--		return;
--	}
--
--	mempool = mempool_create(name, &p);
--	if (mempool == NULL) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--}
--
--static const char cmd_link_help[] =
--"link <link_name>\n"
--"   dev <device_name> | port <port_id>\n"
--"   rxq <n_queues> <queue_size> <mempool_name>\n"
--"   txq <n_queues> <queue_size>\n"
--"   promiscuous on | off\n"
--"   [rss <qid_0> ... <qid_n>]\n";
--
--static void
--cmd_link(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	struct link_params p;
--	struct link_params_rss rss;
--	struct link *link;
--	char *name;
--
--	memset(&p, 0, sizeof(p));
--
--	if ((n_tokens < 13) || (n_tokens > 14 + LINK_RXQ_RSS_MAX)) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--	name = tokens[1];
--
--	if (strcmp(tokens[2], "dev") == 0)
--		p.dev_name = tokens[3];
--	else if (strcmp(tokens[2], "port") == 0) {
--		p.dev_name = NULL;
--
--		if (parser_read_uint16(&p.port_id, tokens[3]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "port_id");
--			return;
--		}
--	} else {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "dev or port");
--		return;
--	}
--
--	if (strcmp(tokens[4], "rxq") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rxq");
--		return;
--	}
--
--	if (parser_read_uint32(&p.rx.n_queues, tokens[5]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "n_queues");
--		return;
--	}
--	if (parser_read_uint32(&p.rx.queue_size, tokens[6]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "queue_size");
--		return;
--	}
--
--	p.rx.mempool_name = tokens[7];
--
--	if (strcmp(tokens[8], "txq") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "txq");
--		return;
--	}
--
--	if (parser_read_uint32(&p.tx.n_queues, tokens[9]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "n_queues");
--		return;
--	}
--
--	if (parser_read_uint32(&p.tx.queue_size, tokens[10]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "queue_size");
--		return;
--	}
--
--	if (strcmp(tokens[11], "promiscuous") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "promiscuous");
--		return;
--	}
--
--	if (strcmp(tokens[12], "on") == 0)
--		p.promiscuous = 1;
--	else if (strcmp(tokens[12], "off") == 0)
--		p.promiscuous = 0;
--	else {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "on or off");
--		return;
--	}
--
--	/* RSS */
--	p.rx.rss = NULL;
--	if (n_tokens > 13) {
--		uint32_t queue_id, i;
--
--		if (strcmp(tokens[13], "rss") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rss");
--			return;
--		}
--
--		p.rx.rss = &rss;
--
--		rss.n_queues = 0;
--		for (i = 14; i < n_tokens; i++) {
--			if (parser_read_uint32(&queue_id, tokens[i]) != 0) {
--				snprintf(out, out_size, MSG_ARG_INVALID,
--					"queue_id");
--				return;
--			}
--
--			rss.queue_id[rss.n_queues] = queue_id;
--			rss.n_queues++;
--		}
--	}
--
--	link = link_create(name, &p);
--	if (link == NULL) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--}
--
--/* Print the link stats and info */
--static void
--print_link_info(struct link *link, char *out, size_t out_size)
--{
--	struct rte_eth_stats stats;
--	struct rte_ether_addr mac_addr;
--	struct rte_eth_link eth_link;
--	uint16_t mtu;
--	int ret;
--
--	memset(&stats, 0, sizeof(stats));
--	rte_eth_stats_get(link->port_id, &stats);
--
--	ret = rte_eth_macaddr_get(link->port_id, &mac_addr);
--	if (ret != 0) {
--		snprintf(out, out_size, "\n%s: MAC address get failed: %s",
--			 link->name, rte_strerror(-ret));
--		return;
--	}
--
--	ret = rte_eth_link_get(link->port_id, &eth_link);
--	if (ret < 0) {
--		snprintf(out, out_size, "\n%s: link get failed: %s",
--			 link->name, rte_strerror(-ret));
--		return;
--	}
--
--	rte_eth_dev_get_mtu(link->port_id, &mtu);
--
--	snprintf(out, out_size,
--		"\n"
--		"%s: flags=<%s> mtu %u\n"
--		"\tether " RTE_ETHER_ADDR_PRT_FMT " rxqueues %u txqueues %u\n"
--		"\tport# %u  speed %s\n"
--		"\tRX packets %" PRIu64"  bytes %" PRIu64"\n"
--		"\tRX errors %" PRIu64"  missed %" PRIu64"  no-mbuf %" PRIu64"\n"
--		"\tTX packets %" PRIu64"  bytes %" PRIu64"\n"
--		"\tTX errors %" PRIu64"\n",
--		link->name,
--		eth_link.link_status == 0 ? "DOWN" : "UP",
--		mtu,
--		RTE_ETHER_ADDR_BYTES(&mac_addr),
--		link->n_rxq,
--		link->n_txq,
--		link->port_id,
--		rte_eth_link_speed_to_str(eth_link.link_speed),
--		stats.ipackets,
--		stats.ibytes,
--		stats.ierrors,
--		stats.imissed,
--		stats.rx_nombuf,
--		stats.opackets,
--		stats.obytes,
--		stats.oerrors);
--}
--
--/*
-- * link show [<link_name>]
-- */
--static void
--cmd_link_show(char **tokens, uint32_t n_tokens, char *out, size_t out_size)
--{
--	struct link *link;
--	char *link_name;
--
--	if (n_tokens != 2 && n_tokens != 3) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	if (n_tokens == 2) {
--		link = link_next(NULL);
--
--		while (link != NULL) {
--			out_size = out_size - strlen(out);
--			out = &out[strlen(out)];
--
--			print_link_info(link, out, out_size);
--			link = link_next(link);
--		}
--	} else {
--		out_size = out_size - strlen(out);
--		out = &out[strlen(out)];
--
--		link_name = tokens[2];
--		link = link_find(link_name);
--
--		if (link == NULL) {
--			snprintf(out, out_size, MSG_ARG_INVALID,
--					"Link does not exist");
--			return;
--		}
--		print_link_info(link, out, out_size);
--	}
--}
--
--static const char cmd_swq_help[] =
--"swq <swq_name>\n"
--"   size <size>\n"
--"   cpu <cpu_id>\n";
--
--static void
--cmd_swq(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	struct swq_params p;
--	char *name;
--	struct swq *swq;
--
--	if (n_tokens != 6) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	name = tokens[1];
--
--	if (strcmp(tokens[2], "size") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "size");
--		return;
--	}
--
--	if (parser_read_uint32(&p.size, tokens[3]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "size");
--		return;
--	}
--
--	if (strcmp(tokens[4], "cpu") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "cpu");
--		return;
--	}
--
--	if (parser_read_uint32(&p.cpu_id, tokens[5]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "cpu_id");
--		return;
--	}
--
--	swq = swq_create(name, &p);
--	if (swq == NULL) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--}
--
--static const char cmd_tmgr_subport_profile_help[] =
--"tmgr subport profile\n"
--"   <tb_rate> <tb_size>\n"
--"   <tc0_rate> <tc1_rate> <tc2_rate> <tc3_rate> <tc4_rate>"
--"        <tc5_rate> <tc6_rate> <tc7_rate> <tc8_rate>"
--"        <tc9_rate> <tc10_rate> <tc11_rate> <tc12_rate>\n"
--"   <tc_period>\n";
--
--static void
--cmd_tmgr_subport_profile(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	struct rte_sched_subport_profile_params subport_profile;
--	int status, i;
--
--	if (n_tokens != 19) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	if (parser_read_uint64(&subport_profile.tb_rate, tokens[3]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "tb_rate");
--		return;
--	}
--
--	if (parser_read_uint64(&subport_profile.tb_size, tokens[4]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "tb_size");
--		return;
--	}
--
--	for (i = 0; i < RTE_SCHED_TRAFFIC_CLASSES_PER_PIPE; i++)
--		if (parser_read_uint64(&subport_profile.tc_rate[i],
--				tokens[5 + i]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "tc_rate");
--			return;
--		}
--
--	if (parser_read_uint64(&subport_profile.tc_period, tokens[18]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "tc_period");
--		return;
--	}
--
--	status = tmgr_subport_profile_add(&subport_profile);
--	if (status != 0) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--}
--
--static const char cmd_tmgr_pipe_profile_help[] =
--"tmgr pipe profile\n"
--"   <tb_rate> <tb_size>\n"
--"   <tc0_rate> <tc1_rate> <tc2_rate> <tc3_rate> <tc4_rate>"
--"     <tc5_rate> <tc6_rate> <tc7_rate> <tc8_rate>"
--"     <tc9_rate> <tc10_rate> <tc11_rate> <tc12_rate>\n"
--"   <tc_period>\n"
--"   <tc_ov_weight>\n"
--"   <wrr_weight0..3>\n";
--
--static void
--cmd_tmgr_pipe_profile(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	struct rte_sched_pipe_params p;
--	int status, i;
--
--	if (n_tokens != 24) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	if (parser_read_uint64(&p.tb_rate, tokens[3]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "tb_rate");
--		return;
--	}
--
--	if (parser_read_uint64(&p.tb_size, tokens[4]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "tb_size");
--		return;
--	}
--
--	for (i = 0; i < RTE_SCHED_TRAFFIC_CLASSES_PER_PIPE; i++)
--		if (parser_read_uint64(&p.tc_rate[i], tokens[5 + i]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "tc_rate");
--			return;
--		}
--
--	if (parser_read_uint64(&p.tc_period, tokens[18]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "tc_period");
--		return;
--	}
--
--	if (parser_read_uint8(&p.tc_ov_weight, tokens[19]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "tc_ov_weight");
--		return;
--	}
--
--	for (i = 0; i < RTE_SCHED_BE_QUEUES_PER_PIPE; i++)
--		if (parser_read_uint8(&p.wrr_weights[i], tokens[20 + i]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "wrr_weights");
--			return;
--		}
--
--	status = tmgr_pipe_profile_add(&p);
--	if (status != 0) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--}
--
--static const char cmd_tmgr_help[] =
--"tmgr <tmgr_name>\n"
--"   rate <rate>\n"
--"   spp <n_subports_per_port>\n"
--"   pps <n_pipes_per_subport>\n"
--"   fo <frame_overhead>\n"
--"   mtu <mtu>\n"
--"   cpu <cpu_id>\n";
--
--static void
--cmd_tmgr(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	struct tmgr_port_params p;
--	char *name;
--	struct tmgr_port *tmgr_port;
--
--	if (n_tokens != 14) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	name = tokens[1];
--
--	if (strcmp(tokens[2], "rate") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rate");
--		return;
--	}
--
--	if (parser_read_uint64(&p.rate, tokens[3]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "rate");
--		return;
--	}
--
--	if (strcmp(tokens[4], "spp") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "spp");
--		return;
--	}
--
--	if (parser_read_uint32(&p.n_subports_per_port, tokens[5]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "n_subports_per_port");
--		return;
--	}
--
--	if (strcmp(tokens[6], "pps") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "spp");
--		return;
--	}
--
--	if (parser_read_uint32(&p.n_pipes_per_subport, tokens[7]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "n_pipes_per_subport");
--		return;
--	}
--
--	if (strcmp(tokens[8], "fo") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "fo");
--		return;
--	}
--
--	if (parser_read_uint32(&p.frame_overhead, tokens[9]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "frame_overhead");
--		return;
--	}
--
--	if (strcmp(tokens[10], "mtu") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "mtu");
--		return;
--	}
--
--	if (parser_read_uint32(&p.mtu, tokens[11]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "mtu");
--		return;
--	}
--
--	if (strcmp(tokens[12], "cpu") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "cpu");
--		return;
--	}
--
--	if (parser_read_uint32(&p.cpu_id, tokens[13]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "cpu_id");
--		return;
--	}
--
--	tmgr_port = tmgr_port_create(name, &p);
--	if (tmgr_port == NULL) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--}
--
--static const char cmd_tmgr_subport_help[] =
--"tmgr <tmgr_name> subport <subport_id>\n"
--"   profile <subport_profile_id>\n";
--
--static void
--cmd_tmgr_subport(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	uint32_t subport_id, subport_profile_id;
--	int status;
--	char *name;
--
--	if (n_tokens != 6) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	name = tokens[1];
--
--	if (parser_read_uint32(&subport_id, tokens[3]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "subport_id");
--		return;
--	}
--
--	if (parser_read_uint32(&subport_profile_id, tokens[5]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "subport_profile_id");
--		return;
--	}
--
--	status = tmgr_subport_config(name, subport_id, subport_profile_id);
--	if (status) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--}
--
--
--static const char cmd_tmgr_subport_pipe_help[] =
--"tmgr <tmgr_name> subport <subport_id> pipe\n"
--"   from <pipe_id_first> to <pipe_id_last>\n"
--"   profile <pipe_profile_id>\n";
--
--static void
--cmd_tmgr_subport_pipe(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	uint32_t subport_id, pipe_id_first, pipe_id_last, pipe_profile_id;
--	int status;
--	char *name;
--
--	if (n_tokens != 11) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	name = tokens[1];
--
--	if (parser_read_uint32(&subport_id, tokens[3]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "subport_id");
--		return;
--	}
--
--	if (strcmp(tokens[4], "pipe") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "pipe");
--		return;
--	}
--
--	if (strcmp(tokens[5], "from") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "from");
--		return;
--	}
--
--	if (parser_read_uint32(&pipe_id_first, tokens[6]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "pipe_id_first");
--		return;
--	}
--
--	if (strcmp(tokens[7], "to") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "to");
--		return;
--	}
--
--	if (parser_read_uint32(&pipe_id_last, tokens[8]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "pipe_id_last");
--		return;
--	}
--
--	if (strcmp(tokens[9], "profile") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "profile");
--		return;
--	}
--
--	if (parser_read_uint32(&pipe_profile_id, tokens[10]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "pipe_profile_id");
--		return;
--	}
--
--	status = tmgr_pipe_config(name, subport_id, pipe_id_first,
--			pipe_id_last, pipe_profile_id);
--	if (status) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--}
--
--
--static const char cmd_tap_help[] =
--"tap <tap_name>\n";
--
--static void
--cmd_tap(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	char *name;
--	struct tap *tap;
--
--	if (n_tokens != 2) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	name = tokens[1];
--
--	tap = tap_create(name);
--	if (tap == NULL) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--}
--
--
--static const char cmd_cryptodev_help[] =
--"cryptodev <cryptodev_name>\n"
--"   dev <device_name> | dev_id <device_id>\n"
--"   queue <n_queues> <queue_size>\n"
--"   max_sessions <n_sessions>";
--
--static void
--cmd_cryptodev(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	struct cryptodev_params params;
--	char *name;
--
--	memset(&params, 0, sizeof(params));
--	if (n_tokens != 9) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	name = tokens[1];
--
--	if (strcmp(tokens[2], "dev") == 0)
--		params.dev_name = tokens[3];
--	else if (strcmp(tokens[2], "dev_id") == 0) {
--		if (parser_read_uint32(&params.dev_id, tokens[3]) < 0) {
--			snprintf(out, out_size,	MSG_ARG_INVALID,
--				"dev_id");
--			return;
--		}
--	} else {
--		snprintf(out, out_size,	MSG_ARG_INVALID,
--			"cryptodev");
--		return;
--	}
--
--	if (strcmp(tokens[4], "queue")) {
--		snprintf(out, out_size,	MSG_ARG_NOT_FOUND,
--			"queue");
--		return;
--	}
--
--	if (parser_read_uint32(&params.n_queues, tokens[5]) < 0) {
--		snprintf(out, out_size,	MSG_ARG_INVALID,
--			"q");
--		return;
--	}
--
--	if (parser_read_uint32(&params.queue_size, tokens[6]) < 0) {
--		snprintf(out, out_size,	MSG_ARG_INVALID,
--			"queue_size");
--		return;
--	}
--
--	if (strcmp(tokens[7], "max_sessions")) {
--		snprintf(out, out_size,	MSG_ARG_NOT_FOUND,
--			"max_sessions");
--		return;
--	}
--
--	if (parser_read_uint32(&params.session_pool_size, tokens[8]) < 0) {
--		snprintf(out, out_size,	MSG_ARG_INVALID,
--			"queue_size");
--		return;
--	}
--
--	if (cryptodev_create(name, &params) == NULL) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--}
--
--static const char cmd_port_in_action_profile_help[] =
--"port in action profile <profile_name>\n"
--"   [filter match | mismatch offset <key_offset> mask <key_mask> key <key_value> port <port_id>]\n"
--"   [balance offset <key_offset> mask <key_mask> port <port_id0> ... <port_id15>]\n";
--
--static void
--cmd_port_in_action_profile(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	struct port_in_action_profile_params p;
--	struct port_in_action_profile *ap;
--	char *name;
--	uint32_t t0;
--
--	memset(&p, 0, sizeof(p));
--
--	if (n_tokens < 5) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	if (strcmp(tokens[1], "in") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "in");
--		return;
--	}
--
--	if (strcmp(tokens[2], "action") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "action");
--		return;
--	}
--
--	if (strcmp(tokens[3], "profile") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "profile");
--		return;
--	}
--
--	name = tokens[4];
--
--	t0 = 5;
--
--	if ((t0 < n_tokens) && (strcmp(tokens[t0], "filter") == 0)) {
--		uint32_t size;
--
--		if (n_tokens < t0 + 10) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH, "port in action profile filter");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 1], "match") == 0)
--			p.fltr.filter_on_match = 1;
--		else if (strcmp(tokens[t0 + 1], "mismatch") == 0)
--			p.fltr.filter_on_match = 0;
--		else {
--			snprintf(out, out_size, MSG_ARG_INVALID, "match or mismatch");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 2], "offset") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "offset");
--			return;
--		}
--
--		if (parser_read_uint32(&p.fltr.key_offset, tokens[t0 + 3]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "key_offset");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 4], "mask") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "mask");
--			return;
--		}
--
--		size = RTE_PORT_IN_ACTION_FLTR_KEY_SIZE;
--		if ((parse_hex_string(tokens[t0 + 5], p.fltr.key_mask, &size) != 0) ||
--			(size != RTE_PORT_IN_ACTION_FLTR_KEY_SIZE)) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "key_mask");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 6], "key") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "key");
--			return;
--		}
--
--		size = RTE_PORT_IN_ACTION_FLTR_KEY_SIZE;
--		if ((parse_hex_string(tokens[t0 + 7], p.fltr.key, &size) != 0) ||
--			(size != RTE_PORT_IN_ACTION_FLTR_KEY_SIZE)) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "key_value");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 8], "port") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "port");
--			return;
--		}
--
--		if (parser_read_uint32(&p.fltr.port_id, tokens[t0 + 9]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "port_id");
--			return;
--		}
--
--		p.action_mask |= 1LLU << RTE_PORT_IN_ACTION_FLTR;
--		t0 += 10;
--	} /* filter */
--
--	if ((t0 < n_tokens) && (strcmp(tokens[t0], "balance") == 0)) {
--		uint32_t i;
--
--		if (n_tokens < t0 + 22) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				"port in action profile balance");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 1], "offset") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "offset");
--			return;
--		}
--
--		if (parser_read_uint32(&p.lb.key_offset, tokens[t0 + 2]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "key_offset");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 3], "mask") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "mask");
--			return;
--		}
--
--		p.lb.key_size = RTE_PORT_IN_ACTION_LB_KEY_SIZE_MAX;
--		if (parse_hex_string(tokens[t0 + 4], p.lb.key_mask, &p.lb.key_size) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "key_mask");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 5], "port") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "port");
--			return;
--		}
--
--		for (i = 0; i < 16; i++)
--			if (parser_read_uint32(&p.lb.port_id[i], tokens[t0 + 6 + i]) != 0) {
--				snprintf(out, out_size, MSG_ARG_INVALID, "port_id");
--				return;
--			}
--
--		p.action_mask |= 1LLU << RTE_PORT_IN_ACTION_LB;
--		t0 += 22;
--	} /* balance */
--
--	if (t0 < n_tokens) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	ap = port_in_action_profile_create(name, &p);
--	if (ap == NULL) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--}
--
--
--static const char cmd_table_action_profile_help[] =
--"table action profile <profile_name>\n"
--"   ipv4 | ipv6\n"
--"   offset <ip_offset>\n"
--"   fwd\n"
--"   [balance offset <key_offset> mask <key_mask> outoffset <out_offset>]\n"
--"   [meter srtcm | trtcm\n"
--"       tc <n_tc>\n"
--"       stats none | pkts | bytes | both]\n"
--"   [tm spp <n_subports_per_port> pps <n_pipes_per_subport>]\n"
--"   [encap ether | vlan | qinq | mpls | pppoe | qinq_pppoe \n"
--"       vxlan offset <ether_offset> ipv4 | ipv6 vlan on | off]\n"
--"   [nat src | dst\n"
--"       proto udp | tcp]\n"
--"   [ttl drop | fwd\n"
--"       stats none | pkts]\n"
--"   [stats pkts | bytes | both]\n"
--"   [time]\n"
--"   [sym_crypto dev <CRYPTODEV_NAME> offset <op_offset>]\n"
--"   [tag]\n"
--"   [decap]\n";
--
--static void
--cmd_table_action_profile(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	struct table_action_profile_params p;
--	struct table_action_profile *ap;
--	char *name;
--	uint32_t t0;
--
--	memset(&p, 0, sizeof(p));
--
--	if (n_tokens < 8) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	if (strcmp(tokens[1], "action") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "action");
--		return;
--	}
--
--	if (strcmp(tokens[2], "profile") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "profile");
--		return;
--	}
--
--	name = tokens[3];
--
--	if (strcmp(tokens[4], "ipv4") == 0)
--		p.common.ip_version = 1;
--	else if (strcmp(tokens[4], "ipv6") == 0)
--		p.common.ip_version = 0;
--	else {
--		snprintf(out, out_size, MSG_ARG_INVALID, "ipv4 or ipv6");
--		return;
--	}
--
--	if (strcmp(tokens[5], "offset") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "offset");
--		return;
--	}
--
--	if (parser_read_uint32(&p.common.ip_offset, tokens[6]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "ip_offset");
--		return;
--	}
--
--	if (strcmp(tokens[7], "fwd") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "fwd");
--		return;
--	}
--
--	p.action_mask |= 1LLU << RTE_TABLE_ACTION_FWD;
--
--	t0 = 8;
--	if ((t0 < n_tokens) && (strcmp(tokens[t0], "balance") == 0)) {
--		if (n_tokens < t0 + 7) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH, "table action profile balance");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 1], "offset") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "offset");
--			return;
--		}
--
--		if (parser_read_uint32(&p.lb.key_offset, tokens[t0 + 2]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "key_offset");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 3], "mask") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "mask");
--			return;
--		}
--
--		p.lb.key_size = RTE_PORT_IN_ACTION_LB_KEY_SIZE_MAX;
--		if (parse_hex_string(tokens[t0 + 4], p.lb.key_mask, &p.lb.key_size) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "key_mask");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 5], "outoffset") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "outoffset");
--			return;
--		}
--
--		if (parser_read_uint32(&p.lb.out_offset, tokens[t0 + 6]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "out_offset");
--			return;
--		}
--
--		p.action_mask |= 1LLU << RTE_TABLE_ACTION_LB;
--		t0 += 7;
--	} /* balance */
--
--	if ((t0 < n_tokens) && (strcmp(tokens[t0], "meter") == 0)) {
--		if (n_tokens < t0 + 6) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				"table action profile meter");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 1], "srtcm") == 0)
--			p.mtr.alg = RTE_TABLE_ACTION_METER_SRTCM;
--		else if (strcmp(tokens[t0 + 1], "trtcm") == 0)
--			p.mtr.alg = RTE_TABLE_ACTION_METER_TRTCM;
--		else {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
--				"srtcm or trtcm");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 2], "tc") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "tc");
--			return;
--		}
--
--		if (parser_read_uint32(&p.mtr.n_tc, tokens[t0 + 3]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "n_tc");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 4], "stats") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "stats");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 5], "none") == 0) {
--			p.mtr.n_packets_enabled = 0;
--			p.mtr.n_bytes_enabled = 0;
--		} else if (strcmp(tokens[t0 + 5], "pkts") == 0) {
--			p.mtr.n_packets_enabled = 1;
--			p.mtr.n_bytes_enabled = 0;
--		} else if (strcmp(tokens[t0 + 5], "bytes") == 0) {
--			p.mtr.n_packets_enabled = 0;
--			p.mtr.n_bytes_enabled = 1;
--		} else if (strcmp(tokens[t0 + 5], "both") == 0) {
--			p.mtr.n_packets_enabled = 1;
--			p.mtr.n_bytes_enabled = 1;
--		} else {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
--				"none or pkts or bytes or both");
--			return;
--		}
--
--		p.action_mask |= 1LLU << RTE_TABLE_ACTION_MTR;
--		t0 += 6;
--	} /* meter */
--
--	if ((t0 < n_tokens) && (strcmp(tokens[t0], "tm") == 0)) {
--		if (n_tokens < t0 + 5) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				"table action profile tm");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 1], "spp") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "spp");
--			return;
--		}
--
--		if (parser_read_uint32(&p.tm.n_subports_per_port,
--			tokens[t0 + 2]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID,
--				"n_subports_per_port");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 3], "pps") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "pps");
--			return;
--		}
--
--		if (parser_read_uint32(&p.tm.n_pipes_per_subport,
--			tokens[t0 + 4]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID,
--				"n_pipes_per_subport");
--			return;
--		}
--
--		p.action_mask |= 1LLU << RTE_TABLE_ACTION_TM;
--		t0 += 5;
--	} /* tm */
--
--	if ((t0 < n_tokens) && (strcmp(tokens[t0], "encap") == 0)) {
--		uint32_t n_extra_tokens = 0;
--
--		if (n_tokens < t0 + 2) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				"action profile encap");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 1], "ether") == 0)
--			p.encap.encap_mask = 1LLU << RTE_TABLE_ACTION_ENCAP_ETHER;
--		else if (strcmp(tokens[t0 + 1], "vlan") == 0)
--			p.encap.encap_mask = 1LLU << RTE_TABLE_ACTION_ENCAP_VLAN;
--		else if (strcmp(tokens[t0 + 1], "qinq") == 0)
--			p.encap.encap_mask = 1LLU << RTE_TABLE_ACTION_ENCAP_QINQ;
--		else if (strcmp(tokens[t0 + 1], "mpls") == 0)
--			p.encap.encap_mask = 1LLU << RTE_TABLE_ACTION_ENCAP_MPLS;
--		else if (strcmp(tokens[t0 + 1], "pppoe") == 0)
--			p.encap.encap_mask = 1LLU << RTE_TABLE_ACTION_ENCAP_PPPOE;
--		else if (strcmp(tokens[t0 + 1], "vxlan") == 0) {
--			if (n_tokens < t0 + 2 + 5) {
--				snprintf(out, out_size, MSG_ARG_MISMATCH,
--					"action profile encap vxlan");
--				return;
--			}
--
--			if (strcmp(tokens[t0 + 2], "offset") != 0) {
--				snprintf(out, out_size, MSG_ARG_NOT_FOUND,
--					"vxlan: offset");
--				return;
--			}
--
--			if (parser_read_uint32(&p.encap.vxlan.data_offset,
--				tokens[t0 + 2 + 1]) != 0) {
--				snprintf(out, out_size, MSG_ARG_INVALID,
--					"vxlan: ether_offset");
--				return;
--			}
--
--			if (strcmp(tokens[t0 + 2 + 2], "ipv4") == 0)
--				p.encap.vxlan.ip_version = 1;
--			else if (strcmp(tokens[t0 + 2 + 2], "ipv6") == 0)
--				p.encap.vxlan.ip_version = 0;
--			else {
--				snprintf(out, out_size, MSG_ARG_INVALID,
--					"vxlan: ipv4 or ipv6");
--				return;
--			}
--
--			if (strcmp(tokens[t0 + 2 + 3], "vlan") != 0) {
--				snprintf(out, out_size, MSG_ARG_NOT_FOUND,
--					"vxlan: vlan");
--				return;
--			}
--
--			if (strcmp(tokens[t0 + 2 + 4], "on") == 0)
--				p.encap.vxlan.vlan = 1;
--			else if (strcmp(tokens[t0 + 2 + 4], "off") == 0)
--				p.encap.vxlan.vlan = 0;
--			else {
--				snprintf(out, out_size, MSG_ARG_INVALID,
--					"vxlan: on or off");
--				return;
--			}
--
--			p.encap.encap_mask = 1LLU << RTE_TABLE_ACTION_ENCAP_VXLAN;
--			n_extra_tokens = 5;
--		} else if (strcmp(tokens[t0 + 1], "qinq_pppoe") == 0)
--			p.encap.encap_mask =
--				1LLU << RTE_TABLE_ACTION_ENCAP_QINQ_PPPOE;
--		else {
--			snprintf(out, out_size, MSG_ARG_MISMATCH, "encap");
--			return;
--		}
--
--		p.action_mask |= 1LLU << RTE_TABLE_ACTION_ENCAP;
--		t0 += 2 + n_extra_tokens;
--	} /* encap */
--
--	if ((t0 < n_tokens) && (strcmp(tokens[t0], "nat") == 0)) {
--		if (n_tokens < t0 + 4) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				"table action profile nat");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 1], "src") == 0)
--			p.nat.source_nat = 1;
--		else if (strcmp(tokens[t0 + 1], "dst") == 0)
--			p.nat.source_nat = 0;
--		else {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
--				"src or dst");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 2], "proto") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "proto");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 3], "tcp") == 0)
--			p.nat.proto = 0x06;
--		else if (strcmp(tokens[t0 + 3], "udp") == 0)
--			p.nat.proto = 0x11;
--		else {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
--				"tcp or udp");
--			return;
--		}
--
--		p.action_mask |= 1LLU << RTE_TABLE_ACTION_NAT;
--		t0 += 4;
--	} /* nat */
--
--	if ((t0 < n_tokens) && (strcmp(tokens[t0], "ttl") == 0)) {
--		if (n_tokens < t0 + 4) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				"table action profile ttl");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 1], "drop") == 0)
--			p.ttl.drop = 1;
--		else if (strcmp(tokens[t0 + 1], "fwd") == 0)
--			p.ttl.drop = 0;
--		else {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
--				"drop or fwd");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 2], "stats") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "stats");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 3], "none") == 0)
--			p.ttl.n_packets_enabled = 0;
--		else if (strcmp(tokens[t0 + 3], "pkts") == 0)
--			p.ttl.n_packets_enabled = 1;
--		else {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
--				"none or pkts");
--			return;
--		}
--
--		p.action_mask |= 1LLU << RTE_TABLE_ACTION_TTL;
--		t0 += 4;
--	} /* ttl */
--
--	if ((t0 < n_tokens) && (strcmp(tokens[t0], "stats") == 0)) {
--		if (n_tokens < t0 + 2) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				"table action profile stats");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 1], "pkts") == 0) {
--			p.stats.n_packets_enabled = 1;
--			p.stats.n_bytes_enabled = 0;
--		} else if (strcmp(tokens[t0 + 1], "bytes") == 0) {
--			p.stats.n_packets_enabled = 0;
--			p.stats.n_bytes_enabled = 1;
--		} else if (strcmp(tokens[t0 + 1], "both") == 0) {
--			p.stats.n_packets_enabled = 1;
--			p.stats.n_bytes_enabled = 1;
--		} else {
--			snprintf(out, out_size,	MSG_ARG_NOT_FOUND,
--				"pkts or bytes or both");
--			return;
--		}
--
--		p.action_mask |= 1LLU << RTE_TABLE_ACTION_STATS;
--		t0 += 2;
--	} /* stats */
--
--	if ((t0 < n_tokens) && (strcmp(tokens[t0], "time") == 0)) {
--		p.action_mask |= 1LLU << RTE_TABLE_ACTION_TIME;
--		t0 += 1;
--	} /* time */
--
--	if ((t0 < n_tokens) && (strcmp(tokens[t0], "sym_crypto") == 0)) {
--		struct cryptodev *cryptodev;
--
--		if (n_tokens < t0 + 5 ||
--				strcmp(tokens[t0 + 1], "dev") ||
--				strcmp(tokens[t0 + 3], "offset")) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				"table action profile sym_crypto");
--			return;
--		}
--
--		cryptodev = cryptodev_find(tokens[t0 + 2]);
--		if (cryptodev == NULL) {
--			snprintf(out, out_size, MSG_ARG_INVALID,
--				"table action profile sym_crypto");
--			return;
--		}
--
--		p.sym_crypto.cryptodev_id = cryptodev->dev_id;
--
--		if (parser_read_uint32(&p.sym_crypto.op_offset,
--				tokens[t0 + 4]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID,
--					"table action profile sym_crypto");
--			return;
--		}
--
--		p.sym_crypto.mp_create = cryptodev->mp_create;
--		p.sym_crypto.mp_init = cryptodev->mp_init;
--
--		p.action_mask |= 1LLU << RTE_TABLE_ACTION_SYM_CRYPTO;
--
--		t0 += 5;
--	} /* sym_crypto */
--
--	if ((t0 < n_tokens) && (strcmp(tokens[t0], "tag") == 0)) {
--		p.action_mask |= 1LLU << RTE_TABLE_ACTION_TAG;
--		t0 += 1;
--	} /* tag */
--
--	if ((t0 < n_tokens) && (strcmp(tokens[t0], "decap") == 0)) {
--		p.action_mask |= 1LLU << RTE_TABLE_ACTION_DECAP;
--		t0 += 1;
--	} /* decap */
--
--	if (t0 < n_tokens) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	ap = table_action_profile_create(name, &p);
--	if (ap == NULL) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--}
--
--static const char cmd_pipeline_help[] =
--"pipeline <pipeline_name>\n"
--"   period <timer_period_ms>\n"
--"   offset_port_id <offset_port_id>\n"
--"   cpu <cpu_id>\n";
--
--static void
--cmd_pipeline(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	struct pipeline_params p;
--	char *name;
--	struct pipeline *pipeline;
--
--	if (n_tokens != 8) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	name = tokens[1];
--
--	if (strcmp(tokens[2], "period") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "period");
--		return;
--	}
--
--	if (parser_read_uint32(&p.timer_period_ms, tokens[3]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "timer_period_ms");
--		return;
--	}
--
--	if (strcmp(tokens[4], "offset_port_id") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "offset_port_id");
--		return;
--	}
--
--	if (parser_read_uint32(&p.offset_port_id, tokens[5]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "offset_port_id");
--		return;
--	}
--
--	if (strcmp(tokens[6], "cpu") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "cpu");
--		return;
--	}
--
--	if (parser_read_uint32(&p.cpu_id, tokens[7]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "cpu_id");
--		return;
--	}
--
--	pipeline = pipeline_create(name, &p);
--	if (pipeline == NULL) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--}
--
--static const char cmd_pipeline_port_in_help[] =
--"pipeline <pipeline_name> port in\n"
--"   bsz <burst_size>\n"
--"   link <link_name> rxq <queue_id>\n"
--"   | swq <swq_name>\n"
--"   | tmgr <tmgr_name>\n"
--"   | tap <tap_name> mempool <mempool_name> mtu <mtu>\n"
--"   | source mempool <mempool_name> file <file_name> bpp <n_bytes_per_pkt>\n"
--"   | cryptodev <cryptodev_name> rxq <queue_id>\n"
--"   [action <port_in_action_profile_name>]\n"
--"   [disabled]\n";
--
--static void
--cmd_pipeline_port_in(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	struct port_in_params p;
--	char *pipeline_name;
--	uint32_t t0;
--	int enabled, status;
--
--	if (n_tokens < 7) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	pipeline_name = tokens[1];
--
--	if (strcmp(tokens[2], "port") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "port");
--		return;
--	}
--
--	if (strcmp(tokens[3], "in") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "in");
--		return;
--	}
--
--	if (strcmp(tokens[4], "bsz") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "bsz");
--		return;
--	}
--
--	if (parser_read_uint32(&p.burst_size, tokens[5]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "burst_size");
--		return;
--	}
--
--	t0 = 6;
--
--	if (strcmp(tokens[t0], "link") == 0) {
--		if (n_tokens < t0 + 4) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				"pipeline port in link");
--			return;
--		}
--
--		p.type = PORT_IN_RXQ;
--
--		p.dev_name = tokens[t0 + 1];
--
--		if (strcmp(tokens[t0 + 2], "rxq") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rxq");
--			return;
--		}
--
--		if (parser_read_uint16(&p.rxq.queue_id, tokens[t0 + 3]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID,
--				"queue_id");
--			return;
--		}
--		t0 += 4;
--	} else if (strcmp(tokens[t0], "swq") == 0) {
--		if (n_tokens < t0 + 2) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				"pipeline port in swq");
--			return;
--		}
--
--		p.type = PORT_IN_SWQ;
--
--		p.dev_name = tokens[t0 + 1];
--
--		t0 += 2;
--	} else if (strcmp(tokens[t0], "tmgr") == 0) {
--		if (n_tokens < t0 + 2) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				"pipeline port in tmgr");
--			return;
--		}
--
--		p.type = PORT_IN_TMGR;
--
--		p.dev_name = tokens[t0 + 1];
--
--		t0 += 2;
--	} else if (strcmp(tokens[t0], "tap") == 0) {
--		if (n_tokens < t0 + 6) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				"pipeline port in tap");
--			return;
--		}
--
--		p.type = PORT_IN_TAP;
--
--		p.dev_name = tokens[t0 + 1];
--
--		if (strcmp(tokens[t0 + 2], "mempool") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
--				"mempool");
--			return;
--		}
--
--		p.tap.mempool_name = tokens[t0 + 3];
--
--		if (strcmp(tokens[t0 + 4], "mtu") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
--				"mtu");
--			return;
--		}
--
--		if (parser_read_uint32(&p.tap.mtu, tokens[t0 + 5]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "mtu");
--			return;
--		}
--
--		t0 += 6;
--	} else if (strcmp(tokens[t0], "source") == 0) {
--		if (n_tokens < t0 + 6) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				"pipeline port in source");
--			return;
--		}
--
--		p.type = PORT_IN_SOURCE;
--
--		p.dev_name = NULL;
--
--		if (strcmp(tokens[t0 + 1], "mempool") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
--				"mempool");
--			return;
--		}
--
--		p.source.mempool_name = tokens[t0 + 2];
--
--		if (strcmp(tokens[t0 + 3], "file") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
--				"file");
--			return;
--		}
--
--		p.source.file_name = tokens[t0 + 4];
--
--		if (strcmp(tokens[t0 + 5], "bpp") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
--				"bpp");
--			return;
--		}
--
--		if (parser_read_uint32(&p.source.n_bytes_per_pkt, tokens[t0 + 6]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID,
--				"n_bytes_per_pkt");
--			return;
--		}
--
--		t0 += 7;
--	} else if (strcmp(tokens[t0], "cryptodev") == 0) {
--		if (n_tokens < t0 + 3) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				"pipeline port in cryptodev");
--			return;
--		}
--
--		p.type = PORT_IN_CRYPTODEV;
--
--		p.dev_name = tokens[t0 + 1];
--		if (parser_read_uint16(&p.rxq.queue_id, tokens[t0 + 3]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID,
--				"rxq");
--			return;
--		}
--
--		p.cryptodev.arg_callback = NULL;
--		p.cryptodev.f_callback = NULL;
--
--		t0 += 4;
--	} else {
--		snprintf(out, out_size, MSG_ARG_INVALID, tokens[0]);
--		return;
--	}
--
--	p.action_profile_name = NULL;
--	if ((n_tokens > t0) && (strcmp(tokens[t0], "action") == 0)) {
--		if (n_tokens < t0 + 2) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH, "action");
--			return;
--		}
--
--		p.action_profile_name = tokens[t0 + 1];
--
--		t0 += 2;
--	}
--
--	enabled = 1;
--	if ((n_tokens > t0) &&
--		(strcmp(tokens[t0], "disabled") == 0)) {
--		enabled = 0;
--
--		t0 += 1;
--	}
--
--	if (n_tokens != t0) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	status = pipeline_port_in_create(pipeline_name,
--		&p, enabled);
--	if (status) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--}
--
--static const char cmd_pipeline_port_out_help[] =
--"pipeline <pipeline_name> port out\n"
--"   bsz <burst_size>\n"
--"   link <link_name> txq <txq_id>\n"
--"   | swq <swq_name>\n"
--"   | tmgr <tmgr_name>\n"
--"   | tap <tap_name>\n"
--"   | sink [file <file_name> pkts <max_n_pkts>]\n"
--"   | cryptodev <cryptodev_name> txq <txq_id> offset <crypto_op_offset>\n";
--
--static void
--cmd_pipeline_port_out(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	struct port_out_params p;
--	char *pipeline_name;
--	int status;
--
--	memset(&p, 0, sizeof(p));
--
--	if (n_tokens < 7) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	pipeline_name = tokens[1];
--
--	if (strcmp(tokens[2], "port") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "port");
--		return;
--	}
--
--	if (strcmp(tokens[3], "out") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "out");
--		return;
--	}
--
--	if (strcmp(tokens[4], "bsz") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "bsz");
--		return;
--	}
--
--	if (parser_read_uint32(&p.burst_size, tokens[5]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "burst_size");
--		return;
--	}
--
--	if (strcmp(tokens[6], "link") == 0) {
--		if (n_tokens != 10) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				"pipeline port out link");
--			return;
--		}
--
--		p.type = PORT_OUT_TXQ;
--
--		p.dev_name = tokens[7];
--
--		if (strcmp(tokens[8], "txq") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "txq");
--			return;
--		}
--
--		if (parser_read_uint16(&p.txq.queue_id, tokens[9]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "queue_id");
--			return;
--		}
--	} else if (strcmp(tokens[6], "swq") == 0) {
--		if (n_tokens != 8) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				"pipeline port out swq");
--			return;
--		}
--
--		p.type = PORT_OUT_SWQ;
--
--		p.dev_name = tokens[7];
--	} else if (strcmp(tokens[6], "tmgr") == 0) {
--		if (n_tokens != 8) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				"pipeline port out tmgr");
--			return;
--		}
--
--		p.type = PORT_OUT_TMGR;
--
--		p.dev_name = tokens[7];
--	} else if (strcmp(tokens[6], "tap") == 0) {
--		if (n_tokens != 8) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				"pipeline port out tap");
--			return;
--		}
--
--		p.type = PORT_OUT_TAP;
--
--		p.dev_name = tokens[7];
--	} else if (strcmp(tokens[6], "sink") == 0) {
--		if ((n_tokens != 7) && (n_tokens != 11)) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				"pipeline port out sink");
--			return;
--		}
--
--		p.type = PORT_OUT_SINK;
--
--		p.dev_name = NULL;
--
--		if (n_tokens == 7) {
--			p.sink.file_name = NULL;
--			p.sink.max_n_pkts = 0;
--		} else {
--			if (strcmp(tokens[7], "file") != 0) {
--				snprintf(out, out_size, MSG_ARG_NOT_FOUND,
--					"file");
--				return;
--			}
--
--			p.sink.file_name = tokens[8];
--
--			if (strcmp(tokens[9], "pkts") != 0) {
--				snprintf(out, out_size, MSG_ARG_NOT_FOUND, "pkts");
--				return;
--			}
--
--			if (parser_read_uint32(&p.sink.max_n_pkts, tokens[10]) != 0) {
--				snprintf(out, out_size, MSG_ARG_INVALID, "max_n_pkts");
--				return;
--			}
--		}
--
--	} else if (strcmp(tokens[6], "cryptodev") == 0) {
--		if (n_tokens != 12) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				"pipeline port out cryptodev");
--			return;
--		}
--
--		p.type = PORT_OUT_CRYPTODEV;
--
--		p.dev_name = tokens[7];
--
--		if (strcmp(tokens[8], "txq")) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				"pipeline port out cryptodev");
--			return;
--		}
--
--		if (parser_read_uint16(&p.cryptodev.queue_id, tokens[9])
--				!= 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "queue_id");
--			return;
--		}
--
--		if (strcmp(tokens[10], "offset")) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				"pipeline port out cryptodev");
--			return;
--		}
--
--		if (parser_read_uint32(&p.cryptodev.op_offset, tokens[11])
--				!= 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "queue_id");
--			return;
--		}
--	} else {
--		snprintf(out, out_size, MSG_ARG_INVALID, tokens[0]);
--		return;
--	}
--
--	status = pipeline_port_out_create(pipeline_name, &p);
--	if (status) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--}
--
--static const char cmd_pipeline_table_help[] =
--"pipeline <pipeline_name> table\n"
--"       match\n"
--"       acl\n"
--"           ipv4 | ipv6\n"
--"           offset <ip_header_offset>\n"
--"           size <n_rules>\n"
--"       | array\n"
--"           offset <key_offset>\n"
--"           size <n_keys>\n"
--"       | hash\n"
--"           ext | lru\n"
--"           key <key_size>\n"
--"           mask <key_mask>\n"
--"           offset <key_offset>\n"
--"           buckets <n_buckets>\n"
--"           size <n_keys>\n"
--"       | lpm\n"
--"           ipv4 | ipv6\n"
--"           offset <ip_header_offset>\n"
--"           size <n_rules>\n"
--"       | stub\n"
--"   [action <table_action_profile_name>]\n";
--
--static void
--cmd_pipeline_table(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	uint8_t key_mask[TABLE_RULE_MATCH_SIZE_MAX];
--	struct table_params p;
--	char *pipeline_name;
--	uint32_t t0;
--	int status;
--
--	if (n_tokens < 5) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	pipeline_name = tokens[1];
--
--	if (strcmp(tokens[2], "table") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "table");
--		return;
--	}
--
--	if (strcmp(tokens[3], "match") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "match");
--		return;
--	}
--
--	t0 = 4;
--	if (strcmp(tokens[t0], "acl") == 0) {
--		if (n_tokens < t0 + 6) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				"pipeline table acl");
--			return;
--		}
--
--		p.match_type = TABLE_ACL;
--
--		if (strcmp(tokens[t0 + 1], "ipv4") == 0)
--			p.match.acl.ip_version = 1;
--		else if (strcmp(tokens[t0 + 1], "ipv6") == 0)
--			p.match.acl.ip_version = 0;
--		else {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
--				"ipv4 or ipv6");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 2], "offset") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "offset");
--			return;
--		}
--
--		if (parser_read_uint32(&p.match.acl.ip_header_offset,
--			tokens[t0 + 3]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID,
--				"ip_header_offset");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 4], "size") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "size");
--			return;
--		}
--
--		if (parser_read_uint32(&p.match.acl.n_rules,
--			tokens[t0 + 5]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "n_rules");
--			return;
--		}
--
--		t0 += 6;
--	} else if (strcmp(tokens[t0], "array") == 0) {
--		if (n_tokens < t0 + 5) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				"pipeline table array");
--			return;
--		}
--
--		p.match_type = TABLE_ARRAY;
--
--		if (strcmp(tokens[t0 + 1], "offset") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "offset");
--			return;
--		}
--
--		if (parser_read_uint32(&p.match.array.key_offset,
--			tokens[t0 + 2]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "key_offset");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 3], "size") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "size");
--			return;
--		}
--
--		if (parser_read_uint32(&p.match.array.n_keys,
--			tokens[t0 + 4]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "n_keys");
--			return;
--		}
--
--		t0 += 5;
--	} else if (strcmp(tokens[t0], "hash") == 0) {
--		uint32_t key_mask_size = TABLE_RULE_MATCH_SIZE_MAX;
--
--		if (n_tokens < t0 + 12) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				"pipeline table hash");
--			return;
--		}
--
--		p.match_type = TABLE_HASH;
--
--		if (strcmp(tokens[t0 + 1], "ext") == 0)
--			p.match.hash.extendable_bucket = 1;
--		else if (strcmp(tokens[t0 + 1], "lru") == 0)
--			p.match.hash.extendable_bucket = 0;
--		else {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
--				"ext or lru");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 2], "key") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "key");
--			return;
--		}
--
--		if ((parser_read_uint32(&p.match.hash.key_size,
--			tokens[t0 + 3]) != 0) ||
--			(p.match.hash.key_size == 0) ||
--			(p.match.hash.key_size > TABLE_RULE_MATCH_SIZE_MAX)) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "key_size");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 4], "mask") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "mask");
--			return;
--		}
--
--		if ((parse_hex_string(tokens[t0 + 5],
--			key_mask, &key_mask_size) != 0) ||
--			(key_mask_size != p.match.hash.key_size)) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "key_mask");
--			return;
--		}
--		p.match.hash.key_mask = key_mask;
--
--		if (strcmp(tokens[t0 + 6], "offset") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "offset");
--			return;
--		}
--
--		if (parser_read_uint32(&p.match.hash.key_offset,
--			tokens[t0 + 7]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "key_offset");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 8], "buckets") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "buckets");
--			return;
--		}
--
--		if (parser_read_uint32(&p.match.hash.n_buckets,
--			tokens[t0 + 9]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "n_buckets");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 10], "size") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "size");
--			return;
--		}
--
--		if (parser_read_uint32(&p.match.hash.n_keys,
--			tokens[t0 + 11]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "n_keys");
--			return;
--		}
--
--		t0 += 12;
--	} else if (strcmp(tokens[t0], "lpm") == 0) {
--		if (n_tokens < t0 + 6) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				"pipeline table lpm");
--			return;
--		}
--
--		p.match_type = TABLE_LPM;
--
--		if (strcmp(tokens[t0 + 1], "ipv4") == 0)
--			p.match.lpm.key_size = 4;
--		else if (strcmp(tokens[t0 + 1], "ipv6") == 0)
--			p.match.lpm.key_size = 16;
--		else {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
--				"ipv4 or ipv6");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 2], "offset") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "offset");
--			return;
--		}
--
--		if (parser_read_uint32(&p.match.lpm.key_offset,
--			tokens[t0 + 3]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "key_offset");
--			return;
--		}
--
--		if (strcmp(tokens[t0 + 4], "size") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "size");
--			return;
--		}
--
--		if (parser_read_uint32(&p.match.lpm.n_rules,
--			tokens[t0 + 5]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "n_rules");
--			return;
--		}
--
--		t0 += 6;
--	} else if (strcmp(tokens[t0], "stub") == 0) {
--		p.match_type = TABLE_STUB;
--
--		t0 += 1;
--	} else {
--		snprintf(out, out_size, MSG_ARG_INVALID, tokens[0]);
--		return;
--	}
--
--	p.action_profile_name = NULL;
--	if ((n_tokens > t0) && (strcmp(tokens[t0], "action") == 0)) {
--		if (n_tokens < t0 + 2) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH, "action");
--			return;
--		}
--
--		p.action_profile_name = tokens[t0 + 1];
--
--		t0 += 2;
--	}
--
--	if (n_tokens > t0) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	status = pipeline_table_create(pipeline_name, &p);
--	if (status) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--}
--
--static const char cmd_pipeline_port_in_table_help[] =
--"pipeline <pipeline_name> port in <port_id> table <table_id>\n";
--
--static void
--cmd_pipeline_port_in_table(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	char *pipeline_name;
--	uint32_t port_id, table_id;
--	int status;
--
--	if (n_tokens != 7) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	pipeline_name = tokens[1];
--
--	if (strcmp(tokens[2], "port") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "port");
--		return;
--	}
--
--	if (strcmp(tokens[3], "in") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "in");
--		return;
--	}
--
--	if (parser_read_uint32(&port_id, tokens[4]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "port_id");
--		return;
--	}
--
--	if (strcmp(tokens[5], "table") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "table");
--		return;
--	}
--
--	if (parser_read_uint32(&table_id, tokens[6]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
--		return;
--	}
--
--	status = pipeline_port_in_connect_to_table(pipeline_name,
--		port_id,
--		table_id);
--	if (status) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--}
--
--
--static const char cmd_pipeline_port_in_stats_help[] =
--"pipeline <pipeline_name> port in <port_id> stats read [clear]\n";
--
--#define MSG_PIPELINE_PORT_IN_STATS                         \
--	"Pkts in: %" PRIu64 "\n"                           \
--	"Pkts dropped by AH: %" PRIu64 "\n"                \
--	"Pkts dropped by other: %" PRIu64 "\n"
--
--static void
--cmd_pipeline_port_in_stats(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	struct rte_pipeline_port_in_stats stats;
--	char *pipeline_name;
--	uint32_t port_id;
--	int clear, status;
--
--	if ((n_tokens != 7) && (n_tokens != 8)) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	pipeline_name = tokens[1];
--
--	if (strcmp(tokens[2], "port") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "port");
--		return;
--	}
--
--	if (strcmp(tokens[3], "in") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "in");
--		return;
--	}
--
--	if (parser_read_uint32(&port_id, tokens[4]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "port_id");
--		return;
--	}
--
--	if (strcmp(tokens[5], "stats") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "stats");
--		return;
--	}
--
--	if (strcmp(tokens[6], "read") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "read");
--		return;
--	}
--
--	clear = 0;
--	if (n_tokens == 8) {
--		if (strcmp(tokens[7], "clear") != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "clear");
--			return;
--		}
--
--		clear = 1;
--	}
--
--	status = pipeline_port_in_stats_read(pipeline_name,
--		port_id,
--		&stats,
--		clear);
--	if (status) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--
--	snprintf(out, out_size, MSG_PIPELINE_PORT_IN_STATS,
--		stats.stats.n_pkts_in,
--		stats.n_pkts_dropped_by_ah,
--		stats.stats.n_pkts_drop);
--}
--
--
--static const char cmd_pipeline_port_in_enable_help[] =
--"pipeline <pipeline_name> port in <port_id> enable\n";
--
--static void
--cmd_pipeline_port_in_enable(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	char *pipeline_name;
--	uint32_t port_id;
--	int status;
--
--	if (n_tokens != 6) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	pipeline_name = tokens[1];
--
--	if (strcmp(tokens[2], "port") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "port");
--		return;
--	}
--
--	if (strcmp(tokens[3], "in") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "in");
--		return;
--	}
--
--	if (parser_read_uint32(&port_id, tokens[4]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "port_id");
--		return;
--	}
--
--	if (strcmp(tokens[5], "enable") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "enable");
--		return;
--	}
--
--	status = pipeline_port_in_enable(pipeline_name, port_id);
--	if (status) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--}
--
--
--static const char cmd_pipeline_port_in_disable_help[] =
--"pipeline <pipeline_name> port in <port_id> disable\n";
--
--static void
--cmd_pipeline_port_in_disable(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	char *pipeline_name;
--	uint32_t port_id;
--	int status;
--
--	if (n_tokens != 6) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	pipeline_name = tokens[1];
--
--	if (strcmp(tokens[2], "port") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "port");
--		return;
--	}
--
--	if (strcmp(tokens[3], "in") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "in");
--		return;
--	}
--
--	if (parser_read_uint32(&port_id, tokens[4]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "port_id");
--		return;
--	}
--
--	if (strcmp(tokens[5], "disable") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "disable");
--		return;
--	}
--
--	status = pipeline_port_in_disable(pipeline_name, port_id);
--	if (status) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--}
--
--
--static const char cmd_pipeline_port_out_stats_help[] =
--"pipeline <pipeline_name> port out <port_id> stats read [clear]\n";
--
--#define MSG_PIPELINE_PORT_OUT_STATS                        \
--	"Pkts in: %" PRIu64 "\n"                           \
--	"Pkts dropped by AH: %" PRIu64 "\n"                \
--	"Pkts dropped by other: %" PRIu64 "\n"
--
--static void
--cmd_pipeline_port_out_stats(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	struct rte_pipeline_port_out_stats stats;
--	char *pipeline_name;
--	uint32_t port_id;
--	int clear, status;
--
--	if ((n_tokens != 7) && (n_tokens != 8)) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	pipeline_name = tokens[1];
--
--	if (strcmp(tokens[2], "port") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "port");
--		return;
--	}
--
--	if (strcmp(tokens[3], "out") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "out");
--		return;
--	}
--
--	if (parser_read_uint32(&port_id, tokens[4]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "port_id");
--		return;
--	}
--
--	if (strcmp(tokens[5], "stats") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "stats");
--		return;
--	}
--
--	if (strcmp(tokens[6], "read") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "read");
--		return;
--	}
--
--	clear = 0;
--	if (n_tokens == 8) {
--		if (strcmp(tokens[7], "clear") != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "clear");
--			return;
--		}
--
--		clear = 1;
--	}
--
--	status = pipeline_port_out_stats_read(pipeline_name,
--		port_id,
--		&stats,
--		clear);
--	if (status) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--
--	snprintf(out, out_size, MSG_PIPELINE_PORT_OUT_STATS,
--		stats.stats.n_pkts_in,
--		stats.n_pkts_dropped_by_ah,
--		stats.stats.n_pkts_drop);
--}
--
--
--static const char cmd_pipeline_table_stats_help[] =
--"pipeline <pipeline_name> table <table_id> stats read [clear]\n";
--
--#define MSG_PIPELINE_TABLE_STATS                                     \
--	"Pkts in: %" PRIu64 "\n"                                     \
--	"Pkts in with lookup miss: %" PRIu64 "\n"                    \
--	"Pkts in with lookup hit dropped by AH: %" PRIu64 "\n"       \
--	"Pkts in with lookup hit dropped by others: %" PRIu64 "\n"   \
--	"Pkts in with lookup miss dropped by AH: %" PRIu64 "\n"      \
--	"Pkts in with lookup miss dropped by others: %" PRIu64 "\n"
--
--static void
--cmd_pipeline_table_stats(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	struct rte_pipeline_table_stats stats;
--	char *pipeline_name;
--	uint32_t table_id;
--	int clear, status;
--
--	if ((n_tokens != 6) && (n_tokens != 7)) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	pipeline_name = tokens[1];
--
--	if (strcmp(tokens[2], "table") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "port");
--		return;
--	}
--
--	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
--		return;
--	}
--
--	if (strcmp(tokens[4], "stats") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "stats");
--		return;
--	}
--
--	if (strcmp(tokens[5], "read") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "read");
--		return;
--	}
--
--	clear = 0;
--	if (n_tokens == 7) {
--		if (strcmp(tokens[6], "clear") != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "clear");
--			return;
--		}
--
--		clear = 1;
--	}
--
--	status = pipeline_table_stats_read(pipeline_name,
--		table_id,
--		&stats,
--		clear);
--	if (status) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--
--	snprintf(out, out_size, MSG_PIPELINE_TABLE_STATS,
--		stats.stats.n_pkts_in,
--		stats.stats.n_pkts_lookup_miss,
--		stats.n_pkts_dropped_by_lkp_hit_ah,
--		stats.n_pkts_dropped_lkp_hit,
--		stats.n_pkts_dropped_by_lkp_miss_ah,
--		stats.n_pkts_dropped_lkp_miss);
--}
--
--/**
-- * <match> ::=
-- *
-- * match
-- *    acl
-- *       priority <priority>
-- *       ipv4 | ipv6 <sa> <sa_depth> <da> <da_depth>
-- *       <sp0> <sp1> <dp0> <dp1> <proto>
-- *    | array <pos>
-- *    | hash
-- *       raw <key>
-- *       | ipv4_5tuple <sa> <da> <sp> <dp> <proto>
-- *       | ipv6_5tuple <sa> <da> <sp> <dp> <proto>
-- *       | ipv4_addr <addr>
-- *       | ipv6_addr <addr>
-- *       | qinq <svlan> <cvlan>
-- *    | lpm
-- *       ipv4 | ipv6 <addr> <depth>
-- */
--struct pkt_key_qinq {
--	uint16_t ethertype_svlan;
--	uint16_t svlan;
--	uint16_t ethertype_cvlan;
--	uint16_t cvlan;
--};
--
--struct pkt_key_ipv4_5tuple {
--	uint8_t time_to_live;
--	uint8_t proto;
--	uint16_t hdr_checksum;
--	uint32_t sa;
--	uint32_t da;
--	uint16_t sp;
--	uint16_t dp;
--};
--
--struct pkt_key_ipv6_5tuple {
--	uint16_t payload_length;
--	uint8_t proto;
--	uint8_t hop_limit;
--	struct rte_ipv6_addr sa;
--	struct rte_ipv6_addr da;
--	uint16_t sp;
--	uint16_t dp;
--};
--
--struct pkt_key_ipv4_addr {
--	uint32_t addr;
--};
--
--struct pkt_key_ipv6_addr {
--	struct rte_ipv6_addr addr;
--};
--
--static uint32_t
--parse_match(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size,
--	struct table_rule_match *m)
--{
--	memset(m, 0, sizeof(*m));
--
--	if (n_tokens < 2)
--		return 0;
--
--	if (strcmp(tokens[0], "match") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "match");
--		return 0;
--	}
--
--	if (strcmp(tokens[1], "acl") == 0) {
--		if (n_tokens < 14) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--			return 0;
--		}
--
--		m->match_type = TABLE_ACL;
--
--		if (strcmp(tokens[2], "priority") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "priority");
--			return 0;
--		}
--
--		if (parser_read_uint32(&m->match.acl.priority,
--			tokens[3]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "priority");
--			return 0;
--		}
--
--		if (strcmp(tokens[4], "ipv4") == 0) {
--			struct in_addr saddr, daddr;
--
--			m->match.acl.ip_version = 1;
--
--			if (parse_ipv4_addr(tokens[5], &saddr) != 0) {
--				snprintf(out, out_size, MSG_ARG_INVALID, "sa");
--				return 0;
--			}
--			m->match.acl.ipv4.sa = rte_be_to_cpu_32(saddr.s_addr);
--
--			if (parse_ipv4_addr(tokens[7], &daddr) != 0) {
--				snprintf(out, out_size, MSG_ARG_INVALID, "da");
--				return 0;
--			}
--			m->match.acl.ipv4.da = rte_be_to_cpu_32(daddr.s_addr);
--		} else if (strcmp(tokens[4], "ipv6") == 0) {
--			struct rte_ipv6_addr saddr, daddr;
--
--			m->match.acl.ip_version = 0;
--
--			if (parse_ipv6_addr(tokens[5], &saddr) != 0) {
--				snprintf(out, out_size, MSG_ARG_INVALID, "sa");
--				return 0;
--			}
--			m->match.acl.ipv6.sa = saddr;
--
--			if (parse_ipv6_addr(tokens[7], &daddr) != 0) {
--				snprintf(out, out_size, MSG_ARG_INVALID, "da");
--				return 0;
--			}
--			m->match.acl.ipv6.da = daddr;
--		} else {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND,
--				"ipv4 or ipv6");
--			return 0;
--		}
--
--		if (parser_read_uint32(&m->match.acl.sa_depth,
--			tokens[6]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "sa_depth");
--			return 0;
--		}
--
--		if (parser_read_uint32(&m->match.acl.da_depth,
--			tokens[8]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "da_depth");
--			return 0;
--		}
--
--		if (parser_read_uint16(&m->match.acl.sp0, tokens[9]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "sp0");
--			return 0;
--		}
--
--		if (parser_read_uint16(&m->match.acl.sp1, tokens[10]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "sp1");
--			return 0;
--		}
--
--		if (parser_read_uint16(&m->match.acl.dp0, tokens[11]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "dp0");
--			return 0;
--		}
--
--		if (parser_read_uint16(&m->match.acl.dp1, tokens[12]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "dp1");
--			return 0;
--		}
--
--		if (parser_read_uint8(&m->match.acl.proto, tokens[13]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "proto");
--			return 0;
--		}
--
--		m->match.acl.proto_mask = 0xff;
--
--		return 14;
--	} /* acl */
--
--	if (strcmp(tokens[1], "array") == 0) {
--		if (n_tokens < 3) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--			return 0;
--		}
--
--		m->match_type = TABLE_ARRAY;
--
--		if (parser_read_uint32(&m->match.array.pos, tokens[2]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "pos");
--			return 0;
--		}
--
--		return 3;
--	} /* array */
--
--	if (strcmp(tokens[1], "hash") == 0) {
--		if (n_tokens < 3) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--			return 0;
--		}
--
--		m->match_type = TABLE_HASH;
--
--		if (strcmp(tokens[2], "raw") == 0) {
--			uint32_t key_size = TABLE_RULE_MATCH_SIZE_MAX;
--
--			if (n_tokens < 4) {
--				snprintf(out, out_size, MSG_ARG_MISMATCH,
--					tokens[0]);
--				return 0;
--			}
--
--			if (parse_hex_string(tokens[3],
--				m->match.hash.key, &key_size) != 0) {
--				snprintf(out, out_size, MSG_ARG_INVALID, "key");
--				return 0;
--			}
--
--			return 4;
--		} /* hash raw */
--
--		if (strcmp(tokens[2], "ipv4_5tuple") == 0) {
--			struct pkt_key_ipv4_5tuple *ipv4 =
--				(struct pkt_key_ipv4_5tuple *) m->match.hash.key;
--			struct in_addr saddr, daddr;
--			uint16_t sp, dp;
--			uint8_t proto;
--
--			if (n_tokens < 8) {
--				snprintf(out, out_size, MSG_ARG_MISMATCH,
--					tokens[0]);
--				return 0;
--			}
--
--			if (parse_ipv4_addr(tokens[3], &saddr) != 0) {
--				snprintf(out, out_size, MSG_ARG_INVALID, "sa");
--				return 0;
--			}
--
--			if (parse_ipv4_addr(tokens[4], &daddr) != 0) {
--				snprintf(out, out_size, MSG_ARG_INVALID, "da");
--				return 0;
--			}
--
--			if (parser_read_uint16(&sp, tokens[5]) != 0) {
--				snprintf(out, out_size, MSG_ARG_INVALID, "sp");
--				return 0;
--			}
--
--			if (parser_read_uint16(&dp, tokens[6]) != 0) {
--				snprintf(out, out_size, MSG_ARG_INVALID, "dp");
--				return 0;
--			}
--
--			if (parser_read_uint8(&proto, tokens[7]) != 0) {
--				snprintf(out, out_size, MSG_ARG_INVALID,
--					"proto");
--				return 0;
--			}
--
--			ipv4->sa = saddr.s_addr;
--			ipv4->da = daddr.s_addr;
--			ipv4->sp = rte_cpu_to_be_16(sp);
--			ipv4->dp = rte_cpu_to_be_16(dp);
--			ipv4->proto = proto;
--
--			return 8;
--		} /* hash ipv4_5tuple */
--
--		if (strcmp(tokens[2], "ipv6_5tuple") == 0) {
--			struct pkt_key_ipv6_5tuple *ipv6 =
--				(struct pkt_key_ipv6_5tuple *) m->match.hash.key;
--			struct rte_ipv6_addr saddr, daddr;
--			uint16_t sp, dp;
--			uint8_t proto;
--
--			if (n_tokens < 8) {
--				snprintf(out, out_size, MSG_ARG_MISMATCH,
--					tokens[0]);
--				return 0;
--			}
--
--			if (parse_ipv6_addr(tokens[3], &saddr) != 0) {
--				snprintf(out, out_size, MSG_ARG_INVALID, "sa");
--				return 0;
--			}
--
--			if (parse_ipv6_addr(tokens[4], &daddr) != 0) {
--				snprintf(out, out_size, MSG_ARG_INVALID, "da");
--				return 0;
--			}
--
--			if (parser_read_uint16(&sp, tokens[5]) != 0) {
--				snprintf(out, out_size, MSG_ARG_INVALID, "sp");
--				return 0;
--			}
--
--			if (parser_read_uint16(&dp, tokens[6]) != 0) {
--				snprintf(out, out_size, MSG_ARG_INVALID, "dp");
--				return 0;
--			}
--
--			if (parser_read_uint8(&proto, tokens[7]) != 0) {
--				snprintf(out, out_size, MSG_ARG_INVALID,
--					"proto");
--				return 0;
--			}
--
--			ipv6->sa = saddr;
--			ipv6->da = daddr;
--			ipv6->sp = rte_cpu_to_be_16(sp);
--			ipv6->dp = rte_cpu_to_be_16(dp);
--			ipv6->proto = proto;
--
--			return 8;
--		} /* hash ipv6_5tuple */
--
--		if (strcmp(tokens[2], "ipv4_addr") == 0) {
--			struct pkt_key_ipv4_addr *ipv4_addr =
--				(struct pkt_key_ipv4_addr *) m->match.hash.key;
--			struct in_addr addr;
--
--			if (n_tokens < 4) {
--				snprintf(out, out_size, MSG_ARG_MISMATCH,
--					tokens[0]);
--				return 0;
--			}
--
--			if (parse_ipv4_addr(tokens[3], &addr) != 0) {
--				snprintf(out, out_size, MSG_ARG_INVALID,
--					"addr");
--				return 0;
--			}
--
--			ipv4_addr->addr = addr.s_addr;
--
--			return 4;
--		} /* hash ipv4_addr */
--
--		if (strcmp(tokens[2], "ipv6_addr") == 0) {
--			struct pkt_key_ipv6_addr *ipv6_addr =
--				(struct pkt_key_ipv6_addr *) m->match.hash.key;
--			struct rte_ipv6_addr addr;
--
--			if (n_tokens < 4) {
--				snprintf(out, out_size, MSG_ARG_MISMATCH,
--					tokens[0]);
--				return 0;
--			}
--
--			if (parse_ipv6_addr(tokens[3], &addr) != 0) {
--				snprintf(out, out_size, MSG_ARG_INVALID,
--					"addr");
--				return 0;
--			}
--
--			ipv6_addr->addr = addr;
--
--			return 4;
--		} /* hash ipv6_5tuple */
--
--		if (strcmp(tokens[2], "qinq") == 0) {
--			struct pkt_key_qinq *qinq =
--				(struct pkt_key_qinq *) m->match.hash.key;
--			uint16_t svlan, cvlan;
--
--			if (n_tokens < 5) {
--				snprintf(out, out_size, MSG_ARG_MISMATCH,
--					tokens[0]);
--				return 0;
--			}
--
--			if ((parser_read_uint16(&svlan, tokens[3]) != 0) ||
--				(svlan > 0xFFF)) {
--				snprintf(out, out_size, MSG_ARG_INVALID,
--					"svlan");
--				return 0;
--			}
--
--			if ((parser_read_uint16(&cvlan, tokens[4]) != 0) ||
--				(cvlan > 0xFFF)) {
--				snprintf(out, out_size, MSG_ARG_INVALID,
--					"cvlan");
--				return 0;
--			}
--
--			qinq->svlan = rte_cpu_to_be_16(svlan);
--			qinq->cvlan = rte_cpu_to_be_16(cvlan);
--
--			return 5;
--		} /* hash qinq */
--
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return 0;
--	} /* hash */
--
--	if (strcmp(tokens[1], "lpm") == 0) {
--		if (n_tokens < 5) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--			return 0;
--		}
--
--		m->match_type = TABLE_LPM;
--
--		if (strcmp(tokens[2], "ipv4") == 0) {
--			struct in_addr addr;
--
--			m->match.lpm.ip_version = 1;
--
--			if (parse_ipv4_addr(tokens[3], &addr) != 0) {
--				snprintf(out, out_size, MSG_ARG_INVALID,
--					"addr");
--				return 0;
--			}
--
--			m->match.lpm.ipv4 = rte_be_to_cpu_32(addr.s_addr);
--		} else if (strcmp(tokens[2], "ipv6") == 0) {
--			struct rte_ipv6_addr addr;
--
--			m->match.lpm.ip_version = 0;
--
--			if (parse_ipv6_addr(tokens[3], &addr) != 0) {
--				snprintf(out, out_size, MSG_ARG_INVALID,
--					"addr");
--				return 0;
--			}
--
--			m->match.lpm.ipv6 = addr;
--		} else {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				"ipv4 or ipv6");
--			return 0;
--		}
--
--		if (parser_read_uint8(&m->match.lpm.depth, tokens[4]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "depth");
--			return 0;
--		}
--
--		return 5;
--	} /* lpm */
--
--	snprintf(out, out_size, MSG_ARG_MISMATCH,
--		"acl or array or hash or lpm");
--	return 0;
--}
--
--/**
-- * table_action ::=
-- *
-- * action
-- *    fwd
-- *       drop
-- *       | port <port_id>
-- *       | meta
-- *       | table <table_id>
-- *    [balance <out0> ... <out7>]
-- *    [meter
-- *       tc0 meter <meter_profile_id> policer g <pa> y <pa> r <pa>
-- *       [tc1 meter <meter_profile_id> policer g <pa> y <pa> r <pa>
-- *       tc2 meter <meter_profile_id> policer g <pa> y <pa> r <pa>
-- *       tc3 meter <meter_profile_id> policer g <pa> y <pa> r <pa>]]
-- *    [tm subport <subport_id> pipe <pipe_id>]
-- *    [encap
-- *       ether <da> <sa>
-- *       | vlan <da> <sa> <pcp> <dei> <vid>
-- *       | qinq <da> <sa> <pcp> <dei> <vid> <pcp> <dei> <vid>
-- *       | qinq_pppoe <da> <sa> <pcp> <dei> <vid> <pcp> <dei> <vid> <session_id>
-- *       | mpls unicast | multicast
-- *          <da> <sa>
-- *          label0 <label> <tc> <ttl>
-- *          [label1 <label> <tc> <ttl>
-- *          [label2 <label> <tc> <ttl>
-- *          [label3 <label> <tc> <ttl>]]]
-- *       | pppoe <da> <sa> <session_id>
-- *       | vxlan ether <da> <sa>
-- *          [vlan <pcp> <dei> <vid>]
-- *          ipv4 <sa> <da> <dscp> <ttl>
-- *          | ipv6 <sa> <da> <flow_label> <dscp> <hop_limit>
-- *          udp <sp> <dp>
-- *          vxlan <vni>]
-- *    [nat ipv4 | ipv6 <addr> <port>]
-- *    [ttl dec | keep]
-- *    [stats]
-- *    [time]
-- *    [sym_crypto
-- *       encrypt | decrypt
-- *       type
-- *       | cipher
-- *          cipher_algo <algo> cipher_key <key> cipher_iv <iv>
-- *       | cipher_auth
-- *          cipher_algo <algo> cipher_key <key> cipher_iv <iv>
-- *          auth_algo <algo> auth_key <key> digest_size <size>
-- *       | aead
-- *          aead_algo <algo> aead_key <key> aead_iv <iv> aead_aad <aad>
-- *          digest_size <size>
-- *       data_offset <data_offset>]
-- *    [tag <tag>]
-- *    [decap <n>]
-- *
-- * where:
-- *    <pa> ::= g | y | r | drop
-- */
--static uint32_t
--parse_table_action_fwd(char **tokens,
--	uint32_t n_tokens,
--	struct table_rule_action *a)
--{
--	if ((n_tokens == 0) || (strcmp(tokens[0], "fwd") != 0))
--		return 0;
--
--	tokens++;
--	n_tokens--;
--
--	if (n_tokens && (strcmp(tokens[0], "drop") == 0)) {
--		a->fwd.action = RTE_PIPELINE_ACTION_DROP;
--		a->action_mask |= 1 << RTE_TABLE_ACTION_FWD;
--		return 1 + 1;
--	}
--
--	if (n_tokens && (strcmp(tokens[0], "port") == 0)) {
--		uint32_t id;
--
--		if ((n_tokens < 2) ||
--			parser_read_uint32(&id, tokens[1]))
--			return 0;
--
--		a->fwd.action = RTE_PIPELINE_ACTION_PORT;
--		a->fwd.id = id;
--		a->action_mask |= 1 << RTE_TABLE_ACTION_FWD;
--		return 1 + 2;
--	}
--
--	if (n_tokens && (strcmp(tokens[0], "meta") == 0)) {
--		a->fwd.action = RTE_PIPELINE_ACTION_PORT_META;
--		a->action_mask |= 1 << RTE_TABLE_ACTION_FWD;
--		return 1 + 1;
--	}
--
--	if (n_tokens && (strcmp(tokens[0], "table") == 0)) {
--		uint32_t id;
--
--		if ((n_tokens < 2) ||
--			parser_read_uint32(&id, tokens[1]))
--			return 0;
--
--		a->fwd.action = RTE_PIPELINE_ACTION_TABLE;
--		a->fwd.id = id;
--		a->action_mask |= 1 << RTE_TABLE_ACTION_FWD;
--		return 1 + 2;
--	}
--
--	return 0;
--}
--
--static uint32_t
--parse_table_action_balance(char **tokens,
--	uint32_t n_tokens,
--	struct table_rule_action *a)
--{
--	uint32_t i;
--
--	if ((n_tokens == 0) || (strcmp(tokens[0], "balance") != 0))
--		return 0;
--
--	tokens++;
--	n_tokens--;
--
--	if (n_tokens < RTE_TABLE_ACTION_LB_TABLE_SIZE)
--		return 0;
--
--	for (i = 0; i < RTE_TABLE_ACTION_LB_TABLE_SIZE; i++)
--		if (parser_read_uint32(&a->lb.out[i], tokens[i]) != 0)
--			return 0;
--
--	a->action_mask |= 1 << RTE_TABLE_ACTION_LB;
--	return 1 + RTE_TABLE_ACTION_LB_TABLE_SIZE;
--
--}
--
--static int
--parse_policer_action(char *token, enum rte_table_action_policer *a)
--{
--	if (strcmp(token, "g") == 0) {
--		*a = RTE_TABLE_ACTION_POLICER_COLOR_GREEN;
--		return 0;
--	}
--
--	if (strcmp(token, "y") == 0) {
--		*a = RTE_TABLE_ACTION_POLICER_COLOR_YELLOW;
--		return 0;
--	}
--
--	if (strcmp(token, "r") == 0) {
--		*a = RTE_TABLE_ACTION_POLICER_COLOR_RED;
--		return 0;
--	}
--
--	if (strcmp(token, "drop") == 0) {
--		*a = RTE_TABLE_ACTION_POLICER_DROP;
--		return 0;
--	}
--
--	return -1;
--}
--
--static uint32_t
--parse_table_action_meter_tc(char **tokens,
--	uint32_t n_tokens,
--	struct rte_table_action_mtr_tc_params *mtr)
--{
--	if ((n_tokens < 9) ||
--		strcmp(tokens[0], "meter") ||
--		parser_read_uint32(&mtr->meter_profile_id, tokens[1]) ||
--		strcmp(tokens[2], "policer") ||
--		strcmp(tokens[3], "g") ||
--		parse_policer_action(tokens[4], &mtr->policer[RTE_COLOR_GREEN]) ||
--		strcmp(tokens[5], "y") ||
--		parse_policer_action(tokens[6], &mtr->policer[RTE_COLOR_YELLOW]) ||
--		strcmp(tokens[7], "r") ||
--		parse_policer_action(tokens[8], &mtr->policer[RTE_COLOR_RED]))
--		return 0;
--
--	return 9;
--}
--
--static uint32_t
--parse_table_action_meter(char **tokens,
--	uint32_t n_tokens,
--	struct table_rule_action *a)
--{
--	if ((n_tokens == 0) || strcmp(tokens[0], "meter"))
--		return 0;
--
--	tokens++;
--	n_tokens--;
--
--	if ((n_tokens < 10) ||
--		strcmp(tokens[0], "tc0") ||
--		(parse_table_action_meter_tc(tokens + 1,
--			n_tokens - 1,
--			&a->mtr.mtr[0]) == 0))
--		return 0;
--
--	tokens += 10;
--	n_tokens -= 10;
--
--	if ((n_tokens == 0) || strcmp(tokens[0], "tc1")) {
--		a->mtr.tc_mask = 1;
--		a->action_mask |= 1 << RTE_TABLE_ACTION_MTR;
--		return 1 + 10;
--	}
--
--	if ((n_tokens < 30) ||
--		(parse_table_action_meter_tc(tokens + 1,
--			n_tokens - 1, &a->mtr.mtr[1]) == 0) ||
--		strcmp(tokens[10], "tc2") ||
--		(parse_table_action_meter_tc(tokens + 11,
--			n_tokens - 11, &a->mtr.mtr[2]) == 0) ||
--		strcmp(tokens[20], "tc3") ||
--		(parse_table_action_meter_tc(tokens + 21,
--			n_tokens - 21, &a->mtr.mtr[3]) == 0))
--		return 0;
--
--	a->mtr.tc_mask = 0xF;
--	a->action_mask |= 1 << RTE_TABLE_ACTION_MTR;
--	return 1 + 10 + 3 * 10;
--}
--
--static uint32_t
--parse_table_action_tm(char **tokens,
--	uint32_t n_tokens,
--	struct table_rule_action *a)
--{
--	uint32_t subport_id, pipe_id;
--
--	if ((n_tokens < 5) ||
--		strcmp(tokens[0], "tm") ||
--		strcmp(tokens[1], "subport") ||
--		parser_read_uint32(&subport_id, tokens[2]) ||
--		strcmp(tokens[3], "pipe") ||
--		parser_read_uint32(&pipe_id, tokens[4]))
--		return 0;
--
--	a->tm.subport_id = subport_id;
--	a->tm.pipe_id = pipe_id;
--	a->action_mask |= 1 << RTE_TABLE_ACTION_TM;
--	return 5;
--}
--
--static uint32_t
--parse_table_action_encap(char **tokens,
--	uint32_t n_tokens,
--	struct table_rule_action *a)
--{
--	if ((n_tokens == 0) || strcmp(tokens[0], "encap"))
--		return 0;
--
--	tokens++;
--	n_tokens--;
--
--	/* ether */
--	if (n_tokens && (strcmp(tokens[0], "ether") == 0)) {
--		if ((n_tokens < 3) ||
--			parse_mac_addr(tokens[1], &a->encap.ether.ether.da) ||
--			parse_mac_addr(tokens[2], &a->encap.ether.ether.sa))
--			return 0;
--
--		a->encap.type = RTE_TABLE_ACTION_ENCAP_ETHER;
--		a->action_mask |= 1 << RTE_TABLE_ACTION_ENCAP;
--		return 1 + 3;
--	}
--
--	/* vlan */
--	if (n_tokens && (strcmp(tokens[0], "vlan") == 0)) {
--		uint32_t pcp, dei, vid;
--
--		if ((n_tokens < 6) ||
--			parse_mac_addr(tokens[1], &a->encap.vlan.ether.da) ||
--			parse_mac_addr(tokens[2], &a->encap.vlan.ether.sa) ||
--			parser_read_uint32(&pcp, tokens[3]) ||
--			(pcp > 0x7) ||
--			parser_read_uint32(&dei, tokens[4]) ||
--			(dei > 0x1) ||
--			parser_read_uint32(&vid, tokens[5]) ||
--			(vid > 0xFFF))
--			return 0;
--
--		a->encap.vlan.vlan.pcp = pcp & 0x7;
--		a->encap.vlan.vlan.dei = dei & 0x1;
--		a->encap.vlan.vlan.vid = vid & 0xFFF;
--		a->encap.type = RTE_TABLE_ACTION_ENCAP_VLAN;
--		a->action_mask |= 1 << RTE_TABLE_ACTION_ENCAP;
--		return 1 + 6;
--	}
--
--	/* qinq */
--	if (n_tokens && (strcmp(tokens[0], "qinq") == 0)) {
--		uint32_t svlan_pcp, svlan_dei, svlan_vid;
--		uint32_t cvlan_pcp, cvlan_dei, cvlan_vid;
--
--		if ((n_tokens < 9) ||
--			parse_mac_addr(tokens[1], &a->encap.qinq.ether.da) ||
--			parse_mac_addr(tokens[2], &a->encap.qinq.ether.sa) ||
--			parser_read_uint32(&svlan_pcp, tokens[3]) ||
--			(svlan_pcp > 0x7) ||
--			parser_read_uint32(&svlan_dei, tokens[4]) ||
--			(svlan_dei > 0x1) ||
--			parser_read_uint32(&svlan_vid, tokens[5]) ||
--			(svlan_vid > 0xFFF) ||
--			parser_read_uint32(&cvlan_pcp, tokens[6]) ||
--			(cvlan_pcp > 0x7) ||
--			parser_read_uint32(&cvlan_dei, tokens[7]) ||
--			(cvlan_dei > 0x1) ||
--			parser_read_uint32(&cvlan_vid, tokens[8]) ||
--			(cvlan_vid > 0xFFF))
--			return 0;
--
--		a->encap.qinq.svlan.pcp = svlan_pcp & 0x7;
--		a->encap.qinq.svlan.dei = svlan_dei & 0x1;
--		a->encap.qinq.svlan.vid = svlan_vid & 0xFFF;
--		a->encap.qinq.cvlan.pcp = cvlan_pcp & 0x7;
--		a->encap.qinq.cvlan.dei = cvlan_dei & 0x1;
--		a->encap.qinq.cvlan.vid = cvlan_vid & 0xFFF;
--		a->encap.type = RTE_TABLE_ACTION_ENCAP_QINQ;
--		a->action_mask |= 1 << RTE_TABLE_ACTION_ENCAP;
--		return 1 + 9;
--	}
--
--	/* qinq_pppoe */
--	if (n_tokens && (strcmp(tokens[0], "qinq_pppoe") == 0)) {
--		uint32_t svlan_pcp, svlan_dei, svlan_vid;
--		uint32_t cvlan_pcp, cvlan_dei, cvlan_vid;
--
--		if ((n_tokens < 10) ||
--			parse_mac_addr(tokens[1],
--				&a->encap.qinq_pppoe.ether.da) ||
--			parse_mac_addr(tokens[2],
--				&a->encap.qinq_pppoe.ether.sa) ||
--			parser_read_uint32(&svlan_pcp, tokens[3]) ||
--			(svlan_pcp > 0x7) ||
--			parser_read_uint32(&svlan_dei, tokens[4]) ||
--			(svlan_dei > 0x1) ||
--			parser_read_uint32(&svlan_vid, tokens[5]) ||
--			(svlan_vid > 0xFFF) ||
--			parser_read_uint32(&cvlan_pcp, tokens[6]) ||
--			(cvlan_pcp > 0x7) ||
--			parser_read_uint32(&cvlan_dei, tokens[7]) ||
--			(cvlan_dei > 0x1) ||
--			parser_read_uint32(&cvlan_vid, tokens[8]) ||
--			(cvlan_vid > 0xFFF) ||
--			parser_read_uint16(&a->encap.qinq_pppoe.pppoe.session_id,
--				tokens[9]))
--			return 0;
--
--		a->encap.qinq_pppoe.svlan.pcp = svlan_pcp & 0x7;
--		a->encap.qinq_pppoe.svlan.dei = svlan_dei & 0x1;
--		a->encap.qinq_pppoe.svlan.vid = svlan_vid & 0xFFF;
--		a->encap.qinq_pppoe.cvlan.pcp = cvlan_pcp & 0x7;
--		a->encap.qinq_pppoe.cvlan.dei = cvlan_dei & 0x1;
--		a->encap.qinq_pppoe.cvlan.vid = cvlan_vid & 0xFFF;
--		a->encap.type = RTE_TABLE_ACTION_ENCAP_QINQ_PPPOE;
--		a->action_mask |= 1 << RTE_TABLE_ACTION_ENCAP;
--		return 1 + 10;
--
--	}
--
--	/* mpls */
--	if (n_tokens && (strcmp(tokens[0], "mpls") == 0)) {
--		uint32_t label, tc, ttl;
--
--		if (n_tokens < 8)
--			return 0;
--
--		if (strcmp(tokens[1], "unicast") == 0)
--			a->encap.mpls.unicast = 1;
--		else if (strcmp(tokens[1], "multicast") == 0)
--			a->encap.mpls.unicast = 0;
--		else
--			return 0;
--
--		if (parse_mac_addr(tokens[2], &a->encap.mpls.ether.da) ||
--			parse_mac_addr(tokens[3], &a->encap.mpls.ether.sa) ||
--			strcmp(tokens[4], "label0") ||
--			parser_read_uint32(&label, tokens[5]) ||
--			(label > 0xFFFFF) ||
--			parser_read_uint32(&tc, tokens[6]) ||
--			(tc > 0x7) ||
--			parser_read_uint32(&ttl, tokens[7]) ||
--			(ttl > 0x3F))
--			return 0;
--
--		a->encap.mpls.mpls[0].label = label;
--		a->encap.mpls.mpls[0].tc = tc;
--		a->encap.mpls.mpls[0].ttl = ttl;
--
--		tokens += 8;
--		n_tokens -= 8;
--
--		if ((n_tokens == 0) || strcmp(tokens[0], "label1")) {
--			a->encap.mpls.mpls_count = 1;
--			a->encap.type = RTE_TABLE_ACTION_ENCAP_MPLS;
--			a->action_mask |= 1 << RTE_TABLE_ACTION_ENCAP;
--			return 1 + 8;
--		}
--
--		if ((n_tokens < 4) ||
--			parser_read_uint32(&label, tokens[1]) ||
--			(label > 0xFFFFF) ||
--			parser_read_uint32(&tc, tokens[2]) ||
--			(tc > 0x7) ||
--			parser_read_uint32(&ttl, tokens[3]) ||
--			(ttl > 0x3F))
--			return 0;
--
--		a->encap.mpls.mpls[1].label = label;
--		a->encap.mpls.mpls[1].tc = tc;
--		a->encap.mpls.mpls[1].ttl = ttl;
--
--		tokens += 4;
--		n_tokens -= 4;
--
--		if ((n_tokens == 0) || strcmp(tokens[0], "label2")) {
--			a->encap.mpls.mpls_count = 2;
--			a->encap.type = RTE_TABLE_ACTION_ENCAP_MPLS;
--			a->action_mask |= 1 << RTE_TABLE_ACTION_ENCAP;
--			return 1 + 8 + 4;
--		}
--
--		if ((n_tokens < 4) ||
--			parser_read_uint32(&label, tokens[1]) ||
--			(label > 0xFFFFF) ||
--			parser_read_uint32(&tc, tokens[2]) ||
--			(tc > 0x7) ||
--			parser_read_uint32(&ttl, tokens[3]) ||
--			(ttl > 0x3F))
--			return 0;
--
--		a->encap.mpls.mpls[2].label = label;
--		a->encap.mpls.mpls[2].tc = tc;
--		a->encap.mpls.mpls[2].ttl = ttl;
--
--		tokens += 4;
--		n_tokens -= 4;
--
--		if ((n_tokens == 0) || strcmp(tokens[0], "label3")) {
--			a->encap.mpls.mpls_count = 3;
--			a->encap.type = RTE_TABLE_ACTION_ENCAP_MPLS;
--			a->action_mask |= 1 << RTE_TABLE_ACTION_ENCAP;
--			return 1 + 8 + 4 + 4;
--		}
--
--		if ((n_tokens < 4) ||
--			parser_read_uint32(&label, tokens[1]) ||
--			(label > 0xFFFFF) ||
--			parser_read_uint32(&tc, tokens[2]) ||
--			(tc > 0x7) ||
--			parser_read_uint32(&ttl, tokens[3]) ||
--			(ttl > 0x3F))
--			return 0;
--
--		a->encap.mpls.mpls[3].label = label;
--		a->encap.mpls.mpls[3].tc = tc;
--		a->encap.mpls.mpls[3].ttl = ttl;
--
--		a->encap.mpls.mpls_count = 4;
--		a->encap.type = RTE_TABLE_ACTION_ENCAP_MPLS;
--		a->action_mask |= 1 << RTE_TABLE_ACTION_ENCAP;
--		return 1 + 8 + 4 + 4 + 4;
--	}
--
--	/* pppoe */
--	if (n_tokens && (strcmp(tokens[0], "pppoe") == 0)) {
--		if ((n_tokens < 4) ||
--			parse_mac_addr(tokens[1], &a->encap.pppoe.ether.da) ||
--			parse_mac_addr(tokens[2], &a->encap.pppoe.ether.sa) ||
--			parser_read_uint16(&a->encap.pppoe.pppoe.session_id,
--				tokens[3]))
--			return 0;
--
--		a->encap.type = RTE_TABLE_ACTION_ENCAP_PPPOE;
--		a->action_mask |= 1 << RTE_TABLE_ACTION_ENCAP;
--		return 1 + 4;
--	}
--
--	/* vxlan */
--	if (n_tokens && (strcmp(tokens[0], "vxlan") == 0)) {
--		uint32_t n = 0;
--
--		n_tokens--;
--		tokens++;
--		n++;
--
--		/* ether <da> <sa> */
--		if ((n_tokens < 3) ||
--			strcmp(tokens[0], "ether") ||
--			parse_mac_addr(tokens[1], &a->encap.vxlan.ether.da) ||
--			parse_mac_addr(tokens[2], &a->encap.vxlan.ether.sa))
--			return 0;
--
--		n_tokens -= 3;
--		tokens += 3;
--		n += 3;
--
--		/* [vlan <pcp> <dei> <vid>] */
--		if (strcmp(tokens[0], "vlan") == 0) {
--			uint32_t pcp, dei, vid;
--
--			if ((n_tokens < 4) ||
--				parser_read_uint32(&pcp, tokens[1]) ||
--				(pcp > 7) ||
--				parser_read_uint32(&dei, tokens[2]) ||
--				(dei > 1) ||
--				parser_read_uint32(&vid, tokens[3]) ||
--				(vid > 0xFFF))
--				return 0;
--
--			a->encap.vxlan.vlan.pcp = pcp;
--			a->encap.vxlan.vlan.dei = dei;
--			a->encap.vxlan.vlan.vid = vid;
--
--			n_tokens -= 4;
--			tokens += 4;
--			n += 4;
--		}
--
--		/* ipv4 <sa> <da> <dscp> <ttl>
--		   | ipv6 <sa> <da> <flow_label> <dscp> <hop_limit> */
--		if (strcmp(tokens[0], "ipv4") == 0) {
--			struct in_addr sa, da;
--			uint8_t dscp, ttl;
--
--			if ((n_tokens < 5) ||
--				parse_ipv4_addr(tokens[1], &sa) ||
--				parse_ipv4_addr(tokens[2], &da) ||
--				parser_read_uint8(&dscp, tokens[3]) ||
--				(dscp > 64) ||
--				parser_read_uint8(&ttl, tokens[4]))
--				return 0;
--
--			a->encap.vxlan.ipv4.sa = rte_be_to_cpu_32(sa.s_addr);
--			a->encap.vxlan.ipv4.da = rte_be_to_cpu_32(da.s_addr);
--			a->encap.vxlan.ipv4.dscp = dscp;
--			a->encap.vxlan.ipv4.ttl = ttl;
--
--			n_tokens -= 5;
--			tokens += 5;
--			n += 5;
--		} else if (strcmp(tokens[0], "ipv6") == 0) {
--			struct rte_ipv6_addr sa, da;
--			uint32_t flow_label;
--			uint8_t dscp, hop_limit;
--
--			if ((n_tokens < 6) ||
--				parse_ipv6_addr(tokens[1], &sa) ||
--				parse_ipv6_addr(tokens[2], &da) ||
--				parser_read_uint32(&flow_label, tokens[3]) ||
--				parser_read_uint8(&dscp, tokens[4]) ||
--				(dscp > 64) ||
--				parser_read_uint8(&hop_limit, tokens[5]))
--				return 0;
--
--			a->encap.vxlan.ipv6.sa = sa;
--			a->encap.vxlan.ipv6.da = da;
--			a->encap.vxlan.ipv6.flow_label = flow_label;
--			a->encap.vxlan.ipv6.dscp = dscp;
--			a->encap.vxlan.ipv6.hop_limit = hop_limit;
--
--			n_tokens -= 6;
--			tokens += 6;
--			n += 6;
--		} else
--			return 0;
--
--		/* udp <sp> <dp> */
--		if ((n_tokens < 3) ||
--			strcmp(tokens[0], "udp") ||
--			parser_read_uint16(&a->encap.vxlan.udp.sp, tokens[1]) ||
--			parser_read_uint16(&a->encap.vxlan.udp.dp, tokens[2]))
--			return 0;
--
--		n_tokens -= 3;
--		tokens += 3;
--		n += 3;
--
--		/* vxlan <vni> */
--		if ((n_tokens < 2) ||
--			strcmp(tokens[0], "vxlan") ||
--			parser_read_uint32(&a->encap.vxlan.vxlan.vni, tokens[1]) ||
--			(a->encap.vxlan.vxlan.vni > 0xFFFFFF))
--			return 0;
--
--		n_tokens -= 2;
--		tokens += 2;
--		n += 2;
--
--		a->encap.type = RTE_TABLE_ACTION_ENCAP_VXLAN;
--		a->action_mask |= 1 << RTE_TABLE_ACTION_ENCAP;
--		return 1 + n;
--	}
--
--	return 0;
--}
--
--static uint32_t
--parse_table_action_nat(char **tokens,
--	uint32_t n_tokens,
--	struct table_rule_action *a)
--{
--	if ((n_tokens < 4) ||
--		strcmp(tokens[0], "nat"))
--		return 0;
--
--	if (strcmp(tokens[1], "ipv4") == 0) {
--		struct in_addr addr;
--		uint16_t port;
--
--		if (parse_ipv4_addr(tokens[2], &addr) ||
--			parser_read_uint16(&port, tokens[3]))
--			return 0;
--
--		a->nat.ip_version = 1;
--		a->nat.addr.ipv4 = rte_be_to_cpu_32(addr.s_addr);
--		a->nat.port = port;
--		a->action_mask |= 1 << RTE_TABLE_ACTION_NAT;
--		return 4;
--	}
--
--	if (strcmp(tokens[1], "ipv6") == 0) {
--		struct rte_ipv6_addr addr;
--		uint16_t port;
--
--		if (parse_ipv6_addr(tokens[2], &addr) ||
--			parser_read_uint16(&port, tokens[3]))
--			return 0;
--
--		a->nat.ip_version = 0;
--		a->nat.addr.ipv6 = addr;
--		a->nat.port = port;
--		a->action_mask |= 1 << RTE_TABLE_ACTION_NAT;
--		return 4;
--	}
--
--	return 0;
--}
--
--static uint32_t
--parse_table_action_ttl(char **tokens,
--	uint32_t n_tokens,
--	struct table_rule_action *a)
--{
--	if ((n_tokens < 2) ||
--		strcmp(tokens[0], "ttl"))
--		return 0;
--
--	if (strcmp(tokens[1], "dec") == 0)
--		a->ttl.decrement = 1;
--	else if (strcmp(tokens[1], "keep") == 0)
--		a->ttl.decrement = 0;
--	else
--		return 0;
--
--	a->action_mask |= 1 << RTE_TABLE_ACTION_TTL;
--	return 2;
--}
--
--static uint32_t
--parse_table_action_stats(char **tokens,
--	uint32_t n_tokens,
--	struct table_rule_action *a)
--{
--	if ((n_tokens < 1) ||
--		strcmp(tokens[0], "stats"))
--		return 0;
--
--	a->stats.n_packets = 0;
--	a->stats.n_bytes = 0;
--	a->action_mask |= 1 << RTE_TABLE_ACTION_STATS;
--	return 1;
--}
--
--static uint32_t
--parse_table_action_time(char **tokens,
--	uint32_t n_tokens,
--	struct table_rule_action *a)
--{
--	if ((n_tokens < 1) ||
--		strcmp(tokens[0], "time"))
--		return 0;
--
--	a->time.time = rte_rdtsc();
--	a->action_mask |= 1 << RTE_TABLE_ACTION_TIME;
--	return 1;
--}
--
--static void
--parse_free_sym_crypto_param_data(struct rte_table_action_sym_crypto_params *p)
--{
--	struct rte_crypto_sym_xform *xform[2] = {NULL};
--	uint32_t i;
--
--	xform[0] = p->xform;
--	if (xform[0])
--		xform[1] = xform[0]->next;
--
--	for (i = 0; i < 2; i++) {
--		if (xform[i] == NULL)
--			continue;
--
--		switch (xform[i]->type) {
--		case RTE_CRYPTO_SYM_XFORM_CIPHER:
--			free(p->cipher_auth.cipher_iv.val);
--			free(p->cipher_auth.cipher_iv_update.val);
--			break;
--		case RTE_CRYPTO_SYM_XFORM_AUTH:
--			if (p->cipher_auth.auth_iv.val)
--				free(p->cipher_auth.cipher_iv.val);
--			if (p->cipher_auth.auth_iv_update.val)
--				free(p->cipher_auth.cipher_iv_update.val);
--			break;
--		case RTE_CRYPTO_SYM_XFORM_AEAD:
--			free(p->aead.iv.val);
--			free(p->aead.aad.val);
--			break;
--		default:
--			continue;
--		}
--	}
--
--}
--
--static struct rte_crypto_sym_xform *
--parse_table_action_cipher(struct rte_table_action_sym_crypto_params *p,
--		uint8_t *key, uint32_t max_key_len, char **tokens,
--		uint32_t n_tokens, uint32_t encrypt, uint32_t *used_n_tokens)
--{
--	struct rte_crypto_sym_xform *xform_cipher;
--	int status;
--	size_t len;
--
--	if (n_tokens < 7 || strcmp(tokens[1], "cipher_algo") ||
--			strcmp(tokens[3], "cipher_key") ||
--			strcmp(tokens[5], "cipher_iv"))
--		return NULL;
--
--	xform_cipher = calloc(1, sizeof(*xform_cipher));
--	if (xform_cipher == NULL)
--		return NULL;
--
--	xform_cipher->type = RTE_CRYPTO_SYM_XFORM_CIPHER;
--	xform_cipher->cipher.op = encrypt ? RTE_CRYPTO_CIPHER_OP_ENCRYPT :
--			RTE_CRYPTO_CIPHER_OP_DECRYPT;
--
--	/* cipher_algo */
--	status = rte_cryptodev_get_cipher_algo_enum(
--			&xform_cipher->cipher.algo, tokens[2]);
--	if (status < 0)
--		goto error_exit;
--
--	/* cipher_key */
--	len = strlen(tokens[4]);
--	if (len / 2 > max_key_len) {
--		status = -ENOMEM;
--		goto error_exit;
--	}
--
--	status = parse_hex_string(tokens[4], key, (uint32_t *)&len);
--	if (status < 0)
--		goto error_exit;
--
--	xform_cipher->cipher.key.data = key;
--	xform_cipher->cipher.key.length = (uint16_t)len;
--
--	/* cipher_iv */
--	len = strlen(tokens[6]);
--
--	p->cipher_auth.cipher_iv.val = calloc(1, len / 2 + 1);
--	if (p->cipher_auth.cipher_iv.val == NULL)
--		goto error_exit;
--
--	status = parse_hex_string(tokens[6],
--			p->cipher_auth.cipher_iv.val,
--			(uint32_t *)&len);
--	if (status < 0)
--		goto error_exit;
--
--	xform_cipher->cipher.iv.length = (uint16_t)len;
--	xform_cipher->cipher.iv.offset = RTE_TABLE_ACTION_SYM_CRYPTO_IV_OFFSET;
--	p->cipher_auth.cipher_iv.length = (uint32_t)len;
--	*used_n_tokens = 7;
--
--	return xform_cipher;
--
--error_exit:
--	if (p->cipher_auth.cipher_iv.val) {
--		free(p->cipher_auth.cipher_iv.val);
--		p->cipher_auth.cipher_iv.val = NULL;
--	}
--
--	free(xform_cipher);
--
--	return NULL;
--}
--
--static struct rte_crypto_sym_xform *
--parse_table_action_cipher_auth(struct rte_table_action_sym_crypto_params *p,
--		uint8_t *key, uint32_t max_key_len, char **tokens,
--		uint32_t n_tokens, uint32_t encrypt, uint32_t *used_n_tokens)
--{
--	struct rte_crypto_sym_xform *xform_cipher;
--	struct rte_crypto_sym_xform *xform_auth;
--	int status;
--	size_t len;
--
--	if (n_tokens < 13 ||
--			strcmp(tokens[7], "auth_algo") ||
--			strcmp(tokens[9], "auth_key") ||
--			strcmp(tokens[11], "digest_size"))
--		return NULL;
--
--	xform_auth = calloc(1, sizeof(*xform_auth));
--	if (xform_auth == NULL)
--		return NULL;
--
--	xform_auth->type = RTE_CRYPTO_SYM_XFORM_AUTH;
--	xform_auth->auth.op = encrypt ? RTE_CRYPTO_AUTH_OP_GENERATE :
--			RTE_CRYPTO_AUTH_OP_VERIFY;
--
--	/* auth_algo */
--	status = rte_cryptodev_get_auth_algo_enum(&xform_auth->auth.algo,
--			tokens[8]);
--	if (status < 0)
--		goto error_exit;
--
--	/* auth_key */
--	len = strlen(tokens[10]);
--	if (len / 2 > max_key_len) {
--		status = -ENOMEM;
--		goto error_exit;
--	}
--
--	status = parse_hex_string(tokens[10], key, (uint32_t *)&len);
--	if (status < 0)
--		goto error_exit;
--
--	xform_auth->auth.key.data = key;
--	xform_auth->auth.key.length = (uint16_t)len;
--
--	key += xform_auth->auth.key.length;
--	max_key_len -= xform_auth->auth.key.length;
--
--	if (strcmp(tokens[11], "digest_size"))
--		goto error_exit;
--
--	status = parser_read_uint16(&xform_auth->auth.digest_length,
--			tokens[12]);
--	if (status < 0)
--		goto error_exit;
--
--	xform_cipher = parse_table_action_cipher(p, key, max_key_len, tokens,
--			7, encrypt, used_n_tokens);
--	if (xform_cipher == NULL)
--		goto error_exit;
--
--	*used_n_tokens += 6;
--
--	if (encrypt) {
--		xform_cipher->next = xform_auth;
--		return xform_cipher;
--	} else {
--		xform_auth->next = xform_cipher;
--		return xform_auth;
--	}
--
--error_exit:
--	if (p->cipher_auth.auth_iv.val) {
--		free(p->cipher_auth.auth_iv.val);
--		p->cipher_auth.auth_iv.val = 0;
--	}
--
--	free(xform_auth);
--
--	return NULL;
--}
--
--static struct rte_crypto_sym_xform *
--parse_table_action_aead(struct rte_table_action_sym_crypto_params *p,
--		uint8_t *key, uint32_t max_key_len, char **tokens,
--		uint32_t n_tokens, uint32_t encrypt, uint32_t *used_n_tokens)
--{
--	struct rte_crypto_sym_xform *xform_aead;
--	int status;
--	size_t len;
--
--	if (n_tokens < 11 || strcmp(tokens[1], "aead_algo") ||
--			strcmp(tokens[3], "aead_key") ||
--			strcmp(tokens[5], "aead_iv") ||
--			strcmp(tokens[7], "aead_aad") ||
--			strcmp(tokens[9], "digest_size"))
--		return NULL;
--
--	xform_aead = calloc(1, sizeof(*xform_aead));
--	if (xform_aead == NULL)
--		return NULL;
--
--	xform_aead->type = RTE_CRYPTO_SYM_XFORM_AEAD;
--	xform_aead->aead.op = encrypt ? RTE_CRYPTO_AEAD_OP_ENCRYPT :
--			RTE_CRYPTO_AEAD_OP_DECRYPT;
--
--	/* aead_algo */
--	status = rte_cryptodev_get_aead_algo_enum(&xform_aead->aead.algo,
--			tokens[2]);
--	if (status < 0)
--		goto error_exit;
--
--	/* aead_key */
--	len = strlen(tokens[4]);
--	if (len / 2 > max_key_len) {
--		status = -ENOMEM;
--		goto error_exit;
--	}
--
--	status = parse_hex_string(tokens[4], key, (uint32_t *)&len);
--	if (status < 0)
--		goto error_exit;
--
--	xform_aead->aead.key.data = key;
--	xform_aead->aead.key.length = (uint16_t)len;
--
--	/* aead_iv */
--	len = strlen(tokens[6]);
--	p->aead.iv.val = calloc(1, len / 2 + 1);
--	if (p->aead.iv.val == NULL)
--		goto error_exit;
--
--	status = parse_hex_string(tokens[6], p->aead.iv.val,
--			(uint32_t *)&len);
--	if (status < 0)
--		goto error_exit;
--
--	xform_aead->aead.iv.length = (uint16_t)len;
--	xform_aead->aead.iv.offset = RTE_TABLE_ACTION_SYM_CRYPTO_IV_OFFSET;
--	p->aead.iv.length = (uint32_t)len;
--
--	/* aead_aad */
--	len = strlen(tokens[8]);
--	p->aead.aad.val = calloc(1, len / 2 + 1);
--	if (p->aead.aad.val == NULL)
--		goto error_exit;
--
--	status = parse_hex_string(tokens[8], p->aead.aad.val, (uint32_t *)&len);
--	if (status < 0)
--		goto error_exit;
--
--	xform_aead->aead.aad_length = (uint16_t)len;
--	p->aead.aad.length = (uint32_t)len;
--
--	/* digest_size */
--	status = parser_read_uint16(&xform_aead->aead.digest_length,
--			tokens[10]);
--	if (status < 0)
--		goto error_exit;
--
--	*used_n_tokens = 11;
--
--	return xform_aead;
--
--error_exit:
--	if (p->aead.iv.val) {
--		free(p->aead.iv.val);
--		p->aead.iv.val = NULL;
--	}
--	if (p->aead.aad.val) {
--		free(p->aead.aad.val);
--		p->aead.aad.val = NULL;
--	}
--
--	free(xform_aead);
--
--	return NULL;
--}
--
--
--static uint32_t
--parse_table_action_sym_crypto(char **tokens,
--	uint32_t n_tokens,
--	struct table_rule_action *a)
--{
--	struct rte_table_action_sym_crypto_params *p = &a->sym_crypto;
--	struct rte_crypto_sym_xform *xform = NULL;
--	uint8_t *key = a->sym_crypto_key;
--	uint32_t max_key_len = SYM_CRYPTO_MAX_KEY_SIZE;
--	uint32_t used_n_tokens;
--	uint32_t encrypt;
--	int status;
--
--	if ((n_tokens < 12) ||
--		strcmp(tokens[0], "sym_crypto") ||
--		strcmp(tokens[2], "type"))
--		return 0;
--
--	memset(p, 0, sizeof(*p));
--
--	if (strcmp(tokens[1], "encrypt") == 0)
--		encrypt = 1;
--	else
--		encrypt = 0;
--
--	status = parser_read_uint32(&p->data_offset, tokens[n_tokens - 1]);
--	if (status < 0)
--		return 0;
--
--	if (strcmp(tokens[3], "cipher") == 0) {
--		tokens += 3;
--		n_tokens -= 3;
--
--		xform = parse_table_action_cipher(p, key, max_key_len, tokens,
--				n_tokens, encrypt, &used_n_tokens);
--	} else if (strcmp(tokens[3], "cipher_auth") == 0) {
--		tokens += 3;
--		n_tokens -= 3;
--
--		xform = parse_table_action_cipher_auth(p, key, max_key_len,
--				tokens, n_tokens, encrypt, &used_n_tokens);
--	} else if (strcmp(tokens[3], "aead") == 0) {
--		tokens += 3;
--		n_tokens -= 3;
--
--		xform = parse_table_action_aead(p, key, max_key_len, tokens,
--				n_tokens, encrypt, &used_n_tokens);
--	}
--
--	if (xform == NULL)
--		return 0;
--
--	p->xform = xform;
--
--	if (strcmp(tokens[used_n_tokens], "data_offset")) {
--		parse_free_sym_crypto_param_data(p);
--		return 0;
--	}
--
--	a->action_mask |= 1 << RTE_TABLE_ACTION_SYM_CRYPTO;
--
--	return used_n_tokens + 5;
--}
--
--static uint32_t
--parse_table_action_tag(char **tokens,
--	uint32_t n_tokens,
--	struct table_rule_action *a)
--{
--	if ((n_tokens < 2) ||
--		strcmp(tokens[0], "tag"))
--		return 0;
--
--	if (parser_read_uint32(&a->tag.tag, tokens[1]))
--		return 0;
--
--	a->action_mask |= 1 << RTE_TABLE_ACTION_TAG;
--	return 2;
--}
--
--static uint32_t
--parse_table_action_decap(char **tokens,
--	uint32_t n_tokens,
--	struct table_rule_action *a)
--{
--	if ((n_tokens < 2) ||
--		strcmp(tokens[0], "decap"))
--		return 0;
--
--	if (parser_read_uint16(&a->decap.n, tokens[1]))
--		return 0;
--
--	a->action_mask |= 1 << RTE_TABLE_ACTION_DECAP;
--	return 2;
--}
--
--static uint32_t
--parse_table_action(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size,
--	struct table_rule_action *a)
--{
--	uint32_t n_tokens0 = n_tokens;
--
--	memset(a, 0, sizeof(*a));
--
--	if ((n_tokens < 2) ||
--		strcmp(tokens[0], "action"))
--		return 0;
--
--	tokens++;
--	n_tokens--;
--
--	if (n_tokens && (strcmp(tokens[0], "fwd") == 0)) {
--		uint32_t n;
--
--		n = parse_table_action_fwd(tokens, n_tokens, a);
--		if (n == 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID,
--				"action fwd");
--			return 0;
--		}
--
--		tokens += n;
--		n_tokens -= n;
--	}
--
--	if (n_tokens && (strcmp(tokens[0], "balance") == 0)) {
--		uint32_t n;
--
--		n = parse_table_action_balance(tokens, n_tokens, a);
--		if (n == 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID,
--				"action balance");
--			return 0;
--		}
--
--		tokens += n;
--		n_tokens -= n;
--	}
--
--	if (n_tokens && (strcmp(tokens[0], "meter") == 0)) {
--		uint32_t n;
--
--		n = parse_table_action_meter(tokens, n_tokens, a);
--		if (n == 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID,
--				"action meter");
--			return 0;
--		}
--
--		tokens += n;
--		n_tokens -= n;
--	}
--
--	if (n_tokens && (strcmp(tokens[0], "tm") == 0)) {
--		uint32_t n;
--
--		n = parse_table_action_tm(tokens, n_tokens, a);
--		if (n == 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID,
--				"action tm");
--			return 0;
--		}
--
--		tokens += n;
--		n_tokens -= n;
--	}
--
--	if (n_tokens && (strcmp(tokens[0], "encap") == 0)) {
--		uint32_t n;
--
--		n = parse_table_action_encap(tokens, n_tokens, a);
--		if (n == 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID,
--				"action encap");
--			return 0;
--		}
--
--		tokens += n;
--		n_tokens -= n;
--	}
--
--	if (n_tokens && (strcmp(tokens[0], "nat") == 0)) {
--		uint32_t n;
--
--		n = parse_table_action_nat(tokens, n_tokens, a);
--		if (n == 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID,
--				"action nat");
--			return 0;
--		}
--
--		tokens += n;
--		n_tokens -= n;
--	}
--
--	if (n_tokens && (strcmp(tokens[0], "ttl") == 0)) {
--		uint32_t n;
--
--		n = parse_table_action_ttl(tokens, n_tokens, a);
--		if (n == 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID,
--				"action ttl");
--			return 0;
--		}
--
--		tokens += n;
--		n_tokens -= n;
--	}
--
--	if (n_tokens && (strcmp(tokens[0], "stats") == 0)) {
--		uint32_t n;
--
--		n = parse_table_action_stats(tokens, n_tokens, a);
--		if (n == 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID,
--				"action stats");
--			return 0;
--		}
--
--		tokens += n;
--		n_tokens -= n;
--	}
--
--	if (n_tokens && (strcmp(tokens[0], "time") == 0)) {
--		uint32_t n;
--
--		n = parse_table_action_time(tokens, n_tokens, a);
--		if (n == 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID,
--				"action time");
--			return 0;
--		}
--
--		tokens += n;
--		n_tokens -= n;
--	}
--
--	if (n_tokens && (strcmp(tokens[0], "sym_crypto") == 0)) {
--		uint32_t n;
--
--		n = parse_table_action_sym_crypto(tokens, n_tokens, a);
--		if (n == 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID,
--				"action sym_crypto");
--		}
--
--		tokens += n;
--		n_tokens -= n;
--	}
--
--	if (n_tokens && (strcmp(tokens[0], "tag") == 0)) {
--		uint32_t n;
--
--		n = parse_table_action_tag(tokens, n_tokens, a);
--		if (n == 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID,
--				"action tag");
--			return 0;
--		}
--
--		tokens += n;
--		n_tokens -= n;
--	}
--
--	if (n_tokens && (strcmp(tokens[0], "decap") == 0)) {
--		uint32_t n;
--
--		n = parse_table_action_decap(tokens, n_tokens, a);
--		if (n == 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID,
--				"action decap");
--			return 0;
--		}
--
--		tokens += n;
--		n_tokens -= n;
--	}
--
--	if (n_tokens0 - n_tokens == 1) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "action");
--		return 0;
--	}
--
--	return n_tokens0 - n_tokens;
--}
--
--
--static const char cmd_pipeline_table_rule_add_help[] =
--"pipeline <pipeline_name> table <table_id> rule add\n"
--"     match <match>\n"
--"     action <table_action>\n";
--
--static void
--cmd_pipeline_table_rule_add(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	struct table_rule_match m;
--	struct table_rule_action a;
--	char *pipeline_name;
--	uint32_t table_id, t0, n_tokens_parsed;
--	int status;
--
--	if (n_tokens < 8) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	pipeline_name = tokens[1];
--
--	if (strcmp(tokens[2], "table") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "table");
--		return;
--	}
--
--	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
--		return;
--	}
--
--	if (strcmp(tokens[4], "rule") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rule");
--		return;
--	}
--
--	if (strcmp(tokens[5], "add") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "add");
--		return;
--	}
--
--	t0 = 6;
--
--	/* match */
--	n_tokens_parsed = parse_match(tokens + t0,
--		n_tokens - t0,
--		out,
--		out_size,
--		&m);
--	if (n_tokens_parsed == 0)
--		return;
--	t0 += n_tokens_parsed;
--
--	/* action */
--	n_tokens_parsed = parse_table_action(tokens + t0,
--		n_tokens - t0,
--		out,
--		out_size,
--		&a);
--	if (n_tokens_parsed == 0)
--		return;
--	t0 += n_tokens_parsed;
--
--	if (t0 != n_tokens) {
--		snprintf(out, out_size, MSG_ARG_INVALID, tokens[0]);
--		return;
--	}
--
--	status = pipeline_table_rule_add(pipeline_name, table_id, &m, &a);
--	if (status) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--
--	if (a.action_mask & 1 << RTE_TABLE_ACTION_SYM_CRYPTO)
--		parse_free_sym_crypto_param_data(&a.sym_crypto);
--}
--
--
--static const char cmd_pipeline_table_rule_add_default_help[] =
--"pipeline <pipeline_name> table <table_id> rule add\n"
--"     match\n"
--"        default\n"
--"     action\n"
--"        fwd\n"
--"           drop\n"
--"           | port <port_id>\n"
--"           | meta\n"
--"           | table <table_id>\n";
--
--static void
--cmd_pipeline_table_rule_add_default(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	struct table_rule_action action;
--	char *pipeline_name;
--	uint32_t table_id;
--	int status;
--
--	if ((n_tokens != 11) && (n_tokens != 12)) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	pipeline_name = tokens[1];
--
--	if (strcmp(tokens[2], "table") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "table");
--		return;
--	}
--
--	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
--		return;
--	}
--
--	if (strcmp(tokens[4], "rule") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rule");
--		return;
--	}
--
--	if (strcmp(tokens[5], "add") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "add");
--		return;
--	}
--
--	if (strcmp(tokens[6], "match") != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "match");
--		return;
--	}
--
--	if (strcmp(tokens[7], "default") != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "default");
--		return;
--	}
--
--	if (strcmp(tokens[8], "action") != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "action");
--		return;
--	}
--
--	if (strcmp(tokens[9], "fwd") != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "fwd");
--		return;
--	}
--
--	action.action_mask = 1 << RTE_TABLE_ACTION_FWD;
--
--	if (strcmp(tokens[10], "drop") == 0) {
--		if (n_tokens != 11) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--			return;
--		}
--
--		action.fwd.action = RTE_PIPELINE_ACTION_DROP;
--	} else if (strcmp(tokens[10], "port") == 0) {
--		uint32_t id;
--
--		if (n_tokens != 12) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--			return;
--		}
--
--		if (parser_read_uint32(&id, tokens[11]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "port_id");
--			return;
--		}
--
--		action.fwd.action = RTE_PIPELINE_ACTION_PORT;
--		action.fwd.id = id;
--	} else if (strcmp(tokens[10], "meta") == 0) {
--		if (n_tokens != 11) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--			return;
--		}
--
--		action.fwd.action = RTE_PIPELINE_ACTION_PORT_META;
--	} else if (strcmp(tokens[10], "table") == 0) {
--		uint32_t id;
--
--		if (n_tokens != 12) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--			return;
--		}
--
--		if (parser_read_uint32(&id, tokens[11]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
--			return;
--		}
--
--		action.fwd.action = RTE_PIPELINE_ACTION_TABLE;
--		action.fwd.id = id;
--	} else {
--		snprintf(out, out_size, MSG_ARG_INVALID,
--			"drop or port or meta or table");
--		return;
--	}
--
--	status = pipeline_table_rule_add_default(pipeline_name,
--		table_id,
--		&action);
--	if (status) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--}
--
--
--static const char cmd_pipeline_table_rule_add_bulk_help[] =
--"pipeline <pipeline_name> table <table_id> rule add bulk <file_name>\n"
--"\n"
--"  File <file_name>:\n"
--"  - line format: match <match> action <action>\n";
--
--static int
--cli_rule_file_process(const char *file_name,
--	size_t line_len_max,
--	struct table_rule_list **rule_list,
--	uint32_t *n_rules,
--	uint32_t *line_number,
--	char *out,
--	size_t out_size);
--
--static void
--cmd_pipeline_table_rule_add_bulk(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	struct table_rule_list *list = NULL;
--	char *pipeline_name, *file_name;
--	uint32_t table_id, n_rules, n_rules_added, n_rules_not_added, line_number;
--	int status;
--
--	if (n_tokens != 8) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	pipeline_name = tokens[1];
--
--	if (strcmp(tokens[2], "table") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "table");
--		return;
--	}
--
--	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
--		return;
--	}
--
--	if (strcmp(tokens[4], "rule") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rule");
--		return;
--	}
--
--	if (strcmp(tokens[5], "add") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "add");
--		return;
--	}
--
--	if (strcmp(tokens[6], "bulk") != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "bulk");
--		return;
--	}
--
--	file_name = tokens[7];
--
--	/* Load rules from file. */
--	status = cli_rule_file_process(file_name,
--		1024,
--		&list,
--		&n_rules,
--		&line_number,
--		out,
--		out_size);
--	if (status) {
--		snprintf(out, out_size, MSG_FILE_ERR, file_name, line_number);
--		return;
--	}
--
--	/* Rule bulk add */
--	status = pipeline_table_rule_add_bulk(pipeline_name,
--		table_id,
--		list,
--		&n_rules_added,
--		&n_rules_not_added);
--	if (status) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--
--	snprintf(out, out_size, "Added %u rules out of %u.\n",
--		n_rules_added,
--		n_rules);
--}
--
--
--static const char cmd_pipeline_table_rule_delete_help[] =
--"pipeline <pipeline_name> table <table_id> rule delete\n"
--"     match <match>\n";
--
--static void
--cmd_pipeline_table_rule_delete(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	struct table_rule_match m;
--	char *pipeline_name;
--	uint32_t table_id, n_tokens_parsed, t0;
--	int status;
--
--	if (n_tokens < 8) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	pipeline_name = tokens[1];
--
--	if (strcmp(tokens[2], "table") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "table");
--		return;
--	}
--
--	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
--		return;
--	}
--
--	if (strcmp(tokens[4], "rule") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rule");
--		return;
--	}
--
--	if (strcmp(tokens[5], "delete") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "delete");
--		return;
--	}
--
--	t0 = 6;
--
--	/* match */
--	n_tokens_parsed = parse_match(tokens + t0,
--		n_tokens - t0,
--		out,
--		out_size,
--		&m);
--	if (n_tokens_parsed == 0)
--		return;
--	t0 += n_tokens_parsed;
--
--	if (n_tokens != t0) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	status = pipeline_table_rule_delete(pipeline_name,
--		table_id,
--		&m);
--	if (status) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--}
--
--
--static const char cmd_pipeline_table_rule_delete_default_help[] =
--"pipeline <pipeline_name> table <table_id> rule delete\n"
--"     match\n"
--"        default\n";
--
--static void
--cmd_pipeline_table_rule_delete_default(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	char *pipeline_name;
--	uint32_t table_id;
--	int status;
--
--	if (n_tokens != 8) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	pipeline_name = tokens[1];
--
--	if (strcmp(tokens[2], "table") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "table");
--		return;
--	}
--
--	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
--		return;
--	}
--
--	if (strcmp(tokens[4], "rule") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rule");
--		return;
--	}
--
--	if (strcmp(tokens[5], "delete") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "delete");
--		return;
--	}
--
--	if (strcmp(tokens[6], "match") != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "match");
--		return;
--	}
--
--	if (strcmp(tokens[7], "default") != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "default");
--		return;
--	}
--
--	status = pipeline_table_rule_delete_default(pipeline_name,
--		table_id);
--	if (status) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--}
--
--static void
--ether_addr_show(FILE *f, struct rte_ether_addr *addr)
--{
--	fprintf(f, RTE_ETHER_ADDR_PRT_FMT, RTE_ETHER_ADDR_BYTES(addr));
--}
--
--static void
--ipv4_addr_show(FILE *f, uint32_t addr)
--{
--	fprintf(f, "%u.%u.%u.%u",
--		addr >> 24,
--		(addr >> 16) & 0xFF,
--		(addr >> 8) & 0xFF,
--		addr & 0xFF);
--}
--
--static void
--ipv6_addr_show(FILE *f, const struct rte_ipv6_addr *ip)
--{
--	fprintf(f, RTE_IPV6_ADDR_FMT ":", RTE_IPV6_ADDR_SPLIT(ip));
--}
--
--static const char *
--policer_action_string(enum rte_table_action_policer action) {
 -	switch (action) {
--		case RTE_TABLE_ACTION_POLICER_COLOR_GREEN: return "G";
--		case RTE_TABLE_ACTION_POLICER_COLOR_YELLOW: return "Y";
--		case RTE_TABLE_ACTION_POLICER_COLOR_RED: return "R";
--		case RTE_TABLE_ACTION_POLICER_DROP: return "D";
--		default: return "?";
+-	case RTE_TABLE_ACTION_LB:
+-		return sizeof(struct rte_table_action_lb_config);
+-	case RTE_TABLE_ACTION_MTR:
+-		return sizeof(struct rte_table_action_mtr_config);
+-	case RTE_TABLE_ACTION_TM:
+-		return sizeof(struct rte_table_action_tm_config);
+-	case RTE_TABLE_ACTION_ENCAP:
+-		return sizeof(struct rte_table_action_encap_config);
+-	case RTE_TABLE_ACTION_NAT:
+-		return sizeof(struct rte_table_action_nat_config);
+-	case RTE_TABLE_ACTION_TTL:
+-		return sizeof(struct rte_table_action_ttl_config);
+-	case RTE_TABLE_ACTION_STATS:
+-		return sizeof(struct rte_table_action_stats_config);
+-	case RTE_TABLE_ACTION_SYM_CRYPTO:
+-		return sizeof(struct rte_table_action_sym_crypto_config);
+-	default:
+-		return 0;
 -	}
 -}
 -
--static int
--table_rule_show(const char *pipeline_name,
--	uint32_t table_id,
--	const char *file_name)
+-static void*
+-action_cfg_get(struct ap_config *ap_config,
+-	enum rte_table_action_type type)
 -{
--	struct pipeline *pipeline;
--	struct table *table;
--	struct table_rule *rule;
--	FILE *f = NULL;
--	uint32_t i;
+-	switch (type) {
+-	case RTE_TABLE_ACTION_LB:
+-		return &ap_config->lb;
 -
--	/* Check input params. */
--	if ((pipeline_name == NULL) ||
--		(file_name == NULL))
--		return -1;
+-	case RTE_TABLE_ACTION_MTR:
+-		return &ap_config->mtr;
 -
--	pipeline = pipeline_find(pipeline_name);
--	if (pipeline == NULL || table_id >= pipeline->n_tables)
--		return -1;
+-	case RTE_TABLE_ACTION_TM:
+-		return &ap_config->tm;
 -
--	table = &pipeline->table[table_id];
+-	case RTE_TABLE_ACTION_ENCAP:
+-		return &ap_config->encap;
 -
--	/* Open file. */
--	f = fopen(file_name, "w");
--	if (f == NULL)
--		return -1;
+-	case RTE_TABLE_ACTION_NAT:
+-		return &ap_config->nat;
 -
--	/* Write table rules to file. */
--	TAILQ_FOREACH(rule, &table->rules, node) {
--		struct table_rule_match *m = &rule->match;
--		struct table_rule_action *a = &rule->action;
+-	case RTE_TABLE_ACTION_TTL:
+-		return &ap_config->ttl;
 -
--		fprintf(f, "match ");
--		switch (m->match_type) {
--		case TABLE_ACL:
--			fprintf(f, "acl priority %u ",
--				m->match.acl.priority);
+-	case RTE_TABLE_ACTION_STATS:
+-		return &ap_config->stats;
 -
--			fprintf(f, m->match.acl.ip_version ? "ipv4 " : "ipv6 ");
--
--			if (m->match.acl.ip_version)
--				ipv4_addr_show(f, m->match.acl.ipv4.sa);
--			else
--				ipv6_addr_show(f, &m->match.acl.ipv6.sa);
--
--			fprintf(f, "%u",	m->match.acl.sa_depth);
--
--			if (m->match.acl.ip_version)
--				ipv4_addr_show(f, m->match.acl.ipv4.da);
--			else
--				ipv6_addr_show(f, &m->match.acl.ipv6.da);
--
--			fprintf(f, "%u",	m->match.acl.da_depth);
--
--			fprintf(f, "%u %u %u %u %u ",
--				(uint32_t)m->match.acl.sp0,
--				(uint32_t)m->match.acl.sp1,
--				(uint32_t)m->match.acl.dp0,
--				(uint32_t)m->match.acl.dp1,
--				(uint32_t)m->match.acl.proto);
--			break;
--
--		case TABLE_ARRAY:
--			fprintf(f, "array %u ",
--				m->match.array.pos);
--			break;
--
--		case TABLE_HASH:
--			fprintf(f, "hash raw ");
--			for (i = 0; i < table->params.match.hash.key_size; i++)
--				fprintf(f, "%02x", m->match.hash.key[i]);
--			fprintf(f, " ");
--			break;
--
--		case TABLE_LPM:
--			fprintf(f, "lpm ");
--
--			fprintf(f, m->match.lpm.ip_version ? "ipv4 " : "ipv6 ");
--
--			if (m->match.acl.ip_version)
--				ipv4_addr_show(f, m->match.lpm.ipv4);
--			else
--				ipv6_addr_show(f, &m->match.lpm.ipv6);
--
--			fprintf(f, "%u ",
--				(uint32_t)m->match.lpm.depth);
--			break;
--
--		default:
--			fprintf(f, "unknown ");
--		}
--
--		fprintf(f, "action ");
--		if (a->action_mask & (1LLU << RTE_TABLE_ACTION_FWD)) {
--			fprintf(f, "fwd ");
--			switch (a->fwd.action) {
--			case RTE_PIPELINE_ACTION_DROP:
--				fprintf(f, "drop ");
--				break;
--
--			case RTE_PIPELINE_ACTION_PORT:
--				fprintf(f, "port %u ", a->fwd.id);
--				break;
--
--			case RTE_PIPELINE_ACTION_PORT_META:
--				fprintf(f, "meta ");
--				break;
--
--			case RTE_PIPELINE_ACTION_TABLE:
--			default:
--				fprintf(f, "table %u ", a->fwd.id);
--			}
--		}
--
--		if (a->action_mask & (1LLU << RTE_TABLE_ACTION_LB)) {
--			fprintf(f, "balance ");
--			for (i = 0; i < RTE_DIM(a->lb.out); i++)
--				fprintf(f, "%u ", a->lb.out[i]);
--		}
--
--		if (a->action_mask & (1LLU << RTE_TABLE_ACTION_MTR)) {
--			fprintf(f, "mtr ");
--			for (i = 0; i < RTE_TABLE_ACTION_TC_MAX; i++)
--				if (a->mtr.tc_mask & (1 << i)) {
--					struct rte_table_action_mtr_tc_params *p =
--						&a->mtr.mtr[i];
--					enum rte_table_action_policer ga =
--						p->policer[RTE_COLOR_GREEN];
--					enum rte_table_action_policer ya =
--						p->policer[RTE_COLOR_YELLOW];
--					enum rte_table_action_policer ra =
--						p->policer[RTE_COLOR_RED];
--
--					fprintf(f, "tc%u meter %u policer g %s y %s r %s ",
--						i,
--						a->mtr.mtr[i].meter_profile_id,
--						policer_action_string(ga),
--						policer_action_string(ya),
--						policer_action_string(ra));
--				}
--		}
--
--		if (a->action_mask & (1LLU << RTE_TABLE_ACTION_TM))
--			fprintf(f, "tm subport %u pipe %u ",
--				a->tm.subport_id,
--				a->tm.pipe_id);
--
--		if (a->action_mask & (1LLU << RTE_TABLE_ACTION_ENCAP)) {
--			fprintf(f, "encap ");
--			switch (a->encap.type) {
--			case RTE_TABLE_ACTION_ENCAP_ETHER:
--				fprintf(f, "ether ");
--				ether_addr_show(f, &a->encap.ether.ether.da);
--				fprintf(f, " ");
--				ether_addr_show(f, &a->encap.ether.ether.sa);
--				fprintf(f, " ");
--				break;
--
--			case RTE_TABLE_ACTION_ENCAP_VLAN:
--				fprintf(f, "vlan ");
--				ether_addr_show(f, &a->encap.vlan.ether.da);
--				fprintf(f, " ");
--				ether_addr_show(f, &a->encap.vlan.ether.sa);
--				fprintf(f, " pcp %u dei %u vid %u ",
--					a->encap.vlan.vlan.pcp,
--					a->encap.vlan.vlan.dei,
--					a->encap.vlan.vlan.vid);
--				break;
--
--			case RTE_TABLE_ACTION_ENCAP_QINQ:
--				fprintf(f, "qinq ");
--				ether_addr_show(f, &a->encap.qinq.ether.da);
--				fprintf(f, " ");
--				ether_addr_show(f, &a->encap.qinq.ether.sa);
--				fprintf(f, " pcp %u dei %u vid %u pcp %u dei %u vid %u ",
--					a->encap.qinq.svlan.pcp,
--					a->encap.qinq.svlan.dei,
--					a->encap.qinq.svlan.vid,
--					a->encap.qinq.cvlan.pcp,
--					a->encap.qinq.cvlan.dei,
--					a->encap.qinq.cvlan.vid);
--				break;
--
--			case RTE_TABLE_ACTION_ENCAP_MPLS:
--				fprintf(f, "mpls %s ", (a->encap.mpls.unicast) ?
--					"unicast " : "multicast ");
--				ether_addr_show(f, &a->encap.mpls.ether.da);
--				fprintf(f, " ");
--				ether_addr_show(f, &a->encap.mpls.ether.sa);
--				fprintf(f, " ");
--				for (i = 0; i < a->encap.mpls.mpls_count; i++) {
--					struct rte_table_action_mpls_hdr *l =
--						&a->encap.mpls.mpls[i];
--
--					fprintf(f, "label%u %u %u %u ",
--						i,
--						l->label,
--						l->tc,
--						l->ttl);
--				}
--				break;
--
--			case RTE_TABLE_ACTION_ENCAP_PPPOE:
--				fprintf(f, "pppoe ");
--				ether_addr_show(f, &a->encap.pppoe.ether.da);
--				fprintf(f, " ");
--				ether_addr_show(f, &a->encap.pppoe.ether.sa);
--				fprintf(f, " %u ", a->encap.pppoe.pppoe.session_id);
--				break;
--
--			case RTE_TABLE_ACTION_ENCAP_VXLAN:
--				fprintf(f, "vxlan ether ");
--				ether_addr_show(f, &a->encap.vxlan.ether.da);
--				fprintf(f, " ");
--				ether_addr_show(f, &a->encap.vxlan.ether.sa);
--				if (table->ap->params.encap.vxlan.vlan)
--					fprintf(f, " vlan pcp %u dei %u vid %u ",
--						a->encap.vxlan.vlan.pcp,
--						a->encap.vxlan.vlan.dei,
--						a->encap.vxlan.vlan.vid);
--				if (table->ap->params.encap.vxlan.ip_version) {
--					fprintf(f, " ipv4 ");
--					ipv4_addr_show(f, a->encap.vxlan.ipv4.sa);
--					fprintf(f, " ");
--					ipv4_addr_show(f, a->encap.vxlan.ipv4.da);
--					fprintf(f, " %u %u ",
--						(uint32_t)a->encap.vxlan.ipv4.dscp,
--						(uint32_t)a->encap.vxlan.ipv4.ttl);
--				} else {
--					fprintf(f, " ipv6 ");
--					ipv6_addr_show(f, &a->encap.vxlan.ipv6.sa);
--					fprintf(f, " ");
--					ipv6_addr_show(f, &a->encap.vxlan.ipv6.da);
--					fprintf(f, " %u %u %u ",
--						a->encap.vxlan.ipv6.flow_label,
--						(uint32_t)a->encap.vxlan.ipv6.dscp,
--						(uint32_t)a->encap.vxlan.ipv6.hop_limit);
--					fprintf(f, " udp %u %u vxlan %u ",
--						a->encap.vxlan.udp.sp,
--						a->encap.vxlan.udp.dp,
--						a->encap.vxlan.vxlan.vni);
--				}
--				break;
--
--			default:
--				fprintf(f, "unknown ");
--			}
--		}
--
--		if (a->action_mask & (1LLU << RTE_TABLE_ACTION_NAT)) {
--			fprintf(f, "nat %s ", (a->nat.ip_version) ? "ipv4 " : "ipv6 ");
--			if (a->nat.ip_version)
--				ipv4_addr_show(f, a->nat.addr.ipv4);
--			else
--				ipv6_addr_show(f, &a->nat.addr.ipv6);
--			fprintf(f, " %u ", (uint32_t)(a->nat.port));
--		}
--
--		if (a->action_mask & (1LLU << RTE_TABLE_ACTION_TTL))
--			fprintf(f, "ttl %s ", (a->ttl.decrement) ? "dec" : "keep");
--
--		if (a->action_mask & (1LLU << RTE_TABLE_ACTION_STATS))
--			fprintf(f, "stats ");
--
--		if (a->action_mask & (1LLU << RTE_TABLE_ACTION_TIME))
--			fprintf(f, "time ");
--
--		if (a->action_mask & (1LLU << RTE_TABLE_ACTION_SYM_CRYPTO))
--			fprintf(f, "sym_crypto ");
--
--		if (a->action_mask & (1LLU << RTE_TABLE_ACTION_TAG))
--			fprintf(f, "tag %u ", a->tag.tag);
--
--		if (a->action_mask & (1LLU << RTE_TABLE_ACTION_DECAP))
--			fprintf(f, "decap %u ", a->decap.n);
--
--		/* end */
--		fprintf(f, "\n");
--	}
--
--	/* Write table default rule to file. */
--	if (table->rule_default) {
--		struct table_rule_action *a = &table->rule_default->action;
--
--		fprintf(f, "# match default action fwd ");
--
--		switch (a->fwd.action) {
--		case RTE_PIPELINE_ACTION_DROP:
--			fprintf(f, "drop ");
--			break;
--
--		case RTE_PIPELINE_ACTION_PORT:
--			fprintf(f, "port %u ", a->fwd.id);
--			break;
--
--		case RTE_PIPELINE_ACTION_PORT_META:
--			fprintf(f, "meta ");
--			break;
--
--		case RTE_PIPELINE_ACTION_TABLE:
--		default:
--			fprintf(f, "table %u ", a->fwd.id);
--		}
--	} else
--		fprintf(f, "# match default action fwd drop ");
--
--	fprintf(f, "\n");
--
--	/* Close file. */
--	fclose(f);
--
--	return 0;
--}
--
--static const char cmd_pipeline_table_rule_show_help[] =
--"pipeline <pipeline_name> table <table_id> rule show\n"
--"     file <file_name>\n";
--
--static void
--cmd_pipeline_table_rule_show(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	char *file_name = NULL, *pipeline_name;
--	uint32_t table_id;
--	int status;
--
--	if (n_tokens != 8) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	pipeline_name = tokens[1];
--
--	if (strcmp(tokens[2], "table") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "table");
--		return;
--	}
--
--	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
--		return;
--	}
--
--	if (strcmp(tokens[4], "rule") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rule");
--		return;
--	}
--
--	if (strcmp(tokens[5], "show") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "show");
--		return;
--	}
--
--	if (strcmp(tokens[6], "file") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "file");
--		return;
--	}
--
--	file_name = tokens[7];
--
--	status = table_rule_show(pipeline_name, table_id, file_name);
--	if (status) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--}
--
--static const char cmd_pipeline_table_rule_stats_read_help[] =
--"pipeline <pipeline_name> table <table_id> rule read stats [clear]\n"
--"     match <match>\n";
--
--static void
--cmd_pipeline_table_rule_stats_read(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	struct table_rule_match m;
--	struct rte_table_action_stats_counters stats;
--	char *pipeline_name;
--	uint32_t table_id, n_tokens_parsed;
--	int clear = 0, status;
--
--	if (n_tokens < 7) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	pipeline_name = tokens[1];
--
--	if (strcmp(tokens[2], "table") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "table");
--		return;
--	}
--
--	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
--		return;
--	}
--
--	if (strcmp(tokens[4], "rule") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rule");
--		return;
--	}
--
--	if (strcmp(tokens[5], "read") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "read");
--		return;
--	}
--
--	if (strcmp(tokens[6], "stats") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "stats");
--		return;
--	}
--
--	n_tokens -= 7;
--	tokens += 7;
--
--	/* clear */
--	if (n_tokens && (strcmp(tokens[0], "clear") == 0)) {
--		clear = 1;
--
--		n_tokens--;
--		tokens++;
--	}
--
--	/* match */
--	if ((n_tokens == 0) || strcmp(tokens[0], "match")) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "match");
--		return;
--	}
--
--	n_tokens_parsed = parse_match(tokens,
--		n_tokens,
--		out,
--		out_size,
--		&m);
--	if (n_tokens_parsed == 0)
--		return;
--	n_tokens -= n_tokens_parsed;
--	tokens += n_tokens_parsed;
--
--	/* end */
--	if (n_tokens) {
--		snprintf(out, out_size, MSG_ARG_INVALID, tokens[0]);
--		return;
--	}
--
--	/* Read table rule stats. */
--	status = pipeline_table_rule_stats_read(pipeline_name,
--		table_id,
--		&m,
--		&stats,
--		clear);
--	if (status) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--
--	/* Print stats. */
--	if (stats.n_packets_valid && stats.n_bytes_valid)
--		snprintf(out, out_size, "Packets: %" PRIu64 "; Bytes: %" PRIu64 "\n",
--			stats.n_packets,
--			stats.n_bytes);
--
--	if (stats.n_packets_valid && !stats.n_bytes_valid)
--		snprintf(out, out_size, "Packets: %" PRIu64 "; Bytes: N/A\n",
--			stats.n_packets);
--
--	if (!stats.n_packets_valid && stats.n_bytes_valid)
--		snprintf(out, out_size, "Packets: N/A; Bytes: %" PRIu64 "\n",
--			stats.n_bytes);
--
--	if (!stats.n_packets_valid && !stats.n_bytes_valid)
--		snprintf(out, out_size, "Packets: N/A ; Bytes: N/A\n");
--}
--
--static const char cmd_pipeline_table_meter_profile_add_help[] =
--"pipeline <pipeline_name> table <table_id> meter profile <meter_profile_id>\n"
--"   add srtcm cir <cir> cbs <cbs> ebs <ebs>\n"
--"   | trtcm cir <cir> pir <pir> cbs <cbs> pbs <pbs>\n";
--
--static void
--cmd_pipeline_table_meter_profile_add(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	struct rte_table_action_meter_profile p;
--	char *pipeline_name;
--	uint32_t table_id, meter_profile_id;
--	int status;
--
--	if (n_tokens < 9) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	pipeline_name = tokens[1];
--
--	if (strcmp(tokens[2], "table") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "port");
--		return;
--	}
--
--	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
--		return;
--	}
--
--	if (strcmp(tokens[4], "meter") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "meter");
--		return;
--	}
--
--	if (strcmp(tokens[5], "profile") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "profile");
--		return;
--	}
--
--	if (parser_read_uint32(&meter_profile_id, tokens[6]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "meter_profile_id");
--		return;
--	}
--
--	if (strcmp(tokens[7], "add") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "add");
--		return;
--	}
--
--	if (strcmp(tokens[8], "srtcm") == 0) {
--		if (n_tokens != 15) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH,
--				tokens[0]);
--			return;
--		}
--
--		p.alg = RTE_TABLE_ACTION_METER_SRTCM;
--
--		if (strcmp(tokens[9], "cir") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "cir");
--			return;
--		}
--
--		if (parser_read_uint64(&p.srtcm.cir, tokens[10]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "cir");
--			return;
--		}
--
--		if (strcmp(tokens[11], "cbs") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "cbs");
--			return;
--		}
--
--		if (parser_read_uint64(&p.srtcm.cbs, tokens[12]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "cbs");
--			return;
--		}
--
--		if (strcmp(tokens[13], "ebs") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "ebs");
--			return;
--		}
--
--		if (parser_read_uint64(&p.srtcm.ebs, tokens[14]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "ebs");
--			return;
--		}
--	} else if (strcmp(tokens[8], "trtcm") == 0) {
--		if (n_tokens != 17) {
--			snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--			return;
--		}
--
--		p.alg = RTE_TABLE_ACTION_METER_TRTCM;
--
--		if (strcmp(tokens[9], "cir") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "cir");
--			return;
--		}
--
--		if (parser_read_uint64(&p.trtcm.cir, tokens[10]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "cir");
--			return;
--		}
--
--		if (strcmp(tokens[11], "pir") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "pir");
--			return;
--		}
--
--		if (parser_read_uint64(&p.trtcm.pir, tokens[12]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "pir");
--			return;
--		}
--		if (strcmp(tokens[13], "cbs") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "cbs");
--			return;
--		}
--
--		if (parser_read_uint64(&p.trtcm.cbs, tokens[14]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "cbs");
--			return;
--		}
--
--		if (strcmp(tokens[15], "pbs") != 0) {
--			snprintf(out, out_size, MSG_ARG_NOT_FOUND, "pbs");
--			return;
--		}
--
--		if (parser_read_uint64(&p.trtcm.pbs, tokens[16]) != 0) {
--			snprintf(out, out_size, MSG_ARG_INVALID, "pbs");
--			return;
--		}
--	} else {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	status = pipeline_table_mtr_profile_add(pipeline_name,
--		table_id,
--		meter_profile_id,
--		&p);
--	if (status) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--}
--
--
--static const char cmd_pipeline_table_meter_profile_delete_help[] =
--"pipeline <pipeline_name> table <table_id>\n"
--"   meter profile <meter_profile_id> delete\n";
--
--static void
--cmd_pipeline_table_meter_profile_delete(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	char *pipeline_name;
--	uint32_t table_id, meter_profile_id;
--	int status;
--
--	if (n_tokens != 8) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	pipeline_name = tokens[1];
--
--	if (strcmp(tokens[2], "table") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "port");
--		return;
--	}
--
--	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
--		return;
--	}
--
--	if (strcmp(tokens[4], "meter") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "meter");
--		return;
--	}
--
--	if (strcmp(tokens[5], "profile") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "profile");
--		return;
--	}
--
--	if (parser_read_uint32(&meter_profile_id, tokens[6]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "meter_profile_id");
--		return;
--	}
--
--	if (strcmp(tokens[7], "delete") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "delete");
--		return;
--	}
--
--	status = pipeline_table_mtr_profile_delete(pipeline_name,
--		table_id,
--		meter_profile_id);
--	if (status) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--}
--
--
--static const char cmd_pipeline_table_rule_meter_read_help[] =
--"pipeline <pipeline_name> table <table_id> rule read meter [clear]\n"
--"     match <match>\n";
--
--static void
--cmd_pipeline_table_rule_meter_read(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	struct table_rule_match m;
--	struct rte_table_action_mtr_counters stats;
--	char *pipeline_name;
--	uint32_t table_id, n_tokens_parsed;
--	int clear = 0, status;
--
--	if (n_tokens < 7) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	pipeline_name = tokens[1];
--
--	if (strcmp(tokens[2], "table") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "table");
--		return;
--	}
--
--	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
--		return;
--	}
--
--	if (strcmp(tokens[4], "rule") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rule");
--		return;
--	}
--
--	if (strcmp(tokens[5], "read") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "read");
--		return;
--	}
--
--	if (strcmp(tokens[6], "meter") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "meter");
--		return;
--	}
--
--	n_tokens -= 7;
--	tokens += 7;
--
--	/* clear */
--	if (n_tokens && (strcmp(tokens[0], "clear") == 0)) {
--		clear = 1;
--
--		n_tokens--;
--		tokens++;
--	}
--
--	/* match */
--	if ((n_tokens == 0) || strcmp(tokens[0], "match")) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "match");
--		return;
--	}
--
--	n_tokens_parsed = parse_match(tokens,
--		n_tokens,
--		out,
--		out_size,
--		&m);
--	if (n_tokens_parsed == 0)
--		return;
--	n_tokens -= n_tokens_parsed;
--	tokens += n_tokens_parsed;
--
--	/* end */
--	if (n_tokens) {
--		snprintf(out, out_size, MSG_ARG_INVALID, tokens[0]);
--		return;
--	}
--
--	/* Read table rule meter stats. */
--	status = pipeline_table_rule_mtr_read(pipeline_name,
--		table_id,
--		&m,
--		&stats,
--		clear);
--	if (status) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--
--	/* Print stats. */
--}
--
--
--static const char cmd_pipeline_table_dscp_help[] =
--"pipeline <pipeline_name> table <table_id> dscp <file_name>\n"
--"\n"
--" File <file_name>:\n"
--"   - exactly 64 lines\n"
--"   - line format: <tc_id> <tc_queue_id> <color>, with <color> as: g | y | r\n";
--
--static int
--load_dscp_table(struct rte_table_action_dscp_table *dscp_table,
--	const char *file_name,
--	uint32_t *line_number)
--{
--	FILE *f = NULL;
--	uint32_t dscp, l;
--
--	/* Check input arguments */
--	if ((dscp_table == NULL) ||
--		(file_name == NULL) ||
--		(line_number == NULL)) {
--		if (line_number)
--			*line_number = 0;
--		return -EINVAL;
--	}
--
--	/* Open input file */
--	f = fopen(file_name, "r");
--	if (f == NULL) {
--		*line_number = 0;
--		return -EINVAL;
--	}
--
--	/* Read file */
--	for (dscp = 0, l = 1; ; l++) {
--		char line[64];
--		char *tokens[3];
--		enum rte_color color;
--		uint32_t tc_id, tc_queue_id, n_tokens = RTE_DIM(tokens);
--
--		if (fgets(line, sizeof(line), f) == NULL)
--			break;
--
--		if (is_comment(line))
--			continue;
--
--		if (parse_tokenize_string(line, tokens, &n_tokens)) {
--			*line_number = l;
--			fclose(f);
--			return -EINVAL;
--		}
--
--		if (n_tokens == 0)
--			continue;
--
--		if ((dscp >= RTE_DIM(dscp_table->entry)) ||
--			(n_tokens != RTE_DIM(tokens)) ||
--			parser_read_uint32(&tc_id, tokens[0]) ||
--			(tc_id >= RTE_TABLE_ACTION_TC_MAX) ||
--			parser_read_uint32(&tc_queue_id, tokens[1]) ||
--			(tc_queue_id >= RTE_TABLE_ACTION_TC_QUEUE_MAX) ||
--			(strlen(tokens[2]) != 1)) {
--			*line_number = l;
--			fclose(f);
--			return -EINVAL;
--		}
--
--		switch (tokens[2][0]) {
--		case 'g':
--		case 'G':
--			color = RTE_COLOR_GREEN;
--			break;
--
--		case 'y':
--		case 'Y':
--			color = RTE_COLOR_YELLOW;
--			break;
--
--		case 'r':
--		case 'R':
--			color = RTE_COLOR_RED;
--			break;
--
--		default:
--			*line_number = l;
--			fclose(f);
--			return -EINVAL;
--		}
--
--		dscp_table->entry[dscp].tc_id = tc_id;
--		dscp_table->entry[dscp].tc_queue_id = tc_queue_id;
--		dscp_table->entry[dscp].color = color;
--		dscp++;
--	}
--
--	/* Close file */
--	fclose(f);
--	return 0;
--}
--
--static void
--cmd_pipeline_table_dscp(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	struct rte_table_action_dscp_table dscp_table;
--	char *pipeline_name, *file_name;
--	uint32_t table_id, line_number;
--	int status;
--
--	if (n_tokens != 6) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	pipeline_name = tokens[1];
--
--	if (strcmp(tokens[2], "table") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "port");
--		return;
--	}
--
--	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
--		return;
--	}
--
--	if (strcmp(tokens[4], "dscp") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "dscp");
--		return;
--	}
--
--	file_name = tokens[5];
--
--	status = load_dscp_table(&dscp_table, file_name, &line_number);
--	if (status) {
--		snprintf(out, out_size, MSG_FILE_ERR, file_name, line_number);
--		return;
--	}
--
--	status = pipeline_table_dscp_table_update(pipeline_name,
--		table_id,
--		UINT64_MAX,
--		&dscp_table);
--	if (status) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--}
--
--
--static const char cmd_pipeline_table_rule_ttl_read_help[] =
--"pipeline <pipeline_name> table <table_id> rule read ttl [clear]\n"
--"     match <match>\n";
--
--static void
--cmd_pipeline_table_rule_ttl_read(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	struct table_rule_match m;
--	struct rte_table_action_ttl_counters stats;
--	char *pipeline_name;
--	uint32_t table_id, n_tokens_parsed;
--	int clear = 0, status;
--
--	if (n_tokens < 7) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	pipeline_name = tokens[1];
--
--	if (strcmp(tokens[2], "table") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "table");
--		return;
--	}
--
--	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
--		return;
--	}
--
--	if (strcmp(tokens[4], "rule") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rule");
--		return;
--	}
--
--	if (strcmp(tokens[5], "read") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "read");
--		return;
--	}
--
--	if (strcmp(tokens[6], "ttl") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "ttl");
--		return;
--	}
--
--	n_tokens -= 7;
--	tokens += 7;
--
--	/* clear */
--	if (n_tokens && (strcmp(tokens[0], "clear") == 0)) {
--		clear = 1;
--
--		n_tokens--;
--		tokens++;
--	}
--
--	/* match */
--	if ((n_tokens == 0) || strcmp(tokens[0], "match")) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "match");
--		return;
--	}
--
--	n_tokens_parsed = parse_match(tokens,
--		n_tokens,
--		out,
--		out_size,
--		&m);
--	if (n_tokens_parsed == 0)
--		return;
--	n_tokens -= n_tokens_parsed;
--	tokens += n_tokens_parsed;
--
--	/* end */
--	if (n_tokens) {
--		snprintf(out, out_size, MSG_ARG_INVALID, tokens[0]);
--		return;
--	}
--
--	/* Read table rule TTL stats. */
--	status = pipeline_table_rule_ttl_read(pipeline_name,
--		table_id,
--		&m,
--		&stats,
--		clear);
--	if (status) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--
--	/* Print stats. */
--	snprintf(out, out_size, "Packets: %" PRIu64 "\n",
--		stats.n_packets);
--}
--
--static const char cmd_pipeline_table_rule_time_read_help[] =
--"pipeline <pipeline_name> table <table_id> rule read time\n"
--"     match <match>\n";
--
--static void
--cmd_pipeline_table_rule_time_read(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	struct table_rule_match m;
--	char *pipeline_name;
--	uint64_t timestamp;
--	uint32_t table_id, n_tokens_parsed;
--	int status;
--
--	if (n_tokens < 7) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	pipeline_name = tokens[1];
--
--	if (strcmp(tokens[2], "table") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "table");
--		return;
--	}
--
--	if (parser_read_uint32(&table_id, tokens[3]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "table_id");
--		return;
--	}
--
--	if (strcmp(tokens[4], "rule") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "rule");
--		return;
--	}
--
--	if (strcmp(tokens[5], "read") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "read");
--		return;
--	}
--
--	if (strcmp(tokens[6], "time") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "time");
--		return;
--	}
--
--	n_tokens -= 7;
--	tokens += 7;
--
--	/* match */
--	if ((n_tokens == 0) || strcmp(tokens[0], "match")) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "match");
--		return;
--	}
--
--	n_tokens_parsed = parse_match(tokens,
--		n_tokens,
--		out,
--		out_size,
--		&m);
--	if (n_tokens_parsed == 0)
--		return;
--	n_tokens -= n_tokens_parsed;
--	tokens += n_tokens_parsed;
--
--	/* end */
--	if (n_tokens) {
--		snprintf(out, out_size, MSG_ARG_INVALID, tokens[0]);
--		return;
--	}
--
--	/* Read table rule timestamp. */
--	status = pipeline_table_rule_time_read(pipeline_name,
--		table_id,
--		&m,
--		&timestamp);
--	if (status) {
--		snprintf(out, out_size, MSG_CMD_FAIL, tokens[0]);
--		return;
--	}
--
--	/* Print stats. */
--	snprintf(out, out_size, "Packets: %" PRIu64 "\n", timestamp);
--}
--
--static const char cmd_thread_pipeline_enable_help[] =
--"thread <thread_id> pipeline <pipeline_name> enable\n";
--
--static void
--cmd_thread_pipeline_enable(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	char *pipeline_name;
--	uint32_t thread_id;
--	int status;
--
--	if (n_tokens != 5) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	if (parser_read_uint32(&thread_id, tokens[1]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "thread_id");
--		return;
--	}
--
--	if (strcmp(tokens[2], "pipeline") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "pipeline");
--		return;
--	}
--
--	pipeline_name = tokens[3];
--
--	if (strcmp(tokens[4], "enable") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "enable");
--		return;
--	}
--
--	status = thread_pipeline_enable(thread_id, pipeline_name);
--	if (status) {
--		snprintf(out, out_size, MSG_CMD_FAIL, "thread pipeline enable");
--		return;
--	}
--}
--
--
--static const char cmd_thread_pipeline_disable_help[] =
--"thread <thread_id> pipeline <pipeline_name> disable\n";
--
--static void
--cmd_thread_pipeline_disable(char **tokens,
--	uint32_t n_tokens,
--	char *out,
--	size_t out_size)
--{
--	char *pipeline_name;
--	uint32_t thread_id;
--	int status;
--
--	if (n_tokens != 5) {
--		snprintf(out, out_size, MSG_ARG_MISMATCH, tokens[0]);
--		return;
--	}
--
--	if (parser_read_uint32(&thread_id, tokens[1]) != 0) {
--		snprintf(out, out_size, MSG_ARG_INVALID, "thread_id");
--		return;
--	}
--
--	if (strcmp(tokens[2], "pipeline") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "pipeline");
--		return;
--	}
--
--	pipeline_name = tokens[3];
--
--	if (strcmp(tokens[4], "disable") != 0) {
--		snprintf(out, out_size, MSG_ARG_NOT_FOUND, "disable");
--		return;
--	}
--
--	status = thread_pipeline_disable(thread_id, pipeline_name);
--	if (status) {
--		snprintf(out, out_size, MSG_CMD_FAIL,
--			"thread pipeline disable");
--		return;
+-	case RTE_TABLE_ACTION_SYM_CRYPTO:
+-		return &ap_config->sym_crypto;
+-	default:
+-		return NULL;
 -	}
 -}
 -
 -static void
--cmd_help(char **tokens, uint32_t n_tokens, char *out, size_t out_size)
+-action_cfg_set(struct ap_config *ap_config,
+-	enum rte_table_action_type type,
+-	void *action_cfg)
 -{
--	tokens++;
--	n_tokens--;
+-	void *dst = action_cfg_get(ap_config, type);
 -
--	if (n_tokens == 0) {
--		snprintf(out, out_size,
--			"Type 'help <command>' for details on each command.\n\n"
--			"List of commands:\n"
--			"\tmempool\n"
--			"\tlink\n"
--			"\tswq\n"
--			"\ttmgr subport profile\n"
--			"\ttmgr pipe profile\n"
--			"\ttmgr\n"
--			"\ttmgr subport\n"
--			"\ttmgr subport pipe\n"
--			"\ttap\n"
--			"\tport in action profile\n"
--			"\ttable action profile\n"
--			"\tpipeline\n"
--			"\tpipeline port in\n"
--			"\tpipeline port out\n"
--			"\tpipeline table\n"
--			"\tpipeline port in table\n"
--			"\tpipeline port in stats\n"
--			"\tpipeline port in enable\n"
--			"\tpipeline port in disable\n"
--			"\tpipeline port out stats\n"
--			"\tpipeline table stats\n"
--			"\tpipeline table rule add\n"
--			"\tpipeline table rule add default\n"
--			"\tpipeline table rule add bulk\n"
--			"\tpipeline table rule delete\n"
--			"\tpipeline table rule delete default\n"
--			"\tpipeline table rule show\n"
--			"\tpipeline table rule stats read\n"
--			"\tpipeline table meter profile add\n"
--			"\tpipeline table meter profile delete\n"
--			"\tpipeline table rule meter read\n"
--			"\tpipeline table dscp\n"
--			"\tpipeline table rule ttl read\n"
--			"\tpipeline table rule time read\n"
--			"\tthread pipeline enable\n"
--			"\tthread pipeline disable\n\n");
--		return;
--	}
+-	if (dst)
+-		memcpy(dst, action_cfg, action_cfg_size(type));
 -
--	if (strcmp(tokens[0], "mempool") == 0) {
--		snprintf(out, out_size, "\n%s\n", cmd_mempool_help);
--		return;
--	}
--
--	if (strcmp(tokens[0], "link") == 0) {
--		snprintf(out, out_size, "\n%s\n", cmd_link_help);
--		return;
--	}
--
--	if (strcmp(tokens[0], "swq") == 0) {
--		snprintf(out, out_size, "\n%s\n", cmd_swq_help);
--		return;
--	}
--
--	if (strcmp(tokens[0], "tmgr") == 0) {
--		if (n_tokens == 1) {
--			snprintf(out, out_size, "\n%s\n", cmd_tmgr_help);
--			return;
--		}
--
--		if ((n_tokens == 2) &&
--			(strcmp(tokens[1], "subport")) == 0) {
--			snprintf(out, out_size, "\n%s\n", cmd_tmgr_subport_help);
--			return;
--		}
--
--		if ((n_tokens == 3) &&
--			(strcmp(tokens[1], "subport") == 0) &&
--			(strcmp(tokens[2], "profile") == 0)) {
--			snprintf(out, out_size, "\n%s\n",
--				cmd_tmgr_subport_profile_help);
--			return;
--		}
--
--		if ((n_tokens == 3) &&
--			(strcmp(tokens[1], "subport") == 0) &&
--			(strcmp(tokens[2], "pipe") == 0)) {
--			snprintf(out, out_size, "\n%s\n", cmd_tmgr_subport_pipe_help);
--			return;
--		}
--
--		if ((n_tokens == 3) &&
--			(strcmp(tokens[1], "pipe") == 0) &&
--			(strcmp(tokens[2], "profile") == 0)) {
--			snprintf(out, out_size, "\n%s\n", cmd_tmgr_pipe_profile_help);
--			return;
--		}
--	}
--
--	if (strcmp(tokens[0], "tap") == 0) {
--		snprintf(out, out_size, "\n%s\n", cmd_tap_help);
--		return;
--	}
--
--	if (strcmp(tokens[0], "cryptodev") == 0) {
--		snprintf(out, out_size, "\n%s\n", cmd_cryptodev_help);
--		return;
--	}
--
--	if ((n_tokens == 4) &&
--		(strcmp(tokens[0], "port") == 0) &&
--		(strcmp(tokens[1], "in") == 0) &&
--		(strcmp(tokens[2], "action") == 0) &&
--		(strcmp(tokens[3], "profile") == 0)) {
--		snprintf(out, out_size, "\n%s\n", cmd_port_in_action_profile_help);
--		return;
--	}
--
--	if ((n_tokens == 3) &&
--		(strcmp(tokens[0], "table") == 0) &&
--		(strcmp(tokens[1], "action") == 0) &&
--		(strcmp(tokens[2], "profile") == 0)) {
--		snprintf(out, out_size, "\n%s\n", cmd_table_action_profile_help);
--		return;
--	}
--
--	if ((strcmp(tokens[0], "pipeline") == 0) && (n_tokens == 1)) {
--		snprintf(out, out_size, "\n%s\n", cmd_pipeline_help);
--		return;
--	}
--
--	if ((strcmp(tokens[0], "pipeline") == 0) &&
--		(strcmp(tokens[1], "port") == 0)) {
--		if ((n_tokens == 3) && (strcmp(tokens[2], "in")) == 0) {
--			snprintf(out, out_size, "\n%s\n", cmd_pipeline_port_in_help);
--			return;
--		}
--
--		if ((n_tokens == 3) && (strcmp(tokens[2], "out")) == 0) {
--			snprintf(out, out_size, "\n%s\n", cmd_pipeline_port_out_help);
--			return;
--		}
--
--		if ((n_tokens == 4) &&
--			(strcmp(tokens[2], "in") == 0) &&
--			(strcmp(tokens[3], "table") == 0)) {
--			snprintf(out, out_size, "\n%s\n",
--				cmd_pipeline_port_in_table_help);
--			return;
--		}
--
--		if ((n_tokens == 4) &&
--			(strcmp(tokens[2], "in") == 0) &&
--			(strcmp(tokens[3], "stats") == 0)) {
--			snprintf(out, out_size, "\n%s\n",
--				cmd_pipeline_port_in_stats_help);
--			return;
--		}
--
--		if ((n_tokens == 4) &&
--			(strcmp(tokens[2], "in") == 0) &&
--			(strcmp(tokens[3], "enable") == 0)) {
--			snprintf(out, out_size, "\n%s\n",
--				cmd_pipeline_port_in_enable_help);
--			return;
--		}
--
--		if ((n_tokens == 4) &&
--			(strcmp(tokens[2], "in") == 0) &&
--			(strcmp(tokens[3], "disable") == 0)) {
--			snprintf(out, out_size, "\n%s\n",
--				cmd_pipeline_port_in_disable_help);
--			return;
--		}
--
--		if ((n_tokens == 4) &&
--			(strcmp(tokens[2], "out") == 0) &&
--			(strcmp(tokens[3], "stats") == 0)) {
--			snprintf(out, out_size, "\n%s\n",
--				cmd_pipeline_port_out_stats_help);
--			return;
--		}
--	}
--
--	if ((strcmp(tokens[0], "pipeline") == 0) &&
--		(strcmp(tokens[1], "table") == 0)) {
--		if (n_tokens == 2) {
--			snprintf(out, out_size, "\n%s\n", cmd_pipeline_table_help);
--			return;
--		}
--
--		if ((n_tokens == 3) && strcmp(tokens[2], "stats") == 0) {
--			snprintf(out, out_size, "\n%s\n",
--				cmd_pipeline_table_stats_help);
--			return;
--		}
--
--		if ((n_tokens == 3) && strcmp(tokens[2], "dscp") == 0) {
--			snprintf(out, out_size, "\n%s\n",
--				cmd_pipeline_table_dscp_help);
--			return;
--		}
--
--		if ((n_tokens == 4) &&
--			(strcmp(tokens[2], "rule") == 0) &&
--			(strcmp(tokens[3], "add") == 0)) {
--			snprintf(out, out_size, "\n%s\n",
--				cmd_pipeline_table_rule_add_help);
--			return;
--		}
--
--		if ((n_tokens == 5) &&
--			(strcmp(tokens[2], "rule") == 0) &&
--			(strcmp(tokens[3], "add") == 0) &&
--			(strcmp(tokens[4], "default") == 0)) {
--			snprintf(out, out_size, "\n%s\n",
--				cmd_pipeline_table_rule_add_default_help);
--			return;
--		}
--
--		if ((n_tokens == 5) &&
--			(strcmp(tokens[2], "rule") == 0) &&
--			(strcmp(tokens[3], "add") == 0) &&
--			(strcmp(tokens[4], "bulk") == 0)) {
--			snprintf(out, out_size, "\n%s\n",
--				cmd_pipeline_table_rule_add_bulk_help);
--			return;
--		}
--
--		if ((n_tokens == 4) &&
--			(strcmp(tokens[2], "rule") == 0) &&
--			(strcmp(tokens[3], "delete") == 0)) {
--			snprintf(out, out_size, "\n%s\n",
--				cmd_pipeline_table_rule_delete_help);
--			return;
--		}
--
--		if ((n_tokens == 5) &&
--			(strcmp(tokens[2], "rule") == 0) &&
--			(strcmp(tokens[3], "delete") == 0) &&
--			(strcmp(tokens[4], "default") == 0)) {
--			snprintf(out, out_size, "\n%s\n",
--				cmd_pipeline_table_rule_delete_default_help);
--			return;
--		}
--
--		if ((n_tokens == 4) &&
--			(strcmp(tokens[2], "rule") == 0) &&
--			(strcmp(tokens[3], "show") == 0)) {
--			snprintf(out, out_size, "\n%s\n",
--				cmd_pipeline_table_rule_show_help);
--			return;
--		}
--
--		if ((n_tokens == 5) &&
--			(strcmp(tokens[2], "rule") == 0) &&
--			(strcmp(tokens[3], "stats") == 0) &&
--			(strcmp(tokens[4], "read") == 0)) {
--			snprintf(out, out_size, "\n%s\n",
--				cmd_pipeline_table_rule_stats_read_help);
--			return;
--		}
--
--		if ((n_tokens == 5) &&
--			(strcmp(tokens[2], "meter") == 0) &&
--			(strcmp(tokens[3], "profile") == 0) &&
--			(strcmp(tokens[4], "add") == 0)) {
--			snprintf(out, out_size, "\n%s\n",
--				cmd_pipeline_table_meter_profile_add_help);
--			return;
--		}
--
--		if ((n_tokens == 5) &&
--			(strcmp(tokens[2], "meter") == 0) &&
--			(strcmp(tokens[3], "profile") == 0) &&
--			(strcmp(tokens[4], "delete") == 0)) {
--			snprintf(out, out_size, "\n%s\n",
--				cmd_pipeline_table_meter_profile_delete_help);
--			return;
--		}
--
--		if ((n_tokens == 5) &&
--			(strcmp(tokens[2], "rule") == 0) &&
--			(strcmp(tokens[3], "meter") == 0) &&
--			(strcmp(tokens[4], "read") == 0)) {
--			snprintf(out, out_size, "\n%s\n",
--				cmd_pipeline_table_rule_meter_read_help);
--			return;
--		}
--
--		if ((n_tokens == 5) &&
--			(strcmp(tokens[2], "rule") == 0) &&
--			(strcmp(tokens[3], "ttl") == 0) &&
--			(strcmp(tokens[4], "read") == 0)) {
--			snprintf(out, out_size, "\n%s\n",
--				cmd_pipeline_table_rule_ttl_read_help);
--			return;
--		}
--
--		if ((n_tokens == 5) &&
--			(strcmp(tokens[2], "rule") == 0) &&
--			(strcmp(tokens[3], "time") == 0) &&
--			(strcmp(tokens[4], "read") == 0)) {
--			snprintf(out, out_size, "\n%s\n",
--				cmd_pipeline_table_rule_time_read_help);
--			return;
--		}
--	}
--
--	if ((n_tokens == 3) &&
--		(strcmp(tokens[0], "thread") == 0) &&
--		(strcmp(tokens[1], "pipeline") == 0)) {
--		if (strcmp(tokens[2], "enable") == 0) {
--			snprintf(out, out_size, "\n%s\n",
--				cmd_thread_pipeline_enable_help);
--			return;
--		}
--
--		if (strcmp(tokens[2], "disable") == 0) {
--			snprintf(out, out_size, "\n%s\n",
--				cmd_thread_pipeline_disable_help);
--			return;
--		}
--	}
--
--	snprintf(out, out_size, "Invalid command\n");
+-	ap_config->action_mask |= 1LLU << type;
 -}
 -
--void
--cli_process(char *in, char *out, size_t out_size)
--{
--	char *tokens[CMD_MAX_TOKENS];
--	uint32_t n_tokens = RTE_DIM(tokens);
--	int status;
--
--	if (is_comment(in))
--		return;
--
--	status = parse_tokenize_string(in, tokens, &n_tokens);
--	if (status) {
--		snprintf(out, out_size, MSG_ARG_TOO_MANY, "");
--		return;
--	}
--
--	if (n_tokens == 0)
--		return;
--
--	if (strcmp(tokens[0], "help") == 0) {
--		cmd_help(tokens, n_tokens, out, out_size);
--		return;
--	}
--
--	if (strcmp(tokens[0], "mempool") == 0) {
--		cmd_mempool(tokens, n_tokens, out, out_size);
--		return;
--	}
--
--	if (strcmp(tokens[0], "link") == 0) {
--		if (strcmp(tokens[1], "show") == 0) {
--			cmd_link_show(tokens, n_tokens, out, out_size);
--			return;
--		}
--
--		cmd_link(tokens, n_tokens, out, out_size);
--		return;
--	}
--
--	if (strcmp(tokens[0], "swq") == 0) {
--		cmd_swq(tokens, n_tokens, out, out_size);
--		return;
--	}
--
--	if (strcmp(tokens[0], "tmgr") == 0) {
--		if ((n_tokens >= 3) &&
--			(strcmp(tokens[1], "subport") == 0) &&
--			(strcmp(tokens[2], "profile") == 0)) {
--			cmd_tmgr_subport_profile(tokens, n_tokens,
--				out, out_size);
--			return;
--		}
--
--		if ((n_tokens >= 3) &&
--			(strcmp(tokens[1], "pipe") == 0) &&
--			(strcmp(tokens[2], "profile") == 0)) {
--			cmd_tmgr_pipe_profile(tokens, n_tokens, out, out_size);
--			return;
--		}
--
--		if ((n_tokens >= 5) &&
--			(strcmp(tokens[2], "subport") == 0) &&
--			(strcmp(tokens[4], "profile") == 0)) {
--			cmd_tmgr_subport(tokens, n_tokens, out, out_size);
--			return;
--		}
--
--		if ((n_tokens >= 5) &&
--			(strcmp(tokens[2], "subport") == 0) &&
--			(strcmp(tokens[4], "pipe") == 0)) {
--			cmd_tmgr_subport_pipe(tokens, n_tokens, out, out_size);
--			return;
--		}
--
--		cmd_tmgr(tokens, n_tokens, out, out_size);
--		return;
--	}
--
--	if (strcmp(tokens[0], "tap") == 0) {
--		cmd_tap(tokens, n_tokens, out, out_size);
--		return;
--	}
--
--	if (strcmp(tokens[0], "cryptodev") == 0) {
--		cmd_cryptodev(tokens, n_tokens, out, out_size);
--		return;
--	}
--
--	if (strcmp(tokens[0], "port") == 0) {
--		cmd_port_in_action_profile(tokens, n_tokens, out, out_size);
--		return;
--	}
--
--	if (strcmp(tokens[0], "table") == 0) {
--		cmd_table_action_profile(tokens, n_tokens, out, out_size);
--		return;
--	}
--
--	if (strcmp(tokens[0], "pipeline") == 0) {
--		if ((n_tokens >= 3) &&
--			(strcmp(tokens[2], "period") == 0)) {
--			cmd_pipeline(tokens, n_tokens, out, out_size);
--			return;
--		}
--
--		if ((n_tokens >= 5) &&
--			(strcmp(tokens[2], "port") == 0) &&
--			(strcmp(tokens[3], "in") == 0) &&
--			(strcmp(tokens[4], "bsz") == 0)) {
--			cmd_pipeline_port_in(tokens, n_tokens, out, out_size);
--			return;
--		}
--
--		if ((n_tokens >= 5) &&
--			(strcmp(tokens[2], "port") == 0) &&
--			(strcmp(tokens[3], "out") == 0) &&
--			(strcmp(tokens[4], "bsz") == 0)) {
--			cmd_pipeline_port_out(tokens, n_tokens, out, out_size);
--			return;
--		}
--
--		if ((n_tokens >= 4) &&
--			(strcmp(tokens[2], "table") == 0) &&
--			(strcmp(tokens[3], "match") == 0)) {
--			cmd_pipeline_table(tokens, n_tokens, out, out_size);
--			return;
--		}
--
--		if ((n_tokens >= 6) &&
--			(strcmp(tokens[2], "port") == 0) &&
--			(strcmp(tokens[3], "in") == 0) &&
--			(strcmp(tokens[5], "table") == 0)) {
--			cmd_pipeline_port_in_table(tokens, n_tokens,
--				out, out_size);
--			return;
--		}
--
--		if ((n_tokens >= 6) &&
--			(strcmp(tokens[2], "port") == 0) &&
--			(strcmp(tokens[3], "in") == 0) &&
--			(strcmp(tokens[5], "stats") == 0)) {
--			cmd_pipeline_port_in_stats(tokens, n_tokens,
--				out, out_size);
--			return;
--		}
--
--		if ((n_tokens >= 6) &&
--			(strcmp(tokens[2], "port") == 0) &&
--			(strcmp(tokens[3], "in") == 0) &&
--			(strcmp(tokens[5], "enable") == 0)) {
--			cmd_pipeline_port_in_enable(tokens, n_tokens,
--				out, out_size);
--			return;
--		}
--
--		if ((n_tokens >= 6) &&
--			(strcmp(tokens[2], "port") == 0) &&
--			(strcmp(tokens[3], "in") == 0) &&
--			(strcmp(tokens[5], "disable") == 0)) {
--			cmd_pipeline_port_in_disable(tokens, n_tokens,
--				out, out_size);
--			return;
--		}
--
--		if ((n_tokens >= 6) &&
--			(strcmp(tokens[2], "port") == 0) &&
--			(strcmp(tokens[3], "out") == 0) &&
--			(strcmp(tokens[5], "stats") == 0)) {
--			cmd_pipeline_port_out_stats(tokens, n_tokens,
--				out, out_size);
--			return;
--		}
--
--		if ((n_tokens >= 5) &&
--			(strcmp(tokens[2], "table") == 0) &&
--			(strcmp(tokens[4], "stats") == 0)) {
--			cmd_pipeline_table_stats(tokens, n_tokens,
--				out, out_size);
--			return;
--		}
--
--		if ((n_tokens >= 7) &&
--			(strcmp(tokens[2], "table") == 0) &&
--			(strcmp(tokens[4], "rule") == 0) &&
--			(strcmp(tokens[5], "add") == 0) &&
--			(strcmp(tokens[6], "match") == 0)) {
--			if ((n_tokens >= 8) &&
--				(strcmp(tokens[7], "default") == 0)) {
--				cmd_pipeline_table_rule_add_default(tokens,
--					n_tokens, out, out_size);
--				return;
--			}
--
--			cmd_pipeline_table_rule_add(tokens, n_tokens,
--				out, out_size);
--			return;
--		}
--
--		if ((n_tokens >= 7) &&
--			(strcmp(tokens[2], "table") == 0) &&
--			(strcmp(tokens[4], "rule") == 0) &&
--			(strcmp(tokens[5], "add") == 0) &&
--			(strcmp(tokens[6], "bulk") == 0)) {
--			cmd_pipeline_table_rule_add_bulk(tokens,
--				n_tokens, out, out_size);
--			return;
--		}
--
--		if ((n_tokens >= 7) &&
--			(strcmp(tokens[2], "table") == 0) &&
--			(strcmp(tokens[4], "rule") == 0) &&
--			(strcmp(tokens[5], "delete") == 0) &&
--			(strcmp(tokens[6], "match") == 0)) {
--			if ((n_tokens >= 8) &&
--				(strcmp(tokens[7], "default") == 0)) {
--				cmd_pipeline_table_rule_delete_default(tokens,
--					n_tokens, out, out_size);
--				return;
--				}
--
--			cmd_pipeline_table_rule_delete(tokens, n_tokens,
--				out, out_size);
--			return;
--		}
--
--		if ((n_tokens >= 6) &&
--			(strcmp(tokens[2], "table") == 0) &&
--			(strcmp(tokens[4], "rule") == 0) &&
--			(strcmp(tokens[5], "show") == 0)) {
--			cmd_pipeline_table_rule_show(tokens, n_tokens,
--				out, out_size);
--			return;
--		}
--
--		if ((n_tokens >= 7) &&
--			(strcmp(tokens[2], "table") == 0) &&
--			(strcmp(tokens[4], "rule") == 0) &&
--			(strcmp(tokens[5], "read") == 0) &&
--			(strcmp(tokens[6], "stats") == 0)) {
--			cmd_pipeline_table_rule_stats_read(tokens, n_tokens,
--				out, out_size);
--			return;
--		}
--
--		if ((n_tokens >= 8) &&
--			(strcmp(tokens[2], "table") == 0) &&
--			(strcmp(tokens[4], "meter") == 0) &&
--			(strcmp(tokens[5], "profile") == 0) &&
--			(strcmp(tokens[7], "add") == 0)) {
--			cmd_pipeline_table_meter_profile_add(tokens, n_tokens,
--				out, out_size);
--			return;
--		}
--
--		if ((n_tokens >= 8) &&
--			(strcmp(tokens[2], "table") == 0) &&
--			(strcmp(tokens[4], "meter") == 0) &&
--			(strcmp(tokens[5], "profile") == 0) &&
--			(strcmp(tokens[7], "delete") == 0)) {
--			cmd_pipeline_table_meter_profile_delete(tokens,
--				n_tokens, out, out_size);
--			return;
--		}
--
--		if ((n_tokens >= 7) &&
--			(strcmp(tokens[2], "table") == 0) &&
--			(strcmp(tokens[4], "rule") == 0) &&
--			(strcmp(tokens[5], "read") == 0) &&
--			(strcmp(tokens[6], "meter") == 0)) {
--			cmd_pipeline_table_rule_meter_read(tokens, n_tokens,
--				out, out_size);
--			return;
--		}
--
--		if ((n_tokens >= 5) &&
--			(strcmp(tokens[2], "table") == 0) &&
--			(strcmp(tokens[4], "dscp") == 0)) {
--			cmd_pipeline_table_dscp(tokens, n_tokens,
--				out, out_size);
--			return;
--		}
--
--		if ((n_tokens >= 7) &&
--			(strcmp(tokens[2], "table") == 0) &&
--			(strcmp(tokens[4], "rule") == 0) &&
--			(strcmp(tokens[5], "read") == 0) &&
--			(strcmp(tokens[6], "ttl") == 0)) {
--			cmd_pipeline_table_rule_ttl_read(tokens, n_tokens,
--				out, out_size);
--			return;
--		}
--
--		if ((n_tokens >= 7) &&
--			(strcmp(tokens[2], "table") == 0) &&
--			(strcmp(tokens[4], "rule") == 0) &&
--			(strcmp(tokens[5], "read") == 0) &&
--			(strcmp(tokens[6], "time") == 0)) {
--			cmd_pipeline_table_rule_time_read(tokens, n_tokens,
--				out, out_size);
--			return;
--		}
--	}
--
--	if (strcmp(tokens[0], "thread") == 0) {
--		if ((n_tokens >= 5) &&
--			(strcmp(tokens[4], "enable") == 0)) {
--			cmd_thread_pipeline_enable(tokens, n_tokens,
--				out, out_size);
--			return;
--		}
--
--		if ((n_tokens >= 5) &&
--			(strcmp(tokens[4], "disable") == 0)) {
--			cmd_thread_pipeline_disable(tokens, n_tokens,
--				out, out_size);
--			return;
--		}
--	}
--
--	snprintf(out, out_size, MSG_CMD_UNKNOWN, tokens[0]);
--}
--
--int
--cli_script_process(const char *file_name,
--	size_t msg_in_len_max,
--	size_t msg_out_len_max)
--{
--	char *msg_in = NULL, *msg_out = NULL;
--	FILE *f = NULL;
--
--	/* Check input arguments */
--	if ((file_name == NULL) ||
--		(strlen(file_name) == 0) ||
--		(msg_in_len_max == 0) ||
--		(msg_out_len_max == 0))
--		return -EINVAL;
--
--	msg_in = malloc(msg_in_len_max + 1);
--	msg_out = malloc(msg_out_len_max + 1);
--	if ((msg_in == NULL) ||
--		(msg_out == NULL)) {
--		free(msg_out);
--		free(msg_in);
--		return -ENOMEM;
--	}
--
--	/* Open input file */
--	f = fopen(file_name, "r");
--	if (f == NULL) {
--		free(msg_out);
--		free(msg_in);
--		return -EIO;
--	}
--
--	/* Read file */
--	for ( ; ; ) {
--		if (fgets(msg_in, msg_in_len_max + 1, f) == NULL)
--			break;
--
--		printf("%s", msg_in);
--		msg_out[0] = 0;
--
--		cli_process(msg_in,
--			msg_out,
--			msg_out_len_max);
--
--		if (strlen(msg_out))
--			printf("%s", msg_out);
--	}
--
--	/* Close file */
--	fclose(f);
--	free(msg_out);
--	free(msg_in);
--	return 0;
--}
--
--static int
--cli_rule_file_process(const char *file_name,
--	size_t line_len_max,
--	struct table_rule_list **rule_list,
--	uint32_t *n_rules,
--	uint32_t *line_number,
--	char *out,
--	size_t out_size)
--{
--	struct table_rule_list *list = NULL;
--	char *line = NULL;
--	FILE *f = NULL;
--	uint32_t rule_id = 0, line_id = 0;
--	int status = 0;
--
--	/* Check input arguments */
--	if ((file_name == NULL) ||
--		(strlen(file_name) == 0) ||
--		(line_len_max == 0) ||
--		(rule_list == NULL) ||
--		(n_rules == NULL) ||
--		(line_number == NULL) ||
--		(out == NULL)) {
--		status = -EINVAL;
--		goto cli_rule_file_process_free;
--	}
--
--	/* Memory allocation */
--	list = malloc(sizeof(struct table_rule_list));
--	if (list == NULL) {
--		status = -ENOMEM;
--		goto cli_rule_file_process_free;
--	}
--
--	TAILQ_INIT(list);
--
--	line = malloc(line_len_max + 1);
--	if (line == NULL) {
--		status = -ENOMEM;
--		goto cli_rule_file_process_free;
--	}
--
--	/* Open file */
--	f = fopen(file_name, "r");
--	if (f == NULL) {
--		status = -EIO;
--		goto cli_rule_file_process_free;
--	}
--
--	/* Read file */
--	for (line_id = 1, rule_id = 0; ; line_id++) {
--		char *tokens[CMD_MAX_TOKENS];
--		struct table_rule *rule = NULL;
--		uint32_t n_tokens, n_tokens_parsed, t0;
--
--		/* Read next line from file. */
--		if (fgets(line, line_len_max + 1, f) == NULL)
--			break;
--
--		/* Comment. */
--		if (is_comment(line))
--			continue;
--
--		/* Parse line. */
--		n_tokens = RTE_DIM(tokens);
--		status = parse_tokenize_string(line, tokens, &n_tokens);
--		if (status) {
--			status = -EINVAL;
--			goto cli_rule_file_process_free;
--		}
--
--		/* Empty line. */
--		if (n_tokens == 0)
--			continue;
--		t0 = 0;
--
--		/* Rule alloc and insert. */
--		rule = calloc(1, sizeof(struct table_rule));
--		if (rule == NULL) {
--			status = -ENOMEM;
--			goto cli_rule_file_process_free;
--		}
--
--		TAILQ_INSERT_TAIL(list, rule, node);
--
--		/* Rule match. */
--		n_tokens_parsed = parse_match(tokens + t0,
--			n_tokens - t0,
--			out,
--			out_size,
--			&rule->match);
--		if (n_tokens_parsed == 0) {
--			status = -EINVAL;
--			goto cli_rule_file_process_free;
--		}
--		t0 += n_tokens_parsed;
--
--		/* Rule action. */
--		n_tokens_parsed = parse_table_action(tokens + t0,
--			n_tokens - t0,
--			out,
--			out_size,
--			&rule->action);
--		if (n_tokens_parsed == 0) {
--			status = -EINVAL;
--			goto cli_rule_file_process_free;
--		}
--		t0 += n_tokens_parsed;
--
--		/* Line completed. */
--		if (t0 < n_tokens) {
--			status = -EINVAL;
--			goto cli_rule_file_process_free;
--		}
--
--		/* Increment rule count */
--		rule_id++;
--	}
--
--	/* Close file */
--	fclose(f);
--
--	/* Memory free */
--	free(line);
--
--	*rule_list = list;
--	*n_rules = rule_id;
--	*line_number = line_id;
--	return 0;
--
--cli_rule_file_process_free:
--	if (rule_list != NULL)
--		*rule_list = NULL;
--
--	if (n_rules != NULL)
--		*n_rules = rule_id;
--
--	if (line_number != NULL)
--		*line_number = line_id;
--
--	if (list != NULL)
--		for ( ; ; ) {
--			struct table_rule *rule;
--
--			rule = TAILQ_FIRST(list);
--			if (rule == NULL)
--				break;
--
--			TAILQ_REMOVE(list, rule, node);
--			free(rule);
--		}
--
--	if (f)
--		fclose(f);
--	free(line);
--	free(list);
--
--	return status;
--}
-diff --git a/examples/ip_pipeline/cli.h b/examples/ip_pipeline/cli.h
-deleted file mode 100644
-index 992e4c3a4a..0000000000
---- a/examples/ip_pipeline/cli.h
-+++ /dev/null
-@@ -1,18 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2018 Intel Corporation
-- */
--
--#ifndef __INCLUDE_CLI_H__
--#define __INCLUDE_CLI_H__
--
--#include <stddef.h>
--
--void
--cli_process(char *in, char *out, size_t out_size);
--
--int
--cli_script_process(const char *file_name,
--	size_t msg_in_len_max,
--	size_t msg_out_len_max);
--
--#endif
-diff --git a/examples/ip_pipeline/common.h b/examples/ip_pipeline/common.h
-deleted file mode 100644
-index 0886dfbe95..0000000000
---- a/examples/ip_pipeline/common.h
-+++ /dev/null
-@@ -1,12 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2018 Intel Corporation
-- */
--
--#ifndef _INCLUDE_COMMON_H_
--#define _INCLUDE_COMMON_H_
--
--#ifndef NAME_SIZE
--#define NAME_SIZE                                            64
--#endif
--
--#endif /* _INCLUDE_COMMON_H_ */
-diff --git a/examples/ip_pipeline/conn.c b/examples/ip_pipeline/conn.c
-deleted file mode 100644
-index b2406b7af1..0000000000
---- a/examples/ip_pipeline/conn.c
-+++ /dev/null
-@@ -1,330 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2018 Intel Corporation
-- */
--
--#include <string.h>
--#include <stdlib.h>
--#include <stdio.h>
--#include <unistd.h>
--#include <sys/types.h>
--
--#include <sys/socket.h>
--
--#include <sys/epoll.h>
--#include <netinet/in.h>
--#include <arpa/inet.h>
--#include <errno.h>
--
--#include <rte_string_fns.h>
--
--#include "conn.h"
--
--#define MSG_CMD_TOO_LONG "Command too long."
--
--struct conn {
--	char *welcome;
--	char *prompt;
--	char *buf;
--	char *msg_in;
--	char *msg_out;
--	size_t buf_size;
--	size_t msg_in_len_max;
--	size_t msg_out_len_max;
--	size_t msg_in_len;
--	int fd_server;
--	int fd_client_group;
--	conn_msg_handle_t msg_handle;
+-struct ap_data {
+-	size_t offset[RTE_TABLE_ACTION_MAX];
+-	size_t total_size;
 -};
 -
--struct conn *
--conn_init(struct conn_params *p)
+-static size_t
+-action_data_size(enum rte_table_action_type action,
+-	struct ap_config *ap_config)
 -{
--	struct sockaddr_in server_address;
--	struct conn *conn;
--	int fd_server, fd_client_group, status;
+-	switch (action) {
+-	case RTE_TABLE_ACTION_FWD:
+-		return sizeof(struct fwd_data);
 -
--	memset(&server_address, 0, sizeof(server_address));
+-	case RTE_TABLE_ACTION_LB:
+-		return sizeof(struct lb_data);
+-
+-	case RTE_TABLE_ACTION_MTR:
+-		return mtr_data_size(&ap_config->mtr);
+-
+-	case RTE_TABLE_ACTION_TM:
+-		return sizeof(struct tm_data);
+-
+-	case RTE_TABLE_ACTION_ENCAP:
+-		return encap_data_size(&ap_config->encap);
+-
+-	case RTE_TABLE_ACTION_NAT:
+-		return nat_data_size(&ap_config->nat,
+-			&ap_config->common);
+-
+-	case RTE_TABLE_ACTION_TTL:
+-		return sizeof(struct ttl_data);
+-
+-	case RTE_TABLE_ACTION_STATS:
+-		return sizeof(struct stats_data);
+-
+-	case RTE_TABLE_ACTION_TIME:
+-		return sizeof(struct time_data);
+-
+-	case RTE_TABLE_ACTION_SYM_CRYPTO:
+-		return (sizeof(struct sym_crypto_data));
+-
+-	case RTE_TABLE_ACTION_TAG:
+-		return sizeof(struct tag_data);
+-
+-	case RTE_TABLE_ACTION_DECAP:
+-		return sizeof(struct decap_data);
+-
+-	default:
+-		return 0;
+-	}
+-}
+-
+-
+-static void
+-action_data_offset_set(struct ap_data *ap_data,
+-	struct ap_config *ap_config)
+-{
+-	uint64_t action_mask = ap_config->action_mask;
+-	size_t offset;
+-	uint32_t action;
+-
+-	memset(ap_data->offset, 0, sizeof(ap_data->offset));
+-
+-	offset = 0;
+-	for (action = 0; action < RTE_TABLE_ACTION_MAX; action++)
+-		if (action_mask & (1LLU << action)) {
+-			ap_data->offset[action] = offset;
+-			offset += action_data_size((enum rte_table_action_type)action,
+-				ap_config);
+-		}
+-
+-	ap_data->total_size = offset;
+-}
+-
+-struct rte_table_action_profile {
+-	struct ap_config cfg;
+-	struct ap_data data;
+-	int frozen;
+-};
+-
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_profile_create, 18.05)
+-struct rte_table_action_profile *
+-rte_table_action_profile_create(struct rte_table_action_common_config *common)
+-{
+-	struct rte_table_action_profile *ap;
 -
 -	/* Check input arguments */
--	if ((p == NULL) ||
--		(p->welcome == NULL) ||
--		(p->prompt == NULL) ||
--		(p->addr == NULL) ||
--		(p->buf_size == 0) ||
--		(p->msg_in_len_max == 0) ||
--		(p->msg_out_len_max == 0) ||
--		(p->msg_handle == NULL))
--		return NULL;
--
--	status = inet_aton(p->addr, &server_address.sin_addr);
--	if (status == 0)
+-	if (common == NULL)
 -		return NULL;
 -
 -	/* Memory allocation */
--	conn = calloc(1, sizeof(struct conn));
--	if (conn == NULL)
+-	ap = calloc(1, sizeof(struct rte_table_action_profile));
+-	if (ap == NULL)
 -		return NULL;
 -
--	conn->welcome = calloc(1, CONN_WELCOME_LEN_MAX + 1);
--	conn->prompt = calloc(1, CONN_PROMPT_LEN_MAX + 1);
--	conn->buf = calloc(1, p->buf_size);
--	conn->msg_in = calloc(1, p->msg_in_len_max + 1);
--	conn->msg_out = calloc(1, p->msg_out_len_max + 1);
+-	/* Initialization */
+-	memcpy(&ap->cfg.common, common, sizeof(*common));
 -
--	if ((conn->welcome == NULL) ||
--		(conn->prompt == NULL) ||
--		(conn->buf == NULL) ||
--		(conn->msg_in == NULL) ||
--		(conn->msg_out == NULL)) {
--		conn_free(conn);
--		return NULL;
--	}
--
--	/* Server socket */
--	server_address.sin_family = AF_INET;
--	server_address.sin_port = htons(p->port);
--
--	fd_server = socket(AF_INET,
--		SOCK_STREAM | SOCK_NONBLOCK,
--		0);
--	if (fd_server == -1) {
--		conn_free(conn);
--		return NULL;
--	}
--
--	status = bind(fd_server,
--		(struct sockaddr *) &server_address,
--		sizeof(server_address));
--	if (status == -1) {
--		conn_free(conn);
--		close(fd_server);
--		return NULL;
--	}
--
--	status = listen(fd_server, 16);
--	if (status == -1) {
--		conn_free(conn);
--		close(fd_server);
--		return NULL;
--	}
--
--	/* Client group */
--	fd_client_group = epoll_create(1);
--	if (fd_client_group == -1) {
--		conn_free(conn);
--		close(fd_server);
--		return NULL;
--	}
--
--	/* Fill in */
--	strlcpy(conn->welcome, p->welcome, CONN_WELCOME_LEN_MAX + 1);
--	strlcpy(conn->prompt, p->prompt, CONN_PROMPT_LEN_MAX + 1);
--	conn->buf_size = p->buf_size;
--	conn->msg_in_len_max = p->msg_in_len_max;
--	conn->msg_out_len_max = p->msg_out_len_max;
--	conn->msg_in_len = 0;
--	conn->fd_server = fd_server;
--	conn->fd_client_group = fd_client_group;
--	conn->msg_handle = p->msg_handle;
--
--	return conn;
+-	return ap;
 -}
 -
--void
--conn_free(struct conn *conn)
--{
--	if (conn == NULL)
--		return;
 -
--	if (conn->fd_client_group)
--		close(conn->fd_client_group);
--
--	if (conn->fd_server)
--		close(conn->fd_server);
--
--	free(conn->msg_out);
--	free(conn->msg_in);
--	free(conn->prompt);
--	free(conn->welcome);
--	free(conn);
--}
--
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_profile_action_register, 18.05)
 -int
--conn_poll_for_conn(struct conn *conn)
+-rte_table_action_profile_action_register(struct rte_table_action_profile *profile,
+-	enum rte_table_action_type type,
+-	void *action_config)
 -{
--	struct sockaddr_in client_address;
--	struct epoll_event event;
--	socklen_t client_address_length;
--	int fd_client, status;
+-	int status;
 -
 -	/* Check input arguments */
--	if (conn == NULL)
--		return -1;
--
--	/* Server socket */
--	client_address_length = sizeof(client_address);
--	fd_client = accept4(conn->fd_server,
--		(struct sockaddr *) &client_address,
--		&client_address_length,
--		SOCK_NONBLOCK);
--	if (fd_client == -1) {
--		if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
--			return 0;
--
--		return -1;
--	}
--
--	/* Client group */
--	event.events = EPOLLIN | EPOLLRDHUP | EPOLLHUP;
--	event.data.fd = fd_client;
--
--	status = epoll_ctl(conn->fd_client_group,
--		EPOLL_CTL_ADD,
--		fd_client,
--		&event);
--	if (status == -1) {
--		close(fd_client);
--		return -1;
--	}
--
--	/* Client */
--	status = write(fd_client,
--		conn->welcome,
--		strlen(conn->welcome));
--	if (status == -1) {
--		close(fd_client);
--		return -1;
--	}
--
--	status = write(fd_client,
--		conn->prompt,
--		strlen(conn->prompt));
--	if (status == -1) {
--		close(fd_client);
--		return -1;
--	}
--
--	return 0;
--}
--
--static int
--data_event_handle(struct conn *conn,
--	int fd_client)
--{
--	ssize_t len, i, status;
--
--	/* Read input message */
--
--	len = read(fd_client,
--		conn->buf,
--		conn->buf_size);
--	if (len == -1) {
--		if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
--			return 0;
--
--		return -1;
--	}
--	if (len == 0)
--		return 0;
--
--	/* Handle input messages */
--	for (i = 0; i < len; i++) {
--		if (conn->buf[i] == '\n') {
--			size_t n;
--
--			conn->msg_in[conn->msg_in_len] = 0;
--			conn->msg_out[0] = 0;
--
--			conn->msg_handle(conn->msg_in,
--				conn->msg_out,
--				conn->msg_out_len_max);
--
--			n = strlen(conn->msg_out);
--			if (n) {
--				status = write(fd_client,
--					conn->msg_out,
--					n);
--				if (status == -1)
--					return status;
--			}
--
--			conn->msg_in_len = 0;
--		} else if (conn->msg_in_len < conn->msg_in_len_max) {
--			conn->msg_in[conn->msg_in_len] = conn->buf[i];
--			conn->msg_in_len++;
--		} else {
--			status = write(fd_client,
--				MSG_CMD_TOO_LONG,
--				strlen(MSG_CMD_TOO_LONG));
--			if (status == -1)
--				return status;
--
--			conn->msg_in_len = 0;
--		}
--	}
--
--	/* Write prompt */
--	status = write(fd_client,
--		conn->prompt,
--		strlen(conn->prompt));
--	if (status == -1)
--		return status;
--
--	return 0;
--}
--
--static int
--control_event_handle(struct conn *conn,
--	int fd_client)
--{
--	int status;
--
--	status = epoll_ctl(conn->fd_client_group,
--		EPOLL_CTL_DEL,
--		fd_client,
--		NULL);
--	if (status == -1)
--		return -1;
--
--	status = close(fd_client);
--	if (status == -1)
--		return -1;
--
--	return 0;
--}
--
--int
--conn_poll_for_msg(struct conn *conn)
--{
--	struct epoll_event event;
--	int fd_client, status, status_data = 0, status_control = 0;
--
--	/* Check input arguments */
--	if (conn == NULL)
--		return -1;
--
--	/* Client group */
--	status = epoll_wait(conn->fd_client_group,
--		&event,
--		1,
--		0);
--	if (status == -1)
--		return -1;
--	if (status == 0)
--		return 0;
--
--	fd_client = event.data.fd;
--
--	/* Data available */
--	if (event.events & EPOLLIN)
--		status_data = data_event_handle(conn, fd_client);
--
--	/* Control events */
--	if (event.events & (EPOLLRDHUP | EPOLLERR | EPOLLHUP))
--		status_control = control_event_handle(conn, fd_client);
--
--	if (status_data || status_control)
--		return -1;
--
--	return 0;
--}
-diff --git a/examples/ip_pipeline/conn.h b/examples/ip_pipeline/conn.h
-deleted file mode 100644
-index 46f9f95e9c..0000000000
---- a/examples/ip_pipeline/conn.h
-+++ /dev/null
-@@ -1,47 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2018 Intel Corporation
-- */
--
--#ifndef __INCLUDE_CONN_H__
--#define __INCLUDE_CONN_H__
--
--#include <stdint.h>
--
--struct conn;
--
--#ifndef CONN_WELCOME_LEN_MAX
--#define CONN_WELCOME_LEN_MAX                               1024
--#endif
--
--#ifndef CONN_PROMPT_LEN_MAX
--#define CONN_PROMPT_LEN_MAX                                16
--#endif
--
--typedef void (*conn_msg_handle_t)(char *msg_in,
--	char *msg_out,
--	size_t msg_out_len_max);
--
--struct conn_params {
--	const char *welcome;
--	const char *prompt;
--	const char *addr;
--	uint16_t port;
--	size_t buf_size;
--	size_t msg_in_len_max;
--	size_t msg_out_len_max;
--	conn_msg_handle_t msg_handle;
--};
--
--struct conn *
--conn_init(struct conn_params *p);
--
--void
--conn_free(struct conn *conn);
--
--int
--conn_poll_for_conn(struct conn *conn);
--
--int
--conn_poll_for_msg(struct conn *conn);
--
--#endif
-diff --git a/examples/ip_pipeline/cryptodev.c b/examples/ip_pipeline/cryptodev.c
-deleted file mode 100644
-index cd0f9c3d4e..0000000000
---- a/examples/ip_pipeline/cryptodev.c
-+++ /dev/null
-@@ -1,160 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2018 Intel Corporation
-- */
--
--#include <stdlib.h>
--#include <stdio.h>
--
--#include <rte_cryptodev.h>
--#include <rte_string_fns.h>
--
--#include "cryptodev.h"
--
--#define PIPELINE_CRYPTO_SESSION_CACHE_SIZE	128
--
--static struct cryptodev_list cryptodev_list;
--
--int
--cryptodev_init(void)
--{
--	TAILQ_INIT(&cryptodev_list);
--
--	return 0;
--}
--
--struct cryptodev *
--cryptodev_find(const char *name)
--{
--	struct cryptodev *cryptodev;
--
--	if (name == NULL)
--		return NULL;
--
--	TAILQ_FOREACH(cryptodev, &cryptodev_list, node)
--		if (strcmp(cryptodev->name, name) == 0)
--			return cryptodev;
--
--	return NULL;
--}
--
--struct cryptodev *
--cryptodev_next(struct cryptodev *cryptodev)
--{
--	return (cryptodev == NULL) ?
--			TAILQ_FIRST(&cryptodev_list) :
--			TAILQ_NEXT(cryptodev, node);
--}
--
--struct cryptodev *
--cryptodev_create(const char *name, struct cryptodev_params *params)
--{
--	struct rte_cryptodev_info dev_info;
--	struct rte_cryptodev_config dev_conf;
--	struct rte_cryptodev_qp_conf queue_conf;
--	struct cryptodev *cryptodev;
--	uint32_t dev_id, i;
--	uint32_t socket_id;
--	uint32_t cache_size;
--	char mp_name[NAME_SIZE];
--	int status;
--
--	/* Check input params */
--	if ((name == NULL) ||
--		cryptodev_find(name) ||
--		(params->n_queues == 0) ||
--		(params->queue_size == 0) ||
--		(params->session_pool_size == 0))
--		return NULL;
--
--	if (params->dev_name) {
--		status = rte_cryptodev_get_dev_id(params->dev_name);
--		if (status == -1)
--			return NULL;
--
--		dev_id = (uint32_t)status;
--	} else {
--		if (rte_cryptodev_is_valid_dev(params->dev_id) == 0)
--			return NULL;
--
--		dev_id = params->dev_id;
--	}
--
--	cache_size = (params->session_pool_size / 2 <
--			PIPELINE_CRYPTO_SESSION_CACHE_SIZE) ?
--					(params->session_pool_size / 2) :
--					PIPELINE_CRYPTO_SESSION_CACHE_SIZE;
--
--	socket_id = rte_cryptodev_socket_id(dev_id);
--	rte_cryptodev_info_get(dev_id, &dev_info);
--
--	if (dev_info.max_nb_queue_pairs < params->n_queues)
--		return NULL;
--
--	dev_conf.socket_id = socket_id;
--	dev_conf.nb_queue_pairs = params->n_queues;
--	dev_conf.ff_disable = 0;
--
--	status = rte_cryptodev_configure(dev_id, &dev_conf);
--	if (status < 0)
--		return NULL;
--
--	queue_conf.nb_descriptors = params->queue_size;
--	for (i = 0; i < params->n_queues; i++) {
--		status = rte_cryptodev_queue_pair_setup(dev_id, i,
--				&queue_conf, socket_id);
--		if (status < 0)
--			return NULL;
--	}
--
--	if (rte_cryptodev_start(dev_id) < 0)
--		return NULL;
--
--	cryptodev = calloc(1, sizeof(struct cryptodev));
--	if (cryptodev == NULL) {
--		rte_cryptodev_stop(dev_id);
--		return NULL;
--	}
--
--	strlcpy(cryptodev->name, name, sizeof(cryptodev->name));
--	cryptodev->dev_id = dev_id;
--	cryptodev->n_queues = params->n_queues;
--
--	snprintf(mp_name, NAME_SIZE, "%s_mp%u", name, dev_id);
--	cryptodev->mp_create = rte_cryptodev_sym_session_pool_create(
--			mp_name,
--			params->session_pool_size,
--			0,
--			cache_size,
--			0,
--			socket_id);
--	if (!cryptodev->mp_create)
--		goto error_exit;
--
--	snprintf(mp_name, NAME_SIZE, "%s_mp_priv%u", name, dev_id);
--	cryptodev->mp_init = rte_mempool_create(
--			NULL,
--			params->session_pool_size,
--			rte_cryptodev_sym_get_private_session_size(dev_id),
--			cache_size,
--			0,
--			NULL,
--			NULL,
--			NULL,
--			NULL,
--			socket_id,
--			0);
--	if (!cryptodev->mp_init)
--		goto error_exit;
--
--	TAILQ_INSERT_TAIL(&cryptodev_list, cryptodev, node);
--
--	return cryptodev;
--
--error_exit:
--	rte_mempool_free(cryptodev->mp_create);
--	rte_mempool_free(cryptodev->mp_init);
--
--	free(cryptodev);
--
--	return NULL;
--}
-diff --git a/examples/ip_pipeline/cryptodev.h b/examples/ip_pipeline/cryptodev.h
-deleted file mode 100644
-index d00434379e..0000000000
---- a/examples/ip_pipeline/cryptodev.h
-+++ /dev/null
-@@ -1,46 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2018 Intel Corporation
-- */
--
--#ifndef _INCLUDE_SYM_C_H_
--#define _INCLUDE_SYM_C_H_
--
--#include <stdint.h>
--#include <sys/queue.h>
--
--#include <rte_cryptodev.h>
--
--#include "common.h"
--
--struct cryptodev {
--	TAILQ_ENTRY(cryptodev) node;
--	char name[NAME_SIZE];
--	uint16_t dev_id;
--	uint32_t n_queues;
--	struct rte_mempool *mp_create;
--	struct rte_mempool *mp_init;
--};
--
--TAILQ_HEAD(cryptodev_list, cryptodev);
--
--int
--cryptodev_init(void);
--
--struct cryptodev *
--cryptodev_find(const char *name);
--
--struct cryptodev *
--cryptodev_next(struct cryptodev *cryptodev);
--
--struct cryptodev_params {
--	const char *dev_name;
--	uint32_t dev_id; /**< Valid only when *dev_name* is NULL. */
--	uint32_t n_queues;
--	uint32_t queue_size;
--	uint32_t session_pool_size;
--};
--
--struct cryptodev *
--cryptodev_create(const char *name, struct cryptodev_params *params);
--
--#endif
-diff --git a/examples/ip_pipeline/examples/firewall.cli b/examples/ip_pipeline/examples/firewall.cli
-deleted file mode 100644
-index 269256c161..0000000000
---- a/examples/ip_pipeline/examples/firewall.cli
-+++ /dev/null
-@@ -1,59 +0,0 @@
--; SPDX-License-Identifier: BSD-3-Clause
--; Copyright(c) 2010-2018 Intel Corporation
--
--;                 _______________
--; LINK0 RXQ0 --->|               |---> LINK0 TXQ0
--;                |               |
--; LINK1 RXQ0 --->|               |---> LINK1 TXQ0
--;                |   Firewall    |
--; LINK2 RXQ0 --->|               |---> LINK2 TXQ0
--;                |               |
--; LINK3 RXQ0 --->|               |---> LINK3 TXQ0
--;                |_______________|
--;                        |
--;                       -+-
--;
--; Input packet: Ethernet/IPv4
--;
--; Packet buffer layout:
--; #   Field Name            Offset (Bytes)      Size (Bytes)
--; 0   Mbuf                  0                   128
--; 1   Headroom              128                 128
--; 2   Ethernet header       256                 14
--; 3   IPv4 header           270                 20
--
--mempool MEMPOOL0 buffer 2304 pool 32K cache 256 cpu 0
--
--link LINK0 dev 0000:02:00.0 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
--link LINK1 dev 0000:02:00.1 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
--link LINK2 dev 0000:06:00.0 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
--link LINK3 dev 0000:06:00.1 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
--
--table action profile AP0 ipv4 offset 270 fwd
--
--pipeline PIPELINE0 period 10 offset_port_id 0 cpu 0
--
--pipeline PIPELINE0 port in bsz 32 link LINK0 rxq 0
--pipeline PIPELINE0 port in bsz 32 link LINK1 rxq 0
--pipeline PIPELINE0 port in bsz 32 link LINK2 rxq 0
--pipeline PIPELINE0 port in bsz 32 link LINK3 rxq 0
--
--pipeline PIPELINE0 port out bsz 32 link LINK0 txq 0
--pipeline PIPELINE0 port out bsz 32 link LINK1 txq 0
--pipeline PIPELINE0 port out bsz 32 link LINK2 txq 0
--pipeline PIPELINE0 port out bsz 32 link LINK3 txq 0
--
--pipeline PIPELINE0 table match acl ipv4 offset 270 size 4K action AP0
--
--pipeline PIPELINE0 port in 0 table 0
--pipeline PIPELINE0 port in 1 table 0
--pipeline PIPELINE0 port in 2 table 0
--pipeline PIPELINE0 port in 3 table 0
--
--thread 1 pipeline PIPELINE0 enable
--
--pipeline PIPELINE0 table 0 rule add match default action fwd drop
--pipeline PIPELINE0 table 0 rule add match acl priority 0 ipv4 0.0.0.0 0 100.0.0.0 10 0 65535 0 65535 6 action fwd port 0
--pipeline PIPELINE0 table 0 rule add match acl priority 0 ipv4 0.0.0.0 0 100.64.0.0 10 0 65535 0 65535 6 action fwd port 1
--pipeline PIPELINE0 table 0 rule add match acl priority 0 ipv4 0.0.0.0 0 100.128.0.0 10 0 65535 0 65535 6 action fwd port 2
--pipeline PIPELINE0 table 0 rule add match acl priority 0 ipv4 0.0.0.0 0 100.192.0.0 10 0 65535 0 65535 6 action fwd port 3
-diff --git a/examples/ip_pipeline/examples/flow.cli b/examples/ip_pipeline/examples/flow.cli
-deleted file mode 100644
-index 426ff90255..0000000000
---- a/examples/ip_pipeline/examples/flow.cli
-+++ /dev/null
-@@ -1,60 +0,0 @@
--; SPDX-License-Identifier: BSD-3-Clause
--; Copyright(c) 2010-2018 Intel Corporation
--
--;                 ________________
--; LINK0 RXQ0 --->|                |---> LINK0 TXQ0
--;                |                |
--; LINK1 RXQ0 --->|                |---> LINK1 TXQ0
--;                |      Flow      |
--; LINK2 RXQ0 --->| Classification |---> LINK2 TXQ0
--;                |                |
--; LINK3 RXQ0 --->|                |---> LINK3 TXQ0
--;                |________________|
--;                        |
--;                        +-----------> SINK0 (flow lookup miss)
--;
--; Input packet: Ethernet/IPv4
--;
--; Packet buffer layout:
--; #   Field Name       Offset (Bytes)   Size (Bytes)
--; 0   Mbuf             0                128
--; 1   Headroom         128              128
--; 2   Ethernet header  256              14
--; 3   IPv4 header      270              20
--
--mempool MEMPOOL0 buffer 2304 pool 32K cache 256 cpu 0
--
--link LINK0 dev 0000:02:00.0 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
--link LINK1 dev 0000:02:00.1 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
--link LINK2 dev 0000:06:00.0 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
--link LINK3 dev 0000:06:00.1 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
--
--table action profile AP0 ipv4 offset 270 fwd
--
--pipeline PIPELINE0 period 10 offset_port_id 0 cpu 0
--
--pipeline PIPELINE0 port in bsz 32 link LINK0 rxq 0
--pipeline PIPELINE0 port in bsz 32 link LINK1 rxq 0
--pipeline PIPELINE0 port in bsz 32 link LINK2 rxq 0
--pipeline PIPELINE0 port in bsz 32 link LINK3 rxq 0
--
--pipeline PIPELINE0 port out bsz 32 link LINK0 txq 0
--pipeline PIPELINE0 port out bsz 32 link LINK1 txq 0
--pipeline PIPELINE0 port out bsz 32 link LINK2 txq 0
--pipeline PIPELINE0 port out bsz 32 link LINK3 txq 0
--pipeline PIPELINE0 port out bsz 32 sink
--
--pipeline PIPELINE0 table match hash ext key 16 mask 00FF0000FFFFFFFFFFFFFFFFFFFFFFFF offset 278 buckets 16K size 65K action AP0
--
--pipeline PIPELINE0 port in 0 table 0
--pipeline PIPELINE0 port in 1 table 0
--pipeline PIPELINE0 port in 2 table 0
--pipeline PIPELINE0 port in 3 table 0
--
--thread 1 pipeline PIPELINE0 enable
--
--pipeline PIPELINE0 table 0 rule add match default action fwd port 4
--pipeline PIPELINE0 table 0 rule add match hash ipv4_5tuple 100.0.0.10 200.0.0.10 100 200 6 action fwd port 0
--pipeline PIPELINE0 table 0 rule add match hash ipv4_5tuple 100.0.0.11 200.0.0.11 101 201 6 action fwd port 1
--pipeline PIPELINE0 table 0 rule add match hash ipv4_5tuple 100.0.0.12 200.0.0.12 102 202 6 action fwd port 2
--pipeline PIPELINE0 table 0 rule add match hash ipv4_5tuple 100.0.0.13 200.0.0.13 103 203 6 action fwd port 3
-diff --git a/examples/ip_pipeline/examples/flow_crypto.cli b/examples/ip_pipeline/examples/flow_crypto.cli
-deleted file mode 100644
-index 849f9d5fec..0000000000
---- a/examples/ip_pipeline/examples/flow_crypto.cli
-+++ /dev/null
-@@ -1,57 +0,0 @@
--; SPDX-License-Identifier: BSD-3-Clause
--; Copyright(c) 2018 Intel Corporation
--
--;                 ________________
--; LINK0 RXQ0 --->|                |---> CRYPTO0 TXQ0
--;                |      Flow      |
--; CRYPTO0 RXQ0-->| Classification |---> LINK0 TXQ0
--;                |________________|
--;                        |
--;                        +-----------> SINK0 (flow lookup miss)
--;
--; Input packet: Ethernet/IPv4
--;
--; Packet buffer layout:
--; #   Field Name       Offset (Bytes)   Size (Bytes)
--; 0   Mbuf             0                128
--; 1   Headroom         128              128
--; 2   Ethernet header  256              14
--; 3   IPv4 header      280              20
--; 4   Packet           256              1536
--; 5   Crypto Operation 1792             160
--
--mempool MEMPOOL0 buffer 2304 pool 32K cache 256 cpu 1
--
--link LINK0 dev 81:00.0 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
--
--#Cryptodev
--cryptodev CRYPTO0 dev crypto_aesni_gcm0 queue 1 1024 max_sessions 512
--
--table action profile AP0 ipv4 offset 270 fwd sym_crypto dev CRYPTO0 offset 1792
--table action profile AP1 ipv4 offset 270 fwd
--
--pipeline PIPELINE0 period 10 offset_port_id 0 cpu 1
--
--pipeline PIPELINE0 port in bsz 32 link LINK0 rxq 0
--pipeline PIPELINE0 port in bsz 32 cryptodev CRYPTO0 rxq 0
--
--pipeline PIPELINE0 port out bsz 32 cryptodev CRYPTO0 txq 0 offset 1792
--pipeline PIPELINE0 port out bsz 32 link LINK0 txq 0
--pipeline PIPELINE0 port out bsz 32 sink
--
--pipeline PIPELINE0 table match hash ext key 8 mask FFFFFFFF00000000 offset 282 buckets 1K size 4K action AP0
--pipeline PIPELINE0 table match stub action AP1
--
--pipeline PIPELINE0 port in 0 table 0
--pipeline PIPELINE0 port in 1 table 1
--
--thread 2 pipeline PIPELINE0 enable
--
--pipeline PIPELINE0 table 0 rule add match default action fwd port 2
--
--#AES-GCM encrypt
--pipeline PIPELINE0 table 0 rule add match hash ipv4_addr 100.0.0.10 action fwd port 0 sym_crypto encrypt type aead aead_algo aes-gcm aead_key 000102030405060708090a0b0c0d0e0f aead_iv 000102030405060708090a0b aead_aad 000102030405060708090a0b0c0d0e0f digest_size 8 data_offset 290
--#AES-GCM decrypt
--#pipeline PIPELINE0 table 0 rule add match hash ipv4_addr 100.0.0.10 action fwd port 0 sym_crypto decrypt type aead aead_algo aes-gcm aead_key 000102030405060708090a0b0c0d0e0f aead_iv 000102030405060708090a0b aead_aad 000102030405060708090a0b0c0d0e0f digest_size 8 data_offset 290
--
--pipeline PIPELINE0 table 1 rule add match default action fwd port 1
-diff --git a/examples/ip_pipeline/examples/l2fwd.cli b/examples/ip_pipeline/examples/l2fwd.cli
-deleted file mode 100644
-index 35e77cc968..0000000000
---- a/examples/ip_pipeline/examples/l2fwd.cli
-+++ /dev/null
-@@ -1,51 +0,0 @@
--; SPDX-License-Identifier: BSD-3-Clause
--; Copyright(c) 2010-2018 Intel Corporation
--
--; The pipeline below implements a simple pass-through connection between the
--; input ports to the output ports, as in this diagram:
--;                 ________________
--; LINK0 RXQ0 --->|................|---> LINK1 TXQ0
--;                |                |
--; LINK1 RXQ0 --->|................|---> LINK0 TXQ0
--;                |    PIPELINE0   |
--; LINK2 RXQ0 --->|................|---> LINK3 TXQ0
--;                |                |
--; LINK3 RXQ0 --->|................|---> LINK2 TXQ0
--;                |________________|
--;
--
--mempool MEMPOOL0 buffer 2304 pool 32K cache 256 cpu 0
--
--link LINK0 dev 0000:02:00.0 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
--link LINK1 dev 0000:02:00.1 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
--link LINK2 dev 0000:06:00.0 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
--link LINK3 dev 0000:06:00.1 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
--
--pipeline PIPELINE0 period 10 offset_port_id 0 cpu 0
--
--pipeline PIPELINE0 port in bsz 32 link LINK0 rxq 0
--pipeline PIPELINE0 port in bsz 32 link LINK1 rxq 0
--pipeline PIPELINE0 port in bsz 32 link LINK2 rxq 0
--pipeline PIPELINE0 port in bsz 32 link LINK3 rxq 0
--
--pipeline PIPELINE0 port out bsz 32 link LINK0 txq 0
--pipeline PIPELINE0 port out bsz 32 link LINK1 txq 0
--pipeline PIPELINE0 port out bsz 32 link LINK2 txq 0
--pipeline PIPELINE0 port out bsz 32 link LINK3 txq 0
--
--pipeline PIPELINE0 table match stub
--pipeline PIPELINE0 table match stub
--pipeline PIPELINE0 table match stub
--pipeline PIPELINE0 table match stub
--
--pipeline PIPELINE0 port in 0 table 0
--pipeline PIPELINE0 port in 1 table 1
--pipeline PIPELINE0 port in 2 table 2
--pipeline PIPELINE0 port in 3 table 3
--
--thread 1 pipeline PIPELINE0 enable
--
--pipeline PIPELINE0 table 0 rule add match default action fwd port 1
--pipeline PIPELINE0 table 1 rule add match default action fwd port 0
--pipeline PIPELINE0 table 2 rule add match default action fwd port 3
--pipeline PIPELINE0 table 3 rule add match default action fwd port 2
-diff --git a/examples/ip_pipeline/examples/route.cli b/examples/ip_pipeline/examples/route.cli
-deleted file mode 100644
-index 579b36a659..0000000000
---- a/examples/ip_pipeline/examples/route.cli
-+++ /dev/null
-@@ -1,60 +0,0 @@
--; SPDX-License-Identifier: BSD-3-Clause
--; Copyright(c) 2010-2018 Intel Corporation
--
--;                 _______________
--; LINK0 RXQ0 --->|               |---> LINK0 TXQ0
--;                |               |
--; LINK1 RXQ0 --->|               |---> LINK1 TXQ0
--;                |    Routing    |
--; LINK2 RXQ0 --->|               |---> LINK2 TXQ0
--;                |               |
--; LINK3 RXQ0 --->|               |---> LINK3 TXQ0
--;                |_______________|
--;                        |
--;                        +-----------> SINK0 (route miss)
--;
--; Input packet: Ethernet/IPv4
--;
--; Packet buffer layout:
--; #   Field Name       Offset (Bytes)   Size (Bytes)
--; 0   Mbuf             0                128
--; 1   Headroom         128              128
--; 2   Ethernet header  256              14
--; 3   IPv4 header      270              20
--
--mempool MEMPOOL0 buffer 2304 pool 32K cache 256 cpu 0
--
--link LINK0 dev 0000:02:00.0 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
--link LINK1 dev 0000:02:00.1 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
--link LINK2 dev 0000:06:00.0 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
--link LINK3 dev 0000:06:00.1 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
--
--table action profile AP0 ipv4 offset 270 fwd encap ether
--
--pipeline PIPELINE0 period 10 offset_port_id 0 cpu 0
--
--pipeline PIPELINE0 port in bsz 32 link LINK0 rxq 0
--pipeline PIPELINE0 port in bsz 32 link LINK1 rxq 0
--pipeline PIPELINE0 port in bsz 32 link LINK2 rxq 0
--pipeline PIPELINE0 port in bsz 32 link LINK3 rxq 0
--
--pipeline PIPELINE0 port out bsz 32 link LINK0 txq 0
--pipeline PIPELINE0 port out bsz 32 link LINK1 txq 0
--pipeline PIPELINE0 port out bsz 32 link LINK2 txq 0
--pipeline PIPELINE0 port out bsz 32 link LINK3 txq 0
--pipeline PIPELINE0 port out bsz 32 sink
--
--pipeline PIPELINE0 table match lpm ipv4 offset 286 size 4K action AP0
--
--pipeline PIPELINE0 port in 0 table 0
--pipeline PIPELINE0 port in 1 table 0
--pipeline PIPELINE0 port in 2 table 0
--pipeline PIPELINE0 port in 3 table 0
--
--thread 1 pipeline PIPELINE0 enable
--
--pipeline PIPELINE0 table 0 rule add match default action fwd port 4
--pipeline PIPELINE0 table 0 rule add match lpm ipv4 100.0.0.0 10 action fwd port 0 encap ether a0:a1:a2:a3:a4:a5 00:01:02:03:04:05
--pipeline PIPELINE0 table 0 rule add match lpm ipv4 100.64.0.0 10 action fwd port 1 encap ether b0:b1:b2:b3:b4:b5 10:11:12:13:14:15
--pipeline PIPELINE0 table 0 rule add match lpm ipv4 100.128.0.0 10 action fwd port 2 encap ether c0:c1:c2:c3:c4:c5 20:21:22:23:24:25
--pipeline PIPELINE0 table 0 rule add match lpm ipv4 100.192.0.0 10 action fwd port 3 encap ether d0:d1:d2:d3:d4:d5 30:31:32:33:34:35
-diff --git a/examples/ip_pipeline/examples/route_ecmp.cli b/examples/ip_pipeline/examples/route_ecmp.cli
-deleted file mode 100644
-index 06434a2560..0000000000
---- a/examples/ip_pipeline/examples/route_ecmp.cli
-+++ /dev/null
-@@ -1,57 +0,0 @@
--; SPDX-License-Identifier: BSD-3-Clause
--; Copyright(c) 2010-2018 Intel Corporation
--
--; Equal Cost Multi-Path (ECMP) Routing
--;
--; Input packet: Ethernet/IPv4
--;
--; Packet buffer layout:
--; #   Field Name       Offset (Bytes)   Size (Bytes)
--; 0   Mbuf             0                128
--; 1   Headroom         128              128
--; 2   Ethernet header  256              14
--; 3   IPv4 header      270              20
--
--mempool MEMPOOL0 buffer 2304 pool 32K cache 256 cpu 0
--
--link LINK0 dev 0000:02:00.0 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
--link LINK1 dev 0000:02:00.1 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
--link LINK2 dev 0000:06:00.0 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
--link LINK3 dev 0000:06:00.1 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
--
--table action profile APRT ipv4 offset 270 fwd balance offset 278 mask 00FF0000FFFFFFFFFFFFFFFFFFFFFFFF outoffset 256
--table action profile APNH ipv4 offset 270 fwd encap ether
--
--pipeline PIPELINE0 period 10 offset_port_id 0 cpu 0
--
--pipeline PIPELINE0 port in bsz 32 link LINK0 rxq 0
--pipeline PIPELINE0 port in bsz 32 link LINK1 rxq 0
--pipeline PIPELINE0 port in bsz 32 link LINK2 rxq 0
--pipeline PIPELINE0 port in bsz 32 link LINK3 rxq 0
--
--pipeline PIPELINE0 port out bsz 32 link LINK0 txq 0
--pipeline PIPELINE0 port out bsz 32 link LINK1 txq 0
--pipeline PIPELINE0 port out bsz 32 link LINK2 txq 0
--pipeline PIPELINE0 port out bsz 32 link LINK3 txq 0
--pipeline PIPELINE0 port out bsz 32 sink
--
--pipeline PIPELINE0 table match lpm ipv4 offset 286 size 4K action APRT
--pipeline PIPELINE0 table match array offset 256 size 64K action APNH
--
--pipeline PIPELINE0 port in 0 table 0
--pipeline PIPELINE0 port in 1 table 0
--pipeline PIPELINE0 port in 2 table 0
--pipeline PIPELINE0 port in 3 table 0
--
--thread 1 pipeline PIPELINE0 enable
--
--pipeline PIPELINE0 table 0 rule add match default action fwd port 4
--pipeline PIPELINE0 table 0 rule add match lpm ipv4 100.0.0.0 10 action fwd table 1 balance 0 0 0 0 1 1 2 2
--pipeline PIPELINE0 table 0 rule add match lpm ipv4 100.64.0.0 10 action fwd table 1 balance 1 1 1 1 2 2 3 3
--pipeline PIPELINE0 table 0 rule add match lpm ipv4 100.128.0.0 10 action fwd table 1 balance 2 2 2 2 3 3 0 0
--pipeline PIPELINE0 table 0 rule add match lpm ipv4 100.192.0.0 10 action fwd table 1 balance 3 3 3 3 0 0 1 1
--
--pipeline PIPELINE0 table 1 rule add match array 0 action fwd port 0 encap ether a0:a1:a2:a3:a4:a5 00:01:02:03:04:05
--pipeline PIPELINE0 table 1 rule add match array 1 action fwd port 1 encap ether b0:b1:b2:b3:b4:b5 10:11:12:13:14:15
--pipeline PIPELINE0 table 1 rule add match array 2 action fwd port 2 encap ether c0:c1:c2:c3:c4:c5 20:21:22:23:24:25
--pipeline PIPELINE0 table 1 rule add match array 3 action fwd port 3 encap ether d0:d1:d2:d3:d4:d5 30:31:32:33:34:35
-diff --git a/examples/ip_pipeline/examples/rss.cli b/examples/ip_pipeline/examples/rss.cli
-deleted file mode 100644
-index 29c0a91392..0000000000
---- a/examples/ip_pipeline/examples/rss.cli
-+++ /dev/null
-@@ -1,112 +0,0 @@
--; SPDX-License-Identifier: BSD-3-Clause
--; Copyright(c) 2010-2018 Intel Corporation
--
--; This setup demonstrates the usage of NIC Receive Side Scaling (RSS) feature.
--; Each NIC splits the input traffic into 4 RX queues, with each of its RX queues
--; being handled by a different pipeline:
--;
--;                                                    +-----------+    +----------+
--;                       +--------------------------->|           |    |          |
--;                       |       +------------------->| PIPELINE0 +--->|  LINK 0  |--->
--;                       |       |     +------------->| (CORE A)  |    |    TX    |
--;                       |       |     |     +------->|           |    |          |
--;                       |       |     |     |        +-----------+    +----------+
--;    +----------+       |       |     |     |
--;    |          |-------+       |     |     |
--;--->|  LINK 0  |-----------+   |     |     |
--;    |    RX    |---------+ |   |     |     |
--;    |          |-------+ | |   |     |     |
--;    +----------+       | | |   |     |     |        +-----------+    +----------+
--;                       | | +---|-----|-----|------->|           |    |          |
--;    +----------+       | |     | +---|-----|------->| PIPELINE1 +--->|  LINK 1  |--->
--;    |          |-------|-|-----+ |   | +---|------->| (CORE B)  |    |    TX    |
--;--->|  LINK 1  |-------|-|-------+   | |   | +----->|           |    |          |
--;    |    RX    |-------|-|-------+   | |   | |      +-----------+    +----------+
--;    |          |-------|-|-----+ |   | |   | |
--;    +----------+       | |     | |   | |   | |
--;                       | |     | |   | |   | |
--;    +----------+       | |     | |   | |   | |
--;    |          |-------|-|-----|-|---+ |   | |
--;--->|  LINK 2  |-------|-|-----|-|-----+   | |      +-----------+    +----------+
--;    |    RX    |-----+ | +-----|-|---------|-|----->|           |    |          |
--;    |          |---+ | |       | +---------|-|----->| PIPELINE2 +--->|  LINK 2  |--->
--;    +----------+   | +-|-------|-----------|-|----->| (CORE C)  |    |    TX    |
--;                   |   |       |           | | +--->|           |    |          |
--;    +----------+   |   |       |           | | |    +-----------+    +----------+
--;    |          |---|---|-------|-----------+ | |
--;--->|  LINK 3  |---|---|-------|-------------+ |
--;    |    RX    |---|---|-------|---------------+
--;    |          |---|---|-------|-----------+
--;    +----------+   |   |       |           |
--;                   |   |       |           |        +-----------+    +----------+
--;                   |   +-------|-----------|------->|           |    |          |
--;                   |           +-----------|------->| PIPELINE3 +--->|  LINK 3  |--->
--;                   +-----------------------|------->| (CORE D)  |    |    TX    |
--;                                           +------->|           |    |          |
--;                                                    +-----------+    +----------+
--;
--;
--
--mempool MEMPOOL0 buffer 2304 pool 32K cache 256 cpu 0
--
--link LINK0 dev 0000:02:00.0 rxq 4 128 MEMPOOL0 txq 1 512 promiscuous on rss 0 1 2 3
--link LINK1 dev 0000:02:00.1 rxq 4 128 MEMPOOL0 txq 1 512 promiscuous on rss 0 1 2 3
--link LINK2 dev 0000:06:00.0 rxq 4 128 MEMPOOL0 txq 1 512 promiscuous on rss 0 1 2 3
--link LINK3 dev 0000:06:00.1 rxq 4 128 MEMPOOL0 txq 1 512 promiscuous on rss 0 1 2 3
--
--pipeline PIPELINE0 period 10 offset_port_id 0 cpu 0
--pipeline PIPELINE0 port in bsz 32 link LINK0 rxq 0
--pipeline PIPELINE0 port in bsz 32 link LINK1 rxq 0
--pipeline PIPELINE0 port in bsz 32 link LINK2 rxq 0
--pipeline PIPELINE0 port in bsz 32 link LINK3 rxq 0
--pipeline PIPELINE0 port out bsz 32 link LINK0 txq 0
--pipeline PIPELINE0 table match stub
--pipeline PIPELINE0 port in 0 table 0
--pipeline PIPELINE0 port in 1 table 0
--pipeline PIPELINE0 port in 2 table 0
--pipeline PIPELINE0 port in 3 table 0
--pipeline PIPELINE0 table 0 rule add match default action fwd port 0
--
--pipeline PIPELINE1 period 10 offset_port_id 0 cpu 0
--pipeline PIPELINE1 port in bsz 32 link LINK0 rxq 1
--pipeline PIPELINE1 port in bsz 32 link LINK1 rxq 1
--pipeline PIPELINE1 port in bsz 32 link LINK2 rxq 1
--pipeline PIPELINE1 port in bsz 32 link LINK3 rxq 1
--pipeline PIPELINE1 port out bsz 32 link LINK1 txq 0
--pipeline PIPELINE1 table match stub
--pipeline PIPELINE1 port in 0 table 0
--pipeline PIPELINE1 port in 1 table 0
--pipeline PIPELINE1 port in 2 table 0
--pipeline PIPELINE1 port in 3 table 0
--pipeline PIPELINE1 table 0 rule add match default action fwd port 0
--
--pipeline PIPELINE2 period 10 offset_port_id 0 cpu 0
--pipeline PIPELINE2 port in bsz 32 link LINK0 rxq 2
--pipeline PIPELINE2 port in bsz 32 link LINK1 rxq 2
--pipeline PIPELINE2 port in bsz 32 link LINK2 rxq 2
--pipeline PIPELINE2 port in bsz 32 link LINK3 rxq 2
--pipeline PIPELINE2 port out bsz 32 link LINK2 txq 0
--pipeline PIPELINE2 table match stub
--pipeline PIPELINE2 port in 0 table 0
--pipeline PIPELINE2 port in 1 table 0
--pipeline PIPELINE2 port in 2 table 0
--pipeline PIPELINE2 port in 3 table 0
--pipeline PIPELINE2 table 0 rule add match default action fwd port 0
--
--pipeline PIPELINE3 period 10 offset_port_id 0 cpu 0
--pipeline PIPELINE3 port in bsz 32 link LINK0 rxq 3
--pipeline PIPELINE3 port in bsz 32 link LINK1 rxq 3
--pipeline PIPELINE3 port in bsz 32 link LINK2 rxq 3
--pipeline PIPELINE3 port in bsz 32 link LINK3 rxq 3
--pipeline PIPELINE3 port out bsz 32 link LINK3 txq 0
--pipeline PIPELINE3 table match stub
--pipeline PIPELINE3 port in 0 table 0
--pipeline PIPELINE3 port in 1 table 0
--pipeline PIPELINE3 port in 2 table 0
--pipeline PIPELINE3 port in 3 table 0
--pipeline PIPELINE3 table 0 rule add match default action fwd port 0
--
--thread 1 pipeline PIPELINE0 enable
--thread 2 pipeline PIPELINE1 enable
--thread 3 pipeline PIPELINE2 enable
--thread 4 pipeline PIPELINE3 enable
-diff --git a/examples/ip_pipeline/examples/tap.cli b/examples/ip_pipeline/examples/tap.cli
-deleted file mode 100644
-index 600cea2643..0000000000
---- a/examples/ip_pipeline/examples/tap.cli
-+++ /dev/null
-@@ -1,66 +0,0 @@
--; SPDX-License-Identifier: BSD-3-Clause
--; Copyright(c) 2010-2018 Intel Corporation
--
--;                 _______________          ______________________
--;                |               |  TAP0  |                      |
--; LINK0 RXQ0 --->|...............|------->|--+                   |
--;                |               |  TAP1  |  | br0               |
--; LINK1 TXQ0 <---|...............|<-------|<-+                   |
--;                |               |        |     Linux Kernel     |
--;                |   PIPELINE0   |        |     Network Stack    |
--;                |               |  TAP1  |                      |
--; LINK1 RXQ0 --->|...............|------->|--+                   |
--;                |               |  TAP0  |  | br0               |
--; LINK0 TXQ0 <---|...............|<-------|<-+                   |
--;                |_______________|        |______________________|
--;
--; Configure Linux kernel bridge between TAP0 and TAP1 interfaces:
--;    [Linux]$ brctl addbr br0
--;    [Linux]$ brctl addif br0 TAP0
--;    [Linux]$ brctl addif br0 TAP1
--;    [Linux]$ ifconfig TAP0 up
--;    [Linux]$ ifconfig TAP1 up
--;    [Linux]$ ifconfig br0 up
--;
--; Monitor packet forwarding performed by Linux kernel between TAP0 and TAP1:
--;    [Linux]$ tcpdump -i TAP0
--;    [Linux]$ tcpdump -i TAP1
--
--mempool MEMPOOL0 buffer 2304 pool 32K cache 256 cpu 0
--
--link LINK0 dev 0000:02:00.0 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
--link LINK1 dev 0000:02:00.1 rxq 1 128 MEMPOOL0 txq 1 512 promiscuous on
--
--tap TAP0
--tap TAP1
--
--table action profile AP0 ipv4 offset 270 fwd
--
--pipeline PIPELINE0 period 10 offset_port_id 0 cpu 0
--
--pipeline PIPELINE0 port in bsz 32 link LINK0 rxq 0
--pipeline PIPELINE0 port in bsz 32 tap TAP1 mempool MEMPOOL0 mtu 1500
--pipeline PIPELINE0 port in bsz 32 link LINK1 rxq 0
--pipeline PIPELINE0 port in bsz 32 tap TAP0 mempool MEMPOOL0 mtu 1500
--
--pipeline PIPELINE0 port out bsz 32 tap TAP0
--pipeline PIPELINE0 port out bsz 32 link LINK1 txq 0
--pipeline PIPELINE0 port out bsz 32 tap TAP1
--pipeline PIPELINE0 port out bsz 32 link LINK0 txq 0
--
--pipeline PIPELINE0 table match stub action AP0
--pipeline PIPELINE0 table match stub action AP0
--pipeline PIPELINE0 table match stub action AP0
--pipeline PIPELINE0 table match stub action AP0
--
--pipeline PIPELINE0 port in 0 table 0
--pipeline PIPELINE0 port in 1 table 1
--pipeline PIPELINE0 port in 2 table 2
--pipeline PIPELINE0 port in 3 table 3
--
--thread 1 pipeline PIPELINE0 enable
--
--pipeline PIPELINE0 table 0 rule add match default action fwd port 0
--pipeline PIPELINE0 table 1 rule add match default action fwd port 1
--pipeline PIPELINE0 table 2 rule add match default action fwd port 2
--pipeline PIPELINE0 table 3 rule add match default action fwd port 3
-diff --git a/examples/ip_pipeline/link.c b/examples/ip_pipeline/link.c
-deleted file mode 100644
-index 4d69ebebfb..0000000000
---- a/examples/ip_pipeline/link.c
-+++ /dev/null
-@@ -1,270 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2018 Intel Corporation
-- */
--
--#include <stdlib.h>
--#include <string.h>
--
--#include <rte_ethdev.h>
--#include <rte_string_fns.h>
--
--#include "link.h"
--#include "mempool.h"
--
--static struct link_list link_list;
--
--int
--link_init(void)
--{
--	TAILQ_INIT(&link_list);
--
--	return 0;
--}
--
--struct link *
--link_find(const char *name)
--{
--	struct link *link;
--
--	if (name == NULL)
--		return NULL;
--
--	TAILQ_FOREACH(link, &link_list, node)
--		if (strcmp(link->name, name) == 0)
--			return link;
--
--	return NULL;
--}
--
--struct link *
--link_next(struct link *link)
--{
--	return (link == NULL) ? TAILQ_FIRST(&link_list) : TAILQ_NEXT(link, node);
--}
--
--static struct rte_eth_conf port_conf_default = {
--	.link_speeds = 0,
--	.rxmode = {
--		.mq_mode = RTE_ETH_MQ_RX_NONE,
--		.mtu = 9000 - (RTE_ETHER_HDR_LEN + RTE_ETHER_CRC_LEN), /* Jumbo frame MTU */
--	},
--	.rx_adv_conf = {
--		.rss_conf = {
--			.rss_key = NULL,
--			.rss_key_len = 40,
--			.rss_hf = 0,
--		},
--	},
--	.txmode = {
--		.mq_mode = RTE_ETH_MQ_TX_NONE,
--	},
--	.lpbk_mode = 0,
--};
--
--#define RETA_CONF_SIZE     (RTE_ETH_RSS_RETA_SIZE_512 / RTE_ETH_RETA_GROUP_SIZE)
--
--static int
--rss_setup(uint16_t port_id,
--	uint16_t reta_size,
--	struct link_params_rss *rss)
--{
--	struct rte_eth_rss_reta_entry64 reta_conf[RETA_CONF_SIZE];
--	uint32_t i;
--	int status;
--
--	/* RETA setting */
--	memset(reta_conf, 0, sizeof(reta_conf));
--
--	for (i = 0; i < reta_size; i++)
--		reta_conf[i / RTE_ETH_RETA_GROUP_SIZE].mask = UINT64_MAX;
--
--	for (i = 0; i < reta_size; i++) {
--		uint32_t reta_id = i / RTE_ETH_RETA_GROUP_SIZE;
--		uint32_t reta_pos = i % RTE_ETH_RETA_GROUP_SIZE;
--		uint32_t rss_qs_pos = i % rss->n_queues;
--
--		reta_conf[reta_id].reta[reta_pos] =
--			(uint16_t) rss->queue_id[rss_qs_pos];
--	}
--
--	/* RETA update */
--	status = rte_eth_dev_rss_reta_update(port_id,
--		reta_conf,
--		reta_size);
--
--	return status;
--}
--
--struct link *
--link_create(const char *name, struct link_params *params)
--{
--	struct rte_eth_dev_info port_info;
--	struct rte_eth_conf port_conf;
--	struct link *link;
--	struct link_params_rss *rss;
--	struct mempool *mempool;
--	uint32_t cpu_id, i;
--	int status;
--	uint16_t port_id;
--
--	/* Check input params */
--	if ((name == NULL) ||
--		link_find(name) ||
--		(params == NULL) ||
--		(params->rx.n_queues == 0) ||
--		(params->rx.queue_size == 0) ||
--		(params->tx.n_queues == 0) ||
--		(params->tx.queue_size == 0))
--		return NULL;
--
--	port_id = params->port_id;
--	if (params->dev_name) {
--		status = rte_eth_dev_get_port_by_name(params->dev_name,
--			&port_id);
--
--		if (status)
--			return NULL;
--	} else
--		if (!rte_eth_dev_is_valid_port(port_id))
--			return NULL;
--
--	if (rte_eth_dev_info_get(port_id, &port_info) != 0)
--		return NULL;
--
--	mempool = mempool_find(params->rx.mempool_name);
--	if (mempool == NULL)
--		return NULL;
--
--	rss = params->rx.rss;
--	if (rss) {
--		if ((port_info.reta_size == 0) ||
--			(port_info.reta_size > RTE_ETH_RSS_RETA_SIZE_512))
--			return NULL;
--
--		if ((rss->n_queues == 0) ||
--			(rss->n_queues >= LINK_RXQ_RSS_MAX))
--			return NULL;
--
--		for (i = 0; i < rss->n_queues; i++)
--			if (rss->queue_id[i] >= port_info.max_rx_queues)
--				return NULL;
--	}
--
--	/**
--	 * Resource create
--	 */
--	/* Port */
--	memcpy(&port_conf, &port_conf_default, sizeof(port_conf));
--	if (rss) {
--		port_conf.rxmode.mq_mode = RTE_ETH_MQ_RX_RSS;
--		port_conf.rx_adv_conf.rss_conf.rss_hf =
--			(RTE_ETH_RSS_IP | RTE_ETH_RSS_TCP | RTE_ETH_RSS_UDP) &
--			port_info.flow_type_rss_offloads;
--	}
--
--	cpu_id = (uint32_t) rte_eth_dev_socket_id(port_id);
--	if (cpu_id == (uint32_t) SOCKET_ID_ANY)
--		cpu_id = 0;
--
--	status = rte_eth_dev_configure(
--		port_id,
--		params->rx.n_queues,
--		params->tx.n_queues,
--		&port_conf);
--
--	if (status < 0)
--		return NULL;
--
--	if (params->promiscuous) {
--		status = rte_eth_promiscuous_enable(port_id);
--		if (status != 0)
--			return NULL;
--	}
--
--	/* Port RX */
--	for (i = 0; i < params->rx.n_queues; i++) {
--		status = rte_eth_rx_queue_setup(
--			port_id,
--			i,
--			params->rx.queue_size,
--			cpu_id,
--			NULL,
--			mempool->m);
--
--		if (status < 0)
--			return NULL;
--	}
--
--	/* Port TX */
--	for (i = 0; i < params->tx.n_queues; i++) {
--		status = rte_eth_tx_queue_setup(
--			port_id,
--			i,
--			params->tx.queue_size,
--			cpu_id,
--			NULL);
--
--		if (status < 0)
--			return NULL;
--	}
--
--	/* Port start */
--	status = rte_eth_dev_start(port_id);
--	if (status < 0)
--		return NULL;
--
--	if (rss) {
--		status = rss_setup(port_id, port_info.reta_size, rss);
--
--		if (status) {
--			rte_eth_dev_stop(port_id);
--			return NULL;
--		}
--	}
--
--	/* Port link up */
--	status = rte_eth_dev_set_link_up(port_id);
--	if ((status < 0) && (status != -ENOTSUP)) {
--		rte_eth_dev_stop(port_id);
--		return NULL;
--	}
--
--	/* Node allocation */
--	link = calloc(1, sizeof(struct link));
--	if (link == NULL) {
--		rte_eth_dev_stop(port_id);
--		return NULL;
--	}
--
--	/* Node fill in */
--	strlcpy(link->name, name, sizeof(link->name));
--	link->port_id = port_id;
--	link->n_rxq = params->rx.n_queues;
--	link->n_txq = params->tx.n_queues;
--
--	/* Node add to list */
--	TAILQ_INSERT_TAIL(&link_list, link, node);
--
--	return link;
--}
--
--int
--link_is_up(const char *name)
--{
--	struct rte_eth_link link_params;
--	struct link *link;
--
--	/* Check input params */
--	if (name == NULL)
--		return 0;
--
--	link = link_find(name);
--	if (link == NULL)
--		return 0;
--
--	/* Resource */
--	if (rte_eth_link_get(link->port_id, &link_params) < 0)
--		return 0;
--
--	return (link_params.link_status == RTE_ETH_LINK_DOWN) ? 0 : 1;
--}
-diff --git a/examples/ip_pipeline/link.h b/examples/ip_pipeline/link.h
-deleted file mode 100644
-index 34ff1149e0..0000000000
---- a/examples/ip_pipeline/link.h
-+++ /dev/null
-@@ -1,66 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2018 Intel Corporation
-- */
--
--#ifndef _INCLUDE_LINK_H_
--#define _INCLUDE_LINK_H_
--
--#include <stdint.h>
--#include <sys/queue.h>
--
--#include "common.h"
--
--#ifndef LINK_RXQ_RSS_MAX
--#define LINK_RXQ_RSS_MAX                                   16
--#endif
--
--struct link {
--	TAILQ_ENTRY(link) node;
--	char name[NAME_SIZE];
--	uint16_t port_id;
--	uint32_t n_rxq;
--	uint32_t n_txq;
--};
--
--TAILQ_HEAD(link_list, link);
--
--int
--link_init(void);
--
--struct link *
--link_find(const char *name);
--
--struct link *
--link_next(struct link *link);
--
--struct link_params_rss {
--	uint32_t queue_id[LINK_RXQ_RSS_MAX];
--	uint32_t n_queues;
--};
--
--struct link_params {
--	const char *dev_name;
--	uint16_t port_id; /**< Valid only when *dev_name* is NULL. */
--
--	struct {
--		uint32_t n_queues;
--		uint32_t queue_size;
--		const char *mempool_name;
--		struct link_params_rss *rss;
--	} rx;
--
--	struct {
--		uint32_t n_queues;
--		uint32_t queue_size;
--	} tx;
--
--	int promiscuous;
--};
--
--struct link *
--link_create(const char *name, struct link_params *params);
--
--int
--link_is_up(const char *name);
--
--#endif /* _INCLUDE_LINK_H_ */
-diff --git a/examples/ip_pipeline/main.c b/examples/ip_pipeline/main.c
-deleted file mode 100644
-index 663f538f02..0000000000
---- a/examples/ip_pipeline/main.c
-+++ /dev/null
-@@ -1,260 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2018 Intel Corporation
-- */
--
--#include <stdio.h>
--#include <stdlib.h>
--#include <string.h>
--#include <fcntl.h>
--#include <unistd.h>
--#include <getopt.h>
--
--#include <rte_launch.h>
--#include <rte_eal.h>
--
--#include "cli.h"
--#include "conn.h"
--#include "cryptodev.h"
--#include "link.h"
--#include "mempool.h"
--#include "pipeline.h"
--#include "swq.h"
--#include "tap.h"
--#include "thread.h"
--#include "tmgr.h"
--
--static const char usage[] =
--	"%s EAL_ARGS -- [-h HOST] [-p PORT] [-s SCRIPT]\n";
--
--static const char welcome[] =
--	"\n"
--	"Welcome to IP Pipeline!\n"
--	"\n";
--
--static const char prompt[] = "pipeline> ";
--
--static struct app_params {
--	struct conn_params conn;
--	char *script_name;
--} app = {
--	.conn = {
--		.welcome = welcome,
--		.prompt = prompt,
--		.addr = "0.0.0.0",
--		.port = 8086,
--		.buf_size = 1024 * 1024,
--		.msg_in_len_max = 1024,
--		.msg_out_len_max = 1024 * 1024,
--		.msg_handle = cli_process,
--	},
--	.script_name = NULL,
--};
--
--static int
--parse_args(int argc, char **argv)
--{
--	char *app_name = argv[0];
--	struct option lgopts[] = {
--		{ NULL,  0, 0, 0 }
--	};
--	int opt, option_index;
--	int h_present, p_present, s_present, n_args, i;
--
--	/* Skip EAL input args */
--	n_args = argc;
--	for (i = 0; i < n_args; i++)
--		if (strcmp(argv[i], "--") == 0) {
--			argc -= i;
--			argv += i;
--			break;
--		}
--
--	if (i == n_args)
--		return 0;
--
--	/* Parse args */
--	h_present = 0;
--	p_present = 0;
--	s_present = 0;
--
--	while ((opt = getopt_long(argc, argv, "h:p:s:", lgopts, &option_index))
--			!= EOF)
--		switch (opt) {
--		case 'h':
--			if (h_present) {
--				printf("Error: Multiple -h arguments\n");
--				return -1;
--			}
--			h_present = 1;
--
--			if (!strlen(optarg)) {
--				printf("Error: Argument for -h not provided\n");
--				return -1;
--			}
--
--			app.conn.addr = strdup(optarg);
--			if (app.conn.addr == NULL) {
--				printf("Error: Not enough memory\n");
--				return -1;
--			}
--			break;
--
--		case 'p':
--			if (p_present) {
--				printf("Error: Multiple -p arguments\n");
--				return -1;
--			}
--			p_present = 1;
--
--			if (!strlen(optarg)) {
--				printf("Error: Argument for -p not provided\n");
--				return -1;
--			}
--
--			app.conn.port = (uint16_t) atoi(optarg);
--			break;
--
--		case 's':
--			if (s_present) {
--				printf("Error: Multiple -s arguments\n");
--				return -1;
--			}
--			s_present = 1;
--
--			if (!strlen(optarg)) {
--				printf("Error: Argument for -s not provided\n");
--				return -1;
--			}
--
--			app.script_name = strdup(optarg);
--			if (app.script_name == NULL) {
--				printf("Error: Not enough memory\n");
--				return -1;
--			}
--			break;
--
--		default:
--			printf(usage, app_name);
--			return -1;
--		}
--
--	optind = 1; /* reset getopt lib */
--
--	return 0;
--}
--
--int
--main(int argc, char **argv)
--{
--	struct conn *conn;
--	int status;
--
--	/* Parse application arguments */
--	status = parse_args(argc, argv);
--	if (status < 0)
--		return status;
--
--	/* EAL */
--	status = rte_eal_init(argc, argv);
--	if (status < 0) {
--		printf("Error: EAL initialization failed (%d)\n", status);
--		return status;
--	};
--
--	/* Connectivity */
--	conn = conn_init(&app.conn);
--	if (conn == NULL) {
--		printf("Error: Connectivity initialization failed (%d)\n",
--			status);
--		return status;
--	};
--
--	/* Mempool */
--	status = mempool_init();
--	if (status) {
--		printf("Error: Mempool initialization failed (%d)\n", status);
--		return status;
--	}
--
--	/* Link */
--	status = link_init();
--	if (status) {
--		printf("Error: Link initialization failed (%d)\n", status);
--		return status;
--	}
--
--	/* SWQ */
--	status = swq_init();
--	if (status) {
--		printf("Error: SWQ initialization failed (%d)\n", status);
--		return status;
--	}
--
--	/* Traffic Manager */
--	status = tmgr_init();
--	if (status) {
--		printf("Error: TMGR initialization failed (%d)\n", status);
--		return status;
--	}
--
--	/* TAP */
--	status = tap_init();
--	if (status) {
--		printf("Error: TAP initialization failed (%d)\n", status);
--		return status;
--	}
--
--	/* Sym Crypto */
--	status = cryptodev_init();
--	if (status) {
--		printf("Error: Cryptodev initialization failed (%d)\n",
--				status);
--		return status;
--	}
--
--	/* Action */
--	status = port_in_action_profile_init();
--	if (status) {
--		printf("Error: Input port action profile initialization failed (%d)\n", status);
--		return status;
--	}
--
--	status = table_action_profile_init();
--	if (status) {
--		printf("Error: Action profile initialization failed (%d)\n",
--			status);
--		return status;
--	}
--
--	/* Pipeline */
--	status = pipeline_init();
--	if (status) {
--		printf("Error: Pipeline initialization failed (%d)\n", status);
--		return status;
--	}
--
--	/* Thread */
--	status = thread_init();
--	if (status) {
--		printf("Error: Thread initialization failed (%d)\n", status);
--		return status;
--	}
--
--	rte_eal_mp_remote_launch(
--		thread_main,
--		NULL,
--		SKIP_MAIN);
--
--	/* Script */
--	if (app.script_name)
--		cli_script_process(app.script_name,
--			app.conn.msg_in_len_max,
--			app.conn.msg_out_len_max);
--
--	/* Dispatch loop */
--	for ( ; ; ) {
--		conn_poll_for_conn(conn);
--
--		conn_poll_for_msg(conn);
--	}
--}
-diff --git a/examples/ip_pipeline/mempool.c b/examples/ip_pipeline/mempool.c
-deleted file mode 100644
-index f5d2a7d108..0000000000
---- a/examples/ip_pipeline/mempool.c
-+++ /dev/null
-@@ -1,82 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2018 Intel Corporation
-- */
--
--#include <stdlib.h>
--#include <string.h>
--
--#include <rte_mbuf.h>
--#include <rte_string_fns.h>
--
--#include "mempool.h"
--
--#define BUFFER_SIZE_MIN        (sizeof(struct rte_mbuf) + RTE_PKTMBUF_HEADROOM)
--
--static struct mempool_list mempool_list;
--
--int
--mempool_init(void)
--{
--	TAILQ_INIT(&mempool_list);
--
--	return 0;
--}
--
--struct mempool *
--mempool_find(const char *name)
--{
--	struct mempool *mempool;
--
--	if (name == NULL)
--		return NULL;
--
--	TAILQ_FOREACH(mempool, &mempool_list, node)
--		if (strcmp(mempool->name, name) == 0)
--			return mempool;
--
--	return NULL;
--}
--
--struct mempool *
--mempool_create(const char *name, struct mempool_params *params)
--{
--	struct mempool *mempool;
--	struct rte_mempool *m;
--
--	/* Check input params */
--	if ((name == NULL) ||
--		mempool_find(name) ||
--		(params == NULL) ||
--		(params->buffer_size < BUFFER_SIZE_MIN) ||
--		(params->pool_size == 0))
--		return NULL;
--
--	/* Resource create */
--	m = rte_pktmbuf_pool_create(
--		name,
--		params->pool_size,
--		params->cache_size,
--		0,
--		params->buffer_size - sizeof(struct rte_mbuf),
--		params->cpu_id);
--
--	if (m == NULL)
--		return NULL;
--
--	/* Node allocation */
--	mempool = calloc(1, sizeof(struct mempool));
--	if (mempool == NULL) {
--		rte_mempool_free(m);
--		return NULL;
--	}
--
--	/* Node fill in */
--	strlcpy(mempool->name, name, sizeof(mempool->name));
--	mempool->m = m;
--	mempool->buffer_size = params->buffer_size;
--
--	/* Node add to list */
--	TAILQ_INSERT_TAIL(&mempool_list, mempool, node);
--
--	return mempool;
--}
-diff --git a/examples/ip_pipeline/mempool.h b/examples/ip_pipeline/mempool.h
-deleted file mode 100644
-index bd46a11ca0..0000000000
---- a/examples/ip_pipeline/mempool.h
-+++ /dev/null
-@@ -1,40 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2018 Intel Corporation
-- */
--
--#ifndef _INCLUDE_MEMPOOL_H_
--#define _INCLUDE_MEMPOOL_H_
--
--#include <stdint.h>
--#include <sys/queue.h>
--
--#include <rte_mempool.h>
--
--#include "common.h"
--
--struct mempool {
--	TAILQ_ENTRY(mempool) node;
--	char name[NAME_SIZE];
--	struct rte_mempool *m;
--	uint32_t buffer_size;
--};
--
--TAILQ_HEAD(mempool_list, mempool);
--
--int
--mempool_init(void);
--
--struct mempool *
--mempool_find(const char *name);
--
--struct mempool_params {
--	uint32_t buffer_size;
--	uint32_t pool_size;
--	uint32_t cache_size;
--	uint32_t cpu_id;
--};
--
--struct mempool *
--mempool_create(const char *name, struct mempool_params *params);
--
--#endif /* _INCLUDE_MEMPOOL_H_ */
-diff --git a/examples/ip_pipeline/meson.build b/examples/ip_pipeline/meson.build
-deleted file mode 100644
-index 68049157e4..0000000000
---- a/examples/ip_pipeline/meson.build
-+++ /dev/null
-@@ -1,30 +0,0 @@
--# SPDX-License-Identifier: BSD-3-Clause
--# Copyright(c) 2017-2018 Intel Corporation
--
--# meson file, for building this example as part of a main DPDK build.
--#
--# To build this example as a standalone application with an already-installed
--# DPDK instance, use 'make'
--
--build = cc.has_header('sys/epoll.h')
--if not build
--    subdir_done()
--endif
--
--deps += ['pipeline', 'bus_pci']
--allow_experimental_apis = true
--sources = files(
--        'action.c',
--        'cli.c',
--        'conn.c',
--        'cryptodev.c',
--        'link.c',
--        'main.c',
--        'mempool.c',
--        'parser.c',
--        'pipeline.c',
--        'swq.c',
--        'tap.c',
--        'thread.c',
--        'tmgr.c',
--)
-diff --git a/examples/ip_pipeline/parser.c b/examples/ip_pipeline/parser.c
-deleted file mode 100644
-index 8baa70e1f4..0000000000
---- a/examples/ip_pipeline/parser.c
-+++ /dev/null
-@@ -1,506 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2016 Intel Corporation.
-- * Copyright (c) 2009, Olivier MATZ <zer0@droids-corp.org>
-- * All rights reserved.
-- */
--
--#include <stdint.h>
--#include <stdlib.h>
--#include <stdio.h>
--#include <ctype.h>
--#include <getopt.h>
--#include <errno.h>
--#include <stdarg.h>
--#include <string.h>
--#include <libgen.h>
--#include <unistd.h>
--#include <sys/wait.h>
--#include <arpa/inet.h>
--#include <sys/socket.h>
--
--#include <rte_errno.h>
--#include <rte_string_fns.h>
--
--#include "parser.h"
--
--static uint32_t
--get_hex_val(char c)
--{
--	switch (c) {
--	case '0': case '1': case '2': case '3': case '4': case '5':
--	case '6': case '7': case '8': case '9':
--		return c - '0';
--	case 'A': case 'B': case 'C': case 'D': case 'E': case 'F':
--		return c - 'A' + 10;
--	case 'a': case 'b': case 'c': case 'd': case 'e': case 'f':
--		return c - 'a' + 10;
--	default:
--		return 0;
--	}
--}
--
--int
--parser_read_arg_bool(const char *p)
--{
--	p = rte_str_skip_leading_spaces(p);
--	int result = -EINVAL;
--
--	if (((p[0] == 'y') && (p[1] == 'e') && (p[2] == 's')) ||
--		((p[0] == 'Y') && (p[1] == 'E') && (p[2] == 'S'))) {
--		p += 3;
--		result = 1;
--	}
--
--	if (((p[0] == 'o') && (p[1] == 'n')) ||
--		((p[0] == 'O') && (p[1] == 'N'))) {
--		p += 2;
--		result = 1;
--	}
--
--	if (((p[0] == 'n') && (p[1] == 'o')) ||
--		((p[0] == 'N') && (p[1] == 'O'))) {
--		p += 2;
--		result = 0;
--	}
--
--	if (((p[0] == 'o') && (p[1] == 'f') && (p[2] == 'f')) ||
--		((p[0] == 'O') && (p[1] == 'F') && (p[2] == 'F'))) {
--		p += 3;
--		result = 0;
--	}
--
--	p = rte_str_skip_leading_spaces(p);
--
--	if (p[0] != '\0')
+-	if ((profile == NULL) ||
+-		profile->frozen ||
+-		(action_valid(type) == 0) ||
+-		(profile->cfg.action_mask & (1LLU << type)) ||
+-		((action_cfg_size(type) == 0) && action_config) ||
+-		(action_cfg_size(type) && (action_config == NULL)))
 -		return -EINVAL;
 -
--	return result;
--}
--
--int
--parser_read_uint64(uint64_t *value, const char *p)
--{
--	char *next;
--	uint64_t val;
--
--	p = rte_str_skip_leading_spaces(p);
--	if (!isdigit(*p))
--		return -EINVAL;
--
--	val = strtoul(p, &next, 10);
--	if (p == next)
--		return -EINVAL;
--
--	p = next;
--	switch (*p) {
--	case 'T':
--		val *= 1024ULL;
--		/* fall through */
--	case 'G':
--		val *= 1024ULL;
--		/* fall through */
--	case 'M':
--		val *= 1024ULL;
--		/* fall through */
--	case 'k':
--	case 'K':
--		val *= 1024ULL;
--		p++;
+-	switch (type) {
+-	case RTE_TABLE_ACTION_LB:
+-		status = lb_cfg_check(action_config);
 -		break;
--	}
 -
--	p = rte_str_skip_leading_spaces(p);
--	if (*p != '\0')
--		return -EINVAL;
--
--	*value = val;
--	return 0;
--}
--
--int
--parser_read_uint64_hex(uint64_t *value, const char *p)
--{
--	char *next;
--	uint64_t val;
--
--	p = rte_str_skip_leading_spaces(p);
--
--	val = strtoul(p, &next, 16);
--	if (p == next)
--		return -EINVAL;
--
--	p = rte_str_skip_leading_spaces(next);
--	if (*p != '\0')
--		return -EINVAL;
--
--	*value = val;
--	return 0;
--}
--
--int
--parser_read_uint32(uint32_t *value, const char *p)
--{
--	uint64_t val = 0;
--	int ret = parser_read_uint64(&val, p);
--
--	if (ret < 0)
--		return ret;
--
--	if (val > UINT32_MAX)
--		return -ERANGE;
--
--	*value = val;
--	return 0;
--}
--
--int
--parser_read_uint32_hex(uint32_t *value, const char *p)
--{
--	uint64_t val = 0;
--	int ret = parser_read_uint64_hex(&val, p);
--
--	if (ret < 0)
--		return ret;
--
--	if (val > UINT32_MAX)
--		return -ERANGE;
--
--	*value = val;
--	return 0;
--}
--
--int
--parser_read_uint16(uint16_t *value, const char *p)
--{
--	uint64_t val = 0;
--	int ret = parser_read_uint64(&val, p);
--
--	if (ret < 0)
--		return ret;
--
--	if (val > UINT16_MAX)
--		return -ERANGE;
--
--	*value = val;
--	return 0;
--}
--
--int
--parser_read_uint16_hex(uint16_t *value, const char *p)
--{
--	uint64_t val = 0;
--	int ret = parser_read_uint64_hex(&val, p);
--
--	if (ret < 0)
--		return ret;
--
--	if (val > UINT16_MAX)
--		return -ERANGE;
--
--	*value = val;
--	return 0;
--}
--
--int
--parser_read_uint8(uint8_t *value, const char *p)
--{
--	uint64_t val = 0;
--	int ret = parser_read_uint64(&val, p);
--
--	if (ret < 0)
--		return ret;
--
--	if (val > UINT8_MAX)
--		return -ERANGE;
--
--	*value = val;
--	return 0;
--}
--
--int
--parser_read_uint8_hex(uint8_t *value, const char *p)
--{
--	uint64_t val = 0;
--	int ret = parser_read_uint64_hex(&val, p);
--
--	if (ret < 0)
--		return ret;
--
--	if (val > UINT8_MAX)
--		return -ERANGE;
--
--	*value = val;
--	return 0;
--}
--
--int
--parse_tokenize_string(char *string, char *tokens[], uint32_t *n_tokens)
--{
--	uint32_t i;
--
--	if ((string == NULL) ||
--		(tokens == NULL) ||
--		(*n_tokens < 1))
--		return -EINVAL;
--
--	for (i = 0; i < *n_tokens; i++) {
--		tokens[i] = strtok_r(string, PARSE_DELIMITER, &string);
--		if (tokens[i] == NULL)
--			break;
--	}
--
--	if ((i == *n_tokens) &&
--		(NULL != strtok_r(string, PARSE_DELIMITER, &string)))
--		return -E2BIG;
--
--	*n_tokens = i;
--	return 0;
--}
--
--int
--parse_hex_string(char *src, uint8_t *dst, uint32_t *size)
--{
--	char *c;
--	uint32_t len, i;
--
--	/* Check input parameters */
--	if ((src == NULL) ||
--		(dst == NULL) ||
--		(size == NULL) ||
--		(*size == 0))
--		return -1;
--
--	len = strlen(src);
--	if (((len & 3) != 0) ||
--		(len > (*size) * 2))
--		return -1;
--	*size = len / 2;
--
--	for (c = src; *c != 0; c++) {
--		if ((((*c) >= '0') && ((*c) <= '9')) ||
--			(((*c) >= 'A') && ((*c) <= 'F')) ||
--			(((*c) >= 'a') && ((*c) <= 'f')))
--			continue;
--
--		return -1;
--	}
--
--	/* Convert chars to bytes */
--	for (i = 0; i < *size; i++)
--		dst[i] = get_hex_val(src[2 * i]) * 16 +
--			get_hex_val(src[2 * i + 1]);
--
--	return 0;
--}
--
--int
--parse_mpls_labels(char *string, uint32_t *labels, uint32_t *n_labels)
--{
--	uint32_t n_max_labels = *n_labels, count = 0;
--
--	/* Check for void list of labels */
--	if (strcmp(string, "<void>") == 0) {
--		*n_labels = 0;
--		return 0;
--	}
--
--	/* At least one label should be present */
--	for ( ; (*string != '\0'); ) {
--		char *next;
--		int value;
--
--		if (count >= n_max_labels)
--			return -1;
--
--		if (count > 0) {
--			if (string[0] != ':')
--				return -1;
--
--			string++;
--		}
--
--		value = strtol(string, &next, 10);
--		if (next == string)
--			return -1;
--		string = next;
--
--		labels[count++] = (uint32_t) value;
--	}
--
--	*n_labels = count;
--	return 0;
--}
--
--static struct rte_ether_addr *
--my_ether_aton(const char *a)
--{
--	int i;
--	char *end;
--	unsigned long o[RTE_ETHER_ADDR_LEN];
--	static struct rte_ether_addr ether_addr;
--
--	i = 0;
--	do {
--		errno = 0;
--		o[i] = strtoul(a, &end, 16);
--		if (errno != 0 || end == a || (end[0] != ':' && end[0] != 0))
--			return NULL;
--		a = end + 1;
--	} while (++i != RTE_DIM(o) && end[0] != 0);
--
--	/* Junk at the end of line */
--	if (end[0] != 0)
--		return NULL;
--
--	/* Support the format XX:XX:XX:XX:XX:XX */
--	if (i == RTE_ETHER_ADDR_LEN) {
--		while (i-- != 0) {
--			if (o[i] > UINT8_MAX)
--				return NULL;
--			ether_addr.addr_bytes[i] = (uint8_t)o[i];
--		}
--	/* Support the format XXXX:XXXX:XXXX */
--	} else if (i == RTE_ETHER_ADDR_LEN / 2) {
--		while (i-- != 0) {
--			if (o[i] > UINT16_MAX)
--				return NULL;
--			ether_addr.addr_bytes[i * 2] = (uint8_t)(o[i] >> 8);
--			ether_addr.addr_bytes[i * 2 + 1] = (uint8_t)(o[i] & 0xff);
--		}
--	/* unknown format */
--	} else
--		return NULL;
--
--	return (struct rte_ether_addr *)&ether_addr;
--}
--
--int
--parse_ipv4_addr(const char *token, struct in_addr *ipv4)
--{
--	if (strlen(token) >= INET_ADDRSTRLEN)
--		return -EINVAL;
--
--	if (inet_pton(AF_INET, token, ipv4) != 1)
--		return -EINVAL;
--
--	return 0;
--}
--
--int
--parse_ipv6_addr(const char *token, struct rte_ipv6_addr *ipv6)
--{
--	if (strlen(token) >= INET6_ADDRSTRLEN)
--		return -EINVAL;
--
--	if (inet_pton(AF_INET6, token, ipv6) != 1)
--		return -EINVAL;
--
--	return 0;
--}
--
--int
--parse_mac_addr(const char *token, struct rte_ether_addr *addr)
--{
--	struct rte_ether_addr *tmp;
--
--	tmp = my_ether_aton(token);
--	if (tmp == NULL)
--		return -1;
--
--	*addr = *tmp;
--	return 0;
--}
--
--int
--parse_cpu_core(const char *entry,
--	struct cpu_core_params *p)
--{
--	size_t num_len;
--	char num[8];
--
--	uint32_t s = 0, c = 0, h = 0, val;
--	uint8_t s_parsed = 0, c_parsed = 0, h_parsed = 0;
--	const char *next = rte_str_skip_leading_spaces(entry);
--	char type;
--
--	if (p == NULL)
--		return -EINVAL;
--
--	/* Expect <CORE> or [sX][cY][h]. At least one parameter is required. */
--	while (*next != '\0') {
--		/* If everything parsed nothing should left */
--		if (s_parsed && c_parsed && h_parsed)
--			return -EINVAL;
--
--		type = *next;
--		switch (type) {
--		case 's':
--		case 'S':
--			if (s_parsed || c_parsed || h_parsed)
--				return -EINVAL;
--			s_parsed = 1;
--			next++;
--			break;
--		case 'c':
--		case 'C':
--			if (c_parsed || h_parsed)
--				return -EINVAL;
--			c_parsed = 1;
--			next++;
--			break;
--		case 'h':
--		case 'H':
--			if (h_parsed)
--				return -EINVAL;
--			h_parsed = 1;
--			next++;
--			break;
--		default:
--			/* If it start from digit it must be only core id. */
--			if (!isdigit(*next) || s_parsed || c_parsed || h_parsed)
--				return -EINVAL;
--
--			type = 'C';
--		}
--
--		for (num_len = 0; *next != '\0'; next++, num_len++) {
--			if (num_len == RTE_DIM(num))
--				return -EINVAL;
--
--			if (!isdigit(*next))
--				break;
--
--			num[num_len] = *next;
--		}
--
--		if (num_len == 0 && type != 'h' && type != 'H')
--			return -EINVAL;
--
--		if (num_len != 0 && (type == 'h' || type == 'H'))
--			return -EINVAL;
--
--		num[num_len] = '\0';
--		val = strtol(num, NULL, 10);
--
--		h = 0;
--		switch (type) {
--		case 's':
--		case 'S':
--			s = val;
--			break;
--		case 'c':
--		case 'C':
--			c = val;
--			break;
--		case 'h':
--		case 'H':
--			h = 1;
--			break;
--		}
--	}
--
--	p->socket_id = s;
--	p->core_id = c;
--	p->thread_id = h;
--	return 0;
--}
-diff --git a/examples/ip_pipeline/parser.h b/examples/ip_pipeline/parser.h
-deleted file mode 100644
-index c8f0187d71..0000000000
---- a/examples/ip_pipeline/parser.h
-+++ /dev/null
-@@ -1,56 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2016 Intel Corporation
-- */
--
--#ifndef __INCLUDE_PARSER_H__
--#define __INCLUDE_PARSER_H__
--
--#include <ctype.h>
--#include <stdint.h>
--
--#include <rte_ip.h>
--#include <rte_ether.h>
--
--#define PARSE_DELIMITER				" \f\n\r\t\v"
--
--static inline size_t
--skip_digits(const char *src)
--{
--	size_t i;
--
--	for (i = 0; isdigit(src[i]); i++)
--		;
--
--	return i;
--}
--
--int parser_read_arg_bool(const char *p);
--
--int parser_read_uint64(uint64_t *value, const char *p);
--int parser_read_uint32(uint32_t *value, const char *p);
--int parser_read_uint16(uint16_t *value, const char *p);
--int parser_read_uint8(uint8_t *value, const char *p);
--
--int parser_read_uint64_hex(uint64_t *value, const char *p);
--int parser_read_uint32_hex(uint32_t *value, const char *p);
--int parser_read_uint16_hex(uint16_t *value, const char *p);
--int parser_read_uint8_hex(uint8_t *value, const char *p);
--
--int parse_hex_string(char *src, uint8_t *dst, uint32_t *size);
--
--int parse_ipv4_addr(const char *token, struct in_addr *ipv4);
--int parse_ipv6_addr(const char *token, struct rte_ipv6_addr *ipv6);
--int parse_mac_addr(const char *token, struct rte_ether_addr *addr);
--int parse_mpls_labels(char *string, uint32_t *labels, uint32_t *n_labels);
--
--struct cpu_core_params {
--	uint32_t socket_id;
--	uint32_t core_id;
--	uint32_t thread_id;
--};
--
--int parse_cpu_core(const char *entry, struct cpu_core_params *p);
--
--int parse_tokenize_string(char *string, char *tokens[], uint32_t *n_tokens);
--
--#endif
-diff --git a/examples/ip_pipeline/pipeline.c b/examples/ip_pipeline/pipeline.c
-deleted file mode 100644
-index 792aab0059..0000000000
---- a/examples/ip_pipeline/pipeline.c
-+++ /dev/null
-@@ -1,1078 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2018 Intel Corporation
-- */
--
--#include <stdlib.h>
--#include <string.h>
--
--#include <rte_common.h>
--#include <rte_ip.h>
--#include <rte_tcp.h>
--
--#include <rte_string_fns.h>
--#include <rte_port_ethdev.h>
--#include <rte_port_ring.h>
--#include <rte_port_source_sink.h>
--#include <rte_port_fd.h>
--#include <rte_port_sched.h>
--#include <rte_port_sym_crypto.h>
--
--#include <rte_table_acl.h>
--#include <rte_table_array.h>
--#include <rte_table_hash.h>
--#include <rte_table_hash_func.h>
--#include <rte_table_lpm.h>
--#include <rte_table_lpm_ipv6.h>
--#include <rte_table_stub.h>
--
--#include "link.h"
--#include "mempool.h"
--#include "pipeline.h"
--#include "tap.h"
--#include "tmgr.h"
--#include "swq.h"
--#include "cryptodev.h"
--
--#ifndef PIPELINE_MSGQ_SIZE
--#define PIPELINE_MSGQ_SIZE                                 64
--#endif
--
--#ifndef TABLE_LPM_NUMBER_TBL8
--#define TABLE_LPM_NUMBER_TBL8                              256
--#endif
--
--static struct pipeline_list pipeline_list;
--
--int
--pipeline_init(void)
--{
--	TAILQ_INIT(&pipeline_list);
--
--	return 0;
--}
--
--struct pipeline *
--pipeline_find(const char *name)
--{
--	struct pipeline *pipeline;
--
--	if (name == NULL)
--		return NULL;
--
--	TAILQ_FOREACH(pipeline, &pipeline_list, node)
--		if (strcmp(name, pipeline->name) == 0)
--			return pipeline;
--
--	return NULL;
--}
--
--struct pipeline *
--pipeline_create(const char *name, struct pipeline_params *params)
--{
--	char msgq_name[NAME_MAX];
--	struct rte_pipeline_params pp;
--	struct pipeline *pipeline;
--	struct rte_pipeline *p;
--	struct rte_ring *msgq_req;
--	struct rte_ring *msgq_rsp;
--
--	/* Check input params */
--	if ((name == NULL) ||
--		pipeline_find(name) ||
--		(params == NULL) ||
--		(params->timer_period_ms == 0))
--		return NULL;
--
--	/* Resource create */
--	snprintf(msgq_name, sizeof(msgq_name), "%s-MSGQ-REQ", name);
--
--	msgq_req = rte_ring_create(msgq_name,
--		PIPELINE_MSGQ_SIZE,
--		params->cpu_id,
--		RING_F_SP_ENQ | RING_F_SC_DEQ);
--	if (msgq_req == NULL)
--		return NULL;
--
--	snprintf(msgq_name, sizeof(msgq_name), "%s-MSGQ-RSP", name);
--
--	msgq_rsp = rte_ring_create(msgq_name,
--		PIPELINE_MSGQ_SIZE,
--		params->cpu_id,
--		RING_F_SP_ENQ | RING_F_SC_DEQ);
--	if (msgq_rsp == NULL) {
--		rte_ring_free(msgq_req);
--		return NULL;
--	}
--
--	pp.name = name;
--	pp.socket_id = (int) params->cpu_id;
--	pp.offset_port_id = params->offset_port_id;
--
--	p = rte_pipeline_create(&pp);
--	if (p == NULL) {
--		rte_ring_free(msgq_rsp);
--		rte_ring_free(msgq_req);
--		return NULL;
--	}
--
--	/* Node allocation */
--	pipeline = calloc(1, sizeof(struct pipeline));
--	if (pipeline == NULL) {
--		rte_pipeline_free(p);
--		rte_ring_free(msgq_rsp);
--		rte_ring_free(msgq_req);
--		return NULL;
--	}
--
--	/* Node fill in */
--	strlcpy(pipeline->name, name, sizeof(pipeline->name));
--	pipeline->p = p;
--	pipeline->n_ports_in = 0;
--	pipeline->n_ports_out = 0;
--	pipeline->n_tables = 0;
--	pipeline->msgq_req = msgq_req;
--	pipeline->msgq_rsp = msgq_rsp;
--	pipeline->timer_period_ms = params->timer_period_ms;
--	pipeline->enabled = 0;
--	pipeline->cpu_id = params->cpu_id;
--
--	/* Node add to list */
--	TAILQ_INSERT_TAIL(&pipeline_list, pipeline, node);
--
--	return pipeline;
--}
--
--int
--pipeline_port_in_create(const char *pipeline_name,
--	struct port_in_params *params,
--	int enabled)
--{
--	struct rte_pipeline_port_in_params p;
--
--	union {
--		struct rte_port_ethdev_reader_params ethdev;
--		struct rte_port_ring_reader_params ring;
--		struct rte_port_sched_reader_params sched;
--		struct rte_port_fd_reader_params fd;
--		struct rte_port_source_params source;
--		struct rte_port_sym_crypto_reader_params sym_crypto;
--	} pp;
--
--	struct pipeline *pipeline;
--	struct port_in *port_in;
--	struct port_in_action_profile *ap;
--	struct rte_port_in_action *action;
--	uint32_t port_id;
--	int status;
--
--	memset(&p, 0, sizeof(p));
--	memset(&pp, 0, sizeof(pp));
--
--	/* Check input params */
--	if ((pipeline_name == NULL) ||
--		(params == NULL) ||
--		(params->burst_size == 0) ||
--		(params->burst_size > RTE_PORT_IN_BURST_SIZE_MAX))
--		return -1;
--
--	pipeline = pipeline_find(pipeline_name);
--	if (pipeline == NULL)
--		return -1;
--
--	ap = NULL;
--	if (params->action_profile_name) {
--		ap = port_in_action_profile_find(params->action_profile_name);
--		if (ap == NULL)
--			return -1;
--	}
--
--	switch (params->type) {
--	case PORT_IN_RXQ:
--	{
--		struct link *link;
--
--		link = link_find(params->dev_name);
--		if (link == NULL)
--			return -1;
--
--		if (params->rxq.queue_id >= link->n_rxq)
--			return -1;
--
--		pp.ethdev.port_id = link->port_id;
--		pp.ethdev.queue_id = params->rxq.queue_id;
--
--		p.ops = &rte_port_ethdev_reader_ops;
--		p.arg_create = &pp.ethdev;
+-	case RTE_TABLE_ACTION_MTR:
+-		status = mtr_cfg_check(action_config);
 -		break;
--	}
 -
--	case PORT_IN_SWQ:
--	{
--		struct swq *swq;
--
--		swq = swq_find(params->dev_name);
--		if (swq == NULL)
--			return -1;
--
--		pp.ring.ring = swq->r;
--
--		p.ops = &rte_port_ring_reader_ops;
--		p.arg_create = &pp.ring;
+-	case RTE_TABLE_ACTION_TM:
+-		status = tm_cfg_check(action_config);
 -		break;
--	}
 -
--	case PORT_IN_TMGR:
--	{
--		struct tmgr_port *tmgr_port;
--
--		tmgr_port = tmgr_port_find(params->dev_name);
--		if (tmgr_port == NULL)
--			return -1;
--
--		pp.sched.sched = tmgr_port->s;
--
--		p.ops = &rte_port_sched_reader_ops;
--		p.arg_create = &pp.sched;
+-	case RTE_TABLE_ACTION_ENCAP:
+-		status = encap_cfg_check(action_config);
 -		break;
--	}
 -
--	case PORT_IN_TAP:
--	{
--		struct tap *tap;
--		struct mempool *mempool;
--
--		tap = tap_find(params->dev_name);
--		mempool = mempool_find(params->tap.mempool_name);
--		if ((tap == NULL) || (mempool == NULL))
--			return -1;
--
--		pp.fd.fd = tap->fd;
--		pp.fd.mempool = mempool->m;
--		pp.fd.mtu = params->tap.mtu;
--
--		p.ops = &rte_port_fd_reader_ops;
--		p.arg_create = &pp.fd;
+-	case RTE_TABLE_ACTION_NAT:
+-		status = nat_cfg_check(action_config);
 -		break;
--	}
 -
--
--	case PORT_IN_SOURCE:
--	{
--		struct mempool *mempool;
--
--		mempool = mempool_find(params->source.mempool_name);
--		if (mempool == NULL)
--			return -1;
--
--		pp.source.mempool = mempool->m;
--		pp.source.file_name = params->source.file_name;
--		pp.source.n_bytes_per_pkt = params->source.n_bytes_per_pkt;
--
--		p.ops = &rte_port_source_ops;
--		p.arg_create = &pp.source;
+-	case RTE_TABLE_ACTION_TTL:
+-		status = ttl_cfg_check(action_config);
 -		break;
--	}
 -
--	case PORT_IN_CRYPTODEV:
--	{
--		struct cryptodev *cryptodev;
--
--		cryptodev = cryptodev_find(params->dev_name);
--		if (cryptodev == NULL)
--			return -1;
--
--		if (params->rxq.queue_id > cryptodev->n_queues - 1)
--			return -1;
--
--		pp.sym_crypto.cryptodev_id = cryptodev->dev_id;
--		pp.sym_crypto.queue_id = params->cryptodev.queue_id;
--		pp.sym_crypto.f_callback = params->cryptodev.f_callback;
--		pp.sym_crypto.arg_callback = params->cryptodev.arg_callback;
--		p.ops = &rte_port_sym_crypto_reader_ops;
--		p.arg_create = &pp.sym_crypto;
--
+-	case RTE_TABLE_ACTION_STATS:
+-		status = stats_cfg_check(action_config);
 -		break;
--	}
+-
+-	case RTE_TABLE_ACTION_SYM_CRYPTO:
+-		status = sym_crypto_cfg_check(action_config);
+-		break;
 -
 -	default:
--		return -1;
--	}
--
--	p.burst_size = params->burst_size;
--
--	/* Resource create */
--	action = NULL;
--	p.f_action = NULL;
--	p.arg_ah = NULL;
--
--	if (ap) {
--		action = rte_port_in_action_create(ap->ap,
--			pipeline->cpu_id);
--		if (action == NULL)
--			return -1;
--
--		status = rte_port_in_action_params_get(
--			action,
--			&p);
--		if (status) {
--			rte_port_in_action_free(action);
--			return -1;
--		}
--	}
--
--	status = rte_pipeline_port_in_create(pipeline->p,
--		&p,
--		&port_id);
--	if (status) {
--		rte_port_in_action_free(action);
--		return -1;
--	}
--
--	if (enabled)
--		rte_pipeline_port_in_enable(pipeline->p, port_id);
--
--	/* Pipeline */
--	port_in = &pipeline->port_in[pipeline->n_ports_in];
--	memcpy(&port_in->params, params, sizeof(*params));
--	port_in->ap = ap;
--	port_in->a = action;
--	pipeline->n_ports_in++;
--
--	return 0;
--}
--
--int
--pipeline_port_in_connect_to_table(const char *pipeline_name,
--	uint32_t port_id,
--	uint32_t table_id)
--{
--	struct pipeline *pipeline;
--	int status;
--
--	/* Check input params */
--	if (pipeline_name == NULL)
--		return -1;
--
--	pipeline = pipeline_find(pipeline_name);
--	if ((pipeline == NULL) ||
--		(port_id >= pipeline->n_ports_in) ||
--		(table_id >= pipeline->n_tables))
--		return -1;
--
--	/* Resource */
--	status = rte_pipeline_port_in_connect_to_table(pipeline->p,
--		port_id,
--		table_id);
--
--	return status;
--
--}
--
--int
--pipeline_port_out_create(const char *pipeline_name,
--	struct port_out_params *params)
--{
--	struct rte_pipeline_port_out_params p;
--
--	union {
--		struct rte_port_ethdev_writer_params ethdev;
--		struct rte_port_ring_writer_params ring;
--		struct rte_port_sched_writer_params sched;
--		struct rte_port_fd_writer_params fd;
--		struct rte_port_sink_params sink;
--		struct rte_port_sym_crypto_writer_params sym_crypto;
--	} pp;
--
--	union {
--		struct rte_port_ethdev_writer_nodrop_params ethdev;
--		struct rte_port_ring_writer_nodrop_params ring;
--		struct rte_port_fd_writer_nodrop_params fd;
--		struct rte_port_sym_crypto_writer_nodrop_params sym_crypto;
--	} pp_nodrop;
--
--	struct pipeline *pipeline;
--	uint32_t port_id;
--	int status;
--
--	memset(&p, 0, sizeof(p));
--	memset(&pp, 0, sizeof(pp));
--	memset(&pp_nodrop, 0, sizeof(pp_nodrop));
--
--	/* Check input params */
--	if ((pipeline_name == NULL) ||
--		(params == NULL) ||
--		(params->burst_size == 0) ||
--		(params->burst_size > RTE_PORT_IN_BURST_SIZE_MAX))
--		return -1;
--
--	pipeline = pipeline_find(pipeline_name);
--	if (pipeline == NULL)
--		return -1;
--
--	switch (params->type) {
--	case PORT_OUT_TXQ:
--	{
--		struct link *link;
--
--		link = link_find(params->dev_name);
--		if (link == NULL)
--			return -1;
--
--		if (params->txq.queue_id >= link->n_txq)
--			return -1;
--
--		pp.ethdev.port_id = link->port_id;
--		pp.ethdev.queue_id = params->txq.queue_id;
--		pp.ethdev.tx_burst_sz = params->burst_size;
--
--		pp_nodrop.ethdev.port_id = link->port_id;
--		pp_nodrop.ethdev.queue_id = params->txq.queue_id;
--		pp_nodrop.ethdev.tx_burst_sz = params->burst_size;
--		pp_nodrop.ethdev.n_retries = params->n_retries;
--
--		if (params->retry == 0) {
--			p.ops = &rte_port_ethdev_writer_ops;
--			p.arg_create = &pp.ethdev;
--		} else {
--			p.ops = &rte_port_ethdev_writer_nodrop_ops;
--			p.arg_create = &pp_nodrop.ethdev;
--		}
+-		status = 0;
 -		break;
 -	}
--
--	case PORT_OUT_SWQ:
--	{
--		struct swq *swq;
--
--		swq = swq_find(params->dev_name);
--		if (swq == NULL)
--			return -1;
--
--		pp.ring.ring = swq->r;
--		pp.ring.tx_burst_sz = params->burst_size;
--
--		pp_nodrop.ring.ring = swq->r;
--		pp_nodrop.ring.tx_burst_sz = params->burst_size;
--		pp_nodrop.ring.n_retries = params->n_retries;
--
--		if (params->retry == 0) {
--			p.ops = &rte_port_ring_writer_ops;
--			p.arg_create = &pp.ring;
--		} else {
--			p.ops = &rte_port_ring_writer_nodrop_ops;
--			p.arg_create = &pp_nodrop.ring;
--		}
--		break;
--	}
--
--	case PORT_OUT_TMGR:
--	{
--		struct tmgr_port *tmgr_port;
--
--		tmgr_port = tmgr_port_find(params->dev_name);
--		if (tmgr_port == NULL)
--			return -1;
--
--		pp.sched.sched = tmgr_port->s;
--		pp.sched.tx_burst_sz = params->burst_size;
--
--		p.ops = &rte_port_sched_writer_ops;
--		p.arg_create = &pp.sched;
--		break;
--	}
--
--	case PORT_OUT_TAP:
--	{
--		struct tap *tap;
--
--		tap = tap_find(params->dev_name);
--		if (tap == NULL)
--			return -1;
--
--		pp.fd.fd = tap->fd;
--		pp.fd.tx_burst_sz = params->burst_size;
--
--		pp_nodrop.fd.fd = tap->fd;
--		pp_nodrop.fd.tx_burst_sz = params->burst_size;
--		pp_nodrop.fd.n_retries = params->n_retries;
--
--		if (params->retry == 0) {
--			p.ops = &rte_port_fd_writer_ops;
--			p.arg_create = &pp.fd;
--		} else {
--			p.ops = &rte_port_fd_writer_nodrop_ops;
--			p.arg_create = &pp_nodrop.fd;
--		}
--		break;
--	}
--
--
--	case PORT_OUT_SINK:
--	{
--		pp.sink.file_name = params->sink.file_name;
--		pp.sink.max_n_pkts = params->sink.max_n_pkts;
--
--		p.ops = &rte_port_sink_ops;
--		p.arg_create = &pp.sink;
--		break;
--	}
--
--	case PORT_OUT_CRYPTODEV:
--	{
--		struct cryptodev *cryptodev;
--
--		cryptodev = cryptodev_find(params->dev_name);
--		if (cryptodev == NULL)
--			return -1;
--
--		if (params->cryptodev.queue_id >= cryptodev->n_queues)
--			return -1;
--
--		pp.sym_crypto.cryptodev_id = cryptodev->dev_id;
--		pp.sym_crypto.queue_id = params->cryptodev.queue_id;
--		pp.sym_crypto.tx_burst_sz = params->burst_size;
--		pp.sym_crypto.crypto_op_offset = params->cryptodev.op_offset;
--
--		pp_nodrop.sym_crypto.cryptodev_id = cryptodev->dev_id;
--		pp_nodrop.sym_crypto.queue_id = params->cryptodev.queue_id;
--		pp_nodrop.sym_crypto.tx_burst_sz = params->burst_size;
--		pp_nodrop.sym_crypto.n_retries = params->retry;
--		pp_nodrop.sym_crypto.crypto_op_offset =
--				params->cryptodev.op_offset;
--
--		if (params->retry == 0) {
--			p.ops = &rte_port_sym_crypto_writer_ops;
--			p.arg_create = &pp.sym_crypto;
--		} else {
--			p.ops = &rte_port_sym_crypto_writer_nodrop_ops;
--			p.arg_create = &pp_nodrop.sym_crypto;
--		}
--
--		break;
--	}
--
--	default:
--		return -1;
--	}
--
--	p.f_action = NULL;
--	p.arg_ah = NULL;
--
--	/* Resource create */
--	status = rte_pipeline_port_out_create(pipeline->p,
--		&p,
--		&port_id);
 -
 -	if (status)
--		return -1;
+-		return status;
 -
--	/* Pipeline */
--	pipeline->n_ports_out++;
+-	/* Action enable */
+-	action_cfg_set(&profile->cfg, type, action_config);
 -
 -	return 0;
 -}
 -
--static const struct rte_acl_field_def table_acl_field_format_ipv4[] = {
--	/* Protocol */
--	[0] = {
--		.type = RTE_ACL_FIELD_TYPE_BITMASK,
--		.size = sizeof(uint8_t),
--		.field_index = 0,
--		.input_index = 0,
--		.offset = offsetof(struct rte_ipv4_hdr, next_proto_id),
--	},
--
--	/* Source IP address (IPv4) */
--	[1] = {
--		.type = RTE_ACL_FIELD_TYPE_MASK,
--		.size = sizeof(uint32_t),
--		.field_index = 1,
--		.input_index = 1,
--		.offset = offsetof(struct rte_ipv4_hdr, src_addr),
--	},
--
--	/* Destination IP address (IPv4) */
--	[2] = {
--		.type = RTE_ACL_FIELD_TYPE_MASK,
--		.size = sizeof(uint32_t),
--		.field_index = 2,
--		.input_index = 2,
--		.offset = offsetof(struct rte_ipv4_hdr, dst_addr),
--	},
--
--	/* Source Port */
--	[3] = {
--		.type = RTE_ACL_FIELD_TYPE_RANGE,
--		.size = sizeof(uint16_t),
--		.field_index = 3,
--		.input_index = 3,
--		.offset = sizeof(struct rte_ipv4_hdr) +
--			offsetof(struct rte_tcp_hdr, src_port),
--	},
--
--	/* Destination Port */
--	[4] = {
--		.type = RTE_ACL_FIELD_TYPE_RANGE,
--		.size = sizeof(uint16_t),
--		.field_index = 4,
--		.input_index = 3,
--		.offset = sizeof(struct rte_ipv4_hdr) +
--			offsetof(struct rte_tcp_hdr, dst_port),
--	},
--};
--
--static const struct rte_acl_field_def table_acl_field_format_ipv6[] = {
--	/* Protocol */
--	[0] = {
--		.type = RTE_ACL_FIELD_TYPE_BITMASK,
--		.size = sizeof(uint8_t),
--		.field_index = 0,
--		.input_index = 0,
--		.offset = offsetof(struct rte_ipv6_hdr, proto),
--	},
--
--	/* Source IP address (IPv6) */
--	[1] = {
--		.type = RTE_ACL_FIELD_TYPE_MASK,
--		.size = sizeof(uint32_t),
--		.field_index = 1,
--		.input_index = 1,
--		.offset = offsetof(struct rte_ipv6_hdr, src_addr.a[0]),
--	},
--
--	[2] = {
--		.type = RTE_ACL_FIELD_TYPE_MASK,
--		.size = sizeof(uint32_t),
--		.field_index = 2,
--		.input_index = 2,
--		.offset = offsetof(struct rte_ipv6_hdr, src_addr.a[4]),
--	},
--
--	[3] = {
--		.type = RTE_ACL_FIELD_TYPE_MASK,
--		.size = sizeof(uint32_t),
--		.field_index = 3,
--		.input_index = 3,
--		.offset = offsetof(struct rte_ipv6_hdr, src_addr.a[8]),
--	},
--
--	[4] = {
--		.type = RTE_ACL_FIELD_TYPE_MASK,
--		.size = sizeof(uint32_t),
--		.field_index = 4,
--		.input_index = 4,
--		.offset = offsetof(struct rte_ipv6_hdr, src_addr.a[12]),
--	},
--
--	/* Destination IP address (IPv6) */
--	[5] = {
--		.type = RTE_ACL_FIELD_TYPE_MASK,
--		.size = sizeof(uint32_t),
--		.field_index = 5,
--		.input_index = 5,
--		.offset = offsetof(struct rte_ipv6_hdr, dst_addr.a[0]),
--	},
--
--	[6] = {
--		.type = RTE_ACL_FIELD_TYPE_MASK,
--		.size = sizeof(uint32_t),
--		.field_index = 6,
--		.input_index = 6,
--		.offset = offsetof(struct rte_ipv6_hdr, dst_addr.a[4]),
--	},
--
--	[7] = {
--		.type = RTE_ACL_FIELD_TYPE_MASK,
--		.size = sizeof(uint32_t),
--		.field_index = 7,
--		.input_index = 7,
--		.offset = offsetof(struct rte_ipv6_hdr, dst_addr.a[8]),
--	},
--
--	[8] = {
--		.type = RTE_ACL_FIELD_TYPE_MASK,
--		.size = sizeof(uint32_t),
--		.field_index = 8,
--		.input_index = 8,
--		.offset = offsetof(struct rte_ipv6_hdr, dst_addr.a[12]),
--	},
--
--	/* Source Port */
--	[9] = {
--		.type = RTE_ACL_FIELD_TYPE_RANGE,
--		.size = sizeof(uint16_t),
--		.field_index = 9,
--		.input_index = 9,
--		.offset = sizeof(struct rte_ipv6_hdr) +
--			offsetof(struct rte_tcp_hdr, src_port),
--	},
--
--	/* Destination Port */
--	[10] = {
--		.type = RTE_ACL_FIELD_TYPE_RANGE,
--		.size = sizeof(uint16_t),
--		.field_index = 10,
--		.input_index = 9,
--		.offset = sizeof(struct rte_ipv6_hdr) +
--			offsetof(struct rte_tcp_hdr, dst_port),
--	},
--};
--
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_profile_freeze, 18.05)
 -int
--pipeline_table_create(const char *pipeline_name,
--	struct table_params *params)
+-rte_table_action_profile_freeze(struct rte_table_action_profile *profile)
 -{
--	char name[NAME_MAX];
--	struct rte_pipeline_table_params p;
+-	if (profile->frozen)
+-		return -EBUSY;
 -
--	union {
--		struct rte_table_acl_params acl;
--		struct rte_table_array_params array;
--		struct rte_table_hash_params hash;
--		struct rte_table_lpm_params lpm;
--		struct rte_table_lpm_ipv6_params lpm_ipv6;
--	} pp;
+-	profile->cfg.action_mask |= 1LLU << RTE_TABLE_ACTION_FWD;
+-	action_data_offset_set(&profile->data, &profile->cfg);
+-	profile->frozen = 1;
 -
--	struct pipeline *pipeline;
--	struct table *table;
--	struct table_action_profile *ap;
+-	return 0;
+-}
+-
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_profile_free, 18.05)
+-int
+-rte_table_action_profile_free(struct rte_table_action_profile *profile)
+-{
+-	if (profile == NULL)
+-		return 0;
+-
+-	free(profile);
+-	return 0;
+-}
+-
+-/**
+- * Action
+- */
+-#define METER_PROFILES_MAX                                 32
+-
+-struct rte_table_action {
+-	struct ap_config cfg;
+-	struct ap_data data;
+-	struct dscp_table_data dscp_table;
+-	struct meter_profile_data mp[METER_PROFILES_MAX];
+-};
+-
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_create, 18.05)
+-struct rte_table_action *
+-rte_table_action_create(struct rte_table_action_profile *profile,
+-	uint32_t socket_id)
+-{
 -	struct rte_table_action *action;
--	uint32_t table_id;
--	int status;
 -
--	memset(&p, 0, sizeof(p));
--	memset(&pp, 0, sizeof(pp));
--
--	/* Check input params */
--	if ((pipeline_name == NULL) ||
--		(params == NULL))
--		return -1;
--
--	pipeline = pipeline_find(pipeline_name);
--	if ((pipeline == NULL) ||
--		(pipeline->n_tables >= RTE_PIPELINE_TABLE_MAX))
--		return -1;
--
--	ap = NULL;
--	if (params->action_profile_name) {
--		ap = table_action_profile_find(params->action_profile_name);
--		if (ap == NULL)
--			return -1;
--	}
--
--	snprintf(name, NAME_MAX, "%s_table%u",
--		pipeline_name, pipeline->n_tables);
--
--	switch (params->match_type) {
--	case TABLE_ACL:
--	{
--		uint32_t ip_header_offset = params->match.acl.ip_header_offset -
--			(sizeof(struct rte_mbuf) + RTE_PKTMBUF_HEADROOM);
--		uint32_t i;
--
--		if (params->match.acl.n_rules == 0)
--			return -1;
--
--		pp.acl.name = name;
--		pp.acl.n_rules = params->match.acl.n_rules;
--		if (params->match.acl.ip_version) {
--			memcpy(&pp.acl.field_format,
--				&table_acl_field_format_ipv4,
--				sizeof(table_acl_field_format_ipv4));
--			pp.acl.n_rule_fields =
--				RTE_DIM(table_acl_field_format_ipv4);
--		} else {
--			memcpy(&pp.acl.field_format,
--				&table_acl_field_format_ipv6,
--				sizeof(table_acl_field_format_ipv6));
--			pp.acl.n_rule_fields =
--				RTE_DIM(table_acl_field_format_ipv6);
--		}
--
--		for (i = 0; i < pp.acl.n_rule_fields; i++)
--			pp.acl.field_format[i].offset += ip_header_offset;
--
--		p.ops = &rte_table_acl_ops;
--		p.arg_create = &pp.acl;
--		break;
--	}
--
--	case TABLE_ARRAY:
--	{
--		if (params->match.array.n_keys == 0)
--			return -1;
--
--		pp.array.n_entries = params->match.array.n_keys;
--		pp.array.offset = params->match.array.key_offset;
--
--		p.ops = &rte_table_array_ops;
--		p.arg_create = &pp.array;
--		break;
--	}
--
--	case TABLE_HASH:
--	{
--		struct rte_table_ops *ops;
--		rte_table_hash_op_hash f_hash;
--
--		if (params->match.hash.n_keys == 0)
--			return -1;
--
--		switch (params->match.hash.key_size) {
--		case  8:
--			f_hash = rte_table_hash_crc_key8;
--			break;
--		case 16:
--			f_hash = rte_table_hash_crc_key16;
--			break;
--		case 24:
--			f_hash = rte_table_hash_crc_key24;
--			break;
--		case 32:
--			f_hash = rte_table_hash_crc_key32;
--			break;
--		case 40:
--			f_hash = rte_table_hash_crc_key40;
--			break;
--		case 48:
--			f_hash = rte_table_hash_crc_key48;
--			break;
--		case 56:
--			f_hash = rte_table_hash_crc_key56;
--			break;
--		case 64:
--			f_hash = rte_table_hash_crc_key64;
--			break;
--		default:
--			return -1;
--		}
--
--		pp.hash.name = name;
--		pp.hash.key_size = params->match.hash.key_size;
--		pp.hash.key_offset = params->match.hash.key_offset;
--		pp.hash.key_mask = params->match.hash.key_mask;
--		pp.hash.n_keys = params->match.hash.n_keys;
--		pp.hash.n_buckets = params->match.hash.n_buckets;
--		pp.hash.f_hash = f_hash;
--		pp.hash.seed = 0;
--
--		if (params->match.hash.extendable_bucket)
--			switch (params->match.hash.key_size) {
--			case  8:
--				ops = &rte_table_hash_key8_ext_ops;
--				break;
--			case 16:
--				ops = &rte_table_hash_key16_ext_ops;
--				break;
--			default:
--				ops = &rte_table_hash_ext_ops;
--			}
--		else
--			switch (params->match.hash.key_size) {
--			case  8:
--				ops = &rte_table_hash_key8_lru_ops;
--				break;
--			case 16:
--				ops = &rte_table_hash_key16_lru_ops;
--				break;
--			default:
--				ops = &rte_table_hash_lru_ops;
--			}
--
--		p.ops = ops;
--		p.arg_create = &pp.hash;
--		break;
--	}
--
--	case TABLE_LPM:
--	{
--		if (params->match.lpm.n_rules == 0)
--			return -1;
--
--		switch (params->match.lpm.key_size) {
--		case 4:
--		{
--			pp.lpm.name = name;
--			pp.lpm.n_rules = params->match.lpm.n_rules;
--			pp.lpm.number_tbl8s = TABLE_LPM_NUMBER_TBL8;
--			pp.lpm.flags = 0;
--			pp.lpm.entry_unique_size = p.action_data_size +
--				sizeof(struct rte_pipeline_table_entry);
--			pp.lpm.offset = params->match.lpm.key_offset;
--
--			p.ops = &rte_table_lpm_ops;
--			p.arg_create = &pp.lpm;
--			break;
--		}
--
--		case 16:
--		{
--			pp.lpm_ipv6.name = name;
--			pp.lpm_ipv6.n_rules = params->match.lpm.n_rules;
--			pp.lpm_ipv6.number_tbl8s = TABLE_LPM_NUMBER_TBL8;
--			pp.lpm_ipv6.entry_unique_size = p.action_data_size +
--				sizeof(struct rte_pipeline_table_entry);
--			pp.lpm_ipv6.offset = params->match.lpm.key_offset;
--
--			p.ops = &rte_table_lpm_ipv6_ops;
--			p.arg_create = &pp.lpm_ipv6;
--			break;
--		}
--
--		default:
--			return -1;
--		}
--
--		break;
--	}
--
--	case TABLE_STUB:
--	{
--		p.ops = &rte_table_stub_ops;
--		p.arg_create = NULL;
--		break;
--	}
--
--	default:
--		return -1;
--	}
--
--	/* Resource create */
--	action = NULL;
--	p.f_action_hit = NULL;
--	p.f_action_miss = NULL;
--	p.arg_ah = NULL;
--
--	if (ap) {
--		action = rte_table_action_create(ap->ap,
--			pipeline->cpu_id);
--		if (action == NULL)
--			return -1;
--
--		status = rte_table_action_table_params_get(
--			action,
--			&p);
--		if (status ||
--			((p.action_data_size +
--			sizeof(struct rte_pipeline_table_entry)) >
--			TABLE_RULE_ACTION_SIZE_MAX)) {
--			rte_table_action_free(action);
--			return -1;
--		}
--	}
--
--	if (params->match_type == TABLE_LPM) {
--		if (params->match.lpm.key_size == 4)
--			pp.lpm.entry_unique_size = p.action_data_size +
--				sizeof(struct rte_pipeline_table_entry);
--
--		if (params->match.lpm.key_size == 16)
--			pp.lpm_ipv6.entry_unique_size = p.action_data_size +
--				sizeof(struct rte_pipeline_table_entry);
--	}
--
--	status = rte_pipeline_table_create(pipeline->p,
--		&p,
--		&table_id);
--	if (status) {
--		rte_table_action_free(action);
--		return -1;
--	}
--
--	/* Pipeline */
--	table = &pipeline->table[pipeline->n_tables];
--	memcpy(&table->params, params, sizeof(*params));
--	table->ap = ap;
--	table->a = action;
--	TAILQ_INIT(&table->rules);
--	table->rule_default = NULL;
--
--	pipeline->n_tables++;
--
--	return 0;
--}
--
--struct table_rule *
--table_rule_find(struct table *table,
--    struct table_rule_match *match)
--{
--	struct table_rule *rule;
--
--	TAILQ_FOREACH(rule, &table->rules, node)
--		if (memcmp(&rule->match, match, sizeof(*match)) == 0)
--			return rule;
--
--	return NULL;
--}
--
--void
--table_rule_add(struct table *table,
--    struct table_rule *new_rule)
--{
--	struct table_rule *existing_rule;
--
--	existing_rule = table_rule_find(table, &new_rule->match);
--	if (existing_rule == NULL)
--		TAILQ_INSERT_TAIL(&table->rules, new_rule, node);
--	else {
--		TAILQ_INSERT_AFTER(&table->rules, existing_rule, new_rule, node);
--		TAILQ_REMOVE(&table->rules, existing_rule, node);
--		free(existing_rule);
--	}
--}
--
--void
--table_rule_add_bulk(struct table *table,
--    struct table_rule_list *list,
--    uint32_t n_rules)
--{
--	uint32_t i;
--
--	for (i = 0; i < n_rules; i++) {
--		struct table_rule *existing_rule, *new_rule;
--
--		new_rule = TAILQ_FIRST(list);
--		if (new_rule == NULL)
--			break;
--
--		TAILQ_REMOVE(list, new_rule, node);
--
--		existing_rule = table_rule_find(table, &new_rule->match);
--		if (existing_rule == NULL)
--			TAILQ_INSERT_TAIL(&table->rules, new_rule, node);
--		else {
--			TAILQ_INSERT_AFTER(&table->rules, existing_rule, new_rule, node);
--			TAILQ_REMOVE(&table->rules, existing_rule, node);
--			free(existing_rule);
--		}
--	}
--}
--
--void
--table_rule_delete(struct table *table,
--    struct table_rule_match *match)
--{
--	struct table_rule *rule;
--
--	rule = table_rule_find(table, match);
--	if (rule == NULL)
--		return;
--
--	TAILQ_REMOVE(&table->rules, rule, node);
--	free(rule);
--}
--
--void
--table_rule_default_add(struct table *table,
--	struct table_rule *rule)
--{
--	free(table->rule_default);
--	table->rule_default = rule;
--}
--
--void
--table_rule_default_delete(struct table *table)
--{
--	free(table->rule_default);
--	table->rule_default = NULL;
--}
-diff --git a/examples/ip_pipeline/pipeline.h b/examples/ip_pipeline/pipeline.h
-deleted file mode 100644
-index 89696480fc..0000000000
---- a/examples/ip_pipeline/pipeline.h
-+++ /dev/null
-@@ -1,425 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2018 Intel Corporation
-- */
--
--#ifndef _INCLUDE_PIPELINE_H_
--#define _INCLUDE_PIPELINE_H_
--
--#include <stdint.h>
--#include <sys/queue.h>
--
--#include <rte_pipeline.h>
--#include <rte_table_action.h>
--
--#include "common.h"
--#include "action.h"
--
--struct pipeline_params {
--	uint32_t timer_period_ms;
--	uint32_t offset_port_id;
--	uint32_t cpu_id;
--};
--
--enum port_in_type {
--	PORT_IN_RXQ,
--	PORT_IN_SWQ,
--	PORT_IN_TMGR,
--	PORT_IN_TAP,
--	PORT_IN_SOURCE,
--	PORT_IN_CRYPTODEV,
--};
--
--struct port_in_params {
--	/* Read */
--	enum port_in_type type;
--	const char *dev_name;
--	union {
--		struct {
--			uint16_t queue_id;
--		} rxq;
--
--		struct {
--			const char *mempool_name;
--			uint32_t mtu;
--		} tap;
--
--		struct {
--			const char *mempool_name;
--			const char *file_name;
--			uint32_t n_bytes_per_pkt;
--		} source;
--
--		struct {
--			uint16_t queue_id;
--			void *f_callback;
--			void *arg_callback;
--		} cryptodev;
--	};
--	uint32_t burst_size;
--
--	/* Action */
--	const char *action_profile_name;
--};
--
--enum port_out_type {
--	PORT_OUT_TXQ,
--	PORT_OUT_SWQ,
--	PORT_OUT_TMGR,
--	PORT_OUT_TAP,
--	PORT_OUT_SINK,
--	PORT_OUT_CRYPTODEV,
--};
--
--struct port_out_params {
--	enum port_out_type type;
--	const char *dev_name;
--	union {
--		struct {
--			uint16_t queue_id;
--		} txq;
--
--		struct {
--			const char *file_name;
--			uint32_t max_n_pkts;
--		} sink;
--
--		struct {
--			uint16_t queue_id;
--			uint32_t op_offset;
--		} cryptodev;
--	};
--	uint32_t burst_size;
--	int retry;
--	uint32_t n_retries;
--};
--
--enum table_type {
--	TABLE_ACL,
--	TABLE_ARRAY,
--	TABLE_HASH,
--	TABLE_LPM,
--	TABLE_STUB,
--};
--
--struct table_acl_params {
--	uint32_t n_rules;
--	uint32_t ip_header_offset;
--	int ip_version;
--};
--
--struct table_array_params {
--	uint32_t n_keys;
--	uint32_t key_offset;
--};
--
--struct table_hash_params {
--	uint32_t n_keys;
--	uint32_t key_offset;
--	uint32_t key_size;
--	uint8_t *key_mask;
--	uint32_t n_buckets;
--	int extendable_bucket;
--};
--
--struct table_lpm_params {
--	uint32_t n_rules;
--	uint32_t key_offset;
--	uint32_t key_size;
--};
--
--struct table_params {
--	/* Match */
--	enum table_type match_type;
--	union {
--		struct table_acl_params acl;
--		struct table_array_params array;
--		struct table_hash_params hash;
--		struct table_lpm_params lpm;
--	} match;
--
--	/* Action */
--	const char *action_profile_name;
--};
--
--struct table_rule;
--
--TAILQ_HEAD(table_rule_list, table_rule);
--
--struct port_in {
--	struct port_in_params params;
--	struct port_in_action_profile *ap;
--	struct rte_port_in_action *a;
--};
--
--struct table {
--	struct table_params params;
--	struct table_action_profile *ap;
--	struct rte_table_action *a;
--	struct table_rule_list rules;
--	struct table_rule *rule_default;
--};
--
--struct pipeline {
--	TAILQ_ENTRY(pipeline) node;
--	char name[NAME_SIZE];
--
--	struct rte_pipeline *p;
--	struct port_in port_in[RTE_PIPELINE_PORT_IN_MAX];
--	struct table table[RTE_PIPELINE_TABLE_MAX];
--	uint32_t n_ports_in;
--	uint32_t n_ports_out;
--	uint32_t n_tables;
--
--	struct rte_ring *msgq_req;
--	struct rte_ring *msgq_rsp;
--	uint32_t timer_period_ms;
--
--	int enabled;
--	uint32_t thread_id;
--	uint32_t cpu_id;
--};
--
--TAILQ_HEAD(pipeline_list, pipeline);
--
--int
--pipeline_init(void);
--
--struct pipeline *
--pipeline_find(const char *name);
--
--struct pipeline *
--pipeline_create(const char *name, struct pipeline_params *params);
--
--int
--pipeline_port_in_create(const char *pipeline_name,
--	struct port_in_params *params,
--	int enabled);
--
--int
--pipeline_port_in_connect_to_table(const char *pipeline_name,
--	uint32_t port_id,
--	uint32_t table_id);
--
--int
--pipeline_port_out_create(const char *pipeline_name,
--	struct port_out_params *params);
--
--int
--pipeline_table_create(const char *pipeline_name,
--	struct table_params *params);
--
--struct table_rule_match_acl {
--	int ip_version;
--
--	union {
--		struct {
--			uint32_t sa;
--			uint32_t da;
--		} ipv4;
--
--		struct {
--			struct rte_ipv6_addr sa;
--			struct rte_ipv6_addr da;
--		} ipv6;
--	};
--
--	uint32_t sa_depth;
--	uint32_t da_depth;
--	uint16_t sp0;
--	uint16_t sp1;
--	uint16_t dp0;
--	uint16_t dp1;
--	uint8_t proto;
--	uint8_t proto_mask;
--	uint32_t priority;
--};
--
--struct table_rule_match_array {
--	uint32_t pos;
--};
--
--#ifndef TABLE_RULE_MATCH_SIZE_MAX
--#define TABLE_RULE_MATCH_SIZE_MAX                          256
--#endif
--
--#ifndef TABLE_RULE_ACTION_SIZE_MAX
--#define TABLE_RULE_ACTION_SIZE_MAX                         2048
--#endif
--
--struct table_rule_match_hash {
--	uint8_t key[TABLE_RULE_MATCH_SIZE_MAX];
--};
--
--struct table_rule_match_lpm {
--	int ip_version;
--
--	union {
--		uint32_t ipv4;
--		struct rte_ipv6_addr ipv6;
--	};
--
--	uint8_t depth;
--};
--
--struct table_rule_match {
--	enum table_type match_type;
--
--	union {
--		struct table_rule_match_acl acl;
--		struct table_rule_match_array array;
--		struct table_rule_match_hash hash;
--		struct table_rule_match_lpm lpm;
--	} match;
--};
--
--#ifndef SYM_CRYPTO_MAX_KEY_SIZE
--#define SYM_CRYPTO_MAX_KEY_SIZE                (256)
--#endif
--
--struct table_rule_action {
--	uint64_t action_mask;
--	struct rte_table_action_fwd_params fwd;
--	struct rte_table_action_lb_params lb;
--	struct rte_table_action_mtr_params mtr;
--	struct rte_table_action_tm_params tm;
--	struct rte_table_action_encap_params encap;
--	struct rte_table_action_nat_params nat;
--	struct rte_table_action_ttl_params ttl;
--	struct rte_table_action_stats_params stats;
--	struct rte_table_action_time_params time;
--	struct rte_table_action_sym_crypto_params sym_crypto;
--	uint8_t sym_crypto_key[SYM_CRYPTO_MAX_KEY_SIZE];
--	struct rte_table_action_tag_params tag;
--	struct rte_table_action_decap_params decap;
--
--};
--
--struct table_rule {
--	TAILQ_ENTRY(table_rule) node;
--	struct table_rule_match match;
--	struct table_rule_action action;
--	void *data;
--};
--
--int
--pipeline_port_in_stats_read(const char *pipeline_name,
--	uint32_t port_id,
--	struct rte_pipeline_port_in_stats *stats,
--	int clear);
--
--int
--pipeline_port_in_enable(const char *pipeline_name,
--	uint32_t port_id);
--
--int
--pipeline_port_in_disable(const char *pipeline_name,
--	uint32_t port_id);
--
--int
--pipeline_port_out_stats_read(const char *pipeline_name,
--	uint32_t port_id,
--	struct rte_pipeline_port_out_stats *stats,
--	int clear);
--
--int
--pipeline_table_stats_read(const char *pipeline_name,
--	uint32_t table_id,
--	struct rte_pipeline_table_stats *stats,
--	int clear);
--
--int
--pipeline_table_rule_add(const char *pipeline_name,
--	uint32_t table_id,
--	struct table_rule_match *match,
--	struct table_rule_action *action);
--
--int
--pipeline_table_rule_add_bulk(const char *pipeline_name,
--	uint32_t table_id,
--	struct table_rule_list *list,
--	uint32_t *n_rules_added,
--	uint32_t *n_rules_not_added);
--
--int
--pipeline_table_rule_add_default(const char *pipeline_name,
--	uint32_t table_id,
--	struct table_rule_action *action);
--
--int
--pipeline_table_rule_delete(const char *pipeline_name,
--	uint32_t table_id,
--	struct table_rule_match *match);
--
--int
--pipeline_table_rule_delete_default(const char *pipeline_name,
--	uint32_t table_id);
--
--int
--pipeline_table_rule_stats_read(const char *pipeline_name,
--	uint32_t table_id,
--	struct table_rule_match *match,
--	struct rte_table_action_stats_counters *stats,
--	int clear);
--
--int
--pipeline_table_mtr_profile_add(const char *pipeline_name,
--	uint32_t table_id,
--	uint32_t meter_profile_id,
--	struct rte_table_action_meter_profile *profile);
--
--int
--pipeline_table_mtr_profile_delete(const char *pipeline_name,
--	uint32_t table_id,
--	uint32_t meter_profile_id);
--
--int
--pipeline_table_rule_mtr_read(const char *pipeline_name,
--	uint32_t table_id,
--	struct table_rule_match *match,
--	struct rte_table_action_mtr_counters *stats,
--	int clear);
--
--int
--pipeline_table_dscp_table_update(const char *pipeline_name,
--	uint32_t table_id,
--	uint64_t dscp_mask,
--	struct rte_table_action_dscp_table *dscp_table);
--
--int
--pipeline_table_rule_ttl_read(const char *pipeline_name,
--	uint32_t table_id,
--	struct table_rule_match *match,
--	struct rte_table_action_ttl_counters *stats,
--	int clear);
--
--int
--pipeline_table_rule_time_read(const char *pipeline_name,
--	uint32_t table_id,
--	struct table_rule_match *match,
--	uint64_t *timestamp);
--
--struct table_rule *
--table_rule_find(struct table *table,
--	struct table_rule_match *match);
--
--void
--table_rule_add(struct table *table,
--	struct table_rule *rule);
--
--void
--table_rule_add_bulk(struct table *table,
--	struct table_rule_list *list,
--	uint32_t n_rules);
--
--void
--table_rule_delete(struct table *table,
--	struct table_rule_match *match);
--
--void
--table_rule_default_add(struct table *table,
--	struct table_rule *rule);
--
--void
--table_rule_default_delete(struct table *table);
--
--#endif /* _INCLUDE_PIPELINE_H_ */
-diff --git a/examples/ip_pipeline/swq.c b/examples/ip_pipeline/swq.c
-deleted file mode 100644
-index 7e54a1dbfe..0000000000
---- a/examples/ip_pipeline/swq.c
-+++ /dev/null
-@@ -1,76 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2018 Intel Corporation
-- */
--
--#include <stdlib.h>
--#include <string.h>
--
--#include <rte_string_fns.h>
--
--#include "swq.h"
--
--static struct swq_list swq_list;
--
--int
--swq_init(void)
--{
--	TAILQ_INIT(&swq_list);
--
--	return 0;
--}
--
--struct swq *
--swq_find(const char *name)
--{
--	struct swq *swq;
--
--	if (name == NULL)
+-	/* Check input arguments */
+-	if ((profile == NULL) ||
+-		(profile->frozen == 0))
 -		return NULL;
--
--	TAILQ_FOREACH(swq, &swq_list, node)
--		if (strcmp(swq->name, name) == 0)
--			return swq;
--
--	return NULL;
--}
--
--struct swq *
--swq_create(const char *name, struct swq_params *params)
--{
--	struct swq *swq;
--	struct rte_ring *r;
--	unsigned int flags = RING_F_SP_ENQ | RING_F_SC_DEQ;
--
--	/* Check input params */
--	if ((name == NULL) ||
--		swq_find(name) ||
--		(params == NULL) ||
--		(params->size == 0))
--		return NULL;
--
--	/* Resource create */
--	r = rte_ring_create(
--		name,
--		params->size,
--		params->cpu_id,
--		flags);
--
--	if (r == NULL)
--		return NULL;
--
--	/* Node allocation */
--	swq = calloc(1, sizeof(struct swq));
--	if (swq == NULL) {
--		rte_ring_free(r);
--		return NULL;
--	}
--
--	/* Node fill in */
--	strlcpy(swq->name, name, sizeof(swq->name));
--	swq->r = r;
--
--	/* Node add to list */
--	TAILQ_INSERT_TAIL(&swq_list, swq, node);
--
--	return swq;
--}
-diff --git a/examples/ip_pipeline/swq.h b/examples/ip_pipeline/swq.h
-deleted file mode 100644
-index c8440ee3cd..0000000000
---- a/examples/ip_pipeline/swq.h
-+++ /dev/null
-@@ -1,37 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2018 Intel Corporation
-- */
--
--#ifndef _INCLUDE_SWQ_H_
--#define _INCLUDE_SWQ_H_
--
--#include <stdint.h>
--#include <sys/queue.h>
--
--#include <rte_ring.h>
--
--#include "common.h"
--
--struct swq {
--	TAILQ_ENTRY(swq) node;
--	char name[NAME_SIZE];
--	struct rte_ring *r;
--};
--
--TAILQ_HEAD(swq_list, swq);
--
--int
--swq_init(void);
--
--struct swq *
--swq_find(const char *name);
--
--struct swq_params {
--	uint32_t size;
--	uint32_t cpu_id;
--};
--
--struct swq *
--swq_create(const char *name, struct swq_params *params);
--
--#endif /* _INCLUDE_SWQ_H_ */
-diff --git a/examples/ip_pipeline/tap.c b/examples/ip_pipeline/tap.c
-deleted file mode 100644
-index adae640c1e..0000000000
---- a/examples/ip_pipeline/tap.c
-+++ /dev/null
-@@ -1,102 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2018 Intel Corporation
-- */
--
--#include <netinet/in.h>
--#ifdef RTE_EXEC_ENV_LINUX
--#include <linux/if.h>
--#include <linux/if_tun.h>
--#endif
--#include <sys/ioctl.h>
--
--#include <fcntl.h>
--#include <stdio.h>
--#include <stdlib.h>
--#include <string.h>
--#include <unistd.h>
--
--#include <rte_string_fns.h>
--
--#include "tap.h"
--
--#define TAP_DEV                                            "/dev/net/tun"
--
--static struct tap_list tap_list;
--
--int
--tap_init(void)
--{
--	TAILQ_INIT(&tap_list);
--
--	return 0;
--}
--
--struct tap *
--tap_find(const char *name)
--{
--	struct tap *tap;
--
--	if (name == NULL)
--		return NULL;
--
--	TAILQ_FOREACH(tap, &tap_list, node)
--		if (strcmp(tap->name, name) == 0)
--			return tap;
--
--	return NULL;
--}
--
--#ifndef RTE_EXEC_ENV_LINUX
--
--struct tap *
--tap_create(const char *name __rte_unused)
--{
--	return NULL;
--}
--
--#else
--
--struct tap *
--tap_create(const char *name)
--{
--	struct tap *tap;
--	struct ifreq ifr;
--	int fd, status;
--
--	/* Check input params */
--	if ((name == NULL) ||
--		tap_find(name))
--		return NULL;
--
--	/* Resource create */
--	fd = open(TAP_DEV, O_RDWR | O_NONBLOCK);
--	if (fd < 0)
--		return NULL;
--
--	memset(&ifr, 0, sizeof(ifr));
--	ifr.ifr_flags = IFF_TAP | IFF_NO_PI; /* No packet information */
--	strlcpy(ifr.ifr_name, name, IFNAMSIZ);
--
--	status = ioctl(fd, TUNSETIFF, (void *) &ifr);
--	if (status < 0) {
--		close(fd);
--		return NULL;
--	}
--
--	/* Node allocation */
--	tap = calloc(1, sizeof(struct tap));
--	if (tap == NULL) {
--		close(fd);
--		return NULL;
--	}
--	/* Node fill in */
--	strlcpy(tap->name, name, sizeof(tap->name));
--	tap->fd = fd;
--
--	/* Node add to list */
--	TAILQ_INSERT_TAIL(&tap_list, tap, node);
--
--	return tap;
--}
--
--#endif
-diff --git a/examples/ip_pipeline/tap.h b/examples/ip_pipeline/tap.h
-deleted file mode 100644
-index 0dce72fe3c..0000000000
---- a/examples/ip_pipeline/tap.h
-+++ /dev/null
-@@ -1,29 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2018 Intel Corporation
-- */
--
--#ifndef _INCLUDE_TAP_H_
--#define _INCLUDE_TAP_H_
--
--#include <sys/queue.h>
--
--#include "common.h"
--
--struct tap {
--	TAILQ_ENTRY(tap) node;
--	char name[NAME_SIZE];
--	int fd;
--};
--
--TAILQ_HEAD(tap_list, tap);
--
--int
--tap_init(void);
--
--struct tap *
--tap_find(const char *name);
--
--struct tap *
--tap_create(const char *name);
--
--#endif /* _INCLUDE_TAP_H_ */
-diff --git a/examples/ip_pipeline/thread.c b/examples/ip_pipeline/thread.c
-deleted file mode 100644
-index 0a44bddd90..0000000000
---- a/examples/ip_pipeline/thread.c
-+++ /dev/null
-@@ -1,3137 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2018 Intel Corporation
-- */
--
--#include <stdlib.h>
--
--#include <rte_common.h>
--#include <rte_cycles.h>
--#include <rte_lcore.h>
--#include <rte_ring.h>
--
--#include <rte_table_acl.h>
--#include <rte_table_array.h>
--#include <rte_table_hash.h>
--#include <rte_table_lpm.h>
--#include <rte_table_lpm_ipv6.h>
--
--#include "common.h"
--#include "thread.h"
--#include "pipeline.h"
--
--#ifndef THREAD_PIPELINES_MAX
--#define THREAD_PIPELINES_MAX                               256
--#endif
--
--#ifndef THREAD_MSGQ_SIZE
--#define THREAD_MSGQ_SIZE                                   64
--#endif
--
--#ifndef THREAD_TIMER_PERIOD_MS
--#define THREAD_TIMER_PERIOD_MS                             100
--#endif
--
--/**
-- * Main thread: data plane thread context
-- */
--struct thread {
--	struct rte_ring *msgq_req;
--	struct rte_ring *msgq_rsp;
--
--	uint32_t enabled;
--};
--
--static struct thread thread[RTE_MAX_LCORE];
--
--/**
-- * Data plane threads: context
-- */
--struct table_data {
--	struct rte_table_action *a;
--};
--
--struct pipeline_data {
--	struct rte_pipeline *p;
--	struct table_data table_data[RTE_PIPELINE_TABLE_MAX];
--	uint32_t n_tables;
--
--	struct rte_ring *msgq_req;
--	struct rte_ring *msgq_rsp;
--	uint64_t timer_period; /* Measured in CPU cycles. */
--	uint64_t time_next;
--
--	uint8_t buffer[TABLE_RULE_ACTION_SIZE_MAX];
--};
--
--struct __rte_cache_aligned thread_data {
--	struct rte_pipeline *p[THREAD_PIPELINES_MAX];
--	uint32_t n_pipelines;
--
--	struct pipeline_data pipeline_data[THREAD_PIPELINES_MAX];
--	struct rte_ring *msgq_req;
--	struct rte_ring *msgq_rsp;
--	uint64_t timer_period; /* Measured in CPU cycles. */
--	uint64_t time_next;
--	uint64_t time_next_min;
--};
--
--static struct thread_data thread_data[RTE_MAX_LCORE];
--
--/**
-- * Main thread: data plane thread init
-- */
--static void
--thread_free(void)
--{
--	uint32_t i;
--
--	for (i = 0; i < RTE_MAX_LCORE; i++) {
--		struct thread *t = &thread[i];
--
--		if (!rte_lcore_is_enabled(i))
--			continue;
--
--		/* MSGQs */
--		rte_ring_free(t->msgq_req);
--
--		rte_ring_free(t->msgq_rsp);
--	}
--}
--
--int
--thread_init(void)
--{
--	uint32_t i;
--
--	RTE_LCORE_FOREACH_WORKER(i) {
--		char name[NAME_MAX];
--		struct rte_ring *msgq_req, *msgq_rsp;
--		struct thread *t = &thread[i];
--		struct thread_data *t_data = &thread_data[i];
--		uint32_t cpu_id = rte_lcore_to_socket_id(i);
--
--		/* MSGQs */
--		snprintf(name, sizeof(name), "THREAD-%04x-MSGQ-REQ", i);
--
--		msgq_req = rte_ring_create(name,
--			THREAD_MSGQ_SIZE,
--			cpu_id,
--			RING_F_SP_ENQ | RING_F_SC_DEQ);
--
--		if (msgq_req == NULL) {
--			thread_free();
--			return -1;
--		}
--
--		snprintf(name, sizeof(name), "THREAD-%04x-MSGQ-RSP", i);
--
--		msgq_rsp = rte_ring_create(name,
--			THREAD_MSGQ_SIZE,
--			cpu_id,
--			RING_F_SP_ENQ | RING_F_SC_DEQ);
--
--		if (msgq_rsp == NULL) {
--			thread_free();
--			return -1;
--		}
--
--		/* Main thread records */
--		t->msgq_req = msgq_req;
--		t->msgq_rsp = msgq_rsp;
--		t->enabled = 1;
--
--		/* Data plane thread records */
--		t_data->n_pipelines = 0;
--		t_data->msgq_req = msgq_req;
--		t_data->msgq_rsp = msgq_rsp;
--		t_data->timer_period =
--			(rte_get_tsc_hz() * THREAD_TIMER_PERIOD_MS) / 1000;
--		t_data->time_next = rte_get_tsc_cycles() + t_data->timer_period;
--		t_data->time_next_min = t_data->time_next;
--	}
--
--	return 0;
--}
--
--static inline int
--thread_is_running(uint32_t thread_id)
--{
--	enum rte_lcore_state_t thread_state;
--
--	thread_state = rte_eal_get_lcore_state(thread_id);
--	return (thread_state == RUNNING) ? 1 : 0;
--}
--
--/**
-- * Pipeline is running when:
-- *    (A) Pipeline is mapped to a data plane thread AND
-- *    (B) Its data plane thread is in RUNNING state.
-- */
--static inline int
--pipeline_is_running(struct pipeline *p)
--{
--	if (p->enabled == 0)
--		return 0;
--
--	return thread_is_running(p->thread_id);
--}
--
--/**
-- * Main thread & data plane threads: message passing
-- */
--enum thread_req_type {
--	THREAD_REQ_PIPELINE_ENABLE = 0,
--	THREAD_REQ_PIPELINE_DISABLE,
--	THREAD_REQ_MAX
--};
--
--struct thread_msg_req {
--	enum thread_req_type type;
--
--	union {
--		struct {
--			struct rte_pipeline *p;
--			struct {
--				struct rte_table_action *a;
--			} table[RTE_PIPELINE_TABLE_MAX];
--			struct rte_ring *msgq_req;
--			struct rte_ring *msgq_rsp;
--			uint32_t timer_period_ms;
--			uint32_t n_tables;
--		} pipeline_enable;
--
--		struct {
--			struct rte_pipeline *p;
--		} pipeline_disable;
--	};
--};
--
--struct thread_msg_rsp {
--	int status;
--};
--
--/**
-- * Main thread
-- */
--static struct thread_msg_req *
--thread_msg_alloc(void)
--{
--	size_t size = RTE_MAX(sizeof(struct thread_msg_req),
--		sizeof(struct thread_msg_rsp));
--
--	return calloc(1, size);
--}
--
--static void
--thread_msg_free(struct thread_msg_rsp *rsp)
--{
--	free(rsp);
--}
--
--static struct thread_msg_rsp *
--thread_msg_send_recv(uint32_t thread_id,
--	struct thread_msg_req *req)
--{
--	struct thread *t = &thread[thread_id];
--	struct rte_ring *msgq_req = t->msgq_req;
--	struct rte_ring *msgq_rsp = t->msgq_rsp;
--	struct thread_msg_rsp *rsp;
--	int status;
--
--	/* send */
--	do {
--		status = rte_ring_sp_enqueue(msgq_req, req);
--	} while (status == -ENOBUFS);
--
--	/* recv */
--	do {
--		status = rte_ring_sc_dequeue(msgq_rsp, (void **) &rsp);
--	} while (status != 0);
--
--	return rsp;
--}
--
--int
--thread_pipeline_enable(uint32_t thread_id,
--	const char *pipeline_name)
--{
--	struct pipeline *p = pipeline_find(pipeline_name);
--	struct thread *t;
--	struct thread_msg_req *req;
--	struct thread_msg_rsp *rsp;
--	uint32_t i;
--	int status;
--
--	/* Check input params */
--	if ((thread_id >= RTE_MAX_LCORE) ||
--		(p == NULL) ||
--		(p->n_ports_in == 0) ||
--		(p->n_ports_out == 0) ||
--		(p->n_tables == 0))
--		return -1;
--
--	t = &thread[thread_id];
--	if ((t->enabled == 0) ||
--		p->enabled)
--		return -1;
--
--	if (!thread_is_running(thread_id)) {
--		struct thread_data *td = &thread_data[thread_id];
--		struct pipeline_data *tdp = &td->pipeline_data[td->n_pipelines];
--
--		if (td->n_pipelines >= THREAD_PIPELINES_MAX)
--			return -1;
--
--		/* Data plane thread */
--		td->p[td->n_pipelines] = p->p;
--
--		tdp->p = p->p;
--		for (i = 0; i < p->n_tables; i++)
--			tdp->table_data[i].a = p->table[i].a;
--
--		tdp->n_tables = p->n_tables;
--
--		tdp->msgq_req = p->msgq_req;
--		tdp->msgq_rsp = p->msgq_rsp;
--		tdp->timer_period = (rte_get_tsc_hz() * p->timer_period_ms) / 1000;
--		tdp->time_next = rte_get_tsc_cycles() + tdp->timer_period;
--
--		td->n_pipelines++;
--
--		/* Pipeline */
--		p->thread_id = thread_id;
--		p->enabled = 1;
--
--		return 0;
--	}
--
--	/* Allocate request */
--	req = thread_msg_alloc();
--	if (req == NULL)
--		return -1;
--
--	/* Write request */
--	req->type = THREAD_REQ_PIPELINE_ENABLE;
--	req->pipeline_enable.p = p->p;
--	for (i = 0; i < p->n_tables; i++)
--		req->pipeline_enable.table[i].a =
--			p->table[i].a;
--	req->pipeline_enable.msgq_req = p->msgq_req;
--	req->pipeline_enable.msgq_rsp = p->msgq_rsp;
--	req->pipeline_enable.timer_period_ms = p->timer_period_ms;
--	req->pipeline_enable.n_tables = p->n_tables;
--
--	/* Send request and wait for response */
--	rsp = thread_msg_send_recv(thread_id, req);
--
--	/* Read response */
--	status = rsp->status;
--
--	/* Free response */
--	thread_msg_free(rsp);
--
--	/* Request completion */
--	if (status)
--		return status;
--
--	p->thread_id = thread_id;
--	p->enabled = 1;
--
--	return 0;
--}
--
--int
--thread_pipeline_disable(uint32_t thread_id,
--	const char *pipeline_name)
--{
--	struct pipeline *p = pipeline_find(pipeline_name);
--	struct thread *t;
--	struct thread_msg_req *req;
--	struct thread_msg_rsp *rsp;
--	int status;
--
--	/* Check input params */
--	if ((thread_id >= RTE_MAX_LCORE) ||
--		(p == NULL))
--		return -1;
--
--	t = &thread[thread_id];
--	if (t->enabled == 0)
--		return -1;
--
--	if (p->enabled == 0)
--		return 0;
--
--	if (p->thread_id != thread_id)
--		return -1;
--
--	if (!thread_is_running(thread_id)) {
--		struct thread_data *td = &thread_data[thread_id];
--		uint32_t i;
--
--		for (i = 0; i < td->n_pipelines; i++) {
--			struct pipeline_data *tdp = &td->pipeline_data[i];
--
--			if (tdp->p != p->p)
--				continue;
--
--			/* Data plane thread */
--			if (i < td->n_pipelines - 1) {
--				struct rte_pipeline *pipeline_last =
--					td->p[td->n_pipelines - 1];
--				struct pipeline_data *tdp_last =
--					&td->pipeline_data[td->n_pipelines - 1];
--
--				td->p[i] = pipeline_last;
--				memcpy(tdp, tdp_last, sizeof(*tdp));
--			}
--
--			td->n_pipelines--;
--
--			/* Pipeline */
--			p->enabled = 0;
--
--			break;
--		}
--
--		return 0;
--	}
--
--	/* Allocate request */
--	req = thread_msg_alloc();
--	if (req == NULL)
--		return -1;
--
--	/* Write request */
--	req->type = THREAD_REQ_PIPELINE_DISABLE;
--	req->pipeline_disable.p = p->p;
--
--	/* Send request and wait for response */
--	rsp = thread_msg_send_recv(thread_id, req);
--
--	/* Read response */
--	status = rsp->status;
--
--	/* Free response */
--	thread_msg_free(rsp);
--
--	/* Request completion */
--	if (status)
--		return status;
--
--	p->enabled = 0;
--
--	return 0;
--}
--
--/**
-- * Data plane threads: message handling
-- */
--static inline struct thread_msg_req *
--thread_msg_recv(struct rte_ring *msgq_req)
--{
--	struct thread_msg_req *req = NULL;
--
--	int status = rte_ring_sc_dequeue(msgq_req, (void **) &req);
--
--	if (status != 0)
--		return NULL;
--
--	return req;
--}
--
--static inline void
--thread_msg_send(struct rte_ring *msgq_rsp,
--	struct thread_msg_rsp *rsp)
--{
--	int status;
--
--	do {
--		status = rte_ring_sp_enqueue(msgq_rsp, rsp);
--	} while (status == -ENOBUFS);
--}
--
--static struct thread_msg_rsp *
--thread_msg_handle_pipeline_enable(struct thread_data *t,
--	struct thread_msg_req *req)
--{
--	struct thread_msg_rsp *rsp = (struct thread_msg_rsp *) req;
--	struct pipeline_data *p = &t->pipeline_data[t->n_pipelines];
--	uint32_t i;
--
--	/* Request */
--	if (t->n_pipelines >= THREAD_PIPELINES_MAX) {
--		rsp->status = -1;
--		return rsp;
--	}
--
--	t->p[t->n_pipelines] = req->pipeline_enable.p;
--
--	p->p = req->pipeline_enable.p;
--	for (i = 0; i < req->pipeline_enable.n_tables; i++)
--		p->table_data[i].a =
--			req->pipeline_enable.table[i].a;
--
--	p->n_tables = req->pipeline_enable.n_tables;
--
--	p->msgq_req = req->pipeline_enable.msgq_req;
--	p->msgq_rsp = req->pipeline_enable.msgq_rsp;
--	p->timer_period =
--		(rte_get_tsc_hz() * req->pipeline_enable.timer_period_ms) / 1000;
--	p->time_next = rte_get_tsc_cycles() + p->timer_period;
--
--	t->n_pipelines++;
--
--	/* Response */
--	rsp->status = 0;
--	return rsp;
--}
--
--static struct thread_msg_rsp *
--thread_msg_handle_pipeline_disable(struct thread_data *t,
--	struct thread_msg_req *req)
--{
--	struct thread_msg_rsp *rsp = (struct thread_msg_rsp *) req;
--	uint32_t n_pipelines = t->n_pipelines;
--	struct rte_pipeline *pipeline = req->pipeline_disable.p;
--	uint32_t i;
--
--	/* find pipeline */
--	for (i = 0; i < n_pipelines; i++) {
--		struct pipeline_data *p = &t->pipeline_data[i];
--
--		if (p->p != pipeline)
--			continue;
--
--		if (i < n_pipelines - 1) {
--			struct rte_pipeline *pipeline_last =
--				t->p[n_pipelines - 1];
--			struct pipeline_data *p_last =
--				&t->pipeline_data[n_pipelines - 1];
--
--			t->p[i] = pipeline_last;
--			memcpy(p, p_last, sizeof(*p));
--		}
--
--		t->n_pipelines--;
--
--		rsp->status = 0;
--		return rsp;
--	}
--
--	/* should not get here */
--	rsp->status = 0;
--	return rsp;
--}
--
--static void
--thread_msg_handle(struct thread_data *t)
--{
--	for ( ; ; ) {
--		struct thread_msg_req *req;
--		struct thread_msg_rsp *rsp;
--
--		req = thread_msg_recv(t->msgq_req);
--		if (req == NULL)
--			break;
--
--		switch (req->type) {
--		case THREAD_REQ_PIPELINE_ENABLE:
--			rsp = thread_msg_handle_pipeline_enable(t, req);
--			break;
--
--		case THREAD_REQ_PIPELINE_DISABLE:
--			rsp = thread_msg_handle_pipeline_disable(t, req);
--			break;
--
--		default:
--			rsp = (struct thread_msg_rsp *) req;
--			rsp->status = -1;
--		}
--
--		thread_msg_send(t->msgq_rsp, rsp);
--	}
--}
--
--/**
-- * Main thread & data plane threads: message passing
-- */
--enum pipeline_req_type {
--	/* Port IN */
--	PIPELINE_REQ_PORT_IN_STATS_READ,
--	PIPELINE_REQ_PORT_IN_ENABLE,
--	PIPELINE_REQ_PORT_IN_DISABLE,
--
--	/* Port OUT */
--	PIPELINE_REQ_PORT_OUT_STATS_READ,
--
--	/* Table */
--	PIPELINE_REQ_TABLE_STATS_READ,
--	PIPELINE_REQ_TABLE_RULE_ADD,
--	PIPELINE_REQ_TABLE_RULE_ADD_DEFAULT,
--	PIPELINE_REQ_TABLE_RULE_ADD_BULK,
--	PIPELINE_REQ_TABLE_RULE_DELETE,
--	PIPELINE_REQ_TABLE_RULE_DELETE_DEFAULT,
--	PIPELINE_REQ_TABLE_RULE_STATS_READ,
--	PIPELINE_REQ_TABLE_MTR_PROFILE_ADD,
--	PIPELINE_REQ_TABLE_MTR_PROFILE_DELETE,
--	PIPELINE_REQ_TABLE_RULE_MTR_READ,
--	PIPELINE_REQ_TABLE_DSCP_TABLE_UPDATE,
--	PIPELINE_REQ_TABLE_RULE_TTL_READ,
--	PIPELINE_REQ_TABLE_RULE_TIME_READ,
--	PIPELINE_REQ_MAX
--};
--
--struct pipeline_msg_req_port_in_stats_read {
--	int clear;
--};
--
--struct pipeline_msg_req_port_out_stats_read {
--	int clear;
--};
--
--struct pipeline_msg_req_table_stats_read {
--	int clear;
--};
--
--struct pipeline_msg_req_table_rule_add {
--	struct table_rule_match match;
--	struct table_rule_action action;
--};
--
--struct pipeline_msg_req_table_rule_add_default {
--	struct table_rule_action action;
--};
--
--struct pipeline_msg_req_table_rule_add_bulk {
--	struct table_rule_list *list;
--	int bulk;
--};
--
--struct pipeline_msg_req_table_rule_delete {
--	struct table_rule_match match;
--};
--
--struct pipeline_msg_req_table_rule_stats_read {
--	void *data;
--	int clear;
--};
--
--struct pipeline_msg_req_table_mtr_profile_add {
--	uint32_t meter_profile_id;
--	struct rte_table_action_meter_profile profile;
--};
--
--struct pipeline_msg_req_table_mtr_profile_delete {
--	uint32_t meter_profile_id;
--};
--
--struct pipeline_msg_req_table_rule_mtr_read {
--	void *data;
--	uint32_t tc_mask;
--	int clear;
--};
--
--struct pipeline_msg_req_table_dscp_table_update {
--	uint64_t dscp_mask;
--	struct rte_table_action_dscp_table dscp_table;
--};
--
--struct pipeline_msg_req_table_rule_ttl_read {
--	void *data;
--	int clear;
--};
--
--struct pipeline_msg_req_table_rule_time_read {
--	void *data;
--};
--
--struct pipeline_msg_req {
--	enum pipeline_req_type type;
--	uint32_t id; /* Port IN, port OUT or table ID */
--
--	union {
--		struct pipeline_msg_req_port_in_stats_read port_in_stats_read;
--		struct pipeline_msg_req_port_out_stats_read port_out_stats_read;
--		struct pipeline_msg_req_table_stats_read table_stats_read;
--		struct pipeline_msg_req_table_rule_add table_rule_add;
--		struct pipeline_msg_req_table_rule_add_default table_rule_add_default;
--		struct pipeline_msg_req_table_rule_add_bulk table_rule_add_bulk;
--		struct pipeline_msg_req_table_rule_delete table_rule_delete;
--		struct pipeline_msg_req_table_rule_stats_read table_rule_stats_read;
--		struct pipeline_msg_req_table_mtr_profile_add table_mtr_profile_add;
--		struct pipeline_msg_req_table_mtr_profile_delete table_mtr_profile_delete;
--		struct pipeline_msg_req_table_rule_mtr_read table_rule_mtr_read;
--		struct pipeline_msg_req_table_dscp_table_update table_dscp_table_update;
--		struct pipeline_msg_req_table_rule_ttl_read table_rule_ttl_read;
--		struct pipeline_msg_req_table_rule_time_read table_rule_time_read;
--	};
--};
--
--struct pipeline_msg_rsp_port_in_stats_read {
--	struct rte_pipeline_port_in_stats stats;
--};
--
--struct pipeline_msg_rsp_port_out_stats_read {
--	struct rte_pipeline_port_out_stats stats;
--};
--
--struct pipeline_msg_rsp_table_stats_read {
--	struct rte_pipeline_table_stats stats;
--};
--
--struct pipeline_msg_rsp_table_rule_add {
--	void *data;
--};
--
--struct pipeline_msg_rsp_table_rule_add_default {
--	void *data;
--};
--
--struct pipeline_msg_rsp_table_rule_add_bulk {
--	uint32_t n_rules;
--};
--
--struct pipeline_msg_rsp_table_rule_stats_read {
--	struct rte_table_action_stats_counters stats;
--};
--
--struct pipeline_msg_rsp_table_rule_mtr_read {
--	struct rte_table_action_mtr_counters stats;
--};
--
--struct pipeline_msg_rsp_table_rule_ttl_read {
--	struct rte_table_action_ttl_counters stats;
--};
--
--struct pipeline_msg_rsp_table_rule_time_read {
--	uint64_t timestamp;
--};
--
--struct pipeline_msg_rsp {
--	int status;
--
--	union {
--		struct pipeline_msg_rsp_port_in_stats_read port_in_stats_read;
--		struct pipeline_msg_rsp_port_out_stats_read port_out_stats_read;
--		struct pipeline_msg_rsp_table_stats_read table_stats_read;
--		struct pipeline_msg_rsp_table_rule_add table_rule_add;
--		struct pipeline_msg_rsp_table_rule_add_default table_rule_add_default;
--		struct pipeline_msg_rsp_table_rule_add_bulk table_rule_add_bulk;
--		struct pipeline_msg_rsp_table_rule_stats_read table_rule_stats_read;
--		struct pipeline_msg_rsp_table_rule_mtr_read table_rule_mtr_read;
--		struct pipeline_msg_rsp_table_rule_ttl_read table_rule_ttl_read;
--		struct pipeline_msg_rsp_table_rule_time_read table_rule_time_read;
--	};
--};
--
--/**
-- * Main thread
-- */
--static struct pipeline_msg_req *
--pipeline_msg_alloc(void)
--{
--	size_t size = RTE_MAX(sizeof(struct pipeline_msg_req),
--		sizeof(struct pipeline_msg_rsp));
--
--	return calloc(1, size);
--}
--
--static void
--pipeline_msg_free(struct pipeline_msg_rsp *rsp)
--{
--	free(rsp);
--}
--
--static struct pipeline_msg_rsp *
--pipeline_msg_send_recv(struct pipeline *p,
--	struct pipeline_msg_req *req)
--{
--	struct rte_ring *msgq_req = p->msgq_req;
--	struct rte_ring *msgq_rsp = p->msgq_rsp;
--	struct pipeline_msg_rsp *rsp;
--	int status;
--
--	/* send */
--	do {
--		status = rte_ring_sp_enqueue(msgq_req, req);
--	} while (status == -ENOBUFS);
--
--	/* recv */
--	do {
--		status = rte_ring_sc_dequeue(msgq_rsp, (void **) &rsp);
--	} while (status != 0);
--
--	return rsp;
--}
--
--int
--pipeline_port_in_stats_read(const char *pipeline_name,
--	uint32_t port_id,
--	struct rte_pipeline_port_in_stats *stats,
--	int clear)
--{
--	struct pipeline *p;
--	struct pipeline_msg_req *req;
--	struct pipeline_msg_rsp *rsp;
--	int status;
--
--	/* Check input params */
--	if ((pipeline_name == NULL) ||
--		(stats == NULL))
--		return -1;
--
--	p = pipeline_find(pipeline_name);
--	if ((p == NULL) ||
--		(port_id >= p->n_ports_in))
--		return -1;
--
--	if (!pipeline_is_running(p)) {
--		status = rte_pipeline_port_in_stats_read(p->p,
--			port_id,
--			stats,
--			clear);
--
--		return status;
--	}
--
--	/* Allocate request */
--	req = pipeline_msg_alloc();
--	if (req == NULL)
--		return -1;
--
--	/* Write request */
--	req->type = PIPELINE_REQ_PORT_IN_STATS_READ;
--	req->id = port_id;
--	req->port_in_stats_read.clear = clear;
--
--	/* Send request and wait for response */
--	rsp = pipeline_msg_send_recv(p, req);
--
--	/* Read response */
--	status = rsp->status;
--	if (status == 0)
--		memcpy(stats, &rsp->port_in_stats_read.stats, sizeof(*stats));
--
--	/* Free response */
--	pipeline_msg_free(rsp);
--
--	return status;
--}
--
--int
--pipeline_port_in_enable(const char *pipeline_name,
--	uint32_t port_id)
--{
--	struct pipeline *p;
--	struct pipeline_msg_req *req;
--	struct pipeline_msg_rsp *rsp;
--	int status;
--
--	/* Check input params */
--	if (pipeline_name == NULL)
--		return -1;
--
--	p = pipeline_find(pipeline_name);
--	if ((p == NULL) ||
--		(port_id >= p->n_ports_in))
--		return -1;
--
--	if (!pipeline_is_running(p)) {
--		status = rte_pipeline_port_in_enable(p->p, port_id);
--		return status;
--	}
--
--	/* Allocate request */
--	req = pipeline_msg_alloc();
--	if (req == NULL)
--		return -1;
--
--	/* Write request */
--	req->type = PIPELINE_REQ_PORT_IN_ENABLE;
--	req->id = port_id;
--
--	/* Send request and wait for response */
--	rsp = pipeline_msg_send_recv(p, req);
--
--	/* Read response */
--	status = rsp->status;
--
--	/* Free response */
--	pipeline_msg_free(rsp);
--
--	return status;
--}
--
--int
--pipeline_port_in_disable(const char *pipeline_name,
--	uint32_t port_id)
--{
--	struct pipeline *p;
--	struct pipeline_msg_req *req;
--	struct pipeline_msg_rsp *rsp;
--	int status;
--
--	/* Check input params */
--	if (pipeline_name == NULL)
--		return -1;
--
--	p = pipeline_find(pipeline_name);
--	if ((p == NULL) ||
--		(port_id >= p->n_ports_in))
--		return -1;
--
--	if (!pipeline_is_running(p)) {
--		status = rte_pipeline_port_in_disable(p->p, port_id);
--		return status;
--	}
--
--	/* Allocate request */
--	req = pipeline_msg_alloc();
--	if (req == NULL)
--		return -1;
--
--	/* Write request */
--	req->type = PIPELINE_REQ_PORT_IN_DISABLE;
--	req->id = port_id;
--
--	/* Send request and wait for response */
--	rsp = pipeline_msg_send_recv(p, req);
--
--	/* Read response */
--	status = rsp->status;
--
--	/* Free response */
--	pipeline_msg_free(rsp);
--
--	return status;
--}
--
--int
--pipeline_port_out_stats_read(const char *pipeline_name,
--	uint32_t port_id,
--	struct rte_pipeline_port_out_stats *stats,
--	int clear)
--{
--	struct pipeline *p;
--	struct pipeline_msg_req *req;
--	struct pipeline_msg_rsp *rsp;
--	int status;
--
--	/* Check input params */
--	if ((pipeline_name == NULL) ||
--		(stats == NULL))
--		return -1;
--
--	p = pipeline_find(pipeline_name);
--	if ((p == NULL) ||
--		(port_id >= p->n_ports_out))
--		return -1;
--
--	if (!pipeline_is_running(p)) {
--		status = rte_pipeline_port_out_stats_read(p->p,
--			port_id,
--			stats,
--			clear);
--
--		return status;
--	}
--
--	/* Allocate request */
--	req = pipeline_msg_alloc();
--	if (req == NULL)
--		return -1;
--
--	/* Write request */
--	req->type = PIPELINE_REQ_PORT_OUT_STATS_READ;
--	req->id = port_id;
--	req->port_out_stats_read.clear = clear;
--
--	/* Send request and wait for response */
--	rsp = pipeline_msg_send_recv(p, req);
--
--	/* Read response */
--	status = rsp->status;
--	if (status == 0)
--		memcpy(stats, &rsp->port_out_stats_read.stats, sizeof(*stats));
--
--	/* Free response */
--	pipeline_msg_free(rsp);
--
--	return status;
--}
--
--int
--pipeline_table_stats_read(const char *pipeline_name,
--	uint32_t table_id,
--	struct rte_pipeline_table_stats *stats,
--	int clear)
--{
--	struct pipeline *p;
--	struct pipeline_msg_req *req;
--	struct pipeline_msg_rsp *rsp;
--	int status;
--
--	/* Check input params */
--	if ((pipeline_name == NULL) ||
--		(stats == NULL))
--		return -1;
--
--	p = pipeline_find(pipeline_name);
--	if ((p == NULL) ||
--		(table_id >= p->n_tables))
--		return -1;
--
--	if (!pipeline_is_running(p)) {
--		status = rte_pipeline_table_stats_read(p->p,
--			table_id,
--			stats,
--			clear);
--
--		return status;
--	}
--
--	/* Allocate request */
--	req = pipeline_msg_alloc();
--	if (req == NULL)
--		return -1;
--
--	/* Write request */
--	req->type = PIPELINE_REQ_TABLE_STATS_READ;
--	req->id = table_id;
--	req->table_stats_read.clear = clear;
--
--	/* Send request and wait for response */
--	rsp = pipeline_msg_send_recv(p, req);
--
--	/* Read response */
--	status = rsp->status;
--	if (status == 0)
--		memcpy(stats, &rsp->table_stats_read.stats, sizeof(*stats));
--
--	/* Free response */
--	pipeline_msg_free(rsp);
--
--	return status;
--}
--
--static int
--match_check(struct table_rule_match *match,
--	struct pipeline *p,
--	uint32_t table_id)
--{
--	struct table *table;
--
--	if ((match == NULL) ||
--		(p == NULL) ||
--		(table_id >= p->n_tables))
--		return -1;
--
--	table = &p->table[table_id];
--	if (match->match_type != table->params.match_type)
--		return -1;
--
--	switch (match->match_type) {
--	case TABLE_ACL:
--	{
--		struct table_acl_params *t = &table->params.match.acl;
--		struct table_rule_match_acl *r = &match->match.acl;
--
--		if ((r->ip_version && (t->ip_version == 0)) ||
--			((r->ip_version == 0) && t->ip_version))
--			return -1;
--
--		if (r->ip_version) {
--			if ((r->sa_depth > 32) ||
--				(r->da_depth > 32))
--				return -1;
--		} else {
--			if ((r->sa_depth > 128) ||
--				(r->da_depth > 128))
--				return -1;
--		}
--		return 0;
--	}
--
--	case TABLE_ARRAY:
--		return 0;
--
--	case TABLE_HASH:
--		return 0;
--
--	case TABLE_LPM:
--	{
--		struct table_lpm_params *t = &table->params.match.lpm;
--		struct table_rule_match_lpm *r = &match->match.lpm;
--
--		if ((r->ip_version && (t->key_size != 4)) ||
--			((r->ip_version == 0) && (t->key_size != 16)))
--			return -1;
--
--		if (r->ip_version) {
--			if (r->depth > 32)
--				return -1;
--		} else {
--			if (r->depth > 128)
--				return -1;
--		}
--		return 0;
--	}
--
--	case TABLE_STUB:
--		return -1;
--
--	default:
--		return -1;
--	}
--}
--
--static int
--action_check(struct table_rule_action *action,
--	struct pipeline *p,
--	uint32_t table_id)
--{
--	struct table_action_profile *ap;
--
--	if ((action == NULL) ||
--		(p == NULL) ||
--		(table_id >= p->n_tables))
--		return -1;
--
--	ap = p->table[table_id].ap;
--	if (action->action_mask != ap->params.action_mask)
--		return -1;
--
--	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_FWD)) {
--		if ((action->fwd.action == RTE_PIPELINE_ACTION_PORT) &&
--			(action->fwd.id >= p->n_ports_out))
--			return -1;
--
--		if ((action->fwd.action == RTE_PIPELINE_ACTION_TABLE) &&
--			(action->fwd.id >= p->n_tables))
--			return -1;
--	}
--
--	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_MTR)) {
--		uint32_t tc_mask0 = (1 << ap->params.mtr.n_tc) - 1;
--		uint32_t tc_mask1 = action->mtr.tc_mask;
--
--		if (tc_mask1 != tc_mask0)
--			return -1;
--	}
--
--	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_TM)) {
--		uint32_t n_subports_per_port =
--			ap->params.tm.n_subports_per_port;
--		uint32_t n_pipes_per_subport =
--			ap->params.tm.n_pipes_per_subport;
--		uint32_t subport_id = action->tm.subport_id;
--		uint32_t pipe_id = action->tm.pipe_id;
--
--		if ((subport_id >= n_subports_per_port) ||
--			(pipe_id >= n_pipes_per_subport))
--			return -1;
--	}
--
--	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_ENCAP)) {
--		uint64_t encap_mask = ap->params.encap.encap_mask;
--		enum rte_table_action_encap_type type = action->encap.type;
--
--		if ((encap_mask & (1LLU << type)) == 0)
--			return -1;
--	}
--
--	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_NAT)) {
--		int ip_version0 = ap->params.common.ip_version;
--		int ip_version1 = action->nat.ip_version;
--
--		if ((ip_version1 && (ip_version0 == 0)) ||
--			((ip_version1 == 0) && ip_version0))
--			return -1;
--	}
--
--	return 0;
--}
--
--static int
--action_default_check(struct table_rule_action *action,
--	struct pipeline *p,
--	uint32_t table_id)
--{
--	if ((action == NULL) ||
--		(action->action_mask != (1LLU << RTE_TABLE_ACTION_FWD)) ||
--		(p == NULL) ||
--		(table_id >= p->n_tables))
--		return -1;
--
--	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_FWD)) {
--		if ((action->fwd.action == RTE_PIPELINE_ACTION_PORT) &&
--			(action->fwd.id >= p->n_ports_out))
--			return -1;
--
--		if ((action->fwd.action == RTE_PIPELINE_ACTION_TABLE) &&
--			(action->fwd.id >= p->n_tables))
--			return -1;
--	}
--
--	return 0;
--}
--
--union table_rule_match_low_level {
--	struct rte_table_acl_rule_add_params acl_add;
--	struct rte_table_acl_rule_delete_params acl_delete;
--	struct rte_table_array_key array;
--	uint8_t hash[TABLE_RULE_MATCH_SIZE_MAX];
--	struct rte_table_lpm_key lpm_ipv4;
--	struct rte_table_lpm_ipv6_key lpm_ipv6;
--};
--
--static int
--match_convert(struct table_rule_match *mh,
--	union table_rule_match_low_level *ml,
--	int add);
--
--static int
--action_convert(struct rte_table_action *a,
--	struct table_rule_action *action,
--	struct rte_pipeline_table_entry *data);
--
--struct table_ll {
--	struct rte_pipeline *p;
--	int table_id;
--	struct rte_table_action *a;
--	int bulk_supported;
--};
--
--static int
--table_rule_add_bulk_ll(struct table_ll *table,
--	struct table_rule_list *list,
--	uint32_t *n_rules)
--{
--	union table_rule_match_low_level *match_ll = NULL;
--	uint8_t *action_ll = NULL;
--	void **match_ll_ptr = NULL;
--	struct rte_pipeline_table_entry **action_ll_ptr = NULL;
--	struct rte_pipeline_table_entry **entries_ptr = NULL;
--	int *found = NULL;
--	struct table_rule *rule;
--	uint32_t n, i;
--	int status = 0;
--
--	n = 0;
--	TAILQ_FOREACH(rule, list, node)
--		n++;
 -
 -	/* Memory allocation */
--	match_ll = calloc(n, sizeof(union table_rule_match_low_level));
--	action_ll = calloc(n, TABLE_RULE_ACTION_SIZE_MAX);
+-	action = rte_zmalloc_socket(NULL,
+-		sizeof(struct rte_table_action),
+-		RTE_CACHE_LINE_SIZE,
+-		socket_id);
+-	if (action == NULL)
+-		return NULL;
 -
--	match_ll_ptr = calloc(n, sizeof(void *));
--	action_ll_ptr = calloc(n, sizeof(struct rte_pipeline_table_entry *));
+-	/* Initialization */
+-	memcpy(&action->cfg, &profile->cfg, sizeof(profile->cfg));
+-	memcpy(&action->data, &profile->data, sizeof(profile->data));
 -
--	entries_ptr = calloc(n, sizeof(struct rte_pipeline_table_entry *));
--	found = calloc(n, sizeof(int));
--
--	if (match_ll == NULL ||
--		action_ll == NULL ||
--		match_ll_ptr == NULL ||
--		action_ll_ptr == NULL ||
--		entries_ptr == NULL ||
--		found == NULL) {
--			status = -ENOMEM;
--			goto table_rule_add_bulk_ll_free;
--	}
--
--	/* Init */
--	for (i = 0; i < n; i++) {
--		match_ll_ptr[i] = (void *)&match_ll[i];
--		action_ll_ptr[i] = (struct rte_pipeline_table_entry *)
--			&action_ll[i * TABLE_RULE_ACTION_SIZE_MAX];
--	}
--
--	/* Rule (match, action) conversion */
--	i = 0;
--	TAILQ_FOREACH(rule, list, node) {
--		status = match_convert(&rule->match, match_ll_ptr[i], 1);
--		if (status)
--			goto table_rule_add_bulk_ll_free;
--
--		status = action_convert(table->a, &rule->action, action_ll_ptr[i]);
--		if (status)
--			goto table_rule_add_bulk_ll_free;
--
--		i++;
--	}
--
--	/* Add rule (match, action) to table */
--	if (table->bulk_supported) {
--		status = rte_pipeline_table_entry_add_bulk(table->p,
--			table->table_id,
--			match_ll_ptr,
--			action_ll_ptr,
--			n,
--			found,
--			entries_ptr);
--		if (status)
--			goto table_rule_add_bulk_ll_free;
--	} else
--		for (i = 0; i < n; i++) {
--			status = rte_pipeline_table_entry_add(table->p,
--				table->table_id,
--				match_ll_ptr[i],
--				action_ll_ptr[i],
--				&found[i],
--				&entries_ptr[i]);
--			if (status) {
--				if (i == 0)
--					goto table_rule_add_bulk_ll_free;
--
--				/* No roll-back. */
--				status = 0;
--				n = i;
--				break;
--			}
--		}
--
--	/* Write back to the rule list. */
--	i = 0;
--	TAILQ_FOREACH(rule, list, node) {
--		if (i >= n)
--			break;
--
--		rule->data = entries_ptr[i];
--
--		i++;
--	}
--
--	*n_rules = n;
--
--	/* Free */
--table_rule_add_bulk_ll_free:
--	free(found);
--	free(entries_ptr);
--	free(action_ll_ptr);
--	free(match_ll_ptr);
--	free(action_ll);
--	free(match_ll);
--
--	return status;
+-	return action;
 -}
 -
+-static __rte_always_inline void *
+-action_data_get(void *data,
+-	struct rte_table_action *action,
+-	enum rte_table_action_type type)
+-{
+-	size_t offset = action->data.offset[type];
+-	uint8_t *data_bytes = data;
+-
+-	return &data_bytes[offset];
+-}
+-
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_apply, 18.05)
 -int
--pipeline_table_rule_add(const char *pipeline_name,
--	uint32_t table_id,
--	struct table_rule_match *match,
--	struct table_rule_action *action)
+-rte_table_action_apply(struct rte_table_action *action,
+-	void *data,
+-	enum rte_table_action_type type,
+-	void *action_params)
 -{
--	struct pipeline *p;
--	struct table *table;
--	struct pipeline_msg_req *req;
--	struct pipeline_msg_rsp *rsp;
--	struct table_rule *rule;
--	int status;
+-	void *action_data;
 -
--	/* Check input params */
--	if ((pipeline_name == NULL) ||
--		(match == NULL) ||
--		(action == NULL))
--		return -1;
+-	/* Check input arguments */
+-	if ((action == NULL) ||
+-		(data == NULL) ||
+-		(action_valid(type) == 0) ||
+-		((action->cfg.action_mask & (1LLU << type)) == 0) ||
+-		(action_params == NULL))
+-		return -EINVAL;
 -
--	p = pipeline_find(pipeline_name);
--	if ((p == NULL) ||
--		(table_id >= p->n_tables) ||
--		match_check(match, p, table_id) ||
--		action_check(action, p, table_id))
--		return -1;
+-	/* Data update */
+-	action_data = action_data_get(data, action, type);
 -
--	table = &p->table[table_id];
+-	switch (type) {
+-	case RTE_TABLE_ACTION_FWD:
+-		return fwd_apply(action_data,
+-			action_params);
 -
--	rule = calloc(1, sizeof(struct table_rule));
--	if (rule == NULL)
--		return -1;
+-	case RTE_TABLE_ACTION_LB:
+-		return lb_apply(action_data,
+-			action_params);
 -
--	memcpy(&rule->match, match, sizeof(*match));
--	memcpy(&rule->action, action, sizeof(*action));
+-	case RTE_TABLE_ACTION_MTR:
+-		return mtr_apply(action_data,
+-			action_params,
+-			&action->cfg.mtr,
+-			action->mp,
+-			RTE_DIM(action->mp));
 -
--	if (!pipeline_is_running(p)) {
--		union table_rule_match_low_level match_ll;
--		struct rte_pipeline_table_entry *data_in, *data_out;
--		int key_found;
--		uint8_t *buffer;
+-	case RTE_TABLE_ACTION_TM:
+-		return tm_apply(action_data,
+-			action_params,
+-			&action->cfg.tm);
 -
--		buffer = calloc(TABLE_RULE_ACTION_SIZE_MAX, sizeof(uint8_t));
--		if (buffer == NULL) {
--			free(rule);
--			return -1;
--		}
+-	case RTE_TABLE_ACTION_ENCAP:
+-		return encap_apply(action_data,
+-			action_params,
+-			&action->cfg.encap,
+-			&action->cfg.common);
 -
--		/* Table match-action rule conversion */
--		data_in = (struct rte_pipeline_table_entry *)buffer;
+-	case RTE_TABLE_ACTION_NAT:
+-		return nat_apply(action_data,
+-			action_params,
+-			&action->cfg.common);
 -
--		status = match_convert(match, &match_ll, 1);
--		if (status) {
--			free(buffer);
--			free(rule);
--			return -1;
--		}
+-	case RTE_TABLE_ACTION_TTL:
+-		return ttl_apply(action_data,
+-			action_params);
 -
--		status = action_convert(table->a, action, data_in);
--		if (status) {
--			free(buffer);
--			free(rule);
--			return -1;
--		}
+-	case RTE_TABLE_ACTION_STATS:
+-		return stats_apply(action_data,
+-			action_params);
 -
--		/* Add rule (match, action) to table */
--		status = rte_pipeline_table_entry_add(p->p,
--				table_id,
--				&match_ll,
--				data_in,
--				&key_found,
--				&data_out);
--		if (status) {
--			free(buffer);
--			free(rule);
--			return -1;
--		}
+-	case RTE_TABLE_ACTION_TIME:
+-		return time_apply(action_data,
+-			action_params);
 -
--		/* Write Response */
--		rule->data = data_out;
--		table_rule_add(table, rule);
+-	case RTE_TABLE_ACTION_SYM_CRYPTO:
+-		return sym_crypto_apply(action_data,
+-				&action->cfg.sym_crypto,
+-				action_params);
 -
--		free(buffer);
--		return 0;
--	}
+-	case RTE_TABLE_ACTION_TAG:
+-		return tag_apply(action_data,
+-			action_params);
 -
--	/* Allocate request */
--	req = pipeline_msg_alloc();
--	if (req == NULL) {
--		free(rule);
--		return -1;
--	}
+-	case RTE_TABLE_ACTION_DECAP:
+-		return decap_apply(action_data,
+-			action_params);
 -
--	/* Write request */
--	req->type = PIPELINE_REQ_TABLE_RULE_ADD;
--	req->id = table_id;
--	memcpy(&req->table_rule_add.match, match, sizeof(*match));
--	memcpy(&req->table_rule_add.action, action, sizeof(*action));
--
--	/* Send request and wait for response */
--	rsp = pipeline_msg_send_recv(p, req);
--
--	/* Read response */
--	status = rsp->status;
--	if (status == 0) {
--		rule->data = rsp->table_rule_add.data;
--		table_rule_add(table, rule);
--	} else
--		free(rule);
--
--	/* Free response */
--	pipeline_msg_free(rsp);
--
--	return status;
--}
--
--int
--pipeline_table_rule_add_default(const char *pipeline_name,
--	uint32_t table_id,
--	struct table_rule_action *action)
--{
--	struct pipeline *p;
--	struct table *table;
--	struct pipeline_msg_req *req;
--	struct pipeline_msg_rsp *rsp;
--	struct table_rule *rule;
--	int status;
--
--	/* Check input params */
--	if ((pipeline_name == NULL) ||
--		(action == NULL))
--		return -1;
--
--	p = pipeline_find(pipeline_name);
--	if ((p == NULL) ||
--		(table_id >= p->n_tables) ||
--		action_default_check(action, p, table_id))
--		return -1;
--
--	table = &p->table[table_id];
--
--	rule = calloc(1, sizeof(struct table_rule));
--	if (rule == NULL)
--		return -1;
--
--	memcpy(&rule->action, action, sizeof(*action));
--
--	if (!pipeline_is_running(p)) {
--		struct rte_pipeline_table_entry *data_in, *data_out;
--		uint8_t *buffer;
--
--		buffer = calloc(TABLE_RULE_ACTION_SIZE_MAX, sizeof(uint8_t));
--		if (buffer == NULL) {
--			free(rule);
--			return -1;
--		}
--
--		/* Apply actions */
--		data_in = (struct rte_pipeline_table_entry *)buffer;
--
--		data_in->action = action->fwd.action;
--		if (action->fwd.action == RTE_PIPELINE_ACTION_PORT)
--			data_in->port_id = action->fwd.id;
--		if (action->fwd.action == RTE_PIPELINE_ACTION_TABLE)
--			data_in->table_id = action->fwd.id;
--
--		/* Add default rule to table */
--		status = rte_pipeline_table_default_entry_add(p->p,
--				table_id,
--				data_in,
--				&data_out);
--		if (status) {
--			free(buffer);
--			free(rule);
--			return -1;
--		}
--
--		/* Write Response */
--		rule->data = data_out;
--		table_rule_default_add(table, rule);
--
--		free(buffer);
--		return 0;
--	}
--
--	/* Allocate request */
--	req = pipeline_msg_alloc();
--	if (req == NULL) {
--		free(rule);
--		return -1;
--	}
--
--	/* Write request */
--	req->type = PIPELINE_REQ_TABLE_RULE_ADD_DEFAULT;
--	req->id = table_id;
--	memcpy(&req->table_rule_add_default.action, action, sizeof(*action));
--
--	/* Send request and wait for response */
--	rsp = pipeline_msg_send_recv(p, req);
--
--	/* Read response */
--	status = rsp->status;
--	if (status == 0) {
--		rule->data = rsp->table_rule_add_default.data;
--		table_rule_default_add(table, rule);
--	} else
--		free(rule);
--
--	/* Free response */
--	pipeline_msg_free(rsp);
--
--	return status;
--}
--
--static uint32_t
--table_rule_list_free(struct table_rule_list *list)
--{
--	uint32_t n = 0;
--
--	if (!list)
--		return 0;
--
--	for ( ; ; ) {
--		struct table_rule *rule;
--
--		rule = TAILQ_FIRST(list);
--		if (rule == NULL)
--			break;
--
--		TAILQ_REMOVE(list, rule, node);
--		free(rule);
--		n++;
--	}
--
--	free(list);
--	return n;
--}
--
--int
--pipeline_table_rule_add_bulk(const char *pipeline_name,
--	uint32_t table_id,
--	struct table_rule_list *list,
--	uint32_t *n_rules_added,
--	uint32_t *n_rules_not_added)
--{
--	struct pipeline *p;
--	struct table *table;
--	struct pipeline_msg_req *req;
--	struct pipeline_msg_rsp *rsp;
--	struct table_rule *rule;
--	int status = 0;
--
--	/* Check input params */
--	if ((pipeline_name == NULL) ||
--		(list == NULL) ||
--		TAILQ_EMPTY(list) ||
--		(n_rules_added == NULL) ||
--		(n_rules_not_added == NULL)) {
--		table_rule_list_free(list);
+-	default:
 -		return -EINVAL;
 -	}
+-}
 -
--	p = pipeline_find(pipeline_name);
--	if ((p == NULL) ||
--		(table_id >= p->n_tables)) {
--		table_rule_list_free(list);
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_dscp_table_update, 18.05)
+-int
+-rte_table_action_dscp_table_update(struct rte_table_action *action,
+-	uint64_t dscp_mask,
+-	struct rte_table_action_dscp_table *table)
+-{
+-	uint32_t i;
+-
+-	/* Check input arguments */
+-	if ((action == NULL) ||
+-		((action->cfg.action_mask & ((1LLU << RTE_TABLE_ACTION_MTR) |
+-		(1LLU << RTE_TABLE_ACTION_TM))) == 0) ||
+-		(dscp_mask == 0) ||
+-		(table == NULL))
 -		return -EINVAL;
+-
+-	for (i = 0; i < RTE_DIM(table->entry); i++) {
+-		struct dscp_table_entry_data *data =
+-			&action->dscp_table.entry[i];
+-		struct rte_table_action_dscp_table_entry *entry =
+-			&table->entry[i];
+-
+-		if ((dscp_mask & (1LLU << i)) == 0)
+-			continue;
+-
+-		data->color = entry->color;
+-		data->tc = entry->tc_id;
+-		data->tc_queue = entry->tc_queue_id;
 -	}
 -
--	table = &p->table[table_id];
--
--	TAILQ_FOREACH(rule, list, node)
--		if (match_check(&rule->match, p, table_id) ||
--			action_check(&rule->action, p, table_id)) {
--			table_rule_list_free(list);
--			return -EINVAL;
--		}
--
--	if (!pipeline_is_running(p)) {
--		struct table_ll table_ll = {
--			.p = p->p,
--			.table_id = table_id,
--			.a = table->a,
--			.bulk_supported = table->params.match_type == TABLE_ACL,
--		};
--
--		status = table_rule_add_bulk_ll(&table_ll, list, n_rules_added);
--		if (status) {
--			table_rule_list_free(list);
--			return status;
--		}
--
--		table_rule_add_bulk(table, list, *n_rules_added);
--		*n_rules_not_added = table_rule_list_free(list);
--		return 0;
--	}
--
--	/* Allocate request */
--	req = pipeline_msg_alloc();
--	if (req == NULL) {
--		table_rule_list_free(list);
--		return -ENOMEM;
--	}
--
--	/* Write request */
--	req->type = PIPELINE_REQ_TABLE_RULE_ADD_BULK;
--	req->id = table_id;
--	req->table_rule_add_bulk.list = list;
--	req->table_rule_add_bulk.bulk = table->params.match_type == TABLE_ACL;
--
--	/* Send request and wait for response */
--	rsp = pipeline_msg_send_recv(p, req);
--
--	/* Read response */
--	status = rsp->status;
--	if (status == 0) {
--		*n_rules_added = rsp->table_rule_add_bulk.n_rules;
--
--		table_rule_add_bulk(table, list, *n_rules_added);
--		*n_rules_not_added = table_rule_list_free(list);
--	} else
--		table_rule_list_free(list);
--
--
--	/* Free response */
--	pipeline_msg_free(rsp);
--
--	return status;
+-	return 0;
 -}
 -
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_meter_profile_add, 18.05)
 -int
--pipeline_table_rule_delete(const char *pipeline_name,
--	uint32_t table_id,
--	struct table_rule_match *match)
--{
--	struct pipeline *p;
--	struct table *table;
--	struct pipeline_msg_req *req;
--	struct pipeline_msg_rsp *rsp;
--	int status;
--
--	/* Check input params */
--	if ((pipeline_name == NULL) ||
--		(match == NULL))
--		return -1;
--
--	p = pipeline_find(pipeline_name);
--	if ((p == NULL) ||
--		(table_id >= p->n_tables) ||
--		match_check(match, p, table_id))
--		return -1;
--
--	table = &p->table[table_id];
--
--	if (!pipeline_is_running(p)) {
--		union table_rule_match_low_level match_ll;
--		int key_found;
--
--		status = match_convert(match, &match_ll, 0);
--		if (status)
--			return -1;
--
--		status = rte_pipeline_table_entry_delete(p->p,
--				table_id,
--				&match_ll,
--				&key_found,
--				NULL);
--
--		if (status == 0)
--			table_rule_delete(table, match);
--
--		return status;
--	}
--
--	/* Allocate request */
--	req = pipeline_msg_alloc();
--	if (req == NULL)
--		return -1;
--
--	/* Write request */
--	req->type = PIPELINE_REQ_TABLE_RULE_DELETE;
--	req->id = table_id;
--	memcpy(&req->table_rule_delete.match, match, sizeof(*match));
--
--	/* Send request and wait for response */
--	rsp = pipeline_msg_send_recv(p, req);
--
--	/* Read response */
--	status = rsp->status;
--	if (status == 0)
--		table_rule_delete(table, match);
--
--	/* Free response */
--	pipeline_msg_free(rsp);
--
--	return status;
--}
--
--int
--pipeline_table_rule_delete_default(const char *pipeline_name,
--	uint32_t table_id)
--{
--	struct pipeline *p;
--	struct table *table;
--	struct pipeline_msg_req *req;
--	struct pipeline_msg_rsp *rsp;
--	int status;
--
--	/* Check input params */
--	if (pipeline_name == NULL)
--		return -1;
--
--	p = pipeline_find(pipeline_name);
--	if ((p == NULL) ||
--		(table_id >= p->n_tables))
--		return -1;
--
--	table = &p->table[table_id];
--
--	if (!pipeline_is_running(p)) {
--		status = rte_pipeline_table_default_entry_delete(p->p,
--			table_id,
--			NULL);
--
--		if (status == 0)
--			table_rule_default_delete(table);
--
--		return status;
--	}
--
--	/* Allocate request */
--	req = pipeline_msg_alloc();
--	if (req == NULL)
--		return -1;
--
--	/* Write request */
--	req->type = PIPELINE_REQ_TABLE_RULE_DELETE_DEFAULT;
--	req->id = table_id;
--
--	/* Send request and wait for response */
--	rsp = pipeline_msg_send_recv(p, req);
--
--	/* Read response */
--	status = rsp->status;
--	if (status == 0)
--		table_rule_default_delete(table);
--
--	/* Free response */
--	pipeline_msg_free(rsp);
--
--	return status;
--}
--
--int
--pipeline_table_rule_stats_read(const char *pipeline_name,
--	uint32_t table_id,
--	struct table_rule_match *match,
--	struct rte_table_action_stats_counters *stats,
--	int clear)
--{
--	struct pipeline *p;
--	struct table *table;
--	struct pipeline_msg_req *req;
--	struct pipeline_msg_rsp *rsp;
--	struct table_rule *rule;
--	int status;
--
--	/* Check input params */
--	if ((pipeline_name == NULL) ||
--		(match == NULL) ||
--		(stats == NULL))
--		return -1;
--
--	p = pipeline_find(pipeline_name);
--	if ((p == NULL) ||
--		(table_id >= p->n_tables) ||
--		match_check(match, p, table_id))
--		return -1;
--
--	table = &p->table[table_id];
--	rule = table_rule_find(table, match);
--	if (rule == NULL)
--		return -1;
--
--	if (!pipeline_is_running(p)) {
--		status = rte_table_action_stats_read(table->a,
--			rule->data,
--			stats,
--			clear);
--
--		return status;
--	}
--
--	/* Allocate request */
--	req = pipeline_msg_alloc();
--	if (req == NULL)
--		return -1;
--
--	/* Write request */
--	req->type = PIPELINE_REQ_TABLE_RULE_STATS_READ;
--	req->id = table_id;
--	req->table_rule_stats_read.data = rule->data;
--	req->table_rule_stats_read.clear = clear;
--
--	/* Send request and wait for response */
--	rsp = pipeline_msg_send_recv(p, req);
--
--	/* Read response */
--	status = rsp->status;
--	if (status == 0)
--		memcpy(stats, &rsp->table_rule_stats_read.stats, sizeof(*stats));
--
--	/* Free response */
--	pipeline_msg_free(rsp);
--
--	return status;
--}
--
--int
--pipeline_table_mtr_profile_add(const char *pipeline_name,
--	uint32_t table_id,
+-rte_table_action_meter_profile_add(struct rte_table_action *action,
 -	uint32_t meter_profile_id,
 -	struct rte_table_action_meter_profile *profile)
 -{
--	struct pipeline *p;
--	struct pipeline_msg_req *req;
--	struct pipeline_msg_rsp *rsp;
--	int status;
+-	struct meter_profile_data *mp_data;
+-	uint32_t status;
 -
--	/* Check input params */
--	if ((pipeline_name == NULL) ||
+-	/* Check input arguments */
+-	if ((action == NULL) ||
+-		((action->cfg.action_mask & (1LLU << RTE_TABLE_ACTION_MTR)) == 0) ||
 -		(profile == NULL))
--		return -1;
+-		return -EINVAL;
 -
--	p = pipeline_find(pipeline_name);
--	if ((p == NULL) ||
--		(table_id >= p->n_tables))
--		return -1;
+-	if (profile->alg != RTE_TABLE_ACTION_METER_TRTCM)
+-		return -ENOTSUP;
 -
--	if (!pipeline_is_running(p)) {
--		struct rte_table_action *a = p->table[table_id].a;
+-	mp_data = meter_profile_data_find(action->mp,
+-		RTE_DIM(action->mp),
+-		meter_profile_id);
+-	if (mp_data)
+-		return -EEXIST;
 -
--		status = rte_table_action_meter_profile_add(a,
--			meter_profile_id,
--			profile);
+-	mp_data = meter_profile_data_find_unused(action->mp,
+-		RTE_DIM(action->mp));
+-	if (!mp_data)
+-		return -ENOSPC;
 -
+-	/* Install new profile */
+-	status = rte_meter_trtcm_profile_config(&mp_data->profile,
+-		&profile->trtcm);
+-	if (status)
 -		return status;
--	}
 -
--	/* Allocate request */
--	req = pipeline_msg_alloc();
--	if (req == NULL)
--		return -1;
+-	mp_data->profile_id = meter_profile_id;
+-	mp_data->valid = 1;
 -
--	/* Write request */
--	req->type = PIPELINE_REQ_TABLE_MTR_PROFILE_ADD;
--	req->id = table_id;
--	req->table_mtr_profile_add.meter_profile_id = meter_profile_id;
--	memcpy(&req->table_mtr_profile_add.profile, profile, sizeof(*profile));
--
--	/* Send request and wait for response */
--	rsp = pipeline_msg_send_recv(p, req);
--
--	/* Read response */
--	status = rsp->status;
--
--	/* Free response */
--	pipeline_msg_free(rsp);
--
--	return status;
+-	return 0;
 -}
 -
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_meter_profile_delete, 18.05)
 -int
--pipeline_table_mtr_profile_delete(const char *pipeline_name,
--	uint32_t table_id,
+-rte_table_action_meter_profile_delete(struct rte_table_action *action,
 -	uint32_t meter_profile_id)
 -{
--	struct pipeline *p;
--	struct pipeline_msg_req *req;
--	struct pipeline_msg_rsp *rsp;
--	int status;
+-	struct meter_profile_data *mp_data;
 -
--	/* Check input params */
--	if (pipeline_name == NULL)
--		return -1;
+-	/* Check input arguments */
+-	if ((action == NULL) ||
+-		((action->cfg.action_mask & (1LLU << RTE_TABLE_ACTION_MTR)) == 0))
+-		return -EINVAL;
 -
--	p = pipeline_find(pipeline_name);
--	if ((p == NULL) ||
--		(table_id >= p->n_tables))
--		return -1;
+-	mp_data = meter_profile_data_find(action->mp,
+-		RTE_DIM(action->mp),
+-		meter_profile_id);
+-	if (!mp_data)
+-		return 0;
 -
--	if (!pipeline_is_running(p)) {
--		struct rte_table_action *a = p->table[table_id].a;
+-	/* Uninstall profile */
+-	mp_data->valid = 0;
 -
--		status = rte_table_action_meter_profile_delete(a,
--				meter_profile_id);
--
--		return status;
--	}
--
--	/* Allocate request */
--	req = pipeline_msg_alloc();
--	if (req == NULL)
--		return -1;
--
--	/* Write request */
--	req->type = PIPELINE_REQ_TABLE_MTR_PROFILE_DELETE;
--	req->id = table_id;
--	req->table_mtr_profile_delete.meter_profile_id = meter_profile_id;
--
--	/* Send request and wait for response */
--	rsp = pipeline_msg_send_recv(p, req);
--
--	/* Read response */
--	status = rsp->status;
--
--	/* Free response */
--	pipeline_msg_free(rsp);
--
--	return status;
+-	return 0;
 -}
 -
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_meter_read, 18.05)
 -int
--pipeline_table_rule_mtr_read(const char *pipeline_name,
--	uint32_t table_id,
--	struct table_rule_match *match,
+-rte_table_action_meter_read(struct rte_table_action *action,
+-	void *data,
+-	uint32_t tc_mask,
 -	struct rte_table_action_mtr_counters *stats,
 -	int clear)
 -{
--	struct pipeline *p;
--	struct table *table;
--	struct pipeline_msg_req *req;
--	struct pipeline_msg_rsp *rsp;
--	struct table_rule *rule;
--	uint32_t tc_mask;
--	int status;
+-	struct mtr_trtcm_data *mtr_data;
+-	uint32_t i;
 -
--	/* Check input params */
--	if ((pipeline_name == NULL) ||
--		(match == NULL) ||
--		(stats == NULL))
--		return -1;
+-	/* Check input arguments */
+-	if ((action == NULL) ||
+-		((action->cfg.action_mask & (1LLU << RTE_TABLE_ACTION_MTR)) == 0) ||
+-		(data == NULL) ||
+-		(tc_mask > RTE_LEN2MASK(action->cfg.mtr.n_tc, uint32_t)))
+-		return -EINVAL;
 -
--	p = pipeline_find(pipeline_name);
--	if ((p == NULL) ||
--		(table_id >= p->n_tables) ||
--		match_check(match, p, table_id))
--		return -1;
+-	mtr_data = action_data_get(data, action, RTE_TABLE_ACTION_MTR);
 -
--	table = &p->table[table_id];
--	tc_mask = (1 << table->ap->params.mtr.n_tc) - 1;
+-	/* Read */
+-	if (stats) {
+-		for (i = 0; i < RTE_TABLE_ACTION_TC_MAX; i++) {
+-			struct rte_table_action_mtr_counters_tc *dst =
+-				&stats->stats[i];
+-			struct mtr_trtcm_data *src = &mtr_data[i];
 -
--	rule = table_rule_find(table, match);
--	if (rule == NULL)
--		return -1;
+-			if ((tc_mask & (1 << i)) == 0)
+-				continue;
 -
--	if (!pipeline_is_running(p)) {
--		status = rte_table_action_meter_read(table->a,
--				rule->data,
--				tc_mask,
--				stats,
--				clear);
+-			dst->n_packets[RTE_COLOR_GREEN] =
+-				mtr_trtcm_data_stats_get(src, RTE_COLOR_GREEN);
 -
--		return status;
+-			dst->n_packets[RTE_COLOR_YELLOW] =
+-				mtr_trtcm_data_stats_get(src, RTE_COLOR_YELLOW);
+-
+-			dst->n_packets[RTE_COLOR_RED] =
+-				mtr_trtcm_data_stats_get(src, RTE_COLOR_RED);
+-
+-			dst->n_packets_valid = 1;
+-			dst->n_bytes_valid = 0;
+-		}
+-
+-		stats->tc_mask = tc_mask;
 -	}
 -
--	/* Allocate request */
--	req = pipeline_msg_alloc();
--	if (req == NULL)
--		return -1;
+-	/* Clear */
+-	if (clear)
+-		for (i = 0; i < RTE_TABLE_ACTION_TC_MAX; i++) {
+-			struct mtr_trtcm_data *src = &mtr_data[i];
 -
--	/* Write request */
--	req->type = PIPELINE_REQ_TABLE_RULE_MTR_READ;
--	req->id = table_id;
--	req->table_rule_mtr_read.data = rule->data;
--	req->table_rule_mtr_read.tc_mask = tc_mask;
--	req->table_rule_mtr_read.clear = clear;
+-			if ((tc_mask & (1 << i)) == 0)
+-				continue;
 -
--	/* Send request and wait for response */
--	rsp = pipeline_msg_send_recv(p, req);
+-			mtr_trtcm_data_stats_reset(src, RTE_COLOR_GREEN);
+-			mtr_trtcm_data_stats_reset(src, RTE_COLOR_YELLOW);
+-			mtr_trtcm_data_stats_reset(src, RTE_COLOR_RED);
+-		}
 -
--	/* Read response */
--	status = rsp->status;
--	if (status == 0)
--		memcpy(stats, &rsp->table_rule_mtr_read.stats, sizeof(*stats));
 -
--	/* Free response */
--	pipeline_msg_free(rsp);
--
--	return status;
+-	return 0;
 -}
 -
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_ttl_read, 18.05)
 -int
--pipeline_table_dscp_table_update(const char *pipeline_name,
--	uint32_t table_id,
--	uint64_t dscp_mask,
--	struct rte_table_action_dscp_table *dscp_table)
--{
--	struct pipeline *p;
--	struct pipeline_msg_req *req;
--	struct pipeline_msg_rsp *rsp;
--	int status;
--
--	/* Check input params */
--	if ((pipeline_name == NULL) ||
--		(dscp_table == NULL))
--		return -1;
--
--	p = pipeline_find(pipeline_name);
--	if ((p == NULL) ||
--		(table_id >= p->n_tables))
--		return -1;
--
--	if (!pipeline_is_running(p)) {
--		struct rte_table_action *a = p->table[table_id].a;
--
--		status = rte_table_action_dscp_table_update(a,
--				dscp_mask,
--				dscp_table);
--
--		return status;
--	}
--
--	/* Allocate request */
--	req = pipeline_msg_alloc();
--	if (req == NULL)
--		return -1;
--
--	/* Write request */
--	req->type = PIPELINE_REQ_TABLE_DSCP_TABLE_UPDATE;
--	req->id = table_id;
--	req->table_dscp_table_update.dscp_mask = dscp_mask;
--	memcpy(&req->table_dscp_table_update.dscp_table,
--		dscp_table, sizeof(*dscp_table));
--
--	/* Send request and wait for response */
--	rsp = pipeline_msg_send_recv(p, req);
--
--	/* Read response */
--	status = rsp->status;
--
--	/* Free response */
--	pipeline_msg_free(rsp);
--
--	return status;
--}
--
--int
--pipeline_table_rule_ttl_read(const char *pipeline_name,
--	uint32_t table_id,
--	struct table_rule_match *match,
+-rte_table_action_ttl_read(struct rte_table_action *action,
+-	void *data,
 -	struct rte_table_action_ttl_counters *stats,
 -	int clear)
 -{
--	struct pipeline *p;
--	struct table *table;
--	struct pipeline_msg_req *req;
--	struct pipeline_msg_rsp *rsp;
--	struct table_rule *rule;
--	int status;
+-	struct ttl_data *ttl_data;
 -
--	/* Check input params */
--	if ((pipeline_name == NULL) ||
--		(match == NULL) ||
--		(stats == NULL))
--		return -1;
+-	/* Check input arguments */
+-	if ((action == NULL) ||
+-		((action->cfg.action_mask &
+-		(1LLU << RTE_TABLE_ACTION_TTL)) == 0) ||
+-		(data == NULL))
+-		return -EINVAL;
 -
--	p = pipeline_find(pipeline_name);
--	if ((p == NULL) ||
--		(table_id >= p->n_tables) ||
--		match_check(match, p, table_id))
--		return -1;
+-	ttl_data = action_data_get(data, action, RTE_TABLE_ACTION_TTL);
 -
--	table = &p->table[table_id];
--	if (!table->ap->params.ttl.n_packets_enabled)
--		return -1;
+-	/* Read */
+-	if (stats)
+-		stats->n_packets = TTL_STATS_READ(ttl_data);
 -
--	rule = table_rule_find(table, match);
--	if (rule == NULL)
--		return -1;
+-	/* Clear */
+-	if (clear)
+-		TTL_STATS_RESET(ttl_data);
 -
--	if (!pipeline_is_running(p)) {
--		status = rte_table_action_ttl_read(table->a,
--				rule->data,
--				stats,
--				clear);
--
--		return status;
--	}
--
--	/* Allocate request */
--	req = pipeline_msg_alloc();
--	if (req == NULL)
--		return -1;
--
--	/* Write request */
--	req->type = PIPELINE_REQ_TABLE_RULE_TTL_READ;
--	req->id = table_id;
--	req->table_rule_ttl_read.data = rule->data;
--	req->table_rule_ttl_read.clear = clear;
--
--	/* Send request and wait for response */
--	rsp = pipeline_msg_send_recv(p, req);
--
--	/* Read response */
--	status = rsp->status;
--	if (status == 0)
--		memcpy(stats, &rsp->table_rule_ttl_read.stats, sizeof(*stats));
--
--	/* Free response */
--	pipeline_msg_free(rsp);
--
--	return status;
+-	return 0;
 -}
 -
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_stats_read, 18.05)
 -int
--pipeline_table_rule_time_read(const char *pipeline_name,
--	uint32_t table_id,
--	struct table_rule_match *match,
+-rte_table_action_stats_read(struct rte_table_action *action,
+-	void *data,
+-	struct rte_table_action_stats_counters *stats,
+-	int clear)
+-{
+-	struct stats_data *stats_data;
+-
+-	/* Check input arguments */
+-	if ((action == NULL) ||
+-		((action->cfg.action_mask &
+-		(1LLU << RTE_TABLE_ACTION_STATS)) == 0) ||
+-		(data == NULL))
+-		return -EINVAL;
+-
+-	stats_data = action_data_get(data, action,
+-		RTE_TABLE_ACTION_STATS);
+-
+-	/* Read */
+-	if (stats) {
+-		stats->n_packets = stats_data->n_packets;
+-		stats->n_bytes = stats_data->n_bytes;
+-		stats->n_packets_valid = 1;
+-		stats->n_bytes_valid = 1;
+-	}
+-
+-	/* Clear */
+-	if (clear) {
+-		stats_data->n_packets = 0;
+-		stats_data->n_bytes = 0;
+-	}
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_time_read, 18.05)
+-int
+-rte_table_action_time_read(struct rte_table_action *action,
+-	void *data,
 -	uint64_t *timestamp)
 -{
--	struct pipeline *p;
--	struct table *table;
--	struct pipeline_msg_req *req;
--	struct pipeline_msg_rsp *rsp;
--	struct table_rule *rule;
--	int status;
+-	struct time_data *time_data;
 -
--	/* Check input params */
--	if ((pipeline_name == NULL) ||
--		(match == NULL) ||
+-	/* Check input arguments */
+-	if ((action == NULL) ||
+-		((action->cfg.action_mask &
+-		(1LLU << RTE_TABLE_ACTION_TIME)) == 0) ||
+-		(data == NULL) ||
 -		(timestamp == NULL))
--		return -1;
+-		return -EINVAL;
 -
--	p = pipeline_find(pipeline_name);
--	if ((p == NULL) ||
--		(table_id >= p->n_tables) ||
--		match_check(match, p, table_id))
--		return -1;
+-	time_data = action_data_get(data, action, RTE_TABLE_ACTION_TIME);
 -
--	table = &p->table[table_id];
--
--	rule = table_rule_find(table, match);
--	if (rule == NULL)
--		return -1;
--
--	if (!pipeline_is_running(p)) {
--		status = rte_table_action_time_read(table->a,
--				rule->data,
--				timestamp);
--
--		return status;
--	}
--
--	/* Allocate request */
--	req = pipeline_msg_alloc();
--	if (req == NULL)
--		return -1;
--
--	/* Write request */
--	req->type = PIPELINE_REQ_TABLE_RULE_TIME_READ;
--	req->id = table_id;
--	req->table_rule_time_read.data = rule->data;
--
--	/* Send request and wait for response */
--	rsp = pipeline_msg_send_recv(p, req);
--
--	/* Read response */
--	status = rsp->status;
--	if (status == 0)
--		*timestamp = rsp->table_rule_time_read.timestamp;
--
--	/* Free response */
--	pipeline_msg_free(rsp);
--
--	return status;
--}
--
--/**
-- * Data plane threads: message handling
-- */
--static inline struct pipeline_msg_req *
--pipeline_msg_recv(struct rte_ring *msgq_req)
--{
--	struct pipeline_msg_req *req;
--
--	int status = rte_ring_sc_dequeue(msgq_req, (void **) &req);
--
--	if (status != 0)
--		return NULL;
--
--	return req;
--}
--
--static inline void
--pipeline_msg_send(struct rte_ring *msgq_rsp,
--	struct pipeline_msg_rsp *rsp)
--{
--	int status;
--
--	do {
--		status = rte_ring_sp_enqueue(msgq_rsp, rsp);
--	} while (status == -ENOBUFS);
--}
--
--static struct pipeline_msg_rsp *
--pipeline_msg_handle_port_in_stats_read(struct pipeline_data *p,
--	struct pipeline_msg_req *req)
--{
--	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
--	uint32_t port_id = req->id;
--	int clear = req->port_in_stats_read.clear;
--
--	rsp->status = rte_pipeline_port_in_stats_read(p->p,
--		port_id,
--		&rsp->port_in_stats_read.stats,
--		clear);
--
--	return rsp;
--}
--
--static struct pipeline_msg_rsp *
--pipeline_msg_handle_port_in_enable(struct pipeline_data *p,
--	struct pipeline_msg_req *req)
--{
--	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
--	uint32_t port_id = req->id;
--
--	rsp->status = rte_pipeline_port_in_enable(p->p,
--		port_id);
--
--	return rsp;
--}
--
--static struct pipeline_msg_rsp *
--pipeline_msg_handle_port_in_disable(struct pipeline_data *p,
--	struct pipeline_msg_req *req)
--{
--	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
--	uint32_t port_id = req->id;
--
--	rsp->status = rte_pipeline_port_in_disable(p->p,
--		port_id);
--
--	return rsp;
--}
--
--static struct pipeline_msg_rsp *
--pipeline_msg_handle_port_out_stats_read(struct pipeline_data *p,
--	struct pipeline_msg_req *req)
--{
--	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
--	uint32_t port_id = req->id;
--	int clear = req->port_out_stats_read.clear;
--
--	rsp->status = rte_pipeline_port_out_stats_read(p->p,
--		port_id,
--		&rsp->port_out_stats_read.stats,
--		clear);
--
--	return rsp;
--}
--
--static struct pipeline_msg_rsp *
--pipeline_msg_handle_table_stats_read(struct pipeline_data *p,
--	struct pipeline_msg_req *req)
--{
--	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
--	uint32_t port_id = req->id;
--	int clear = req->table_stats_read.clear;
--
--	rsp->status = rte_pipeline_table_stats_read(p->p,
--		port_id,
--		&rsp->table_stats_read.stats,
--		clear);
--
--	return rsp;
--}
--
--static int
--match_convert_ipv6_depth(uint32_t depth, uint32_t *depth32)
--{
--	if (depth > 128)
--		return -1;
--
--	switch (depth / 32) {
--	case 0:
--		depth32[0] = depth;
--		depth32[1] = 0;
--		depth32[2] = 0;
--		depth32[3] = 0;
--		return 0;
--
--	case 1:
--		depth32[0] = 32;
--		depth32[1] = depth - 32;
--		depth32[2] = 0;
--		depth32[3] = 0;
--		return 0;
--
--	case 2:
--		depth32[0] = 32;
--		depth32[1] = 32;
--		depth32[2] = depth - 64;
--		depth32[3] = 0;
--		return 0;
--
--	case 3:
--		depth32[0] = 32;
--		depth32[1] = 32;
--		depth32[2] = 32;
--		depth32[3] = depth - 96;
--		return 0;
--
--	case 4:
--		depth32[0] = 32;
--		depth32[1] = 32;
--		depth32[2] = 32;
--		depth32[3] = 32;
--		return 0;
--
--	default:
--		return -1;
--	}
--}
--
--static int
--match_convert(struct table_rule_match *mh,
--	union table_rule_match_low_level *ml,
--	int add)
--{
--	memset(ml, 0, sizeof(*ml));
--
--	switch (mh->match_type) {
--	case TABLE_ACL:
--		if (mh->match.acl.ip_version)
--			if (add) {
--				ml->acl_add.field_value[0].value.u8 =
--					mh->match.acl.proto;
--				ml->acl_add.field_value[0].mask_range.u8 =
--					mh->match.acl.proto_mask;
--
--				ml->acl_add.field_value[1].value.u32 =
--					mh->match.acl.ipv4.sa;
--				ml->acl_add.field_value[1].mask_range.u32 =
--					mh->match.acl.sa_depth;
--
--				ml->acl_add.field_value[2].value.u32 =
--					mh->match.acl.ipv4.da;
--				ml->acl_add.field_value[2].mask_range.u32 =
--					mh->match.acl.da_depth;
--
--				ml->acl_add.field_value[3].value.u16 =
--					mh->match.acl.sp0;
--				ml->acl_add.field_value[3].mask_range.u16 =
--					mh->match.acl.sp1;
--
--				ml->acl_add.field_value[4].value.u16 =
--					mh->match.acl.dp0;
--				ml->acl_add.field_value[4].mask_range.u16 =
--					mh->match.acl.dp1;
--
--				ml->acl_add.priority =
--					(int32_t) mh->match.acl.priority;
--			} else {
--				ml->acl_delete.field_value[0].value.u8 =
--					mh->match.acl.proto;
--				ml->acl_delete.field_value[0].mask_range.u8 =
--					mh->match.acl.proto_mask;
--
--				ml->acl_delete.field_value[1].value.u32 =
--					mh->match.acl.ipv4.sa;
--				ml->acl_delete.field_value[1].mask_range.u32 =
--					mh->match.acl.sa_depth;
--
--				ml->acl_delete.field_value[2].value.u32 =
--					mh->match.acl.ipv4.da;
--				ml->acl_delete.field_value[2].mask_range.u32 =
--					mh->match.acl.da_depth;
--
--				ml->acl_delete.field_value[3].value.u16 =
--					mh->match.acl.sp0;
--				ml->acl_delete.field_value[3].mask_range.u16 =
--					mh->match.acl.sp1;
--
--				ml->acl_delete.field_value[4].value.u16 =
--					mh->match.acl.dp0;
--				ml->acl_delete.field_value[4].mask_range.u16 =
--					mh->match.acl.dp1;
--			}
--		else
--			if (add) {
--				uint32_t *sa32 = (uint32_t *)&mh->match.acl.ipv6.sa;
--				uint32_t *da32 = (uint32_t *)&mh->match.acl.ipv6.da;
--				uint32_t sa32_depth[4], da32_depth[4];
--				int status;
--
--				status = match_convert_ipv6_depth(
--					mh->match.acl.sa_depth,
--					sa32_depth);
--				if (status)
--					return status;
--
--				status = match_convert_ipv6_depth(
--					mh->match.acl.da_depth,
--					da32_depth);
--				if (status)
--					return status;
--
--				ml->acl_add.field_value[0].value.u8 =
--					mh->match.acl.proto;
--				ml->acl_add.field_value[0].mask_range.u8 =
--					mh->match.acl.proto_mask;
--
--				ml->acl_add.field_value[1].value.u32 =
--					rte_be_to_cpu_32(sa32[0]);
--				ml->acl_add.field_value[1].mask_range.u32 =
--					sa32_depth[0];
--				ml->acl_add.field_value[2].value.u32 =
--					rte_be_to_cpu_32(sa32[1]);
--				ml->acl_add.field_value[2].mask_range.u32 =
--					sa32_depth[1];
--				ml->acl_add.field_value[3].value.u32 =
--					rte_be_to_cpu_32(sa32[2]);
--				ml->acl_add.field_value[3].mask_range.u32 =
--					sa32_depth[2];
--				ml->acl_add.field_value[4].value.u32 =
--					rte_be_to_cpu_32(sa32[3]);
--				ml->acl_add.field_value[4].mask_range.u32 =
--					sa32_depth[3];
--
--				ml->acl_add.field_value[5].value.u32 =
--					rte_be_to_cpu_32(da32[0]);
--				ml->acl_add.field_value[5].mask_range.u32 =
--					da32_depth[0];
--				ml->acl_add.field_value[6].value.u32 =
--					rte_be_to_cpu_32(da32[1]);
--				ml->acl_add.field_value[6].mask_range.u32 =
--					da32_depth[1];
--				ml->acl_add.field_value[7].value.u32 =
--					rte_be_to_cpu_32(da32[2]);
--				ml->acl_add.field_value[7].mask_range.u32 =
--					da32_depth[2];
--				ml->acl_add.field_value[8].value.u32 =
--					rte_be_to_cpu_32(da32[3]);
--				ml->acl_add.field_value[8].mask_range.u32 =
--					da32_depth[3];
--
--				ml->acl_add.field_value[9].value.u16 =
--					mh->match.acl.sp0;
--				ml->acl_add.field_value[9].mask_range.u16 =
--					mh->match.acl.sp1;
--
--				ml->acl_add.field_value[10].value.u16 =
--					mh->match.acl.dp0;
--				ml->acl_add.field_value[10].mask_range.u16 =
--					mh->match.acl.dp1;
--
--				ml->acl_add.priority =
--					(int32_t) mh->match.acl.priority;
--			} else {
--				uint32_t *sa32 = (uint32_t *)&mh->match.acl.ipv6.sa;
--				uint32_t *da32 = (uint32_t *)&mh->match.acl.ipv6.da;
--				uint32_t sa32_depth[4], da32_depth[4];
--				int status;
--
--				status = match_convert_ipv6_depth(
--					mh->match.acl.sa_depth,
--					sa32_depth);
--				if (status)
--					return status;
--
--				status = match_convert_ipv6_depth(
--					mh->match.acl.da_depth,
--					da32_depth);
--				if (status)
--					return status;
--
--				ml->acl_delete.field_value[0].value.u8 =
--					mh->match.acl.proto;
--				ml->acl_delete.field_value[0].mask_range.u8 =
--					mh->match.acl.proto_mask;
--
--				ml->acl_delete.field_value[1].value.u32 =
--					rte_be_to_cpu_32(sa32[0]);
--				ml->acl_delete.field_value[1].mask_range.u32 =
--					sa32_depth[0];
--				ml->acl_delete.field_value[2].value.u32 =
--					rte_be_to_cpu_32(sa32[1]);
--				ml->acl_delete.field_value[2].mask_range.u32 =
--					sa32_depth[1];
--				ml->acl_delete.field_value[3].value.u32 =
--					rte_be_to_cpu_32(sa32[2]);
--				ml->acl_delete.field_value[3].mask_range.u32 =
--					sa32_depth[2];
--				ml->acl_delete.field_value[4].value.u32 =
--					rte_be_to_cpu_32(sa32[3]);
--				ml->acl_delete.field_value[4].mask_range.u32 =
--					sa32_depth[3];
--
--				ml->acl_delete.field_value[5].value.u32 =
--					rte_be_to_cpu_32(da32[0]);
--				ml->acl_delete.field_value[5].mask_range.u32 =
--					da32_depth[0];
--				ml->acl_delete.field_value[6].value.u32 =
--					rte_be_to_cpu_32(da32[1]);
--				ml->acl_delete.field_value[6].mask_range.u32 =
--					da32_depth[1];
--				ml->acl_delete.field_value[7].value.u32 =
--					rte_be_to_cpu_32(da32[2]);
--				ml->acl_delete.field_value[7].mask_range.u32 =
--					da32_depth[2];
--				ml->acl_delete.field_value[8].value.u32 =
--					rte_be_to_cpu_32(da32[3]);
--				ml->acl_delete.field_value[8].mask_range.u32 =
--					da32_depth[3];
--
--				ml->acl_delete.field_value[9].value.u16 =
--					mh->match.acl.sp0;
--				ml->acl_delete.field_value[9].mask_range.u16 =
--					mh->match.acl.sp1;
--
--				ml->acl_delete.field_value[10].value.u16 =
--					mh->match.acl.dp0;
--				ml->acl_delete.field_value[10].mask_range.u16 =
--					mh->match.acl.dp1;
--			}
--		return 0;
--
--	case TABLE_ARRAY:
--		ml->array.pos = mh->match.array.pos;
--		return 0;
--
--	case TABLE_HASH:
--		memcpy(ml->hash, mh->match.hash.key, sizeof(ml->hash));
--		return 0;
--
--	case TABLE_LPM:
--		if (mh->match.lpm.ip_version) {
--			ml->lpm_ipv4.ip = mh->match.lpm.ipv4;
--			ml->lpm_ipv4.depth = mh->match.lpm.depth;
--		} else {
--			ml->lpm_ipv6.ip = mh->match.lpm.ipv6;
--			ml->lpm_ipv6.depth = mh->match.lpm.depth;
--		}
--
--		return 0;
--
--	default:
--		return -1;
--	}
--}
--
--static int
--action_convert(struct rte_table_action *a,
--	struct table_rule_action *action,
--	struct rte_pipeline_table_entry *data)
--{
--	int status;
--
--	/* Apply actions */
--	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_FWD)) {
--		status = rte_table_action_apply(a,
--			data,
--			RTE_TABLE_ACTION_FWD,
--			&action->fwd);
--
--		if (status)
--			return status;
--	}
--
--	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_LB)) {
--		status = rte_table_action_apply(a,
--			data,
--			RTE_TABLE_ACTION_LB,
--			&action->lb);
--
--		if (status)
--			return status;
--	}
--
--	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_MTR)) {
--		status = rte_table_action_apply(a,
--			data,
--			RTE_TABLE_ACTION_MTR,
--			&action->mtr);
--
--		if (status)
--			return status;
--	}
--
--	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_TM)) {
--		status = rte_table_action_apply(a,
--			data,
--			RTE_TABLE_ACTION_TM,
--			&action->tm);
--
--		if (status)
--			return status;
--	}
--
--	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_ENCAP)) {
--		status = rte_table_action_apply(a,
--			data,
--			RTE_TABLE_ACTION_ENCAP,
--			&action->encap);
--
--		if (status)
--			return status;
--	}
--
--	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_NAT)) {
--		status = rte_table_action_apply(a,
--			data,
--			RTE_TABLE_ACTION_NAT,
--			&action->nat);
--
--		if (status)
--			return status;
--	}
--
--	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_TTL)) {
--		status = rte_table_action_apply(a,
--			data,
--			RTE_TABLE_ACTION_TTL,
--			&action->ttl);
--
--		if (status)
--			return status;
--	}
--
--	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_STATS)) {
--		status = rte_table_action_apply(a,
--			data,
--			RTE_TABLE_ACTION_STATS,
--			&action->stats);
--
--		if (status)
--			return status;
--	}
--
--	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_TIME)) {
--		status = rte_table_action_apply(a,
--			data,
--			RTE_TABLE_ACTION_TIME,
--			&action->time);
--
--		if (status)
--			return status;
--	}
--
--	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_SYM_CRYPTO)) {
--		status = rte_table_action_apply(a,
--			data,
--			RTE_TABLE_ACTION_SYM_CRYPTO,
--			&action->sym_crypto);
--
--		if (status)
--			return status;
--	}
--
--	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_TAG)) {
--		status = rte_table_action_apply(a,
--			data,
--			RTE_TABLE_ACTION_TAG,
--			&action->tag);
--
--		if (status)
--			return status;
--	}
--
--	if (action->action_mask & (1LLU << RTE_TABLE_ACTION_DECAP)) {
--		status = rte_table_action_apply(a,
--			data,
--			RTE_TABLE_ACTION_DECAP,
--			&action->decap);
--
--		if (status)
--			return status;
--	}
+-	/* Read */
+-	*timestamp = time_data->time;
 -
 -	return 0;
 -}
 -
--static struct pipeline_msg_rsp *
--pipeline_msg_handle_table_rule_add(struct pipeline_data *p,
--	struct pipeline_msg_req *req)
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_crypto_sym_session_get, 18.11)
+-struct rte_cryptodev_sym_session *
+-rte_table_action_crypto_sym_session_get(struct rte_table_action *action,
+-	void *data)
 -{
--	union table_rule_match_low_level match_ll;
--	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
--	struct table_rule_match *match = &req->table_rule_add.match;
--	struct table_rule_action *action = &req->table_rule_add.action;
--	struct rte_pipeline_table_entry *data_in, *data_out;
--	uint32_t table_id = req->id;
--	int key_found, status;
--	struct rte_table_action *a = p->table_data[table_id].a;
+-	struct sym_crypto_data *sym_crypto_data;
 -
--	/* Apply actions */
--	memset(p->buffer, 0, sizeof(p->buffer));
--	data_in = (struct rte_pipeline_table_entry *) p->buffer;
+-	/* Check input arguments */
+-	if ((action == NULL) ||
+-		((action->cfg.action_mask &
+-		(1LLU << RTE_TABLE_ACTION_SYM_CRYPTO)) == 0) ||
+-		(data == NULL))
+-		return NULL;
 -
--	status = match_convert(match, &match_ll, 1);
--	if (status) {
--		rsp->status = -1;
--		return rsp;
--	}
+-	sym_crypto_data = action_data_get(data, action,
+-			RTE_TABLE_ACTION_SYM_CRYPTO);
 -
--	status = action_convert(a, action, data_in);
--	if (status) {
--		rsp->status = -1;
--		return rsp;
--	}
--
--	status = rte_pipeline_table_entry_add(p->p,
--		table_id,
--		&match_ll,
--		data_in,
--		&key_found,
--		&data_out);
--	if (status) {
--		rsp->status = -1;
--		return rsp;
--	}
--
--	/* Write response */
--	rsp->status = 0;
--	rsp->table_rule_add.data = data_out;
--
--	return rsp;
+-	return sym_crypto_data->session;
 -}
 -
--static struct pipeline_msg_rsp *
--pipeline_msg_handle_table_rule_add_default(struct pipeline_data *p,
--	struct pipeline_msg_req *req)
+-static __rte_always_inline uint64_t
+-pkt_work(struct rte_mbuf *mbuf,
+-	struct rte_pipeline_table_entry *table_entry,
+-	uint64_t time,
+-	struct rte_table_action *action,
+-	struct ap_config *cfg)
 -{
--	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
--	struct table_rule_action *action = &req->table_rule_add_default.action;
--	struct rte_pipeline_table_entry *data_in, *data_out;
--	uint32_t table_id = req->id;
--	int status;
+-	uint64_t drop_mask = 0;
 -
--	/* Apply actions */
--	memset(p->buffer, 0, sizeof(p->buffer));
--	data_in = (struct rte_pipeline_table_entry *) p->buffer;
+-	uint32_t ip_offset = action->cfg.common.ip_offset;
+-	void *ip = RTE_MBUF_METADATA_UINT32_PTR(mbuf, ip_offset);
 -
--	data_in->action = action->fwd.action;
--	if (action->fwd.action == RTE_PIPELINE_ACTION_PORT)
--		data_in->port_id = action->fwd.id;
--	if (action->fwd.action == RTE_PIPELINE_ACTION_TABLE)
--		data_in->table_id = action->fwd.id;
+-	uint32_t dscp;
+-	uint16_t total_length;
 -
--	/* Add default rule to table */
--	status = rte_pipeline_table_default_entry_add(p->p,
--		table_id,
--		data_in,
--		&data_out);
--	if (status) {
--		rsp->status = -1;
--		return rsp;
+-	if (cfg->common.ip_version) {
+-		struct rte_ipv4_hdr *hdr = ip;
+-
+-		dscp = hdr->type_of_service >> 2;
+-		total_length = rte_ntohs(hdr->total_length);
+-	} else {
+-		struct rte_ipv6_hdr *hdr = ip;
+-
+-		dscp = (rte_ntohl(hdr->vtc_flow) & 0x0F600000) >> 18;
+-		total_length = rte_ntohs(hdr->payload_len) +
+-			sizeof(struct rte_ipv6_hdr);
 -	}
 -
--	/* Write response */
--	rsp->status = 0;
--	rsp->table_rule_add_default.data = data_out;
+-	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_LB)) {
+-		void *data =
+-			action_data_get(table_entry, action, RTE_TABLE_ACTION_LB);
 -
--	return rsp;
+-		pkt_work_lb(mbuf,
+-			data,
+-			&cfg->lb);
+-	}
+-	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_MTR)) {
+-		void *data =
+-			action_data_get(table_entry, action, RTE_TABLE_ACTION_MTR);
+-
+-		drop_mask |= pkt_work_mtr(mbuf,
+-			data,
+-			&action->dscp_table,
+-			action->mp,
+-			time,
+-			dscp,
+-			total_length);
+-	}
+-
+-	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_TM)) {
+-		void *data =
+-			action_data_get(table_entry, action, RTE_TABLE_ACTION_TM);
+-
+-		pkt_work_tm(mbuf,
+-			data,
+-			&action->dscp_table,
+-			dscp);
+-	}
+-
+-	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_DECAP)) {
+-		void *data = action_data_get(table_entry,
+-			action,
+-			RTE_TABLE_ACTION_DECAP);
+-
+-		pkt_work_decap(mbuf, data);
+-	}
+-
+-	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_ENCAP)) {
+-		void *data =
+-			action_data_get(table_entry, action, RTE_TABLE_ACTION_ENCAP);
+-
+-		pkt_work_encap(mbuf,
+-			data,
+-			&cfg->encap,
+-			ip,
+-			total_length,
+-			ip_offset);
+-	}
+-
+-	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_NAT)) {
+-		void *data =
+-			action_data_get(table_entry, action, RTE_TABLE_ACTION_NAT);
+-
+-		if (cfg->common.ip_version)
+-			pkt_ipv4_work_nat(ip, data, &cfg->nat);
+-		else
+-			pkt_ipv6_work_nat(ip, data, &cfg->nat);
+-	}
+-
+-	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_TTL)) {
+-		void *data =
+-			action_data_get(table_entry, action, RTE_TABLE_ACTION_TTL);
+-
+-		if (cfg->common.ip_version)
+-			drop_mask |= pkt_ipv4_work_ttl(ip, data);
+-		else
+-			drop_mask |= pkt_ipv6_work_ttl(ip, data);
+-	}
+-
+-	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_STATS)) {
+-		void *data =
+-			action_data_get(table_entry, action, RTE_TABLE_ACTION_STATS);
+-
+-		pkt_work_stats(data, total_length);
+-	}
+-
+-	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_TIME)) {
+-		void *data =
+-			action_data_get(table_entry, action, RTE_TABLE_ACTION_TIME);
+-
+-		pkt_work_time(data, time);
+-	}
+-
+-	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_SYM_CRYPTO)) {
+-		void *data = action_data_get(table_entry, action,
+-				RTE_TABLE_ACTION_SYM_CRYPTO);
+-
+-		drop_mask |= pkt_work_sym_crypto(mbuf, data, &cfg->sym_crypto,
+-				ip_offset);
+-	}
+-
+-	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_TAG)) {
+-		void *data = action_data_get(table_entry,
+-			action,
+-			RTE_TABLE_ACTION_TAG);
+-
+-		pkt_work_tag(mbuf, data);
+-	}
+-
+-	return drop_mask;
 -}
 -
--static struct pipeline_msg_rsp *
--pipeline_msg_handle_table_rule_add_bulk(struct pipeline_data *p,
--	struct pipeline_msg_req *req)
+-static __rte_always_inline uint64_t
+-pkt4_work(struct rte_mbuf **mbufs,
+-	struct rte_pipeline_table_entry **table_entries,
+-	uint64_t time,
+-	struct rte_table_action *action,
+-	struct ap_config *cfg)
 -{
--	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
+-	uint64_t drop_mask0 = 0;
+-	uint64_t drop_mask1 = 0;
+-	uint64_t drop_mask2 = 0;
+-	uint64_t drop_mask3 = 0;
 -
--	uint32_t table_id = req->id;
--	struct table_rule_list *list = req->table_rule_add_bulk.list;
--	uint32_t bulk = req->table_rule_add_bulk.bulk;
+-	struct rte_mbuf *mbuf0 = mbufs[0];
+-	struct rte_mbuf *mbuf1 = mbufs[1];
+-	struct rte_mbuf *mbuf2 = mbufs[2];
+-	struct rte_mbuf *mbuf3 = mbufs[3];
 -
--	uint32_t n_rules_added;
--	int status;
+-	struct rte_pipeline_table_entry *table_entry0 = table_entries[0];
+-	struct rte_pipeline_table_entry *table_entry1 = table_entries[1];
+-	struct rte_pipeline_table_entry *table_entry2 = table_entries[2];
+-	struct rte_pipeline_table_entry *table_entry3 = table_entries[3];
 -
--	struct table_ll table_ll = {
--		.p = p->p,
--		.table_id = table_id,
--		.a = p->table_data[table_id].a,
--		.bulk_supported = bulk,
+-	uint32_t ip_offset = action->cfg.common.ip_offset;
+-	void *ip0 = RTE_MBUF_METADATA_UINT32_PTR(mbuf0, ip_offset);
+-	void *ip1 = RTE_MBUF_METADATA_UINT32_PTR(mbuf1, ip_offset);
+-	void *ip2 = RTE_MBUF_METADATA_UINT32_PTR(mbuf2, ip_offset);
+-	void *ip3 = RTE_MBUF_METADATA_UINT32_PTR(mbuf3, ip_offset);
+-
+-	uint32_t dscp0, dscp1, dscp2, dscp3;
+-	uint16_t total_length0, total_length1, total_length2, total_length3;
+-
+-	if (cfg->common.ip_version) {
+-		struct rte_ipv4_hdr *hdr0 = ip0;
+-		struct rte_ipv4_hdr *hdr1 = ip1;
+-		struct rte_ipv4_hdr *hdr2 = ip2;
+-		struct rte_ipv4_hdr *hdr3 = ip3;
+-
+-		dscp0 = hdr0->type_of_service >> 2;
+-		dscp1 = hdr1->type_of_service >> 2;
+-		dscp2 = hdr2->type_of_service >> 2;
+-		dscp3 = hdr3->type_of_service >> 2;
+-
+-		total_length0 = rte_ntohs(hdr0->total_length);
+-		total_length1 = rte_ntohs(hdr1->total_length);
+-		total_length2 = rte_ntohs(hdr2->total_length);
+-		total_length3 = rte_ntohs(hdr3->total_length);
+-	} else {
+-		struct rte_ipv6_hdr *hdr0 = ip0;
+-		struct rte_ipv6_hdr *hdr1 = ip1;
+-		struct rte_ipv6_hdr *hdr2 = ip2;
+-		struct rte_ipv6_hdr *hdr3 = ip3;
+-
+-		dscp0 = (rte_ntohl(hdr0->vtc_flow) & 0x0F600000) >> 18;
+-		dscp1 = (rte_ntohl(hdr1->vtc_flow) & 0x0F600000) >> 18;
+-		dscp2 = (rte_ntohl(hdr2->vtc_flow) & 0x0F600000) >> 18;
+-		dscp3 = (rte_ntohl(hdr3->vtc_flow) & 0x0F600000) >> 18;
+-
+-		total_length0 = rte_ntohs(hdr0->payload_len) +
+-			sizeof(struct rte_ipv6_hdr);
+-		total_length1 = rte_ntohs(hdr1->payload_len) +
+-			sizeof(struct rte_ipv6_hdr);
+-		total_length2 = rte_ntohs(hdr2->payload_len) +
+-			sizeof(struct rte_ipv6_hdr);
+-		total_length3 = rte_ntohs(hdr3->payload_len) +
+-			sizeof(struct rte_ipv6_hdr);
+-	}
+-
+-	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_LB)) {
+-		void *data0 =
+-			action_data_get(table_entry0, action, RTE_TABLE_ACTION_LB);
+-		void *data1 =
+-			action_data_get(table_entry1, action, RTE_TABLE_ACTION_LB);
+-		void *data2 =
+-			action_data_get(table_entry2, action, RTE_TABLE_ACTION_LB);
+-		void *data3 =
+-			action_data_get(table_entry3, action, RTE_TABLE_ACTION_LB);
+-
+-		pkt_work_lb(mbuf0,
+-			data0,
+-			&cfg->lb);
+-
+-		pkt_work_lb(mbuf1,
+-			data1,
+-			&cfg->lb);
+-
+-		pkt_work_lb(mbuf2,
+-			data2,
+-			&cfg->lb);
+-
+-		pkt_work_lb(mbuf3,
+-			data3,
+-			&cfg->lb);
+-	}
+-
+-	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_MTR)) {
+-		void *data0 =
+-			action_data_get(table_entry0, action, RTE_TABLE_ACTION_MTR);
+-		void *data1 =
+-			action_data_get(table_entry1, action, RTE_TABLE_ACTION_MTR);
+-		void *data2 =
+-			action_data_get(table_entry2, action, RTE_TABLE_ACTION_MTR);
+-		void *data3 =
+-			action_data_get(table_entry3, action, RTE_TABLE_ACTION_MTR);
+-
+-		drop_mask0 |= pkt_work_mtr(mbuf0,
+-			data0,
+-			&action->dscp_table,
+-			action->mp,
+-			time,
+-			dscp0,
+-			total_length0);
+-
+-		drop_mask1 |= pkt_work_mtr(mbuf1,
+-			data1,
+-			&action->dscp_table,
+-			action->mp,
+-			time,
+-			dscp1,
+-			total_length1);
+-
+-		drop_mask2 |= pkt_work_mtr(mbuf2,
+-			data2,
+-			&action->dscp_table,
+-			action->mp,
+-			time,
+-			dscp2,
+-			total_length2);
+-
+-		drop_mask3 |= pkt_work_mtr(mbuf3,
+-			data3,
+-			&action->dscp_table,
+-			action->mp,
+-			time,
+-			dscp3,
+-			total_length3);
+-	}
+-
+-	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_TM)) {
+-		void *data0 =
+-			action_data_get(table_entry0, action, RTE_TABLE_ACTION_TM);
+-		void *data1 =
+-			action_data_get(table_entry1, action, RTE_TABLE_ACTION_TM);
+-		void *data2 =
+-			action_data_get(table_entry2, action, RTE_TABLE_ACTION_TM);
+-		void *data3 =
+-			action_data_get(table_entry3, action, RTE_TABLE_ACTION_TM);
+-
+-		pkt_work_tm(mbuf0,
+-			data0,
+-			&action->dscp_table,
+-			dscp0);
+-
+-		pkt_work_tm(mbuf1,
+-			data1,
+-			&action->dscp_table,
+-			dscp1);
+-
+-		pkt_work_tm(mbuf2,
+-			data2,
+-			&action->dscp_table,
+-			dscp2);
+-
+-		pkt_work_tm(mbuf3,
+-			data3,
+-			&action->dscp_table,
+-			dscp3);
+-	}
+-
+-	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_DECAP)) {
+-		void *data0 = action_data_get(table_entry0,
+-			action,
+-			RTE_TABLE_ACTION_DECAP);
+-		void *data1 = action_data_get(table_entry1,
+-			action,
+-			RTE_TABLE_ACTION_DECAP);
+-		void *data2 = action_data_get(table_entry2,
+-			action,
+-			RTE_TABLE_ACTION_DECAP);
+-		void *data3 = action_data_get(table_entry3,
+-			action,
+-			RTE_TABLE_ACTION_DECAP);
+-
+-		pkt4_work_decap(mbuf0, mbuf1, mbuf2, mbuf3,
+-			data0, data1, data2, data3);
+-	}
+-
+-	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_ENCAP)) {
+-		void *data0 =
+-			action_data_get(table_entry0, action, RTE_TABLE_ACTION_ENCAP);
+-		void *data1 =
+-			action_data_get(table_entry1, action, RTE_TABLE_ACTION_ENCAP);
+-		void *data2 =
+-			action_data_get(table_entry2, action, RTE_TABLE_ACTION_ENCAP);
+-		void *data3 =
+-			action_data_get(table_entry3, action, RTE_TABLE_ACTION_ENCAP);
+-
+-		pkt_work_encap(mbuf0,
+-			data0,
+-			&cfg->encap,
+-			ip0,
+-			total_length0,
+-			ip_offset);
+-
+-		pkt_work_encap(mbuf1,
+-			data1,
+-			&cfg->encap,
+-			ip1,
+-			total_length1,
+-			ip_offset);
+-
+-		pkt_work_encap(mbuf2,
+-			data2,
+-			&cfg->encap,
+-			ip2,
+-			total_length2,
+-			ip_offset);
+-
+-		pkt_work_encap(mbuf3,
+-			data3,
+-			&cfg->encap,
+-			ip3,
+-			total_length3,
+-			ip_offset);
+-	}
+-
+-	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_NAT)) {
+-		void *data0 =
+-			action_data_get(table_entry0, action, RTE_TABLE_ACTION_NAT);
+-		void *data1 =
+-			action_data_get(table_entry1, action, RTE_TABLE_ACTION_NAT);
+-		void *data2 =
+-			action_data_get(table_entry2, action, RTE_TABLE_ACTION_NAT);
+-		void *data3 =
+-			action_data_get(table_entry3, action, RTE_TABLE_ACTION_NAT);
+-
+-		if (cfg->common.ip_version) {
+-			pkt_ipv4_work_nat(ip0, data0, &cfg->nat);
+-			pkt_ipv4_work_nat(ip1, data1, &cfg->nat);
+-			pkt_ipv4_work_nat(ip2, data2, &cfg->nat);
+-			pkt_ipv4_work_nat(ip3, data3, &cfg->nat);
+-		} else {
+-			pkt_ipv6_work_nat(ip0, data0, &cfg->nat);
+-			pkt_ipv6_work_nat(ip1, data1, &cfg->nat);
+-			pkt_ipv6_work_nat(ip2, data2, &cfg->nat);
+-			pkt_ipv6_work_nat(ip3, data3, &cfg->nat);
+-		}
+-	}
+-
+-	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_TTL)) {
+-		void *data0 =
+-			action_data_get(table_entry0, action, RTE_TABLE_ACTION_TTL);
+-		void *data1 =
+-			action_data_get(table_entry1, action, RTE_TABLE_ACTION_TTL);
+-		void *data2 =
+-			action_data_get(table_entry2, action, RTE_TABLE_ACTION_TTL);
+-		void *data3 =
+-			action_data_get(table_entry3, action, RTE_TABLE_ACTION_TTL);
+-
+-		if (cfg->common.ip_version) {
+-			drop_mask0 |= pkt_ipv4_work_ttl(ip0, data0);
+-			drop_mask1 |= pkt_ipv4_work_ttl(ip1, data1);
+-			drop_mask2 |= pkt_ipv4_work_ttl(ip2, data2);
+-			drop_mask3 |= pkt_ipv4_work_ttl(ip3, data3);
+-		} else {
+-			drop_mask0 |= pkt_ipv6_work_ttl(ip0, data0);
+-			drop_mask1 |= pkt_ipv6_work_ttl(ip1, data1);
+-			drop_mask2 |= pkt_ipv6_work_ttl(ip2, data2);
+-			drop_mask3 |= pkt_ipv6_work_ttl(ip3, data3);
+-		}
+-	}
+-
+-	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_STATS)) {
+-		void *data0 =
+-			action_data_get(table_entry0, action, RTE_TABLE_ACTION_STATS);
+-		void *data1 =
+-			action_data_get(table_entry1, action, RTE_TABLE_ACTION_STATS);
+-		void *data2 =
+-			action_data_get(table_entry2, action, RTE_TABLE_ACTION_STATS);
+-		void *data3 =
+-			action_data_get(table_entry3, action, RTE_TABLE_ACTION_STATS);
+-
+-		pkt_work_stats(data0, total_length0);
+-		pkt_work_stats(data1, total_length1);
+-		pkt_work_stats(data2, total_length2);
+-		pkt_work_stats(data3, total_length3);
+-	}
+-
+-	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_TIME)) {
+-		void *data0 =
+-			action_data_get(table_entry0, action, RTE_TABLE_ACTION_TIME);
+-		void *data1 =
+-			action_data_get(table_entry1, action, RTE_TABLE_ACTION_TIME);
+-		void *data2 =
+-			action_data_get(table_entry2, action, RTE_TABLE_ACTION_TIME);
+-		void *data3 =
+-			action_data_get(table_entry3, action, RTE_TABLE_ACTION_TIME);
+-
+-		pkt_work_time(data0, time);
+-		pkt_work_time(data1, time);
+-		pkt_work_time(data2, time);
+-		pkt_work_time(data3, time);
+-	}
+-
+-	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_SYM_CRYPTO)) {
+-		void *data0 = action_data_get(table_entry0, action,
+-				RTE_TABLE_ACTION_SYM_CRYPTO);
+-		void *data1 = action_data_get(table_entry1, action,
+-				RTE_TABLE_ACTION_SYM_CRYPTO);
+-		void *data2 = action_data_get(table_entry2, action,
+-				RTE_TABLE_ACTION_SYM_CRYPTO);
+-		void *data3 = action_data_get(table_entry3, action,
+-				RTE_TABLE_ACTION_SYM_CRYPTO);
+-
+-		drop_mask0 |= pkt_work_sym_crypto(mbuf0, data0, &cfg->sym_crypto,
+-				ip_offset);
+-		drop_mask1 |= pkt_work_sym_crypto(mbuf1, data1, &cfg->sym_crypto,
+-				ip_offset);
+-		drop_mask2 |= pkt_work_sym_crypto(mbuf2, data2, &cfg->sym_crypto,
+-				ip_offset);
+-		drop_mask3 |= pkt_work_sym_crypto(mbuf3, data3, &cfg->sym_crypto,
+-				ip_offset);
+-	}
+-
+-	if (cfg->action_mask & (1LLU << RTE_TABLE_ACTION_TAG)) {
+-		void *data0 = action_data_get(table_entry0,
+-			action,
+-			RTE_TABLE_ACTION_TAG);
+-		void *data1 = action_data_get(table_entry1,
+-			action,
+-			RTE_TABLE_ACTION_TAG);
+-		void *data2 = action_data_get(table_entry2,
+-			action,
+-			RTE_TABLE_ACTION_TAG);
+-		void *data3 = action_data_get(table_entry3,
+-			action,
+-			RTE_TABLE_ACTION_TAG);
+-
+-		pkt4_work_tag(mbuf0, mbuf1, mbuf2, mbuf3,
+-			data0, data1, data2, data3);
+-	}
+-
+-	return drop_mask0 |
+-		(drop_mask1 << 1) |
+-		(drop_mask2 << 2) |
+-		(drop_mask3 << 3);
+-}
+-
+-static __rte_always_inline int
+-ah(struct rte_pipeline *p,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	struct rte_pipeline_table_entry **entries,
+-	struct rte_table_action *action,
+-	struct ap_config *cfg)
+-{
+-	uint64_t pkts_drop_mask = 0;
+-	uint64_t time = 0;
+-
+-	if (cfg->action_mask & ((1LLU << RTE_TABLE_ACTION_MTR) |
+-		(1LLU << RTE_TABLE_ACTION_TIME)))
+-		time = rte_rdtsc();
+-
+-	if ((pkts_mask & (pkts_mask + 1)) == 0) {
+-		uint64_t n_pkts = rte_popcount64(pkts_mask);
+-		uint32_t i;
+-
+-		for (i = 0; i < (n_pkts & (~0x3LLU)); i += 4) {
+-			uint64_t drop_mask;
+-
+-			drop_mask = pkt4_work(&pkts[i],
+-				&entries[i],
+-				time,
+-				action,
+-				cfg);
+-
+-			pkts_drop_mask |= drop_mask << i;
+-		}
+-
+-		for ( ; i < n_pkts; i++) {
+-			uint64_t drop_mask;
+-
+-			drop_mask = pkt_work(pkts[i],
+-				entries[i],
+-				time,
+-				action,
+-				cfg);
+-
+-			pkts_drop_mask |= drop_mask << i;
+-		}
+-	} else
+-		for ( ; pkts_mask; ) {
+-			uint32_t pos = rte_ctz64(pkts_mask);
+-			uint64_t pkt_mask = 1LLU << pos;
+-			uint64_t drop_mask;
+-
+-			drop_mask = pkt_work(pkts[pos],
+-				entries[pos],
+-				time,
+-				action,
+-				cfg);
+-
+-			pkts_mask &= ~pkt_mask;
+-			pkts_drop_mask |= drop_mask << pos;
+-		}
+-
+-	rte_pipeline_ah_packet_drop(p, pkts_drop_mask);
+-
+-	return 0;
+-}
+-
+-static int
+-ah_default(struct rte_pipeline *p,
+-	struct rte_mbuf **pkts,
+-	uint64_t pkts_mask,
+-	struct rte_pipeline_table_entry **entries,
+-	void *arg)
+-{
+-	struct rte_table_action *action = arg;
+-
+-	return ah(p,
+-		pkts,
+-		pkts_mask,
+-		entries,
+-		action,
+-		&action->cfg);
+-}
+-
+-static rte_pipeline_table_action_handler_hit
+-ah_selector(struct rte_table_action *action)
+-{
+-	if (action->cfg.action_mask == (1LLU << RTE_TABLE_ACTION_FWD))
+-		return NULL;
+-
+-	return ah_default;
+-}
+-
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_table_params_get, 18.05)
+-int
+-rte_table_action_table_params_get(struct rte_table_action *action,
+-	struct rte_pipeline_table_params *params)
+-{
+-	rte_pipeline_table_action_handler_hit f_action_hit;
+-	uint32_t total_size;
+-
+-	/* Check input arguments */
+-	if ((action == NULL) ||
+-		(params == NULL))
+-		return -EINVAL;
+-
+-	f_action_hit = ah_selector(action);
+-	total_size = rte_align32pow2(action->data.total_size);
+-
+-	/* Fill in params */
+-	params->f_action_hit = f_action_hit;
+-	params->f_action_miss = NULL;
+-	params->arg_ah = (f_action_hit) ? action : NULL;
+-	params->action_data_size = total_size -
+-		sizeof(struct rte_pipeline_table_entry);
+-
+-	return 0;
+-}
+-
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_table_action_free, 18.05)
+-int
+-rte_table_action_free(struct rte_table_action *action)
+-{
+-	if (action == NULL)
+-		return 0;
+-
+-	rte_free(action);
+-
+-	return 0;
+-}
+diff --git a/lib/pipeline/rte_table_action.h b/lib/pipeline/rte_table_action.h
+deleted file mode 100644
+index 47a7bdfc01..0000000000
+--- a/lib/pipeline/rte_table_action.h
++++ /dev/null
+@@ -1,1137 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright(c) 2018 Intel Corporation
+- */
+-
+-#ifndef __INCLUDE_RTE_TABLE_ACTION_H__
+-#define __INCLUDE_RTE_TABLE_ACTION_H__
+-
+-/**
+- * @file
+- * RTE Pipeline Table Actions
+- *
+- * This API provides a common set of actions for pipeline tables to speed up
+- * application development.
+- *
+- * Each match-action rule added to a pipeline table has associated data that
+- * stores the action context. This data is input to the table action handler
+- * called for every input packet that hits the rule as part of the table lookup
+- * during the pipeline execution. The pipeline library allows the user to define
+- * his own table actions by providing customized table action handlers (table
+- * lookup) and complete freedom of setting the rules and their data (table rule
+- * add/delete). While the user can still follow this process, this API is
+- * intended to provide a quicker development alternative for a set of predefined
+- * actions.
+- *
+- * The typical steps to use this API are:
+- *  - Define a table action profile. This is a configuration template that can
+- *    potentially be shared by multiple tables from the same or different
+- *    pipelines, with different tables from the same pipeline likely to use
+- *    different action profiles. For every table using a given action profile,
+- *    the profile defines the set of actions and the action configuration to be
+- *    implemented for all the table rules. API functions:
+- *    rte_table_action_profile_create(),
+- *    rte_table_action_profile_action_register(),
+- *    rte_table_action_profile_freeze().
+- *
+- *  - Instantiate the table action profile to create table action objects. Each
+- *    pipeline table has its own table action object. API functions:
+- *    rte_table_action_create().
+- *
+- *  - Use the table action object to generate the pipeline table action handlers
+- *    (invoked by the pipeline table lookup operation). API functions:
+- *    rte_table_action_table_params_get().
+- *
+- *  - Use the table action object to generate the rule data (for the pipeline
+- *    table rule add operation) based on given action parameters. API functions:
+- *    rte_table_action_apply().
+- *
+- *  - Use the table action object to read action data (e.g. stats counters) for
+- *    any given rule. API functions: rte_table_action_XYZ_read().
+- *
+- * @warning
+- * @b EXPERIMENTAL: this API may change without prior notice
+- */
+-
+-#include <stdint.h>
+-
+-#include <rte_compat.h>
+-#include <rte_ether.h>
+-#include <rte_ip6.h>
+-#include <rte_meter.h>
+-#include <rte_table_hash.h>
+-
+-#include "rte_pipeline.h"
+-
+-#ifdef __cplusplus
+-extern "C" {
+-#endif
+-
+-/** Table actions. */
+-enum rte_table_action_type {
+-	/** Forward to next pipeline table, output port or drop. */
+-	RTE_TABLE_ACTION_FWD = 0,
+-
+-	/**  Load balance. */
+-	RTE_TABLE_ACTION_LB,
+-
+-	/**  Traffic Metering and Policing. */
+-	RTE_TABLE_ACTION_MTR,
+-
+-	/**  Traffic Management. */
+-	RTE_TABLE_ACTION_TM,
+-
+-	/** Packet encapsulations. */
+-	RTE_TABLE_ACTION_ENCAP,
+-
+-	/** Network Address Translation (NAT). */
+-	RTE_TABLE_ACTION_NAT,
+-
+-	/** Time to Live (TTL) update. */
+-	RTE_TABLE_ACTION_TTL,
+-
+-	/** Statistics. */
+-	RTE_TABLE_ACTION_STATS,
+-
+-	/** Timestamp. */
+-	RTE_TABLE_ACTION_TIME,
+-
+-	/** Crypto. */
+-	RTE_TABLE_ACTION_SYM_CRYPTO,
+-
+-	/** Tag. */
+-	RTE_TABLE_ACTION_TAG,
+-
+-	/** Packet decapsulations. */
+-	RTE_TABLE_ACTION_DECAP,
+-};
+-
+-/** Common action configuration (per table action profile). */
+-struct rte_table_action_common_config {
+-	/** Input packet Internet Protocol (IP) version. Non-zero for IPv4, zero
+-	 * for IPv6.
+-	 */
+-	int ip_version;
+-
+-	/** IP header offset within the input packet buffer. Offset 0 points to
+-	 * the first byte of the MBUF structure.
+-	 */
+-	uint32_t ip_offset;
+-};
+-
+-/**
+- * RTE_TABLE_ACTION_FWD
+- */
+-/** Forward action parameters (per table rule). */
+-struct rte_table_action_fwd_params {
+-	/** Forward action. */
+-	enum rte_pipeline_action action;
+-
+-	/** Pipeline table ID or output port ID. */
+-	uint32_t id;
+-};
+-
+-/**
+- * RTE_TABLE_ACTION_LB
+- */
+-/** Load balance key size min (number of bytes). */
+-#define RTE_TABLE_ACTION_LB_KEY_SIZE_MIN                    8
+-
+-/** Load balance key size max (number of bytes). */
+-#define RTE_TABLE_ACTION_LB_KEY_SIZE_MAX                    64
+-
+-/** Load balance table size. */
+-#define RTE_TABLE_ACTION_LB_TABLE_SIZE                      8
+-
+-/** Load balance action configuration (per table action profile). */
+-struct rte_table_action_lb_config {
+-	/** Key size (number of bytes). */
+-	uint32_t key_size;
+-
+-	/** Key offset within the input packet buffer. Offset 0 points to the
+-	 * first byte of the MBUF structure.
+-	 */
+-	uint32_t key_offset;
+-
+-	/** Key mask (*key_size* bytes are valid). */
+-	uint8_t key_mask[RTE_TABLE_ACTION_LB_KEY_SIZE_MAX];
+-
+-	/** Hash function. */
+-	rte_table_hash_op_hash f_hash;
+-
+-	/** Seed value for *f_hash*. */
+-	uint64_t seed;
+-
+-	/** Output value offset within the input packet buffer. Offset 0 points
+-	 * to the first byte of the MBUF structure.
+-	 */
+-	uint32_t out_offset;
+-};
+-
+-/** Load balance action parameters (per table rule). */
+-struct rte_table_action_lb_params {
+-	/** Table defining the output values and their weights. The weights are
+-	 * set in 1/RTE_TABLE_ACTION_LB_TABLE_SIZE increments. To assign a
+-	 * weight of N/RTE_TABLE_ACTION_LB_TABLE_SIZE to a given output value
+-	 * (0 <= N <= RTE_TABLE_ACTION_LB_TABLE_SIZE), the same output value
+-	 * needs to show up exactly N times in this table.
+-	 */
+-	uint32_t out[RTE_TABLE_ACTION_LB_TABLE_SIZE];
+-};
+-
+-/**
+- * RTE_TABLE_ACTION_MTR
+- */
+-/** Max number of traffic classes (TCs). */
+-#define RTE_TABLE_ACTION_TC_MAX                                  16
+-
+-/** Max number of queues per traffic class. */
+-#define RTE_TABLE_ACTION_TC_QUEUE_MAX                            16
+-
+-/** Differentiated Services Code Point (DSCP) translation table entry. */
+-struct rte_table_action_dscp_table_entry {
+-	/** Traffic class. Used by the meter or the traffic management actions.
+-	 * Has to be strictly smaller than *RTE_TABLE_ACTION_TC_MAX*. Traffic
+-	 * class 0 is the highest priority.
+-	 */
+-	uint32_t tc_id;
+-
+-	/** Traffic class queue. Used by the traffic management action. Has to
+-	 * be strictly smaller than *RTE_TABLE_ACTION_TC_QUEUE_MAX*.
+-	 */
+-	uint32_t tc_queue_id;
+-
+-	/** Packet color. Used by the meter action as the packet input color
+-	 * for the color aware mode of the traffic metering algorithm.
+-	 */
+-	enum rte_color color;
+-};
+-
+-/** DSCP translation table. */
+-struct rte_table_action_dscp_table {
+-	/** Array of DSCP table entries */
+-	struct rte_table_action_dscp_table_entry entry[64];
+-};
+-
+-/** Supported traffic metering algorithms. */
+-enum rte_table_action_meter_algorithm {
+-	/** Single Rate Three Color Marker (srTCM) - IETF RFC 2697. */
+-	RTE_TABLE_ACTION_METER_SRTCM,
+-
+-	/** Two Rate Three Color Marker (trTCM) - IETF RFC 2698. */
+-	RTE_TABLE_ACTION_METER_TRTCM,
+-};
+-
+-/** Traffic metering profile (configuration template). */
+-struct rte_table_action_meter_profile {
+-	/** Traffic metering algorithm. */
+-	enum rte_table_action_meter_algorithm alg;
+-
+-	union {
+-		/** Only valid when *alg* is set to srTCM - IETF RFC 2697. */
+-		struct rte_meter_srtcm_params srtcm;
+-
+-		/** Only valid when *alg* is set to trTCM - IETF RFC 2698. */
+-		struct rte_meter_trtcm_params trtcm;
+-	};
+-};
+-
+-/** Policer actions. */
+-enum rte_table_action_policer {
+-	/** Recolor the packet as green. */
+-	RTE_TABLE_ACTION_POLICER_COLOR_GREEN = 0,
+-
+-	/** Recolor the packet as yellow. */
+-	RTE_TABLE_ACTION_POLICER_COLOR_YELLOW,
+-
+-	/** Recolor the packet as red. */
+-	RTE_TABLE_ACTION_POLICER_COLOR_RED,
+-
+-	/** Drop the packet. */
+-	RTE_TABLE_ACTION_POLICER_DROP,
+-
+-	/** Number of policer actions. */
+-	RTE_TABLE_ACTION_POLICER_MAX
+-};
+-
+-/** Meter action configuration per traffic class. */
+-struct rte_table_action_mtr_tc_params {
+-	/** Meter profile ID. */
+-	uint32_t meter_profile_id;
+-
+-	/** Policer actions. */
+-	enum rte_table_action_policer policer[RTE_COLORS];
+-};
+-
+-/** Meter action statistics counters per traffic class. */
+-struct rte_table_action_mtr_counters_tc {
+-	/** Number of packets per color at the output of the traffic metering
+-	 * and before the policer actions are executed. Only valid when
+-	 * *n_packets_valid* is non-zero.
+-	 */
+-	uint64_t n_packets[RTE_COLORS];
+-
+-	/** Number of packet bytes per color at the output of the traffic
+-	 * metering and before the policer actions are executed. Only valid when
+-	 * *n_bytes_valid* is non-zero.
+-	 */
+-	uint64_t n_bytes[RTE_COLORS];
+-
+-	/** When non-zero, the *n_packets* field is valid. */
+-	int n_packets_valid;
+-
+-	/** When non-zero, the *n_bytes* field is valid. */
+-	int n_bytes_valid;
+-};
+-
+-/** Meter action configuration (per table action profile). */
+-struct rte_table_action_mtr_config {
+-	/** Meter algorithm. */
+-	enum rte_table_action_meter_algorithm alg;
+-
+-	/** Number of traffic classes. Each traffic class has its own traffic
+-	 * meter and policer instances. Needs to be equal to either 1 or to
+-	 * *RTE_TABLE_ACTION_TC_MAX*.
+-	 */
+-	uint32_t n_tc;
+-
+-	/** When non-zero, the *n_packets* meter stats counter is enabled,
+-	 * otherwise it is disabled.
+-	 *
+-	 * @see struct rte_table_action_mtr_counters_tc
+-	 */
+-	int n_packets_enabled;
+-
+-	/** When non-zero, the *n_bytes* meter stats counter is enabled,
+-	 * otherwise it is disabled.
+-	 *
+-	 * @see struct rte_table_action_mtr_counters_tc
+-	 */
+-	int n_bytes_enabled;
+-};
+-
+-/** Meter action parameters (per table rule). */
+-struct rte_table_action_mtr_params {
+-	/** Traffic meter and policer parameters for each of the *tc_mask*
+-	 * traffic classes.
+-	 */
+-	struct rte_table_action_mtr_tc_params mtr[RTE_TABLE_ACTION_TC_MAX];
+-
+-	/** Bit mask defining which traffic class parameters are valid in *mtr*.
+-	 * If bit N is set in *tc_mask*, then parameters for traffic class N are
+-	 * valid in *mtr*.
+-	 */
+-	uint32_t tc_mask;
+-};
+-
+-/** Meter action statistics counters (per table rule). */
+-struct rte_table_action_mtr_counters {
+-	/** Stats counters for each of the *tc_mask* traffic classes. */
+-	struct rte_table_action_mtr_counters_tc stats[RTE_TABLE_ACTION_TC_MAX];
+-
+-	/** Bit mask defining which traffic class parameters are valid in *mtr*.
+-	 * If bit N is set in *tc_mask*, then parameters for traffic class N are
+-	 * valid in *mtr*.
+-	 */
+-	uint32_t tc_mask;
+-};
+-
+-/**
+- * RTE_TABLE_ACTION_TM
+- */
+-/** Traffic management action configuration (per table action profile). */
+-struct rte_table_action_tm_config {
+-	/** Number of subports per port. */
+-	uint32_t n_subports_per_port;
+-
+-	/** Number of pipes per subport. */
+-	uint32_t n_pipes_per_subport;
+-};
+-
+-/** Traffic management action parameters (per table rule). */
+-struct rte_table_action_tm_params {
+-	/** Subport ID. */
+-	uint32_t subport_id;
+-
+-	/** Pipe ID. */
+-	uint32_t pipe_id;
+-};
+-
+-/**
+- * RTE_TABLE_ACTION_ENCAP
+- */
+-/** Supported packet encapsulation types. */
+-enum rte_table_action_encap_type {
+-	/** IP -> { Ether | IP } */
+-	RTE_TABLE_ACTION_ENCAP_ETHER = 0,
+-
+-	/** IP -> { Ether | VLAN | IP } */
+-	RTE_TABLE_ACTION_ENCAP_VLAN,
+-
+-	/** IP -> { Ether | S-VLAN | C-VLAN | IP } */
+-	RTE_TABLE_ACTION_ENCAP_QINQ,
+-
+-	/** IP -> { Ether | MPLS | IP } */
+-	RTE_TABLE_ACTION_ENCAP_MPLS,
+-
+-	/** IP -> { Ether | PPPoE | PPP | IP } */
+-	RTE_TABLE_ACTION_ENCAP_PPPOE,
+-
+-	/** Ether -> { Ether | IP | UDP | VXLAN | Ether }
+-	 * Ether -> { Ether | VLAN | IP | UDP | VXLAN | Ether }
+-	 */
+-	RTE_TABLE_ACTION_ENCAP_VXLAN,
+-
+-	/** IP -> { Ether | S-VLAN | C-VLAN | PPPoE | PPP | IP } */
+-	RTE_TABLE_ACTION_ENCAP_QINQ_PPPOE,
+-};
+-
+-/** Pre-computed Ethernet header fields for encapsulation action. */
+-struct rte_table_action_ether_hdr {
+-	struct rte_ether_addr da; /**< Destination address. */
+-	struct rte_ether_addr sa; /**< Source address. */
+-};
+-
+-/** Pre-computed VLAN header fields for encapsulation action. */
+-struct rte_table_action_vlan_hdr {
+-	uint8_t pcp; /**< Priority Code Point (PCP). */
+-	uint8_t dei; /**< Drop Eligibility Indicator (DEI). */
+-	uint16_t vid; /**< VLAN Identifier (VID). */
+-};
+-
+-/** Pre-computed MPLS header fields for encapsulation action. */
+-struct rte_table_action_mpls_hdr {
+-	uint32_t label; /**< Label. */
+-	uint8_t tc; /**< Traffic Class (TC). */
+-	uint8_t ttl; /**< Time to Live (TTL). */
+-};
+-
+-/** Pre-computed PPPoE header fields for encapsulation action. */
+-struct rte_table_action_pppoe_hdr {
+-	uint16_t session_id; /**< Session ID. */
+-};
+-
+-/** Pre-computed IPv4 header fields for encapsulation action. */
+-struct rte_table_action_ipv4_header {
+-	uint32_t sa; /**< Source address. */
+-	uint32_t da; /**< Destination address. */
+-	uint8_t dscp; /**< DiffServ Code Point (DSCP). */
+-	uint8_t ttl; /**< Time To Live (TTL). */
+-};
+-
+-/** Pre-computed IPv6 header fields for encapsulation action. */
+-struct rte_table_action_ipv6_header {
+-	struct rte_ipv6_addr sa; /**< Source address. */
+-	struct rte_ipv6_addr da; /**< Destination address. */
+-	uint32_t flow_label; /**< Flow label. */
+-	uint8_t dscp; /**< DiffServ Code Point (DSCP). */
+-	uint8_t hop_limit; /**< Hop Limit (HL). */
+-};
+-
+-/** Pre-computed UDP header fields for encapsulation action. */
+-struct rte_table_action_udp_header {
+-	uint16_t sp; /**< Source port. */
+-	uint16_t dp; /**< Destination port. */
+-};
+-
+-/** Pre-computed VXLAN header fields for encapsulation action. */
+-struct rte_table_action_vxlan_hdr {
+-	uint32_t vni; /**< VXLAN Network Identifier (VNI). */
+-};
+-
+-/** Ether encap parameters. */
+-struct rte_table_action_encap_ether_params {
+-	struct rte_table_action_ether_hdr ether; /**< Ethernet header. */
+-};
+-
+-/** VLAN encap parameters. */
+-struct rte_table_action_encap_vlan_params {
+-	struct rte_table_action_ether_hdr ether; /**< Ethernet header. */
+-	struct rte_table_action_vlan_hdr vlan; /**< VLAN header. */
+-};
+-
+-/** QinQ encap parameters. */
+-struct rte_table_action_encap_qinq_params {
+-	struct rte_table_action_ether_hdr ether; /**< Ethernet header. */
+-	struct rte_table_action_vlan_hdr svlan; /**< Service VLAN header. */
+-	struct rte_table_action_vlan_hdr cvlan; /**< Customer VLAN header. */
+-};
+-
+-/** Max number of MPLS labels per output packet for MPLS encapsulation. */
+-#ifndef RTE_TABLE_ACTION_MPLS_LABELS_MAX
+-#define RTE_TABLE_ACTION_MPLS_LABELS_MAX                   4
+-#endif
+-
+-/** MPLS encap parameters. */
+-struct rte_table_action_encap_mpls_params {
+-	/** Ethernet header. */
+-	struct rte_table_action_ether_hdr ether;
+-
+-	/** MPLS header. */
+-	struct rte_table_action_mpls_hdr mpls[RTE_TABLE_ACTION_MPLS_LABELS_MAX];
+-
+-	/** Number of MPLS labels in MPLS header. */
+-	uint32_t mpls_count;
+-
+-	/** Non-zero for MPLS unicast, zero for MPLS multicast. */
+-	int unicast;
+-};
+-
+-/** PPPoE encap parameters. */
+-struct rte_table_action_encap_pppoe_params {
+-	struct rte_table_action_ether_hdr ether; /**< Ethernet header. */
+-	struct rte_table_action_pppoe_hdr pppoe; /**< PPPoE/PPP headers. */
+-};
+-
+-/** VXLAN encap parameters. */
+-struct rte_table_action_encap_vxlan_params {
+-	struct rte_table_action_ether_hdr ether; /**< Ethernet header. */
+-	struct rte_table_action_vlan_hdr vlan; /**< VLAN header. */
+-
+-	union {
+-		struct rte_table_action_ipv4_header ipv4; /**< IPv4 header. */
+-		struct rte_table_action_ipv6_header ipv6; /**< IPv6 header. */
 -	};
 -
--	status = table_rule_add_bulk_ll(&table_ll, list, &n_rules_added);
--	if (status) {
--		rsp->status = -1;
--		rsp->table_rule_add_bulk.n_rules = 0;
--		return rsp;
--	}
+-	struct rte_table_action_udp_header udp; /**< UDP header. */
+-	struct rte_table_action_vxlan_hdr vxlan; /**< VXLAN header. */
+-};
 -
--	/* Write response */
--	rsp->status = 0;
--	rsp->table_rule_add_bulk.n_rules = n_rules_added;
--	return rsp;
--}
+-/** Encap action configuration (per table action profile). */
+-struct rte_table_action_encap_config {
+-	/** Bit mask defining the set of packet encapsulations enabled for the
+-	 * current table action profile. If bit (1 << N) is set in *encap_mask*,
+-	 * then packet encapsulation N is enabled, otherwise it is disabled.
+-	 *
+-	 * @see enum rte_table_action_encap_type
+-	 */
+-	uint64_t encap_mask;
 -
--static struct pipeline_msg_rsp *
--pipeline_msg_handle_table_rule_delete(struct pipeline_data *p,
--	struct pipeline_msg_req *req)
--{
--	union table_rule_match_low_level match_ll;
--	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
--	struct table_rule_match *match = &req->table_rule_delete.match;
--	uint32_t table_id = req->id;
--	int key_found, status;
+-	/** Encapsulation type specific configuration. */
+-	union {
+-		struct {
+-			/** Input packet to be encapsulated: offset within the
+-			 * input packet buffer to the start of the Ethernet
+-			 * frame to be encapsulated. Offset 0 points to the
+-			 * first byte of the MBUF structure.
+-			 */
+-			uint32_t data_offset;
 -
--	status = match_convert(match, &match_ll, 0);
--	if (status) {
--		rsp->status = -1;
--		return rsp;
--	}
+-			/** Encapsulation header: non-zero when encapsulation
+-			 * header includes a VLAN tag, zero otherwise.
+-			 */
+-			int vlan;
 -
--	rsp->status = rte_pipeline_table_entry_delete(p->p,
--		table_id,
--		&match_ll,
--		&key_found,
--		NULL);
+-			/** Encapsulation header: IP version of the IP header
+-			 * within the encapsulation header. Non-zero for IPv4,
+-			 * zero for IPv6.
+-			 */
+-			int ip_version;
+-		} vxlan; /**< VXLAN specific configuration. */
+-	};
+-};
 -
--	return rsp;
--}
+-/** QinQ_PPPoE encap parameters. */
+-struct rte_table_encap_ether_qinq_pppoe {
 -
--static struct pipeline_msg_rsp *
--pipeline_msg_handle_table_rule_delete_default(struct pipeline_data *p,
--	struct pipeline_msg_req *req)
--{
--	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
--	uint32_t table_id = req->id;
+-	/** Only valid when *type* is set to QinQ. */
+-	struct rte_table_action_ether_hdr ether;
+-	struct rte_table_action_vlan_hdr svlan; /**< Service VLAN header. */
+-	struct rte_table_action_vlan_hdr cvlan; /**< Customer VLAN header. */
+-	struct rte_table_action_pppoe_hdr pppoe; /**< PPPoE/PPP headers. */
+-};
 -
--	rsp->status = rte_pipeline_table_default_entry_delete(p->p,
--		table_id,
--		NULL);
+-/** Encap action parameters (per table rule). */
+-struct rte_table_action_encap_params {
+-	/** Encapsulation type. */
+-	enum rte_table_action_encap_type type;
 -
--	return rsp;
--}
+-	union {
+-		/** Only valid when *type* is set to Ether. */
+-		struct rte_table_action_encap_ether_params ether;
 -
--static struct pipeline_msg_rsp *
--pipeline_msg_handle_table_rule_stats_read(struct pipeline_data *p,
--	struct pipeline_msg_req *req)
--{
--	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
--	uint32_t table_id = req->id;
--	void *data = req->table_rule_stats_read.data;
--	int clear = req->table_rule_stats_read.clear;
--	struct rte_table_action *a = p->table_data[table_id].a;
+-		/** Only valid when *type* is set to VLAN. */
+-		struct rte_table_action_encap_vlan_params vlan;
 -
--	rsp->status = rte_table_action_stats_read(a,
--		data,
--		&rsp->table_rule_stats_read.stats,
--		clear);
+-		/** Only valid when *type* is set to QinQ. */
+-		struct rte_table_action_encap_qinq_params qinq;
 -
--	return rsp;
--}
+-		/** Only valid when *type* is set to MPLS. */
+-		struct rte_table_action_encap_mpls_params mpls;
 -
--static struct pipeline_msg_rsp *
--pipeline_msg_handle_table_mtr_profile_add(struct pipeline_data *p,
--	struct pipeline_msg_req *req)
--{
--	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
--	uint32_t table_id = req->id;
--	uint32_t meter_profile_id = req->table_mtr_profile_add.meter_profile_id;
--	struct rte_table_action_meter_profile *profile =
--		&req->table_mtr_profile_add.profile;
--	struct rte_table_action *a = p->table_data[table_id].a;
+-		/** Only valid when *type* is set to PPPoE. */
+-		struct rte_table_action_encap_pppoe_params pppoe;
 -
--	rsp->status = rte_table_action_meter_profile_add(a,
--		meter_profile_id,
--		profile);
+-		/** Only valid when *type* is set to VXLAN. */
+-		struct rte_table_action_encap_vxlan_params vxlan;
 -
--	return rsp;
--}
--
--static struct pipeline_msg_rsp *
--pipeline_msg_handle_table_mtr_profile_delete(struct pipeline_data *p,
--	struct pipeline_msg_req *req)
--{
--	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
--	uint32_t table_id = req->id;
--	uint32_t meter_profile_id =
--		req->table_mtr_profile_delete.meter_profile_id;
--	struct rte_table_action *a = p->table_data[table_id].a;
--
--	rsp->status = rte_table_action_meter_profile_delete(a,
--		meter_profile_id);
--
--	return rsp;
--}
--
--static struct pipeline_msg_rsp *
--pipeline_msg_handle_table_rule_mtr_read(struct pipeline_data *p,
--	struct pipeline_msg_req *req)
--{
--	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
--	uint32_t table_id = req->id;
--	void *data = req->table_rule_mtr_read.data;
--	uint32_t tc_mask = req->table_rule_mtr_read.tc_mask;
--	int clear = req->table_rule_mtr_read.clear;
--	struct rte_table_action *a = p->table_data[table_id].a;
--
--	rsp->status = rte_table_action_meter_read(a,
--		data,
--		tc_mask,
--		&rsp->table_rule_mtr_read.stats,
--		clear);
--
--	return rsp;
--}
--
--static struct pipeline_msg_rsp *
--pipeline_msg_handle_table_dscp_table_update(struct pipeline_data *p,
--	struct pipeline_msg_req *req)
--{
--	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
--	uint32_t table_id = req->id;
--	uint64_t dscp_mask = req->table_dscp_table_update.dscp_mask;
--	struct rte_table_action_dscp_table *dscp_table =
--		&req->table_dscp_table_update.dscp_table;
--	struct rte_table_action *a = p->table_data[table_id].a;
--
--	rsp->status = rte_table_action_dscp_table_update(a,
--		dscp_mask,
--		dscp_table);
--
--	return rsp;
--}
--
--static struct pipeline_msg_rsp *
--pipeline_msg_handle_table_rule_ttl_read(struct pipeline_data *p,
--	struct pipeline_msg_req *req)
--{
--	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
--	uint32_t table_id = req->id;
--	void *data = req->table_rule_ttl_read.data;
--	int clear = req->table_rule_ttl_read.clear;
--	struct rte_table_action *a = p->table_data[table_id].a;
--
--	rsp->status = rte_table_action_ttl_read(a,
--		data,
--		&rsp->table_rule_ttl_read.stats,
--		clear);
--
--	return rsp;
--}
--
--static struct pipeline_msg_rsp *
--pipeline_msg_handle_table_rule_time_read(struct pipeline_data *p,
--	struct pipeline_msg_req *req)
--{
--	struct pipeline_msg_rsp *rsp = (struct pipeline_msg_rsp *) req;
--	uint32_t table_id = req->id;
--	void *data = req->table_rule_time_read.data;
--	struct rte_table_action *a = p->table_data[table_id].a;
--
--	rsp->status = rte_table_action_time_read(a,
--		data,
--		&rsp->table_rule_time_read.timestamp);
--
--	return rsp;
--}
--
--static void
--pipeline_msg_handle(struct pipeline_data *p)
--{
--	for ( ; ; ) {
--		struct pipeline_msg_req *req;
--		struct pipeline_msg_rsp *rsp;
--
--		req = pipeline_msg_recv(p->msgq_req);
--		if (req == NULL)
--			break;
--
--		switch (req->type) {
--		case PIPELINE_REQ_PORT_IN_STATS_READ:
--			rsp = pipeline_msg_handle_port_in_stats_read(p, req);
--			break;
--
--		case PIPELINE_REQ_PORT_IN_ENABLE:
--			rsp = pipeline_msg_handle_port_in_enable(p, req);
--			break;
--
--		case PIPELINE_REQ_PORT_IN_DISABLE:
--			rsp = pipeline_msg_handle_port_in_disable(p, req);
--			break;
--
--		case PIPELINE_REQ_PORT_OUT_STATS_READ:
--			rsp = pipeline_msg_handle_port_out_stats_read(p, req);
--			break;
--
--		case PIPELINE_REQ_TABLE_STATS_READ:
--			rsp = pipeline_msg_handle_table_stats_read(p, req);
--			break;
--
--		case PIPELINE_REQ_TABLE_RULE_ADD:
--			rsp = pipeline_msg_handle_table_rule_add(p, req);
--			break;
--
--		case PIPELINE_REQ_TABLE_RULE_ADD_DEFAULT:
--			rsp = pipeline_msg_handle_table_rule_add_default(p,	req);
--			break;
--
--		case PIPELINE_REQ_TABLE_RULE_ADD_BULK:
--			rsp = pipeline_msg_handle_table_rule_add_bulk(p, req);
--			break;
--
--		case PIPELINE_REQ_TABLE_RULE_DELETE:
--			rsp = pipeline_msg_handle_table_rule_delete(p, req);
--			break;
--
--		case PIPELINE_REQ_TABLE_RULE_DELETE_DEFAULT:
--			rsp = pipeline_msg_handle_table_rule_delete_default(p, req);
--			break;
--
--		case PIPELINE_REQ_TABLE_RULE_STATS_READ:
--			rsp = pipeline_msg_handle_table_rule_stats_read(p, req);
--			break;
--
--		case PIPELINE_REQ_TABLE_MTR_PROFILE_ADD:
--			rsp = pipeline_msg_handle_table_mtr_profile_add(p, req);
--			break;
--
--		case PIPELINE_REQ_TABLE_MTR_PROFILE_DELETE:
--			rsp = pipeline_msg_handle_table_mtr_profile_delete(p, req);
--			break;
--
--		case PIPELINE_REQ_TABLE_RULE_MTR_READ:
--			rsp = pipeline_msg_handle_table_rule_mtr_read(p, req);
--			break;
--
--		case PIPELINE_REQ_TABLE_DSCP_TABLE_UPDATE:
--			rsp = pipeline_msg_handle_table_dscp_table_update(p, req);
--			break;
--
--		case PIPELINE_REQ_TABLE_RULE_TTL_READ:
--			rsp = pipeline_msg_handle_table_rule_ttl_read(p, req);
--			break;
--
--		case PIPELINE_REQ_TABLE_RULE_TIME_READ:
--			rsp = pipeline_msg_handle_table_rule_time_read(p, req);
--			break;
--
--		default:
--			rsp = (struct pipeline_msg_rsp *) req;
--			rsp->status = -1;
--		}
--
--		pipeline_msg_send(p->msgq_rsp, rsp);
--	}
--}
+-		/** Only valid when *type* is set to QinQ_PPPoE. */
+-		struct rte_table_encap_ether_qinq_pppoe qinq_pppoe;
+-	};
+-};
 -
 -/**
-- * Data plane threads: main
+- * RTE_TABLE_ACTION_NAT
 - */
--int
--thread_main(void *arg __rte_unused)
--{
--	struct thread_data *t;
--	uint32_t thread_id, i;
+-/** NAT action configuration (per table action profile). */
+-struct rte_table_action_nat_config {
+-	/** When non-zero, the IP source address and L4 protocol source port are
+-	 * translated. When zero, the IP destination address and L4 protocol
+-	 * destination port are translated.
+-	 */
+-	int source_nat;
 -
--	thread_id = rte_lcore_id();
--	t = &thread_data[thread_id];
--
--	/* Dispatch loop */
--	for (i = 0; ; i++) {
--		uint32_t j;
--
--		/* Data Plane */
--		for (j = 0; j < t->n_pipelines; j++)
--			rte_pipeline_run(t->p[j]);
--
--		/* Control Plane */
--		if ((i & 0xF) == 0) {
--			uint64_t time = rte_get_tsc_cycles();
--			uint64_t time_next_min = UINT64_MAX;
--
--			if (time < t->time_next_min)
--				continue;
--
--			/* Pipeline message queues */
--			for (j = 0; j < t->n_pipelines; j++) {
--				struct pipeline_data *p =
--					&t->pipeline_data[j];
--				uint64_t time_next = p->time_next;
--
--				if (time_next <= time) {
--					pipeline_msg_handle(p);
--					rte_pipeline_flush(p->p);
--					time_next = time + p->timer_period;
--					p->time_next = time_next;
--				}
--
--				if (time_next < time_next_min)
--					time_next_min = time_next;
--			}
--
--			/* Thread message queues */
--			{
--				uint64_t time_next = t->time_next;
--
--				if (time_next <= time) {
--					thread_msg_handle(t);
--					time_next = time + t->timer_period;
--					t->time_next = time_next;
--				}
--
--				if (time_next < time_next_min)
--					time_next_min = time_next;
--			}
--
--			t->time_next_min = time_next_min;
--		}
--	}
--
--	return 0;
--}
-diff --git a/examples/ip_pipeline/thread.h b/examples/ip_pipeline/thread.h
-deleted file mode 100644
-index facdf004eb..0000000000
---- a/examples/ip_pipeline/thread.h
-+++ /dev/null
-@@ -1,24 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2018 Intel Corporation
-- */
--
--#ifndef _INCLUDE_THREAD_H_
--#define _INCLUDE_THREAD_H_
--
--#include <stdint.h>
--
--int
--thread_pipeline_enable(uint32_t thread_id,
--	const char *pipeline_name);
--
--int
--thread_pipeline_disable(uint32_t thread_id,
--	const char *pipeline_name);
--
--int
--thread_init(void);
--
--int
--thread_main(void *arg);
--
--#endif /* _INCLUDE_THREAD_H_ */
-diff --git a/examples/ip_pipeline/tmgr.c b/examples/ip_pipeline/tmgr.c
-deleted file mode 100644
-index 2432b56aee..0000000000
---- a/examples/ip_pipeline/tmgr.c
-+++ /dev/null
-@@ -1,248 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2018 Intel Corporation
-- */
--
--#include <stdlib.h>
--
--#include <rte_common.h>
--#include <rte_string_fns.h>
--
--#include "tmgr.h"
--
--static struct rte_sched_subport_profile_params
--	subport_profile[TMGR_SUBPORT_PROFILE_MAX];
--
--static uint32_t n_subport_profiles;
--
--static struct rte_sched_pipe_params
--	pipe_profile[TMGR_PIPE_PROFILE_MAX];
--
--static uint32_t n_pipe_profiles;
--
--static const struct rte_sched_subport_params subport_params_default = {
--	.n_pipes_per_subport_enabled = 0, /* filled at runtime */
--	.qsize = {64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64},
--	.pipe_profiles = pipe_profile,
--	.n_pipe_profiles = 0, /* filled at run time */
--	.n_max_pipe_profiles = RTE_DIM(pipe_profile),
--	.cman_params = NULL,
+-	/** Layer 4 protocol, for example TCP (0x06) or UDP (0x11). The checksum
+-	 * field is computed differently and placed at different header offset
+-	 * by each layer 4 protocol.
+-	 */
+-	uint8_t proto;
 -};
 -
--static struct tmgr_port_list tmgr_port_list;
+-/** NAT action parameters (per table rule). */
+-struct rte_table_action_nat_params {
+-	/** IP version for *addr*: non-zero for IPv4, zero for IPv6. */
+-	int ip_version;
 -
--int
--tmgr_init(void)
--{
--	TAILQ_INIT(&tmgr_port_list);
+-	/** IP address. */
+-	union {
+-		/** IPv4 address; only valid when *ip_version* is non-zero. */
+-		uint32_t ipv4;
 -
--	return 0;
--}
+-		/** IPv6 address; only valid when *ip_version* is set to 0. */
+-		struct rte_ipv6_addr ipv6;
+-	} addr;
 -
--struct tmgr_port *
--tmgr_port_find(const char *name)
--{
--	struct tmgr_port *tmgr_port;
+-	/** Port. */
+-	uint16_t port;
+-};
 -
--	if (name == NULL)
--		return NULL;
--
--	TAILQ_FOREACH(tmgr_port, &tmgr_port_list, node)
--		if (strcmp(tmgr_port->name, name) == 0)
--			return tmgr_port;
--
--	return NULL;
--}
--
--int
--tmgr_subport_profile_add(struct rte_sched_subport_profile_params *params)
--{
--	/* Check input params */
--	if (params == NULL)
--		return -1;
--
--	/* Save profile */
--	memcpy(&subport_profile[n_subport_profiles],
--		params,
--		sizeof(*params));
--
--	n_subport_profiles++;
--
--	return 0;
--}
--
--int
--tmgr_pipe_profile_add(struct rte_sched_pipe_params *p)
--{
--	/* Check input params */
--	if (p == NULL)
--		return -1;
--
--	/* Save profile */
--	memcpy(&pipe_profile[n_pipe_profiles],
--		p,
--		sizeof(*p));
--
--	n_pipe_profiles++;
--
--	return 0;
--}
--
--struct tmgr_port *
--tmgr_port_create(const char *name, struct tmgr_port_params *params)
--{
--	struct rte_sched_subport_params subport_params;
--	struct rte_sched_port_params p;
--	struct tmgr_port *tmgr_port;
--	struct rte_sched_port *s;
--	uint32_t i, j;
--
--	/* Check input params */
--	if ((name == NULL) ||
--		tmgr_port_find(name) ||
--		(params == NULL) ||
--		(params->n_subports_per_port == 0) ||
--		(params->n_pipes_per_subport == 0) ||
--		(params->cpu_id >= RTE_MAX_NUMA_NODES) ||
--		(n_subport_profiles == 0) ||
--		(n_pipe_profiles == 0))
--		return NULL;
--
--	/* Resource create */
--	p.name = name;
--	p.socket = (int) params->cpu_id;
--	p.rate = params->rate;
--	p.mtu = params->mtu;
--	p.frame_overhead = params->frame_overhead;
--	p.n_subports_per_port = params->n_subports_per_port;
--	p.n_subport_profiles = n_subport_profiles;
--	p.subport_profiles = subport_profile;
--	p.n_max_subport_profiles = TMGR_SUBPORT_PROFILE_MAX;
--	p.n_pipes_per_subport = params->n_pipes_per_subport;
--
--
--	s = rte_sched_port_config(&p);
--	if (s == NULL)
--		return NULL;
--
--	memcpy(&subport_params, &subport_params_default,
--		sizeof(subport_params_default));
--
--	subport_params.n_pipe_profiles = n_pipe_profiles;
--	subport_params.n_pipes_per_subport_enabled =
--						params->n_pipes_per_subport;
--
--	for (i = 0; i < params->n_subports_per_port; i++) {
--		int status;
--
--		status = rte_sched_subport_config(
--			s,
--			i,
--			&subport_params,
--			0);
--
--		if (status) {
--			rte_sched_port_free(s);
--			return NULL;
--		}
--
--		for (j = 0; j < params->n_pipes_per_subport; j++) {
--
--			status = rte_sched_pipe_config(
--				s,
--				i,
--				j,
--				0);
--
--			if (status) {
--				rte_sched_port_free(s);
--				return NULL;
--			}
--		}
--	}
--
--	/* Node allocation */
--	tmgr_port = calloc(1, sizeof(struct tmgr_port));
--	if (tmgr_port == NULL) {
--		rte_sched_port_free(s);
--		return NULL;
--	}
--
--	/* Node fill in */
--	strlcpy(tmgr_port->name, name, sizeof(tmgr_port->name));
--	tmgr_port->s = s;
--	tmgr_port->n_subports_per_port = params->n_subports_per_port;
--	tmgr_port->n_pipes_per_subport = params->n_pipes_per_subport;
--
--	/* Node add to list */
--	TAILQ_INSERT_TAIL(&tmgr_port_list, tmgr_port, node);
--
--	return tmgr_port;
--}
--
--int
--tmgr_subport_config(const char *port_name,
--	uint32_t subport_id,
--	uint32_t subport_profile_id)
--{
--	struct tmgr_port *port;
--	int status;
--
--	/* Check input params */
--	if (port_name == NULL)
--		return -1;
--
--	port = tmgr_port_find(port_name);
--	if ((port == NULL) ||
--		(subport_id >= port->n_subports_per_port) ||
--		(subport_profile_id >= n_subport_profiles))
--		return -1;
--
--	/* Resource config */
--	status = rte_sched_subport_config(
--		port->s,
--		subport_id,
--		NULL,
--		subport_profile_id);
--
--	return status;
--}
--
--int
--tmgr_pipe_config(const char *port_name,
--	uint32_t subport_id,
--	uint32_t pipe_id_first,
--	uint32_t pipe_id_last,
--	uint32_t pipe_profile_id)
--{
--	struct tmgr_port *port;
--	uint32_t i;
--
--	/* Check input params */
--	if (port_name == NULL)
--		return -1;
--
--	port = tmgr_port_find(port_name);
--	if ((port == NULL) ||
--		(subport_id >= port->n_subports_per_port) ||
--		(pipe_id_first >= port->n_pipes_per_subport) ||
--		(pipe_id_last >= port->n_pipes_per_subport) ||
--		(pipe_id_first > pipe_id_last) ||
--		(pipe_profile_id >= n_pipe_profiles))
--		return -1;
--
--	/* Resource config */
--	for (i = pipe_id_first; i <= pipe_id_last; i++) {
--		int status;
--
--		status = rte_sched_pipe_config(
--			port->s,
--			subport_id,
--			i,
--			(int) pipe_profile_id);
--
--		if (status)
--			return status;
--	}
--
--	return 0;
--}
-diff --git a/examples/ip_pipeline/tmgr.h b/examples/ip_pipeline/tmgr.h
-deleted file mode 100644
-index 1994c55bcc..0000000000
---- a/examples/ip_pipeline/tmgr.h
-+++ /dev/null
-@@ -1,74 +0,0 @@
--/* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright(c) 2010-2018 Intel Corporation
+-/**
+- * RTE_TABLE_ACTION_TTL
 - */
+-/** TTL action configuration (per table action profile). */
+-struct rte_table_action_ttl_config {
+-	/** When non-zero, the input packets whose updated IPv4 Time to Live
+-	 * (TTL) field or IPv6 Hop Limit (HL) field is zero are dropped.
+-	 * When zero, the input packets whose updated IPv4 TTL field or IPv6 HL
+-	 * field is zero are forwarded as usual (typically for debugging
+-	 * purpose).
+-	 */
+-	int drop;
 -
--#ifndef _INCLUDE_TMGR_H_
--#define _INCLUDE_TMGR_H_
--
--#include <stdint.h>
--#include <sys/queue.h>
--
--#include <rte_sched.h>
--#include <rte_red.h>
--
--#include "common.h"
--
--#ifndef TMGR_PIPE_SUBPORT_MAX
--#define TMGR_PIPE_SUBPORT_MAX                              4096
--#endif
--
--#ifndef TMGR_SUBPORT_PROFILE_MAX
--#define TMGR_SUBPORT_PROFILE_MAX                           256
--#endif
--
--#ifndef TMGR_PIPE_PROFILE_MAX
--#define TMGR_PIPE_PROFILE_MAX                              256
--#endif
--
--struct tmgr_port {
--	TAILQ_ENTRY(tmgr_port) node;
--	char name[NAME_SIZE];
--	struct rte_sched_port *s;
--	uint32_t n_subports_per_port;
--	uint32_t n_pipes_per_subport;
+-	/** When non-zero, the *n_packets* stats counter for TTL action is
+-	 * enabled, otherwise disabled.
+-	 *
+-	 * @see struct rte_table_action_ttl_counters
+-	 */
+-	int n_packets_enabled;
 -};
 -
--TAILQ_HEAD(tmgr_port_list, tmgr_port);
--
--int
--tmgr_init(void);
--
--struct tmgr_port *
--tmgr_port_find(const char *name);
--
--struct tmgr_port_params {
--	uint64_t rate;
--	uint32_t n_subports_per_port;
--	uint32_t n_pipes_per_subport;
--	uint32_t frame_overhead;
--	uint32_t mtu;
--	uint32_t cpu_id;
+-/** TTL action parameters (per table rule). */
+-struct rte_table_action_ttl_params {
+-	/** When non-zero, decrement the IPv4 TTL field and update the checksum
+-	 * field, or decrement the IPv6 HL field. When zero, the IPv4 TTL field
+-	 * or the IPv6 HL field is not changed.
+-	 */
+-	int decrement;
 -};
 -
+-/** TTL action statistics packets (per table rule). */
+-struct rte_table_action_ttl_counters {
+-	/** Number of IPv4 packets whose updated TTL field is zero or IPv6
+-	 * packets whose updated HL field is zero.
+-	 */
+-	uint64_t n_packets;
+-};
+-
+-/**
+- * RTE_TABLE_ACTION_STATS
+- */
+-/** Stats action configuration (per table action profile). */
+-struct rte_table_action_stats_config {
+-	/** When non-zero, the *n_packets* stats counter is enabled, otherwise
+-	 * disabled.
+-	 *
+-	 * @see struct rte_table_action_stats_counters
+-	 */
+-	int n_packets_enabled;
+-
+-	/** When non-zero, the *n_bytes* stats counter is enabled, otherwise
+-	 * disabled.
+-	 *
+-	 * @see struct rte_table_action_stats_counters
+-	 */
+-	int n_bytes_enabled;
+-};
+-
+-/** Stats action parameters (per table rule). */
+-struct rte_table_action_stats_params {
+-	/** Initial value for the *n_packets* stats counter. Typically set to 0.
+-	 *
+-	 * @see struct rte_table_action_stats_counters
+-	 */
+-	uint64_t n_packets;
+-
+-	/** Initial value for the *n_bytes* stats counter. Typically set to 0.
+-	 *
+-	 * @see struct rte_table_action_stats_counters
+-	 */
+-	uint64_t n_bytes;
+-};
+-
+-/** Stats action counters (per table rule). */
+-struct rte_table_action_stats_counters {
+-	/** Number of packets. Valid only when *n_packets_valid* is non-zero. */
+-	uint64_t n_packets;
+-
+-	/** Number of bytes. Valid only when *n_bytes_valid* is non-zero. */
+-	uint64_t n_bytes;
+-
+-	/** When non-zero, the *n_packets* field is valid, otherwise invalid. */
+-	int n_packets_valid;
+-
+-	/** When non-zero, the *n_bytes* field is valid, otherwise invalid. */
+-	int n_bytes_valid;
+-};
+-
+-/**
+- * RTE_TABLE_ACTION_TIME
+- */
+-/** Timestamp action parameters (per table rule). */
+-struct rte_table_action_time_params {
+-	/** Initial timestamp value. Typically set to current time. */
+-	uint64_t time;
+-};
+-
+-/**
+- * RTE_TABLE_ACTION_CRYPTO
+- */
+-#ifndef RTE_TABLE_ACTION_SYM_CRYPTO_IV_SIZE_MAX
+-#define RTE_TABLE_ACTION_SYM_CRYPTO_IV_SIZE_MAX		(16)
+-#endif
+-
+-#ifndef RTE_TABLE_ACTION_SYM_CRYPTO_AAD_SIZE_MAX
+-#define RTE_TABLE_ACTION_SYM_CRYPTO_AAD_SIZE_MAX	(16)
+-#endif
+-
+-#ifndef RTE_TABLE_ACTION_SYM_CRYPTO_IV_OFFSET
+-#define RTE_TABLE_ACTION_SYM_CRYPTO_IV_OFFSET				\
+-	(sizeof(struct rte_crypto_op) + sizeof(struct rte_crypto_sym_op))
+-#endif
+-
+-/** Common action structure to store the data's value, length, and offset */
+-struct rte_table_action_vlo {
+-	uint8_t *val;
+-	uint32_t length;
+-	uint32_t offset;
+-};
+-
+-/** Symmetric crypto action configuration (per table action profile). */
+-struct rte_table_action_sym_crypto_config {
+-	/** Target Cryptodev ID. */
+-	uint8_t cryptodev_id;
+-
+-	/**
+-	 * Offset to rte_crypto_op structure within the input packet buffer.
+-	 * Offset 0 points to the first byte of the MBUF structure.
+-	 */
+-	uint32_t op_offset;
+-
+-	/** The mempool for creating cryptodev sessions. */
+-	struct rte_mempool *mp_create;
+-
+-	/** The mempool for initializing cryptodev sessions. */
+-	struct rte_mempool *mp_init;
+-};
+-
+-/** Symmetric Crypto action parameters (per table rule). */
+-struct rte_table_action_sym_crypto_params {
+-
+-	/** Xform pointer contains all relevant information */
+-	struct rte_crypto_sym_xform *xform;
+-
+-	/**
+-	 * Offset within the input packet buffer to the first byte of data
+-	 * to be processed by the crypto unit. Offset 0 points to the first
+-	 * byte of the MBUF structure.
+-	 */
+-	uint32_t data_offset;
+-
+-	union {
+-		struct {
+-			/** Cipher iv data. */
+-			struct rte_table_action_vlo cipher_iv;
+-
+-			/** Cipher iv data. */
+-			struct rte_table_action_vlo cipher_iv_update;
+-
+-			/** Auth iv data. */
+-			struct rte_table_action_vlo auth_iv;
+-
+-			/** Auth iv data. */
+-			struct rte_table_action_vlo auth_iv_update;
+-
+-		} cipher_auth;
+-
+-		struct {
+-			/** AEAD AAD data. */
+-			struct rte_table_action_vlo aad;
+-
+-			/** AEAD iv data. */
+-			struct rte_table_action_vlo iv;
+-
+-			/** AEAD AAD data. */
+-			struct rte_table_action_vlo aad_update;
+-
+-			/** AEAD iv data. */
+-			struct rte_table_action_vlo iv_update;
+-
+-		} aead;
+-	};
+-};
+-
+-/**
+- * RTE_TABLE_ACTION_TAG
+- */
+-/** Tag action parameters (per table rule). */
+-struct rte_table_action_tag_params {
+-	/** Tag to be attached to the input packet. */
+-	uint32_t tag;
+-};
+-
+-/**
+- * RTE_TABLE_ACTION_DECAP
+- */
+-/** Decap action parameters (per table rule). */
+-struct rte_table_action_decap_params {
+-	/** Number of bytes to be removed from the start of the packet. */
+-	uint16_t n;
+-};
+-
+-/**
+- * Table action profile.
+- */
+-struct rte_table_action_profile;
+-
+-/**
+- * Table action profile create.
+- *
+- * @param[in] common
+- *   Common action configuration.
+- * @return
+- *   Table action profile handle on success, NULL otherwise.
+- */
+-__rte_experimental
+-struct rte_table_action_profile *
+-rte_table_action_profile_create(struct rte_table_action_common_config *common);
+-
+-/**
+- * Table action profile free.
+- *
+- * @param[in] profile
+- *   Table profile action handle (needs to be valid).
+- * @return
+- *   Zero on success, non-zero error code otherwise.
+- */
+-__rte_experimental
 -int
--tmgr_subport_profile_add(struct rte_sched_subport_profile_params *sp);
+-rte_table_action_profile_free(struct rte_table_action_profile *profile);
 -
+-/**
+- * Table action profile action register.
+- *
+- * @param[in] profile
+- *   Table profile action handle (needs to be valid and not in frozen state).
+- * @param[in] type
+- *   Specific table action to be registered for *profile*.
+- * @param[in] action_config
+- *   Configuration for the *type* action.
+- *   If struct rte_table_action_*type*_config is defined by the Table Action
+- *   API, it needs to point to a valid instance of this structure, otherwise it
+- *   needs to be set to NULL.
+- * @return
+- *   Zero on success, non-zero error code otherwise.
+- */
+-__rte_experimental
 -int
--tmgr_pipe_profile_add(struct rte_sched_pipe_params *p);
+-rte_table_action_profile_action_register(struct rte_table_action_profile *profile,
+-	enum rte_table_action_type type,
+-	void *action_config);
 -
--struct tmgr_port *
--tmgr_port_create(const char *name, struct tmgr_port_params *params);
--
+-/**
+- * Table action profile freeze.
+- *
+- * Once this function is called successfully, the given profile enters the
+- * frozen state with the following immediate effects: no more actions can be
+- * registered for this profile, so the profile can be instantiated to create
+- * table action objects.
+- *
+- * @param[in] profile
+- *   Table profile action handle (needs to be valid and not in frozen state).
+- * @return
+- *   Zero on success, non-zero error code otherwise.
+- *
+- * @see rte_table_action_create()
+- */
+-__rte_experimental
 -int
--tmgr_subport_config(const char *port_name,
--	uint32_t subport_id,
--	uint32_t subport_profile_id);
+-rte_table_action_profile_freeze(struct rte_table_action_profile *profile);
 -
+-/**
+- * Table action.
+- */
+-struct rte_table_action;
+-
+-/**
+- * Table action create.
+- *
+- * Instantiates the given table action profile to create a table action object.
+- *
+- * @param[in] profile
+- *   Table profile action handle (needs to be valid and in frozen state).
+- * @param[in] socket_id
+- *   CPU socket ID where the internal data structures required by the new table
+- *   action object should be allocated.
+- * @return
+- *   Handle to table action object on success, NULL on error.
+- *
+- * @see rte_table_action_create()
+- */
+-__rte_experimental
+-struct rte_table_action *
+-rte_table_action_create(struct rte_table_action_profile *profile,
+-	uint32_t socket_id);
+-
+-/**
+- * Table action free.
+- *
+- * @param[in] action
+- *   Handle to table action object (needs to be valid).
+- * @return
+- *   Zero on success, non-zero error code otherwise.
+- */
+-__rte_experimental
 -int
--tmgr_pipe_config(const char *port_name,
--	uint32_t subport_id,
--	uint32_t pipe_id_first,
--	uint32_t pipe_id_last,
--	uint32_t pipe_profile_id);
+-rte_table_action_free(struct rte_table_action *action);
 -
--#endif /* _INCLUDE_TMGR_H_ */
-diff --git a/examples/meson.build b/examples/meson.build
-index 25d9c88457..544ec5eadd 100644
---- a/examples/meson.build
-+++ b/examples/meson.build
-@@ -19,7 +19,6 @@ all_examples = [
-         'flow_filtering',
-         'helloworld',
-         'ip_fragmentation',
--        'ip_pipeline',
-         'ip_reassembly',
-         'ipsec-secgw',
-         'ipv4_multicast',
+-/**
+- * Table action table params get.
+- *
+- * @param[in] action
+- *   Handle to table action object (needs to be valid).
+- * @param[inout] params
+- *   Pipeline table parameters (needs to be pre-allocated).
+- * @return
+- *   Zero on success, non-zero error code otherwise.
+- */
+-__rte_experimental
+-int
+-rte_table_action_table_params_get(struct rte_table_action *action,
+-	struct rte_pipeline_table_params *params);
+-
+-/**
+- * Table action apply.
+- *
+- * @param[in] action
+- *   Handle to table action object (needs to be valid).
+- * @param[in] data
+- *   Data byte array (typically table rule data) to apply action *type* on.
+- * @param[in] type
+- *   Specific table action previously registered for the table action profile of
+- *   the *action* object.
+- * @param[in] action_params
+- *   Parameters for the *type* action.
+- *   If struct rte_table_action_*type*_params is defined by the Table Action
+- *   API, it needs to point to a valid instance of this structure, otherwise it
+- *   needs to be set to NULL.
+- * @return
+- *   Zero on success, non-zero error code otherwise.
+- */
+-__rte_experimental
+-int
+-rte_table_action_apply(struct rte_table_action *action,
+-	void *data,
+-	enum rte_table_action_type type,
+-	void *action_params);
+-
+-/**
+- * Table action DSCP table update.
+- *
+- * @param[in] action
+- *   Handle to table action object (needs to be valid).
+- * @param[in] dscp_mask
+- *   64-bit mask defining the DSCP table entries to be updated. If bit N is set
+- *   in this bit mask, then DSCP table entry N is to be updated, otherwise not.
+- * @param[in] table
+- *   DSCP table.
+- * @return
+- *   Zero on success, non-zero error code otherwise.
+- */
+-__rte_experimental
+-int
+-rte_table_action_dscp_table_update(struct rte_table_action *action,
+-	uint64_t dscp_mask,
+-	struct rte_table_action_dscp_table *table);
+-
+-/**
+- * Table action meter profile add.
+- *
+- * @param[in] action
+- *   Handle to table action object (needs to be valid).
+- * @param[in] meter_profile_id
+- *   Meter profile ID to be used for the *profile* once it is successfully added
+- *   to the *action* object (needs to be unused by the set of meter profiles
+- *   currently registered for the *action* object).
+- * @param[in] profile
+- *   Meter profile to be added.
+- * @return
+- *   Zero on success, non-zero error code otherwise.
+- */
+-__rte_experimental
+-int
+-rte_table_action_meter_profile_add(struct rte_table_action *action,
+-	uint32_t meter_profile_id,
+-	struct rte_table_action_meter_profile *profile);
+-
+-/**
+- * Table action meter profile delete.
+- *
+- * @param[in] action
+- *   Handle to table action object (needs to be valid).
+- * @param[in] meter_profile_id
+- *   Meter profile ID of the meter profile to be deleted from the *action*
+- *   object (needs to be valid for the *action* object).
+- * @return
+- *   Zero on success, non-zero error code otherwise.
+- */
+-__rte_experimental
+-int
+-rte_table_action_meter_profile_delete(struct rte_table_action *action,
+-	uint32_t meter_profile_id);
+-
+-/**
+- * Table action meter read.
+- *
+- * @param[in] action
+- *   Handle to table action object (needs to be valid).
+- * @param[in] data
+- *   Data byte array (typically table rule data) with meter action previously
+- *   applied on it.
+- * @param[in] tc_mask
+- *   Bit mask defining which traffic classes should have the meter stats
+- *   counters read from *data* and stored into *stats*. If bit N is set in this
+- *   bit mask, then traffic class N is part of this operation, otherwise it is
+- *   not. If bit N is set in this bit mask, then traffic class N must be one of
+- *   the traffic classes that are enabled for the meter action in the table
+- *   action profile used by the *action* object.
+- * @param[inout] stats
+- *   When non-NULL, it points to the area where the meter stats counters read
+- *   from *data* are saved. Only the meter stats counters for the *tc_mask*
+- *   traffic classes are read and stored to *stats*.
+- * @param[in] clear
+- *   When non-zero, the meter stats counters are cleared (i.e. set to zero),
+- *   otherwise the counters are not modified. When the read operation is enabled
+- *   (*stats* is non-NULL), the clear operation is performed after the read
+- *   operation is completed.
+- * @return
+- *   Zero on success, non-zero error code otherwise.
+- */
+-__rte_experimental
+-int
+-rte_table_action_meter_read(struct rte_table_action *action,
+-	void *data,
+-	uint32_t tc_mask,
+-	struct rte_table_action_mtr_counters *stats,
+-	int clear);
+-
+-/**
+- * Table action TTL read.
+- *
+- * @param[in] action
+- *   Handle to table action object (needs to be valid).
+- * @param[in] data
+- *   Data byte array (typically table rule data) with TTL action previously
+- *   applied on it.
+- * @param[inout] stats
+- *   When non-NULL, it points to the area where the TTL stats counters read from
+- *   *data* are saved.
+- * @param[in] clear
+- *   When non-zero, the TTL stats counters are cleared (i.e. set to zero),
+- *   otherwise the counters are not modified. When the read operation is enabled
+- *   (*stats* is non-NULL), the clear operation is performed after the read
+- *   operation is completed.
+- * @return
+- *   Zero on success, non-zero error code otherwise.
+- */
+-__rte_experimental
+-int
+-rte_table_action_ttl_read(struct rte_table_action *action,
+-	void *data,
+-	struct rte_table_action_ttl_counters *stats,
+-	int clear);
+-
+-/**
+- * Table action stats read.
+- *
+- * @param[in] action
+- *   Handle to table action object (needs to be valid).
+- * @param[in] data
+- *   Data byte array (typically table rule data) with stats action previously
+- *   applied on it.
+- * @param[inout] stats
+- *   When non-NULL, it points to the area where the stats counters read from
+- *   *data* are saved.
+- * @param[in] clear
+- *   When non-zero, the stats counters are cleared (i.e. set to zero), otherwise
+- *   the counters are not modified. When the read operation is enabled (*stats*
+- *   is non-NULL), the clear operation is performed after the read operation is
+- *   completed.
+- * @return
+- *   Zero on success, non-zero error code otherwise.
+- */
+-__rte_experimental
+-int
+-rte_table_action_stats_read(struct rte_table_action *action,
+-	void *data,
+-	struct rte_table_action_stats_counters *stats,
+-	int clear);
+-
+-/**
+- * Table action timestamp read.
+- *
+- * @param[in] action
+- *   Handle to table action object (needs to be valid).
+- * @param[in] data
+- *   Data byte array (typically table rule data) with timestamp action
+- *   previously applied on it.
+- * @param[inout] timestamp
+- *   Pre-allocated memory where the timestamp read from *data* is saved (has to
+- *   be non-NULL).
+- * @return
+- *   Zero on success, non-zero error code otherwise.
+- */
+-__rte_experimental
+-int
+-rte_table_action_time_read(struct rte_table_action *action,
+-	void *data,
+-	uint64_t *timestamp);
+-
+-/**
+- * Table action cryptodev symmetric session get.
+- *
+- * @param[in] action
+- *   Handle to table action object (needs to be valid).
+- * @param[in] data
+- *   Data byte array (typically table rule data) with sym crypto action.
+- * @return
+- *   The pointer to the session on success, NULL otherwise.
+- */
+-__rte_experimental
+-struct rte_cryptodev_sym_session *
+-rte_table_action_crypto_sym_session_get(struct rte_table_action *action,
+-	void *data);
+-
+-#ifdef __cplusplus
+-}
+-#endif
+-
+-#endif /* __INCLUDE_RTE_TABLE_ACTION_H__ */
 -- 
 2.53.0
 
