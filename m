@@ -2,67 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D17C53219
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Jul 2026 17:58:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9585CC53219
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Jul 2026 17:59:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CD27440DD6;
-	Wed, 29 Jul 2026 19:57:42 +0200 (CEST)
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com
- [209.85.216.48]) by mails.dpdk.org (Postfix) with ESMTP id 1626140A8B
- for <dev@dpdk.org>; Wed, 29 Jul 2026 19:57:36 +0200 (CEST)
-Received: by mail-pj1-f48.google.com with SMTP id
- 98e67ed59e1d1-38e071ed6aeso1123060a91.0
- for <dev@dpdk.org>; Wed, 29 Jul 2026 10:57:36 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id EC05140C35;
+	Wed, 29 Jul 2026 19:57:43 +0200 (CEST)
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com
+ [209.85.215.177])
+ by mails.dpdk.org (Postfix) with ESMTP id 2399140B9C
+ for <dev@dpdk.org>; Wed, 29 Jul 2026 19:57:37 +0200 (CEST)
+Received: by mail-pg1-f177.google.com with SMTP id
+ 41be03b00d2f7-ca7bea5e5b3so945862a12.1
+ for <dev@dpdk.org>; Wed, 29 Jul 2026 10:57:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785347855;
- x=1785952655; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785347856;
+ x=1785952656; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=lEifqqKOXgC1FY8p/gDzQU/6M/dVgLI58hl7+YVQlpQ=;
- b=tALljz8qFiYlZJLFJ7zwU7dVxNqBk3zkWDQ5L1DI5rKolrQ5Z3k7t+AWzgKUzgamjD
- 74pLL47udSdvT3kSs6Fr7gvHRwcuuoIjlUzrp5EjyrwqFCrT1s4Zd34cruPUOJOkvMN6
- VHENqnSzSKAuDoriOf9+RRmUGh0yjmOIrwtXJgH54QVx1AOOjKvEm5kDK9BI4u4JFM+O
- OgScVQ+EyWOlVkZssnRDjuySP5CqLc8YcNEAg6lGhKLlp8j4hVrsfpbmJ67M4f8ORuu8
- PCdgu2Cw3Uhm0BmgNAOU8rf/BrcbmOCKib71HNTCOv+RfzDRiDvNYQ+3OwJ9roYh6IUK
- 7V+Q==
+ bh=yqfC3UsRjVykHs3LQAD2C/wMBA9LiNfLWbGW5I/XbHw=;
+ b=VPfcetjaoBH0/zKuI/zv3l/CdKXz0Wj/nQVoVns6yJe7EtPShNxgOxrxO1btB/iRXU
+ NuwMvg4Gwtvqrncosfb8rAWig3ucM3MpnMRGXqsCCgL4ijLp0qVG5aE8Y+cR4Yp5AZMV
+ C90yhvjOL1emQT978zwZ5O6gXWZN9LWvgg5dEIczIodfYDLnXzPQo/HPVgqr4XXsMp9E
+ lkLAuQ8f2Syd3lZqeDB/CFCjzwt3EZPLj1DtB625cq6VLdOUoMgGJPox2lWZarMa6Nvn
+ pW9cSUililbBJQL7jQxN84Rp5p7zUxs92+htv50FyooQbm49HieqbBUgyTlpeyX48a4+
+ /8fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785347855; x=1785952655;
+ d=1e100.net; s=20251104; t=1785347856; x=1785952656;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=lEifqqKOXgC1FY8p/gDzQU/6M/dVgLI58hl7+YVQlpQ=;
- b=g+oM3//adBlSm7IDQ82OHi5l5UZSmNW+BONehQkwegtxjR1DeixWHEMxwkEenzSex8
- KOVzAPlmWqTSsS96r/3nm8/rzZzixexRwPKL5GkeU7Fs98+q4b6GGXHKnUAGbp3JHg2k
- Ui7t7qLK5ESrlbF6TjHURRm//gzVeNMhMMTEZavqCI3s1SBOq0yFPAFlqrqhfoECoV+f
- Pkw/24tlbogaY9mJfgDYpfkS4Kke4g/PGVFvDMMdEfPc2OiKVz87Wce1Lq84uYeIetzG
- vvbNZCypvbKALCxoMqHrz7CZtdHA2epymg5Lp52kis74z1HoKsOM6FBXpW0pT7VCkF8Y
- tteA==
-X-Gm-Message-State: AOJu0YznPPNOvYqZ7imDEJEQCPhyNuSMlhAJ+v2Y+67FpcXmUNbWmZTA
- /xhG4f/fLMpP//+QbqCASx8iakxwr3uVdyA8SWaNOfL9pqoGXUjnNrX8nhWB+wg0DsPUAvHNgIJ
- Zeleh
-X-Gm-Gg: AR+sD13g2f5OGFuVKm6o8DEIazUWnd0r1RpFXIkmFHSJgYgxMmld/UeS1yUic+Aw/sr
- /nB+on0qZaL9a4M7XLXUMrNQ2O1qkdIoUDogfbrqSQ7V1HckreAKZ8WMZBTLCa/a3L52OVoHLAi
- 7/cpieuKKO5AY9FOSQyU5BLWT9vwKhRlGmSWWm1YMTmvv6NNmS1VMQy0sV5KPbrZKFugUg44v/E
- 1ORWMZ4jnoqkVPpo1LVC94nkG9Lo73cmCg9vyzcsSY/EiMS2gWnvnhbREh6EDVWr29z4XBWqb0d
- jNBhPbaTzmCXI3VWmGzojwxdCrHnm3MAXTa6d4WNl/t21cKhyKrtsIzTdZeDN4vNNlVKciL1gks
- 61LBzUtdayVtxi1dmuHcfSmQ2JCpGNROH3v6Fwnr+mBwQ1CnhI0EuVZ10nSzAW9BvetkGzKVcXi
- xsMiYJswhsUG38R5zitoqNqP6XT139vwP1ayKs54Zkhd2LH5Al9xJdvtBPgORhLLLiDm/AAvLw8
- 40IC4djRVzuSqhMa0qRgzRTXtM=
-X-Received: by 2002:a17:90a:e7ce:b0:381:cef1:11b0 with SMTP id
- 98e67ed59e1d1-38f6a54400bmr7165434a91.33.1785347855217; 
- Wed, 29 Jul 2026 10:57:35 -0700 (PDT)
+ bh=yqfC3UsRjVykHs3LQAD2C/wMBA9LiNfLWbGW5I/XbHw=;
+ b=I7x27CGavaLMVFAw4EFvnsjQ3Q/eUS6vWkSjmc2STBJvSP16ZtMNL07gA8BPi/iUPx
+ dv0TZV+whe8wvirwq8efm6c2AHuSpVeRwXDLAZK2IiPFde3ZXuVweAItPwwCm7tPp2Aj
+ s7TCbc6y25o940y92Xq6MbFxT5m+NfePXbIzkOZaZLt8IqXPdJhUDrPBRy8wTI2Ft/J2
+ NRPcwJA36Tik/iBdICUU8H5UuQdITqjZfDnDmjJQnCkrJfIb21lgs0DsiUCoRUc0YgL8
+ 5WHZR2iFwlQFRvEqXb1+Yo20h22nWYRALRD3lJ695PK9PuAzpLqA3BW6xdcgZiGU5i8/
+ G4ZA==
+X-Gm-Message-State: AOJu0YxrGarkNGwdg16pYqM0lDIyX+ySLUdjJJdY+dYQxdL025/ePoFk
+ ntFLuT7ijaNFPvXeNhhSePm41mO2QRZ452hOQxil03WFVmdOSVzOEp0ILpp+Sf2WXSuTxjP8haZ
+ sinG5
+X-Gm-Gg: AR+sD13G1MDR4vF9cF2FDtiwTdD5lXxDj6neKmwlVyupgTZnCFAUEXGZGvhrEeLN7LH
+ koHaBj3SHFpB+/JBgftXiDFFEf3Yui383nbqblrSANj/yRG0uGQr/AL9Oa+/9Sks/jbM544l+K6
+ st70cIPrNjPomPFoY8757VGVXsZfLBBqcd6jYYu0G8Ns/CirBiCy3LaFUysK6Z2T++rS3di5ZAD
+ c1Bq9wi/NArSTfJa2fNb5vk+Z0AqalQ27gcl6ymZho2MEmoQ9EzohxYLzJxiG74YZVLMqGKew5p
+ u6SjeM7IA1ym5XJoi7tBYgn8eeHPvAY7oQLGukWsVOIFFVR5m0nODoLI9/DdECdwC0gHLbix2eO
+ 5W6m3U3YYzj3vBtphXzjFmCP+kOR+moN0p2+fQhHdpx+zdeBAQwHeA86whwFbKTWP4+iDOv6F4D
+ 787Q1YhiHP+RQXCencReeTnYcG0pBsmrrwohwQGDI/aXt0cHsssStwbDLPwEASiYQQ1jOeV9ISl
+ EABXKQtcfD825otEQMF+51Dz0Pkwg1CZonyCQ==
+X-Received: by 2002:a05:6a21:7106:b0:3c3:a4f4:c5c1 with SMTP id
+ adf61e73a8af0-3c8ba60b296mr8401067637.60.1785347856260; 
+ Wed, 29 Jul 2026 10:57:36 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-31504b15f77sm13111562eec.4.2026.07.29.10.57.34
+ 5a478bee46e88-31504b15f77sm13111562eec.4.2026.07.29.10.57.35
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 29 Jul 2026 10:57:34 -0700 (PDT)
+ Wed, 29 Jul 2026 10:57:35 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [RFC 16/32] event/sw: replace SMP barriers with C11 atomics
-Date: Wed, 29 Jul 2026 10:54:09 -0700
-Message-ID: <20260729175715.165120-17-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Subject: [RFC 17/32] eal/x86: move optimized fence out of SMP barrier
+Date: Wed, 29 Jul 2026 10:54:10 -0700
+Message-ID: <20260729175715.165120-18-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260729175715.165120-1-stephen@networkplumber.org>
 References: <20260729175715.165120-1-stephen@networkplumber.org>
@@ -81,90 +84,82 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The write barrier plus plain store publish patterns (cq map count,
-port initialized, device started) become release stores; the barrier
-after clearing started in sw_stop() becomes a release fence. All are
-control path.
+rte_atomic_thread_fence() implemented the seq_cst case by calling the
+deprecated rte_smp_mb(). Invert the dependency: the lock add based
+fence moves into rte_atomic_thread_fence() and rte_smp_mb() becomes a
+wrapper around it, so removing the deprecated barriers later is a pure
+deletion. The optimization itself must stay; a plain seq_cst fence is
+an mfence, about twice the cost. No change in generated code.
 
-Scheduler reads of cq_num_mapped_cqs stay plain loads: acquire loads
-would land in the inner scheduling loops on weakly ordered CPUs. The
-transient window where a new count is visible before the map entry
-on such CPUs predates this change and is unchanged by it; unlink is
-covered by the counter handshake.
+Drop no longer used rte_smp_mb().
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/event/sw/sw_evdev.c | 29 ++++++++++++++++++++---------
- 1 file changed, 20 insertions(+), 9 deletions(-)
+ lib/eal/x86/include/rte_atomic.h | 37 ++++++++++++++------------------
+ 1 file changed, 16 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/event/sw/sw_evdev.c b/drivers/event/sw/sw_evdev.c
-index bb6f50e03b..bdb3dff997 100644
---- a/drivers/event/sw/sw_evdev.c
-+++ b/drivers/event/sw/sw_evdev.c
-@@ -84,8 +84,10 @@ sw_port_link(struct rte_eventdev *dev, void *port, const uint8_t queues[],
- 		}
+diff --git a/lib/eal/x86/include/rte_atomic.h b/lib/eal/x86/include/rte_atomic.h
+index e071e4234e..780fdce871 100644
+--- a/lib/eal/x86/include/rte_atomic.h
++++ b/lib/eal/x86/include/rte_atomic.h
+@@ -60,23 +60,8 @@ extern "C" {
+  * Basic idea is to use lock prefixed add with some dummy memory location
+  * as the destination. From their experiments 128B(2 cache lines) below
+  * current stack pointer looks like a good candidate.
+- * So below we use that technique for rte_smp_mb() implementation.
+  */
  
- 		q->cq_map[q->cq_num_mapped_cqs] = p->id;
--		rte_smp_wmb();
--		q->cq_num_mapped_cqs++;
-+		/* Release publishes the map entry before the new count */
-+		rte_atomic_store_explicit(
-+			(uint32_t __rte_atomic *)&q->cq_num_mapped_cqs,
-+			q->cq_num_mapped_cqs + 1, rte_memory_order_release);
- 	}
- 	return i;
+-static __rte_always_inline void
+-rte_smp_mb(void)
+-{
+-#ifdef RTE_TOOLCHAIN_MSVC
+-	_mm_mfence();
+-#else
+-#ifdef RTE_ARCH_I686
+-	asm volatile("lock addl $0, -128(%%esp); " ::: "memory");
+-#else
+-	asm volatile("lock addl $0, -128(%%rsp); " ::: "memory");
+-#endif
+-#endif
+-}
+-
+ #define rte_io_mb() rte_mb()
+ 
+ #define rte_io_wmb() rte_compiler_barrier()
+@@ -86,17 +71,27 @@ rte_smp_mb(void)
+ /**
+  * Synchronization fence between threads based on the specified memory order.
+  *
+- * On x86 the __rte_atomic_thread_fence(rte_memory_order_seq_cst) generates full 'mfence'
+- * which is quite expensive. The optimized implementation of rte_smp_mb is
+- * used instead.
++ * On x86 the __rte_atomic_thread_fence(rte_memory_order_seq_cst) generates
++ * a full 'mfence' which is quite expensive. The optimized lock add on a
++ * dummy stack location (see above) is used instead.
+  */
+ static __rte_always_inline void
+ rte_atomic_thread_fence(rte_memory_order memorder)
+ {
+-	if (memorder == rte_memory_order_seq_cst)
+-		rte_smp_mb();
+-	else
++	if (memorder != rte_memory_order_seq_cst) {
+ 		__rte_atomic_thread_fence(memorder);
++		return;
++	}
++
++#ifdef RTE_TOOLCHAIN_MSVC
++	_mm_mfence();
++#else
++#ifdef RTE_ARCH_I686
++	asm volatile("lock addl $0, -128(%%esp); " ::: "memory");
++#else
++	asm volatile("lock addl $0, -128(%%rsp); " ::: "memory");
++#endif
++#endif
  }
-@@ -105,8 +107,14 @@ sw_port_unlink(struct rte_eventdev *dev, void *port, uint8_t queues[],
- 			if (q->cq_map[j] == p->id) {
- 				q->cq_map[j] =
- 					q->cq_map[q->cq_num_mapped_cqs - 1];
--				rte_smp_wmb();
--				q->cq_num_mapped_cqs--;
-+				/* Release publishes the map update
-+				 * before the new count
-+				 */
-+				rte_atomic_store_explicit(
-+					(uint32_t __rte_atomic *)
-+						&q->cq_num_mapped_cqs,
-+					q->cq_num_mapped_cqs - 1,
-+					rte_memory_order_release);
- 				unlinked++;
  
- 				p->num_qids_mapped--;
-@@ -208,8 +216,9 @@ sw_port_setup(struct rte_eventdev *dev, uint8_t port_id,
- 	}
- 	dev->data->ports[port_id] = p;
- 
--	rte_smp_wmb();
--	p->initialized = 1;
-+	/* Release publishes the port setup before initialized flag */
-+	rte_atomic_store_explicit((uint8_t __rte_atomic *)&p->initialized, 1,
-+				  rte_memory_order_release);
- 	return 0;
- }
- 
-@@ -815,8 +824,9 @@ sw_start(struct rte_eventdev *dev)
- 	if (sw_xstats_init(sw) < 0)
- 		return -EINVAL;
- 
--	rte_smp_wmb();
--	sw->started = 1;
-+	/* Release publishes device state before the started flag */
-+	rte_atomic_store_explicit((uint8_t __rte_atomic *)&sw->started, 1,
-+				  rte_memory_order_release);
- 
- 	return 0;
- }
-@@ -845,7 +855,8 @@ sw_stop(struct rte_eventdev *dev)
- 	sw_clean_qid_iqs(dev);
- 	sw_xstats_uninit(sw);
- 	sw->started = 0;
--	rte_smp_wmb();
-+	/* Order the started store before re-enabling the service */
-+	rte_atomic_thread_fence(rte_memory_order_release);
- 
- 	if (runstate == 1)
- 		rte_service_runstate_set(sw->service_id, 1);
+ #ifdef __cplusplus
 -- 
 2.53.0
 
