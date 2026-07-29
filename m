@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8CF1C53219
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Jul 2026 17:59:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7265EC53200
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Jul 2026 17:59:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 51C9E40E19;
-	Wed, 29 Jul 2026 19:57:52 +0200 (CEST)
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com
- [209.85.216.46]) by mails.dpdk.org (Postfix) with ESMTP id D1ED940616
- for <dev@dpdk.org>; Wed, 29 Jul 2026 19:57:44 +0200 (CEST)
-Received: by mail-pj1-f46.google.com with SMTP id
- 98e67ed59e1d1-38e347638adso1364145a91.0
- for <dev@dpdk.org>; Wed, 29 Jul 2026 10:57:44 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 945A640E20;
+	Wed, 29 Jul 2026 19:57:53 +0200 (CEST)
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
+ [209.85.214.176])
+ by mails.dpdk.org (Postfix) with ESMTP id E030E40A72
+ for <dev@dpdk.org>; Wed, 29 Jul 2026 19:57:45 +0200 (CEST)
+Received: by mail-pl1-f176.google.com with SMTP id
+ d9443c01a7336-2cedda2ce6fso11312935ad.1
+ for <dev@dpdk.org>; Wed, 29 Jul 2026 10:57:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785347864;
- x=1785952664; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785347865;
+ x=1785952665; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=xJi9wNwE2/KA4iQ1ynk0UUlHDuvRjnv8OvLiKhUVtqw=;
- b=rETWPL9iek0jP14LBF5ZDEsWKmSe8OlggPRer2KfVOUSFKGqY/x30MGfEmKaPtSlvj
- YNg+NHedbDGiIq2/sOC8tBpFeyPhrY0wbsVe0MaLsHzqSr9xzz4f5sM6s4544eFK5j2X
- V4rkB44c8Gy6OyAld7doVw4PrDVNCdsYkP5C1NuSFNQ9AgWro6viXWRCPNqvd8QnNWFj
- zG3KU+R9TUWu22N7wEql41+2yl/KTaBiyiv8A5JiTF//6UJBqQlpLihP3ykf+/jSBAka
- 3tJEvTboE9cj5/XFBTHrVi0exPpwsby/dTNrGoL8fDjCHhHAWCYpLQIhpqlwlgoZXVNi
- ZrZA==
+ bh=9SRYJA6kGluYRuHR+7eOHy9YKHPYkjSgvmYyE4dZVz0=;
+ b=ruFxa66NAXGT/gxs6hwYj4CjQDXDbfCSlemXi7raCZPYCSDZ4O5T5Htiwrd039I+II
+ iQ+ReAlBfN7DpLlOly/WyrItd5IG1GPqqZCXpZQv4zejdVUcStn97vxai7OHUKywSxhK
+ ZiBqU9fqOIzxTP3NUTG8z3D+GkTWskRDNTrYws2Ihn26L8DaogL/FKyMt8NeTLYnBEgw
+ 1ohT8iErAV0r0N51vyz2slaq4eqGLZi0W0eGURKvqZ4iCLHc+ytCU93kmFpzNCO2shNh
+ CnCnjCZziKDuGa0uyugar42vpmFXCfrt6cGaAeZiP2Io9zpYxWkArqqWtfoJ2pcr7yMo
+ VuNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785347864; x=1785952664;
+ d=1e100.net; s=20251104; t=1785347865; x=1785952665;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=xJi9wNwE2/KA4iQ1ynk0UUlHDuvRjnv8OvLiKhUVtqw=;
- b=Bu9NuAYD7gzEckPNOrORh/PG4yazdGPa/Gagioq/yFiiZFzApGFlAZYRQ67G6+VDtK
- /kWBgQQd/5hdLDYwGVNpSgT8+q2g21RGSlgLEdAQfn0mjjHWLgUQTgcgoeh/bTjtgibk
- polzio9mYyEOHVLvSIyZjCSZ3jZEg6kw0Kdnv5YMMNUKDhFmkCV7oJYYVI9c3lnUcjkC
- tIa/uLhascEqF3aRAH0kEb8toeTtDTQabROafdLH2EbLF+/ThDCLEy+0XNRlfutkSnBJ
- jU0aGffQW1cxYY43TzzxMzyRcRG0YKY7I4BEbydMJ8aOdQK6KH2Fxa5Wa8yYlhtAttXH
- tk/A==
-X-Gm-Message-State: AOJu0Yyx2XmlnaoD17mc9ZEt10+pUSo8Pz8Me/HXJwDe8rldE3tOnLpR
- HpG970NUj3C24HkK3b8cWfR3XEM+X96avB6inm7kS82VnwLAg+wm+12fchXE/D1xT2QTM1T1omp
- YIpZo
-X-Gm-Gg: AR+sD11TTAqiE8Jt3uN+33jNAylJr87HRbFOfRH+z6AEsaHCkTWpB8nXnjY6xiEFS/2
- wGsPOlxl77/TXqc4XlSKAwAXgp91FOhfmNzEMPv1IrJL9U4e0WH0RCbY4sjIV4mJ/b4iCOXRY92
- Sf4tC7OinavqZE7DQa+UuY37QCXrkHYvBeq2G/5zzn3AcZOk5S7/CTgQ8wbCA4shCLKd6aCS8SF
- EsAp6MSp3saR40vRmkBVPNFusMMYEywX6PdHIWsyuWhnur9uN57ucaXT2sEAq1EfSqagTfD7l7T
- bA7ULqMLltjwdPaWmYJhcHyBJwlNuOQSTjwgXTGG3GrQNthGenYlPUS1JIoaF25lEMSwFgFpRpQ
- 4buER24QDYLz8ZfCbn0+0nuw9IDCFjPRM9Jw0Ne9lGBcica9Os9ofQmx/uR/37Ddg1GHsG0QEzk
- iyCvLjes01tpzh6zTKXk7Wi2ptOExmaCgRj+BQEpsreP+TqPXAce4x1t/JqQmJTXiWcU3/biztH
- kuSKwmRGFdmPh/tuA8XMQLzgmU=
-X-Received: by 2002:a17:90b:1347:b0:38e:9045:bac0 with SMTP id
- 98e67ed59e1d1-38f6a425a7emr7224420a91.5.1785347863987; 
- Wed, 29 Jul 2026 10:57:43 -0700 (PDT)
+ bh=9SRYJA6kGluYRuHR+7eOHy9YKHPYkjSgvmYyE4dZVz0=;
+ b=d4fV3qUPY400B1V4QZuefVwk1BhNM8d87BNzocJXRHSERTNMSE9+4uiV2Pn4/JBG1S
+ s0LLGN/08rXQHZVmqQlWlv77+gG11WxNyoSQk/mApHPIjzA/P9Lx4EihqRcswGbykizV
+ EWlwT+8/N8+VpogUYBNH8I4O+R7vzEqxiuan/HLDV1a7kjwQxfL0TJyin+5+v4H/ooo1
+ x2I6yrygP3HOsjyB0dY2MuGX15gy8S021KhTuNoQU/3aESC0BwrETNRouEPHWe5jAU84
+ 9QyrMNZJ1lOdTE2RQruS9sJHtmoniXsIyGoKaSquSU5flnteVIn+2nmPRGtR+SvaKBWw
+ 0WYw==
+X-Gm-Message-State: AOJu0Yxs1kZZ61rvK+lLOhMsZa8StMqJhmEt4SmpgiqIQoiqqOhurW0z
+ qKZ5/+3SQnB1s7oAIrmu3L49OmJKZ3Zq/zde/ihlFz64JX+QuvIk/ZaSYnJolFyBJ+SKDOF32cB
+ jRihn
+X-Gm-Gg: AR+sD11x82mmuNsg95PsOITTbA1doAhvrPOFmzVidZ5nPoqgVWcAgiFOzBIhE3nyFQi
+ uznHVKCn0CZllhBqhI3957nStsi9HELcB0y7v5PYYk495JvYgBYPfmLUOKaSNlA4VY7LJJ5ayHE
+ TKB8vyQqdJUtgDoNO3FomuGCmeeqMm2wZTy9TJPCPFEbmVPGmmPFq+RQVpRqq7e+fdN6Bzg+b8B
+ 9XnyuE8T1w5Xl2R2dB/EVYLc/MWiUIIb16WMWVqu+DTZh0tY31DYbkYpl+/fG8efjf1c4wotDWM
+ a2W/bnkLAlC+1WWiYRfSxQG+ncmQd+bP8AnAIe2AU+Vgkgb5ZRFY+yuFSsBd/np7IZ74cvaTKyB
+ qu/KCIi9J46vNpseQMn4VY5ATdSWmgg0UfO0Up/R1VtphkZPnuQpw8JBZ4rMuywU7BxyRwufs7w
+ 30wxe35FXutCGMXOR5H/1QHRaSi7Mpz/NErJDZSQggOnNHpFaI9XALHUBzXyOGyaFWV/HqZ8IH6
+ 6zOWIUVZrDoepBckfj3RaCN7zg=
+X-Received: by 2002:a17:902:f78e:b0:2ca:d151:383a with SMTP id
+ d9443c01a7336-2d015a996dcmr90987565ad.20.1785347865048; 
+ Wed, 29 Jul 2026 10:57:45 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-31504b15f77sm13111562eec.4.2026.07.29.10.57.42
+ 5a478bee46e88-31504b15f77sm13111562eec.4.2026.07.29.10.57.44
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 29 Jul 2026 10:57:43 -0700 (PDT)
+ Wed, 29 Jul 2026 10:57:44 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- =?UTF-8?q?Mattias=20R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>
-Subject: [RFC 24/32] event/dsw: replace SMP barriers with release fences
-Date: Wed, 29 Jul 2026 10:54:17 -0700
-Message-ID: <20260729175715.165120-25-stephen@networkplumber.org>
+ Liang Ma <liangma@bytedance.com>, Peter Mccarthy <peter.mccarthy@intel.com>
+Subject: [RFC 25/32] event/opdl: replace SMP barriers with C11 atomics
+Date: Wed, 29 Jul 2026 10:54:18 -0700
+Message-ID: <20260729175715.165120-26-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260729175715.165120-1-stephen@networkplumber.org>
 References: <20260729175715.165120-1-stephen@networkplumber.org>
@@ -82,60 +83,40 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-All four barriers publish flow table or ring updates before a
-control message enqueue, which is release ordering. All are on the
-migration control path, not per event.
-
-The fences may in fact be removable: the control messages travel
-through rte_ring, whose producer tail update is itself a release
-store covering the preceding writes. Left in place here to keep
-this a like for like conversion.
+Publishing the port becomes a release store of the configured flag;
+the barrier after clearing started becomes a release fence. Both
+are control path.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/event/dsw/dsw_event.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/event/opdl/opdl_evdev.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/event/dsw/dsw_event.c b/drivers/event/dsw/dsw_event.c
-index 399d9f050e..82d3636b29 100644
---- a/drivers/event/dsw/dsw_event.c
-+++ b/drivers/event/dsw/dsw_event.c
-@@ -339,7 +339,7 @@ dsw_port_handle_pause_flows(struct dsw_evdev *dsw, struct dsw_port *port,
- 	/* Make sure any stores to the original port's in_ring is seen
- 	 * before the ctl message.
- 	 */
+diff --git a/drivers/event/opdl/opdl_evdev.c b/drivers/event/opdl/opdl_evdev.c
+index ffa65ef930..1450fa5ae8 100644
+--- a/drivers/event/opdl/opdl_evdev.c
++++ b/drivers/event/opdl/opdl_evdev.c
+@@ -200,8 +200,9 @@ opdl_port_setup(struct rte_eventdev *dev,
+ 	p->queue_id = OPDL_INVALID_QID;
+ 	p->external_qid = OPDL_INVALID_QID;
+ 	dev->data->ports[port_id] = p;
 -	rte_smp_wmb();
-+	rte_atomic_thread_fence(rte_memory_order_release);
- 
- 	dsw_port_ctl_enqueue(&dsw->ports[originating_port_id], &cfm);
+-	p->configured = 1;
++	/* Release publishes port setup before the configured flag */
++	rte_atomic_store_explicit((uint8_t __rte_atomic *)&p->configured, 1,
++				  rte_memory_order_release);
+ 	device->nb_ports++;
+ 	return 0;
  }
-@@ -821,7 +821,7 @@ dsw_port_move_parallel_flows(struct dsw_evdev *dsw,
- 		}
- 	}
+@@ -477,7 +478,7 @@ opdl_stop(struct rte_eventdev *dev)
+ 
+ 	device->started = 0;
  
 -	rte_smp_wmb();
 +	rte_atomic_thread_fence(rte_memory_order_release);
- 
- 	dsw_port_end_emigration(dsw, source_port, RTE_SCHED_TYPE_PARALLEL);
  }
-@@ -1190,7 +1190,7 @@ dsw_port_move_emigrating_flows(struct dsw_evdev *dsw,
- 		    dest_port_id;
- 	}
  
--	rte_smp_wmb();
-+	rte_atomic_thread_fence(rte_memory_order_release);
- 
- 	dsw_port_drain_in_ring(source_port);
- 	dsw_port_forward_emigrated_flows(dsw, source_port);
-@@ -1213,7 +1213,7 @@ dsw_port_move_emigrating_flows(struct dsw_evdev *dsw,
- 	/* Flow table update and migration destination port's enqueues
- 	 * must be seen before the control message.
- 	 */
--	rte_smp_wmb();
-+	rte_atomic_thread_fence(rte_memory_order_release);
- 
- 	dsw_port_ctl_broadcast(dsw, source_port, DSW_CTL_UNPAUSE_REQ,
- 			       source_port->emigration_target_qfs,
+ static int
 -- 
 2.53.0
 
