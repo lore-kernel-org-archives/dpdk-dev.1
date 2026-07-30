@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91C2FC55162
-	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Jul 2026 08:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F04FC54FDF
+	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Jul 2026 09:23:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3AE1240274;
-	Thu, 30 Jul 2026 10:48:46 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0AF504028A;
+	Thu, 30 Jul 2026 11:23:39 +0200 (CEST)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id D1A4A40272
- for <dev@dpdk.org>; Thu, 30 Jul 2026 10:48:43 +0200 (CEST)
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id C2AB140272
+ for <dev@dpdk.org>; Thu, 30 Jul 2026 11:23:37 +0200 (CEST)
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=RILM0Mpe3yyJ4pl87o3x9CJakoxaNoBvVWz+sSY2ABQ=;
- b=xD2R3PctJ2zGXMMVyeR8H7MT8d4XuiI8kyh7voku2ZKFRRA2sgso5nBYm0HTWdfpqTNO2l4Gt
- xm+iuxMZIz6bsNls2q6PdUtcRVCYUc1q5cBW97QPfIBs8Hr+AShB5qsoYmlOd0mPKykJBIcc9KU
- E+yTg/IRIb9MYz2NfHKBxDo=
-Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4h9jX70yyHzJ46bD;
- Thu, 30 Jul 2026 16:48:07 +0800 (CST)
-Received: from frapema100002.china.huawei.com (unknown [7.182.19.63])
- by mail.maildlp.com (Postfix) with ESMTPS id EF4854057A;
- Thu, 30 Jul 2026 16:48:41 +0800 (CST)
-Received: from frapema500003.china.huawei.com (7.182.19.114) by
- frapema100002.china.huawei.com (7.182.19.63) with Microsoft SMTP Server
+ bh=35Md185I0eIDr1yex903nZdyGsvfqbxlpxYdNL8nX5Q=;
+ b=1Rzhgd3C9zJDenUywoqEgPW7DUqoM6YH1A2IL+SmGypXIKuiMfwAp98JC9THxfGSDkCaYuJ2s
+ KS35uUUo4QvU/b8aErdtI34kSa2xFTx1BQMZVm9R7Hr2g9fg1mRmcs3paqbkMFlJBze7cHEnwtA
+ hiS7aqce4+HYfRl+vhGNt34=
+Received: from mail.maildlp.com (unknown [172.18.224.150])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4h9kJP05BzzJ46F5;
+ Thu, 30 Jul 2026 17:23:01 +0800 (CST)
+Received: from dubpeml100003.china.huawei.com (unknown [7.214.147.98])
+ by mail.maildlp.com (Postfix) with ESMTPS id D5B9B40570;
+ Thu, 30 Jul 2026 17:23:35 +0800 (CST)
+Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
+ dubpeml100003.china.huawei.com (7.214.147.98) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Thu, 30 Jul 2026 10:48:41 +0200
-Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
- frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
- Thu, 30 Jul 2026 10:48:41 +0200
-From: Marat Khalili <marat.khalili@huawei.com>
+ 15.2.1544.36; Thu, 30 Jul 2026 10:23:35 +0100
+Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
+ dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
+ Thu, 30 Jul 2026 10:23:35 +0100
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
  <dev@dpdk.org>
-CC: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+CC: Marat Khalili <marat.khalili@huawei.com>
 Subject: RE: [RFC 01/32] bpf: replace deprecated SMP barriers with C11 fences
 Thread-Topic: [RFC 01/32] bpf: replace deprecated SMP barriers with C11 fences
-Thread-Index: AQHdH4O2ptQbX30vgEiaf+/z/N+qaraFv74w
-Date: Thu, 30 Jul 2026 08:48:41 +0000
-Message-ID: <a6a65fbd303f4ef3ba93fbe67d5ef022@huawei.com>
+Thread-Index: AQHdH4O3BdaOnH3nTku9uHFkg7OY0LaFymvw
+Date: Thu, 30 Jul 2026 09:23:35 +0000
+Message-ID: <8009cc6b2f19461ebb52566c322e15f0@huawei.com>
 References: <20260729175715.165120-1-stephen@networkplumber.org>
  <20260729175715.165120-2-stephen@networkplumber.org>
 In-Reply-To: <20260729175715.165120-2-stephen@networkplumber.org>
-Accept-Language: en-US
+Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.137.78]
+x-originating-ip: [10.81.197.251]
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
@@ -62,6 +62,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+
+> The use counter handshake is a store-load pattern, so rte_smp_mb()
+> becomes a seq_cst thread fence; the read barrier in
+> bpf_eth_cbi_unuse() becomes an acquire fence. Same code generated
+> on x86 and arm64.
+>=20
+> Use relaxed loads and stores for the counter itself. With
+> enable_stdatomic, the plain increment of an RTE_ATOMIC() field
+> compiled to a seq_cst add, i.e. two locked operations per burst.
+>=20
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> ---
+>  lib/bpf/bpf_pkt.c | 18 +++++++++++-------
+>  1 file changed, 11 insertions(+), 7 deletions(-)
+>=20
 > diff --git a/lib/bpf/bpf_pkt.c b/lib/bpf/bpf_pkt.c
 > index f072fdaaed..a831b5ad86 100644
 > --- a/lib/bpf/bpf_pkt.c
@@ -72,18 +87,13 @@ Errors-To: dev-bounces@dpdk.org
 >  {
 > -	cbi->use++;
 > +	rte_atomic_store_explicit(&cbi->use,
-> +		rte_atomic_load_explicit(&cbi->use, rte_memory_order_relaxed) + 1,
+> +		rte_atomic_load_explicit(&cbi->use, rte_memory_order_relaxed)
+> + 1,
 > +		rte_memory_order_relaxed);
 >  	/* make sure no store/load reordering could happen */
 > -	rte_smp_mb();
 > +	rte_atomic_thread_fence(rte_memory_order_seq_cst);
 >  }
-
-I think this needs to be analyzed further by AI to see if a more canonical =
-way
-of doing things exists now. To me the whole construct above looks very stra=
-nge.
-
 >=20
 >  /*
 > @@ -92,8 +94,10 @@ static __rte_always_inline void
@@ -93,8 +103,13 @@ nge.
 > -	rte_smp_rmb();
 > -	cbi->use++;
 > +	rte_atomic_thread_fence(rte_memory_order_acquire);
+
+Probably safer to use 'acq_release' order here?
+We do want that all previous loads to be completed at that point. =20
+
 > +	rte_atomic_store_explicit(&cbi->use,
-> +		rte_atomic_load_explicit(&cbi->use, rte_memory_order_relaxed) + 1,
+> +		rte_atomic_load_explicit(&cbi->use, rte_memory_order_relaxed)
+> + 1,
 > +		rte_memory_order_relaxed);
 >  }
 >=20
