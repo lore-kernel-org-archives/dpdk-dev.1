@@ -2,49 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9248EC54FDF
-	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Jul 2026 07:27:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0E6AC54FDF
+	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Jul 2026 08:16:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8ADCB40274;
-	Thu, 30 Jul 2026 09:27:11 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7366340274;
+	Thu, 30 Jul 2026 10:16:31 +0200 (CEST)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 426EE40272
- for <dev@dpdk.org>; Thu, 30 Jul 2026 09:27:10 +0200 (CEST)
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id A339F40272
+ for <dev@dpdk.org>; Thu, 30 Jul 2026 10:16:29 +0200 (CEST)
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=zRP9hCYGgAJyedzCVDN0EGCEBg1/nw9kNqrkZXWoCGo=;
- b=Os/rEp+7ixQTKR6WGmSd2YtNS3gT5YcZNoTPE7awwWbNZ/ROpmPNvbI6YWLx9JToO67dp+Nn1
- J5NoT5dAYPMeeHjXAx+YefoBhB0L05I6sArYpaTj4yU7uWb+xnC1mZbqnIB+R0f+WjPOmm0Nuue
- G1TIgR4vEt1qCCZQHGZ73aI=
+ bh=IaYXy89HbxvdYGgLAI5UEGES4YmE/W8pw2op4J/QXNc=;
+ b=VNoHi12uzF5M0Bc/HD1K4Xo0q/LNZy3+RkcP+4IxnyMtU3cXDgmTrNKsJSgx5b/2WKnPJqmGJ
+ gCTlzd5Q3f3G6QOltYYL/KGG/B8orr+ziNqgxyDiuiBowAe6UKg470BqoDHTfZw6p8phopDvK8G
+ +loMjjI8ayBFBL1tjrJZUMc=
 Received: from mail.maildlp.com (unknown [172.18.224.150])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4h9gk25tC3zJ46ZL;
- Thu, 30 Jul 2026 15:26:34 +0800 (CST)
-Received: from dubpeml100007.china.huawei.com (unknown [7.214.144.235])
- by mail.maildlp.com (Postfix) with ESMTPS id 8791640572;
- Thu, 30 Jul 2026 15:27:09 +0800 (CST)
-Received: from dubpemt100001.china.huawei.com (7.214.147.107) by
- dubpeml100007.china.huawei.com (7.214.144.235) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Thu, 30 Jul 2026 08:27:09 +0100
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4h9hpm5XnFzHnGgH;
+ Thu, 30 Jul 2026 16:15:44 +0800 (CST)
+Received: from dubpeml100001.china.huawei.com (unknown [7.214.144.137])
+ by mail.maildlp.com (Postfix) with ESMTPS id 8CDC440571;
+ Thu, 30 Jul 2026 16:16:26 +0800 (CST)
 Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpemt100001.china.huawei.com (7.214.147.107) with Microsoft SMTP Server
+ dubpeml100001.china.huawei.com (7.214.144.137) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 30 Jul 2026 08:27:08 +0100
+ 15.2.1544.36; Thu, 30 Jul 2026 09:16:26 +0100
 Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
  dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Thu, 30 Jul 2026 08:27:08 +0100
+ Thu, 30 Jul 2026 09:16:26 +0100
 From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
  <dev@dpdk.org>
-CC: Bruce Richardson <bruce.richardson@intel.com>
-Subject: RE: [RFC 17/32] eal/x86: move optimized fence out of SMP barrier
-Thread-Topic: [RFC 17/32] eal/x86: move optimized fence out of SMP barrier
-Thread-Index: AQHdH4PBtAncOdhDekmKmhZCna7csLaFqmPA
-Date: Thu, 30 Jul 2026 07:27:08 +0000
-Message-ID: <5d3bf2db70a9434db118aefbf61b1a02@huawei.com>
+CC: Wathsala Vithanage <wathsala.vithanage@arm.com>
+Subject: RE: [RFC 13/32] ring: replace SMP read barrier with C11 acquire fence
+Thread-Topic: [RFC 13/32] ring: replace SMP read barrier with C11 acquire fence
+Thread-Index: AQHdH4O+9cOmsTSw30m7sfiHkIxx1baFt4yQ
+Date: Thu, 30 Jul 2026 08:16:26 +0000
+Message-ID: <bb96616d436e4761843b8b4b84c923d2@huawei.com>
 References: <20260729175715.165120-1-stephen@networkplumber.org>
- <20260729175715.165120-18-stephen@networkplumber.org>
-In-Reply-To: <20260729175715.165120-18-stephen@networkplumber.org>
+ <20260729175715.165120-14-stephen@networkplumber.org>
+In-Reply-To: <20260729175715.165120-14-stephen@networkplumber.org>
 Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -68,91 +64,46 @@ Errors-To: dev-bounces@dpdk.org
 
 
 
-> rte_atomic_thread_fence() implemented the seq_cst case by calling the
-> deprecated rte_smp_mb(). Invert the dependency: the lock add based
-> fence moves into rte_atomic_thread_fence() and rte_smp_mb() becomes a
-> wrapper around it, so removing the deprecated barriers later is a pure
-> deletion. The optimization itself must stay; a plain seq_cst fence is
-> an mfence, about twice the cost. No change in generated code.
+> rte_smp_rmb() is deprecated. The acquire fence generates the same
+> code everywhere the gcc implementation is used: a compiler barrier
+> on x86 and dmb ishld on ThunderX.
 >=20
-> Drop no longer used rte_smp_mb().
+> The gcc implementation itself is kept: unlike the lock-free stack,
+> the in-tree comment records a 10% x86 performance drop with the
+> C11 version, which needs re-measuring with current compilers
+> before RTE_USE_C11_MEM_MODEL can be removed.
 >=20
 > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 > ---
->  lib/eal/x86/include/rte_atomic.h | 37 ++++++++++++++------------------
->  1 file changed, 16 insertions(+), 21 deletions(-)
+>  lib/ring/rte_ring_gcc_pvt.h | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 >=20
-> diff --git a/lib/eal/x86/include/rte_atomic.h b/lib/eal/x86/include/rte_a=
-tomic.h
-> index e071e4234e..780fdce871 100644
-> --- a/lib/eal/x86/include/rte_atomic.h
-> +++ b/lib/eal/x86/include/rte_atomic.h
-> @@ -60,23 +60,8 @@ extern "C" {
->   * Basic idea is to use lock prefixed add with some dummy memory locatio=
-n
->   * as the destination. From their experiments 128B(2 cache lines) below
->   * current stack pointer looks like a good candidate.
-> - * So below we use that technique for rte_smp_mb() implementation.
->   */
+> diff --git a/lib/ring/rte_ring_gcc_pvt.h b/lib/ring/rte_ring_gcc_pvt.h
+> index 340ece28c7..9c2c58824d 100644
+> --- a/lib/ring/rte_ring_gcc_pvt.h
+> +++ b/lib/ring/rte_ring_gcc_pvt.h
+> @@ -55,10 +55,10 @@ __rte_ring_headtail_move_head_st(struct
+> rte_ring_headtail *d,
 >=20
-> -static __rte_always_inline void
-> -rte_smp_mb(void)
-> -{
-> -#ifdef RTE_TOOLCHAIN_MSVC
-> -	_mm_mfence();
-> -#else
-> -#ifdef RTE_ARCH_I686
-> -	asm volatile("lock addl $0, -128(%%esp); " ::: "memory");
-> -#else
-> -	asm volatile("lock addl $0, -128(%%rsp); " ::: "memory");
-> -#endif
-> -#endif
-> -}
-> -
->  #define rte_io_mb() rte_mb()
+>  	*old_head =3D d->head;
 >=20
->  #define rte_io_wmb() rte_compiler_barrier()
-> @@ -86,17 +71,27 @@ rte_smp_mb(void)
->  /**
->   * Synchronization fence between threads based on the specified memory o=
-rder.
->   *
-> - * On x86 the __rte_atomic_thread_fence(rte_memory_order_seq_cst)
-> generates full 'mfence'
-> - * which is quite expensive. The optimized implementation of rte_smp_mb =
-is
-> - * used instead.
-> + * On x86 the __rte_atomic_thread_fence(rte_memory_order_seq_cst)
-> generates
-> + * a full 'mfence' which is quite expensive. The optimized lock add on a
-> + * dummy stack location (see above) is used instead.
->   */
->  static __rte_always_inline void
->  rte_atomic_thread_fence(rte_memory_order memorder)
->  {
-> -	if (memorder =3D=3D rte_memory_order_seq_cst)
-> -		rte_smp_mb();
-> -	else
-> +	if (memorder !=3D rte_memory_order_seq_cst) {
->  		__rte_atomic_thread_fence(memorder);
-> +		return;
-> +	}
-> +
-> +#ifdef RTE_TOOLCHAIN_MSVC
-> +	_mm_mfence();
-> +#else
-> +#ifdef RTE_ARCH_I686
-> +	asm volatile("lock addl $0, -128(%%esp); " ::: "memory");
-> +#else
-> +	asm volatile("lock addl $0, -128(%%rsp); " ::: "memory");
-> +#endif
-> +#endif
->  }
+> -	/* add rmb barrier to avoid load/load reorder in weak
+> -	 * memory model. It is noop on x86
+> +	/* Acquire fence to avoid load/load reorder in weak
+> +	 * memory model. It is noop on x86.
+>  	 */
+> -	rte_smp_rmb();
+> +	rte_atomic_thread_fence(rte_memory_order_acquire);
 >=20
->  #ifdef __cplusplus
+>  	/*
+>  	 *  The subtraction is done between two unsigned 32bits value
 > --
 
 Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+
+As a side note - do we really need two versions of __rte_ring_headtail_move=
+_head_st()?
+Might be just keep 2 versions of _mt, while _st can be merged into one?
 
 > 2.53.0
 
