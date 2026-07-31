@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E07E8C55167
-	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Jul 2026 05:01:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3575C55167
+	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Jul 2026 05:01:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 826A440E09;
-	Fri, 31 Jul 2026 07:00:09 +0200 (CEST)
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com
- [209.85.216.46]) by mails.dpdk.org (Postfix) with ESMTP id 8DDB540DFB
- for <dev@dpdk.org>; Fri, 31 Jul 2026 07:00:08 +0200 (CEST)
-Received: by mail-pj1-f46.google.com with SMTP id
- 98e67ed59e1d1-38dfe7eb825so492752a91.0
- for <dev@dpdk.org>; Thu, 30 Jul 2026 22:00:08 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6C00A4064C;
+	Fri, 31 Jul 2026 07:00:10 +0200 (CEST)
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com
+ [209.85.215.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 5DB2940DD7
+ for <dev@dpdk.org>; Fri, 31 Jul 2026 07:00:09 +0200 (CEST)
+Received: by mail-pg1-f182.google.com with SMTP id
+ 41be03b00d2f7-c9aea40d799so287953a12.0
+ for <dev@dpdk.org>; Thu, 30 Jul 2026 22:00:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785474008;
  x=1786078808; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=GEROxbuZQgjqdyXhxXT4csd5lpBVEU1BIcdyUP6h7Ps=;
- b=He6IeqOd8uzpEXpJRafOrYz8yFsmFt9GBbH4pew9JUy9A7Zn+ZRbxgyTpw/bbTt2Dj
- zptZapay3ux7LmhH+s5CnHZJhnS1lQZi0aRwR3XboFsgiOVDw7fgwTTA201umaz0FlAo
- XO9KL2LM049e69sVbGL/kDU0loUNlFXbn4o/qosVwKzuRmdNfzC9aoaG5OE0rog0aYiC
- 5im3K26tPIvoycuTQXe3k2zmVsRSN8+//zLNk2gr372Y1BqeY/Uw7+/e2Tk0ze6bs30d
- rOqoJiiSza26TYDboNmhSgcdQap/PzwLSM4x967UCA+/EcoyW5Ebj3+sg9W9tnWe4zCI
- 8MxQ==
+ bh=SXiPVZ3pipZ+5iEEZIAV+QxIF4vuY89DwJfyoIBwidU=;
+ b=lCajr6trzOSKK53z3QRW73fTcsxGItHXvgbtjVoqjywJ39erX2yGgP5d20+09OQF3A
+ vtflf1GUvm1AeAuNq+DzNc41QnbXr2cmJuueFl1eZoPYDT54MF8iScT/FwLopEUfkBuP
+ +X2zr8V6zk1tIecjHooNRsnfnMhBwIYpdadAlICgajI+J+U8hM33r2u/rzPqN3XtqJGG
+ DzsvBsWu+RWq7npRMpQNx0wWONIOTRIdPW+vcXflaJG3vuNH3kPlWVKNauYy0EvXqx3J
+ U/rAACal+EN98Ij3pTohli2c/4IV6UFwu3Wqgd83qRfiKZbw0jzKt7Ie4g+GhyL2vzOF
+ xNBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20251104; t=1785474008; x=1786078808;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=GEROxbuZQgjqdyXhxXT4csd5lpBVEU1BIcdyUP6h7Ps=;
- b=ri6/BdhUV4Y+/OstjDDA5zv5iimtXLENMyds+deAEQ5rL5b/pPCmHaUFZNh58iGFRZ
- OATMrpHR/pH/3+Rhdw0vWwrOurslkZM0d0yd9GbHyFxGtKRlrqQ5s+ci19TrTPWTpXoc
- n2GdIdF28dESxI71Fz/OGMGebmvDSHTJpkDENsDu2LGYuhqVCYlYhmVOOsi503ngpqDQ
- xTnloX4FaaMoWfjyhdoFr5zKoWfQ2dvFnR8BpRpj87+U3sfoD2rwr6gKWZQ/23IpsYaW
- OlgNoopJiXzT7GtoedwLwCMohyqqAlDT1MRDYHaF7arOfVcbEXXSJgQ/PMGwWRTuJQOs
- GeBQ==
-X-Gm-Message-State: AOJu0YxoCXRF1CnFpSwg47eZtAhR6mjQJEcyrMicai+/5wPo5UqnoC4O
- MgRy+s+ImmWrcMIp75PjRj8SITUJGyUt44zJNFMSZViy6WFHsw5xp/Ep1Oy68xYdYFrurnTwxN0
- 1bcrj
-X-Gm-Gg: AR+sD11xgJAprsFOHs2I8ZF3Go3iWIlnk+ld3PdjP+SSIB7ZfaNtD6fqYgzFBUe9N5f
- Py1LFbC5Nes3PtmqcYkw6FJPZt9R+jceH2uAREro2N/cGYq2ZI9ZcFnYq5ubqgYo6QhzyQRsJLe
- B+eotuhdn9gzf/tn19WrD7fJYDe144rTr4fi2nscjjIIZ7Z2ZtFnzjJLTOsfkPJIez7hy4HUHif
- w/fslCrhCpOSUL+et0Ub2IyYFlvKUUJMYK3Y0gUUf75frTwb2n1vvJL5kef4t/aXwDzSeqwTsCb
- Tm6oRI4CZzsPz2dCqkQ7BVunCeekgCqUEs+oixkgARK786Sgjgul7XrHsobRcOvWf3qzHdGkvtm
- lPXweOwrmtRaOUa7ki23PegQ8RKveOBjntlXOKgQ6kipg+zXadxCPvt0DBS8/hs5it6h5+ZE7qP
- +Iwx9hWTADLZfREyIatWWphMu+YLFs00H/K0pDue/qaWGI9Ua7jUodEoO1jQ//Wl6mc/e1kizxX
- jvZCN3udseBBtykhB+es3umvYA=
-X-Received: by 2002:a17:90b:4c81:b0:38e:6ba9:5203 with SMTP id
- 98e67ed59e1d1-38fb140d718mr569421a91.22.1785474007375; 
- Thu, 30 Jul 2026 22:00:07 -0700 (PDT)
+ bh=SXiPVZ3pipZ+5iEEZIAV+QxIF4vuY89DwJfyoIBwidU=;
+ b=sYFPtEWkr9Dj9INUJ62df5LDxSs1dg5Cp9pWkHOfrZZLtwCYoBAzXL4vULh4I1OdRx
+ 3lCMX9XLaWTH8lx+WXU3g7LOQYNGkDJEpgNsTOuU0BUTB3pLgD+OghqWjqv0pu7nGFTI
+ 0pItcwwh7VrOViiXVMfSaCeSWHoLE6V3PfeWj+sBMadZbDlycNOTfT58TVBZmJf3PdWN
+ AWWM1nvl9JBfTE/H2OiQQTzm9IXbOmBpYITgFY6aVlRAcPkZu76FQvQzjtuvmbG0u3QB
+ 2gQuk8zkIbK7Nl1TkU4Cee9mq+/SlAqEAkftEONbv8CB++uyswNckEZq1yI2e3b3on5e
+ Zcgg==
+X-Gm-Message-State: AOJu0YygZ1Xj9YdACwrxbXe7w+OwBlRH3SwZD7JzcR0+89A7uuX+YOG5
+ /kQJfofQngBBLoh0H9Ml6ymtdr7DjWz1AAJTnOgOalLEAQKFZ/lVXj8OUMSsb0tSHqgegr97yFs
+ 7TCn/
+X-Gm-Gg: AR+sD1339TWcq728hW2LqAszuqNtFjcG5dFvV18AMkfhd3ZR04cQ+mGiQH1X8u8WFRP
+ EQNrAdKwfgoEDYOYG0kVpb7BNYiewiC0aNrQkF3b9rA081KnprBMyNih3iC3LR7ZsLa5ZiOtwQb
+ 31Lb+HiLq5eubgVm8H1kRLw5gm/sgTTD4Ml0FKmZNQYLa4jt5AodobzMYUjpEdefuB2xidjb6Le
+ kaj1hBBHuk9z2r7v3xAMtRFH8Gaf/5Tn8vSfeoHyFexd6hw+1Wa+UNjw+kynY7zqUK/xHC9tk0E
+ qLJSZCyMYrcxsxMGs9z5cMlOEoFjMPUVSlh6A0fpdp0K4ajHbUPkn/lZRcD3xPbYCUrxD/qinEh
+ FKTi1fjTa0Toml3oeAZEOfTltkJ4rw9StSxv1rxLgcEcmP/xnMN1mwb6UV1AYtA7Tpc5iSE6XS4
+ lW5qjt4RWgCJvTXuotqos8Sm/oYa/EHqQOZFATCV4xm63hyJoBtn4U5PzRoybt+X0wtyE8zk4v2
+ LtKEVGPM9ysIMRbv2OdTEY0ncg=
+X-Received: by 2002:a05:6a21:4592:b0:3bf:7e2a:e874 with SMTP id
+ adf61e73a8af0-3c91b128bc3mr474607637.1.1785474008527; 
+ Thu, 30 Jul 2026 22:00:08 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3153e06f0f9sm823245eec.23.2026.07.30.22.00.06
+ 5a478bee46e88-3153e06f0f9sm823245eec.23.2026.07.30.22.00.07
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 30 Jul 2026 22:00:06 -0700 (PDT)
+ Thu, 30 Jul 2026 22:00:08 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@nxp.com>
-Subject: [PATCH v6 15/24] common/dpaax: use stdatomic instead of rte_atomic
-Date: Thu, 30 Jul 2026 21:57:53 -0700
-Message-ID: <20260731045948.769926-16-stephen@networkplumber.org>
+ Julien Aube <julien_dpdk@jaube.fr>
+Subject: [PATCH v6 16/24] net/bnx2x: convert from rte_atomic32 to stdatomic
+Date: Thu, 30 Jul 2026 21:57:54 -0700
+Message-ID: <20260731045948.769926-17-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260731045948.769926-1-stephen@networkplumber.org>
 References: <20260521042043.1590536-1-stephen@networkplumber.org>
@@ -84,50 +84,98 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The driver debug code uses local atomic wrappers;
-convert them to DPDK rte_atomic wrappers for C11 stdatomic.
+Replace the legacy rte_atomic32_* API on sc->scan_fp with the
+equivalent rte_atomic_*_explicit C11 helpers, ahead of the
+deprecation of rte_atomicNN_t and its associated wrappers.
+
+All accesses use rte_memory_order_seq_cst, matching the semantics
+of the legacy API. No functional change.
+
+The scan_fp field is a notification flag between the slow-path
+command poster (bnx2x_sp_post) and the fastpath task that reaps
+ramrod completions (bnx2x_handle_fp_tq), also cleared from
+ecore_state_wait on success, panic, and timeout.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/common/dpaax/compat.h | 25 ++++++++++++-------------
- 1 file changed, 12 insertions(+), 13 deletions(-)
+ drivers/net/bnx2x/bnx2x.c    | 6 +++---
+ drivers/net/bnx2x/bnx2x.h    | 2 +-
+ drivers/net/bnx2x/ecore_sp.c | 6 +++---
+ 3 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/common/dpaax/compat.h b/drivers/common/dpaax/compat.h
-index d0635255da..3c229af9ef 100644
---- a/drivers/common/dpaax/compat.h
-+++ b/drivers/common/dpaax/compat.h
-@@ -365,19 +365,18 @@ static inline unsigned long get_zeroed_page(gfp_t __foo __rte_unused)
- #define spin_lock_irqsave(x, f) spin_lock_irq(x)
- #define spin_unlock_irqrestore(x, f) spin_unlock_irq(x)
+diff --git a/drivers/net/bnx2x/bnx2x.c b/drivers/net/bnx2x/bnx2x.c
+index 8790c858d5..027a0a50d5 100644
+--- a/drivers/net/bnx2x/bnx2x.c
++++ b/drivers/net/bnx2x/bnx2x.c
+@@ -1098,7 +1098,7 @@ bnx2x_sp_post(struct bnx2x_softc *sc, int command, int cid, uint32_t data_hi,
+ 	 * Ask bnx2x_intr_intr() to process RAMROD
+ 	 * completion whenever it gets scheduled.
+ 	 */
+-	rte_atomic32_set(&sc->scan_fp, 1);
++	rte_atomic_store_explicit(&sc->scan_fp, 1, rte_memory_order_seq_cst);
+ 	bnx2x_sp_prod_update(sc);
  
--#define atomic_t                rte_atomic32_t
--#define atomic_read(v)          rte_atomic32_read(v)
--#define atomic_set(v, i)        rte_atomic32_set(v, i)
--
--#define atomic_inc(v)           rte_atomic32_add(v, 1)
--#define atomic_dec(v)           rte_atomic32_sub(v, 1)
--
--#define atomic_inc_and_test(v)  rte_atomic32_inc_and_test(v)
--#define atomic_dec_and_test(v)  rte_atomic32_dec_and_test(v)
--
--#define atomic_inc_return(v)    rte_atomic32_add_return(v, 1)
--#define atomic_dec_return(v)    rte_atomic32_sub_return(v, 1)
--#define atomic_sub_and_test(i, v) (rte_atomic32_sub_return(v, i) == 0)
-+typedef RTE_ATOMIC(uint32_t) atomic_t;
-+
-+#define atomic_read(v)          rte_atomic_load_explicit((v), rte_memory_order_relaxed)
-+#define atomic_set(v, i)        rte_atomic_store_explicit((v), (i), rte_memory_order_relaxed)
-+#define atomic_inc(v)           ((void)rte_atomic_fetch_add_explicit((v), 1, \
-+								     rte_memory_order_seq_cst))
-+#define atomic_dec(v)           ((void)rte_atomic_fetch_sub_explicit((v), 1, \
-+								     rte_memory_order_seq_cst))
-+#define atomic_inc_and_test(v)  (rte_atomic_fetch_add_explicit((v), 1, \
-+							       rte_memory_order_seq_cst) == 0)
-+#define atomic_dec_and_test(v)  (rte_atomic_fetch_sub_explicit((v), 1, \
-+							       rte_memory_order_seq_cst) == 0)
+ 	return 0;
+@@ -4575,7 +4575,7 @@ static void bnx2x_handle_fp_tq(struct bnx2x_fastpath *fp)
+ 	/* update the fastpath index */
+ 	bnx2x_update_fp_sb_idx(fp);
  
- /* Interface name len*/
- #define IF_NAME_MAX_LEN 16
+-	if (rte_atomic32_read(&sc->scan_fp) == 1) {
++	if (rte_atomic_load_explicit(&sc->scan_fp, rte_memory_order_seq_cst)) {
+ 		if (bnx2x_has_rx_work(fp)) {
+ 			more_rx = bnx2x_rxeof(sc, fp);
+ 		}
+@@ -4586,7 +4586,7 @@ static void bnx2x_handle_fp_tq(struct bnx2x_fastpath *fp)
+ 			return;
+ 		}
+ 		/* We have completed slow path completion, clear the flag */
+-		rte_atomic32_set(&sc->scan_fp, 0);
++		rte_atomic_store_explicit(&sc->scan_fp, 0, rte_memory_order_seq_cst);
+ 	}
+ 
+ 	bnx2x_ack_sb(sc, fp->igu_sb_id, USTORM_ID,
+diff --git a/drivers/net/bnx2x/bnx2x.h b/drivers/net/bnx2x/bnx2x.h
+index 35206b4758..c5de4b71aa 100644
+--- a/drivers/net/bnx2x/bnx2x.h
++++ b/drivers/net/bnx2x/bnx2x.h
+@@ -1043,7 +1043,7 @@ struct bnx2x_softc {
+ #define PERIODIC_STOP 0
+ #define PERIODIC_GO   1
+ 	volatile unsigned long periodic_flags;
+-	rte_atomic32_t	scan_fp;
++	RTE_ATOMIC(uint32_t) scan_fp;
+ 	struct bnx2x_fastpath fp[MAX_RSS_CHAINS];
+ 	struct bnx2x_sp_objs  sp_objs[MAX_RSS_CHAINS];
+ 
+diff --git a/drivers/net/bnx2x/ecore_sp.c b/drivers/net/bnx2x/ecore_sp.c
+index c6c3857778..33a40dea6e 100644
+--- a/drivers/net/bnx2x/ecore_sp.c
++++ b/drivers/net/bnx2x/ecore_sp.c
+@@ -299,21 +299,21 @@ static int ecore_state_wait(struct bnx2x_softc *sc, int state,
+ #ifdef ECORE_STOP_ON_ERROR
+ 			ECORE_MSG(sc, "exit  (cnt %d)", 5000 - cnt);
+ #endif
+-			rte_atomic32_set(&sc->scan_fp, 0);
++			rte_atomic_store_explicit(&sc->scan_fp, 0, rte_memory_order_seq_cst);
+ 			return ECORE_SUCCESS;
+ 		}
+ 
+ 		ECORE_WAIT(sc, delay_us);
+ 
+ 		if (sc->panic) {
+-			rte_atomic32_set(&sc->scan_fp, 0);
++			rte_atomic_store_explicit(&sc->scan_fp, 0, rte_memory_order_seq_cst);
+ 			return ECORE_IO;
+ 		}
+ 	}
+ 
+ 	/* timeout! */
+ 	PMD_DRV_LOG(ERR, sc, "timeout waiting for state %d", state);
+-	rte_atomic32_set(&sc->scan_fp, 0);
++	rte_atomic_store_explicit(&sc->scan_fp, 0, rte_memory_order_seq_cst);
+ #ifdef ECORE_STOP_ON_ERROR
+ 	ecore_panic();
+ #endif
 -- 
 2.53.0
 
