@@ -2,71 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5DFDC55167
-	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Jul 2026 04:37:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81B33C55167
+	for <dpdk-dev@archiver.kernel.org>; Fri, 31 Jul 2026 04:59:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6C86640262;
-	Fri, 31 Jul 2026 06:37:55 +0200 (CEST)
-Received: from mail.lysator.liu.se (mail.lysator.liu.se [130.236.254.3])
- by mails.dpdk.org (Postfix) with ESMTP id 64B3C40151
- for <dev@dpdk.org>; Fri, 31 Jul 2026 06:37:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lysator.liu.se;
- s=2026; t=1785472672;
- bh=1qHqeeiKxG2b2FDclcbgZc/QxG3lbBc5Ch5J8M/jSgM=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=sv2PETBOef0tY5yjt4mRh8HVEqEbYvTkTLf/ke0kFLFOyY6ggyv9JEAP0Yh8UuHNO
- RppMFrxNzvqdTam03TlPUUVvWV4blZ51ZnWdR39bqSvsRWmV9Rub27DWUj15vVv7hd
- sML81g4KrVhy8gkHTEgUymcG20WNeB4WfrENE6F6pghBYOjd+LB6LxCYoWnsub8kSR
- gaH6G9ehLozZdxe/unEZHmVc/2uSYcrfxiSVEizwKovi9/1ZlW2D+xboxs8f7JmBNW
- l1tlr3oQL1jcahlbjnn9pZqoX20H25Ma+pDiYdivwGR3xvT1wB5KS41JblayvE+t7V
- 1WidjOmChm4Aw==
-Received: from mail.lysator.liu.se (localhost [127.0.0.1])
- by mail.lysator.liu.se (Postfix) with ESMTP id C331012E64
- for <dev@dpdk.org>; Fri, 31 Jul 2026 06:37:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lysator.liu.se;
- s=2026; t=1785472672;
- bh=1qHqeeiKxG2b2FDclcbgZc/QxG3lbBc5Ch5J8M/jSgM=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=sv2PETBOef0tY5yjt4mRh8HVEqEbYvTkTLf/ke0kFLFOyY6ggyv9JEAP0Yh8UuHNO
- RppMFrxNzvqdTam03TlPUUVvWV4blZ51ZnWdR39bqSvsRWmV9Rub27DWUj15vVv7hd
- sML81g4KrVhy8gkHTEgUymcG20WNeB4WfrENE6F6pghBYOjd+LB6LxCYoWnsub8kSR
- gaH6G9ehLozZdxe/unEZHmVc/2uSYcrfxiSVEizwKovi9/1ZlW2D+xboxs8f7JmBNW
- l1tlr3oQL1jcahlbjnn9pZqoX20H25Ma+pDiYdivwGR3xvT1wB5KS41JblayvE+t7V
- 1WidjOmChm4Aw==
-Received: by mail.lysator.liu.se (Postfix, from userid 1004)
- id A91FF12F0C; Fri, 31 Jul 2026 06:37:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lysator.liu.se;
- s=2026; t=1785472671;
- bh=1qHqeeiKxG2b2FDclcbgZc/QxG3lbBc5Ch5J8M/jSgM=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=Vd/9tcRXiQidsFk/w6vMWjJTE5tvTa9rq/nLKTiUSOLqxdYP1if2/4sdllsCXYAWi
- poLgW1TN5jC3U2AQqrpYmWu5/ehjtSrC59JwVgM2YhT6ItGGC71CqGYardLukJ2H6F
- 692rCcn7Jko6ynI6VcW13VtQTlWcOLGUFK2ZNK1dRCDnj8fAlYasdqRgmFV2f/505Q
- gBOY7s8Z5KGlTmykiNKFt57hp/5eQ+WBmzKrTlYjrLFmapuycwYCYc7Bl5iv4dYYe/
- 763FmuyHZS2JFOJHbfs8Ni553hkvJ9RlLD2B/l2tkxFL4ttBeZxn788NibBwxcn764
- TJglRx8fD594w==
-Received: from [192.168.1.85] (h-62-63-215-114.A163.priv.bahnhof.se
- [62.63.215.114])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
- (No client certificate requested)
- by mail.lysator.liu.se (Postfix) with ESMTPSA id 056DB12EAA;
- Fri, 31 Jul 2026 06:37:50 +0200 (CEST)
-Message-ID: <3e81a4bb-21d8-44a5-8714-ec8185fe61a6@lysator.liu.se>
-Date: Fri, 31 Jul 2026 06:37:50 +0200
+	by mails.dpdk.org (Postfix) with ESMTP id 3D61C40262;
+	Fri, 31 Jul 2026 06:59:54 +0200 (CEST)
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
+ [209.85.214.170])
+ by mails.dpdk.org (Postfix) with ESMTP id CD3EA40151
+ for <dev@dpdk.org>; Fri, 31 Jul 2026 06:59:52 +0200 (CEST)
+Received: by mail-pl1-f170.google.com with SMTP id
+ d9443c01a7336-2caced6038eso4497585ad.0
+ for <dev@dpdk.org>; Thu, 30 Jul 2026 21:59:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785473992;
+ x=1786078792; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=yNtVJTmjT/LfahaOPO9qfvRxJJiJm4kXYxIMqEH9hh0=;
+ b=cdlA7TSygZq09A5tiJKX8dCMvzQzoS0fyZRdm9GaVtuYb/QQIA6W86tFNoOvWoTLuO
+ 09kaWMXd/frWm/b7CQQI5hELjIXgSgO184sZbTmRjstagbiyeJW7NYhlFo133eRfw5F0
+ xaHLg6IgCKgCGwhgqMBTXMnAKX8uegREbPBUpRc+cZFHHNV+uXOVeKd7xoZd0bhTg1v1
+ gBJO4MpxPJQfznWfuy6ksSLCeKctfQPhiUexqqTPxs5K5UAQhTtao9TXszMIArgWiH47
+ Ucjx8Sx+XBXiHOrzmGzvpI8JhZ5572sJEMXqUQ+g4hfYlcE/Wv74oLSJx4L+Z7yFjZGz
+ pbQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1785473992; x=1786078792;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=yNtVJTmjT/LfahaOPO9qfvRxJJiJm4kXYxIMqEH9hh0=;
+ b=d4NMDoYA5+IwEJF5I3SEXbPcNkQsYUK6C13jmxI6qeQJ5K1ouRlzMy1ZgAKRkn48R+
+ ghSNqMlkejn7Y+5fa5J6NGDBQ2Kt80vZzv/hpOBbM0FvTwyb7HVMz/vVf0fvCLaJWJf1
+ 39sRHr/2Vr3MlwKIF6zn+CIwvBwhfJQFFzsmkUl0K9LhaLvxXX0G+S/aH6YAs7V58ORe
+ olikpsFRJ3Fz5DRnLuHZNgnlyW28RR4e6xbdW82Dtx6enLoestGAr8MoJDWAEFPO34ux
+ ZjeodKytmOL4Xb6ERiEnhhSTOGNg5LWBY3qaoNmXaOSU0KyBf6Ljcr29kYrpUBag0dMY
+ MiCg==
+X-Gm-Message-State: AOJu0YxAHkbvCE9rv+FfMVijLacO2VKIjf3x+AzdE6x0bbHLLWDDbvS1
+ LnIe5lRBYEkFswFnzXmUY1/q8/cWm9el67Pw0uNAeP4FlyaemIUWezBsF7wIGzv4rdz6Qs71tIt
+ NlJWz
+X-Gm-Gg: AR+sD1003qE5OlWDs2jsCZm+vh9MpbNqaSinf4luN/54Kr1dHZAWevmxkkTntxUqTha
+ V7fVhEOjt3gZ4wVDimUtz2EQxM8+NEeQ7mRRrUlvBlHO9KdWiabY2TCibON6O4+2+FFyXQduXz3
+ pfiF+CTdW3iZ+/7ix++N7xtaErt1iEgaqfduM3HmJm4KEdu+SyQdHgU0Brca3k7KQnfpfHc5Qk0
+ DLmXXkK1aImkhLC4vmAdqmUm9CUb8E0jdexYK1EWkKHtMqjK0wsoy8fIyBbswoM3GIp+idzsM/b
+ 4A7uZ/Jy2t0AV/iD6EMF7+azFDZpLGIoYh7fL8eojivD2RjDancFlJPhKfqZa1/zWFC3lR2LNXN
+ d49Vo8qT754tW46ZHneHU/tIYid61nDLMX20IJh6hRG+ClqpfuJqUfNQT4X/OdQETncQbgFDMrs
+ 7o4LNrdzZVhPDkP6LxGlFz7IKv3fR+j61Gf63Qj9vzp1RWrAk4HFfzry9izsn/Syx7XOeKot4mz
+ UnVpkO693NzqfgF/N59FhPGI310DZ8vhjdAIA==
+X-Received: by 2002:a17:903:2a88:b0:2cf:4c37:d955 with SMTP id
+ d9443c01a7336-2d047eac04cmr4112335ad.27.1785473991558; 
+ Thu, 30 Jul 2026 21:59:51 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-3153e06f0f9sm823245eec.23.2026.07.30.21.59.50
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 30 Jul 2026 21:59:51 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v6 00/24] replace use of rte_atomicNN
+Date: Thu, 30 Jul 2026 21:57:38 -0700
+Message-ID: <20260731045948.769926-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260521042043.1590536-1-stephen@networkplumber.org>
+References: <20260521042043.1590536-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 24/32] event/dsw: replace SMP barriers with release fences
-To: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org
-Cc: =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>
-References: <20260729175715.165120-1-stephen@networkplumber.org>
- <20260729175715.165120-25-stephen@networkplumber.org>
-Content-Language: en-US
-From: =?UTF-8?Q?Mattias_R=C3=B6nnblom?= <hofors@lysator.liu.se>
-In-Reply-To: <20260729175715.165120-25-stephen@networkplumber.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,65 +82,115 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 7/29/26 19:54, Stephen Hemminger wrote:
-> All four barriers publish flow table or ring updates before a
-> control message enqueue, which is release ordering. All are on the
-> migration control path, not per event.
-> 
-> The fences may in fact be removable: the control messages travel
-> through rte_ring, whose producer tail update is itself a release
-> store covering the preceding writes. Left in place here to keep
-> this a like for like conversion.
-> 
+The rte_atomicNN_* family was flagged for deprecation in 2021 by
+commit 3ec965b6de12 ("doc: update atomic operation deprecation")
+but enforcement never landed and in-tree usage continued to grow.
 
-I also suspect you can remove some or all of these. Not sure it's worth 
-the trouble though.
+This series finishes converting every remaining in-tree caller to
+the C11-style rte_atomic_*_explicit() / RTE_ATOMIC() API, then
+marks the legacy functions __rte_deprecated so future in-tree and
+out-of-tree uses are caught at compile time.
 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
->   drivers/event/dsw/dsw_event.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/event/dsw/dsw_event.c b/drivers/event/dsw/dsw_event.c
-> index 399d9f050e..82d3636b29 100644
-> --- a/drivers/event/dsw/dsw_event.c
-> +++ b/drivers/event/dsw/dsw_event.c
-> @@ -339,7 +339,7 @@ dsw_port_handle_pause_flows(struct dsw_evdev *dsw, struct dsw_port *port,
->   	/* Make sure any stores to the original port's in_ring is seen
->   	 * before the ctl message.
->   	 */
-> -	rte_smp_wmb();
-> +	rte_atomic_thread_fence(rte_memory_order_release);
->   
->   	dsw_port_ctl_enqueue(&dsw->ports[originating_port_id], &cfm);
->   }
-> @@ -821,7 +821,7 @@ dsw_port_move_parallel_flows(struct dsw_evdev *dsw,
->   		}
->   	}
->   
-> -	rte_smp_wmb();
-> +	rte_atomic_thread_fence(rte_memory_order_release);
->   
->   	dsw_port_end_emigration(dsw, source_port, RTE_SCHED_TYPE_PARALLEL);
->   }
-> @@ -1190,7 +1190,7 @@ dsw_port_move_emigrating_flows(struct dsw_evdev *dsw,
->   		    dest_port_id;
->   	}
->   
-> -	rte_smp_wmb();
-> +	rte_atomic_thread_fence(rte_memory_order_release);
->   
->   	dsw_port_drain_in_ring(source_port);
->   	dsw_port_forward_emigrated_flows(dsw, source_port);
-> @@ -1213,7 +1213,7 @@ dsw_port_move_emigrating_flows(struct dsw_evdev *dsw,
->   	/* Flow table update and migration destination port's enqueues
->   	 * must be seen before the control message.
->   	 */
-> -	rte_smp_wmb();
-> +	rte_atomic_thread_fence(rte_memory_order_release);
->   
->   	dsw_port_ctl_broadcast(dsw, source_port, DSW_CTL_UNPAUSE_REQ,
->   			       source_port->emigration_target_qfs,
+The goal of this series is to get driver writers to review and
+test each change.
 
-Reviewed-by: Mattias Rönnblom <mattias.ronnblom@ericsson.com>
+v6 - rebase for 26.11
+   - address some more AI review comments
+
+Stephen Hemminger (24):
+  bpf: use C11 atomics in BPF_ST_ATOMIC_REG
+  net/bonding: use stdatomic
+  net/nbl: remove unused rte_atomic16 field
+  net/ena: replace use of rte_atomicNN
+  net/failsafe: convert to stdatomic
+  net/enic: do not use deprecated rte_atomic64
+  net/pfe: use ethdev linkstatus helpers
+  net/sfc: replace rte_atomic with stdatomic
+  crypto/ccp: replace use of rte_atomic64 with stdatomic
+  bus/dpaa: replace rte_atomic16 with stdatomic
+  bus/fslmc: replace rte_atomic16 with stdatomic
+  net/netvsc: replace rte_atomic32 with stdatomic
+  event/sw: convert from rte_atomic32 to stdatomic
+  bus/vmbus: convert from rte_atomic to stdatomic
+  common/dpaax: use stdatomic instead of rte_atomic
+  net/bnx2x: convert from rte_atomic32 to stdatomic
+  bus/fslmc: replace rte_atomic32 with stdatomic
+  drivers/event: replace rte_atomic32 in selftests
+  net/hinic: replace rte_atomic32 with stdatomic
+  net/txgbe: replace rte_atomic32 with stdatomic
+  net/vhost: use stdatomic instead of rte_atomic32
+  vdpa/ifc: replace rte_atomic32 with stdatomic
+  test/atomic: suppress deprecation warnings for legacy APIs
+  eal: deprecate rte_atomicNN functions
+
+ app/test/test_atomic.c                        |  12 +
+ devtools/checkpatches.sh                      |   8 -
+ doc/guides/rel_notes/deprecation.rst          |   4 +-
+ doc/guides/rel_notes/release_26_11.rst        |   5 +
+ drivers/bus/dpaa/base/qbman/qman.c            |   9 +-
+ drivers/bus/fslmc/portal/dpaa2_hw_dpbp.c      |  11 +-
+ drivers/bus/fslmc/portal/dpaa2_hw_dpci.c      |  11 +-
+ drivers/bus/fslmc/portal/dpaa2_hw_dpcon.c     |  11 +-
+ drivers/bus/fslmc/portal/dpaa2_hw_dpio.c      |  14 +-
+ drivers/bus/fslmc/portal/dpaa2_hw_pvt.h       |   9 +-
+ drivers/bus/fslmc/qbman/include/compat.h      |  21 +-
+ drivers/bus/vmbus/private.h                   |   2 +-
+ drivers/bus/vmbus/vmbus_bufring.c             |  39 +--
+ drivers/common/dpaax/compat.h                 |  25 +-
+ drivers/crypto/ccp/ccp_crypto.c               |  11 +-
+ drivers/crypto/ccp/ccp_crypto.h               |   2 +-
+ drivers/crypto/ccp/ccp_dev.c                  |  10 +-
+ drivers/crypto/ccp/ccp_dev.h                  |   4 +-
+ drivers/event/dpaa2/dpaa2_eventdev_selftest.c |  26 +-
+ drivers/event/octeontx/ssovf_evdev_selftest.c |  61 +++--
+ drivers/event/sw/sw_evdev.c                   |   8 +-
+ drivers/event/sw/sw_evdev.h                   |   4 +-
+ drivers/event/sw/sw_evdev_worker.c            |  16 +-
+ drivers/net/bnx2x/bnx2x.c                     |   6 +-
+ drivers/net/bnx2x/bnx2x.h                     |   2 +-
+ drivers/net/bnx2x/ecore_sp.c                  |   6 +-
+ drivers/net/bonding/eth_bond_8023ad_private.h |   6 +-
+ drivers/net/bonding/rte_eth_bond_8023ad.c     |  35 +--
+ drivers/net/ena/base/ena_plat_dpdk.h          |  14 +-
+ drivers/net/ena/ena_ethdev.c                  |  21 +-
+ drivers/net/ena/ena_ethdev.h                  |   7 +-
+ drivers/net/enic/enic.h                       |   6 +-
+ drivers/net/enic/enic_compat.h                |   1 -
+ drivers/net/enic/enic_main.c                  |  17 +-
+ drivers/net/enic/enic_rxtx.c                  |  14 +-
+ drivers/net/enic/enic_rxtx_vec_avx2.c         |   4 +-
+ drivers/net/failsafe/failsafe_ops.c           |  12 +-
+ drivers/net/failsafe/failsafe_private.h       |  29 ++-
+ drivers/net/failsafe/failsafe_rxtx.c          |   2 +-
+ drivers/net/hinic/base/hinic_compat.h         |   2 +-
+ drivers/net/hinic/base/hinic_pmd_hwdev.c      |  24 +-
+ drivers/net/hinic/base/hinic_pmd_hwdev.h      |   4 +-
+ drivers/net/nbl/nbl_hw/nbl_resource.h         |   1 -
+ drivers/net/netvsc/hn_rndis.c                 |  28 +-
+ drivers/net/netvsc/hn_rxtx.c                  |  12 +-
+ drivers/net/netvsc/hn_var.h                   |   6 +-
+ drivers/net/pfe/pfe_ethdev.c                  |  32 +--
+ drivers/net/sfc/sfc.c                         |   9 +-
+ drivers/net/sfc/sfc.h                         |   4 +-
+ drivers/net/sfc/sfc_port.c                    |   7 +-
+ drivers/net/sfc/sfc_stats.h                   |   2 +-
+ drivers/net/txgbe/base/txgbe_mng.c            |   4 +-
+ drivers/net/txgbe/base/txgbe_type.h           |   2 +-
+ drivers/net/vhost/rte_eth_vhost.c             | 103 +++++---
+ drivers/vdpa/ifc/ifcvf_vdpa.c                 |  37 +--
+ lib/bpf/bpf_exec.c                            |  13 +-
+ lib/eal/arm/include/rte_atomic_32.h           |   4 -
+ lib/eal/arm/include/rte_atomic_64.h           |   4 -
+ lib/eal/include/generic/rte_atomic.h          | 243 +++++-------------
+ lib/eal/include/rte_common.h                  |   2 +
+ lib/eal/loongarch/include/rte_atomic.h        |   4 -
+ lib/eal/ppc/include/rte_atomic.h              | 173 -------------
+ lib/eal/riscv/include/rte_atomic.h            |   4 -
+ lib/eal/x86/include/rte_atomic.h              | 172 -------------
+ lib/eal/x86/include/rte_atomic_32.h           | 188 --------------
+ lib/eal/x86/include/rte_atomic_64.h           | 157 -----------
+ 66 files changed, 482 insertions(+), 1264 deletions(-)
+
+-- 
+2.53.0
 
