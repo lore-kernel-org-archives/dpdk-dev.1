@@ -2,33 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C863CC5516F
-	for <dpdk-dev@archiver.kernel.org>; Sat,  1 Aug 2026 08:08:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F334C54FCD
+	for <dpdk-dev@archiver.kernel.org>; Sat,  1 Aug 2026 08:10:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 22B4B402ED;
-	Sat,  1 Aug 2026 10:08:52 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A7BBB402BB;
+	Sat,  1 Aug 2026 10:10:17 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id ADCEA40299
- for <dev@dpdk.org>; Sat,  1 Aug 2026 10:08:50 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com (unknown [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 72FB8226C9
- for <dev@dpdk.org>; Fri, 31 Jul 2026 20:02:09 +0200 (CEST)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Fri, 31 Jul 2026 20:02:09 +0200
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-To: dev@dpdk.org
-Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [RFC PATCH] NEW: pile stack and mempool driver
-Date: Fri, 31 Jul 2026 18:02:02 +0000
-Message-ID: <20260731180202.978978-1-mb@smartsharesystems.com>
-X-Mailer: git-send-email 2.43.0
+ by mails.dpdk.org (Postfix) with ESMTP id 631FD40299
+ for <dev@dpdk.org>; Sat,  1 Aug 2026 10:10:16 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 4302B20730
+ for <dev@dpdk.org>; Sat,  1 Aug 2026 10:10:16 +0200 (CEST)
+Subject: RE: [RFC PATCH] pile stack and mempool driver (resend)
+Date: Sat, 1 Aug 2026 10:10:14 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F659AD@smartserver.smartshare.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 31 Jul 2026 18:02:09.0111 (UTC)
- FILETIME=[B46E5670:01DD2116]
+Content-Type: text/plain;
+	charset="utf-8"
+In-Reply-To: <20260801065358.981232-1-mb@smartsharesystems.com>
+Content-Transfer-Encoding: base64
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Content-class: urn:content-classes:message
+Thread-Topic: [RFC PATCH] pile stack and mempool driver (resend)
+Thread-Index: Ad0hjPuETlP1fp1NSHafYvEG4jyT1QAAB7dg
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+References: <20260801065358.981232-1-mb@smartsharesystems.com>
+From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: <dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -42,1608 +45,1098 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Early submission of:
-- some mempool optimizations,
-- a new mempool "pile" driver, and
-- its underlying "pile" stack implementation.
-
-For community feedback and CI test.
-
-Needless to say, this must be separated into a series of patches.
-For now, I'm submitting a snapshot of work in progress.
-
-Some performance numbers from mempool_perf_autotest_2cores, all
-with cache=1024 cores=2 n_keep=32768:
-
-start performance test (using ring_mp_mc, with cache)
-n_get_bulk= 64 n_put_bulk= 64 constant_n=0 rate_persec= 753985338
-n_get_bulk=256 n_put_bulk=256 constant_n=0 rate_persec= 755805913
-
-start performance test for lf_stack (with cache)
-n_get_bulk= 64 n_put_bulk= 64 constant_n=0 rate_persec=  29132352
-n_get_bulk=256 n_put_bulk=256 constant_n=0 rate_persec=  29276708
-
-start performance test for pile (with cache)
-n_get_bulk= 64 n_put_bulk= 64 constant_n=0 rate_persec= 560159479
-n_get_bulk=256 n_put_bulk=256 constant_n=0 rate_persec= 557910933
-
-Hat tip to Bruce for bringing attention to the ring not being the
-optimal mempool driver.
-
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
----
- app/test/test_mempool.c                   |   3 +-
- app/test/test_stack.c                     |  70 ++++-
- app/test/test_stack_perf.c                |  15 +-
- config/rte_config.h                       |   5 +-
- doc/guides/prog_guide/stack_lib.rst       |  67 ++++-
- drivers/mempool/stack/rte_mempool_stack.c |  40 +++
- drivers/net/bonding/rte_eth_bond_pmd.c    |   2 +-
- drivers/net/intel/cpfl/cpfl_rxtx.h        |   2 +-
- drivers/net/sxe2/sxe2_txrx_vec_avx512.c   |   3 +-
- drivers/net/tap/rte_eth_tap.c             |   2 +-
- lib/eal/include/rte_common.h              |  12 +
- lib/eal/x86/include/rte_memcpy.h          |  29 ++
- lib/mempool/mempool_trace.h               |   1 -
- lib/mempool/rte_mempool.c                 |  51 ++--
- lib/mempool/rte_mempool.h                 |  74 +++--
- lib/stack/meson.build                     |   3 +-
- lib/stack/rte_stack.c                     |  18 +-
- lib/stack/rte_stack.h                     |  77 +++++-
- lib/stack/rte_stack_lf.h                  |   6 +-
- lib/stack/rte_stack_lf_c11.h              |   2 +-
- lib/stack/rte_stack_lf_generic.h          |   2 +-
- lib/stack/rte_stack_lf_stubs.h            |   2 +-
- lib/stack/rte_stack_pile.c                |  33 +++
- lib/stack/rte_stack_pile.h                | 316 ++++++++++++++++++++++
- lib/stack/rte_stack_std.h                 |  41 ++-
- 25 files changed, 756 insertions(+), 120 deletions(-)
- create mode 100644 lib/stack/rte_stack_pile.c
- create mode 100644 lib/stack/rte_stack_pile.h
-
-diff --git a/app/test/test_mempool.c b/app/test/test_mempool.c
-index e54249ce61..76d45cea2a 100644
---- a/app/test/test_mempool.c
-+++ b/app/test/test_mempool.c
-@@ -112,8 +112,7 @@ test_mempool_basic(struct rte_mempool *mp, int use_external_cache)
- 		GOTO_ERR(ret, out);
- 
- 	printf("get private data\n");
--	if (rte_mempool_get_priv(mp) != (char *)mp +
--			RTE_MEMPOOL_HEADER_SIZE(mp, mp->cache_size))
-+	if (rte_mempool_get_priv(mp) != (char *)mp + sizeof(struct rte_mempool))
- 		GOTO_ERR(ret, out);
- 
- #ifndef RTE_EXEC_ENV_FREEBSD /* rte_mem_virt2iova() not supported on bsd */
-diff --git a/app/test/test_stack.c b/app/test/test_stack.c
-index 5517982774..ac52f1c048 100644
---- a/app/test/test_stack.c
-+++ b/app/test/test_stack.c
-@@ -81,13 +81,29 @@ test_stack_push_pop(struct rte_stack *s, void **obj_table, unsigned int bulk_sz)
- 		}
- 	}
- 
--	for (i = 0; i < STACK_SIZE; i++) {
--		if (obj_table[i] != popped_objs[STACK_SIZE - i - 1]) {
--			printf("[%s():%u] Incorrect value %p at index 0x%x\n",
--			       __func__, __LINE__,
--			       popped_objs[STACK_SIZE - i - 1], i);
--			rte_free(popped_objs);
--			return -1;
-+	if (!(s->flags & RTE_STACK_F_PILE)) {
-+		for (i = 0; i < STACK_SIZE; i++) {
-+			if (obj_table[i] != popped_objs[STACK_SIZE - i - 1]) {
-+				printf("[%s():%u] Incorrect value %p at index 0x%x\n",
-+				       __func__, __LINE__,
-+				       popped_objs[STACK_SIZE - i - 1], i);
-+				rte_free(popped_objs);
-+				return -1;
-+			}
-+		}
-+	}
-+
-+	if ((s->flags & RTE_STACK_F_PILE) && (bulk_sz & (RTE_STACK_PILE_BULK_SIZE - 1)) == 0) {
-+		for (i = 0; i < STACK_SIZE; i += RTE_STACK_PILE_BULK_SIZE) {
-+			if (memcmp(&obj_table[i],
-+					&popped_objs[STACK_SIZE - RTE_STACK_PILE_BULK_SIZE - i],
-+					RTE_STACK_PILE_BULK_SIZE) != 0) {
-+				printf("[%s():%u] Incorrect values %p at index 0x%x with bulk size %u\n",
-+				       __func__, __LINE__,
-+				       popped_objs[STACK_SIZE - RTE_STACK_PILE_BULK_SIZE - i], i, bulk_sz);
-+				rte_free(popped_objs);
-+				return -1;
-+			}
- 		}
- 	}
- 
-@@ -152,12 +168,26 @@ test_stack_basic(uint32_t flags)
- 		goto fail_test;
- 	}
- 
--	ret = rte_stack_push(s, obj_table, 2 * STACK_SIZE);
--	if (ret != 0) {
--		printf("[%s():%u] Excess objects push succeeded\n",
--		       __func__, __LINE__);
--		goto fail_test;
-+__rte_diagnostic_push
-+#pragma GCC diagnostic ignored "-Warray-bounds"
-+#pragma GCC diagnostic ignored "-Wstringop-overread"
-+	if (!(s->flags & RTE_STACK_F_PILE)) {
-+		ret = rte_stack_push(s, obj_table, 2 * STACK_SIZE);
-+		if (ret != 0) {
-+			printf("[%s():%u] Excess objects push succeeded\n",
-+			       __func__, __LINE__);
-+			goto fail_test;
-+		}
- 	}
-+	if (s->flags & RTE_STACK_F_PILE) {
-+		ret = rte_stack_push(s, obj_table, STACK_SIZE * RTE_STACK_PILE_BULK_SIZE + 1);
-+		if (ret != 0) {
-+			printf("[%s():%u] Excess objects push succeeded\n",
-+			       __func__, __LINE__);
-+			goto fail_test;
-+		}
-+	}
-+__rte_diagnostic_pop
- 
- 	ret = rte_stack_pop(s, obj_table, 1);
- 	if (ret != 0) {
-@@ -181,14 +211,14 @@ test_stack_name_reuse(uint32_t flags)
- {
- 	struct rte_stack *s[2];
- 
--	s[0] = rte_stack_create("test", STACK_SIZE, rte_socket_id(), flags);
-+	s[0] = rte_stack_create(__func__, STACK_SIZE, rte_socket_id(), flags);
- 	if (s[0] == NULL) {
- 		printf("[%s():%u] Failed to create a stack\n",
- 		       __func__, __LINE__);
- 		return -1;
- 	}
- 
--	s[1] = rte_stack_create("test", STACK_SIZE, rte_socket_id(), flags);
-+	s[1] = rte_stack_create(__func__, STACK_SIZE, rte_socket_id(), flags);
- 	if (s[1] != NULL) {
- 		printf("[%s():%u] Failed to detect re-used name\n",
- 		       __func__, __LINE__);
-@@ -300,6 +330,7 @@ stack_thread_push_pop(__rte_unused void *args)
- 			       __func__, __LINE__, num);
- 			return -1;
- 		}
-+		rte_compiler_barrier();
- 	}
- 
- 	return 0;
-@@ -384,5 +415,16 @@ test_lf_stack(void)
- #endif
- }
- 
-+static int
-+test_pile(void)
-+{
-+#if defined(RTE_STACK_PILE_SUPPORTED)
-+	return __test_stack(RTE_STACK_F_PILE);
-+#else
-+	return TEST_SKIPPED;
-+#endif
-+}
-+
- REGISTER_FAST_TEST(stack_autotest, NOHUGE_SKIP, ASAN_OK, test_stack);
- REGISTER_FAST_TEST(stack_lf_autotest, NOHUGE_SKIP, ASAN_OK, test_lf_stack);
-+REGISTER_FAST_TEST(stack_pile_autotest, NOHUGE_SKIP, ASAN_OK, test_pile);
-diff --git a/app/test/test_stack_perf.c b/app/test/test_stack_perf.c
-index 3f17a2606c..586410671f 100644
---- a/app/test/test_stack_perf.c
-+++ b/app/test/test_stack_perf.c
-@@ -14,14 +14,14 @@
- #include "test.h"
- 
- #define STACK_NAME "STACK_PERF"
--#define MAX_BURST 32
-+#define MAX_BURST RTE_MEMPOOL_CACHE_MAX_SIZE / 2
- #define STACK_SIZE (RTE_MAX_LCORE * MAX_BURST)
- 
- /*
-  * Push/pop bulk sizes, marked volatile so they aren't treated as compile-time
-  * constants.
-  */
--static volatile unsigned int bulk_sizes[] = {8, MAX_BURST};
-+static volatile unsigned int bulk_sizes[] = {1, 8, 32, MAX_BURST};
- 
- static RTE_ATOMIC(uint32_t) lcore_barrier;
- 
-@@ -354,5 +354,16 @@ test_lf_stack_perf(void)
- #endif
- }
- 
-+static int
-+test_pile_perf(void)
-+{
-+#if defined(RTE_STACK_PILE_SUPPORTED)
-+	return __test_stack_perf(RTE_STACK_F_PILE);
-+#else
-+	return TEST_SKIPPED;
-+#endif
-+}
-+
- REGISTER_PERF_TEST(stack_perf_autotest, test_stack_perf);
- REGISTER_PERF_TEST(stack_lf_perf_autotest, test_lf_stack_perf);
-+REGISTER_PERF_TEST(stack_pile_perf_autotest, test_pile_perf);
-diff --git a/config/rte_config.h b/config/rte_config.h
-index 0447cdf2ad..03350660e4 100644
---- a/config/rte_config.h
-+++ b/config/rte_config.h
-@@ -56,7 +56,7 @@
- #define RTE_CONTIGMEM_DEFAULT_BUF_SIZE (512*1024*1024)
- 
- /* mempool defines */
--#define RTE_MEMPOOL_CACHE_MAX_SIZE 512
-+#define RTE_MEMPOOL_CACHE_MAX_SIZE 1024
- /* RTE_LIBRTE_MEMPOOL_STATS is not set */
- /* RTE_LIBRTE_MEMPOOL_DEBUG is not set */
- 
-@@ -64,6 +64,9 @@
- #define RTE_MBUF_DEFAULT_MEMPOOL_OPS "ring_mp_mc"
- /* RTE_MBUF_HISTORY_DEBUG is not set */
- 
-+/* stack defines */
-+#define RTE_STACK_PILE_BULK_SIZE 32
-+
- /* ether defines */
- #define RTE_MAX_QUEUES_PER_PORT 1024
- #define RTE_ETHDEV_RXTX_CALLBACKS 1
-diff --git a/doc/guides/prog_guide/stack_lib.rst b/doc/guides/prog_guide/stack_lib.rst
-index fdf056730c..9b473030d3 100644
---- a/doc/guides/prog_guide/stack_lib.rst
-+++ b/doc/guides/prog_guide/stack_lib.rst
-@@ -1,5 +1,6 @@
- ..  SPDX-License-Identifier: BSD-3-Clause
-     Copyright(c) 2019 Intel Corporation.
-+    Copyright(c) 2026 SmartShare Systems.
- 
- Stack Library
- =============
-@@ -9,9 +10,10 @@ stack of pointers.
- 
- The stack library provides the following basic operations:
- 
--*  Create a uniquely named stack of a user-specified size and using a
-+*  Create a uniquely named stack (or pile) of a user-specified size and using a
-    user-specified socket, with either standard (lock-based) or lock-free
-    behavior.
-+   The pile resembles a lock-free stack, but is not strictly LIFO.
- 
- *  Push and pop a burst of one or more stack objects (pointers).
-    These functions are multi-thread safe.
-@@ -25,8 +27,9 @@ The stack library provides the following basic operations:
- Implementation
- --------------
- 
--The library supports two types of stacks: standard (lock-based) and lock-free.
--Both types use the same set of interfaces, but their implementations differ.
-+The library supports three types of stacks: standard (lock-based), lock-free,
-+and pile (lock-free, not strictly LIFO, optimized for bulk operations).
-+All types use the same set of interfaces, but their implementations differ.
- 
- .. _Stack_Library_Std_Stack:
- 
-@@ -64,7 +67,7 @@ The linked list elements themselves are maintained in a lock-free LIFO, and are
- allocated before stack pushes and freed after stack pops. Since the stack has a
- fixed maximum depth, these elements do not need to be dynamically created.
- 
--The lock-free behavior is selected by passing the *RTE_STACK_F_LF* flag to
-+The lock-free behavior is selected by passing the ``RTE_STACK_F_LF`` flag to
- ``rte_stack_create()``.
- 
- Preventing the ABA problem
-@@ -86,3 +89,59 @@ both pop stale data and incorrectly change the head pointer. By adding a
- modification counter that is updated on every push and pop as part of the
- compare-and-swap, the algorithm can detect when the list changes even if the
- head pointer remains the same.
-+
-+.. _Stack_Library_Pile:
-+
-+Pile
-+~~~~
-+
-+The pile is a stack-like implementation, optimized for bulk operations.
-+It is only LIFO on bulk level, not on object level; i.e. arrays of bulks are
-+pushed and popped in LIFO manner, but objects within each bulk are not ordered
-+as expected by a stack.
-+
-+The pile implementation generally resembles that of the lock-free stack.
-+In addition to the lock-free stack's linked list of solo (single-object) elements,
-+it also contains a linked list of bulk (multi-object) elements.
-+And similar to the linked list of free elements, it contains two linked lists of
-+free elements, one for each element type (bulk and solo).
-+The lock-free property means that multiple threads can push and pop simultaneously.
-+One thread being preempted/delayed in a push or pop operation will not
-+impede the forward progress of any other thread.
-+
-+Push operations are performed by splitting the burst in two: objects fitting into
-+bulk elements, and any remaining objects (after filling bulk elements) into
-+solo elements, and then performaing two lock-free push operations,
-+one for each element type (solo and bulk).
-+
-+Pop operations are performed by splitting the burst in two: objects fitting into
-+bulk elements, and any remaining objects (not filling a bulk element) into
-+solo elements. Two lock-free pop operations are performed,
-+first for bulk elements, and then for solo elements.
-+If the pop operation for bulk elements fails, it keeps retrying, requesting one
-+less bulk element. The number of solo elements in the following request is
-+correspondingly increased.
-+
-+The pile's lock-free list push and pop operations use the lock-free stack's
-+implementations (and uses type casting to mimick C++ class inheritance).
-+
-+The linked list elements themselves are maintained in two lock-free LIFOs,
-+one for bulk elements and one for solo elements, and are
-+allocated before pushes and freed after pops. Since the pile has a
-+fixed maximum depth, these elements do not need to be dynamically created.
-+
-+The pile behavior is selected by passing the ``RTE_STACK_F_PILE`` flag to
-+``rte_stack_create()``.
-+
-+The pile bulk size can be changed by modifying ``RTE_STACK_PILE_BULK_SIZE`` in
-+``config/rte_config.h``.
-+For optimal performance when using the pile mempool driver, the
-+mempool cache size / 2 should be divisible by the pile bulk size.
-+
-+Note:
-+The pile is designed and optimized for use with bulks of objects.
-+Bursts not a multiple of the bulk size are still handled in a lock-free,
-+forward-progress-guaranteed manner. However, pop operations may exhibit
-+significantly lower performance in instances where the optimal number of
-+bulk elements is unavailable, and it is necessary to retry (fetching
-+increasingly fewer bulk elements and correspondingly more solo elements).
-diff --git a/drivers/mempool/stack/rte_mempool_stack.c b/drivers/mempool/stack/rte_mempool_stack.c
-index 1476905227..7467b8b39e 100644
---- a/drivers/mempool/stack/rte_mempool_stack.c
-+++ b/drivers/mempool/stack/rte_mempool_stack.c
-@@ -41,6 +41,36 @@ lf_stack_alloc(struct rte_mempool *mp)
- 	return __stack_alloc(mp, RTE_STACK_F_LF);
- }
- 
-+static int
-+pile_alloc(struct rte_mempool *mp)
-+{
-+	return __stack_alloc(mp, RTE_STACK_F_PILE);
-+}
-+
-+static int
-+pile_enqueue(struct rte_mempool *mp, void * const *obj_table,
-+	      unsigned int n)
-+{
-+	struct rte_stack *s = mp->pool_data;
-+
-+	RTE_ASSERT(s != NULL);
-+	RTE_ASSERT(obj_table != NULL);
-+
-+	return __rte_stack_pile_push(s, obj_table, n) == 0 ? -ENOBUFS : 0;
-+}
-+
-+static int
-+pile_dequeue(struct rte_mempool *mp, void **obj_table,
-+	      unsigned int n)
-+{
-+	struct rte_stack *s = mp->pool_data;
-+
-+	RTE_ASSERT(s != NULL);
-+	RTE_ASSERT(obj_table != NULL);
-+
-+	return __rte_stack_pile_pop(s, obj_table, n) == 0 ? -ENOBUFS : 0;
-+}
-+
- static int
- stack_enqueue(struct rte_mempool *mp, void * const *obj_table,
- 	      unsigned int n)
-@@ -93,5 +123,15 @@ static struct rte_mempool_ops ops_lf_stack = {
- 	.get_count = stack_get_count
- };
- 
-+static struct rte_mempool_ops ops_pile = {
-+	.name = "pile",
-+	.alloc = pile_alloc,
-+	.free = stack_free,
-+	.enqueue = pile_enqueue,
-+	.dequeue = pile_dequeue,
-+	.get_count = stack_get_count
-+};
-+
- RTE_MEMPOOL_REGISTER_OPS(ops_stack);
- RTE_MEMPOOL_REGISTER_OPS(ops_lf_stack);
-+RTE_MEMPOOL_REGISTER_OPS(ops_pile);
-diff --git a/drivers/net/bonding/rte_eth_bond_pmd.c b/drivers/net/bonding/rte_eth_bond_pmd.c
-index 6a4f997b5a..92d7f4f4ef 100644
---- a/drivers/net/bonding/rte_eth_bond_pmd.c
-+++ b/drivers/net/bonding/rte_eth_bond_pmd.c
-@@ -1702,7 +1702,7 @@ member_configure_slow_queue(struct rte_eth_dev *bonding_eth_dev,
- 		snprintf(mem_name, RTE_DIM(mem_name), "member_port%u_slow_pool",
- 				member_id);
- 		port->slow_pool = rte_pktmbuf_pool_create(mem_name, 8191,
--			250, 0, RTE_MBUF_DEFAULT_BUF_SIZE,
-+			256, 0, RTE_MBUF_DEFAULT_BUF_SIZE,
- 			member_eth_dev->data->numa_node);
- 
- 		/* Any memory allocation failure in initialization is critical because
-diff --git a/drivers/net/intel/cpfl/cpfl_rxtx.h b/drivers/net/intel/cpfl/cpfl_rxtx.h
-index 52cdecac88..faf28fd489 100644
---- a/drivers/net/intel/cpfl/cpfl_rxtx.h
-+++ b/drivers/net/intel/cpfl/cpfl_rxtx.h
-@@ -25,7 +25,7 @@
- #define CPFL_P2P_QUEUE_GRP_ID	1
- #define CPFL_P2P_DESC_LEN	16
- #define CPFL_P2P_NB_MBUF	4096
--#define CPFL_P2P_CACHE_SIZE	250
-+#define CPFL_P2P_CACHE_SIZE	256
- #define CPFL_P2P_MBUF_SIZE	2048
- #define CPFL_P2P_RING_BUF	128
- 
-diff --git a/drivers/net/sxe2/sxe2_txrx_vec_avx512.c b/drivers/net/sxe2/sxe2_txrx_vec_avx512.c
-index a830c7a33b..4ded5cb63e 100644
---- a/drivers/net/sxe2/sxe2_txrx_vec_avx512.c
-+++ b/drivers/net/sxe2/sxe2_txrx_vec_avx512.c
-@@ -67,11 +67,12 @@ static __rte_always_inline int32_t sxe2_tx_bufs_free_vec_avx512(struct sxe2_tx_q
- 		}
- 		cache->len += rs_thresh;
- 
--		if (cache->len >= cache->flushthresh) {
-+		if (cache->len >= cache->size) {
- 			(void)rte_mempool_ops_enqueue_bulk(mp,
- 					&cache->objs[cache->size], cache->len - cache->size);
- 			cache->len = cache->size;
- 		}
-+
- 		goto done;
- 	}
- 
-diff --git a/drivers/net/tap/rte_eth_tap.c b/drivers/net/tap/rte_eth_tap.c
-index b93452f168..b3142561c2 100644
---- a/drivers/net/tap/rte_eth_tap.c
-+++ b/drivers/net/tap/rte_eth_tap.c
-@@ -61,7 +61,7 @@
- #define TAP_MAX_MAC_ADDRS	16
- #define TAP_GSO_MBUFS_PER_CORE	128
- #define TAP_GSO_MBUF_SEG_SIZE	128
--#define TAP_GSO_MBUF_CACHE_SIZE	4
-+#define TAP_GSO_MBUF_CACHE_SIZE	32
- #define TAP_GSO_MBUFS_NUM \
- 	(TAP_GSO_MBUFS_PER_CORE * TAP_GSO_MBUF_CACHE_SIZE)
- 
-diff --git a/lib/eal/include/rte_common.h b/lib/eal/include/rte_common.h
-index 79d2a0ab93..0fd0906506 100644
---- a/lib/eal/include/rte_common.h
-+++ b/lib/eal/include/rte_common.h
-@@ -567,6 +567,15 @@ static void __attribute__((destructor(RTE_PRIO(prio)), used)) func(void)
- #define __rte_assume(condition) __assume(condition)
- #endif
- 
-+/**
-+ * Alignment hint precondition
-+ */
-+#ifdef RTE_TOOLCHAIN_MSVC
-+#define __rte_assume_aligned(ptr, alignment) (ptr)
-+#else
-+#define __rte_assume_aligned(ptr, alignment) __builtin_assume_aligned(ptr, alignment)
-+#endif
-+
- /**
-  * Disable AddressSanitizer on some code
-  */
-@@ -775,6 +784,9 @@ rte_is_aligned(const void * const __rte_restrict ptr, const unsigned int align)
- /** Force minimum cache line alignment. */
- #define __rte_cache_min_aligned __rte_aligned(RTE_CACHE_LINE_MIN_SIZE)
- 
-+/** Cache alignment hint precondition */
-+#define __rte_assume_cache_aligned(ptr) __rte_assume_aligned(ptr, RTE_CACHE_LINE_SIZE)
-+
- #define _RTE_CACHE_GUARD_HELPER2(unique) \
- 	alignas(RTE_CACHE_LINE_SIZE) \
- 	char cache_guard_ ## unique[RTE_CACHE_LINE_SIZE * RTE_CACHE_GUARD_LINES]
-diff --git a/lib/eal/x86/include/rte_memcpy.h b/lib/eal/x86/include/rte_memcpy.h
-index 8ed8c55010..3fe1e8d247 100644
---- a/lib/eal/x86/include/rte_memcpy.h
-+++ b/lib/eal/x86/include/rte_memcpy.h
-@@ -707,6 +707,35 @@ rte_memcpy(void *__rte_restrict dst, const void *__rte_restrict src, size_t n)
- #endif
- 		return dst;
- 	}
-+	/* Common way for small copy size of 64-byte blocks */
-+#if defined __AVX512F__ && defined RTE_MEMCPY_AVX512
-+	if (__rte_constant(n) && (n & 63) == 0 && n <= 512) {
-+#elif defined RTE_MEMCPY_AVX
-+	if (__rte_constant(n) && (n & 63) == 0 && n <= 256) {
-+#else /* SSE implementation */
-+	if (__rte_constant(n) && (n & 63) == 0 && n <= 512) {
-+#endif
-+		void *ret = dst;
-+
-+		if (n & 512) {
-+			rte_mov256((uint8_t *)dst + 0 * 256, (const uint8_t *)src + 0 * 256);
-+			rte_mov256((uint8_t *)dst + 1 * 256, (const uint8_t *)src + 1 * 256);
-+		}
-+		if (n & 256) {
-+			rte_mov256((uint8_t *)dst, (const uint8_t *)src);
-+			src = (const uint8_t *)src + 256;
-+			dst = (uint8_t *)dst + 256;
-+		}
-+		if (n & 128) {
-+			rte_mov128((uint8_t *)dst, (const uint8_t *)src);
-+			src = (const uint8_t *)src + 128;
-+			dst = (uint8_t *)dst + 128;
-+		}
-+		if (n & 64)
-+			rte_mov64((uint8_t *)dst, (const uint8_t *)src);
-+
-+		return ret;
-+	}
- 
- 	/* Implementation for size > 64 bytes depends on alignment with vector register size. */
- 	if (!(((uintptr_t)dst | (uintptr_t)src) & ALIGNMENT_MASK))
-diff --git a/lib/mempool/mempool_trace.h b/lib/mempool/mempool_trace.h
-index 23cda1473c..60e47cf67b 100644
---- a/lib/mempool/mempool_trace.h
-+++ b/lib/mempool/mempool_trace.h
-@@ -119,7 +119,6 @@ RTE_TRACE_POINT(
- 	rte_trace_point_emit_i32(socket_id);
- 	rte_trace_point_emit_ptr(cache);
- 	rte_trace_point_emit_u32(cache->len);
--	rte_trace_point_emit_u32(cache->flushthresh);
- )
- 
- RTE_TRACE_POINT(
-diff --git a/lib/mempool/rte_mempool.c b/lib/mempool/rte_mempool.c
-index 817e2b8dc1..457ef8fd1b 100644
---- a/lib/mempool/rte_mempool.c
-+++ b/lib/mempool/rte_mempool.c
-@@ -753,14 +753,13 @@ static void
- mempool_cache_init(struct rte_mempool_cache *cache, uint32_t size)
- {
- 	cache->size = size;
--	cache->flushthresh = size; /* Obsolete; for API/ABI compatibility purposes only */
- 	cache->len = 0;
- }
- 
- /*
-  * Create and initialize a cache for objects that are retrieved from and
-  * returned to an underlying mempool. This structure is identical to the
-- * local_cache[lcore_id] pointed to by the mempool structure.
-+ * local_cache[lcore_id] entry in the mempool structure.
-  */
- RTE_EXPORT_SYMBOL(rte_mempool_cache_create)
- struct rte_mempool_cache *
-@@ -838,9 +837,21 @@ rte_mempool_create_empty(const char *name, unsigned n, unsigned elt_size,
- 		return NULL;
- 	}
- 
-+	/*
-+	 * Alignment requirement for performance optimized move within the mempool cache.
-+	 * @ref rte_mempool_do_generic_put() implementation.
-+	 */
-+	if (cache_size & 31) {
-+		unsigned int rounded = RTE_ALIGN_MUL_CEIL(cache_size, 32);
-+		RTE_MEMPOOL_LOG(WARNING, "%s cache size %u not divisible by 32, using %u instead.",
-+				name, cache_size, rounded);
-+		cache_size = rounded;
-+	}
-+
- 	/* asked cache too big */
- 	if (cache_size > RTE_MEMPOOL_CACHE_MAX_SIZE ||
- 	    cache_size > n) {
-+		RTE_MEMPOOL_LOG(ERR, "Cache size too big.");
- 		rte_errno = EINVAL;
- 		return NULL;
- 	}
-@@ -884,7 +895,7 @@ rte_mempool_create_empty(const char *name, unsigned n, unsigned elt_size,
- 		goto exit_unlock;
- 	}
- 
--	mempool_size = RTE_MEMPOOL_HEADER_SIZE(mp, cache_size);
-+	mempool_size = sizeof(struct rte_mempool);
- 	mempool_size += private_data_size;
- 	mempool_size = RTE_ALIGN_CEIL(mempool_size, RTE_MEMPOOL_ALIGN);
- 
-@@ -900,7 +911,7 @@ rte_mempool_create_empty(const char *name, unsigned n, unsigned elt_size,
- 
- 	/* init the mempool structure */
- 	mp = mz->addr;
--	memset(mp, 0, RTE_MEMPOOL_HEADER_SIZE(mp, cache_size));
-+	memset(mp, 0, mempool_size);
- 	ret = strlcpy(mp->name, name, sizeof(mp->name));
- 	if (ret < 0 || ret >= (int)sizeof(mp->name)) {
- 		rte_errno = ENAMETOOLONG;
-@@ -937,13 +948,6 @@ rte_mempool_create_empty(const char *name, unsigned n, unsigned elt_size,
- 		goto exit_unlock;
- 	}
- 
--	/*
--	 * local_cache pointer is set even if cache_size is zero.
--	 * The local_cache points to just past the elt_pa[] array.
--	 */
--	mp->local_cache = (struct rte_mempool_cache *)
--		RTE_PTR_ADD(mp, RTE_MEMPOOL_HEADER_SIZE(mp, 0));
--
- 	/* Init all default caches. */
- 	if (cache_size != 0) {
- 		for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++)
-@@ -1197,6 +1201,7 @@ mempool_obj_audit(struct rte_mempool *mp, __rte_unused void *opaque,
- 	RTE_MEMPOOL_CHECK_COOKIES(mp, &obj, 1, 2);
- }
- 
-+/* check cookies before and after objects */
- static void
- mempool_audit_cookies(struct rte_mempool *mp)
- {
-@@ -1213,23 +1218,28 @@ mempool_audit_cookies(struct rte_mempool *mp)
- #define mempool_audit_cookies(mp) do {} while(0)
- #endif
- 
--/* check cookies before and after objects */
-+/* check cache size consistency */
- static void
- mempool_audit_cache(const struct rte_mempool *mp)
- {
--	/* check cache size consistency */
- 	unsigned lcore_id;
-+	const uint32_t cache_size = mp->cache_size;
- 
--	if (mp->cache_size == 0)
--		return;
-+	if (cache_size > RTE_MEMPOOL_CACHE_MAX_SIZE) {
-+		RTE_MEMPOOL_LOG(CRIT, "badness on cache size");
-+		rte_panic("MEMPOOL: invalid cache size\n");
-+	}
- 
- 	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
- 		const struct rte_mempool_cache *cache;
- 		cache = &mp->local_cache[lcore_id];
--		if (cache->len > RTE_DIM(cache->objs)) {
--			RTE_MEMPOOL_LOG(CRIT, "badness on cache[%u]",
--				lcore_id);
--			rte_panic("MEMPOOL: invalid cache len\n");
-+		if (cache->size != cache_size) {
-+			RTE_MEMPOOL_LOG(CRIT, "badness on cache[%u] size", lcore_id);
-+			rte_panic("MEMPOOL: invalid cache[%u] size\n", lcore_id);
-+		}
-+		if (cache->len > cache_size) {
-+			RTE_MEMPOOL_LOG(CRIT, "badness on cache[%u] len", lcore_id);
-+			rte_panic("MEMPOOL: invalid cache[%u] len\n", lcore_id);
- 		}
- 	}
- }
-@@ -1241,9 +1251,6 @@ rte_mempool_audit(struct rte_mempool *mp)
- {
- 	mempool_audit_cache(mp);
- 	mempool_audit_cookies(mp);
--
--	/* For case where mempool DEBUG is not set, and cache size is 0 */
--	RTE_SET_USED(mp);
- }
- 
- /* dump the status of the mempool on the console */
-diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
-index 50d958c7c6..49e8401280 100644
---- a/lib/mempool/rte_mempool.h
-+++ b/lib/mempool/rte_mempool.h
-@@ -89,14 +89,14 @@ struct __rte_cache_aligned rte_mempool_debug_stats {
-  */
- struct __rte_cache_aligned rte_mempool_cache {
- 	uint32_t size;	      /**< Size of the cache */
--	uint32_t flushthresh; /**< Obsolete; for API/ABI compatibility purposes only */
- 	uint32_t len;	      /**< Current cache count */
- #ifdef RTE_LIBRTE_MEMPOOL_STATS
--	uint32_t unused;
- 	/*
- 	 * Alternative location for the most frequently updated mempool statistics (per-lcore),
- 	 * providing faster update access when using a mempool cache.
-+	 * Note: 16-byte aligned for optimal SIMD access, when updating pairs of counters.
- 	 */
-+	alignas(16)
- 	struct {
- 		uint64_t put_bulk;          /**< Number of puts. */
- 		uint64_t put_objs;          /**< Number of objects successfully put. */
-@@ -104,15 +104,9 @@ struct __rte_cache_aligned rte_mempool_cache {
- 		uint64_t get_success_objs;  /**< Objects successfully allocated. */
- 	} stats;                        /**< Statistics */
- #endif
--	/**
--	 * Cache objects
--	 *
--	 * Note:
--	 * Cache is allocated at double size for API/ABI compatibility purposes only.
--	 * When reducing its size at an API/ABI breaking release,
--	 * remember to add a cache guard after it.
--	 */
--	alignas(RTE_CACHE_LINE_SIZE) void *objs[RTE_MEMPOOL_CACHE_MAX_SIZE * 2];
-+	/** Cache objects */
-+	alignas(RTE_CACHE_LINE_SIZE) void *objs[RTE_MEMPOOL_CACHE_MAX_SIZE];
-+	RTE_CACHE_GUARD;
- };
- 
- /**
-@@ -240,8 +234,7 @@ struct __rte_cache_aligned rte_mempool {
- 	unsigned int flags;              /**< Flags of the mempool. */
- 	int socket_id;                   /**< Socket id passed at create. */
- 	uint32_t size;                   /**< Max size of the mempool. */
--	uint32_t cache_size;
--	/**< Size of per-lcore default local cache. */
-+	uint32_t cache_size;             /**< Size of per-lcore default local cache. */
- 
- 	uint32_t elt_size;               /**< Size of an element. */
- 	uint32_t header_size;            /**< Size of header (before elt). */
-@@ -257,13 +250,13 @@ struct __rte_cache_aligned rte_mempool {
- 	 */
- 	int32_t ops_index;
- 
--	struct rte_mempool_cache *local_cache; /**< Per-lcore local cache */
--
- 	uint32_t populated_size;         /**< Number of populated objects. */
- 	struct rte_mempool_objhdr_list elt_list; /**< List of objects in pool */
- 	uint32_t nb_mem_chunks;          /**< Number of memory chunks */
- 	struct rte_mempool_memhdr_list mem_list; /**< List of memory chunks */
- 
-+	struct rte_mempool_cache local_cache[RTE_MAX_LCORE]; /**< Per-lcore local cache */
-+
- #ifdef RTE_LIBRTE_MEMPOOL_STATS
- 	/** Per-lcore statistics.
- 	 *
-@@ -271,6 +264,8 @@ struct __rte_cache_aligned rte_mempool {
- 	 */
- 	struct rte_mempool_debug_stats stats[RTE_MAX_LCORE + 1];
- #endif
-+
-+	/* Private data are located immediately after the mempool structure. */
- };
- 
- /** Spreading among memory channels not required. */
-@@ -362,18 +357,6 @@ struct __rte_cache_aligned rte_mempool {
- #define RTE_MEMPOOL_CACHE_STAT_ADD(cache, name, n) do {} while (0)
- #endif
- 
--/**
-- * @internal Calculate the size of the mempool header.
-- *
-- * @param mp
-- *   Pointer to the memory pool.
-- * @param cs
-- *   Size of the per-lcore cache.
-- */
--#define RTE_MEMPOOL_HEADER_SIZE(mp, cs) \
--	(sizeof(*(mp)) + (((cs) == 0) ? 0 : \
--	(sizeof(struct rte_mempool_cache) * RTE_MAX_LCORE)))
--
- /* return the header of a mempool object (internal) */
- static inline struct rte_mempool_objhdr *
- rte_mempool_get_header(void *obj)
-@@ -718,7 +701,7 @@ struct __rte_cache_aligned rte_mempool_ops {
- 	rte_mempool_dequeue_contig_blocks_t dequeue_contig_blocks;
- };
- 
--#define RTE_MEMPOOL_MAX_OPS_IDX 16  /**< Max registered ops structs */
-+#define RTE_MEMPOOL_MAX_OPS_IDX 32  /**< Max registered ops structs */
- 
- /**
-  * Structure storing the table of registered ops structs, each of which contain
-@@ -1049,7 +1032,7 @@ rte_mempool_free(struct rte_mempool *mp);
-  *   If cache_size is non-zero, the rte_mempool library will try to
-  *   limit the accesses to the common lockless pool, by maintaining a
-  *   per-lcore object cache. This argument must be lower or equal to
-- *   RTE_MEMPOOL_CACHE_MAX_SIZE and n.
-+ *   RTE_MEMPOOL_CACHE_MAX_SIZE and n, and it must be divisible by 32.
-  *   The access to the per-lcore table is of course
-  *   faster than the multi-producer/consumer pool. The cache can be
-  *   disabled if the cache_size argument is set to 0; it can be useful to
-@@ -1368,15 +1351,16 @@ rte_mempool_cache_free(struct rte_mempool_cache *cache);
- static __rte_always_inline struct rte_mempool_cache *
- rte_mempool_default_cache(struct rte_mempool *mp, unsigned lcore_id)
- {
--	if (unlikely(mp->cache_size == 0))
-+	if (unlikely(lcore_id == LCORE_ID_ANY))
- 		return NULL;
- 
--	if (unlikely(lcore_id == LCORE_ID_ANY))
-+	struct rte_mempool_cache *cache = &mp->local_cache[lcore_id];
-+
-+	if (unlikely(cache->size == 0))
- 		return NULL;
- 
--	rte_mempool_trace_default_cache(mp, lcore_id,
--		&mp->local_cache[lcore_id]);
--	return &mp->local_cache[lcore_id];
-+	rte_mempool_trace_default_cache(mp, lcore_id, cache);
-+	return cache;
- }
- 
- /**
-@@ -1445,9 +1429,22 @@ rte_mempool_do_generic_put(struct rte_mempool *mp, void * const *obj_table,
- 		 * are more hot, from the upper half of the cache.
- 		 */
- 		__rte_assume(cache->len > cache->size / 2);
--		rte_mempool_ops_enqueue_bulk(mp, &cache->objs[0], cache->size / 2);
--		rte_memcpy(&cache->objs[0], &cache->objs[cache->size / 2],
--				sizeof(void *) * (cache->len - cache->size / 2));
-+		rte_mempool_ops_enqueue_bulk(mp, cache->objs, cache->size / 2);
-+		/*
-+		 * For improved rte_memcpy() performance, move down objects
-+		 * from CPU cache line aligned address in chunks of 32 bytes.
-+		 * Note: For cache->objs[cache->size / 2] to be cache line aligned, cache->size
-+		 * must be divisible by 32 on 32-bit architecture with 64-byte cache line,
-+		 * divisible by 32 on 64-bit architecture with 128-byte cache line, and
-+		 * be divisible by 16 on 64-bit architecture with 64-byte cache line.
-+		 * For API consistency, require mempool cache size is divisible by 32.
-+		 */
-+		const size_t move = RTE_ALIGN_MUL_CEIL(
-+				sizeof(void *) * (cache->len - cache->size / 2), 32);
-+		__rte_assume(move >= 32);
-+		__rte_assume((move & 31) == 0);
-+		rte_memcpy(cache->objs, __rte_assume_cache_aligned(&cache->objs[cache->size / 2]),
-+				move);
- 		cache_objs = &cache->objs[cache->len - cache->size / 2];
- 		cache->len = cache->len - cache->size / 2 + n;
- 	} else {
-@@ -1892,8 +1889,7 @@ void rte_mempool_audit(struct rte_mempool *mp);
-  */
- static inline void *rte_mempool_get_priv(struct rte_mempool *mp)
- {
--	return (char *)mp +
--		RTE_MEMPOOL_HEADER_SIZE(mp, mp->cache_size);
-+	return (char *)mp + sizeof(struct rte_mempool);
- }
- 
- /**
-diff --git a/lib/stack/meson.build b/lib/stack/meson.build
-index 18177a742f..50e688522e 100644
---- a/lib/stack/meson.build
-+++ b/lib/stack/meson.build
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: BSD-3-Clause
- # Copyright(c) 2019 Intel Corporation
- 
--sources = files('rte_stack.c', 'rte_stack_std.c', 'rte_stack_lf.c')
-+sources = files('rte_stack.c', 'rte_stack_std.c', 'rte_stack_lf.c', 'rte_stack_pile.c')
- headers = files('rte_stack.h')
- # subheaders, not for direct inclusion by apps
- indirect_headers += files(
-@@ -10,4 +10,5 @@ indirect_headers += files(
-         'rte_stack_lf_generic.h',
-         'rte_stack_lf_c11.h',
-         'rte_stack_lf_stubs.h',
-+        'rte_stack_pile.h',
- )
-diff --git a/lib/stack/rte_stack.c b/lib/stack/rte_stack.c
-index 4c78fe4b4b..a4bbf8a4d7 100644
---- a/lib/stack/rte_stack.c
-+++ b/lib/stack/rte_stack.c
-@@ -1,5 +1,6 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  * Copyright(c) 2019 Intel Corporation
-+ * Copyright(c) 2026 SmartShare Systems
-  */
- 
- #include <stdalign.h>
-@@ -32,6 +33,8 @@ rte_stack_init(struct rte_stack *s, unsigned int count, uint32_t flags)
- 
- 	if (flags & RTE_STACK_F_LF)
- 		rte_stack_lf_init(s, count);
-+	else if (flags & RTE_STACK_F_PILE)
-+		rte_stack_pile_init(s, count);
- 	else
- 		rte_stack_std_init(s);
- }
-@@ -41,6 +44,8 @@ rte_stack_get_memsize(unsigned int count, uint32_t flags)
- {
- 	if (flags & RTE_STACK_F_LF)
- 		return rte_stack_lf_get_memsize(count);
-+	else if (flags & RTE_STACK_F_PILE)
-+		return rte_stack_pile_get_memsize(count);
- 	else
- 		return rte_stack_std_get_memsize(count);
- }
-@@ -58,7 +63,11 @@ rte_stack_create(const char *name, unsigned int count, int socket_id,
- 	unsigned int sz;
- 	int ret;
- 
--	if (flags & ~(RTE_STACK_F_LF)) {
-+	if (flags & ~(RTE_STACK_F_LF | RTE_STACK_F_PILE)) {
-+		STACK_LOG_ERR("Unsupported stack flags %#x", flags);
-+		return NULL;
-+	}
-+	if ((flags & RTE_STACK_F_LF) && (flags & RTE_STACK_F_PILE)) {
- 		STACK_LOG_ERR("Unsupported stack flags %#x", flags);
- 		return NULL;
- 	}
-@@ -73,6 +82,13 @@ rte_stack_create(const char *name, unsigned int count, int socket_id,
- 		return NULL;
- 	}
- #endif
-+#if !defined(RTE_STACK_PILE_SUPPORTED)
-+	if (flags & RTE_STACK_F_PILE) {
-+		STACK_LOG_ERR("Pile is not supported on your platform");
-+		rte_errno = ENOTSUP;
-+		return NULL;
-+	}
-+#endif
- 
- 	sz = rte_stack_get_memsize(count, flags);
- 
-diff --git a/lib/stack/rte_stack.h b/lib/stack/rte_stack.h
-index fd17ac791d..bf64dbc7bc 100644
---- a/lib/stack/rte_stack.h
-+++ b/lib/stack/rte_stack.h
-@@ -1,5 +1,6 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  * Copyright(c) 2019 Intel Corporation
-+ * Copyright(c) 2026 SmartShare Systems
-  */
- 
- /**
-@@ -28,11 +29,45 @@
- #define RTE_STACK_NAMESIZE (RTE_MEMZONE_NAMESIZE - \
- 			   sizeof(RTE_STACK_MZ_PREFIX) + 1)
- 
-+static_assert(((sizeof(void *) * RTE_STACK_PILE_BULK_SIZE) & RTE_CACHE_LINE_MASK) == 0,
-+		"Pile bulk size must be divisible by CPU cache line size");
-+
-+/* Note: Also used as solo (single-object) pile element. */
- struct rte_stack_lf_elem {
- 	void *data;			/**< Data pointer */
- 	struct rte_stack_lf_elem *next;	/**< Next pointer */
- };
- 
-+/*
-+ * Bulk (multi-object) pile element.
-+ * Inherited from the rte_stack_lf_elem (single-object) class,
-+ * and extended with an array for holding a bulk of object pointers.
-+ */
-+struct rte_stack_pile_bulk_elem {
-+	/* The first part must be compatible with the rte_stack_lf_elem parent class. */
-+	void *data;                                 /**< Data pointer (unused) */
-+	struct rte_stack_pile_bulk_elem *next;      /**< Next pointer */
-+	/* The second part differs. */
-+	alignas(RTE_CACHE_LINE_SIZE)
-+	void *objs[RTE_STACK_PILE_BULK_SIZE];       /**< Bulk (multi-object) pointers */
-+};
-+
-+static_assert(sizeof(struct rte_stack_lf_elem) ==
-+		sizeof(struct rte_stack_lf_elem *) + sizeof(void*),
-+		"Parent type has changed");
-+static_assert(RTE_SIZEOF_FIELD(struct rte_stack_lf_elem, next) ==
-+		RTE_SIZEOF_FIELD(struct rte_stack_pile_bulk_elem, next),
-+		"Inherited type mismatch");
-+static_assert(offsetof(struct rte_stack_lf_elem, next) ==
-+		offsetof(struct rte_stack_pile_bulk_elem, next),
-+		"Inherited type mismatch");
-+static_assert(RTE_SIZEOF_FIELD(struct rte_stack_lf_elem, data) ==
-+		RTE_SIZEOF_FIELD(struct rte_stack_pile_bulk_elem, data),
-+		"Inherited type mismatch");
-+static_assert(offsetof(struct rte_stack_lf_elem, data) ==
-+		offsetof(struct rte_stack_pile_bulk_elem, data),
-+		"Inherited type mismatch");
-+
- struct __rte_aligned(16) rte_stack_lf_head {
- 	struct rte_stack_lf_elem *top; /**< Stack top */
- 	uint64_t cnt; /**< Modification counter for avoiding ABA problem */
-@@ -51,12 +86,35 @@ struct rte_stack_lf_list {
- struct rte_stack_lf {
- 	/** LIFO list of elements */
- 	alignas(RTE_CACHE_LINE_SIZE) struct rte_stack_lf_list used;
-+	RTE_CACHE_GUARD;
- 	/** LIFO list of free elements */
- 	alignas(RTE_CACHE_LINE_SIZE) struct rte_stack_lf_list free;
-+	RTE_CACHE_GUARD;
- 	/** LIFO elements */
- 	alignas(RTE_CACHE_LINE_SIZE) struct rte_stack_lf_elem elems[];
- };
- 
-+/* Pile structure containing three lock-free LIFO-like lists:
-+ *  - A list of elements, each element holding a bulk of pointers to objects.
-+ *  - A list of elements, each element holding one pointer to an object.
-+ *  - A list of free linked-list elements.
-+ */
-+struct rte_stack_pile {
-+	/** LIFO list of bulk (multi-object) elements */
-+	alignas(RTE_CACHE_LINE_SIZE) struct rte_stack_lf_list bulk;
-+	RTE_CACHE_GUARD;
-+	/** LIFO list of solo (single-object) elements */
-+	alignas(RTE_CACHE_LINE_SIZE) struct rte_stack_lf_list solo;
-+	RTE_CACHE_GUARD;
-+	/** LIFO list of free bulk elements */
-+	alignas(RTE_CACHE_LINE_SIZE) struct rte_stack_lf_list free_bulk;
-+	RTE_CACHE_GUARD;
-+	/** LIFO list of free solo elements */
-+	alignas(RTE_CACHE_LINE_SIZE) struct rte_stack_lf_list free_solo;
-+	RTE_CACHE_GUARD;
-+	/** LIFO elements follow, first bulk, then solo */
-+};
-+
- /* Structure containing the LIFO, its current length, and a lock for mutual
-  * exclusion.
-  */
-@@ -78,6 +136,7 @@ struct __rte_cache_aligned rte_stack {
- 	uint32_t flags; /**< Flags supplied at creation. */
- 	union {
- 		struct rte_stack_lf stack_lf; /**< Lock-free LIFO structure. */
-+		struct rte_stack_pile stack_pile; /**< Lock-free pile (LIFO-like) structure. */
- 		struct rte_stack_std stack_std;	/**< LIFO structure. */
- 	};
- };
-@@ -88,8 +147,16 @@ struct __rte_cache_aligned rte_stack {
-  */
- #define RTE_STACK_F_LF 0x0001
- 
-+/**
-+ * The stack-like pile uses lock-free push and pop functions.
-+ * It is optimized for bulks of objects, and is not strictly LIFO.
-+ * This flag is only supported on x86_64 or arm64 platforms, currently.
-+ */
-+#define RTE_STACK_F_PILE 0x0002
-+
- #include "rte_stack_std.h"
- #include "rte_stack_lf.h"
-+#include "rte_stack_pile.h"
- 
- #ifdef __cplusplus
- extern "C" {
-@@ -108,13 +175,15 @@ extern "C" {
-  *   Actual number of objects pushed (either 0 or *n*).
-  */
- static __rte_always_inline unsigned int
--rte_stack_push(struct rte_stack *s, void * const *obj_table, unsigned int n)
-+rte_stack_push(struct rte_stack *s, void * const * __rte_restrict obj_table, unsigned int n)
- {
- 	RTE_ASSERT(s != NULL);
- 	RTE_ASSERT(obj_table != NULL);
- 
- 	if (s->flags & RTE_STACK_F_LF)
- 		return __rte_stack_lf_push(s, obj_table, n);
-+	else if (s->flags & RTE_STACK_F_PILE)
-+		return __rte_stack_pile_push(s, obj_table, n);
- 	else
- 		return __rte_stack_std_push(s, obj_table, n);
- }
-@@ -132,13 +201,15 @@ rte_stack_push(struct rte_stack *s, void * const *obj_table, unsigned int n)
-  *   Actual number of objects popped (either 0 or *n*).
-  */
- static __rte_always_inline unsigned int
--rte_stack_pop(struct rte_stack *s, void **obj_table, unsigned int n)
-+rte_stack_pop(struct rte_stack *s, void ** __rte_restrict obj_table, unsigned int n)
- {
- 	RTE_ASSERT(s != NULL);
- 	RTE_ASSERT(obj_table != NULL);
- 
- 	if (s->flags & RTE_STACK_F_LF)
- 		return __rte_stack_lf_pop(s, obj_table, n);
-+	else if (s->flags & RTE_STACK_F_PILE)
-+		return __rte_stack_pile_pop(s, obj_table, n);
- 	else
- 		return __rte_stack_std_pop(s, obj_table, n);
- }
-@@ -158,6 +229,8 @@ rte_stack_count(struct rte_stack *s)
- 
- 	if (s->flags & RTE_STACK_F_LF)
- 		return __rte_stack_lf_count(s);
-+	else if (s->flags & RTE_STACK_F_PILE)
-+		return __rte_stack_pile_count(s);
- 	else
- 		return __rte_stack_std_count(s);
- }
-diff --git a/lib/stack/rte_stack_lf.h b/lib/stack/rte_stack_lf.h
-index f2b012cd0e..655620aaa9 100644
---- a/lib/stack/rte_stack_lf.h
-+++ b/lib/stack/rte_stack_lf.h
-@@ -34,7 +34,7 @@
-  */
- static __rte_always_inline unsigned int
- __rte_stack_lf_push(struct rte_stack *s,
--		    void * const *obj_table,
-+		    void * const * __rte_restrict obj_table,
- 		    unsigned int n)
- {
- 	struct rte_stack_lf_elem *tmp, *first, *last = NULL;
-@@ -71,7 +71,8 @@ __rte_stack_lf_push(struct rte_stack *s,
-  *   - Actual number of objects popped.
-  */
- static __rte_always_inline unsigned int
--__rte_stack_lf_pop(struct rte_stack *s, void **obj_table, unsigned int n)
-+__rte_stack_lf_pop(struct rte_stack *s, void ** __rte_restrict obj_table,
-+		   unsigned int n)
- {
- 	struct rte_stack_lf_elem *first, *last = NULL;
- 
-@@ -79,6 +80,7 @@ __rte_stack_lf_pop(struct rte_stack *s, void **obj_table, unsigned int n)
- 		return 0;
- 
- 	/* Pop n used elements */
-+	__rte_assume(obj_table != NULL);
- 	first = __rte_stack_lf_pop_elems(&s->stack_lf.used,
- 					 n, obj_table, &last);
- 	if (unlikely(first == NULL))
-diff --git a/lib/stack/rte_stack_lf_c11.h b/lib/stack/rte_stack_lf_c11.h
-index b97e02d6a1..501e985a49 100644
---- a/lib/stack/rte_stack_lf_c11.h
-+++ b/lib/stack/rte_stack_lf_c11.h
-@@ -99,7 +99,7 @@ __rte_stack_lf_push_elems(struct rte_stack_lf_list *list,
- static __rte_always_inline struct rte_stack_lf_elem *
- __rte_stack_lf_pop_elems(struct rte_stack_lf_list *list,
- 			 unsigned int num,
--			 void **obj_table,
-+			 void ** __rte_restrict obj_table,
- 			 struct rte_stack_lf_elem **last)
- {
- 	struct rte_stack_lf_head old_head;
-diff --git a/lib/stack/rte_stack_lf_generic.h b/lib/stack/rte_stack_lf_generic.h
-index cc69e4d168..c4cc4d2c03 100644
---- a/lib/stack/rte_stack_lf_generic.h
-+++ b/lib/stack/rte_stack_lf_generic.h
-@@ -74,7 +74,7 @@ __rte_stack_lf_push_elems(struct rte_stack_lf_list *list,
- static __rte_always_inline struct rte_stack_lf_elem *
- __rte_stack_lf_pop_elems(struct rte_stack_lf_list *list,
- 			 unsigned int num,
--			 void **obj_table,
-+			 void ** __rte_restrict obj_table,
- 			 struct rte_stack_lf_elem **last)
- {
- 	struct rte_stack_lf_head old_head;
-diff --git a/lib/stack/rte_stack_lf_stubs.h b/lib/stack/rte_stack_lf_stubs.h
-index a05abf1f1c..457a415ccf 100644
---- a/lib/stack/rte_stack_lf_stubs.h
-+++ b/lib/stack/rte_stack_lf_stubs.h
-@@ -30,7 +30,7 @@ __rte_stack_lf_push_elems(struct rte_stack_lf_list *list,
- static __rte_always_inline struct rte_stack_lf_elem *
- __rte_stack_lf_pop_elems(struct rte_stack_lf_list *list,
- 			 unsigned int num,
--			 void **obj_table,
-+			 void ** __rte_restrict obj_table,
- 			 struct rte_stack_lf_elem **last)
- {
- 	RTE_SET_USED(obj_table);
-diff --git a/lib/stack/rte_stack_pile.c b/lib/stack/rte_stack_pile.c
-new file mode 100644
-index 0000000000..eb42ba70a9
---- /dev/null
-+++ b/lib/stack/rte_stack_pile.c
-@@ -0,0 +1,33 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 SmartShare Systems
-+ */
-+
-+#include "rte_stack.h"
-+
-+void
-+rte_stack_pile_init(struct rte_stack *s, unsigned int count)
-+{
-+    unsigned int bulk = (count + RTE_STACK_PILE_BULK_SIZE - 1) / RTE_STACK_PILE_BULK_SIZE;
-+	struct rte_stack_pile_bulk_elem * bulk_elems = (struct rte_stack_pile_bulk_elem *)(&s->stack_pile + 1);
-+	struct rte_stack_lf_elem * solo_elems = (struct rte_stack_lf_elem *)&bulk_elems[bulk];
-+	unsigned int i;
-+
-+	for (i = 0; i < bulk; i++)
-+		__rte_stack_pile_bulk_push_elems(&s->stack_pile.free_bulk,
-+					  &bulk_elems[i], &bulk_elems[i], 1);
-+	for (i = 0; i < count; i++)
-+		__rte_stack_lf_push_elems(&s->stack_pile.free_solo,
-+					  &solo_elems[i], &solo_elems[i], 1);
-+}
-+
-+ssize_t
-+rte_stack_pile_get_memsize(unsigned int count)
-+{
-+    unsigned int bulk = (count + RTE_STACK_PILE_BULK_SIZE - 1) / RTE_STACK_PILE_BULK_SIZE;
-+	ssize_t sz = sizeof(struct rte_stack); /* Already cache line aligned. */
-+	sz += bulk * sizeof(struct rte_stack_pile_bulk_elem); /* Already cache line aligned. */
-+	sz += RTE_CACHE_LINE_ROUNDUP(count * sizeof(struct rte_stack_lf_elem));
-+	sz += RTE_CACHE_GUARD_LINES * RTE_CACHE_LINE_SIZE;
-+
-+	return sz;
-+}
-diff --git a/lib/stack/rte_stack_pile.h b/lib/stack/rte_stack_pile.h
-new file mode 100644
-index 0000000000..d928515d18
---- /dev/null
-+++ b/lib/stack/rte_stack_pile.h
-@@ -0,0 +1,316 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 SmartShare Systems
-+ */
-+
-+#ifndef _RTE_STACK_PILE_H_
-+#define _RTE_STACK_PILE_H_
-+
-+#if !(defined(RTE_ARCH_X86_64) || defined(RTE_ARCH_ARM64))
-+#include "rte_stack_lf_stubs.h"
-+#else
-+#ifdef RTE_USE_C11_MEM_MODEL
-+#include "rte_stack_lf_c11.h"
-+#else
-+#include "rte_stack_lf_generic.h"
-+#endif
-+
-+/**
-+ * Indicates that RTE_STACK_F_PILE is supported.
-+ */
-+#define RTE_STACK_PILE_SUPPORTED
-+#endif
-+
-+static __rte_always_inline unsigned int
-+__rte_stack_pile_count(struct rte_stack *s)
-+{
-+	/* stack_lf_push() and stack_lf_pop() do not update the list's contents
-+	 * and stack_lf->len atomically, which can cause the list to appear
-+	 * shorter than it actually is if this function is called while other
-+	 * threads are modifying the list.
-+	 *
-+	 * However, given the inherently approximate nature of the get_count
-+	 * callback -- even if the list and its size were updated atomically,
-+	 * the size could change between when get_count executes and when the
-+	 * value is returned to the caller -- this is acceptable.
-+	 *
-+	 * The stack_lf->len updates are placed such that the list may appear to
-+	 * have fewer elements than it does, but will never appear to have more
-+	 * elements. If the mempool is near-empty to the point that this is a
-+	 * concern, the user should consider increasing the mempool size.
-+	 */
-+#ifdef RTE_USE_C11_MEM_MODEL
-+	return RTE_MIN((unsigned int)s->capacity,
-+			(unsigned int)rte_atomic_load_explicit(&s->stack_pile.bulk.len,
-+			rte_memory_order_relaxed) * RTE_STACK_PILE_BULK_SIZE +
-+			(unsigned int)rte_atomic_load_explicit(&s->stack_pile.solo.len,
-+			rte_memory_order_relaxed));
-+#else
-+	/* NOTE: review for potential ordering optimization */
-+	return RTE_MIN((unsigned int)s->capacity,
-+			(unsigned int)rte_atomic_load_explicit(&s->stack_pile.bulk.len,
-+			rte_memory_order_seq_cst) * RTE_STACK_PILE_BULK_SIZE +
-+			(unsigned int)rte_atomic_load_explicit(&s->stack_pile.solo.len,
-+			rte_memory_order_seq_cst));
-+#endif
-+}
-+
-+static __rte_always_inline void
-+__rte_stack_pile_bulk_push_elems(struct rte_stack_lf_list *list,
-+		struct rte_stack_pile_bulk_elem *first,
-+		struct rte_stack_pile_bulk_elem *last,
-+		unsigned int num)
-+{
-+	__rte_stack_lf_push_elems(list,
-+		(struct rte_stack_lf_elem *)first,
-+		(struct rte_stack_lf_elem *)last,
-+		num);
-+}
-+
-+static __rte_always_inline struct rte_stack_pile_bulk_elem *
-+__rte_stack_pile_bulk_pop_elems(struct rte_stack_lf_list *list,
-+		unsigned int num,
-+		void ** __rte_restrict obj_table,
-+		struct rte_stack_pile_bulk_elem **last)
-+{
-+	struct rte_stack_pile_bulk_elem *first = (struct rte_stack_pile_bulk_elem *)__rte_stack_lf_pop_elems(list, num, NULL, (struct rte_stack_lf_elem **)last);
-+	if (first == NULL)
-+		return NULL;
-+
-+	if (obj_table != NULL) {
-+		/* Traverse the list to copy the bulks. */
-+		struct rte_stack_pile_bulk_elem *tmp = first;
-+		for (unsigned int i = 0; i < num; i++, tmp = tmp->next)
-+			rte_memcpy(&obj_table[i * RTE_STACK_PILE_BULK_SIZE], tmp->objs, sizeof(void *) * RTE_STACK_PILE_BULK_SIZE);
-+	}
-+
-+	return first;
-+}
-+
-+/**
-+ * Push several objects on the pile (lock-free, MT-safe).
-+ *
-+ * @param pile
-+ *   A pointer to the pile structure.
-+ * @param obj_table
-+ *   A pointer to a table of void * pointers (objects).
-+ * @param n
-+ *   The number of objects to push on the pile from the obj_table.
-+ * @return
-+ *   Actual number of objects pushed (either 0 or *n*).
-+ */
-+static __rte_always_inline unsigned int
-+__rte_stack_pile_push(struct rte_stack *s,
-+		void * const * __rte_restrict obj_table,
-+		unsigned int n)
-+{
-+	RTE_ASSERT(s != NULL);
-+	RTE_ASSERT(obj_table != NULL);
-+
-+	struct rte_stack_pile *pile = &s->stack_pile;
-+	struct rte_stack_pile_bulk_elem *bulk_first = NULL, *bulk_last = NULL;
-+	struct rte_stack_lf_elem *solo_first = NULL, *solo_last = NULL;
-+	unsigned int n_bulk = n / RTE_STACK_PILE_BULK_SIZE;
-+	unsigned int n_solo = n & (RTE_STACK_PILE_BULK_SIZE - 1);
-+	unsigned int i;
-+
-+	if (unlikely(n_bulk == 0)) {
-+		if (unlikely(n_solo == 0))
-+			return 0;
-+		else
-+			goto solo;
-+	}
-+
-+	/* Allocate n_bulk elements from the free list. */
-+	bulk_first = __rte_stack_pile_bulk_pop_elems(&pile->free_bulk, n_bulk, NULL, &bulk_last);
-+	if (unlikely(bulk_first == NULL))
-+		return 0; /* Failed. */
-+
-+	if (likely(n_solo == 0))
-+		goto bulk;
-+
-+solo:
-+	/* Allocate n_solo elements from the free list. */
-+	solo_first = __rte_stack_lf_pop_elems(&pile->free_solo, n_solo, NULL, &solo_last);
-+	if (unlikely(solo_first == NULL)) {
-+		/* Failed. Roll back. */
-+		if (n_bulk > 0)
-+			__rte_stack_pile_bulk_push_elems(&pile->free_bulk, bulk_first, bulk_last, n_bulk);
-+		return 0;
-+	}
-+
-+	/*
-+	 * Construct the solo elements.
-+	 * Copy the objects, but ignore the object order.
-+	 */
-+	struct rte_stack_lf_elem *tmp_solo = solo_first;
-+	__rte_assume(n_solo > 0);
-+	__rte_assume(n_solo < RTE_STACK_PILE_BULK_SIZE);
-+	for (i = 0; i < n_solo; i++, tmp_solo = tmp_solo->next)
-+		tmp_solo->data = obj_table[n_bulk * RTE_STACK_PILE_BULK_SIZE + i];
-+
-+	/* Push them to the solo list. */
-+	__rte_stack_lf_push_elems(&pile->solo, solo_first, solo_last, n_solo);
-+
-+	if (unlikely(n_bulk == 0))
-+		return n; /* Done. */
-+
-+bulk:
-+	/*
-+	 * Construct the bulk elements.
-+	 * Copy bulks in reverse order, but ignore the object order within each bulk.
-+	 */
-+	struct rte_stack_pile_bulk_elem *tmp_bulk = bulk_first;
-+	__rte_assume(n_bulk > 0);
-+	for (i = 0; i < n_bulk; i++, tmp_bulk = tmp_bulk->next)
-+		rte_memcpy(tmp_bulk->objs, &obj_table[(n_bulk - i - 1) * RTE_STACK_PILE_BULK_SIZE], sizeof(void *) * RTE_STACK_PILE_BULK_SIZE);
-+
-+	/* Push them to the bulk list. */
-+	__rte_stack_pile_bulk_push_elems(&pile->bulk, bulk_first, bulk_last, n_bulk);
-+
-+	return n;
-+}
-+
-+/**
-+ * Pop several objects from the pile (lock-free, MT-safe).
-+ *
-+ * @param pile
-+ *   A pointer to the pile structure.
-+ * @param obj_table
-+ *   A pointer to a table of void * pointers (objects).
-+ * @param n
-+ *   The number of objects to pull from the pile.
-+ * @return
-+ *   Actual number of objects popped (either 0 or *n*).
-+ */
-+static __rte_always_inline unsigned int
-+__rte_stack_pile_pop(struct rte_stack *s,
-+		void ** __rte_restrict obj_table,
-+		unsigned int n)
-+{
-+	RTE_ASSERT(s != NULL);
-+	RTE_ASSERT(obj_table != NULL);
-+
-+	struct rte_stack_pile *pile = &s->stack_pile;
-+	struct rte_stack_pile_bulk_elem *bulk_first = NULL, *bulk_last = NULL;
-+	struct rte_stack_lf_elem *solo_first = NULL, *solo_last = NULL;
-+	unsigned int n_bulk = n / RTE_STACK_PILE_BULK_SIZE;
-+	unsigned int n_solo = n & (RTE_STACK_PILE_BULK_SIZE - 1);
-+	unsigned int i;
-+
-+	if (unlikely(n_bulk == 0)) {
-+		if (unlikely(n_solo == 0))
-+			return 0;
-+		else
-+			goto solo;
-+	}
-+
-+bulk:
-+	/* Fetch n_bulk * RTE_STACK_PILE_BULK_SIZE objects as bulk elements. */
-+	bulk_first = __rte_stack_pile_bulk_pop_elems(&pile->bulk, n_bulk, obj_table, &bulk_last);
-+	if (unlikely(bulk_first == NULL)) {
-+		/* Not available. Retry with fewer bulk elements; objects to be fetched as solo elements instead. */
-+		n_solo += RTE_STACK_PILE_BULK_SIZE;
-+		n_bulk--;
-+		if (n_bulk > 0)
-+			goto bulk;
-+		else
-+			goto solo;
-+	}
-+
-+	if (likely(n_solo == 0))
-+		goto done;
-+
-+solo:
-+	/* Fetch n_solo objects as solo elements. */
-+	solo_first = __rte_stack_lf_pop_elems(&pile->solo, n_solo, &obj_table[n_bulk * RTE_STACK_PILE_BULK_SIZE], &solo_last);
-+	if (solo_first != NULL)
-+		goto done;
-+
-+	/* Solo elements not available. Try fragmentation. */
-+	alignas(RTE_CACHE_LINE_SIZE) void * obj_frag[RTE_STACK_PILE_BULK_SIZE];
-+	struct rte_stack_pile_bulk_elem *frag;
-+
-+	/* Fetch a fragmentation element as a bulk element. */
-+	frag = __rte_stack_pile_bulk_pop_elems(&pile->bulk, 1, obj_frag, NULL);
-+	if (unlikely(frag == NULL)) {
-+		/* Failed. Roll back. */
-+		if (n_bulk > 0)
-+			__rte_stack_pile_bulk_push_elems(&pile->bulk, bulk_first, bulk_last, n_bulk);
-+		return 0;
-+	}
-+
-+	/* Get n_solo objects from the fragmentation element. */
-+	__rte_assume(n_solo > 0);
-+	__rte_assume(n_solo < RTE_STACK_PILE_BULK_SIZE);
-+	for (i = 0; i < n_solo; i++)
-+		obj_table[n_bulk * RTE_STACK_PILE_BULK_SIZE + i] = obj_frag[i];
-+
-+	/* Fetch free elements for the excess objects. */
-+	__rte_assume(RTE_STACK_PILE_BULK_SIZE - n_solo > 0);
-+	__rte_assume(RTE_STACK_PILE_BULK_SIZE - n_solo < RTE_STACK_PILE_BULK_SIZE - 1);
-+	solo_first = __rte_stack_lf_pop_elems(&pile->free_solo, RTE_STACK_PILE_BULK_SIZE - n_solo, NULL, &solo_last);
-+	if (unlikely(solo_first == NULL)) {
-+		/* Failed. Roll back. */
-+		struct rte_stack_pile_bulk_elem *last;
-+		if (n_bulk > 0) {
-+			/* Attach the bulk elements after the fragmentation element. */
-+			frag->next = bulk_first;
-+			last = bulk_last;
-+		} else
-+			last = frag;
-+		__rte_stack_pile_bulk_push_elems(&pile->bulk, frag, last, 1 + n_bulk);
-+		return 0;
-+	}
-+
-+	/* Construct the solo elements from the excess objects. */
-+	struct rte_stack_lf_elem *tmp = solo_first;
-+	__rte_assume(n_solo > 0);
-+	__rte_assume(n_solo < RTE_STACK_PILE_BULK_SIZE);
-+	for (i = n_solo; i < RTE_STACK_PILE_BULK_SIZE; i++, tmp = tmp->next)
-+		tmp->data = obj_frag[i];
-+
-+	/* Push the excess objects as solo elements. */
-+	__rte_stack_lf_push_elems(&pile->solo, solo_first, solo_last, RTE_STACK_PILE_BULK_SIZE - n_solo);
-+	n_solo = 0;
-+
-+	/* Add the fragmentation element in front of the bulk elements, so it can be freed. */
-+	if (n_bulk > 0)
-+		frag->next = bulk_first;
-+	else
-+		bulk_last = frag;
-+	bulk_first = frag;
-+	n_bulk++;
-+
-+done:
-+	/* Success. Free the elements. */
-+	if (n_bulk > 0)
-+		__rte_stack_pile_bulk_push_elems(&pile->free_bulk, bulk_first, bulk_last, n_bulk);
-+	if (n_solo > 0)
-+		__rte_stack_lf_push_elems(&pile->free_solo, solo_first, solo_last, n_solo);
-+
-+	return n;
-+}
-+
-+/**
-+ * @internal Initialize a pile stack.
-+ *
-+ * @param s
-+ *   A pointer to the stack structure.
-+ * @param count
-+ *   The size of the stack.
-+ */
-+void
-+rte_stack_pile_init(struct rte_stack *s, unsigned int count);
-+
-+/**
-+ * @internal Return the memory required for a pile stack.
-+ *
-+ * @param count
-+ *   The size of the stack.
-+ * @return
-+ *   The bytes to allocate for a pile stack.
-+ */
-+ssize_t
-+rte_stack_pile_get_memsize(unsigned int count);
-+
-+#endif /* _RTE_STACK_PILE_H_ */
-diff --git a/lib/stack/rte_stack_std.h b/lib/stack/rte_stack_std.h
-index ae28add5c4..003095a144 100644
---- a/lib/stack/rte_stack_std.h
-+++ b/lib/stack/rte_stack_std.h
-@@ -6,6 +6,7 @@
- #define _RTE_STACK_STD_H_
- 
- #include <rte_branch_prediction.h>
-+#include <rte_memcpy.h>
- 
- /**
-  * @internal Push several objects on the stack (MT-safe).
-@@ -20,27 +21,24 @@
-  *   Actual number of objects pushed (either 0 or *n*).
-  */
- static __rte_always_inline unsigned int
--__rte_stack_std_push(struct rte_stack *s, void * const *obj_table,
-+__rte_stack_std_push(struct rte_stack *s, void * const * __rte_restrict obj_table,
- 		     unsigned int n)
- {
--	struct rte_stack_std *stack = &s->stack_std;
--	unsigned int index;
--	void **cache_objs;
-+	struct rte_stack_std * __rte_restrict stack = &s->stack_std;
-+	void ** __rte_restrict stack_objs;
- 
- 	rte_spinlock_lock(&stack->lock);
--	cache_objs = &stack->objs[stack->len];
- 
--	/* Is there sufficient space in the stack? */
--	if ((stack->len + n) > s->capacity) {
-+	if (unlikely((stack->len + n) > s->capacity)) {
-+		/* Insufficient room in the stack. */
- 		rte_spinlock_unlock(&stack->lock);
- 		return 0;
- 	}
- 
--	/* Add elements back into the cache */
--	for (index = 0; index < n; ++index, obj_table++)
--		cache_objs[index] = *obj_table;
--
-+	/* Push objects to the stack */
-+	stack_objs = &stack->objs[stack->len];
- 	stack->len += n;
-+	rte_memcpy(stack_objs, obj_table, sizeof(void *) * n);
- 
- 	rte_spinlock_unlock(&stack->lock);
- 	return n;
-@@ -59,28 +57,27 @@ __rte_stack_std_push(struct rte_stack *s, void * const *obj_table,
-  *   Actual number of objects popped (either 0 or *n*).
-  */
- static __rte_always_inline unsigned int
--__rte_stack_std_pop(struct rte_stack *s, void **obj_table, unsigned int n)
-+__rte_stack_std_pop(struct rte_stack *s, void ** __rte_restrict obj_table, unsigned int n)
- {
--	struct rte_stack_std *stack = &s->stack_std;
--	unsigned int index, len;
--	void **cache_objs;
-+	struct rte_stack_std * __rte_restrict stack = &s->stack_std;
-+	unsigned int index;
-+	void ** __rte_restrict stack_objs;
- 
- 	rte_spinlock_lock(&stack->lock);
- 
- 	if (unlikely(n > stack->len)) {
-+		/* Insufficient objects in the stack. */
- 		rte_spinlock_unlock(&stack->lock);
- 		return 0;
- 	}
- 
--	cache_objs = stack->objs;
--
--	for (index = 0, len = stack->len - 1; index < n;
--			++index, len--, obj_table++)
--		*obj_table = cache_objs[len];
--
-+	/* Pop objects from the stack */
-+	stack_objs = &stack->objs[stack->len];
- 	stack->len -= n;
--	rte_spinlock_unlock(&stack->lock);
-+	for (index = 0; index < n; index++)
-+		*obj_table++ = *--stack_objs;
- 
-+	rte_spinlock_unlock(&stack->lock);
- 	return n;
- }
- 
--- 
-2.43.0
-
+UExFQVNFIElHTk9SRS4NCihSZXNlbnQgZHVlIHRvIGludGVybmFsIG1haWwgcHJvYmxlbXMuKQ0K
+DQpWZW5saWcgaGlsc2VuIC8gS2luZCByZWdhcmRzLA0KLU1vcnRlbiBCcsO4cnVwDQoNCj4gLS0t
+LS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTW9ydGVuIEJyw7hydXAgW21haWx0bzpt
+YkBzbWFydHNoYXJlc3lzdGVtcy5jb21dDQo+IFNlbnQ6IFNhdHVyZGF5LCAxIEF1Z3VzdCAyMDI2
+IDA4LjU0DQo+IFRvOiBkZXZAZHBkay5vcmcNCj4gQ2M6IE1vcnRlbiBCcsO4cnVwDQo+IFN1Ympl
+Y3Q6IFtSRkMgUEFUQ0hdIHBpbGUgc3RhY2sgYW5kIG1lbXBvb2wgZHJpdmVyIChyZXNlbmQpDQo+
+IA0KPiBFYXJseSBzdWJtaXNzaW9uIG9mOg0KPiAtIHNvbWUgbWVtcG9vbCBvcHRpbWl6YXRpb25z
+LA0KPiAtIGEgbmV3IG1lbXBvb2wgInBpbGUiIGRyaXZlciwgYW5kDQo+IC0gaXRzIHVuZGVybHlp
+bmcgInBpbGUiIHN0YWNrIGltcGxlbWVudGF0aW9uLg0KPiANCj4gRm9yIGNvbW11bml0eSBmZWVk
+YmFjayBhbmQgQ0kgdGVzdC4NCj4gDQo+IE5lZWRsZXNzIHRvIHNheSwgdGhpcyBtdXN0IGJlIHNl
+cGFyYXRlZCBpbnRvIGEgc2VyaWVzIG9mIHBhdGNoZXMuDQo+IEZvciBub3csIEknbSBzdWJtaXR0
+aW5nIGEgc25hcHNob3Qgb2Ygd29yayBpbiBwcm9ncmVzcy4NCj4gDQo+IFNvbWUgcGVyZm9ybWFu
+Y2UgbnVtYmVycyBmcm9tIG1lbXBvb2xfcGVyZl9hdXRvdGVzdF8yY29yZXMsIGFsbA0KPiB3aXRo
+IGNhY2hlPTEwMjQgY29yZXM9MiBuX2tlZXA9MzI3Njg6DQo+IA0KPiBzdGFydCBwZXJmb3JtYW5j
+ZSB0ZXN0ICh1c2luZyByaW5nX21wX21jLCB3aXRoIGNhY2hlKQ0KPiBuX2dldF9idWxrPSA2NCBu
+X3B1dF9idWxrPSA2NCBjb25zdGFudF9uPTAgcmF0ZV9wZXJzZWM9IDc1Mzk4NTMzOA0KPiBuX2dl
+dF9idWxrPTI1NiBuX3B1dF9idWxrPTI1NiBjb25zdGFudF9uPTAgcmF0ZV9wZXJzZWM9IDc1NTgw
+NTkxMw0KPiANCj4gc3RhcnQgcGVyZm9ybWFuY2UgdGVzdCBmb3IgbGZfc3RhY2sgKHdpdGggY2Fj
+aGUpDQo+IG5fZ2V0X2J1bGs9IDY0IG5fcHV0X2J1bGs9IDY0IGNvbnN0YW50X249MCByYXRlX3Bl
+cnNlYz0gIDI5MTMyMzUyDQo+IG5fZ2V0X2J1bGs9MjU2IG5fcHV0X2J1bGs9MjU2IGNvbnN0YW50
+X249MCByYXRlX3BlcnNlYz0gIDI5Mjc2NzA4DQo+IA0KPiBzdGFydCBwZXJmb3JtYW5jZSB0ZXN0
+IGZvciBwaWxlICh3aXRoIGNhY2hlKQ0KPiBuX2dldF9idWxrPSA2NCBuX3B1dF9idWxrPSA2NCBj
+b25zdGFudF9uPTAgcmF0ZV9wZXJzZWM9IDU2MDE1OTQ3OQ0KPiBuX2dldF9idWxrPTI1NiBuX3B1
+dF9idWxrPTI1NiBjb25zdGFudF9uPTAgcmF0ZV9wZXJzZWM9IDU1NzkxMDkzMw0KPiANCj4gSGF0
+IHRpcCB0byBCcnVjZSBmb3IgYnJpbmdpbmcgYXR0ZW50aW9uIHRvIHRoZSByaW5nIG5vdCBiZWlu
+ZyB0aGUNCj4gb3B0aW1hbCBtZW1wb29sIGRyaXZlci4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IE1v
+cnRlbiBCcsO4cnVwIDxtYkBzbWFydHNoYXJlc3lzdGVtcy5jb20+DQo+IC0tLQ0KPiAgYXBwL3Rl
+c3QvdGVzdF9tZW1wb29sLmMgICAgICAgICAgICAgICAgICAgfCAgIDMgKy0NCj4gIGFwcC90ZXN0
+L3Rlc3Rfc3RhY2suYyAgICAgICAgICAgICAgICAgICAgIHwgIDcwICsrKystDQo+ICBhcHAvdGVz
+dC90ZXN0X3N0YWNrX3BlcmYuYyAgICAgICAgICAgICAgICB8ICAxNSArLQ0KPiAgY29uZmlnL3J0
+ZV9jb25maWcuaCAgICAgICAgICAgICAgICAgICAgICAgfCAgIDUgKy0NCj4gIGRvYy9ndWlkZXMv
+cHJvZ19ndWlkZS9zdGFja19saWIucnN0ICAgICAgIHwgIDY3ICsrKystDQo+ICBkcml2ZXJzL21l
+bXBvb2wvc3RhY2svcnRlX21lbXBvb2xfc3RhY2suYyB8ICA0MCArKysNCj4gIGRyaXZlcnMvbmV0
+L2JvbmRpbmcvcnRlX2V0aF9ib25kX3BtZC5jICAgIHwgICAyICstDQo+ICBkcml2ZXJzL25ldC9p
+bnRlbC9jcGZsL2NwZmxfcnh0eC5oICAgICAgICB8ICAgMiArLQ0KPiAgZHJpdmVycy9uZXQvc3hl
+Mi9zeGUyX3R4cnhfdmVjX2F2eDUxMi5jICAgfCAgIDMgKy0NCj4gIGRyaXZlcnMvbmV0L3RhcC9y
+dGVfZXRoX3RhcC5jICAgICAgICAgICAgIHwgICAyICstDQo+ICBsaWIvZWFsL2luY2x1ZGUvcnRl
+X2NvbW1vbi5oICAgICAgICAgICAgICB8ICAxMiArDQo+ICBsaWIvZWFsL3g4Ni9pbmNsdWRlL3J0
+ZV9tZW1jcHkuaCAgICAgICAgICB8ICAyOSArKw0KPiAgbGliL21lbXBvb2wvbWVtcG9vbF90cmFj
+ZS5oICAgICAgICAgICAgICAgfCAgIDEgLQ0KPiAgbGliL21lbXBvb2wvcnRlX21lbXBvb2wuYyAg
+ICAgICAgICAgICAgICAgfCAgNTEgKystLQ0KPiAgbGliL21lbXBvb2wvcnRlX21lbXBvb2wuaCAg
+ICAgICAgICAgICAgICAgfCAgNzQgKysrLS0NCj4gIGxpYi9zdGFjay9tZXNvbi5idWlsZCAgICAg
+ICAgICAgICAgICAgICAgIHwgICAzICstDQo+ICBsaWIvc3RhY2svcnRlX3N0YWNrLmMgICAgICAg
+ICAgICAgICAgICAgICB8ICAxOCArLQ0KPiAgbGliL3N0YWNrL3J0ZV9zdGFjay5oICAgICAgICAg
+ICAgICAgICAgICAgfCAgNzcgKysrKystDQo+ICBsaWIvc3RhY2svcnRlX3N0YWNrX2xmLmggICAg
+ICAgICAgICAgICAgICB8ICAgNiArLQ0KPiAgbGliL3N0YWNrL3J0ZV9zdGFja19sZl9jMTEuaCAg
+ICAgICAgICAgICAgfCAgIDIgKy0NCj4gIGxpYi9zdGFjay9ydGVfc3RhY2tfbGZfZ2VuZXJpYy5o
+ICAgICAgICAgIHwgICAyICstDQo+ICBsaWIvc3RhY2svcnRlX3N0YWNrX2xmX3N0dWJzLmggICAg
+ICAgICAgICB8ICAgMiArLQ0KPiAgbGliL3N0YWNrL3J0ZV9zdGFja19waWxlLmMgICAgICAgICAg
+ICAgICAgfCAgMzMgKysrDQo+ICBsaWIvc3RhY2svcnRlX3N0YWNrX3BpbGUuaCAgICAgICAgICAg
+ICAgICB8IDMxNiArKysrKysrKysrKysrKysrKysrKysrDQo+ICBsaWIvc3RhY2svcnRlX3N0YWNr
+X3N0ZC5oICAgICAgICAgICAgICAgICB8ICA0MSArKy0NCj4gIDI1IGZpbGVzIGNoYW5nZWQsIDc1
+NiBpbnNlcnRpb25zKCspLCAxMjAgZGVsZXRpb25zKC0pDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQg
+bGliL3N0YWNrL3J0ZV9zdGFja19waWxlLmMNCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBsaWIvc3Rh
+Y2svcnRlX3N0YWNrX3BpbGUuaA0KPiANCj4gZGlmZiAtLWdpdCBhL2FwcC90ZXN0L3Rlc3RfbWVt
+cG9vbC5jIGIvYXBwL3Rlc3QvdGVzdF9tZW1wb29sLmMNCj4gaW5kZXggZTU0MjQ5Y2U2MS4uNzZk
+NDVjZWEyYSAxMDA2NDQNCj4gLS0tIGEvYXBwL3Rlc3QvdGVzdF9tZW1wb29sLmMNCj4gKysrIGIv
+YXBwL3Rlc3QvdGVzdF9tZW1wb29sLmMNCj4gQEAgLTExMiw4ICsxMTIsNyBAQCB0ZXN0X21lbXBv
+b2xfYmFzaWMoc3RydWN0IHJ0ZV9tZW1wb29sICptcCwgaW50DQo+IHVzZV9leHRlcm5hbF9jYWNo
+ZSkNCj4gIAkJR09UT19FUlIocmV0LCBvdXQpOw0KPiANCj4gIAlwcmludGYoImdldCBwcml2YXRl
+IGRhdGFcbiIpOw0KPiAtCWlmIChydGVfbWVtcG9vbF9nZXRfcHJpdihtcCkgIT0gKGNoYXIgKilt
+cCArDQo+IC0JCQlSVEVfTUVNUE9PTF9IRUFERVJfU0laRShtcCwgbXAtPmNhY2hlX3NpemUpKQ0K
+PiArCWlmIChydGVfbWVtcG9vbF9nZXRfcHJpdihtcCkgIT0gKGNoYXIgKiltcCArIHNpemVvZihz
+dHJ1Y3QNCj4gcnRlX21lbXBvb2wpKQ0KPiAgCQlHT1RPX0VSUihyZXQsIG91dCk7DQo+IA0KPiAg
+I2lmbmRlZiBSVEVfRVhFQ19FTlZfRlJFRUJTRCAvKiBydGVfbWVtX3ZpcnQyaW92YSgpIG5vdCBz
+dXBwb3J0ZWQgb24NCj4gYnNkICovDQo+IGRpZmYgLS1naXQgYS9hcHAvdGVzdC90ZXN0X3N0YWNr
+LmMgYi9hcHAvdGVzdC90ZXN0X3N0YWNrLmMNCj4gaW5kZXggNTUxNzk4Mjc3NC4uYWM1MmYxYzA0
+OCAxMDA2NDQNCj4gLS0tIGEvYXBwL3Rlc3QvdGVzdF9zdGFjay5jDQo+ICsrKyBiL2FwcC90ZXN0
+L3Rlc3Rfc3RhY2suYw0KPiBAQCAtODEsMTMgKzgxLDI5IEBAIHRlc3Rfc3RhY2tfcHVzaF9wb3Ao
+c3RydWN0IHJ0ZV9zdGFjayAqcywgdm9pZA0KPiAqKm9ial90YWJsZSwgdW5zaWduZWQgaW50IGJ1
+bGtfc3opDQo+ICAJCX0NCj4gIAl9DQo+IA0KPiAtCWZvciAoaSA9IDA7IGkgPCBTVEFDS19TSVpF
+OyBpKyspIHsNCj4gLQkJaWYgKG9ial90YWJsZVtpXSAhPSBwb3BwZWRfb2Jqc1tTVEFDS19TSVpF
+IC0gaSAtIDFdKSB7DQo+IC0JCQlwcmludGYoIlslcygpOiV1XSBJbmNvcnJlY3QgdmFsdWUgJXAg
+YXQgaW5kZXgNCj4gMHgleFxuIiwNCj4gLQkJCSAgICAgICBfX2Z1bmNfXywgX19MSU5FX18sDQo+
+IC0JCQkgICAgICAgcG9wcGVkX29ianNbU1RBQ0tfU0laRSAtIGkgLSAxXSwgaSk7DQo+IC0JCQly
+dGVfZnJlZShwb3BwZWRfb2Jqcyk7DQo+IC0JCQlyZXR1cm4gLTE7DQo+ICsJaWYgKCEocy0+Zmxh
+Z3MgJiBSVEVfU1RBQ0tfRl9QSUxFKSkgew0KPiArCQlmb3IgKGkgPSAwOyBpIDwgU1RBQ0tfU0la
+RTsgaSsrKSB7DQo+ICsJCQlpZiAob2JqX3RhYmxlW2ldICE9IHBvcHBlZF9vYmpzW1NUQUNLX1NJ
+WkUgLSBpIC0gMV0pDQo+IHsNCj4gKwkJCQlwcmludGYoIlslcygpOiV1XSBJbmNvcnJlY3QgdmFs
+dWUgJXAgYXQgaW5kZXgNCj4gMHgleFxuIiwNCj4gKwkJCQkgICAgICAgX19mdW5jX18sIF9fTElO
+RV9fLA0KPiArCQkJCSAgICAgICBwb3BwZWRfb2Jqc1tTVEFDS19TSVpFIC0gaSAtIDFdLCBpKTsN
+Cj4gKwkJCQlydGVfZnJlZShwb3BwZWRfb2Jqcyk7DQo+ICsJCQkJcmV0dXJuIC0xOw0KPiArCQkJ
+fQ0KPiArCQl9DQo+ICsJfQ0KPiArDQo+ICsJaWYgKChzLT5mbGFncyAmIFJURV9TVEFDS19GX1BJ
+TEUpICYmIChidWxrX3N6ICYNCj4gKFJURV9TVEFDS19QSUxFX0JVTEtfU0laRSAtIDEpKSA9PSAw
+KSB7DQo+ICsJCWZvciAoaSA9IDA7IGkgPCBTVEFDS19TSVpFOyBpICs9IFJURV9TVEFDS19QSUxF
+X0JVTEtfU0laRSkNCj4gew0KPiArCQkJaWYgKG1lbWNtcCgmb2JqX3RhYmxlW2ldLA0KPiArCQkJ
+CQkmcG9wcGVkX29ianNbU1RBQ0tfU0laRSAtDQo+IFJURV9TVEFDS19QSUxFX0JVTEtfU0laRSAt
+IGldLA0KPiArCQkJCQlSVEVfU1RBQ0tfUElMRV9CVUxLX1NJWkUpICE9IDApIHsNCj4gKwkJCQlw
+cmludGYoIlslcygpOiV1XSBJbmNvcnJlY3QgdmFsdWVzICVwIGF0IGluZGV4DQo+IDB4JXggd2l0
+aCBidWxrIHNpemUgJXVcbiIsDQo+ICsJCQkJICAgICAgIF9fZnVuY19fLCBfX0xJTkVfXywNCj4g
+KwkJCQkgICAgICAgcG9wcGVkX29ianNbU1RBQ0tfU0laRSAtDQo+IFJURV9TVEFDS19QSUxFX0JV
+TEtfU0laRSAtIGldLCBpLCBidWxrX3N6KTsNCj4gKwkJCQlydGVfZnJlZShwb3BwZWRfb2Jqcyk7
+DQo+ICsJCQkJcmV0dXJuIC0xOw0KPiArCQkJfQ0KPiAgCQl9DQo+ICAJfQ0KPiANCj4gQEAgLTE1
+MiwxMiArMTY4LDI2IEBAIHRlc3Rfc3RhY2tfYmFzaWModWludDMyX3QgZmxhZ3MpDQo+ICAJCWdv
+dG8gZmFpbF90ZXN0Ow0KPiAgCX0NCj4gDQo+IC0JcmV0ID0gcnRlX3N0YWNrX3B1c2gocywgb2Jq
+X3RhYmxlLCAyICogU1RBQ0tfU0laRSk7DQo+IC0JaWYgKHJldCAhPSAwKSB7DQo+IC0JCXByaW50
+ZigiWyVzKCk6JXVdIEV4Y2VzcyBvYmplY3RzIHB1c2ggc3VjY2VlZGVkXG4iLA0KPiAtCQkgICAg
+ICAgX19mdW5jX18sIF9fTElORV9fKTsNCj4gLQkJZ290byBmYWlsX3Rlc3Q7DQo+ICtfX3J0ZV9k
+aWFnbm9zdGljX3B1c2gNCj4gKyNwcmFnbWEgR0NDIGRpYWdub3N0aWMgaWdub3JlZCAiLVdhcnJh
+eS1ib3VuZHMiDQo+ICsjcHJhZ21hIEdDQyBkaWFnbm9zdGljIGlnbm9yZWQgIi1Xc3RyaW5nb3At
+b3ZlcnJlYWQiDQo+ICsJaWYgKCEocy0+ZmxhZ3MgJiBSVEVfU1RBQ0tfRl9QSUxFKSkgew0KPiAr
+CQlyZXQgPSBydGVfc3RhY2tfcHVzaChzLCBvYmpfdGFibGUsIDIgKiBTVEFDS19TSVpFKTsNCj4g
+KwkJaWYgKHJldCAhPSAwKSB7DQo+ICsJCQlwcmludGYoIlslcygpOiV1XSBFeGNlc3Mgb2JqZWN0
+cyBwdXNoIHN1Y2NlZWRlZFxuIiwNCj4gKwkJCSAgICAgICBfX2Z1bmNfXywgX19MSU5FX18pOw0K
+PiArCQkJZ290byBmYWlsX3Rlc3Q7DQo+ICsJCX0NCj4gIAl9DQo+ICsJaWYgKHMtPmZsYWdzICYg
+UlRFX1NUQUNLX0ZfUElMRSkgew0KPiArCQlyZXQgPSBydGVfc3RhY2tfcHVzaChzLCBvYmpfdGFi
+bGUsIFNUQUNLX1NJWkUgKg0KPiBSVEVfU1RBQ0tfUElMRV9CVUxLX1NJWkUgKyAxKTsNCj4gKwkJ
+aWYgKHJldCAhPSAwKSB7DQo+ICsJCQlwcmludGYoIlslcygpOiV1XSBFeGNlc3Mgb2JqZWN0cyBw
+dXNoIHN1Y2NlZWRlZFxuIiwNCj4gKwkJCSAgICAgICBfX2Z1bmNfXywgX19MSU5FX18pOw0KPiAr
+CQkJZ290byBmYWlsX3Rlc3Q7DQo+ICsJCX0NCj4gKwl9DQo+ICtfX3J0ZV9kaWFnbm9zdGljX3Bv
+cA0KPiANCj4gIAlyZXQgPSBydGVfc3RhY2tfcG9wKHMsIG9ial90YWJsZSwgMSk7DQo+ICAJaWYg
+KHJldCAhPSAwKSB7DQo+IEBAIC0xODEsMTQgKzIxMSwxNCBAQCB0ZXN0X3N0YWNrX25hbWVfcmV1
+c2UodWludDMyX3QgZmxhZ3MpDQo+ICB7DQo+ICAJc3RydWN0IHJ0ZV9zdGFjayAqc1syXTsNCj4g
+DQo+IC0Jc1swXSA9IHJ0ZV9zdGFja19jcmVhdGUoInRlc3QiLCBTVEFDS19TSVpFLCBydGVfc29j
+a2V0X2lkKCksDQo+IGZsYWdzKTsNCj4gKwlzWzBdID0gcnRlX3N0YWNrX2NyZWF0ZShfX2Z1bmNf
+XywgU1RBQ0tfU0laRSwgcnRlX3NvY2tldF9pZCgpLA0KPiBmbGFncyk7DQo+ICAJaWYgKHNbMF0g
+PT0gTlVMTCkgew0KPiAgCQlwcmludGYoIlslcygpOiV1XSBGYWlsZWQgdG8gY3JlYXRlIGEgc3Rh
+Y2tcbiIsDQo+ICAJCSAgICAgICBfX2Z1bmNfXywgX19MSU5FX18pOw0KPiAgCQlyZXR1cm4gLTE7
+DQo+ICAJfQ0KPiANCj4gLQlzWzFdID0gcnRlX3N0YWNrX2NyZWF0ZSgidGVzdCIsIFNUQUNLX1NJ
+WkUsIHJ0ZV9zb2NrZXRfaWQoKSwNCj4gZmxhZ3MpOw0KPiArCXNbMV0gPSBydGVfc3RhY2tfY3Jl
+YXRlKF9fZnVuY19fLCBTVEFDS19TSVpFLCBydGVfc29ja2V0X2lkKCksDQo+IGZsYWdzKTsNCj4g
+IAlpZiAoc1sxXSAhPSBOVUxMKSB7DQo+ICAJCXByaW50ZigiWyVzKCk6JXVdIEZhaWxlZCB0byBk
+ZXRlY3QgcmUtdXNlZCBuYW1lXG4iLA0KPiAgCQkgICAgICAgX19mdW5jX18sIF9fTElORV9fKTsN
+Cj4gQEAgLTMwMCw2ICszMzAsNyBAQCBzdGFja190aHJlYWRfcHVzaF9wb3AoX19ydGVfdW51c2Vk
+IHZvaWQgKmFyZ3MpDQo+ICAJCQkgICAgICAgX19mdW5jX18sIF9fTElORV9fLCBudW0pOw0KPiAg
+CQkJcmV0dXJuIC0xOw0KPiAgCQl9DQo+ICsJCXJ0ZV9jb21waWxlcl9iYXJyaWVyKCk7DQo+ICAJ
+fQ0KPiANCj4gIAlyZXR1cm4gMDsNCj4gQEAgLTM4NCw1ICs0MTUsMTYgQEAgdGVzdF9sZl9zdGFj
+ayh2b2lkKQ0KPiAgI2VuZGlmDQo+ICB9DQo+IA0KPiArc3RhdGljIGludA0KPiArdGVzdF9waWxl
+KHZvaWQpDQo+ICt7DQo+ICsjaWYgZGVmaW5lZChSVEVfU1RBQ0tfUElMRV9TVVBQT1JURUQpDQo+
+ICsJcmV0dXJuIF9fdGVzdF9zdGFjayhSVEVfU1RBQ0tfRl9QSUxFKTsNCj4gKyNlbHNlDQo+ICsJ
+cmV0dXJuIFRFU1RfU0tJUFBFRDsNCj4gKyNlbmRpZg0KPiArfQ0KPiArDQo+ICBSRUdJU1RFUl9G
+QVNUX1RFU1Qoc3RhY2tfYXV0b3Rlc3QsIE5PSFVHRV9TS0lQLCBBU0FOX09LLCB0ZXN0X3N0YWNr
+KTsNCj4gIFJFR0lTVEVSX0ZBU1RfVEVTVChzdGFja19sZl9hdXRvdGVzdCwgTk9IVUdFX1NLSVAs
+IEFTQU5fT0ssDQo+IHRlc3RfbGZfc3RhY2spOw0KPiArUkVHSVNURVJfRkFTVF9URVNUKHN0YWNr
+X3BpbGVfYXV0b3Rlc3QsIE5PSFVHRV9TS0lQLCBBU0FOX09LLA0KPiB0ZXN0X3BpbGUpOw0KPiBk
+aWZmIC0tZ2l0IGEvYXBwL3Rlc3QvdGVzdF9zdGFja19wZXJmLmMgYi9hcHAvdGVzdC90ZXN0X3N0
+YWNrX3BlcmYuYw0KPiBpbmRleCAzZjE3YTI2MDZjLi41ODY0MTA2NzFmIDEwMDY0NA0KPiAtLS0g
+YS9hcHAvdGVzdC90ZXN0X3N0YWNrX3BlcmYuYw0KPiArKysgYi9hcHAvdGVzdC90ZXN0X3N0YWNr
+X3BlcmYuYw0KPiBAQCAtMTQsMTQgKzE0LDE0IEBADQo+ICAjaW5jbHVkZSAidGVzdC5oIg0KPiAN
+Cj4gICNkZWZpbmUgU1RBQ0tfTkFNRSAiU1RBQ0tfUEVSRiINCj4gLSNkZWZpbmUgTUFYX0JVUlNU
+IDMyDQo+ICsjZGVmaW5lIE1BWF9CVVJTVCBSVEVfTUVNUE9PTF9DQUNIRV9NQVhfU0laRSAvIDIN
+Cj4gICNkZWZpbmUgU1RBQ0tfU0laRSAoUlRFX01BWF9MQ09SRSAqIE1BWF9CVVJTVCkNCj4gDQo+
+ICAvKg0KPiAgICogUHVzaC9wb3AgYnVsayBzaXplcywgbWFya2VkIHZvbGF0aWxlIHNvIHRoZXkg
+YXJlbid0IHRyZWF0ZWQgYXMNCj4gY29tcGlsZS10aW1lDQo+ICAgKiBjb25zdGFudHMuDQo+ICAg
+Ki8NCj4gLXN0YXRpYyB2b2xhdGlsZSB1bnNpZ25lZCBpbnQgYnVsa19zaXplc1tdID0gezgsIE1B
+WF9CVVJTVH07DQo+ICtzdGF0aWMgdm9sYXRpbGUgdW5zaWduZWQgaW50IGJ1bGtfc2l6ZXNbXSA9
+IHsxLCA4LCAzMiwgTUFYX0JVUlNUfTsNCj4gDQo+ICBzdGF0aWMgUlRFX0FUT01JQyh1aW50MzJf
+dCkgbGNvcmVfYmFycmllcjsNCj4gDQo+IEBAIC0zNTQsNSArMzU0LDE2IEBAIHRlc3RfbGZfc3Rh
+Y2tfcGVyZih2b2lkKQ0KPiAgI2VuZGlmDQo+ICB9DQo+IA0KPiArc3RhdGljIGludA0KPiArdGVz
+dF9waWxlX3BlcmYodm9pZCkNCj4gK3sNCj4gKyNpZiBkZWZpbmVkKFJURV9TVEFDS19QSUxFX1NV
+UFBPUlRFRCkNCj4gKwlyZXR1cm4gX190ZXN0X3N0YWNrX3BlcmYoUlRFX1NUQUNLX0ZfUElMRSk7
+DQo+ICsjZWxzZQ0KPiArCXJldHVybiBURVNUX1NLSVBQRUQ7DQo+ICsjZW5kaWYNCj4gK30NCj4g
+Kw0KPiAgUkVHSVNURVJfUEVSRl9URVNUKHN0YWNrX3BlcmZfYXV0b3Rlc3QsIHRlc3Rfc3RhY2tf
+cGVyZik7DQo+ICBSRUdJU1RFUl9QRVJGX1RFU1Qoc3RhY2tfbGZfcGVyZl9hdXRvdGVzdCwgdGVz
+dF9sZl9zdGFja19wZXJmKTsNCj4gK1JFR0lTVEVSX1BFUkZfVEVTVChzdGFja19waWxlX3BlcmZf
+YXV0b3Rlc3QsIHRlc3RfcGlsZV9wZXJmKTsNCj4gZGlmZiAtLWdpdCBhL2NvbmZpZy9ydGVfY29u
+ZmlnLmggYi9jb25maWcvcnRlX2NvbmZpZy5oDQo+IGluZGV4IDA0NDdjZGYyYWQuLjAzMzUwNjYw
+ZTQgMTAwNjQ0DQo+IC0tLSBhL2NvbmZpZy9ydGVfY29uZmlnLmgNCj4gKysrIGIvY29uZmlnL3J0
+ZV9jb25maWcuaA0KPiBAQCAtNTYsNyArNTYsNyBAQA0KPiAgI2RlZmluZSBSVEVfQ09OVElHTUVN
+X0RFRkFVTFRfQlVGX1NJWkUgKDUxMioxMDI0KjEwMjQpDQo+IA0KPiAgLyogbWVtcG9vbCBkZWZp
+bmVzICovDQo+IC0jZGVmaW5lIFJURV9NRU1QT09MX0NBQ0hFX01BWF9TSVpFIDUxMg0KPiArI2Rl
+ZmluZSBSVEVfTUVNUE9PTF9DQUNIRV9NQVhfU0laRSAxMDI0DQo+ICAvKiBSVEVfTElCUlRFX01F
+TVBPT0xfU1RBVFMgaXMgbm90IHNldCAqLw0KPiAgLyogUlRFX0xJQlJURV9NRU1QT09MX0RFQlVH
+IGlzIG5vdCBzZXQgKi8NCj4gDQo+IEBAIC02NCw2ICs2NCw5IEBADQo+ICAjZGVmaW5lIFJURV9N
+QlVGX0RFRkFVTFRfTUVNUE9PTF9PUFMgInJpbmdfbXBfbWMiDQo+ICAvKiBSVEVfTUJVRl9ISVNU
+T1JZX0RFQlVHIGlzIG5vdCBzZXQgKi8NCj4gDQo+ICsvKiBzdGFjayBkZWZpbmVzICovDQo+ICsj
+ZGVmaW5lIFJURV9TVEFDS19QSUxFX0JVTEtfU0laRSAzMg0KPiArDQo+ICAvKiBldGhlciBkZWZp
+bmVzICovDQo+ICAjZGVmaW5lIFJURV9NQVhfUVVFVUVTX1BFUl9QT1JUIDEwMjQNCj4gICNkZWZp
+bmUgUlRFX0VUSERFVl9SWFRYX0NBTExCQUNLUyAxDQo+IGRpZmYgLS1naXQgYS9kb2MvZ3VpZGVz
+L3Byb2dfZ3VpZGUvc3RhY2tfbGliLnJzdA0KPiBiL2RvYy9ndWlkZXMvcHJvZ19ndWlkZS9zdGFj
+a19saWIucnN0DQo+IGluZGV4IGZkZjA1NjczMGMuLjliNDczMDMwZDMgMTAwNjQ0DQo+IC0tLSBh
+L2RvYy9ndWlkZXMvcHJvZ19ndWlkZS9zdGFja19saWIucnN0DQo+ICsrKyBiL2RvYy9ndWlkZXMv
+cHJvZ19ndWlkZS9zdGFja19saWIucnN0DQo+IEBAIC0xLDUgKzEsNiBAQA0KPiAgLi4gIFNQRFgt
+TGljZW5zZS1JZGVudGlmaWVyOiBCU0QtMy1DbGF1c2UNCj4gICAgICBDb3B5cmlnaHQoYykgMjAx
+OSBJbnRlbCBDb3Jwb3JhdGlvbi4NCj4gKyAgICBDb3B5cmlnaHQoYykgMjAyNiBTbWFydFNoYXJl
+IFN5c3RlbXMuDQo+IA0KPiAgU3RhY2sgTGlicmFyeQ0KPiAgPT09PT09PT09PT09PQ0KPiBAQCAt
+OSw5ICsxMCwxMCBAQCBzdGFjayBvZiBwb2ludGVycy4NCj4gDQo+ICBUaGUgc3RhY2sgbGlicmFy
+eSBwcm92aWRlcyB0aGUgZm9sbG93aW5nIGJhc2ljIG9wZXJhdGlvbnM6DQo+IA0KPiAtKiAgQ3Jl
+YXRlIGEgdW5pcXVlbHkgbmFtZWQgc3RhY2sgb2YgYSB1c2VyLXNwZWNpZmllZCBzaXplIGFuZCB1
+c2luZyBhDQo+ICsqICBDcmVhdGUgYSB1bmlxdWVseSBuYW1lZCBzdGFjayAob3IgcGlsZSkgb2Yg
+YSB1c2VyLXNwZWNpZmllZCBzaXplDQo+IGFuZCB1c2luZyBhDQo+ICAgICB1c2VyLXNwZWNpZmll
+ZCBzb2NrZXQsIHdpdGggZWl0aGVyIHN0YW5kYXJkIChsb2NrLWJhc2VkKSBvciBsb2NrLQ0KPiBm
+cmVlDQo+ICAgICBiZWhhdmlvci4NCj4gKyAgIFRoZSBwaWxlIHJlc2VtYmxlcyBhIGxvY2stZnJl
+ZSBzdGFjaywgYnV0IGlzIG5vdCBzdHJpY3RseSBMSUZPLg0KPiANCj4gICogIFB1c2ggYW5kIHBv
+cCBhIGJ1cnN0IG9mIG9uZSBvciBtb3JlIHN0YWNrIG9iamVjdHMgKHBvaW50ZXJzKS4NCj4gICAg
+IFRoZXNlIGZ1bmN0aW9ucyBhcmUgbXVsdGktdGhyZWFkIHNhZmUuDQo+IEBAIC0yNSw4ICsyNyw5
+IEBAIFRoZSBzdGFjayBsaWJyYXJ5IHByb3ZpZGVzIHRoZSBmb2xsb3dpbmcgYmFzaWMNCj4gb3Bl
+cmF0aW9uczoNCj4gIEltcGxlbWVudGF0aW9uDQo+ICAtLS0tLS0tLS0tLS0tLQ0KPiANCj4gLVRo
+ZSBsaWJyYXJ5IHN1cHBvcnRzIHR3byB0eXBlcyBvZiBzdGFja3M6IHN0YW5kYXJkIChsb2NrLWJh
+c2VkKSBhbmQNCj4gbG9jay1mcmVlLg0KPiAtQm90aCB0eXBlcyB1c2UgdGhlIHNhbWUgc2V0IG9m
+IGludGVyZmFjZXMsIGJ1dCB0aGVpciBpbXBsZW1lbnRhdGlvbnMNCj4gZGlmZmVyLg0KPiArVGhl
+IGxpYnJhcnkgc3VwcG9ydHMgdGhyZWUgdHlwZXMgb2Ygc3RhY2tzOiBzdGFuZGFyZCAobG9jay1i
+YXNlZCksDQo+IGxvY2stZnJlZSwNCj4gK2FuZCBwaWxlIChsb2NrLWZyZWUsIG5vdCBzdHJpY3Rs
+eSBMSUZPLCBvcHRpbWl6ZWQgZm9yIGJ1bGsNCj4gb3BlcmF0aW9ucykuDQo+ICtBbGwgdHlwZXMg
+dXNlIHRoZSBzYW1lIHNldCBvZiBpbnRlcmZhY2VzLCBidXQgdGhlaXIgaW1wbGVtZW50YXRpb25z
+DQo+IGRpZmZlci4NCj4gDQo+ICAuLiBfU3RhY2tfTGlicmFyeV9TdGRfU3RhY2s6DQo+IA0KPiBA
+QCAtNjQsNyArNjcsNyBAQCBUaGUgbGlua2VkIGxpc3QgZWxlbWVudHMgdGhlbXNlbHZlcyBhcmUg
+bWFpbnRhaW5lZCBpbg0KPiBhIGxvY2stZnJlZSBMSUZPLCBhbmQgYXJlDQo+ICBhbGxvY2F0ZWQg
+YmVmb3JlIHN0YWNrIHB1c2hlcyBhbmQgZnJlZWQgYWZ0ZXIgc3RhY2sgcG9wcy4gU2luY2UgdGhl
+DQo+IHN0YWNrIGhhcyBhDQo+ICBmaXhlZCBtYXhpbXVtIGRlcHRoLCB0aGVzZSBlbGVtZW50cyBk
+byBub3QgbmVlZCB0byBiZSBkeW5hbWljYWxseQ0KPiBjcmVhdGVkLg0KPiANCj4gLVRoZSBsb2Nr
+LWZyZWUgYmVoYXZpb3IgaXMgc2VsZWN0ZWQgYnkgcGFzc2luZyB0aGUgKlJURV9TVEFDS19GX0xG
+Kg0KPiBmbGFnIHRvDQo+ICtUaGUgbG9jay1mcmVlIGJlaGF2aW9yIGlzIHNlbGVjdGVkIGJ5IHBh
+c3NpbmcgdGhlIGBgUlRFX1NUQUNLX0ZfTEZgYA0KPiBmbGFnIHRvDQo+ICBgYHJ0ZV9zdGFja19j
+cmVhdGUoKWBgLg0KPiANCj4gIFByZXZlbnRpbmcgdGhlIEFCQSBwcm9ibGVtDQo+IEBAIC04Niwz
+ICs4OSw1OSBAQCBib3RoIHBvcCBzdGFsZSBkYXRhIGFuZCBpbmNvcnJlY3RseSBjaGFuZ2UgdGhl
+IGhlYWQNCj4gcG9pbnRlci4gQnkgYWRkaW5nIGENCj4gIG1vZGlmaWNhdGlvbiBjb3VudGVyIHRo
+YXQgaXMgdXBkYXRlZCBvbiBldmVyeSBwdXNoIGFuZCBwb3AgYXMgcGFydCBvZg0KPiB0aGUNCj4g
+IGNvbXBhcmUtYW5kLXN3YXAsIHRoZSBhbGdvcml0aG0gY2FuIGRldGVjdCB3aGVuIHRoZSBsaXN0
+IGNoYW5nZXMgZXZlbg0KPiBpZiB0aGUNCj4gIGhlYWQgcG9pbnRlciByZW1haW5zIHRoZSBzYW1l
+Lg0KPiArDQo+ICsuLiBfU3RhY2tfTGlicmFyeV9QaWxlOg0KPiArDQo+ICtQaWxlDQo+ICt+fn5+
+DQo+ICsNCj4gK1RoZSBwaWxlIGlzIGEgc3RhY2stbGlrZSBpbXBsZW1lbnRhdGlvbiwgb3B0aW1p
+emVkIGZvciBidWxrDQo+IG9wZXJhdGlvbnMuDQo+ICtJdCBpcyBvbmx5IExJRk8gb24gYnVsayBs
+ZXZlbCwgbm90IG9uIG9iamVjdCBsZXZlbDsgaS5lLiBhcnJheXMgb2YNCj4gYnVsa3MgYXJlDQo+
+ICtwdXNoZWQgYW5kIHBvcHBlZCBpbiBMSUZPIG1hbm5lciwgYnV0IG9iamVjdHMgd2l0aGluIGVh
+Y2ggYnVsayBhcmUgbm90DQo+IG9yZGVyZWQNCj4gK2FzIGV4cGVjdGVkIGJ5IGEgc3RhY2suDQo+
+ICsNCj4gK1RoZSBwaWxlIGltcGxlbWVudGF0aW9uIGdlbmVyYWxseSByZXNlbWJsZXMgdGhhdCBv
+ZiB0aGUgbG9jay1mcmVlDQo+IHN0YWNrLg0KPiArSW4gYWRkaXRpb24gdG8gdGhlIGxvY2stZnJl
+ZSBzdGFjaydzIGxpbmtlZCBsaXN0IG9mIHNvbG8gKHNpbmdsZS0NCj4gb2JqZWN0KSBlbGVtZW50
+cywNCj4gK2l0IGFsc28gY29udGFpbnMgYSBsaW5rZWQgbGlzdCBvZiBidWxrIChtdWx0aS1vYmpl
+Y3QpIGVsZW1lbnRzLg0KPiArQW5kIHNpbWlsYXIgdG8gdGhlIGxpbmtlZCBsaXN0IG9mIGZyZWUg
+ZWxlbWVudHMsIGl0IGNvbnRhaW5zIHR3bw0KPiBsaW5rZWQgbGlzdHMgb2YNCj4gK2ZyZWUgZWxl
+bWVudHMsIG9uZSBmb3IgZWFjaCBlbGVtZW50IHR5cGUgKGJ1bGsgYW5kIHNvbG8pLg0KPiArVGhl
+IGxvY2stZnJlZSBwcm9wZXJ0eSBtZWFucyB0aGF0IG11bHRpcGxlIHRocmVhZHMgY2FuIHB1c2gg
+YW5kIHBvcA0KPiBzaW11bHRhbmVvdXNseS4NCj4gK09uZSB0aHJlYWQgYmVpbmcgcHJlZW1wdGVk
+L2RlbGF5ZWQgaW4gYSBwdXNoIG9yIHBvcCBvcGVyYXRpb24gd2lsbCBub3QNCj4gK2ltcGVkZSB0
+aGUgZm9yd2FyZCBwcm9ncmVzcyBvZiBhbnkgb3RoZXIgdGhyZWFkLg0KPiArDQo+ICtQdXNoIG9w
+ZXJhdGlvbnMgYXJlIHBlcmZvcm1lZCBieSBzcGxpdHRpbmcgdGhlIGJ1cnN0IGluIHR3bzogb2Jq
+ZWN0cw0KPiBmaXR0aW5nIGludG8NCj4gK2J1bGsgZWxlbWVudHMsIGFuZCBhbnkgcmVtYWluaW5n
+IG9iamVjdHMgKGFmdGVyIGZpbGxpbmcgYnVsayBlbGVtZW50cykNCj4gaW50bw0KPiArc29sbyBl
+bGVtZW50cywgYW5kIHRoZW4gcGVyZm9ybWFpbmcgdHdvIGxvY2stZnJlZSBwdXNoIG9wZXJhdGlv
+bnMsDQo+ICtvbmUgZm9yIGVhY2ggZWxlbWVudCB0eXBlIChzb2xvIGFuZCBidWxrKS4NCj4gKw0K
+PiArUG9wIG9wZXJhdGlvbnMgYXJlIHBlcmZvcm1lZCBieSBzcGxpdHRpbmcgdGhlIGJ1cnN0IGlu
+IHR3bzogb2JqZWN0cw0KPiBmaXR0aW5nIGludG8NCj4gK2J1bGsgZWxlbWVudHMsIGFuZCBhbnkg
+cmVtYWluaW5nIG9iamVjdHMgKG5vdCBmaWxsaW5nIGEgYnVsayBlbGVtZW50KQ0KPiBpbnRvDQo+
+ICtzb2xvIGVsZW1lbnRzLiBUd28gbG9jay1mcmVlIHBvcCBvcGVyYXRpb25zIGFyZSBwZXJmb3Jt
+ZWQsDQo+ICtmaXJzdCBmb3IgYnVsayBlbGVtZW50cywgYW5kIHRoZW4gZm9yIHNvbG8gZWxlbWVu
+dHMuDQo+ICtJZiB0aGUgcG9wIG9wZXJhdGlvbiBmb3IgYnVsayBlbGVtZW50cyBmYWlscywgaXQg
+a2VlcHMgcmV0cnlpbmcsDQo+IHJlcXVlc3Rpbmcgb25lDQo+ICtsZXNzIGJ1bGsgZWxlbWVudC4g
+VGhlIG51bWJlciBvZiBzb2xvIGVsZW1lbnRzIGluIHRoZSBmb2xsb3dpbmcNCj4gcmVxdWVzdCBp
+cw0KPiArY29ycmVzcG9uZGluZ2x5IGluY3JlYXNlZC4NCj4gKw0KPiArVGhlIHBpbGUncyBsb2Nr
+LWZyZWUgbGlzdCBwdXNoIGFuZCBwb3Agb3BlcmF0aW9ucyB1c2UgdGhlIGxvY2stZnJlZQ0KPiBz
+dGFjaydzDQo+ICtpbXBsZW1lbnRhdGlvbnMgKGFuZCB1c2VzIHR5cGUgY2FzdGluZyB0byBtaW1p
+Y2sgQysrIGNsYXNzDQo+IGluaGVyaXRhbmNlKS4NCj4gKw0KPiArVGhlIGxpbmtlZCBsaXN0IGVs
+ZW1lbnRzIHRoZW1zZWx2ZXMgYXJlIG1haW50YWluZWQgaW4gdHdvIGxvY2stZnJlZQ0KPiBMSUZP
+cywNCj4gK29uZSBmb3IgYnVsayBlbGVtZW50cyBhbmQgb25lIGZvciBzb2xvIGVsZW1lbnRzLCBh
+bmQgYXJlDQo+ICthbGxvY2F0ZWQgYmVmb3JlIHB1c2hlcyBhbmQgZnJlZWQgYWZ0ZXIgcG9wcy4g
+U2luY2UgdGhlIHBpbGUgaGFzIGENCj4gK2ZpeGVkIG1heGltdW0gZGVwdGgsIHRoZXNlIGVsZW1l
+bnRzIGRvIG5vdCBuZWVkIHRvIGJlIGR5bmFtaWNhbGx5DQo+IGNyZWF0ZWQuDQo+ICsNCj4gK1Ro
+ZSBwaWxlIGJlaGF2aW9yIGlzIHNlbGVjdGVkIGJ5IHBhc3NpbmcgdGhlIGBgUlRFX1NUQUNLX0Zf
+UElMRWBgIGZsYWcNCj4gdG8NCj4gK2BgcnRlX3N0YWNrX2NyZWF0ZSgpYGAuDQo+ICsNCj4gK1Ro
+ZSBwaWxlIGJ1bGsgc2l6ZSBjYW4gYmUgY2hhbmdlZCBieSBtb2RpZnlpbmcNCj4gYGBSVEVfU1RB
+Q0tfUElMRV9CVUxLX1NJWkVgYCBpbg0KPiArYGBjb25maWcvcnRlX2NvbmZpZy5oYGAuDQo+ICtG
+b3Igb3B0aW1hbCBwZXJmb3JtYW5jZSB3aGVuIHVzaW5nIHRoZSBwaWxlIG1lbXBvb2wgZHJpdmVy
+LCB0aGUNCj4gK21lbXBvb2wgY2FjaGUgc2l6ZSAvIDIgc2hvdWxkIGJlIGRpdmlzaWJsZSBieSB0
+aGUgcGlsZSBidWxrIHNpemUuDQo+ICsNCj4gK05vdGU6DQo+ICtUaGUgcGlsZSBpcyBkZXNpZ25l
+ZCBhbmQgb3B0aW1pemVkIGZvciB1c2Ugd2l0aCBidWxrcyBvZiBvYmplY3RzLg0KPiArQnVyc3Rz
+IG5vdCBhIG11bHRpcGxlIG9mIHRoZSBidWxrIHNpemUgYXJlIHN0aWxsIGhhbmRsZWQgaW4gYSBs
+b2NrLQ0KPiBmcmVlLA0KPiArZm9yd2FyZC1wcm9ncmVzcy1ndWFyYW50ZWVkIG1hbm5lci4gSG93
+ZXZlciwgcG9wIG9wZXJhdGlvbnMgbWF5DQo+IGV4aGliaXQNCj4gK3NpZ25pZmljYW50bHkgbG93
+ZXIgcGVyZm9ybWFuY2UgaW4gaW5zdGFuY2VzIHdoZXJlIHRoZSBvcHRpbWFsIG51bWJlcg0KPiBv
+Zg0KPiArYnVsayBlbGVtZW50cyBpcyB1bmF2YWlsYWJsZSwgYW5kIGl0IGlzIG5lY2Vzc2FyeSB0
+byByZXRyeSAoZmV0Y2hpbmcNCj4gK2luY3JlYXNpbmdseSBmZXdlciBidWxrIGVsZW1lbnRzIGFu
+ZCBjb3JyZXNwb25kaW5nbHkgbW9yZSBzb2xvDQo+IGVsZW1lbnRzKS4NCj4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvbWVtcG9vbC9zdGFjay9ydGVfbWVtcG9vbF9zdGFjay5jDQo+IGIvZHJpdmVycy9t
+ZW1wb29sL3N0YWNrL3J0ZV9tZW1wb29sX3N0YWNrLmMNCj4gaW5kZXggMTQ3NjkwNTIyNy4uNzQ2
+N2I4YjM5ZSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9tZW1wb29sL3N0YWNrL3J0ZV9tZW1wb29s
+X3N0YWNrLmMNCj4gKysrIGIvZHJpdmVycy9tZW1wb29sL3N0YWNrL3J0ZV9tZW1wb29sX3N0YWNr
+LmMNCj4gQEAgLTQxLDYgKzQxLDM2IEBAIGxmX3N0YWNrX2FsbG9jKHN0cnVjdCBydGVfbWVtcG9v
+bCAqbXApDQo+ICAJcmV0dXJuIF9fc3RhY2tfYWxsb2MobXAsIFJURV9TVEFDS19GX0xGKTsNCj4g
+IH0NCj4gDQo+ICtzdGF0aWMgaW50DQo+ICtwaWxlX2FsbG9jKHN0cnVjdCBydGVfbWVtcG9vbCAq
+bXApDQo+ICt7DQo+ICsJcmV0dXJuIF9fc3RhY2tfYWxsb2MobXAsIFJURV9TVEFDS19GX1BJTEUp
+Ow0KPiArfQ0KPiArDQo+ICtzdGF0aWMgaW50DQo+ICtwaWxlX2VucXVldWUoc3RydWN0IHJ0ZV9t
+ZW1wb29sICptcCwgdm9pZCAqIGNvbnN0ICpvYmpfdGFibGUsDQo+ICsJICAgICAgdW5zaWduZWQg
+aW50IG4pDQo+ICt7DQo+ICsJc3RydWN0IHJ0ZV9zdGFjayAqcyA9IG1wLT5wb29sX2RhdGE7DQo+
+ICsNCj4gKwlSVEVfQVNTRVJUKHMgIT0gTlVMTCk7DQo+ICsJUlRFX0FTU0VSVChvYmpfdGFibGUg
+IT0gTlVMTCk7DQo+ICsNCj4gKwlyZXR1cm4gX19ydGVfc3RhY2tfcGlsZV9wdXNoKHMsIG9ial90
+YWJsZSwgbikgPT0gMCA/IC1FTk9CVUZTIDoNCj4gMDsNCj4gK30NCj4gKw0KPiArc3RhdGljIGlu
+dA0KPiArcGlsZV9kZXF1ZXVlKHN0cnVjdCBydGVfbWVtcG9vbCAqbXAsIHZvaWQgKipvYmpfdGFi
+bGUsDQo+ICsJICAgICAgdW5zaWduZWQgaW50IG4pDQo+ICt7DQo+ICsJc3RydWN0IHJ0ZV9zdGFj
+ayAqcyA9IG1wLT5wb29sX2RhdGE7DQo+ICsNCj4gKwlSVEVfQVNTRVJUKHMgIT0gTlVMTCk7DQo+
+ICsJUlRFX0FTU0VSVChvYmpfdGFibGUgIT0gTlVMTCk7DQo+ICsNCj4gKwlyZXR1cm4gX19ydGVf
+c3RhY2tfcGlsZV9wb3Aocywgb2JqX3RhYmxlLCBuKSA9PSAwID8gLUVOT0JVRlMgOiAwOw0KPiAr
+fQ0KPiArDQo+ICBzdGF0aWMgaW50DQo+ICBzdGFja19lbnF1ZXVlKHN0cnVjdCBydGVfbWVtcG9v
+bCAqbXAsIHZvaWQgKiBjb25zdCAqb2JqX3RhYmxlLA0KPiAgCSAgICAgIHVuc2lnbmVkIGludCBu
+KQ0KPiBAQCAtOTMsNSArMTIzLDE1IEBAIHN0YXRpYyBzdHJ1Y3QgcnRlX21lbXBvb2xfb3BzIG9w
+c19sZl9zdGFjayA9IHsNCj4gIAkuZ2V0X2NvdW50ID0gc3RhY2tfZ2V0X2NvdW50DQo+ICB9Ow0K
+PiANCj4gK3N0YXRpYyBzdHJ1Y3QgcnRlX21lbXBvb2xfb3BzIG9wc19waWxlID0gew0KPiArCS5u
+YW1lID0gInBpbGUiLA0KPiArCS5hbGxvYyA9IHBpbGVfYWxsb2MsDQo+ICsJLmZyZWUgPSBzdGFj
+a19mcmVlLA0KPiArCS5lbnF1ZXVlID0gcGlsZV9lbnF1ZXVlLA0KPiArCS5kZXF1ZXVlID0gcGls
+ZV9kZXF1ZXVlLA0KPiArCS5nZXRfY291bnQgPSBzdGFja19nZXRfY291bnQNCj4gK307DQo+ICsN
+Cj4gIFJURV9NRU1QT09MX1JFR0lTVEVSX09QUyhvcHNfc3RhY2spOw0KPiAgUlRFX01FTVBPT0xf
+UkVHSVNURVJfT1BTKG9wc19sZl9zdGFjayk7DQo+ICtSVEVfTUVNUE9PTF9SRUdJU1RFUl9PUFMo
+b3BzX3BpbGUpOw0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvYm9uZGluZy9ydGVfZXRoX2Jv
+bmRfcG1kLmMNCj4gYi9kcml2ZXJzL25ldC9ib25kaW5nL3J0ZV9ldGhfYm9uZF9wbWQuYw0KPiBp
+bmRleCA2YTRmOTk3YjVhLi45MmQ3ZjRmNGVmIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL25ldC9i
+b25kaW5nL3J0ZV9ldGhfYm9uZF9wbWQuYw0KPiArKysgYi9kcml2ZXJzL25ldC9ib25kaW5nL3J0
+ZV9ldGhfYm9uZF9wbWQuYw0KPiBAQCAtMTcwMiw3ICsxNzAyLDcgQEAgbWVtYmVyX2NvbmZpZ3Vy
+ZV9zbG93X3F1ZXVlKHN0cnVjdCBydGVfZXRoX2Rldg0KPiAqYm9uZGluZ19ldGhfZGV2LA0KPiAg
+CQlzbnByaW50ZihtZW1fbmFtZSwgUlRFX0RJTShtZW1fbmFtZSksDQo+ICJtZW1iZXJfcG9ydCV1
+X3Nsb3dfcG9vbCIsDQo+ICAJCQkJbWVtYmVyX2lkKTsNCj4gIAkJcG9ydC0+c2xvd19wb29sID0g
+cnRlX3BrdG1idWZfcG9vbF9jcmVhdGUobWVtX25hbWUsIDgxOTEsDQo+IC0JCQkyNTAsIDAsIFJU
+RV9NQlVGX0RFRkFVTFRfQlVGX1NJWkUsDQo+ICsJCQkyNTYsIDAsIFJURV9NQlVGX0RFRkFVTFRf
+QlVGX1NJWkUsDQo+ICAJCQltZW1iZXJfZXRoX2Rldi0+ZGF0YS0+bnVtYV9ub2RlKTsNCj4gDQo+
+ICAJCS8qIEFueSBtZW1vcnkgYWxsb2NhdGlvbiBmYWlsdXJlIGluIGluaXRpYWxpemF0aW9uIGlz
+DQo+IGNyaXRpY2FsIGJlY2F1c2UNCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2ludGVsL2Nw
+ZmwvY3BmbF9yeHR4LmgNCj4gYi9kcml2ZXJzL25ldC9pbnRlbC9jcGZsL2NwZmxfcnh0eC5oDQo+
+IGluZGV4IDUyY2RlY2FjODguLmZhZjI4ZmQ0ODkgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbmV0
+L2ludGVsL2NwZmwvY3BmbF9yeHR4LmgNCj4gKysrIGIvZHJpdmVycy9uZXQvaW50ZWwvY3BmbC9j
+cGZsX3J4dHguaA0KPiBAQCAtMjUsNyArMjUsNyBAQA0KPiAgI2RlZmluZSBDUEZMX1AyUF9RVUVV
+RV9HUlBfSUQJMQ0KPiAgI2RlZmluZSBDUEZMX1AyUF9ERVNDX0xFTgkxNg0KPiAgI2RlZmluZSBD
+UEZMX1AyUF9OQl9NQlVGCTQwOTYNCj4gLSNkZWZpbmUgQ1BGTF9QMlBfQ0FDSEVfU0laRQkyNTAN
+Cj4gKyNkZWZpbmUgQ1BGTF9QMlBfQ0FDSEVfU0laRQkyNTYNCj4gICNkZWZpbmUgQ1BGTF9QMlBf
+TUJVRl9TSVpFCTIwNDgNCj4gICNkZWZpbmUgQ1BGTF9QMlBfUklOR19CVUYJMTI4DQo+IA0KPiBk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvc3hlMi9zeGUyX3R4cnhfdmVjX2F2eDUxMi5jDQo+IGIv
+ZHJpdmVycy9uZXQvc3hlMi9zeGUyX3R4cnhfdmVjX2F2eDUxMi5jDQo+IGluZGV4IGE4MzBjN2Ez
+M2IuLjRkZWQ1Y2I2M2UgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbmV0L3N4ZTIvc3hlMl90eHJ4
+X3ZlY19hdng1MTIuYw0KPiArKysgYi9kcml2ZXJzL25ldC9zeGUyL3N4ZTJfdHhyeF92ZWNfYXZ4
+NTEyLmMNCj4gQEAgLTY3LDExICs2NywxMiBAQCBzdGF0aWMgX19ydGVfYWx3YXlzX2lubGluZSBp
+bnQzMl90DQo+IHN4ZTJfdHhfYnVmc19mcmVlX3ZlY19hdng1MTIoc3RydWN0IHN4ZTJfdHhfcQ0K
+PiAgCQl9DQo+ICAJCWNhY2hlLT5sZW4gKz0gcnNfdGhyZXNoOw0KPiANCj4gLQkJaWYgKGNhY2hl
+LT5sZW4gPj0gY2FjaGUtPmZsdXNodGhyZXNoKSB7DQo+ICsJCWlmIChjYWNoZS0+bGVuID49IGNh
+Y2hlLT5zaXplKSB7DQo+ICAJCQkodm9pZClydGVfbWVtcG9vbF9vcHNfZW5xdWV1ZV9idWxrKG1w
+LA0KPiAgCQkJCQkmY2FjaGUtPm9ianNbY2FjaGUtPnNpemVdLCBjYWNoZS0+bGVuIC0NCj4gY2Fj
+aGUtPnNpemUpOw0KPiAgCQkJY2FjaGUtPmxlbiA9IGNhY2hlLT5zaXplOw0KPiAgCQl9DQo+ICsN
+Cj4gIAkJZ290byBkb25lOw0KPiAgCX0NCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC90
+YXAvcnRlX2V0aF90YXAuYw0KPiBiL2RyaXZlcnMvbmV0L3RhcC9ydGVfZXRoX3RhcC5jDQo+IGlu
+ZGV4IGI5MzQ1MmYxNjguLmIzMTQyNTYxYzIgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbmV0L3Rh
+cC9ydGVfZXRoX3RhcC5jDQo+ICsrKyBiL2RyaXZlcnMvbmV0L3RhcC9ydGVfZXRoX3RhcC5jDQo+
+IEBAIC02MSw3ICs2MSw3IEBADQo+ICAjZGVmaW5lIFRBUF9NQVhfTUFDX0FERFJTCTE2DQo+ICAj
+ZGVmaW5lIFRBUF9HU09fTUJVRlNfUEVSX0NPUkUJMTI4DQo+ICAjZGVmaW5lIFRBUF9HU09fTUJV
+Rl9TRUdfU0laRQkxMjgNCj4gLSNkZWZpbmUgVEFQX0dTT19NQlVGX0NBQ0hFX1NJWkUJNA0KPiAr
+I2RlZmluZSBUQVBfR1NPX01CVUZfQ0FDSEVfU0laRQkzMg0KPiAgI2RlZmluZSBUQVBfR1NPX01C
+VUZTX05VTSBcDQo+ICAJKFRBUF9HU09fTUJVRlNfUEVSX0NPUkUgKiBUQVBfR1NPX01CVUZfQ0FD
+SEVfU0laRSkNCj4gDQo+IGRpZmYgLS1naXQgYS9saWIvZWFsL2luY2x1ZGUvcnRlX2NvbW1vbi5o
+DQo+IGIvbGliL2VhbC9pbmNsdWRlL3J0ZV9jb21tb24uaA0KPiBpbmRleCA3OWQyYTBhYjkzLi4w
+ZmQwOTA2NTA2IDEwMDY0NA0KPiAtLS0gYS9saWIvZWFsL2luY2x1ZGUvcnRlX2NvbW1vbi5oDQo+
+ICsrKyBiL2xpYi9lYWwvaW5jbHVkZS9ydGVfY29tbW9uLmgNCj4gQEAgLTU2Nyw2ICs1NjcsMTUg
+QEAgc3RhdGljIHZvaWQNCj4gX19hdHRyaWJ1dGVfXygoZGVzdHJ1Y3RvcihSVEVfUFJJTyhwcmlv
+KSksIHVzZWQpKSBmdW5jKHZvaWQpDQo+ICAjZGVmaW5lIF9fcnRlX2Fzc3VtZShjb25kaXRpb24p
+IF9fYXNzdW1lKGNvbmRpdGlvbikNCj4gICNlbmRpZg0KPiANCj4gKy8qKg0KPiArICogQWxpZ25t
+ZW50IGhpbnQgcHJlY29uZGl0aW9uDQo+ICsgKi8NCj4gKyNpZmRlZiBSVEVfVE9PTENIQUlOX01T
+VkMNCj4gKyNkZWZpbmUgX19ydGVfYXNzdW1lX2FsaWduZWQocHRyLCBhbGlnbm1lbnQpIChwdHIp
+DQo+ICsjZWxzZQ0KPiArI2RlZmluZSBfX3J0ZV9hc3N1bWVfYWxpZ25lZChwdHIsIGFsaWdubWVu
+dCkNCj4gX19idWlsdGluX2Fzc3VtZV9hbGlnbmVkKHB0ciwgYWxpZ25tZW50KQ0KPiArI2VuZGlm
+DQo+ICsNCj4gIC8qKg0KPiAgICogRGlzYWJsZSBBZGRyZXNzU2FuaXRpemVyIG9uIHNvbWUgY29k
+ZQ0KPiAgICovDQo+IEBAIC03NzUsNiArNzg0LDkgQEAgcnRlX2lzX2FsaWduZWQoY29uc3Qgdm9p
+ZCAqIGNvbnN0IF9fcnRlX3Jlc3RyaWN0DQo+IHB0ciwgY29uc3QgdW5zaWduZWQgaW50IGFsaWdu
+KQ0KPiAgLyoqIEZvcmNlIG1pbmltdW0gY2FjaGUgbGluZSBhbGlnbm1lbnQuICovDQo+ICAjZGVm
+aW5lIF9fcnRlX2NhY2hlX21pbl9hbGlnbmVkIF9fcnRlX2FsaWduZWQoUlRFX0NBQ0hFX0xJTkVf
+TUlOX1NJWkUpDQo+IA0KPiArLyoqIENhY2hlIGFsaWdubWVudCBoaW50IHByZWNvbmRpdGlvbiAq
+Lw0KPiArI2RlZmluZSBfX3J0ZV9hc3N1bWVfY2FjaGVfYWxpZ25lZChwdHIpIF9fcnRlX2Fzc3Vt
+ZV9hbGlnbmVkKHB0ciwNCj4gUlRFX0NBQ0hFX0xJTkVfU0laRSkNCj4gKw0KPiAgI2RlZmluZSBf
+UlRFX0NBQ0hFX0dVQVJEX0hFTFBFUjIodW5pcXVlKSBcDQo+ICAJYWxpZ25hcyhSVEVfQ0FDSEVf
+TElORV9TSVpFKSBcDQo+ICAJY2hhciBjYWNoZV9ndWFyZF8gIyMgdW5pcXVlW1JURV9DQUNIRV9M
+SU5FX1NJWkUgKg0KPiBSVEVfQ0FDSEVfR1VBUkRfTElORVNdDQo+IGRpZmYgLS1naXQgYS9saWIv
+ZWFsL3g4Ni9pbmNsdWRlL3J0ZV9tZW1jcHkuaA0KPiBiL2xpYi9lYWwveDg2L2luY2x1ZGUvcnRl
+X21lbWNweS5oDQo+IGluZGV4IDhlZDhjNTUwMTAuLjNmZTFlOGQyNDcgMTAwNjQ0DQo+IC0tLSBh
+L2xpYi9lYWwveDg2L2luY2x1ZGUvcnRlX21lbWNweS5oDQo+ICsrKyBiL2xpYi9lYWwveDg2L2lu
+Y2x1ZGUvcnRlX21lbWNweS5oDQo+IEBAIC03MDcsNiArNzA3LDM1IEBAIHJ0ZV9tZW1jcHkodm9p
+ZCAqX19ydGVfcmVzdHJpY3QgZHN0LCBjb25zdCB2b2lkDQo+ICpfX3J0ZV9yZXN0cmljdCBzcmMs
+IHNpemVfdCBuKQ0KPiAgI2VuZGlmDQo+ICAJCXJldHVybiBkc3Q7DQo+ICAJfQ0KPiArCS8qIENv
+bW1vbiB3YXkgZm9yIHNtYWxsIGNvcHkgc2l6ZSBvZiA2NC1ieXRlIGJsb2NrcyAqLw0KPiArI2lm
+IGRlZmluZWQgX19BVlg1MTJGX18gJiYgZGVmaW5lZCBSVEVfTUVNQ1BZX0FWWDUxMg0KPiArCWlm
+IChfX3J0ZV9jb25zdGFudChuKSAmJiAobiAmIDYzKSA9PSAwICYmIG4gPD0gNTEyKSB7DQo+ICsj
+ZWxpZiBkZWZpbmVkIFJURV9NRU1DUFlfQVZYDQo+ICsJaWYgKF9fcnRlX2NvbnN0YW50KG4pICYm
+IChuICYgNjMpID09IDAgJiYgbiA8PSAyNTYpIHsNCj4gKyNlbHNlIC8qIFNTRSBpbXBsZW1lbnRh
+dGlvbiAqLw0KPiArCWlmIChfX3J0ZV9jb25zdGFudChuKSAmJiAobiAmIDYzKSA9PSAwICYmIG4g
+PD0gNTEyKSB7DQo+ICsjZW5kaWYNCj4gKwkJdm9pZCAqcmV0ID0gZHN0Ow0KPiArDQo+ICsJCWlm
+IChuICYgNTEyKSB7DQo+ICsJCQlydGVfbW92MjU2KCh1aW50OF90ICopZHN0ICsgMCAqIDI1Niwg
+KGNvbnN0IHVpbnQ4X3QNCj4gKilzcmMgKyAwICogMjU2KTsNCj4gKwkJCXJ0ZV9tb3YyNTYoKHVp
+bnQ4X3QgKilkc3QgKyAxICogMjU2LCAoY29uc3QgdWludDhfdA0KPiAqKXNyYyArIDEgKiAyNTYp
+Ow0KPiArCQl9DQo+ICsJCWlmIChuICYgMjU2KSB7DQo+ICsJCQlydGVfbW92MjU2KCh1aW50OF90
+ICopZHN0LCAoY29uc3QgdWludDhfdCAqKXNyYyk7DQo+ICsJCQlzcmMgPSAoY29uc3QgdWludDhf
+dCAqKXNyYyArIDI1NjsNCj4gKwkJCWRzdCA9ICh1aW50OF90ICopZHN0ICsgMjU2Ow0KPiArCQl9
+DQo+ICsJCWlmIChuICYgMTI4KSB7DQo+ICsJCQlydGVfbW92MTI4KCh1aW50OF90ICopZHN0LCAo
+Y29uc3QgdWludDhfdCAqKXNyYyk7DQo+ICsJCQlzcmMgPSAoY29uc3QgdWludDhfdCAqKXNyYyAr
+IDEyODsNCj4gKwkJCWRzdCA9ICh1aW50OF90ICopZHN0ICsgMTI4Ow0KPiArCQl9DQo+ICsJCWlm
+IChuICYgNjQpDQo+ICsJCQlydGVfbW92NjQoKHVpbnQ4X3QgKilkc3QsIChjb25zdCB1aW50OF90
+ICopc3JjKTsNCj4gKw0KPiArCQlyZXR1cm4gcmV0Ow0KPiArCX0NCj4gDQo+ICAJLyogSW1wbGVt
+ZW50YXRpb24gZm9yIHNpemUgPiA2NCBieXRlcyBkZXBlbmRzIG9uIGFsaWdubWVudCB3aXRoDQo+
+IHZlY3RvciByZWdpc3RlciBzaXplLiAqLw0KPiAgCWlmICghKCgodWludHB0cl90KWRzdCB8ICh1
+aW50cHRyX3Qpc3JjKSAmIEFMSUdOTUVOVF9NQVNLKSkNCj4gZGlmZiAtLWdpdCBhL2xpYi9tZW1w
+b29sL21lbXBvb2xfdHJhY2UuaCBiL2xpYi9tZW1wb29sL21lbXBvb2xfdHJhY2UuaA0KPiBpbmRl
+eCAyM2NkYTE0NzNjLi42MGU0N2NmNjdiIDEwMDY0NA0KPiAtLS0gYS9saWIvbWVtcG9vbC9tZW1w
+b29sX3RyYWNlLmgNCj4gKysrIGIvbGliL21lbXBvb2wvbWVtcG9vbF90cmFjZS5oDQo+IEBAIC0x
+MTksNyArMTE5LDYgQEAgUlRFX1RSQUNFX1BPSU5UKA0KPiAgCXJ0ZV90cmFjZV9wb2ludF9lbWl0
+X2kzMihzb2NrZXRfaWQpOw0KPiAgCXJ0ZV90cmFjZV9wb2ludF9lbWl0X3B0cihjYWNoZSk7DQo+
+ICAJcnRlX3RyYWNlX3BvaW50X2VtaXRfdTMyKGNhY2hlLT5sZW4pOw0KPiAtCXJ0ZV90cmFjZV9w
+b2ludF9lbWl0X3UzMihjYWNoZS0+Zmx1c2h0aHJlc2gpOw0KPiAgKQ0KPiANCj4gIFJURV9UUkFD
+RV9QT0lOVCgNCj4gZGlmZiAtLWdpdCBhL2xpYi9tZW1wb29sL3J0ZV9tZW1wb29sLmMgYi9saWIv
+bWVtcG9vbC9ydGVfbWVtcG9vbC5jDQo+IGluZGV4IDgxN2UyYjhkYzEuLjQ1N2VmOGZkMWIgMTAw
+NjQ0DQo+IC0tLSBhL2xpYi9tZW1wb29sL3J0ZV9tZW1wb29sLmMNCj4gKysrIGIvbGliL21lbXBv
+b2wvcnRlX21lbXBvb2wuYw0KPiBAQCAtNzUzLDE0ICs3NTMsMTMgQEAgc3RhdGljIHZvaWQNCj4g
+IG1lbXBvb2xfY2FjaGVfaW5pdChzdHJ1Y3QgcnRlX21lbXBvb2xfY2FjaGUgKmNhY2hlLCB1aW50
+MzJfdCBzaXplKQ0KPiAgew0KPiAgCWNhY2hlLT5zaXplID0gc2l6ZTsNCj4gLQljYWNoZS0+Zmx1
+c2h0aHJlc2ggPSBzaXplOyAvKiBPYnNvbGV0ZTsgZm9yIEFQSS9BQkkgY29tcGF0aWJpbGl0eQ0K
+PiBwdXJwb3NlcyBvbmx5ICovDQo+ICAJY2FjaGUtPmxlbiA9IDA7DQo+ICB9DQo+IA0KPiAgLyoN
+Cj4gICAqIENyZWF0ZSBhbmQgaW5pdGlhbGl6ZSBhIGNhY2hlIGZvciBvYmplY3RzIHRoYXQgYXJl
+IHJldHJpZXZlZCBmcm9tDQo+IGFuZA0KPiAgICogcmV0dXJuZWQgdG8gYW4gdW5kZXJseWluZyBt
+ZW1wb29sLiBUaGlzIHN0cnVjdHVyZSBpcyBpZGVudGljYWwgdG8NCj4gdGhlDQo+IC0gKiBsb2Nh
+bF9jYWNoZVtsY29yZV9pZF0gcG9pbnRlZCB0byBieSB0aGUgbWVtcG9vbCBzdHJ1Y3R1cmUuDQo+
+ICsgKiBsb2NhbF9jYWNoZVtsY29yZV9pZF0gZW50cnkgaW4gdGhlIG1lbXBvb2wgc3RydWN0dXJl
+Lg0KPiAgICovDQo+ICBSVEVfRVhQT1JUX1NZTUJPTChydGVfbWVtcG9vbF9jYWNoZV9jcmVhdGUp
+DQo+ICBzdHJ1Y3QgcnRlX21lbXBvb2xfY2FjaGUgKg0KPiBAQCAtODM4LDkgKzgzNywyMSBAQCBy
+dGVfbWVtcG9vbF9jcmVhdGVfZW1wdHkoY29uc3QgY2hhciAqbmFtZSwNCj4gdW5zaWduZWQgbiwg
+dW5zaWduZWQgZWx0X3NpemUsDQo+ICAJCXJldHVybiBOVUxMOw0KPiAgCX0NCj4gDQo+ICsJLyoN
+Cj4gKwkgKiBBbGlnbm1lbnQgcmVxdWlyZW1lbnQgZm9yIHBlcmZvcm1hbmNlIG9wdGltaXplZCBt
+b3ZlIHdpdGhpbg0KPiB0aGUgbWVtcG9vbCBjYWNoZS4NCj4gKwkgKiBAcmVmIHJ0ZV9tZW1wb29s
+X2RvX2dlbmVyaWNfcHV0KCkgaW1wbGVtZW50YXRpb24uDQo+ICsJICovDQo+ICsJaWYgKGNhY2hl
+X3NpemUgJiAzMSkgew0KPiArCQl1bnNpZ25lZCBpbnQgcm91bmRlZCA9IFJURV9BTElHTl9NVUxf
+Q0VJTChjYWNoZV9zaXplLCAzMik7DQo+ICsJCVJURV9NRU1QT09MX0xPRyhXQVJOSU5HLCAiJXMg
+Y2FjaGUgc2l6ZSAldSBub3QgZGl2aXNpYmxlIGJ5DQo+IDMyLCB1c2luZyAldSBpbnN0ZWFkLiIs
+DQo+ICsJCQkJbmFtZSwgY2FjaGVfc2l6ZSwgcm91bmRlZCk7DQo+ICsJCWNhY2hlX3NpemUgPSBy
+b3VuZGVkOw0KPiArCX0NCj4gKw0KPiAgCS8qIGFza2VkIGNhY2hlIHRvbyBiaWcgKi8NCj4gIAlp
+ZiAoY2FjaGVfc2l6ZSA+IFJURV9NRU1QT09MX0NBQ0hFX01BWF9TSVpFIHx8DQo+ICAJICAgIGNh
+Y2hlX3NpemUgPiBuKSB7DQo+ICsJCVJURV9NRU1QT09MX0xPRyhFUlIsICJDYWNoZSBzaXplIHRv
+byBiaWcuIik7DQo+ICAJCXJ0ZV9lcnJubyA9IEVJTlZBTDsNCj4gIAkJcmV0dXJuIE5VTEw7DQo+
+ICAJfQ0KPiBAQCAtODg0LDcgKzg5NSw3IEBAIHJ0ZV9tZW1wb29sX2NyZWF0ZV9lbXB0eShjb25z
+dCBjaGFyICpuYW1lLCB1bnNpZ25lZA0KPiBuLCB1bnNpZ25lZCBlbHRfc2l6ZSwNCj4gIAkJZ290
+byBleGl0X3VubG9jazsNCj4gIAl9DQo+IA0KPiAtCW1lbXBvb2xfc2l6ZSA9IFJURV9NRU1QT09M
+X0hFQURFUl9TSVpFKG1wLCBjYWNoZV9zaXplKTsNCj4gKwltZW1wb29sX3NpemUgPSBzaXplb2Yo
+c3RydWN0IHJ0ZV9tZW1wb29sKTsNCj4gIAltZW1wb29sX3NpemUgKz0gcHJpdmF0ZV9kYXRhX3Np
+emU7DQo+ICAJbWVtcG9vbF9zaXplID0gUlRFX0FMSUdOX0NFSUwobWVtcG9vbF9zaXplLCBSVEVf
+TUVNUE9PTF9BTElHTik7DQo+IA0KPiBAQCAtOTAwLDcgKzkxMSw3IEBAIHJ0ZV9tZW1wb29sX2Ny
+ZWF0ZV9lbXB0eShjb25zdCBjaGFyICpuYW1lLCB1bnNpZ25lZA0KPiBuLCB1bnNpZ25lZCBlbHRf
+c2l6ZSwNCj4gDQo+ICAJLyogaW5pdCB0aGUgbWVtcG9vbCBzdHJ1Y3R1cmUgKi8NCj4gIAltcCA9
+IG16LT5hZGRyOw0KPiAtCW1lbXNldChtcCwgMCwgUlRFX01FTVBPT0xfSEVBREVSX1NJWkUobXAs
+IGNhY2hlX3NpemUpKTsNCj4gKwltZW1zZXQobXAsIDAsIG1lbXBvb2xfc2l6ZSk7DQo+ICAJcmV0
+ID0gc3RybGNweShtcC0+bmFtZSwgbmFtZSwgc2l6ZW9mKG1wLT5uYW1lKSk7DQo+ICAJaWYgKHJl
+dCA8IDAgfHwgcmV0ID49IChpbnQpc2l6ZW9mKG1wLT5uYW1lKSkgew0KPiAgCQlydGVfZXJybm8g
+PSBFTkFNRVRPT0xPTkc7DQo+IEBAIC05MzcsMTMgKzk0OCw2IEBAIHJ0ZV9tZW1wb29sX2NyZWF0
+ZV9lbXB0eShjb25zdCBjaGFyICpuYW1lLA0KPiB1bnNpZ25lZCBuLCB1bnNpZ25lZCBlbHRfc2l6
+ZSwNCj4gIAkJZ290byBleGl0X3VubG9jazsNCj4gIAl9DQo+IA0KPiAtCS8qDQo+IC0JICogbG9j
+YWxfY2FjaGUgcG9pbnRlciBpcyBzZXQgZXZlbiBpZiBjYWNoZV9zaXplIGlzIHplcm8uDQo+IC0J
+ICogVGhlIGxvY2FsX2NhY2hlIHBvaW50cyB0byBqdXN0IHBhc3QgdGhlIGVsdF9wYVtdIGFycmF5
+Lg0KPiAtCSAqLw0KPiAtCW1wLT5sb2NhbF9jYWNoZSA9IChzdHJ1Y3QgcnRlX21lbXBvb2xfY2Fj
+aGUgKikNCj4gLQkJUlRFX1BUUl9BREQobXAsIFJURV9NRU1QT09MX0hFQURFUl9TSVpFKG1wLCAw
+KSk7DQo+IC0NCj4gIAkvKiBJbml0IGFsbCBkZWZhdWx0IGNhY2hlcy4gKi8NCj4gIAlpZiAoY2Fj
+aGVfc2l6ZSAhPSAwKSB7DQo+ICAJCWZvciAobGNvcmVfaWQgPSAwOyBsY29yZV9pZCA8IFJURV9N
+QVhfTENPUkU7IGxjb3JlX2lkKyspDQo+IEBAIC0xMTk3LDYgKzEyMDEsNyBAQCBtZW1wb29sX29i
+al9hdWRpdChzdHJ1Y3QgcnRlX21lbXBvb2wgKm1wLA0KPiBfX3J0ZV91bnVzZWQgdm9pZCAqb3Bh
+cXVlLA0KPiAgCVJURV9NRU1QT09MX0NIRUNLX0NPT0tJRVMobXAsICZvYmosIDEsIDIpOw0KPiAg
+fQ0KPiANCj4gKy8qIGNoZWNrIGNvb2tpZXMgYmVmb3JlIGFuZCBhZnRlciBvYmplY3RzICovDQo+
+ICBzdGF0aWMgdm9pZA0KPiAgbWVtcG9vbF9hdWRpdF9jb29raWVzKHN0cnVjdCBydGVfbWVtcG9v
+bCAqbXApDQo+ICB7DQo+IEBAIC0xMjEzLDIzICsxMjE4LDI4IEBAIG1lbXBvb2xfYXVkaXRfY29v
+a2llcyhzdHJ1Y3QgcnRlX21lbXBvb2wgKm1wKQ0KPiAgI2RlZmluZSBtZW1wb29sX2F1ZGl0X2Nv
+b2tpZXMobXApIGRvIHt9IHdoaWxlKDApDQo+ICAjZW5kaWYNCj4gDQo+IC0vKiBjaGVjayBjb29r
+aWVzIGJlZm9yZSBhbmQgYWZ0ZXIgb2JqZWN0cyAqLw0KPiArLyogY2hlY2sgY2FjaGUgc2l6ZSBj
+b25zaXN0ZW5jeSAqLw0KPiAgc3RhdGljIHZvaWQNCj4gIG1lbXBvb2xfYXVkaXRfY2FjaGUoY29u
+c3Qgc3RydWN0IHJ0ZV9tZW1wb29sICptcCkNCj4gIHsNCj4gLQkvKiBjaGVjayBjYWNoZSBzaXpl
+IGNvbnNpc3RlbmN5ICovDQo+ICAJdW5zaWduZWQgbGNvcmVfaWQ7DQo+ICsJY29uc3QgdWludDMy
+X3QgY2FjaGVfc2l6ZSA9IG1wLT5jYWNoZV9zaXplOw0KPiANCj4gLQlpZiAobXAtPmNhY2hlX3Np
+emUgPT0gMCkNCj4gLQkJcmV0dXJuOw0KPiArCWlmIChjYWNoZV9zaXplID4gUlRFX01FTVBPT0xf
+Q0FDSEVfTUFYX1NJWkUpIHsNCj4gKwkJUlRFX01FTVBPT0xfTE9HKENSSVQsICJiYWRuZXNzIG9u
+IGNhY2hlIHNpemUiKTsNCj4gKwkJcnRlX3BhbmljKCJNRU1QT09MOiBpbnZhbGlkIGNhY2hlIHNp
+emVcbiIpOw0KPiArCX0NCj4gDQo+ICAJZm9yIChsY29yZV9pZCA9IDA7IGxjb3JlX2lkIDwgUlRF
+X01BWF9MQ09SRTsgbGNvcmVfaWQrKykgew0KPiAgCQljb25zdCBzdHJ1Y3QgcnRlX21lbXBvb2xf
+Y2FjaGUgKmNhY2hlOw0KPiAgCQljYWNoZSA9ICZtcC0+bG9jYWxfY2FjaGVbbGNvcmVfaWRdOw0K
+PiAtCQlpZiAoY2FjaGUtPmxlbiA+IFJURV9ESU0oY2FjaGUtPm9ianMpKSB7DQo+IC0JCQlSVEVf
+TUVNUE9PTF9MT0coQ1JJVCwgImJhZG5lc3Mgb24gY2FjaGVbJXVdIiwNCj4gLQkJCQlsY29yZV9p
+ZCk7DQo+IC0JCQlydGVfcGFuaWMoIk1FTVBPT0w6IGludmFsaWQgY2FjaGUgbGVuXG4iKTsNCj4g
+KwkJaWYgKGNhY2hlLT5zaXplICE9IGNhY2hlX3NpemUpIHsNCj4gKwkJCVJURV9NRU1QT09MX0xP
+RyhDUklULCAiYmFkbmVzcyBvbiBjYWNoZVsldV0gc2l6ZSIsDQo+IGxjb3JlX2lkKTsNCj4gKwkJ
+CXJ0ZV9wYW5pYygiTUVNUE9PTDogaW52YWxpZCBjYWNoZVsldV0gc2l6ZVxuIiwNCj4gbGNvcmVf
+aWQpOw0KPiArCQl9DQo+ICsJCWlmIChjYWNoZS0+bGVuID4gY2FjaGVfc2l6ZSkgew0KPiArCQkJ
+UlRFX01FTVBPT0xfTE9HKENSSVQsICJiYWRuZXNzIG9uIGNhY2hlWyV1XSBsZW4iLA0KPiBsY29y
+ZV9pZCk7DQo+ICsJCQlydGVfcGFuaWMoIk1FTVBPT0w6IGludmFsaWQgY2FjaGVbJXVdIGxlblxu
+IiwNCj4gbGNvcmVfaWQpOw0KPiAgCQl9DQo+ICAJfQ0KPiAgfQ0KPiBAQCAtMTI0MSw5ICsxMjUx
+LDYgQEAgcnRlX21lbXBvb2xfYXVkaXQoc3RydWN0IHJ0ZV9tZW1wb29sICptcCkNCj4gIHsNCj4g
+IAltZW1wb29sX2F1ZGl0X2NhY2hlKG1wKTsNCj4gIAltZW1wb29sX2F1ZGl0X2Nvb2tpZXMobXAp
+Ow0KPiAtDQo+IC0JLyogRm9yIGNhc2Ugd2hlcmUgbWVtcG9vbCBERUJVRyBpcyBub3Qgc2V0LCBh
+bmQgY2FjaGUgc2l6ZSBpcyAwDQo+ICovDQo+IC0JUlRFX1NFVF9VU0VEKG1wKTsNCj4gIH0NCj4g
+DQo+ICAvKiBkdW1wIHRoZSBzdGF0dXMgb2YgdGhlIG1lbXBvb2wgb24gdGhlIGNvbnNvbGUgKi8N
+Cj4gZGlmZiAtLWdpdCBhL2xpYi9tZW1wb29sL3J0ZV9tZW1wb29sLmggYi9saWIvbWVtcG9vbC9y
+dGVfbWVtcG9vbC5oDQo+IGluZGV4IDUwZDk1OGM3YzYuLjQ5ZTg0MDEyODAgMTAwNjQ0DQo+IC0t
+LSBhL2xpYi9tZW1wb29sL3J0ZV9tZW1wb29sLmgNCj4gKysrIGIvbGliL21lbXBvb2wvcnRlX21l
+bXBvb2wuaA0KPiBAQCAtODksMTQgKzg5LDE0IEBAIHN0cnVjdCBfX3J0ZV9jYWNoZV9hbGlnbmVk
+IHJ0ZV9tZW1wb29sX2RlYnVnX3N0YXRzDQo+IHsNCj4gICAqLw0KPiAgc3RydWN0IF9fcnRlX2Nh
+Y2hlX2FsaWduZWQgcnRlX21lbXBvb2xfY2FjaGUgew0KPiAgCXVpbnQzMl90IHNpemU7CSAgICAg
+IC8qKjwgU2l6ZSBvZiB0aGUgY2FjaGUgKi8NCj4gLQl1aW50MzJfdCBmbHVzaHRocmVzaDsgLyoq
+PCBPYnNvbGV0ZTsgZm9yIEFQSS9BQkkgY29tcGF0aWJpbGl0eQ0KPiBwdXJwb3NlcyBvbmx5ICov
+DQo+ICAJdWludDMyX3QgbGVuOwkgICAgICAvKio8IEN1cnJlbnQgY2FjaGUgY291bnQgKi8NCj4g
+ICNpZmRlZiBSVEVfTElCUlRFX01FTVBPT0xfU1RBVFMNCj4gLQl1aW50MzJfdCB1bnVzZWQ7DQo+
+ICAJLyoNCj4gIAkgKiBBbHRlcm5hdGl2ZSBsb2NhdGlvbiBmb3IgdGhlIG1vc3QgZnJlcXVlbnRs
+eSB1cGRhdGVkIG1lbXBvb2wNCj4gc3RhdGlzdGljcyAocGVyLWxjb3JlKSwNCj4gIAkgKiBwcm92
+aWRpbmcgZmFzdGVyIHVwZGF0ZSBhY2Nlc3Mgd2hlbiB1c2luZyBhIG1lbXBvb2wgY2FjaGUuDQo+
+ICsJICogTm90ZTogMTYtYnl0ZSBhbGlnbmVkIGZvciBvcHRpbWFsIFNJTUQgYWNjZXNzLCB3aGVu
+IHVwZGF0aW5nDQo+IHBhaXJzIG9mIGNvdW50ZXJzLg0KPiAgCSAqLw0KPiArCWFsaWduYXMoMTYp
+DQo+ICAJc3RydWN0IHsNCj4gIAkJdWludDY0X3QgcHV0X2J1bGs7ICAgICAgICAgIC8qKjwgTnVt
+YmVyIG9mIHB1dHMuICovDQo+ICAJCXVpbnQ2NF90IHB1dF9vYmpzOyAgICAgICAgICAvKio8IE51
+bWJlciBvZiBvYmplY3RzDQo+IHN1Y2Nlc3NmdWxseSBwdXQuICovDQo+IEBAIC0xMDQsMTUgKzEw
+NCw5IEBAIHN0cnVjdCBfX3J0ZV9jYWNoZV9hbGlnbmVkIHJ0ZV9tZW1wb29sX2NhY2hlIHsNCj4g
+IAkJdWludDY0X3QgZ2V0X3N1Y2Nlc3Nfb2JqczsgIC8qKjwgT2JqZWN0cyBzdWNjZXNzZnVsbHkN
+Cj4gYWxsb2NhdGVkLiAqLw0KPiAgCX0gc3RhdHM7ICAgICAgICAgICAgICAgICAgICAgICAgLyoq
+PCBTdGF0aXN0aWNzICovDQo+ICAjZW5kaWYNCj4gLQkvKioNCj4gLQkgKiBDYWNoZSBvYmplY3Rz
+DQo+IC0JICoNCj4gLQkgKiBOb3RlOg0KPiAtCSAqIENhY2hlIGlzIGFsbG9jYXRlZCBhdCBkb3Vi
+bGUgc2l6ZSBmb3IgQVBJL0FCSSBjb21wYXRpYmlsaXR5DQo+IHB1cnBvc2VzIG9ubHkuDQo+IC0J
+ICogV2hlbiByZWR1Y2luZyBpdHMgc2l6ZSBhdCBhbiBBUEkvQUJJIGJyZWFraW5nIHJlbGVhc2Us
+DQo+IC0JICogcmVtZW1iZXIgdG8gYWRkIGEgY2FjaGUgZ3VhcmQgYWZ0ZXIgaXQuDQo+IC0JICov
+DQo+IC0JYWxpZ25hcyhSVEVfQ0FDSEVfTElORV9TSVpFKSB2b2lkDQo+ICpvYmpzW1JURV9NRU1Q
+T09MX0NBQ0hFX01BWF9TSVpFICogMl07DQo+ICsJLyoqIENhY2hlIG9iamVjdHMgKi8NCj4gKwlh
+bGlnbmFzKFJURV9DQUNIRV9MSU5FX1NJWkUpIHZvaWQNCj4gKm9ianNbUlRFX01FTVBPT0xfQ0FD
+SEVfTUFYX1NJWkVdOw0KPiArCVJURV9DQUNIRV9HVUFSRDsNCj4gIH07DQo+IA0KPiAgLyoqDQo+
+IEBAIC0yNDAsOCArMjM0LDcgQEAgc3RydWN0IF9fcnRlX2NhY2hlX2FsaWduZWQgcnRlX21lbXBv
+b2wgew0KPiAgCXVuc2lnbmVkIGludCBmbGFnczsgICAgICAgICAgICAgIC8qKjwgRmxhZ3Mgb2Yg
+dGhlIG1lbXBvb2wuICovDQo+ICAJaW50IHNvY2tldF9pZDsgICAgICAgICAgICAgICAgICAgLyoq
+PCBTb2NrZXQgaWQgcGFzc2VkIGF0IGNyZWF0ZS4NCj4gKi8NCj4gIAl1aW50MzJfdCBzaXplOyAg
+ICAgICAgICAgICAgICAgICAvKio8IE1heCBzaXplIG9mIHRoZSBtZW1wb29sLiAqLw0KPiAtCXVp
+bnQzMl90IGNhY2hlX3NpemU7DQo+IC0JLyoqPCBTaXplIG9mIHBlci1sY29yZSBkZWZhdWx0IGxv
+Y2FsIGNhY2hlLiAqLw0KPiArCXVpbnQzMl90IGNhY2hlX3NpemU7ICAgICAgICAgICAgIC8qKjwg
+U2l6ZSBvZiBwZXItbGNvcmUgZGVmYXVsdA0KPiBsb2NhbCBjYWNoZS4gKi8NCj4gDQo+ICAJdWlu
+dDMyX3QgZWx0X3NpemU7ICAgICAgICAgICAgICAgLyoqPCBTaXplIG9mIGFuIGVsZW1lbnQuICov
+DQo+ICAJdWludDMyX3QgaGVhZGVyX3NpemU7ICAgICAgICAgICAgLyoqPCBTaXplIG9mIGhlYWRl
+ciAoYmVmb3JlDQo+IGVsdCkuICovDQo+IEBAIC0yNTcsMTMgKzI1MCwxMyBAQCBzdHJ1Y3QgX19y
+dGVfY2FjaGVfYWxpZ25lZCBydGVfbWVtcG9vbCB7DQo+ICAJICovDQo+ICAJaW50MzJfdCBvcHNf
+aW5kZXg7DQo+IA0KPiAtCXN0cnVjdCBydGVfbWVtcG9vbF9jYWNoZSAqbG9jYWxfY2FjaGU7IC8q
+KjwgUGVyLWxjb3JlIGxvY2FsIGNhY2hlDQo+ICovDQo+IC0NCj4gIAl1aW50MzJfdCBwb3B1bGF0
+ZWRfc2l6ZTsgICAgICAgICAvKio8IE51bWJlciBvZiBwb3B1bGF0ZWQNCj4gb2JqZWN0cy4gKi8N
+Cj4gIAlzdHJ1Y3QgcnRlX21lbXBvb2xfb2JqaGRyX2xpc3QgZWx0X2xpc3Q7IC8qKjwgTGlzdCBv
+ZiBvYmplY3RzIGluDQo+IHBvb2wgKi8NCj4gIAl1aW50MzJfdCBuYl9tZW1fY2h1bmtzOyAgICAg
+ICAgICAvKio8IE51bWJlciBvZiBtZW1vcnkgY2h1bmtzICovDQo+ICAJc3RydWN0IHJ0ZV9tZW1w
+b29sX21lbWhkcl9saXN0IG1lbV9saXN0OyAvKio8IExpc3Qgb2YgbWVtb3J5DQo+IGNodW5rcyAq
+Lw0KPiANCj4gKwlzdHJ1Y3QgcnRlX21lbXBvb2xfY2FjaGUgbG9jYWxfY2FjaGVbUlRFX01BWF9M
+Q09SRV07IC8qKjwgUGVyLQ0KPiBsY29yZSBsb2NhbCBjYWNoZSAqLw0KPiArDQo+ICAjaWZkZWYg
+UlRFX0xJQlJURV9NRU1QT09MX1NUQVRTDQo+ICAJLyoqIFBlci1sY29yZSBzdGF0aXN0aWNzLg0K
+PiAgCSAqDQo+IEBAIC0yNzEsNiArMjY0LDggQEAgc3RydWN0IF9fcnRlX2NhY2hlX2FsaWduZWQg
+cnRlX21lbXBvb2wgew0KPiAgCSAqLw0KPiAgCXN0cnVjdCBydGVfbWVtcG9vbF9kZWJ1Z19zdGF0
+cyBzdGF0c1tSVEVfTUFYX0xDT1JFICsgMV07DQo+ICAjZW5kaWYNCj4gKw0KPiArCS8qIFByaXZh
+dGUgZGF0YSBhcmUgbG9jYXRlZCBpbW1lZGlhdGVseSBhZnRlciB0aGUgbWVtcG9vbA0KPiBzdHJ1
+Y3R1cmUuICovDQo+ICB9Ow0KPiANCj4gIC8qKiBTcHJlYWRpbmcgYW1vbmcgbWVtb3J5IGNoYW5u
+ZWxzIG5vdCByZXF1aXJlZC4gKi8NCj4gQEAgLTM2MiwxOCArMzU3LDYgQEAgc3RydWN0IF9fcnRl
+X2NhY2hlX2FsaWduZWQgcnRlX21lbXBvb2wgew0KPiAgI2RlZmluZSBSVEVfTUVNUE9PTF9DQUNI
+RV9TVEFUX0FERChjYWNoZSwgbmFtZSwgbikgZG8ge30gd2hpbGUgKDApDQo+ICAjZW5kaWYNCj4g
+DQo+IC0vKioNCj4gLSAqIEBpbnRlcm5hbCBDYWxjdWxhdGUgdGhlIHNpemUgb2YgdGhlIG1lbXBv
+b2wgaGVhZGVyLg0KPiAtICoNCj4gLSAqIEBwYXJhbSBtcA0KPiAtICogICBQb2ludGVyIHRvIHRo
+ZSBtZW1vcnkgcG9vbC4NCj4gLSAqIEBwYXJhbSBjcw0KPiAtICogICBTaXplIG9mIHRoZSBwZXIt
+bGNvcmUgY2FjaGUuDQo+IC0gKi8NCj4gLSNkZWZpbmUgUlRFX01FTVBPT0xfSEVBREVSX1NJWkUo
+bXAsIGNzKSBcDQo+IC0JKHNpemVvZigqKG1wKSkgKyAoKChjcykgPT0gMCkgPyAwIDogXA0KPiAt
+CShzaXplb2Yoc3RydWN0IHJ0ZV9tZW1wb29sX2NhY2hlKSAqIFJURV9NQVhfTENPUkUpKSkNCj4g
+LQ0KPiAgLyogcmV0dXJuIHRoZSBoZWFkZXIgb2YgYSBtZW1wb29sIG9iamVjdCAoaW50ZXJuYWwp
+ICovDQo+ICBzdGF0aWMgaW5saW5lIHN0cnVjdCBydGVfbWVtcG9vbF9vYmpoZHIgKg0KPiAgcnRl
+X21lbXBvb2xfZ2V0X2hlYWRlcih2b2lkICpvYmopDQo+IEBAIC03MTgsNyArNzAxLDcgQEAgc3Ry
+dWN0IF9fcnRlX2NhY2hlX2FsaWduZWQgcnRlX21lbXBvb2xfb3BzIHsNCj4gIAlydGVfbWVtcG9v
+bF9kZXF1ZXVlX2NvbnRpZ19ibG9ja3NfdCBkZXF1ZXVlX2NvbnRpZ19ibG9ja3M7DQo+ICB9Ow0K
+PiANCj4gLSNkZWZpbmUgUlRFX01FTVBPT0xfTUFYX09QU19JRFggMTYgIC8qKjwgTWF4IHJlZ2lz
+dGVyZWQgb3BzIHN0cnVjdHMgKi8NCj4gKyNkZWZpbmUgUlRFX01FTVBPT0xfTUFYX09QU19JRFgg
+MzIgIC8qKjwgTWF4IHJlZ2lzdGVyZWQgb3BzIHN0cnVjdHMgKi8NCj4gDQo+ICAvKioNCj4gICAq
+IFN0cnVjdHVyZSBzdG9yaW5nIHRoZSB0YWJsZSBvZiByZWdpc3RlcmVkIG9wcyBzdHJ1Y3RzLCBl
+YWNoIG9mDQo+IHdoaWNoIGNvbnRhaW4NCj4gQEAgLTEwNDksNyArMTAzMiw3IEBAIHJ0ZV9tZW1w
+b29sX2ZyZWUoc3RydWN0IHJ0ZV9tZW1wb29sICptcCk7DQo+ICAgKiAgIElmIGNhY2hlX3NpemUg
+aXMgbm9uLXplcm8sIHRoZSBydGVfbWVtcG9vbCBsaWJyYXJ5IHdpbGwgdHJ5IHRvDQo+ICAgKiAg
+IGxpbWl0IHRoZSBhY2Nlc3NlcyB0byB0aGUgY29tbW9uIGxvY2tsZXNzIHBvb2wsIGJ5IG1haW50
+YWluaW5nIGENCj4gICAqICAgcGVyLWxjb3JlIG9iamVjdCBjYWNoZS4gVGhpcyBhcmd1bWVudCBt
+dXN0IGJlIGxvd2VyIG9yIGVxdWFsIHRvDQo+IC0gKiAgIFJURV9NRU1QT09MX0NBQ0hFX01BWF9T
+SVpFIGFuZCBuLg0KPiArICogICBSVEVfTUVNUE9PTF9DQUNIRV9NQVhfU0laRSBhbmQgbiwgYW5k
+IGl0IG11c3QgYmUgZGl2aXNpYmxlIGJ5IDMyLg0KPiAgICogICBUaGUgYWNjZXNzIHRvIHRoZSBw
+ZXItbGNvcmUgdGFibGUgaXMgb2YgY291cnNlDQo+ICAgKiAgIGZhc3RlciB0aGFuIHRoZSBtdWx0
+aS1wcm9kdWNlci9jb25zdW1lciBwb29sLiBUaGUgY2FjaGUgY2FuIGJlDQo+ICAgKiAgIGRpc2Fi
+bGVkIGlmIHRoZSBjYWNoZV9zaXplIGFyZ3VtZW50IGlzIHNldCB0byAwOyBpdCBjYW4gYmUgdXNl
+ZnVsDQo+IHRvDQo+IEBAIC0xMzY4LDE1ICsxMzUxLDE2IEBAIHJ0ZV9tZW1wb29sX2NhY2hlX2Zy
+ZWUoc3RydWN0IHJ0ZV9tZW1wb29sX2NhY2hlDQo+ICpjYWNoZSk7DQo+ICBzdGF0aWMgX19ydGVf
+YWx3YXlzX2lubGluZSBzdHJ1Y3QgcnRlX21lbXBvb2xfY2FjaGUgKg0KPiAgcnRlX21lbXBvb2xf
+ZGVmYXVsdF9jYWNoZShzdHJ1Y3QgcnRlX21lbXBvb2wgKm1wLCB1bnNpZ25lZCBsY29yZV9pZCkN
+Cj4gIHsNCj4gLQlpZiAodW5saWtlbHkobXAtPmNhY2hlX3NpemUgPT0gMCkpDQo+ICsJaWYgKHVu
+bGlrZWx5KGxjb3JlX2lkID09IExDT1JFX0lEX0FOWSkpDQo+ICAJCXJldHVybiBOVUxMOw0KPiAN
+Cj4gLQlpZiAodW5saWtlbHkobGNvcmVfaWQgPT0gTENPUkVfSURfQU5ZKSkNCj4gKwlzdHJ1Y3Qg
+cnRlX21lbXBvb2xfY2FjaGUgKmNhY2hlID0gJm1wLT5sb2NhbF9jYWNoZVtsY29yZV9pZF07DQo+
+ICsNCj4gKwlpZiAodW5saWtlbHkoY2FjaGUtPnNpemUgPT0gMCkpDQo+ICAJCXJldHVybiBOVUxM
+Ow0KPiANCj4gLQlydGVfbWVtcG9vbF90cmFjZV9kZWZhdWx0X2NhY2hlKG1wLCBsY29yZV9pZCwN
+Cj4gLQkJJm1wLT5sb2NhbF9jYWNoZVtsY29yZV9pZF0pOw0KPiAtCXJldHVybiAmbXAtPmxvY2Fs
+X2NhY2hlW2xjb3JlX2lkXTsNCj4gKwlydGVfbWVtcG9vbF90cmFjZV9kZWZhdWx0X2NhY2hlKG1w
+LCBsY29yZV9pZCwgY2FjaGUpOw0KPiArCXJldHVybiBjYWNoZTsNCj4gIH0NCj4gDQo+ICAvKioN
+Cj4gQEAgLTE0NDUsOSArMTQyOSwyMiBAQCBydGVfbWVtcG9vbF9kb19nZW5lcmljX3B1dChzdHJ1
+Y3QgcnRlX21lbXBvb2wNCj4gKm1wLCB2b2lkICogY29uc3QgKm9ial90YWJsZSwNCj4gIAkJICog
+YXJlIG1vcmUgaG90LCBmcm9tIHRoZSB1cHBlciBoYWxmIG9mIHRoZSBjYWNoZS4NCj4gIAkJICov
+DQo+ICAJCV9fcnRlX2Fzc3VtZShjYWNoZS0+bGVuID4gY2FjaGUtPnNpemUgLyAyKTsNCj4gLQkJ
+cnRlX21lbXBvb2xfb3BzX2VucXVldWVfYnVsayhtcCwgJmNhY2hlLT5vYmpzWzBdLCBjYWNoZS0N
+Cj4gPnNpemUgLyAyKTsNCj4gLQkJcnRlX21lbWNweSgmY2FjaGUtPm9ianNbMF0sICZjYWNoZS0+
+b2Jqc1tjYWNoZS0+c2l6ZSAvIDJdLA0KPiAtCQkJCXNpemVvZih2b2lkICopICogKGNhY2hlLT5s
+ZW4gLSBjYWNoZS0+c2l6ZSAvDQo+IDIpKTsNCj4gKwkJcnRlX21lbXBvb2xfb3BzX2VucXVldWVf
+YnVsayhtcCwgY2FjaGUtPm9ianMsIGNhY2hlLT5zaXplIC8NCj4gMik7DQo+ICsJCS8qDQo+ICsJ
+CSAqIEZvciBpbXByb3ZlZCBydGVfbWVtY3B5KCkgcGVyZm9ybWFuY2UsIG1vdmUgZG93biBvYmpl
+Y3RzDQo+ICsJCSAqIGZyb20gQ1BVIGNhY2hlIGxpbmUgYWxpZ25lZCBhZGRyZXNzIGluIGNodW5r
+cyBvZiAzMg0KPiBieXRlcy4NCj4gKwkJICogTm90ZTogRm9yIGNhY2hlLT5vYmpzW2NhY2hlLT5z
+aXplIC8gMl0gdG8gYmUgY2FjaGUgbGluZQ0KPiBhbGlnbmVkLCBjYWNoZS0+c2l6ZQ0KPiArCQkg
+KiBtdXN0IGJlIGRpdmlzaWJsZSBieSAzMiBvbiAzMi1iaXQgYXJjaGl0ZWN0dXJlIHdpdGggNjQt
+DQo+IGJ5dGUgY2FjaGUgbGluZSwNCj4gKwkJICogZGl2aXNpYmxlIGJ5IDMyIG9uIDY0LWJpdCBh
+cmNoaXRlY3R1cmUgd2l0aCAxMjgtYnl0ZQ0KPiBjYWNoZSBsaW5lLCBhbmQNCj4gKwkJICogYmUg
+ZGl2aXNpYmxlIGJ5IDE2IG9uIDY0LWJpdCBhcmNoaXRlY3R1cmUgd2l0aCA2NC1ieXRlDQo+IGNh
+Y2hlIGxpbmUuDQo+ICsJCSAqIEZvciBBUEkgY29uc2lzdGVuY3ksIHJlcXVpcmUgbWVtcG9vbCBj
+YWNoZSBzaXplIGlzDQo+IGRpdmlzaWJsZSBieSAzMi4NCj4gKwkJICovDQo+ICsJCWNvbnN0IHNp
+emVfdCBtb3ZlID0gUlRFX0FMSUdOX01VTF9DRUlMKA0KPiArCQkJCXNpemVvZih2b2lkICopICog
+KGNhY2hlLT5sZW4gLSBjYWNoZS0+c2l6ZSAvDQo+IDIpLCAzMik7DQo+ICsJCV9fcnRlX2Fzc3Vt
+ZShtb3ZlID49IDMyKTsNCj4gKwkJX19ydGVfYXNzdW1lKChtb3ZlICYgMzEpID09IDApOw0KPiAr
+CQlydGVfbWVtY3B5KGNhY2hlLT5vYmpzLCBfX3J0ZV9hc3N1bWVfY2FjaGVfYWxpZ25lZCgmY2Fj
+aGUtDQo+ID5vYmpzW2NhY2hlLT5zaXplIC8gMl0pLA0KPiArCQkJCW1vdmUpOw0KPiAgCQljYWNo
+ZV9vYmpzID0gJmNhY2hlLT5vYmpzW2NhY2hlLT5sZW4gLSBjYWNoZS0+c2l6ZSAvIDJdOw0KPiAg
+CQljYWNoZS0+bGVuID0gY2FjaGUtPmxlbiAtIGNhY2hlLT5zaXplIC8gMiArIG47DQo+ICAJfSBl
+bHNlIHsNCj4gQEAgLTE4OTIsOCArMTg4OSw3IEBAIHZvaWQgcnRlX21lbXBvb2xfYXVkaXQoc3Ry
+dWN0IHJ0ZV9tZW1wb29sICptcCk7DQo+ICAgKi8NCj4gIHN0YXRpYyBpbmxpbmUgdm9pZCAqcnRl
+X21lbXBvb2xfZ2V0X3ByaXYoc3RydWN0IHJ0ZV9tZW1wb29sICptcCkNCj4gIHsNCj4gLQlyZXR1
+cm4gKGNoYXIgKiltcCArDQo+IC0JCVJURV9NRU1QT09MX0hFQURFUl9TSVpFKG1wLCBtcC0+Y2Fj
+aGVfc2l6ZSk7DQo+ICsJcmV0dXJuIChjaGFyICopbXAgKyBzaXplb2Yoc3RydWN0IHJ0ZV9tZW1w
+b29sKTsNCj4gIH0NCj4gDQo+ICAvKioNCj4gZGlmZiAtLWdpdCBhL2xpYi9zdGFjay9tZXNvbi5i
+dWlsZCBiL2xpYi9zdGFjay9tZXNvbi5idWlsZA0KPiBpbmRleCAxODE3N2E3NDJmLi41MGU2ODg1
+MjJlIDEwMDY0NA0KPiAtLS0gYS9saWIvc3RhY2svbWVzb24uYnVpbGQNCj4gKysrIGIvbGliL3N0
+YWNrL21lc29uLmJ1aWxkDQo+IEBAIC0xLDcgKzEsNyBAQA0KPiAgIyBTUERYLUxpY2Vuc2UtSWRl
+bnRpZmllcjogQlNELTMtQ2xhdXNlDQo+ICAjIENvcHlyaWdodChjKSAyMDE5IEludGVsIENvcnBv
+cmF0aW9uDQo+IA0KPiAtc291cmNlcyA9IGZpbGVzKCdydGVfc3RhY2suYycsICdydGVfc3RhY2tf
+c3RkLmMnLCAncnRlX3N0YWNrX2xmLmMnKQ0KPiArc291cmNlcyA9IGZpbGVzKCdydGVfc3RhY2su
+YycsICdydGVfc3RhY2tfc3RkLmMnLCAncnRlX3N0YWNrX2xmLmMnLA0KPiAncnRlX3N0YWNrX3Bp
+bGUuYycpDQo+ICBoZWFkZXJzID0gZmlsZXMoJ3J0ZV9zdGFjay5oJykNCj4gICMgc3ViaGVhZGVy
+cywgbm90IGZvciBkaXJlY3QgaW5jbHVzaW9uIGJ5IGFwcHMNCj4gIGluZGlyZWN0X2hlYWRlcnMg
+Kz0gZmlsZXMoDQo+IEBAIC0xMCw0ICsxMCw1IEBAIGluZGlyZWN0X2hlYWRlcnMgKz0gZmlsZXMo
+DQo+ICAgICAgICAgICdydGVfc3RhY2tfbGZfZ2VuZXJpYy5oJywNCj4gICAgICAgICAgJ3J0ZV9z
+dGFja19sZl9jMTEuaCcsDQo+ICAgICAgICAgICdydGVfc3RhY2tfbGZfc3R1YnMuaCcsDQo+ICsg
+ICAgICAgICdydGVfc3RhY2tfcGlsZS5oJywNCj4gICkNCj4gZGlmZiAtLWdpdCBhL2xpYi9zdGFj
+ay9ydGVfc3RhY2suYyBiL2xpYi9zdGFjay9ydGVfc3RhY2suYw0KPiBpbmRleCA0Yzc4ZmU0YjRi
+Li5hNGJiZjhhNGQ3IDEwMDY0NA0KPiAtLS0gYS9saWIvc3RhY2svcnRlX3N0YWNrLmMNCj4gKysr
+IGIvbGliL3N0YWNrL3J0ZV9zdGFjay5jDQo+IEBAIC0xLDUgKzEsNiBAQA0KPiAgLyogU1BEWC1M
+aWNlbnNlLUlkZW50aWZpZXI6IEJTRC0zLUNsYXVzZQ0KPiAgICogQ29weXJpZ2h0KGMpIDIwMTkg
+SW50ZWwgQ29ycG9yYXRpb24NCj4gKyAqIENvcHlyaWdodChjKSAyMDI2IFNtYXJ0U2hhcmUgU3lz
+dGVtcw0KPiAgICovDQo+IA0KPiAgI2luY2x1ZGUgPHN0ZGFsaWduLmg+DQo+IEBAIC0zMiw2ICsz
+Myw4IEBAIHJ0ZV9zdGFja19pbml0KHN0cnVjdCBydGVfc3RhY2sgKnMsIHVuc2lnbmVkIGludA0K
+PiBjb3VudCwgdWludDMyX3QgZmxhZ3MpDQo+IA0KPiAgCWlmIChmbGFncyAmIFJURV9TVEFDS19G
+X0xGKQ0KPiAgCQlydGVfc3RhY2tfbGZfaW5pdChzLCBjb3VudCk7DQo+ICsJZWxzZSBpZiAoZmxh
+Z3MgJiBSVEVfU1RBQ0tfRl9QSUxFKQ0KPiArCQlydGVfc3RhY2tfcGlsZV9pbml0KHMsIGNvdW50
+KTsNCj4gIAllbHNlDQo+ICAJCXJ0ZV9zdGFja19zdGRfaW5pdChzKTsNCj4gIH0NCj4gQEAgLTQx
+LDYgKzQ0LDggQEAgcnRlX3N0YWNrX2dldF9tZW1zaXplKHVuc2lnbmVkIGludCBjb3VudCwgdWlu
+dDMyX3QNCj4gZmxhZ3MpDQo+ICB7DQo+ICAJaWYgKGZsYWdzICYgUlRFX1NUQUNLX0ZfTEYpDQo+
+ICAJCXJldHVybiBydGVfc3RhY2tfbGZfZ2V0X21lbXNpemUoY291bnQpOw0KPiArCWVsc2UgaWYg
+KGZsYWdzICYgUlRFX1NUQUNLX0ZfUElMRSkNCj4gKwkJcmV0dXJuIHJ0ZV9zdGFja19waWxlX2dl
+dF9tZW1zaXplKGNvdW50KTsNCj4gIAllbHNlDQo+ICAJCXJldHVybiBydGVfc3RhY2tfc3RkX2dl
+dF9tZW1zaXplKGNvdW50KTsNCj4gIH0NCj4gQEAgLTU4LDcgKzYzLDExIEBAIHJ0ZV9zdGFja19j
+cmVhdGUoY29uc3QgY2hhciAqbmFtZSwgdW5zaWduZWQgaW50DQo+IGNvdW50LCBpbnQgc29ja2V0
+X2lkLA0KPiAgCXVuc2lnbmVkIGludCBzejsNCj4gIAlpbnQgcmV0Ow0KPiANCj4gLQlpZiAoZmxh
+Z3MgJiB+KFJURV9TVEFDS19GX0xGKSkgew0KPiArCWlmIChmbGFncyAmIH4oUlRFX1NUQUNLX0Zf
+TEYgfCBSVEVfU1RBQ0tfRl9QSUxFKSkgew0KPiArCQlTVEFDS19MT0dfRVJSKCJVbnN1cHBvcnRl
+ZCBzdGFjayBmbGFncyAlI3giLCBmbGFncyk7DQo+ICsJCXJldHVybiBOVUxMOw0KPiArCX0NCj4g
+KwlpZiAoKGZsYWdzICYgUlRFX1NUQUNLX0ZfTEYpICYmIChmbGFncyAmIFJURV9TVEFDS19GX1BJ
+TEUpKSB7DQo+ICAJCVNUQUNLX0xPR19FUlIoIlVuc3VwcG9ydGVkIHN0YWNrIGZsYWdzICUjeCIs
+IGZsYWdzKTsNCj4gIAkJcmV0dXJuIE5VTEw7DQo+ICAJfQ0KPiBAQCAtNzMsNiArODIsMTMgQEAg
+cnRlX3N0YWNrX2NyZWF0ZShjb25zdCBjaGFyICpuYW1lLCB1bnNpZ25lZCBpbnQNCj4gY291bnQs
+IGludCBzb2NrZXRfaWQsDQo+ICAJCXJldHVybiBOVUxMOw0KPiAgCX0NCj4gICNlbmRpZg0KPiAr
+I2lmICFkZWZpbmVkKFJURV9TVEFDS19QSUxFX1NVUFBPUlRFRCkNCj4gKwlpZiAoZmxhZ3MgJiBS
+VEVfU1RBQ0tfRl9QSUxFKSB7DQo+ICsJCVNUQUNLX0xPR19FUlIoIlBpbGUgaXMgbm90IHN1cHBv
+cnRlZCBvbiB5b3VyIHBsYXRmb3JtIik7DQo+ICsJCXJ0ZV9lcnJubyA9IEVOT1RTVVA7DQo+ICsJ
+CXJldHVybiBOVUxMOw0KPiArCX0NCj4gKyNlbmRpZg0KPiANCj4gIAlzeiA9IHJ0ZV9zdGFja19n
+ZXRfbWVtc2l6ZShjb3VudCwgZmxhZ3MpOw0KPiANCj4gZGlmZiAtLWdpdCBhL2xpYi9zdGFjay9y
+dGVfc3RhY2suaCBiL2xpYi9zdGFjay9ydGVfc3RhY2suaA0KPiBpbmRleCBmZDE3YWM3OTFkLi5i
+ZjY0ZGJjN2JjIDEwMDY0NA0KPiAtLS0gYS9saWIvc3RhY2svcnRlX3N0YWNrLmgNCj4gKysrIGIv
+bGliL3N0YWNrL3J0ZV9zdGFjay5oDQo+IEBAIC0xLDUgKzEsNiBAQA0KPiAgLyogU1BEWC1MaWNl
+bnNlLUlkZW50aWZpZXI6IEJTRC0zLUNsYXVzZQ0KPiAgICogQ29weXJpZ2h0KGMpIDIwMTkgSW50
+ZWwgQ29ycG9yYXRpb24NCj4gKyAqIENvcHlyaWdodChjKSAyMDI2IFNtYXJ0U2hhcmUgU3lzdGVt
+cw0KPiAgICovDQo+IA0KPiAgLyoqDQo+IEBAIC0yOCwxMSArMjksNDUgQEANCj4gICNkZWZpbmUg
+UlRFX1NUQUNLX05BTUVTSVpFIChSVEVfTUVNWk9ORV9OQU1FU0laRSAtIFwNCj4gIAkJCSAgIHNp
+emVvZihSVEVfU1RBQ0tfTVpfUFJFRklYKSArIDEpDQo+IA0KPiArc3RhdGljX2Fzc2VydCgoKHNp
+emVvZih2b2lkICopICogUlRFX1NUQUNLX1BJTEVfQlVMS19TSVpFKSAmDQo+IFJURV9DQUNIRV9M
+SU5FX01BU0spID09IDAsDQo+ICsJCSJQaWxlIGJ1bGsgc2l6ZSBtdXN0IGJlIGRpdmlzaWJsZSBi
+eSBDUFUgY2FjaGUgbGluZSBzaXplIik7DQo+ICsNCj4gKy8qIE5vdGU6IEFsc28gdXNlZCBhcyBz
+b2xvIChzaW5nbGUtb2JqZWN0KSBwaWxlIGVsZW1lbnQuICovDQo+ICBzdHJ1Y3QgcnRlX3N0YWNr
+X2xmX2VsZW0gew0KPiAgCXZvaWQgKmRhdGE7CQkJLyoqPCBEYXRhIHBvaW50ZXIgKi8NCj4gIAlz
+dHJ1Y3QgcnRlX3N0YWNrX2xmX2VsZW0gKm5leHQ7CS8qKjwgTmV4dCBwb2ludGVyICovDQo+ICB9
+Ow0KPiANCj4gKy8qDQo+ICsgKiBCdWxrIChtdWx0aS1vYmplY3QpIHBpbGUgZWxlbWVudC4NCj4g
+KyAqIEluaGVyaXRlZCBmcm9tIHRoZSBydGVfc3RhY2tfbGZfZWxlbSAoc2luZ2xlLW9iamVjdCkg
+Y2xhc3MsDQo+ICsgKiBhbmQgZXh0ZW5kZWQgd2l0aCBhbiBhcnJheSBmb3IgaG9sZGluZyBhIGJ1
+bGsgb2Ygb2JqZWN0IHBvaW50ZXJzLg0KPiArICovDQo+ICtzdHJ1Y3QgcnRlX3N0YWNrX3BpbGVf
+YnVsa19lbGVtIHsNCj4gKwkvKiBUaGUgZmlyc3QgcGFydCBtdXN0IGJlIGNvbXBhdGlibGUgd2l0
+aCB0aGUgcnRlX3N0YWNrX2xmX2VsZW0NCj4gcGFyZW50IGNsYXNzLiAqLw0KPiArCXZvaWQgKmRh
+dGE7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLyoqPCBEYXRhIHBvaW50ZXINCj4g
+KHVudXNlZCkgKi8NCj4gKwlzdHJ1Y3QgcnRlX3N0YWNrX3BpbGVfYnVsa19lbGVtICpuZXh0OyAg
+ICAgIC8qKjwgTmV4dCBwb2ludGVyICovDQo+ICsJLyogVGhlIHNlY29uZCBwYXJ0IGRpZmZlcnMu
+ICovDQo+ICsJYWxpZ25hcyhSVEVfQ0FDSEVfTElORV9TSVpFKQ0KPiArCXZvaWQgKm9ianNbUlRF
+X1NUQUNLX1BJTEVfQlVMS19TSVpFXTsgICAgICAgLyoqPCBCdWxrIChtdWx0aS0NCj4gb2JqZWN0
+KSBwb2ludGVycyAqLw0KPiArfTsNCj4gKw0KPiArc3RhdGljX2Fzc2VydChzaXplb2Yoc3RydWN0
+IHJ0ZV9zdGFja19sZl9lbGVtKSA9PQ0KPiArCQlzaXplb2Yoc3RydWN0IHJ0ZV9zdGFja19sZl9l
+bGVtICopICsgc2l6ZW9mKHZvaWQqKSwNCj4gKwkJIlBhcmVudCB0eXBlIGhhcyBjaGFuZ2VkIik7
+DQo+ICtzdGF0aWNfYXNzZXJ0KFJURV9TSVpFT0ZfRklFTEQoc3RydWN0IHJ0ZV9zdGFja19sZl9l
+bGVtLCBuZXh0KSA9PQ0KPiArCQlSVEVfU0laRU9GX0ZJRUxEKHN0cnVjdCBydGVfc3RhY2tfcGls
+ZV9idWxrX2VsZW0sIG5leHQpLA0KPiArCQkiSW5oZXJpdGVkIHR5cGUgbWlzbWF0Y2giKTsNCj4g
+K3N0YXRpY19hc3NlcnQob2Zmc2V0b2Yoc3RydWN0IHJ0ZV9zdGFja19sZl9lbGVtLCBuZXh0KSA9
+PQ0KPiArCQlvZmZzZXRvZihzdHJ1Y3QgcnRlX3N0YWNrX3BpbGVfYnVsa19lbGVtLCBuZXh0KSwN
+Cj4gKwkJIkluaGVyaXRlZCB0eXBlIG1pc21hdGNoIik7DQo+ICtzdGF0aWNfYXNzZXJ0KFJURV9T
+SVpFT0ZfRklFTEQoc3RydWN0IHJ0ZV9zdGFja19sZl9lbGVtLCBkYXRhKSA9PQ0KPiArCQlSVEVf
+U0laRU9GX0ZJRUxEKHN0cnVjdCBydGVfc3RhY2tfcGlsZV9idWxrX2VsZW0sIGRhdGEpLA0KPiAr
+CQkiSW5oZXJpdGVkIHR5cGUgbWlzbWF0Y2giKTsNCj4gK3N0YXRpY19hc3NlcnQob2Zmc2V0b2Yo
+c3RydWN0IHJ0ZV9zdGFja19sZl9lbGVtLCBkYXRhKSA9PQ0KPiArCQlvZmZzZXRvZihzdHJ1Y3Qg
+cnRlX3N0YWNrX3BpbGVfYnVsa19lbGVtLCBkYXRhKSwNCj4gKwkJIkluaGVyaXRlZCB0eXBlIG1p
+c21hdGNoIik7DQo+ICsNCj4gIHN0cnVjdCBfX3J0ZV9hbGlnbmVkKDE2KSBydGVfc3RhY2tfbGZf
+aGVhZCB7DQo+ICAJc3RydWN0IHJ0ZV9zdGFja19sZl9lbGVtICp0b3A7IC8qKjwgU3RhY2sgdG9w
+ICovDQo+ICAJdWludDY0X3QgY250OyAvKio8IE1vZGlmaWNhdGlvbiBjb3VudGVyIGZvciBhdm9p
+ZGluZyBBQkEgcHJvYmxlbQ0KPiAqLw0KPiBAQCAtNTEsMTIgKzg2LDM1IEBAIHN0cnVjdCBydGVf
+c3RhY2tfbGZfbGlzdCB7DQo+ICBzdHJ1Y3QgcnRlX3N0YWNrX2xmIHsNCj4gIAkvKiogTElGTyBs
+aXN0IG9mIGVsZW1lbnRzICovDQo+ICAJYWxpZ25hcyhSVEVfQ0FDSEVfTElORV9TSVpFKSBzdHJ1
+Y3QgcnRlX3N0YWNrX2xmX2xpc3QgdXNlZDsNCj4gKwlSVEVfQ0FDSEVfR1VBUkQ7DQo+ICAJLyoq
+IExJRk8gbGlzdCBvZiBmcmVlIGVsZW1lbnRzICovDQo+ICAJYWxpZ25hcyhSVEVfQ0FDSEVfTElO
+RV9TSVpFKSBzdHJ1Y3QgcnRlX3N0YWNrX2xmX2xpc3QgZnJlZTsNCj4gKwlSVEVfQ0FDSEVfR1VB
+UkQ7DQo+ICAJLyoqIExJRk8gZWxlbWVudHMgKi8NCj4gIAlhbGlnbmFzKFJURV9DQUNIRV9MSU5F
+X1NJWkUpIHN0cnVjdCBydGVfc3RhY2tfbGZfZWxlbSBlbGVtc1tdOw0KPiAgfTsNCj4gDQo+ICsv
+KiBQaWxlIHN0cnVjdHVyZSBjb250YWluaW5nIHRocmVlIGxvY2stZnJlZSBMSUZPLWxpa2UgbGlz
+dHM6DQo+ICsgKiAgLSBBIGxpc3Qgb2YgZWxlbWVudHMsIGVhY2ggZWxlbWVudCBob2xkaW5nIGEg
+YnVsayBvZiBwb2ludGVycyB0bw0KPiBvYmplY3RzLg0KPiArICogIC0gQSBsaXN0IG9mIGVsZW1l
+bnRzLCBlYWNoIGVsZW1lbnQgaG9sZGluZyBvbmUgcG9pbnRlciB0byBhbg0KPiBvYmplY3QuDQo+
+ICsgKiAgLSBBIGxpc3Qgb2YgZnJlZSBsaW5rZWQtbGlzdCBlbGVtZW50cy4NCj4gKyAqLw0KPiAr
+c3RydWN0IHJ0ZV9zdGFja19waWxlIHsNCj4gKwkvKiogTElGTyBsaXN0IG9mIGJ1bGsgKG11bHRp
+LW9iamVjdCkgZWxlbWVudHMgKi8NCj4gKwlhbGlnbmFzKFJURV9DQUNIRV9MSU5FX1NJWkUpIHN0
+cnVjdCBydGVfc3RhY2tfbGZfbGlzdCBidWxrOw0KPiArCVJURV9DQUNIRV9HVUFSRDsNCj4gKwkv
+KiogTElGTyBsaXN0IG9mIHNvbG8gKHNpbmdsZS1vYmplY3QpIGVsZW1lbnRzICovDQo+ICsJYWxp
+Z25hcyhSVEVfQ0FDSEVfTElORV9TSVpFKSBzdHJ1Y3QgcnRlX3N0YWNrX2xmX2xpc3Qgc29sbzsN
+Cj4gKwlSVEVfQ0FDSEVfR1VBUkQ7DQo+ICsJLyoqIExJRk8gbGlzdCBvZiBmcmVlIGJ1bGsgZWxl
+bWVudHMgKi8NCj4gKwlhbGlnbmFzKFJURV9DQUNIRV9MSU5FX1NJWkUpIHN0cnVjdCBydGVfc3Rh
+Y2tfbGZfbGlzdCBmcmVlX2J1bGs7DQo+ICsJUlRFX0NBQ0hFX0dVQVJEOw0KPiArCS8qKiBMSUZP
+IGxpc3Qgb2YgZnJlZSBzb2xvIGVsZW1lbnRzICovDQo+ICsJYWxpZ25hcyhSVEVfQ0FDSEVfTElO
+RV9TSVpFKSBzdHJ1Y3QgcnRlX3N0YWNrX2xmX2xpc3QgZnJlZV9zb2xvOw0KPiArCVJURV9DQUNI
+RV9HVUFSRDsNCj4gKwkvKiogTElGTyBlbGVtZW50cyBmb2xsb3csIGZpcnN0IGJ1bGssIHRoZW4g
+c29sbyAqLw0KPiArfTsNCj4gKw0KPiAgLyogU3RydWN0dXJlIGNvbnRhaW5pbmcgdGhlIExJRk8s
+IGl0cyBjdXJyZW50IGxlbmd0aCwgYW5kIGEgbG9jayBmb3INCj4gbXV0dWFsDQo+ICAgKiBleGNs
+dXNpb24uDQo+ICAgKi8NCj4gQEAgLTc4LDYgKzEzNiw3IEBAIHN0cnVjdCBfX3J0ZV9jYWNoZV9h
+bGlnbmVkIHJ0ZV9zdGFjayB7DQo+ICAJdWludDMyX3QgZmxhZ3M7IC8qKjwgRmxhZ3Mgc3VwcGxp
+ZWQgYXQgY3JlYXRpb24uICovDQo+ICAJdW5pb24gew0KPiAgCQlzdHJ1Y3QgcnRlX3N0YWNrX2xm
+IHN0YWNrX2xmOyAvKio8IExvY2stZnJlZSBMSUZPDQo+IHN0cnVjdHVyZS4gKi8NCj4gKwkJc3Ry
+dWN0IHJ0ZV9zdGFja19waWxlIHN0YWNrX3BpbGU7IC8qKjwgTG9jay1mcmVlIHBpbGUNCj4gKExJ
+Rk8tbGlrZSkgc3RydWN0dXJlLiAqLw0KPiAgCQlzdHJ1Y3QgcnRlX3N0YWNrX3N0ZCBzdGFja19z
+dGQ7CS8qKjwgTElGTyBzdHJ1Y3R1cmUuICovDQo+ICAJfTsNCj4gIH07DQo+IEBAIC04OCw4ICsx
+NDcsMTYgQEAgc3RydWN0IF9fcnRlX2NhY2hlX2FsaWduZWQgcnRlX3N0YWNrIHsNCj4gICAqLw0K
+PiAgI2RlZmluZSBSVEVfU1RBQ0tfRl9MRiAweDAwMDENCj4gDQo+ICsvKioNCj4gKyAqIFRoZSBz
+dGFjay1saWtlIHBpbGUgdXNlcyBsb2NrLWZyZWUgcHVzaCBhbmQgcG9wIGZ1bmN0aW9ucy4NCj4g
+KyAqIEl0IGlzIG9wdGltaXplZCBmb3IgYnVsa3Mgb2Ygb2JqZWN0cywgYW5kIGlzIG5vdCBzdHJp
+Y3RseSBMSUZPLg0KPiArICogVGhpcyBmbGFnIGlzIG9ubHkgc3VwcG9ydGVkIG9uIHg4Nl82NCBv
+ciBhcm02NCBwbGF0Zm9ybXMsDQo+IGN1cnJlbnRseS4NCj4gKyAqLw0KPiArI2RlZmluZSBSVEVf
+U1RBQ0tfRl9QSUxFIDB4MDAwMg0KPiArDQo+ICAjaW5jbHVkZSAicnRlX3N0YWNrX3N0ZC5oIg0K
+PiAgI2luY2x1ZGUgInJ0ZV9zdGFja19sZi5oIg0KPiArI2luY2x1ZGUgInJ0ZV9zdGFja19waWxl
+LmgiDQo+IA0KPiAgI2lmZGVmIF9fY3BsdXNwbHVzDQo+ICBleHRlcm4gIkMiIHsNCj4gQEAgLTEw
+OCwxMyArMTc1LDE1IEBAIGV4dGVybiAiQyIgew0KPiAgICogICBBY3R1YWwgbnVtYmVyIG9mIG9i
+amVjdHMgcHVzaGVkIChlaXRoZXIgMCBvciAqbiopLg0KPiAgICovDQo+ICBzdGF0aWMgX19ydGVf
+YWx3YXlzX2lubGluZSB1bnNpZ25lZCBpbnQNCj4gLXJ0ZV9zdGFja19wdXNoKHN0cnVjdCBydGVf
+c3RhY2sgKnMsIHZvaWQgKiBjb25zdCAqb2JqX3RhYmxlLCB1bnNpZ25lZA0KPiBpbnQgbikNCj4g
+K3J0ZV9zdGFja19wdXNoKHN0cnVjdCBydGVfc3RhY2sgKnMsIHZvaWQgKiBjb25zdCAqIF9fcnRl
+X3Jlc3RyaWN0DQo+IG9ial90YWJsZSwgdW5zaWduZWQgaW50IG4pDQo+ICB7DQo+ICAJUlRFX0FT
+U0VSVChzICE9IE5VTEwpOw0KPiAgCVJURV9BU1NFUlQob2JqX3RhYmxlICE9IE5VTEwpOw0KPiAN
+Cj4gIAlpZiAocy0+ZmxhZ3MgJiBSVEVfU1RBQ0tfRl9MRikNCj4gIAkJcmV0dXJuIF9fcnRlX3N0
+YWNrX2xmX3B1c2gocywgb2JqX3RhYmxlLCBuKTsNCj4gKwllbHNlIGlmIChzLT5mbGFncyAmIFJU
+RV9TVEFDS19GX1BJTEUpDQo+ICsJCXJldHVybiBfX3J0ZV9zdGFja19waWxlX3B1c2gocywgb2Jq
+X3RhYmxlLCBuKTsNCj4gIAllbHNlDQo+ICAJCXJldHVybiBfX3J0ZV9zdGFja19zdGRfcHVzaChz
+LCBvYmpfdGFibGUsIG4pOw0KPiAgfQ0KPiBAQCAtMTMyLDEzICsyMDEsMTUgQEAgcnRlX3N0YWNr
+X3B1c2goc3RydWN0IHJ0ZV9zdGFjayAqcywgdm9pZCAqIGNvbnN0DQo+ICpvYmpfdGFibGUsIHVu
+c2lnbmVkIGludCBuKQ0KPiAgICogICBBY3R1YWwgbnVtYmVyIG9mIG9iamVjdHMgcG9wcGVkIChl
+aXRoZXIgMCBvciAqbiopLg0KPiAgICovDQo+ICBzdGF0aWMgX19ydGVfYWx3YXlzX2lubGluZSB1
+bnNpZ25lZCBpbnQNCj4gLXJ0ZV9zdGFja19wb3Aoc3RydWN0IHJ0ZV9zdGFjayAqcywgdm9pZCAq
+Km9ial90YWJsZSwgdW5zaWduZWQgaW50IG4pDQo+ICtydGVfc3RhY2tfcG9wKHN0cnVjdCBydGVf
+c3RhY2sgKnMsIHZvaWQgKiogX19ydGVfcmVzdHJpY3Qgb2JqX3RhYmxlLA0KPiB1bnNpZ25lZCBp
+bnQgbikNCj4gIHsNCj4gIAlSVEVfQVNTRVJUKHMgIT0gTlVMTCk7DQo+ICAJUlRFX0FTU0VSVChv
+YmpfdGFibGUgIT0gTlVMTCk7DQo+IA0KPiAgCWlmIChzLT5mbGFncyAmIFJURV9TVEFDS19GX0xG
+KQ0KPiAgCQlyZXR1cm4gX19ydGVfc3RhY2tfbGZfcG9wKHMsIG9ial90YWJsZSwgbik7DQo+ICsJ
+ZWxzZSBpZiAocy0+ZmxhZ3MgJiBSVEVfU1RBQ0tfRl9QSUxFKQ0KPiArCQlyZXR1cm4gX19ydGVf
+c3RhY2tfcGlsZV9wb3Aocywgb2JqX3RhYmxlLCBuKTsNCj4gIAllbHNlDQo+ICAJCXJldHVybiBf
+X3J0ZV9zdGFja19zdGRfcG9wKHMsIG9ial90YWJsZSwgbik7DQo+ICB9DQo+IEBAIC0xNTgsNiAr
+MjI5LDggQEAgcnRlX3N0YWNrX2NvdW50KHN0cnVjdCBydGVfc3RhY2sgKnMpDQo+IA0KPiAgCWlm
+IChzLT5mbGFncyAmIFJURV9TVEFDS19GX0xGKQ0KPiAgCQlyZXR1cm4gX19ydGVfc3RhY2tfbGZf
+Y291bnQocyk7DQo+ICsJZWxzZSBpZiAocy0+ZmxhZ3MgJiBSVEVfU1RBQ0tfRl9QSUxFKQ0KPiAr
+CQlyZXR1cm4gX19ydGVfc3RhY2tfcGlsZV9jb3VudChzKTsNCj4gIAllbHNlDQo+ICAJCXJldHVy
+biBfX3J0ZV9zdGFja19zdGRfY291bnQocyk7DQo+ICB9DQo+IGRpZmYgLS1naXQgYS9saWIvc3Rh
+Y2svcnRlX3N0YWNrX2xmLmggYi9saWIvc3RhY2svcnRlX3N0YWNrX2xmLmgNCj4gaW5kZXggZjJi
+MDEyY2QwZS4uNjU1NjIwYWFhOSAxMDA2NDQNCj4gLS0tIGEvbGliL3N0YWNrL3J0ZV9zdGFja19s
+Zi5oDQo+ICsrKyBiL2xpYi9zdGFjay9ydGVfc3RhY2tfbGYuaA0KPiBAQCAtMzQsNyArMzQsNyBA
+QA0KPiAgICovDQo+ICBzdGF0aWMgX19ydGVfYWx3YXlzX2lubGluZSB1bnNpZ25lZCBpbnQNCj4g
+IF9fcnRlX3N0YWNrX2xmX3B1c2goc3RydWN0IHJ0ZV9zdGFjayAqcywNCj4gLQkJICAgIHZvaWQg
+KiBjb25zdCAqb2JqX3RhYmxlLA0KPiArCQkgICAgdm9pZCAqIGNvbnN0ICogX19ydGVfcmVzdHJp
+Y3Qgb2JqX3RhYmxlLA0KPiAgCQkgICAgdW5zaWduZWQgaW50IG4pDQo+ICB7DQo+ICAJc3RydWN0
+IHJ0ZV9zdGFja19sZl9lbGVtICp0bXAsICpmaXJzdCwgKmxhc3QgPSBOVUxMOw0KPiBAQCAtNzEs
+NyArNzEsOCBAQCBfX3J0ZV9zdGFja19sZl9wdXNoKHN0cnVjdCBydGVfc3RhY2sgKnMsDQo+ICAg
+KiAgIC0gQWN0dWFsIG51bWJlciBvZiBvYmplY3RzIHBvcHBlZC4NCj4gICAqLw0KPiAgc3RhdGlj
+IF9fcnRlX2Fsd2F5c19pbmxpbmUgdW5zaWduZWQgaW50DQo+IC1fX3J0ZV9zdGFja19sZl9wb3Ao
+c3RydWN0IHJ0ZV9zdGFjayAqcywgdm9pZCAqKm9ial90YWJsZSwgdW5zaWduZWQgaW50DQo+IG4p
+DQo+ICtfX3J0ZV9zdGFja19sZl9wb3Aoc3RydWN0IHJ0ZV9zdGFjayAqcywgdm9pZCAqKiBfX3J0
+ZV9yZXN0cmljdA0KPiBvYmpfdGFibGUsDQo+ICsJCSAgIHVuc2lnbmVkIGludCBuKQ0KPiAgew0K
+PiAgCXN0cnVjdCBydGVfc3RhY2tfbGZfZWxlbSAqZmlyc3QsICpsYXN0ID0gTlVMTDsNCj4gDQo+
+IEBAIC03OSw2ICs4MCw3IEBAIF9fcnRlX3N0YWNrX2xmX3BvcChzdHJ1Y3QgcnRlX3N0YWNrICpz
+LCB2b2lkDQo+ICoqb2JqX3RhYmxlLCB1bnNpZ25lZCBpbnQgbikNCj4gIAkJcmV0dXJuIDA7DQo+
+IA0KPiAgCS8qIFBvcCBuIHVzZWQgZWxlbWVudHMgKi8NCj4gKwlfX3J0ZV9hc3N1bWUob2JqX3Rh
+YmxlICE9IE5VTEwpOw0KPiAgCWZpcnN0ID0gX19ydGVfc3RhY2tfbGZfcG9wX2VsZW1zKCZzLT5z
+dGFja19sZi51c2VkLA0KPiAgCQkJCQkgbiwgb2JqX3RhYmxlLCAmbGFzdCk7DQo+ICAJaWYgKHVu
+bGlrZWx5KGZpcnN0ID09IE5VTEwpKQ0KPiBkaWZmIC0tZ2l0IGEvbGliL3N0YWNrL3J0ZV9zdGFj
+a19sZl9jMTEuaA0KPiBiL2xpYi9zdGFjay9ydGVfc3RhY2tfbGZfYzExLmgNCj4gaW5kZXggYjk3
+ZTAyZDZhMS4uNTAxZTk4NWE0OSAxMDA2NDQNCj4gLS0tIGEvbGliL3N0YWNrL3J0ZV9zdGFja19s
+Zl9jMTEuaA0KPiArKysgYi9saWIvc3RhY2svcnRlX3N0YWNrX2xmX2MxMS5oDQo+IEBAIC05OSw3
+ICs5OSw3IEBAIF9fcnRlX3N0YWNrX2xmX3B1c2hfZWxlbXMoc3RydWN0IHJ0ZV9zdGFja19sZl9s
+aXN0DQo+ICpsaXN0LA0KPiAgc3RhdGljIF9fcnRlX2Fsd2F5c19pbmxpbmUgc3RydWN0IHJ0ZV9z
+dGFja19sZl9lbGVtICoNCj4gIF9fcnRlX3N0YWNrX2xmX3BvcF9lbGVtcyhzdHJ1Y3QgcnRlX3N0
+YWNrX2xmX2xpc3QgKmxpc3QsDQo+ICAJCQkgdW5zaWduZWQgaW50IG51bSwNCj4gLQkJCSB2b2lk
+ICoqb2JqX3RhYmxlLA0KPiArCQkJIHZvaWQgKiogX19ydGVfcmVzdHJpY3Qgb2JqX3RhYmxlLA0K
+PiAgCQkJIHN0cnVjdCBydGVfc3RhY2tfbGZfZWxlbSAqKmxhc3QpDQo+ICB7DQo+ICAJc3RydWN0
+IHJ0ZV9zdGFja19sZl9oZWFkIG9sZF9oZWFkOw0KPiBkaWZmIC0tZ2l0IGEvbGliL3N0YWNrL3J0
+ZV9zdGFja19sZl9nZW5lcmljLmgNCj4gYi9saWIvc3RhY2svcnRlX3N0YWNrX2xmX2dlbmVyaWMu
+aA0KPiBpbmRleCBjYzY5ZTRkMTY4Li5jNGNjNGQyYzAzIDEwMDY0NA0KPiAtLS0gYS9saWIvc3Rh
+Y2svcnRlX3N0YWNrX2xmX2dlbmVyaWMuaA0KPiArKysgYi9saWIvc3RhY2svcnRlX3N0YWNrX2xm
+X2dlbmVyaWMuaA0KPiBAQCAtNzQsNyArNzQsNyBAQCBfX3J0ZV9zdGFja19sZl9wdXNoX2VsZW1z
+KHN0cnVjdCBydGVfc3RhY2tfbGZfbGlzdA0KPiAqbGlzdCwNCj4gIHN0YXRpYyBfX3J0ZV9hbHdh
+eXNfaW5saW5lIHN0cnVjdCBydGVfc3RhY2tfbGZfZWxlbSAqDQo+ICBfX3J0ZV9zdGFja19sZl9w
+b3BfZWxlbXMoc3RydWN0IHJ0ZV9zdGFja19sZl9saXN0ICpsaXN0LA0KPiAgCQkJIHVuc2lnbmVk
+IGludCBudW0sDQo+IC0JCQkgdm9pZCAqKm9ial90YWJsZSwNCj4gKwkJCSB2b2lkICoqIF9fcnRl
+X3Jlc3RyaWN0IG9ial90YWJsZSwNCj4gIAkJCSBzdHJ1Y3QgcnRlX3N0YWNrX2xmX2VsZW0gKips
+YXN0KQ0KPiAgew0KPiAgCXN0cnVjdCBydGVfc3RhY2tfbGZfaGVhZCBvbGRfaGVhZDsNCj4gZGlm
+ZiAtLWdpdCBhL2xpYi9zdGFjay9ydGVfc3RhY2tfbGZfc3R1YnMuaA0KPiBiL2xpYi9zdGFjay9y
+dGVfc3RhY2tfbGZfc3R1YnMuaA0KPiBpbmRleCBhMDVhYmYxZjFjLi40NTdhNDE1Y2NmIDEwMDY0
+NA0KPiAtLS0gYS9saWIvc3RhY2svcnRlX3N0YWNrX2xmX3N0dWJzLmgNCj4gKysrIGIvbGliL3N0
+YWNrL3J0ZV9zdGFja19sZl9zdHVicy5oDQo+IEBAIC0zMCw3ICszMCw3IEBAIF9fcnRlX3N0YWNr
+X2xmX3B1c2hfZWxlbXMoc3RydWN0IHJ0ZV9zdGFja19sZl9saXN0DQo+ICpsaXN0LA0KPiAgc3Rh
+dGljIF9fcnRlX2Fsd2F5c19pbmxpbmUgc3RydWN0IHJ0ZV9zdGFja19sZl9lbGVtICoNCj4gIF9f
+cnRlX3N0YWNrX2xmX3BvcF9lbGVtcyhzdHJ1Y3QgcnRlX3N0YWNrX2xmX2xpc3QgKmxpc3QsDQo+
+ICAJCQkgdW5zaWduZWQgaW50IG51bSwNCj4gLQkJCSB2b2lkICoqb2JqX3RhYmxlLA0KPiArCQkJ
+IHZvaWQgKiogX19ydGVfcmVzdHJpY3Qgb2JqX3RhYmxlLA0KPiAgCQkJIHN0cnVjdCBydGVfc3Rh
+Y2tfbGZfZWxlbSAqKmxhc3QpDQo+ICB7DQo+ICAJUlRFX1NFVF9VU0VEKG9ial90YWJsZSk7DQo+
+IGRpZmYgLS1naXQgYS9saWIvc3RhY2svcnRlX3N0YWNrX3BpbGUuYyBiL2xpYi9zdGFjay9ydGVf
+c3RhY2tfcGlsZS5jDQo+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+IGluZGV4IDAwMDAwMDAwMDAu
+LmViNDJiYTcwYTkNCj4gLS0tIC9kZXYvbnVsbA0KPiArKysgYi9saWIvc3RhY2svcnRlX3N0YWNr
+X3BpbGUuYw0KPiBAQCAtMCwwICsxLDMzIEBADQo+ICsvKiBTUERYLUxpY2Vuc2UtSWRlbnRpZmll
+cjogQlNELTMtQ2xhdXNlDQo+ICsgKiBDb3B5cmlnaHQoYykgMjAyNiBTbWFydFNoYXJlIFN5c3Rl
+bXMNCj4gKyAqLw0KPiArDQo+ICsjaW5jbHVkZSAicnRlX3N0YWNrLmgiDQo+ICsNCj4gK3ZvaWQN
+Cj4gK3J0ZV9zdGFja19waWxlX2luaXQoc3RydWN0IHJ0ZV9zdGFjayAqcywgdW5zaWduZWQgaW50
+IGNvdW50KQ0KPiArew0KPiArICAgIHVuc2lnbmVkIGludCBidWxrID0gKGNvdW50ICsgUlRFX1NU
+QUNLX1BJTEVfQlVMS19TSVpFIC0gMSkgLw0KPiBSVEVfU1RBQ0tfUElMRV9CVUxLX1NJWkU7DQo+
+ICsJc3RydWN0IHJ0ZV9zdGFja19waWxlX2J1bGtfZWxlbSAqIGJ1bGtfZWxlbXMgPSAoc3RydWN0
+DQo+IHJ0ZV9zdGFja19waWxlX2J1bGtfZWxlbSAqKSgmcy0+c3RhY2tfcGlsZSArIDEpOw0KPiAr
+CXN0cnVjdCBydGVfc3RhY2tfbGZfZWxlbSAqIHNvbG9fZWxlbXMgPSAoc3RydWN0IHJ0ZV9zdGFj
+a19sZl9lbGVtDQo+ICopJmJ1bGtfZWxlbXNbYnVsa107DQo+ICsJdW5zaWduZWQgaW50IGk7DQo+
+ICsNCj4gKwlmb3IgKGkgPSAwOyBpIDwgYnVsazsgaSsrKQ0KPiArCQlfX3J0ZV9zdGFja19waWxl
+X2J1bGtfcHVzaF9lbGVtcygmcy0+c3RhY2tfcGlsZS5mcmVlX2J1bGssDQo+ICsJCQkJCSAgJmJ1
+bGtfZWxlbXNbaV0sICZidWxrX2VsZW1zW2ldLCAxKTsNCj4gKwlmb3IgKGkgPSAwOyBpIDwgY291
+bnQ7IGkrKykNCj4gKwkJX19ydGVfc3RhY2tfbGZfcHVzaF9lbGVtcygmcy0+c3RhY2tfcGlsZS5m
+cmVlX3NvbG8sDQo+ICsJCQkJCSAgJnNvbG9fZWxlbXNbaV0sICZzb2xvX2VsZW1zW2ldLCAxKTsN
+Cj4gK30NCj4gKw0KPiArc3NpemVfdA0KPiArcnRlX3N0YWNrX3BpbGVfZ2V0X21lbXNpemUodW5z
+aWduZWQgaW50IGNvdW50KQ0KPiArew0KPiArICAgIHVuc2lnbmVkIGludCBidWxrID0gKGNvdW50
+ICsgUlRFX1NUQUNLX1BJTEVfQlVMS19TSVpFIC0gMSkgLw0KPiBSVEVfU1RBQ0tfUElMRV9CVUxL
+X1NJWkU7DQo+ICsJc3NpemVfdCBzeiA9IHNpemVvZihzdHJ1Y3QgcnRlX3N0YWNrKTsgLyogQWxy
+ZWFkeSBjYWNoZSBsaW5lDQo+IGFsaWduZWQuICovDQo+ICsJc3ogKz0gYnVsayAqIHNpemVvZihz
+dHJ1Y3QgcnRlX3N0YWNrX3BpbGVfYnVsa19lbGVtKTsgLyogQWxyZWFkeQ0KPiBjYWNoZSBsaW5l
+IGFsaWduZWQuICovDQo+ICsJc3ogKz0gUlRFX0NBQ0hFX0xJTkVfUk9VTkRVUChjb3VudCAqIHNp
+emVvZihzdHJ1Y3QNCj4gcnRlX3N0YWNrX2xmX2VsZW0pKTsNCj4gKwlzeiArPSBSVEVfQ0FDSEVf
+R1VBUkRfTElORVMgKiBSVEVfQ0FDSEVfTElORV9TSVpFOw0KPiArDQo+ICsJcmV0dXJuIHN6Ow0K
+PiArfQ0KPiBkaWZmIC0tZ2l0IGEvbGliL3N0YWNrL3J0ZV9zdGFja19waWxlLmggYi9saWIvc3Rh
+Y2svcnRlX3N0YWNrX3BpbGUuaA0KPiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPiBpbmRleCAwMDAw
+MDAwMDAwLi5kOTI4NTE1ZDE4DQo+IC0tLSAvZGV2L251bGwNCj4gKysrIGIvbGliL3N0YWNrL3J0
+ZV9zdGFja19waWxlLmgNCj4gQEAgLTAsMCArMSwzMTYgQEANCj4gKy8qIFNQRFgtTGljZW5zZS1J
+ZGVudGlmaWVyOiBCU0QtMy1DbGF1c2UNCj4gKyAqIENvcHlyaWdodChjKSAyMDI2IFNtYXJ0U2hh
+cmUgU3lzdGVtcw0KPiArICovDQo+ICsNCj4gKyNpZm5kZWYgX1JURV9TVEFDS19QSUxFX0hfDQo+
+ICsjZGVmaW5lIF9SVEVfU1RBQ0tfUElMRV9IXw0KPiArDQo+ICsjaWYgIShkZWZpbmVkKFJURV9B
+UkNIX1g4Nl82NCkgfHwgZGVmaW5lZChSVEVfQVJDSF9BUk02NCkpDQo+ICsjaW5jbHVkZSAicnRl
+X3N0YWNrX2xmX3N0dWJzLmgiDQo+ICsjZWxzZQ0KPiArI2lmZGVmIFJURV9VU0VfQzExX01FTV9N
+T0RFTA0KPiArI2luY2x1ZGUgInJ0ZV9zdGFja19sZl9jMTEuaCINCj4gKyNlbHNlDQo+ICsjaW5j
+bHVkZSAicnRlX3N0YWNrX2xmX2dlbmVyaWMuaCINCj4gKyNlbmRpZg0KPiArDQo+ICsvKioNCj4g
+KyAqIEluZGljYXRlcyB0aGF0IFJURV9TVEFDS19GX1BJTEUgaXMgc3VwcG9ydGVkLg0KPiArICov
+DQo+ICsjZGVmaW5lIFJURV9TVEFDS19QSUxFX1NVUFBPUlRFRA0KPiArI2VuZGlmDQo+ICsNCj4g
+K3N0YXRpYyBfX3J0ZV9hbHdheXNfaW5saW5lIHVuc2lnbmVkIGludA0KPiArX19ydGVfc3RhY2tf
+cGlsZV9jb3VudChzdHJ1Y3QgcnRlX3N0YWNrICpzKQ0KPiArew0KPiArCS8qIHN0YWNrX2xmX3B1
+c2goKSBhbmQgc3RhY2tfbGZfcG9wKCkgZG8gbm90IHVwZGF0ZSB0aGUgbGlzdCdzDQo+IGNvbnRl
+bnRzDQo+ICsJICogYW5kIHN0YWNrX2xmLT5sZW4gYXRvbWljYWxseSwgd2hpY2ggY2FuIGNhdXNl
+IHRoZSBsaXN0IHRvDQo+IGFwcGVhcg0KPiArCSAqIHNob3J0ZXIgdGhhbiBpdCBhY3R1YWxseSBp
+cyBpZiB0aGlzIGZ1bmN0aW9uIGlzIGNhbGxlZCB3aGlsZQ0KPiBvdGhlcg0KPiArCSAqIHRocmVh
+ZHMgYXJlIG1vZGlmeWluZyB0aGUgbGlzdC4NCj4gKwkgKg0KPiArCSAqIEhvd2V2ZXIsIGdpdmVu
+IHRoZSBpbmhlcmVudGx5IGFwcHJveGltYXRlIG5hdHVyZSBvZiB0aGUNCj4gZ2V0X2NvdW50DQo+
+ICsJICogY2FsbGJhY2sgLS0gZXZlbiBpZiB0aGUgbGlzdCBhbmQgaXRzIHNpemUgd2VyZSB1cGRh
+dGVkDQo+IGF0b21pY2FsbHksDQo+ICsJICogdGhlIHNpemUgY291bGQgY2hhbmdlIGJldHdlZW4g
+d2hlbiBnZXRfY291bnQgZXhlY3V0ZXMgYW5kIHdoZW4NCj4gdGhlDQo+ICsJICogdmFsdWUgaXMg
+cmV0dXJuZWQgdG8gdGhlIGNhbGxlciAtLSB0aGlzIGlzIGFjY2VwdGFibGUuDQo+ICsJICoNCj4g
+KwkgKiBUaGUgc3RhY2tfbGYtPmxlbiB1cGRhdGVzIGFyZSBwbGFjZWQgc3VjaCB0aGF0IHRoZSBs
+aXN0IG1heQ0KPiBhcHBlYXIgdG8NCj4gKwkgKiBoYXZlIGZld2VyIGVsZW1lbnRzIHRoYW4gaXQg
+ZG9lcywgYnV0IHdpbGwgbmV2ZXIgYXBwZWFyIHRvDQo+IGhhdmUgbW9yZQ0KPiArCSAqIGVsZW1l
+bnRzLiBJZiB0aGUgbWVtcG9vbCBpcyBuZWFyLWVtcHR5IHRvIHRoZSBwb2ludCB0aGF0IHRoaXMN
+Cj4gaXMgYQ0KPiArCSAqIGNvbmNlcm4sIHRoZSB1c2VyIHNob3VsZCBjb25zaWRlciBpbmNyZWFz
+aW5nIHRoZSBtZW1wb29sIHNpemUuDQo+ICsJICovDQo+ICsjaWZkZWYgUlRFX1VTRV9DMTFfTUVN
+X01PREVMDQo+ICsJcmV0dXJuIFJURV9NSU4oKHVuc2lnbmVkIGludClzLT5jYXBhY2l0eSwNCj4g
+KwkJCSh1bnNpZ25lZCBpbnQpcnRlX2F0b21pY19sb2FkX2V4cGxpY2l0KCZzLQ0KPiA+c3RhY2tf
+cGlsZS5idWxrLmxlbiwNCj4gKwkJCXJ0ZV9tZW1vcnlfb3JkZXJfcmVsYXhlZCkgKiBSVEVfU1RB
+Q0tfUElMRV9CVUxLX1NJWkUNCj4gKw0KPiArCQkJKHVuc2lnbmVkIGludClydGVfYXRvbWljX2xv
+YWRfZXhwbGljaXQoJnMtDQo+ID5zdGFja19waWxlLnNvbG8ubGVuLA0KPiArCQkJcnRlX21lbW9y
+eV9vcmRlcl9yZWxheGVkKSk7DQo+ICsjZWxzZQ0KPiArCS8qIE5PVEU6IHJldmlldyBmb3IgcG90
+ZW50aWFsIG9yZGVyaW5nIG9wdGltaXphdGlvbiAqLw0KPiArCXJldHVybiBSVEVfTUlOKCh1bnNp
+Z25lZCBpbnQpcy0+Y2FwYWNpdHksDQo+ICsJCQkodW5zaWduZWQgaW50KXJ0ZV9hdG9taWNfbG9h
+ZF9leHBsaWNpdCgmcy0NCj4gPnN0YWNrX3BpbGUuYnVsay5sZW4sDQo+ICsJCQlydGVfbWVtb3J5
+X29yZGVyX3NlcV9jc3QpICogUlRFX1NUQUNLX1BJTEVfQlVMS19TSVpFDQo+ICsNCj4gKwkJCSh1
+bnNpZ25lZCBpbnQpcnRlX2F0b21pY19sb2FkX2V4cGxpY2l0KCZzLQ0KPiA+c3RhY2tfcGlsZS5z
+b2xvLmxlbiwNCj4gKwkJCXJ0ZV9tZW1vcnlfb3JkZXJfc2VxX2NzdCkpOw0KPiArI2VuZGlmDQo+
+ICt9DQo+ICsNCj4gK3N0YXRpYyBfX3J0ZV9hbHdheXNfaW5saW5lIHZvaWQNCj4gK19fcnRlX3N0
+YWNrX3BpbGVfYnVsa19wdXNoX2VsZW1zKHN0cnVjdCBydGVfc3RhY2tfbGZfbGlzdCAqbGlzdCwN
+Cj4gKwkJc3RydWN0IHJ0ZV9zdGFja19waWxlX2J1bGtfZWxlbSAqZmlyc3QsDQo+ICsJCXN0cnVj
+dCBydGVfc3RhY2tfcGlsZV9idWxrX2VsZW0gKmxhc3QsDQo+ICsJCXVuc2lnbmVkIGludCBudW0p
+DQo+ICt7DQo+ICsJX19ydGVfc3RhY2tfbGZfcHVzaF9lbGVtcyhsaXN0LA0KPiArCQkoc3RydWN0
+IHJ0ZV9zdGFja19sZl9lbGVtICopZmlyc3QsDQo+ICsJCShzdHJ1Y3QgcnRlX3N0YWNrX2xmX2Vs
+ZW0gKilsYXN0LA0KPiArCQludW0pOw0KPiArfQ0KPiArDQo+ICtzdGF0aWMgX19ydGVfYWx3YXlz
+X2lubGluZSBzdHJ1Y3QgcnRlX3N0YWNrX3BpbGVfYnVsa19lbGVtICoNCj4gK19fcnRlX3N0YWNr
+X3BpbGVfYnVsa19wb3BfZWxlbXMoc3RydWN0IHJ0ZV9zdGFja19sZl9saXN0ICpsaXN0LA0KPiAr
+CQl1bnNpZ25lZCBpbnQgbnVtLA0KPiArCQl2b2lkICoqIF9fcnRlX3Jlc3RyaWN0IG9ial90YWJs
+ZSwNCj4gKwkJc3RydWN0IHJ0ZV9zdGFja19waWxlX2J1bGtfZWxlbSAqKmxhc3QpDQo+ICt7DQo+
+ICsJc3RydWN0IHJ0ZV9zdGFja19waWxlX2J1bGtfZWxlbSAqZmlyc3QgPSAoc3RydWN0DQo+IHJ0
+ZV9zdGFja19waWxlX2J1bGtfZWxlbSAqKV9fcnRlX3N0YWNrX2xmX3BvcF9lbGVtcyhsaXN0LCBu
+dW0sIE5VTEwsDQo+IChzdHJ1Y3QgcnRlX3N0YWNrX2xmX2VsZW0gKiopbGFzdCk7DQo+ICsJaWYg
+KGZpcnN0ID09IE5VTEwpDQo+ICsJCXJldHVybiBOVUxMOw0KPiArDQo+ICsJaWYgKG9ial90YWJs
+ZSAhPSBOVUxMKSB7DQo+ICsJCS8qIFRyYXZlcnNlIHRoZSBsaXN0IHRvIGNvcHkgdGhlIGJ1bGtz
+LiAqLw0KPiArCQlzdHJ1Y3QgcnRlX3N0YWNrX3BpbGVfYnVsa19lbGVtICp0bXAgPSBmaXJzdDsN
+Cj4gKwkJZm9yICh1bnNpZ25lZCBpbnQgaSA9IDA7IGkgPCBudW07IGkrKywgdG1wID0gdG1wLT5u
+ZXh0KQ0KPiArCQkJcnRlX21lbWNweSgmb2JqX3RhYmxlW2kgKiBSVEVfU1RBQ0tfUElMRV9CVUxL
+X1NJWkVdLA0KPiB0bXAtPm9ianMsIHNpemVvZih2b2lkICopICogUlRFX1NUQUNLX1BJTEVfQlVM
+S19TSVpFKTsNCj4gKwl9DQo+ICsNCj4gKwlyZXR1cm4gZmlyc3Q7DQo+ICt9DQo+ICsNCj4gKy8q
+Kg0KPiArICogUHVzaCBzZXZlcmFsIG9iamVjdHMgb24gdGhlIHBpbGUgKGxvY2stZnJlZSwgTVQt
+c2FmZSkuDQo+ICsgKg0KPiArICogQHBhcmFtIHBpbGUNCj4gKyAqICAgQSBwb2ludGVyIHRvIHRo
+ZSBwaWxlIHN0cnVjdHVyZS4NCj4gKyAqIEBwYXJhbSBvYmpfdGFibGUNCj4gKyAqICAgQSBwb2lu
+dGVyIHRvIGEgdGFibGUgb2Ygdm9pZCAqIHBvaW50ZXJzIChvYmplY3RzKS4NCj4gKyAqIEBwYXJh
+bSBuDQo+ICsgKiAgIFRoZSBudW1iZXIgb2Ygb2JqZWN0cyB0byBwdXNoIG9uIHRoZSBwaWxlIGZy
+b20gdGhlIG9ial90YWJsZS4NCj4gKyAqIEByZXR1cm4NCj4gKyAqICAgQWN0dWFsIG51bWJlciBv
+ZiBvYmplY3RzIHB1c2hlZCAoZWl0aGVyIDAgb3IgKm4qKS4NCj4gKyAqLw0KPiArc3RhdGljIF9f
+cnRlX2Fsd2F5c19pbmxpbmUgdW5zaWduZWQgaW50DQo+ICtfX3J0ZV9zdGFja19waWxlX3B1c2go
+c3RydWN0IHJ0ZV9zdGFjayAqcywNCj4gKwkJdm9pZCAqIGNvbnN0ICogX19ydGVfcmVzdHJpY3Qg
+b2JqX3RhYmxlLA0KPiArCQl1bnNpZ25lZCBpbnQgbikNCj4gK3sNCj4gKwlSVEVfQVNTRVJUKHMg
+IT0gTlVMTCk7DQo+ICsJUlRFX0FTU0VSVChvYmpfdGFibGUgIT0gTlVMTCk7DQo+ICsNCj4gKwlz
+dHJ1Y3QgcnRlX3N0YWNrX3BpbGUgKnBpbGUgPSAmcy0+c3RhY2tfcGlsZTsNCj4gKwlzdHJ1Y3Qg
+cnRlX3N0YWNrX3BpbGVfYnVsa19lbGVtICpidWxrX2ZpcnN0ID0gTlVMTCwgKmJ1bGtfbGFzdCA9
+DQo+IE5VTEw7DQo+ICsJc3RydWN0IHJ0ZV9zdGFja19sZl9lbGVtICpzb2xvX2ZpcnN0ID0gTlVM
+TCwgKnNvbG9fbGFzdCA9IE5VTEw7DQo+ICsJdW5zaWduZWQgaW50IG5fYnVsayA9IG4gLyBSVEVf
+U1RBQ0tfUElMRV9CVUxLX1NJWkU7DQo+ICsJdW5zaWduZWQgaW50IG5fc29sbyA9IG4gJiAoUlRF
+X1NUQUNLX1BJTEVfQlVMS19TSVpFIC0gMSk7DQo+ICsJdW5zaWduZWQgaW50IGk7DQo+ICsNCj4g
+KwlpZiAodW5saWtlbHkobl9idWxrID09IDApKSB7DQo+ICsJCWlmICh1bmxpa2VseShuX3NvbG8g
+PT0gMCkpDQo+ICsJCQlyZXR1cm4gMDsNCj4gKwkJZWxzZQ0KPiArCQkJZ290byBzb2xvOw0KPiAr
+CX0NCj4gKw0KPiArCS8qIEFsbG9jYXRlIG5fYnVsayBlbGVtZW50cyBmcm9tIHRoZSBmcmVlIGxp
+c3QuICovDQo+ICsJYnVsa19maXJzdCA9IF9fcnRlX3N0YWNrX3BpbGVfYnVsa19wb3BfZWxlbXMo
+JnBpbGUtPmZyZWVfYnVsaywNCj4gbl9idWxrLCBOVUxMLCAmYnVsa19sYXN0KTsNCj4gKwlpZiAo
+dW5saWtlbHkoYnVsa19maXJzdCA9PSBOVUxMKSkNCj4gKwkJcmV0dXJuIDA7IC8qIEZhaWxlZC4g
+Ki8NCj4gKw0KPiArCWlmIChsaWtlbHkobl9zb2xvID09IDApKQ0KPiArCQlnb3RvIGJ1bGs7DQo+
+ICsNCj4gK3NvbG86DQo+ICsJLyogQWxsb2NhdGUgbl9zb2xvIGVsZW1lbnRzIGZyb20gdGhlIGZy
+ZWUgbGlzdC4gKi8NCj4gKwlzb2xvX2ZpcnN0ID0gX19ydGVfc3RhY2tfbGZfcG9wX2VsZW1zKCZw
+aWxlLT5mcmVlX3NvbG8sIG5fc29sbywNCj4gTlVMTCwgJnNvbG9fbGFzdCk7DQo+ICsJaWYgKHVu
+bGlrZWx5KHNvbG9fZmlyc3QgPT0gTlVMTCkpIHsNCj4gKwkJLyogRmFpbGVkLiBSb2xsIGJhY2su
+ICovDQo+ICsJCWlmIChuX2J1bGsgPiAwKQ0KPiArCQkJX19ydGVfc3RhY2tfcGlsZV9idWxrX3B1
+c2hfZWxlbXMoJnBpbGUtPmZyZWVfYnVsaywNCj4gYnVsa19maXJzdCwgYnVsa19sYXN0LCBuX2J1
+bGspOw0KPiArCQlyZXR1cm4gMDsNCj4gKwl9DQo+ICsNCj4gKwkvKg0KPiArCSAqIENvbnN0cnVj
+dCB0aGUgc29sbyBlbGVtZW50cy4NCj4gKwkgKiBDb3B5IHRoZSBvYmplY3RzLCBidXQgaWdub3Jl
+IHRoZSBvYmplY3Qgb3JkZXIuDQo+ICsJICovDQo+ICsJc3RydWN0IHJ0ZV9zdGFja19sZl9lbGVt
+ICp0bXBfc29sbyA9IHNvbG9fZmlyc3Q7DQo+ICsJX19ydGVfYXNzdW1lKG5fc29sbyA+IDApOw0K
+PiArCV9fcnRlX2Fzc3VtZShuX3NvbG8gPCBSVEVfU1RBQ0tfUElMRV9CVUxLX1NJWkUpOw0KPiAr
+CWZvciAoaSA9IDA7IGkgPCBuX3NvbG87IGkrKywgdG1wX3NvbG8gPSB0bXBfc29sby0+bmV4dCkN
+Cj4gKwkJdG1wX3NvbG8tPmRhdGEgPSBvYmpfdGFibGVbbl9idWxrICoNCj4gUlRFX1NUQUNLX1BJ
+TEVfQlVMS19TSVpFICsgaV07DQo+ICsNCj4gKwkvKiBQdXNoIHRoZW0gdG8gdGhlIHNvbG8gbGlz
+dC4gKi8NCj4gKwlfX3J0ZV9zdGFja19sZl9wdXNoX2VsZW1zKCZwaWxlLT5zb2xvLCBzb2xvX2Zp
+cnN0LCBzb2xvX2xhc3QsDQo+IG5fc29sbyk7DQo+ICsNCj4gKwlpZiAodW5saWtlbHkobl9idWxr
+ID09IDApKQ0KPiArCQlyZXR1cm4gbjsgLyogRG9uZS4gKi8NCj4gKw0KPiArYnVsazoNCj4gKwkv
+Kg0KPiArCSAqIENvbnN0cnVjdCB0aGUgYnVsayBlbGVtZW50cy4NCj4gKwkgKiBDb3B5IGJ1bGtz
+IGluIHJldmVyc2Ugb3JkZXIsIGJ1dCBpZ25vcmUgdGhlIG9iamVjdCBvcmRlcg0KPiB3aXRoaW4g
+ZWFjaCBidWxrLg0KPiArCSAqLw0KPiArCXN0cnVjdCBydGVfc3RhY2tfcGlsZV9idWxrX2VsZW0g
+KnRtcF9idWxrID0gYnVsa19maXJzdDsNCj4gKwlfX3J0ZV9hc3N1bWUobl9idWxrID4gMCk7DQo+
+ICsJZm9yIChpID0gMDsgaSA8IG5fYnVsazsgaSsrLCB0bXBfYnVsayA9IHRtcF9idWxrLT5uZXh0
+KQ0KPiArCQlydGVfbWVtY3B5KHRtcF9idWxrLT5vYmpzLCAmb2JqX3RhYmxlWyhuX2J1bGsgLSBp
+IC0gMSkgKg0KPiBSVEVfU1RBQ0tfUElMRV9CVUxLX1NJWkVdLCBzaXplb2Yodm9pZCAqKSAqIFJU
+RV9TVEFDS19QSUxFX0JVTEtfU0laRSk7DQo+ICsNCj4gKwkvKiBQdXNoIHRoZW0gdG8gdGhlIGJ1
+bGsgbGlzdC4gKi8NCj4gKwlfX3J0ZV9zdGFja19waWxlX2J1bGtfcHVzaF9lbGVtcygmcGlsZS0+
+YnVsaywgYnVsa19maXJzdCwNCj4gYnVsa19sYXN0LCBuX2J1bGspOw0KPiArDQo+ICsJcmV0dXJu
+IG47DQo+ICt9DQo+ICsNCj4gKy8qKg0KPiArICogUG9wIHNldmVyYWwgb2JqZWN0cyBmcm9tIHRo
+ZSBwaWxlIChsb2NrLWZyZWUsIE1ULXNhZmUpLg0KPiArICoNCj4gKyAqIEBwYXJhbSBwaWxlDQo+
+ICsgKiAgIEEgcG9pbnRlciB0byB0aGUgcGlsZSBzdHJ1Y3R1cmUuDQo+ICsgKiBAcGFyYW0gb2Jq
+X3RhYmxlDQo+ICsgKiAgIEEgcG9pbnRlciB0byBhIHRhYmxlIG9mIHZvaWQgKiBwb2ludGVycyAo
+b2JqZWN0cykuDQo+ICsgKiBAcGFyYW0gbg0KPiArICogICBUaGUgbnVtYmVyIG9mIG9iamVjdHMg
+dG8gcHVsbCBmcm9tIHRoZSBwaWxlLg0KPiArICogQHJldHVybg0KPiArICogICBBY3R1YWwgbnVt
+YmVyIG9mIG9iamVjdHMgcG9wcGVkIChlaXRoZXIgMCBvciAqbiopLg0KPiArICovDQo+ICtzdGF0
+aWMgX19ydGVfYWx3YXlzX2lubGluZSB1bnNpZ25lZCBpbnQNCj4gK19fcnRlX3N0YWNrX3BpbGVf
+cG9wKHN0cnVjdCBydGVfc3RhY2sgKnMsDQo+ICsJCXZvaWQgKiogX19ydGVfcmVzdHJpY3Qgb2Jq
+X3RhYmxlLA0KPiArCQl1bnNpZ25lZCBpbnQgbikNCj4gK3sNCj4gKwlSVEVfQVNTRVJUKHMgIT0g
+TlVMTCk7DQo+ICsJUlRFX0FTU0VSVChvYmpfdGFibGUgIT0gTlVMTCk7DQo+ICsNCj4gKwlzdHJ1
+Y3QgcnRlX3N0YWNrX3BpbGUgKnBpbGUgPSAmcy0+c3RhY2tfcGlsZTsNCj4gKwlzdHJ1Y3QgcnRl
+X3N0YWNrX3BpbGVfYnVsa19lbGVtICpidWxrX2ZpcnN0ID0gTlVMTCwgKmJ1bGtfbGFzdCA9DQo+
+IE5VTEw7DQo+ICsJc3RydWN0IHJ0ZV9zdGFja19sZl9lbGVtICpzb2xvX2ZpcnN0ID0gTlVMTCwg
+KnNvbG9fbGFzdCA9IE5VTEw7DQo+ICsJdW5zaWduZWQgaW50IG5fYnVsayA9IG4gLyBSVEVfU1RB
+Q0tfUElMRV9CVUxLX1NJWkU7DQo+ICsJdW5zaWduZWQgaW50IG5fc29sbyA9IG4gJiAoUlRFX1NU
+QUNLX1BJTEVfQlVMS19TSVpFIC0gMSk7DQo+ICsJdW5zaWduZWQgaW50IGk7DQo+ICsNCj4gKwlp
+ZiAodW5saWtlbHkobl9idWxrID09IDApKSB7DQo+ICsJCWlmICh1bmxpa2VseShuX3NvbG8gPT0g
+MCkpDQo+ICsJCQlyZXR1cm4gMDsNCj4gKwkJZWxzZQ0KPiArCQkJZ290byBzb2xvOw0KPiArCX0N
+Cj4gKw0KPiArYnVsazoNCj4gKwkvKiBGZXRjaCBuX2J1bGsgKiBSVEVfU1RBQ0tfUElMRV9CVUxL
+X1NJWkUgb2JqZWN0cyBhcyBidWxrDQo+IGVsZW1lbnRzLiAqLw0KPiArCWJ1bGtfZmlyc3QgPSBf
+X3J0ZV9zdGFja19waWxlX2J1bGtfcG9wX2VsZW1zKCZwaWxlLT5idWxrLCBuX2J1bGssDQo+IG9i
+al90YWJsZSwgJmJ1bGtfbGFzdCk7DQo+ICsJaWYgKHVubGlrZWx5KGJ1bGtfZmlyc3QgPT0gTlVM
+TCkpIHsNCj4gKwkJLyogTm90IGF2YWlsYWJsZS4gUmV0cnkgd2l0aCBmZXdlciBidWxrIGVsZW1l
+bnRzOyBvYmplY3RzDQo+IHRvIGJlIGZldGNoZWQgYXMgc29sbyBlbGVtZW50cyBpbnN0ZWFkLiAq
+Lw0KPiArCQluX3NvbG8gKz0gUlRFX1NUQUNLX1BJTEVfQlVMS19TSVpFOw0KPiArCQluX2J1bGst
+LTsNCj4gKwkJaWYgKG5fYnVsayA+IDApDQo+ICsJCQlnb3RvIGJ1bGs7DQo+ICsJCWVsc2UNCj4g
+KwkJCWdvdG8gc29sbzsNCj4gKwl9DQo+ICsNCj4gKwlpZiAobGlrZWx5KG5fc29sbyA9PSAwKSkN
+Cj4gKwkJZ290byBkb25lOw0KPiArDQo+ICtzb2xvOg0KPiArCS8qIEZldGNoIG5fc29sbyBvYmpl
+Y3RzIGFzIHNvbG8gZWxlbWVudHMuICovDQo+ICsJc29sb19maXJzdCA9IF9fcnRlX3N0YWNrX2xm
+X3BvcF9lbGVtcygmcGlsZS0+c29sbywgbl9zb2xvLA0KPiAmb2JqX3RhYmxlW25fYnVsayAqIFJU
+RV9TVEFDS19QSUxFX0JVTEtfU0laRV0sICZzb2xvX2xhc3QpOw0KPiArCWlmIChzb2xvX2ZpcnN0
+ICE9IE5VTEwpDQo+ICsJCWdvdG8gZG9uZTsNCj4gKw0KPiArCS8qIFNvbG8gZWxlbWVudHMgbm90
+IGF2YWlsYWJsZS4gVHJ5IGZyYWdtZW50YXRpb24uICovDQo+ICsJYWxpZ25hcyhSVEVfQ0FDSEVf
+TElORV9TSVpFKSB2b2lkICoNCj4gb2JqX2ZyYWdbUlRFX1NUQUNLX1BJTEVfQlVMS19TSVpFXTsN
+Cj4gKwlzdHJ1Y3QgcnRlX3N0YWNrX3BpbGVfYnVsa19lbGVtICpmcmFnOw0KPiArDQo+ICsJLyog
+RmV0Y2ggYSBmcmFnbWVudGF0aW9uIGVsZW1lbnQgYXMgYSBidWxrIGVsZW1lbnQuICovDQo+ICsJ
+ZnJhZyA9IF9fcnRlX3N0YWNrX3BpbGVfYnVsa19wb3BfZWxlbXMoJnBpbGUtPmJ1bGssIDEsIG9i
+al9mcmFnLA0KPiBOVUxMKTsNCj4gKwlpZiAodW5saWtlbHkoZnJhZyA9PSBOVUxMKSkgew0KPiAr
+CQkvKiBGYWlsZWQuIFJvbGwgYmFjay4gKi8NCj4gKwkJaWYgKG5fYnVsayA+IDApDQo+ICsJCQlf
+X3J0ZV9zdGFja19waWxlX2J1bGtfcHVzaF9lbGVtcygmcGlsZS0+YnVsaywNCj4gYnVsa19maXJz
+dCwgYnVsa19sYXN0LCBuX2J1bGspOw0KPiArCQlyZXR1cm4gMDsNCj4gKwl9DQo+ICsNCj4gKwkv
+KiBHZXQgbl9zb2xvIG9iamVjdHMgZnJvbSB0aGUgZnJhZ21lbnRhdGlvbiBlbGVtZW50LiAqLw0K
+PiArCV9fcnRlX2Fzc3VtZShuX3NvbG8gPiAwKTsNCj4gKwlfX3J0ZV9hc3N1bWUobl9zb2xvIDwg
+UlRFX1NUQUNLX1BJTEVfQlVMS19TSVpFKTsNCj4gKwlmb3IgKGkgPSAwOyBpIDwgbl9zb2xvOyBp
+KyspDQo+ICsJCW9ial90YWJsZVtuX2J1bGsgKiBSVEVfU1RBQ0tfUElMRV9CVUxLX1NJWkUgKyBp
+XSA9DQo+IG9ial9mcmFnW2ldOw0KPiArDQo+ICsJLyogRmV0Y2ggZnJlZSBlbGVtZW50cyBmb3Ig
+dGhlIGV4Y2VzcyBvYmplY3RzLiAqLw0KPiArCV9fcnRlX2Fzc3VtZShSVEVfU1RBQ0tfUElMRV9C
+VUxLX1NJWkUgLSBuX3NvbG8gPiAwKTsNCj4gKwlfX3J0ZV9hc3N1bWUoUlRFX1NUQUNLX1BJTEVf
+QlVMS19TSVpFIC0gbl9zb2xvIDwNCj4gUlRFX1NUQUNLX1BJTEVfQlVMS19TSVpFIC0gMSk7DQo+
+ICsJc29sb19maXJzdCA9IF9fcnRlX3N0YWNrX2xmX3BvcF9lbGVtcygmcGlsZS0+ZnJlZV9zb2xv
+LA0KPiBSVEVfU1RBQ0tfUElMRV9CVUxLX1NJWkUgLSBuX3NvbG8sIE5VTEwsICZzb2xvX2xhc3Qp
+Ow0KPiArCWlmICh1bmxpa2VseShzb2xvX2ZpcnN0ID09IE5VTEwpKSB7DQo+ICsJCS8qIEZhaWxl
+ZC4gUm9sbCBiYWNrLiAqLw0KPiArCQlzdHJ1Y3QgcnRlX3N0YWNrX3BpbGVfYnVsa19lbGVtICps
+YXN0Ow0KPiArCQlpZiAobl9idWxrID4gMCkgew0KPiArCQkJLyogQXR0YWNoIHRoZSBidWxrIGVs
+ZW1lbnRzIGFmdGVyIHRoZSBmcmFnbWVudGF0aW9uDQo+IGVsZW1lbnQuICovDQo+ICsJCQlmcmFn
+LT5uZXh0ID0gYnVsa19maXJzdDsNCj4gKwkJCWxhc3QgPSBidWxrX2xhc3Q7DQo+ICsJCX0gZWxz
+ZQ0KPiArCQkJbGFzdCA9IGZyYWc7DQo+ICsJCV9fcnRlX3N0YWNrX3BpbGVfYnVsa19wdXNoX2Vs
+ZW1zKCZwaWxlLT5idWxrLCBmcmFnLCBsYXN0LCAxDQo+ICsgbl9idWxrKTsNCj4gKwkJcmV0dXJu
+IDA7DQo+ICsJfQ0KPiArDQo+ICsJLyogQ29uc3RydWN0IHRoZSBzb2xvIGVsZW1lbnRzIGZyb20g
+dGhlIGV4Y2VzcyBvYmplY3RzLiAqLw0KPiArCXN0cnVjdCBydGVfc3RhY2tfbGZfZWxlbSAqdG1w
+ID0gc29sb19maXJzdDsNCj4gKwlfX3J0ZV9hc3N1bWUobl9zb2xvID4gMCk7DQo+ICsJX19ydGVf
+YXNzdW1lKG5fc29sbyA8IFJURV9TVEFDS19QSUxFX0JVTEtfU0laRSk7DQo+ICsJZm9yIChpID0g
+bl9zb2xvOyBpIDwgUlRFX1NUQUNLX1BJTEVfQlVMS19TSVpFOyBpKyssIHRtcCA9IHRtcC0NCj4g
+Pm5leHQpDQo+ICsJCXRtcC0+ZGF0YSA9IG9ial9mcmFnW2ldOw0KPiArDQo+ICsJLyogUHVzaCB0
+aGUgZXhjZXNzIG9iamVjdHMgYXMgc29sbyBlbGVtZW50cy4gKi8NCj4gKwlfX3J0ZV9zdGFja19s
+Zl9wdXNoX2VsZW1zKCZwaWxlLT5zb2xvLCBzb2xvX2ZpcnN0LCBzb2xvX2xhc3QsDQo+IFJURV9T
+VEFDS19QSUxFX0JVTEtfU0laRSAtIG5fc29sbyk7DQo+ICsJbl9zb2xvID0gMDsNCj4gKw0KPiAr
+CS8qIEFkZCB0aGUgZnJhZ21lbnRhdGlvbiBlbGVtZW50IGluIGZyb250IG9mIHRoZSBidWxrIGVs
+ZW1lbnRzLA0KPiBzbyBpdCBjYW4gYmUgZnJlZWQuICovDQo+ICsJaWYgKG5fYnVsayA+IDApDQo+
+ICsJCWZyYWctPm5leHQgPSBidWxrX2ZpcnN0Ow0KPiArCWVsc2UNCj4gKwkJYnVsa19sYXN0ID0g
+ZnJhZzsNCj4gKwlidWxrX2ZpcnN0ID0gZnJhZzsNCj4gKwluX2J1bGsrKzsNCj4gKw0KPiArZG9u
+ZToNCj4gKwkvKiBTdWNjZXNzLiBGcmVlIHRoZSBlbGVtZW50cy4gKi8NCj4gKwlpZiAobl9idWxr
+ID4gMCkNCj4gKwkJX19ydGVfc3RhY2tfcGlsZV9idWxrX3B1c2hfZWxlbXMoJnBpbGUtPmZyZWVf
+YnVsaywNCj4gYnVsa19maXJzdCwgYnVsa19sYXN0LCBuX2J1bGspOw0KPiArCWlmIChuX3NvbG8g
+PiAwKQ0KPiArCQlfX3J0ZV9zdGFja19sZl9wdXNoX2VsZW1zKCZwaWxlLT5mcmVlX3NvbG8sIHNv
+bG9fZmlyc3QsDQo+IHNvbG9fbGFzdCwgbl9zb2xvKTsNCj4gKw0KPiArCXJldHVybiBuOw0KPiAr
+fQ0KPiArDQo+ICsvKioNCj4gKyAqIEBpbnRlcm5hbCBJbml0aWFsaXplIGEgcGlsZSBzdGFjay4N
+Cj4gKyAqDQo+ICsgKiBAcGFyYW0gcw0KPiArICogICBBIHBvaW50ZXIgdG8gdGhlIHN0YWNrIHN0
+cnVjdHVyZS4NCj4gKyAqIEBwYXJhbSBjb3VudA0KPiArICogICBUaGUgc2l6ZSBvZiB0aGUgc3Rh
+Y2suDQo+ICsgKi8NCj4gK3ZvaWQNCj4gK3J0ZV9zdGFja19waWxlX2luaXQoc3RydWN0IHJ0ZV9z
+dGFjayAqcywgdW5zaWduZWQgaW50IGNvdW50KTsNCj4gKw0KPiArLyoqDQo+ICsgKiBAaW50ZXJu
+YWwgUmV0dXJuIHRoZSBtZW1vcnkgcmVxdWlyZWQgZm9yIGEgcGlsZSBzdGFjay4NCj4gKyAqDQo+
+ICsgKiBAcGFyYW0gY291bnQNCj4gKyAqICAgVGhlIHNpemUgb2YgdGhlIHN0YWNrLg0KPiArICog
+QHJldHVybg0KPiArICogICBUaGUgYnl0ZXMgdG8gYWxsb2NhdGUgZm9yIGEgcGlsZSBzdGFjay4N
+Cj4gKyAqLw0KPiArc3NpemVfdA0KPiArcnRlX3N0YWNrX3BpbGVfZ2V0X21lbXNpemUodW5zaWdu
+ZWQgaW50IGNvdW50KTsNCj4gKw0KPiArI2VuZGlmIC8qIF9SVEVfU1RBQ0tfUElMRV9IXyAqLw0K
+PiBkaWZmIC0tZ2l0IGEvbGliL3N0YWNrL3J0ZV9zdGFja19zdGQuaCBiL2xpYi9zdGFjay9ydGVf
+c3RhY2tfc3RkLmgNCj4gaW5kZXggYWUyOGFkZDVjNC4uMDAzMDk1YTE0NCAxMDA2NDQNCj4gLS0t
+IGEvbGliL3N0YWNrL3J0ZV9zdGFja19zdGQuaA0KPiArKysgYi9saWIvc3RhY2svcnRlX3N0YWNr
+X3N0ZC5oDQo+IEBAIC02LDYgKzYsNyBAQA0KPiAgI2RlZmluZSBfUlRFX1NUQUNLX1NURF9IXw0K
+PiANCj4gICNpbmNsdWRlIDxydGVfYnJhbmNoX3ByZWRpY3Rpb24uaD4NCj4gKyNpbmNsdWRlIDxy
+dGVfbWVtY3B5Lmg+DQo+IA0KPiAgLyoqDQo+ICAgKiBAaW50ZXJuYWwgUHVzaCBzZXZlcmFsIG9i
+amVjdHMgb24gdGhlIHN0YWNrIChNVC1zYWZlKS4NCj4gQEAgLTIwLDI3ICsyMSwyNCBAQA0KPiAg
+ICogICBBY3R1YWwgbnVtYmVyIG9mIG9iamVjdHMgcHVzaGVkIChlaXRoZXIgMCBvciAqbiopLg0K
+PiAgICovDQo+ICBzdGF0aWMgX19ydGVfYWx3YXlzX2lubGluZSB1bnNpZ25lZCBpbnQNCj4gLV9f
+cnRlX3N0YWNrX3N0ZF9wdXNoKHN0cnVjdCBydGVfc3RhY2sgKnMsIHZvaWQgKiBjb25zdCAqb2Jq
+X3RhYmxlLA0KPiArX19ydGVfc3RhY2tfc3RkX3B1c2goc3RydWN0IHJ0ZV9zdGFjayAqcywgdm9p
+ZCAqIGNvbnN0ICoNCj4gX19ydGVfcmVzdHJpY3Qgb2JqX3RhYmxlLA0KPiAgCQkgICAgIHVuc2ln
+bmVkIGludCBuKQ0KPiAgew0KPiAtCXN0cnVjdCBydGVfc3RhY2tfc3RkICpzdGFjayA9ICZzLT5z
+dGFja19zdGQ7DQo+IC0JdW5zaWduZWQgaW50IGluZGV4Ow0KPiAtCXZvaWQgKipjYWNoZV9vYmpz
+Ow0KPiArCXN0cnVjdCBydGVfc3RhY2tfc3RkICogX19ydGVfcmVzdHJpY3Qgc3RhY2sgPSAmcy0+
+c3RhY2tfc3RkOw0KPiArCXZvaWQgKiogX19ydGVfcmVzdHJpY3Qgc3RhY2tfb2JqczsNCj4gDQo+
+ICAJcnRlX3NwaW5sb2NrX2xvY2soJnN0YWNrLT5sb2NrKTsNCj4gLQljYWNoZV9vYmpzID0gJnN0
+YWNrLT5vYmpzW3N0YWNrLT5sZW5dOw0KPiANCj4gLQkvKiBJcyB0aGVyZSBzdWZmaWNpZW50IHNw
+YWNlIGluIHRoZSBzdGFjaz8gKi8NCj4gLQlpZiAoKHN0YWNrLT5sZW4gKyBuKSA+IHMtPmNhcGFj
+aXR5KSB7DQo+ICsJaWYgKHVubGlrZWx5KChzdGFjay0+bGVuICsgbikgPiBzLT5jYXBhY2l0eSkp
+IHsNCj4gKwkJLyogSW5zdWZmaWNpZW50IHJvb20gaW4gdGhlIHN0YWNrLiAqLw0KPiAgCQlydGVf
+c3BpbmxvY2tfdW5sb2NrKCZzdGFjay0+bG9jayk7DQo+ICAJCXJldHVybiAwOw0KPiAgCX0NCj4g
+DQo+IC0JLyogQWRkIGVsZW1lbnRzIGJhY2sgaW50byB0aGUgY2FjaGUgKi8NCj4gLQlmb3IgKGlu
+ZGV4ID0gMDsgaW5kZXggPCBuOyArK2luZGV4LCBvYmpfdGFibGUrKykNCj4gLQkJY2FjaGVfb2Jq
+c1tpbmRleF0gPSAqb2JqX3RhYmxlOw0KPiAtDQo+ICsJLyogUHVzaCBvYmplY3RzIHRvIHRoZSBz
+dGFjayAqLw0KPiArCXN0YWNrX29ianMgPSAmc3RhY2stPm9ianNbc3RhY2stPmxlbl07DQo+ICAJ
+c3RhY2stPmxlbiArPSBuOw0KPiArCXJ0ZV9tZW1jcHkoc3RhY2tfb2Jqcywgb2JqX3RhYmxlLCBz
+aXplb2Yodm9pZCAqKSAqIG4pOw0KPiANCj4gIAlydGVfc3BpbmxvY2tfdW5sb2NrKCZzdGFjay0+
+bG9jayk7DQo+ICAJcmV0dXJuIG47DQo+IEBAIC01OSwyOCArNTcsMjcgQEAgX19ydGVfc3RhY2tf
+c3RkX3B1c2goc3RydWN0IHJ0ZV9zdGFjayAqcywgdm9pZCAqDQo+IGNvbnN0ICpvYmpfdGFibGUs
+DQo+ICAgKiAgIEFjdHVhbCBudW1iZXIgb2Ygb2JqZWN0cyBwb3BwZWQgKGVpdGhlciAwIG9yICpu
+KikuDQo+ICAgKi8NCj4gIHN0YXRpYyBfX3J0ZV9hbHdheXNfaW5saW5lIHVuc2lnbmVkIGludA0K
+PiAtX19ydGVfc3RhY2tfc3RkX3BvcChzdHJ1Y3QgcnRlX3N0YWNrICpzLCB2b2lkICoqb2JqX3Rh
+YmxlLCB1bnNpZ25lZA0KPiBpbnQgbikNCj4gK19fcnRlX3N0YWNrX3N0ZF9wb3Aoc3RydWN0IHJ0
+ZV9zdGFjayAqcywgdm9pZCAqKiBfX3J0ZV9yZXN0cmljdA0KPiBvYmpfdGFibGUsIHVuc2lnbmVk
+IGludCBuKQ0KPiAgew0KPiAtCXN0cnVjdCBydGVfc3RhY2tfc3RkICpzdGFjayA9ICZzLT5zdGFj
+a19zdGQ7DQo+IC0JdW5zaWduZWQgaW50IGluZGV4LCBsZW47DQo+IC0Jdm9pZCAqKmNhY2hlX29i
+anM7DQo+ICsJc3RydWN0IHJ0ZV9zdGFja19zdGQgKiBfX3J0ZV9yZXN0cmljdCBzdGFjayA9ICZz
+LT5zdGFja19zdGQ7DQo+ICsJdW5zaWduZWQgaW50IGluZGV4Ow0KPiArCXZvaWQgKiogX19ydGVf
+cmVzdHJpY3Qgc3RhY2tfb2JqczsNCj4gDQo+ICAJcnRlX3NwaW5sb2NrX2xvY2soJnN0YWNrLT5s
+b2NrKTsNCj4gDQo+ICAJaWYgKHVubGlrZWx5KG4gPiBzdGFjay0+bGVuKSkgew0KPiArCQkvKiBJ
+bnN1ZmZpY2llbnQgb2JqZWN0cyBpbiB0aGUgc3RhY2suICovDQo+ICAJCXJ0ZV9zcGlubG9ja191
+bmxvY2soJnN0YWNrLT5sb2NrKTsNCj4gIAkJcmV0dXJuIDA7DQo+ICAJfQ0KPiANCj4gLQljYWNo
+ZV9vYmpzID0gc3RhY2stPm9ianM7DQo+IC0NCj4gLQlmb3IgKGluZGV4ID0gMCwgbGVuID0gc3Rh
+Y2stPmxlbiAtIDE7IGluZGV4IDwgbjsNCj4gLQkJCSsraW5kZXgsIGxlbi0tLCBvYmpfdGFibGUr
+KykNCj4gLQkJKm9ial90YWJsZSA9IGNhY2hlX29ianNbbGVuXTsNCj4gLQ0KPiArCS8qIFBvcCBv
+YmplY3RzIGZyb20gdGhlIHN0YWNrICovDQo+ICsJc3RhY2tfb2JqcyA9ICZzdGFjay0+b2Jqc1tz
+dGFjay0+bGVuXTsNCj4gIAlzdGFjay0+bGVuIC09IG47DQo+IC0JcnRlX3NwaW5sb2NrX3VubG9j
+aygmc3RhY2stPmxvY2spOw0KPiArCWZvciAoaW5kZXggPSAwOyBpbmRleCA8IG47IGluZGV4Kysp
+DQo+ICsJCSpvYmpfdGFibGUrKyA9ICotLXN0YWNrX29ianM7DQo+IA0KPiArCXJ0ZV9zcGlubG9j
+a191bmxvY2soJnN0YWNrLT5sb2NrKTsNCj4gIAlyZXR1cm4gbjsNCj4gIH0NCj4gDQo+IC0tDQo+
+IDIuNDMuMA0KDQo=
