@@ -2,36 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A56C55175
-	for <dpdk-dev@archiver.kernel.org>; Sat,  1 Aug 2026 10:17:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5433AC55172
+	for <dpdk-dev@archiver.kernel.org>; Sat,  1 Aug 2026 10:17:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2B74B4060F;
-	Sat,  1 Aug 2026 12:17:17 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 95D2A402BB;
+	Sat,  1 Aug 2026 12:09:28 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id F0FE940299
- for <dev@dpdk.org>; Sat,  1 Aug 2026 12:17:14 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 32EE240299
+ for <dev@dpdk.org>; Sat,  1 Aug 2026 12:09:27 +0200 (CEST)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id A8A12207AB
- for <dev@dpdk.org>; Sat,  1 Aug 2026 12:17:14 +0200 (CEST)
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id D493B207AB
+ for <dev@dpdk.org>; Sat,  1 Aug 2026 12:09:26 +0200 (CEST)
 Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
  smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Sat, 1 Aug 2026 12:17:14 +0200
+ Sat, 1 Aug 2026 12:09:26 +0200
 From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
 To: dev@dpdk.org
 Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [RFC PATCH v3] NEW: pile stack and mempool driver
-Date: Sat,  1 Aug 2026 10:17:12 +0000
-Message-ID: <20260801101712.981778-1-mb@smartsharesystems.com>
+Subject: [RFC PATCH v2] NEW: pile stack and mempool driver
+Date: Sat,  1 Aug 2026 10:09:19 +0000
+Message-ID: <20260801100919.981700-1-mb@smartsharesystems.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F659AB@smartserver.smartshare.dk>
 References: <98CBD80474FA8B44BF855DF32C47DC35F659AB@smartserver.smartshare.dk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 01 Aug 2026 10:17:14.0349 (UTC)
- FILETIME=[EC4531D0:01DD219E]
+X-OriginalArrivalTime: 01 Aug 2026 10:09:26.0539 (UTC)
+ FILETIME=[D56F0DB0:01DD219D]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,8 +81,6 @@ v2:
 * Added __rte_internal to pile init and get_memsize. (AI)
 * Fix roll back bulk elements in wrong order with fragmentation. (AI)
 * Minor changes suggested by AI.
-v3:
-* Revert rename unused field in rte_stack_pile_bulk_elem structure.
 ---
  app/test/test_mempool.c                   |   3 +-
  app/test/test_stack.c                     |  67 ++++-
@@ -956,7 +954,7 @@ index 4c78fe4b4b..a4bbf8a4d7 100644
  	sz = rte_stack_get_memsize(count, flags);
  
 diff --git a/lib/stack/rte_stack.h b/lib/stack/rte_stack.h
-index fd17ac791d..84013941eb 100644
+index fd17ac791d..92b40891d1 100644
 --- a/lib/stack/rte_stack.h
 +++ b/lib/stack/rte_stack.h
 @@ -1,5 +1,6 @@
@@ -986,11 +984,11 @@ index fd17ac791d..84013941eb 100644
 + */
 +struct rte_stack_pile_bulk_elem {
 +	/* The first part must be ABI compatible with the rte_stack_lf_elem parent class. */
-+	void *data;                             /**< Unused, for rte_stack_lf_elem compatibility */
-+	struct rte_stack_pile_bulk_elem *next;  /**< Next pointer */
++	void *unused;                               /**< For rte_stack_lf_elem compatibility only */
++	struct rte_stack_pile_bulk_elem *next;      /**< Next pointer */
 +	/* The second part differs. */
 +	alignas(RTE_CACHE_LINE_SIZE)
-+	void *objs[RTE_STACK_PILE_BULK_SIZE];   /**< Bulk (multi-object) pointers */
++	void *objs[RTE_STACK_PILE_BULK_SIZE];       /**< Bulk (multi-object) pointers */
 +};
 +
 +static_assert(sizeof(struct rte_stack_lf_elem) ==
