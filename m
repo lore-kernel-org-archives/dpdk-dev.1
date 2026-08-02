@@ -2,70 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 300B4C55162
-	for <dpdk-dev@archiver.kernel.org>; Sun,  2 Aug 2026 18:18:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A667C55171
+	for <dpdk-dev@archiver.kernel.org>; Sun,  2 Aug 2026 18:19:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 43AF44064F;
-	Sun,  2 Aug 2026 20:18:47 +0200 (CEST)
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com
- [209.85.215.174])
- by mails.dpdk.org (Postfix) with ESMTP id 176A7402D2
- for <dev@dpdk.org>; Sun,  2 Aug 2026 20:18:42 +0200 (CEST)
-Received: by mail-pg1-f174.google.com with SMTP id
- 41be03b00d2f7-cbe431467e6so741542a12.1
- for <dev@dpdk.org>; Sun, 02 Aug 2026 11:18:42 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id BAF7740616;
+	Sun,  2 Aug 2026 20:18:49 +0200 (CEST)
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com
+ [209.85.216.54]) by mails.dpdk.org (Postfix) with ESMTP id 3D033402D2
+ for <dev@dpdk.org>; Sun,  2 Aug 2026 20:18:43 +0200 (CEST)
+Received: by mail-pj1-f54.google.com with SMTP id
+ 98e67ed59e1d1-38e347638adso3108348a91.0
+ for <dev@dpdk.org>; Sun, 02 Aug 2026 11:18:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785694721;
- x=1786299521; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785694722;
+ x=1786299522; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=Q0NnmNfDyygJVYE3yMXSqR1/51lL3n20fFyqA8YDGl4=;
- b=ba1dt5JF3hWn9+MbUgx8XaXBVfwhRY8uBvopy2BpCACb1TL3VeRqdfyej1hMGS5giy
- k3UJLSyWQGCHufUSndmWRhA5JibOuxnBnSt/IzzE/2Rbp/rhgESW9tuDpWIT0VS1oUvv
- Jql6AkrWDoThPeYaZ76yT/WkulvPQRSsl4DET+MO/Et+LAM9nO496ytF1sGotNO4lZUo
- 0jbLEM0Z9lNJnZY/kzuSsr2Njr1MC4uuJJ0i+ol0kmBH9hWvfchLiq9CL9K9jpcZMDP/
- pwpEF4mlgQwCJkL6t6ql0WmzCU2QcS1myOPWzodIDGjItC1UFwwFun57la12DZUWyeQT
- OyiQ==
+ bh=T0X2dyER+inL3cyVQ9o0HewOFzlQGmv+yzyMC13S/7g=;
+ b=LXbcZ8zIjpuNUw6xEQhXThPb0AYUhDxSaWQ1swG9vSnkdJgBfy1ylwvHG45YdyIPBH
+ xphvwB/hOEdv3r2jvHim7LUsBhoDXAmVtKIgdAzeZfmazBXXipRQePKoorAQ6ZIHjzTD
+ C/P8wLZwIuit8A0pA5k58RxO3qq4WlBozyLGUcJ1PXHyuNSrUp/ovTDSNHti746/N47e
+ oFBiFMxXGSLXqWbTlikWLrRwvvs73eHbGO4fK2aTnecJNNgYtNJ3Urm42GJHaSugDgw1
+ Ru/YcNH2thOJZDKHQ7Pmq2IvkTOap4hJIXGwCC7mXW0Lvmlf6lVbQmlWx7Nk9W+uBlpR
+ Pe+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785694721; x=1786299521;
+ d=1e100.net; s=20251104; t=1785694722; x=1786299522;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=Q0NnmNfDyygJVYE3yMXSqR1/51lL3n20fFyqA8YDGl4=;
- b=glm2PzhYZ98PSoR2k0X5cH52s/iFbyZpl7uPY7Ex+SCc10wXu67YfaJhtqsYCwam8D
- +cdhKpMgZz+ea6/c7X3ht4zijFWQa3E3tNQpGliyRFfwBtSlAuzpqroKaOeUCM627lqf
- iv4rGhuo56FU8mZMZt9Wk56rT2glH25f6Uw2CZi+QpnNarLwzudWxmh32VJpbEhdJNDu
- FHXhnAVYzJy4QhhNBbThqW+lFYm6ZCj9LAfN4NJM+hhBoRt9ckmdtdshITp6brdqHh/1
- jYxBL8q6Us9SRrMVzS53MGysE8zDR49b6DvrPN/j8Jev93G3zJd5v+SpxGSGx1OmMquN
- /N8Q==
-X-Gm-Message-State: AOJu0YzaC2iVNqvE7PzGjtxccPg5FZIHscC91x2AWI8R9Raileavb8Lq
- 0gvCArgmD7SyykUPIUXAj7Sr+XDRaMqeeDGpV65NfuOypT1Xk+Y/prJ0F68owe7DlTdIwEqkr5n
- ZoIxs
-X-Gm-Gg: AR+sD103HWwPb3kADRPBrs6M54qG47zBE0oaGTgi0UNS3KJVklzAjeXZBgBJuIJAbSg
- My61W12HnvbYXwd1XOCiALT3Q7Xxq5/WJa5uA7Bv4sYOgbynULw+Bg+GPLagvGyX8KOhFir6NZq
- RxMLR0/mHcc4maOWchwwW5ZShnMjBhEGOQHLK2HVzZWEWWsvDoDB7MQlgqi/J1Anx3G3H+ay9aU
- kdwrr5Wj/vGFo8mAdXdc7TV5AIbigBiZ13TIExxeg1wDJDOTUH5wWGFPO3HzSO/+fTSQbHTtEcs
- YoA/Oppj3JZ4XucBwEojx16kbs+xJA+w1rgmCbpJdDP9V95XsVCjNfO7175hxEUcqRZxC+76kSJ
- yCXyyOQCndb/pJAreGd0jUZCzvGfOqrRXgv7rLnoG0dS8fttOH5DbwFbnBcTuWHuUWRiSW/dZ1i
- udZz3OOTx7kIhu6J7ylJAWiQWk+1QsWDjLh+RN3uoKA8zGRsBmH74cqBF5zvlCpeGCnjSR13iSt
- sYz2Pa3BbsNxPDp5MtwoRP9k/U=
-X-Received: by 2002:a05:6a20:d510:b0:3c6:61c6:8971 with SMTP id
- adf61e73a8af0-3c91aa16314mr11043224637.39.1785694721180; 
- Sun, 02 Aug 2026 11:18:41 -0700 (PDT)
+ bh=T0X2dyER+inL3cyVQ9o0HewOFzlQGmv+yzyMC13S/7g=;
+ b=ejYoCbX5KHut1/lfFMzf6JzWwCh6m3i5TjCyQd2K+sC2GKe9iig5UVnqViPJH5jtY5
+ Wb1y5qElqc+KhyB3tNc/mJLpThAi3hX9S7mBX2k7MOPITYVacDNn5yb51ZMwhTFTUSwq
+ uAZO9M23OzEpYOiHYqcXKQJc7eorhi8GpUhVCpXIFKAw7KEaG+TbycktEQpVZwci9mEG
+ dyGdoOsWYh1BSoErd5NpBPKEjBVNxWZterLZgps3gguExOaJKhfxZIGaZvAm6d9DO5P7
+ yJbNpfX0QKBz2xOI/22MjyWWW7FCAlBT1zq2V9w5g8XMbdU+hWiofrxvVMfMScE46h+D
+ DPtw==
+X-Gm-Message-State: AOJu0YxwdmoIj0jOMs2BFiSw6Y1tXbVPbvBGU546JVVZjew5Kq2zMY51
+ JilF4ZUA/Gnqt9+AmCkWanLlMlm6ynlc0nekAlduE9OPdW8SwDYxS33ZJfBKjK7zUTEdCYy1QlR
+ bUn4y
+X-Gm-Gg: AR+sD10b1YKXj/a9CONbI9lAxUKiK/RRu2MBvssyujGpNGTx92aSrijQm5dwYYDGBBV
+ 3BV77JNhZp4fEUrAnmiERo/qP0re40n0vxHcftcgZPWrA1Ey/TGUNcY18d7PkSuVKu1TyCZBT/H
+ ASEd5JRu5GwYqocYTBd8Zd5dEvMsnQHYlu7FUXQl3Eiiee6z1xTxKtdEXmA76dtVP5rQ1LHeqEo
+ JTvKkxV4ZN9INK2McBPiorDm/4nyFpg1sNbtfJum+teh2P1WIjzWk/2dsSQGzcupFp9FkuTV4KL
+ n8YzYG5aKcQdeVZYepht1KStcIP+RLJIIo6vKtNh1Njy5YldExk0ENM6CeGyyTiG4hrIBTvh+yF
+ 3a0QyTvsgeg5GkKXj4lKTg0vKnr+oNHOdzUqGA8iyNPKZ4lmsYQrmGrelL/0GpgEMKvDGA+/13J
+ OZJnMyKu3ANE0O8xs45VWgR4tjyznB2ERGocYXecuNYrtQNLq4gf6a+mCuCvgLEAtapBTC5xyCR
+ yAG2OZgHV92G2dKBMMRB2PsO1A=
+X-Received: by 2002:a17:90b:17c7:b0:38f:1dc:672f with SMTP id
+ 98e67ed59e1d1-38fbc497f62mr6587888a91.18.1785694722282; 
+ Sun, 02 Aug 2026 11:18:42 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-13fab050d8csm39682295c88.0.2026.08.02.11.18.40
+ a92af1059eb24-13fab050d8csm39682295c88.0.2026.08.02.11.18.41
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 02 Aug 2026 11:18:40 -0700 (PDT)
+ Sun, 02 Aug 2026 11:18:41 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [RFC 03/21] net/ixgbe: remove experimental FDIR API
-Date: Sun,  2 Aug 2026 11:15:08 -0700
-Message-ID: <20260802181835.476887-4-stephen@networkplumber.org>
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [RFC 04/21] net/i40e: remove experimental FDIR API
+Date: Sun,  2 Aug 2026 11:15:09 -0700
+Message-ID: <20260802181835.476887-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260802181835.476887-1-stephen@networkplumber.org>
 References: <20260802181835.476887-1-stephen@networkplumber.org>
@@ -84,212 +82,268 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove the flow director related private APIs in ixgbe.
+Remove the flow director related private APIs in i40e.
 
-These APIs are experimental therefore they can be removed
+These APIs are experimental, therefore they can be removed
 without deprecation warning.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/intel/ixgbe/ixgbe_ethdev.h  |   5 -
- drivers/net/intel/ixgbe/ixgbe_fdir.c    | 117 ------------------------
- drivers/net/intel/ixgbe/rte_pmd_ixgbe.c |  34 -------
- drivers/net/intel/ixgbe/rte_pmd_ixgbe.h |  32 -------
- 4 files changed, 188 deletions(-)
+ drivers/net/intel/i40e/i40e_ethdev.c  |   4 +-
+ drivers/net/intel/i40e/i40e_ethdev.h  |   4 -
+ drivers/net/intel/i40e/i40e_fdir.c    | 140 --------------------------
+ drivers/net/intel/i40e/i40e_flow.c    |   3 +-
+ drivers/net/intel/i40e/rte_pmd_i40e.c |  34 -------
+ drivers/net/intel/i40e/rte_pmd_i40e.h |  33 ------
+ 6 files changed, 3 insertions(+), 215 deletions(-)
 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.h b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-index 5d3243cb4d..c290f04611 100644
---- a/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-+++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-@@ -717,11 +717,6 @@ int ixgbe_fdir_filter_program(struct ixgbe_adapter *adapter,
- 		struct rte_eth_fdir_conf *fdir_conf,
- 		struct ixgbe_fdir_rule *rule,
- 		bool del, bool update);
--void ixgbe_fdir_info_get(struct rte_eth_dev *dev,
--			 struct rte_eth_fdir_info *fdir_info);
--void ixgbe_fdir_stats_get(struct rte_eth_dev *dev,
--			  struct rte_eth_fdir_stats *fdir_stats);
--
- void ixgbe_configure_dcb(struct rte_eth_dev *dev);
+diff --git a/drivers/net/intel/i40e/i40e_ethdev.c b/drivers/net/intel/i40e/i40e_ethdev.c
+index b6b2d291ee..5cbdfe9db2 100644
+--- a/drivers/net/intel/i40e/i40e_ethdev.c
++++ b/drivers/net/intel/i40e/i40e_ethdev.c
+@@ -9335,8 +9335,8 @@ i40e_get_valid_input_set(enum i40e_filter_pctype pctype,
+ 	};
  
- int
-diff --git a/drivers/net/intel/ixgbe/ixgbe_fdir.c b/drivers/net/intel/ixgbe/ixgbe_fdir.c
-index b32dc54287..20cc72ffcd 100644
---- a/drivers/net/intel/ixgbe/ixgbe_fdir.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_fdir.c
-@@ -1202,123 +1202,6 @@ ixgbe_fdir_flush(struct rte_eth_dev *dev)
- 	return ret;
- }
- 
--#define FDIRENTRIES_NUM_SHIFT 10
--void
--ixgbe_fdir_info_get(struct rte_eth_dev *dev, struct rte_eth_fdir_info *fdir_info)
--{
--	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
--	struct rte_eth_fdir_conf *fdir_conf = IXGBE_DEV_FDIR_CONF(dev);
--	struct ixgbe_hw_fdir_info *info =
--			IXGBE_DEV_PRIVATE_TO_FDIR_INFO(dev->data->dev_private);
--	uint32_t fdirctrl, max_num;
--	uint8_t offset;
--
--	fdirctrl = IXGBE_READ_REG(hw, IXGBE_FDIRCTRL);
--	offset = ((fdirctrl & IXGBE_FDIRCTRL_FLEX_MASK) >>
--			IXGBE_FDIRCTRL_FLEX_SHIFT) * sizeof(uint16_t);
--
--	fdir_info->mode = fdir_conf->mode;
--	max_num = (1 << (FDIRENTRIES_NUM_SHIFT +
--			(fdirctrl & FDIRCTRL_PBALLOC_MASK)));
--	if (fdir_info->mode >= RTE_FDIR_MODE_PERFECT &&
--	    fdir_info->mode <= RTE_FDIR_MODE_PERFECT_TUNNEL)
--		fdir_info->guarant_spc = max_num;
--	else if (fdir_info->mode == RTE_FDIR_MODE_SIGNATURE)
--		fdir_info->guarant_spc = max_num * 4;
--
--	fdir_info->mask.vlan_tci_mask = info->mask.vlan_tci_mask;
--	fdir_info->mask.ipv4_mask.src_ip = info->mask.src_ipv4_mask;
--	fdir_info->mask.ipv4_mask.dst_ip = info->mask.dst_ipv4_mask;
--	IPV6_MASK_TO_ADDR(info->mask.src_ipv6_mask,
--			fdir_info->mask.ipv6_mask.src_ip);
--	IPV6_MASK_TO_ADDR(info->mask.dst_ipv6_mask,
--			fdir_info->mask.ipv6_mask.dst_ip);
--	fdir_info->mask.src_port_mask = info->mask.src_port_mask;
--	fdir_info->mask.dst_port_mask = info->mask.dst_port_mask;
--	fdir_info->mask.mac_addr_byte_mask = info->mask.mac_addr_byte_mask;
--	fdir_info->mask.tunnel_id_mask = info->mask.tunnel_id_mask;
--	fdir_info->mask.tunnel_type_mask = info->mask.tunnel_type_mask;
--	fdir_info->max_flexpayload = IXGBE_FDIR_MAX_FLEX_LEN;
--
--	if (fdir_info->mode == RTE_FDIR_MODE_PERFECT_MAC_VLAN ||
--	    fdir_info->mode == RTE_FDIR_MODE_PERFECT_TUNNEL)
--		fdir_info->flow_types_mask[0] = 0ULL;
--	else
--		fdir_info->flow_types_mask[0] = IXGBE_FDIR_FLOW_TYPES;
--	for (uint32_t i = 1; i < RTE_FLOW_MASK_ARRAY_SIZE; i++)
--		fdir_info->flow_types_mask[i] = 0ULL;
--
--	fdir_info->flex_payload_unit = sizeof(uint16_t);
--	fdir_info->max_flex_payload_segment_num = 1;
--	fdir_info->flex_payload_limit = IXGBE_MAX_FLX_SOURCE_OFF;
--	fdir_info->flex_conf.nb_payloads = 1;
--	fdir_info->flex_conf.flex_set[0].type = RTE_ETH_RAW_PAYLOAD;
--	fdir_info->flex_conf.flex_set[0].src_offset[0] = offset;
--	fdir_info->flex_conf.flex_set[0].src_offset[1] = offset + 1;
--	fdir_info->flex_conf.nb_flexmasks = 1;
--	fdir_info->flex_conf.flex_mask[0].flow_type = RTE_ETH_FLOW_UNKNOWN;
--	fdir_info->flex_conf.flex_mask[0].mask[0] =
--			(uint8_t)(info->mask.flex_bytes_mask & 0x00FF);
--	fdir_info->flex_conf.flex_mask[0].mask[1] =
--			(uint8_t)((info->mask.flex_bytes_mask & 0xFF00) >> 8);
--}
--
--void
--ixgbe_fdir_stats_get(struct rte_eth_dev *dev, struct rte_eth_fdir_stats *fdir_stats)
--{
--	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
--	struct rte_eth_fdir_conf *fdir_conf = IXGBE_DEV_FDIR_CONF(dev);
--	struct ixgbe_hw_fdir_info *info =
--		IXGBE_DEV_PRIVATE_TO_FDIR_INFO(dev->data->dev_private);
--	uint32_t reg, max_num;
--	enum rte_fdir_mode fdir_mode = fdir_conf->mode;
--
--	/* Get the information from registers */
--	reg = IXGBE_READ_REG(hw, IXGBE_FDIRFREE);
--	info->collision = (uint16_t)((reg & IXGBE_FDIRFREE_COLL_MASK) >>
--				     IXGBE_FDIRFREE_COLL_SHIFT);
--	info->free = (uint16_t)((reg & IXGBE_FDIRFREE_FREE_MASK) >>
--				IXGBE_FDIRFREE_FREE_SHIFT);
--
--	reg = IXGBE_READ_REG(hw, IXGBE_FDIRLEN);
--	info->maxhash = (uint16_t)((reg & IXGBE_FDIRLEN_MAXHASH_MASK) >>
--				   IXGBE_FDIRLEN_MAXHASH_SHIFT);
--	info->maxlen  = (uint8_t)((reg & IXGBE_FDIRLEN_MAXLEN_MASK) >>
--				  IXGBE_FDIRLEN_MAXLEN_SHIFT);
--
--	reg = IXGBE_READ_REG(hw, IXGBE_FDIRUSTAT);
--	info->remove += (reg & IXGBE_FDIRUSTAT_REMOVE_MASK) >>
--		IXGBE_FDIRUSTAT_REMOVE_SHIFT;
--	info->add += (reg & IXGBE_FDIRUSTAT_ADD_MASK) >>
--		IXGBE_FDIRUSTAT_ADD_SHIFT;
--
--	reg = IXGBE_READ_REG(hw, IXGBE_FDIRFSTAT) & 0xFFFF;
--	info->f_remove += (reg & IXGBE_FDIRFSTAT_FREMOVE_MASK) >>
--		IXGBE_FDIRFSTAT_FREMOVE_SHIFT;
--	info->f_add += (reg & IXGBE_FDIRFSTAT_FADD_MASK) >>
--		IXGBE_FDIRFSTAT_FADD_SHIFT;
--
--	/*  Copy the new information in the fdir parameter */
--	fdir_stats->collision = info->collision;
--	fdir_stats->free = info->free;
--	fdir_stats->maxhash = info->maxhash;
--	fdir_stats->maxlen = info->maxlen;
--	fdir_stats->remove = info->remove;
--	fdir_stats->add = info->add;
--	fdir_stats->f_remove = info->f_remove;
--	fdir_stats->f_add = info->f_add;
--
--	reg = IXGBE_READ_REG(hw, IXGBE_FDIRCTRL);
--	max_num = (1 << (FDIRENTRIES_NUM_SHIFT +
--			 (reg & FDIRCTRL_PBALLOC_MASK)));
--	if (fdir_mode >= RTE_FDIR_MODE_PERFECT &&
--	    fdir_mode <= RTE_FDIR_MODE_PERFECT_TUNNEL)
--		fdir_stats->guarant_cnt = max_num - fdir_stats->free;
--	else if (fdir_mode == RTE_FDIR_MODE_SIGNATURE)
--		fdir_stats->guarant_cnt = max_num * 4 - fdir_stats->free;
--
--}
--
- /* restore flow director filter */
- void
- ixgbe_fdir_filter_restore(struct rte_eth_dev *dev)
-diff --git a/drivers/net/intel/ixgbe/rte_pmd_ixgbe.c b/drivers/net/intel/ixgbe/rte_pmd_ixgbe.c
-index f816fa3173..e0dff9cd73 100644
---- a/drivers/net/intel/ixgbe/rte_pmd_ixgbe.c
-+++ b/drivers/net/intel/ixgbe/rte_pmd_ixgbe.c
-@@ -1176,37 +1176,3 @@ rte_pmd_ixgbe_mdio_unlocked_write(uint16_t port, uint32_t reg_addr,
+ 	/**
+-	 * Flow director supports only fields defined in
+-	 * union rte_eth_fdir_flow.
++	 * Flow director supports only fields reachable through
++	 * rte_flow item patterns.
+ 	 */
+ 	static const uint64_t valid_fdir_inset_table[] = {
+ 		[I40E_FILTER_PCTYPE_FRAG_IPV4] =
+diff --git a/drivers/net/intel/i40e/i40e_ethdev.h b/drivers/net/intel/i40e/i40e_ethdev.h
+index 9d9bde6aeb..3968bfd267 100644
+--- a/drivers/net/intel/i40e/i40e_ethdev.h
++++ b/drivers/net/intel/i40e/i40e_ethdev.h
+@@ -1369,10 +1369,6 @@ enum i40e_filter_pctype
+ uint16_t i40e_pctype_to_flowtype(const struct i40e_adapter *adapter,
+ 				 enum i40e_filter_pctype pctype);
+ int i40e_dev_set_gre_key_len(struct i40e_hw *hw, uint8_t len);
+-void i40e_fdir_info_get(struct rte_eth_dev *dev,
+-			struct rte_eth_fdir_info *fdir);
+-void i40e_fdir_stats_get(struct rte_eth_dev *dev,
+-			 struct rte_eth_fdir_stats *stat);
+ int i40e_select_filter_input_set(struct i40e_hw *hw,
+ 				 struct rte_eth_input_set_conf *conf,
+ 				 enum rte_filter_type filter);
+diff --git a/drivers/net/intel/i40e/i40e_fdir.c b/drivers/net/intel/i40e/i40e_fdir.c
+index 8a233f8a97..f36eceab3a 100644
+--- a/drivers/net/intel/i40e/i40e_fdir.c
++++ b/drivers/net/intel/i40e/i40e_fdir.c
+@@ -1800,146 +1800,6 @@ i40e_fdir_flush(struct rte_eth_dev *dev)
  	return 0;
  }
  
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_ixgbe_get_fdir_info, 20.08)
+-static inline void
+-i40e_fdir_info_get_flex_set(struct i40e_pf *pf,
+-			struct rte_eth_flex_payload_cfg *flex_set,
+-			uint16_t *num)
+-{
+-	struct i40e_fdir_flex_pit *flex_pit;
+-	struct rte_eth_flex_payload_cfg *ptr = flex_set;
+-	uint16_t src, dst, size, j, k;
+-	uint8_t i, layer_idx;
+-
+-	for (layer_idx = I40E_FLXPLD_L2_IDX;
+-	     layer_idx <= I40E_FLXPLD_L4_IDX;
+-	     layer_idx++) {
+-		if (layer_idx == I40E_FLXPLD_L2_IDX)
+-			ptr->type = RTE_ETH_L2_PAYLOAD;
+-		else if (layer_idx == I40E_FLXPLD_L3_IDX)
+-			ptr->type = RTE_ETH_L3_PAYLOAD;
+-		else if (layer_idx == I40E_FLXPLD_L4_IDX)
+-			ptr->type = RTE_ETH_L4_PAYLOAD;
+-
+-		for (i = 0; i < I40E_MAX_FLXPLD_FIED; i++) {
+-			flex_pit = &pf->fdir.flex_set[layer_idx *
+-				I40E_MAX_FLXPLD_FIED + i];
+-			if (flex_pit->size == 0)
+-				continue;
+-			src = flex_pit->src_offset * sizeof(uint16_t);
+-			dst = flex_pit->dst_offset * sizeof(uint16_t);
+-			size = flex_pit->size * sizeof(uint16_t);
+-			for (j = src, k = dst; j < src + size; j++, k++)
+-				ptr->src_offset[k] = j;
+-		}
+-		(*num)++;
+-		ptr++;
+-	}
+-}
+-
+-static inline void
+-i40e_fdir_info_get_flex_mask(struct i40e_pf *pf,
+-			struct rte_eth_fdir_flex_mask *flex_mask,
+-			uint16_t *num)
+-{
+-	struct i40e_fdir_flex_mask *mask;
+-	struct rte_eth_fdir_flex_mask *ptr = flex_mask;
+-	uint16_t flow_type;
+-	uint8_t i, j;
+-	uint16_t off_bytes, mask_tmp;
+-
+-	for (i = I40E_FILTER_PCTYPE_NONF_IPV4_UDP;
+-	     i <= I40E_FILTER_PCTYPE_L2_PAYLOAD;
+-	     i++) {
+-		mask =  &pf->fdir.flex_mask[i];
+-		flow_type = i40e_pctype_to_flowtype(pf->adapter,
+-						    (enum i40e_filter_pctype)i);
+-		if (flow_type == RTE_ETH_FLOW_UNKNOWN)
+-			continue;
+-
+-		for (j = 0; j < I40E_FDIR_MAX_FLEXWORD_NUM; j++) {
+-			if (mask->word_mask & I40E_FLEX_WORD_MASK(j)) {
+-				ptr->mask[j * sizeof(uint16_t)] = UINT8_MAX;
+-				ptr->mask[j * sizeof(uint16_t) + 1] = UINT8_MAX;
+-			} else {
+-				ptr->mask[j * sizeof(uint16_t)] = 0x0;
+-				ptr->mask[j * sizeof(uint16_t) + 1] = 0x0;
+-			}
+-		}
+-		for (j = 0; j < I40E_FDIR_BITMASK_NUM_WORD; j++) {
+-			off_bytes = mask->bitmask[j].offset * sizeof(uint16_t);
+-			mask_tmp = ~mask->bitmask[j].mask;
+-			ptr->mask[off_bytes] &= I40E_HI_BYTE(mask_tmp);
+-			ptr->mask[off_bytes + 1] &= I40E_LO_BYTE(mask_tmp);
+-		}
+-		ptr->flow_type = flow_type;
+-		ptr++;
+-		(*num)++;
+-	}
+-}
+-
+-/*
+- * i40e_fdir_info_get - get information of Flow Director
+- * @pf: ethernet device to get info from
+- * @fdir: a pointer to a structure of type *rte_eth_fdir_info* to be filled with
+- *    the flow director information.
+- */
+-void
+-i40e_fdir_info_get(struct rte_eth_dev *dev, struct rte_eth_fdir_info *fdir)
+-{
+-	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(dev->data->dev_private);
+-	struct i40e_hw *hw = I40E_PF_TO_HW(pf);
+-	uint16_t num_flex_set = 0;
+-	uint16_t num_flex_mask = 0;
+-	uint16_t i;
+-
+-	fdir->mode = RTE_FDIR_MODE_NONE;
+-
+-	fdir->guarant_spc =
+-		(uint32_t)hw->func_caps.fd_filters_guaranteed;
+-	fdir->best_spc =
+-		(uint32_t)hw->func_caps.fd_filters_best_effort;
+-	fdir->max_flexpayload = I40E_FDIR_MAX_FLEX_LEN;
+-	fdir->flow_types_mask[0] = I40E_FDIR_FLOWS;
+-	for (i = 1; i < RTE_FLOW_MASK_ARRAY_SIZE; i++)
+-		fdir->flow_types_mask[i] = 0ULL;
+-	fdir->flex_payload_unit = sizeof(uint16_t);
+-	fdir->flex_bitmask_unit = sizeof(uint16_t);
+-	fdir->max_flex_payload_segment_num = I40E_MAX_FLXPLD_FIED;
+-	fdir->flex_payload_limit = I40E_MAX_FLX_SOURCE_OFF;
+-	fdir->max_flex_bitmask_num = I40E_FDIR_BITMASK_NUM_WORD;
+-
+-	i40e_fdir_info_get_flex_set(pf,
+-				fdir->flex_conf.flex_set,
+-				&num_flex_set);
+-	i40e_fdir_info_get_flex_mask(pf,
+-				fdir->flex_conf.flex_mask,
+-				&num_flex_mask);
+-
+-	fdir->flex_conf.nb_payloads = num_flex_set;
+-	fdir->flex_conf.nb_flexmasks = num_flex_mask;
+-}
+-
+-/*
+- * i40e_fdir_stat_get - get statistics of Flow Director
+- * @pf: ethernet device to get info from
+- * @stat: a pointer to a structure of type *rte_eth_fdir_stats* to be filled with
+- *    the flow director statistics.
+- */
+-void
+-i40e_fdir_stats_get(struct rte_eth_dev *dev, struct rte_eth_fdir_stats *stat)
+-{
+-	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(dev->data->dev_private);
+-	struct i40e_hw *hw = I40E_PF_TO_HW(pf);
+-	uint32_t fdstat;
+-
+-	fdstat = I40E_READ_REG(hw, I40E_PFQF_FDSTAT);
+-	stat->guarant_cnt =
+-		(uint32_t)((fdstat & I40E_PFQF_FDSTAT_GUARANT_CNT_MASK) >>
+-			    I40E_PFQF_FDSTAT_GUARANT_CNT_SHIFT);
+-	stat->best_cnt =
+-		(uint32_t)((fdstat & I40E_PFQF_FDSTAT_BEST_CNT_MASK) >>
+-			    I40E_PFQF_FDSTAT_BEST_CNT_SHIFT);
+-}
+ 
+ /* Restore flow director filter */
+ void
+diff --git a/drivers/net/intel/i40e/i40e_flow.c b/drivers/net/intel/i40e/i40e_flow.c
+index 6eb85a7d0d..e9993db6dd 100644
+--- a/drivers/net/intel/i40e/i40e_flow.c
++++ b/drivers/net/intel/i40e/i40e_flow.c
+@@ -2391,8 +2391,7 @@ i40e_flow_parse_fdir_pattern(struct rte_eth_dev *dev,
+ 
+ 			for (i = 0; i < raw_spec->length; i++) {
+ 				j = i + next_dst_off;
+-				if (j >= RTE_ETH_FDIR_MAX_FLEXLEN ||
+-						j >= I40E_FDIR_MAX_FLEX_LEN)
++				if (j >= I40E_FDIR_MAX_FLEX_LEN)
+ 					break;
+ 				filter->input.flow_ext.flexbytes[j] =
+ 					raw_spec->pattern[i];
+diff --git a/drivers/net/intel/i40e/rte_pmd_i40e.c b/drivers/net/intel/i40e/rte_pmd_i40e.c
+index 2e7943ef8b..e47c1aa9d7 100644
+--- a/drivers/net/intel/i40e/rte_pmd_i40e.c
++++ b/drivers/net/intel/i40e/rte_pmd_i40e.c
+@@ -3219,40 +3219,6 @@ rte_pmd_i40e_inset_set(uint16_t port, uint8_t pctype,
+ 	return 0;
+ }
+ 
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_i40e_get_fdir_info, 20.08)
 -int
--rte_pmd_ixgbe_get_fdir_info(uint16_t port, struct rte_eth_fdir_info *fdir_info)
+-rte_pmd_i40e_get_fdir_info(uint16_t port, struct rte_eth_fdir_info *fdir_info)
 -{
 -	struct rte_eth_dev *dev;
 -
 -	RTE_ETH_VALID_PORTID_OR_ERR_RET(port, -ENODEV);
 -
 -	dev = &rte_eth_devices[port];
--	if (!is_ixgbe_supported(dev))
+-	if (!is_i40e_supported(dev))
 -		return -ENOTSUP;
 -
--	ixgbe_fdir_info_get(dev, fdir_info);
+-	i40e_fdir_info_get(dev, fdir_info);
 -
 -	return 0;
 -}
 -
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_ixgbe_get_fdir_stats, 20.08)
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_i40e_get_fdir_stats, 20.08)
 -int
--rte_pmd_ixgbe_get_fdir_stats(uint16_t port,
--			     struct rte_eth_fdir_stats *fdir_stats)
+-rte_pmd_i40e_get_fdir_stats(uint16_t port, struct rte_eth_fdir_stats *fdir_stat)
 -{
 -	struct rte_eth_dev *dev;
 -
 -	RTE_ETH_VALID_PORTID_OR_ERR_RET(port, -ENODEV);
 -
 -	dev = &rte_eth_devices[port];
--	if (!is_ixgbe_supported(dev))
+-	if (!is_i40e_supported(dev))
 -		return -ENOTSUP;
 -
--	ixgbe_fdir_stats_get(dev, fdir_stats);
+-	i40e_fdir_stats_get(dev, fdir_stat);
 -
 -	return 0;
 -}
-diff --git a/drivers/net/intel/ixgbe/rte_pmd_ixgbe.h b/drivers/net/intel/ixgbe/rte_pmd_ixgbe.h
-index 7ca1126cfb..74bb5aa140 100644
---- a/drivers/net/intel/ixgbe/rte_pmd_ixgbe.h
-+++ b/drivers/net/intel/ixgbe/rte_pmd_ixgbe.h
-@@ -724,36 +724,4 @@ enum {
+-
+ RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_i40e_set_gre_key_len, 20.08)
  int
- rte_pmd_ixgbe_upd_fctrl_sbp(uint16_t port, int enable);
+ rte_pmd_i40e_set_gre_key_len(uint16_t port, uint8_t len)
+diff --git a/drivers/net/intel/i40e/rte_pmd_i40e.h b/drivers/net/intel/i40e/rte_pmd_i40e.h
+index 5af7e2330f..34900f9bec 100644
+--- a/drivers/net/intel/i40e/rte_pmd_i40e.h
++++ b/drivers/net/intel/i40e/rte_pmd_i40e.h
+@@ -1067,39 +1067,6 @@ rte_pmd_i40e_inset_field_clear(uint64_t *inset, uint8_t field_idx)
+ 	return 0;
+ }
  
 -/**
 - * Get port fdir info
@@ -305,14 +359,14 @@ index 7ca1126cfb..74bb5aa140 100644
 - */
 -__rte_experimental
 -int
--rte_pmd_ixgbe_get_fdir_info(uint16_t port, struct rte_eth_fdir_info *fdir_info);
+-rte_pmd_i40e_get_fdir_info(uint16_t port, struct rte_eth_fdir_info *fdir_info);
 -
 -/**
 - * Get port fdir status
 - *
 - * @param port
 - *   The port identifier of the Ethernet device.
-- * @param fdir_stats
+- * @param fdir_stat
 - *   The fdir status of the port
 - * @return
 - *   - (0) if successful.
@@ -321,9 +375,12 @@ index 7ca1126cfb..74bb5aa140 100644
 - */
 -__rte_experimental
 -int
--rte_pmd_ixgbe_get_fdir_stats(uint16_t port,
--			     struct rte_eth_fdir_stats *fdir_stats);
- #endif /* _PMD_IXGBE_H_ */
+-rte_pmd_i40e_get_fdir_stats(uint16_t port,
+-			    struct rte_eth_fdir_stats *fdir_stat);
+-
+ /**
+  * Set GRE key length
+  *
 -- 
 2.53.0
 
