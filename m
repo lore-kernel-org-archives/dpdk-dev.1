@@ -2,75 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5025BC55162
-	for <dpdk-dev@archiver.kernel.org>; Sun,  2 Aug 2026 15:22:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D3BAC55177
+	for <dpdk-dev@archiver.kernel.org>; Sun,  2 Aug 2026 16:46:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2CE5940269;
-	Sun,  2 Aug 2026 17:22:45 +0200 (CEST)
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com
- [209.85.128.172])
- by mails.dpdk.org (Postfix) with ESMTP id F2FAF400D6
- for <dev@dpdk.org>; Sun,  2 Aug 2026 17:22:40 +0200 (CEST)
-Received: by mail-yw1-f172.google.com with SMTP id
- 00721157ae682-81e69a2db34so38185607b3.0
- for <dev@dpdk.org>; Sun, 02 Aug 2026 08:22:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785684160;
- x=1786288960; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=nWFYBK4LZChu+hNhC+m56Svdt+I4Al4Zl7usH0oFdnM=;
- b=QagvC4RtMdCVci7vyr3ECA7bshV2RTxMA7OgbDaiG3FRxsdhxjMdC5dDaDSzYIRlS9
- l69b+pB8ifBLbR6ICg39LwVuvM7zl65RTtjevJ2JpTUw2OhyrZ884KAk0E8PzBh5t64M
- /vhpvHpYXRKnqJJFkBktBiPDURVYamgLv5KV6bLooxOq1Lxm2uZ57r8VnCxrfclxOQ6H
- EkZH6rDH48axXeH+5V3MltsHmwFVxDEX9lxelrtd9S8ZEXMK/cHlhX/RoCc6LwmSKb4d
- GQfYEdvgZ/llojiBFhKkwiVLijhIK1sDh5YvG4tx8LSAONcectLP+RCW8ENeCfiXFlKn
- yNyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785684160; x=1786288960;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=nWFYBK4LZChu+hNhC+m56Svdt+I4Al4Zl7usH0oFdnM=;
- b=Nt7ZPVNclRXYpsDfn4rG1djKyN/ivwtEUn85KsBlZGRsR9w7c7mPRIVo57Qe+pK5EK
- SJzH+anqguZQpbtAH7l3VUhsGVR2skTJFyUyVuEaF9srxbrfBGM+TptQ6larDmrMkz5J
- V9+jLOV3k50yG/Yie3M5RiKwwn6zDVcOK5xEhYLgZ8KmbLxXQAcmCIq3P33DNTSyC1rR
- 3HCZMzCHo5d2YmYLI0eEu2GNmuIwNh6BnIxD6i/rj/fo6kFFl1SaLDgMFwNFDW95kDv9
- lnkqNuVz5iGQjV0cR/59+64WW3y2VNMxipDpftr+YNNYrJB6OHAfruSYAYnxive6VA0b
- mRlw==
-X-Gm-Message-State: AOJu0Yw2PqKyW8JAQLgFWLh0jwCuNCFV3QC4vqCb0aA3qfAFS7PjEsQO
- ivOMMY5LSTLDICTwCbJ77QWttMAwUUSgb51dYZQGAFmyywP+o44MpvEynd9f5CKOM3iT+yIjfWs
- g7aCTh/A=
-X-Gm-Gg: AR+sD12lOyOnNyzo/8ASnMqR6XJ2fq+Fgtvk3vc7eUuL3Gxpg/y7iV2MNC+QbS2WlYH
- BJJyX8MefGvvKBBCpgQ+7ezNEg+61C956Z5p6fW30iLAp+RRsKzaapP2LjSr/jKGhEU066tnxgW
- W3dYoUUCIfJ9His7eduQxTIxtAlvOjdTF1bTilqQvPx+oEcBbts3WFTEO/bDvJZGP9+oedqMDnB
- NzG2F9k9BiC2nKzUoSts7ZFd1qt97frypSqhaoH4/+QukaH3EHfbXQAHAMvwTkEZGQgAPlh5t78
- IbjLkGjqhL69MGxCq4T9K9IeXlNOPOdxKh95/lCXVTgrRD+olyeQzMRRbOqva1mEl4OqWlV0hFs
- LCHRaU3dy5hYeL+mi7mYD3Hemz/H6GpxStTBHwC4GrbvCAAEAKr3KOkNWsDy9y1YMYzCCfk+T1v
- 4cxf9dDXD8OEf0tBUsp9ahyFGW0RW8yf8R52+kItJ/eXYMMy/REoDrJk1uEeAUMxBQVF396Ou8C
- bdbGL+NxtBY1RJEiIiA6IMJ2SvfvlhaYXMQdA+G
-X-Received: by 2002:a05:690c:450a:b0:809:9422:8c47 with SMTP id
- 00721157ae682-81fd4b5a2e1mr94118407b3.22.1785684159758; 
- Sun, 02 Aug 2026 08:22:39 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 00721157ae682-81fccf2e4f5sm42080887b3.3.2026.08.02.08.22.39
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 02 Aug 2026 08:22:39 -0700 (PDT)
-Date: Sun, 2 Aug 2026 08:22:35 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: dev@dpdk.org
-Subject: Re: [RFC PATCH v6] pile stack and mempool driver
-Message-ID: <20260802082235.3aef3964@phoenix.local>
-In-Reply-To: <20260802095954.1098479-1-mb@smartsharesystems.com>
-References: <98CBD80474FA8B44BF855DF32C47DC35F659AB@smartserver.smartshare.dk>
- <20260802095954.1098479-1-mb@smartsharesystems.com>
+	by mails.dpdk.org (Postfix) with ESMTP id E9D8C40269;
+	Sun,  2 Aug 2026 18:46:04 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 47A8F400D6
+ for <dev@dpdk.org>; Sun,  2 Aug 2026 18:46:01 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 0257820730;
+ Sun,  2 Aug 2026 18:46:01 +0200 (CEST)
+Content-class: urn:content-classes:message
+Subject: RE: [RFC PATCH v6] pile stack and mempool driver
+Date: Sun, 2 Aug 2026 18:45:59 +0200
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F659B2@smartserver.smartshare.dk>
+In-Reply-To: <20260802082235.3aef3964@phoenix.local>
+X-MS-Has-Attach: 
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+X-MS-TNEF-Correlator: 
+Thread-Topic: [RFC PATCH v6] pile stack and mempool driver
+Thread-Index: Ad0iksMiaigL0mrJQ1GT7MHWpvx8hAACeucg
+References: <98CBD80474FA8B44BF855DF32C47DC35F659AB@smartserver.smartshare.dk><20260802095954.1098479-1-mb@smartsharesystems.com>
+ <20260802082235.3aef3964@phoenix.local>
+From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>
+Cc: <dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,279 +47,218 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sun,  2 Aug 2026 09:59:54 +0000
-Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
-
-> Early submission of:
-> - some mempool optimizations,
-> - a new mempool "pile" driver, and
-> - its underlying "pile" stack implementation.
->=20
-> For community feedback and CI test.
->=20
-> Needless to say, this must be separated into a series of patches.
-> For now, I'm submitting a snapshot of work in progress.
->=20
-> Some performance numbers from mempool_perf_autotest_2cores, all
-> with cache=3D1024 cores=3D2 n_keep=3D32768:
->=20
-> start performance test (using ring_mp_mc, with cache)
-> n_get_bulk=3D 64 n_put_bulk=3D 64 constant_n=3D0 rate_persec=3D 753985338
-> n_get_bulk=3D256 n_put_bulk=3D256 constant_n=3D0 rate_persec=3D 755805913
->=20
-> start performance test for lf_stack (with cache)
-> n_get_bulk=3D 64 n_put_bulk=3D 64 constant_n=3D0 rate_persec=3D  29132352
-> n_get_bulk=3D256 n_put_bulk=3D256 constant_n=3D0 rate_persec=3D  29276708
->=20
-> start performance test for pile (with cache)
-> n_get_bulk=3D 64 n_put_bulk=3D 64 constant_n=3D0 rate_persec=3D 560159479
-> n_get_bulk=3D256 n_put_bulk=3D256 constant_n=3D0 rate_persec=3D 557910933
->=20
-> Hat tip to Bruce for bringing attention to the ring not being the
-> optimal mempool driver.
->=20
-> Signed-off-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
-> ---
-
-Since relatively complex, did AI review with more advanced model.
-
-Review of [RFC PATCH v6] pile stack and mempool driver
-
-Errors
-
-1. lib/stack/rte_stack_pile.h, __rte_stack_pile_pop()
-
-The bulk retry loop breaks the invariant that the fragmentation path
-depends on (n_solo < RTE_STACK_PILE_BULK_SIZE):
-
-	n_solo +=3D RTE_STACK_PILE_BULK_SIZE;
-	n_bulk--;
-	if (n_bulk > 0)
-		goto bulk;
-	else
-		goto solo;
-
-Each retry adds a whole bulk worth of objects to n_solo, so control can
-reach the "solo:" label with n_solo >=3D RTE_STACK_PILE_BULK_SIZE (up to n).
-If the solo pop then fails and the fragmentation path is taken, four
-things go wrong:
-
- - __rte_assume(n_solo < RTE_STACK_PILE_BULK_SIZE) is false, which is
-   undefined behavior.
-
- - the copy loop
-
-	for (i =3D 0; i < n_solo; i++)
-		obj_table[n_bulk * RTE_STACK_PILE_BULK_SIZE + i] =3D obj_frag[i];
-
-   reads past the end of obj_frag[RTE_STACK_PILE_BULK_SIZE] whenever
-   n_solo > RTE_STACK_PILE_BULK_SIZE.
-
- - RTE_STACK_PILE_BULK_SIZE - n_solo underflows for n_solo > BULK_SIZE,
-   so free_solo is asked for ~4 billion elements.
-
- - for n_solo =3D=3D RTE_STACK_PILE_BULK_SIZE exactly, the request becomes
-   a zero-element pop:
-
-	solo_first =3D __rte_stack_lf_pop_elems(&pile->free_solo, 0, NULL, &solo_l=
-ast);
-
-   __rte_stack_lf_pop_elems() with num =3D=3D 0 never enters the traversal
-   loop, so it leaves *last untouched and returns old_head.top, which is
-   non-NULL whenever free_solo is not empty. solo_last is therefore still
-   NULL when
-
-	__rte_stack_lf_push_elems(&pile->solo, solo_first, solo_last, 0);
-
-   executes "last->next =3D old_head.top", i.e. a NULL pointer write.  It
-   also splices free_solo's current head onto pile->solo.
-
-Reachable path with BULK_SIZE 32: pop of 64 objects, pile->bulk holds
-one element, pile->solo empty, free_solo non-empty.  The pop of 2 bulks
-fails (n_solo becomes 32, n_bulk 1), the pop of 1 bulk succeeds, the
-solo pop of 32 fails, and the fragmentation path is entered with
-n_solo =3D=3D 32.
-
-The fragmentation path only makes sense for a partial bulk.  After the
-retry loop, split n_solo back into whole bulks plus a remainder and
-service the whole-bulk part from pile->solo (or fail), keeping the
-fragmentation path bounded to n_solo < RTE_STACK_PILE_BULK_SIZE.
-
-2. lib/stack/rte_stack_pile.h, __rte_stack_pile_pop()
-
-	__rte_assume(RTE_STACK_PILE_BULK_SIZE - n_solo < RTE_STACK_PILE_BULK_SIZE =
-- 1);
-
-Off by one: with n_solo =3D=3D 1 the left side is BULK_SIZE - 1, and
-"BULK_SIZE - 1 < BULK_SIZE - 1" is false.  A false __rte_assume() is
-undefined behavior.  Should be "< RTE_STACK_PILE_BULK_SIZE".
-
-3. app/test/test_stack.c, test_stack_push_pop()
-
-	if (memcmp(&obj_table[i],
-			&popped_objs[STACK_SIZE - RTE_STACK_PILE_BULK_SIZE - i],
-			RTE_STACK_PILE_BULK_SIZE) !=3D 0) {
-
-memcmp() takes a byte count, but RTE_STACK_PILE_BULK_SIZE is an object
-count.  Only the first 4 pointers of each 32-pointer bulk are compared
-on a 64-bit build.  Needs
-"RTE_STACK_PILE_BULK_SIZE * sizeof(void *)".
-
-4. lib/mempool/rte_mempool.h, rte_mempool_do_generic_put()
-
-	const size_t move =3D RTE_ALIGN_MUL_CEIL(
-			sizeof(void *) * (cache->len - cache->size / 2), 32);
-	rte_memcpy(cache->objs, __rte_assume_cache_aligned(&cache->objs[cache->siz=
-e / 2]),
-			move);
-
-Both the alignment hint and the rounded-up length are only valid when
-cache->size is a multiple of 32.  rte_mempool_create_empty() now enforces
-that, but rte_mempool_cache_create() is unchanged and still accepts any
-size in 1..RTE_MEMPOOL_CACHE_MAX_SIZE.  A user cache of, say, size 100
-gives &objs[50] at a 400-byte offset, and __builtin_assume_aligned() is
-then told a false precondition - the compiler may emit aligned vector
-loads and fault.  Either apply the same rounding/rejection in
-rte_mempool_cache_create(), or drop the alignment hint.
-
-Warnings
-
-5. ABI and API changes without deprecation notices
-
-deprecation.rst currently covers only the flushthresh field and the
-oversize objs array.  The patch additionally changes:
-
- - struct rte_mempool: local_cache from pointer to inline
-   local_cache[RTE_MAX_LCORE] array
- - removal of the RTE_MEMPOOL_HEADER_SIZE() macro
- - RTE_MEMPOOL_CACHE_MAX_SIZE 512 -> 1024
- - RTE_MEMPOOL_MAX_OPS_IDX 16 -> 32, which changes the size of the
-   exported rte_mempool_ops_table variable
- - cache_size must now be a multiple of 32
-
-The two existing deprecation entries should also be removed by this
-patch once they are implemented.
-
-6. lib/mempool/rte_mempool.h - mempool header footprint
-
-With local_cache[] inline and RTE_MEMPOOL_CACHE_MAX_SIZE at 1024, the
-header is roughly RTE_MAX_LCORE * 8.3 KB, i.e. about 1 MB per mempool,
-and it is now allocated (and memset) unconditionally.  Previously
-RTE_MEMPOOL_HEADER_SIZE(mp, 0) omitted the array entirely for mempools
-created with cache_size =3D=3D 0, which is common for control-object pools.
-
-7. lib/mempool/rte_mempool.c, rte_mempool_create_empty()
-
-	if (cache_size & 31) {
-		unsigned int rounded =3D RTE_ALIGN_MUL_FLOOR(cache_size, 32);
-
-Any requested cache_size below 32 is silently rounded to 0, disabling
-the cache.  The doxygen change in rte_mempool.h says the argument "must
-be divisible by 32", which reads as a rejection, not a silent rounding -
-doc and code disagree.  The log messages should also print the requested
-and effective values, and "divisble" is misspelled.
-
-8. app/test/test_stack.c
-
-The excess-push test is wrapped in "#if 0 /* FIXME ... */".  That
-removes coverage for the standard and lock-free stacks as well, and it
-is exactly the test that would exercise the pile capacity behavior in
-item 9.  Dead code should not be committed; either fix the
--Warray-bounds trigger (a runtime-computed size in a volatile variable
-is usually enough) or drop the block and note the gap in the commit
-message.
-
-9. lib/stack/rte_stack_pile.c, rte_stack_pile_init()
-
-The pile is initialized with ceil(count / BULK_SIZE) bulk elements plus
-count solo elements, so it can hold up to roughly 2 * count objects,
-above the declared capacity.  __rte_stack_pile_count() only hides this
-by clamping with RTE_MIN(s->capacity, ...).  rte_stack_push() is
-documented to fail when there is insufficient space; either enforce the
-capacity or document that the pile does not.
-
-10. lib/stack/rte_stack_pile.c
-
-rte_stack_pile_init() derives the element base from
-"(&s->stack_pile + 1)" while rte_stack_pile_get_memsize() sizes it from
-"sizeof(struct rte_stack)".  These agree only because rte_stack_pile
-happens to be the largest member of the union in struct rte_stack.  If
-another member grows, init() writes past the memzone with no diagnostic.
-Use the same expression in both places, or give struct rte_stack_pile a
-flexible array member as rte_stack_lf has.
-
-11. lib/stack/rte_stack_pile.h - doxygen
-
-Both __rte_stack_pile_push() and __rte_stack_pile_pop() document
-"@param pile", but the parameter is "struct rte_stack *s".  Doxygen with
--Dwerror will flag the undocumented parameter.
-
-12. Missing release notes
-
-doc/guides/rel_notes/release_26_11.rst is not updated for the new pile
-stack type, the new "pile" mempool driver, the mempool ABI changes, or
-the new __rte_assume_aligned() / __rte_assume_cache_aligned() EAL
-macros.
-
-13. doc/guides/mempool/stack.rst
-
-The driver guide lists the "stack" and "lf_stack" modes; the new "pile"
-mode is not added.  PMD/driver documentation must match the registered
-ops.
-
-14. lib/mempool/mempool_trace.h
-
-Dropping rte_trace_point_emit_u32(cache->flushthresh) changes the
-recorded trace format for that trace point.  Worth a release note entry
-for consumers parsing the trace output.
-
-15. app/test/test_stack_perf.c
-
-	#define MAX_BURST (RTE_MEMPOOL_CACHE_MAX_SIZE / 2)
-
-A stack library test should not take its burst size from a mempool
-configuration constant.  Use a stack-specific value (or
-RTE_STACK_PILE_BULK_SIZE multiples).
-
-Info
-
-16. lib/eal/x86/include/rte_memcpy.h
-
-The new constant-size block allows n <=3D 512 for AVX-512 and for SSE, but
-only n <=3D 256 for AVX2 - is the asymmetry intended?  Splitting a single
-"if (" across #if/#elif/#else with the body outside is also hard to
-read; a per-ISA RTE_MEMCPY_CONST_MAX define and one "if" would be
-clearer.  This change and the __rte_assume_aligned() addition are
-independent of the pile work and are good candidates for their own
-patches when the series is split.
-
-17. drivers/net/sxe2/sxe2_txrx_vec_avx512.c
-
-The hunk adds an unrelated blank line before "goto done;".
-
-18. lib/stack/rte_stack_pile.h, __rte_stack_pile_bulk_pop_elems()
-
-The element list is traversed twice: once inside
-__rte_stack_lf_pop_elems() (to find the new head and set *last) and
-again to copy the bulk contents.  For a pop of 8 bulk elements that is
-two dependent pointer chases over the same cache lines.
-
-19. drivers/mempool/stack/rte_mempool_stack.c
-
-pile_enqueue() returns -ENOBUFS when the push fails, but
-rte_mempool_ops_enqueue_bulk() returns void and callers do not recover,
-so a failed put loses objects.  This is the same hazard the lock-free
-stack already has, but the pile has two independent free lists, so the
-window in which a concurrent pop leaves neither free_bulk nor free_solo
-able to satisfy a push is wider.  Worth calling out in stack_lib.rst.
-
-20. doc/guides/prog_guide/stack_lib.rst
-
-"performaing" -> "performing".  The trailing "Note:" paragraph would
-render better as a ".. note::" directive.
-
-21. The series mixes at least five independent changes (EAL assume-aligned
-macro, x86 rte_memcpy fast path, mempool cache/header rework, the pile
-stack, the pile mempool driver).  You already noted this; those look
-like the natural split points, and the mempool cache rework in
-particular deserves its own review thread given the ABI impact.
+VGhhbmsgeW91LCBTdGVwaGVuLg0KDQpWZXJ5IHVzZWZ1bCByZXZpZXcgZmVlZGJhY2ssIGVzcGVj
+aWFsbHkgdGhlIGZpcnN0IHBvaW50IQ0KDQpJIHRyaWVkIGEgZmV3IGRpZmZlcmVudCBhbGdvcml0
+aG1zIGZvciBoYW5kbGluZyB0aGUgbWl4IG9mIHNvbG8gYW5kIGJ1bGsgb2JqZWN0cyBiZWZvcmUg
+YXJyaXZpbmcgYXQgdGhpcyBvbmUuDQpCdXQgYXMgdGhlIEFJIHJldmlldyByZXZlYWxlZCwgaXQg
+c3RpbGwgbmVlZHMgc29tZSB3b3JrLg0KV2lsbCBmb2xsb3cgdXAgd2l0aCBhIHY3IHBhdGNoLg0K
+DQoNClZlbmxpZyBoaWxzZW4gLyBLaW5kIHJlZ2FyZHMsDQotTW9ydGVuIEJyw7hydXANCg0KDQo+
+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFN0ZXBoZW4gSGVtbWluZ2VyIFtt
+YWlsdG86c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmddDQo+IFNlbnQ6IFN1bmRheSwgMiBBdWd1
+c3QgMjAyNiAxNy4yMw0KPiANCj4gT24gU3VuLCAgMiBBdWcgMjAyNiAwOTo1OTo1NCArMDAwMA0K
+PiBNb3J0ZW4gQnLDuHJ1cCA8bWJAc21hcnRzaGFyZXN5c3RlbXMuY29tPiB3cm90ZToNCj4gDQo+
+ID4gRWFybHkgc3VibWlzc2lvbiBvZjoNCj4gPiAtIHNvbWUgbWVtcG9vbCBvcHRpbWl6YXRpb25z
+LA0KPiA+IC0gYSBuZXcgbWVtcG9vbCAicGlsZSIgZHJpdmVyLCBhbmQNCj4gPiAtIGl0cyB1bmRl
+cmx5aW5nICJwaWxlIiBzdGFjayBpbXBsZW1lbnRhdGlvbi4NCj4gPg0KPiA+IEZvciBjb21tdW5p
+dHkgZmVlZGJhY2sgYW5kIENJIHRlc3QuDQo+ID4NCj4gPiBOZWVkbGVzcyB0byBzYXksIHRoaXMg
+bXVzdCBiZSBzZXBhcmF0ZWQgaW50byBhIHNlcmllcyBvZiBwYXRjaGVzLg0KPiA+IEZvciBub3cs
+IEknbSBzdWJtaXR0aW5nIGEgc25hcHNob3Qgb2Ygd29yayBpbiBwcm9ncmVzcy4NCj4gPg0KPiA+
+IFNvbWUgcGVyZm9ybWFuY2UgbnVtYmVycyBmcm9tIG1lbXBvb2xfcGVyZl9hdXRvdGVzdF8yY29y
+ZXMsIGFsbA0KPiA+IHdpdGggY2FjaGU9MTAyNCBjb3Jlcz0yIG5fa2VlcD0zMjc2ODoNCj4gPg0K
+PiA+IHN0YXJ0IHBlcmZvcm1hbmNlIHRlc3QgKHVzaW5nIHJpbmdfbXBfbWMsIHdpdGggY2FjaGUp
+DQo+ID4gbl9nZXRfYnVsaz0gNjQgbl9wdXRfYnVsaz0gNjQgY29uc3RhbnRfbj0wIHJhdGVfcGVy
+c2VjPSA3NTM5ODUzMzgNCj4gPiBuX2dldF9idWxrPTI1NiBuX3B1dF9idWxrPTI1NiBjb25zdGFu
+dF9uPTAgcmF0ZV9wZXJzZWM9IDc1NTgwNTkxMw0KPiA+DQo+ID4gc3RhcnQgcGVyZm9ybWFuY2Ug
+dGVzdCBmb3IgbGZfc3RhY2sgKHdpdGggY2FjaGUpDQo+ID4gbl9nZXRfYnVsaz0gNjQgbl9wdXRf
+YnVsaz0gNjQgY29uc3RhbnRfbj0wIHJhdGVfcGVyc2VjPSAgMjkxMzIzNTINCj4gPiBuX2dldF9i
+dWxrPTI1NiBuX3B1dF9idWxrPTI1NiBjb25zdGFudF9uPTAgcmF0ZV9wZXJzZWM9ICAyOTI3Njcw
+OA0KPiA+DQo+ID4gc3RhcnQgcGVyZm9ybWFuY2UgdGVzdCBmb3IgcGlsZSAod2l0aCBjYWNoZSkN
+Cj4gPiBuX2dldF9idWxrPSA2NCBuX3B1dF9idWxrPSA2NCBjb25zdGFudF9uPTAgcmF0ZV9wZXJz
+ZWM9IDU2MDE1OTQ3OQ0KPiA+IG5fZ2V0X2J1bGs9MjU2IG5fcHV0X2J1bGs9MjU2IGNvbnN0YW50
+X249MCByYXRlX3BlcnNlYz0gNTU3OTEwOTMzDQo+ID4NCj4gPiBIYXQgdGlwIHRvIEJydWNlIGZv
+ciBicmluZ2luZyBhdHRlbnRpb24gdG8gdGhlIHJpbmcgbm90IGJlaW5nIHRoZQ0KPiA+IG9wdGlt
+YWwgbWVtcG9vbCBkcml2ZXIuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBNb3J0ZW4gQnLDuHJ1
+cCA8bWJAc21hcnRzaGFyZXN5c3RlbXMuY29tPg0KPiA+IC0tLQ0KPiANCj4gU2luY2UgcmVsYXRp
+dmVseSBjb21wbGV4LCBkaWQgQUkgcmV2aWV3IHdpdGggbW9yZSBhZHZhbmNlZCBtb2RlbC4NCj4g
+DQo+IFJldmlldyBvZiBbUkZDIFBBVENIIHY2XSBwaWxlIHN0YWNrIGFuZCBtZW1wb29sIGRyaXZl
+cg0KPiANCj4gRXJyb3JzDQo+IA0KPiAxLiBsaWIvc3RhY2svcnRlX3N0YWNrX3BpbGUuaCwgX19y
+dGVfc3RhY2tfcGlsZV9wb3AoKQ0KPiANCj4gVGhlIGJ1bGsgcmV0cnkgbG9vcCBicmVha3MgdGhl
+IGludmFyaWFudCB0aGF0IHRoZSBmcmFnbWVudGF0aW9uIHBhdGgNCj4gZGVwZW5kcyBvbiAobl9z
+b2xvIDwgUlRFX1NUQUNLX1BJTEVfQlVMS19TSVpFKToNCj4gDQo+IAluX3NvbG8gKz0gUlRFX1NU
+QUNLX1BJTEVfQlVMS19TSVpFOw0KPiAJbl9idWxrLS07DQo+IAlpZiAobl9idWxrID4gMCkNCj4g
+CQlnb3RvIGJ1bGs7DQo+IAllbHNlDQo+IAkJZ290byBzb2xvOw0KPiANCj4gRWFjaCByZXRyeSBh
+ZGRzIGEgd2hvbGUgYnVsayB3b3J0aCBvZiBvYmplY3RzIHRvIG5fc29sbywgc28gY29udHJvbCBj
+YW4NCj4gcmVhY2ggdGhlICJzb2xvOiIgbGFiZWwgd2l0aCBuX3NvbG8gPj0gUlRFX1NUQUNLX1BJ
+TEVfQlVMS19TSVpFICh1cCB0bw0KPiBuKS4NCj4gSWYgdGhlIHNvbG8gcG9wIHRoZW4gZmFpbHMg
+YW5kIHRoZSBmcmFnbWVudGF0aW9uIHBhdGggaXMgdGFrZW4sIGZvdXINCj4gdGhpbmdzIGdvIHdy
+b25nOg0KPiANCj4gIC0gX19ydGVfYXNzdW1lKG5fc29sbyA8IFJURV9TVEFDS19QSUxFX0JVTEtf
+U0laRSkgaXMgZmFsc2UsIHdoaWNoIGlzDQo+ICAgIHVuZGVmaW5lZCBiZWhhdmlvci4NCj4gDQo+
+ICAtIHRoZSBjb3B5IGxvb3ANCj4gDQo+IAlmb3IgKGkgPSAwOyBpIDwgbl9zb2xvOyBpKyspDQo+
+IAkJb2JqX3RhYmxlW25fYnVsayAqIFJURV9TVEFDS19QSUxFX0JVTEtfU0laRSArIGldID0NCj4g
+b2JqX2ZyYWdbaV07DQo+IA0KPiAgICByZWFkcyBwYXN0IHRoZSBlbmQgb2Ygb2JqX2ZyYWdbUlRF
+X1NUQUNLX1BJTEVfQlVMS19TSVpFXSB3aGVuZXZlcg0KPiAgICBuX3NvbG8gPiBSVEVfU1RBQ0tf
+UElMRV9CVUxLX1NJWkUuDQo+IA0KPiAgLSBSVEVfU1RBQ0tfUElMRV9CVUxLX1NJWkUgLSBuX3Nv
+bG8gdW5kZXJmbG93cyBmb3Igbl9zb2xvID4gQlVMS19TSVpFLA0KPiAgICBzbyBmcmVlX3NvbG8g
+aXMgYXNrZWQgZm9yIH40IGJpbGxpb24gZWxlbWVudHMuDQo+IA0KPiAgLSBmb3Igbl9zb2xvID09
+IFJURV9TVEFDS19QSUxFX0JVTEtfU0laRSBleGFjdGx5LCB0aGUgcmVxdWVzdCBiZWNvbWVzDQo+
+ICAgIGEgemVyby1lbGVtZW50IHBvcDoNCj4gDQo+IAlzb2xvX2ZpcnN0ID0gX19ydGVfc3RhY2tf
+bGZfcG9wX2VsZW1zKCZwaWxlLT5mcmVlX3NvbG8sIDAsIE5VTEwsDQo+ICZzb2xvX2xhc3QpOw0K
+PiANCj4gICAgX19ydGVfc3RhY2tfbGZfcG9wX2VsZW1zKCkgd2l0aCBudW0gPT0gMCBuZXZlciBl
+bnRlcnMgdGhlIHRyYXZlcnNhbA0KPiAgICBsb29wLCBzbyBpdCBsZWF2ZXMgKmxhc3QgdW50b3Vj
+aGVkIGFuZCByZXR1cm5zIG9sZF9oZWFkLnRvcCwgd2hpY2gNCj4gaXMNCj4gICAgbm9uLU5VTEwg
+d2hlbmV2ZXIgZnJlZV9zb2xvIGlzIG5vdCBlbXB0eS4gc29sb19sYXN0IGlzIHRoZXJlZm9yZQ0K
+PiBzdGlsbA0KPiAgICBOVUxMIHdoZW4NCj4gDQo+IAlfX3J0ZV9zdGFja19sZl9wdXNoX2VsZW1z
+KCZwaWxlLT5zb2xvLCBzb2xvX2ZpcnN0LCBzb2xvX2xhc3QsIDApOw0KPiANCj4gICAgZXhlY3V0
+ZXMgImxhc3QtPm5leHQgPSBvbGRfaGVhZC50b3AiLCBpLmUuIGEgTlVMTCBwb2ludGVyIHdyaXRl
+LiAgSXQNCj4gICAgYWxzbyBzcGxpY2VzIGZyZWVfc29sbydzIGN1cnJlbnQgaGVhZCBvbnRvIHBp
+bGUtPnNvbG8uDQo+IA0KPiBSZWFjaGFibGUgcGF0aCB3aXRoIEJVTEtfU0laRSAzMjogcG9wIG9m
+IDY0IG9iamVjdHMsIHBpbGUtPmJ1bGsgaG9sZHMNCj4gb25lIGVsZW1lbnQsIHBpbGUtPnNvbG8g
+ZW1wdHksIGZyZWVfc29sbyBub24tZW1wdHkuICBUaGUgcG9wIG9mIDIgYnVsa3MNCj4gZmFpbHMg
+KG5fc29sbyBiZWNvbWVzIDMyLCBuX2J1bGsgMSksIHRoZSBwb3Agb2YgMSBidWxrIHN1Y2NlZWRz
+LCB0aGUNCj4gc29sbyBwb3Agb2YgMzIgZmFpbHMsIGFuZCB0aGUgZnJhZ21lbnRhdGlvbiBwYXRo
+IGlzIGVudGVyZWQgd2l0aA0KPiBuX3NvbG8gPT0gMzIuDQo+IA0KPiBUaGUgZnJhZ21lbnRhdGlv
+biBwYXRoIG9ubHkgbWFrZXMgc2Vuc2UgZm9yIGEgcGFydGlhbCBidWxrLiAgQWZ0ZXIgdGhlDQo+
+IHJldHJ5IGxvb3AsIHNwbGl0IG5fc29sbyBiYWNrIGludG8gd2hvbGUgYnVsa3MgcGx1cyBhIHJl
+bWFpbmRlciBhbmQNCj4gc2VydmljZSB0aGUgd2hvbGUtYnVsayBwYXJ0IGZyb20gcGlsZS0+c29s
+byAob3IgZmFpbCksIGtlZXBpbmcgdGhlDQo+IGZyYWdtZW50YXRpb24gcGF0aCBib3VuZGVkIHRv
+IG5fc29sbyA8IFJURV9TVEFDS19QSUxFX0JVTEtfU0laRS4NCj4gDQo+IDIuIGxpYi9zdGFjay9y
+dGVfc3RhY2tfcGlsZS5oLCBfX3J0ZV9zdGFja19waWxlX3BvcCgpDQo+IA0KPiAJX19ydGVfYXNz
+dW1lKFJURV9TVEFDS19QSUxFX0JVTEtfU0laRSAtIG5fc29sbyA8DQo+IFJURV9TVEFDS19QSUxF
+X0JVTEtfU0laRSAtIDEpOw0KPiANCj4gT2ZmIGJ5IG9uZTogd2l0aCBuX3NvbG8gPT0gMSB0aGUg
+bGVmdCBzaWRlIGlzIEJVTEtfU0laRSAtIDEsIGFuZA0KPiAiQlVMS19TSVpFIC0gMSA8IEJVTEtf
+U0laRSAtIDEiIGlzIGZhbHNlLiAgQSBmYWxzZSBfX3J0ZV9hc3N1bWUoKSBpcw0KPiB1bmRlZmlu
+ZWQgYmVoYXZpb3IuICBTaG91bGQgYmUgIjwgUlRFX1NUQUNLX1BJTEVfQlVMS19TSVpFIi4NCj4g
+DQo+IDMuIGFwcC90ZXN0L3Rlc3Rfc3RhY2suYywgdGVzdF9zdGFja19wdXNoX3BvcCgpDQo+IA0K
+PiAJaWYgKG1lbWNtcCgmb2JqX3RhYmxlW2ldLA0KPiAJCQkmcG9wcGVkX29ianNbU1RBQ0tfU0la
+RSAtIFJURV9TVEFDS19QSUxFX0JVTEtfU0laRSAtDQo+IGldLA0KPiAJCQlSVEVfU1RBQ0tfUElM
+RV9CVUxLX1NJWkUpICE9IDApIHsNCj4gDQo+IG1lbWNtcCgpIHRha2VzIGEgYnl0ZSBjb3VudCwg
+YnV0IFJURV9TVEFDS19QSUxFX0JVTEtfU0laRSBpcyBhbiBvYmplY3QNCj4gY291bnQuICBPbmx5
+IHRoZSBmaXJzdCA0IHBvaW50ZXJzIG9mIGVhY2ggMzItcG9pbnRlciBidWxrIGFyZSBjb21wYXJl
+ZA0KPiBvbiBhIDY0LWJpdCBidWlsZC4gIE5lZWRzDQo+ICJSVEVfU1RBQ0tfUElMRV9CVUxLX1NJ
+WkUgKiBzaXplb2Yodm9pZCAqKSIuDQo+IA0KPiA0LiBsaWIvbWVtcG9vbC9ydGVfbWVtcG9vbC5o
+LCBydGVfbWVtcG9vbF9kb19nZW5lcmljX3B1dCgpDQo+IA0KPiAJY29uc3Qgc2l6ZV90IG1vdmUg
+PSBSVEVfQUxJR05fTVVMX0NFSUwoDQo+IAkJCXNpemVvZih2b2lkICopICogKGNhY2hlLT5sZW4g
+LSBjYWNoZS0+c2l6ZSAvIDIpLCAzMik7DQo+IAlydGVfbWVtY3B5KGNhY2hlLT5vYmpzLCBfX3J0
+ZV9hc3N1bWVfY2FjaGVfYWxpZ25lZCgmY2FjaGUtDQo+ID5vYmpzW2NhY2hlLT5zaXplIC8gMl0p
+LA0KPiAJCQltb3ZlKTsNCj4gDQo+IEJvdGggdGhlIGFsaWdubWVudCBoaW50IGFuZCB0aGUgcm91
+bmRlZC11cCBsZW5ndGggYXJlIG9ubHkgdmFsaWQgd2hlbg0KPiBjYWNoZS0+c2l6ZSBpcyBhIG11
+bHRpcGxlIG9mIDMyLiAgcnRlX21lbXBvb2xfY3JlYXRlX2VtcHR5KCkgbm93DQo+IGVuZm9yY2Vz
+DQo+IHRoYXQsIGJ1dCBydGVfbWVtcG9vbF9jYWNoZV9jcmVhdGUoKSBpcyB1bmNoYW5nZWQgYW5k
+IHN0aWxsIGFjY2VwdHMgYW55DQo+IHNpemUgaW4gMS4uUlRFX01FTVBPT0xfQ0FDSEVfTUFYX1NJ
+WkUuICBBIHVzZXIgY2FjaGUgb2YsIHNheSwgc2l6ZSAxMDANCj4gZ2l2ZXMgJm9ianNbNTBdIGF0
+IGEgNDAwLWJ5dGUgb2Zmc2V0LCBhbmQgX19idWlsdGluX2Fzc3VtZV9hbGlnbmVkKCkgaXMNCj4g
+dGhlbiB0b2xkIGEgZmFsc2UgcHJlY29uZGl0aW9uIC0gdGhlIGNvbXBpbGVyIG1heSBlbWl0IGFs
+aWduZWQgdmVjdG9yDQo+IGxvYWRzIGFuZCBmYXVsdC4gIEVpdGhlciBhcHBseSB0aGUgc2FtZSBy
+b3VuZGluZy9yZWplY3Rpb24gaW4NCj4gcnRlX21lbXBvb2xfY2FjaGVfY3JlYXRlKCksIG9yIGRy
+b3AgdGhlIGFsaWdubWVudCBoaW50Lg0KPiANCj4gV2FybmluZ3MNCj4gDQo+IDUuIEFCSSBhbmQg
+QVBJIGNoYW5nZXMgd2l0aG91dCBkZXByZWNhdGlvbiBub3RpY2VzDQo+IA0KPiBkZXByZWNhdGlv
+bi5yc3QgY3VycmVudGx5IGNvdmVycyBvbmx5IHRoZSBmbHVzaHRocmVzaCBmaWVsZCBhbmQgdGhl
+DQo+IG92ZXJzaXplIG9ianMgYXJyYXkuICBUaGUgcGF0Y2ggYWRkaXRpb25hbGx5IGNoYW5nZXM6
+DQo+IA0KPiAgLSBzdHJ1Y3QgcnRlX21lbXBvb2w6IGxvY2FsX2NhY2hlIGZyb20gcG9pbnRlciB0
+byBpbmxpbmUNCj4gICAgbG9jYWxfY2FjaGVbUlRFX01BWF9MQ09SRV0gYXJyYXkNCj4gIC0gcmVt
+b3ZhbCBvZiB0aGUgUlRFX01FTVBPT0xfSEVBREVSX1NJWkUoKSBtYWNybw0KPiAgLSBSVEVfTUVN
+UE9PTF9DQUNIRV9NQVhfU0laRSA1MTIgLT4gMTAyNA0KPiAgLSBSVEVfTUVNUE9PTF9NQVhfT1BT
+X0lEWCAxNiAtPiAzMiwgd2hpY2ggY2hhbmdlcyB0aGUgc2l6ZSBvZiB0aGUNCj4gICAgZXhwb3J0
+ZWQgcnRlX21lbXBvb2xfb3BzX3RhYmxlIHZhcmlhYmxlDQo+ICAtIGNhY2hlX3NpemUgbXVzdCBu
+b3cgYmUgYSBtdWx0aXBsZSBvZiAzMg0KPiANCj4gVGhlIHR3byBleGlzdGluZyBkZXByZWNhdGlv
+biBlbnRyaWVzIHNob3VsZCBhbHNvIGJlIHJlbW92ZWQgYnkgdGhpcw0KPiBwYXRjaCBvbmNlIHRo
+ZXkgYXJlIGltcGxlbWVudGVkLg0KPiANCj4gNi4gbGliL21lbXBvb2wvcnRlX21lbXBvb2wuaCAt
+IG1lbXBvb2wgaGVhZGVyIGZvb3RwcmludA0KPiANCj4gV2l0aCBsb2NhbF9jYWNoZVtdIGlubGlu
+ZSBhbmQgUlRFX01FTVBPT0xfQ0FDSEVfTUFYX1NJWkUgYXQgMTAyNCwgdGhlDQo+IGhlYWRlciBp
+cyByb3VnaGx5IFJURV9NQVhfTENPUkUgKiA4LjMgS0IsIGkuZS4gYWJvdXQgMSBNQiBwZXIgbWVt
+cG9vbCwNCj4gYW5kIGl0IGlzIG5vdyBhbGxvY2F0ZWQgKGFuZCBtZW1zZXQpIHVuY29uZGl0aW9u
+YWxseS4gIFByZXZpb3VzbHkNCj4gUlRFX01FTVBPT0xfSEVBREVSX1NJWkUobXAsIDApIG9taXR0
+ZWQgdGhlIGFycmF5IGVudGlyZWx5IGZvciBtZW1wb29scw0KPiBjcmVhdGVkIHdpdGggY2FjaGVf
+c2l6ZSA9PSAwLCB3aGljaCBpcyBjb21tb24gZm9yIGNvbnRyb2wtb2JqZWN0IHBvb2xzLg0KPiAN
+Cj4gNy4gbGliL21lbXBvb2wvcnRlX21lbXBvb2wuYywgcnRlX21lbXBvb2xfY3JlYXRlX2VtcHR5
+KCkNCj4gDQo+IAlpZiAoY2FjaGVfc2l6ZSAmIDMxKSB7DQo+IAkJdW5zaWduZWQgaW50IHJvdW5k
+ZWQgPSBSVEVfQUxJR05fTVVMX0ZMT09SKGNhY2hlX3NpemUsIDMyKTsNCj4gDQo+IEFueSByZXF1
+ZXN0ZWQgY2FjaGVfc2l6ZSBiZWxvdyAzMiBpcyBzaWxlbnRseSByb3VuZGVkIHRvIDAsIGRpc2Fi
+bGluZw0KPiB0aGUgY2FjaGUuICBUaGUgZG94eWdlbiBjaGFuZ2UgaW4gcnRlX21lbXBvb2wuaCBz
+YXlzIHRoZSBhcmd1bWVudCAibXVzdA0KPiBiZSBkaXZpc2libGUgYnkgMzIiLCB3aGljaCByZWFk
+cyBhcyBhIHJlamVjdGlvbiwgbm90IGEgc2lsZW50IHJvdW5kaW5nDQo+IC0NCj4gZG9jIGFuZCBj
+b2RlIGRpc2FncmVlLiAgVGhlIGxvZyBtZXNzYWdlcyBzaG91bGQgYWxzbyBwcmludCB0aGUNCj4g
+cmVxdWVzdGVkDQo+IGFuZCBlZmZlY3RpdmUgdmFsdWVzLCBhbmQgImRpdmlzYmxlIiBpcyBtaXNz
+cGVsbGVkLg0KPiANCj4gOC4gYXBwL3Rlc3QvdGVzdF9zdGFjay5jDQo+IA0KPiBUaGUgZXhjZXNz
+LXB1c2ggdGVzdCBpcyB3cmFwcGVkIGluICIjaWYgMCAvKiBGSVhNRSAuLi4gKi8iLiAgVGhhdA0K
+PiByZW1vdmVzIGNvdmVyYWdlIGZvciB0aGUgc3RhbmRhcmQgYW5kIGxvY2stZnJlZSBzdGFja3Mg
+YXMgd2VsbCwgYW5kIGl0DQo+IGlzIGV4YWN0bHkgdGhlIHRlc3QgdGhhdCB3b3VsZCBleGVyY2lz
+ZSB0aGUgcGlsZSBjYXBhY2l0eSBiZWhhdmlvciBpbg0KPiBpdGVtIDkuICBEZWFkIGNvZGUgc2hv
+dWxkIG5vdCBiZSBjb21taXR0ZWQ7IGVpdGhlciBmaXggdGhlDQo+IC1XYXJyYXktYm91bmRzIHRy
+aWdnZXIgKGEgcnVudGltZS1jb21wdXRlZCBzaXplIGluIGEgdm9sYXRpbGUgdmFyaWFibGUNCj4g
+aXMgdXN1YWxseSBlbm91Z2gpIG9yIGRyb3AgdGhlIGJsb2NrIGFuZCBub3RlIHRoZSBnYXAgaW4g
+dGhlIGNvbW1pdA0KPiBtZXNzYWdlLg0KPiANCj4gOS4gbGliL3N0YWNrL3J0ZV9zdGFja19waWxl
+LmMsIHJ0ZV9zdGFja19waWxlX2luaXQoKQ0KPiANCj4gVGhlIHBpbGUgaXMgaW5pdGlhbGl6ZWQg
+d2l0aCBjZWlsKGNvdW50IC8gQlVMS19TSVpFKSBidWxrIGVsZW1lbnRzIHBsdXMNCj4gY291bnQg
+c29sbyBlbGVtZW50cywgc28gaXQgY2FuIGhvbGQgdXAgdG8gcm91Z2hseSAyICogY291bnQgb2Jq
+ZWN0cywNCj4gYWJvdmUgdGhlIGRlY2xhcmVkIGNhcGFjaXR5LiAgX19ydGVfc3RhY2tfcGlsZV9j
+b3VudCgpIG9ubHkgaGlkZXMgdGhpcw0KPiBieSBjbGFtcGluZyB3aXRoIFJURV9NSU4ocy0+Y2Fw
+YWNpdHksIC4uLikuICBydGVfc3RhY2tfcHVzaCgpIGlzDQo+IGRvY3VtZW50ZWQgdG8gZmFpbCB3
+aGVuIHRoZXJlIGlzIGluc3VmZmljaWVudCBzcGFjZTsgZWl0aGVyIGVuZm9yY2UgdGhlDQo+IGNh
+cGFjaXR5IG9yIGRvY3VtZW50IHRoYXQgdGhlIHBpbGUgZG9lcyBub3QuDQo+IA0KPiAxMC4gbGli
+L3N0YWNrL3J0ZV9zdGFja19waWxlLmMNCj4gDQo+IHJ0ZV9zdGFja19waWxlX2luaXQoKSBkZXJp
+dmVzIHRoZSBlbGVtZW50IGJhc2UgZnJvbQ0KPiAiKCZzLT5zdGFja19waWxlICsgMSkiIHdoaWxl
+IHJ0ZV9zdGFja19waWxlX2dldF9tZW1zaXplKCkgc2l6ZXMgaXQgZnJvbQ0KPiAic2l6ZW9mKHN0
+cnVjdCBydGVfc3RhY2spIi4gIFRoZXNlIGFncmVlIG9ubHkgYmVjYXVzZSBydGVfc3RhY2tfcGls
+ZQ0KPiBoYXBwZW5zIHRvIGJlIHRoZSBsYXJnZXN0IG1lbWJlciBvZiB0aGUgdW5pb24gaW4gc3Ry
+dWN0IHJ0ZV9zdGFjay4gIElmDQo+IGFub3RoZXIgbWVtYmVyIGdyb3dzLCBpbml0KCkgd3JpdGVz
+IHBhc3QgdGhlIG1lbXpvbmUgd2l0aCBubw0KPiBkaWFnbm9zdGljLg0KPiBVc2UgdGhlIHNhbWUg
+ZXhwcmVzc2lvbiBpbiBib3RoIHBsYWNlcywgb3IgZ2l2ZSBzdHJ1Y3QgcnRlX3N0YWNrX3BpbGUg
+YQ0KPiBmbGV4aWJsZSBhcnJheSBtZW1iZXIgYXMgcnRlX3N0YWNrX2xmIGhhcy4NCj4gDQo+IDEx
+LiBsaWIvc3RhY2svcnRlX3N0YWNrX3BpbGUuaCAtIGRveHlnZW4NCj4gDQo+IEJvdGggX19ydGVf
+c3RhY2tfcGlsZV9wdXNoKCkgYW5kIF9fcnRlX3N0YWNrX3BpbGVfcG9wKCkgZG9jdW1lbnQNCj4g
+IkBwYXJhbSBwaWxlIiwgYnV0IHRoZSBwYXJhbWV0ZXIgaXMgInN0cnVjdCBydGVfc3RhY2sgKnMi
+LiAgRG94eWdlbg0KPiB3aXRoDQo+IC1Ed2Vycm9yIHdpbGwgZmxhZyB0aGUgdW5kb2N1bWVudGVk
+IHBhcmFtZXRlci4NCj4gDQo+IDEyLiBNaXNzaW5nIHJlbGVhc2Ugbm90ZXMNCj4gDQo+IGRvYy9n
+dWlkZXMvcmVsX25vdGVzL3JlbGVhc2VfMjZfMTEucnN0IGlzIG5vdCB1cGRhdGVkIGZvciB0aGUg
+bmV3IHBpbGUNCj4gc3RhY2sgdHlwZSwgdGhlIG5ldyAicGlsZSIgbWVtcG9vbCBkcml2ZXIsIHRo
+ZSBtZW1wb29sIEFCSSBjaGFuZ2VzLCBvcg0KPiB0aGUgbmV3IF9fcnRlX2Fzc3VtZV9hbGlnbmVk
+KCkgLyBfX3J0ZV9hc3N1bWVfY2FjaGVfYWxpZ25lZCgpIEVBTA0KPiBtYWNyb3MuDQo+IA0KPiAx
+My4gZG9jL2d1aWRlcy9tZW1wb29sL3N0YWNrLnJzdA0KPiANCj4gVGhlIGRyaXZlciBndWlkZSBs
+aXN0cyB0aGUgInN0YWNrIiBhbmQgImxmX3N0YWNrIiBtb2RlczsgdGhlIG5ldyAicGlsZSINCj4g
+bW9kZSBpcyBub3QgYWRkZWQuICBQTUQvZHJpdmVyIGRvY3VtZW50YXRpb24gbXVzdCBtYXRjaCB0
+aGUgcmVnaXN0ZXJlZA0KPiBvcHMuDQo+IA0KPiAxNC4gbGliL21lbXBvb2wvbWVtcG9vbF90cmFj
+ZS5oDQo+IA0KPiBEcm9wcGluZyBydGVfdHJhY2VfcG9pbnRfZW1pdF91MzIoY2FjaGUtPmZsdXNo
+dGhyZXNoKSBjaGFuZ2VzIHRoZQ0KPiByZWNvcmRlZCB0cmFjZSBmb3JtYXQgZm9yIHRoYXQgdHJh
+Y2UgcG9pbnQuICBXb3J0aCBhIHJlbGVhc2Ugbm90ZSBlbnRyeQ0KPiBmb3IgY29uc3VtZXJzIHBh
+cnNpbmcgdGhlIHRyYWNlIG91dHB1dC4NCj4gDQo+IDE1LiBhcHAvdGVzdC90ZXN0X3N0YWNrX3Bl
+cmYuYw0KPiANCj4gCSNkZWZpbmUgTUFYX0JVUlNUIChSVEVfTUVNUE9PTF9DQUNIRV9NQVhfU0la
+RSAvIDIpDQo+IA0KPiBBIHN0YWNrIGxpYnJhcnkgdGVzdCBzaG91bGQgbm90IHRha2UgaXRzIGJ1
+cnN0IHNpemUgZnJvbSBhIG1lbXBvb2wNCj4gY29uZmlndXJhdGlvbiBjb25zdGFudC4gIFVzZSBh
+IHN0YWNrLXNwZWNpZmljIHZhbHVlIChvcg0KPiBSVEVfU1RBQ0tfUElMRV9CVUxLX1NJWkUgbXVs
+dGlwbGVzKS4NCj4gDQo+IEluZm8NCj4gDQo+IDE2LiBsaWIvZWFsL3g4Ni9pbmNsdWRlL3J0ZV9t
+ZW1jcHkuaA0KPiANCj4gVGhlIG5ldyBjb25zdGFudC1zaXplIGJsb2NrIGFsbG93cyBuIDw9IDUx
+MiBmb3IgQVZYLTUxMiBhbmQgZm9yIFNTRSwNCj4gYnV0DQo+IG9ubHkgbiA8PSAyNTYgZm9yIEFW
+WDIgLSBpcyB0aGUgYXN5bW1ldHJ5IGludGVuZGVkPyAgU3BsaXR0aW5nIGEgc2luZ2xlDQo+ICJp
+ZiAoIiBhY3Jvc3MgI2lmLyNlbGlmLyNlbHNlIHdpdGggdGhlIGJvZHkgb3V0c2lkZSBpcyBhbHNv
+IGhhcmQgdG8NCj4gcmVhZDsgYSBwZXItSVNBIFJURV9NRU1DUFlfQ09OU1RfTUFYIGRlZmluZSBh
+bmQgb25lICJpZiIgd291bGQgYmUNCj4gY2xlYXJlci4gIFRoaXMgY2hhbmdlIGFuZCB0aGUgX19y
+dGVfYXNzdW1lX2FsaWduZWQoKSBhZGRpdGlvbiBhcmUNCj4gaW5kZXBlbmRlbnQgb2YgdGhlIHBp
+bGUgd29yayBhbmQgYXJlIGdvb2QgY2FuZGlkYXRlcyBmb3IgdGhlaXIgb3duDQo+IHBhdGNoZXMg
+d2hlbiB0aGUgc2VyaWVzIGlzIHNwbGl0Lg0KPiANCj4gMTcuIGRyaXZlcnMvbmV0L3N4ZTIvc3hl
+Ml90eHJ4X3ZlY19hdng1MTIuYw0KPiANCj4gVGhlIGh1bmsgYWRkcyBhbiB1bnJlbGF0ZWQgYmxh
+bmsgbGluZSBiZWZvcmUgImdvdG8gZG9uZTsiLg0KPiANCj4gMTguIGxpYi9zdGFjay9ydGVfc3Rh
+Y2tfcGlsZS5oLCBfX3J0ZV9zdGFja19waWxlX2J1bGtfcG9wX2VsZW1zKCkNCj4gDQo+IFRoZSBl
+bGVtZW50IGxpc3QgaXMgdHJhdmVyc2VkIHR3aWNlOiBvbmNlIGluc2lkZQ0KPiBfX3J0ZV9zdGFj
+a19sZl9wb3BfZWxlbXMoKSAodG8gZmluZCB0aGUgbmV3IGhlYWQgYW5kIHNldCAqbGFzdCkgYW5k
+DQo+IGFnYWluIHRvIGNvcHkgdGhlIGJ1bGsgY29udGVudHMuICBGb3IgYSBwb3Agb2YgOCBidWxr
+IGVsZW1lbnRzIHRoYXQgaXMNCj4gdHdvIGRlcGVuZGVudCBwb2ludGVyIGNoYXNlcyBvdmVyIHRo
+ZSBzYW1lIGNhY2hlIGxpbmVzLg0KPiANCj4gMTkuIGRyaXZlcnMvbWVtcG9vbC9zdGFjay9ydGVf
+bWVtcG9vbF9zdGFjay5jDQo+IA0KPiBwaWxlX2VucXVldWUoKSByZXR1cm5zIC1FTk9CVUZTIHdo
+ZW4gdGhlIHB1c2ggZmFpbHMsIGJ1dA0KPiBydGVfbWVtcG9vbF9vcHNfZW5xdWV1ZV9idWxrKCkg
+cmV0dXJucyB2b2lkIGFuZCBjYWxsZXJzIGRvIG5vdCByZWNvdmVyLA0KPiBzbyBhIGZhaWxlZCBw
+dXQgbG9zZXMgb2JqZWN0cy4gIFRoaXMgaXMgdGhlIHNhbWUgaGF6YXJkIHRoZSBsb2NrLWZyZWUN
+Cj4gc3RhY2sgYWxyZWFkeSBoYXMsIGJ1dCB0aGUgcGlsZSBoYXMgdHdvIGluZGVwZW5kZW50IGZy
+ZWUgbGlzdHMsIHNvIHRoZQ0KPiB3aW5kb3cgaW4gd2hpY2ggYSBjb25jdXJyZW50IHBvcCBsZWF2
+ZXMgbmVpdGhlciBmcmVlX2J1bGsgbm9yIGZyZWVfc29sbw0KPiBhYmxlIHRvIHNhdGlzZnkgYSBw
+dXNoIGlzIHdpZGVyLiAgV29ydGggY2FsbGluZyBvdXQgaW4gc3RhY2tfbGliLnJzdC4NCj4gDQo+
+IDIwLiBkb2MvZ3VpZGVzL3Byb2dfZ3VpZGUvc3RhY2tfbGliLnJzdA0KPiANCj4gInBlcmZvcm1h
+aW5nIiAtPiAicGVyZm9ybWluZyIuICBUaGUgdHJhaWxpbmcgIk5vdGU6IiBwYXJhZ3JhcGggd291
+bGQNCj4gcmVuZGVyIGJldHRlciBhcyBhICIuLiBub3RlOjoiIGRpcmVjdGl2ZS4NCj4gDQo+IDIx
+LiBUaGUgc2VyaWVzIG1peGVzIGF0IGxlYXN0IGZpdmUgaW5kZXBlbmRlbnQgY2hhbmdlcyAoRUFM
+IGFzc3VtZS0NCj4gYWxpZ25lZA0KPiBtYWNybywgeDg2IHJ0ZV9tZW1jcHkgZmFzdCBwYXRoLCBt
+ZW1wb29sIGNhY2hlL2hlYWRlciByZXdvcmssIHRoZSBwaWxlDQo+IHN0YWNrLCB0aGUgcGlsZSBt
+ZW1wb29sIGRyaXZlcikuICBZb3UgYWxyZWFkeSBub3RlZCB0aGlzOyB0aG9zZSBsb29rDQo+IGxp
+a2UgdGhlIG5hdHVyYWwgc3BsaXQgcG9pbnRzLCBhbmQgdGhlIG1lbXBvb2wgY2FjaGUgcmV3b3Jr
+IGluDQo+IHBhcnRpY3VsYXIgZGVzZXJ2ZXMgaXRzIG93biByZXZpZXcgdGhyZWFkIGdpdmVuIHRo
+ZSBBQkkgaW1wYWN0Lg0K
