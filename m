@@ -2,38 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D3BAC55177
-	for <dpdk-dev@archiver.kernel.org>; Sun,  2 Aug 2026 16:46:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 725CBC55162
+	for <dpdk-dev@archiver.kernel.org>; Sun,  2 Aug 2026 18:18:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E9D8C40269;
-	Sun,  2 Aug 2026 18:46:04 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 47A8F400D6
- for <dev@dpdk.org>; Sun,  2 Aug 2026 18:46:01 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 0257820730;
- Sun,  2 Aug 2026 18:46:01 +0200 (CEST)
-Content-class: urn:content-classes:message
-Subject: RE: [RFC PATCH v6] pile stack and mempool driver
-Date: Sun, 2 Aug 2026 18:45:59 +0200
+	by mails.dpdk.org (Postfix) with ESMTP id 3991340272;
+	Sun,  2 Aug 2026 20:18:41 +0200 (CEST)
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com
+ [209.85.216.41]) by mails.dpdk.org (Postfix) with ESMTP id 39947400D6
+ for <dev@dpdk.org>; Sun,  2 Aug 2026 20:18:39 +0200 (CEST)
+Received: by mail-pj1-f41.google.com with SMTP id
+ 98e67ed59e1d1-38dfe910e9dso2470784a91.3
+ for <dev@dpdk.org>; Sun, 02 Aug 2026 11:18:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785694718;
+ x=1786299518; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=qZl6xE/TWQ53bJusaR1b0VlPYmHcxSfSirJJsL7yIO8=;
+ b=PMPQkcACfIm2fpEaYjhOCY0D7Qoa2nnUDpmPSbw2qyyvaWiDbKHN6sXiz3TEV9kUpc
+ mkkCiX6zGxBqewQ9tGb8RgNIoLxpJ9g4G7K2bYLF/1/7FoH5o1MSCegCrSX9yblZfwjk
+ koHPNIITRCiwAvAX+yyldbHMNciys4lMmeowOcMsVLujkUaN4+YCN5K+5yE3rxsA1bn1
+ 6y6DN1S4ykl9HK/3i0PlsSRnBiWRKrtSxQX3kFwZPMlmC0yZoEPnicromYn1pAlO+XHQ
+ X2YyCPbbg13jE+suA1KiYuVa3HHBCZzn87V//O9xTdeqDl6lsgouSWCg1sXBdBaKGDHI
+ Nu7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1785694718; x=1786299518;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=qZl6xE/TWQ53bJusaR1b0VlPYmHcxSfSirJJsL7yIO8=;
+ b=O43fAUhyqyBWlCq754c9YNGjZCyPqnMLKH87wV9eiU345Oi+kH2Uu8LANvyHWudQo1
+ WJY/Lt0yR0IXbyIJx9lp0MPnuJF62+1QobTk0nDUwJSlxuWnoBjqF03x9enBo5bUnelN
+ Gq23Nq1I2NJKzq90JtzjVFWz0lusb2xeViFV0X5GrygdsYBwKJUKrOTVtTdsfLi5COTt
+ mRXOlrf2Ciz9q/5Qgd6EGqYsyTjspBKXFmKMwGv2+PhoVf0x96ISg+sl2tEgbjhX0rrI
+ hAuRpGVs7oyYCR7O2p0N+LoCdRFEgAzbpMD7Y5XKWw8iypWXm/jkuEX2GRN6YaBmY9wp
+ JLQA==
+X-Gm-Message-State: AOJu0YwFEhwXc69YQ07/yyu9I9XnOdSFnEfjbd6y1LpeowK3lYsm2qsn
+ UKWDpY0fQi6MBOsFHhOwyS9I6/Z41hQflcpENbqdsHmg+B/TIHwUuf1dlCl/E/gGv6Ya/rcuQDQ
+ nhCTk
+X-Gm-Gg: AR+sD10qtIHokgpqHN4SWymuEnCr0/Q6S71iVND4j1mNqyo+Xgvf/8SZ8p9jSWo2S5i
+ jB3ZzHjB3Lo8CpwnjDVJQBcKu015uOMym/VxFhZM0DGdrEERrO8vvmfDrZLLu/7XdEa57ez7Yz/
+ 9mUgB3MUAhjSHsbIRNqVsLAiGIDRDlIP0kMhxHb46L/NZCqbE4DZbHprtCZVd4dStNlWxQoNmho
+ mtyAYlojxPzAOUULoTyld1+Sb4a5hiqHnf7SUTybTrHlxZ8DNGUTqGblTid1WfPLc3RsgwZD2ek
+ XxRq226/bRuxopk/ZYTjB28lkUXYo9nSLUf1ta/U6yj2d3EqizUHQWcEnxRcc+rOOS2L8wvQwIA
+ lQLMJ/UVrHIM1+jRCzvSYtsr6Bq0x7RUi34XehsBqMfakNEtVcs1U1ZDbivT/813cqKtzE42CDo
+ /Kjxyqcire0MWc4GwAFV3yXC2ie8avSNvc8FMRh3o6gNKxDnHBlQQobhKxnr3IdnEfL9MKPFnyb
+ /0J3S6evBl3RQFJB1EcrRCBFN4=
+X-Received: by 2002:a17:90b:562e:b0:369:a359:b181 with SMTP id
+ 98e67ed59e1d1-38fbc4ae534mr6763768a91.23.1785694717930; 
+ Sun, 02 Aug 2026 11:18:37 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-13fab050d8csm39682295c88.0.2026.08.02.11.18.36
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sun, 02 Aug 2026 11:18:37 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [RFC 00/21] ethdev: isolate legacy flow director
+Date: Sun,  2 Aug 2026 11:15:05 -0700
+Message-ID: <20260802181835.476887-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F659B2@smartserver.smartshare.dk>
-In-Reply-To: <20260802082235.3aef3964@phoenix.local>
-X-MS-Has-Attach: 
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-X-MS-TNEF-Correlator: 
-Thread-Topic: [RFC PATCH v6] pile stack and mempool driver
-Thread-Index: Ad0iksMiaigL0mrJQ1GT7MHWpvx8hAACeucg
-References: <98CBD80474FA8B44BF855DF32C47DC35F659AB@smartserver.smartshare.dk><20260802095954.1098479-1-mb@smartsharesystems.com>
- <20260802082235.3aef3964@phoenix.local>
-From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Stephen Hemminger" <stephen@networkplumber.org>
-Cc: <dev@dpdk.org>
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -47,218 +78,158 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-VGhhbmsgeW91LCBTdGVwaGVuLg0KDQpWZXJ5IHVzZWZ1bCByZXZpZXcgZmVlZGJhY2ssIGVzcGVj
-aWFsbHkgdGhlIGZpcnN0IHBvaW50IQ0KDQpJIHRyaWVkIGEgZmV3IGRpZmZlcmVudCBhbGdvcml0
-aG1zIGZvciBoYW5kbGluZyB0aGUgbWl4IG9mIHNvbG8gYW5kIGJ1bGsgb2JqZWN0cyBiZWZvcmUg
-YXJyaXZpbmcgYXQgdGhpcyBvbmUuDQpCdXQgYXMgdGhlIEFJIHJldmlldyByZXZlYWxlZCwgaXQg
-c3RpbGwgbmVlZHMgc29tZSB3b3JrLg0KV2lsbCBmb2xsb3cgdXAgd2l0aCBhIHY3IHBhdGNoLg0K
-DQoNClZlbmxpZyBoaWxzZW4gLyBLaW5kIHJlZ2FyZHMsDQotTW9ydGVuIEJyw7hydXANCg0KDQo+
-IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFN0ZXBoZW4gSGVtbWluZ2VyIFtt
-YWlsdG86c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmddDQo+IFNlbnQ6IFN1bmRheSwgMiBBdWd1
-c3QgMjAyNiAxNy4yMw0KPiANCj4gT24gU3VuLCAgMiBBdWcgMjAyNiAwOTo1OTo1NCArMDAwMA0K
-PiBNb3J0ZW4gQnLDuHJ1cCA8bWJAc21hcnRzaGFyZXN5c3RlbXMuY29tPiB3cm90ZToNCj4gDQo+
-ID4gRWFybHkgc3VibWlzc2lvbiBvZjoNCj4gPiAtIHNvbWUgbWVtcG9vbCBvcHRpbWl6YXRpb25z
-LA0KPiA+IC0gYSBuZXcgbWVtcG9vbCAicGlsZSIgZHJpdmVyLCBhbmQNCj4gPiAtIGl0cyB1bmRl
-cmx5aW5nICJwaWxlIiBzdGFjayBpbXBsZW1lbnRhdGlvbi4NCj4gPg0KPiA+IEZvciBjb21tdW5p
-dHkgZmVlZGJhY2sgYW5kIENJIHRlc3QuDQo+ID4NCj4gPiBOZWVkbGVzcyB0byBzYXksIHRoaXMg
-bXVzdCBiZSBzZXBhcmF0ZWQgaW50byBhIHNlcmllcyBvZiBwYXRjaGVzLg0KPiA+IEZvciBub3cs
-IEknbSBzdWJtaXR0aW5nIGEgc25hcHNob3Qgb2Ygd29yayBpbiBwcm9ncmVzcy4NCj4gPg0KPiA+
-IFNvbWUgcGVyZm9ybWFuY2UgbnVtYmVycyBmcm9tIG1lbXBvb2xfcGVyZl9hdXRvdGVzdF8yY29y
-ZXMsIGFsbA0KPiA+IHdpdGggY2FjaGU9MTAyNCBjb3Jlcz0yIG5fa2VlcD0zMjc2ODoNCj4gPg0K
-PiA+IHN0YXJ0IHBlcmZvcm1hbmNlIHRlc3QgKHVzaW5nIHJpbmdfbXBfbWMsIHdpdGggY2FjaGUp
-DQo+ID4gbl9nZXRfYnVsaz0gNjQgbl9wdXRfYnVsaz0gNjQgY29uc3RhbnRfbj0wIHJhdGVfcGVy
-c2VjPSA3NTM5ODUzMzgNCj4gPiBuX2dldF9idWxrPTI1NiBuX3B1dF9idWxrPTI1NiBjb25zdGFu
-dF9uPTAgcmF0ZV9wZXJzZWM9IDc1NTgwNTkxMw0KPiA+DQo+ID4gc3RhcnQgcGVyZm9ybWFuY2Ug
-dGVzdCBmb3IgbGZfc3RhY2sgKHdpdGggY2FjaGUpDQo+ID4gbl9nZXRfYnVsaz0gNjQgbl9wdXRf
-YnVsaz0gNjQgY29uc3RhbnRfbj0wIHJhdGVfcGVyc2VjPSAgMjkxMzIzNTINCj4gPiBuX2dldF9i
-dWxrPTI1NiBuX3B1dF9idWxrPTI1NiBjb25zdGFudF9uPTAgcmF0ZV9wZXJzZWM9ICAyOTI3Njcw
-OA0KPiA+DQo+ID4gc3RhcnQgcGVyZm9ybWFuY2UgdGVzdCBmb3IgcGlsZSAod2l0aCBjYWNoZSkN
-Cj4gPiBuX2dldF9idWxrPSA2NCBuX3B1dF9idWxrPSA2NCBjb25zdGFudF9uPTAgcmF0ZV9wZXJz
-ZWM9IDU2MDE1OTQ3OQ0KPiA+IG5fZ2V0X2J1bGs9MjU2IG5fcHV0X2J1bGs9MjU2IGNvbnN0YW50
-X249MCByYXRlX3BlcnNlYz0gNTU3OTEwOTMzDQo+ID4NCj4gPiBIYXQgdGlwIHRvIEJydWNlIGZv
-ciBicmluZ2luZyBhdHRlbnRpb24gdG8gdGhlIHJpbmcgbm90IGJlaW5nIHRoZQ0KPiA+IG9wdGlt
-YWwgbWVtcG9vbCBkcml2ZXIuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBNb3J0ZW4gQnLDuHJ1
-cCA8bWJAc21hcnRzaGFyZXN5c3RlbXMuY29tPg0KPiA+IC0tLQ0KPiANCj4gU2luY2UgcmVsYXRp
-dmVseSBjb21wbGV4LCBkaWQgQUkgcmV2aWV3IHdpdGggbW9yZSBhZHZhbmNlZCBtb2RlbC4NCj4g
-DQo+IFJldmlldyBvZiBbUkZDIFBBVENIIHY2XSBwaWxlIHN0YWNrIGFuZCBtZW1wb29sIGRyaXZl
-cg0KPiANCj4gRXJyb3JzDQo+IA0KPiAxLiBsaWIvc3RhY2svcnRlX3N0YWNrX3BpbGUuaCwgX19y
-dGVfc3RhY2tfcGlsZV9wb3AoKQ0KPiANCj4gVGhlIGJ1bGsgcmV0cnkgbG9vcCBicmVha3MgdGhl
-IGludmFyaWFudCB0aGF0IHRoZSBmcmFnbWVudGF0aW9uIHBhdGgNCj4gZGVwZW5kcyBvbiAobl9z
-b2xvIDwgUlRFX1NUQUNLX1BJTEVfQlVMS19TSVpFKToNCj4gDQo+IAluX3NvbG8gKz0gUlRFX1NU
-QUNLX1BJTEVfQlVMS19TSVpFOw0KPiAJbl9idWxrLS07DQo+IAlpZiAobl9idWxrID4gMCkNCj4g
-CQlnb3RvIGJ1bGs7DQo+IAllbHNlDQo+IAkJZ290byBzb2xvOw0KPiANCj4gRWFjaCByZXRyeSBh
-ZGRzIGEgd2hvbGUgYnVsayB3b3J0aCBvZiBvYmplY3RzIHRvIG5fc29sbywgc28gY29udHJvbCBj
-YW4NCj4gcmVhY2ggdGhlICJzb2xvOiIgbGFiZWwgd2l0aCBuX3NvbG8gPj0gUlRFX1NUQUNLX1BJ
-TEVfQlVMS19TSVpFICh1cCB0bw0KPiBuKS4NCj4gSWYgdGhlIHNvbG8gcG9wIHRoZW4gZmFpbHMg
-YW5kIHRoZSBmcmFnbWVudGF0aW9uIHBhdGggaXMgdGFrZW4sIGZvdXINCj4gdGhpbmdzIGdvIHdy
-b25nOg0KPiANCj4gIC0gX19ydGVfYXNzdW1lKG5fc29sbyA8IFJURV9TVEFDS19QSUxFX0JVTEtf
-U0laRSkgaXMgZmFsc2UsIHdoaWNoIGlzDQo+ICAgIHVuZGVmaW5lZCBiZWhhdmlvci4NCj4gDQo+
-ICAtIHRoZSBjb3B5IGxvb3ANCj4gDQo+IAlmb3IgKGkgPSAwOyBpIDwgbl9zb2xvOyBpKyspDQo+
-IAkJb2JqX3RhYmxlW25fYnVsayAqIFJURV9TVEFDS19QSUxFX0JVTEtfU0laRSArIGldID0NCj4g
-b2JqX2ZyYWdbaV07DQo+IA0KPiAgICByZWFkcyBwYXN0IHRoZSBlbmQgb2Ygb2JqX2ZyYWdbUlRF
-X1NUQUNLX1BJTEVfQlVMS19TSVpFXSB3aGVuZXZlcg0KPiAgICBuX3NvbG8gPiBSVEVfU1RBQ0tf
-UElMRV9CVUxLX1NJWkUuDQo+IA0KPiAgLSBSVEVfU1RBQ0tfUElMRV9CVUxLX1NJWkUgLSBuX3Nv
-bG8gdW5kZXJmbG93cyBmb3Igbl9zb2xvID4gQlVMS19TSVpFLA0KPiAgICBzbyBmcmVlX3NvbG8g
-aXMgYXNrZWQgZm9yIH40IGJpbGxpb24gZWxlbWVudHMuDQo+IA0KPiAgLSBmb3Igbl9zb2xvID09
-IFJURV9TVEFDS19QSUxFX0JVTEtfU0laRSBleGFjdGx5LCB0aGUgcmVxdWVzdCBiZWNvbWVzDQo+
-ICAgIGEgemVyby1lbGVtZW50IHBvcDoNCj4gDQo+IAlzb2xvX2ZpcnN0ID0gX19ydGVfc3RhY2tf
-bGZfcG9wX2VsZW1zKCZwaWxlLT5mcmVlX3NvbG8sIDAsIE5VTEwsDQo+ICZzb2xvX2xhc3QpOw0K
-PiANCj4gICAgX19ydGVfc3RhY2tfbGZfcG9wX2VsZW1zKCkgd2l0aCBudW0gPT0gMCBuZXZlciBl
-bnRlcnMgdGhlIHRyYXZlcnNhbA0KPiAgICBsb29wLCBzbyBpdCBsZWF2ZXMgKmxhc3QgdW50b3Vj
-aGVkIGFuZCByZXR1cm5zIG9sZF9oZWFkLnRvcCwgd2hpY2gNCj4gaXMNCj4gICAgbm9uLU5VTEwg
-d2hlbmV2ZXIgZnJlZV9zb2xvIGlzIG5vdCBlbXB0eS4gc29sb19sYXN0IGlzIHRoZXJlZm9yZQ0K
-PiBzdGlsbA0KPiAgICBOVUxMIHdoZW4NCj4gDQo+IAlfX3J0ZV9zdGFja19sZl9wdXNoX2VsZW1z
-KCZwaWxlLT5zb2xvLCBzb2xvX2ZpcnN0LCBzb2xvX2xhc3QsIDApOw0KPiANCj4gICAgZXhlY3V0
-ZXMgImxhc3QtPm5leHQgPSBvbGRfaGVhZC50b3AiLCBpLmUuIGEgTlVMTCBwb2ludGVyIHdyaXRl
-LiAgSXQNCj4gICAgYWxzbyBzcGxpY2VzIGZyZWVfc29sbydzIGN1cnJlbnQgaGVhZCBvbnRvIHBp
-bGUtPnNvbG8uDQo+IA0KPiBSZWFjaGFibGUgcGF0aCB3aXRoIEJVTEtfU0laRSAzMjogcG9wIG9m
-IDY0IG9iamVjdHMsIHBpbGUtPmJ1bGsgaG9sZHMNCj4gb25lIGVsZW1lbnQsIHBpbGUtPnNvbG8g
-ZW1wdHksIGZyZWVfc29sbyBub24tZW1wdHkuICBUaGUgcG9wIG9mIDIgYnVsa3MNCj4gZmFpbHMg
-KG5fc29sbyBiZWNvbWVzIDMyLCBuX2J1bGsgMSksIHRoZSBwb3Agb2YgMSBidWxrIHN1Y2NlZWRz
-LCB0aGUNCj4gc29sbyBwb3Agb2YgMzIgZmFpbHMsIGFuZCB0aGUgZnJhZ21lbnRhdGlvbiBwYXRo
-IGlzIGVudGVyZWQgd2l0aA0KPiBuX3NvbG8gPT0gMzIuDQo+IA0KPiBUaGUgZnJhZ21lbnRhdGlv
-biBwYXRoIG9ubHkgbWFrZXMgc2Vuc2UgZm9yIGEgcGFydGlhbCBidWxrLiAgQWZ0ZXIgdGhlDQo+
-IHJldHJ5IGxvb3AsIHNwbGl0IG5fc29sbyBiYWNrIGludG8gd2hvbGUgYnVsa3MgcGx1cyBhIHJl
-bWFpbmRlciBhbmQNCj4gc2VydmljZSB0aGUgd2hvbGUtYnVsayBwYXJ0IGZyb20gcGlsZS0+c29s
-byAob3IgZmFpbCksIGtlZXBpbmcgdGhlDQo+IGZyYWdtZW50YXRpb24gcGF0aCBib3VuZGVkIHRv
-IG5fc29sbyA8IFJURV9TVEFDS19QSUxFX0JVTEtfU0laRS4NCj4gDQo+IDIuIGxpYi9zdGFjay9y
-dGVfc3RhY2tfcGlsZS5oLCBfX3J0ZV9zdGFja19waWxlX3BvcCgpDQo+IA0KPiAJX19ydGVfYXNz
-dW1lKFJURV9TVEFDS19QSUxFX0JVTEtfU0laRSAtIG5fc29sbyA8DQo+IFJURV9TVEFDS19QSUxF
-X0JVTEtfU0laRSAtIDEpOw0KPiANCj4gT2ZmIGJ5IG9uZTogd2l0aCBuX3NvbG8gPT0gMSB0aGUg
-bGVmdCBzaWRlIGlzIEJVTEtfU0laRSAtIDEsIGFuZA0KPiAiQlVMS19TSVpFIC0gMSA8IEJVTEtf
-U0laRSAtIDEiIGlzIGZhbHNlLiAgQSBmYWxzZSBfX3J0ZV9hc3N1bWUoKSBpcw0KPiB1bmRlZmlu
-ZWQgYmVoYXZpb3IuICBTaG91bGQgYmUgIjwgUlRFX1NUQUNLX1BJTEVfQlVMS19TSVpFIi4NCj4g
-DQo+IDMuIGFwcC90ZXN0L3Rlc3Rfc3RhY2suYywgdGVzdF9zdGFja19wdXNoX3BvcCgpDQo+IA0K
-PiAJaWYgKG1lbWNtcCgmb2JqX3RhYmxlW2ldLA0KPiAJCQkmcG9wcGVkX29ianNbU1RBQ0tfU0la
-RSAtIFJURV9TVEFDS19QSUxFX0JVTEtfU0laRSAtDQo+IGldLA0KPiAJCQlSVEVfU1RBQ0tfUElM
-RV9CVUxLX1NJWkUpICE9IDApIHsNCj4gDQo+IG1lbWNtcCgpIHRha2VzIGEgYnl0ZSBjb3VudCwg
-YnV0IFJURV9TVEFDS19QSUxFX0JVTEtfU0laRSBpcyBhbiBvYmplY3QNCj4gY291bnQuICBPbmx5
-IHRoZSBmaXJzdCA0IHBvaW50ZXJzIG9mIGVhY2ggMzItcG9pbnRlciBidWxrIGFyZSBjb21wYXJl
-ZA0KPiBvbiBhIDY0LWJpdCBidWlsZC4gIE5lZWRzDQo+ICJSVEVfU1RBQ0tfUElMRV9CVUxLX1NJ
-WkUgKiBzaXplb2Yodm9pZCAqKSIuDQo+IA0KPiA0LiBsaWIvbWVtcG9vbC9ydGVfbWVtcG9vbC5o
-LCBydGVfbWVtcG9vbF9kb19nZW5lcmljX3B1dCgpDQo+IA0KPiAJY29uc3Qgc2l6ZV90IG1vdmUg
-PSBSVEVfQUxJR05fTVVMX0NFSUwoDQo+IAkJCXNpemVvZih2b2lkICopICogKGNhY2hlLT5sZW4g
-LSBjYWNoZS0+c2l6ZSAvIDIpLCAzMik7DQo+IAlydGVfbWVtY3B5KGNhY2hlLT5vYmpzLCBfX3J0
-ZV9hc3N1bWVfY2FjaGVfYWxpZ25lZCgmY2FjaGUtDQo+ID5vYmpzW2NhY2hlLT5zaXplIC8gMl0p
-LA0KPiAJCQltb3ZlKTsNCj4gDQo+IEJvdGggdGhlIGFsaWdubWVudCBoaW50IGFuZCB0aGUgcm91
-bmRlZC11cCBsZW5ndGggYXJlIG9ubHkgdmFsaWQgd2hlbg0KPiBjYWNoZS0+c2l6ZSBpcyBhIG11
-bHRpcGxlIG9mIDMyLiAgcnRlX21lbXBvb2xfY3JlYXRlX2VtcHR5KCkgbm93DQo+IGVuZm9yY2Vz
-DQo+IHRoYXQsIGJ1dCBydGVfbWVtcG9vbF9jYWNoZV9jcmVhdGUoKSBpcyB1bmNoYW5nZWQgYW5k
-IHN0aWxsIGFjY2VwdHMgYW55DQo+IHNpemUgaW4gMS4uUlRFX01FTVBPT0xfQ0FDSEVfTUFYX1NJ
-WkUuICBBIHVzZXIgY2FjaGUgb2YsIHNheSwgc2l6ZSAxMDANCj4gZ2l2ZXMgJm9ianNbNTBdIGF0
-IGEgNDAwLWJ5dGUgb2Zmc2V0LCBhbmQgX19idWlsdGluX2Fzc3VtZV9hbGlnbmVkKCkgaXMNCj4g
-dGhlbiB0b2xkIGEgZmFsc2UgcHJlY29uZGl0aW9uIC0gdGhlIGNvbXBpbGVyIG1heSBlbWl0IGFs
-aWduZWQgdmVjdG9yDQo+IGxvYWRzIGFuZCBmYXVsdC4gIEVpdGhlciBhcHBseSB0aGUgc2FtZSBy
-b3VuZGluZy9yZWplY3Rpb24gaW4NCj4gcnRlX21lbXBvb2xfY2FjaGVfY3JlYXRlKCksIG9yIGRy
-b3AgdGhlIGFsaWdubWVudCBoaW50Lg0KPiANCj4gV2FybmluZ3MNCj4gDQo+IDUuIEFCSSBhbmQg
-QVBJIGNoYW5nZXMgd2l0aG91dCBkZXByZWNhdGlvbiBub3RpY2VzDQo+IA0KPiBkZXByZWNhdGlv
-bi5yc3QgY3VycmVudGx5IGNvdmVycyBvbmx5IHRoZSBmbHVzaHRocmVzaCBmaWVsZCBhbmQgdGhl
-DQo+IG92ZXJzaXplIG9ianMgYXJyYXkuICBUaGUgcGF0Y2ggYWRkaXRpb25hbGx5IGNoYW5nZXM6
-DQo+IA0KPiAgLSBzdHJ1Y3QgcnRlX21lbXBvb2w6IGxvY2FsX2NhY2hlIGZyb20gcG9pbnRlciB0
-byBpbmxpbmUNCj4gICAgbG9jYWxfY2FjaGVbUlRFX01BWF9MQ09SRV0gYXJyYXkNCj4gIC0gcmVt
-b3ZhbCBvZiB0aGUgUlRFX01FTVBPT0xfSEVBREVSX1NJWkUoKSBtYWNybw0KPiAgLSBSVEVfTUVN
-UE9PTF9DQUNIRV9NQVhfU0laRSA1MTIgLT4gMTAyNA0KPiAgLSBSVEVfTUVNUE9PTF9NQVhfT1BT
-X0lEWCAxNiAtPiAzMiwgd2hpY2ggY2hhbmdlcyB0aGUgc2l6ZSBvZiB0aGUNCj4gICAgZXhwb3J0
-ZWQgcnRlX21lbXBvb2xfb3BzX3RhYmxlIHZhcmlhYmxlDQo+ICAtIGNhY2hlX3NpemUgbXVzdCBu
-b3cgYmUgYSBtdWx0aXBsZSBvZiAzMg0KPiANCj4gVGhlIHR3byBleGlzdGluZyBkZXByZWNhdGlv
-biBlbnRyaWVzIHNob3VsZCBhbHNvIGJlIHJlbW92ZWQgYnkgdGhpcw0KPiBwYXRjaCBvbmNlIHRo
-ZXkgYXJlIGltcGxlbWVudGVkLg0KPiANCj4gNi4gbGliL21lbXBvb2wvcnRlX21lbXBvb2wuaCAt
-IG1lbXBvb2wgaGVhZGVyIGZvb3RwcmludA0KPiANCj4gV2l0aCBsb2NhbF9jYWNoZVtdIGlubGlu
-ZSBhbmQgUlRFX01FTVBPT0xfQ0FDSEVfTUFYX1NJWkUgYXQgMTAyNCwgdGhlDQo+IGhlYWRlciBp
-cyByb3VnaGx5IFJURV9NQVhfTENPUkUgKiA4LjMgS0IsIGkuZS4gYWJvdXQgMSBNQiBwZXIgbWVt
-cG9vbCwNCj4gYW5kIGl0IGlzIG5vdyBhbGxvY2F0ZWQgKGFuZCBtZW1zZXQpIHVuY29uZGl0aW9u
-YWxseS4gIFByZXZpb3VzbHkNCj4gUlRFX01FTVBPT0xfSEVBREVSX1NJWkUobXAsIDApIG9taXR0
-ZWQgdGhlIGFycmF5IGVudGlyZWx5IGZvciBtZW1wb29scw0KPiBjcmVhdGVkIHdpdGggY2FjaGVf
-c2l6ZSA9PSAwLCB3aGljaCBpcyBjb21tb24gZm9yIGNvbnRyb2wtb2JqZWN0IHBvb2xzLg0KPiAN
-Cj4gNy4gbGliL21lbXBvb2wvcnRlX21lbXBvb2wuYywgcnRlX21lbXBvb2xfY3JlYXRlX2VtcHR5
-KCkNCj4gDQo+IAlpZiAoY2FjaGVfc2l6ZSAmIDMxKSB7DQo+IAkJdW5zaWduZWQgaW50IHJvdW5k
-ZWQgPSBSVEVfQUxJR05fTVVMX0ZMT09SKGNhY2hlX3NpemUsIDMyKTsNCj4gDQo+IEFueSByZXF1
-ZXN0ZWQgY2FjaGVfc2l6ZSBiZWxvdyAzMiBpcyBzaWxlbnRseSByb3VuZGVkIHRvIDAsIGRpc2Fi
-bGluZw0KPiB0aGUgY2FjaGUuICBUaGUgZG94eWdlbiBjaGFuZ2UgaW4gcnRlX21lbXBvb2wuaCBz
-YXlzIHRoZSBhcmd1bWVudCAibXVzdA0KPiBiZSBkaXZpc2libGUgYnkgMzIiLCB3aGljaCByZWFk
-cyBhcyBhIHJlamVjdGlvbiwgbm90IGEgc2lsZW50IHJvdW5kaW5nDQo+IC0NCj4gZG9jIGFuZCBj
-b2RlIGRpc2FncmVlLiAgVGhlIGxvZyBtZXNzYWdlcyBzaG91bGQgYWxzbyBwcmludCB0aGUNCj4g
-cmVxdWVzdGVkDQo+IGFuZCBlZmZlY3RpdmUgdmFsdWVzLCBhbmQgImRpdmlzYmxlIiBpcyBtaXNz
-cGVsbGVkLg0KPiANCj4gOC4gYXBwL3Rlc3QvdGVzdF9zdGFjay5jDQo+IA0KPiBUaGUgZXhjZXNz
-LXB1c2ggdGVzdCBpcyB3cmFwcGVkIGluICIjaWYgMCAvKiBGSVhNRSAuLi4gKi8iLiAgVGhhdA0K
-PiByZW1vdmVzIGNvdmVyYWdlIGZvciB0aGUgc3RhbmRhcmQgYW5kIGxvY2stZnJlZSBzdGFja3Mg
-YXMgd2VsbCwgYW5kIGl0DQo+IGlzIGV4YWN0bHkgdGhlIHRlc3QgdGhhdCB3b3VsZCBleGVyY2lz
-ZSB0aGUgcGlsZSBjYXBhY2l0eSBiZWhhdmlvciBpbg0KPiBpdGVtIDkuICBEZWFkIGNvZGUgc2hv
-dWxkIG5vdCBiZSBjb21taXR0ZWQ7IGVpdGhlciBmaXggdGhlDQo+IC1XYXJyYXktYm91bmRzIHRy
-aWdnZXIgKGEgcnVudGltZS1jb21wdXRlZCBzaXplIGluIGEgdm9sYXRpbGUgdmFyaWFibGUNCj4g
-aXMgdXN1YWxseSBlbm91Z2gpIG9yIGRyb3AgdGhlIGJsb2NrIGFuZCBub3RlIHRoZSBnYXAgaW4g
-dGhlIGNvbW1pdA0KPiBtZXNzYWdlLg0KPiANCj4gOS4gbGliL3N0YWNrL3J0ZV9zdGFja19waWxl
-LmMsIHJ0ZV9zdGFja19waWxlX2luaXQoKQ0KPiANCj4gVGhlIHBpbGUgaXMgaW5pdGlhbGl6ZWQg
-d2l0aCBjZWlsKGNvdW50IC8gQlVMS19TSVpFKSBidWxrIGVsZW1lbnRzIHBsdXMNCj4gY291bnQg
-c29sbyBlbGVtZW50cywgc28gaXQgY2FuIGhvbGQgdXAgdG8gcm91Z2hseSAyICogY291bnQgb2Jq
-ZWN0cywNCj4gYWJvdmUgdGhlIGRlY2xhcmVkIGNhcGFjaXR5LiAgX19ydGVfc3RhY2tfcGlsZV9j
-b3VudCgpIG9ubHkgaGlkZXMgdGhpcw0KPiBieSBjbGFtcGluZyB3aXRoIFJURV9NSU4ocy0+Y2Fw
-YWNpdHksIC4uLikuICBydGVfc3RhY2tfcHVzaCgpIGlzDQo+IGRvY3VtZW50ZWQgdG8gZmFpbCB3
-aGVuIHRoZXJlIGlzIGluc3VmZmljaWVudCBzcGFjZTsgZWl0aGVyIGVuZm9yY2UgdGhlDQo+IGNh
-cGFjaXR5IG9yIGRvY3VtZW50IHRoYXQgdGhlIHBpbGUgZG9lcyBub3QuDQo+IA0KPiAxMC4gbGli
-L3N0YWNrL3J0ZV9zdGFja19waWxlLmMNCj4gDQo+IHJ0ZV9zdGFja19waWxlX2luaXQoKSBkZXJp
-dmVzIHRoZSBlbGVtZW50IGJhc2UgZnJvbQ0KPiAiKCZzLT5zdGFja19waWxlICsgMSkiIHdoaWxl
-IHJ0ZV9zdGFja19waWxlX2dldF9tZW1zaXplKCkgc2l6ZXMgaXQgZnJvbQ0KPiAic2l6ZW9mKHN0
-cnVjdCBydGVfc3RhY2spIi4gIFRoZXNlIGFncmVlIG9ubHkgYmVjYXVzZSBydGVfc3RhY2tfcGls
-ZQ0KPiBoYXBwZW5zIHRvIGJlIHRoZSBsYXJnZXN0IG1lbWJlciBvZiB0aGUgdW5pb24gaW4gc3Ry
-dWN0IHJ0ZV9zdGFjay4gIElmDQo+IGFub3RoZXIgbWVtYmVyIGdyb3dzLCBpbml0KCkgd3JpdGVz
-IHBhc3QgdGhlIG1lbXpvbmUgd2l0aCBubw0KPiBkaWFnbm9zdGljLg0KPiBVc2UgdGhlIHNhbWUg
-ZXhwcmVzc2lvbiBpbiBib3RoIHBsYWNlcywgb3IgZ2l2ZSBzdHJ1Y3QgcnRlX3N0YWNrX3BpbGUg
-YQ0KPiBmbGV4aWJsZSBhcnJheSBtZW1iZXIgYXMgcnRlX3N0YWNrX2xmIGhhcy4NCj4gDQo+IDEx
-LiBsaWIvc3RhY2svcnRlX3N0YWNrX3BpbGUuaCAtIGRveHlnZW4NCj4gDQo+IEJvdGggX19ydGVf
-c3RhY2tfcGlsZV9wdXNoKCkgYW5kIF9fcnRlX3N0YWNrX3BpbGVfcG9wKCkgZG9jdW1lbnQNCj4g
-IkBwYXJhbSBwaWxlIiwgYnV0IHRoZSBwYXJhbWV0ZXIgaXMgInN0cnVjdCBydGVfc3RhY2sgKnMi
-LiAgRG94eWdlbg0KPiB3aXRoDQo+IC1Ed2Vycm9yIHdpbGwgZmxhZyB0aGUgdW5kb2N1bWVudGVk
-IHBhcmFtZXRlci4NCj4gDQo+IDEyLiBNaXNzaW5nIHJlbGVhc2Ugbm90ZXMNCj4gDQo+IGRvYy9n
-dWlkZXMvcmVsX25vdGVzL3JlbGVhc2VfMjZfMTEucnN0IGlzIG5vdCB1cGRhdGVkIGZvciB0aGUg
-bmV3IHBpbGUNCj4gc3RhY2sgdHlwZSwgdGhlIG5ldyAicGlsZSIgbWVtcG9vbCBkcml2ZXIsIHRo
-ZSBtZW1wb29sIEFCSSBjaGFuZ2VzLCBvcg0KPiB0aGUgbmV3IF9fcnRlX2Fzc3VtZV9hbGlnbmVk
-KCkgLyBfX3J0ZV9hc3N1bWVfY2FjaGVfYWxpZ25lZCgpIEVBTA0KPiBtYWNyb3MuDQo+IA0KPiAx
-My4gZG9jL2d1aWRlcy9tZW1wb29sL3N0YWNrLnJzdA0KPiANCj4gVGhlIGRyaXZlciBndWlkZSBs
-aXN0cyB0aGUgInN0YWNrIiBhbmQgImxmX3N0YWNrIiBtb2RlczsgdGhlIG5ldyAicGlsZSINCj4g
-bW9kZSBpcyBub3QgYWRkZWQuICBQTUQvZHJpdmVyIGRvY3VtZW50YXRpb24gbXVzdCBtYXRjaCB0
-aGUgcmVnaXN0ZXJlZA0KPiBvcHMuDQo+IA0KPiAxNC4gbGliL21lbXBvb2wvbWVtcG9vbF90cmFj
-ZS5oDQo+IA0KPiBEcm9wcGluZyBydGVfdHJhY2VfcG9pbnRfZW1pdF91MzIoY2FjaGUtPmZsdXNo
-dGhyZXNoKSBjaGFuZ2VzIHRoZQ0KPiByZWNvcmRlZCB0cmFjZSBmb3JtYXQgZm9yIHRoYXQgdHJh
-Y2UgcG9pbnQuICBXb3J0aCBhIHJlbGVhc2Ugbm90ZSBlbnRyeQ0KPiBmb3IgY29uc3VtZXJzIHBh
-cnNpbmcgdGhlIHRyYWNlIG91dHB1dC4NCj4gDQo+IDE1LiBhcHAvdGVzdC90ZXN0X3N0YWNrX3Bl
-cmYuYw0KPiANCj4gCSNkZWZpbmUgTUFYX0JVUlNUIChSVEVfTUVNUE9PTF9DQUNIRV9NQVhfU0la
-RSAvIDIpDQo+IA0KPiBBIHN0YWNrIGxpYnJhcnkgdGVzdCBzaG91bGQgbm90IHRha2UgaXRzIGJ1
-cnN0IHNpemUgZnJvbSBhIG1lbXBvb2wNCj4gY29uZmlndXJhdGlvbiBjb25zdGFudC4gIFVzZSBh
-IHN0YWNrLXNwZWNpZmljIHZhbHVlIChvcg0KPiBSVEVfU1RBQ0tfUElMRV9CVUxLX1NJWkUgbXVs
-dGlwbGVzKS4NCj4gDQo+IEluZm8NCj4gDQo+IDE2LiBsaWIvZWFsL3g4Ni9pbmNsdWRlL3J0ZV9t
-ZW1jcHkuaA0KPiANCj4gVGhlIG5ldyBjb25zdGFudC1zaXplIGJsb2NrIGFsbG93cyBuIDw9IDUx
-MiBmb3IgQVZYLTUxMiBhbmQgZm9yIFNTRSwNCj4gYnV0DQo+IG9ubHkgbiA8PSAyNTYgZm9yIEFW
-WDIgLSBpcyB0aGUgYXN5bW1ldHJ5IGludGVuZGVkPyAgU3BsaXR0aW5nIGEgc2luZ2xlDQo+ICJp
-ZiAoIiBhY3Jvc3MgI2lmLyNlbGlmLyNlbHNlIHdpdGggdGhlIGJvZHkgb3V0c2lkZSBpcyBhbHNv
-IGhhcmQgdG8NCj4gcmVhZDsgYSBwZXItSVNBIFJURV9NRU1DUFlfQ09OU1RfTUFYIGRlZmluZSBh
-bmQgb25lICJpZiIgd291bGQgYmUNCj4gY2xlYXJlci4gIFRoaXMgY2hhbmdlIGFuZCB0aGUgX19y
-dGVfYXNzdW1lX2FsaWduZWQoKSBhZGRpdGlvbiBhcmUNCj4gaW5kZXBlbmRlbnQgb2YgdGhlIHBp
-bGUgd29yayBhbmQgYXJlIGdvb2QgY2FuZGlkYXRlcyBmb3IgdGhlaXIgb3duDQo+IHBhdGNoZXMg
-d2hlbiB0aGUgc2VyaWVzIGlzIHNwbGl0Lg0KPiANCj4gMTcuIGRyaXZlcnMvbmV0L3N4ZTIvc3hl
-Ml90eHJ4X3ZlY19hdng1MTIuYw0KPiANCj4gVGhlIGh1bmsgYWRkcyBhbiB1bnJlbGF0ZWQgYmxh
-bmsgbGluZSBiZWZvcmUgImdvdG8gZG9uZTsiLg0KPiANCj4gMTguIGxpYi9zdGFjay9ydGVfc3Rh
-Y2tfcGlsZS5oLCBfX3J0ZV9zdGFja19waWxlX2J1bGtfcG9wX2VsZW1zKCkNCj4gDQo+IFRoZSBl
-bGVtZW50IGxpc3QgaXMgdHJhdmVyc2VkIHR3aWNlOiBvbmNlIGluc2lkZQ0KPiBfX3J0ZV9zdGFj
-a19sZl9wb3BfZWxlbXMoKSAodG8gZmluZCB0aGUgbmV3IGhlYWQgYW5kIHNldCAqbGFzdCkgYW5k
-DQo+IGFnYWluIHRvIGNvcHkgdGhlIGJ1bGsgY29udGVudHMuICBGb3IgYSBwb3Agb2YgOCBidWxr
-IGVsZW1lbnRzIHRoYXQgaXMNCj4gdHdvIGRlcGVuZGVudCBwb2ludGVyIGNoYXNlcyBvdmVyIHRo
-ZSBzYW1lIGNhY2hlIGxpbmVzLg0KPiANCj4gMTkuIGRyaXZlcnMvbWVtcG9vbC9zdGFjay9ydGVf
-bWVtcG9vbF9zdGFjay5jDQo+IA0KPiBwaWxlX2VucXVldWUoKSByZXR1cm5zIC1FTk9CVUZTIHdo
-ZW4gdGhlIHB1c2ggZmFpbHMsIGJ1dA0KPiBydGVfbWVtcG9vbF9vcHNfZW5xdWV1ZV9idWxrKCkg
-cmV0dXJucyB2b2lkIGFuZCBjYWxsZXJzIGRvIG5vdCByZWNvdmVyLA0KPiBzbyBhIGZhaWxlZCBw
-dXQgbG9zZXMgb2JqZWN0cy4gIFRoaXMgaXMgdGhlIHNhbWUgaGF6YXJkIHRoZSBsb2NrLWZyZWUN
-Cj4gc3RhY2sgYWxyZWFkeSBoYXMsIGJ1dCB0aGUgcGlsZSBoYXMgdHdvIGluZGVwZW5kZW50IGZy
-ZWUgbGlzdHMsIHNvIHRoZQ0KPiB3aW5kb3cgaW4gd2hpY2ggYSBjb25jdXJyZW50IHBvcCBsZWF2
-ZXMgbmVpdGhlciBmcmVlX2J1bGsgbm9yIGZyZWVfc29sbw0KPiBhYmxlIHRvIHNhdGlzZnkgYSBw
-dXNoIGlzIHdpZGVyLiAgV29ydGggY2FsbGluZyBvdXQgaW4gc3RhY2tfbGliLnJzdC4NCj4gDQo+
-IDIwLiBkb2MvZ3VpZGVzL3Byb2dfZ3VpZGUvc3RhY2tfbGliLnJzdA0KPiANCj4gInBlcmZvcm1h
-aW5nIiAtPiAicGVyZm9ybWluZyIuICBUaGUgdHJhaWxpbmcgIk5vdGU6IiBwYXJhZ3JhcGggd291
-bGQNCj4gcmVuZGVyIGJldHRlciBhcyBhICIuLiBub3RlOjoiIGRpcmVjdGl2ZS4NCj4gDQo+IDIx
-LiBUaGUgc2VyaWVzIG1peGVzIGF0IGxlYXN0IGZpdmUgaW5kZXBlbmRlbnQgY2hhbmdlcyAoRUFM
-IGFzc3VtZS0NCj4gYWxpZ25lZA0KPiBtYWNybywgeDg2IHJ0ZV9tZW1jcHkgZmFzdCBwYXRoLCBt
-ZW1wb29sIGNhY2hlL2hlYWRlciByZXdvcmssIHRoZSBwaWxlDQo+IHN0YWNrLCB0aGUgcGlsZSBt
-ZW1wb29sIGRyaXZlcikuICBZb3UgYWxyZWFkeSBub3RlZCB0aGlzOyB0aG9zZSBsb29rDQo+IGxp
-a2UgdGhlIG5hdHVyYWwgc3BsaXQgcG9pbnRzLCBhbmQgdGhlIG1lbXBvb2wgY2FjaGUgcmV3b3Jr
-IGluDQo+IHBhcnRpY3VsYXIgZGVzZXJ2ZXMgaXRzIG93biByZXZpZXcgdGhyZWFkIGdpdmVuIHRo
-ZSBBQkkgaW1wYWN0Lg0K
+The original flow support in DPDK was Intel specific and built around
+the flow director feature.  It was superseded by the generic rte_flow
+API, and the legacy filter API was deprecated in 17.02 and removed in
+20.11.  What survived that removal are the data structures: they were
+never deleted, only relocated, and they remain wired into ethdev's
+public headers.
+
+The visible cost is include pollution.  Because rte_ethdev.h pulls in
+rte_eth_ctrl.h, which pulls in rte_flow.h, every application including
+rte_ethdev.h also gets rte_ether.h, rte_ip.h, rte_tcp.h, rte_udp.h and
+rte_sctp.h.  A number of drivers and libraries have come to depend on
+that, without saying so.
+
+This series breaks that chain.
+
+  01-02  Remove an unused include, and drop the last use of ntohl()
+         in ethdev in favour of the rte_byteorder macros.
+
+  03-04  Remove the flow director private APIs from ixgbe and i40e.
+         These are experimental, so no deprecation notice is required.
+
+  05     Remove flow director support from testpmd.  The testpmd CLI
+         is not a stable interface, but "show port fdir" disappearing
+         is user visible, so it is called out in the release notes.
+
+  06-19  Include hygiene.  Each of these adds the network protocol
+         headers that a driver, library, test or example was getting
+         indirectly.  No functional change; each patch stands alone
+         and can be acked by its maintainer without reading the rest
+         of the series.
+
+  20     Move the remaining legacy definitions out of rte_eth_ctrl.h
+         and ethdev_driver.h into a single lib/ethdev/ethdev_fdir.h,
+         included only by the drivers that need it, and drop the
+         include from rte_ethdev.h.
+
+  21     Release notes.
+
+ethdev_fdir.h is a transitional home, not a new interface.  It is a
+driver SDK header, is not part of the public API, and exists only so
+that the drivers still carrying legacy flow director state have
+somewhere to get these definitions.  New drivers should not use it.
+The intent is to delete it once ixgbe and i40e no longer need it.
+
+This does not touch RTE_ETH_FLOW_* in rte_ethdev.h, which has users
+beyond flow director, nor the flow director state still held inside
+individual drivers.
+
+Applications that were relying on the indirect includes will need to
+add explicit ones; this is a source level change only, with no ABI
+impact.
+
+Build tested on x86_64 and aarch64, gcc and clang, with
+-Dexamples=all -Dtests=true -Denable_driver_sdk=true.
+
+There is still more to do here but since I don't have Intel
+hardware and there is no standalone tests for this stuff
+will stick to mechanical refactoring.
+
+
+Stephen Hemminger (21):
+  net/dpaa, net/dpaa2: remove unused include
+  ethdev: use byte order instead of ntohl
+  net/ixgbe: remove experimental FDIR API
+  net/i40e: remove experimental FDIR API
+  app/testpmd: remove support for flow director
+  net/gve: include IP, UDP and TCP header
+  crypto/dpaa_sec: include UDP header
+  net/nfp: break implicit dependency on rte_eth_ctrl.h
+  net/mana: include used network headers
+  gro: include headers directly
+  test: include headers directly
+  node: get UDP header
+  net/rnp: include network headers
+  net/r8169: get network headers
+  net/ngbe: include network protocol headers
+  examples: include network headers
+  net/mlx5: include rte_flow as needed
+  net/sfc: include rte_flow
+  net/intel: include network headers
+  ethdev, drivers: isolate flow director
+  doc: add release not about rte_ethdev changes
+
+ app/test-eventdev/test_pipeline_common.h      |   1 +
+ app/test-pmd/cmdline.c                        |  21 +--
+ app/test-pmd/config.c                         | 163 ------------------
+ app/test-pmd/testpmd.h                        |   3 -
+ app/test/test_bpf.c                           |   3 +
+ app/test/test_security_inline_macsec.c        |   2 +
+ app/test/test_security_inline_proto.c         |   1 +
+ doc/api/doxy-api-index.md                     |   1 -
+ doc/guides/rel_notes/release_26_11.rst        |  13 ++
+ doc/guides/testpmd_app_ug/testpmd_funcs.rst   |  36 ----
+ drivers/crypto/dpaa_sec/dpaa_sec.h            |   2 +
+ drivers/net/dpaa/dpaa_ptp.c                   |   1 -
+ drivers/net/dpaa2/dpaa2_ptp.c                 |   1 -
+ drivers/net/gve/gve_ethdev.h                  |   3 +
+ drivers/net/hinic/hinic_pmd_ethdev.h          |   2 +
+ drivers/net/hinic3/hinic3_ethdev.h            |   1 +
+ drivers/net/intel/common/tx_scalar.h          |   3 +
+ drivers/net/intel/cpfl/cpfl_flow_engine_fxp.c |   2 +-
+ drivers/net/intel/e1000/e1000_ethdev.h        |   1 +
+ drivers/net/intel/e1000/igc_filter.h          |   2 +-
+ drivers/net/intel/i40e/i40e_ethdev.c          |   4 +-
+ drivers/net/intel/i40e/i40e_ethdev.h          |   5 +-
+ drivers/net/intel/i40e/i40e_fdir.c            | 140 ---------------
+ drivers/net/intel/i40e/i40e_flow.c            |   3 +-
+ drivers/net/intel/i40e/rte_pmd_i40e.c         |  34 ----
+ drivers/net/intel/i40e/rte_pmd_i40e.h         |  33 ----
+ drivers/net/intel/iavf/iavf_fsub.c            |   2 +-
+ drivers/net/intel/iavf/iavf_hash.c            |   2 +-
+ drivers/net/intel/ice/ice_acl_filter.c        |   2 +-
+ drivers/net/intel/ice/ice_ethdev.h            |   2 +
+ drivers/net/intel/ice/ice_generic_flow.c      |   1 +
+ drivers/net/intel/ice/ice_hash.c              |   2 +-
+ drivers/net/intel/ice/ice_switch_filter.c     |   2 +-
+ drivers/net/intel/ipn3ke/ipn3ke_flow.c        |   2 +-
+ drivers/net/intel/ixgbe/ixgbe_ethdev.h        |   6 +-
+ drivers/net/intel/ixgbe/ixgbe_fdir.c          | 117 -------------
+ drivers/net/intel/ixgbe/rte_pmd_ixgbe.c       |  34 ----
+ drivers/net/intel/ixgbe/rte_pmd_ixgbe.h       |  32 ----
+ drivers/net/mana/mana.c                       |   2 +
+ drivers/net/mana/tx.c                         |   3 +
+ drivers/net/mlx5/mlx5_ethdev.c                |   1 +
+ drivers/net/mlx5/mlx5_flow.h                  |   1 +
+ drivers/net/mlx5/mlx5_txq.c                   |   1 +
+ drivers/net/mlx5/mlx5_utils.c                 |   1 +
+ drivers/net/mlx5/mlx5_utils.h                 |   1 +
+ drivers/net/nbl/nbl_include/nbl_include.h     |   1 +
+ drivers/net/nfp/nfp_ethdev.c                  |   6 +-
+ drivers/net/nfp/nfp_net_common.h              |   1 +
+ drivers/net/ngbe/ngbe_rxtx.c                  |   4 +
+ drivers/net/r8169/r8169_rxtx.c                |   3 +
+ drivers/net/rnp/rnp_rxtx.c                    |   6 +
+ drivers/net/sfc/sfc_dp.c                      |   1 +
+ drivers/net/txgbe/txgbe_ethdev.h              |   1 +
+ examples/l2fwd-macsec/main.c                  |   2 +
+ examples/l3fwd-graph/main.c                   |   1 +
+ examples/l3fwd/l3fwd.h                        |   2 +
+ lib/ethdev/ethdev_driver.h                    |  36 ----
+ lib/ethdev/{rte_eth_ctrl.h => ethdev_fdir.h}  |  58 +++++--
+ lib/ethdev/meson.build                        |   2 +-
+ lib/ethdev/rte_ethdev.h                       |  13 +-
+ lib/ethdev/sff_8472.c                         |   3 +-
+ lib/gro/gro_tcp4.c                            |   1 +
+ lib/gro/gro_vxlan_tcp4.c                      |   4 +-
+ lib/gro/gro_vxlan_udp4.c                      |   1 +
+ lib/gro/rte_gro.c                             |   1 +
+ lib/node/udp4_input.c                         |   1 +
+ 66 files changed, 147 insertions(+), 696 deletions(-)
+ rename lib/ethdev/{rte_eth_ctrl.h => ethdev_fdir.h} (91%)
+
+-- 
+2.53.0
+
