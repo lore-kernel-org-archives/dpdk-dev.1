@@ -2,76 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85663C55174
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Aug 2026 03:01:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5434FC5516F
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Aug 2026 06:24:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 588CF40272;
-	Mon,  3 Aug 2026 05:01:57 +0200 (CEST)
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com
- [209.85.216.43]) by mails.dpdk.org (Postfix) with ESMTP id A62BC4014F
- for <dev@dpdk.org>; Mon,  3 Aug 2026 05:01:56 +0200 (CEST)
-Received: by mail-pj1-f43.google.com with SMTP id
- 98e67ed59e1d1-38e07ebd263so1691199a91.1
- for <dev@dpdk.org>; Sun, 02 Aug 2026 20:01:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785726115;
- x=1786330915; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=Iw6Smf3pl3DaC8ZAXhVmb0EAWrOjO8PgUpkewQLsOQw=;
- b=HNz2lSSS/huWLxgFrIULQgWM0dBH2YESF/AgqEjbEwGvZfD509deBPdXgcsf24jzxW
- 2Bong3UQCd61/BWM593hXpgxAICyWdnrqV7H7o13eXXvIU0yv4WxRDu8beTREVcUFQBs
- CK/u+4CMvlAWCLC0G1ZYh96M1rhvMGrfjTfJolRZPOAMWuB/dgSkKj1pzpRZ8yyUvUYo
- zXspHTudyTCqw39op5EGEJB2cG/uDEDZX+NNbmznVZsg9DW3iT87zJx+W6Q0dAVjKm6v
- iOzMuItYNXE2JprTYzLUmgH6qFhHEuYTxVlI+Coo0OheQfPdnKxjnVfe8c4IISwXDKj8
- FWQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785726115; x=1786330915;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=Iw6Smf3pl3DaC8ZAXhVmb0EAWrOjO8PgUpkewQLsOQw=;
- b=qrNE7jkliV+AlxQgwsljZ04iBN4pY/4Hevwn38AAb8p/jB9bQR983chpQboK/exhiS
- 3nXf1Wr8KJT39m/bamiP6P5KW4TElg1An8Y2ZhfvdrxbH9uTutEeWeKb8bxpNgXtsRr2
- tsmcdZrwNhwyvk/WCSCTgilMeiPnvlAK6qdLlKyZ12LgdT3J+DRj1TmO9s52mjQnHQ0c
- 5U4+jRs9LjDJ2EJVF0IqhVrdACEMJiMm7hQv+BximhUhSh9p2WuJvrOMczGC2kqfXaRs
- OJvVTf9uSsJolkxl/vT+RvULsUEy0zOhFDWP3nQ+nH1nvtrXBiWK8raSvPh9kzXzpj0y
- UV0Q==
-X-Gm-Message-State: AOJu0YxWwl1EImPO8noTIlYKCE6fQz5Yna6TFQhgg0lx86Gv7ezDH5hO
- rsE6hA51LfMd32KK6rni9CW3dY2dogNaJY7mQT6lPD4U6+J7WKGBtdFA9uClU3YVf/c=
-X-Gm-Gg: AR+sD13pr4wTFK4mrQYql/0/9mbhLjGdXUtrlLBwfbWbr9YircnBgYjsJyhwaYuG2QN
- rmlKMqK2og1ohfoXzljLxF6kRnDVOQvUNoQtHr5n5G6fypE377tOvJOb0XzR7dfs6O8IWnHdsz4
- sOh/2zhJP32/2HZCnYPNQlGQtbRl79vcOvtS/0NXQy54g9Wszw8DOPgnD6+2NtKh5oD6aPhVqSe
- kBxNYJyorxNH7tEIxglgb7MAWcbErt405RjBU76rQ+z8WShmtVTxAqMO/kSIdpIpjqGPSAX2ocW
- 5UWYDq2DmuFDboIvwKTOlFH3yA+a8/NLyOHfk+UWjWQgocoJsFwD3yEuq1bBA0A0UehgBAbs80s
- GpA1rbLRqLZu0NV4oFnApLm7ANgDwTwwDFMgM9P0ere2F9xTVd9IQAHRWAFoULXNNgcA2u/bSOw
- PZYz+FW4CoihxEDNx2rmF7jDlAktrdRljiWugpF+IPbijHwDdJiXEZoUOXCoAI1zivfenF3S0Vr
- wnSruOi7HLijipCqADjLnXMaaN2BA==
-X-Received: by 2002:a17:90b:2dc4:b0:38e:ad9d:1151 with SMTP id
- 98e67ed59e1d1-38fbc3f807cmr8146272a91.4.1785726115420; 
- Sun, 02 Aug 2026 20:01:55 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-13fab4cb50dsm41887987c88.10.2026.08.02.20.01.54
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 02 Aug 2026 20:01:55 -0700 (PDT)
-Date: Sun, 2 Aug 2026 20:01:52 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Marat Khalili <marat.khalili@huawei.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>, Jerin Jacob <jerinj@marvell.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>, Akhil Goyal
- <gakhil@marvell.com>, "Anoob Joseph" <anoobj@marvell.com>
-Subject: Re: [RFC 11/21] test: include headers directly
-Message-ID: <20260802200152.520fccaa@phoenix.local>
-In-Reply-To: <4a00ff617234470da636f5b1915eb663@huawei.com>
-References: <20260802181835.476887-1-stephen@networkplumber.org>
- <20260802181835.476887-12-stephen@networkplumber.org>
- <4a00ff617234470da636f5b1915eb663@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 4595640272;
+	Mon,  3 Aug 2026 08:24:26 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 10C3840269
+ for <dev@dpdk.org>; Mon,  3 Aug 2026 08:24:24 +0200 (CEST)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 6730G2mM3311422; Sun, 2 Aug 2026 23:24:24 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=26Nkw98YMCKg7nT+FRxGodh
+ wpGmcj2dtYNYrY4l7U7Y=; b=k6gTA3wux1KTAyPH7hLYw4uS21dj7vwAtEE3rod
+ Pc0E1BQFQc4fwp2e8R9EDZWTYm9F/TSthijdkGDr5eMgc7guk2o4Fr7wlSNAiknq
+ PE1rF6vZqL4NWXBMzQWBncYnsN4cB0rcNqbOy2f3wB8Do9ol8eSgrfqH0QAth+LA
+ IAT1B97qE0enzkpqawbPB3MetnspG8gZeUvxSi+dmm4GpDyzh282QFzd1xzbUoGt
+ Ela0cjHUP3bdiwoQU0Sn8CeJXgOxZKMmI6nOVl0YsmPIpqfTW1ilShPGnpPA5vXk
+ 6+gCly6nT1KNERcs0zqwuuwvZ0e3TjMlkqEYYBmwXdqLr7w==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4ft1j8hwk5-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Sun, 02 Aug 2026 23:24:24 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Sun, 2 Aug 2026 23:24:22 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Sun, 2 Aug 2026 23:24:22 -0700
+Received: from hyd11149.caveonetworks.com (unknown [10.29.44.105])
+ by maili.marvell.com (Postfix) with ESMTP id 743F63F70A4;
+ Sun,  2 Aug 2026 23:24:20 -0700 (PDT)
+From: Rupesh Chiluka <rchiluka@marvell.com>
+To: <dev@dpdk.org>
+CC: <gakhil@marvell.com>, <ktejasree@marvell.com>, <anoobj@marvell.com>,
+ <jerinj@marvell.com>, <stephen@networkplumber.org>, Rupesh Chiluka
+ <rchiluka@marvell.com>
+Subject: [PATCH v1 1/3] common/cpt: use timing-safe digest comparison
+Date: Mon, 3 Aug 2026 11:54:13 +0530
+Message-ID: <89e98b3ccc1ad93ed67fb5750c88df94f0c1ecf7.1785737875.git.rchiluka@marvell.com>
+X-Mailer: git-send-email 2.48.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=Ip0utr/g c=1 sm=1 tr=0 ts=6a703418 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=Sv0fKeRqtYgA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
+ a=qit2iCtTFQkLgVSMPQTB:22 a=M5GUcnROAAAA:8 a=JR0WhENSYSrLnM2BT_EA:9
+ a=zZCYzV9kfG8A:10 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODAzMDA1MyBTYWx0ZWRfX9DQZzqTLbMU5
+ fkvZnY+/6F2BCTGF/9VzwTQxsYgsLEYP3khErO3+c6GCu4SFYsdqdU5LNbVqigJ5RB1sPJ3CQ/m
+ HHGGVk3fEcOE/ejnB7C/QdCGGBvpG6M=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODAzMDA1MyBTYWx0ZWRfX/1zmlNvCLPxT
+ xlhwc9uV2sf4UwGKaaj2XAA4EcCeFspTPmv/S0//5xLKjzIoeGcL66XyPxeg07kAD3+my/QvEFu
+ JqplGLTcviZmJhdrtbpZi+YJsaU/LipaWmhesjJ8ETNlPCNcvAC0/OcZdUkukrOL38Ihauf8sS+
+ D3xN5sFha44CFOyqAUqxYbi6ywMpUr/KIZ5FKFAkk17zUHJdlY4stKv2aM59JHgPN9M78IzK0vB
+ QBq4l4vydmLEQzb1aB8SaklsfGaSVGY+G/bnx6C85O+xTmrYAxolm8NPKvfuySSkd3Fv/N1BXnN
+ yIC0NtICF5O3oUErG5Mf3E1WX+/3iVB70l8KCb4xk5bgj3Un5mGZ0wJHmEHzisF6z/BcLai7PWD
+ mQXEE61976LFXyiSIWi1LUEM+2au2S8VY2LZ4RRfTq9a6ygFo0Ubnv2ZssRFNeFN5MMrt01CExY
+ Ce266SARamyLFwlDSGg==
+X-Proofpoint-GUID: K5hXVVNkGD5Fh8GtyAOCh8pWv8F1jYzF
+X-Proofpoint-ORIG-GUID: K5hXVVNkGD5Fh8GtyAOCh8pWv8F1jYzF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-02_06,2026-07-30_01,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,38 +83,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sun, 2 Aug 2026 19:37:04 +0000
-Marat Khalili <marat.khalili@huawei.com> wrote:
+compl_auth_verify() compared the generated and received MAC with
+memcmp(), which returns early on the first differing byte and leaks
+the number of matching leading bytes through timing.
 
-> > diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
-> > index 3205afaa63..32389c803a 100644
-> > --- a/app/test/test_bpf.c
-> > +++ b/app/test/test_bpf.c
-> > @@ -15,6 +15,9 @@
-> >  #include <rte_random.h>
-> >  #include <rte_byteorder.h>
-> >  #include <rte_errno.h>
-> > +#include <rte_ip.h>
-> > +#include <rte_udp.h>
-> > +#include <rte_tcp.h>
-> > 
-> >  #include "test.h"
-> >   
-> 
-> This file has another group of includes guarded by RTE_LIB_BPF several lines
-> below, with `#include <rte_ip.h>` already there. It also seems that the guard
-> is redundant since `meson.build` already declares same dependency. We probably
-> should avoid adding duplicates, and optionally also do a cleanup here.
-> 
-> With test_pipeline_common.h I could not find what uses the newly added header.
-> Other changed files have guards against MSVC which are not redundant. If the
-> new includes were added under this guard I could probably ack the change as
-> harmless, but as is the opinion of other maintainers is needed. So maybe
-> splitting the commit per-file would accelerate the process.
-> 
-> Obvious question is if we could have some general policy and tools.
-> Explicit includes are good, but whack-a-mole approach can only go so far.
-> 
+Use rte_memeq_timingsafe() for the verify comparison.
 
-Good point. There is a good existing tool 'iwyu' that does this.
-Will use that.
+Bugzilla ID: 1773
+
+Signed-off-by: Rupesh Chiluka <rchiluka@marvell.com>
+---
+ drivers/common/cpt/cpt_ucode.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/common/cpt/cpt_ucode.h b/drivers/common/cpt/cpt_ucode.h
+index 636f93604e..a6ecbaf429 100644
+--- a/drivers/common/cpt/cpt_ucode.h
++++ b/drivers/common/cpt/cpt_ucode.h
+@@ -3354,10 +3354,10 @@ compl_auth_verify(struct rte_crypto_op *op,
+ 		return;
+ 	}
+ 
+-	if (memcmp(mac, gen_mac, mac_len))
+-		op->status = RTE_CRYPTO_OP_STATUS_AUTH_FAILED;
+-	else
++	if (rte_memeq_timingsafe(mac, gen_mac, mac_len))
+ 		op->status = RTE_CRYPTO_OP_STATUS_SUCCESS;
++	else
++		op->status = RTE_CRYPTO_OP_STATUS_AUTH_FAILED;
+ }
+ 
+ static __rte_always_inline void
+-- 
+2.48.1
+
