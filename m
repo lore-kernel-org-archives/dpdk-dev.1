@@ -2,92 +2,126 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE741C55175
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Aug 2026 09:16:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 190D0C55175
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Aug 2026 09:18:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3D25A402E2;
-	Mon,  3 Aug 2026 11:16:26 +0200 (CEST)
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com
- [209.85.210.53]) by mails.dpdk.org (Postfix) with ESMTP id 7AD6A40272
- for <dev@dpdk.org>; Mon,  3 Aug 2026 11:16:24 +0200 (CEST)
-Received: by mail-ot1-f53.google.com with SMTP id
- 46e09a7af769-7eb1dc6bd53so1934578a34.2
- for <dev@dpdk.org>; Mon, 03 Aug 2026 02:16:24 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1785748584; cv=none;
- d=google.com; s=arc-20260327;
- b=RZZzq/+GZbGdTufLhzWwbGWKK4n+wEKQ5g43TAsGGgOhu4AtdXdk7+AD2jhri19LuE
- EpBDBuUuG8H83GGXMH1tSexivlNV8QgZyfU9delm9PFmPUgk2/NqdwXifF8Z3FyGr3sM
- wTdrDvjNXOOsvYX2IfPrBgvW/mX+CoOFf+8Xa8E73+ggXwsEC30kWbRU+6JE7ePsEtDP
- RmK4McQ35yywdDSLuRMAthDqMM6T1KZJ1w0PvOsA7gSkkdS37U2JEM/nwq3D6zO0mw+x
- eTTvGPx81te0BHEgHIeEoARSb6FqiYnhvtFjAvHF35oyu/5z7/zK6UJ0Zu70yWH9G/3p
- j2bQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=MlHVn2NkDnFPDTnENso1MAQSEQaIomEXyYLFOxVlWc0=;
- fh=DHZTw2arxLbniIV2UDDBWqcUzMSWMyy00ACQCLBUWjA=;
- b=FSBHPEeh58330Med9Ji3bIHpTpXjj5l1Qz2L6xAeSpaBobquJUVVVt85ybnccKSxJ/
- B5RlaOnrtVWKpHJJ4PMpbGHFoLjDDNhQx0iyBrP4oiiP3DVHvScI97pkLMB9aNJcjhs3
- 0wdSyYm/61UZ94n9YbqC2Mq0BF8cl8U3wkIPjAsVKgg9hD4J8URGbMFKhRxJf/CrJne+
- mIjGjC7cpFBvZEeN/vTyHJVrDDEjxUIZoqeT4fluEjoZ9nLk8d5Hc6XSeiBLaDIk5jTG
- eI7evsE1JHZRamX9UkUY2Rg0Ylh9IGQVToOCXVu/0xzYFgvseq/XWwaPRCbwq2cP+YIG
- 5t2A==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1785748584; x=1786353384; darn=dpdk.org;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=MlHVn2NkDnFPDTnENso1MAQSEQaIomEXyYLFOxVlWc0=;
- b=Cj49l4C3dJJ43Udz7cWDwmabwdd9PneSnmd7hqOPJlMXmxdmrn3GDVqMZyi3n7BTqz
- U22MNprRY+QftmD1uVb7E3Fjg43VhIoQViHlvtO8JoHijMUnTsiQJNS8vXm6QKnh2etF
- GA28DWSDL/a9FFjU1ACOgV7Z/F78j4yzpc9r7BRq1qeW5+T7ggdCmt/0jHNBpyZSFEXW
- frtXnTlsUYYruF61mWjCvOag2o2urQ2i0aqby6prfB6yXSMpRCAvXue4/CTWRdXLZsot
- M8fYV9+EhOAlYJU13j5ifZPHBzXzI+Nw9yelOnD11x2convkDeTGsvjnddy/paKLWFvL
- hhRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785748584; x=1786353384;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=MlHVn2NkDnFPDTnENso1MAQSEQaIomEXyYLFOxVlWc0=;
- b=KkEswRDEMPD9Q9HVIY0V07d+NONoPZSCYOKqgMynvNl+1xc4nfZfXme6i77/8modqf
- 5q4qMtik0gNLNgp7b3mlqeqLVanYs68pZM1kuhE5NrQ2ZOTbBhMzHX5DiUa5zkxed+P1
- sQy0ybr9t5t309OntQVS3DrQxlQy0Ow2a6ddWeR83s+BenC3+cDsx7n7IHz3mj/tVXSR
- 6I3hAet58qtjp06uZJkznNlKeL7ORDv6CwBP6+tf3kMu0zVbCUK/uLFrrKEol7uTy21z
- rNL+SUxo9sXTqD1QBK9tTXYVZn0pLh8m18aSeIMH+m/UojozmaHFJGLWV6wB5k7iyxMG
- 9Ceg==
-X-Forwarded-Encrypted: i=1;
- AHgh+RomxnAT7n1Q694HB+aKCtb7XCB6gKF17jYBFWqWmRZ+uGOZTm4lRpNJ051/e+IR16op7jM=@dpdk.org
-X-Gm-Message-State: AOJu0YxtnsfgdlQoMAlqIog0r5iqFwoKQwWpY50xdVIT9iuPJv3Jqv6P
- cu9HSFuxc6qY+77VnxFxbfFePwS9nIVirY7lkR+qnkyuNM03m8tcC5OD/e1FBj05H6CSf9pJJA3
- cvtHdjgUEGOIeI6CEebxGSzYvnDnipYg=
-X-Gm-Gg: AR+sD10w3x5lGH7CMwQvAic/wLmxI+s4n/9OminxaYi8V56SRwahGbc7F5qFVL3yvrt
- nb65zd1FLRJX0MxyH/LUUT9RAcjhB+Cl/Z2trlW2OVl0cMgmuNdY2VvyDlfLvqL0BruZpt9YK4K
- GTuRssllV91OpqtgxXYvI7tczUYzNzO+OsREwDZPUsJpURLiDUjLhNCFu9Tzdmmjuzi4NlvJPKT
- jDWpBRqAYov/Z0BSb94qku/8KFcHZ7PqnIyMo33BD11og4zfW8FbQ3Yy4gzQ6+UhENmddDlnyBV
- 03II28Jlbf5FXK2zaq3gVzqJsbk457uLeetB0LXVchdd4g==
-X-Received: by 2002:a05:6830:211b:b0:7e9:c102:333d with SMTP id
- 46e09a7af769-7f196f8ad8cmr15229230a34.9.1785748583677; Mon, 03 Aug 2026
- 02:16:23 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 87D2440269;
+	Mon,  3 Aug 2026 11:18:38 +0200 (CEST)
+Received: from CY7PR03CU001.outbound.protection.outlook.com
+ (mail-westcentralusazon11010037.outbound.protection.outlook.com
+ [40.93.198.37]) by mails.dpdk.org (Postfix) with ESMTP id D66D040269;
+ Mon,  3 Aug 2026 11:18:36 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HATir+0Lnpvww+C6ez5yufpU8dJDUpCDVW5aICzWPCqOuLmXCC5p+XFFXULe7bLWjlrtpKawVK4Wf0BKaE9aMnmKJGio66CPC2dJDtOIovElJ10pvS6KwLu/7DHbhfRk5jbRFp5TRfktZG27Da+lp/FSoWKwfd83BW/eNvgW/paJwgivDQ9lOvdJEZAEBqAUH/eQuK724Q906SAZPJN6GBvxyxArbxSch/TOupYGweHFGBAKwXXBqy6eyVA+pFP/uek3F+0iJyCz7CrssfEEAWS8H6WvAHvmPUyiTlkSbE8qoK4uVElNKs9YlwZk1DY+w+Y1bKXw1VLMPy0BvMADzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CN2DrCjKgdOE/KPVwlsLzoOtPcS3Nh5Cf9yY+jnTaFE=;
+ b=Bb//18V9N1pcmP9eU3FlO7HWQQDWwxEAvEYPRnjhDhaUnU9vipk/WeykPm50p2j9+qC5LjZU9A28lGGQloRi+8c4dN83I7o4d5bESy5JBbUkNt1MbGgCRg3fXeU9FoE8Mzvr7KiQ5l6xGIJvgbmCTmg/XB3+a8Yy3d7NsY04hobaMCmzly2TvnPI83LG4095wYB5uhturRJ92E/cOGuTZXjXhzO6I7eQGDhkC4MYhN2oZPp4j80P9h91QtBUDGxR8KaKsKUHemn6uP0KR73+pc2qi6aCTHB7nh+Yc7Vp2ln1J5KSLc+RpzzNepZ4RlA2z6fj0wQkUp8jZ6+zX5uBJQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CN2DrCjKgdOE/KPVwlsLzoOtPcS3Nh5Cf9yY+jnTaFE=;
+ b=Jzb6A5E/Cgq/gtJ/jI+1dKtxvbgcDLgBiwerQIGye040f5UWnzH0oYYp+/ypDY9tgTs4PVsmxM72DylWcLJ8CjfB/iewfb7RZxnWZa10fj+1Y4St+P5bvlD1LrB3os51p5suDD8XtYE1TaKzP7mtIxbQEPsrK7rzAtDjoMbPtvKNbB9A5fANJq3ZwFZiuRtsGQE9SH3/qKx+jlm3b+87M86SxF5HzkOdBuRLBPhus5u7DGIskjsggB4apICwGNOpX9SBozaxuA+6faGo7HcNVNhkbn9Bcn9touw2q3NdC/ghLEeESdJRp/sxtmyiq83N6McZuhpAdIay0Ji3jZ2dvg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MW4PR12MB6754.namprd12.prod.outlook.com (2603:10b6:303:1eb::7)
+ by DS7PR12MB5815.namprd12.prod.outlook.com (2603:10b6:8:77::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.270.17; Mon, 3 Aug
+ 2026 09:18:32 +0000
+Received: from MW4PR12MB6754.namprd12.prod.outlook.com
+ ([fe80::baee:e8cc:6cbf:3d84]) by MW4PR12MB6754.namprd12.prod.outlook.com
+ ([fe80::baee:e8cc:6cbf:3d84%4]) with mapi id 15.21.0270.017; Mon, 3 Aug 2026
+ 09:18:32 +0000
+Message-ID: <b62fba61-0317-485a-bb1e-e42cf271ff92@nvidia.com>
+Date: Mon, 3 Aug 2026 12:18:21 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] net/mlx5: avoid wildcard drop flow in priority
+ discovery
+To: Gavin Hu <gahu@nvidia.com>, dev@dpdk.org
+Cc: Wei Yan <yanwei.wy@bytedance.com>, stable@dpdk.org,
+ Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>,
+ Ori Kam <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>,
+ Matan Azrad <matan@nvidia.com>, Ophir Munk <ophirmu@nvidia.com>,
+ Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
+References: <20260713041856.67144-1-gahu@nvidia.com>
+ <20260714060751.44814-1-gahu@nvidia.com>
+Content-Language: en-US
+From: Raslan Darawsheh <rasland@nvidia.com>
+In-Reply-To: <20260714060751.44814-1-gahu@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR2P281CA0164.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:99::14) To MW4PR12MB6754.namprd12.prod.outlook.com
+ (2603:10b6:303:1eb::7)
 MIME-Version: 1.0
-References: <20260727211003.22590-1-kobikenzi@gmail.com>
-In-Reply-To: <20260727211003.22590-1-kobikenzi@gmail.com>
-From: Nithin Dabilpuram <nithind1988@gmail.com>
-Date: Mon, 3 Aug 2026 14:46:12 +0530
-X-Gm-Features: AUfX_mxayafHvmDpyZb7NRFq-H4--V67Nwd4DRL6Ex0sEsQzgXfrxeKDh_GQMNM
-Message-ID: <CAMuDWKS82pVaKkE4rSH9A1NTPZF8JZRTx7QkDFvZ7MBfzhzhoA@mail.gmail.com>
-Subject: Re: [PATCH] doc: fix typo in CNXK guide
-To: Kobi Kenzi <kobikenzi@gmail.com>
-Cc: Thomas Monjalon <thomas@monjalon.net>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>, 
- Kiran Kumar K <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, 
- Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>, 
- Rakesh Kudurumalla <rkudurumalla@marvell.com>, dev@dpdk.org, stable@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW4PR12MB6754:EE_|DS7PR12MB5815:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0c584dbd-ef06-4da9-23cd-08def1402f4c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|366016|23010399003|376014|1800799024|4143699003|56012099006|11063799006|10067099003|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info: 8qAkBchrM45nRrcWiDjdWKBKWuQvhV/qa59EGPLb9dMc23hYcBwhMXEaOMsHll3/jo4Q3zF27ojO+hPkpUdDnVC5Y+y0gEA3EYbFg83UXkKruRp97FwOsWO0AdnadTrNKqg0OXdsaEYsyQsVZWy8B2RHnNctmE1AHqcYXfwWqN0+QgyOhPfDHCfH2JWLJl8Xwa3hWoC5o7wPdewzAcpVW3un2qTJ5NBgo4weZ0z4Yrp2Bk/zqARkUreS7U4NuUkjdqWH5FdQ8DCYOmWvaTzM5iQe5L6MMm2VbFiJwsz7rpa2x7TMMDyjCTnm+I3F9gxn0hPrdcwqmyNQ1h+RsKlwL0gziCsxaejwZvaSSLle4H+/98dwb3zRpIKFx3t0//H2jd0xWvup1kIXwqZIHjrq9Cdv8gfnJJyJded/AeEXCLXcfA+iYUA+zQO+IpsutWZzDVryQ1LlgUvL4oO/r69XJQBshriq6wrk+C1Vr47zjbiAQPsmrg451JcAEo5TU9LFqZox0BovPRNA5sRTQ3z4dpo8pudrZ2PA5PV4uwbu9UC7iaYnKY2IzRQ9B7YnOnErIP9mW+L9F3/pDBW2jD4BeksBzxDMYh773mKB1sHY6PfaYrnXLwDgXCScZnTU1HgA0e/Os3uKvcIKPPjsNKY8mjZjOwEdIMr6PRiygbQyGGs=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:MW4PR12MB6754.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(23010399003)(376014)(1800799024)(4143699003)(56012099006)(11063799006)(10067099003)(18002099003)(22082099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SnZuN0k4cGhrR1J1c0dqNDZzUkh5R0R6M1lyblRlL1owWG9mditEVnAxRW5Z?=
+ =?utf-8?B?MXAwaWlnR29KNVo3K0lMRG5pTUJIZmNrUVZMVDdJK3RSeFNLZURWZWVpclNU?=
+ =?utf-8?B?aitGZ3ZtSjJMZHRsOGJ2aGZmT1FmVE92eU4rWlFmT3h2YUNPWk4vU3FHaisx?=
+ =?utf-8?B?K3RGVjM3MTZOeW5iaDhnVTlCMDR2bkIwWS83Z0tuU3Qwb3RBbEtob3BtNEFH?=
+ =?utf-8?B?cU9RZ3BTb010Szk5YWNmSlBHZDZmNHpPdEUzZmdtcUxodEx0bHU0R3BlcTM1?=
+ =?utf-8?B?dXUwY3ZhRGZkNnV0OFI5amRmdk5ZeEhudlVkZnhxa2EvakFxZE1raWhtOTJm?=
+ =?utf-8?B?MDBkUnV6NEN6UXNhN0JjSm5pYWZlOVh0MWc4VkdKTklNWVZnNnNSWjdPaWVn?=
+ =?utf-8?B?bTF4QVVZRFIzd2s3bkkyakw3eU5pWHB4REx5dlBZWUMyeU8rWVVwRTZCdGtq?=
+ =?utf-8?B?Qlc3Y3RXWG9tbUJaMnJDTmxTNExERG1XbmRyVy9lNmplVEk3czdwaFBSUENW?=
+ =?utf-8?B?ZTlzV3B4enF3SE54Q3ZSdjFkeHBLU0gvOU1ZZk1oVUZlVUhrZm9obWR4enJk?=
+ =?utf-8?B?d2kwSzB1WFVucE1CZ1lCaUlQcXpUNkFOYTRzaHViS2JnUTRvSTNyQ0c4bUNI?=
+ =?utf-8?B?TE5BUE1tQWhidGRUVzkwNzF4YWVzQVZCdmZMRm5xYlgxc0tBTm52VldkSjMz?=
+ =?utf-8?B?V2s3NFRCb3p2OWlBT0oyb2wrZWNzRnlBV054QmhFWC9OV2FTR0FTekNaSjQx?=
+ =?utf-8?B?MmpXUjRrTUJoZncxQmJmWHF0enFxWVlIY2M2ZmhIeUtWL0RUa3ZwdDBRSmN6?=
+ =?utf-8?B?bVdPOUN4WnBhTS9HOGZ2Y29FL0JHdEV1UW1KKzI1NlBmV2E3RjNVR0VaaXA3?=
+ =?utf-8?B?QjVXQWZyQlhJb1JjYnE0SzlGU3VUU3FxcHVPZEhiTjZzRXJvMmJaNzhGeXVT?=
+ =?utf-8?B?QWx4M01vN3ZmZkY3VnZIZWkySlJIWDNRVXhzUm9JWUxlRi8vUWFGVlhZTGsr?=
+ =?utf-8?B?clFiVDFRTmNQNnlXSjFxbkhpamNjekJFSHp1Wk5EZEZ2T3ZKUmZsLzNhZEF4?=
+ =?utf-8?B?WGZERkZlbGhUNk8zajlNUGpPOHRQUGpMT3N5STlqS0diNTA4a2JSR2pzQzFS?=
+ =?utf-8?B?YzRNRTRuTmg2alNEcTlzRDN4Q3AzMTlBbnNxQmIwZFl5VE5zY3UwTTNCcnFx?=
+ =?utf-8?B?M1BJV0s4WmwvR09SY1BzY2VzaUgxaldZOHJQVXJQUmc3OFF2Ylh2T05sVko4?=
+ =?utf-8?B?KzhsNHQ5Y2JzMzR6ZzRPZCtkajdWSktzT2YyUktXYlMvMlg5N2o5N1lJOVh3?=
+ =?utf-8?B?T0h4K0xkYjhKWnlzcXNNQmJaN3JyZDdVSFgzSzdkRk5sYmcveTdHR2ZrN2dE?=
+ =?utf-8?B?QkJTUFdVNEJRaVUrdVE2M1hzdzRvZ2c0YnlLK2RlU1ZyMXI1M0JHc01sWFov?=
+ =?utf-8?B?VDFGNWJzV1FEb3lzVmJqaGw1cWNGSTgvakFnVHBza2RrYUozZWcxa1E5dnpS?=
+ =?utf-8?B?eW5IZW5FenRwMzNYb1AvZnM5NmNlZThPYXlyWmtPZnN6QTRITXkyMHMrS1M3?=
+ =?utf-8?B?OVdULzcrWnp1b043QkdwWXNtZTFFYlkrQWl0dDhsNDZVQlZhOG40anA5QkI2?=
+ =?utf-8?B?ZE5vMmh3Wm1pblJsSDVMRU51ZVE2MEpiamVtOFJoZzQ2SXlwbDQzRGdPOVdu?=
+ =?utf-8?B?eXNEMDdiVld5aHJKR2pZaWRaSUVpQWN1S1FJYktsdFNRalpVNFFMSWJjMjFZ?=
+ =?utf-8?B?U012VnF6dklrR1BLOHRkdE5mN1NFcldUTWR6anZYekVCYnowdThibzAzVU9Q?=
+ =?utf-8?B?Y3hXNHVNTklkSk54ZTNzVVVDUVBXTmNTVE1CM3RHdE1kdUVBOGQ4b1VCMmhH?=
+ =?utf-8?B?TjBoT2szek0wZFhKOE93OENubmhSM0hVOXlDTjFjckFxaG85dytHOXZNUDAv?=
+ =?utf-8?B?WWxkWXFDSlpCTkJMY3lHWFBDcmFhakxVb2hiUWVOVXhvQ20zSVQ5L1QweHpi?=
+ =?utf-8?B?b25kSGZFM3FKT2xMQlcrZnZsVTVIUCsyZTVTTkxKYmw3QklDRkRQOWFEYVlk?=
+ =?utf-8?B?VG1nU2tZSmZRME55S2czQ2pkM1gyUHNXUVJTTDJpdjBLUmVORjVoYXYvOFFo?=
+ =?utf-8?B?ZGJvWnIrTXFSWUVmeHQ1TENkNS8xN1UrQ0E0empjNEkzamt4cXovaUZwOHRJ?=
+ =?utf-8?B?MlRwZUE4MlRXbElHeFdGanlZall2bTJzMXVZOUg5cHo5UFVhTTZQZWV2UXBl?=
+ =?utf-8?B?eXVaam1HcHY4TkV3dDhjdWZqdlBaQmFNWjBTdUw1SWYxZGJ4ZWZvb2pkOXBn?=
+ =?utf-8?Q?RsSoJcy/V8gTuRONKp?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0c584dbd-ef06-4da9-23cd-08def1402f4c
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR12MB6754.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Aug 2026 09:18:30.9675 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: j/vctoywi9l2SL142Dhez7ZcfICKPxTJlfcziOAcfbthaq6Al/ZFAWQMIuCT0FBscFQ+q9GyBxd+H52Z+bY9KQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5815
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -101,50 +135,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Acked-By: Nithin Dabilpuram <ndabilpuram@marvell.com>
+Hi,
 
-On Wed, Jul 29, 2026 at 4:47=E2=80=AFPM Kobi Kenzi <kobikenzi@gmail.com> wr=
-ote:
->
-> Correct a spelling error in the transmit completion handler documentation=
-.
->
-> Fixes: dd9446991212 ("net/cnxk: add transmit completion handler")
+
+On 14/07/2026 9:07 AM, Gavin Hu wrote:
+> From: Wei Yan <yanwei.wy@bytedance.com>
+> 
+> Priority discovery installs temporary drop flows to probe supported flow
+> priorities. These flows match a wildcard Ethernet pattern, so they can
+> also match real traffic while discovery is running. On shared devices this
+> may temporarily drop kernel traffic and cause TCP connection timeouts.
+> 
+> Constrain the probe flows to match both source and destination MAC
+> addresses as ff:ff:ff:ff:ff:ff. This keeps the rule valid for discovery
+> while avoiding matches on normal Ethernet traffic.
+> 
+> Fixes: 3eca5f8a610e ("net/mlx5: move flow priority discovery to Verbs file")
+> Fixes: c5042f93a425 ("net/mlx5: discover max flow priority using DevX")
 > Cc: stable@dpdk.org
-> Signed-off-by: Kobi Kenzi <kobikenzi@gmail.com>
+> 
+> Signed-off-by: Wei Yan <yanwei.wy@bytedance.com>
+> Signed-off-by: Gavin Hu <gahu@nvidia.com>
 > ---
->  .mailmap                 | 1 +
->  doc/guides/nics/cnxk.rst | 2 +-
->  2 files changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/.mailmap b/.mailmap
-> index fcb3d1bb3f..f44296a218 100644
-> --- a/.mailmap
-> +++ b/.mailmap
-> @@ -887,6 +887,7 @@ Kiran Vedere <kiranv@nvidia.com>
->  Kirill Rybalchenko <kirill.rybalchenko@intel.com>
->  Kishore Padmanabha <kishore.padmanabha@broadcom.com>
->  Klaus Degner <kd@allegro-packets.com>
-> +Kobi Kenzi <kobikenzi@gmail.com>
->  Kommula Shiva Shankar <kshankar@marvell.com>
->  Konstantin Ananyev <konstantin.ananyev@huawei.com> <konstantin.v.ananyev=
-@yandex.ru>
->  Konstantin Ananyev <konstantin.ananyev@huawei.com> <konstantin.ananyev@i=
-ntel.com>
-> diff --git a/doc/guides/nics/cnxk.rst b/doc/guides/nics/cnxk.rst
-> index cb7a86e8fc..56ad9dc7cf 100644
-> --- a/doc/guides/nics/cnxk.rst
-> +++ b/doc/guides/nics/cnxk.rst
-> @@ -409,7 +409,7 @@ Runtime Config Options
->     When transmit completion handler is enabled,
->     the PMD invokes the callback handler provided by the application
->     for every packet which has external buf attached to mbuf
-> -   and frees main mbuf, external buffer is provided to applicatoin.
-> +   and frees main mbuf, external buffer is provided to application.
->     Once external buffer is handed over to application,
->     it is application responsibility either to free or reuse external buf=
-fer
->     using ``tx_compl_ena`` devargs parameter.
-> --
-> 2.43.0
->
+> +v2:
+> +* Fixed the compiling issue by some compilers in mlx5_flow_verbs.c.
+> 
+
+Patch applied to next-net-mlx,
+
+Kindest regards
+Raslan Darawsheh
+
