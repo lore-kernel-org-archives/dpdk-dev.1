@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD48FC55184
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Aug 2026 16:54:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44C39C55184
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Aug 2026 16:54:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F228140A4B;
-	Mon,  3 Aug 2026 18:53:22 +0200 (CEST)
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com
- [209.85.215.181])
- by mails.dpdk.org (Postfix) with ESMTP id DAAD640691
- for <dev@dpdk.org>; Mon,  3 Aug 2026 18:53:15 +0200 (CEST)
-Received: by mail-pg1-f181.google.com with SMTP id
- 41be03b00d2f7-c9fe3c9bd5fso80364a12.0
- for <dev@dpdk.org>; Mon, 03 Aug 2026 09:53:15 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1739C406B4;
+	Mon,  3 Aug 2026 18:53:24 +0200 (CEST)
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com
+ [209.85.215.176])
+ by mails.dpdk.org (Postfix) with ESMTP id E296340695
+ for <dev@dpdk.org>; Mon,  3 Aug 2026 18:53:16 +0200 (CEST)
+Received: by mail-pg1-f176.google.com with SMTP id
+ 41be03b00d2f7-ca80d708489so69034a12.1
+ for <dev@dpdk.org>; Mon, 03 Aug 2026 09:53:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785775995;
- x=1786380795; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785775996;
+ x=1786380796; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=n9hw+M6eRVed4boVcugzYoR9TdG+QylMmS7ERWW1X1k=;
- b=cw0H0YJkRcWELgslgyyrWfssE2d1GSqwYjjPv3d97xu0Ook/V8Pliii+YC6eCKPYzK
- FfBha28v0ImulJ/VOhGAc3V22q0Ji89QvEP+NlQz9R+w1galzGr8Cjknr0qIsR7GWGvL
- EzKluGfU6x0VNKxkPsM8VfE6p89tjpDTz8urQJVMHocFrNCSWrgw0VpWm8SKeCr6EyA7
- G8hMLFvt88RGcZ4W/HL2vFtrmTFXmSQEAlbJyxX904qXeTcTw6EAaUQgevi7tlQPm76o
- YRvY3tiFfxj/VvWVED3XhsJIqQCac72hai21JjlWk9y2dr4O+2A9S4uLCLi3S7L4GMq+
- GUFg==
+ bh=EfYYPoZlVBAvm5TydGIOrJRU4bw/HozNqEiPB3KBVWI=;
+ b=dT0wOjkn8F67VKCrOMw+zI1sIBkcLe3KfrxQYZIacO6UxqqLnfTMNPnS0rKxDqZ+6F
+ im95Fheg0Xly5/Vgmnt/eCuHfgW/m1fASHCA5gz4nvdDGe7tU0ZgR5FwW+EuWJrocFTi
+ sQhHLf0TsbHD3CQ79gXIsXCC6BOdDP1nQ3pXQh5ctv3geG5q099gHblQZ6hISLxms/3w
+ Pk7gk+Z3IR4kHPwDkQcd1w13Wz8d2S09i4KgIRnRjgA7phvWtvNeqj/hK0JD/ILAWkSJ
+ x1Eov0v2Q/cAnXznyweVBCmxITf6OY+NZcsQBbqO1YVMpb4f5zEtorBqYy/Wewz0XJ4/
+ cuVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785775995; x=1786380795;
+ d=1e100.net; s=20251104; t=1785775996; x=1786380796;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=n9hw+M6eRVed4boVcugzYoR9TdG+QylMmS7ERWW1X1k=;
- b=sHtudpjTs+mCX4/iVOzh3dnPR0k5t82Wt2KMH/NXVUIAfgVjgWsgQXsi4za0pVBXVM
- 7BuFDibvvhQbYie8zqdIgzgAmtqg13BpP3lHIuzVOZye3kPj7zzftQEJDBWi67CPU2ti
- N+TvSfLvyTsasQBgZa3xB+4OUgeGN/bRoKm0QAR3f9ZkSvg1nkIkaxteyWqqh465yKmj
- HFrzGxkDo/Ley9X1LJwDYSckYaD8riRWH0ZqoPn4P1R8FC5/3/i9D+H/KFROdB9jk/ck
- HclhZLCQysgnPTxP/troav7bw0l6Ib+H9xhrApxtySrcd5ShH2bcIEyh9vjKz6Ww2LXq
- TwkA==
-X-Gm-Message-State: AOJu0YwhQ2Gltibaq0P0xCmMw7TRSbKiBk/n5iEun55sblLDLy7dw617
- FgAF6YAFBdwudTkFo6dVAZyB0jflokxpRz/cIcVE5kM3673Ooec+M7It8IqlcutRKx41Gk26h2n
- D2S9+
-X-Gm-Gg: AR+sD12Rxo46ueDjPiD2uWNv+qQew4jDGy3k0s/kBlIvUpP8sQJJTk1aIWVq04+vznm
- DYMZcZvYx51APRbS92LJVqFU9ytEjNoqueFF+KRCfZaeoYxz1LR56gcmGmHMfh4AVU2OmlAbTFN
- SDPqKd+hplosSRblDAfqVft79oBZzEREmTsRM0wzjlL7aEj4GOt4xO9w9xevEjhhnM2smtmxGt8
- h6gHEhrUjvihOp3PFphM/w9g5avEP5SmYSRdaWHG0uU71e3LDCs5SxgeOGpjfCbGGC2zzLUOadK
- JRJpkv1TpBWrULRTzjpDsJx2dQ8fDSLmGqGS60pGfNw8hZ0FU2L9dpclbhjdYNbqfXF9Wqexici
- SL0PYgVp8lEmP00QDtR6uion/KmgWq4klW+ESRhZlB8bkrxcOgl0LBXdwBj6HFHmis2dkPIr8gm
- kSpZcSza3qD6FJdIrm8oKxzqE/XmQkENxxYIYF+ZF5BvOjs885HhHJCkhFj0KeaxnGlbtWPHHzK
- zqIYfMwClKz4uHDH8wZ/Kz40h8=
-X-Received: by 2002:a05:6a20:2d14:b0:3a8:800:bdf4 with SMTP id
- adf61e73a8af0-3cb6ca4cc03mr297790637.33.1785775995069; 
- Mon, 03 Aug 2026 09:53:15 -0700 (PDT)
+ bh=EfYYPoZlVBAvm5TydGIOrJRU4bw/HozNqEiPB3KBVWI=;
+ b=tWzZ8nQQNI40LMHC5thKVqXfBNwejoqLAym1KqygQMg9YrarErx2IuR+xpD1GppBUc
+ RlYeVGWbsZacJGKSdoYwV1tlcJgfNcJNQITMzHtBr2wICSvu3qIxTZ0OT6XXyhuvtfCb
+ ukgV1++3hCKBtx6okGxUjfWu+ALDJeEUogyvOs4sVpGM28Q/ne87QZCV3YeOiBTZUJ/N
+ WP7AzgkpeC0CXbSsnLun8+fkNC7bX9GQg/U6QDkbUgPv8JebVObZYOh/ld8H6PMusXuG
+ pBCsuTh/IHKTCiOuOMRU5WSPKRFBp2rhEtFv5/x1PAgdK7kpMQ9dc/XcHjpOn4Ady1lT
+ utzQ==
+X-Gm-Message-State: AOJu0YzzMYyvsmGB4P7V4FMgENlIJ4kpc0/819lue8Jiy2FOnAumlXuP
+ diqd7xIRhc7vTR0mvOjcilYEviQZeQbVeoSOhjgn3bG4PIwGuxf2FA6rrNQvYQHI+9WXJKPBEAu
+ VMrtD
+X-Gm-Gg: AR+sD11ZX+OOGawmGkgpKCvKiGhZVgBSb7O20bGkzV4ZWrE+n6/Yk9mFUlNpAnRGoju
+ vmfF3GZpcUbjYsBQlVZrRle7GNK/F31BdYvabEGHj5h5AEZEn6O5qLE7oVqJyotUAeY13p5EY7J
+ cmZC7DJYdC760zFM11d9XrsfakJt813zGk+AulXfviR4oWnwX6IQCPFe7/8w07AivRRISxhGmLM
+ lxvnvdhnIxX7pugbs3JZu0zzQhpgNecxERsDCeo/pkz40sHhWr7qWZ1Qfu1HdbHkXzY6JqKa4ht
+ 4Ena8iVYGQ3E8fOrMhT7vuqC05Cmq2gT7XMPNS7i52fraZwAP8uhjgjchnJ5LAWCypZZXQQ6tS1
+ a4nHcUnMj3uLB1s0ajMCRip4eGVMPgbPJCWNhmqD5+TUFras9iccTD/WxoUwDh/bDo7Omb3SZt5
+ y922xxfTHuMn4kSKWWng446FvbUoUelVSwB8RhpX/G9aOAkbU7jDli+fOlx2+yu5BhqznB0zBr1
+ sUg8yZviQ9YgPmvBAZk26uswvM=
+X-Received: by 2002:a05:6a20:d52d:b0:3bf:990d:3fc7 with SMTP id
+ adf61e73a8af0-3cb6c9c1834mr275912637.20.1785775996057; 
+ Mon, 03 Aug 2026 09:53:16 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3153dd4e5b0sm37711635eec.1.2026.08.03.09.53.14
+ 5a478bee46e88-3153dd4e5b0sm37711635eec.1.2026.08.03.09.53.15
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 03 Aug 2026 09:53:14 -0700 (PDT)
+ Mon, 03 Aug 2026 09:53:15 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Chaoyong He <chaoyong.he@corigine.com>
-Subject: [PATCH v2 08/22] net/nfp: break implicit dependency on rte_eth_ctrl.h
-Date: Mon,  3 Aug 2026 09:51:54 -0700
-Message-ID: <20260803165304.289869-9-stephen@networkplumber.org>
+ Long Li <longli@microsoft.com>, Wei Hu <weh@microsoft.com>
+Subject: [PATCH v2 09/22] net/mana: include used network headers
+Date: Mon,  3 Aug 2026 09:51:55 -0700
+Message-ID: <20260803165304.289869-10-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260803165304.289869-1-stephen@networkplumber.org>
 References: <20260803165304.289869-1-stephen@networkplumber.org>
@@ -83,61 +83,45 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This driver was using UINT64_BIT which was getting defined
-via deprecated rte_eth_ctrl.h. Replace with local definition.
-
-Also include rte_flow.h instead of depending on indirect
-inclusion from rte_ethdev.h.
+This driver was getting definition of IP, UDP, and TCP headers
+implicitly via rte_ethdev.h. That will be changing so instead
+include the required headers directly.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/nfp/nfp_ethdev.c     | 6 ++++--
- drivers/net/nfp/nfp_net_common.h | 1 +
- 2 files changed, 5 insertions(+), 2 deletions(-)
+ drivers/net/mana/mana.c | 2 ++
+ drivers/net/mana/tx.c   | 3 +++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/drivers/net/nfp/nfp_ethdev.c b/drivers/net/nfp/nfp_ethdev.c
-index d2da18013c..25be1de080 100644
---- a/drivers/net/nfp/nfp_ethdev.c
-+++ b/drivers/net/nfp/nfp_ethdev.c
-@@ -6,6 +6,7 @@
+diff --git a/drivers/net/mana/mana.c b/drivers/net/mana/mana.c
+index 0b72f711a1..3870cb4a52 100644
+--- a/drivers/net/mana/mana.c
++++ b/drivers/net/mana/mana.c
+@@ -6,8 +6,10 @@
+ #include <dirent.h>
+ #include <fcntl.h>
+ #include <sys/mman.h>
++#include <sys/socket.h>
+ #include <sys/ioctl.h>
+ #include <net/if.h>
++#include <netinet/in.h>
+ 
+ #include <ethdev_driver.h>
+ #include <ethdev_pci.h>
+diff --git a/drivers/net/mana/tx.c b/drivers/net/mana/tx.c
+index 10f2212b5d..9517b033dc 100644
+--- a/drivers/net/mana/tx.c
++++ b/drivers/net/mana/tx.c
+@@ -3,6 +3,9 @@
   */
  
- #include <unistd.h>
-+#include <limits.h>
- 
- #include <eal_firmware.h>
- #include <rte_alarm.h>
-@@ -32,6 +33,7 @@
- 
- /* 64-bit per app capabilities */
- #define NFP_NET_APP_CAP_SP_INDIFF       RTE_BIT64(0) /* Indifferent to port speed */
-+#define NFP_UINT64_BIT (CHAR_BIT * sizeof(uint64_t))
- 
- #define NFP_PF_DRIVER_NAME net_nfp_pf
- #define NFP_PF_FORCE_RELOAD_FW   "force_reload_fw"
-@@ -2060,8 +2062,8 @@ nfp_net_speed_capa_get_real(struct nfp_eth_media_buf *media_buf,
- 
- 	for (i = 0; i < RTE_DIM(media_buf->supported_modes); i++) {
- 		supported_modes = media_buf->supported_modes[i];
--		offset = i * UINT64_BIT;
--		for (j = 0; j < UINT64_BIT; j++) {
-+		offset = i * NFP_UINT64_BIT;
-+		for (j = 0; j < NFP_UINT64_BIT; j++) {
- 			if (supported_modes == 0)
- 				break;
- 
-diff --git a/drivers/net/nfp/nfp_net_common.h b/drivers/net/nfp/nfp_net_common.h
-index 2bd2d54028..a479a7fbd4 100644
---- a/drivers/net/nfp/nfp_net_common.h
-+++ b/drivers/net/nfp/nfp_net_common.h
-@@ -8,6 +8,7 @@
- 
- #include <bus_pci_driver.h>
  #include <ethdev_driver.h>
-+#include <rte_flow.h>
- #include <nfp_common.h>
- #include <nfp_dev.h>
- #include <rte_spinlock.h>
++#include <rte_ip.h>
++#include <rte_udp.h>
++#include <rte_tcp.h>
+ 
+ #include <infiniband/verbs.h>
+ #include <infiniband/manadv.h>
 -- 
 2.53.0
 
