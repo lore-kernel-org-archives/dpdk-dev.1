@@ -2,79 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02AC7C5516F
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Aug 2026 06:24:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DEEC55184
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Aug 2026 08:14:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3A5D8402E2;
-	Mon,  3 Aug 2026 08:24:37 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id B9C1F40615
- for <dev@dpdk.org>; Mon,  3 Aug 2026 08:24:35 +0200 (CEST)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 6730JVJH3316373; Sun, 2 Aug 2026 23:24:35 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=P
- XYO/ecmaho+W+NBO61gTwLHtXRXxbCIrfG2gmxUj2k=; b=AnJNB7WPoanWAF6og
- CdXGIkc09ZwA8N8sWoKmkDyh6QcPKTgyl6n1MRp5BiUsP5y5rOT9A5V7OQGjsEDA
- t2noRLLwT3N0N09TW4Q0MTafQsulAG5gutKtujBFHrqH0qd1hUHdBZbtFgrvKlp0
- btg3KF633YiWjrrGhShfAu5PgOmB2RqA0Yi5Xn6YYu7JvHs0V8rBZg1ryDPHeXgp
- SLyveFIHJ2Uo32K4k4YiAGgcDTWCE4cGsLXB78YznwdbV7yEFrV2eK9oQ2isgRnC
- geUT6MDSzk/E84vT61t0Ylb0/fepTrEELoaiOYLIs+odVSWZL7Bdw3c8Pesn0ZTl
- KdaVg==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4ft1j8hwkb-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Sun, 02 Aug 2026 23:24:34 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Sun, 2 Aug 2026 23:24:33 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Sun, 2 Aug 2026 23:24:33 -0700
-Received: from hyd11149.caveonetworks.com (unknown [10.29.44.105])
- by maili.marvell.com (Postfix) with ESMTP id 0AB1F3F70A4;
- Sun,  2 Aug 2026 23:24:29 -0700 (PDT)
-From: Rupesh Chiluka <rchiluka@marvell.com>
-To: <dev@dpdk.org>
-CC: <gakhil@marvell.com>, <ktejasree@marvell.com>, <anoobj@marvell.com>,
- <jerinj@marvell.com>, <stephen@networkplumber.org>, Rupesh Chiluka
- <rchiluka@marvell.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>, "Kiran
- Kumar K" <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>,
- Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
-Subject: [PATCH v1 3/3] net/cnxk: use timing-safe MAC address comparison
-Date: Mon, 3 Aug 2026 11:54:15 +0530
-Message-ID: <a902ba117c37b0d392a91c3e89692bc89e49f9b9.1785737875.git.rchiluka@marvell.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <89e98b3ccc1ad93ed67fb5750c88df94f0c1ecf7.1785737875.git.rchiluka@marvell.com>
-References: <89e98b3ccc1ad93ed67fb5750c88df94f0c1ecf7.1785737875.git.rchiluka@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 8149240272;
+	Mon,  3 Aug 2026 10:14:50 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id C657040269
+ for <dev@dpdk.org>; Mon,  3 Aug 2026 10:14:48 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 9C12E20697
+ for <dev@dpdk.org>; Mon,  3 Aug 2026 10:14:48 +0200 (CEST)
+Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
+ smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
+ Mon, 3 Aug 2026 10:14:48 +0200
+From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+To: dev@dpdk.org
+Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+Subject: [RFC PATCH v7] pile stack and mempool driver
+Date: Mon,  3 Aug 2026 08:14:46 +0000
+Message-ID: <20260803081446.1292377-1-mb@smartsharesystems.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F659AB@smartserver.smartshare.dk>
+References: <98CBD80474FA8B44BF855DF32C47DC35F659AB@smartserver.smartshare.dk>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=Ip0utr/g c=1 sm=1 tr=0 ts=6a703422 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=Sv0fKeRqtYgA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=qit2iCtTFQkLgVSMPQTB:22 a=M5GUcnROAAAA:8 a=3jWfGPZ2yggDclZvyaYA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODAzMDA1MyBTYWx0ZWRfX1BUzJ798NaBg
- rVRyZ1QOEMRP8zd6vCARYAIEvdGuDEA3c9LnkQrqaEcGhyTlyj1ZsxbNIIQvRqjHSnEHpUehvCz
- Upb6gnlde3QCYbZBq1B/wHkL+OUI3Z0=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODAzMDA1MyBTYWx0ZWRfX/YcALvwueldz
- 1qtBpqL8dkAXYih7VhLle9DIWdOptVEvAJpnQHHp94uF2mNIbI0k0RGnWnAM720MqkTT9Fb5p3c
- PxOvfVxE87uBcOxWfw+73QER3OrOsKPHU4RxCwssDPd04ZUcm7EnkanpxfkQNm/hTEcPsrKo6A8
- Ho/k4A5XCDb8iqt9NaVGOnw0i2XhNHi0FZ7HXkciP9xjWlYsmOaH9TgWmCT3VSJ68QT66tVrniP
- 3Cdm1qCD6g4MvmUFieDWBLjUZiIzRSThdNP5QG0ccjyJEhtcD5vcNBFoagSny0EUBg/YgpBRRct
- Zvt1oB5TNzdE16k8ukjouckjclCxaqpPloEZK8xHUzB8Q+fCfSVUn+vPr0U/fCrUYus6ZNj1vTS
- kDfKTEwBrPPhAawmc0TvgKvTNpuRMJvdABSiPyRukfpjxapeT0oW7LzEv4mUg2qY1xAurn32xGG
- HA90CiZXuSScKmOM8YQ==
-X-Proofpoint-GUID: rSqUYVFYqvrV9S_SStjIvJTe84nVDv58
-X-Proofpoint-ORIG-GUID: rSqUYVFYqvrV9S_SStjIvJTe84nVDv58
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-02_06,2026-07-30_01,2025-10-01_01
+X-OriginalArrivalTime: 03 Aug 2026 08:14:48.0189 (UTC)
+ FILETIME=[2671A2D0:01DD2320]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,30 +45,1938 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-nix_find_mac_addr() compared MAC addresses with memcmp(), which
-returns early on the first differing byte. Use rte_memeq_timingsafe()
-for constant-time comparison.
+Early submission of:
+- A new "pile" stack-like implementation using the Stack API, and
+- an accompanying "pile" mempool driver.
+And:
+- Some mempool optimizations.
+- Deprecating "__rte_restrict" in favor of keyword "__restrict",
+  supported by all relevant C/C++ compilers.
+- An x86 rte_memcpy() optimization for some compile time known sizes
+  (64-byte blocks up to 512 or 256 bytes).
+- Decorating the object tables in the Stack API with "restrict".
 
-Bugzilla ID: 1773
+For CI test and community feedback.
 
-Signed-off-by: Rupesh Chiluka <rchiluka@marvell.com>
+Needless to say, this must be separated into a series of patches,
+or multiple independent series of patches.
+For now, I'm submitting a snapshot of work in progress.
+
+The "pile" somewhat resembles the lock-free stack, but operates on
+bulks (arrays) of objects, to significantly reduce linked list
+traversal.
+With the pile's default bulk size of 32 objects, a mempool cache
+flush/refill traverses a linked list of only 16 elements, whereas
+the lock-free stack would traverse a linked list of 512 elements.
+
+Some performance numbers from mempool_perf_autotest_2cores, all
+with cache=1024 cores=2 n_keep=32768:
+
+start performance test (using ring_mp_mc, with cache)
+n_get_bulk= 64 n_put_bulk= 64 constant_n=0 rate_persec= 753985338
+n_get_bulk=256 n_put_bulk=256 constant_n=0 rate_persec= 755805913
+
+start performance test for lf_stack (with cache)
+n_get_bulk= 64 n_put_bulk= 64 constant_n=0 rate_persec=  29132352
+n_get_bulk=256 n_put_bulk=256 constant_n=0 rate_persec=  29276708
+
+start performance test for pile (with cache)
+n_get_bulk= 64 n_put_bulk= 64 constant_n=0 rate_persec= 560159479
+n_get_bulk=256 n_put_bulk=256 constant_n=0 rate_persec= 557910933
+
+Hat tip to Bruce for bringing attention to the ring not being the
+optimal mempool driver!
+
+Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
 ---
- drivers/net/cnxk/cnxk_ethdev_ops.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2:
+* Fix indentation, long lines, etc. (checkpatch)
+* Fix label followed by a declaration is a C23 extension. (CI)
+* Added __rte_internal to pile init and get_memsize. (AI)
+* Fix roll back bulk elements in wrong order with fragmentation. (AI)
+* Minor changes suggested by AI.
+v3:
+* Revert rename unused field in rte_stack_pile_bulk_elem structure.
+v4:
+* Revert add __rte_internal.
+  Compilation fails, and existing stack implementations don't have it.
+v5:
+* Remove compiler diagnostic pragmas in stack overflow test case.
+  (Stephen)
+* Temporarily remove stack overflow test case until a sufficiently
+  obfuscated variant doesn't trigger a compiler warning about array
+  overrun.
+* Revert most changes in rte_stack_std.h, and only change what is
+  necessary.
+* Add FIXME in the pile implementation, noting that support for the
+  generic memory model should be removed here too, if removed in the
+  lock-free stack.
+  (Inspired by Stephen)
+v6:
+* Add note about roll back of objects in fragmentation element. (AI)
+* Move declaration of temporary variable up, to please compilers. (CI)
+* Revert mempool cache size adjustments in some drivers;
+  let the mempool creation function adjust at runtime instead.
+v7:
+* Use the "__restrict" keyword, supported by all relevant C/C++ compilers.
+  Degrade "__rte_restrict" to a backwards compatibility macro,
+  document it as deprecated, and check for it in checkpatches.sh.
+* Eliminate risk of namespace pollution by prefixing ALIGNMENT_MASK
+  macro in x86 rte_memcpy.h header file.
+* Replace conditional code by defining RTE_MEMCPY_BLOCK_64_MAX. (AI)
+* Fix off-by-one in assumption when fetching free elements for the
+  excess objects in the fragmentation element. (AI, advanced model)
+* Fix memcmp() size in test_stack_push_pop(). (AI, advanced model)
+* Do not try fragmentation when we know (from fetching bulk elements
+  above) that no bulk element is available.
+  (Inspired by AI, advanced model)
+* Fix function descriptions mentioning wrong parameter name.
+  (AI, advanced model)
+* Fix typo in documentation. (AI, advanced model)
+* Mention the pile in the mempool stack documentation.
+  (AI, advanced model)
+* Set the mbuf default pool ops to "pile", for CI test purposes only.
+* Select the C11 memory model for x86, for CI test purposes only.
+---
+ app/test/test_mempool.c                   |   3 +-
+ app/test/test_stack.c                     |  64 ++++-
+ app/test/test_stack_perf.c                |  15 +-
+ config/rte_config.h                       |   7 +-
+ config/x86/meson.build                    |   1 +
+ devtools/checkpatches.sh                  |   8 +
+ doc/guides/mempool/stack.rst              |  12 +-
+ doc/guides/prog_guide/stack_lib.rst       |  67 ++++-
+ drivers/mempool/stack/rte_mempool_stack.c |  40 +++
+ drivers/net/sxe2/sxe2_txrx_vec_avx512.c   |   2 +-
+ drivers/net/tap/rte_eth_tap.c             |   2 +-
+ lib/eal/include/rte_bitset.h              |   2 +-
+ lib/eal/include/rte_common.h              |  21 +-
+ lib/eal/x86/include/rte_memcpy.h          |  69 +++--
+ lib/mempool/mempool_trace.h               |   1 -
+ lib/mempool/rte_mempool.c                 |  75 +++--
+ lib/mempool/rte_mempool.h                 |  76 +++--
+ lib/stack/meson.build                     |   3 +-
+ lib/stack/rte_stack.c                     |  18 +-
+ lib/stack/rte_stack.h                     |  83 +++++-
+ lib/stack/rte_stack_lf.h                  |   6 +-
+ lib/stack/rte_stack_lf_c11.h              |   2 +-
+ lib/stack/rte_stack_lf_generic.h          |   2 +-
+ lib/stack/rte_stack_lf_stubs.h            |   2 +-
+ lib/stack/rte_stack_pile.c                |  35 +++
+ lib/stack/rte_stack_pile.h                | 330 ++++++++++++++++++++++
+ lib/stack/rte_stack_std.h                 |  24 +-
+ 27 files changed, 836 insertions(+), 134 deletions(-)
+ create mode 100644 lib/stack/rte_stack_pile.c
+ create mode 100644 lib/stack/rte_stack_pile.h
 
-diff --git a/drivers/net/cnxk/cnxk_ethdev_ops.c b/drivers/net/cnxk/cnxk_ethdev_ops.c
-index 0ea3d7e89f..094312e406 100644
---- a/drivers/net/cnxk/cnxk_ethdev_ops.c
-+++ b/drivers/net/cnxk/cnxk_ethdev_ops.c
-@@ -1147,7 +1147,7 @@ nix_find_mac_addr(struct rte_eth_dev *eth_dev, struct rte_ether_addr *addr)
- 	memset(&null_mac_addr, 0, sizeof(null_mac_addr));
- 	addr = addr ? addr : &null_mac_addr;
- 	for (i = 0; i < dev->max_mac_entries; i++) {
--		if (!memcmp(&eth_dev->data->mac_addrs[i], addr, sizeof(*addr)))
-+		if (rte_memeq_timingsafe(&eth_dev->data->mac_addrs[i], addr, sizeof(*addr)))
- 			return i;
+diff --git a/app/test/test_mempool.c b/app/test/test_mempool.c
+index e54249ce61..76d45cea2a 100644
+--- a/app/test/test_mempool.c
++++ b/app/test/test_mempool.c
+@@ -112,8 +112,7 @@ test_mempool_basic(struct rte_mempool *mp, int use_external_cache)
+ 		GOTO_ERR(ret, out);
+ 
+ 	printf("get private data\n");
+-	if (rte_mempool_get_priv(mp) != (char *)mp +
+-			RTE_MEMPOOL_HEADER_SIZE(mp, mp->cache_size))
++	if (rte_mempool_get_priv(mp) != (char *)mp + sizeof(struct rte_mempool))
+ 		GOTO_ERR(ret, out);
+ 
+ #ifndef RTE_EXEC_ENV_FREEBSD /* rte_mem_virt2iova() not supported on bsd */
+diff --git a/app/test/test_stack.c b/app/test/test_stack.c
+index 5517982774..a40c73d63d 100644
+--- a/app/test/test_stack.c
++++ b/app/test/test_stack.c
+@@ -81,13 +81,30 @@ test_stack_push_pop(struct rte_stack *s, void **obj_table, unsigned int bulk_sz)
+ 		}
  	}
  
+-	for (i = 0; i < STACK_SIZE; i++) {
+-		if (obj_table[i] != popped_objs[STACK_SIZE - i - 1]) {
+-			printf("[%s():%u] Incorrect value %p at index 0x%x\n",
+-			       __func__, __LINE__,
+-			       popped_objs[STACK_SIZE - i - 1], i);
+-			rte_free(popped_objs);
+-			return -1;
++	if (!(s->flags & RTE_STACK_F_PILE)) {
++		for (i = 0; i < STACK_SIZE; i++) {
++			if (obj_table[i] != popped_objs[STACK_SIZE - i - 1]) {
++				printf("[%s():%u] Incorrect value %p at index 0x%x\n",
++				       __func__, __LINE__,
++				       popped_objs[STACK_SIZE - i - 1], i);
++				rte_free(popped_objs);
++				return -1;
++			}
++		}
++	}
++
++	if ((s->flags & RTE_STACK_F_PILE) && (bulk_sz & (RTE_STACK_PILE_BULK_SIZE - 1)) == 0) {
++		for (i = 0; i < STACK_SIZE; i += RTE_STACK_PILE_BULK_SIZE) {
++			if (memcmp(&obj_table[i],
++					&popped_objs[STACK_SIZE - RTE_STACK_PILE_BULK_SIZE - i],
++					sizeof(void *) * RTE_STACK_PILE_BULK_SIZE) != 0) {
++				printf("[%s():%u] Incorrect values %p at index 0x%x with bulk size %u\n",
++				       __func__, __LINE__,
++				       popped_objs[STACK_SIZE - RTE_STACK_PILE_BULK_SIZE - i],
++				       i, bulk_sz);
++				rte_free(popped_objs);
++				return -1;
++			}
+ 		}
+ 	}
+ 
+@@ -152,12 +169,24 @@ test_stack_basic(uint32_t flags)
+ 		goto fail_test;
+ 	}
+ 
+-	ret = rte_stack_push(s, obj_table, 2 * STACK_SIZE);
+-	if (ret != 0) {
+-		printf("[%s():%u] Excess objects push succeeded\n",
+-		       __func__, __LINE__);
+-		goto fail_test;
++#if 0 /* FIXME: Omitted. Doesn't compile [-Warray-bounds=]. Write an obfuscated method. */
++	if (!(s->flags & RTE_STACK_F_PILE)) {
++		ret = rte_stack_push(s, obj_table, 2 * STACK_SIZE);
++		if (ret != 0) {
++			printf("[%s():%u] Excess objects push succeeded\n",
++			       __func__, __LINE__);
++			goto fail_test;
++		}
+ 	}
++	if (s->flags & RTE_STACK_F_PILE) {
++		ret = rte_stack_push(s, obj_table, STACK_SIZE * RTE_STACK_PILE_BULK_SIZE + 1);
++		if (ret != 0) {
++			printf("[%s():%u] Excess objects push succeeded\n",
++			       __func__, __LINE__);
++			goto fail_test;
++		}
++	}
++#endif
+ 
+ 	ret = rte_stack_pop(s, obj_table, 1);
+ 	if (ret != 0) {
+@@ -384,5 +413,16 @@ test_lf_stack(void)
+ #endif
+ }
+ 
++static int
++test_pile(void)
++{
++#if defined(RTE_STACK_PILE_SUPPORTED)
++	return __test_stack(RTE_STACK_F_PILE);
++#else
++	return TEST_SKIPPED;
++#endif
++}
++
+ REGISTER_FAST_TEST(stack_autotest, NOHUGE_SKIP, ASAN_OK, test_stack);
+ REGISTER_FAST_TEST(stack_lf_autotest, NOHUGE_SKIP, ASAN_OK, test_lf_stack);
++REGISTER_FAST_TEST(stack_pile_autotest, NOHUGE_SKIP, ASAN_OK, test_pile);
+diff --git a/app/test/test_stack_perf.c b/app/test/test_stack_perf.c
+index 3f17a2606c..a15f3719c2 100644
+--- a/app/test/test_stack_perf.c
++++ b/app/test/test_stack_perf.c
+@@ -14,14 +14,14 @@
+ #include "test.h"
+ 
+ #define STACK_NAME "STACK_PERF"
+-#define MAX_BURST 32
++#define MAX_BURST (RTE_MEMPOOL_CACHE_MAX_SIZE / 2)
+ #define STACK_SIZE (RTE_MAX_LCORE * MAX_BURST)
+ 
+ /*
+  * Push/pop bulk sizes, marked volatile so they aren't treated as compile-time
+  * constants.
+  */
+-static volatile unsigned int bulk_sizes[] = {8, MAX_BURST};
++static volatile unsigned int bulk_sizes[] = {1, 8, 32, MAX_BURST};
+ 
+ static RTE_ATOMIC(uint32_t) lcore_barrier;
+ 
+@@ -354,5 +354,16 @@ test_lf_stack_perf(void)
+ #endif
+ }
+ 
++static int
++test_pile_perf(void)
++{
++#if defined(RTE_STACK_PILE_SUPPORTED)
++	return __test_stack_perf(RTE_STACK_F_PILE);
++#else
++	return TEST_SKIPPED;
++#endif
++}
++
+ REGISTER_PERF_TEST(stack_perf_autotest, test_stack_perf);
+ REGISTER_PERF_TEST(stack_lf_perf_autotest, test_lf_stack_perf);
++REGISTER_PERF_TEST(stack_pile_perf_autotest, test_pile_perf);
+diff --git a/config/rte_config.h b/config/rte_config.h
+index 0447cdf2ad..6085d2e1a0 100644
+--- a/config/rte_config.h
++++ b/config/rte_config.h
+@@ -56,14 +56,17 @@
+ #define RTE_CONTIGMEM_DEFAULT_BUF_SIZE (512*1024*1024)
+ 
+ /* mempool defines */
+-#define RTE_MEMPOOL_CACHE_MAX_SIZE 512
++#define RTE_MEMPOOL_CACHE_MAX_SIZE 1024
+ /* RTE_LIBRTE_MEMPOOL_STATS is not set */
+ /* RTE_LIBRTE_MEMPOOL_DEBUG is not set */
+ 
+ /* mbuf defines */
+-#define RTE_MBUF_DEFAULT_MEMPOOL_OPS "ring_mp_mc"
++#define RTE_MBUF_DEFAULT_MEMPOOL_OPS "pile" /* FIXME: Test only. Default: "ring_mp_mc" */
+ /* RTE_MBUF_HISTORY_DEBUG is not set */
+ 
++/* stack defines */
++#define RTE_STACK_PILE_BULK_SIZE 32
++
+ /* ether defines */
+ #define RTE_MAX_QUEUES_PER_PORT 1024
+ #define RTE_ETHDEV_RXTX_CALLBACKS 1
+diff --git a/config/x86/meson.build b/config/x86/meson.build
+index 124b204847..28be579556 100644
+--- a/config/x86/meson.build
++++ b/config/x86/meson.build
+@@ -49,6 +49,7 @@ else
+ endif
+ 
+ dpdk_conf.set('RTE_MAX_NUMA_NODES', 32)
++dpdk_conf.set('RTE_USE_C11_MEM_MODEL', true) # FIXME: Test only.
+ 
+ if is_ms_compiler
+     subdir_done()
+diff --git a/devtools/checkpatches.sh b/devtools/checkpatches.sh
+index 18bd825372..63c1ece0b6 100755
+--- a/devtools/checkpatches.sh
++++ b/devtools/checkpatches.sh
+@@ -154,6 +154,14 @@ check_forbidden_additions() { # <patch>
+ 		-f $(dirname $(readlink -f $0))/check-forbidden-tokens.awk \
+ 		"$1" || res=1
+ 
++	# refrain from using __rte_restrict
++	awk -v FOLDERS="lib drivers app examples" \
++		-v EXPRESSIONS="__rte_restrict" \
++		-v RET_ON_FAIL=1 \
++		-v MESSAGE='Using __rte_restrict, prefer restrict' \
++		-f $(dirname $(readlink -f $0))/check-forbidden-tokens.awk \
++		"$1" || res=1
++
+ 	# refrain from using compiler __atomic_xxx builtins
+ 	awk -v FOLDERS="lib drivers app examples" \
+ 		-v SKIP_FILES='drivers/common/cnxk/' \
+diff --git a/doc/guides/mempool/stack.rst b/doc/guides/mempool/stack.rst
+index 80ea07e65d..708f48f952 100644
+--- a/doc/guides/mempool/stack.rst
++++ b/doc/guides/mempool/stack.rst
+@@ -1,5 +1,6 @@
+ ..  SPDX-License-Identifier: BSD-3-Clause
+     Copyright(c) 2020 Intel Corporation.
++    Copyright(c) 2026 SmartShare Systems.
+ 
+ Stack Mempool Driver
+ ====================
+@@ -28,6 +29,12 @@ can be selected as described in :ref:`Mempool_Handlers`:
+   The underlying **rte_stack** operates in lock-free mode. For more
+   information please refer to :ref:`Stack_Library_LF_Stack`.
+ 
++- ``pile``
++
++  The underlying **rte_stack** operates in lock-free mode,
++  and is optimized for bulks of objects.
++  For more information please refer to :ref:`_Stack_Library_Pile`.
++
+ The standard stack outperforms the lock-free stack on average, however the
+ standard stack is non-preemptive: if a mempool user is preempted while holding
+ the stack lock, that thread will block all other mempool accesses until it
+@@ -35,9 +42,12 @@ returns and releases the lock. As a result, an application using the standard
+ stack whose threads can be preempted can suffer from brief, infrequent
+ performance hiccups.
+ 
+-The lock-free stack, by design, is not susceptible to this problem; one thread can
++The lock-free stack and the pile, by design, are not susceptible to this problem; one thread can
+ be preempted at any point during a push or pop operation and will not impede
+ the progress of any other thread.
+ 
++The pile is not LIFO per object, but per bulk of objects.
++Although the pile is optimized for bulks of objects, it can handle any request size.
++
+ For a more detailed description of the stack implementations, please refer to
+ :doc:`/prog_guide/stack_lib`.
+diff --git a/doc/guides/prog_guide/stack_lib.rst b/doc/guides/prog_guide/stack_lib.rst
+index fdf056730c..d5a498e778 100644
+--- a/doc/guides/prog_guide/stack_lib.rst
++++ b/doc/guides/prog_guide/stack_lib.rst
+@@ -1,5 +1,6 @@
+ ..  SPDX-License-Identifier: BSD-3-Clause
+     Copyright(c) 2019 Intel Corporation.
++    Copyright(c) 2026 SmartShare Systems.
+ 
+ Stack Library
+ =============
+@@ -9,9 +10,10 @@ stack of pointers.
+ 
+ The stack library provides the following basic operations:
+ 
+-*  Create a uniquely named stack of a user-specified size and using a
++*  Create a uniquely named stack (or pile) of a user-specified size and using a
+    user-specified socket, with either standard (lock-based) or lock-free
+    behavior.
++   The pile resembles a lock-free stack, but is not strictly LIFO.
+ 
+ *  Push and pop a burst of one or more stack objects (pointers).
+    These functions are multi-thread safe.
+@@ -25,8 +27,9 @@ The stack library provides the following basic operations:
+ Implementation
+ --------------
+ 
+-The library supports two types of stacks: standard (lock-based) and lock-free.
+-Both types use the same set of interfaces, but their implementations differ.
++The library supports three types of stacks: standard (lock-based), lock-free,
++and pile (lock-free, not strictly LIFO, optimized for bulk operations).
++All types use the same set of interfaces, but their implementations differ.
+ 
+ .. _Stack_Library_Std_Stack:
+ 
+@@ -64,7 +67,7 @@ The linked list elements themselves are maintained in a lock-free LIFO, and are
+ allocated before stack pushes and freed after stack pops. Since the stack has a
+ fixed maximum depth, these elements do not need to be dynamically created.
+ 
+-The lock-free behavior is selected by passing the *RTE_STACK_F_LF* flag to
++The lock-free behavior is selected by passing the ``RTE_STACK_F_LF`` flag to
+ ``rte_stack_create()``.
+ 
+ Preventing the ABA problem
+@@ -86,3 +89,59 @@ both pop stale data and incorrectly change the head pointer. By adding a
+ modification counter that is updated on every push and pop as part of the
+ compare-and-swap, the algorithm can detect when the list changes even if the
+ head pointer remains the same.
++
++.. _Stack_Library_Pile:
++
++Pile
++~~~~
++
++The pile is a stack-like implementation, optimized for bulk operations.
++It is only LIFO on bulk level, not on object level; i.e. arrays of bulks are
++pushed and popped in LIFO manner, but objects within each bulk are not ordered
++as expected by a stack.
++
++The pile implementation generally resembles that of the lock-free stack.
++In addition to the lock-free stack's linked list of solo (single-object) elements,
++it also contains a linked list of bulk (multi-object) elements.
++And similar to the linked list of free elements, it contains two linked lists of
++free elements, one for each element type (bulk and solo).
++The lock-free property means that multiple threads can push and pop simultaneously.
++One thread being preempted/delayed in a push or pop operation will not
++impede the forward progress of any other thread.
++
++Push operations are performed by splitting the burst in two: objects fitting into
++bulk elements, and any remaining objects (after filling bulk elements) into
++solo elements, and then performing two lock-free push operations,
++one for each element type (solo and bulk).
++
++Pop operations are performed by splitting the burst in two: objects fitting into
++bulk elements, and any remaining objects (not filling a bulk element) into
++solo elements. Two lock-free pop operations are performed,
++first for bulk elements, and then for solo elements.
++If the pop operation for bulk elements fails, it keeps retrying, requesting one
++less bulk element. The number of solo elements in the following request is
++correspondingly increased.
++
++The pile's lock-free list push and pop operations use the lock-free stack's
++implementations (and uses type casting to mimic C++ class inheritance).
++
++The linked list elements themselves are maintained in two lock-free LIFOs,
++one for bulk elements and one for solo elements, and are
++allocated before pushes and freed after pops. Since the pile has a
++fixed maximum depth, these elements do not need to be dynamically created.
++
++The pile behavior is selected by passing the ``RTE_STACK_F_PILE`` flag to
++``rte_stack_create()``.
++
++The pile bulk size can be changed by modifying ``RTE_STACK_PILE_BULK_SIZE`` in
++``config/rte_config.h``.
++For optimal performance when using the pile mempool driver, the
++mempool cache size / 2 should be divisible by the pile bulk size.
++
++.. note::
++    The pile is designed and optimized for use with bulks of objects.
++    Bursts not a multiple of the bulk size are still handled in a lock-free,
++    forward-progress-guaranteed manner. However, pop operations may exhibit
++    significantly lower performance in instances where the optimal number of
++    bulk elements is unavailable, and it is necessary to retry (fetching
++    increasingly fewer bulk elements and correspondingly more solo elements).
+diff --git a/drivers/mempool/stack/rte_mempool_stack.c b/drivers/mempool/stack/rte_mempool_stack.c
+index 1476905227..7467b8b39e 100644
+--- a/drivers/mempool/stack/rte_mempool_stack.c
++++ b/drivers/mempool/stack/rte_mempool_stack.c
+@@ -41,6 +41,36 @@ lf_stack_alloc(struct rte_mempool *mp)
+ 	return __stack_alloc(mp, RTE_STACK_F_LF);
+ }
+ 
++static int
++pile_alloc(struct rte_mempool *mp)
++{
++	return __stack_alloc(mp, RTE_STACK_F_PILE);
++}
++
++static int
++pile_enqueue(struct rte_mempool *mp, void * const *obj_table,
++	      unsigned int n)
++{
++	struct rte_stack *s = mp->pool_data;
++
++	RTE_ASSERT(s != NULL);
++	RTE_ASSERT(obj_table != NULL);
++
++	return __rte_stack_pile_push(s, obj_table, n) == 0 ? -ENOBUFS : 0;
++}
++
++static int
++pile_dequeue(struct rte_mempool *mp, void **obj_table,
++	      unsigned int n)
++{
++	struct rte_stack *s = mp->pool_data;
++
++	RTE_ASSERT(s != NULL);
++	RTE_ASSERT(obj_table != NULL);
++
++	return __rte_stack_pile_pop(s, obj_table, n) == 0 ? -ENOBUFS : 0;
++}
++
+ static int
+ stack_enqueue(struct rte_mempool *mp, void * const *obj_table,
+ 	      unsigned int n)
+@@ -93,5 +123,15 @@ static struct rte_mempool_ops ops_lf_stack = {
+ 	.get_count = stack_get_count
+ };
+ 
++static struct rte_mempool_ops ops_pile = {
++	.name = "pile",
++	.alloc = pile_alloc,
++	.free = stack_free,
++	.enqueue = pile_enqueue,
++	.dequeue = pile_dequeue,
++	.get_count = stack_get_count
++};
++
+ RTE_MEMPOOL_REGISTER_OPS(ops_stack);
+ RTE_MEMPOOL_REGISTER_OPS(ops_lf_stack);
++RTE_MEMPOOL_REGISTER_OPS(ops_pile);
+diff --git a/drivers/net/sxe2/sxe2_txrx_vec_avx512.c b/drivers/net/sxe2/sxe2_txrx_vec_avx512.c
+index a830c7a33b..2e680f4027 100644
+--- a/drivers/net/sxe2/sxe2_txrx_vec_avx512.c
++++ b/drivers/net/sxe2/sxe2_txrx_vec_avx512.c
+@@ -67,7 +67,7 @@ static __rte_always_inline int32_t sxe2_tx_bufs_free_vec_avx512(struct sxe2_tx_q
+ 		}
+ 		cache->len += rs_thresh;
+ 
+-		if (cache->len >= cache->flushthresh) {
++		if (cache->len >= cache->size) {
+ 			(void)rte_mempool_ops_enqueue_bulk(mp,
+ 					&cache->objs[cache->size], cache->len - cache->size);
+ 			cache->len = cache->size;
+diff --git a/drivers/net/tap/rte_eth_tap.c b/drivers/net/tap/rte_eth_tap.c
+index b93452f168..b3142561c2 100644
+--- a/drivers/net/tap/rte_eth_tap.c
++++ b/drivers/net/tap/rte_eth_tap.c
+@@ -61,7 +61,7 @@
+ #define TAP_MAX_MAC_ADDRS	16
+ #define TAP_GSO_MBUFS_PER_CORE	128
+ #define TAP_GSO_MBUF_SEG_SIZE	128
+-#define TAP_GSO_MBUF_CACHE_SIZE	4
++#define TAP_GSO_MBUF_CACHE_SIZE	32
+ #define TAP_GSO_MBUFS_NUM \
+ 	(TAP_GSO_MBUFS_PER_CORE * TAP_GSO_MBUF_CACHE_SIZE)
+ 
+diff --git a/lib/eal/include/rte_bitset.h b/lib/eal/include/rte_bitset.h
+index 4e6d44874a..8fc4a76da7 100644
+--- a/lib/eal/include/rte_bitset.h
++++ b/lib/eal/include/rte_bitset.h
+@@ -978,7 +978,7 @@ rte_bitset_find_clear_wrap(const uint64_t *bitset, size_t size, size_t start_bit
+  */
+ __rte_experimental
+ static inline void
+-rte_bitset_copy(uint64_t *__rte_restrict dst_bitset, const uint64_t *__rte_restrict src_bitset,
++rte_bitset_copy(uint64_t * __restrict dst_bitset, const uint64_t * __restrict src_bitset,
+ 		size_t size)
+ {
+ 	rte_memcpy(dst_bitset, src_bitset, RTE_BITSET_SIZE(size));
+diff --git a/lib/eal/include/rte_common.h b/lib/eal/include/rte_common.h
+index 79d2a0ab93..212f43c494 100644
+--- a/lib/eal/include/rte_common.h
++++ b/lib/eal/include/rte_common.h
+@@ -250,12 +250,11 @@ typedef uint16_t unaligned_uint16_t;
+ 
+ /**
+  * Mark pointer as restricted with regard to pointer aliasing.
++ * For backwards compatibility only.
++ * @deprecated
++ * Use the ``__restrict`` keyword (recognized by supported C and C++ compilers) instead.
+  */
+-#if !defined(__STDC_VERSION__) || __STDC_VERSION__ < 199901L
+ #define __rte_restrict __restrict
+-#else
+-#define __rte_restrict restrict
+-#endif
+ 
+ /**
+  * definition to mark a variable or function parameter as used so
+@@ -567,6 +566,15 @@ static void __attribute__((destructor(RTE_PRIO(prio)), used)) func(void)
+ #define __rte_assume(condition) __assume(condition)
+ #endif
+ 
++/**
++ * Alignment hint precondition
++ */
++#ifdef RTE_TOOLCHAIN_MSVC
++#define __rte_assume_aligned(ptr, alignment) (ptr)
++#else
++#define __rte_assume_aligned(ptr, alignment) __builtin_assume_aligned(ptr, alignment)
++#endif
++
+ /**
+  * Disable AddressSanitizer on some code
+  */
+@@ -729,7 +737,7 @@ static void __attribute__((destructor(RTE_PRIO(prio)), used)) func(void)
+  *   True(1) where the pointer is correctly aligned, false(0) otherwise
+  */
+ static inline int
+-rte_is_aligned(const void * const __rte_restrict ptr, const unsigned int align)
++rte_is_aligned(const void * const __restrict ptr, const unsigned int align)
+ {
+ 	return ((uintptr_t)ptr & (align - 1)) == 0;
+ }
+@@ -775,6 +783,9 @@ rte_is_aligned(const void * const __rte_restrict ptr, const unsigned int align)
+ /** Force minimum cache line alignment. */
+ #define __rte_cache_min_aligned __rte_aligned(RTE_CACHE_LINE_MIN_SIZE)
+ 
++/** Cache alignment hint precondition */
++#define __rte_assume_cache_aligned(ptr) __rte_assume_aligned(ptr, RTE_CACHE_LINE_SIZE)
++
+ #define _RTE_CACHE_GUARD_HELPER2(unique) \
+ 	alignas(RTE_CACHE_LINE_SIZE) \
+ 	char cache_guard_ ## unique[RTE_CACHE_LINE_SIZE * RTE_CACHE_GUARD_LINES]
+diff --git a/lib/eal/x86/include/rte_memcpy.h b/lib/eal/x86/include/rte_memcpy.h
+index 8ed8c55010..5e3e55737c 100644
+--- a/lib/eal/x86/include/rte_memcpy.h
++++ b/lib/eal/x86/include/rte_memcpy.h
+@@ -45,7 +45,7 @@ extern "C" {
+  *   Pointer to the destination data.
+  */
+ static __rte_always_inline void *
+-rte_memcpy(void *__rte_restrict dst, const void *__rte_restrict src, size_t n);
++rte_memcpy(void * __restrict dst, const void * __restrict src, size_t n);
+ 
+ /**
+  * Copy bytes from one location to another,
+@@ -53,7 +53,7 @@ rte_memcpy(void *__rte_restrict dst, const void *__rte_restrict src, size_t n);
+  * Use with n <= 15.
+  */
+ static __rte_always_inline void *
+-rte_mov15_or_less(void *__rte_restrict dst, const void *__rte_restrict src, size_t n)
++rte_mov15_or_less(void * __restrict dst, const void * __restrict src, size_t n)
+ {
+ 	/**
+ 	 * Use the following structs to avoid violating C standard
+@@ -98,7 +98,7 @@ rte_mov15_or_less(void *__rte_restrict dst, const void *__rte_restrict src, size
+  * locations must not overlap.
+  */
+ static __rte_always_inline void
+-rte_mov16(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src)
++rte_mov16(uint8_t * __restrict dst, const uint8_t * __restrict src)
+ {
+ 	__m128i xmm0;
+ 
+@@ -111,7 +111,7 @@ rte_mov16(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src)
+  * locations must not overlap.
+  */
+ static __rte_always_inline void
+-rte_mov32(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src)
++rte_mov32(uint8_t * __restrict dst, const uint8_t * __restrict src)
+ {
+ #if defined RTE_MEMCPY_AVX
+ 	__m256i ymm0;
+@@ -129,7 +129,7 @@ rte_mov32(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src)
+  * locations must not overlap.
+  */
+ static __rte_always_inline void
+-rte_mov48(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src)
++rte_mov48(uint8_t * __restrict dst, const uint8_t * __restrict src)
+ {
+ #if defined RTE_MEMCPY_AVX
+ 	rte_mov32((uint8_t *)dst, (const uint8_t *)src);
+@@ -146,7 +146,7 @@ rte_mov48(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src)
+  * locations must not overlap.
+  */
+ static __rte_always_inline void
+-rte_mov64(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src)
++rte_mov64(uint8_t * __restrict dst, const uint8_t * __restrict src)
+ {
+ #if defined __AVX512F__ && defined RTE_MEMCPY_AVX512
+ 	__m512i zmm0;
+@@ -164,7 +164,7 @@ rte_mov64(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src)
+  * locations must not overlap.
+  */
+ static __rte_always_inline void
+-rte_mov128(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src)
++rte_mov128(uint8_t * __restrict dst, const uint8_t * __restrict src)
+ {
+ 	rte_mov64(dst + 0 * 64, src + 0 * 64);
+ 	rte_mov64(dst + 1 * 64, src + 1 * 64);
+@@ -175,7 +175,7 @@ rte_mov128(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src)
+  * locations must not overlap.
+  */
+ static __rte_always_inline void
+-rte_mov256(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src)
++rte_mov256(uint8_t * __restrict dst, const uint8_t * __restrict src)
+ {
+ 	rte_mov128(dst + 0 * 128, src + 0 * 128);
+ 	rte_mov128(dst + 1 * 128, src + 1 * 128);
+@@ -187,14 +187,15 @@ rte_mov256(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src)
+  * AVX512 implementation below
+  */
+ 
+-#define ALIGNMENT_MASK 0x3F
++#define RTE_MEMCPY_ALIGNMENT_MASK 0x3F
++#define RTE_MEMCPY_BLOCK_64_MAX 512
+ 
+ /**
+  * Copy 128-byte blocks from one location to another,
+  * locations must not overlap.
+  */
+ static __rte_always_inline void
+-rte_mov128blocks(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src, size_t n)
++rte_mov128blocks(uint8_t * __restrict dst, const uint8_t * __restrict src, size_t n)
+ {
+ 	__m512i zmm0, zmm1;
+ 
+@@ -214,7 +215,7 @@ rte_mov128blocks(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src,
+  * locations must not overlap.
+  */
+ static inline void
+-rte_mov512blocks(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src, size_t n)
++rte_mov512blocks(uint8_t * __restrict dst, const uint8_t * __restrict src, size_t n)
+ {
+ 	__m512i zmm0, zmm1, zmm2, zmm3, zmm4, zmm5, zmm6, zmm7;
+ 
+@@ -247,7 +248,7 @@ rte_mov512blocks(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src,
+  * Use with n > 64.
+  */
+ static __rte_always_inline void *
+-rte_memcpy_generic_more_than_64(void *__rte_restrict dst, const void *__rte_restrict src,
++rte_memcpy_generic_more_than_64(void * __restrict dst, const void * __restrict src,
+ 		size_t n)
+ {
+ 	void *ret = dst;
+@@ -333,14 +334,15 @@ rte_memcpy_generic_more_than_64(void *__rte_restrict dst, const void *__rte_rest
+  * AVX implementation below
+  */
+ 
+-#define ALIGNMENT_MASK 0x1F
++#define RTE_MEMCPY_ALIGNMENT_MASK 0x1F
++#define RTE_MEMCPY_BLOCK_64_MAX 256
+ 
+ /**
+  * Copy 128-byte blocks from one location to another,
+  * locations must not overlap.
+  */
+ static __rte_always_inline void
+-rte_mov128blocks(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src, size_t n)
++rte_mov128blocks(uint8_t * __restrict dst, const uint8_t * __restrict src, size_t n)
+ {
+ 	__m256i ymm0, ymm1, ymm2, ymm3;
+ 
+@@ -373,7 +375,7 @@ rte_mov128blocks(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src,
+  * Use with n > 64.
+  */
+ static __rte_always_inline void *
+-rte_memcpy_generic_more_than_64(void *__rte_restrict dst, const void *__rte_restrict src,
++rte_memcpy_generic_more_than_64(void * __restrict dst, const void * __restrict src,
+ 		size_t n)
+ {
+ 	void *ret = dst;
+@@ -444,7 +446,8 @@ rte_memcpy_generic_more_than_64(void *__rte_restrict dst, const void *__rte_rest
+  * SSE implementation below
+  */
+ 
+-#define ALIGNMENT_MASK 0x0F
++#define RTE_MEMCPY_ALIGNMENT_MASK 0x0F
++#define RTE_MEMCPY_BLOCK_64_MAX 512
+ 
+ /**
+  * Macro for copying unaligned block from one location to another with constant load offset,
+@@ -546,7 +549,7 @@ rte_memcpy_generic_more_than_64(void *__rte_restrict dst, const void *__rte_rest
+  * Use with n > 64.
+  */
+ static __rte_always_inline void *
+-rte_memcpy_generic_more_than_64(void *__rte_restrict dst, const void *__rte_restrict src,
++rte_memcpy_generic_more_than_64(void * __restrict dst, const void * __restrict src,
+ 		size_t n)
+ {
+ 	__m128i xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7, xmm8;
+@@ -654,7 +657,7 @@ rte_memcpy_generic_more_than_64(void *__rte_restrict dst, const void *__rte_rest
+  * Use with n > 64.
+  */
+ static __rte_always_inline void *
+-rte_memcpy_aligned_more_than_64(void *__rte_restrict dst, const void *__rte_restrict src,
++rte_memcpy_aligned_more_than_64(void * __restrict dst, const void * __restrict src,
+ 		size_t n)
+ {
+ 	void *ret = dst;
+@@ -674,7 +677,7 @@ rte_memcpy_aligned_more_than_64(void *__rte_restrict dst, const void *__rte_rest
+ }
+ 
+ static __rte_always_inline void *
+-rte_memcpy(void *__rte_restrict dst, const void *__rte_restrict src, size_t n)
++rte_memcpy(void * __restrict dst, const void * __restrict src, size_t n)
+ {
+ 	/* Fast way when copy size doesn't exceed 64 bytes. */
+ 	if (n < 16)
+@@ -707,15 +710,39 @@ rte_memcpy(void *__rte_restrict dst, const void *__rte_restrict src, size_t n)
+ #endif
+ 		return dst;
+ 	}
++	/* Common way for small copy size of 64-byte blocks */
++	if (__rte_constant(n) && (n & 63) == 0 && n <= RTE_MEMCPY_BLOCK_64_MAX) {
++		void *ret = dst;
++
++		if (n & 512) {
++			rte_mov256((uint8_t *)dst + 0 * 256, (const uint8_t *)src + 0 * 256);
++			rte_mov256((uint8_t *)dst + 1 * 256, (const uint8_t *)src + 1 * 256);
++		}
++		if (n & 256) {
++			rte_mov256((uint8_t *)dst, (const uint8_t *)src);
++			src = (const uint8_t *)src + 256;
++			dst = (uint8_t *)dst + 256;
++		}
++		if (n & 128) {
++			rte_mov128((uint8_t *)dst, (const uint8_t *)src);
++			src = (const uint8_t *)src + 128;
++			dst = (uint8_t *)dst + 128;
++		}
++		if (n & 64)
++			rte_mov64((uint8_t *)dst, (const uint8_t *)src);
++
++		return ret;
++	}
+ 
+ 	/* Implementation for size > 64 bytes depends on alignment with vector register size. */
+-	if (!(((uintptr_t)dst | (uintptr_t)src) & ALIGNMENT_MASK))
++	if (!(((uintptr_t)dst | (uintptr_t)src) & RTE_MEMCPY_ALIGNMENT_MASK))
+ 		return rte_memcpy_aligned_more_than_64(dst, src, n);
+ 	else
+ 		return rte_memcpy_generic_more_than_64(dst, src, n);
+ }
+ 
+-#undef ALIGNMENT_MASK
++#undef RTE_MEMCPY_ALIGNMENT_MASK
++#undef RTE_MEMCPY_BLOCK_64_MAX
+ 
+ #ifdef __cplusplus
+ }
+diff --git a/lib/mempool/mempool_trace.h b/lib/mempool/mempool_trace.h
+index 23cda1473c..60e47cf67b 100644
+--- a/lib/mempool/mempool_trace.h
++++ b/lib/mempool/mempool_trace.h
+@@ -119,7 +119,6 @@ RTE_TRACE_POINT(
+ 	rte_trace_point_emit_i32(socket_id);
+ 	rte_trace_point_emit_ptr(cache);
+ 	rte_trace_point_emit_u32(cache->len);
+-	rte_trace_point_emit_u32(cache->flushthresh);
+ )
+ 
+ RTE_TRACE_POINT(
+diff --git a/lib/mempool/rte_mempool.c b/lib/mempool/rte_mempool.c
+index 817e2b8dc1..04b959c61f 100644
+--- a/lib/mempool/rte_mempool.c
++++ b/lib/mempool/rte_mempool.c
+@@ -753,14 +753,13 @@ static void
+ mempool_cache_init(struct rte_mempool_cache *cache, uint32_t size)
+ {
+ 	cache->size = size;
+-	cache->flushthresh = size; /* Obsolete; for API/ABI compatibility purposes only */
+ 	cache->len = 0;
+ }
+ 
+ /*
+  * Create and initialize a cache for objects that are retrieved from and
+  * returned to an underlying mempool. This structure is identical to the
+- * local_cache[lcore_id] pointed to by the mempool structure.
++ * local_cache[lcore_id] entry in the mempool structure.
+  */
+ RTE_EXPORT_SYMBOL(rte_mempool_cache_create)
+ struct rte_mempool_cache *
+@@ -768,6 +767,23 @@ rte_mempool_cache_create(uint32_t size, int socket_id)
+ {
+ 	struct rte_mempool_cache *cache;
+ 
++	/*
++	 * Alignment requirement for performance optimized move within the mempool cache.
++	 * @ref rte_mempool_do_generic_put() implementation.
++	 */
++	if (size & 31) {
++		uint32_t rounded = RTE_ALIGN_MUL_FLOOR(size, 32);
++		if (rounded == 0) {
++			RTE_MEMPOOL_LOG(ERR,
++					"Tiny cache size not divisible by 32.");
++			rte_errno = EINVAL;
++			return NULL;
++		}
++		RTE_MEMPOOL_LOG(DEBUG,
++				"Rounding down cache size to nearest multiple of 32.");
++		size = rounded;
++	}
++
+ 	if (size == 0 || size > RTE_MEMPOOL_CACHE_MAX_SIZE) {
+ 		rte_errno = EINVAL;
+ 		return NULL;
+@@ -838,9 +854,28 @@ rte_mempool_create_empty(const char *name, unsigned n, unsigned elt_size,
+ 		return NULL;
+ 	}
+ 
++	/*
++	 * Alignment requirement for performance optimized move within the mempool cache.
++	 * @ref rte_mempool_do_generic_put() implementation.
++	 */
++	RTE_BUILD_BUG_ON(((sizeof(void *) * RTE_MEMPOOL_CACHE_MAX_SIZE / 2) &
++			RTE_CACHE_LINE_MASK) != 0);
++	RTE_BUILD_BUG_ON((RTE_MEMPOOL_CACHE_MAX_SIZE & 31) != 0);
++	if (cache_size & 31) {
++		unsigned int rounded = RTE_ALIGN_MUL_FLOOR(cache_size, 32);
++		if (rounded > 0)
++			RTE_MEMPOOL_LOG(DEBUG,
++					"Rounding down cache size to nearest multiple of 32.");
++		else
++			RTE_MEMPOOL_LOG(WARNING,
++					"Tiny cache size not divisible by 32. Disabling cache.");
++		cache_size = rounded;
++	}
++
+ 	/* asked cache too big */
+ 	if (cache_size > RTE_MEMPOOL_CACHE_MAX_SIZE ||
+ 	    cache_size > n) {
++		RTE_MEMPOOL_LOG(ERR, "Cache size too big.");
+ 		rte_errno = EINVAL;
+ 		return NULL;
+ 	}
+@@ -884,7 +919,7 @@ rte_mempool_create_empty(const char *name, unsigned n, unsigned elt_size,
+ 		goto exit_unlock;
+ 	}
+ 
+-	mempool_size = RTE_MEMPOOL_HEADER_SIZE(mp, cache_size);
++	mempool_size = sizeof(struct rte_mempool);
+ 	mempool_size += private_data_size;
+ 	mempool_size = RTE_ALIGN_CEIL(mempool_size, RTE_MEMPOOL_ALIGN);
+ 
+@@ -900,7 +935,7 @@ rte_mempool_create_empty(const char *name, unsigned n, unsigned elt_size,
+ 
+ 	/* init the mempool structure */
+ 	mp = mz->addr;
+-	memset(mp, 0, RTE_MEMPOOL_HEADER_SIZE(mp, cache_size));
++	memset(mp, 0, mempool_size);
+ 	ret = strlcpy(mp->name, name, sizeof(mp->name));
+ 	if (ret < 0 || ret >= (int)sizeof(mp->name)) {
+ 		rte_errno = ENAMETOOLONG;
+@@ -937,13 +972,6 @@ rte_mempool_create_empty(const char *name, unsigned n, unsigned elt_size,
+ 		goto exit_unlock;
+ 	}
+ 
+-	/*
+-	 * local_cache pointer is set even if cache_size is zero.
+-	 * The local_cache points to just past the elt_pa[] array.
+-	 */
+-	mp->local_cache = (struct rte_mempool_cache *)
+-		RTE_PTR_ADD(mp, RTE_MEMPOOL_HEADER_SIZE(mp, 0));
+-
+ 	/* Init all default caches. */
+ 	if (cache_size != 0) {
+ 		for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++)
+@@ -1197,6 +1225,7 @@ mempool_obj_audit(struct rte_mempool *mp, __rte_unused void *opaque,
+ 	RTE_MEMPOOL_CHECK_COOKIES(mp, &obj, 1, 2);
+ }
+ 
++/* check cookies before and after objects */
+ static void
+ mempool_audit_cookies(struct rte_mempool *mp)
+ {
+@@ -1213,23 +1242,28 @@ mempool_audit_cookies(struct rte_mempool *mp)
+ #define mempool_audit_cookies(mp) do {} while(0)
+ #endif
+ 
+-/* check cookies before and after objects */
++/* check cache size consistency */
+ static void
+ mempool_audit_cache(const struct rte_mempool *mp)
+ {
+-	/* check cache size consistency */
+ 	unsigned lcore_id;
++	const uint32_t cache_size = mp->cache_size;
+ 
+-	if (mp->cache_size == 0)
+-		return;
++	if (cache_size > RTE_MEMPOOL_CACHE_MAX_SIZE) {
++		RTE_MEMPOOL_LOG(CRIT, "badness on cache size");
++		rte_panic("MEMPOOL: invalid cache size\n");
++	}
+ 
+ 	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
+ 		const struct rte_mempool_cache *cache;
+ 		cache = &mp->local_cache[lcore_id];
+-		if (cache->len > RTE_DIM(cache->objs)) {
+-			RTE_MEMPOOL_LOG(CRIT, "badness on cache[%u]",
+-				lcore_id);
+-			rte_panic("MEMPOOL: invalid cache len\n");
++		if (cache->size != cache_size) {
++			RTE_MEMPOOL_LOG(CRIT, "badness on cache[%u] size", lcore_id);
++			rte_panic("MEMPOOL: invalid cache[%u] size\n", lcore_id);
++		}
++		if (cache->len > cache_size) {
++			RTE_MEMPOOL_LOG(CRIT, "badness on cache[%u] len", lcore_id);
++			rte_panic("MEMPOOL: invalid cache[%u] len\n", lcore_id);
+ 		}
+ 	}
+ }
+@@ -1241,9 +1275,6 @@ rte_mempool_audit(struct rte_mempool *mp)
+ {
+ 	mempool_audit_cache(mp);
+ 	mempool_audit_cookies(mp);
+-
+-	/* For case where mempool DEBUG is not set, and cache size is 0 */
+-	RTE_SET_USED(mp);
+ }
+ 
+ /* dump the status of the mempool on the console */
+diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
+index 50d958c7c6..4a061de1ef 100644
+--- a/lib/mempool/rte_mempool.h
++++ b/lib/mempool/rte_mempool.h
+@@ -89,14 +89,14 @@ struct __rte_cache_aligned rte_mempool_debug_stats {
+  */
+ struct __rte_cache_aligned rte_mempool_cache {
+ 	uint32_t size;	      /**< Size of the cache */
+-	uint32_t flushthresh; /**< Obsolete; for API/ABI compatibility purposes only */
+ 	uint32_t len;	      /**< Current cache count */
+ #ifdef RTE_LIBRTE_MEMPOOL_STATS
+-	uint32_t unused;
+ 	/*
+ 	 * Alternative location for the most frequently updated mempool statistics (per-lcore),
+ 	 * providing faster update access when using a mempool cache.
++	 * Note: 16-byte aligned for optimal SIMD access, when updating pairs of counters.
+ 	 */
++	alignas(16)
+ 	struct {
+ 		uint64_t put_bulk;          /**< Number of puts. */
+ 		uint64_t put_objs;          /**< Number of objects successfully put. */
+@@ -104,15 +104,9 @@ struct __rte_cache_aligned rte_mempool_cache {
+ 		uint64_t get_success_objs;  /**< Objects successfully allocated. */
+ 	} stats;                        /**< Statistics */
+ #endif
+-	/**
+-	 * Cache objects
+-	 *
+-	 * Note:
+-	 * Cache is allocated at double size for API/ABI compatibility purposes only.
+-	 * When reducing its size at an API/ABI breaking release,
+-	 * remember to add a cache guard after it.
+-	 */
+-	alignas(RTE_CACHE_LINE_SIZE) void *objs[RTE_MEMPOOL_CACHE_MAX_SIZE * 2];
++	/** Cache objects */
++	alignas(RTE_CACHE_LINE_SIZE) void *objs[RTE_MEMPOOL_CACHE_MAX_SIZE];
++	RTE_CACHE_GUARD;
+ };
+ 
+ /**
+@@ -240,8 +234,7 @@ struct __rte_cache_aligned rte_mempool {
+ 	unsigned int flags;              /**< Flags of the mempool. */
+ 	int socket_id;                   /**< Socket id passed at create. */
+ 	uint32_t size;                   /**< Max size of the mempool. */
+-	uint32_t cache_size;
+-	/**< Size of per-lcore default local cache. */
++	uint32_t cache_size;             /**< Size of per-lcore default local cache. */
+ 
+ 	uint32_t elt_size;               /**< Size of an element. */
+ 	uint32_t header_size;            /**< Size of header (before elt). */
+@@ -257,13 +250,13 @@ struct __rte_cache_aligned rte_mempool {
+ 	 */
+ 	int32_t ops_index;
+ 
+-	struct rte_mempool_cache *local_cache; /**< Per-lcore local cache */
+-
+ 	uint32_t populated_size;         /**< Number of populated objects. */
+ 	struct rte_mempool_objhdr_list elt_list; /**< List of objects in pool */
+ 	uint32_t nb_mem_chunks;          /**< Number of memory chunks */
+ 	struct rte_mempool_memhdr_list mem_list; /**< List of memory chunks */
+ 
++	struct rte_mempool_cache local_cache[RTE_MAX_LCORE]; /**< Per-lcore local cache */
++
+ #ifdef RTE_LIBRTE_MEMPOOL_STATS
+ 	/** Per-lcore statistics.
+ 	 *
+@@ -271,6 +264,8 @@ struct __rte_cache_aligned rte_mempool {
+ 	 */
+ 	struct rte_mempool_debug_stats stats[RTE_MAX_LCORE + 1];
+ #endif
++
++	/* Private data are located immediately after the mempool structure. */
+ };
+ 
+ /** Spreading among memory channels not required. */
+@@ -362,18 +357,6 @@ struct __rte_cache_aligned rte_mempool {
+ #define RTE_MEMPOOL_CACHE_STAT_ADD(cache, name, n) do {} while (0)
+ #endif
+ 
+-/**
+- * @internal Calculate the size of the mempool header.
+- *
+- * @param mp
+- *   Pointer to the memory pool.
+- * @param cs
+- *   Size of the per-lcore cache.
+- */
+-#define RTE_MEMPOOL_HEADER_SIZE(mp, cs) \
+-	(sizeof(*(mp)) + (((cs) == 0) ? 0 : \
+-	(sizeof(struct rte_mempool_cache) * RTE_MAX_LCORE)))
+-
+ /* return the header of a mempool object (internal) */
+ static inline struct rte_mempool_objhdr *
+ rte_mempool_get_header(void *obj)
+@@ -718,7 +701,7 @@ struct __rte_cache_aligned rte_mempool_ops {
+ 	rte_mempool_dequeue_contig_blocks_t dequeue_contig_blocks;
+ };
+ 
+-#define RTE_MEMPOOL_MAX_OPS_IDX 16  /**< Max registered ops structs */
++#define RTE_MEMPOOL_MAX_OPS_IDX 32  /**< Max registered ops structs */
+ 
+ /**
+  * Structure storing the table of registered ops structs, each of which contain
+@@ -1049,7 +1032,7 @@ rte_mempool_free(struct rte_mempool *mp);
+  *   If cache_size is non-zero, the rte_mempool library will try to
+  *   limit the accesses to the common lockless pool, by maintaining a
+  *   per-lcore object cache. This argument must be lower or equal to
+- *   RTE_MEMPOOL_CACHE_MAX_SIZE and n.
++ *   RTE_MEMPOOL_CACHE_MAX_SIZE and n, and it must be divisible by 32.
+  *   The access to the per-lcore table is of course
+  *   faster than the multi-producer/consumer pool. The cache can be
+  *   disabled if the cache_size argument is set to 0; it can be useful to
+@@ -1368,15 +1351,16 @@ rte_mempool_cache_free(struct rte_mempool_cache *cache);
+ static __rte_always_inline struct rte_mempool_cache *
+ rte_mempool_default_cache(struct rte_mempool *mp, unsigned lcore_id)
+ {
+-	if (unlikely(mp->cache_size == 0))
++	if (unlikely(lcore_id == LCORE_ID_ANY))
+ 		return NULL;
+ 
+-	if (unlikely(lcore_id == LCORE_ID_ANY))
++	struct rte_mempool_cache *cache = &mp->local_cache[lcore_id];
++
++	if (unlikely(cache->size == 0))
+ 		return NULL;
+ 
+-	rte_mempool_trace_default_cache(mp, lcore_id,
+-		&mp->local_cache[lcore_id]);
+-	return &mp->local_cache[lcore_id];
++	rte_mempool_trace_default_cache(mp, lcore_id, cache);
++	return cache;
+ }
+ 
+ /**
+@@ -1445,9 +1429,24 @@ rte_mempool_do_generic_put(struct rte_mempool *mp, void * const *obj_table,
+ 		 * are more hot, from the upper half of the cache.
+ 		 */
+ 		__rte_assume(cache->len > cache->size / 2);
+-		rte_mempool_ops_enqueue_bulk(mp, &cache->objs[0], cache->size / 2);
+-		rte_memcpy(&cache->objs[0], &cache->objs[cache->size / 2],
+-				sizeof(void *) * (cache->len - cache->size / 2));
++		rte_mempool_ops_enqueue_bulk(mp, cache->objs, cache->size / 2);
++		/*
++		 * For improved rte_memcpy() performance, move down objects
++		 * from CPU cache line aligned address in chunks of 32 bytes.
++		 * Note: For cache->objs[cache->size / 2] to be cache line aligned, cache->size
++		 * must be divisible by 32 on 32-bit architecture with 64-byte cache line,
++		 * divisible by 32 on 64-bit architecture with 128-byte cache line, and
++		 * be divisible by 16 on 64-bit architecture with 64-byte cache line.
++		 * For API consistency, require mempool cache size is divisible by 32.
++		 * This requirement is enforced when creating the cache.
++		 * @ref rte_mempool_create_empty() implementation.
++		 */
++		const size_t move = RTE_ALIGN_MUL_CEIL(
++				sizeof(void *) * (cache->len - cache->size / 2), 32);
++		__rte_assume(move >= 32);
++		__rte_assume((move & 31) == 0);
++		rte_memcpy(cache->objs, __rte_assume_cache_aligned(&cache->objs[cache->size / 2]),
++				move);
+ 		cache_objs = &cache->objs[cache->len - cache->size / 2];
+ 		cache->len = cache->len - cache->size / 2 + n;
+ 	} else {
+@@ -1892,8 +1891,7 @@ void rte_mempool_audit(struct rte_mempool *mp);
+  */
+ static inline void *rte_mempool_get_priv(struct rte_mempool *mp)
+ {
+-	return (char *)mp +
+-		RTE_MEMPOOL_HEADER_SIZE(mp, mp->cache_size);
++	return (char *)mp + sizeof(struct rte_mempool);
+ }
+ 
+ /**
+diff --git a/lib/stack/meson.build b/lib/stack/meson.build
+index 18177a742f..50e688522e 100644
+--- a/lib/stack/meson.build
++++ b/lib/stack/meson.build
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(c) 2019 Intel Corporation
+ 
+-sources = files('rte_stack.c', 'rte_stack_std.c', 'rte_stack_lf.c')
++sources = files('rte_stack.c', 'rte_stack_std.c', 'rte_stack_lf.c', 'rte_stack_pile.c')
+ headers = files('rte_stack.h')
+ # subheaders, not for direct inclusion by apps
+ indirect_headers += files(
+@@ -10,4 +10,5 @@ indirect_headers += files(
+         'rte_stack_lf_generic.h',
+         'rte_stack_lf_c11.h',
+         'rte_stack_lf_stubs.h',
++        'rte_stack_pile.h',
+ )
+diff --git a/lib/stack/rte_stack.c b/lib/stack/rte_stack.c
+index 4c78fe4b4b..a4bbf8a4d7 100644
+--- a/lib/stack/rte_stack.c
++++ b/lib/stack/rte_stack.c
+@@ -1,5 +1,6 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+  * Copyright(c) 2019 Intel Corporation
++ * Copyright(c) 2026 SmartShare Systems
+  */
+ 
+ #include <stdalign.h>
+@@ -32,6 +33,8 @@ rte_stack_init(struct rte_stack *s, unsigned int count, uint32_t flags)
+ 
+ 	if (flags & RTE_STACK_F_LF)
+ 		rte_stack_lf_init(s, count);
++	else if (flags & RTE_STACK_F_PILE)
++		rte_stack_pile_init(s, count);
+ 	else
+ 		rte_stack_std_init(s);
+ }
+@@ -41,6 +44,8 @@ rte_stack_get_memsize(unsigned int count, uint32_t flags)
+ {
+ 	if (flags & RTE_STACK_F_LF)
+ 		return rte_stack_lf_get_memsize(count);
++	else if (flags & RTE_STACK_F_PILE)
++		return rte_stack_pile_get_memsize(count);
+ 	else
+ 		return rte_stack_std_get_memsize(count);
+ }
+@@ -58,7 +63,11 @@ rte_stack_create(const char *name, unsigned int count, int socket_id,
+ 	unsigned int sz;
+ 	int ret;
+ 
+-	if (flags & ~(RTE_STACK_F_LF)) {
++	if (flags & ~(RTE_STACK_F_LF | RTE_STACK_F_PILE)) {
++		STACK_LOG_ERR("Unsupported stack flags %#x", flags);
++		return NULL;
++	}
++	if ((flags & RTE_STACK_F_LF) && (flags & RTE_STACK_F_PILE)) {
+ 		STACK_LOG_ERR("Unsupported stack flags %#x", flags);
+ 		return NULL;
+ 	}
+@@ -73,6 +82,13 @@ rte_stack_create(const char *name, unsigned int count, int socket_id,
+ 		return NULL;
+ 	}
+ #endif
++#if !defined(RTE_STACK_PILE_SUPPORTED)
++	if (flags & RTE_STACK_F_PILE) {
++		STACK_LOG_ERR("Pile is not supported on your platform");
++		rte_errno = ENOTSUP;
++		return NULL;
++	}
++#endif
+ 
+ 	sz = rte_stack_get_memsize(count, flags);
+ 
+diff --git a/lib/stack/rte_stack.h b/lib/stack/rte_stack.h
+index fd17ac791d..84bb620c5a 100644
+--- a/lib/stack/rte_stack.h
++++ b/lib/stack/rte_stack.h
+@@ -1,5 +1,6 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+  * Copyright(c) 2019 Intel Corporation
++ * Copyright(c) 2026 SmartShare Systems
+  */
+ 
+ /**
+@@ -28,11 +29,47 @@
+ #define RTE_STACK_NAMESIZE (RTE_MEMZONE_NAMESIZE - \
+ 			   sizeof(RTE_STACK_MZ_PREFIX) + 1)
+ 
++static_assert(((sizeof(void *) * RTE_STACK_PILE_BULK_SIZE) & RTE_CACHE_LINE_MASK) == 0,
++		"Pile bulk size must be divisible by CPU cache line size");
++static_assert(RTE_IS_POWER_OF_2(RTE_STACK_PILE_BULK_SIZE),
++		"RTE_STACK_PILE_BULK_SIZE must be power of 2");
++
++/* Note: Also used as solo (single-object) pile element. */
+ struct rte_stack_lf_elem {
+ 	void *data;			/**< Data pointer */
+ 	struct rte_stack_lf_elem *next;	/**< Next pointer */
+ };
+ 
++/*
++ * Bulk (multi-object) pile element.
++ * Inherited from the rte_stack_lf_elem (single-object) class,
++ * and extended with an array for holding a bulk of object pointers.
++ */
++struct rte_stack_pile_bulk_elem {
++	/* The first part must be ABI compatible with the rte_stack_lf_elem parent class. */
++	void *data;                             /**< Unused, for rte_stack_lf_elem compatibility */
++	struct rte_stack_pile_bulk_elem *next;  /**< Next pointer */
++	/* The second part differs. */
++	alignas(RTE_CACHE_LINE_SIZE)
++	void *objs[RTE_STACK_PILE_BULK_SIZE];   /**< Bulk (multi-object) pointers */
++};
++
++static_assert(sizeof(struct rte_stack_lf_elem) ==
++		sizeof(struct rte_stack_lf_elem *) + sizeof(void *),
++		"Parent type has changed");
++static_assert(RTE_SIZEOF_FIELD(struct rte_stack_lf_elem, next) ==
++		RTE_SIZEOF_FIELD(struct rte_stack_pile_bulk_elem, next),
++		"Inherited type mismatch");
++static_assert(offsetof(struct rte_stack_lf_elem, next) ==
++		offsetof(struct rte_stack_pile_bulk_elem, next),
++		"Inherited type mismatch");
++static_assert(RTE_SIZEOF_FIELD(struct rte_stack_lf_elem, data) ==
++		RTE_SIZEOF_FIELD(struct rte_stack_pile_bulk_elem, data),
++		"Inherited type mismatch");
++static_assert(offsetof(struct rte_stack_lf_elem, data) ==
++		offsetof(struct rte_stack_pile_bulk_elem, data),
++		"Inherited type mismatch");
++
+ struct __rte_aligned(16) rte_stack_lf_head {
+ 	struct rte_stack_lf_elem *top; /**< Stack top */
+ 	uint64_t cnt; /**< Modification counter for avoiding ABA problem */
+@@ -51,12 +88,36 @@ struct rte_stack_lf_list {
+ struct rte_stack_lf {
+ 	/** LIFO list of elements */
+ 	alignas(RTE_CACHE_LINE_SIZE) struct rte_stack_lf_list used;
++	RTE_CACHE_GUARD;
+ 	/** LIFO list of free elements */
+ 	alignas(RTE_CACHE_LINE_SIZE) struct rte_stack_lf_list free;
++	RTE_CACHE_GUARD;
+ 	/** LIFO elements */
+ 	alignas(RTE_CACHE_LINE_SIZE) struct rte_stack_lf_elem elems[];
+ };
+ 
++/* Pile structure containing three lock-free LIFO-like lists:
++ *  - A list of elements, each element holding a bulk of pointers to objects.
++ *  - A list of elements, each element holding one pointer to an object.
++ *  - A list of free linked-list elements.
++ */
++struct rte_stack_pile {
++	/** LIFO list of bulk (multi-object) elements */
++	alignas(RTE_CACHE_LINE_SIZE) struct rte_stack_lf_list bulk;
++	RTE_CACHE_GUARD;
++	/** LIFO list of solo (single-object) elements */
++	alignas(RTE_CACHE_LINE_SIZE) struct rte_stack_lf_list solo;
++	RTE_CACHE_GUARD;
++	/** LIFO list of free bulk elements */
++	alignas(RTE_CACHE_LINE_SIZE) struct rte_stack_lf_list free_bulk;
++	RTE_CACHE_GUARD;
++	/** LIFO list of free solo elements */
++	alignas(RTE_CACHE_LINE_SIZE) struct rte_stack_lf_list free_solo;
++	RTE_CACHE_GUARD;
++	/** LIFO elements follow, first bulk, then solo */
++	alignas(RTE_CACHE_LINE_SIZE) void *elems[];
++};
++
+ /* Structure containing the LIFO, its current length, and a lock for mutual
+  * exclusion.
+  */
+@@ -78,6 +139,7 @@ struct __rte_cache_aligned rte_stack {
+ 	uint32_t flags; /**< Flags supplied at creation. */
+ 	union {
+ 		struct rte_stack_lf stack_lf; /**< Lock-free LIFO structure. */
++		struct rte_stack_pile stack_pile; /**< Lock-free pile (LIFO-like) structure. */
+ 		struct rte_stack_std stack_std;	/**< LIFO structure. */
+ 	};
+ };
+@@ -88,8 +150,19 @@ struct __rte_cache_aligned rte_stack {
+  */
+ #define RTE_STACK_F_LF 0x0001
+ 
++/**
++ * The stack-like pile uses lock-free push and pop functions.
++ * It is optimized for bulks of objects, and is not strictly LIFO.
++ * This flag is only supported on x86_64 or arm64 platforms, currently.
++ *
++ * @warning
++ * @b EXPERIMENTAL: this API may change, or be removed, without prior notice.
++ */
++#define RTE_STACK_F_PILE 0x0002
++
+ #include "rte_stack_std.h"
+ #include "rte_stack_lf.h"
++#include "rte_stack_pile.h"
+ 
+ #ifdef __cplusplus
+ extern "C" {
+@@ -108,13 +181,15 @@ extern "C" {
+  *   Actual number of objects pushed (either 0 or *n*).
+  */
+ static __rte_always_inline unsigned int
+-rte_stack_push(struct rte_stack *s, void * const *obj_table, unsigned int n)
++rte_stack_push(struct rte_stack *s, void * const * __restrict obj_table, unsigned int n)
+ {
+ 	RTE_ASSERT(s != NULL);
+ 	RTE_ASSERT(obj_table != NULL);
+ 
+ 	if (s->flags & RTE_STACK_F_LF)
+ 		return __rte_stack_lf_push(s, obj_table, n);
++	else if (s->flags & RTE_STACK_F_PILE)
++		return __rte_stack_pile_push(s, obj_table, n);
+ 	else
+ 		return __rte_stack_std_push(s, obj_table, n);
+ }
+@@ -132,13 +207,15 @@ rte_stack_push(struct rte_stack *s, void * const *obj_table, unsigned int n)
+  *   Actual number of objects popped (either 0 or *n*).
+  */
+ static __rte_always_inline unsigned int
+-rte_stack_pop(struct rte_stack *s, void **obj_table, unsigned int n)
++rte_stack_pop(struct rte_stack *s, void ** __restrict obj_table, unsigned int n)
+ {
+ 	RTE_ASSERT(s != NULL);
+ 	RTE_ASSERT(obj_table != NULL);
+ 
+ 	if (s->flags & RTE_STACK_F_LF)
+ 		return __rte_stack_lf_pop(s, obj_table, n);
++	else if (s->flags & RTE_STACK_F_PILE)
++		return __rte_stack_pile_pop(s, obj_table, n);
+ 	else
+ 		return __rte_stack_std_pop(s, obj_table, n);
+ }
+@@ -158,6 +235,8 @@ rte_stack_count(struct rte_stack *s)
+ 
+ 	if (s->flags & RTE_STACK_F_LF)
+ 		return __rte_stack_lf_count(s);
++	else if (s->flags & RTE_STACK_F_PILE)
++		return __rte_stack_pile_count(s);
+ 	else
+ 		return __rte_stack_std_count(s);
+ }
+diff --git a/lib/stack/rte_stack_lf.h b/lib/stack/rte_stack_lf.h
+index f2b012cd0e..e13b2a60d7 100644
+--- a/lib/stack/rte_stack_lf.h
++++ b/lib/stack/rte_stack_lf.h
+@@ -34,7 +34,7 @@
+  */
+ static __rte_always_inline unsigned int
+ __rte_stack_lf_push(struct rte_stack *s,
+-		    void * const *obj_table,
++		    void * const * __restrict obj_table,
+ 		    unsigned int n)
+ {
+ 	struct rte_stack_lf_elem *tmp, *first, *last = NULL;
+@@ -71,7 +71,8 @@ __rte_stack_lf_push(struct rte_stack *s,
+  *   - Actual number of objects popped.
+  */
+ static __rte_always_inline unsigned int
+-__rte_stack_lf_pop(struct rte_stack *s, void **obj_table, unsigned int n)
++__rte_stack_lf_pop(struct rte_stack *s, void ** __restrict obj_table,
++		   unsigned int n)
+ {
+ 	struct rte_stack_lf_elem *first, *last = NULL;
+ 
+@@ -79,6 +80,7 @@ __rte_stack_lf_pop(struct rte_stack *s, void **obj_table, unsigned int n)
+ 		return 0;
+ 
+ 	/* Pop n used elements */
++	__rte_assume(obj_table != NULL);
+ 	first = __rte_stack_lf_pop_elems(&s->stack_lf.used,
+ 					 n, obj_table, &last);
+ 	if (unlikely(first == NULL))
+diff --git a/lib/stack/rte_stack_lf_c11.h b/lib/stack/rte_stack_lf_c11.h
+index b97e02d6a1..d02bd1aece 100644
+--- a/lib/stack/rte_stack_lf_c11.h
++++ b/lib/stack/rte_stack_lf_c11.h
+@@ -99,7 +99,7 @@ __rte_stack_lf_push_elems(struct rte_stack_lf_list *list,
+ static __rte_always_inline struct rte_stack_lf_elem *
+ __rte_stack_lf_pop_elems(struct rte_stack_lf_list *list,
+ 			 unsigned int num,
+-			 void **obj_table,
++			 void ** __restrict obj_table,
+ 			 struct rte_stack_lf_elem **last)
+ {
+ 	struct rte_stack_lf_head old_head;
+diff --git a/lib/stack/rte_stack_lf_generic.h b/lib/stack/rte_stack_lf_generic.h
+index cc69e4d168..5187caf586 100644
+--- a/lib/stack/rte_stack_lf_generic.h
++++ b/lib/stack/rte_stack_lf_generic.h
+@@ -74,7 +74,7 @@ __rte_stack_lf_push_elems(struct rte_stack_lf_list *list,
+ static __rte_always_inline struct rte_stack_lf_elem *
+ __rte_stack_lf_pop_elems(struct rte_stack_lf_list *list,
+ 			 unsigned int num,
+-			 void **obj_table,
++			 void ** __restrict obj_table,
+ 			 struct rte_stack_lf_elem **last)
+ {
+ 	struct rte_stack_lf_head old_head;
+diff --git a/lib/stack/rte_stack_lf_stubs.h b/lib/stack/rte_stack_lf_stubs.h
+index a05abf1f1c..5810744d67 100644
+--- a/lib/stack/rte_stack_lf_stubs.h
++++ b/lib/stack/rte_stack_lf_stubs.h
+@@ -30,7 +30,7 @@ __rte_stack_lf_push_elems(struct rte_stack_lf_list *list,
+ static __rte_always_inline struct rte_stack_lf_elem *
+ __rte_stack_lf_pop_elems(struct rte_stack_lf_list *list,
+ 			 unsigned int num,
+-			 void **obj_table,
++			 void ** __restrict obj_table,
+ 			 struct rte_stack_lf_elem **last)
+ {
+ 	RTE_SET_USED(obj_table);
+diff --git a/lib/stack/rte_stack_pile.c b/lib/stack/rte_stack_pile.c
+new file mode 100644
+index 0000000000..ccad544b8c
+--- /dev/null
++++ b/lib/stack/rte_stack_pile.c
+@@ -0,0 +1,35 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 SmartShare Systems
++ */
++
++#include "rte_stack.h"
++
++void
++rte_stack_pile_init(struct rte_stack *s, unsigned int count)
++{
++	unsigned int bulk = (count + RTE_STACK_PILE_BULK_SIZE - 1) / RTE_STACK_PILE_BULK_SIZE;
++	struct rte_stack_pile_bulk_elem *bulk_elems =
++			(struct rte_stack_pile_bulk_elem *)(&s->stack_pile.elems);
++	struct rte_stack_lf_elem *solo_elems = (struct rte_stack_lf_elem *)&bulk_elems[bulk];
++	unsigned int i;
++
++	for (i = 0; i < bulk; i++)
++		__rte_stack_pile_bulk_push_elems(&s->stack_pile.free_bulk,
++					  &bulk_elems[i], &bulk_elems[i], 1);
++	for (i = 0; i < count; i++)
++		__rte_stack_lf_push_elems(&s->stack_pile.free_solo,
++					  &solo_elems[i], &solo_elems[i], 1);
++}
++
++ssize_t
++rte_stack_pile_get_memsize(unsigned int count)
++{
++	unsigned int bulk = (count + RTE_STACK_PILE_BULK_SIZE - 1) / RTE_STACK_PILE_BULK_SIZE;
++	ssize_t sz = offsetof(struct rte_stack, stack_pile.elems);
++	sz += bulk * sizeof(struct rte_stack_pile_bulk_elem);
++	sz += count * sizeof(struct rte_stack_lf_elem);
++	sz += RTE_CACHE_LINE_ROUNDUP(sz);
++	sz += RTE_CACHE_GUARD_LINES * RTE_CACHE_LINE_SIZE;
++
++	return sz;
++}
+diff --git a/lib/stack/rte_stack_pile.h b/lib/stack/rte_stack_pile.h
+new file mode 100644
+index 0000000000..8aa93b7e86
+--- /dev/null
++++ b/lib/stack/rte_stack_pile.h
+@@ -0,0 +1,330 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 SmartShare Systems
++ */
++
++#ifndef _RTE_STACK_PILE_H_
++#define _RTE_STACK_PILE_H_
++
++#include <rte_memcpy.h>
++
++#include "rte_stack_lf.h"
++#ifdef RTE_STACK_LF_SUPPORTED
++/**
++ * Indicates that RTE_STACK_F_PILE is supported.
++ */
++#define RTE_STACK_PILE_SUPPORTED
++#endif
++
++static __rte_always_inline unsigned int
++__rte_stack_pile_count(struct rte_stack *s)
++{
++	/* stack_lf_push() and stack_lf_pop() do not update the list's contents
++	 * and stack_lf->len atomically, which can cause the list to appear
++	 * shorter than it actually is if this function is called while other
++	 * threads are modifying the list.
++	 *
++	 * However, given the inherently approximate nature of the get_count
++	 * callback -- even if the list and its size were updated atomically,
++	 * the size could change between when get_count executes and when the
++	 * value is returned to the caller -- this is acceptable.
++	 *
++	 * The stack_lf->len updates are placed such that the list may appear to
++	 * have fewer elements than it does, but will never appear to have more
++	 * elements. If the mempool is near-empty to the point that this is a
++	 * concern, the user should consider increasing the mempool size.
++	 */
++#ifdef RTE_USE_C11_MEM_MODEL
++	return RTE_MIN((unsigned int)s->capacity,
++			(unsigned int)rte_atomic_load_explicit(&s->stack_pile.bulk.len,
++			rte_memory_order_relaxed) * RTE_STACK_PILE_BULK_SIZE +
++			(unsigned int)rte_atomic_load_explicit(&s->stack_pile.solo.len,
++			rte_memory_order_relaxed));
++#else /* FIXME: Remove if removed from lock-free stack. */
++	/* NOTE: review for potential ordering optimization */
++	return RTE_MIN((unsigned int)s->capacity,
++			(unsigned int)rte_atomic_load_explicit(&s->stack_pile.bulk.len,
++			rte_memory_order_seq_cst) * RTE_STACK_PILE_BULK_SIZE +
++			(unsigned int)rte_atomic_load_explicit(&s->stack_pile.solo.len,
++			rte_memory_order_seq_cst));
++#endif
++}
++
++static __rte_always_inline void
++__rte_stack_pile_bulk_push_elems(struct rte_stack_lf_list *list,
++		struct rte_stack_pile_bulk_elem *first,
++		struct rte_stack_pile_bulk_elem *last,
++		unsigned int num)
++{
++	__rte_stack_lf_push_elems(list,
++		(struct rte_stack_lf_elem *)first,
++		(struct rte_stack_lf_elem *)last,
++		num);
++}
++
++static __rte_always_inline struct rte_stack_pile_bulk_elem *
++__rte_stack_pile_bulk_pop_elems(struct rte_stack_lf_list *list,
++		unsigned int num,
++		void ** __restrict obj_table,
++		struct rte_stack_pile_bulk_elem **last)
++{
++	struct rte_stack_pile_bulk_elem *first = (struct rte_stack_pile_bulk_elem *)
++			__rte_stack_lf_pop_elems(list, num, NULL,
++			(struct rte_stack_lf_elem **)last);
++	if (first == NULL)
++		return NULL;
++
++	if (obj_table != NULL) {
++		/* Traverse the list to copy the bulks. */
++		struct rte_stack_pile_bulk_elem *tmp = first;
++		for (unsigned int i = 0; i < num; i++, tmp = tmp->next)
++			rte_memcpy(&obj_table[i * RTE_STACK_PILE_BULK_SIZE], tmp->objs,
++					sizeof(void *) * RTE_STACK_PILE_BULK_SIZE);
++	}
++
++	return first;
++}
++
++/**
++ * Push several objects on the pile (lock-free, MT-safe).
++ *
++ * @param s
++ *   A pointer to the pile structure.
++ * @param obj_table
++ *   A pointer to a table of void * pointers (objects).
++ * @param n
++ *   The number of objects to push on the pile from the obj_table.
++ * @return
++ *   Actual number of objects pushed (either 0 or *n*).
++ */
++static __rte_always_inline unsigned int
++__rte_stack_pile_push(struct rte_stack *s,
++		void * const * __restrict obj_table,
++		unsigned int n)
++{
++	RTE_ASSERT(s != NULL);
++	RTE_ASSERT(obj_table != NULL);
++
++	struct rte_stack_pile *pile = &s->stack_pile;
++	struct rte_stack_pile_bulk_elem *bulk_first = NULL, *bulk_last = NULL, *tmp_bulk;
++	struct rte_stack_lf_elem *solo_first = NULL, *solo_last = NULL, *tmp_solo;
++	unsigned int n_bulk = n / RTE_STACK_PILE_BULK_SIZE;
++	unsigned int n_solo = n & (RTE_STACK_PILE_BULK_SIZE - 1);
++	unsigned int i;
++
++	if (unlikely(n_bulk == 0)) {
++		if (unlikely(n_solo == 0))
++			return 0;
++		goto solo;
++	}
++
++	/* Allocate n_bulk elements from the free list. */
++	bulk_first = __rte_stack_pile_bulk_pop_elems(&pile->free_bulk, n_bulk, NULL, &bulk_last);
++	if (unlikely(bulk_first == NULL))
++		return 0; /* Failed. */
++
++	if (likely(n_solo == 0))
++		goto bulk;
++
++solo:
++	/* Allocate n_solo elements from the free list. */
++	solo_first = __rte_stack_lf_pop_elems(&pile->free_solo, n_solo, NULL, &solo_last);
++	if (unlikely(solo_first == NULL)) {
++		/* Failed. Roll back. */
++		if (n_bulk > 0)
++			__rte_stack_pile_bulk_push_elems(&pile->free_bulk,
++					bulk_first, bulk_last, n_bulk);
++		return 0;
++	}
++
++	/*
++	 * Construct the solo elements.
++	 * Copy the objects, but ignore the object order.
++	 */
++	tmp_solo = solo_first;
++	__rte_assume(n_solo > 0);
++	__rte_assume(n_solo < RTE_STACK_PILE_BULK_SIZE);
++	for (i = 0; i < n_solo; i++, tmp_solo = tmp_solo->next)
++		tmp_solo->data = obj_table[n_bulk * RTE_STACK_PILE_BULK_SIZE + i];
++
++	/* Push them to the solo list. */
++	__rte_stack_lf_push_elems(&pile->solo, solo_first, solo_last, n_solo);
++
++	if (unlikely(n_bulk == 0))
++		return n; /* Done. */
++
++bulk:
++	/*
++	 * Construct the bulk elements.
++	 * Copy bulks in reverse order, but ignore the object order within each bulk.
++	 */
++	tmp_bulk = bulk_first;
++	__rte_assume(n_bulk > 0);
++	for (i = 0; i < n_bulk; i++, tmp_bulk = tmp_bulk->next)
++		rte_memcpy(tmp_bulk->objs, &obj_table[(n_bulk - i - 1) * RTE_STACK_PILE_BULK_SIZE],
++				sizeof(void *) * RTE_STACK_PILE_BULK_SIZE);
++
++	/* Push them to the bulk list. */
++	__rte_stack_pile_bulk_push_elems(&pile->bulk, bulk_first, bulk_last, n_bulk);
++
++	return n;
++}
++
++/**
++ * Pop several objects from the pile (lock-free, MT-safe).
++ *
++ * @param s
++ *   A pointer to the pile structure.
++ * @param obj_table
++ *   A pointer to a table of void * pointers (objects).
++ * @param n
++ *   The number of objects to pull from the pile.
++ * @return
++ *   Actual number of objects popped (either 0 or *n*).
++ */
++static __rte_always_inline unsigned int
++__rte_stack_pile_pop(struct rte_stack *s,
++		void ** __restrict obj_table,
++		unsigned int n)
++{
++	RTE_ASSERT(s != NULL);
++	RTE_ASSERT(obj_table != NULL);
++
++	struct rte_stack_pile *pile = &s->stack_pile;
++	struct rte_stack_pile_bulk_elem *bulk_first = NULL, *bulk_last = NULL;
++	struct rte_stack_lf_elem *solo_first = NULL, *solo_last = NULL, *tmp_solo;
++	alignas(RTE_CACHE_LINE_SIZE) void *obj_frag[RTE_STACK_PILE_BULK_SIZE];
++	struct rte_stack_pile_bulk_elem *frag = NULL;
++	unsigned int n_bulk = n / RTE_STACK_PILE_BULK_SIZE;
++	unsigned int n_solo = n & (RTE_STACK_PILE_BULK_SIZE - 1);
++	unsigned int i;
++
++	if (unlikely(n_bulk == 0)) {
++		if (unlikely(n_solo == 0))
++			return 0;
++		goto solo;
++	}
++
++bulk:
++	/* Fetch n_bulk * RTE_STACK_PILE_BULK_SIZE objects as bulk elements. */
++	bulk_first = __rte_stack_pile_bulk_pop_elems(&pile->bulk, n_bulk, obj_table, &bulk_last);
++	if (unlikely(bulk_first == NULL)) {
++		/*
++		 * Not available.
++		 * Retry with fewer bulk elements; objects to be fetched as solo elements instead.
++		 */
++		n_solo += RTE_STACK_PILE_BULK_SIZE;
++		n_bulk--;
++		if (n_bulk > 0)
++			goto bulk;
++		else
++			goto solo;
++	}
++
++	if (likely(n_solo == 0))
++		goto done;
++
++solo:
++	/* Fetch n_solo objects as solo elements. */
++	solo_first = __rte_stack_lf_pop_elems(&pile->solo, n_solo,
++			&obj_table[n_bulk * RTE_STACK_PILE_BULK_SIZE], &solo_last);
++	if (solo_first != NULL)
++		goto done;
++
++	/* Solo elements not available. Try fragmentation. */
++	if (unlikely(n_solo >= RTE_STACK_PILE_BULK_SIZE))
++		goto fail; /* Ran out of bulk elements above. Don't try to fetch one more. */
++
++	/* Fetch a fragmentation element as a bulk element. */
++	frag = __rte_stack_pile_bulk_pop_elems(&pile->bulk, 1, obj_frag, NULL);
++	if (unlikely(frag == NULL))
++		goto fail;
++
++	/* Get n_solo objects from the fragmentation element. */
++	__rte_assume(n_solo > 0);
++	__rte_assume(n_solo < RTE_STACK_PILE_BULK_SIZE);
++	for (i = 0; i < n_solo; i++)
++		obj_table[n_bulk * RTE_STACK_PILE_BULK_SIZE + i] = obj_frag[i];
++
++	/* Fetch free elements for the excess objects. */
++	__rte_assume(RTE_STACK_PILE_BULK_SIZE - n_solo > 0);
++	__rte_assume(RTE_STACK_PILE_BULK_SIZE - n_solo < RTE_STACK_PILE_BULK_SIZE);
++	solo_first = __rte_stack_lf_pop_elems(&pile->free_solo,
++			RTE_STACK_PILE_BULK_SIZE - n_solo, NULL, &solo_last);
++	if (unlikely(solo_first == NULL))
++		goto fail;
++
++	/* Construct the solo elements from the excess objects. */
++	tmp_solo = solo_first;
++	__rte_assume(n_solo > 0);
++	__rte_assume(n_solo < RTE_STACK_PILE_BULK_SIZE);
++	for (i = n_solo; i < RTE_STACK_PILE_BULK_SIZE; i++, tmp_solo = tmp_solo->next)
++		tmp_solo->data = obj_frag[i];
++
++	/* Push the excess objects as solo elements. */
++	__rte_stack_lf_push_elems(&pile->solo, solo_first, solo_last,
++			RTE_STACK_PILE_BULK_SIZE - n_solo);
++	n_solo = 0;
++
++	/* Add the fragmentation element in front of the bulk elements, so it can be freed. */
++	if (n_bulk > 0)
++		frag->next = bulk_first;
++	else
++		bulk_last = frag;
++	bulk_first = frag;
++	n_bulk++;
++
++done:
++	/* Success. Free the elements. */
++	if (n_bulk > 0)
++		__rte_stack_pile_bulk_push_elems(&pile->free_bulk, bulk_first, bulk_last, n_bulk);
++	if (n_solo > 0)
++		__rte_stack_lf_push_elems(&pile->free_solo, solo_first, solo_last, n_solo);
++
++	return n;
++
++fail:
++	/* Failed. Roll back. */
++	if (frag != NULL) {
++		/*
++		 * No further action than this is required to roll the fragmentation
++		 * element back into the pile of bulk elements, as the objects in
++		 * the fragmentation element are intact.
++		 */
++		if (n_bulk > 0) {
++			/* Attach the fragmentation element after the bulk elements. */
++			bulk_last->next = frag;
++		} else {
++			bulk_first = frag;
++			bulk_last = frag;
++		}
++		n_bulk += 1;
++	}
++	if (n_bulk > 0)
++		__rte_stack_pile_bulk_push_elems(&pile->bulk, bulk_first, bulk_last, n_bulk);
++
++    return 0;
++}
++
++/**
++ * @internal Initialize a pile stack.
++ *
++ * @param s
++ *   A pointer to the stack structure.
++ * @param count
++ *   The size of the stack.
++ */
++void
++rte_stack_pile_init(struct rte_stack *s, unsigned int count);
++
++/**
++ * @internal Return the memory required for a pile stack.
++ *
++ * @param count
++ *   The size of the stack.
++ * @return
++ *   The bytes to allocate for a pile stack.
++ */
++ssize_t
++rte_stack_pile_get_memsize(unsigned int count);
++
++#endif /* _RTE_STACK_PILE_H_ */
+diff --git a/lib/stack/rte_stack_std.h b/lib/stack/rte_stack_std.h
+index ae28add5c4..8a3ca9edf6 100644
+--- a/lib/stack/rte_stack_std.h
++++ b/lib/stack/rte_stack_std.h
+@@ -20,25 +20,25 @@
+  *   Actual number of objects pushed (either 0 or *n*).
+  */
+ static __rte_always_inline unsigned int
+-__rte_stack_std_push(struct rte_stack *s, void * const *obj_table,
++__rte_stack_std_push(struct rte_stack *s, void * const * __restrict obj_table,
+ 		     unsigned int n)
+ {
+ 	struct rte_stack_std *stack = &s->stack_std;
+ 	unsigned int index;
+-	void **cache_objs;
++	void ** __restrict stack_objs;
+ 
+ 	rte_spinlock_lock(&stack->lock);
+-	cache_objs = &stack->objs[stack->len];
++	stack_objs = &stack->objs[stack->len];
+ 
+-	/* Is there sufficient space in the stack? */
+-	if ((stack->len + n) > s->capacity) {
++	if (unlikely((stack->len + n) > s->capacity)) {
++		/* Insufficient space in the stack. */
+ 		rte_spinlock_unlock(&stack->lock);
+ 		return 0;
+ 	}
+ 
+-	/* Add elements back into the cache */
++	/* Push objects to the stack */
+ 	for (index = 0; index < n; ++index, obj_table++)
+-		cache_objs[index] = *obj_table;
++		stack_objs[index] = *obj_table;
+ 
+ 	stack->len += n;
+ 
+@@ -59,24 +59,26 @@ __rte_stack_std_push(struct rte_stack *s, void * const *obj_table,
+  *   Actual number of objects popped (either 0 or *n*).
+  */
+ static __rte_always_inline unsigned int
+-__rte_stack_std_pop(struct rte_stack *s, void **obj_table, unsigned int n)
++__rte_stack_std_pop(struct rte_stack *s, void ** __restrict obj_table, unsigned int n)
+ {
+ 	struct rte_stack_std *stack = &s->stack_std;
+ 	unsigned int index, len;
+-	void **cache_objs;
++	void ** __restrict stack_objs;
+ 
+ 	rte_spinlock_lock(&stack->lock);
+ 
+ 	if (unlikely(n > stack->len)) {
++		/* Insufficient objects in the stack. */
+ 		rte_spinlock_unlock(&stack->lock);
+ 		return 0;
+ 	}
+ 
+-	cache_objs = stack->objs;
++	stack_objs = stack->objs;
+ 
++	/* Pop objects from the stack */
+ 	for (index = 0, len = stack->len - 1; index < n;
+ 			++index, len--, obj_table++)
+-		*obj_table = cache_objs[len];
++		*obj_table = stack_objs[len];
+ 
+ 	stack->len -= n;
+ 	rte_spinlock_unlock(&stack->lock);
 -- 
-2.48.1
+2.43.0
 
