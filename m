@@ -2,50 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1B8FC55184
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Aug 2026 09:31:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7252C55179
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Aug 2026 11:27:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CE8B640272;
-	Mon,  3 Aug 2026 11:31:11 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
- by mails.dpdk.org (Postfix) with ESMTP id D07DF40269
- for <dev@dpdk.org>; Mon,  3 Aug 2026 11:31:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1785749471; x=1817285471;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=UPYnwnGzxftHwyIMDAVuL6UNCdUL24P8iIQx+zgQro4=;
- b=UD/8br1InGTPk/13Q9W80iFlnUWHBjq8oI+KjoOXuv0lLOrTnoC598PD
- Pcy1BthYijgzUmHM1MI6Umk8OdY3nAmxcqvaFXeDQYzSIP/qrMRurKmxo
- p6KXCrOToBzRLjaYBx5BCGzzqCEmX6HgraeMxqtxY3SZapkqpxvxZ51Ck
- r0qKqoMGjycuDzs0/sfENltj6vHzvFelaxWVi903OqyPaBGof00qBM5bZ
- eQzIHvS+iB+VkZVdwWdG/PRTI2fk8XFtMwlsT8u0r5OoBNqOIT9kn1mUJ
- BVObkEb1vmBDTGVeeRTa9SgZhPLK5Z7xj67Wbs8rYf7ZYV8t78w2GDyzE Q==;
-X-CSE-ConnectionGUID: DSThOAWXRyK71yY+ijKJ4g==
-X-CSE-MsgGUID: Qqjs4boaQv6+TFEvaBvTGg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11863"; a="86141220"
-X-IronPort-AV: E=Sophos;i="6.25,202,1779174000"; d="scan'208";a="86141220"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
- by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 03 Aug 2026 02:31:10 -0700
-X-CSE-ConnectionGUID: /+RYpDk8QUCjrK/8lCH2Vw==
-X-CSE-MsgGUID: 0+7J4XInTQCZ+7mPx5yHVA==
-X-ExtLoop1: 1
-Received: from pae-14.iind.intel.com ([10.190.203.153])
- by fmviesa003.fm.intel.com with ESMTP; 03 Aug 2026 02:31:08 -0700
-From: Anurag Mandal <anurag.mandal@intel.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, praveen.shetty@intel.com,
- Anurag Mandal <anurag.mandal@intel.com>
-Subject: [PATCH v2] net/cpfl: add timesync support
-Date: Mon,  3 Aug 2026 09:30:27 +0000
-Message-Id: <20260803093027.870965-1-anurag.mandal@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260728102008.860157-1-anurag.mandal@intel.com>
-References: <20260728102008.860157-1-anurag.mandal@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 81A6A40272;
+	Mon,  3 Aug 2026 13:27:57 +0200 (CEST)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+ by mails.dpdk.org (Postfix) with ESMTP id DC03440269
+ for <dev@dpdk.org>; Mon,  3 Aug 2026 13:27:55 +0200 (CEST)
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mxct.zte.com.cn (FangMail) with ESMTPS id 4hDDtY6gtqz51SnC;
+ Mon, 03 Aug 2026 19:27:49 +0800 (CST)
+Received: from szxl2zmapp07.zte.com.cn ([10.1.32.52])
+ by mse-fl1.zte.com.cn with SMTP id 673BRhcS014505;
+ Mon, 3 Aug 2026 19:27:43 +0800 (+08)
+ (envelope-from wang.junlong1@zte.com.cn)
+Received: from localhost.localdomain (unknown [192.168.6.15])
+ by smtp (Zmail) with SMTP; Mon, 3 Aug 2026 19:27:46 +0800
+X-Zmail-TransId: 3e816a707b2e010-efbbb
+X-Zmail-LocalSMTP: 1
+X-Zmail-RealSender: wang.junlong1@zte.com.cn
+From: Junlong Wang <wang.junlong1@zte.com.cn>
+To: stephen@networkplumber.org
+Cc: dev@dpdk.org, Junlong Wang <wang.junlong1@zte.com.cn>
+Subject: [PATCH v10 0/4] net/zxdh: optimize Rx/Tx path performance
+Date: Mon,  3 Aug 2026 19:24:14 +0800
+Message-ID: <20260803112419.2202150-1-wang.junlong1@zte.com.cn>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260709104637.924861-1-wang.junlong1@zte.com.cn>
+References: <20260709104637.924861-1-wang.junlong1@zte.com.cn>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed;
+	boundary="=====_001_next====="
+X-MAIL: mse-fl1.zte.com.cn 673BRhcS014505
+X-TLS: YES
+X-ENVELOPE-SENDER: wang.junlong1@zte.com.cn
+X-SOURCE-IP: 10.5.228.132 unknown Mon, 03 Aug 2026 19:27:49 +0800
+X-CLEAN: YES
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 6A707B35.000/4hDDtY6gtqz51SnC
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,244 +58,262 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The cpfl PMD advertises RTE_ETH_RX_OFFLOAD_TIMESTAMP, so received
-packets carry a 32-bit hardware timestamp that the common idpf Rx
-path extends to 64-bit nanoseconds using the device PTP clock (PHC).
-However, it never initialised the PHC, so the timestamp conversion
-had no reference time.
-Applications had no way to enable timestamping or to read the
-current device clock to correlate the mbuf timestamps.
 
-This patch adds PTP support by reusing the idpf common PTP helpers:
 
-- timesync_enable: allocate and initialise the adapter PTP state,
-  query the PTP capabilities, program the base increment value
-  and set the device clock to the current system time.
-  The PTP state is shared by all vports of an adapter, so it
-  is initialised only once.
+--=====_001_next=====
+Content-Type: multipart/related;
+	boundary="=====_002_next====="
 
-- timesync_read_time: return the current device clock as a timespec.
 
-- timesync_disable: release the PTP state.
+--=====_002_next=====
+Content-Type: multipart/alternative;
+	boundary="=====_003_next====="
 
-Once timesync is enabled, the common Rx path resolves the cached
-PHC time, so the mbuf Rx timestamp dynfield reports valid
-nanosecond values and applications can read the device clock with
-rte_eth_timesync_read_time().
 
-Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
----
-V2: Removed read_clock support
+--=====_003_next=====
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
 
- drivers/net/intel/cpfl/cpfl_ethdev.c | 107 +++++++++++++++++++++++++++
- drivers/net/intel/cpfl/cpfl_ethdev.h |   1 +
- drivers/net/intel/idpf/idpf_ptp.c    |   5 ++
- drivers/net/intel/idpf/idpf_ptp.h    |   4 +
- 4 files changed, 117 insertions(+)
+djEwOg0KICAtIEJhc2VkIG9uIHRoZSBpc3N1ZXMgcmFpc2VkIGluIHRoZSBBSSByZXZpZXcsIFBh
+dGNoIDIvNCBQYXRjaCAzLzQgUGF0Y2ggNC80IGhhdmUgYmVlbiBtb2RpZmllZC4NCg0Kdjk6DQog
+IC0gUmVtb3ZlIGFkZCBzaW1wbGUgVHggeG1pdCBmdW5jdGlvbnMgKHp4ZGhfeG1pdF9wa3RzX3Np
+bXBsZSkgaW4gdGhlIGxhc3QgcGF0Y2guDQoNCnY4Og0KICAtIEFkZCBjaGVja2VkIHRoZSBzaXpl
+IG9mIFpYREhfRExfTkVUX0hEUl9TSVpFIGFuZCBSVEVfUEtUTUJVRl9IRUFEUk9PTSBpbg0KICAg
+IHp4ZGhfeG1pdF9wa3RzX3NpbXBsZSgpIGJlZm9yZSBzdWJtaXR0aW5nLiBBZGQgc3RhdGljX2Fz
+c2VydCB0byByZWplY3QgYnVpbGRzIHdpdGggaW5zdWZmaWNpZW50DQogICAgZGVmYXVsdCBoZWFk
+cm9vbSBhdCBjb21waWxlIHRpbWUuDQoNCnY3Og0KICAtIEFkZCBhIG5ldyB4bWl0IHByZXBhcmUg
+ZnVuYyBmb3IgeG1pdF9wa3RzX3NpbXBsZSwgd2hpY2ggd2lsbCBjaGVja2VkIHRoZSBzaXplIG9m
+DQogICAgWlhESF9ETF9ORVRfSERSX1NJWkUgYW5kIFJURV9QS1RNQlVGX0hFQURST09NLg0KDQp2
+NjoNCiAgLSBSZW1vdmUgdW5uZWNlc3NhcnkgZXJyb3IgY2hlY2tpbmcgY29kZSBpbiBzdWJtaXRf
+dG9fYmFja2VuZF9zaW1wbGUoKSBhbmQNCiAgICBwa3RfcGFkZGluZygpLiBTaW5jZSBhcyB0aGUg
+bWF4IGRsX25ldF9oZHJfbGVuIGlzIGFsd2F5cyBsZXNzIHRoYW4NCiAgICBSVEVfUEtUTUJVRl9I
+RUFEUk9PTSwgcnRlX3BrdG1idWZfcHJlcGVuZCgpIGNhbm5vdCBmYWlsIGluIHRoZQ0KICAgIHNp
+bXBsZSBwYXRoIChzaW5nbGUtc2VnbWVudCBtYnVmcykuDQp2NToNCiAgLSBSZW9yZ2FuaXplIHBh
+dGNoIHNlcmllcywgcGxhY2luZyBpbnRlcnJ1cHQgZml4IGFzIHRoZSBmaXJzdCBwYXRjaA0KICAg
+IGFuZCBmaXggY29uZGl0aW9uIGNoZWNrIHRvIHByb3Blcmx5IGVuYWJsZSBpbnRlcnJ1cHRzLg0K
+ICAtIEZpeCB6eGRoX3JlY3Zfc2luZ2xlX3BrdHMoKSBub3QgY29tcGFjdGluZyByY3ZfcGt0c1td
+IG9uIGZhaWx1cmUsDQogICAgd2hpY2ggY291bGQgY2F1c2UgdXNlLWFmdGVyLWZyZWUgYW5kIG1i
+dWYgbGVhay4NCiAgLSBGaXggdHhfYnVuY2goKSBhbmQgdHgxKCkgbWlzc2luZyBzdG9yZSBiYXJy
+aWVyIGJlZm9yZSBzZXR0aW5nIEFWQUlMIGZsYWcsDQogICAgcHJldmVudGluZyBkYXRhIHJhY2Ug
+b24gd2Vha2x5LW9yZGVyZWQgYXJjaGl0ZWN0dXJlcy4NCiAgLSBGaXggc3VibWl0X3RvX2JhY2tl
+bmRfc2ltcGxlKCkgd3JpdGluZyBkZXNjcmlwdG9ycyBmb3IgcGFja2V0cyB0aGF0DQogICAgZmFp
+bGVkIHBrdF9wYWRkaW5nKCksIGNhdXNpbmcgbWJ1ZiBsZWFrLg0KdjQ6DQogIC0gZml4IHNvbWUg
+QUkgcmV2aWV3IGlzc3Vlcy4NCiAgLSBmaXggcXVldWUgZW5hYmxlIGludHIgYnVnLg0KdjM6DQog
+IC0gcmVtb3ZlIHVubmVjZXNzYXJ5IE5VTEwgY2hlY2sgaW4genhkaF9pbml0X3F1ZXVlLg0KICAt
+IFNwbGl0IFJpbmc6IEJpdFszMV0gaXMgdW51c2VkIGFuZCByZXNlcnZlZCwgenhkaF9xdWV1ZV9u
+b3RpZnkoKTogcmVtb3ZpbmcgdGhlDQogICAgenhkaF9wY2lfd2l0aF9mZWF0dXJlKGh3LCBaWERI
+X0ZfUklOR19QQUNLRUQpIGNoZWNrOw0KICAtIHJlbW92ZSB1bm5lY2Vzc2FyeSBkb3VibGUtZnJl
+ZSBpbiBpbiB6eGRoX3JlY3Zfc2luZ2xlX3BrdHMoKTsNCiAgLSB1c2VkIHJ0ZV9wa3RtYnVmX210
+b2QoKTsNCiAgLSByZW1vdmUgcnhxX2dldF92cShxKSBtYWNybywgdXNlIHEtPnZxIGFuZCBhcHBs
+eSBpdCBjb25zaXN0ZW50bHk7DQogIC0gUmVmYWN0b3Jpbmcgc2NhdHRlciBhbmQgbXR1IGNoZWNr
+IGxvZ2ljIGluIHp4ZGhfZGV2X210dV9zZXQoKTsNCiAgLSBzZXQgdHhkcC0+aWQgPSBhdmFpbF9p
+ZHggKyBpIGluIHR4X2J1bmNoL3R4MS4NCiAgLSBhZGQgY29tbWVudCBkb2N1bWVudGluZyB6eGRo
+X3htaXRfZW5xdWV1ZV9hcHBlbmQoKSBub3cgc2V0cyBkeHAtPmNvb2tpZSA9IE5VTEwgZm9yDQog
+ICAgdGhlIGhlYWQgc2xvdCBhbmQgc3RvcmVzIGNvb2tpZXMgcGVyIGRlc2NyaXB0b3IgdmlhIGRl
+cFtpZHhdLmNvb2tpZS4NCiAgLSBhZGQgb25lLWxpbmUgY29tbWVudCBub3RpbmcgdHhfYnVuY2go
+KSBpcyB0aGUgc2ltcGxlIHBhdGggaGFuZGxlcyBzaW5nbGUtc2VnbWVudC4NCiAgLSByZW1vdmUg
+dW5uZWNlc3NhcnkgRXh0cmEgaW5pdGlhbGl6YXRpb24gYW5kIHRoZSB1aW50MzJfdCBjYXN0Lg0K
+djI6DQogIC0genhkaF9yeHR4LmMsIHBrdF9wYWRkaW5nKCk6IG1vZGlmeWVkIHRoZSByZXR1cm4g
+dmFsdWUgb2YgcGt0X3BhZGRpbmcoKTsNCiAgLSB6eGRoX3J4dHguYywgenhkaF9yZWN2X3Npbmds
+ZV9wa3RzKCk6IG1vZGlmeWVkIFdoZW4genhkaF9pbml0X21idWYoKSBmYWlscw0KICAgIHRoZSBs
+b29wIGRvZXMgImNvbnRpbnVlIiBhbmQgZnJlZSBtYnVmczsNCiAgLSB6eGRoX3J4dHguYywgcmVm
+aWxsX2Rlc2NfdW53cmFwKCk6IEFkZCBydGVfaW9fd21iKCkgYmVmb3JlIHdyaXRpbmcgZmxhZ3MN
+CiAgICBpbiB0aGUgcmVmaWxsX3F1ZV9kZXNjcygpOw0KICAtIHp4ZGhfcXVldWUuaCwgenhkaF9x
+dWV1ZV9lbmFibGVfaW50cigpOiBSZW1vdmUgdW5uZWNlc3NhcnkgZnVuY3Rpb24gb2YgenhkaF9x
+dWV1ZV9lbmFibGVfaW50cjsNCiAgLSB6eGRoX2V0aGRldi5jLCB6eGRoX2luaXRfcXVldWUoKTog
+Y2hhbmdlZCB0aGUgaGRyX216IE5VTEwgY2hlY2sgbG9naWM7DQogIC0genhkaF9yeHR4LmMsIHp4
+ZGhfeG1pdF9wa3RzX3NpbXBsZSgp44CBenhkaF9yZWN2X3NpbmdsZV9wa3RzKCk6IGFkZCBzdGF0
+cy5ieXRlcyBjb3VudDsNCiAgLSB6eGRoX3J4dHguYywgenhkaF9pbml0X21idWYoKTpyZW1vdmUg
+IHJ0ZV9wa3RtYnVmX2R1bXAoc3Rkb3V0LCByeG0sIDQwKTsNCiAgLSB6eGRoX2V0aGRldi5jLCB6
+eGRoX2Rldl9mcmVlX21idWZzKCk6IHVzaW5nIHJ0ZV9wa3RtYnVmX2ZyZWUoKSB0byBmcmVlIG1i
+dWZzOw0KICAtIFNwbGl0dGluZyBpbnRvIHNlcGFyYXRlIHBhdGNoZXMsIHN0cnVjdHVyZSByZW9y
+Z2FuaXphdGlvbiBhbmQgc3dfcmluZyByZW1vdmFs44CBDQogICAgUlggcmVjdiBvcHRpbWl6ZeOA
+gVR4IHhtaXQgb3B0aW1pemXjgIFUeDsNCnYxOg0KICBUaGlzIHBhdGNoIG9wdGltaXplcyB0aGUg
+WlhESCBQTUQncyByZWNlaXZlIGFuZCB0cmFuc21pdCBwYXRoIGZvciBiZXR0ZXINCiAgcGVyZm9y
+bWFuY2UgdGhyb3VnaCBzZXZlcmFsIGltcHJvdmVtZW50czoNCi0gQWRkIHNpbXBsZSBUWC9SWCBi
+dXJzdCBmdW5jdGlvbnMgKHp4ZGhfeG1pdF9wa3RzX3NpbXBsZSBhbmQNCiAgenhkaF9yZWN2X3Np
+bmdsZV9wa3RzKSBmb3Igc2luZ2xlLXNlZ21lbnQgcGFja2V0IHNjZW5hcmlvcy4NCi0gUmVtb3Zl
+IFJYIHNvZnR3YXJlIHJpbmcgKHN3X3JpbmcpIHRvIHJlZHVjZSBtZW1vcnkgYWxsb2NhdGlvbiBh
+bmQNCiAgY29weS4NCi0gT3B0aW1pemUgZGVzY3JpcHRvciBtYW5hZ2VtZW50IHdpdGggcHJlZmV0
+Y2hpbmcgYW5kIHNpbXBsaWZpZWQNCiAgY2xlYW51cC4NCi0gUmVvcmdhbml6ZSBzdHJ1Y3R1cmUg
+ZmllbGRzIGZvciBiZXR0ZXIgY2FjaGUgbG9jYWxpdHkuDQoNCiAgVGhlc2UgY2hhbmdlcyByZWR1
+Y2UgQ1BVIGN5Y2xlcyBhbmQgbWVtb3J5IGJhbmR3aWR0aCBjb25zdW1wdGlvbiwNCiAgcmVzdWx0
+aW5nIGluIGltcHJvdmVkIHBhY2tldCBwcm9jZXNzaW5nIHRocm91Z2hwdXQuDQoNCkp1bmxvbmcg
+V2FuZyAoNCk6DQogIG5ldC96eGRoOiBmaXggcXVldWUgZW5hYmxlIGludHIgaXNzdWVzDQogIG5l
+dC96eGRoOiBvcHRpbWl6ZSBxdWV1ZSBzdHJ1Y3R1cmUgdG8gaW1wcm92ZSBwZXJmb3JtYW5jZQ0K
+ICBuZXQvenhkaDogb3B0aW1pemUgUnggcmVjdiBwa3RzIHBlcmZvcm1hbmNlDQogIG5ldC96eGRo
+OiBvcHRpbWl6ZSBUeCB4bWl0IHBrdHMgcGVyZm9ybWFuY2UNCg0KIGRvYy9ndWlkZXMvcmVsX25v
+dGVzL3JlbGVhc2VfMjZfMDcucnN0IHwgIDExICsNCiBkcml2ZXJzL25ldC96eGRoL3p4ZGhfZXRo
+ZGV2LmMgICAgICAgICB8ICA3NyArKystLS0NCiBkcml2ZXJzL25ldC96eGRoL3p4ZGhfZXRoZGV2
+X29wcy5jICAgICB8ICAyMyArLQ0KIGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9ldGhkZXZfb3BzLmgg
+ICAgIHwgICA3ICsNCiBkcml2ZXJzL25ldC96eGRoL3p4ZGhfcGNpLmMgICAgICAgICAgICB8ICAy
+MSAtLQ0KIGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9wY2kuaCAgICAgICAgICAgIHwgICAxIC0NCiBk
+cml2ZXJzL25ldC96eGRoL3p4ZGhfcXVldWUuYyAgICAgICAgICB8ICAxMSArLQ0KIGRyaXZlcnMv
+bmV0L3p4ZGgvenhkaF9xdWV1ZS5oICAgICAgICAgIHwgMTMyICsrKystLS0tLS0NCiBkcml2ZXJz
+L25ldC96eGRoL3p4ZGhfcnh0eC5jICAgICAgICAgICB8IDMxNyArKysrKysrKysrKysrKystLS0t
+LS0tLS0tDQogZHJpdmVycy9uZXQvenhkaC96eGRoX3J4dHguaCAgICAgICAgICAgfCAgMTQgKy0N
+CiAxMCBmaWxlcyBjaGFuZ2VkLCAzMTYgaW5zZXJ0aW9ucygrKSwgMjk4IGRlbGV0aW9ucygtKQ0K
+DQotLSANCjIuMjcuMA==
 
-diff --git a/drivers/net/intel/cpfl/cpfl_ethdev.c b/drivers/net/intel/cpfl/cpfl_ethdev.c
-index 4315adb68c..e4dabd8043 100644
---- a/drivers/net/intel/cpfl/cpfl_ethdev.c
-+++ b/drivers/net/intel/cpfl/cpfl_ethdev.c
-@@ -1335,6 +1335,110 @@ cpfl_hairpin_unbind(struct rte_eth_dev *dev, uint16_t rx_port)
- 	return 0;
- }
- 
-+static int
-+cpfl_timesync_enable(struct rte_eth_dev *dev)
-+{
-+	struct cpfl_vport *cpfl_vport = dev->data->dev_private;
-+	struct idpf_vport *vport = &cpfl_vport->base;
-+	struct idpf_adapter *adapter = vport->adapter;
-+	struct timespec sys_ts;
-+	uint64_t ns;
-+	int ret;
-+
-+	if (dev->data->dev_started && !(dev->data->dev_conf.rxmode.offloads &
-+	    RTE_ETH_RX_OFFLOAD_TIMESTAMP)) {
-+		PMD_DRV_LOG(ERR, "Rx timestamp offload not configured");
-+		return -1;
-+	}
-+
-+	/* PTP state is shared by all vports of the adapter. */
-+	if (adapter->ptp != NULL)
-+		return 0;
-+
-+	adapter->ptp = rte_zmalloc(NULL, sizeof(struct idpf_ptp), 0);
-+	if (adapter->ptp == NULL) {
-+		PMD_DRV_LOG(ERR, "Failed to allocate memory for PTP");
-+		return -ENOMEM;
-+	}
-+
-+	ret = idpf_ptp_get_caps(adapter);
-+	if (ret) {
-+		PMD_DRV_LOG(ERR, "Failed to get PTP capabilities, err=%d", ret);
-+		goto fail_ptp;
-+	}
-+
-+	/*
-+	 * Write the default increment time value if the clock adjustments
-+	 * are enabled.
-+	 */
-+	if (adapter->ptp->adj_dev_clk_time_access != IDPF_PTP_NONE) {
-+		ret = idpf_ptp_adj_dev_clk_fine(adapter, adapter->ptp->base_incval);
-+		if (ret) {
-+			PMD_DRV_LOG(ERR, "PTP set incval failed, err=%d", ret);
-+			goto fail_ptp;
-+		}
-+	}
-+
-+	/* Do not initialize the PTP if the device clock time cannot be read. */
-+	if (adapter->ptp->get_dev_clk_time_access == IDPF_PTP_NONE) {
-+		PMD_DRV_LOG(ERR, "Getting device clock time is not supported");
-+		ret = -EIO;
-+		goto fail_ptp;
-+	}
-+
-+	/* Set the device clock time to system time. */
-+	if (adapter->ptp->set_dev_clk_time_access != IDPF_PTP_NONE) {
-+		clock_gettime(CLOCK_REALTIME, &sys_ts);
-+		ns = rte_timespec_to_ns(&sys_ts);
-+		ret = idpf_ptp_set_dev_clk_time(adapter, ns);
-+		if (ret) {
-+			PMD_DRV_LOG(ERR, "PTP set clock time failed, err=%d", ret);
-+			goto fail_ptp;
-+		}
-+	}
-+
-+	adapter->ptp->cmd.shtime_enable_mask = PF_GLTSYN_CMD_SYNC_SHTIME_EN_M;
-+	adapter->ptp->cmd.exec_cmd_mask = PF_GLTSYN_CMD_SYNC_EXEC_CMD_M;
-+
-+	return 0;
-+
-+fail_ptp:
-+	rte_free(adapter->ptp);
-+	adapter->ptp = NULL;
-+	return ret;
-+}
-+
-+static int
-+cpfl_timesync_read_time(struct rte_eth_dev *dev, struct timespec *ts)
-+{
-+	struct cpfl_vport *cpfl_vport = dev->data->dev_private;
-+	struct idpf_adapter *adapter = cpfl_vport->base.adapter;
-+	uint64_t time;
-+	int ret;
-+
-+	ret = idpf_ptp_read_src_clk_reg(adapter, &time);
-+	if (ret)
-+		PMD_DRV_LOG(ERR, "PTP read time failed, err %d", ret);
-+	else
-+		*ts = rte_ns_to_timespec(time);
-+
-+	return ret;
-+}
-+
-+static int
-+cpfl_timesync_disable(struct rte_eth_dev *dev)
-+{
-+	struct cpfl_vport *cpfl_vport = dev->data->dev_private;
-+	struct idpf_adapter *adapter = cpfl_vport->base.adapter;
-+
-+	if (adapter->ptp != NULL) {
-+		rte_free(adapter->ptp);
-+		adapter->ptp = NULL;
-+	}
-+
-+	return 0;
-+}
-+
- static const struct eth_dev_ops cpfl_eth_dev_ops = {
- 	.dev_configure			= cpfl_dev_configure,
- 	.dev_close			= cpfl_dev_close,
-@@ -1368,6 +1472,9 @@ static const struct eth_dev_ops cpfl_eth_dev_ops = {
- 	.hairpin_get_peer_ports         = cpfl_hairpin_get_peer_ports,
- 	.hairpin_bind                   = cpfl_hairpin_bind,
- 	.hairpin_unbind                 = cpfl_hairpin_unbind,
-+	.timesync_enable                = cpfl_timesync_enable,
-+	.timesync_read_time             = cpfl_timesync_read_time,
-+	.timesync_disable               = cpfl_timesync_disable,
- };
- 
- static int
-diff --git a/drivers/net/intel/cpfl/cpfl_ethdev.h b/drivers/net/intel/cpfl/cpfl_ethdev.h
-index d41aa93191..a9e532a46c 100644
---- a/drivers/net/intel/cpfl/cpfl_ethdev.h
-+++ b/drivers/net/intel/cpfl/cpfl_ethdev.h
-@@ -16,6 +16,7 @@
- 
- #include <idpf_common_device.h>
- #include <idpf_common_virtchnl.h>
-+#include <idpf_ptp.h>
- #include <base/idpf_prototype.h>
- #include <base/virtchnl2.h>
- 
-diff --git a/drivers/net/intel/idpf/idpf_ptp.c b/drivers/net/intel/idpf/idpf_ptp.c
-index 5c3fcb90e4..47830de239 100644
---- a/drivers/net/intel/idpf/idpf_ptp.c
-+++ b/drivers/net/intel/idpf/idpf_ptp.c
-@@ -2,6 +2,7 @@
-  * Copyright(c) 2025 Intel Corporation
-  */
- 
-+#include <eal_export.h>
- #include "idpf_ptp.h"
- #include "idpf_common_virtchnl.h"
- #include "base/virtchnl2.h"
-@@ -38,6 +39,7 @@ idpf_ptp_get_features_access(const struct idpf_adapter *adapter)
- 		IDPF_PTP_ACCESS(adapter, VIRTCHNL2_CAP_PTP_TX_TSTAMPS);
- }
- 
-+RTE_EXPORT_INTERNAL_SYMBOL(idpf_ptp_get_caps)
- int
- idpf_ptp_get_caps(struct idpf_adapter *adapter)
- {
-@@ -212,6 +214,7 @@ idpf_ptp_get_cross_time(struct idpf_adapter *adapter,
- 	return err;
- }
- 
-+RTE_EXPORT_INTERNAL_SYMBOL(idpf_ptp_set_dev_clk_time)
- int
- idpf_ptp_set_dev_clk_time(struct idpf_adapter *adapter, uint64_t time)
- {
-@@ -256,6 +259,7 @@ idpf_ptp_adj_dev_clk_time(struct idpf_adapter *adapter, int64_t delta)
- 	return err;
- }
- 
-+RTE_EXPORT_INTERNAL_SYMBOL(idpf_ptp_adj_dev_clk_fine)
- int
- idpf_ptp_adj_dev_clk_fine(struct idpf_adapter *adapter, uint64_t incval)
- {
-@@ -487,6 +491,7 @@ idpf_ptp_read_src_clk_reg_mailbox(struct idpf_adapter *adapter,
-  *
-  * Return: 0 on success, -errno otherwise.
-  */
-+RTE_EXPORT_INTERNAL_SYMBOL(idpf_ptp_read_src_clk_reg)
- int
- idpf_ptp_read_src_clk_reg(struct idpf_adapter *adapter, uint64_t *src_clk)
- {
-diff --git a/drivers/net/intel/idpf/idpf_ptp.h b/drivers/net/intel/idpf/idpf_ptp.h
-index 0c901440fb..851cdad027 100644
---- a/drivers/net/intel/idpf/idpf_ptp.h
-+++ b/drivers/net/intel/idpf/idpf_ptp.h
-@@ -88,13 +88,17 @@ struct idpf_ptp_dev_timers {
- 	uint64_t dev_clk_time_ns;
- };
- 
-+__rte_internal
- int idpf_ptp_get_caps(struct idpf_adapter *adapter);
-+__rte_internal
- int idpf_ptp_read_src_clk_reg(struct idpf_adapter *adapter, uint64_t *src_clk);
- int idpf_ptp_get_dev_clk_time(struct idpf_adapter *adapter,
- 			     struct idpf_ptp_dev_timers *dev_clk_time);
- int idpf_ptp_get_cross_time(struct idpf_adapter *adapter,
- 			    struct idpf_ptp_dev_timers *cross_time);
-+__rte_internal
- int idpf_ptp_set_dev_clk_time(struct idpf_adapter *adapter, uint64_t time);
-+__rte_internal
- int idpf_ptp_adj_dev_clk_fine(struct idpf_adapter *adapter, uint64_t incval);
- int idpf_ptp_adj_dev_clk_time(struct idpf_adapter *adapter, int64_t delta);
- int idpf_ptp_get_vport_tstamps_caps(struct idpf_vport *vport);
--- 
-2.34.1
+
+--=====_003_next=====
+Content-Type: text/html ;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+djEwOjxiciAvPiZuYnNwOyZuYnNwOy0mbmJzcDtCYXNlZCZuYnNwO29uJm5ic3A7dGhlJm5ic3A7
+aXNzdWVzJm5ic3A7cmFpc2VkJm5ic3A7aW4mbmJzcDt0aGUmbmJzcDtBSSZuYnNwO3Jldmlldywm
+bmJzcDtQYXRjaCZuYnNwOzIvNCZuYnNwO1BhdGNoJm5ic3A7My80Jm5ic3A7UGF0Y2gmbmJzcDs0
+LzQmbmJzcDtoYXZlJm5ic3A7YmVlbiZuYnNwO21vZGlmaWVkLjxiciAvPg08YnIgLz52OTo8YnIg
+Lz4mbmJzcDsmbmJzcDstJm5ic3A7UmVtb3ZlJm5ic3A7YWRkJm5ic3A7c2ltcGxlJm5ic3A7VHgm
+bmJzcDt4bWl0Jm5ic3A7ZnVuY3Rpb25zJm5ic3A7KHp4ZGhfeG1pdF9wa3RzX3NpbXBsZSkmbmJz
+cDtpbiZuYnNwO3RoZSZuYnNwO2xhc3QmbmJzcDtwYXRjaC48YnIgLz4NPGJyIC8+djg6PGJyIC8+
+Jm5ic3A7Jm5ic3A7LSZuYnNwO0FkZCZuYnNwO2NoZWNrZWQmbmJzcDt0aGUmbmJzcDtzaXplJm5i
+c3A7b2YmbmJzcDtaWERIX0RMX05FVF9IRFJfU0laRSZuYnNwO2FuZCZuYnNwO1JURV9QS1RNQlVG
+X0hFQURST09NJm5ic3A7aW48YnIgLz4mbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt6eGRoX3htaXRf
+cGt0c19zaW1wbGUoKSZuYnNwO2JlZm9yZSZuYnNwO3N1Ym1pdHRpbmcuJm5ic3A7QWRkJm5ic3A7
+c3RhdGljX2Fzc2VydCZuYnNwO3RvJm5ic3A7cmVqZWN0Jm5ic3A7YnVpbGRzJm5ic3A7d2l0aCZu
+YnNwO2luc3VmZmljaWVudDxiciAvPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO2RlZmF1bHQmbmJz
+cDtoZWFkcm9vbSZuYnNwO2F0Jm5ic3A7Y29tcGlsZSZuYnNwO3RpbWUuPGJyIC8+DTxiciAvPnY3
+OjxiciAvPiZuYnNwOyZuYnNwOy0mbmJzcDtBZGQmbmJzcDthJm5ic3A7bmV3Jm5ic3A7eG1pdCZu
+YnNwO3ByZXBhcmUmbmJzcDtmdW5jJm5ic3A7Zm9yJm5ic3A7eG1pdF9wa3RzX3NpbXBsZSwmbmJz
+cDt3aGljaCZuYnNwO3dpbGwmbmJzcDtjaGVja2VkJm5ic3A7dGhlJm5ic3A7c2l6ZSZuYnNwO29m
+PGJyIC8+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7WlhESF9ETF9ORVRfSERSX1NJWkUmbmJzcDth
+bmQmbmJzcDtSVEVfUEtUTUJVRl9IRUFEUk9PTS48YnIgLz4NPGJyIC8+djY6PGJyIC8+Jm5ic3A7
+Jm5ic3A7LSZuYnNwO1JlbW92ZSZuYnNwO3VubmVjZXNzYXJ5Jm5ic3A7ZXJyb3ImbmJzcDtjaGVj
+a2luZyZuYnNwO2NvZGUmbmJzcDtpbiZuYnNwO3N1Ym1pdF90b19iYWNrZW5kX3NpbXBsZSgpJm5i
+c3A7YW5kPGJyIC8+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7cGt0X3BhZGRpbmcoKS4mbmJzcDtT
+aW5jZSZuYnNwO2FzJm5ic3A7dGhlJm5ic3A7bWF4Jm5ic3A7ZGxfbmV0X2hkcl9sZW4mbmJzcDtp
+cyZuYnNwO2Fsd2F5cyZuYnNwO2xlc3MmbmJzcDt0aGFuPGJyIC8+Jm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7UlRFX1BLVE1CVUZfSEVBRFJPT00sJm5ic3A7cnRlX3BrdG1idWZfcHJlcGVuZCgpJm5i
+c3A7Y2Fubm90Jm5ic3A7ZmFpbCZuYnNwO2luJm5ic3A7dGhlPGJyIC8+Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7c2ltcGxlJm5ic3A7cGF0aCZuYnNwOyhzaW5nbGUtc2VnbWVudCZuYnNwO21idWZz
+KS48YnIgLz52NTo8YnIgLz4mbmJzcDsmbmJzcDstJm5ic3A7UmVvcmdhbml6ZSZuYnNwO3BhdGNo
+Jm5ic3A7c2VyaWVzLCZuYnNwO3BsYWNpbmcmbmJzcDtpbnRlcnJ1cHQmbmJzcDtmaXgmbmJzcDth
+cyZuYnNwO3RoZSZuYnNwO2ZpcnN0Jm5ic3A7cGF0Y2g8YnIgLz4mbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDthbmQmbmJzcDtmaXgmbmJzcDtjb25kaXRpb24mbmJzcDtjaGVjayZuYnNwO3RvJm5ic3A7
+cHJvcGVybHkmbmJzcDtlbmFibGUmbmJzcDtpbnRlcnJ1cHRzLjxiciAvPiZuYnNwOyZuYnNwOy0m
+bmJzcDtGaXgmbmJzcDt6eGRoX3JlY3Zfc2luZ2xlX3BrdHMoKSZuYnNwO25vdCZuYnNwO2NvbXBh
+Y3RpbmcmbmJzcDtyY3ZfcGt0c1tdJm5ic3A7b24mbmJzcDtmYWlsdXJlLDxiciAvPiZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwO3doaWNoJm5ic3A7Y291bGQmbmJzcDtjYXVzZSZuYnNwO3VzZS1hZnRl
+ci1mcmVlJm5ic3A7YW5kJm5ic3A7bWJ1ZiZuYnNwO2xlYWsuPGJyIC8+Jm5ic3A7Jm5ic3A7LSZu
+YnNwO0ZpeCZuYnNwO3R4X2J1bmNoKCkmbmJzcDthbmQmbmJzcDt0eDEoKSZuYnNwO21pc3Npbmcm
+bmJzcDtzdG9yZSZuYnNwO2JhcnJpZXImbmJzcDtiZWZvcmUmbmJzcDtzZXR0aW5nJm5ic3A7QVZB
+SUwmbmJzcDtmbGFnLDxiciAvPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3ByZXZlbnRpbmcmbmJz
+cDtkYXRhJm5ic3A7cmFjZSZuYnNwO29uJm5ic3A7d2Vha2x5LW9yZGVyZWQmbmJzcDthcmNoaXRl
+Y3R1cmVzLjxiciAvPiZuYnNwOyZuYnNwOy0mbmJzcDtGaXgmbmJzcDtzdWJtaXRfdG9fYmFja2Vu
+ZF9zaW1wbGUoKSZuYnNwO3dyaXRpbmcmbmJzcDtkZXNjcmlwdG9ycyZuYnNwO2ZvciZuYnNwO3Bh
+Y2tldHMmbmJzcDt0aGF0PGJyIC8+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7ZmFpbGVkJm5ic3A7
+cGt0X3BhZGRpbmcoKSwmbmJzcDtjYXVzaW5nJm5ic3A7bWJ1ZiZuYnNwO2xlYWsuPGJyIC8+djQ6
+PGJyIC8+Jm5ic3A7Jm5ic3A7LSZuYnNwO2ZpeCZuYnNwO3NvbWUmbmJzcDtBSSZuYnNwO3Jldmll
+dyZuYnNwO2lzc3Vlcy48YnIgLz4mbmJzcDsmbmJzcDstJm5ic3A7Zml4Jm5ic3A7cXVldWUmbmJz
+cDtlbmFibGUmbmJzcDtpbnRyJm5ic3A7YnVnLjxiciAvPnYzOjxiciAvPiZuYnNwOyZuYnNwOy0m
+bmJzcDtyZW1vdmUmbmJzcDt1bm5lY2Vzc2FyeSZuYnNwO05VTEwmbmJzcDtjaGVjayZuYnNwO2lu
+Jm5ic3A7enhkaF9pbml0X3F1ZXVlLjxiciAvPiZuYnNwOyZuYnNwOy0mbmJzcDtTcGxpdCZuYnNw
+O1Jpbmc6Jm5ic3A7Qml0WzMxXSZuYnNwO2lzJm5ic3A7dW51c2VkJm5ic3A7YW5kJm5ic3A7cmVz
+ZXJ2ZWQsJm5ic3A7enhkaF9xdWV1ZV9ub3RpZnkoKTombmJzcDtyZW1vdmluZyZuYnNwO3RoZTxi
+ciAvPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3p4ZGhfcGNpX3dpdGhfZmVhdHVyZShodywmbmJz
+cDtaWERIX0ZfUklOR19QQUNLRUQpJm5ic3A7Y2hlY2s7PGJyIC8+Jm5ic3A7Jm5ic3A7LSZuYnNw
+O3JlbW92ZSZuYnNwO3VubmVjZXNzYXJ5Jm5ic3A7ZG91YmxlLWZyZWUmbmJzcDtpbiZuYnNwO2lu
+Jm5ic3A7enhkaF9yZWN2X3NpbmdsZV9wa3RzKCk7PGJyIC8+Jm5ic3A7Jm5ic3A7LSZuYnNwO3Vz
+ZWQmbmJzcDtydGVfcGt0bWJ1Zl9tdG9kKCk7PGJyIC8+Jm5ic3A7Jm5ic3A7LSZuYnNwO3JlbW92
+ZSZuYnNwO3J4cV9nZXRfdnEocSkmbmJzcDttYWNybywmbmJzcDt1c2UmbmJzcDtxLSZndDt2cSZu
+YnNwO2FuZCZuYnNwO2FwcGx5Jm5ic3A7aXQmbmJzcDtjb25zaXN0ZW50bHk7PGJyIC8+Jm5ic3A7
+Jm5ic3A7LSZuYnNwO1JlZmFjdG9yaW5nJm5ic3A7c2NhdHRlciZuYnNwO2FuZCZuYnNwO210dSZu
+YnNwO2NoZWNrJm5ic3A7bG9naWMmbmJzcDtpbiZuYnNwO3p4ZGhfZGV2X210dV9zZXQoKTs8YnIg
+Lz4mbmJzcDsmbmJzcDstJm5ic3A7c2V0Jm5ic3A7dHhkcC0mZ3Q7aWQmbmJzcDs9Jm5ic3A7YXZh
+aWxfaWR4Jm5ic3A7KyZuYnNwO2kmbmJzcDtpbiZuYnNwO3R4X2J1bmNoL3R4MS48YnIgLz4mbmJz
+cDsmbmJzcDstJm5ic3A7YWRkJm5ic3A7Y29tbWVudCZuYnNwO2RvY3VtZW50aW5nJm5ic3A7enhk
+aF94bWl0X2VucXVldWVfYXBwZW5kKCkmbmJzcDtub3cmbmJzcDtzZXRzJm5ic3A7ZHhwLSZndDtj
+b29raWUmbmJzcDs9Jm5ic3A7TlVMTCZuYnNwO2ZvcjxiciAvPiZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwO3RoZSZuYnNwO2hlYWQmbmJzcDtzbG90Jm5ic3A7YW5kJm5ic3A7c3RvcmVzJm5ic3A7Y29v
+a2llcyZuYnNwO3BlciZuYnNwO2Rlc2NyaXB0b3ImbmJzcDt2aWEmbmJzcDtkZXBbaWR4XS5jb29r
+aWUuPGJyIC8+Jm5ic3A7Jm5ic3A7LSZuYnNwO2FkZCZuYnNwO29uZS1saW5lJm5ic3A7Y29tbWVu
+dCZuYnNwO25vdGluZyZuYnNwO3R4X2J1bmNoKCkmbmJzcDtpcyZuYnNwO3RoZSZuYnNwO3NpbXBs
+ZSZuYnNwO3BhdGgmbmJzcDtoYW5kbGVzJm5ic3A7c2luZ2xlLXNlZ21lbnQuPGJyIC8+Jm5ic3A7
+Jm5ic3A7LSZuYnNwO3JlbW92ZSZuYnNwO3VubmVjZXNzYXJ5Jm5ic3A7RXh0cmEmbmJzcDtpbml0
+aWFsaXphdGlvbiZuYnNwO2FuZCZuYnNwO3RoZSZuYnNwO3VpbnQzMl90Jm5ic3A7Y2FzdC48YnIg
+Lz52Mjo8YnIgLz4mbmJzcDsmbmJzcDstJm5ic3A7enhkaF9yeHR4LmMsJm5ic3A7cGt0X3BhZGRp
+bmcoKTombmJzcDttb2RpZnllZCZuYnNwO3RoZSZuYnNwO3JldHVybiZuYnNwO3ZhbHVlJm5ic3A7
+b2YmbmJzcDtwa3RfcGFkZGluZygpOzxiciAvPiZuYnNwOyZuYnNwOy0mbmJzcDt6eGRoX3J4dHgu
+YywmbmJzcDt6eGRoX3JlY3Zfc2luZ2xlX3BrdHMoKTombmJzcDttb2RpZnllZCZuYnNwO1doZW4m
+bmJzcDt6eGRoX2luaXRfbWJ1ZigpJm5ic3A7ZmFpbHM8YnIgLz4mbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDt0aGUmbmJzcDtsb29wJm5ic3A7ZG9lcyZuYnNwOyZxdW90O2NvbnRpbnVlJnF1b3Q7Jm5i
+c3A7YW5kJm5ic3A7ZnJlZSZuYnNwO21idWZzOzxiciAvPiZuYnNwOyZuYnNwOy0mbmJzcDt6eGRo
+X3J4dHguYywmbmJzcDtyZWZpbGxfZGVzY191bndyYXAoKTombmJzcDtBZGQmbmJzcDtydGVfaW9f
+d21iKCkmbmJzcDtiZWZvcmUmbmJzcDt3cml0aW5nJm5ic3A7ZmxhZ3M8YnIgLz4mbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDtpbiZuYnNwO3RoZSZuYnNwO3JlZmlsbF9xdWVfZGVzY3MoKTs8YnIgLz4m
+bmJzcDsmbmJzcDstJm5ic3A7enhkaF9xdWV1ZS5oLCZuYnNwO3p4ZGhfcXVldWVfZW5hYmxlX2lu
+dHIoKTombmJzcDtSZW1vdmUmbmJzcDt1bm5lY2Vzc2FyeSZuYnNwO2Z1bmN0aW9uJm5ic3A7b2Ym
+bmJzcDt6eGRoX3F1ZXVlX2VuYWJsZV9pbnRyOzxiciAvPiZuYnNwOyZuYnNwOy0mbmJzcDt6eGRo
+X2V0aGRldi5jLCZuYnNwO3p4ZGhfaW5pdF9xdWV1ZSgpOiZuYnNwO2NoYW5nZWQmbmJzcDt0aGUm
+bmJzcDtoZHJfbXombmJzcDtOVUxMJm5ic3A7Y2hlY2smbmJzcDtsb2dpYzs8YnIgLz4mbmJzcDsm
+bmJzcDstJm5ic3A7enhkaF9yeHR4LmMsJm5ic3A7enhkaF94bWl0X3BrdHNfc2ltcGxlKCnjgIF6
+eGRoX3JlY3Zfc2luZ2xlX3BrdHMoKTombmJzcDthZGQmbmJzcDtzdGF0cy5ieXRlcyZuYnNwO2Nv
+dW50OzxiciAvPiZuYnNwOyZuYnNwOy0mbmJzcDt6eGRoX3J4dHguYywmbmJzcDt6eGRoX2luaXRf
+bWJ1ZigpOnJlbW92ZSZuYnNwOyZuYnNwO3J0ZV9wa3RtYnVmX2R1bXAoc3Rkb3V0LCZuYnNwO3J4
+bSwmbmJzcDs0MCk7PGJyIC8+Jm5ic3A7Jm5ic3A7LSZuYnNwO3p4ZGhfZXRoZGV2LmMsJm5ic3A7
+enhkaF9kZXZfZnJlZV9tYnVmcygpOiZuYnNwO3VzaW5nJm5ic3A7cnRlX3BrdG1idWZfZnJlZSgp
+Jm5ic3A7dG8mbmJzcDtmcmVlJm5ic3A7bWJ1ZnM7PGJyIC8+Jm5ic3A7Jm5ic3A7LSZuYnNwO1Nw
+bGl0dGluZyZuYnNwO2ludG8mbmJzcDtzZXBhcmF0ZSZuYnNwO3BhdGNoZXMsJm5ic3A7c3RydWN0
+dXJlJm5ic3A7cmVvcmdhbml6YXRpb24mbmJzcDthbmQmbmJzcDtzd19yaW5nJm5ic3A7cmVtb3Zh
+bOOAgTxiciAvPiZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO1JYJm5ic3A7cmVjdiZuYnNwO29wdGlt
+aXpl44CBVHgmbmJzcDt4bWl0Jm5ic3A7b3B0aW1pemXjgIFUeDs8YnIgLz52MTo8YnIgLz4mbmJz
+cDsmbmJzcDtUaGlzJm5ic3A7cGF0Y2gmbmJzcDtvcHRpbWl6ZXMmbmJzcDt0aGUmbmJzcDtaWERI
+Jm5ic3A7UE1EJmFwb3M7cyZuYnNwO3JlY2VpdmUmbmJzcDthbmQmbmJzcDt0cmFuc21pdCZuYnNw
+O3BhdGgmbmJzcDtmb3ImbmJzcDtiZXR0ZXI8YnIgLz4mbmJzcDsmbmJzcDtwZXJmb3JtYW5jZSZu
+YnNwO3Rocm91Z2gmbmJzcDtzZXZlcmFsJm5ic3A7aW1wcm92ZW1lbnRzOjxiciAvPi0mbmJzcDtB
+ZGQmbmJzcDtzaW1wbGUmbmJzcDtUWC9SWCZuYnNwO2J1cnN0Jm5ic3A7ZnVuY3Rpb25zJm5ic3A7
+KHp4ZGhfeG1pdF9wa3RzX3NpbXBsZSZuYnNwO2FuZDxiciAvPiZuYnNwOyZuYnNwO3p4ZGhfcmVj
+dl9zaW5nbGVfcGt0cykmbmJzcDtmb3ImbmJzcDtzaW5nbGUtc2VnbWVudCZuYnNwO3BhY2tldCZu
+YnNwO3NjZW5hcmlvcy48YnIgLz4tJm5ic3A7UmVtb3ZlJm5ic3A7UlgmbmJzcDtzb2Z0d2FyZSZu
+YnNwO3JpbmcmbmJzcDsoc3dfcmluZykmbmJzcDt0byZuYnNwO3JlZHVjZSZuYnNwO21lbW9yeSZu
+YnNwO2FsbG9jYXRpb24mbmJzcDthbmQ8YnIgLz4mbmJzcDsmbmJzcDtjb3B5LjxiciAvPi0mbmJz
+cDtPcHRpbWl6ZSZuYnNwO2Rlc2NyaXB0b3ImbmJzcDttYW5hZ2VtZW50Jm5ic3A7d2l0aCZuYnNw
+O3ByZWZldGNoaW5nJm5ic3A7YW5kJm5ic3A7c2ltcGxpZmllZDxiciAvPiZuYnNwOyZuYnNwO2Ns
+ZWFudXAuPGJyIC8+LSZuYnNwO1Jlb3JnYW5pemUmbmJzcDtzdHJ1Y3R1cmUmbmJzcDtmaWVsZHMm
+bmJzcDtmb3ImbmJzcDtiZXR0ZXImbmJzcDtjYWNoZSZuYnNwO2xvY2FsaXR5LjxiciAvPg08YnIg
+Lz4mbmJzcDsmbmJzcDtUaGVzZSZuYnNwO2NoYW5nZXMmbmJzcDtyZWR1Y2UmbmJzcDtDUFUmbmJz
+cDtjeWNsZXMmbmJzcDthbmQmbmJzcDttZW1vcnkmbmJzcDtiYW5kd2lkdGgmbmJzcDtjb25zdW1w
+dGlvbiw8YnIgLz4mbmJzcDsmbmJzcDtyZXN1bHRpbmcmbmJzcDtpbiZuYnNwO2ltcHJvdmVkJm5i
+c3A7cGFja2V0Jm5ic3A7cHJvY2Vzc2luZyZuYnNwO3Rocm91Z2hwdXQuPGJyIC8+DTxiciAvPkp1
+bmxvbmcmbmJzcDtXYW5nJm5ic3A7KDQpOjxiciAvPiZuYnNwOyZuYnNwO25ldC96eGRoOiZuYnNw
+O2ZpeCZuYnNwO3F1ZXVlJm5ic3A7ZW5hYmxlJm5ic3A7aW50ciZuYnNwO2lzc3VlczxiciAvPiZu
+YnNwOyZuYnNwO25ldC96eGRoOiZuYnNwO29wdGltaXplJm5ic3A7cXVldWUmbmJzcDtzdHJ1Y3R1
+cmUmbmJzcDt0byZuYnNwO2ltcHJvdmUmbmJzcDtwZXJmb3JtYW5jZTxiciAvPiZuYnNwOyZuYnNw
+O25ldC96eGRoOiZuYnNwO29wdGltaXplJm5ic3A7UngmbmJzcDtyZWN2Jm5ic3A7cGt0cyZuYnNw
+O3BlcmZvcm1hbmNlPGJyIC8+Jm5ic3A7Jm5ic3A7bmV0L3p4ZGg6Jm5ic3A7b3B0aW1pemUmbmJz
+cDtUeCZuYnNwO3htaXQmbmJzcDtwa3RzJm5ic3A7cGVyZm9ybWFuY2U8YnIgLz4NPGJyIC8+Jm5i
+c3A7ZG9jL2d1aWRlcy9yZWxfbm90ZXMvcmVsZWFzZV8yNl8wNy5yc3QmbmJzcDt8Jm5ic3A7Jm5i
+c3A7MTEmbmJzcDsrPGJyIC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96eGRoX2V0aGRldi5jJm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7fCZuYnNw
+OyZuYnNwOzc3Jm5ic3A7KysrLS0tPGJyIC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96eGRoX2V0
+aGRldl9vcHMuYyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3wmbmJzcDsmbmJzcDsyMyZu
+YnNwOystPGJyIC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96eGRoX2V0aGRldl9vcHMuaCZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3wmbmJzcDsmbmJzcDsmbmJzcDs3Jm5ic3A7KzxiciAv
+PiZuYnNwO2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9wY2kuYyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3wmbmJzcDsm
+bmJzcDsyMSZuYnNwOy0tPGJyIC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96eGRoX3BjaS5oJm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7fCZuYnNwOyZuYnNwOyZuYnNwOzEmbmJzcDstPGJyIC8+Jm5ic3A7ZHJpdmVy
+cy9uZXQvenhkaC96eGRoX3F1ZXVlLmMmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDt8Jm5ic3A7Jm5ic3A7MTEmbmJzcDsrLTxiciAvPiZu
+YnNwO2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9xdWV1ZS5oJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7fCZuYnNwOzEzMiZuYnNwOysrKyst
+LS0tLS08YnIgLz4mbmJzcDtkcml2ZXJzL25ldC96eGRoL3p4ZGhfcnh0eC5jJm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7fCZu
+YnNwOzMxNyZuYnNwOysrKysrKysrKysrKysrKy0tLS0tLS0tLS08YnIgLz4mbmJzcDtkcml2ZXJz
+L25ldC96eGRoL3p4ZGhfcnh0eC5oJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7fCZuYnNwOyZuYnNwOzE0Jm5ic3A7Ky08YnIg
+Lz4mbmJzcDsxMCZuYnNwO2ZpbGVzJm5ic3A7Y2hhbmdlZCwmbmJzcDszMTYmbmJzcDtpbnNlcnRp
+b25zKCspLCZuYnNwOzI5OCZuYnNwO2RlbGV0aW9ucygtKTxiciAvPg08YnIgLz4tLSZuYnNwOw08
+YnIgLz4yLjI3LjA8YnIgLz4=
+
+
+--=====_003_next=====--
+
+--=====_002_next=====--
+
+--=====_001_next=====--
 
