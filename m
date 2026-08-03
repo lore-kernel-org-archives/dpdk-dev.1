@@ -2,21 +2,21 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B98C55182
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Aug 2026 17:22:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD8EEC55822
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Aug 2026 17:25:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6C0684026C;
-	Mon,  3 Aug 2026 19:22:20 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id F27D74026C;
+	Mon,  3 Aug 2026 19:25:54 +0200 (CEST)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 2A3FD40269
- for <dev@dpdk.org>; Mon,  3 Aug 2026 19:22:19 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id F2B4A4026C
+ for <dev@dpdk.org>; Mon,  3 Aug 2026 19:25:53 +0200 (CEST)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 1ED274B9C5; Mon,  3 Aug 2026 19:22:19 +0200 (CEST)
+ id E78F44B9C5; Mon,  3 Aug 2026 19:25:53 +0200 (CEST)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/DTS Bug 1976] dts: remove crypto test type and resolve no link
- error
-Date: Mon, 03 Aug 2026 17:22:19 +0000
+Subject: [DPDK/DTS Bug 1977] dts: resolve packet loss on Intel X710
+ performance tests.
+Date: Mon, 03 Aug 2026 17:25:54 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -35,7 +35,7 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter cc
  target_milestone
-Message-ID: <bug-1976-3@http.bugs.dpdk.org/>
+Message-ID: <bug-1977-3@http.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: http://bugs.dpdk.org/
@@ -55,10 +55,11 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1976
+http://bugs.dpdk.org/show_bug.cgi?id=3D1977
 
-            Bug ID: 1976
-           Summary: dts: remove crypto test type and resolve no link error
+            Bug ID: 1977
+           Summary: dts: resolve packet loss on Intel X710 performance
+                    tests.
            Product: DPDK
            Version: 26.07
           Hardware: All
@@ -72,14 +73,10 @@ http://bugs.dpdk.org/show_bug.cgi?id=3D1976
                 CC: juraj.linkes@pantheon.tech, probb@iol.unh.edu
   Target Milestone: ---
 
-With the addition of no link topology in 26.07, there is no longer a need f=
-or
-the crypto test type. Running in a no link topology removes the need for
-creating a TG and therefore crypto tests can be relabeled as performance te=
-sts
-that can be ran in no link mode. This however, causes DTS to crash so the c=
-rash
-must first be resolved and then the crypto test type can be removed.
+The current single core performance test yields zero packets when running t=
+he
+TG on an Intel X710 NIC. The packets do not leave TREX due to their contents
+which should be updated.
 
 --=20
 You are receiving this mail because:
