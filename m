@@ -2,70 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB847C55182
-	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Aug 2026 16:53:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BBFDC55182
+	for <dpdk-dev@archiver.kernel.org>; Mon,  3 Aug 2026 16:53:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 15737402E2;
-	Mon,  3 Aug 2026 18:53:11 +0200 (CEST)
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com
- [209.85.214.174])
- by mails.dpdk.org (Postfix) with ESMTP id 59AAF40269
- for <dev@dpdk.org>; Mon,  3 Aug 2026 18:53:09 +0200 (CEST)
-Received: by mail-pl1-f174.google.com with SMTP id
- d9443c01a7336-2cc891373e0so39438965ad.2
- for <dev@dpdk.org>; Mon, 03 Aug 2026 09:53:08 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 091CC4064A;
+	Mon,  3 Aug 2026 18:53:12 +0200 (CEST)
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com
+ [209.85.214.177])
+ by mails.dpdk.org (Postfix) with ESMTP id 9BE71402CC
+ for <dev@dpdk.org>; Mon,  3 Aug 2026 18:53:10 +0200 (CEST)
+Received: by mail-pl1-f177.google.com with SMTP id
+ d9443c01a7336-2ced3386430so36221135ad.1
+ for <dev@dpdk.org>; Mon, 03 Aug 2026 09:53:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785775988;
- x=1786380788; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785775990;
+ x=1786380790; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=SgL7c7IObXoiG3HwTS93AdQuWUp5B0BuI+WbIoHoCNI=;
- b=ibKIIvQcKEjHxA0RfNOgbkRiZhlk81d2aHM12LdAp/EqTBQ3xmdxKyHHw1XggNS297
- PRP/RJziFxDsJ+gVDpirgZK94VC30vgkaJDbJCoP987i72NkYDQIIeGJpTv3MVqcUOBB
- 6ENKh42VDgwpnrSs/Khx/kqpFi1o4hgDKr0VMsnq4BJSeHc81Ea6kvtNiN9V5smWIQIj
- 2Z3/u5jV5Nvwyv2or7Fn6dT7VSBJUroxivnPtrWDY3SEfOhbYtHMQp5CaDMqR1hXDCjF
- 0mWnRGJXFUoEeOj08cXzcb6/ywDgBuxmmtuvszZvcwFerZcn2Ppwk8MSL/Qtjm7JCS4x
- EsRQ==
+ bh=9SEd10dZejZ4JZxUwmdm9mOezE2U4jT3yrs4Cg2ehgg=;
+ b=rUldUUG88J7b82+NCEigXL8oiqCm3JcOHodz/3XouIGnTVYi6Phu+wvR9McmmBKldH
+ q8nBYEum3pLMj2FrOXCVK4PG3RmZhlvuSJMQamzzboIqoq2A+c9DjmhdcRsPLUY/na5x
+ pmD8EW8S/zuA6FI8KDdHeScN4NkP0u6SaKRulITafetTg14f/E6cUpmr+G6q1D+YTO6L
+ t9rCWi2CQexPjHO1J3wgdIJDX3RnzDiHEqDUMJMnzEScS0x/R9VOEAHW/lUFvy69M2zo
+ jKQ0oXGjatW5sssESHVgcPMs0gIu7WTZ0W4yxHtRFw+YfKkiIoEZMkT/1crW1DE/GiUd
+ LE3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785775988; x=1786380788;
+ d=1e100.net; s=20251104; t=1785775990; x=1786380790;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=SgL7c7IObXoiG3HwTS93AdQuWUp5B0BuI+WbIoHoCNI=;
- b=KmWv00M9KwJhVx4/TlVfs8GKcCTxFgJclPF8zMlhu5kjWe0gJ3oConTTDeSSAOt9eZ
- 7WN3i5G+TFG7t/f0pHE8OOhv8F3Fr/2/PHQYMtwQwNFZ4r6M2GzSa2/TybjjAXza0fNP
- JEXOnBATwImM5oPUnvlteElc7nm5bmJcfN7NcIUSvr6Z8iMKeU0dNcNHmehzdDZ8CFGy
- xOcM3N2EO0p1AJ/gtVYKYjY2BY8Xh8iyP8AaSgwVQlDBbBw/kS9zcDpVf+I/LHyVlNpp
- bRXJss7XydXn0WTeAgFmquKTbtGK3wdLyjcl/KATV3gsbvBv9Gdxa5XXLXTHlW+mNAX6
- Lzkg==
-X-Gm-Message-State: AOJu0YxKSYQBN/cf1AWafZ2oqZCGaHmOl8OeVBIoFXU8ABLANb9MTCjB
- mGovxUvzFyS8+nXsaLNuOkhA0fDUULwA5990s91oX2XQOA7KfItuWCtUfFfFIih98kd7URA4G4h
- JL4G6
-X-Gm-Gg: AR+sD13oKwEFW4ezfN6B2U8hJHjFKqGcS1nCAKNOZQym109x6AApIvhK7yNJSD+f1l/
- P54wUnDqnSVaGNQyH//lCvvlhG0ExXMR2cm7IESDOJDUsrHVtKZuY8djtYeFfVfa9vLPimvIXlq
- VOgYazjenciLV3IeOQ2xbE9KgkLf8oam2vKAl3igP3D4W7xOa7+/qq7xL5LRlpfAkQ3EY585u4J
- uu7j0wRoqwClpK/s+AmojiQG90XajaS1Xr71RdxQluoYlY/qHqts6b3wSlO3uRS0p0iz39ZEOp7
- 7w5liM0DBY2C6P3c4fCtj7fuzSmJNj2W595QxKC4PgFFYhn0qQkTs3P0/OmQFhdl5FXSOEjmNvm
- hkzRZ/TkQTYhkgMkKuXYP7xMk1PhgyNWuZS/J8+wOLfAKSkgiJ2rhBT4zlb4pMd6jaS3CkcIpIJ
- RmaMIJJL0q88f1ajlgKohpoax27UoL/owzzqrwL9tiwCXPs9U534nP2pTtaBQEBLJIxLwAvi6Tc
- xvyWpkXgA38hihisDWVlMIPp6g=
-X-Received: by 2002:a17:903:1a30:b0:2cc:670d:9b2f with SMTP id
- d9443c01a7336-2d052412606mr116824985ad.33.1785775988028; 
- Mon, 03 Aug 2026 09:53:08 -0700 (PDT)
+ bh=9SEd10dZejZ4JZxUwmdm9mOezE2U4jT3yrs4Cg2ehgg=;
+ b=FG0fKzcI6smL8v/DaGLRqYwk0miuc9+zZOgAlRhyvu0YC8N+WlcOkrPyi5wZyBHaKr
+ Nfx0Bj7fF/i8bNP+fvtWVMJWfkQ1w1qHIkYdTRggx0eZFsHtz3uHYZftqHuIq5I84r1t
+ eWn90D0c07LGJYN2SSPPOIfJYKmhNAQpCoDyWv7/fXhe7ZC43n44Psz84eyOX2hmEuAC
+ 6z65S3tWjc+6udroFmZ7pf1Xm5ggFMvcKTeg8uzDTKIdnGRk+GSG45Fm3P2VRHsiGL2z
+ SNHEPAm7LVuEYdTke//9uvyQYEGvo1f1ocOyuGeRfeu97/sNLOuDWLrT8FVNjqM/QW5O
+ oY3A==
+X-Gm-Message-State: AOJu0YxFmAl+oaYwUdCa7fxvWnaCTeP8sZ8jeYxrQ5wC6uq0PfqQbLxf
+ IkY7Bl+6jKlXxS6xr8t9dn4wRonFyIFycRcCfQa2fct/XjM43t15yuaN/yNPH7lJK/3YWgUwjRL
+ 4hIhT
+X-Gm-Gg: AR+sD11SyM4axbaghuU0X14/77L/r7JJQRaaQW9ZZeKWWa8cbTSxvWIxhxjxzpkNb9y
+ PWb6ShiqLMroWZBuoMSIPl9Udx35i164nV4ypgHj4J2/SiNyYtVZ9BJnqvw6kwW6mF9ih6TWnlv
+ YLjjvopEVLDpPe85oArAuH6cm7n598Lbmxq1nf35lrR1QIlsji2famJljBZh7Ub/65kA7BuSXx9
+ bZrqsBfmZJyC5i8M7o/eNMW0NZ8T1anhAw9w/+2kxfgalX8gKJ2vn+D2Gl/dFIhA3+dk7+CVXMa
+ SoPUPS9NV1MqzBTAuGFm5WcsOSJfHwyOohtkU27VI3FH33lLiqwl/I6wAAo3ZqCwYKBAIwn2lzz
+ nOplicC9F7Mz7pvz0h3ZQjbH5OGXNpThQlsKaXDFWFvVu5Mc9ZjS9K1wCWSjMD0KcQiKNexRdiR
+ vpECA8HgMDSNAAIVJnLxj5KvrzkLFn/i0D2poCzN5LmCs5Hs/TbW0TpYlhJ/5S6kFTdml+vlcSK
+ VrKrQ4mUGNzzPjHgpisNvjn5gU=
+X-Received: by 2002:a05:6a21:700a:b0:3bf:6237:b1b3 with SMTP id
+ adf61e73a8af0-3c92a85cd62mr9946919637.42.1785775989033; 
+ Mon, 03 Aug 2026 09:53:09 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3153dd4e5b0sm37711635eec.1.2026.08.03.09.53.07
+ 5a478bee46e88-3153dd4e5b0sm37711635eec.1.2026.08.03.09.53.08
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 03 Aug 2026 09:53:07 -0700 (PDT)
+ Mon, 03 Aug 2026 09:53:08 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@nxp.com>
-Subject: [PATCH v2 01/22] drivers/net: remove unused include in dpaa
-Date: Mon,  3 Aug 2026 09:51:47 -0700
-Message-ID: <20260803165304.289869-2-stephen@networkplumber.org>
+ Thomas Monjalon <thomas@monjalon.net>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: [PATCH v2 02/22] ethdev: use DPDK byte order conversion
+Date: Mon,  3 Aug 2026 09:51:48 -0700
+Message-ID: <20260803165304.289869-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260803165304.289869-1-stephen@networkplumber.org>
 References: <20260803165304.289869-1-stephen@networkplumber.org>
@@ -84,37 +84,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-rte_eth_ctrl.h is deprecated and its contents are not used here.
+DPDK has its own byte order macros which are preferred
+over the POSIX/libc ones in arpa/inet.h
+This resolves issue where this code was inheriting the
+inclusion of arpa/inet.h from rte_ethdev.h -> rte_eth_ctrl.h.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/dpaa/dpaa_ptp.c   | 1 -
- drivers/net/dpaa2/dpaa2_ptp.c | 1 -
- 2 files changed, 2 deletions(-)
+ lib/ethdev/sff_8472.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/dpaa/dpaa_ptp.c b/drivers/net/dpaa/dpaa_ptp.c
-index e9b332c571..f91d3f9ce3 100644
---- a/drivers/net/dpaa/dpaa_ptp.c
-+++ b/drivers/net/dpaa/dpaa_ptp.c
-@@ -9,7 +9,6 @@
+diff --git a/lib/ethdev/sff_8472.c b/lib/ethdev/sff_8472.c
+index 97f231854c..acbbcee210 100644
+--- a/lib/ethdev/sff_8472.c
++++ b/lib/ethdev/sff_8472.c
+@@ -4,6 +4,7 @@
+  */
  
- #include <rte_ethdev.h>
- #include <rte_log.h>
--#include <rte_eth_ctrl.h>
- #include <rte_malloc.h>
- #include <rte_time.h>
+ #include <stdio.h>
++#include <rte_byteorder.h>
  
-diff --git a/drivers/net/dpaa2/dpaa2_ptp.c b/drivers/net/dpaa2/dpaa2_ptp.c
-index 751e558c73..77d5d82b44 100644
---- a/drivers/net/dpaa2/dpaa2_ptp.c
-+++ b/drivers/net/dpaa2/dpaa2_ptp.c
-@@ -12,7 +12,6 @@
+ #include "sff_common.h"
  
- #include <ethdev_driver.h>
- #include <rte_log.h>
--#include <rte_eth_ctrl.h>
- #include <rte_malloc.h>
- #include <rte_time.h>
+@@ -176,7 +177,7 @@ static float befloattoh(const uint32_t *source)
+ 		float dst;
+ 	} converter;
+ 
+-	converter.src = ntohl(*source);
++	converter.src = rte_be_to_cpu_32(*source);
+ 	return converter.dst;
+ }
  
 -- 
 2.53.0
