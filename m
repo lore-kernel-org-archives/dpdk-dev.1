@@ -2,73 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A655AC55822
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Aug 2026 15:52:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BC4EC55184
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Aug 2026 15:53:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C3C1D40696;
-	Tue,  4 Aug 2026 17:52:16 +0200 (CEST)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
- [209.85.214.182])
- by mails.dpdk.org (Postfix) with ESMTP id E485B4068A
- for <dev@dpdk.org>; Tue,  4 Aug 2026 17:52:14 +0200 (CEST)
-Received: by mail-pl1-f182.google.com with SMTP id
- d9443c01a7336-2cc7ef7ec27so29595ad.1
- for <dev@dpdk.org>; Tue, 04 Aug 2026 08:52:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785858734;
- x=1786463534; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=HOqIT5iq4WdthbmbKGbPf4WkRYbBb0dl2nrLjonHtYM=;
- b=fKRodlfRlp1dUkDG4t6iQXKewTn2Hx1FUdRqwsaMiNlyV3aOgDpXJL7l56VYQLnylu
- LL7HUfMAyBdrejFHJ6lIYHWaRHBgDXLh6FlWX+BzzVb6htwYxQAiEQjBQTF/+/BNqyBI
- +6EFDi/UlNerBbzteFFM7c9xQThMxsm4AI8ecW18ecE0djUOt6vhY75tlS41+ogFfZGS
- 0VKeQFX//Ht6o2b2VM1VNl5jpfduoSrSez3xq/l39NsDEoQawqlq4ZTOsr+aLOjhq3IM
- 0KkY/lIPcPeGD/rlYozOP5Q22MLDiW7SgcHGj/iwKh7wcJIawXQVhENJMI7fZnDxpE0+
- NnAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785858734; x=1786463534;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=HOqIT5iq4WdthbmbKGbPf4WkRYbBb0dl2nrLjonHtYM=;
- b=ds0bhxGSMJl89OjsWKzIvGG8IV6sHbVa6MTCDmSRrOdPWHBn8gzyy2gY2+VN6D57aL
- MFw59waSiH2jMc3bUmcJGFpx/vQduX8EYJ+KFXQW0SDlQEPIcgQ2KPcNEz3e1jQt39Fy
- PaTFipPzFsHENKqcIyoHr7aXgW9D3LcjDoOz3+xDLit/j1ucH6xz48994y8aqMzvmJct
- H3uBlbhiqbZYqnpF7H/IrAC1mWF7jwQFz+MGT+SHEOw5m2NPwxOgD8ZrseV//60+O3S5
- yjkGLWECtz9KnHNzeN10aJzB1R8D5VVTgW1Kuw/pwTOPrsAR+TUFbQ/AX7VsnaSxWOP6
- r7yg==
-X-Gm-Message-State: AOJu0YyBcm1mzS9JCpCfrrhWtXJJSwZ7ijexWP7nITs8fUMlzIXk34td
- px36MC02rPWv0FZlibCc//A9zjDhiXddq0HVoqpmSA2Cw8XjijjeUA4kHkb2AdXRgHY=
-X-Gm-Gg: AR+sD10/4ouIg75ndiJMcCcoBUmu1a4/eCKyeMClV/6Ue0mx5IUqqZAowoAvIbZm2ya
- Df03xvgpW+Dd+x12IK4Mhd1EZDxr/qmsu+cEbqEP6oosXXkfXTqom0vCie9B6M6O/kwvdPIcg05
- BSvlQF6aXbON/9TfI2JtRHLfP2+l60LKOjrdEYKV4KWl0AMhsxoWEebN4F5pctQKMzOEW/i1x7y
- +u8l4F943wtbz6WfepQigFOAk520Gfq9jABQH6Gl78E4eU9wJJhh7/nB9XlLQ9qDNrU7WGF0+Wc
- BDhtsZrRUdOCZU3xZKUAxy4Fbps1DbK+MBCMh4pmlJi1tm+BX++IY/sLZM+wI+sCncvcQiFwXjN
- CmGsSnbSXCqTY1V9bnh7RZl/LAU9SbswLI/rDOQzuoT2eYcCTGqKc1EXHwky8ArSkQl8H7sFZcJ
- M0gAvLJFSKYcszJ0Gp+znyeSvojWQv+TDZ/0ECuIu6B4uvCLDTw5A0GohEF3wI/b5ShMpaID9x0
- /yaF5JHbrhSFFGSrZp5OroMXnXv+dSUuNSlbPEk262/vFtvdv5V
-X-Received: by 2002:a17:902:e843:b0:2c9:cf5d:d9b8 with SMTP id
- d9443c01a7336-2d0523bea8emr148726475ad.33.1785858733949; 
- Tue, 04 Aug 2026 08:52:13 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-315867bc261sm5939476eec.28.2026.08.04.08.52.13
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 04 Aug 2026 08:52:13 -0700 (PDT)
-Date: Tue, 4 Aug 2026 08:52:10 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>
-Subject: Re: [PATCH] eal/x86: optimize memcpy of small 64-byte blocks
-Message-ID: <20260804085210.74763eb5@phoenix.local>
-In-Reply-To: <20260804143305.1344327-1-mb@smartsharesystems.com>
-References: <20260804143305.1344327-1-mb@smartsharesystems.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+	by mails.dpdk.org (Postfix) with ESMTP id C74FC406BB;
+	Tue,  4 Aug 2026 17:53:02 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 5D7704068A
+ for <dev@dpdk.org>; Tue,  4 Aug 2026 17:53:01 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=9XumaCsP0fZKqmTJpmwgb+/hShdPAS1fXA34B1sT2Vw=;
+ b=nI+bnSSBGOcgRw/6TdHa5h5jKrCfgxH5Z3WuNj78XCfDlcaa18HffawNrGak1eG4t/OVlC2az
+ 4G1PVELo/FSMpaS3reciL0dYvsFXaXPSK9YOnKCHmaa8mTk9sSwPZgjsqbvxFsCiBKY1bDXiwnn
+ neBgVGdSjBaIDolcDzYCbQc=
+Received: from mail.maildlp.com (unknown [172.18.224.107])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4hDyjF3jWnzJ46ZD;
+ Tue,  4 Aug 2026 23:52:17 +0800 (CST)
+Received: from frapema100001.china.huawei.com (unknown [7.182.19.23])
+ by mail.maildlp.com (Postfix) with ESMTPS id 1B2934058B;
+ Tue,  4 Aug 2026 23:53:01 +0800 (CST)
+Received: from frapema500003.china.huawei.com (7.182.19.114) by
+ frapema100001.china.huawei.com (7.182.19.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Tue, 4 Aug 2026 17:53:00 +0200
+Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
+ frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
+ Tue, 4 Aug 2026 17:53:00 +0200
+From: Marat Khalili <marat.khalili@huawei.com>
+To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
+ <dev@dpdk.org>
+CC: Jerin Jacob <jerinj@marvell.com>, Konstantin Ananyev
+ <konstantin.ananyev@huawei.com>, Akhil Goyal <gakhil@marvell.com>, "Anoob
+ Joseph" <anoobj@marvell.com>
+Subject: RE: [PATCH v3 07/23] app/test: include headers directly
+Thread-Topic: [PATCH v3 07/23] app/test: include headers directly
+Thread-Index: AQHdJChgFVKwz1XWc0Sq6L5N5IW2SbaOCdYg
+Date: Tue, 4 Aug 2026 15:53:00 +0000
+Message-ID: <5ae64cb06ec84589a713b563a719ad4e@huawei.com>
+References: <20260803165304.289869-1-stephen@networkplumber.org>
+ <20260804154549.148691-1-stephen@networkplumber.org>
+ <20260804154549.148691-8-stephen@networkplumber.org>
+In-Reply-To: <20260804154549.148691-8-stephen@networkplumber.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.137.78]
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,18 +65,69 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue,  4 Aug 2026 14:33:04 +0000
-Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
+> diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
+> index 3205afaa63..5b71f94a71 100644
+> --- a/app/test/test_bpf.c
+> +++ b/app/test/test_bpf.c
+> @@ -5,16 +5,28 @@
+>  #include <stdio.h>
+>  #include <string.h>
+>  #include <stdint.h>
+> +#include <stdlib.h>
+> +#include <stdbool.h>
+> +#include <stddef.h>
+> +#include <stdalign.h>
+>  #include <inttypes.h>
+> +#include <errno.h>
+> +#include <limits.h>
+>  #include <unistd.h>
+>=20
+> -#include <rte_memory.h>
+> +#include <rte_bitops.h>
+>  #include <rte_debug.h>
+>  #include <rte_hexdump.h>
+>  #include <rte_malloc.h>
+> +#include <rte_memcpy.h>
+> +#include <rte_mbuf.h>
+>  #include <rte_random.h>
+>  #include <rte_byteorder.h>
+>  #include <rte_errno.h>
+> +#include <rte_ether.h>
+> +#include <rte_ip.h>
+> +#include <rte_udp.h>
+> +#include <rte_tcp.h>
+>=20
+>  #include "test.h"
+>=20
+> @@ -30,8 +42,6 @@ test_bpf(void)
+>  #else
+>=20
+>  #include <rte_bpf.h>
+> -#include <rte_ether.h>
+> -#include <rte_ip.h>
+>=20
+>=20
+>  /* Tests of most simple BPF programs (no instructions, one instruction e=
+tc.) */
+> @@ -1331,7 +1341,7 @@ test_jump2_check(uint64_t rc, const void *arg)
+>  	uint16_t eth_type;
+>  	uint64_t v =3D -1;
+>=20
+> -	if (eth_hdr->ether_type =3D=3D htons(0x8100)) {
+> +	if (eth_hdr->ether_type =3D=3D rte_cpu_to_be_16(0x8100)) {
+>  		const struct rte_vlan_hdr *vlan_hdr =3D
+>  			(const void *)(eth_hdr + 1);
+>  		eth_type =3D vlan_hdr->eth_proto;
+> @@ -1341,7 +1351,7 @@ test_jump2_check(uint64_t rc, const void *arg)
+>  		next =3D eth_hdr + 1;
+>  	}
+>=20
+> -	if (eth_type =3D=3D htons(0x0800)) {
+> +	if (eth_type =3D=3D rte_cpu_to_be_16(0x0800)) {
+>  		ipv4_hdr =3D next;
+>  		if ((ipv4_hdr->dst_addr & rte_cpu_to_be_32(TEST_NETMASK)) =3D=3D
+>  		    rte_cpu_to_be_32(TEST_SUBNET)) {
 
-> +	/* Common way for small copy size of 64-byte blocks. Unlikely, so const=
-ant size only */
-> +	if (__rte_constant(n) && (n & 63) =3D=3D 0 && n <=3D RTE_MEMCPY_BLOCK_6=
-4_MAX) {
-> +		void *ret =3D dst;
-> +
+For the `test_bpf.c` part:
 
-Maybe just let compiler decide, it will generate vector instructions in mos=
-t cases.
-
-	if (__rte_constant(n))
-		return mempcpy(dst, src, n);
+Acked-by: Marat Khalili <marat.khalili@huawei.com>
