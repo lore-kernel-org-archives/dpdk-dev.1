@@ -2,69 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38E94C55184
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Aug 2026 15:46:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F85BC55822
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Aug 2026 15:46:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 731B5406BB;
-	Tue,  4 Aug 2026 17:46:03 +0200 (CEST)
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
- [209.85.214.176])
- by mails.dpdk.org (Postfix) with ESMTP id D64054068A
- for <dev@dpdk.org>; Tue,  4 Aug 2026 17:46:01 +0200 (CEST)
-Received: by mail-pl1-f176.google.com with SMTP id
- d9443c01a7336-2cea3004256so118385ad.0
- for <dev@dpdk.org>; Tue, 04 Aug 2026 08:46:01 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5F6D4409FA;
+	Tue,  4 Aug 2026 17:46:04 +0200 (CEST)
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com
+ [209.85.216.48]) by mails.dpdk.org (Postfix) with ESMTP id 0DBF440696
+ for <dev@dpdk.org>; Tue,  4 Aug 2026 17:46:03 +0200 (CEST)
+Received: by mail-pj1-f48.google.com with SMTP id
+ 98e67ed59e1d1-38dc69c74b8so4557782a91.0
+ for <dev@dpdk.org>; Tue, 04 Aug 2026 08:46:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785858361;
- x=1786463161; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785858362;
+ x=1786463162; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=YjnpP4lqKsf4myRljJ84jL/lCQKHXOltnTAODfex5PM=;
- b=z3g+klYtOnUncSkuxtjbJD7BaQMsvCsrsS1eiL1B+I/nS2E7MpuFuopDfAICtSEUZm
- oHqFw5KAv3ZWPSxdcciCKrauy5RfpjNPjasRq0EdT70sHx0u90XOZEXnzItSeePOBMxx
- m69JlFVxDnG32yhKBJdnTIrxcHhDJiFpljwYP3cGVSjXGExfbNUDEM1OubOFp2h4tIIC
- Xn/ppUpYoxAT2GUaednFm88Y6VV4zvyYC11l1ZIAyf61KJ4WS5r6pF8cT4ODoORzWz/H
- 1mq1NbYYBCbj57djzG65g+O5Q7aE4gAuqaULnUlPDWtDvZ2tZcYhIgV9YSIHUTQATRE/
- lYwg==
+ bh=WOlfF3Lo9RPg/CDFbo8+4VpohDopebmOSAAtUKQ4vrk=;
+ b=a0IL6n4fJ6DgMQNusaxOR6NarIAaPJHAGe7rhrmB1rNBCl5H57brgGR4cXaFIBUwhV
+ Y+L5kA57INgOIWJIYXn+DRy0QMrtzIWBHwufz54PTlNZchVXiuJ0W6Qj7lbE5sG9HAzI
+ uogJxf1Hwn+Dt1gOHKdegjoYGt2+K4xYHLY6JaK68t3hlEhv9ztGF8gnbR0Wy+mDodiu
+ pnFpqleHSsZfJCbJn8iED8SQZsxVMJ8Krn/2J2Jt7uLLYzts7CrWJIOabLiD7UgE/TOw
+ EcybP0lCifDklSp1kAxW9TNyI/lSlWytvaUBnDPQjI4JIbGapUIAyet3D8LGV8iEc7WE
+ UC+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785858361; x=1786463161;
+ d=1e100.net; s=20251104; t=1785858362; x=1786463162;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=YjnpP4lqKsf4myRljJ84jL/lCQKHXOltnTAODfex5PM=;
- b=Bgw3d/9E25igoQNKWrJG1Ni7Z+9QydmI3Id1tDQKxw8TN4iV6YnSqFlafiMiApLxOy
- /LfWIFj58LGWcEgmjTpLSYLfmE3C/iLVMplEhcp1Akot7XLKdtJ/hNWPSv9XBhsK00hT
- MZD8oiVrSdZ4vMrnWSX3WET+DNInAsFTgQZjk09qdz3teh2xoiJSTXqcpG5u5OgNHrqt
- oU42AKfKyre5hkccbuuVjXo22hRGRfcZpqNeIFgSxwMViMvGPyGqNijSo7aWw1/FiEUA
- +K+3mXpCgJKAgn88B6VxTFZJ8JDQfwIDUSRfI74zf6dFYiDoYYBK8tcYlOIqVW+VlE3/
- BAVw==
-X-Gm-Message-State: AOJu0YzZxKqO7gswj4FzByWhD6A+TKvBgtmgBFdar/8EejULSxsWtN2H
- W1ZEwSN9QYPXJi97JlQC+xp9XhcyjiGjE0JlrEzFOT2MiWD3cm0QxEWWGjyS10k9VsQbGRXp81K
- n+ZXE
-X-Gm-Gg: AR+sD13HzybNZvq9JOw2UQolI56BB2yo48EHRagrv/hzXJizZz290PQBp3esPwqeU82
- he5Kjk0fxtyk8u15v9YqppjiDdfM+Hm92SlPvp1nbZFqXAqSYPZtVa0I6YA8U09fu85+cGqqxHW
- duq+SNVx4ihaiU5QCWKOTnkFWLXxtFRX5A4PABcJGINimyBh45qzsLhBrlY8NGoiHf+bw8hIAvh
- jybFadArJ2HCQW2F/Ud6uC4+YMwh4GEHl5A476zW9k05JjDi1ALLz8rAHTq1GcJPNsnsMz5CsHF
- pmhVtmQmrIzRaEn6Wvgy7Stldyx3Ck1VDxqzGL1x48s2SUY+yviLmxX6v89zHCn//EL/4u9xTRv
- U3gYFrPYZU8fN88DAZzMRBAEx+Hh0IYX05sgBJkNkXxr+T/Vv9EIcBsqMNoNFnqf8c/APsOxGW+
- rk2+ln0h1n88ao7/z5vw8JWTMwJg7sm31FVuTBbucT2VJLcWO7+Oup+j1NV1tZj/b9uce/Ek8Zk
- wugpSlQ7gp6uEZwyaz5ISLIZM4=
-X-Received: by 2002:a17:902:d549:b0:2cc:96ab:9798 with SMTP id
- d9443c01a7336-2d0524290camr141224815ad.28.1785858360946; 
- Tue, 04 Aug 2026 08:46:00 -0700 (PDT)
+ bh=WOlfF3Lo9RPg/CDFbo8+4VpohDopebmOSAAtUKQ4vrk=;
+ b=n5413zDJkXvdt3Ef+QAkCISPOMRaDz5kLTGVaYV9/I5YiSTndtoWnYPIAv5cgj20wo
+ j3Ek56e9RXFeBRMx+vC9ihHUsTyDTbvFKSa0geiy/+tAhSdjWf82tVC1WpkDSI7iC1fn
+ 63fQIu5/m35VCLTtrdYJMuNiohK+7bm4Pu/AVno7gtMBz8A0RoA5ScyzK3nzu6rWnf0X
+ g5O4b0DikYtDlNwIVlmN++i8mAywzJ0eoeT7csAlWZpOpyEKO2/UkopEI0SD/GKP3mp6
+ yqJV19QosONHX5xzmHWDQUuJkNCJSLJyelf7XGwp7omur6MtYTr0lVhuEY8Ybg3YxX7d
+ EAfA==
+X-Gm-Message-State: AOJu0YwQnPBYEfLEfth/btEOWkNSLav/+IcdfO51FmOEJxV/NcOjP+cu
+ y0RNmR/qPNDgmlzHU02w5sagYal1ZQfY9RSvIIDMwQRN1Hra1Hdylgsf1cJcdIMqqrbOkXb4ucb
+ Qz6tr
+X-Gm-Gg: AR+sD13VNZ0dPQv9dANlirZ1UMLr14mmiCHNiVsp77P+RakiDtnYfZTEl/CCcmt4/+U
+ MnMwEam9KVvW+LYyuxpUagWJYL9RDvbEn9LEa9q6fdwj3wDBn5EXJfPymF4+WuF6eDcZLfmOyy/
+ TNV112EJFahr9+ISyknT+aUeZzoPZtkPQTpedyL16VL/9weXplBq/K/9qhf2FfTeEfSyNs5rEKm
+ sA618IxY6yaCybBtF4U0OM16MYCK7d/GCxwuS6M51qKpqM/GWUs43buAr6zDMGW2J6bi4V2zcpM
+ kWwYs4XLkmdV8R/EeojRwqi0/ggaIlMddVyJtUxas+vEhM/K218GFsklz/tsTqcBWml9yQDRj6O
+ ausaHd0ZNu8UihKNVi2tOsBO/5VU+Y259LkYz7m7KYcwGVU/BWMeF7tLMGNjcsDVkZFlNQbamb7
+ b3y52TcxPUA3CTktfcJcPonnBdJcmVJGp9HL6JbNncSzGAt3HforNEreQb0SB1ICWAVM7i30q++
+ Nnj8CSF1jr1eywYpZp0v9GJFdma/7mvAggcK/0=
+X-Received: by 2002:a05:6a21:4606:b0:3c3:7cfe:b337 with SMTP id
+ adf61e73a8af0-3c92a5f1c73mr14909917637.30.1785858362006; 
+ Tue, 04 Aug 2026 08:46:02 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3158644a195sm5613894eec.13.2026.08.04.08.45.59
+ 5a478bee46e88-3158644a195sm5613894eec.13.2026.08.04.08.46.01
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 04 Aug 2026 08:46:00 -0700 (PDT)
+ Tue, 04 Aug 2026 08:46:01 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v3 04/23] net/i40e: remove experimental FDIR API
-Date: Tue,  4 Aug 2026 08:44:52 -0700
-Message-ID: <20260804154549.148691-5-stephen@networkplumber.org>
+ Aman Singh <aman.deep.singh@intel.com>
+Subject: [PATCH v3 05/23] app/testpmd: remove support for flow director
+Date: Tue,  4 Aug 2026 08:44:53 -0700
+Message-ID: <20260804154549.148691-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260804154549.148691-1-stephen@networkplumber.org>
 References: <20260803165304.289869-1-stephen@networkplumber.org>
@@ -84,362 +83,391 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove the flow director related private APIs in i40e.
-These APIs are experimental, therefore they can be removed
-without additional warnings.
+The legacy flow director API is deprecated and being removed.
+Drop it from testpmd; the testpmd CLI is not a stable API.
+
+Removed commands:
+  show port fdir (port_id|all)
+  clear port fdir (port_id|all)
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/nics/i40e.rst              |  46 ---------
- drivers/net/intel/i40e/i40e_ethdev.c  |   4 +-
- drivers/net/intel/i40e/i40e_ethdev.h  |   4 -
- drivers/net/intel/i40e/i40e_fdir.c    | 140 --------------------------
- drivers/net/intel/i40e/i40e_flow.c    |   3 +-
- drivers/net/intel/i40e/rte_pmd_i40e.c |  34 -------
- drivers/net/intel/i40e/rte_pmd_i40e.h |  33 ------
- 7 files changed, 3 insertions(+), 261 deletions(-)
+ app/test-pmd/cmdline.c                      |  21 +--
+ app/test-pmd/config.c                       | 163 --------------------
+ app/test-pmd/testpmd.h                      |   3 -
+ doc/guides/testpmd_app_ug/testpmd_funcs.rst |  54 +------
+ 4 files changed, 14 insertions(+), 227 deletions(-)
 
-diff --git a/doc/guides/nics/i40e.rst b/doc/guides/nics/i40e.rst
-index 29234dbf0f..67a3b29024 100644
---- a/doc/guides/nics/i40e.rst
-+++ b/doc/guides/nics/i40e.rst
-@@ -397,52 +397,6 @@ Add a rule to direct ``ipv4-udp`` packet whose ``dst_ip=2.2.2.5, src_ip=2.2.2.3,
-             dst is 2.2.2.5 / udp src is 32 dst is 32 / end \
-             actions mark id 1 / queue index 1 / end
+diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
+index 10ee7c5179..c142a8ec50 100644
+--- a/app/test-pmd/cmdline.c
++++ b/app/test-pmd/cmdline.c
+@@ -163,7 +163,7 @@ static void cmd_help_long_parsed(void *parsed_result,
+ 			"Display:\n"
+ 			"--------\n\n"
  
--Check the flow director status:
--
--.. code-block:: console
--
--   testpmd> show port fdir 0
--
--   ######################## FDIR infos for port 0      ####################
--     MODE:   PERFECT
--     SUPPORTED FLOW TYPE:  ipv4-frag ipv4-tcp ipv4-udp ipv4-sctp ipv4-other
--                           ipv6-frag ipv6-tcp ipv6-udp ipv6-sctp ipv6-other
--			   l2_payload
--     FLEX PAYLOAD INFO:
--     max_len:	    16	        payload_limit: 480
--     payload_unit:  2	        payload_seg:   3
--     bitmask_unit:  2	        bitmask_num:   2
--     MASK:
--       vlan_tci: 0x0000,
--       src_ipv4: 0x00000000,
--       dst_ipv4: 0x00000000,
--       src_port: 0x0000,
--       dst_port: 0x0000
--       src_ipv6: 0x00000000,0x00000000,0x00000000,0x00000000,
--       dst_ipv6: 0x00000000,0x00000000,0x00000000,0x00000000
--     FLEX PAYLOAD SRC OFFSET:
--       L2_PAYLOAD:    0      1	    2	   3	  4	 5	6  ...
--       L3_PAYLOAD:    0      1	    2	   3	  4	 5	6  ...
--       L4_PAYLOAD:    0      1	    2	   3	  4	 5	6  ...
--     FLEX MASK CFG:
--       ipv4-udp:    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
--       ipv4-tcp:    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
--       ipv4-sctp:   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
--       ipv4-other:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
--       ipv4-frag:   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
--       ipv6-udp:    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
--       ipv6-tcp:    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
--       ipv6-sctp:   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
--       ipv6-other:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
--       ipv6-frag:   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
--       l2_payload:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
--     guarant_count: 1	        best_count:    0
--     guarant_space: 512         best_space:    7168
--     collision:     0	        free:	       0
--     maxhash:	    0	        maxlen:        0
--     add:	    0	        remove:        0
--     f_add:	    0	        f_remove:      0
--
+-			"show port (info|stats|summary|xstats|fdir|dcb_tc) (port_id|all)\n"
++			"show port (info|stats|summary|xstats|dcb_tc) (port_id|all)\n"
+ 			"    Display information for port_id, or all.\n\n"
  
- Floating VEB
- ~~~~~~~~~~~~
-diff --git a/drivers/net/intel/i40e/i40e_ethdev.c b/drivers/net/intel/i40e/i40e_ethdev.c
-index b6b2d291ee..5cbdfe9db2 100644
---- a/drivers/net/intel/i40e/i40e_ethdev.c
-+++ b/drivers/net/intel/i40e/i40e_ethdev.c
-@@ -9335,8 +9335,8 @@ i40e_get_valid_input_set(enum i40e_filter_pctype pctype,
- 	};
+ 			"show port info (port_id) representor\n"
+@@ -189,7 +189,7 @@ static void cmd_help_long_parsed(void *parsed_result,
+ 			"show port (port_id) rss-hash [key | algorithm]\n"
+ 			"    Display the RSS hash functions, RSS hash key and RSS hash algorithms of port\n\n"
  
- 	/**
--	 * Flow director supports only fields defined in
--	 * union rte_eth_fdir_flow.
-+	 * Flow director supports only fields reachable through
-+	 * rte_flow item patterns.
- 	 */
- 	static const uint64_t valid_fdir_inset_table[] = {
- 		[I40E_FILTER_PCTYPE_FRAG_IPV4] =
-diff --git a/drivers/net/intel/i40e/i40e_ethdev.h b/drivers/net/intel/i40e/i40e_ethdev.h
-index 9d9bde6aeb..3968bfd267 100644
---- a/drivers/net/intel/i40e/i40e_ethdev.h
-+++ b/drivers/net/intel/i40e/i40e_ethdev.h
-@@ -1369,10 +1369,6 @@ enum i40e_filter_pctype
- uint16_t i40e_pctype_to_flowtype(const struct i40e_adapter *adapter,
- 				 enum i40e_filter_pctype pctype);
- int i40e_dev_set_gre_key_len(struct i40e_hw *hw, uint8_t len);
--void i40e_fdir_info_get(struct rte_eth_dev *dev,
--			struct rte_eth_fdir_info *fdir);
--void i40e_fdir_stats_get(struct rte_eth_dev *dev,
--			 struct rte_eth_fdir_stats *stat);
- int i40e_select_filter_input_set(struct i40e_hw *hw,
- 				 struct rte_eth_input_set_conf *conf,
- 				 enum rte_filter_type filter);
-diff --git a/drivers/net/intel/i40e/i40e_fdir.c b/drivers/net/intel/i40e/i40e_fdir.c
-index 8a233f8a97..f36eceab3a 100644
---- a/drivers/net/intel/i40e/i40e_fdir.c
-+++ b/drivers/net/intel/i40e/i40e_fdir.c
-@@ -1800,146 +1800,6 @@ i40e_fdir_flush(struct rte_eth_dev *dev)
- 	return 0;
+-			"clear port (info|stats|xstats|fdir) (port_id|all)\n"
++			"clear port (info|stats|xstats) (port_id|all)\n"
+ 			"    Clear information for port_id, or all.\n\n"
+ 
+ 			"show (rxq|txq) info (port_id) (queue_id)\n"
+@@ -7514,11 +7514,6 @@ static void cmd_showportall_parsed(void *parsed_result,
+ 	else if (!strcmp(res->what, "xstats"))
+ 		RTE_ETH_FOREACH_DEV(i)
+ 			nic_xstats_display(i);
+-#if defined(RTE_NET_I40E) || defined(RTE_NET_IXGBE)
+-	else if (!strcmp(res->what, "fdir"))
+-		RTE_ETH_FOREACH_DEV(i)
+-			fdir_get_infos(i);
+-#endif
+ 	else if (!strcmp(res->what, "dcb_tc"))
+ 		RTE_ETH_FOREACH_DEV(i)
+ 			port_dcb_info_display(i);
+@@ -7531,14 +7526,14 @@ static cmdline_parse_token_string_t cmd_showportall_port =
+ 	TOKEN_STRING_INITIALIZER(struct cmd_showportall_result, port, "port");
+ static cmdline_parse_token_string_t cmd_showportall_what =
+ 	TOKEN_STRING_INITIALIZER(struct cmd_showportall_result, what,
+-				 "info#summary#stats#xstats#fdir#dcb_tc");
++				 "info#summary#stats#xstats#dcb_tc");
+ static cmdline_parse_token_string_t cmd_showportall_all =
+ 	TOKEN_STRING_INITIALIZER(struct cmd_showportall_result, all, "all");
+ static cmdline_parse_inst_t cmd_showportall = {
+ 	.f = cmd_showportall_parsed,
+ 	.data = NULL,
+ 	.help_str = "show|clear port "
+-		"info|summary|stats|xstats|fdir|dcb_tc all",
++		"info|summary|stats|xstats|dcb_tc all",
+ 	.tokens = {
+ 		(void *)&cmd_showportall_show,
+ 		(void *)&cmd_showportall_port,
+@@ -7576,10 +7571,6 @@ static void cmd_showport_parsed(void *parsed_result,
+ 		nic_stats_display(res->portnum);
+ 	else if (!strcmp(res->what, "xstats"))
+ 		nic_xstats_display(res->portnum);
+-#if defined(RTE_NET_I40E) || defined(RTE_NET_IXGBE)
+-	else if (!strcmp(res->what, "fdir"))
+-		 fdir_get_infos(res->portnum);
+-#endif
+ 	else if (!strcmp(res->what, "dcb_tc"))
+ 		port_dcb_info_display(res->portnum);
+ }
+@@ -7591,7 +7582,7 @@ static cmdline_parse_token_string_t cmd_showport_port =
+ 	TOKEN_STRING_INITIALIZER(struct cmd_showport_result, port, "port");
+ static cmdline_parse_token_string_t cmd_showport_what =
+ 	TOKEN_STRING_INITIALIZER(struct cmd_showport_result, what,
+-				 "info#summary#stats#xstats#fdir#dcb_tc");
++				 "info#summary#stats#xstats#dcb_tc");
+ static cmdline_parse_token_num_t cmd_showport_portnum =
+ 	TOKEN_NUM_INITIALIZER(struct cmd_showport_result, portnum, RTE_UINT16);
+ 
+@@ -7599,7 +7590,7 @@ static cmdline_parse_inst_t cmd_showport = {
+ 	.f = cmd_showport_parsed,
+ 	.data = NULL,
+ 	.help_str = "show|clear port "
+-		"info|summary|stats|xstats|fdir|dcb_tc "
++		"info|summary|stats|xstats|dcb_tc "
+ 		"<port_id>",
+ 	.tokens = {
+ 		(void *)&cmd_showport_show,
+diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
+index aa03eb99cc..582e7287be 100644
+--- a/app/test-pmd/config.c
++++ b/app/test-pmd/config.c
+@@ -7056,169 +7056,6 @@ flowtype_to_str(uint16_t flow_type)
+ 	return NULL;
  }
  
+-#if defined(RTE_NET_I40E) || defined(RTE_NET_IXGBE)
+-
 -static inline void
--i40e_fdir_info_get_flex_set(struct i40e_pf *pf,
--			struct rte_eth_flex_payload_cfg *flex_set,
--			uint16_t *num)
+-print_fdir_flex_payload(struct rte_eth_fdir_flex_conf *flex_conf, uint32_t num)
 -{
--	struct i40e_fdir_flex_pit *flex_pit;
--	struct rte_eth_flex_payload_cfg *ptr = flex_set;
--	uint16_t src, dst, size, j, k;
--	uint8_t i, layer_idx;
+-	struct rte_eth_flex_payload_cfg *cfg;
+-	uint32_t i, j;
 -
--	for (layer_idx = I40E_FLXPLD_L2_IDX;
--	     layer_idx <= I40E_FLXPLD_L4_IDX;
--	     layer_idx++) {
--		if (layer_idx == I40E_FLXPLD_L2_IDX)
--			ptr->type = RTE_ETH_L2_PAYLOAD;
--		else if (layer_idx == I40E_FLXPLD_L3_IDX)
--			ptr->type = RTE_ETH_L3_PAYLOAD;
--		else if (layer_idx == I40E_FLXPLD_L4_IDX)
--			ptr->type = RTE_ETH_L4_PAYLOAD;
--
--		for (i = 0; i < I40E_MAX_FLXPLD_FIED; i++) {
--			flex_pit = &pf->fdir.flex_set[layer_idx *
--				I40E_MAX_FLXPLD_FIED + i];
--			if (flex_pit->size == 0)
--				continue;
--			src = flex_pit->src_offset * sizeof(uint16_t);
--			dst = flex_pit->dst_offset * sizeof(uint16_t);
--			size = flex_pit->size * sizeof(uint16_t);
--			for (j = src, k = dst; j < src + size; j++, k++)
--				ptr->src_offset[k] = j;
--		}
--		(*num)++;
--		ptr++;
+-	for (i = 0; i < flex_conf->nb_payloads; i++) {
+-		cfg = &flex_conf->flex_set[i];
+-		if (cfg->type == RTE_ETH_RAW_PAYLOAD)
+-			printf("\n    RAW:  ");
+-		else if (cfg->type == RTE_ETH_L2_PAYLOAD)
+-			printf("\n    L2_PAYLOAD:  ");
+-		else if (cfg->type == RTE_ETH_L3_PAYLOAD)
+-			printf("\n    L3_PAYLOAD:  ");
+-		else if (cfg->type == RTE_ETH_L4_PAYLOAD)
+-			printf("\n    L4_PAYLOAD:  ");
+-		else
+-			printf("\n    UNKNOWN PAYLOAD(%u):  ", cfg->type);
+-		for (j = 0; j < num; j++)
+-			printf("  %-5u", cfg->src_offset[j]);
 -	}
+-	printf("\n");
 -}
 -
 -static inline void
--i40e_fdir_info_get_flex_mask(struct i40e_pf *pf,
--			struct rte_eth_fdir_flex_mask *flex_mask,
--			uint16_t *num)
+-print_fdir_flex_mask(struct rte_eth_fdir_flex_conf *flex_conf, uint32_t num)
 -{
--	struct i40e_fdir_flex_mask *mask;
--	struct rte_eth_fdir_flex_mask *ptr = flex_mask;
--	uint16_t flow_type;
--	uint8_t i, j;
--	uint16_t off_bytes, mask_tmp;
+-	struct rte_eth_fdir_flex_mask *mask;
+-	uint32_t i, j;
+-	const char *p;
 -
--	for (i = I40E_FILTER_PCTYPE_NONF_IPV4_UDP;
--	     i <= I40E_FILTER_PCTYPE_L2_PAYLOAD;
--	     i++) {
--		mask =  &pf->fdir.flex_mask[i];
--		flow_type = i40e_pctype_to_flowtype(pf->adapter,
--						    (enum i40e_filter_pctype)i);
--		if (flow_type == RTE_ETH_FLOW_UNKNOWN)
+-	for (i = 0; i < flex_conf->nb_flexmasks; i++) {
+-		mask = &flex_conf->flex_mask[i];
+-		p = flowtype_to_str(mask->flow_type);
+-		printf("\n    %s:\t", p ? p : "unknown");
+-		for (j = 0; j < num; j++)
+-			printf(" %02x", mask->mask[j]);
+-	}
+-	printf("\n");
+-}
+-
+-static inline void
+-print_fdir_flow_type(uint32_t flow_types_mask)
+-{
+-	int i;
+-	const char *p;
+-
+-	for (i = RTE_ETH_FLOW_UNKNOWN; i < RTE_ETH_FLOW_MAX; i++) {
+-		if (!(flow_types_mask & (1 << i)))
 -			continue;
--
--		for (j = 0; j < I40E_FDIR_MAX_FLEXWORD_NUM; j++) {
--			if (mask->word_mask & I40E_FLEX_WORD_MASK(j)) {
--				ptr->mask[j * sizeof(uint16_t)] = UINT8_MAX;
--				ptr->mask[j * sizeof(uint16_t) + 1] = UINT8_MAX;
--			} else {
--				ptr->mask[j * sizeof(uint16_t)] = 0x0;
--				ptr->mask[j * sizeof(uint16_t) + 1] = 0x0;
--			}
--		}
--		for (j = 0; j < I40E_FDIR_BITMASK_NUM_WORD; j++) {
--			off_bytes = mask->bitmask[j].offset * sizeof(uint16_t);
--			mask_tmp = ~mask->bitmask[j].mask;
--			ptr->mask[off_bytes] &= I40E_HI_BYTE(mask_tmp);
--			ptr->mask[off_bytes + 1] &= I40E_LO_BYTE(mask_tmp);
--		}
--		ptr->flow_type = flow_type;
--		ptr++;
--		(*num)++;
+-		p = flowtype_to_str(i);
+-		if (p)
+-			printf(" %s", p);
+-		else
+-			printf(" unknown");
 -	}
+-	printf("\n");
 -}
 -
--/*
-- * i40e_fdir_info_get - get information of Flow Director
-- * @pf: ethernet device to get info from
-- * @fdir: a pointer to a structure of type *rte_eth_fdir_info* to be filled with
-- *    the flow director information.
-- */
--void
--i40e_fdir_info_get(struct rte_eth_dev *dev, struct rte_eth_fdir_info *fdir)
+-static int
+-get_fdir_info(portid_t port_id, struct rte_eth_fdir_info *fdir_info,
+-		    struct rte_eth_fdir_stats *fdir_stat)
 -{
--	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(dev->data->dev_private);
--	struct i40e_hw *hw = I40E_PF_TO_HW(pf);
--	uint16_t num_flex_set = 0;
--	uint16_t num_flex_mask = 0;
--	uint16_t i;
+-	int ret = -ENOTSUP;
 -
--	fdir->mode = RTE_FDIR_MODE_NONE;
--
--	fdir->guarant_spc =
--		(uint32_t)hw->func_caps.fd_filters_guaranteed;
--	fdir->best_spc =
--		(uint32_t)hw->func_caps.fd_filters_best_effort;
--	fdir->max_flexpayload = I40E_FDIR_MAX_FLEX_LEN;
--	fdir->flow_types_mask[0] = I40E_FDIR_FLOWS;
--	for (i = 1; i < RTE_FLOW_MASK_ARRAY_SIZE; i++)
--		fdir->flow_types_mask[i] = 0ULL;
--	fdir->flex_payload_unit = sizeof(uint16_t);
--	fdir->flex_bitmask_unit = sizeof(uint16_t);
--	fdir->max_flex_payload_segment_num = I40E_MAX_FLXPLD_FIED;
--	fdir->flex_payload_limit = I40E_MAX_FLX_SOURCE_OFF;
--	fdir->max_flex_bitmask_num = I40E_FDIR_BITMASK_NUM_WORD;
--
--	i40e_fdir_info_get_flex_set(pf,
--				fdir->flex_conf.flex_set,
--				&num_flex_set);
--	i40e_fdir_info_get_flex_mask(pf,
--				fdir->flex_conf.flex_mask,
--				&num_flex_mask);
--
--	fdir->flex_conf.nb_payloads = num_flex_set;
--	fdir->flex_conf.nb_flexmasks = num_flex_mask;
+-#ifdef RTE_NET_I40E
+-	if (ret == -ENOTSUP) {
+-		ret = rte_pmd_i40e_get_fdir_info(port_id, fdir_info);
+-		if (!ret)
+-			ret = rte_pmd_i40e_get_fdir_stats(port_id, fdir_stat);
+-	}
+-#endif
+-#ifdef RTE_NET_IXGBE
+-	if (ret == -ENOTSUP) {
+-		ret = rte_pmd_ixgbe_get_fdir_info(port_id, fdir_info);
+-		if (!ret)
+-			ret = rte_pmd_ixgbe_get_fdir_stats(port_id, fdir_stat);
+-	}
+-#endif
+-	switch (ret) {
+-	case 0:
+-		break;
+-	case -ENOTSUP:
+-		fprintf(stderr, "\n FDIR is not supported on port %-2d\n",
+-			port_id);
+-		break;
+-	default:
+-		fprintf(stderr, "programming error: (%s)\n", strerror(-ret));
+-		break;
+-	}
+-	return ret;
 -}
 -
--/*
-- * i40e_fdir_stat_get - get statistics of Flow Director
-- * @pf: ethernet device to get info from
-- * @stat: a pointer to a structure of type *rte_eth_fdir_stats* to be filled with
-- *    the flow director statistics.
-- */
 -void
--i40e_fdir_stats_get(struct rte_eth_dev *dev, struct rte_eth_fdir_stats *stat)
+-fdir_get_infos(portid_t port_id)
 -{
--	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(dev->data->dev_private);
--	struct i40e_hw *hw = I40E_PF_TO_HW(pf);
--	uint32_t fdstat;
+-	struct rte_eth_fdir_stats fdir_stat;
+-	struct rte_eth_fdir_info fdir_info;
 -
--	fdstat = I40E_READ_REG(hw, I40E_PFQF_FDSTAT);
--	stat->guarant_cnt =
--		(uint32_t)((fdstat & I40E_PFQF_FDSTAT_GUARANT_CNT_MASK) >>
--			    I40E_PFQF_FDSTAT_GUARANT_CNT_SHIFT);
--	stat->best_cnt =
--		(uint32_t)((fdstat & I40E_PFQF_FDSTAT_BEST_CNT_MASK) >>
--			    I40E_PFQF_FDSTAT_BEST_CNT_SHIFT);
+-	static const char *fdir_stats_border = "########################";
+-
+-	if (port_id_is_invalid(port_id, ENABLED_WARN))
+-		return;
+-
+-	memset(&fdir_info, 0, sizeof(fdir_info));
+-	memset(&fdir_stat, 0, sizeof(fdir_stat));
+-	if (get_fdir_info(port_id, &fdir_info, &fdir_stat))
+-		return;
+-
+-	printf("\n  %s FDIR infos for port %-2d     %s\n",
+-	       fdir_stats_border, port_id, fdir_stats_border);
+-	printf("  MODE: ");
+-	if (fdir_info.mode == RTE_FDIR_MODE_PERFECT)
+-		printf("  PERFECT\n");
+-	else if (fdir_info.mode == RTE_FDIR_MODE_PERFECT_MAC_VLAN)
+-		printf("  PERFECT-MAC-VLAN\n");
+-	else if (fdir_info.mode == RTE_FDIR_MODE_PERFECT_TUNNEL)
+-		printf("  PERFECT-TUNNEL\n");
+-	else if (fdir_info.mode == RTE_FDIR_MODE_SIGNATURE)
+-		printf("  SIGNATURE\n");
+-	else
+-		printf("  DISABLE\n");
+-	if (fdir_info.mode != RTE_FDIR_MODE_PERFECT_MAC_VLAN
+-		&& fdir_info.mode != RTE_FDIR_MODE_PERFECT_TUNNEL) {
+-		printf("  SUPPORTED FLOW TYPE: ");
+-		print_fdir_flow_type(fdir_info.flow_types_mask[0]);
+-	}
+-	printf("  FLEX PAYLOAD INFO:\n");
+-	printf("  max_len:       %-10"PRIu32"  payload_limit: %-10"PRIu32"\n"
+-	       "  payload_unit:  %-10"PRIu32"  payload_seg:   %-10"PRIu32"\n"
+-	       "  bitmask_unit:  %-10"PRIu32"  bitmask_num:   %-10"PRIu32"\n",
+-		fdir_info.max_flexpayload, fdir_info.flex_payload_limit,
+-		fdir_info.flex_payload_unit,
+-		fdir_info.max_flex_payload_segment_num,
+-		fdir_info.flex_bitmask_unit, fdir_info.max_flex_bitmask_num);
+-	if (fdir_info.flex_conf.nb_payloads > 0) {
+-		printf("  FLEX PAYLOAD SRC OFFSET:");
+-		print_fdir_flex_payload(&fdir_info.flex_conf, fdir_info.max_flexpayload);
+-	}
+-	if (fdir_info.flex_conf.nb_flexmasks > 0) {
+-		printf("  FLEX MASK CFG:");
+-		print_fdir_flex_mask(&fdir_info.flex_conf, fdir_info.max_flexpayload);
+-	}
+-	printf("  guarant_count: %-10"PRIu32"  best_count:    %"PRIu32"\n",
+-	       fdir_stat.guarant_cnt, fdir_stat.best_cnt);
+-	printf("  guarant_space: %-10"PRIu32"  best_space:    %"PRIu32"\n",
+-	       fdir_info.guarant_spc, fdir_info.best_spc);
+-	printf("  collision:     %-10"PRIu32"  free:          %"PRIu32"\n"
+-	       "  maxhash:       %-10"PRIu32"  maxlen:        %"PRIu32"\n"
+-	       "  add:	         %-10"PRIu64"  remove:        %"PRIu64"\n"
+-	       "  f_add:         %-10"PRIu64"  f_remove:      %"PRIu64"\n",
+-	       fdir_stat.collision, fdir_stat.free,
+-	       fdir_stat.maxhash, fdir_stat.maxlen,
+-	       fdir_stat.add, fdir_stat.remove,
+-	       fdir_stat.f_add, fdir_stat.f_remove);
+-	printf("  %s############################%s\n",
+-	       fdir_stats_border, fdir_stats_border);
 -}
- 
- /* Restore flow director filter */
+-
+-#endif /* RTE_NET_I40E || RTE_NET_IXGBE */
+-
  void
-diff --git a/drivers/net/intel/i40e/i40e_flow.c b/drivers/net/intel/i40e/i40e_flow.c
-index 6eb85a7d0d..e9993db6dd 100644
---- a/drivers/net/intel/i40e/i40e_flow.c
-+++ b/drivers/net/intel/i40e/i40e_flow.c
-@@ -2391,8 +2391,7 @@ i40e_flow_parse_fdir_pattern(struct rte_eth_dev *dev,
+ set_vf_traffic(portid_t port_id, uint8_t is_rx, uint16_t vf, uint8_t on)
+ {
+diff --git a/app/test-pmd/testpmd.h b/app/test-pmd/testpmd.h
+index 083171853c..f7c10ab6b8 100644
+--- a/app/test-pmd/testpmd.h
++++ b/app/test-pmd/testpmd.h
+@@ -1212,9 +1212,6 @@ int all_ports_stopped(void);
+ int port_is_stopped(portid_t port_id);
+ int port_is_started(portid_t port_id);
+ void pmd_test_exit(void);
+-#if defined(RTE_NET_I40E) || defined(RTE_NET_IXGBE)
+-void fdir_get_infos(portid_t port_id);
+-#endif
+ void port_rss_reta_info(portid_t port_id,
+ 			struct rte_eth_rss_reta_entry64 *reta_conf,
+ 			uint16_t nb_entries);
+diff --git a/doc/guides/testpmd_app_ug/testpmd_funcs.rst b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
+index e65376df54..062cf32fe9 100644
+--- a/doc/guides/testpmd_app_ug/testpmd_funcs.rst
++++ b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
+@@ -22,10 +22,10 @@ If you type a partial command and hit ``<TAB>`` you get a list of the available
  
- 			for (i = 0; i < raw_spec->length; i++) {
- 				j = i + next_dst_off;
--				if (j >= RTE_ETH_FDIR_MAX_FLEXLEN ||
--						j >= I40E_FDIR_MAX_FLEX_LEN)
-+				if (j >= I40E_FDIR_MAX_FLEX_LEN)
- 					break;
- 				filter->input.flow_ext.flexbytes[j] =
- 					raw_spec->pattern[i];
-diff --git a/drivers/net/intel/i40e/rte_pmd_i40e.c b/drivers/net/intel/i40e/rte_pmd_i40e.c
-index 2e7943ef8b..e47c1aa9d7 100644
---- a/drivers/net/intel/i40e/rte_pmd_i40e.c
-+++ b/drivers/net/intel/i40e/rte_pmd_i40e.c
-@@ -3219,40 +3219,6 @@ rte_pmd_i40e_inset_set(uint16_t port, uint8_t pctype,
- 	return 0;
- }
+    testpmd> show port <TAB>
  
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_i40e_get_fdir_info, 20.08)
--int
--rte_pmd_i40e_get_fdir_info(uint16_t port, struct rte_eth_fdir_info *fdir_info)
--{
--	struct rte_eth_dev *dev;
--
--	RTE_ETH_VALID_PORTID_OR_ERR_RET(port, -ENODEV);
--
--	dev = &rte_eth_devices[port];
--	if (!is_i40e_supported(dev))
--		return -ENOTSUP;
--
--	i40e_fdir_info_get(dev, fdir_info);
--
--	return 0;
--}
--
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_i40e_get_fdir_stats, 20.08)
--int
--rte_pmd_i40e_get_fdir_stats(uint16_t port, struct rte_eth_fdir_stats *fdir_stat)
--{
--	struct rte_eth_dev *dev;
--
--	RTE_ETH_VALID_PORTID_OR_ERR_RET(port, -ENODEV);
--
--	dev = &rte_eth_devices[port];
--	if (!is_i40e_supported(dev))
--		return -ENOTSUP;
--
--	i40e_fdir_stats_get(dev, fdir_stat);
--
--	return 0;
--}
--
- RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_i40e_set_gre_key_len, 20.08)
- int
- rte_pmd_i40e_set_gre_key_len(uint16_t port, uint8_t len)
-diff --git a/drivers/net/intel/i40e/rte_pmd_i40e.h b/drivers/net/intel/i40e/rte_pmd_i40e.h
-index 5af7e2330f..34900f9bec 100644
---- a/drivers/net/intel/i40e/rte_pmd_i40e.h
-+++ b/drivers/net/intel/i40e/rte_pmd_i40e.h
-@@ -1067,39 +1067,6 @@ rte_pmd_i40e_inset_field_clear(uint64_t *inset, uint8_t field_idx)
- 	return 0;
- }
+-       info [Mul-choice STRING]: show|clear port info|stats|xstats|fdir|dcb_tc|cap X
+-       info [Mul-choice STRING]: show|clear port info|stats|xstats|fdir|dcb_tc|cap all
+-       stats [Mul-choice STRING]: show|clear port info|stats|xstats|fdir|dcb_tc|cap X
+-       stats [Mul-choice STRING]: show|clear port info|stats|xstats|fdir|dcb_tc|cap all
++       info [Mul-choice STRING]: show|clear port info|stats|xstats|dcb_tc|cap X
++       info [Mul-choice STRING]: show|clear port info|stats|xstats|dcb_tc|cap all
++       stats [Mul-choice STRING]: show|clear port info|stats|xstats|dcb_tc|cap X
++       stats [Mul-choice STRING]: show|clear port info|stats|xstats|dcb_tc|cap all
+        ...
  
--/**
-- * Get port fdir info
-- *
-- * @param port
-- *   The port identifier of the Ethernet device.
-- * @param fdir_info
-- *   The fdir info of the port
-- * @return
-- *   - (0) if successful.
-- *   - (-ENODEV) if *port* invalid.
-- *   - (-ENOTSUP) if operation not supported.
-- */
--__rte_experimental
--int
--rte_pmd_i40e_get_fdir_info(uint16_t port, struct rte_eth_fdir_info *fdir_info);
+ 
+@@ -160,7 +160,7 @@ show port
+ 
+ Display information for a given port or all ports::
+ 
+-   testpmd> show port (info|summary|stats|xstats|fdir|dcb_tc|cap) (port_id|all)
++   testpmd> show port (info|summary|stats|xstats|dcb_tc|cap) (port_id|all)
+ 
+ The available information categories are:
+ 
+@@ -172,8 +172,6 @@ The available information categories are:
+ 
+ * ``xstats``: RX/TX extended NIC statistics.
+ 
+-* ``fdir``: Flow Director information and statistics.
 -
--/**
-- * Get port fdir status
-- *
-- * @param port
-- *   The port identifier of the Ethernet device.
-- * @param fdir_stat
-- *   The fdir status of the port
-- * @return
-- *   - (0) if successful.
-- *   - (-ENODEV) if *port* invalid.
-- *   - (-ENOTSUP) if operation not supported.
-- */
--__rte_experimental
--int
--rte_pmd_i40e_get_fdir_stats(uint16_t port,
--			    struct rte_eth_fdir_stats *fdir_stat);
+ * ``dcb_tc``: DCB information such as TC mapping.
+ 
+ For example:
+@@ -262,7 +260,7 @@ clear port
+ 
+ Clear the port statistics and forward engine statistics for a given port or for all ports::
+ 
+-   testpmd> clear port (info|stats|xstats|fdir) (port_id|all)
++   testpmd> clear port (info|stats|xstats) (port_id|all)
+ 
+ For example::
+ 
+@@ -2288,42 +2286,6 @@ Where the threshold type can be:
+ 
+ These threshold options are also available from the command-line.
+ 
+-port config pctype mapping
+-~~~~~~~~~~~~~~~~~~~~~~~~~~
 -
- /**
-  * Set GRE key length
-  *
+-Reset pctype mapping table::
+-
+-   testpmd> port config (port_id) pctype mapping reset
+-
+-Update hardware defined pctype to software defined flow type mapping table::
+-
+-   testpmd> port config (port_id) pctype mapping update (pctype_id_0[,pctype_id_1]*) (flow_type_id)
+-
+-where:
+-
+-* ``pctype_id_x``: hardware pctype id as index of bit in bitmask value of the pctype mapping table.
+-
+-* ``flow_type_id``: software flow type id as the index of the pctype mapping table.
+-
+-port config input set
+-~~~~~~~~~~~~~~~~~~~~~
+-
+-Config RSS/FDIR/FDIR flexible payload input set for some pctype::
+-
+-   testpmd> port config (port_id) pctype (pctype_id) \
+-            (hash_inset|fdir_inset|fdir_flx_inset) \
+-	    (get|set|clear) field (field_idx)
+-
+-Clear RSS/FDIR/FDIR flexible payload input set for some pctype::
+-
+-   testpmd> port config (port_id) pctype (pctype_id) \
+-            (hash_inset|fdir_inset|fdir_flx_inset) clear all
+-
+-where:
+-
+-* ``pctype_id``: hardware packet classification types.
+-* ``field_idx``: hardware field index.
+-
+ port config udp_tunnel_port
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+@@ -5519,10 +5481,10 @@ L2TPv2 RSS rules can be created by the following commands::
+    testpmd> flow create 0 ingress pattern eth / ipv6 / udp / l2tpv2 / ppp / ipv6
+             / end actions rss types ipv6 end queues end / end
+ 
+-Sample L2TPv2 FDIR rules
++Sample L2TPv2 flow rules
+ ~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+-L2TPv2 FDIR rules can be created by the following commands::
++L2TPv2 flow rules can be created by the following commands::
+ 
+    testpmd> flow create 0 ingress pattern eth / ipv4 / udp / l2tpv2 type control
+             session_id is 0x1111 / end actions queue index 3 / end
 -- 
 2.53.0
 
