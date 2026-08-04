@@ -2,129 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A01EC55184
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Aug 2026 13:46:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14748C55184
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Aug 2026 14:33:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D4C56402D1;
-	Tue,  4 Aug 2026 15:46:34 +0200 (CEST)
-Received: from SN4PR2101CU001.outbound.protection.outlook.com
- (mail-southcentralusazon11012061.outbound.protection.outlook.com
- [40.93.195.61]) by mails.dpdk.org (Postfix) with ESMTP id EF00540285;
- Tue,  4 Aug 2026 15:46:32 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=t4DlfIwxDMYxt2ICrLZSfiH+6Y89pz4IKntDV6pDtkkY0wznZAfbOLrRbjLks+QA9cSzvBtnYbNSe4k3RkS6uCl47oqGUpwSPTVPQHCavWM1eoKyhPfcgbmKCc7UYH5yHPqH91POUK2tqylM8ZVB7AWQMkUk73dSgrPhAr6v0vNE+xAYtQ70uK5ztaLz95lqhiDH7bPsZwi91cTptkgpGEB2qqr5kE5+lMHdKPoHMAkHfCflrZ87e4eNnsHXSYJpE8HBbD/48lLP4GTLreGo4NPU0px9Pf//jJg6zEFnlEdzcZHsHPwBMdCaWlvUTBsZ60mmpNSDBJ1S4YgG5cH3AQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LKuMeSCmjpZAteL3wfxbiTdKKyznp5TicJQ/0t+UZW0=;
- b=RWialC7YDaaMnWZo+7Q9vfO5p/M+Mx+dvXfcVkUQC/ellchiVQv0FVU0KYHFTXWxgYCUAKKQXFZDpbLuicn8ZWLTWpxlnBwxiQjQSz8oHseTv/Ge0OvE/LNvpc/8cMoUm5Fwv+REjEhfIfpPsn5AlhDk01i0Cm5MYsI/iRAvLk9Tzn5RUnJd9i8r75fBLjoUjlkin5Ez7+zHzoJ67IVI5BkvTsC7AjhPC+8WJ5977/qdn+k/583OMluM2/GilrXiBzQMaG4dGJTHSAmFpD8ueh7tYyIcVdKY9I8+oPaX8J55se0TIbeFxlsp1FnSdXQmqwBBdLajtfRDu5oMPhB1vg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LKuMeSCmjpZAteL3wfxbiTdKKyznp5TicJQ/0t+UZW0=;
- b=Ang4QvY+ZzB7qOmhqz3Qh58XAIqP2lpqY6tDpOdHLY9Mr7o14qqvJ30AE706yQE8H1Ubulm9TNI7qb/Pi0209/h9jAFxEdLsPOy0ETElFYQDGZxgQh2Hr3G4EcB1Fsk2zku/UULKnh+dWeiAzW7D7QAINDrQCHPoQ5WdonChN+vYWKDzih2dLm1a5DrDNXY8uFfcOYWIjSYRZN4pkt6AQp87LuZM6UiCyQOK9CzdRNNFmstCb7RIEjRrdJouP5okn7QBnJ1f9KFT8tDpzUqVh6+fuS9vcWJDy0ZXm8fbnvvpZMQze58Eswc1Fn/xZJOz5fwRzJlDz05VgYy8uOfeyQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SJ2PR12MB9212.namprd12.prod.outlook.com (2603:10b6:a03:563::19)
- by PH7PR12MB7842.namprd12.prod.outlook.com (2603:10b6:510:27a::21)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.270.18; Tue, 4 Aug
- 2026 13:46:27 +0000
-Received: from SJ2PR12MB9212.namprd12.prod.outlook.com
- ([fe80::af42:fef1:1367:7d1d]) by SJ2PR12MB9212.namprd12.prod.outlook.com
- ([fe80::af42:fef1:1367:7d1d%3]) with mapi id 15.21.0292.013; Tue, 4 Aug 2026
- 13:46:27 +0000
-Message-ID: <c49e8480-5d4d-459d-bf8d-c73321c42abb@nvidia.com>
-Date: Tue, 4 Aug 2026 16:46:14 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: 24.11.7 patches review and test
-To: luca.boccassi@gmail.com, stable@dpdk.org, dsosnowski@nvidia.com,
- maxime.peim@gmail.com
-Cc: dev@dpdk.org, Abhishek Marathe <Abhishek.Marathe@microsoft.com>,
- David Christensen <drc@linux.vnet.ibm.com>,
- Hemant Agrawal <hemant.agrawal@nxp.com>, Ian Stokes <ian.stokes@intel.com>,
- Jerin Jacob <jerinj@marvell.com>, John McNamara <john.mcnamara@intel.com>,
- Ju-Hyoung Lee <juhlee@microsoft.com>, Kevin Traynor <ktraynor@redhat.com>,
- Luca Boccassi <bluca@debian.org>, Pei Zhang <pezhang@redhat.com>,
- Raslan Darawsheh <rasland@nvidia.com>, Thomas Monjalon
- <thomas@monjalon.net>, Yanghang Liu <yanghliu@redhat.com>,
- sbadawi@nvidia.com, waela@nvidia.com
-References: <20260727094306.41797-1-luca.boccassi@gmail.com>
-Content-Language: en-US
-From: Ali Alnubani <alialnu@nvidia.com>
-In-Reply-To: <20260727094306.41797-1-luca.boccassi@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR2P281CA0011.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a::21) To SJ2PR12MB9212.namprd12.prod.outlook.com
- (2603:10b6:a03:563::19)
+	by mails.dpdk.org (Postfix) with ESMTP id ED125402D1;
+	Tue,  4 Aug 2026 16:33:07 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 6680340285
+ for <dev@dpdk.org>; Tue,  4 Aug 2026 16:33:07 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 24DA12051A;
+ Tue,  4 Aug 2026 16:33:07 +0200 (CEST)
+Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
+ smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
+ Tue, 4 Aug 2026 16:33:06 +0200
+From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+To: dev@dpdk.org,
+	Bruce Richardson <bruce.richardson@intel.com>
+Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+Subject: [PATCH] eal/x86: optimize memcpy of small 64-byte blocks
+Date: Tue,  4 Aug 2026 14:33:04 +0000
+Message-ID: <20260804143305.1344327-1-mb@smartsharesystems.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB9212:EE_|PH7PR12MB7842:EE_
-X-MS-Office365-Filtering-Correlation-Id: 095105ad-562f-40db-026b-08def22ec7bf
-X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|7416014|366016|1800799024|23010399003|11063799006|56012099006|10067099003|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info: IZCd8p78GLCurMLByUk/95Ym2Euvk+Iv/3uXXJKJAciP7XsChfRFuXXcPXSEUNyeyaKZgN11nuXY1Ch+w7RnNedOQlgS2TSvI3VaNPhDtyYY4GNIDAJO4qwdOaQCecvnefpbdzSn+jVGqSmq08d0CBLecmV/T31wNtstRM1T91E4YD408eEKeTWtt+hq09N2s9ugz23Mvpcwy0oiSgQ7Fa7Wz+JQZ0IyJyAwPve7CMWohTi/x2J8BxdY5p4p3pQfCnim5IPYJcXr9dN2R+bEZFDNLQTTSI0F7k9jR+jshK2ZxcPVXAGCh+HxeFqgdbSiGWckaWlF7ZyATLNqPbRQleU8iIkfxWrirlE5irMoyl42wseJYYA1Ho5NZP3jS0QwpDrjtAspgGteBNdXRGGlhlB6FNHoRMmO1cjrSMYb8PPQZmg1vhokS0pEqrlaB3gxp9OCoUlow45/vs3ySMMcxhooHQx27JzBuijpnrKgqj43GVHCC0b3h4X6M7TUL8C5ZEsxkLp01mjTAJ0poyfRF2h0IINmNJHkXk3VxgRU1pNUW9A4OyKQHafPsA0AntbFLN4c9Za14veyQiAj+UfxKfi2tyPZUhkVPy+fh+8eza/Qu+YKXc412YfhQ/H1tXBIaz0FpjfwOzQ/MR0sBqhltCUxxKw2+NXjC8MmEzRWPiQ=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SJ2PR12MB9212.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(7416014)(366016)(1800799024)(23010399003)(11063799006)(56012099006)(10067099003)(18002099003)(22082099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?YzQ5b1BNYkxCYkFqakZ1cEF4cDhsVGJGekRkMHQySkh5QThGN2U5UnVNc3dG?=
- =?utf-8?B?dENJaUlBaVNxTnNrdGpvNlVPdkRqSnVXTVVKbEZKbVVNSC94Q1RNdmswMHN5?=
- =?utf-8?B?Y1E4SllpY0pqWVcrM2JjdExYQnhkMnVqeURZTzB1RENnUDE0VzIzVHU5eGhx?=
- =?utf-8?B?T3RKS0VnQzl5SEZrZTZEbU9BM3JJZloydjVsRWkyNkwwWjcyWnloYnJWVXJQ?=
- =?utf-8?B?L2FoY3pYNlJlVHBlS2tZWGtDa0R2YUJCVFYrVXhvZkZtUlc5Y2xHSnE1V3Ni?=
- =?utf-8?B?dytLeXNhRHA2bXVwTHJYTGZLWGVSV0dPTXkzN2RZb0xVTVE0ak9haFRmc0Rz?=
- =?utf-8?B?dFJtaURzanVaZU1VVUpPQURsNnBuWkt0ZUFGayt3MyszcU9pcUlUN1FzWFE1?=
- =?utf-8?B?WnhUd1Y2ZUgyWkFhdW1RYXJubTNvUDh3YWdIOTk1UFlud2FkeGRZaVZwUGZS?=
- =?utf-8?B?Sm1YY1BMSzV0c2l1YjVDS1J0RzlwL2lvc0VleHpkb2lQeGxwZWVlU2ZXVTFk?=
- =?utf-8?B?dThEa2lway9uUW9Ra0srYWdEajZtaTRXTEIxdE1OaEdvdFlMSE5RRWN2aW02?=
- =?utf-8?B?NExiakE2MTFwZFpWOHFkVHd6TmI4WldWSXUvNHZ2YzJXTU1uNjEwYmJvN0ZK?=
- =?utf-8?B?Mnh5OTlqcWJXK2xRTTdVUFVMRWIvV0VTN3BHeklidENsVHhyaTQwQ0NaVGxD?=
- =?utf-8?B?azhqY3B0Wm82Y2psV0xKZUFhMFpoNisvUlgxRll3VVNwYkVYb1E1WjNEY2I0?=
- =?utf-8?B?U0ZoLzNtZ3dZWktSMFBPT2FBcC9IaDlvQW1aQWwxMGo1MlpZSDI0S0Fkd1B6?=
- =?utf-8?B?RC9FZ3ZLRzhqMHpwcXhSaDNaYW0yY21rc3ljRlVNaC9CZ1hpQ3N6RFl3ZmN3?=
- =?utf-8?B?cTl6cmpURklZYWxWV29KZjFXQUxPM2UyaFl6NmZmL0V0ZjVpTXRFeXpJWFRM?=
- =?utf-8?B?UjU0ejRyVm1XYmZPakpvZGtJZThxVFVtYytjd0V3OWQvN1h1eU5kZXdDODlM?=
- =?utf-8?B?bFdOaGZwNjJGMURIM2hRWHNQZTlaUlk1RnFjNlNlLzZ3ZzRWQTdRRUY3cm1w?=
- =?utf-8?B?dDNDbWR1a2xkeGlqK0ZwRjdFVVIrTmlMK0h5Ukd5cmNBVlBha1ZWUHJWNDdB?=
- =?utf-8?B?eDh6cy9zczBoOGJLVTZMNitBZHU5RVFoUVNwV3JESVh1UytPR3o2VFZSTXhi?=
- =?utf-8?B?VzBDL1hjalVjRnJJSGRUYnZ5WW5EamlLVS8xbnhVVjBsY2F0MklVZmJ6U3F6?=
- =?utf-8?B?SUFQRG9GSWg1NzJGY2FkU1BmN2ozMllIMHVwNVQrNFZzU3FWWW5UZmJoODJG?=
- =?utf-8?B?OEN1RnZ5S3dpZDk4QUM0dFJHNkp0ZHQrN0lkc2xrMTBMbHZSQkJwT0VmeTRB?=
- =?utf-8?B?cEc1elFxNGtNMExrMHprUzFFa1BFZVU3YnJzd0dZWE9oc0pKcjJoN2pKVTI4?=
- =?utf-8?B?NWtuc0krU2xTSHE5MDJ5dnNsVGtwUWNwY0VQN2MrOHRpS0YrbVhQQ0EvVU55?=
- =?utf-8?B?M3NFUzdCOW5zVFAzc2tTQWpmazBNR3ZCSVc2NFFSWGpKdlpYUDhMck8wc0pV?=
- =?utf-8?B?NDBMd1BJYnh2RTVSemFhUkZxVWpDdTYwcVFDV0hVd1M2MEJocWx4TkhKNWpn?=
- =?utf-8?B?QUdTZTF1elpNclhlTWlPWXNJR1QzTkpyMmEvWTZrYkFJc2RLaks2SlZYYXJn?=
- =?utf-8?B?UXozWUZiZ3dFSWduM21ZTk1ldGpuU0JyTFkxNDgvNWgrdWJFcXRFZEd2KzF1?=
- =?utf-8?B?dEZGY2pYMDZmbkc1S2hhMTU3UEtYQ1cwR29HR1locU5XMFhobWxQWS9pZWw1?=
- =?utf-8?B?cEp0T3hwVVRaYUxBVml4SGt2bkR5bVU5Q3BMeDlHcUJRNDk5eEphVlRWbXZ4?=
- =?utf-8?B?VnlrVTBNc0tIdmhxdlRLVmNYT09VYWtwQTZ2MlFnZFd2bTNveE5HcGZkUHlG?=
- =?utf-8?B?dno3elpLMGptWEdQYldIOGpyRzlrTFNwMGtVU3lKYmlWdWUrVFljUVRsTk5V?=
- =?utf-8?B?aEN6RnArMHhmTEhMQ2Z6bDE2dGhvQkR2L2VpU1lub2JoQm4zV2RxOTU1OStx?=
- =?utf-8?B?WEUwczl3aDREeDdIdWN5bkRqNkpLOUFGMVQxdGFUWit3d0VwZFR3YW9TbUFC?=
- =?utf-8?B?akRhWEgvMlV1bFM5NUloT1VEeUoxdGhtcGNhbHhoZFdzVGZlQmdqSU13V0RX?=
- =?utf-8?B?NXREM1k0SkJJTTNFQnVVb2Fhc2N5Tk9iWWMvQ3l5Z3FVUVNLenlIMEZBZVFt?=
- =?utf-8?B?cjhlaFRaL2NlYm9IQUJRMDhhUzJCMGFicUhOSmRLOTNsN00zcHpoMnRWTG8r?=
- =?utf-8?B?THZtUEs0YVBCZ1Y1ODMrYUdGUmI2dTBOeE53YkFjZUd2Ym1YNVdFZz09?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 095105ad-562f-40db-026b-08def22ec7bf
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB9212.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2026 13:46:26.8904 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ShA7ApN0opmSuK7FWlVNczf4wsL9v/AErtf7Qf/6JkrG3mRVOaG7mCpMzVFAXnDJ8q2Tx5Fn+na2TC9TtINqlg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7842
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 04 Aug 2026 14:33:06.0822 (UTC)
+ FILETIME=[2A4BEA60:01DD241E]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -138,51 +44,150 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 7/27/26 12:43 PM, luca.boccassi@gmail.com wrote:
+The implementation for copying 64-byte blocks up to 512 (or 256) bytes
+does not depend on address alignment with the size of the CPU's vector
+registers, but is implemented in both unaligned and aligned copy
+functions.
+The main rte_memcpy() function was updated, so
+if the copy size is known at compile time and the other criteria match,
+the copy is performed without checking alignment requirements.
+This provides two benefits when the optimization comes into play:
+1. A performance gain, because the address alignment check is avoided.
+3. Reduced instruction memory footprint, because the compiler only
+generates one instance of the function for copying, instead of two
+instances (one in the unaligned copy function, and one in the aligned
+copy function).
 
-> Hi all,
->
-> Here is a list of patches targeted for stable release 24.11.7.The planned date for the final release is 2026/08/10.
->
-> Please help with testing and validation of your use cases and report
-> any issues/results with reply-all to this mail. For the final release
-> the fixes and reported validations will be added to the release notes.
->
-> A release candidate tarball can be found at:
->
->      https://dpdk.org/browse/dpdk-stable/tag/?id=v24.11.7-rc1
->
-> These patches are located at branch 24.11 of dpdk-stable repo:
->      https://dpdk.org/browse/dpdk-stable/
->
-> Thanks.
->
-> Luca Boccassi
->
-> ---
-[..]
-> Maxime Peim (1):
->        net/mlx5: prepend implicit items in sync flow creation
-[..]
+Furthermore, the temporary alignment mask definition (ALIGNMENT_MASK)
+was prefixed by RTE_MEMCPY_ to prevent potential namespace collision.
 
-Hello Maxime, Luca,
+And finally, the superfluous function declaration at the top of the
+file was removed, and its description was moved to the function
+definition.
+This improves search results with source code browsers.
 
-Commit 471350f6cd ("net/mlx5: prepend implicit items in sync flow 
-creation") on 24.11 regresses eSwitch HWS when representor matching is 
-disabled (repr_matching_en=0): traffic that should hit PF NIC Rx rules 
-after FDB transfer is no longer received.
+Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
+---
+ lib/eal/x86/include/rte_memcpy.h | 64 ++++++++++++++++++++++----------
+ 1 file changed, 44 insertions(+), 20 deletions(-)
 
-The backport dropped the priv->sh->config.repr_matching checks that 
-previously gated implicit REPRESENTED_PORT / REG_C_0 prepending. That is 
-correct on upstream main after repr_matching_en was removed 
-(c41f621786), but on 24.11 the option still exists and, when off, TX 
-representor tagging is not set up. Unconditionally prepending those 
-matches then scopes NIC rules incorrectly.
-
-Dariusz volunteered to send a fix.
-
-We will send our full report soon.
-
-Regards,
-Ali
+diff --git a/lib/eal/x86/include/rte_memcpy.h b/lib/eal/x86/include/rte_memcpy.h
+index 8ed8c55010..ce5a55c36f 100644
+--- a/lib/eal/x86/include/rte_memcpy.h
++++ b/lib/eal/x86/include/rte_memcpy.h
+@@ -32,21 +32,6 @@ extern "C" {
+ #define RTE_MEMCPY_AVX
+ #endif
+ 
+-/**
+- * Copy bytes from one location to another. The locations must not overlap.
+- *
+- * @param dst
+- *   Pointer to the destination of the data.
+- * @param src
+- *   Pointer to the source data.
+- * @param n
+- *   Number of bytes to copy.
+- * @return
+- *   Pointer to the destination data.
+- */
+-static __rte_always_inline void *
+-rte_memcpy(void *__rte_restrict dst, const void *__rte_restrict src, size_t n);
+-
+ /**
+  * Copy bytes from one location to another,
+  * locations must not overlap.
+@@ -187,7 +172,8 @@ rte_mov256(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src)
+  * AVX512 implementation below
+  */
+ 
+-#define ALIGNMENT_MASK 0x3F
++#define RTE_MEMCPY_ALIGNMENT_MASK 0x3F
++#define RTE_MEMCPY_BLOCK_64_MAX 512
+ 
+ /**
+  * Copy 128-byte blocks from one location to another,
+@@ -333,7 +319,8 @@ rte_memcpy_generic_more_than_64(void *__rte_restrict dst, const void *__rte_rest
+  * AVX implementation below
+  */
+ 
+-#define ALIGNMENT_MASK 0x1F
++#define RTE_MEMCPY_ALIGNMENT_MASK 0x1F
++#define RTE_MEMCPY_BLOCK_64_MAX 256
+ 
+ /**
+  * Copy 128-byte blocks from one location to another,
+@@ -444,7 +431,8 @@ rte_memcpy_generic_more_than_64(void *__rte_restrict dst, const void *__rte_rest
+  * SSE implementation below
+  */
+ 
+-#define ALIGNMENT_MASK 0x0F
++#define RTE_MEMCPY_ALIGNMENT_MASK 0x0F
++#define RTE_MEMCPY_BLOCK_64_MAX 512
+ 
+ /**
+  * Macro for copying unaligned block from one location to another with constant load offset,
+@@ -673,6 +661,18 @@ rte_memcpy_aligned_more_than_64(void *__rte_restrict dst, const void *__rte_rest
+ 	return ret;
+ }
+ 
++/**
++ * Copy bytes from one location to another. The locations must not overlap.
++ *
++ * @param dst
++ *   Pointer to the destination of the data.
++ * @param src
++ *   Pointer to the source data.
++ * @param n
++ *   Number of bytes to copy.
++ * @return
++ *   Pointer to the destination data.
++ */
+ static __rte_always_inline void *
+ rte_memcpy(void *__rte_restrict dst, const void *__rte_restrict src, size_t n)
+ {
+@@ -707,15 +707,39 @@ rte_memcpy(void *__rte_restrict dst, const void *__rte_restrict src, size_t n)
+ #endif
+ 		return dst;
+ 	}
++	/* Common way for small copy size of 64-byte blocks. Unlikely, so constant size only */
++	if (__rte_constant(n) && (n & 63) == 0 && n <= RTE_MEMCPY_BLOCK_64_MAX) {
++		void *ret = dst;
++
++		if (n & 512) {
++			rte_mov256((uint8_t *)dst + 0 * 256, (const uint8_t *)src + 0 * 256);
++			rte_mov256((uint8_t *)dst + 1 * 256, (const uint8_t *)src + 1 * 256);
++		}
++		if (n & 256) {
++			rte_mov256((uint8_t *)dst, (const uint8_t *)src);
++			src = (const uint8_t *)src + 256;
++			dst = (uint8_t *)dst + 256;
++		}
++		if (n & 128) {
++			rte_mov128((uint8_t *)dst, (const uint8_t *)src);
++			src = (const uint8_t *)src + 128;
++			dst = (uint8_t *)dst + 128;
++		}
++		if (n & 64)
++			rte_mov64((uint8_t *)dst, (const uint8_t *)src);
++
++		return ret;
++	}
+ 
+ 	/* Implementation for size > 64 bytes depends on alignment with vector register size. */
+-	if (!(((uintptr_t)dst | (uintptr_t)src) & ALIGNMENT_MASK))
++	if (!(((uintptr_t)dst | (uintptr_t)src) & RTE_MEMCPY_ALIGNMENT_MASK))
+ 		return rte_memcpy_aligned_more_than_64(dst, src, n);
+ 	else
+ 		return rte_memcpy_generic_more_than_64(dst, src, n);
+ }
+ 
+-#undef ALIGNMENT_MASK
++#undef RTE_MEMCPY_ALIGNMENT_MASK
++#undef RTE_MEMCPY_BLOCK_64_MAX
+ 
+ #ifdef __cplusplus
+ }
+-- 
+2.43.0
 
