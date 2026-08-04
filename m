@@ -2,69 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7634BC55184
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Aug 2026 15:48:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ECD7C55184
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Aug 2026 15:48:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D53CA40E0C;
-	Tue,  4 Aug 2026 17:46:20 +0200 (CEST)
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com
- [209.85.215.177])
- by mails.dpdk.org (Postfix) with ESMTP id E944240E0C
- for <dev@dpdk.org>; Tue,  4 Aug 2026 17:46:19 +0200 (CEST)
-Received: by mail-pg1-f177.google.com with SMTP id
- 41be03b00d2f7-c9b373d5af0so3696801a12.2
- for <dev@dpdk.org>; Tue, 04 Aug 2026 08:46:19 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D5D2940E13;
+	Tue,  4 Aug 2026 17:46:23 +0200 (CEST)
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com
+ [209.85.214.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 074DD40679
+ for <dev@dpdk.org>; Tue,  4 Aug 2026 17:46:21 +0200 (CEST)
+Received: by mail-pl1-f181.google.com with SMTP id
+ d9443c01a7336-2cf50c6f235so79605ad.0
+ for <dev@dpdk.org>; Tue, 04 Aug 2026 08:46:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785858379;
- x=1786463179; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785858380;
+ x=1786463180; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=6oq+ryBB+5JHMFYgHEgTou6uBV3xjOuWGBVyTcYTjcc=;
- b=Urj3mL3j1kMYJGy6dQXPHiNGGSDEtS/eB4sO3VqjxulNQVZ6R7InVrufuzAcnRS9Zc
- 3IYfPPTcFnOMHSh3TQbko1kRT6s/dtYT2k97EICeOkUmpx3IU6pX0RTGN096SDqzdH1p
- OoJV9Wa+Fj3ABrjb374RWDxiMF4NfweAgRyHcO3wzrxlf+pPpXSAPnVADvLfrNIq01Bk
- z4zXVAg+TKgssc9eH0t9dhTvudDfdp1zTwITyR7f11u9Ua8ZgBvYcj5q3WhAxqUU72TP
- +E5PItxasYUEnIxrgCg0a61Zqhfn9dwoh86waJ0HF/KdWhTJhfYsfOsgb7GPvqkRnnVi
- 9XYQ==
+ bh=Go3XJW5+Jl51o1tcrhS4oxtPg+y24Hoca0TlixUZ318=;
+ b=cPQOVLYYLQpiL2tA4MnDpYhYP/RsK2R295n0XjDiKtcrPXzK/K5x9RtMK86g7n2fOI
+ 3ere/V4oUD/ETW+JU2JEQKcgMWPbvL61vhwL/RFMnciu1Sc3Y6l1FeAI/5XdjRLnGrsO
+ V8mcZo7qS+b/4Ww5pYUkSc/6/25oUHsBGw5zOKWgj1OfuvoI4W+ulfXSi0UFWoffUz0B
+ xO1kSHY1r5yPG2+/7PPwdSGPX+4F1E6v+OocTfGbrVo4d1LxBiTOSZGgfocRvGCtTQUr
+ fcQRBVgXwYZg4YyGhQm+7U8V0bN0y3xDHvgXAoVbn4CWCmScpm86fU5nKHhmzAGIU/0t
+ D/iA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785858379; x=1786463179;
+ d=1e100.net; s=20251104; t=1785858380; x=1786463180;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=6oq+ryBB+5JHMFYgHEgTou6uBV3xjOuWGBVyTcYTjcc=;
- b=hN6QYOaRZGxKGZ1ifVHFIfB1zt4779iuads1KAA3wvE2hTc2x50BdFahaL4S+VY36d
- SRAecHS6vWMvB9DXYjgUOnIPDTPxpQUjdBLydpqNWJuU+vavHMcAn2YIU8jWJCyuVm11
- uVpi0fR6Pu24yEBKdPPtfu3u3soHx5AcXbHbAJzjc2vVIW3W0EtKExPF9zRZD3cyL0Wh
- DR2raDoJpynLqHXC82dRHRouCGYi6rC9TH8BM5Uk4QCK1e1r6kfXaqTenj7YAD3Z9jAb
- WLVEMbQVm2M7aahpVScg0xrgWjJO+Pz3uD5EGVkL6rBgICPZDTt0pM9e+aJ16MDejgLV
- kC7g==
-X-Gm-Message-State: AOJu0YyGl/mCbkwKQpgYfHMq2kHtdX/hKXQvUEqTTYz1ZngwsDPPw6Oi
- pbfF7/ahO3vJa1kOhU4WdG7Z6CI02EAIBLbklBMxR4+qfzdApjNreGi0OI9RrlboqNwLIEYRnQq
- P1SqR
-X-Gm-Gg: AR+sD11nlqCQo6mx0a+6nS8BY+RCzU6ILjM06iGCKm6XfFno9LJjCT7KSp9x//hIWsi
- o3XFPM+NrbQjQD76RugCydrFDZLVRlSGtI9pI4rNvXXlTjQueQUOceq02FNaMcau3t48Iykh1u7
- +dEPXKx1q2S2AnPXzYOfWUHwvtW4DAkxL2dVcCKdGmvUk3AENwjzcbQDg0xuVZgQzpyrdgreuKM
- loOeUcQ+lt8HrHXEHroxf/vMtOflhwN9p5hmDGgr9VZTYpzbqr5PS1sv6/wxQwnEGPNIVWqdIt1
- oMB1TPJzrtiUVw85oaKbVDLYp4A9047JUUGGEsZcRDsFwAU4RswhgIwkitge+XLchcvNTYku2W4
- 40gsUqV2fbPwqW79iURVF+YDuStewei08DQb1ttA7BWKFWFAGlfsHXZ7TkNnkREotijgbWZqmi5
- XFwR1fGAyAZSPpL4VecgQFEypCnhq1Zxjju8cDZfZOnP4oUORCfIaF15MKtwpQXUbc+C+lpxArw
- w10sQGABbAe6jEqGphJxolEe2w=
-X-Received: by 2002:a17:903:1850:b0:2cc:a977:4260 with SMTP id
- d9443c01a7336-2d0521eac6fmr165807975ad.21.1785858379065; 
- Tue, 04 Aug 2026 08:46:19 -0700 (PDT)
+ bh=Go3XJW5+Jl51o1tcrhS4oxtPg+y24Hoca0TlixUZ318=;
+ b=k0jIVVPJBobowP5lP5cwIh9E5a/NZ4pcSeVk3pUMUT7oz5vCX/5PmgpFyEXLSyCMbh
+ T37Sz2w0v3v2XsyyTD6abKqA/7JjyqGiRXJQ0d18wek8YhoUB0VFrFgVlZRHOXGLP4cz
+ 5WnIuOJ5QO7sDmacwgrgQjB5/S+tthiTCfl26ezYu5h2sRqPLeFhstzWhvS4pDlueODR
+ UORNQF0/NiLu2Pucn46+UFhUUR/X5yLhLGiFXuGbvSiqezQ+jIQUm1y35i4fskFVdTkB
+ 3iRt6yrdALgA4jSgtnoor2zCRh0/TLqMgVY/XkmGNyU5IFiBYSo8nluzy/i0prIXCDze
+ M0jg==
+X-Gm-Message-State: AOJu0YxilUPrP2ksBvtRHpNSwMpxmKRoJl9nbn2gaEDeh18I6EDZNWLy
+ Hg+gAubp0azPvxG13/kFVbifr2pJhWMIE/ga98UNX19SBzVAkK14Wcmti5MkY4tXL0qkQBw2Psd
+ ucNLB
+X-Gm-Gg: AR+sD13X5f0QBE1p1srOj20Z11VuTpV1v7WAp7FSZAbApbkDwAqjoH/7+xaYF0/5/n4
+ dvv+6owZr/HuxY0t/G2Q8dLzWhKI12qPovAsO+n+Cwg/HuP8TQd7hefGygGXsuUJ5BzkV/k4Uox
+ WqgVXGTPHZi+EMuuKuGOEjf4tir9J2fNpDqdSdj87Cc07p6Nk3frHtYRstg4fu7lOWKRnpT/UPe
+ UnDXdEvgikiSkX+bjy7bqlz2z7Vhd33XQ86dnWDfrypryLxExrrhWV/kvfN1zfu5dXCH2uKjWv6
+ UUCSmflSWAqxDpbEmWQ/iHj9Nymn6B0FJJzqpFkxAujqWULQqD8jW7ejwRd524nOpuvGYEf+77A
+ 63QqYYMvZODNbOYlUf2HZPCBfL77U/wOw9CNbefcG2Jq3OuQbSi7SGHCxV5j0hcokuYnS17d2RX
+ URpEg0Qt58zu/j7wsndzckLQ9RQE2FF7PBAdjvMg9HCEnHQJecJ3XKqsAq3I2UluubvPngjGpjY
+ 4RAsRidljcYfiJOsdekrCTP6bE=
+X-Received: by 2002:a17:903:32cf:b0:2cf:1536:3d41 with SMTP id
+ d9443c01a7336-2d052411e61mr143522405ad.28.1785858380194; 
+ Tue, 04 Aug 2026 08:46:20 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3158644a195sm5613894eec.13.2026.08.04.08.46.18
+ 5a478bee46e88-3158644a195sm5613894eec.13.2026.08.04.08.46.19
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 04 Aug 2026 08:46:18 -0700 (PDT)
+ Tue, 04 Aug 2026 08:46:19 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v3 20/23] net/intel/common: include network headers
-Date: Tue,  4 Aug 2026 08:45:08 -0700
-Message-ID: <20260804154549.148691-21-stephen@networkplumber.org>
+ Apeksha Gupta <apeksha.gupta@nxp.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>
+Subject: [PATCH v3 21/23] net/enetfec: add missing sys/types.h include
+Date: Tue,  4 Aug 2026 08:45:09 -0700
+Message-ID: <20260804154549.148691-22-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260804154549.148691-1-stephen@networkplumber.org>
 References: <20260803165304.289869-1-stephen@networkplumber.org>
@@ -84,28 +85,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This file was depending on network protocol headers getting
-included via rte_ethdev.h -> rte_flow.h.
+The enet_regs.h header uses BSD types 'uint' and 'ushort' which
+were previously available through indirect inclusion via:
+  rte_ethdev.h -> rte_flow.h -> rte_ip.h -> rte_ip[46].h -> sys/types.h
+
+After changes to reduce rte_ethdev.h header dependencies, this
+indirect inclusion no longer occurs, causing build failures on
+PowerPC.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/intel/common/tx_scalar.h | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/enetfec/enet_regs.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/intel/common/tx_scalar.h b/drivers/net/intel/common/tx_scalar.h
-index 11ab6c08fc..dcb2ea5542 100644
---- a/drivers/net/intel/common/tx_scalar.h
-+++ b/drivers/net/intel/common/tx_scalar.h
-@@ -8,6 +8,9 @@
- #include <stdint.h>
- #include <rte_io.h>
- #include <rte_byteorder.h>
-+#include <rte_udp.h>
-+#include <rte_tcp.h>
-+#include <rte_sctp.h>
+diff --git a/drivers/net/enetfec/enet_regs.h b/drivers/net/enetfec/enet_regs.h
+index c9400957f8..a834fa5889 100644
+--- a/drivers/net/enetfec/enet_regs.h
++++ b/drivers/net/enetfec/enet_regs.h
+@@ -5,6 +5,8 @@
+ #ifndef __ENETFEC_REGS_H
+ #define __ENETFEC_REGS_H
  
- /* depends on common Tx definitions. */
- #include "tx.h"
++#include <sys/types.h>
++
+ /* Ethernet receive use control and status of buffer descriptor
+  */
+ #define RX_BD_TR	((ushort)0x0001) /* Truncated */
 -- 
 2.53.0
 
