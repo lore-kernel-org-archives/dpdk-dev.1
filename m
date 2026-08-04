@@ -2,72 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E8BC55822
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Aug 2026 15:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A655AC55822
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Aug 2026 15:52:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7248240A8B;
-	Tue,  4 Aug 2026 17:47:19 +0200 (CEST)
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com
- [209.85.160.179])
- by mails.dpdk.org (Postfix) with ESMTP id 4062340C35
- for <dev@dpdk.org>; Tue,  4 Aug 2026 17:47:18 +0200 (CEST)
-Received: by mail-qt1-f179.google.com with SMTP id
- d75a77b69052e-51bfa429aa6so7549611cf.0
- for <dev@dpdk.org>; Tue, 04 Aug 2026 08:47:18 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id C3C1D40696;
+	Tue,  4 Aug 2026 17:52:16 +0200 (CEST)
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
+ [209.85.214.182])
+ by mails.dpdk.org (Postfix) with ESMTP id E485B4068A
+ for <dev@dpdk.org>; Tue,  4 Aug 2026 17:52:14 +0200 (CEST)
+Received: by mail-pl1-f182.google.com with SMTP id
+ d9443c01a7336-2cc7ef7ec27so29595ad.1
+ for <dev@dpdk.org>; Tue, 04 Aug 2026 08:52:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1785858437; x=1786463237; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=6dP7BVhWwAfdBW2FdDGddNOOsCR5SvmAw21sSLVA9PM=;
- b=e2EoiP5sjV73OnlVljwtsIr4favWWWQ8ZNe1XggVWLnVu0t1ioopYKou3Ln0mqhTlg
- chIn080gTreaBOrSlBG2bnhMz1MCZ4axfQOezpAKncqvZ1WTg2WjhcTQJcHrqtwg9yC9
- DElIURUwswoADZd1hbpwvrJizJMc4yJxDMja4=
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785858734;
+ x=1786463534; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=HOqIT5iq4WdthbmbKGbPf4WkRYbBb0dl2nrLjonHtYM=;
+ b=fKRodlfRlp1dUkDG4t6iQXKewTn2Hx1FUdRqwsaMiNlyV3aOgDpXJL7l56VYQLnylu
+ LL7HUfMAyBdrejFHJ6lIYHWaRHBgDXLh6FlWX+BzzVb6htwYxQAiEQjBQTF/+/BNqyBI
+ +6EFDi/UlNerBbzteFFM7c9xQThMxsm4AI8ecW18ecE0djUOt6vhY75tlS41+ogFfZGS
+ 0VKeQFX//Ht6o2b2VM1VNl5jpfduoSrSez3xq/l39NsDEoQawqlq4ZTOsr+aLOjhq3IM
+ 0KkY/lIPcPeGD/rlYozOP5Q22MLDiW7SgcHGj/iwKh7wcJIawXQVhENJMI7fZnDxpE0+
+ NnAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785858437; x=1786463237;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=6dP7BVhWwAfdBW2FdDGddNOOsCR5SvmAw21sSLVA9PM=;
- b=Yo8dc7CY8of3ffXZYMDPm97kGPvhCF0OjFbqu8Fknw9YSiAEt1wQv3KZRC1iLBDcac
- FUCRSLv29qpwZArGQPUNODRGgmISE5YH6dIt6D67bXguGjYEEj0lhKHIJnXVONLbAZv2
- gVYVJ9DJinT+thM1DlPtiFfMVP1wm2mvaS94TNNlxzP7CjJj5vhsjwszwnpr7YyciM+p
- KicxOuMsZYL28CaBt1ooIHGy2e3ZWZZ8jIFb9xor6yjSUr2Y5763d31b8PlpP3HwlJNz
- y54NoZgfEJyY2bNJYgKgJ0SQj/6eGWGd9iIjC0TClsK7GS+xS5yi8eG+K9m5Q7+X4ohY
- ys4Q==
-X-Gm-Message-State: AOJu0YzkDLsny8XkwDc9s1TQzQ5eXTOcLpB3Fc7uQEZXDZ2tkV89BDVN
- Rhbf56EVvXr0EkxHMOibjzYXUGYmKwDpAK7PPXibU/BlBpm+DzyUzzmnpSBcFJCR9F8=
-X-Gm-Gg: AR+sD10vi4OLW7dbdZ6cEKSS6KaB2rivO3I/4gY9x3Za60SWPI+U7u+6zeUpF3yd01P
- J59ZKXGQpMcoreLgneBNZLxiG97NAFXGtpJWcLFtTcqUvGgxT/SEnBpOYUEaZxAbF0NesB5Nwcd
- gWxzciTIcAPRzlr4/kcGJ/Wj2YNLEsZzjdIy2fUuusQcBIybqlSmiFX8cGzVRwptxmNdeyQQVIH
- qhkPW10orHdlNXCEcC87YlMmx1R6bIPQsOk5q2DApFRiwCqzvZLnm8zqObEsApigO+rUIKK7sqo
- ULdtLAPDQJWBJbFX+gnND2v5uxfw851/E5lpsXiMXMNTXFJEAKhNb5DTxYOKtuCQvCrjIF134VC
- q6r4aZHPzdFD8BdkOWaG6piMwwBn9IrKGda49wfwpxkfqjneh4Cogwkbq2kPWu205EdOcih7blo
- EkDg5M2LGVDxZa+TG5JPG1um+ycWtSXbotZ5d3B8fBQZw7WpCrFs6okYI31DHoAuNZlMWoKakuB
- ciaA7YJsc0Oq21n9LfAZpiSBBxzH7BNF02vq4/kA+Cusepirq2S+tjbWlHzH5Sf5mE574++Q2I3
- Jvkr1ZH68i/jdUYiMz5y9IVkdBkUB0Me7dwhfe7lzZmaQNG1Kxxg3C0LcBPO
-X-Received: by 2002:a05:622a:345:b0:51b:feee:b08f with SMTP id
- d75a77b69052e-52ce5af8229mr1953711cf.1.1785858437381; 
- Tue, 04 Aug 2026 08:47:17 -0700 (PDT)
-Received: from fedora.iol.unh.edu ([2606:4100:3880:1271:af2f:903c:2ca9:975f])
+ d=1e100.net; s=20251104; t=1785858734; x=1786463534;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=HOqIT5iq4WdthbmbKGbPf4WkRYbBb0dl2nrLjonHtYM=;
+ b=ds0bhxGSMJl89OjsWKzIvGG8IV6sHbVa6MTCDmSRrOdPWHBn8gzyy2gY2+VN6D57aL
+ MFw59waSiH2jMc3bUmcJGFpx/vQduX8EYJ+KFXQW0SDlQEPIcgQ2KPcNEz3e1jQt39Fy
+ PaTFipPzFsHENKqcIyoHr7aXgW9D3LcjDoOz3+xDLit/j1ucH6xz48994y8aqMzvmJct
+ H3uBlbhiqbZYqnpF7H/IrAC1mWF7jwQFz+MGT+SHEOw5m2NPwxOgD8ZrseV//60+O3S5
+ yjkGLWECtz9KnHNzeN10aJzB1R8D5VVTgW1Kuw/pwTOPrsAR+TUFbQ/AX7VsnaSxWOP6
+ r7yg==
+X-Gm-Message-State: AOJu0YyBcm1mzS9JCpCfrrhWtXJJSwZ7ijexWP7nITs8fUMlzIXk34td
+ px36MC02rPWv0FZlibCc//A9zjDhiXddq0HVoqpmSA2Cw8XjijjeUA4kHkb2AdXRgHY=
+X-Gm-Gg: AR+sD10/4ouIg75ndiJMcCcoBUmu1a4/eCKyeMClV/6Ue0mx5IUqqZAowoAvIbZm2ya
+ Df03xvgpW+Dd+x12IK4Mhd1EZDxr/qmsu+cEbqEP6oosXXkfXTqom0vCie9B6M6O/kwvdPIcg05
+ BSvlQF6aXbON/9TfI2JtRHLfP2+l60LKOjrdEYKV4KWl0AMhsxoWEebN4F5pctQKMzOEW/i1x7y
+ +u8l4F943wtbz6WfepQigFOAk520Gfq9jABQH6Gl78E4eU9wJJhh7/nB9XlLQ9qDNrU7WGF0+Wc
+ BDhtsZrRUdOCZU3xZKUAxy4Fbps1DbK+MBCMh4pmlJi1tm+BX++IY/sLZM+wI+sCncvcQiFwXjN
+ CmGsSnbSXCqTY1V9bnh7RZl/LAU9SbswLI/rDOQzuoT2eYcCTGqKc1EXHwky8ArSkQl8H7sFZcJ
+ M0gAvLJFSKYcszJ0Gp+znyeSvojWQv+TDZ/0ECuIu6B4uvCLDTw5A0GohEF3wI/b5ShMpaID9x0
+ /yaF5JHbrhSFFGSrZp5OroMXnXv+dSUuNSlbPEk262/vFtvdv5V
+X-Received: by 2002:a17:902:e843:b0:2c9:cf5d:d9b8 with SMTP id
+ d9443c01a7336-2d0523bea8emr148726475ad.33.1785858733949; 
+ Tue, 04 Aug 2026 08:52:13 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-52ce4fc0200sm2120561cf.0.2026.08.04.08.47.16
+ 5a478bee46e88-315867bc261sm5939476eec.28.2026.08.04.08.52.13
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 04 Aug 2026 08:47:17 -0700 (PDT)
-From: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
-To: luca.vizzarro@arm.com,
-	patrickrobb1997@gmail.com
-Cc: dev@dpdk.org, abailey@iol.unh.edu, lylavoie@iol.unh.edu,
- Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
-Subject: [PATCH v7 2/2] dts: add build arguments to test run configuration
-Date: Tue,  4 Aug 2026 11:47:12 -0400
-Message-ID: <20260804154712.436889-2-knimoji@iol.unh.edu>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260804154712.436889-1-knimoji@iol.unh.edu>
-References: <20260522154637.952588-1-knimoji@iol.unh.edu>
- <20260804154712.436889-1-knimoji@iol.unh.edu>
+ Tue, 04 Aug 2026 08:52:13 -0700 (PDT)
+Date: Tue, 4 Aug 2026 08:52:10 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
+Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>
+Subject: Re: [PATCH] eal/x86: optimize memcpy of small 64-byte blocks
+Message-ID: <20260804085210.74763eb5@phoenix.local>
+In-Reply-To: <20260804143305.1344327-1-mb@smartsharesystems.com>
+References: <20260804143305.1344327-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,145 +82,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch adds the ability to specify build arguments when building DPDK
-through DTS. Doing so allows users to build DPDK with the desired build
-arguments, which allows for a more configurable DTS run.
+On Tue,  4 Aug 2026 14:33:04 +0000
+Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
 
-Signed-off-by: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
----
- dts/configurations/test_run.example.yaml | 13 +++++++++++++
- dts/framework/config/test_run.py         |  2 ++
- dts/framework/remote_session/dpdk.py     | 16 ++++++++++------
- dts/framework/utils.py                   | 21 ++++++++++++++++++++-
- 4 files changed, 45 insertions(+), 7 deletions(-)
+> +	/* Common way for small copy size of 64-byte blocks. Unlikely, so const=
+ant size only */
+> +	if (__rte_constant(n) && (n & 63) =3D=3D 0 && n <=3D RTE_MEMCPY_BLOCK_6=
+4_MAX) {
+> +		void *ret =3D dst;
+> +
 
-diff --git a/dts/configurations/test_run.example.yaml b/dts/configurations/test_run.example.yaml
-index 51f9ab8237..182ee377aa 100644
---- a/dts/configurations/test_run.example.yaml
-+++ b/dts/configurations/test_run.example.yaml
-@@ -16,6 +16,8 @@
- #       `precompiled_build_dir` or `build_options` can be defined, but not both.
- #   `compiler_wrapper`:
- #       Optional, adds a compiler wrapper if present.
-+#   `build_args`:
-+#       The additional build arguments to be used when building DPDK.
- #   `func_traffic_generator` & `perf_traffic_generator`:
- #       Define `func_traffic_generator` when `func` set to true.
- #       Define `perf_traffic_generator` when `perf` set to true.
-@@ -46,6 +48,17 @@ dpdk:
-       # the combination of the following two makes CC="ccache gcc"
-       compiler: gcc
-       compiler_wrapper: ccache # see `Optional Fields`
-+      # arguments to be used when building DPDK
-+      # build_args:
-+      #   c_args:
-+      #     - O3
-+      #     - g
-+      #   b_coverage:
-+      #     - "true"
-+      #   buildtype:
-+      #     - release
-+      #   flags:
-+      #     - strip
- func_traffic_generator:
-   type: SCAPY
- # perf_traffic_generator:
-diff --git a/dts/framework/config/test_run.py b/dts/framework/config/test_run.py
-index 81630df77d..cf6569ea0c 100644
---- a/dts/framework/config/test_run.py
-+++ b/dts/framework/config/test_run.py
-@@ -191,6 +191,8 @@ class DPDKBuildOptionsConfiguration(FrozenModel):
-     #: This string will be put in front of the compiler when executing the build. Useful for adding
-     #: wrapper commands, such as ``ccache``.
-     compiler_wrapper: str = ""
-+    #: The build arguments to build dpdk with
-+    build_args: dict[str, list[str]] = {}
- 
- 
- class DPDKUncompiledBuildConfiguration(BaseDPDKBuildConfiguration):
-diff --git a/dts/framework/remote_session/dpdk.py b/dts/framework/remote_session/dpdk.py
-index 683bc3470e..58d20efebe 100644
---- a/dts/framework/remote_session/dpdk.py
-+++ b/dts/framework/remote_session/dpdk.py
-@@ -109,8 +109,8 @@ def setup(self) -> None:
-                         "Cannot create code coverage report using a precompiled build directory."
-                     )
-                 self._set_remote_dpdk_build_dir(build_dir)
--            case DPDKUncompiledBuildConfiguration(build_options=build_options):
--                self._configure_dpdk_build(build_options)
-+            case DPDKUncompiledBuildConfiguration():
-+                self._configure_dpdk_build(self.config.build_options)
-                 self._build_dpdk()
- 
-     def teardown(self) -> None:
-@@ -295,17 +295,21 @@ def _build_dpdk(self) -> None:
-         `remote_dpdk_tree_path` has already been set on the SUT node.
-         """
-         ctx = get_ctx()
-+        build_options = getattr(self.config, "build_options")
-         # If the SUT is an ice driver device, make sure to build with 16B descriptors.
-         if (
-             ctx.topology.type is not LinkTopology.NO_LINK
-             and ctx.topology.sut_port_ingress
-             and ctx.topology.sut_port_ingress.config.os_driver == "ice"
-         ):
--            meson_args = MesonArgs(
--                default_library="static", libdir="lib", c_args="-DRTE_NET_INTEL_USE_16BYTE_DESC"
--            )
-+            if "c_args" in build_options.build_args:
-+                build_options.build_args["c_args"].append("DRTE_NET_INTEL_USE_16BYTE_DESC")
-+            else:
-+                build_options.build_args["c_args"] = ["DRTE_NET_INTEL_USE_16BYTE_DESC"]
-+
-+            meson_args = MesonArgs(build_options.build_args, default_library="static", libdir="lib")
-         else:
--            meson_args = MesonArgs(default_library="static", libdir="lib")
-+            meson_args = MesonArgs(build_options.build_args, default_library="static", libdir="lib")
- 
-         if SETTINGS.code_coverage:
-             meson_args._add_arg("-Db_coverage=true")
-diff --git a/dts/framework/utils.py b/dts/framework/utils.py
-index 55d6dfc337..0e41f3f48c 100644
---- a/dts/framework/utils.py
-+++ b/dts/framework/utils.py
-@@ -101,10 +101,16 @@ class MesonArgs:
- 
-     _default_library: str
- 
--    def __init__(self, default_library: str | None = None, **dpdk_args: str | bool):
-+    def __init__(
-+        self,
-+        dpdk_build_args: dict[str, list[str]],
-+        default_library: str | None = None,
-+        **dpdk_args: str | bool,
-+    ):
-         """Initialize the meson arguments.
- 
-         Args:
-+            dpdk_build_args: The DPDK build arguments specified in the test run configuration file.
-             default_library: The default library type, Meson supports ``shared``, ``static`` and
-                 ``both``. Defaults to :data:`None`, in which case the argument won't be used.
-             dpdk_args: The arguments found in ``meson_options.txt`` in root DPDK directory.
-@@ -123,6 +129,19 @@ def __init__(self, default_library: str | None = None, **dpdk_args: str | bool):
-             )
-         )
- 
-+        arguments = []
-+        for option, value in dpdk_build_args.items():
-+            if option == "c_args":
-+                values = " ".join(f"-{val}" for val in value)
-+                arguments.append(f'-D{option}="{values}"')
-+            elif option == "flags":
-+                values = " ".join(f"--{val}" for val in value)
-+                arguments.append(values)
-+            else:
-+                arguments.append(f" -D{option}={value[0]}")
-+
-+        self._dpdk_args = " ".join(f"{self._dpdk_args} {' '.join(arguments)}".split())
-+
-     def __str__(self) -> str:
-         """The actual args."""
-         return " ".join(f"{self._default_library} {self._dpdk_args}".split())
--- 
-2.55.0
+Maybe just let compiler decide, it will generate vector instructions in mos=
+t cases.
 
+	if (__rte_constant(n))
+		return mempcpy(dst, src, n);
