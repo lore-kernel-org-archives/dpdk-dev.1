@@ -2,75 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E913C55822
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Aug 2026 16:31:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF553C55184
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Aug 2026 16:33:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B4A3940685;
-	Tue,  4 Aug 2026 18:31:51 +0200 (CEST)
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
- [209.85.214.170])
- by mails.dpdk.org (Postfix) with ESMTP id BC44D40616
- for <dev@dpdk.org>; Tue,  4 Aug 2026 18:31:50 +0200 (CEST)
-Received: by mail-pl1-f170.google.com with SMTP id
- d9443c01a7336-2cc97653887so693045ad.1
- for <dev@dpdk.org>; Tue, 04 Aug 2026 09:31:50 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3370440685;
+	Tue,  4 Aug 2026 18:33:45 +0200 (CEST)
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com
+ [209.85.214.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 0BBB740616
+ for <dev@dpdk.org>; Tue,  4 Aug 2026 18:33:43 +0200 (CEST)
+Received: by mail-pl1-f179.google.com with SMTP id
+ d9443c01a7336-2cace91f112so904045ad.0
+ for <dev@dpdk.org>; Tue, 04 Aug 2026 09:33:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785861110;
- x=1786465910; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785861222;
+ x=1786466022; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=3NkuzJEF6KGs4LdLtITDiNoVID53P6M0xJ4I7PcpqdQ=;
- b=QiNbxOsNSc4N507JYYKn+1lukMqCoO6lBBx1vIK3sQxcQd6N/SslcW7Qm/4QHYn9yx
- 43PTaFHsdwT+DCr8eYoAL2KeSkups5QpykOOU3hjrK5BtiOnP6gM5//Jh+oFEhdj3ail
- /7uIqMDOvyvWNFMNgZQGdlRfkUQaoKO7ZLvphQCe2Aans+TTzvgDHMJoAFtGZxiNZwTi
- hSCXYgkUA2m2th2+u2uMsgq01aK+CDSCEFVkgQU2jc117c1Ahnkz09dU0q0/1n8QIW5p
- R0CletzHQ2VNJ+r3kPLip+SJC0ORGt24yU9ppkLANA4GSzaU1Nfe3qO3E84sRZivHBLm
- l4QQ==
+ bh=2hUXjRrVTx93CKY6rQiykDu40109ZTSSwt7/g6gMa+0=;
+ b=jYPK6Shm+VayvjAbFZfRXlrPenEgDCUM9/YclJXD19pRHeXbYXGm375Dqe7FD5vX7l
+ ykhe/LQXoLs7bUmdbUesSeH6Y6YieYsQKR5CP3VIL0cZYFTcfzodeJIzCFAl4PH0EvI0
+ s+KclkYqR7fmoAp2mewyO7UpGPDUQfTPAKGF27NehentNC8VWBGqiE/OhtgcwRDv++fj
+ vWNiYVCUMEt7G6gaB9sjaJIZFEeTTg2yAMQofo4/u/P/7d75rtC82oXjilWYSwJ+KLjv
+ LDMlATMXyVuwjooRpG5D8Mxr6inSA6Qbh6wT7ynnPpsu7v2gWQVLEQhHR726DBWwowJw
+ c/rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785861110; x=1786465910;
+ d=1e100.net; s=20251104; t=1785861222; x=1786466022;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=3NkuzJEF6KGs4LdLtITDiNoVID53P6M0xJ4I7PcpqdQ=;
- b=KbZz5sMt8c27RlLQTXRmgn5LDfBGzHPKRJPuIGT4D214sDy4GRVcKoF3hSomHxgUMZ
- LSkyGdDogPH09EBoaQpCxN54SLSQgeSIYG+8LqKaeM4AxU8Tv2HKi927eC9Yiv4jCLU8
- Jo4F7t6lOnGLY/M9dVa/o/BlVFe5yHz0hFbni/bSLkce5SIYfRed58tcDxROYt2s1KkB
- lVwEF+T7YTVLF2BgzSSGPhQqlX8Y442bfY47v44QLlN8tHIeufKay/xJ8SVVp6ZAjwyr
- P2LtBLArRct1v01I0TKpf8g0MHcTpQwBIIn9f9WrJPFhdC8vx3y0yNMlLtTEb6juw/nF
- bJIQ==
-X-Forwarded-Encrypted: i=1;
- AHgh+RrM/J/9fL85Re6n572QiDGzzUDOhefvmjYgJGPXRQXzeeld1cOaZGz8FyvXjUbIWDQKFkU=@dpdk.org
-X-Gm-Message-State: AOJu0YziO7VOzyuMW66G1td0WT/GXXaT30u+Q33/zHrUIb2iziAUxpPY
- m+66mIswOIZ8fa7yUPuNfHh8bGMdUodVnX0+f8O7bs4VA7QbYEcDN4L2/oF+l883sfw=
-X-Gm-Gg: AR+sD12++wtQIIZw+q9UEcgo/4W9hi/2J+MbHi/m4j6idp0B8ve86NNGsAx4cC8Cd2w
- md22HHE2isoq0+fFLRrJwQy/Ypk8rze058eV5ZzpwhfgWcsS9eqr81HSGPllnjvm+u4HqeQSjYp
- 2SVaXD202mEEQmzQfy+JUQHQW4DKhat9gxYt+jEKjnvggxAJkwBRMZB3i4bmVwtm4WbC8xJ3TAo
- lRxVvOJkpQkVrBb/K6oVnNU0OcQUI6ZR1ksngJ7MbAd+JwANEM89A4vyAi8/F1+ytk/riXeHTge
- QuHvP+T0Aqv9rYs3V7ctzHewis8C3LchlpEG+Q+VixwrIkBPJUcNVueeXmXBHYMFmTQEnPO+28e
- 2sEOHrMYyvZwmVGbJDV+z0EgvhX/dtfB/C2ibOw6DOykYfFe1O+U6IWbw519y3xKgC0AUFsR73z
- jr5IF0ZyIUEAHL58XiiRscx5Un9g5YoX5Mnhb0SBmJuqyYaaaJvzOe1asD4ygfkSjVhO9iNNG8S
- nDU+F19eOXC7qnuSyKdyFQbhdks7Q==
-X-Received: by 2002:a17:903:2409:b0:2c9:aae1:a61a with SMTP id
- d9443c01a7336-2d0ca77f02fmr584255ad.14.1785861109632; 
- Tue, 04 Aug 2026 09:31:49 -0700 (PDT)
+ bh=2hUXjRrVTx93CKY6rQiykDu40109ZTSSwt7/g6gMa+0=;
+ b=c8HTcipGFqZrvD5HE6xXz8qThjI0WCcKuOQmTNaA74tK4PIl7m/ZBcYFOOuX6KaHDt
+ OheMoX7B6EwMeX3fTO2MnLSbXMI22rg9GHnGKSgal2iusKrRF3wKPMJEvGvCVJMICURe
+ kZapNu+UfnPkQnRvKAdlsdEDhXZnG1ZbN1yC+OR2aA5Q6K3eRrcEQ/qqZioQCkfXR1rb
+ v4a3GOuhhyhC9oPGryxmm58wygMiP9x4eysrbFs6gK9aRdhZixYqSvP55bMexDJJSvQD
+ AjtkLceN/7dwZ9uNdZ862KRogCFvzPOFRlB62iyKG7TxiKzwNPyjhLSKvop73T26Lse1
+ qfeA==
+X-Gm-Message-State: AOJu0YxjpHbOfEHZ7d0wkpj9V3zbdfps1DHyrBV5n+7Ob/f8WsrJKS3x
+ ynXEf4bnegTpXAd9wkIAnIboOAhV26dZUbkuTvRuLL9GwtlB2sPpw/C54dwS/ApFxzBiiEuw0Pr
+ R2llA
+X-Gm-Gg: AR+sD11NN9ZCU3/GG3Doqu49EjeZK+UCgmtDOVrMXJGAvdA/n8erxunQh8ESBrcCeYF
+ Kbl3VkVOlz8FtVKBSED2w3hg9KtbHVBbqgtHQfWpcab0ymDOx7YiykOG0dHfUntGrdPB9hCRt9A
+ vs5pltD5PStT0/lm+Nt0d24B6wbR2EhxKfY0CeA0zj+19VgaWg5HNE0ANPHbooSCVveNXmkgUmV
+ 5JB1c5QzBRR1bGc7wKFAY/319USbDwB23qcjK8ncu6uvI04julihXg1gM7KmfqkPqTNZJCHMJbq
+ KnkVrOeku3vRB43S0TY1p24h/1Nk8DAvOhuk+i46i2XViq5fWscJgEwp+3B3IBwORuX6Zk6cZiW
+ NuWkplVz2F+0EnQNlzPbsS2wTEAKGj/ZvJpeJP/hlFYfmUo3lX8JM0zv203SMH9m6Sd6tYVJ2/S
+ k0s/feuucUmNjuPGYV7H/xmYIo8TrTGNMl3vTziVx6qWWre34JHDMhODDgrA99KzpWTI7DbXdwJ
+ e1oJURjP+eEs6qJBJBbPtgrFKhFsA==
+X-Received: by 2002:a17:902:ccca:b0:2ca:e3f:6a4a with SMTP id
+ d9443c01a7336-2d0ca962f22mr227195ad.21.1785861221908; 
+ Tue, 04 Aug 2026 09:33:41 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-315863b0a9csm9140043eec.2.2026.08.04.09.31.48
+ 5a478bee46e88-315863b761asm10452056eec.1.2026.08.04.09.33.41
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 04 Aug 2026 09:31:49 -0700 (PDT)
-Date: Tue, 4 Aug 2026 09:31:45 -0700
+ Tue, 04 Aug 2026 09:33:41 -0700 (PDT)
+Date: Tue, 4 Aug 2026 09:33:39 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Mattias =?UTF-8?B?UsO2bm5ibG9t?= <hofors@lysator.liu.se>
-Cc: thomas@monjalon.net, andrew.rybchenko@oktetlabs.ru,
- sriram.yagnaraman@ericsson.com, dev@dpdk.org, bingz@nvidia.com,
- rasland@nvidia.com, Mattias =?UTF-8?B?UsO2bm5ibG9t?=
- <mattias.ronnblom@ericsson.com>
-Subject: Re: [RFC 0/5] fix and complete the eCPRI header
-Message-ID: <20260804093145.77db5df4@phoenix.local>
-In-Reply-To: <20260804081319.1869087-1-hofors@lysator.liu.se>
-References: <20260804081319.1869087-1-hofors@lysator.liu.se>
+To: Junlong Wang <wang.junlong1@zte.com.cn>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v10 0/4] net/zxdh: optimize Rx/Tx path performance
+Message-ID: <20260804093339.23efb551@phoenix.local>
+In-Reply-To: <20260803112419.2202150-1-wang.junlong1@zte.com.cn>
+References: <20260709104637.924861-1-wang.junlong1@zte.com.cn>
+ <20260803112419.2202150-1-wang.junlong1@zte.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -87,129 +84,253 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue,  4 Aug 2026 10:13:14 +0200
-Mattias R=C3=B6nnblom <hofors@lysator.liu.se> wrote:
+On Mon,  3 Aug 2026 19:24:14 +0800
+Junlong Wang <wang.junlong1@zte.com.cn> wrote:
 
-> From: Mattias R=C3=B6nnblom <mattias.ronnblom@ericsson.com>
+> v10:
+>   - Based on the issues raised in the AI review, Patch 2/4 Patch 3/4 Patc=
+h 4/4 have been modified.
 >=20
-> The objective of this series is to make rte_ecpri.h a complete and
-> correct description of the eCPRI V2.0 message headers, usable for
-> parsing and building messages, and not only for matching on a few
-> header fields with rte_flow, which is what it was added for.
+> v9:
+>   - Remove add simple Tx xmit functions (zxdh_xmit_pkts_simple) in the la=
+st patch.
 >=20
-> The first two patches fix wire format bugs in rte_ecpri.h: missing
-> fields in the One-Way Delay Measurement message header, and padding in
-> the Remote Reset one. Both change struct sizes, hence the release note
-> entries and the lack of a stable tag.
+> v8:
+>   - Add checked the size of ZXDH_DL_NET_HDR_SIZE and RTE_PKTMBUF_HEADROOM=
+ in
+>     zxdh_xmit_pkts_simple() before submitting. Add static_assert to rejec=
+t builds with insufficient
+>     default headroom at compile time.
 >=20
-> The rest completes the eCPRI V2.0 coverage of the header.
+> v7:
+>   - Add a new xmit prepare func for xmit_pkts_simple, which will checked =
+the size of
+>     ZXDH_DL_NET_HDR_SIZE and RTE_PKTMBUF_HEADROOM.
 >=20
-> Mattias R=C3=B6nnblom (5):
->   net: fix eCPRI delay measurement message header
->   net: fix eCPRI remote reset message header size
->   net: add missing eCPRI message field values
->   net: allow byte swapping eCPRI remote memory access
->   net: add eCPRI IWF message headers
+> v6:
+>   - Remove unnecessary error checking code in submit_to_backend_simple() =
+and
+>     pkt_padding(). Since as the max dl_net_hdr_len is always less than
+>     RTE_PKTMBUF_HEADROOM, rte_pktmbuf_prepend() cannot fail in the
+>     simple path (single-segment mbufs).
+> v5:
+>   - Reorganize patch series, placing interrupt fix as the first patch
+>     and fix condition check to properly enable interrupts.
+>   - Fix zxdh_recv_single_pkts() not compacting rcv_pkts[] on failure,
+>     which could cause use-after-free and mbuf leak.
+>   - Fix tx_bunch() and tx1() missing store barrier before setting AVAIL f=
+lag,
+>     preventing data race on weakly-ordered architectures.
+>   - Fix submit_to_backend_simple() writing descriptors for packets that
+>     failed pkt_padding(), causing mbuf leak.
+> v4:
+>   - fix some AI review issues.
+>   - fix queue enable intr bug.
+> v3:
+>   - remove unnecessary NULL check in zxdh_init_queue.
+>   - Split Ring: Bit[31] is unused and reserved, zxdh_queue_notify(): remo=
+ving the
+>     zxdh_pci_with_feature(hw, ZXDH_F_RING_PACKED) check;
+>   - remove unnecessary double-free in in zxdh_recv_single_pkts();
+>   - used rte_pktmbuf_mtod();
+>   - remove rxq_get_vq(q) macro, use q->vq and apply it consistently;
+>   - Refactoring scatter and mtu check logic in zxdh_dev_mtu_set();
+>   - set txdp->id =3D avail_idx + i in tx_bunch/tx1.
+>   - add comment documenting zxdh_xmit_enqueue_append() now sets dxp->cook=
+ie =3D NULL for
+>     the head slot and stores cookies per descriptor via dep[idx].cookie.
+>   - add one-line comment noting tx_bunch() is the simple path handles sin=
+gle-segment.
+>   - remove unnecessary Extra initialization and the uint32_t cast.
+> v2:
+>   - zxdh_rxtx.c, pkt_padding(): modifyed the return value of pkt_padding(=
+);
+>   - zxdh_rxtx.c, zxdh_recv_single_pkts(): modifyed When zxdh_init_mbuf() =
+fails
+>     the loop does "continue" and free mbufs;
+>   - zxdh_rxtx.c, refill_desc_unwrap(): Add rte_io_wmb() before writing fl=
+ags
+>     in the refill_que_descs();
+>   - zxdh_queue.h, zxdh_queue_enable_intr(): Remove unnecessary function o=
+f zxdh_queue_enable_intr;
+>   - zxdh_ethdev.c, zxdh_init_queue(): changed the hdr_mz NULL check logic;
+>   - zxdh_rxtx.c, zxdh_xmit_pkts_simple()=E3=80=81zxdh_recv_single_pkts():=
+ add stats.bytes count;
+>   - zxdh_rxtx.c, zxdh_init_mbuf():remove  rte_pktmbuf_dump(stdout, rxm, 4=
+0);
+>   - zxdh_ethdev.c, zxdh_dev_free_mbufs(): using rte_pktmbuf_free() to fre=
+e mbufs;
+>   - Splitting into separate patches, structure reorganization and sw_ring=
+ removal=E3=80=81
+>     RX recv optimize=E3=80=81Tx xmit optimize=E3=80=81Tx;
+> v1:
+>   This patch optimizes the ZXDH PMD's receive and transmit path for better
+>   performance through several improvements:
+> - Add simple TX/RX burst functions (zxdh_xmit_pkts_simple and
+>   zxdh_recv_single_pkts) for single-segment packet scenarios.
+> - Remove RX software ring (sw_ring) to reduce memory allocation and
+>   copy.
+> - Optimize descriptor management with prefetching and simplified
+>   cleanup.
+> - Reorganize structure fields for better cache locality.
 >=20
->  doc/guides/rel_notes/release_26_11.rst |   8 ++
->  lib/net/rte_ecpri.h                    | 164 +++++++++++++++++++++++--
->  2 files changed, 159 insertions(+), 13 deletions(-)
+>   These changes reduce CPU cycles and memory bandwidth consumption,
+>   resulting in improved packet processing throughput.
+>=20
+> Junlong Wang (4):
+>   net/zxdh: fix queue enable intr issues
+>   net/zxdh: optimize queue structure to improve performance
+>   net/zxdh: optimize Rx recv pkts performance
+>   net/zxdh: optimize Tx xmit pkts performance
+>=20
+>  doc/guides/rel_notes/release_26_07.rst |  11 +
+>  drivers/net/zxdh/zxdh_ethdev.c         |  77 +++---
+>  drivers/net/zxdh/zxdh_ethdev_ops.c     |  23 +-
+>  drivers/net/zxdh/zxdh_ethdev_ops.h     |   7 +
+>  drivers/net/zxdh/zxdh_pci.c            |  21 --
+>  drivers/net/zxdh/zxdh_pci.h            |   1 -
+>  drivers/net/zxdh/zxdh_queue.c          |  11 +-
+>  drivers/net/zxdh/zxdh_queue.h          | 132 ++++------
+>  drivers/net/zxdh/zxdh_rxtx.c           | 317 +++++++++++++++----------
+>  drivers/net/zxdh/zxdh_rxtx.h           |  14 +-
+>  10 files changed, 316 insertions(+), 298 deletions(-)
+>=20
 
-More detailed AI review (the CI one is really pretty dumb).
-TLDR: missing/lack of deprecation notices.
+Detailed AI review still finds several issues.
 
-Applied cleanly on c1a46b9 (26.11.0-rc0). Built with -Dwerror=3Dtrue and
-net/dpaa2 + net/bnxt enabled (the two in-tree consumers of the changed
-structs) plus testpmd: no warnings. Per-commit compile of dpaa2_flow.c,
-ulp_rte_parser.c and cmdline_flow.c at each of the five commits is also
-clean, so the series is bisect safe.
+Applied on top of c1a46b9 and built each commit separately with
+-Dwerror=3Dtrue. All four commits compile clean with no warnings, so
+the series is bisect safe. The v9 issues with F_NOTIFICATION_DATA,
+the missing uplink header in ZXDH_ETH_OVERHEAD, the data_off double
+count, and the recv_single compaction are all fixed. A few things
+still need work.
 
-Measured layouts after the series:
+Patch 2/4: optimize queue structure
 
-  rte_ecpri_msg_delay_measure  size=3D20 align=3D1
-      msr_id=3D0 act_type=3D1 ts_sec=3D2 ts_nsec=3D8 comp_val=3D12
-  rte_ecpri_msg_remote_reset   size=3D 3 align=3D1  rst_id=3D0 rst_op=3D2
-  rte_ecpri_msg_rm_access      size=3D12 align=3D4  addr=3D4 length=3D10
-  rte_ecpri_msg_iwf_up         size=3D 9 align=3D1
-  rte_ecpri_msg_iwf_opt        size=3D 4 align=3D2
-  rte_ecpri_msg_iwf_map        size=3D 4 align=3D2
-  rte_ecpri_msg_iwf_dctrl      size=3D12 align=3D4
-  rte_ecpri_combined_msg_hdr   size=3D24 align=3D4
+Warning: the inlined zxdh_queue_notify() drops the
+ZXDH_F_RING_PACKED gate that zxdh_notify_queue() had on bit 31.
+The old code only set it when packed was negotiated; the new one
+sets it from cached_flags unconditionally. The commit log says the
+F_NOTIFICATION_DATA gate was kept but says nothing about removing
+the packed gate. Either restore it, or state in the log that packed
+is now assumed.
 
-Every size and offset claim in the commit messages and the release notes
-holds, including "the layout, the size and the field access are all
-unchanged" in 4/5 and "keeps its size" in 5/5. dummy[5] bounds the union
-exactly again. The only in-tree users of dummy[] touch dummy[0], and the
-offsetof() uses in dpaa2 land on unchanged offsets, so nothing breaks at
-source level. The Fixes tag is correct: d164c609e70b is the commit that
-added lib/librte_net/rte_ecpri.h along with the flow item.
+Info: the new next_qidx member of struct zxdh_virtqueue has no
+readers and no writers anywhere in the tree. Dead field in a patch
+whose purpose is removing dead fields.
 
-Patch 1: net: fix eCPRI delay measurement message header
+Info: rsv_8B is a uint32_t, so four bytes not eight.
 
-Error: ABI break with no deprecation notice. There is no eCPRI entry in
-doc/guides/rel_notes/deprecation.rst, neither in this series nor in tree.
-abi_policy.rst is explicit that the .11 breakage window "is *not*
-permission to circumvent the other aspects of the procedures to make ABI
-changes ... 3 ACKs of the requirement to break the ABI and the observance
-of a deprecation notice are still mandatory". The ABI Changes template in
-the release notes says the same thing ("which was announced in the
-previous releases"). As posted this targets 27.11, not 26.11, unless the
-techboard grants an exception.
+Info: zxdh_vq_desc_extra::ndescs has no readers or writers left
+after 4/4 removes the last two. It should be removed with the rest.
 
-Worth spelling out the concrete breakage in the notice, because this is
-not just a formality. rte_flow_conv_copy() uses rte_flow_desc_item[].size,
-which is sizeof(struct rte_flow_item_ecpri). That becomes 24 bytes, so a
-new library memcpy()s 24 bytes out of a 16-byte spec allocated by an
-application built against the old header, an 8-byte out-of-bounds read.
-All existing field offsets are preserved, so that is the specific hazard
-to cite.
+Patch 3/4: optimize Rx recv pkts
 
-Warning: the reason for the missing stable tag is only in the cover
-letter, which is not preserved in git history. Someone doing LTS triage
-later sees a Fixes tag with no Cc: stable@dpdk.org and no explanation.
-Please move that reasoning into the commit message, and say plainly that
-the bug stays live on the LTS branches because the fix cannot be
-backported.
+Error: zxdh_dev_mtu_set() and zxdh_scattered_rx() use different
+predicates. mtu_set includes LRO:
 
-Info: the Compensation Value is documented here as "in units of 2^-16 ns"
-while delay_a/delay_b in 5/5 are documented as "in 1/16 ns". Those differ
-by a factor of 4096, so one of them looks like a typo.
+	uint8_t need_scatter =3D
+		(dev->data->dev_conf.rxmode.offloads &
+		 (RTE_ETH_RX_OFFLOAD_TCP_LRO |
+		  RTE_ETH_RX_OFFLOAD_SCATTER)) || ...
 
-Info: please add static_assert on the size, and ideally the alignment, of
-the packed structs. rte_ether.h already does this:
+but zxdh_scattered_rx() has no LRO term, and set_rxtx_funcs() keeps
+LRO in a separate dev->data->lro flag. So scattered_rx never
+reflects LRO. With LRO on, scatter off, and an MTU that fits the
+buffer, need_scatter is 1 while scattered_rx is 0 and every
+rte_eth_dev_set_mtu() on a started port fails with "Stop port
+first." Both sites need the same predicate.
 
-  static_assert(sizeof(struct rte_ether_hdr) =3D=3D 14, ...);
-  static_assert(alignof(struct rte_ether_hdr) =3D=3D 2, ...);
+Warning: the same check also rejects MTU decreases. If scattered_rx
+is already 1 and the new MTU fits in one buffer, need_scatter is 0
+and the call is refused, even though the scattered Rx function
+handles single segment packets fine. Only the 0 to 1 transition
+needs rejecting.
 
-Three structs in this series now depend on __rte_packed_begin producing
-20, 3 and 9 bytes respectively, and MSVC handles pragma pack and uint8_t
-bitfields on its own terms. There is no eCPRI test anywhere in app/test,
-so the wire layout is otherwise entirely unverified. This is the addition
-I would most like to see.
+Warning: set_rxtx_funcs() silently drops the ZXDH_NET_F_MRG_RXBUF
+check that used to fail the port. zxdh_recv_pkts_packed() still
+walks header->type_hdr.num_buffers to build chains, which is
+mergeable rxbuf semantics. If dropping the requirement is
+deliberate, say so in the log.
 
-Patch 2: net: fix eCPRI remote reset message header size
+Warning: zxdh_queue_kick_prepare_packed() is removed and both Rx
+paths now call zxdh_queue_notify() unconditionally on every burst
+that refills. That ignores the device's RING_EVENT_FLAGS_DISABLE
+suppression and adds an MMIO write per burst. That is a
+pessimization in a patch titled "optimize" and it is not mentioned
+in the log.
 
-Error: same missing deprecation notice as 1/5.
+Info: the two Rx paths address the header differently.
+recv_pkts_packed uses buf_addr + RTE_PKTMBUF_HEADROOM,
+zxdh_init_mbuf uses rte_pktmbuf_mtod(). Both work today because
+refill always allocates fresh mbufs, but pick one; mtod is the
+idiom.
 
-Warning: same stable tag rationale as 1/5.
+Info: zxdh_scattered_rx() returns bool but its comment says it
+returns 1 or 0. And zxdh_set_rxtx_funcs() now has no failure path
+and its return value is ignored by the only caller, so make it
+void.
 
-Patch 3: net: add missing eCPRI message field values
+Info: this patch adds ZXDH_MTU_TO_PKTLEN() but zxdh_scattered_rx()
+open codes mtu + ZXDH_ETH_OVERHEAD + ZXDH_UL_NET_HDR_SIZE instead
+of using it.
 
-Warning: eleven new macros in an installed header with no release note.
-One "New Features" entry covering the eCPRI V2.0 header completion, for
-this patch and 5/5 together, would be enough.
+Patch 4/4: optimize Tx xmit pkts
 
-Patch 5: net: add eCPRI IWF message headers
+Error: the walk in zxdh_xmit_fast_flush() is still unbounded and
+driven by device written memory:
 
-Warning: four new public structs and six new macros with no release note.
-See 3/5.
+	id =3D desc[used_idx].id;
+	do {
+		...
+		used_idx +=3D 1;
+		if (unlikely(used_idx =3D=3D size)) {
+			used_idx =3D 0;
+			vq->used_wrap_counter ^=3D 1;
+		}
+	} while (curr_id !=3D id);
 
-Info: I could not verify the line_rate:5 / res:1 / s:1 / f:1 bit ordering
-in rte_ecpri_msg_iwf_up against eCPRI V2.0 figure 31A. Please confirm that
-byte. The uint8_t bitfields themselves are fine, rte_geneve.h and
-rte_gtp.h set the precedent.
+id comes out of the descriptor ring. If the device writes
+id >=3D vq_nentries, curr_id never equals id and the loop spins
+forever, freeing cookies around the whole ring and flipping
+used_wrap_counter each lap. An in range but wrong id inflates
+free_cnt past vq_nentries and corrupts ring accounting. Validate
+id < size before entering the loop, or cap the iteration count at
+vq_nentries. This was raised on v9 and the rewrite did not address
+it.
 
-Info: 5/5 says the combined header keeps its size but does not say why
-iwf_up is packed while the other three IWF structs are not. Without
-packing it would be 12 bytes rather than 9. A sentence in the commit
-message would save the next reader the arithmetic.
+Error: the prefetch indexes past the end of the descriptor array:
+
+	rte_prefetch0(&desc[used_idx + NEXT_CACHELINE_OFF_16B]);
+
+used_idx reaches size - 1, so this reads up to desc[size + 7].
+vq_nentries is validated power of two in zxdh_queue.c, so mask it:
+
+	rte_prefetch0(&desc[(used_idx + NEXT_CACHELINE_OFF_16B) &
+			(size - 1)]);
+
+Warning: point 2 of the commit log says "no reset of the id field
+is performed in the flush loop", but the loop body starts with
+
+	desc[used_idx].id =3D used_idx;
+
+The store is also redundant, since both enqueue paths write .id on
+every enqueue. It is dirtying a device shared cache line in the hot
+path for nothing. Drop it and fix the log, or explain why it is
+needed.
+
+Warning: the release notes go in the wrong file. The tree is at
+26.11.0-rc0; the hunk adds to doc/guides/rel_notes/release_26_07.rst
+which is already released. It belongs in release_26_11.rst.
+
+Warning: the xstats counters are removed in 3/4 but documented in
+4/4. Code and docs should land in the same commit.
+
+Info: the NEXT_CACHELINE_OFF_16B conditional is dead.
+RTE_CACHE_LINE_SIZE / 16 already gives 8 and 4 for the 128 and 64
+cases, so only the #else branch is needed.
+
+Info: leftover comment in zxdh_xmit_pkts_packed(), "Positive value
+indicates it need free vring descriptors", now sits above the
+free_cnt test with nothing to refer to since need was removed. Also
+a double space after > on that line.
