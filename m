@@ -2,71 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F31CC55184
-	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Aug 2026 15:47:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5631BC55184
+	for <dpdk-dev@archiver.kernel.org>; Tue,  4 Aug 2026 15:47:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EA52F40E0A;
-	Tue,  4 Aug 2026 17:46:18 +0200 (CEST)
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com
- [209.85.216.51]) by mails.dpdk.org (Postfix) with ESMTP id D02FE40DDC
- for <dev@dpdk.org>; Tue,  4 Aug 2026 17:46:17 +0200 (CEST)
-Received: by mail-pj1-f51.google.com with SMTP id
- 98e67ed59e1d1-38e69bdb0fcso3497020a91.1
- for <dev@dpdk.org>; Tue, 04 Aug 2026 08:46:17 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id DD42B40E0B;
+	Tue,  4 Aug 2026 17:46:19 +0200 (CEST)
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
+ [209.85.214.178])
+ by mails.dpdk.org (Postfix) with ESMTP id D101B40DFD
+ for <dev@dpdk.org>; Tue,  4 Aug 2026 17:46:18 +0200 (CEST)
+Received: by mail-pl1-f178.google.com with SMTP id
+ d9443c01a7336-2ced3386430so48042625ad.1
+ for <dev@dpdk.org>; Tue, 04 Aug 2026 08:46:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785858377;
- x=1786463177; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785858378;
+ x=1786463178; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=+4Lod7esgwoloXCt6rGhR1rOmj8JmQPwx7czXDdY0ZQ=;
- b=wstBaqA4xIZROxnCYaXg6Fgdj4Malb11bHvvcBUEsrXbNmgvtLb3wpYABZ5VxEirIC
- uISde6jaGoeZCLJaeR1VI4Rhvd3R8FElez9djoOFJf4rIL0IWeCdNJ/QljB1ql433juu
- MCLGVoZLKh5poPa/vGQ4Aq9FM714FSYXw+CiPKB41741i049ubTxxxfsf+FLIcbu4Ak4
- aX7lcp7wnRDBon2B2weT4tKo7c3ljVIfE0v/d6QKL2RJwwIjPSQA6bJINrWfxDcIiIYi
- GoasLDJOzbbNUZwpVvp3WR254ID3Gs/c1Ln8ndOLIy06y6kRGklEfyedX81z92vcYTRz
- W1nw==
+ bh=tGcdyLJjY6iR2dMv1Ft9l27CE1TMIf13cnrW33wlgcY=;
+ b=Yf6xdY3WsPpAs4iPQDiEouBPzzcv9Qxnhb2KIqCiWnaa1ZOfl4kS/NLoWPxS1LnhJX
+ iIkkfZ3CUtm4QjFfxyY/T1GF8a+85NPmV2wZ1ddbcVPNHe086z7UDjQuFAugzeKp0CPx
+ AJ/20hcnjHsRCi4dVYrlDzDNrKV4sq4osuRy4U2ZF5SUySW1BRLBYkm93Ps3l1G/PJUc
+ ZuPi6q/Y4UxhpkTlTYLIxmed9N5lisbbV/xjpEC99tCrL4mnFDU+4wLZ6fT6APqIYmOe
+ q4bfaXCBi3QzSAKNBUWez1bK/JZsBUUOGUdMw816GGGlHVqAxnJKQcBvAFQa2CqfwQ/0
+ U0dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785858377; x=1786463177;
+ d=1e100.net; s=20251104; t=1785858378; x=1786463178;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=+4Lod7esgwoloXCt6rGhR1rOmj8JmQPwx7czXDdY0ZQ=;
- b=R5hUZM/V5VqDu/ip3PwOoqoZH7Twu3BSV8sbYv7qBeL53fbqjsekLuj+8izEk4nnCS
- iL9RJwVaP1WC03CfKeSdRn6VR5pCn0A1/Q56yg3cng8ghvMiyiThf8AHNgmmviUCw6fO
- 3BqzEhZ43jHfo5qOE338USiN1eoas8iIRntZcLsEAFM6Wuj8mR7cq4Vvvc3D24ByIHqV
- sUphcSTQj58vgClorGaui7UJl067dCdTqTCSl/Y61X7+UVA43XzoX2MlDcyAdnjg5itJ
- /++B8WP1DXPM5QbMJ8mgI/KQ6KinI6vXYwWVRcKgx4OxpDJKgH8q7dcaUM9A+bl6ByyS
- sIOg==
-X-Gm-Message-State: AOJu0Yzm6BkUZAqw5cCAem/imFd8+xRiMLcssDn5LYXoAe2NLyHibPS5
- 6JUdLlijfZ5EYuWdOZsK3uxW2annlVE48OZHU2ss3skCPId9b3filNOitcS/1gEimAG0A+34LNS
- EmY6i
-X-Gm-Gg: AR+sD130pM2TR0Ww6mm0XZUyYjtBDUj+wTnD/9FMcKFr0PxllXUdIXWLAalZHFoMiSC
- UAF9h0OrWI2ajSJC+V0nm8/o2uiSlGfpSb2C7UTec0DgQl55wVjXpgHmLo/lbItppBLPlppGV7u
- yyaViXVrhLDjOj6n6TQH/FeDI0Oyr61PU2j5Fnmb1/SGo2Y7V1oGLOXtv9H6eNG2BkqoPy1ZEZp
- 75lv75et0jKJvesiSYhrsH+J9sphGkursK9MKl8dpbSKagAA5IL+5Mo5Dp42K7u62/PB8aAf7TV
- yjjp4ALs/Qao9HDsmYqZnV6g+ezuxOj5X2cO9OIU0e8fVHXWGBU7ze+TCXJP7O1pT4WKC3NLJGL
- QhYRAokZg7QfcxUYzD5K8JHsh+hVbV6ZBm0txPGVXdVnasjG+177/cTzrUQhU/iyZFmt+2IBoNA
- xGtmrAcJ3ipUiwW9ZfDCW5biZ8FPHMS2K+dyVRKXcLjUs5ou3pv6KelZc6zDyma1qpYnWXrFXt1
- +RDDOzz/E9wnJ0Kr4tTM12l/9s=
-X-Received: by 2002:a17:90b:2d84:b0:38f:18f9:785 with SMTP id
- 98e67ed59e1d1-3903c538263mr134795a91.8.1785858376917; 
- Tue, 04 Aug 2026 08:46:16 -0700 (PDT)
+ bh=tGcdyLJjY6iR2dMv1Ft9l27CE1TMIf13cnrW33wlgcY=;
+ b=a10Cyn88lnGUv0y8RzzcEsCJ8XMIl1EX5P5wyDuVTC+QAStKOfF7kON2EZemGefnwx
+ 8FJr6a638fET2ctUd3lWmK8FYeGFIk3SjPjHNzDuvUvu6KlFkS4aFtrNFiynts58EMbU
+ ylxkZ7dmCbvwmUPlk3FY4l3+2R3x/xiJ8PwdCKWYeiXIYj6VNZ1G/BJLuo3WO8rLpNeT
+ to6kkIbB3UQwQKMhCyhxGdSXS0tqjwh6x1PF0Bd/Bg6uy9R0AsgxZxi+7YEnL8QkEPxO
+ PVprpNh4ZUWH6xs1VUBxZ5qb0SlAs57RZRvQ3yFF7XA3yL38Gl4GhvZiAW3iK68z7QyX
+ /5Fw==
+X-Gm-Message-State: AOJu0YyZWS7clzFeLEyNf4TfHNDpiCtFdQEo3fDiCAJCDwGDZAhCpbUv
+ +JxOvSVoMDKeS3PbQSSfPJ9ArmRhFFrYTL/yvkPZ/ZMN9aGz7f4rE/9247K5b111gL56Vmw5fjN
+ Zk/FJ
+X-Gm-Gg: AR+sD13QiPzhrTmxcgyzQ1VzBcV8q9DWpaDjXz19h9rb0R7simaBYjQywU9NBhFDI3u
+ /c0CrzruuL4e2O7xY2113iYos1bIHhsy9gmmWbgfZEz6fDQ6y0LYPKpGQ9FgvGgJ0WQioVcEBly
+ pHubwNjtsx32cZD/X5Oh5JMz0UH+qb5sxXgPW8k0gxXP5oSke7JnHQ4Y+gkve8PzDrJKUHoScJ2
+ aUgKAl8oFpKemUUmZeCh/07G5a8WfYBH+l387XCQk60vfvykr2i1YGKG2OCRi7AzTg/5cpCr+Yr
+ JqmkepjbTOaQrX/nyU2x8BTcEnC5KJAYXvU8tzt/voiKzyilGi8dUXVHjSw8QRiQboOwIAzJu5K
+ 9975YiJktCvUdzCfPvUKZLf6c1CgqYZwDxW8c9sd9SMnljHSTWg3Eren5eQNJWLDeli9MUui7vj
+ TJQwnSGjJ9pXmYKjVlE+fNKSnixYmlhSZFDrXhv6NIWaM2PlsTUjD+DtJZmamFk0Foj4V9z3tdl
+ vmjsLHEWfir7OzdZ7vyokpKRVU=
+X-Received: by 2002:a17:903:2ca:b0:2ca:6d87:cda0 with SMTP id
+ d9443c01a7336-2d0521a5716mr149979095ad.6.1785858378039; 
+ Tue, 04 Aug 2026 08:46:18 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3158644a195sm5613894eec.13.2026.08.04.08.46.15
+ 5a478bee46e88-3158644a195sm5613894eec.13.2026.08.04.08.46.17
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 04 Aug 2026 08:46:16 -0700 (PDT)
+ Tue, 04 Aug 2026 08:46:17 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
- Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
-Subject: [PATCH v3 18/23] net/mlx5: include rte_flow as needed
-Date: Tue,  4 Aug 2026 08:45:06 -0700
-Message-ID: <20260804154549.148691-19-stephen@networkplumber.org>
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: [PATCH v3 19/23] net/sfc: include rte_flow
+Date: Tue,  4 Aug 2026 08:45:07 -0700
+Message-ID: <20260804154549.148691-20-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260804154549.148691-1-stephen@networkplumber.org>
 References: <20260803165304.289869-1-stephen@networkplumber.org>
@@ -86,79 +84,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The driver was getting rte_flow.h included indirectly via
-rte_ethdev.h. This will change in future and driver should
-include it where needed.
+This driver was depending on rte_ethdev.h doing inclusion
+of rte_flow.h.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/mlx5/mlx5_ethdev.c | 1 +
- drivers/net/mlx5/mlx5_flow.h   | 1 +
- drivers/net/mlx5/mlx5_txq.c    | 1 +
- drivers/net/mlx5/mlx5_utils.c  | 1 +
- drivers/net/mlx5/mlx5_utils.h  | 1 +
- 5 files changed, 5 insertions(+)
+ drivers/net/sfc/sfc_dp.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/mlx5/mlx5_ethdev.c b/drivers/net/mlx5/mlx5_ethdev.c
-index 8160d10e7e..c3d8e1b04f 100644
---- a/drivers/net/mlx5/mlx5_ethdev.c
-+++ b/drivers/net/mlx5/mlx5_ethdev.c
-@@ -19,6 +19,7 @@
- #include <rte_string_fns.h>
- #include <rte_rwlock.h>
- #include <rte_cycles.h>
+diff --git a/drivers/net/sfc/sfc_dp.c b/drivers/net/sfc/sfc_dp.c
+index 7e2a20e4dc..c867c2c2ff 100644
+--- a/drivers/net/sfc/sfc_dp.c
++++ b/drivers/net/sfc/sfc_dp.c
+@@ -15,6 +15,7 @@
+ #include <rte_ethdev.h>
+ #include <rte_log.h>
+ #include <rte_mbuf_dyn.h>
 +#include <rte_flow.h>
  
- #include <mlx5_malloc.h>
+ #include "efx.h"
  
-diff --git a/drivers/net/mlx5/mlx5_flow.h b/drivers/net/mlx5/mlx5_flow.h
-index 3415b4722e..0da50fab85 100644
---- a/drivers/net/mlx5/mlx5_flow.h
-+++ b/drivers/net/mlx5/mlx5_flow.h
-@@ -12,6 +12,7 @@
- 
- #include <rte_alarm.h>
- #include <rte_mtr.h>
-+#include <rte_flow.h>
- 
- #include <mlx5_glue.h>
- #include <mlx5_prm.h>
-diff --git a/drivers/net/mlx5/mlx5_txq.c b/drivers/net/mlx5/mlx5_txq.c
-index f9b254c6c5..f0b7b2d032 100644
---- a/drivers/net/mlx5/mlx5_txq.c
-+++ b/drivers/net/mlx5/mlx5_txq.c
-@@ -18,6 +18,7 @@
- #include <rte_common.h>
- #include <rte_eal_paging.h>
- #include <rte_bitops.h>
-+#include <rte_flow.h>
- 
- #include <mlx5_common.h>
- #include <mlx5_common_mr.h>
-diff --git a/drivers/net/mlx5/mlx5_utils.c b/drivers/net/mlx5/mlx5_utils.c
-index 606743c4b7..12820054ff 100644
---- a/drivers/net/mlx5/mlx5_utils.c
-+++ b/drivers/net/mlx5/mlx5_utils.c
-@@ -3,6 +3,7 @@
-  */
- 
- #include <rte_malloc.h>
-+#include <rte_flow.h>
- 
- #include <mlx5_malloc.h>
- 
-diff --git a/drivers/net/mlx5/mlx5_utils.h b/drivers/net/mlx5/mlx5_utils.h
-index 9ab79c8ad5..19d03145a6 100644
---- a/drivers/net/mlx5/mlx5_utils.h
-+++ b/drivers/net/mlx5/mlx5_utils.h
-@@ -16,6 +16,7 @@
- #include <rte_rwlock.h>
- #include <rte_memory.h>
- #include <rte_bitmap.h>
-+#include <rte_flow.h>
- 
- #include <mlx5_common.h>
- #include <mlx5_common_utils.h>
 -- 
 2.53.0
 
