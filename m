@@ -2,51 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A7FAC55ABA
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Aug 2026 13:47:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFBCEC55ABA
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Aug 2026 15:37:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4B68E40DDC;
-	Wed,  5 Aug 2026 15:46:26 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
- by mails.dpdk.org (Postfix) with ESMTP id 49C1E40BA2
- for <dev@dpdk.org>; Wed,  5 Aug 2026 15:46:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1785937582; x=1817473582;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=Br4bRFV12kDN0EjDTtinJYta46bqjx2V5LCLgD0Hgp4=;
- b=hc0LYqzrYoYys8N9y8hUahsgZT8JSXVzYRjZtBYXqgI0OV4sIQ1DomoC
- 1ZDCeKFUWXSi374EHP8CRh8CGSkyJ8xhEeKKcj39hCSPH9BNKYIl5rFDR
- l0TPu5ZqPrjgnbrLV3aQLRH7QSCVgEr49NuJ/cj/AAP/NEwe9qUY1Cfy3
- UlbvXDN4Sgj1RePFnhMntk6ojCGZoVhXSDr8kWX6YcQ2OV9tjWiiIyfuz
- Sk9qfMH5VP0fnVGsrclBP2OWd7nSO+CRFsvIfRuF2a/JBWXlztqbD72z6
- +mFGp4wHl0mgk8WXB5y6koASHtVyYs0brdvZa6v5lmIf0AP057F+1Hwoh g==;
-X-CSE-ConnectionGUID: Qn1maDGoQae3scmdQv23CQ==
-X-CSE-MsgGUID: l4fCP8VuTq+1eX6N6ySAEw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11865"; a="86284138"
-X-IronPort-AV: E=Sophos;i="6.25,206,1779174000"; d="scan'208";a="86284138"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
- by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 05 Aug 2026 06:46:22 -0700
-X-CSE-ConnectionGUID: pbYxaEZvToqjIJA8eC8YTg==
-X-CSE-MsgGUID: g3KQveVoT26qoaTogcvCHg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,206,1779174000"; d="scan'208";a="258476822"
-Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa007.fm.intel.com with ESMTP; 05 Aug 2026 06:46:21 -0700
-From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org,
-	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v9 19/19] vfio: introduce cdev mode
-Date: Wed,  5 Aug 2026 14:45:48 +0100
-Message-ID: <f8206aff46b7e33973c83a4c92abd1295c039fd8.1785937061.git.anatoly.burakov@intel.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <cover.1785937060.git.anatoly.burakov@intel.com>
- <cover.1785937060.git.anatoly.burakov@intel.com>
-References: 
+	by mails.dpdk.org (Postfix) with ESMTP id C4FEC402AC;
+	Wed,  5 Aug 2026 17:37:12 +0200 (CEST)
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com
+ [209.85.216.52]) by mails.dpdk.org (Postfix) with ESMTP id 704F94021F
+ for <dev@dpdk.org>; Wed,  5 Aug 2026 17:37:11 +0200 (CEST)
+Received: by mail-pj1-f52.google.com with SMTP id
+ 98e67ed59e1d1-38e07ebd263so793489a91.1
+ for <dev@dpdk.org>; Wed, 05 Aug 2026 08:37:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785944230;
+ x=1786549030; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=K39ZmB9aUyQUiCGL3RuVHTtoteZAuSa3Luip5BZWscQ=;
+ b=jVT5+hIH8JdlW09hx689JnxWm34r0oMD5DmZ2s/drMoeAQL0ijDdxoSwrzhc8ejQMK
+ X99L/DsBL58SHaqH/7pRIg9vZS8XS3X0ogvSRojiP88OLhgNK4GzokyhV4sCfTSVvZgh
+ pKCDJg92ErJtvbgoPWLR5By9A9yVq/HMvbq5YPMj7EQxnm7Di7ioRH3fhBuuVJU8Zjgv
+ lwJGdih8n17uHUi8FJe8TQF58yeKJ9jBhFDoOJbHhONDCmaMFa5Iui1qFXdMQzMhlRwM
+ dGnqN/hRiGGdbVr95zzR0qAbknrzDBvWBnmGZSx1O+uAWenNdXTercQ1483Bilfxnnxi
+ f7xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1785944230; x=1786549030;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=K39ZmB9aUyQUiCGL3RuVHTtoteZAuSa3Luip5BZWscQ=;
+ b=eI5R7EX9jUPrT049Lvj6nEzblQTt3luyFrS1fzfm9M1fvRlBQPR4Uydr8BvbGdSVpO
+ Fx3HSaXgyUVn6LqmhQ9uMstN0psy5+KMe8vOs07FustxCYgsjV14d7A6WNjVCx8ftqf2
+ TMBzYQH1Eb84GMgmWDwukpBUujaDK+0FUpBxTf6l707YEWSFzXoemXBDE8I+ml+FeKKi
+ 6iS+HlM7FNzVQbQ4pNKfyuyW+3slgnDgokoIdKhu5ZFLSVCOQdKn4rWTQedf1SNT787s
+ O6h9s4AY06VVGKPinGybjkZ8l4Rwj8fnD1hmEZgim4HasWTT12knIeBpjTyIm8kRPkGu
+ f7yA==
+X-Gm-Message-State: AOJu0Yw6+lXSI3xIUYeEQ11rb/6iYAQV5eWtWmRFL3haocBFq90yO2WM
+ 3pCBPvJmGJswNUKIPO/ItKCHykhonX4L4BXoPCYYigQIpm60lpfYTqNivBPetw63DZ24rcKuRsY
+ mMXSz
+X-Gm-Gg: AR+sD1128xBXdVScgcfEm9JvnPr8VsgBktbpXNFnYoH1uoPuJBl+vfGohFFvWfv8LVk
+ tu4qAeQP7M0+8D6GxEZUhPyTwss4KSL9YkSiTt6LdBOPtFNxh+0BwLWPUbxuUUO+NcKRoMf67VS
+ JzNyIiDvSoSwSk86d3F8E3ewMFWgCWb2jUl7AtyHHgCNQXk+8xzytv4dJM9EFEAykflNxQAiWix
+ BNvcz6Nqvh/Z78T5NwserZ2wtPDBG9MNP5H1hphPB1PluiZHCl6AWt95vF4gFDPDfcBAHHdPUsY
+ iFe8NySM6ICecijW1tzEQlrPNchu10xYwRKhXRjFZjPSnjuAiMFZeLjWApqiFMq4ZCVEvO/uibI
+ qJpltwfKn0wF/cuzMdcsVrUDLgU5PXiG4rwP/fC5/VZnG/E2CTk3zuff1PVjf58QgNB6xG1HmOk
+ nN796TwlLKTo/eDGaS6MzxCcvxZWsLgCgO8mlVBYphw9R6PK/7wHOFGUW18Kf7OLcd9oLdtR+8r
+ 72dRWvS995Md6ipsFFzWvSkdgsXRJo=
+X-Received: by 2002:a17:90b:2d50:b0:38f:1f8:1fa with SMTP id
+ 98e67ed59e1d1-3903c5ca8c2mr8256289a91.15.1785944230053; 
+ Wed, 05 Aug 2026 08:37:10 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-3158673b7b2sm18011404eec.19.2026.08.05.08.37.09
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 05 Aug 2026 08:37:09 -0700 (PDT)
+Date: Wed, 5 Aug 2026 08:37:04 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Cc: <dev@dpdk.org>, <mattias.ronnblom@ericsson.com>
+Subject: Re: [RFC v2] memtank: add memtank library
+Message-ID: <20260805083704.005d1c76@phoenix.local>
+In-Reply-To: <20260805123305.90059-1-konstantin.ananyev@huawei.com>
+References: <0260610103918.96857-1-konstantin.ananyev@huawei.com>
+ <20260805123305.90059-1-konstantin.ananyev@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,948 +83,353 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add support for VFIO cdev (also known as IOMMUFD) API. The group API is now
-considered legacy in the kernel, and all further development is expected to
-happen in IOMMUFD infrastructure.
+On Wed, 5 Aug 2026 13:33:01 +0100
+Konstantin Ananyev <konstantin.ananyev@huawei.com> wrote:
 
-To assist any future use of VFIO cdev mode for custom behavior, also
-introduce "get device number" API, which is kind-of-but-not-really similar
-to the concept of IOMMU group.
+> v2:
+> - Addressed majority of AI review comments (except 11, 12,14):
+>   https://patchwork.dpdk.org/project/dpdk/patch/20260610103918.96857-1-konstantin.ananyev@huawei.com/#185014
+> - Still missing integration/common tests with fastmem RFC:
+>   https://patchwork.dpdk.org/project/dpdk/list/?series=38273
+> 
+> Introduce memtank, highly customizable fixed sized object allocator
+> for DPDK applications. It offers close to the mempool level performance
+> on the fast path.
+> Main difference with the mempool is the ability to grow/shrink at runtime
+> with user provided grow/shirnk threshold values, plus some extra
+> features for higher flexibility.
+> 
+> Key properties:
+> 
+> - relies on user to provide callbacks for actual memory reservations.
+>   User is free to choose whatever is most suitable way for his scenario,
+>   i.e: via malloc/rte_malloc/mmap/some custom memory allocator.
+> - user defined constructor callback for newly allocated objects.
+> - bulk alloc and free APIs.
+> - different alloc/free policies (specified by user via flags parameter):
+>   * lightweight as possible, but can fail
+>   * more robust, but heavyweight - causes call to user-provided backing
+>     memory allocator.
+> - backing memory grows/shrinks on demand, special API extensions
+>   to allow user control grow/shrink size, frequency and when/where it
+>   is going to happen (DP, CP, both, etc.).
+> - ability to pre-allocate all objects at memtank creation time
+>   (mempool like behavior).
+> - custom object size and alignment.
+> - per object runtime statistics and sanity-checks (boundary violation,
+>   double free, etc.) can be enabled/disabled at memtank creation time.
+> 
+> Known limitations (subject for further improvements):
+> 
+> - scalability:
+>   after 8+ lcores conventional mempool (with FIFO) starts to outperform
+>   memtank (which uses LIFO inside).
+> - mempool_cache integration is not part of the library and right now
+>   has to be implemented by used manually on top of memtank API.
+> 
+> Envisioned usage scenarios within DPDK-based apps:
+> various flow/session control structures (TCP PCB, CT, NAT sessions, etc.)
+> that needs to be allocated/freed at the data-path.
+> Also can be used by 'semi-fastpath' allocations:
+> TBL-8 blocks for LPM, hash buckets, etc.
+> 
+> Initial idea is inspired by Linux/Solaris SLAB allocators.
+> Also re-used some ideas from my previous work for TLDK project:
+> https://github.com/FDio/tldk
+> Signed-off-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+> ---
 
-Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
----
- lib/eal/freebsd/eal.c            |  10 +
- lib/eal/include/rte_vfio.h       |  31 +++
- lib/eal/linux/eal_vfio.c         | 222 +++++++++++++++++-
- lib/eal/linux/eal_vfio.h         |  29 ++-
- lib/eal/linux/eal_vfio_cdev.c    | 390 +++++++++++++++++++++++++++++++
- lib/eal/linux/eal_vfio_mp_sync.c |  42 ++++
- lib/eal/linux/meson.build        |   1 +
- 7 files changed, 721 insertions(+), 4 deletions(-)
- create mode 100644 lib/eal/linux/eal_vfio_cdev.c
+More detailed AI review (Claude Opus 5):
 
-diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
-index bb05a969a9..a84280a66c 100644
---- a/lib/eal/freebsd/eal.c
-+++ b/lib/eal/freebsd/eal.c
-@@ -931,3 +931,13 @@ rte_vfio_get_mode(void)
- {
- 	return RTE_VFIO_MODE_NONE;
- }
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_get_device_num)
-+int
-+rte_vfio_get_device_num(__rte_unused const char *sysfs_base,
-+		__rte_unused const char *dev_addr,
-+		__rte_unused int *vfio_device_num)
-+{
-+	rte_errno = ENOTSUP;
-+	return -1;
-+}
-diff --git a/lib/eal/include/rte_vfio.h b/lib/eal/include/rte_vfio.h
-index 6a4d101e33..b9c7184616 100644
---- a/lib/eal/include/rte_vfio.h
-+++ b/lib/eal/include/rte_vfio.h
-@@ -28,6 +28,8 @@ extern "C" {
- 
- #define RTE_VFIO_DIR "/dev/vfio"
- #define RTE_VFIO_CONTAINER_PATH "/dev/vfio/vfio"
-+#define RTE_VFIO_IOMMUFD_PATH "/dev/iommu"
-+#define RTE_VFIO_CDEV_DEVICES_PATH "/dev/vfio/devices"
- #define RTE_VFIO_GROUP_FMT "/dev/vfio/%u"
- #define RTE_VFIO_NOIOMMU_GROUP_FMT "/dev/vfio/noiommu-%u"
- #define RTE_VFIO_NOIOMMU_MODE "/sys/module/vfio/parameters/enable_unsafe_noiommu_mode"
-@@ -48,11 +50,13 @@ struct vfio_device_info;
-  * - RTE_VFIO_MODE_NONE: VFIO is not enabled.
-  * - RTE_VFIO_MODE_GROUP: Legacy group mode.
-  * - RTE_VFIO_MODE_NOIOMMU: Unsafe no-IOMMU mode.
-+ * - RTE_VFIO_MODE_CDEV: Character device mode.
-  */
- enum rte_vfio_mode {
- 	RTE_VFIO_MODE_NONE = 0, /**< VFIO not enabled */
- 	RTE_VFIO_MODE_GROUP,    /**< Group mode */
- 	RTE_VFIO_MODE_NOIOMMU,  /**< Group mode with no IOMMU protection */
-+	RTE_VFIO_MODE_CDEV,     /**< Device mode */
- };
- 
- /**
-@@ -197,6 +201,33 @@ __rte_internal
- int
- rte_vfio_get_group_num(const char *sysfs_base, const char *dev_addr, int *iommu_group_num);
- 
-+/**
-+ * @internal
-+ * Parse VFIO cdev device number for a device.
-+ *
-+ * This function is only relevant on Linux in cdev mode.
-+ *
-+ * @param sysfs_base
-+ *   Sysfs path prefix.
-+ * @param dev_addr
-+ *   Device identifier.
-+ * @param vfio_device_num
-+ *   Pointer to where VFIO cdev device number will be stored.
-+ *
-+ * @return
-+ *   0 on success.
-+ *   <0 on failure, rte_errno is set.
-+ *
-+ * Possible rte_errno values include:
-+ * - ENODEV  - Device not managed by VFIO.
-+ * - EINVAL  - Invalid parameters.
-+ * - ENOXIO  - VFIO support not initialized.
-+ * - ENOTSUP - Unsupported VFIO mode.
-+ */
-+__rte_internal
-+int
-+rte_vfio_get_device_num(const char *sysfs_base, const char *dev_addr, int *vfio_device_num);
-+
- /**
-  * @internal
-  * Get device information.
-diff --git a/lib/eal/linux/eal_vfio.c b/lib/eal/linux/eal_vfio.c
-index 5263bea240..00dc9af78a 100644
---- a/lib/eal/linux/eal_vfio.c
-+++ b/lib/eal/linux/eal_vfio.c
-@@ -347,6 +347,20 @@ vfio_container_get_by_group_num(int group_num)
- 	return NULL;
- }
- 
-+static struct container *
-+vfio_container_get_by_dev_num(int dev_num)
-+{
-+	struct container *cfg;
-+	struct vfio_device *dev;
-+
-+	CONTAINER_FOREACH_ACTIVE(cfg) {
-+		DEVICE_FOREACH_ACTIVE(cfg, dev)
-+			if (dev->dev_num == dev_num)
-+				return cfg;
-+	}
-+	return NULL;
-+}
-+
- static struct container *
- vfio_container_create(void)
- {
-@@ -516,6 +530,55 @@ vfio_setup_dma_mem(struct container *cfg)
- 	return 0;
- }
- 
-+static enum vfio_result
-+vfio_cdev_assign_device(struct container *cfg, const char *sysfs_base,
-+		const char *dev_addr, struct vfio_device **out_dev)
-+{
-+	struct vfio_device *dev, *found_dev;
-+	enum vfio_result res;
-+	int dev_num, ret;
-+
-+	/* get the cdev device number from sysfs */
-+	ret = vfio_cdev_get_device_num(sysfs_base, dev_addr, &dev_num);
-+	if (ret < 0) {
-+		EAL_LOG(ERR, "Failed to get cdev device number for %s", dev_addr);
-+		return VFIO_ERROR;
-+	} else if (ret == 0) {
-+		EAL_LOG(ERR, "Device %s not bound to vfio-pci cdev", dev_addr);
-+		return VFIO_NOT_MANAGED;
-+	}
-+
-+	/* do we already have this device? */
-+	found_dev = vfio_cdev_get_dev_by_num(cfg, dev_num);
-+	if (found_dev != NULL) {
-+		EAL_LOG(ERR, "Device %s already assigned to this container", dev_addr);
-+		*out_dev = found_dev;
-+		return VFIO_EXISTS;
-+	}
-+	/* create new device structure */
-+	dev = vfio_device_create(cfg);
-+	if (dev == NULL) {
-+		EAL_LOG(ERR, "No space to track new VFIO cdev device");
-+		return VFIO_NO_SPACE;
-+	}
-+	/* store device number */
-+	dev->dev_num = dev_num;
-+
-+	/* set up our device now and store it in config */
-+	ret = vfio_cdev_setup_device(cfg, dev);
-+	if (ret < 0) {
-+		EAL_LOG(ERR, "Cannot setup cdev device %s", dev_addr);
-+		res = VFIO_ERROR;
-+		goto err;
-+	}
-+	*out_dev = dev;
-+	return VFIO_SUCCESS;
-+
-+err:
-+	vfio_device_erase(cfg, dev);
-+	return res;
-+}
-+
- static enum vfio_result
- vfio_group_assign_device(struct container *cfg, const char *sysfs_base,
- 		const char *dev_addr, struct vfio_device **out_dev)
-@@ -662,6 +725,49 @@ rte_vfio_container_assign_device(int container_fd, const char *sysfs_base, const
- 		return -1;
- 	}
- 
-+	/*
-+	 * The device-to-container assignment is a complex problem to solve, for the following
-+	 * reasons:
-+	 *
-+	 * 1. PCI infrastructure is decoupled from VFIO, so PCI does not know anything about VFIO
-+	 *
-+	 * This means that while 99% of VFIO usage is PCI-related, we cannot communicate to PCI that
-+	 * we want to map a particular device using a particular container. Previously, this was
-+	 * achieved using back-channel communication via IOMMU group binding, so that whenever PCI
-+	 * map actually happens, VFIO knows which container to use, so this is roughly the model we
-+	 * are going with.
-+	 *
-+	 * 2. VFIO cannot depend on PCI because VFIO is in EAL
-+	 *
-+	 * We cannot "assign" a PCI device to container using rte_pci_device pointer because VFIO
-+	 * cannot depend on PCI definitions, nor can't we even assume that our device is in fact a
-+	 * PCI device, even though in practice this is true (at the time of this writing, FSLMC is
-+	 * the only bus doing non-PCI VFIO mappings, but FSLMC manages all VFIO infrastructure by
-+	 * itself, so in practice even counting FSLMC bus, we're always dealing with PCI devices).
-+	 *
-+	 * 3. The "assignment" means different things for group and cdev mode
-+	 *
-+	 * In group mode, to "bind" a device to a specific container, it is enough to bind its
-+	 * IOMMU group, so that when rte_vfio_setup_device() is called, we simply retrieve already
-+	 * existing group, and through that we figure out which container to use.
-+	 *
-+	 * For cdev mode, there are no "groups", so "assignment" either means we store some kind of
-+	 * uniquely identifying token (such as device number, or an opaque pointer), or we simply
-+	 * open the device straight away, and when rte_vfio_setup_device() comes we simply return
-+	 * the fd that was already opened at assign.
-+	 *
-+	 * Doing it the latter way (opening the device at assign for both group and cdev modes)
-+	 * actually solves all of these problems, so that's what we're going to do - the device
-+	 * setup API call will actually just assign the device to default container, while release
-+	 * will automatically cleanup and unassign anything that needs unassigned. There will be no
-+	 * "unassign" call, as it is not necessary.
-+	 *
-+	 * There is one downside for group mode when adding duplicate devices: to get to device fd,
-+	 * we need to go through the entire codepath before we arrive at fd only to realize it was
-+	 * already opened earlier, but this is acceptable compromise for unifying the API around
-+	 * device assignment.
-+	 */
-+
- 	if (vfio_cfg.mode == RTE_VFIO_MODE_NONE) {
- 		EAL_LOG(ERR, "VFIO support not initialized");
- 		rte_errno = ENXIO;
-@@ -682,6 +788,9 @@ rte_vfio_container_assign_device(int container_fd, const char *sysfs_base, const
- 	case RTE_VFIO_MODE_NOIOMMU:
- 		res = vfio_group_assign_device(cfg, sysfs_base, dev_addr, &dev);
- 		break;
-+	case RTE_VFIO_MODE_CDEV:
-+		res = vfio_cdev_assign_device(cfg, sysfs_base, dev_addr, &dev);
-+		break;
- 	default:
- 		EAL_LOG(ERR, "Unsupported VFIO mode");
- 		res = VFIO_NOT_SUPPORTED;
-@@ -754,6 +863,24 @@ rte_vfio_setup_device(const char *sysfs_base, const char *dev_addr,
- 		res = vfio_group_assign_device(cfg, sysfs_base, dev_addr, &dev);
- 		break;
- 	}
-+	case RTE_VFIO_MODE_CDEV:
-+	{
-+		int dev_num;
-+
-+		/* find device number */
-+		ret = vfio_cdev_get_device_num(sysfs_base, dev_addr, &dev_num);
-+		if (ret < 0)
-+			goto assign_fail;
-+		else if (ret == 0)
-+			goto not_managed;
-+
-+		cfg = vfio_container_get_by_dev_num(dev_num);
-+		if (cfg == NULL)
-+			cfg = vfio_cfg.default_cfg;
-+
-+		res = vfio_cdev_assign_device(cfg, sysfs_base, dev_addr, &dev);
-+		break;
-+	}
- 	default:
- 		EAL_LOG(ERR, "Unsupported VFIO mode");
- 		rte_errno = ENOTSUP;
-@@ -873,6 +1000,12 @@ rte_vfio_release_device(const char *sysfs_base __rte_unused,
- 		}
- 		break;
- 	}
-+	case RTE_VFIO_MODE_CDEV:
-+	{
-+		/* for cdev, just erase the device and we're done */
-+		vfio_device_erase(cfg, dev);
-+		break;
-+	}
- 	default:
- 		EAL_LOG(ERR, "Unsupported VFIO mode");
- 		rte_errno = ENOTSUP;
-@@ -939,8 +1072,19 @@ vfio_select_mode(void)
- 		if (vfio_sync_mode(cfg, &mode) < 0)
- 			goto err;
- 
--		/* primary handles DMA setup for default containers */
--		group_cfg->dma_setup_done = true;
-+		if (mode == RTE_VFIO_MODE_CDEV) {
-+			/* in cdev mode, sync ioas */
-+			if (vfio_cdev_sync_ioas(cfg) < 0)
-+				goto err;
-+		} else if (mode == RTE_VFIO_MODE_GROUP ||
-+					mode == RTE_VFIO_MODE_NOIOMMU) {
-+			/* in group-like modes, primary handles DMA */
-+			group_cfg->dma_setup_done = true;
-+		} else {
-+			/* shouldn't happen */
-+			EAL_LOG(ERR, "Unknown VFIO mode %d", mode);
-+			goto err;
-+		}
- 		return mode;
- 	}
- 	/* if we failed mp sync setup, we cannot initialize VFIO */
-@@ -957,6 +1101,19 @@ vfio_select_mode(void)
- 			return RTE_VFIO_MODE_NOIOMMU;
- 		return RTE_VFIO_MODE_GROUP;
- 	}
-+	EAL_LOG(DEBUG, "VFIO group mode not available, trying cdev mode...");
-+	/* try cdev mode */
-+	if (vfio_cdev_enable(cfg) == 0) {
-+		if (vfio_cdev_setup_ioas(cfg) < 0)
-+			goto err_mpsync;
-+		if (vfio_setup_dma_mem(cfg) < 0)
-+			goto err_mpsync;
-+		if (vfio_register_mem_event_callback() < 0)
-+			goto err_mpsync;
-+
-+		return RTE_VFIO_MODE_CDEV;
-+	}
-+	EAL_LOG(DEBUG, "VFIO cdev mode not available");
- err_mpsync:
- 	vfio_mp_sync_cleanup();
- err:
-@@ -971,6 +1128,7 @@ vfio_mode_to_str(enum rte_vfio_mode mode)
- 	switch (mode) {
- 	case RTE_VFIO_MODE_GROUP: return "group";
- 	case RTE_VFIO_MODE_NOIOMMU: return "noiommu";
-+	case RTE_VFIO_MODE_CDEV: return "cdev";
- 	default: return "not initialized";
- 	}
- }
-@@ -1110,6 +1268,40 @@ rte_vfio_get_group_num(const char *sysfs_base, const char *dev_addr, int *iommu_
- 	return 0;
- }
- 
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_get_device_num)
-+int
-+rte_vfio_get_device_num(const char *sysfs_base, const char *dev_addr, int *device_num)
-+{
-+	int ret;
-+
-+	if (sysfs_base == NULL || dev_addr == NULL || device_num == NULL) {
-+		rte_errno = EINVAL;
-+		return -1;
-+	}
-+
-+	if (vfio_cfg.mode == RTE_VFIO_MODE_NONE) {
-+		EAL_LOG(ERR, "VFIO support not initialized");
-+		rte_errno = ENXIO;
-+		return -1;
-+	}
-+
-+	if (vfio_cfg.mode != RTE_VFIO_MODE_CDEV) {
-+		EAL_LOG(ERR, "VFIO not initialized in cdev mode");
-+		rte_errno = ENOTSUP;
-+		return -1;
-+	}
-+
-+	ret = vfio_cdev_get_device_num(sysfs_base, dev_addr, device_num);
-+	if (ret < 0) {
-+		rte_errno = EINVAL;
-+		return -1;
-+	} else if (ret == 0) {
-+		rte_errno = ENODEV;
-+		return -1;
-+	}
-+	return 0;
-+}
-+
- static int
- vfio_dma_mem_map(struct container *cfg, uint64_t vaddr, uint64_t iova,
- 		uint64_t len, int do_map)
-@@ -1309,6 +1501,25 @@ rte_vfio_container_create(void)
- 		cfg->container_fd = container_fd;
- 		break;
- 	}
-+	case RTE_VFIO_MODE_CDEV:
-+	{
-+		/* Open new iommufd for custom container */
-+		container_fd = vfio_cdev_get_iommufd();
-+		if (container_fd < 0) {
-+			EAL_LOG(ERR, "Cannot open iommufd for cdev container");
-+			rte_errno = EIO;
-+			goto err;
-+		}
-+		cfg->container_fd = container_fd;
-+
-+		/* Set up IOAS for this container */
-+		if (vfio_cdev_setup_ioas(cfg) < 0) {
-+			EAL_LOG(ERR, "Cannot setup IOAS for cdev container");
-+			rte_errno = EIO;
-+			goto err;
-+		}
-+		break;
-+	}
- 	default:
- 		EAL_LOG(NOTICE, "Unsupported VFIO mode");
- 		rte_errno = ENOTSUP;
-@@ -1367,6 +1578,13 @@ rte_vfio_container_destroy(int container_fd)
- 			vfio_group_erase(cfg, grp);
- 		}
- 		break;
-+	case RTE_VFIO_MODE_CDEV:
-+		/* erase all devices */
-+		DEVICE_FOREACH_ACTIVE(cfg, dev) {
-+			EAL_LOG(DEBUG, "Device vfio%d still open, closing", dev->dev_num);
-+			vfio_device_erase(cfg, dev);
-+		}
-+		break;
- 	default:
- 		EAL_LOG(ERR, "Unsupported VFIO mode");
- 		rte_errno = ENOTSUP;
-diff --git a/lib/eal/linux/eal_vfio.h b/lib/eal/linux/eal_vfio.h
-index 68d3a3ec6e..52cb3a0e08 100644
---- a/lib/eal/linux/eal_vfio.h
-+++ b/lib/eal/linux/eal_vfio.h
-@@ -48,7 +48,10 @@ struct vfio_group {
- /* device tracking (common for group and cdev modes) */
- struct vfio_device {
- 	bool active;
--	int group; /**< back-reference to group list (group mode) */
-+	union {
-+		int group; /**< back-reference to group list (group mode) */
-+		int dev_num;   /**< device number, e.g., X in /dev/vfio/devices/vfioX (cdev mode) */
-+	};
- 	int fd;
- };
- 
-@@ -61,12 +64,20 @@ struct vfio_group_config {
- 	struct vfio_group groups[RTE_MAX_VFIO_GROUPS];
- };
- 
-+/* cdev mode specific configuration */
-+struct vfio_cdev_config {
-+	uint32_t ioas_id;
-+};
-+
- /* per-container configuration */
- struct container {
- 	bool active;
- 	int container_fd;
- 	struct user_mem_maps mem_maps;
--	struct vfio_group_config group_cfg;
-+	union {
-+		struct vfio_group_config group_cfg;
-+		struct vfio_cdev_config cdev_cfg;
-+	};
- 	int n_devices;
- 	struct vfio_device devices[RTE_MAX_VFIO_DEVICES];
- };
-@@ -160,12 +171,24 @@ int vfio_group_setup_iommu(struct container *cfg);
- int vfio_group_setup_device_fd(const char *dev_addr,
- 		struct vfio_group *grp, struct vfio_device *dev);
- 
-+/* cdev mode functions */
-+int vfio_cdev_enable(struct container *cfg);
-+int vfio_cdev_setup_ioas(struct container *cfg);
-+int vfio_cdev_sync_ioas(struct container *cfg);
-+int vfio_cdev_get_iommufd(void);
-+int vfio_cdev_get_device_num(const char *sysfs_base, const char *dev_addr,
-+		int *cdev_dev_num);
-+struct vfio_device *vfio_cdev_get_dev_by_num(struct container *cfg, int cdev_dev_num);
-+int vfio_cdev_setup_device(struct container *cfg, struct vfio_device *dev);
-+
- #define VFIO_MEM_EVENT_CLB_NAME "vfio_mem_event_clb"
- #define EAL_VFIO_MP "eal_vfio_mp_sync"
- 
- #define SOCKET_REQ_CONTAINER 0x100
- #define SOCKET_REQ_GROUP 0x200
- #define SOCKET_REQ_IOMMU_TYPE 0x400
-+#define SOCKET_REQ_CDEV 0x800
-+#define SOCKET_REQ_IOAS_ID 0x1000
- #define SOCKET_OK 0x0
- #define SOCKET_NO_FD 0x1
- #define SOCKET_ERR 0xFF
-@@ -176,6 +199,8 @@ struct vfio_mp_param {
- 	union {
- 		int group_num;
- 		int iommu_type_id;
-+		int cdev_dev_num;
-+		int ioas_id;
- 		enum rte_vfio_mode mode;
- 	};
- };
-diff --git a/lib/eal/linux/eal_vfio_cdev.c b/lib/eal/linux/eal_vfio_cdev.c
-new file mode 100644
-index 0000000000..ce61a97853
---- /dev/null
-+++ b/lib/eal/linux/eal_vfio_cdev.c
-@@ -0,0 +1,390 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2010-2025 Intel Corporation
-+ */
-+
-+#include <dirent.h>
-+#include <fcntl.h>
-+#include <limits.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <unistd.h>
-+
-+#include <uapi/linux/iommufd.h>
-+#include <uapi/linux/vfio.h>
-+
-+#include <rte_log.h>
-+#include <rte_errno.h>
-+#include <rte_memory.h>
-+#include <rte_string_fns.h>
-+
-+#include "eal_vfio.h"
-+#include "eal_private.h"
-+#include "eal_internal_cfg.h"
-+
-+static int vfio_cdev_dma_map(struct container *cfg);
-+static int vfio_cdev_dma_mem_map(struct container *cfg, uint64_t vaddr,
-+		uint64_t iova, uint64_t len, int do_map);
-+
-+/* IOMMUFD cdev mode IOMMU operations */
-+static const struct vfio_iommu_ops iommufd_ops = {
-+	.type_id = 0, /* cdev mode doesn't use type_id */
-+	.name = "IOMMUFD",
-+	.partial_unmap = false,
-+	.dma_map_func = &vfio_cdev_dma_map,
-+	.dma_user_map_func = &vfio_cdev_dma_mem_map
-+};
-+
-+static int
-+vfio_cdev_dma_mem_map(struct container *cfg, uint64_t vaddr, uint64_t iova,
-+		uint64_t len, int do_map)
-+{
-+	struct iommu_ioas_map ioas_map;
-+	struct iommu_ioas_unmap ioas_unmap;
-+	int ret;
-+
-+	if (do_map != 0) {
-+		memset(&ioas_map, 0, sizeof(ioas_map));
-+		ioas_map.size = sizeof(struct iommu_ioas_map);
-+		ioas_map.flags = IOMMU_IOAS_MAP_FIXED_IOVA |
-+				IOMMU_IOAS_MAP_READABLE |
-+				IOMMU_IOAS_MAP_WRITEABLE;
-+		ioas_map.ioas_id = cfg->cdev_cfg.ioas_id;
-+		ioas_map.user_va = vaddr;
-+		ioas_map.length = len;
-+		ioas_map.iova = iova;
-+
-+		ret = ioctl(cfg->container_fd, IOMMU_IOAS_MAP, &ioas_map);
-+		if (ret) {
-+			/**
-+			 * In case the mapping was already done EEXIST will be
-+			 * returned from kernel.
-+			 */
-+			if (errno == EEXIST) {
-+				EAL_LOG(DEBUG,
-+					"Memory segment is already mapped, skipping");
-+			} else {
-+				EAL_LOG(ERR,
-+					"Cannot set up DMA remapping, error "
-+					"%i (%s)", errno, strerror(errno));
-+				return -1;
-+			}
-+		}
-+	} else {
-+		memset(&ioas_unmap, 0, sizeof(ioas_unmap));
-+		ioas_unmap.size = sizeof(struct iommu_ioas_unmap);
-+		ioas_unmap.ioas_id = cfg->cdev_cfg.ioas_id;
-+		ioas_unmap.length = len;
-+		ioas_unmap.iova = iova;
-+
-+		ret = ioctl(cfg->container_fd, IOMMU_IOAS_UNMAP, &ioas_unmap);
-+		if (ret) {
-+			EAL_LOG(ERR, "Cannot clear DMA remapping, error "
-+					"%i (%s)", errno, strerror(errno));
-+			return -1;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+cdev_map(const struct rte_memseg_list *msl, const struct rte_memseg *ms,
-+		void *arg)
-+{
-+	struct container *cfg = arg;
-+
-+	/* skip external memory that isn't a heap */
-+	if (msl->external && !msl->heap)
-+		return 0;
-+
-+	/* skip any segments with invalid IOVA addresses */
-+	if (ms->iova == RTE_BAD_IOVA)
-+		return 0;
-+
-+	return vfio_cdev_dma_mem_map(cfg, ms->addr_64, ms->iova, ms->len, 1);
-+}
-+
-+static int
-+vfio_cdev_dma_map(struct container *cfg)
-+{
-+	return rte_memseg_walk(cdev_map, cfg);
-+}
-+
-+int
-+vfio_cdev_sync_ioas(struct container *cfg)
-+{
-+	struct rte_mp_msg mp_req, *mp_rep;
-+	struct rte_mp_reply mp_reply = {0};
-+	struct timespec ts = {.tv_sec = 5, .tv_nsec = 0};
-+	struct vfio_mp_param *p = (struct vfio_mp_param *)mp_req.param;
-+
-+	p->req = SOCKET_REQ_IOAS_ID;
-+	rte_strscpy(mp_req.name, EAL_VFIO_MP, sizeof(mp_req.name));
-+	mp_req.len_param = sizeof(*p);
-+	mp_req.num_fds = 0;
-+
-+	if (rte_mp_request_sync(&mp_req, &mp_reply, &ts) == 0 && mp_reply.nb_received == 1) {
-+		mp_rep = &mp_reply.msgs[0];
-+		p = (struct vfio_mp_param *)mp_rep->param;
-+		if (p->result == SOCKET_OK && mp_rep->num_fds == 0) {
-+			cfg->cdev_cfg.ioas_id = p->ioas_id;
-+			free(mp_reply.msgs);
-+			return 0;
-+		}
-+	}
-+
-+	free(mp_reply.msgs);
-+	EAL_LOG(ERR, "Cannot request ioas_id");
-+	return -1;
-+}
-+
-+int
-+vfio_cdev_setup_ioas(struct container *cfg)
-+{
-+	struct iommu_ioas_alloc ioas_alloc;
-+	int ret;
-+
-+	/* Allocate an IOAS */
-+	memset(&ioas_alloc, 0, sizeof(ioas_alloc));
-+	ioas_alloc.size = sizeof(struct iommu_ioas_alloc);
-+	ioas_alloc.flags = 0;
-+
-+	ret = ioctl(cfg->container_fd, IOMMU_IOAS_ALLOC, &ioas_alloc);
-+	if (ret) {
-+		EAL_LOG(ERR, "Cannot allocate IOAS, error %i (%s)",
-+				errno, strerror(errno));
-+		return -1;
-+	}
-+	cfg->cdev_cfg.ioas_id = ioas_alloc.out_ioas_id;
-+
-+	EAL_LOG(DEBUG, "Allocated IOAS with ID %u", cfg->cdev_cfg.ioas_id);
-+	return 0;
-+}
-+
-+int
-+vfio_cdev_get_iommufd(void)
-+{
-+	int iommufd;
-+
-+	/* if not requesting via mp, open iommufd locally */
-+	iommufd = open(RTE_VFIO_IOMMUFD_PATH, O_RDWR);
-+	if (iommufd < 0) {
-+		EAL_LOG(ERR, "Cannot open %s: %s",
-+				RTE_VFIO_IOMMUFD_PATH, strerror(errno));
-+		return -1;
-+	}
-+
-+	return iommufd;
-+}
-+
-+int
-+vfio_cdev_enable(struct container *cfg)
-+{
-+	int iommufd;
-+
-+	/* Check if iommufd device exists */
-+	if (access(RTE_VFIO_IOMMUFD_PATH, F_OK) != 0) {
-+		EAL_LOG(DEBUG,
-+			"IOMMUFD device does not exist, skipping VFIO cdev support...");
-+		return 1;
-+	}
-+
-+	/* open iommufd */
-+	iommufd = vfio_cdev_get_iommufd();
-+	if (iommufd < 0)
-+		return -1;
-+
-+	/* cdev mode does not have different IOMMU ops */
-+	vfio_cfg.ops = &iommufd_ops;
-+
-+	cfg->container_fd = iommufd;
-+	return 0;
-+}
-+
-+int
-+vfio_cdev_get_device_num(const char *sysfs_base, const char *dev_addr, int *cdev_dev_num)
-+{
-+	char linkname[PATH_MAX];
-+	char filename[PATH_MAX];
-+	char *dev_tok, *end;
-+	int dev_num;
-+	DIR *dir;
-+	struct dirent *entry;
-+
-+	memset(linkname, 0, sizeof(linkname));
-+	memset(filename, 0, sizeof(filename));
-+
-+	/* check if vfio-dev directory exists for this device */
-+	snprintf(linkname, sizeof(linkname),
-+			 "%s/%s/vfio-dev", sysfs_base, dev_addr);
-+
-+	dir = opendir(linkname);
-+	if (dir == NULL) {
-+		/* device doesn't have vfio-dev, not bound to vfio-pci cdev */
-+		return 0;
-+	}
-+
-+	/* find vfioX entry in vfio-dev directory */
-+	while ((entry = readdir(dir)) != NULL) {
-+		if (strncmp(entry->d_name, "vfio", 4) == 0) {
-+			/* parse device number from vfioX */
-+			errno = 0;
-+			dev_tok = entry->d_name + 4; /* skip "vfio" prefix */
-+			end = dev_tok;
-+			dev_num = strtol(dev_tok, &end, 10);
-+			if (end == dev_tok || *end != '\0' || errno != 0) {
-+				EAL_LOG(ERR, "%s error parsing VFIO cdev device number!",
-+						dev_addr);
-+				closedir(dir);
-+				return -1;
-+			}
-+			*cdev_dev_num = dev_num;
-+			closedir(dir);
-+			return 1;
-+		}
-+	}
-+
-+	closedir(dir);
-+	/* no vfio device found */
-+	return 0;
-+}
-+
-+struct vfio_device *
-+vfio_cdev_get_dev_by_num(struct container *cfg, int cdev_dev_num)
-+{
-+	struct vfio_device *dev;
-+	/* find device handle */
-+	DEVICE_FOREACH_ACTIVE(cfg, dev) {
-+		if (dev->dev_num != cdev_dev_num)
-+			continue;
-+		return dev;
-+	}
-+	return NULL;
-+}
-+
-+static int
-+cdev_open_device_fd(int cdev_dev_num)
-+{
-+	char devname[PATH_MAX] = {0};
-+	int dev_fd;
-+
-+	snprintf(devname, sizeof(devname), "%s/vfio%d",
-+			RTE_VFIO_CDEV_DEVICES_PATH, cdev_dev_num);
-+
-+	dev_fd = open(devname, O_RDWR);
-+	if (dev_fd < 0) {
-+		EAL_LOG(ERR, "Cannot open %s: %s", devname, strerror(errno));
-+		return -1;
-+	}
-+
-+	return dev_fd;
-+}
-+
-+static int
-+cdev_attach_device_to_iommufd(struct container *cfg, struct vfio_device *dev)
-+{
-+	struct vfio_device_bind_iommufd bind = {0};
-+	struct vfio_device_attach_iommufd_pt attach = {0};
-+	rte_uuid_t vf_token;
-+
-+	rte_eal_vfio_get_vf_token(vf_token);
-+
-+	/* try with token first */
-+	if (!rte_uuid_is_null(vf_token)) {
-+		bind.flags = VFIO_DEVICE_BIND_FLAG_TOKEN;
-+		bind.token_uuid_ptr = (uintptr_t)&vf_token;
-+		bind.argsz = sizeof(bind);
-+		bind.iommufd = cfg->container_fd;
-+
-+		/* this may fail because the kernel is too old */
-+		if (ioctl(dev->fd, VFIO_DEVICE_BIND_IOMMUFD, &bind) < 0) {
-+			EAL_LOG(DEBUG, "Failed to bind device %d with VF token", dev->dev_num);
-+			EAL_LOG(NOTICE, "Unable to use VF tokens with current kernel version.");
-+			EAL_LOG(NOTICE, "Please use kernel >=6.17 or use group mode.");
-+			/* erase the bind structure */
-+			bind = (struct vfio_device_bind_iommufd){0};
-+		} else {
-+			goto attach;
-+		}
-+	}
-+	bind.flags = 0;
-+	bind.argsz = sizeof(bind);
-+	bind.iommufd = cfg->container_fd;
-+
-+	if (ioctl(dev->fd, VFIO_DEVICE_BIND_IOMMUFD, &bind) < 0) {
-+		EAL_LOG(ERR, "Cannot bind device to IOMMUFD, error %i (%s)",
-+				errno, strerror(errno));
-+		return -1;
-+	}
-+
-+attach:
-+	/* attach device to IOAS */
-+	attach.argsz = sizeof(attach);
-+	attach.flags = 0;
-+	attach.pt_id = cfg->cdev_cfg.ioas_id;
-+
-+	if (ioctl(dev->fd, VFIO_DEVICE_ATTACH_IOMMUFD_PT, &attach) < 0) {
-+		EAL_LOG(ERR, "Cannot attach device to IOAS, error %i (%s)",
-+				errno, strerror(errno));
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+vfio_cdev_request_dev_fd(struct vfio_device *dev)
-+{
-+	struct rte_mp_msg mp_req, *mp_rep;
-+	struct rte_mp_reply mp_reply = {0};
-+	struct timespec ts = {.tv_sec = 5, .tv_nsec = 0};
-+	struct vfio_mp_param *p = (struct vfio_mp_param *)mp_req.param;
-+	int device_fd = -1;
-+
-+	/* secondary process requests device fd from primary */
-+	p->req = SOCKET_REQ_CDEV;
-+	p->cdev_dev_num = dev->dev_num;
-+	rte_strscpy(mp_req.name, EAL_VFIO_MP, sizeof(mp_req.name));
-+	mp_req.len_param = sizeof(*p);
-+	mp_req.num_fds = 0;
-+
-+	if (rte_mp_request_sync(&mp_req, &mp_reply, &ts) == 0 &&
-+			mp_reply.nb_received == 1) {
-+		mp_rep = &mp_reply.msgs[0];
-+		p = (struct vfio_mp_param *)mp_rep->param;
-+		if (p->result == SOCKET_OK && mp_rep->num_fds == 1)
-+			device_fd = mp_rep->fds[0];
-+	}
-+
-+	free(mp_reply.msgs);
-+
-+	if (device_fd < 0) {
-+		EAL_LOG(ERR, "Cannot request device fd for vfio%d", dev->dev_num);
-+		return -1;
-+	}
-+	dev->fd = device_fd;
-+
-+	return 0;
-+}
-+
-+int
-+vfio_cdev_setup_device(struct container *cfg, struct vfio_device *dev)
-+{
-+	int device_fd;
-+
-+	/* get device fd - primary or custom container opens it, secondary requests from primary */
-+	if (rte_eal_process_type() == RTE_PROC_PRIMARY || !vfio_container_is_default(cfg)) {
-+		device_fd = cdev_open_device_fd(dev->dev_num);
-+		if (device_fd < 0)
-+			return -1;
-+		dev->fd = device_fd;
-+
-+		/* attach device to iommufd - only in primary */
-+		if (cdev_attach_device_to_iommufd(cfg, dev) < 0)
-+			return -1;
-+	} else if (vfio_cdev_request_dev_fd(dev) < 0) {
-+		return -1;
-+	}
-+	return 0;
-+}
-diff --git a/lib/eal/linux/eal_vfio_mp_sync.c b/lib/eal/linux/eal_vfio_mp_sync.c
-index 9a07d35023..6d94f44af8 100644
---- a/lib/eal/linux/eal_vfio_mp_sync.c
-+++ b/lib/eal/linux/eal_vfio_mp_sync.c
-@@ -93,6 +93,48 @@ vfio_mp_primary(const struct rte_mp_msg *msg, const void *peer)
- 		}
- 		break;
- 	}
-+	case SOCKET_REQ_CDEV:
-+	{
-+		struct container *cfg;
-+		struct vfio_device *dev;
-+
-+		if (vfio_cfg.mode != RTE_VFIO_MODE_CDEV) {
-+			EAL_LOG(ERR, "VFIO not initialized in cdev mode");
-+			r->result = SOCKET_ERR;
-+			break;
-+		}
-+
-+		r->req = SOCKET_REQ_CDEV;
-+		r->cdev_dev_num = m->cdev_dev_num;
-+
-+		cfg = vfio_cfg.default_cfg;
-+		dev = vfio_cdev_get_dev_by_num(cfg, m->cdev_dev_num);
-+		if (dev == NULL) {
-+			r->result = SOCKET_NO_FD;
-+		} else {
-+			r->result = SOCKET_OK;
-+			reply.num_fds = 1;
-+			reply.fds[0] = dev->fd;
-+		}
-+		break;
-+	}
-+	case SOCKET_REQ_IOAS_ID:
-+	{
-+		struct container *cfg;
-+
-+		if (vfio_cfg.mode != RTE_VFIO_MODE_CDEV) {
-+			EAL_LOG(ERR, "VFIO not initialized in cdev mode");
-+			r->result = SOCKET_ERR;
-+			break;
-+		}
-+
-+		r->req = SOCKET_REQ_IOAS_ID;
-+		cfg = vfio_cfg.default_cfg;
-+		r->ioas_id = cfg->cdev_cfg.ioas_id;
-+
-+		r->result = SOCKET_OK;
-+		break;
-+	}
- 	default:
- 		EAL_LOG(ERR, "vfio received invalid message!");
- 		return -1;
-diff --git a/lib/eal/linux/meson.build b/lib/eal/linux/meson.build
-index 5ec8eddaa2..c164a30b49 100644
---- a/lib/eal/linux/meson.build
-+++ b/lib/eal/linux/meson.build
-@@ -16,6 +16,7 @@ sources += files(
-         'eal_thread.c',
-         'eal_timer.c',
-         'eal_vfio.c',
-+        'eal_vfio_cdev.c',
-         'eal_vfio_group.c',
-         'eal_vfio_mp_sync.c',
- )
--- 
-2.52.0
+Review of [RFC v2] memtank: add memtank library
 
+Errors
+
+lib/memtank/memtank.h
+  TAILQ_ENTRY/TAILQ_HEAD and friends are used without including
+  <sys/queue.h>.  This only compiles because rte_common.h pulls in
+  rte_os.h, and only the Linux and FreeBSD rte_os.h include <sys/queue.h>.
+  The Windows rte_os.h does not; it only defines the RTE_TAILQ_* wrappers.
+  As written the library will not build on Windows, and nothing in
+  lib/memtank/meson.build excludes it there.
+  Use RTE_TAILQ_HEAD(), RTE_TAILQ_ENTRY(), RTE_TAILQ_FIRST() and
+  RTE_TAILQ_NEXT() as the rest of DPDK does, and add an explicit
+  #include <sys/queue.h> for the macros that have no RTE_ wrapper
+  (TAILQ_INIT, TAILQ_REMOVE, TAILQ_INSERT_*, TAILQ_CONCAT, TAILQ_LAST).
+
+lib/memtank/memtank.h
+  struct memtank_free ends in a flexible array member and is then embedded
+  as struct rte_memtank::mtf.  C11 6.7.2.1p3 forbids a structure containing
+  a flexible array member from being a member of another structure.  GCC and
+  clang accept it as an extension, MSVC warns (C4200).  Either move the
+  free[] array out of the struct and store a pointer plus the trailing
+  allocation, or make memtank_free the outer object.
+
+lib/memtank/rte_memtank.h
+  The object constructor callback returns void:
+
+      void (*init)(void *obj[], uint32_t num, void *udata);
+
+  Object construction can fail (sub-allocation, lock init, device handle),
+  and there is no way for the user to report that.  init() is also called
+  from init_chunk() with no error path back to grow_chunk().  Give it an
+  int return and propagate the failure out of rte_memtank_grow() /
+  rte_memtank_chunk_alloc().
+
+  Related: there is no destructor callback to pair with init().  Objects
+  constructed in init_chunk() are silently discarded when _shrink_chunk()
+  or rte_memtank_destroy() hands the raw chunk back to prm.free(), so any
+  per-object resource the constructor acquired is leaked.  For a library
+  whose selling point is runtime shrink, this needs an answer.
+
+lib/memtank/memtank.c
+  rte_memtank_grow() and rte_memtank_shrink() read mt->mtf.nb_free without
+  holding mtf.lock:
+
+      k = t->min_free - t->nb_free;
+      ...
+      if (t->nb_free < t->max_free)
+
+  nb_free is written under that lock in get_free()/put_free().  This is a
+  data race; the effect is benign (a threshold heuristic) but it is
+  undefined behaviour and TSan will flag it.  Either take the lock for the
+  read or make nb_free an RTE_ATOMIC() with a relaxed load.
+
+lib/memtank/memtank.c
+  rte_memtank_alloc() gates the chunk path on "flags != 0" rather than on
+  RTE_MTANK_ALLOC_CHUNK:
+
+      if (n != num && flags != 0)
+
+  RTE_MTANK_ALLOC_CHUNK is defined in the public header and never
+  referenced anywhere in lib/.  Any undefined flag bit therefore behaves as
+  ALLOC_CHUNK.  Test the flag explicitly, and reject unknown bits.
+
+app/test/test_memtank_stress.c, test_memtank_cleanup()
+  The accumulated worker exit codes are discarded:
+
+      rc = 0;
+      RTE_LCORE_FOREACH_WORKER(lc) {
+              rc |= rte_eal_wait_lcore(lc);
+              ...
+      }
+      ...
+      rc = rte_memtank_sanity_check(mt, 0);   /* overwrites */
+
+  A worker that failed its content check during cleanup is reported as
+  success.  Should be "rc |=".
+
+app/test/test_memtank_stress.c, test_memtank_worker()
+  rc is declared uninitialized and only assigned inside the two
+  "if (num != 0)" blocks.  num is rte_rand() % BULK_NUM and can be zero for
+  both alloc and free on a given iteration.  If the loop exits after such
+  an iteration, the function returns an uninitialized value.  Initialize
+  rc = 0.
+
+doc/api/doxy-api-index.md
+  [memcpy](@ref rte_memcpy.h) was the last entry in the memory group and
+  has no trailing comma.  The new line is appended after it without adding
+  one, so the two entries run together in the rendered index.  Add the
+  comma to the memcpy line.
+
+doc/guides/prog_guide/memtank_lib.rst
+  Markdown triple backticks are used throughout instead of RST inline
+  literals, e.g. ```rte_memtank_create()``` and one instance of
+  ```RTE_MTANK_FREE_SHRINK````.  RST wants double backticks; as written
+  Sphinx emits inline-markup warnings and the extra backticks appear in the
+  output.  With -Dwerror this fails the docs build.
+
+  Several bullet continuations are not indented, which terminates the list
+  and produces a block quote instead:
+
+      * ```rte_memtank_create()```/... are responsible for
+      creation/destroying the memntank.
+
+  Same at the rte_memtank_grow() and rte_memtank_shrink() bullets.
+
+doc/guides/prog_guide/memtank_lib.rst, Create/Destroy example
+  The example does not compile and would not work if it did:
+   - "sruct user_defined_type;"
+   - .obj_size and .obj_align initializers are terminated with ';' instead
+     of ','
+   - .free = user_define_free, but the function is user_defined_free
+   - .max_obj is never set, so it is 0, while .max_free is 1024 * 1024.
+     check_param() rejects max_free > max_obj, so rte_memtank_create()
+     returns NULL with EINVAL.
+
+Warnings
+
+Process
+  No entry added to doc/guides/rel_notes/release_26_11.rst.  A new library
+  needs a "New Features" item.
+
+  No MAINTAINERS entry for lib/memtank; devtools/check-maintainers.sh will
+  report it as unmaintained.
+
+lib/memtank/memtank.c, misc.c
+  The advertised double-free and boundary detection does not cover the
+  fast path.  obj_dbg_alloc()/obj_dbg_free() are only called from
+  rte_memtank_chunk_alloc()/rte_memtank_chunk_free().  Objects that go out
+  through get_free() and come back through put_free() never touch the
+  nb_alloc/nb_free counters, so an application that frees the same object
+  twice simply gets it into mtf.free[] twice, and both copies still satisfy
+  memobj_verify(mo, 1).  The commit message and the doc both claim double
+  free detection without qualification.  Either extend the checks to the
+  cache path or scope the claim.
+
+lib/memtank/memtank.h
+  struct memobj is 32 bytes and is appended to every object unconditionally.
+  With RTE_MTANK_OBJ_DBG clear, only the 8-byte chunk pointer is used; the
+  two red zones and the dbg counters are pure overhead.  The stated use case
+  is "relatively small objects" and flow/session structures, where 32 bytes
+  per object is a large tax.  Consider making the layout depend on the flag.
+
+lib/memtank/memtank.c
+  nb_chunks uses rte_memory_order_acq_rel on both fetch_add and fetch_sub.
+  It is a plain counter with no data published through it; relaxed is
+  sufficient and is what rte_memtank_dump()/sanity_check() already use for
+  the load.
+
+lib/memtank/memtank.c, put_chunk()
+  The only bound on the write into ch->free[] is RTE_ASSERT(), which is
+  compiled out unless RTE_ENABLE_ASSERT.  In a normal build a double free,
+  or a pointer that is not from this memtank, overruns the chunk's free
+  array into object memory with no diagnostic.  Since OBJ_DBG does not
+  catch the cache path either (above), there is no configuration in which
+  this is reliably detected.
+
+lib/memtank/memtank.c, check_param()
+  prm->obj_size is not validated.  A memtank with obj_size 0 is accepted;
+  test_memtank.c's create_invalid case relies on that.  Reject 0, or
+  document that it is meaningful.
+
+  Also, obj_align must be a non-zero power of two, but rte_memtank_prm's
+  Doxygen does not say so; 0 is a natural "don't care" value for a caller
+  and is rejected.
+
+app/test/test_memtank_stress.c, update_global_cfg()
+  max_obj = wrk_max_obj * rte_lcore_count() = 64 * nb_lcores by default,
+  while mtnk_prm.max_free is 32 * BULK_NUM = 1024.  check_param() rejects
+  max_free > max_obj, so rte_memtank_create() fails and the stress test
+  reports -ENOMEM on any host with fewer than 16 lcores.  Derive max_obj
+  from max_free, or clamp.
+
+app/test/test_memtank_stress.c
+  - struct memtank_arg arg[RTE_MAX_LCORE] is on the stack; 256 bytes per
+    entry, and RTE_MAX_LCORE is configurable well above the default 128.
+  - rte_ring_enqueue_bulk() and rte_ring_dequeue_bulk() return values are
+    ignored in test_memtank_worker() and test_worker_cleanup().
+  - test_memtank_mt() returns early when fill_worker_args() fails partway
+    through the loop, leaking the rings created for earlier lcores.
+  - parse_opt() lets a later successful option overwrite an earlier
+    parse failure, so bad input is silently accepted.
+
+app/test/test_memtank.c
+  memtank_alloc_test() and test_memtank_create_invalid() return via
+  RTE_TEST_ASSERT_* without calling rte_memtank_destroy(), leaking the
+  memtank (and its chunks) on every failure path.
+
+lib/memtank/meson.build
+  extra_flags is empty and the foreach over it is dead code.  Drop both.
+  sources and headers are short lists; DPDK style puts those on one line.
+
+doc/guides/prog_guide/memtank_lib.rst
+  - ".. figure:: img/memtank_internal.svg" should use the wildcard form
+    "img/memtank_internal.*".
+  - The figure has no caption, and the _figure_memtank-internals label is
+    never referenced.
+  - The doc calls the two chunk lists USED and FREE; the code calls them
+    MC_USED and MC_FULL.  Pick one.
+  - The min_free / max_free bullets and the alloc-flag bullets are
+    term/description pairs and read better as RST definition lists.
+  - Non-ASCII en-dash on the "built-in per object runtime verify" line.
+  - Typos: "Same a s mempool", "memntank" (x4), "rte_memetank_destroy",
+    "ret_memtank_free", "pooll", "miscelanneous", "cheking", "Aled public
+    API", "relased", "shrinked", "statisitics", "maximimum", "thershold",
+    "theshold", "udnerlying", "susbystem", "It's internals", "how many
+    memory", "by used manually", "As used needs".
+
+doc/guides/prog_guide/img/memtank_internal.svg
+  No newline at end of file.  It is also a single 9.8 KB line exported from
+  Office, referencing Calibri and Wingdings with private-use glyphs that
+  will not render off Windows.
+
+lib/memtank/misc.c
+  %zx is used to print uintptr_t values (p[i], align) in mobj_bulk_check().
+  Use PRIxPTR.
+
+lib/memtank/rte_memtank.h, memtank.c
+  Include ordering: rte_memtank.h has <stdio.h> after the rte_ headers, and
+  memtank.c puts the local "memtank.h" before the rte_ headers.  DPDK order
+  is system, EAL, DPDK libs, local.
+
+lib/memtank/rte_memtank.h
+  Doxygen typos in the public header: "Same a s mempool", "intitialize",
+  "insteance", "initialiaze", "A pinter to the file", "concurently"
+  (x2), "inconsitency".  These land in the published API docs.
+  The commit message has "shirnk".
+
+Info
+
+lib/memtank/memtank.c
+  memtank_meta_size(), memchunk_meta_size(), memobj_size() and
+  memchunk_size() each declare an unused "static const struct X *p" purely
+  to feed sizeof/alignof.  Use the type directly and drop the statics.
+
+  ALIGN_MUL_CEIL(v, mul) is a ceiling divide, but RTE_ALIGN_MUL_CEIL in
+  rte_common.h rounds up to a multiple.  Same name, different meaning, in
+  the same translation unit.  Rename it, e.g. CEIL_DIV().
+
+  rte_memtank_grow(): "k = t->min_free - t->nb_free; if ((int32_t)k <= 0)"
+  is an unsigned subtract cast back to signed.  "if (t->nb_free >=
+  t->min_free) return 0;" says the same thing.
+
+  rte_memtank_shrink() only reclaims chunks from the MC_FULL list and never
+  drains the free cache, so a memtank whose objects are all parked in
+  mtf.free[] will sit at nb_free == max_free and return 0 forever.  The
+  limitation is noted in the doc; worth also noting on the API.
+
+  max_chunk = ceil(max_obj / nb_obj_chunk), so the actual object ceiling is
+  max_obj rounded up to a chunk boundary.  Document that max_obj is
+  approximate.
+
+  rte_memtank_alloc()/free() do not check for a NULL tank while dump() and
+  sanity_check() do.  Fine either way, but be consistent and say which in
+  the Doxygen.
+
+lib/memtank/misc.c
+  mobj_bulk_check(): "k = ((mt->flags & RTE_MTANK_OBJ_DBG) != 0) & fmsk;"
+  uses bitwise & on two logical values.
+
+  rte_memtank_dump() prints "\t[USED]={,\n" - stray comma.
+
+  mfree_stat_collect() returns silently when malloc() fails, and the caller
+  then prints an all-zero free_stat block as if it were real.
+
+  ptr_cmp() is correct but obscure; qsort on uintptr_t is clearer as
+  "(v1 > v2) - (v1 < v2)".
+
+lib/memtank/rte_memtank.h
+  RTE_MTANK_DUMP_END is an implementation detail ("first not used power of
+  two") exposed in a public enum.  Compute RTE_MTANK_DUMP_ALL from the
+  named flags instead.
+
+app/test/test_memtank_stress.c
+  check_fill_objs() passes the lcore id into a uint8_t fill pattern, so
+  lcores above 255 collide.  Its static rte_spinlock_t dump_lock is never
+  rte_spinlock_init()'d; it works because zero is unlocked, but say so or
+  initialize it.
+
+app/test/test_memtank.c
+  test_free() does "return free(buf);" from a void function.  The comment
+  "min_obj is 0 so this is expected to fail" refers to a field that does
+  not exist.
+
+No Reviewed-by: this is an RFC and there are open errors above.
+
+General comment on direction: the design is sound and the chunk/LIFO split
+is clean, but the two things that most need settling before a non-RFC
+posting are (1) the init callback contract - a void constructor with no
+destructor cannot support the flow/session use case the cover letter aims
+at, and (2) what the OBJ_DBG mode actually guarantees, given that the fast
+path bypasses it entirely.
