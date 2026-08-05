@@ -2,133 +2,87 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14C57C55ABA
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Aug 2026 10:35:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B1B4C55ABA
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Aug 2026 11:07:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 075A4402BB;
-	Wed,  5 Aug 2026 12:35:26 +0200 (CEST)
-Received: from CH5PR02CU005.outbound.protection.outlook.com
- (mail-northcentralusazon11012046.outbound.protection.outlook.com
- [40.107.200.46])
- by mails.dpdk.org (Postfix) with ESMTP id BEA2A40272;
- Wed,  5 Aug 2026 12:35:23 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uoKdYvrGw/MsOnyTGT/1TCce3BYzjF4l8A27L9xqO/1SeOgO/Oyp4De47BuUAco76H53h57TF3FkIXzuXzmOqg1FWM2AaMHkfzxb6FYngrrys+NZVkj4F3Qw2vevaJistPmLEhdJQXAcHarSAm3n4o6wYx01ey8wceyYNrsJDfiMzIfEjEYnwGnq0IC04YdTbXsCbMezKHRIBixyjsQecuiPkBFhqP3oniJ86N16BcIkM9KcewmP11ZO/R+6+pgk0yHVOYRqYIGw4E5J/uQ70SYqsUibCnaAPAUPbuDRIh6QjYWvsYuTCQAEtcv4hHjJKUyLS5TeafOBqkxd8STiuQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jmLYswYglfGEJI7biiGIsP5ws5ns0EBGOZvc4wqW+6U=;
- b=T10WxhIHD+HwBHESa/a/Mwut+/hW0noC4JUS+blF5BsEtgRdfdRFkyp+hile1TN7nRRNyCbPzQRFgTlV8ZDJdhESsuP3G+HyAOsBO18eiMGaeZCOZrFd028lxohDIHszpHT4q2iqSiJu9hO3qHvHlV4ScPmK3WIh4xn63Y0egGvHWqjlDbotCe9Sqbw3Hu+fVUMkYcRG49Pay8c6FqMMVJbW5GClFFjDT7nJWwI9+KzNWXJEnFcwHHXAC83EMTeN9dGD1TmIl16A3FN/6S8APjK81isITBoAtKjJGvAEmyB8nDkOT8zOP5jDKvbTgqNlQJIzpc82f52YWzWvaCe0ew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jmLYswYglfGEJI7biiGIsP5ws5ns0EBGOZvc4wqW+6U=;
- b=sOvwXKbXXwaPdIL0pq4kYl89I+BMMRJ7bJAdFRxv7J6LTcmsMHZqc5x5jo4ObgDCb3gq8PFkw7OJFIMexlVUZiDRTHzcOwMx60BHb7k+JZvfaLww3ZEQJZGIrkVYhWxOhXioUbWtemj23ng9qKRxyXInlGpJq2grgqSrihaG4fMVC+4KWCTvbH5ZwmpvjLlu5beH2H3sJrXmPdOFog0KCjMPcvQ64cU3+y4ZPG3rbJVNL4QRz0DIi9+UWNjBh3eN48xLUhLC8P+w5mqd/UE+wuO5ohAE1HI2VGBagdWkyFBU2fj5CmRxmW6sMgJJikigUsTwO8V9JLFaZhkvsR0ryg==
-Received: from PH0PR12MB7077.namprd12.prod.outlook.com (2603:10b6:510:21d::7)
- by SJ1PR12MB6049.namprd12.prod.outlook.com (2603:10b6:a03:48c::22)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.270.18; Wed, 5 Aug
- 2026 10:35:19 +0000
-Received: from PH0PR12MB7077.namprd12.prod.outlook.com
- ([fe80::af33:9226:1e78:5033]) by PH0PR12MB7077.namprd12.prod.outlook.com
- ([fe80::af33:9226:1e78:5033%5]) with mapi id 15.21.0292.018; Wed, 5 Aug 2026
- 10:35:19 +0000
-From: Dariusz Sosnowski <dsosnowski@nvidia.com>
-To: Ali Alnubani <alialnu@nvidia.com>, "luca.boccassi@gmail.com"
- <luca.boccassi@gmail.com>, "stable@dpdk.org" <stable@dpdk.org>,
- "maxime.peim@gmail.com" <maxime.peim@gmail.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>, Abhishek Marathe
- <Abhishek.Marathe@microsoft.com>, David Christensen <drc@linux.vnet.ibm.com>, 
- Hemant Agrawal <hemant.agrawal@nxp.com>, Ian Stokes <ian.stokes@intel.com>,
- jerinj <jerinj@marvell.com>, John McNamara <john.mcnamara@intel.com>,
- Ju-Hyoung Lee <juhlee@microsoft.com>, Kevin Traynor <ktraynor@redhat.com>,
- Luca Boccassi <bluca@debian.org>, Pei Zhang <pezhang@redhat.com>, Raslan
- Darawsheh <rasland@nvidia.com>, "NBU-Contact-Thomas Monjalon (EXTERNAL)"
- <thomas@monjalon.net>, Yanghang Liu <yanghliu@redhat.com>, Salaheddin Badawi
- <sbadawi@nvidia.com>, Wael Abualrub <waela@nvidia.com>
-Subject: RE: 24.11.7 patches review and test
-Thread-Topic: 24.11.7 patches review and test
-Thread-Index: AQHdHaxhiNT9ug91y0ixriw08GmD6raN8+IAgAFc1NA=
-Date: Wed, 5 Aug 2026 10:35:19 +0000
-Message-ID: <PH0PR12MB70778D3F0532D5201E071D59A4D32@PH0PR12MB7077.namprd12.prod.outlook.com>
+	by mails.dpdk.org (Postfix) with ESMTP id E4D0E40272;
+	Wed,  5 Aug 2026 13:07:35 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 41D5F40144
+ for <dev@dpdk.org>; Wed,  5 Aug 2026 13:07:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1785928053;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=PQngiP4/sn9sfjiDE/cc8Wp7cV7m4NcC13uNJQWKlBg=;
+ b=bvK7R7V8Cp6BH+2IEDy6h14PvYA+BO9pdlCeV0eusqetIwg/cHbGIbkDE2zssUV74UOvCv
+ xEUiE8Vop8Lqn+zpvYPFTljPbIpdVVJAS3y9k+VKq9Boiciz1ut0mfJVZddmWWxiN3Nki/
+ WoyueFQvUUzK/2VwN39m7SodX3d6b+M=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-221-C3wAIZ8INmaC6X1DsvP0ag-1; Wed, 05 Aug 2026 07:07:32 -0400
+X-MC-Unique: C3wAIZ8INmaC6X1DsvP0ag-1
+X-Mimecast-MFC-AGG-ID: C3wAIZ8INmaC6X1DsvP0ag_1785928051
+Received: by mail-wm1-f72.google.com with SMTP id
+ 5b1f17b1804b1-49544a639e9so4296875e9.1
+ for <dev@dpdk.org>; Wed, 05 Aug 2026 04:07:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1785928051; x=1786532851;
+ h=content-transfer-encoding:content-type:in-reply-to:from
+ :content-language:references:cc:to:subject:user-agent:mime-version
+ :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=PQngiP4/sn9sfjiDE/cc8Wp7cV7m4NcC13uNJQWKlBg=;
+ b=kPHNKg0UUlCsXeSNFSR/g5nkMjeTNy6Ig/uAGsTo4n0ppBVVflQTDXQpev8gCds5Q5
+ 47B34BM3ppnOVPUlZJpQjNHgKodEv2I1RJaRR2VKFW2G3r3h03e67jlvreNd0vlxR10w
+ j8WAgCDkQ5fKKdwZhcJ9iQpMe1e0r4ukQQAb5UrEMI3g6exyu0m+QwkzIg6nmaBVdZ4z
+ u0aUHPWEaX2Wsy7ETpnRKNXS/mcBu/XQoGOE9iINbC3DEhfu8W3Qo57FT4GViBz/OWne
+ SVMr1ImjDA3aDvYoIRxgz9ckXLPtAscLsO3fDdv343/ib9Hn4ypoUWnUI2QIS06RLPd+
+ T/7w==
+X-Gm-Message-State: AOJu0YwlHXaU6U3x3f3WJgBQWZF9z77TWWYcEukCWPaOzktFrfFuQSJ4
+ 0jeFxjd86GwTMh6BqkL7D+wPvXYKkiNWvYQSGwhywHDFCORsN3V/lSlUyF4aNlq/sk4HlrUqT7Z
+ y0X3Tm8Ozp1mbbhzpgd0tVroPaCvk0MJWtmPbZjKU4nyQ
+X-Gm-Gg: AR+sD1379iEGI8Dzf1MGvY+6NY9RkFrc+pQD4v/w5C3B7x5R4WqEkNDHGxQ3LzE1WVk
+ cBZFIrrey2rhrjzfF7LSwP/rGaonRKhoeqaXydMr5hj60mVCM3BYad6faPi8HfiTt7jSXK1DfSN
+ wSw/WvUg5mGyM2kKI1PyzFPj9MlyyOBWRuoxw8/CnxArK6gIdhxV3/GkbLq5vvC+hh2bfzerX2f
+ Tnjev34jcmT6GauXdLzJZSqZ9GdGz+8oCyj/2jBIMMIJvXSCbcqBFV87q+bwXsktn+6ADLFWi6U
+ cm0gVNq2AxXOoTC/oYMcCXD9yisFRTE04hEbsu39VLEoqGkJbLrgaZQm5vv/MtCzOmde2o99imf
+ 8
+X-Received: by 2002:a05:600c:5694:b0:495:503f:cf9a with SMTP id
+ 5b1f17b1804b1-4994e7bab0emr47180695e9.9.1785928051066; 
+ Wed, 05 Aug 2026 04:07:31 -0700 (PDT)
+X-Received: by 2002:a05:600c:5694:b0:495:503f:cf9a with SMTP id
+ 5b1f17b1804b1-4994e7bab0emr47180055e9.9.1785928050617; 
+ Wed, 05 Aug 2026 04:07:30 -0700 (PDT)
+Received: from [192.168.0.66] ([78.16.71.222])
+ by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-4994a100e14sm160949845e9.14.2026.08.05.04.07.28
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Wed, 05 Aug 2026 04:07:29 -0700 (PDT)
+Message-ID: <a2e71ae1-daf2-4f7f-aa08-47cd450ca1a3@redhat.com>
+Date: Wed, 5 Aug 2026 12:07:28 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: 24.11.7 patches review and test
+To: Ali Alnubani <alialnu@nvidia.com>, luca.boccassi@gmail.com,
+ stable@dpdk.org, dsosnowski@nvidia.com, maxime.peim@gmail.com
+Cc: dev@dpdk.org, Luca Boccassi <bluca@debian.org>,
+ Raslan Darawsheh <rasland@nvidia.com>, Thomas Monjalon
+ <thomas@monjalon.net>, sbadawi@nvidia.com, waela@nvidia.com
 References: <20260727094306.41797-1-luca.boccassi@gmail.com>
  <c49e8480-5d4d-459d-bf8d-c73321c42abb@nvidia.com>
+From: Kevin Traynor <ktraynor@redhat.com>
 In-Reply-To: <c49e8480-5d4d-459d-bf8d-c73321c42abb@nvidia.com>
-Accept-Language: en-US
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 686M6Jumy-DGhZ_mtqfmSpYPVX22NYQO2EAoJOTHxlw_1785928051
+X-Mimecast-Originator: redhat.com
 Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH0PR12MB7077:EE_|SJ1PR12MB6049:EE_
-x-ms-office365-filtering-correlation-id: 7336d631-c59f-46cc-c87b-08def2dd3f07
-x-ld-processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|366016|23010399003|1800799024|7416014|376014|11063799006|10067099003|4143699003|56012099006|18002099003|22082099003|38070700021;
-x-microsoft-antispam-message-info: iLJyVzH+XCC397zH/gHFWxti/Y+s62aishVIdTNjoLjrqR+WTLCQOUnwhhbSCwfH7iBAVhcRKg7JbhgzHy7+E8RtNMct+Ah3vTuD5SEcIAaVvmMLtsO0Vm/kedYacemDBbXTVQ2/VsKVwqRDT02cg4ruMq61W6mWexucYtJd5TUZix7DrBJAdTeAQSp27d1Uy3tz7kTSa0CzIAHI1GCou28WcvYczjDxOyF4MGmUpPgq2loa2/JgSK/IJve7yKBS4Z0XGB4hnXwscOOnv3sf+ZF1UjeIfc0O/BfXxPb+Kxe/TJzjAydYp2DtyhEGVy4/qsuYdGve2NB9Dbcld/7/eS8ULIVv8f3OEqgZ0pkWULfMwXc7jmYV2s158fMnhLt8l1klkQku2/DtRZCrMu3Fj3uWk7VB8g6dAFF9waE/QArwx1YG6Rjz1vBAqI0zVUDEDpYOeGZmXOUi+FWF8I2t7ydFx6eZishbeyhxG3ySb6SCZJEJg6dLKWlP8+YTEZrHqEJI/I9LsHhcm122oW6bRHC/cLPzydTcSuM+rECWJEX50xCN1Z8XWRVgomzLibEcIqN8YnDonZWvC4Iqq4S4hiRz1N+oVwtK0Zv/Rm6EsgbEKNO9ajfHE5lknAlQ1MZQO7I0jYIwvaVkPn8Qg4dVe5XL8/1xhX9PkpeDafN9vlCZ6/tjBZjI29veN2MkMn+hIV3mMjWSJr+9mqBSiS3A8egUwId4793Osvr9czDws10=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:PH0PR12MB7077.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(23010399003)(1800799024)(7416014)(376014)(11063799006)(10067099003)(4143699003)(56012099006)(18002099003)(22082099003)(38070700021);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?OGRrZkpOdjYyZE9vMFR3NEl1QWc0NWZsR0lXQ1FqVDR2VEhDb2NWUmY2WDFU?=
- =?utf-8?B?aE45aDJEemY4NEtpMnQzVDBVVnhyTGJxYXpYTmpyeXhhQjN2WEpQNlR3dmdL?=
- =?utf-8?B?VUh3VGJyOEhGZER6akxwZlVTeXVmQmJESkkvZEJmU1lxZGJMaFF5MnN6Uy9p?=
- =?utf-8?B?cmczbG5SSVhianUwOURKYmJJeitSMXF4UnRjc0pTQ3JGZkhnR1hnajRCU2RL?=
- =?utf-8?B?VzRVam9jWVBQVmRVaFdHMWdPYnNUSlc2L0lnRWFyMVRSWnVUM3JGOVhwcHFQ?=
- =?utf-8?B?MEh3Zzdod2lodlhkRFFEb3hkMUhMWUpFWEgvL0dSOFFsejlLS3puYWlYdmhn?=
- =?utf-8?B?clRjK1EvQXV3R1RhQU92WWNCRDBHK05uSDl2WmFIOXVBT2R4a2tFNEJFZktM?=
- =?utf-8?B?ZEZsaTVPc1JmeEhuZlpkMmVGb0l6R1JnRG9nZGJIYWJqaXJaN0lXaEVBMXJQ?=
- =?utf-8?B?Vmh0eDBSUVN1bFllZFVlR1J0ZXNmU1JWVHdLYjZmTVFFaml4bmZFQjZlNFVZ?=
- =?utf-8?B?bENIdmtFTGhaOTZ3eGJLWHVJZVVOYnE0VmdkSDh0dEFvKzJpU0lwQkxSYnpG?=
- =?utf-8?B?dmZFck9NbDlwTDBiTWlnWEFSQ3dyeUxsZEhBSm1SZVpCNzdOMWE4ZzNjejR6?=
- =?utf-8?B?bE1nY2lRTkNnVUVEZUlvYXRidU9CMnU5aVpFYVF3TmZVNm55WUNlTWpRK3py?=
- =?utf-8?B?bzBOdzQvMnlNV0J0VDdBTDF3OEFFdW9uemNnU0FuZXZlbEZLSldyZWxpY0Nx?=
- =?utf-8?B?ZE9TZnNJRUo4VUY3RjhINlIvRGpMTFF0S3VNdkFsV2NQTnJ2TXVwODBGdkF4?=
- =?utf-8?B?M2NlL0RnOENvOHhnbU9kRTNiNXFZWExENlJRYzdnTU1jUUZTd2U5bFNLdCtu?=
- =?utf-8?B?TmozR3ZsZ3dsTFgrcEcrS0tlMGlFckJSRWJQRW02UGIrS1NSa3NVR2h6azJv?=
- =?utf-8?B?R2NFSUdSTE5pR0QrTUpUZkxPZXhCNnAvb0l3SmIyV0RLQnN3M2M0YmtCMW5W?=
- =?utf-8?B?eEZ0U05GRXJtVEVQQmliWXlsSytYdHZkcktVQWlSVjQwcTdYcFdBYldtVVRp?=
- =?utf-8?B?ZGNQcGlYeENQeWZTaTRlRDN0L09IQ0psNUVtS2lsc2FvdjdzSWxlZTgvM0Rr?=
- =?utf-8?B?NEtnWlZsUmdVQ1NVa3RHYVh6UVRQMEdPbDIwaTRDZ3dMNUZhUW1zOTNlQWpS?=
- =?utf-8?B?dk50Yk1YaERnQU9pNXdWTGRoRCtneDZ1Z2dSQlZhcWdMQzd3S0JWeDZCVHBa?=
- =?utf-8?B?cmZMcU5ETzIyY2JhaXd0a0JqcmJRSXRNR09Fd3RsaVlhK2xTZjJNdUlvYlEx?=
- =?utf-8?B?UWZzOU9CWk1ENTRJUzl4UXpWQ0d4UmxlWVpoT1FvNDl1TVRENHhMKytiUW52?=
- =?utf-8?B?TTBPNm56N1lQTkdSVVAva1g4VU1PN29qaUJ2YTQ3c2RTZGpWclhrb1Q5c1Zp?=
- =?utf-8?B?dHJ2SW9uQld1WUdibGQ1dVhaL3c3cElKa0MxdHdCQmRWZ1hBbVJYRGZROEpN?=
- =?utf-8?B?OFZyeS9lVm1hOEdJTktGcyswUjBIWC9oS2hjeTNmejljUDlBaTM3QWFaY0xS?=
- =?utf-8?B?WXpLbEg2bEQxSHh6bm5CVFdBb2h1Vkt3WThhMTNDUXFkWFBOckdiSS9xbU1N?=
- =?utf-8?B?djZ6TzRZOUFMa1VpY2l2UUxrWHJ2K2RUUHFtdzdzb0l3ckZSRjViek9Vdm9L?=
- =?utf-8?B?Qjg4eUNIT2tiQlVrMGJheldJbVQvV0w2aDJ1UmFybGFldjNUOHpBandlbU9I?=
- =?utf-8?B?b1JvTFJZT2lBam9zTUo3OG1TM3dWNlN3OVoyKzdObzhSOHV5MEwrUUgvMnJV?=
- =?utf-8?B?VS9HQml0SXZYNU1xRlNqaWpnODdDanZ3NkpDWmRNaGNQWkdMU0wzWVVCZzNo?=
- =?utf-8?B?RTJvQ1RnNDRxNWlJL21IdDlTSUhwd25SN2lEWnBMSjRZL0hxWk84WG85L2x2?=
- =?utf-8?B?cEVUYU5vMDVLc3lUcnRIY1k1dndxOUdFYVlTc1JmUDJFaG5GeE5Gd3dOeDUv?=
- =?utf-8?B?VjNka09EcVE4S0p0RzNEclo2V2lBam5SZ1FTYVd6MldRYVoxOFVzZVg3SEp0?=
- =?utf-8?B?SVRFRXhWaDJHYW9oeTBJMnBsZndWeFVtNjVtclB6M05qYVFEWUNVM1JXSkpK?=
- =?utf-8?B?MHpzeGYvbGwyOTFtZTlubzlpbS92NkFjVVc3YktHOW04TVREQ08zK1U2aGdy?=
- =?utf-8?B?eVZQT2xQSGtEYWloS2s0QXF6THdZSjN4cVNaLzZGZDExTTdyTkdIcG4xU2tN?=
- =?utf-8?B?Yk9HZkc2TWtiYTdNM2dZOUt5bHZlUWVoUkp2d1ZZT0wzc1A0M2dxczBwSDZO?=
- =?utf-8?B?bHVPUzIxNGlRSUFodEcrMElWQjNqRDE0cG95QnJXWHgvU0hYMlA3UT09?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR12MB7077.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7336d631-c59f-46cc-c87b-08def2dd3f07
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Aug 2026 10:35:19.2285 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: JXJ2g21qVg2wvMeV1cvgH3m85cujMyP8kj5dZYS5crWnwnw6Emt0QaNCitULZRSXRDsBHZECUhQhez38SYgnWA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6049
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -142,51 +96,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-SGkgYWxsLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEFsaSBBbG51
-YmFuaSA8YWxpYWxudUBudmlkaWEuY29tPg0KPiBTZW50OiBUdWVzZGF5LCBBdWd1c3QgNCwgMjAy
-NiAzOjQ2IFBNDQo+IFRvOiBsdWNhLmJvY2Nhc3NpQGdtYWlsLmNvbTsgc3RhYmxlQGRwZGsub3Jn
-OyBEYXJpdXN6IFNvc25vd3NraQ0KPiA8ZHNvc25vd3NraUBudmlkaWEuY29tPjsgbWF4aW1lLnBl
-aW1AZ21haWwuY29tDQo+IENjOiBkZXZAZHBkay5vcmc7IEFiaGlzaGVrIE1hcmF0aGUgPEFiaGlz
-aGVrLk1hcmF0aGVAbWljcm9zb2Z0LmNvbT47DQo+IERhdmlkIENocmlzdGVuc2VuIDxkcmNAbGlu
-dXgudm5ldC5pYm0uY29tPjsgSGVtYW50IEFncmF3YWwNCj4gPGhlbWFudC5hZ3Jhd2FsQG54cC5j
-b20+OyBJYW4gU3Rva2VzIDxpYW4uc3Rva2VzQGludGVsLmNvbT47IGplcmluag0KPiA8amVyaW5q
-QG1hcnZlbGwuY29tPjsgSm9obiBNY05hbWFyYSA8am9obi5tY25hbWFyYUBpbnRlbC5jb20+OyBK
-dS0NCj4gSHlvdW5nIExlZSA8anVobGVlQG1pY3Jvc29mdC5jb20+OyBLZXZpbiBUcmF5bm9yDQo+
-IDxrdHJheW5vckByZWRoYXQuY29tPjsgTHVjYSBCb2NjYXNzaSA8Ymx1Y2FAZGViaWFuLm9yZz47
-IFBlaSBaaGFuZw0KPiA8cGV6aGFuZ0ByZWRoYXQuY29tPjsgUmFzbGFuIERhcmF3c2hlaCA8cmFz
-bGFuZEBudmlkaWEuY29tPjsgTkJVLQ0KPiBDb250YWN0LVRob21hcyBNb25qYWxvbiAoRVhURVJO
-QUwpIDx0aG9tYXNAbW9uamFsb24ubmV0PjsgWWFuZ2hhbmcNCj4gTGl1IDx5YW5naGxpdUByZWRo
-YXQuY29tPjsgU2FsYWhlZGRpbiBCYWRhd2kgPHNiYWRhd2lAbnZpZGlhLmNvbT47DQo+IFdhZWwg
-QWJ1YWxydWIgPHdhZWxhQG52aWRpYS5jb20+DQo+IFN1YmplY3Q6IFJlOiAyNC4xMS43IHBhdGNo
-ZXMgcmV2aWV3IGFuZCB0ZXN0DQo+IA0KPiBPbiA3LzI3LzI2IDEyOjQzIFBNLCBsdWNhLmJvY2Nh
-c3NpQGdtYWlsLmNvbSB3cm90ZToNCj4gDQo+ID4gSGkgYWxsLA0KPiA+DQo+ID4gSGVyZSBpcyBh
-IGxpc3Qgb2YgcGF0Y2hlcyB0YXJnZXRlZCBmb3Igc3RhYmxlIHJlbGVhc2UgMjQuMTEuNy5UaGUg
-cGxhbm5lZCBkYXRlDQo+IGZvciB0aGUgZmluYWwgcmVsZWFzZSBpcyAyMDI2LzA4LzEwLg0KPiA+
-DQo+ID4gUGxlYXNlIGhlbHAgd2l0aCB0ZXN0aW5nIGFuZCB2YWxpZGF0aW9uIG9mIHlvdXIgdXNl
-IGNhc2VzIGFuZCByZXBvcnQNCj4gPiBhbnkgaXNzdWVzL3Jlc3VsdHMgd2l0aCByZXBseS1hbGwg
-dG8gdGhpcyBtYWlsLiBGb3IgdGhlIGZpbmFsIHJlbGVhc2UNCj4gPiB0aGUgZml4ZXMgYW5kIHJl
-cG9ydGVkIHZhbGlkYXRpb25zIHdpbGwgYmUgYWRkZWQgdG8gdGhlIHJlbGVhc2Ugbm90ZXMuDQo+
-ID4NCj4gPiBBIHJlbGVhc2UgY2FuZGlkYXRlIHRhcmJhbGwgY2FuIGJlIGZvdW5kIGF0Og0KPiA+
-DQo+ID4gICAgICBodHRwczovL2RwZGsub3JnL2Jyb3dzZS9kcGRrLXN0YWJsZS90YWcvP2lkPXYy
-NC4xMS43LXJjMQ0KPiA+DQo+ID4gVGhlc2UgcGF0Y2hlcyBhcmUgbG9jYXRlZCBhdCBicmFuY2gg
-MjQuMTEgb2YgZHBkay1zdGFibGUgcmVwbzoNCj4gPiAgICAgIGh0dHBzOi8vZHBkay5vcmcvYnJv
-d3NlL2RwZGstc3RhYmxlLw0KPiA+DQo+ID4gVGhhbmtzLg0KPiA+DQo+ID4gTHVjYSBCb2NjYXNz
-aQ0KPiA+DQo+ID4gLS0tDQo+IFsuLl0NCj4gPiBNYXhpbWUgUGVpbSAoMSk6DQo+ID4gICAgICAg
-IG5ldC9tbHg1OiBwcmVwZW5kIGltcGxpY2l0IGl0ZW1zIGluIHN5bmMgZmxvdyBjcmVhdGlvbg0K
-PiBbLi5dDQo+IA0KPiBIZWxsbyBNYXhpbWUsIEx1Y2EsDQo+IA0KPiBDb21taXQgNDcxMzUwZjZj
-ZCAoIm5ldC9tbHg1OiBwcmVwZW5kIGltcGxpY2l0IGl0ZW1zIGluIHN5bmMgZmxvdw0KPiBjcmVh
-dGlvbiIpIG9uIDI0LjExIHJlZ3Jlc3NlcyBlU3dpdGNoIEhXUyB3aGVuIHJlcHJlc2VudG9yIG1h
-dGNoaW5nIGlzDQo+IGRpc2FibGVkIChyZXByX21hdGNoaW5nX2VuPTApOiB0cmFmZmljIHRoYXQg
-c2hvdWxkIGhpdCBQRiBOSUMgUnggcnVsZXMgYWZ0ZXINCj4gRkRCIHRyYW5zZmVyIGlzIG5vIGxv
-bmdlciByZWNlaXZlZC4NCj4gDQo+IFRoZSBiYWNrcG9ydCBkcm9wcGVkIHRoZSBwcml2LT5zaC0+
-Y29uZmlnLnJlcHJfbWF0Y2hpbmcgY2hlY2tzIHRoYXQNCj4gcHJldmlvdXNseSBnYXRlZCBpbXBs
-aWNpdCBSRVBSRVNFTlRFRF9QT1JUIC8gUkVHX0NfMCBwcmVwZW5kaW5nLiBUaGF0IGlzDQo+IGNv
-cnJlY3Qgb24gdXBzdHJlYW0gbWFpbiBhZnRlciByZXByX21hdGNoaW5nX2VuIHdhcyByZW1vdmVk
-IChjNDFmNjIxNzg2KSwNCj4gYnV0IG9uIDI0LjExIHRoZSBvcHRpb24gc3RpbGwgZXhpc3RzIGFu
-ZCwgd2hlbiBvZmYsIFRYIHJlcHJlc2VudG9yIHRhZ2dpbmcgaXMgbm90DQo+IHNldCB1cC4gVW5j
-b25kaXRpb25hbGx5IHByZXBlbmRpbmcgdGhvc2UgbWF0Y2hlcyB0aGVuIHNjb3BlcyBOSUMgcnVs
-ZXMNCj4gaW5jb3JyZWN0bHkuDQo+IA0KPiBEYXJpdXN6IHZvbHVudGVlcmVkIHRvIHNlbmQgYSBm
-aXguDQoNCkkgc2VudCB0aGUgZml4IGZvciB0aGUgYWJvdmUgdG8gc3RhYmxlIG1haWxpbmcgbGlz
-dDogaHR0cHM6Ly9pbmJveC5kcGRrLm9yZy9zdGFibGUvMjAyNjA4MDUxMDMyMzIuMjI2ODM1LTEt
-ZHNvc25vd3NraUBudmlkaWEuY29tLw0KDQpCZXN0IHJlZ2FyZHMsDQpEYXJpdXN6IFNvc25vd3Nr
-aQ0K
+On 8/4/26 14:46, Ali Alnubani wrote:
+> On 7/27/26 12:43 PM, luca.boccassi@gmail.com wrote:
+> 
+>> Hi all,
+>>
+>> Here is a list of patches targeted for stable release 24.11.7.The 
+>> planned date for the final release is 2026/08/10.
+>>
+>> Please help with testing and validation of your use cases and report
+>> any issues/results with reply-all to this mail. For the final release
+>> the fixes and reported validations will be added to the release notes.
+>>
+>> A release candidate tarball can be found at:
+>>
+>>      https://dpdk.org/browse/dpdk-stable/tag/?id=v24.11.7-rc1
+>>
+>> These patches are located at branch 24.11 of dpdk-stable repo:
+>>      https://dpdk.org/browse/dpdk-stable/
+>>
+>> Thanks.
+>>
+>> Luca Boccassi
+>>
+>> ---
+> [..]
+>> Maxime Peim (1):
+>>        net/mlx5: prepend implicit items in sync flow creation
+> [..]
+> 
+> Hello Maxime, Luca,
+> 
+> Commit 471350f6cd ("net/mlx5: prepend implicit items in sync flow 
+> creation") on 24.11 regresses eSwitch HWS when representor matching is 
+> disabled (repr_matching_en=0): traffic that should hit PF NIC Rx rules 
+> after FDB transfer is no longer received.
+> 
+> The backport dropped the priv->sh->config.repr_matching checks that 
+> previously gated implicit REPRESENTED_PORT / REG_C_0 prepending. That is 
+> correct on upstream main after repr_matching_en was removed 
+> (c41f621786), but on 24.11 the option still exists and, when off, TX 
+> representor tagging is not set up. Unconditionally prepending those 
+> matches then scopes NIC rules incorrectly.
+> 
+
+I think we should be ok for 23.11 as the commit that was being fixed was 
+introduced in 24.07 so the backport is not relevant.
+
+e909fd3a90 S F net/mlx5: prepend implicit items in sync flow creation 
+(24.07)
+
+and ok for 25.11 as c41f621786 is present.
+
+$ git tag --contains c41f621786 | grep v25.11
+v25.11
+
+
+> Dariusz volunteered to send a fix.
+> 
+> We will send our full report soon.
+> 
+> Regards,
+> Ali
+> 
+
