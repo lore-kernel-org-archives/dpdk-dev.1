@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3075DC55ABA
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Aug 2026 13:47:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97DAAC55ABA
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Aug 2026 13:47:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2364D406B7;
-	Wed,  5 Aug 2026 15:46:13 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1B67740A84;
+	Wed,  5 Aug 2026 15:46:14 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
- by mails.dpdk.org (Postfix) with ESMTP id BA4A140A81
- for <dev@dpdk.org>; Wed,  5 Aug 2026 15:46:10 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 46E9440B95
+ for <dev@dpdk.org>; Wed,  5 Aug 2026 15:46:12 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1785937571; x=1817473571;
+ t=1785937572; x=1817473572;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=WYoaFU79mdwTt3qGEoek7Ibc5ZWqkq8wj0bp3l1eqvM=;
- b=Yhmgva+T2+bHA46HNhxF9Owzxe7paZthE3frKg3FUFxti1e485JnBbAr
- RjHXld3AgOx3L8/nn4nKUSylSm24nZzH6qSscjksF1hMdt+iFxy150UFV
- GXK8RU1DujG80V0Tr7Qi6KOiDS0f0VhHgThveiV5PkBvccHyy0RR1QuLG
- uJy1HadxJweZrTQgIdDAK8N1vdgORExt8pbUZ07dgCIt1SzKJ/F5e+3y0
- vlqGQeeyIRse7oyD57t64qjZScfoChrGFlw6zTql3arhR1M3u+f+TzNTo
- RdbNqgfEzMqZvPcNEEh0slhdZFGV7h68rsPryAJkEie+czDkwkXzZ4h/4 w==;
-X-CSE-ConnectionGUID: +g3uJeLsTj2+cxtanbx9IQ==
-X-CSE-MsgGUID: 9IpJDiW+ROOeI6fOXq9Acw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11865"; a="86284102"
-X-IronPort-AV: E=Sophos;i="6.25,206,1779174000"; d="scan'208";a="86284102"
+ bh=hV+pmWKIsgZBMiXsxVugQ7e62P3sd5jKj4XTWkOBAGo=;
+ b=DIphE7rYqu3n/FyhuT+uaRfXanTJUlHe0oswlF7tI68dUG0TVeveVemI
+ qfAr78JTEUejEk47sRyxU5hpnixc4SwyI//o5BM/rNnkUQN7n2phowaea
+ f4KplpkC/82dCzUoHlK30i1TOEzo3lu8QaZhJuHTqkeQjzFvhvWDa6JI5
+ h2IHt0HSFqGQawhN6Ci3bvLofr/PkY4a4JnLWqKEsahdm9gKhpF3lwAc+
+ le6hgsOdo5k3Gk0MeyJ76taJhvTn+JAW3Snm4m3fTUC68xXt5ohDenxcy
+ DTMYLkiDaYyOuIRnbCR3lc0g4gh1ikNlHhKCllrBLCGELtL4zPsJF1F8C w==;
+X-CSE-ConnectionGUID: 0EiXPqvmRXeRcWTbI+lMCw==
+X-CSE-MsgGUID: BUABNGAiQsy8mIZxuqCBbA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11865"; a="86284107"
+X-IronPort-AV: E=Sophos;i="6.25,206,1779174000"; d="scan'208";a="86284107"
 Received: from fmviesa007.fm.intel.com ([10.60.135.147])
  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 05 Aug 2026 06:46:10 -0700
-X-CSE-ConnectionGUID: 3wuoC7vORky3Ia0fmZomEw==
-X-CSE-MsgGUID: pI3IjG9pQ5a4p0a20MY8og==
+ 05 Aug 2026 06:46:12 -0700
+X-CSE-ConnectionGUID: 7SjGkLq6RWGxUnkt19GLTA==
+X-CSE-MsgGUID: 8XUSz3dtQOyRJ1N9pAileg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,206,1779174000"; d="scan'208";a="258476689"
+X-IronPort-AV: E=Sophos;i="6.25,206,1779174000"; d="scan'208";a="258476765"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa007.fm.intel.com with ESMTP; 05 Aug 2026 06:46:09 -0700
+ by fmviesa007.fm.intel.com with ESMTP; 05 Aug 2026 06:46:11 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Maxime Coquelin <maxime.coquelin@redhat.com>,
- Chenbo Xia <chenbox@nvidia.com>
-Subject: [PATCH v9 11/19] vhost: remove group-related API from driver
-Date: Wed,  5 Aug 2026 14:45:40 +0100
-Message-ID: <1def31a16d9e5c3b59434ad5a4e42a0ecd5d7770.1785937061.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org,
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v9 12/19] vfio: remove group-based API
+Date: Wed,  5 Aug 2026 14:45:41 +0100
+Message-ID: <9446a7502c844f5f124564d8503f609a1bbc75be.1785937061.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1785937060.git.anatoly.burakov@intel.com>
  <cover.1785937060.git.anatoly.burakov@intel.com>
@@ -60,61 +60,371 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The vDPA driver API has "get_vfio_group_fd" in its ops structure, but no
-driver is using it any more, as better API's were added and implemented.
-Remove this API from vDPA ops structure.
+All drivers have been adjusted to not use the VFIO group API directly and
+instead rely on container device assignment model, so the group API is no
+longer useful and can be removed.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- doc/guides/prog_guide/vhost_lib.rst  | 4 ----
- doc/guides/rel_notes/deprecation.rst | 4 ----
- lib/vhost/vdpa_driver.h              | 3 ---
- 3 files changed, 11 deletions(-)
+ lib/eal/freebsd/eal.c            | 33 ---------------
+ lib/eal/include/rte_vfio.h       | 72 --------------------------------
+ lib/eal/linux/eal_vfio.c         | 47 ++++++++++-----------
+ lib/eal/linux/eal_vfio.h         |  2 +
+ lib/eal/linux/eal_vfio_mp_sync.c |  2 +-
+ 5 files changed, 26 insertions(+), 130 deletions(-)
 
-diff --git a/doc/guides/prog_guide/vhost_lib.rst b/doc/guides/prog_guide/vhost_lib.rst
-index 0c2b4d020a..2f80cf4072 100644
---- a/doc/guides/prog_guide/vhost_lib.rst
-+++ b/doc/guides/prog_guide/vhost_lib.rst
-@@ -471,10 +471,6 @@ Finally, a set of device ops is defined for device specific operations:
+diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
+index 0c64a62c5a..cda72dfd1d 100644
+--- a/lib/eal/freebsd/eal.c
++++ b/lib/eal/freebsd/eal.c
+@@ -856,13 +856,6 @@ int rte_vfio_noiommu_is_enabled(void)
+ 	return 0;
+ }
  
-   Called to allow the device to response to RARP sending.
- 
--* ``get_vfio_group_fd``
+-RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_clear_group)
+-int rte_vfio_clear_group(__rte_unused int vfio_group_fd)
+-{
+-	rte_errno = ENOTSUP;
+-	return -1;
+-}
 -
--   Called to get the VFIO group fd of the device.
+ RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_get_group_num)
+ int
+ rte_vfio_get_group_num(__rte_unused const char *sysfs_base,
+@@ -881,14 +874,6 @@ rte_vfio_get_container_fd(void)
+ 	return -1;
+ }
+ 
+-RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_get_group_fd)
+-int
+-rte_vfio_get_group_fd(__rte_unused int iommu_group_num)
+-{
+-	rte_errno = ENOTSUP;
+-	return -1;
+-}
 -
- * ``get_vfio_device_fd``
+ RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_container_create)
+ int
+ rte_vfio_container_create(void)
+@@ -905,24 +890,6 @@ rte_vfio_container_destroy(__rte_unused int container_fd)
+ 	return -1;
+ }
  
-   Called to get the VFIO device fd of the device.
-diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
-index f2901064f5..c520129ac3 100644
---- a/doc/guides/rel_notes/deprecation.rst
-+++ b/doc/guides/rel_notes/deprecation.rst
-@@ -30,10 +30,6 @@ Deprecation Notices
-   Use the ``-S <service-corelist>`` parameter instead
-   to specify the cores to be used for background services in DPDK.
- 
--* vdpa: The vDPA driver API will no longer offer ``get_vfio_group_fd``
--  as part of its internal API. All drivers will be adjusted
--  to use the new unified VFIO container device assignment API.
+-RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_container_group_bind)
+-int
+-rte_vfio_container_group_bind(__rte_unused int container_fd,
+-		__rte_unused int iommu_group_num)
+-{
+-	rte_errno = ENOTSUP;
+-	return -1;
+-}
 -
- * rte_atomicNN_xxx: These APIs do not take memory order parameter. This does
-   not allow for writing optimized code for all the CPU architectures supported
-   in DPDK. DPDK has adopted the atomic operations from
-diff --git a/lib/vhost/vdpa_driver.h b/lib/vhost/vdpa_driver.h
-index 42392a0d14..c7b9be09fb 100644
---- a/lib/vhost/vdpa_driver.h
-+++ b/lib/vhost/vdpa_driver.h
-@@ -50,9 +50,6 @@ struct rte_vdpa_dev_ops {
- 	/** Destination operations when migration done */
- 	int (*migration_done)(int vid);
- 
--	/** Get the vfio group fd */
--	int (*get_vfio_group_fd)(int vid);
+-RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_container_group_unbind)
+-int
+-rte_vfio_container_group_unbind(__rte_unused int container_fd,
+-		__rte_unused int iommu_group_num)
+-{
+-	rte_errno = ENOTSUP;
+-	return -1;
+-}
 -
- 	/** Get the vfio device fd */
- 	int (*get_vfio_device_fd)(int vid);
+ RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_container_dma_map)
+ int
+ rte_vfio_container_dma_map(__rte_unused int container_fd,
+diff --git a/lib/eal/include/rte_vfio.h b/lib/eal/include/rte_vfio.h
+index 4890ecf06d..51ca1c162f 100644
+--- a/lib/eal/include/rte_vfio.h
++++ b/lib/eal/include/rte_vfio.h
+@@ -136,24 +136,6 @@ int rte_vfio_is_enabled(const char *modname);
+ __rte_internal
+ int rte_vfio_noiommu_is_enabled(void);
  
+-/**
+- * @internal
+- * Remove group fd from internal VFIO group fd array.
+- *
+- * This function is only relevant to linux and will return
+- * an error on BSD.
+- *
+- * @param vfio_group_fd
+- *   VFIO Group FD.
+- *
+- * @return
+- *   0 on success.
+- *   <0 on failure.
+- */
+-__rte_internal
+-int
+-rte_vfio_clear_group(int vfio_group_fd);
+-
+ /**
+  * @internal
+  * Parse IOMMU group number for a device.
+@@ -218,24 +200,6 @@ __rte_internal
+ int
+ rte_vfio_get_container_fd(void);
+ 
+-/**
+- * @internal
+- * Open VFIO group fd or get an existing one.
+- *
+- * This function is only relevant to linux and will return
+- * an error on BSD.
+- *
+- * @param iommu_group_num
+- *   iommu group number
+- *
+- * @return
+- *  > 0 group fd
+- *  < 0 for errors
+- */
+-__rte_internal
+-int
+-rte_vfio_get_group_fd(int iommu_group_num);
+-
+ /**
+  * @internal
+  * Create a new container for device binding.
+@@ -297,42 +261,6 @@ int
+ rte_vfio_container_assign_device(int vfio_container_fd, const char *sysfs_base,
+ 		const char *dev_addr);
+ 
+-/**
+- * @internal
+- * Bind a IOMMU group to a container.
+- *
+- * @param container_fd
+- *   the container's fd
+- *
+- * @param iommu_group_num
+- *   the iommu group number to bind to container
+- *
+- * @return
+- *   group fd if successful
+- *   <0 if failed
+- */
+-__rte_internal
+-int
+-rte_vfio_container_group_bind(int container_fd, int iommu_group_num);
+-
+-/**
+- * @internal
+- * Unbind a IOMMU group from a container.
+- *
+- * @param container_fd
+- *   the container fd of container
+- *
+- * @param iommu_group_num
+- *   the iommu group number to delete from container
+- *
+- * @return
+- *    0 if successful
+- *   <0 if failed
+- */
+-__rte_internal
+-int
+-rte_vfio_container_group_unbind(int container_fd, int iommu_group_num);
+-
+ /**
+  * @internal
+  * Perform DMA mapping for devices in a container.
+diff --git a/lib/eal/linux/eal_vfio.c b/lib/eal/linux/eal_vfio.c
+index 02fec64658..7893d334eb 100644
+--- a/lib/eal/linux/eal_vfio.c
++++ b/lib/eal/linux/eal_vfio.c
+@@ -67,6 +67,9 @@ static int vfio_noiommu_dma_mem_map(int, uint64_t, uint64_t, uint64_t, int);
+ static int vfio_dma_mem_map(struct vfio_config *vfio_cfg, uint64_t vaddr,
+ 		uint64_t iova, uint64_t len, int do_map);
+ 
++static int vfio_container_group_bind(int container_fd, int iommu_group_num);
++static int vfio_container_group_unbind(int container_fd, int iommu_group_num);
++
+ /* IOMMU types we support */
+ static const struct vfio_iommu_type iommu_types[] = {
+ 	/* x86 IOMMU, otherwise known as type 1 */
+@@ -532,9 +535,8 @@ get_vfio_cfg_by_container_fd(int container_fd)
+ 	return NULL;
+ }
+ 
+-RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_get_group_fd)
+ int
+-rte_vfio_get_group_fd(int iommu_group_num)
++vfio_get_group_fd_by_num(int iommu_group_num)
+ {
+ 	struct vfio_config *vfio_cfg;
+ 
+@@ -731,9 +733,8 @@ vfio_sync_default_container(void)
+ 	return -1;
+ }
+ 
+-RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_clear_group)
+-int
+-rte_vfio_clear_group(int vfio_group_fd)
++static int
++vfio_clear_group(int vfio_group_fd)
+ {
+ 	int i;
+ 	struct vfio_config *vfio_cfg;
+@@ -787,7 +788,7 @@ rte_vfio_setup_device(const char *sysfs_base, const char *dev_addr,
+ 		return -1;
+ 
+ 	/* get the actual group fd */
+-	vfio_group_fd = rte_vfio_get_group_fd(iommu_group_num);
++	vfio_group_fd = vfio_get_group_fd_by_num(iommu_group_num);
+ 	if (vfio_group_fd < 0 && vfio_group_fd != -ENOENT)
+ 		return -1;
+ 
+@@ -813,14 +814,14 @@ rte_vfio_setup_device(const char *sysfs_base, const char *dev_addr,
+ 		EAL_LOG(ERR, "%s cannot get VFIO group status, "
+ 			"error %i (%s)", dev_addr, errno, strerror(errno));
+ 		close(vfio_group_fd);
+-		rte_vfio_clear_group(vfio_group_fd);
++		vfio_clear_group(vfio_group_fd);
+ 		return -1;
+ 	} else if (!(group_status.flags & VFIO_GROUP_FLAGS_VIABLE)) {
+ 		EAL_LOG(ERR, "%s VFIO group is not viable! "
+ 			"Not all devices in IOMMU group bound to VFIO or unbound",
+ 			dev_addr);
+ 		close(vfio_group_fd);
+-		rte_vfio_clear_group(vfio_group_fd);
++		vfio_clear_group(vfio_group_fd);
+ 		return -1;
+ 	}
+ 
+@@ -841,7 +842,7 @@ rte_vfio_setup_device(const char *sysfs_base, const char *dev_addr,
+ 				"%s cannot add VFIO group to container, error "
+ 				"%i (%s)", dev_addr, errno, strerror(errno));
+ 			close(vfio_group_fd);
+-			rte_vfio_clear_group(vfio_group_fd);
++			vfio_clear_group(vfio_group_fd);
+ 			return -1;
+ 		}
+ 
+@@ -865,7 +866,7 @@ rte_vfio_setup_device(const char *sysfs_base, const char *dev_addr,
+ 					"%s failed to select IOMMU type",
+ 					dev_addr);
+ 				close(vfio_group_fd);
+-				rte_vfio_clear_group(vfio_group_fd);
++				vfio_clear_group(vfio_group_fd);
+ 				return -1;
+ 			}
+ 			/* lock memory hotplug before mapping and release it
+@@ -882,7 +883,7 @@ rte_vfio_setup_device(const char *sysfs_base, const char *dev_addr,
+ 					"%i (%s)",
+ 					dev_addr, errno, strerror(errno));
+ 				close(vfio_group_fd);
+-				rte_vfio_clear_group(vfio_group_fd);
++				vfio_clear_group(vfio_group_fd);
+ 				rte_mcfg_mem_read_unlock();
+ 				return -1;
+ 			}
+@@ -951,7 +952,7 @@ rte_vfio_setup_device(const char *sysfs_base, const char *dev_addr,
+ 		if (ret < 0) {
+ 			EAL_LOG(ERR, "Could not sync default VFIO container");
+ 			close(vfio_group_fd);
+-			rte_vfio_clear_group(vfio_group_fd);
++			vfio_clear_group(vfio_group_fd);
+ 			return -1;
+ 		}
+ 		/* we have successfully initialized VFIO, notify user */
+@@ -988,7 +989,7 @@ rte_vfio_setup_device(const char *sysfs_base, const char *dev_addr,
+ 		EAL_LOG(WARNING, "Getting a vfio_dev_fd for %s failed",
+ 				dev_addr);
+ 		close(vfio_group_fd);
+-		rte_vfio_clear_group(vfio_group_fd);
++		vfio_clear_group(vfio_group_fd);
+ 		return -1;
+ 	}
+ 
+@@ -1026,9 +1027,9 @@ rte_vfio_release_device(const char *sysfs_base, const char *dev_addr,
+ 	}
+ 
+ 	/* get the actual group fd */
+-	vfio_group_fd = rte_vfio_get_group_fd(iommu_group_num);
++	vfio_group_fd = vfio_get_group_fd_by_num(iommu_group_num);
+ 	if (vfio_group_fd < 0) {
+-		EAL_LOG(INFO, "rte_vfio_get_group_fd failed for %s",
++		EAL_LOG(INFO, "vfio_get_group_fd_by_num failed for %s",
+ 				   dev_addr);
+ 		ret = vfio_group_fd;
+ 		goto out;
+@@ -1064,7 +1065,7 @@ rte_vfio_release_device(const char *sysfs_base, const char *dev_addr,
+ 			goto out;
+ 		}
+ 
+-		if (rte_vfio_clear_group(vfio_group_fd) < 0) {
++		if (vfio_clear_group(vfio_group_fd) < 0) {
+ 			EAL_LOG(INFO, "Error when clearing group for %s",
+ 					   dev_addr);
+ 			ret = -1;
+@@ -2091,7 +2092,7 @@ rte_vfio_container_destroy(int container_fd)
+ 
+ 	for (i = 0; i < RTE_DIM(vfio_cfg->vfio_groups); i++)
+ 		if (vfio_cfg->vfio_groups[i].group_num != -1)
+-			rte_vfio_container_group_unbind(container_fd,
++			vfio_container_group_unbind(container_fd,
+ 				vfio_cfg->vfio_groups[i].group_num);
+ 
+ 	close(container_fd);
+@@ -2122,7 +2123,7 @@ rte_vfio_container_assign_device(int vfio_container_fd, const char *sysfs_base,
+ 		return -1;
+ 	}
+ 
+-	ret = rte_vfio_container_group_bind(vfio_container_fd,
++	ret = vfio_container_group_bind(vfio_container_fd,
+ 			iommu_group_num);
+ 	if (ret < 0) {
+ 		EAL_LOG(ERR,
+@@ -2134,9 +2135,8 @@ rte_vfio_container_assign_device(int vfio_container_fd, const char *sysfs_base,
+ 	return 0;
+ }
+ 
+-RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_container_group_bind)
+-int
+-rte_vfio_container_group_bind(int container_fd, int iommu_group_num)
++static int
++vfio_container_group_bind(int container_fd, int iommu_group_num)
+ {
+ 	struct vfio_config *vfio_cfg;
+ 
+@@ -2149,9 +2149,8 @@ rte_vfio_container_group_bind(int container_fd, int iommu_group_num)
+ 	return vfio_get_group_fd(vfio_cfg, iommu_group_num);
+ }
+ 
+-RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_container_group_unbind)
+-int
+-rte_vfio_container_group_unbind(int container_fd, int iommu_group_num)
++static int
++vfio_container_group_unbind(int container_fd, int iommu_group_num)
+ {
+ 	struct vfio_group *cur_grp = NULL;
+ 	struct vfio_config *vfio_cfg;
+diff --git a/lib/eal/linux/eal_vfio.h b/lib/eal/linux/eal_vfio.h
+index 89c4b5ba45..30389fb274 100644
+--- a/lib/eal/linux/eal_vfio.h
++++ b/lib/eal/linux/eal_vfio.h
+@@ -51,6 +51,8 @@ vfio_set_iommu_type(int vfio_container_fd);
+ int
+ vfio_get_iommu_type(void);
+ 
++int vfio_get_group_fd_by_num(int iommu_group_num);
++
+ /* check if we have any supported extensions */
+ int
+ vfio_has_supported_extensions(int vfio_container_fd);
+diff --git a/lib/eal/linux/eal_vfio_mp_sync.c b/lib/eal/linux/eal_vfio_mp_sync.c
+index 22136f2e8b..3eaeef2fc8 100644
+--- a/lib/eal/linux/eal_vfio_mp_sync.c
++++ b/lib/eal/linux/eal_vfio_mp_sync.c
+@@ -34,7 +34,7 @@ vfio_mp_primary(const struct rte_mp_msg *msg, const void *peer)
+ 	case SOCKET_REQ_GROUP:
+ 		r->req = SOCKET_REQ_GROUP;
+ 		r->group_num = m->group_num;
+-		fd = rte_vfio_get_group_fd(m->group_num);
++		fd = vfio_get_group_fd_by_num(m->group_num);
+ 		if (fd < 0 && fd != -ENOENT)
+ 			r->result = SOCKET_ERR;
+ 		else if (fd == -ENOENT)
 -- 
 2.52.0
 
