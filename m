@@ -2,65 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5174C55174
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Aug 2026 15:37:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69FDBC55ABA
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Aug 2026 17:00:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CA39E4042C;
-	Wed,  5 Aug 2026 17:37:21 +0200 (CEST)
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com
- [209.85.219.50]) by mails.dpdk.org (Postfix) with ESMTP id B14FD4021F
- for <dev@dpdk.org>; Wed,  5 Aug 2026 17:37:19 +0200 (CEST)
-Received: by mail-qv1-f50.google.com with SMTP id
- 6a1803df08f44-8f29ec73064so7679836d6.1
- for <dev@dpdk.org>; Wed, 05 Aug 2026 08:37:19 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2B6FC4027E;
+	Wed,  5 Aug 2026 19:00:51 +0200 (CEST)
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com
+ [209.85.215.170])
+ by mails.dpdk.org (Postfix) with ESMTP id 857D44021F
+ for <dev@dpdk.org>; Wed,  5 Aug 2026 19:00:49 +0200 (CEST)
+Received: by mail-pg1-f170.google.com with SMTP id
+ 41be03b00d2f7-ca88130e09aso979245a12.3
+ for <dev@dpdk.org>; Wed, 05 Aug 2026 10:00:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1785944239; x=1786549039; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=20q0TFA++hih8p3+nuZ+ZA5sd/GInbn7tCLAAEJlYZk=;
- b=djZxx0XAfDkrbS9h1mSO+5Vwk1+wIyUA8r8dqfW/a1vBQQZ98cX7V0sM1saoyglplt
- lO5odDCXcY/scPQtVklVuQ20Xqndsj2i4ZOdAHl0kE+xBTxXrbGiw4AW4P5vlasLm4de
- VmtDMx+iVX2+jPoIUqlmUlgnKIkBU/6qZdzVI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785944239; x=1786549039;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785949248;
+ x=1786554048; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=20q0TFA++hih8p3+nuZ+ZA5sd/GInbn7tCLAAEJlYZk=;
- b=atzP7j5jlNpqHrDoaKZGcq9Jyiz6fi+C6/3B2+kjauOQVwMeQSxzwRj5AjEZ4u9t7W
- bR/kIi3r1+rNm+IENV/h/SS27HQ+eNhLUebLz/w3Ts/ZSwoThIfCtLoYViFTzPYDKC8C
- z0+qlGg9PA0Dh157XbrwdsuFOnu6QRj2nUpjoDQmf6egE4zvHkK9tolB4b2Smh+ArAtV
- g9C3krD7c/L+WVZm/zY7Q0OpkfPdhNn0K91a0Se/lqf83+I9RioOEydZnjNDG8q4Akkz
- oFST5QjouR0Svr7Oq6f5ZuZFjW/2cASgRLWbClA4oBqiwPfHCBM0o73H8GGL8G7nHIwY
- r4jA==
-X-Forwarded-Encrypted: i=1;
- AHgh+RpXPraGS0xDzAoxfyLb3mmXWCT9H+4cRMOE3RVZHUBWAd1Tx3/3IF9WwKzfesILt0KEDXE=@dpdk.org
-X-Gm-Message-State: AOJu0Yy5tBhx1kHp5oTD26/QIJT0S0SRXB1wnSf3qxNiW1+K3ujaeMtu
- VJo5wR+krlV7jymF3nJcvufvGduvlFAd4TjSuGTHHUdx/zV2jBCli1z4RnkNXfs/vVY=
-X-Gm-Gg: AR+sD13dSVoUwwILaG90hw8sIoXNCkV0lNZr6CDrkKK+/eKLLTgIcahCLiF6eJdTxzt
- LgaYC3NPQBGI7TuoRM5MTOHwpgTV3FbqfUkxjg+F6vUVgvIl+VNLqmMKiVB7O9nbzS/RD/fvxxH
- 6F4LQeSxtOOzA2Op96cyuZnIlwNPs2fNFGMrQZHaA8L1cMDNcqxN7Z3CWHnikiLCx5l7qg+0nww
- 8fKNMF/Wn3lU/6fJup7TcsCqSbpnNA2uLNcehURNMgcL7vJ9jkcwXY5QI6vXCp1O9FrUkDuPdgc
- CPCfn3cy9bMhfhy8WDB476HgRUAAd8TiIgAusJnWDg7CU7ODFQsF2eKanB+u1rdbqBq0lcDBaQT
- k7nJ298rbdlfCcsdkNFBIpMFSmGp6puF5v0zBZrLEMzQrQKhNYp7WskUYIeN7Q27VfEq1d5wh+A
- JUpKRaaO/SuRN5DABwLsVErYTHe6+6+BLd/BWeVn8fiIUKKda3fVKlNN1VyFOf1ffbYJ0f
-X-Received: by 2002:a05:6214:d4d:b0:8ee:cee4:7497 with SMTP id
- 6a1803df08f44-9088125aa85mr88061506d6.16.1785944238985; 
- Wed, 05 Aug 2026 08:37:18 -0700 (PDT)
-Received: from d121029.iol.unh.edu ([2606:4100:3880:1210::219])
+ bh=RPDjMQLTWdi6HpS/w2WjK2hvMFca6Po2oI1z6UXywRQ=;
+ b=Jt0U1tTZkX0X7NOS03PFeKnwOYm6c4LkRcd8Q5DN2su4iPniarBYl737ApwqwQk31a
+ ebE7zl3huJOvlNtjRSARLp7UHhGO9kClB3w9qW295cxbgBkl4uzBxbRwmRfITgkJbDQn
+ yG0aMJyPQp3iousLZpo0xH2T6BB4HwEgZXr+8lKuVZmlJ/tFSZ+beUy+gEg6Y4tjUsmM
+ JYl1xbp7OKBzHO540fRnq76U36YZf2/plAv20k0PEnOzXuihM04B9Au6VKBTYWxyLrxT
+ 4iOZx+a14BZwgWL74A+QVy561HhLSnzoDMdSDwQGziYGmMgrpnEPnSifbqWc3wvQrpj1
+ DHEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1785949248; x=1786554048;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=RPDjMQLTWdi6HpS/w2WjK2hvMFca6Po2oI1z6UXywRQ=;
+ b=NjOvAZzwoIC77yU9V4+PSPnl0uVERqISqIWAUfHVHo14QZMAm5ePvwlUlOPL0GPOBh
+ xI6LAe5SSFwwhY05Pj+NaOkwO/v1WjytUBm9hmP4Q1GKfUz0KVIBcAD1fxotrE2nhIqM
+ ytLezZRl86qw/KFyjxw8h4EVQf5t4WrZe4SJBBAEX9xQbrOFm+wd17c+sz/gpo3sneq3
+ tZaABbn+gfrwiknrnXJTBpzrEfabVbko0uMuELPrU35xhnA3RA1WQ4dlsFUnUHcRfaj8
+ IXbnML1REwwwYB8Unpiii6/NlBuWQQzsAwnkHe9in4gj/gplFaxocuqnGMwAXjo5VyR9
+ ywMA==
+X-Gm-Message-State: AOJu0Yynem9Hn3riDOdTo56KPL6cO2y06Nyrd1yetAyaGEyb1HH59Cit
+ sUeg0gvqheDVf4n/ve3k1HcKgfdwsX8wbv/U83Kq/6zS71MJ2LOJHzGtD+MlPa/kQw8/kNaiW4U
+ LW6CH
+X-Gm-Gg: AR+sD10EtYUWugeycQKSQ686/LMqRlRvS7eSLvdIXtdfMcz7fQrl43rB2XQMEpyMMQs
+ /to+6PE3o9leeMfc69hktqSV5NnVCC4kHYnD0viuQuzrSD6wfh4wgUd23bfzvb/Bt8+yhhXsWBa
+ /IATNONsT7Wm+lKA/ikaUXG/CRqp2yKLTMdtMx9Rzb915cUiOe598H58uO/VJmMU1RifyfhbLhX
+ ZGfxuLE0nSOBj9qVSogwJpF3RYBq3G4LZbD6ahX3+LpZjQ7HflyOzbzk6XyYr9isWrh8XrdwzvD
+ FLLcUVDhxlEqyD7yQY/PpMQ2EciOjL7VeRodkDqzltqyWPn3FX3wQS1kBUacQrNDAeedXT73BsA
+ k79gw/sJuLFMNlQxAA4zBqJT9WcQ+E2/0NPvRz2LQxEed6rLO69QTOVi2Fh5YBjpMbgNf7C5Olw
+ 4zp1md1o2iVVqSzNN881Jpb6jRnE88/BXcAOnZYD16mKjJUncqNz4cPwGL6ERigLp0QvY1PBTHU
+ ASuLz6UiPZ9q8xm9iXxQSg26dQ=
+X-Received: by 2002:a05:6a20:6a10:b0:3bf:735d:7fb8 with SMTP id
+ adf61e73a8af0-3cb85ef7a4cmr8963868637.27.1785949247735; 
+ Wed, 05 Aug 2026 10:00:47 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-908846e6155sm18112886d6.43.2026.08.05.08.37.17
+ 5a478bee46e88-31586401507sm17787987eec.9.2026.08.05.10.00.46
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 05 Aug 2026 08:37:18 -0700 (PDT)
-From: Andrew Bailey <abailey@iol.unh.edu>
-To: dladd@iol.unh.edu, dev@dpdk.org, luca.vizzarro@arm.com,
- patrickrobb1997@gmail.com
-Cc: knimoji@iol.unh.edu, lylavoie@iol.unh.edu,
- Andrew Bailey <abailey@iol.unh.edu>
-Subject: [PATCH v1] dts: update configuration for performance test
-Date: Wed,  5 Aug 2026 11:36:58 -0400
-Message-ID: <20260805153658.345207-1-abailey@iol.unh.edu>
-X-Mailer: git-send-email 2.55.0
+ Wed, 05 Aug 2026 10:00:46 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v4] ethdev: add buffer size parameter to
+ rte_eth_dev_get_name_by_port()
+Date: Wed,  5 Aug 2026 10:00:18 -0700
+Message-ID: <20260805170043.199622-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260409013658.965613-1-stephen@networkplumber.org>
+References: <20260409013658.965613-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -76,165 +83,382 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The single core forward performance test suite can run a variety of
-combinations of buffer sizes and number of descriptors. It is beneficial
-if any possible combination of these parameters could be tested against
-a specific delta tolerance; Rather than a globally defined tolerance for
-all testing. Along with this, adjusting traffic duration and test
-repetitions helps users define a more accurate test run if they wish to
-get a more refined average. Furthermore, the cores allotted to TREX can
-vary among systems and should be defined by the user.
+rte_eth_dev_get_name_by_port() uses strcpy() into a caller-provided
+buffer with no bounds checking. A mistaken caller that supplies a
+buffer smaller than RTE_ETH_NAME_MAX_LEN can overflow the buffer.
 
-Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+Add a size parameter and replace strcpy() with strlcpy(), returning
+-ERANGE if the name is truncated. The copy is now performed under
+the ethdev shared data lock so that the name cannot be mutated by
+another process between reading and copying.
+
+Update all in-tree callers to pass sizeof(name) as the new parameter.
+
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- dts/configurations/test_run.example.yaml      |  1 +
- dts/framework/config/test_run.py              |  1 +
- .../testbed_model/traffic_generator/trex.py   |  3 +-
- .../TestSuite_single_core_forward_perf.py     | 52 ++++++++++++++-----
- 4 files changed, 43 insertions(+), 14 deletions(-)
+ app/dumpcap/main.c                           |  8 +++----
+ app/pdump/main.c                             |  8 +++----
+ app/test-pmd/config.c                        |  6 ++---
+ app/test/test_event_eth_tx_adapter.c         |  4 ++--
+ app/test/test_pmd_ring_perf.c                |  4 ++--
+ app/test/test_pmd_tap.c                      |  6 ++---
+ doc/guides/rel_notes/release_26_11.rst       |  3 +++
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c        |  4 ++--
+ drivers/net/cnxk/cnxk_flow.c                 | 10 ++++----
+ examples/multi_process/hotplug_mp/commands.c |  2 +-
+ examples/pipeline/cli.c                      |  2 +-
+ lib/ethdev/rte_ethdev.c                      | 25 ++++++++++++++------
+ lib/ethdev/rte_ethdev.h                      | 10 +++++---
+ lib/pdump/rte_pdump.c                        |  2 +-
+ 14 files changed, 57 insertions(+), 37 deletions(-)
 
-diff --git a/dts/configurations/test_run.example.yaml b/dts/configurations/test_run.example.yaml
-index 51f9ab8237..c6eb086211 100644
---- a/dts/configurations/test_run.example.yaml
-+++ b/dts/configurations/test_run.example.yaml
-@@ -52,6 +52,7 @@ func_traffic_generator:
- #   type: TREX
- #   remote_path: "/opt/trex/v3.03" # The remote path of the traffic generator application.
- #   config: "/opt/trex_config/trex_config.yaml" # Additional configuration files. (Leave blank if not required)
-+#   cores: 10 # The number of cores to run TRex with.
- perf: false # disable performance testing
- func: true # enable functional testing
- crypto: false # disable cryptographic testing
-diff --git a/dts/framework/config/test_run.py b/dts/framework/config/test_run.py
-index 81630df77d..1ffb6b2365 100644
---- a/dts/framework/config/test_run.py
-+++ b/dts/framework/config/test_run.py
-@@ -420,6 +420,7 @@ class TrexTrafficGeneratorConfig(TrafficGeneratorConfig):
-     type: Literal[TrafficGeneratorType.TREX]
-     remote_path: PurePath
-     config: PurePath
-+    cores: int
+diff --git a/app/dumpcap/main.c b/app/dumpcap/main.c
+index 46a6cb251e..47483535fc 100644
+--- a/app/dumpcap/main.c
++++ b/app/dumpcap/main.c
+@@ -244,7 +244,7 @@ static void find_interfaces(void)
  
+ 		/* maybe got passed port number string as name */
+ 		intf->port = get_uint(intf->name, "port_number", UINT16_MAX);
+-		if (rte_eth_dev_get_name_by_port(intf->port, intf->name) < 0)
++		if (rte_eth_dev_get_name_by_port(intf->port, intf->name, sizeof(intf->name)) < 0)
+ 			rte_exit(EXIT_FAILURE, "Invalid port number %u\n",
+ 				 intf->port);
+ 	}
+@@ -261,7 +261,7 @@ static void set_default_interface(void)
+ 	uint16_t p;
  
- #: A union type discriminating traffic generators by the `type` field.
-diff --git a/dts/framework/testbed_model/traffic_generator/trex.py b/dts/framework/testbed_model/traffic_generator/trex.py
-index d53791b0a6..2b52cfcbd1 100644
---- a/dts/framework/testbed_model/traffic_generator/trex.py
-+++ b/dts/framework/testbed_model/traffic_generator/trex.py
-@@ -82,7 +82,7 @@ class TrexTrafficGenerator(PerformanceTrafficGenerator):
+ 	RTE_ETH_FOREACH_DEV(p) {
+-		if (rte_eth_dev_get_name_by_port(p, name) < 0)
++		if (rte_eth_dev_get_name_by_port(p, name, sizeof(name)) < 0)
+ 			continue;
  
-     _streaming_mode: TrexStatelessTXModes = TrexStatelessTXModes.STLTXCont
+ 		intf = add_interface(name);
+@@ -278,7 +278,7 @@ static void dump_interfaces(void)
+ 	uint16_t p;
  
--    _tg_cores: int = 10
-+    _tg_cores: int
+ 	RTE_ETH_FOREACH_DEV(p) {
+-		if (rte_eth_dev_get_name_by_port(p, name) < 0)
++		if (rte_eth_dev_get_name_by_port(p, name, sizeof(name)) < 0)
+ 			continue;
+ 		printf("%u. %s\n", p, name);
+ 	}
+@@ -498,7 +498,7 @@ static void statistics_loop(void)
  
-     _trex_app: BlockingApp
+ 	while (!rte_atomic_load_explicit(&quit_signal, rte_memory_order_relaxed)) {
+ 		RTE_ETH_FOREACH_DEV(p) {
+-			if (rte_eth_dev_get_name_by_port(p, name) < 0)
++			if (rte_eth_dev_get_name_by_port(p, name, sizeof(name)) < 0)
+ 				continue;
  
-@@ -102,6 +102,7 @@ def __init__(self, tg_node: Node, config: TrexTrafficGeneratorConfig) -> None:
-         super().__init__(tg_node=tg_node, config=config)
-         self._tg_node_config = tg_node.config
-         self._tg_config = config
-+        self._tg_cores = config.cores
+ 			r = rte_eth_stats_get(p, &stats);
+diff --git a/app/pdump/main.c b/app/pdump/main.c
+index 1e62c8adc1..1f6135b20e 100644
+--- a/app/pdump/main.c
++++ b/app/pdump/main.c
+@@ -539,16 +539,16 @@ cleanup_pdump_resources(void)
  
-         self._os_session = create_session(self._tg_node.config, "TRex", self._logger)
+ 		/* Remove the vdev(s) created */
+ 		if (pt->dir & RTE_PDUMP_FLAG_RX) {
+-			rte_eth_dev_get_name_by_port(pt->rx_vdev_id, name);
+-			rte_eal_hotplug_remove("vdev", name);
++			if (rte_eth_dev_get_name_by_port(pt->rx_vdev_id, name, sizeof(name)) == 0)
++				rte_eal_hotplug_remove("vdev", name);
+ 		}
  
-diff --git a/dts/tests/TestSuite_single_core_forward_perf.py b/dts/tests/TestSuite_single_core_forward_perf.py
-index 57aecdf7a4..a966d44ebd 100644
---- a/dts/tests/TestSuite_single_core_forward_perf.py
-+++ b/dts/tests/TestSuite_single_core_forward_perf.py
-@@ -32,14 +32,40 @@ class Config(BaseConfig):
-     """Performance test metrics."""
+ 		if (pt->single_pdump_dev)
+ 			continue;
  
-     test_parameters: list[dict[str, int | float]] = [
--        {"frame_size": 64, "num_descriptors": 1024, "expected_mpps": 1.00},
--        {"frame_size": 128, "num_descriptors": 1024, "expected_mpps": 1.00},
--        {"frame_size": 256, "num_descriptors": 1024, "expected_mpps": 1.00},
--        {"frame_size": 512, "num_descriptors": 1024, "expected_mpps": 1.00},
--        {"frame_size": 1024, "num_descriptors": 1024, "expected_mpps": 1.00},
--        {"frame_size": 1518, "num_descriptors": 1024, "expected_mpps": 1.00},
-+        {"frame_size": 64, "num_descriptors": 1024, "expected_mpps": 1.00, "delta_tolerance": 0.05},
-+        {
-+            "frame_size": 128,
-+            "num_descriptors": 1024,
-+            "expected_mpps": 1.00,
-+            "delta_tolerance": 0.05,
-+        },
-+        {
-+            "frame_size": 256,
-+            "num_descriptors": 1024,
-+            "expected_mpps": 1.00,
-+            "delta_tolerance": 0.05,
-+        },
-+        {
-+            "frame_size": 512,
-+            "num_descriptors": 1024,
-+            "expected_mpps": 1.00,
-+            "delta_tolerance": 0.05,
-+        },
-+        {
-+            "frame_size": 1024,
-+            "num_descriptors": 1024,
-+            "expected_mpps": 1.00,
-+            "delta_tolerance": 0.05,
-+        },
-+        {
-+            "frame_size": 1518,
-+            "num_descriptors": 1024,
-+            "expected_mpps": 1.00,
-+            "delta_tolerance": 0.05,
-+        },
-     ]
--    delta_tolerance: float = 0.05
-+    traffic_duration: int = 5
-+    test_repetitions: int = 5
+ 		if (pt->dir & RTE_PDUMP_FLAG_TX) {
+-			rte_eth_dev_get_name_by_port(pt->tx_vdev_id, name);
+-			rte_eal_hotplug_remove("vdev", name);
++			if (rte_eth_dev_get_name_by_port(pt->tx_vdev_id, name, sizeof(name)) == 0)
++				rte_eal_hotplug_remove("vdev", name);
+ 		}
  
+ 	}
+diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
+index aa03eb99cc..b470b95694 100644
+--- a/app/test-pmd/config.c
++++ b/app/test-pmd/config.c
+@@ -697,7 +697,7 @@ device_infos_display(const char *identifier)
+ 							      &mac_addr) == 0)
+ 					print_ethaddr("\n\tMAC address: ",
+ 						      &mac_addr);
+-				rte_eth_dev_get_name_by_port(port_id, name);
++				rte_eth_dev_get_name_by_port(port_id, name, sizeof(name));
+ 				printf("\n\tDevice name: %s", name);
+ 				if (rte_eth_dev_info_get(port_id, &dev_info) == 0)
+ 					device_infos_display_speeds(dev_info.speed_capa);
+@@ -830,7 +830,7 @@ port_infos_display(portid_t port_id)
+ 	       info_border, port_id, info_border);
+ 	if (eth_macaddr_get_print_err(port_id, &mac_addr) == 0)
+ 		print_ethaddr("MAC address: ", &mac_addr);
+-	rte_eth_dev_get_name_by_port(port_id, name);
++	rte_eth_dev_get_name_by_port(port_id, name, sizeof(name));
+ 	printf("\nDevice name: %s", name);
+ 	printf("\nDriver name: %s", dev_info.driver_name);
  
- @requires_link_topology(LinkTopology.TWO_LINKS)
-@@ -51,7 +77,8 @@ class TestSingleCoreForwardPerf(TestSuite):
-     def set_up_suite(self):
-         """Set up the test suite."""
-         self.test_parameters = self.config.test_parameters
--        self.delta_tolerance = self.config.delta_tolerance
-+        self.traffic_duration = self.config.traffic_duration
-+        self.test_repetitions = self.config.test_repetitions
+@@ -1031,7 +1031,7 @@ port_summary_display(portid_t port_id)
+ 	if (ret != 0)
+ 		return;
  
-     def _transmit(self, testpmd: TestPmd, frame_size: int, repetitions: int = 1) -> float:
-         """Create a testpmd session with every rule in the given list, verify jump behavior.
-@@ -76,8 +103,7 @@ def _transmit(self, testpmd: TestPmd, frame_size: int, repetitions: int = 1) ->
-         rx_avg = 0.0
+-	rte_eth_dev_get_name_by_port(port_id, name);
++	rte_eth_dev_get_name_by_port(port_id, name, sizeof(name));
+ 	ret = eth_macaddr_get_print_err(port_id, &mac_addr);
+ 	if (ret != 0)
+ 		return;
+diff --git a/app/test/test_event_eth_tx_adapter.c b/app/test/test_event_eth_tx_adapter.c
+index bec298a8b8..a7cbe39367 100644
+--- a/app/test/test_event_eth_tx_adapter.c
++++ b/app/test/test_event_eth_tx_adapter.c
+@@ -192,8 +192,8 @@ deinit_ports(void)
  
-         for _ in range(repetitions):
--            # Transmit for 5 seconds.
--            stats = assess_performance_by_packet(packet=packet, duration=5)
-+            stats = assess_performance_by_packet(packet=packet, duration=self.traffic_duration)
-             rx_avg += stats.rx_pps
-         return rx_avg / (repetitions * 1_000_000)
+ 	for (i = 0; i < RTE_DIM(default_params.port); i++) {
+ 		rte_eth_dev_stop(default_params.port[i]);
+-		rte_eth_dev_get_name_by_port(default_params.port[i], name);
+-		rte_vdev_uninit(name);
++		if (rte_eth_dev_get_name_by_port(default_params.port[i], name, sizeof(name)) == 0)
++			rte_vdev_uninit(name);
+ 		for (j = 0; j < RTE_DIM(default_params.r[i]); j++)
+ 			rte_ring_free(default_params.r[i][j]);
+ 	}
+diff --git a/app/test/test_pmd_ring_perf.c b/app/test/test_pmd_ring_perf.c
+index 3636df5c73..ac60f506ab 100644
+--- a/app/test/test_pmd_ring_perf.c
++++ b/app/test/test_pmd_ring_perf.c
+@@ -157,8 +157,8 @@ test_ring_pmd_perf(void)
+ 	/* release port and ring resources */
+ 	if (rte_eth_dev_stop(ring_ethdev_port) != 0)
+ 		return -1;
+-	rte_eth_dev_get_name_by_port(ring_ethdev_port, name);
+-	rte_vdev_uninit(name);
++	if (rte_eth_dev_get_name_by_port(ring_ethdev_port, name, sizeof(name)) == 0)
++		rte_vdev_uninit(name);
+ 	rte_ring_free(r);
+ 	return 0;
+ }
+diff --git a/app/test/test_pmd_tap.c b/app/test/test_pmd_tap.c
+index 6d0e8b4f54..ded26bc5e3 100644
+--- a/app/test/test_pmd_tap.c
++++ b/app/test/test_pmd_tap.c
+@@ -594,7 +594,7 @@ test_tap_multi_queue(void)
+ 	uint16_t port;
+ 	RTE_ETH_FOREACH_DEV(port) {
+ 		char name[RTE_ETH_NAME_MAX_LEN];
+-		if (rte_eth_dev_get_name_by_port(port, name) == 0 &&
++		if (rte_eth_dev_get_name_by_port(port, name, sizeof(name)) == 0 &&
+ 		    strstr(name, "net_tap_mq"))
+ 			goto found;
+ 	}
+@@ -739,7 +739,7 @@ test_tap_setup(void)
+ 	/* Find the port IDs */
+ 	RTE_ETH_FOREACH_DEV(port_id) {
+ 		char name[RTE_ETH_NAME_MAX_LEN];
+-		if (rte_eth_dev_get_name_by_port(port_id, name) != 0)
++		if (rte_eth_dev_get_name_by_port(port_id, name, sizeof(name)) != 0)
+ 			continue;
  
-@@ -134,21 +160,21 @@ def single_core_forward_perf(self) -> None:
-                 **driver_specific_testpmd_args,
-             ) as testpmd:
-                 params["measured_mpps"] = round(
--                    self._transmit(testpmd, frame_size, repetitions=5), 3
-+                    self._transmit(testpmd, frame_size, repetitions=self.test_repetitions), 3
-                 )
-                 params["performance_delta"] = round(
-                     (float(params["measured_mpps"]) - float(params["expected_mpps"]))
-                     / float(params["expected_mpps"]),
-                     3,
-                 )
--                params["pass"] = float(params["performance_delta"]) >= -self.delta_tolerance
-+                params["pass"] = float(params["performance_delta"]) >= -params["delta_tolerance"]
+ 		if (strstr(name, "net_tap0"))
+@@ -785,7 +785,7 @@ test_tap_rx_queue_setup(void)
+ 	port = -1;
+ 	RTE_ETH_FOREACH_DEV(port_id) {
+ 		char name[RTE_ETH_NAME_MAX_LEN];
+-		if (rte_eth_dev_get_name_by_port(port_id, name) == 0 &&
++		if (rte_eth_dev_get_name_by_port(port_id, name, sizeof(name)) == 0 &&
+ 		    strstr(name, "net_tap_neg")) {
+ 			port = port_id;
+ 			break;
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index c8cc86295d..c271174af7 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -93,6 +93,9 @@ API Changes
+    Also, make sure to start the actual text at the margin.
+    =======================================================
  
-         self._produce_stats_table(self.test_parameters)
++* ethdev: Added ``size`` parameter to ``rte_eth_dev_get_name_by_port()``
++  to prevent buffer overflows.
++
  
-         for params in self.test_parameters:
-             verify(
-                 params["pass"] is True,
--                f"""Packets forwarded is less than {(1 - self.delta_tolerance) * 100}%
-+                f"""Packets forwarded is less than {(1 - params["delta_tolerance"]) * 100}%
-                 of the expected baseline.
-                 Measured MPPS = {params["measured_mpps"]}
-                 Expected MPPS = {params["expected_mpps"]}""",
+ ABI Changes
+ -----------
+diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
+index 6ca9d3309b..e1ffc64c5e 100644
+--- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
++++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
+@@ -608,7 +608,7 @@ ulp_tf_ctx_shared_session_open(struct bnxt *bp,
+ 
+ 	memset(&parms, 0, sizeof(parms));
+ 	rc = rte_eth_dev_get_name_by_port(ethdev->data->port_id,
+-					  parms.ctrl_chan_name);
++					  parms.ctrl_chan_name, sizeof(parms.ctrl_chan_name));
+ 	if (rc) {
+ 		BNXT_DRV_DBG(ERR, "Invalid port %d, rc = %d\n",
+ 			     ethdev->data->port_id, rc);
+@@ -786,7 +786,7 @@ ulp_tf_ctx_session_open(struct bnxt *bp,
+ 	memset(&params, 0, sizeof(params));
+ 
+ 	rc = rte_eth_dev_get_name_by_port(ethdev->data->port_id,
+-					  params.ctrl_chan_name);
++					  params.ctrl_chan_name, sizeof(params.ctrl_chan_name));
+ 	if (rc) {
+ 		BNXT_DRV_DBG(ERR, "Invalid port %d, rc = %d\n",
+ 			     ethdev->data->port_id, rc);
+diff --git a/drivers/net/cnxk/cnxk_flow.c b/drivers/net/cnxk/cnxk_flow.c
+index c1c48eb7ab..eb51ce37e8 100644
+--- a/drivers/net/cnxk/cnxk_flow.c
++++ b/drivers/net/cnxk/cnxk_flow.c
+@@ -117,7 +117,7 @@ npc_parse_port_id_action(struct rte_eth_dev *eth_dev, const struct rte_flow_acti
+ 
+ 	port_act = (const struct rte_flow_action_port_id *)action->conf;
+ 
+-	rc = rte_eth_dev_get_name_by_port(port_act->id, if_name);
++	rc = rte_eth_dev_get_name_by_port(port_act->id, if_name, sizeof(if_name));
+ 	if (rc) {
+ 		plt_err("Name not found for output port id");
+ 		goto err_exit;
+@@ -517,7 +517,8 @@ cnxk_map_actions(struct rte_eth_dev *eth_dev, const struct rte_flow_attr *attr,
+ 		case RTE_FLOW_ACTION_TYPE_PORT_REPRESENTOR:
+ 			in_actions[i].conf = actions->conf;
+ 			act_ethdev = (const struct rte_flow_action_ethdev *)actions->conf;
+-			if (rte_eth_dev_get_name_by_port(act_ethdev->port_id, if_name)) {
++			if (rte_eth_dev_get_name_by_port(act_ethdev->port_id, if_name,
++							 sizeof(if_name))) {
+ 				plt_err("Name not found for output port id");
+ 				goto err_exit;
+ 			}
+@@ -557,7 +558,7 @@ cnxk_map_actions(struct rte_eth_dev *eth_dev, const struct rte_flow_attr *attr,
+ 				    actions->type != RTE_FLOW_ACTION_TYPE_PORT_ID ?
+ 					    act_ethdev->port_id :
+ 					    port_act->id,
+-				    if_name)) {
++				    if_name, sizeof(if_name))) {
+ 				plt_err("Name not found for output port id");
+ 				goto err_exit;
+ 			}
+@@ -713,7 +714,8 @@ cnxk_map_pattern(struct rte_eth_dev *eth_dev, const struct rte_flow_item pattern
+ 		if (pattern->type == RTE_FLOW_ITEM_TYPE_REPRESENTED_PORT ||
+ 		    pattern->type == RTE_FLOW_ITEM_TYPE_PORT_REPRESENTOR) {
+ 			rep_eth_dev = (const struct rte_flow_item_ethdev *)pattern->spec;
+-			if (rte_eth_dev_get_name_by_port(rep_eth_dev->port_id, if_name)) {
++			if (rte_eth_dev_get_name_by_port(rep_eth_dev->port_id, if_name,
++							 sizeof(if_name))) {
+ 				plt_err("Name not found for output port id");
+ 				goto fail;
+ 			}
+diff --git a/examples/multi_process/hotplug_mp/commands.c b/examples/multi_process/hotplug_mp/commands.c
+index 900eb9f774..92a4f0378b 100644
+--- a/examples/multi_process/hotplug_mp/commands.c
++++ b/examples/multi_process/hotplug_mp/commands.c
+@@ -36,7 +36,7 @@ cmd_list_parsed(__rte_unused void *parsed_result,
+ 	cmdline_printf(cl, "list all etherdev\n");
+ 
+ 	RTE_ETH_FOREACH_DEV(port_id) {
+-		rte_eth_dev_get_name_by_port(port_id, dev_name);
++		rte_eth_dev_get_name_by_port(port_id, dev_name, sizeof(dev_name));
+ 		if (strlen(dev_name) > 0)
+ 			cmdline_printf(cl, "%d\t%s\n", port_id, dev_name);
+ 		else
+diff --git a/examples/pipeline/cli.c b/examples/pipeline/cli.c
+index 901706fab9..b65c6c8be6 100644
+--- a/examples/pipeline/cli.c
++++ b/examples/pipeline/cli.c
+@@ -396,7 +396,7 @@ ethdev_show(uint16_t port_id, char **out, size_t *out_size)
+ 	if (rte_eth_link_get(port_id, &link) != 0)
+ 		return;
+ 
+-	rte_eth_dev_get_name_by_port(port_id, name);
++	rte_eth_dev_get_name_by_port(port_id, name, sizeof(name));
+ 	rte_eth_stats_get(port_id, &stats);
+ 	rte_eth_macaddr_get(port_id, &addr);
+ 	rte_eth_dev_get_mtu(port_id, &mtu);
+diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
+index 9efeaf77cb..23219ae992 100644
+--- a/lib/ethdev/rte_ethdev.c
++++ b/lib/ethdev/rte_ethdev.c
+@@ -723,10 +723,8 @@ rte_eth_dev_count_total(void)
+ 
+ RTE_EXPORT_SYMBOL(rte_eth_dev_get_name_by_port)
+ int
+-rte_eth_dev_get_name_by_port(uint16_t port_id, char *name)
++rte_eth_dev_get_name_by_port(uint16_t port_id, char *name, size_t size)
+ {
+-	char *tmp;
+-
+ 	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -ENODEV);
+ 
+ 	if (name == NULL) {
+@@ -735,13 +733,26 @@ rte_eth_dev_get_name_by_port(uint16_t port_id, char *name)
+ 		return -EINVAL;
+ 	}
+ 
++	if (size == 0) {
++		RTE_ETHDEV_LOG_LINE(ERR,
++			"Cannot get ethdev port %u name with zero-size buffer", port_id);
++		return -EINVAL;
++	}
++
+ 	rte_spinlock_lock(rte_mcfg_ethdev_get_lock());
+-	/* shouldn't check 'rte_eth_devices[i].data',
+-	 * because it might be overwritten by VDEV PMD */
+-	tmp = eth_dev_shared_data->data[port_id].name;
++	/*
++	 * Use the shared data name rather than rte_eth_devices[].data->name
++	 * because VDEV PMDs may overwrite the per-process data pointer.
++	 */
++	size_t n = strlcpy(name, eth_dev_shared_data->data[port_id].name, size);
+ 	rte_spinlock_unlock(rte_mcfg_ethdev_get_lock());
+ 
+-	strcpy(name, tmp);
++	if (n >= size) {
++		RTE_ETHDEV_LOG_LINE(ERR,
++				    "ethdev port %u name exceeds buffer size %zu",
++				    port_id, size);
++		return -ERANGE;
++	}
+ 
+ 	rte_ethdev_trace_get_name_by_port(port_id, name);
+ 
+diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
+index ee400b386f..f11b54f184 100644
+--- a/lib/ethdev/rte_ethdev.h
++++ b/lib/ethdev/rte_ethdev.h
+@@ -5704,14 +5704,18 @@ rte_eth_dev_get_port_by_name(const char *name, uint16_t *port_id);
+  * @param port_id
+  *   Port identifier of the device.
+  * @param name
+- *   Buffer of size RTE_ETH_NAME_MAX_LEN to store the name.
++ *   Buffer to store the name.
++ * @param size
++ *   Size of the buffer pointed to by @p name. Should be at least
++ *   RTE_ETH_NAME_MAX_LEN bytes.
+  * @return
+  *   - (0) if successful.
+  *   - (-ENODEV) if *port_id* is invalid.
+- *   - (-EINVAL) on failure.
++ *   - (-EINVAL) if *name* is NULL or *size* is 0.
++ *   - (-ERANGE) if the buffer is too small for the device name.
+  */
+ int
+-rte_eth_dev_get_name_by_port(uint16_t port_id, char *name);
++rte_eth_dev_get_name_by_port(uint16_t port_id, char *name, size_t size);
+ 
+ /**
+  * Check that numbers of Rx and Tx descriptors satisfy descriptors limits from
+diff --git a/lib/pdump/rte_pdump.c b/lib/pdump/rte_pdump.c
+index ac94efe7ff..57c81d4322 100644
+--- a/lib/pdump/rte_pdump.c
++++ b/lib/pdump/rte_pdump.c
+@@ -736,7 +736,7 @@ pdump_validate_port(uint16_t port, char *name)
+ 		return -1;
+ 	}
+ 
+-	ret = rte_eth_dev_get_name_by_port(port, name);
++	ret = rte_eth_dev_get_name_by_port(port, name, sizeof(name));
+ 	if (ret < 0) {
+ 		PDUMP_LOG_LINE(ERR, "port %u to name mapping failed",
+ 			  port);
 -- 
-2.55.0
+2.53.0
 
