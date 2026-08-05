@@ -2,59 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33A96C55174
-	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Aug 2026 05:45:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10FE8C55822
+	for <dpdk-dev@archiver.kernel.org>; Wed,  5 Aug 2026 05:56:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2020D40144;
-	Wed,  5 Aug 2026 07:45:57 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 448A44003C
- for <dev@dpdk.org>; Wed,  5 Aug 2026 07:45:55 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=iWpW7Sk/OvZ+AsLWpHsTJbcgQcG+IBKq2OBGjEstyY4=;
- b=oZhdmBBLf0vpPrsbbz/Qzce3R4pgC/rj961dW9CGTfJUOHi0Vccd3GomBu5ClJ+5vyGVyhMex
- IcLKNiNPdfQOfBr2wrbZ1Pu4xOe1LowyeMFR/OvpHvyxoPPhqRMjuIN3xRNTk3K91R9MNBbhh55
- EzjRv7jQNmtv9zXxYtk+rnU=
-Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4hFKBC5XJPzJ468v;
- Wed,  5 Aug 2026 13:45:07 +0800 (CST)
-Received: from dubpeml500005.china.huawei.com (unknown [7.214.145.207])
- by mail.maildlp.com (Postfix) with ESMTPS id 49D2E40569;
- Wed,  5 Aug 2026 13:45:52 +0800 (CST)
-Received: from dubpemt100001.china.huawei.com (7.214.147.107) by
- dubpeml500005.china.huawei.com (7.214.145.207) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 5 Aug 2026 06:45:51 +0100
-Received: from dubpeml100001.china.huawei.com (7.214.144.137) by
- dubpemt100001.china.huawei.com (7.214.147.107) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 5 Aug 2026 06:45:51 +0100
-Received: from dubpeml100001.china.huawei.com ([7.214.144.137]) by
- dubpeml100001.china.huawei.com ([7.214.144.137]) with mapi id 15.02.1544.036; 
- Wed, 5 Aug 2026 06:45:51 +0100
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>, "Stephen
- Hemminger" <stephen@networkplumber.org>
-CC: "dev@dpdk.org" <dev@dpdk.org>, Bruce Richardson
- <bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id CA21B40144;
+	Wed,  5 Aug 2026 07:56:15 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id B79B84003C
+ for <dev@dpdk.org>; Wed,  5 Aug 2026 07:56:14 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 883AB2051A;
+ Wed,  5 Aug 2026 07:56:14 +0200 (CEST)
+Content-class: urn:content-classes:message
 Subject: RE: [PATCH] eal/x86: optimize memcpy of small 64-byte blocks
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Date: Wed, 5 Aug 2026 07:56:13 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F659BD@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+In-Reply-To: <6f474724bc22441a8a4f516f3398ca76@huawei.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
 Thread-Topic: [PATCH] eal/x86: optimize memcpy of small 64-byte blocks
-Thread-Index: AQHdJB42oNL4gJj070KJtRurBEIGmLaN+WoAgAAJXwCAAOt0oA==
-Date: Wed, 5 Aug 2026 05:45:51 +0000
-Message-ID: <6f474724bc22441a8a4f516f3398ca76@huawei.com>
+Thread-Index: AQHdJB42oNL4gJj070KJtRurBEIGmLaN+WoAgAAJXwCAAOt0oIAABRpA
 References: <20260804143305.1344327-1-mb@smartsharesystems.com>
  <20260804085210.74763eb5@phoenix.local>
  <98CBD80474FA8B44BF855DF32C47DC35F659B8@smartserver.smartshare.dk>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F659B8@smartserver.smartshare.dk>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.126.173.34]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+ <6f474724bc22441a8a4f516f3398ca76@huawei.com>
+From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
+ "Stephen Hemminger" <stephen@networkplumber.org>
+Cc: <dev@dpdk.org>,
+	"Bruce Richardson" <bruce.richardson@intel.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -68,17 +51,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQoNCj4gPiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3Bs
-dW1iZXIub3JnXQ0KPiA+IFNlbnQ6IFR1ZXNkYXksIDQgQXVndXN0IDIwMjYgMTcuNTINCj4gPg0K
-PiA+IE9uIFR1ZSwgIDQgQXVnIDIwMjYgMTQ6MzM6MDQgKzAwMDANCj4gPiBNb3J0ZW4gQnLDuHJ1
-cCA8bWJAc21hcnRzaGFyZXN5c3RlbXMuY29tPiB3cm90ZToNCj4gPg0KPiA+ID4gKwkvKiBDb21t
-b24gd2F5IGZvciBzbWFsbCBjb3B5IHNpemUgb2YgNjQtYnl0ZSBibG9ja3MuIFVubGlrZWx5LCBz
-bw0KPiA+IGNvbnN0YW50IHNpemUgb25seSAqLw0KPiA+ID4gKwlpZiAoX19ydGVfY29uc3RhbnQo
-bikgJiYgKG4gJiA2MykgPT0gMCAmJiBuIDw9DQo+ID4gUlRFX01FTUNQWV9CTE9DS182NF9NQVgp
-IHsNCj4gPiA+ICsJCXZvaWQgKnJldCA9IGRzdDsNCj4gPiA+ICsNCj4gPg0KPiA+IE1heWJlIGp1
-c3QgbGV0IGNvbXBpbGVyIGRlY2lkZSwgaXQgd2lsbCBnZW5lcmF0ZSB2ZWN0b3IgaW5zdHJ1Y3Rp
-b25zIGluDQo+ID4gbW9zdCBjYXNlcy4NCj4gPg0KPiA+IAlpZiAoX19ydGVfY29uc3RhbnQobikp
-DQo+ID4gCQlyZXR1cm4gbWVtcGNweShkc3QsIHNyYywgbik7DQo+IA0KPiBNYXliZSBpbiBtb3N0
-LCBidXQgbm90IGluIGFsbDoNCj4gaHR0cHM6Ly9nb2Rib2x0Lm9yZy96L0t2ZEtxVDVyWQ0KDQpX
-aXRoICctbWF2eCcgb3IgJy1tYXZ4NTEyZicgaXQgbG9va3MgbGlrZSBpdCBkb2VzIGZvciB5b3Vy
-IHNhbXBsZSBjb2RlLg0KDQoNCg==
+PiBGcm9tOiBLb25zdGFudGluIEFuYW55ZXYgW21haWx0bzprb25zdGFudGluLmFuYW55ZXZAaHVh
+d2VpLmNvbV0NCj4gU2VudDogV2VkbmVzZGF5LCA1IEF1Z3VzdCAyMDI2IDA3LjQ2DQo+IA0KPiA+
+ID4gRnJvbTogU3RlcGhlbiBIZW1taW5nZXIgW21haWx0bzpzdGVwaGVuQG5ldHdvcmtwbHVtYmVy
+Lm9yZ10NCj4gPiA+IFNlbnQ6IFR1ZXNkYXksIDQgQXVndXN0IDIwMjYgMTcuNTINCj4gPiA+DQo+
+ID4gPiBPbiBUdWUsICA0IEF1ZyAyMDI2IDE0OjMzOjA0ICswMDAwDQo+ID4gPiBNb3J0ZW4gQnLD
+uHJ1cCA8bWJAc21hcnRzaGFyZXN5c3RlbXMuY29tPiB3cm90ZToNCj4gPiA+DQo+ID4gPiA+ICsJ
+LyogQ29tbW9uIHdheSBmb3Igc21hbGwgY29weSBzaXplIG9mIDY0LWJ5dGUgYmxvY2tzLg0KPiBV
+bmxpa2VseSwgc28NCj4gPiA+IGNvbnN0YW50IHNpemUgb25seSAqLw0KPiA+ID4gPiArCWlmIChf
+X3J0ZV9jb25zdGFudChuKSAmJiAobiAmIDYzKSA9PSAwICYmIG4gPD0NCj4gPiA+IFJURV9NRU1D
+UFlfQkxPQ0tfNjRfTUFYKSB7DQo+ID4gPiA+ICsJCXZvaWQgKnJldCA9IGRzdDsNCj4gPiA+ID4g
+Kw0KPiA+ID4NCj4gPiA+IE1heWJlIGp1c3QgbGV0IGNvbXBpbGVyIGRlY2lkZSwgaXQgd2lsbCBn
+ZW5lcmF0ZSB2ZWN0b3INCj4gaW5zdHJ1Y3Rpb25zIGluDQo+ID4gPiBtb3N0IGNhc2VzLg0KPiA+
+ID4NCj4gPiA+IAlpZiAoX19ydGVfY29uc3RhbnQobikpDQo+ID4gPiAJCXJldHVybiBtZW1wY3B5
+KGRzdCwgc3JjLCBuKTsNCj4gPg0KPiA+IE1heWJlIGluIG1vc3QsIGJ1dCBub3QgaW4gYWxsOg0K
+PiA+IGh0dHBzOi8vZ29kYm9sdC5vcmcvei9LdmRLcVQ1clkNCj4gDQo+IFdpdGggJy1tYXZ4JyBv
+ciAnLW1hdng1MTJmJyBpdCBsb29rcyBsaWtlIGl0IGRvZXMgZm9yIHlvdXIgc2FtcGxlIGNvZGUu
+DQoNCkl0IGFsc28gZG9lcyB3aXRoIC1tc3NlNC4yIHdoZW4gU1ogaXMgcmVkdWNlZCB0byAyNTYg
+Ynl0ZXMuDQpDbGFuZyBzd2l0Y2hlcyB0byBpbmxpbmUgd2hlbiBTWiBpcyByZWR1Y2VkIHRvIDEy
+OCBieXRlcy4NCg0KSXQgc2VlbXMgdGhlIGNvbXBpbGVyIGhhcyBhIHRocmVzaG9sZCBmb3Igd2hl
+biB0byBpbmxpbmUgYW5kIHdoZW4gdG8gY2FsbCB0aGUgQyBsaWJyYXJ5J3MgbWVtY3B5IHN1YnJv
+dXRpbmUuDQpUaGUgdGhyZXNob2xkIGRlcGVuZHMgb24gYm90aCBjb3B5IHNpemUgYW5kIHZlY3Rv
+ciByZWdpc3RlciBzaXplLg0KQW5kIGl0IGlzIGNvbXBpbGVyIGRlcGVuZGVudC4NCg0KV2l0aCBy
+dGVfbWVtY3B5KCkgaXQgaXMgYWx3YXlzIGlubGluZS4NCg0K
