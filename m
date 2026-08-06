@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E153DC56208
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 14:13:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE03C55ABF
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 14:13:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ECF3440E17;
-	Thu,  6 Aug 2026 16:11:57 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E553940E1B;
+	Thu,  6 Aug 2026 16:11:58 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
- by mails.dpdk.org (Postfix) with ESMTP id 4B9BA40E03
+ by mails.dpdk.org (Postfix) with ESMTP id DE8B940E0C
  for <dev@dpdk.org>; Thu,  6 Aug 2026 16:11:54 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1786025515; x=1817561515;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=pRTtLvOFrQNIvTlICY58eHZ46QAC5vqp9NOIv+jyQ9s=;
- b=hKZ8AD2xtKb+upYDNpRqJ865siZOW3ETVFSz7xmhY+loFeMcWwnNVk88
- aROo87n31laxi4VM6lucKBtKjVx5XHTPZ9lC9zS+4yriAPks/6I1FA1JR
- UYnb+hKeT3clYwgkaQZsK6OlJyM6OtVz+J7qe5WfG6DHxT4hZJUEEj7Ty
- YhxDUDFGvl4Zvb1gw8GW5dotlNKD7w2gvUTPSdY8AoUmsQK40Z5r/HVN/
- AdsY0fSiVu5SY5dU0OBD5knH9NWNYxK11tE2L4DzmE2SWDoeiU30qzMyZ
- /DoJaLwLP0cCpyRZn7PFYi08nvoOwi8azHeHv59YeipTvvcaT1SMBk7FE w==;
-X-CSE-ConnectionGUID: tJiOw3sNRJiIR0Z1AaXl3A==
-X-CSE-MsgGUID: 7sbH0erlTNS/3UOdf37pww==
-X-IronPort-AV: E=McAfee;i="6800,10657,11867"; a="85590045"
-X-IronPort-AV: E=Sophos;i="6.25,208,1779174000"; d="scan'208";a="85590045"
+ bh=a1X7lEqqkQj2CC+M7GIKJ/o8LrEZf0rD/OMP/Ud5zwQ=;
+ b=eiB21ekaeWOfjzl+tInpoaWLH7GwHlHKzUSOhragLRQQ/Kp7e7yAfxk1
+ 9DWwK8sNCB9Ldn654+junDEq6bD/YT1nDrkeU/h3DsDouH4U92xuT66kg
+ /ib71DFrqn0L1oAQQHDp+ip/bLs7oxNtR7wjiiIGXB/muAt/+nUCWIHbw
+ P5JUuZX4VmRwETpZJyNrU7muTZj6TBbpAiyw0MwrvrxiNyajOi/FojXD3
+ cXcjth1I9zBmg5NV0OXgitrxTxKEuj54k4KTeX1RkFFtt926FzgkFzjZB
+ USU/xCKtxdzY6gFyYXDkb4dgm5yHNA4RTTfhJgcirgcxwJ0H3csvdz5CR Q==;
+X-CSE-ConnectionGUID: bi8BZzduT46dvLLrHw2+mg==
+X-CSE-MsgGUID: vIu53psHRFeqWOFzAfbBuQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11867"; a="85590047"
+X-IronPort-AV: E=Sophos;i="6.25,208,1779174000"; d="scan'208";a="85590047"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Aug 2026 07:11:54 -0700
-X-CSE-ConnectionGUID: NJMPdfS6TSq+4s3P7tyreA==
-X-CSE-MsgGUID: A/tZS4ckSJuWULcLPHKWdQ==
+ 06 Aug 2026 07:11:55 -0700
+X-CSE-ConnectionGUID: aJd6MNpLRqqP9YUzfXa2Yg==
+X-CSE-MsgGUID: W4BIS87CSUa8dzpW693YnA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,208,1779174000"; d="scan'208";a="292015205"
+X-IronPort-AV: E=Sophos;i="6.25,208,1779174000"; d="scan'208";a="292015209"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa002.jf.intel.com with ESMTP; 06 Aug 2026 07:11:53 -0700
+ by orviesa002.jf.intel.com with ESMTP; 06 Aug 2026 07:11:54 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Christian Koue Muf <ckm@napatech.com>,
- Serhii Iliushyk <sil-plv@napatech.com>
-Subject: [PATCH v10 18/20] net/ntnic: use the new VFIO mode API
-Date: Thu,  6 Aug 2026 15:11:18 +0100
-Message-ID: <e696ee32fd1c859901d10568090fbba1fa24bb0e.1786025388.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org,
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v10 19/20] vfio: remove no-IOMMU check API
+Date: Thu,  6 Aug 2026 15:11:19 +0100
+Message-ID: <781094f56b23c816057dee614dec58ccd6f8af06.1786025388.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1786025387.git.anatoly.burakov@intel.com>
  <cover.1786025387.git.anatoly.burakov@intel.com>
@@ -60,26 +60,76 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use new VFIO mode API to query no-IOMMU status.
+The `rte_vfio_noiommu_is_enabled()` check has now been replaced by the new
+mode API, so remove it.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/ntnic/ntnic_ethdev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/eal/freebsd/eal.c      |  6 ------
+ lib/eal/include/rte_vfio.h | 14 --------------
+ lib/eal/linux/eal_vfio.c   |  7 -------
+ 3 files changed, 27 deletions(-)
 
-diff --git a/drivers/net/ntnic/ntnic_ethdev.c b/drivers/net/ntnic/ntnic_ethdev.c
-index 7cc90a7a5b..8b6bca974c 100644
---- a/drivers/net/ntnic/ntnic_ethdev.c
-+++ b/drivers/net/ntnic/ntnic_ethdev.c
-@@ -2690,7 +2690,7 @@ nthw_pci_probe(struct rte_pci_driver *pci_drv, struct rte_pci_device *pci_dev)
- 			(pci_dev->device.devargs->data ? pci_dev->device.devargs->data : "NULL"));
- 	}
+diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
+index 6c1d1e3751..bb05a969a9 100644
+--- a/lib/eal/freebsd/eal.c
++++ b/lib/eal/freebsd/eal.c
+@@ -850,12 +850,6 @@ int rte_vfio_is_enabled(__rte_unused const char *modname)
+ 	return 0;
+ }
  
--	const int n_rte_vfio_no_io_mmu_enabled = rte_vfio_noiommu_is_enabled();
-+	const int n_rte_vfio_no_io_mmu_enabled = rte_vfio_get_mode() == RTE_VFIO_MODE_NOIOMMU;
- 	NT_LOG(DBG, NTNIC, "vfio_no_iommu_enabled=%d", n_rte_vfio_no_io_mmu_enabled);
+-RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_noiommu_is_enabled)
+-int rte_vfio_noiommu_is_enabled(void)
+-{
+-	return 0;
+-}
+-
+ RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_get_group_num)
+ int
+ rte_vfio_get_group_num(__rte_unused const char *sysfs_base,
+diff --git a/lib/eal/include/rte_vfio.h b/lib/eal/include/rte_vfio.h
+index 6f21fa85ce..6a4d101e33 100644
+--- a/lib/eal/include/rte_vfio.h
++++ b/lib/eal/include/rte_vfio.h
+@@ -170,20 +170,6 @@ __rte_internal
+ enum rte_vfio_mode
+ rte_vfio_get_mode(void);
  
- 	if (n_rte_vfio_no_io_mmu_enabled) {
+-/**
+- * @internal
+- * Check if VFIO NOIOMMU mode is enabled.
+- *
+- * This function is only relevant on Linux in group mode.
+- *
+- * @return
+- *   1 if enabled.
+- *   0 if not enabled or not supported.
+- */
+-__rte_internal
+-int
+-rte_vfio_noiommu_is_enabled(void);
+-
+ /**
+  * @internal
+  * Parse IOMMU group number for a device.
+diff --git a/lib/eal/linux/eal_vfio.c b/lib/eal/linux/eal_vfio.c
+index 715e329974..5263bea240 100644
+--- a/lib/eal/linux/eal_vfio.c
++++ b/lib/eal/linux/eal_vfio.c
+@@ -1277,13 +1277,6 @@ container_dma_unmap(struct container *cfg, uint64_t vaddr, uint64_t iova,
+ 	return ret;
+ }
+ 
+-RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_noiommu_is_enabled)
+-int
+-rte_vfio_noiommu_is_enabled(void)
+-{
+-	return vfio_cfg.mode == RTE_VFIO_MODE_NOIOMMU;
+-}
+-
+ RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_container_create)
+ int
+ rte_vfio_container_create(void)
 -- 
 2.52.0
 
