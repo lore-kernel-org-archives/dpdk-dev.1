@@ -2,39 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B83D6C5AC7A
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Aug 2026 11:27:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B44EBC2A09B
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Aug 2026 13:07:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 57A7340E2A;
-	Fri,  7 Aug 2026 13:26:44 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 797144027E
- for <dev@dpdk.org>; Fri,  7 Aug 2026 13:26:31 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 61C451A0124;
- Fri,  7 Aug 2026 13:26:31 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com
- (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 29F8E1A011E;
- Fri,  7 Aug 2026 13:26:31 +0200 (CEST)
-Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
- [92.120.147.250])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id A82EC1800088;
- Fri,  7 Aug 2026 19:26:30 +0800 (+08)
-From: Gagandeep Singh <g.singh@nxp.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 98FC5402DF;
+	Fri,  7 Aug 2026 15:07:03 +0200 (CEST)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com
+ [209.85.128.180])
+ by mails.dpdk.org (Postfix) with ESMTP id BA0254027E
+ for <dev@dpdk.org>; Thu,  6 Aug 2026 19:26:53 +0200 (CEST)
+Received: by mail-yw1-f180.google.com with SMTP id
+ 00721157ae682-81ed000b507so23779147b3.0
+ for <dev@dpdk.org>; Thu, 06 Aug 2026 10:26:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=weka.io; s=google; t=1786037213; x=1786642013; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=9xtJf7MLPYDWVSPr7+eVIe55sJGgXemZtJDu1MyRIvY=;
+ b=Kcm4DTVDUZQF8hTe7JDQ8aZTtoKOVjcvBd9+jhh0rVXSK38Nnbrqkauwn9517exoRj
+ JBp47icDBDW278Y/2hqHIxjTGKULAmAU/RDp9Rr37uwN6NQxeQUmBSTw9OTpHJ4bALej
+ Gt7NGR0wqpmx8sDMbhyBeR943Fdn6DsKpfFs4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1786037213; x=1786642013;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=9xtJf7MLPYDWVSPr7+eVIe55sJGgXemZtJDu1MyRIvY=;
+ b=rEuwhfrmxxHMqx5nzWEr8LBfXQaTw4cbzx6D+ljKSLye7FSB0r3UmPGHi3A6vGeIps
+ yNkWxKh7laYJMpl25nGXo7mFUOmmR7HAruYz7x+5DR2x52+GxTYCGlwngPR9tR6vmMVR
+ 9xqUYikqD5NSHQCp4JEhIFyvXNDgTv2klVbi7D5MpCmGGpFyrtdF6eUSmyx9OyPhwlh+
+ 9kJxXsnXQ+oCH00KpQCAByDTUGy4a3x3NELQK0ax01yIutstIiGVXtd2pOpqwNvQ/KK3
+ sCc47Qwx1VcAPPLJ4eUije0OEVsjBT+p2sMO3deRoXyBtB8NEsfjrgd/tYwrOD16OEiw
+ r7Ig==
+X-Gm-Message-State: AOJu0YyMH10nVctG+x68LJvqNjggxCfzVMgMpuetvLcwEqyi9GZ++NwX
+ rZtFjV0TX1aeaky8eSTm0dgHlR1JaqR4fHs+t7HIE07AD+wJOS3MaeB7RfbhQXc4CW0e3Smjh3w
+ QJPfAhUeq3z4FuSt39+XvxX30UglL4QOjO3yKM7li9fi33DcssuOWnpJxeHztpT1kRwVarVO6mM
+ 29FXCuAcE3a89IZUV9HhmDMuLJfIEroUXyaZBtrIH99KU=
+X-Gm-Gg: AR+sD132QRu2YTldPYb9Crqjr9pY0Shf4TTInByGG9cpX4CefijIuxjncxUyATT4/gR
+ ZaQ+v/ZeYqi/55rJoDHdadc72KcyANQrUMI5yn1G2TQ2XLRT5hb4fM8tmvoweoifJROYSWaqUJN
+ kXnJc46jdcSuEH/38lDzGAUyQBJsY+RDc1njzhOyhVZP5qZ8K2LYwsEb8sVy06yN1LG4Vt15Zg/
+ 2DrAvBO8/VgvNcFxGNxDUZ7d1Ffm0V9Q04WzB6QlAgmUKO0GVKazy4PJSmax0Q93Qh8VN7B6RCR
+ ZzDPiHJXFjGklQdRr3PG/KS7M0WS+y9ESdWdlxbo+f+rpJWowPK6BnOtUgjoNnudPO6ZqOvtY10
+ 1CV6912LXg8n+UA1vrfU0BdKHSsu+rVk1Rnc/EGa/8ZTgRjZlWkICUubCZgUq55Sr7/4NnOS/bP
+ mS4UPOJOugKJ8IDXN9uPNKd8OQUthdcUeh6SObviYbmio2B37dTnDJSpBA8Di3eMW8lRZ4TPzaH
+ sfXngBACRJmVdMZG1SpuxnIZ9fVQWi9CZdTumiRwQ==
+X-Received: by 2002:a05:690c:6081:b0:81e:6fd:93b4 with SMTP id
+ 00721157ae682-82022523c7bmr100376837b3.19.1786037212641; 
+ Thu, 06 Aug 2026 10:26:52 -0700 (PDT)
+Received: from rita-ruvinsky-Precision-3490.wekalab.io ([185.114.120.1])
+ by smtp.gmail.com with ESMTPSA id
+ 00721157ae682-82013261c83sm43073417b3.18.2026.08.06.10.26.50
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 06 Aug 2026 10:26:52 -0700 (PDT)
+From: Rita Ruvinsky <rita.ruvinsky@weka.io>
 To: dev@dpdk.org
-Cc: hemant.agrawal@nxp.com,
-	Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v4 14/14] net/enetc4: add WRR Tx scheduler devarg for VF rings
-Date: Fri,  7 Aug 2026 16:56:23 +0530
-Message-Id: <20260807112623.1402493-15-g.singh@nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20260807112623.1402493-1-g.singh@nxp.com>
-References: <20260807070241.1151161-1-g.singh@nxp.com>
- <20260807112623.1402493-1-g.singh@nxp.com>
+Cc: longli@microsoft.com, weh@microsoft.com, stephen@networkplumber.org,
+ Rita Ruvinsky <rita.ruvinsky@weka.io>, stable@dpdk.org
+Subject: [PATCH v2 1/2] net/mana: fix MR length truncation for chunks over 4GB
+Date: Thu,  6 Aug 2026 20:26:39 +0300
+Message-ID: <20260806172640.2456451-1-rita.ruvinsky@weka.io>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+X-Mailman-Approved-At: Fri, 07 Aug 2026 15:07:01 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,262 +78,126 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add enetc4_txq_wrr devarg to configure per-ring WRR weights in the
-NETC LEAF-level Tx scheduler (TBaMR register, bits [6:4]).
+mana_range.len is a uint32_t, so a mempool chunk of 4GB or more
+truncates modulo 2^32 -- exactly 4GB becomes 0, 15GB becomes 3GB.
 
-The NETC Tx scheduler has three levels:
-  - ROOT (port/TC): strict priority + CBS (PF/port space)
-  - MID  (SI/VSI):  WBFS shaping (PF space)
-  - LEAF (Tx BDR):  strict priority + frame-based WRR (VF/SI space)
+The guard against priv->max_mr_size cannot catch this because it
+compares the already-truncated value, and the device advertises
+max_mr_size as UINT64_MAX. ibv_reg_mr() then fails with EINVAL on a
+zero length, or silently registers a region far shorter than the pool,
+so lookups for buffers past that boundary never find an MR and no Rx
+WQE can be posted.
 
-TBaMR is in the VF own SI space, so no Linux PF involvement is
-needed for PRIO or WRR configuration.
+Widen the length to uint64_t through the MR path, including the
+multi-process request that forwards it to the primary process.
 
-Changes:
-- enetc_hw.h: add ENETC_TBMR_WRR_MASK, ENETC_TBMR_WRR(n) macros for
-  TBaMR bits [6:4], and ENETC_TBMR_PRIO_MASK for bits [2:0]
-- enetc.h: add txq_wrr pointer to enetc_eth_hw struct
-- enetc4_ethdev.c: add parse_txq_wrr() and wire ENETC4_TXQ_WRR devarg
-  through enetc4_get_devargs() and enetc4_dev_configure(); apply WRR
-  bits in enetc4_tx_queue_setup() and enetc4_tx_queue_start()
-
-Usage:
-  # strict priority: ring 0 highest
-  -a 0002:00:12.0,enetc4_txq_prior="3|2|1"
-
-  # WRR 2:4:1 on same-priority rings
-  -a 0002:00:12.0,enetc4_txq_prior="1|1|1",enetc4_txq_wrr="2|4|1"
-
-Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
+Fixes: 0f5db3c68ba7 ("net/mana: implement memory registration")
+Cc: stable@dpdk.org
+Signed-off-by: Rita Ruvinsky <rita.ruvinsky@weka.io>
+Reviewed-by: Long Li <longli@microsoft.com>
 ---
- doc/guides/rel_notes/release_26_11.rst |  1 +
- drivers/net/enetc/base/enetc_hw.h      |  5 ++
- drivers/net/enetc/enetc.h              |  1 +
- drivers/net/enetc/enetc4_ethdev.c      | 97 ++++++++++++++++++++------
- 4 files changed, 82 insertions(+), 22 deletions(-)
+v2:
+- Rebased on main; resolves the conflict with the device reset
+  changes in mana.h reported by Stephen Hemminger and the Intel CI.
+- Added Reviewed-by from Long Li.
 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index d69888aafb..3ea34523fe 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -73,6 +73,7 @@ New Features
-   * Added SI-based port VLAN insertion (Tx) and removal (Rx) for ENETC4 PF and VF.
-   * Updated ENETC4 VF link status reporting to use bitmask encoding.
-   * Added TX PAUSE support for the ENETC4 VF via RX congestion mode.
-+  * Added WRR Tx scheduler devarg (``enetc4_txq_wrr``) for ENETC4 VF ring weights.
+ drivers/net/mana/mana.h |  4 ++--
+ drivers/net/mana/mp.c   |  4 ++--
+ drivers/net/mana/mr.c   | 11 ++++++-----
+ 3 files changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/net/mana/mana.h b/drivers/net/mana/mana.h
+index a7b301484a..79879b7626 100644
+--- a/drivers/net/mana/mana.h
++++ b/drivers/net/mana/mana.h
+@@ -602,7 +602,7 @@ struct mana_mp_param {
  
- Removed Items
- -------------
-diff --git a/drivers/net/enetc/base/enetc_hw.h b/drivers/net/enetc/base/enetc_hw.h
-index 33d075fe59..5a71f01db9 100644
---- a/drivers/net/enetc/base/enetc_hw.h
-+++ b/drivers/net/enetc/base/enetc_hw.h
-@@ -86,6 +86,11 @@ enum enetc_bdr_type {TX, RX};
+ 	/* MANA_MP_REQ_CREATE_MR */
+ 	uintptr_t addr;
+-	uint32_t len;
++	uint64_t len;
+ };
  
- #define ENETC_RTBLENR_LEN(n)		((n) & ~0x7)
- #define ENETC_TBMR_EN			BIT(31)
-+/* TBaMR[WRR] bits [6:4]: weight for same-priority ring arbitration (0=1x .. 7=8x). */
-+#define ENETC_TBMR_WRR_MASK		GENMASK(6, 4)
-+#define ENETC_TBMR_WRR(n)		((((n) - 1) & 0x7) << 4)
-+/* TBaMR[PRIO] bits [2:0]: strict priority (0=lowest, 7=highest). */
-+#define ENETC_TBMR_PRIO_MASK		GENMASK(2, 0)
+ #define MANA_MP_NAME	"net_mana_mp"
+@@ -611,7 +611,7 @@ int mana_mp_init_secondary(void);
+ void mana_mp_uninit_primary(void);
+ void mana_mp_uninit_secondary(void);
+ int mana_mp_req_verbs_cmd_fd(struct rte_eth_dev *dev);
+-int mana_mp_req_mr_create(struct mana_priv *priv, uintptr_t addr, uint32_t len);
++int mana_mp_req_mr_create(struct mana_priv *priv, uintptr_t addr, uint64_t len);
+ int mana_map_doorbell_secondary(struct rte_eth_dev *eth_dev, int fd);
  
- /* Port regs, offset: 1_0000h */
- #define ENETC_PORT_BASE			0x10000
-diff --git a/drivers/net/enetc/enetc.h b/drivers/net/enetc/enetc.h
-index 8aaf8a7eb1..e0943d093a 100644
---- a/drivers/net/enetc/enetc.h
-+++ b/drivers/net/enetc/enetc.h
-@@ -134,6 +134,7 @@ struct enetc_eth_hw {
- 	uint32_t vsi_timeout; /* VSI-PSI message wait timeout (iterations) */
- 	uint32_t vsi_delay;   /* VSI-PSI message wait delay (us) */
- 	uint32_t *txq_prior;  /* per-queue TX priority (TBMR priority bits) */
-+	uint32_t *txq_wrr;    /* per-queue TX WRR weight pre-shifted for TBMR[WRR] */
- 	uint8_t nc_mode;      /* 1 = non-cacheable BD memory, use _nc ops */
- 	uint8_t rxq_intr_en;  /* 1 = per-queue Rx MSI-X interrupts enabled */
- 	/* 1 = legacy PF-to-VF link message layout (4-bit speed / 4-bit cookie),
-diff --git a/drivers/net/enetc/enetc4_ethdev.c b/drivers/net/enetc/enetc4_ethdev.c
-index 2355522515..e490ecaf4c 100644
---- a/drivers/net/enetc/enetc4_ethdev.c
-+++ b/drivers/net/enetc/enetc4_ethdev.c
-@@ -28,22 +28,26 @@ static uint64_t dev_tx_offloads_sup =
- 	RTE_ETH_TX_OFFLOAD_UDP_TSO;
- 
- #define ENETC4_TXQ_PRIORITIES	"enetc4_txq_prior"
-+#define ENETC4_TXQ_WRR		"enetc4_txq_wrr"
- #define ENETC4_NC_MEMORY	"nc"
- 
-+
+ int mana_mp_req_on_rxtx(struct rte_eth_dev *dev, enum mana_mp_req_type type);
+diff --git a/drivers/net/mana/mp.c b/drivers/net/mana/mp.c
+index 1670f1ea9c..f278bcdce5 100644
+--- a/drivers/net/mana/mp.c
++++ b/drivers/net/mana/mp.c
+@@ -20,7 +20,7 @@ extern struct mana_shared_data *mana_shared_data;
+  * Process MR request from secondary process.
+  */
  static int
- parse_txq_prior(const char *key __rte_unused, const char *value, void *opaque)
+-mana_mp_mr_create(struct mana_priv *priv, uintptr_t addr, uint32_t len)
++mana_mp_mr_create(struct mana_priv *priv, uintptr_t addr, uint64_t len)
  {
- 	struct rte_eth_dev *dev = (struct rte_eth_dev *)opaque;
- 	struct enetc_eth_hw *hw =
--		ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
--	char *input_str = strdup(value);
-+				ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	char *input_str;
- 	char *str;
- 	uint32_t i = 0;
+ 	struct ibv_mr *ibv_mr;
+ 	int ret;
+@@ -331,7 +331,7 @@ mana_mp_req_verbs_cmd_fd(struct rte_eth_dev *dev)
+  * Request the primary process to register a MR.
+  */
+ int
+-mana_mp_req_mr_create(struct mana_priv *priv, uintptr_t addr, uint32_t len)
++mana_mp_req_mr_create(struct mana_priv *priv, uintptr_t addr, uint64_t len)
+ {
+ 	struct rte_mp_msg mp_req = {0};
+ 	struct rte_mp_msg *mp_res;
+diff --git a/drivers/net/mana/mr.c b/drivers/net/mana/mr.c
+index 8914f4cf04..0ce1a76ed5 100644
+--- a/drivers/net/mana/mr.c
++++ b/drivers/net/mana/mr.c
+@@ -13,7 +13,8 @@
+ struct mana_range {
+ 	uintptr_t	start;
+ 	uintptr_t	end;
+-	uint32_t	len;
++	/* 64-bit: a mempool chunk can be 4GB or more, which overflows uint32_t. */
++	uint64_t	len;
+ };
  
-+	input_str = strdup(value);
- 	if (!input_str)
--		return -ENOMEM;
-+		return -1;
+ void
+@@ -47,13 +48,13 @@ mana_new_pmd_mr(struct mana_mr_btree *local_tree, struct mana_priv *priv,
  
--	hw->txq_prior = calloc(hw->max_tx_queues, sizeof(uint32_t));
-+	rte_free(hw->txq_prior);
-+	hw->txq_prior = rte_zmalloc(NULL, hw->max_tx_queues * sizeof(uint32_t), 0);
- 	if (!hw->txq_prior) {
- 		free(input_str);
- 		return -ENOMEM;
-@@ -51,7 +55,46 @@ parse_txq_prior(const char *key __rte_unused, const char *value, void *opaque)
- 
- 	str = strtok(input_str, "|");
- 	while (str != NULL && i < hw->max_tx_queues) {
--		hw->txq_prior[i++] = (uint32_t)atoi(str);
-+		hw->txq_prior[i++] = atoi(str) & ENETC_TBMR_PRIO_MASK;
-+		str = strtok(NULL, "|");
-+	}
-+
-+	free(input_str);
-+	return 0;
-+}
-+
-+/* Parse enetc4_txq_wrr="w0|w1|..." devarg; weight 1..8 per ring. */
-+static int parse_txq_wrr(const char *key __rte_unused, const char *value,
-+			  void *opaque)
-+{
-+	struct rte_eth_dev *dev = (struct rte_eth_dev *)opaque;
-+	struct enetc_eth_hw *hw =
-+			ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	char *input_str;
-+	char *str;
-+	uint32_t i = 0;
-+	int w;
-+
-+	input_str = strdup(value);
-+	if (!input_str)
-+		return -1;
-+
-+	rte_free(hw->txq_wrr);
-+	hw->txq_wrr = rte_zmalloc(NULL,
-+			hw->max_tx_queues * sizeof(uint32_t), 0);
-+	if (!hw->txq_wrr) {
-+		free(input_str);
-+		return -1;
-+	}
-+
-+	str = strtok(input_str, "|");
-+	while (str != NULL && i < hw->max_tx_queues) {
-+		w = atoi(str);
-+		if (w < 1)
-+			w = 1;
-+		if (w > 8)
-+			w = 8;
-+		hw->txq_wrr[i++] = ENETC_TBMR_WRR(w);
- 		str = strtok(NULL, "|");
- 	}
- 
-@@ -97,6 +140,13 @@ enetc4_get_devargs(struct rte_eth_dev *dev, const char *key)
- 			return 0;
+ 	for (i = 0; i < pool->nb_mem_chunks; i++) {
+ 		if (ranges[i].len > priv->max_mr_size) {
+-			DP_LOG(ERR, "memory chunk size %u exceeding max MR",
++			DP_LOG(ERR, "memory chunk size %" PRIu64 " exceeding max MR",
+ 			       ranges[i].len);
+ 			return -ENOMEM;
  		}
- 	}
-+	if (!strcmp(key, ENETC4_TXQ_WRR)) {
-+		if (rte_kvargs_process(kvlist, key,
-+				       parse_txq_wrr, (void *)dev) < 0) {
-+			rte_kvargs_free(kvlist);
-+			return 0;
-+		}
-+	}
- 	if (!strcmp(key, ENETC4_NC_MEMORY)) {
- 		if (rte_kvargs_process(kvlist, key,
- 				       parse_nc, (void *)dev) < 0) {
-@@ -109,19 +159,6 @@ enetc4_get_devargs(struct rte_eth_dev *dev, const char *key)
- 	return 0;
- }
  
--/* Supported Rx offloads */
--static uint64_t dev_rx_offloads_sup =
--	RTE_ETH_RX_OFFLOAD_IPV4_CKSUM |
--	RTE_ETH_RX_OFFLOAD_UDP_CKSUM |
--	RTE_ETH_RX_OFFLOAD_TCP_CKSUM |
--	RTE_ETH_RX_OFFLOAD_SCATTER;
--
--/* Supported Tx offloads */
--static uint64_t dev_tx_offloads_sup =
--	RTE_ETH_TX_OFFLOAD_IPV4_CKSUM |
--	RTE_ETH_TX_OFFLOAD_UDP_CKSUM |
--	RTE_ETH_TX_OFFLOAD_TCP_CKSUM |
--	RTE_ETH_TX_OFFLOAD_MULTI_SEGS;
+ 		DP_LOG(DEBUG,
+-		       "registering memory chunk start 0x%" PRIxPTR " len %u",
++		       "registering memory chunk start 0x%" PRIxPTR " len %" PRIu64,
+ 		       ranges[i].start, ranges[i].len);
  
- static int
- enetc4_dev_start(struct rte_eth_dev *dev)
-@@ -458,7 +495,9 @@ enetc4_tx_queue_setup(struct rte_eth_dev *dev,
- 
- 		/* apply TX queue priority if configured */
- 		if (priv->hw.txq_prior)
--			tx_en |= priv->hw.txq_prior[tx_ring->index];
-+			tx_data |= priv->hw.txq_prior[tx_ring->index];
-+		if (priv->hw.txq_wrr)
-+			tx_data |= priv->hw.txq_wrr[tx_ring->index];
- 		/* enable ring */
- 		enetc4_txbdr_wr(&priv->hw.hw, tx_ring->index,
- 			       ENETC_TBMR, tx_en);
-@@ -613,7 +652,6 @@ enetc4_rx_queue_setup(struct rte_eth_dev *dev,
- 	struct enetc_eth_adapter *adapter =
- 			ENETC_DEV_PRIVATE(data->dev_private);
- 	uint64_t rx_offloads = data->dev_conf.rxmode.offloads;
--	uint32_t rx_enable;
- 	uint32_t rsc_size;
- 	bool keep_crc;
- 	bool rsc_enable;
-@@ -869,7 +907,10 @@ enetc4_dev_close(struct rte_eth_dev *dev)
- 		dev->data->tx_queues[i] = NULL;
- 	}
- 	dev->data->nb_tx_queues = 0;
--
-+	rte_free(hw->txq_prior);
-+	hw->txq_prior = NULL;
-+	rte_free(hw->txq_wrr);
-+	hw->txq_wrr = NULL;
- 	if (rte_eal_iova_mode() == RTE_IOVA_PA)
- 		dpaax_iova_table_depopulate();
- 
-@@ -1020,6 +1061,11 @@ enetc4_dev_configure(struct rte_eth_dev *dev)
- 	for (i = 0; i < dev->data->nb_tx_queues; i++)
- 		enetc4_rxbdr_wr(enetc_hw, i, ENETC_TBMR, ENETC_BMR_RESET);
- 
-+	hw->nc_mode = 0;
-+	enetc4_get_devargs(dev, ENETC4_TXQ_PRIORITIES);
-+	enetc4_get_devargs(dev, ENETC4_TXQ_WRR);
-+	enetc4_get_devargs(dev, ENETC4_NC_MEMORY);
-+
- 	if (dev->data->nb_rx_queues <= 1)
- 		return 0;
- 
-@@ -1142,7 +1188,13 @@ enetc4_tx_queue_start(struct rte_eth_dev *dev, uint16_t qidx)
- 	if (dev->data->tx_queue_state[qidx] == RTE_ETH_QUEUE_STATE_STOPPED) {
- 		tx_data = enetc4_txbdr_rd(&priv->hw.hw, tx_ring->index,
- 					 ENETC_TBMR);
--		tx_data = tx_data | ENETC_TBMR_EN;
-+		/* Clear scheduler bits before applying fresh devarg values. */
-+		tx_data &= ~(ENETC_TBMR_PRIO_MASK | ENETC_TBMR_WRR_MASK);
-+		tx_data |= ENETC_TBMR_EN;
-+		if (priv->hw.txq_prior)
-+			tx_data |= priv->hw.txq_prior[tx_ring->index];
-+		if (priv->hw.txq_wrr)
-+			tx_data |= priv->hw.txq_wrr[tx_ring->index];
- 		enetc4_txbdr_wr(&priv->hw.hw, tx_ring->index, ENETC_TBMR,
- 			       tx_data);
- 		dev->data->tx_queue_state[qidx] = RTE_ETH_QUEUE_STATE_STARTED;
-@@ -1457,5 +1509,6 @@ RTE_PMD_REGISTER_PCI_TABLE(net_enetc4, pci_id_enetc4_map);
- RTE_PMD_REGISTER_KMOD_DEP(net_enetc4, "* vfio-pci");
- RTE_PMD_REGISTER_PARAM_STRING(net_enetc4,
- 			      ENETC4_TXQ_PRIORITIES "=<string> "
-+			      ENETC4_TXQ_WRR "=<string> "
- 			      ENETC4_NC_MEMORY "=<int>");
- RTE_LOG_REGISTER_DEFAULT(enetc4_logtype_pmd, NOTICE);
+ 		if (rte_eal_process_type() == RTE_PROC_SECONDARY) {
+@@ -62,7 +63,7 @@ mana_new_pmd_mr(struct mana_mr_btree *local_tree, struct mana_priv *priv,
+ 						    ranges[i].len);
+ 			if (ret) {
+ 				DP_LOG(ERR,
+-				       "MR failed start 0x%" PRIxPTR " len %u",
++				       "MR failed start 0x%" PRIxPTR " len %" PRIu64,
+ 				       ranges[i].start, ranges[i].len);
+ 				return ret;
+ 			}
+@@ -98,7 +99,7 @@ mana_new_pmd_mr(struct mana_mr_btree *local_tree, struct mana_priv *priv,
+ 				return ret;
+ 			}
+ 		} else {
+-			DP_LOG(ERR, "MR failed at 0x%" PRIxPTR " len %u",
++			DP_LOG(ERR, "MR failed at 0x%" PRIxPTR " len %" PRIu64,
+ 			       ranges[i].start, ranges[i].len);
+ 			return -errno;
+ 		}
 -- 
-2.25.1
+2.43.0
 
