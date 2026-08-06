@@ -2,32 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3DB6C55ABF
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 11:29:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83C12C55ABF
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 11:29:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5B3F740A8B;
-	Thu,  6 Aug 2026 13:28:51 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id EC19A40BA6;
+	Thu,  6 Aug 2026 13:28:52 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id A5FCD40696
- for <dev@dpdk.org>; Thu,  6 Aug 2026 13:28:44 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5190E406B6
+ for <dev@dpdk.org>; Thu,  6 Aug 2026 13:28:45 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 85F671A00B9;
- Thu,  6 Aug 2026 13:28:44 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 35FA21A009D;
+ Thu,  6 Aug 2026 13:28:45 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4FAAA1A00AE;
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C77851A00B7;
  Thu,  6 Aug 2026 13:28:44 +0200 (CEST)
 Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
  [92.120.147.250])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id C384918000B0;
- Thu,  6 Aug 2026 19:28:43 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 479721800088;
+ Thu,  6 Aug 2026 19:28:44 +0800 (+08)
 From: Gagandeep Singh <g.singh@nxp.com>
 To: dev@dpdk.org, Sachin Saxena <sachin.saxena@nxp.com>,
  Vanshika Shukla <vanshika.shukla@nxp.com>
 Cc: hemant.agrawal@nxp.com
-Subject: [PATCH 09/14] net/enetc: support stats reset for VF
-Date: Thu,  6 Aug 2026 16:58:31 +0530
-Message-Id: <20260806112836.707921-10-g.singh@nxp.com>
+Subject: [PATCH 10/14] net/enetc4: add per-queue Rx interrupt support for VF
+Date: Thu,  6 Aug 2026 16:58:32 +0530
+Message-Id: <20260806112836.707921-11-g.singh@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260806112836.707921-1-g.singh@nxp.com>
 References: <20260806112836.707921-1-g.singh@nxp.com>
@@ -47,165 +47,344 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The NETC SI-level hardware counters (SIROCT0, SIRFRM0, SITOCT0,
-SITFRM0, SITDFCR) are read-only for a VF and cannot be directly
-zeroed. No VSI-PSI command class exists for stats reset, and using
-FLR/soft-reset to clear counters is not reliable due to a known
-hardware erratum on some NETC platforms.
+Add MSI-X per-queue Rx interrupt support to the ENETC4 VF PMD on the
+cacheable (default) Rx path. This allows applications such as l3fwd-power
+to block in epoll_wait when no traffic is present, reducing CPU utilization
+to near zero.
 
-Implement stats_reset for the enetc4 VF PMD using a software
-snapshot/delta approach: on stats_reset, the current HW counter
-values are captured as a baseline in a new per-device
-enetc4_vf_stats_saved struct. stats_get then reports the delta
-(current_hw_value - saved_baseline), so counters appear to start
-from zero after each reset call. Per-ring software Rx error
-accumulators (ierrors) are zeroed directly on reset.
+MSI-X vector 0 is reserved for the PSI-to-VSI mailbox. Rx queue i is
+mapped to MSI-X vector i + 1 via ENETC_SIMSIRRV. Per-ring coalescing is
+enabled with ICPT=1 so the first arriving packet fires the interrupt
+immediately. The SIRXIDR W1C detect bit is cleared before re-arming
+ENETC_RBIER to prevent spurious interrupts after traffic stops.
 
-Register the stats_reset callback in both VF ops tables
-(enetc4_vf_ops and enetc4_vf_ops_no_vsi_m) so the feature is
-available regardless of whether the VSI messaging path is enabled.
+The interrupt infrastructure (rte_intr_efd_enable +
+rte_intr_vec_list_alloc) is set up before rte_intr_enable() so that
+vfio-pci can wire each MSI-X vector to its eventfd when programming
+the MSI-X table.
+
+enetc4_dev_configure() is updated to trigger interrupt setup when
+intr_conf.rxq is set (not only when intr_conf.lsc is set), as applications
+like l3fwd-power set intr_conf.rxq without setting lsc.
+
+Documentation is updated to describe the feature, list the kernel and
+host setup steps, and provide an example l3fwd-power command for single
+queue/core interrupt-driven operation.
 
 Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
+ doc/guides/nics/enetc4.rst             | 69 +++++++++++++++++++-
+ doc/guides/nics/features/enetc4.ini    |  1 +
  doc/guides/rel_notes/release_26_11.rst |  1 +
- drivers/net/enetc/enetc.h              | 17 +++++++
- drivers/net/enetc/enetc4_vf.c          | 61 +++++++++++++++++++++++---
- 3 files changed, 74 insertions(+), 5 deletions(-)
+ drivers/net/enetc/base/enetc4_hw.h     |  2 +
+ drivers/net/enetc/enetc.h              |  1 +
+ drivers/net/enetc/enetc4_ethdev.c      |  9 +--
+ drivers/net/enetc/enetc4_vf.c          | 89 +++++++++++++++++++++++++-
+ 7 files changed, 166 insertions(+), 6 deletions(-)
 
+diff --git a/doc/guides/nics/enetc4.rst b/doc/guides/nics/enetc4.rst
+index cd757be12f..d8e323d614 100644
+--- a/doc/guides/nics/enetc4.rst
++++ b/doc/guides/nics/enetc4.rst
+@@ -59,6 +59,10 @@ Key functionality includes:
+   Segment Coalesce (RSC), enabled when the TCP LRO Rx offload flag is
+   requested. RSC requires the FCS to be stripped, so it cannot be combined
+   with the KEEP_CRC Rx offload.
++- Per-queue Rx interrupts on VFs (cacheable Rx path only), enabling
++  interrupt-driven receive with ``vfio-pci``. Applications set
++  ``intr_conf.rxq = 1`` in ``rte_eth_conf`` to activate this feature.
++  See `Rx Interrupt Mode (VF)`_ for setup details.
+ - Firmware version: The NETC IP version is reported via ``rte_eth_dev_fw_version_get``.
+ - Registers dump: The station interface, port (PF only) and BD ring registers are dumped via ``rte_eth_dev_get_reg_info``.
+ 
+@@ -95,7 +99,9 @@ The following dependencies are not part of DPDK and must be installed separately
+ Driver compilation and testing
+ ------------------------------
+ 
+-Follow instructions available in the document :doc:`build_and_test` to launch **testpmd**.
++Follow instructions available in the document
++:ref:`compiling and testing a PMD for a NIC <pmd_build_and_test>`
++to launch **testpmd**.
+ 
+ 
+ Driver Arguments (devargs)
+@@ -156,3 +162,64 @@ PF/Common devargs
+   Usage example::
+ 
+     dpdk-testpmd -a 0000:00:00.0,nc=1 -- -i
++
++
++Rx Interrupt Mode (VF)
++----------------------
++
++The ENETC4 VF PMD supports per-queue MSI-X Rx interrupts on the cacheable
++(default) Rx path. This allows applications to block in ``epoll_wait``
++instead of busy-polling, reducing CPU utilization when traffic is absent.
++
++**MSI-X vector assignment**
++
++ENETC4 VF MSI-X vector 0 is reserved for the PSI-to-VSI mailbox interrupt
++(link status notifications). Rx queue ``i`` is mapped to vector ``i + 1``.
++The driver allocates all required eventfds before calling
++``rte_intr_enable()`` so that ``vfio-pci`` can wire each MSI-X vector to
++its eventfd when it programs the MSI-X table.
++
++**Kernel and driver requirements**
++
++- ``vfio-pci`` kernel module with no-IOMMU mode enabled (no SMMU required).
++- The non-cacheable memory mode (``nc=1`` devarg) does **not** support
++  Rx interrupts and returns ``-ENOTSUP`` from ``rx_queue_intr_enable``.
++
++**Host setup**
++
++.. code-block:: console
++
++   # Enable vfio-pci no-IOMMU mode (if SMMU is not available)
++   modprobe vfio enable_unsafe_noiommu_mode=1
++   modprobe vfio-pci
++
++   # Bind the VF to vfio-pci
++   echo vfio-pci > /sys/bus/pci/devices/<vf_pci_addr>/driver_override
++   echo <vf_pci_addr> > /sys/bus/pci/drivers_probe
++
++**Running l3fwd-power with a single queue and core**
++
++The ``l3fwd-power`` sample application demonstrates interrupt-driven Rx.
++It sets ``intr_conf.rxq = 1`` in ``rte_eth_conf``, which triggers the VF
++interrupt setup in the driver. The ``--vfio-intr=msix`` EAL flag instructs
++DPDK to use MSI-X eventfds for interrupt signalling.
++
++.. code-block:: console
++
++   ./dpdk-l3fwd-power -l 0-1 -n 1 --vfio-intr=msix \
++       -a <vf_pci_addr> -- \
++       -p 0x1 --config="(0,0,1)" --no-numa --interrupt-only
++
++Where:
++
++- ``-l 0-1`` assigns the main thread to core 0 and the forwarding lcore to
++  core 1.
++- ``-a <vf_pci_addr>`` specifies the VF PCI address (e.g. ``0000:01:00.1``).
++- ``--config="(0,0,1)"`` maps port 0, queue 0 to lcore 1.
++- ``--interrupt-only`` enables pure interrupt mode (no busy-poll fallback).
++
++With no incoming traffic the forwarding lcore sleeps in ``epoll_wait``;
++CPU utilization drops to near zero. On the first arriving packet the MSI-X
++interrupt fires, the lcore wakes, drains the ring, disables the interrupt,
++processes the burst, then re-enables and re-arms the interrupt before
++returning to sleep.
+diff --git a/doc/guides/nics/features/enetc4.ini b/doc/guides/nics/features/enetc4.ini
+index 6540a43909..812c215b15 100644
+--- a/doc/guides/nics/features/enetc4.ini
++++ b/doc/guides/nics/features/enetc4.ini
+@@ -5,6 +5,7 @@
+ ;
+ [Features]
+ Link status event    = Y
++Queue interrupt      = Y
+ Speed capabilities   = Y
+ Link status          = Y
+ LRO                  = Y
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index eca0dc1dea..b88e2825a6 100644
+index b88e2825a6..9b39debc1d 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -68,6 +68,7 @@ New Features
-   * Added register dump support for ENETC4 PF and VF.
+@@ -69,6 +69,7 @@ New Features
    * Added ring parameters support for the ENETC4 VF (rxq_info_get / txq_info_get).
    * Refreshed VF link speed on the link-up interrupt in the ENETC4 VF driver.
-+  * Added stats reset for the ENETC4 VF using a software snapshot/delta approach.
+   * Added stats reset for the ENETC4 VF using a software snapshot/delta approach.
++  * Added per-queue MSI-X Rx interrupt support for the ENETC4 VF.
  
  Removed Items
  -------------
+diff --git a/drivers/net/enetc/base/enetc4_hw.h b/drivers/net/enetc/base/enetc4_hw.h
+index 8ad8f169d2..9543e982a2 100644
+--- a/drivers/net/enetc/base/enetc4_hw.h
++++ b/drivers/net/enetc/base/enetc4_hw.h
+@@ -250,6 +250,8 @@ struct enetc_rx_bd_ext {
+ #define ENETC4_VSIIDR            0xA08
+ #define ENETC4_VSIIER_MRIE       BIT(9)
+ #define ENETC4_SI_INT_IDX        0
++/* MSI-X vector base for per-Rx-queue interrupts; vector 0 is the mailbox. */
++#define ENETC4_VF_RX_VEC_BASE    1
+ 
+ /* VSI Registers */
+ #define ENETC4_VSIMSGSR  0x204   /* RO */
 diff --git a/drivers/net/enetc/enetc.h b/drivers/net/enetc/enetc.h
-index 367d350dde..3590cf6639 100644
+index 3590cf6639..903829323e 100644
 --- a/drivers/net/enetc/enetc.h
 +++ b/drivers/net/enetc/enetc.h
-@@ -105,6 +105,21 @@ struct enetc_bdr {
- 	uint8_t rsc_enable;
- };
- 
-+/*
-+ * Saved SI counter baseline for VF stats reset. Since the SI-level
-+ * hardware counters (SIROCT0, SIRFRM0, SITOCT0, SITFRM0, SITDFCR)
-+ * are read-only for a VF and cannot be directly zeroed, stats_reset
-+ * captures the current counter values as a baseline. stats_get then
-+ * reports the delta: current_hw_value - baseline.
-+ */
-+struct enetc4_vf_stats_saved {
-+	uint64_t ipackets;
-+	uint64_t opackets;
-+	uint64_t ibytes;
-+	uint64_t obytes;
-+	uint64_t oerrors;
-+};
-+
- struct enetc_eth_hw {
- 	struct rte_eth_dev *ndev;
- 	struct enetc_hw hw;
-@@ -124,6 +139,8 @@ struct enetc_eth_hw {
+@@ -135,6 +135,7 @@ struct enetc_eth_hw {
+ 	uint32_t vsi_delay;   /* VSI-PSI message wait delay (us) */
+ 	uint32_t *txq_prior;  /* per-queue TX priority (TBMR priority bits) */
+ 	uint8_t nc_mode;      /* 1 = non-cacheable BD memory, use _nc ops */
++	uint8_t rxq_intr_en;  /* 1 = per-queue Rx MSI-X interrupts enabled */
+ 	/* 1 = legacy PF-to-VF link message layout (4-bit speed / 4-bit cookie),
  	 * for PF kernel versions before 6.18.37. Set via vf_link_legacy devarg.
  	 */
- 	uint8_t vf_link_legacy;
-+	/* Baseline snapshot for VF stats reset (software delta approach). */
-+	struct enetc4_vf_stats_saved vf_stats_saved;
- };
+diff --git a/drivers/net/enetc/enetc4_ethdev.c b/drivers/net/enetc/enetc4_ethdev.c
+index afee0b90a3..d987f1288c 100644
+--- a/drivers/net/enetc/enetc4_ethdev.c
++++ b/drivers/net/enetc/enetc4_ethdev.c
+@@ -839,7 +839,8 @@ enetc4_dev_close(struct rte_eth_dev *dev)
+ 		return 0;
  
- /*
+ 	if (hw->device_id == ENETC4_DEV_ID_VF) {
+-		if (dev->data->dev_conf.intr_conf.lsc != 0)
++		if (dev->data->dev_conf.intr_conf.lsc != 0 ||
++		    dev->data->dev_conf.intr_conf.rxq != 0)
+ 			enetc4_vf_dev_intr(dev, false);
+ 		ret = enetc4_vf_dev_stop(dev);
+ 	} else {
+@@ -961,12 +962,12 @@ enetc4_dev_configure(struct rte_eth_dev *dev)
+ 	if (hw->device_id != ENETC4_DEV_ID_VF)
+ 		enetc4_port_wr(enetc_hw, ENETC4_PARCSCR, checksum);
+ 
+-	/* Enable interrupts */
+ 	if (hw->device_id == ENETC4_DEV_ID_VF) {
+-		if (dev->data->dev_conf.intr_conf.lsc != 0) {
++		if (dev->data->dev_conf.intr_conf.lsc != 0 ||
++		    dev->data->dev_conf.intr_conf.rxq != 0) {
+ 			ret = enetc4_vf_dev_intr(dev, true);
+ 			if (ret)
+-				ENETC_PMD_WARN("Failed to setup link interrupts");
++				ENETC_PMD_WARN("Failed to setup VF interrupts: %d", ret);
+ 		}
+ 	}
+ 
 diff --git a/drivers/net/enetc/enetc4_vf.c b/drivers/net/enetc/enetc4_vf.c
-index 58e38fe398..70cef39116 100644
+index 70cef39116..f6e2ee46bc 100644
 --- a/drivers/net/enetc/enetc4_vf.c
 +++ b/drivers/net/enetc/enetc4_vf.c
-@@ -225,15 +225,64 @@ enetc4_vf_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats,
- 	uint8_t i;
+@@ -1555,6 +1555,52 @@ static const struct rte_pci_id pci_vf_id_enetc4_map[] = {
+ 	{ .vendor_id = 0, /* sentinel */ },
+ };
  
- 	PMD_INIT_FUNC_TRACE();
--	stats->ipackets = enetc4_rd(enetc_hw, ENETC4_SIRFRM0);
--	stats->opackets = enetc4_rd(enetc_hw, ENETC4_SITFRM0);
--	stats->ibytes = enetc4_rd(enetc_hw, ENETC4_SIROCT0);
--	stats->obytes = enetc4_rd(enetc_hw, ENETC4_SITOCT0);
--	stats->oerrors = enetc4_rd(enetc_hw, ENETC4_SITDFCR);
-+
-+	/*
-+	 * The SI-level counters are read-only for a VF; they cannot be
-+	 * zeroed directly. Instead, stats_reset captures a baseline
-+	 * snapshot, and stats_get reports the delta so that the reported
-+	 * values appear to start from zero after each reset call.
-+	 */
-+	stats->ipackets = enetc4_rd(enetc_hw, ENETC4_SIRFRM0) -
-+			  hw->vf_stats_saved.ipackets;
-+	stats->opackets = enetc4_rd(enetc_hw, ENETC4_SITFRM0) -
-+			  hw->vf_stats_saved.opackets;
-+	stats->ibytes   = enetc4_rd(enetc_hw, ENETC4_SIROCT0) -
-+			  hw->vf_stats_saved.ibytes;
-+	stats->obytes   = enetc4_rd(enetc_hw, ENETC4_SITOCT0) -
-+			  hw->vf_stats_saved.obytes;
-+	stats->oerrors  = enetc4_rd(enetc_hw, ENETC4_SITDFCR) -
-+			  hw->vf_stats_saved.oerrors;
-+
- 	for (i = 0; i < dev->data->nb_rx_queues; i++) {
- 		rx_ring = dev->data->rx_queues[i];
- 		stats->ierrors += rx_ring->ierrors;
- 	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * Reset VF statistics by capturing a new baseline snapshot of the
-+ * SI-level hardware counters. Because those counters are read-only
-+ * for a VF (hardware erratum prevents reliable clear via FLR/soft
-+ * reset too), the driver uses a software delta approach: every
-+ * stats_get call reports current_hw_value - saved_baseline.
-+ */
 +static int
-+enetc4_vf_stats_reset(struct rte_eth_dev *dev)
++enetc4_vf_rx_queue_intr_enable(struct rte_eth_dev *dev, uint16_t queue_id)
 +{
 +	struct enetc_eth_hw *hw =
 +		ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
 +	struct enetc_hw *enetc_hw = &hw->hw;
-+	struct enetc_bdr *rx_ring;
-+	uint8_t i;
++	uint16_t vec;
 +
-+	PMD_INIT_FUNC_TRACE();
++	if (hw->nc_mode)
++		return -ENOTSUP;
 +
-+	/* Snapshot current HW SI counter values as the new zero baseline. */
-+	hw->vf_stats_saved.ipackets = enetc4_rd(enetc_hw, ENETC4_SIRFRM0);
-+	hw->vf_stats_saved.opackets = enetc4_rd(enetc_hw, ENETC4_SITFRM0);
-+	hw->vf_stats_saved.ibytes   = enetc4_rd(enetc_hw, ENETC4_SIROCT0);
-+	hw->vf_stats_saved.obytes   = enetc4_rd(enetc_hw, ENETC4_SITOCT0);
-+	hw->vf_stats_saved.oerrors  = enetc4_rd(enetc_hw, ENETC4_SITDFCR);
++	if (!hw->rxq_intr_en)
++		return -ENOTSUP;
 +
-+	/* Reset the per-ring software Rx error accumulators. */
-+	for (i = 0; i < dev->data->nb_rx_queues; i++) {
-+		rx_ring = dev->data->rx_queues[i];
-+		if (rx_ring)
-+			rx_ring->ierrors = 0;
-+	}
++	vec = queue_id + ENETC4_VF_RX_VEC_BASE;
 +
- 	return 0;
- }
- 
-@@ -1514,6 +1563,7 @@ static const struct eth_dev_ops enetc4_vf_ops_no_vsi_m = {
- 	.dev_stop             = enetc4_vf_dev_stop,
- 	.dev_close            = enetc4_dev_close,
- 	.stats_get            = enetc4_vf_stats_get,
-+	.stats_reset          = enetc4_vf_stats_reset,
- 	.dev_infos_get        = enetc4_vf_dev_infos_get,
++	enetc_wr(enetc_hw, ENETC_SIMSIRRV(queue_id), vec);
++	enetc4_rxbdr_wr(enetc_hw, queue_id, ENETC4_RBICR1, 0);
++	enetc4_rxbdr_wr(enetc_hw, queue_id, ENETC4_RBICR0,
++			ENETC4_RBICR0_ICEN | ENETC4_RBICR0_ICPT(1));
++	enetc_wr(enetc_hw, ENETC_SIRXIDR, BIT(queue_id));
++
++	enetc4_rxbdr_wr(enetc_hw, queue_id, ENETC_RBIER, ENETC_RBIER_RXTIE);
++
++	return 0;
++}
++
++static int
++enetc4_vf_rx_queue_intr_disable(struct rte_eth_dev *dev, uint16_t queue_id)
++{
++	struct enetc_eth_hw *hw =
++		ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
++	struct enetc_hw *enetc_hw = &hw->hw;
++
++	if (hw->nc_mode)
++		return -ENOTSUP;
++
++	if (!hw->rxq_intr_en)
++		return 0;
++
++	enetc4_rxbdr_wr(enetc_hw, queue_id, ENETC_RBIER, 0);
++	enetc_wr(enetc_hw, ENETC_SIMSIRRV(queue_id), 0);
++
++	return 0;
++}
++
+ /* Features supported by this driver */
+ /* ops table used when VSI messaging is disabled */
+ static const struct eth_dev_ops enetc4_vf_ops_no_vsi_m = {
+@@ -1568,7 +1614,15 @@ static const struct eth_dev_ops enetc4_vf_ops_no_vsi_m = {
  	.fw_version_get       = enetc4_vf_fw_version_get,
  	.get_reg              = enetc4_vf_get_regs,
-@@ -1538,6 +1588,7 @@ static const struct eth_dev_ops enetc4_vf_ops = {
- 	.dev_stop             = enetc4_vf_dev_stop,
- 	.dev_close            = enetc4_dev_close,
- 	.stats_get            = enetc4_vf_stats_get,
-+	.stats_reset          = enetc4_vf_stats_reset,
- 	.dev_infos_get        = enetc4_vf_dev_infos_get,
- 	.get_reg              = enetc4_vf_get_regs,
  	.mtu_set              = enetc4_vf_mtu_set,
++	.mac_addr_set         = enetc4_vf_set_mac_addr,
++	.mac_addr_add	      = enetc4_vf_mac_addr_add,
++	.promiscuous_enable   = enetc4_vf_promisc_enable,
++	.promiscuous_disable  = enetc4_vf_promisc_disable,
++	.allmulticast_enable  = enetc4_vf_multicast_enable,
++	.allmulticast_disable = enetc4_vf_multicast_disable,
+ 	.link_update	      = enetc4_vf_link_update_dummy,
++	.vlan_filter_set      = enetc4_vf_vlan_filter_set,
++	.vlan_offload_set     = enetc4_vf_vlan_offload_set,
+ 	.rx_queue_setup       = enetc4_rx_queue_setup,
+ 	.rx_queue_start       = enetc4_rx_queue_start,
+ 	.rx_queue_stop        = enetc4_rx_queue_stop,
+@@ -1606,6 +1660,8 @@ static const struct eth_dev_ops enetc4_vf_ops = {
+ 	.rx_queue_stop        = enetc4_rx_queue_stop,
+ 	.rx_queue_release     = enetc4_rx_queue_release,
+ 	.rxq_info_get         = enetc4_rxq_info_get,
++	.rx_queue_intr_enable  = enetc4_vf_rx_queue_intr_enable,
++	.rx_queue_intr_disable = enetc4_vf_rx_queue_intr_disable,
+ 	.tx_queue_setup       = enetc4_tx_queue_setup,
+ 	.tx_queue_start       = enetc4_tx_queue_start,
+ 	.tx_queue_stop        = enetc4_tx_queue_stop,
+@@ -1851,6 +1907,36 @@ enetc4_vf_dev_intr(struct rte_eth_dev *eth_dev, bool enable)
+ 		/* Vector index 0 */
+ 		enetc_wr(enetc_hw, ENETC4_SIMSIVR, ENETC4_SI_INT_IDX);
+ 
++		if (rte_intr_cap_multiple(intr_handle) &&
++		    eth_dev->data->nb_rx_queues > 0) {
++			uint16_t nb_rx = eth_dev->data->nb_rx_queues;
++			uint16_t i;
++
++			ret = rte_intr_efd_enable(intr_handle,
++					nb_rx + ENETC4_VF_RX_VEC_BASE);
++			if (ret) {
++				ENETC_PMD_WARN("Failed to enable per-queue Rx eventfds: %d",
++					       ret);
++				ret = 0;
++				hw->rxq_intr_en = 0;
++			} else {
++				ret = rte_intr_vec_list_alloc(intr_handle,
++						"enetc4_vf_rx_intr", nb_rx);
++				if (ret) {
++					ENETC_PMD_WARN("Failed to alloc intr vec list: %d",
++						       ret);
++					rte_intr_efd_disable(intr_handle);
++					hw->rxq_intr_en = 0;
++				} else {
++					for (i = 0; i < nb_rx; i++)
++						rte_intr_vec_list_index_set(
++							intr_handle, i,
++							i + ENETC4_VF_RX_VEC_BASE);
++					hw->rxq_intr_en = 1;
++				}
++			}
++		}
++
+ 		/* enable uio/vfio intr/eventfd mapping */
+ 		ret = rte_intr_enable(intr_handle);
+ 		if (ret) {
+@@ -1874,6 +1960,7 @@ enetc4_vf_dev_intr(struct rte_eth_dev *eth_dev, bool enable)
+ 		ENETC_PMD_WARN("Failed to un-register link notification %d", ret);
+ disable:
+ 	enetc_vf_enable_mr_int(enetc_hw, false);
++	hw->rxq_intr_en = 0;
+ 	ret = rte_intr_disable(intr_handle);
+ 	if (ret)
+ 		ENETC_PMD_WARN("Failed to disable INTR %d", ret);
+@@ -1893,7 +1980,7 @@ static struct rte_pci_driver rte_enetc4_vf_pmd = {
+ 
+ RTE_PMD_REGISTER_PCI(net_enetc4_vf, rte_enetc4_vf_pmd);
+ RTE_PMD_REGISTER_PCI_TABLE(net_enetc4_vf, pci_vf_id_enetc4_map);
+-RTE_PMD_REGISTER_KMOD_DEP(net_enetc4_vf, "* igb_uio | uio_pci_generic");
++RTE_PMD_REGISTER_KMOD_DEP(net_enetc4_vf, "* igb_uio | uio_pci_generic | vfio-pci");
+ RTE_PMD_REGISTER_PARAM_STRING(net_enetc4_vf,
+ 			      ENETC4_VSI_DISABLE "=<any> "
+ 			      ENETC4_VSI_TIMEOUT "=<uint> "
