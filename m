@@ -2,73 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39BC7C55838
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 03:52:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3692FC55838
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 05:10:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5C7EC4027E;
-	Thu,  6 Aug 2026 05:52:50 +0200 (CEST)
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com
- [209.85.216.47]) by mails.dpdk.org (Postfix) with ESMTP id 19C8D4021E
- for <dev@dpdk.org>; Thu,  6 Aug 2026 05:52:49 +0200 (CEST)
-Received: by mail-pj1-f47.google.com with SMTP id
- 98e67ed59e1d1-383b4a3755fso1749669a91.3
- for <dev@dpdk.org>; Wed, 05 Aug 2026 20:52:49 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 111F64027E;
+	Thu,  6 Aug 2026 07:10:16 +0200 (CEST)
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com
+ [209.85.215.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 7C3BF4021E
+ for <dev@dpdk.org>; Thu,  6 Aug 2026 07:10:14 +0200 (CEST)
+Received: by mail-pg1-f179.google.com with SMTP id
+ 41be03b00d2f7-c99eaa1f020so1823499a12.2
+ for <dev@dpdk.org>; Wed, 05 Aug 2026 22:10:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785988368;
- x=1786593168; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=7hKgm/veXU6bJMcJhx2h4NimENwcXRoZjZqhEp0Xvhw=;
- b=xdcvbkmPY6nZb4rFbIhP4TWC201zAWInhNpRVZK91jD9kL2CvK0mmcPSGjA0EjpaxY
- z0+5nYO1Ox+3EKC3uPIVvqjUVIOfDrJC8dm9etPxQ8fewzOZSTlTO/gEV6Kr+7ccgoX0
- XwK/yHG1ew0rhn5phSZRk+PTTFlopUAROP368uYpSpksbH2aRKReU3ljBTFc/2q+j53M
- pOXXJ5hyaGrf+dBl4zbzP2mJbFoscmJYHQmbGgaiILDut40n8pcT+bUl+kh1o5TNnKI5
- 2TgPAVDTQQljbc7lXsAXK1Kn79GG7coM4fMd2N8ZoFMT6xBPcxnmn5HeSsm7W6YrikCc
- Jr/A==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785993013;
+ x=1786597813; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=aBhIdxQmcsf+CUil5E2RWOUHGl+5CKywJrCLZt1B4qg=;
+ b=AujQIMN97lAYGd7v8xWDqbjfq/tW76rpIf5vD9g0oyxfgTuAmozt+ylBVtS6O4iyUw
+ Hjgs6hfZskbpljYXAxFGCCs+lBY9imA5fUbGP4mByQs7I1aEQhmTEwKHbS4qMAl8rkuu
+ DoH7A/i0hc7sog880dMYeDDVkqKDbbWCz4dWxea+IO92suwPhSDKjiWBZdpx12VDW9lU
+ 7dEINYAgkUx5T/oQBz3GiCTcbnJz/JaKAMytG/rBY3XePMHh7lx1IDxiZ1p+yrG4rot3
+ G4TpBjbbsLqeoFXlO2TGx7OTKXEL157FGSeQbaMk6Y1qdWO51RviT91ZEau5qGrLfUqn
+ 786A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785988368; x=1786593168;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=7hKgm/veXU6bJMcJhx2h4NimENwcXRoZjZqhEp0Xvhw=;
- b=NjDQgoZGEbIcRQpDVWAQVjBXhuPbajJAQIuwTbEv9TK/lYL1FH133onXTGDMRVK4G2
- y2Inz2pW1ImJ7Hj7+ZA+t7B9qkrv/oCm8MyELqyxkXAU5B6Fc1tQ1wXouNvZDDc4SIuw
- vlyOZP8v+Q5XxBw57mVged8iOIENOtLYSzQC3IMVVXvXUonoAlF56Y51AoVeZVCJ9e1m
- 0oJ+cRGWKkrl04yiZt0msg0Z6NngZr7+UxorZNVYSe7zBlArBFK8OOISZcOloRtRInfI
- rL+px3btevXn1LTfRdN+eShHQHxjJLLKs1YJ0iuQsfxzdIsG155n8rEj0DGQytIe9co5
- rvhQ==
-X-Gm-Message-State: AOJu0YzJmD50mGU5WE6xM7xScY8IwazKQGVLVPRstKBI0r+8GCoemxKg
- EWNDtBtGxMHks0ysUt/xfcGT1GMUj91HT8eB+GEcSxzFhAfaAGrYl5cCmbAuLkGmOaw=
-X-Gm-Gg: AR+sD10UU9Dnb4fJ6/gRKWzZhP7gEzDcjbBUfqubkQBZXuFjmFWBiTy7LPzre22mxB5
- NGYtOpyaUEmtbD/zc3WphOEYKGDq8zSnNlFPY3BMuGAU0fNm8r/qB7KpFyMWjnKun5FOTsjoq+9
- 3TJ9247UuQcuZPcOmeV3t3e+ZpfEA4F2BqNacu5lITd7pziGyFE8/NG/USouIcZ+u1sz58puTpt
- oYu+PQ/CFks87tKhmLPoUXOlFtZLNiiD5q/RsmKg31HoAVqVW28Vm6iKjYFCwzmrmA+AD1ZCxlB
- QjEofqjQrKf/WCOqGSedf4j0/Thcmbcd5GhmbJlvrKzwaDrAqQi5Ti1SXnyfPPWn6gxJLBfsyMO
- VBBZwm1lNuTZzbRcXnox9gkbtFtkfWDLIcO40xlL7645B1eeJgYsKpZWBeLXhGFfLuasJOFnAn1
- RlPhB0iIuRvQ4DItvPgFulRywt+r0i7qBBdxk6FWkEvz3+dcV4sKcaDW12uw9Z6+7fSW2Dan8O/
- EYxchY/10hKix6WTjvSawQ07RMw9w==
-X-Received: by 2002:a17:90b:560c:b0:38e:70d5:b12d with SMTP id
- 98e67ed59e1d1-3903c537991mr12733731a91.6.1785988368121; 
- Wed, 05 Aug 2026 20:52:48 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ d=1e100.net; s=20251104; t=1785993013; x=1786597813;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=aBhIdxQmcsf+CUil5E2RWOUHGl+5CKywJrCLZt1B4qg=;
+ b=QCh+Bh2Ot3LSpUVRU/xE6Qlnex30MFIStnKWdtQI99SmP4wr7dJDyMjN2xAEoh+BTY
+ FQeinXV3xg8ymu/I0/aq/eL+KKqp/EXoHOCX3G75zjvpO1uSfMjxJs+xqLSbyxtIe1qp
+ m7GHIRxzCZIlb0AZXoETPIahqMe5VHzSKwQxNURXFEt0DtaqF4ohGbICZSncN63uHlNX
+ Os7unz93JV6HF3SLGhXJ0SZO+zCKlX2u92sLmmILyORg5lzS2I+gV2vb7ZE8bUK2XJFH
+ 5eBiwpWc1zWuqpXCYwhZH5bQyierRpnQdLSR6UPb5j4az4Ijvtj+KsV/GVB14AXxtDMT
+ mvyg==
+X-Gm-Message-State: AOJu0Yx9QiIF2gl2NB6QKUyb64748ISTkvpJX0bvBSE/4KO3NkfttZXE
+ 6tHqBE7VaY/wME5rLc3fY9UXSfS0li3f+052KobK7sJaiH7Wtuei2Aqcv1MzEv+hZ3Gtm30Gobn
+ AOUquK6A=
+X-Gm-Gg: AR+sD13WWhCJeppEljGolJ1hfjrOawoB+r95RKDc10c/3kfmhAEY7ei+JGPMeKcWxv7
+ Vg18QuVj/SHtcXlCA93Di85e+YGkYuzuYAzHwfq8UYZ+rUzJyU3SXOKzIHZzvWssY7SEpGxWElT
+ nRVMtTTNBTkm4dw+3FsuYIFHsJp7WWW4RP448IdEpA1/L+03qS1bOo9yVSG0VPi7RI+aorJnQy3
+ Xm5lNfkodBotYYXYCHoadDEGAm+bn+uj4ztGgt8nMcnYs/9nK06rbxn68a8oY6eVrusq4zUBcSL
+ 7lTY0K8gHGqCmyhuwyF9QR4iyd3TICcBlAtC1iOVzS9sZhuy1itP/8bCuNfhvgD2b7j3XP/4u5S
+ IIAfj2BIfMQMJ6KCzweWDgBoaorm4HLRVcGHze7wRM+2HBDGxTXspIHsQMKegd0AoPYahIHxm/4
+ uAdKLq7k60o78lAu0MccmKGukITYKfODLvAb3rBh6OgF8V1oarnIgF5L6n2AAiot0rNKaVvmuE0
+ QJlUpwX46wPg1qCZs57EXnJyJI=
+X-Received: by 2002:a05:6a20:7f81:b0:3c3:a0cd:9d27 with SMTP id
+ adf61e73a8af0-3cb85ea2b4fmr13090500637.26.1785993007397; 
+ Wed, 05 Aug 2026 22:10:07 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-13fca908068sm19326925c88.12.2026.08.05.20.52.47
+ 5a478bee46e88-315ae6c1fd4sm392780eec.14.2026.08.05.22.10.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 05 Aug 2026 20:52:47 -0700 (PDT)
-Date: Wed, 5 Aug 2026 20:52:44 -0700
+ Wed, 05 Aug 2026 22:10:06 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Anatoly Burakov <anatoly.burakov@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v9 00/19] Support VFIO cdev API in DPDK
-Message-ID: <20260805205244.55f20724@phoenix.local>
-In-Reply-To: <cover.1785937060.git.anatoly.burakov@intel.com>
-References: <cover.1763141462.git.anatoly.burakov@intel.com>
- <cover.1785937060.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v4 00/23] ethdev: refactor remaining uses of flow director
+Date: Wed,  5 Aug 2026 22:08:54 -0700
+Message-ID: <20260806051004.166778-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260803165304.289869-1-stephen@networkplumber.org>
+References: <20260803165304.289869-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,160 +82,132 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed,  5 Aug 2026 14:45:29 +0100
-Anatoly Burakov <anatoly.burakov@intel.com> wrote:
+The original flow support in DPDK was Intel-specific and built around
+the flow director feature. It was superseded by the generic rte_flow
+API introduced in the 17.02 release. The direct API calls to flow
+director were removed in 20.11, but the data structures were never
+removed and drivers still use them. Some Intel drivers also carry
+driver-specific APIs related to flow director.
 
-> Therefore, what we do instead is introduce a new API for container device
-> assignment which, semantically, will assign a device to specified container, so
-> that when it is mapped using `rte_pci_map_device`, the appropriate container is
-> selected. Under the hood though, we essentially transition to getting device fd
-> straight away at assign stage, so that by the time the PCI bus attempts to map
-> the device, it is already mapped and we just return an fd. There is no
-> "unassign" API because `release_device` already performs that function.
-> 
-> Additionally, a new `rte_vfio_get_mode` API is added for those cases that need
-> some introspection into VFIO's internals, with three new modes: group
-> (old-style), no-iommu (old-style but without IOMMU), and cdev (the new mode).
-> Although no-IOMMU is technically a variant of group mode, the distinction is
-> largely irrelevant to the user, as all usages of noiommu checks in our codebase
-> are for deciding whether to use IOVA or PA, not anything to do with managing
-> groups. The current plan for kernel community is to *not* introduce no-IOMMU
-> cdev implementation, and IOMMUFD's own group API compatibility layer also does
-> not implement no-IOMMU mode, which is why this will be kept for compatibility
-> for these use cases.
-> 
-> There were other users of VFIO which relied on group API but only for convenience
-> purposes; no actual VFIO functionality depended on those API's. Therefore, group
-> API's are removed and, where appropriate, replaced with the new API's.
-> 
-> List of removed API's:
-> 
-> * `rte_vfio_get_group_fd`
-> * `rte_vfio_clear_group`
-> * `rte_vfio_container_group_bind` (replaced by container assign API)
-> * `rte_vfio_container_group_unbind`
-> * `rte_vfio_noiommu_is_enabled` (replaced by new mode API)
-> 
-> 2. The API responsibilities aren't clear and bleed into each other
-> ==================================================================
-> 
-> Some API's do multiple things at once. In particular:
-> 
-> * `rte_vfio_get_device_info` will setup the device
-> * `rte_vfio_setup_device` will get device info
-> 
-> These API's have been adjusted to do one thing only.
+These vestiges mean applications can still see flow director data
+structures, since rte_ethdev.h pulls in rte_eth_ctrl.h. It also means
+several drivers and libraries have come to depend on network header
+definitions arriving indirectly.
 
-AI diagnosed apply failure.
+Since drivers still need these definitions, rte_eth_ctrl.h is renamed
+to ethdev_fdir.h and the remaining bits in ethdev_driver.h are folded
+into it. This is a driver SDK header, not public API, and exists only
+so that drivers still carrying legacy flow director state have
+somewhere to get these definitions. New drivers should not use it.
 
-This does not apply to main. Patches 8 and 11 have stale context:
-patch 8 still has the rte_pci_unmap_device() call in
-nfp_vdpa_vfio_setup() that 7185c65c95c6 ("vdpa/nfp: fix double PCI
-unmap on unplug") removed in June, and patch 11 has the pre-1c726e28fd
-wording of the RARP line in vhost_lib.rst. The series applies cleanly
-at 481aeec3d7, so v9 looks to be based on a tree from before 2026-06-24.
-Both are context-only; please rebase for v10.
+Applications relying on the indirect includes will need to add explicit
+ones; this is a source level change only, with no ABI impact. The fdir
+option of the testpmd "show port" and "clear port" commands is also
+removed.
 
-Much of the stuff in cover letter needs to be release notes.
+v4 - fix AI review comments
+   - fix build of enetfec
+   - cleanup more leftovers from flow director in testpmd
 
-More AI (Claude Opus) comments:
-Patch 13 (vfio: cleanup and refactor)
+Stephen Hemminger (23):
+  drivers/net: remove unused include in dpaa and dpaa2
+  ethdev: use DPDK byte order conversion
+  net/ixgbe: remove experimental FDIR API
+  net/i40e: remove experimental FDIR API
+  app/testpmd: remove support for flow director
+  app/testpmd: move str_to_flowtype to i40e
+  app/test: include headers directly
+  gro: include headers directly
+  crypto/dpaa_sec: include UDP header
+  net/gve: include UDP, SCTP and TCP headers
+  net/nfp: break implicit dependency on rte_eth_ctrl.h
+  net/mana: include used network headers
+  node: get UDP header
+  net/rnp: include network headers
+  net/r8169: get network headers
+  net/ngbe: include network protocol headers
+  examples: include network headers
+  net/mlx5: include rte_flow as needed
+  net/sfc: include rte_flow
+  net/intel/common: include network headers
+  net/enetfec: add missing sys/types.h include
+  ethdev, drivers: isolate flow director
+  doc: add release note about rte_ethdev changes
 
-Error: container fd 0 is closed on the error path. CONTAINER_INITIALIZER
-only initializes the mem_maps lock, so container_fd is 0, not -1. The
-pre-refactor code initialized every vfio_cfgs[i].vfio_container_fd to -1.
-vfio_container_erase() tests
+ app/test-eventdev/test_pipeline_common.h      |   1 +
+ app/test-pmd/cmdline.c                        |  21 +-
+ app/test-pmd/config.c                         | 225 ------------------
+ app/test-pmd/testpmd.h                        |   6 -
+ app/test/test_bpf.c                           |  20 +-
+ app/test/test_security_inline_macsec.c        |   2 +
+ app/test/test_security_inline_proto.c         |   1 +
+ doc/api/doxy-api-index.md                     |   1 -
+ doc/guides/nics/i40e.rst                      |  46 ----
+ doc/guides/rel_notes/release_26_11.rst        |  24 ++
+ doc/guides/testpmd_app_ug/intro.rst           |   4 +-
+ doc/guides/testpmd_app_ug/testpmd_funcs.rst   |  56 +----
+ drivers/crypto/dpaa_sec/dpaa_sec.h            |   2 +
+ drivers/net/dpaa/dpaa_ptp.c                   |   1 -
+ drivers/net/dpaa2/dpaa2_ptp.c                 |   1 -
+ drivers/net/enetfec/enet_regs.h               |   2 +
+ drivers/net/gve/gve_ethdev.h                  |  13 +-
+ drivers/net/hinic/hinic_pmd_ethdev.h          |   2 +
+ drivers/net/hinic3/hinic3_ethdev.h            |   1 +
+ drivers/net/intel/common/tx_scalar.h          |   3 +
+ drivers/net/intel/cpfl/cpfl_flow_engine_fxp.c |   2 +-
+ drivers/net/intel/e1000/e1000_ethdev.h        |   1 +
+ drivers/net/intel/e1000/igc_filter.h          |   2 +-
+ drivers/net/intel/i40e/i40e_ethdev.c          |   4 +-
+ drivers/net/intel/i40e/i40e_ethdev.h          |   5 +-
+ drivers/net/intel/i40e/i40e_fdir.c            | 140 -----------
+ drivers/net/intel/i40e/i40e_flow.c            |   3 +-
+ drivers/net/intel/i40e/i40e_testpmd.c         |  51 ++++
+ drivers/net/intel/i40e/rte_pmd_i40e.c         |  34 ---
+ drivers/net/intel/i40e/rte_pmd_i40e.h         |  33 ---
+ drivers/net/intel/iavf/iavf_fsub.c            |   2 +-
+ drivers/net/intel/iavf/iavf_hash.c            |   2 +-
+ drivers/net/intel/ice/ice_acl_filter.c        |   2 +-
+ drivers/net/intel/ice/ice_ethdev.h            |   2 +
+ drivers/net/intel/ice/ice_generic_flow.c      |   1 +
+ drivers/net/intel/ice/ice_hash.c              |   2 +-
+ drivers/net/intel/ice/ice_switch_filter.c     |   2 +-
+ drivers/net/intel/ipn3ke/ipn3ke_flow.c        |   2 +-
+ drivers/net/intel/ixgbe/ixgbe_ethdev.h        |   6 +-
+ drivers/net/intel/ixgbe/ixgbe_fdir.c          | 117 ---------
+ drivers/net/intel/ixgbe/rte_pmd_ixgbe.c       |  34 ---
+ drivers/net/intel/ixgbe/rte_pmd_ixgbe.h       |  32 ---
+ drivers/net/mana/mana.c                       |  26 +-
+ drivers/net/mana/tx.c                         |   3 +
+ drivers/net/mlx5/mlx5_ethdev.c                |   1 +
+ drivers/net/mlx5/mlx5_flow.h                  |   1 +
+ drivers/net/mlx5/mlx5_txq.c                   |   1 +
+ drivers/net/mlx5/mlx5_utils.c                 |   1 +
+ drivers/net/mlx5/mlx5_utils.h                 |   1 +
+ drivers/net/nbl/nbl_include/nbl_include.h     |   1 +
+ drivers/net/nfp/nfp_ethdev.c                  |   6 +-
+ drivers/net/nfp/nfp_net_common.h              |   4 +-
+ drivers/net/ngbe/ngbe_rxtx.c                  |   4 +
+ drivers/net/r8169/r8169_rxtx.c                |  19 +-
+ drivers/net/rnp/rnp_rxtx.c                    |   6 +
+ drivers/net/sfc/sfc_dp.c                      |   1 +
+ drivers/net/txgbe/txgbe_ethdev.h              |   1 +
+ examples/l2fwd-macsec/main.c                  |   2 +
+ examples/l3fwd-graph/main.c                   |   1 +
+ examples/l3fwd/l3fwd.h                        |   2 +
+ lib/ethdev/ethdev_driver.h                    |  36 ---
+ lib/ethdev/{rte_eth_ctrl.h => ethdev_fdir.h}  |  62 ++++-
+ lib/ethdev/meson.build                        |   2 +-
+ lib/ethdev/rte_ethdev.h                       |  13 +-
+ lib/ethdev/sff_8472.c                         |   4 +-
+ lib/gro/gro_tcp4.c                            |   9 +-
+ lib/gro/gro_tcp6.c                            |   9 +-
+ lib/gro/gro_vxlan_tcp4.c                      |  10 +-
+ lib/gro/gro_vxlan_udp4.c                      |   9 +-
+ lib/gro/rte_gro.c                             |   9 +-
+ lib/node/udp4_input.c                         |  17 +-
+ 71 files changed, 324 insertions(+), 848 deletions(-)
+ rename lib/ethdev/{rte_eth_ctrl.h => ethdev_fdir.h} (90%)
 
-	if (cfg->container_fd >= 0 && close(cfg->container_fd))
-
-so any path that allocates a container and fails before assigning the fd
-closes stdin. rte_vfio_container_create() has three such paths (group
-open failure, iommufd open failure, and the default: arm), as does
-vfio_select_mode()'s err label. Add .container_fd = -1 to
-CONTAINER_INITIALIZER, and use the same initializer in
-vfio_container_erase() instead of (struct container){0}.
-
-Error: double close in vfio_has_supported_extensions(). The VFIO_CHECK_
-EXTENSION error path closes vfio_container_fd and returns -1, and the
-caller vfio_group_open_container_fd() then closes it again:
-
-	ret = vfio_has_supported_extensions(vfio_container_fd);
-	if (ret) {
-		EAL_LOG(DEBUG, "No supported IOMMU extensions found!");
-		close(vfio_container_fd);
-		return -1;
-	}
-
-Upstream had the close in the callee on both error paths and none in the
-caller; the refactor added the caller close and removed only one of the
-two callee closes. The fd may already have been handed out to another
-thread by then. Drop the close() inside vfio_has_supported_extensions().
-
-Warning: no release notes. The series makes the entire rte_vfio API
-internal, removes the group-based API and rte_vfio_noiommu_is_enabled(),
-and adds cdev mode. Only deprecation.rst is touched;
-doc/guides/rel_notes/release_26_11.rst needs "Removed Items" and
-"New Features" entries.
-
-Patch 14 (bus/pci: use the new VFIO mode API)
-
-Error: noiommu is no longer detected. pci_device_iova_mode() runs from
-rte_pci_get_iommu_class() during rte_bus_get_iommu_class(), which
-rte_eal_init() calls at line 689, well before rte_vfio_enable() at line
-775. rte_vfio_get_mode() returns RTE_VFIO_MODE_NONE at that point, so
-is_vfio_noiommu_enabled latches to 0 and IOVA VA is selected on a
-noiommu system. The old rte_vfio_noiommu_is_enabled() read
-/sys/module/vfio/parameters/enable_unsafe_noiommu_mode directly and was
-therefore valid before VFIO init. The noiommu probe needs to stay
-sysfs-based, or IOVA mode selection has to move after rte_vfio_enable().
-
-Patch 15 (bus/fslmc: use the new VFIO mode API)
-
-Error: fslmc bus scan now fails on every system. rte_fslmc_scan() is
-called from rte_bus_scan() at eal.c:680, again before rte_vfio_enable().
-The new check
-
-	if (rte_vfio_get_mode() != RTE_VFIO_MODE_GROUP &&
-			rte_vfio_get_mode() != RTE_VFIO_MODE_NOIOMMU) {
-		ret = -EINVAL;
-		goto scan_fail;
-	}
-
-always sees RTE_VFIO_MODE_NONE, so no DPAA2 device is ever scanned. The
-same ordering problem applies to rte_dpaa2_get_iommu_class() and to
-fslmc_vfio_add_group(), which will now always pick VFIO_TYPE1_IOMMU.
-
-Warning: the new scan_fail branch has no log message, unlike every other
-failure in that function, so the failure is silent.
-
-Patch 19 (vfio: introduce cdev mode)
-
-Error: vfio_cfg.ops is never set in a cdev-mode secondary. The only
-assignment is in vfio_cdev_enable(), reached solely from the primary arm
-of vfio_select_mode(). The secondary path calls vfio_sync_mode() and
-vfio_cdev_sync_ioas(), neither of which touches ops. A cdev secondary
-therefore has ops == NULL and every rte_vfio_container_dma_map()/
-dma_unmap() fails in vfio_dma_mem_map() with "VFIO support not
-initialized". The same applies to a container made with
-rte_vfio_container_create() in a secondary: it opens an iommufd and
-allocates an IOAS but leaves ops NULL. Set vfio_cfg.ops to the iommufd
-ops in the secondary cdev path as well.
-
-Note also that container_dma_map()/container_dma_unmap() dereference
-vfio_cfg.ops->partial_unmap without a NULL check; only vfio_dma_mem_map()
-guards it.
-
-Patch 5 (net/nbl: do not use VFIO group bind API)
-
-Info: nbl_open_group_fd() needs a blank line between the declaration and
-the statements:
-
-	static int
-	nbl_open_group_fd(int iommu_group_num)
-	{
-		char path[PATH_MAX];
-
-		snprintf(path, sizeof(path), RTE_VFIO_GROUP_FMT, iommu_group_num);
-		return open(path, O_RDWR);
-	}
+-- 
+2.53.0
 
