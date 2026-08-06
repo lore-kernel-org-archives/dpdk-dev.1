@@ -2,68 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F8F1C56208
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 13:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5F12C56208
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 13:54:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 86E8B40B8C;
-	Thu,  6 Aug 2026 15:54:13 +0200 (CEST)
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com
- [209.85.160.178])
- by mails.dpdk.org (Postfix) with ESMTP id 7DF6C40A4B
- for <dev@dpdk.org>; Thu,  6 Aug 2026 15:54:12 +0200 (CEST)
-Received: by mail-qt1-f178.google.com with SMTP id
- d75a77b69052e-51a868b6962so21860481cf.2
- for <dev@dpdk.org>; Thu, 06 Aug 2026 06:54:12 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 84E4E40A67;
+	Thu,  6 Aug 2026 15:54:15 +0200 (CEST)
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com
+ [209.85.219.41]) by mails.dpdk.org (Postfix) with ESMTP id 2C4E040A76
+ for <dev@dpdk.org>; Thu,  6 Aug 2026 15:54:14 +0200 (CEST)
+Received: by mail-qv1-f41.google.com with SMTP id
+ 6a1803df08f44-9061a795d76so21988496d6.3
+ for <dev@dpdk.org>; Thu, 06 Aug 2026 06:54:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1786024452; x=1786629252; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1786024453; x=1786629253; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=bTRVeC1H6UzOvRt33LlP85IykY6/OkOwDl/ttqp12Hk=;
- b=graILKC1aOCiFvSKLM9IfqqF+CWrNU4iiwDil21vzqx63M/JEzV4iRcOSItyOyHtzy
- wp6IjFsWx7s9dgMUqU431OHuXbSrNmfFt/+yO7TU6UpkB/DNv6lp5E+xIlnZL9IjwZl1
- e8dYGAA5uKjakNDIaddL7U5gWe3YWXX/FLUxs=
+ bh=L7u6HXvaIZsIFgoNNDQj3GXqFxp5Fi4MU4j2VPQ5pSI=;
+ b=c/qakrz9zS41SsBK3x3WJxKhjOHZ6UXGvyd73ddMd3kn8JAOOGX0rHp/b35kudZJFr
+ eGSXu3QPzmH/hdJfWJ70OFVvS472ALjrW0P2ds/f5JmFGsapMnZYkOPboFnqQc8qvBV+
+ lfOMdC1SyyxNsMN7XmB2qlQA9qHVSwBf8CvCM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786024452; x=1786629252;
+ d=1e100.net; s=20251104; t=1786024453; x=1786629253;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=bTRVeC1H6UzOvRt33LlP85IykY6/OkOwDl/ttqp12Hk=;
- b=paouoe81X+HaEcw/SwH9GHfA0r4raQP7twYjKMgutIvPAiJbJ7PFI+xQSV1eA1CcKW
- 0dqqiytXBslBiDlSG84a6G0Pjvaiw1MkYsl803vBTyJEl1rwoW/KBmSlAhJUr2O5BOFF
- dUGNNnDtuVQyijnGCtjSUSdnCFew16o8T0fw/MQglGdCRj4bHII9adU9FquHbfkHK8HO
- KftuhngqcLdz1133n3Cfp3NRCobLR+cSv//sbIoDVqjEznVjdKOWgVgorH2eOx9zl/dJ
- NNdkgJFMt9/AiopcSoE//TC9UEKeRsciJjZILL+Twrxk7lM+fnG8S8KAOMklMFFBbC3T
- 2FTw==
-X-Gm-Message-State: AOJu0YxeD5hKqk21DbSWAs7wfYdmd7DWjph8S515uafLL6Ncmspa3K/k
- DpbdQm43vIVJag37m9Dc8/aaK4o/X3TFDRCEK5qxz6kTXUAepb3VuBrxpJmqB8foI+fk9qsDsMQ
- CREOFo6PgNegakyrSbyomvTaB8FwuwFFpiMrzoo2B94zdZOtHqlK1t9tyHd1LADQWouisF1wDP/
- VqB9xCRfR0KhILCtMFD2AItHEeJYM=
-X-Gm-Gg: AR+sD11pDRTMNDeIqkfobYgp8cMPrzGcnQI3SYa1QRLLNAiNaxIF8NKEt+bTriCNBJb
- nbX1XOn37VZWtuBHCHCCn1/wOOjc9F/LhHuMhrW1ye6Cb5e2Av/einv66Wx7Rma4zmNmFJAEJlW
- mChuEqhYtTXzt+9kQJR4eTaaS7SAfELUq4RTZhSv8et9tFpxeb4t/tL6B5uzD9i/UvqWjTXhLlH
- e9NyYJ6v3VYgYI5aqMF9EWyK2HOGRE+ugTBHsDRB99tJdSWzXi5sG4aDedG/s2aE5A/GDU5Iwce
- aFOoJcdd1n8Bl0jYu0vo8DnRQotcO70as6f1LFyJi6yymZrL7DsqQ2I/hVsmYpL7FpGtnX4qpwx
- bTsaSv6eafPzu8xNHIjqgYTcDGMZDJKty2vlHCAF3bdgucm4TP7bcSjrYA4VWH2OWbcIAMF9JPg
- TZ78DqjgYomyvR+PV1nDH0WzgdgST5iQdvQ/oNOM3/dWmCTGn7o87MPg+FrOI1vmzrAMgy9+Luc
- CugQEGcOnqHQw8aWO668lQ9CZGGXOr9fE3CJjmM7iYxxlkQY/c=
-X-Received: by 2002:ac8:5ac2:0:b0:528:3ae6:14d6 with SMTP id
- d75a77b69052e-52ce61c7beamr142639351cf.36.1786024451405; 
- Thu, 06 Aug 2026 06:54:11 -0700 (PDT)
+ bh=L7u6HXvaIZsIFgoNNDQj3GXqFxp5Fi4MU4j2VPQ5pSI=;
+ b=hctwnIG2U4dchHeJUcmviJpXWvwBdilOsxkzctwozwftXPW1TOJmfM0ivisn3WKe0J
+ e+0ubdo8fdQUxiGGsbyUCC16dlV3EQK6s3Waa42eQUKRWr5leESU7r87Lvz97OAjnmRi
+ bjIkJ9SeHBvhXWk+kwHHXPOxdmB+EQeoEpJhgacaqt5ADtTixb3Pph5VFuv6kzbs/xvw
+ V9XOVk5blHKRGzOq8cy0HZfPahAy/v+Yb95z2HJlko31apNzvVN10HlSUYRT2x6EQyAf
+ WclOIx84krvCsjuUGWgJKR6kR92sN5hVndZ3KXW2BwlFwnbkB5T2S2qsHZR5wxTQsngJ
+ MSgA==
+X-Gm-Message-State: AOJu0YzB5U075tqfZIelaWWI/x2bEVt13J1gp4/GD5Qvav9fMIrlHdmD
+ LMTnktXWEfYGeZrBeoAQwcSWzVPABjIlLHchZUy+hS84UYJ/7+JwSxpUMW9iX54E1iuJQa9bTe+
+ AlleCd2YYXSQwHjEH+kjhZ0gFAUF6CytMkSmDsvpra6xSuKey7WNszKgTSY5+aIZLmpOgbB7+qt
+ BIVqiK2RLyZkvqhUFsBJ24Oq/T4WU=
+X-Gm-Gg: AR+sD10H2mcPYPL53yoNAcgvvVYc/i6qnwPILnNRo+8Lq37oeG8pmmyfV/Y5euNxzIJ
+ 2dVUN+IUKzAJhGxgcvk/aah3BdPUYrafr0csrMShFEoL/UhzJKX3Ky90c5bxsskmZY+OCJdnlEL
+ bYVCjySah6rWoApfKqlTNkai8jNYvGnhujjFsuSTrWw1RrGLci/ppxEkV/CEze20WGy8bAPxh1f
+ N8d4aobS5iEoC3lURbce32O1iHnqQoQ+yrq+NzDarPiNzrh09eLCFoFWkrTkdpotss+oT7tm/l/
+ 66+jb+L1MgabdEOM+WpDAmWob0LlG5x9VwlmchGypphcR1uSdiNSFsOb3LRxNRqwhsLLxPnQrcE
+ m80NMfzC6gJz9ogNhXZ0MJShB7YcTygCHG0HJ/tGsGPraCq7gyZoxWjZZMqHvFRy3jieMF630Ou
+ Ex5sHvC5m6/lN5zTkmon6TsGr3R76g9uSdybEhmUIGRsEKoogI2B0jFlObK+FUSnuCZfyp+/3Gh
+ GC88cJQTgnAgs2qEL3tIkEREaH3aa9CmRjWx8mW
+X-Received: by 2002:a05:6214:5286:b0:8ce:ca7d:b099 with SMTP id
+ 6a1803df08f44-9089b601cc4mr17841616d6.18.1786024453347; 
+ Thu, 06 Aug 2026 06:54:13 -0700 (PDT)
 Received: from syn-2603-7083-bff0-a0d0-0000-0000-0000-1a64.res6.spectrum.com
  ([2606:4100:3880:1257::1039]) by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-9088a219ea8sm34175516d6.37.2026.08.06.06.54.09
+ 6a1803df08f44-9088a219ea8sm34175516d6.37.2026.08.06.06.54.11
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 06 Aug 2026 06:54:10 -0700 (PDT)
+ Thu, 06 Aug 2026 06:54:12 -0700 (PDT)
 From: Andrew Bailey <abailey@iol.unh.edu>
 To: dev@dpdk.org,
 	luca.vizzarro@arm.com,
 	patrickrobb1997@gmail.com
 Cc: knimoji@iol.unh.edu, lylavoie@iol.unh.edu, dladd@iol.unh.edu,
  Andrew Bailey <abailey@iol.unh.edu>, Dean Marx <dmarx@iol.unh.edu>
-Subject: [PATCH v5 5/7] dts: move test suite module from framework to API
-Date: Thu,  6 Aug 2026 09:53:44 -0400
-Message-ID: <20260806135346.568766-6-abailey@iol.unh.edu>
+Subject: [PATCH v5 6/7] dts: move params directory from framework to API
+Date: Thu,  6 Aug 2026 09:53:45 -0400
+Message-ID: <20260806135346.568766-7-abailey@iol.unh.edu>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260806135346.568766-1-abailey@iol.unh.edu>
 References: <20260806135346.568766-1-abailey@iol.unh.edu>
@@ -82,749 +81,346 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, each test suite imports the TestSuite class
-from the DTS framework to use as a base class.
-However, the goal for 26.07 is to move all test suite
-imports to the API module. Moves and updates the test_suite
-file to the API directory, and updates all files that import
-test_suite to reflect this change.
+The params directory is imported in test suites such as
+packet capture to use as a base class for dumpcap.
+Move this to the API.
 
 Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
 Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
 ---
- .../dts/{framework.test_suite.rst => api.test_suite.rst}  | 2 +-
- doc/api/dts/index.rst                                     | 2 +-
- dts/api/capabilities.py                                   | 6 +++---
- dts/api/context.py                                        | 2 +-
- dts/api/packet.py                                         | 2 +-
- dts/{framework => api}/test_suite.py                      | 3 +--
- dts/api/testbed_model/capability.py                       | 6 +++---
- dts/framework/config/__init__.py                          | 4 ++--
- dts/framework/config/test_run.py                          | 8 ++++----
- dts/framework/test_run.py                                 | 2 +-
- dts/tests/TestSuite_blocklist.py                          | 2 +-
- dts/tests/TestSuite_buffer_scatter.py                     | 2 +-
- dts/tests/TestSuite_checksum_offload.py                   | 2 +-
- dts/tests/TestSuite_cryptodev_latency.py                  | 2 +-
- dts/tests/TestSuite_cryptodev_throughput.py               | 2 +-
- dts/tests/TestSuite_dual_vlan.py                          | 2 +-
- dts/tests/TestSuite_dynamic_config.py                     | 2 +-
- dts/tests/TestSuite_dynamic_queue_conf.py                 | 2 +-
- dts/tests/TestSuite_flow_offload.py                       | 2 +-
- dts/tests/TestSuite_hello_world.py                        | 2 +-
- dts/tests/TestSuite_l2fwd.py                              | 2 +-
- dts/tests/TestSuite_mac_filter.py                         | 2 +-
- dts/tests/TestSuite_mtu.py                                | 2 +-
- dts/tests/TestSuite_packet_capture.py                     | 2 +-
- dts/tests/TestSuite_port_control.py                       | 2 +-
- dts/tests/TestSuite_port_restart_config_persistency.py    | 2 +-
- dts/tests/TestSuite_port_stats.py                         | 2 +-
- dts/tests/TestSuite_promisc_support.py                    | 2 +-
- dts/tests/TestSuite_qinq.py                               | 2 +-
- dts/tests/TestSuite_queue_toggle.py                       | 2 +-
- dts/tests/TestSuite_rss.py                                | 2 +-
- dts/tests/TestSuite_rx_split.py                           | 2 +-
- dts/tests/TestSuite_rx_tx_offload.py                      | 2 +-
- dts/tests/TestSuite_single_core_forward_perf.py           | 2 +-
- dts/tests/TestSuite_smoke_tests.py                        | 2 +-
- dts/tests/TestSuite_softnic.py                            | 2 +-
- dts/tests/TestSuite_speed_capabilities.py                 | 2 +-
- dts/tests/TestSuite_unified_packet.py                     | 2 +-
- dts/tests/TestSuite_virtio_forward.py                     | 2 +-
- dts/tests/TestSuite_vlan.py                               | 2 +-
- 40 files changed, 48 insertions(+), 49 deletions(-)
- rename doc/api/dts/{framework.test_suite.rst => api.test_suite.rst} (81%)
- rename dts/{framework => api}/test_suite.py (99%)
+ .../{framework.params.eal.rst => api.params.eal.rst}   |  2 +-
+ doc/api/dts/{framework.params.rst => api.params.rst}   |  6 +++---
+ ...framework.params.types.rst => api.params.types.rst} |  2 +-
+ doc/api/dts/index.rst                                  |  2 +-
+ dts/api/cryptodev/__init__.py                          |  2 +-
+ dts/api/cryptodev/config.py                            |  4 ++--
+ dts/{framework => api}/params/__init__.py              |  0
+ dts/{framework => api}/params/eal.py                   |  2 +-
+ dts/{framework => api}/params/types.py                 | 10 +++++++---
+ dts/api/testpmd/__init__.py                            |  7 ++++++-
+ dts/api/testpmd/config.py                              |  6 +++---
+ dts/framework/remote_session/blocking_app.py           |  4 ++--
+ dts/framework/remote_session/dpdk.py                   |  2 +-
+ dts/framework/remote_session/dpdk_shell.py             |  2 +-
+ dts/framework/remote_session/interactive_shell.py      |  2 +-
+ dts/tests/TestSuite_packet_capture.py                  |  2 +-
+ dts/tests/TestSuite_single_core_forward_perf.py        |  2 +-
+ 17 files changed, 33 insertions(+), 24 deletions(-)
+ rename doc/api/dts/{framework.params.eal.rst => api.params.eal.rst} (79%)
+ rename doc/api/dts/{framework.params.rst => api.params.rst} (71%)
+ rename doc/api/dts/{framework.params.types.rst => api.params.types.rst} (80%)
+ rename dts/{framework => api}/params/__init__.py (100%)
+ rename dts/{framework => api}/params/eal.py (97%)
+ rename dts/{framework => api}/params/types.py (96%)
 
-diff --git a/doc/api/dts/framework.test_suite.rst b/doc/api/dts/api.test_suite.rst
-similarity index 81%
-rename from doc/api/dts/framework.test_suite.rst
-rename to doc/api/dts/api.test_suite.rst
-index 9517f51a4a..4acb7b103a 100644
---- a/doc/api/dts/framework.test_suite.rst
-+++ b/doc/api/dts/api.test_suite.rst
+diff --git a/doc/api/dts/framework.params.eal.rst b/doc/api/dts/api.params.eal.rst
+similarity index 79%
+rename from doc/api/dts/framework.params.eal.rst
+rename to doc/api/dts/api.params.eal.rst
+index 6999b00233..4531cb1fe1 100644
+--- a/doc/api/dts/framework.params.eal.rst
++++ b/doc/api/dts/api.params.eal.rst
 @@ -3,6 +3,6 @@
- test\_suite - Common Test Suite Features
- ========================================
+ eal - EAL Parameters Modelling
+ ==============================
  
--.. automodule:: framework.test_suite
-+.. automodule:: api.test_suite
+-.. automodule:: framework.params.eal
++.. automodule:: api.params.eal
+    :members:
+    :show-inheritance:
+diff --git a/doc/api/dts/framework.params.rst b/doc/api/dts/api.params.rst
+similarity index 71%
+rename from doc/api/dts/framework.params.rst
+rename to doc/api/dts/api.params.rst
+index d8c6af9667..3ea7f9215e 100644
+--- a/doc/api/dts/framework.params.rst
++++ b/doc/api/dts/api.params.rst
+@@ -3,7 +3,7 @@
+ params - Command Line Parameters Modelling
+ ==========================================
+ 
+-.. automodule:: framework.params
++.. automodule:: api.params
+    :members:
+    :show-inheritance:
+ 
+@@ -11,5 +11,5 @@ params - Command Line Parameters Modelling
+    :hidden:
+    :maxdepth: 1
+ 
+-   framework.params.eal
+-   framework.params.types
++   api.params.eal
++   api.params.types
+diff --git a/doc/api/dts/framework.params.types.rst b/doc/api/dts/api.params.types.rst
+similarity index 80%
+rename from doc/api/dts/framework.params.types.rst
+rename to doc/api/dts/api.params.types.rst
+index 6d609038be..4754b3a665 100644
+--- a/doc/api/dts/framework.params.types.rst
++++ b/doc/api/dts/api.params.types.rst
+@@ -3,6 +3,6 @@
+ params.types - Parameters Modelling Types
+ =========================================
+ 
+-.. automodule:: framework.params.types
++.. automodule:: api.params.types
     :members:
     :show-inheritance:
 diff --git a/doc/api/dts/index.rst b/doc/api/dts/index.rst
-index f47e4af3f2..7c282bbba1 100644
+index 7c282bbba1..e89e782ac0 100644
 --- a/doc/api/dts/index.rst
 +++ b/doc/api/dts/index.rst
-@@ -29,7 +29,7 @@ Modules
+@@ -18,7 +18,7 @@ Packages
+    api
+    api.testbed_model
+    framework.remote_session
+-   framework.params
++   api.params
+    framework.config
  
-    framework.runner
-    framework.test_run
--   framework.test_suite
-+   api.test_suite
-    framework.test_result
-    framework.settings
-    api.context
-diff --git a/dts/api/capabilities.py b/dts/api/capabilities.py
-index 8ed832a588..933eb6bca7 100644
---- a/dts/api/capabilities.py
-+++ b/dts/api/capabilities.py
-@@ -22,7 +22,7 @@
- Examples:
-     .. code:: python
- 
--        from framework.test_suite import TestSuite, func_test
-+        from api.test_suite import TestSuite, func_test
-         from api.testbed_model.capability import LinkTopology, requires_link_topology
-         # The whole test suite (each test case within) doesn't require any links.
-         @requires_link_topology(LinkTopology.NO_LINK)
-@@ -33,7 +33,7 @@ def hello_world_single_core(self):
- 
-     .. code:: python
- 
--        from framework.test_suite import TestSuite, func_test
-+        from api.test_suite import TestSuite, func_test
-         from api.testbed_model.capability import NicCapability, requires_nic_capability
-         class TestPmdBufferScatter(TestSuite):
-             # only the test case requires the SCATTERED_RX_ENABLED capability
-@@ -47,7 +47,7 @@ def test_scatter_mbuf_2048(self):
- from typing import TYPE_CHECKING, Callable
+ Modules
+diff --git a/dts/api/cryptodev/__init__.py b/dts/api/cryptodev/__init__.py
+index 198607696f..496079c2af 100644
+--- a/dts/api/cryptodev/__init__.py
++++ b/dts/api/cryptodev/__init__.py
+@@ -27,7 +27,7 @@
+ from framework.remote_session.dpdk_shell import compute_eal_params
  
  if TYPE_CHECKING:
--    from framework.test_suite import TestProtocol
-+    from api.test_suite import TestProtocol
+-    from framework.params.types import CryptoPmdParamsDict
++    from api.params.types import CryptoPmdParamsDict
+ from pathlib import PurePath
  
  
- class LinkTopology(IntEnum):
-diff --git a/dts/api/context.py b/dts/api/context.py
-index 57e14ef598..753b2101a0 100644
---- a/dts/api/context.py
-+++ b/dts/api/context.py
-@@ -16,10 +16,10 @@
- from framework.settings import SETTINGS
+diff --git a/dts/api/cryptodev/config.py b/dts/api/cryptodev/config.py
+index a88e70d45c..3420c2fe91 100644
+--- a/dts/api/cryptodev/config.py
++++ b/dts/api/cryptodev/config.py
+@@ -6,9 +6,9 @@
+ from enum import auto
+ from typing import Literal
  
- if TYPE_CHECKING:
-+    from api.test_suite import TestCase, TestSuite
-     from api.testbed_model.capability import TestProtocol
-     from api.testbed_model.traffic_generator.traffic_generator import TrafficGenerator
-     from framework.remote_session.dpdk import DPDKBuildEnvironment, DPDKRuntimeEnvironment
--    from framework.test_suite import TestCase, TestSuite
++from api.params import Params, Switch
++from api.params.eal import EalParams
+ from api.utils import StrEnum
+-from framework.params import Params, Switch
+-from framework.params.eal import EalParams
  
- P = ParamSpec("P")
+ Silent = Literal[""]
  
-diff --git a/dts/api/packet.py b/dts/api/packet.py
-index defbb758c8..58f47f1646 100644
---- a/dts/api/packet.py
-+++ b/dts/api/packet.py
-@@ -175,7 +175,7 @@ def adjust_addresses(packets: list[Packet], expected: bool = False) -> list[Pack
-     Raises:
-         InternalError: If no tests are running.
-     """
--    from framework.test_suite import TestSuite
-+    from api.test_suite import TestSuite
+diff --git a/dts/framework/params/__init__.py b/dts/api/params/__init__.py
+similarity index 100%
+rename from dts/framework/params/__init__.py
+rename to dts/api/params/__init__.py
+diff --git a/dts/framework/params/eal.py b/dts/api/params/eal.py
+similarity index 97%
+rename from dts/framework/params/eal.py
+rename to dts/api/params/eal.py
+index 86bfd3fcc6..64fa45ae12 100644
+--- a/dts/framework/params/eal.py
++++ b/dts/api/params/eal.py
+@@ -6,9 +6,9 @@
+ from dataclasses import dataclass, field
+ from typing import TYPE_CHECKING, Literal
  
-     if get_ctx().local.current_test_suite is None:
-         raise InternalError("No current test suite, tests aren't running?")
-diff --git a/dts/framework/test_suite.py b/dts/api/test_suite.py
-similarity index 99%
-rename from dts/framework/test_suite.py
-rename to dts/api/test_suite.py
-index 786cfc7bff..0822f9bfe5 100644
---- a/dts/framework/test_suite.py
-+++ b/dts/api/test_suite.py
-@@ -34,8 +34,7 @@
- from api.testbed_model.topology import Topology
- from api.utils import to_pascal_case
- from framework.config.common import FrozenModel
--
--from .logger import DTSLogger, get_dts_logger
-+from framework.logger import DTSLogger, get_dts_logger
- 
- if TYPE_CHECKING:
-     from api.context import Context
-diff --git a/dts/api/testbed_model/capability.py b/dts/api/testbed_model/capability.py
-index 2748daa8a4..bb581d4ab7 100644
---- a/dts/api/testbed_model/capability.py
-+++ b/dts/api/testbed_model/capability.py
-@@ -25,7 +25,7 @@
- Examples:
-     .. code:: python
- 
--        from framework.test_suite import TestSuite, func_test
-+        from api.test_suite import TestSuite, func_test
-         from api.testbed_model.capability import LinkTopology, requires
-         # The whole test suite (each test case within) doesn't require any links.
-         @requires_link_topology(LinkTopology.NO_LINK)
-@@ -36,7 +36,7 @@ def hello_world_single_core(self):
- 
-     .. code:: python
- 
--        from framework.test_suite import TestSuite, func_test
-+        from api.test_suite import TestSuite, func_test
-         from api.testbed_model.capability import NicCapability, requires
-         class TestPmdBufferScatter(TestSuite):
-             # only the test case requires the SCATTERED_RX_ENABLED capability
-@@ -71,8 +71,8 @@ def test_scatter_mbuf_2048(self):
- from framework.logger import get_dts_logger
- 
- if TYPE_CHECKING:
-+    from api.test_suite import TestCase
-     from api.testpmd import TestPmd
--    from framework.test_suite import TestCase
- 
- P = ParamSpec("P")
- TestPmdMethod = Callable[Concatenate["TestPmd", P], Any]
-diff --git a/dts/framework/config/__init__.py b/dts/framework/config/__init__.py
-index e24a351ecf..c8edf340bd 100644
---- a/dts/framework/config/__init__.py
-+++ b/dts/framework/config/__init__.py
-@@ -43,7 +43,7 @@
- 
- # Import only if type checking or building docs, to prevent circular imports.
- if TYPE_CHECKING:
--    from framework.test_suite import BaseConfig
-+    from api.test_suite import BaseConfig
- 
- NodesConfig = Annotated[list[NodeConfiguration], Field(min_length=1)]
- 
-@@ -184,7 +184,7 @@ def load_config(ctx: ValidationContext) -> Configuration:
-     nodes = _load_and_parse_model(ctx["settings"].nodes_config_path, NodesConfig, ctx)
- 
-     try:
--        from framework.test_suite import BaseConfig as BaseConfig
-+        from api.test_suite import BaseConfig as BaseConfig
- 
-         Configuration.model_rebuild()
-         return Configuration.model_validate(
-diff --git a/dts/framework/config/test_run.py b/dts/framework/config/test_run.py
-index b87c7b2d19..40fce48bf9 100644
---- a/dts/framework/config/test_run.py
-+++ b/dts/framework/config/test_run.py
-@@ -33,7 +33,7 @@
- from .common import FrozenModel, load_fields_from_settings
- 
- if TYPE_CHECKING:
--    from framework.test_suite import BaseConfig, TestCase, TestSuite, TestSuiteSpec
-+    from api.test_suite import BaseConfig, TestCase, TestSuite, TestSuiteSpec
- 
- 
- @unique
-@@ -230,7 +230,7 @@ class TestSuiteConfig(FrozenModel):
-     @cached_property
-     def test_suite_spec(self) -> "TestSuiteSpec":
-         """The specification of the requested test suite."""
--        from framework.test_suite import find_by_name
-+        from api.test_suite import find_by_name
- 
-         test_suite_spec = find_by_name(self.test_suite_name)
-         assert test_suite_spec is not None, (
-@@ -280,7 +280,7 @@ def fetch_all_test_suites() -> list[TestSuiteConfig]:
- 
-     This function does not include the smoke tests.
-     """
--    from framework.test_suite import AVAILABLE_TEST_SUITES
-+    from api.test_suite import AVAILABLE_TEST_SUITES
- 
-     return [
-         TestSuiteConfig(test_suite=test_suite.name)
-@@ -506,7 +506,7 @@ def filter_tests(
-         self, tests_config: dict[str, "BaseConfig"]
-     ) -> Iterable[tuple[type["TestSuite"], "BaseConfig", deque[type["TestCase"]]]]:
-         """Filter test suites and cases selected for execution."""
--        from framework.test_suite import TestCaseType
-+        from api.test_suite import TestCaseType
- 
-         test_suites = [TestSuiteConfig(test_suite="smoke_tests")]
- 
-diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
-index 42a56d38c9..dfbdd0b5b5 100644
---- a/dts/framework/test_run.py
-+++ b/dts/framework/test_run.py
-@@ -110,6 +110,7 @@
- from api.capabilities import LinkTopology
- from api.context import Context, init_ctx
- from api.exception import InternalError, SkippedTestException, TestCaseVerifyError
-+from api.test_suite import BaseConfig, TestCase, TestCaseType, TestSuite
- from api.testbed_model.capability import (
-     Capability,
-     get_supported_capabilities,
-@@ -123,7 +124,6 @@
- from framework.remote_session.dpdk import DPDKBuildEnvironment, DPDKRuntimeEnvironment
- from framework.settings import SETTINGS
- from framework.test_result import Result, ResultNode, TestRunResult
--from framework.test_suite import BaseConfig, TestCase, TestCaseType, TestSuite
- 
- TestScenario = tuple[type[TestSuite], BaseConfig, deque[type[TestCase]]]
- 
-diff --git a/dts/tests/TestSuite_blocklist.py b/dts/tests/TestSuite_blocklist.py
-index 97e03b8fb7..31e69c0de9 100644
---- a/dts/tests/TestSuite_blocklist.py
-+++ b/dts/tests/TestSuite_blocklist.py
-@@ -11,9 +11,9 @@
-     requires_link_topology,
- )
- from api.test import verify
-+from api.test_suite import TestSuite, func_test
- from api.testbed_model.port import Port
- from api.testpmd import TestPmd
--from framework.test_suite import TestSuite, func_test
- 
- 
- class TestBlocklist(TestSuite):
-diff --git a/dts/tests/TestSuite_buffer_scatter.py b/dts/tests/TestSuite_buffer_scatter.py
-index 539082f2e4..cd1a52ad5e 100644
---- a/dts/tests/TestSuite_buffer_scatter.py
-+++ b/dts/tests/TestSuite_buffer_scatter.py
-@@ -28,9 +28,9 @@
- )
- from api.packet import send_packet_and_capture
- from api.test import verify
-+from api.test_suite import TestSuite, func_test
- from api.testpmd import TestPmd
- from api.testpmd.config import SimpleForwardingModes
--from framework.test_suite import TestSuite, func_test
- 
- 
- @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
-diff --git a/dts/tests/TestSuite_checksum_offload.py b/dts/tests/TestSuite_checksum_offload.py
-index 90ca798e56..a2ea13991b 100644
---- a/dts/tests/TestSuite_checksum_offload.py
-+++ b/dts/tests/TestSuite_checksum_offload.py
-@@ -25,10 +25,10 @@
- )
- from api.packet import send_packet_and_capture
- from api.test import verify
-+from api.test_suite import TestSuite, func_test
- from api.testpmd import TestPmd
- from api.testpmd.config import SimpleForwardingModes
- from api.testpmd.types import ChecksumOffloadOptions, PacketOffloadFlag
--from framework.test_suite import TestSuite, func_test
- 
- 
- @requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_IPV4_CKSUM)
-diff --git a/dts/tests/TestSuite_cryptodev_latency.py b/dts/tests/TestSuite_cryptodev_latency.py
-index 981c483a14..444a5b282c 100644
---- a/dts/tests/TestSuite_cryptodev_latency.py
-+++ b/dts/tests/TestSuite_cryptodev_latency.py
-@@ -31,8 +31,8 @@
-     CryptodevResults,
- )
- from api.test import skip, verify
-+from api.test_suite import BaseConfig, TestSuite, crypto_test
++from api.params import Params, Switch
+ from api.testbed_model.cpu import LogicalCoreList
  from api.testbed_model.virtual_device import VirtualDevice
--from framework.test_suite import BaseConfig, TestSuite, crypto_test
+-from framework.params import Params, Switch
  
- config_list: list[dict[str, int | float | str]] = [
-     {"buff_size": 64, "avg_cycles": 99_999.00, "avg_time_us": 9999.0},
-diff --git a/dts/tests/TestSuite_cryptodev_throughput.py b/dts/tests/TestSuite_cryptodev_throughput.py
-index b861c52bae..59f64f2cd7 100644
---- a/dts/tests/TestSuite_cryptodev_throughput.py
-+++ b/dts/tests/TestSuite_cryptodev_throughput.py
-@@ -31,8 +31,8 @@
-     CryptodevResults,
- )
- from api.test import skip, verify
-+from api.test_suite import BaseConfig, TestSuite, crypto_test
- from api.testbed_model.virtual_device import VirtualDevice
--from framework.test_suite import BaseConfig, TestSuite, crypto_test
- 
- config_list: list[dict[str, int | float | str]] = [
-     {"buff_size": 64, "Gbps": 1.00},
-diff --git a/dts/tests/TestSuite_dual_vlan.py b/dts/tests/TestSuite_dual_vlan.py
-index 1b77dd2b47..f3347a6d52 100644
---- a/dts/tests/TestSuite_dual_vlan.py
-+++ b/dts/tests/TestSuite_dual_vlan.py
-@@ -21,9 +21,9 @@
- from api.capabilities import LinkTopology, requires_link_topology
- from api.packet import send_packet_and_capture
- from api.test import verify
-+from api.test_suite import TestSuite, func_test
- from api.testpmd import TestPmd
- from api.testpmd.config import SimpleForwardingModes
--from framework.test_suite import TestSuite, func_test
- 
- 
- class TestDualVlan(TestSuite):
-diff --git a/dts/tests/TestSuite_dynamic_config.py b/dts/tests/TestSuite_dynamic_config.py
-index 7204ec4f73..b9e2c30da1 100644
---- a/dts/tests/TestSuite_dynamic_config.py
-+++ b/dts/tests/TestSuite_dynamic_config.py
-@@ -27,9 +27,9 @@
- )
- from api.packet import send_packet_and_capture
- from api.test import verify
-+from api.test_suite import TestSuite, func_test
- from api.testpmd import TestPmd
- from api.testpmd.config import SimpleForwardingModes
--from framework.test_suite import TestSuite, func_test
- 
- 
- @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
-diff --git a/dts/tests/TestSuite_dynamic_queue_conf.py b/dts/tests/TestSuite_dynamic_queue_conf.py
-index b62efa2b42..24584c7d60 100644
---- a/dts/tests/TestSuite_dynamic_queue_conf.py
-+++ b/dts/tests/TestSuite_dynamic_queue_conf.py
-@@ -38,9 +38,9 @@
- from api.exception import InteractiveCommandExecutionError
- from api.packet import send_packets
- from api.test import fail, verify
-+from api.test_suite import TestSuite, func_test
- from api.testpmd import TestPmd
- from api.testpmd.config import PortTopology, SimpleForwardingModes
--from framework.test_suite import TestSuite, func_test
- 
- 
- def setup_and_teardown_test(
-diff --git a/dts/tests/TestSuite_flow_offload.py b/dts/tests/TestSuite_flow_offload.py
-index 5902406a8e..09384b1983 100644
---- a/dts/tests/TestSuite_flow_offload.py
-+++ b/dts/tests/TestSuite_flow_offload.py
-@@ -28,9 +28,9 @@
- )
- from api.packet import send_packet_and_capture
- from api.test import fail, log, verify
-+from api.test_suite import TestSuite, func_test
- from api.testpmd import TestPmd
- from api.testpmd.types import FlowRule
--from framework.test_suite import TestSuite, func_test
- 
- 
- @dataclass
-diff --git a/dts/tests/TestSuite_hello_world.py b/dts/tests/TestSuite_hello_world.py
-index bf1a93c782..cd62eb8f3e 100644
---- a/dts/tests/TestSuite_hello_world.py
-+++ b/dts/tests/TestSuite_hello_world.py
-@@ -9,8 +9,8 @@
+ if TYPE_CHECKING:
+     from api.testbed_model.port import Port
+diff --git a/dts/framework/params/types.py b/dts/api/params/types.py
+similarity index 96%
+rename from dts/framework/params/types.py
+rename to dts/api/params/types.py
+index f9a51963a2..c4b718eebe 100644
+--- a/dts/framework/params/types.py
++++ b/dts/api/params/types.py
+@@ -12,8 +12,10 @@ def create_testpmd(**kwargs: Unpack[TestPmdParamsDict]):
+             params = TestPmdParams(**kwargs)
  """
  
- from api.test import log
-+from api.test_suite import BaseConfig, TestSuite, func_test
- from api.testpmd import TestPmd
--from framework.test_suite import BaseConfig, TestSuite, func_test
++from __future__ import annotations
++
+ from pathlib import PurePath
+-from typing import TypedDict
++from typing import TYPE_CHECKING, TypedDict
  
- 
- class Config(BaseConfig):
-diff --git a/dts/tests/TestSuite_l2fwd.py b/dts/tests/TestSuite_l2fwd.py
-index 5650366c36..f237821a04 100644
---- a/dts/tests/TestSuite_l2fwd.py
-+++ b/dts/tests/TestSuite_l2fwd.py
-@@ -19,11 +19,11 @@
-     match_all_packets,
-     send_packets_and_capture,
+ from api.cryptodev.config import (
+     AeadAlgName,
+@@ -56,8 +58,10 @@ def create_testpmd(**kwargs: Unpack[TestPmdParamsDict]):
+     TXRingParams,
+     TxUDPPortPair,
  )
-+from api.test_suite import TestSuite, func_test
- from api.testbed_model.cpu import LogicalCoreCount
- from api.testpmd import TestPmd
- from api.testpmd.config import EthPeer, SimpleForwardingModes
- from api.utils import generate_random_packets
--from framework.test_suite import TestSuite, func_test
+-from api.testpmd.types import RxOffloadCapability, TxOffloadCapability
+-from framework.params import Switch, YesNoSwitch
++
++if TYPE_CHECKING:
++    from api.testpmd.types import RxOffloadCapability, TxOffloadCapability
++from api.params import Switch, YesNoSwitch
  
  
- @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
-diff --git a/dts/tests/TestSuite_mac_filter.py b/dts/tests/TestSuite_mac_filter.py
-index b44822d31c..eb1413f336 100644
---- a/dts/tests/TestSuite_mac_filter.py
-+++ b/dts/tests/TestSuite_mac_filter.py
-@@ -26,8 +26,8 @@
- from api.exception import InteractiveCommandExecutionError
- from api.packet import send_packet_and_capture
- from api.test import fail, verify
-+from api.test_suite import TestSuite, func_test
- from api.testpmd import TestPmd
--from framework.test_suite import TestSuite, func_test
+ class EalParamsDict(TypedDict, total=False):
+diff --git a/dts/api/testpmd/__init__.py b/dts/api/testpmd/__init__.py
+index ce41408eb6..33504640e3 100644
+--- a/dts/api/testpmd/__init__.py
++++ b/dts/api/testpmd/__init__.py
+@@ -14,6 +14,8 @@
+     testpmd.close()
+ """
  
- 
- @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
-diff --git a/dts/tests/TestSuite_mtu.py b/dts/tests/TestSuite_mtu.py
-index 8355495d33..c264db299e 100644
---- a/dts/tests/TestSuite_mtu.py
-+++ b/dts/tests/TestSuite_mtu.py
-@@ -23,8 +23,8 @@
++from __future__ import annotations
++
+ import functools
+ import re
+ import time
+@@ -21,6 +23,7 @@
+ from enum import Flag
+ from pathlib import PurePath
+ from typing import (
++    TYPE_CHECKING,
+     Any,
+     Callable,
+     ClassVar,
+@@ -56,7 +59,9 @@
+     TxOffloadConfiguration,
+     VLANOffloadFlag,
  )
- from api.packet import send_packet_and_capture
- from api.test import verify
-+from api.test_suite import TestSuite, func_test
- from api.testpmd import TestPmd
--from framework.test_suite import TestSuite, func_test
+-from framework.params.types import TestPmdParamsDict
++
++if TYPE_CHECKING:
++    from api.params.types import TestPmdParamsDict
+ from framework.remote_session.dpdk_shell import DPDKShell
+ from framework.remote_session.interactive_shell import only_active
+ from framework.settings import SETTINGS
+diff --git a/dts/api/testpmd/config.py b/dts/api/testpmd/config.py
+index 3850a4eb8a..c72c1b2c90 100644
+--- a/dts/api/testpmd/config.py
++++ b/dts/api/testpmd/config.py
+@@ -13,8 +13,7 @@
+ from pathlib import PurePath
+ from typing import Literal, NamedTuple
  
- STANDARD_FRAME = 1518  # --max-pkt-len will subtract l2 information at a minimum of 18 bytes.
- JUMBO_FRAME = 9018
+-from api.utils import StrEnum
+-from framework.params import (
++from api.params import (
+     Params,
+     Switch,
+     YesNoSwitch,
+@@ -25,7 +24,8 @@
+     modify_str,
+     str_from_flag_value,
+ )
+-from framework.params.eal import EalParams
++from api.params.eal import EalParams
++from api.utils import StrEnum
+ 
+ from .types import RxOffloadCapability, TxOffloadCapability
+ 
+diff --git a/dts/framework/remote_session/blocking_app.py b/dts/framework/remote_session/blocking_app.py
+index 84db3974b1..537d937eca 100644
+--- a/dts/framework/remote_session/blocking_app.py
++++ b/dts/framework/remote_session/blocking_app.py
+@@ -31,9 +31,9 @@
+ from typing_extensions import Self
+ 
+ from api.context import get_ctx
++from api.params import Params
++from api.params.eal import EalParams
+ from api.testbed_model.node import Node
+-from framework.params import Params
+-from framework.params.eal import EalParams
+ from framework.remote_session.dpdk_shell import compute_eal_params
+ from framework.remote_session.interactive_shell import InteractiveShell
+ 
+diff --git a/dts/framework/remote_session/dpdk.py b/dts/framework/remote_session/dpdk.py
+index c02c68af77..4de61ece68 100644
+--- a/dts/framework/remote_session/dpdk.py
++++ b/dts/framework/remote_session/dpdk.py
+@@ -16,6 +16,7 @@
+ from api.capabilities import LinkTopology
+ from api.context import get_ctx
+ from api.exception import ConfigurationError, RemoteFileNotFoundError
++from api.params.eal import EalParams
+ from api.testbed_model.cpu import LogicalCore, LogicalCoreCount, LogicalCoreList, lcore_filter
+ from api.testbed_model.node import Node
+ from api.testbed_model.os_session import OSSession
+@@ -33,7 +34,6 @@
+     RemoteDPDKTreeLocation,
+ )
+ from framework.logger import DTSLogger, get_dts_logger
+-from framework.params.eal import EalParams
+ from framework.remote_session.remote_session import CommandResult
+ 
+ 
+diff --git a/dts/framework/remote_session/dpdk_shell.py b/dts/framework/remote_session/dpdk_shell.py
+index b807f9bdae..61cc4687f3 100644
+--- a/dts/framework/remote_session/dpdk_shell.py
++++ b/dts/framework/remote_session/dpdk_shell.py
+@@ -11,8 +11,8 @@
+ from pathlib import PurePath
+ 
+ from api.context import get_ctx
++from api.params.eal import EalParams
+ from api.testbed_model.cpu import LogicalCoreList
+-from framework.params.eal import EalParams
+ from framework.remote_session.interactive_shell import (
+     InteractiveShell,
+     only_active,
+diff --git a/dts/framework/remote_session/interactive_shell.py b/dts/framework/remote_session/interactive_shell.py
+index 831861a9ac..f9b7a7720d 100644
+--- a/dts/framework/remote_session/interactive_shell.py
++++ b/dts/framework/remote_session/interactive_shell.py
+@@ -35,9 +35,9 @@
+     InteractiveSSHSessionDeadError,
+     InteractiveSSHTimeoutError,
+ )
++from api.params import Params
+ from api.testbed_model.node import Node
+ from framework.logger import DTSLogger, get_dts_logger
+-from framework.params import Params
+ from framework.settings import SETTINGS
+ 
+ P = ParamSpec("P")
 diff --git a/dts/tests/TestSuite_packet_capture.py b/dts/tests/TestSuite_packet_capture.py
-index 042b7019aa..fd5cef5268 100644
+index fd5cef5268..ba67c9e1c6 100644
 --- a/dts/tests/TestSuite_packet_capture.py
 +++ b/dts/tests/TestSuite_packet_capture.py
-@@ -36,6 +36,7 @@
-     send_packets_and_capture,
- )
- from api.test import verify
-+from api.test_suite import TestSuite, func_test
- from api.testbed_model.cpu import LogicalCoreList
- from api.testbed_model.traffic_generator.capturing_traffic_generator import (
-     PacketFilteringConfig,
-@@ -44,7 +45,6 @@
- from framework.params import Params
- from framework.remote_session.blocking_app import BlockingApp
- from framework.remote_session.dpdk_shell import compute_eal_params
--from framework.test_suite import TestSuite, func_test
- 
- 
- @dataclass(kw_only=True)
-diff --git a/dts/tests/TestSuite_port_control.py b/dts/tests/TestSuite_port_control.py
-index b51fdc2959..c2f2de3493 100644
---- a/dts/tests/TestSuite_port_control.py
-+++ b/dts/tests/TestSuite_port_control.py
-@@ -18,9 +18,9 @@
- )
- from api.packet import send_packets_and_capture
- from api.test import verify
-+from api.test_suite import TestSuite, func_test
- from api.testpmd import TestPmd
- from api.testpmd.config import SimpleForwardingModes
--from framework.test_suite import TestSuite, func_test
- 
- 
- @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
-diff --git a/dts/tests/TestSuite_port_restart_config_persistency.py b/dts/tests/TestSuite_port_restart_config_persistency.py
-index 4ea22b6d70..88df35d33c 100644
---- a/dts/tests/TestSuite_port_restart_config_persistency.py
-+++ b/dts/tests/TestSuite_port_restart_config_persistency.py
-@@ -14,9 +14,9 @@
-     requires_nic_capability,
- )
- from api.test import verify
-+from api.test_suite import TestSuite, func_test
- from api.testpmd import TestPmd
- from api.testpmd.types import TestPmdPortFlowCtrl
--from framework.test_suite import TestSuite, func_test
- 
- ALTERNATIVE_MTU: int = 800
- STANDARD_MTU: int = 1500
-diff --git a/dts/tests/TestSuite_port_stats.py b/dts/tests/TestSuite_port_stats.py
-index 3dc045f847..0328c6718c 100644
---- a/dts/tests/TestSuite_port_stats.py
-+++ b/dts/tests/TestSuite_port_stats.py
-@@ -25,10 +25,10 @@
- )
- from api.packet import send_packet_and_capture
- from api.test import verify
-+from api.test_suite import TestSuite, func_test
- from api.testpmd import TestPmd
- from api.testpmd.config import SimpleForwardingModes
- from api.testpmd.types import RtePTypes, TestPmdVerbosePacket
--from framework.test_suite import TestSuite, func_test
- 
- 
- @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
-diff --git a/dts/tests/TestSuite_promisc_support.py b/dts/tests/TestSuite_promisc_support.py
-index a0c65dc662..c59c8c6078 100644
---- a/dts/tests/TestSuite_promisc_support.py
-+++ b/dts/tests/TestSuite_promisc_support.py
-@@ -21,8 +21,8 @@
-     send_packets_and_capture,
- )
- from api.test import verify
-+from api.test_suite import TestSuite, func_test
- from api.testpmd import TestPmd
--from framework.test_suite import TestSuite, func_test
- 
- 
- @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
-diff --git a/dts/tests/TestSuite_qinq.py b/dts/tests/TestSuite_qinq.py
-index 505d71dbc8..5dde37d4db 100644
---- a/dts/tests/TestSuite_qinq.py
-+++ b/dts/tests/TestSuite_qinq.py
-@@ -18,8 +18,8 @@
- from api.capabilities import NicCapability, requires_nic_capability
- from api.packet import send_packet_and_capture
- from api.test import log, verify
-+from api.test_suite import TestSuite, func_test
- from api.testpmd import TestPmd
--from framework.test_suite import TestSuite, func_test
- 
- 
- class TestQinq(TestSuite):
-diff --git a/dts/tests/TestSuite_queue_toggle.py b/dts/tests/TestSuite_queue_toggle.py
-index e4edc89123..a9ea356b22 100644
---- a/dts/tests/TestSuite_queue_toggle.py
-+++ b/dts/tests/TestSuite_queue_toggle.py
-@@ -24,9 +24,9 @@
- )
- from api.packet import send_packet_and_capture
- from api.test import verify
-+from api.test_suite import TestSuite, func_test
- from api.testpmd import TestPmd
- from api.testpmd.config import SimpleForwardingModes
--from framework.test_suite import TestSuite, func_test
- 
- 
- @requires_link_topology(LinkTopology.TWO_LINKS)
-diff --git a/dts/tests/TestSuite_rss.py b/dts/tests/TestSuite_rss.py
-index 1e60bdba07..b538e93af9 100644
---- a/dts/tests/TestSuite_rss.py
-+++ b/dts/tests/TestSuite_rss.py
-@@ -23,6 +23,7 @@
- from api.exception import InteractiveCommandExecutionError
- from api.packet import send_packets_and_capture
- from api.test import verify
-+from api.test_suite import BaseConfig, TestSuite, func_test
- from api.testpmd import TestPmd
- from api.testpmd.config import SimpleForwardingModes
- from api.testpmd.types import (
-@@ -31,7 +32,6 @@
-     TestPmdVerbosePacket,
- )
- from api.utils import StrEnum
--from framework.test_suite import BaseConfig, TestSuite, func_test
- 
- 
- class Config(BaseConfig):
-diff --git a/dts/tests/TestSuite_rx_split.py b/dts/tests/TestSuite_rx_split.py
-index 470e48d0d3..3b3e4cd620 100644
---- a/dts/tests/TestSuite_rx_split.py
-+++ b/dts/tests/TestSuite_rx_split.py
-@@ -21,10 +21,10 @@
- from api.exception import InteractiveCommandExecutionError
- from api.packet import adjust_addresses, send_packet_and_capture
- from api.test import fail, verify
-+from api.test_suite import TestSuite, func_test
- from api.testpmd import TestPmd
- from api.testpmd.config import SimpleForwardingModes
- from api.testpmd.types import RxOffloadCapability, TxOffloadCapability
--from framework.test_suite import TestSuite, func_test
- 
- PAYLOAD = bytes(range(256))
- ETHER_HDR_LEN = len(Ether(dst="00:00:00:00:00:00"))
-diff --git a/dts/tests/TestSuite_rx_tx_offload.py b/dts/tests/TestSuite_rx_tx_offload.py
-index b0da627d3c..c8d24baaae 100644
---- a/dts/tests/TestSuite_rx_tx_offload.py
-+++ b/dts/tests/TestSuite_rx_tx_offload.py
-@@ -13,12 +13,12 @@
-     requires_nic_capability,
- )
- from api.test import verify
-+from api.test_suite import TestSuite, func_test
- from api.testpmd import TestPmd
- from api.testpmd.types import (
-     OffloadConfiguration,
-     RxTxLiteralSwitch,
- )
--from framework.test_suite import TestSuite, func_test
- 
- 
- @requires_link_topology(LinkTopology.ONE_LINK)
-diff --git a/dts/tests/TestSuite_single_core_forward_perf.py b/dts/tests/TestSuite_single_core_forward_perf.py
-index 57aecdf7a4..f51ff76c4c 100644
---- a/dts/tests/TestSuite_single_core_forward_perf.py
-+++ b/dts/tests/TestSuite_single_core_forward_perf.py
-@@ -22,10 +22,10 @@
- )
- from api.packet import assess_performance_by_packet
- from api.test import verify, write_performance_json
-+from api.test_suite import BaseConfig, TestSuite, perf_test
- from api.testpmd import TestPmd
- from api.testpmd.config import RXRingParams, TXRingParams
- from framework.params.types import TestPmdParamsDict
--from framework.test_suite import BaseConfig, TestSuite, perf_test
- 
- 
- class Config(BaseConfig):
-diff --git a/dts/tests/TestSuite_smoke_tests.py b/dts/tests/TestSuite_smoke_tests.py
-index 656e2e4bb7..b3eb325fc0 100644
---- a/dts/tests/TestSuite_smoke_tests.py
-+++ b/dts/tests/TestSuite_smoke_tests.py
-@@ -19,12 +19,12 @@
-     requires_link_topology,
- )
- from api.test import verify
-+from api.test_suite import TestSuite, func_test
- from api.testbed_model.linux_session import LinuxSession
- from api.testpmd import TestPmd
- from api.utils import REGEX_FOR_PCI_ADDRESS
- from framework.config.node import PortConfig
- from framework.settings import SETTINGS
--from framework.test_suite import TestSuite, func_test
- 
- 
- @requires_link_topology(LinkTopology.NO_LINK)
-diff --git a/dts/tests/TestSuite_softnic.py b/dts/tests/TestSuite_softnic.py
-index 91a6d4eb9f..05a6d3aa18 100644
---- a/dts/tests/TestSuite_softnic.py
-+++ b/dts/tests/TestSuite_softnic.py
-@@ -18,11 +18,11 @@
+@@ -35,6 +35,7 @@
      match_all_packets,
      send_packets_and_capture,
  )
-+from api.test_suite import TestSuite, func_test
- from api.testbed_model.virtual_device import VirtualDevice
++from api.params import Params
+ from api.test import verify
+ from api.test_suite import TestSuite, func_test
+ from api.testbed_model.cpu import LogicalCoreList
+@@ -42,7 +43,6 @@
+     PacketFilteringConfig,
+ )
  from api.testpmd import TestPmd
- from api.testpmd.config import EthPeer
- from api.utils import generate_random_packets
--from framework.test_suite import TestSuite, func_test
+-from framework.params import Params
+ from framework.remote_session.blocking_app import BlockingApp
+ from framework.remote_session.dpdk_shell import compute_eal_params
  
- 
- @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
-diff --git a/dts/tests/TestSuite_speed_capabilities.py b/dts/tests/TestSuite_speed_capabilities.py
-index 9cbd6f1ef7..c9b0f74feb 100644
---- a/dts/tests/TestSuite_speed_capabilities.py
-+++ b/dts/tests/TestSuite_speed_capabilities.py
-@@ -13,8 +13,8 @@
+diff --git a/dts/tests/TestSuite_single_core_forward_perf.py b/dts/tests/TestSuite_single_core_forward_perf.py
+index f51ff76c4c..4b22c5d091 100644
+--- a/dts/tests/TestSuite_single_core_forward_perf.py
++++ b/dts/tests/TestSuite_single_core_forward_perf.py
+@@ -21,11 +21,11 @@
      requires_link_topology,
  )
- from api.test import verify
-+from api.test_suite import BaseConfig, TestSuite, func_test
+ from api.packet import assess_performance_by_packet
++from api.params.types import TestPmdParamsDict
+ from api.test import verify, write_performance_json
+ from api.test_suite import BaseConfig, TestSuite, perf_test
  from api.testpmd import TestPmd
--from framework.test_suite import BaseConfig, TestSuite, func_test
+ from api.testpmd.config import RXRingParams, TXRingParams
+-from framework.params.types import TestPmdParamsDict
  
  
  class Config(BaseConfig):
-diff --git a/dts/tests/TestSuite_unified_packet.py b/dts/tests/TestSuite_unified_packet.py
-index fcc7f7fbbb..bf3654f0d7 100644
---- a/dts/tests/TestSuite_unified_packet.py
-+++ b/dts/tests/TestSuite_unified_packet.py
-@@ -25,10 +25,10 @@
- )
- from api.packet import send_packet_and_capture
- from api.test import verify
-+from api.test_suite import TestSuite, func_test
- from api.testpmd import TestPmd
- from api.testpmd.config import SimpleForwardingModes
- from api.testpmd.types import RtePTypes, TestPmdVerbosePacket
--from framework.test_suite import TestSuite, func_test
- 
- 
- class TestUnifiedPacket(TestSuite):
-diff --git a/dts/tests/TestSuite_virtio_forward.py b/dts/tests/TestSuite_virtio_forward.py
-index 06bcd86ee4..a16299d908 100644
---- a/dts/tests/TestSuite_virtio_forward.py
-+++ b/dts/tests/TestSuite_virtio_forward.py
-@@ -12,12 +12,12 @@
- from api.capabilities import LinkTopology
- from api.packet import send_packets_and_capture
- from api.test import log, verify
-+from api.test_suite import TestSuite, func_test
- from api.testbed_model.capability import requires
- from api.testbed_model.linux_session import LinuxSession
- from api.testbed_model.virtual_device import VirtualDevice
- from api.testpmd import TestPmd
- from api.testpmd.config import PortTopology, SimpleForwardingModes
--from framework.test_suite import TestSuite, func_test
- 
- 
- class TestVirtioForward(TestSuite):
-diff --git a/dts/tests/TestSuite_vlan.py b/dts/tests/TestSuite_vlan.py
-index 898673fc86..975e87b128 100644
---- a/dts/tests/TestSuite_vlan.py
-+++ b/dts/tests/TestSuite_vlan.py
-@@ -23,9 +23,9 @@
- )
- from api.packet import send_packet_and_capture
- from api.test import verify
-+from api.test_suite import TestSuite, func_test
- from api.testpmd import TestPmd
- from api.testpmd.config import SimpleForwardingModes
--from framework.test_suite import TestSuite, func_test
- 
- 
- @requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_VLAN_FILTER)
 -- 
 2.55.0
 
