@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F622C56205
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 17:51:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 630CEC56205
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 17:51:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9B6FD40616;
-	Thu,  6 Aug 2026 19:51:14 +0200 (CEST)
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com
- [209.85.222.174])
- by mails.dpdk.org (Postfix) with ESMTP id 2C1F340695
- for <dev@dpdk.org>; Thu,  6 Aug 2026 19:51:13 +0200 (CEST)
-Received: by mail-qk1-f174.google.com with SMTP id
- af79cd13be357-92ed19f4d60so84849685a.0
- for <dev@dpdk.org>; Thu, 06 Aug 2026 10:51:13 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E6FC14060F;
+	Thu,  6 Aug 2026 19:51:18 +0200 (CEST)
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com
+ [209.85.222.169])
+ by mails.dpdk.org (Postfix) with ESMTP id 4E86940262
+ for <dev@dpdk.org>; Thu,  6 Aug 2026 19:51:18 +0200 (CEST)
+Received: by mail-qk1-f169.google.com with SMTP id
+ af79cd13be357-92e5d6f35c1so202077185a.0
+ for <dev@dpdk.org>; Thu, 06 Aug 2026 10:51:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1786038672; x=1786643472; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1786038677; x=1786643477; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=E0jelht2lj8DoEMaI4GnToB1YZlySxM9EkoCITMHt7o=;
- b=J8JxOEUi2wt11N0wQR8UmXPNbiOFJ2CIy9vyUnnp03Dy5DiHDvV5pTxwnXyirjfrH+
- UbJx7VhtWYZK+ur2CY2jnlh32p9FJKJjcHQf7mN2Q+LNJTPkJuUYHNzrnB3BcR9gziXm
- o41JitX/S1xYRgB5tiTiE7VKeZ95uaUXx/JCs=
+ bh=bTRVeC1H6UzOvRt33LlP85IykY6/OkOwDl/ttqp12Hk=;
+ b=BNwK2vvBEr8WVMf5gvjKShE+OSaM2YtGXBlwLkhCSxTpYLntJ7a4whrpXWjqhHVnd7
+ XdTnLs8+9uAOftFylQCqYgWXhGH+SRmf1saJ9UHcUhyCHCAD2ZkUH9bjRbhjH7ytzz4w
+ 9C4Wm7/+XMEoBCaTX/ssOT5HWE3Zz2WKGR91M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786038672; x=1786643472;
+ d=1e100.net; s=20251104; t=1786038677; x=1786643477;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=E0jelht2lj8DoEMaI4GnToB1YZlySxM9EkoCITMHt7o=;
- b=M8c+LDAf8hbzYgiQGaMs+JcjxGzQHrSb5zrita6+2LhrjdWBhQgQeb1R8CH0PUoKHD
- QwdgHabutaxVBHjqkBtrezMJPhswYUFPT5NlZ2h6jFM2HVoOLJR5PW595s6Q7M9lsdBr
- PxEiPnMjzmghsTUbBj4B3LfrsgmNoaTk3k2S6sC2UJHMzkZiPR6CXHMtEGNeUlGjr0cg
- P/lQwzIE/J7E0jqCs7hUKAf4n3T0JGKmP2EPbtITEP/jyDJZ9xsgX93Ti3Ft3u96XQUy
- 6xFams3DcYrBsvDCIDRQEcJhlgVINP5kkSxSrZXYeyAA0m2I9iAK2ZWKORET6NjuN/QR
- cufQ==
-X-Gm-Message-State: AOJu0YwXhyZ0Bq43tfA8T2vBlXwP6hLSIXuMwniCmSNrFHBBTu5W47Wp
- hULuXedRbyaimVNg8PqIp0B/Ggh8XLBEM9QUySidOipCKQvQZJL060oat8xYHcuZ4V9M7Z8TrC9
- 0WunV1FPCNHPRXt2EY/Kr7UQbyLsxPWeGfp3AvIeKZruktBmT+t7yI5ijj0z57kSer0W7TVRnn6
- Nn4UIZRgu7EnPEvP+11rECwdYuMnw=
-X-Gm-Gg: AR+sD132hGlJKiw3c6s/X1acHDDbxSRKGikQ6DoeG+wXGUwVYOfdmKTHX6eOl1Rxifu
- e4AlHjUzEGEygasG5gWQEmkGsDuwqA6gDq72kFNiU7qPjZZmmu2GJfDHhW+0CIBNdSdZzOHlCSg
- 5DnBe+zlVCNoPCIuamauZMgklFAV11V1itQOcclP10O4aPds4R+HSGMzkkeH8D/vo3OLmTntUaO
- fI3aM9cSr7gp3lj7t3V3vL/UtI2BjY+kIVbHVg4YGWN6vdJu2zAHWo11nwdQN8kIffOxWBP7owy
- Dz3JiQ+kgcb1tezwKkwWWSnqqIetMr4nE1pTpNoZVJgNqKOkI2UDt3+wNEDR00ovA9f5DvEp6d1
- TXqQz9G70GlEng9ulhumaDpw5bekyATPgNpuKO8VFeuu7/XqQmUHvDJCgHojmD+h4t1iHg3wHPU
- kFDLC1PGNP72zD9QO3qnBJzCb4N1UxwWM887x/iLFs7LTZKZ3l78ixcdzZo4inwEAU/DxovqiEt
- GyWsUtp8gUpVs4UkMOWAf3lLYEpq+sbqpL8uleT
-X-Received: by 2002:a05:620a:261b:b0:936:5760:2eb6 with SMTP id
- af79cd13be357-9365945e9e9mr930945985a.5.1786038672011; 
- Thu, 06 Aug 2026 10:51:12 -0700 (PDT)
+ bh=bTRVeC1H6UzOvRt33LlP85IykY6/OkOwDl/ttqp12Hk=;
+ b=PQ8LPC03i+eCQ24qPNrGqKySZcGwpidQORjRgb5gAZzoFYNXLkdSgvAIxAEBa0Z5xz
+ Sh8iKfS9XXrFAxuIMIJIogJzpZ2P0s1Gl5W52WPcsdYExoUB/6JgQuBS8pbml4AAO9l/
+ rsGpcp9IEfbj7eMEcFLV9gcAjWsZt7fGE4XnIQ9YXIWhF1ZtbCNu849GUNiPvIEflyqK
+ GTdA5TbJNb/8+InvYoEbLiNI4dVM0qU02W9tIiHCFS4zECmTV14oi5ex/C9l1N2V1IF8
+ 2kYRYlYIkrUYxFmkVB5mSRjsCUi68oMQk0DUkZAGoEkl82tRUzA/SnsYAU0h6+a7PopB
+ gSag==
+X-Gm-Message-State: AOJu0YyGxR43C4V++ChD05PO6HZefmGJ6Kwvc/zalSqG8w6w1l6lwKDr
+ Q/uUFIaAnPYWTBcAOfYiSgI1uw/3Su8EA5IlGzG4q9Q+S+gaeMtq+IFqykTaml65sGA4muyLyuO
+ 2QOI2d9+YwK93acAi8Db4F8uAu39oKjanphOMnXhvqPxnIplRKBnziYSU53kLG670rm/eC1mTQW
+ edXHHLy97UDtp9OAU6slxC2GM5FYE=
+X-Gm-Gg: AR+sD13aPDOSkoM3ovAW5WomsSF33R9EdxbCt9H4kSZUd/ls62Ad8hzDJL7mmbgwdh/
+ iyRhPW2scEuiD2DcmFBIQke1JPDHcvPjlt9qM53bvXWhLnawBQbdmo5cAomDiGbtv9Y1JALCkef
+ hkn0rijmtDgy/jKwXn4QMbxYjQfTdoz6WpMktkMlQ0is9UIXPh54Y1L86BxGoCvYiG1Wa4zmqxp
+ kfIKK1CdV1HI+zwxCdde478R0DqW7WNqZJT5cMcDSVNodPTnMVktw/o0mH5JPvZ/UkjPo6WAYpT
+ 1vBT6gA32HwaTL8z7YSJCAHDH4KhyJaY1L35/JA8NS83zvKbOmPClmlvHnposbB0aYpBTRlTBAI
+ qAt/ZJMw1LNaHe0Q+NT+SRKZUYWwox5aGO23fnawmM8MB2PhFJJbE3CqOPgOY5HiPeB4V+kY4ZG
+ nTlAuAlohOWJlbRk0cHECraeHga+lmrImhlPyT1EzgNdP9fjVOsx76ptQlYsGtK20/krLdCvSFp
+ mHwyx4UGHoG3UDA/bMHnVb66CCkD/pWFAGqHFK/
+X-Received: by 2002:a05:620a:414c:b0:930:ae2b:10c1 with SMTP id
+ af79cd13be357-936491f30f6mr1541682985a.42.1786038677280; 
+ Thu, 06 Aug 2026 10:51:17 -0700 (PDT)
 Received: from syn-2603-7083-bff0-a0d0-0000-0000-0000-1a64.res6.spectrum.com
  ([2606:4100:3880:1257::1039]) by smtp.gmail.com with ESMTPSA id
- af79cd13be357-93657688090sm317311285a.27.2026.08.06.10.51.10
+ af79cd13be357-93657688090sm317311285a.27.2026.08.06.10.51.15
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 06 Aug 2026 10:51:11 -0700 (PDT)
+ Thu, 06 Aug 2026 10:51:16 -0700 (PDT)
 From: Andrew Bailey <abailey@iol.unh.edu>
 To: dev@dpdk.org,
 	luca.vizzarro@arm.com,
 	patrickrobb1997@gmail.com
 Cc: knimoji@iol.unh.edu, lylavoie@iol.unh.edu, dladd@iol.unh.edu,
  Andrew Bailey <abailey@iol.unh.edu>, Dean Marx <dmarx@iol.unh.edu>
-Subject: [PATCH v6 4/7] dts: move testbed model from framework to API
-Date: Thu,  6 Aug 2026 13:50:21 -0400
-Message-ID: <20260806175024.13655-5-abailey@iol.unh.edu>
+Subject: [PATCH v6 5/7] dts: move test suite module from framework to API
+Date: Thu,  6 Aug 2026 13:50:22 -0400
+Message-ID: <20260806175024.13655-6-abailey@iol.unh.edu>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260806175024.13655-1-abailey@iol.unh.edu>
 References: <20260806135346.568766-1-abailey@iol.unh.edu>
@@ -83,1127 +83,749 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Multiple test suites import modules from testbed model
-in the framework. Move this directory to the API.
+Currently, each test suite imports the TestSuite class
+from the DTS framework to use as a base class.
+However, the goal for 26.07 is to move all test suite
+imports to the API module. Moves and updates the test_suite
+file to the API directory, and updates all files that import
+test_suite to reflect this change.
 
 Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
 Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
 ---
- ...y.rst => api.testbed_model.capability.rst} |  2 +-
- ...odel.cpu.rst => api.testbed_model.cpu.rst} |  2 +-
- ...st => api.testbed_model.linux_session.rst} |  2 +-
- ...el.node.rst => api.testbed_model.node.rst} |  2 +-
- ...n.rst => api.testbed_model.os_session.rst} |  2 +-
- ...el.port.rst => api.testbed_model.port.rst} |  2 +-
- ...st => api.testbed_model.posix_session.rst} |  2 +-
- doc/api/dts/api.testbed_model.rst             | 28 +++++++++++++++++++
- ...ogy.rst => api.testbed_model.topology.rst} |  2 +-
- ...generator.capturing_traffic_generator.rst} |  2 +-
- .../api.testbed_model.traffic_generator.rst   | 16 +++++++++++
- ...testbed_model.traffic_generator.scapy.rst} |  2 +-
- ...l.traffic_generator.traffic_generator.rst} |  2 +-
- ...t => api.testbed_model.virtual_device.rst} |  2 +-
- doc/api/dts/framework.testbed_model.rst       | 28 -------------------
- ...mework.testbed_model.traffic_generator.rst | 16 -----------
- doc/api/dts/index.rst                         |  2 +-
- dts/api/artifact.py                           |  2 +-
- dts/api/capabilities.py                       |  8 +++---
- dts/api/context.py                            | 10 +++----
- dts/api/packet.py                             | 10 +++----
- .../testbed_model/__init__.py                 |  0
- .../testbed_model/capability.py               | 10 +++----
- dts/{framework => api}/testbed_model/cpu.py   |  2 +-
- .../testbed_model/linux_session.py            |  2 +-
- dts/{framework => api}/testbed_model/node.py  |  0
- .../testbed_model/os_session.py               |  6 ++--
- dts/{framework => api}/testbed_model/port.py  |  0
- .../testbed_model/posix_session.py            |  0
- .../testbed_model/topology.py                 |  4 +--
- .../traffic_generator/__init__.py             |  2 +-
- .../capturing_traffic_generator.py            |  2 +-
- .../performance_traffic_generator.py          |  0
- .../testbed_model/traffic_generator/scapy.py  | 12 ++++----
- .../traffic_generator/traffic_generator.py    |  6 ++--
- .../testbed_model/traffic_generator/trex.py   | 14 +++++-----
- .../testbed_model/virtual_device.py           |  0
- dts/framework/params/eal.py                   |  6 ++--
- dts/framework/params/types.py                 |  6 ++--
- dts/framework/remote_session/blocking_app.py  |  2 +-
- dts/framework/remote_session/dpdk.py          |  8 +++---
- dts/framework/remote_session/dpdk_shell.py    |  2 +-
- .../remote_session/interactive_shell.py       |  2 +-
- dts/framework/runner.py                       |  2 +-
- dts/framework/test_result.py                  |  2 +-
- dts/framework/test_run.py                     | 16 +++++------
- dts/framework/test_suite.py                   |  4 +--
- dts/tests/TestSuite_blocklist.py              |  2 +-
- dts/tests/TestSuite_cryptodev_latency.py      |  2 +-
- dts/tests/TestSuite_cryptodev_throughput.py   |  2 +-
- dts/tests/TestSuite_l2fwd.py                  |  2 +-
- dts/tests/TestSuite_packet_capture.py         |  8 +++---
- dts/tests/TestSuite_smoke_tests.py            |  2 +-
- dts/tests/TestSuite_softnic.py                |  2 +-
- dts/tests/TestSuite_virtio_forward.py         |  6 ++--
- 55 files changed, 140 insertions(+), 140 deletions(-)
- rename doc/api/dts/{framework.testbed_model.capability.rst => api.testbed_model.capability.rst} (74%)
- rename doc/api/dts/{framework.testbed_model.cpu.rst => api.testbed_model.cpu.rst} (78%)
- rename doc/api/dts/{framework.testbed_model.linux_session.rst => api.testbed_model.linux_session.rst} (74%)
- rename doc/api/dts/{framework.testbed_model.node.rst => api.testbed_model.node.rst} (71%)
- rename doc/api/dts/{framework.testbed_model.os_session.rst => api.testbed_model.os_session.rst} (76%)
- rename doc/api/dts/{framework.testbed_model.port.rst => api.testbed_model.port.rst} (77%)
- rename doc/api/dts/{framework.testbed_model.posix_session.rst => api.testbed_model.posix_session.rst} (74%)
- create mode 100644 doc/api/dts/api.testbed_model.rst
- rename doc/api/dts/{framework.testbed_model.topology.rst => api.testbed_model.topology.rst} (73%)
- rename doc/api/dts/{framework.testbed_model.traffic_generator.capturing_traffic_generator.rst => api.testbed_model.traffic_generator.capturing_traffic_generator.rst} (68%)
- create mode 100644 doc/api/dts/api.testbed_model.traffic_generator.rst
- rename doc/api/dts/{framework.testbed_model.traffic_generator.scapy.rst => api.testbed_model.traffic_generator.scapy.rst} (70%)
- rename doc/api/dts/{framework.testbed_model.traffic_generator.traffic_generator.rst => api.testbed_model.traffic_generator.traffic_generator.rst} (65%)
- rename doc/api/dts/{framework.testbed_model.virtual_device.rst => api.testbed_model.virtual_device.rst} (72%)
- delete mode 100644 doc/api/dts/framework.testbed_model.rst
- delete mode 100644 doc/api/dts/framework.testbed_model.traffic_generator.rst
- rename dts/{framework => api}/testbed_model/__init__.py (100%)
- rename dts/{framework => api}/testbed_model/capability.py (99%)
- rename dts/{framework => api}/testbed_model/cpu.py (99%)
- rename dts/{framework => api}/testbed_model/linux_session.py (99%)
- rename dts/{framework => api}/testbed_model/node.py (100%)
- rename dts/{framework => api}/testbed_model/os_session.py (99%)
- rename dts/{framework => api}/testbed_model/port.py (100%)
- rename dts/{framework => api}/testbed_model/posix_session.py (100%)
- rename dts/{framework => api}/testbed_model/topology.py (99%)
- rename dts/{framework => api}/testbed_model/traffic_generator/__init__.py (97%)
- rename dts/{framework => api}/testbed_model/traffic_generator/capturing_traffic_generator.py (99%)
- rename dts/{framework => api}/testbed_model/traffic_generator/performance_traffic_generator.py (100%)
- rename dts/{framework => api}/testbed_model/traffic_generator/scapy.py (98%)
- rename dts/{framework => api}/testbed_model/traffic_generator/traffic_generator.py (94%)
- rename dts/{framework => api}/testbed_model/traffic_generator/trex.py (97%)
- rename dts/{framework => api}/testbed_model/virtual_device.py (100%)
+ .../dts/{framework.test_suite.rst => api.test_suite.rst}  | 2 +-
+ doc/api/dts/index.rst                                     | 2 +-
+ dts/api/capabilities.py                                   | 6 +++---
+ dts/api/context.py                                        | 2 +-
+ dts/api/packet.py                                         | 2 +-
+ dts/{framework => api}/test_suite.py                      | 3 +--
+ dts/api/testbed_model/capability.py                       | 6 +++---
+ dts/framework/config/__init__.py                          | 4 ++--
+ dts/framework/config/test_run.py                          | 8 ++++----
+ dts/framework/test_run.py                                 | 2 +-
+ dts/tests/TestSuite_blocklist.py                          | 2 +-
+ dts/tests/TestSuite_buffer_scatter.py                     | 2 +-
+ dts/tests/TestSuite_checksum_offload.py                   | 2 +-
+ dts/tests/TestSuite_cryptodev_latency.py                  | 2 +-
+ dts/tests/TestSuite_cryptodev_throughput.py               | 2 +-
+ dts/tests/TestSuite_dual_vlan.py                          | 2 +-
+ dts/tests/TestSuite_dynamic_config.py                     | 2 +-
+ dts/tests/TestSuite_dynamic_queue_conf.py                 | 2 +-
+ dts/tests/TestSuite_flow_offload.py                       | 2 +-
+ dts/tests/TestSuite_hello_world.py                        | 2 +-
+ dts/tests/TestSuite_l2fwd.py                              | 2 +-
+ dts/tests/TestSuite_mac_filter.py                         | 2 +-
+ dts/tests/TestSuite_mtu.py                                | 2 +-
+ dts/tests/TestSuite_packet_capture.py                     | 2 +-
+ dts/tests/TestSuite_port_control.py                       | 2 +-
+ dts/tests/TestSuite_port_restart_config_persistency.py    | 2 +-
+ dts/tests/TestSuite_port_stats.py                         | 2 +-
+ dts/tests/TestSuite_promisc_support.py                    | 2 +-
+ dts/tests/TestSuite_qinq.py                               | 2 +-
+ dts/tests/TestSuite_queue_toggle.py                       | 2 +-
+ dts/tests/TestSuite_rss.py                                | 2 +-
+ dts/tests/TestSuite_rx_split.py                           | 2 +-
+ dts/tests/TestSuite_rx_tx_offload.py                      | 2 +-
+ dts/tests/TestSuite_single_core_forward_perf.py           | 2 +-
+ dts/tests/TestSuite_smoke_tests.py                        | 2 +-
+ dts/tests/TestSuite_softnic.py                            | 2 +-
+ dts/tests/TestSuite_speed_capabilities.py                 | 2 +-
+ dts/tests/TestSuite_unified_packet.py                     | 2 +-
+ dts/tests/TestSuite_virtio_forward.py                     | 2 +-
+ dts/tests/TestSuite_vlan.py                               | 2 +-
+ 40 files changed, 48 insertions(+), 49 deletions(-)
+ rename doc/api/dts/{framework.test_suite.rst => api.test_suite.rst} (81%)
+ rename dts/{framework => api}/test_suite.py (99%)
 
-diff --git a/doc/api/dts/framework.testbed_model.capability.rst b/doc/api/dts/api.testbed_model.capability.rst
-similarity index 74%
-rename from doc/api/dts/framework.testbed_model.capability.rst
-rename to doc/api/dts/api.testbed_model.capability.rst
-index fab91cad83..88e396dddb 100644
---- a/doc/api/dts/framework.testbed_model.capability.rst
-+++ b/doc/api/dts/api.testbed_model.capability.rst
+diff --git a/doc/api/dts/framework.test_suite.rst b/doc/api/dts/api.test_suite.rst
+similarity index 81%
+rename from doc/api/dts/framework.test_suite.rst
+rename to doc/api/dts/api.test_suite.rst
+index 9517f51a4a..4acb7b103a 100644
+--- a/doc/api/dts/framework.test_suite.rst
++++ b/doc/api/dts/api.test_suite.rst
 @@ -3,6 +3,6 @@
- capability - Testbed Capabilities
- =================================
+ test\_suite - Common Test Suite Features
+ ========================================
  
--.. automodule:: framework.testbed_model.capability
-+.. automodule:: api.testbed_model.capability
+-.. automodule:: framework.test_suite
++.. automodule:: api.test_suite
     :members:
     :show-inheritance:
-diff --git a/doc/api/dts/framework.testbed_model.cpu.rst b/doc/api/dts/api.testbed_model.cpu.rst
-similarity index 78%
-rename from doc/api/dts/framework.testbed_model.cpu.rst
-rename to doc/api/dts/api.testbed_model.cpu.rst
-index 997f2a9795..dbbb29480a 100644
---- a/doc/api/dts/framework.testbed_model.cpu.rst
-+++ b/doc/api/dts/api.testbed_model.cpu.rst
-@@ -3,6 +3,6 @@
- cpu - CPU Representation and Utilities
- ======================================
- 
--.. automodule:: framework.testbed_model.cpu
-+.. automodule:: api.testbed_model.cpu
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/framework.testbed_model.linux_session.rst b/doc/api/dts/api.testbed_model.linux_session.rst
-similarity index 74%
-rename from doc/api/dts/framework.testbed_model.linux_session.rst
-rename to doc/api/dts/api.testbed_model.linux_session.rst
-index 7567816199..cfe79d8bca 100644
---- a/doc/api/dts/framework.testbed_model.linux_session.rst
-+++ b/doc/api/dts/api.testbed_model.linux_session.rst
-@@ -3,6 +3,6 @@
- linux\_session - Linux Remote Session
- =====================================
- 
--.. automodule:: framework.testbed_model.linux_session
-+.. automodule:: api.testbed_model.linux_session
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/framework.testbed_model.node.rst b/doc/api/dts/api.testbed_model.node.rst
-similarity index 71%
-rename from doc/api/dts/framework.testbed_model.node.rst
-rename to doc/api/dts/api.testbed_model.node.rst
-index 23c6c46a00..15f522e5f7 100644
---- a/doc/api/dts/framework.testbed_model.node.rst
-+++ b/doc/api/dts/api.testbed_model.node.rst
-@@ -3,6 +3,6 @@
- node - Base Node
- ================
- 
--.. automodule:: framework.testbed_model.node
-+.. automodule:: api.testbed_model.node
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/framework.testbed_model.os_session.rst b/doc/api/dts/api.testbed_model.os_session.rst
-similarity index 76%
-rename from doc/api/dts/framework.testbed_model.os_session.rst
-rename to doc/api/dts/api.testbed_model.os_session.rst
-index ecfb352311..e7e3f9894f 100644
---- a/doc/api/dts/framework.testbed_model.os_session.rst
-+++ b/doc/api/dts/api.testbed_model.os_session.rst
-@@ -3,6 +3,6 @@
- os\_session - OS-aware Remote Session ABC
- =========================================
- 
--.. automodule:: framework.testbed_model.os_session
-+.. automodule:: api.testbed_model.os_session
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/framework.testbed_model.port.rst b/doc/api/dts/api.testbed_model.port.rst
-similarity index 77%
-rename from doc/api/dts/framework.testbed_model.port.rst
-rename to doc/api/dts/api.testbed_model.port.rst
-index fdb7ca8a1d..d64501aef0 100644
---- a/doc/api/dts/framework.testbed_model.port.rst
-+++ b/doc/api/dts/api.testbed_model.port.rst
-@@ -3,7 +3,7 @@
- port - NIC Port Representation
- ==============================
- 
--.. automodule:: framework.testbed_model.port
-+.. automodule:: api.testbed_model.port
-    :members:
-    :show-inheritance:
-    :noindex:
-diff --git a/doc/api/dts/framework.testbed_model.posix_session.rst b/doc/api/dts/api.testbed_model.posix_session.rst
-similarity index 74%
-rename from doc/api/dts/framework.testbed_model.posix_session.rst
-rename to doc/api/dts/api.testbed_model.posix_session.rst
-index e65585fd85..9f0e9ff18d 100644
---- a/doc/api/dts/framework.testbed_model.posix_session.rst
-+++ b/doc/api/dts/api.testbed_model.posix_session.rst
-@@ -3,6 +3,6 @@
- posix\_session - Posix Remote Session
- =====================================
- 
--.. automodule:: framework.testbed_model.posix_session
-+.. automodule:: api.testbed_model.posix_session
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/api.testbed_model.rst b/doc/api/dts/api.testbed_model.rst
-new file mode 100644
-index 0000000000..5e2e5189b2
---- /dev/null
-+++ b/doc/api/dts/api.testbed_model.rst
-@@ -0,0 +1,28 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+testbed\_model - Testbed Modelling Package
-+==========================================
-+
-+.. automodule:: api.testbed_model
-+   :members:
-+   :show-inheritance:
-+
-+.. toctree::
-+   :hidden:
-+   :maxdepth: 2
-+
-+   api.testbed_model.traffic_generator
-+
-+.. toctree::
-+   :hidden:
-+   :maxdepth: 1
-+
-+   api.testbed_model.os_session
-+   api.testbed_model.linux_session
-+   api.testbed_model.posix_session
-+   api.testbed_model.node
-+   api.testbed_model.capability
-+   api.testbed_model.cpu
-+   api.testbed_model.port
-+   api.testbed_model.topology
-+   api.testbed_model.virtual_device
-diff --git a/doc/api/dts/framework.testbed_model.topology.rst b/doc/api/dts/api.testbed_model.topology.rst
-similarity index 73%
-rename from doc/api/dts/framework.testbed_model.topology.rst
-rename to doc/api/dts/api.testbed_model.topology.rst
-index 496f2a895f..bb63fe38dc 100644
---- a/doc/api/dts/framework.testbed_model.topology.rst
-+++ b/doc/api/dts/api.testbed_model.topology.rst
-@@ -3,6 +3,6 @@
- topology - Testbed Topology
- ===========================
- 
--.. automodule:: framework.testbed_model.topology
-+.. automodule:: api.testbed_model.topology
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/framework.testbed_model.traffic_generator.capturing_traffic_generator.rst b/doc/api/dts/api.testbed_model.traffic_generator.capturing_traffic_generator.rst
-similarity index 68%
-rename from doc/api/dts/framework.testbed_model.traffic_generator.capturing_traffic_generator.rst
-rename to doc/api/dts/api.testbed_model.traffic_generator.capturing_traffic_generator.rst
-index 29fa834042..cfe03201a7 100644
---- a/doc/api/dts/framework.testbed_model.traffic_generator.capturing_traffic_generator.rst
-+++ b/doc/api/dts/api.testbed_model.traffic_generator.capturing_traffic_generator.rst
-@@ -3,6 +3,6 @@
- capturing\_traffic\_generator - Base Capturing TG ABC
- =====================================================
- 
--.. automodule:: framework.testbed_model.traffic_generator.capturing_traffic_generator
-+.. automodule:: api.testbed_model.traffic_generator.capturing_traffic_generator
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/api.testbed_model.traffic_generator.rst b/doc/api/dts/api.testbed_model.traffic_generator.rst
-new file mode 100644
-index 0000000000..311bdcf6b9
---- /dev/null
-+++ b/doc/api/dts/api.testbed_model.traffic_generator.rst
-@@ -0,0 +1,16 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+traffic\_generator Subpackage
-+=============================
-+
-+.. automodule:: api.testbed_model.traffic_generator
-+   :members:
-+   :show-inheritance:
-+
-+.. toctree::
-+   :hidden:
-+   :maxdepth: 1
-+
-+   api.testbed_model.traffic_generator.traffic_generator
-+   api.testbed_model.traffic_generator.capturing_traffic_generator
-+   api.testbed_model.traffic_generator.scapy
-diff --git a/doc/api/dts/framework.testbed_model.traffic_generator.scapy.rst b/doc/api/dts/api.testbed_model.traffic_generator.scapy.rst
-similarity index 70%
-rename from doc/api/dts/framework.testbed_model.traffic_generator.scapy.rst
-rename to doc/api/dts/api.testbed_model.traffic_generator.scapy.rst
-index df78ac9514..949bb66632 100644
---- a/doc/api/dts/framework.testbed_model.traffic_generator.scapy.rst
-+++ b/doc/api/dts/api.testbed_model.traffic_generator.scapy.rst
-@@ -3,6 +3,6 @@
- scapy - Capturing Traffic Generator
- ===================================
- 
--.. automodule:: framework.testbed_model.traffic_generator.scapy
-+.. automodule:: api.testbed_model.traffic_generator.scapy
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/framework.testbed_model.traffic_generator.traffic_generator.rst b/doc/api/dts/api.testbed_model.traffic_generator.traffic_generator.rst
-similarity index 65%
-rename from doc/api/dts/framework.testbed_model.traffic_generator.traffic_generator.rst
-rename to doc/api/dts/api.testbed_model.traffic_generator.traffic_generator.rst
-index bfec728dee..1045e534b5 100644
---- a/doc/api/dts/framework.testbed_model.traffic_generator.traffic_generator.rst
-+++ b/doc/api/dts/api.testbed_model.traffic_generator.traffic_generator.rst
-@@ -3,6 +3,6 @@
- traffic\_generator - Base TG ABC
- ================================
- 
--.. automodule:: framework.testbed_model.traffic_generator.traffic_generator
-+.. automodule:: api.testbed_model.traffic_generator.traffic_generator
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/framework.testbed_model.virtual_device.rst b/doc/api/dts/api.testbed_model.virtual_device.rst
-similarity index 72%
-rename from doc/api/dts/framework.testbed_model.virtual_device.rst
-rename to doc/api/dts/api.testbed_model.virtual_device.rst
-index a6b0420e75..97adc895f6 100644
---- a/doc/api/dts/framework.testbed_model.virtual_device.rst
-+++ b/doc/api/dts/api.testbed_model.virtual_device.rst
-@@ -3,6 +3,6 @@
- virtual\_device - Virtual Devices
- =================================
- 
--.. automodule:: framework.testbed_model.virtual_device
-+.. automodule:: api.testbed_model.virtual_device
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/framework.testbed_model.rst b/doc/api/dts/framework.testbed_model.rst
-deleted file mode 100644
-index f283178f6a..0000000000
---- a/doc/api/dts/framework.testbed_model.rst
-+++ /dev/null
-@@ -1,28 +0,0 @@
--.. SPDX-License-Identifier: BSD-3-Clause
--
--testbed\_model - Testbed Modelling Package
--==========================================
--
--.. automodule:: framework.testbed_model
--   :members:
--   :show-inheritance:
--
--.. toctree::
--   :hidden:
--   :maxdepth: 2
--
--   framework.testbed_model.traffic_generator
--
--.. toctree::
--   :hidden:
--   :maxdepth: 1
--
--   framework.testbed_model.os_session
--   framework.testbed_model.linux_session
--   framework.testbed_model.posix_session
--   framework.testbed_model.node
--   framework.testbed_model.capability
--   framework.testbed_model.cpu
--   framework.testbed_model.port
--   framework.testbed_model.topology
--   framework.testbed_model.virtual_device
-diff --git a/doc/api/dts/framework.testbed_model.traffic_generator.rst b/doc/api/dts/framework.testbed_model.traffic_generator.rst
-deleted file mode 100644
-index 24c250ee3a..0000000000
---- a/doc/api/dts/framework.testbed_model.traffic_generator.rst
-+++ /dev/null
-@@ -1,16 +0,0 @@
--.. SPDX-License-Identifier: BSD-3-Clause
--
--traffic\_generator Subpackage
--=============================
--
--.. automodule:: framework.testbed_model.traffic_generator
--   :members:
--   :show-inheritance:
--
--.. toctree::
--   :hidden:
--   :maxdepth: 1
--
--   framework.testbed_model.traffic_generator.traffic_generator
--   framework.testbed_model.traffic_generator.capturing_traffic_generator
--   framework.testbed_model.traffic_generator.scapy
 diff --git a/doc/api/dts/index.rst b/doc/api/dts/index.rst
-index 98269d6e80..f47e4af3f2 100644
+index f47e4af3f2..7c282bbba1 100644
 --- a/doc/api/dts/index.rst
 +++ b/doc/api/dts/index.rst
-@@ -16,7 +16,7 @@ Packages
+@@ -29,7 +29,7 @@ Modules
  
-    tests
-    api
--   framework.testbed_model
-+   api.testbed_model
-    framework.remote_session
-    framework.params
-    framework.config
-diff --git a/dts/api/artifact.py b/dts/api/artifact.py
-index f3dd07de56..74a8ac667f 100644
---- a/dts/api/artifact.py
-+++ b/dts/api/artifact.py
-@@ -48,9 +48,9 @@
- from typing_extensions import Buffer
- 
- from api.exception import InternalError
-+from api.testbed_model.node import Node, NodeIdentifier, get_node
- from framework.logger import DTSLogger, get_dts_logger
- from framework.settings import SETTINGS
--from framework.testbed_model.node import Node, NodeIdentifier, get_node
- 
- TextMode: TypeAlias = (
-     Literal["r", "r+", "w", "w+", "a", "a+", "x", "x+"]
+    framework.runner
+    framework.test_run
+-   framework.test_suite
++   api.test_suite
+    framework.test_result
+    framework.settings
+    api.context
 diff --git a/dts/api/capabilities.py b/dts/api/capabilities.py
-index b0c1d81d36..8ed832a588 100644
+index 8ed832a588..933eb6bca7 100644
 --- a/dts/api/capabilities.py
 +++ b/dts/api/capabilities.py
-@@ -23,7 +23,7 @@
+@@ -22,7 +22,7 @@
+ Examples:
      .. code:: python
  
-         from framework.test_suite import TestSuite, func_test
--        from framework.testbed_model.capability import LinkTopology, requires_link_topology
-+        from api.testbed_model.capability import LinkTopology, requires_link_topology
+-        from framework.test_suite import TestSuite, func_test
++        from api.test_suite import TestSuite, func_test
+         from api.testbed_model.capability import LinkTopology, requires_link_topology
          # The whole test suite (each test case within) doesn't require any links.
          @requires_link_topology(LinkTopology.NO_LINK)
-         @func_test
-@@ -34,7 +34,7 @@ def hello_world_single_core(self):
+@@ -33,7 +33,7 @@ def hello_world_single_core(self):
+ 
      .. code:: python
  
-         from framework.test_suite import TestSuite, func_test
--        from framework.testbed_model.capability import NicCapability, requires_nic_capability
-+        from api.testbed_model.capability import NicCapability, requires_nic_capability
+-        from framework.test_suite import TestSuite, func_test
++        from api.test_suite import TestSuite, func_test
+         from api.testbed_model.capability import NicCapability, requires_nic_capability
          class TestPmdBufferScatter(TestSuite):
              # only the test case requires the SCATTERED_RX_ENABLED capability
-             # other test cases may not require it
-@@ -237,7 +237,7 @@ def requires_link_topology(
-     Returns:
-         The decorated test case or test suite.
-     """
--    from framework.testbed_model.capability import TopologyCapability
-+    from api.testbed_model.capability import TopologyCapability
- 
-     def add_required_topology(
-         test_case_or_suite: type["TestProtocol"],
-@@ -260,7 +260,7 @@ def requires_nic_capability(
-     Returns:
-         The decorated test case or test suite.
-     """
--    from framework.testbed_model.capability import DecoratedNicCapability
-+    from api.testbed_model.capability import DecoratedNicCapability
- 
-     def add_required_capability(
-         test_case_or_suite: type["TestProtocol"],
-diff --git a/dts/api/context.py b/dts/api/context.py
-index 709b99421e..57e14ef598 100644
---- a/dts/api/context.py
-+++ b/dts/api/context.py
-@@ -9,17 +9,17 @@
- from typing import TYPE_CHECKING, Any, Optional, ParamSpec, Union
- 
- from api.exception import InternalError
-+from api.testbed_model.cpu import LogicalCoreCount, LogicalCoreList
-+from api.testbed_model.node import Node
-+from api.testbed_model.topology import Topology
- from framework.remote_session.shell_pool import ShellPool
- from framework.settings import SETTINGS
--from framework.testbed_model.cpu import LogicalCoreCount, LogicalCoreList
--from framework.testbed_model.node import Node
--from framework.testbed_model.topology import Topology
+@@ -47,7 +47,7 @@ def test_scatter_mbuf_2048(self):
+ from typing import TYPE_CHECKING, Callable
  
  if TYPE_CHECKING:
-+    from api.testbed_model.capability import TestProtocol
-+    from api.testbed_model.traffic_generator.traffic_generator import TrafficGenerator
+-    from framework.test_suite import TestProtocol
++    from api.test_suite import TestProtocol
+ 
+ 
+ class LinkTopology(IntEnum):
+diff --git a/dts/api/context.py b/dts/api/context.py
+index 57e14ef598..753b2101a0 100644
+--- a/dts/api/context.py
++++ b/dts/api/context.py
+@@ -16,10 +16,10 @@
+ from framework.settings import SETTINGS
+ 
+ if TYPE_CHECKING:
++    from api.test_suite import TestCase, TestSuite
+     from api.testbed_model.capability import TestProtocol
+     from api.testbed_model.traffic_generator.traffic_generator import TrafficGenerator
      from framework.remote_session.dpdk import DPDKBuildEnvironment, DPDKRuntimeEnvironment
-     from framework.test_suite import TestCase, TestSuite
--    from framework.testbed_model.capability import TestProtocol
--    from framework.testbed_model.traffic_generator.traffic_generator import TrafficGenerator
+-    from framework.test_suite import TestCase, TestSuite
  
  P = ParamSpec("P")
  
 diff --git a/dts/api/packet.py b/dts/api/packet.py
-index dda3087df4..defbb758c8 100644
+index defbb758c8..58f47f1646 100644
 --- a/dts/api/packet.py
 +++ b/dts/api/packet.py
-@@ -30,13 +30,13 @@
- from api.context import get_ctx
- from api.exception import InternalError
- from api.test import fail, log_debug
--from api.utils import get_packet_summaries
--from framework.testbed_model.traffic_generator.capturing_traffic_generator import (
-+from api.testbed_model.traffic_generator.capturing_traffic_generator import (
-     PacketFilteringConfig,
- )
--from framework.testbed_model.traffic_generator.performance_traffic_generator import (
-+from api.testbed_model.traffic_generator.performance_traffic_generator import (
-     PerformanceTrafficStats,
- )
-+from api.utils import get_packet_summaries
- 
- 
- def send_packet_and_capture(
-@@ -83,7 +83,7 @@ def send_packets_and_capture(
-         A list of received packets.
+@@ -175,7 +175,7 @@ def adjust_addresses(packets: list[Packet], expected: bool = False) -> list[Pack
+     Raises:
+         InternalError: If no tests are running.
      """
-     from api.context import get_ctx
--    from framework.testbed_model.traffic_generator.capturing_traffic_generator import (
-+    from api.testbed_model.traffic_generator.capturing_traffic_generator import (
-         CapturingTrafficGenerator,
-     )
+-    from framework.test_suite import TestSuite
++    from api.test_suite import TestSuite
  
-@@ -339,7 +339,7 @@ def assess_performance_by_packet(
-     Returns:
-         Performance statistics of the generated test.
-     """
--    from framework.testbed_model.traffic_generator.performance_traffic_generator import (
-+    from api.testbed_model.traffic_generator.performance_traffic_generator import (
-         PerformanceTrafficGenerator,
-     )
- 
-diff --git a/dts/framework/testbed_model/__init__.py b/dts/api/testbed_model/__init__.py
-similarity index 100%
-rename from dts/framework/testbed_model/__init__.py
-rename to dts/api/testbed_model/__init__.py
-diff --git a/dts/framework/testbed_model/capability.py b/dts/api/testbed_model/capability.py
+     if get_ctx().local.current_test_suite is None:
+         raise InternalError("No current test suite, tests aren't running?")
+diff --git a/dts/framework/test_suite.py b/dts/api/test_suite.py
 similarity index 99%
-rename from dts/framework/testbed_model/capability.py
-rename to dts/api/testbed_model/capability.py
-index 00b40a3b1e..2748daa8a4 100644
---- a/dts/framework/testbed_model/capability.py
+rename from dts/framework/test_suite.py
+rename to dts/api/test_suite.py
+index 786cfc7bff..0822f9bfe5 100644
+--- a/dts/framework/test_suite.py
++++ b/dts/api/test_suite.py
+@@ -34,8 +34,7 @@
+ from api.testbed_model.topology import Topology
+ from api.utils import to_pascal_case
+ from framework.config.common import FrozenModel
+-
+-from .logger import DTSLogger, get_dts_logger
++from framework.logger import DTSLogger, get_dts_logger
+ 
+ if TYPE_CHECKING:
+     from api.context import Context
+diff --git a/dts/api/testbed_model/capability.py b/dts/api/testbed_model/capability.py
+index 2748daa8a4..bb581d4ab7 100644
+--- a/dts/api/testbed_model/capability.py
 +++ b/dts/api/testbed_model/capability.py
-@@ -26,7 +26,7 @@
+@@ -25,7 +25,7 @@
+ Examples:
      .. code:: python
  
-         from framework.test_suite import TestSuite, func_test
--        from framework.testbed_model.capability import LinkTopology, requires
-+        from api.testbed_model.capability import LinkTopology, requires
+-        from framework.test_suite import TestSuite, func_test
++        from api.test_suite import TestSuite, func_test
+         from api.testbed_model.capability import LinkTopology, requires
          # The whole test suite (each test case within) doesn't require any links.
          @requires_link_topology(LinkTopology.NO_LINK)
-         @func_test
-@@ -37,7 +37,7 @@ def hello_world_single_core(self):
+@@ -36,7 +36,7 @@ def hello_world_single_core(self):
+ 
      .. code:: python
  
-         from framework.test_suite import TestSuite, func_test
--        from framework.testbed_model.capability import NicCapability, requires
-+        from api.testbed_model.capability import NicCapability, requires
+-        from framework.test_suite import TestSuite, func_test
++        from api.test_suite import TestSuite, func_test
+         from api.testbed_model.capability import NicCapability, requires
          class TestPmdBufferScatter(TestSuite):
              # only the test case requires the SCATTERED_RX_ENABLED capability
-             # other test cases may not require it
-@@ -65,10 +65,10 @@ def test_scatter_mbuf_2048(self):
- 
- from api.capabilities import LinkTopology, NicCapability
- from api.exception import ConfigurationError, InternalError, SkippedTestException
-+from api.testbed_model.node import Node
-+from api.testbed_model.port import DriverKind
-+from api.testbed_model.topology import Topology
+@@ -71,8 +71,8 @@ def test_scatter_mbuf_2048(self):
  from framework.logger import get_dts_logger
--from framework.testbed_model.node import Node
--from framework.testbed_model.port import DriverKind
--from framework.testbed_model.topology import Topology
  
  if TYPE_CHECKING:
++    from api.test_suite import TestCase
      from api.testpmd import TestPmd
-diff --git a/dts/framework/testbed_model/cpu.py b/dts/api/testbed_model/cpu.py
-similarity index 99%
-rename from dts/framework/testbed_model/cpu.py
-rename to dts/api/testbed_model/cpu.py
-index 68e9c7dffb..34fb6d0848 100644
---- a/dts/framework/testbed_model/cpu.py
-+++ b/dts/api/testbed_model/cpu.py
-@@ -29,7 +29,7 @@
- 
- @unique
- class Architecture(StrEnum):
--    r"""The supported architectures of :class:`~framework.testbed_model.node.Node`\s."""
-+    r"""The supported architectures of :class:`~api.testbed_model.node.Node`\s."""
- 
-     #:
-     i686 = auto()
-diff --git a/dts/framework/testbed_model/linux_session.py b/dts/api/testbed_model/linux_session.py
-similarity index 99%
-rename from dts/framework/testbed_model/linux_session.py
-rename to dts/api/testbed_model/linux_session.py
-index 26c53f069c..399968efd4 100644
---- a/dts/framework/testbed_model/linux_session.py
-+++ b/dts/api/testbed_model/linux_session.py
-@@ -23,8 +23,8 @@
-     InternalError,
-     RemoteCommandExecutionError,
- )
-+from api.testbed_model.port import PortInfo
- from api.utils import expand_range
--from framework.testbed_model.port import PortInfo
- 
- from .cpu import LogicalCore
- from .port import Port
-diff --git a/dts/framework/testbed_model/node.py b/dts/api/testbed_model/node.py
-similarity index 100%
-rename from dts/framework/testbed_model/node.py
-rename to dts/api/testbed_model/node.py
-diff --git a/dts/framework/testbed_model/os_session.py b/dts/api/testbed_model/os_session.py
-similarity index 99%
-rename from dts/framework/testbed_model/os_session.py
-rename to dts/api/testbed_model/os_session.py
-index 08122874e6..7944fda8c0 100644
---- a/dts/framework/testbed_model/os_session.py
-+++ b/dts/api/testbed_model/os_session.py
-@@ -73,11 +73,11 @@ class OSSessionInfo:
- 
-     Attributes:
-         os_name: The name of the running operating system of
--            the :class:`~framework.testbed_model.node.Node`.
-+            the :class:`~api.testbed_model.node.Node`.
-         os_version: The version of the running operating system of
--            the :class:`~framework.testbed_model.node.Node`.
-+            the :class:`~api.testbed_model.node.Node`.
-         kernel_version: The kernel version of the running operating system of
--            the :class:`~framework.testbed_model.node.Node`.
-+            the :class:`~api.testbed_model.node.Node`.
-     """
- 
-     os_name: str
-diff --git a/dts/framework/testbed_model/port.py b/dts/api/testbed_model/port.py
-similarity index 100%
-rename from dts/framework/testbed_model/port.py
-rename to dts/api/testbed_model/port.py
-diff --git a/dts/framework/testbed_model/posix_session.py b/dts/api/testbed_model/posix_session.py
-similarity index 100%
-rename from dts/framework/testbed_model/posix_session.py
-rename to dts/api/testbed_model/posix_session.py
-diff --git a/dts/framework/testbed_model/topology.py b/dts/api/testbed_model/topology.py
-similarity index 99%
-rename from dts/framework/testbed_model/topology.py
-rename to dts/api/testbed_model/topology.py
-index 6b8c5edee5..7d074f9ef4 100644
---- a/dts/framework/testbed_model/topology.py
-+++ b/dts/api/testbed_model/topology.py
-@@ -19,8 +19,8 @@
- 
- from api.capabilities import LinkTopology
- from api.exception import ConfigurationError, InternalError
--from framework.testbed_model.linux_session import LinuxSession
--from framework.testbed_model.node import Node, NodeIdentifier
-+from api.testbed_model.linux_session import LinuxSession
-+from api.testbed_model.node import Node, NodeIdentifier
- 
- from .port import DriverKind, Port, PortConfig
- 
-diff --git a/dts/framework/testbed_model/traffic_generator/__init__.py b/dts/api/testbed_model/traffic_generator/__init__.py
-similarity index 97%
-rename from dts/framework/testbed_model/traffic_generator/__init__.py
-rename to dts/api/testbed_model/traffic_generator/__init__.py
-index 324b5e88f3..11fa25448a 100644
---- a/dts/framework/testbed_model/traffic_generator/__init__.py
-+++ b/dts/api/testbed_model/traffic_generator/__init__.py
-@@ -15,12 +15,12 @@
- """
- 
- from api.exception import ConfigurationError
-+from api.testbed_model.node import Node
- from framework.config.test_run import (
-     ScapyTrafficGeneratorConfig,
-     TrafficGeneratorConfig,
-     TrexTrafficGeneratorConfig,
- )
--from framework.testbed_model.node import Node
- 
- from .scapy import ScapyTrafficGenerator
- from .traffic_generator import TrafficGenerator
-diff --git a/dts/framework/testbed_model/traffic_generator/capturing_traffic_generator.py b/dts/api/testbed_model/traffic_generator/capturing_traffic_generator.py
-similarity index 99%
-rename from dts/framework/testbed_model/traffic_generator/capturing_traffic_generator.py
-rename to dts/api/testbed_model/traffic_generator/capturing_traffic_generator.py
-index 2804d64990..db274e5e82 100644
---- a/dts/framework/testbed_model/traffic_generator/capturing_traffic_generator.py
-+++ b/dts/api/testbed_model/traffic_generator/capturing_traffic_generator.py
-@@ -17,8 +17,8 @@
- from scapy.packet import Packet
- 
- from api.artifact import Artifact
-+from api.testbed_model.port import Port
- from api.utils import get_packet_summaries
--from framework.testbed_model.port import Port
- 
- from .traffic_generator import TrafficGenerator
- 
-diff --git a/dts/framework/testbed_model/traffic_generator/performance_traffic_generator.py b/dts/api/testbed_model/traffic_generator/performance_traffic_generator.py
-similarity index 100%
-rename from dts/framework/testbed_model/traffic_generator/performance_traffic_generator.py
-rename to dts/api/testbed_model/traffic_generator/performance_traffic_generator.py
-diff --git a/dts/framework/testbed_model/traffic_generator/scapy.py b/dts/api/testbed_model/traffic_generator/scapy.py
-similarity index 98%
-rename from dts/framework/testbed_model/traffic_generator/scapy.py
-rename to dts/api/testbed_model/traffic_generator/scapy.py
-index 70856cc1f0..1edc1af838 100644
---- a/dts/framework/testbed_model/traffic_generator/scapy.py
-+++ b/dts/api/testbed_model/traffic_generator/scapy.py
-@@ -26,15 +26,15 @@
- from scapy.packet import Packet
- 
- from api.exception import InteractiveSSHSessionDeadError, InternalError
-+from api.testbed_model.node import Node
-+from api.testbed_model.port import Port
-+from api.testbed_model.topology import Topology
-+from api.testbed_model.traffic_generator.capturing_traffic_generator import (
-+    PacketFilteringConfig,
-+)
- from framework.config.node import OS
- from framework.config.test_run import ScapyTrafficGeneratorConfig
- from framework.remote_session.python_shell import PythonShell
--from framework.testbed_model.node import Node
--from framework.testbed_model.port import Port
--from framework.testbed_model.topology import Topology
--from framework.testbed_model.traffic_generator.capturing_traffic_generator import (
--    PacketFilteringConfig,
--)
- 
- from .capturing_traffic_generator import CapturingTrafficGenerator
- 
-diff --git a/dts/framework/testbed_model/traffic_generator/traffic_generator.py b/dts/api/testbed_model/traffic_generator/traffic_generator.py
-similarity index 94%
-rename from dts/framework/testbed_model/traffic_generator/traffic_generator.py
-rename to dts/api/testbed_model/traffic_generator/traffic_generator.py
-index fedce77fdf..5fd68e5144 100644
---- a/dts/framework/testbed_model/traffic_generator/traffic_generator.py
-+++ b/dts/api/testbed_model/traffic_generator/traffic_generator.py
-@@ -13,11 +13,11 @@
- 
- from scapy.packet import Packet
- 
-+from api.testbed_model.node import Node
-+from api.testbed_model.port import Port
-+from api.testbed_model.topology import Topology
- from framework.config.test_run import TrafficGeneratorConfig
- from framework.logger import DTSLogger, get_dts_logger
--from framework.testbed_model.node import Node
--from framework.testbed_model.port import Port
--from framework.testbed_model.topology import Topology
- 
- 
- class TrafficGenerator(ABC):
-diff --git a/dts/framework/testbed_model/traffic_generator/trex.py b/dts/api/testbed_model/traffic_generator/trex.py
-similarity index 97%
-rename from dts/framework/testbed_model/traffic_generator/trex.py
-rename to dts/api/testbed_model/traffic_generator/trex.py
-index 7fd6234d27..ffb1390706 100644
---- a/dts/framework/testbed_model/traffic_generator/trex.py
-+++ b/dts/api/testbed_model/traffic_generator/trex.py
-@@ -12,19 +12,19 @@
- from scapy.packet import Packet
- 
- from api.exception import SSHTimeoutError
-+from api.testbed_model.node import Node, create_session
-+from api.testbed_model.os_session import OSSession
-+from api.testbed_model.topology import Topology
-+from api.testbed_model.traffic_generator.performance_traffic_generator import (
-+    PerformanceTrafficGenerator,
-+    PerformanceTrafficStats,
-+)
- from api.utils import StrEnum
- from framework.config.node import OS, NodeConfiguration
- from framework.config.test_run import TrexTrafficGeneratorConfig
- from framework.parser import TextParser
- from framework.remote_session.blocking_app import BlockingApp
- from framework.remote_session.python_shell import PythonShell
--from framework.testbed_model.node import Node, create_session
--from framework.testbed_model.os_session import OSSession
--from framework.testbed_model.topology import Topology
--from framework.testbed_model.traffic_generator.performance_traffic_generator import (
--    PerformanceTrafficGenerator,
--    PerformanceTrafficStats,
--)
- 
- 
- @dataclass(slots=True)
-diff --git a/dts/framework/testbed_model/virtual_device.py b/dts/api/testbed_model/virtual_device.py
-similarity index 100%
-rename from dts/framework/testbed_model/virtual_device.py
-rename to dts/api/testbed_model/virtual_device.py
-diff --git a/dts/framework/params/eal.py b/dts/framework/params/eal.py
-index e84a20f02f..86bfd3fcc6 100644
---- a/dts/framework/params/eal.py
-+++ b/dts/framework/params/eal.py
-@@ -6,12 +6,12 @@
- from dataclasses import dataclass, field
- from typing import TYPE_CHECKING, Literal
- 
-+from api.testbed_model.cpu import LogicalCoreList
-+from api.testbed_model.virtual_device import VirtualDevice
- from framework.params import Params, Switch
--from framework.testbed_model.cpu import LogicalCoreList
--from framework.testbed_model.virtual_device import VirtualDevice
- 
- if TYPE_CHECKING:
--    from framework.testbed_model.port import Port
-+    from api.testbed_model.port import Port
- 
- 
- def _port_to_pci(port: "Port") -> str:
-diff --git a/dts/framework/params/types.py b/dts/framework/params/types.py
-index a9f3749083..f9a51963a2 100644
---- a/dts/framework/params/types.py
-+++ b/dts/framework/params/types.py
-@@ -32,6 +32,9 @@ def create_testpmd(**kwargs: Unpack[TestPmdParamsDict]):
-     TestType,
-     TLSVersion,
- )
-+from api.testbed_model.cpu import LogicalCoreList
-+from api.testbed_model.port import Port
-+from api.testbed_model.virtual_device import VirtualDevice
- from api.testpmd.config import (
-     AnonMempoolAllocationMode,
-     EthPeer,
-@@ -55,9 +58,6 @@ def create_testpmd(**kwargs: Unpack[TestPmdParamsDict]):
- )
- from api.testpmd.types import RxOffloadCapability, TxOffloadCapability
- from framework.params import Switch, YesNoSwitch
--from framework.testbed_model.cpu import LogicalCoreList
--from framework.testbed_model.port import Port
--from framework.testbed_model.virtual_device import VirtualDevice
- 
- 
- class EalParamsDict(TypedDict, total=False):
-diff --git a/dts/framework/remote_session/blocking_app.py b/dts/framework/remote_session/blocking_app.py
-index 07db6dfeb0..84db3974b1 100644
---- a/dts/framework/remote_session/blocking_app.py
-+++ b/dts/framework/remote_session/blocking_app.py
-@@ -31,11 +31,11 @@
- from typing_extensions import Self
- 
- from api.context import get_ctx
-+from api.testbed_model.node import Node
- from framework.params import Params
- from framework.params.eal import EalParams
- from framework.remote_session.dpdk_shell import compute_eal_params
- from framework.remote_session.interactive_shell import InteractiveShell
--from framework.testbed_model.node import Node
- 
- P = TypeVar("P", bound=Params)
- 
-diff --git a/dts/framework/remote_session/dpdk.py b/dts/framework/remote_session/dpdk.py
-index ee34eb567d..c02c68af77 100644
---- a/dts/framework/remote_session/dpdk.py
-+++ b/dts/framework/remote_session/dpdk.py
-@@ -16,6 +16,10 @@
- from api.capabilities import LinkTopology
- from api.context import get_ctx
- from api.exception import ConfigurationError, RemoteFileNotFoundError
-+from api.testbed_model.cpu import LogicalCore, LogicalCoreCount, LogicalCoreList, lcore_filter
-+from api.testbed_model.node import Node
-+from api.testbed_model.os_session import OSSession
-+from api.testbed_model.virtual_device import VirtualDevice
- from api.utils import MesonArgs, TarCompressionFormat
- from framework.config.test_run import (
-     DPDKBuildConfiguration,
-@@ -31,10 +35,6 @@
- from framework.logger import DTSLogger, get_dts_logger
- from framework.params.eal import EalParams
- from framework.remote_session.remote_session import CommandResult
--from framework.testbed_model.cpu import LogicalCore, LogicalCoreCount, LogicalCoreList, lcore_filter
--from framework.testbed_model.node import Node
--from framework.testbed_model.os_session import OSSession
--from framework.testbed_model.virtual_device import VirtualDevice
- 
- 
- @dataclass(slots=True, frozen=True)
-diff --git a/dts/framework/remote_session/dpdk_shell.py b/dts/framework/remote_session/dpdk_shell.py
-index a8f169787c..b807f9bdae 100644
---- a/dts/framework/remote_session/dpdk_shell.py
-+++ b/dts/framework/remote_session/dpdk_shell.py
-@@ -11,12 +11,12 @@
- from pathlib import PurePath
- 
- from api.context import get_ctx
-+from api.testbed_model.cpu import LogicalCoreList
- from framework.params.eal import EalParams
- from framework.remote_session.interactive_shell import (
-     InteractiveShell,
-     only_active,
- )
--from framework.testbed_model.cpu import LogicalCoreList
- 
- 
- def compute_eal_params(
-diff --git a/dts/framework/remote_session/interactive_shell.py b/dts/framework/remote_session/interactive_shell.py
-index 362bc2a352..831861a9ac 100644
---- a/dts/framework/remote_session/interactive_shell.py
-+++ b/dts/framework/remote_session/interactive_shell.py
-@@ -35,10 +35,10 @@
-     InteractiveSSHSessionDeadError,
-     InteractiveSSHTimeoutError,
- )
-+from api.testbed_model.node import Node
- from framework.logger import DTSLogger, get_dts_logger
- from framework.params import Params
- from framework.settings import SETTINGS
--from framework.testbed_model.node import Node
+-    from framework.test_suite import TestCase
  
  P = ParamSpec("P")
- T = TypeVar("T", bound="InteractiveShell")
-diff --git a/dts/framework/runner.py b/dts/framework/runner.py
-index cb137fbf7b..ba5bc45cfc 100644
---- a/dts/framework/runner.py
-+++ b/dts/framework/runner.py
-@@ -13,9 +13,9 @@
- import textwrap
+ TestPmdMethod = Callable[Concatenate["TestPmd", P], Any]
+diff --git a/dts/framework/config/__init__.py b/dts/framework/config/__init__.py
+index e24a351ecf..c8edf340bd 100644
+--- a/dts/framework/config/__init__.py
++++ b/dts/framework/config/__init__.py
+@@ -43,7 +43,7 @@
  
- from api.exception import ConfigurationError
-+from api.testbed_model.node import Node
- from framework.config.common import ValidationContext
- from framework.test_run import TestRun
--from framework.testbed_model.node import Node
+ # Import only if type checking or building docs, to prevent circular imports.
+ if TYPE_CHECKING:
+-    from framework.test_suite import BaseConfig
++    from api.test_suite import BaseConfig
  
- from .config import Configuration, load_config
- from .logger import DTSLogger, get_dts_logger
-diff --git a/dts/framework/test_result.py b/dts/framework/test_result.py
-index 3cecb928ca..5f945163ce 100644
---- a/dts/framework/test_result.py
-+++ b/dts/framework/test_result.py
-@@ -36,9 +36,9 @@
- from typing_extensions import OrderedDict
+ NodesConfig = Annotated[list[NodeConfiguration], Field(min_length=1)]
  
- from api.exception import DTSError, ErrorSeverity, InternalError
-+from api.testbed_model.os_session import OSSessionInfo
- from framework.remote_session.dpdk import DPDKBuildInfo
- from framework.settings import SETTINGS
--from framework.testbed_model.os_session import OSSessionInfo
+@@ -184,7 +184,7 @@ def load_config(ctx: ValidationContext) -> Configuration:
+     nodes = _load_and_parse_model(ctx["settings"].nodes_config_path, NodesConfig, ctx)
+ 
+     try:
+-        from framework.test_suite import BaseConfig as BaseConfig
++        from api.test_suite import BaseConfig as BaseConfig
+ 
+         Configuration.model_rebuild()
+         return Configuration.model_validate(
+diff --git a/dts/framework/config/test_run.py b/dts/framework/config/test_run.py
+index b87c7b2d19..40fce48bf9 100644
+--- a/dts/framework/config/test_run.py
++++ b/dts/framework/config/test_run.py
+@@ -33,7 +33,7 @@
+ from .common import FrozenModel, load_fields_from_settings
+ 
+ if TYPE_CHECKING:
+-    from framework.test_suite import BaseConfig, TestCase, TestSuite, TestSuiteSpec
++    from api.test_suite import BaseConfig, TestCase, TestSuite, TestSuiteSpec
  
  
- class Result(IntEnum):
+ @unique
+@@ -230,7 +230,7 @@ class TestSuiteConfig(FrozenModel):
+     @cached_property
+     def test_suite_spec(self) -> "TestSuiteSpec":
+         """The specification of the requested test suite."""
+-        from framework.test_suite import find_by_name
++        from api.test_suite import find_by_name
+ 
+         test_suite_spec = find_by_name(self.test_suite_name)
+         assert test_suite_spec is not None, (
+@@ -280,7 +280,7 @@ def fetch_all_test_suites() -> list[TestSuiteConfig]:
+ 
+     This function does not include the smoke tests.
+     """
+-    from framework.test_suite import AVAILABLE_TEST_SUITES
++    from api.test_suite import AVAILABLE_TEST_SUITES
+ 
+     return [
+         TestSuiteConfig(test_suite=test_suite.name)
+@@ -506,7 +506,7 @@ def filter_tests(
+         self, tests_config: dict[str, "BaseConfig"]
+     ) -> Iterable[tuple[type["TestSuite"], "BaseConfig", deque[type["TestCase"]]]]:
+         """Filter test suites and cases selected for execution."""
+-        from framework.test_suite import TestCaseType
++        from api.test_suite import TestCaseType
+ 
+         test_suites = [TestSuiteConfig(test_suite="smoke_tests")]
+ 
 diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
-index 8b9ae4a49a..42a56d38c9 100644
+index 42a56d38c9..dfbdd0b5b5 100644
 --- a/dts/framework/test_run.py
 +++ b/dts/framework/test_run.py
-@@ -110,20 +110,20 @@
+@@ -110,6 +110,7 @@
  from api.capabilities import LinkTopology
  from api.context import Context, init_ctx
  from api.exception import InternalError, SkippedTestException, TestCaseVerifyError
-+from api.testbed_model.capability import (
-+    Capability,
-+    get_supported_capabilities,
-+    test_if_supported,
-+)
-+from api.testbed_model.node import Node
-+from api.testbed_model.topology import PortLink, Topology
-+from api.testbed_model.traffic_generator import create_traffic_generator
- from framework.config.test_run import TestRunConfiguration
- from framework.logger import DTSLogger, get_dts_logger
++from api.test_suite import BaseConfig, TestCase, TestCaseType, TestSuite
+ from api.testbed_model.capability import (
+     Capability,
+     get_supported_capabilities,
+@@ -123,7 +124,6 @@
  from framework.remote_session.dpdk import DPDKBuildEnvironment, DPDKRuntimeEnvironment
  from framework.settings import SETTINGS
  from framework.test_result import Result, ResultNode, TestRunResult
- from framework.test_suite import BaseConfig, TestCase, TestCaseType, TestSuite
--from framework.testbed_model.capability import (
--    Capability,
--    get_supported_capabilities,
--    test_if_supported,
--)
--from framework.testbed_model.node import Node
--from framework.testbed_model.topology import PortLink, Topology
--from framework.testbed_model.traffic_generator import create_traffic_generator
+-from framework.test_suite import BaseConfig, TestCase, TestCaseType, TestSuite
  
  TestScenario = tuple[type[TestSuite], BaseConfig, deque[type[TestCase]]]
  
-diff --git a/dts/framework/test_suite.py b/dts/framework/test_suite.py
-index 6066f7a77a..786cfc7bff 100644
---- a/dts/framework/test_suite.py
-+++ b/dts/framework/test_suite.py
-@@ -30,10 +30,10 @@
- from typing_extensions import Self
- 
- from api.exception import ConfigurationError, InternalError
-+from api.testbed_model.capability import TestProtocol
-+from api.testbed_model.topology import Topology
- from api.utils import to_pascal_case
- from framework.config.common import FrozenModel
--from framework.testbed_model.capability import TestProtocol
--from framework.testbed_model.topology import Topology
- 
- from .logger import DTSLogger, get_dts_logger
- 
 diff --git a/dts/tests/TestSuite_blocklist.py b/dts/tests/TestSuite_blocklist.py
-index c57231de22..97e03b8fb7 100644
+index 97e03b8fb7..31e69c0de9 100644
 --- a/dts/tests/TestSuite_blocklist.py
 +++ b/dts/tests/TestSuite_blocklist.py
 @@ -11,9 +11,9 @@
      requires_link_topology,
  )
  from api.test import verify
-+from api.testbed_model.port import Port
++from api.test_suite import TestSuite, func_test
+ from api.testbed_model.port import Port
  from api.testpmd import TestPmd
- from framework.test_suite import TestSuite, func_test
--from framework.testbed_model.port import Port
+-from framework.test_suite import TestSuite, func_test
  
  
  class TestBlocklist(TestSuite):
+diff --git a/dts/tests/TestSuite_buffer_scatter.py b/dts/tests/TestSuite_buffer_scatter.py
+index 539082f2e4..cd1a52ad5e 100644
+--- a/dts/tests/TestSuite_buffer_scatter.py
++++ b/dts/tests/TestSuite_buffer_scatter.py
+@@ -28,9 +28,9 @@
+ )
+ from api.packet import send_packet_and_capture
+ from api.test import verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
+diff --git a/dts/tests/TestSuite_checksum_offload.py b/dts/tests/TestSuite_checksum_offload.py
+index 90ca798e56..a2ea13991b 100644
+--- a/dts/tests/TestSuite_checksum_offload.py
++++ b/dts/tests/TestSuite_checksum_offload.py
+@@ -25,10 +25,10 @@
+ )
+ from api.packet import send_packet_and_capture
+ from api.test import verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+ from api.testpmd.types import ChecksumOffloadOptions, PacketOffloadFlag
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ @requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_IPV4_CKSUM)
 diff --git a/dts/tests/TestSuite_cryptodev_latency.py b/dts/tests/TestSuite_cryptodev_latency.py
-index ed6423eb26..981c483a14 100644
+index 981c483a14..444a5b282c 100644
 --- a/dts/tests/TestSuite_cryptodev_latency.py
 +++ b/dts/tests/TestSuite_cryptodev_latency.py
 @@ -31,8 +31,8 @@
      CryptodevResults,
  )
  from api.test import skip, verify
-+from api.testbed_model.virtual_device import VirtualDevice
- from framework.test_suite import BaseConfig, TestSuite, crypto_test
--from framework.testbed_model.virtual_device import VirtualDevice
++from api.test_suite import BaseConfig, TestSuite, crypto_test
+ from api.testbed_model.virtual_device import VirtualDevice
+-from framework.test_suite import BaseConfig, TestSuite, crypto_test
  
  config_list: list[dict[str, int | float | str]] = [
      {"buff_size": 64, "avg_cycles": 99_999.00, "avg_time_us": 9999.0},
 diff --git a/dts/tests/TestSuite_cryptodev_throughput.py b/dts/tests/TestSuite_cryptodev_throughput.py
-index d69714e1fa..b861c52bae 100644
+index b861c52bae..59f64f2cd7 100644
 --- a/dts/tests/TestSuite_cryptodev_throughput.py
 +++ b/dts/tests/TestSuite_cryptodev_throughput.py
 @@ -31,8 +31,8 @@
      CryptodevResults,
  )
  from api.test import skip, verify
-+from api.testbed_model.virtual_device import VirtualDevice
- from framework.test_suite import BaseConfig, TestSuite, crypto_test
--from framework.testbed_model.virtual_device import VirtualDevice
++from api.test_suite import BaseConfig, TestSuite, crypto_test
+ from api.testbed_model.virtual_device import VirtualDevice
+-from framework.test_suite import BaseConfig, TestSuite, crypto_test
  
  config_list: list[dict[str, int | float | str]] = [
      {"buff_size": 64, "Gbps": 1.00},
+diff --git a/dts/tests/TestSuite_dual_vlan.py b/dts/tests/TestSuite_dual_vlan.py
+index 1b77dd2b47..f3347a6d52 100644
+--- a/dts/tests/TestSuite_dual_vlan.py
++++ b/dts/tests/TestSuite_dual_vlan.py
+@@ -21,9 +21,9 @@
+ from api.capabilities import LinkTopology, requires_link_topology
+ from api.packet import send_packet_and_capture
+ from api.test import verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ class TestDualVlan(TestSuite):
+diff --git a/dts/tests/TestSuite_dynamic_config.py b/dts/tests/TestSuite_dynamic_config.py
+index 7204ec4f73..b9e2c30da1 100644
+--- a/dts/tests/TestSuite_dynamic_config.py
++++ b/dts/tests/TestSuite_dynamic_config.py
+@@ -27,9 +27,9 @@
+ )
+ from api.packet import send_packet_and_capture
+ from api.test import verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
+diff --git a/dts/tests/TestSuite_dynamic_queue_conf.py b/dts/tests/TestSuite_dynamic_queue_conf.py
+index b62efa2b42..24584c7d60 100644
+--- a/dts/tests/TestSuite_dynamic_queue_conf.py
++++ b/dts/tests/TestSuite_dynamic_queue_conf.py
+@@ -38,9 +38,9 @@
+ from api.exception import InteractiveCommandExecutionError
+ from api.packet import send_packets
+ from api.test import fail, verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import PortTopology, SimpleForwardingModes
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ def setup_and_teardown_test(
+diff --git a/dts/tests/TestSuite_flow_offload.py b/dts/tests/TestSuite_flow_offload.py
+index 5902406a8e..09384b1983 100644
+--- a/dts/tests/TestSuite_flow_offload.py
++++ b/dts/tests/TestSuite_flow_offload.py
+@@ -28,9 +28,9 @@
+ )
+ from api.packet import send_packet_and_capture
+ from api.test import fail, log, verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.types import FlowRule
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ @dataclass
+diff --git a/dts/tests/TestSuite_hello_world.py b/dts/tests/TestSuite_hello_world.py
+index bf1a93c782..cd62eb8f3e 100644
+--- a/dts/tests/TestSuite_hello_world.py
++++ b/dts/tests/TestSuite_hello_world.py
+@@ -9,8 +9,8 @@
+ """
+ 
+ from api.test import log
++from api.test_suite import BaseConfig, TestSuite, func_test
+ from api.testpmd import TestPmd
+-from framework.test_suite import BaseConfig, TestSuite, func_test
+ 
+ 
+ class Config(BaseConfig):
 diff --git a/dts/tests/TestSuite_l2fwd.py b/dts/tests/TestSuite_l2fwd.py
-index 574842e2e4..5650366c36 100644
+index 5650366c36..f237821a04 100644
 --- a/dts/tests/TestSuite_l2fwd.py
 +++ b/dts/tests/TestSuite_l2fwd.py
 @@ -19,11 +19,11 @@
      match_all_packets,
      send_packets_and_capture,
  )
-+from api.testbed_model.cpu import LogicalCoreCount
++from api.test_suite import TestSuite, func_test
+ from api.testbed_model.cpu import LogicalCoreCount
  from api.testpmd import TestPmd
  from api.testpmd.config import EthPeer, SimpleForwardingModes
  from api.utils import generate_random_packets
- from framework.test_suite import TestSuite, func_test
--from framework.testbed_model.cpu import LogicalCoreCount
+-from framework.test_suite import TestSuite, func_test
  
  
  @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
+diff --git a/dts/tests/TestSuite_mac_filter.py b/dts/tests/TestSuite_mac_filter.py
+index b44822d31c..eb1413f336 100644
+--- a/dts/tests/TestSuite_mac_filter.py
++++ b/dts/tests/TestSuite_mac_filter.py
+@@ -26,8 +26,8 @@
+ from api.exception import InteractiveCommandExecutionError
+ from api.packet import send_packet_and_capture
+ from api.test import fail, verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
+diff --git a/dts/tests/TestSuite_mtu.py b/dts/tests/TestSuite_mtu.py
+index 8355495d33..c264db299e 100644
+--- a/dts/tests/TestSuite_mtu.py
++++ b/dts/tests/TestSuite_mtu.py
+@@ -23,8 +23,8 @@
+ )
+ from api.packet import send_packet_and_capture
+ from api.test import verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+-from framework.test_suite import TestSuite, func_test
+ 
+ STANDARD_FRAME = 1518  # --max-pkt-len will subtract l2 information at a minimum of 18 bytes.
+ JUMBO_FRAME = 9018
 diff --git a/dts/tests/TestSuite_packet_capture.py b/dts/tests/TestSuite_packet_capture.py
-index 4bd15e2401..042b7019aa 100644
+index 042b7019aa..fd5cef5268 100644
 --- a/dts/tests/TestSuite_packet_capture.py
 +++ b/dts/tests/TestSuite_packet_capture.py
-@@ -36,15 +36,15 @@
+@@ -36,6 +36,7 @@
      send_packets_and_capture,
  )
  from api.test import verify
-+from api.testbed_model.cpu import LogicalCoreList
-+from api.testbed_model.traffic_generator.capturing_traffic_generator import (
-+    PacketFilteringConfig,
-+)
- from api.testpmd import TestPmd
++from api.test_suite import TestSuite, func_test
+ from api.testbed_model.cpu import LogicalCoreList
+ from api.testbed_model.traffic_generator.capturing_traffic_generator import (
+     PacketFilteringConfig,
+@@ -44,7 +45,6 @@
  from framework.params import Params
  from framework.remote_session.blocking_app import BlockingApp
  from framework.remote_session.dpdk_shell import compute_eal_params
- from framework.test_suite import TestSuite, func_test
--from framework.testbed_model.cpu import LogicalCoreList
--from framework.testbed_model.traffic_generator.capturing_traffic_generator import (
--    PacketFilteringConfig,
--)
+-from framework.test_suite import TestSuite, func_test
  
  
  @dataclass(kw_only=True)
+diff --git a/dts/tests/TestSuite_port_control.py b/dts/tests/TestSuite_port_control.py
+index b51fdc2959..c2f2de3493 100644
+--- a/dts/tests/TestSuite_port_control.py
++++ b/dts/tests/TestSuite_port_control.py
+@@ -18,9 +18,9 @@
+ )
+ from api.packet import send_packets_and_capture
+ from api.test import verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
+diff --git a/dts/tests/TestSuite_port_restart_config_persistency.py b/dts/tests/TestSuite_port_restart_config_persistency.py
+index 4ea22b6d70..88df35d33c 100644
+--- a/dts/tests/TestSuite_port_restart_config_persistency.py
++++ b/dts/tests/TestSuite_port_restart_config_persistency.py
+@@ -14,9 +14,9 @@
+     requires_nic_capability,
+ )
+ from api.test import verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.types import TestPmdPortFlowCtrl
+-from framework.test_suite import TestSuite, func_test
+ 
+ ALTERNATIVE_MTU: int = 800
+ STANDARD_MTU: int = 1500
+diff --git a/dts/tests/TestSuite_port_stats.py b/dts/tests/TestSuite_port_stats.py
+index 3dc045f847..0328c6718c 100644
+--- a/dts/tests/TestSuite_port_stats.py
++++ b/dts/tests/TestSuite_port_stats.py
+@@ -25,10 +25,10 @@
+ )
+ from api.packet import send_packet_and_capture
+ from api.test import verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+ from api.testpmd.types import RtePTypes, TestPmdVerbosePacket
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
+diff --git a/dts/tests/TestSuite_promisc_support.py b/dts/tests/TestSuite_promisc_support.py
+index a0c65dc662..c59c8c6078 100644
+--- a/dts/tests/TestSuite_promisc_support.py
++++ b/dts/tests/TestSuite_promisc_support.py
+@@ -21,8 +21,8 @@
+     send_packets_and_capture,
+ )
+ from api.test import verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
+diff --git a/dts/tests/TestSuite_qinq.py b/dts/tests/TestSuite_qinq.py
+index 505d71dbc8..5dde37d4db 100644
+--- a/dts/tests/TestSuite_qinq.py
++++ b/dts/tests/TestSuite_qinq.py
+@@ -18,8 +18,8 @@
+ from api.capabilities import NicCapability, requires_nic_capability
+ from api.packet import send_packet_and_capture
+ from api.test import log, verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ class TestQinq(TestSuite):
+diff --git a/dts/tests/TestSuite_queue_toggle.py b/dts/tests/TestSuite_queue_toggle.py
+index e4edc89123..a9ea356b22 100644
+--- a/dts/tests/TestSuite_queue_toggle.py
++++ b/dts/tests/TestSuite_queue_toggle.py
+@@ -24,9 +24,9 @@
+ )
+ from api.packet import send_packet_and_capture
+ from api.test import verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ @requires_link_topology(LinkTopology.TWO_LINKS)
+diff --git a/dts/tests/TestSuite_rss.py b/dts/tests/TestSuite_rss.py
+index 1e60bdba07..b538e93af9 100644
+--- a/dts/tests/TestSuite_rss.py
++++ b/dts/tests/TestSuite_rss.py
+@@ -23,6 +23,7 @@
+ from api.exception import InteractiveCommandExecutionError
+ from api.packet import send_packets_and_capture
+ from api.test import verify
++from api.test_suite import BaseConfig, TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+ from api.testpmd.types import (
+@@ -31,7 +32,6 @@
+     TestPmdVerbosePacket,
+ )
+ from api.utils import StrEnum
+-from framework.test_suite import BaseConfig, TestSuite, func_test
+ 
+ 
+ class Config(BaseConfig):
+diff --git a/dts/tests/TestSuite_rx_split.py b/dts/tests/TestSuite_rx_split.py
+index 470e48d0d3..3b3e4cd620 100644
+--- a/dts/tests/TestSuite_rx_split.py
++++ b/dts/tests/TestSuite_rx_split.py
+@@ -21,10 +21,10 @@
+ from api.exception import InteractiveCommandExecutionError
+ from api.packet import adjust_addresses, send_packet_and_capture
+ from api.test import fail, verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+ from api.testpmd.types import RxOffloadCapability, TxOffloadCapability
+-from framework.test_suite import TestSuite, func_test
+ 
+ PAYLOAD = bytes(range(256))
+ ETHER_HDR_LEN = len(Ether(dst="00:00:00:00:00:00"))
+diff --git a/dts/tests/TestSuite_rx_tx_offload.py b/dts/tests/TestSuite_rx_tx_offload.py
+index b0da627d3c..c8d24baaae 100644
+--- a/dts/tests/TestSuite_rx_tx_offload.py
++++ b/dts/tests/TestSuite_rx_tx_offload.py
+@@ -13,12 +13,12 @@
+     requires_nic_capability,
+ )
+ from api.test import verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.types import (
+     OffloadConfiguration,
+     RxTxLiteralSwitch,
+ )
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ @requires_link_topology(LinkTopology.ONE_LINK)
+diff --git a/dts/tests/TestSuite_single_core_forward_perf.py b/dts/tests/TestSuite_single_core_forward_perf.py
+index 57aecdf7a4..f51ff76c4c 100644
+--- a/dts/tests/TestSuite_single_core_forward_perf.py
++++ b/dts/tests/TestSuite_single_core_forward_perf.py
+@@ -22,10 +22,10 @@
+ )
+ from api.packet import assess_performance_by_packet
+ from api.test import verify, write_performance_json
++from api.test_suite import BaseConfig, TestSuite, perf_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import RXRingParams, TXRingParams
+ from framework.params.types import TestPmdParamsDict
+-from framework.test_suite import BaseConfig, TestSuite, perf_test
+ 
+ 
+ class Config(BaseConfig):
 diff --git a/dts/tests/TestSuite_smoke_tests.py b/dts/tests/TestSuite_smoke_tests.py
-index fce83604a6..656e2e4bb7 100644
+index 656e2e4bb7..b3eb325fc0 100644
 --- a/dts/tests/TestSuite_smoke_tests.py
 +++ b/dts/tests/TestSuite_smoke_tests.py
 @@ -19,12 +19,12 @@
      requires_link_topology,
  )
  from api.test import verify
-+from api.testbed_model.linux_session import LinuxSession
++from api.test_suite import TestSuite, func_test
+ from api.testbed_model.linux_session import LinuxSession
  from api.testpmd import TestPmd
  from api.utils import REGEX_FOR_PCI_ADDRESS
  from framework.config.node import PortConfig
  from framework.settings import SETTINGS
- from framework.test_suite import TestSuite, func_test
--from framework.testbed_model.linux_session import LinuxSession
+-from framework.test_suite import TestSuite, func_test
  
  
  @requires_link_topology(LinkTopology.NO_LINK)
 diff --git a/dts/tests/TestSuite_softnic.py b/dts/tests/TestSuite_softnic.py
-index c57a12c932..91a6d4eb9f 100644
+index 91a6d4eb9f..05a6d3aa18 100644
 --- a/dts/tests/TestSuite_softnic.py
 +++ b/dts/tests/TestSuite_softnic.py
 @@ -18,11 +18,11 @@
      match_all_packets,
      send_packets_and_capture,
  )
-+from api.testbed_model.virtual_device import VirtualDevice
++from api.test_suite import TestSuite, func_test
+ from api.testbed_model.virtual_device import VirtualDevice
  from api.testpmd import TestPmd
  from api.testpmd.config import EthPeer
  from api.utils import generate_random_packets
- from framework.test_suite import TestSuite, func_test
--from framework.testbed_model.virtual_device import VirtualDevice
+-from framework.test_suite import TestSuite, func_test
  
  
  @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
+diff --git a/dts/tests/TestSuite_speed_capabilities.py b/dts/tests/TestSuite_speed_capabilities.py
+index 9cbd6f1ef7..c9b0f74feb 100644
+--- a/dts/tests/TestSuite_speed_capabilities.py
++++ b/dts/tests/TestSuite_speed_capabilities.py
+@@ -13,8 +13,8 @@
+     requires_link_topology,
+ )
+ from api.test import verify
++from api.test_suite import BaseConfig, TestSuite, func_test
+ from api.testpmd import TestPmd
+-from framework.test_suite import BaseConfig, TestSuite, func_test
+ 
+ 
+ class Config(BaseConfig):
+diff --git a/dts/tests/TestSuite_unified_packet.py b/dts/tests/TestSuite_unified_packet.py
+index fcc7f7fbbb..bf3654f0d7 100644
+--- a/dts/tests/TestSuite_unified_packet.py
++++ b/dts/tests/TestSuite_unified_packet.py
+@@ -25,10 +25,10 @@
+ )
+ from api.packet import send_packet_and_capture
+ from api.test import verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+ from api.testpmd.types import RtePTypes, TestPmdVerbosePacket
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ class TestUnifiedPacket(TestSuite):
 diff --git a/dts/tests/TestSuite_virtio_forward.py b/dts/tests/TestSuite_virtio_forward.py
-index 6efaa4e156..06bcd86ee4 100644
+index 06bcd86ee4..a16299d908 100644
 --- a/dts/tests/TestSuite_virtio_forward.py
 +++ b/dts/tests/TestSuite_virtio_forward.py
 @@ -12,12 +12,12 @@
  from api.capabilities import LinkTopology
  from api.packet import send_packets_and_capture
  from api.test import log, verify
-+from api.testbed_model.capability import requires
-+from api.testbed_model.linux_session import LinuxSession
-+from api.testbed_model.virtual_device import VirtualDevice
++from api.test_suite import TestSuite, func_test
+ from api.testbed_model.capability import requires
+ from api.testbed_model.linux_session import LinuxSession
+ from api.testbed_model.virtual_device import VirtualDevice
  from api.testpmd import TestPmd
  from api.testpmd.config import PortTopology, SimpleForwardingModes
- from framework.test_suite import TestSuite, func_test
--from framework.testbed_model.capability import requires
--from framework.testbed_model.linux_session import LinuxSession
--from framework.testbed_model.virtual_device import VirtualDevice
+-from framework.test_suite import TestSuite, func_test
  
  
  class TestVirtioForward(TestSuite):
+diff --git a/dts/tests/TestSuite_vlan.py b/dts/tests/TestSuite_vlan.py
+index 898673fc86..975e87b128 100644
+--- a/dts/tests/TestSuite_vlan.py
++++ b/dts/tests/TestSuite_vlan.py
+@@ -23,9 +23,9 @@
+ )
+ from api.packet import send_packet_and_capture
+ from api.test import verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ @requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_VLAN_FILTER)
 -- 
 2.55.0
 
