@@ -2,32 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 275DCC55ABF
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 11:29:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FECBC55ABF
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 11:29:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 877C640A71;
-	Thu,  6 Aug 2026 13:28:49 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 73EB140A7D;
+	Thu,  6 Aug 2026 13:28:50 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id BEBD04064F
- for <dev@dpdk.org>; Thu,  6 Aug 2026 13:28:43 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 3ECD540687
+ for <dev@dpdk.org>; Thu,  6 Aug 2026 13:28:44 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A27C31A00AE;
- Thu,  6 Aug 2026 13:28:43 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1D9161A00B7;
+ Thu,  6 Aug 2026 13:28:44 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6B35A1A009D;
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D925E1A009D;
  Thu,  6 Aug 2026 13:28:43 +0200 (CEST)
 Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
  [92.120.147.250])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id DFACC18000B0;
- Thu,  6 Aug 2026 19:28:42 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 589571800088;
+ Thu,  6 Aug 2026 19:28:43 +0800 (+08)
 From: Gagandeep Singh <g.singh@nxp.com>
 To: dev@dpdk.org, Sachin Saxena <sachin.saxena@nxp.com>,
  Vanshika Shukla <vanshika.shukla@nxp.com>
 Cc: hemant.agrawal@nxp.com
-Subject: [PATCH 07/14] net/enetc: support ethtool ring parameters
-Date: Thu,  6 Aug 2026 16:58:29 +0530
-Message-Id: <20260806112836.707921-8-g.singh@nxp.com>
+Subject: [PATCH 08/14] net/enetc: refresh link speed on VF link-up interrupt
+Date: Thu,  6 Aug 2026 16:58:30 +0530
+Message-Id: <20260806112836.707921-9-g.singh@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260806112836.707921-1-g.singh@nxp.com>
 References: <20260806112836.707921-1-g.singh@nxp.com>
@@ -47,100 +47,264 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The ethtool ring parameter query relies on the queue info ethdev
-ops (.rxq_info_get/.txq_info_get) together with the descriptor
-limits reported in dev_info. The PF already registered these ops,
-but the VF ops tables did not, so ring parameter queries failed on
-the VF.
+The interrupt-driven link-status path (enetc4_process_psi_msg) only
+updated link_status when a PSI-to-VSI notification arrived; it never
+re-queried the link speed from the PF.  As a result, after a link-down
+followed by a link-up the cached link_speed showed the speed from the
+previous session rather than the freshly negotiated one.
 
-Make enetc4_rxq_info_get() and enetc4_txq_info_get() non-static and
-register them in both VF ops tables so ring parameters are reported
-for both the PF and VF.
+Fix this by:
+
+1. Introducing enetc4_decode_link_speed() - a shared helper that maps
+   a PF-to-VF speed status code to the corresponding RTE_ETH_SPEED_NUM_*
+   / RTE_ETH_LINK_*_DUPLEX values, handling both the current and the
+   legacy (vf_link_legacy) 4-bit message layout.
+
+2. Calling enetc4_vf_get_link_speed() inside enetc4_process_psi_msg()
+   on ENETC_LINK_UP so the negotiated speed is fetched from the PF and
+   decoded immediately, before rte_eth_linkstatus_set() is called and
+   the LSC callback is fired.
 
 Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
- doc/guides/rel_notes/release_26_11.rst | 1 +
- drivers/net/enetc/enetc.h              | 4 ++++
- drivers/net/enetc/enetc4_ethdev.c      | 4 ++--
- drivers/net/enetc/enetc4_vf.c          | 4 ++++
- 4 files changed, 11 insertions(+), 2 deletions(-)
+ doc/guides/rel_notes/release_26_11.rst |   1 +
+ drivers/net/enetc/enetc4_vf.c          | 197 +++++++++++++------------
+ 2 files changed, 107 insertions(+), 91 deletions(-)
 
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index deb3bc5d52..9e333edf4f 100644
+index 9e333edf4f..eca0dc1dea 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -66,6 +66,7 @@ New Features
-   * Extended the PF-to-VF link speed code field from 4-bit to 8-bit in ENETC4.
+@@ -67,6 +67,7 @@ New Features
    * Added firmware version reporting for the ENETC4 VF.
    * Added register dump support for ENETC4 PF and VF.
-+  * Added ring parameters support for the ENETC4 VF (rxq_info_get / txq_info_get).
+   * Added ring parameters support for the ENETC4 VF (rxq_info_get / txq_info_get).
++  * Refreshed VF link speed on the link-up interrupt in the ENETC4 VF driver.
  
  Removed Items
  -------------
-diff --git a/drivers/net/enetc/enetc.h b/drivers/net/enetc/enetc.h
-index 73404308fe..367d350dde 100644
---- a/drivers/net/enetc/enetc.h
-+++ b/drivers/net/enetc/enetc.h
-@@ -339,6 +339,10 @@ int enetc4_tx_queue_stop(struct rte_eth_dev *dev, uint16_t qidx);
- void enetc4_tx_queue_release(struct rte_eth_dev *dev, uint16_t qid);
- const uint32_t *enetc4_supported_ptypes_get(struct rte_eth_dev *dev __rte_unused,
- 			size_t *no_of_elements);
-+void enetc4_rxq_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
-+			 struct rte_eth_rxq_info *qinfo);
-+void enetc4_txq_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
-+			 struct rte_eth_txq_info *qinfo);
- 
- /*
-  * enetc4_vf function prototype
-diff --git a/drivers/net/enetc/enetc4_ethdev.c b/drivers/net/enetc/enetc4_ethdev.c
-index 681bac3ecc..afee0b90a3 100644
---- a/drivers/net/enetc/enetc4_ethdev.c
-+++ b/drivers/net/enetc/enetc4_ethdev.c
-@@ -1125,7 +1125,7 @@ enetc4_tx_queue_stop(struct rte_eth_dev *dev, uint16_t qidx)
- 	return 0;
- }
- 
--static void
-+void
- enetc4_rxq_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
- 			struct rte_eth_rxq_info *qinfo)
- {
-@@ -1139,7 +1139,7 @@ enetc4_rxq_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
- 	qinfo->conf.rx_drop_en = 0;
- }
- 
--static void
-+void
- enetc4_txq_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
- 			struct rte_eth_txq_info *qinfo)
- {
 diff --git a/drivers/net/enetc/enetc4_vf.c b/drivers/net/enetc/enetc4_vf.c
-index 8af22f069b..7623a66e98 100644
+index 7623a66e98..58e38fe398 100644
 --- a/drivers/net/enetc/enetc4_vf.c
 +++ b/drivers/net/enetc/enetc4_vf.c
-@@ -1508,10 +1508,12 @@ static const struct eth_dev_ops enetc4_vf_ops_no_vsi_m = {
- 	.rx_queue_start       = enetc4_rx_queue_start,
- 	.rx_queue_stop        = enetc4_rx_queue_stop,
- 	.rx_queue_release     = enetc4_rx_queue_release,
-+	.rxq_info_get         = enetc4_rxq_info_get,
- 	.tx_queue_setup       = enetc4_tx_queue_setup,
- 	.tx_queue_start       = enetc4_tx_queue_start,
- 	.tx_queue_stop        = enetc4_tx_queue_stop,
- 	.tx_queue_release     = enetc4_tx_queue_release,
-+	.txq_info_get         = enetc4_txq_info_get,
- 	.dev_supported_ptypes_get = enetc4_supported_ptypes_get,
- };
+@@ -324,9 +324,99 @@ enetc4_msg_get_psi_msg(struct enetc_hw *enetc_hw, struct enetc_psi_reply_msg *re
+ 	reply_msg->status = status;
+ }
  
-@@ -1537,10 +1539,12 @@ static const struct eth_dev_ops enetc4_vf_ops = {
- 	.rx_queue_start       = enetc4_rx_queue_start,
- 	.rx_queue_stop        = enetc4_rx_queue_stop,
- 	.rx_queue_release     = enetc4_rx_queue_release,
-+	.rxq_info_get         = enetc4_rxq_info_get,
- 	.tx_queue_setup       = enetc4_tx_queue_setup,
- 	.tx_queue_start       = enetc4_tx_queue_start,
- 	.tx_queue_stop        = enetc4_tx_queue_stop,
- 	.tx_queue_release     = enetc4_tx_queue_release,
-+	.txq_info_get         = enetc4_txq_info_get,
- 	.dev_supported_ptypes_get = enetc4_supported_ptypes_get,
- };
++/* Forward declaration: defined later in this file */
++static int enetc4_vf_get_link_speed(struct rte_eth_dev *dev,
++				     struct enetc_psi_reply_msg *reply_msg);
++
++/*
++ * Decode a PF-to-VF link-speed status code into the link_speed and
++ * link_duplex fields of *link.  vf_link_legacy selects the older
++ * 4-bit code layout used by kernel PFs before v6.18.37.
++ */
++static void
++enetc4_decode_link_speed(uint8_t status, bool vf_link_legacy,
++			 struct rte_eth_link *link)
++{
++	switch (status) {
++	case ENETC_SPEED_UNKNOWN:
++		ENETC_PMD_DEBUG("Speed unknown");
++		link->link_speed = RTE_ETH_SPEED_NUM_NONE;
++		break;
++	case ENETC_SPEED_10_HALF_DUPLEX:
++		link->link_speed = RTE_ETH_SPEED_NUM_10M;
++		link->link_duplex = RTE_ETH_LINK_HALF_DUPLEX;
++		break;
++	case ENETC_SPEED_10_FULL_DUPLEX:
++		link->link_speed = RTE_ETH_SPEED_NUM_10M;
++		link->link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
++		break;
++	case ENETC_SPEED_100_HALF_DUPLEX:
++		link->link_speed = RTE_ETH_SPEED_NUM_100M;
++		link->link_duplex = RTE_ETH_LINK_HALF_DUPLEX;
++		break;
++	case ENETC_SPEED_100_FULL_DUPLEX:
++		link->link_speed = RTE_ETH_SPEED_NUM_100M;
++		link->link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
++		break;
++	case ENETC_SPEED_1000:
++		link->link_speed = RTE_ETH_SPEED_NUM_1G;
++		link->link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
++		break;
++	case ENETC_SPEED_2500:
++		link->link_speed = RTE_ETH_SPEED_NUM_2_5G;
++		link->link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
++		break;
++	case ENETC_SPEED_5000:
++		link->link_speed = RTE_ETH_SPEED_NUM_5G;
++		link->link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
++		break;
++	default:
++		if (vf_link_legacy) {
++			/* Legacy PF-to-VF message layout (older kernel PF):
++			 * speeds above 5Gbps use fixed 4-bit class codes.
++			 */
++			switch (status) {
++			case ENETC_SPEED_LEGACY_10G:
++				link->link_speed = RTE_ETH_SPEED_NUM_10G;
++				link->link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
++				break;
++			case ENETC_SPEED_LEGACY_25G:
++				link->link_speed = RTE_ETH_SPEED_NUM_25G;
++				link->link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
++				break;
++			case ENETC_SPEED_LEGACY_50G:
++				link->link_speed = RTE_ETH_SPEED_NUM_50G;
++				link->link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
++				break;
++			case ENETC_SPEED_LEGACY_100G:
++				link->link_speed = RTE_ETH_SPEED_NUM_100G;
++				link->link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
++				break;
++			case ENETC_SPEED_LEGACY_NOT_SUPPORTED:
++				ENETC_PMD_DEBUG("Speed not supported");
++				link->link_speed = RTE_ETH_SPEED_NUM_UNKNOWN;
++				break;
++			default:
++				ENETC_PMD_ERR("Unknown speed status");
++				link->link_speed = RTE_ETH_SPEED_NUM_UNKNOWN;
++				break;
++			}
++			break;
++		}
++		/* Any status here is > ENETC_SPEED_5000.  Reverse the formula:
++		 *   SPEED = (status - ENETC_SPEED_5000) * 1000 + 5000  (in Mbps)
++		 */
++		link->link_speed = (status - ENETC_SPEED_5000) * 1000 + 5000;
++		link->link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
++		break;
++	}
++}
++
+ static void
+ enetc4_process_psi_msg(struct rte_eth_dev *eth_dev, struct enetc_hw *enetc_hw)
+ {
++	struct enetc_eth_hw *hw =
++		ENETC_DEV_PRIVATE_TO_HW(eth_dev->data->dev_private);
+ 	struct enetc_psi_reply_msg *msg;
+ 	struct rte_eth_link link;
+ 	int ret = 0;
+@@ -345,6 +435,20 @@ enetc4_process_psi_msg(struct rte_eth_dev *eth_dev, struct enetc_hw *enetc_hw)
+ 		case ENETC_LINK_UP:
+ 			ENETC_PMD_DEBUG("Link is up");
+ 			link.link_status = RTE_ETH_LINK_UP;
++			/* Re-query speed from PF so the cached value reflects
++			 * the current negotiated speed after link-up.
++			 */
++			rte_free(msg);
++			msg = rte_zmalloc(NULL, sizeof(*msg), RTE_CACHE_LINE_SIZE);
++			if (msg) {
++				if (!enetc4_vf_get_link_speed(eth_dev, msg) &&
++				    msg->class_id == ENETC_CLASS_ID_LINK_SPEED)
++					enetc4_decode_link_speed(msg->status,
++							hw->vf_link_legacy,
++							&link);
++			} else {
++				ENETC_PMD_WARN("Failed to alloc msg for speed query");
++			}
+ 			break;
+ 		case ENETC_LINK_DOWN:
+ 			ENETC_PMD_DEBUG("Link is down");
+@@ -1048,97 +1152,8 @@ enetc4_vf_link_update(struct rte_eth_dev *dev, int wait_to_complete __rte_unused
+ 	}
  
+ 	if (reply_msg->class_id == ENETC_CLASS_ID_LINK_SPEED) {
+-		switch (reply_msg->status) {
+-		case ENETC_SPEED_UNKNOWN:
+-			ENETC_PMD_DEBUG("Speed unknown");
+-			link.link_speed = RTE_ETH_SPEED_NUM_NONE;
+-			break;
+-		case ENETC_SPEED_10_HALF_DUPLEX:
+-			link.link_speed = RTE_ETH_SPEED_NUM_10M;
+-			link.link_duplex = RTE_ETH_LINK_HALF_DUPLEX;
+-			break;
+-		case ENETC_SPEED_10_FULL_DUPLEX:
+-			link.link_speed = RTE_ETH_SPEED_NUM_10M;
+-			link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
+-			break;
+-		case ENETC_SPEED_100_HALF_DUPLEX:
+-			link.link_speed = RTE_ETH_SPEED_NUM_100M;
+-			link.link_duplex = RTE_ETH_LINK_HALF_DUPLEX;
+-			break;
+-		case ENETC_SPEED_100_FULL_DUPLEX:
+-			link.link_speed = RTE_ETH_SPEED_NUM_100M;
+-			link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
+-			break;
+-		case ENETC_SPEED_1000:
+-			link.link_speed = RTE_ETH_SPEED_NUM_1G;
+-			link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
+-			break;
+-		case ENETC_SPEED_2500:
+-			link.link_speed = RTE_ETH_SPEED_NUM_2_5G;
+-			link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
+-			break;
+-		case ENETC_SPEED_5000:
+-			link.link_speed = RTE_ETH_SPEED_NUM_5G;
+-			link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
+-			break;
+-		default:
+-			if (hw->vf_link_legacy) {
+-				/* Legacy PF-to-VF message layout (older kernel
+-				 * PF): speeds greater than 5Gbps are encoded
+-				 * with fixed 4-bit class codes rather than the
+-				 * formula below.
+-				 */
+-				switch (reply_msg->status) {
+-				case ENETC_SPEED_LEGACY_10G:
+-					link.link_speed = RTE_ETH_SPEED_NUM_10G;
+-					link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
+-					break;
+-				case ENETC_SPEED_LEGACY_25G:
+-					link.link_speed = RTE_ETH_SPEED_NUM_25G;
+-					link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
+-					break;
+-				case ENETC_SPEED_LEGACY_50G:
+-					link.link_speed = RTE_ETH_SPEED_NUM_50G;
+-					link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
+-					break;
+-				case ENETC_SPEED_LEGACY_100G:
+-					link.link_speed = RTE_ETH_SPEED_NUM_100G;
+-					link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
+-					break;
+-				case ENETC_SPEED_LEGACY_NOT_SUPPORTED:
+-					ENETC_PMD_DEBUG("Speed not supported");
+-					link.link_speed = RTE_ETH_SPEED_NUM_UNKNOWN;
+-					break;
+-				default:
+-					ENETC_PMD_ERR("Unknown speed status");
+-					link.link_speed = RTE_ETH_SPEED_NUM_UNKNOWN;
+-					break;
+-				}
+-				break;
+-			}
+-
+-			/* Any status reaching here is greater than
+-			 * ENETC_SPEED_5000, as all values from 0x0 to
+-			 * ENETC_SPEED_5000 are handled by the cases above. Speeds
+-			 * greater than 5Gbps are not enumerated and follow the
+-			 * formula:
+-			 *
+-			 *   SPEED = (link_speed - 5000) / 1000 + ENETC_SPEED_5000
+-			 *
+-			 * where link_speed is in Mbps. Reverse it here to get the
+-			 * actual link speed (RTE_ETH_SPEED_NUM_* values are in Mbps).
+-			 *
+-			 * The PF only reports speeds that map to a well-known
+-			 * RTE_ETH_SPEED_NUM_* value, so the computed value is a
+-			 * valid DPDK speed. If a future speed not yet defined in
+-			 * DPDK needs to be supported, the corresponding
+-			 * RTE_ETH_SPEED_NUM_* value must first be added upstream.
+-			 */
+-			link.link_speed = (reply_msg->status - ENETC_SPEED_5000)
+-					  * 1000 + 5000;
+-			link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
+-			break;
+-		}
++		enetc4_decode_link_speed(reply_msg->status,
++					 hw->vf_link_legacy, &link);
+ 	} else {
+ 		ENETC_PMD_ERR("Wrong reply message");
+ 		return -1;
