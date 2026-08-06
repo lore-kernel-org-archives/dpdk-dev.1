@@ -2,86 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FAC0C5AC7C
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 17:48:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12AD8C56205
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 17:50:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6E78E4027E;
-	Thu,  6 Aug 2026 19:48:01 +0200 (CEST)
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com
- [209.85.214.174])
- by mails.dpdk.org (Postfix) with ESMTP id 9868640262
- for <dev@dpdk.org>; Thu,  6 Aug 2026 19:48:00 +0200 (CEST)
-Received: by mail-pl1-f174.google.com with SMTP id
- d9443c01a7336-2cf452def93so10205145ad.1
- for <dev@dpdk.org>; Thu, 06 Aug 2026 10:48:00 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1A8B54027E;
+	Thu,  6 Aug 2026 19:50:42 +0200 (CEST)
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com
+ [209.85.222.171])
+ by mails.dpdk.org (Postfix) with ESMTP id DBCCF40262
+ for <dev@dpdk.org>; Thu,  6 Aug 2026 19:50:40 +0200 (CEST)
+Received: by mail-qk1-f171.google.com with SMTP id
+ af79cd13be357-934956bee57so229013485a.2
+ for <dev@dpdk.org>; Thu, 06 Aug 2026 10:50:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786038479;
- x=1786643279; darn=dpdk.org; 
+ d=iol.unh.edu; s=unh-iol; t=1786038640; x=1786643440; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=EUHbWMpE2Mkngp5WCqbc0F71WQhJD2k51ht+z99gxn0=;
- b=ovIftbpQBNXqt0/LE3QvTp0AXgjopa4xi6HpeMt6I6KqSgLlKX77xmA9Q/WtheFlZh
- gtl52zKRJMu8IJFyNaUmAgXkCQqDsPl4moNa9yY5d6vji4iQ6xeIlcN8XZlk4yOXl7lx
- vujHnvcgS1/Njm5xDGk9jVUFSHBPATGLmtei8MSe8lD9iMvkJrXyhEAdVykd2Sd4COf6
- oOaaNJ4Sp4z68wyYk6/itFR8ap0GDSU+W2HJvnWNMNsdoxdwMmflzwqc2JO2eGO6DDlE
- kYe/1BQMFkGBbjcSw/NzERrcmoRTen/aEtU4pCVr5drXoCO7GbwvO/+jELWzzsGv0Xop
- MXmQ==
+ bh=omf1LnzDSONXitNVhBvoNyC4TQOAxx0K65CcjW+Kvgg=;
+ b=eCtqURb2xhObH+yP5Ni2A1xXe8HSwCtPKQ6xLf55Ty5c/ZhSh6kqVgOxfgoGSVxLTG
+ lLGn3s7K2K8r4sEN4sGujjStAf8TwPKrvw5MUJsxmU1ukPrquNgC6bzrQ/XSmjElfUBT
+ BJ6u/FBDb0kerE6TpQ25UQp+FDlcwfoN+3I8o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786038479; x=1786643279;
+ d=1e100.net; s=20251104; t=1786038640; x=1786643440;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=EUHbWMpE2Mkngp5WCqbc0F71WQhJD2k51ht+z99gxn0=;
- b=kL3CTtA91EQhgFZNJrZIcmB4fVUYWDD5R80dtQULbxuG4uTCtAFhp8J64veszwcG4x
- I17fx88nKP4dexlQy1tT8ffoNTCKHdHpf+CwT/9VD1/Se59ULfs5bzXtGyobuwfBk5Vb
- +OndQMTg8CNR1EZpwK0MPk2DW/4EnWJb7fEkVXZtqF8lJaLq8cDFwexY/uuoBHNrIMAZ
- mwcEp10MrkJcJ2FvF7V70igFbhDopSlNBEDiI7LQhpoo0DGnsSXPcUQRwzQmMsHs8oND
- 0tolwVwmVFMTp2fDAzo7EzKaaFkCfd75ZYhVKahtTn72Bm986C+P8HpcK9KCHE3FxRs4
- lzvg==
-X-Gm-Message-State: AOJu0Yy8id2oIXzwCT44U6gwfxFAf9ZJGeW1Nf2HM1eYI2CsHXcmc7B8
- sJ4m5I+e8OWez0UaMX5VZBY4PGG/dt8MjVI2wIGcGQVfmldYOWOJuGv6kHVM2bpbTsIYzuTcQVP
- h6bVwmd0=
-X-Gm-Gg: AR+sD1306c3ilKksrv/Or8RpZa6X1U+E+zCmQacB+8hVE1NT4RCQYeTzG6YJyQMkwMG
- GipIKO68FTTcUDdFEwU6Sc4gcaxMDlBh4AWMQRw6DfjkO5K/qdh35vzjC/WNYShxBDURcJeDxGx
- MIJJJBuOHnZDuu+ccxrk/Tw/J5HasBg+y6XQiB5jCb6PKiRkQSzxMrzSmQXTigdcvAKO2b7BPV5
- Z2zzFn4IQKuux8Y3bq1qrBp16waNJ1kri9TxTtlydxEWv51gJbfHpZDALq2Yyh9dnyOjZHVFohT
- ZFxY0YTJErSSdfPY6YMMPUs0CqSRVz3v1vg8fsog6eJV3Rb82+woy+pLr8bfyx6dmj5HVWStZ1V
- VQPzXdRHx+Bul8OmMwbkH5XRfIhxKLoar9JXgbJcujO4JLC0D+T6XnQfqCzC6FX+dBE0v3Eu0cY
- Li8/IUxiplc6jVJWEZtmwnv8nWbmfRlY4aznswb7Tei9VLqnoL1jErFvEKr/xdz53BXfHdwylqM
- +B5Xj4/ofDbkw9ihBM2iR2fkG0=
-X-Received: by 2002:a17:903:2f0f:b0:2cf:70d2:da7c with SMTP id
- d9443c01a7336-2d0f1c3c54dmr116013115ad.12.1786038479468; 
- Thu, 06 Aug 2026 10:47:59 -0700 (PDT)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-315867d4929sm31089771eec.30.2026.08.06.10.47.56
+ bh=omf1LnzDSONXitNVhBvoNyC4TQOAxx0K65CcjW+Kvgg=;
+ b=qUz9X2UmwKv02ezdokc5voElYTfbHrx73fpq5dUiWkc5cvYK7J7TTHImNKL9Xk05Gf
+ GA06U2s7OJXBZ36UXdjyjk5/sS6Y8Ct0jlrKQiMFOICiIPNv/Ie+4xFl4Mxllk+re6D7
+ BZD5C84Pr53IPqiiLfrta0QVmQNenEFZjy2ePHNzJNJxGMkWEYw9AmAbG6tfICdD5oHn
+ jp23bCxopy9yR9MPuRF9N2l/GRFwBrWhcaOGyMdQ/bs6opWjoa1AkkR+XGAbWfMJDMLs
+ 1ojLAYulPXl3bDmczp1zw8LotNRkTgfKWqcyUj+YdGmWZhQo8RWOJmcdnDefSAHqD7XX
+ 78Hg==
+X-Gm-Message-State: AOJu0Yx5nvKK16XhMWcOKxCoyRVSOzyp2fzHMLu9/k15J1coU31z4mJP
+ Xn02xKxqBygAtiTxWj1sf+mBmBlxcoyoZFM60V6rHKFvMFMFx8ZOJM0JWJvVGzzJlJ94MjisBYr
+ LU+xo8L/fPmaUGWbsCYedZPOgbFWyK16BJwszfnuZpaSBSZ8tRkhfywG3lYuZQf412M6FknTDIc
+ /2jxE2z32RxsPUS7ENSYX5XsJhMBg=
+X-Gm-Gg: AR+sD13+eD+NKRVihxvatouxBt7ujXGTN6xE3cP70JoKwTJQSumyyPbbNbPzRnOhHr2
+ bVIumLKL6WJO6DdUvmMXrWjTQLuP7BYZkZ4E1qSWEES4QixgGfwF74G1JOK9LBvRUNRXcZWQfwc
+ va2ns4JNypJTPSPsaUetwU95hXTXjJ7qerbJ5Zboxk6QBvS5/AcRmD8FxMQPil8NeEG0NWQXiwN
+ 7nmbLM+apgBNjhEzK/F4TigQR+eZepShqq2oxOfLVokG9NmZlMLz/JhhU7ZyvSpJTGCA2mzulX1
+ LDAl1XK0pyJAl/QjUyI3Lwm9+h24VdW628ce228fmdezywVpELwvw3pm0rMUsS2TyAMiOzYhYgd
+ 6ZcDI7RvCknuunt5teGkFV+45656HXk6CTZ7z/pcahJXLpYv1RwMbWyOP61nTfSO1ISHeogApx6
+ 20GkjovSn1wvMLYcP1i8+zkvWlwOVs9GHLqTEmhr1uHUUTRiod9UqvVPFyYZhiHbMWqCQLHwuXm
+ HUUJeRKO7z60NqxQcj6HXZtn0ObZiWK+5UXiek/
+X-Received: by 2002:a05:620a:618b:b0:936:315b:a5f4 with SMTP id
+ af79cd13be357-9364901e95cmr1809426385a.5.1786038639775; 
+ Thu, 06 Aug 2026 10:50:39 -0700 (PDT)
+Received: from syn-2603-7083-bff0-a0d0-0000-0000-0000-1a64.res6.spectrum.com
+ ([2606:4100:3880:1257::1039]) by smtp.gmail.com with ESMTPSA id
+ af79cd13be357-93657688090sm317311285a.27.2026.08.06.10.50.38
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 06 Aug 2026 10:47:57 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Reshma Pattan <reshma.pattan@intel.com>,
- Aman Singh <aman.deep.singh@intel.com>,
- Naga Harish K S V <s.v.naga.harish.k@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
- Ajit Khaparde <ajit.khaparde@broadcom.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Kiran Kumar K <kirankumark@marvell.com>,
- Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
- Harman Kalra <hkalra@marvell.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Cristian Dumitrescu <cristian.dumitrescu@intel.com>,
- Thomas Monjalon <thomas@monjalon.net>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: [PATCH v4] ethdev: add buffer size parameter to
- rte_eth_dev_get_name_by_port()
-Date: Thu,  6 Aug 2026 10:47:54 -0700
-Message-ID: <20260806174755.890910-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260409013658.965613-1-stephen@networkplumber.org>
-References: <20260409013658.965613-1-stephen@networkplumber.org>
+ Thu, 06 Aug 2026 10:50:39 -0700 (PDT)
+From: Andrew Bailey <abailey@iol.unh.edu>
+To: dev@dpdk.org,
+	luca.vizzarro@arm.com,
+	patrickrobb1997@gmail.com
+Cc: knimoji@iol.unh.edu, lylavoie@iol.unh.edu, dladd@iol.unh.edu,
+ Andrew Bailey <abailey@iol.unh.edu>, Dean Marx <dmarx@iol.unh.edu>
+Subject: [PATCH v6 0/7] dts: remove imports from framework in test suites
+Date: Thu,  6 Aug 2026 13:50:17 -0400
+Message-ID: <20260806175024.13655-1-abailey@iol.unh.edu>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260806135346.568766-1-abailey@iol.unh.edu>
+References: <20260806135346.568766-1-abailey@iol.unh.edu>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -97,445 +82,182 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-rte_eth_dev_get_name_by_port() uses strcpy() into a caller-provided
-buffer with no bounds checking. A mistaken caller that supplies a
-buffer smaller than RTE_ETH_NAME_MAX_LEN can overflow the buffer.
+This series takes action to make modules accessible from api that were
+only in framework before. This greatly cleans up the majority of test
+suites, ridding them of almost all framework imports.
 
-Add a size parameter and replace strcpy() with strlcpy(), returning
--ERANGE if the name is truncated. The copy is now performed under
-the ethdev shared data lock so that the name cannot be mutated by
-another process between reading and copying.
+Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
+Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
 
-Update all in-tree callers to pass the size of the buffer
-and add checks for return value.
-
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/dumpcap/main.c                           |  8 +++---
- app/pdump/main.c                             |  8 +++---
- app/test-pmd/config.c                        | 13 ++++++----
- app/test/test_event_eth_tx_adapter.c         |  4 +--
- app/test/test_pmd_ring_perf.c                |  4 +--
- app/test/test_pmd_tap.c                      |  6 ++---
- doc/guides/rel_notes/deprecation.rst         |  4 ---
- doc/guides/rel_notes/release_26_11.rst       |  3 +++
- drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c        |  4 +--
- drivers/net/cnxk/cnxk_flow.c                 | 10 +++++---
- examples/multi_process/hotplug_mp/commands.c |  5 ++--
- examples/pipeline/cli.c                      |  4 ++-
- lib/ethdev/rte_ethdev.c                      | 27 +++++++++++++-------
- lib/ethdev/rte_ethdev.h                      | 12 ++++++---
- lib/pdump/rte_pdump.c                        |  8 +++---
- 15 files changed, 71 insertions(+), 49 deletions(-)
 
-diff --git a/app/dumpcap/main.c b/app/dumpcap/main.c
-index 46a6cb251e..47483535fc 100644
---- a/app/dumpcap/main.c
-+++ b/app/dumpcap/main.c
-@@ -244,7 +244,7 @@ static void find_interfaces(void)
- 
- 		/* maybe got passed port number string as name */
- 		intf->port = get_uint(intf->name, "port_number", UINT16_MAX);
--		if (rte_eth_dev_get_name_by_port(intf->port, intf->name) < 0)
-+		if (rte_eth_dev_get_name_by_port(intf->port, intf->name, sizeof(intf->name)) < 0)
- 			rte_exit(EXIT_FAILURE, "Invalid port number %u\n",
- 				 intf->port);
- 	}
-@@ -261,7 +261,7 @@ static void set_default_interface(void)
- 	uint16_t p;
- 
- 	RTE_ETH_FOREACH_DEV(p) {
--		if (rte_eth_dev_get_name_by_port(p, name) < 0)
-+		if (rte_eth_dev_get_name_by_port(p, name, sizeof(name)) < 0)
- 			continue;
- 
- 		intf = add_interface(name);
-@@ -278,7 +278,7 @@ static void dump_interfaces(void)
- 	uint16_t p;
- 
- 	RTE_ETH_FOREACH_DEV(p) {
--		if (rte_eth_dev_get_name_by_port(p, name) < 0)
-+		if (rte_eth_dev_get_name_by_port(p, name, sizeof(name)) < 0)
- 			continue;
- 		printf("%u. %s\n", p, name);
- 	}
-@@ -498,7 +498,7 @@ static void statistics_loop(void)
- 
- 	while (!rte_atomic_load_explicit(&quit_signal, rte_memory_order_relaxed)) {
- 		RTE_ETH_FOREACH_DEV(p) {
--			if (rte_eth_dev_get_name_by_port(p, name) < 0)
-+			if (rte_eth_dev_get_name_by_port(p, name, sizeof(name)) < 0)
- 				continue;
- 
- 			r = rte_eth_stats_get(p, &stats);
-diff --git a/app/pdump/main.c b/app/pdump/main.c
-index 1e62c8adc1..1f6135b20e 100644
---- a/app/pdump/main.c
-+++ b/app/pdump/main.c
-@@ -539,16 +539,16 @@ cleanup_pdump_resources(void)
- 
- 		/* Remove the vdev(s) created */
- 		if (pt->dir & RTE_PDUMP_FLAG_RX) {
--			rte_eth_dev_get_name_by_port(pt->rx_vdev_id, name);
--			rte_eal_hotplug_remove("vdev", name);
-+			if (rte_eth_dev_get_name_by_port(pt->rx_vdev_id, name, sizeof(name)) == 0)
-+				rte_eal_hotplug_remove("vdev", name);
- 		}
- 
- 		if (pt->single_pdump_dev)
- 			continue;
- 
- 		if (pt->dir & RTE_PDUMP_FLAG_TX) {
--			rte_eth_dev_get_name_by_port(pt->tx_vdev_id, name);
--			rte_eal_hotplug_remove("vdev", name);
-+			if (rte_eth_dev_get_name_by_port(pt->tx_vdev_id, name, sizeof(name)) == 0)
-+				rte_eal_hotplug_remove("vdev", name);
- 		}
- 
- 	}
-diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
-index aa03eb99cc..b58304e484 100644
---- a/app/test-pmd/config.c
-+++ b/app/test-pmd/config.c
-@@ -697,8 +697,8 @@ device_infos_display(const char *identifier)
- 							      &mac_addr) == 0)
- 					print_ethaddr("\n\tMAC address: ",
- 						      &mac_addr);
--				rte_eth_dev_get_name_by_port(port_id, name);
--				printf("\n\tDevice name: %s", name);
-+				if (rte_eth_dev_get_name_by_port(port_id, name, sizeof(name)) == 0)
-+					printf("\n\tDevice name: %s", name);
- 				if (rte_eth_dev_info_get(port_id, &dev_info) == 0)
- 					device_infos_display_speeds(dev_info.speed_capa);
- 				printf("\n");
-@@ -830,8 +830,8 @@ port_infos_display(portid_t port_id)
- 	       info_border, port_id, info_border);
- 	if (eth_macaddr_get_print_err(port_id, &mac_addr) == 0)
- 		print_ethaddr("MAC address: ", &mac_addr);
--	rte_eth_dev_get_name_by_port(port_id, name);
--	printf("\nDevice name: %s", name);
-+	if (rte_eth_dev_get_name_by_port(port_id, name, sizeof(name)) == 0)
-+		printf("\nDevice name: %s", name);
- 	printf("\nDriver name: %s", dev_info.driver_name);
- 
- 	if (rte_eth_dev_fw_version_get(port_id, fw_version,
-@@ -1031,7 +1031,10 @@ port_summary_display(portid_t port_id)
- 	if (ret != 0)
- 		return;
- 
--	rte_eth_dev_get_name_by_port(port_id, name);
-+	ret = rte_eth_dev_get_name_by_port(port_id, name, sizeof(name));
-+	if (ret != 0)
-+		return;
-+
- 	ret = eth_macaddr_get_print_err(port_id, &mac_addr);
- 	if (ret != 0)
- 		return;
-diff --git a/app/test/test_event_eth_tx_adapter.c b/app/test/test_event_eth_tx_adapter.c
-index bec298a8b8..a7cbe39367 100644
---- a/app/test/test_event_eth_tx_adapter.c
-+++ b/app/test/test_event_eth_tx_adapter.c
-@@ -192,8 +192,8 @@ deinit_ports(void)
- 
- 	for (i = 0; i < RTE_DIM(default_params.port); i++) {
- 		rte_eth_dev_stop(default_params.port[i]);
--		rte_eth_dev_get_name_by_port(default_params.port[i], name);
--		rte_vdev_uninit(name);
-+		if (rte_eth_dev_get_name_by_port(default_params.port[i], name, sizeof(name)) == 0)
-+			rte_vdev_uninit(name);
- 		for (j = 0; j < RTE_DIM(default_params.r[i]); j++)
- 			rte_ring_free(default_params.r[i][j]);
- 	}
-diff --git a/app/test/test_pmd_ring_perf.c b/app/test/test_pmd_ring_perf.c
-index 3636df5c73..ac60f506ab 100644
---- a/app/test/test_pmd_ring_perf.c
-+++ b/app/test/test_pmd_ring_perf.c
-@@ -157,8 +157,8 @@ test_ring_pmd_perf(void)
- 	/* release port and ring resources */
- 	if (rte_eth_dev_stop(ring_ethdev_port) != 0)
- 		return -1;
--	rte_eth_dev_get_name_by_port(ring_ethdev_port, name);
--	rte_vdev_uninit(name);
-+	if (rte_eth_dev_get_name_by_port(ring_ethdev_port, name, sizeof(name)) == 0)
-+		rte_vdev_uninit(name);
- 	rte_ring_free(r);
- 	return 0;
- }
-diff --git a/app/test/test_pmd_tap.c b/app/test/test_pmd_tap.c
-index 6d0e8b4f54..ded26bc5e3 100644
---- a/app/test/test_pmd_tap.c
-+++ b/app/test/test_pmd_tap.c
-@@ -594,7 +594,7 @@ test_tap_multi_queue(void)
- 	uint16_t port;
- 	RTE_ETH_FOREACH_DEV(port) {
- 		char name[RTE_ETH_NAME_MAX_LEN];
--		if (rte_eth_dev_get_name_by_port(port, name) == 0 &&
-+		if (rte_eth_dev_get_name_by_port(port, name, sizeof(name)) == 0 &&
- 		    strstr(name, "net_tap_mq"))
- 			goto found;
- 	}
-@@ -739,7 +739,7 @@ test_tap_setup(void)
- 	/* Find the port IDs */
- 	RTE_ETH_FOREACH_DEV(port_id) {
- 		char name[RTE_ETH_NAME_MAX_LEN];
--		if (rte_eth_dev_get_name_by_port(port_id, name) != 0)
-+		if (rte_eth_dev_get_name_by_port(port_id, name, sizeof(name)) != 0)
- 			continue;
- 
- 		if (strstr(name, "net_tap0"))
-@@ -785,7 +785,7 @@ test_tap_rx_queue_setup(void)
- 	port = -1;
- 	RTE_ETH_FOREACH_DEV(port_id) {
- 		char name[RTE_ETH_NAME_MAX_LEN];
--		if (rte_eth_dev_get_name_by_port(port_id, name) == 0 &&
-+		if (rte_eth_dev_get_name_by_port(port_id, name, sizeof(name)) == 0 &&
- 		    strstr(name, "net_tap_neg")) {
- 			port = port_id;
- 			break;
-diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
-index 6ad7698c6b..880d39c31a 100644
---- a/doc/guides/rel_notes/deprecation.rst
-+++ b/doc/guides/rel_notes/deprecation.rst
-@@ -136,10 +136,6 @@ Deprecation Notices
-   The legacy actions should be removed
-   once ``MODIFY_FIELD`` alternative is implemented in drivers.
- 
--* ethdev: Starting in 26.11, the function ``rte_eth_dev_get_name_by_port()``
--  will take a size parameter as well as the string buffer.
--  This will detect and prevent accidental overwriting of caller provided buffer.
--
- * graph: The internal scheduling mechanism of ``struct rte_graph``
-   will change in DPDK 26.11.
-   The circular buffer fields (``head``, ``tail``, ``cir_mask``, ``cir_start``)
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index c8cc86295d..c271174af7 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -93,6 +93,9 @@ API Changes
-    Also, make sure to start the actual text at the margin.
-    =======================================================
- 
-+* ethdev: Added ``size`` parameter to ``rte_eth_dev_get_name_by_port()``
-+  to prevent buffer overflows.
-+
- 
- ABI Changes
- -----------
-diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
-index 6ca9d3309b..e1ffc64c5e 100644
---- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
-+++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
-@@ -608,7 +608,7 @@ ulp_tf_ctx_shared_session_open(struct bnxt *bp,
- 
- 	memset(&parms, 0, sizeof(parms));
- 	rc = rte_eth_dev_get_name_by_port(ethdev->data->port_id,
--					  parms.ctrl_chan_name);
-+					  parms.ctrl_chan_name, sizeof(parms.ctrl_chan_name));
- 	if (rc) {
- 		BNXT_DRV_DBG(ERR, "Invalid port %d, rc = %d\n",
- 			     ethdev->data->port_id, rc);
-@@ -786,7 +786,7 @@ ulp_tf_ctx_session_open(struct bnxt *bp,
- 	memset(&params, 0, sizeof(params));
- 
- 	rc = rte_eth_dev_get_name_by_port(ethdev->data->port_id,
--					  params.ctrl_chan_name);
-+					  params.ctrl_chan_name, sizeof(params.ctrl_chan_name));
- 	if (rc) {
- 		BNXT_DRV_DBG(ERR, "Invalid port %d, rc = %d\n",
- 			     ethdev->data->port_id, rc);
-diff --git a/drivers/net/cnxk/cnxk_flow.c b/drivers/net/cnxk/cnxk_flow.c
-index c1c48eb7ab..eb51ce37e8 100644
---- a/drivers/net/cnxk/cnxk_flow.c
-+++ b/drivers/net/cnxk/cnxk_flow.c
-@@ -117,7 +117,7 @@ npc_parse_port_id_action(struct rte_eth_dev *eth_dev, const struct rte_flow_acti
- 
- 	port_act = (const struct rte_flow_action_port_id *)action->conf;
- 
--	rc = rte_eth_dev_get_name_by_port(port_act->id, if_name);
-+	rc = rte_eth_dev_get_name_by_port(port_act->id, if_name, sizeof(if_name));
- 	if (rc) {
- 		plt_err("Name not found for output port id");
- 		goto err_exit;
-@@ -517,7 +517,8 @@ cnxk_map_actions(struct rte_eth_dev *eth_dev, const struct rte_flow_attr *attr,
- 		case RTE_FLOW_ACTION_TYPE_PORT_REPRESENTOR:
- 			in_actions[i].conf = actions->conf;
- 			act_ethdev = (const struct rte_flow_action_ethdev *)actions->conf;
--			if (rte_eth_dev_get_name_by_port(act_ethdev->port_id, if_name)) {
-+			if (rte_eth_dev_get_name_by_port(act_ethdev->port_id, if_name,
-+							 sizeof(if_name))) {
- 				plt_err("Name not found for output port id");
- 				goto err_exit;
- 			}
-@@ -557,7 +558,7 @@ cnxk_map_actions(struct rte_eth_dev *eth_dev, const struct rte_flow_attr *attr,
- 				    actions->type != RTE_FLOW_ACTION_TYPE_PORT_ID ?
- 					    act_ethdev->port_id :
- 					    port_act->id,
--				    if_name)) {
-+				    if_name, sizeof(if_name))) {
- 				plt_err("Name not found for output port id");
- 				goto err_exit;
- 			}
-@@ -713,7 +714,8 @@ cnxk_map_pattern(struct rte_eth_dev *eth_dev, const struct rte_flow_item pattern
- 		if (pattern->type == RTE_FLOW_ITEM_TYPE_REPRESENTED_PORT ||
- 		    pattern->type == RTE_FLOW_ITEM_TYPE_PORT_REPRESENTOR) {
- 			rep_eth_dev = (const struct rte_flow_item_ethdev *)pattern->spec;
--			if (rte_eth_dev_get_name_by_port(rep_eth_dev->port_id, if_name)) {
-+			if (rte_eth_dev_get_name_by_port(rep_eth_dev->port_id, if_name,
-+							 sizeof(if_name))) {
- 				plt_err("Name not found for output port id");
- 				goto fail;
- 			}
-diff --git a/examples/multi_process/hotplug_mp/commands.c b/examples/multi_process/hotplug_mp/commands.c
-index 900eb9f774..e84e130b3c 100644
---- a/examples/multi_process/hotplug_mp/commands.c
-+++ b/examples/multi_process/hotplug_mp/commands.c
-@@ -31,12 +31,13 @@ cmd_list_parsed(__rte_unused void *parsed_result,
- 			    __rte_unused void *data)
- {
- 	uint16_t port_id;
--	char dev_name[RTE_DEV_NAME_MAX_LEN];
- 
- 	cmdline_printf(cl, "list all etherdev\n");
- 
- 	RTE_ETH_FOREACH_DEV(port_id) {
--		rte_eth_dev_get_name_by_port(port_id, dev_name);
-+		char dev_name[RTE_DEV_NAME_MAX_LEN] = "";
-+
-+		rte_eth_dev_get_name_by_port(port_id, dev_name, sizeof(dev_name));
- 		if (strlen(dev_name) > 0)
- 			cmdline_printf(cl, "%d\t%s\n", port_id, dev_name);
- 		else
-diff --git a/examples/pipeline/cli.c b/examples/pipeline/cli.c
-index 901706fab9..644ae56fd3 100644
---- a/examples/pipeline/cli.c
-+++ b/examples/pipeline/cli.c
-@@ -396,7 +396,9 @@ ethdev_show(uint16_t port_id, char **out, size_t *out_size)
- 	if (rte_eth_link_get(port_id, &link) != 0)
- 		return;
- 
--	rte_eth_dev_get_name_by_port(port_id, name);
-+	if (rte_eth_dev_get_name_by_port(port_id, name, sizeof(name)) != 0)
-+		return;
-+
- 	rte_eth_stats_get(port_id, &stats);
- 	rte_eth_macaddr_get(port_id, &addr);
- 	rte_eth_dev_get_mtu(port_id, &mtu);
-diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-index 9efeaf77cb..5446af84ec 100644
---- a/lib/ethdev/rte_ethdev.c
-+++ b/lib/ethdev/rte_ethdev.c
-@@ -723,25 +723,34 @@ rte_eth_dev_count_total(void)
- 
- RTE_EXPORT_SYMBOL(rte_eth_dev_get_name_by_port)
- int
--rte_eth_dev_get_name_by_port(uint16_t port_id, char *name)
-+rte_eth_dev_get_name_by_port(uint16_t port_id, char *name, size_t size)
- {
--	char *tmp;
--
- 	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -ENODEV);
- 
- 	if (name == NULL) {
--		RTE_ETHDEV_LOG_LINE(ERR, "Cannot get ethdev port %u name to NULL",
--			port_id);
-+		RTE_ETHDEV_LOG_LINE(ERR, "Cannot get ethdev port %u name to NULL", port_id);
-+		return -EINVAL;
-+	}
-+
-+	if (size == 0) {
-+		RTE_ETHDEV_LOG_LINE(ERR, "Cannot get ethdev port %u name with zero-size buffer",
-+				    port_id);
- 		return -EINVAL;
- 	}
- 
- 	rte_spinlock_lock(rte_mcfg_ethdev_get_lock());
--	/* shouldn't check 'rte_eth_devices[i].data',
--	 * because it might be overwritten by VDEV PMD */
--	tmp = eth_dev_shared_data->data[port_id].name;
-+	/*
-+	 * Use the shared data name rather than rte_eth_devices[].data->name
-+	 * because VDEV PMDs may overwrite the per-process data pointer.
-+	 */
-+	size_t n = strlcpy(name, eth_dev_shared_data->data[port_id].name, size);
- 	rte_spinlock_unlock(rte_mcfg_ethdev_get_lock());
- 
--	strcpy(name, tmp);
-+	if (n >= size) {
-+		RTE_ETHDEV_LOG_LINE(ERR, "ethdev port %u name exceeds buffer size %zu",
-+				    port_id, size);
-+		return -ERANGE;
-+	}
- 
- 	rte_ethdev_trace_get_name_by_port(port_id, name);
- 
-diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
-index ee400b386f..9ccc1c0845 100644
---- a/lib/ethdev/rte_ethdev.h
-+++ b/lib/ethdev/rte_ethdev.h
-@@ -5704,14 +5704,20 @@ rte_eth_dev_get_port_by_name(const char *name, uint16_t *port_id);
-  * @param port_id
-  *   Port identifier of the device.
-  * @param name
-- *   Buffer of size RTE_ETH_NAME_MAX_LEN to store the name.
-+ *   Buffer to store the name.
-+ * @param size
-+ *   Size of the buffer pointed to by *name*.
-+ *   Must be large enough to hold device name,
-+ *   RTE_ETH_NAME_MAX_LEN is always sufficient.
-  * @return
-  *   - (0) if successful.
-  *   - (-ENODEV) if *port_id* is invalid.
-- *   - (-EINVAL) on failure.
-+ *   - (-EINVAL) if *name* is NULL or *size* is 0.
-+ *   - (-ERANGE) if the buffer is too small for the device name,
-+ *               result is truncated.
-  */
- int
--rte_eth_dev_get_name_by_port(uint16_t port_id, char *name);
-+rte_eth_dev_get_name_by_port(uint16_t port_id, char *name, size_t size);
- 
- /**
-  * Check that numbers of Rx and Tx descriptors satisfy descriptors limits from
-diff --git a/lib/pdump/rte_pdump.c b/lib/pdump/rte_pdump.c
-index ac94efe7ff..3d494592b3 100644
---- a/lib/pdump/rte_pdump.c
-+++ b/lib/pdump/rte_pdump.c
-@@ -726,7 +726,7 @@ pdump_validate_flags(uint32_t flags)
- }
- 
- static int
--pdump_validate_port(uint16_t port, char *name)
-+pdump_validate_port(uint16_t port, char *name, size_t len)
- {
- 	int ret = 0;
- 
-@@ -736,7 +736,7 @@ pdump_validate_port(uint16_t port, char *name)
- 		return -1;
- 	}
- 
--	ret = rte_eth_dev_get_name_by_port(port, name);
-+	ret = rte_eth_dev_get_name_by_port(port, name, len);
- 	if (ret < 0) {
- 		PDUMP_LOG_LINE(ERR, "port %u to name mapping failed",
- 			  port);
-@@ -818,7 +818,7 @@ pdump_enable(uint16_t port, uint16_t queue,
- 	int ret;
- 	char name[RTE_DEV_NAME_MAX_LEN];
- 
--	ret = pdump_validate_port(port, name);
-+	ret = pdump_validate_port(port, name, sizeof(name));
- 	if (ret < 0)
- 		return ret;
- 	ret = pdump_validate_ring_mp(ring, mp);
-@@ -912,7 +912,7 @@ rte_pdump_disable(uint16_t port, uint16_t queue, uint32_t flags)
- 	int ret = 0;
- 	char name[RTE_DEV_NAME_MAX_LEN];
- 
--	ret = pdump_validate_port(port, name);
-+	ret = pdump_validate_port(port, name, sizeof(name));
- 	if (ret < 0)
- 		return ret;
- 	ret = pdump_validate_flags(flags);
--- 
-2.53.0
+v5:
+ * Resolved merge conflicts and rebased to main.
+ * Removed additional framework imports from test suites.
+v6:
+ * Included missing linux_session py file
+ * Included missing linux_session rst file
+
+Andrew Bailey (7):
+  dts: move exception module from framework to API
+  dts: move utils from framework to API
+  dts: move context from framework to API
+  dts: move testbed model from framework to API
+  dts: move test suite module from framework to API
+  dts: move params directory from framework to API
+  dts: separate Linux session into interface and logic
+
+ ...{framework.context.rst => api.context.rst} |  2 +-
+ ...mework.exception.rst => api.exception.rst} |  2 +-
+ ...work.params.eal.rst => api.params.eal.rst} |  2 +-
+ .../{framework.params.rst => api.params.rst}  |  6 +-
+ ....params.types.rst => api.params.types.rst} |  2 +-
+ ...work.test_suite.rst => api.test_suite.rst} |  2 +-
+ ...y.rst => api.testbed_model.capability.rst} |  2 +-
+ ...odel.cpu.rst => api.testbed_model.cpu.rst} |  2 +-
+ ...st => api.testbed_model.linux_session.rst} |  2 +-
+ ...el.node.rst => api.testbed_model.node.rst} |  2 +-
+ ...n.rst => api.testbed_model.os_session.rst} |  2 +-
+ ...el.port.rst => api.testbed_model.port.rst} |  2 +-
+ ...st => api.testbed_model.posix_session.rst} |  2 +-
+ doc/api/dts/api.testbed_model.rst             | 28 ++++++
+ ...ogy.rst => api.testbed_model.topology.rst} |  2 +-
+ ...generator.capturing_traffic_generator.rst} |  2 +-
+ .../api.testbed_model.traffic_generator.rst   | 16 ++++
+ ...testbed_model.traffic_generator.scapy.rst} |  2 +-
+ ...l.traffic_generator.traffic_generator.rst} |  2 +-
+ ...t => api.testbed_model.virtual_device.rst} |  2 +-
+ .../{framework.utils.rst => api.utils.rst}    |  2 +-
+ doc/api/dts/framework.linux_session.rst       |  9 ++
+ doc/api/dts/framework.testbed_model.rst       | 28 ------
+ ...mework.testbed_model.traffic_generator.rst | 16 ----
+ doc/api/dts/index.rst                         | 13 +--
+ dts/api/artifact.py                           |  6 +-
+ dts/api/capabilities.py                       | 14 +--
+ dts/{framework => api}/context.py             | 14 +--
+ dts/api/cryptodev/__init__.py                 |  6 +-
+ dts/api/cryptodev/config.py                   |  6 +-
+ dts/{framework => api}/exception.py           |  0
+ dts/api/packet.py                             | 18 ++--
+ dts/{framework => api}/params/__init__.py     |  0
+ dts/{framework => api}/params/eal.py          |  8 +-
+ dts/{framework => api}/params/types.py        | 16 ++--
+ dts/api/test.py                               |  4 +-
+ dts/{framework => api}/test_suite.py          | 15 ++--
+ .../testbed_model/__init__.py                 |  0
+ .../testbed_model/capability.py               | 18 ++--
+ dts/{framework => api}/testbed_model/cpu.py   |  4 +-
+ dts/api/testbed_model/linux_session.py        | 45 ++++++++++
+ dts/{framework => api}/testbed_model/node.py  |  6 +-
+ .../testbed_model/os_session.py               |  8 +-
+ dts/{framework => api}/testbed_model/port.py  |  2 +-
+ .../testbed_model/posix_session.py            |  6 +-
+ .../testbed_model/topology.py                 | 20 ++---
+ .../traffic_generator/__init__.py             |  4 +-
+ .../capturing_traffic_generator.py            |  4 +-
+ .../performance_traffic_generator.py          |  0
+ .../testbed_model/traffic_generator/scapy.py  | 14 +--
+ .../traffic_generator/traffic_generator.py    |  8 +-
+ .../testbed_model/traffic_generator/trex.py   | 18 ++--
+ .../testbed_model/virtual_device.py           |  0
+ dts/api/testpmd/__init__.py                   | 11 ++-
+ dts/api/testpmd/config.py                     |  6 +-
+ dts/api/testpmd/types.py                      |  2 +-
+ dts/{framework => api}/utils.py               |  2 +-
+ dts/framework/config/__init__.py              |  6 +-
+ dts/framework/config/node.py                  |  2 +-
+ dts/framework/config/test_run.py              | 12 +--
+ .../{testbed_model => }/linux_session.py      | 12 ++-
+ dts/framework/parser.py                       |  2 +-
+ dts/framework/remote_session/blocking_app.py  |  8 +-
+ dts/framework/remote_session/dpdk.py          | 16 ++--
+ dts/framework/remote_session/dpdk_shell.py    |  6 +-
+ .../interactive_remote_session.py             |  2 +-
+ .../remote_session/interactive_shell.py       |  8 +-
+ .../remote_session/remote_session.py          |  4 +-
+ dts/framework/runner.py                       |  4 +-
+ dts/framework/test_result.py                  |  5 +-
+ dts/framework/test_run.py                     | 24 ++---
+ dts/tests/TestSuite_blocklist.py              |  4 +-
+ dts/tests/TestSuite_buffer_scatter.py         |  2 +-
+ dts/tests/TestSuite_checksum_offload.py       |  2 +-
+ dts/tests/TestSuite_cryptodev_latency.py      |  6 +-
+ dts/tests/TestSuite_cryptodev_throughput.py   | 89 +++++--------------
+ dts/tests/TestSuite_dual_vlan.py              |  2 +-
+ dts/tests/TestSuite_dynamic_config.py         |  2 +-
+ dts/tests/TestSuite_dynamic_queue_conf.py     |  4 +-
+ dts/tests/TestSuite_flow_offload.py           | 12 +--
+ dts/tests/TestSuite_hello_world.py            |  2 +-
+ dts/tests/TestSuite_l2fwd.py                  |  8 +-
+ dts/tests/TestSuite_mac_filter.py             |  4 +-
+ dts/tests/TestSuite_mtu.py                    |  2 +-
+ dts/tests/TestSuite_packet_capture.py         | 12 +--
+ dts/tests/TestSuite_port_control.py           |  2 +-
+ ...stSuite_port_restart_config_persistency.py |  2 +-
+ dts/tests/TestSuite_port_stats.py             |  2 +-
+ dts/tests/TestSuite_promisc_support.py        |  2 +-
+ dts/tests/TestSuite_qinq.py                   |  2 +-
+ dts/tests/TestSuite_queue_toggle.py           |  2 +-
+ dts/tests/TestSuite_rss.py                    |  6 +-
+ dts/tests/TestSuite_rx_split.py               |  4 +-
+ dts/tests/TestSuite_rx_tx_offload.py          |  2 +-
+ .../TestSuite_single_core_forward_perf.py     |  4 +-
+ dts/tests/TestSuite_smoke_tests.py            |  6 +-
+ dts/tests/TestSuite_softnic.py                |  6 +-
+ dts/tests/TestSuite_speed_capabilities.py     |  2 +-
+ dts/tests/TestSuite_unified_packet.py         |  2 +-
+ dts/tests/TestSuite_virtio_forward.py         |  8 +-
+ dts/tests/TestSuite_vlan.py                   |  2 +-
+ 101 files changed, 382 insertions(+), 371 deletions(-)
+ rename doc/api/dts/{framework.context.rst => api.context.rst} (80%)
+ rename doc/api/dts/{framework.exception.rst => api.exception.rst} (77%)
+ rename doc/api/dts/{framework.params.eal.rst => api.params.eal.rst} (79%)
+ rename doc/api/dts/{framework.params.rst => api.params.rst} (71%)
+ rename doc/api/dts/{framework.params.types.rst => api.params.types.rst} (80%)
+ rename doc/api/dts/{framework.test_suite.rst => api.test_suite.rst} (81%)
+ rename doc/api/dts/{framework.testbed_model.capability.rst => api.testbed_model.capability.rst} (74%)
+ rename doc/api/dts/{framework.testbed_model.cpu.rst => api.testbed_model.cpu.rst} (78%)
+ rename doc/api/dts/{framework.testbed_model.linux_session.rst => api.testbed_model.linux_session.rst} (74%)
+ rename doc/api/dts/{framework.testbed_model.node.rst => api.testbed_model.node.rst} (71%)
+ rename doc/api/dts/{framework.testbed_model.os_session.rst => api.testbed_model.os_session.rst} (76%)
+ rename doc/api/dts/{framework.testbed_model.port.rst => api.testbed_model.port.rst} (77%)
+ rename doc/api/dts/{framework.testbed_model.posix_session.rst => api.testbed_model.posix_session.rst} (74%)
+ create mode 100644 doc/api/dts/api.testbed_model.rst
+ rename doc/api/dts/{framework.testbed_model.topology.rst => api.testbed_model.topology.rst} (73%)
+ rename doc/api/dts/{framework.testbed_model.traffic_generator.capturing_traffic_generator.rst => api.testbed_model.traffic_generator.capturing_traffic_generator.rst} (68%)
+ create mode 100644 doc/api/dts/api.testbed_model.traffic_generator.rst
+ rename doc/api/dts/{framework.testbed_model.traffic_generator.scapy.rst => api.testbed_model.traffic_generator.scapy.rst} (70%)
+ rename doc/api/dts/{framework.testbed_model.traffic_generator.traffic_generator.rst => api.testbed_model.traffic_generator.traffic_generator.rst} (65%)
+ rename doc/api/dts/{framework.testbed_model.virtual_device.rst => api.testbed_model.virtual_device.rst} (72%)
+ rename doc/api/dts/{framework.utils.rst => api.utils.rst} (80%)
+ create mode 100644 doc/api/dts/framework.linux_session.rst
+ delete mode 100644 doc/api/dts/framework.testbed_model.rst
+ delete mode 100644 doc/api/dts/framework.testbed_model.traffic_generator.rst
+ rename dts/{framework => api}/context.py (90%)
+ rename dts/{framework => api}/exception.py (100%)
+ rename dts/{framework => api}/params/__init__.py (100%)
+ rename dts/{framework => api}/params/eal.py (89%)
+ rename dts/{framework => api}/params/types.py (93%)
+ rename dts/{framework => api}/test_suite.py (98%)
+ rename dts/{framework => api}/testbed_model/__init__.py (100%)
+ rename dts/{framework => api}/testbed_model/capability.py (98%)
+ rename dts/{framework => api}/testbed_model/cpu.py (99%)
+ create mode 100644 dts/api/testbed_model/linux_session.py
+ rename dts/{framework => api}/testbed_model/node.py (98%)
+ rename dts/{framework => api}/testbed_model/os_session.py (99%)
+ rename dts/{framework => api}/testbed_model/port.py (98%)
+ rename dts/{framework => api}/testbed_model/posix_session.py (99%)
+ rename dts/{framework => api}/testbed_model/topology.py (96%)
+ rename dts/{framework => api}/testbed_model/traffic_generator/__init__.py (95%)
+ rename dts/{framework => api}/testbed_model/traffic_generator/capturing_traffic_generator.py (98%)
+ rename dts/{framework => api}/testbed_model/traffic_generator/performance_traffic_generator.py (100%)
+ rename dts/{framework => api}/testbed_model/traffic_generator/scapy.py (98%)
+ rename dts/{framework => api}/testbed_model/traffic_generator/traffic_generator.py (91%)
+ rename dts/{framework => api}/testbed_model/traffic_generator/trex.py (96%)
+ rename dts/{framework => api}/testbed_model/virtual_device.py (100%)
+ rename dts/{framework => api}/utils.py (99%)
+ rename dts/framework/{testbed_model => }/linux_session.py (98%)
+
+--
+2.55.0
 
