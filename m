@@ -2,64 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CADC2C56208
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 14:04:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E172C55ABF
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 14:11:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0FDB0402BB;
-	Thu,  6 Aug 2026 16:04:02 +0200 (CEST)
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com
- [209.85.221.47]) by mails.dpdk.org (Postfix) with ESMTP id 0344C4027E
- for <dev@dpdk.org>; Thu,  6 Aug 2026 16:04:00 +0200 (CEST)
-Received: by mail-wr1-f47.google.com with SMTP id
- ffacd0b85a97d-47fd4531020so1454233f8f.3
- for <dev@dpdk.org>; Thu, 06 Aug 2026 07:04:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1786025039; x=1786629839; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=vUMO8y2f7LiHBAZ2N5vLuLSu6nQ0sX4X+AWbYK72P6g=;
- b=qmKdfT8dejFGN81QkL+GsHbvfUKIM2GHyHYQe1GOFepCx8pJlo8haO3DvHWy02B2uG
- O3YjPu7bYOe3tZB4A8w/VcvupsSauoctC48mQ0pvtnh110bnlK/eATNBPyhCdCxbfA7o
- CF0iDHWWtWVVHdtHralhSRYC//G6oGDpGDYXqsP0GhdLLDxLBpUAyJuWQB3j5RQUu5rt
- eMgLzsbdI0S2iLWqAbcyoyjOwXpIXOFeUeD/qtcCm0peBq/CkgUvvfMQtfbGFqgwpthN
- /ovHXcIUChWPSzNmrikyegA5EY9BwuInnT+BPlIr7INtZxLVYC3gz5tjaHFQbJLhUhuf
- bq1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786025039; x=1786629839;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=vUMO8y2f7LiHBAZ2N5vLuLSu6nQ0sX4X+AWbYK72P6g=;
- b=H9MB3iuXjdVAegrIKezZoxm7cnddRxuWn39W3KMXgU3tgsUO2V28XW5IQbGBpmMZ4c
- pFgJk+G9modyiVuftOtJv6kRm++tFPd76UG5PYUpzEjwk2kgHwFBIrZD9DQD+vJpqBFq
- ShfltNBpkago74RrT6EwFJ8T3gyPzbVeaeOmjcdFsJYUHPdOdqYQ3xTb1ldwKzllsK1z
- /r+0ggEziw+/vwxNE+U3nUq89o1B7BkPB/9/QaUiCncuKKOjlokZpaU69Xm4ruQ8Slz/
- 2rDl761VJulVyt7wUAxaNbCengmHU76dWLKt6YI4B3JoJrBYkQ+xRjuuyLkSsUpObP+l
- J3DA==
-X-Gm-Message-State: AOJu0YySp+fElLBWf4Uk51CaRfChpM1gfEGhqfbmcmcyusi97Rdk42Cw
- CvwB03xpr7/0mPpeSZGHF+8QQOb0OuqLgyA+/tDo4XZ4SnVA9Czkl4hl
-X-Gm-Gg: AR+sD13B2NJBdptn4+TDfgMZNu+mI2IlvngbIugl+5ADLbYg1MKacX4kVdt1aWCtwS1
- irfF6TkU1y6CIzCsSXNP2tfHCv3GGYLbY2dfWQKXj4RpTo4W+HzcpkIBtFq5tTLebPjMDf9rKnn
- 0TokgMA4CyTTgSy361oxxyCoQ+qWprqwQK84XJ0HBILEK02+aj42vg9sdkHqLKxLxNrhJUst5JW
- mm3dKz7EuSB/Y2nDS18A5kwZKb5qnHKqNit+6IFlFWRH7KW9IUD6tze3Kg3yOOIkYqveo1ZrYXX
- XY+lda7YtmLr7tckFGoB8t6aTH4kqMBnbxQCersb+TCo+Ay/tc3B1ZIpU87tjDqehtdHwDL7zp7
- 5qTNMjODNoWPgrZQMBsqGuNuOSl0o2ggUJ9p6+GkR2QXf9aNmpKqgx23XFI37aEqpTcDM83q5z3
- QtHSxwx9/f+jPGTOQoF9MfH+Q44IV/DSrpp/8n1+cpkaQxGianjlFa6GZ4s3h2kg6qquw=
-X-Received: by 2002:adf:e19d:0:b0:47f:f138:226 with SMTP id
- ffacd0b85a97d-47ff138035cmr18321092f8f.17.1786025039358; 
- Thu, 06 Aug 2026 07:03:59 -0700 (PDT)
-Received: from DMUbuntu ([95.214.11.195]) by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-47ff7b183b2sm7168107f8f.24.2026.08.06.07.03.58
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 06 Aug 2026 07:03:59 -0700 (PDT)
-From: Dmitriy Matveichev <matveichev.dmitriy@gmail.com>
-To: jgrajcia@cisco.com
-Cc: dev@dpdk.org,
-	Dmitriy Matveichev <matveichev.dmitriy@gmail.com>
-Subject: [PATCH] net/memif: unregister callback on error in listener handler
-Date: Thu,  6 Aug 2026 17:03:33 +0300
-Message-ID: <20260806140333.35422-1-matveichev.dmitriy@gmail.com>
-X-Mailer: git-send-email 2.53.0
+	by mails.dpdk.org (Postfix) with ESMTP id A9986402D1;
+	Thu,  6 Aug 2026 16:11:29 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+ by mails.dpdk.org (Postfix) with ESMTP id 2F4474027E
+ for <dev@dpdk.org>; Thu,  6 Aug 2026 16:11:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1786025488; x=1817561488;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=xNYlHWwxXmq1Eu5gsOMIJ8+GxwvWDpl1lqc65NVnNvA=;
+ b=I+nGZoXJZUw7dtyTnulLvbPoqCxofY4OI5rN9jZMooqhwefLBo4tpHDt
+ ojiD9i936AzSdsmMpdW4mMGVFo+hIIOX4qJEVXi1B/1Y6/Gog5x13zZgA
+ 0FObv4XrKZprbdZ0CHoS7VUEsA+v+S9hfJhnK5br8REe1bh6a7FzSZhp4
+ Jukgccg8KLjTrkepgT3yDZ7Ll4+A64tHWf/KHURM/liCyE4ewNbBsi56j
+ YAgxN1/Zh0fQ6cLrelPLUuFFvaXcxW8xhokq/ElPre70gHpowBZtaXR/w
+ CbIIkftFoM0sYEicw6AGgQHEDHO3zg61Ka2/3Cw9EJLXU89Lv6TtolVLw Q==;
+X-CSE-ConnectionGUID: rVR7e1GMR8GJjxjFON01CA==
+X-CSE-MsgGUID: uZ+1oAlvRwK7tz2cU2z/9g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11867"; a="85589935"
+X-IronPort-AV: E=Sophos;i="6.25,208,1779174000"; d="scan'208";a="85589935"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+ by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 06 Aug 2026 07:11:27 -0700
+X-CSE-ConnectionGUID: 1mtexBTdTmKChqQXNajcGA==
+X-CSE-MsgGUID: HobbnUhoQL6EuXgDEJNwJQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,208,1779174000"; d="scan'208";a="292015141"
+Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
+ by orviesa002.jf.intel.com with ESMTP; 06 Aug 2026 07:11:27 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org
+Subject: [PATCH v10 00/20] Support VFIO cdev API in DPDK
+Date: Thu,  6 Aug 2026 15:11:00 +0100
+Message-ID: <cover.1786025387.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <cover.1763141462.git.anatoly.burakov@intel.com>
+References: <cover.1763141462.git.anatoly.burakov@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -75,59 +58,185 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Fix the crash if a memif client disconnects before a server says hello
+This patchset introduces a major refactor of the VFIO subsystem in DPDK to
+support character device (cdev) interface introduced in Linux kernel, as well as
+make the API more streamlined and useful. The goal is to simplify device
+management, improve compatibility, and clarify API responsibilities.
 
-Signed-off-by: Dmitriy Matveichev <matveichev.dmitriy@gmail.com>
----
+The following sections outline the key issues addressed by this patchset and the
+corresponding changes introduced.
 
-If a memif client disconnects before a server says hello in memif_listener_handler we get errors 
-"MEMIF: memif_msg_send_from_queue(): sendmsg fail: Broken pipe.
-EAL: PANIC in eal_intr_thread_main():
-Error adding fd 59 epoll_ctl, Bad file descriptor".
-During the error handling in this func a socket is freed but the eal_intr_thread_main knows nothing about it. The descriptor becomes invalid after close. 
-We should unregister callback from the eal_intr_thread_main loop and only after that we can safely free the socket. 
+1. Only group mode is supported
+===============================
 
- .mailmap                         |  1 +
- drivers/net/memif/memif_socket.c | 10 ++++++----
- 2 files changed, 7 insertions(+), 4 deletions(-)
+Since kernel version 4.14.327 (LTS), VFIO supports the new character device
+(cdev)-based way of working with VFIO devices (otherwise known as IOMMUFD). This
+is a device-centric mode and does away with all the complexity regarding groups
+and IOMMU types, delegating it all to the kernel, and exposes a much simpler
+interface to userspace.
 
-diff --git a/.mailmap b/.mailmap
-index fcb3d1bb3f..d0148b0d9c 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -409,6 +409,7 @@ Ding Zhi <zhi.ding@6wind.com>
- Diogo Behrens <diogo.behrens@huawei.com>
- Dirk-Holger Lenz <dirk.lenz@ng4t.com>
- Dmitri Epshtein <dima@marvell.com>
-+Dmitriy Matveichev <matveichev.dmitriy@gmail.com>
- Dmitriy Yakovlev <bombermag@gmail.com>
- Dmitry Eremin-Solenikov <dmitry.ereminsolenikov@linaro.org>
- Dmitry Kozlyuk <dmitry.kozliuk@gmail.com> <dkozlyuk@nvidia.com>
-diff --git a/drivers/net/memif/memif_socket.c b/drivers/net/memif/memif_socket.c
-index 649f8d0e61..898ad75fa6 100644
---- a/drivers/net/memif/memif_socket.c
-+++ b/drivers/net/memif/memif_socket.c
-@@ -878,14 +878,16 @@ memif_listener_handler(void *arg)
- 	return;
- 
-  error:
--	if (sockfd >= 0) {
--		close(sockfd);
--		sockfd = -1;
--	}
- 	if (cc != NULL) {
-+		rte_intr_callback_unregister(cc->intr_handle, memif_intr_handler,
-+					 cc);
- 		rte_intr_instance_free(cc->intr_handle);
- 		rte_free(cc);
- 	}
-+	if (sockfd >= 0) {
-+		close(sockfd);
-+		sockfd = -1;
-+	}
- }
- 
- static struct memif_socket *
+The old group interface is still around, and will need to be kept in DPDK both
+for compatibility reasons, as well as supporting special cases (FSLMC bus, NBL
+driver, no-IOMMU mode etc.), but it is now internal-only and not exposed through
+the API the way it was before.
+
+To enable this, VFIO is heavily refactored, so that the code can support both
+modes while relying on (mostly) common infrastructure.
+
+Note that the existing `rte_vfio_device_setup/release` model is fundamentally
+incompatible with cdev mode, because for custom container cases, the expected
+flow is that the user binds the IOMMU group (and thus, implicitly, the device
+itself) to a specific container using `rte_vfio_container_group_bind`, whereas
+this step is not needed for cdev as the device fd is assigned to the container
+straight away.
+
+Therefore, what we do instead is introduce a new API for container device
+assignment which, semantically, will assign a device to specified container, so
+that when it is mapped using `rte_pci_map_device`, the appropriate container is
+selected. Under the hood though, we essentially transition to getting device fd
+straight away at assign stage, so that by the time the PCI bus attempts to map
+the device, it is already mapped and we just return an fd. There is no
+"unassign" API because `release_device` already performs that function.
+
+Additionally, a new `rte_vfio_get_mode` API is added for those cases that need
+some introspection into VFIO's internals, with three new modes: group
+(old-style), no-iommu (old-style but without IOMMU), and cdev (the new mode).
+Although no-IOMMU is technically a variant of group mode, the distinction is
+largely irrelevant to the user, as all usages of noiommu checks in our codebase
+are for deciding whether to use IOVA or PA, not anything to do with managing
+groups. The current plan for kernel community is to *not* introduce no-IOMMU
+cdev implementation, and IOMMUFD's own group API compatibility layer also does
+not implement no-IOMMU mode, which is why this will be kept for compatibility
+for these use cases.
+
+There were other users of VFIO which relied on group API but only for convenience
+purposes; no actual VFIO functionality depended on those API's. Therefore, group
+API's are removed and, where appropriate, replaced with the new API's.
+
+List of removed API's:
+
+* `rte_vfio_get_group_fd`
+* `rte_vfio_clear_group`
+* `rte_vfio_container_group_bind` (replaced by container assign API)
+* `rte_vfio_container_group_unbind`
+* `rte_vfio_noiommu_is_enabled` (replaced by new mode API)
+
+2. The API responsibilities aren't clear and bleed into each other
+==================================================================
+
+Some API's do multiple things at once. In particular:
+
+* `rte_vfio_get_device_info` will setup the device
+* `rte_vfio_setup_device` will get device info
+
+These API's have been adjusted to do one thing only.
+
+v10:
+- Added a patch that renames confusing error labels
+- Fixed compiler warning about unused variable
+
+v9:
+- Moved erroneous rte_errno-related comments to later in the patchset
+- Moved removal of vDPA group fd API's to their respective patches
+- Fixed typo in errno comments (ENXIO vs ENOXIO)
+- Fixed corruption of group config in secondary process (v8 AI review)
+
+v8:
+- Rebase
+- Fixed build errors due to variable shadowing
+- Removed duplicate fd check as kernel does not provide a way to distinguish
+  between device fd's
+
+v7:
+- Rebase
+- Added removal of deprecation notices
+- Fixed implicit numeric comparison in patch 12
+
+v6:
+- Fixed missing header include in vfio cdev file
+
+v5:
+- Added back missing uapi patch
+
+v4:
+- Fixed issues with documenting rte_vfio_mode enum
+- Separated deprecation notices into a separate patchset
+
+v3:
+- Make API removal cleaner
+- Fix `get_group_num` usages to align with new API
+- Fix issues with function exports
+- Fix issues with `setup_device` returning old-style values in some cases
+
+v2:
+- Make the entire API internal
+- More aggressive API pruning, complete removal of group API
+- Fixed a bug in group mode where device could not be used
+- Better documentation and deprecation notice patches
+- Moved doc patches to beginning of patchset
+
+Anatoly Burakov (20):
+  uapi: update to v6.17 and add iommufd.h
+  vfio: make all functions internal
+  bus/pci: rename mismatching error labels
+  vfio: split get device info from setup
+  vfio: add container device assignment API
+  net/nbl: do not use VFIO group bind API
+  net/ntnic: use container device assignment API
+  vdpa/ifc: use container device assignment API
+  vdpa/nfp: use container device assignment API
+  vdpa/sfc: use container device assignment API
+  vdpa/mlx5: remove group-related API
+  vhost: remove group-related API from driver
+  vfio: remove group-based API
+  vfio: cleanup and refactor
+  bus/pci: use the new VFIO mode API
+  bus/fslmc: use the new VFIO mode API
+  net/hinic3: use the new VFIO mode API
+  net/ntnic: use the new VFIO mode API
+  vfio: remove no-IOMMU check API
+  vfio: introduce cdev mode
+
+ config/arm/meson.build                    |    1 +
+ config/meson.build                        |    1 +
+ doc/guides/prog_guide/vhost_lib.rst       |    4 -
+ doc/guides/rel_notes/deprecation.rst      |   10 -
+ drivers/bus/cdx/cdx_vfio.c                |   25 +-
+ drivers/bus/fslmc/fslmc_bus.c             |   10 +-
+ drivers/bus/fslmc/fslmc_vfio.c            |    6 +-
+ drivers/bus/pci/linux/pci.c               |    2 +-
+ drivers/bus/pci/linux/pci_vfio.c          |   47 +-
+ drivers/bus/platform/platform.c           |    9 +-
+ drivers/crypto/bcmfs/bcmfs_vfio.c         |   14 +-
+ drivers/net/hinic3/base/hinic3_hwdev.c    |    3 +-
+ drivers/net/nbl/nbl_common/nbl_userdev.c  |   21 +-
+ drivers/net/nbl/nbl_include/nbl_include.h |    1 +
+ drivers/net/ntnic/ntnic_ethdev.c          |    2 +-
+ drivers/net/ntnic/ntnic_vfio.c            |   30 +-
+ drivers/vdpa/ifc/ifcvf_vdpa.c             |   34 +-
+ drivers/vdpa/mlx5/mlx5_vdpa.c             |    1 -
+ drivers/vdpa/nfp/nfp_vdpa.c               |   37 +-
+ drivers/vdpa/sfc/sfc_vdpa.c               |   39 +-
+ drivers/vdpa/sfc/sfc_vdpa.h               |    2 -
+ kernel/linux/uapi/linux/iommufd.h         | 1292 +++++++++++
+ kernel/linux/uapi/linux/vduse.h           |    2 +-
+ kernel/linux/uapi/linux/vfio.h            |   12 +-
+ kernel/linux/uapi/version                 |    2 +-
+ lib/eal/freebsd/eal.c                     |   98 +-
+ lib/eal/include/rte_vfio.h                |  387 ++--
+ lib/eal/linux/eal_vfio.c                  | 2444 ++++++++-------------
+ lib/eal/linux/eal_vfio.h                  |  167 +-
+ lib/eal/linux/eal_vfio_cdev.c             |  390 ++++
+ lib/eal/linux/eal_vfio_group.c            |  984 +++++++++
+ lib/eal/linux/eal_vfio_mp_sync.c          |   80 +-
+ lib/eal/linux/meson.build                 |    2 +
+ lib/eal/windows/eal.c                     |    4 +-
+ lib/vhost/vdpa_driver.h                   |    3 -
+ 35 files changed, 4263 insertions(+), 1903 deletions(-)
+ create mode 100644 kernel/linux/uapi/linux/iommufd.h
+ create mode 100644 lib/eal/linux/eal_vfio_cdev.c
+ create mode 100644 lib/eal/linux/eal_vfio_group.c
+
 -- 
-2.53.0
+2.52.0
 
