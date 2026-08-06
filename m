@@ -2,38 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E597C55ABF
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 08:43:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E453AC561E6
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 09:17:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 29D8B406B8;
-	Thu,  6 Aug 2026 10:42:56 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id BCC1840613
- for <dev@dpdk.org>; Thu,  6 Aug 2026 10:42:51 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 90E622002A7;
- Thu,  6 Aug 2026 10:42:51 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com
- (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2CE102002B5;
- Thu,  6 Aug 2026 10:42:51 +0200 (CEST)
-Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
- [92.120.147.250])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 3C42518000B5;
- Thu,  6 Aug 2026 16:42:50 +0800 (+08)
-From: Gagandeep Singh <g.singh@nxp.com>
-To: dev@dpdk.org,
-	Prashant Gupta <prashant.gupta_3@nxp.com>
-Cc: hemant.agrawal@nxp.com
-Subject: [PATCH 3/4] dma/imx_edma5: add data path
-Date: Thu,  6 Aug 2026 14:12:44 +0530
-Message-Id: <20260806084245.561305-4-g.singh@nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20260806084245.561305-1-g.singh@nxp.com>
-References: <20260806084245.561305-1-g.singh@nxp.com>
+	by mails.dpdk.org (Postfix) with ESMTP id DBA9D40431;
+	Thu,  6 Aug 2026 11:17:41 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id AF25040288
+ for <dev@dpdk.org>; Thu,  6 Aug 2026 11:17:39 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 7C79C20692;
+ Thu,  6 Aug 2026 11:17:39 +0200 (CEST)
+Content-class: urn:content-classes:message
+Subject: RE: [PATCH] eal/x86: optimize memcpy of small 64-byte blocks
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Date: Thu, 6 Aug 2026 11:17:38 +0200
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F659C6@smartserver.smartshare.dk>
+In-Reply-To: <fc32ab5225194114bac9286fe82815e1@huawei.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH] eal/x86: optimize memcpy of small 64-byte blocks
+Thread-Index: AQHdJB42oNL4gJj070KJtRurBEIGmLaN+WoAgAAJXwCAAOt0oIAABRpAgAAL2ECAAB9NYIAAlEawgAAzoeCAAMFNUIAAEs8Q
+References: <20260804143305.1344327-1-mb@smartsharesystems.com>
+ <20260804085210.74763eb5@phoenix.local>
+ <98CBD80474FA8B44BF855DF32C47DC35F659B8@smartserver.smartshare.dk>
+ <6f474724bc22441a8a4f516f3398ca76@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F659BD@smartserver.smartshare.dk>
+ <3c7eea01416249e0aaeab0e8b6b4c157@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F659BF@smartserver.smartshare.dk>
+ <3a96ca58a1e146758f5314202a04c3de@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F659C3@smartserver.smartshare.dk>
+ <fc32ab5225194114bac9286fe82815e1@huawei.com>
+From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
+ "Stephen Hemminger" <stephen@networkplumber.org>
+Cc: <dev@dpdk.org>,
+	"Bruce Richardson" <bruce.richardson@intel.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -47,565 +57,113 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add the memory-to-memory data path for the eDMA5 dmadev.
-
-The eDMA5 exposes a single transfer control descriptor and a single
-completion flag per hardware channel, so jobs are serialised in software.
-Each enqueued job is played out synchronously as one or more single-block
-transfers: the per-channel TCD is programmed, the transfer is
-software-started and the driver busy-waits for the DONE flag with a
-wall-clock bounded timeout. Scatter-gather copies walk the source and
-destination segment lists as two cursors, emitting one single-block
-sub-transfer per iteration that fits both current segments.
-
-As the eDMA5 is a non-coherent bus master, source and destination buffers
-are cleaned from the CPU cache before a transfer and the destination is
-invalidated after completion so the application observes the DMA result.
-
-This adds copy, copy_sg, submit, completed, completed_status and
-burst_capacity, wired through the device fast-path object.
-
-Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
-Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
----
- drivers/dma/imx_edma5/imx_edma5_dmadev.c | 517 +++++++++++++++++++++++
- 1 file changed, 517 insertions(+)
-
-diff --git a/drivers/dma/imx_edma5/imx_edma5_dmadev.c b/drivers/dma/imx_edma5/imx_edma5_dmadev.c
-index 0b2671e926..0b6a56112e 100644
---- a/drivers/dma/imx_edma5/imx_edma5_dmadev.c
-+++ b/drivers/dma/imx_edma5/imx_edma5_dmadev.c
-@@ -338,6 +338,516 @@ imx_edma5_close(struct rte_dma_dev *dev)
- 	return 0;
- }
- 
-+/*
-+ * Encode the largest natural transfer size (SSIZE/DSIZE) usable for a given
-+ * source, destination and length. The address must be aligned to the transfer
-+ * size and the byte count must be a multiple of it.
-+ */
-+static uint16_t
-+imx_edma5_calc_attr(uint64_t src, uint64_t dst, uint32_t len)
-+{
-+	uint32_t sz = IMX_EDMA5_TCD_SIZE_1B;
-+
-+	if (((src | dst | len) & 0x1F) == 0)
-+		sz = IMX_EDMA5_TCD_SIZE_32B;
-+	else if (((src | dst | len) & 0xF) == 0)
-+		sz = IMX_EDMA5_TCD_SIZE_16B;
-+	else if (((src | dst | len) & 0x7) == 0)
-+		sz = IMX_EDMA5_TCD_SIZE_8B;
-+	else if (((src | dst | len) & 0x3) == 0)
-+		sz = IMX_EDMA5_TCD_SIZE_4B;
-+	else if (((src | dst | len) & 0x1) == 0)
-+		sz = IMX_EDMA5_TCD_SIZE_2B;
-+
-+	return IMX_EDMA5_TCD_ATTR_SSIZE(sz) | IMX_EDMA5_TCD_ATTR_DSIZE(sz);
-+}
-+
-+/*
-+ * Program the channel TCD for a single-block copy: one minor loop of "len"
-+ * bytes with a major count of 1. Completion is polled via CH_CSR.DONE.
-+ */
-+static inline void
-+imx_edma5_program_copy(struct imx_edma5_vchan *vc, uint64_t src, uint64_t dst,
-+		       uint32_t len)
-+{
-+	uint8_t *tcd = vc->tcd_regs;
-+	uint16_t attr = imx_edma5_calc_attr(src, dst, len);
-+
-+	imx_edma5_write64(tcd, IMX_EDMA5_TCD_SADDR, src);
-+	imx_edma5_write64(tcd, IMX_EDMA5_TCD_DADDR, dst);
-+	imx_edma5_write16(tcd, IMX_EDMA5_TCD_ATTR, attr);
-+	imx_edma5_write16(tcd, IMX_EDMA5_TCD_SOFF,
-+			  (uint16_t)(1u << IMX_EDMA5_TCD_ATTR_GET_SSIZE(attr)));
-+	imx_edma5_write16(tcd, IMX_EDMA5_TCD_DOFF,
-+			  (uint16_t)(1u << IMX_EDMA5_TCD_ATTR_GET_DSIZE(attr)));
-+	imx_edma5_write32(tcd, IMX_EDMA5_TCD_NBYTES, len);
-+	imx_edma5_write64(tcd, IMX_EDMA5_TCD_SLAST, 0);
-+	imx_edma5_write64(tcd, IMX_EDMA5_TCD_DLAST_SGA, 0);
-+	imx_edma5_write16(tcd, IMX_EDMA5_TCD_CITER, 1);
-+	imx_edma5_write16(tcd, IMX_EDMA5_TCD_BITER, 1);
-+	/* Clear CSR so no scatter-gather link is followed. */
-+	imx_edma5_write16(tcd, IMX_EDMA5_TCD_CSR, 0);
-+}
-+
-+/* Fill an in-memory hardware TCD64 descriptor for one copy segment. */
-+static inline void
-+imx_edma5_fill_tcd(struct imx_edma5_hw_tcd64 *t, uint64_t src, uint64_t dst,
-+		   uint32_t len)
-+{
-+	uint16_t attr = imx_edma5_calc_attr(src, dst, len);
-+	uint16_t soff = (uint16_t)(1u << IMX_EDMA5_TCD_ATTR_GET_SSIZE(attr));
-+	uint16_t doff = (uint16_t)(1u << IMX_EDMA5_TCD_ATTR_GET_DSIZE(attr));
-+
-+	t->saddr = rte_cpu_to_le_64(src);
-+	t->soff = rte_cpu_to_le_16(soff);
-+	t->attr = rte_cpu_to_le_16(attr);
-+	t->nbytes = rte_cpu_to_le_32(len);
-+	t->slast = 0;
-+	t->daddr = rte_cpu_to_le_64(dst);
-+	t->dlast_sga = 0;
-+	t->doff = rte_cpu_to_le_16(doff);
-+	t->citer = rte_cpu_to_le_16(1);
-+	t->csr = 0;
-+	t->biter = rte_cpu_to_le_16(1);
-+}
-+
-+static inline void
-+imx_edma5_hw_start(struct imx_edma5_vchan *vc)
-+{
-+	uint16_t csr = imx_edma5_read16(vc->tcd_regs, IMX_EDMA5_TCD_CSR);
-+
-+	csr |= IMX_EDMA5_TCD_CSR_START;
-+	imx_edma5_write16(vc->tcd_regs, IMX_EDMA5_TCD_CSR, csr);
-+}
-+
-+/*
-+ * Invalidate the CPU cache lines covering a completed job's destination(s) so
-+ * the application reads the DMA result rather than stale cache. The lines were
-+ * cleaned at enqueue time, so this clean+invalidate behaves as a pure
-+ * invalidate.
-+ */
-+static inline void
-+imx_edma5_job_invalidate_dst(struct imx_edma5_job *job)
-+{
-+	if (job->nb_sg > 0) {
-+		uint16_t s;
-+
-+		for (s = 0; s < job->nb_sg; s++) {
-+			rte_iova_t da = rte_le_to_cpu_64(job->sg_tcd[s].daddr);
-+			uint32_t len = rte_le_to_cpu_32(job->sg_tcd[s].nbytes);
-+			void *va = rte_mem_iova2virt(da);
-+
-+			if (va != NULL)
-+				imx_edma5_cache_inval(va, len);
-+		}
-+	} else if (job->dst_va != NULL) {
-+		imx_edma5_cache_inval(job->dst_va, job->len);
-+	}
-+}
-+
-+/*
-+ * Upper bound on how long to poll for a single-block transfer to complete.
-+ * A wall-clock deadline is used rather than a raw spin count so the bound is
-+ * independent of CPU speed and transfer size: even the largest single-block
-+ * copy this driver issues completes in well under a millisecond at eDMA5 bus
-+ * rates, so 1 ms is comfortably above the worst case while still bounding a
-+ * wedged channel instead of hanging the CPU.
-+ */
-+#define IMX_EDMA5_WAIT_TIMEOUT_MS	1
-+
-+/*
-+ * Wait for the single register TCD transfer to finish and clear its latched
-+ * status. Returns true on success, false on a logged channel error (CH_ES.ERR)
-+ * or timeout. The per-transfer completion flag CH_CSR.DONE and the CH_ES error
-+ * bit are both write-1-to-clear.
-+ */
-+static inline bool
-+imx_edma5_wait_done(struct imx_edma5_vchan *vc)
-+{
-+	uint64_t deadline = rte_get_timer_cycles() +
-+		(rte_get_timer_hz() * IMX_EDMA5_WAIT_TIMEOUT_MS) / 1000;
-+
-+	do {
-+		uint32_t ch_es = imx_edma5_read32(vc->ch_regs, IMX_EDMA5_CH_ES);
-+		uint32_t ch_csr;
-+
-+		if (ch_es & IMX_EDMA5_CH_ES_ERR) {
-+			imx_edma5_write32(vc->ch_regs, IMX_EDMA5_CH_ES,
-+					  IMX_EDMA5_CH_ES_ERR);
-+			/* Reset the errored channel before the next job reuses it. */
-+			imx_edma5_reset_hw_chan(vc);
-+			return false;
-+		}
-+
-+		ch_csr = imx_edma5_read32(vc->ch_regs, IMX_EDMA5_CH_CSR);
-+		if (ch_csr & IMX_EDMA5_CH_CSR_DONE) {
-+			imx_edma5_write32(vc->ch_regs, IMX_EDMA5_CH_CSR,
-+					  IMX_EDMA5_CH_CSR_DONE);
-+			return true;
-+		}
-+	} while (rte_get_timer_cycles() < deadline);
-+
-+	IMX_EDMA5_LOG(ERR,
-+		      "channel %u timed out waiting for DONE (CH_CSR=0x%08x "
-+		      "CH_ES=0x%08x)",
-+		      vc->hw_chan,
-+		      imx_edma5_read32(vc->ch_regs, IMX_EDMA5_CH_CSR),
-+		      imx_edma5_read32(vc->ch_regs, IMX_EDMA5_CH_ES));
-+
-+	/* Reset the possibly-still-active channel before the next job reuses it. */
-+	imx_edma5_reset_hw_chan(vc);
-+	return false;
-+}
-+
-+/*
-+ * Execute one job to completion on the channel's single register TCD.
-+ *
-+ * The eDMA5 exposes a single TCD and a single completion flag per channel, so
-+ * jobs are serialised in software: a job is run synchronously here (program the
-+ * TCD, software-start, busy-wait for DONE) and its completion recorded in
-+ * job->done for the completion API to reap. Scatter-gather segments are played
-+ * out one at a time as single-block transfers, since the eDMA5 does not
-+ * auto-advance a hardware TCD chain for software-started mem-to-mem transfers.
-+ * On success the destination cache lines are invalidated (non-coherent master).
-+ */
-+static inline void
-+imx_edma5_run_job(struct imx_edma5_vchan *vc, struct imx_edma5_job *job)
-+{
-+	bool ok = true;
-+
-+	if (job->nb_sg > 0) {
-+		uint16_t s;
-+
-+		for (s = 0; s < job->nb_sg; s++) {
-+			uint64_t src = rte_le_to_cpu_64(job->sg_tcd[s].saddr);
-+			uint64_t dst = rte_le_to_cpu_64(job->sg_tcd[s].daddr);
-+			uint32_t len = rte_le_to_cpu_32(job->sg_tcd[s].nbytes);
-+
-+			imx_edma5_program_copy(vc, src, dst, len);
-+			imx_edma5_hw_start(vc);
-+			if (!imx_edma5_wait_done(vc)) {
-+				ok = false;
-+				break;
-+			}
-+		}
-+	} else {
-+		imx_edma5_program_copy(vc, job->src_iova, job->dst_iova,
-+				       job->len);
-+		imx_edma5_hw_start(vc);
-+		ok = imx_edma5_wait_done(vc);
-+	}
-+
-+	if (ok)
-+		imx_edma5_job_invalidate_dst(job);
-+
-+	job->error = ok ? 0 : 1;
-+	job->done = 1;
-+	vc->submitted_count++;
-+}
-+
-+static int
-+imx_edma5_copy(void *dev_private, uint16_t vchan, rte_iova_t src,
-+	       rte_iova_t dst, uint32_t length, uint64_t flags)
-+{
-+	struct imx_edma5_dev *ed = dev_private;
-+	struct imx_edma5_vchan *vc = &ed->vchans[vchan];
-+	struct imx_edma5_job *job;
-+	uint16_t slot;
-+
-+	/* NBYTES = 0 is undefined on the eDMA5 and can wedge the channel. */
-+	if (length == 0)
-+		return -EINVAL;
-+
-+	/* Ring full? one slot is kept free to distinguish full from empty. */
-+	if (vc->nb_enqueued >= (uint16_t)(vc->nb_desc - 1))
-+		return -ENOSPC;
-+
-+	slot = vc->head;
-+	job = &vc->jobs[slot];
-+	job->ridx = vc->ridx;
-+	job->submitted = 0;
-+	job->done = 0;
-+	job->error = 0;
-+	job->nb_sg = 0;
-+	job->len = length;
-+	job->src_iova = src;
-+	job->dst_iova = dst;
-+	job->dst_va = rte_mem_iova2virt(dst);
-+
-+	/*
-+	 * Non-cache-coherent master: clean the source so the device reads the
-+	 * CPU's latest writes, and clean the destination so a prior dirty line
-+	 * cannot be written back over the DMA result (the destination is
-+	 * invalidated after completion).
-+	 */
-+	{
-+		void *src_va = rte_mem_iova2virt(src);
-+
-+		if (src_va != NULL)
-+			imx_edma5_cache_clean(src_va, length);
-+		if (job->dst_va != NULL)
-+			imx_edma5_cache_clean(job->dst_va, length);
-+	}
-+
-+	/* Run now if SUBMIT is set, else later by imx_edma5_submit(). */
-+	if (flags & RTE_DMA_OP_FLAG_SUBMIT) {
-+		imx_edma5_run_job(vc, job);
-+		job->submitted = 1;
-+	}
-+
-+	vc->head = (vc->head + 1) & vc->desc_mask;
-+	vc->nb_enqueued++;
-+
-+	return vc->ridx++;
-+}
-+
-+static int
-+imx_edma5_copy_sg(void *dev_private, uint16_t vchan,
-+		  const struct rte_dma_sge *src, const struct rte_dma_sge *dst,
-+		  uint16_t nb_src, uint16_t nb_dst, uint64_t flags)
-+{
-+	struct imx_edma5_dev *ed = dev_private;
-+	struct imx_edma5_vchan *vc = &ed->vchans[vchan];
-+	struct imx_edma5_hw_tcd64 *tcd;
-+	struct imx_edma5_job *job;
-+	uint16_t slot;
-+	uint16_t s;
-+	uint16_t si = 0, di = 0;	/* current source/destination seg index */
-+	uint32_t s_off = 0, d_off = 0;	/* byte offset within current segment */
-+	uint16_t nsg = 0;		/* sub-transfers produced so far */
-+	uint64_t src_total = 0, dst_total = 0;
-+
-+	/*
-+	 * The scatter-gather contract is a byte stream: the source and
-+	 * destination lists may be segmented independently but their
-+	 * concatenations are equal. The lists are walked as two cursors,
-+	 * emitting one single-block sub-transfer per run that fits in both the
-+	 * current source and destination segments. This yields at most
-+	 * nb_src + nb_dst - 1 sub-transfers, which fit in IMX_EDMA5_SG_TCD_PER_JOB.
-+	 */
-+	if (nb_src == 0 || nb_dst == 0 ||
-+	    nb_src > IMX_EDMA5_MAX_SGES || nb_dst > IMX_EDMA5_MAX_SGES) {
-+		IMX_EDMA5_LOG(ERR, "Unsupported SG shape src=%u dst=%u",
-+			      nb_src, nb_dst);
-+		return -EINVAL;
-+	}
-+
-+	/* Ring full? one slot is kept free to distinguish full from empty. */
-+	if (vc->nb_enqueued >= (uint16_t)(vc->nb_desc - 1))
-+		return -ENOSPC;
-+
-+	slot = vc->head;
-+	job = &vc->jobs[slot];
-+	job->ridx = vc->ridx;
-+	job->submitted = 0;
-+	job->done = 0;
-+	job->error = 0;
-+
-+	/* This job's dedicated slice of the in-memory TCD pool. */
-+	job->sg_tcd = &vc->sg_tcd_pool[(size_t)slot * IMX_EDMA5_SG_TCD_PER_JOB];
-+	tcd = job->sg_tcd;
-+
-+	/*
-+	 * Clean every source and destination segment up front (non-coherent
-+	 * master): the device must read current source data, and dirty
-+	 * destination lines must be flushed before the transfer.
-+	 */
-+	for (s = 0; s < nb_src; s++) {
-+		void *va = rte_mem_iova2virt(src[s].addr);
-+
-+		src_total += src[s].length;
-+		if (va != NULL)
-+			imx_edma5_cache_clean(va, src[s].length);
-+	}
-+	for (s = 0; s < nb_dst; s++) {
-+		void *va = rte_mem_iova2virt(dst[s].addr);
-+
-+		dst_total += dst[s].length;
-+		if (va != NULL)
-+			imx_edma5_cache_clean(va, dst[s].length);
-+	}
-+
-+	/* copy_sg requires equal total bytes on both lists; reject misuse. */
-+	if (src_total != dst_total) {
-+		IMX_EDMA5_LOG(ERR,
-+			      "SG byte count mismatch src=%" PRIu64
-+			      " dst=%" PRIu64, src_total, dst_total);
-+		return -EINVAL;
-+	}
-+
-+	while (si < nb_src && di < nb_dst) {
-+		uint32_t s_rem = src[si].length - s_off;
-+		uint32_t d_rem = dst[di].length - d_off;
-+		uint32_t len = RTE_MIN(s_rem, d_rem);
-+
-+		/* Skip zero-length segments without emitting a descriptor. */
-+		if (len == 0) {
-+			if (s_rem == 0) {
-+				si++;
-+				s_off = 0;
-+			}
-+			if (d_rem == 0) {
-+				di++;
-+				d_off = 0;
-+			}
-+			continue;
-+		}
-+
-+		if (nsg >= IMX_EDMA5_SG_TCD_PER_JOB) {
-+			IMX_EDMA5_LOG(ERR,
-+				      "SG produced too many sub-transfers "
-+				      "(src=%u dst=%u)", nb_src, nb_dst);
-+			/* Defensive: clear nb_sg so the abandoned slot is not reused. */
-+			job->nb_sg = 0;
-+			return -EINVAL;
-+		}
-+
-+		imx_edma5_fill_tcd(&tcd[nsg], src[si].addr + s_off,
-+				   dst[di].addr + d_off, len);
-+		nsg++;
-+
-+		s_off += len;
-+		d_off += len;
-+		if (s_off == src[si].length) {
-+			si++;
-+			s_off = 0;
-+		}
-+		if (d_off == dst[di].length) {
-+			di++;
-+			d_off = 0;
-+		}
-+	}
-+
-+	/* No sub-transfer (all segments zero-length): NBYTES = 0 wedges eDMA5. */
-+	if (nsg == 0) {
-+		IMX_EDMA5_LOG(ERR, "SG produced zero sub-transfers");
-+		return -EINVAL;
-+	}
-+
-+	job->nb_sg = nsg;
-+
-+	/* Run now if SUBMIT is set, else later by imx_edma5_submit(). */
-+	if (flags & RTE_DMA_OP_FLAG_SUBMIT) {
-+		imx_edma5_run_job(vc, job);
-+		job->submitted = 1;
-+	}
-+
-+	vc->head = (vc->head + 1) & vc->desc_mask;
-+	vc->nb_enqueued++;
-+
-+	return vc->ridx++;
-+}
-+
-+static int
-+imx_edma5_submit(void *dev_private, uint16_t vchan)
-+{
-+	struct imx_edma5_dev *ed = dev_private;
-+	struct imx_edma5_vchan *vc = &ed->vchans[vchan];
-+	uint16_t idx = vc->tail;
-+
-+	/* Run every enqueued-but-not-yet-submitted job to completion (FIFO). */
-+	while (idx != vc->head) {
-+		struct imx_edma5_job *job = &vc->jobs[idx];
-+
-+		if (!job->submitted) {
-+			imx_edma5_run_job(vc, job);
-+			job->submitted = 1;
-+		}
-+		idx = (idx + 1) & vc->desc_mask;
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * Reap completed jobs from the software ring in FIFO order. Jobs run
-+ * synchronously, so a submitted job's result is already in job->done/error.
-+ * An unsubmitted job stops the walk.
-+ */
-+static uint16_t
-+imx_edma5_completed(void *dev_private, uint16_t vchan, const uint16_t nb_cpls,
-+		    uint16_t *last_idx, bool *has_error)
-+{
-+	struct imx_edma5_dev *ed = dev_private;
-+	struct imx_edma5_vchan *vc = &ed->vchans[vchan];
-+	uint16_t count = 0;
-+
-+	*has_error = false;
-+
-+	while (count < nb_cpls && vc->tail != vc->head) {
-+		struct imx_edma5_job *job = &vc->jobs[vc->tail];
-+
-+		if (!job->submitted || !job->done)
-+			break;
-+
-+		/*
-+		 * Stop before an errored job: it is left in the ring for
-+		 * rte_dma_completed_status(), and last_idx stays at the last
-+		 * successful transfer.
-+		 */
-+		if (job->error) {
-+			*has_error = true;
-+			break;
-+		}
-+
-+		vc->last_idx = job->ridx;
-+		vc->completed_count++;
-+
-+		vc->tail = (vc->tail + 1) & vc->desc_mask;
-+		vc->nb_enqueued--;
-+		count++;
-+	}
-+
-+	*last_idx = vc->last_idx;
-+
-+	return count;
-+}
-+
-+static uint16_t
-+imx_edma5_completed_status(void *dev_private, uint16_t vchan,
-+			   const uint16_t nb_cpls, uint16_t *last_idx,
-+			   enum rte_dma_status_code *status)
-+{
-+	struct imx_edma5_dev *ed = dev_private;
-+	struct imx_edma5_vchan *vc = &ed->vchans[vchan];
-+	uint16_t count = 0;
-+
-+	while (count < nb_cpls && vc->tail != vc->head) {
-+		struct imx_edma5_job *job = &vc->jobs[vc->tail];
-+
-+		if (!job->submitted || !job->done)
-+			break;
-+
-+		if (job->error) {
-+			status[count] = RTE_DMA_STATUS_BUS_ERROR;
-+			vc->errors_count++;
-+		} else {
-+			status[count] = RTE_DMA_STATUS_SUCCESSFUL;
-+		}
-+
-+		vc->last_idx = job->ridx;
-+		vc->completed_count++;
-+
-+		vc->tail = (vc->tail + 1) & vc->desc_mask;
-+		vc->nb_enqueued--;
-+		count++;
-+	}
-+
-+	*last_idx = vc->last_idx;
-+
-+	return count;
-+}
-+
-+static uint16_t
-+imx_edma5_burst_capacity(const void *dev_private, uint16_t vchan)
-+{
-+	const struct imx_edma5_dev *ed = dev_private;
-+	const struct imx_edma5_vchan *vc = &ed->vchans[vchan];
-+
-+	/* One slot is reserved to distinguish full from empty. */
-+	return vc->nb_desc - 1 - vc->nb_enqueued;
-+}
-+
- static const struct rte_dma_dev_ops imx_edma5_ops = {
- 	.dev_info_get	= imx_edma5_info_get,
- 	.dev_configure	= imx_edma5_configure,
-@@ -383,6 +893,13 @@ imx_edma5_probe(struct rte_platform_device *pdev)
- 
- 	dev->device = &pdev->device;
- 	dev->dev_ops = &imx_edma5_ops;
-+	dev->fp_obj->dev_private = dev->data->dev_private;
-+	dev->fp_obj->copy = imx_edma5_copy;
-+	dev->fp_obj->copy_sg = imx_edma5_copy_sg;
-+	dev->fp_obj->submit = imx_edma5_submit;
-+	dev->fp_obj->completed = imx_edma5_completed;
-+	dev->fp_obj->completed_status = imx_edma5_completed_status;
-+	dev->fp_obj->burst_capacity = imx_edma5_burst_capacity;
- 
- 	ed = dev->data->dev_private;
- 	ed->reg_base = res->mem.addr;
--- 
-2.25.1
-
+PiBGcm9tOiBLb25zdGFudGluIEFuYW55ZXYgW21haWx0bzprb25zdGFudGluLmFuYW55ZXZAaHVh
+d2VpLmNvbV0NCj4gU2VudDogVGh1cnNkYXksIDYgQXVndXN0IDIwMjYgMDkuNTgNCj4gDQo+ID4g
+PiA+ID4gPiA+ID4gPiA+ICsJLyogQ29tbW9uIHdheSBmb3Igc21hbGwgY29weSBzaXplIG9mIDY0
+LWJ5dGUNCj4gYmxvY2tzLg0KPiA+ID4gPiA+ID4gPiBVbmxpa2VseSwgc28NCj4gPiA+ID4gPiA+
+ID4gPiA+IGNvbnN0YW50IHNpemUgb25seSAqLw0KPiA+ID4gPiA+ID4gPiA+ID4gPiArCWlmIChf
+X3J0ZV9jb25zdGFudChuKSAmJiAobiAmIDYzKSA9PSAwICYmIG4gPD0NCj4gPiA+ID4gPiA+ID4g
+PiA+IFJURV9NRU1DUFlfQkxPQ0tfNjRfTUFYKSB7DQo+ID4gPiA+ID4gPiA+ID4gPiA+ICsJCXZv
+aWQgKnJldCA9IGRzdDsNCj4gPiA+ID4gPiA+ID4gPiA+ID4gKw0KPiA+ID4gPiA+ID4gPiA+ID4N
+Cj4gPiA+ID4gPiA+ID4gPiA+IE1heWJlIGp1c3QgbGV0IGNvbXBpbGVyIGRlY2lkZSwgaXQgd2ls
+bCBnZW5lcmF0ZSB2ZWN0b3INCj4gPiA+ID4gPiA+ID4gaW5zdHJ1Y3Rpb25zIGluDQo+ID4gPiA+
+ID4gPiA+ID4gPiBtb3N0IGNhc2VzLg0KPiA+ID4gPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+ID4g
+PiA+IAlpZiAoX19ydGVfY29uc3RhbnQobikpDQo+ID4gPiA+ID4gPiA+ID4gPiAJCXJldHVybiBt
+ZW1wY3B5KGRzdCwgc3JjLCBuKTsNCj4gPiA+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gPiA+IE1h
+eWJlIGluIG1vc3QsIGJ1dCBub3QgaW4gYWxsOg0KPiA+ID4gPiA+ID4gPiA+IGh0dHBzOi8vZ29k
+Ym9sdC5vcmcvei9LdmRLcVQ1clkNCj4gPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+ID4gV2l0aCAn
+LW1hdngnIG9yICctbWF2eDUxMmYnIGl0IGxvb2tzIGxpa2UgaXQgZG9lcyBmb3IgeW91cg0KPiA+
+ID4gc2FtcGxlDQo+ID4gPiA+ID4gY29kZS4NCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiBJdCBh
+bHNvIGRvZXMgd2l0aCAtbXNzZTQuMiB3aGVuIFNaIGlzIHJlZHVjZWQgdG8gMjU2IGJ5dGVzLg0K
+PiA+ID4gPiA+ID4gQ2xhbmcgc3dpdGNoZXMgdG8gaW5saW5lIHdoZW4gU1ogaXMgcmVkdWNlZCB0
+byAxMjggYnl0ZXMuDQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gSXQgc2VlbXMgdGhlIGNvbXBp
+bGVyIGhhcyBhIHRocmVzaG9sZCBmb3Igd2hlbiB0byBpbmxpbmUgYW5kDQo+IHdoZW4NCj4gPiA+
+IHRvDQo+ID4gPiA+ID4gY2FsbCB0aGUgQw0KPiA+ID4gPiA+ID4gbGlicmFyeSdzIG1lbWNweSBz
+dWJyb3V0aW5lLg0KPiA+ID4gPiA+ID4gVGhlIHRocmVzaG9sZCBkZXBlbmRzIG9uIGJvdGggY29w
+eSBzaXplIGFuZCB2ZWN0b3IgcmVnaXN0ZXINCj4gc2l6ZS4NCj4gPiA+ID4gPiA+IEFuZCBpdCBp
+cyBjb21waWxlciBkZXBlbmRlbnQuDQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBJIHRoaW5rIHRoZXJl
+IGFyZSBjb21waWxlciBvcHRpb25zIHRvIHNwZWNpZnkgZGVzaXJlZCB0aHJlc2hvbGQNCj4gPiA+
+IHZhbHVlcy4NCj4gPiA+ID4gPiBMZXQgc2F5IGZvciBnY2MgdGhlcmUgaXMgICcgLW1tZW1jcHkt
+c3RyYXRlZ3k9c3RyYXRlZ3knLg0KPiA+ID4gPiA+IEZvciB0aGF0IGV4YW1wbGUgaW4gdGhhdCBw
+YXJ0aWN1bGFyIGNhc2UNCj4gPiA+ID4gPiAtbW1lbWNweS1zdHJhdGVneT12ZWN0b3JfbG9vcDo1
+MTI6YWxpZ24sbG9vcDotMTphbGlnbg0KPiA+ID4gPiA+IGdlbmVyYXRlcyBzc2UgbG9hZHMvc3Rv
+cmVzLg0KPiA+ID4gPiA+IE1pZ2h0IGJlIHdlIGNhbiBleHBsb2l0IGl0IHNvbWVob3c/DQo+ID4g
+PiA+DQo+ID4gPiA+IFRoYXQgY291bGQgZ2l2ZSB1cyBoaWdoZXIgZ3JhbnVsYXJpdHkvY29udHJv
+bCBvdmVyIG1lbWNweSBmb3INCj4gPiA+IGluZGl2aWR1YWwNCj4gPiA+ID4gbWVtY3B5IGluc3Rh
+bmNlczsgbWlnaHQgYmUgdXNlZnVsIGZvciBob3QgY29kZSBwYXRocyB3aGVyZSB3ZQ0KPiBoYXZl
+DQo+ID4gPiBtb3JlDQo+ID4gPiA+IGtub3dsZWRnZSBhYm91dCB0aGUgY29weSBvcGVyYXRpb24g
+dGhhbiB0aGUgY29tcGlsZXIgY2FuIGluZmVyLg0KPiA+ID4gPiBIb3dldmVyLCBwcmFnbWFzIGFy
+ZSBkaXNjb3VyYWdlZCBpbiBEUERLLCBhbmQgdGhpcyBsb29rcyBsaWtlIGENCj4gdmVyeQ0KPiA+
+ID4gc2ltaWxhcg0KPiA+ID4gPiBwYXRoLg0KPiA+ID4NCj4gPiA+IFdlbGwsIHJpZ2h0IG5vdyAg
+cnRlX21lbWNweS5oIGlzIDcwMCsgbGluZXMgYW5kIGtlZXBzIGdyb3dpbmcuDQo+ID4gPiBDb25z
+aWRlcmluZyB0aGF0IHByb2JhYmx5IHByYWdtYXMgYXJlIG5vdCB0aGF0IGJhZC4NCj4gPiA+IE9m
+IGNvdXJzZSwgcHJhZ21hcyBoYXZlIHRoZWlyIG93biBpc3N1ZXMgYW5kIGl0IGlzIGhhcmQgdG8g
+ZW5zdXJlDQo+IHRoYXQNCj4gPiA+IHRoZXkgd2lsbCBwcm9kdWNlIHNhbWUgY29kZSBiZXR3ZWVu
+IGRpZmZlcmVudCBjb21waWxlcnMvdmVyc2lvbnMsDQo+IGV0Yy4NCj4gPiA+DQo+ID4gPiA+ID4g
+SSBhbSBub3QgcmVhbGx5IGhhcHB5IHRoYXQgb3VyIGhvbWUtYnJld2VkIG1lbWNweSBjb2RlLWJs
+b2NrDQo+IGtlZXBzDQo+ID4gPiA+ID4gZ3Jvd2luZywNCj4gPiA+ID4gPiB3aGlsZSB3ZSBrZWVw
+IHRhbGtpbmcgdGhhdCBpdCB3b3VsZCBiZSBnb29kIHRvIGVsaW1pbmF0ZSBpdA0KPiA+ID4gY29t
+cGxldGVseS4NCj4gPiA+ID4NCj4gPiA+ID4gSSBhZ3JlZSBpbiBwcmluY2lwbGUuDQo+ID4gPiA+
+IEhvd2V2ZXIsIHRoaXMgcnRlX21lbWNweSgpIG9wdGltaXphdGlvbiBpcyBmb3IgdGhlIHBpbGUv
+bWVtcG9vbA0KPiA+ID4gb3B0aW1pemF0aW9ucw0KPiA+ID4gPiBJJ20gd29ya2luZyBvbiwgc28g
+dGhlcmUgaXMgYSBzcGVjaWZpYyB1c2UgY2FzZSBtb3RpdmF0aW5nIHRoZQ0KPiBhZGRlZA0KPiA+
+ID4gY29kZS4NCj4gPiA+DQo+ID4gPiBJIHVuZGVyc3RhbmQgdGhhdCB5b3UgcHJvYmFibHkgaGF2
+ZSBzb21lIHNwZWNpZmljIHVzZS1jYXNlIGluIG1pbmQuDQo+ID4gPiBCVFcgZm9yIHRoaXMgb3B0
+aW1pemF0aW9uIHlvdSBtZW50aW9uZWQgYWJvdmU6IHdoYXQgaXMgdGhlIGdhaW4NCj4gd2l0aA0K
+PiA+ID4gdGhlc2UgY2hhbmdlcz8NCj4gPg0KPiA+IElNTywgdGhlIHByaW1hcnkgYmVuZWZpdCBp
+cyB0aGUgbXVjaCBzaW1wbGVyIChhbmQgc21hbGxlcikgYXNzZW1ibHkNCj4gb3V0cHV0IGR1ZQ0K
+PiA+IHRvIGF2b2lkaW5nIHRoZSBhZGRyZXNzIGFsaWdubWVudCBjaGVjayAoYW5kIHRoZSByZXN1
+bHRpbmcgZHVwbGljYXRlZA0KPiBjb2RlKS4NCj4gDQo+IEkgdGhpbmsgdGhhdCBzaG91bGQgYmUg
+bWVhc3VyYWJsZSB0b286IHdob2xlIGJpbmFyeSAgYW5kL29yIGhvdCBwYXRoDQo+IGZ1bmN0aW9u
+IHNpemUgcmVkdWN0aW9uLCBldGMuDQoNClRoZSBzaXplIG9mIHRoZSBnZW5lcmF0ZWQgY29kZSBm
+b3IgdGhlIGNvcHkgb3BlcmF0aW9uIGlzIHJlZHVjZWQgdG8gc2xpZ2h0bHkgbGVzcyB0aGFuIGhh
+bGYgKG9ubHkgb25lIGluc3RhbmNlIG9mIHRoZSBjb3B5IG9wZXJhdGlvbiBpbnN0ZWFkIG9mIHR3
+bywgYW5kIHRoZSBhZGRyZXNzIGFsaWdubWVudCBjb21wYXJpc29uIGlzIG9taXR0ZWQpLg0KDQo+
+IA0KPiA+IEkgaGF2ZW4ndCBtZWFzdXJlZCB0aGUgcGVyZm9ybWFuY2UgZ2Fpbi4NCj4gPiBCYXNl
+ZCBvbiB0aGUgcGVyZiBnYWluIGluIGEgcHJldmlvdXMgbWVtcG9vbCBvcHRpbWl6YXRpb24gcGF0
+Y2ggWzFdLA0KPiBpdCBzZWVtcw0KPiA+IGF2b2lkaW5nIHRoZSBhZGRyZXNzIGFsaWdubWVudCBj
+aGVjayBzaGF2ZXMgfjIgY3ljbGVzIG9mZiB0aGUgY29weQ0KPiBvcGVyYXRpb24gKGZvcg0KPiA+
+IGNhY2hlLXRvLWNhY2hlIGNvcHkpLg0KPiA+IEkgZXhwZWN0IHRoYXQgdGhlIHNhbWUgZ2FpbiAo
+ZnJvbSBhdm9pZGluZyB0aGUgYWRkcmVzcyBhbGlnbm1lbnQNCj4gY2hlY2spIGFwcGxpZXMNCj4g
+PiBoZXJlLg0KPiANCj4gT2ssIHRoZW4gSSBzdWdnZXN0IHdlIGRvIHNvbWUgbWVhc3VyZW1lbnRz
+IGZpcnN0LCBiZWZvcmUgZ29pbmcgZm9yd2FyZA0KPiB3aXRoIGl0Lg0KDQpJIHRyaWVkIG1lbWNw
+eV9wZXJmX2F1dG90ZXN0LCBidXQgdGhlIGJyYW5jaCBwcmVkaWN0b3Iga2lja3MgaW4gYW5kIGVs
+aW1pbmF0ZXMgdGhlIGNvc3Qgb2YgdGhlIGFkZHJlc3MgYWxpZ25tZW50IGNvbXBhcmlzb24uIFNv
+IHRoZSByZXN1bHRzIGFyZSB2ZXJ5IHNpbWlsYXIuDQoNCkJUVywgdGhhdCdzIGEgZ2VuZXJhbCBp
+c3N1ZSB3aXRoIG91ciBwZXJmIHRlc3RzOiBSZXBlYXRlZCB0ZXN0aW5nIGRvZXNuJ3Qgc2hvdyB0
+aGUgY29zdCBvZiBicmFuY2hlcywgYmVjYXVzZSB0aGV5IGFyZSBhbHdheXMgZWxpbWluYXRlZCBi
+eSB0aGUgYnJhbmNoIHByZWRpY3Rvci4NCg0KPT09PT09PSA9PT09PT09PT09PT09PT09PSA9PT09
+PT09PT09PT09PT09PSA9PT09PT09PT09PT09PT09PSA9PT09PT09PT09PT09PT09PQ0KICAgU2l6
+ZSAgIENhY2hlIHRvIGNhY2hlICAgICBDYWNoZSB0byBtZW0gICAgICBNZW0gdG8gY2FjaGUgICAg
+ICAgIE1lbSB0byBtZW0NCihieXRlcykgICAgICAgICAgKHRpY2tzKSAgICAgICAgICAodGlja3Mp
+ICAgICAgICAgICAodGlja3MpICAgICAgICAgICAodGlja3MpDQotLS0tLS0tIC0tLS0tLS0tLS0t
+LS0tLS0tIC0tLS0tLS0tLS0tLS0tLS0tIC0tLS0tLS0tLS0tLS0tLS0tIC0tLS0tLS0tLS0tLS0t
+LS0tDQo9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0gMzJCIGFsaWduZWQgPT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09DQpCZWZvcmUNCkMgICAgNjQgIDIgLSAgMiggIDku
+NjAlKSAgMjIgLSAyMSggIDQuNDglKSAgMzMgLSAzMSggIDUuMTUlKSAgNTcgLSA1NiggIDAuMjgl
+KQ0KQyAgIDEyOCAgNCAtICA0KCAgNS41NiUpICA0MSAtIDQwKCAgMy41OSUpICA1MyAtIDUyKCAg
+MS40OSUpIDEwMSAtMTAwKCAgMC43MSUpDQpDICAgMTkyICA2IC0gIDYoICA0LjA2JSkgIDY0IC0g
+NjAoICA1LjYxJSkgIDY4IC0gNjkoIC0xLjY4JSkgMTM2IC0xMzgoIC0xLjQ5JSkNCkMgICAyNTYg
+MTAgLSAgOSggIDUuMjElKSAgODIgLSA4MSggIDEuMjAlKSAgOTMgLSA4NyggIDcuNDclKSAxNzIg
+LTE3NSggLTEuNDYlKQ0KQWZ0ZXINCkMgICAgNjQgIDIgLSAgMiggLTAuNzElKSAgMjIgLSAyMSgg
+IDcuNjIlKSAgMzEgLSAzMCggIDQuMzIlKSAgNTcgLSA1OSggLTMuMDMlKQ0KQyAgIDEyOCAgNCAt
+ICA0KCAtMC4zNCUpICA0MCAtIDQwKCAgMC42MCUpICA1MCAtIDUwKCAgMC40MSUpICA5NyAtIDk5
+KCAtMS45NiUpDQpDICAgMTkyICA2IC0gIDYoICA1LjI3JSkgIDU5IC0gNTkoIC0wLjI3JSkgIDY5
+IC0gNzIoIC00LjQyJSkgMTM5IC0xMzgoICAwLjkwJSkNCkMgICAyNTYgIDkgLSAgOSggIDkuMTQl
+KSAgNzcgLSA3NyggIDAuMjUlKSAgODkgLSA5MCggLTAuODglKSAxODAgLTE3NyggIDEuNTclKQ0K
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PSBVbmFsaWduZWQgPT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PQ0KQmVmb3JlDQpDICAgIDY0ICA1IC0gIDUoICAwLjk4JSkg
+IDMyIC0gMzIoICAwLjcyJSkgIDQyIC0gNDIoICAwLjQ0JSkgIDgyIC0gODIoICAwLjUxJSkNCkMg
+ICAxMjggIDggLSAgOSgtMTEuMjYlKSAgNTEgLSA1MCggIDAuNTMlKSAgNjAgLSA1OSggIDAuODkl
+KSAxMTcgLTExNSggIDEuMzclKQ0KQyAgIDE5MiAxMyAtIDEyKCAgMS42MiUpICA2NiAtIDY3KCAt
+MS4xMiUpICA4MyAtIDgwKCAgMy4yNiUpIDE1NyAtMTY1KCAtNS4yNSUpDQpDICAgMjU2IDIxIC0g
+MjIoIC01Ljc4JSkgIDk0IC0gOTMoICAxLjY1JSkgMTAwIC0gOTkoICAxLjUyJSkgMjAyIC0yMDQo
+IC0xLjM0JSkNCkFmdGVyDQpDICAgIDY0ICA1IC0gIDUoICAwLjA1JSkgIDMxIC0gMzEoICAwLjE2
+JSkgIDQwIC0gMzkoICAxLjM3JSkgIDc3IC0gNzcoIC0wLjkzJSkNCkMgICAxMjggIDkgLSAgOSgg
+LTAuNjklKSAgNTAgLSA1MCggLTAuMDIlKSAgNjEgLSA2MCggIDIuNzElKSAxMTggLTEyMiggLTMu
+MTUlKQ0KQyAgIDE5MiAxMiAtIDExKCAgNy42OCUpICA2OCAtIDY2KCAgMy42NCUpICA3OSAtIDgx
+KCAtMi44NSUpIDE2NCAtMTY0KCAtMC4xMiUpDQpDICAgMjU2IDIxIC0gMjAoICAxLjgwJSkgIDkw
+IC0gODcoICAyLjcwJSkgIDk2IC0gOTcoIC0wLjk5JSkgMjAyIC0yMDEoICAwLjA5JSkNCg0KPiAN
+Cj4gPiBbMV06DQo+IGh0dHBzOi8vcGF0Y2h3b3JrLmRwZGsub3JnL3Byb2plY3QvZHBkay9wYXRj
+aC8yMDI2MDUyMTE4NTYzMS4xMTYwNDYtMS0NCj4gPiBtYkBzbWFydHNoYXJlc3lzdGVtcy5jb20v
+DQoNCg==
