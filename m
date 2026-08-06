@@ -2,69 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC5E5C55838
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 03:27:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 649E3C55ABA
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 03:27:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BF13740DD6;
-	Thu,  6 Aug 2026 05:26:15 +0200 (CEST)
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com
- [209.85.215.180])
- by mails.dpdk.org (Postfix) with ESMTP id 6672D40DD0
- for <dev@dpdk.org>; Thu,  6 Aug 2026 05:26:10 +0200 (CEST)
-Received: by mail-pg1-f180.google.com with SMTP id
- 41be03b00d2f7-c9e607d81fcso1083750a12.2
- for <dev@dpdk.org>; Wed, 05 Aug 2026 20:26:10 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E2AFB40BA5;
+	Thu,  6 Aug 2026 05:26:16 +0200 (CEST)
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com
+ [209.85.215.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 77D2D40DD5
+ for <dev@dpdk.org>; Thu,  6 Aug 2026 05:26:11 +0200 (CEST)
+Received: by mail-pg1-f182.google.com with SMTP id
+ 41be03b00d2f7-c9eefcf9175so1553567a12.3
+ for <dev@dpdk.org>; Wed, 05 Aug 2026 20:26:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785986769;
- x=1786591569; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785986770;
+ x=1786591570; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=sKP/fk8at5K5Dy2DFgWa8ygIz1ijbg73jIr/fcjfOKY=;
- b=qI50hSeG4FMgK8vgsmsRjh9iPDOJArpUFO3e0SWahEZGVvZTJKp3Kt8gdQs1zSSLui
- 9ySHpelc/tQcSgDHZIUun/v0N/9NJu9WxUE0d+KUuLvcbKxf0VROYe58dX3MeVGwI3Hn
- KPe45kH/9npPQX8IVroiB0BnVAjpglTs/Dj5pCsLIO/QC0HMWQJ9RH6ouW8zYj4Nreuy
- JT4HBAoHEhRVeJ+QgMDh0joRP9zcUl81FHxmV6soTfOXFeqp10D3lP2tnA7ma2KZMVGn
- Mzk8SwmMY9/aq0qdn6yKVg4frLX+QWWqO7wn3sV3+uJ4im6cNE1vqAHnUSlGTkn7654O
- 1I8g==
+ bh=XT8YOf8a1+B59z95moLpVN2Lfv0ITvACtleTQ59MkC8=;
+ b=KTMs8Tx0AM1X/Lhq/N4xTngZ4FfZx1pXuL4PTObb04vPchbOJY3XQ9FAyjLJHBAMrx
+ ocngx87jWu8Cq8hgB72vIUCgUM8zMLdMX/9lnK+UP6N7yg4RhUemWjxtsnsLOckDATYb
+ yr11MkY2rlWsyRfTUtPm1uPCYeSbNd+05Iwy2dT5oa8OQiIt+z2FaKujZ9QATktPdQHC
+ 90a7fUZIfXvxEpxyv/h9CPoa7zvjCAL57Cphi7CwD1Fg28vT8pCe47E8pgxDiCSIwzFb
+ PJyyz3yx4+/+uS1dIZwzvpWx3X/ObBqlPZcVuvDFs0OvsfgaFjPEi7H2d9Y5YauxHuRq
+ HQGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785986769; x=1786591569;
+ d=1e100.net; s=20251104; t=1785986770; x=1786591570;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=sKP/fk8at5K5Dy2DFgWa8ygIz1ijbg73jIr/fcjfOKY=;
- b=rZRp8HA3dpxXE/WpWQmI6ewqcaDs3l77Lp5GC2XNKMJhT/+8udkjTzJsN6VsfwDpOU
- C5zYnOnMqlv9gW+XOWMynNihm50h7pr7yjYYdtzzKkSKE4r/a+JE1+//9lHJQn8s++QC
- tkLdLNHjBWnsd13O4FZrmoR36GRmUcB1HDIjoKKu7EtOk66ynzqq0e1ZrhEEkQVrhWIo
- ErOydfXvL0+gErGKBJppNfn+fsNqBMsOqL2XEFVRgBRltNrPNltY4GN8E9Pzuf+0P9Ky
- nGeYaIHbVIyDLZh7mnbgehQjB25ppuOTgV0GlXuuWjNXOVuXodPMaJSqUc030ock5nWS
- sX1w==
-X-Gm-Message-State: AOJu0YzAvOQy20KAQ6YPP6BQVPoKKDwt2GnI8ah5GlIcgs97A2B2dXTK
- LSX+GGKyhg6TX8fgkSN+WjGOCgPMcKMy4rXk9nzhh+aHTXJpyHrY+PrR8E5j8L4Wgc3FlyQovhR
- pC0VT
-X-Gm-Gg: AR+sD115OkXu3Lj+3QbU29/R/CGz35INoLVPHBYFRXzC56mbjUp5Cc8FPuuCEc5nqdz
- hzsG/2OLhgOoeUnZUrUj7v19jqJq29OTmE786stvn20eVankSINutCrng/7FXJuWYxu1yp9F8QT
- nl0CzToGiqylQXCp1eAj2vGgDLdHja2SYAnSDnfrSUNkMMLwl6qTnB2ko93kBvt1kPCnyRMMjoe
- v4e4IQFEZEyhkxIgN8kevlxCE+H0w9ZO0SZpT7k5VtF8u7dGdyV6if18T3LKfLxQCPWqnLMkLa/
- 5F20Jcj5uMhyrCHM+GRURP9HLT20CZr0KnQx3CHhMpvK2GMtjN0CdjYyWb51a7W9AgdU928Q10M
- 1e8PfPdEPQyvis47JxNv0eQ6uZnV8RqTJmFrGhKkiHGR3hOg43XcQeEgS5Tz17AsWuJMGy3ect3
- PxjfWMIWadnzzQugcVE+ce5ug+V5iAMImkSErRH9SNm4hvii8bX8Z7SFeIDIijKMni+LQHqtcU0
- OiI+K2DM6rTK+ZnL7g2LRxBlBM=
-X-Received: by 2002:a05:6a21:4685:b0:3c6:3c5b:fe5f with SMTP id
- adf61e73a8af0-3cb85df2a61mr13899296637.2.1785986769526; 
- Wed, 05 Aug 2026 20:26:09 -0700 (PDT)
+ bh=XT8YOf8a1+B59z95moLpVN2Lfv0ITvACtleTQ59MkC8=;
+ b=ckA7mb9D7YMvPSDwOT6rwZvo8hNVKYBwVOZL6dDGdGk8TUOZGH6HqJ5mF4iFH+SS0K
+ j/el9NfwW3xnQeGc/Lx0mWsB95On0d8db08yjJkm80o2NsAqCGM3oVmTBNtS0HRlkPb3
+ nuP5HlQOH0IMKT01FbSPiDTK1rFeMj7ikP0VJ8LO/tETRrNZ9avPhNe5VpathBrcajnq
+ Wj0TXCXNKIQLRhj7iTkIIkuWypasn68CkemAgZIMpwtFEbmAAgWOAa7Z9lEM4MKrQ30B
+ guy1qhL5RIBD/P3x5IHn7zhjsVtff8TkOHbTYL7Lx4FDZuPqS6EEu2RyS4d0s7ETnHAT
+ ecPw==
+X-Gm-Message-State: AOJu0YzkuCSqf9z9mg1HzeY0OlU0xD072O+B2OyTwNDc95eor+WqlS9w
+ d6k88T6M65/iIamaxuS1QPF4aZ3+ISTbx8fPj0eLn3Fcto9okGaM0DWSVWaq3nr/2yixR2iIQw1
+ WFQzb3eY=
+X-Gm-Gg: AR+sD12B7BjFuGucNzc51QIkA8IeD6Aq+UxAxTRBNxKw8czikf2qY2kfOqaEJ5v20nQ
+ YFWZmtWq4gv1ZfJiAJwoietENt6agt0jo1Y8BmswrYIPZZcdupQ8poIJK4pbCza7CQYczqCXdBX
+ MkybYqLAcJuc7NE/fou4wThNu712Du4zzld00uINPyoMterxpDMDp2Bu1kqkQOpsvoVv93/EFrE
+ bazvmFVjYIw/ADDjKvIFcTM+hAEmDfq57H2cCOQ43Sxa0ZCAheLv+auDGPnVVOEU/Vm9b2w0oGe
+ MH5RlLvNRX73auqqWx8ps7RnH/MMoSLKIyXiAh53JIMUczcgIt163bVR8+PUZoGPTiYInDC0X9D
+ s5/tm8q/9BTLz/pp72lPIbaeRPmBYjvR8ptbfDvIwks5pb8wpW3Tmvuo53npD/1lB+mfrerw/e8
+ ORoHo3/3RtBJkLEseijRt8y5VG0QmkVk+MABHUk9axEz6YGBzDlR/CzBRY4ChJURIuT4if0XXEk
+ RNtPb1KKv9bWB4lKlavND3/TnTDPiVuNM3Kzw==
+X-Received: by 2002:a05:6a21:46c9:b0:3c3:6528:c87 with SMTP id
+ adf61e73a8af0-3cb85dcc76emr14249165637.1.1785986770606; 
+ Wed, 05 Aug 2026 20:26:10 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-315863b0c61sm23301631eec.6.2026.08.05.20.26.08
+ 5a478bee46e88-315863b0c61sm23301631eec.6.2026.08.05.20.26.09
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 05 Aug 2026 20:26:09 -0700 (PDT)
+ Wed, 05 Aug 2026 20:26:10 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Jiawen Wu <jiawenwu@trustnetic.com>, Zaiyu Wang <zaiyuwang@trustnetic.com>
-Subject: [PATCH v7 20/24] net/txgbe: replace rte_atomic32 with stdatomic
-Date: Wed,  5 Aug 2026 20:23:12 -0700
-Message-ID: <20260806032544.21337-21-stephen@networkplumber.org>
+ Maxime Coquelin <maxime.coquelin@redhat.com>,
+ Chenbo Xia <chenbox@nvidia.com>
+Subject: [PATCH v7 21/24] net/vhost: use stdatomic instead of rte_atomic32
+Date: Wed,  5 Aug 2026 20:23:13 -0700
+Message-ID: <20260806032544.21337-22-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260806032544.21337-1-stephen@networkplumber.org>
 References: <20260521042043.1590536-1-stephen@networkplumber.org>
@@ -84,67 +85,245 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The swfw_busy flag guarding the AML SW-FW mailbox is a one-bit lock,
-so convert it to RTE_ATOMIC(bool) and replace the legacy
-test-and-set / clear pair with explicit acquire-release:
+Convert allow_queuing, while_queuing, started, and dev_attached from
+rte_atomic32_t to RTE_ATOMIC(uint32_t) and replace rte_atomic32_*()
+with rte_atomic_*_explicit().
 
-  rte_atomic32_test_and_set ->
-      rte_atomic_exchange_explicit(.., true, acquire)
-  rte_atomic32_clear        ->
-      rte_atomic_store_explicit(.., false, release)
+The data-path / control-thread handshake on allow_queuing and
+while_queuing is a Dekker-style mutual-visibility pattern: each side
+stores its own flag and then loads the peer's. Both legs must be
+seq_cst to forbid store-load reordering; anything weaker permits both
+sides to miss each other. The previous rte_atomic32_set/read compiled
+to plain volatile stores/loads and provided no such ordering, so this
+also closes a latent ordering hole on weakly-ordered ISAs.
 
-Acquire on the take pairs with release on the drop, so accesses
-inside the critical section are synchronized between successive
-holders. Default zero-initialization of struct txgbe_hw still
-gives swfw_busy = false, so no init site needs updating.
+The data-path exit store of while_queuing=0 is release, ordering
+preceding slot accesses before the control thread observes the data
+path as idle.
 
-Note:
-The previous rte_atomic32_test_and_set return value was
-inverted relative to what this code expected; this patch
-incidentally corrects that. A standalone Fixes: patch is
-queued in net-next.
+The flags started and dev_attached are consulted only inside
+update_queuing_status, where the per-queue handshake provides the
+real synchronization; their loads and stores are relaxed.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/txgbe/base/txgbe_mng.c  | 4 ++--
- drivers/net/txgbe/base/txgbe_type.h | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/vhost/rte_eth_vhost.c | 92 +++++++++++++++++++------------
+ 1 file changed, 58 insertions(+), 34 deletions(-)
 
-diff --git a/drivers/net/txgbe/base/txgbe_mng.c b/drivers/net/txgbe/base/txgbe_mng.c
-index a1974820b6..c58e1d6589 100644
---- a/drivers/net/txgbe/base/txgbe_mng.c
-+++ b/drivers/net/txgbe/base/txgbe_mng.c
-@@ -185,7 +185,7 @@ txgbe_host_interface_command_aml(struct txgbe_hw *hw, u32 *buffer,
+diff --git a/drivers/net/vhost/rte_eth_vhost.c b/drivers/net/vhost/rte_eth_vhost.c
+index 05940f2461..2acf670c94 100644
+--- a/drivers/net/vhost/rte_eth_vhost.c
++++ b/drivers/net/vhost/rte_eth_vhost.c
+@@ -73,8 +73,8 @@ struct vhost_stats {
+ 
+ struct vhost_queue {
+ 	int vid;
+-	rte_atomic32_t allow_queuing;
+-	rte_atomic32_t while_queuing;
++	RTE_ATOMIC(uint32_t) allow_queuing;
++	RTE_ATOMIC(uint32_t) while_queuing;
+ 	struct pmd_internal *internal;
+ 	struct rte_mempool *mb_pool;
+ 	uint16_t port;
+@@ -86,14 +86,14 @@ struct vhost_queue {
+ };
+ 
+ struct pmd_internal {
+-	rte_atomic32_t dev_attached;
++	RTE_ATOMIC(uint32_t) dev_attached;
+ 	char *iface_name;
+ 	uint64_t flags;
+ 	uint64_t disable_flags;
+ 	uint64_t features;
+ 	uint16_t max_queues;
+ 	int vid;
+-	rte_atomic32_t started;
++	RTE_ATOMIC(uint32_t) started;
+ 	bool vlan_strip;
+ 	bool rx_sw_csum;
+ 	bool tx_sw_csum;
+@@ -406,12 +406,19 @@ eth_vhost_rx(void *q, struct rte_mbuf **bufs, uint16_t nb_bufs)
+ 	uint16_t i, nb_rx = 0;
+ 	uint16_t nb_receive = nb_bufs;
+ 
+-	if (unlikely(rte_atomic32_read(&r->allow_queuing) == 0))
++	/* Fast-path early exit; racy load is fine here -- if we miss a
++	 * transition we get caught by the seq_cst check below.
++	 */
++	if (unlikely(rte_atomic_load_explicit(&r->allow_queuing, rte_memory_order_relaxed) == 0))
+ 		return 0;
+ 
+-	rte_atomic32_set(&r->while_queuing, 1);
+-
+-	if (unlikely(rte_atomic32_read(&r->allow_queuing) == 0))
++	/* Announce presence, then re-check. The store and the following
++	 * load MUST both be seq_cst so they are totally ordered with the
++	 * control thread's store-to-allow_queuing / load-of-while_queuing
++	 * pair. Anything weaker permits both sides to miss each other.
++	 */
++	rte_atomic_store_explicit(&r->while_queuing, 1, rte_memory_order_seq_cst);
++	if (unlikely(rte_atomic_load_explicit(&r->allow_queuing, rte_memory_order_seq_cst) == 0))
+ 		goto out;
+ 
+ 	/* Dequeue packets from guest TX queue */
+@@ -446,7 +453,7 @@ eth_vhost_rx(void *q, struct rte_mbuf **bufs, uint16_t nb_bufs)
  	}
  
- 	/* try to get lock */
--	while (rte_atomic32_test_and_set(&hw->swfw_busy)) {
-+	while (rte_atomic_exchange_explicit(&hw->swfw_busy, true, rte_memory_order_acquire)) {
- 		timeout--;
- 		if (!timeout)
- 			return TXGBE_ERR_TIMEOUT;
-@@ -266,7 +266,7 @@ txgbe_host_interface_command_aml(struct txgbe_hw *hw, u32 *buffer,
- 	/* index++, index replace txgbe_hic_hdr.checksum */
- 	hw->swfw_index = resp->index == TXGBE_HIC_HDR_INDEX_MAX ?
- 					0 : resp->index + 1;
--	rte_atomic32_clear(&hw->swfw_busy);
-+	rte_atomic_store_explicit(&hw->swfw_busy, false, rte_memory_order_release);
+ out:
+-	rte_atomic32_set(&r->while_queuing, 0);
++	rte_atomic_store_explicit(&r->while_queuing, 0, rte_memory_order_release);
  
- 	return err;
+ 	return nb_rx;
  }
-diff --git a/drivers/net/txgbe/base/txgbe_type.h b/drivers/net/txgbe/base/txgbe_type.h
-index f9b5cbe61a..5c16c4f07e 100644
---- a/drivers/net/txgbe/base/txgbe_type.h
-+++ b/drivers/net/txgbe/base/txgbe_type.h
-@@ -897,7 +897,7 @@ struct txgbe_hw {
- 	rte_spinlock_t phy_lock;
- 	/*amlite: new SW-FW mbox */
- 	u8 swfw_index;
--	rte_atomic32_t swfw_busy;
-+	RTE_ATOMIC(bool) swfw_busy;
- 	bool link_valid;
- 	bool reconfig_rx;
- 	RTE_ATOMIC(bool) pf_running;
+@@ -460,12 +467,19 @@ eth_vhost_tx(void *q, struct rte_mbuf **bufs, uint16_t nb_bufs)
+ 	uint64_t nb_bytes = 0;
+ 	uint64_t nb_missed = 0;
+ 
+-	if (unlikely(rte_atomic32_read(&r->allow_queuing) == 0))
++	/* Fast-path early exit; racy load is fine here -- if we miss a
++	 * transition we get caught by the seq_cst check below.
++	 */
++	if (unlikely(rte_atomic_load_explicit(&r->allow_queuing, rte_memory_order_relaxed) == 0))
+ 		return 0;
+ 
+-	rte_atomic32_set(&r->while_queuing, 1);
+-
+-	if (unlikely(rte_atomic32_read(&r->allow_queuing) == 0))
++	/* Announce presence, then re-check. The store and the following
++	 * load MUST both be seq_cst so they are totally ordered with the
++	 * control thread's store-to-allow_queuing / load-of-while_queuing
++	 * pair. Anything weaker permits both sides to miss each other.
++	 */
++	rte_atomic_store_explicit(&r->while_queuing, 1, rte_memory_order_seq_cst);
++	if (unlikely(rte_atomic_load_explicit(&r->allow_queuing, rte_memory_order_seq_cst) == 0))
+ 		goto out;
+ 
+ 	for (i = 0; i < nb_bufs; i++) {
+@@ -515,7 +529,7 @@ eth_vhost_tx(void *q, struct rte_mbuf **bufs, uint16_t nb_bufs)
+ 	for (i = 0; likely(i < nb_tx); i++)
+ 		rte_pktmbuf_free(bufs[i]);
+ out:
+-	rte_atomic32_set(&r->while_queuing, 0);
++	rte_atomic_store_explicit(&r->while_queuing, 0, rte_memory_order_release);
+ 
+ 	return nb_tx;
+ }
+@@ -756,8 +770,12 @@ update_queuing_status(struct rte_eth_dev *dev, bool wait_queuing)
+ 	if (!dev->data->rx_queues || !dev->data->tx_queues)
+ 		return;
+ 
+-	if (rte_atomic32_read(&internal->started) == 0 ||
+-	    rte_atomic32_read(&internal->dev_attached) == 0)
++	/* These are control-plane flags consulted only here;
++	 * the real data-path handshake is on vq->allow_queuing below.
++	 * Relaxed is sufficient.
++	 */
++	if (rte_atomic_load_explicit(&internal->started, rte_memory_order_relaxed) == 0 ||
++	    rte_atomic_load_explicit(&internal->dev_attached, rte_memory_order_relaxed) == 0)
+ 		allow_queuing = 0;
+ 
+ 	state = vring_states[dev->data->port_id];
+@@ -767,11 +785,13 @@ update_queuing_status(struct rte_eth_dev *dev, bool wait_queuing)
+ 		vq = dev->data->rx_queues[i];
+ 		if (vq == NULL)
+ 			continue;
+-		if (allow_queuing && state->cur[vq->virtqueue_id])
+-			rte_atomic32_set(&vq->allow_queuing, 1);
+-		else
+-			rte_atomic32_set(&vq->allow_queuing, 0);
+-		while (wait_queuing && rte_atomic32_read(&vq->while_queuing))
++
++		rte_atomic_store_explicit(&vq->allow_queuing,
++					  (allow_queuing && state->cur[vq->virtqueue_id]),
++					  rte_memory_order_seq_cst);
++
++		while (wait_queuing &&
++		       rte_atomic_load_explicit(&vq->while_queuing, rte_memory_order_seq_cst))
+ 			rte_pause();
+ 	}
+ 
+@@ -779,11 +799,13 @@ update_queuing_status(struct rte_eth_dev *dev, bool wait_queuing)
+ 		vq = dev->data->tx_queues[i];
+ 		if (vq == NULL)
+ 			continue;
+-		if (allow_queuing && state->cur[vq->virtqueue_id])
+-			rte_atomic32_set(&vq->allow_queuing, 1);
+-		else
+-			rte_atomic32_set(&vq->allow_queuing, 0);
+-		while (wait_queuing && rte_atomic32_read(&vq->while_queuing))
++
++		rte_atomic_store_explicit(&vq->allow_queuing,
++					  (allow_queuing && state->cur[vq->virtqueue_id]),
++					  rte_memory_order_seq_cst);
++
++		while (wait_queuing &&
++		       rte_atomic_load_explicit(&vq->while_queuing, rte_memory_order_seq_cst))
+ 			rte_pause();
+ 	}
+ }
+@@ -848,7 +870,7 @@ new_device(int vid)
+ 	}
+ 
+ 	internal->vid = vid;
+-	if (rte_atomic32_read(&internal->started) == 1) {
++	if (rte_atomic_load_explicit(&internal->started, rte_memory_order_relaxed) == 1) {
+ 		queue_setup(eth_dev, internal);
+ 		if (dev_conf->intr_conf.rxq)
+ 			eth_vhost_configure_intr(eth_dev);
+@@ -863,7 +885,7 @@ new_device(int vid)
+ 
+ 	vhost_dev_csum_configure(eth_dev);
+ 
+-	rte_atomic32_set(&internal->dev_attached, 1);
++	rte_atomic_store_explicit(&internal->dev_attached, 1, rte_memory_order_relaxed);
+ 	update_queuing_status(eth_dev, false);
+ 
+ 	VHOST_LOG_LINE(INFO, "Vhost device %d created", vid);
+@@ -893,7 +915,7 @@ destroy_device(int vid)
+ 	eth_dev = list->eth_dev;
+ 	internal = eth_dev->data->dev_private;
+ 
+-	rte_atomic32_set(&internal->dev_attached, 0);
++	rte_atomic_store_explicit(&internal->dev_attached, 0, rte_memory_order_relaxed);
+ 	update_queuing_status(eth_dev, true);
+ 	eth_vhost_unconfigure_intr(eth_dev);
+ 
+@@ -1148,11 +1170,11 @@ eth_dev_start(struct rte_eth_dev *eth_dev)
+ 	}
+ 
+ 	queue_setup(eth_dev, internal);
+-	if (rte_atomic32_read(&internal->dev_attached) == 1 &&
++	if (rte_atomic_load_explicit(&internal->dev_attached, rte_memory_order_relaxed) == 1 &&
+ 			dev_conf->intr_conf.rxq)
+ 		eth_vhost_configure_intr(eth_dev);
+ 
+-	rte_atomic32_set(&internal->started, 1);
++	rte_atomic_store_explicit(&internal->started, 1, rte_memory_order_relaxed);
+ 	update_queuing_status(eth_dev, false);
+ 
+ 	for (i = 0; i < eth_dev->data->nb_rx_queues; i++)
+@@ -1170,7 +1192,7 @@ eth_dev_stop(struct rte_eth_dev *dev)
+ 	uint16_t i;
+ 
+ 	dev->data->dev_started = 0;
+-	rte_atomic32_set(&internal->started, 0);
++	rte_atomic_store_explicit(&internal->started, 0, rte_memory_order_relaxed);
+ 	update_queuing_status(dev, true);
+ 
+ 	for (i = 0; i < dev->data->nb_rx_queues; i++)
+@@ -1471,8 +1493,10 @@ vhost_dev_priv_dump(struct rte_eth_dev *dev, FILE *f)
+ 	fprintf(f, "features: 0x%" PRIx64 "\n", internal->features);
+ 	fprintf(f, "max_queues: %u\n", internal->max_queues);
+ 	fprintf(f, "vid: %d\n", internal->vid);
+-	fprintf(f, "started: %d\n", rte_atomic32_read(&internal->started));
+-	fprintf(f, "dev_attached: %d\n", rte_atomic32_read(&internal->dev_attached));
++	fprintf(f, "started: %u\n",
++		rte_atomic_load_explicit(&internal->started, rte_memory_order_relaxed));
++	fprintf(f, "dev_attached: %u\n",
++		rte_atomic_load_explicit(&internal->dev_attached, rte_memory_order_relaxed));
+ 	fprintf(f, "vlan_strip: %d\n", internal->vlan_strip);
+ 	fprintf(f, "rx_sw_csum: %d\n", internal->rx_sw_csum);
+ 	fprintf(f, "tx_sw_csum: %d\n", internal->tx_sw_csum);
 -- 
 2.53.0
 
