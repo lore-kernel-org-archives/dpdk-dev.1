@@ -2,68 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41BABC56205
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 05:11:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D068C55ABF
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 05:11:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A49B540DD7;
-	Thu,  6 Aug 2026 07:10:33 +0200 (CEST)
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com
- [209.85.216.45]) by mails.dpdk.org (Postfix) with ESMTP id 50EEA40DD0
- for <dev@dpdk.org>; Thu,  6 Aug 2026 07:10:32 +0200 (CEST)
-Received: by mail-pj1-f45.google.com with SMTP id
- 98e67ed59e1d1-38e58034d05so1615773a91.2
- for <dev@dpdk.org>; Wed, 05 Aug 2026 22:10:32 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 015FA40DDC;
+	Thu,  6 Aug 2026 07:10:35 +0200 (CEST)
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com
+ [209.85.215.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 744A240DD3
+ for <dev@dpdk.org>; Thu,  6 Aug 2026 07:10:33 +0200 (CEST)
+Received: by mail-pg1-f178.google.com with SMTP id
+ 41be03b00d2f7-cbe3fed2f58so1474595a12.3
+ for <dev@dpdk.org>; Wed, 05 Aug 2026 22:10:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785993031;
- x=1786597831; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785993032;
+ x=1786597832; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=fihoI0uIHwuXDRKVh1jaOjZtWk22yK5mMjKdo9Fw+tc=;
- b=VtHWpaZeVxeVMF9C0l7gjfnbHn5vjrPvjXwiq77pId0EF6FNXtOYJ8hNrFulJxuuoB
- r4ZFlklhw+jkBEXMS25rZu8wuykl4XBRQLajhoYE1s5FipGc49MtsgrI2hQn2xpN35fw
- dyD/u7pMIOlWMiPuwoUdPBG1qhYwil+YPX0bfFVWY6IBLJnc28gooqcLruqSEzj6hZ6O
- vnVmQrT9K4Fsw7pq4pb83ej/lQ1llvSlTmKz3nIWjRlpiVX4bib6zuNJFN5Vvz7pvXMX
- bhPH2G6lmjlmFjJAru94vbGHpSomIu0Xg6Kj0+Fh9cy8YN7kN2i+BgZ3jzeJQ5dom+9a
- /RLQ==
+ bh=Lapvp/IodBZRVG3QgR46Yu+3jZQ1Mm2TKg938FLk6VM=;
+ b=klufY4yz+7H7I6vkrUU70b0hNp/4K4fKYqDdaT0Vy8jH3Kd4KTZBX5M9vlAGHSKKD/
+ T0rIiCibHQ9mKmWVBzK9V0Vr9rJowiWv2ekcRKTj3afGme6Fb/+NErI7LglILrzzgSff
+ i1tRknOh1BR25RmzzcvrEqMk8a7topQpm+8f5zHMLIeuXIK+nuX99jSOpF3VsKqI6L22
+ hGeZ2qM0B87dC3YB9oWnmAEelvwS/AxZcjdSrRX/CUJd/ePCXLQ5KdpiTfv/UgpZkwHL
+ dU0mQAM1fqab9ljM3WicuLicGpv3CBBfQdd8ILtMyETvsD5d/Nln16SxBfqlxGOmshif
+ wHng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785993031; x=1786597831;
+ d=1e100.net; s=20251104; t=1785993032; x=1786597832;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=fihoI0uIHwuXDRKVh1jaOjZtWk22yK5mMjKdo9Fw+tc=;
- b=L78C6JeRJ1+EXihSieTUTxv5axwSrbnYMTMBbPUNGG5d2NABVPK5uNePCqsOnT7wDn
- JSJfxVXDH69ZKv+3E4zuW8RElXlOSBcPklk/Q73dfGA9Ef8InP+a31yDM7Pdg82K7FA8
- vqp58Djy4LhTQ/MbDLVHP+ZHjRiwYJLld2bABvKYadlEy75aQNxIFb2GI/jOL5qiIgMN
- nwXPiRJfNrbtcUAhexFXsMdvt0WMpKCeuFnNna3UqIOeB7t8UgZqxCyXwQVh3woU1GiV
- ZBpdIOrGx6EukLdclYTwxepiHF/sTgZhQXTCYIZUdr5JW3GL2T2vmPC998lt07XTy84h
- fwbw==
-X-Gm-Message-State: AOJu0Yx8xw5K5LBWwH6bRdXqfJb8fYPxcdLhKT11kvKNAeXeSb4+Am7q
- UUaP3YtIrdKvaG+gfPrKffEmx5xu95V7C4r0+paI3CeIckUNRNzTO7x8MfYNHjvdGfVsrQTTVz8
- LYZDjKCw=
-X-Gm-Gg: AR+sD10Rdh7+q9sNQoqmUGxkMacPwoP8rq2d3+cWbbE8OC7bx8A5DmSqvaHk5JWgtP/
- EQ//q3nZkntoMhHFOhkxZMZguobgiEhYM+Tcd7L83Eq/cuKn/n6yPl8qjor8qXhg9dlDuONEQSJ
- VaUe3pYOkzyznodtufK/vZfqAzxz9hTg96mdygrEzK92PoMKwis0wG8VHx8XsQCXrfJ6Zzfv2I0
- tq44jX0zFyPIGc/tWc5OzzKFR85G7mJrZDD4OTRAOZ4ipdZvcWSXZN396vmzBmc4FTpifQCoRf6
- W5Z08HVuNPo81aUX9XQ0pf6Ls7hq4pUmik5At5kztyEHgEsmbds+kXDZAfiR3r1SzbIQO0FdX/P
- 1YkOyWOly3CU9dtw8ydW0v9+JnOso/5LT+pGoYD+sgAYB9q6JjpnkAYTv8VsWCg3tNuBT+o24IU
- 4JD+ZL7qnHufgihCRda6wGBcLRjxMw8IghmUMt5oWa2wwd5dGdz47M1UXrhhBPNl29tRmkaiTZZ
- ZHaAWtRtergrloizy50Ksol5zbsD8tflUfi3w==
-X-Received: by 2002:a17:90a:ec8b:b0:38f:aab1:5148 with SMTP id
- 98e67ed59e1d1-3903c5d313bmr12909819a91.13.1785993031391; 
- Wed, 05 Aug 2026 22:10:31 -0700 (PDT)
+ bh=Lapvp/IodBZRVG3QgR46Yu+3jZQ1Mm2TKg938FLk6VM=;
+ b=lTrfBiWbnQJrpiRVP5vlkU0i8FwyynYBcyNeCLVX6tbrTbflIHfyC1NnKB9HJp26/S
+ ckVoDTmSFgR14FTzIZ7fkFl0aiJ0qK4yAr3iD9frMBgoNI0dgaVb+aYOt0mBp1GSF1uc
+ Bwvqg+lt+rD7ogTgPfRG4e5JXW/rVg8PPTLsv26J1FeagXjIa8gimngWjhsKVxL+dvRW
+ b37e2GKFsQTK7thwhw7qVnjEWIImblG82whLad8oohzTTKmXWr/8R2FEsDgYevluD1nT
+ azOcDCKzAipoHT7DNUnekBRD780fGuTb5pbF0iifDI3RNrlPY+cFdHgfnH4Cp22QwvAN
+ zVxg==
+X-Gm-Message-State: AOJu0YylJvOmcKXEf3ITazOXlVI3FXIRGTYIsV9R974C+4NPZ1dpeunt
+ 4aC33kB2cnq3vWm8WWdajhxTkgQniIWHPfLS1qytW7dM0SL6xhY7JNTel6s3fc+mYtSOz0moWFZ
+ OvPQq4I0=
+X-Gm-Gg: AR+sD13AGjA8Mk8gbL1WhLCE+jTyrkDzE5VZK+UkKcd2T+tbFq434tY52DTOAdNc+qY
+ yeC+yps62cjFIcgfZFLb94gA2OvE7W/DnjeGBXMDyl/Ka+tsX1GP0DEwjiNAUwTOYLMg2qrMxT+
+ FDPySwLploqMtSOSJoDNP9cdxh4cgyxxYDZpnPbt2QDUXni80RCrSxNOKxqaDw682TokRvqY/CA
+ XUWUGjt/RZzl+/yDAusVYCJUj4GXh1pWMp9VZ2yIbcua7dtXyp6y0ciP6KVNkA57BrgHhtVItBh
+ NJ80WN5wSuyV9LxDCHeESFa1Rci0GigCutCN4NAmfrgtJJap2uEpaf1BYGj6FI/ulPc36Rt7wtv
+ kYYFy7HtHirWvTymry/OvNg6WPZZ+XEkXtrXetn52di87cevA6gxRGKkJ7Ny99NxXphvDg/H9PO
+ IyAxs7A4MkS1rj2MMKqfe4xuBvjUzmPKFJGN4X3kLYfpxv8/hYnGSELk3JBk8suxvHkDLjEzqHf
+ zAmsRcDIHXgnsrPR7jokEsl0Cs=
+X-Received: by 2002:a05:6a20:7f86:b0:3bf:9c93:ac44 with SMTP id
+ adf61e73a8af0-3cb85ea363cmr10802062637.19.1785993032621; 
+ Wed, 05 Aug 2026 22:10:32 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-315ae6c1fd4sm392780eec.14.2026.08.05.22.10.30
+ 5a478bee46e88-315ae6c1fd4sm392780eec.14.2026.08.05.22.10.31
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 05 Aug 2026 22:10:30 -0700 (PDT)
+ Wed, 05 Aug 2026 22:10:32 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Jiawen Wu <jiawenwu@trustnetic.com>, Zaiyu Wang <zaiyuwang@trustnetic.com>
-Subject: [PATCH v4 16/23] net/ngbe: include network protocol headers
-Date: Wed,  5 Aug 2026 22:09:10 -0700
-Message-ID: <20260806051004.166778-17-stephen@networkplumber.org>
+ Akhil Goyal <gakhil@marvell.com>, Jerin Jacob <jerinj@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Zhirun Yan <yanzhirun_163@163.com>
+Subject: [PATCH v4 17/23] examples: include network headers
+Date: Wed,  5 Aug 2026 22:09:11 -0700
+Message-ID: <20260806051004.166778-18-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260806051004.166778-1-stephen@networkplumber.org>
 References: <20260803165304.289869-1-stephen@networkplumber.org>
@@ -83,29 +87,57 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Do not depend on network protocol headers getting included
-via rte_ethdev.h.
+Don't depend on network protocol headers getting indirectly
+included via rte_ethdev.h.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/ngbe/ngbe_rxtx.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ examples/l2fwd-macsec/main.c | 2 ++
+ examples/l3fwd-graph/main.c  | 1 +
+ examples/l3fwd/l3fwd.h       | 2 ++
+ 3 files changed, 5 insertions(+)
 
-diff --git a/drivers/net/ngbe/ngbe_rxtx.c b/drivers/net/ngbe/ngbe_rxtx.c
-index a1389de9c0..fee984c396 100644
---- a/drivers/net/ngbe/ngbe_rxtx.c
-+++ b/drivers/net/ngbe/ngbe_rxtx.c
-@@ -11,6 +11,10 @@
- #include <rte_malloc.h>
- #include <rte_net.h>
+diff --git a/examples/l2fwd-macsec/main.c b/examples/l2fwd-macsec/main.c
+index 059f8a2170..e07769bd57 100644
+--- a/examples/l2fwd-macsec/main.c
++++ b/examples/l2fwd-macsec/main.c
+@@ -33,9 +33,11 @@
+ #include <rte_debug.h>
+ #include <rte_ether.h>
+ #include <rte_ethdev.h>
++#include <rte_flow.h>
+ #include <rte_mempool.h>
+ #include <rte_mbuf.h>
+ #include <rte_security.h>
++#include <rte_macsec.h>
+ #include <rte_string_fns.h>
+ 
+ static volatile bool force_quit;
+diff --git a/examples/l3fwd-graph/main.c b/examples/l3fwd-graph/main.c
+index 5f89286dce..79dee4d103 100644
+--- a/examples/l3fwd-graph/main.c
++++ b/examples/l3fwd-graph/main.c
+@@ -36,6 +36,7 @@
+ #include <rte_per_lcore.h>
+ #include <rte_string_fns.h>
  #include <rte_vect.h>
 +#include <rte_ip.h>
-+#include <rte_udp.h>
-+#include <rte_tcp.h>
-+#include <rte_sctp.h>
  
- #include "ngbe_logs.h"
- #include "base/ngbe.h"
+ #include <cmdline_parse.h>
+ #include <cmdline_parse_etheraddr.h>
+diff --git a/examples/l3fwd/l3fwd.h b/examples/l3fwd/l3fwd.h
+index 349fc37c79..db7b746f59 100644
+--- a/examples/l3fwd/l3fwd.h
++++ b/examples/l3fwd/l3fwd.h
+@@ -8,6 +8,8 @@
+ #include <rte_ethdev.h>
+ #include <rte_vect.h>
+ #include <rte_acl.h>
++#include <rte_ip.h>
++
+ 
+ #define DO_RFC_1812_CHECKS
+ 
 -- 
 2.53.0
 
