@@ -2,32 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B5CDC561E6
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 08:43:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 706F0C55ABF
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 08:43:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 39EC340A6B;
-	Thu,  6 Aug 2026 10:42:54 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2961040A67;
+	Thu,  6 Aug 2026 10:42:55 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 02B1F40431
+ by mails.dpdk.org (Postfix) with ESMTP id 8B81A402BB
  for <dev@dpdk.org>; Thu,  6 Aug 2026 10:42:51 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id DA01B1A0003;
- Thu,  6 Aug 2026 10:42:50 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6E5911A000D;
+ Thu,  6 Aug 2026 10:42:51 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A27C91A001C;
- Thu,  6 Aug 2026 10:42:50 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 36A271A0009;
+ Thu,  6 Aug 2026 10:42:51 +0200 (CEST)
 Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
  [92.120.147.250])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id CC94318000B1;
- Thu,  6 Aug 2026 16:42:49 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id B7D2D18000B0;
+ Thu,  6 Aug 2026 16:42:50 +0800 (+08)
 From: Gagandeep Singh <g.singh@nxp.com>
 To: dev@dpdk.org,
 	Prashant Gupta <prashant.gupta_3@nxp.com>
 Cc: hemant.agrawal@nxp.com
-Subject: [PATCH 2/4] dma/imx_edma5: add device configuration
-Date: Thu,  6 Aug 2026 14:12:43 +0530
-Message-Id: <20260806084245.561305-3-g.singh@nxp.com>
+Subject: [PATCH 4/4] dma/imx_edma5: add statistics and dump
+Date: Thu,  6 Aug 2026 14:12:45 +0530
+Message-Id: <20260806084245.561305-5-g.singh@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260806084245.561305-1-g.singh@nxp.com>
 References: <20260806084245.561305-1-g.singh@nxp.com>
@@ -47,235 +47,114 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add the configuration and lifecycle operations for the i.MX95 eDMA5
-dmadev: device configure, virtual channel setup, start, stop and close.
+Add per-vchan statistics, virtual channel status reporting and a device
+dump callback to the eDMA5 dmadev.
 
-Each virtual channel maps 1:1 onto a usable hardware channel and owns a
-software job ring plus a pool of in-memory TCD64 descriptors for
-scatter-gather. Channel setup validates the requested direction and ring
-size, allocates these rings, and resets the hardware channel to a known
-idle state. Start re-arms global clock and arbitration and clears the
-per-channel bookkeeping; stop resets every configured channel; close
-frees the per-channel resources.
+stats_get and stats_reset expose the submitted, completed and error
+counters maintained by the data path, supporting both a single vchan and
+the RTE_DMA_ALL_VCHAN aggregate. vchan_status reports whether a channel is
+idle, active or halted on an unreaped error by inspecting the outstanding
+jobs in the software ring. dev_dump prints the device and per-vchan
+software state to aid debugging.
 
 Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
 ---
- drivers/dma/imx_edma5/imx_edma5_dmadev.c | 247 +++++++++++++++++++++++
- 1 file changed, 247 insertions(+)
+ drivers/dma/imx_edma5/imx_edma5_dmadev.c | 121 +++++++++++++++++++++++
+ 1 file changed, 121 insertions(+)
 
 diff --git a/drivers/dma/imx_edma5/imx_edma5_dmadev.c b/drivers/dma/imx_edma5/imx_edma5_dmadev.c
-index 6efe6b0a46..0b2671e926 100644
+index 0b6a56112e..f309bd9f08 100644
 --- a/drivers/dma/imx_edma5/imx_edma5_dmadev.c
 +++ b/drivers/dma/imx_edma5/imx_edma5_dmadev.c
-@@ -78,6 +78,14 @@ imx_edma5_read_channel_mask(const char *dev_name)
- 	return mask;
+@@ -848,6 +848,121 @@ imx_edma5_burst_capacity(const void *dev_private, uint16_t vchan)
+ 	return vc->nb_desc - 1 - vc->nb_enqueued;
  }
  
-+/* Return the register base of hardware channel n. */
-+static inline uint8_t *
-+imx_edma5_chan_base(struct imx_edma5_dev *ed, uint32_t chan)
++static int
++imx_edma5_vchan_status(const struct rte_dma_dev *dev, uint16_t vchan,
++		       enum rte_dma_vchan_status *status)
 +{
-+	return ed->reg_base + IMX_EDMA5_CHAN_BASE_OFF +
-+	       (size_t)chan * IMX_EDMA5_CHAN_STRIDE;
++	const struct imx_edma5_dev *ed = dev->data->dev_private;
++	const struct imx_edma5_vchan *vc = &ed->vchans[vchan];
++	uint16_t idx;
++
++	/*
++	 * HALTED_ERROR if an errored job is still unreaped, ACTIVE while any job
++	 * is outstanding (not done, or enqueued but not submitted), else IDLE.
++	 */
++	*status = RTE_DMA_VCHAN_IDLE;
++
++	for (idx = vc->tail; idx != vc->head; idx = (idx + 1) & vc->desc_mask) {
++		const struct imx_edma5_job *job = &vc->jobs[idx];
++
++		if (job->submitted && job->done && job->error) {
++			*status = RTE_DMA_VCHAN_HALTED_ERROR;
++			break;
++		}
++
++		if (!job->submitted || !job->done) {
++			*status = RTE_DMA_VCHAN_ACTIVE;
++			break;
++		}
++	}
++
++	return 0;
 +}
 +
- static int
- imx_edma5_info_get(const struct rte_dma_dev *dev, struct rte_dma_info *dev_info,
- 		   uint32_t info_sz)
-@@ -97,8 +105,247 @@ imx_edma5_info_get(const struct rte_dma_dev *dev, struct rte_dma_info *dev_info,
- 	return 0;
- }
- 
-+static void imx_edma5_reset_hw_chan(struct imx_edma5_vchan *vc);
++static int
++imx_edma5_stats_get(const struct rte_dma_dev *dev, uint16_t vchan,
++		    struct rte_dma_stats *stats, uint32_t stats_sz)
++{
++	const struct imx_edma5_dev *ed = dev->data->dev_private;
++
++	RTE_SET_USED(stats_sz);
++
++	stats->submitted = 0;
++	stats->completed = 0;
++	stats->errors = 0;
++
++	/* RTE_DMA_ALL_VCHAN requests the aggregate across every vchan. */
++	if (vchan == RTE_DMA_ALL_VCHAN) {
++		uint16_t i;
++
++		for (i = 0; i < ed->nb_vchans; i++) {
++			const struct imx_edma5_vchan *vc = &ed->vchans[i];
++
++			stats->submitted += vc->submitted_count;
++			stats->completed += vc->completed_count;
++			stats->errors += vc->errors_count;
++		}
++	} else if (vchan < ed->nb_vchans) {
++		const struct imx_edma5_vchan *vc = &ed->vchans[vchan];
++
++		stats->submitted = vc->submitted_count;
++		stats->completed = vc->completed_count;
++		stats->errors = vc->errors_count;
++	}
++
++	return 0;
++}
 +
 +static int
-+imx_edma5_configure(struct rte_dma_dev *dev, const struct rte_dma_conf *conf,
-+		    uint32_t conf_sz)
++imx_edma5_stats_reset(struct rte_dma_dev *dev, uint16_t vchan)
 +{
 +	struct imx_edma5_dev *ed = dev->data->dev_private;
 +
-+	RTE_SET_USED(conf_sz);
-+
-+	if (conf->nb_vchans == 0 || conf->nb_vchans > ed->max_vchans) {
-+		IMX_EDMA5_LOG(ERR, "Invalid nb_vchans %u (max %u)",
-+			      conf->nb_vchans, ed->max_vchans);
-+		return -EINVAL;
-+	}
-+
-+	if (ed->vchans == NULL) {
-+		ed->vchans = rte_zmalloc_socket("imx_edma5_vchans",
-+				ed->max_vchans * sizeof(struct imx_edma5_vchan),
-+				RTE_CACHE_LINE_SIZE, dev->data->numa_node);
-+		if (ed->vchans == NULL) {
-+			IMX_EDMA5_LOG(ERR, "Failed to alloc vchan array");
-+			return -ENOMEM;
-+		}
-+	} else {
-+		/* Reconfigure: reset and free every previously configured channel. */
++	/* RTE_DMA_ALL_VCHAN requests a reset of every vchan. */
++	if (vchan == RTE_DMA_ALL_VCHAN) {
 +		uint16_t i;
 +
 +		for (i = 0; i < ed->nb_vchans; i++) {
 +			struct imx_edma5_vchan *vc = &ed->vchans[i];
 +
-+			if (!vc->configured)
-+				continue;
-+			imx_edma5_reset_hw_chan(vc);
-+			rte_free(vc->jobs);
-+			rte_free(vc->sg_tcd_pool);
-+			memset(vc, 0, sizeof(*vc));
++			vc->submitted_count = 0;
++			vc->completed_count = 0;
++			vc->errors_count = 0;
 +		}
-+	}
++	} else if (vchan < ed->nb_vchans) {
++		struct imx_edma5_vchan *vc = &ed->vchans[vchan];
 +
-+	ed->nb_vchans = conf->nb_vchans;
-+
-+	return 0;
-+}
-+
-+/* Reset a hardware channel to a known idle state. */
-+static void
-+imx_edma5_reset_hw_chan(struct imx_edma5_vchan *vc)
-+{
-+	uint8_t *ch = vc->ch_regs;
-+	uint8_t *tcd = vc->tcd_regs;
-+	uint32_t sbr;
-+
-+	/*
-+	 * Disable hardware request and clear latched completion state.
-+	 * CH_CSR.DONE is write-1-to-clear, so write the DONE bit to clear any
-+	 * stale completion (e.g. left by the bootloader/kernel driver) while
-+	 * leaving all other control bits disabled.
-+	 */
-+	imx_edma5_write32(ch, IMX_EDMA5_CH_CSR, IMX_EDMA5_CH_CSR_DONE);
-+	imx_edma5_write32(ch, IMX_EDMA5_CH_ES, IMX_EDMA5_CH_ES_ERR);
-+	imx_edma5_write32(ch, IMX_EDMA5_CH_INT, IMX_EDMA5_CH_INT_INT);
-+
-+	/*
-+	 * Enable the read/write attribute bits in the System Bus Register with a
-+	 * read-modify-write. The security/privilege attribute bits carried here
-+	 * come up with a valid reset default that the bus fabric (XRDC) checks
-+	 * and that must be preserved; a blind write of just RD|WR would clear
-+	 * them and make the fabric reject the eDMA master transaction.
-+	 */
-+	sbr = imx_edma5_read32(ch, IMX_EDMA5_CH_SBR);
-+	sbr |= IMX_EDMA5_CH_SBR_RD | IMX_EDMA5_CH_SBR_WR;
-+	imx_edma5_write32(ch, IMX_EDMA5_CH_SBR, sbr);
-+
-+	/*
-+	 * Program cache-coherent memory attributes so the eDMA snoops the CPU
-+	 * caches, matching the Linux fsl-edma driver on a dma-coherent
-+	 * controller.
-+	 */
-+	imx_edma5_write32(ch, IMX_EDMA5_CH_MATTR, IMX_EDMA5_CH_MATTR_COHERENT);
-+
-+	/* Clear the TCD control/status so the channel is idle. */
-+	imx_edma5_write16(tcd, IMX_EDMA5_TCD_CSR, 0);
-+	imx_edma5_write16(tcd, IMX_EDMA5_TCD_CITER, 0);
-+	imx_edma5_write16(tcd, IMX_EDMA5_TCD_BITER, 0);
-+}
-+
-+static int
-+imx_edma5_vchan_setup(struct rte_dma_dev *dev, uint16_t vchan,
-+		      const struct rte_dma_vchan_conf *conf,
-+		      uint32_t conf_sz)
-+{
-+	struct imx_edma5_dev *ed = dev->data->dev_private;
-+	struct imx_edma5_vchan *vc;
-+
-+	RTE_SET_USED(conf_sz);
-+
-+	if (vchan >= ed->nb_vchans) {
-+		IMX_EDMA5_LOG(ERR, "vchan %u out of range", vchan);
-+		return -EINVAL;
-+	}
-+
-+	if (conf->direction != RTE_DMA_DIR_MEM_TO_MEM) {
-+		IMX_EDMA5_LOG(ERR, "Only mem-to-mem direction supported");
-+		return -EINVAL;
-+	}
-+
-+	if (!rte_is_power_of_2(conf->nb_desc) ||
-+	    conf->nb_desc < IMX_EDMA5_MIN_DESC ||
-+	    conf->nb_desc > IMX_EDMA5_MAX_DESC) {
-+		IMX_EDMA5_LOG(ERR, "nb_desc must be power of 2 in [%u..%u]",
-+			      IMX_EDMA5_MIN_DESC, IMX_EDMA5_MAX_DESC);
-+		return -EINVAL;
-+	}
-+
-+	vc = &ed->vchans[vchan];
-+
-+	/* Free previous rings if this vchan is being reconfigured. */
-+	rte_free(vc->jobs);
-+	rte_free(vc->sg_tcd_pool);
-+	memset(vc, 0, sizeof(*vc));
-+
-+	/*
-+	 * Map this vchan onto a usable hardware channel. chan_map[] skips
-+	 * channels reserved by "dma-channel-mask" (channels 0 and 1 on i.MX95).
-+	 */
-+	vc->hw_chan = ed->chan_map[vchan];
-+	vc->ch_regs = imx_edma5_chan_base(ed, vc->hw_chan);
-+	vc->tcd_regs = vc->ch_regs + IMX_EDMA5_CH_TCD_OFF;
-+	vc->nb_desc = conf->nb_desc;
-+	vc->desc_mask = conf->nb_desc - 1;
-+
-+	vc->jobs = rte_zmalloc_socket("imx_edma5_jobs",
-+			vc->nb_desc * sizeof(struct imx_edma5_job),
-+			RTE_CACHE_LINE_SIZE, dev->data->numa_node);
-+	if (vc->jobs == NULL) {
-+		IMX_EDMA5_LOG(ERR, "Failed to alloc job ring for vchan %u",
-+			      vchan);
-+		return -ENOMEM;
-+	}
-+
-+	/* One IMX_EDMA5_SG_TCD_PER_JOB descriptor slice per job ring slot. */
-+	vc->sg_tcd_pool = rte_zmalloc_socket("imx_edma5_sgtcd",
-+			(size_t)vc->nb_desc * IMX_EDMA5_SG_TCD_PER_JOB *
-+				sizeof(struct imx_edma5_hw_tcd64),
-+			RTE_CACHE_LINE_SIZE, dev->data->numa_node);
-+	if (vc->sg_tcd_pool == NULL) {
-+		IMX_EDMA5_LOG(ERR, "Failed to alloc SG TCD pool for vchan %u",
-+			      vchan);
-+		rte_free(vc->jobs);
-+		vc->jobs = NULL;
-+		return -ENOMEM;
-+	}
-+	vc->sg_tcd_iova = rte_malloc_virt2iova(vc->sg_tcd_pool);
-+
-+	imx_edma5_reset_hw_chan(vc);
-+	vc->configured = true;
-+
-+	return 0;
-+}
-+
-+static int
-+imx_edma5_start(struct rte_dma_dev *dev)
-+{
-+	struct imx_edma5_dev *ed = dev->data->dev_private;
-+	uint32_t mp_csr;
-+	uint16_t i;
-+
-+	/*
-+	 * Enable round-robin arbitration with a read-modify-write so GCLC (set
-+	 * in probe) is preserved; clearing GCLC would re-gate the per-channel
-+	 * clocks and external-abort any subsequent channel access.
-+	 */
-+	mp_csr = imx_edma5_read32(ed->reg_base, IMX_EDMA5_MP_CSR);
-+	mp_csr |= IMX_EDMA5_MP_CSR_GCLC | IMX_EDMA5_MP_CSR_ERCA;
-+	imx_edma5_write32(ed->reg_base, IMX_EDMA5_MP_CSR, mp_csr);
-+
-+	for (i = 0; i < ed->nb_vchans; i++) {
-+		struct imx_edma5_vchan *vc = &ed->vchans[i];
-+
-+		if (!vc->configured)
-+			continue;
-+		imx_edma5_reset_hw_chan(vc);
-+		vc->head = 0;
-+		vc->tail = 0;
-+		vc->nb_enqueued = 0;
-+		vc->ridx = 0;
-+		/* Seed last_idx one step before the first cookie (0). */
-+		vc->last_idx = UINT16_MAX;
 +		vc->submitted_count = 0;
 +		vc->completed_count = 0;
 +		vc->errors_count = 0;
@@ -285,49 +164,41 @@ index 6efe6b0a46..0b2671e926 100644
 +}
 +
 +static int
-+imx_edma5_stop(struct rte_dma_dev *dev)
++imx_edma5_dump(const struct rte_dma_dev *dev, FILE *f)
 +{
-+	struct imx_edma5_dev *ed = dev->data->dev_private;
++	const struct imx_edma5_dev *ed = dev->data->dev_private;
 +	uint16_t i;
 +
++	(void)fprintf(f, "  imx_edma5 nb_channels=%u nb_vchans=%u\n",
++		      ed->nb_channels, ed->nb_vchans);
 +	for (i = 0; i < ed->nb_vchans; i++) {
-+		struct imx_edma5_vchan *vc = &ed->vchans[i];
++		const struct imx_edma5_vchan *vc = &ed->vchans[i];
 +
-+		if (vc->configured)
-+			imx_edma5_reset_hw_chan(vc);
++		(void)fprintf(f,
++			"    vchan %u: hw_chan=%u nb_desc=%u enqueued=%u "
++			"submitted=%" PRIu64 " completed=%" PRIu64
++			" errors=%" PRIu64 "\n",
++			i, vc->hw_chan, vc->nb_desc, vc->nb_enqueued,
++			vc->submitted_count, vc->completed_count,
++			vc->errors_count);
 +	}
-+
-+	return 0;
-+}
-+
-+static int
-+imx_edma5_close(struct rte_dma_dev *dev)
-+{
-+	struct imx_edma5_dev *ed = dev->data->dev_private;
-+	uint16_t i;
-+
-+	if (ed->vchans != NULL) {
-+		for (i = 0; i < ed->max_vchans; i++) {
-+			rte_free(ed->vchans[i].jobs);
-+			rte_free(ed->vchans[i].sg_tcd_pool);
-+		}
-+		rte_free(ed->vchans);
-+		ed->vchans = NULL;
-+	}
-+
-+	ed->nb_vchans = 0;
 +
 +	return 0;
 +}
 +
  static const struct rte_dma_dev_ops imx_edma5_ops = {
  	.dev_info_get	= imx_edma5_info_get,
-+	.dev_configure	= imx_edma5_configure,
-+	.dev_start	= imx_edma5_start,
-+	.dev_stop	= imx_edma5_stop,
-+	.dev_close	= imx_edma5_close,
+ 	.dev_configure	= imx_edma5_configure,
+@@ -856,6 +971,12 @@ static const struct rte_dma_dev_ops imx_edma5_ops = {
+ 	.dev_close	= imx_edma5_close,
+ 
+ 	.vchan_setup	= imx_edma5_vchan_setup,
++	.vchan_status	= imx_edma5_vchan_status,
 +
-+	.vchan_setup	= imx_edma5_vchan_setup,
++	.stats_get	= imx_edma5_stats_get,
++	.stats_reset	= imx_edma5_stats_reset,
++
++	.dev_dump	= imx_edma5_dump,
  };
  
  static int
