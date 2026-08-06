@@ -2,47 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1FB1C55ABF
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 08:28:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E2C5C55ABF
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 08:28:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E475D406B4;
-	Thu,  6 Aug 2026 10:27:57 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2A46D40615;
+	Thu,  6 Aug 2026 10:28:05 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
- by mails.dpdk.org (Postfix) with ESMTP id 3702E40276;
- Thu,  6 Aug 2026 10:27:56 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5B86F402EE;
+ Thu,  6 Aug 2026 10:28:03 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1786004876; x=1817540876;
+ t=1786004884; x=1817540884;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=o56VLBSc9c3dWv7K0ZyfD+YCg+R88Jc7y5EcCWN9yIA=;
- b=bILyHgUz0ncbIWuPMgNGuKLfwAIiHkLpmRGQIVf/n4thHqMdPfDj1bEx
- bIn9aEgXoUlMUk5xOgmqx+YNzRAjXKpPoYW5PxD8LRD/86YljTk1kObD6
- Zmys+HUozhf+o+mOvXZrkpntbaVnUcpukQbzfW2CRiZdo9d18eaB5sjPC
- MDbp0Mk2sBlPdeuc263Wtcdn29iQVSq2FrkMBazdMfvejG0OzDsjiXF5T
- 3Nr9nxckArpWGZ0ycT97oINUQoDmw2Q31rxWVXzfU3Pdv8gBXWQAim6pk
- pH8/RDIuA1bHeYZh+jXI6ePz2Aojl66DoLY5FvkHiz/V+E7Fosub96pTv w==;
-X-CSE-ConnectionGUID: LOTaRujITQKH8BhIZc+pBw==
-X-CSE-MsgGUID: v5oX5106Q0aIaNKXA3JcnA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11866"; a="86666992"
-X-IronPort-AV: E=Sophos;i="6.25,208,1779174000"; d="scan'208";a="86666992"
+ bh=AW5NlwlxM14KXhoCes5Facsvxn0z6XnuMV2MQIUn18s=;
+ b=W/+wYb1hpG43wSWp0GXAbKD76URt/3JlcNec8qfGICaNXFZnXlYJo0LV
+ lFJmGfzBWiKT+z8ga3wbb10GVBxZFq6ss4tBo4ePt27QWPgQ/W/iVxdlq
+ DB8uryfMxrLTrozfg56Qm5mNNDSsKGeUPsrDieWVMyhoDiP4Ya4JEWH+5
+ K+0VJrRqG1sh48iN46F/eECNBk+93D4HZgX+8U/Vx4HTfaspk71P65hUv
+ 4HXHUFB6fREZKSwaSx6EN211z1pbdD8bNfodUD3nZTaVEdIzY1wPRU8rV
+ 60B8/R+uOjUAGXtFMfvywYYRDY1hCsKFvCxsqkkh40uPKp+vZmLB1n8Yb A==;
+X-CSE-ConnectionGUID: R9DbcHHHRq6vzdewdkcQEw==
+X-CSE-MsgGUID: f4Y2aE/rRTudkps5iPqAEA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11866"; a="86667001"
+X-IronPort-AV: E=Sophos;i="6.25,208,1779174000"; d="scan'208";a="86667001"
 Received: from fmviesa008.fm.intel.com ([10.60.135.148])
  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Aug 2026 01:27:56 -0700
-X-CSE-ConnectionGUID: PNCys3iBRTi5KUffDCg4Tw==
-X-CSE-MsgGUID: BfqzeHiFRJSNWOi+5u10wQ==
+ 06 Aug 2026 01:28:02 -0700
+X-CSE-ConnectionGUID: IYnTj2D8TGWBgEtXBZm6lg==
+X-CSE-MsgGUID: MavPZ49yS/6RJXR8K2EkBw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,208,1779174000"; d="scan'208";a="259421019"
+X-IronPort-AV: E=Sophos;i="6.25,208,1779174000"; d="scan'208";a="259421028"
 Received: from pae-14.iind.intel.com ([10.190.203.153])
- by fmviesa008.fm.intel.com with ESMTP; 06 Aug 2026 01:27:54 -0700
+ by fmviesa008.fm.intel.com with ESMTP; 06 Aug 2026 01:28:00 -0700
 From: Anurag Mandal <anurag.mandal@intel.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com, vladimir.medvedkin@intel.com,
  ciara.loftus@intel.com, Anurag Mandal <anurag.mandal@intel.com>,
  stable@dpdk.org
-Subject: [PATCH 4/5] net/iavf: change no_poll flag to atomic
-Date: Thu,  6 Aug 2026 08:26:27 +0000
-Message-Id: <d1ea05c4fb2db04ce8cdd5d96b1998c183cf864e.1786004043.git.anurag.mandal@intel.com>
+Subject: [PATCH 5/5] net/iavf: improve VF reset detection on fast ARQ flip
+Date: Thu,  6 Aug 2026 08:26:28 +0000
+Message-Id: <ffb0fb45f27b33c90e26bf420193671f2488a172.1786004043.git.anurag.mandal@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1786004043.git.anurag.mandal@intel.com>
 References: <cover.1786004043.git.anurag.mandal@intel.com>
@@ -61,98 +61,116 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The no_poll gate that pauses the Rx/Tx data path during reset and
-link-down was a plain bool written on the control path and read on
-the data-plane lcores without synchronization, allowing stale reads
-that either keep dropping traffic or trigger spurious reset detection.
+During PF-initiated reset or a remote/ToR switch link-flap,
+the PF toggles the admin receive queue enable bit (ARQLEN1)
+so quickly around a VF reset that the VF's sampling window
+misses it, leaving the PF and the VF states out of sync
+and the data path stalled.
 
-Made no_poll an RTE_ATOMIC(bool) and access it with release stores and
-acquire loads so data-plane lcores reliably observe gate changes.
+Complement the ARQLEN1 check with VFGEN_RSTAT
+(VIRTCHNL_VFR_INPROGRESS) and shorten the poll interval to
+5 ms (with a proportionally larger count, keeping the ~10 s
+budget), matching the Linux kernel iavf driver.
+When the VFR is still not observed, proceed with recovery
+instead of bailing out so the PF and  the VF states converge.
 
-Fixes: 5b3124a0a6ef ("net/iavf: support no polling when link down")
+Fixes: ada64daa1a5b ("net/iavf: fix VF reset for flow director rule")
+Fixes: 80fb3c920458 ("net/iavf: fix crash on VF start")
 Cc: stable@dpdk.org
 
 Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
 ---
- drivers/net/intel/iavf/iavf.h        | 2 +-
- drivers/net/intel/iavf/iavf_ethdev.c | 6 +++++-
- drivers/net/intel/iavf/iavf_rxtx.c   | 8 ++++++--
- drivers/net/intel/iavf/iavf_vchnl.c  | 4 +++-
- 4 files changed, 15 insertions(+), 5 deletions(-)
+ drivers/net/intel/iavf/iavf.h        |  1 +
+ drivers/net/intel/iavf/iavf_ethdev.c | 41 +++++++++++++++++++++-------
+ 2 files changed, 32 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
-index e76c3bb410..037bc8436f 100644
+index 037bc8436f..5e49e81447 100644
 --- a/drivers/net/intel/iavf/iavf.h
 +++ b/drivers/net/intel/iavf/iavf.h
-@@ -392,7 +392,7 @@ struct iavf_adapter {
- 	alignas(RTE_CACHE_LINE_MIN_SIZE) uint32_t ptype_tbl[IAVF_MAX_PKT_TYPE];
- 	bool stopped;
- 	bool closed;
--	bool no_poll;
-+	RTE_ATOMIC(bool)no_poll;
- 	enum iavf_rx_func_type rx_func_type;
- 	enum iavf_tx_func_type tx_func_type;
- 	uint16_t fdir_ref_cnt;
+@@ -21,6 +21,7 @@
+ #define IAVF_AQ_BUF_SZ            4096
+ #define IAVF_RESET_WAIT_CNT       2000
+ #define IAVF_RESET_DETECTED_CNT   500
++#define IAVF_RESET_POLL_SCALE     4  /* Poll-interval scale for reset detection */
+ #define IAVF_BUF_SIZE_MIN         1024
+ #define IAVF_FRAME_SIZE_MAX       9728
+ #define IAVF_QUEUE_BASE_ADDR_UNIT 128
 diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index 87b826c873..f6ce339b0c 100644
+index f6ce339b0c..21bac51467 100644
 --- a/drivers/net/intel/iavf/iavf_ethdev.c
 +++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -3604,9 +3604,13 @@ void
- iavf_set_no_poll(struct iavf_adapter *adapter, bool link_change)
- {
- 	struct iavf_info *vf = &adapter->vf;
-+	bool no_poll;
+@@ -3235,7 +3235,9 @@ iavf_dev_close(struct rte_eth_dev *dev)
+ 	/* remove RSS configuration */
+ 	iavf_hash_uninit(adapter);
  
--	adapter->no_poll = (link_change & !vf->link_up) ||
-+	no_poll = (link_change & !vf->link_up) ||
- 		vf->vf_reset || vf->in_reset_recovery;
+-	iavf_flow_flush(dev, NULL);
++	/* Skip the virtchnl-emitting teardown on a PF-initiated reset */
++	if (!vf->pf_reset_in_progress)
++		iavf_flow_flush(dev, NULL);
+ 	iavf_flow_uninit(adapter);
+ 
+ 	/*
+@@ -3358,8 +3360,26 @@ iavf_dev_reset(struct rte_eth_dev *dev)
+ static inline bool
+ iavf_is_reset(struct iavf_hw *hw)
+ {
+-	return !(IAVF_READ_REG(hw, IAVF_VF_ARQLEN1) &
+-		IAVF_VF_ARQLEN1_ARQENABLE_MASK);
++	uint32_t rstat;
 +
-+	rte_atomic_store_explicit(&adapter->no_poll, no_poll,
-+				  rte_memory_order_release);
++	/* ARQ has been disabled by the PF as part of the VFR. */
++	if (!(IAVF_READ_REG(hw, IAVF_VF_ARQLEN1) &
++		IAVF_VF_ARQLEN1_ARQENABLE_MASK))
++		return true;
++
++	/*
++	 * VFGEN_RSTAT reports VIRTCHNL_VFR_INPROGRESS.
++	 * At times, the PF flips ARQENABLE so quickly
++	 * around a VFR that the ARQLEN1 sample window
++	 * misses it. Using VFGEN_RSTAT, as a
++	 * complementary indicator, prevents from
++	 * missing a reset that really did happen.
++	 */
++	rstat = (IAVF_READ_REG(hw, IAVF_VFGEN_RSTAT) &
++		 IAVF_VFGEN_RSTAT_VFR_STATE_MASK) >>
++		IAVF_VFGEN_RSTAT_VFR_STATE_SHIFT;
++
++	return rstat == VIRTCHNL_VFR_INPROGRESS;
  }
  
- static int
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
-index 931bb8420d..104197d082 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx.c
-@@ -3723,7 +3723,9 @@ iavf_recv_pkts_no_poll(void *rx_queue, struct rte_mbuf **rx_pkts,
- 	struct ci_rx_queue *rxq = rx_queue;
- 	enum iavf_rx_func_type rx_func_type;
+ static bool
+@@ -3368,11 +3388,14 @@ iavf_is_reset_detected(struct iavf_adapter *adapter)
+ 	struct iavf_hw *hw = IAVF_DEV_PRIVATE_TO_HW(adapter);
+ 	int i;
  
--	if (!rxq->iavf_vsi || rxq->iavf_vsi->adapter->no_poll)
-+	if (!rxq->iavf_vsi ||
-+	    rte_atomic_load_explicit(&rxq->iavf_vsi->adapter->no_poll,
-+				     rte_memory_order_acquire))
- 		return 0;
- 
- 	rx_func_type = rxq->iavf_vsi->adapter->rx_func_type;
-@@ -3739,7 +3741,9 @@ iavf_xmit_pkts_no_poll(void *tx_queue, struct rte_mbuf **tx_pkts,
- 	struct ci_tx_queue *txq = tx_queue;
- 	enum iavf_tx_func_type tx_func_type;
- 
--	if (!txq->iavf_vsi || txq->iavf_vsi->adapter->no_poll)
-+	if (!txq->iavf_vsi ||
-+	    rte_atomic_load_explicit(&txq->iavf_vsi->adapter->no_poll,
-+				     rte_memory_order_acquire))
- 		return 0;
- 
- 	tx_func_type = txq->iavf_vsi->adapter->tx_func_type;
-diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
-index d22990a524..dee76f97cb 100644
---- a/drivers/net/intel/iavf/iavf_vchnl.c
-+++ b/drivers/net/intel/iavf/iavf_vchnl.c
-@@ -268,7 +268,9 @@ iavf_handle_link_change_event(struct rte_eth_dev *dev,
- 	if (adapter->devargs.no_poll_on_link_down) {
- 		iavf_set_no_poll(adapter, true);
- 		PMD_DRV_LOG(DEBUG, "VF no poll turned %s",
--			    adapter->no_poll ? "on" : "off");
-+			    rte_atomic_load_explicit(&adapter->no_poll,
-+						     rte_memory_order_relaxed) ?
-+						     "on" : "off");
- 		if (!vf->link_up)
- 			iavf_dev_tx_drain(dev);
+-	/* poll until we see the reset actually happen */
+-	for (i = 0; i < IAVF_RESET_DETECTED_CNT; i++) {
++	/*
++	 * Poll until the reset actually happen.
++	 * Poll every 5 ms to catch the fast ARQ flips.
++	 */
++	for (i = 0; i < IAVF_RESET_DETECTED_CNT * IAVF_RESET_POLL_SCALE; i++) {
+ 		if (iavf_is_reset(hw))
+ 			return true;
+-		rte_delay_ms(20);
++		rte_delay_us(5000);
  	}
+ 
+ 	return false;
+@@ -3423,10 +3446,8 @@ iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset)
+ 		if (!dev->data->dev_started)
+ 			return;
+ 
+-		if (!iavf_is_reset_detected(adapter)) {
+-			PMD_DRV_LOG(DEBUG, "reset not start");
+-			return;
+-		}
++		if (!iavf_is_reset_detected(adapter))
++			PMD_DRV_LOG(WARNING, "VFR not observed; recovering anyway");
+ 	}
+ 
+ 	vf->in_reset_recovery = true;
 -- 
 2.34.1
 
