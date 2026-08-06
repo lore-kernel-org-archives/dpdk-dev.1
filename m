@@ -2,84 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0F5DC5AC7C
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 17:19:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F1C7C5AC7C
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 17:19:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F09A44027E;
-	Thu,  6 Aug 2026 19:19:34 +0200 (CEST)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com
- [209.85.208.50]) by mails.dpdk.org (Postfix) with ESMTP id A46A340262
- for <dev@dpdk.org>; Thu,  6 Aug 2026 19:19:33 +0200 (CEST)
-Received: by mail-ed1-f50.google.com with SMTP id
- 4fb4d7f45d1cf-6a144c8eea2so3482036a12.0
- for <dev@dpdk.org>; Thu, 06 Aug 2026 10:19:33 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1786036773; cv=none;
+	by mails.dpdk.org (Postfix) with ESMTP id 0A75A4027E;
+	Thu,  6 Aug 2026 19:19:58 +0200 (CEST)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com
+ [209.85.218.47]) by mails.dpdk.org (Postfix) with ESMTP id 2CDB640262
+ for <dev@dpdk.org>; Thu,  6 Aug 2026 19:19:57 +0200 (CEST)
+Received: by mail-ej1-f47.google.com with SMTP id
+ a640c23a62f3a-c2055573c8cso222181466b.3
+ for <dev@dpdk.org>; Thu, 06 Aug 2026 10:19:57 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1786036797; cv=none;
  d=google.com; s=arc-20260327;
- b=qEPc998hUkmCioQ7h9Z+kYVzfEZIhF6JCCrEoH1HBHxQHS7Ws4dY5qWTGdWUZhsRwT
- sQh+C6s2ZKJFFjgLJHRTEPW/lkEYRlzns3ihpCPqNxRoV53fBTiJHYlzfXu3L0ZQr7RJ
- h/bR5T7C+0NHjNf058JsjIiEhUZWUdl8XxRwzPXeiH5FVKODZ4C473Qu7l9rbOVcR174
- TTkceDhSYw+y7tJUZK/K0BfzkFVHZAgfyi9QMk0HEFSPelyomk0e/Fel8EplHTSE4aY3
- o4NdOuSUZoZdqehKOFzkwnD09Epk2T6vkOqmjDMSMzr4boTavoiziiaZRQVyDlvR6HTa
- 8HaQ==
+ b=nKthrNvNqqrXu6esTdDwsqNr3/mRVBB7mTQEMvk74RJoOEVDGGxdI28hBlOwkhMtKQ
+ M4YxToBkmTVgdyEKIcKY3F8U7xFtTSO5SFtsgkEcv4nJHFneB8Pm8EBI1Uiirb6AkFLp
+ 8cSwfgqIzljO6EgqvOc1d9GgN7gYvUmZMpALmZMiuTXJW+11HLgHGwti0zFK7qR2dOz1
+ gL3Szlrv215agyO+RBRko2Lmb4C+JU23HuwPkpVggjSbpUjStOxF6J2BqAET3oxduQqb
+ JpZ7J9NvrW/ScD4CU8Y7PPIllfCP37m3aujcS5C9ordjC7JWJPFcLRiEm5WDM7iRrXzi
+ jiMg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
  s=arc-20260327; 
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:dkim-signature;
- bh=IKUCC48k3G9fc//ojdtz8m/2nHpNZLGCwJNCtVJhfko=;
- fh=8NFLu/qH+uG/uIwiD/cCofpvhzLvwSzaJE4CYPqpxig=;
- b=HNHsio/Q3T5bFhdY34pM4pqZZGpc93RUYKUJYZTqYBnb+xjQL0w4C48lzmIX7xjYwm
- /oYZR3DnE4GafHmVLYL543HdSbfh6utRUJndi7I4hbAH+UuXd8L97bzfi6tNx6jHAy2H
- nZfopScWEVwj/+6q6MQ3am06y2/6FzCbcamQNcIWViH+gNZn++Pxtf6o2lXWc1Ez1HHN
- nt9iIv5XJBLI7reAAnl0QVuii4x7SUwL+9ARhKX2ldbtsbPmcgt0FH1zQLlE0anBGw5u
- O3+tZCzUv/of8opTGKfgj8cZKJJuH6PS7mIhrfDqZHwbiNeEemM+IlbbTHtGyZfhxE3x
- clKQ==; darn=dpdk.org
+ bh=ORiFj61vezZe77mupWRR9cuWxct8+m5p68/3U7oqo/g=;
+ fh=UMJ93c4jGx+8uNDwGo8ghV2VB5+nCFODu6lZ6pBlNjY=;
+ b=nMBUecIgeV52HY62zRp4ISI5xtnlY37UDnlzx4dyUkrbDGIGzeCnBuKlFpwBxhZRYN
+ mL1PRP+9Ifk8pqLEKCspE8Ji6p6x9w+kLVkDyEotIUTY8cmjUeaw4vfM420mm/L6YVc5
+ ffW/pzaBRK+ekaKWF243SRUZQK0g187N7Tg8ff+d02hdRKOAM8+ROOXIq1C7uxm9+tjD
+ Sq9a84luhrM2oTc1rfonr9cTvj9wXrBfD9oJiL0oNfMiiAvdNcwQh/JcNs1VRujm1TdU
+ +phHYN5Xs8CQz82q8V9S7B80k5d5+KG5CbUbUIeYOtE0SlJfmw4SjHkk78LHAf7UC4S5
+ Z3XA==; darn=dpdk.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1786036773; x=1786641573; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1786036797; x=1786641597; darn=dpdk.org;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=IKUCC48k3G9fc//ojdtz8m/2nHpNZLGCwJNCtVJhfko=;
- b=Qdnp/JGTwqZOHZBfmmze6/uc9JbZ9BbnLPw362YPuquCCEeX7MXeB2vgvKSTV2wXXk
- 9SOceKemQZd8Xf9NTouU4p2GCDjDGcwtYzj10+3PmuNoTJlcbrbvTET0hzAv/OyQTtEM
- DMiXiJ3nxyLESS5xsRGpplykfVxK4w5H25CZg=
+ :content-type; bh=ORiFj61vezZe77mupWRR9cuWxct8+m5p68/3U7oqo/g=;
+ b=IZZip2GL8p99APF37hEBworm9+jKM07PSwYdabEUxKzEpdrzo6HlndE1kPE392hiwB
+ X349kDxzDJetL1OYNpjSnKy/Hke0iV/V43Pl51C6t1Lae9a6QF9cdz8BgA5cARxBaM2O
+ Uz+oLYjYpOzHs1QtjhEG6j9AlBk7AaQvrZCQ0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786036773; x=1786641573;
+ d=1e100.net; s=20251104; t=1786036797; x=1786641597;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to:content-type;
- bh=IKUCC48k3G9fc//ojdtz8m/2nHpNZLGCwJNCtVJhfko=;
- b=dleVVWLzg7ln0A8B29aU0sH5cOUM57EdCsmad3sxZIyQn2B1i8gC9wtY4UvOjlGk52
- IAJTjNQ5cRmI3lDR1a57ITKpBmPdiLDqZ8IxdfMyVQk8I/G48DLWQtrFcYy+pcWuSDaM
- yxTFU62afZ01zgaC4rRlL14zfGWtfcD/An1RvZ18FW5QfDmnNn1Le8xF7fmCrflDr1H6
- EdVKmOm2rDS48ozV8yFP62lnUvB8K3WzSZOUh7/LG7Gps25yi69g9yUdKkTq3cH7vqc5
- wP78vGNB8T5goZkD5ur3/8x2+bZJGmZvHGnKdN5VB9yj+8ewGJkqaHDqecKwpDepeYnq
- 2zAw==
-X-Gm-Message-State: AOJu0YzjWFcERY+Sw+Okstx5d0x2i2wh1J9CEuU5Mw6L0IikldmnSVcB
- XNOIAWTa2Xa6c7+TTd3hkHyX06polByZ+sjJw/y5TpnlxRgnQM8gIyTCFgS5xg8fZIsYPH+/J0f
- wz56Hs4uEtb0G9RycOMKdQmACibqiSgAp/GujwHfxfaWsEf528rSn
-X-Gm-Gg: AR+sD13aJabv5Db+5RyMkiXXdAHqaAvJXZA0Wata3Nan7MIO1nOa6u2I3aYmsKVFbTn
- n7VleZc9XovC5xWCpLI0JdQb+bljVGvXH1YKeO6ZiFAv2Scfbe7zcy2O1qNloJzqRmc0zNn1xhL
- SXliWxtbe6Saclfz0Ce7Qj9vNFkx3nY7utvzm6WDsvlaENA27B9VX68u08poR7DZxP924MWrkYE
- 93bFVawX8EvbVOOUr1HkrSUmQgvnpob1v6Q7vcz2t0yj+fkAcWnLWwqdO56oWgF1ZKCgPsWJotc
- bSzc1OBxB6Sj31x2h7329Jb8Gl9a4+6vV61HbmGzMox9/25Ybz6MrsN6I+Q6
-X-Received: by 2002:a05:6402:a0c2:b0:6a1:8d3e:ee67 with SMTP id
- 4fb4d7f45d1cf-6a18d3ef0c6mr5936515a12.4.1786036773326; Thu, 06 Aug 2026
- 10:19:33 -0700 (PDT)
+ bh=ORiFj61vezZe77mupWRR9cuWxct8+m5p68/3U7oqo/g=;
+ b=tQVqBeieDalpfgB9JU+50zWV48MLxksEh947KhI+vKTTDokAFqqSGT6K1UESUwArO/
+ na92S6O5icn4rbdIxctv2+9GPT9Bjv9h25BJljDOmNQUUzJLR2DxVTfPA0LfeXyDxqcf
+ LsV5UpL3e0eeRIGbRLa7aJx09EHEw9UACbNdgfXdyKDsunAiOkTDVRX+988sPEmMkK/u
+ G64FdsMrgvB7BrDH4Q313tEUk/wV0JsZNYZ4NYruGkuEa9Zok3C6Zq977bYYN0HjHNYd
+ rDc50h3ygXynC3qujG5KTtIvEI5yNtjv/ahuNOiEhczkHagemwY0WdRI8uj40rc1Ahve
+ ZKrQ==
+X-Gm-Message-State: AOJu0YxXk6ggDAK5y1r8FWUTkg8RkXhY/bFAJe0We9Q3LL/1CZjb4kgo
+ EkNKSdxVsjo7Orh0eck3L3CChb5saaehXKnFkkIjaHeSgk9B7zcFFx214lEYGmq8DKDATZlfGSJ
+ 9AnaSbgJB/cBzNjXA4aljN+RyvoS06QJdpkU2J+ZbROEGyjKYP56fJt8=
+X-Gm-Gg: AR+sD10OFVekLwn4nrgkvOYDdQbBqkaJ58+upW85g3WaPWCIxro4c3ytVOmKoI7YoMN
+ uDmsb94KktJdZZm+MkeInjf1kFHlsMO6zoMMt1NHYDTbZUbB2dyBVyghvHBwo0Gu9hqkVO+RuhK
+ hZCYXtrrLKaON2rispYCNbQwsG9GEpYnBv5yr1rKw+PixhzrI7A/W69E93LU71yXHH4yHHsq/Vn
+ rrYUQetjWcONBbhhxD4ANH6BAKPXa4oKL2PYXoqmmrsLdu8OqrZ34ntC8j6aNc9dO359FKetMww
+ BRQThwJ9sJ3DlaYdfkRrDo9RTac5u1n075FhE+g9RcmP3IC+uL9RwJTQQz4/
+X-Received: by 2002:a17:907:c241:b0:c1c:6150:c2f1 with SMTP id
+ a640c23a62f3a-c2039b49a08mr891529866b.8.1786036796819; Thu, 06 Aug 2026
+ 10:19:56 -0700 (PDT)
 MIME-Version: 1.0
 References: <20260806135346.568766-1-abailey@iol.unh.edu>
  <20260806171636.656181-1-abailey@iol.unh.edu>
- <20260806171636.656181-2-abailey@iol.unh.edu>
-In-Reply-To: <20260806171636.656181-2-abailey@iol.unh.edu>
+ <20260806171636.656181-3-abailey@iol.unh.edu>
+In-Reply-To: <20260806171636.656181-3-abailey@iol.unh.edu>
 From: Andrew Bailey <abailey@iol.unh.edu>
-Date: Thu, 6 Aug 2026 13:19:22 -0400
-X-Gm-Features: AUfX_mzqLMYhpComBSlGtUcXkI9ONsTsCwEuDkGX2ni-L3PSml6PhKjFPJQuUaw
-Message-ID: <CABJ3N2Ui1vhwGgj6K4aZ+r7t8H+G3pe=-rjTNyx_sdsMbN0HMQ@mail.gmail.com>
-Subject: Re: [PATCH v6 1/7] doc: improve 26.07 release notes
+Date: Thu, 6 Aug 2026 13:19:45 -0400
+X-Gm-Features: AUfX_myAQEEFmQd7Ua0ZyHzZ0_TM7qMJ8Tl-ii_jAYvSeO0MmC1Nf8UGjGXPbAk
+Message-ID: <CABJ3N2VcNvm2mt8TUj7qXBeoBFqG1W_QG6fH7AUVcyT0YKXOrQ@mail.gmail.com>
+Subject: Re: [PATCH v6 2/7] version: 26.07.0
 To: dev@dpdk.org, luca.vizzarro@arm.com, patrickrobb1997@gmail.com
 Cc: knimoji@iol.unh.edu, lylavoie@iol.unh.edu, dladd@iol.unh.edu, 
- Bruce Richardson <bruce.richardson@intel.com>,
  Thomas Monjalon <thomas@monjalon.net>
-Content-Type: multipart/alternative; boundary="0000000000006e1fab065864176b"
+Content-Type: multipart/alternative; boundary="000000000000d4995e0658641876"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -93,7 +92,7 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000006e1fab065864176b
+--000000000000d4995e0658641876
 Content-Type: text/plain; charset="UTF-8"
 
 Hi all,
@@ -103,11 +102,11 @@ I sent the wrong patchfiles out, please ignore.
 Thanks,
 Andrew Bailey
 
---0000000000006e1fab065864176b
+--000000000000d4995e0658641876
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-<div dir=3D"ltr"><div dir=3D"ltr">Hi all,<br><br>I sent the wrong patchfile=
-s=C2=A0out, please ignore.<br><br>Thanks,<br>Andrew Bailey</div></div>
+<div dir=3D"ltr">Hi all,<br><br>I sent the wrong patchfiles=C2=A0out, pleas=
+e ignore.<br><br>Thanks,<br>Andrew Bailey</div>
 
---0000000000006e1fab065864176b--
+--000000000000d4995e0658641876--
