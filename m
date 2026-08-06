@@ -2,58 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00399C5AC7C
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 17:17:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62E0EC56208
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 17:17:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1BC3940A67;
-	Thu,  6 Aug 2026 19:16:51 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1D26940697;
+	Thu,  6 Aug 2026 19:16:52 +0200 (CEST)
 Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com
- [209.85.219.50]) by mails.dpdk.org (Postfix) with ESMTP id C86DA40696
- for <dev@dpdk.org>; Thu,  6 Aug 2026 19:16:49 +0200 (CEST)
+ [209.85.219.50]) by mails.dpdk.org (Postfix) with ESMTP id 6D4B940A6E
+ for <dev@dpdk.org>; Thu,  6 Aug 2026 19:16:51 +0200 (CEST)
 Received: by mail-qv1-f50.google.com with SMTP id
- 6a1803df08f44-8f1e274ccb9so14342836d6.2
- for <dev@dpdk.org>; Thu, 06 Aug 2026 10:16:49 -0700 (PDT)
+ 6a1803df08f44-8efbafa1bacso14079686d6.1
+ for <dev@dpdk.org>; Thu, 06 Aug 2026 10:16:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1786036609; x=1786641409; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1786036611; x=1786641411; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=Vizc2u3Q4MQUu3B6xpOfk2V7bI6JKUcdYZ3PTaH+ofA=;
- b=QdIW4iuktB3jxOhq8iQB+cl+Tptq20sZr51kLn/dvKtQdI1q2NrbMKHKuCw9nqqT4k
- kkwckNu2ievSXJimLwConL8hnqvF/kaa59Jxms8tXURYHmbAMnSUT54cl+ftC/A4bPl8
- fWH++ZiH9h6kILdBSwpNcb6tllHbQoQD8eLQI=
+ bh=neWwG0ocnoh44VZL+K+jWg8PbDE/zt+quzT6ph+vqt8=;
+ b=fiTiswnlWnyXzdOCrKTOy3DlBttRPesayucx85ZltrN/ecGSW7Bm1xFVfdlYlUl2O8
+ 4kJfNM4ooCHNXhT433XXb/KBs4smPCy2RkYo8TWqnGey85QkzzVpoH1DHhxLOFPYIStB
+ QoyTybTYMiaJ0TlOZFwKmWLhrje4nMFAsFvSU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786036609; x=1786641409;
+ d=1e100.net; s=20251104; t=1786036611; x=1786641411;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=Vizc2u3Q4MQUu3B6xpOfk2V7bI6JKUcdYZ3PTaH+ofA=;
- b=Qk6Uk3okIWydVv59IhSyd4K69/XsMmb8J/DOuvbotevWs84a5EzTNgNdzKqxV3u0e3
- +mIenbUu3PmguLwclPI5vXtXLLGDMfw0JuZ1UmwxsKvtGTyGBmPIAnGxIeimUrDjk3Lu
- +dqi4SQHeKB1Z1sUmVGOnxGOTiw6cN8Hv0qpn9JME9tbXiMZYf6T8O6UQBTjVq3+2ZTn
- FpPb3SsUo5aI2akZilbkZOlmbYeyyv+krHzgUGVJCkJ9s6XKuxRhqmg3URDhgLOBwzUk
- 11DaUPcqG4m7WFruCbohWGnkekaug1QiU+JE0gwCf8wLVoa0mQDmZzVStoRUduetU2ob
- AXew==
-X-Gm-Message-State: AOJu0YyeI/nU5VqdiGwJgWZVgaymo1+0tx+hQed+IfUdG+RQLeOl6Qa3
- JkjybDCr5E6SFkhP7UKjK4+EwiCM0hJT6NTVAJAP3yBoRUNDToHXdMzqB/7l4R/t93FrIZBnqEt
- S0JO7HjmuGSsCuHqgOPmODVLYFie9yUiA9+MubJ5I0d0ZILG/ZXaI88DQPjFqPdj3ZMqPbxb83t
- YaBn5rG3VryLUfD7vxXAaUKvuooVM=
-X-Gm-Gg: AR+sD123H9oQnRN3vXG6VKrPpywHkZKq3MpICTcVHaN2ptSh4rpK2+paskLG1Afexq9
- KHdU7PX4uDQt6oetdLHO3zmlm0gc7gnQqVZQCjv3ZaRSKi/PfSExOQobCMlhrGO4iXexg8tp9gg
- ZV9NeI2oNsAX2F1fQZ5Vnc7oWJ/DiilcSy76WJPitdZuImtK+0idanS0rjToXolFrRKinYEUu4E
- rMP9nuZtZJZNuy7pHisYeIeBBxpQRRhqSEEEocPSBDdrQ098DOSSTLHTq6DQRveihlMO1256+c8
- 3NDqEcxQX+sbNQ9YcDFJhcgHfkyRqOPfJ7+FUG6i0SoX2DfVuc4hCKpBGG3gC43Eytbvu+BZOmk
- rR3lfV3fEeuxNh1/9CKcTXjNavRuipHtbKySigNMU5QrUGPRRlZ1BsmYOMnevK//m19cQRF35eA
- aoMeX3sFAWQCywxM4fXTrUopkgtTYJV7zXOrSt+ru8KPPyF5MeDTmkwihsP4mUqPyN+zUrfepiz
- uhAD98UAm7a437k6KelZK3SWrJLPDOqh8hDfQUy
-X-Received: by 2002:a05:6214:29c5:b0:8df:98e0:4594 with SMTP id
- 6a1803df08f44-908813800f7mr186372456d6.15.1786036609087; 
- Thu, 06 Aug 2026 10:16:49 -0700 (PDT)
+ bh=neWwG0ocnoh44VZL+K+jWg8PbDE/zt+quzT6ph+vqt8=;
+ b=pM4LcASF+fuBlqlu6+1kikurdPaNNrsSX4ZF6cqcWEXAxSiGIXYkbEmB5lfzxUplAu
+ N9T/CdPeB7Bxx/O8aJy3dSVCYaCIfhJHkR249csngjGJSQdN7bphxl5MOtX02A9AeYVa
+ MGS3IUpfFC3xmS0wmMBKU8kOjQGWTwsDucKrzfCVV0gmudFjn++XGyfaNDW9pjmAGLhM
+ Bz7pi5Ia3+W/emBlMOAmEAKt7/vNxhn0hUylXoXT4oGYlmOowdne9QTiihSBqpgEORTH
+ R1ykNOZ1n7EGEUvi5RDeyNCATh+2N3a7pusxRIktBqzO0pDD2bSyZ89FwOm0dk4Ygh6S
+ esOA==
+X-Gm-Message-State: AOJu0YwL2IobdoKVp3M9Rn+jtnwo8W4TYMqJtnf6RnaDcTZLdOZCxnf2
+ R0g/3Jaq/g557OxoweddXZiLfGrnmZ75FUVx1qNXszeMDsF8OX6qVEdjzR5RP1TjjNFjH7+zW4N
+ lHdj+sVkPhiXCjRahSmCxDtybi3PHEChpRHcjhSRmv1TFzu4B4HGWAO1qd0fqFK31jK3r5Gdo5A
+ lXrJ3RZV49C8Vi7NOitUcIrcTIikM=
+X-Gm-Gg: AR+sD10LdEXn3/iPjm2kTac9KBqCmrep1GYCEx2W9k3rrPKHy4NVIZI2koH6KEo85mC
+ JE4DZs9UdaLnmdDgazzOav1eIsNVVijpa1T4qyHy8D6/azi85xI0ntGvSu0Wmh6sNIJX9Abx6i5
+ J6+PuWVfAgsc2UZ+vzF664vNSQzrEGxoSgxGLNay5t7SbMxBeP+rfHsJ5T/ARYaBvig0A9e642E
+ F0OQ2O4bU3mDC9A1ph0LXx4+CIixpou0I3XVqyrSqBxkrQMlLCHugWf+PWVne1O8q/MeGptfIE+
+ jhtoyEm643IC9rmsMmuzqbZu8IWEXECbsBk2XVo5QI12a6JaTPQNBNL8TOuMP9bjm5McJWNGxe8
+ Cvj7wvr0qygACMrbv/6PeM8tmDKn0QKiomhQ+5hxVLscYu4CTL2HxoVkNj4zWVO+DcyvFdGlrXb
+ /UWGimYc74jlgcex5erx/SRq80anYwepdpVH1qulT5CdvvyZ6KYctAhZG40xLN3SDGrU9fGRVEf
+ hLrQRLNN6hIDYD6+w3b7BPpRkfhZbvxk30fsmYq
+X-Received: by 2002:a0c:f014:0:b0:908:8f97:7d8c with SMTP id
+ 6a1803df08f44-9088f977e8emr118017406d6.4.1786036610659; 
+ Thu, 06 Aug 2026 10:16:50 -0700 (PDT)
 Received: from syn-2603-7083-bff0-a0d0-0000-0000-0000-1a64.res6.spectrum.com
  ([2606:4100:3880:1257::1039]) by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-9087ffb8f76sm59934006d6.11.2026.08.06.10.16.47
+ 6a1803df08f44-9087ffb8f76sm59934006d6.11.2026.08.06.10.16.49
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 06 Aug 2026 10:16:48 -0700 (PDT)
+ Thu, 06 Aug 2026 10:16:50 -0700 (PDT)
 From: Andrew Bailey <abailey@iol.unh.edu>
 To: dev@dpdk.org,
 	luca.vizzarro@arm.com,
@@ -61,9 +61,9 @@ To: dev@dpdk.org,
 Cc: knimoji@iol.unh.edu, lylavoie@iol.unh.edu, dladd@iol.unh.edu,
  Dariusz Sosnowski <dsosnowski@nvidia.com>,
  David Marchand <david.marchand@redhat.com>
-Subject: [PATCH v6 4/7] ethdev: remove flow metadata symbol aliases
-Date: Thu,  6 Aug 2026 13:16:33 -0400
-Message-ID: <20260806171636.656181-5-abailey@iol.unh.edu>
+Subject: [PATCH v6 5/7] net/mlx5: remove versioned symbols aliases
+Date: Thu,  6 Aug 2026 13:16:34 -0400
+Message-ID: <20260806171636.656181-6-abailey@iol.unh.edu>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260806171636.656181-1-abailey@iol.unh.edu>
 References: <20260806135346.568766-1-abailey@iol.unh.edu>
@@ -85,73 +85,127 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Dariusz Sosnowski <dsosnowski@nvidia.com>
 
-Version aliases for rte_flow_dynf_metadata_register
-and EXPERIMENTAL version on rte_flow_dynf_metadata_offs
-and rte_flow_dynf_metadata_mask symbols added in
-commit 56045d198968 ("ethdev: add aliases for flow metadata symbols")
+Version function symbols added in
+commit 556b2a33727a ("net/mlx5: add aliases for some promoted symbols"):
+
+- rte_pmd_mlx5_driver_event_cb_register
+- rte_pmd_mlx5_driver_event_cb_unregister
+- rte_pmd_mlx5_enable_steering
+- rte_pmd_mlx5_disable_steering
+
 are not needed after ABI version bump.
-This patch removes them.
+This patch removes versioned symbols.
 
 Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
 Acked-by: David Marchand <david.marchand@redhat.com>
 ---
- lib/ethdev/meson.build |  2 --
- lib/ethdev/rte_flow.c  | 13 +++++--------
- 2 files changed, 5 insertions(+), 10 deletions(-)
+ drivers/net/mlx5/meson.build         |  2 --
+ drivers/net/mlx5/mlx5_driver_event.c | 22 ++++++----------------
+ drivers/net/mlx5/mlx5_flow.c         | 18 ++++++------------
+ 3 files changed, 12 insertions(+), 30 deletions(-)
 
-diff --git a/lib/ethdev/meson.build b/lib/ethdev/meson.build
-index 63fd866af9..8ba6c708a2 100644
---- a/lib/ethdev/meson.build
-+++ b/lib/ethdev/meson.build
-@@ -1,8 +1,6 @@
- # SPDX-License-Identifier: BSD-3-Clause
- # Copyright(c) 2017 Intel Corporation
+diff --git a/drivers/net/mlx5/meson.build b/drivers/net/mlx5/meson.build
+index 0fa6322779..82a7dfe782 100644
+--- a/drivers/net/mlx5/meson.build
++++ b/drivers/net/mlx5/meson.build
+@@ -2,8 +2,6 @@
+ # Copyright 2018 6WIND S.A.
+ # Copyright 2018 Mellanox Technologies, Ltd
  
 -use_function_versioning = true
 -
- sources = files(
-         'ethdev_driver.c',
-         'ethdev_private.c',
-diff --git a/lib/ethdev/rte_flow.c b/lib/ethdev/rte_flow.c
-index 799c5c4843..60c9a3d06f 100644
---- a/lib/ethdev/rte_flow.c
-+++ b/lib/ethdev/rte_flow.c
-@@ -23,11 +23,11 @@
- #define FLOW_LOG RTE_ETHDEV_LOG_LINE
- 
- /* Mbuf dynamic field name for metadata. */
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_flow_dynf_metadata_offs, 19.11)
-+RTE_EXPORT_SYMBOL(rte_flow_dynf_metadata_offs)
- int32_t rte_flow_dynf_metadata_offs = -1;
- 
- /* Mbuf dynamic field flag bit number for metadata. */
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_flow_dynf_metadata_mask, 19.11)
-+RTE_EXPORT_SYMBOL(rte_flow_dynf_metadata_mask)
- uint64_t rte_flow_dynf_metadata_mask;
- 
- /**
-@@ -282,7 +282,9 @@ static const struct rte_flow_desc_data rte_flow_desc_action[] = {
- 	MK_FLOW_ACTION(JUMP_TO_TABLE_INDEX, sizeof(struct rte_flow_action_jump_to_table_index)),
- };
- 
--RTE_DEFAULT_SYMBOL(27, int, rte_flow_dynf_metadata_register, (void))
-+RTE_EXPORT_SYMBOL(rte_flow_dynf_metadata_register)
-+int
-+rte_flow_dynf_metadata_register(void)
- {
- 	int offset;
- 	int flag;
-@@ -315,11 +317,6 @@ RTE_DEFAULT_SYMBOL(27, int, rte_flow_dynf_metadata_register, (void))
- 	return -rte_errno;
+ if not (is_linux or is_windows)
+     build = false
+     reason = 'only supported on Linux and Windows'
+diff --git a/drivers/net/mlx5/mlx5_driver_event.c b/drivers/net/mlx5/mlx5_driver_event.c
+index 52e6ad7824..89e49331c8 100644
+--- a/drivers/net/mlx5/mlx5_driver_event.c
++++ b/drivers/net/mlx5/mlx5_driver_event.c
+@@ -236,8 +236,9 @@ notify_existing_devices(rte_pmd_mlx5_driver_event_callback_t cb, void *opaque)
+ 		notify_existing_queues(port_id, cb, opaque);
  }
  
--RTE_VERSION_EXPERIMENTAL_SYMBOL(int, rte_flow_dynf_metadata_register, (void))
+-RTE_DEFAULT_SYMBOL(27, int, rte_pmd_mlx5_driver_event_cb_register,
+-		   (rte_pmd_mlx5_driver_event_callback_t cb, void *opaque))
++RTE_EXPORT_SYMBOL(rte_pmd_mlx5_driver_event_cb_register)
++int
++rte_pmd_mlx5_driver_event_cb_register(rte_pmd_mlx5_driver_event_callback_t cb, void *opaque)
+ {
+ 	struct registered_cb *r;
+ 
+@@ -263,14 +264,9 @@ RTE_DEFAULT_SYMBOL(27, int, rte_pmd_mlx5_driver_event_cb_register,
+ 	return 0;
+ }
+ 
+-RTE_VERSION_EXPERIMENTAL_SYMBOL(int, rte_pmd_mlx5_driver_event_cb_register,
+-				(rte_pmd_mlx5_driver_event_callback_t cb, void *opaque))
 -{
--	return rte_flow_dynf_metadata_register();
+-	return rte_pmd_mlx5_driver_event_cb_register(cb, opaque);
 -}
 -
- static inline void
- fts_enter(struct rte_eth_dev *dev)
+-RTE_DEFAULT_SYMBOL(27, int, rte_pmd_mlx5_driver_event_cb_unregister,
+-		   (rte_pmd_mlx5_driver_event_callback_t cb))
++RTE_EXPORT_SYMBOL(rte_pmd_mlx5_driver_event_cb_unregister)
++int
++rte_pmd_mlx5_driver_event_cb_unregister(rte_pmd_mlx5_driver_event_callback_t cb)
+ {
+ 	struct registered_cb *r;
+ 	bool found = false;
+@@ -293,12 +289,6 @@ RTE_DEFAULT_SYMBOL(27, int, rte_pmd_mlx5_driver_event_cb_unregister,
+ 	return 0;
+ }
+ 
+-RTE_VERSION_EXPERIMENTAL_SYMBOL(int, rte_pmd_mlx5_driver_event_cb_unregister,
+-				(rte_pmd_mlx5_driver_event_callback_t cb))
+-{
+-	return rte_pmd_mlx5_driver_event_cb_unregister(cb);
+-}
+-
+ RTE_FINI(rte_pmd_mlx5_driver_event_cb_cleanup) {
+ 	struct registered_cb *r;
+ 
+diff --git a/drivers/net/mlx5/mlx5_flow.c b/drivers/net/mlx5/mlx5_flow.c
+index fb90caf178..b0eac185b5 100644
+--- a/drivers/net/mlx5/mlx5_flow.c
++++ b/drivers/net/mlx5/mlx5_flow.c
+@@ -12537,7 +12537,9 @@ flow_disable_steering_run_on_related(struct rte_eth_dev *dev,
+ 	}
+ }
+ 
+-RTE_DEFAULT_SYMBOL(27, void, rte_pmd_mlx5_disable_steering, (void))
++RTE_EXPORT_SYMBOL(rte_pmd_mlx5_disable_steering)
++void
++rte_pmd_mlx5_disable_steering(void)
+ {
+ 	uint16_t port_id;
+ 
+@@ -12561,12 +12563,9 @@ RTE_DEFAULT_SYMBOL(27, void, rte_pmd_mlx5_disable_steering, (void))
+ 	mlx5_steering_disabled = true;
+ }
+ 
+-RTE_VERSION_EXPERIMENTAL_SYMBOL(void, rte_pmd_mlx5_disable_steering, (void))
+-{
+-	rte_pmd_mlx5_disable_steering();
+-}
+-
+-RTE_DEFAULT_SYMBOL(27, int, rte_pmd_mlx5_enable_steering, (void))
++RTE_EXPORT_SYMBOL(rte_pmd_mlx5_enable_steering)
++int
++rte_pmd_mlx5_enable_steering(void)
+ {
+ 	uint16_t port_id;
+ 
+@@ -12583,11 +12582,6 @@ RTE_DEFAULT_SYMBOL(27, int, rte_pmd_mlx5_enable_steering, (void))
+ 	return 0;
+ }
+ 
+-RTE_VERSION_EXPERIMENTAL_SYMBOL(int, rte_pmd_mlx5_enable_steering, (void))
+-{
+-	return rte_pmd_mlx5_enable_steering();
+-}
+-
+ bool
+ mlx5_vport_rx_metadata_passing_enabled(const struct mlx5_dev_ctx_shared *sh)
  {
 -- 
 2.55.0
