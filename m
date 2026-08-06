@@ -2,48 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E453AC561E6
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 09:17:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4349DC55ABF
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 09:22:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DBA9D40431;
-	Thu,  6 Aug 2026 11:17:41 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id AF25040288
- for <dev@dpdk.org>; Thu,  6 Aug 2026 11:17:39 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 7C79C20692;
- Thu,  6 Aug 2026 11:17:39 +0200 (CEST)
-Content-class: urn:content-classes:message
-Subject: RE: [PATCH] eal/x86: optimize memcpy of small 64-byte blocks
+	by mails.dpdk.org (Postfix) with ESMTP id 370A140431;
+	Thu,  6 Aug 2026 11:22:12 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id BE0D0402F1
+ for <dev@dpdk.org>; Thu,  6 Aug 2026 11:22:10 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 961142002A8;
+ Thu,  6 Aug 2026 11:22:10 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com
+ (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5F090200028;
+ Thu,  6 Aug 2026 11:22:10 +0200 (CEST)
+Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
+ [92.120.147.250])
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 8B2EA1800088;
+ Thu,  6 Aug 2026 17:22:09 +0800 (+08)
+From: Gagandeep Singh <g.singh@nxp.com>
+To: dev@dpdk.org,
+	Tomasz Duszynski <tduszynski@marvell.com>
+Cc: hemant.agrawal@nxp.com
+Subject: [PATCH] bus/platform: match device by devicetree compatible string
+Date: Thu,  6 Aug 2026 14:52:08 +0530
+Message-Id: <20260806092208.587673-1-g.singh@nxp.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Date: Thu, 6 Aug 2026 11:17:38 +0200
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F659C6@smartserver.smartshare.dk>
-In-Reply-To: <fc32ab5225194114bac9286fe82815e1@huawei.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH] eal/x86: optimize memcpy of small 64-byte blocks
-Thread-Index: AQHdJB42oNL4gJj070KJtRurBEIGmLaN+WoAgAAJXwCAAOt0oIAABRpAgAAL2ECAAB9NYIAAlEawgAAzoeCAAMFNUIAAEs8Q
-References: <20260804143305.1344327-1-mb@smartsharesystems.com>
- <20260804085210.74763eb5@phoenix.local>
- <98CBD80474FA8B44BF855DF32C47DC35F659B8@smartserver.smartshare.dk>
- <6f474724bc22441a8a4f516f3398ca76@huawei.com>
- <98CBD80474FA8B44BF855DF32C47DC35F659BD@smartserver.smartshare.dk>
- <3c7eea01416249e0aaeab0e8b6b4c157@huawei.com>
- <98CBD80474FA8B44BF855DF32C47DC35F659BF@smartserver.smartshare.dk>
- <3a96ca58a1e146758f5314202a04c3de@huawei.com>
- <98CBD80474FA8B44BF855DF32C47DC35F659C3@smartserver.smartshare.dk>
- <fc32ab5225194114bac9286fe82815e1@huawei.com>
-From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
- "Stephen Hemminger" <stephen@networkplumber.org>
-Cc: <dev@dpdk.org>,
-	"Bruce Richardson" <bruce.richardson@intel.com>
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,113 +45,116 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBLb25zdGFudGluIEFuYW55ZXYgW21haWx0bzprb25zdGFudGluLmFuYW55ZXZAaHVh
-d2VpLmNvbV0NCj4gU2VudDogVGh1cnNkYXksIDYgQXVndXN0IDIwMjYgMDkuNTgNCj4gDQo+ID4g
-PiA+ID4gPiA+ID4gPiA+ICsJLyogQ29tbW9uIHdheSBmb3Igc21hbGwgY29weSBzaXplIG9mIDY0
-LWJ5dGUNCj4gYmxvY2tzLg0KPiA+ID4gPiA+ID4gPiBVbmxpa2VseSwgc28NCj4gPiA+ID4gPiA+
-ID4gPiA+IGNvbnN0YW50IHNpemUgb25seSAqLw0KPiA+ID4gPiA+ID4gPiA+ID4gPiArCWlmIChf
-X3J0ZV9jb25zdGFudChuKSAmJiAobiAmIDYzKSA9PSAwICYmIG4gPD0NCj4gPiA+ID4gPiA+ID4g
-PiA+IFJURV9NRU1DUFlfQkxPQ0tfNjRfTUFYKSB7DQo+ID4gPiA+ID4gPiA+ID4gPiA+ICsJCXZv
-aWQgKnJldCA9IGRzdDsNCj4gPiA+ID4gPiA+ID4gPiA+ID4gKw0KPiA+ID4gPiA+ID4gPiA+ID4N
-Cj4gPiA+ID4gPiA+ID4gPiA+IE1heWJlIGp1c3QgbGV0IGNvbXBpbGVyIGRlY2lkZSwgaXQgd2ls
-bCBnZW5lcmF0ZSB2ZWN0b3INCj4gPiA+ID4gPiA+ID4gaW5zdHJ1Y3Rpb25zIGluDQo+ID4gPiA+
-ID4gPiA+ID4gPiBtb3N0IGNhc2VzLg0KPiA+ID4gPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+ID4g
-PiA+IAlpZiAoX19ydGVfY29uc3RhbnQobikpDQo+ID4gPiA+ID4gPiA+ID4gPiAJCXJldHVybiBt
-ZW1wY3B5KGRzdCwgc3JjLCBuKTsNCj4gPiA+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gPiA+IE1h
-eWJlIGluIG1vc3QsIGJ1dCBub3QgaW4gYWxsOg0KPiA+ID4gPiA+ID4gPiA+IGh0dHBzOi8vZ29k
-Ym9sdC5vcmcvei9LdmRLcVQ1clkNCj4gPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+ID4gV2l0aCAn
-LW1hdngnIG9yICctbWF2eDUxMmYnIGl0IGxvb2tzIGxpa2UgaXQgZG9lcyBmb3IgeW91cg0KPiA+
-ID4gc2FtcGxlDQo+ID4gPiA+ID4gY29kZS4NCj4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiBJdCBh
-bHNvIGRvZXMgd2l0aCAtbXNzZTQuMiB3aGVuIFNaIGlzIHJlZHVjZWQgdG8gMjU2IGJ5dGVzLg0K
-PiA+ID4gPiA+ID4gQ2xhbmcgc3dpdGNoZXMgdG8gaW5saW5lIHdoZW4gU1ogaXMgcmVkdWNlZCB0
-byAxMjggYnl0ZXMuDQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gSXQgc2VlbXMgdGhlIGNvbXBp
-bGVyIGhhcyBhIHRocmVzaG9sZCBmb3Igd2hlbiB0byBpbmxpbmUgYW5kDQo+IHdoZW4NCj4gPiA+
-IHRvDQo+ID4gPiA+ID4gY2FsbCB0aGUgQw0KPiA+ID4gPiA+ID4gbGlicmFyeSdzIG1lbWNweSBz
-dWJyb3V0aW5lLg0KPiA+ID4gPiA+ID4gVGhlIHRocmVzaG9sZCBkZXBlbmRzIG9uIGJvdGggY29w
-eSBzaXplIGFuZCB2ZWN0b3IgcmVnaXN0ZXINCj4gc2l6ZS4NCj4gPiA+ID4gPiA+IEFuZCBpdCBp
-cyBjb21waWxlciBkZXBlbmRlbnQuDQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBJIHRoaW5rIHRoZXJl
-IGFyZSBjb21waWxlciBvcHRpb25zIHRvIHNwZWNpZnkgZGVzaXJlZCB0aHJlc2hvbGQNCj4gPiA+
-IHZhbHVlcy4NCj4gPiA+ID4gPiBMZXQgc2F5IGZvciBnY2MgdGhlcmUgaXMgICcgLW1tZW1jcHkt
-c3RyYXRlZ3k9c3RyYXRlZ3knLg0KPiA+ID4gPiA+IEZvciB0aGF0IGV4YW1wbGUgaW4gdGhhdCBw
-YXJ0aWN1bGFyIGNhc2UNCj4gPiA+ID4gPiAtbW1lbWNweS1zdHJhdGVneT12ZWN0b3JfbG9vcDo1
-MTI6YWxpZ24sbG9vcDotMTphbGlnbg0KPiA+ID4gPiA+IGdlbmVyYXRlcyBzc2UgbG9hZHMvc3Rv
-cmVzLg0KPiA+ID4gPiA+IE1pZ2h0IGJlIHdlIGNhbiBleHBsb2l0IGl0IHNvbWVob3c/DQo+ID4g
-PiA+DQo+ID4gPiA+IFRoYXQgY291bGQgZ2l2ZSB1cyBoaWdoZXIgZ3JhbnVsYXJpdHkvY29udHJv
-bCBvdmVyIG1lbWNweSBmb3INCj4gPiA+IGluZGl2aWR1YWwNCj4gPiA+ID4gbWVtY3B5IGluc3Rh
-bmNlczsgbWlnaHQgYmUgdXNlZnVsIGZvciBob3QgY29kZSBwYXRocyB3aGVyZSB3ZQ0KPiBoYXZl
-DQo+ID4gPiBtb3JlDQo+ID4gPiA+IGtub3dsZWRnZSBhYm91dCB0aGUgY29weSBvcGVyYXRpb24g
-dGhhbiB0aGUgY29tcGlsZXIgY2FuIGluZmVyLg0KPiA+ID4gPiBIb3dldmVyLCBwcmFnbWFzIGFy
-ZSBkaXNjb3VyYWdlZCBpbiBEUERLLCBhbmQgdGhpcyBsb29rcyBsaWtlIGENCj4gdmVyeQ0KPiA+
-ID4gc2ltaWxhcg0KPiA+ID4gPiBwYXRoLg0KPiA+ID4NCj4gPiA+IFdlbGwsIHJpZ2h0IG5vdyAg
-cnRlX21lbWNweS5oIGlzIDcwMCsgbGluZXMgYW5kIGtlZXBzIGdyb3dpbmcuDQo+ID4gPiBDb25z
-aWRlcmluZyB0aGF0IHByb2JhYmx5IHByYWdtYXMgYXJlIG5vdCB0aGF0IGJhZC4NCj4gPiA+IE9m
-IGNvdXJzZSwgcHJhZ21hcyBoYXZlIHRoZWlyIG93biBpc3N1ZXMgYW5kIGl0IGlzIGhhcmQgdG8g
-ZW5zdXJlDQo+IHRoYXQNCj4gPiA+IHRoZXkgd2lsbCBwcm9kdWNlIHNhbWUgY29kZSBiZXR3ZWVu
-IGRpZmZlcmVudCBjb21waWxlcnMvdmVyc2lvbnMsDQo+IGV0Yy4NCj4gPiA+DQo+ID4gPiA+ID4g
-SSBhbSBub3QgcmVhbGx5IGhhcHB5IHRoYXQgb3VyIGhvbWUtYnJld2VkIG1lbWNweSBjb2RlLWJs
-b2NrDQo+IGtlZXBzDQo+ID4gPiA+ID4gZ3Jvd2luZywNCj4gPiA+ID4gPiB3aGlsZSB3ZSBrZWVw
-IHRhbGtpbmcgdGhhdCBpdCB3b3VsZCBiZSBnb29kIHRvIGVsaW1pbmF0ZSBpdA0KPiA+ID4gY29t
-cGxldGVseS4NCj4gPiA+ID4NCj4gPiA+ID4gSSBhZ3JlZSBpbiBwcmluY2lwbGUuDQo+ID4gPiA+
-IEhvd2V2ZXIsIHRoaXMgcnRlX21lbWNweSgpIG9wdGltaXphdGlvbiBpcyBmb3IgdGhlIHBpbGUv
-bWVtcG9vbA0KPiA+ID4gb3B0aW1pemF0aW9ucw0KPiA+ID4gPiBJJ20gd29ya2luZyBvbiwgc28g
-dGhlcmUgaXMgYSBzcGVjaWZpYyB1c2UgY2FzZSBtb3RpdmF0aW5nIHRoZQ0KPiBhZGRlZA0KPiA+
-ID4gY29kZS4NCj4gPiA+DQo+ID4gPiBJIHVuZGVyc3RhbmQgdGhhdCB5b3UgcHJvYmFibHkgaGF2
-ZSBzb21lIHNwZWNpZmljIHVzZS1jYXNlIGluIG1pbmQuDQo+ID4gPiBCVFcgZm9yIHRoaXMgb3B0
-aW1pemF0aW9uIHlvdSBtZW50aW9uZWQgYWJvdmU6IHdoYXQgaXMgdGhlIGdhaW4NCj4gd2l0aA0K
-PiA+ID4gdGhlc2UgY2hhbmdlcz8NCj4gPg0KPiA+IElNTywgdGhlIHByaW1hcnkgYmVuZWZpdCBp
-cyB0aGUgbXVjaCBzaW1wbGVyIChhbmQgc21hbGxlcikgYXNzZW1ibHkNCj4gb3V0cHV0IGR1ZQ0K
-PiA+IHRvIGF2b2lkaW5nIHRoZSBhZGRyZXNzIGFsaWdubWVudCBjaGVjayAoYW5kIHRoZSByZXN1
-bHRpbmcgZHVwbGljYXRlZA0KPiBjb2RlKS4NCj4gDQo+IEkgdGhpbmsgdGhhdCBzaG91bGQgYmUg
-bWVhc3VyYWJsZSB0b286IHdob2xlIGJpbmFyeSAgYW5kL29yIGhvdCBwYXRoDQo+IGZ1bmN0aW9u
-IHNpemUgcmVkdWN0aW9uLCBldGMuDQoNClRoZSBzaXplIG9mIHRoZSBnZW5lcmF0ZWQgY29kZSBm
-b3IgdGhlIGNvcHkgb3BlcmF0aW9uIGlzIHJlZHVjZWQgdG8gc2xpZ2h0bHkgbGVzcyB0aGFuIGhh
-bGYgKG9ubHkgb25lIGluc3RhbmNlIG9mIHRoZSBjb3B5IG9wZXJhdGlvbiBpbnN0ZWFkIG9mIHR3
-bywgYW5kIHRoZSBhZGRyZXNzIGFsaWdubWVudCBjb21wYXJpc29uIGlzIG9taXR0ZWQpLg0KDQo+
-IA0KPiA+IEkgaGF2ZW4ndCBtZWFzdXJlZCB0aGUgcGVyZm9ybWFuY2UgZ2Fpbi4NCj4gPiBCYXNl
-ZCBvbiB0aGUgcGVyZiBnYWluIGluIGEgcHJldmlvdXMgbWVtcG9vbCBvcHRpbWl6YXRpb24gcGF0
-Y2ggWzFdLA0KPiBpdCBzZWVtcw0KPiA+IGF2b2lkaW5nIHRoZSBhZGRyZXNzIGFsaWdubWVudCBj
-aGVjayBzaGF2ZXMgfjIgY3ljbGVzIG9mZiB0aGUgY29weQ0KPiBvcGVyYXRpb24gKGZvcg0KPiA+
-IGNhY2hlLXRvLWNhY2hlIGNvcHkpLg0KPiA+IEkgZXhwZWN0IHRoYXQgdGhlIHNhbWUgZ2FpbiAo
-ZnJvbSBhdm9pZGluZyB0aGUgYWRkcmVzcyBhbGlnbm1lbnQNCj4gY2hlY2spIGFwcGxpZXMNCj4g
-PiBoZXJlLg0KPiANCj4gT2ssIHRoZW4gSSBzdWdnZXN0IHdlIGRvIHNvbWUgbWVhc3VyZW1lbnRz
-IGZpcnN0LCBiZWZvcmUgZ29pbmcgZm9yd2FyZA0KPiB3aXRoIGl0Lg0KDQpJIHRyaWVkIG1lbWNw
-eV9wZXJmX2F1dG90ZXN0LCBidXQgdGhlIGJyYW5jaCBwcmVkaWN0b3Iga2lja3MgaW4gYW5kIGVs
-aW1pbmF0ZXMgdGhlIGNvc3Qgb2YgdGhlIGFkZHJlc3MgYWxpZ25tZW50IGNvbXBhcmlzb24uIFNv
-IHRoZSByZXN1bHRzIGFyZSB2ZXJ5IHNpbWlsYXIuDQoNCkJUVywgdGhhdCdzIGEgZ2VuZXJhbCBp
-c3N1ZSB3aXRoIG91ciBwZXJmIHRlc3RzOiBSZXBlYXRlZCB0ZXN0aW5nIGRvZXNuJ3Qgc2hvdyB0
-aGUgY29zdCBvZiBicmFuY2hlcywgYmVjYXVzZSB0aGV5IGFyZSBhbHdheXMgZWxpbWluYXRlZCBi
-eSB0aGUgYnJhbmNoIHByZWRpY3Rvci4NCg0KPT09PT09PSA9PT09PT09PT09PT09PT09PSA9PT09
-PT09PT09PT09PT09PSA9PT09PT09PT09PT09PT09PSA9PT09PT09PT09PT09PT09PQ0KICAgU2l6
-ZSAgIENhY2hlIHRvIGNhY2hlICAgICBDYWNoZSB0byBtZW0gICAgICBNZW0gdG8gY2FjaGUgICAg
-ICAgIE1lbSB0byBtZW0NCihieXRlcykgICAgICAgICAgKHRpY2tzKSAgICAgICAgICAodGlja3Mp
-ICAgICAgICAgICAodGlja3MpICAgICAgICAgICAodGlja3MpDQotLS0tLS0tIC0tLS0tLS0tLS0t
-LS0tLS0tIC0tLS0tLS0tLS0tLS0tLS0tIC0tLS0tLS0tLS0tLS0tLS0tIC0tLS0tLS0tLS0tLS0t
-LS0tDQo9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0gMzJCIGFsaWduZWQgPT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09DQpCZWZvcmUNCkMgICAgNjQgIDIgLSAgMiggIDku
-NjAlKSAgMjIgLSAyMSggIDQuNDglKSAgMzMgLSAzMSggIDUuMTUlKSAgNTcgLSA1NiggIDAuMjgl
-KQ0KQyAgIDEyOCAgNCAtICA0KCAgNS41NiUpICA0MSAtIDQwKCAgMy41OSUpICA1MyAtIDUyKCAg
-MS40OSUpIDEwMSAtMTAwKCAgMC43MSUpDQpDICAgMTkyICA2IC0gIDYoICA0LjA2JSkgIDY0IC0g
-NjAoICA1LjYxJSkgIDY4IC0gNjkoIC0xLjY4JSkgMTM2IC0xMzgoIC0xLjQ5JSkNCkMgICAyNTYg
-MTAgLSAgOSggIDUuMjElKSAgODIgLSA4MSggIDEuMjAlKSAgOTMgLSA4NyggIDcuNDclKSAxNzIg
-LTE3NSggLTEuNDYlKQ0KQWZ0ZXINCkMgICAgNjQgIDIgLSAgMiggLTAuNzElKSAgMjIgLSAyMSgg
-IDcuNjIlKSAgMzEgLSAzMCggIDQuMzIlKSAgNTcgLSA1OSggLTMuMDMlKQ0KQyAgIDEyOCAgNCAt
-ICA0KCAtMC4zNCUpICA0MCAtIDQwKCAgMC42MCUpICA1MCAtIDUwKCAgMC40MSUpICA5NyAtIDk5
-KCAtMS45NiUpDQpDICAgMTkyICA2IC0gIDYoICA1LjI3JSkgIDU5IC0gNTkoIC0wLjI3JSkgIDY5
-IC0gNzIoIC00LjQyJSkgMTM5IC0xMzgoICAwLjkwJSkNCkMgICAyNTYgIDkgLSAgOSggIDkuMTQl
-KSAgNzcgLSA3NyggIDAuMjUlKSAgODkgLSA5MCggLTAuODglKSAxODAgLTE3NyggIDEuNTclKQ0K
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PSBVbmFsaWduZWQgPT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PQ0KQmVmb3JlDQpDICAgIDY0ICA1IC0gIDUoICAwLjk4JSkg
-IDMyIC0gMzIoICAwLjcyJSkgIDQyIC0gNDIoICAwLjQ0JSkgIDgyIC0gODIoICAwLjUxJSkNCkMg
-ICAxMjggIDggLSAgOSgtMTEuMjYlKSAgNTEgLSA1MCggIDAuNTMlKSAgNjAgLSA1OSggIDAuODkl
-KSAxMTcgLTExNSggIDEuMzclKQ0KQyAgIDE5MiAxMyAtIDEyKCAgMS42MiUpICA2NiAtIDY3KCAt
-MS4xMiUpICA4MyAtIDgwKCAgMy4yNiUpIDE1NyAtMTY1KCAtNS4yNSUpDQpDICAgMjU2IDIxIC0g
-MjIoIC01Ljc4JSkgIDk0IC0gOTMoICAxLjY1JSkgMTAwIC0gOTkoICAxLjUyJSkgMjAyIC0yMDQo
-IC0xLjM0JSkNCkFmdGVyDQpDICAgIDY0ICA1IC0gIDUoICAwLjA1JSkgIDMxIC0gMzEoICAwLjE2
-JSkgIDQwIC0gMzkoICAxLjM3JSkgIDc3IC0gNzcoIC0wLjkzJSkNCkMgICAxMjggIDkgLSAgOSgg
-LTAuNjklKSAgNTAgLSA1MCggLTAuMDIlKSAgNjEgLSA2MCggIDIuNzElKSAxMTggLTEyMiggLTMu
-MTUlKQ0KQyAgIDE5MiAxMiAtIDExKCAgNy42OCUpICA2OCAtIDY2KCAgMy42NCUpICA3OSAtIDgx
-KCAtMi44NSUpIDE2NCAtMTY0KCAtMC4xMiUpDQpDICAgMjU2IDIxIC0gMjAoICAxLjgwJSkgIDkw
-IC0gODcoICAyLjcwJSkgIDk2IC0gOTcoIC0wLjk5JSkgMjAyIC0yMDEoICAwLjA5JSkNCg0KPiAN
-Cj4gPiBbMV06DQo+IGh0dHBzOi8vcGF0Y2h3b3JrLmRwZGsub3JnL3Byb2plY3QvZHBkay9wYXRj
-aC8yMDI2MDUyMTE4NTYzMS4xMTYwNDYtMS0NCj4gPiBtYkBzbWFydHNoYXJlc3lzdGVtcy5jb20v
-DQoNCg==
+The platform bus currently matches a DPDK driver to a device only by
+comparing the kernel driver name bound to the device against the DPDK
+driver name. Devices bound to the generic vfio-platform kernel driver
+all report the same driver name, which carries no device identity, so a
+specific DPDK driver cannot claim its device this way.
+
+Add of_device_is_compatible(), which reads the device-tree "compatible"
+strings exposed under the device's of_node in sysfs and compares them
+against a requested string. platform_bus_match() now falls back to
+matching the DPDK driver name or its alias against these compatible
+strings, letting a driver bind to a device identified by its
+device-tree "compatible" value.
+
+Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
+---
+ drivers/bus/platform/platform.c | 67 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 66 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/bus/platform/platform.c b/drivers/bus/platform/platform.c
+index 90d865a8df..6d5b0d3a4e 100644
+--- a/drivers/bus/platform/platform.c
++++ b/drivers/bus/platform/platform.c
+@@ -1,5 +1,6 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+  * Copyright(C) 2023 Marvell.
++ * Copyright 2026 NXP
+  */
+ 
+ #include <uapi/linux/vfio.h>
+@@ -230,6 +231,57 @@ of_resource_name(const char *dev_name, int index)
+ 	return NULL;
+ }
+ 
++/*
++ * Check whether any of the NUL-separated device-tree "compatible" strings
++ * exposed by the platform device matches the given string. A single pair of
++ * enclosing double quotes is stripped from the requested compatible so both
++ * quoted and unquoted spellings match the raw device-tree value.
++ */
++static bool
++of_device_is_compatible(const char *dev_name, const char *compat)
++{
++	char path[PATH_MAX], buf[BUFSIZ] = { };
++	char want[BUFSIZ];
++	const char *s;
++	size_t clen;
++	FILE *f;
++	size_t len;
++
++	if (compat == NULL)
++		return false;
++
++	/* Copy the requested compatible, dropping a pair of enclosing quotes. */
++	clen = strlen(compat);
++	if (clen >= 2 && compat[0] == '"' && compat[clen - 1] == '"') {
++		clen -= 2;
++		if (clen >= sizeof(want))
++			clen = sizeof(want) - 1;
++		memcpy(want, compat + 1, clen);
++		want[clen] = '\0';
++	} else {
++		rte_strscpy(want, compat, sizeof(want));
++	}
++
++	snprintf(path, sizeof(path), PLATFORM_BUS_DEVICES_PATH "/%s/of_node/compatible", dev_name);
++	f = fopen(path, "r");
++	if (f == NULL)
++		return false;
++
++	/* Read the raw contents, preserving embedded NULL separators. */
++	len = fread(buf, 1, sizeof(buf) - 1, f);
++	fclose(f);
++	if (len == 0)
++		return false;
++
++	/* Bound the walk by the read length: some kernels omit the trailing NULL. */
++	for (s = buf; s < buf + len; s += strlen(s) + 1) {
++		if (!strcmp(s, want))
++			return true;
++	}
++
++	return false;
++}
++
+ static int
+ device_map_resources(struct rte_platform_device *pdev, unsigned int num)
+ {
+@@ -386,8 +438,21 @@ platform_bus_match(const struct rte_driver *drv, const struct rte_device *dev)
+ 	}
+ 
+ 	/* match by device name */
+-	if (!strcmp(pdev->name, pdrv->driver.name))
++	if (!strcmp(pdev->name, pdrv->driver.name)) {
+ 		match = true;
++		goto out;
++	}
++
++	/*
++	 * The generic vfio-platform kernel driver name carries no device
++	 * identity, so fall back to matching the device-tree "compatible"
++	 * strings against the DPDK driver name or alias.
++	 */
++	if (of_device_is_compatible(pdev->name, pdrv->driver.name) ||
++	    of_device_is_compatible(pdev->name, pdrv->driver.alias)) {
++		match = true;
++		goto out;
++	}
+ 
+ out:
+ 	free(kdrv);
+-- 
+2.25.1
+
