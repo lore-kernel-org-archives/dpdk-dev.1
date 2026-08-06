@@ -2,69 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9D73C55838
-	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 03:26:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0492C55838
+	for <dpdk-dev@archiver.kernel.org>; Thu,  6 Aug 2026 03:26:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E4F10406B4;
-	Thu,  6 Aug 2026 05:26:00 +0200 (CEST)
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com
- [209.85.216.52]) by mails.dpdk.org (Postfix) with ESMTP id 6477D406B4
- for <dev@dpdk.org>; Thu,  6 Aug 2026 05:25:58 +0200 (CEST)
-Received: by mail-pj1-f52.google.com with SMTP id
- 98e67ed59e1d1-38dc4553f62so1855154a91.0
- for <dev@dpdk.org>; Wed, 05 Aug 2026 20:25:58 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D85A240A76;
+	Thu,  6 Aug 2026 05:26:01 +0200 (CEST)
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com
+ [209.85.215.180])
+ by mails.dpdk.org (Postfix) with ESMTP id 6989B406B8
+ for <dev@dpdk.org>; Thu,  6 Aug 2026 05:25:59 +0200 (CEST)
+Received: by mail-pg1-f180.google.com with SMTP id
+ 41be03b00d2f7-c9e7391839cso1639607a12.0
+ for <dev@dpdk.org>; Wed, 05 Aug 2026 20:25:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785986757;
- x=1786591557; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1785986758;
+ x=1786591558; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=E3N+8LlpTc8hcuIAubrC64R0p8hw3zimiex6fza0Jio=;
- b=bVuUkdiGQS7cSqaPiOOKnl0tgCorw3PB+JZUuN7nsNjwdamE5m47oMA+nmqNdMedhN
- ftMmTy0WOBzs2TrAckfbPCrmu0xvGvrnUs3qRDNtF6DkllbmxFNBC7FiBgp8IOemis4A
- nsQ2gBJ+9/odBDpBkxxQly7TaPaZQf696pYxyX2CVVZZjwYRyJd5V6NHYpxDiLT9aK6l
- aDWCV1c0TaxW6V/9Uy8kU/8UDZtArTxRAGMFoApBE/g3JFz0CU5Z4TbtDi9KE12HA8ic
- CQbGt6XQJJBKoQA6LyVl+yXnTmW48n4CcGzKWddXRbrfoCzolPmGgPvuQyxajWk20tPy
- HqZw==
+ bh=oXfyXLy6OUjoEhM8oMb1wm6XoMDgVHDHJy8P9wKoggo=;
+ b=ClMzXw9tAxu6HKB7GR6XFo7bdZH+OZQFqnApblcXE4EqXWBE4ci1a6YiAmeKi3XT6O
+ PRhOtHBNO22+C1EbbPaHHAuQjOmAGKHsjO8nSfSHQPxeoJNbagx5wg74CYMB2DYlutV/
+ CaNXfBwlQzsphocd6hTaQVv4BKeQevM3wgUgu56lo4QLcd3g34ZYFpFISuGcijElsRPp
+ Rp+mdx2PJHPQCrCyO0FglLgM2zD8CdMjZC9wnJvd6w7NOgSoN0M251cVPqv8CeBJQaAn
+ TZYEqZuQ6paGHWTXFBKZVXBLfMAe6FO2P2upGzZK3c73Cg+DkPPgHmoUAH77DbAF47Pe
+ 9Wkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1785986757; x=1786591557;
+ d=1e100.net; s=20251104; t=1785986758; x=1786591558;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=E3N+8LlpTc8hcuIAubrC64R0p8hw3zimiex6fza0Jio=;
- b=C/cVYoEZM2DPMgdAgtImc2ajIwUIVPapyiKzYB7BgLun7rG46ca9lmexHxGZhkLoPT
- EJNL1/+vug5qcYilZqhdQyvXU6GJrUbLmjt40HlAC4ybaeNwmX2lyJqv15KHrOhR9uqZ
- ICELIXz1tBmUdhfk7Te7ksGP65rk+CRrAp7iIwBAPw1RkqfzkAitxkGfmwveW+gwuZaF
- Nwa9hawKzpT/U7gqfhXDa2oU+pt/cXUCQyEqFGWcsqT/lSMuZAhrEnE6mSttaFZzyFvI
- Y1szdrnxIozvl39L3DYCYNstNrfoeh1wwEvXGOHsM8bG0u5R4z4uFPpbJc/GzYoiYk28
- eYVA==
-X-Gm-Message-State: AOJu0YzFXnSTnPChJqS1actiPgrj4x0lIk9lrG03gSnB5Lc8B/93ZuAE
- zcntY11OKGtEiJmYGMLDQqOblxRvRBXWv3YAjPLrrhV5GCg/S8ANIMheL36sgxuJ7u+EUP+PjiI
- lmcc0YS8=
-X-Gm-Gg: AR+sD10sDNIV7/4vydcFWAGscfUkeRGbCKKOipv8aMbOyykY+PAoskilh76maGwsmSS
- x8SUxlalOsarAZ9bpCa/oH+wKiihHW+AcZ+7ypk7+fs0J9dHz7LoyxpFO1YjPthLvkaOycn2nCU
- OyNLSRxt6izZE5l4IhuIYP43r3uvW+WxXQE0qNvRyrL1W1+QGf8zQSlsjx8p6vQhbQXlpP+KfzT
- AWtQHQNK2aoBJe3Zd/nHRh5Xrynk2fRkiuZuSk/nPhbPoYRMMOvGxCTg41OhNTYwTjyMHdmykAE
- aeimHbvcz89RH2OFHwLBoIH19At3RWHtBSf7pJa3Wc8z4GOrdrtTwtuK1X5IJBxWZOo6RWFEvIS
- 8IHmjRBHBuQbcoAv58vbXhamq0Pbd7nlNkA2Befc2LqwycNtt7SQdJdL8LCRZ+aAam0+OeAKzmH
- lmilWXIuo6cXksJVb578O4CopUpdauBC0/dS6PMxnrdwE0K/JdIr4opxScu5fF3iYpUQo/cXZOc
- +HHiEmBkLwzfbXWML0PuMFj+Xg=
-X-Received: by 2002:a17:90b:3a8e:b0:381:152b:d596 with SMTP id
- 98e67ed59e1d1-3903c59a6f9mr9693719a91.11.1785986757496; 
- Wed, 05 Aug 2026 20:25:57 -0700 (PDT)
+ bh=oXfyXLy6OUjoEhM8oMb1wm6XoMDgVHDHJy8P9wKoggo=;
+ b=Rq8ItQgf4nTOQPwD1fnh9B6zuOFdGRjzhe5cxtdylSgb58QoR+zt9GV6jgXiDWVMVP
+ 3EinlaVrlJcUu3+hIUUuyIoxE/iMOB8MsY1kb7UJZMcTQgXHM+CNqeMqPaR8uJBciyo8
+ S9GU1NXPQVfkc4P8PMKTS/ve2uKy9CEt6quleVr9DPErjqcIT+Ibm7lHcu5wI32i/et7
+ CKueHtCnTGAvlBncOGRQHNqec5cwv4YPS3wo5Lw7bzmBPI/QubjHPlCRKtLWN+J72xIo
+ O4TP/5LDJKsyl8Ktoi80NwUeHYuoSj3V0bpUmsevidenNYHD5kJFkB5zQhs+5/nxL/+1
+ sjmw==
+X-Gm-Message-State: AOJu0YzPvDNTP31TjaTqIyWp9wcaovagVV8zHwBRjqbJ9B+maR/Na9PB
+ d0OsSGwJLqAIRj5gbUHcZ/ctGksGNEDqNvab5H+1bPYStjEIJ/XhRKARB1AMGAILGOlUvWfZ0kq
+ GBM+/q+k=
+X-Gm-Gg: AR+sD12/KnYkScaqQ+jlW9rlLXIuLUgkWA/uhKEUdcZXA3k2a/fB+vzSezHTL7pizEy
+ MchtMHLUJVtaT3eJroRQn28a80j8hFaQ2HaiFr8KxwTyHEdU3BG62aNrQxu6JsBqnjGukS42rQL
+ //8bB7E1CYYNstMJZRi/xcQZmcsGg0SbOfdAfm7qHWxDqTMovwT2tvAs7FOobzJOfDUDWsAjqab
+ x6h7htW0bb43lqslMrl+zwlav4f1htL6PvV1aK5H8Ia8nbLSH2Sn5vGpsc1d0VJm8buwd91qyG0
+ 3EOUgtNALGwNeAky7/vDoewvtHKjNIZLqKrOKCPAbhT/iYp2vrB7mK8J7/ChWEu9zztZrIluxNZ
+ Q2Tkxg6aPc7foIsDX2N1JN6higoaLKqhCJoxw2jhGt09KyO6ksP9dJyaCEfpefXnIchOc4H8E9w
+ Hj7RPrNY7vBfuNueUMrR938pdk7vxe9QfnO4SGOWHa5x8JiKBPC9U8q6dAkruR9bHXX+BpT5J3I
+ vVuoKcf3ENdBXuvhS9XQfM931JFWq2AaGPLgQ==
+X-Received: by 2002:a05:6a21:6112:b0:3b7:aefe:4367 with SMTP id
+ adf61e73a8af0-3cb85f509e2mr14251975637.33.1785986758532; 
+ Wed, 05 Aug 2026 20:25:58 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-315863b0c61sm23301631eec.6.2026.08.05.20.25.56
+ 5a478bee46e88-315863b0c61sm23301631eec.6.2026.08.05.20.25.57
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 05 Aug 2026 20:25:57 -0700 (PDT)
+ Wed, 05 Aug 2026 20:25:58 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Sunil Uttarwar <sunilprakashrao.uttarwar@amd.com>
-Subject: [PATCH v7 09/24] crypto/ccp: replace use of rte_atomic64 with
- stdatomic
-Date: Wed,  5 Aug 2026 20:23:01 -0700
-Message-ID: <20260806032544.21337-10-stephen@networkplumber.org>
+ Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>
+Subject: [PATCH v7 10/24] bus/dpaa: replace rte_atomic16 with stdatomic
+Date: Wed,  5 Aug 2026 20:23:02 -0700
+Message-ID: <20260806032544.21337-11-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260806032544.21337-1-stephen@networkplumber.org>
 References: <20260521042043.1590536-1-stephen@networkplumber.org>
@@ -84,122 +85,55 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The rte_atomicNN functions are deprecated. Replace the free
-count with stdatomic.
+This is simple inuse flag which can be done with stdatomic
+exchange logic.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/crypto/ccp/ccp_crypto.c | 11 +++++++----
- drivers/crypto/ccp/ccp_crypto.h |  2 +-
- drivers/crypto/ccp/ccp_dev.c    | 10 ++++++----
- drivers/crypto/ccp/ccp_dev.h    |  4 ++--
- 4 files changed, 16 insertions(+), 11 deletions(-)
+ drivers/bus/dpaa/base/qbman/qman.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/crypto/ccp/ccp_crypto.c b/drivers/crypto/ccp/ccp_crypto.c
-index b07a786d8e..f966335be5 100644
---- a/drivers/crypto/ccp/ccp_crypto.c
-+++ b/drivers/crypto/ccp/ccp_crypto.c
-@@ -2683,7 +2683,8 @@ process_ops_to_enqueue(struct ccp_qp *qp,
- 	b_info->cmd_q = cmd_q;
- 	b_info->lsb_buf_phys = (phys_addr_t)rte_mem_virt2iova((void *)b_info->lsb_buf);
- 
--	rte_atomic64_sub(&b_info->cmd_q->free_slots, slots_req);
-+	rte_atomic_fetch_sub_explicit(&b_info->cmd_q->free_slots, slots_req,
-+				      rte_memory_order_seq_cst);
- 
- 	b_info->head_offset = (uint32_t)(cmd_q->qbase_phys_addr + cmd_q->qidx *
- 					 Q_DESC_SIZE);
-@@ -2729,8 +2730,9 @@ process_ops_to_enqueue(struct ccp_qp *qp,
- 			result = -1;
- 		}
- 		if (unlikely(result < 0)) {
--			rte_atomic64_add(&b_info->cmd_q->free_slots,
--					 (slots_req - b_info->desccnt));
-+			rte_atomic_fetch_add_explicit(&b_info->cmd_q->free_slots,
-+						      slots_req - b_info->desccnt,
-+						      rte_memory_order_seq_cst);
- 			break;
- 		}
- 		b_info->op[i] = op[i];
-@@ -2914,7 +2916,8 @@ process_ops_to_dequeue(struct ccp_qp *qp,
- success:
- 	*total_nb_ops = b_info->total_nb_ops;
- 	nb_ops = ccp_prepare_ops(qp, op, b_info, nb_ops);
--	rte_atomic64_add(&b_info->cmd_q->free_slots, b_info->desccnt);
-+	rte_atomic_fetch_add_explicit(&b_info->cmd_q->free_slots, b_info->desccnt,
-+				      rte_memory_order_seq_cst);
- 	b_info->desccnt = 0;
- 	if (b_info->opcnt > 0) {
- 		qp->b_info = b_info;
-diff --git a/drivers/crypto/ccp/ccp_crypto.h b/drivers/crypto/ccp/ccp_crypto.h
-index d0b417ca29..5c61b1582d 100644
---- a/drivers/crypto/ccp/ccp_crypto.h
-+++ b/drivers/crypto/ccp/ccp_crypto.h
-@@ -10,7 +10,7 @@
- #include <stdint.h>
- #include <string.h>
- 
--#include <rte_atomic.h>
-+#include <rte_stdatomic.h>
+diff --git a/drivers/bus/dpaa/base/qbman/qman.c b/drivers/bus/dpaa/base/qbman/qman.c
+index d289df2d33..ff56f7b1ab 100644
+--- a/drivers/bus/dpaa/base/qbman/qman.c
++++ b/drivers/bus/dpaa/base/qbman/qman.c
+@@ -11,6 +11,7 @@
+ #include <rte_eventdev.h>
  #include <rte_byteorder.h>
- #include <rte_io.h>
- #include <rte_pci.h>
-diff --git a/drivers/crypto/ccp/ccp_dev.c b/drivers/crypto/ccp/ccp_dev.c
-index 5088d8ded6..a75816cdfc 100644
---- a/drivers/crypto/ccp/ccp_dev.c
-+++ b/drivers/crypto/ccp/ccp_dev.c
-@@ -47,14 +47,15 @@ ccp_allot_queue(struct rte_cryptodev *cdev, int slot_req)
- 	priv->last_dev = dev;
- 	if (dev->qidx >= dev->cmd_q_count)
- 		dev->qidx = 0;
--	ret = rte_atomic64_read(&dev->cmd_q[dev->qidx].free_slots);
-+	ret = rte_atomic_load_explicit(&dev->cmd_q[dev->qidx].free_slots, rte_memory_order_relaxed);
- 	if (ret >= slot_req)
- 		return &dev->cmd_q[dev->qidx];
- 	for (i = 0; i < dev->cmd_q_count; i++) {
- 		dev->qidx++;
- 		if (dev->qidx >= dev->cmd_q_count)
- 			dev->qidx = 0;
--		ret = rte_atomic64_read(&dev->cmd_q[dev->qidx].free_slots);
-+		ret = rte_atomic_load_explicit(&dev->cmd_q[dev->qidx].free_slots,
-+					       rte_memory_order_relaxed);
- 		if (ret >= slot_req)
- 			return &dev->cmd_q[dev->qidx];
- 	}
-@@ -583,8 +584,9 @@ ccp_add_device(struct ccp_device *dev)
- 			CCP_LOG_ERR("queue doesn't have lsb regions");
- 		cmd_q->lsb = -1;
- 
--		rte_atomic64_init(&cmd_q->free_slots);
--		rte_atomic64_set(&cmd_q->free_slots, (COMMANDS_PER_QUEUE - 1));
-+		rte_atomic_store_explicit(&cmd_q->free_slots,
-+					  COMMANDS_PER_QUEUE - 1,
-+					  rte_memory_order_seq_cst);
- 		/* unused slot barrier b/w H&T */
- 	}
- 
-diff --git a/drivers/crypto/ccp/ccp_dev.h b/drivers/crypto/ccp/ccp_dev.h
-index cd63830759..8c408ac8d3 100644
---- a/drivers/crypto/ccp/ccp_dev.h
-+++ b/drivers/crypto/ccp/ccp_dev.h
-@@ -11,7 +11,7 @@
- #include <string.h>
- 
- #include <bus_pci_driver.h>
--#include <rte_atomic.h>
+ #include <rte_dpaa_logs.h>
 +#include <rte_stdatomic.h>
- #include <rte_byteorder.h>
- #include <rte_io.h>
- #include <rte_pci.h>
-@@ -182,7 +182,7 @@ struct __rte_cache_aligned ccp_queue {
- 	struct ccp_device *dev;
- 	char memz_name[RTE_MEMZONE_NAMESIZE];
+ #include <eal_export.h>
+ #include <dpaa_bits.h>
  
--	rte_atomic64_t free_slots;
-+	RTE_ATOMIC(int64_t) free_slots;
- 	/**< available free slots updated from enq/deq calls */
+@@ -683,7 +684,7 @@ qman_init_portal(struct qman_portal *portal,
  
- 	/* Queue identifier */
+ #define MAX_GLOBAL_PORTALS 8
+ static struct qman_portal global_portals[MAX_GLOBAL_PORTALS];
+-static rte_atomic16_t global_portals_used[MAX_GLOBAL_PORTALS];
++static RTE_ATOMIC(bool) global_portals_used[MAX_GLOBAL_PORTALS];
+ 
+ struct qman_portal *
+ qman_alloc_global_portal(struct qm_portal_config *q_pcfg)
+@@ -691,7 +692,8 @@ qman_alloc_global_portal(struct qm_portal_config *q_pcfg)
+ 	unsigned int i;
+ 
+ 	for (i = 0; i < MAX_GLOBAL_PORTALS; i++) {
+-		if (rte_atomic16_test_and_set(&global_portals_used[i])) {
++		if (!rte_atomic_exchange_explicit(&global_portals_used[i], true,
++						  rte_memory_order_acquire)) {
+ 			global_portals[i].config = q_pcfg;
+ 			return &global_portals[i];
+ 		}
+@@ -708,7 +710,8 @@ qman_free_global_portal(struct qman_portal *portal)
+ 
+ 	for (i = 0; i < MAX_GLOBAL_PORTALS; i++) {
+ 		if (&global_portals[i] == portal) {
+-			rte_atomic16_clear(&global_portals_used[i]);
++			rte_atomic_store_explicit(&global_portals_used[i], false,
++						  rte_memory_order_release);
+ 			return 0;
+ 		}
+ 	}
 -- 
 2.53.0
 
