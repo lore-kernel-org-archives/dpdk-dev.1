@@ -2,49 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A47C5AC67
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Aug 2026 03:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F31C5AC7A
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Aug 2026 03:48:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 67A2C402AC;
-	Fri,  7 Aug 2026 05:33:03 +0200 (CEST)
-Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com
- [113.46.200.219])
- by mails.dpdk.org (Postfix) with ESMTP id E7A9D40279
- for <dev@dpdk.org>; Fri,  7 Aug 2026 05:33:01 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=BYR6F4zbyW1rHg0ObEA8Di+jjSPMlyn1fPcx7iGJux4=;
- b=VVCnkN3q2dqD3wWrahoFqfO8KBVwR6UIsk5rZuXKKY4BIEt4WZlTQF1E3StLF4njgwJ67y6RP
- XlzR7qMxh8DxKdfY1mzalssgdAAj8WTvMgSt6frtDK8sFr3xgS0Okjkm5TLE+nqZk3X72REQ5C6
- EqO9n4crZWVJYhpXwrwh1OU=
-Received: from mail.maildlp.com (unknown [172.19.162.197])
- by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4hGTxh2FGmz1prKd;
- Fri,  7 Aug 2026 11:23:20 +0800 (CST)
-Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
- by mail.maildlp.com (Postfix) with ESMTPS id 9C5884057D;
- Fri,  7 Aug 2026 11:32:54 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Fri, 7 Aug 2026 11:32:54 +0800
-Message-ID: <21ea27ff-513c-425e-8dfd-2a7fc4cee626@huawei.com>
-Date: Fri, 7 Aug 2026 11:32:53 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id 6E9AE402DF;
+	Fri,  7 Aug 2026 05:48:35 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 2812C40279
+ for <dev@dpdk.org>; Fri,  7 Aug 2026 05:48:34 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E32B720010E;
+ Fri,  7 Aug 2026 05:48:33 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com
+ (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id AC65D20010D;
+ Fri,  7 Aug 2026 05:48:33 +0200 (CEST)
+Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
+ [92.120.147.250])
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id E1FE418000B1;
+ Fri,  7 Aug 2026 11:48:32 +0800 (+08)
+From: Gagandeep Singh <g.singh@nxp.com>
+To: dev@dpdk.org
+Cc: hemant.agrawal@nxp.com
+Subject: [PATCH v2 00/14] net/enetc: add new features for ENETC4 VF on i.MX9
+Date: Fri,  7 Aug 2026 09:18:15 +0530
+Message-Id: <20260807034829.1030307-1-g.singh@nxp.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20260806112836.707921-1-g.singh@nxp.com>
+References: <20260806112836.707921-1-g.singh@nxp.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] devtools: support local opencode agent for patch review
-To: Chengwen Feng <chengwen.feng@linux.dev>, <thomas@monjalon.net>,
- <stephen@networkplumber.org>
-CC: <aconole@redhat.com>, <dev@dpdk.org>
-References: <20260703091902.525837-1-datshan@qq.com>
- <20260807031104.2503404-1-chengwen.feng@linux.dev>
-Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20260807031104.2503404-1-chengwen.feng@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemo500009.china.huawei.com (7.202.194.199)
+X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,47 +46,62 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 8/7/2026 11:11 AM, Chengwen Feng wrote:
-> From: Chengwen Feng <fengchengwen@huawei.com>
-> 
-> Currently review-patch.py only supports cloud AI providers
-> (Anthropic, OpenAI, xAI, Google) via REST API, requiring API keys.
-> 
-> Add a --via option that invokes the locally installed opencode CLI as
-> the review runner instead of making HTTP calls. opencode reads
-> AGENTS.md from the DPDK project directory automatically, needing no
-> configuration beyond opencode on PATH.
-> 
-> The --via and -p/--provider options are independent -- via routes to
-> the local agent mode while -p continues to use the cloud API path.
-> 
-> Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
-> Acked-by: Morten Brørup <mb@smartsharesystems.com>
-> ---
-> v5: Use linux.dev mailbox to send email and update mailmap
-> v4: Fix AI review comments with Claude Opus which provided by Stephen
-> v3: Rebase main to fix apply error
-> v2: Address comments from Stephen, including: not arise
-> FileNotFoundError and more clarify.
-> 
-> ---
->  .mailmap                            |   2 +-
->  devtools/ai/review-patch.py         | 305 ++++++++++++++++++++++------
->  doc/guides/contributing/patches.rst |  10 +
->  3 files changed, 249 insertions(+), 68 deletions(-)
-> 
-> diff --git a/.mailmap b/.mailmap
-> index fcb3d1bb3f..d86a09b5b3 100644
-> --- a/.mailmap
-> +++ b/.mailmap
-> @@ -270,7 +270,7 @@ Chengfei Han <han.chengfei@zte.com.cn>
->  Chengfeng Ye <cyeaa@connect.ust.hk>
->  Chenghu Yao <yao.chenghu@zte.com.cn>
->  Chenglian Sun <sunchenglian@loongson.cn>
-> -Chengwen Feng <fengchengwen@huawei.com>
-> +Chengwen Feng <fengchengwen@huawei.com> <chengwen.feng@linux.dev>
+V2-changes:
+ - compilation fixes.
 
-For this new email address:
-Acked-by: Chengwen Feng <fengchengwen@huawei.com>
+V1-changes:
+This series adds new PMD features to the ENETC4 driver targeting the
+NXP i.MX95 NETC IP.
 
+The series covers:
+
+ - KEEP_CRC Rx offload: preserve the Ethernet FCS in the receive buffer.
+ - TSO: TCP Segmentation Offload for the VF Tx path.
+ - RSC/LRO: hardware Receive Segment Coalesce for PF and VF Rx paths.
+ - Link speed code: extend the PF-to-VF mailbox field from 4-bit to
+   8-bit to support speeds beyond 10G.
+ - Firmware version: report the NETC IP version via fw_version_get.
+ - Register dump: dump SI, port (PF) and BD ring registers.
+ - Ring parameters: implement rxq_info_get / txq_info_get for the VF.
+ - Link-up interrupt: refresh the cached link speed on each VF link-up
+   interrupt so that link_update returns the current speed immediately.
+ - Stats reset: software snapshot/delta approach for VF counter reset.
+ - Per-queue Rx interrupt: MSI-X per-queue Rx interrupts for the VF,
+   enabling interrupt-driven receive with l3fwd-power.
+ - SI VLAN: hardware port VLAN insertion/removal for PF and VF.
+ - VF link status bitmask: switch VF link status to bitmask encoding
+   to align with the PF and newer kernel driver conventions.
+ - TX PAUSE: VF sets Rx congestion mode when the PF signals TX PAUSE
+   negotiated on the wire; adds Flow control = Y to enetc4.ini.
+ - WRR Tx scheduler: per-ring WRR weights via enetc4_txq_wrr devarg.
+
+Gagandeep Singh (14):
+  net/enetc: add KEEP_CRC offload support for ENETC4
+  net/enetc: add TSO support for ENETC4 VF
+  net/enetc: add RSC (hardware LRO) support for ENETC4
+  net/enetc: extend link speed code field to 8-bit for PF-to-VF message
+  net/enetc: support firmware version get for VF
+  net/enetc: support registers dump
+  net/enetc: support ethtool ring parameters
+  net/enetc: refresh link speed on VF link-up interrupt
+  net/enetc: support stats reset for VF
+  net/enetc4: add per-queue Rx interrupt support for VF
+  net/enetc4: add SI-based port VLAN insertion and removal
+  net/enetc4: update VF link status to bitmask encoding
+  net/enetc4: enable TX PAUSE via VF RX congestion mode
+  net/enetc4: add WRR Tx scheduler devarg for VF rings
+
+ doc/guides/nics/enetc4.rst             |  81 ++-
+ doc/guides/nics/features/enetc4.ini    |   8 +
+ doc/guides/rel_notes/release_26_11.rst |  19 +
+ drivers/net/enetc/base/enetc4_hw.h     | 129 +++-
+ drivers/net/enetc/base/enetc_hw.h      |   6 +
+ drivers/net/enetc/enetc.h              | 135 ++++-
+ drivers/net/enetc/enetc4_ethdev.c      | 402 +++++++++++--
+ drivers/net/enetc/enetc4_vf.c          | 779 ++++++++++++++++++++++---
+ drivers/net/enetc/enetc_rxtx.c         | 529 ++++++++++++++++-
+ 9 files changed, 1942 insertions(+), 146 deletions(-)
+
+-- 
+2.25.1
 
