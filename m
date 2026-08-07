@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDBA9C5AC7A
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Aug 2026 14:47:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAE3AC2A09B
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Aug 2026 14:47:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9DBE440DDD;
-	Fri,  7 Aug 2026 16:46:46 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8612F40DC9;
+	Fri,  7 Aug 2026 16:46:48 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id 6867E40A77
- for <dev@dpdk.org>; Fri,  7 Aug 2026 16:46:44 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id E3C0140BA6
+ for <dev@dpdk.org>; Fri,  7 Aug 2026 16:46:45 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1786114004; x=1817650004;
+ t=1786114006; x=1817650006;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=yunFJeFZC3LLQGkacybHYz+bakTsf3t4WbauW8nkRuA=;
- b=RZkNyjHqMI6fJ5ylrCkubRJaDrcopPTrrwrhseY7nYQ78Hc4QdckuGpc
- QsKE61mZTqH6hmtlAvq8fHSOXMLf9MPy6ooyQlP5umg2JLLnQE9fat2KB
- E9k7ovUG9xta1XW15CiUHo2FhqccFdz4C53ElHO+KMW8SSk262rsZfUdx
- Kca7BFwpoJuW/bY7/6Uqua9pqtCl/vLsoKsASvi1gl0NH1RHZsK64xUVe
- 8/0LWoRG+XtcgVFGCwzWkQUjaT5nmuA8ydCtrcnzB3mW+7IBdZpZG/3EU
- PVhv2BVAcwlcXUzqQqHeVTDN/T468967poX8r8TjxUI+zoSPZ8u1BRWMa w==;
-X-CSE-ConnectionGUID: +46t7z7YQhagO1N8gY3VDQ==
-X-CSE-MsgGUID: xbICiJ45THSHAdAqK2OXKQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11868"; a="104257308"
-X-IronPort-AV: E=Sophos;i="6.25,210,1779174000"; d="scan'208";a="104257308"
+ bh=/Qcs8eqdeQmDnWmqPkEeLMMUF9OB6eBcQ2Y+ycOQ3NU=;
+ b=BllSBxkBa+wjxfS3Yu2jvq63d4S6Ji/t6TX9W/eRhrEDhZZk1Te7c+4Q
+ qVCid1qw3lZywmenpkcNfN0RkUm7HUAzEAS66gIDSzvc/f7h0Zkrjoo6w
+ +BzQ82XtEAMhivwXkzIJGXb9/G7dl4wDrUg7wC5/IaeTsiWeo6hau6E50
+ J09k8RNAZw/YgcU/dqhL8zyBmy2JSkE13mjCGNM9a+EOG/nbwcsqNz009
+ EA87NCdEz+PTbIKp1dPobeeazMkmzqRVUjxhbZ45kjDMVMq6v7HmkchEf
+ J1Xun9c2ioykGpV/k8y1kcbffVcLitFzkuH3p6+hXkVbg94gAOS9OYtDG Q==;
+X-CSE-ConnectionGUID: oZD7KwBlStCKcf7c8ZUCdw==
+X-CSE-MsgGUID: qbZ4CuC0R8OzBdCS1TIQXw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11868"; a="104257311"
+X-IronPort-AV: E=Sophos;i="6.25,210,1779174000"; d="scan'208";a="104257311"
 Received: from orviesa001.jf.intel.com ([10.64.159.141])
  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Aug 2026 07:46:44 -0700
-X-CSE-ConnectionGUID: PRo386mmQQSi4iaGraBtuQ==
-X-CSE-MsgGUID: ivRJjyrJS0O93pMcSoDxow==
+ 07 Aug 2026 07:46:45 -0700
+X-CSE-ConnectionGUID: NGMC9U+uSxm95OWs0pK6VA==
+X-CSE-MsgGUID: JF+WKC3vQemL/QhVA9chJg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,210,1779174000"; d="scan'208";a="300623262"
+X-IronPort-AV: E=Sophos;i="6.25,210,1779174000"; d="scan'208";a="300623263"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa001.jf.intel.com with ESMTP; 07 Aug 2026 07:46:43 -0700
+ by orviesa001.jf.intel.com with ESMTP; 07 Aug 2026 07:46:44 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org,
-	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v11 05/20] vfio: add container device assignment API
-Date: Fri,  7 Aug 2026 15:46:14 +0100
-Message-ID: <3ca4da6c03070b7d9d2620a9284ff6ea731c7746.1786113800.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org, Dimon Zhao <dimon.zhao@nebula-matrix.com>,
+ Leon Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
+Subject: [PATCH v11 06/20] net/nbl: do not use VFIO group bind API
+Date: Fri,  7 Aug 2026 15:46:15 +0100
+Message-ID: <f6f8f3ff576fda345300b77bfb033160e950f56d.1786113800.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1786113799.git.anatoly.burakov@intel.com>
  <cover.1786113799.git.anatoly.burakov@intel.com>
@@ -60,121 +60,94 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, VFIO has explicit group bind API's, but the way they're used is
-such that no one actually cares about VFIO groups, and the real goal of
-everyone using VFIO group bind API is to bind devices to particular VFIO
-container, such that when `rte_vfio_setup_device` call eventually comes,
-VFIO will pick up the correct container.
+The NBL driver currently uses group bind API, but it is using it only to
+get group fd and nothing else. In context of NBL driver, this is the only
+usage of VFIO API's in the driver, and it is not necessary to use it for
+what NBL driver is trying to accomplish.
 
-To remove dependency on group API's, add a new "container assign device"
-API call that will do the same thing, but will not depend on managing VFIO
-group fd's.
+Use a direct `open()` call instead, and store the group fd in common
+structure.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- lib/eal/freebsd/eal.c      | 10 ++++++++++
- lib/eal/include/rte_vfio.h | 26 ++++++++++++++++++++++++++
- lib/eal/linux/eal_vfio.c   | 32 ++++++++++++++++++++++++++++++++
- 3 files changed, 68 insertions(+)
+ drivers/net/nbl/nbl_common/nbl_userdev.c  | 20 +++++++++++++-------
+ drivers/net/nbl/nbl_include/nbl_include.h |  1 +
+ 2 files changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
-index f8ab932962..0c64a62c5a 100644
---- a/lib/eal/freebsd/eal.c
-+++ b/lib/eal/freebsd/eal.c
-@@ -944,3 +944,13 @@ rte_vfio_container_dma_unmap(__rte_unused int container_fd,
- 	rte_errno = ENOTSUP;
- 	return -1;
- }
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_container_assign_device)
-+int
-+rte_vfio_container_assign_device(__rte_unused int vfio_container_fd,
-+		__rte_unused const char *sysfs_base,
-+		__rte_unused const char *dev_addr)
-+{
-+	rte_errno = ENOTSUP;
-+	return -1;
-+}
-diff --git a/lib/eal/include/rte_vfio.h b/lib/eal/include/rte_vfio.h
-index fb666141f6..4890ecf06d 100644
---- a/lib/eal/include/rte_vfio.h
-+++ b/lib/eal/include/rte_vfio.h
-@@ -271,6 +271,32 @@ __rte_internal
- int
- rte_vfio_container_destroy(int container_fd);
- 
-+/**
-+ * @internal
-+ *
-+ * Assign a device to a VFIO container.
-+ *
-+ * Doing so will cause `rte_vfio_setup_device()` to set up the device with the VFIO container
-+ * specified in this assign operation.
-+ *
-+ * This function is only relevant on Linux.
-+ *
-+ * @param vfio_container_fd
-+ *   VFIO container file descriptor.
-+ * @param sysfs_base
-+ *   Sysfs path prefix.
-+ * @param dev_addr
-+ *   Device identifier.
-+ *
-+ * @return
-+ *   0 on success.
-+ *   <0 on failure.
-+ */
-+__rte_internal
-+int
-+rte_vfio_container_assign_device(int vfio_container_fd, const char *sysfs_base,
-+		const char *dev_addr);
-+
- /**
-  * @internal
-  * Bind a IOMMU group to a container.
-diff --git a/lib/eal/linux/eal_vfio.c b/lib/eal/linux/eal_vfio.c
-index 47c973e49a..02fec64658 100644
---- a/lib/eal/linux/eal_vfio.c
-+++ b/lib/eal/linux/eal_vfio.c
-@@ -2102,6 +2102,38 @@ rte_vfio_container_destroy(int container_fd)
- 	return 0;
+diff --git a/drivers/net/nbl/nbl_common/nbl_userdev.c b/drivers/net/nbl/nbl_common/nbl_userdev.c
+index 96f0d2e264..54326e44e1 100644
+--- a/drivers/net/nbl/nbl_common/nbl_userdev.c
++++ b/drivers/net/nbl/nbl_common/nbl_userdev.c
+@@ -387,6 +387,15 @@ nbl_userdev_mem_event_callback(enum rte_mem_event type, const void *addr, size_t
+ 	}
  }
  
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_container_assign_device)
-+int
-+rte_vfio_container_assign_device(int vfio_container_fd, const char *sysfs_base,
-+		const char *dev_addr)
++static int
++nbl_open_group_fd(int iommu_group_num)
 +{
-+	int iommu_group_num;
-+	int ret;
++	char path[PATH_MAX];
 +
-+	ret = rte_vfio_get_group_num(sysfs_base, dev_addr, &iommu_group_num);
-+	if (ret < 0) {
-+		EAL_LOG(ERR, "Cannot get IOMMU group number for device %s",
-+			dev_addr);
-+		return -1;
-+	} else if (ret == 0) {
-+		EAL_LOG(ERR,
-+			"Device %s is not assigned to any IOMMU group",
-+			dev_addr);
-+		return -1;
-+	}
-+
-+	ret = rte_vfio_container_group_bind(vfio_container_fd,
-+			iommu_group_num);
-+	if (ret < 0) {
-+		EAL_LOG(ERR,
-+			"Cannot bind IOMMU group %d for device %s",
-+			iommu_group_num, dev_addr);
-+		return -1;
-+	}
-+
-+	return 0;
++	snprintf(path, sizeof(path), RTE_VFIO_GROUP_FMT, iommu_group_num);
++	return open(path, O_RDWR);
 +}
 +
- RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_container_group_bind)
- int
- rte_vfio_container_group_bind(int container_fd, int iommu_group_num)
+ static int nbl_mdev_map_device(struct nbl_adapter *adapter)
+ {
+ 	const struct rte_pci_device *pci_dev = adapter->pci_dev;
+@@ -424,11 +433,12 @@ static int nbl_mdev_map_device(struct nbl_adapter *adapter)
+ 	}
+ 
+ 	NBL_LOG(DEBUG, "nbl vfio container %d", container);
+-	vfio_group_fd = rte_vfio_container_group_bind(container, common->iommu_group_num);
++	vfio_group_fd = nbl_open_group_fd(common->iommu_group_num);
+ 	if (vfio_group_fd < 0) {
+ 		NBL_LOG(ERR, "nbl vfio group bind failed, %d", vfio_group_fd);
+ 		goto free_container;
+ 	}
++	common->groupfd = vfio_group_fd;
+ 
+ 	/* check if the group is viable */
+ 	ret = ioctl(vfio_group_fd, VFIO_GROUP_GET_STATUS, &group_status);
+@@ -535,7 +545,6 @@ static int nbl_mdev_map_device(struct nbl_adapter *adapter)
+ 	}
+ free_group:
+ 	close(vfio_group_fd);
+-	rte_vfio_clear_group(vfio_group_fd);
+ free_container:
+ 	if (container_create)
+ 		rte_vfio_container_destroy(container);
+@@ -549,17 +558,14 @@ static int nbl_mdev_unmap_device(struct nbl_adapter *adapter)
+ 
+ 	close(common->devfd);
+ 	rte_mcfg_mem_read_lock();
+-	vfio_group_fd = rte_vfio_container_group_bind(nbl_default_container,
+-						      common->iommu_group_num);
++	vfio_group_fd = common->groupfd;
+ 	NBL_LOG(DEBUG, "close vfio_group_fd %d", vfio_group_fd);
+ 	ret = ioctl(vfio_group_fd, VFIO_GROUP_UNSET_CONTAINER, &nbl_default_container);
+ 	if (ret)
+ 		NBL_LOG(ERR, "unset container, error %i (%s) %d",
+ 			errno, strerror(errno), ret);
+ 	nbl_group_count--;
+-	ret = rte_vfio_container_group_unbind(nbl_default_container, common->iommu_group_num);
+-	if (ret)
+-		NBL_LOG(ERR, "vfio container group unbind failed %d", ret);
++	close(vfio_group_fd);
+ 	if (!nbl_group_count) {
+ 		rte_mem_event_callback_unregister(NBL_USERDEV_EVENT_CLB_NAME, NULL);
+ 		nbl_userdev_dma_free();
+diff --git a/drivers/net/nbl/nbl_include/nbl_include.h b/drivers/net/nbl/nbl_include/nbl_include.h
+index eeae6a3301..ba99b9f8e7 100644
+--- a/drivers/net/nbl/nbl_include/nbl_include.h
++++ b/drivers/net/nbl/nbl_include/nbl_include.h
+@@ -132,6 +132,7 @@ struct nbl_common_info {
+ 	u16 vsi_id;
+ 	u16 instance_id;
+ 	int devfd;
++	int groupfd;
+ 	int eventfd;
+ 	int ifindex;
+ 	int iommu_group_num;
 -- 
 2.52.0
 
