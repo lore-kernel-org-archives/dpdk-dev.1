@@ -2,39 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB2BC5AC7A
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Aug 2026 03:49:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 007A3C5AC7A
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Aug 2026 06:17:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 687C940B99;
-	Fri,  7 Aug 2026 05:48:50 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id E1DE240671
- for <dev@dpdk.org>; Fri,  7 Aug 2026 05:48:37 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id C911520010D;
- Fri,  7 Aug 2026 05:48:37 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com
- (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 909B2200127;
- Fri,  7 Aug 2026 05:48:37 +0200 (CEST)
-Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
- [92.120.147.250])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 1A97718000B6;
- Fri,  7 Aug 2026 11:48:37 +0800 (+08)
-From: Gagandeep Singh <g.singh@nxp.com>
-To: dev@dpdk.org
-Cc: hemant.agrawal@nxp.com,
-	Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v2 14/14] net/enetc4: add WRR Tx scheduler devarg for VF rings
-Date: Fri,  7 Aug 2026 09:18:29 +0530
-Message-Id: <20260807034829.1030307-15-g.singh@nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20260807034829.1030307-1-g.singh@nxp.com>
-References: <20260806112836.707921-1-g.singh@nxp.com>
- <20260807034829.1030307-1-g.singh@nxp.com>
+	by mails.dpdk.org (Postfix) with ESMTP id E9B8A402D1;
+	Fri,  7 Aug 2026 08:17:34 +0200 (CEST)
+Received: from canpmsgout09.his.huawei.com (canpmsgout09.his.huawei.com
+ [113.46.200.224])
+ by mails.dpdk.org (Postfix) with ESMTP id 58BD7402B6
+ for <dev@dpdk.org>; Fri,  7 Aug 2026 08:17:33 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=bpucSEX0HaDd53b3008E/mdreyWfmGTOQbVXKp4NkUY=;
+ b=QjF7PnL7GIEea5XSMfscpfsxymEXGNDDmQ0rpTUaYo2777Hz65F7xMkkmoWxG7VmNAuvuXzTo
+ j1dlzXEyesT1BHltnTAd5hhFkKDmtWoK9ZTtiVcpm2F3Db/j5d3mxq4kNY5n/WCBQgyjrSqf36n
+ IYv0EhDWDYTouSRuyRNIBUY=
+Received: from mail.maildlp.com (unknown [172.19.163.127])
+ by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4hGYZR1SYXz1cyQ2;
+ Fri,  7 Aug 2026 14:06:55 +0800 (CST)
+Received: from kwepemp200007.china.huawei.com (unknown [7.202.195.46])
+ by mail.maildlp.com (Postfix) with ESMTPS id 3CC9F402AB;
+ Fri,  7 Aug 2026 14:17:28 +0800 (CST)
+Received: from kwepemp500015.china.huawei.com (7.202.195.9) by
+ kwepemp200007.china.huawei.com (7.202.195.46) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Fri, 7 Aug 2026 14:17:27 +0800
+Received: from localhost.localdomain (10.50.163.32) by
+ kwepemp500015.china.huawei.com (7.202.195.9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Fri, 7 Aug 2026 14:17:27 +0800
+From: Xingui Yang <yangxingui@huawei.com>
+To: <dev@dpdk.org>
+CC: <stephen@networkplumber.org>, <david.marchand@redhat.com>,
+ <aman.deep.singh@intel.com>, <fengchengwen@huawei.com>,
+ <lihuisong@huawei.com>, <liuyonglong@huawei.com>, <kangfenglong@huawei.com>
+Subject: [PATCH v4] app/testpmd: support runt frames in txonly
+Date: Fri, 7 Aug 2026 14:17:27 +0800
+Message-ID: <20260807061727.1687254-1-yangxingui@huawei.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain
+X-Originating-IP: [10.50.163.32]
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemp500015.china.huawei.com (7.202.195.9)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,262 +59,171 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add enetc4_txq_wrr devarg to configure per-ring WRR weights in the
-NETC LEAF-level Tx scheduler (TBaMR register, bits [6:4]).
+Allow setting transmit size to be a small value which has Ethernet
+header but no IP or UDP header, since control level protocols can be
+very short.
 
-The NETC Tx scheduler has three levels:
-  - ROOT (port/TC): strict priority + CBS (PF/port space)
-  - MID  (SI/VSI):  WBFS shaping (PF space)
-  - LEAF (Tx BDR):  strict priority + frame-based WRR (VF/SI space)
+Checksum offloads are disabled when headers are incomplete.
+copy_buf_to_pkt_segs stops at the last segment to prevent OOB access.
 
-TBaMR is in the VF own SI space, so no Linux PF involvement is
-needed for PRIO or WRR configuration.
-
-Changes:
-- enetc_hw.h: add ENETC_TBMR_WRR_MASK, ENETC_TBMR_WRR(n) macros for
-  TBaMR bits [6:4], and ENETC_TBMR_PRIO_MASK for bits [2:0]
-- enetc.h: add txq_wrr pointer to enetc_eth_hw struct
-- enetc4_ethdev.c: add parse_txq_wrr() and wire ENETC4_TXQ_WRR devarg
-  through enetc4_get_devargs() and enetc4_dev_configure(); apply WRR
-  bits in enetc4_tx_queue_setup() and enetc4_tx_queue_start()
-
-Usage:
-  # strict priority: ring 0 highest
-  -a 0002:00:12.0,enetc4_txq_prior="3|2|1"
-
-  # WRR 2:4:1 on same-priority rings
-  -a 0002:00:12.0,enetc4_txq_prior="1|1|1",enetc4_txq_wrr="2|4|1"
-
-Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
+Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
+Signed-off-by: Xingui Yang <yangxingui@huawei.com>
 ---
- doc/guides/rel_notes/release_26_11.rst |  1 +
- drivers/net/enetc/base/enetc_hw.h      |  5 ++
- drivers/net/enetc/enetc.h              |  1 +
- drivers/net/enetc/enetc4_ethdev.c      | 97 ++++++++++++++++++++------
- 4 files changed, 82 insertions(+), 22 deletions(-)
+Changes in v4:
+- Removed ultra-small frame support (< 14 bytes) per Stephen's review.
+---
+ app/test-pmd/config.c                       | 13 ++++----
+ app/test-pmd/txonly.c                       | 36 +++++++++++++++++++--
+ doc/guides/rel_notes/release_26_11.rst      |  7 ++++
+ doc/guides/testpmd_app_ug/testpmd_funcs.rst | 11 +++++++
+ 4 files changed, 58 insertions(+), 9 deletions(-)
 
+diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
+index aa03eb99cc..86c794b923 100644
+--- a/app/test-pmd/config.c
++++ b/app/test-pmd/config.c
+@@ -6333,9 +6333,8 @@ set_tx_pkt_segments(unsigned int *seg_lengths, unsigned int nb_segs)
+ 	/*
+ 	 * Check that each segment length is greater or equal than
+ 	 * the mbuf data size.
+-	 * Check also that the total packet length is greater or equal than the
+-	 * size of an empty UDP/IP packet (sizeof(struct rte_ether_hdr) +
+-	 * 20 + 8).
++	 * The total packet length must be at least the size of an
++	 * Ethernet header.
+ 	 */
+ 	tx_pkt_len = 0;
+ 	for (i = 0; i < nb_segs; i++) {
+@@ -6347,10 +6346,10 @@ set_tx_pkt_segments(unsigned int *seg_lengths, unsigned int nb_segs)
+ 		}
+ 		tx_pkt_len = (uint16_t)(tx_pkt_len + seg_lengths[i]);
+ 	}
+-	if (tx_pkt_len < (sizeof(struct rte_ether_hdr) + 20 + 8)) {
+-		fprintf(stderr, "total packet length=%u < %d - give up\n",
+-				(unsigned) tx_pkt_len,
+-				(int)(sizeof(struct rte_ether_hdr) + 20 + 8));
++	if (tx_pkt_len < sizeof(struct rte_ether_hdr)) {
++		fprintf(stderr, "total packet length=%u < %zu - give up\n",
++				(unsigned int) tx_pkt_len,
++				sizeof(struct rte_ether_hdr));
+ 		return;
+ 	}
+ 
+diff --git a/app/test-pmd/txonly.c b/app/test-pmd/txonly.c
+index a4acb85d29..e90e28a6e6 100644
+--- a/app/test-pmd/txonly.c
++++ b/app/test-pmd/txonly.c
+@@ -76,6 +76,12 @@ copy_buf_to_pkt_segs(void* buf, unsigned len, struct rte_mbuf *pkt,
+ 	while (offset >= seg->data_len) {
+ 		offset -= seg->data_len;
+ 		seg = seg->next;
++		/*
++		 * The packet may be shorter than the header stack when
++		 * generating runt frames, stop once it runs out of segments.
++		 */
++		if (seg == NULL)
++			return;
+ 	}
+ 	copy_len = seg->data_len - offset;
+ 	seg_buf = rte_pktmbuf_mtod_offset(seg, char *, offset);
+@@ -84,6 +90,8 @@ copy_buf_to_pkt_segs(void* buf, unsigned len, struct rte_mbuf *pkt,
+ 		len -= copy_len;
+ 		buf = ((char*) buf + copy_len);
+ 		seg = seg->next;
++		if (seg == NULL)
++			return;
+ 		seg_buf = rte_pktmbuf_mtod(seg, char *);
+ 		copy_len = seg->data_len;
+ 	}
+@@ -193,7 +201,6 @@ pkt_burst_prepare(struct rte_mbuf *pkt, struct rte_mempool *mbp,
+ 	pkt->vlan_tci = vlan_tci;
+ 	pkt->vlan_tci_outer = vlan_tci_outer;
+ 	pkt->l2_len = sizeof(struct rte_ether_hdr);
+-	pkt->l3_len = sizeof(struct rte_ipv4_hdr);
+ 
+ 	pkt_len = pkt->data_len;
+ 	pkt_seg = pkt;
+@@ -204,6 +211,25 @@ pkt_burst_prepare(struct rte_mbuf *pkt, struct rte_mempool *mbp,
+ 		pkt_len += pkt_seg->data_len;
+ 	}
+ 	pkt_seg->next = NULL; /* Last segment of packet. */
++
++	/*
++	 * A runt frame may be too short to carry a full IPv4/UDP header.
++	 * Clamp l3_len and drop any checksum offload whose header is not
++	 * fully present, so the PMD is never asked to checksum bytes that
++	 * are not in the frame. pkt_len is at least sizeof(struct rte_ether_hdr),
++	 * so the subtraction below cannot underflow.
++	 */
++	pkt->l3_len = RTE_MIN(sizeof(struct rte_ipv4_hdr),
++			pkt_len - sizeof(struct rte_ether_hdr));
++	if (pkt_len < sizeof(struct rte_ether_hdr) +
++			sizeof(struct rte_ipv4_hdr))
++		pkt->ol_flags &= ~(RTE_MBUF_F_TX_IP_CKSUM |
++				RTE_MBUF_F_TX_L4_MASK);
++	else if (pkt_len < sizeof(struct rte_ether_hdr) +
++			sizeof(struct rte_ipv4_hdr) +
++			sizeof(struct rte_udp_hdr))
++		pkt->ol_flags &= ~RTE_MBUF_F_TX_L4_MASK;
++
+ 	/*
+ 	 * Copy headers in first packet segment(s).
+ 	 */
+@@ -405,7 +431,13 @@ tx_only_begin(portid_t pi)
+ 	pkt_hdr_len = (uint16_t)(sizeof(struct rte_ether_hdr) +
+ 				 sizeof(struct rte_ipv4_hdr) +
+ 				 sizeof(struct rte_udp_hdr));
+-	pkt_data_len = tx_pkt_length - pkt_hdr_len;
++	/*
++	 * tx_pkt_length may be smaller than the full header stack when
++	 * generating runt frames, clamp the payload length to zero in
++	 * that case so the IP/UDP length fields stay sane.
++	 */
++	pkt_data_len = tx_pkt_length > pkt_hdr_len ?
++			tx_pkt_length - pkt_hdr_len : 0;
+ 
+ 	if ((tx_pkt_split == TX_PKT_SPLIT_RND || txonly_multi_flow) &&
+ 	    tx_pkt_seg_lengths[0] < pkt_hdr_len) {
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index d69888aafb..3ea34523fe 100644
+index c8cc86295d..577b892d57 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -73,6 +73,7 @@ New Features
-   * Added SI-based port VLAN insertion (Tx) and removal (Rx) for ENETC4 PF and VF.
-   * Updated ENETC4 VF link status reporting to use bitmask encoding.
-   * Added TX PAUSE support for the ENETC4 VF via RX congestion mode.
-+  * Added WRR Tx scheduler devarg (``enetc4_txq_wrr``) for ENETC4 VF ring weights.
+@@ -55,6 +55,13 @@ New Features
+      Also, make sure to start the actual text at the margin.
+      =======================================================
+ 
++* **Updated testpmd application.**
++
++  Added support for runt frames in txonly mode. The minimum packet
++  length for ``set txpkts`` is relaxed to the Ethernet header size,
++  since control level protocols can be very short. Checksum offloads
++  are automatically disabled when headers are incomplete.
++
  
  Removed Items
  -------------
-diff --git a/drivers/net/enetc/base/enetc_hw.h b/drivers/net/enetc/base/enetc_hw.h
-index 33d075fe59..5a71f01db9 100644
---- a/drivers/net/enetc/base/enetc_hw.h
-+++ b/drivers/net/enetc/base/enetc_hw.h
-@@ -86,6 +86,11 @@ enum enetc_bdr_type {TX, RX};
+diff --git a/doc/guides/testpmd_app_ug/testpmd_funcs.rst b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
+index e65376df54..0edcdd8444 100644
+--- a/doc/guides/testpmd_app_ug/testpmd_funcs.rst
++++ b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
+@@ -874,6 +874,17 @@ Set the length of each segment of the TX-ONLY packets or length of packet for FL
  
- #define ENETC_RTBLENR_LEN(n)		((n) & ~0x7)
- #define ENETC_TBMR_EN			BIT(31)
-+/* TBaMR[WRR] bits [6:4]: weight for same-priority ring arbitration (0=1x .. 7=8x). */
-+#define ENETC_TBMR_WRR_MASK		GENMASK(6, 4)
-+#define ENETC_TBMR_WRR(n)		((((n) - 1) & 0x7) << 4)
-+/* TBaMR[PRIO] bits [2:0]: strict priority (0=lowest, 7=highest). */
-+#define ENETC_TBMR_PRIO_MASK		GENMASK(2, 0)
+ Where x[,y]* represents a CSV list of values, without white space.
  
- /* Port regs, offset: 1_0000h */
- #define ENETC_PORT_BASE			0x10000
-diff --git a/drivers/net/enetc/enetc.h b/drivers/net/enetc/enetc.h
-index 8aaf8a7eb1..e0943d093a 100644
---- a/drivers/net/enetc/enetc.h
-+++ b/drivers/net/enetc/enetc.h
-@@ -134,6 +134,7 @@ struct enetc_eth_hw {
- 	uint32_t vsi_timeout; /* VSI-PSI message wait timeout (iterations) */
- 	uint32_t vsi_delay;   /* VSI-PSI message wait delay (us) */
- 	uint32_t *txq_prior;  /* per-queue TX priority (TBMR priority bits) */
-+	uint32_t *txq_wrr;    /* per-queue TX WRR weight pre-shifted for TBMR[WRR] */
- 	uint8_t nc_mode;      /* 1 = non-cacheable BD memory, use _nc ops */
- 	uint8_t rxq_intr_en;  /* 1 = per-queue Rx MSI-X interrupts enabled */
- 	/* 1 = legacy PF-to-VF link message layout (4-bit speed / 4-bit cookie),
-diff --git a/drivers/net/enetc/enetc4_ethdev.c b/drivers/net/enetc/enetc4_ethdev.c
-index 2355522515..e490ecaf4c 100644
---- a/drivers/net/enetc/enetc4_ethdev.c
-+++ b/drivers/net/enetc/enetc4_ethdev.c
-@@ -28,22 +28,26 @@ static uint64_t dev_tx_offloads_sup =
- 	RTE_ETH_TX_OFFLOAD_UDP_TSO;
- 
- #define ENETC4_TXQ_PRIORITIES	"enetc4_txq_prior"
-+#define ENETC4_TXQ_WRR		"enetc4_txq_wrr"
- #define ENETC4_NC_MEMORY	"nc"
- 
++The total packet length may be set as small as the Ethernet header
++(``sizeof(struct rte_ether_hdr)``), since control level protocols can
++be very short. This generates runt frames with truncated IPv4/UDP
++headers. Checksum offloads are automatically disabled when the
++corresponding header is not fully present.
 +
- static int
- parse_txq_prior(const char *key __rte_unused, const char *value, void *opaque)
- {
- 	struct rte_eth_dev *dev = (struct rte_eth_dev *)opaque;
- 	struct enetc_eth_hw *hw =
--		ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
--	char *input_str = strdup(value);
-+				ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	char *input_str;
- 	char *str;
- 	uint32_t i = 0;
- 
-+	input_str = strdup(value);
- 	if (!input_str)
--		return -ENOMEM;
-+		return -1;
- 
--	hw->txq_prior = calloc(hw->max_tx_queues, sizeof(uint32_t));
-+	rte_free(hw->txq_prior);
-+	hw->txq_prior = rte_zmalloc(NULL, hw->max_tx_queues * sizeof(uint32_t), 0);
- 	if (!hw->txq_prior) {
- 		free(input_str);
- 		return -ENOMEM;
-@@ -51,7 +55,46 @@ parse_txq_prior(const char *key __rte_unused, const char *value, void *opaque)
- 
- 	str = strtok(input_str, "|");
- 	while (str != NULL && i < hw->max_tx_queues) {
--		hw->txq_prior[i++] = (uint32_t)atoi(str);
-+		hw->txq_prior[i++] = atoi(str) & ENETC_TBMR_PRIO_MASK;
-+		str = strtok(NULL, "|");
-+	}
++Note that random split (``set txsplit rand``) and multi-flow
++(``set txonly-flows``) still require the first segment to hold the full
++Ethernet/IPv4/UDP header stack, so they cannot be combined with runt
++lengths.
 +
-+	free(input_str);
-+	return 0;
-+}
-+
-+/* Parse enetc4_txq_wrr="w0|w1|..." devarg; weight 1..8 per ring. */
-+static int parse_txq_wrr(const char *key __rte_unused, const char *value,
-+			  void *opaque)
-+{
-+	struct rte_eth_dev *dev = (struct rte_eth_dev *)opaque;
-+	struct enetc_eth_hw *hw =
-+			ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	char *input_str;
-+	char *str;
-+	uint32_t i = 0;
-+	int w;
-+
-+	input_str = strdup(value);
-+	if (!input_str)
-+		return -1;
-+
-+	rte_free(hw->txq_wrr);
-+	hw->txq_wrr = rte_zmalloc(NULL,
-+			hw->max_tx_queues * sizeof(uint32_t), 0);
-+	if (!hw->txq_wrr) {
-+		free(input_str);
-+		return -1;
-+	}
-+
-+	str = strtok(input_str, "|");
-+	while (str != NULL && i < hw->max_tx_queues) {
-+		w = atoi(str);
-+		if (w < 1)
-+			w = 1;
-+		if (w > 8)
-+			w = 8;
-+		hw->txq_wrr[i++] = ENETC_TBMR_WRR(w);
- 		str = strtok(NULL, "|");
- 	}
+ set txtimes
+ ~~~~~~~~~~~
  
-@@ -97,6 +140,13 @@ enetc4_get_devargs(struct rte_eth_dev *dev, const char *key)
- 			return 0;
- 		}
- 	}
-+	if (!strcmp(key, ENETC4_TXQ_WRR)) {
-+		if (rte_kvargs_process(kvlist, key,
-+				       parse_txq_wrr, (void *)dev) < 0) {
-+			rte_kvargs_free(kvlist);
-+			return 0;
-+		}
-+	}
- 	if (!strcmp(key, ENETC4_NC_MEMORY)) {
- 		if (rte_kvargs_process(kvlist, key,
- 				       parse_nc, (void *)dev) < 0) {
-@@ -109,19 +159,6 @@ enetc4_get_devargs(struct rte_eth_dev *dev, const char *key)
- 	return 0;
- }
- 
--/* Supported Rx offloads */
--static uint64_t dev_rx_offloads_sup =
--	RTE_ETH_RX_OFFLOAD_IPV4_CKSUM |
--	RTE_ETH_RX_OFFLOAD_UDP_CKSUM |
--	RTE_ETH_RX_OFFLOAD_TCP_CKSUM |
--	RTE_ETH_RX_OFFLOAD_SCATTER;
--
--/* Supported Tx offloads */
--static uint64_t dev_tx_offloads_sup =
--	RTE_ETH_TX_OFFLOAD_IPV4_CKSUM |
--	RTE_ETH_TX_OFFLOAD_UDP_CKSUM |
--	RTE_ETH_TX_OFFLOAD_TCP_CKSUM |
--	RTE_ETH_TX_OFFLOAD_MULTI_SEGS;
- 
- static int
- enetc4_dev_start(struct rte_eth_dev *dev)
-@@ -458,7 +495,9 @@ enetc4_tx_queue_setup(struct rte_eth_dev *dev,
- 
- 		/* apply TX queue priority if configured */
- 		if (priv->hw.txq_prior)
--			tx_en |= priv->hw.txq_prior[tx_ring->index];
-+			tx_data |= priv->hw.txq_prior[tx_ring->index];
-+		if (priv->hw.txq_wrr)
-+			tx_data |= priv->hw.txq_wrr[tx_ring->index];
- 		/* enable ring */
- 		enetc4_txbdr_wr(&priv->hw.hw, tx_ring->index,
- 			       ENETC_TBMR, tx_en);
-@@ -613,7 +652,6 @@ enetc4_rx_queue_setup(struct rte_eth_dev *dev,
- 	struct enetc_eth_adapter *adapter =
- 			ENETC_DEV_PRIVATE(data->dev_private);
- 	uint64_t rx_offloads = data->dev_conf.rxmode.offloads;
--	uint32_t rx_enable;
- 	uint32_t rsc_size;
- 	bool keep_crc;
- 	bool rsc_enable;
-@@ -869,7 +907,10 @@ enetc4_dev_close(struct rte_eth_dev *dev)
- 		dev->data->tx_queues[i] = NULL;
- 	}
- 	dev->data->nb_tx_queues = 0;
--
-+	rte_free(hw->txq_prior);
-+	hw->txq_prior = NULL;
-+	rte_free(hw->txq_wrr);
-+	hw->txq_wrr = NULL;
- 	if (rte_eal_iova_mode() == RTE_IOVA_PA)
- 		dpaax_iova_table_depopulate();
- 
-@@ -1020,6 +1061,11 @@ enetc4_dev_configure(struct rte_eth_dev *dev)
- 	for (i = 0; i < dev->data->nb_tx_queues; i++)
- 		enetc4_rxbdr_wr(enetc_hw, i, ENETC_TBMR, ENETC_BMR_RESET);
- 
-+	hw->nc_mode = 0;
-+	enetc4_get_devargs(dev, ENETC4_TXQ_PRIORITIES);
-+	enetc4_get_devargs(dev, ENETC4_TXQ_WRR);
-+	enetc4_get_devargs(dev, ENETC4_NC_MEMORY);
-+
- 	if (dev->data->nb_rx_queues <= 1)
- 		return 0;
- 
-@@ -1142,7 +1188,13 @@ enetc4_tx_queue_start(struct rte_eth_dev *dev, uint16_t qidx)
- 	if (dev->data->tx_queue_state[qidx] == RTE_ETH_QUEUE_STATE_STOPPED) {
- 		tx_data = enetc4_txbdr_rd(&priv->hw.hw, tx_ring->index,
- 					 ENETC_TBMR);
--		tx_data = tx_data | ENETC_TBMR_EN;
-+		/* Clear scheduler bits before applying fresh devarg values. */
-+		tx_data &= ~(ENETC_TBMR_PRIO_MASK | ENETC_TBMR_WRR_MASK);
-+		tx_data |= ENETC_TBMR_EN;
-+		if (priv->hw.txq_prior)
-+			tx_data |= priv->hw.txq_prior[tx_ring->index];
-+		if (priv->hw.txq_wrr)
-+			tx_data |= priv->hw.txq_wrr[tx_ring->index];
- 		enetc4_txbdr_wr(&priv->hw.hw, tx_ring->index, ENETC_TBMR,
- 			       tx_data);
- 		dev->data->tx_queue_state[qidx] = RTE_ETH_QUEUE_STATE_STARTED;
-@@ -1457,5 +1509,6 @@ RTE_PMD_REGISTER_PCI_TABLE(net_enetc4, pci_id_enetc4_map);
- RTE_PMD_REGISTER_KMOD_DEP(net_enetc4, "* vfio-pci");
- RTE_PMD_REGISTER_PARAM_STRING(net_enetc4,
- 			      ENETC4_TXQ_PRIORITIES "=<string> "
-+			      ENETC4_TXQ_WRR "=<string> "
- 			      ENETC4_NC_MEMORY "=<int>");
- RTE_LOG_REGISTER_DEFAULT(enetc4_logtype_pmd, NOTICE);
 -- 
-2.25.1
+2.43.0
 
