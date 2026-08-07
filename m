@@ -2,49 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 845F9C2A09B
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Aug 2026 14:48:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCD72C2A09B
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Aug 2026 16:16:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 626B940E72;
-	Fri,  7 Aug 2026 16:47:08 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id E2FC240E54
- for <dev@dpdk.org>; Fri,  7 Aug 2026 16:47:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1786114026; x=1817650026;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=o+HS7m+Salz0Hu+933JnxeXA5KiUpz7AAqLqEpKm2qs=;
- b=WpCI6OesWzH6WNcHDYmkyG+w1XSP7tEaGw8AJRK7e9tIr/j8aRq1chGz
- BoWe1oyrWvFShuO8HbHa48/wAec93fktAWp64rLnT0EDfxg4vQcGBK4y0
- LBrHsbF7BEZBFS8RFgV06RokpsJng5B+Uqu3jI7i3YL5BhsFxtFDodbAG
- Q+ZUh1KipdvUg2QV75uaHS63rB64yD6mnOmROfYhj2ck/ru4R0Vg9Mgk+
- CY/3e5ayTtlqLgFYwAURe+v6zXaQyZxcC6xhTMm42bR1pu5ST1Pqlm21p
- F6qLdQ2ZcPX5Jl96ArpKMzFO1cruKOLq9GPCfiKxACxUohZWswdwntWcP w==;
-X-CSE-ConnectionGUID: oRGMjxTBR7ishSVYpcZm4A==
-X-CSE-MsgGUID: such96OgTN60u4MS1Mj7jA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11868"; a="104257366"
-X-IronPort-AV: E=Sophos;i="6.25,210,1779174000"; d="scan'208";a="104257366"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
- by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Aug 2026 07:47:05 -0700
-X-CSE-ConnectionGUID: 2GOpgO+1Qx+9zJkBXgixZA==
-X-CSE-MsgGUID: yXlFY3DNTxi15Oa6bjiY0g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,210,1779174000"; d="scan'208";a="300623318"
-Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa001.jf.intel.com with ESMTP; 07 Aug 2026 07:47:04 -0700
-From: Anatoly Burakov <anatoly.burakov@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id C8DD0402AC;
+	Fri,  7 Aug 2026 18:16:54 +0200 (CEST)
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com
+ [209.85.222.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 2A94940265
+ for <dev@dpdk.org>; Fri,  7 Aug 2026 18:16:53 +0200 (CEST)
+Received: by mail-qk1-f182.google.com with SMTP id
+ af79cd13be357-92e99ef0902so198419185a.2
+ for <dev@dpdk.org>; Fri, 07 Aug 2026 09:16:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1786119412; x=1786724212; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=+maPUG2S4BuROyXydTEXkEVzn9rNPTCkAmayVkgnn1I=;
+ b=fh5h1tE6j26GXwuDViXAcQeVLYWfuBjYcbjASo/TiUNXHRRhCVCNYSb8x/S7whx68H
+ +f1JNCUHdBD7OgZuShPn3WLYNNa9jIxruluB4+/Nh8pnJ/ftJliDiux0c3GE2mCpcdyC
+ 600oHJtqQ5SXk3uUSrCSthbRPtNNzFBiF+ewI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1786119412; x=1786724212;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=+maPUG2S4BuROyXydTEXkEVzn9rNPTCkAmayVkgnn1I=;
+ b=pAN0TEos1CgAyAFZGQHLh1i8qGrC6F+pt98sGJw+zlNMMHj8HtxIGwQRohAd9ASmbc
+ Oxzzu4zT+Z00k4CPJPQytTIq+f+We2T8nTG2j3lBTvlnJZWF8ikgmi3SfZX4kQFEREFQ
+ /lqjvE8kohob0BDvORbvEW2mmUShsofcoLGRZkMDt2WhWJLRBH7USQpOzdzWjoutUIRy
+ kZuUvVIOaqg4mdKBpzy8IoZUxKl33bcTCwyIrUNHfCiqCXEOJPNFJ8ela5LeYK5mhScj
+ SgRQctDWLVTWTWwK93ZFq9OnyGTS6T5NGHPndGwbeG7hS3bSzx2SF5Jk1kKKhcAZXnjl
+ JHwg==
+X-Gm-Message-State: AOJu0YxAOpKPra/7WrSpJJ3OAGLzCijroP7TQiuccdSNBFWizbgcuJFr
+ m60gwIQlsNslkueO+hXNJPIJiSBBtTwSrMRAjJwLJP1dwpK3Mogfv3mO9f6iy4ksE+7mnRtiGlE
+ pfijbMREHpS9LknDC3kbOSqfnO5oNjSJSva5mrH+YIpYxDjHvDE1HA8dwdRvDq6uJVsIkvhd26P
+ dHH+elNLm4KZmt8d6ytjegrMIET2w=
+X-Gm-Gg: AR+sD13CUs2K7873KUh6Jl+0PtPdDuUivDd3JOrh3h6SZd7L2HJkMvcD9sAmGyWYiZV
+ /r28X7Qh+D5VvMxpHkyDwx6XwIJgxgVBr0lAg5doOj3/i1v+SJewP7uDFnZp5J5yJhZGsAf/4sa
+ gjXiGkDd64DozX9aohGlueUKWByJaA6BAHnIoNKHN9vHzRxUUQdooPc6w1rou12hjUUqxelMdU7
+ VMVhGoBUR8F2KC3VIjXf8c1BJvtuLsD90yh2uJKIwm8/shaAQZXpCdnZ4bD/JGnf1KGuiMsqWqh
+ W8Fh6AVM7Z1AuOUo25YxYkVUlnUDNzkDGVJPlOexRCmqwBPUa7EbRi7m0WzasGMQNmZN9/t+rUM
+ hHCKmkfM+CYuS9tlYxHJD2Ehnr9MHaedxpadTjBwPE35SisCDr7YA5EHo1ubKBU2yelJVB97vf7
+ BQ3ZpjROY1v5x7kFGdU1zEgmW5SkQvFbCdwstbQN1Hwgq/QExbjMtwBnp5WMcVNHmOj/5suYxRT
+ mxuXKy/KCQ=
+X-Received: by 2002:a05:620a:628b:b0:92e:f0a5:ac3e with SMTP id
+ af79cd13be357-936490ebca7mr2657705985a.28.1786119411932; 
+ Fri, 07 Aug 2026 09:16:51 -0700 (PDT)
+Received: from d121029.iol.unh.edu ([2606:4100:3880:1210::219])
+ by smtp.gmail.com with ESMTPSA id
+ af79cd13be357-9366e09dc07sm181798585a.15.2026.08.07.09.16.51
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 07 Aug 2026 09:16:51 -0700 (PDT)
+From: Andrew Bailey <abailey@iol.unh.edu>
 To: dev@dpdk.org,
-	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v11 20/20] vfio: introduce cdev mode
-Date: Fri,  7 Aug 2026 15:46:29 +0100
-Message-ID: <f64c30def14a39538b4920d8d79a8cc7f7323889.1786113800.git.anatoly.burakov@intel.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <cover.1786113799.git.anatoly.burakov@intel.com>
- <cover.1786113799.git.anatoly.burakov@intel.com>
-References: 
+	luca.vizzarro@arm.com,
+	patrickrobb1997@gmail.com
+Cc: knimoji@iol.unh.edu, lylavoie@iol.unh.edu, dladd@iol.unh.edu,
+ Andrew Bailey <abailey@iol.unh.edu>, Dean Marx <dmarx@iol.unh.edu>
+Subject: [PATCH v7 0/7] dts: remove imports from framework in test suites
+Date: Fri,  7 Aug 2026 12:16:35 -0400
+Message-ID: <20260807161642.122310-1-abailey@iol.unh.edu>
+X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260806135346.568766-1-abailey@iol.unh.edu>
+References: <20260806135346.568766-1-abailey@iol.unh.edu>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -60,969 +82,184 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add support for VFIO cdev (also known as IOMMUFD) API. The group API is now
-considered legacy in the kernel, and all further development is expected to
-happen in IOMMUFD infrastructure.
+This series takes action to make modules accessible from api that were
+only in framework before. This greatly cleans up the majority of test
+suites, ridding them of almost all framework imports.
 
-The implementation largely follows the kernel reference, with most
-differences concentrated in how the container and the devices are set up.
-The VFIO container allocates an "IOAS" (IO address space), maps the memory
-into that space, and attaches devices to IOAS - there is no IOMMU type
-discovery at device attach time.
+Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
+Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
 
-To assist any future use of VFIO cdev mode for custom behavior, also
-introduce "get device number" API, which is kind-of-but-not-really similar
-to the concept of IOMMU group.
-
-Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- lib/eal/freebsd/eal.c            |  10 +
- lib/eal/include/rte_vfio.h       |  31 +++
- lib/eal/linux/eal_vfio.c         | 226 +++++++++++++++++-
- lib/eal/linux/eal_vfio.h         |  30 ++-
- lib/eal/linux/eal_vfio_cdev.c    | 396 +++++++++++++++++++++++++++++++
- lib/eal/linux/eal_vfio_mp_sync.c |  42 ++++
- lib/eal/linux/meson.build        |   1 +
- 7 files changed, 732 insertions(+), 4 deletions(-)
- create mode 100644 lib/eal/linux/eal_vfio_cdev.c
 
-diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
-index bb05a969a9..a84280a66c 100644
---- a/lib/eal/freebsd/eal.c
-+++ b/lib/eal/freebsd/eal.c
-@@ -931,3 +931,13 @@ rte_vfio_get_mode(void)
- {
- 	return RTE_VFIO_MODE_NONE;
- }
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_get_device_num)
-+int
-+rte_vfio_get_device_num(__rte_unused const char *sysfs_base,
-+		__rte_unused const char *dev_addr,
-+		__rte_unused int *vfio_device_num)
-+{
-+	rte_errno = ENOTSUP;
-+	return -1;
-+}
-diff --git a/lib/eal/include/rte_vfio.h b/lib/eal/include/rte_vfio.h
-index 6a4d101e33..b9c7184616 100644
---- a/lib/eal/include/rte_vfio.h
-+++ b/lib/eal/include/rte_vfio.h
-@@ -28,6 +28,8 @@ extern "C" {
- 
- #define RTE_VFIO_DIR "/dev/vfio"
- #define RTE_VFIO_CONTAINER_PATH "/dev/vfio/vfio"
-+#define RTE_VFIO_IOMMUFD_PATH "/dev/iommu"
-+#define RTE_VFIO_CDEV_DEVICES_PATH "/dev/vfio/devices"
- #define RTE_VFIO_GROUP_FMT "/dev/vfio/%u"
- #define RTE_VFIO_NOIOMMU_GROUP_FMT "/dev/vfio/noiommu-%u"
- #define RTE_VFIO_NOIOMMU_MODE "/sys/module/vfio/parameters/enable_unsafe_noiommu_mode"
-@@ -48,11 +50,13 @@ struct vfio_device_info;
-  * - RTE_VFIO_MODE_NONE: VFIO is not enabled.
-  * - RTE_VFIO_MODE_GROUP: Legacy group mode.
-  * - RTE_VFIO_MODE_NOIOMMU: Unsafe no-IOMMU mode.
-+ * - RTE_VFIO_MODE_CDEV: Character device mode.
-  */
- enum rte_vfio_mode {
- 	RTE_VFIO_MODE_NONE = 0, /**< VFIO not enabled */
- 	RTE_VFIO_MODE_GROUP,    /**< Group mode */
- 	RTE_VFIO_MODE_NOIOMMU,  /**< Group mode with no IOMMU protection */
-+	RTE_VFIO_MODE_CDEV,     /**< Device mode */
- };
- 
- /**
-@@ -197,6 +201,33 @@ __rte_internal
- int
- rte_vfio_get_group_num(const char *sysfs_base, const char *dev_addr, int *iommu_group_num);
- 
-+/**
-+ * @internal
-+ * Parse VFIO cdev device number for a device.
-+ *
-+ * This function is only relevant on Linux in cdev mode.
-+ *
-+ * @param sysfs_base
-+ *   Sysfs path prefix.
-+ * @param dev_addr
-+ *   Device identifier.
-+ * @param vfio_device_num
-+ *   Pointer to where VFIO cdev device number will be stored.
-+ *
-+ * @return
-+ *   0 on success.
-+ *   <0 on failure, rte_errno is set.
-+ *
-+ * Possible rte_errno values include:
-+ * - ENODEV  - Device not managed by VFIO.
-+ * - EINVAL  - Invalid parameters.
-+ * - ENOXIO  - VFIO support not initialized.
-+ * - ENOTSUP - Unsupported VFIO mode.
-+ */
-+__rte_internal
-+int
-+rte_vfio_get_device_num(const char *sysfs_base, const char *dev_addr, int *vfio_device_num);
-+
- /**
-  * @internal
-  * Get device information.
-diff --git a/lib/eal/linux/eal_vfio.c b/lib/eal/linux/eal_vfio.c
-index 7eeaba012e..21ef27d92d 100644
---- a/lib/eal/linux/eal_vfio.c
-+++ b/lib/eal/linux/eal_vfio.c
-@@ -347,6 +347,20 @@ vfio_container_get_by_group_num(int group_num)
- 	return NULL;
- }
- 
-+static struct container *
-+vfio_container_get_by_dev_num(int dev_num)
-+{
-+	struct container *cfg;
-+	struct vfio_device *dev;
-+
-+	CONTAINER_FOREACH_ACTIVE(cfg) {
-+		DEVICE_FOREACH_ACTIVE(cfg, dev)
-+			if (dev->dev_num == dev_num)
-+				return cfg;
-+	}
-+	return NULL;
-+}
-+
- static struct container *
- vfio_container_create(void)
- {
-@@ -516,6 +530,55 @@ vfio_setup_dma_mem(struct container *cfg)
- 	return 0;
- }
- 
-+static enum vfio_result
-+vfio_cdev_assign_device(struct container *cfg, const char *sysfs_base,
-+		const char *dev_addr, struct vfio_device **out_dev)
-+{
-+	struct vfio_device *dev, *found_dev;
-+	enum vfio_result res;
-+	int dev_num, ret;
-+
-+	/* get the cdev device number from sysfs */
-+	ret = vfio_cdev_get_device_num(sysfs_base, dev_addr, &dev_num);
-+	if (ret < 0) {
-+		EAL_LOG(ERR, "Failed to get cdev device number for %s", dev_addr);
-+		return VFIO_ERROR;
-+	} else if (ret == 0) {
-+		EAL_LOG(ERR, "Device %s not bound to vfio-pci cdev", dev_addr);
-+		return VFIO_NOT_MANAGED;
-+	}
-+
-+	/* do we already have this device? */
-+	found_dev = vfio_cdev_get_dev_by_num(cfg, dev_num);
-+	if (found_dev != NULL) {
-+		EAL_LOG(ERR, "Device %s already assigned to this container", dev_addr);
-+		*out_dev = found_dev;
-+		return VFIO_EXISTS;
-+	}
-+	/* create new device structure */
-+	dev = vfio_device_create(cfg);
-+	if (dev == NULL) {
-+		EAL_LOG(ERR, "No space to track new VFIO cdev device");
-+		return VFIO_NO_SPACE;
-+	}
-+	/* store device number */
-+	dev->dev_num = dev_num;
-+
-+	/* set up our device now and store it in config */
-+	ret = vfio_cdev_setup_device(cfg, dev);
-+	if (ret < 0) {
-+		EAL_LOG(ERR, "Cannot setup cdev device %s", dev_addr);
-+		res = VFIO_ERROR;
-+		goto err;
-+	}
-+	*out_dev = dev;
-+	return VFIO_SUCCESS;
-+
-+err:
-+	vfio_device_erase(cfg, dev);
-+	return res;
-+}
-+
- static enum vfio_result
- vfio_group_assign_device(struct container *cfg, const char *sysfs_base,
- 		const char *dev_addr, struct vfio_device **out_dev)
-@@ -662,6 +725,49 @@ rte_vfio_container_assign_device(int container_fd, const char *sysfs_base, const
- 		return -1;
- 	}
- 
-+	/*
-+	 * The device-to-container assignment is a complex problem to solve, for the following
-+	 * reasons:
-+	 *
-+	 * 1. PCI infrastructure is decoupled from VFIO, so PCI does not know anything about VFIO
-+	 *
-+	 * This means that while 99% of VFIO usage is PCI-related, we cannot communicate to PCI that
-+	 * we want to map a particular device using a particular container. Previously, this was
-+	 * achieved using back-channel communication via IOMMU group binding, so that whenever PCI
-+	 * map actually happens, VFIO knows which container to use, so this is roughly the model we
-+	 * are going with.
-+	 *
-+	 * 2. VFIO cannot depend on PCI because VFIO is in EAL
-+	 *
-+	 * We cannot "assign" a PCI device to container using rte_pci_device pointer because VFIO
-+	 * cannot depend on PCI definitions, nor can't we even assume that our device is in fact a
-+	 * PCI device, even though in practice this is true (at the time of this writing, FSLMC is
-+	 * the only bus doing non-PCI VFIO mappings, but FSLMC manages all VFIO infrastructure by
-+	 * itself, so in practice even counting FSLMC bus, we're always dealing with PCI devices).
-+	 *
-+	 * 3. The "assignment" means different things for group and cdev mode
-+	 *
-+	 * In group mode, to "bind" a device to a specific container, it is enough to bind its
-+	 * IOMMU group, so that when rte_vfio_setup_device() is called, we simply retrieve already
-+	 * existing group, and through that we figure out which container to use.
-+	 *
-+	 * For cdev mode, there are no "groups", so "assignment" either means we store some kind of
-+	 * uniquely identifying token (such as device number, or an opaque pointer), or we simply
-+	 * open the device straight away, and when rte_vfio_setup_device() comes we simply return
-+	 * the fd that was already opened at assign.
-+	 *
-+	 * Doing it the latter way (opening the device at assign for both group and cdev modes)
-+	 * actually solves all of these problems, so that's what we're going to do - the device
-+	 * setup API call will actually just assign the device to default container, while release
-+	 * will automatically cleanup and unassign anything that needs unassigned. There will be no
-+	 * "unassign" call, as it is not necessary.
-+	 *
-+	 * There is one downside for group mode when adding duplicate devices: to get to device fd,
-+	 * we need to go through the entire codepath before we arrive at fd only to realize it was
-+	 * already opened earlier, but this is acceptable compromise for unifying the API around
-+	 * device assignment.
-+	 */
-+
- 	if (vfio_cfg.mode == RTE_VFIO_MODE_NONE) {
- 		EAL_LOG(ERR, "VFIO support not initialized");
- 		rte_errno = ENXIO;
-@@ -682,6 +788,9 @@ rte_vfio_container_assign_device(int container_fd, const char *sysfs_base, const
- 	case RTE_VFIO_MODE_NOIOMMU:
- 		res = vfio_group_assign_device(cfg, sysfs_base, dev_addr, &dev);
- 		break;
-+	case RTE_VFIO_MODE_CDEV:
-+		res = vfio_cdev_assign_device(cfg, sysfs_base, dev_addr, &dev);
-+		break;
- 	default:
- 		EAL_LOG(ERR, "Unsupported VFIO mode");
- 		res = VFIO_NOT_SUPPORTED;
-@@ -754,6 +863,24 @@ rte_vfio_setup_device(const char *sysfs_base, const char *dev_addr,
- 		res = vfio_group_assign_device(cfg, sysfs_base, dev_addr, &dev);
- 		break;
- 	}
-+	case RTE_VFIO_MODE_CDEV:
-+	{
-+		int dev_num;
-+
-+		/* find device number */
-+		ret = vfio_cdev_get_device_num(sysfs_base, dev_addr, &dev_num);
-+		if (ret < 0)
-+			goto assign_fail;
-+		else if (ret == 0)
-+			goto not_managed;
-+
-+		cfg = vfio_container_get_by_dev_num(dev_num);
-+		if (cfg == NULL)
-+			cfg = vfio_cfg.default_cfg;
-+
-+		res = vfio_cdev_assign_device(cfg, sysfs_base, dev_addr, &dev);
-+		break;
-+	}
- 	default:
- 		EAL_LOG(ERR, "Unsupported VFIO mode");
- 		rte_errno = ENOTSUP;
-@@ -873,6 +1000,12 @@ rte_vfio_release_device(const char *sysfs_base __rte_unused,
- 		}
- 		break;
- 	}
-+	case RTE_VFIO_MODE_CDEV:
-+	{
-+		/* for cdev, just erase the device and we're done */
-+		vfio_device_erase(cfg, dev);
-+		break;
-+	}
- 	default:
- 		EAL_LOG(ERR, "Unsupported VFIO mode");
- 		rte_errno = ENOTSUP;
-@@ -939,8 +1072,20 @@ vfio_select_mode(void)
- 		if (vfio_sync_mode(cfg, &mode) < 0)
- 			goto err;
- 
--		/* primary handles DMA setup for default containers */
--		group_cfg->dma_setup_done = true;
-+		if (mode == RTE_VFIO_MODE_CDEV) {
-+			vfio_cdev_setup_ops();
-+			/* in cdev mode, sync ioas */
-+			if (vfio_cdev_sync_ioas(cfg) < 0)
-+				goto err;
-+		} else if (mode == RTE_VFIO_MODE_GROUP ||
-+					mode == RTE_VFIO_MODE_NOIOMMU) {
-+			/* in group-like modes, primary handles DMA */
-+			group_cfg->dma_setup_done = true;
-+		} else {
-+			/* shouldn't happen */
-+			EAL_LOG(ERR, "Unknown VFIO mode %d", mode);
-+			goto err;
-+		}
- 		return mode;
- 	}
- 	/* if we failed mp sync setup, we cannot initialize VFIO */
-@@ -957,10 +1102,26 @@ vfio_select_mode(void)
- 			return RTE_VFIO_MODE_NOIOMMU;
- 		return RTE_VFIO_MODE_GROUP;
- 	}
-+	EAL_LOG(DEBUG, "VFIO group mode not available, trying cdev mode...");
-+	/* try cdev mode */
-+	if (vfio_cdev_enable(cfg) == 0) {
-+		vfio_cdev_setup_ops();
-+		if (vfio_cdev_setup_ioas(cfg) < 0)
-+			goto err_mpsync;
-+		if (vfio_setup_dma_mem(cfg) < 0)
-+			goto err_mpsync;
-+		if (vfio_register_mem_event_callback() < 0)
-+			goto err_mpsync;
-+
-+		return RTE_VFIO_MODE_CDEV;
-+	}
-+	EAL_LOG(DEBUG, "VFIO cdev mode not available");
- err_mpsync:
- 	vfio_mp_sync_cleanup();
- err:
- 	vfio_container_erase(cfg);
-+	/* reset ops as well */
-+	vfio_cfg.ops = NULL;
- 
- 	return RTE_VFIO_MODE_NONE;
- }
-@@ -971,6 +1132,7 @@ vfio_mode_to_str(enum rte_vfio_mode mode)
- 	switch (mode) {
- 	case RTE_VFIO_MODE_GROUP: return "group";
- 	case RTE_VFIO_MODE_NOIOMMU: return "noiommu";
-+	case RTE_VFIO_MODE_CDEV: return "cdev";
- 	default: return "not initialized";
- 	}
- }
-@@ -1110,6 +1272,40 @@ rte_vfio_get_group_num(const char *sysfs_base, const char *dev_addr, int *iommu_
- 	return 0;
- }
- 
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_get_device_num)
-+int
-+rte_vfio_get_device_num(const char *sysfs_base, const char *dev_addr, int *device_num)
-+{
-+	int ret;
-+
-+	if (sysfs_base == NULL || dev_addr == NULL || device_num == NULL) {
-+		rte_errno = EINVAL;
-+		return -1;
-+	}
-+
-+	if (vfio_cfg.mode == RTE_VFIO_MODE_NONE) {
-+		EAL_LOG(ERR, "VFIO support not initialized");
-+		rte_errno = ENXIO;
-+		return -1;
-+	}
-+
-+	if (vfio_cfg.mode != RTE_VFIO_MODE_CDEV) {
-+		EAL_LOG(ERR, "VFIO not initialized in cdev mode");
-+		rte_errno = ENOTSUP;
-+		return -1;
-+	}
-+
-+	ret = vfio_cdev_get_device_num(sysfs_base, dev_addr, device_num);
-+	if (ret < 0) {
-+		rte_errno = EINVAL;
-+		return -1;
-+	} else if (ret == 0) {
-+		rte_errno = ENODEV;
-+		return -1;
-+	}
-+	return 0;
-+}
-+
- static int
- vfio_dma_mem_map(struct container *cfg, uint64_t vaddr, uint64_t iova,
- 		uint64_t len, int do_map)
-@@ -1309,6 +1505,25 @@ rte_vfio_container_create(void)
- 		cfg->container_fd = container_fd;
- 		break;
- 	}
-+	case RTE_VFIO_MODE_CDEV:
-+	{
-+		/* Open new iommufd for custom container */
-+		container_fd = vfio_cdev_get_iommufd();
-+		if (container_fd < 0) {
-+			EAL_LOG(ERR, "Cannot open iommufd for cdev container");
-+			rte_errno = EIO;
-+			goto err;
-+		}
-+		cfg->container_fd = container_fd;
-+
-+		/* Set up IOAS for this container */
-+		if (vfio_cdev_setup_ioas(cfg) < 0) {
-+			EAL_LOG(ERR, "Cannot setup IOAS for cdev container");
-+			rte_errno = EIO;
-+			goto err;
-+		}
-+		break;
-+	}
- 	default:
- 		EAL_LOG(NOTICE, "Unsupported VFIO mode");
- 		rte_errno = ENOTSUP;
-@@ -1367,6 +1582,13 @@ rte_vfio_container_destroy(int container_fd)
- 			vfio_group_erase(cfg, grp);
- 		}
- 		break;
-+	case RTE_VFIO_MODE_CDEV:
-+		/* erase all devices */
-+		DEVICE_FOREACH_ACTIVE(cfg, dev) {
-+			EAL_LOG(DEBUG, "Device vfio%d still open, closing", dev->dev_num);
-+			vfio_device_erase(cfg, dev);
-+		}
-+		break;
- 	default:
- 		EAL_LOG(ERR, "Unsupported VFIO mode");
- 		rte_errno = ENOTSUP;
-diff --git a/lib/eal/linux/eal_vfio.h b/lib/eal/linux/eal_vfio.h
-index 93dd2d266e..d2dc06307e 100644
---- a/lib/eal/linux/eal_vfio.h
-+++ b/lib/eal/linux/eal_vfio.h
-@@ -48,7 +48,10 @@ struct vfio_group {
- /* device tracking (common for group and cdev modes) */
- struct vfio_device {
- 	bool active;
--	int group; /**< back-reference to group list (group mode) */
-+	union {
-+		int group; /**< back-reference to group list (group mode) */
-+		int dev_num;   /**< device number, e.g., X in /dev/vfio/devices/vfioX (cdev mode) */
-+	};
- 	int fd;
- };
- 
-@@ -61,12 +64,20 @@ struct vfio_group_config {
- 	struct vfio_group groups[RTE_MAX_VFIO_GROUPS];
- };
- 
-+/* cdev mode specific configuration */
-+struct vfio_cdev_config {
-+	uint32_t ioas_id;
-+};
-+
- /* per-container configuration */
- struct container {
- 	bool active;
- 	int container_fd;
- 	struct user_mem_maps mem_maps;
--	struct vfio_group_config group_cfg;
-+	union {
-+		struct vfio_group_config group_cfg;
-+		struct vfio_cdev_config cdev_cfg;
-+	};
- 	int n_devices;
- 	struct vfio_device devices[RTE_MAX_VFIO_DEVICES];
- };
-@@ -161,12 +172,25 @@ int vfio_group_setup_iommu(struct container *cfg);
- int vfio_group_setup_device_fd(const char *dev_addr,
- 		struct vfio_group *grp, struct vfio_device *dev);
- 
-+/* cdev mode functions */
-+int vfio_cdev_enable(struct container *cfg);
-+void vfio_cdev_setup_ops(void);
-+int vfio_cdev_setup_ioas(struct container *cfg);
-+int vfio_cdev_sync_ioas(struct container *cfg);
-+int vfio_cdev_get_iommufd(void);
-+int vfio_cdev_get_device_num(const char *sysfs_base, const char *dev_addr,
-+		int *cdev_dev_num);
-+struct vfio_device *vfio_cdev_get_dev_by_num(struct container *cfg, int cdev_dev_num);
-+int vfio_cdev_setup_device(struct container *cfg, struct vfio_device *dev);
-+
- #define VFIO_MEM_EVENT_CLB_NAME "vfio_mem_event_clb"
- #define EAL_VFIO_MP "eal_vfio_mp_sync"
- 
- #define SOCKET_REQ_CONTAINER 0x100
- #define SOCKET_REQ_GROUP 0x200
- #define SOCKET_REQ_IOMMU_TYPE 0x400
-+#define SOCKET_REQ_CDEV 0x800
-+#define SOCKET_REQ_IOAS_ID 0x1000
- #define SOCKET_OK 0x0
- #define SOCKET_NO_FD 0x1
- #define SOCKET_ERR 0xFF
-@@ -177,6 +201,8 @@ struct vfio_mp_param {
- 	union {
- 		int group_num;
- 		int iommu_type_id;
-+		int cdev_dev_num;
-+		int ioas_id;
- 		enum rte_vfio_mode mode;
- 	};
- };
-diff --git a/lib/eal/linux/eal_vfio_cdev.c b/lib/eal/linux/eal_vfio_cdev.c
-new file mode 100644
-index 0000000000..a659891b60
---- /dev/null
-+++ b/lib/eal/linux/eal_vfio_cdev.c
-@@ -0,0 +1,396 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2010-2025 Intel Corporation
-+ */
-+
-+#include <dirent.h>
-+#include <fcntl.h>
-+#include <limits.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <unistd.h>
-+
-+#include <uapi/linux/iommufd.h>
-+#include <uapi/linux/vfio.h>
-+
-+#include <rte_log.h>
-+#include <rte_errno.h>
-+#include <rte_memory.h>
-+#include <rte_string_fns.h>
-+
-+#include "eal_vfio.h"
-+#include "eal_private.h"
-+#include "eal_internal_cfg.h"
-+
-+static int vfio_cdev_dma_map(struct container *cfg);
-+static int vfio_cdev_dma_mem_map(struct container *cfg, uint64_t vaddr,
-+		uint64_t iova, uint64_t len, int do_map);
-+
-+/* IOMMUFD cdev mode IOMMU operations */
-+static const struct vfio_iommu_ops iommufd_ops = {
-+	.type_id = 0, /* cdev mode doesn't use type_id */
-+	.name = "IOMMUFD",
-+	.partial_unmap = false,
-+	.dma_map_func = &vfio_cdev_dma_map,
-+	.dma_user_map_func = &vfio_cdev_dma_mem_map
-+};
-+
-+void
-+vfio_cdev_setup_ops(void)
-+{
-+	vfio_cfg.ops = &iommufd_ops;
-+}
-+
-+static int
-+vfio_cdev_dma_mem_map(struct container *cfg, uint64_t vaddr, uint64_t iova,
-+		uint64_t len, int do_map)
-+{
-+	struct iommu_ioas_map ioas_map;
-+	struct iommu_ioas_unmap ioas_unmap;
-+	int ret;
-+
-+	if (do_map != 0) {
-+		memset(&ioas_map, 0, sizeof(ioas_map));
-+		ioas_map.size = sizeof(struct iommu_ioas_map);
-+		ioas_map.flags = IOMMU_IOAS_MAP_FIXED_IOVA |
-+				IOMMU_IOAS_MAP_READABLE |
-+				IOMMU_IOAS_MAP_WRITEABLE;
-+		ioas_map.ioas_id = cfg->cdev_cfg.ioas_id;
-+		ioas_map.user_va = vaddr;
-+		ioas_map.length = len;
-+		ioas_map.iova = iova;
-+
-+		ret = ioctl(cfg->container_fd, IOMMU_IOAS_MAP, &ioas_map);
-+		if (ret) {
-+			/**
-+			 * In case the mapping was already done EEXIST will be
-+			 * returned from kernel.
-+			 */
-+			if (errno == EEXIST) {
-+				EAL_LOG(DEBUG,
-+					"Memory segment is already mapped, skipping");
-+			} else {
-+				EAL_LOG(ERR,
-+					"Cannot set up DMA remapping, error "
-+					"%i (%s)", errno, strerror(errno));
-+				return -1;
-+			}
-+		}
-+	} else {
-+		memset(&ioas_unmap, 0, sizeof(ioas_unmap));
-+		ioas_unmap.size = sizeof(struct iommu_ioas_unmap);
-+		ioas_unmap.ioas_id = cfg->cdev_cfg.ioas_id;
-+		ioas_unmap.length = len;
-+		ioas_unmap.iova = iova;
-+
-+		ret = ioctl(cfg->container_fd, IOMMU_IOAS_UNMAP, &ioas_unmap);
-+		if (ret) {
-+			EAL_LOG(ERR, "Cannot clear DMA remapping, error "
-+					"%i (%s)", errno, strerror(errno));
-+			return -1;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+cdev_map(const struct rte_memseg_list *msl, const struct rte_memseg *ms,
-+		void *arg)
-+{
-+	struct container *cfg = arg;
-+
-+	/* skip external memory that isn't a heap */
-+	if (msl->external && !msl->heap)
-+		return 0;
-+
-+	/* skip any segments with invalid IOVA addresses */
-+	if (ms->iova == RTE_BAD_IOVA)
-+		return 0;
-+
-+	return vfio_cdev_dma_mem_map(cfg, ms->addr_64, ms->iova, ms->len, 1);
-+}
-+
-+static int
-+vfio_cdev_dma_map(struct container *cfg)
-+{
-+	return rte_memseg_walk(cdev_map, cfg);
-+}
-+
-+int
-+vfio_cdev_sync_ioas(struct container *cfg)
-+{
-+	struct rte_mp_msg mp_req, *mp_rep;
-+	struct rte_mp_reply mp_reply = {0};
-+	struct timespec ts = {.tv_sec = 5, .tv_nsec = 0};
-+	struct vfio_mp_param *p = (struct vfio_mp_param *)mp_req.param;
-+
-+	p->req = SOCKET_REQ_IOAS_ID;
-+	rte_strscpy(mp_req.name, EAL_VFIO_MP, sizeof(mp_req.name));
-+	mp_req.len_param = sizeof(*p);
-+	mp_req.num_fds = 0;
-+
-+	if (rte_mp_request_sync(&mp_req, &mp_reply, &ts) == 0 && mp_reply.nb_received == 1) {
-+		mp_rep = &mp_reply.msgs[0];
-+		p = (struct vfio_mp_param *)mp_rep->param;
-+		if (p->result == SOCKET_OK && mp_rep->num_fds == 0) {
-+			cfg->cdev_cfg.ioas_id = p->ioas_id;
-+			free(mp_reply.msgs);
-+			return 0;
-+		}
-+	}
-+
-+	free(mp_reply.msgs);
-+	EAL_LOG(ERR, "Cannot request ioas_id");
-+	return -1;
-+}
-+
-+int
-+vfio_cdev_setup_ioas(struct container *cfg)
-+{
-+	struct iommu_ioas_alloc ioas_alloc;
-+	int ret;
-+
-+	/* Allocate an IOAS */
-+	memset(&ioas_alloc, 0, sizeof(ioas_alloc));
-+	ioas_alloc.size = sizeof(struct iommu_ioas_alloc);
-+	ioas_alloc.flags = 0;
-+
-+	ret = ioctl(cfg->container_fd, IOMMU_IOAS_ALLOC, &ioas_alloc);
-+	if (ret) {
-+		EAL_LOG(ERR, "Cannot allocate IOAS, error %i (%s)",
-+				errno, strerror(errno));
-+		return -1;
-+	}
-+	cfg->cdev_cfg.ioas_id = ioas_alloc.out_ioas_id;
-+
-+	EAL_LOG(DEBUG, "Allocated IOAS with ID %u", cfg->cdev_cfg.ioas_id);
-+	return 0;
-+}
-+
-+int
-+vfio_cdev_get_iommufd(void)
-+{
-+	int iommufd;
-+
-+	/* if not requesting via mp, open iommufd locally */
-+	iommufd = open(RTE_VFIO_IOMMUFD_PATH, O_RDWR);
-+	if (iommufd < 0) {
-+		EAL_LOG(ERR, "Cannot open %s: %s",
-+				RTE_VFIO_IOMMUFD_PATH, strerror(errno));
-+		return -1;
-+	}
-+
-+	return iommufd;
-+}
-+
-+int
-+vfio_cdev_enable(struct container *cfg)
-+{
-+	int iommufd;
-+
-+	/* Check if iommufd device exists */
-+	if (access(RTE_VFIO_IOMMUFD_PATH, F_OK) != 0) {
-+		EAL_LOG(DEBUG,
-+			"IOMMUFD device does not exist, skipping VFIO cdev support...");
-+		return 1;
-+	}
-+
-+	/* open iommufd */
-+	iommufd = vfio_cdev_get_iommufd();
-+	if (iommufd < 0)
-+		return -1;
-+
-+	cfg->container_fd = iommufd;
-+	return 0;
-+}
-+
-+int
-+vfio_cdev_get_device_num(const char *sysfs_base, const char *dev_addr, int *cdev_dev_num)
-+{
-+	char linkname[PATH_MAX];
-+	char filename[PATH_MAX];
-+	char *dev_tok, *end;
-+	int dev_num;
-+	DIR *dir;
-+	struct dirent *entry;
-+
-+	memset(linkname, 0, sizeof(linkname));
-+	memset(filename, 0, sizeof(filename));
-+
-+	/* check if vfio-dev directory exists for this device */
-+	snprintf(linkname, sizeof(linkname),
-+			 "%s/%s/vfio-dev", sysfs_base, dev_addr);
-+
-+	dir = opendir(linkname);
-+	if (dir == NULL) {
-+		/* device doesn't have vfio-dev, not bound to vfio-pci cdev */
-+		return 0;
-+	}
-+
-+	/* find vfioX entry in vfio-dev directory */
-+	while ((entry = readdir(dir)) != NULL) {
-+		if (strncmp(entry->d_name, "vfio", 4) == 0) {
-+			/* parse device number from vfioX */
-+			errno = 0;
-+			dev_tok = entry->d_name + 4; /* skip "vfio" prefix */
-+			end = dev_tok;
-+			dev_num = strtol(dev_tok, &end, 10);
-+			if (end == dev_tok || *end != '\0' || errno != 0) {
-+				EAL_LOG(ERR, "%s error parsing VFIO cdev device number!",
-+						dev_addr);
-+				closedir(dir);
-+				return -1;
-+			}
-+			*cdev_dev_num = dev_num;
-+			closedir(dir);
-+			return 1;
-+		}
-+	}
-+
-+	closedir(dir);
-+	/* no vfio device found */
-+	return 0;
-+}
-+
-+struct vfio_device *
-+vfio_cdev_get_dev_by_num(struct container *cfg, int cdev_dev_num)
-+{
-+	struct vfio_device *dev;
-+	/* find device handle */
-+	DEVICE_FOREACH_ACTIVE(cfg, dev) {
-+		if (dev->dev_num != cdev_dev_num)
-+			continue;
-+		return dev;
-+	}
-+	return NULL;
-+}
-+
-+static int
-+cdev_open_device_fd(int cdev_dev_num)
-+{
-+	char devname[PATH_MAX] = {0};
-+	int dev_fd;
-+
-+	snprintf(devname, sizeof(devname), "%s/vfio%d",
-+			RTE_VFIO_CDEV_DEVICES_PATH, cdev_dev_num);
-+
-+	dev_fd = open(devname, O_RDWR);
-+	if (dev_fd < 0) {
-+		EAL_LOG(ERR, "Cannot open %s: %s", devname, strerror(errno));
-+		return -1;
-+	}
-+
-+	return dev_fd;
-+}
-+
-+static int
-+cdev_attach_device_to_iommufd(struct container *cfg, struct vfio_device *dev)
-+{
-+	struct vfio_device_bind_iommufd bind = {0};
-+	struct vfio_device_attach_iommufd_pt attach = {0};
-+	rte_uuid_t vf_token;
-+
-+	rte_eal_vfio_get_vf_token(vf_token);
-+
-+	/* try with token first */
-+	if (!rte_uuid_is_null(vf_token)) {
-+		bind.flags = VFIO_DEVICE_BIND_FLAG_TOKEN;
-+		bind.token_uuid_ptr = (uintptr_t)&vf_token;
-+		bind.argsz = sizeof(bind);
-+		bind.iommufd = cfg->container_fd;
-+
-+		/* this may fail because the kernel is too old */
-+		if (ioctl(dev->fd, VFIO_DEVICE_BIND_IOMMUFD, &bind) < 0) {
-+			EAL_LOG(DEBUG, "Failed to bind device %d with VF token", dev->dev_num);
-+			EAL_LOG(NOTICE, "Unable to use VF tokens with current kernel version.");
-+			EAL_LOG(NOTICE, "Please use kernel >=6.17 or use group mode.");
-+			/* erase the bind structure */
-+			bind = (struct vfio_device_bind_iommufd){0};
-+		} else {
-+			goto attach;
-+		}
-+	}
-+	bind.flags = 0;
-+	bind.argsz = sizeof(bind);
-+	bind.iommufd = cfg->container_fd;
-+
-+	if (ioctl(dev->fd, VFIO_DEVICE_BIND_IOMMUFD, &bind) < 0) {
-+		EAL_LOG(ERR, "Cannot bind device to IOMMUFD, error %i (%s)",
-+				errno, strerror(errno));
-+		return -1;
-+	}
-+
-+attach:
-+	/* attach device to IOAS */
-+	attach.argsz = sizeof(attach);
-+	attach.flags = 0;
-+	attach.pt_id = cfg->cdev_cfg.ioas_id;
-+
-+	if (ioctl(dev->fd, VFIO_DEVICE_ATTACH_IOMMUFD_PT, &attach) < 0) {
-+		EAL_LOG(ERR, "Cannot attach device to IOAS, error %i (%s)",
-+				errno, strerror(errno));
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+vfio_cdev_request_dev_fd(struct vfio_device *dev)
-+{
-+	struct rte_mp_msg mp_req, *mp_rep;
-+	struct rte_mp_reply mp_reply = {0};
-+	struct timespec ts = {.tv_sec = 5, .tv_nsec = 0};
-+	struct vfio_mp_param *p = (struct vfio_mp_param *)mp_req.param;
-+	int device_fd = -1;
-+
-+	/* secondary process requests device fd from primary */
-+	p->req = SOCKET_REQ_CDEV;
-+	p->cdev_dev_num = dev->dev_num;
-+	rte_strscpy(mp_req.name, EAL_VFIO_MP, sizeof(mp_req.name));
-+	mp_req.len_param = sizeof(*p);
-+	mp_req.num_fds = 0;
-+
-+	if (rte_mp_request_sync(&mp_req, &mp_reply, &ts) == 0 &&
-+			mp_reply.nb_received == 1) {
-+		mp_rep = &mp_reply.msgs[0];
-+		p = (struct vfio_mp_param *)mp_rep->param;
-+		if (p->result == SOCKET_OK && mp_rep->num_fds == 1)
-+			device_fd = mp_rep->fds[0];
-+	}
-+
-+	free(mp_reply.msgs);
-+
-+	if (device_fd < 0) {
-+		EAL_LOG(ERR, "Cannot request device fd for vfio%d", dev->dev_num);
-+		return -1;
-+	}
-+	dev->fd = device_fd;
-+
-+	return 0;
-+}
-+
-+int
-+vfio_cdev_setup_device(struct container *cfg, struct vfio_device *dev)
-+{
-+	int device_fd;
-+
-+	/* get device fd - primary or custom container opens it, secondary requests from primary */
-+	if (rte_eal_process_type() == RTE_PROC_PRIMARY || !vfio_container_is_default(cfg)) {
-+		device_fd = cdev_open_device_fd(dev->dev_num);
-+		if (device_fd < 0)
-+			return -1;
-+		dev->fd = device_fd;
-+
-+		/* attach device to iommufd - only in primary */
-+		if (cdev_attach_device_to_iommufd(cfg, dev) < 0) {
-+			close(device_fd);
-+			dev->fd = -1;
-+			return -1;
-+		}
-+	} else if (vfio_cdev_request_dev_fd(dev) < 0) {
-+		return -1;
-+	}
-+	return 0;
-+}
-diff --git a/lib/eal/linux/eal_vfio_mp_sync.c b/lib/eal/linux/eal_vfio_mp_sync.c
-index 9a07d35023..6d94f44af8 100644
---- a/lib/eal/linux/eal_vfio_mp_sync.c
-+++ b/lib/eal/linux/eal_vfio_mp_sync.c
-@@ -93,6 +93,48 @@ vfio_mp_primary(const struct rte_mp_msg *msg, const void *peer)
- 		}
- 		break;
- 	}
-+	case SOCKET_REQ_CDEV:
-+	{
-+		struct container *cfg;
-+		struct vfio_device *dev;
-+
-+		if (vfio_cfg.mode != RTE_VFIO_MODE_CDEV) {
-+			EAL_LOG(ERR, "VFIO not initialized in cdev mode");
-+			r->result = SOCKET_ERR;
-+			break;
-+		}
-+
-+		r->req = SOCKET_REQ_CDEV;
-+		r->cdev_dev_num = m->cdev_dev_num;
-+
-+		cfg = vfio_cfg.default_cfg;
-+		dev = vfio_cdev_get_dev_by_num(cfg, m->cdev_dev_num);
-+		if (dev == NULL) {
-+			r->result = SOCKET_NO_FD;
-+		} else {
-+			r->result = SOCKET_OK;
-+			reply.num_fds = 1;
-+			reply.fds[0] = dev->fd;
-+		}
-+		break;
-+	}
-+	case SOCKET_REQ_IOAS_ID:
-+	{
-+		struct container *cfg;
-+
-+		if (vfio_cfg.mode != RTE_VFIO_MODE_CDEV) {
-+			EAL_LOG(ERR, "VFIO not initialized in cdev mode");
-+			r->result = SOCKET_ERR;
-+			break;
-+		}
-+
-+		r->req = SOCKET_REQ_IOAS_ID;
-+		cfg = vfio_cfg.default_cfg;
-+		r->ioas_id = cfg->cdev_cfg.ioas_id;
-+
-+		r->result = SOCKET_OK;
-+		break;
-+	}
- 	default:
- 		EAL_LOG(ERR, "vfio received invalid message!");
- 		return -1;
-diff --git a/lib/eal/linux/meson.build b/lib/eal/linux/meson.build
-index 5ec8eddaa2..c164a30b49 100644
---- a/lib/eal/linux/meson.build
-+++ b/lib/eal/linux/meson.build
-@@ -16,6 +16,7 @@ sources += files(
-         'eal_thread.c',
-         'eal_timer.c',
-         'eal_vfio.c',
-+        'eal_vfio_cdev.c',
-         'eal_vfio_group.c',
-         'eal_vfio_mp_sync.c',
- )
--- 
-2.52.0
+v5:
+ * Resolved merge conflicts and rebased to main.
+ * Removed additional framework imports from test suites.
+v6:
+ * Included missing linux_session py file.
+ * Included missing linux_session rst file.
+v7:
+ * Resolved issue where linux sessions was not imported properly.
+
+Andrew Bailey (7):
+  dts: move exception module from framework to API
+  dts: move utils from framework to API
+  dts: move context from framework to API
+  dts: move testbed model from framework to API
+  dts: move test suite module from framework to API
+  dts: move params directory from framework to API
+  dts: separate Linux session into interface and logic
+
+ ...{framework.context.rst => api.context.rst} |  2 +-
+ ...mework.exception.rst => api.exception.rst} |  2 +-
+ ...work.params.eal.rst => api.params.eal.rst} |  2 +-
+ .../{framework.params.rst => api.params.rst}  |  6 +-
+ ....params.types.rst => api.params.types.rst} |  2 +-
+ ...work.test_suite.rst => api.test_suite.rst} |  2 +-
+ ...y.rst => api.testbed_model.capability.rst} |  2 +-
+ ...odel.cpu.rst => api.testbed_model.cpu.rst} |  2 +-
+ ...st => api.testbed_model.linux_session.rst} |  2 +-
+ ...el.node.rst => api.testbed_model.node.rst} |  2 +-
+ ...n.rst => api.testbed_model.os_session.rst} |  2 +-
+ ...el.port.rst => api.testbed_model.port.rst} |  2 +-
+ ...st => api.testbed_model.posix_session.rst} |  2 +-
+ doc/api/dts/api.testbed_model.rst             | 28 ++++++
+ ...ogy.rst => api.testbed_model.topology.rst} |  2 +-
+ ...generator.capturing_traffic_generator.rst} |  2 +-
+ .../api.testbed_model.traffic_generator.rst   | 16 ++++
+ ...testbed_model.traffic_generator.scapy.rst} |  2 +-
+ ...l.traffic_generator.traffic_generator.rst} |  2 +-
+ ...t => api.testbed_model.virtual_device.rst} |  2 +-
+ .../{framework.utils.rst => api.utils.rst}    |  2 +-
+ doc/api/dts/framework.linux_session.rst       |  9 ++
+ doc/api/dts/framework.testbed_model.rst       | 28 ------
+ ...mework.testbed_model.traffic_generator.rst | 16 ----
+ doc/api/dts/index.rst                         | 13 +--
+ dts/api/artifact.py                           |  6 +-
+ dts/api/capabilities.py                       | 14 +--
+ dts/{framework => api}/context.py             | 14 +--
+ dts/api/cryptodev/__init__.py                 |  6 +-
+ dts/api/cryptodev/config.py                   |  6 +-
+ dts/{framework => api}/exception.py           |  0
+ dts/api/packet.py                             | 18 ++--
+ dts/{framework => api}/params/__init__.py     |  0
+ dts/{framework => api}/params/eal.py          |  8 +-
+ dts/{framework => api}/params/types.py        | 16 ++--
+ dts/api/test.py                               |  4 +-
+ dts/{framework => api}/test_suite.py          | 15 ++--
+ .../testbed_model/__init__.py                 |  0
+ .../testbed_model/capability.py               | 18 ++--
+ dts/{framework => api}/testbed_model/cpu.py   |  4 +-
+ dts/api/testbed_model/linux_session.py        | 43 +++++++++
+ dts/{framework => api}/testbed_model/node.py  |  6 +-
+ .../testbed_model/os_session.py               |  8 +-
+ dts/{framework => api}/testbed_model/port.py  |  2 +-
+ .../testbed_model/posix_session.py            |  6 +-
+ .../testbed_model/topology.py                 | 20 ++---
+ .../traffic_generator/__init__.py             |  4 +-
+ .../capturing_traffic_generator.py            |  4 +-
+ .../performance_traffic_generator.py          |  0
+ .../testbed_model/traffic_generator/scapy.py  | 14 +--
+ .../traffic_generator/traffic_generator.py    |  8 +-
+ .../testbed_model/traffic_generator/trex.py   | 18 ++--
+ .../testbed_model/virtual_device.py           |  0
+ dts/api/testpmd/__init__.py                   | 11 ++-
+ dts/api/testpmd/config.py                     |  6 +-
+ dts/api/testpmd/types.py                      |  2 +-
+ dts/{framework => api}/utils.py               |  2 +-
+ dts/framework/config/__init__.py              |  6 +-
+ dts/framework/config/node.py                  |  2 +-
+ dts/framework/config/test_run.py              | 12 +--
+ .../{testbed_model => }/linux_session.py      | 15 ++--
+ dts/framework/parser.py                       |  2 +-
+ dts/framework/remote_session/blocking_app.py  |  8 +-
+ dts/framework/remote_session/dpdk.py          | 16 ++--
+ dts/framework/remote_session/dpdk_shell.py    |  6 +-
+ .../interactive_remote_session.py             |  2 +-
+ .../remote_session/interactive_shell.py       |  8 +-
+ .../remote_session/remote_session.py          |  4 +-
+ dts/framework/runner.py                       |  4 +-
+ dts/framework/test_result.py                  |  5 +-
+ dts/framework/test_run.py                     | 24 ++---
+ dts/tests/TestSuite_blocklist.py              |  4 +-
+ dts/tests/TestSuite_buffer_scatter.py         |  2 +-
+ dts/tests/TestSuite_checksum_offload.py       |  2 +-
+ dts/tests/TestSuite_cryptodev_latency.py      |  6 +-
+ dts/tests/TestSuite_cryptodev_throughput.py   | 89 +++++--------------
+ dts/tests/TestSuite_dual_vlan.py              |  2 +-
+ dts/tests/TestSuite_dynamic_config.py         |  2 +-
+ dts/tests/TestSuite_dynamic_queue_conf.py     |  4 +-
+ dts/tests/TestSuite_flow_offload.py           | 12 +--
+ dts/tests/TestSuite_hello_world.py            |  2 +-
+ dts/tests/TestSuite_l2fwd.py                  |  8 +-
+ dts/tests/TestSuite_mac_filter.py             |  4 +-
+ dts/tests/TestSuite_mtu.py                    |  2 +-
+ dts/tests/TestSuite_packet_capture.py         | 12 +--
+ dts/tests/TestSuite_port_control.py           |  2 +-
+ ...stSuite_port_restart_config_persistency.py |  2 +-
+ dts/tests/TestSuite_port_stats.py             |  2 +-
+ dts/tests/TestSuite_promisc_support.py        |  2 +-
+ dts/tests/TestSuite_qinq.py                   |  2 +-
+ dts/tests/TestSuite_queue_toggle.py           |  2 +-
+ dts/tests/TestSuite_rss.py                    |  6 +-
+ dts/tests/TestSuite_rx_split.py               |  4 +-
+ dts/tests/TestSuite_rx_tx_offload.py          |  2 +-
+ .../TestSuite_single_core_forward_perf.py     |  4 +-
+ dts/tests/TestSuite_smoke_tests.py            |  6 +-
+ dts/tests/TestSuite_softnic.py                |  6 +-
+ dts/tests/TestSuite_speed_capabilities.py     |  2 +-
+ dts/tests/TestSuite_unified_packet.py         |  2 +-
+ dts/tests/TestSuite_virtio_forward.py         |  8 +-
+ dts/tests/TestSuite_vlan.py                   |  2 +-
+ 101 files changed, 382 insertions(+), 372 deletions(-)
+ rename doc/api/dts/{framework.context.rst => api.context.rst} (80%)
+ rename doc/api/dts/{framework.exception.rst => api.exception.rst} (77%)
+ rename doc/api/dts/{framework.params.eal.rst => api.params.eal.rst} (79%)
+ rename doc/api/dts/{framework.params.rst => api.params.rst} (71%)
+ rename doc/api/dts/{framework.params.types.rst => api.params.types.rst} (80%)
+ rename doc/api/dts/{framework.test_suite.rst => api.test_suite.rst} (81%)
+ rename doc/api/dts/{framework.testbed_model.capability.rst => api.testbed_model.capability.rst} (74%)
+ rename doc/api/dts/{framework.testbed_model.cpu.rst => api.testbed_model.cpu.rst} (78%)
+ rename doc/api/dts/{framework.testbed_model.linux_session.rst => api.testbed_model.linux_session.rst} (74%)
+ rename doc/api/dts/{framework.testbed_model.node.rst => api.testbed_model.node.rst} (71%)
+ rename doc/api/dts/{framework.testbed_model.os_session.rst => api.testbed_model.os_session.rst} (76%)
+ rename doc/api/dts/{framework.testbed_model.port.rst => api.testbed_model.port.rst} (77%)
+ rename doc/api/dts/{framework.testbed_model.posix_session.rst => api.testbed_model.posix_session.rst} (74%)
+ create mode 100644 doc/api/dts/api.testbed_model.rst
+ rename doc/api/dts/{framework.testbed_model.topology.rst => api.testbed_model.topology.rst} (73%)
+ rename doc/api/dts/{framework.testbed_model.traffic_generator.capturing_traffic_generator.rst => api.testbed_model.traffic_generator.capturing_traffic_generator.rst} (68%)
+ create mode 100644 doc/api/dts/api.testbed_model.traffic_generator.rst
+ rename doc/api/dts/{framework.testbed_model.traffic_generator.scapy.rst => api.testbed_model.traffic_generator.scapy.rst} (70%)
+ rename doc/api/dts/{framework.testbed_model.traffic_generator.traffic_generator.rst => api.testbed_model.traffic_generator.traffic_generator.rst} (65%)
+ rename doc/api/dts/{framework.testbed_model.virtual_device.rst => api.testbed_model.virtual_device.rst} (72%)
+ rename doc/api/dts/{framework.utils.rst => api.utils.rst} (80%)
+ create mode 100644 doc/api/dts/framework.linux_session.rst
+ delete mode 100644 doc/api/dts/framework.testbed_model.rst
+ delete mode 100644 doc/api/dts/framework.testbed_model.traffic_generator.rst
+ rename dts/{framework => api}/context.py (90%)
+ rename dts/{framework => api}/exception.py (100%)
+ rename dts/{framework => api}/params/__init__.py (100%)
+ rename dts/{framework => api}/params/eal.py (89%)
+ rename dts/{framework => api}/params/types.py (93%)
+ rename dts/{framework => api}/test_suite.py (98%)
+ rename dts/{framework => api}/testbed_model/__init__.py (100%)
+ rename dts/{framework => api}/testbed_model/capability.py (98%)
+ rename dts/{framework => api}/testbed_model/cpu.py (99%)
+ create mode 100644 dts/api/testbed_model/linux_session.py
+ rename dts/{framework => api}/testbed_model/node.py (98%)
+ rename dts/{framework => api}/testbed_model/os_session.py (99%)
+ rename dts/{framework => api}/testbed_model/port.py (98%)
+ rename dts/{framework => api}/testbed_model/posix_session.py (99%)
+ rename dts/{framework => api}/testbed_model/topology.py (96%)
+ rename dts/{framework => api}/testbed_model/traffic_generator/__init__.py (95%)
+ rename dts/{framework => api}/testbed_model/traffic_generator/capturing_traffic_generator.py (98%)
+ rename dts/{framework => api}/testbed_model/traffic_generator/performance_traffic_generator.py (100%)
+ rename dts/{framework => api}/testbed_model/traffic_generator/scapy.py (98%)
+ rename dts/{framework => api}/testbed_model/traffic_generator/traffic_generator.py (91%)
+ rename dts/{framework => api}/testbed_model/traffic_generator/trex.py (96%)
+ rename dts/{framework => api}/testbed_model/virtual_device.py (100%)
+ rename dts/{framework => api}/utils.py (99%)
+ rename dts/framework/{testbed_model => }/linux_session.py (98%)
+
+--
+2.55.0
 
