@@ -2,70 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A701AC5AC7C
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Aug 2026 10:16:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B82B7C5AC7A
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Aug 2026 10:17:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7E47C4027E;
-	Fri,  7 Aug 2026 12:16:40 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id BDF2C40697;
+	Fri,  7 Aug 2026 12:17:27 +0200 (CEST)
 Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
  [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id CD1A840264;
- Fri,  7 Aug 2026 12:16:38 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mails.dpdk.org (Postfix) with ESMTP id DE40440264;
+ Fri,  7 Aug 2026 12:17:25 +0200 (CEST)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
  by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 6777bfww755560; Fri, 7 Aug 2026 03:16:38 -0700
+ 6771ZPnQ1316138; Fri, 7 Aug 2026 03:17:25 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=N58avRFsVIm2IzHvGIiW9v9
- O0RMH8lCv32QI8WcBM8k=; b=e+QYd+1nHclK9wjc031YZGT2gEZyvHv489Zk91l
- 773e59JXGpHJuCA0G7VWJBgCedZC+O8iJp3W4KDfoEharrea/rwZ4SVYkIbDypWm
- O9NPwhtZlom4HEJQDf1PQSvHx5VYIhKS1rSqke2pj/43wSVxWhAUnCpyj7Gw2z5t
- pak/6KRhJWVFsMMWYMGv06fB00K4xyadKjurlu9lg96M4uv9rr2+L4idZln4yyqC
- P/o2aHMiRSnSPhy9wXkFcwANkGYZA3SZdZswktqmALulCGLRwC/4SXVheCWqb9Dk
- wC7N20eDmVlhy5wDo9/6io9nY5ksOLkpNZaZjWYScm0cOxQ==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4fvy5vu0vx-1
+ :mime-version:subject:to; s=pfpt0220; bh=bh7RJoc85q8BO+bWhdeGJra
+ k07D1lf3ZzyXh9ulGxpU=; b=HZiuLXYk8gGs8p60y5JzNtzNvYE9eplDhRC5AcI
+ IFvFVwOEPw2pIBJiatD+T5VRWdhsxEsw+LFN79K/sG4vrlCkLQr+dhB4Tot5SLKr
+ K2aKcC4I6SZyYTUnA9CDiWs2QwP24gZyKid1ZPtRnvKtxKrEyubdOh5OftKbAffS
+ JeKunKrfs208bxE/RZGgwoTQIhU54ysf4UGQoHbNG9BYQ5HeDqpeF4cl+bew5WJq
+ LMdxVe5eNOUPaoB1LEBakEpP6X0oc2cr9QCvU2zyyjnMaI6k3dKkkSbD1A6uqEya
+ nW8C+OMn/J6/W9R0SjDT0DzONEu0pon2bAEjys/IZepqpYw==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4fw5tys5jn-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Fri, 07 Aug 2026 03:16:37 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ Fri, 07 Aug 2026 03:17:24 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Fri, 7 Aug 2026 03:16:36 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Fri, 7 Aug 2026 03:16:36 -0700
+ 15.2.1544.25; Fri, 7 Aug 2026 03:17:24 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Fri, 7 Aug 2026 03:17:24 -0700
 Received: from cavium-SR1-T640.. (unknown [10.28.36.102])
- by maili.marvell.com (Postfix) with ESMTP id 3B51A3F704F;
- Fri,  7 Aug 2026 03:16:33 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 7B8BF3F704F;
+ Fri,  7 Aug 2026 03:17:21 -0700 (PDT)
 From: Akhil Goyal <gakhil@marvell.com>
 To: <dev@dpdk.org>
 CC: <jpalider@marvell.com>, <tduszynski@marvell.com>, <jerinj@marvell.com>,
- <thomas@monjalon.net>, Akhil Goyal <gakhil@marvell.com>, <stable@dpdk.org>
-Subject: [PATCH] raw/cnxk_gpio: fix out of bound access for negative gpio
-Date: Fri, 7 Aug 2026 15:46:30 +0530
-Message-ID: <20260807101630.3571199-1-gakhil@marvell.com>
+ <thomas@monjalon.net>, Akhil Goyal <gakhil@marvell.com>,
+ <stable@dpdk.org>, Marat Khalili <marat.khalili@huawei.com>
+Subject: [PATCH] raw/cnxk_bphy: fix missing doxygen comments
+Date: Fri, 7 Aug 2026 15:47:18 +0530
+Message-ID: <20260807101718.3571504-1-gakhil@marvell.com>
 X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=Ot5/DS/t c=1 sm=1 tr=0 ts=6a75b085 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODA3MDA3OCBTYWx0ZWRfX8hExSKix5D7J
+ pU37k4lDK3K5DLW0r2fxHxgQm12o044Uh77ClapWQwgcVnf1Pm8meFMgPIka0uUmNA7J3ahL8mY
+ WI0flQ96wU1UWMp+sB6280ohFTHIyED5YaAj1rq45Z54AvxL2BvW7oP454hrJfaZdKjnioC8hM4
+ 9tiPsIP+sD/mbCnO0nAayPSPr0p7NyMK1mXIfDjxkldSr0yudEh6sgQmcx7H9PD7+mjpal9+OTR
+ rV3VHK4TODHBCj+ro0r2iUzN5tWw/pP171oOPfKbOtyTQyiFEvgNifBgh99MFT1Pky+IM50zYAm
+ mGFosbbt9WfWnrjRblFVXjx0Xid7v/oahDwN1aDe9NzMKpFLlX5fgrUMQhpynkb3eebeecnq/aU
+ +58FSl4T0PII9wdQVkAoB9uSP6CWR/KflcgCCGQIMj0R+FQqR8H3zH1ZSbCeOi6Uzfbg5fo+S+Z
+ Aqy4q+QTU47/P+KHGbQ==
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODA3MDA3OCBTYWx0ZWRfX2bMLdFjhD8Da
+ ChXvCCavfEhiCvH2vNN7niWrlQT9o8u7qnYY3y6aSsyhN0sGWPKRxBFOLNMGaBLU4QBHFDWOQqJ
+ Dr1TEpUsiu9d68HAEkl8k/rvBtxNsM0=
+X-Proofpoint-ORIG-GUID: cSoCC-odAbCcBVITfTdShtcBUReCto10
+X-Proofpoint-GUID: cSoCC-odAbCcBVITfTdShtcBUReCto10
+X-Authority-Analysis: v=2.4 cv=LMRWhpW9 c=1 sm=1 tr=0 ts=6a75b0b5 cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
  a=Sv0fKeRqtYgA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=QXcCYyLzdtTjyudCfB6f:22 a=8rWy6zfcAAAA:8 a=M5GUcnROAAAA:8
- a=WVCrVrVrQjCZBLGTpbsA:9 a=YjdVzJdQTyZRADMV7wFX:22 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODA3MDA3OCBTYWx0ZWRfX8vgP3rSeTdXQ
- wrOWKmalEUasmug0rJkMaKiKur2TxbdM7rDIe2eexeHSE/XWQuhTF6Ui2mmjwY9UTeBYhIZWefo
- bQGbDgVvql7qFeb2JrdHmI2QFaWpvCXBd4++GjLNUHAaJNxIPza1A51JhabZSrF++qcBGiBtY5E
- v62YAky75dKaepx3Gd1PU/AfJUI22eLAIUvrzItHTSNSzLFA+ZOiEXVP+nLLmPfedJ2/c6+xkid
- xILVDOIxObS8x7zfa3DcyemJjSswiKqD8vKZCke7+8vLTp1hIua5nx0WkZ6zPLe1v1ztOaBi2LD
- Fq8WLltEufaCcRyRijHFt+kTI9VumtgejJmRFqRu2Z2ZeWs8/YP+oxCnls4dN18ePgNSZWx1HDm
- ZCw9Y258aXwBCT7AjrWo4KwD71fM8c7vlGrI3s7FgM/Ly0YcBIZUYgmfplTAab4xlC9NYP0xWwd
- VgwAExrAzMq2D2en71A==
-X-Proofpoint-ORIG-GUID: ruK-PSX__DRSbklea9z5aKJdBKRU_pAw
-X-Proofpoint-GUID: ruK-PSX__DRSbklea9z5aKJdBKRU_pAw
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODA3MDA3OCBTYWx0ZWRfX4PT8/UOIMFhp
- lr5nVirawl+dYEYqkZ7T7i77S9GDLDb5OyCrFVNTjGGfVnGj8IGljWFgL2OnxCrIeBE7LlZS3pU
- hev1PGjpFsWW5pzYLAWaXWgCc2YJy9k=
+ a=qit2iCtTFQkLgVSMPQTB:22 a=8rWy6zfcAAAA:8 a=i0EeH86SAAAA:8 a=M5GUcnROAAAA:8
+ a=V1_DYYl1hJua2h4WtLwA:9 a=YjdVzJdQTyZRADMV7wFX:22 a=OBjm3rFKGHvpk9ecZwUJ:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-08-07_01,2026-08-06_01,2025-10-01_01
@@ -82,32 +83,55 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-cnxk_gpio_valid(struct cnxk_gpiochip *gpiochip, int gpio)
-validates the GPIO number with only an upper bound while gpio
-can be wrongly configured as negative value from application.
-Added a check to reject negative values.
+Documentation build for raw driver cnxk_bphy,
+if included in `doc/api/doxy-api.conf.in`,
+fails because of missing dozygen comments.
+Added comments to fix the doc build.
 
-Fixes: ecc0dd455e9a ("raw/cnxk_gpio: add option to select subset of GPIOs")
+Bugzilla ID: 1962
+Fixes: 2e8bd307fae3 ("common/cnxk: support switching CPRI/ETH back and forth")
+Fixes: bd2fd34ab86f ("common/cnxk: sync eth mode change command with firmware")
 Cc: stable@dpdk.org
 
+Reported-by: Marat Khalili <marat.khalili@huawei.com>
 Signed-off-by: Akhil Goyal <gakhil@marvell.com>
 ---
- drivers/raw/cnxk_gpio/cnxk_gpio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ doc/api/doxy-api.conf.in             | 1 +
+ drivers/raw/cnxk_bphy/rte_pmd_bphy.h | 2 ++
+ 2 files changed, 3 insertions(+)
 
-diff --git a/drivers/raw/cnxk_gpio/cnxk_gpio.c b/drivers/raw/cnxk_gpio/cnxk_gpio.c
-index 0549e326f9..e22fb7cf7b 100644
---- a/drivers/raw/cnxk_gpio/cnxk_gpio.c
-+++ b/drivers/raw/cnxk_gpio/cnxk_gpio.c
-@@ -795,7 +795,7 @@ cnxk_gpio_process_buf(struct cnxk_gpio *gpio, struct rte_rawdev_buf *rbuf)
- static bool
- cnxk_gpio_valid(struct cnxk_gpiochip *gpiochip, int gpio)
- {
--	return gpio < gpiochip->num_gpios && gpiochip->gpios[gpio];
-+	return (gpio >= 0) && (gpio < gpiochip->num_gpios) && gpiochip->gpios[gpio];
- }
+diff --git a/doc/api/doxy-api.conf.in b/doc/api/doxy-api.conf.in
+index bedd944681..94096ee710 100644
+--- a/doc/api/doxy-api.conf.in
++++ b/doc/api/doxy-api.conf.in
+@@ -24,6 +24,7 @@ INPUT                   = @TOPDIR@/doc/api/doxy-api-index.md \
+                           @TOPDIR@/drivers/net/intel/ixgbe \
+                           @TOPDIR@/drivers/net/mlx5 \
+                           @TOPDIR@/drivers/net/softnic \
++                          @TOPDIR@/drivers/raw/cnxk_bphy \
+                           @TOPDIR@/drivers/raw/dpaa2_cmdif \
+                           @TOPDIR@/drivers/raw/ifpga \
+                           @TOPDIR@/lib/eal/include \
+diff --git a/drivers/raw/cnxk_bphy/rte_pmd_bphy.h b/drivers/raw/cnxk_bphy/rte_pmd_bphy.h
+index f668e6ea82..99504dc496 100644
+--- a/drivers/raw/cnxk_bphy/rte_pmd_bphy.h
++++ b/drivers/raw/cnxk_bphy/rte_pmd_bphy.h
+@@ -174,6 +174,7 @@ enum cnxk_bphy_cgx_eth_link_mode {
+ 	__CNXK_BPHY_CGX_ETH_LINK_MODE_MAX
+ };
  
- static int
++/** Available CPRI modes */
+ enum cnxk_bphy_cgx_eth_mode_cpri {
+ 	/** 2.4G Lane Rate */
+ 	CNXK_BPHY_CGX_ETH_MODE_CPRI_2_4G_BIT,
+@@ -191,6 +192,7 @@ enum cnxk_bphy_cgx_eth_mode_cpri {
+ 	CNXK_BPHY_CGX_ETH_MODE_CPRI_24_3G_BIT,
+ };
+ 
++/** Available mode groups */
+ enum cnxk_bphy_cgx_mode_group {
+ 	/** ETH group */
+ 	CNXK_BPHY_CGX_MODE_GROUP_ETH,
 -- 
 2.43.0
 
