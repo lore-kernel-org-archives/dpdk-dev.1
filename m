@@ -2,59 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF3CC5AC7A
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Aug 2026 10:46:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8284C5AC7A
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Aug 2026 10:52:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DB9704027E;
-	Fri,  7 Aug 2026 12:46:42 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
- by mails.dpdk.org (Postfix) with ESMTP id 19EA940264
- for <dev@dpdk.org>; Fri,  7 Aug 2026 12:46:35 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B1F494027E;
+	Fri,  7 Aug 2026 12:52:04 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+ by mails.dpdk.org (Postfix) with ESMTP id 86D0640264
+ for <dev@dpdk.org>; Fri,  7 Aug 2026 12:52:02 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1786099602; x=1817635602;
+ t=1786099922; x=1817635922;
  h=from:to:cc:subject:date:message-id:references:
  in-reply-to:content-transfer-encoding:mime-version;
- bh=8OTOG5xE2z/eI9tDpLk/wpFL0V1qhOuSuNqWsBhCwKg=;
- b=UhNefjRHqkPEOEEvw8lGD0DaU7ivQkeBmts3U4GUGNWWZCT5MGzP/ibO
- VMUn3HSV+HUfchjOq0wMbCGeUoQzw8bBF2GR4vFsZQ37rafaVOkzYetn0
- NRU56aPKO1+hWIq+AoT0CdeQ/AozN4CVybodq9CFUz6Ankhdgh33ookiA
- PD0NUmkrTZ6KBhIR0EhMrFUuTJ5VF0lJHz4ZAZfxzITMn8Ca+NUx4pfli
- ZjoYLPQIBFye4rbHH76qBNS7/ZVjx+i0tZgz0KudZ3H/B5mCQ6w63e71j
- TfIbeG23r+qyrkbX/sjIWHMo11UJ3KAB6x3lY9+AcELGXXKjL0EomCKCV g==;
-X-CSE-ConnectionGUID: BX2Fl25oT3qoI9OzAOTsrw==
-X-CSE-MsgGUID: MoIj8BQWRwef3ADtofJNAQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11867"; a="86783991"
-X-IronPort-AV: E=Sophos;i="6.25,210,1779174000"; d="scan'208";a="86783991"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
- by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Aug 2026 03:46:34 -0700
-X-CSE-ConnectionGUID: PmOID4GrT2WJstiBqau99A==
-X-CSE-MsgGUID: y72LfwJDTBaDSQnf4usyYA==
+ bh=53x3TgfsI2PtKHJd+MCcXrLji4Wq4Gqr0HWovbWIc1o=;
+ b=MB/aeZElt2Av0rTsoWf4yeucbnfmV/NNttPgAgfgNq1tcHfGS0xplpEw
+ DN24rJ1WTPlS1nioKYtVdmsPvEo02kPRSicNji5dksCYcbVYzGXQisdkC
+ 3Vd+WuW3FSVCBl2Y1bSdwfUyTSLc9D4oBZKF+E3OGq2AlNr9FtMnqe6Yb
+ xMiwsMdEbuXx7cSwBbktDDm43dB53Eduu56EIJC0dnTmXbtUGQUDI4S+z
+ vZghvpckG0PvgtTLDEj2cnI+fCdL3kKE3R53pmDKSYGuKswNeaJJyiCtE
+ NDc8Glr+n19PI3b/MQr3b99dN9aS+MvSk1+2Q00PcsZQcReg+eKWTH0CM w==;
+X-CSE-ConnectionGUID: uhlAFq9cSTiPiZBzEorBLQ==
+X-CSE-MsgGUID: D5luZOJ+Sy2fDncQKHAb8Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11867"; a="86469341"
+X-IronPort-AV: E=Sophos;i="6.25,210,1779174000"; d="scan'208";a="86469341"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+ by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 Aug 2026 03:52:01 -0700
+X-CSE-ConnectionGUID: K1IAK+0lT8ueb4p864ykJg==
+X-CSE-MsgGUID: xkTLZS3aQueM3OMOqyjBVg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,210,1779174000"; d="scan'208";a="262414973"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
- by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Aug 2026 03:46:32 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+X-IronPort-AV: E=Sophos;i="6.25,210,1779174000"; d="scan'208";a="287049600"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+ by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 Aug 2026 03:52:01 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Fri, 7 Aug 2026 03:46:31 -0700
+ 15.2.2562.45; Fri, 7 Aug 2026 03:52:00 -0700
 Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45 via Frontend Transport; Fri, 7 Aug 2026 03:46:31 -0700
-Received: from CY3PR05CU001.outbound.protection.outlook.com (40.93.201.69) by
+ 15.2.2562.45 via Frontend Transport; Fri, 7 Aug 2026 03:52:00 -0700
+Received: from BN1PR04CU002.outbound.protection.outlook.com (52.101.56.16) by
  edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Fri, 7 Aug 2026 03:46:31 -0700
+ 15.2.2562.45; Fri, 7 Aug 2026 03:52:00 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=m+EBvlVIwDonA5qsmL6bNqX+MmF+2irzYdpgBm0cjPJsGUiMniTWHUxOVIiYUj5Gecxi4E1BRRCQmYHzrjcVtffwjTrnSV4E82qhXnJePpzCucMKletDQhGtoU+G8Z/pT/QGN9SK4z28tcognIJh2Urseo3YG2KPkwd/9g8kz0WhcNE1QrpNx6SkMj40lwt1jnQq7fcB1VzF2aEOaVA+DwtQ08X89pf0RRWXFxls1l3f4XuAI41GVsbZw58EoFuHt+KrS6GcZwrEoO61oP2UbuvQ7KDPGgul9QPGX7XO+YLoQG9QeaWLFfa0AUxZIOeVTt4epzeyo5o71Wtwx9K/uw==
+ b=Gdywo7ptrRy51/M7CUvm6iLVucbYVDNN0Hrp7PaLrpvarWx44Y0qJZ0qLX5MOKN5zFplOQKzpQyw23RdwJhbopbG4iTcLvZNttJcLJKm9x8fc8n91pNYB7rmmbPcSfqzPEG7FhjpjQyBESQmwR3fr8zYklZplKIfdoZbmNjKzZG/CNC5uTx8JexVRoSRebA2JTgWDcfn/jATeoK9N2+/JZFiusPEhwdMWNOBMs8Z6PVTkqxUm2mfW7zb0SEQ8jOYw/jH0c1/4XU7X33I3hhIN4WzIWZZXj3AWSCCUduCKfdTGvsySRz+g/cyN8KEj56WwjR7kCRpgSnQa2z4F2B90w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=G/aEkK3S6CgtnW4AAqOuzjxqU2kuUWtALajacTIZgLI=;
- b=YZ7yfGi0BOkLpTAZtZc+QPl4iG7qXsNQ4aJ2oFiQNYIlu2x5vBM7ykjVlP9CG0rKXLjDsmX1hAzUchD4i1aMwQV3y5fIvhLvE4n0gg3hEuY4v/zBpf75ecYoNLkPYrYNUfvNwS7SQzIT8bJ87Tm3nQcnMHmtdddFaQ98jh3gBzmd2dfO+IvQm3670eqWo4W69OOpy24a2f1/IKHVYyFtOUR/tthdurK69FdaUs1eKx4yZaLuvsglk3T1qW7Xvd2kyGUKQ1WZRl0W93sClN0dmaDC6V/Y4yLkUznKa8ZddgreJYTYRBTrJZd6G75L70B06QQS3Mnx66fEiSJcbtyeHA==
+ bh=UVpYFHD0HOj6MmPmrH70r15dVm4KdsyvjokSamL8/h4=;
+ b=gj5iFVdUxKIPOaLtlqBON+4RfCaYdBV13wiurYaEnZDzFo6X3gm1s0GarOGp3iJkZ3K0njI3j8O5qOA6TOrmB4WACGZYPlWannUhvJ99BDGkkBDdaaXBQUmJnswc8hRRKD9EU6cFcIU1NQIMK3M5WdyUkrA/VFjbcyPEmGrAbmDXQTjQaYS1NmeLyaXLg8JUR2W0ki4Ax97k61pazY3rYcF5DtTAGZ+9X5lyWnhvtQXFZvEBOHMcJExajICDGOCLmvABdGUbT7fuV3i98wMjKiv2U+QKLYb4L/joSpBYm0T0OuqUiWH6uzh63Rs1FaAFKfdz9AkGOyoY6UiHAVE73A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
@@ -62,23 +62,23 @@ Received: from IA4PR11MB9278.namprd11.prod.outlook.com (2603:10b6:208:563::12)
  by DS6PR11MB9895.namprd11.prod.outlook.com (2603:10b6:8:460::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.21; Fri, 7 Aug
- 2026 10:46:28 +0000
+ 2026 10:51:59 +0000
 Received: from IA4PR11MB9278.namprd11.prod.outlook.com
  ([fe80::9bef:c20f:571f:7057]) by IA4PR11MB9278.namprd11.prod.outlook.com
  ([fe80::9bef:c20f:571f:7057%6]) with mapi id 15.21.0270.016; Fri, 7 Aug 2026
- 10:46:27 +0000
+ 10:51:52 +0000
 From: "Loftus, Ciara" <ciara.loftus@intel.com>
 To: "Mandal, Anurag" <anurag.mandal@intel.com>, "dev@dpdk.org" <dev@dpdk.org>
 CC: "Richardson, Bruce" <bruce.richardson@intel.com>, "Medvedkin, Vladimir"
  <vladimir.medvedkin@intel.com>
-Subject: RE: [PATCH 2/5] net/iavf: defer device start when PF VSI not ready
-Thread-Topic: [PATCH 2/5] net/iavf: defer device start when PF VSI not ready
-Thread-Index: AQHdJX17FOdMGHC3AEWD9Og2G8CcZraSZKhw
-Date: Fri, 7 Aug 2026 10:46:27 +0000
-Message-ID: <IA4PR11MB927865ADBA29A49F57FECA118ED12@IA4PR11MB9278.namprd11.prod.outlook.com>
+Subject: RE: [PATCH 3/5] net/iavf: drain in-flight Tx before reset
+Thread-Topic: [PATCH 3/5] net/iavf: drain in-flight Tx before reset
+Thread-Index: AQHdJX19LbjCe/lDAEGtE7CwRggsTLaSaTCw
+Date: Fri, 7 Aug 2026 10:51:52 +0000
+Message-ID: <IA4PR11MB9278F463F4212529A291E3728ED12@IA4PR11MB9278.namprd11.prod.outlook.com>
 References: <cover.1786004043.git.anurag.mandal@intel.com>
- <39df153b08742a36bfe74bac5026d14a2dc95f1d.1786004043.git.anurag.mandal@intel.com>
-In-Reply-To: <39df153b08742a36bfe74bac5026d14a2dc95f1d.1786004043.git.anurag.mandal@intel.com>
+ <074c789358709981d30f637e7b2715c3c92bdfca.1786004043.git.anurag.mandal@intel.com>
+In-Reply-To: <074c789358709981d30f637e7b2715c3c92bdfca.1786004043.git.anurag.mandal@intel.com>
 Accept-Language: en-IE, en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -87,58 +87,58 @@ authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 x-ms-publictraffictype: Email
 x-ms-traffictypediagnostic: IA4PR11MB9278:EE_|DS6PR11MB9895:EE_
-x-ms-office365-filtering-correlation-id: c6d82d9f-2c8b-4e3c-65b7-08def471224a
+x-ms-office365-filtering-correlation-id: 1788757f-75c8-4a9b-320e-08def471e3d8
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
- ARA:13230040|23010399003|376014|366016|1800799024|38070700021|6133799003|56012099006|22082099003|11063799006|5023799004|10067099003|4143699003|18002099003;
-x-microsoft-antispam-message-info: STeVD8gNTvGrZ0RXMX/CRydrSbTiJerA6F/0NBWrsGhQCQBD2mtKZaMo+R+jgbhAPOplMT+C2UtWeC7bDmTM+zVBtiUhwJwmEMhNgHtcUQaYrHwtAM0IZC/xWQCFVNUjMIID6e8odTD9jeg2L5tB/fs1BQ6QIDwxBWC2cZrOqyR4YHIz8WwxbNsbj31tK9epOG0MnrE8rvri0fpL1rL5DiHoo088d9UkLt1z+YIq8w6u4jzmWWCyI7u/BvZ5+NGY+Dw7FKOBxAoo2yZ6kyQxZMzxV0JnMgJC/gxa+8JUfESA2KS9U2hgoSgZqZABf1pjMmJY+5SkXrnSAfbNfLr1uR34OfxZVxDC/9UzG4N8FQ4HIaDLE8gpfUkMRq8CjlPLygNmNHIEGUlihUvogglnJ8Q66vKsJshkkSQ9BJm7+UCb1GeZjI834yiUhG0+okqpO/4AAbp7IPmCkUZVFYKFIthq5uT9cyKRkPABpsCns3kjQxOl7cRcpBuI5+kUhUWA+EIP3ax/j9iqfKpHg0SwY9U6i0r5RUUO6dCdV15+XfiqFogvOXrPUiUoVBRTdJk7a20D3xpbuggHUXmcCOL3DkrMV/Fpmpe+PaKmnCthsag1Hz+hbtIpZ1puYzliqCEs7Go7ANdzbDxwdfvv+mtX89cAaOnp0vvl+lTpPyouD42v9iuE5f1rie9Fh1++3j5hJvALidHM8GE7aNiEs1iumBUZnM5MMipAfJ6Mdg6+9zI=
+ ARA:13230040|23010399003|376014|366016|1800799024|38070700021|6133799003|56012099006|22082099003|11063799006|10067099003|4143699003|18002099003;
+x-microsoft-antispam-message-info: KJtj/bswVIYAdU6LyivkKFAp6oetDF9k7V14mNm+gb7giA+rMDM43q8Y94zB9q6l37Y86yBlTD29CeyYiPcn5j8Q3C+5u0+49wOy9Bf9Jqjq3oimjAL1bbyBG9RvCKOuiOJqoX7iGG2GgL+IH2Ue3i03bARhQhViv1evvr1iMYPS5XiDdg5PQnQC65ocXETZ4wErjmWs/Dt9AUSUgg/IDZJe/4Ky9PZ+zrm7VXsbE8BuOyw1eCnqoyM+xsTwsfywUeyjRK4IApqcli8fiyETLBHf+pfkgry/zoX48CFKfn5s0tv5iI8A1sZNCAe+9NtzzOdqObsw5ZbPkao0YjvK/hchfuEttSP9ctidTPIB+GA9UJ9s2QczhwnnwurInFElZDklArt5vmB6JQJeow9mPWxJ9gMMxGqJg4oGG7IzHftYu1AsW3bizGm1t/rRod/RqFiSDuVzPb6KqJNW9wm3gB/SoY+rPBoUUQ75e9jPscGGw5faqydHnsGPYK6lKzg0EwvNL00+/RQ3s6mveMJREHjC2xWT+cc5vhq0eB12Gf4ySC56fv2N5lRdar5Zm5EJhd3ZIm+r0x7izs0HLa+AFVgTOSk9JrevMKKpeT0W6Jxlys4bkuKq0W/GP5r3lW9M7UagqdLJN+R6Ve6d1eHX128/kt2KzPKjw84AwonXqHf0w0WCiCloywOYAVH9C99g/D7+eaDlCCTKjz21ksUEAmy+NakTnndsALXNLyABzBE=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:IA4PR11MB9278.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(23010399003)(376014)(366016)(1800799024)(38070700021)(6133799003)(56012099006)(22082099003)(11063799006)(5023799004)(10067099003)(4143699003)(18002099003);
+ SFS:(13230040)(23010399003)(376014)(366016)(1800799024)(38070700021)(6133799003)(56012099006)(22082099003)(11063799006)(10067099003)(4143699003)(18002099003);
  DIR:OUT; SFP:1101; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?gNhTo+hVIpj9ABbSMCTFsS4vmbOtS6x4RImeDBYgrhLaWiRDQPc9dNIa9qNQ?=
- =?us-ascii?Q?DiYb9MlwpDFuAzNtOMiZwx4uH5BR9QmUkivPJBlHfnFMMbRYmLM9lvVixG4L?=
- =?us-ascii?Q?Z2mX9UeixfGOunilVlHoRIVTH4q3dXnx/YHrpZM5D5DKxCMkG0Nza5aN6aUF?=
- =?us-ascii?Q?Rc1JLBWbrqlV9b0JEftc2hvPZX7A6e2+yMzL/9o8SW2MPRncCa3Z0po8CDCH?=
- =?us-ascii?Q?XSra6py5CDYuhmJNDFUyTEdza5B1yp1z3GU6Ml1UhhEBItL/UzWtttm5Lj4Y?=
- =?us-ascii?Q?OyBeeTIdzrRIunoacM2UtOtrJ0SsgwhNHRayNsDZm1siZLWMfdoriIq8BSHW?=
- =?us-ascii?Q?J8SY+5s1GBItAnO1RH/tUFV6rczDFf3ZkwpvXApwb2Nl49NuhCk9CgKScotr?=
- =?us-ascii?Q?tOgFCVG3iKlAq9xwvbZZ0L3xr73rOjHQ7DjG36p/Y5xKBbfvXxO5kTZNuxr9?=
- =?us-ascii?Q?kX4JSCjnZklzAkytALr3J2vR0XJTqy1PibM+6HxRnopAtEWNNybgcmr5kOmW?=
- =?us-ascii?Q?D0dRusQILxSCFprDSVahQ0jiGo5/S1vtW80BxxLrdREqay/OlMtmlwuyKg+Z?=
- =?us-ascii?Q?6irmOrrtO8V6m9mOO0cUey51XJL/u0EQ0mRhclnTCy1mZcWzhBRkVOaGamzI?=
- =?us-ascii?Q?6Cxldgw5p+xulbxhXpLpvLIR/MvSgZNP8jENKbito42oNSle7Ex7dh5gyyTb?=
- =?us-ascii?Q?XnBHbYJIkfhUPcqY9nZU8cll+Wlxpe35jC1Pt8r/dlI6i3tvVhAeK8j9h/J/?=
- =?us-ascii?Q?nUiApZNZ+Pfc+k1TUaRhOXAnhPpkmePgUs5GtyFmqbykY64rP3CMzZHfY3zM?=
- =?us-ascii?Q?LkJbctvf+EG98g3GqZOf+paW8Aoh0sfKoasZ6hV14jF5mkDqpan+sY5zPDfd?=
- =?us-ascii?Q?VksIj2sR3l5sRBkiwyBRyQbmV/yq4rLrUfjN/o2sojh79NCFU622NRtGO+I9?=
- =?us-ascii?Q?yc4pP7Ffyk62BsPFt2fO1IWOfXuJA7KYK0E+SBsi5mIBM1JxlDeka7gXE1cQ?=
- =?us-ascii?Q?eManDQp+2RyOs9j286fyPVldc89zrRgtBe6G1HfzJFYpTtMRS2eKVYBrcd8K?=
- =?us-ascii?Q?fy8aMvj08VSiZFjl37zkMmAsk98kaaP60XJbyvXXE9xwD6gbHKM0hnplXJWF?=
- =?us-ascii?Q?1FH1ipcc2LZ4CsafGhF8qSfJnRJgjZWNM9mDDwbD+/LRW/v9sPdCRe9Fs3y4?=
- =?us-ascii?Q?TJMhv+UMkHI4wI+cGPBoUri6pYON/DqAoZGW9znR4hZuvpWUaIUJq3qoGTkB?=
- =?us-ascii?Q?D6/cT47Ev/xV7Hw8wWV9qOkS5xf4xqKc3nGTzt3GcBY5luN/frJjEsSk6YZU?=
- =?us-ascii?Q?BEMiLJm9FFNGA6h2vnDJMpQLc7pJs6uXmIxnCSIDhc3YQh3J2BsdCcOwYvQK?=
- =?us-ascii?Q?jMu4NqLbZaAP9JzJ8+3TMNz216m9DgfVt7tymoiOz2hK19CCLaKZ7dJJXPNi?=
- =?us-ascii?Q?VWWnVSkWjSJ11EeYH2+fjS42sprGQ+7h9O6wX5bt1KN53fA//Kz8M58/GTsj?=
- =?us-ascii?Q?kh6hj0nvzNmnF7r8qvT15g1dcTeE+15GQXzX0dm+8cgE8UPWixaOO4bOTBlZ?=
- =?us-ascii?Q?nCacozvv2K/WccjOxZby/DDe+YNqeqG+cZwbxvoM0ftg7q58fiYf499wgdhZ?=
- =?us-ascii?Q?1I08Axeq3wbG9aT802NlQMbV18NF4l9t22JzWCveK70eiBybUOoXgB4CwX0X?=
- =?us-ascii?Q?EZH4DHlDJjS4mIK4iz2zCGEJPu6in5bSndQrwSOH/Y+TX7Es?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?AvY6XQedeUSt50RxUUJNuvcSfSTt2qjaDvG7rTyXugI+hd/K2BND12tQS0wr?=
+ =?us-ascii?Q?1mw+/4pheKNFBWvUKvpmWjm/h2WtyZgUD1FuvZ+eRHq1JXOaWPaS6HjLpKje?=
+ =?us-ascii?Q?6vudFOwmv+3zCoKZqgWg0ykBJW3uSnJF/KFLypiSPU5bNRqVK8CzTzKQwtnG?=
+ =?us-ascii?Q?NAwxxmB9S8YKR/Rbl1bFAkGvc4EVfwQfT7UuCIbfMuBGJQf9Ak70PrXh3dFi?=
+ =?us-ascii?Q?QKHlB5ZnHL8nwZ4qvlmSWFPHIpF76GfTmPQbR1pYSLtbmU1+DYfz9pL2/1DS?=
+ =?us-ascii?Q?BrdOndfGxfoOFci2lp2KrjKaXAxg5Vvwm8qqpKp+BnSKPsx8vXCmOLyH+4to?=
+ =?us-ascii?Q?2wpBcgiypxb7YxrbPxw72aP5B3xf4Lzk3k2t60Xux0d7b5kcfK376RoMYViM?=
+ =?us-ascii?Q?L9D5yWnmxMhowtidwuOY6/j4Vt724+QK3r/+PIoEf32JzT0n1asEyWJWLfT7?=
+ =?us-ascii?Q?lD3xzEe9slKxHsDQym7ZwGA9ogJNqT6vxRx1Go1GPQt7hWtyTv3fJtZqYUgV?=
+ =?us-ascii?Q?PaP3gbRxBF4oz7rJ2/+yBabxqZuC39nw//sGpu6/S54NBaAazuYvP1yaBTMQ?=
+ =?us-ascii?Q?V/OvaXMoQ4DMvsDImwTcKCQNY2CgnF+s0oiLdCfLmd3IQ7ns50NphF6EV4Ta?=
+ =?us-ascii?Q?kWhh6OrM06pHc47hzykVep8sFBY6WOP4KeEXC8JwyQDw2uVAlkLK8QUfJuEJ?=
+ =?us-ascii?Q?ZcN27trcQVIGFfCpJn5eOLKozDR3tOXDdZz/mzH7kNMw6ihkt6lwPFTZ3XXs?=
+ =?us-ascii?Q?sJdbnlT760+zncQQr0PiLuh2ZEljhbiNkCKpmlWvhOOlS52n6RaIAolIeDaD?=
+ =?us-ascii?Q?5VxtM+TD9IXjpADmdcHf4SP5rsWg88Ga6BfyssJhEt7AO+p5VnXHrQkyXb+o?=
+ =?us-ascii?Q?JK4d7MDHcmiGxtRS30cV613yurgh37JfD712E7JcmzEbqK+GLPXq7y55L/wO?=
+ =?us-ascii?Q?UbT7ubyxAzW2VkaNTqPc3GUQ/4aFRlsrbi9GZEMXKxOGHAq72aNQ6URBZtF9?=
+ =?us-ascii?Q?wZmCSO/GNVkvSdwIjqYzAddUNA7VtOTTdo0EzXPMV/lvIwv7zF/b3JjMLijs?=
+ =?us-ascii?Q?Qeh+rmzVjrDiAfQoWBjBCUy10+gc3th+3XFgnpGLUkZD9VqyKVOT8p+hd922?=
+ =?us-ascii?Q?YylIc9KlXOiSKTy0CLskXjAhLIoydLfkNhSL46cxwWU6iiKyFu+zKRPlLtIZ?=
+ =?us-ascii?Q?stAY/di5XcM/HSMNlgbFdHYuSymfieV87gous4PnilgjZ5R762KPHXvCp8WW?=
+ =?us-ascii?Q?AmjOfRaD1DxXp9ryzH4eV3smzZCbYpaBLSiywC0GtBORmPIozKjnR2r3umLo?=
+ =?us-ascii?Q?j+x8x49RHlWH//vQv5T9xcpM5GebUJ+epPDqpB9vZLlcvplTOqIh7zrcm01/?=
+ =?us-ascii?Q?v4hj0lJsTZhtUPX2T5Z8IOfr+PyDheU+jMDHTecP9hFXl+byxdiYBFjQ3xsZ?=
+ =?us-ascii?Q?fmfHqil/pdWicDEpJ6P0wlioFiagjKYk8TYweEWiUNTkNdxpYBNpmxA1Pk/Z?=
+ =?us-ascii?Q?7Dnfh2fUiBaJydTDuce+NLxY8CQ3l29efU6CO+579qMD8MHMJIbuGpi6dK3G?=
+ =?us-ascii?Q?S1WB1p/b3pgaZzCl+SJ/jZFFiVOg2Ovp+YJGKHck1PlTycTp42KILNxl9D6Z?=
+ =?us-ascii?Q?u6r11z2Ba3MdqGphHB8/5o7aXL5jQKGnKYxJK5kc6UWndC2OBSA/4w7WU5uh?=
+ =?us-ascii?Q?7m8UbuQbVeSHIG7FiauWtzi4WC36GAkGGzM2J2Bq7xxUrMC3?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: ZKX7P0s4X/vkS7OsMEY9yy+qrL2PXOloX1mpsUD7IEEsWdakC9MVjS11UOZtiGBBATYQf+yIA8amlNwyG3Sr8E1v9Bl+ojASsGnKC1kJiIuYLrJBO9Gc9+BoOOyaQHbnlQaAOpoAagWMh4m//JAmX6NsewwnuUC+A7ORFdNkMuUXzr4IFx8tfL94lAred6FqZyBsqzGJ3IT9Dn1qYOU0xHLDcXC8SvYFq3PcXR4C1teH1m4Qs+bToFGVCKnzDu3HgGfOzv2uMqVcTIHrDiJCRRV+t2Z4cNhle7o8UN1nJFjuAaluya247CisZ8th9KCJJbCEmenY6QvCWG9ZaI11iA==
+X-Exchange-RoutingPolicyChecked: D08hUdZaBc3mvRccBurD6GVlKhqH4Uqd6MPVBe4Dc+ApVoSBPZMyV3DqqgTIeYN7J/oO4oKjT9L23bDTBymcm4au7fjDQIxYyT/JgERTSNLBlgczXFDz1Gz/mnwG5Gi/QU3qFudUtguTNFSTSv8Vyn6s7UBJL80Kxp/CZ6N3Zzjy1/o1J5+RmNiVOtfcAKOuM4oZJBPNh+o24jdzowNpZ2fJpNOyit6Nmj+stt2DtDMvCuFHJhrd81ZosIKjSCQwCNmwJUHRof6S5GhuAeZvx0Z04/WMIqS8r6dRF218T+om/WO/QK0c07RknMmANOCyffOfcohRgBIi+cDJUP9E1g==
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: IA4PR11MB9278.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c6d82d9f-2c8b-4e3c-65b7-08def471224a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Aug 2026 10:46:27.6332 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1788757f-75c8-4a9b-320e-08def471e3d8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Aug 2026 10:51:52.4055 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6yJ5rZl9pW6rPy/NQMrTn6mEDrVqmAhJJ7UMlnfjOGCaUILi2R24lsbc5JpfEM0AiMGnARJE3vX00Ak/OkIaXA==
+X-MS-Exchange-CrossTenant-userprincipalname: ThdgKDx0I9SROjIvXgMCuaPVeBE5cEr7miEnIN/aynZIPfoQc0oFENxNf84dFmTuaOYvle95u/Oc/L9EPOhN3g==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS6PR11MB9895
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
@@ -154,209 +154,128 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Subject: [PATCH 2/5] net/iavf: defer device start when PF VSI not ready
->=20
-> During reset recovery iavf_dev_start() might fail (typically -EIO
-> from VIRTCHNL_OP_CONFIG_VSI_QUEUES) because the PF VSI is not yet
-> active, leaving the VF down and requiring manual intervention
-> to recover.
->=20
-> Added a start_pending flag: when device start fails during recovery,
-> defer it instead of erroring out and resume it from newly added
-> iavf_resume_pending_start() on the next link-up event, so the
-> VF comes back automatically.
 
-It sounds like a fix, can you add a Fixes tag?
+
+> -----Original Message-----
+> From: Mandal, Anurag <anurag.mandal@intel.com>
+> Sent: 06 August 2026 09:26
+> To: dev@dpdk.org
+> Cc: Richardson, Bruce <bruce.richardson@intel.com>; Medvedkin, Vladimir
+> <vladimir.medvedkin@intel.com>; Loftus, Ciara <ciara.loftus@intel.com>;
+> Mandal, Anurag <anurag.mandal@intel.com>
+> Subject: [PATCH 3/5] net/iavf: drain in-flight Tx before reset
+>=20
+> On a link-down or impending PF reset, in-flight Tx descriptors
+> were left pending when the queues were torn down, which could
+> trigger Malicious Driver Detection (MDD) events and
+> leak descriptors.
+>=20
+> Added iavf_dev_tx_drain() to let already-posted Tx bursts
+> complete and flush the rings within a bounded budget,
+> and call it on link-down and reset-impending events
+> before teardown, preventing MDD events and descriptor leaks.
+> The drain selects the cleanup routine that matches the
+> active Tx path: the scalar path uses ci_tx_xmit_cleanup(),
+> while the vector and CTX paths use ci_tx_free_bufs_vec().
+> This matters because the scalar and vector paths track
+> their software rings differently
+> (ci_tx_entry vs ci_tx_entry_vec) and using the scalar
+> routine on a vector queue would walk the wrong ring
+> and free the wrong mbufs.
+
+I think " The drain selects the cleanup routine that matches the
+active Tx path" is sufficient detail, you can clip the rest out.
 
 >=20
 > Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
 > ---
->  drivers/net/intel/iavf/iavf.h        |  2 +
->  drivers/net/intel/iavf/iavf_ethdev.c | 56 ++++++++++++++++++++++++++--
->  drivers/net/intel/iavf/iavf_vchnl.c  | 16 +++++++-
->  3 files changed, 69 insertions(+), 5 deletions(-)
+>  drivers/net/intel/iavf/iavf_rxtx.c  | 104 ++++++++++++++++++++++++++++
+>  drivers/net/intel/iavf/iavf_rxtx.h  |   6 ++
+>  drivers/net/intel/iavf/iavf_vchnl.c |   7 ++
+>  3 files changed, 117 insertions(+)
 >=20
-> diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.=
-h
-> index 293adaf6c9..e76c3bb410 100644
-> --- a/drivers/net/intel/iavf/iavf.h
-> +++ b/drivers/net/intel/iavf/iavf.h
-> @@ -293,6 +293,7 @@ struct iavf_info {
->  	bool in_reset_recovery;
->  	bool reset_pending;
->  	bool pf_reset_in_progress;
-> +	bool start_pending;
+> diff --git a/drivers/net/intel/iavf/iavf_rxtx.c
+> b/drivers/net/intel/iavf/iavf_rxtx.c
+> index 4f2ffe6188..931bb8420d 100644
+> --- a/drivers/net/intel/iavf/iavf_rxtx.c
+> +++ b/drivers/net/intel/iavf/iavf_rxtx.c
+> @@ -32,6 +32,7 @@
 >=20
->  	uint32_t ptp_caps;
->  	rte_spinlock_t phc_time_aq_lock;
-> @@ -533,4 +534,5 @@ void iavf_handle_hw_reset(struct rte_eth_dev *dev,
-> bool vf_initiated_reset);
->  void iavf_set_no_poll(struct iavf_adapter *adapter, bool link_change);
->  bool is_iavf_supported(struct rte_eth_dev *dev);
->  void iavf_hash_uninit(struct iavf_adapter *ad);
-> +void iavf_resume_pending_start(struct rte_eth_dev *dev);
->  #endif /* _IAVF_ETHDEV_H_ */
-> diff --git a/drivers/net/intel/iavf/iavf_ethdev.c
-> b/drivers/net/intel/iavf/iavf_ethdev.c
-> index e475b64971..87b826c873 100644
-> --- a/drivers/net/intel/iavf/iavf_ethdev.c
-> +++ b/drivers/net/intel/iavf/iavf_ethdev.c
-> @@ -1093,6 +1093,9 @@ iavf_dev_start(struct rte_eth_dev *dev)
+>  #include "iavf.h"
+>  #include "iavf_rxtx.h"
+> +#include "iavf_rxtx_vec_common.h"
+>  #include "iavf_ipsec_crypto.h"
+>  #include "rte_pmd_iavf.h"
 >=20
->  	iavf_phc_sync_alarm_start(dev);
->=20
-> +	/* An explicit start supersedes any pending deferred start */
-> +	vf->start_pending =3D false;
-> +
->  	return 0;
->=20
->  error:
-> @@ -1131,6 +1134,9 @@ iavf_dev_stop(struct rte_eth_dev *dev)
->  	adapter->stopped =3D 1;
->  	dev->data->dev_started =3D 0;
->=20
-> +	/* An explicit stop cancels any pending deferred start */
-> +	vf->start_pending =3D false;
-> +
->  	return 0;
+> @@ -4025,6 +4026,109 @@ iavf_tx_done_cleanup_full(struct ci_tx_queue
+> *txq,
+>  	return (int)pkt_cnt;
 >  }
 >=20
-> @@ -3425,6 +3431,7 @@ iavf_handle_hw_reset(struct rte_eth_dev *dev,
-> bool vf_initiated_reset)
->=20
->  	vf->in_reset_recovery =3D true;
->  	vf->pf_reset_in_progress =3D !vf_initiated_reset;
-> +	vf->start_pending =3D false;
->  	iavf_set_no_poll(adapter, false);
->=20
->  	/* Call the pre reset callback */
-> @@ -3445,10 +3452,17 @@ iavf_handle_hw_reset(struct rte_eth_dev *dev,
-> bool vf_initiated_reset)
->  	if (!vf_initiated_reset || restart_device) {
->  		/* start the device */
->  		ret =3D iavf_dev_start(dev);
-> -		if (ret)
-> -			goto error;
-> -
-> -		dev->data->dev_started =3D 1;
-> +		if (ret =3D=3D 0) {
-> +			dev->data->dev_started =3D 1;
-> +		} else {
-> +			PMD_DRV_LOG(WARNING,
-> +				    "dev_start failed during reset recovery
-> (rc=3D%d);"
-> +				    "deferring to next link-up event",
-> +				    ret);
-> +			vf->start_pending =3D true;
-> +			dev->data->dev_started =3D 0;
-> +			ret =3D 0;
-> +		}
->  	}
->=20
->  	/* Restore settings after the reset */
-> @@ -3662,6 +3676,40 @@ bool is_iavf_supported(struct rte_eth_dev *dev)
->  	return !strcmp(dev->device->driver->name,
-> rte_iavf_pmd.driver.name);
->  }
->=20
-> +void
-> +iavf_resume_pending_start(struct rte_eth_dev *dev)
+> +/*
+> + * Reclaim completed Tx descriptors for a single queue using the cleanup
+> + * routine that matches the active Tx path.
+
+> + * The scalar and vector paths track their software rings differently
+> + * (ci_tx_entry vs ci_tx_entry_vec) and keep separate completion
+> + * bookkeeping, so using the scalar routine on a vector queue
+> + * (or vice versa) would free the wrong mbufs.
+
+I think the above sentence can be removed (verbose).
+
+> + * Returns true if any descriptors were reclaimed.
+> + */
+> +static bool
+> +iavf_tx_drain_cleanup(struct ci_tx_queue *txq,
+> +		      enum iavf_tx_func_type tx_func_type)
 > +{
-> +	struct iavf_info *vf =3D IAVF_DEV_PRIVATE_TO_VF(dev->data-
-> >dev_private);
-> +	int ret;
-> +
-> +	if (!vf->start_pending)
-> +		return;
-> +	/*
-> +	 * If the application has already (re)started the port itself, the
-> +	 * deferred start is stale, the application's action is honoured
-> +	 * and resume pending is dropped to avoid starting an
-> +	 * already-running port a second time.
-> +	 */
-> +	if (dev->data->dev_started) {
-> +		vf->start_pending =3D false;
-> +		return;
-> +	}
-> +
-> +	if (!vf->link_up)
-> +		return;
-> +
-> +	PMD_DRV_LOG(DEBUG, "PF link back up; resuming deferred
-> dev_start");
-> +	ret =3D iavf_dev_start(dev);
-
-This call to iavf_dev_start could result in another nested call to
-iavf_resume_pending_start which would be problematic.
-iavf_dev_start polls the ARQ eg.
-
-iavf_dev_start -> iavf_configure_queues -> iavf_execute_vf_cmd_safe ->
-iavf_wait_for_msg -> iavf_read_msg_from_pf -> iavf_clean_arq_element
-
-If another LSC happens during this time, you could enter
-iavf_handle_link_change_event again and end up calling
-iavf_resume_pending_start again. It can maybe be prevented by clearing the
-pending flag at the beginning of iavf_resume_pending_start and setting it
-again if the start fails.
-
-> +	if (ret =3D=3D 0) {
-> +		dev->data->dev_started =3D 1;
-> +		vf->start_pending =3D false;
-> +	} else {
-> +		PMD_DRV_LOG(ERR,
-> +			    "deferred dev_start failed (ret=3D%d); will retry on
-> next link-up",
-> +			    ret);
+> +	switch (tx_func_type) {
+> +	case IAVF_TX_AVX2_CTX:
+> +	case IAVF_TX_AVX2_CTX_OFFLOAD:
+> +	case IAVF_TX_AVX512_CTX:
+> +	case IAVF_TX_AVX512_CTX_OFFLOAD:
+> +		return ci_tx_free_bufs_vec(txq, iavf_tx_desc_done, true) !=3D 0;
+> +	case IAVF_TX_NEON:
+> +	case IAVF_TX_AVX2:
+> +	case IAVF_TX_AVX2_OFFLOAD:
+> +	case IAVF_TX_AVX512:
+> +	case IAVF_TX_AVX512_OFFLOAD:
+> +		return ci_tx_free_bufs_vec(txq, iavf_tx_desc_done, false) !=3D 0;
+> +	case IAVF_TX_DEFAULT:
+> +	default:
+> +		return ci_tx_xmit_cleanup(txq) =3D=3D 0;
 > +	}
 > +}
 > +
->  RTE_PMD_REGISTER_PCI(net_iavf, rte_iavf_pmd);
->  RTE_PMD_REGISTER_PCI_TABLE(net_iavf, pci_id_iavf_map);
->  RTE_PMD_REGISTER_KMOD_DEP(net_iavf, "* igb_uio | vfio-pci");
-> diff --git a/drivers/net/intel/iavf/iavf_vchnl.c
-> b/drivers/net/intel/iavf/iavf_vchnl.c
-> index 56918ebcc1..8e102b02aa 100644
-> --- a/drivers/net/intel/iavf/iavf_vchnl.c
-> +++ b/drivers/net/intel/iavf/iavf_vchnl.c
-> @@ -260,7 +260,7 @@ iavf_handle_link_change_event(struct rte_eth_dev
-> *dev,
->  	 * (link is down or a VF reset is in progress); the watchdog drives
->  	 * auto-reset recovery, so it must remain armed in those cases.
->  	 */
-> -	if (vf->link_up && !vf->vf_reset)
-> +	if (vf->link_up && !vf->vf_reset && !vf->in_reset_recovery)
 
-Is this change relevant to the rest of this patch?
+[snip]
 
->  		iavf_dev_watchdog_disable(adapter);
->  	else
->  		iavf_dev_watchdog_enable(adapter);
-> @@ -271,6 +271,20 @@ iavf_handle_link_change_event(struct rte_eth_dev
-> *dev,
->  			    adapter->no_poll ? "on" : "off");
->  	}
->=20
-> +	/*
-> +	 * Resume a deferred dev_start.
-> +	 * iavf_handle_hw_reset() sets vf->start_pending when
-> +	 * reset recovery completed dev_init() but iavf_dev_start()
-> +	 * itself failed (typically -EIO from
-> VIRTCHNL_OP_CONFIG_VSI_QUEUES
-> +	 * when the PF VSI was inactive).
-> +	 * A link-up event implies the PF VSI is active again, so retry now.
-> +	 * Run before the LSC event post so the port is ready to accept Tx
-> +	 * by the time the app's link-up callback fires; no_poll has already
-> +	 * been cleared above so bursts go through as soon as
-> +	 * dev_start sets dev_started=3D1.
-> +	 */
+>  	/*
+> @@ -341,6 +343,8 @@ iavf_read_msg_from_pf(struct iavf_adapter
+> *adapter, uint16_t buf_len,
+>  			if (!vf->vf_reset) {
+>  				vf->vf_reset =3D true;
+>  				iavf_set_no_poll(adapter, false);
+> +				if (adapter->devargs.no_poll_on_link_down)
+> +					iavf_dev_tx_drain(vf->eth_dev);
+>  				iavf_dev_event_post(vf->eth_dev,
+>  					RTE_ETH_EVENT_INTR_RESET,
+>  					NULL, 0);
+> @@ -579,6 +583,9 @@ iavf_handle_pf_event_msg(struct rte_eth_dev *dev,
+> uint8_t *msg,
+>  		if (!vf->vf_reset) {
+>  			vf->vf_reset =3D true;
+>  			iavf_set_no_poll(adapter, false);
+> +			iavf_dev_watchdog_enable(adapter);
 
-I think this comment is verbose, consider shortening it.
+Is this enabling of the watchdog intended?
 
-> +	iavf_resume_pending_start(dev);
-> +
->  	iavf_dev_event_post(dev, RTE_ETH_EVENT_INTR_LSC, NULL, 0);
->=20
->  	PMD_DRV_LOG(INFO, "Link status update:%s",
+> +			if (adapter->devargs.no_poll_on_link_down)
+> +				iavf_dev_tx_drain(dev);
+>  			iavf_dev_event_post(dev,
+> RTE_ETH_EVENT_INTR_RESET,
+>  				NULL, 0);
+>  		}
 > --
 > 2.34.1
 
