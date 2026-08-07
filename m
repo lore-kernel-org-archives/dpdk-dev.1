@@ -2,50 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 007A3C5AC7A
-	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Aug 2026 06:17:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E42DCC5AC7C
+	for <dpdk-dev@archiver.kernel.org>; Fri,  7 Aug 2026 06:48:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E9B8A402D1;
-	Fri,  7 Aug 2026 08:17:34 +0200 (CEST)
-Received: from canpmsgout09.his.huawei.com (canpmsgout09.his.huawei.com
- [113.46.200.224])
- by mails.dpdk.org (Postfix) with ESMTP id 58BD7402B6
- for <dev@dpdk.org>; Fri,  7 Aug 2026 08:17:33 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=bpucSEX0HaDd53b3008E/mdreyWfmGTOQbVXKp4NkUY=;
- b=QjF7PnL7GIEea5XSMfscpfsxymEXGNDDmQ0rpTUaYo2777Hz65F7xMkkmoWxG7VmNAuvuXzTo
- j1dlzXEyesT1BHltnTAd5hhFkKDmtWoK9ZTtiVcpm2F3Db/j5d3mxq4kNY5n/WCBQgyjrSqf36n
- IYv0EhDWDYTouSRuyRNIBUY=
-Received: from mail.maildlp.com (unknown [172.19.163.127])
- by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4hGYZR1SYXz1cyQ2;
- Fri,  7 Aug 2026 14:06:55 +0800 (CST)
-Received: from kwepemp200007.china.huawei.com (unknown [7.202.195.46])
- by mail.maildlp.com (Postfix) with ESMTPS id 3CC9F402AB;
- Fri,  7 Aug 2026 14:17:28 +0800 (CST)
-Received: from kwepemp500015.china.huawei.com (7.202.195.9) by
- kwepemp200007.china.huawei.com (7.202.195.46) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Fri, 7 Aug 2026 14:17:27 +0800
-Received: from localhost.localdomain (10.50.163.32) by
- kwepemp500015.china.huawei.com (7.202.195.9) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Fri, 7 Aug 2026 14:17:27 +0800
-From: Xingui Yang <yangxingui@huawei.com>
-To: <dev@dpdk.org>
-CC: <stephen@networkplumber.org>, <david.marchand@redhat.com>,
- <aman.deep.singh@intel.com>, <fengchengwen@huawei.com>,
- <lihuisong@huawei.com>, <liuyonglong@huawei.com>, <kangfenglong@huawei.com>
-Subject: [PATCH v4] app/testpmd: support runt frames in txonly
-Date: Fri, 7 Aug 2026 14:17:27 +0800
-Message-ID: <20260807061727.1687254-1-yangxingui@huawei.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id B36024064A;
+	Fri,  7 Aug 2026 08:48:58 +0200 (CEST)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+ by mails.dpdk.org (Postfix) with ESMTP id CD6A7402B6
+ for <dev@dpdk.org>; Fri,  7 Aug 2026 08:48:57 +0200 (CEST)
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 92AEC1A0131;
+ Fri,  7 Aug 2026 08:48:57 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com
+ (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5B5DC1A012E;
+ Fri,  7 Aug 2026 08:48:57 +0200 (CEST)
+Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
+ [92.120.147.250])
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 8F8B318000B1;
+ Fri,  7 Aug 2026 14:48:56 +0800 (+08)
+From: Gagandeep Singh <g.singh@nxp.com>
+To: dev@dpdk.org
+Cc: hemant.agrawal@nxp.com
+Subject: [PATCH v2 0/5] dma/imx_edma5: introduce NXP i.MX95 eDMA5 driver
+Date: Fri,  7 Aug 2026 12:18:48 +0530
+Message-Id: <20260807064853.1138187-1-g.singh@nxp.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20260806084245.561305-1-g.singh@nxp.com>
+References: <20260806084245.561305-1-g.singh@nxp.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=y
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.50.163.32]
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemp500015.china.huawei.com (7.202.195.9)
+X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,171 +47,74 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Allow setting transmit size to be a small value which has Ethernet
-header but no IP or UDP header, since control level protocols can be
-very short.
+V2-changes:
+ - Added dependent patch: bus/platform: match device by devicetree compatible string
+ - Fixed multiple AI reported issues includes:
+   - removed the alias from the driver, no need of it
+   - removed imx_edma5_write32 from data-path, reported as coherency
+     concern.
+   - fix submit for previously enqueued jobs.
+   - Added dsb in data path
+   - Added a commnet for rte_mem_iova2virt() NULL behaviour.
+   - Fixed: TCD NBYTES bits 31:30 are SMLOE/DMLOE — full 32-bit length corrupts them
+   - Data path is fully synchronous: Acknowledged but intentionally deferred —
+     the synchronous design is a deliberate simplification for the initial upstream submission.
+     Noted in docs.
+   - In-memory TCD64 pool is more complex than needed:
+     Noted/deferred — the pool structure was retained for forward compatibility
+     with hardware SG chaining.
+   - Extended `imx_edma5_dump()` to read and print `CH_CSR` and `CH_ES` registers
+     for every configured vchan.
+   - Double and stary lines removed.
 
-Checksum offloads are disabled when headers are incomplete.
-copy_buf_to_pkt_segs stops at the last segment to prevent OOB access.
+V1:
+This patch series adds a new dmadev Poll-Mode Driver (PMD) for the NXP
+i.MX95 eDMA5 (Enhanced DMA Type 5) controller.
 
-Suggested-by: Stephen Hemminger <stephen@networkplumber.org>
-Signed-off-by: Xingui Yang <yangxingui@huawei.com>
----
-Changes in v4:
-- Removed ultra-small frame support (< 14 bytes) per Stephen's review.
----
- app/test-pmd/config.c                       | 13 ++++----
- app/test-pmd/txonly.c                       | 36 +++++++++++++++++++--
- doc/guides/rel_notes/release_26_11.rst      |  7 ++++
- doc/guides/testpmd_app_ug/testpmd_funcs.rst | 11 +++++++
- 4 files changed, 58 insertions(+), 9 deletions(-)
+Key features supported by this driver:
+  - Memory-to-memory copy (RTE_DMA_OP_TYPE_MEMCPY)
+  - Scatter-gather memory copy (RTE_DMA_OP_TYPE_SG)
+  - 64-bit TCD (Transfer Control Descriptor) format
+  - Non-coherent DMA with explicit cache clean/invalidate
+  - Per-channel statistics and register dump for debug
 
-diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
-index aa03eb99cc..86c794b923 100644
---- a/app/test-pmd/config.c
-+++ b/app/test-pmd/config.c
-@@ -6333,9 +6333,8 @@ set_tx_pkt_segments(unsigned int *seg_lengths, unsigned int nb_segs)
- 	/*
- 	 * Check that each segment length is greater or equal than
- 	 * the mbuf data size.
--	 * Check also that the total packet length is greater or equal than the
--	 * size of an empty UDP/IP packet (sizeof(struct rte_ether_hdr) +
--	 * 20 + 8).
-+	 * The total packet length must be at least the size of an
-+	 * Ethernet header.
- 	 */
- 	tx_pkt_len = 0;
- 	for (i = 0; i < nb_segs; i++) {
-@@ -6347,10 +6346,10 @@ set_tx_pkt_segments(unsigned int *seg_lengths, unsigned int nb_segs)
- 		}
- 		tx_pkt_len = (uint16_t)(tx_pkt_len + seg_lengths[i]);
- 	}
--	if (tx_pkt_len < (sizeof(struct rte_ether_hdr) + 20 + 8)) {
--		fprintf(stderr, "total packet length=%u < %d - give up\n",
--				(unsigned) tx_pkt_len,
--				(int)(sizeof(struct rte_ether_hdr) + 20 + 8));
-+	if (tx_pkt_len < sizeof(struct rte_ether_hdr)) {
-+		fprintf(stderr, "total packet length=%u < %zu - give up\n",
-+				(unsigned int) tx_pkt_len,
-+				sizeof(struct rte_ether_hdr));
- 		return;
- 	}
- 
-diff --git a/app/test-pmd/txonly.c b/app/test-pmd/txonly.c
-index a4acb85d29..e90e28a6e6 100644
---- a/app/test-pmd/txonly.c
-+++ b/app/test-pmd/txonly.c
-@@ -76,6 +76,12 @@ copy_buf_to_pkt_segs(void* buf, unsigned len, struct rte_mbuf *pkt,
- 	while (offset >= seg->data_len) {
- 		offset -= seg->data_len;
- 		seg = seg->next;
-+		/*
-+		 * The packet may be shorter than the header stack when
-+		 * generating runt frames, stop once it runs out of segments.
-+		 */
-+		if (seg == NULL)
-+			return;
- 	}
- 	copy_len = seg->data_len - offset;
- 	seg_buf = rte_pktmbuf_mtod_offset(seg, char *, offset);
-@@ -84,6 +90,8 @@ copy_buf_to_pkt_segs(void* buf, unsigned len, struct rte_mbuf *pkt,
- 		len -= copy_len;
- 		buf = ((char*) buf + copy_len);
- 		seg = seg->next;
-+		if (seg == NULL)
-+			return;
- 		seg_buf = rte_pktmbuf_mtod(seg, char *);
- 		copy_len = seg->data_len;
- 	}
-@@ -193,7 +201,6 @@ pkt_burst_prepare(struct rte_mbuf *pkt, struct rte_mempool *mbp,
- 	pkt->vlan_tci = vlan_tci;
- 	pkt->vlan_tci_outer = vlan_tci_outer;
- 	pkt->l2_len = sizeof(struct rte_ether_hdr);
--	pkt->l3_len = sizeof(struct rte_ipv4_hdr);
- 
- 	pkt_len = pkt->data_len;
- 	pkt_seg = pkt;
-@@ -204,6 +211,25 @@ pkt_burst_prepare(struct rte_mbuf *pkt, struct rte_mempool *mbp,
- 		pkt_len += pkt_seg->data_len;
- 	}
- 	pkt_seg->next = NULL; /* Last segment of packet. */
-+
-+	/*
-+	 * A runt frame may be too short to carry a full IPv4/UDP header.
-+	 * Clamp l3_len and drop any checksum offload whose header is not
-+	 * fully present, so the PMD is never asked to checksum bytes that
-+	 * are not in the frame. pkt_len is at least sizeof(struct rte_ether_hdr),
-+	 * so the subtraction below cannot underflow.
-+	 */
-+	pkt->l3_len = RTE_MIN(sizeof(struct rte_ipv4_hdr),
-+			pkt_len - sizeof(struct rte_ether_hdr));
-+	if (pkt_len < sizeof(struct rte_ether_hdr) +
-+			sizeof(struct rte_ipv4_hdr))
-+		pkt->ol_flags &= ~(RTE_MBUF_F_TX_IP_CKSUM |
-+				RTE_MBUF_F_TX_L4_MASK);
-+	else if (pkt_len < sizeof(struct rte_ether_hdr) +
-+			sizeof(struct rte_ipv4_hdr) +
-+			sizeof(struct rte_udp_hdr))
-+		pkt->ol_flags &= ~RTE_MBUF_F_TX_L4_MASK;
-+
- 	/*
- 	 * Copy headers in first packet segment(s).
- 	 */
-@@ -405,7 +431,13 @@ tx_only_begin(portid_t pi)
- 	pkt_hdr_len = (uint16_t)(sizeof(struct rte_ether_hdr) +
- 				 sizeof(struct rte_ipv4_hdr) +
- 				 sizeof(struct rte_udp_hdr));
--	pkt_data_len = tx_pkt_length - pkt_hdr_len;
-+	/*
-+	 * tx_pkt_length may be smaller than the full header stack when
-+	 * generating runt frames, clamp the payload length to zero in
-+	 * that case so the IP/UDP length fields stay sane.
-+	 */
-+	pkt_data_len = tx_pkt_length > pkt_hdr_len ?
-+			tx_pkt_length - pkt_hdr_len : 0;
- 
- 	if ((tx_pkt_split == TX_PKT_SPLIT_RND || txonly_multi_flow) &&
- 	    tx_pkt_seg_lengths[0] < pkt_hdr_len) {
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index c8cc86295d..577b892d57 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -55,6 +55,13 @@ New Features
-      Also, make sure to start the actual text at the margin.
-      =======================================================
- 
-+* **Updated testpmd application.**
-+
-+  Added support for runt frames in txonly mode. The minimum packet
-+  length for ``set txpkts`` is relaxed to the Ethernet header size,
-+  since control level protocols can be very short. Checksum offloads
-+  are automatically disabled when headers are incomplete.
-+
- 
- Removed Items
- -------------
-diff --git a/doc/guides/testpmd_app_ug/testpmd_funcs.rst b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-index e65376df54..0edcdd8444 100644
---- a/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-+++ b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-@@ -874,6 +874,17 @@ Set the length of each segment of the TX-ONLY packets or length of packet for FL
- 
- Where x[,y]* represents a CSV list of values, without white space.
- 
-+The total packet length may be set as small as the Ethernet header
-+(``sizeof(struct rte_ether_hdr)``), since control level protocols can
-+be very short. This generates runt frames with truncated IPv4/UDP
-+headers. Checksum offloads are automatically disabled when the
-+corresponding header is not fully present.
-+
-+Note that random split (``set txsplit rand``) and multi-flow
-+(``set txonly-flows``) still require the first segment to hold the full
-+Ethernet/IPv4/UDP header stack, so they cannot be combined with runt
-+lengths.
-+
- set txtimes
- ~~~~~~~~~~~
- 
+Patch breakdown:
+  [1/4] Skeleton: bus probe/remove, dmadev registration, MAINTAINERS,
+        doc index, and release notes for 26.11.
+  [2/4] Device configuration: vchan setup, TCD ring allocation,
+        start/stop, and capability reporting.
+  [3/4] Data path: enqueue (copy and sg), doorbell, completion poll.
+  [4/4] Statistics and dump: per-channel counters and register dump.
+
+Tested on NXP i.MX95 EVK with vfio-platform.
+
+Gagandeep Singh (5):
+  bus/platform: match device by devicetree compatible string
+  dma/imx_edma5: introduce eDMA5 dmadev skeleton
+  dma/imx_edma5: add device configuration
+  dma/imx_edma5: add data path
+  dma/imx_edma5: add statistics and dump
+
+ MAINTAINERS                                |    5 +
+ doc/guides/dmadevs/imx_edma5.rst           |   61 +
+ doc/guides/dmadevs/index.rst               |    1 +
+ doc/guides/rel_notes/release_26_11.rst     |    6 +
+ drivers/bus/platform/bus_platform_driver.h |    3 +-
+ drivers/bus/platform/platform.c            |   67 +-
+ drivers/dma/imx_edma5/imx_edma5_dmadev.c   | 1162 ++++++++++++++++++++
+ drivers/dma/imx_edma5/imx_edma5_dmadev.h   |  220 ++++
+ drivers/dma/imx_edma5/imx_edma5_hw.h       |  157 +++
+ drivers/dma/imx_edma5/imx_edma5_logs.h     |   16 +
+ drivers/dma/imx_edma5/meson.build          |   10 +
+ drivers/dma/meson.build                    |    1 +
+ 12 files changed, 1707 insertions(+), 2 deletions(-)
+ create mode 100644 doc/guides/dmadevs/imx_edma5.rst
+ create mode 100644 drivers/dma/imx_edma5/imx_edma5_dmadev.c
+ create mode 100644 drivers/dma/imx_edma5/imx_edma5_dmadev.h
+ create mode 100644 drivers/dma/imx_edma5/imx_edma5_hw.h
+ create mode 100644 drivers/dma/imx_edma5/imx_edma5_logs.h
+ create mode 100644 drivers/dma/imx_edma5/meson.build
+
 -- 
-2.43.0
+2.25.1
 
