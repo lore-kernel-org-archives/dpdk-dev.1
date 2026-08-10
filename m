@@ -2,76 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E10C5AD55
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Aug 2026 15:24:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77029C5AD55
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Aug 2026 15:25:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8B7B640E17;
-	Mon, 10 Aug 2026 17:24:28 +0200 (CEST)
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com
- [209.85.215.178])
- by mails.dpdk.org (Postfix) with ESMTP id 4E34940272
- for <dev@dpdk.org>; Mon, 10 Aug 2026 17:24:27 +0200 (CEST)
-Received: by mail-pg1-f178.google.com with SMTP id
- 41be03b00d2f7-c998fd549a8so1507139a12.2
- for <dev@dpdk.org>; Mon, 10 Aug 2026 08:24:27 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id A15F940272;
+	Mon, 10 Aug 2026 17:25:48 +0200 (CEST)
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com
+ [209.85.214.180])
+ by mails.dpdk.org (Postfix) with ESMTP id 5C96C40144
+ for <dev@dpdk.org>; Mon, 10 Aug 2026 17:25:47 +0200 (CEST)
+Received: by mail-pl1-f180.google.com with SMTP id
+ d9443c01a7336-2cad8076b01so22351895ad.2
+ for <dev@dpdk.org>; Mon, 10 Aug 2026 08:25:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786375466;
- x=1786980266; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786375546;
+ x=1786980346; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=99R4WhvZxuUrgiq1tItOh0g5Mp6f8e5JL7kCXxNY/m4=;
- b=bwNnUshYIpLODcPA/KVzUp903NQ4B6HA4LsGTG7J7K6x4Wz2aPPki3Leb+K3KZuftW
- dnqN1TSxSccUxf+/QVsrnifyKYR4n0k219dv1el2cZL5/We0On1jouQeq89TlnISLb3t
- lal+mG4KBA4//WRBVeVxNAaTE1lDJYHBpSknHdSl2qkKfb0iK64C5tl9ZdMEhKJJ6j/K
- 8rx05+wZCKn1vyrVaC52cRyvQgIerXP4pb9o/nAmd39F+b4O9RGQRKeGSOKDBqdjs1Ca
- YjXfoFXxTEyQO/+Jpfa3D3Tlhs3BVQG787Qxfq59mtR9Ckj5o2x25Iq+dQNm2/WXjAYQ
- n/6w==
+ bh=tMGKVZzTvVjD93rE3Xo2xOvCirbn+ymTlozIKQiZ4T0=;
+ b=A/6bB4YnPOD5EE4U1zKmOegDgUUdJ/cPoAE0ylD4h+nyR+A2JpWUj7TmXxOimkdLES
+ cP0uPpxNdGgDT5LLmiggIet43Td107Q9/N2KSSbiVx2rctZ0ANSJvmDFYCuFXr+wJGlJ
+ L7F3Bl4IMeMKqC/r1+n1kTtP+mx12z733Dc7VPf2d/YzklXkq1Jy9upH8OAlvzCNheTZ
+ F6rnp2J7vwYELOMSi/cmyfJtIQdEJlHJJKXIT7JRsyzYH3Jh378YiMJwEdF9WErsMlvI
+ /CwMhgzC21Wbj8PlRMMoSZF/5kQRjR9nfEsMNXkgaCeWYlpnsFbYUHPUyuo+uAmOVE1x
+ cH6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786375466; x=1786980266;
+ d=1e100.net; s=20251104; t=1786375546; x=1786980346;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=99R4WhvZxuUrgiq1tItOh0g5Mp6f8e5JL7kCXxNY/m4=;
- b=ZXYOdnu8DZ8XgNizzYrdnMwdCtKIEgu/lDWb8DV0fhYc1k67sBUhSyFYSlNa/DnZ20
- XNhq/CdMbXwRREqyMp3DkTWVmmNImtdnNL35vQUL9aHgf29NQwkAU9qAi83e152eycyu
- G7iJjI9xSZjB5aXWRXnwlKK7wp9PLdhJC0R30LRTeA4rFE7clNol76oDTIMTK2bsd/K1
- mtwKwt1NI/mtyvXJqL44a9tpcgnKxkvqUxN1QMmDhGN/OX16noOPupkbG91A3qnjDwmf
- f13+b91+nv0uNRpw+7oqO8iOK/SIN50cVW0LbZvfyZMMCzOPXNrgvgky2VYgnJP72dpS
- feAw==
-X-Gm-Message-State: AOJu0YxuqUWd9mq+X1ObbxJb3+2xFJ2sPgDi3kYbSWdDIf2EqRQcSG4/
- I7/1tSJ/9uksyNsOcWIobNqJuhGWs1yRCHb8lriklwM6Vsu8d4+MsUXC74WhXKL6VRM=
-X-Gm-Gg: AR+sD13s7sxP3nNHPv7p7cGYwSZXv7wWW0bQgzBjImamZXjoJ3F+MeNBl7D/kLD5gC7
- gSyrzYo1M0aGBEmfSqdJEG5CO+9cIKvkjXxTLTvg/JucCb2RVDWVVA94wv17RXe7RxmzbJK389t
- 4Rdo16kQ16ZYhRrJ0kI6aZ0YdLjx6V+/Z48klIoJzlOdqxh3cMpzk5giRXL8sTOtPR72rhOteHV
- OHOYqkbbKQcoOdknaoJgS/K4+cVIwTT1PcwJZi67OWtgHxlty8ivoVr+8Zzw0fxeZgS4rFu7bOA
- cDlptp83uY91n2T4A21y22W1z78jifC/ViGe7sFo+5fR0vuLuQJ94vybfF4Gat2DH4uib7f6i1G
- sa6ToaFHFnQnA95syUFrDLBVAPPxzHFdFv7XWaZRw8zRlQOoO6dVi9clzNAEjToEp4BfxAMQt1s
- MaShc3BjNU9smibrs0BTgl6b7SJ54eTYwBSnNAEq1T9+gqq9n0PEby6b7xrmpx4Soq67GoeRU/Q
- id9HrxKavlehKycDHIzKTHrcazoB2o=
-X-Received: by 2002:a05:6a20:568e:b0:3bf:49c8:f7b with SMTP id
- adf61e73a8af0-3cc1a1a810fmr3580422637.13.1786375466196; 
- Mon, 10 Aug 2026 08:24:26 -0700 (PDT)
+ bh=tMGKVZzTvVjD93rE3Xo2xOvCirbn+ymTlozIKQiZ4T0=;
+ b=e8d8osiCnLymlqxXZRKSsxo2SyQiAjr0sRy2UxfglrOG0xv3IsZHgBPO9EnyGV/wMR
+ lyZlZBaG9pMPXIHiVfMNOlyF60uRyzxYonpWLPjCUdplITgombX9cKoX/0LOvjYdSqJh
+ dtRGRn/1yGuwWi+rP8Vs3BlYG7JdFQZE4LEK+KpfRf7EhiVbDX6voVjiSBW4lNkKVqGi
+ GWmRPH6q1mcv7tc4+9EYMC1FDxRNNseVbWN1mm7AKpPYF0opcnQsYyNHUyfKTOmdkLNX
+ HIMKZ7vsTdRfkekOVi4i0m6TRiu5rxtSg6J1QWTDy5VF0m7IpOTWzQVUhqcWqaG/p0pf
+ YO6A==
+X-Gm-Message-State: AOJu0YwXxfNY5MUKsBX79v+dQQb7mXXK2f4Uj90rsRAzqhMshljuNUva
+ +LUD0NzKgRIo/JHnCgu9rOp2mTrT2IK8fQqzXiCGs3rwwNljND8doVpBSh5fxlwK6Tk=
+X-Gm-Gg: AR+sD10YX0UpeMV/3Ujg8QLw+1uYDVmB8EOSqgtwQeA8jupVixdSAmQ/15Za8kRn9ka
+ ff3evo0/TkVdLJxOaXtepArJynZTLodoL9BMu7liu4mQNJqaiRUUSsU6dtmP8KI3OFEtQuvhhIT
+ wuFiAcTRyvv58dK92+HoO7s5er0ua3qxfVMduFrAjnQCBvPhABmXDAnvSRCmnaQn6N9nZMKAeTz
+ se9M69bNMhGYEObsLakbTUtKWt0asOj1oaO9VBxfl4ry9OsxveDUlNDIpZ+ofA6xsewij2tp+oq
+ eMmbHucE/PZQOGZZEcZnB/6zP3XQ7ajTfeF6x/rOhBIsQFnjv4CDS+yg+HMXuZ51AsuKx2jC4bj
+ sbudMqMD5+5jztcQye7MxiIMV1QIuFFJGveNWRxJi/YlRjjoEB9BSGRq3vA2VfBZd7PjWerxvf2
+ 4q/P+eAeSNAYrls6LYsx8yZuv2mnxzGOLlE244QT2iodNkVLcIIH3FH4IPfoFRFnvYUqUG1prI6
+ pg9FZqD+6Ow5JvcDJms/D9NfTQi7A==
+X-Received: by 2002:a17:903:4688:b0:2cc:f5aa:9513 with SMTP id
+ d9443c01a7336-2d0ca7fbc9amr550650025ad.10.1786375546286; 
+ Mon, 10 Aug 2026 08:25:46 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-14101a5ee91sm35417454c88.11.2026.08.10.08.24.25
+ 5a478bee46e88-315be8d6074sm47708167eec.12.2026.08.10.08.25.45
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 10 Aug 2026 08:24:25 -0700 (PDT)
-Date: Mon, 10 Aug 2026 08:24:12 -0700
+ Mon, 10 Aug 2026 08:25:45 -0700 (PDT)
+Date: Mon, 10 Aug 2026 08:25:43 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Maayan Kashani <mkashani@nvidia.com>
-Cc: <dev@dpdk.org>, <rasland@nvidia.com>, <stable@dpdk.org>, "Dariusz
- Sosnowski" <dsosnowski@nvidia.com>, Viacheslav Ovsiienko
- <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
- <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
- <matan@nvidia.com>, Thomas Monjalon <thomas@monjalon.net>, Gregory Etelson
- <getelson@nvidia.com>
-Subject: Re: [PATCH v2] net/mlx5: fix uint16 underflow on Rx queue error path
-Message-ID: <20260810082412.76a25695@phoenix.local>
-In-Reply-To: <20260809094837.123931-1-mkashani@nvidia.com>
-References: <20260730135620.213682-1-mkashani@nvidia.com>
- <20260809094837.123931-1-mkashani@nvidia.com>
+To: Gagandeep Singh <g.singh@nxp.com>
+Cc: dev@dpdk.org, hemant.agrawal@nxp.com
+Subject: Re: [PATCH v5 00/14] net/enetc: add new features for ENETC4 on i.MX95
+Message-ID: <20260810082543.1d89caed@phoenix.local>
+In-Reply-To: <20260810104815.2827703-1-g.singh@nxp.com>
+References: <20260807112623.1402493-1-g.singh@nxp.com>
+ <20260810104815.2827703-1-g.singh@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -88,61 +83,267 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sun, 9 Aug 2026 12:48:37 +0300
-Maayan Kashani <mkashani@nvidia.com> wrote:
+On Mon, 10 Aug 2026 16:18:01 +0530
+Gagandeep Singh <g.singh@nxp.com> wrote:
 
-> Avoid post-decrementing the segment index when it is zero in the
-> error cleanup path of mlx5_rxq_mempool_register().
+> V4-changes:
+>  - fix doc build issue: WARNING: undefined label: pmd_build_and_test
 > 
-> Coverity issue: 503770
-> Fixes: 8d1cb02da5b7 ("net/mlx5: support selective Rx")
-> Cc: stable@dpdk.org
+> v3-changes:
+>  - fix doc build issue.
+>  - fix compilation issue on fedore:43-gcc-minsize
 > 
-> Signed-off-by: Maayan Kashani <mkashani@nvidia.com>
-> ---
+> V2-changes:
+>  - compilation fixes.
+> 
+> V1-changes:
+> This series adds new PMD features to the ENETC4 driver targeting the
+> NXP i.MX95 NETC IP.
+> 
+> The series covers:
+> 
+>  - KEEP_CRC Rx offload: preserve the Ethernet FCS in the receive buffer.
+>  - TSO: TCP Segmentation Offload for the VF Tx path.
+>  - RSC/LRO: hardware Receive Segment Coalesce for PF and VF Rx paths.
+>  - Link speed code: extend the PF-to-VF mailbox field from 4-bit to
+>    8-bit to support speeds beyond 10G.
+>  - Firmware version: report the NETC IP version via fw_version_get.
+>  - Register dump: dump SI, port (PF) and BD ring registers.
+>  - Ring parameters: implement rxq_info_get / txq_info_get for the VF.
+>  - Link-up interrupt: refresh the cached link speed on each VF link-up
+>    interrupt so that link_update returns the current speed immediately.
+>  - Stats reset: software snapshot/delta approach for VF counter reset.
+>  - Per-queue Rx interrupt: MSI-X per-queue Rx interrupts for the VF,
+>    enabling interrupt-driven receive with l3fwd-power.
+>  - SI VLAN: hardware port VLAN insertion/removal for PF and VF.
+>  - VF link status bitmask: switch VF link status to bitmask encoding
+>    to align with the PF and newer kernel driver conventions.
+>  - TX PAUSE: VF sets Rx congestion mode when the PF signals TX PAUSE
+>    negotiated on the wire; adds Flow control = Y to enetc4.ini.
+>  - WRR Tx scheduler: per-ring WRR weights via enetc4_txq_wrr devarg.
+> 
+> Gagandeep Singh (14):
+>   net/enetc: add keep-CRC Rx offload for ENETC4
+>   net/enetc: add TSO support for ENETC4 VF
+>   net/enetc: add RSC (hardware LRO) support for ENETC4
+>   net/enetc: extend PF-VF link speed field to 8 bits
+>   net/enetc: support firmware version get for VF
+>   net/enetc: support registers dump
+>   net/enetc: support ethtool ring parameters
+>   net/enetc: refresh link speed on VF link-up interrupt
+>   net/enetc: support stats reset for VF
+>   net/enetc4: add per-queue Rx interrupt support for VF
+>   net/enetc4: add SI-based port VLAN insertion and removal
+>   net/enetc4: update VF link status to bitmask encoding
+>   net/enetc4: enable Tx PAUSE via VF Rx congestion mode
+>   net/enetc4: add WRR Tx scheduler devarg for VF rings
+> 
+>  doc/guides/nics/enetc4.rst             | 100 +++
+>  doc/guides/nics/features/enetc4.ini    |   8 +
+>  doc/guides/rel_notes/release_26_11.rst |  21 +
+>  drivers/net/enetc/base/enetc4_hw.h     | 129 +++-
+>  drivers/net/enetc/base/enetc_hw.h      |   6 +
+>  drivers/net/enetc/enetc.h              | 134 ++++-
+>  drivers/net/enetc/enetc4_ethdev.c      | 413 +++++++++++--
+>  drivers/net/enetc/enetc4_vf.c          | 801 ++++++++++++++++++++++---
+>  drivers/net/enetc/enetc_rxtx.c         | 531 +++++++++++++++-
+>  9 files changed, 1998 insertions(+), 145 deletions(-)
+> 
 
-Claude Opus AI review sees dead bodies here...
+Better but still has AI review issues:
 
-Review of [PATCH v2] net/mlx5: fix uint16 underflow on Rx queue error path
+ENETC4 v5 series review - 14 patches
 
-Warning: undocumented second change, and it is dead code
+No Reviewed-by; two errors remain.
 
-  The commit message describes only the loop restructuring, but the patch
-  also adds a "seg->mp == NULL" guard around the free:
+Build status is now correct. All 14 commits build clean individually
+on top of c1a46b9 with gcc 13.3 and -Dwerror=true:
 
-  +		if (seg->mp == NULL) {
-  +			mlx5_free(seg->null_mbuf);
-  +			seg->null_mbuf = NULL;
-  +		}
+[0] d657b18 01/14 add keep-CRC Rx offload for ENETC4
+[0] 410e8f0 02/14 add TSO support for ENETC4 VF
+[0] 1dc5e61 03/14 add RSC (hardware LRO) support for ENETC4
+[0] 3dc3726 04/14 extend PF-VF link speed field to 8 bits
+[0] e1ba634 05/14 support firmware version get for VF
+[0] f3772c4 06/14 support registers dump
+[0] 4c51974 07/14 support ethtool ring parameters
+[0] 663e4ac 08/14 refresh link speed on VF link-up interrupt
+[0] d9c0dfa 09/14 support stats reset for VF
+[0] 3b7ef0c 10/14 add per-queue Rx interrupt support for VF
+[0] 131a052 11/14 add SI-based port VLAN insertion and removal
+[0] ea47dc2 12/14 update VF link status to bitmask encoding
+[0] ffaa8a6 13/14 enable Tx PAUSE via VF Rx congestion mode
+[0] 57ac69c 14/14 add WRR Tx scheduler devarg for VF rings
 
-  This guard can never be false for a segment that has a null_mbuf.
-  seg->null_mbuf is only ever assigned in the mp == NULL branch of the
-  registration loop (mlx5_trigger.c:179), and rxq_ctrl is allocated with
-  MLX5_MEM_ZERO (mlx5_rxq.c:1881), so a segment with mp != NULL always has
-  null_mbuf == NULL. mlx5_free() already returns early on NULL
-  (drivers/common/mlx5/mlx5_malloc.c:275), so the guard changes nothing.
+check-git-log.sh: 14/14 valid patches. No trailing whitespace.
 
-  It also makes this cleanup inconsistent with rxq_free_elts_sprq(),
-  which frees null_mbuf for every segment unconditionally:
+Confirmed fixed from v4: prev_seg declaration moved to patch 01; the
+duplicate offload arrays and duplicate rx_enable removed at the point
+of introduction; SCATTER and MULTI_SEGS restored to the PF capability
+lists; both LSO validation paths now free the mbuf before start++; the
+rte_cpu_to_le_16() on the uint8_t flags field dropped; Tx ring doubling
+validated post-multiply; mailbox-dependent ops removed from the no-VSI
+table; link speed decode bounded to defined RTE_ETH_SPEED_NUM_* values;
+duplicate rte_kvargs.h include removed; RSC now explicitly rejects nc=1
+rather than silently overriding the burst selection; vf_link_legacy and
+enetc4_txq_wrr documented, and the release note calls out the 6.18.37
+PF requirement.
 
-	for (i = 0; i < rxq->rxseg_n; i++) {
-		mlx5_free(rxq->rxseg[i].null_mbuf);
-		rxq->rxseg[i].null_mbuf = NULL;
-	}
+This round I read patches 05-14 in full, which I had deferred.
 
-  Suggest dropping the guard so the patch does only what its subject says.
-  If it is deliberate, say why in the commit message and apply the same
-  rule in mlx5_rxq.c so the two paths agree.
+Patch 14
 
-Info: the underflow has no observable effect
+Error: free() on memory allocated with rte_zmalloc().
 
-  In the original "while (s-- > 0)", s is uint16_t and the comparison uses
-  the value before the decrement. With s == 0 the body never executes; s
-  wraps to 0xFFFF but is dead from that point on, so there is no
-  out-of-bounds index and no misbehaviour. Coverity 503770 is reporting the
-  wrap of a dead local. The rewrite is behaviour-preserving and fine, but
-  it would help stable maintainers to state in the commit message that this
-  is a static-analysis fix with no runtime impact.
+parse_txq_prior() was converted from calloc() to rte_zmalloc(), and
+enetc4_dev_close() was updated to rte_free(). enetc4_dev_uninit() was
+not:
 
-Info: no v2 changelog after the "---" separator, so what changed since
-  20260730135620.213682-1-mkashani@nvidia.com is not visible to reviewers.
+static int
+enetc4_dev_uninit(struct rte_eth_dev eth_dev)
+{
+...
+if (hw->txq_prior) {
+free(hw->txq_prior); / rte_zmalloc'd */
+hw->txq_prior = NULL;
+}
+
+    return enetc4_dev_close(eth_dev);
+
+}
+
+uninit runs before close, so on any port using enetc4_txq_prior the
+pointer is still non-NULL here and libc free() is handed a pointer from
+the DPDK heap. txq_wrr is not freed on this path at all. Both
+allocations are already released correctly in enetc4_dev_close(), so
+the simplest fix is to delete the block from enetc4_dev_uninit().
+
+Patch 10
+
+Error: eventfd and vector-list leak on interrupt teardown.
+
+enetc4_vf_dev_intr(dev, true) calls rte_intr_efd_enable() and
+rte_intr_vec_list_alloc(). The disable path clears rxq_intr_en, calls
+rte_intr_disable() and unregisters the callback, but never calls
+rte_intr_efd_disable() or rte_intr_vec_list_free(). The eventfds and
+the vector list survive dev_close, and a subsequent configure/close
+cycle allocates a new set each time.
+
+The intr_enable_fail: label has the same gap: if rte_intr_enable()
+fails after efd_enable() succeeded, both resources are dropped.
+
+disable:
+enetc_vf_enable_mr_int(enetc_hw, false);
+hw->rxq_intr_en = 0;
+
+rte_intr_vec_list_free(intr_handle);
+
+    rte_intr_efd_disable(intr_handle);
+    ret = rte_intr_disable(intr_handle);
+
+Patch 03
+
+Warning: Rx ring doubling still bypasses MAX_BD_COUNT.
+
+The Tx side now validates after the multiply, but enetc4_alloc_rxbdr()
+does not:
+
+ring_desc = rxr->rsc_enable ? (uint32_t)nb_desc * 2 : (uint32_t)nb_desc;
+
+size = ring_desc * sizeof(struct enetc_swbd);
+
+The only bound is nb_rx_desc > MAX_BD_COUNT in enetc4_rx_queue_setup(),
+checked before the doubling, so an RSC ring can reach 128000 entries.
+ENETC_RTBLENR_LEN(n) is ((n) & ~0x7) with no upper clamp. Mirror the
+check that enetc4_alloc_txbdr() already has.
+
+Patch 08
+
+Warning: VSI-PSI transaction issued from the interrupt handler.
+
+enetc4_process_psi_msg() runs from enetc4_dev_interrupt_handler(), and
+now issues a fresh mailbox round trip:
+
+    rte_free(msg);
+    msg = rte_zmalloc(NULL, sizeof(*msg), RTE_CACHE_LINE_SIZE);
+    if (msg) {
+            if (!enetc4_vf_get_link_speed(eth_dev, msg) && ...
+
+There are eleven enetc4_msg_vsi_send() call sites and no lock anywhere
+in the file. Until this patch every one of them ran on the control
+thread, so they were serialized by convention. This is the first that
+runs on the interrupt thread, so it can interleave with a concurrent
+mac_addr_set, vlan_pvid_set, mtu_set or link_update: both writers touch
+VSIMSGSNDAR/VSIMSGSR and one consumes the other's reply.
+
+A mutex around the send/poll sequence in enetc4_msg_vsi_send() would
+cover all callers at once. Note it would need to be a sleeping lock,
+not rte_spinlock_t, since the poll loop waits up to vsi_timeout.
+
+Info: the free-and-reallocate of msg is unnecessary churn; memset of
+the existing buffer would do, and would remove the NULL branch.
+
+Patch 13
+
+Warning: unsynchronized access to tx_pause_active and RBMR.
+
+hw->tx_pause_active is written by enetc4_vf_set_congestion_mode() on
+the interrupt thread and read by enetc4_rx_queue_setup() and
+enetc4_rx_queue_start() on the control thread as a plain uint8_t. Use
+rte_atomic_store_explicit()/rte_atomic_load_explicit() with
+rte_memory_order_release/acquire; relaxed is not enough here because
+the flag publishes the RBMR writes that precede it.
+
+The RBMR read-modify-write is the larger half of the same problem:
+
+    rbmr = enetc4_rxbdr_rd(enetc_hw, i, ENETC_RBMR);
+    if (enable)
+            rbmr |= ENETC_RBMR_CM;
+    ...
+    enetc4_rxbdr_wr(enetc_hw, i, ENETC_RBMR, rbmr);
+
+enetc4_rx_queue_start() and _stop() perform the same read-modify-write
+on ENETC_RBMR_EN from the control thread. A link-status interrupt
+arriving mid-sequence can lose either update, leaving a ring enabled
+without congestion mode or disabled with it.
+
+Patch 06
+
+Warning: signed shift overflow in the register-dump version field.
+
+regs->version = hw->device_id << 16 | hw->revision_id;
+
+device_id is uint16_t, so it promotes to int before the shift. Both
+ENETC4_DEV_ID (0xe101) and ENETC4_DEV_ID_VF (0xef00) have bit 15 set,
+so the shift result is not representable in int -- undefined behaviour,
+and UBSan will flag it. The same line appears in both
+enetc4_get_regs() and enetc4_vf_get_regs().
+
+regs->version = (uint32_t)hw->device_id << 16 | hw->revision_id;
+
+Info: enetc4_txbdr_regs[] and enetc4_rxbdr_regs[] are static const
+arrays defined in enetc.h, so every translation unit that includes the
+header gets its own copy. Moving them to one .c file with an extern
+declaration, or making them macros, avoids the duplication.
+
+Patch 05
+
+Info: the fw_size == 0 early return reports the length of "0.0" rather
+than of the real version string, since ip_mj and ip_mn are still zero
+at that point. Callers using the query-then-allocate idiom get a
+buffer that is too small, though the second call returns the correct
+size so it does self-correct.
+
+Series-wide
+
+Info: four new consecutive-blank-line pairs -- enetc.h:464,
+enetc4_ethdev.c:36 and :164, enetc_rxtx.c:1144.
+
+Info: the release note entry uses "TX PAUSE" and "RX congestion mode";
+the commit subjects were corrected to Tx/Rx in this revision but the
+note was not.
+
+Info: parse_txq_prior() returns -1 for strdup failure but -ENOMEM for
+the rte_zmalloc failure; parse_txq_wrr() returns -1 for both. Worth
+making consistent.
+
+
