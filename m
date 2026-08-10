@@ -2,89 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7B72C5AE5D
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Aug 2026 10:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6899C5AE5D
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Aug 2026 10:48:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4758F40E0A;
-	Mon, 10 Aug 2026 12:42:39 +0200 (CEST)
-Received: from mail-yx1-f47.google.com (mail-yx1-f47.google.com
- [74.125.224.47]) by mails.dpdk.org (Postfix) with ESMTP id 5AD1D40671
- for <dev@dpdk.org>; Mon, 10 Aug 2026 12:42:37 +0200 (CEST)
-Received: by mail-yx1-f47.google.com with SMTP id
- 956f58d0204a3-6611669cd16so2233619d50.0
- for <dev@dpdk.org>; Mon, 10 Aug 2026 03:42:37 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1786358556; cv=none;
- d=google.com; s=arc-20260327;
- b=oGGLTJAHmUvEKnBQilAVH889sGZGq8jWstd4W9KIKJK4pnaih8dAorUmqmnuwE6P52
- O92mWgf7Yclb5kea1yoMObrpCy4Rovw2ufHGYS2lOCeyjAf/75JmtngG7F+inMbb8ko/
- SgHkPQxXe14J89wiAwtSsIo4Pto+BUVA70kW6HANR6DAjwC8EoFYV0Zf4dsO5hwXK/HU
- 5jULHQrx9r90ZxQrjufQjk3L3OstpzkhFkVKC1HRl+r3u0DrSEozsehCxpN6WfZjCtpi
- 0vc9BCzr/3KWrqrqlC10THCKugszOrlLWrVEoZmCaseT8Vn5Ro2ajwQfB2SK2pM4ELuS
- NhVA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=amsH/GzHM9z1NDGkCnOnYVAcVoOOCYGb8Z6jKnvAXcc=;
- fh=rHqa4iH8c6LoLmz/oL0Zs+figF3qFiuIxVBLdArE9gQ=;
- b=ahj+Vq6hkmtaFVvreNuNQ774CgdwwhZ3OQ/vNBKtgPyr2bX/toAASqWiq43aqoqut0
- LFLfvEKfCI1KoT1X4eBXZS129I0r9XezEs7QXca21dtiUDBIvH5vLyrrC6itSvzeTQSE
- gVqFH97Q66Y+Vv4IZDqmpOgolfwmlO8U15iNTz7GDtVNMcC/42QCUMuzH5J+rIdPGbHG
- 8PnAUO/rZ7yUNKoWqJgS0DibNsY8aLC8BwV4vqTd2jg2yhb5OIlFQKz+bQgCCH4XG4Iz
- ucsrGC/FsCfpCvFPBWQucuB/Oru4rKNx18uTfwUeYd4KNjMNlQQXwRjWSN2krH0dMhqL
- WYqw==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1786358556; x=1786963356; darn=dpdk.org;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=amsH/GzHM9z1NDGkCnOnYVAcVoOOCYGb8Z6jKnvAXcc=;
- b=JqFnwPWDJ47CsrSriQClY8RgRJZcvSmmx3uN0D3OtACdRkf5GTPyrBZvzi8bmj1pib
- sauGj2rTc4LnnXVlAGgRFC7+IEAPj9Pj2l2fMhqfjB6FK03IGo1OVyQZNVOp07tjPBu9
- ZECf+2wW+wzGXwf94iIetqDH4O5sC1OzYO5z+7qVgu4A7d9IktafPedUaXLCSNAKxDWs
- +rlMUIo06HPBe5ntk+ryQJXMEDD7aiKq0HgWt3kNh6LYr7f+l5TjJA7hn2+LeB/vHjmg
- 1ogUJkKPUK6QZTqg2Uh+60y1CfweMAZx5ZdiRFN4qTKJK6hf6BBtOLGBL2wj70D067bb
- SYCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786358556; x=1786963356;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=amsH/GzHM9z1NDGkCnOnYVAcVoOOCYGb8Z6jKnvAXcc=;
- b=pZc/+RF8WkD1E3C1nKhAtSfOO10XLiqoqe9TDwfTH/CKluaGVUTRFyvcrw6SJBivIB
- b77gHYnUnpaYQVSYBxejUrfshB3FauxrDZYy/ulPHMPcDQzZEzwXspzqOkjHxkaUs1A7
- gD0o9S2UBdGRdjLGJxH4qgpgUDDrDngLzRb3+E3/6PYNwTZVdGjICVloeXKlsRx2rANC
- vwgZBY9PKOkwCY4ij18vSL1iIxele42e7yjYgjoNET4xwEmRSdyOXmaqDRTIPDrGw5AW
- 1igJrs2hyzlHsygN1Kqz2/Trj1ywXDh9LbuVGmZ3/IICLO7OcTikiGKdyO08Az+xXtw3
- H/KQ==
-X-Forwarded-Encrypted: i=1;
- AHgh+Rp4oIYZZxT1HVt5D/wmcx40xAM73/WFgKpTEllrQ+OMNfPolOs5QedEmWU6z15NQBRVzl8=@dpdk.org
-X-Gm-Message-State: AOJu0Ywr5OenKnebQL+HPp3XwN4l7l3qXWVCbK5GlRK8BRV9RFaRsFzG
- Ljqo9XsrV9qLoY9zYSnbF+DihO2kTqPp0Dbs8YK5SNwVno0csCVxFaX2YZCjIRmCHM0LZI6D8F/
- AoL49amUMMTCZPINPPNGWPNZfZFoR4FE=
-X-Gm-Gg: AR+sD13CjdxwnOz4U1MWWLQ+cm3x/ULTaEkPQfRMBVAJTVDK8JBpXx7+1ngDW34tQ8s
- 5NB/Dkn1frmGS7Ikqq11Hzifdh1Ahk0usEagFTrlBSvskuv0Hs3YSP28goh/S7eWDo4+pOuhDVZ
- ndXBrocCTYKjJDBGFpIL1wB3lTQTUIjebda3MU4YKK6P316IZQDf9KWLJwKnx5jTaYaMcwIBAgX
- 7YegMMcKabJjXViLbJ89VTV/g7+t+myGSna1ZHaAfUdkfrZVOifCwPMc15/qpeHBBe1rBaOqIVd
- xaZxKa849zbwDvjiQVMWD9Y6s8IKwU0/FCgOD19Dny9W36bWbZjM+SmxDKdV++Q2TYddwIXumfD
- r42vKx1nXP7EckQ==
-X-Received: by 2002:a05:690c:b01:b0:804:a2d5:1e04 with SMTP id
- 00721157ae682-82574af4157mr121749447b3.16.1786358556552; Mon, 10 Aug 2026
- 03:42:36 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id C9021402E8;
+	Mon, 10 Aug 2026 12:48:19 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 44717402E8
+ for <dev@dpdk.org>; Mon, 10 Aug 2026 12:48:18 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1AD1F200026;
+ Mon, 10 Aug 2026 12:48:18 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com
+ (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D5F61200007;
+ Mon, 10 Aug 2026 12:48:17 +0200 (CEST)
+Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
+ [92.120.147.250])
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 1C1DD18000B0;
+ Mon, 10 Aug 2026 18:48:17 +0800 (+08)
+From: Gagandeep Singh <g.singh@nxp.com>
+To: dev@dpdk.org
+Cc: hemant.agrawal@nxp.com
+Subject: [PATCH v5 00/14] net/enetc: add new features for ENETC4 on i.MX95
+Date: Mon, 10 Aug 2026 16:18:01 +0530
+Message-Id: <20260810104815.2827703-1-g.singh@nxp.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20260807112623.1402493-1-g.singh@nxp.com>
+References: <20260807112623.1402493-1-g.singh@nxp.com>
 MIME-Version: 1.0
-References: <20260727094306.41797-1-luca.boccassi@gmail.com>
- <DS4PPF00BBED10C46A3A7E83F35B88C059E9FDE2@DS4PPF00BBED10C.namprd11.prod.outlook.com>
-In-Reply-To: <DS4PPF00BBED10C46A3A7E83F35B88C059E9FDE2@DS4PPF00BBED10C.namprd11.prod.outlook.com>
-From: Luca Boccassi <luca.boccassi@gmail.com>
-Date: Mon, 10 Aug 2026 11:42:25 +0100
-X-Gm-Features: AUfX_mxcQn6oppdBSwff5FdqBCRiOFoxf2JErFYunuLOn7p0tQnpgaPo5ExnFUQ
-Message-ID: <CAMw=ZnRq7nCu7E1n-52wLaOwzhc27tWx+9XDDK-Q5RELE=1arw@mail.gmail.com>
-Subject: Re: 24.11.7 patches review and test
-To: "Xu, HailinX" <hailinx.xu@intel.com>
-Cc: "stable@dpdk.org" <stable@dpdk.org>, "dev@dpdk.org" <dev@dpdk.org>, 
- "Mcnamara, John" <john.mcnamara@intel.com>, Kevin Traynor <ktraynor@redhat.com>,
- Thomas Monjalon <thomas@monjalon.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -98,50 +46,69 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 10 Aug 2026 at 02:09, Xu, HailinX <hailinx.xu@intel.com> wrote:
->
-> > -----Original Message-----
-> > From: luca.boccassi@gmail.com <luca.boccassi@gmail.com>
-> > Sent: Monday, July 27, 2026 5:43 PM
-> > To: stable@dpdk.org
-> > Cc: dev@dpdk.org; Abhishek Marathe <Abhishek.Marathe@microsoft.com>;
-> > Ali Alnubani <alialnu@nvidia.com>; David Christensen
-> > <drc@linux.vnet.ibm.com>; Agrawal, Hemant <hemant.agrawal@nxp.com>;
-> > Ian Stokes <ian.stokes@intel.com>; Jerin Jacob <jerinj@marvell.com>;
-> > Mcnamara, John <john.mcnamara@intel.com>; Ju-Hyoung Lee
-> > <juhlee@microsoft.com>; Kevin Traynor <ktraynor@redhat.com>; Luca
-> > Boccassi <bluca@debian.org>; Pei Zhang <pezhang@redhat.com>; Raslan
-> > Darawsheh <rasland@nvidia.com>; Thomas Monjalon
-> > <thomas@monjalon.net>; Yanghang Liu <yanghliu@redhat.com>
-> > Subject: 24.11.7 patches review and test
-> >
-> > Hi all,
-> >
-> > Here is a list of patches targeted for stable release 24.11.7.
-> >
-> > The planned date for the final release is 2026/08/10.
-> >
-> > Please help with testing and validation of your use cases and report any
-> > issues/results with reply-all to this mail. For the final release the fixes and
-> > reported validations will be added to the release notes.
-> >
-> > A release candidate tarball can be found at:
-> >
-> >     https://dpdk.org/browse/dpdk-stable/tag/?id=v24.11.7-rc1
-> >
-> > These patches are located at branch 24.11 of dpdk-stable repo:
-> >     https://dpdk.org/browse/dpdk-stable/
-> >
-> > Thanks.
-> >
-> > Luca Boccassi
-> >
-> > ---
-> Update the test status for Intel part. dpdk24.11.7-rc1 all validation test done. found 1 new issue.
->
-> New issue:
->   Bug 1974 - [dpdk24.11.7-rc1] DPDK build failed with clang on Ubuntu26.04
+V4-changes:
+ - fix doc build issue: WARNING: undefined label: pmd_build_and_test
 
-This test hasn't changed and is the same in main as far as I can see.
-Are you sure this is a regression in 24.11.7 and not simply a new
-compiler issue that affects all branches?
+v3-changes:
+ - fix doc build issue.
+ - fix compilation issue on fedore:43-gcc-minsize
+
+V2-changes:
+ - compilation fixes.
+
+V1-changes:
+This series adds new PMD features to the ENETC4 driver targeting the
+NXP i.MX95 NETC IP.
+
+The series covers:
+
+ - KEEP_CRC Rx offload: preserve the Ethernet FCS in the receive buffer.
+ - TSO: TCP Segmentation Offload for the VF Tx path.
+ - RSC/LRO: hardware Receive Segment Coalesce for PF and VF Rx paths.
+ - Link speed code: extend the PF-to-VF mailbox field from 4-bit to
+   8-bit to support speeds beyond 10G.
+ - Firmware version: report the NETC IP version via fw_version_get.
+ - Register dump: dump SI, port (PF) and BD ring registers.
+ - Ring parameters: implement rxq_info_get / txq_info_get for the VF.
+ - Link-up interrupt: refresh the cached link speed on each VF link-up
+   interrupt so that link_update returns the current speed immediately.
+ - Stats reset: software snapshot/delta approach for VF counter reset.
+ - Per-queue Rx interrupt: MSI-X per-queue Rx interrupts for the VF,
+   enabling interrupt-driven receive with l3fwd-power.
+ - SI VLAN: hardware port VLAN insertion/removal for PF and VF.
+ - VF link status bitmask: switch VF link status to bitmask encoding
+   to align with the PF and newer kernel driver conventions.
+ - TX PAUSE: VF sets Rx congestion mode when the PF signals TX PAUSE
+   negotiated on the wire; adds Flow control = Y to enetc4.ini.
+ - WRR Tx scheduler: per-ring WRR weights via enetc4_txq_wrr devarg.
+
+Gagandeep Singh (14):
+  net/enetc: add keep-CRC Rx offload for ENETC4
+  net/enetc: add TSO support for ENETC4 VF
+  net/enetc: add RSC (hardware LRO) support for ENETC4
+  net/enetc: extend PF-VF link speed field to 8 bits
+  net/enetc: support firmware version get for VF
+  net/enetc: support registers dump
+  net/enetc: support ethtool ring parameters
+  net/enetc: refresh link speed on VF link-up interrupt
+  net/enetc: support stats reset for VF
+  net/enetc4: add per-queue Rx interrupt support for VF
+  net/enetc4: add SI-based port VLAN insertion and removal
+  net/enetc4: update VF link status to bitmask encoding
+  net/enetc4: enable Tx PAUSE via VF Rx congestion mode
+  net/enetc4: add WRR Tx scheduler devarg for VF rings
+
+ doc/guides/nics/enetc4.rst             | 100 +++
+ doc/guides/nics/features/enetc4.ini    |   8 +
+ doc/guides/rel_notes/release_26_11.rst |  21 +
+ drivers/net/enetc/base/enetc4_hw.h     | 129 +++-
+ drivers/net/enetc/base/enetc_hw.h      |   6 +
+ drivers/net/enetc/enetc.h              | 134 ++++-
+ drivers/net/enetc/enetc4_ethdev.c      | 413 +++++++++++--
+ drivers/net/enetc/enetc4_vf.c          | 801 ++++++++++++++++++++++---
+ drivers/net/enetc/enetc_rxtx.c         | 531 +++++++++++++++-
+ 9 files changed, 1998 insertions(+), 145 deletions(-)
+
+-- 
+2.25.1
+
