@@ -2,71 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77029C5AD55
-	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Aug 2026 15:25:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0607EC5AD7B
+	for <dpdk-dev@archiver.kernel.org>; Mon, 10 Aug 2026 15:28:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A15F940272;
-	Mon, 10 Aug 2026 17:25:48 +0200 (CEST)
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com
- [209.85.214.180])
- by mails.dpdk.org (Postfix) with ESMTP id 5C96C40144
- for <dev@dpdk.org>; Mon, 10 Aug 2026 17:25:47 +0200 (CEST)
-Received: by mail-pl1-f180.google.com with SMTP id
- d9443c01a7336-2cad8076b01so22351895ad.2
- for <dev@dpdk.org>; Mon, 10 Aug 2026 08:25:47 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0C90840272;
+	Mon, 10 Aug 2026 17:28:15 +0200 (CEST)
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com
+ [209.85.216.53]) by mails.dpdk.org (Postfix) with ESMTP id 3E16E40144
+ for <dev@dpdk.org>; Mon, 10 Aug 2026 17:28:13 +0200 (CEST)
+Received: by mail-pj1-f53.google.com with SMTP id
+ 98e67ed59e1d1-383cb94f742so2145528a91.3
+ for <dev@dpdk.org>; Mon, 10 Aug 2026 08:28:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786375546;
- x=1786980346; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786375692;
+ x=1786980492; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=tMGKVZzTvVjD93rE3Xo2xOvCirbn+ymTlozIKQiZ4T0=;
- b=A/6bB4YnPOD5EE4U1zKmOegDgUUdJ/cPoAE0ylD4h+nyR+A2JpWUj7TmXxOimkdLES
- cP0uPpxNdGgDT5LLmiggIet43Td107Q9/N2KSSbiVx2rctZ0ANSJvmDFYCuFXr+wJGlJ
- L7F3Bl4IMeMKqC/r1+n1kTtP+mx12z733Dc7VPf2d/YzklXkq1Jy9upH8OAlvzCNheTZ
- F6rnp2J7vwYELOMSi/cmyfJtIQdEJlHJJKXIT7JRsyzYH3Jh378YiMJwEdF9WErsMlvI
- /CwMhgzC21Wbj8PlRMMoSZF/5kQRjR9nfEsMNXkgaCeWYlpnsFbYUHPUyuo+uAmOVE1x
- cH6w==
+ bh=ah8xKdbaEB1K8M3UylbFd6ROPheYCCnxVMTYSvoDMU0=;
+ b=gNuHxZeItDwO+MZj+H9bKZdvRaLMXmIVCI2fsl9PbNxht5SgyKkxLleGgSEAl2nrmx
+ MNtn0pJxldyL94BwCqngi+bvOFwHGwd3iCOnQEQX0bpHLGyrhwL9jzqNKOisF4fANaXQ
+ jbUyjCklH8zDWqd1g2qwM5qGSIkNIoXGPdonHkbOC+lJ5Na7JydNZ2VRUUMvEa5sQZSs
+ Ehw0YoBV8PsDMMXsrZx5OW4zThfzWfx7q2evLGo7cZq1IyExaXFl2KTFFLxaZ7Ts3iEU
+ zsyF4lq3e17bw69UiJAAgdD+YADjdASbwp0JHd76c/JtKYTnfTYAPFHsSIHDeh0DQ5H0
+ +g2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786375546; x=1786980346;
+ d=1e100.net; s=20251104; t=1786375692; x=1786980492;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=tMGKVZzTvVjD93rE3Xo2xOvCirbn+ymTlozIKQiZ4T0=;
- b=e8d8osiCnLymlqxXZRKSsxo2SyQiAjr0sRy2UxfglrOG0xv3IsZHgBPO9EnyGV/wMR
- lyZlZBaG9pMPXIHiVfMNOlyF60uRyzxYonpWLPjCUdplITgombX9cKoX/0LOvjYdSqJh
- dtRGRn/1yGuwWi+rP8Vs3BlYG7JdFQZE4LEK+KpfRf7EhiVbDX6voVjiSBW4lNkKVqGi
- GWmRPH6q1mcv7tc4+9EYMC1FDxRNNseVbWN1mm7AKpPYF0opcnQsYyNHUyfKTOmdkLNX
- HIMKZ7vsTdRfkekOVi4i0m6TRiu5rxtSg6J1QWTDy5VF0m7IpOTWzQVUhqcWqaG/p0pf
- YO6A==
-X-Gm-Message-State: AOJu0YwXxfNY5MUKsBX79v+dQQb7mXXK2f4Uj90rsRAzqhMshljuNUva
- +LUD0NzKgRIo/JHnCgu9rOp2mTrT2IK8fQqzXiCGs3rwwNljND8doVpBSh5fxlwK6Tk=
-X-Gm-Gg: AR+sD10YX0UpeMV/3Ujg8QLw+1uYDVmB8EOSqgtwQeA8jupVixdSAmQ/15Za8kRn9ka
- ff3evo0/TkVdLJxOaXtepArJynZTLodoL9BMu7liu4mQNJqaiRUUSsU6dtmP8KI3OFEtQuvhhIT
- wuFiAcTRyvv58dK92+HoO7s5er0ua3qxfVMduFrAjnQCBvPhABmXDAnvSRCmnaQn6N9nZMKAeTz
- se9M69bNMhGYEObsLakbTUtKWt0asOj1oaO9VBxfl4ry9OsxveDUlNDIpZ+ofA6xsewij2tp+oq
- eMmbHucE/PZQOGZZEcZnB/6zP3XQ7ajTfeF6x/rOhBIsQFnjv4CDS+yg+HMXuZ51AsuKx2jC4bj
- sbudMqMD5+5jztcQye7MxiIMV1QIuFFJGveNWRxJi/YlRjjoEB9BSGRq3vA2VfBZd7PjWerxvf2
- 4q/P+eAeSNAYrls6LYsx8yZuv2mnxzGOLlE244QT2iodNkVLcIIH3FH4IPfoFRFnvYUqUG1prI6
- pg9FZqD+6Ow5JvcDJms/D9NfTQi7A==
-X-Received: by 2002:a17:903:4688:b0:2cc:f5aa:9513 with SMTP id
- d9443c01a7336-2d0ca7fbc9amr550650025ad.10.1786375546286; 
- Mon, 10 Aug 2026 08:25:46 -0700 (PDT)
+ bh=ah8xKdbaEB1K8M3UylbFd6ROPheYCCnxVMTYSvoDMU0=;
+ b=Q0JDqDVA2hT2oOqZ3zPMeNmmsdTUFHdkdTLBovF8T8jKCN0sqW8XwB6mbGlap1hpSV
+ DbD7mQsLmUSc9JaFmzep9DfLBzv2UH6dvsXwGto33SQiglKlszucfAhdoUTHGkXsFgT3
+ H6Vaw538YtqsCx3j8k+Vbkqz/I67hgr+TBD8RPK8EhFZSGdV98ns28dzS7GxPlFQ7/2b
+ 9jwKEs32Y5xNR7Adav7wMyTurTcZJhJabGidKzQO7DVxTBztp06i0+yE9AMoLmW8Rlg3
+ BnFkR43mn1GqZ+wb/EpFg9v0zDfkcOPjEf+UWDY2rpvQOL8bYcLnRZCZ0EzvArhXMSKh
+ HJRw==
+X-Gm-Message-State: AOJu0YyapwW371tBKxZoN9w6Zb7P+eo1RrOvEF7LH8xKzj/vvaUNbVys
+ h3RG5EV4UHGqODdZPpitvtNwq+3uua2gwRyl6dIWLZNjzBznorN6+GM12qDmYjNuHjg=
+X-Gm-Gg: AR+sD13iGN/O2azha3xItBG6xiImTKopAnDxOZQasQZqEjZvRgZVLdXsWEr81sGdG4I
+ mB+h4M0csY0xxs6ebcYETu0g4b8Eg5xlbQzsLS8kXAA+RcOou9tKzvzWWRDIzxLXJAXD4WamZhM
+ Ri6CQtiNW5CMyODyy7dcHdoF8R7sI1KzOqvi/EGfJNeOBxUroMoRE80hPckSSwfVxMlIkpWuBb7
+ +mJ9uV+m9SWzfSLcGEUU4pin4c65T+j4Y0jHVTb6n5MxB2X1hXhzd0E/CWpMHrTqX1AvxY1yA4n
+ V73qw2uWgbuBjD8z+f2SUFvSDnjjjGE4SaYcEl8GfC93hBevC4AssFJXX+ka64+STk0TBU0O38w
+ El/pi4uWvLvTWVuRqgBUv154bkaneFrN3uAutokSrPc55m7MpJQaLI+kI2iSIJM9QndL3E5cFj8
+ VFr8QkifPqIhNmuvLP5sDBZ7tR0KWu2FqZMPf0Iz9ZYEiWYZLFwdFBmtBRlao7KljjVUiuAJEnR
+ wQNC2IYF7rOqlE8NshA075lGHcfPQ==
+X-Received: by 2002:a17:90b:38d2:b0:38e:11ba:992c with SMTP id
+ 98e67ed59e1d1-392cca14bf1mr2205725a91.12.1786375691698; 
+ Mon, 10 Aug 2026 08:28:11 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-315be8d6074sm47708167eec.12.2026.08.10.08.25.45
+ a92af1059eb24-14101b7b39bsm35974839c88.14.2026.08.10.08.28.10
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 10 Aug 2026 08:25:45 -0700 (PDT)
-Date: Mon, 10 Aug 2026 08:25:43 -0700
+ Mon, 10 Aug 2026 08:28:11 -0700 (PDT)
+Date: Mon, 10 Aug 2026 08:28:07 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Gagandeep Singh <g.singh@nxp.com>
-Cc: dev@dpdk.org, hemant.agrawal@nxp.com
-Subject: Re: [PATCH v5 00/14] net/enetc: add new features for ENETC4 on i.MX95
-Message-ID: <20260810082543.1d89caed@phoenix.local>
-In-Reply-To: <20260810104815.2827703-1-g.singh@nxp.com>
-References: <20260807112623.1402493-1-g.singh@nxp.com>
- <20260810104815.2827703-1-g.singh@nxp.com>
+To: Anurag Mandal <anurag.mandal@intel.com>
+Cc: dev@dpdk.org, ciara.loftus@intel.com, mtahhan@redhat.com, stable@dpdk.org
+Subject: Re: [PATCH] net/af_xdp: fix default device plugin path
+Message-ID: <20260810082807.33fc8a4a@phoenix.local>
+In-Reply-To: <20260810101158.1011356-1-anurag.mandal@intel.com>
+References: <20260810101158.1011356-1-anurag.mandal@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -83,267 +81,173 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 10 Aug 2026 16:18:01 +0530
-Gagandeep Singh <g.singh@nxp.com> wrote:
+On Mon, 10 Aug 2026 10:11:58 +0000
+Anurag Mandal <anurag.mandal@intel.com> wrote:
 
-> V4-changes:
->  - fix doc build issue: WARNING: undefined label: pmd_build_and_test
+> When use_cni=1 or use_pinned_map=1 is passed without an explicit
+> dp_path, the PMD builds the path to the AF_XDP device plugin
+> endpoint itself.
+> That default was hardcoded to /tmp/afxdp_dp/<if_name>/.
 > 
-> v3-changes:
->  - fix doc build issue.
->  - fix compilation issue on fedore:43-gcc-minsize
+> A unix domain socket and a pinned map are runtime state.
+> Current Linux file hierarchy conventions place these below
+> the runtime directory, not below world writable /tmp.
+> DPDK already exposes such a location through
+> rte_eal_get_runtime_dir().
 > 
-> V2-changes:
->  - compilation fixes.
+> The location cannot simply be moved as it is a contract
+> duplicated in the AF_XDP Device Plugin for Kubernetes,
+> which creates the socket and mounts it into the pod at
+> the /tmp path the PMD expects.
+> Changing only the PMD would break every existing deployment.
 > 
-> V1-changes:
-> This series adds new PMD features to the ENETC4 driver targeting the
-> NXP i.MX95 NETC IP.
+> This patch fixes the default so that the endpoint is looked
+> up below the EAL runtime directory first, and fall back to
+> /tmp/afxdp_dp only when nothing is found there, a warning
+> is logged whenever that fallback is taken.
+> Existing plugin deployments keep working unchanged, while
+> a deployment, that places the endpoint in the runtime
+> directory, no longer has to pass dp_path.
+> An explicit dp_path still overrides both.
 > 
-> The series covers:
+> The <if_name> component is kept in both layouts. It is what
+> keeps the endpoints of several interfaces distinct when more
+> than one UDS server is mounted in a single pod.
 > 
->  - KEEP_CRC Rx offload: preserve the Ethernet FCS in the receive buffer.
->  - TSO: TCP Segmentation Offload for the VF Tx path.
->  - RSC/LRO: hardware Receive Segment Coalesce for PF and VF Rx paths.
->  - Link speed code: extend the PF-to-VF mailbox field from 4-bit to
->    8-bit to support speeds beyond 10G.
->  - Firmware version: report the NETC IP version via fw_version_get.
->  - Register dump: dump SI, port (PF) and BD ring registers.
->  - Ring parameters: implement rxq_info_get / txq_info_get for the VF.
->  - Link-up interrupt: refresh the cached link speed on each VF link-up
->    interrupt so that link_update returns the current speed immediately.
->  - Stats reset: software snapshot/delta approach for VF counter reset.
->  - Per-queue Rx interrupt: MSI-X per-queue Rx interrupts for the VF,
->    enabling interrupt-driven receive with l3fwd-power.
->  - SI VLAN: hardware port VLAN insertion/removal for PF and VF.
->  - VF link status bitmask: switch VF link status to bitmask encoding
->    to align with the PF and newer kernel driver conventions.
->  - TX PAUSE: VF sets Rx congestion mode when the PF signals TX PAUSE
->    negotiated on the wire; adds Flow control = Y to enetc4.ini.
->  - WRR Tx scheduler: per-ring WRR weights via enetc4_txq_wrr devarg.
+> The runtime directory prefix makes the built path longer,
+> so reject a dp_path that does not fit the sun_path field
+> of struct sockaddr_un instead of letting strlcpy()
+> silently truncate it.
 > 
-> Gagandeep Singh (14):
->   net/enetc: add keep-CRC Rx offload for ENETC4
->   net/enetc: add TSO support for ENETC4 VF
->   net/enetc: add RSC (hardware LRO) support for ENETC4
->   net/enetc: extend PF-VF link speed field to 8 bits
->   net/enetc: support firmware version get for VF
->   net/enetc: support registers dump
->   net/enetc: support ethtool ring parameters
->   net/enetc: refresh link speed on VF link-up interrupt
->   net/enetc: support stats reset for VF
->   net/enetc4: add per-queue Rx interrupt support for VF
->   net/enetc4: add SI-based port VLAN insertion and removal
->   net/enetc4: update VF link status to bitmask encoding
->   net/enetc4: enable Tx PAUSE via VF Rx congestion mode
->   net/enetc4: add WRR Tx scheduler devarg for VF rings
+> The interface name check is moved ahead of the path
+> construction, as the default path is now built from it.
 > 
->  doc/guides/nics/enetc4.rst             | 100 +++
->  doc/guides/nics/features/enetc4.ini    |   8 +
->  doc/guides/rel_notes/release_26_11.rst |  21 +
->  drivers/net/enetc/base/enetc4_hw.h     | 129 +++-
->  drivers/net/enetc/base/enetc_hw.h      |   6 +
->  drivers/net/enetc/enetc.h              | 134 ++++-
->  drivers/net/enetc/enetc4_ethdev.c      | 413 +++++++++++--
->  drivers/net/enetc/enetc4_vf.c          | 801 ++++++++++++++++++++++---
->  drivers/net/enetc/enetc_rxtx.c         | 531 +++++++++++++++-
->  9 files changed, 1998 insertions(+), 145 deletions(-)
+> Bugzilla ID: 1973
+> Fixes: 9c1323736cf9 ("net/af_xdp: fix multi-interface support for k8s")
+> Fixes: 8a324b1c6464 ("net/af_xdp: support AF_XDP device plugin pinned maps")
+> Cc: stable@dpdk.org
 > 
+> Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
+> ---
 
-Better but still has AI review issues:
+Don't think changing path should go to stable.
 
-ENETC4 v5 series review - 14 patches
+AI review had overly wordy response. But does make good points
+that need to be looked at.
 
-No Reviewed-by; two errors remain.
+Applies cleanly to main (drivers/net/af_xdp/rte_eth_af_xdp.c,
+doc/guides/nics/af_xdp.rst, doc/guides/howto/af_xdp_dp.rst).
 
-Build status is now correct. All 14 commits build clean individually
-on top of c1a46b9 with gcc 13.3 and -Dwerror=true:
+No correctness bugs found in the C changes. RTE_SIZEOF_FIELD, unistd.h,
+sys/un.h and rte_eal.h are all already available in the file; kvlist is
+freed unconditionally inside parse_parameters(), so the two new early
+returns in probe() do not leak it; snprintf truncation is checked on both
+branches; the moved if_name check lands immediately after
+parse_parameters(), which is correct.
 
-[0] d657b18 01/14 add keep-CRC Rx offload for ENETC4
-[0] 410e8f0 02/14 add TSO support for ENETC4 VF
-[0] 1dc5e61 03/14 add RSC (hardware LRO) support for ENETC4
-[0] 3dc3726 04/14 extend PF-VF link speed field to 8 bits
-[0] e1ba634 05/14 support firmware version get for VF
-[0] f3772c4 06/14 support registers dump
-[0] 4c51974 07/14 support ethtool ring parameters
-[0] 663e4ac 08/14 refresh link speed on VF link-up interrupt
-[0] d9c0dfa 09/14 support stats reset for VF
-[0] 3b7ef0c 10/14 add per-queue Rx interrupt support for VF
-[0] 131a052 11/14 add SI-based port VLAN insertion and removal
-[0] ea47dc2 12/14 update VF link status to bitmask encoding
-[0] ffaa8a6 13/14 enable Tx PAUSE via VF Rx congestion mode
-[0] 57ac69c 14/14 add WRR Tx scheduler devarg for VF rings
+The findings below are documentation and process.
 
-check-git-log.sh: 14/14 valid patches. No trailing whitespace.
+Warning: doc/guides/howto/af_xdp_dp.rst - stale note contradicts the patch
 
-Confirmed fixed from v4: prev_seg declaration moved to patch 01; the
-duplicate offload arrays and duplicate rx_enable removed at the point
-of introduction; SCATTER and MULTI_SEGS restored to the PF capability
-lists; both LSO validation paths now free the mbuf before start++; the
-rte_cpu_to_le_16() on the uint8_t flags field dropped; Tx ring doubling
-validated post-multiply; mailbox-dependent ops removed from the no-VSI
-table; link speed decode bounded to defined RTE_ETH_SPEED_NUM_* values;
-duplicate rte_kvargs.h include removed; RSC now explicitly rejects nc=1
-rather than silently overriding the burst selection; vf_link_legacy and
-enetc4_txq_wrr documented, and the release note calls out the 6.18.37
-PF requirement.
+  The patch rewrites the paragraph at line 70 but leaves the third note
+  block untouched. Post-patch the file reads:
 
-This round I read patches 05-14 in full, which I had deferred.
+     "It looks for afxdp_dp/<if_name>/afxdp.sock ... below the EAL runtime
+      directory ... When no such entry exists, the PMD falls back to ..."
 
-Patch 14
+  and then, twenty lines later:
 
-Error: free() on memory allocated with rte_zmalloc().
+     "In these versions of the PMD if a user doesn't explicitly set the
+      dp_path parameter when using use_cni then that path is transparently
+      configured in the AF_XDP PMD to the default AF_XDP Device Plugin for
+      Kubernetes mount point path."
 
-parse_txq_prior() was converted from calloc() to rte_zmalloc(), and
-enetc4_dev_close() was updated to rte_free(). enetc4_dev_uninit() was
-not:
+  The second statement is now wrong. Either fold it into the new text or
+  reword it to say the legacy mount point is the fallback.
 
-static int
-enetc4_dev_uninit(struct rte_eth_dev eth_dev)
-{
-...
-if (hw->txq_prior) {
-free(hw->txq_prior); / rte_zmalloc'd */
-hw->txq_prior = NULL;
-}
+Warning: doc/guides/nics/af_xdp.rst - line exceeds 100 characters
 
-    return enetc4_dev_close(eth_dev);
+  The new use_pinned_map example is 103 characters:
 
-}
+    --vdev=net_af_xdp0,use_pinned_map=1,dp_path="/var/run/dpdk/rte/afxdp_dp/<<interface name>>/xsks_map"
 
-uninit runs before close, so on any port using enetc4_txq_prior the
-pointer is still non-NULL here and libc free() is handed a pointer from
-the DPDK heap. txq_wrr is not freed on this path at all. Both
-allocations are already released correctly in enetc4_dev_close(), so
-the simplest fix is to delete the block from enetc4_dev_uninit().
+  The line it replaces was 88. checkpatches.sh will flag this. The use_cni
+  example is 98 and is fine.
 
-Patch 10
+Warning: doc/guides/nics/af_xdp.rst - /var/run/dpdk/rte is not the runtime
+directory in general
 
-Error: eventfd and vector-list leak on interrupt teardown.
+  Both examples now hardcode /var/run/dpdk/rte. eal_create_runtime_dir()
+  builds <base>/dpdk/<file-prefix>, where <base> is RUNTIME_DIRECTORY if
+  set, /var/run for uid 0, and otherwise XDG_RUNTIME_DIR or /tmp. So for a
+  non-root run the path is /tmp/dpdk/rte, and any --file-prefix changes the
+  last component. A user copying the example verbatim gets a path that does
+  not exist, and the "not below world writable /tmp" rationale in the commit
+  message does not hold for the non-root case either.
 
-enetc4_vf_dev_intr(dev, true) calls rte_intr_efd_enable() and
-rte_intr_vec_list_alloc(). The disable path clears rxq_intr_en, calls
-rte_intr_disable() and unregisters the callback, but never calls
-rte_intr_efd_disable() or rte_intr_vec_list_free(). The eventfds and
-the vector list survive dev_close, and a subsequent configure/close
-cycle allocates a new set each time.
+  Suggest keeping <<interface name>> placeholder style for the prefix too,
+  e.g. dp_path="<runtime dir>/afxdp_dp/<<interface name>>/afxdp.sock", with
+  one sentence saying the runtime directory is what
+  rte_eal_get_runtime_dir() returns and depends on uid and --file-prefix.
+  That also brings the pinned-map line back under 100 characters.
 
-The intr_enable_fail: label has the same gap: if rte_intr_enable()
-fails after efd_enable() succeeded, both resources are dropped.
+Warning: doc - "place the pinned map below the EAL runtime directory" is not
+actionable as written
 
-disable:
-enetc_vf_enable_mr_int(enetc_hw, false);
-hw->rxq_intr_en = 0;
+  Both new notes say:
 
-rte_intr_vec_list_free(intr_handle);
+     "New deployments should place the socket or pinned map below the EAL
+      runtime directory"
 
-    rte_intr_efd_disable(intr_handle);
-    ret = rte_intr_disable(intr_handle);
+  A pinned eBPF map can only be created by bpf_obj_pin() onto a bpffs mount.
+  The EAL runtime directory is an ordinary directory created with mkdir(),
+  so nothing can be pinned into it directly - it only works if the deployment
+  bind-mounts a bpffs entry there, which is what the device plugin does today
+  for /tmp/afxdp_dp. Worth saying "mount the endpoint below" rather than
+  "place ... below", so readers do not conclude bpf_obj_pin() will work
+  against the runtime directory.
 
-Patch 03
+Warning: Cc: stable@dpdk.org on a behavior change
 
-Warning: Rx ring doubling still bypasses MAX_BD_COUNT.
+  The patch mixes two things. The strlcpy() truncation fix in init_uds_sock()
+  and probe(), plus the moved if_name check, are straightforward fixes and
+  are good stable material. Preferring the runtime directory over
+  /tmp/afxdp_dp is a new default-resolution policy: it introduces a new
+  lookup, a new WARNING on every probe of an existing deployment, and a new
+  hard -ENAMETOOLONG failure for dp_path values that previously worked
+  (truncated). Stable branches are not supposed to take behavior changes.
 
-The Tx side now validates after the multiply, but enetc4_alloc_rxbdr()
-does not:
+  Suggest splitting: patch 1 = truncation rejection + if_name reorder, with
+  the two Fixes: tags and Cc: stable; patch 2 = runtime directory preference,
+  main only, with a release note entry since it changes the documented
+  meaning of an existing vdev argument.
 
-ring_desc = rxr->rsc_enable ? (uint32_t)nb_desc * 2 : (uint32_t)nb_desc;
+Info: get_dflt_dp_path() could apply the sun_path limit so the fallback is
+still reachable
 
-size = ring_desc * sizeof(struct enetc_swbd);
+  The helper bounds both snprintf() results against PATH_MAX. For the UDS
+  case the real limit is sizeof(sun_path) (108), and that limit is only
+  applied later in probe(). runtime_dir itself is bounded by UNIX_PATH_MAX,
+  so with a long --file-prefix the runtime-directory candidate can exceed
+  107 bytes. If that path happens to exist, probe() now fails with
+  -ENAMETOOLONG rather than falling back to the legacy path, which would
+  have fit. Passing the applicable limit into the helper (or checking
+  sun_path on the first candidate before access()) would keep the fallback
+  reachable in that case.
 
-The only bound is nb_rx_desc > MAX_BD_COUNT in enetc4_rx_queue_setup(),
-checked before the doubling, so an RSC ring can reach 128000 entries.
-ENETC_RTBLENR_LEN(n) is ((n) & ~0x7) with no upper clamp. Mirror the
-check that enetc4_alloc_txbdr() already has.
+Info: the length check in init_uds_sock() is unreachable
 
-Patch 08
+  internals->dp_path is only ever populated from the probe()-validated
+  dp_path, and probe() already rejects anything >= sizeof(sun_path) when
+  use_cni is set. The check inside init_uds_sock() cannot fire. It is
+  harmless defense in depth, but if you want only one, init_uds_sock() is
+  the better place - it is the actual point of use and covers send_msg(),
+  which does the same strlcpy() into dst.sun_path.
 
-Warning: VSI-PSI transaction issued from the interrupt handler.
+Info: WARNING is a strong level for the currently supported configuration
 
-enetc4_process_psi_msg() runs from enetc4_dev_interrupt_handler(), and
-now issues a fresh mailbox round trip:
-
-    rte_free(msg);
-    msg = rte_zmalloc(NULL, sizeof(*msg), RTE_CACHE_LINE_SIZE);
-    if (msg) {
-            if (!enetc4_vf_get_link_speed(eth_dev, msg) && ...
-
-There are eleven enetc4_msg_vsi_send() call sites and no lock anywhere
-in the file. Until this patch every one of them ran on the control
-thread, so they were serialized by convention. This is the first that
-runs on the interrupt thread, so it can interleave with a concurrent
-mac_addr_set, vlan_pvid_set, mtu_set or link_update: both writers touch
-VSIMSGSNDAR/VSIMSGSR and one consumes the other's reply.
-
-A mutex around the send/poll sequence in enetc4_msg_vsi_send() would
-cover all callers at once. Note it would need to be a sleeping lock,
-not rte_spinlock_t, since the poll loop waits up to vsi_timeout.
-
-Info: the free-and-reallocate of msg is unnecessary churn; memset of
-the existing buffer would do, and would remove the NULL branch.
-
-Patch 13
-
-Warning: unsynchronized access to tx_pause_active and RBMR.
-
-hw->tx_pause_active is written by enetc4_vf_set_congestion_mode() on
-the interrupt thread and read by enetc4_rx_queue_setup() and
-enetc4_rx_queue_start() on the control thread as a plain uint8_t. Use
-rte_atomic_store_explicit()/rte_atomic_load_explicit() with
-rte_memory_order_release/acquire; relaxed is not enough here because
-the flag publishes the RBMR writes that precede it.
-
-The RBMR read-modify-write is the larger half of the same problem:
-
-    rbmr = enetc4_rxbdr_rd(enetc_hw, i, ENETC_RBMR);
-    if (enable)
-            rbmr |= ENETC_RBMR_CM;
-    ...
-    enetc4_rxbdr_wr(enetc_hw, i, ENETC_RBMR, rbmr);
-
-enetc4_rx_queue_start() and _stop() perform the same read-modify-write
-on ENETC_RBMR_EN from the control thread. A link-status interrupt
-arriving mid-sequence can lose either update, leaving a ring enabled
-without congestion mode or disabled with it.
-
-Patch 06
-
-Warning: signed shift overflow in the register-dump version field.
-
-regs->version = hw->device_id << 16 | hw->revision_id;
-
-device_id is uint16_t, so it promotes to int before the shift. Both
-ENETC4_DEV_ID (0xe101) and ENETC4_DEV_ID_VF (0xef00) have bit 15 set,
-so the shift result is not representable in int -- undefined behaviour,
-and UBSan will flag it. The same line appears in both
-enetc4_get_regs() and enetc4_vf_get_regs().
-
-regs->version = (uint32_t)hw->device_id << 16 | hw->revision_id;
-
-Info: enetc4_txbdr_regs[] and enetc4_rxbdr_regs[] are static const
-arrays defined in enetc.h, so every translation unit that includes the
-header gets its own copy. Moving them to one .c file with an extern
-declaration, or making them macros, avoids the duplication.
-
-Patch 05
-
-Info: the fw_size == 0 early return reports the length of "0.0" rather
-than of the real version string, since ip_mj and ip_mn are still zero
-at that point. Callers using the query-then-allocate idiom get a
-buffer that is too small, though the second call returns the correct
-size so it does self-correct.
-
-Series-wide
-
-Info: four new consecutive-blank-line pairs -- enetc.h:464,
-enetc4_ethdev.c:36 and :164, enetc_rxtx.c:1144.
-
-Info: the release note entry uses "TX PAUSE" and "RX congestion mode";
-the commit subjects were corrected to Tx/Rx in this revision but the
-note was not.
-
-Info: parse_txq_prior() returns -1 for strdup failure but -ENOMEM for
-the rte_zmalloc failure; parse_txq_wrr() returns -1 for both. Worth
-making consistent.
-
-
+  get_dflt_dp_path() logs at WARNING every time the runtime directory has no
+  entry, which is every probe of every existing AF_XDP Device Plugin
+  deployment - i.e. the configuration the documentation still describes as
+  supported. NOTICE would convey "you may want to migrate" without making
+  correctly configured pods look broken in logs.
