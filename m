@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 677E3C5B572
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 17:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB12AC5B56A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 17:50:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 66B48415D7;
-	Tue, 11 Aug 2026 19:49:17 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7E26042795;
+	Tue, 11 Aug 2026 19:49:18 +0200 (CEST)
 Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id ACD8C4278E
- for <dev@dpdk.org>; Tue, 11 Aug 2026 19:49:15 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 40D6442793;
+ Tue, 11 Aug 2026 19:49:16 +0200 (CEST)
 Received: from localhost.localdomain (unknown [78.109.70.194])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id A4F87E0BE5;
- Tue, 11 Aug 2026 21:49:14 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am A4F87E0BE5
+ by agw.arknetworks.am (Postfix) with ESMTPSA id 76F70E0D23;
+ Tue, 11 Aug 2026 21:49:15 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 76F70E0D23
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
- s=default; t=1786470555;
- bh=9BScmQFAKPk+Ekcv08wC0WM7cbLztQcA5okl2dSERqY=;
- h=From:To:Cc:Subject:Date:From;
- b=E9uZKl6GFzu9gbIdqhTVdtm8GjtoaPlIrDsXG6UJ4Cv3oG9X58La3XI3T6n7bJMS3
- gdtG+1862iOJv5HTQYaEfgYe/QX67k36PeW3bvAl6E6QqTAU7PXvd4ICEsDNvbqMaP
- 8CvwWZhfsjvfRbnowhFaLLjIJAcB2yAwTuFA7jfuyiGHrEzRKL8KW+5hl0AP1ZX4gz
- 1ldl5X1lPzmLSLZ9SUWqyVGG0PGh4hkLEDizhERSGnYlhltrhQiwN/I9p3GyAFhGQr
- ICnbCGVCRCYTf0lanUQExzGptiYhjetK0t/ICQ7UO5kic+8M7CGTAcod91QVHch+OV
- dkOEz6Li3T3Ag==
+ s=default; t=1786470556;
+ bh=h8nRH4Bk1B1xSPPymgnZLGzDopt/mAQwOjZkLxGWZiA=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=y7Tf7Fly0aTQfb2Ghcp0gZ17rdnOc5BvkAsg7cJcyNXob8m3l+U8N4G6/JZo+NptR
+ dsdndii8OJKeOtg31Z4Oy8XHSOVFh/yCrZZ8L7YR4X557cBHx6hXEHHhIZAaNRQ8ib
+ w+ZB2QDeRUW8Hs+GDcgSjScA0R5rJqYKjUYgQA+ymvK0mngGjQZ8o/O/NV6V9e9qNs
+ T6lWQ8Tw8FwCp6n9hNPuHOtUi5sW8EyZIhtbIbiU+9haWmDHUizMQZ+1Jol0L3LzAG
+ ZG2s5EStVvT69rLIvvte5rSP5DvwzgaSutsY8yefkqR6H79pYKNI1CLbjSvS7lOVFA
+ bRIoeghwRuKIA==
 From: Ivan Malov <ivan.malov@arknetworks.am>
 To: dev@dpdk.org
 Cc: Andy Moreton <andy.moreton@amd.com>,
@@ -34,11 +34,14 @@ Cc: Andy Moreton <andy.moreton@amd.com>,
  Roman Zhukov <Roman.Zhukov@arknetworks.am>,
  Pieter Jansen van Vuuren <pieter.jansen-van-vuuren@amd.com>,
  Stephen Hemminger <stephen@networkplumber.org>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: [PATCH 0/3] net/sfc: miscellaneous bug fixes
-Date: Tue, 11 Aug 2026 21:49:10 +0400
-Message-ID: <20260811174913.8961-1-ivan.malov@arknetworks.am>
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, stable@dpdk.org
+Subject: [PATCH 1/3] net/sfc: set Rx queue type flags from scratch on queue
+ setup
+Date: Tue, 11 Aug 2026 21:49:11 +0400
+Message-ID: <20260811174913.8961-2-ivan.malov@arknetworks.am>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260811174913.8961-1-ivan.malov@arknetworks.am>
+References: <20260811174913.8961-1-ivan.malov@arknetworks.am>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -54,31 +57,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Three independent fixes. The first ensures that Rx queue
-type flags are derived from scratch on every queue setup,
-preventing flags from a prior configuration persisting
-when an offload is disabled.
+Derive queue type flags from scratch on every queue setup
+so that flags left over from a previous configuration do
+not persist when an offload is disabled.
 
-The second patch removes an erroneous static qualifier
-from a flow RSS iterator variable, which incorrectly
-shared state between multiple interfaces.
+Fixes: b8cf5ba549f2 ("net/sfc: support initialising different Rx queue types")
+Cc: stable@dpdk.org
 
-The third patch corrects reading of the advertised
-autoneg capability. When the user disables it, the
-corresponding bit was re-added upon the next
-link-state query.
+Signed-off-by: Ivan Malov <ivan.malov@arknetworks.am>
+Reviewed-by: Andy Moreton <andy.moreton@amd.com>
+---
+ drivers/net/sfc/sfc_rx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Ivan Malov (3):
-  net/sfc: set Rx queue type flags from scratch on queue setup
-  net/sfc: drop wrong static qualifier from iterator variable
-  common/sfc_efx/base: fix reading advertised autoneg ability
-
- drivers/common/sfc_efx/base/efx_np.c       | 11 +++++------
- drivers/common/sfc_efx/base/medford4_phy.c |  6 +++++-
- drivers/net/sfc/sfc_flow_rss.c             |  2 +-
- drivers/net/sfc/sfc_rx.c                   |  2 +-
- 4 files changed, 12 insertions(+), 9 deletions(-)
-
+diff --git a/drivers/net/sfc/sfc_rx.c b/drivers/net/sfc/sfc_rx.c
+index d8b961ff7e..e049beced5 100644
+--- a/drivers/net/sfc/sfc_rx.c
++++ b/drivers/net/sfc/sfc_rx.c
+@@ -1183,7 +1183,7 @@ sfc_rx_qinit(struct sfc_adapter *sa, sfc_sw_index_t sw_index,
+ 	else
+ 		rxq_info->type = EFX_RXQ_TYPE_DEFAULT;
+ 
+-	rxq_info->type_flags |=
++	rxq_info->type_flags =
+ 		(offloads & RTE_ETH_RX_OFFLOAD_SCATTER) ?
+ 		EFX_RXQ_FLAG_SCATTER : EFX_RXQ_FLAG_NONE;
+ 
 -- 
 2.47.3
 
