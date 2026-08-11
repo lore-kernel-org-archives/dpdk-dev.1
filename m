@@ -2,112 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 972DBC5AC67
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 07:51:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1901DC5B574
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 08:29:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D3F5A40ED9;
-	Tue, 11 Aug 2026 09:50:59 +0200 (CEST)
-Received: from DUZPR83CU001.outbound.protection.outlook.com
- (mail-northeuropeazon11012040.outbound.protection.outlook.com [52.101.66.40])
- by mails.dpdk.org (Postfix) with ESMTP id 8E6A040E18
- for <dev@dpdk.org>; Tue, 11 Aug 2026 09:50:58 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KnfFYezrHu00JhwOX2ssVHfELEsHScWvWiBtf8SRHWZxy0/5nAIogwxrHh/XzarabJ5zrLcHcL5tcV1xtfTltP3o89XeK11cYKdGMXqjliVy+FNTpJL5G01IEOiN3jhoiVpB984UT8RxIq8CMF8joteUVsAU4J9/3YpfY+mNdubmI763VMkQki8W3PbKeB6QtmAGNA3myxg+MpRwZec39ReqqCYYNIHiK+rZx+Zz9aVF93/KSlfxylA7nzEesdyL/aSncwJ+qG0lc/rUDcu6PLHcNaL0MTREnnA06o0YEOYfdcUaSz7oJDxIta1NB4yphLVB9shfYBFuaqd2J1bUqA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/qHvkKNbMT/8CpQhzyoguv+504JIvd4JxNujfiT0K6w=;
- b=rGOVwtoLNZbUPAoBgHmEwN/Bj8mBBQnWJq4i2GvnFAtWHA97l5xJI5h+fbWb9owtRNloBmlWVhYL3AGzYjnJDCJEJTE+LKCDwrGULNZ3/f+kyiotra3L4WAdk6Y9RBxEhYllFz7STZqT0RY9rNecPQnxuzgvgXpKuA3Oot5A0W2TLqQvuo0iS7R3/vrXHwbXpYJ5rH4d1KaSeY8NFTGUW3LJ+OBNKASPUjgRotx49Wr0XVvE4w8Q1QiQy8W9+KA1QECOMXCMbFlj8sWMHE3NPolRsn8FoS/NhpFdMldXwEIcsVBOMbEYNeBgyVHX3J2nByBcFYD6VDYoKcxM7QF4uw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/qHvkKNbMT/8CpQhzyoguv+504JIvd4JxNujfiT0K6w=;
- b=BSJaX6oiuSHpJYyOUVQpHoaeyE7j4fWw82PlKK/8E7xV6+DWTd+LFTGL5FPY8rI2pgi0ZPavc+K6k868OVyWEojz3HKF7WoCxsS33ag9Xu+4TbhcFaonukuOfg/Q5mSnN0MpoblgRQ9CmRr8D6/+s+Az7uGf90ULRYXIPvAfYOjgHabzjyeO7L7FML3U+Pecc0RcOK0+GL7rCZ1sFfyI02gJE6ZayFJ4XNeYPcM/tjFLjci2c2isWO8aUlFUA4WvR1oqXrAcmCXW1PdBtDlFEH5jQtx4/M09fpfFaSzisWQAgCSlmkz/zyiXBotG+BtP9f3f6saCISBpY7nvH7rmRQ==
-Received: from AMBPR04MB12281.eurprd04.prod.outlook.com
- (2603:10a6:20b:725::21) by AS8PR04MB8593.eurprd04.prod.outlook.com
- (2603:10a6:20b:424::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.292.25; Tue, 11 Aug
- 2026 07:50:56 +0000
-Received: from AMBPR04MB12281.eurprd04.prod.outlook.com
- ([fe80::7fd7:1292:c69b:6cf]) by AMBPR04MB12281.eurprd04.prod.outlook.com
- ([fe80::7fd7:1292:c69b:6cf%4]) with mapi id 15.21.0292.024; Tue, 11 Aug 2026
- 07:50:56 +0000
-From: Gagandeep Singh <G.Singh@nxp.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: "dev@dpdk.org" <dev@dpdk.org>, "gakhil@marvell.com" <gakhil@marvell.com>, 
- Hemant Agrawal <hemant.agrawal@nxp.com>
-Subject: RE: [PATCH 6/6] crypto/dpaa2_sec: add support for env variables
-Thread-Topic: [PATCH 6/6] crypto/dpaa2_sec: add support for env variables
-Thread-Index: AQHdKLuS8esGGTDBSkqFsPh3ZpJAW7aXZO0AgAEVCUA=
-Date: Tue, 11 Aug 2026 07:50:56 +0000
-Message-ID: <AMBPR04MB12281C70CC79EB21582EBC4F8E1DD2@AMBPR04MB12281.eurprd04.prod.outlook.com>
-References: <20260810112951.2879825-1-g.singh@nxp.com>
- <20260810112951.2879825-7-g.singh@nxp.com>
- <20260810081620.1a1753f8@phoenix.local>
-In-Reply-To: <20260810081620.1a1753f8@phoenix.local>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AMBPR04MB12281:EE_|AS8PR04MB8593:EE_
-x-ms-office365-filtering-correlation-id: ed32d53b-0535-438e-6fbd-08def77d46ab
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|19092799006|23010399003|1800799024|366016|376014|38070700021|11063799006|56012099006|10067099003|4143699003|6133799003|22082099003|18002099003;
-x-microsoft-antispam-message-info: Ji4VFvuQtTQ/ZFDFUQwHpFkCycziYIEDSiGf/pXPRZ5Kxm7CBlIYSUk0eMjb/3OxaVV0SBR1jEjJAF7DQ7ox5KaR4ybGyr0AlKaFzelDzPLwrEY5bnvZF+p0VGesK6U4mGoFgejeyICjuIJdQcnrAvikBJUTAsE9c0qAF+bx24dtdU54UeeTDfU2YBmXW3lgtHDpzJNngL7bKPWPXtX4B0z01XTmfttNP/ze87vDaW6PZvCP2Wt0WOdUPuFb3mM2/0dvnFrq327R+CpuTBI7c/iqyNgOJItghYwYUQHfurMUmLBL7wlIntQ6sDMcK05e9oABSloyRtrok9ZVFv8WDCsOQxdtXw8mOxyohE0Y/VHYeGBu1mGLz7O7qJdeRL5fpnsJTiWk8YHY6lMDdx7NaWGZyCD8rv7We0a1nxf2jvJxC+WxW7ab7QGQyKt5Cha9tChGGj+VHnRoQwZhMGd1nKeMyxuPUaFSOq1LKmLEN2Nf2yOK0m1vpFPxmxm2bGnfivNGfXXeCfuNc2UK+LiCKB3NPSIKS3XjUJXRFVmKuyARqTMXdU8upKXWpgmHPflpkRKPytkXa2fuOwu7Q/EwEuilIpbCpl0sww3nY3iHJChZSoLkEFaK3QiA1OAG26J6KHNWbfHFArWgDbRPT00nqLZnHPJe1vBBm4e/cen4d3495kq5GdXCVzbuil6FTc0IyUSVVV0w362FVWJR7Qk6qQ==
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:AMBPR04MB12281.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(19092799006)(23010399003)(1800799024)(366016)(376014)(38070700021)(11063799006)(56012099006)(10067099003)(4143699003)(6133799003)(22082099003)(18002099003);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?lo2vbk8JgCXidd4GtH2I9tXwTS9fI79UWr1Wa0cpdJXhsX1ToLpLnWpCVuaZ?=
- =?us-ascii?Q?gwhjctUImOjwdeWw60xw0Ek1KdCrJDURgo2EOXRLd4LA3gzaGozRLryngdec?=
- =?us-ascii?Q?1XVcBUqD5I0lZR4Vi6FDtXUlzXjCg78aOBj+cdrOiYL50PPtykI2TLebIHBe?=
- =?us-ascii?Q?30f/81g+xSaJZFVknV+zSUlT7bm+UjhYCZ5+dJ9t8VDluRpXnFBn2ItYc6Md?=
- =?us-ascii?Q?c5cZPC8JpQN6A6AaM4err+lMAmolAy+QLX6zapbF/ghg/aCc2qkDRA86/iF4?=
- =?us-ascii?Q?ROMdNvcgf/NGU32MZ4XEfrXiyZ6RVMGuDy4Gtdd4rLZYMjyfxGGCIJaOqcFl?=
- =?us-ascii?Q?a65pPN9eJpyqutCnP6ZC7q9E1hJJ4f8d5ncPRWkAZoGpWH0DrBGO8vgFhG1j?=
- =?us-ascii?Q?PU0HUZ56JDrI7Ky5BlYc0gsm5J1TjsSYX6vS+4KLVwFFNuBywqZuumC5HVfG?=
- =?us-ascii?Q?K5frIUQ7zN2pE42OzgT4C5EBRkEV+O5wB5SPKkSfBUAyhI6fHE+DJ1pYCDnY?=
- =?us-ascii?Q?rQkQDMIoyg+XYMrcl4T4C6O1enM2rQj++2yfTNv5uZxcDVmKmet7EJfDMYxz?=
- =?us-ascii?Q?/5LsTOZaOObuxU/4HXuXoJsIjg9qy/epiywRAxjroJvaIaysR0zUgdk5JtgH?=
- =?us-ascii?Q?ugGe9Ct4ZD+/0+pKY9kIeenmCRcJ+1Q+trCoO9CzapJgC2vOnluEutfjKRwr?=
- =?us-ascii?Q?tGlfUiPCLrV89cFMXsWZbnrGCbvxtEn2Srosk7xBP7rUlxPXWRSs1QZrvS6t?=
- =?us-ascii?Q?Tkb+O8rDi19vnFyLUhuwwfbVsFkVPm+wTns49XsFPGejMC33hZ6bMDUkimAz?=
- =?us-ascii?Q?ANcq1cBd+Ct2IVhEbPcw7ogLNNPWaus2yhHsoO/jgLvXsglkPH8iUqb/jwaO?=
- =?us-ascii?Q?H/k1ykkIu/txUuLqw6aA8LGIEZhXOzhPudvNHcfgVVeI2eRbzJgCaxQOLxYb?=
- =?us-ascii?Q?2YMBdGYumZ+8x/7ZxFUsaWGOuCSiyGjowmAZ1Fig20x2QR2prNxxrLEGvtFg?=
- =?us-ascii?Q?PIcXdn4xRG+rd3XPJAz+RGHhtA5AjOZ3gqPi6ttx3lVGxzLWhga8fpBk9u3c?=
- =?us-ascii?Q?BQHVAPThY0ZpAFBO+skzFj7dmdltQEOZQQ3guzz557U1XaigdYvTzOsVPdYM?=
- =?us-ascii?Q?7Lt7ySXNjOrCZ4VeX/MyKbrHpzilXpvWXOxpD69/yxc08pxsM4kTcr88StP0?=
- =?us-ascii?Q?fgMog2el29N5vla8RpkQXxMJzHN8iOk+N9Y4dM83SkvC/ZJPS8fyVlPWJTK2?=
- =?us-ascii?Q?ojBrgCJJW51Yn39XdGVl3//GSPfpSJ9db6psMy/ty9x5Oy0gYtJtOSxP/2SD?=
- =?us-ascii?Q?rVF4btspKExBDPjiEkBFcceFrfC+gc1tWEsUsZjkZ982/jqm1p2ode5azAP7?=
- =?us-ascii?Q?DYtc5cYyF/Lv8nP2abKmhgBRKhuU8Pf7WgCEyOgPSu2H8rAV1HGJpMPatD4X?=
- =?us-ascii?Q?fsrH9+h4fLtOjeySR3SQfDer2sNq725cTbUsazSFc+t9OQn1zftj8c0KYWDe?=
- =?us-ascii?Q?BnefkPp9rN7Cl6W/HLna3oWyfGlppZhibTPakF0yE9vl3q4gZduE+O8lKkFT?=
- =?us-ascii?Q?CTr/w58eBSDz8iQxShn9BAwE9ldM/3nKTVeu9lSzfKidZ9q3KNtmmFm443YN?=
- =?us-ascii?Q?p7aNQi5SKsk1sz65rGdGcRLFefAVAl5JzX1JQZp/2hHY4hvoE3+m3bhgrUv2?=
- =?us-ascii?Q?zEKmrHlmyLA/2183cxNbyW3Iy27r7w5o80VqobTDEcD8aOeV?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id 4AAC940E39;
+	Tue, 11 Aug 2026 10:29:02 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+ by mails.dpdk.org (Postfix) with ESMTP id 0EDAF4027F
+ for <dev@dpdk.org>; Tue, 11 Aug 2026 10:29:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1786436941; x=1817972941;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=AgwR1wNCkN6Q6Lgn9Bv0509Y9YLQNR+goIaLzWJrbN4=;
+ b=NnnElK6CdqNs2WZz+Fk1Z6xeFBTyhzCeIArm8qdQSZS1B1Aba8bqRkOS
+ ApfKq2rZIbPAHZjdT9U92ewjxDqdyK+vSU0MyGRdEF+/1jQDJkQ1y7m+2
+ rFQoVejhZga50Ht+n34iQWgbxrUCvdItw5X+xmQffFlZoWUO1CC0Dt5pi
+ 8kxMBHD8S4+DP/i45K+FB14YbyNG9EMJP4cJeyEOiC25GpqqYmCZGW/0V
+ m6/xtMvIGqlDc+0v2R4EdZ1y1OVIAZysf5pSUx4MIcJ5v5dnFThTkWCx6
+ RqZcLZH4WdLEpTy9TNpMr8FFbwz/goDJSGF48xKxNqJ/IUTKfFHewTPdv g==;
+X-CSE-ConnectionGUID: 7BuP7n9BRui4AfTEb2Rg4g==
+X-CSE-MsgGUID: NeTYdzSfQPuvD0mwm91izQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11871"; a="86083562"
+X-IronPort-AV: E=Sophos;i="6.25,217,1779174000"; d="scan'208";a="86083562"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+ by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Aug 2026 01:29:00 -0700
+X-CSE-ConnectionGUID: 2ki4K/zCSdiRqSpj0jKRtw==
+X-CSE-MsgGUID: sE842gZpQcW/Fni15eP4Ng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,217,1779174000"; d="scan'208";a="263325718"
+Received: from pae-14.iind.intel.com ([10.190.203.153])
+ by orviesa007.jf.intel.com with ESMTP; 11 Aug 2026 01:28:58 -0700
+From: Anurag Mandal <anurag.mandal@intel.com>
+To: dev@dpdk.org
+Cc: ciara.loftus@intel.com, mtahhan@redhat.com, stephen@networkplumber.org,
+ Anurag Mandal <anurag.mandal@intel.com>
+Subject: [PATCH v2] net/af_xdp: fix default device plugin path
+Date: Tue, 11 Aug 2026 08:27:57 +0000
+Message-Id: <20260811082757.1059350-1-anurag.mandal@intel.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260810101158.1011356-1-anurag.mandal@intel.com>
+References: <20260810101158.1011356-1-anurag.mandal@intel.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AMBPR04MB12281.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ed32d53b-0535-438e-6fbd-08def77d46ab
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Aug 2026 07:50:56.1489 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: g5DeV/R9msa/2N7TVumjDhiw5Qm6q0xdf3yMGwpdEGPd1cSfyBSuLMcwZQ/lNgQt
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8593
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -121,36 +60,282 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi,
+When use_cni=1 or use_pinned_map=1 is passed without an explicit
+dp_path, the PMD builds the path to the AF_XDP device plugin
+endpoint itself.
+That default was hardcoded to /tmp/afxdp_dp/<if_name>/.
 
-> -----Original Message-----
-> From: Stephen Hemminger <stephen@networkplumber.org>
-> Sent: Monday, August 10, 2026 8:46 PM
-> To: Gagandeep Singh <G.Singh@nxp.com>
-> Cc: dev@dpdk.org; gakhil@marvell.com; Hemant Agrawal
-> <hemant.agrawal@nxp.com>
-> Subject: Re: [PATCH 6/6] crypto/dpaa2_sec: add support for env variables
->=20
-> On Mon, 10 Aug 2026 16:59:51 +0530
-> Gagandeep Singh <g.singh@nxp.com> wrote:
->=20
-> > Allow driver configuration via environment variables as a fallback
-> > when devargs are not provided. After processing devargs (or when
-> > devargs are absent), check DRIVER_STRICT_ORDER and
-> DRIVER_DUMP_MODE
-> > environment variables to set en_loose_ordered and dpaa2_sec_dp_dump.
-> >
-> > This lets users configure the driver without modifying EAL arguments,
-> > useful in environments where command-line access is restricted.
-> >
-> > Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
->=20
-> No. This is bad precedent. DPDK has a method for configuration.
-> Adding AdHoc environment variables creates chaos.
+A unix domain socket and a pinned map are runtime state.
+DPDK exposes a location for such state through
+rte_eal_get_runtime_dir(), which is per user, per
+file prefix, and created with mode 0700, unlike
+the shared /tmp/afxdp_dp directory.
 
-I understand the concern. The devargs are already presents. The motivation =
-was mainly customer support. In many deployments,
-users cannot easily modify EAL/devargs but can set environment variables wi=
-thout the need to update and recompile
-their binaries, making it easier to enable temporary debugging in the field=
-.
+The location cannot simply be moved as it is a contract
+duplicated in the AF_XDP Device Plugin for Kubernetes,
+which creates the socket and mounts it into the pod at
+the /tmp path the PMD expects.
+Changing only the PMD would break every existing deployment.
+
+This patch fixes the default so that the endpoint is looked
+up below the EAL runtime directory first, and /tmp/afxdp_dp
+is only used when nothing is found there.
+Use of the fallback is logged at notice level.
+Existing plugin deployments keep working unchanged, while
+a deployment that places the endpoint in the runtime
+directory no longer has to pass dp_path.
+An explicit dp_path still overrides both.
+
+The <if_name> component is kept in both layouts. It is what
+keeps the endpoints of several interfaces distinct when more
+than one UDS server is mounted in a single pod.
+
+The runtime directory prefix makes the built path longer,
+so reject a dp_path that does not fit the sun_path field
+of struct sockaddr_un instead of letting strlcpy()
+silently truncate it.
+
+The interface name check is moved ahead of the path
+construction, as the default path is now built from it.
+
+Bugzilla ID: 1973
+Fixes: 9c1323736cf9 ("net/af_xdp: fix multi-interface support for k8s")
+Fixes: 8a324b1c6464 ("net/af_xdp: support AF_XDP device plugin pinned maps")
+
+Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
+---
+V2: Addressed Stephen Hemminger's AI review comments
+
+ doc/guides/howto/af_xdp_dp.rst      | 32 +++++++++++--
+ doc/guides/nics/af_xdp.rst          | 35 ++++++++++++--
+ drivers/net/af_xdp/rte_eth_af_xdp.c | 73 ++++++++++++++++++++++++++---
+ 3 files changed, 126 insertions(+), 14 deletions(-)
+
+diff --git a/doc/guides/howto/af_xdp_dp.rst b/doc/guides/howto/af_xdp_dp.rst
+index c194ead250..7227f29a73 100644
+--- a/doc/guides/howto/af_xdp_dp.rst
++++ b/doc/guides/howto/af_xdp_dp.rst
+@@ -68,7 +68,28 @@ arguments to explicitly tell the AF_XDP PMD where to find either:
+ 2. The pinned xskmap to use when creating AF_XDP sockets.
+ 
+ If this argument is not passed alongside the ``use_cni`` or ``use_pinned_map`` arguments
+-then the AF_XDP PMD configures it internally to the `AF_XDP Device Plugin for Kubernetes`_.
++then the AF_XDP PMD builds the path itself.
++It looks for ``afxdp_dp/<if_name>/afxdp.sock``
++(or ``afxdp_dp/<if_name>/xsks_map``) in the EAL runtime directory,
++the conventional location for runtime state such as sockets.
++When no such entry exists, the PMD falls back to the same file
++below ``/tmp/afxdp_dp``, the location used by the
++`AF_XDP Device Plugin for Kubernetes`_.
++
++.. note::
++
++   The ``/tmp/afxdp_dp`` fallback exists only for compatibility with
++   deployments of the `AF_XDP Device Plugin for Kubernetes`_
++   that mount the endpoint there.
++   New deployments should mount the endpoint
++   below the EAL runtime directory,
++   or point at it explicitly with ``dp_path``.
++   A pinned map lives on a bpffs mount,
++   so it has to be bind mounted into that directory;
++   it cannot be pinned into the runtime directory itself.
++   The ``<if_name>`` component of the path must be kept in either location:
++   it is what distinguishes the endpoints
++   when several interfaces are mounted in a single pod.
+ 
+ .. note::
+ 
+@@ -80,8 +101,9 @@ then the AF_XDP PMD configures it internally to the `AF_XDP Device Plugin for Ku
+    DPDK AF_XDP PMD > v23.11 will work with latest version of the AF_XDP Device Plugin
+    through a combination of the ``dp_path`` and/or the ``use_cni`` parameter.
+    In these versions of the PMD if a user doesn't explicitly set the ``dp_path`` parameter
+-   when using ``use_cni`` then that path is transparently configured in the AF_XDP PMD
+-   to the default `AF_XDP Device Plugin for Kubernetes`_ mount point path.
++   when using ``use_cni`` then the PMD looks for the endpoint
++   below the EAL runtime directory first,
++   and falls back to the default `AF_XDP Device Plugin for Kubernetes`_ mount point path.
+    The path can be overridden by explicitly setting the ``dp_path`` param.
+ 
+ .. note::
+@@ -339,4 +361,6 @@ Run dpdk-testpmd with the AF_XDP Device Plugin + CNI
+ .. note::
+ 
+    If the ``dp_path`` parameter isn't explicitly set with ``use_cni`` or ``use_pinned_map``
+-   the AF_XDP PMD will set the parameter values to the `AF_XDP Device Plugin for Kubernetes`_ defaults.
++   the AF_XDP PMD looks for the endpoint below the EAL runtime directory first,
++   and only then below the ``/tmp/afxdp_dp`` location
++   used by the `AF_XDP Device Plugin for Kubernetes`_.
+diff --git a/doc/guides/nics/af_xdp.rst b/doc/guides/nics/af_xdp.rst
+index c455b4c066..4d2ee48ff7 100644
+--- a/doc/guides/nics/af_xdp.rst
++++ b/doc/guides/nics/af_xdp.rst
+@@ -199,18 +199,45 @@ to explicitly tell the AF_XDP PMD where to find either:
+ 1. The UDS to interact with the AF_XDP Device Plugin. OR
+ 2. The pinned xskmap to use when creating AF_XDP sockets.
+ 
+-If this argument is not passed alongside the ``use_cni`` or ``use_pinned_map`` arguments then
+-the AF_XDP PMD configures it internally to the `AF_XDP Device Plugin for Kubernetes`_.
++If this argument is not passed alongside the ``use_cni`` or ``use_pinned_map`` arguments,
++the AF_XDP PMD builds the path itself.
++It looks for ``afxdp_dp/<<interface name>>/afxdp.sock``
++(or ``afxdp_dp/<<interface name>>/xsks_map``) in the EAL runtime directory,
++the conventional location for runtime state such as sockets.
++When no such entry exists, the PMD falls back to the same file
++below ``/tmp/afxdp_dp``, the location used by the
++`AF_XDP Device Plugin for Kubernetes`_.
++
++``<runtime_dir>`` below is the EAL runtime directory
++returned by ``rte_eal_get_runtime_dir()``.
++It is not a fixed path:
++it depends on the user ID the application runs as
++and on the ``--file-prefix`` EAL option.
+ 
+ .. _AF_XDP Device Plugin for Kubernetes: https://github.com/redhat-et/afxdp-plugins-for-kubernetes
+ 
++.. note::
++
++   The ``/tmp/afxdp_dp`` fallback exists only for compatibility with
++   deployments of the `AF_XDP Device Plugin for Kubernetes`_
++   that mount the endpoint there.
++   New deployments should mount the endpoint
++   below the EAL runtime directory,
++   or point at it explicitly with ``dp_path``.
++   A pinned map lives on a bpffs mount,
++   so it has to be bind mounted into that directory;
++   it cannot be pinned into the runtime directory itself.
++   The interface name component of the path must be kept in either location:
++   it is what distinguishes the endpoints
++   when several interfaces are mounted in a single pod.
++
+ .. code-block:: console
+ 
+-   --vdev=net_af_xdp0,use_cni=1,dp_path="/tmp/afxdp_dp/<<interface name>>/afxdp.sock"
++   --vdev=net_af_xdp0,use_cni=1,dp_path="<runtime_dir>/afxdp_dp/<<interface name>>/afxdp.sock"
+ 
+ .. code-block:: console
+ 
+-   --vdev=net_af_xdp0,use_pinned_map=1,dp_path="/tmp/afxdp_dp/<<interface name>>/xsks_map"
++   --vdev=net_af_xdp0,use_pinned_map=1,dp_path="<runtime_dir>/afxdp_dp/<<interface name>>/xsks_map"
+ 
+ Limitations
+ -----------
+diff --git a/drivers/net/af_xdp/rte_eth_af_xdp.c b/drivers/net/af_xdp/rte_eth_af_xdp.c
+index 2cdb533276..54bd095c92 100644
+--- a/drivers/net/af_xdp/rte_eth_af_xdp.c
++++ b/drivers/net/af_xdp/rte_eth_af_xdp.c
+@@ -83,7 +83,9 @@ RTE_LOG_REGISTER_DEFAULT(af_xdp_logtype, NOTICE);
+ 
+ #define ETH_AF_XDP_MP_KEY "afxdp_mp_send_fds"
+ 
+-#define DP_BASE_PATH			"/tmp/afxdp_dp"
++/* Directory holding the per interface device plugin endpoints. */
++#define DP_DIR_NAME			"afxdp_dp"
++#define DP_LEGACY_BASE_PATH		"/tmp/" DP_DIR_NAME
+ #define DP_UDS_SOCK             "afxdp.sock"
+ #define DP_XSK_MAP				"xsks_map"
+ #define MAX_LONG_OPT_SZ			64
+@@ -2459,6 +2461,47 @@ afxdp_mp_send_fds(const struct rte_mp_msg *request, const void *peer)
+ 	return 0;
+ }
+ 
++/*
++ * Build the default device plugin path for an interface.
++ *
++ * Unix domain sockets and pinned maps are runtime state, so the EAL runtime
++ * directory is preferred: it is per user and per file prefix, and both of its
++ * levels are created with mode 0700. The AF_XDP Device Plugin for Kubernetes
++ * still creates and mounts these endpoints below DP_LEGACY_BASE_PATH, so that
++ * location is used when the runtime directory holds no usable entry.
++ *
++ * The interface name is always part of the path: it keeps the endpoints of
++ * several interfaces distinct when more than one is mounted in a single pod.
++ *
++ * "size" is the longest path the caller can use, which may be shorter than the
++ * destination buffer. A runtime directory candidate that does not fit is
++ * skipped rather than rejected, so the shorter legacy path stays reachable.
++ */
++static int
++get_dflt_dp_path(char *dp_path, size_t size, const char *if_name,
++		 const char *entry)
++{
++	int ret;
++
++	ret = snprintf(dp_path, size, "%s/%s/%s/%s", rte_eal_get_runtime_dir(),
++		       DP_DIR_NAME, if_name, entry);
++	if (ret >= 0 && (size_t)ret < size && access(dp_path, F_OK) == 0)
++		return 0;
++
++	ret = snprintf(dp_path, size, "%s/%s/%s", DP_LEGACY_BASE_PATH, if_name,
++		       entry);
++	if (ret < 0 || (size_t)ret >= size) {
++		AF_XDP_LOG_LINE(ERR, "Device plugin path for %s is too long", if_name);
++		return -ENAMETOOLONG;
++	}
++
++	AF_XDP_LOG_LINE(NOTICE,
++		"No usable '%s' entry for %s below '%s', falling back to '%s'",
++		entry, if_name, rte_eal_get_runtime_dir(), DP_LEGACY_BASE_PATH);
++
++	return 0;
++}
++
+ static int
+ rte_pmd_af_xdp_probe(struct rte_vdev_device *dev)
+ {
+@@ -2522,6 +2565,11 @@ rte_pmd_af_xdp_probe(struct rte_vdev_device *dev)
+ 		return -EINVAL;
+ 	}
+ 
++	if (strlen(if_name) == 0) {
++		AF_XDP_LOG_LINE(ERR, "Network interface must be specified");
++		return -EINVAL;
++	}
++
+ 	if (use_cni && use_pinned_map) {
+ 		AF_XDP_LOG_LINE(ERR, "When '%s' parameter is used, '%s' parameter is not valid",
+ 			ETH_AF_XDP_USE_CNI_ARG, ETH_AF_XDP_USE_PINNED_MAP_ARG);
+@@ -2543,13 +2591,20 @@ rte_pmd_af_xdp_probe(struct rte_vdev_device *dev)
+ 	}
+ 
+ 	if (use_cni && !strnlen(dp_path, PATH_MAX)) {
+-		snprintf(dp_path, sizeof(dp_path), "%s/%s/%s", DP_BASE_PATH, if_name, DP_UDS_SOCK);
++		/* The UDS path is bounded by sun_path, not by PATH_MAX. */
++		ret = get_dflt_dp_path(dp_path,
++				RTE_SIZEOF_FIELD(struct sockaddr_un, sun_path),
++				if_name, DP_UDS_SOCK);
++		if (ret < 0)
++			return ret;
+ 		AF_XDP_LOG_LINE(INFO, "'%s' parameter not provided, setting value to '%s'",
+ 			ETH_AF_XDP_DP_PATH_ARG, dp_path);
+ 	}
+ 
+ 	if (use_pinned_map && !strnlen(dp_path, PATH_MAX)) {
+-		snprintf(dp_path, sizeof(dp_path), "%s/%s/%s", DP_BASE_PATH, if_name, DP_XSK_MAP);
++		ret = get_dflt_dp_path(dp_path, sizeof(dp_path), if_name, DP_XSK_MAP);
++		if (ret < 0)
++			return ret;
+ 		AF_XDP_LOG_LINE(INFO, "'%s' parameter not provided, setting value to '%s'",
+ 			ETH_AF_XDP_DP_PATH_ARG, dp_path);
+ 	}
+@@ -2561,9 +2616,15 @@ rte_pmd_af_xdp_probe(struct rte_vdev_device *dev)
+ 		return -EINVAL;
+ 	}
+ 
+-	if (strlen(if_name) == 0) {
+-		AF_XDP_LOG_LINE(ERR, "Network interface must be specified");
+-		return -EINVAL;
++	/*
++	 * The socket address is copied into sun_path which is much shorter than
++	 * PATH_MAX, reject an oversized path instead of silently truncating it.
++	 */
++	if (use_cni && strnlen(dp_path, PATH_MAX) >=
++		       RTE_SIZEOF_FIELD(struct sockaddr_un, sun_path)) {
++		AF_XDP_LOG_LINE(ERR, "'%s' value '%s' is too long for a unix socket address",
++				ETH_AF_XDP_DP_PATH_ARG, dp_path);
++		return -ENAMETOOLONG;
+ 	}
+ 
+ 	/* get numa node id from net sysfs */
+-- 
+2.34.1
+
