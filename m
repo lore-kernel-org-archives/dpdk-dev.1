@@ -2,40 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE2DC5B56A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 12:00:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A370C5B56A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 12:17:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B9C82427DD;
-	Tue, 11 Aug 2026 13:58:11 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 75770427C3
- for <dev@dpdk.org>; Tue, 11 Aug 2026 13:58:08 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 596492001B0;
- Tue, 11 Aug 2026 13:58:08 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com
- (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 227222001B4;
- Tue, 11 Aug 2026 13:58:08 +0200 (CEST)
-Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
- [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 989AE18000B0;
- Tue, 11 Aug 2026 19:58:06 +0800 (+08)
-From: Hemant Agrawal <hemant.agrawal@nxp.com>
-To: stephen@networkplumber.org,
-	thomas@monjalon.net,
-	dev@dpdk.org
-Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v8 26/26] drivers: memory free in destructor
-Date: Tue, 11 Aug 2026 17:27:31 +0530
-Message-Id: <20260811115731.3421032-27-hemant.agrawal@nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20260811115731.3421032-1-hemant.agrawal@nxp.com>
-References: <20260703124950.1895871-1-hemant.agrawal@nxp.com>
- <20260811115731.3421032-1-hemant.agrawal@nxp.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 082B340E1F;
+	Tue, 11 Aug 2026 14:17:35 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 505864027F
+ for <dev@dpdk.org>; Tue, 11 Aug 2026 14:17:34 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 0610822827
+ for <dev@dpdk.org>; Tue, 11 Aug 2026 14:17:34 +0200 (CEST)
+Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
+ smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
+ Tue, 11 Aug 2026 14:17:33 +0200
+From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+To: dev@dpdk.org
+Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+Subject: [PATCH] stack: improve source code readability
+Date: Tue, 11 Aug 2026 12:17:27 +0000
+Message-ID: <20260811121727.1706225-1-mb@smartsharesystems.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+X-OriginalArrivalTime: 11 Aug 2026 12:17:33.0745 (UTC)
+ FILETIME=[637F1A10:01DD298B]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,146 +43,76 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jun Yang <jun.yang@nxp.com>
+Fixed misleading local variable names in the standard stack,
+for improved source code readability.
+No functional change.
 
-Don't free eal memory in destructor.
-User should invoke dpaax_enter_destructor in
-it's destructorto mark current context if there
-is eal memory to be freed.
+Fixes: 05d3b5283cc1 ("stack: introduce stack library")
 
-Signed-off-by: Jun Yang <jun.yang@nxp.com>
+Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
 ---
- drivers/bus/dpaa/dpaa_bus.c             |  1 +
- drivers/common/dpaax/compat.h           | 22 +++++++++++++++++-----
- drivers/common/dpaax/dpaax_iova_table.c | 25 ++++++++++++++++++++++++-
- drivers/mempool/dpaa/dpaa_mempool.c     |  2 ++
- drivers/net/dpaa/dpaa_ethdev.c          |  1 +
- 5 files changed, 45 insertions(+), 6 deletions(-)
+No need to backport.
+---
+ lib/stack/rte_stack_std.h | 20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
-index 16892b5247..01bfaacbf7 100644
---- a/drivers/bus/dpaa/dpaa_bus.c
-+++ b/drivers/bus/dpaa/dpaa_bus.c
-@@ -915,6 +915,7 @@ RTE_FINI_PRIO(dpaa_cleanup, 102)
- 	if (!dpaa_bus_global_init)
- 		return;
- 
-+	dpaax_enter_destructor();
- 	/* cleanup portals in case non-graceful exit */
- 	RTE_LCORE_FOREACH_WORKER(lcore_id) {
- 		/* Check for non zero id */
-diff --git a/drivers/common/dpaax/compat.h b/drivers/common/dpaax/compat.h
-index d0635255da..b826a55de2 100644
---- a/drivers/common/dpaax/compat.h
-+++ b/drivers/common/dpaax/compat.h
-@@ -2,7 +2,7 @@
-  *
-  * Copyright 2011 Freescale Semiconductor, Inc.
-  * All rights reserved.
-- * Copyright 2019-2020 NXP
-+ * Copyright 2019-2020, 2026 NXP
-  *
-  */
- 
-@@ -336,11 +336,23 @@ static inline void copy_bytes(void *dest, const void *src, size_t sz)
- #define copy_bytes memcpy
- #endif
- 
--/* Allocator stuff */
--#define kmalloc(sz, t)	rte_malloc(NULL, sz, 0)
--#define kzalloc(sz, t)  rte_zmalloc(NULL, sz, 0)
-+__rte_internal
-+void dpaax_enter_destructor(void);
-+__rte_internal
-+int is_dpaax_in_destructor(void);
-+
-+/* Allocator stuff, make sure the eal memory pool is available when calling.*/
-+#define kmalloc(sz, _t) ((void)(_t), rte_malloc(NULL, sz, 0))
-+#define kzalloc(sz, _t) ((void)(_t), rte_zmalloc(NULL, sz, 0))
- #define vmalloc(sz)	rte_malloc(NULL, sz, 0)
--#define kfree(p)	rte_free(p)
-+
-+#define kfree(p) \
-+({ \
-+	if (!is_dpaax_in_destructor()) \
-+		rte_free(p); \
-+	else \
-+		pr_debug("Eal memory has been destroyed.\n"); \
-+})
- 
- static inline unsigned long get_zeroed_page(gfp_t __foo __rte_unused)
+diff --git a/lib/stack/rte_stack_std.h b/lib/stack/rte_stack_std.h
+index ae28add5c4..d5b21defb0 100644
+--- a/lib/stack/rte_stack_std.h
++++ b/lib/stack/rte_stack_std.h
+@@ -25,20 +25,20 @@ __rte_stack_std_push(struct rte_stack *s, void * const *obj_table,
  {
-diff --git a/drivers/common/dpaax/dpaax_iova_table.c b/drivers/common/dpaax/dpaax_iova_table.c
-index 1220d9654b..d53b24d4f4 100644
---- a/drivers/common/dpaax/dpaax_iova_table.c
-+++ b/drivers/common/dpaax/dpaax_iova_table.c
-@@ -1,17 +1,40 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright 2018-2023 NXP
-+ * Copyright 2018-2023,2026 NXP
-  */
+ 	struct rte_stack_std *stack = &s->stack_std;
+ 	unsigned int index;
+-	void **cache_objs;
++	void **stack_objs;
  
- #include <eal_export.h>
- #include <rte_memory.h>
+ 	rte_spinlock_lock(&stack->lock);
+-	cache_objs = &stack->objs[stack->len];
++	stack_objs = &stack->objs[stack->len];
  
- #include "dpaax_iova_table.h"
-+#include "compat.h"
- #include "dpaax_logs.h"
+-	/* Is there sufficient space in the stack? */
+-	if ((stack->len + n) > s->capacity) {
++	if (unlikely((stack->len + n) > s->capacity)) {
++		/* Insufficient space in the stack. */
+ 		rte_spinlock_unlock(&stack->lock);
+ 		return 0;
+ 	}
  
- /* Global table reference */
- RTE_EXPORT_INTERNAL_SYMBOL(dpaax_iova_table_p)
- struct dpaax_iova_table *dpaax_iova_table_p;
+-	/* Add elements back into the cache */
++	/* Push objects to the stack */
+ 	for (index = 0; index < n; ++index, obj_table++)
+-		cache_objs[index] = *obj_table;
++		stack_objs[index] = *obj_table;
  
-+/*
-+ * Track whether the process is executing DPDK destructors. During
-+ * teardown the EAL memory subsystem may already be gone, so freeing
-+ * EAL memory from a DPAAx destructor is unsafe. Drivers mark the
-+ * destructor context via dpaax_enter_destructor() so that kfree()
-+ * (see compat.h) can skip rte_free() in that window.
-+ */
-+static int s_dpaax_in_destructor;
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(dpaax_enter_destructor)
-+void dpaax_enter_destructor(void)
-+{
-+	s_dpaax_in_destructor = 1;
-+}
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(is_dpaax_in_destructor)
-+int is_dpaax_in_destructor(void)
-+{
-+	return s_dpaax_in_destructor;
-+}
-+
-+
- static int dpaax_handle_memevents(void);
+ 	stack->len += n;
  
- /* A structure representing the device-tree node available in /proc/device-tree.
-diff --git a/drivers/mempool/dpaa/dpaa_mempool.c b/drivers/mempool/dpaa/dpaa_mempool.c
-index 25f37bab51..edcb8dfacb 100644
---- a/drivers/mempool/dpaa/dpaa_mempool.c
-+++ b/drivers/mempool/dpaa/dpaa_mempool.c
-@@ -531,6 +531,8 @@ RTE_FINI_PRIO(dpaa_mpool_finish, RTE_PRIORITY_104)
+@@ -63,20 +63,22 @@ __rte_stack_std_pop(struct rte_stack *s, void **obj_table, unsigned int n)
  {
- 	uint16_t bpid;
+ 	struct rte_stack_std *stack = &s->stack_std;
+ 	unsigned int index, len;
+-	void **cache_objs;
++	void **stack_objs;
  
-+	dpaax_enter_destructor();
-+
- 	for (bpid = 0; bpid < DPAA_MAX_BPOOLS; bpid++) {
- 		if (s_dpaa_bpid_allocated_flag[bpid].used) {
- 			bman_free_bpid(bpid, s_dpaa_bpid_allocated_flag[bpid].flags);
-diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
-index 4eb1f635bb..a07c73cf47 100644
---- a/drivers/net/dpaa/dpaa_ethdev.c
-+++ b/drivers/net/dpaa/dpaa_ethdev.c
-@@ -2811,6 +2811,7 @@ RTE_FINI_PRIO(dpaa_finish, 103)
- 	struct rte_eth_dev *dev;
+ 	rte_spinlock_lock(&stack->lock);
  
- 	PMD_INIT_FUNC_TRACE();
-+	dpaax_enter_destructor();
- 	/* For secondary, primary will do all the cleanup */
- 	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
- 		return;
+ 	if (unlikely(n > stack->len)) {
++		/* Insufficient objects in the stack. */
+ 		rte_spinlock_unlock(&stack->lock);
+ 		return 0;
+ 	}
+ 
+-	cache_objs = stack->objs;
++	stack_objs = stack->objs;
+ 
++	/* Pop objects from the stack */
+ 	for (index = 0, len = stack->len - 1; index < n;
+ 			++index, len--, obj_table++)
+-		*obj_table = cache_objs[len];
++		*obj_table = stack_objs[len];
+ 
+ 	stack->len -= n;
+ 	rte_spinlock_unlock(&stack->lock);
 -- 
-2.25.1
+2.43.0
 
