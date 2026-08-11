@@ -2,72 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D7DEC5B56A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 20:09:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14995C5AC67
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 20:24:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A489D40298;
-	Tue, 11 Aug 2026 22:09:22 +0200 (CEST)
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com
- [209.85.214.175])
- by mails.dpdk.org (Postfix) with ESMTP id 767B34021E
- for <dev@dpdk.org>; Tue, 11 Aug 2026 22:09:21 +0200 (CEST)
-Received: by mail-pl1-f175.google.com with SMTP id
- d9443c01a7336-2ce98cb8165so4092605ad.1
- for <dev@dpdk.org>; Tue, 11 Aug 2026 13:09:21 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 170F44025F;
+	Tue, 11 Aug 2026 22:24:08 +0200 (CEST)
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com
+ [209.85.216.48]) by mails.dpdk.org (Postfix) with ESMTP id D0E074021E
+ for <dev@dpdk.org>; Tue, 11 Aug 2026 22:24:05 +0200 (CEST)
+Received: by mail-pj1-f48.google.com with SMTP id
+ 98e67ed59e1d1-38e347638adso396754a91.0
+ for <dev@dpdk.org>; Tue, 11 Aug 2026 13:24:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786478960;
- x=1787083760; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786479845;
+ x=1787084645; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=50BX7E9u3T7kMY/FkEfh7Y+CM1FJ4HRuRV05QsESYv4=;
- b=DZR+6962rxXQQJA5Mkc6yDcHnSlYCsmNRyuCjYP0qI2VptGj+D1eUwdIcwxF50GAX8
- 0fqnOKrk+mRYb3EAY3UDaA5qnxjwkN1D4K69Oz3ehBChBUQ7VXf3ADR+lVg8mDjzg5Em
- Wn58Y8UGG4hJXnNrYlF29V4Akg6ALUvc8t9hehC9rh/OcOplrJxSe07v7HjyBbLPd/g7
- p+YvFf35oYSF5SfxloC+o/TbM/SP8ovVSmDhpdUWqGq3oLanv3O+ZkYCwsrV79TY0LpV
- Xmrcz4gSS7ZlIA9qJ16eZRXxjzB8Dy7L87icjMC4WNVkbba5owgROm54BiyoJ8WreHGB
- h/JA==
+ bh=8X32+bjg1zxUfGM2W586gP71//rD4H9l7iS/55HNqEc=;
+ b=BvRKG/a1QL3qFmqggI8nZ3mDr7lH8bIzVn2weOY/HNc5uvV6RabM9s51p6r/ovl0Io
+ fBzIDNfJLcuRfoEGdwLwjuxUh1V9A3XAnCD5k6laVYeuH0Y2DGPx6FnWpvOLzDY3lY01
+ /JXPnB1jaBWW5R11Pyle3kFVcU7Mqn2uzlb10KtXNen/RZpUK+WbwC/Z93qBCgUdkUzY
+ uQ930AjGUKH7cyKzhiYIaEhZVOe8AVdaZMQvv8Bz+lDqsTabBWH57HYRvkBBa4Fg/qCK
+ XjO1FOSAwW9N9rhLkRgLGj1W592ED7OPyAI4tAb0mJvJU7U//0f18AMr4R0CXacHWcQp
+ ERCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786478960; x=1787083760;
+ d=1e100.net; s=20251104; t=1786479845; x=1787084645;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=50BX7E9u3T7kMY/FkEfh7Y+CM1FJ4HRuRV05QsESYv4=;
- b=AVdgN1U9qr0kQkh831WJiufbBJ6wIb3ea9607nzwsgzPbcKoUf1yREDkGVU/hyDL7N
- 6qV1BB3YrNZRTaPA4CXLuDV0/MNhBWVfa9pOSSH4rhS9ufTeEVxfYb93EayksyI4pgcp
- P4XHDfRuXlLw57l2yn3c35RNfOgfuYhnWzsIsWVA7T8gW2IWk9sgmWQNO5gLV+dFdegP
- yA5tD3lkdVMB1lx1nl61Xa6SYBXAyYPfsTkeUUMSkbHVt1CPkIA/VybNokvcuAUJITfs
- /PK6fhDgccaM0zTJ8K3k1xKDulRcpOlaqRth0sWpgTpwnP372aleZ6sEL9WfiCgS5tzc
- NAHQ==
-X-Forwarded-Encrypted: i=1;
- AHgh+Rr0sPzITwP1qg1URGPBiNnVeP3O85gpE2Tf7QiELcrsdVG2IkF9vEtsxJvE6fiH55XIsXM=@dpdk.org
-X-Gm-Message-State: AOJu0YyZFwXzL9psbM7kaiTBtlHEJHLHxt1CaAsbm43mZY/HJqB5v+t6
- 85zSi/1YxlJ+RESkRPjhgAqNJVSFFQijqg9bmhuOmTNeOxHOhEco5xlTn4hWLXpSuvE=
-X-Gm-Gg: AR+sD11TYKdd6xwhuR8FJ4eLv5bNvWmi9pbxWbz482ThGurLRI1TyRq8q2I8Yxy56tB
- F+yVW8N3ZZyaCGGhAEdToFynM4PcVa0OCJn/LRreA2lDykxBbdbDEQ5kr1clwj0HTUkC2n7VvB8
- /5A50mbtEVpwvDF/zIV/VpgW+mV6l/9lt+fY8Ik6rgiUgXfjxHS903s8M0dHjzpKXhCza2+jKSN
- ERI2ar0E158PJNrN7uSuP53xzhAsbsuXQ3p8RM6L07SLuk7q2KZCGs8f62O1KsxUXQdn3xtmzWG
- +d0JZkhXqg88VH/DefflXlbIJuuLzg4UOR+2VukN2PXVFFS2jdF8nfC6+p/A4zwgIiNVwJAFR3f
- bbks1tevHVpGWhar0Fr/iZFlEiBPaoUuKfqE0gaCjW9fIuxg4dHHH7rwYhLOl/Tv4f1lWhjWPYt
- Iicb1iyv6yDmGoCSlWPE+9kZunpLqqrmP84p+Yq579VcEn5vSy77YY3JomH8JrEJYhaPph1ZHnj
- PEtE/gIV02WfUCPQNZ0fjmMn7yjug==
-X-Received: by 2002:a17:903:1b50:b0:2ca:53f7:3c69 with SMTP id
- d9443c01a7336-2d32da4e721mr36443895ad.9.1786478960183; 
- Tue, 11 Aug 2026 13:09:20 -0700 (PDT)
+ bh=8X32+bjg1zxUfGM2W586gP71//rD4H9l7iS/55HNqEc=;
+ b=UnAsuzdFDY6MALSXzDYrOtCETEUf+8hCmChGw5jqHuesj/iLfR6q6am1vBV0mFvsN6
+ 10oh1t1PIP4zceqNhh63BUzhDmB/XbNAWIorLylVJF2Wq5RJDpU8UXNJl7QQetkbhdRn
+ bREylmesy5fI2mIMHboSgWkJuwx58aez6JJ0eLtyiuelR+pNK9BCuUJ9+yTfAwcuT82Z
+ esCNzfaXi7VbI6zyLzy4Q60gf0d4Sl9VGqa/ka1uvcykqSSeZ3G0no5vYk7Xk60VJJrX
+ L8ivV4JAc9wp4LwlOU8YAsbEvyPa/XyBZOoqVBuWxSXdaaOvbqkudDeOtLx3dg1ZTzZr
+ O7nw==
+X-Gm-Message-State: AOJu0YzdvVxpQMSFR/mn/DS4VwruUSktkIouBOxHe52tYfC53bQ5HID0
+ G20QgGUlPFTHy+Jysci7WCD4o+2h5lfIS1vxpygfLprY4NhdnivBOKccHyEdsJ97znk=
+X-Gm-Gg: AR+sD11Ip/qKmSUCIe83UmTkmVxCO/On+SPSMvZz7IPeZOZpwbD2i9z/fooEmfNx5Js
+ mRnIEgoyL13ul2EGovu4H/xlErwRk0BRT5T9sLI6DCyppwWWJbQ7fDeqmC+PiCtbvtE9gDEMaLp
+ XkAM95SqxBarIpJnqYVUrjY9xu7GbgJc/iMEdboMRaEfRp0kf8876ySguHR+wKX9+TP/s5Y16XL
+ H52nLNLWYNQea8pu7BeHfIgWeXOPvsP8evNHKozLyQ4ZM6sm97Gt7GsIyXSJbI7lHaYlsFDWnOA
+ PeQ9g+13PzcvoSYXJVMeMtxcPo1+StvM1mHhI1WVNOtPFpWphQ7g8egzaVsNj79DRL+v/bOgFc3
+ 7PTgVbtM0Z4GeezSLv2BAjUbIIV1LHIqrDmcvBvbtjjPCO8RMJNUJwWXhT7E6SpJdaj54xAzwvV
+ DChpGf3s5DWCkqim5QxG8zriZ77X2tOitWG7JMn8hOSdcZvvPm0NmfJiMzdBDMN9v18jxjvzqJD
+ YZ7I+WiS9TXZx04V1FIrpiYWgM8tQ==
+X-Received: by 2002:a17:90b:2248:b0:380:105f:8ffd with SMTP id
+ 98e67ed59e1d1-392ec662df2mr5921058a91.16.1786479844618; 
+ Tue, 11 Aug 2026 13:24:04 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-31cf628e0edsm2360012eec.18.2026.08.11.13.09.19
+ a92af1059eb24-14124454d3csm2444121c88.2.2026.08.11.13.24.03
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 11 Aug 2026 13:09:19 -0700 (PDT)
-Date: Tue, 11 Aug 2026 13:09:17 -0700
+ Tue, 11 Aug 2026 13:24:04 -0700 (PDT)
+Date: Tue, 11 Aug 2026 13:24:01 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: David Marchand <david.marchand@redhat.com>
-Cc: hemant.agrawal@nxp.com, dev@dpdk.org
-Subject: Re: [RFC 00/11] Device unplug and bus cleanup refactoring for NXP
-Message-ID: <20260811130917.3fb16b5b@phoenix.local>
-In-Reply-To: <20260723135400.3621271-1-david.marchand@redhat.com>
-References: <20260723135400.3621271-1-david.marchand@redhat.com>
+To: Ivan Malov <ivan.malov@arknetworks.am>
+Cc: dev@dpdk.org, Andy Moreton <andy.moreton@amd.com>, Viacheslav
+ Galaktionov <viacheslav.galaktionov@arknetworks.am>, Roman Zhukov
+ <Roman.Zhukov@arknetworks.am>, Pieter Jansen van Vuuren
+ <pieter.jansen-van-vuuren@amd.com>, Andrew Rybchenko
+ <andrew.rybchenko@oktetlabs.ru>
+Subject: Re: [PATCH 00/14] common/sfc_efx/base: fix code analysis issues
+Message-ID: <20260811132401.4ef4391d@phoenix.local>
+In-Reply-To: <20260811174821.8930-1-ivan.malov@arknetworks.am>
+References: <20260811174821.8930-1-ivan.malov@arknetworks.am>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,149 +85,228 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 23 Jul 2026 15:53:48 +0200
-David Marchand <david.marchand@redhat.com> wrote:
+On Tue, 11 Aug 2026 21:48:07 +0400
+Ivan Malov <ivan.malov@arknetworks.am> wrote:
 
-> Hello Hemant,
+> This series addresses code analysis defects in the
+> common/sfc_efx/base library.
 > 
-> This is a followup to the refactoring started in 26.07.
+> The first four patches fix excessive stack consumption in
+> MCDI helper functions, each exceeding 1 KB on-stack, by
+> switching to heap-allocated payload buffers.
 > 
-> I took some time with my best AI friend to cleanup DPAA and FSLMC bus
-> drivers.
+> The remaining ten patches correct SAL annotations, add NULL
+> checks across netport and filter helpers, resolving
+> uninitialised memory, buffer overrun, and potential
+> dereference issues. The final patch widens loop
+> variable types to address a CodeQL warning.
 > 
-> Like the last time, only compilation has been checked.
-> I have no hardware to test runtime.
+> Andy Moreton (14):
+>   common/sfc_efx/base: reduce stack in RSS context table write
+>   common/sfc_efx/base: reduce stack in get addr regions MCDI
+>   common/sfc_efx/base: reduce stack in set addr regions MCDI
+>   common/sfc_efx/base: reduce stack in netport stat describe
+>   common/sfc_efx/base: fix filter saved spec handling
+>   common/sfc_efx/base: fix annotations in client MAC addr get
+>   common/sfc_efx/base: fix annotations in HW-SW mask converter
+>   common/sfc_efx/base: fix annotations in get fixed port props
+>   common/sfc_efx/base: fix annotations in SW-HW enum converter
+>   common/sfc_efx/base: fix annotation in netport stat describe
+>   common/sfc_efx/base: fix flex array in netport stat describe
+>   common/sfc_efx/base: fix filter in SW-HW mask converter
+>   common/sfc_efx/base: rework SW mask to HW enum converter
+>   common/sfc_efx/base: cleanup wider type comparisons in loops
 > 
-> One thing that could be broken is either the order of devices
-> initialisation, or bugs in the device filtering that I tried to
-> simplify.
+>  drivers/common/sfc_efx/base/ef10_filter.c |  11 +-
+>  drivers/common/sfc_efx/base/ef10_mcdi.c   |   2 +-
+>  drivers/common/sfc_efx/base/ef10_nvram.c  |   4 +-
+>  drivers/common/sfc_efx/base/ef10_rx.c     |  22 +++-
+>  drivers/common/sfc_efx/base/efx.h         |   3 +-
+>  drivers/common/sfc_efx/base/efx_bootcfg.c |   2 +-
+>  drivers/common/sfc_efx/base/efx_mcdi.c    |  50 +++++--
+>  drivers/common/sfc_efx/base/efx_np.c      | 152 ++++++++++++----------
+>  drivers/common/sfc_efx/base/mcdi_mon.c    |   2 +-
+>  9 files changed, 155 insertions(+), 93 deletions(-)
 > 
-> I think it is worth testing and fixing, as it will make the two NXP
-> bus drivers similar to other bus drivers (but keep the special IO devices
-> handling internal to the FSLMC bus for example).
-> 
 
-Detailed AI review spotted some things.
+Since AI review by CI is limited. Went with more detailed review
+and it spotted lots of issues.
 
-Review of [RFC 00/11] bus refactoring for NXP buses
+Reviewed the series applied on top of c1a46b9 ("doc: remove unreferenced
+KNI and examples figures"). All 14 patches apply cleanly.
 
-Reviewed against DPDK main (c1a46b9), applied with git am, cross-built
-with config/arm/arm64_dpaa_linux_gcc -Dwerror=true.
+Patch 01-04: common/sfc_efx/base: reduce stack in ...
 
-Patch 02/11: bus/dpaa: allocate interrupt during probing
+Info: All four conversions replace EFX_MCDI_DECLARE_BUF() with a plain
+MAX(IN_LEN, OUT_LEN) size for EFSYS_KMEM_ALLOC. That drops the two
+guarantees the macro provides:
 
-Error: fd leak on the dpaa_setup_intr() failure path.
+  #define EFX_MCDI_BUF_SIZE(_in_len, _out_len)                          \
+        EFX_P2ROUNDUP(size_t,                                           \
+                MAX(MAX(_in_len, _out_len), (2 * sizeof (efx_dword_t))),\
+                sizeof (efx_dword_t))
 
-  ret = dpaa_setup_intr(dpaa_dev->intr_handle);
-  if (ret != 0) {
-          ...
-          goto release_intr;
-  }
-  ...
-          dpaa_close_intr(dpaa_dev->intr_handle);
-  release_intr:
-          rte_intr_instance_free(dpaa_dev->intr_handle);
+The dword rounding is not cosmetic: ef10_mcdi_send_request() reads the
+payload a full dword at a time
 
-dpaa_setup_intr() opens an eventfd and stores it with rte_intr_fd_set()
-before calling rte_intr_type_set().  If rte_intr_type_set() fails, the fd
-is already installed in the handle, but the goto lands past
-dpaa_close_intr(), so the instance is freed with the fd still open.
-Move the label above dpaa_close_intr(), or close the fd inside
-dpaa_setup_intr() on its own error paths.
+        for (pos = 0; pos < sdu_len; pos += sizeof (efx_dword_t))
+                dword = *(efx_dword_t *)((uint8_t *)sdup + pos);
 
-Warning: error propagation lost in dpaa_bus_cleanup().  The old code
-returned -1 when drv->remove() failed; the rewritten loop does
-"rte_errno = errno; goto next;" and the function unconditionally returns
-0.  The local "ret" is also assigned and never read afterwards.  This is
-transient (patch 03 replaces the body with rte_bus_generic_cleanup())
-but each commit should stand on its own; track the failure in a variable
-and return it.
+so a non-dword-multiple allocation would be read past its end. For these
+four call sites the lengths happen to be dword multiples (4+4*n, 992,
+8+8*n, 1020), so there is no defect today, but open-coding MAX() removes
+the property for future length changes. Suggest
 
-Info: jumping into the middle of an if-block ("release_intr:" inside the
-"if (ret != 0)" body) is legal but hard to follow.  A separate error
-block would read better.
+        size = EFX_MCDI_BUF_SIZE(MC_CMD_..._IN_LEN(n), MC_CMD_..._OUT_LEN);
 
-Patch 04/11: bus/fslmc: fix memory leaks in scan
+which is a drop-in and keeps the invariant documented in efx_mcdi.h.
 
-Warning: fslmc_bus_remove_device() is described as fully freeing a
-device, but dev->device.name is strdup()'d in scan_one_fslmc_device()
-and never freed here or anywhere else.  Same gap in fslmc_free_device()
-added by patch 11.  Since this patch is specifically about scan-time
-leaks, freeing the name belongs here.
+Error path handling in all four is correct: the ENOMEM label sits below
+the EFSYS_KMEM_FREE so the failed allocation is not freed, and every
+later label falls through to it.
 
-Patch 07/11: bus/fslmc: refactor device filtering for multiprocess
+Patch 05: common/sfc_efx/base: fix filter saved spec handling
 
-Error: allowlist mode is broken by moving the ignore test into scan.
-scan_one_fslmc_device() now calls rte_bus_device_is_ignored(), which in
-RTE_BUS_SCAN_ALLOWLIST mode returns true for every device lacking an
-explicit RTE_DEV_ALLOWED devargs.  A single "-a fslmc:dpni.1" sets
-rte_fslmc_bus.conf.scan_mode to ALLOWLIST (eal_common_devargs.c:349),
-after which dpbp/dpcon/dpci/dprc/dpdmux/dprtc are dropped at scan time.
-Those control objects are not probed by a driver; they are initialised
-by fslmc_vfio_process_group(), so dropping them at scan leaves the bus
-non-functional.  fslmc_filter_control_devices() applies the same test to
-DPMCP and DPIO, so allowlist mode also fails "No MC Portal device found"
-(-ENODEV).  The old code tested only devargs->policy == RTE_DEV_BLOCKED,
-and the generic probe loop already skips ignored devices at probe time,
-which is why allowlists worked before.
+Info: The two added NULL checks are unreachable. In
+ef10_filter_add_select_action(), saved_spec == NULL forces
+*action = EF10_FILTER_ADD_NEW; every path that yields ADD_STORE,
+ADD_REPLACE or ADD_REFRESH is inside the else branch where saved_spec is
+non-NULL. So in ef10_filter_add_execute_action() both
 
-Error: the DPIO split drops the only DPIO on a primary process.  The old
-code guarded the split with "dpio_count > 1":
+        } else if (action == EF10_FILTER_ADD_STORE) {
+                EFSYS_ASSERT(overridden_spec != NULL);
+                if (saved_spec != NULL)
 
-  if (!is_dpio_in_blocklist && dpio_count > 1) {
+and
 
-The new helper has no such guard, so with exactly one DPIO,
-last_index == 0, current_device == 0, and the primary branch removes it:
+        if ((action == EF10_FILTER_ADD_REPLACE) && (saved_spec != NULL)) {
 
-  } else if (rte_eal_process_type() == RTE_PROC_PRIMARY &&
-                  current_device == last_index) {
-          fslmc_bus_remove_device(dev);
+test an invariant that already holds. The __in_opt annotations are
+accurate and worth keeping, but the STORE branch already asserts its
+sibling invariant one line above; an EFSYS_ASSERT(saved_spec != NULL)
+would match local style and keep the invariant explicit rather than
+silently skipping the efs_overridden_spec assignment if it were ever
+violated.
 
-Restore the dpio_count > 1 condition.
+Patch 09: common/sfc_efx/base: fix annotations in SW-HW enum converter
 
-Warning: when a DPMCP is blocklisted, surplus MPORTAL devices are left
-in the bus list.  fslmc_vfio_process_group() now breaks out of the
-MPORTAL loop after the first device.  When is_dpmcp_in_blocklist is set,
-fslmc_filter_control_devices() skips the split, so more than one MPORTAL
-can remain and the extras are never removed.  The previous loop had no
-break and removed all of them.
+Info: __success() is placed above "static void" here, but in patch 13 it
+is placed between "static void" and the function name. Every existing
+use in the tree puts it on the return type line, e.g. ef10_nvram.c:941
 
-Patch 11/11: bus/fslmc: use generic cleanup
+        __checkReturn   __success(return != B_FALSE)    boolean_t
+        ef10_nvram_buffer_find_item(
 
-Error: cleanup ordering makes fslmc_vfio_close_group() a no-op.
+Please pick one placement for both patches, preferably the existing one.
 
-  rte_bus_generic_cleanup(bus);
+Patch 11: common/sfc_efx/base: fix flex array in netport stat describe
 
-  ret = fslmc_vfio_close_group();
+Error: count and stride are firmware-supplied and are now used to index
+the response buffer with no bound derived from the response length:
 
-rte_bus_generic_cleanup() unplugs every device, calls
-rte_bus_remove_device() and then bus->free_device(), emptying
-rte_fslmc_bus.device_list.  fslmc_vfio_close_group() then iterates that
-now-empty list, so fslmc_close_iodevices() is never called for DPIO,
-DPCON, DPCI, DPBP or DPDMUX; only fslmc_vfio_clear_group() still runs.
-Call fslmc_vfio_close_group() before rte_bus_generic_cleanup().
+        stride = MCDI_OUT_DWORD(req, MAC_STATISTICS_DESCRIPTOR_OUT_ENTRY_SIZE);
+        count = MCDI_OUT_DWORD(req, MAC_STATISTICS_DESCRIPTOR_OUT_ENTRY_COUNT);
+        ...
+                for (i = 0; i < count; ++i) {
+                        efx_np_stat_describe(entries + i * stride,
 
-Warning: the return value of rte_bus_generic_cleanup() is discarded.  It
-reports unplug failures via -1/rte_errno; fslmc_cleanup() overwrites
-"ret" with the fslmc_vfio_close_group() result and loses it.
+entries points at payload + 20 in a 1020-byte allocation, and
+efx_np_stat_describe() reads 8 bytes at each entry. Any count beyond
+(out_sz - 20) / stride reads response bytes that were never written, and
+count * stride above 1000 reads past the end of the heap allocation.
 
-Warning: fslmc_free_device() only calls free().  It does not release
-dev->intr_handle and does not decrement fslmc_bus_device_count[], both
-of which fslmc_bus_remove_device() handles.  Devices torn down through
-the generic path therefore leave the per-type counters permanently
-stale.
+The old code derived the iteration count from out_sz via
+MC_CMD_MAC_STATISTICS_DESCRIPTOR_OUT_ENTRIES_NUM(out_sz), which was
+wrong for stride > 8 as the commit message says, but it did bound the
+loop by the data actually received. The replacement needs to validate
+both fields, e.g. after reading them:
 
-Info (01/11): removing the "struct rte_dpaa2_device *dev" declaration
-from the process_once block leaves a stray blank line at the top of the
-block in rte_fslmc_scan().
+        if (stride < MC_CMD_STAT_DESC_LEN ||
+            count > (out_sz -
+                     MC_CMD_MAC_STATISTICS_DESCRIPTOR_OUT_ENTRIES_OFST) /
+                    stride) {
+                rc = EMSGSIZE;
+                goto fail4;
+        }
 
-Info (06/11): dev_types[] is a non-static, non-const local array, so it
-is rebuilt on the stack for every device.  Make it "static const".
+The stride test must come first, since stride == 0 is otherwise a
+division by zero.
 
-Info (06/11): the sscanf() return value is unchecked, and the new
-prefix-based match is weaker than the old strtok() guard.  A name such
-as "dpni." matches the prefix, leaves dev_id pointing at "", sscanf()
-fails, and the device is registered with object_id 0 -- colliding with a
-real dpni.0.  The old code rejected it because strtok(NULL, ".")
-returned NULL.  Check that sscanf() returns 1 and skip the device
-otherwise.
+Warning: MORE_ENTRIES is a one-bit field inside FLAGS:
+
+        MC_CMD_MAC_STATISTICS_DESCRIPTOR_OUT_FLAGS_OFST 8
+        MC_CMD_MAC_STATISTICS_DESCRIPTOR_OUT_MORE_ENTRIES_OFST 8
+        MC_CMD_MAC_STATISTICS_DESCRIPTOR_OUT_MORE_ENTRIES_LBN 0
+        MC_CMD_MAC_STATISTICS_DESCRIPTOR_OUT_MORE_ENTRIES_WIDTH 1
+
+but the patch reads the whole 32-bit FLAGS dword and tests it against
+zero. Any future flag bit added to FLAGS makes (count == 0 && more != 0)
+fail a legitimate final response with EMSGSIZE, which fails
+efx_np_stats_assign() and therefore probe. Use the field accessor:
+
+        more = MCDI_OUT_DWORD_FIELD(req,
+            MAC_STATISTICS_DESCRIPTOR_OUT_FLAGS,
+            MAC_STATISTICS_DESCRIPTOR_OUT_MORE_ENTRIES);
+
+Patch 13: common/sfc_efx/base: rework SW mask to HW enum converter
+
+Error: The FEC default overwrites the deliberate MC_CMD_FEC_NONE choice.
+Just above the call, efx_np_link_ctrl() computes
+
+        if ((cap_mask_sw & EFX_PHY_CAP_FEC_MASK) == 0)
+                cap_enum_hw = MC_CMD_FEC_NONE;
+        else
+                cap_enum_hw = MC_CMD_FEC_AUTO;
+
+and the comment below it still says "If the mask has got no
+'FEC_REQUESTED' bits, use 'NONE' or 'AUTO' from above." Before this
+patch that worked because *enum_hwp was left untouched when nothing
+matched. Now the flags_seen == 0 path unconditionally assigns the
+default, and the call passes a hardcoded MC_CMD_FEC_AUTO:
+
+        EFX_NP_CAP_SW_MASK_TO_HW_ENUM(efx_np_cap_map_fec_req,
+            ETH_AN_FIELDS_FEC_MASK, cap_data_raw, cap_mask_sw,
+            MC_CMD_FEC_AUTO, NULL, NULL, &supported, &cap_enum_hw);
+
+So a request with no FEC bits at all now programs FEC_MODE = AUTO
+instead of NONE, i.e. a user asking for no FEC gets negotiated FEC.
+Passing cap_enum_hw itself as the default preserves the intent.
+
+Error: The selection order changes from first supported HW enum to last.
+The old loop cleared the matched bit
+
+        mask_sw &= ~(flag_sw);
+        if (enum_hwp != NULL)
+                *enum_hwp = hw_sw_map->encm_hw;
+
+so later map entries carrying the same encm_sw failed the
+(mask_sw & flag_sw) == flag_sw test and could not overwrite *enum_hwp.
+The new loop has no clearing, so every match overwrites and the last
+entry wins. efx_np_cap_map_tech is one-to-many: EFX_PHY_CAP_100000FDX
+maps to fifteen MC_CMD_ETH_TECH_* values, so with the default lane count
+(filter returns B_TRUE for everything) a fixed-link 100G request now
+programs 100GBASE_CR10 where it previously programmed 100GBASE_KR4.
+That is a functional change, not a simplification. If the previous
+selection is intended, break out of the loop on the first match.
+
+Warning: In the fixed-link branch the default changes the programmed
+technology as well. link_tech is initialised to MC_CMD_ETH_TECH_NONE,
+and previously stayed NONE when no requested tech bit was present in the
+map; it is now overwritten with MC_CMD_ETH_TECH_AUTO. This may well be
+the desired fix, but it is not mentioned in the commit message and
+should be.
+
+Info: __success() placement differs from patch 09 and from the rest of
+the tree; see the note on patch 09.
+
+Patches 06, 07, 08, 10, 12 and 14 look correct to me.
+
+For 07, the added "*sw_maskp = 0" is safe: efx_np_link_state() memsets
+*lsp before the calls, and the AN bit reordering keeps both masks
+correct. For 08, MC_CMD_ETH_AN_FIELDS_LEN and
+MC_CMD_GET_FIXED_PORT_PROPERTIES_OUT_ABILITIES_LEN are both 25, and
+ep_np_cap_data_raw is declared with the former, so the annotation
+matches the memcpy. For 12, both existing callers pass either a non-NULL
+filter_arg or NULL for both, so the added check is inert today.
+
+Not build tested on my side.
