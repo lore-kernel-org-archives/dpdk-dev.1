@@ -2,32 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 751EDC5B574
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 07:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D57C5B574
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 07:41:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6C03940E72;
-	Tue, 11 Aug 2026 09:40:41 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5FC3640E96;
+	Tue, 11 Aug 2026 09:40:42 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 3FD714021E
+ by mails.dpdk.org (Postfix) with ESMTP id 8D3AF4021E
  for <dev@dpdk.org>; Tue, 11 Aug 2026 09:40:38 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1951520017E;
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 63D7D200188;
  Tue, 11 Aug 2026 09:40:38 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id ACBD2200190;
- Tue, 11 Aug 2026 09:40:37 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 01991200185;
+ Tue, 11 Aug 2026 09:40:38 +0200 (CEST)
 Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
  [92.120.147.250])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id CF5691800088;
- Tue, 11 Aug 2026 15:40:36 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 2FD4218000B7;
+ Tue, 11 Aug 2026 15:40:37 +0800 (+08)
 From: Gagandeep Singh <g.singh@nxp.com>
 To: dev@dpdk.org
 Cc: hemant.agrawal@nxp.com,
 	Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v6 02/13] net/enetc: add TSO support for ENETC4 VF
-Date: Tue, 11 Aug 2026 13:10:21 +0530
-Message-Id: <20260811074032.3646324-3-g.singh@nxp.com>
+Subject: [PATCH v6 03/13] net/enetc: add RSC (hardware LRO) support for ENETC4
+Date: Tue, 11 Aug 2026 13:10:22 +0530
+Message-Id: <20260811074032.3646324-4-g.singh@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260811074032.3646324-1-g.singh@nxp.com>
 References: <20260810104815.2827703-1-g.singh@nxp.com>
@@ -48,521 +48,633 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add TCP and UDP segmentation offload (TSO) for the ENETC4 virtual
-function. The offload is advertised through the VF Tx capabilities and
-is enabled on a per-queue basis when an application requests the TSO
-offload flags during Tx queue setup.
+Add Receive Segment Coalesce (RSC) support, exposed as the DPDK
+RTE_ETH_RX_OFFLOAD_TCP_LRO Rx offload, for the ENETC4 PF and VF on
+i.MX95. RSC lets the HW coalesce multiple in-order TCP segments of a
+flow into a single receive frame, reducing per-packet overhead.
 
-A dedicated Tx burst, enetc_xmit_pkts_lso(), builds the large-send
-descriptor chain: a standard header BD, a 16B extension BD carrying the
-segment size and frame length extension, and one BD per payload buffer
-with the final-frame flag on the last BD. To make room for the extra
-extension BD, an LSO-enabled Tx ring is allocated with twice the number
-of descriptors. The existing non-TSO Tx paths are left unchanged.
+RSC is a port-level offload driven by a dedicated Rx burst
+(enetc_recv_pkts_rsc). When TCP LRO is requested the ring is switched
+to 32B extended receive descriptors (RBaMR[BDS] = 1), the FCS is
+stripped (RBaMR[CRC] = 0, so RSC is incompatible with KEEP_CRC),
+interrupt coalescing is enabled (RBaICR0[ICEN] with a non-zero
+RBaICR1[ICTT] hold timer that doubles as the RSC flush window), and
+RBaRSCR[EN] is set with the coalesced-frame size clamped to the HW
+maximum.
+
+Because a 32B descriptor spans two 16B ring slots, the ring length
+register (RBaLENR) and the consumer-index register are programmed in
+HW-descriptor units (slot count / 2), while the internal SW indices
+continue to track 16B slots. Coalesced clusters are delivered with the
+RTE_MBUF_F_RX_LRO flag set when RSC_FRAMES > 1.
 
 Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
- doc/guides/nics/enetc4.rst             |   2 +
+ doc/guides/nics/enetc4.rst             |   4 +
  doc/guides/nics/features/enetc4.ini    |   1 +
  doc/guides/rel_notes/release_26_11.rst |   1 +
- drivers/net/enetc/base/enetc4_hw.h     |  34 +++-
- drivers/net/enetc/enetc.h              |   3 +
- drivers/net/enetc/enetc4_ethdev.c      |  49 ++++-
- drivers/net/enetc/enetc4_vf.c          |   2 +
- drivers/net/enetc/enetc_rxtx.c         | 257 +++++++++++++++++++++++++
- 8 files changed, 344 insertions(+), 5 deletions(-)
+ drivers/net/enetc/base/enetc4_hw.h     |  75 ++++++++
+ drivers/net/enetc/enetc.h              |   5 +
+ drivers/net/enetc/enetc4_ethdev.c      | 112 +++++++++++-
+ drivers/net/enetc/enetc4_vf.c          |   1 +
+ drivers/net/enetc/enetc_rxtx.c         | 234 +++++++++++++++++++++++++
+ 8 files changed, 427 insertions(+), 6 deletions(-)
 
 diff --git a/doc/guides/nics/enetc4.rst b/doc/guides/nics/enetc4.rst
-index f0dd039f6e..4d27e4048e 100644
+index 4d27e4048e..e7f4348603 100644
 --- a/doc/guides/nics/enetc4.rst
 +++ b/doc/guides/nics/enetc4.rst
-@@ -53,6 +53,8 @@ Key functionality includes:
- - Receive processing: Upon packet reception, the BD Ring status bit is set,
-   facilitating packet processing.
+@@ -55,6 +55,10 @@ Key functionality includes:
  - Transmission: Packet transmission precedes reception, ensuring efficient data transfer.
-+- TCP and UDP segmentation offload (TSO) on VFs, enabled per Tx queue
-+  when the TSO offload flag is requested.
+ - TCP and UDP segmentation offload (TSO) on VFs, enabled per Tx queue
+   when the TSO offload flag is requested.
++- Large receive offload (LRO) on the receive path via hardware Receive
++  Segment Coalesce (RSC), enabled when the TCP LRO Rx offload flag is
++  requested. RSC requires the FCS to be stripped, so it cannot be combined
++  with the KEEP_CRC Rx offload.
  
  
  Prerequisites
 diff --git a/doc/guides/nics/features/enetc4.ini b/doc/guides/nics/features/enetc4.ini
-index 91b18d979e..8ec1e8d00f 100644
+index 8ec1e8d00f..aae398e210 100644
 --- a/doc/guides/nics/features/enetc4.ini
 +++ b/doc/guides/nics/features/enetc4.ini
 @@ -7,6 +7,7 @@
  Link status event    = Y
  Speed capabilities   = Y
  Link status          = Y
-+TSO                  = Y
++LRO                  = Y
+ TSO                  = Y
  Promiscuous mode     = Y
  Allmulticast mode    = Y
- Unicast MAC filter   = Y
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 3678dd6894..6a348ab4e0 100644
+index 6a348ab4e0..0dd08e0259 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -61,6 +61,7 @@ New Features
-   Updated the NXP ENETC4 poll mode driver for i.MX95:
+@@ -62,6 +62,7 @@ New Features
  
    * Added KEEP_CRC Rx offload support for the ENETC4 PMD to preserve the Ethernet FCS.
-+  * Added TCP Segmentation Offload (TSO) support for the ENETC4 VF.
+   * Added TCP Segmentation Offload (TSO) support for the ENETC4 VF.
++  * Added Receive Segment Coalesce (RSC / hardware LRO) support for ENETC4 PF and VF.
  
  Removed Items
  -------------
 diff --git a/drivers/net/enetc/base/enetc4_hw.h b/drivers/net/enetc/base/enetc4_hw.h
-index c81ac00ec6..6bc462a93e 100644
+index 6bc462a93e..d42c04df4b 100644
 --- a/drivers/net/enetc/base/enetc4_hw.h
 +++ b/drivers/net/enetc/base/enetc4_hw.h
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright 2024 NXP
-+ * Copyright 2024-2026 NXP
-  *
-  * This header file defines the register offsets and bit fields
-  * of ENETC4 PF and VFs.
-@@ -24,7 +24,12 @@ struct enetc_msg_swbd {
+@@ -102,6 +102,81 @@ struct enetc_tx_bd_ext {
  
- /* enetc4 txbd flags */
- #define ENETC4_TXBD_FLAGS_L4CS		BIT(0)
-+/* Request LSO (Large Send Offload) segmentation for this frame */
-+#define ENETC4_TXBD_FLAGS_LSO		BIT(1)
-+/* L4 checksum insertion (also used for checksum update on LSO) */
- #define ENETC4_TXBD_FLAGS_L_TX_CKSUM	BIT(3)
-+/* Extended descriptor: the next 16B ring entry is an extension BD */
-+#define ENETC4_TXBD_FLAGS_EXT		BIT(6)
- #define ENETC4_TXBD_FLAGS_F		BIT(7)
- /* L4 type */
- #define ENETC4_TXBD_L4T_UDP		BIT(0)
-@@ -34,6 +39,33 @@ struct enetc_msg_swbd {
- /* IPv4 checksum */
- #define ENETC4_TXBD_IPCS		1
- 
+ /* RBaMR[CRC]: 0 = FCS removed, 1 = FCS preserved (KEEP_CRC) */
+ #define ENETC4_RBMR_CRC			BIT(8)
 +/*
-+ * Extension Transmit Buffer Descriptor (16B). When the standard BD has the
-+ * extended flag set, this occupies the next ring entry and carries the extra
-+ * fields required by LSO.
++ * RBaMR[BDS]: buffer descriptor size select for a receive ring.
++ * 0 = standard 16B descriptors, 1 = extended 32B descriptors.
++ * RSC requires 32B descriptors (BDS = 1). Matches the Linux enetc
++ * driver definition (ENETC_RBMR_BDS = BIT(2)).
 + */
-+struct enetc_tx_bd_ext {
-+	uint32_t timestamp;	/* PTP timestamp, unused for LSO */
-+	uint32_t vlan;		/* VLAN insert, unused for LSO */
-+	uint32_t lso;		/* LSO_MAX_SEG_SIZE and FRM_LEN_EXT */
-+	uint32_t flags;		/* extension flags */
++#define ENETC4_RBMR_BDS			BIT(2)
++
++/*
++ * Rx BDR a RSC register (RBaRSCR), offset 0x30 from the ring base.
++ * Controls Receive Segment Coalesce (RSC / LRO) for the ring.
++ */
++#define ENETC4_RBRSCR			0x30
++/* Enable RSC on this ring */
++#define ENETC4_RBRSCR_EN		BIT(31)
++/* Permit coalescing of TCP segments that carry the timestamp option */
++#define ENETC4_RBRSCR_CT		BIT(29)
++/* SIZE field (bits 15-0): maximum coalesced frame size produced by RSC */
++#define ENETC4_RBRSCR_SIZE(x)		((uint32_t)((x) & 0xffff))
++
++/*
++ * RBaICR0[ICEN]: interrupt coalescing enable. RSC requires interrupt
++ * coalescing to be enabled; the coalescing timer doubles as the RSC flush
++ * timer. ICPT (bits 8-0) is the packet-count threshold.
++ */
++#define ENETC4_RBICR0			0xa8
++#define ENETC4_RBICR0_ICEN		BIT(31)
++#define ENETC4_RBICR0_ICPT(x)		((uint32_t)((x) & 0x1ff))
++/* Rx BDR a interrupt coalescing register 1 (threshold timer) */
++#define ENETC4_RBICR1			0xac
++
++/*
++ * SI-level Rx interrupt detect register 0 (SIRXIDR0). W1C, one bit per Rx
++ * ring (RX0..RX23). The interrupt-coalescing timer (which also gates RSC
++ * coalescing) does not re-arm while a ring's detect bit stays set, so the
++ * poll-mode driver writes BIT(ring index) here every poll to keep RSC
++ * coalescing. The per-ring RBaIDR (0xa4) is read-only and cannot be used.
++ */
++#define ENETC_SIRXIDR			0xa28
++
++/*
++ * RSC (Receive Segment Coalesce) limits and defaults.
++ * Maximum coalesced frame size the HW will build (programmed in RBaRSCR[SIZE]).
++ * Bounded to 16 bits by the SIZE field width.
++ */
++#define ENETC4_RSC_MAX_FRAME		0xffff
++/* Default interrupt coalescing packet threshold used to satisfy RSC's ICEN
++ * precondition. The PMD is poll-mode, so this only gates the RSC flush timer.
++ */
++#define ENETC4_RSC_DEF_ICPT		1
++/*
++ * Default interrupt coalescing timer threshold (RBaICR1[ICTT]), in NETC
++ * platform clock cycles. This timer is the RSC coalesce-hold window: HW keeps
++ * a coalesced frame open while it runs and appends in-order segments. A value
++ * of 0 disables the timer and flushes every segment separately (no
++ * coalescing), so it must be non-zero for RSC to merge anything.
++ */
++#define ENETC4_RSC_DEF_ICTT		0x10000
++
++/*
++ * Extended 32B receive writeback buffer descriptor. Used only on RSC-enabled
++ * rings (RBaMR[BDS] = 1). The first 16 bytes match the standard descriptor
++ * writeback layout; the second 16 bytes carry the RSC and timestamp fields.
++ * RSC_FRAMES reports how many frames were coalesced (1 to 255; 1 means the
++ * frame was not coalesced).
++ */
++struct enetc_rx_bd_ext {
++	uint32_t timestamp;	/* offset 0x10: PTP timestamp */
++	uint32_t rsc_frames;	/* offset 0x14: RSC_FRAMES in bits 7-0 */
++	uint32_t rsc_abs_ts_delta; /* offset 0x18 */
++	uint32_t reserved;	/* offset 0x1c */
 +};
 +
-+/* LSO_MAX_SEG_SIZE occupies bits 13-0 of the LSO word */
-+#define ENETC4_TXBD_EXT_LSO_SEG_MASK	0x3fff
-+#define ENETC4_TXBD_EXT_LSO_SEG(mss) \
-+		((uint32_t)((mss) & ENETC4_TXBD_EXT_LSO_SEG_MASK))
-+/* FRM_LEN_EXT occupies bits 19-16 of the LSO word (top 4 bits of data len) */
-+#define ENETC4_TXBD_EXT_FRM_LEN_EXT(x) \
-+		(((uint32_t)((x) & 0xf)) << 16)
-+/* Final flag in the extension flags word (bit 127 -> local bit 31) */
-+#define ENETC4_TXBD_EXT_FLAGS_F		BIT(31)
-+
-+/* NETC does not create LSO frames larger than this many bytes */
-+#define ENETC4_LSO_MAX_FRAME		9600
-+/* Maximum LSO data unit (payload to be segmented) supported by HW: 256KB */
-+#define ENETC4_LSO_MAX_DATA_UNIT	(256 * 1024)
-+
- /***************************ENETC port registers**************************/
- #define ENETC4_PMR		0x10
- #define ENETC4_PMR_EN		(BIT(16) | BIT(17) | BIT(18))
++/* RSC_FRAMES occupies bits 7-0 of the rsc_frames word */
++#define ENETC4_RXBD_EXT_RSC_FRAMES(x)	((x) & 0xff)
+ 
+ /* i.MX95 supports jumbo frame, but it is recommended to set the max frame
+  * size to 2000 bytes.
 diff --git a/drivers/net/enetc/enetc.h b/drivers/net/enetc/enetc.h
-index d3a8b8e34a..6cd031f269 100644
+index 6cd031f269..145ebbbb00 100644
 --- a/drivers/net/enetc/enetc.h
 +++ b/drivers/net/enetc/enetc.h
-@@ -99,6 +99,7 @@ struct enetc_bdr {
- 	uint64_t ierrors;
+@@ -100,6 +100,8 @@ struct enetc_bdr {
  	uint8_t rx_deferred_start;
  	uint8_t tx_deferred_start;
-+	uint8_t lso_enable;
+ 	uint8_t lso_enable;
++	void *rbidr;
++	uint8_t rsc_enable;
  };
  
  struct enetc_eth_hw {
-@@ -312,6 +313,8 @@ uint16_t enetc_xmit_pkts(void *txq, struct rte_mbuf **tx_pkts,
- 		uint16_t nb_pkts);
- uint16_t enetc_xmit_pkts_nc(void *txq, struct rte_mbuf **tx_pkts,
- 		uint16_t nb_pkts);
-+uint16_t enetc_xmit_pkts_lso(void *txq, struct rte_mbuf **tx_pkts,
-+		uint16_t nb_pkts);
- uint16_t enetc_recv_pkts(void *rxq, struct rte_mbuf **rx_pkts,
+@@ -319,12 +321,15 @@ uint16_t enetc_recv_pkts(void *rxq, struct rte_mbuf **rx_pkts,
  		uint16_t nb_pkts);
  uint16_t enetc_recv_pkts_nc(void *rxq, struct rte_mbuf **rx_pkts,
+ 		uint16_t nb_pkts);
++uint16_t enetc_recv_pkts_rsc(void *rxq, struct rte_mbuf **rx_pkts,
++		uint16_t nb_pkts);
+ uint16_t enetc_xmit_pkts_cacheable(void *txq, struct rte_mbuf **tx_pkts,
+ 		uint16_t nb_pkts);
+ uint16_t enetc_recv_pkts_cacheable(void *rxq, struct rte_mbuf **rx_pkts,
+ 		uint16_t nb_pkts);
+ 
+ int enetc_refill_rx_ring(struct enetc_bdr *rx_ring, const int buff_cnt);
++int enetc_refill_rx_ring_rsc(struct enetc_bdr *rx_ring, const int buff_cnt);
+ 
+ /*
+  * Cache-maintenance constants for cacheable BD ring mode.
 diff --git a/drivers/net/enetc/enetc4_ethdev.c b/drivers/net/enetc/enetc4_ethdev.c
-index 91e2cdb129..24c454fe28 100644
+index 24c454fe28..925da3f68e 100644
 --- a/drivers/net/enetc/enetc4_ethdev.c
 +++ b/drivers/net/enetc/enetc4_ethdev.c
-@@ -24,7 +24,9 @@ static uint64_t dev_tx_offloads_sup =
- 	RTE_ETH_TX_OFFLOAD_IPV4_CKSUM |
- 	RTE_ETH_TX_OFFLOAD_UDP_CKSUM |
- 	RTE_ETH_TX_OFFLOAD_TCP_CKSUM |
--	RTE_ETH_TX_OFFLOAD_MULTI_SEGS;
-+	RTE_ETH_TX_OFFLOAD_MULTI_SEGS |
-+	RTE_ETH_TX_OFFLOAD_TCP_TSO |
-+	RTE_ETH_TX_OFFLOAD_UDP_TSO;
+@@ -17,7 +17,8 @@ static uint64_t dev_rx_offloads_sup =
+ 	RTE_ETH_RX_OFFLOAD_UDP_CKSUM |
+ 	RTE_ETH_RX_OFFLOAD_TCP_CKSUM |
+ 	RTE_ETH_RX_OFFLOAD_SCATTER |
+-	RTE_ETH_RX_OFFLOAD_KEEP_CRC;
++	RTE_ETH_RX_OFFLOAD_KEEP_CRC |
++	RTE_ETH_RX_OFFLOAD_TCP_LRO;
  
- #define ENETC4_TXQ_PRIORITIES	"enetc4_txq_prior"
- #define ENETC4_NC_MEMORY	"nc"
-@@ -309,22 +311,37 @@ static int
- enetc4_alloc_txbdr(struct enetc_bdr *txr, uint16_t nb_desc)
+ /* Supported Tx offloads */
+ static uint64_t dev_tx_offloads_sup =
+@@ -302,6 +303,8 @@ enetc4_dev_infos_get(struct rte_eth_dev *dev,
+ 	dev_info->max_rx_pktlen = ENETC4_MAC_MAXFRM_SIZE;
+ 	dev_info->rx_offload_capa = dev_rx_offloads_sup;
+ 	dev_info->tx_offload_capa = dev_tx_offloads_sup;
++	/* Max RSC (LRO) coalesced frame size; matches RBaRSCR[SIZE]. */
++	dev_info->max_lro_pkt_size = ENETC4_RSC_MAX_FRAME;
+ 	dev_info->flow_type_rss_offloads = ENETC_RSS_OFFLOAD_ALL;
+ 
+ 	return 0;
+@@ -512,22 +515,35 @@ static int
+ enetc4_alloc_rxbdr(struct enetc_bdr *rxr, uint16_t nb_desc)
  {
  	int size;
 +	uint32_t ring_desc;
- 
--	size = nb_desc * sizeof(struct enetc_swbd);
++
 +	/*
-+	 * On LSO-enabled rings each frame uses an extra 16B extension BD
-+	 * (logical 32B descriptor) plus the payload BDs.  Size the ring with
-+	 * twice the requested entries so the effective frame capacity is
-+	 * preserved.  Non-LSO rings are sized exactly as requested.
++	 * RSC rings use 32B descriptors (RBaMR[BDS] = 1), i.e. two 16B slots
++	 * each, so allocate 2 * nb_desc slots. Non-RSC rings use 16B slots.
 +	 */
-+	ring_desc = txr->lso_enable ? (uint32_t)nb_desc * 2 : (uint32_t)nb_desc;
++	ring_desc = rxr->rsc_enable ? (uint32_t)nb_desc * 2 : (uint32_t)nb_desc;
 +	if (ring_desc > MAX_BD_COUNT) {
-+		ENETC_PMD_ERR("LSO ring_desc %u > MAX_BD_COUNT %u; "
-+			      "reduce nb_desc to <= %u with LSO enabled",
++		ENETC_PMD_ERR("RSC ring_desc %u > MAX_BD_COUNT %u; "
++			      "reduce nb_desc to <= %u with RSC enabled",
 +			      ring_desc, MAX_BD_COUNT, MAX_BD_COUNT / 2);
 +		return -EINVAL;
 +	}
-+
+ 
+-	size = nb_desc * sizeof(struct enetc_swbd);
 +	size = ring_desc * sizeof(struct enetc_swbd);
  	/* Zero q_swbd so buffer_addr is NULL for all uninitialized slots. */
- 	txr->q_swbd = rte_zmalloc(NULL, size, ENETC_BD_RING_ALIGN);
- 	if (txr->q_swbd == NULL)
+ 	rxr->q_swbd = rte_zmalloc(NULL, size, ENETC_BD_RING_ALIGN);
+ 	if (rxr->q_swbd == NULL)
  		return -ENOMEM;
  
- 	/* Allocate the TX BD ring: each BD is struct enetc_tx_bd (16 bytes). */
--	size = nb_desc * sizeof(struct enetc_tx_bd);
-+	size = ring_desc * sizeof(struct enetc_tx_bd);
- 	txr->bd_base = rte_zmalloc(NULL, size, ENETC_BD_RING_ALIGN);
- 	if (txr->bd_base == NULL) {
- 		rte_free(txr->q_swbd);
- 		txr->q_swbd = NULL;
+ 	/* Allocate the RX BD ring: each BD is union enetc_rx_bd (16 bytes). */
+-	size = nb_desc * sizeof(union enetc_rx_bd);
++	size = ring_desc * sizeof(union enetc_rx_bd);
+ 	rxr->bd_base = rte_zmalloc(NULL, size, ENETC_BD_RING_ALIGN);
+ 	if (rxr->bd_base == NULL) {
+ 		rte_free(rxr->q_swbd);
+ 		rxr->q_swbd = NULL;
  		return -ENOMEM;
  	}
--	txr->bd_count = nb_desc;
-+	txr->bd_count = ring_desc;
- 	txr->next_to_clean = 0;
- 	txr->next_to_use = 0;
+-	rxr->bd_count = nb_desc;
++	rxr->bd_count = ring_desc;
+ 	rxr->next_to_clean = 0;
+ 	rxr->next_to_use = 0;
+ 	rxr->next_to_alloc = 0;
+@@ -550,13 +566,30 @@ enetc4_setup_rxbdr(struct enetc_hw *hw, struct enetc_bdr *rx_ring,
+ 		       lower_32_bits((uint64_t)bd_address));
+ 	enetc4_rxbdr_wr(hw, idx, ENETC_RBBAR1,
+ 		       upper_32_bits((uint64_t)bd_address));
++	/*
++	 * RBaLENR counts HW descriptors. With RSC (BDS = 1) a descriptor is
++	 * 32B (two 16B slots), so program bd_count / 2; otherwise bd_count.
++	 */
+ 	enetc4_rxbdr_wr(hw, idx, ENETC_RBLENR,
+-		       ENETC_RTBLENR_LEN(rx_ring->bd_count));
++		       ENETC_RTBLENR_LEN(rx_ring->rsc_enable ?
++				rx_ring->bd_count / 2 : rx_ring->bd_count));
  
-@@ -376,6 +393,7 @@ enetc4_tx_queue_setup(struct rte_eth_dev *dev,
- 	struct rte_eth_dev_data *data = dev->data;
- 	struct enetc_eth_adapter *priv =
+ 	rx_ring->mb_pool = mb_pool;
+ 	rx_ring->rcir = (void *)((size_t)hw->reg +
+ 			ENETC_BDR(RX, idx, ENETC_RBCIR));
+-	enetc_refill_rx_ring(rx_ring, ENETC_BD_ALIGN_DOWN(enetc_bd_unused(rx_ring)));
++	/* RSC rings clear their Rx interrupt-detect event via SIRXIDR (see
++	 * enetc_clean_rx_ring_rsc); cache the register address here.
++	 */
++	if (rx_ring->rsc_enable)
++		rx_ring->rbidr = (void *)((size_t)hw->reg + ENETC_SIRXIDR);
++
++	/* RSC rings use the 2-slot-stride refill for 32B descriptors. */
++	if (rx_ring->rsc_enable)
++		enetc_refill_rx_ring_rsc(rx_ring,
++			ENETC_BD_ALIGN_DOWN(enetc_bd_unused(rx_ring)));
++	else
++		enetc_refill_rx_ring(rx_ring,
++			ENETC_BD_ALIGN_DOWN(enetc_bd_unused(rx_ring)));
+ 	buf_size = (uint16_t)(rte_pktmbuf_data_room_size(rx_ring->mb_pool) -
+ 		   RTE_PKTMBUF_HEADROOM);
+ 	enetc4_rxbdr_wr(hw, idx, ENETC_RBBSR, buf_size);
+@@ -578,7 +611,9 @@ enetc4_rx_queue_setup(struct rte_eth_dev *dev,
+ 	struct enetc_eth_adapter *adapter =
  			ENETC_DEV_PRIVATE(data->dev_private);
-+	uint64_t tx_offloads;
+ 	uint64_t rx_offloads = data->dev_conf.rxmode.offloads;
++	uint32_t rsc_size;
+ 	bool keep_crc;
++	bool rsc_enable;
  
  	PMD_INIT_FUNC_TRACE();
- 	if (nb_desc > MAX_BD_COUNT)
-@@ -389,6 +407,29 @@ enetc4_tx_queue_setup(struct rte_eth_dev *dev,
- 	}
+ 	if (nb_rx_desc > MAX_BD_COUNT)
+@@ -595,6 +630,28 @@ enetc4_rx_queue_setup(struct rte_eth_dev *dev,
+ 	keep_crc = !!(rx_offloads & RTE_ETH_RX_OFFLOAD_KEEP_CRC);
+ 	rx_ring->crc_len = (uint8_t)(keep_crc ? RTE_ETHER_CRC_LEN : 0);
  
- 	tx_ring->index = queue_idx;
 +	/*
-+	 * LSO (TCP/UDP segmentation) is a port-level offload. The Tx burst is
-+	 * a single device-level function pointer, so it must be consistent for
-+	 * all queues; likewise every ring must be sized the same way. Decide
-+	 * from the port offloads only (not the per-queue tx_conf) so that all
-+	 * queues either use the LSO burst with a doubled ring, or none do.
-+	 * The LSO burst also handles non-TSO packets, so it is safe on queues
-+	 * that never carry TSO traffic. LSO needs HW FCS insertion, so it is
-+	 * incompatible with KEEP_CRC on Rx.
++	 * RSC (LRO) is a port-level offload: the Rx burst is a single device
++	 * function pointer, so decide from port offloads (not per-queue
++	 * rx_conf) to keep all rings consistent. RSC needs HW FCS stripping
++	 * (RBaMR[CRC] = 0), so it is incompatible with KEEP_CRC.
 +	 */
-+	tx_offloads = data->dev_conf.txmode.offloads;
-+	if (tx_offloads & (RTE_ETH_TX_OFFLOAD_TCP_TSO |
-+			   RTE_ETH_TX_OFFLOAD_UDP_TSO)) {
-+		if (data->dev_conf.rxmode.offloads &
-+		    RTE_ETH_RX_OFFLOAD_KEEP_CRC) {
-+			ENETC_PMD_ERR("LSO (TSO) is incompatible with KEEP_CRC");
-+			rte_free(tx_ring);
++	rsc_enable = !!(rx_offloads & RTE_ETH_RX_OFFLOAD_TCP_LRO);
++	if (rsc_enable) {
++		if (keep_crc) {
++			ENETC_PMD_ERR("RSC (LRO) is incompatible with KEEP_CRC");
++			rte_free(rx_ring);
 +			return -EINVAL;
 +		}
-+		tx_ring->lso_enable = 1;
-+		dev->tx_pkt_burst = &enetc_xmit_pkts_lso;
++		if (adapter->hw.nc_mode) {
++			ENETC_PMD_ERR("RSC (LRO) is incompatible with nc=1 (non-cacheable mode)");
++			rte_free(rx_ring);
++			return -EINVAL;
++		}
++		rx_ring->rsc_enable = 1;
++		dev->rx_pkt_burst = &enetc_recv_pkts_rsc;
 +	}
 +
- 	err = enetc4_alloc_txbdr(tx_ring, nb_desc);
+ 	err = enetc4_alloc_rxbdr(rx_ring, nb_rx_desc);
  	if (err)
  		goto fail;
+@@ -613,6 +670,49 @@ enetc4_rx_queue_setup(struct rte_eth_dev *dev,
+ 	else
+ 		rx_enable &= ~ENETC4_RBMR_CRC;
+ 
++	if (rsc_enable) {
++		/*
++		 * RSC preconditions (all must hold or RBaRSCR[EN] is ignored):
++		 * BDS = 1 (32B descriptors), CRC = 0 (FCS stripped, enforced
++		 * above), ICEN = 1 (its timer doubles as the RSC flush timer),
++		 * and RBaRSCR[EN] with CT for timestamped segments. SIZE caps
++		 * the coalesced frame; honor rxmode.max_lro_pkt_size clamped to
++		 * the HW max, falling back to the HW max when unset.
++		 */
++		rx_enable |= ENETC4_RBMR_BDS;
++
++		/*
++		 * Commit RBMR[BDS] to HW now (ring still disabled, EN clear)
++		 * so the 32B descriptor mode is active before RBaRSCR[EN] is
++		 * set. BDS = 1 is a hard RSC precondition: if RBaRSCR[EN] is
++		 * written while BDS is still 0 in HW, RSC may be silently
++		 * ignored. The ring-enable step below writes RBMR again with
++		 * EN added.
++		 */
++		enetc4_rxbdr_wr(&adapter->hw.hw, rx_ring->index, ENETC_RBMR,
++			       rx_enable);
++
++		rsc_size = data->dev_conf.rxmode.max_lro_pkt_size;
++		if (rsc_size == 0 || rsc_size > ENETC4_RSC_MAX_FRAME)
++			rsc_size = ENETC4_RSC_MAX_FRAME;
++
++		/*
++		 * Program ICTT FIRST (with ICEN = 0) then enable ICEN, as the
++		 * RM requires. ICTT is the RSC coalesce-hold window; a zero
++		 * value disables the timer and forces HW to flush every frame
++		 * (no coalescing), so use a non-zero default.
++		 */
++		enetc4_rxbdr_wr(&adapter->hw.hw, rx_ring->index,
++			       ENETC4_RBICR1, ENETC4_RSC_DEF_ICTT);
++		enetc4_rxbdr_wr(&adapter->hw.hw, rx_ring->index,
++			       ENETC4_RBICR0, ENETC4_RBICR0_ICEN |
++			       ENETC4_RBICR0_ICPT(ENETC4_RSC_DEF_ICPT));
++		enetc4_rxbdr_wr(&adapter->hw.hw, rx_ring->index,
++			       ENETC4_RBRSCR, ENETC4_RBRSCR_EN |
++			       ENETC4_RBRSCR_CT |
++			       ENETC4_RBRSCR_SIZE(rsc_size));
++	}
++
+ 	if (!rx_conf->rx_deferred_start) {
+ 		/* enable ring */
+ 		rx_enable |= ENETC_RBMR_EN;
 diff --git a/drivers/net/enetc/enetc4_vf.c b/drivers/net/enetc/enetc4_vf.c
-index 83a1e4931f..3083a56335 100644
+index 3083a56335..be79a18a39 100644
 --- a/drivers/net/enetc/enetc4_vf.c
 +++ b/drivers/net/enetc/enetc4_vf.c
-@@ -60,6 +60,8 @@ static uint64_t dev_tx_offloads_sup =
- 	RTE_ETH_TX_OFFLOAD_IPV4_CKSUM |
- 	RTE_ETH_TX_OFFLOAD_UDP_CKSUM |
- 	RTE_ETH_TX_OFFLOAD_TCP_CKSUM |
-+	RTE_ETH_TX_OFFLOAD_TCP_TSO |
-+	RTE_ETH_TX_OFFLOAD_UDP_TSO |
- 	RTE_ETH_TX_OFFLOAD_MULTI_SEGS;
+@@ -53,6 +53,7 @@ static uint64_t dev_rx_offloads_sup =
+ 	RTE_ETH_RX_OFFLOAD_TCP_CKSUM |
+ 	RTE_ETH_RX_OFFLOAD_VLAN_FILTER |
+ 	RTE_ETH_RX_OFFLOAD_KEEP_CRC |
++	RTE_ETH_RX_OFFLOAD_TCP_LRO |
+ 	RTE_ETH_RX_OFFLOAD_SCATTER;
  
- static void
+ /* Supported Tx offloads */
 diff --git a/drivers/net/enetc/enetc_rxtx.c b/drivers/net/enetc/enetc_rxtx.c
-index d5855e69a3..0bb5a86dd8 100644
+index 0bb5a86dd8..8d3008843c 100644
 --- a/drivers/net/enetc/enetc_rxtx.c
 +++ b/drivers/net/enetc/enetc_rxtx.c
-@@ -221,6 +221,263 @@ enetc_xmit_pkts_nc(void *tx_queue,
- 	return start;
+@@ -907,6 +907,240 @@ enetc_recv_pkts_nc(void *rxq, struct rte_mbuf **rx_pkts,
+ 	return enetc_clean_rx_ring_nc(rx_ring, rx_pkts, nb_pkts);
  }
  
 +/*
-+ * LSO (Large Send Offload) Tx burst.
-+ *
-+ * Dedicated burst used on Tx rings with LSO enabled (txr->lso_enable). It
-+ * follows the same non-cache-coherent discipline as enetc_xmit_pkts_cacheable:
-+ * payload lines are flushed with dcbf before handing the frame to HW and the
-+ * written BD cache lines are flushed at the end of the batch.
-+ *
-+ * A TSO/USO frame uses an extended Tx descriptor: the standard BD points at
-+ * the L2/L3/L4 header template (BUF_LEN = header length, FRM_LEN = payload
-+ * length), followed by an extension BD in the next ring slot holding the
-+ * segment size, then one BD per payload buffer with the F flag on the last.
-+ * Non-TSO packets fall through to the normal encoding so mixed traffic works.
++ * RSC (LRO) refill. buff_cnt is in 16B slots; each 32B descriptor is two
++ * slots. The even slot takes a fresh mbuf, the odd extension slot never owns
++ * a buffer, so walk the ring two slots at a time. Cache maintenance mirrors
++ * enetc_refill_rx_ring (dcbf per 64B line, i.e. two descriptors).
 + */
-+uint16_t
-+enetc_xmit_pkts_lso(void *tx_queue,
-+		struct rte_mbuf **tx_pkts,
-+		uint16_t nb_pkts)
++int
++enetc_refill_rx_ring_rsc(struct enetc_bdr *rx_ring, const int buff_cnt)
 +{
-+	int i, start, bds_to_use;
-+	struct enetc_tx_bd *txbd = NULL;
-+	struct enetc_tx_bd_ext *txbd_ext;
-+	struct enetc_bdr *tx_ring = (struct enetc_bdr *)tx_queue;
-+	unsigned int j;
-+	uint8_t *data;
-+	struct rte_mbuf *seg;
-+	uint16_t seg_len, segs_per_pkt;
-+	bool is_first_seg;
-+	int first_bd_idx, bd_count;
++	struct enetc_swbd *rx_swbd;
++	union enetc_rx_bd *rxbd, *grp_start_rxbd;
++	int i, j, k = ENETC_RXBD_BUNDLE;
++	struct rte_mbuf *m[ENETC_RXBD_BUNDLE];
++	struct rte_mempool *mb_pool;
 +
-+	i = tx_ring->next_to_use;
-+	bds_to_use = enetc_bd_unused(tx_ring);
-+	bd_count = tx_ring->bd_count;
-+	start = 0;
++	i = rx_ring->next_to_use;
++	mb_pool = rx_ring->mb_pool;
++	rx_swbd = &rx_ring->q_swbd[i];
++	rxbd = ENETC_RXBD(*rx_ring, i);
++	grp_start_rxbd = rxbd;
 +
-+	first_bd_idx = i;
++	for (j = 0; j < buff_cnt; j += 2) {
++		/* Bulk alloc one mbuf per descriptor (every two slots). */
++		if (k == ENETC_RXBD_BUNDLE) {
++			int want = (buff_cnt - j) / 2;
++			int m_cnt = RTE_MIN(want, ENETC_RXBD_BUNDLE);
 +
-+	while (start < nb_pkts) {
-+		seg = tx_pkts[start];
-+		segs_per_pkt = seg->nb_segs;
-+
-+		if (seg->ol_flags &
-+		    (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG)) {
-+			bool is_udp_seg =
-+				!!(seg->ol_flags & RTE_MBUF_F_TX_UDP_SEG);
-+			uint32_t hdr_len = seg->l2_len + seg->l3_len +
-+					   seg->l4_len;
-+			uint32_t data_unit;
-+			uint16_t first_payload;
-+			struct rte_mbuf *dseg;
-+			int bds_needed;
-+
-+			/* Header BD + extension BD + one BD per segment. */
-+			bds_needed = 2 + segs_per_pkt;
-+			if (bds_to_use < bds_needed)
-+				break;
-+
-+			/*
-+			 * Skip frames with nothing to segment, or whose
-+			 * headers are not fully contained in the first
-+			 * segment. The first BD carries the header template
-+			 * and first_payload is computed as (first segment
-+			 * data_len - hdr_len), so the L2/L3/L4 headers must
-+			 * reside contiguously in the first mbuf; otherwise the
-+			 * unsigned subtraction would underflow.
-+			 */
-+			if (unlikely(hdr_len >= rte_pktmbuf_pkt_len(seg) ||
-+				     hdr_len > rte_pktmbuf_data_len(seg))) {
-+				rte_pktmbuf_free(seg);
-+				start++;
-+				continue;
-+			}
-+			data_unit = rte_pktmbuf_pkt_len(seg) - hdr_len;
-+
-+			/*
-+			 * Skip frames that violate HW LSO limits: a zero
-+			 * segment size, a payload larger than the HW data
-+			 * unit, or a per-segment frame (headers + segment)
-+			 * bigger than the maximum LSO frame size.
-+			 */
-+			if (unlikely(seg->tso_segsz == 0 ||
-+				     data_unit > ENETC4_LSO_MAX_DATA_UNIT ||
-+				     hdr_len + seg->tso_segsz >
-+					     ENETC4_LSO_MAX_FRAME)) {
-+				rte_pktmbuf_free(seg);
-+				start++;
-+				continue;
-+			}
-+
-+			/* Standard (first) BD: header template only. */
-+			data = rte_pktmbuf_mtod(seg, void *);
-+
-+			seg_len = rte_pktmbuf_data_len(seg);
-+			for (j = 0; j < seg_len; j += RTE_CACHE_LINE_SIZE)
-+				dcbf(data + j);
-+			dcbf(data + (seg_len - 1));
-+
-+			txbd = ENETC_TXBD(*tx_ring, i);
-+			memset(txbd, 0, sizeof(*txbd));
-+			tx_ring->q_swbd[i].buffer_addr = seg;
-+
-+			/* FRM_LEN low 16 bits = payload length, BUF_LEN = hdr. */
-+			txbd->frm_len = rte_cpu_to_le_16(data_unit & 0xffff);
-+			txbd->buf_len = rte_cpu_to_le_16((uint16_t)hdr_len);
-+			txbd->addr = rte_cpu_to_le_64(rte_mbuf_data_iova(seg));
-+
-+			/* Checksum control for the per-segment L3/L4 rewrite. */
-+			txbd->l3_start = seg->l2_len;
-+			txbd->l3_hdr_size = seg->l3_len / 4;
-+			if (seg->ol_flags & RTE_MBUF_F_TX_IPV6) {
-+				txbd->l3t = 1;
-+			} else {
-+				txbd->l3t = ENETC4_TXBD_L3T;
-+				txbd->ipcs = ENETC4_TXBD_IPCS;
-+			}
-+			txbd->l4t = is_udp_seg ? ENETC4_TXBD_L4T_UDP :
-+						 ENETC4_TXBD_L4T_TCP;
-+			txbd->flags = ENETC4_TXBD_FLAGS_L_TX_CKSUM |
-+				      ENETC4_TXBD_FLAGS_L4CS |
-+				      ENETC4_TXBD_FLAGS_LSO |
-+				      ENETC4_TXBD_FLAGS_EXT;
-+
-+			i++;
-+			bds_to_use--;
-+			if (unlikely(i == bd_count))
-+				i = 0;
-+
-+			/* Extension BD occupies the next ring slot. */
-+			tx_ring->q_swbd[i].buffer_addr = NULL;
-+			txbd_ext = (struct enetc_tx_bd_ext *)
-+				   ENETC_TXBD(*tx_ring, i);
-+			memset(txbd_ext, 0, sizeof(*txbd_ext));
-+			txbd_ext->lso = rte_cpu_to_le_32(ENETC4_TXBD_EXT_LSO_SEG(seg->tso_segsz) |
-+					ENETC4_TXBD_EXT_FRM_LEN_EXT(data_unit >> 16));
-+
-+			i++;
-+			bds_to_use--;
-+			if (unlikely(i == bd_count))
-+				i = 0;
-+
-+			/*
-+			 * Payload BDs. The first segment's payload starts after
-+			 * the header template; remaining segments are pure
-+			 * payload.
-+			 */
-+			first_payload = (uint16_t)(seg_len - hdr_len);
-+			dseg = seg;
-+			is_first_seg = true;
-+			while (dseg) {
-+				uint16_t dlen;
-+				uint64_t daddr;
-+
-+				if (is_first_seg) {
-+					dlen = first_payload;
-+					daddr = rte_mbuf_data_iova(dseg) +
-+						hdr_len;
-+					is_first_seg = false;
-+				} else {
-+					dlen = rte_pktmbuf_data_len(dseg);
-+					data = rte_pktmbuf_mtod(dseg, void *);
-+					for (j = 0; j < dlen;
-+					     j += RTE_CACHE_LINE_SIZE)
-+						dcbf(data + j);
-+					dcbf(data + (dlen - 1));
-+					daddr = rte_mbuf_data_iova(dseg);
-+				}
-+
-+				if (dlen == 0) {
-+					dseg = dseg->next;
-+					continue;
-+				}
-+
-+				tx_ring->q_swbd[i].buffer_addr = NULL;
-+				txbd = ENETC_TXBD(*tx_ring, i);
-+				memset(txbd, 0, sizeof(*txbd));
-+				txbd->buf_len = rte_cpu_to_le_16(dlen);
-+				txbd->addr = rte_cpu_to_le_64(daddr);
-+				i++;
-+				bds_to_use--;
-+				if (unlikely(i == bd_count))
-+					i = 0;
-+				dseg = dseg->next;
-+			}
-+
-+			/* Mark the last written BD as frame-last. */
-+			txbd->flags |= ENETC4_TXBD_FLAGS_F;
-+			start++;
-+			continue;
++			k = 0;
++			if (rte_pktmbuf_alloc_bulk(mb_pool, m, m_cnt))
++				return -1;
 +		}
 +
-+		/* Non-TSO packet: standard single/multi-seg encoding. */
-+		if (bds_to_use < segs_per_pkt)
-+			break;
++		rx_swbd->buffer_addr = m[k];
++		rxbd->w.addr = (uint64_t)(uintptr_t)
++			       rx_swbd->buffer_addr->buf_iova +
++			       rx_swbd->buffer_addr->data_off;
++		/* clear 'R' as well */
++		rxbd->r.lstatus = 0;
++		k++;
 +
-+		is_first_seg = true;
-+		while (seg) {
-+			tx_ring->q_swbd[i].buffer_addr = NULL;
-+			seg_len = rte_pktmbuf_data_len(seg);
-+			data = rte_pktmbuf_mtod(seg, void *);
++		/* Extension (odd) slot never owns a buffer. */
++		rx_swbd[1].buffer_addr = NULL;
 +
-+			for (j = 0; j < seg_len; j += RTE_CACHE_LINE_SIZE)
-+				dcbf(data + j);
-+			dcbf(data + (seg_len - 1));
++		rx_swbd += 2;
++		rxbd += 2;
++		i += 2;
 +
-+			txbd = ENETC_TXBD(*tx_ring, i);
-+			txbd->flags = 0;
-+			if (is_first_seg) {
-+				tx_ring->q_swbd[i].buffer_addr = seg;
-+				txbd->frm_len = rte_pktmbuf_pkt_len(seg);
-+				if (seg->ol_flags & ENETC4_TX_CKSUM_OFFLOAD_MASK)
-+					enetc4_tx_offload_checksum(seg, txbd);
-+				is_first_seg = false;
-+			}
-+
-+			txbd->buf_len = rte_cpu_to_le_16(seg_len);
-+			txbd->addr = rte_cpu_to_le_64(rte_mbuf_data_iova(seg));
-+			seg = seg->next;
-+			i++;
-+			bds_to_use--;
-+
-+			if (unlikely(i == bd_count))
-+				i = 0;
-+		}
-+
-+		txbd->flags |= ENETC4_TXBD_FLAGS_F;
-+		start++;
-+	}
-+
-+	/*
-+	 * Flush TX BDs to PoC so HW (non-cache-coherent i.MX95) can read the
-+	 * descriptors from memory.  Same discipline as enetc_xmit_pkts_cacheable:
-+	 * walk from the cache-line-aligned start of first_bd_idx to just past
-+	 * the last written BD, one dcbf per 64-byte (4-BD) line.
-+	 */
-+	if (likely(start > 0)) {
-+		int n = first_bd_idx & ~ENETC_BD_PER_CL_MASK;
-+		int written = (i - n + bd_count) % bd_count;
-+
-+		if (written == 0)
-+			written = bd_count;
-+		written = (written + ENETC_BD_PER_CL_MASK) &
-+			  ~ENETC_BD_PER_CL_MASK;
-+
-+		while (written > 0) {
-+			dcbf((void *)ENETC_TXBD(*tx_ring, n));
-+			n = (n + ENETC_BD_PER_CL) % bd_count;
-+			written -= ENETC_BD_PER_CL;
++		if (unlikely(i == rx_ring->bd_count)) {
++			/* Ring wrap: flush partial/full group before reset. */
++			dcbf((void *)grp_start_rxbd);
++			i = 0;
++			rxbd = ENETC_RXBD(*rx_ring, i);
++			rx_swbd = &rx_ring->q_swbd[i];
++			grp_start_rxbd = rxbd;
++		} else if ((i & ENETC_BD_PER_CL_MASK) == 0) {
++			/* Completed a full 4-slot (2-descriptor) cache line. */
++			dcbf((void *)grp_start_rxbd);
++			grp_start_rxbd = rxbd;
 +		}
 +	}
 +
-+	enetc_clean_tx_ring(tx_ring);
-+	tx_ring->next_to_use = i;
-+	enetc_wr_reg(tx_ring->tcir, i);
++	/* Flush any remaining partial group at the end of the fill. */
++	if (j && (i & ENETC_BD_PER_CL_MASK) != 0)
++		dcbf((void *)grp_start_rxbd);
 +
-+	return start;
++	if (likely(j)) {
++		rx_ring->next_to_alloc = i;
++		rx_ring->next_to_use = i;
++		/*
++		 * Internal indices track 16B slots, but the HW consumer-index
++		 * register counts 32B descriptors, so program i / 2.
++		 */
++		enetc_wr_reg(rx_ring->rcir, i / 2);
++	}
++
++	return j;
 +}
 +
- int
- enetc_refill_rx_ring(struct enetc_bdr *rx_ring, const int buff_cnt)
- {
++/*
++ * RSC (LRO) clean. Same non-cache-coherent discipline as
++ * enetc_clean_rx_ring_cacheable but walks 32B descriptors (two 16B slots
++ * each); the extension half at slot i+1 carries the RSC coalesce count.
++ * RSC_FRAMES > 1 flags the cluster RTE_MBUF_F_RX_LRO. RSC always strips the
++ * FCS (RBaMR[CRC] = 0), so no CRC trim is needed.
++ */
++static int
++enetc_clean_rx_ring_rsc(struct enetc_bdr *rx_ring,
++		    struct rte_mbuf **rx_pkts,
++		    int work_limit)
++{
++	int rx_frm_cnt = 0;
++	int cleaned_cnt, i;
++	struct enetc_swbd *rx_swbd;
++	union enetc_rx_bd *rxbd, rxbd_temp;
++	struct enetc_rx_bd_ext *rxbd_ext;
++	struct rte_mbuf *first_seg = NULL, *cur_seg = NULL;
++	uint32_t bd_status;
++	uint8_t *data;
++	uint32_t j;
++	struct rte_mbuf *seg;
++	uint16_t data_len;
++	uint8_t rsc_frames;
++
++	/* next descriptor to process */
++	i = rx_ring->next_to_clean;
++	rxbd = ENETC_RXBD(*rx_ring, i);
++	cleaned_cnt = enetc_bd_unused(rx_ring);
++	rx_swbd = &rx_ring->q_swbd[i];
++
++	/*
++	 * Always invalidate the cache line that contains next_to_clean before
++	 * the first status read. On RSC rings a 64B line holds two 32B
++	 * descriptors. See enetc_clean_rx_ring_cacheable for the full rationale
++	 * on why dccivac (clean+invalidate) is used from EL0 instead of DC IVAC.
++	 */
++	dccivac((void *)ENETC_RXBD(*rx_ring,
++			  (i & ~(int)ENETC_BD_PER_CL_MASK)));
++
++	while (likely(rx_frm_cnt < work_limit)) {
++		/* Atomically snapshot the 16B writeback half of the BD. */
++#ifdef RTE_ARCH_32
++		rte_memcpy(&rxbd_temp, rxbd, 16);
++#else
++		__uint128_t *dst128 = (__uint128_t *)&rxbd_temp;
++		const __uint128_t *src128 = (const __uint128_t *)rxbd;
++		*dst128 = *src128;
++#endif
++		bd_status = rte_le_to_cpu_32(rxbd_temp.r.lstatus);
++
++		if (!(bd_status & ENETC_RXBD_LSTATUS_R))
++			break;
++		if (rxbd_temp.r.error)
++			rx_ring->ierrors++;
++
++		/*
++		 * Extension half (odd slot) carries the RSC coalesce count.
++		 * Invariant: an RSC ring is allocated with bd_count = nb_desc * 2
++		 * (always even), next_to_clean starts at 0, and i only ever
++		 * advances by 2 with a wrap at i == bd_count. So i is always the
++		 * even (writeback) slot of a 32B descriptor and never exceeds
++		 * bd_count - 2; i + 1 is therefore always the matching odd
++		 * extension slot and stays in bounds (never wraps past the ring).
++		 */
++		rxbd_ext = (struct enetc_rx_bd_ext *)
++			   ENETC_RXBD(*rx_ring, i + 1);
++		rsc_frames = ENETC4_RXBD_EXT_RSC_FRAMES(rte_le_to_cpu_32(rxbd_ext->rsc_frames));
++
++		seg = rx_swbd->buffer_addr;
++		data_len = rte_le_to_cpu_16(rxbd_temp.r.buf_len);
++		seg->data_len = data_len;
++		if (!first_seg) {
++			first_seg = seg;
++			cur_seg = seg;
++			first_seg->pkt_len = data_len;
++			first_seg->ol_flags = 0;
++			enetc_dev_rx_parse(first_seg,
++						rxbd_temp.r.parse_summary);
++			first_seg->hash.rss = rxbd_temp.r.rss_hash;
++			/* RSC_FRAMES > 1 means HW coalesced segments (LRO). */
++			if (rsc_frames > 1)
++				first_seg->ol_flags |= RTE_MBUF_F_RX_LRO;
++		} else {
++			first_seg->pkt_len += data_len;
++			first_seg->nb_segs++;
++			cur_seg->next = seg;
++			cur_seg = seg;
++		}
++
++		/* Invalidate packet data so the CPU reads HW-DMA'd payload. */
++		data = rte_pktmbuf_mtod(seg, void *);
++		for (j = 0; j < data_len; j += RTE_CACHE_LINE_SIZE)
++			dccivac(data + j);
++		/*
++		 * Cover the last byte of an unaligned buffer. Guard against a
++		 * zero-length BD so data_len - 1 does not step before the
++		 * payload start.
++		 */
++		if (likely(data_len))
++			dccivac(data + (data_len - 1));
++
++		if (bd_status & ENETC_RXBD_LSTATUS_F) {
++			seg->next = NULL;
++			ENETC_PMD_DP_DEBUG("RSC_FRAMES=%u pkt_len=%u nb_segs=%u",
++					   rsc_frames, first_seg->pkt_len,
++					   first_seg->nb_segs);
++			rx_pkts[rx_frm_cnt] = first_seg;
++			rx_frm_cnt++;
++			first_seg = NULL;
++		}
++
++		/* Two 16B slots per 32B RSC descriptor. */
++		cleaned_cnt += 2;
++		rx_swbd += 2;
++		i += 2;
++		if (unlikely(i == rx_ring->bd_count)) {
++			i = 0;
++			rx_swbd = &rx_ring->q_swbd[i];
++		}
++		rxbd = ENETC_RXBD(*rx_ring, i);
++
++		/*
++		 * Crossed a 4-slot (cache-line, two-descriptor) boundary:
++		 * invalidate the new group so subsequent status reads fetch
++		 * fresh DDR data written by HW.
++		 */
++		if ((i & ENETC_BD_PER_CL_MASK) == 0 &&
++		    likely(rx_frm_cnt < work_limit))
++			dccivac((void *)rxbd);
++	}
++
++	rx_ring->next_to_clean = i;
++	enetc_refill_rx_ring_rsc(rx_ring, ENETC_BD_ALIGN_DOWN(cleaned_cnt));
++
++	/*
++	 * Write-1-to-clear this ring's event in SIRXIDR. Without this the
++	 * interrupt-coalescing timer never re-arms and HW stops coalescing
++	 * after the first RSC frame (this PMD is poll-mode and never services
++	 * the interrupt). SIRXIDR is W1C, one bit per ring; RBaIDR is
++	 * read-only. Matches the Linux driver's enetc_wr_reg_hot(idr, BIT()).
++	 */
++	enetc4_wr_reg(rx_ring->rbidr, BIT(rx_ring->index));
++
++	return rx_frm_cnt;
++}
++
++uint16_t
++enetc_recv_pkts_rsc(void *rxq, struct rte_mbuf **rx_pkts,
++		uint16_t nb_pkts)
++{
++	struct enetc_bdr *rx_ring = (struct enetc_bdr *)rxq;
++
++	return enetc_clean_rx_ring_rsc(rx_ring, rx_pkts, nb_pkts);
++}
++
+ uint16_t
+ enetc_recv_pkts(void *rxq, struct rte_mbuf **rx_pkts,
+ 		uint16_t nb_pkts)
 -- 
 2.25.1
 
