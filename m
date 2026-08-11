@@ -2,72 +2,154 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC35EC5B572
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 15:55:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09C27C5B572
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 16:21:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 53F9241153;
-	Tue, 11 Aug 2026 17:55:13 +0200 (CEST)
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com
- [209.85.219.52]) by mails.dpdk.org (Postfix) with ESMTP id 0B46241140
- for <dev@dpdk.org>; Tue, 11 Aug 2026 17:55:11 +0200 (CEST)
-Received: by mail-qv1-f52.google.com with SMTP id
- 6a1803df08f44-9063b380982so34711026d6.0
- for <dev@dpdk.org>; Tue, 11 Aug 2026 08:55:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1786463710; x=1787068510; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=sTW4zfc7mTD4TrrMDczo6NgbMJqhdfRn20gSFq5Xct8=;
- b=ZvV/oTuIbbLUFVh7e9nGDLL8zFicnGuWD4FskBW0zwfXVHvYLoPxFAKO1Q7aNs4hwS
- j6t4Z0j7pji9WU7c/XXHNkfEPX82YlN6u51eNRUq0RVjPd1mXBHXfLgJ+mJ4QYrvW7eM
- uwXhYdmbp2/OYb6VkmkKrSorgDP5X1cl9RIug=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786463710; x=1787068510;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=sTW4zfc7mTD4TrrMDczo6NgbMJqhdfRn20gSFq5Xct8=;
- b=TTofZaqQYKvpdwG65zkgEbm7QZRqHlbHDcmGnnI1uOBohH8vNWhu+87Y4AxGgdmC4A
- ttvdEz2xqoiej8+uhq2PGmEQ8l9wpMvJK9DxcMWWfXvIjfbue+b+Qr4yfmNfPXmmCiVc
- wV7P75VvbH4BrB1eAs7iD//Rnu80+Iw2mbTXTI4J7Rg7GHvmtiBQS+YrdG1efk5ZKBD+
- APYDzmwV4QHafsuS9bBnaK5c/6CHwgrAqvTvpdTsCT+czy7yE1/DKwBwrYKCXVb0xABn
- 0DDj73dptKO+Dpt0fOwUiZZio+qJ/eM0sIMQz5C+9mymjLKW2QmEbH2NvXyVC57Hox5n
- 1VLw==
-X-Gm-Message-State: AOJu0YzJOfPS2x7CvyINHW4FyKJGxxa1v+lV8KJ9CMTLdx6n4yXBG9zF
- Kxg/E/fwXLgUyb2INOg9fj/fc3Y5leozRIiXQwwz+xCzzPTodq+HjDluT/JksgTBk+Vw7Fyj1p6
- TaVurejyWIEbV4334+SPNmyBc4qN8YOnphzm9D6wUxl0TI7+ez8tjcd8AuiDRWhWe5DsCvedHoa
- BKi5HlxCQwea57Rx0fQaqLhH5IRBQ=
-X-Gm-Gg: AR+sD11K8w0wbHs40jDJc8HDuVsUgJRUjL4CxTHkfQwIaEpSPU6gLU6oD6l+Oo1TKkp
- fmhQfEDSRpi1sLZjqG+tHMx7CKYzO2TBY//64aoH+iSwefOaQhjvKbv3QKwKQL4Pc4QNmIv53AN
- YSQBN8opUna1KltXkmbKS9oIgtjgdSy2+TjFinZpqDrv4hnn8SKdfpZnqldTxvhkjD0LoURkNOi
- rf+A0HbUDlrQjxmaNj8Jj7E6Mr4MqMIQbElEnlnSet5pUYAigKHLe5YZv8PJ+l+CKPsm212p4q9
- +3FD04ukqZ8+qTF6b+k5rKQ0qgwxfnre+02faGKDHS1kTvwzRvaZ6AnD+k9NssK3ARN2brpokqh
- REnbZZ81AI02EqgGGgBAg8iRkdQRZseqwd7SENMmGGXiazDgsSzeEfIYHNeG5SA+4jyV3gbiTib
- iR2zbO5pbuLCQmS+oVDmgcTA1XOLPzh4beL5c9z+p4V0IsBjLAQ8EL+ulFXIOi4emaf1bxZurYD
- fEPesOFAKnwjiYzFzNShQ==
-X-Received: by 2002:a05:6214:c8d:b0:8e5:d7d1:7bf with SMTP id
- 6a1803df08f44-90a669419aemr41472436d6.4.1786463710290; 
- Tue, 11 Aug 2026 08:55:10 -0700 (PDT)
-Received: from d121029.iol.unh.edu ([2606:4100:3880:1210::219])
- by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-90a6c29fe59sm2120326d6.15.2026.08.11.08.55.09
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 11 Aug 2026 08:55:09 -0700 (PDT)
-From: Andrew Bailey <abailey@iol.unh.edu>
-To: dev@dpdk.org,
-	luca.vizzarro@arm.com,
-	patrickrobb1997@gmail.com
-Cc: knimoji@iol.unh.edu, lylavoie@iol.unh.edu, dladd@iol.unh.edu,
- Dean Marx <dmarx@iol.unh.edu>, Andrew Bailey <abailey@iol.unh.edu>
-Subject: [PATCH v2 2/2] dts: add VXLAN protocols to flow test suite
-Date: Tue, 11 Aug 2026 11:54:50 -0400
-Message-ID: <20260811155450.486646-3-abailey@iol.unh.edu>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260811155450.486646-1-abailey@iol.unh.edu>
-References: <20260811155450.486646-1-abailey@iol.unh.edu>
+	by mails.dpdk.org (Postfix) with ESMTP id 22CB440285;
+	Tue, 11 Aug 2026 18:21:43 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+ by mails.dpdk.org (Postfix) with ESMTP id C53D34026F
+ for <dev@dpdk.org>; Tue, 11 Aug 2026 18:21:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1786465302; x=1818001302;
+ h=message-id:date:subject:to:cc:references:from:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=sBvDR0/AvrGnByY5NUmxpMfuR5A466l32h6z/UofpGo=;
+ b=W2sq/TfUBExF1ShKj37zX6NY2fGUAWphCzm/+MUTW4nIcm71KxQqnLn2
+ XGiLU611wEg0UhzkyYLB8SdseGm992xsJY3SgEBEp20F6EeHB7oQruu1P
+ cNBJWYFhAO9y+UB4TxQGXTIGUqTCUMzXRxaQpxgMkS7Zl2R6WbrcGNTpg
+ fY3Pyk4VMfrEKbb689LDQlE/6nVNYJe4Ocya5FvAPqsrXz3VfOKfIzexY
+ M8O859uIHyWJXkMwHw6/r2pTVXu9xJ3kR+Fx+31ppV8xBKz9Kd7fS54d0
+ usIDJX6frULVPh/Qz3ive0+304IlkJp168xUaz6xCFEIRQEHsgN1TJ9S8 w==;
+X-CSE-ConnectionGUID: XGgplkiFRcqPlc2OVptNhQ==
+X-CSE-MsgGUID: MUdCISg2SpidXR4l1y522A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11872"; a="98518310"
+X-IronPort-AV: E=Sophos;i="6.25,218,1779174000"; d="scan'208";a="98518310"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+ by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Aug 2026 09:21:41 -0700
+X-CSE-ConnectionGUID: mF47kY3qQ0KA1PY5WVwocQ==
+X-CSE-MsgGUID: PfC7sL5zSbS+srgbErxgBw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,218,1779174000"; d="scan'208";a="267650728"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Aug 2026 09:21:41 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Tue, 11 Aug 2026 09:21:40 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45 via Frontend Transport; Tue, 11 Aug 2026 09:21:40 -0700
+Received: from BYAPR05CU005.outbound.protection.outlook.com (52.101.85.56) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Tue, 11 Aug 2026 09:21:39 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Igv+RsS4oesL4d9SAnOWgXGLQoi4cKNZI53wpXwgBMsdQnykXs+0uFFet+K94qwrF42LRrGP9upcF2doXz4k99vbKbo7oU70bopt53Ayjirm90xoVlCQLIgyu7EnNcNyUr4aKBMnUGUkVQ66YcKzQJhwx5pu6/D47NaiGJxUesvji0VO5CPjnroaqGJ23RWXTZw8IZae+9uClbMo08ewB6DM7w2qXGBB0ua/gnaPQ9llX13620qekGc6+YcG7pye9rg0aLR82aLYXcKBTKvvsH5Nqzgk5VvLb0PsVegsRQriNp1hW608vVX5ib5WEp6Y64uAQCvPCwm4YpF4TD2FNA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=d7OO8p5yT+WAJ16lrVhJqsyQbhwbUCJwAHM2lVK2Gbg=;
+ b=wCMA0OLbzg4xyyFYT6YiaYhCY0jUSUfOPZYMsDvSwsjGDj/IO+BlS0YYv/OlaNLsQCCtfqs5SX8Z7cutwQrzcb+wQtx6lMOabS81RROdauAlGoKTvCqsywcZt0f+DxOLtKOVEKjBpwPHarM/wSCY7d4GqiJ9QZoIchp8oiF3czu2sj0Gy1sWSWOmLfgro807RqxgNO9MvtJewohHJjVYz+T2R5m1qicXVocqt0IhKrpia3FaNdsVYnSyv37OBcYRJqdobVayTSBH8PW0cItBeGvEIsXNpZGqRCT7KpqmZ8Oe+EOCN7RgO4Qzv6RKybmylOh46JAEOVqYoKfoM19vtQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM8PR11MB5653.namprd11.prod.outlook.com (2603:10b6:8:25::8) by
+ DM6PR11MB4626.namprd11.prod.outlook.com (2603:10b6:5:2a9::21) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.315.12; Tue, 11 Aug 2026 16:21:37 +0000
+Received: from DM8PR11MB5653.namprd11.prod.outlook.com
+ ([fe80::74e3:c0eb:29ee:fffa]) by DM8PR11MB5653.namprd11.prod.outlook.com
+ ([fe80::74e3:c0eb:29ee:fffa%3]) with mapi id 15.21.0292.024; Tue, 11 Aug 2026
+ 16:21:37 +0000
+Message-ID: <475ae05d-aa41-4a2d-bb54-1912fd3aae2a@intel.com>
+Date: Tue, 11 Aug 2026 17:21:32 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] crypto/ipsec_mb: require minimum version 2.0 for IPsec MB
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: <dev@dpdk.org>, Kai Ji <kai.ji@intel.com>, Pablo de Lara
+ <pablo.de.lara.guarch@intel.com>
+References: <20260811112636.4106950-1-radu.nicolau@intel.com>
+ <20260811085300.66c89502@phoenix.local>
+Content-Language: en-US
+From: Radu Nicolau <radu.nicolau@intel.com>
+In-Reply-To: <20260811085300.66c89502@phoenix.local>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DU2P251CA0021.EURP251.PROD.OUTLOOK.COM
+ (2603:10a6:10:230::24) To DM8PR11MB5653.namprd11.prod.outlook.com
+ (2603:10b6:8:25::8)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM8PR11MB5653:EE_|DM6PR11MB4626:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3dbaab8b-1e0c-472e-cfe2-08def7c49dad
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|23010399003|366016|1800799024|10067099003|11063799006|56012099006|4143699003|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info: zB3mErlkriT+HFbtqD5MRfKGgm0UMmtXwYmquYijOVLsWUe/UhBo11Lr44OgfU50YPyS2VfFOI2z38YVaSN6h52DT+PUilDcIMamQ75JDX2eL4wWMTbqBKAWzQLIudAxSU92bliZO+pDrz0F3NgcKxDHuq4Ays499A1ZSYacAae1Tj7neCYNbrbn4tTEGNu5X+Cw8FKRiSvG63ANM5Xz+2ugvBE5VZ1yuus3QwP4DGPwgNSmOuImF3GCN4oziU4mv60lM3y+9Pyf//LFQ4vxYQGZ7K3fad4C2Fx9Z5oXoH8CWu/mOUqugSPepGiClhlWUH+8flCPUUlKtiTIea1hl2ARxWa8u1RQSi6M4bJC9ypPrPKkpEy7IhGQRYIQzQ2Rc1rvECQJZshMjoEgvX7kc9OPxVuepcyoFmgfVgmReOVE5U+SinlYkNiy1RlvjUzO847FGsHon2It5v/0XV4Vi1CB6TWIYFrNTh0KO5LotbtcjpNEyaup0uvgx7W14QKGdRw4psSiui0e9otj40eN3pUdg+O5LghajQ6FKWSDipIqDg3BseYBiEPHmXAG6EyXtvXOn83V6p3bXNUZMP01q500DTDzdYkoQ0/e8QtK1+Ij7m6Ob0Xgdk3WTrnwo/TvM4xA7rjYK4iztM0d6YILC1EIfrFMUr2U4yE8LNBesx0=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DM8PR11MB5653.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(23010399003)(366016)(1800799024)(10067099003)(11063799006)(56012099006)(4143699003)(18002099003)(22082099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?c21VWFlnRXI0VXFGYVNqRmRLQlNMLzdyS21EemFNTTFTM0tVZDN6TENxSWV2?=
+ =?utf-8?B?anNBcnpSSU9hYzhueHlhWlVvMTJnb2JmcU1BSThiUTYzYWdjamc0d25CdStZ?=
+ =?utf-8?B?a2R2aUg3NVc4N0FLcXkvTStlTXJzZHFkUjZnTWdRU0NBWTlvS2VtSEtOVHlZ?=
+ =?utf-8?B?RmlPb1FKL3Vha3pHWXBLbXZ2VktGWlcxcWM5cm1NSktzcVRiL0JDLzdDQ2Vv?=
+ =?utf-8?B?d2tQUUY5a2Z5OVdoTnZta2RmTDhzODNXeTYrODRkVE9JOFliMTE1VmxmczFh?=
+ =?utf-8?B?N1dZY0pqMWptMm1pc1N6dHR0VHhnTnNOT1ZKQWw1a2pCbk5tbXhVSW9kWUxn?=
+ =?utf-8?B?NkwwR29hSWhZVElQMnBrLy91bzZVWVk5VTlyZDVoR21qV3YwSEVrdUhYNjNC?=
+ =?utf-8?B?czRQQmxHUThBaitabTRyQzkvRlBsS2hVZEhZQSszeWsvRnloRTBKVC9KeERh?=
+ =?utf-8?B?Q09rVUdvbVVsditrdXRybXhsc2tHV0sxclc1YVdXM3ZNNEYrQWNlS3paSFdR?=
+ =?utf-8?B?dUFSZmU1SzFycjA2b0Z1cktmdlBCdDdoUzFIZDdqZXlEU0FMUitacVFBM0k0?=
+ =?utf-8?B?eHFwOTJVNHdQVmJ2OTlTMElpdFFodjlqRnFtdTlScmZwa1ZyczJoQk02OWRs?=
+ =?utf-8?B?dVVBVGZCb2FEajJHbnQzbTk4MnBVQklMWTg1bTBRL1BwZ2JvbjhLa1U1T1BC?=
+ =?utf-8?B?L2JkekN0Q3R5Y2o1UXcrb1I5ODBSWExUTjY0Q010L3Z3REREd2tQWVpMNjg5?=
+ =?utf-8?B?VHNYL0V5NDV2RWk0RDNMYjVSWmR0bm9JeHdQUnF2b3NwMFduOHlLbTFxTTdU?=
+ =?utf-8?B?ZDRMZDVTdk5jclQ4djgzNkhUWXdDcXhJQTcyOW9obTRZWE56aFUxeUFMeEMw?=
+ =?utf-8?B?RFlWTTVIRGVZZ0xqZnlrOWxCYXBrOFQxOGZPRGMxS1Y2bzhQU1lkU2pBelFD?=
+ =?utf-8?B?SXgrQ2hleGZwUklyOFYvUzVWcFpXakhRY2VobXBxTXJ2SFU4bmo5ZEEzL3lI?=
+ =?utf-8?B?TDJBc1UzUVpKMk5ZbldMRSs3Z0lUOG1lWjYrVFgvdkg5cFpVYzNBRzh4cHhh?=
+ =?utf-8?B?YUJEVnZZaTdLRFZXWmVLbjMvcDJvZmdFSTZtK3RHdE5wL3FnSG90b2Rva2ZU?=
+ =?utf-8?B?WVNwd3dCSkRINlNtaFA3TWJKUTlsc2ttZXFuMDlWRUZEUlJhUTlNOUtTNXFM?=
+ =?utf-8?B?Ry9ucm5mRlJneGFrM2JFVDlzN0tpQmZRb0hreS9zcGw0bS9vYkdlcE5VUXBC?=
+ =?utf-8?B?dEpJMG9hZE5zUE14c2l0Z2RlT096R0ViT1JxNnFnSjcvVDZyclZ5MjhISlRO?=
+ =?utf-8?B?bGd6TG5lYzQ1Mm9TWERKbGpKMkx4NGovZGVkZ01rRncvL043TTU4UWJPMUsw?=
+ =?utf-8?B?UmV6dDJ4YkxZb2xvUGxuejNETG4zV1VvaXQ3eWNWVjM0MWl0QjBnNkVzY01O?=
+ =?utf-8?B?OTdlS1BmdlAvbERpaUtEem5XbHJwaVNic2w1QWJEeWFEd1BjcjVWbWJCUDNX?=
+ =?utf-8?B?S2JNNHVRLzdSd210SGR3aW1WMUw4UjQwTGlXNUJoWDdyUVg4Z00vMWphOXlH?=
+ =?utf-8?B?UCtDTzkzWjVTaktiYThOcDJpM0c4eWQzbkU4L3ByTitlZjZpVmRaMnFpT08w?=
+ =?utf-8?B?eWh0RjRnN29Yakt6Nk5XYjRaaElXMjFRWGY2eWE1RFkxbkx4bC82Z01helFZ?=
+ =?utf-8?B?UFFETzV6ZjZqR0R4Mk1RNC9odVBMUGM2aUdLS0tJZ2lrTzlGUlQrUUQ0TlBN?=
+ =?utf-8?B?VGg2S2F3Y09IZ2NXUXBFdTlJanZCakRFSWdvQ0lEeGhwTzBpMmw5eU5VSkRO?=
+ =?utf-8?B?aTJKSFRzODlKWWFzUDl4eUpsVG5DOGVBclRiMzIvaGpISlRFVjJab2owRkdk?=
+ =?utf-8?B?dExhY2hVYVZSK1Iyak9ubGhWdG10WXV0ZGdEOUtVc1BzQTdQUjd0YlN5aXZa?=
+ =?utf-8?B?Y2VpVGNyWEJkcFNWU216SXhYVnBpL21DRnpDTlRKaTUwYldCdWhPRTBmaHpU?=
+ =?utf-8?B?RXE1N0FxUFdxSlozaXJuTVJnMDVjL05OczVFMWx1SXdCOTNwaE56UkswZE5p?=
+ =?utf-8?B?RFZXTlMxd3VHQTBMZ2VPQURsTnZtcm5LandaaEp5ZzY3SEpSZDUrRFpmdGIv?=
+ =?utf-8?B?ak01UzlhRHZWeFV2Q1BQc3U0K096VHpRUTUveFhzOUIvdXd6VWpDanBaaTJn?=
+ =?utf-8?B?S09GdDNlSUh1L2RxKzJVb3J0SmlsRkRsMW1QYkV0TWY1eVhQN2p3K1poSDBr?=
+ =?utf-8?B?QjdCZUtJTkVmelpRQVlKbFd6dHBWSHBDNmhCTUpUWEpoR0JaOXlvTFo2Qk5T?=
+ =?utf-8?B?VS9EM2tzeE9YY2wwNjBsNFBhZGUwQlk0b3VwcWRacnFwL3FsTjJidz09?=
+X-Exchange-RoutingPolicyChecked: PgK/xM/juCNsONDuTK+oXpF/aySxKaaqNGLm80nHamtPYyr/nZ5OH70r6YtzcZpc/ygcFwaJXC86DnwFuoZlw6iBoJ3UYYk4ykERZIHASZ3LdcmCfzAgEFy1dW6R7iLyfgDHW/x3esLlOPo+E5bqCIFrozT5WQL+JNoN4cxODhNYhdSTtdPIVrJxw6sa/zVSXVuAtnQvhQwSnsc6DdDGE5x43xPc2zbRli0lz/vbjbxt1LqZhZcNcDndOt4LROfb0o7KzNRRqaDovC4ZTEmMWRFczMgJeoaYzVT1EsSnxOGHKdInK9gbEbJfVZO4q7OdR8zsgn18zniAKHp0Nr6Qrw==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3dbaab8b-1e0c-472e-cfe2-08def7c49dad
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR11MB5653.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2026 16:21:36.9853 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cl2/qlkIcBLS97stsafCUnSMnPPwCM9K/t+NFTw0zIy3SrTDlrBUe+N2DqCRWC9GfFGSVIwKpo4UYTMjFCEDDA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB4626
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,324 +163,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Dean Marx <dmarx@iol.unh.edu>
 
-Add VXLAN protocol stacks to the list of test stacks
-in the rte_flow test suite. Refactor the generator
-to properly construct VXLAN flows and packets.
+On 11-Aug-26 4:53 PM, Stephen Hemminger wrote:
+> On Tue, 11 Aug 2026 11:26:35 +0000
+> Radu Nicolau <radu.nicolau@intel.com> wrote:
+>
+>> Increase the minimum required IPsec MB library version to 2.0
+>> As a consequence, clean up the aesni_mb PMD code.
+>>
+>> Signed-off-by: Radu Nicolau <radu.nicolau@intel.com>
+>> ---
+> What happens if user has out of date library?
+> Is it detected at build config time with reasonable warning?
 
-Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
-Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
-Reviewed-by: Andrew Bailey <abailey@iol.unh.edu>
----
- dts/tests/TestSuite_flow_offload.py | 202 +++++++++++++++++++++++++---
- 1 file changed, 180 insertions(+), 22 deletions(-)
+At config time the PMDs will be disabled with a warning explaining the 
+reason: "IPSec_MB version >= 2.0.0 is required, found version 1.5.0".
 
-diff --git a/dts/tests/TestSuite_flow_offload.py b/dts/tests/TestSuite_flow_offload.py
-index be11d09875..6fe45c9894 100644
---- a/dts/tests/TestSuite_flow_offload.py
-+++ b/dts/tests/TestSuite_flow_offload.py
-@@ -10,7 +10,7 @@
- 
- """
- 
--from dataclasses import dataclass
-+from dataclasses import dataclass, field
- from itertools import product
- from typing import Any, Callable, Optional
- 
-@@ -18,6 +18,7 @@
- from scapy.layers.inet6 import IPv6
- from scapy.layers.l2 import ARP, Dot1Q, Ether
- from scapy.layers.sctp import SCTP
-+from scapy.layers.vxlan import VXLAN
- from scapy.packet import Packet, Raw
- 
- from api.capabilities import NicCapability, requires_nic_capability
-@@ -50,10 +51,16 @@ class Protocol:
-     scapy_class: type[Packet]
-     pattern_name: str
-     fields: list[PatternField]
-+    default_values: dict[str, Any] = field(default_factory=dict)
- 
-     def build_scapy_layer(self, field_values: dict[str, Any]) -> Packet:
--        """Construct a Scapy layer with the given field values."""
--        return self.scapy_class(**field_values)
-+        """Construct a Scapy layer with the given field values.
-+
-+        Default values are applied first, then overridden by any
-+        explicit field values so test parameters always win.
-+        """
-+        merged = {**self.default_values, **field_values}
-+        return self.scapy_class(**merged)
- 
- 
- @dataclass
-@@ -125,6 +132,7 @@ class JumpTest:
- 
- 
- PROTOCOLS: dict[str, Protocol] = {
-+    # -------------------- Base Protocols --------------------
-     "eth": Protocol(
-         name="eth",
-         scapy_class=Ether,
-@@ -215,6 +223,89 @@ class JumpTest:
-             PatternField("op", "opcode", [1, 2]),
-         ],
-     ),
-+    # -------------------- VXLAN Outer Protocols --------------------
-+    "eth_outer": Protocol(
-+        name="eth_outer",
-+        scapy_class=Ether,
-+        pattern_name="eth",
-+        fields=[
-+            PatternField("src", "src", ["02:00:00:00:00:00"]),
-+            PatternField("dst", "dst", ["02:00:00:00:00:02"]),
-+        ],
-+    ),
-+    "ipv4_outer": Protocol(
-+        name="ipv4_outer",
-+        scapy_class=IP,
-+        pattern_name="ipv4",
-+        fields=[
-+            PatternField("src", "src", ["10.0.0.1"]),
-+            PatternField("dst", "dst", ["10.0.0.2"]),
-+            PatternField("ttl", "ttl", [64, 128]),
-+            PatternField("tos", "tos", [0, 4]),
-+        ],
-+    ),
-+    "udp_outer": Protocol(
-+        name="udp_outer",
-+        scapy_class=UDP,
-+        pattern_name="udp",
-+        fields=[],
-+        default_values={"dport": 4789},
-+    ),
-+    # -------------------- VXLAN Tunnel Header --------------------
-+    "vxlan": Protocol(
-+        name="vxlan",
-+        scapy_class=VXLAN,
-+        pattern_name="vxlan",
-+        fields=[
-+            PatternField("vni", "vni", [42, 100]),
-+        ],
-+    ),
-+    # -------------------- VXLAN Inner Protocols --------------------
-+    "eth_inner": Protocol(
-+        name="eth_inner",
-+        scapy_class=Ether,
-+        pattern_name="eth",
-+        fields=[
-+            PatternField("src", "src", ["02:00:00:00:00:00"]),
-+            PatternField("dst", "dst", ["02:00:00:00:00:02"]),
-+        ],
-+    ),
-+    "ipv4_inner": Protocol(
-+        name="ipv4_inner",
-+        scapy_class=IP,
-+        pattern_name="ipv4",
-+        fields=[
-+            PatternField("src", "src", ["192.168.1.1"]),
-+            PatternField("dst", "dst", ["192.168.1.2"]),
-+        ],
-+    ),
-+    "ipv6_inner": Protocol(
-+        name="ipv6_inner",
-+        scapy_class=IPv6,
-+        pattern_name="ipv6",
-+        fields=[
-+            PatternField("src", "src", ["2001:db8::1"]),
-+            PatternField("dst", "dst", ["2001:db8::2"]),
-+        ],
-+    ),
-+    "tcp_inner": Protocol(
-+        name="tcp_inner",
-+        scapy_class=TCP,
-+        pattern_name="tcp",
-+        fields=[
-+            PatternField("sport", "src", [1234]),
-+            PatternField("dport", "dst", [80]),
-+        ],
-+    ),
-+    "udp_inner": Protocol(
-+        name="udp_inner",
-+        scapy_class=UDP,
-+        pattern_name="udp",
-+        fields=[
-+            PatternField("sport", "src", [5000]),
-+            PatternField("dport", "dst", [53]),
-+        ],
-+    ),
- }
- 
- 
-@@ -234,6 +325,7 @@ class JumpTest:
- }
- 
- PROTOCOL_STACKS = [
-+    # -------------------- Non-tunnel stacks --------------------
-     [("eth", True)],
-     [("eth", False), ("ipv4", True)],
-     [("eth", False), ("ipv4", True), ("tcp", True)],
-@@ -253,6 +345,66 @@ class JumpTest:
-     [("eth", False), ("vlan", False), ("ipv6", True), ("tcp", True)],
-     [("eth", False), ("vlan", False), ("ipv6", True), ("udp", True)],
-     [("eth", False), ("arp", True)],
-+    # -------------------- VXLAN tunnel stacks --------------------
-+    [
-+        ("eth_outer", False),
-+        ("ipv4_outer", True),
-+        ("udp_outer", False),
-+        ("vxlan", True),
-+        ("eth_inner", False),
-+        ("ipv4_inner", False),
-+    ],
-+    [
-+        ("eth_outer", False),
-+        ("ipv4_outer", True),
-+        ("udp_outer", False),
-+        ("vxlan", True),
-+        ("eth_inner", False),
-+        ("ipv4_inner", False),
-+        ("tcp_inner", False),
-+    ],
-+    [
-+        ("eth_outer", False),
-+        ("ipv4_outer", True),
-+        ("udp_outer", False),
-+        ("vxlan", True),
-+        ("eth_inner", False),
-+        ("ipv4_inner", False),
-+        ("udp_inner", False),
-+    ],
-+    [
-+        ("eth_outer", False),
-+        ("ipv4_outer", True),
-+        ("udp_outer", False),
-+        ("vxlan", True),
-+        ("eth_inner", False),
-+        ("ipv6_inner", False),
-+    ],
-+    [
-+        ("eth_outer", False),
-+        ("ipv4_outer", True),
-+        ("udp_outer", False),
-+        ("vxlan", True),
-+        ("eth_inner", False),
-+        ("ipv6_inner", False),
-+        ("tcp_inner", False),
-+    ],
-+    [
-+        ("eth_outer", False),
-+        ("ipv4_outer", True),
-+        ("udp_outer", False),
-+        ("vxlan", True),
-+        ("eth_inner", False),
-+        ("ipv6_inner", False),
-+        ("udp_inner", False),
-+    ],
-+    [
-+        ("eth_outer", False),
-+        ("ipv4_outer", True),
-+        ("udp_outer", False),
-+        ("vxlan", True),
-+        ("eth_inner", False),
-+    ],
- ]
- 
- 
-@@ -304,6 +456,10 @@ def generate(
-     ) -> list[FlowTest]:
-         """Generate test cases for patterns matching fields across multiple protocols.
- 
-+        Pattern parts are assembled in stack order to preserve positional
-+        correctness, which is required for tunnel encapsulations where
-+        inner and outer layers share the same pattern_name.
-+
-         Args:
-             protocol_stack: List of (protocol_name, test_fields) tuples.
-                 If test_fields is True, iterate through field combinations.
-@@ -316,15 +472,12 @@ def generate(
-             List of FlowTest objects ready for execution.
-         """
-         action_spec = self.actions[action_name]
--
--        wildcard_protocols = [name for name, test_fields in protocol_stack if not test_fields]
--        field_test_protocols = [name for name, test_fields in protocol_stack if test_fields]
-         all_protocol_names = [name for name, _ in protocol_stack]
--
--        wildcard_pattern_parts = [self.protocols[name].pattern_name for name in wildcard_protocols]
-+        field_test_protocols = [name for name, test_fields in protocol_stack if test_fields]
- 
-         if not field_test_protocols:
--            pattern = " / ".join(wildcard_pattern_parts)
-+            pattern_parts = [self.protocols[name].pattern_name for name, _ in protocol_stack]
-+            pattern = " / ".join(pattern_parts)
-             flow_rule = FlowRule(
-                 direction="ingress",
-                 pattern=[pattern],
-@@ -339,7 +492,7 @@ def generate(
-                     packet=packet,
-                     verification_type=action_spec.verification_type,
-                     verification_params=action_spec.build_verification_params(action_value),
--                    description=" / ".join(wildcard_pattern_parts) + f" -> {action_spec.name}",
-+                    description=pattern + f" -> {action_spec.name}",
-                 )
-             ]
- 
-@@ -354,24 +507,32 @@ def generate(
-             max_vals = max(len(f_spec.test_parameters) for _, f_spec in field_combo)
- 
-             for i in range(max_vals):
--                field_pattern_parts = []
-+                field_value_map: dict[str, tuple[Protocol, PatternField, Any]] = {}
-                 all_field_values: dict[str, dict[str, Any]] = {}
--                desc_parts = []
- 
-                 for protocol_spec, field_spec in field_combo:
-                     val = field_spec.test_parameters[i % len(field_spec.test_parameters)]
--
--                    field_pattern_parts.append(
--                        f"{protocol_spec.pattern_name} {field_spec.pattern_field} is {val}"
--                    )
-+                    field_value_map[protocol_spec.name] = (protocol_spec, field_spec, val)
- 
-                     if protocol_spec.name not in all_field_values:
-                         all_field_values[protocol_spec.name] = {}
-                     all_field_values[protocol_spec.name][field_spec.scapy_field] = val
- 
--                    desc_parts.append(f"{protocol_spec.name}[{field_spec.scapy_field}={val}]")
-+                pattern_parts = []
-+                desc_parts = []
-+
-+                for proto_name, test_fields in protocol_stack:
-+                    proto_spec = self.protocols[proto_name]
-+                    if test_fields and proto_name in field_value_map:
-+                        _, f_spec, val = field_value_map[proto_name]
-+                        pattern_parts.append(
-+                            f"{proto_spec.pattern_name} {f_spec.pattern_field} is {val}"
-+                        )
-+                        desc_parts.append(f"{proto_spec.name}[{f_spec.scapy_field}={val}]")
-+                    else:
-+                        pattern_parts.append(proto_spec.pattern_name)
- 
--                full_pattern = " / ".join(wildcard_pattern_parts + field_pattern_parts)
-+                full_pattern = " / ".join(pattern_parts)
- 
-                 flow_rule = FlowRule(
-                     direction="ingress",
-@@ -384,10 +545,7 @@ def generate(
-                     all_protocol_names, all_field_values, add_payload=True
-                 )
- 
--                wildcard_desc = " / ".join(wildcard_pattern_parts)
--                field_desc = " / ".join(desc_parts)
--                full_desc = f"{wildcard_desc} / {field_desc}" if wildcard_desc else field_desc
--
-+                full_desc = " / ".join(desc_parts)
-                 test_cases.append(
-                     FlowTest(
-                         flow_rule=flow_rule,
--- 
-2.55.0
+> What was release date?
+> Debian changelog says 2.0 was introduced in 18 Sep 2024
+> and is Debian stable (trixie).
+
+According to 
+https://github.com/intel/intel-ipsec-mb/releases#release-v2.0 it's 
+November 2024
 
