@@ -2,74 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AAE9C5CFCF
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 17:00:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A300C5B56A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 17:04:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 53C764026F;
-	Tue, 11 Aug 2026 19:00:31 +0200 (CEST)
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
- [209.85.214.178])
- by mails.dpdk.org (Postfix) with ESMTP id 0E34F4021E
- for <dev@dpdk.org>; Tue, 11 Aug 2026 19:00:29 +0200 (CEST)
-Received: by mail-pl1-f178.google.com with SMTP id
- d9443c01a7336-2cfff5f88dbso1860345ad.3
- for <dev@dpdk.org>; Tue, 11 Aug 2026 10:00:29 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id F2C7A4026F;
+	Tue, 11 Aug 2026 19:04:42 +0200 (CEST)
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com
+ [209.85.160.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 68EED4021E
+ for <dev@dpdk.org>; Tue, 11 Aug 2026 19:04:41 +0200 (CEST)
+Received: by mail-qt1-f171.google.com with SMTP id
+ d75a77b69052e-52d58d7aad6so954441cf.2
+ for <dev@dpdk.org>; Tue, 11 Aug 2026 10:04:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786467629;
- x=1787072429; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=kQijRFvgFf25bIynP9BicbczlDvRCedNoRVijWDOwQg=;
- b=VrSpx6QURVBrwDch8gWIPNwyy2Gz70q1wPNWOMPXIuryH9PiG2Yy8/DQPZFJm7lKps
- VSJG6td0Bxce9rgGLQl0ZOQlyO8au5JoiDEVaBhQNLjYAj56jgEs3WsB6zJyN4T4WUlr
- 34j+dxCgyUsOLYIWJTOqRQl4ohqZqm04ilj1erGfD9EcCu0MXO8oUnKBN8LfxfzR1eci
- vA7KJn/z4HViBCKKtXH+QFwzrEhqPF6gn21sQlXeovrXEexY4rNeY4pvSeQWdvEIvppo
- 2qHuZCP5TwWbrHVfskzrysDtHu3690DF1Mx5NH7h3z39ClnXr9Hb3cdmJVFeRRSDPQ3O
- kBKg==
+ d=iol.unh.edu; s=unh-iol; t=1786467881; x=1787072681; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=i8go8JxZxmWl2guyxhaPOQPZrEE/S6XV7mxeplDAM3Q=;
+ b=cRH1/efjjJkWlqdz/9zRYlIrGs4B2nwGlAPmxwpDnoX7kxClaF8dyHgIIZp6C1BmIo
+ 8oytxydEmyCRuSOBNBhMayu5Nb+wwb/7AAQSKlZ2OmFuEXbD+uUuNTn6e3hwLnW7eo4q
+ nMt5IoFo9B5eSYRK1mOy48BURielVqrxSPDKc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786467629; x=1787072429;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=kQijRFvgFf25bIynP9BicbczlDvRCedNoRVijWDOwQg=;
- b=l4CWKi2l0ZBLVYBi5WBp/obiC+ohi0iOD6v04yHUEO5KKZ7gdmYfeC1cov1gatoYTY
- oGjo0QV1HzAJ7MfN+B+vjJfz/NWrkpf0RZ5nIAmRNWfKZ/5HesItXPBcBv4xeCEdeSqB
- Alu56VOEDkkapxVgsn0+xGdo/skm2aQO+xSVau6cpynSf2FrswKlBfpXdx5B9Z6LMAaL
- 88pDDe0JYEsQJ40a6ch1d8YfjCW4XfYAIIYldB6LNzoOaqwKoHWIin3yAiDOUs9v9Yhy
- KgOw2Cbpg0fdUbMXLMcrDFtcSRMNWSrI+SKXMWoHTeDTn/eWD4pnMikuEIHJoWEKnHuT
- f2tQ==
-X-Gm-Message-State: AOJu0YzHkbQQl0lq54z9RnNInBRQBmVXf1MU67drjVq8Mbt8wvo3bYvY
- A8HLDYvTxt5v2EoMoesL29NONgUbg7UO4cF1YoNkdGa0w1TdS2oFb2yfWwMwlzWwI14=
-X-Gm-Gg: AR+sD11tKEZdFOwGCzYBBKTfGdXWc7nj9sl9YYs819rd8nfJCkPAsQS2jToGwQeWTTa
- wloHrweaewrih/bcfY6afiEM3apKxq6AHS5OZ4sHIKXysHF9abaC0uuRWPxi+DohzglfTPQL2qv
- +oLEub6MMk4tVaz6sTasBkqdshu9HHJW/UaHf+KhfX/qetIV1u9bE6UM8DVXf8bBlBtoh/adphd
- pkHF+EF6u0czyMMXwrrnaBfUiW5Z2DD31oTc4sT+DwboIpYscUNDFxbz3nh/vZC0+G3DZO7vBoK
- g07mvs9PnZDayBo0nIMkhEJ0S61PBBrpHG0yiBgmDkX9IeSGSrI1mnDEdXMiLMM8NpqAUxY7ypy
- OkRbONZMQJKyYoVd87HolSITbTOZ6NzZ19wQX95EyJ1mRMp/tByqHgF06lbGCHelHwxJPTnkVfS
- WvX7VUNY9ghYb0P4AvHp12Sjdl0ZXH/UtkjXifDL9d+tgemKtyDVVyEclaxWW/NOSYpY+THPP1O
- NlkdeJCRVfmukCpQe0CtvN8JQv4D6C8j89L+hNc
-X-Received: by 2002:a05:6a20:2587:b0:3c3:64cc:311a with SMTP id
- adf61e73a8af0-3cc2ba57880mr5042316637.22.1786467624546; 
- Tue, 11 Aug 2026 10:00:24 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ d=1e100.net; s=20251104; t=1786467881; x=1787072681;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=i8go8JxZxmWl2guyxhaPOQPZrEE/S6XV7mxeplDAM3Q=;
+ b=KoTU2hHuWSDehMTTl/GKr8w/cF3VKtZN77AvIAypatzx5vWjanjFmJRiz3lOx7T9HO
+ qOmb93t90mrqZGoD/8k+6JaI3LDkwYwFeIqmLsiPV5j5H+CtpqUMlfYqTTa4LXewB4HJ
+ J3SJtBjDyyx1U3PgbAO+z5ucvoGEANGSnSvVoqlslpLOj5whllyLC1S8ZWS9COsaHqr/
+ ghPMhAdWKKqof1t6YVEqBaYepdvaalPll8+rttoDkGq6+No2lXqGYkXFk3WEiWtAg00u
+ Cc38A+gWeOg7EADYqueLz8C/0I4NqkqfG8txe2VijJNt9SQRquM51z+qdeYoHEq+auOT
+ h8GA==
+X-Gm-Message-State: AOJu0YwRvQx8ouHhJ3mtxOjDfgubJ3YnPNipy1qgkJBTxMrrnPTFQmrN
+ GAQpXauR5W2ghzxtmOGU0a7TRapxt9zig/APQs51Y6ACrxZx2TmokrmoudRRr5FollhtFly+eLp
+ QA/7AY4ndk5xNNNe7utDr5HFwN9aVZuuRnlh+YSjXaoIMIvPJPtnSyeXw2i3HVExhG2mygJDQGA
+ lesaYW8tOUKua/WuHDaFPvwJxF0to=
+X-Gm-Gg: AR+sD10mwaYEpl83uhNjSXvy43YYwGF4iYwwWFtOUcKcHj1M7lVkB2bRg63vpW2d4NS
+ 80edW1lR50sdfG9HHZ7VBOP9HnhZm+fOhIeHxGdK06c6mwIDw+qnzam37pt0DFXf6HfKBe35Xlk
+ K+da3zzDKhZ/QzPk1qMWAUBk11/vdtm4ETCOFrzH6dj7ZwOcrk6kxu5cZHBL5N/SFE1IZh9y/uj
+ VnHrPeLAwVai+za6eDNiwfW2p0+TYa6pqhM36O+FiUPIo2HO6oM+2/M2AJ+MrzWu9wUS2ueTNdr
+ sbtUtbxFuMA07hFhNPL4tiEyBFIYY6D0n2PiotGf3ehYHIuwxkL6jkGTrCRq7zVnDqS9QazExHL
+ h+gxPzPLc04X6w7f9Gqk8RYN8Tz494Ch/sRLxhnpDrtLARR42BEhoVoHNjqdmailkih8LHn3o/3
+ g9NxeX4MVHILIX8dbSOKepndX7kKZNvC0tym74drZ5QaIldCeWWZnaBK6ArJp631mJJyy+JwL3N
+ ObaqEGFZqhek/xx
+X-Received: by 2002:a05:622a:2281:b0:51c:b6d:740b with SMTP id
+ d75a77b69052e-52d6024a01cmr18739171cf.34.1786467880571; 
+ Tue, 11 Aug 2026 10:04:40 -0700 (PDT)
+Received: from d121029.iol.unh.edu ([2606:4100:3880:1210::219])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-14124471f30sm1128545c88.4.2026.08.11.10.00.23
+ 6a1803df08f44-90a6c2cf030sm3399446d6.22.2026.08.11.10.04.39
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 11 Aug 2026 10:00:24 -0700 (PDT)
-Date: Tue, 11 Aug 2026 10:00:20 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Gagandeep Singh <g.singh@nxp.com>
-Cc: dev@dpdk.org, hemant.agrawal@nxp.com
-Subject: Re: [PATCH v3 0/5] dma/imx_edma5: introduce NXP i.MX95 eDMA5 driver
-Message-ID: <20260811100020.3a896d84@phoenix.local>
-In-Reply-To: <20260811104933.3843522-1-g.singh@nxp.com>
-References: <20260807064853.1138187-1-g.singh@nxp.com>
- <20260811104933.3843522-1-g.singh@nxp.com>
+ Tue, 11 Aug 2026 10:04:39 -0700 (PDT)
+From: Andrew Bailey <abailey@iol.unh.edu>
+To: dev@dpdk.org,
+	luca.vizzarro@arm.com,
+	patrickrobb1997@gmail.com
+Cc: knimoji@iol.unh.edu, lylavoie@iol.unh.edu, dladd@iol.unh.edu,
+ Andrew Bailey <abailey@iol.unh.edu>, Dean Marx <dmarx@iol.unh.edu>,
+ Patrick Robb <probb@iol.unh.edu>
+Subject: [PATCH v7] dts: refactor flow suite with generator pattern
+Date: Tue, 11 Aug 2026 13:04:33 -0400
+Message-ID: <20260811170433.517663-1-abailey@iol.unh.edu>
+X-Mailer: git-send-email 2.55.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,139 +80,345 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 11 Aug 2026 16:19:28 +0530
-Gagandeep Singh <g.singh@nxp.com> wrote:
+Refactor current flow test suite to utilize a generator
+method, which dynamically creates flow rules from a
+dictionary of pattern and action fields during runtime.
+This allows for much more extensive testing of the flow
+API without exponential code growth.
 
-> V3-changes:
->  - Fixed below AI comments:
->    - Dead quote-stripping removed (`of_device_is_compatible`)
->    - Redundant `goto out` removed
->    - New Features entry added for bus platform changes.
->    - Scatter-gather doc corrected in both sections
->    - Unused CH_MATTR macros removed
->    - Fixed SG sub-transfer length cap (`imx_edma5_copy_sg`)
->    - Updated Per-job timeout logic.
->    - Updated `rte_mem_iova2virt` per-op in IOVA=3DVA mode logic
->    - Updated comments and documentation as per the AI comments.
->=20
-> V2-changes:
->  - Added dependent patch: bus/platform: match device by devicetree compat=
-ible string
->  - Fixed multiple AI reported issues includes:
->    - removed the alias from the driver, no need of it
->    - removed imx_edma5_write32 from data-path, reported as coherency
->      concern.
->    - fix submit for previously enqueued jobs.
->    - Added dsb in data path
->    - Added a commnet for rte_mem_iova2virt() NULL behaviour.
->    - Fixed: TCD NBYTES bits 31:30 are SMLOE/DMLOE =E2=80=94 full 32-bit l=
-ength corrupts them
->    - Data path is fully synchronous: Acknowledged but intentionally defer=
-red =E2=80=94
->      the synchronous design is a deliberate simplification for the initia=
-l upstream submission.
->      Noted in docs.
->    - In-memory TCD64 pool is more complex than needed:
->      Noted/deferred =E2=80=94 the pool structure was retained for forward=
- compatibility
->      with hardware SG chaining.
->    - Extended `imx_edma5_dump()` to read and print `CH_CSR` and `CH_ES` r=
-egisters
->      for every configured vchan.
->    - Double and stary lines removed.
->=20
-> V1:
-> This patch series adds a new dmadev Poll-Mode Driver (PMD) for the NXP
-> i.MX95 eDMA5 (Enhanced DMA Type 5) controller.
->=20
-> Key features supported by this driver:
->   - Memory-to-memory copy (RTE_DMA_OP_TYPE_MEMCPY)
->   - Scatter-gather memory copy (RTE_DMA_OP_TYPE_SG)
->   - 64-bit TCD (Transfer Control Descriptor) format
->   - Non-coherent DMA with explicit cache clean/invalidate
->   - Per-channel statistics and register dump for debug
->=20
-> Patch breakdown:
->   [1/4] Skeleton: bus probe/remove, dmadev registration, MAINTAINERS,
->         doc index, and release notes for 26.11.
->   [2/4] Device configuration: vchan setup, TCD ring allocation,
->         start/stop, and capability reporting.
->   [3/4] Data path: enqueue (copy and sg), doorbell, completion poll.
->   [4/4] Statistics and dump: per-channel counters and register dump.
->=20
-> Tested on NXP i.MX95 EVK with vfio-platform.
->=20
-> Gagandeep Singh (5):
->   bus/platform: match device by devicetree compatible string
->   dma/imx_edma5: introduce eDMA5 dmadev skeleton
->   dma/imx_edma5: add device configuration
->   dma/imx_edma5: add data path
->   dma/imx_edma5: add statistics and dump
->=20
->  MAINTAINERS                                |    5 +
->  doc/guides/dmadevs/imx_edma5.rst           |   69 ++
->  doc/guides/dmadevs/index.rst               |    1 +
->  doc/guides/rel_notes/release_26_11.rst     |   15 +
->  drivers/bus/platform/bus_platform_driver.h |    3 +-
->  drivers/bus/platform/platform.c            |   52 +-
->  drivers/dma/imx_edma5/imx_edma5_dmadev.c   | 1190 ++++++++++++++++++++
->  drivers/dma/imx_edma5/imx_edma5_dmadev.h   |  234 ++++
->  drivers/dma/imx_edma5/imx_edma5_hw.h       |  144 +++
->  drivers/dma/imx_edma5/imx_edma5_logs.h     |   16 +
->  drivers/dma/imx_edma5/meson.build          |   10 +
->  drivers/dma/meson.build                    |    1 +
->  12 files changed, 1738 insertions(+), 2 deletions(-)
->  create mode 100644 doc/guides/dmadevs/imx_edma5.rst
->  create mode 100644 drivers/dma/imx_edma5/imx_edma5_dmadev.c
->  create mode 100644 drivers/dma/imx_edma5/imx_edma5_dmadev.h
->  create mode 100644 drivers/dma/imx_edma5/imx_edma5_hw.h
->  create mode 100644 drivers/dma/imx_edma5/imx_edma5_logs.h
->  create mode 100644 drivers/dma/imx_edma5/meson.build
->=20
+Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
+Reviewed-by: Patrick Robb <probb@iol.unh.edu>
+---
 
-Still lots of AI review feedback if run with stronger model.
-Nothing major
+v7:
+ * Resolve merge conflicts.
+ dts/tests/TestSuite_flow_offload.py | 206 ++++++++++++++++++++++++----
+ 1 file changed, 182 insertions(+), 24 deletions(-)
 
-Review of [PATCH v3 0/5] dma/imx_edma5: introduce NXP i.MX95 eDMA5 driver
+diff --git a/dts/tests/TestSuite_flow_offload.py b/dts/tests/TestSuite_flow_offload.py
+index be11d09875..d1a6c2fa74 100644
+--- a/dts/tests/TestSuite_flow_offload.py
++++ b/dts/tests/TestSuite_flow_offload.py
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(c) 2025 University of New Hampshire
+
+-"""RTE Flow testing suite.
++"""Flow offload testing suite.
+
+ This suite verifies a range of flow rules built using patterns
+ and actions from the RTE Flow API. It would be impossible to cover
+@@ -10,7 +10,7 @@
+
+ """
+
+-from dataclasses import dataclass
++from dataclasses import dataclass, field
+ from itertools import product
+ from typing import Any, Callable, Optional
+
+@@ -18,6 +18,7 @@
+ from scapy.layers.inet6 import IPv6
+ from scapy.layers.l2 import ARP, Dot1Q, Ether
+ from scapy.layers.sctp import SCTP
++from scapy.layers.vxlan import VXLAN
+ from scapy.packet import Packet, Raw
+
+ from api.capabilities import NicCapability, requires_nic_capability
+@@ -50,10 +51,16 @@ class Protocol:
+     scapy_class: type[Packet]
+     pattern_name: str
+     fields: list[PatternField]
++    default_values: dict[str, Any] = field(default_factory=dict)
+
+     def build_scapy_layer(self, field_values: dict[str, Any]) -> Packet:
+-        """Construct a Scapy layer with the given field values."""
+-        return self.scapy_class(**field_values)
++        """Construct a Scapy layer with the given field values.
++
++        Default values are applied first, then overridden by any
++        explicit field values so test parameters always win.
++        """
++        merged = {**self.default_values, **field_values}
++        return self.scapy_class(**merged)
 
 
+ @dataclass
+@@ -125,6 +132,7 @@ class JumpTest:
 
-Verification: the full series applies cleanly to main. Each of the five
-commits builds independently with -Dwerror=3Dtrue on x86_64 and on aarch64
-cross, for both the bus and the driver objects. Documentation renders
-without sphinx warnings and both release-notes entries appear, ordered
-bus-before-PMD per the suggested ordering in the template. check-git-log
-reports 5/5 valid. No trailing whitespace, no lines over 100 characters.
 
-Patch 1/5 addresses both v2 findings: the quote-stripping block is gone
-and the redundant goto before the out: label is gone. The release-notes
-entry has been added. Two small things remain, neither of them defects:
+ PROTOCOLS: dict[str, Protocol] = {
++    # -------------------- Base Protocols --------------------
+     "eth": Protocol(
+         name="eth",
+         scapy_class=Ether,
+@@ -215,6 +223,89 @@ class JumpTest:
+             PatternField("op", "opcode", [1, 2]),
+         ],
+     ),
++    # -------------------- VXLAN Outer Protocols --------------------
++    "eth_outer": Protocol(
++        name="eth_outer",
++        scapy_class=Ether,
++        pattern_name="eth",
++        fields=[
++            PatternField("src", "src", ["02:00:00:00:00:00"]),
++            PatternField("dst", "dst", ["02:00:00:00:00:02"]),
++        ],
++    ),
++    "ipv4_outer": Protocol(
++        name="ipv4_outer",
++        scapy_class=IP,
++        pattern_name="ipv4",
++        fields=[
++            PatternField("src", "src", ["10.0.0.1"]),
++            PatternField("dst", "dst", ["10.0.0.2"]),
++            PatternField("ttl", "ttl", [64, 128]),
++            PatternField("tos", "tos", [0, 4]),
++        ],
++    ),
++    "udp_outer": Protocol(
++        name="udp_outer",
++        scapy_class=UDP,
++        pattern_name="udp",
++        fields=[],
++        default_values={"dport": 4789},
++    ),
++    # -------------------- VXLAN Tunnel Header --------------------
++    "vxlan": Protocol(
++        name="vxlan",
++        scapy_class=VXLAN,
++        pattern_name="vxlan",
++        fields=[
++            PatternField("vni", "vni", [42, 100]),
++        ],
++    ),
++    # -------------------- VXLAN Inner Protocols --------------------
++    "eth_inner": Protocol(
++        name="eth_inner",
++        scapy_class=Ether,
++        pattern_name="eth",
++        fields=[
++            PatternField("src", "src", ["02:00:00:00:00:00"]),
++            PatternField("dst", "dst", ["02:00:00:00:00:02"]),
++        ],
++    ),
++    "ipv4_inner": Protocol(
++        name="ipv4_inner",
++        scapy_class=IP,
++        pattern_name="ipv4",
++        fields=[
++            PatternField("src", "src", ["192.168.1.1"]),
++            PatternField("dst", "dst", ["192.168.1.2"]),
++        ],
++    ),
++    "ipv6_inner": Protocol(
++        name="ipv6_inner",
++        scapy_class=IPv6,
++        pattern_name="ipv6",
++        fields=[
++            PatternField("src", "src", ["2001:db8::1"]),
++            PatternField("dst", "dst", ["2001:db8::2"]),
++        ],
++    ),
++    "tcp_inner": Protocol(
++        name="tcp_inner",
++        scapy_class=TCP,
++        pattern_name="tcp",
++        fields=[
++            PatternField("sport", "src", [1234]),
++            PatternField("dport", "dst", [80]),
++        ],
++    ),
++    "udp_inner": Protocol(
++        name="udp_inner",
++        scapy_class=UDP,
++        pattern_name="udp",
++        fields=[
++            PatternField("sport", "src", [5000]),
++            PatternField("dport", "dst", [53]),
++        ],
++    ),
+ }
 
-Info: With the quote handling removed, the `want` buffer in
-of_device_is_compatible() is a straight copy of `compat` and is no longer
-needed - strcmp(s, compat) would do. Dropping it also removes 8 KB
-(BUFSIZ) of stack from a function that currently reserves about 20 KB
-across path[], buf[] and want[]. The rte_strscpy() return value is also
-unchecked, which becomes moot once the copy goes away.
 
-Info: The working pattern for a device-tree compatible is now to set
-.driver.alias directly in the rte_platform_driver initializer, because
-RTE_PMD_REGISTER_ALIAS stringifies its argument and cannot express a
-string containing a comma. That is a reasonable resolution, but nothing
-in bus_platform_driver.h says so, and the next driver author will
-reach for the macro first. A sentence in the comment above
-RTE_PMD_REGISTER_ALIAS would save someone the debugging session.
+@@ -234,6 +325,7 @@ class JumpTest:
+ }
 
-Info: imx_edma5_hw.h line 77 has a double blank line left where the
-CH_MATTR attribute macros were removed, and IMX_EDMA5_CH_MATTR (line 55)
-is now the only CH_MATTR definition remaining and has no user. Keeping a
-complete register-offset map is defensible.
+ PROTOCOL_STACKS = [
++    # -------------------- Non-tunnel stacks --------------------
+     [("eth", True)],
+     [("eth", False), ("ipv4", True)],
+     [("eth", False), ("ipv4", True), ("tcp", True)],
+@@ -253,6 +345,66 @@ class JumpTest:
+     [("eth", False), ("vlan", False), ("ipv6", True), ("tcp", True)],
+     [("eth", False), ("vlan", False), ("ipv6", True), ("udp", True)],
+     [("eth", False), ("arp", True)],
++    # -------------------- VXLAN tunnel stacks --------------------
++    [
++        ("eth_outer", False),
++        ("ipv4_outer", True),
++        ("udp_outer", False),
++        ("vxlan", True),
++        ("eth_inner", False),
++        ("ipv4_inner", False),
++    ],
++    [
++        ("eth_outer", False),
++        ("ipv4_outer", True),
++        ("udp_outer", False),
++        ("vxlan", True),
++        ("eth_inner", False),
++        ("ipv4_inner", False),
++        ("tcp_inner", False),
++    ],
++    [
++        ("eth_outer", False),
++        ("ipv4_outer", True),
++        ("udp_outer", False),
++        ("vxlan", True),
++        ("eth_inner", False),
++        ("ipv4_inner", False),
++        ("udp_inner", False),
++    ],
++    [
++        ("eth_outer", False),
++        ("ipv4_outer", True),
++        ("udp_outer", False),
++        ("vxlan", True),
++        ("eth_inner", False),
++        ("ipv6_inner", False),
++    ],
++    [
++        ("eth_outer", False),
++        ("ipv4_outer", True),
++        ("udp_outer", False),
++        ("vxlan", True),
++        ("eth_inner", False),
++        ("ipv6_inner", False),
++        ("tcp_inner", False),
++    ],
++    [
++        ("eth_outer", False),
++        ("ipv4_outer", True),
++        ("udp_outer", False),
++        ("vxlan", True),
++        ("eth_inner", False),
++        ("ipv6_inner", False),
++        ("udp_inner", False),
++    ],
++    [
++        ("eth_outer", False),
++        ("ipv4_outer", True),
++        ("udp_outer", False),
++        ("vxlan", True),
++        ("eth_inner", False),
++    ],
+ ]
 
-Info: The cover letter's "Patch breakdown" still lists [1/4] through
-[4/4] from v1; the series has been five patches since v2.
 
-The correctness issues from v1 and v2 - the unreachable probe, the broken
-alias, the missing DSB, the SUBMIT-flag semantics, the NBYTES truncation
-in both copy paths, the per-sub-transfer timeout, and the coherency
-contradiction - are all resolved and verified against the applied tree.
+@@ -304,6 +456,10 @@ def generate(
+     ) -> list[FlowTest]:
+         """Generate test cases for patterns matching fields across multiple protocols.
+
++        Pattern parts are assembled in stack order to preserve positional
++        correctness, which is required for tunnel encapsulations where
++        inner and outer layers share the same pattern_name.
++
+         Args:
+             protocol_stack: List of (protocol_name, test_fields) tuples.
+                 If test_fields is True, iterate through field combinations.
+@@ -316,15 +472,12 @@ def generate(
+             List of FlowTest objects ready for execution.
+         """
+         action_spec = self.actions[action_name]
+-
+-        wildcard_protocols = [name for name, test_fields in protocol_stack if not test_fields]
+-        field_test_protocols = [name for name, test_fields in protocol_stack if test_fields]
+         all_protocol_names = [name for name, _ in protocol_stack]
+-
+-        wildcard_pattern_parts = [self.protocols[name].pattern_name for name in wildcard_protocols]
++        field_test_protocols = [name for name, test_fields in protocol_stack if test_fields]
+
+         if not field_test_protocols:
+-            pattern = " / ".join(wildcard_pattern_parts)
++            pattern_parts = [self.protocols[name].pattern_name for name, _ in protocol_stack]
++            pattern = " / ".join(pattern_parts)
+             flow_rule = FlowRule(
+                 direction="ingress",
+                 pattern=[pattern],
+@@ -339,7 +492,7 @@ def generate(
+                     packet=packet,
+                     verification_type=action_spec.verification_type,
+                     verification_params=action_spec.build_verification_params(action_value),
+-                    description=" / ".join(wildcard_pattern_parts) + f" -> {action_spec.name}",
++                    description=pattern + f" -> {action_spec.name}",
+                 )
+             ]
+
+@@ -354,24 +507,32 @@ def generate(
+             max_vals = max(len(f_spec.test_parameters) for _, f_spec in field_combo)
+
+             for i in range(max_vals):
+-                field_pattern_parts = []
++                field_value_map: dict[str, tuple[Protocol, PatternField, Any]] = {}
+                 all_field_values: dict[str, dict[str, Any]] = {}
+-                desc_parts = []
+
+                 for protocol_spec, field_spec in field_combo:
+                     val = field_spec.test_parameters[i % len(field_spec.test_parameters)]
+-
+-                    field_pattern_parts.append(
+-                        f"{protocol_spec.pattern_name} {field_spec.pattern_field} is {val}"
+-                    )
++                    field_value_map[protocol_spec.name] = (protocol_spec, field_spec, val)
+
+                     if protocol_spec.name not in all_field_values:
+                         all_field_values[protocol_spec.name] = {}
+                     all_field_values[protocol_spec.name][field_spec.scapy_field] = val
+
+-                    desc_parts.append(f"{protocol_spec.name}[{field_spec.scapy_field}={val}]")
++                pattern_parts = []
++                desc_parts = []
++
++                for proto_name, test_fields in protocol_stack:
++                    proto_spec = self.protocols[proto_name]
++                    if test_fields and proto_name in field_value_map:
++                        _, f_spec, val = field_value_map[proto_name]
++                        pattern_parts.append(
++                            f"{proto_spec.pattern_name} {f_spec.pattern_field} is {val}"
++                        )
++                        desc_parts.append(f"{proto_spec.name}[{f_spec.scapy_field}={val}]")
++                    else:
++                        pattern_parts.append(proto_spec.pattern_name)
+
+-                full_pattern = " / ".join(wildcard_pattern_parts + field_pattern_parts)
++                full_pattern = " / ".join(pattern_parts)
+
+                 flow_rule = FlowRule(
+                     direction="ingress",
+@@ -384,10 +545,7 @@ def generate(
+                     all_protocol_names, all_field_values, add_payload=True
+                 )
+
+-                wildcard_desc = " / ".join(wildcard_pattern_parts)
+-                field_desc = " / ".join(desc_parts)
+-                full_desc = f"{wildcard_desc} / {field_desc}" if wildcard_desc else field_desc
+-
++                full_desc = " / ".join(desc_parts)
+                 test_cases.append(
+                     FlowTest(
+                         flow_rule=flow_rule,
+@@ -403,7 +561,7 @@ def generate(
+
+ @requires_nic_capability(NicCapability.FLOW_CTRL)
+ class TestFlowOffload(TestSuite):
+-    """Flow offload test suite.
++    """Flow Offload test suite.
+
+     This suite consists of 4 test cases:
+     1. Queue Action: Verifies queue actions with multi-protocol patterns
+--
+2.55.0
 
