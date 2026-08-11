@@ -2,70 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A300C5B56A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 17:04:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6686C5B56A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 17:12:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F2C7A4026F;
-	Tue, 11 Aug 2026 19:04:42 +0200 (CEST)
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com
- [209.85.160.171])
- by mails.dpdk.org (Postfix) with ESMTP id 68EED4021E
- for <dev@dpdk.org>; Tue, 11 Aug 2026 19:04:41 +0200 (CEST)
-Received: by mail-qt1-f171.google.com with SMTP id
- d75a77b69052e-52d58d7aad6so954441cf.2
- for <dev@dpdk.org>; Tue, 11 Aug 2026 10:04:41 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id C9F194026F;
+	Tue, 11 Aug 2026 19:12:46 +0200 (CEST)
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com
+ [209.85.222.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 28E734021E
+ for <dev@dpdk.org>; Tue, 11 Aug 2026 19:12:45 +0200 (CEST)
+Received: by mail-qk1-f178.google.com with SMTP id
+ af79cd13be357-92e6a434cabso10033485a.1
+ for <dev@dpdk.org>; Tue, 11 Aug 2026 10:12:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1786467881; x=1787072681; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=i8go8JxZxmWl2guyxhaPOQPZrEE/S6XV7mxeplDAM3Q=;
- b=cRH1/efjjJkWlqdz/9zRYlIrGs4B2nwGlAPmxwpDnoX7kxClaF8dyHgIIZp6C1BmIo
- 8oytxydEmyCRuSOBNBhMayu5Nb+wwb/7AAQSKlZ2OmFuEXbD+uUuNTn6e3hwLnW7eo4q
- nMt5IoFo9B5eSYRK1mOy48BURielVqrxSPDKc=
+ d=iol.unh.edu; s=unh-iol; t=1786468364; x=1787073164; darn=dpdk.org;
+ h=content-transfer-encoding:content-type:mime-version:message-id:date
+ :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=DqZ8R5zq+FGc9ivOET+ooPSj4hnRo6ojU2Ng/ahOQ5Q=;
+ b=BqWTdHplPaAsjkF44C9R9j8yvEMrG7wAwXM74sz/tM7TcvVp+/1+SoeCHe3suQtJPo
+ kc2p2Zp0IVzXUH1BBJLM6VCrsdH+ZzW3hPPx9vg330il47RgpZDCr3T5Rn4klN2S4a5o
+ W2YJkCJghgJd7+/wvMq0Ot2m2/SLIYrt9wqq0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786467881; x=1787072681;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=i8go8JxZxmWl2guyxhaPOQPZrEE/S6XV7mxeplDAM3Q=;
- b=KoTU2hHuWSDehMTTl/GKr8w/cF3VKtZN77AvIAypatzx5vWjanjFmJRiz3lOx7T9HO
- qOmb93t90mrqZGoD/8k+6JaI3LDkwYwFeIqmLsiPV5j5H+CtpqUMlfYqTTa4LXewB4HJ
- J3SJtBjDyyx1U3PgbAO+z5ucvoGEANGSnSvVoqlslpLOj5whllyLC1S8ZWS9COsaHqr/
- ghPMhAdWKKqof1t6YVEqBaYepdvaalPll8+rttoDkGq6+No2lXqGYkXFk3WEiWtAg00u
- Cc38A+gWeOg7EADYqueLz8C/0I4NqkqfG8txe2VijJNt9SQRquM51z+qdeYoHEq+auOT
- h8GA==
-X-Gm-Message-State: AOJu0YwRvQx8ouHhJ3mtxOjDfgubJ3YnPNipy1qgkJBTxMrrnPTFQmrN
- GAQpXauR5W2ghzxtmOGU0a7TRapxt9zig/APQs51Y6ACrxZx2TmokrmoudRRr5FollhtFly+eLp
- QA/7AY4ndk5xNNNe7utDr5HFwN9aVZuuRnlh+YSjXaoIMIvPJPtnSyeXw2i3HVExhG2mygJDQGA
- lesaYW8tOUKua/WuHDaFPvwJxF0to=
-X-Gm-Gg: AR+sD10mwaYEpl83uhNjSXvy43YYwGF4iYwwWFtOUcKcHj1M7lVkB2bRg63vpW2d4NS
- 80edW1lR50sdfG9HHZ7VBOP9HnhZm+fOhIeHxGdK06c6mwIDw+qnzam37pt0DFXf6HfKBe35Xlk
- K+da3zzDKhZ/QzPk1qMWAUBk11/vdtm4ETCOFrzH6dj7ZwOcrk6kxu5cZHBL5N/SFE1IZh9y/uj
- VnHrPeLAwVai+za6eDNiwfW2p0+TYa6pqhM36O+FiUPIo2HO6oM+2/M2AJ+MrzWu9wUS2ueTNdr
- sbtUtbxFuMA07hFhNPL4tiEyBFIYY6D0n2PiotGf3ehYHIuwxkL6jkGTrCRq7zVnDqS9QazExHL
- h+gxPzPLc04X6w7f9Gqk8RYN8Tz494Ch/sRLxhnpDrtLARR42BEhoVoHNjqdmailkih8LHn3o/3
- g9NxeX4MVHILIX8dbSOKepndX7kKZNvC0tym74drZ5QaIldCeWWZnaBK6ArJp631mJJyy+JwL3N
- ObaqEGFZqhek/xx
-X-Received: by 2002:a05:622a:2281:b0:51c:b6d:740b with SMTP id
- d75a77b69052e-52d6024a01cmr18739171cf.34.1786467880571; 
- Tue, 11 Aug 2026 10:04:40 -0700 (PDT)
+ d=1e100.net; s=20251104; t=1786468364; x=1787073164;
+ h=content-transfer-encoding:content-type:mime-version:message-id:date
+ :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=DqZ8R5zq+FGc9ivOET+ooPSj4hnRo6ojU2Ng/ahOQ5Q=;
+ b=c3gSVGxjCwg+HnG4EzU77mPjpAYCvWj3GZ2ERtL/Wc6ttYKxdgpz7tKiQS61dQSbwM
+ 9WHp+aWs2aBub1wAL4u8ay3CSMtm0qhySKD/9Kc8kCMpTsWo0KdwljFJRuWEpgnZH1ch
+ 7bBz+KqOUhbDv2XIEHVeFoPKfUL/xEHbNab7dqs5wRTYb1JTnZZQLu9LesPy5Kg9qBpd
+ mO5l7uAvrVeuJVIxb1VGaGBdt40rB+BkFDODbaK77w4ftPImfy8dQBnw4dhG+NGt9l6M
+ yGOloazjbPP1j7K6R2u2Irjph/J5rfewz1sRmG4vqEFT7+VFRGq6dUJeEonLGXw3vYSY
+ /XQg==
+X-Gm-Message-State: AOJu0YxbsUgHt5Nuav86NvvQzW2EEhALPPRGJVNDFuz5VP9uqVG+Mlxd
+ rPLAfCU/0QBpKZV0eOcoZUjN8yPA+2yksTHX4M0enIozsfgGjRvrLPAelRX4tWmat5JP5fUR73+
+ ICHpDs3nFsVD+dX28+tYkYc4iKS+r8KM2WkNrNZnN+fK10hAP+JHdDZspBfha8sMTHMcvr1w3tj
+ 4vnCiIvtTEo+bTYMeSpXZsuxB4SSo=
+X-Gm-Gg: AR+sD123rMigSZ4fW4JeUbBnzOq6RJKwcceaNz1G4id61sjSiYyCAT7o9MZksgT+/uQ
+ T6EIj8en9Bqoiw4Axoj8y0ydOsJJ7cB/TYlRbDuXRDuDy0ySmcSpPNVul+TBO/bt4tHKAtX0c5p
+ qHB8QQdX5FrDsjssn4qvjm3T/N2wdIPp3ArhqxzobN3rzKoVWqEd1tjTpDvDv4sNtHXZWsh5KRK
+ p0wb0Ku+O4hfOuXQ3pTegbMlOl0tdIrcZ5pFF+Sq3YSppf5jZrKLLd//priNZlQSwanuMGei0tn
+ WjYnx3f9IGOkhagIKYW8TlxStSxY8I0xHMM7ZXCP5+z78AhkDnaXsjYSwRSrzajXE3eXFPzUkF7
+ Cw5S6e6yDwAvc47t9LsU40BvohO4zL5qAjkCyM3r6cuXlN8NUPtNfA0E3pmVh5ZSeKJwdB218yZ
+ LzC6Lt0Ws8qVuZ/RW04hF9dfbmX106qz2joJV6VYYbuPXGYaeTNCfiOMxjogcrEe9RnQq/O+IOF
+ 4HBDDiLpmU=
+X-Received: by 2002:a05:620a:3707:b0:915:e9c3:f1a0 with SMTP id
+ af79cd13be357-936a8ec2b5fmr443518185a.12.1786468364202; 
+ Tue, 11 Aug 2026 10:12:44 -0700 (PDT)
 Received: from d121029.iol.unh.edu ([2606:4100:3880:1210::219])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-90a6c2cf030sm3399446d6.22.2026.08.11.10.04.39
+ af79cd13be357-936a8472b1fsm151124685a.7.2026.08.11.10.12.43
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 11 Aug 2026 10:04:39 -0700 (PDT)
+ Tue, 11 Aug 2026 10:12:43 -0700 (PDT)
 From: Andrew Bailey <abailey@iol.unh.edu>
 To: dev@dpdk.org,
 	luca.vizzarro@arm.com,
 	patrickrobb1997@gmail.com
 Cc: knimoji@iol.unh.edu, lylavoie@iol.unh.edu, dladd@iol.unh.edu,
- Andrew Bailey <abailey@iol.unh.edu>, Dean Marx <dmarx@iol.unh.edu>,
- Patrick Robb <probb@iol.unh.edu>
-Subject: [PATCH v7] dts: refactor flow suite with generator pattern
-Date: Tue, 11 Aug 2026 13:04:33 -0400
-Message-ID: <20260811170433.517663-1-abailey@iol.unh.edu>
+ Dean Marx <dmarx@iol.unh.edu>, Andrew Bailey <abailey@iol.unh.edu>
+Subject: [PATCH v1] dts: add PVVP case to virtio suite
+Date: Tue, 11 Aug 2026 13:12:30 -0400
+Message-ID: <20260811171235.519323-1-abailey@iol.unh.edu>
 X-Mailer: git-send-email 2.55.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -80,345 +80,132 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Refactor current flow test suite to utilize a generator
-method, which dynamically creates flow rules from a
-dictionary of pattern and action fields during runtime.
-This allows for much more extensive testing of the flow
-API without exponential code growth.
+From: Dean Marx <dmarx@iol.unh.edu>
 
-Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+Add an additional test case to the virtio_fwd suite which
+tests packet forwarding across a physical-virtual-virtual-physical
+topology.
+
 Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
-Reviewed-by: Patrick Robb <probb@iol.unh.edu>
+Reviewed-by: Andrew Bailey <abailey@iol.unh.edu>
 ---
+ dts/tests/TestSuite_virtio_forward.py | 99 +++++++++++++++++++++++++++
+ 1 file changed, 99 insertions(+)
 
-v7:
- * Resolve merge conflicts.
- dts/tests/TestSuite_flow_offload.py | 206 ++++++++++++++++++++++++----
- 1 file changed, 182 insertions(+), 24 deletions(-)
-
-diff --git a/dts/tests/TestSuite_flow_offload.py b/dts/tests/TestSuite_flow_offload.py
-index be11d09875..d1a6c2fa74 100644
---- a/dts/tests/TestSuite_flow_offload.py
-+++ b/dts/tests/TestSuite_flow_offload.py
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: BSD-3-Clause
- # Copyright(c) 2025 University of New Hampshire
-
--"""RTE Flow testing suite.
-+"""Flow offload testing suite.
-
- This suite verifies a range of flow rules built using patterns
- and actions from the RTE Flow API. It would be impossible to cover
-@@ -10,7 +10,7 @@
-
+diff --git a/dts/tests/TestSuite_virtio_forward.py b/dts/tests/TestSuite_virtio_forward.py
+index 6efaa4e156..3f165e9ae0 100644
+--- a/dts/tests/TestSuite_virtio_forward.py
++++ b/dts/tests/TestSuite_virtio_forward.py
+@@ -6,6 +6,8 @@
+ Verify vhost/virtio pvp and fully virtual functionalities.
  """
-
--from dataclasses import dataclass
-+from dataclasses import dataclass, field
- from itertools import product
- from typing import Any, Callable, Optional
-
-@@ -18,6 +18,7 @@
- from scapy.layers.inet6 import IPv6
- from scapy.layers.l2 import ARP, Dot1Q, Ether
- from scapy.layers.sctp import SCTP
-+from scapy.layers.vxlan import VXLAN
- from scapy.packet import Packet, Raw
-
- from api.capabilities import NicCapability, requires_nic_capability
-@@ -50,10 +51,16 @@ class Protocol:
-     scapy_class: type[Packet]
-     pattern_name: str
-     fields: list[PatternField]
-+    default_values: dict[str, Any] = field(default_factory=dict)
-
-     def build_scapy_layer(self, field_values: dict[str, Any]) -> Packet:
--        """Construct a Scapy layer with the given field values."""
--        return self.scapy_class(**field_values)
-+        """Construct a Scapy layer with the given field values.
+ 
++from pathlib import PurePath
 +
-+        Default values are applied first, then overridden by any
-+        explicit field values so test parameters always win.
+ from scapy.layers.inet import IP
+ from scapy.layers.l2 import Ether
+ 
+@@ -195,3 +197,100 @@ def pvp_loop(self) -> None:
+                     f"PVP loop forwarding verification failed: vhost interface RX={rx_packets},"
+                     f" TX={tx_packets} (expected ≥100 each).",
+                 )
++
++    @requires(topology_type=LinkTopology.ONE_LINK)
++    @func_test
++    def pvvp_loop(self) -> None:
++        """Test vhost/virtio physical-virtual-virtual-physical topology.
++
++        Steps:
++            * Create directory for vhost-user socket files.
++            * Launch primary testpmd session with physical NICs and two virtio-user
++                vdevs connected to vhost-user sockets in server mode.
++            * Launch first vhost testpmd session with vhost vdev connected to the
++                first vhost-user socket as client.
++            * Launch second vhost testpmd session with vhost vdev connected to the
++                second vhost-user socket as client.
++            * Configure port forwarding order in primary session to chain physical
++                port through both virtual devices.
++            * Start packet forwarding on all three testpmd sessions.
++            * Send 100 packets to the physical interface from external tester.
++
++        Verify:
++            * Both vhost sessions receive/forward 100+ packets each.
 +        """
-+        merged = {**self.default_values, **field_values}
-+        return self.scapy_class(**merged)
-
-
- @dataclass
-@@ -125,6 +132,7 @@ class JumpTest:
-
-
- PROTOCOLS: dict[str, Protocol] = {
-+    # -------------------- Base Protocols --------------------
-     "eth": Protocol(
-         name="eth",
-         scapy_class=Ether,
-@@ -215,6 +223,89 @@ class JumpTest:
-             PatternField("op", "opcode", [1, 2]),
-         ],
-     ),
-+    # -------------------- VXLAN Outer Protocols --------------------
-+    "eth_outer": Protocol(
-+        name="eth_outer",
-+        scapy_class=Ether,
-+        pattern_name="eth",
-+        fields=[
-+            PatternField("src", "src", ["02:00:00:00:00:00"]),
-+            PatternField("dst", "dst", ["02:00:00:00:00:02"]),
-+        ],
-+    ),
-+    "ipv4_outer": Protocol(
-+        name="ipv4_outer",
-+        scapy_class=IP,
-+        pattern_name="ipv4",
-+        fields=[
-+            PatternField("src", "src", ["10.0.0.1"]),
-+            PatternField("dst", "dst", ["10.0.0.2"]),
-+            PatternField("ttl", "ttl", [64, 128]),
-+            PatternField("tos", "tos", [0, 4]),
-+        ],
-+    ),
-+    "udp_outer": Protocol(
-+        name="udp_outer",
-+        scapy_class=UDP,
-+        pattern_name="udp",
-+        fields=[],
-+        default_values={"dport": 4789},
-+    ),
-+    # -------------------- VXLAN Tunnel Header --------------------
-+    "vxlan": Protocol(
-+        name="vxlan",
-+        scapy_class=VXLAN,
-+        pattern_name="vxlan",
-+        fields=[
-+            PatternField("vni", "vni", [42, 100]),
-+        ],
-+    ),
-+    # -------------------- VXLAN Inner Protocols --------------------
-+    "eth_inner": Protocol(
-+        name="eth_inner",
-+        scapy_class=Ether,
-+        pattern_name="eth",
-+        fields=[
-+            PatternField("src", "src", ["02:00:00:00:00:00"]),
-+            PatternField("dst", "dst", ["02:00:00:00:00:02"]),
-+        ],
-+    ),
-+    "ipv4_inner": Protocol(
-+        name="ipv4_inner",
-+        scapy_class=IP,
-+        pattern_name="ipv4",
-+        fields=[
-+            PatternField("src", "src", ["192.168.1.1"]),
-+            PatternField("dst", "dst", ["192.168.1.2"]),
-+        ],
-+    ),
-+    "ipv6_inner": Protocol(
-+        name="ipv6_inner",
-+        scapy_class=IPv6,
-+        pattern_name="ipv6",
-+        fields=[
-+            PatternField("src", "src", ["2001:db8::1"]),
-+            PatternField("dst", "dst", ["2001:db8::2"]),
-+        ],
-+    ),
-+    "tcp_inner": Protocol(
-+        name="tcp_inner",
-+        scapy_class=TCP,
-+        pattern_name="tcp",
-+        fields=[
-+            PatternField("sport", "src", [1234]),
-+            PatternField("dport", "dst", [80]),
-+        ],
-+    ),
-+    "udp_inner": Protocol(
-+        name="udp_inner",
-+        scapy_class=UDP,
-+        pattern_name="udp",
-+        fields=[
-+            PatternField("sport", "src", [5000]),
-+            PatternField("dport", "dst", [53]),
-+        ],
-+    ),
- }
-
-
-@@ -234,6 +325,7 @@ class JumpTest:
- }
-
- PROTOCOL_STACKS = [
-+    # -------------------- Non-tunnel stacks --------------------
-     [("eth", True)],
-     [("eth", False), ("ipv4", True)],
-     [("eth", False), ("ipv4", True), ("tcp", True)],
-@@ -253,6 +345,66 @@ class JumpTest:
-     [("eth", False), ("vlan", False), ("ipv6", True), ("tcp", True)],
-     [("eth", False), ("vlan", False), ("ipv6", True), ("udp", True)],
-     [("eth", False), ("arp", True)],
-+    # -------------------- VXLAN tunnel stacks --------------------
-+    [
-+        ("eth_outer", False),
-+        ("ipv4_outer", True),
-+        ("udp_outer", False),
-+        ("vxlan", True),
-+        ("eth_inner", False),
-+        ("ipv4_inner", False),
-+    ],
-+    [
-+        ("eth_outer", False),
-+        ("ipv4_outer", True),
-+        ("udp_outer", False),
-+        ("vxlan", True),
-+        ("eth_inner", False),
-+        ("ipv4_inner", False),
-+        ("tcp_inner", False),
-+    ],
-+    [
-+        ("eth_outer", False),
-+        ("ipv4_outer", True),
-+        ("udp_outer", False),
-+        ("vxlan", True),
-+        ("eth_inner", False),
-+        ("ipv4_inner", False),
-+        ("udp_inner", False),
-+    ],
-+    [
-+        ("eth_outer", False),
-+        ("ipv4_outer", True),
-+        ("udp_outer", False),
-+        ("vxlan", True),
-+        ("eth_inner", False),
-+        ("ipv6_inner", False),
-+    ],
-+    [
-+        ("eth_outer", False),
-+        ("ipv4_outer", True),
-+        ("udp_outer", False),
-+        ("vxlan", True),
-+        ("eth_inner", False),
-+        ("ipv6_inner", False),
-+        ("tcp_inner", False),
-+    ],
-+    [
-+        ("eth_outer", False),
-+        ("ipv4_outer", True),
-+        ("udp_outer", False),
-+        ("vxlan", True),
-+        ("eth_inner", False),
-+        ("ipv6_inner", False),
-+        ("udp_inner", False),
-+    ],
-+    [
-+        ("eth_outer", False),
-+        ("ipv4_outer", True),
-+        ("udp_outer", False),
-+        ("vxlan", True),
-+        ("eth_inner", False),
-+    ],
- ]
-
-
-@@ -304,6 +456,10 @@ def generate(
-     ) -> list[FlowTest]:
-         """Generate test cases for patterns matching fields across multiple protocols.
-
-+        Pattern parts are assembled in stack order to preserve positional
-+        correctness, which is required for tunnel encapsulations where
-+        inner and outer layers share the same pattern_name.
++        self.sut_node = self._ctx.sut_node
++        if not isinstance(self.sut_node.main_session, LinuxSession):
++            verify(False, "Must be running on a Linux environment.")
++        self.sut_node.main_session.remove_remote_dir("/tmp/vhost-sockets")
++        self.sut_node.main_session.create_directory(PurePath("/tmp/vhost-sockets"))
++        with (
++            TestPmd(
++                prefix="vhost1",
++                vdevs=[
++                    VirtualDevice("net_vhost0,iface=/tmp/vhost-sockets/vhost0,queues=1,client=1")
++                ],
++                no_pci=True,
++            ) as vhost1,
++            TestPmd(
++                prefix="vhost2",
++                vdevs=[
++                    VirtualDevice("net_vhost1,iface=/tmp/vhost-sockets/vhost1,queues=1,client=1")
++                ],
++                no_pci=True,
++            ) as vhost2,
++            TestPmd(
++                prefix="virtio",
++                vdevs=[
++                    VirtualDevice(
++                        "net_virtio_user0,mac=00:00:00:00:00:01,path=/tmp/vhost-sockets/vhost0,queues=1,queue_size=1024,server=1"
++                    ),
++                    VirtualDevice(
++                        "net_virtio_user1,mac=00:00:00:00:00:02,path=/tmp/vhost-sockets/vhost1,queues=1,queue_size=1024,server=1"
++                    ),
++                ],
++                port_topology=PortTopology.chained,
++            ) as virtio,
++        ):
++            virtio.set_forward_mode(SimpleForwardingModes.mac)
++            vhost1.set_forward_mode(SimpleForwardingModes.mac)
++            vhost2.set_forward_mode(SimpleForwardingModes.mac)
 +
-         Args:
-             protocol_stack: List of (protocol_name, test_fields) tuples.
-                 If test_fields is True, iterate through field combinations.
-@@ -316,15 +472,12 @@ def generate(
-             List of FlowTest objects ready for execution.
-         """
-         action_spec = self.actions[action_name]
--
--        wildcard_protocols = [name for name, test_fields in protocol_stack if not test_fields]
--        field_test_protocols = [name for name, test_fields in protocol_stack if test_fields]
-         all_protocol_names = [name for name, _ in protocol_stack]
--
--        wildcard_pattern_parts = [self.protocols[name].pattern_name for name in wildcard_protocols]
-+        field_test_protocols = [name for name, test_fields in protocol_stack if test_fields]
-
-         if not field_test_protocols:
--            pattern = " / ".join(wildcard_pattern_parts)
-+            pattern_parts = [self.protocols[name].pattern_name for name, _ in protocol_stack]
-+            pattern = " / ".join(pattern_parts)
-             flow_rule = FlowRule(
-                 direction="ingress",
-                 pattern=[pattern],
-@@ -339,7 +492,7 @@ def generate(
-                     packet=packet,
-                     verification_type=action_spec.verification_type,
-                     verification_params=action_spec.build_verification_params(action_value),
--                    description=" / ".join(wildcard_pattern_parts) + f" -> {action_spec.name}",
-+                    description=pattern + f" -> {action_spec.name}",
-                 )
-             ]
-
-@@ -354,24 +507,32 @@ def generate(
-             max_vals = max(len(f_spec.test_parameters) for _, f_spec in field_combo)
-
-             for i in range(max_vals):
--                field_pattern_parts = []
-+                field_value_map: dict[str, tuple[Protocol, PatternField, Any]] = {}
-                 all_field_values: dict[str, dict[str, Any]] = {}
--                desc_parts = []
-
-                 for protocol_spec, field_spec in field_combo:
-                     val = field_spec.test_parameters[i % len(field_spec.test_parameters)]
--
--                    field_pattern_parts.append(
--                        f"{protocol_spec.pattern_name} {field_spec.pattern_field} is {val}"
--                    )
-+                    field_value_map[protocol_spec.name] = (protocol_spec, field_spec, val)
-
-                     if protocol_spec.name not in all_field_values:
-                         all_field_values[protocol_spec.name] = {}
-                     all_field_values[protocol_spec.name][field_spec.scapy_field] = val
-
--                    desc_parts.append(f"{protocol_spec.name}[{field_spec.scapy_field}={val}]")
-+                pattern_parts = []
-+                desc_parts = []
++            portlist_order = [0, 2, 3, 1] if len(virtio.ports) == 4 else [0, 2, 1]
++            virtio.set_portlist(order=portlist_order)
 +
-+                for proto_name, test_fields in protocol_stack:
-+                    proto_spec = self.protocols[proto_name]
-+                    if test_fields and proto_name in field_value_map:
-+                        _, f_spec, val = field_value_map[proto_name]
-+                        pattern_parts.append(
-+                            f"{proto_spec.pattern_name} {f_spec.pattern_field} is {val}"
-+                        )
-+                        desc_parts.append(f"{proto_spec.name}[{f_spec.scapy_field}={val}]")
-+                    else:
-+                        pattern_parts.append(proto_spec.pattern_name)
-
--                full_pattern = " / ".join(wildcard_pattern_parts + field_pattern_parts)
-+                full_pattern = " / ".join(pattern_parts)
-
-                 flow_rule = FlowRule(
-                     direction="ingress",
-@@ -384,10 +545,7 @@ def generate(
-                     all_protocol_names, all_field_values, add_payload=True
-                 )
-
--                wildcard_desc = " / ".join(wildcard_pattern_parts)
--                field_desc = " / ".join(desc_parts)
--                full_desc = f"{wildcard_desc} / {field_desc}" if wildcard_desc else field_desc
--
-+                full_desc = " / ".join(desc_parts)
-                 test_cases.append(
-                     FlowTest(
-                         flow_rule=flow_rule,
-@@ -403,7 +561,7 @@ def generate(
-
- @requires_nic_capability(NicCapability.FLOW_CTRL)
- class TestFlowOffload(TestSuite):
--    """Flow offload test suite.
-+    """Flow Offload test suite.
-
-     This suite consists of 4 test cases:
-     1. Queue Action: Verifies queue actions with multi-protocol patterns
---
++            virtio.start()
++            vhost1.start()
++            vhost2.start()
++
++            packet = Ether() / IP()
++            packets = [packet] * 100
++            send_packets_and_capture(packets)
++
++            vhost1.stop()
++            vhost2.stop()
++            virtio.stop()
++
++            vhost1_forwarding_stats, vhost1_raw_output = vhost1.show_port_stats_all()
++            vhost2_forwarding_stats, vhost2_raw_output = vhost2.show_port_stats_all()
++
++            rx_packets_vhost1 = vhost1_forwarding_stats[0].rx_packets
++            tx_packets_vhost1 = vhost1_forwarding_stats[0].tx_packets
++
++            rx_packets_vhost2 = vhost2_forwarding_stats[0].rx_packets
++            tx_packets_vhost2 = vhost2_forwarding_stats[0].tx_packets
++
++            log(f"Vhost1 forwarding statistics:\n{vhost1_raw_output}")
++            log(f"Vhost2 forwarding statistics:\n{vhost2_raw_output}")
++
++            verify(
++                rx_packets_vhost1 >= 100 and tx_packets_vhost1 >= 100,
++                f"PVP loop forwarding verification failed: vhost1 interface RX={rx_packets_vhost1},"
++                f" TX={tx_packets_vhost1} (expected ≥100 each).",
++            )
++
++            verify(
++                rx_packets_vhost2 >= 100 and tx_packets_vhost2 >= 100,
++                f"PVP loop forwarding verification failed: vhost2 interface RX={rx_packets_vhost2},"
++                f" TX={tx_packets_vhost2} (expected ≥100 each).",
++            )
+-- 
 2.55.0
 
