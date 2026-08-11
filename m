@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23457C5B572
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 17:51:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8F0DC5B572
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 17:51:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5A5AD427E2;
-	Tue, 11 Aug 2026 19:50:35 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 555DE42C24;
+	Tue, 11 Aug 2026 19:50:36 +0200 (CEST)
 Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id 4F349427DC
- for <dev@dpdk.org>; Tue, 11 Aug 2026 19:50:31 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 1782E427B2
+ for <dev@dpdk.org>; Tue, 11 Aug 2026 19:50:32 +0200 (CEST)
 Received: from localhost.localdomain (unknown [78.109.70.194])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id 98FA9E054D;
- Tue, 11 Aug 2026 21:50:30 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 98FA9E054D
+ by agw.arknetworks.am (Postfix) with ESMTPSA id 6196CE0EC6;
+ Tue, 11 Aug 2026 21:50:31 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 6196CE0EC6
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
  s=default; t=1786470631;
- bh=xtS89p3xu+Mgjzuw1PxaotzpkTAF6WrGK1MNOgxlLpM=;
+ bh=D8tJ3Ix/aWjFMepSkBtLtZTXJeHr2TIx6KQSvqXEg8M=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=G1rAkbgzI/taAd19DIkOtyRRncuCNzG/gzKnUC/VQJW/2Kn9fYaw0pn3q5p1Cf++d
- dC4yKVqpdrQSywkCwmA4UbpYUsFhb1/P0IyqMZlu2M0UH1i+2l+ZWOF9AZwjF75Af8
- SY5oFruhuVBsWDIjtYUo691tPYfYaDXqoSQV17+RaMRrZKJvbiS5YPurlHQTO7Zkyt
- 3zQHT8Mdib7yxj3/5N3a0nuSyrKxSnYrJkfdWGJjGyz8a6mP+sZDo5mCnruIUAaS/h
- hQ5Zlf9oHmnvmwJCvEIxdcZs4ArkE7fEQ6zWljxpxUuP3Ldd/OyyBkBADOLzg2d4rt
- DnUCTajDLFX8w==
+ b=zDXusQGo7wfUHqR6xgaLpduKAT4cBEZ/PTxSjZJrHA4DlJy8HoLEfOZ/opZfk+IX8
+ zgBaUyEHCCAwmIfGQMZy3EV4NngSBKu9GRVwjIzPWMo1ayplpditD0Yf7FIOFYZafw
+ L9ydnGAxT0foLqHfENZIEiJuRA/oB6fQcAo/9KH2rBZAPnkV/83o575cBCAkXl6atD
+ eCoWLNWf/AsTqUUoQiwRuPSicUj1WxIxrQlbX4FF3XF9+O16HUxF1Zi+O0VntS0wh1
+ Gr9lbZnFMwuYspID2DySgmdQrXp4YrSpGBylLEoVZvXBv6k99sRqSuc+f2NveQ+O/G
+ NyJCeN1QgsBZQ==
 From: Ivan Malov <ivan.malov@arknetworks.am>
 To: dev@dpdk.org
 Cc: Andy Moreton <andy.moreton@amd.com>,
@@ -35,10 +35,10 @@ Cc: Andy Moreton <andy.moreton@amd.com>,
  Pieter Jansen van Vuuren <pieter.jansen-van-vuuren@amd.com>,
  Stephen Hemminger <stephen@networkplumber.org>,
  Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: [PATCH 5/6] common/sfc_efx/base: deny periodic MAC stats delivery to
- VFs
-Date: Tue, 11 Aug 2026 21:50:24 +0400
-Message-ID: <20260811175025.9019-6-ivan.malov@arknetworks.am>
+Subject: [PATCH 6/6] doc: announce VF support of AMD Solarflare X45xx family
+ NICs
+Date: Tue, 11 Aug 2026 21:50:25 +0400
+Message-ID: <20260811175025.9019-7-ivan.malov@arknetworks.am>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260811175025.9019-1-ivan.malov@arknetworks.am>
 References: <20260811175025.9019-1-ivan.malov@arknetworks.am>
@@ -57,54 +57,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, requesting periodic DMA results in an EACCES error being
-returned, but the DPDK driver expects ENOTSUP to handle the
-situation gracefully. Implement proper error indication.
+The Solarflare PMD has been updated to support VADAPTER statistics and to
+let the user attach to the X4 VFs (created by the PF that is attached
+either to the DPDK application or to the Solarflare Linux net driver).
 
 Signed-off-by: Ivan Malov <ivan.malov@arknetworks.am>
-Reviewed-by: Andy Moreton <andy.moreton@amd.com>
+Reviewed-by: Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>
 ---
- drivers/common/sfc_efx/base/efx_np.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+ doc/guides/rel_notes/release_26_11.rst | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/common/sfc_efx/base/efx_np.c b/drivers/common/sfc_efx/base/efx_np.c
-index 6d9c62fcda..dafb1dfee6 100644
---- a/drivers/common/sfc_efx/base/efx_np.c
-+++ b/drivers/common/sfc_efx/base/efx_np.c
-@@ -1724,16 +1724,32 @@ efx_np_mac_stats(
- 	efx_mcdi_execute(enp, &req);
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index c8cc86295d..a4a8a67d8c 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -55,6 +55,10 @@ New Features
+      Also, make sure to start the actual text at the margin.
+      =======================================================
  
- 	if (req.emr_rc != 0) {
-+		const efx_nic_cfg_t *encp = &enp->en_nic_cfg;
++* **Updated Solarflare network driver.**
 +
-+		if (req.emr_rc == EACCES && (enable | events) &&
-+		    EFX_PCI_FUNCTION_IS_VF(encp)) {
-+			/*
-+			 * VFs cannot request periodic DMAing of statistics.
-+			 * Indicate 'ENOTSUP' for the DPDK driver to handle
-+			 * this gracefully and stick with one-time uploads.
-+			 */
-+			rc = ENOTSUP;
-+			goto fail3;
-+		}
++  * Added VF support on AMD Solarflare X45xx adapters.
 +
- 		/* EF10: Expect ENOENT if no DMA queues are initialised */
- 		if ((req.emr_rc != ENOENT) ||
- 		    (enp->en_rx_qcount + enp->en_tx_qcount != 0)) {
- 			rc = req.emr_rc;
--			goto fail3;
-+			goto fail4;
- 		}
- 	}
  
- 	return (0);
- 
-+fail4:
-+	EFSYS_PROBE(fail4);
-+
- fail3:
- 	EFSYS_PROBE(fail3);
- 
+ Removed Items
+ -------------
 -- 
 2.47.3
 
