@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57F3EC5B56A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 17:50:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43425C5B56A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 17:50:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7FFA2427AA;
-	Tue, 11 Aug 2026 19:49:19 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C1C9B427BB;
+	Tue, 11 Aug 2026 19:49:20 +0200 (CEST)
 Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id 220C04114B;
+ by mails.dpdk.org (Postfix) with ESMTP id EFFE14278E;
  Tue, 11 Aug 2026 19:49:17 +0200 (CEST)
 Received: from localhost.localdomain (unknown [78.109.70.194])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id 54E48E0CCB;
- Tue, 11 Aug 2026 21:49:16 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 54E48E0CCB
+ by agw.arknetworks.am (Postfix) with ESMTPSA id 34934E0EC6;
+ Tue, 11 Aug 2026 21:49:17 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 34934E0EC6
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
  s=default; t=1786470557;
- bh=HKaCMR3mbXKqaUh97rZuqLcF1/YJpAfr1S3hV9qcoVA=;
+ bh=02F/amhGFNd1QVNgM8aAbOhkYLDU9M8dGK89Szd7K38=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=3ObYou/tfJ9IxpV2hcmHoyatv2nMxRT6P/O8oFc6nR4SoDiAcf5ejmtFOp6GNCI+8
- maEdavBTec5HzkYux3AdZVFvKxEe3yEVdbPPq85CesWQCGZEVtk8oXRXXPy68b3+8P
- UpKIFRyUHYOooLcPguLb7t2i3GwOuAePEG+IR6CMvGDyfo4BmZvLbjwhwzDalWe5pw
- ktmjPYpzh2x+KdvGLAcDnx9w38plUkiamqiA5rYVx5z+NsQC6kMRBRMd4a0rZaQWHE
- emY/dLZw8b5WhmjRAIV1x5rB37Lai4yn8n4QzCyj5egeNHzMVXhfa1HRFHtanhDEZV
- Kzqgf3t3mRL3g==
+ b=yfdKMSOwFUfnbeM+6D2Hzja5PlMvaZs7IH+TXBVBn54ylcbchGfN2dKzjlyYww0ck
+ DqqMWMYaC4/23cv0A4Do/TEiRWVeJco35pNRZWGz/KqBHC31AhEqo6HDDXWMC6Q+xv
+ 5mgFEw2u43XslxkZfowy9nFsoQJaLzod7qWt5rRgX0G3kIa/e9JIedxVfMfRvTcxYL
+ YIe2BsMWCDMy1rBeUf4Z3tvhIsw0G6J7nWLVmqi3MWeCCaPTLhQ1ldiHj7g8O1I8jS
+ rsHZUlhHmEGbfcuNizeR67tIC0lHFBrSpORX2GMq62eNpBYoCfIWHmi/WNa6JMm12A
+ LYLp21qL/CnQg==
 From: Ivan Malov <ivan.malov@arknetworks.am>
 To: dev@dpdk.org
 Cc: Andy Moreton <andy.moreton@amd.com>,
@@ -35,10 +35,10 @@ Cc: Andy Moreton <andy.moreton@amd.com>,
  Pieter Jansen van Vuuren <pieter.jansen-van-vuuren@amd.com>,
  Stephen Hemminger <stephen@networkplumber.org>,
  Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, stable@dpdk.org
-Subject: [PATCH 2/3] net/sfc: drop wrong static qualifier from iterator
- variable
-Date: Tue, 11 Aug 2026 21:49:12 +0400
-Message-ID: <20260811174913.8961-3-ivan.malov@arknetworks.am>
+Subject: [PATCH 3/3] common/sfc_efx/base: fix reading advertised autoneg
+ ability
+Date: Tue, 11 Aug 2026 21:49:13 +0400
+Message-ID: <20260811174913.8961-4-ivan.malov@arknetworks.am>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260811174913.8961-1-ivan.malov@arknetworks.am>
 References: <20260811174913.8961-1-ivan.malov@arknetworks.am>
@@ -57,32 +57,82 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Obviously, this should be per interface state.
-Static wrongly turns it into global state.
+The issue is that when the user disables auto-negotiation by removing
+the capability bit from the 'advertised mask' (set method) and then
+reads the resulting capabilities, which involves querying MCDI, the
+bit reappears in the mask irrespective of the user's intent.
 
-Fixes: 6da67e706dc9 ("net/sfc: rework flow action RSS support")
+Fix this by remembering the user's intent before any link-state queries.
+
+Fixes: 2a5cf77e6de8 ("common/sfc_efx/base: provide PHY link get method on Medford4")
+Fixes: 06f569de6c06 ("common/sfc_efx/base: decode netport link state on probe path")
 Cc: stable@dpdk.org
 
+Suggested-by: Andy Moreton <andy.moreton@amd.com>
 Signed-off-by: Ivan Malov <ivan.malov@arknetworks.am>
 Reviewed-by: Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>
 Reviewed-by: Andy Moreton <andy.moreton@amd.com>
 ---
- drivers/net/sfc/sfc_flow_rss.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/common/sfc_efx/base/efx_np.c       | 11 +++++------
+ drivers/common/sfc_efx/base/medford4_phy.c |  6 +++++-
+ 2 files changed, 10 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/sfc/sfc_flow_rss.c b/drivers/net/sfc/sfc_flow_rss.c
-index 8e2749833b..f19d6f00c5 100644
---- a/drivers/net/sfc/sfc_flow_rss.c
-+++ b/drivers/net/sfc/sfc_flow_rss.c
-@@ -202,7 +202,7 @@ sfc_flow_rss_ctx_reuse(struct sfc_adapter *sa,
- 		       uint16_t sw_qid_min, const uint16_t *sw_qids)
+diff --git a/drivers/common/sfc_efx/base/efx_np.c b/drivers/common/sfc_efx/base/efx_np.c
+index 4ba3c7d260..a8396535bf 100644
+--- a/drivers/common/sfc_efx/base/efx_np.c
++++ b/drivers/common/sfc_efx/base/efx_np.c
+@@ -436,9 +436,6 @@ efx_np_link_state(
+ 	    MCDI_OUT2(req, const uint8_t, LINK_STATE_OUT_ADVERTISED_ABILITIES),
+ 	    &lsp->enls_adv_cap_mask);
+ 
+-	if (lsp->enls_an_supported != B_FALSE)
+-		lsp->enls_adv_cap_mask |= 1U << EFX_PHY_CAP_AN;
+-
+ 	efx_np_cap_hw_data_to_sw_mask(
+ 	    MCDI_OUT2(req, const uint8_t,
+ 		    LINK_STATE_OUT_LINK_PARTNER_ABILITIES),
+@@ -1020,11 +1017,13 @@ efx_np_attach(
+ 	if (rc != 0)
+ 		goto fail3;
+ 
+-	if (ls.enls_an_supported != B_FALSE)
+-		epp->ep_phy_cap_mask |= 1U << EFX_PHY_CAP_AN;
+-
+ 	epp->ep_adv_cap_mask = ls.enls_adv_cap_mask;
+ 
++	if (ls.enls_an_supported != B_FALSE) {
++		epp->ep_adv_cap_mask |= 1U << EFX_PHY_CAP_AN;
++		epp->ep_phy_cap_mask |= 1U << EFX_PHY_CAP_AN;
++	}
++
+ #if EFSYS_OPT_LOOPBACK
+ 	efx_np_assign_loopback_props(enp);
+ #endif /* EFSYS_OPT_LOOPBACK */
+diff --git a/drivers/common/sfc_efx/base/medford4_phy.c b/drivers/common/sfc_efx/base/medford4_phy.c
+index 7b456c9b8a..4d2a954d4f 100644
+--- a/drivers/common/sfc_efx/base/medford4_phy.c
++++ b/drivers/common/sfc_efx/base/medford4_phy.c
+@@ -32,15 +32,19 @@ medford4_phy_get_link(
+ 	__out		ef10_link_state_t *elsp)
  {
- 	struct sfc_flow_rss *flow_rss = &sa->flow_rss;
--	static struct sfc_flow_rss_ctx *ctx;
-+	struct sfc_flow_rss_ctx *ctx;
+ 	efx_np_handle_t nph = enp->en_port.ep_np_handle;
++	const efx_port_t *port = &enp->en_port;
+ 	efx_np_link_state_t ls;
+ 	efx_np_mac_state_t ms;
++	uint32_t preserve_an;
+ 	efx_rc_t rc;
  
- 	SFC_ASSERT(sfc_adapter_is_locked(sa));
++	preserve_an = port->ep_adv_cap_mask & (1U << EFX_PHY_CAP_AN);
++
+ 	rc = efx_np_link_state(enp, nph, &ls);
+ 	if (rc != 0)
+ 		goto fail1;
  
+-	elsp->epls.epls_adv_cap_mask = ls.enls_adv_cap_mask;
++	elsp->epls.epls_adv_cap_mask = ls.enls_adv_cap_mask | preserve_an;
+ 	elsp->epls.epls_lp_cap_mask = ls.enls_lp_cap_mask;
+ 	elsp->epls.epls_lane_count = ls.enls_lane_count;
+ 	elsp->els_loopback = ls.enls_loopback;
 -- 
 2.47.3
 
