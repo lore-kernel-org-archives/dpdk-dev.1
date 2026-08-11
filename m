@@ -2,33 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D17C5B56A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 11:58:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 696FBC5B56A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 11:58:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4FF2441133;
-	Tue, 11 Aug 2026 13:57:44 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 5358F410D2
- for <dev@dpdk.org>; Tue, 11 Aug 2026 13:57:42 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 2F6241A01C0;
- Tue, 11 Aug 2026 13:57:42 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6961F410E4;
+	Tue, 11 Aug 2026 13:57:45 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 3AE86410D2
+ for <dev@dpdk.org>; Tue, 11 Aug 2026 13:57:43 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1F5E22001A0;
+ Tue, 11 Aug 2026 13:57:43 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id EBE281A001C;
- Tue, 11 Aug 2026 13:57:41 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D90762001B9;
+ Tue, 11 Aug 2026 13:57:42 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 221DD18000B0;
- Tue, 11 Aug 2026 19:57:39 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 5A1A718000B5;
+ Tue, 11 Aug 2026 19:57:41 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
-Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v8 04/26] bus/dpaa: scan max BPID from DTS
-Date: Tue, 11 Aug 2026 17:27:09 +0530
-Message-Id: <20260811115731.3421032-5-hemant.agrawal@nxp.com>
+Cc: Prashant Gupta <prashant.gupta_3@nxp.com>
+Subject: [PATCH v8 05/26] drivers: add process-type guards for secondary
+ process
+Date: Tue, 11 Aug 2026 17:27:10 +0530
+Message-Id: <20260811115731.3421032-6-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260811115731.3421032-1-hemant.agrawal@nxp.com>
 References: <20260703124950.1895871-1-hemant.agrawal@nxp.com>
@@ -49,110 +50,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jun Yang <jun.yang@nxp.com>
+From: Prashant Gupta <prashant.gupta_3@nxp.com>
 
-Calculate the maximum BPID dynamically from the device tree
-configuration instead of using a hardcoded value. This ensures
-correct operation across different DPAA hardware configurations.
+Add RTE_PROC_PRIMARY checks in device initialization paths for
+dma/dpaa drivers. Secondary processes should skip hardware
+initialization to prevent segfaults when accessing hardware
+registers that are only mapped in the primary process.
 
-Signed-off-by: Jun Yang <jun.yang@nxp.com>
+Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
 ---
- drivers/bus/dpaa/base/qbman/bman_driver.c | 49 ++++++++++++++++-------
- 1 file changed, 34 insertions(+), 15 deletions(-)
+ drivers/dma/dpaa/dpaa_qdma.c   | 3 +++
+ drivers/net/dpaa/dpaa_ethdev.c | 5 ++++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/bus/dpaa/base/qbman/bman_driver.c b/drivers/bus/dpaa/base/qbman/bman_driver.c
-index 71a2028383..8b012b48c8 100644
---- a/drivers/bus/dpaa/base/qbman/bman_driver.c
-+++ b/drivers/bus/dpaa/base/qbman/bman_driver.c
+diff --git a/drivers/dma/dpaa/dpaa_qdma.c b/drivers/dma/dpaa/dpaa_qdma.c
+index e2cb157c43..3981bf277e 100644
+--- a/drivers/dma/dpaa/dpaa_qdma.c
++++ b/drivers/dma/dpaa/dpaa_qdma.c
+@@ -1351,6 +1351,9 @@ dpaa_qdma_init(struct rte_dma_dev *dmadev)
+ 	int ret;
+ 	uint32_t i, j, k;
+ 
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
++		return 0;
++
+ 	if (dpaa_get_devargs(dmadev->device->devargs, DPAA_DMA_ERROR_CHECK)) {
+ 		s_hw_err_check = true;
+ 		DPAA_QDMA_INFO("Enable DMA error checks");
+diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
+index 4181fefe82..184e4ced9e 100644
+--- a/drivers/net/dpaa/dpaa_ethdev.c
++++ b/drivers/net/dpaa/dpaa_ethdev.c
 @@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0
+ /* SPDX-License-Identifier: BSD-3-Clause
   *
-  * Copyright 2008-2016 Freescale Semiconductor Inc.
-- * Copyright 2017 NXP
-+ * Copyright 2017,2026 NXP
+  *   Copyright 2016 Freescale Semiconductor, Inc. All rights reserved.
+- *   Copyright 2017-2020,2022-2025 NXP
++ *   Copyright 2017-2020,2022-2026 NXP
   *
   */
+ /* System headers */
+@@ -2676,6 +2676,9 @@ rte_dpaa_remove(struct rte_dpaa_device *dpaa_dev)
  
-@@ -180,9 +180,15 @@ int bman_init_ccsr(const struct device_node *node)
- 	return 0;
- }
+ 	PMD_INIT_FUNC_TRACE();
  
-+#define BPID_RANGE_START_INDEX 0
-+#define BPID_RANGE_COUNT_INDEX 1
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
++		return 0;
 +
- int bman_global_init(void)
- {
- 	const struct device_node *dt_node;
-+	const rte_be32_t *range;
-+	uint32_t start, count;
-+	int ret;
- 	static int done;
- 
- 	if (done)
-@@ -198,36 +204,49 @@ int bman_global_init(void)
- 	if (of_device_is_compatible(dt_node, "fsl,bman-portal-1.0") ||
- 	    of_device_is_compatible(dt_node, "fsl,bman-portal-1.0.0")) {
- 		bman_ip_rev = BMAN_REV10;
--		bman_pool_max = 64;
- 	} else if (of_device_is_compatible(dt_node, "fsl,bman-portal-2.0") ||
- 		of_device_is_compatible(dt_node, "fsl,bman-portal-2.0.8")) {
- 		bman_ip_rev = BMAN_REV20;
--		bman_pool_max = 8;
- 	} else if (of_device_is_compatible(dt_node, "fsl,bman-portal-2.1.0") ||
- 		of_device_is_compatible(dt_node, "fsl,bman-portal-2.1.1") ||
- 		of_device_is_compatible(dt_node, "fsl,bman-portal-2.1.2") ||
- 		of_device_is_compatible(dt_node, "fsl,bman-portal-2.1.3")) {
- 		bman_ip_rev = BMAN_REV21;
--		bman_pool_max = 64;
- 	} else {
--		pr_warn("unknown BMan version in portal node,default "
--			"to rev1.0");
-+		pr_warn("unknown BMan version in portal node, default to rev1.0");
- 		bman_ip_rev = BMAN_REV10;
--		bman_pool_max = 64;
- 	}
- 
- 	if (!bman_ip_rev) {
- 		pr_err("Unknown bman portal version\n");
- 		return -ENODEV;
- 	}
--	{
--		const struct device_node *dn = of_find_compatible_node(NULL,
--							NULL, "fsl,bman");
--		if (!dn)
--			pr_err("No bman device node available");
--
--		if (bman_init_ccsr(dn))
--			pr_err("BMan CCSR map failed.");
-+
-+	for_each_compatible_node(dt_node, NULL, "fsl,bpid-range") {
-+		range = of_get_property(dt_node, "fsl,bpid-range", NULL);
-+		if (!range)
-+			continue;
-+		start = rte_be_to_cpu_32(range[BPID_RANGE_START_INDEX]);
-+		count = rte_be_to_cpu_32(range[BPID_RANGE_COUNT_INDEX]);
-+		bman_pool_max = start + count;
-+		pr_info("Max BPID: %d, fixed BPID < %d", bman_pool_max, start);
-+		break;
-+	}
-+	if (!bman_pool_max) {
-+		pr_warn("No BPID range found in DTS, using default pool max\n");
-+		bman_pool_max = 64;
-+	}
-+
-+	dt_node = of_find_compatible_node(NULL, NULL, "fsl,bman");
-+	if (!dt_node) {
-+		pr_err("No bman device node available");
-+		return -ENODEV;
-+	}
-+
-+	ret = bman_init_ccsr(dt_node);
-+	if (ret) {
-+		pr_err("Failed(%d) to init bman ccsr", ret);
-+		return ret;
- 	}
- 
- 	done = 1;
+ 	eth_dev = rte_eth_dev_allocated(dpaa_dev->device.name);
+ 	if (eth_dev && eth_dev->state != RTE_ETH_DEV_UNUSED) {
+ 		dpaa_eth_dev_close(eth_dev);
 -- 
 2.25.1
 
