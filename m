@@ -2,62 +2,64 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14995C5AC67
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 20:24:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C925C5AC67
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 20:24:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 170F44025F;
-	Tue, 11 Aug 2026 22:24:08 +0200 (CEST)
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com
- [209.85.216.48]) by mails.dpdk.org (Postfix) with ESMTP id D0E074021E
- for <dev@dpdk.org>; Tue, 11 Aug 2026 22:24:05 +0200 (CEST)
-Received: by mail-pj1-f48.google.com with SMTP id
- 98e67ed59e1d1-38e347638adso396754a91.0
- for <dev@dpdk.org>; Tue, 11 Aug 2026 13:24:05 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 73FD640E3F;
+	Tue, 11 Aug 2026 22:24:38 +0200 (CEST)
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com
+ [209.85.214.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 541584025F
+ for <dev@dpdk.org>; Tue, 11 Aug 2026 22:24:37 +0200 (CEST)
+Received: by mail-pl1-f179.google.com with SMTP id
+ d9443c01a7336-2cee9b74ee1so2963645ad.3
+ for <dev@dpdk.org>; Tue, 11 Aug 2026 13:24:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786479845;
- x=1787084645; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786479876;
+ x=1787084676; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=8X32+bjg1zxUfGM2W586gP71//rD4H9l7iS/55HNqEc=;
- b=BvRKG/a1QL3qFmqggI8nZ3mDr7lH8bIzVn2weOY/HNc5uvV6RabM9s51p6r/ovl0Io
- fBzIDNfJLcuRfoEGdwLwjuxUh1V9A3XAnCD5k6laVYeuH0Y2DGPx6FnWpvOLzDY3lY01
- /JXPnB1jaBWW5R11Pyle3kFVcU7Mqn2uzlb10KtXNen/RZpUK+WbwC/Z93qBCgUdkUzY
- uQ930AjGUKH7cyKzhiYIaEhZVOe8AVdaZMQvv8Bz+lDqsTabBWH57HYRvkBBa4Fg/qCK
- XjO1FOSAwW9N9rhLkRgLGj1W592ED7OPyAI4tAb0mJvJU7U//0f18AMr4R0CXacHWcQp
- ERCg==
+ bh=JmIb3Ilo6Zh16GPUw9lzks8nKeElzMasvGo25B1npdo=;
+ b=jo97OZ4NCfP40V7qtYCTsfjM6DOkq3EurLdJ2BKY6VYvdJ3PExReIQ4ASWE+WtsqwT
+ wRtA/OHLt68WeYA4v014IWOSB2DFS5CL0IYjVTRjDWProvT3HISGl7L8GxXNgAKqp6zv
+ i9QtOQqLUO213YYU1QrquxGchlY6AaVk3nipkC2hNsl5p9R5IO/hEN6EPkYYjPRoF4hC
+ erGm/XioZ6gUEmNUFge+mOhPQjFWhC/X3hy2WO1/CXe2Gc1FJgi1BAZGIn0f4dHEEbSD
+ frblg0GiKLEMOPC3UAzvy6PUMWF1fUgoZEgXj5cmDb3QUUStQ1wFasTvjnIMKB+GZRzK
+ oYpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786479845; x=1787084645;
+ d=1e100.net; s=20251104; t=1786479876; x=1787084676;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=8X32+bjg1zxUfGM2W586gP71//rD4H9l7iS/55HNqEc=;
- b=UnAsuzdFDY6MALSXzDYrOtCETEUf+8hCmChGw5jqHuesj/iLfR6q6am1vBV0mFvsN6
- 10oh1t1PIP4zceqNhh63BUzhDmB/XbNAWIorLylVJF2Wq5RJDpU8UXNJl7QQetkbhdRn
- bREylmesy5fI2mIMHboSgWkJuwx58aez6JJ0eLtyiuelR+pNK9BCuUJ9+yTfAwcuT82Z
- esCNzfaXi7VbI6zyLzy4Q60gf0d4Sl9VGqa/ka1uvcykqSSeZ3G0no5vYk7Xk60VJJrX
- L8ivV4JAc9wp4LwlOU8YAsbEvyPa/XyBZOoqVBuWxSXdaaOvbqkudDeOtLx3dg1ZTzZr
- O7nw==
-X-Gm-Message-State: AOJu0YzdvVxpQMSFR/mn/DS4VwruUSktkIouBOxHe52tYfC53bQ5HID0
- G20QgGUlPFTHy+Jysci7WCD4o+2h5lfIS1vxpygfLprY4NhdnivBOKccHyEdsJ97znk=
-X-Gm-Gg: AR+sD11Ip/qKmSUCIe83UmTkmVxCO/On+SPSMvZz7IPeZOZpwbD2i9z/fooEmfNx5Js
- mRnIEgoyL13ul2EGovu4H/xlErwRk0BRT5T9sLI6DCyppwWWJbQ7fDeqmC+PiCtbvtE9gDEMaLp
- XkAM95SqxBarIpJnqYVUrjY9xu7GbgJc/iMEdboMRaEfRp0kf8876ySguHR+wKX9+TP/s5Y16XL
- H52nLNLWYNQea8pu7BeHfIgWeXOPvsP8evNHKozLyQ4ZM6sm97Gt7GsIyXSJbI7lHaYlsFDWnOA
- PeQ9g+13PzcvoSYXJVMeMtxcPo1+StvM1mHhI1WVNOtPFpWphQ7g8egzaVsNj79DRL+v/bOgFc3
- 7PTgVbtM0Z4GeezSLv2BAjUbIIV1LHIqrDmcvBvbtjjPCO8RMJNUJwWXhT7E6SpJdaj54xAzwvV
- DChpGf3s5DWCkqim5QxG8zriZ77X2tOitWG7JMn8hOSdcZvvPm0NmfJiMzdBDMN9v18jxjvzqJD
- YZ7I+WiS9TXZx04V1FIrpiYWgM8tQ==
-X-Received: by 2002:a17:90b:2248:b0:380:105f:8ffd with SMTP id
- 98e67ed59e1d1-392ec662df2mr5921058a91.16.1786479844618; 
- Tue, 11 Aug 2026 13:24:04 -0700 (PDT)
+ bh=JmIb3Ilo6Zh16GPUw9lzks8nKeElzMasvGo25B1npdo=;
+ b=gjCf44WKyuks4bHGiBqxvfK8lQydaSWT7ysn577uCof3YssCTwRRXukSX1R3GNqEaq
+ 8S1IaZxbFInElvtZ0gPyj7D7SSqnGljnyqzqLDtoXK0pVSSa1BGbYkog3ocJJf/AehwI
+ Ju6EnH+U0sjLGQ7PNtwOpmFuEzplWnUR0LAR9oVHTiznRWlILgGXYWwuBdB7m5dp1Gew
+ UJxwunJPsVr8UV/ypK3JGbJSnIkMBFEBUA0Gq2UAA5fenNYlotjZlHioFN58UJOhGcN+
+ BvgxFgehmz/qh0IbY/oflcYJeAkfmC4L0RbGANcH9cUJBnJCsmH5qe5+lOTXK3PaRKPa
+ w/Xw==
+X-Gm-Message-State: AOJu0YzHGwtivhcX/lEE6B+E8hkgJ74JtAUaWGEaem6cUKA0IxDAdvIc
+ okAANtWU3xzLiDAoxJwLJfI1AdaBpYHYdYWO4876EWDwXoSf1ohiM9WqbEdcz8xOLhI2Ln8j1Al
+ 5CWcA
+X-Gm-Gg: AR+sD13G0IU3yPTIHdCC3jxdRPRxynLAXkGvVY2gCBSWFvurFgS1XmmhgQoTsmXeUVg
+ 6WgD8UImAhmCIW/Mrt+meX6v6mOnzTCIW19pKXrEE7IWgp8kC26XkIJDkdTW/vQDQg5xC2NuJlY
+ +21d9A6MgD1q/W8KIWODHMhU76HxHXIqTHOieVr2vDxZxXpBYubbscxg9OAAjyU1yhBiukd/YUP
+ tvqFWiA/UzhSKzAY4wwGgjWE0Gneoi/P6fd24PK+uh7MlCM7/0+PqI8tfX5lai7tVaonYFGTw1x
+ KQ6TDgvLSBthAE3IMJ8zZNHztKo09LdxTTSMozFyBsgDREEdri0rkyf5JHqGCGOtGMVXi63yMfj
+ x/yBB4bBK+GFc1gbu1e5ttXyKL4d709vpKvnE7YMkeq41RItnaOtIWpufnkN6+HcviJxBkPnvmG
+ vdI0LiieKAAfaXBZOwj8c1dmhOyq73l910l12MIM9oQT1eXIPJgJ2I+XntMX4+aBnvf7c+70rWQ
+ LaHmANrKZmTya3pnYZ6dgt6LA7H/Q==
+X-Received: by 2002:a05:6a20:2d13:b0:3c4:1916:9d46 with SMTP id
+ adf61e73a8af0-3cc2bac42a9mr7902853637.27.1786479876388; 
+ Tue, 11 Aug 2026 13:24:36 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-14124454d3csm2444121c88.2.2026.08.11.13.24.03
+ a92af1059eb24-14124454d3csm2446852c88.2.2026.08.11.13.24.35
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 11 Aug 2026 13:24:04 -0700 (PDT)
-Date: Tue, 11 Aug 2026 13:24:01 -0700
+ Tue, 11 Aug 2026 13:24:36 -0700 (PDT)
+Date: Tue, 11 Aug 2026 13:24:33 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Ivan Malov <ivan.malov@arknetworks.am>
 Cc: dev@dpdk.org, Andy Moreton <andy.moreton@amd.com>, Viacheslav
@@ -65,10 +67,10 @@ Cc: dev@dpdk.org, Andy Moreton <andy.moreton@amd.com>, Viacheslav
  <Roman.Zhukov@arknetworks.am>, Pieter Jansen van Vuuren
  <pieter.jansen-van-vuuren@amd.com>, Andrew Rybchenko
  <andrew.rybchenko@oktetlabs.ru>
-Subject: Re: [PATCH 00/14] common/sfc_efx/base: fix code analysis issues
-Message-ID: <20260811132401.4ef4391d@phoenix.local>
-In-Reply-To: <20260811174821.8930-1-ivan.malov@arknetworks.am>
-References: <20260811174821.8930-1-ivan.malov@arknetworks.am>
+Subject: Re: [PATCH 0/3] net/sfc: miscellaneous bug fixes
+Message-ID: <20260811132433.6f4551f2@phoenix.local>
+In-Reply-To: <20260811174913.8961-1-ivan.malov@arknetworks.am>
+References: <20260811174913.8961-1-ivan.malov@arknetworks.am>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -85,228 +87,143 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 11 Aug 2026 21:48:07 +0400
+On Tue, 11 Aug 2026 21:49:10 +0400
 Ivan Malov <ivan.malov@arknetworks.am> wrote:
 
-> This series addresses code analysis defects in the
-> common/sfc_efx/base library.
+> Three independent fixes. The first ensures that Rx queue
+> type flags are derived from scratch on every queue setup,
+> preventing flags from a prior configuration persisting
+> when an offload is disabled.
 > 
-> The first four patches fix excessive stack consumption in
-> MCDI helper functions, each exceeding 1 KB on-stack, by
-> switching to heap-allocated payload buffers.
+> The second patch removes an erroneous static qualifier
+> from a flow RSS iterator variable, which incorrectly
+> shared state between multiple interfaces.
 > 
-> The remaining ten patches correct SAL annotations, add NULL
-> checks across netport and filter helpers, resolving
-> uninitialised memory, buffer overrun, and potential
-> dereference issues. The final patch widens loop
-> variable types to address a CodeQL warning.
+> The third patch corrects reading of the advertised
+> autoneg capability. When the user disables it, the
+> corresponding bit was re-added upon the next
+> link-state query.
 > 
-> Andy Moreton (14):
->   common/sfc_efx/base: reduce stack in RSS context table write
->   common/sfc_efx/base: reduce stack in get addr regions MCDI
->   common/sfc_efx/base: reduce stack in set addr regions MCDI
->   common/sfc_efx/base: reduce stack in netport stat describe
->   common/sfc_efx/base: fix filter saved spec handling
->   common/sfc_efx/base: fix annotations in client MAC addr get
->   common/sfc_efx/base: fix annotations in HW-SW mask converter
->   common/sfc_efx/base: fix annotations in get fixed port props
->   common/sfc_efx/base: fix annotations in SW-HW enum converter
->   common/sfc_efx/base: fix annotation in netport stat describe
->   common/sfc_efx/base: fix flex array in netport stat describe
->   common/sfc_efx/base: fix filter in SW-HW mask converter
->   common/sfc_efx/base: rework SW mask to HW enum converter
->   common/sfc_efx/base: cleanup wider type comparisons in loops
+> Ivan Malov (3):
+>   net/sfc: set Rx queue type flags from scratch on queue setup
+>   net/sfc: drop wrong static qualifier from iterator variable
+>   common/sfc_efx/base: fix reading advertised autoneg ability
 > 
->  drivers/common/sfc_efx/base/ef10_filter.c |  11 +-
->  drivers/common/sfc_efx/base/ef10_mcdi.c   |   2 +-
->  drivers/common/sfc_efx/base/ef10_nvram.c  |   4 +-
->  drivers/common/sfc_efx/base/ef10_rx.c     |  22 +++-
->  drivers/common/sfc_efx/base/efx.h         |   3 +-
->  drivers/common/sfc_efx/base/efx_bootcfg.c |   2 +-
->  drivers/common/sfc_efx/base/efx_mcdi.c    |  50 +++++--
->  drivers/common/sfc_efx/base/efx_np.c      | 152 ++++++++++++----------
->  drivers/common/sfc_efx/base/mcdi_mon.c    |   2 +-
->  9 files changed, 155 insertions(+), 93 deletions(-)
+>  drivers/common/sfc_efx/base/efx_np.c       | 11 +++++------
+>  drivers/common/sfc_efx/base/medford4_phy.c |  6 +++++-
+>  drivers/net/sfc/sfc_flow_rss.c             |  2 +-
+>  drivers/net/sfc/sfc_rx.c                   |  2 +-
+>  4 files changed, 12 insertions(+), 9 deletions(-)
 > 
 
-Since AI review by CI is limited. Went with more detailed review
-and it spotted lots of issues.
+Detailed AI review found some issues here.
 
-Reviewed the series applied on top of c1a46b9 ("doc: remove unreferenced
-KNI and examples figures"). All 14 patches apply cleanly.
+Review of [PATCH 0/3] SFC bug fixes (Ivan Malov)
 
-Patch 01-04: common/sfc_efx/base: reduce stack in ...
+Patch 1/3 - net/sfc: set Rx queue type flags from scratch on queue setup
 
-Info: All four conversions replace EFX_MCDI_DECLARE_BUF() with a plain
-MAX(IN_LEN, OUT_LEN) size for EFSYS_KMEM_ALLOC. That drops the two
-guarantees the macro provides:
+  Error: replacing "|=" with "=" discards extra type flags that callers
+  seed via sfc_rx_qinit_info() immediately before sfc_rx_qinit().
 
-  #define EFX_MCDI_BUF_SIZE(_in_len, _out_len)                          \
-        EFX_P2ROUNDUP(size_t,                                           \
-                MAX(MAX(_in_len, _out_len), (2 * sizeof (efx_dword_t))),\
-                sizeof (efx_dword_t))
+  Two call sites do this today:
 
-The dword rounding is not cosmetic: ef10_mcdi_send_request() reads the
-payload a full dword at a time
+    drivers/net/sfc/sfc_repr_proxy.c:556
+        sfc_rx_qinit_info(sa, rxq->sw_index, EFX_RXQ_FLAG_INGRESS_MPORT);
+        sfc_rx_qinit(sa, rxq->sw_index, ...);      /* line 562 */
 
-        for (pos = 0; pos < sdu_len; pos += sizeof (efx_dword_t))
-                dword = *(efx_dword_t *)((uint8_t *)sdup + pos);
+    drivers/net/sfc/sfc_mae_counter.c:870
+        sfc_rx_qinit_info(sa, sa->counter_rxq.sw_index,
+                          EFX_RXQ_FLAG_USER_MARK);
+        sfc_rx_qinit(sa, sa->counter_rxq.sw_index, ...);  /* line 875 */
 
-so a non-dword-multiple allocation would be read past its end. For these
-four call sites the lengths happen to be dword multiples (4+4*n, 992,
-8+8*n, 1020), so there is no defect today, but open-coding MAX() removes
-the property for future length changes. Suggest
+  sfc_rx_qinit_info() does "rxq_info->type_flags = extra_efx_type_flags"
+  (sfc_rx.c:1663).  The "|=" at sfc_rx.c:1186 was what preserved that
+  value; with "=" it is overwritten before anything reads it.
 
-        size = EFX_MCDI_BUF_SIZE(MC_CMD_..._IN_LEN(n), MC_CMD_..._OUT_LEN);
+  Two consequences:
 
-which is a drop-in and keeps the invariant documented in efx_mcdi.h.
+    - rxq_info->type_flags is passed straight to efx_rx_qcreate()
+      (sfc_rx.c:822 and :842), so the hardware Rx prefix no longer
+      carries ingress mport / user mark for those queues.
 
-Error path handling in all four is correct: the ENOMEM label sits below
-the EFSYS_KMEM_FREE so the failed allocation is not freed, and every
-later label falls through to it.
+    - sfc_rx.c:1240 derives SFC_RXQ_FLAG_INGRESS_MPORT from type_flags,
+      and sfc_ef100_rx.c:824 consumes it.  Representor proxy demux
+      loses its mport field.
 
-Patch 05: common/sfc_efx/base: fix filter saved spec handling
+  EFX_RXQ_FLAG_USER_MARK is re-added at sfc_rx.c:1203, but only when
+  RTE_ETH_RX_METADATA_USER_MARK was negotiated or flow tunnel is active
+  - neither holds for the MAE counter queue.
 
-Info: The two added NULL checks are unreachable. In
-ef10_filter_add_select_action(), saved_spec == NULL forces
-*action = EF10_FILTER_ADD_NEW; every path that yields ADD_STORE,
-ADD_REPLACE or ADD_REFRESH is inside the else branch where saved_spec is
-non-NULL. So in ef10_filter_add_execute_action() both
+  The underlying problem the patch describes is real: sfc_rx_configure()
+  only calls sfc_rx_qinit_info() for newly added queues (sfc_rx.c:1837,
+  inside "while (sas->ethdev_rxq_count < nb_rx_queues)"), so existing
+  ethdev queues keep stale flags across a reconfigure.  The fix needs to
+  reset only the offload-derived bits.  Suggested approach: record the
+  caller-supplied flags in a separate field, e.g.
 
-        } else if (action == EF10_FILTER_ADD_STORE) {
-                EFSYS_ASSERT(overridden_spec != NULL);
-                if (saved_spec != NULL)
+      /* sfc_rx_qinit_info() */
+      rxq_info->extra_type_flags = extra_efx_type_flags;
+      rxq_info->type_flags = extra_efx_type_flags;
 
-and
+      /* sfc_rx_qinit() */
+      rxq_info->type_flags = rxq_info->extra_type_flags |
+              ((offloads & RTE_ETH_RX_OFFLOAD_SCATTER) ?
+               EFX_RXQ_FLAG_SCATTER : EFX_RXQ_FLAG_NONE);
 
-        if ((action == EF10_FILTER_ADD_REPLACE) && (saved_spec != NULL)) {
 
-test an invariant that already holds. The __in_opt annotations are
-accurate and worth keeping, but the STORE branch already asserts its
-sibling invariant one line above; an EFSYS_ASSERT(saved_spec != NULL)
-would match local style and keep the invariant explicit rather than
-silently skipping the efs_overridden_spec assignment if it were ever
-violated.
+Patch 2/3 - net/sfc: drop wrong static qualifier from iterator variable
 
-Patch 09: common/sfc_efx/base: fix annotations in SW-HW enum converter
+  Info: the change is correct, but the commit message overstates the
+  impact.  TAILQ_FOREACH() assigns the variable from TAILQ_FIRST()
+  before the first iteration, and every return path returns a value
+  produced inside the loop, so the static storage is never read stale.
+  There is no observable misbehaviour to backport a fix for.  Consider
+  rewording as a cleanup (unnecessary global state, not thread-safe by
+  construction) and dropping the Cc: stable and Fixes: tags, or state
+  explicitly that no functional change is expected.
 
-Info: __success() is placed above "static void" here, but in patch 13 it
-is placed between "static void" and the function name. Every existing
-use in the tree puts it on the return type line, e.g. ef10_nvram.c:941
 
-        __checkReturn   __success(return != B_FALSE)    boolean_t
-        ef10_nvram_buffer_find_item(
+Patch 3/3 - common/sfc_efx/base: fix reading advertised autoneg ability
 
-Please pick one placement for both patches, preferably the existing one.
+  Error: the first efx_np.c hunk does not apply to main.  The patch
+  expects the block
 
-Patch 11: common/sfc_efx/base: fix flex array in netport stat describe
+      if (lsp->enls_an_supported != B_FALSE)
+              lsp->enls_adv_cap_mask |= 1U << EFX_PHY_CAP_AN;
 
-Error: count and stride are firmware-supplied and are now used to index
-the response buffer with no bound derived from the response length:
+  to sit after the LINK_STATE_OUT_ADVERTISED_ABILITIES conversion, but
+  upstream has it before it (efx_np.c:432), and at the position the
+  patch expects upstream has
 
-        stride = MCDI_OUT_DWORD(req, MAC_STATISTICS_DESCRIPTOR_OUT_ENTRY_SIZE);
-        count = MCDI_OUT_DWORD(req, MAC_STATISTICS_DESCRIPTOR_OUT_ENTRY_COUNT);
-        ...
-                for (i = 0; i < count; ++i) {
-                        efx_np_stat_describe(entries + i * stride,
+      if (status_flags & (1U << MC_CMD_LINK_STATUS_FLAGS_AN_ABLE))
+              lsp->enls_lp_cap_mask |= 1U << EFX_PHY_CAP_AN;
 
-entries points at payload + 20 in a 1020-byte allocation, and
-efx_np_stat_describe() reads 8 bytes at each entry. Any count beyond
-(out_sz - 20) / stride reads response bytes that were never written, and
-count * stride above 1000 reads past the end of the heap allocation.
+  from 70857163b72a ("common/sfc_efx/base: fix autoneg detection with
+  netport MCDI").  git am and git apply -3 both fail on that hunk; the
+  efx_np_attach() hunk and medford4_phy.c apply cleanly.  Please rebase
+  on main and resend.
 
-The old code derived the iteration count from out_sz via
-MC_CMD_MAC_STATISTICS_DESCRIPTOR_OUT_ENTRIES_NUM(out_sz), which was
-wrong for stride > 8 as the commit message says, but it did bound the
-loop by the data actually received. The replacement needs to validate
-both fields, e.g. after reading them:
+  The logic itself checks out on the rebased placement.  Removing the
+  AN bit from enls_adv_cap_mask leaves only two consumers, and both are
+  covered: efx_np_attach() (efx_np.c:1005) now sets the bit itself, and
+  medford4_phy_get_link() (medford4_phy.c:43) restores it from
+  ep_adv_cap_mask.  medford4_mac_poll() writes the result back into
+  ep_adv_cap_mask, so the bit is self-sustaining, and clearing it via
+  efx_phy_adv_cap_set() sticks.  Setting it back is gated on
+  ep_phy_cap_mask (efx_phy.c:264), which attach only populates when
+  AN is supported, so the preserved bit cannot outlive AN support.
 
-        if (stride < MC_CMD_STAT_DESC_LEN ||
-            count > (out_sz -
-                     MC_CMD_MAC_STATISTICS_DESCRIPTOR_OUT_ENTRIES_OFST) /
-                    stride) {
-                rc = EMSGSIZE;
-                goto fail4;
-        }
+  Info: the added local
 
-The stride test must come first, since stride == 0 is otherwise a
-division by zero.
+      const efx_port_t *port = &enp->en_port;
 
-Warning: MORE_ENTRIES is a one-bit field inside FLAGS:
+  is used once and the file otherwise reaches through enp->en_port
+  directly (line 33) or names the local "epp" (medford4_phy_reconfigure,
+  medford4_mac_poll).  Suggest dropping it:
 
-        MC_CMD_MAC_STATISTICS_DESCRIPTOR_OUT_FLAGS_OFST 8
-        MC_CMD_MAC_STATISTICS_DESCRIPTOR_OUT_MORE_ENTRIES_OFST 8
-        MC_CMD_MAC_STATISTICS_DESCRIPTOR_OUT_MORE_ENTRIES_LBN 0
-        MC_CMD_MAC_STATISTICS_DESCRIPTOR_OUT_MORE_ENTRIES_WIDTH 1
+      preserve_an = enp->en_port.ep_adv_cap_mask &
+                    (1U << EFX_PHY_CAP_AN);
 
-but the patch reads the whole 32-bit FLAGS dword and tests it against
-zero. Any future flag bit added to FLAGS makes (count == 0 && more != 0)
-fail a legitimate final response with EMSGSIZE, which fails
-efx_np_stats_assign() and therefore probe. Use the field accessor:
 
-        more = MCDI_OUT_DWORD_FIELD(req,
-            MAC_STATISTICS_DESCRIPTOR_OUT_FLAGS,
-            MAC_STATISTICS_DESCRIPTOR_OUT_MORE_ENTRIES);
-
-Patch 13: common/sfc_efx/base: rework SW mask to HW enum converter
-
-Error: The FEC default overwrites the deliberate MC_CMD_FEC_NONE choice.
-Just above the call, efx_np_link_ctrl() computes
-
-        if ((cap_mask_sw & EFX_PHY_CAP_FEC_MASK) == 0)
-                cap_enum_hw = MC_CMD_FEC_NONE;
-        else
-                cap_enum_hw = MC_CMD_FEC_AUTO;
-
-and the comment below it still says "If the mask has got no
-'FEC_REQUESTED' bits, use 'NONE' or 'AUTO' from above." Before this
-patch that worked because *enum_hwp was left untouched when nothing
-matched. Now the flags_seen == 0 path unconditionally assigns the
-default, and the call passes a hardcoded MC_CMD_FEC_AUTO:
-
-        EFX_NP_CAP_SW_MASK_TO_HW_ENUM(efx_np_cap_map_fec_req,
-            ETH_AN_FIELDS_FEC_MASK, cap_data_raw, cap_mask_sw,
-            MC_CMD_FEC_AUTO, NULL, NULL, &supported, &cap_enum_hw);
-
-So a request with no FEC bits at all now programs FEC_MODE = AUTO
-instead of NONE, i.e. a user asking for no FEC gets negotiated FEC.
-Passing cap_enum_hw itself as the default preserves the intent.
-
-Error: The selection order changes from first supported HW enum to last.
-The old loop cleared the matched bit
-
-        mask_sw &= ~(flag_sw);
-        if (enum_hwp != NULL)
-                *enum_hwp = hw_sw_map->encm_hw;
-
-so later map entries carrying the same encm_sw failed the
-(mask_sw & flag_sw) == flag_sw test and could not overwrite *enum_hwp.
-The new loop has no clearing, so every match overwrites and the last
-entry wins. efx_np_cap_map_tech is one-to-many: EFX_PHY_CAP_100000FDX
-maps to fifteen MC_CMD_ETH_TECH_* values, so with the default lane count
-(filter returns B_TRUE for everything) a fixed-link 100G request now
-programs 100GBASE_CR10 where it previously programmed 100GBASE_KR4.
-That is a functional change, not a simplification. If the previous
-selection is intended, break out of the loop on the first match.
-
-Warning: In the fixed-link branch the default changes the programmed
-technology as well. link_tech is initialised to MC_CMD_ETH_TECH_NONE,
-and previously stayed NONE when no requested tech bit was present in the
-map; it is now overwritten with MC_CMD_ETH_TECH_AUTO. This may well be
-the desired fix, but it is not mentioned in the commit message and
-should be.
-
-Info: __success() placement differs from patch 09 and from the rest of
-the tree; see the note on patch 09.
-
-Patches 06, 07, 08, 10, 12 and 14 look correct to me.
-
-For 07, the added "*sw_maskp = 0" is safe: efx_np_link_state() memsets
-*lsp before the calls, and the AN bit reordering keeps both masks
-correct. For 08, MC_CMD_ETH_AN_FIELDS_LEN and
-MC_CMD_GET_FIXED_PORT_PROPERTIES_OUT_ABILITIES_LEN are both 25, and
-ep_np_cap_data_raw is declared with the former, so the annotation
-matches the memcpy. For 12, both existing callers pass either a non-NULL
-filter_arg or NULL for both, so the added check is inert today.
-
-Not build tested on my side.
+Fixes: tags in all three patches resolve to real commits with matching
+subjects.
