@@ -2,50 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03BEAC5AD7B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 04:26:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F9FEC5B569
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 07:06:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 30EE0402AB;
-	Tue, 11 Aug 2026 06:26:55 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id 9548740272;
- Tue, 11 Aug 2026 06:26:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1786422414; x=1817958414;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=x38F1U5gDvwNE0hKlINDI8T8Jgbnje3NPaPAsDkATHI=;
- b=cVVz6H772Y1Wk+ARHH6PKBQk5RL6ITjlG6vYTgyChG+5O0oirlGc4pfF
- p96bQBKE7EGbDBnyKVJ87vmB7xNcB8HJEoKL7p1Fu0CKrsfCcHUC6hwxW
- oK/uBlTWt2o6irUI/NfLEo/KWTYk5JJtlz3ZoX2KV2/5Xl3yNZj6hWjzs
- jIYbuCdZCzFX5tjESsigNfxHTCgb+KnzIeIGbv4pT6dGgEIbhagi4p8KZ
- oesPJh7J6CRe/79C8eYPgVpYGFeHDoUubDiFzbWnqnMKSslXUYF56mci9
- IV6X1dxT9N0mbAvc9nCuFZ4I0Sgl03INRWuJJRJpZK5F3onQ3zc+OTaey Q==;
-X-CSE-ConnectionGUID: D9n6r2riSYSTaxDq5VSy2Q==
-X-CSE-MsgGUID: MxQ5pAg3SSifTJ0plW3hhQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11871"; a="74480216"
-X-IronPort-AV: E=Sophos;i="6.25,217,1779174000"; d="scan'208";a="74480216"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
- by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 10 Aug 2026 21:26:52 -0700
-X-CSE-ConnectionGUID: U2824nBiTgS5EVvpjZHK1Q==
-X-CSE-MsgGUID: Wu4iR4ZsQGixVudzGEwZlA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,217,1779174000"; d="scan'208";a="263276871"
-Received: from npg-npf-wlpr-srv19.iind.intel.com ([10.190.212.201])
- by orviesa007.jf.intel.com with ESMTP; 10 Aug 2026 21:26:51 -0700
-From: Shaiq Wani <shaiq.wani@intel.com>
-To: dev@dpdk.org,
-	bruce.richardson@intel.com,
-	aman.deep.singh@intel.com
-Cc: stable@dpdk.org
-Subject: [PATCH] net/idpf: propagate PCI NUMA node to vport ethdev
-Date: Tue, 11 Aug 2026 09:56:35 +0530
-Message-Id: <20260811042635.465194-1-shaiq.wani@intel.com>
-X-Mailer: git-send-email 2.34.1
+	by mails.dpdk.org (Postfix) with ESMTP id D719B402AB;
+	Tue, 11 Aug 2026 09:06:02 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 8245540272
+ for <dev@dpdk.org>; Tue, 11 Aug 2026 09:06:01 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=WWrOd6iT5TjHNVg2ZxMdUoSlbGPMo3iMN9Xf26PKAys=;
+ b=LhZVr4G1qQcKY6EFH2kcFUoXW7hWr3cGXI/yfz0psBs6JpbVUGQeN+TrOVcABv/F8rWJcosO/
+ bkywRMDbSj6pslCyn9baaNsR0rk80gJJbc4uPASlOQlBHCmfBx076So/reRdH+xtjZdQ0KZfyJE
+ h8tOrH9iTw01QN3LvGigG/g=
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4hK2gb6SKtzJ46Yw;
+ Tue, 11 Aug 2026 15:04:59 +0800 (CST)
+Received: from dubpeml500004.china.huawei.com (unknown [7.214.147.1])
+ by mail.maildlp.com (Postfix) with ESMTPS id 676164057A;
+ Tue, 11 Aug 2026 15:05:54 +0800 (CST)
+Received: from dubpemt500001.china.huawei.com (7.214.144.77) by
+ dubpeml500004.china.huawei.com (7.214.147.1) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 11 Aug 2026 08:05:54 +0100
+Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
+ dubpemt500001.china.huawei.com (7.214.144.77) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 11 Aug 2026 08:05:53 +0100
+Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
+ dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
+ Tue, 11 Aug 2026 08:05:53 +0100
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>, "Stephen
+ Hemminger" <stephen@networkplumber.org>
+CC: "dev@dpdk.org" <dev@dpdk.org>, Bruce Richardson
+ <bruce.richardson@intel.com>
+Subject: RE: [PATCH] eal/x86: optimize memcpy of small 64-byte blocks
+Thread-Topic: [PATCH] eal/x86: optimize memcpy of small 64-byte blocks
+Thread-Index: AQHdJB42oNL4gJj070KJtRurBEIGmLaN+WoAgAAJXwCAAOt0oIAABRpAgAAL2ECAAB9NYIAAlEawgAAzoeCAAMFNUIAAEs8QgAe7bdA=
+Date: Tue, 11 Aug 2026 07:05:53 +0000
+Message-ID: <22720aafe5cf445787940bb319f7e90e@huawei.com>
+References: <20260804143305.1344327-1-mb@smartsharesystems.com>
+ <20260804085210.74763eb5@phoenix.local>
+ <98CBD80474FA8B44BF855DF32C47DC35F659B8@smartserver.smartshare.dk>
+ <6f474724bc22441a8a4f516f3398ca76@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F659BD@smartserver.smartshare.dk>
+ <3c7eea01416249e0aaeab0e8b6b4c157@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F659BF@smartserver.smartshare.dk>
+ <3a96ca58a1e146758f5314202a04c3de@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F659C3@smartserver.smartshare.dk>
+ <fc32ab5225194114bac9286fe82815e1@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F659C6@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F659C6@smartserver.smartshare.dk>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.48.156.143]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,38 +76,123 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The IDPF driver creates vport ethdevs via rte_eth_dev_create() with a
-NULL bus_specific_init callback, bypassing the standard PCI probe path
-that normally copies the PCI device's NUMA node into
-eth_dev->data->numa_node via rte_eth_copy_pci_info().
-
-As a result, rte_eth_dev_socket_id() always returns 0 regardless of
-which NUMA node the device is attached to, causing NUMA-unaware memory
-allocations for mempools and queue descriptors on multi-socket systems.
-
-Set dev->data->numa_node explicitly from the parent PCI device in
-idpf_dev_vport_init() to restore correct NUMA affinity.
-
-Fixes: 5e0f60527e5b ("net/idpf: remove vport req and recv info from adapter")
-Cc: stable@dpdk.org
-
-Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
----
- drivers/net/intel/idpf/idpf_ethdev.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/net/intel/idpf/idpf_ethdev.c b/drivers/net/intel/idpf/idpf_ethdev.c
-index c13505416a..965de4ed9d 100644
---- a/drivers/net/intel/idpf/idpf_ethdev.c
-+++ b/drivers/net/intel/idpf/idpf_ethdev.c
-@@ -1565,6 +1565,7 @@ idpf_dev_vport_init(struct rte_eth_dev *dev, void *init_params)
- 	int ret = 0;
- 
- 	dev->dev_ops = &idpf_eth_dev_ops;
-+	dev->data->numa_node = dev->device->numa_node;
- 	vport->adapter = &adapter->base;
- 	vport->sw_idx = param->idx;
- 	vport->devarg_id = param->devarg_id;
--- 
-2.34.1
-
+DQo+ID4gPiA+ID4gPiA+ID4gPiA+ID4gKwkvKiBDb21tb24gd2F5IGZvciBzbWFsbCBjb3B5IHNp
+emUgb2YgNjQtYnl0ZQ0KPiA+IGJsb2Nrcy4NCj4gPiA+ID4gPiA+ID4gPiBVbmxpa2VseSwgc28N
+Cj4gPiA+ID4gPiA+ID4gPiA+ID4gY29uc3RhbnQgc2l6ZSBvbmx5ICovDQo+ID4gPiA+ID4gPiA+
+ID4gPiA+ID4gKwlpZiAoX19ydGVfY29uc3RhbnQobikgJiYgKG4gJiA2MykgPT0gMCAmJiBuIDw9
+DQo+ID4gPiA+ID4gPiA+ID4gPiA+IFJURV9NRU1DUFlfQkxPQ0tfNjRfTUFYKSB7DQo+ID4gPiA+
+ID4gPiA+ID4gPiA+ID4gKwkJdm9pZCAqcmV0ID0gZHN0Ow0KPiA+ID4gPiA+ID4gPiA+ID4gPiA+
+ICsNCj4gPiA+ID4gPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+ID4gPiA+ID4gTWF5YmUganVzdCBs
+ZXQgY29tcGlsZXIgZGVjaWRlLCBpdCB3aWxsIGdlbmVyYXRlIHZlY3Rvcg0KPiA+ID4gPiA+ID4g
+PiA+IGluc3RydWN0aW9ucyBpbg0KPiA+ID4gPiA+ID4gPiA+ID4gPiBtb3N0IGNhc2VzLg0KPiA+
+ID4gPiA+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gPiA+ID4gPiAJaWYgKF9fcnRlX2NvbnN0YW50
+KG4pKQ0KPiA+ID4gPiA+ID4gPiA+ID4gPiAJCXJldHVybiBtZW1wY3B5KGRzdCwgc3JjLCBuKTsN
+Cj4gPiA+ID4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiA+ID4gPiBNYXliZSBpbiBtb3N0LCBidXQg
+bm90IGluIGFsbDoNCj4gPiA+ID4gPiA+ID4gPiA+IGh0dHBzOi8vZ29kYm9sdC5vcmcvei9LdmRL
+cVQ1clkNCj4gPiA+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gPiA+IFdpdGggJy1tYXZ4JyBvciAn
+LW1hdng1MTJmJyBpdCBsb29rcyBsaWtlIGl0IGRvZXMgZm9yIHlvdXINCj4gPiA+ID4gc2FtcGxl
+DQo+ID4gPiA+ID4gPiBjb2RlLg0KPiA+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gPiBJdCBhbHNv
+IGRvZXMgd2l0aCAtbXNzZTQuMiB3aGVuIFNaIGlzIHJlZHVjZWQgdG8gMjU2IGJ5dGVzLg0KPiA+
+ID4gPiA+ID4gPiBDbGFuZyBzd2l0Y2hlcyB0byBpbmxpbmUgd2hlbiBTWiBpcyByZWR1Y2VkIHRv
+IDEyOCBieXRlcy4NCj4gPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+ID4gSXQgc2VlbXMgdGhlIGNv
+bXBpbGVyIGhhcyBhIHRocmVzaG9sZCBmb3Igd2hlbiB0byBpbmxpbmUgYW5kDQo+ID4gd2hlbg0K
+PiA+ID4gPiB0bw0KPiA+ID4gPiA+ID4gY2FsbCB0aGUgQw0KPiA+ID4gPiA+ID4gPiBsaWJyYXJ5
+J3MgbWVtY3B5IHN1YnJvdXRpbmUuDQo+ID4gPiA+ID4gPiA+IFRoZSB0aHJlc2hvbGQgZGVwZW5k
+cyBvbiBib3RoIGNvcHkgc2l6ZSBhbmQgdmVjdG9yIHJlZ2lzdGVyDQo+ID4gc2l6ZS4NCj4gPiA+
+ID4gPiA+ID4gQW5kIGl0IGlzIGNvbXBpbGVyIGRlcGVuZGVudC4NCj4gPiA+ID4gPiA+DQo+ID4g
+PiA+ID4gPiBJIHRoaW5rIHRoZXJlIGFyZSBjb21waWxlciBvcHRpb25zIHRvIHNwZWNpZnkgZGVz
+aXJlZCB0aHJlc2hvbGQNCj4gPiA+ID4gdmFsdWVzLg0KPiA+ID4gPiA+ID4gTGV0IHNheSBmb3Ig
+Z2NjIHRoZXJlIGlzICAnIC1tbWVtY3B5LXN0cmF0ZWd5PXN0cmF0ZWd5Jy4NCj4gPiA+ID4gPiA+
+IEZvciB0aGF0IGV4YW1wbGUgaW4gdGhhdCBwYXJ0aWN1bGFyIGNhc2UNCj4gPiA+ID4gPiA+IC1t
+bWVtY3B5LXN0cmF0ZWd5PXZlY3Rvcl9sb29wOjUxMjphbGlnbixsb29wOi0xOmFsaWduDQo+ID4g
+PiA+ID4gPiBnZW5lcmF0ZXMgc3NlIGxvYWRzL3N0b3Jlcy4NCj4gPiA+ID4gPiA+IE1pZ2h0IGJl
+IHdlIGNhbiBleHBsb2l0IGl0IHNvbWVob3c/DQo+ID4gPiA+ID4NCj4gPiA+ID4gPiBUaGF0IGNv
+dWxkIGdpdmUgdXMgaGlnaGVyIGdyYW51bGFyaXR5L2NvbnRyb2wgb3ZlciBtZW1jcHkgZm9yDQo+
+ID4gPiA+IGluZGl2aWR1YWwNCj4gPiA+ID4gPiBtZW1jcHkgaW5zdGFuY2VzOyBtaWdodCBiZSB1
+c2VmdWwgZm9yIGhvdCBjb2RlIHBhdGhzIHdoZXJlIHdlDQo+ID4gaGF2ZQ0KPiA+ID4gPiBtb3Jl
+DQo+ID4gPiA+ID4ga25vd2xlZGdlIGFib3V0IHRoZSBjb3B5IG9wZXJhdGlvbiB0aGFuIHRoZSBj
+b21waWxlciBjYW4gaW5mZXIuDQo+ID4gPiA+ID4gSG93ZXZlciwgcHJhZ21hcyBhcmUgZGlzY291
+cmFnZWQgaW4gRFBESywgYW5kIHRoaXMgbG9va3MgbGlrZSBhDQo+ID4gdmVyeQ0KPiA+ID4gPiBz
+aW1pbGFyDQo+ID4gPiA+ID4gcGF0aC4NCj4gPiA+ID4NCj4gPiA+ID4gV2VsbCwgcmlnaHQgbm93
+ICBydGVfbWVtY3B5LmggaXMgNzAwKyBsaW5lcyBhbmQga2VlcHMgZ3Jvd2luZy4NCj4gPiA+ID4g
+Q29uc2lkZXJpbmcgdGhhdCBwcm9iYWJseSBwcmFnbWFzIGFyZSBub3QgdGhhdCBiYWQuDQo+ID4g
+PiA+IE9mIGNvdXJzZSwgcHJhZ21hcyBoYXZlIHRoZWlyIG93biBpc3N1ZXMgYW5kIGl0IGlzIGhh
+cmQgdG8gZW5zdXJlDQo+ID4gdGhhdA0KPiA+ID4gPiB0aGV5IHdpbGwgcHJvZHVjZSBzYW1lIGNv
+ZGUgYmV0d2VlbiBkaWZmZXJlbnQgY29tcGlsZXJzL3ZlcnNpb25zLA0KPiA+IGV0Yy4NCj4gPiA+
+ID4NCj4gPiA+ID4gPiA+IEkgYW0gbm90IHJlYWxseSBoYXBweSB0aGF0IG91ciBob21lLWJyZXdl
+ZCBtZW1jcHkgY29kZS1ibG9jaw0KPiA+IGtlZXBzDQo+ID4gPiA+ID4gPiBncm93aW5nLA0KPiA+
+ID4gPiA+ID4gd2hpbGUgd2Uga2VlcCB0YWxraW5nIHRoYXQgaXQgd291bGQgYmUgZ29vZCB0byBl
+bGltaW5hdGUgaXQNCj4gPiA+ID4gY29tcGxldGVseS4NCj4gPiA+ID4gPg0KPiA+ID4gPiA+IEkg
+YWdyZWUgaW4gcHJpbmNpcGxlLg0KPiA+ID4gPiA+IEhvd2V2ZXIsIHRoaXMgcnRlX21lbWNweSgp
+IG9wdGltaXphdGlvbiBpcyBmb3IgdGhlIHBpbGUvbWVtcG9vbA0KPiA+ID4gPiBvcHRpbWl6YXRp
+b25zDQo+ID4gPiA+ID4gSSdtIHdvcmtpbmcgb24sIHNvIHRoZXJlIGlzIGEgc3BlY2lmaWMgdXNl
+IGNhc2UgbW90aXZhdGluZyB0aGUNCj4gPiBhZGRlZA0KPiA+ID4gPiBjb2RlLg0KPiA+ID4gPg0K
+PiA+ID4gPiBJIHVuZGVyc3RhbmQgdGhhdCB5b3UgcHJvYmFibHkgaGF2ZSBzb21lIHNwZWNpZmlj
+IHVzZS1jYXNlIGluIG1pbmQuDQo+ID4gPiA+IEJUVyBmb3IgdGhpcyBvcHRpbWl6YXRpb24geW91
+IG1lbnRpb25lZCBhYm92ZTogd2hhdCBpcyB0aGUgZ2Fpbg0KPiA+IHdpdGgNCj4gPiA+ID4gdGhl
+c2UgY2hhbmdlcz8NCj4gPiA+DQo+ID4gPiBJTU8sIHRoZSBwcmltYXJ5IGJlbmVmaXQgaXMgdGhl
+IG11Y2ggc2ltcGxlciAoYW5kIHNtYWxsZXIpIGFzc2VtYmx5DQo+ID4gb3V0cHV0IGR1ZQ0KPiA+
+ID4gdG8gYXZvaWRpbmcgdGhlIGFkZHJlc3MgYWxpZ25tZW50IGNoZWNrIChhbmQgdGhlIHJlc3Vs
+dGluZyBkdXBsaWNhdGVkDQo+ID4gY29kZSkuDQo+ID4NCj4gPiBJIHRoaW5rIHRoYXQgc2hvdWxk
+IGJlIG1lYXN1cmFibGUgdG9vOiB3aG9sZSBiaW5hcnkgIGFuZC9vciBob3QgcGF0aA0KPiA+IGZ1
+bmN0aW9uIHNpemUgcmVkdWN0aW9uLCBldGMuDQo+IA0KPiBUaGUgc2l6ZSBvZiB0aGUgZ2VuZXJh
+dGVkIGNvZGUgZm9yIHRoZSBjb3B5IG9wZXJhdGlvbiBpcyByZWR1Y2VkIHRvIHNsaWdodGx5IGxl
+c3MNCj4gdGhhbiBoYWxmIChvbmx5IG9uZSBpbnN0YW5jZSBvZiB0aGUgY29weSBvcGVyYXRpb24g
+aW5zdGVhZCBvZiB0d28sIGFuZCB0aGUNCj4gYWRkcmVzcyBhbGlnbm1lbnQgY29tcGFyaXNvbiBp
+cyBvbWl0dGVkKS4NCj4gDQo+ID4NCj4gPiA+IEkgaGF2ZW4ndCBtZWFzdXJlZCB0aGUgcGVyZm9y
+bWFuY2UgZ2Fpbi4NCj4gPiA+IEJhc2VkIG9uIHRoZSBwZXJmIGdhaW4gaW4gYSBwcmV2aW91cyBt
+ZW1wb29sIG9wdGltaXphdGlvbiBwYXRjaCBbMV0sDQo+ID4gaXQgc2VlbXMNCj4gPiA+IGF2b2lk
+aW5nIHRoZSBhZGRyZXNzIGFsaWdubWVudCBjaGVjayBzaGF2ZXMgfjIgY3ljbGVzIG9mZiB0aGUg
+Y29weQ0KPiA+IG9wZXJhdGlvbiAoZm9yDQo+ID4gPiBjYWNoZS10by1jYWNoZSBjb3B5KS4NCj4g
+PiA+IEkgZXhwZWN0IHRoYXQgdGhlIHNhbWUgZ2FpbiAoZnJvbSBhdm9pZGluZyB0aGUgYWRkcmVz
+cyBhbGlnbm1lbnQNCj4gPiBjaGVjaykgYXBwbGllcw0KPiA+ID4gaGVyZS4NCj4gPg0KPiA+IE9r
+LCB0aGVuIEkgc3VnZ2VzdCB3ZSBkbyBzb21lIG1lYXN1cmVtZW50cyBmaXJzdCwgYmVmb3JlIGdv
+aW5nIGZvcndhcmQNCj4gPiB3aXRoIGl0Lg0KPiANCj4gSSB0cmllZCBtZW1jcHlfcGVyZl9hdXRv
+dGVzdCwgYnV0IHRoZSBicmFuY2ggcHJlZGljdG9yIGtpY2tzIGluIGFuZCBlbGltaW5hdGVzDQo+
+IHRoZSBjb3N0IG9mIHRoZSBhZGRyZXNzIGFsaWdubWVudCBjb21wYXJpc29uLiBTbyB0aGUgcmVz
+dWx0cyBhcmUgdmVyeSBzaW1pbGFyLg0KDQpJbmRlZWQsIHRoZXkgYXJlIHRoZSBzYW1lLg0KDQo+
+IEJUVywgdGhhdCdzIGEgZ2VuZXJhbCBpc3N1ZSB3aXRoIG91ciBwZXJmIHRlc3RzOiBSZXBlYXRl
+ZCB0ZXN0aW5nIGRvZXNuJ3Qgc2hvdw0KPiB0aGUgY29zdCBvZiBicmFuY2hlcywgYmVjYXVzZSB0
+aGV5IGFyZSBhbHdheXMgZWxpbWluYXRlZCBieSB0aGUgYnJhbmNoDQo+IHByZWRpY3Rvci4NCg0K
+TWlnaHQgYmUuLi4NCkJ1dCB3ZSBkbyBuZWVkIHNvbWUgbWVhc3VyYWJsZSBldmlkZW5jZSB0aGF0
+IHN1Y2ggY2hhbmdlIGltcHJvdmUgdGhpbmdzLA0Kb3RoZXJ3aXNlIC0gd2h5IHRvIGJvdGhlcj8N
+CklmIHRoYXQgcGVyZiB0ZXN0IGlzIG5vdCBnb29mIGVub3VnaCAtIGxldCdzIHRyeSB0byBleHRl
+bmQgaXQgb3IgdXNlIGRpZmZlcmVudCBvbmUuDQpCVFcsIGluIHlvdXIgbWVtcG9vbCBwaWxlIFJG
+QywgSSBzZWUgeW91IGFsc28gdXNlIHJ0ZV9tZW1jcHkgb3ZlciBmaXhlZCBzaXplZCBidWZmZXJz
+Lg0KRG8geW91IHNlZSBhbnkgaW1wcm92ZW1lbnQgdGhlcmUgKHdpdC93aXRob3V0IHJ0ZV9tZW1j
+cHkgb3B0aW1peGF0aW9uKT8gIA0KDQo+ID09PT09PT0gPT09PT09PT09PT09PT09PT0gPT09PT09
+PT09PT09PT09PT0gPT09PT09PT09PT09PT09PT0NCj4gPT09PT09PT09PT09PT09PT0NCj4gICAg
+U2l6ZSAgIENhY2hlIHRvIGNhY2hlICAgICBDYWNoZSB0byBtZW0gICAgICBNZW0gdG8gY2FjaGUg
+ICAgICAgIE1lbSB0byBtZW0NCj4gKGJ5dGVzKSAgICAgICAgICAodGlja3MpICAgICAgICAgICh0
+aWNrcykgICAgICAgICAgICh0aWNrcykgICAgICAgICAgICh0aWNrcykNCj4gLS0tLS0tLSAtLS0t
+LS0tLS0tLS0tLS0tLSAtLS0tLS0tLS0tLS0tLS0tLSAtLS0tLS0tLS0tLS0tLS0tLSAtLS0tLS0t
+LS0tLS0tLS0tLQ0KPiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0gMzJCIGFsaWdu
+ZWQNCj4gPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09DQo+IEJlZm9yZQ0KPiBDICAg
+IDY0ICAyIC0gIDIoICA5LjYwJSkgIDIyIC0gMjEoICA0LjQ4JSkgIDMzIC0gMzEoICA1LjE1JSkg
+IDU3IC0gNTYoICAwLjI4JSkNCj4gQyAgIDEyOCAgNCAtICA0KCAgNS41NiUpICA0MSAtIDQwKCAg
+My41OSUpICA1MyAtIDUyKCAgMS40OSUpIDEwMSAtMTAwKCAgMC43MSUpDQo+IEMgICAxOTIgIDYg
+LSAgNiggIDQuMDYlKSAgNjQgLSA2MCggIDUuNjElKSAgNjggLSA2OSggLTEuNjglKSAxMzYgLTEz
+OCggLTEuNDklKQ0KPiBDICAgMjU2IDEwIC0gIDkoICA1LjIxJSkgIDgyIC0gODEoICAxLjIwJSkg
+IDkzIC0gODcoICA3LjQ3JSkgMTcyIC0xNzUoIC0xLjQ2JSkNCj4gQWZ0ZXINCj4gQyAgICA2NCAg
+MiAtICAyKCAtMC43MSUpICAyMiAtIDIxKCAgNy42MiUpICAzMSAtIDMwKCAgNC4zMiUpICA1NyAt
+IDU5KCAtMy4wMyUpDQo+IEMgICAxMjggIDQgLSAgNCggLTAuMzQlKSAgNDAgLSA0MCggIDAuNjAl
+KSAgNTAgLSA1MCggIDAuNDElKSAgOTcgLSA5OSggLTEuOTYlKQ0KPiBDICAgMTkyICA2IC0gIDYo
+ICA1LjI3JSkgIDU5IC0gNTkoIC0wLjI3JSkgIDY5IC0gNzIoIC00LjQyJSkgMTM5IC0xMzgoICAw
+LjkwJSkNCj4gQyAgIDI1NiAgOSAtICA5KCAgOS4xNCUpICA3NyAtIDc3KCAgMC4yNSUpICA4OSAt
+IDkwKCAtMC44OCUpIDE4MCAtMTc3KCAgMS41NyUpDQo+ID09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT0gVW5hbGlnbmVkDQo+ID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT0NCj4gQmVmb3JlDQo+IEMgICAgNjQgIDUgLSAgNSggIDAuOTglKSAgMzIgLSAzMiggIDAuNzIl
+KSAgNDIgLSA0MiggIDAuNDQlKSAgODIgLSA4MiggIDAuNTElKQ0KPiBDICAgMTI4ICA4IC0gIDko
+LTExLjI2JSkgIDUxIC0gNTAoICAwLjUzJSkgIDYwIC0gNTkoICAwLjg5JSkgMTE3IC0xMTUoICAx
+LjM3JSkNCj4gQyAgIDE5MiAxMyAtIDEyKCAgMS42MiUpICA2NiAtIDY3KCAtMS4xMiUpICA4MyAt
+IDgwKCAgMy4yNiUpIDE1NyAtMTY1KCAtNS4yNSUpDQo+IEMgICAyNTYgMjEgLSAyMiggLTUuNzgl
+KSAgOTQgLSA5MyggIDEuNjUlKSAxMDAgLSA5OSggIDEuNTIlKSAyMDIgLTIwNCggLTEuMzQlKQ0K
+PiBBZnRlcg0KPiBDICAgIDY0ICA1IC0gIDUoICAwLjA1JSkgIDMxIC0gMzEoICAwLjE2JSkgIDQw
+IC0gMzkoICAxLjM3JSkgIDc3IC0gNzcoIC0wLjkzJSkNCj4gQyAgIDEyOCAgOSAtICA5KCAtMC42
+OSUpICA1MCAtIDUwKCAtMC4wMiUpICA2MSAtIDYwKCAgMi43MSUpIDExOCAtMTIyKCAtMy4xNSUp
+DQo+IEMgICAxOTIgMTIgLSAxMSggIDcuNjglKSAgNjggLSA2NiggIDMuNjQlKSAgNzkgLSA4MSgg
+LTIuODUlKSAxNjQgLTE2NCggLTAuMTIlKQ0KPiBDICAgMjU2IDIxIC0gMjAoICAxLjgwJSkgIDkw
+IC0gODcoICAyLjcwJSkgIDk2IC0gOTcoIC0wLjk5JSkgMjAyIC0yMDEoICAwLjA5JSkNCj4gDQo+
+ID4NCj4gPiA+IFsxXToNCj4gPiBodHRwczovL3BhdGNod29yay5kcGRrLm9yZy9wcm9qZWN0L2Rw
+ZGsvcGF0Y2gvMjAyNjA1MjExODU2MzEuMTE2MDQ2LTEtDQo+ID4gPiBtYkBzbWFydHNoYXJlc3lz
+dGVtcy5jb20vDQoNCg==
