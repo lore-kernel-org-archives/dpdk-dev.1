@@ -2,50 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB784C5CFC1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 11:10:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13323C5CFCF
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 11:27:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F083E40288;
-	Tue, 11 Aug 2026 13:10:39 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 035774027F
- for <dev@dpdk.org>; Tue, 11 Aug 2026 13:10:39 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 8D00222827;
- Tue, 11 Aug 2026 13:10:37 +0200 (CEST)
-Content-class: urn:content-classes:message
-Subject: RE: [PATCH] eal/x86: optimize memcpy of small 64-byte blocks
+	by mails.dpdk.org (Postfix) with ESMTP id 067A540288;
+	Tue, 11 Aug 2026 13:27:00 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 6E3AE4027F
+ for <dev@dpdk.org>; Tue, 11 Aug 2026 13:26:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1786447618; x=1817983618;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=wPvzMiNQ6PIdKEuUMN1FiMegjw/wPZHOApi9UlJxo/g=;
+ b=dssmq8RqwxiN1hla/HLeLmtscw9RoefB7M03Z7+swfCAt+c6YWB5DGKK
+ 0IUuuWT25Gyrmyj0vqTpySK8YfHEm3ZvAEwFx6VHjdUgXOvQFhYQMD6FG
+ Jmk0aShyETn1Wj0fkYBpF5E25U4ML3w+6HGRxmaAWdYEjQdSmnfs5ZFgp
+ r8cuU+c1ZXYfjZUS768HZ+V8S7u3hHvRNgm3F9Yg9BUAQJ8sODWMlDBEh
+ sxse5lreZ+Mg7JgwNV9N1Wk3PTUidLrJmFJqP2c0zwZSB/ZHLJ8isH5ct
+ D+f/506t/4q1+SCDPi7SLOP1pdw/YNx9OxqBOti7PvIQG18MHde6hZYtx Q==;
+X-CSE-ConnectionGUID: KVuuGJrsQpewGH8Pz7iubg==
+X-CSE-MsgGUID: NatG6jmYS964DDAw2CAiIg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11871"; a="89502169"
+X-IronPort-AV: E=Sophos;i="6.25,217,1779174000"; d="scan'208";a="89502169"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+ by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Aug 2026 04:26:56 -0700
+X-CSE-ConnectionGUID: tAHWmBhYR2urzd7kHbJbvg==
+X-CSE-MsgGUID: Qr/bVWy1R8ishbPTQmMr8A==
+X-ExtLoop1: 1
+Received: from silpixa00401749.ir.intel.com ([10.20.224.233])
+ by fmviesa003.fm.intel.com with ESMTP; 11 Aug 2026 04:26:54 -0700
+From: Radu Nicolau <radu.nicolau@intel.com>
+To: dev@dpdk.org
+Cc: Radu Nicolau <radu.nicolau@intel.com>, Kai Ji <kai.ji@intel.com>,
+ Pablo de Lara <pablo.de.lara.guarch@intel.com>
+Subject: [PATCH] crypto/ipsec_mb: require minimum version 2.0 for IPsec MB
+Date: Tue, 11 Aug 2026 11:26:35 +0000
+Message-ID: <20260811112636.4106950-1-radu.nicolau@intel.com>
+X-Mailer: git-send-email 2.52.0
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Date: Tue, 11 Aug 2026 13:10:35 +0200
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F659D3@smartserver.smartshare.dk>
-In-Reply-To: <22720aafe5cf445787940bb319f7e90e@huawei.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH] eal/x86: optimize memcpy of small 64-byte blocks
-Thread-Index: AQHdJB42oNL4gJj070KJtRurBEIGmLaN+WoAgAAJXwCAAOt0oIAABRpAgAAL2ECAAB9NYIAAlEawgAAzoeCAAMFNUIAAEs8QgAe7bdCAAD6sMA==
-References: <20260804143305.1344327-1-mb@smartsharesystems.com>
- <20260804085210.74763eb5@phoenix.local>
- <98CBD80474FA8B44BF855DF32C47DC35F659B8@smartserver.smartshare.dk>
- <6f474724bc22441a8a4f516f3398ca76@huawei.com>
- <98CBD80474FA8B44BF855DF32C47DC35F659BD@smartserver.smartshare.dk>
- <3c7eea01416249e0aaeab0e8b6b4c157@huawei.com>
- <98CBD80474FA8B44BF855DF32C47DC35F659BF@smartserver.smartshare.dk>
- <3a96ca58a1e146758f5314202a04c3de@huawei.com>
- <98CBD80474FA8B44BF855DF32C47DC35F659C3@smartserver.smartshare.dk>
- <fc32ab5225194114bac9286fe82815e1@huawei.com>
- <98CBD80474FA8B44BF855DF32C47DC35F659C6@smartserver.smartshare.dk>
- <22720aafe5cf445787940bb319f7e90e@huawei.com>
-From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
- "Stephen Hemminger" <stephen@networkplumber.org>
-Cc: <dev@dpdk.org>,
-	"Bruce Richardson" <bruce.richardson@intel.com>
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,208 +57,370 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBLb25zdGFudGluIEFuYW55ZXYgW21haWx0bzprb25zdGFudGluLmFuYW55ZXZAaHVh
-d2VpLmNvbV0NCj4gU2VudDogVHVlc2RheSwgMTEgQXVndXN0IDIwMjYgMDkuMDYNCj4gDQo+IA0K
-PiA+ID4gPiA+ID4gPiA+ID4gPiA+ID4gKwkvKiBDb21tb24gd2F5IGZvciBzbWFsbCBjb3B5IHNp
-emUgb2YgNjQtYnl0ZQ0KPiA+ID4gYmxvY2tzLg0KPiA+ID4gPiA+ID4gPiA+ID4gVW5saWtlbHks
-IHNvDQo+ID4gPiA+ID4gPiA+ID4gPiA+ID4gY29uc3RhbnQgc2l6ZSBvbmx5ICovDQo+ID4gPiA+
-ID4gPiA+ID4gPiA+ID4gPiArCWlmIChfX3J0ZV9jb25zdGFudChuKSAmJiAobiAmIDYzKSA9PSAw
-ICYmIG4gPD0NCj4gPiA+ID4gPiA+ID4gPiA+ID4gPiBSVEVfTUVNQ1BZX0JMT0NLXzY0X01BWCkg
-ew0KPiA+ID4gPiA+ID4gPiA+ID4gPiA+ID4gKwkJdm9pZCAqcmV0ID0gZHN0Ow0KPiA+ID4gPiA+
-ID4gPiA+ID4gPiA+ID4gKw0KPiA+ID4gPiA+ID4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiA+ID4g
-PiA+ID4gTWF5YmUganVzdCBsZXQgY29tcGlsZXIgZGVjaWRlLCBpdCB3aWxsIGdlbmVyYXRlDQo+
-IHZlY3Rvcg0KPiA+ID4gPiA+ID4gPiA+ID4gaW5zdHJ1Y3Rpb25zIGluDQo+ID4gPiA+ID4gPiA+
-ID4gPiA+ID4gbW9zdCBjYXNlcy4NCj4gPiA+ID4gPiA+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4g
-PiA+ID4gPiA+IAlpZiAoX19ydGVfY29uc3RhbnQobikpDQo+ID4gPiA+ID4gPiA+ID4gPiA+ID4g
-CQlyZXR1cm4gbWVtcGNweShkc3QsIHNyYywgbik7DQo+ID4gPiA+ID4gPiA+ID4gPiA+DQo+ID4g
-PiA+ID4gPiA+ID4gPiA+IE1heWJlIGluIG1vc3QsIGJ1dCBub3QgaW4gYWxsOg0KPiA+ID4gPiA+
-ID4gPiA+ID4gPiBodHRwczovL2dvZGJvbHQub3JnL3ovS3ZkS3FUNXJZDQo+ID4gPiA+ID4gPiA+
-ID4gPg0KPiA+ID4gPiA+ID4gPiA+ID4gV2l0aCAnLW1hdngnIG9yICctbWF2eDUxMmYnIGl0IGxv
-b2tzIGxpa2UgaXQgZG9lcyBmb3INCj4geW91cg0KPiA+ID4gPiA+IHNhbXBsZQ0KPiA+ID4gPiA+
-ID4gPiBjb2RlLg0KPiA+ID4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiA+ID4gSXQgYWxzbyBkb2Vz
-IHdpdGggLW1zc2U0LjIgd2hlbiBTWiBpcyByZWR1Y2VkIHRvIDI1Ng0KPiBieXRlcy4NCj4gPiA+
-ID4gPiA+ID4gPiBDbGFuZyBzd2l0Y2hlcyB0byBpbmxpbmUgd2hlbiBTWiBpcyByZWR1Y2VkIHRv
-IDEyOCBieXRlcy4NCj4gPiA+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gPiA+IEl0IHNlZW1zIHRo
-ZSBjb21waWxlciBoYXMgYSB0aHJlc2hvbGQgZm9yIHdoZW4gdG8gaW5saW5lDQo+IGFuZA0KPiA+
-ID4gd2hlbg0KPiA+ID4gPiA+IHRvDQo+ID4gPiA+ID4gPiA+IGNhbGwgdGhlIEMNCj4gPiA+ID4g
-PiA+ID4gPiBsaWJyYXJ5J3MgbWVtY3B5IHN1YnJvdXRpbmUuDQo+ID4gPiA+ID4gPiA+ID4gVGhl
-IHRocmVzaG9sZCBkZXBlbmRzIG9uIGJvdGggY29weSBzaXplIGFuZCB2ZWN0b3INCj4gcmVnaXN0
-ZXINCj4gPiA+IHNpemUuDQo+ID4gPiA+ID4gPiA+ID4gQW5kIGl0IGlzIGNvbXBpbGVyIGRlcGVu
-ZGVudC4NCj4gPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+ID4gSSB0aGluayB0aGVyZSBhcmUgY29t
-cGlsZXIgb3B0aW9ucyB0byBzcGVjaWZ5IGRlc2lyZWQNCj4gdGhyZXNob2xkDQo+ID4gPiA+ID4g
-dmFsdWVzLg0KPiA+ID4gPiA+ID4gPiBMZXQgc2F5IGZvciBnY2MgdGhlcmUgaXMgICcgLW1tZW1j
-cHktc3RyYXRlZ3k9c3RyYXRlZ3knLg0KPiA+ID4gPiA+ID4gPiBGb3IgdGhhdCBleGFtcGxlIGlu
-IHRoYXQgcGFydGljdWxhciBjYXNlDQo+ID4gPiA+ID4gPiA+IC1tbWVtY3B5LXN0cmF0ZWd5PXZl
-Y3Rvcl9sb29wOjUxMjphbGlnbixsb29wOi0xOmFsaWduDQo+ID4gPiA+ID4gPiA+IGdlbmVyYXRl
-cyBzc2UgbG9hZHMvc3RvcmVzLg0KPiA+ID4gPiA+ID4gPiBNaWdodCBiZSB3ZSBjYW4gZXhwbG9p
-dCBpdCBzb21laG93Pw0KPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+IFRoYXQgY291bGQgZ2l2ZSB1
-cyBoaWdoZXIgZ3JhbnVsYXJpdHkvY29udHJvbCBvdmVyIG1lbWNweSBmb3INCj4gPiA+ID4gPiBp
-bmRpdmlkdWFsDQo+ID4gPiA+ID4gPiBtZW1jcHkgaW5zdGFuY2VzOyBtaWdodCBiZSB1c2VmdWwg
-Zm9yIGhvdCBjb2RlIHBhdGhzIHdoZXJlIHdlDQo+ID4gPiBoYXZlDQo+ID4gPiA+ID4gbW9yZQ0K
-PiA+ID4gPiA+ID4ga25vd2xlZGdlIGFib3V0IHRoZSBjb3B5IG9wZXJhdGlvbiB0aGFuIHRoZSBj
-b21waWxlciBjYW4NCj4gaW5mZXIuDQo+ID4gPiA+ID4gPiBIb3dldmVyLCBwcmFnbWFzIGFyZSBk
-aXNjb3VyYWdlZCBpbiBEUERLLCBhbmQgdGhpcyBsb29rcyBsaWtlDQo+IGENCj4gPiA+IHZlcnkN
-Cj4gPiA+ID4gPiBzaW1pbGFyDQo+ID4gPiA+ID4gPiBwYXRoLg0KPiA+ID4gPiA+DQo+ID4gPiA+
-ID4gV2VsbCwgcmlnaHQgbm93ICBydGVfbWVtY3B5LmggaXMgNzAwKyBsaW5lcyBhbmQga2VlcHMg
-Z3Jvd2luZy4NCj4gPiA+ID4gPiBDb25zaWRlcmluZyB0aGF0IHByb2JhYmx5IHByYWdtYXMgYXJl
-IG5vdCB0aGF0IGJhZC4NCj4gPiA+ID4gPiBPZiBjb3Vyc2UsIHByYWdtYXMgaGF2ZSB0aGVpciBv
-d24gaXNzdWVzIGFuZCBpdCBpcyBoYXJkIHRvDQo+IGVuc3VyZQ0KPiA+ID4gdGhhdA0KPiA+ID4g
-PiA+IHRoZXkgd2lsbCBwcm9kdWNlIHNhbWUgY29kZSBiZXR3ZWVuIGRpZmZlcmVudA0KPiBjb21w
-aWxlcnMvdmVyc2lvbnMsDQo+ID4gPiBldGMuDQo+ID4gPiA+ID4NCj4gPiA+ID4gPiA+ID4gSSBh
-bSBub3QgcmVhbGx5IGhhcHB5IHRoYXQgb3VyIGhvbWUtYnJld2VkIG1lbWNweSBjb2RlLQ0KPiBi
-bG9jaw0KPiA+ID4ga2VlcHMNCj4gPiA+ID4gPiA+ID4gZ3Jvd2luZywNCj4gPiA+ID4gPiA+ID4g
-d2hpbGUgd2Uga2VlcCB0YWxraW5nIHRoYXQgaXQgd291bGQgYmUgZ29vZCB0byBlbGltaW5hdGUg
-aXQNCj4gPiA+ID4gPiBjb21wbGV0ZWx5Lg0KPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+IEkgYWdy
-ZWUgaW4gcHJpbmNpcGxlLg0KPiA+ID4gPiA+ID4gSG93ZXZlciwgdGhpcyBydGVfbWVtY3B5KCkg
-b3B0aW1pemF0aW9uIGlzIGZvciB0aGUNCj4gcGlsZS9tZW1wb29sDQo+ID4gPiA+ID4gb3B0aW1p
-emF0aW9ucw0KPiA+ID4gPiA+ID4gSSdtIHdvcmtpbmcgb24sIHNvIHRoZXJlIGlzIGEgc3BlY2lm
-aWMgdXNlIGNhc2UgbW90aXZhdGluZw0KPiB0aGUNCj4gPiA+IGFkZGVkDQo+ID4gPiA+ID4gY29k
-ZS4NCj4gPiA+ID4gPg0KPiA+ID4gPiA+IEkgdW5kZXJzdGFuZCB0aGF0IHlvdSBwcm9iYWJseSBo
-YXZlIHNvbWUgc3BlY2lmaWMgdXNlLWNhc2UgaW4NCj4gbWluZC4NCj4gPiA+ID4gPiBCVFcgZm9y
-IHRoaXMgb3B0aW1pemF0aW9uIHlvdSBtZW50aW9uZWQgYWJvdmU6IHdoYXQgaXMgdGhlIGdhaW4N
-Cj4gPiA+IHdpdGgNCj4gPiA+ID4gPiB0aGVzZSBjaGFuZ2VzPw0KPiA+ID4gPg0KPiA+ID4gPiBJ
-TU8sIHRoZSBwcmltYXJ5IGJlbmVmaXQgaXMgdGhlIG11Y2ggc2ltcGxlciAoYW5kIHNtYWxsZXIp
-DQo+IGFzc2VtYmx5DQo+ID4gPiBvdXRwdXQgZHVlDQo+ID4gPiA+IHRvIGF2b2lkaW5nIHRoZSBh
-ZGRyZXNzIGFsaWdubWVudCBjaGVjayAoYW5kIHRoZSByZXN1bHRpbmcNCj4gZHVwbGljYXRlZA0K
-PiA+ID4gY29kZSkuDQo+ID4gPg0KPiA+ID4gSSB0aGluayB0aGF0IHNob3VsZCBiZSBtZWFzdXJh
-YmxlIHRvbzogd2hvbGUgYmluYXJ5ICBhbmQvb3IgaG90DQo+IHBhdGgNCj4gPiA+IGZ1bmN0aW9u
-IHNpemUgcmVkdWN0aW9uLCBldGMuDQo+ID4NCj4gPiBUaGUgc2l6ZSBvZiB0aGUgZ2VuZXJhdGVk
-IGNvZGUgZm9yIHRoZSBjb3B5IG9wZXJhdGlvbiBpcyByZWR1Y2VkIHRvDQo+IHNsaWdodGx5IGxl
-c3MNCj4gPiB0aGFuIGhhbGYgKG9ubHkgb25lIGluc3RhbmNlIG9mIHRoZSBjb3B5IG9wZXJhdGlv
-biBpbnN0ZWFkIG9mIHR3bywNCj4gYW5kIHRoZQ0KPiA+IGFkZHJlc3MgYWxpZ25tZW50IGNvbXBh
-cmlzb24gaXMgb21pdHRlZCkuDQo+ID4NCj4gPiA+DQo+ID4gPiA+IEkgaGF2ZW4ndCBtZWFzdXJl
-ZCB0aGUgcGVyZm9ybWFuY2UgZ2Fpbi4NCj4gPiA+ID4gQmFzZWQgb24gdGhlIHBlcmYgZ2FpbiBp
-biBhIHByZXZpb3VzIG1lbXBvb2wgb3B0aW1pemF0aW9uIHBhdGNoDQo+IFsxXSwNCj4gPiA+IGl0
-IHNlZW1zDQo+ID4gPiA+IGF2b2lkaW5nIHRoZSBhZGRyZXNzIGFsaWdubWVudCBjaGVjayBzaGF2
-ZXMgfjIgY3ljbGVzIG9mZiB0aGUNCj4gY29weQ0KPiA+ID4gb3BlcmF0aW9uIChmb3INCj4gPiA+
-ID4gY2FjaGUtdG8tY2FjaGUgY29weSkuDQo+ID4gPiA+IEkgZXhwZWN0IHRoYXQgdGhlIHNhbWUg
-Z2FpbiAoZnJvbSBhdm9pZGluZyB0aGUgYWRkcmVzcyBhbGlnbm1lbnQNCj4gPiA+IGNoZWNrKSBh
-cHBsaWVzDQo+ID4gPiA+IGhlcmUuDQo+ID4gPg0KPiA+ID4gT2ssIHRoZW4gSSBzdWdnZXN0IHdl
-IGRvIHNvbWUgbWVhc3VyZW1lbnRzIGZpcnN0LCBiZWZvcmUgZ29pbmcNCj4gZm9yd2FyZA0KPiA+
-ID4gd2l0aCBpdC4NCj4gPg0KPiA+IEkgdHJpZWQgbWVtY3B5X3BlcmZfYXV0b3Rlc3QsIGJ1dCB0
-aGUgYnJhbmNoIHByZWRpY3RvciBraWNrcyBpbiBhbmQNCj4gZWxpbWluYXRlcw0KPiA+IHRoZSBj
-b3N0IG9mIHRoZSBhZGRyZXNzIGFsaWdubWVudCBjb21wYXJpc29uLiBTbyB0aGUgcmVzdWx0cyBh
-cmUgdmVyeQ0KPiBzaW1pbGFyLg0KPiANCj4gSW5kZWVkLCB0aGV5IGFyZSB0aGUgc2FtZS4NCj4g
-DQo+ID4gQlRXLCB0aGF0J3MgYSBnZW5lcmFsIGlzc3VlIHdpdGggb3VyIHBlcmYgdGVzdHM6IFJl
-cGVhdGVkIHRlc3RpbmcNCj4gZG9lc24ndCBzaG93DQo+ID4gdGhlIGNvc3Qgb2YgYnJhbmNoZXMs
-IGJlY2F1c2UgdGhleSBhcmUgYWx3YXlzIGVsaW1pbmF0ZWQgYnkgdGhlDQo+IGJyYW5jaA0KPiA+
-IHByZWRpY3Rvci4NCj4gDQo+IE1pZ2h0IGJlLi4uDQo+IEJ1dCB3ZSBkbyBuZWVkIHNvbWUgbWVh
-c3VyYWJsZSBldmlkZW5jZSB0aGF0IHN1Y2ggY2hhbmdlIGltcHJvdmUNCj4gdGhpbmdzLA0KPiBv
-dGhlcndpc2UgLSB3aHkgdG8gYm90aGVyPw0KPiBJZiB0aGF0IHBlcmYgdGVzdCBpcyBub3QgZ29v
-ZiBlbm91Z2ggLSBsZXQncyB0cnkgdG8gZXh0ZW5kIGl0IG9yIHVzZQ0KPiBkaWZmZXJlbnQgb25l
-Lg0KPiBCVFcsIGluIHlvdXIgbWVtcG9vbCBwaWxlIFJGQywgSSBzZWUgeW91IGFsc28gdXNlIHJ0
-ZV9tZW1jcHkgb3ZlciBmaXhlZA0KPiBzaXplZCBidWZmZXJzLg0KPiBEbyB5b3Ugc2VlIGFueSBp
-bXByb3ZlbWVudCB0aGVyZSAod2l0L3dpdGhvdXQgcnRlX21lbWNweSBvcHRpbWl4YXRpb24pPw0K
-DQpMb29raW5nIGF0IHRoZSBnZW5lcmF0ZWQgYXNzZW1ibHkgKG9iamR1bXAgLVMgYnVpbGQvZHJp
-dmVycy9saWJydGVfbWVtcG9vbF9zdGFjay5zbykuLi4NCg0KVGhpcyBpcyB0aGUgb3B0aW1pemVk
-IGNvcHkgbG9vcCBpbiBwaWxlX2RlcXVldWU6DQoNCiAgICAxNjUwOgk4OSBjYSAgICAgICAgICAg
-ICAgICAJbW92ICAgICVlY3gsJWVkeA0KICAgIDE2NTI6CWM1IGZlIDZmIDQwIDQwICAgICAgIAl2
-bW92ZHF1IDB4NDAoJXJheCksJXltbTANCiAgICAxNjU3OglmZiBjMSAgICAgICAgICAgICAgICAJ
-aW5jICAgICVlY3gNCiAgICAxNjU5OgljMSBlMiAwNSAgICAgICAgICAgICAJc2hsICAgICQweDUs
-JWVkeA0KICAgIDE2NWM6CTQ5IDhkIDE0IGQ0ICAgICAgICAgIAlsZWEgICAgKCVyMTIsJXJkeCw4
-KSwlcmR4DQogICAgMTY2MDoJYzUgZmUgN2YgMDIgICAgICAgICAgCXZtb3ZkcXUgJXltbTAsKCVy
-ZHgpDQogICAgMTY2NDoJYzUgZmUgNmYgNDggNjAgICAgICAgCXZtb3ZkcXUgMHg2MCglcmF4KSwl
-eW1tMQ0KICAgIDE2Njk6CWM1IGZlIDdmIDRhIDIwICAgICAgIAl2bW92ZHF1ICV5bW0xLDB4MjAo
-JXJkeCkNCiAgICAxNjZlOgljNSBmZSA2ZiA5MCA4MCAwMCAwMCAJdm1vdmRxdSAweDgwKCVyYXgp
-LCV5bW0yDQogICAgMTY3NToJMDAgDQogICAgMTY3NjoJYzUgZmUgN2YgNTIgNDAgICAgICAgCXZt
-b3ZkcXUgJXltbTIsMHg0MCglcmR4KQ0KICAgIDE2N2I6CWM1IGZlIDZmIDk4IGEwIDAwIDAwIAl2
-bW92ZHF1IDB4YTAoJXJheCksJXltbTMNCiAgICAxNjgyOgkwMCANCiAgICAxNjgzOgljNSBmZSA3
-ZiA1YSA2MCAgICAgICAJdm1vdmRxdSAleW1tMywweDYwKCVyZHgpDQogICAgMTY4ODoJYzUgZmUg
-NmYgYTAgYzAgMDAgMDAgCXZtb3ZkcXUgMHhjMCglcmF4KSwleW1tNA0KICAgIDE2OGY6CTAwIA0K
-ICAgIDE2OTA6CWM1IGZlIDdmIGEyIDgwIDAwIDAwIAl2bW92ZHF1ICV5bW00LDB4ODAoJXJkeCkN
-CiAgICAxNjk3OgkwMCANCiAgICAxNjk4OgljNSBmZSA2ZiBhOCBlMCAwMCAwMCAJdm1vdmRxdSAw
-eGUwKCVyYXgpLCV5bW01DQogICAgMTY5ZjoJMDAgDQogICAgMTZhMDoJYzUgZmUgN2YgYWEgYTAg
-MDAgMDAgCXZtb3ZkcXUgJXltbTUsMHhhMCglcmR4KQ0KICAgIDE2YTc6CTAwIA0KICAgIDE2YTg6
-CWM1IGZlIDZmIGIwIDAwIDAxIDAwIAl2bW92ZHF1IDB4MTAwKCVyYXgpLCV5bW02DQogICAgMTZh
-ZjoJMDAgDQogICAgMTZiMDoJYzUgZmUgN2YgYjIgYzAgMDAgMDAgCXZtb3ZkcXUgJXltbTYsMHhj
-MCglcmR4KQ0KICAgIDE2Yjc6CTAwIA0KICAgIDE2Yjg6CWM1IGZlIDZmIGI4IDIwIDAxIDAwIAl2
-bW92ZHF1IDB4MTIwKCVyYXgpLCV5bW03DQogICAgMTZiZjoJMDAgDQogICAgMTZjMDoJYzUgZmUg
-N2YgYmEgZTAgMDAgMDAgCXZtb3ZkcXUgJXltbTcsMHhlMCglcmR4KQ0KICAgIDE2Yzc6CTAwIA0K
-ICAgIDE2Yzg6CTQ4IDhiIDQwIDA4ICAgICAgICAgIAltb3YgICAgMHg4KCVyYXgpLCVyYXgNCiAg
-ICAxNmNjOgkzOSBmMSAgICAgICAgICAgICAgICAJY21wICAgICVlc2ksJWVjeA0KICAgIDE2Y2U6
-CTc1IDgwICAgICAgICAgICAgICAgIAlqbmUgICAgMTY1MCA8cGlsZV9kZXF1ZXVlKzB4ZTA+DQog
-ICAgMTZkMDoNCg0KVGhpcyBpcyB3aXRob3V0IHRoZSBydGVfbWVtY3B5IG9wdGltaXphdGlvbjoN
-Cg0KICAgIDE2NTA6CTg5IGNhICAgICAgICAgICAgICAgIAltb3YgICAgJWVjeCwlZWR4DQogICAg
-MTY1MjoJYzUgZmUgNmYgNDAgNDAgICAgICAgCXZtb3ZkcXUgMHg0MCglcmF4KSwleW1tMA0KICAg
-IDE2NTc6CTQ5IDg5IGMxICAgICAgICAgICAgIAltb3YgICAgJXJheCwlcjkNCiAgICAxNjVhOglm
-ZiBjMSAgICAgICAgICAgICAgICAJaW5jICAgICVlY3gNCiAgICAxNjVjOgljMSBlMiAwNSAgICAg
-ICAgICAgICAJc2hsICAgICQweDUsJWVkeA0KICAgIDE2NWY6CTQ5IDhkIDE0IGQ0ICAgICAgICAg
-IAlsZWEgICAgKCVyMTIsJXJkeCw4KSwlcmR4DQogICAgMTY2MzoJYzUgZmUgN2YgMDIgICAgICAg
-ICAgCXZtb3ZkcXUgJXltbTAsKCVyZHgpDQogICAgMTY2NzoJYzUgZmUgNmYgNDggNjAgICAgICAg
-CXZtb3ZkcXUgMHg2MCglcmF4KSwleW1tMQ0KICAgIDE2NmM6CTQ5IDA5IGQxICAgICAgICAgICAg
-IAlvciAgICAgJXJkeCwlcjkNCiAgICAxNjZmOgk0MSA4MyBlMSAxZiAgICAgICAgICAJYW5kICAg
-ICQweDFmLCVyOWQNCiAgICAxNjczOgljNSBmZSA3ZiA0YSAyMCAgICAgICAJdm1vdmRxdSAleW1t
-MSwweDIwKCVyZHgpDQogICAgMTY3ODoJYzUgZmUgNmYgOTAgODAgMDAgMDAgCXZtb3ZkcXUgMHg4
-MCglcmF4KSwleW1tMg0KICAgIDE2N2Y6CTAwIA0KICAgIDE2ODA6CWM1IGZlIDdmIDUyIDQwICAg
-ICAgIAl2bW92ZHF1ICV5bW0yLDB4NDAoJXJkeCkNCiAgICAxNjg1OgljNSBmZSA2ZiA5OCBhMCAw
-MCAwMCAJdm1vdmRxdSAweGEwKCVyYXgpLCV5bW0zDQogICAgMTY4YzoJMDAgDQogICAgMTY4ZDoJ
-YzUgZmUgN2YgNWEgNjAgICAgICAgCXZtb3ZkcXUgJXltbTMsMHg2MCglcmR4KQ0KICAgIDE2OTI6
-CWM1IGZlIDZmIGEwIGMwIDAwIDAwIAl2bW92ZHF1IDB4YzAoJXJheCksJXltbTQNCiAgICAxNjk5
-OgkwMCANCiAgICAxNjlhOgljNSBmZSA3ZiBhMiA4MCAwMCAwMCAJdm1vdmRxdSAleW1tNCwweDgw
-KCVyZHgpDQogICAgMTZhMToJMDAgDQogICAgMTZhMjoJYzUgZmUgNmYgYTggZTAgMDAgMDAgCXZt
-b3ZkcXUgMHhlMCglcmF4KSwleW1tNQ0KICAgIDE2YTk6CTAwIA0KICAgIDE2YWE6CWM1IGZlIDdm
-IGFhIGEwIDAwIDAwIAl2bW92ZHF1ICV5bW01LDB4YTAoJXJkeCkNCiAgICAxNmIxOgkwMCANCiAg
-ICAxNmIyOgljNSBmZSA2ZiBiMCAwMCAwMSAwMCAJdm1vdmRxdSAweDEwMCglcmF4KSwleW1tNg0K
-ICAgIDE2Yjk6CTAwIA0KICAgIDE2YmE6CWM1IGZlIDdmIGIyIGMwIDAwIDAwIAl2bW92ZHF1ICV5
-bW02LDB4YzAoJXJkeCkNCiAgICAxNmMxOgkwMCANCiAgICAxNmMyOgljNSBmZSA2ZiBiOCAyMCAw
-MSAwMCAJdm1vdmRxdSAweDEyMCglcmF4KSwleW1tNw0KICAgIDE2Yzk6CTAwIA0KICAgIDE2Y2E6
-CWM1IGZlIDdmIGJhIGUwIDAwIDAwIAl2bW92ZHF1ICV5bW03LDB4ZTAoJXJkeCkNCiAgICAxNmQx
-OgkwMCANCiAgICAxNmQyOgk0OCA4YiA0MCAwOCAgICAgICAgICAJbW92ICAgIDB4OCglcmF4KSwl
-cmF4DQogICAgMTZkNjoJMGYgODUgYzQgMDAgMDAgMDAgICAgCWpuZSAgICAxN2EwIDxwaWxlX2Rl
-cXVldWUrMHgyMzA+DQogICAgMTZkYzoJMzkgY2UgICAgICAgICAgICAgICAgCWNtcCAgICAlZWN4
-LCVlc2kNCiAgICAxNmRlOgkwZiA4NSA2YyBmZiBmZiBmZiAgICAJam5lICAgIDE2NTAgPHBpbGVf
-ZGVxdWV1ZSsweGUwPg0KICAgIDE2ZTQ6DQogICAgWy4uLl0NCiAgICAxN2EwOgkzOSBmMSAgICAg
-ICAgICAgICAgICAJY21wICAgICVlc2ksJWVjeA0KICAgIDE3YTI6CTBmIDg1IGE4IGZlIGZmIGZm
-ICAgIAlqbmUgICAgMTY1MCA8cGlsZV9kZXF1ZXVlKzB4ZTA+DQogICAgMTdhODoJZTkgMzcgZmYg
-ZmYgZmYgICAgICAgCWptcCAgICAxNmU0IDxwaWxlX2RlcXVldWUrMHgxNzQ+DQoNCkhlcmUsIHRo
-ZSBhbGlnbm1lbnQgY29tcGFyaXNvbiBJIGhhdmUgb3B0aW1pemVkIGF3YXkgaXMgcGVyZm9ybWVk
-IHVzaW5nIHJlZ2lzdGVyICVyOS4NCg0KV2l0aCB0aGUgb3B0aW1pemF0aW9uLCB0aGUgZ2VuZXJh
-dGVkIGFzc2VtYmx5IGlzIGxlc3MgY2x1dHRlcmVkLCBhbmQgdGh1cyBlYXNpZXIgdG8gcmV2aWV3
-Lg0KKEl0IHNlZW1zIHRoZSBjb21waWxlciBpcyBjbGV2ZXIgZW5vdWdoIHRvIG5vdCBkdXBsaWNh
-dGUgdGhlIHR3byBpbnN0YW5jZXMgb2YgdGhlIGNvZGUsIGJ1dCByZXVzZSB0aGUgYWxpZ25lZCBp
-bnN0YW5jZSBmb3IgdGhlIHVuYWxpZ25lZCBjYXNlIHRvby4gU28gdGhlIHJlZHVjdGlvbiBpbiBj
-b2RlIHNpemUgaXMgbm90IGFzIGdyZWF0IGFzIEkgcHJldmlvdXNseSBjbGFpbWVkLikNCg0KSSBh
-Z3JlZSB0aGUgcGVyZm9ybWFuY2UgYmVuZWZpdCBpbiBDUFUgY3ljbGVzIGlzIHByb2JhYmx5IGlu
-c2lnbmlmaWNhbnQuDQpCdXQgdGhlIGdlbmVyYXRlZCBhc3NlbWJseSBpcyBjbGVhbmVyLg0KQW5k
-IGlmIHByZXNzdXJlZCBmb3IgQ1BVIHJlZ2lzdGVycywgdGhlIG9wdGltaXphdGlvbiBhbHNvIGZy
-ZWVzIHVwIG9uZSBDUFUgcmVnaXN0ZXIgZm9yIG90aGVyIHB1cnBvc2VzLg0KDQpDb2RlIHNpemUg
-cmVkdWN0aW9uOg0KVGhlIG9wdGltaXplZCBsb29wIGlzIDB4ODAgYnl0ZXMgb2YgaW5zdHJ1Y3Rp
-b25zLg0KVGhlIG5vbi1vcHRpbWl6ZWQgaXMgMHg4ZSBieXRlcywgMTQgYnl0ZXMgbW9yZSwgaW4g
-dGhlIGxvb3AsIHBsdXMgMTMgYnl0ZXMgb3V0c2lkZSB0aGUgbG9vcC4NCg0KPiANCj4gPiA9PT09
-PT09ID09PT09PT09PT09PT09PT09ID09PT09PT09PT09PT09PT09ID09PT09PT09PT09PT09PT09
-DQo+ID4gPT09PT09PT09PT09PT09PT0NCj4gPiAgICBTaXplICAgQ2FjaGUgdG8gY2FjaGUgICAg
-IENhY2hlIHRvIG1lbSAgICAgIE1lbSB0byBjYWNoZQ0KPiBNZW0gdG8gbWVtDQo+ID4gKGJ5dGVz
-KSAgICAgICAgICAodGlja3MpICAgICAgICAgICh0aWNrcykgICAgICAgICAgICh0aWNrcykNCj4g
-KHRpY2tzKQ0KPiA+IC0tLS0tLS0gLS0tLS0tLS0tLS0tLS0tLS0gLS0tLS0tLS0tLS0tLS0tLS0g
-LS0tLS0tLS0tLS0tLS0tLS0gLS0tLS0tLQ0KPiAtLS0tLS0tLS0tDQo+ID4gPT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09IDMyQiBhbGlnbmVkDQo+ID4gPT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09DQo+ID4gQmVmb3JlDQo+ID4gQyAgICA2NCAgMiAtICAyKCAgOS42MCUp
-ICAyMiAtIDIxKCAgNC40OCUpICAzMyAtIDMxKCAgNS4xNSUpICA1NyAtDQo+IDU2KCAgMC4yOCUp
-DQo+ID4gQyAgIDEyOCAgNCAtICA0KCAgNS41NiUpICA0MSAtIDQwKCAgMy41OSUpICA1MyAtIDUy
-KCAgMS40OSUpIDEwMSAtDQo+IDEwMCggIDAuNzElKQ0KPiA+IEMgICAxOTIgIDYgLSAgNiggIDQu
-MDYlKSAgNjQgLSA2MCggIDUuNjElKSAgNjggLSA2OSggLTEuNjglKSAxMzYgLQ0KPiAxMzgoIC0x
-LjQ5JSkNCj4gPiBDICAgMjU2IDEwIC0gIDkoICA1LjIxJSkgIDgyIC0gODEoICAxLjIwJSkgIDkz
-IC0gODcoICA3LjQ3JSkgMTcyIC0NCj4gMTc1KCAtMS40NiUpDQo+ID4gQWZ0ZXINCj4gPiBDICAg
-IDY0ICAyIC0gIDIoIC0wLjcxJSkgIDIyIC0gMjEoICA3LjYyJSkgIDMxIC0gMzAoICA0LjMyJSkg
-IDU3IC0NCj4gNTkoIC0zLjAzJSkNCj4gPiBDICAgMTI4ICA0IC0gIDQoIC0wLjM0JSkgIDQwIC0g
-NDAoICAwLjYwJSkgIDUwIC0gNTAoICAwLjQxJSkgIDk3IC0NCj4gOTkoIC0xLjk2JSkNCj4gPiBD
-ICAgMTkyICA2IC0gIDYoICA1LjI3JSkgIDU5IC0gNTkoIC0wLjI3JSkgIDY5IC0gNzIoIC00LjQy
-JSkgMTM5IC0NCj4gMTM4KCAgMC45MCUpDQo+ID4gQyAgIDI1NiAgOSAtICA5KCAgOS4xNCUpICA3
-NyAtIDc3KCAgMC4yNSUpICA4OSAtIDkwKCAtMC44OCUpIDE4MCAtDQo+IDE3NyggIDEuNTclKQ0K
-PiA+ID09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0gVW5hbGlnbmVkDQo+ID4gPT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQ0KPiA+IEJlZm9yZQ0KPiA+IEMgICAgNjQg
-IDUgLSAgNSggIDAuOTglKSAgMzIgLSAzMiggIDAuNzIlKSAgNDIgLSA0MiggIDAuNDQlKSAgODIg
-LQ0KPiA4MiggIDAuNTElKQ0KPiA+IEMgICAxMjggIDggLSAgOSgtMTEuMjYlKSAgNTEgLSA1MCgg
-IDAuNTMlKSAgNjAgLSA1OSggIDAuODklKSAxMTcgLQ0KPiAxMTUoICAxLjM3JSkNCj4gPiBDICAg
-MTkyIDEzIC0gMTIoICAxLjYyJSkgIDY2IC0gNjcoIC0xLjEyJSkgIDgzIC0gODAoICAzLjI2JSkg
-MTU3IC0NCj4gMTY1KCAtNS4yNSUpDQo+ID4gQyAgIDI1NiAyMSAtIDIyKCAtNS43OCUpICA5NCAt
-IDkzKCAgMS42NSUpIDEwMCAtIDk5KCAgMS41MiUpIDIwMiAtDQo+IDIwNCggLTEuMzQlKQ0KPiA+
-IEFmdGVyDQo+ID4gQyAgICA2NCAgNSAtICA1KCAgMC4wNSUpICAzMSAtIDMxKCAgMC4xNiUpICA0
-MCAtIDM5KCAgMS4zNyUpICA3NyAtDQo+IDc3KCAtMC45MyUpDQo+ID4gQyAgIDEyOCAgOSAtICA5
-KCAtMC42OSUpICA1MCAtIDUwKCAtMC4wMiUpICA2MSAtIDYwKCAgMi43MSUpIDExOCAtDQo+IDEy
-MiggLTMuMTUlKQ0KPiA+IEMgICAxOTIgMTIgLSAxMSggIDcuNjglKSAgNjggLSA2NiggIDMuNjQl
-KSAgNzkgLSA4MSggLTIuODUlKSAxNjQgLQ0KPiAxNjQoIC0wLjEyJSkNCj4gPiBDICAgMjU2IDIx
-IC0gMjAoICAxLjgwJSkgIDkwIC0gODcoICAyLjcwJSkgIDk2IC0gOTcoIC0wLjk5JSkgMjAyIC0N
-Cj4gMjAxKCAgMC4wOSUpDQo+ID4NCj4gPiA+DQo+ID4gPiA+IFsxXToNCj4gPiA+DQo+IGh0dHBz
-Oi8vcGF0Y2h3b3JrLmRwZGsub3JnL3Byb2plY3QvZHBkay9wYXRjaC8yMDI2MDUyMTE4NTYzMS4x
-MTYwNDYtMS0NCj4gPiA+ID4gbWJAc21hcnRzaGFyZXN5c3RlbXMuY29tLw0KDQo=
+Increase the minimum required IPsec MB library version to 2.0
+As a consequence, clean up the aesni_mb PMD code.
+
+Signed-off-by: Radu Nicolau <radu.nicolau@intel.com>
+---
+ doc/guides/cryptodevs/aesni_gcm.rst         |  7 +++---
+ doc/guides/cryptodevs/aesni_mb.rst          |  7 +++---
+ doc/guides/cryptodevs/qat.rst               |  2 +-
+ doc/guides/cryptodevs/snow3g.rst            |  3 ++-
+ doc/guides/cryptodevs/zuc.rst               |  3 ++-
+ doc/guides/rel_notes/release_26_11.rst      |  4 +++
+ drivers/common/qat/meson.build              |  4 +--
+ drivers/crypto/ipsec_mb/meson.build         |  2 +-
+ drivers/crypto/ipsec_mb/pmd_aesni_mb.c      | 28 +++------------------
+ drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h |  8 ------
+ 10 files changed, 23 insertions(+), 45 deletions(-)
+
+diff --git a/doc/guides/cryptodevs/aesni_gcm.rst b/doc/guides/cryptodevs/aesni_gcm.rst
+index 4683e9dd86..aefc1cedcb 100644
+--- a/doc/guides/cryptodevs/aesni_gcm.rst
++++ b/doc/guides/cryptodevs/aesni_gcm.rst
+@@ -40,8 +40,8 @@ Installation
+ To build DPDK with the AESNI_GCM_PMD the user is required to download the multi-buffer
+ library from `here <https://github.com/01org/intel-ipsec-mb>`_
+ and compile it on their user system before building DPDK.
+-The latest version of the library supported by this PMD is v1.5, which
+-can be downloaded in `<https://github.com/01org/intel-ipsec-mb/archive/v1.5.zip>`_.
++The latest version of the library supported by this PMD is v2.0, which
++can be downloaded from `<https://github.com/01org/intel-ipsec-mb/archive/v2.0.zip>`_.
+ 
+ For Arm system, ARM64 port of the multi-buffer library can be downloaded from
+ https://gitlab.arm.com/arm-reference-solutions/ipsec-mb/-/tree/main/.
+@@ -77,7 +77,8 @@ and the external crypto libraries supported by them:
+    =============  ================================
+    20.11 - 21.08  Multi-buffer library 0.53 - 1.3
+    21.11 - 24.07  Multi-buffer library 1.0  - 1.5
+-   24.11+         Multi-buffer library 1.4+
++   24.11 - 26.07  Multi-buffer library 1.4  - 2.0
++   26.11+         Multi-buffer library 2.0+
+    =============  ================================
+ 
+ Initialization
+diff --git a/doc/guides/cryptodevs/aesni_mb.rst b/doc/guides/cryptodevs/aesni_mb.rst
+index ab7a6138a8..add3c03b74 100644
+--- a/doc/guides/cryptodevs/aesni_mb.rst
++++ b/doc/guides/cryptodevs/aesni_mb.rst
+@@ -96,8 +96,8 @@ Installation
+ To build DPDK with the AESNI_MB_PMD the user is required to download the multi-buffer
+ library from `here <https://github.com/01org/intel-ipsec-mb>`_
+ and compile it on their user system before building DPDK.
+-The latest version of the library supported by this PMD is v1.5, which
+-can be downloaded from `<https://github.com/01org/intel-ipsec-mb/archive/v1.5.zip>`_.
++The latest version of the library supported by this PMD is v2.0, which
++can be downloaded from `<https://github.com/01org/intel-ipsec-mb/archive/v2.0.zip>`_.
+ 
+ For Arm system, ARM64 port of the multi-buffer library can be downloaded from
+ https://gitlab.arm.com/arm-reference-solutions/ipsec-mb/-/tree/main/.
+@@ -132,7 +132,8 @@ and the Multi-Buffer library version supported by them:
+    ==============  ============================
+    20.11 - 21.08   0.53 - 1.3
+    21.11 - 24.07   1.0  - 1.5
+-   24.11+          1.4+
++   24.11 - 26.07   1.4  - 2.0
++   26.11+          2.0+
+    ==============  ============================
+ 
+ Initialization
+diff --git a/doc/guides/cryptodevs/qat.rst b/doc/guides/cryptodevs/qat.rst
+index 6c96c5f88d..1738152435 100644
+--- a/doc/guides/cryptodevs/qat.rst
++++ b/doc/guides/cryptodevs/qat.rst
+@@ -360,7 +360,7 @@ that were previously used for HMAC precomputes.
+ 
+ **On x86 platforms:**
+ 
+-* Intel IPsec MB library (v1.4.0+) is required for HMAC precomputes.
++* Intel IPsec MB library (v2.0+) is required for HMAC precomputes.
+ * OpenSSL (3.0+) is optional for DOCSIS BPI cipher fallback.
+ 
+ **On ARM platforms:**
+diff --git a/doc/guides/cryptodevs/snow3g.rst b/doc/guides/cryptodevs/snow3g.rst
+index e1db5d39ad..e3a47263e1 100644
+--- a/doc/guides/cryptodevs/snow3g.rst
++++ b/doc/guides/cryptodevs/snow3g.rst
+@@ -82,7 +82,8 @@ and the external crypto libraries supported by them:
+    =============  ================================
+    20.02 - 21.08  Multi-buffer library 0.53 - 1.3
+    21.11 - 24.07  Multi-buffer library 1.0  - 1.5
+-   24.11+         Multi-buffer library 1.4+
++   24.11 - 26.07  Multi-buffer library 1.4  - 2.0
++   26.11+         Multi-buffer library 2.0+
+    =============  ================================
+ 
+ Initialization
+diff --git a/doc/guides/cryptodevs/zuc.rst b/doc/guides/cryptodevs/zuc.rst
+index 91b7267362..22b70bc750 100644
+--- a/doc/guides/cryptodevs/zuc.rst
++++ b/doc/guides/cryptodevs/zuc.rst
+@@ -81,7 +81,8 @@ and the external crypto libraries supported by them:
+    =============  ================================
+    20.02 - 21.08  Multi-buffer library 0.53 - 1.3
+    21.11 - 24.07  Multi-buffer library 1.0  - 1.5
+-   24.11+         Multi-buffer library 1.4+
++   24.11 - 26.07  Multi-buffer library 1.4  - 2.0
++   26.11+         Multi-buffer library 2.0+
+    =============  ================================
+ 
+ Initialization
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index c8cc86295d..7fc97ca4c9 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -59,6 +59,10 @@ New Features
+ Removed Items
+ -------------
+ 
++* **Updated AESNI_MB crypto driver.**
++
++  * Remove support for versions older than 2.0 of IPsec MB Library.
++
+ .. This section should contain removed items in this release. Sample format:
+ 
+    * Add a short 1-2 sentence description of the removed item
+diff --git a/drivers/common/qat/meson.build b/drivers/common/qat/meson.build
+index b946354a42..17526d3940 100644
+--- a/drivers/common/qat/meson.build
++++ b/drivers/common/qat/meson.build
+@@ -38,7 +38,7 @@ endif
+ 
+ # IPsec MB is REQUIRED for HMAC precomputes (no OpenSSL 3.0 alternative)
+ # OpenSSL is OPTIONAL for DOCSIS BPI cipher fallback
+-IMB_required_ver = '1.4.0'
++IMB_required_ver = '2.0.0'
+ 
+ # Only check IPsec MB if qat_crypto wasn't already disabled
+ if qat_crypto
+@@ -47,8 +47,6 @@ if qat_crypto
+     else
+         IMB_header = '#include<intel-ipsec-mb.h>'
+     endif
+-
+-    # Check for IPsec MB library (required)
+     libipsecmb = cc.find_library('IPSec_MB', required: false)
+     if libipsecmb.found() and cc.links(
+             'int main(void) {return 0;}', dependencies: libipsecmb)
+diff --git a/drivers/crypto/ipsec_mb/meson.build b/drivers/crypto/ipsec_mb/meson.build
+index eb2085725b..41362c2f4f 100644
+--- a/drivers/crypto/ipsec_mb/meson.build
++++ b/drivers/crypto/ipsec_mb/meson.build
+@@ -9,7 +9,7 @@ endif
+ 
+ cflags += no_wvla_cflag
+ 
+-IMB_required_ver = '1.4.0'
++IMB_required_ver = '2.0.0'
+ IMB_header = '#include<intel-ipsec-mb.h>'
+ if arch_subdir == 'arm'
+     IMB_header = '#include<ipsec-mb.h>'
+diff --git a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c b/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
+index 4c5b6e70b5..02bacd020b 100644
+--- a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
++++ b/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
+@@ -20,10 +20,8 @@ is_aead_algo(IMB_HASH_ALG hash_alg, IMB_CIPHER_MODE cipher_mode)
+ {
+ 	return (hash_alg == IMB_AUTH_CHACHA20_POLY1305 ||
+ 		hash_alg == IMB_AUTH_AES_CCM ||
+-		cipher_mode == IMB_CIPHER_GCM
+-#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
+-		|| cipher_mode == IMB_CIPHER_SM4_GCM
+-#endif
++		cipher_mode == IMB_CIPHER_GCM ||
++		cipher_mode == IMB_CIPHER_SM4_GCM
+ 		);
+ }
+ 
+@@ -295,14 +293,12 @@ aesni_mb_set_session_auth_parameters(IMB_MGR *mb_mgr,
+ 		sess->template_job.hash_alg = IMB_AUTH_SHA_512;
+ 		auth_precompute = 0;
+ 		break;
+-#if IMB_VERSION(1, 5, 0) <= IMB_VERSION_NUM
+ 	case RTE_CRYPTO_AUTH_SM3:
+ 		sess->template_job.hash_alg = IMB_AUTH_SM3;
+ 		break;
+ 	case RTE_CRYPTO_AUTH_SM3_HMAC:
+ 		sess->template_job.hash_alg = IMB_AUTH_HMAC_SM3;
+ 		break;
+-#endif
+ 	default:
+ 		IPSEC_MB_LOG(ERR,
+ 			"Unsupported authentication algorithm selection");
+@@ -353,9 +349,7 @@ aesni_mb_set_session_cipher_parameters(const IMB_MGR *mb_mgr,
+ 	uint8_t is_zuc = 0;
+ 	uint8_t is_snow3g = 0;
+ 	uint8_t is_kasumi = 0;
+-#if IMB_VERSION(1, 5, 0) <= IMB_VERSION_NUM
+ 	uint8_t is_sm4 = 0;
+-#endif
+ 
+ 	if (xform == NULL) {
+ 		sess->template_job.cipher_mode = IMB_CIPHER_NULL;
+@@ -426,7 +420,6 @@ aesni_mb_set_session_cipher_parameters(const IMB_MGR *mb_mgr,
+ 		sess->iv.offset = xform->cipher.iv.offset;
+ 		sess->template_job.iv_len_in_bytes = xform->cipher.iv.length;
+ 		return 0;
+-#if IMB_VERSION(1, 5, 0) <= IMB_VERSION_NUM
+ 	case RTE_CRYPTO_CIPHER_SM4_CBC:
+ 		sess->template_job.cipher_mode = IMB_CIPHER_SM4_CBC;
+ 		is_sm4 = 1;
+@@ -435,13 +428,10 @@ aesni_mb_set_session_cipher_parameters(const IMB_MGR *mb_mgr,
+ 		sess->template_job.cipher_mode = IMB_CIPHER_SM4_ECB;
+ 		is_sm4 = 1;
+ 		break;
+-#endif
+-#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
+ 	case RTE_CRYPTO_CIPHER_SM4_CTR:
+ 		sess->template_job.cipher_mode = IMB_CIPHER_SM4_CNTR;
+ 		is_sm4 = 1;
+ 		break;
+-#endif
+ 	default:
+ 		IPSEC_MB_LOG(ERR, "Unsupported cipher mode parameter");
+ 		return -ENOTSUP;
+@@ -576,7 +566,6 @@ aesni_mb_set_session_cipher_parameters(const IMB_MGR *mb_mgr,
+ 					&sess->cipher.pKeySched_kasumi_cipher);
+ 		sess->template_job.enc_keys = &sess->cipher.pKeySched_kasumi_cipher;
+ 		sess->template_job.dec_keys = &sess->cipher.pKeySched_kasumi_cipher;
+-#if IMB_VERSION(1, 5, 0) <= IMB_VERSION_NUM
+ 	} else if (is_sm4) {
+ 		sess->template_job.key_len_in_bytes = IMB_KEY_128_BYTES;
+ 		IMB_SM4_KEYEXP(mb_mgr, xform->cipher.key.data,
+@@ -584,7 +573,6 @@ aesni_mb_set_session_cipher_parameters(const IMB_MGR *mb_mgr,
+ 				sess->cipher.expanded_sm4_keys.decode);
+ 		sess->template_job.enc_keys = sess->cipher.expanded_sm4_keys.encode;
+ 		sess->template_job.dec_keys = sess->cipher.expanded_sm4_keys.decode;
+-#endif
+ 	} else {
+ 		if (xform->cipher.key.length != 8) {
+ 			IPSEC_MB_LOG(ERR, "Invalid cipher key length");
+@@ -724,7 +712,6 @@ aesni_mb_set_session_aead_parameters(IMB_MGR *mb_mgr,
+ 			return -EINVAL;
+ 		}
+ 		break;
+-#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
+ 	case RTE_CRYPTO_AEAD_SM4_GCM:
+ 		sess->template_job.cipher_mode = IMB_CIPHER_SM4_GCM;
+ 		sess->template_job.hash_alg = IMB_AUTH_SM4_GCM;
+@@ -739,7 +726,6 @@ aesni_mb_set_session_aead_parameters(IMB_MGR *mb_mgr,
+ 		sess->template_job.enc_keys = &sess->cipher.gcm_key;
+ 		sess->template_job.dec_keys = &sess->cipher.gcm_key;
+ 		break;
+-#endif
+ 	default:
+ 		IPSEC_MB_LOG(ERR, "Unsupported aead mode parameter");
+ 		return -ENOTSUP;
+@@ -1065,11 +1051,11 @@ set_cpu_mb_job_params(IMB_JOB *job, struct aesni_mb_session *session,
+ 		job->u.CHACHA20_POLY1305.aad = aad->va;
+ 		break;
+ 
+-#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
++
+ 	case IMB_AUTH_SM4_GCM:
+ 		job->u.GCM.aad = aad->va;
+ 		break;
+-#endif
++
+ 
+ 	default:
+ 		break;
+@@ -1618,11 +1604,9 @@ set_mb_job_params(IMB_JOB *job, struct ipsec_mb_qp *qp,
+ 			imb_set_session(mb_mgr, job);
+ 		}
+ 		break;
+-#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
+ 	case IMB_AUTH_SM4_GCM:
+ 		job->u.GCM.aad = op->sym->aead.aad.data;
+ 		break;
+-#endif
+ 	default:
+ 		break;
+ 	}
+@@ -1753,7 +1737,6 @@ set_mb_job_params(IMB_JOB *job, struct ipsec_mb_qp *qp,
+ 		job->iv = rte_crypto_op_ctod_offset(op, uint8_t *,
+ 			session->iv.offset);
+ 		break;
+-#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
+ 	case IMB_AUTH_SM4_GCM:
+ 		job->hash_start_src_offset_in_bytes = 0;
+ 		/*
+@@ -1766,7 +1749,6 @@ set_mb_job_params(IMB_JOB *job, struct ipsec_mb_qp *qp,
+ 		job->iv = rte_crypto_op_ctod_offset(op, uint8_t *,
+ 				session->iv.offset);
+ 		break;
+-#endif
+ 
+ 	default:
+ 		job->hash_start_src_offset_in_bytes = auth_start_offset(
+@@ -1813,11 +1795,9 @@ set_mb_job_params(IMB_JOB *job, struct ipsec_mb_qp *qp,
+ 		job->msg_len_to_cipher_in_bytes = 0;
+ 		job->cipher_start_src_offset_in_bytes = 0;
+ 		break;
+-#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
+ 	case IMB_CIPHER_SM4_GCM:
+ 		job->msg_len_to_cipher_in_bytes = op->sym->aead.data.length;
+ 		break;
+-#endif
+ 	default:
+ 		job->cipher_start_src_offset_in_bytes =
+ 					op->sym->cipher.data.offset;
+diff --git a/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h b/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h
+index 6dc90a9849..ad38a1e28a 100644
+--- a/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h
++++ b/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h
+@@ -725,7 +725,6 @@ static const struct rte_cryptodev_capabilities aesni_mb_capabilities[] = {
+ 			}, }
+ 		}, }
+ 	},
+-#if IMB_VERSION(1, 5, 0) <= IMB_VERSION_NUM
+ 	{	/* SM3 */
+ 		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
+ 		{.sym = {
+@@ -804,8 +803,6 @@ static const struct rte_cryptodev_capabilities aesni_mb_capabilities[] = {
+ 			}, }
+ 		}, }
+ 	},
+-#endif
+-#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
+ 	{	/* SM4 CTR */
+ 		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
+ 		{.sym = {
+@@ -856,7 +853,6 @@ static const struct rte_cryptodev_capabilities aesni_mb_capabilities[] = {
+ 			}, }
+ 		}, }
+ 	},
+-#endif
+ 	RTE_CRYPTODEV_END_OF_CAPABILITIES_LIST()
+ };
+ 
+@@ -964,10 +960,8 @@ static const unsigned int auth_digest_byte_lengths[] = {
+ 		[IMB_AUTH_ZUC_EIA3_BITLEN]	= 4,
+ 		[IMB_AUTH_SNOW3G_UIA2_BITLEN]	= 4,
+ 		[IMB_AUTH_KASUMI_UIA1]		= 4,
+-#if IMB_VERSION(1, 5, 0) <= IMB_VERSION_NUM
+ 		[IMB_AUTH_SM3]			= 32,
+ 		[IMB_AUTH_HMAC_SM3]		= 32,
+-#endif
+ 	/**< Vector mode dependent pointer table of the multi-buffer APIs */
+ 
+ };
+@@ -1029,7 +1023,6 @@ struct __rte_cache_aligned aesni_mb_session {
+ 			/* *< SNOW3G scheduled cipher key */
+ 			kasumi_key_sched_t pKeySched_kasumi_cipher;
+ 			/* *< KASUMI scheduled cipher key */
+-#if IMB_VERSION(1, 5, 0) <= IMB_VERSION_NUM
+ 			struct {
+ 				alignas(16) uint32_t encode[IMB_SM4_KEY_SCHEDULE_ROUNDS];
+ 				/* *< encode key */
+@@ -1039,7 +1032,6 @@ struct __rte_cache_aligned aesni_mb_session {
+ 			/* *< Expanded SM4 keys - Original 128 bit key is
+ 			 * expanded into 32 round keys, each 32 bits.
+ 			 */
+-#endif
+ 		};
+ 	} cipher;
+ 
+-- 
+2.52.0
+
