@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8BE3C5CFC1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 11:59:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 325C2C5AC67
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 11:59:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 02C524275C;
-	Tue, 11 Aug 2026 13:57:58 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4ED92427A7;
+	Tue, 11 Aug 2026 13:57:59 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id ECD1142794
- for <dev@dpdk.org>; Tue, 11 Aug 2026 13:57:54 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 82E9D4279B
+ for <dev@dpdk.org>; Tue, 11 Aug 2026 13:57:56 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D16A82001B5;
- Tue, 11 Aug 2026 13:57:54 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 652202001B0;
+ Tue, 11 Aug 2026 13:57:56 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 99DCD2001A9;
- Tue, 11 Aug 2026 13:57:54 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2D492200190;
+ Tue, 11 Aug 2026 13:57:56 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 6B80C18000B6;
- Tue, 11 Aug 2026 19:57:53 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id A45BC18000B0;
+ Tue, 11 Aug 2026 19:57:54 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
-Cc: Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v8 15/26] dma/dpaa: add SG data validation and ERR050757
-Date: Tue, 11 Aug 2026 17:27:20 +0530
-Message-Id: <20260811115731.3421032-16-hemant.agrawal@nxp.com>
+Cc: Sachin Saxena <sachin.saxena@nxp.com>
+Subject: [PATCH v8 16/26] net/dpaa: support Rx/Tx taildrop threshold devarg
+Date: Tue, 11 Aug 2026 17:27:21 +0530
+Message-Id: <20260811115731.3421032-17-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260811115731.3421032-1-hemant.agrawal@nxp.com>
 References: <20260703124950.1895871-1-hemant.agrawal@nxp.com>
@@ -49,150 +49,160 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Gagandeep Singh <g.singh@nxp.com>
+Add a 'drv_rx_taildrop' & drv_tx_taildrop device argument to configure
+the Rx frame queue taildrop congestion threshold.
 
-Add scatter-gather (SG) support to the QDMA driver, enabled by default
-via the s_sg_enable flag. Add optional data validation mode controlled
-by the s_data_validation flag for debugging transfer correctness.
-
-Add a workaround for hardware errata ERR050757: when
-RTE_DMA_DPAA_ERRATA_ERR050757 is defined, configure the source frame
-descriptor with stride settings (sss/ssd = FSL_QDMA_CMD_SS_ERR050757_LEN)
-to force PCI read transactions to stay within the errata-safe length
-limit, preventing data corruption on affected silicon.
-
-Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
+Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
+Signed-off-by: Sachin Saxena <sachin.saxena@nxp.com>
 ---
- drivers/dma/dpaa/dpaa_qdma.c | 77 +++++++++++++++++++++++++-----------
- 1 file changed, 54 insertions(+), 23 deletions(-)
+ doc/guides/nics/dpaa.rst       | 18 ++++++--
+ drivers/net/dpaa/dpaa_ethdev.c | 76 +++++++++++++++++++++++++++++++---
+ 2 files changed, 86 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/dma/dpaa/dpaa_qdma.c b/drivers/dma/dpaa/dpaa_qdma.c
-index 3981bf277e..92c95d59fc 100644
---- a/drivers/dma/dpaa/dpaa_qdma.c
-+++ b/drivers/dma/dpaa/dpaa_qdma.c
-@@ -11,6 +11,11 @@
+diff --git a/doc/guides/nics/dpaa.rst b/doc/guides/nics/dpaa.rst
+index c6aab46828..a65d7d1fb8 100644
+--- a/doc/guides/nics/dpaa.rst
++++ b/doc/guides/nics/dpaa.rst
+@@ -272,9 +272,21 @@ Refer to the document :doc:`build_and_test` for details.
+       Done
+       testpmd>
  
- static uint32_t s_sg_max_entry_sz = 2000;
- static bool s_hw_err_check;
-+static int s_data_validation;
-+static int s_sg_enable = 1;
-+#ifdef RTE_DMA_DPAA_ERRATA_ERR050757
-+static int s_pci_read = 1;
-+#endif
- 
- #define DPAA_DMA_ERROR_CHECK "dpaa_dma_err_check"
- 
-@@ -112,7 +117,8 @@ dma_pool_alloc(char *nm, int size, int aligned, dma_addr_t *phy_addr)
- 	if (!virt_addr)
- 		return NULL;
- 
--	*phy_addr = rte_mem_virt2iova(virt_addr);
-+	if (phy_addr)
-+		*phy_addr = rte_mem_virt2iova(virt_addr);
- 
- 	return virt_addr;
- }
-@@ -392,6 +398,8 @@ fsl_qdma_data_validation(struct fsl_qdma_desc *desc[],
- 	char err_msg[512];
- 	int offset;
- 
-+	if (likely(!s_data_validation))
-+		return;
- 
- 	offset = sprintf(err_msg, "Fatal TC%d/queue%d: ",
- 		fsl_queue->block_id,
-@@ -716,19 +724,21 @@ fsl_qdma_enqueue_desc_single(struct fsl_qdma_queue *fsl_queue,
- 	ft = fsl_queue->ft[fsl_queue->ci];
- 
- #ifdef RTE_DMA_DPAA_ERRATA_ERR050757
--	sdf = &ft->df.sdf;
--	sdf->srttype = FSL_QDMA_CMD_RWTTYPE;
-+	if (s_pci_read) {
-+		sdf = &ft->df.sdf;
-+		sdf->srttype = FSL_QDMA_CMD_RWTTYPE;
- #ifdef RTE_DMA_DPAA_ERRATA_ERR050265
--	sdf->prefetch = 1;
-+		sdf->prefetch = 1;
- #endif
--	if (len > FSL_QDMA_CMD_SS_ERR050757_LEN) {
--		sdf->ssen = 1;
--		sdf->sss = FSL_QDMA_CMD_SS_ERR050757_LEN;
--		sdf->ssd = FSL_QDMA_CMD_SS_ERR050757_LEN;
--	} else {
--		sdf->ssen = 0;
--		sdf->sss = 0;
--		sdf->ssd = 0;
-+		if (len > FSL_QDMA_CMD_SS_ERR050757_LEN) {
-+			sdf->ssen = 1;
-+			sdf->sss = FSL_QDMA_CMD_SS_ERR050757_LEN;
-+			sdf->ssd = FSL_QDMA_CMD_SS_ERR050757_LEN;
-+		} else {
-+			sdf->ssen = 0;
-+			sdf->sss = 0;
-+			sdf->ssd = 0;
-+		}
- 	}
- #endif
- 	csgf_src = &ft->desc_sbuf;
-@@ -837,19 +847,21 @@ fsl_qdma_enqueue_desc_sg(struct fsl_qdma_queue *fsl_queue)
- 	csgf_src->length = total_len;
- 	csgf_dest->length = total_len;
- #ifdef RTE_DMA_DPAA_ERRATA_ERR050757
--	sdf = &ft->df.sdf;
--	sdf->srttype = FSL_QDMA_CMD_RWTTYPE;
-+	if (s_pci_read) {
-+		sdf = &ft->df.sdf;
-+		sdf->srttype = FSL_QDMA_CMD_RWTTYPE;
- #ifdef RTE_DMA_DPAA_ERRATA_ERR050265
--	sdf->prefetch = 1;
-+		sdf->prefetch = 1;
- #endif
--	if (total_len > FSL_QDMA_CMD_SS_ERR050757_LEN) {
--		sdf->ssen = 1;
--		sdf->sss = FSL_QDMA_CMD_SS_ERR050757_LEN;
--		sdf->ssd = FSL_QDMA_CMD_SS_ERR050757_LEN;
--	} else {
--		sdf->ssen = 0;
--		sdf->sss = 0;
--		sdf->ssd = 0;
-+		if (total_len > FSL_QDMA_CMD_SS_ERR050757_LEN) {
-+			sdf->ssen = 1;
-+			sdf->sss = FSL_QDMA_CMD_SS_ERR050757_LEN;
-+			sdf->ssd = FSL_QDMA_CMD_SS_ERR050757_LEN;
-+		} else {
-+			sdf->ssen = 0;
-+			sdf->sss = 0;
-+			sdf->ssd = 0;
-+		}
- 	}
- #endif
- 	ret = fsl_qdma_enqueue_desc_to_ring(fsl_queue, num);
-@@ -888,6 +900,25 @@ fsl_qdma_enqueue_desc(struct fsl_qdma_queue *fsl_queue)
- 			fsl_queue->pending_num = 0;
- 		}
- 		return ret;
-+	} else if (!s_sg_enable) {
-+		while (fsl_queue->pending_num > 0) {
-+			ret = fsl_qdma_enqueue_desc_single(fsl_queue,
-+				fsl_queue->pending_desc[start].dst,
-+				fsl_queue->pending_desc[start].src,
-+				fsl_queue->pending_desc[start].len);
-+			if (!ret) {
-+				start = (start + 1) &
-+					(fsl_queue->pending_max - 1);
-+				fsl_queue->pending_start = start;
-+				fsl_queue->pending_num--;
-+			} else {
-+				DPAA_QDMA_ERR("Eq pending desc failed(%d)",
-+					ret);
-+				return -EIO;
-+			}
-+		}
+-* Use dev arg option ``recv_err_pkts=1`` to receive all packets including error packets
+-  and thus disabling hardware based packet handling at driver level,
+-  e.g. ``dpaa:fm1-mac3,recv_err_pkts=1``.
++Device Arguments
++~~~~~~~~~~~~~~~~~
 +
-+		return 0;
- 	}
++The DPAA PMD supports the following per-port device arguments, passed with
++the ``-a`` EAL option (e.g. ``-a dpaa_bus:fm1-mac3,drv_rx_taildrop=64``):
++
++* ``recv_err_pkts`` (default disabled)
++
++  Receive all packets including error packets, disabling hardware based
++  packet handling at driver level. e.g. ``dpaa:fm1-mac3,recv_err_pkts=1`
++
++* ``drv_rx_taildrop`` / ``drv_tx_taildrop``
++
++  Configure the Rx / Tx frame queue taildrop congestion threshold. A value
++  of ``0`` disables taildrop.
  
- 	return fsl_qdma_enqueue_desc_sg(fsl_queue);
+ FMAN Config
+ -----------
+diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
+index 1c42fa0c1c..0ef8fb022e 100644
+--- a/drivers/net/dpaa/dpaa_ethdev.c
++++ b/drivers/net/dpaa/dpaa_ethdev.c
+@@ -55,6 +55,8 @@
+ #define CHECK_INTERVAL          100  /* 100ms */
+ #define MAX_REPEAT_TIME         90   /* 9s (90 * 100ms) in total */
+ #define DRIVER_RECV_ERR_PKTS      "recv_err_pkts"
++#define DRIVER_RX_TAILDROP        "drv_rx_taildrop"
++#define DRIVER_TX_TAILDROP        "drv_tx_taildrop"
+ #define RTE_PRIORITY_103 103
+ 
+ /* Supported Rx offloads */
+@@ -2211,6 +2213,53 @@ dpaa_get_devargs(struct rte_devargs *devargs, const char *key)
+ 	return 1;
+ }
+ 
++static int
++parse_int_devarg_handler(__rte_unused const char *key, const char *value,
++			 void *opaque)
++{
++	char *end;
++	long val;
++
++	errno = 0;
++	val = strtol(value, &end, 0);
++	if (errno != 0 || end == value || *end != '\0')
++		return -EINVAL;
++
++	*(long *)opaque = val;
++	return 0;
++}
++
++/*
++ * Fetch an integer valued device argument.
++ * Returns 1 and stores the parsed value in *val if the key is present and
++ * valid, 0 if the key is absent, and a negative errno on parse error.
++ */
++static int
++dpaa_get_devargs_int(struct rte_devargs *devargs, const char *key, long *val)
++{
++	struct rte_kvargs *kvlist;
++	int ret;
++
++	if (!devargs)
++		return 0;
++
++	kvlist = rte_kvargs_parse(devargs->args, NULL);
++	if (!kvlist)
++		return 0;
++
++	if (!rte_kvargs_count(kvlist, key)) {
++		rte_kvargs_free(kvlist);
++		return 0;
++	}
++
++	ret = rte_kvargs_process(kvlist, key, parse_int_devarg_handler, val);
++	rte_kvargs_free(kvlist);
++	if (ret < 0)
++		return ret;
++
++	return 1;
++}
++
+ /* Initialise a network interface */
+ static int
+ dpaa_dev_init(struct rte_eth_dev *eth_dev)
+@@ -2229,6 +2278,7 @@ dpaa_dev_init(struct rte_eth_dev *eth_dev)
+ 	int8_t dev_vspids[DPAA_MAX_NUM_PCD_QUEUES];
+ 	int8_t vsp_id = -1;
+ 	struct rte_device *dev = eth_dev->device;
++	long td_val = 0;
+ #ifdef RTE_LIBRTE_DPAA_DEBUG_DRIVER
+ 	char *penv;
+ #endif
+@@ -2304,12 +2354,26 @@ dpaa_dev_init(struct rte_eth_dev *eth_dev)
+ 	memset(cgrid, 0, sizeof(cgrid));
+ 	memset(cgrid_tx, 0, sizeof(cgrid_tx));
+ 
+-	/* if DPAA_TX_TAILDROP_THRESHOLD is set, use that value; if 0, it means
++	/* If "drv_rx_taildrop" devarg is set, use that value; if 0, it means
++	 * Rx tail drop is disabled.
++	 */
++	if (dpaa_get_devargs_int(dev->devargs, DRIVER_RX_TAILDROP,
++				 &td_val) == 1) {
++		td_threshold = (unsigned int)td_val;
++		DPAA_PMD_DEBUG("Rx tail drop threshold configured: %u",
++			       td_threshold);
++		/* if a very large value is being configured */
++		if (td_threshold > UINT16_MAX)
++			td_threshold = CGR_RX_PERFQ_THRESH;
++	}
++
++	/* If "drv_tx_taildrop" devarg is set, use that value; if 0, it means
+ 	 * Tx tail drop is disabled.
+ 	 */
+-	if (getenv("DPAA_TX_TAILDROP_THRESHOLD")) {
+-		td_tx_threshold = atoi(getenv("DPAA_TX_TAILDROP_THRESHOLD"));
+-		DPAA_PMD_DEBUG("Tail drop threshold env configured: %u",
++	if (dpaa_get_devargs_int(dev->devargs, DRIVER_TX_TAILDROP,
++				 &td_val) == 1) {
++		td_tx_threshold = (unsigned int)td_val;
++		DPAA_PMD_DEBUG("Tx tail drop threshold configured: %u",
+ 			       td_tx_threshold);
+ 		/* if a very large value is being configured */
+ 		if (td_tx_threshold > UINT16_MAX)
+@@ -2704,5 +2768,7 @@ static struct rte_dpaa_driver rte_dpaa_pmd = {
+ 
+ RTE_PMD_REGISTER_DPAA(net_dpaa, rte_dpaa_pmd);
+ RTE_PMD_REGISTER_PARAM_STRING(net_dpaa,
+-		DRIVER_RECV_ERR_PKTS "=<int>");
++		DRIVER_RECV_ERR_PKTS "=<int>"
++		DRIVER_RX_TAILDROP "=<int>"
++		DRIVER_TX_TAILDROP "=<int>");
+ RTE_LOG_REGISTER_DEFAULT(dpaa_logtype_pmd, NOTICE);
 -- 
 2.25.1
 
