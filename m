@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F07C5B572
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 17:49:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 214A6C5B572
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 17:49:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 50F6B427AE;
-	Tue, 11 Aug 2026 19:48:40 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 65B31427BA;
+	Tue, 11 Aug 2026 19:48:41 +0200 (CEST)
 Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id C084C415D7;
- Tue, 11 Aug 2026 19:48:34 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 9658A4275A;
+ Tue, 11 Aug 2026 19:48:35 +0200 (CEST)
 Received: from localhost.localdomain (unknown [78.109.70.194])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id 05036E0BE5;
- Tue, 11 Aug 2026 21:48:33 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 05036E0BE5
+ by agw.arknetworks.am (Postfix) with ESMTPSA id D3867E0CCB;
+ Tue, 11 Aug 2026 21:48:34 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am D3867E0CCB
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
- s=default; t=1786470514;
- bh=yWZpD9aqRPREQ4rtSpY9EyBQfwJmeAoXcg2ucr8EzE4=;
+ s=default; t=1786470515;
+ bh=UhT1SV9jhgIHnSfgNwNrCJyS+/7A+SpkgQJSYmkvgNo=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=JWrCHjVAKqhM1WfX0pUIL2XURTb7hkG527Q9zWu9zj8hWXQpE+Aq+SWAO61QrvVw0
- rzT4GWOji99Ze4L1OOX6dVZCym5K2MoQo93B40eK1uKQzdN4gqcyK/Sq32Vbw2t7bs
- wGGRmEZT9ZKJNfHqmd/nGgt51+0qm2uxuQiAdGrDUwwsoLmqE+wD1UjZxZwVmEyXYZ
- YdR+t8vYGvYJuTBoRIWMA6bve48q1/dFkxbGIPCWN39pHEIyOUk0XPNZmvnJzhbBxV
- v6v0DfCCRrJPV3uooxPCPGyUL0Q6oedueBvznPnMNgS7nsXi16h7i7TgKKKHul6xKY
- andYANgUrB8Kw==
+ b=AJG4eMcJ4D60SJ+XF9FoaFYBQ8RA8p7y3kri/v6AGCjHibtGzoMvHieeAbZG11u54
+ e6iTMKJIX9pdvlqBBjFOavlckdB4kHodBDuYRY+wFfPKKy9rlnKQNqsVJW3kp16aKF
+ OCq+r44/uxpT/Zyde4UYILBMU+BFOhA75gxE/3YUwAAU1ogEWQz2vIxrE3XVvRmNYI
+ JHuq4NaCm0dKo+HMca/KWVVmS9Fo30AAeSmcbZaYzxnoWwsErJdBsv9/68tZIyiu/M
+ NsiiD74iS8UzF1RPy3kU3iuq9aREUMMQ1gazjjHG9rCPMJ/uYH8tqyvlATeV6Tf7vy
+ j/i8Jmg4pzjhQ==
 From: Ivan Malov <ivan.malov@arknetworks.am>
 To: dev@dpdk.org
 Cc: Andy Moreton <andy.moreton@amd.com>,
@@ -35,10 +35,10 @@ Cc: Andy Moreton <andy.moreton@amd.com>,
  Pieter Jansen van Vuuren <pieter.jansen-van-vuuren@amd.com>,
  Stephen Hemminger <stephen@networkplumber.org>,
  Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, stable@dpdk.org
-Subject: [PATCH 06/14] common/sfc_efx/base: fix annotations in client MAC addr
- get
-Date: Tue, 11 Aug 2026 21:48:13 +0400
-Message-ID: <20260811174821.8930-7-ivan.malov@arknetworks.am>
+Subject: [PATCH 07/14] common/sfc_efx/base: fix annotations in HW-SW mask
+ converter
+Date: Tue, 11 Aug 2026 21:48:14 +0400
+Message-ID: <20260811174821.8930-8-ivan.malov@arknetworks.am>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260811174821.8930-1-ivan.malov@arknetworks.am>
 References: <20260811174821.8930-1-ivan.malov@arknetworks.am>
@@ -59,47 +59,69 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Andy Moreton <andy.moreton@amd.com>
 
-Fix annotations to show the size written to addr_bytes.
+Code analysis reports that efx_np_cap_mask_hw_to_sw does not always write
+to sw_cap_maskp. Fix the annotation to show it is valid on input, and
+initialise the mask in efx_np_cap_hw_data_to_sw_mask.
 
-Fixes: 78b82063df10 ("common/sfc_efx/base: manage VNIC MAC address by MCDI handle")
+Fixes: a90549f527eb ("common/sfc_efx/base: get netport fixed capabilities on probe")
 Cc: stable@dpdk.org
 
 Signed-off-by: Andy Moreton <andy.moreton@amd.com>
 Reviewed-by: Ivan Malov <ivan.malov@arknetworks.am>
 Reviewed-by: Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>
 ---
- drivers/common/sfc_efx/base/efx.h      | 3 ++-
- drivers/common/sfc_efx/base/efx_mcdi.c | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ drivers/common/sfc_efx/base/efx_np.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/common/sfc_efx/base/efx.h b/drivers/common/sfc_efx/base/efx.h
-index 2aa52b401d..b8d1ccd7bd 100644
---- a/drivers/common/sfc_efx/base/efx.h
-+++ b/drivers/common/sfc_efx/base/efx.h
-@@ -439,7 +439,8 @@ extern	__checkReturn	efx_rc_t
- efx_mcdi_client_mac_addr_get(
- 	__in		efx_nic_t *enp,
- 	__in		uint32_t client_handle,
--	__out		uint8_t addr_bytes[EFX_MAC_ADDR_LEN]);
-+	__out_bcount(EFX_MAC_ADDR_LEN)
-+			uint8_t addr_bytes[EFX_MAC_ADDR_LEN]);
- 
- LIBEFX_API
- extern	__checkReturn	efx_rc_t
-diff --git a/drivers/common/sfc_efx/base/efx_mcdi.c b/drivers/common/sfc_efx/base/efx_mcdi.c
-index 58ad1a1bc1..8f14f38cdc 100644
---- a/drivers/common/sfc_efx/base/efx_mcdi.c
-+++ b/drivers/common/sfc_efx/base/efx_mcdi.c
-@@ -737,7 +737,8 @@ efx_mcdi_get_own_client_handle(
- efx_mcdi_client_mac_addr_get(
- 	__in		efx_nic_t *enp,
- 	__in		uint32_t client_handle,
--	__out		uint8_t addr_bytes[EFX_MAC_ADDR_LEN])
-+	__out_bcount(EFX_MAC_ADDR_LEN)
-+			uint8_t addr_bytes[EFX_MAC_ADDR_LEN])
+diff --git a/drivers/common/sfc_efx/base/efx_np.c b/drivers/common/sfc_efx/base/efx_np.c
+index 5044eabdd3..baee83e58e 100644
+--- a/drivers/common/sfc_efx/base/efx_np.c
++++ b/drivers/common/sfc_efx/base/efx_np.c
+@@ -190,7 +190,7 @@ efx_np_cap_mask_hw_to_sw(
+ 	__in				unsigned int hw_sw_map_nentries,
+ 	__in_bcount(hw_cap_data_nbytes)	const uint8_t *hw_cap_data,
+ 	__in				size_t hw_cap_data_nbytes,
+-	__out				uint32_t *sw_cap_maskp)
++	__inout				uint32_t *sw_cap_maskp)
  {
- 	efx_mcdi_req_t req;
- 	EFX_MCDI_DECLARE_BUF(payload,
+ 	FOREACH_SUP_CAP(hw_sw_map, hw_sw_map_nentries,
+ 	    hw_cap_data, hw_cap_data_nbytes) {
+@@ -216,6 +216,8 @@ efx_np_cap_hw_data_to_sw_mask(
+ 	__in			const uint8_t *hw_data,
+ 	__out			uint32_t *sw_maskp)
+ {
++	*sw_maskp = 0;
++
+ 	EFX_NP_CAP_MASK_HW_TO_SW(efx_np_cap_map_tech, ETH_AN_FIELDS_TECH_MASK,
+ 	    hw_data, sw_maskp);
+ 
+@@ -429,21 +431,21 @@ efx_np_link_state(
+ 	_NOTE(ARGUNUSED(lbp))
+ #endif /* EFSYS_OPT_LOOPBACK */
+ 
+-	if (lsp->enls_an_supported != B_FALSE)
+-		lsp->enls_adv_cap_mask |= 1U << EFX_PHY_CAP_AN;
+-
+ 	efx_np_cap_hw_data_to_sw_mask(
+ 	    MCDI_OUT2(req, const uint8_t, LINK_STATE_OUT_ADVERTISED_ABILITIES),
+ 	    &lsp->enls_adv_cap_mask);
+ 
+-	if (status_flags & (1U << MC_CMD_LINK_STATUS_FLAGS_AN_ABLE))
+-		lsp->enls_lp_cap_mask |= 1U << EFX_PHY_CAP_AN;
++	if (lsp->enls_an_supported != B_FALSE)
++		lsp->enls_adv_cap_mask |= 1U << EFX_PHY_CAP_AN;
+ 
+ 	efx_np_cap_hw_data_to_sw_mask(
+ 	    MCDI_OUT2(req, const uint8_t,
+ 		    LINK_STATE_OUT_LINK_PARTNER_ABILITIES),
+ 	    &lsp->enls_lp_cap_mask);
+ 
++	if (status_flags & (1U << MC_CMD_LINK_STATUS_FLAGS_AN_ABLE))
++		lsp->enls_lp_cap_mask |= 1U << EFX_PHY_CAP_AN;
++
+ 	tech = MCDI_OUT_WORD(req, LINK_STATE_OUT_LINK_TECHNOLOGY);
+ 
+ 	if (tech < EFX_ARRAY_SIZE(efx_np_tech_to_lane_count))
 -- 
 2.47.3
 
