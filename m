@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07BC5C5AC67
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 11:59:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8BE3C5CFC1
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 11:59:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DD5BE427A0;
-	Tue, 11 Aug 2026 13:57:56 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 02C524275C;
+	Tue, 11 Aug 2026 13:57:58 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 160714275C
+ by mails.dpdk.org (Postfix) with ESMTP id ECD1142794
  for <dev@dpdk.org>; Tue, 11 Aug 2026 13:57:54 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id EC7602001AE;
- Tue, 11 Aug 2026 13:57:53 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D16A82001B5;
+ Tue, 11 Aug 2026 13:57:54 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B3CF22001A9;
- Tue, 11 Aug 2026 13:57:53 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 99DCD2001A9;
+ Tue, 11 Aug 2026 13:57:54 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 36C211800088;
- Tue, 11 Aug 2026 19:57:52 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 6B80C18000B6;
+ Tue, 11 Aug 2026 19:57:53 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
-Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v8 14/26] drivers: release DPAA bpid on driver destructor
-Date: Tue, 11 Aug 2026 17:27:19 +0530
-Message-Id: <20260811115731.3421032-15-hemant.agrawal@nxp.com>
+Cc: Gagandeep Singh <g.singh@nxp.com>
+Subject: [PATCH v8 15/26] dma/dpaa: add SG data validation and ERR050757
+Date: Tue, 11 Aug 2026 17:27:20 +0530
+Message-Id: <20260811115731.3421032-16-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260811115731.3421032-1-hemant.agrawal@nxp.com>
 References: <20260703124950.1895871-1-hemant.agrawal@nxp.com>
@@ -49,213 +49,150 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jun Yang <jun.yang@nxp.com>
+From: Gagandeep Singh <g.singh@nxp.com>
 
-Track allocated BPIDs in a static per-BPID flag table and register a
-driver destructor that releases any BPIDs still marked as in use at
-process exit. This prevents BPID leaks when an application exits without
-calling rte_mempool_free(). Also tune the per-lcore mempool cache flush
-threshold to match the hardware bulk release size (DPAA_MBUF_MAX_ACQ_REL)
-so that buffers are returned to HW in optimal burst sizes.
+Add scatter-gather (SG) support to the QDMA driver, enabled by default
+via the s_sg_enable flag. Add optional data validation mode controlled
+by the s_data_validation flag for debugging transfer correctness.
 
-Signed-off-by: Jun Yang <jun.yang@nxp.com>
+Add a workaround for hardware errata ERR050757: when
+RTE_DMA_DPAA_ERRATA_ERR050757 is defined, configure the source frame
+descriptor with stride settings (sss/ssd = FSL_QDMA_CMD_SS_ERR050757_LEN)
+to force PCI read transactions to stay within the errata-safe length
+limit, preventing data corruption on affected silicon.
+
+Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
- drivers/bus/dpaa/base/qbman/bman.c       |  8 +++
- drivers/bus/dpaa/dpaa_bus_base_symbols.c |  1 +
- drivers/bus/dpaa/include/fsl_bman.h      |  3 ++
- drivers/mempool/dpaa/dpaa_mempool.c      | 67 ++++++++++++++++++++++--
- drivers/mempool/dpaa/dpaa_mempool.h      |  3 +-
- 5 files changed, 78 insertions(+), 4 deletions(-)
+ drivers/dma/dpaa/dpaa_qdma.c | 77 +++++++++++++++++++++++++-----------
+ 1 file changed, 54 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/bus/dpaa/base/qbman/bman.c b/drivers/bus/dpaa/base/qbman/bman.c
-index ee4232d0a0..0ae1160973 100644
---- a/drivers/bus/dpaa/base/qbman/bman.c
-+++ b/drivers/bus/dpaa/base/qbman/bman.c
-@@ -251,6 +251,14 @@ void bman_free_pool(struct bman_pool *pool)
- 	kfree(pool);
+diff --git a/drivers/dma/dpaa/dpaa_qdma.c b/drivers/dma/dpaa/dpaa_qdma.c
+index 3981bf277e..92c95d59fc 100644
+--- a/drivers/dma/dpaa/dpaa_qdma.c
++++ b/drivers/dma/dpaa/dpaa_qdma.c
+@@ -11,6 +11,11 @@
+ 
+ static uint32_t s_sg_max_entry_sz = 2000;
+ static bool s_hw_err_check;
++static int s_data_validation;
++static int s_sg_enable = 1;
++#ifdef RTE_DMA_DPAA_ERRATA_ERR050757
++static int s_pci_read = 1;
++#endif
+ 
+ #define DPAA_DMA_ERROR_CHECK "dpaa_dma_err_check"
+ 
+@@ -112,7 +117,8 @@ dma_pool_alloc(char *nm, int size, int aligned, dma_addr_t *phy_addr)
+ 	if (!virt_addr)
+ 		return NULL;
+ 
+-	*phy_addr = rte_mem_virt2iova(virt_addr);
++	if (phy_addr)
++		*phy_addr = rte_mem_virt2iova(virt_addr);
+ 
+ 	return virt_addr;
  }
+@@ -392,6 +398,8 @@ fsl_qdma_data_validation(struct fsl_qdma_desc *desc[],
+ 	char err_msg[512];
+ 	int offset;
  
-+void bman_free_bpid(u8 bpid, u32 flags)
-+{
-+	if (flags & BMAN_POOL_FLAG_THRESH)
-+		bm_pool_set(bpid, zero_thresholds);
-+	if (flags & BMAN_POOL_FLAG_DYNAMIC_BPID)
-+		bman_release_bpid(bpid);
-+}
-+
- const struct bman_pool_params *bman_get_params(const struct bman_pool *pool)
- {
- 	return &pool->params;
-diff --git a/drivers/bus/dpaa/dpaa_bus_base_symbols.c b/drivers/bus/dpaa/dpaa_bus_base_symbols.c
-index 1a4778e65b..8775b43ec6 100644
---- a/drivers/bus/dpaa/dpaa_bus_base_symbols.c
-+++ b/drivers/bus/dpaa/dpaa_bus_base_symbols.c
-@@ -58,6 +58,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(qman_alloc_cgrid_range)
- RTE_EXPORT_INTERNAL_SYMBOL(qman_release_cgrid_range)
- RTE_EXPORT_INTERNAL_SYMBOL(dpaa_get_qm_channel_pool_num)
- RTE_EXPORT_INTERNAL_SYMBOL(qman_find_fq_by_cgrid)
-+RTE_EXPORT_INTERNAL_SYMBOL(bman_free_bpid)
- RTE_EXPORT_INTERNAL_SYMBOL(dpaa_intr_enable)
- RTE_EXPORT_INTERNAL_SYMBOL(dpaa_intr_disable)
- RTE_EXPORT_INTERNAL_SYMBOL(dpaa_get_ioctl_version_number)
-diff --git a/drivers/bus/dpaa/include/fsl_bman.h b/drivers/bus/dpaa/include/fsl_bman.h
-index 2d24b89889..9c949d1baa 100644
---- a/drivers/bus/dpaa/include/fsl_bman.h
-+++ b/drivers/bus/dpaa/include/fsl_bman.h
-@@ -287,6 +287,9 @@ struct bman_pool *bman_new_pool(const struct bman_pool_params *params);
- __rte_internal
- void bman_free_pool(struct bman_pool *pool);
- 
-+__rte_internal
-+void bman_free_bpid(u8 bpid, u32 flags);
-+
- /**
-  * bman_get_params - Returns a pool object's parameters.
-  * @pool: the pool object
-diff --git a/drivers/mempool/dpaa/dpaa_mempool.c b/drivers/mempool/dpaa/dpaa_mempool.c
-index 2f8555a026..9b7605276f 100644
---- a/drivers/mempool/dpaa/dpaa_mempool.c
-+++ b/drivers/mempool/dpaa/dpaa_mempool.c
-@@ -25,10 +25,22 @@
- #include <rte_eal.h>
- #include <rte_malloc.h>
- #include <rte_ring.h>
-+#include <rte_common.h>
- 
- #include <dpaa_mempool.h>
- #include <dpaax_iova_table.h>
- 
-+struct dpaa_bpid_flag {
-+	uint32_t flags;
-+	int used;
-+};
-+
-+/** Be referenced in destructor to release bpid allocated.
-+ * Destructor can't access bman_pool from eal mem,
-+ * we release ID with flag directly.
-+ */
-+static struct dpaa_bpid_flag s_dpaa_bpid_allocated_flag[DPAA_MAX_BPOOLS];
-+
- #define FMAN_ERRATA_BOUNDARY ((uint64_t)4096)
- #define FMAN_ERRATA_BOUNDARY_MASK (~(FMAN_ERRATA_BOUNDARY - 1))
- 
-@@ -58,6 +70,8 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
- 	struct bman_pool_params params = {
- 		.flags = BMAN_POOL_FLAG_DYNAMIC_BPID
- 	};
-+	unsigned int lcore_id;
-+	struct rte_mempool_cache *cache;
- 
- 	MEMPOOL_INIT_FUNC_TRACE();
- 
-@@ -115,7 +129,7 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
- 	rte_dpaa_bpid_info[bpid].ptov_off = 0;
- 	rte_dpaa_bpid_info[bpid].flags = 0;
- 
--	bp_info = rte_malloc(NULL,
-+	bp_info = rte_zmalloc(NULL,
- 			     sizeof(struct dpaa_bp_info),
- 			     RTE_CACHE_LINE_SIZE);
- 	if (!bp_info) {
-@@ -127,6 +141,20 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
- 	rte_memcpy(bp_info, (void *)&rte_dpaa_bpid_info[bpid],
- 		   sizeof(struct dpaa_bp_info));
- 	mp->pool_data = (void *)bp_info;
-+	s_dpaa_bpid_allocated_flag[bpid].flags = params.flags;
-+	s_dpaa_bpid_allocated_flag[bpid].used = true;
-+	/* Update per core mempool cache threshold to optimal value which is
-+	 * number of buffers that can be released to HW buffer pool in
-+	 * a single API call.
-+	 */
-+	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
-+		cache = &mp->local_cache[lcore_id];
-+		DPAA_MEMPOOL_DEBUG("lCore %d: cache->flushthresh %d -> %d",
-+			lcore_id, cache->flushthresh,
-+			(uint32_t)(cache->size + DPAA_MBUF_MAX_ACQ_REL));
-+		if (cache->flushthresh)
-+			cache->flushthresh = cache->size + DPAA_MBUF_MAX_ACQ_REL;
-+	}
- 
- 	DPAA_MEMPOOL_INFO("BMAN pool created for bpid =%d", bpid);
- 	return 0;
-@@ -136,6 +164,7 @@ static void
- dpaa_mbuf_free_pool(struct rte_mempool *mp)
- {
- 	struct dpaa_bp_info *bp_info = DPAA_MEMPOOL_TO_POOL_INFO(mp);
-+	uint16_t i;
- 
- 	MEMPOOL_INIT_FUNC_TRACE();
- 
-@@ -143,10 +172,25 @@ dpaa_mbuf_free_pool(struct rte_mempool *mp)
- 		bman_free_pool(bp_info->bp);
- 		DPAA_MEMPOOL_INFO("BMAN pool freed for bpid =%d",
- 				  bp_info->bpid);
--		rte_free(mp->pool_data);
--		bp_info->bp = NULL;
-+		rte_dpaa_bpid_info[bp_info->bpid].mp = NULL;
-+		rte_dpaa_bpid_info[bp_info->bpid].bp = NULL;
-+		s_dpaa_bpid_allocated_flag[bp_info->bpid].used = false;
-+		rte_free(bp_info);
- 		mp->pool_data = NULL;
- 	}
-+
-+	if (!rte_dpaa_bpid_info)
++	if (likely(!s_data_validation))
 +		return;
-+
-+	for (i = 0; i < DPAA_MAX_BPOOLS; i++) {
-+		if (rte_dpaa_bpid_info[i].mp)
-+			break;
-+	}
-+
-+	if (i == DPAA_MAX_BPOOLS) {
-+		rte_free(rte_dpaa_bpid_info);
-+		rte_dpaa_bpid_info = NULL;
-+	}
- }
  
- static int
-@@ -481,4 +525,21 @@ static const struct rte_mempool_ops dpaa_mpool_ops = {
- 	.populate = dpaa_populate,
- };
+ 	offset = sprintf(err_msg, "Fatal TC%d/queue%d: ",
+ 		fsl_queue->block_id,
+@@ -716,19 +724,21 @@ fsl_qdma_enqueue_desc_single(struct fsl_qdma_queue *fsl_queue,
+ 	ft = fsl_queue->ft[fsl_queue->ci];
  
-+#define RTE_PRIORITY_104 104
-+
-+RTE_FINI_PRIO(dpaa_mpool_finish, RTE_PRIORITY_104)
-+{
-+	uint16_t bpid;
-+
-+	for (bpid = 0; bpid < DPAA_MAX_BPOOLS; bpid++) {
-+		if (s_dpaa_bpid_allocated_flag[bpid].used) {
-+			bman_free_bpid(bpid, s_dpaa_bpid_allocated_flag[bpid].flags);
-+			s_dpaa_bpid_allocated_flag[bpid].used = false;
+ #ifdef RTE_DMA_DPAA_ERRATA_ERR050757
+-	sdf = &ft->df.sdf;
+-	sdf->srttype = FSL_QDMA_CMD_RWTTYPE;
++	if (s_pci_read) {
++		sdf = &ft->df.sdf;
++		sdf->srttype = FSL_QDMA_CMD_RWTTYPE;
+ #ifdef RTE_DMA_DPAA_ERRATA_ERR050265
+-	sdf->prefetch = 1;
++		sdf->prefetch = 1;
+ #endif
+-	if (len > FSL_QDMA_CMD_SS_ERR050757_LEN) {
+-		sdf->ssen = 1;
+-		sdf->sss = FSL_QDMA_CMD_SS_ERR050757_LEN;
+-		sdf->ssd = FSL_QDMA_CMD_SS_ERR050757_LEN;
+-	} else {
+-		sdf->ssen = 0;
+-		sdf->sss = 0;
+-		sdf->ssd = 0;
++		if (len > FSL_QDMA_CMD_SS_ERR050757_LEN) {
++			sdf->ssen = 1;
++			sdf->sss = FSL_QDMA_CMD_SS_ERR050757_LEN;
++			sdf->ssd = FSL_QDMA_CMD_SS_ERR050757_LEN;
++		} else {
++			sdf->ssen = 0;
++			sdf->sss = 0;
++			sdf->ssd = 0;
 +		}
-+	}
-+	/** The rte_dpaa_bpid_info and bman_pool from EAL mem have been released
-+	 * with EAL mem pool being destroyed.
-+	 */
-+}
+ 	}
+ #endif
+ 	csgf_src = &ft->desc_sbuf;
+@@ -837,19 +847,21 @@ fsl_qdma_enqueue_desc_sg(struct fsl_qdma_queue *fsl_queue)
+ 	csgf_src->length = total_len;
+ 	csgf_dest->length = total_len;
+ #ifdef RTE_DMA_DPAA_ERRATA_ERR050757
+-	sdf = &ft->df.sdf;
+-	sdf->srttype = FSL_QDMA_CMD_RWTTYPE;
++	if (s_pci_read) {
++		sdf = &ft->df.sdf;
++		sdf->srttype = FSL_QDMA_CMD_RWTTYPE;
+ #ifdef RTE_DMA_DPAA_ERRATA_ERR050265
+-	sdf->prefetch = 1;
++		sdf->prefetch = 1;
+ #endif
+-	if (total_len > FSL_QDMA_CMD_SS_ERR050757_LEN) {
+-		sdf->ssen = 1;
+-		sdf->sss = FSL_QDMA_CMD_SS_ERR050757_LEN;
+-		sdf->ssd = FSL_QDMA_CMD_SS_ERR050757_LEN;
+-	} else {
+-		sdf->ssen = 0;
+-		sdf->sss = 0;
+-		sdf->ssd = 0;
++		if (total_len > FSL_QDMA_CMD_SS_ERR050757_LEN) {
++			sdf->ssen = 1;
++			sdf->sss = FSL_QDMA_CMD_SS_ERR050757_LEN;
++			sdf->ssd = FSL_QDMA_CMD_SS_ERR050757_LEN;
++		} else {
++			sdf->ssen = 0;
++			sdf->sss = 0;
++			sdf->ssd = 0;
++		}
+ 	}
+ #endif
+ 	ret = fsl_qdma_enqueue_desc_to_ring(fsl_queue, num);
+@@ -888,6 +900,25 @@ fsl_qdma_enqueue_desc(struct fsl_qdma_queue *fsl_queue)
+ 			fsl_queue->pending_num = 0;
+ 		}
+ 		return ret;
++	} else if (!s_sg_enable) {
++		while (fsl_queue->pending_num > 0) {
++			ret = fsl_qdma_enqueue_desc_single(fsl_queue,
++				fsl_queue->pending_desc[start].dst,
++				fsl_queue->pending_desc[start].src,
++				fsl_queue->pending_desc[start].len);
++			if (!ret) {
++				start = (start + 1) &
++					(fsl_queue->pending_max - 1);
++				fsl_queue->pending_start = start;
++				fsl_queue->pending_num--;
++			} else {
++				DPAA_QDMA_ERR("Eq pending desc failed(%d)",
++					ret);
++				return -EIO;
++			}
++		}
 +
- RTE_MEMPOOL_REGISTER_OPS(dpaa_mpool_ops);
-diff --git a/drivers/mempool/dpaa/dpaa_mempool.h b/drivers/mempool/dpaa/dpaa_mempool.h
-index 865b533b8f..d7ee49b557 100644
---- a/drivers/mempool/dpaa/dpaa_mempool.h
-+++ b/drivers/mempool/dpaa/dpaa_mempool.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  *
-- *   Copyright 2017,2019,2024 -2025 NXP
-+ *   Copyright 2017,2019,2024 -2026 NXP
-  *
-  */
- #ifndef __DPAA_MEMPOOL_H__
-@@ -24,6 +24,7 @@
++		return 0;
+ 	}
  
- /* total number of bpools on SoC */
- #define DPAA_MAX_BPOOLS	256
-+#define DPAA_INVALID_BPID DPAA_MAX_BPOOLS
- 
- /* Maximum release/acquire from BMAN */
- #define DPAA_MBUF_MAX_ACQ_REL  FSL_BM_BURST_MAX
+ 	return fsl_qdma_enqueue_desc_sg(fsl_queue);
 -- 
 2.25.1
 
