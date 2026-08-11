@@ -2,71 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF06C5B572
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 15:40:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F42C5B56A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 15:44:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 02415406B8;
-	Tue, 11 Aug 2026 17:40:04 +0200 (CEST)
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com
- [209.85.215.172])
- by mails.dpdk.org (Postfix) with ESMTP id D4D7B4027F
- for <dev@dpdk.org>; Tue, 11 Aug 2026 17:40:02 +0200 (CEST)
-Received: by mail-pg1-f172.google.com with SMTP id
- 41be03b00d2f7-ca00f126b7eso2171509a12.2
- for <dev@dpdk.org>; Tue, 11 Aug 2026 08:40:02 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 62B90406B8;
+	Tue, 11 Aug 2026 17:44:25 +0200 (CEST)
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
+ [209.85.214.171])
+ by mails.dpdk.org (Postfix) with ESMTP id BA4144027F
+ for <dev@dpdk.org>; Tue, 11 Aug 2026 17:44:23 +0200 (CEST)
+Received: by mail-pl1-f171.google.com with SMTP id
+ d9443c01a7336-2cf27856f9cso562015ad.2
+ for <dev@dpdk.org>; Tue, 11 Aug 2026 08:44:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786462802;
- x=1787067602; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786463063;
+ x=1787067863; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=pOFq3SRdiLZ4UtKK8vg6OD3Nw0/IY4Zi422p1Rie9xE=;
- b=j6yuiiavhw7tLvyNVbDz9rtfAFnVPXLz3Ay0+p2MfyBff79j+M3MpbxH6neZzu927x
- AWTZjdbf1BRGWpqP0o2MptfDAfo1nV9dvHIvw//VQgkZsUC2VHDDRwyezvjOFCWbcPml
- VwQXJRFelKHnmCpy1Ul48xGn6zfMuOPE2w/kARN9nHeufa2me8kIEU+1x7vU6O8l0Ifi
- mLZntPcs0KMl5qZeeiEB8AQKeL2MgJckcxgfRqiE0hRmPDjbW50lQkRTuqORJJ78Z3J7
- kH+YysIcLccp8SN0nvmQy89bB5wpjTHkuB5m6LRs1LGxCPNBpbWjHWPFgWTE9ZyEmTXo
- uzbA==
+ bh=8qK7lahLr36kDtF6XWYXp95LOGRmhIbNSX043oaQmzM=;
+ b=L/c5fSwvF4sdVsRlONeBPdknajOz9EC8JPSdpN5/mZwl6mQi009cJhttTbCA9i4Xt0
+ 2l8tA3B8CUmpTtMeWmzT8CKKFCnoMrTzU9hFhg1G6UarVIA7P2wwJ/QJ6jjftEOrz0sK
+ FdYzywEspVaT20+I/xnaGjSfoS8lb9UHM+hcNW9YGbL1zJbLNx4k+0fUfwefpSKnLAUI
+ cuT0aEni9N9ZcgSWzAZyBfZa1133L9ZGy3eVXB9JLvBLhboipvhBRq0LDbJvwIsuBieM
+ IkSkGXFcKxpPbOk5s36WtAy82glTS5kQcP2qLjpWKwiklT868zC8YXhESnsCncNpHiyC
+ uJLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786462802; x=1787067602;
+ d=1e100.net; s=20251104; t=1786463063; x=1787067863;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=pOFq3SRdiLZ4UtKK8vg6OD3Nw0/IY4Zi422p1Rie9xE=;
- b=dZt8N9yqS2x5V79c7EdGErDCE5SaEqNADFjh8e1tI2xFQtSFhlJjMDpsfUfC3apU4Q
- dG7ZK5O4ujVtTZBni1Ytun3+xW/6Rw375uPYb56XXyEhoNb96WqgKm5Id1EwyvS4YAr8
- ybsQurO4iimLu9mr88+HwAS/OmeSmMZISdmMEV3rC9nVSDG1kIXb5HNGI/siIHYrFFLo
- +5ixRjeDku6oisN7OGC5Gcmo4AT/I1t8Jx2nqTe8QfF+DH1q1NWtuRA3JTQCs04tD6BH
- G90Jq5DCgBT5eVr88bzB+lfnDaYlSZlmbh4mIgHu04aUu/1rwg8i+qg06kxZtTICWSLH
- LBNA==
-X-Gm-Message-State: AOJu0YwH9ShCspw4xtu2AJpVjKTazgxO94ghiVO4gladZNOfQl+jD2nC
- svaaZImAReoAWYqKTEqbLYAdVAh5KEWGNR1titCveoz0ObDJJkElOvICNhiApiDEBSA=
-X-Gm-Gg: AR+sD139kvPN2Q4+AywY7jvdNxr/ePGMS0DfvWcT4CU2OFEPJIxa2arcBdfPp3J75jg
- Ps1xQQ5MjT5yrx5lljs22RobGlvyZYBd3RPOWtPy6qgD2RVsEKe/RR/bj5FNNlin9Ja2mKUTB69
- mk73FeBIwStZYWpnscLOTj19Q0c0Ilmdn5ccJdIzo4zhf7xUsLaEptAljOv63beAirb4Pk/N4NW
- TtOiLGfZuhti3c/nW7Jk6SSbixWCu4QTaJK4VZOFb6WqmZOU97Xf3gXd07MOKlb225+A4odLi7F
- hV3oZ4z81AFPphYPJD/hab/0137VbZoWqovqqZ4KoZc92PZv3vJSw8eo0Hyi0HhqsM+d04FYHaP
- GCU/mr0JE1ZLAivX6yuj/1dGPwryk2ir24Hml14QMwi6m8zB6qsTvcAWb2IBOmUv0GvAxqKCk8m
- q+cT/+2YKIU/puspxavXW0lyZOifJHthUOkIw3lKCOWmF+U5ux57+3ppvL08cK/kib1BlsJY1oV
- NCM4Bb2eh0WrGdjK6yQHhNdbLA/rw==
-X-Received: by 2002:a05:6a21:460e:b0:3c3:8315:80b7 with SMTP id
- adf61e73a8af0-3cc2b94a7c5mr6205837637.9.1786462801603; 
- Tue, 11 Aug 2026 08:40:01 -0700 (PDT)
+ bh=8qK7lahLr36kDtF6XWYXp95LOGRmhIbNSX043oaQmzM=;
+ b=QT1ud8s/PTCEAwCUwwNlj6DyHAgj23ZfKFVaUYb+V0vO1njvfIGIB79krUeufCHgnH
+ Ovckx7b532HlbW9v/gnjJXEz8/a/MBRXdRTvkasETW+NGz4sw+/DcWXcLXmPBDkBkF8h
+ BsVG+kycyoWzNokyDB6ZSGcK8Cc6dcd3xVUW8877EGsQJVNzJao8lhA+sclz0yOVz9I9
+ M11B1vbClhsvxZ3tD/lLp2RNH/8xUGKe1Q4kuS1cz/CckYPXfmNp0TCquDC+AGUlW32i
+ 16bGn7M0Myv05ihvq5ihMsMdHrzXw41gc29GhwRGPDS4MQ/2kSzK+742IbkPc8w5V6eW
+ WOcw==
+X-Forwarded-Encrypted: i=1;
+ AHgh+RrF0exa/0ddcpU/I7E5UPMYcTahQuG33AVaIa8sXKVxwPl1Lm9mfx8Cl++fzRAdHMmQe7w=@dpdk.org
+X-Gm-Message-State: AOJu0YykC52RK2BTc9KEl9kN2Hlj4Mtm1dwQme1kxkVKZkr0T6VAuZKZ
+ k3CtHrf+QTsDkLA7VOEJ+ZfdtULjvZo6kQ+A8VRb2S5zBFlpma15ZokvouDxIXtDRJ4=
+X-Gm-Gg: AR+sD13HlEMleYs04uJ9FQqBm2Rcg+3WF+uflH0UuZHi5YhEc8JXFzErqfhgHRj5xQx
+ NGXxshrItFw0yJbl5RNyOifbdp3HI9baBz/SxfVuaPuBYC3UTeUm/YADiLoXKAdZ4yC3yrwDZmZ
+ VYi9naA+oPA+q3WU525tizdi+NmDxiPfBBvmpDxR57acnypiICAGWwLORhW81oXRaKHmGWYQq7i
+ YPevE7pRMJBZF7IdQHGAlCZkvp44eaGnaf431RcQ239Nl6XIJu+wdNzVAEXICsmVhOTlST7fk8V
+ dduQV9bEVxEoByIEWRDhtMFEYqCPZwn1Tet7zcQAhLU24NudbVfhOBvODyzQd5tS3fuDcI4g2J3
+ cAvu3PrRRdS1/ANbaBU5XFacg/5SHOKPwpBhC2do//dcrPTW21hvChu1zlAsfyVKEClvmRDd3dt
+ q+SowDaU5NfOa9h5QMalFz3hV5x1u9wEDGW9rbsKNV29HlukyyRQmds4/GyS3y9Z65PI7p9hQc1
+ 1DIQ/KmpR/bA7QUtIWw3vGc7ajxsw==
+X-Received: by 2002:a17:90b:2547:b0:37f:e326:6557 with SMTP id
+ 98e67ed59e1d1-392f46be6acmr1139949a91.4.1786463062400; 
+ Tue, 11 Aug 2026 08:44:22 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-141245540fesm881399c88.9.2026.08.11.08.40.00
+ a92af1059eb24-1412458a390sm592605c88.14.2026.08.11.08.44.21
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 11 Aug 2026 08:40:01 -0700 (PDT)
-Date: Tue, 11 Aug 2026 08:39:58 -0700
+ Tue, 11 Aug 2026 08:44:22 -0700 (PDT)
+Date: Tue, 11 Aug 2026 08:44:19 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Gagandeep Singh <g.singh@nxp.com>
-Cc: dev@dpdk.org, hemant.agrawal@nxp.com
-Subject: Re: [PATCH v7 00/14] net/enetc: add new features for ENETC4 on i.MX95
-Message-ID: <20260811083958.1e65877d@phoenix.local>
-In-Reply-To: <20260811074745.3655334-1-g.singh@nxp.com>
-References: <20260811074032.3646324-1-g.singh@nxp.com>
- <20260811074745.3655334-1-g.singh@nxp.com>
+To: Hemant Agrawal <hemant.agrawal@nxp.com>
+Cc: thomas@monjalon.net, dev@dpdk.org
+Subject: Re: [PATCH v8 00/26] DPAA driver fixes and improvements
+Message-ID: <20260811084419.0ba93487@phoenix.local>
+In-Reply-To: <20260811115731.3421032-1-hemant.agrawal@nxp.com>
+References: <20260703124950.1895871-1-hemant.agrawal@nxp.com>
+ <20260811115731.3421032-1-hemant.agrawal@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -83,212 +85,335 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 11 Aug 2026 13:17:31 +0530
-Gagandeep Singh <g.singh@nxp.com> wrote:
+On Tue, 11 Aug 2026 17:27:05 +0530
+Hemant Agrawal <hemant.agrawal@nxp.com> wrote:
 
-> V7-changes:
->  - added missing 14th patch.
+> This series collects a set of correctness fixes, cleanups and feature
+> additions across the NXP DPAA bus, net, mempool and DMA drivers.
 > 
-> V6-changes:
->  - fixed free() on memory allocated with rte_zmalloc().
->  - fixed eventfd and vector-list leak on interrupt teardown
->  - fixed Rx ring doubling still bypasses
->  - fixed VSI-PSI transaction issued from the interrupt handler
->  - fixed the free-and-reallocate of msg is unnecessary churn
->  - fixed unsynchronized access to tx_pause_active and RBMR
->  - fixed signed shift overflow in the register-dump version field
->  - fixed the fw_size == 0 early return reports the length of "0.0"
->  - unwanted blank lines removed.
->  - parse_txq_prior() returns updated.
+> 1. Bus/fman infrastructure cleanups (patches 01, 02, 12)
+>    - bus/dpaa: refine fman naming and fix global scope
+>    - bus/dpaa: scan max BPID from DTS
+>    - bus/dpaa: improve log macro and fix bus detection
 > 
-> V5-changes:
->  - Patch 1 Build fixes which includes:
->     'prev_seg' undeclared fixed.
->     redefinition of 'dev_rx_offloads_sup' fixed.
->     Error: duplicate rx_enable declaration fixed.
->    PF loses Scattered Rx and Multi-segment Tx
->  - mbuf leak in enetc_xmit_pkts_lso() fixed.
->  - fixed conversion on ENETC4_TXBD_FLAGS_F issue.
->  - fixed link speed decode has no upper bound.
->  - fixed mailbox ops added to the no-VSI ops table.
->  - new devargs documented.
+> 2. Process-type guards (patch 03)
+>    - drivers: add process-type guards to prevent segfaults in secondary
 > 
-> V4-changes:
->  - fix doc build issue: WARNING: undefined label: pmd_build_and_test
+> 3. FQ shutdown hardening (patches 04-08)
+>    - bus/dpaa: define helpers for qman channel and wq
+>    - bus/dpaa: shutdown DPAA FQ by fq descriptor
+>    - bus/dpaa: improve FQ shutdown with channel validation
+>    - bus/dpaa: enhance DPAA FQ shutdown
+>    - bus/dpaa: add DPAA cgrid cleanup support
 > 
-> v3-changes:
->  - fix doc build issue.
->  - fix compilation issue on fedore:43-gcc-minsize
+> 4. net/dpaa improvements (patches 09, 11, 13)
+>    - net/dpaa: add ONIC port checks
+>    - net/dpaa: optimize FM deconfig
+>    - net/dpaa: optimize FMC MAC type parsing
 > 
-> V2-changes:
->  - compilation fixes.
+> 5. Statistics (patch 10)
+>    - drivers: add BMI Tx statistics
 > 
-> V1-changes:
-> This series adds new PMD features to the ENETC4 driver targeting the
-> NXP i.MX95 NETC IP.
+> 6. mempool/dpaa (patches 14-15)
+>    - drivers: optimize DPAA multi-entry buffer pool operations
+>    - drivers: release DPAA bpid on driver destructor
 > 
-> The series covers:
+> 7. dma/dpaa (patch 16)
+>    - dma/dpaa: add SG data validation and ERR050757 fix
 > 
->  - KEEP_CRC Rx offload: preserve the Ethernet FCS in the receive buffer.
->  - TSO: TCP Segmentation Offload for the VF Tx path.
->  - RSC/LRO: hardware Receive Segment Coalesce for PF and VF Rx paths.
->  - Link speed code: extend the PF-to-VF mailbox field from 4-bit to
->    8-bit to support speeds beyond 10G.
->  - Firmware version: report the NETC IP version via fw_version_get.
->  - Register dump: dump SI, port (PF) and BD ring registers.
->  - Ring parameters: implement rxq_info_get / txq_info_get for the VF.
->  - Link-up interrupt: refresh the cached link speed on each VF link-up
->    interrupt so that link_update returns the current speed immediately.
->  - Stats reset: software snapshot/delta approach for VF counter reset.
->  - Per-queue Rx interrupt: MSI-X per-queue Rx interrupts for the VF,
->    enabling interrupt-driven receive with l3fwd-power.
->  - SI VLAN: hardware port VLAN insertion/removal for PF and VF.
->  - VF link status bitmask: switch VF link status to bitmask encoding
->    to align with the PF and newer kernel driver conventions.
->  - TX PAUSE: VF sets Rx congestion mode when the PF signals TX PAUSE
->    negotiated on the wire; adds Flow control = Y to enetc4.ini.
->  - WRR Tx scheduler: per-ring WRR weights via enetc4_txq_wrr devarg.
 > 
-> Gagandeep Singh (14):
->   net/enetc: add keep-CRC Rx offload for ENETC4
->   net/enetc: add TSO support for ENETC4 VF
->   net/enetc: add RSC (hardware LRO) support for ENETC4
->   net/enetc: extend PF-VF link speed field to 8 bits
->   net/enetc: support firmware version get for VF
->   net/enetc: support registers dump
->   net/enetc: support ethtool ring parameters
->   net/enetc: refresh link speed on VF link-up interrupt
->   net/enetc: support stats reset for VF
->   net/enetc4: add per-queue Rx interrupt support for VF
->   net/enetc4: add SI-based port VLAN insertion and removal
->   net/enetc4: update VF link status to bitmask encoding
->   net/enetc4: enable Tx PAUSE via VF Rx congestion mode
->   net/enetc4: add WRR Tx scheduler devarg for VF rings
+> Gagandeep Singh (4):
+>   net/dpaa: fix device remove
+>   bus/dpaa: enhance DPAA FQ shutdown
+>   dma/dpaa: add SG data validation and ERR050757
+>   drivers: add offline (O/H) port device support
 > 
->  doc/guides/nics/enetc4.rst             | 100 +++
->  doc/guides/nics/features/enetc4.ini    |   8 +
->  doc/guides/rel_notes/release_26_11.rst |  21 +
->  drivers/net/enetc/base/enetc4_hw.h     | 128 +++-
->  drivers/net/enetc/base/enetc_hw.h      |   6 +
->  drivers/net/enetc/enetc.h              | 136 ++++-
->  drivers/net/enetc/enetc4_ethdev.c      | 428 +++++++++++--
->  drivers/net/enetc/enetc4_vf.c          | 807 ++++++++++++++++++++++---
->  drivers/net/enetc/enetc_rxtx.c         | 530 +++++++++++++++-
->  9 files changed, 2011 insertions(+), 153 deletions(-)
+> Hemant Agrawal (5):
+>   net/dpaa: optimize FM deconfig
+>   net/dpaa: support Rx/Tx taildrop threshold devarg
+>   net/dpaa: add Tx rate limiting API
+>   net/dpaa: support non fmX-macY type of shared Ethernet name
+>   bus/dpaa: improve log macro and fix bus detection
+> 
+> Jun Yang (15):
+>   drivers: improve  crypto fq resource handling
+>   bus/dpaa: refine fman naming and fix global scope
+>   bus/dpaa: scan max BPID from DTS
+>   bus/dpaa: define helpers for qman channel and wq
+>   drivers: shutdown DPAA FQ by fq descriptor
+>   bus/dpaa: improve FQ shutdown with channel validation
+>   bus/dpaa: add DPAA cgrid cleanup support
+>   drivers: add BMI Tx statistics
+>   net/dpaa: optimize FMC MAC type parsing
+>   drivers: release DPAA bpid on driver destructor
+>   bus/dpaa: orp queue create and burst enqueue
+>   net/dpaa: support fmcless rxq number as devargs
+>   drivers: optimize DPAA multi-entry buffer pool operations
+>   drivers: improve shutdown fq with channel
+>   drivers: memory free in destructor
+> 
+> Prashant Gupta (1):
+>   drivers: add process-type guards for secondary process
+> 
+> Vanshika Shukla (1):
+>   net/dpaa: enhance VSP port support
+> 
+>  doc/guides/nics/dpaa.rst                  |  38 +-
+>  drivers/bus/dpaa/base/fman/fman.c         |  23 +-
+>  drivers/bus/dpaa/base/fman/fman_hw.c      | 104 ++--
+>  drivers/bus/dpaa/base/qbman/bman.c        |  59 +-
+>  drivers/bus/dpaa/base/qbman/bman_driver.c |  49 +-
+>  drivers/bus/dpaa/base/qbman/qman.c        | 196 ++++--
+>  drivers/bus/dpaa/base/qbman/qman.h        |  23 +-
+>  drivers/bus/dpaa/base/qbman/qman_driver.c |  29 +-
+>  drivers/bus/dpaa/bus_dpaa_driver.h        |  11 +-
+>  drivers/bus/dpaa/dpaa_bus.c               | 164 +++--
+>  drivers/bus/dpaa/dpaa_bus_base_symbols.c  |   4 +
+>  drivers/bus/dpaa/include/fman.h           |  13 +-
+>  drivers/bus/dpaa/include/fsl_bman.h       |  49 +-
+>  drivers/bus/dpaa/include/fsl_qman.h       |  51 +-
+>  drivers/common/dpaax/compat.h             |  22 +-
+>  drivers/common/dpaax/dpaax_iova_table.c   |  25 +-
+>  drivers/crypto/dpaa_sec/dpaa_sec.c        | 106 +++-
+>  drivers/dma/dpaa/dpaa_qdma.c              |  80 ++-
+>  drivers/mempool/dpaa/dpaa_mempool.c       |  77 ++-
+>  drivers/mempool/dpaa/dpaa_mempool.h       |   3 +-
+>  drivers/net/dpaa/dpaa_ethdev.c            | 281 +++++++--
+>  drivers/net/dpaa/dpaa_ethdev.h            |  25 +-
+>  drivers/net/dpaa/dpaa_flow.c              | 211 +++++--
+>  drivers/net/dpaa/dpaa_flow.h              |   7 +-
+>  drivers/net/dpaa/dpaa_fmc.c               |  73 ++-
+>  drivers/net/dpaa/dpaa_oldev.c             | 701 ++++++++++++++++++++++
+>  drivers/net/dpaa/fmlib/fm_lib.c           |  32 +-
+>  drivers/net/dpaa/fmlib/fm_port_ext.h      |   4 +-
+>  drivers/net/dpaa/meson.build              |  11 +-
+>  drivers/net/dpaa/rte_pmd_dpaa.h           |  21 +-
+>  drivers/net/dpaa/rte_pmd_dpaa_oldev.h     |  92 +++
+>  31 files changed, 2136 insertions(+), 448 deletions(-)
+>  create mode 100644 drivers/net/dpaa/dpaa_oldev.c
+>  create mode 100644 drivers/net/dpaa/rte_pmd_dpaa_oldev.h
 > 
 
-Still lots of issues found by AI review
+Lots of issues in this patch series. I saw a few but AI sees lots more:
 
-ENETC4 v7 series review - 14 patches
+NAK for this revision.
 
-No Reviewed-by; one error and two warnings remain.
+I reviewed patches 1-20 against an applied tree (base c1a46b9) rather than
+reading the diffs, and stopped there. There are enough structural problems
+that a v9 is a better use of everyone's time than another round of
+patch-by-patch comments. Patches 21-25 are not reviewed.
 
-All 14 commits build clean individually on top of c1a46b9 with gcc 13.3
-and -Dwerror=true. check-git-log.sh: 14/14 valid. No trailing
-whitespace. Consecutive-blank-line counts are back to the upstream
-values in all four touched files.
+Series-level problems
+---------------------
 
-Confirmed fixed from v5: the free()/rte_free() mismatch is gone --
-enetc4_dev_uninit() no longer touches txq_prior at all and both arrays
-are released in enetc4_dev_close(); rte_intr_vec_list_free() and
-rte_intr_efd_disable() added at the intr_enable_fail: label so both the
-teardown and the error path are covered; enetc4_alloc_rxbdr() now
-validates ring_desc against MAX_BD_COUNT the same way the Tx side does;
-tx_pause_active is RTE_ATOMIC with acquire/release accessors; the
-register-dump version field is cast before the shift in both
-enetc4_get_regs() and enetc4_vf_get_regs(); fw_version_get() computes
-the fw_size == 0 length from the real values; release note reads "Tx
-PAUSE ... Rx congestion mode"; parse_txq_prior() and parse_txq_wrr()
-both return -ENOMEM consistently.
+The series is not bisectable. Patch 2 calls qman_shutdown_fq() with a
+struct qman_fq * at four sites in dpaa_sec.c, but the signature is int
+qman_shutdown_fq(u32 fqid) until patch 7 changes it. Building at patch 2
+with -Dwerror=true:
 
-Patch 08
+  ../drivers/crypto/dpaa_sec/dpaa_sec.c:3625:40: error: passing argument 1
+  of 'qman_shutdown_fq' makes integer from pointer without a cast
+  [-Werror=int-conversion]
 
-Error: pthread mutex in shared memory without PTHREAD_PROCESS_SHARED.
+and the same at lines 3636, 3813 and 3826. Reorder or squash.
 
-The new vsi_lock lives in struct enetc_eth_hw, which sits in
-eth_dev->data->dev_private. ethdev allocates that with
-rte_zmalloc_socket(), so it is hugepage memory visible to secondary
-processes:
+Patch 9 reverts most of patch 8: the else-if restructure, the conditional
+SDQCR restore, the declaration placement and the log wording all go back to
+what they were. Patch 8's commit message advertises "only restore SDQCR
+when it was actually changed" and patch 9 removes it. Squash them.
 
-drivers/net/enetc/enetc.h:145
-pthread_mutex_t vsi_lock; /* serializes all VSI-PSI mailbox ... */
+No release notes anywhere. git diff over the series touches only
+doc/guides/nics/dpaa.rst. New PMD API, four new devargs, offline port
+support, and removal of the DPAA_TX_TAILDROP_THRESHOLD environment variable
+all need doc/guides/rel_notes/ entries for 26.11.
 
-drivers/net/enetc/enetc4_vf.c:1985
-pthread_mutex_init(&hw->vsi_lock, NULL);
+Several commit messages describe changes that are not in the patch. Noted
+per-patch below. Please make the messages match the diffs.
 
-Two problems follow. A mutex initialized with NULL attributes is
-undefined behaviour if it is ever locked from a second process. And
-enetc4_vf_dev_init() has no primary-process guard -- enetc4_dev_close()
-is the only place in the driver that checks rte_eal_process_type() --
-so a secondary attaching to the same VF re-runs pthread_mutex_init() on
-a mutex the primary may be holding.
+Dead code that survives all 26 patches: force_ooo (added to struct qman_fq,
+read twice, never written), qman_enqueue_multi_orp() (no caller), the
+ORP_RWS_WIN_*/ORP_AUTO_ADVANCE_*/ORP_LATE_ARRIVE_* enums,
+DPAA_INVALID_BPID, and the six BMI offset macros from patch 11. In
+dma/dpaa, s_sg_enable, s_data_validation and s_pci_read are file-scope
+statics with no way to set them, so the !s_sg_enable path patch 15 adds is
+unreachable.
 
-pthread_mutexattr_t attr;
+Patch 2
+-------
 
-pthread_mutexattr_init(&attr);
-pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
-pthread_mutex_init(&hw->vsi_lock, &attr);
-pthread_mutexattr_destroy(&attr);
+Error: both failure logs after the RX qman_alloc_fqid_range() print ret
+instead of num. ret is 0 there from the last dpaa_sec_init_tx(), so the
+message reads "Failed(0)".
 
-rte_spinlock_t would sidestep the initialization problem but is the
-wrong primitive here, since the poll loop under the lock waits up to
-vsi_timeout iterations.
+Warning: dpaa_sec_uninit() guards the TX release with if (fqid) but
+releases the RX range unconditionally.
 
-Warning: the reply status is still read outside the lock.
+Info: ret = -ENODEV before goto init_error is dead; that label returns
+-EFAULT.
 
-enetc4_msg_vsi_send() now holds vsi_lock across the write, the MB poll
-and the completion-status check, which closes most of the window. But
-every caller re-reads ENETC4_VSIMSGSR after the function has returned
-and dropped the lock:
+Patch 3
+-------
 
-err = enetc4_msg_vsi_send(hw, msg);
-if (err) {
-ENETC_PMD_ERR("VSI message send error");
-goto end;
-}
+Warning: the message says "Make fman_ccsr_map_fd static as it is only used
+within fman.c". It is still non-static at fman.c:19 with extern at
+fman.h:485, and cannot be static while fman_hw.c asserts on it. Drop the
+claim and the "fix global scope" half of the subject.
 
-enetc4_msg_vsi_reply_msg(enetc_hw, reply_msg); /* lock released */
+Patch 4
+-------
 
-Six call sites go through enetc4_msg_vsi_reply_msg() (lines 727, 973,
-1019, 1404, 1504, 1637) and enetc4_vf_get_ip_minor_revision() reads the
-register directly at line 1081. A second thread -- in particular the
-interrupt thread doing the patch 08 speed re-query -- can take the lock
-and start a new transaction between the unlock and that read, so the
-caller parses someone else's reply.
+Error: of_get_property(dt_node, "fsl,bpid-range", NULL) discards the length
+and then reads range[0] and range[1]. Patch 8 of this same series adds
+exactly the right check for the sibling property in qman_driver.c (lenp !=
+sizeof(rte_be32_t) * 2). Do the same here.
 
-enetc4_msg_vsi_send() already has the value in its local vsimsgsr.
-Returning it through an out-parameter, and having callers parse from
-that instead of re-reading the register, removes the window entirely.
+Warning: the per-revision bman_pool_max = 8 for BMAN_REV20 is dropped and
+the no-DTS fallback is a flat 64 for every revision. bman_pool_max gates
+the bounds checks in bman.c and bman_driver.c. Also start + count is
+uint32_t assigned to a u16.
 
-Patch 13
+Patch 5
+-------
 
-Warning: RBMR read-modify-write still races between threads.
+Warning: the secondary-process early return in rte_dpaa_remove() skips
+rte_eth_dev_release_port(), leaking the port slot in the secondary. See
+virtio_user_ethdev.c for the usual pattern.
 
-The atomic on tx_pause_active covers the flag but not the register.
-enetc4_vf_set_congestion_mode() runs on the interrupt thread:
+Info: message says "for dma/dpaa drivers" but net/dpaa is also modified.
 
-rbmr = enetc4_rxbdr_rd(enetc_hw, i, ENETC_RBMR);
-if (enable)
-rbmr |= ENETC_RBMR_CM;
-else
-rbmr &= ~(uint32_t)ENETC_RBMR_CM;
-enetc4_rxbdr_wr(enetc_hw, i, ENETC_RBMR, rbmr);
+Patch 6
+-------
 
-enetc4_rx_queue_start() and enetc4_rx_queue_stop() perform the same
-unguarded read-modify-write on ENETC_RBMR_EN from the control thread.
-A link-status interrupt landing mid-sequence still loses one of the two
-updates, leaving a ring enabled without congestion mode or stopped with
-it set. Serializing the RBMR accesses -- vsi_lock would do, or a
-dedicated per-device lock -- is what is missing.
+Warning: this is a bug fix, not a refactor. The old code was channel =
+dest_wq & 0x7; wq = dest_wq >> 3. Per the qm_fqd dest union in fsl_qman.h
+(channel:13, wq:3) the new helpers are correct and the old code had the two
+swapped. Needs a Fixes: tag, Cc: stable@dpdk.org, and a message that says
+what is being corrected.
 
-Info: the release store on tx_pause_active is placed before the RBMR
-writes it is described as publishing, so the ordering does not do what
-the comment implies. Nothing else is published through this flag, so
-rte_memory_order_relaxed on both sides would be correct and clearer.
+Patch 8
+-------
 
-Patch 06
+Error: the pool-channel branch of qman_shutdown_fq() can never succeed. It
+requires p->config->channel == channel, but config->channel is the portal's
+dedicated channel id (see qman_priv.h) and dedicated channels start at
+QM_CHANNEL_SWPORTAL0 == 0 while pool channels start at 0x21/0x401. Every
+pool-channel FQ shutdown now returns -EINVAL. The old
+QM_SDQCR_CHANNELS_POOL_CONV(channel) drain was removed with nothing in its
+place. This is still broken at the end of the series.
 
-Info: enetc4_txbdr_regs[] and enetc4_rxbdr_regs[] are still static const
-arrays defined in enetc.h, so every translation unit including the
-header gets a private copy. Moving them into one .c file with an extern
-declaration avoids the duplication.
+Patch 9
+-------
+
+Warning: mostly a revert of patch 8, see above.
+
+Warning: the message claims "better handling of ORL presence"; the diff
+does not touch ORL handling.
+
+Patch 10
+--------
+
+Warning: the message names qman_find_fq_by_cgid(); the code adds
+qman_find_fq_by_cgrid().
+
+Warning: the do { } while (1) has no bound. Termination depends entirely on
+the hardware returning ERR_FQID. Bound it by QM_FQID_MASK. Scanning a
+24-bit FQID space with two MC commands per iteration is also slow for a
+teardown path.
+
+Patch 11
+--------
+
+Error: the message says "Extend fman_hw to read Tx BMI registers", but
+fman_hw.c is never touched. fman_if_bmi_stats_get_all() still reads only
+the eight Rx registers, at the end of the series. The four new tx_* xstats
+are therefore filled from Rx counters.
+
+Error: removing fmbm_rstc from struct dpaa_if_rx_bmi_stats breaks
+dpaa_dev_xstats_get(). The bound num - (bmi_count - 1) worked only because
+bmi_count - 1 equalled the BMI entry count. bmi_count is now 8 with 12 BMI
+entries, so the bound is 18 instead of 13 and five xstats read the wrong
+array.
+
+Error: FMAN_IF_BMI_TX_STAT_OFFSET_START/END reference fmbm_tfrc and
+fmbm_tbdc, which do not exist in struct tx_bmi_regs (fman.h:295). All six
+new macros are unused, so this only breaks when someone uses them.
+
+Patch 14
+--------
+
+Error: the per-lcore cache loop reads out of bounds. rte_mempool.c:944 sets
+local_cache past the header using RTE_MEMPOOL_HEADER_SIZE(mp, 0); when
+cache_size == 0 the array is never allocated. The loop reads
+cache->flushthresh for all RTE_MAX_LCORE entries regardless, and writes
+when the garbage read is non-zero.
+
+Error: the tuning is a no-op. rte_mempool.h:92 documents flushthresh as
+"Obsolete; for API/ABI compatibility purposes only" and nothing reads it.
+
+Warning: the s_dpaa_bpid_allocated_flag[] shadow table duplicates state
+already in rte_dpaa_bpid_info[] and exists only because the destructor
+cannot reach EAL memory. Fix the teardown ordering instead.
+
+Info: struct dpaa_bpid_flag.used should be bool. RTE_PRIORITY_104 works
+only by double macro expansion; bus/dpaa and net/dpaa pass the bare number.
+
+Patch 16
+--------
+
+Warning: removing the DPAA_TX_TAILDROP_THRESHOLD environment variable is
+user-visible and needs a release note.
+
+Error: doc, e.g. ``dpaa:fm1-mac3,recv_err_pkts=1` has unbalanced inline
+literal backticks.
+
+Patch 17
+--------
+
+Error: handle leak. On the !port_handle path, a failing
+fm_port_set_rate_limit() returns without the fm_port_close(handle) that
+only runs on the success path.
+
+Warning: rte_pmd_dpaa_port_set_rate_limit() is new public API in an
+installed header with no RTE_EXPORT_*_SYMBOL macro, so it will not appear
+in the generated map. It is also not marked __rte_experimental and has no
+testpmd hook or test. Compare rte_pmd_dpaa_ol_* in dpaa_oldev.c, which does
+this correctly.
+
+Warning: fm_open(0) return is not checked before fm_port_open().
+
+Warning: the failure log prints fm_info.fman_handle rather than the handle
+that failed to open.
+
+Warning: uint32_t ret returned as -ret.
+
+Info: the IOW -> _IOW change is a real fix to a previously unused macro,
+but should be called out in the message.
+
+Patch 18
+--------
+
+Error: eq->orp = orp->fqid is missing the byte swap. The single-frame
+qman_enqueue_orp() a few hundred lines below does eq->orp =
+cpu_to_be32(orp->fqid), and every other field in the new function is
+swapped.
+
+Error: ~(flags[i] & (QMAN_ENQUEUE_FLAG_HOLE | QMAN_ENQUEUE_FLAG_NESN)) is
+bitwise complement and is non-zero for every input, so
+QM_EQCR_VERB_CMD_ENQUEUE is always set and holes are enqueued as real
+frames. Should be logical !.
+
+Warning: force_ooo has no writer anywhere, so both new bypass paths are
+dead. Should also be bool.
+
+Info: QM_EQCR_VERB_COLOUR_MASK and QM_EQCR_VERB_INTERRUPT are propagated
+from flags in the single-frame version but dropped here.
+
+Patch 20
+--------
+
+Error: doc, no blank line before the drv_sh_if_name bullet, which breaks
+the list.
+
+Warning: the doc comment on dpaa_get_devargs_str() describes returning a
+pointer valid until the kvargs list is freed; the function copies into a
+caller-supplied buffer.
