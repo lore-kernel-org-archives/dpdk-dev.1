@@ -2,67 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B1EC5B572
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 15:55:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 322FEC5B572
+	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 15:55:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 25C6840C35;
-	Tue, 11 Aug 2026 17:55:10 +0200 (CEST)
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com
- [209.85.219.44]) by mails.dpdk.org (Postfix) with ESMTP id 2AFFA4026F
- for <dev@dpdk.org>; Tue, 11 Aug 2026 17:55:09 +0200 (CEST)
-Received: by mail-qv1-f44.google.com with SMTP id
- 6a1803df08f44-8eeb4508f29so19498856d6.0
- for <dev@dpdk.org>; Tue, 11 Aug 2026 08:55:09 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5495E42707;
+	Tue, 11 Aug 2026 17:55:11 +0200 (CEST)
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com
+ [209.85.219.50]) by mails.dpdk.org (Postfix) with ESMTP id 1BB3C4026F
+ for <dev@dpdk.org>; Tue, 11 Aug 2026 17:55:10 +0200 (CEST)
+Received: by mail-qv1-f50.google.com with SMTP id
+ 6a1803df08f44-8f1a8e914a9so26844646d6.1
+ for <dev@dpdk.org>; Tue, 11 Aug 2026 08:55:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1786463708; x=1787068508; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=9K12mhJK+t/e7y98sINW1JdA2/9w/3axHu5TxnokBxA=;
- b=TvDRrFRShXmTRCV00+J4jcZXT+9W0jJbXIS3hp/1XQloJwN7cK5VhmpmJxAD/3Inxt
- MZqsBaLs90A6PmJbdOc1WyfPK+cPh+Dyl+PrRGdsNOOiI7E4Jq4aul06L6v62hFggImI
- aTJGE7Q70y3O6s/AMJKaAPhijyt5evS1CwINo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786463708; x=1787068508;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=iol.unh.edu; s=unh-iol; t=1786463709; x=1787068509; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=9K12mhJK+t/e7y98sINW1JdA2/9w/3axHu5TxnokBxA=;
- b=QUvYZ871OuOFIaOrJy1oFjOphdhECA5G5MflzWdQnDSTaTtCEBC5WCdmhX9j+znMiE
- qtoDMJLAZFnMAwGNnz70cbsQ4tsQ2RI3xAn+OewWI/gAeijT3h106Y+Ahp+sgMtKN8XP
- VmHBh+9KwLmYoEdY7nPzHy8JT95slXlzZruIEpCHpzFZr1eVakXK9+J2ZEOmpK436avo
- ERHphLWEwiIBx5WpHYmMAb/2Jt7fZDhyx0XvVN4KVtmO3z+zOEmXOYfLjD5glH361KDs
- HkDNZm18lsom5FThDF6W1AdlH958aW3yUyXjvtzGE9o6BN1wX2pkOwoXSBi6qg5yyrVz
- 18BQ==
-X-Gm-Message-State: AOJu0YyT8IKOmvV4gsb1xrPEZwxgE+k/tb8nfkuUgPDzsPSMTRF9h2fR
- xG9jySerUu6/N8jAsZHRZg4McMgLb0ac19IDpBaU96gO4fkIooPp5dc2g7Z0evBmAjb1U3hdDZN
- ZGRCwjV43Ub3KnHCBR+jLbneZR6b5byKzX/vTJXnHuP7qekZRni3jA0+rCQWikyDb4uGyieooVn
- GDTAljZnJXsjxjtxcUTAcnswSzbtA=
-X-Gm-Gg: AR+sD10ivEku0yE5jeH33zWIc60N/3TGnp3WLnAWHqloGsOI0PNqVPQbJAuzey9HNF2
- wo6VP8druEbkCFhsDJ5gmSBVpL06MLWGXIyddkdGjFf/M5v2ZhUotWjPGyCL6x+Kl5ahxSDLIqA
- lVLaHdbrq6xCcYSh1VH56REqGEZwBV40Ihl3UkcSXJFuEzUEHtSOgfFWN6VaLjvYuEknRwkShKF
- vr0P0PwMHWP0BCM2sFjCHaamZvkURK062EC8tcxtVLIrZKQow9Ys53V+veKkAOUkV5yl3ND4ZXP
- nlQdIUovUjB5LrRY4aCvNfyypbLdxo8BN9DtxXRxPnuxQt61ePfpjvFVGgdCOWvRrSqf2mpuE7w
- xAHhBfMe9hf63oCSeH12gsfVCrlW+qWl6HtUAWsDMVIRjWKHHpq1MTycJcTI3oKLjRzUxskEvwH
- iAlCIoa6ihQo1nSQPi+qhg9J0nniz0BJidPDVUzv0+JL1Ydo+JDGQ98248nySvWSPmIkI9f5P6A
- U+alq5JDDA=
-X-Received: by 2002:a05:6214:19ce:b0:8ec:235c:7a66 with SMTP id
- 6a1803df08f44-90a66ed9380mr40097706d6.27.1786463707970; 
- Tue, 11 Aug 2026 08:55:07 -0700 (PDT)
+ bh=+yiVsQ162Dvl98dkutNuLsLIoK1CoUHFKy/RM87LqCg=;
+ b=QCrEOXp2/HPN7kXPA0rOR3bj81V5HeKeesASNLACGWGDiCLi37FozKJieLCBW/LpAT
+ 9QHcjwipZoNgd3E/h0AqadXt0TV8wcDJP2g6zg6xgHZIvA5o/jBQcXOft7FQNZICsJdP
+ /+ev1KbsffQ/f+VMajMFocRGWuJRQzKeqL6eU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1786463709; x=1787068509;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=+yiVsQ162Dvl98dkutNuLsLIoK1CoUHFKy/RM87LqCg=;
+ b=YXNw068yabkWn74YQY+bxR+uEWAuLUzrXU9ZWr4+xusgVsgAhUyUkHYqOHyAt57Exe
+ Or74VjLWd6re8QMZ+aCxSnPFhhMqZepTo/mtrXqHMdUhsj91CMt3Ek9hTQKvGHpOUP9Y
+ aSKoCIbMEbDT8/zRpGWqgAdoQiCPNWPSi6WWTCL1qOuhW/tyCAxeIN2tgmVt3NXQwwAd
+ W/Ho67Gl/vIHEBP/h30Ig+WhK5x5wb1q79k/iAORHPsZwhHgxVLs/rsKBfjow0PjVs6P
+ xPvB+uxbO3gDiLoecxpjUtMTaW4OPtMbbirLgEoWes7hlRPg9gc6LC3khufe1TfyxEt7
+ K3EA==
+X-Gm-Message-State: AOJu0YxzTZSQzQHwKE5VOzsOM81FcseIl/n/BWI/GYi2yD1eNPY8KjYr
+ e5+vuogAGlpVknOJpB8vc/1hBxNjFASTekpsHdXf/II0kivo2pfg8fblp0ikrepUzIDRuMC/qk/
+ w74r4AkgvFVsCg1ieKtZBTU8g7qNPoVels30wgcPLHa4EsnqwJT1LvxDPkWO+aWpKRfq9+7ZPYJ
+ TNXSIu5rENkoqmg9+/fix8Om+ipnU=
+X-Gm-Gg: AR+sD12I4+ac7bGqe75FNql6F/gf38IT+nRYjZDpQGWc81pHximoVvspwjYY2yOAmZJ
+ anH1nC0SbKG01KAWf5vHIPsAEBBsdxA/GpSKPTSsZpEkmkTi7eSJIf1nPZiH5VoSsQOe00XfPBv
+ UO/iJ2z81YkLwWZ7zBAr7kn9AWakkWh+Bg4L9Q8bSLjHiDtqv+XPsN1qT+Ljky8/z69YYeLCt9r
+ HUN0Okc9kQzy6ZdaFTfEb8OjxhovXDIoMSdJy2C7z2HmtZloqmzp2222/mPTx1GDaCdskR1Kw+M
+ X/Zl2frDMShYyDE8TxZrdkNDQjSQR0ltuAU3YSOBsferCeOORbUaPHj/HE20f5VXjk4o3y/UMg6
+ MycEl28dRZ9DTMP/rcDxIhpaIHLCDJFdVTSwmYKGszoMHstvv00AuwYq7i0oXmt6zTvVUtut4Rw
+ idbp12PX2cR0UMojE1dtfneNsb6ArrmtaJK9vKN9DuNdA2OPu6500oXMvA8iSoCfXa1+Ozl4mki
+ IpWZMopxsE=
+X-Received: by 2002:a05:6214:4306:b0:8a0:d08c:a720 with SMTP id
+ 6a1803df08f44-90a668da06cmr40445296d6.17.1786463709191; 
+ Tue, 11 Aug 2026 08:55:09 -0700 (PDT)
 Received: from d121029.iol.unh.edu ([2606:4100:3880:1210::219])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-90a6c29fe59sm2120326d6.15.2026.08.11.08.55.07
+ 6a1803df08f44-90a6c29fe59sm2120326d6.15.2026.08.11.08.55.08
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 11 Aug 2026 08:55:07 -0700 (PDT)
+ Tue, 11 Aug 2026 08:55:08 -0700 (PDT)
 From: Andrew Bailey <abailey@iol.unh.edu>
 To: dev@dpdk.org,
 	luca.vizzarro@arm.com,
 	patrickrobb1997@gmail.com
 Cc: knimoji@iol.unh.edu, lylavoie@iol.unh.edu, dladd@iol.unh.edu,
- Andrew Bailey <abailey@iol.unh.edu>
-Subject: [PATCH v2 0/2] dts: update verbose output regex for VXLAN packets
-Date: Tue, 11 Aug 2026 11:54:48 -0400
-Message-ID: <20260811155450.486646-1-abailey@iol.unh.edu>
+ Dean Marx <dmarx@iol.unh.edu>, Andrew Bailey <abailey@iol.unh.edu>
+Subject: [PATCH v2 1/2] dts: update verbose output regex for VXLAN packets
+Date: Tue, 11 Aug 2026 11:54:49 -0400
+Message-ID: <20260811155450.486646-2-abailey@iol.unh.edu>
 X-Mailer: git-send-email 2.55.0
+In-Reply-To: <20260811155450.486646-1-abailey@iol.unh.edu>
+References: <20260811155450.486646-1-abailey@iol.unh.edu>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -78,20 +81,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-I am resubmitting this patch on the behalf of Dean as he no longer works
-on this project. No changes have been made, only a rebase on main to
-resolve merge conflicts.
+From: Dean Marx <dmarx@iol.unh.edu>
+
+The packet regex in extract_verbose_output could not
+match verbose output from tunnel protocols like
+VXLAN because it did not allow commas. VXLAN
+verbose lines contain comma-separated fields,
+which caused the regex to fail before reaching
+the final field. This silently dropped the entire
+packet from the parsed output. Added comma and
+dot to the allowed characters in the regex.
 
 Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
+Reviewed-by: Andrew Bailey <abailey@iol.unh.edu>
+Reviewed-by: Patrick Robb <patrickrobb1997@gmail.com>
+---
+ dts/api/testpmd/__init__.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Dean Marx (2):
-  dts: update verbose output regex for VXLAN packets
-  dts: add VXLAN protocols to flow test suite
-
- dts/api/testpmd/__init__.py         |   2 +-
- dts/tests/TestSuite_flow_offload.py | 202 +++++++++++++++++++++++++---
- 2 files changed, 181 insertions(+), 23 deletions(-)
-
---
+diff --git a/dts/api/testpmd/__init__.py b/dts/api/testpmd/__init__.py
+index 7118f9470f..3d9b64d725 100644
+--- a/dts/api/testpmd/__init__.py
++++ b/dts/api/testpmd/__init__.py
+@@ -823,7 +823,7 @@ def extract_verbose_output(output: str) -> list[TestPmdVerbosePacket]:
+         prev_header: str = ""
+         iter = re.finditer(
+             r"(?P<HEADER>(?:port \d+/queue \d+: (?:received|sent) \d+ packets)?)\s*"
+-            r"(?P<PACKET>src=[\w\s=:-]+?ol_flags: [\w ]+)",
++            r"(?P<PACKET>src=[\w\s=:,.-]+?ol_flags: [\w ]+)",
+             output,
+         )
+         for match in iter:
+-- 
 2.55.0
 
