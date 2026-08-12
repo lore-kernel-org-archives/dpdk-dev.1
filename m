@@ -2,94 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9A83C5AD5A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 05:06:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1572C5B567
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 05:41:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2253240647;
-	Wed, 12 Aug 2026 07:06:17 +0200 (CEST)
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com
- [209.85.128.172])
- by mails.dpdk.org (Postfix) with ESMTP id 63487402B8
- for <dev@dpdk.org>; Wed, 12 Aug 2026 07:06:16 +0200 (CEST)
-Received: by mail-yw1-f172.google.com with SMTP id
- 00721157ae682-81ff017d420so24725787b3.0
- for <dev@dpdk.org>; Tue, 11 Aug 2026 22:06:16 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1786511176; cv=none;
- d=google.com; s=arc-20260327;
- b=llgUfqoIeWVFINb7rYMl9QWBfkFqRfVi2bLbj+oB3gFlAcbfAR+VtdDLhjqdrT0AMY
- qvmc54mmMq0lkhdwwJ3JQtzvfdpuchaNpO4aXJ8zHdDjh2jgIF15Ab6fdz7j2dDITQBR
- fBGHOgFyk8gmfFl7vy1uicJYluYJ6BgYE4Do1ShOpa5Ej7yx86p6YlbqUL+jOKz7nmfI
- 8KRoVnVORusUtXQ1pvLeXGvxldGy4JZ2v6FHrZ3ErAK9K8gWxp+zhoaR5kADGXrpf+0Y
- G8W9N8Rp+0h9vIEYwhZHMNZiVAiuLzEQhOpWtbOJps0PouJ6nDm8DxPsUlsEARIyGHnM
- xLKg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=8ckEIcv1c6HCurBPnLcopw3rvl8bQCMG9TFAjWnfP7s=;
- fh=HDcQ3EzVf+LvpYbNMIwQkjpYBwARXbgh4H3CEXqDL74=;
- b=giU92tVKCliv1eC9panWN7wqekyZ/HOT52UTBuSgQp9KEZokxb3tTUKiWnBL1X7OhY
- ysWYDu71Khp33omjqZFWwGdvwjvkfpRYUAYFYQfBw9PVc9QElWQHc0msbubXUMhCOCMC
- urNmGViVOMJd4e82rsONHtcLPHualrdBxVG7rDbBdYCn/ae6LmbxqiifymfreK4iSmEl
- B0qjUFWnz6gGNF786F/UyAFs9aV1Yw+rc4Gb4KqgFRjAYyDdvmZmrKFe0mt2JcrL+xm/
- IUvAwymilCGCs2RVmP9qTBcS+NYQMCRJb6MU6pO+LscK+L3BfgcYDnDkwYfWrQI1l08Y
- IWEA==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1786511176; x=1787115976; darn=dpdk.org;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=8ckEIcv1c6HCurBPnLcopw3rvl8bQCMG9TFAjWnfP7s=;
- b=keHJM9ZXy9uHEy8AwRyny8VLVC/F0HP4DiFk5VZiZVqQk1TlE2yiK5doo6xnBqTDRp
- +tm3knVU0tdRz3GqVoEZ/33KJJJoC2SJWtJs1mn1rljG2KBeS+eKnMpUqySlHcbrXhYq
- cJdAjwQTVeQVg3qDIoKTv9xTSYuUekN78tFRfNm1zaEbcB/JOmu7kakZ37hhfjCD8g9I
- qyhW5400KLWJZGpTsudXW52eeGPGOI5ePV4xNO/zfCGFCIONSSbNRqR7InbXO1HmzyOU
- RUEfyENSCUr0iQ0KFKN5vAHZ/pQ67ecS+rqdJcKegIaGjDWay1ObxzyzqUgVXar3ADVN
- yDgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786511176; x=1787115976;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=8ckEIcv1c6HCurBPnLcopw3rvl8bQCMG9TFAjWnfP7s=;
- b=nFpViZmfDRV+pw+vpjDqgcrexOphsQ8R3ItuAth6W/XPDqujrgUdxmXEnoG5iPIleR
- E2O+As6cCnc+9uH3Er+Rppoun21VxwIF5IhcGfE8sXZiHmmeD2cL8aJPddH5zQ8b9YCs
- kF/Reb3v7Y/apqlL69ecaEKdhqEwuh9Ew2EhZTomqtQUkLnvtt/mubohSCJcG687a8sT
- wH9VimINgO8ENyirNEOKk3oDPCCfKOsUSj8KdegQDiiiwSpGSncVHxzm/OTWwSpkbkki
- FgEKMM916KNDR9I4SN7VxUv0xspeSDfFkvB94AKUwFLjpZ8e1wd+xbWyjrdT1r2AjTdI
- FoIQ==
-X-Forwarded-Encrypted: i=1;
- AHgh+RpgV9qdSfGdkaNcklBV+0Cj1mDYrMLCJHjBFWtyR3Nx8DcgzBxfV3AFx1ORXSqxYfjnzgc=@dpdk.org
-X-Gm-Message-State: AOJu0Yz3XzUfNOYVxwlzjZiwYz+e2h9FN3qOR3tesu8xHrl8LpSJOrV1
- Vs+b7ha1MDs9j8dv1KMxlGKDiG37QL7eEUTrzD6ZTwnmOOAVluAzMDPWaKSGfAexn9j8pM9zBsJ
- WcFL6cm+WsiJo94ncms4Wd28rF403W6U=
-X-Gm-Gg: AR+sD11PDqU7MR86xAjplffcRY8M+OIVfWRtUkbLl/YG5KObpxhtXa5Vkaeddr6HEa1
- X4f7TA7vcdY5TYaa/xY2HCrVtstdJTn8nKKKytwkZy8An0/LTRn4YXSp0lzXX0rOtt4/hcgeKW8
- PnCPGI+/uqGzDTpKbfvBL/c2OixzKOThj+vFxbQ1qluGleCJ1pi63M7hAhohh9x2ZYgwCQWsPQ9
- xIWZVHOHHT8aBcdgBUovXsgQDJ+TRhSt4s80K88sIucy1OxdpOYgFjAButSMFycgsuWs+CFZm1P
- M/4/9oeSXoP+omwnykLWaOrmqfyY52kH8wzG3FLuAFhh7tbxTRFu0XW8nVFgMNsCxjo1LYNdZsj
- p7kjLKodu3V7m/yJoV7S7
-X-Received: by 2002:a05:690c:6206:b0:81e:a373:47ad with SMTP id
- 00721157ae682-8303f8cec17mr39017607b3.2.1786511175633; Tue, 11 Aug 2026
- 22:06:15 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 73F61402B8;
+	Wed, 12 Aug 2026 07:41:16 +0200 (CEST)
+Received: from mailgw1.hygon.cn (unknown [101.204.27.37])
+ by mails.dpdk.org (Postfix) with ESMTP id 4C4EA40279
+ for <dev@dpdk.org>; Wed, 12 Aug 2026 07:41:14 +0200 (CEST)
+Received: from maildlp1.hygon.cn (unknown [127.0.0.1])
+ by mailgw1.hygon.cn (Postfix) with ESMTP id 4hKcmR1c19z1R3kL;
+ Wed, 12 Aug 2026 13:41:11 +0800 (CST)
+Received: from maildlp1.hygon.cn (unknown [172.23.18.60])
+ by mailgw1.hygon.cn (Postfix) with ESMTP id 4hKcmN57T9zTZhW;
+ Wed, 12 Aug 2026 13:41:08 +0800 (CST)
+Received: from cncheex04.Hygon.cn (unknown [172.23.18.114])
+ by maildlp1.hygon.cn (Postfix) with ESMTPS id 4DD3B91D7;
+ Wed, 12 Aug 2026 13:41:02 +0800 (CST)
+Received: from cncheex04.Hygon.cn (172.23.18.114) by cncheex04.Hygon.cn
+ (172.23.18.114) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Wed, 12 Aug
+ 2026 13:41:08 +0800
+Received: from cncheex04.Hygon.cn ([fe80::1b6f:6c58:58a4:430d]) by
+ cncheex04.Hygon.cn ([fe80::1b6f:6c58:58a4:430d%10]) with mapi id
+ 15.02.1544.036; Wed, 12 Aug 2026 13:41:08 +0800
+From: Liangxing Wang <wangliangxing@hygon.cn>
+To: "maxime.coquelin@redhat.com" <maxime.coquelin@redhat.com>,
+ "chenbox@nvidia.com" <chenbox@nvidia.com>, "david.marchand@redhat.com"
+ <david.marchand@redhat.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>
+Subject: RE: [PATCH] net/vhost: support queue info query
+Thread-Topic: [PATCH] net/vhost: support queue info query
+Thread-Index: AQHdCSEDnHL9opyR602UyBgtrhFudbaaJtHw
+Date: Wed, 12 Aug 2026 05:41:08 +0000
+Message-ID: <82df644fbb164dff917617ac491c3c1a@hygon.cn>
+References: <20260701061412.154739-1-wangliangxing@hygon.cn>
+In-Reply-To: <20260701061412.154739-1-wangliangxing@hygon.cn>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.19.25.231]
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20260727211003.22590-1-kobikenzi@gmail.com>
-In-Reply-To: <20260727211003.22590-1-kobikenzi@gmail.com>
-From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Wed, 12 Aug 2026 10:35:49 +0530
-X-Gm-Features: AUfX_mzsFonYOxFwLdueisNqngYbJDx-1-3Zgexnw85TQJlzc3zBwSG_LNUnMZk
-Message-ID: <CALBAE1MX1F-0XjxGcv1ZMWT1VgTkQ7dg80bDdD4AB9tFrHNFyA@mail.gmail.com>
-Subject: Re: [PATCH] doc: fix typo in CNXK guide
-To: Kobi Kenzi <kobikenzi@gmail.com>
-Cc: Thomas Monjalon <thomas@monjalon.net>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>, 
- Kiran Kumar K <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, 
- Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>, 
- Rakesh Kudurumalla <rkudurumalla@marvell.com>, dev@dpdk.org, stable@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -103,51 +59,53 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Jul 29, 2026 at 4:47=E2=80=AFPM Kobi Kenzi <kobikenzi@gmail.com> wr=
-ote:
->
-> Correct a spelling error in the transmit completion handler documentation=
-.
->
-> Fixes: dd9446991212 ("net/cnxk: add transmit completion handler")
-> Cc: stable@dpdk.org
-> Signed-off-by: Kobi Kenzi <kobikenzi@gmail.com>
+S2luZGx5IHBpbmcgZm9yIHJldmlldy4gVGhhbmtzLg0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2Fn
+ZS0tLS0tDQo+IEZyb206IExpYW5neGluZyBXYW5nIDx3YW5nbGlhbmd4aW5nQGh5Z29uLmNuPg0K
+PiBTZW50OiAyMDI2xOo31MIxyNUgMTQ6MTQNCj4gVG86IG1heGltZS5jb3F1ZWxpbkByZWRoYXQu
+Y29tOyBjaGVuYm94QG52aWRpYS5jb20NCj4gQ2M6IGRldkBkcGRrLm9yZzsgTGlhbmd4aW5nIFdh
+bmcgPHdhbmdsaWFuZ3hpbmdAaHlnb24uY24+DQo+IFN1YmplY3Q6IFtQQVRDSF0gbmV0L3Zob3N0
+OiBzdXBwb3J0IHF1ZXVlIGluZm8gcXVlcnkNCj4gDQo+IEFkZCBSeCBhbmQgVHggcXVldWUgaW5m
+byBjYWxsYmFja3MgdG8gcmVwb3J0IHRoZSB2aG9zdC11c2VyIHZyaW5nIHNpemUgYXMgdGhlDQo+
+IHF1ZXVlIGRlc2NyaXB0b3IgbnVtYmVyLg0KPiANCj4gVGhlIHZob3N0LXVzZXIgUE1EIGRvZXMg
+bm90IHVzZSB0aGUgZGVzY3JpcHRvciBjb3VudCBwYXNzZWQgYnkNCj4gcnRlX2V0aF9yeF9xdWV1
+ZV9zZXR1cCgpIGFuZCBydGVfZXRoX3R4X3F1ZXVlX3NldHVwKCkuIFRoZSBhY3R1YWwgcXVldWUN
+Cj4gZGVwdGggaXMgbmVnb3RpYXRlZCB3aXRoIHRoZSB2aXJ0aW8gZnJvbnRlbmQgYW5kIG1haW50
+YWluZWQgYnkgdGhlIHZob3N0DQo+IGxpYnJhcnkuIFF1ZXJ5IHRoZSB2aG9zdCB2cmluZyBhbmQg
+cmVwb3J0IGl0cyBzaXplIHRocm91Z2ggcnhxX2luZm9fZ2V0IGFuZA0KPiB0eHFfaW5mb19nZXQu
+DQo+IA0KPiBXaXRoIHRoaXMgY2hhbmdlLCB0ZXN0cG1kIHVzaW5nIHZob3N0LXVzZXIgUE1EIGNh
+biBkaXNwbGF5IHRoZSBjb3JyZWN0IFJ4IGFuZA0KPiBUeCBxdWV1ZSBkZXNjcmlwdG9yIG51bWJl
+ciBpbiB0aGUgcG9ydCBzdGFydCBsb2cuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBMaWFuZ3hpbmcg
+V2FuZyA8d2FuZ2xpYW5neGluZ0BoeWdvbi5jbj4NCj4gLS0tDQo+ICBkcml2ZXJzL25ldC92aG9z
+dC9ydGVfZXRoX3Zob3N0LmMgfCAzOCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+
+ICAxIGZpbGUgY2hhbmdlZCwgMzggaW5zZXJ0aW9ucygrKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2Ry
+aXZlcnMvbmV0L3Zob3N0L3J0ZV9ldGhfdmhvc3QuYw0KPiBiL2RyaXZlcnMvbmV0L3Zob3N0L3J0
+ZV9ldGhfdmhvc3QuYw0KPiBpbmRleCAwNTk0MGYyNDYxLi5hZjAyM2M3NjM5IDEwMDY0NA0KPiAt
+LS0gYS9kcml2ZXJzL25ldC92aG9zdC9ydGVfZXRoX3Zob3N0LmMNCj4gKysrIGIvZHJpdmVycy9u
+ZXQvdmhvc3QvcnRlX2V0aF92aG9zdC5jDQo+IEBAIC0xNDgwLDEyICsxNDgwLDUwIEBAIHZob3N0
+X2Rldl9wcml2X2R1bXAoc3RydWN0IHJ0ZV9ldGhfZGV2ICpkZXYsDQo+IEZJTEUgKmYpDQo+ICAJ
+cmV0dXJuIDA7DQo+ICB9DQo+IA0KPiArc3RhdGljIHZvaWQNCj4gK2V0aF9yeHFfaW5mb19nZXQo
+c3RydWN0IHJ0ZV9ldGhfZGV2ICpkZXYsIHVpbnQxNl90IHJ4X3F1ZXVlX2lkLA0KPiArCQkgc3Ry
+dWN0IHJ0ZV9ldGhfcnhxX2luZm8gKnFpbmZvKQ0KPiArew0KPiArCXN0cnVjdCBydGVfdmhvc3Rf
+dnJpbmcgdnJpbmc7DQo+ICsJc3RydWN0IHZob3N0X3F1ZXVlICp2cSA9IGRldi0+ZGF0YS0+cnhf
+cXVldWVzW3J4X3F1ZXVlX2lkXTsNCj4gKw0KPiArCXFpbmZvLT5uYl9kZXNjID0gMDsNCj4gKw0K
+PiArCWlmICh2cSA9PSBOVUxMIHx8IHZxLT52aWQgPCAwKQ0KPiArCQlyZXR1cm47DQo+ICsNCj4g
+KwlpZiAocnRlX3Zob3N0X2dldF92aG9zdF92cmluZyh2cS0+dmlkLCB2cS0+dmlydHF1ZXVlX2lk
+LCAmdnJpbmcpIDwgMCkNCj4gKwkJcmV0dXJuOw0KPiArDQo+ICsJcWluZm8tPm5iX2Rlc2MgPSB2
+cmluZy5zaXplOw0KPiArfQ0KPiArDQo+ICtzdGF0aWMgdm9pZA0KPiArZXRoX3R4cV9pbmZvX2dl
+dChzdHJ1Y3QgcnRlX2V0aF9kZXYgKmRldiwgdWludDE2X3QgdHhfcXVldWVfaWQsDQo+ICsJCSBz
+dHJ1Y3QgcnRlX2V0aF90eHFfaW5mbyAqcWluZm8pDQo+ICt7DQo+ICsJc3RydWN0IHJ0ZV92aG9z
+dF92cmluZyB2cmluZzsNCj4gKwlzdHJ1Y3Qgdmhvc3RfcXVldWUgKnZxID0gZGV2LT5kYXRhLT50
+eF9xdWV1ZXNbdHhfcXVldWVfaWRdOw0KPiArDQo+ICsJcWluZm8tPm5iX2Rlc2MgPSAwOw0KPiAr
+DQo+ICsJaWYgKHZxID09IE5VTEwgfHwgdnEtPnZpZCA8IDApDQo+ICsJCXJldHVybjsNCj4gKw0K
+PiArCWlmIChydGVfdmhvc3RfZ2V0X3Zob3N0X3ZyaW5nKHZxLT52aWQsIHZxLT52aXJ0cXVldWVf
+aWQsICZ2cmluZykgPCAwKQ0KPiArCQlyZXR1cm47DQo+ICsNCj4gKwlxaW5mby0+bmJfZGVzYyA9
+IHZyaW5nLnNpemU7DQo+ICt9DQo+ICsNCj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZXRoX2Rldl9v
+cHMgb3BzID0gew0KPiAgCS5kZXZfc3RhcnQgPSBldGhfZGV2X3N0YXJ0LA0KPiAgCS5kZXZfc3Rv
+cCA9IGV0aF9kZXZfc3RvcCwNCj4gIAkuZGV2X2Nsb3NlID0gZXRoX2Rldl9jbG9zZSwNCj4gIAku
+ZGV2X2NvbmZpZ3VyZSA9IGV0aF9kZXZfY29uZmlndXJlLA0KPiAgCS5kZXZfaW5mb3NfZ2V0ID0g
+ZXRoX2Rldl9pbmZvLA0KPiArCS5yeHFfaW5mb19nZXQgPSBldGhfcnhxX2luZm9fZ2V0LA0KPiAr
+CS50eHFfaW5mb19nZXQgPSBldGhfdHhxX2luZm9fZ2V0LA0KPiAgCS5yeF9xdWV1ZV9zZXR1cCA9
+IGV0aF9yeF9xdWV1ZV9zZXR1cCwNCj4gIAkudHhfcXVldWVfc2V0dXAgPSBldGhfdHhfcXVldWVf
+c2V0dXAsDQo+ICAJLnJ4X3F1ZXVlX3JlbGVhc2UgPSBldGhfcnhfcXVldWVfcmVsZWFzZSwNCj4g
+LS0NCj4gMi40My4wDQoNCg==
 
-Applied to dpdk-next-net-mrvl/for-main. Thanks
-
-> ---
->  .mailmap                 | 1 +
->  doc/guides/nics/cnxk.rst | 2 +-
->  2 files changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/.mailmap b/.mailmap
-> index fcb3d1bb3f..f44296a218 100644
-> --- a/.mailmap
-> +++ b/.mailmap
-> @@ -887,6 +887,7 @@ Kiran Vedere <kiranv@nvidia.com>
->  Kirill Rybalchenko <kirill.rybalchenko@intel.com>
->  Kishore Padmanabha <kishore.padmanabha@broadcom.com>
->  Klaus Degner <kd@allegro-packets.com>
-> +Kobi Kenzi <kobikenzi@gmail.com>
->  Kommula Shiva Shankar <kshankar@marvell.com>
->  Konstantin Ananyev <konstantin.ananyev@huawei.com> <konstantin.v.ananyev=
-@yandex.ru>
->  Konstantin Ananyev <konstantin.ananyev@huawei.com> <konstantin.ananyev@i=
-ntel.com>
-> diff --git a/doc/guides/nics/cnxk.rst b/doc/guides/nics/cnxk.rst
-> index cb7a86e8fc..56ad9dc7cf 100644
-> --- a/doc/guides/nics/cnxk.rst
-> +++ b/doc/guides/nics/cnxk.rst
-> @@ -409,7 +409,7 @@ Runtime Config Options
->     When transmit completion handler is enabled,
->     the PMD invokes the callback handler provided by the application
->     for every packet which has external buf attached to mbuf
-> -   and frees main mbuf, external buffer is provided to applicatoin.
-> +   and frees main mbuf, external buffer is provided to application.
->     Once external buffer is handed over to application,
->     it is application responsibility either to free or reuse external buf=
-fer
->     using ``tx_compl_ena`` devargs parameter.
-> --
-> 2.43.0
->
