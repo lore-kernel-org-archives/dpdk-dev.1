@@ -2,34 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE37C5B572
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 17:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E6F1C5B572
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 17:48:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1952242DCA;
-	Wed, 12 Aug 2026 19:46:48 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id D42CB42DA1
- for <dev@dpdk.org>; Wed, 12 Aug 2026 19:46:43 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B898D1A0043;
- Wed, 12 Aug 2026 19:46:43 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2F5B140E20;
+	Wed, 12 Aug 2026 19:46:49 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 1175D42D7F
+ for <dev@dpdk.org>; Wed, 12 Aug 2026 19:46:45 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E9F11200048;
+ Wed, 12 Aug 2026 19:46:44 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 80D711A0046;
- Wed, 12 Aug 2026 19:46:43 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B33CE20003D;
+ Wed, 12 Aug 2026 19:46:44 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 04F8318000B0;
- Thu, 13 Aug 2026 01:46:41 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 37E601800088;
+ Thu, 13 Aug 2026 01:46:43 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
 Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v9 24/25] common/dpaax: add dpaax_enter_destructor() to gate
- EAL memory frees
-Date: Wed, 12 Aug 2026 23:16:07 +0530
-Message-Id: <20260812174609.1100111-25-hemant.agrawal@nxp.com>
+Subject: [PATCH v9 24/25] drivers: add dpaax destructor to gate EAL memory
+ frees
+Date: Wed, 12 Aug 2026 23:16:08 +0530
+Message-Id: <20260812174609.1100111-26-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260812174609.1100111-1-hemant.agrawal@nxp.com>
 References: <20260811115731.3421032-1-hemant.agrawal@nxp.com>
