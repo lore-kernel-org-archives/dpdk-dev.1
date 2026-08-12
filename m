@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D611C5B56A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 17:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3E7EC5B56A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 17:11:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 87414427BD;
-	Wed, 12 Aug 2026 19:10:45 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E9D364279C;
+	Wed, 12 Aug 2026 19:11:06 +0200 (CEST)
 Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id 8718F40E6E
- for <dev@dpdk.org>; Wed, 12 Aug 2026 19:10:43 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 6028540E27
+ for <dev@dpdk.org>; Wed, 12 Aug 2026 19:11:05 +0200 (CEST)
 Received: from localhost.localdomain (unknown [78.109.70.176])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id D4CE7E0BA6;
- Wed, 12 Aug 2026 21:10:42 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am D4CE7E0BA6
+ by agw.arknetworks.am (Postfix) with ESMTPSA id A7B1DE07BF;
+ Wed, 12 Aug 2026 21:11:04 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am A7B1DE07BF
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
- s=default; t=1786554643;
- bh=HP4TeaKKIAhFMnAPzcX/9NXJezNe6iuiMLyTRkzB9Z4=;
+ s=default; t=1786554665;
+ bh=hQcKvqXoNHHfORImWtycBfygfrQkrjjnUvEsaLKSG8s=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=5/2sDDdokHJUUepZsgYkwnoPMghckXnIoGZN9FnX1XYUk1crZMXLA/iyncFvAMFrm
- kxHfpG9FkRw2/djMDKDf92/jnDAWKJaAvCHvNnIZiFDta9y0h6jGTD/oPdHn777ECq
- xbz9Jqx+OjHZaRLGFpQmaNt/SO8nKqxQtTyUMPaPg6nAi37wGCTqQuhPY117Y692+X
- 6ecpLUeCkcoSzMUgxg+XHZf2ZJGNIzQNReYAvAcUUeMTDZmP0eWNX/TXmx311bgmce
- 6N3mrGl80HqhgJcL1oD5xgvBVtQYhlYGydx0+dyl1NAEVzGZuNTSU2afh/7wnh4KAr
- kGwNTaCB3lAkQ==
+ b=MQIYU8Qc3A5LelPTeUXRgus4OjjBDnPHBbd8i8sa0w6NZPJpAV4ZiL8wRScsN3BF/
+ ptRuc33sR6s4xZnFyLOsz6DQ9B7iJT+F2Z5z+yOda9yGpdjC1IQktt+ataMYZtGwK6
+ l4rQiiOHSQEQgWX0Q5cQti6a7QqaT9H5RNTay/ntepmqIQOkJCqli/ni6H85oS+dfN
+ VtV9DWXI1GjjSQRm3CTnlRX4aJ5Jgp6UR3KS79Kom/RTKLWMF8DSF2MKQohC6HL9zE
+ rRS1MtetSEF0ugh7aZIZMvX4x2bX3HerjhZQnVy4ZiLeYuLxQiodpxogsSD0EG01CE
+ em89fPAOdvDPA==
 From: Ivan Malov <ivan.malov@arknetworks.am>
 To: dev@dpdk.org
 Cc: Andy Moreton <andy.moreton@amd.com>,
@@ -35,14 +35,12 @@ Cc: Andy Moreton <andy.moreton@amd.com>,
  Pieter Jansen van Vuuren <pieter.jansen-van-vuuren@amd.com>,
  Stephen Hemminger <stephen@networkplumber.org>,
  Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: [PATCH v2 3/3] common/sfc_efx/base: switch netport stats to use EVB
- port ID
-Date: Wed, 12 Aug 2026 21:10:39 +0400
-Message-ID: <20260812171039.8538-4-ivan.malov@arknetworks.am>
+Subject: [PATCH v2 0/6] common/sfc_efx/base: add Medford4 VF support
+Date: Wed, 12 Aug 2026 21:10:57 +0400
+Message-ID: <20260812171103.8553-1-ivan.malov@arknetworks.am>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260812171039.8538-1-ivan.malov@arknetworks.am>
-References: <20260811174949.8993-1-ivan.malov@arknetworks.am>
- <20260812171039.8538-1-ivan.malov@arknetworks.am>
+In-Reply-To: <20260811175025.9019-1-ivan.malov@arknetworks.am>
+References: <20260811175025.9019-1-ivan.malov@arknetworks.am>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -58,130 +56,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Andy Moreton <andy.moreton@amd.com>
+This series enables DPDK to use the sfc driver
+on a Medford4 VF alongside the PF.
 
-Support for VADAPTER stats requires passing the EVB port handle.
-Use GET_NETPORT_STATISTICS_V2 to do that.
+The first patch wires EVB switch operations into the Medford4
+libefx implementation, allowing the PF to manage VFs.
 
-Also for clarity adjust the argument order for efx_np_mac_stats
-to match the legacy efx_mcdi_mac_stats.
+Starting with MCFW 1.4.0.8, VFs may use the netport MCDI for basic port
+configuration, though several operations remain restricted. The
+remaining four patches address each restriction: dummy fixed
+port properties, suppressed event subscription, denied FCS
+and flow control, and ENOTSUP for periodic MAC stats DMA.
 
-Signed-off-by: Andy Moreton <andy.moreton@amd.com>
-Reviewed-by: Ivan Malov <ivan.malov@arknetworks.am>
-Reviewed-by: Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>
----
- drivers/common/sfc_efx/base/efx_impl.h     |  3 ++-
- drivers/common/sfc_efx/base/efx_mcdi.c     |  2 +-
- drivers/common/sfc_efx/base/efx_np.c       | 15 ++++++++++++---
- drivers/common/sfc_efx/base/medford4_mac.c | 12 +++++++-----
- 4 files changed, 22 insertions(+), 10 deletions(-)
+This series depends on the VADAPTER statistics series.
 
-diff --git a/drivers/common/sfc_efx/base/efx_impl.h b/drivers/common/sfc_efx/base/efx_impl.h
-index c91fbbb61b..6dc7ca870d 100644
---- a/drivers/common/sfc_efx/base/efx_impl.h
-+++ b/drivers/common/sfc_efx/base/efx_impl.h
-@@ -1988,8 +1988,9 @@ extern	__checkReturn	efx_rc_t
- efx_np_mac_stats(
- 	__in		efx_nic_t *enp,
- 	__in		efx_np_handle_t nph,
--	__in		efx_stats_action_t action,
-+	__in		uint32_t vport_id,
- 	__in_opt	const efsys_mem_t *esmp,
-+	__in		efx_stats_action_t action,
- 	__in		uint16_t period_ms);
- #endif /* EFSYS_OPT_MAC_STATS */
- 
-diff --git a/drivers/common/sfc_efx/base/efx_mcdi.c b/drivers/common/sfc_efx/base/efx_mcdi.c
-index 8f14f38cdc..f8306460fa 100644
---- a/drivers/common/sfc_efx/base/efx_mcdi.c
-+++ b/drivers/common/sfc_efx/base/efx_mcdi.c
-@@ -2250,7 +2250,7 @@ efx_mcdi_mac_stats_clear(
- 
- 	if (efx_np_supported(enp) != B_FALSE) {
- 		rc = efx_np_mac_stats(enp, epp->ep_np_handle,
--			    EFX_STATS_CLEAR, NULL, 0);
-+		    enp->en_vport_id, NULL, EFX_STATS_CLEAR, 0);
- 	} else {
- 		rc = efx_mcdi_mac_stats(enp, enp->en_vport_id, NULL,
- 				EFX_STATS_CLEAR, 0);
-diff --git a/drivers/common/sfc_efx/base/efx_np.c b/drivers/common/sfc_efx/base/efx_np.c
-index ca6ae0a9b1..0e1cd35591 100644
---- a/drivers/common/sfc_efx/base/efx_np.c
-+++ b/drivers/common/sfc_efx/base/efx_np.c
-@@ -1607,12 +1607,13 @@ efx_np_mac_ctrl(
- efx_np_mac_stats(
- 	__in		efx_nic_t *enp,
- 	__in		efx_np_handle_t nph,
--	__in		efx_stats_action_t action,
-+	__in		uint32_t vport_id,
- 	__in_opt	const efsys_mem_t *esmp,
-+	__in		efx_stats_action_t action,
- 	__in		uint16_t period_ms)
- {
- 	EFX_MCDI_DECLARE_BUF(payload,
--	    MC_CMD_GET_NETPORT_STATISTICS_IN_LEN,
-+	    MC_CMD_GET_NETPORT_STATISTICS_V2_IN_LEN,
- 	    MC_CMD_GET_NETPORT_STATISTICS_OUT_LENMIN);
- 	boolean_t enable = (action == EFX_STATS_ENABLE_NOEVENTS);
- 	boolean_t events = (action == EFX_STATS_ENABLE_EVENTS);
-@@ -1623,7 +1624,7 @@ efx_np_mac_stats(
- 	efx_rc_t rc;
- 
- 	req.emr_out_length = MC_CMD_GET_NETPORT_STATISTICS_OUT_LENMIN;
--	req.emr_in_length = MC_CMD_GET_NETPORT_STATISTICS_IN_LEN;
-+	req.emr_in_length = MC_CMD_GET_NETPORT_STATISTICS_V2_IN_LEN;
- 	req.emr_cmd = MC_CMD_GET_NETPORT_STATISTICS;
- 	req.emr_out_buf = payload;
- 	req.emr_in_buf = payload;
-@@ -1665,6 +1666,14 @@ efx_np_mac_stats(
- 		MCDI_IN_SET_DWORD(req, GET_NETPORT_STATISTICS_IN_DMA_LEN, sz);
- 	}
- 
-+	/*
-+	 * NOTE: Do not use EVB_PORT_ID_ASSIGNED when disabling periodic stats,
-+	 *	 as this may fail (and leave periodic DMA enabled) if the
-+	 *	 vadapter has already been deleted.
-+	 */
-+	MCDI_IN_SET_DWORD(req, GET_NETPORT_STATISTICS_V2_IN_PORT_ID,
-+		(disable ? EVB_PORT_ID_NULL : vport_id));
-+
- 	efx_mcdi_execute(enp, &req);
- 
- 	if (req.emr_rc != 0) {
-diff --git a/drivers/common/sfc_efx/base/medford4_mac.c b/drivers/common/sfc_efx/base/medford4_mac.c
-index 8ef84c69c6..b6000cf6b9 100644
---- a/drivers/common/sfc_efx/base/medford4_mac.c
-+++ b/drivers/common/sfc_efx/base/medford4_mac.c
-@@ -172,8 +172,8 @@ medford4_mac_stats_upload(
- 	efx_port_t *epp = &(enp->en_port);
- 	efx_rc_t rc;
- 
--	rc = efx_np_mac_stats(enp,
--		    epp->ep_np_handle, EFX_STATS_UPLOAD, esmp, 0);
-+	rc = efx_np_mac_stats(enp, epp->ep_np_handle, enp->en_vport_id,
-+	    esmp, EFX_STATS_UPLOAD, 0);
- 	if (rc != 0)
- 		goto fail1;
- 
-@@ -196,13 +196,15 @@ medford4_mac_stats_periodic(
- 
- 	if (period_ms == 0) {
- 		rc = efx_np_mac_stats(enp, epp->ep_np_handle,
--			    EFX_STATS_DISABLE, NULL, 0);
-+		    enp->en_vport_id, NULL, EFX_STATS_DISABLE, 0);
- 	} else if (events != B_FALSE) {
- 		rc = efx_np_mac_stats(enp, epp->ep_np_handle,
--			    EFX_STATS_ENABLE_EVENTS, esmp, period_ms);
-+		    enp->en_vport_id, esmp, EFX_STATS_ENABLE_EVENTS,
-+		    period_ms);
- 	} else {
- 		rc = efx_np_mac_stats(enp, epp->ep_np_handle,
--			    EFX_STATS_ENABLE_NOEVENTS, esmp, period_ms);
-+		    enp->en_vport_id, esmp, EFX_STATS_ENABLE_NOEVENTS,
-+		    period_ms);
- 	}
- 
- 	if (rc != 0)
+
+v2:
+
+- note for the future AI reviews: apply this on top of
+  the 'common/sfc_efx/base: add VADAPTER statistics for Medford4' series
+
+- addressed https://mails.dpdk.org/archives/dev/2026-August/343072.html
+  -- fixed reporting of the factual link speed when running on VFs
+  -- remaining notes do not seem to point at factual defects
+
+
+Ivan Malov (6):
+  common/sfc_efx/base: let Medford4 PF manage VFs
+  common/sfc_efx/base: indicate dummy netport properties on VF
+  common/sfc_efx/base: skip netport event subscriptions on VFs
+  common/sfc_efx/base: deny tuning FCS and flow control to VFs
+  common/sfc_efx/base: deny periodic MAC stats delivery to VFs
+  doc: announce VF support of AMD Solarflare X45xx family NICs
+
+ doc/guides/rel_notes/release_26_11.rst |  4 ++
+ drivers/common/sfc_efx/base/efx_evb.c  |  6 ++
+ drivers/common/sfc_efx/base/efx_np.c   | 90 ++++++++++++++++++++++----
+ 3 files changed, 88 insertions(+), 12 deletions(-)
+
 -- 
 2.47.3
 
