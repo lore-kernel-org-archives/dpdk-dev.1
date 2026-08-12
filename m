@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EC02C5B56A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 17:11:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02740C5B56A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 17:11:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E4259427A2;
-	Wed, 12 Aug 2026 19:11:07 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E04D9427A1;
+	Wed, 12 Aug 2026 19:11:08 +0200 (CEST)
 Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id 2825342793
+ by mails.dpdk.org (Postfix) with ESMTP id E447842793
  for <dev@dpdk.org>; Wed, 12 Aug 2026 19:11:06 +0200 (CEST)
 Received: from localhost.localdomain (unknown [78.109.70.176])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id 71DBFE0872;
- Wed, 12 Aug 2026 21:11:05 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 71DBFE0872
+ by agw.arknetworks.am (Postfix) with ESMTPSA id 39CA7E0AD0;
+ Wed, 12 Aug 2026 21:11:06 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 39CA7E0AD0
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
  s=default; t=1786554666;
- bh=shpB+sYdwP959siTtsTf8tU0YrnugcyAhRv9zfFbW/4=;
+ bh=nX4xj1PkAhwBFBvYmS2Y233cnfnAK5jWmPH8UGuzl+s=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=J+x5vsv7A8tSLEC7sPppzfeXK1Kcgaxw30MQp1c7svFgBmaVl1jWVAemI0A0JONVW
- Gm0oLmrlNfwFxkB+Sjy6wpsbf3m6SSuSY0tBV6KHC838SFPANuzqFLRDVjyFMp3H3O
- aYx9HW5ALOlboP/ee3BSlwQZ4QxIcSBOV8kD95TvpVtyFLwhYjZRSzKmI5j8miKCKq
- EqTaBWdUgZVO7lxktpumVIRqNjDGhZ4r9IeJkjs1COus13rNzpVjdgCyNrGGU1gyMn
- umCAi92l64qchfljoNT3v16DkiVhARrxxzktA36VbiPXGSRKJJZgRi/S5eFaDSROTJ
- BvmInrp4IX65w==
+ b=Ce/1SE+0R/jgtQpi2b12sFf0otkcK7n+Qzq4seMx7hflha5sIbZRjAsOXI0noCVNl
+ 8rCHXxtLs6BES3YfqALVrIC4a2/TFCUW/+VTEFf5BWe7uJfR/w1Dd0hhfbyE5BET/8
+ MkBaug7VRCIviJieE7ylf9PN/JfYVn8IY6M9tuezg37le3LQAyXsAaDZOzJttA0nD6
+ Dw0RTO47UN3G3SIHf1F8B/YSaXeSyfgf1O4FCXMpNzZbNvi0Sbg13+id+0tqAHr9z+
+ BjQkW9jvznj9BabVbYkpgIZtlg/9LV2jpqPSYqPdLHHOQp91JIWJz/DEJTrUyg8aKn
+ YtUe9+g4xSruw==
 From: Ivan Malov <ivan.malov@arknetworks.am>
 To: dev@dpdk.org
 Cc: Andy Moreton <andy.moreton@amd.com>,
@@ -35,9 +35,10 @@ Cc: Andy Moreton <andy.moreton@amd.com>,
  Pieter Jansen van Vuuren <pieter.jansen-van-vuuren@amd.com>,
  Stephen Hemminger <stephen@networkplumber.org>,
  Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: [PATCH v2 1/6] common/sfc_efx/base: let Medford4 PF manage VFs
-Date: Wed, 12 Aug 2026 21:10:58 +0400
-Message-ID: <20260812171103.8553-2-ivan.malov@arknetworks.am>
+Subject: [PATCH v2 2/6] common/sfc_efx/base: indicate dummy netport properties
+ on VF
+Date: Wed, 12 Aug 2026 21:10:59 +0400
+Message-ID: <20260812171103.8553-3-ivan.malov@arknetworks.am>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260812171103.8553-1-ivan.malov@arknetworks.am>
 References: <20260811175025.9019-1-ivan.malov@arknetworks.am>
@@ -57,35 +58,76 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When the user binds the PF to 'vfio-pci', enables SR-IOV
-and instantiates a VF, looking to attach both the PF and
-the VF to DPDK, the DPDK driver has to instantiate the
-EVB switch on the PF. Wire the necessary methods into
-the Medford4 EVB implementation in libefx.
+Starting with MCFW version 1.4.0.8, Medford4 adapters support the use
+of the netport MCDI for port configuration by a VF; however, the MCDI
+which retrieves fixed port properties is not permitted for use by VFs.
+
+Fill in dummy values sufficient for the DPDK driver to start on a VF.
 
 Signed-off-by: Ivan Malov <ivan.malov@arknetworks.am>
 Reviewed-by: Andy Moreton <andy.moreton@amd.com>
 ---
- drivers/common/sfc_efx/base/efx_evb.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/common/sfc_efx/base/efx_np.c | 26 ++++++++++++++++++++++----
+ 1 file changed, 22 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/common/sfc_efx/base/efx_evb.c b/drivers/common/sfc_efx/base/efx_evb.c
-index 5933c5d883..79db77c635 100644
---- a/drivers/common/sfc_efx/base/efx_evb.c
-+++ b/drivers/common/sfc_efx/base/efx_evb.c
-@@ -107,6 +107,12 @@ efx_evb_init(
- 		break;
- #endif /* EFSYS_OPT_RIVERHEAD */
+diff --git a/drivers/common/sfc_efx/base/efx_np.c b/drivers/common/sfc_efx/base/efx_np.c
+index 0e1cd35591..7a30567fe0 100644
+--- a/drivers/common/sfc_efx/base/efx_np.c
++++ b/drivers/common/sfc_efx/base/efx_np.c
+@@ -240,6 +240,7 @@ efx_np_get_fixed_port_props(
+ 	__out_opt		uint32_t *sup_cap_maskp,
+ 	__out_opt		efx_qword_t *loopback_cap_maskp)
+ {
++	const efx_nic_cfg_t *encp = &enp->en_nic_cfg;
+ 	EFX_MCDI_DECLARE_BUF(payload,
+ 	    MC_CMD_GET_FIXED_PORT_PROPERTIES_IN_LEN,
+ 	    MC_CMD_GET_FIXED_PORT_PROPERTIES_OUT_V2_LEN);
+@@ -247,6 +248,10 @@ efx_np_get_fixed_port_props(
+ 	efx_mcdi_req_t req;
+ 	efx_rc_t rc;
  
-+#if EFSYS_OPT_MEDFORD4
-+	case EFX_FAMILY_MEDFORD4:
-+		eeop = &__efx_evb_ef10_ops;
-+		break;
-+#endif /* EFSYS_OPT_MEDFORD4 */
++	/* VFs do not allow access to the fixed port data. */
++	if (EFX_PCI_FUNCTION_IS_VF(encp))
++		return (0);
 +
- 	default:
- 		EFSYS_ASSERT(0);
- 		rc = ENOTSUP;
+ 	req.emr_out_length = MC_CMD_GET_FIXED_PORT_PROPERTIES_OUT_V2_LEN;
+ 	req.emr_in_length = MC_CMD_GET_FIXED_PORT_PROPERTIES_IN_LEN;
+ 	req.emr_cmd = MC_CMD_GET_FIXED_PORT_PROPERTIES;
+@@ -1050,10 +1055,6 @@ efx_np_attach(
+ 	if (rc != 0)
+ 		goto fail1;
+ 
+-	/*
+-	 * FIXME: This may need revisiting for VFs, which
+-	 * don't necessarily have access to these details.
+-	 */
+ 	rc = efx_np_get_fixed_port_props(enp, epp->ep_np_handle,
+ 		    epp->ep_np_cap_data_raw, &epp->ep_phy_cap_mask,
+ 		    &epp->ep_np_loopback_cap_mask);
+@@ -1071,6 +1072,23 @@ efx_np_attach(
+ 		epp->ep_phy_cap_mask |= 1U << EFX_PHY_CAP_AN;
+ 	}
+ 
++	/*
++	 * On VFs, 'efx_np_get_fixed_port_props' does not report any link
++	 * speeds; however, 'efx_np_link_state' should provide clues as
++	 * to which link speed is de facto active on the VF. Use this
++	 * clue to provide accurate information to the application.
++	 *
++	 * Also, indicate three basic capabilities that the VF cannot
++	 * manage, but that can be safely assumed to be available.
++	 */
++	if (EFX_PCI_FUNCTION_IS_VF(encp)) {
++		epp->ep_phy_cap_mask = epp->ep_adv_cap_mask;
++
++		epp->ep_phy_cap_mask |= 1U << EFX_PHY_CAP_PAUSE;
++		epp->ep_phy_cap_mask |= 1U << EFX_PHY_CAP_ASYM;
++		epp->ep_phy_cap_mask |= 1U << EFX_PHY_CAP_AN;
++	}
++
+ #if EFSYS_OPT_LOOPBACK
+ 	efx_np_assign_loopback_props(enp);
+ #endif /* EFSYS_OPT_LOOPBACK */
 -- 
 2.47.3
 
