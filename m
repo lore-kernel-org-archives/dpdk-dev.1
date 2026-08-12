@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CC04C5B572
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 17:08:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7C0FC5B572
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 17:09:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DC29E40A8A;
-	Wed, 12 Aug 2026 19:08:46 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3548840DD0;
+	Wed, 12 Aug 2026 19:08:48 +0200 (CEST)
 Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id 9FF1440264;
- Wed, 12 Aug 2026 19:08:44 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 6717F4025F;
+ Wed, 12 Aug 2026 19:08:45 +0200 (CEST)
 Received: from localhost.localdomain (unknown [78.109.70.176])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id A6764E0BA6;
- Wed, 12 Aug 2026 21:08:43 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am A6764E0BA6
+ by agw.arknetworks.am (Postfix) with ESMTPSA id 7D9E3E0BD3;
+ Wed, 12 Aug 2026 21:08:44 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 7D9E3E0BD3
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
- s=default; t=1786554524;
- bh=lBBmUCedjEVlrvRMYBPzNpu9y+GIY3b7wFHSvWjd2p0=;
+ s=default; t=1786554525;
+ bh=lF4hXssdnhiwjhKTe93PwR2+ix6fNl7oMhUy9K1MQio=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=DSa6NMkvRrtai8WWHl2sAJFAt0MBkamk29vEEqyxf/eKTqsmOUf9v+NcV6g8ggtGI
- Y1rIjYWWF5F6Yje8e8F1yc6f6dTUu/x6n+JIrhFOzXUhZ14V/3LAjP4Gq4Ad/El9Kc
- S0jXs8gLrK2EhsB4GMP0RbtE7HYNlaN0Bjh0vHYY3jWzzRf88zmfkkKaY5uxkYvLpr
- fHngIUOQMIOONFrnGau6WQGoUJP5hpEY5/WQh7izrJ1dW2QfytB4O+cyusGinMsDb+
- KU5QdpZbquotU5QZE97zia6XW655qjimO5royQHByJCFYHBTQVbSaIs+LZVu/H68Qb
- z4kffV5dprRBQ==
+ b=0aUzwQ+X910hya1aI4ytTa8HCo4opzMYY7HZoSdbcVgJnR2nsjEyCQ1dVR9QMQSbK
+ 45vxWlFfXjqL0ebr05oynrDRREGENmaXdMjBxJMVVginfF65CNfWlC13lA49PGpxZd
+ 4GNdRUjifrkwYPrjjs2ImB24G0oO1x6gKBHyapmna9F6Qjvi9Q8JkRlN4Mieb9uw4N
+ LLs5ykbwn6LmBqJx4H1QQ3x3dTilj+LsgGhDVXx356f0sbCk3atL9VQIhubWK14SiL
+ xVT4ywL1qk8lnR0H01LowXQL9Ea8qW0+ASZr8vU7vsBUSURA5pAZsDOWM8O85QcUF2
+ jQwRa85BikKYg==
 From: Ivan Malov <ivan.malov@arknetworks.am>
 To: dev@dpdk.org
 Cc: Andy Moreton <andy.moreton@amd.com>,
@@ -35,10 +35,10 @@ Cc: Andy Moreton <andy.moreton@amd.com>,
  Pieter Jansen van Vuuren <pieter.jansen-van-vuuren@amd.com>,
  Stephen Hemminger <stephen@networkplumber.org>,
  Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, stable@dpdk.org
-Subject: [PATCH v2 01/14] common/sfc_efx/base: reduce stack in RSS context
- table write
-Date: Wed, 12 Aug 2026 21:08:21 +0400
-Message-ID: <20260812170834.8443-2-ivan.malov@arknetworks.am>
+Subject: [PATCH v2 02/14] common/sfc_efx/base: reduce stack in get addr
+ regions MCDI
+Date: Wed, 12 Aug 2026 21:08:22 +0400
+Message-ID: <20260812170834.8443-3-ivan.malov@arknetworks.am>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260812170834.8443-1-ivan.malov@arknetworks.am>
 References: <20260811174821.8930-1-ivan.malov@arknetworks.am>
@@ -63,78 +63,101 @@ From: Andy Moreton <andy.moreton@amd.com>
 Code analysis reports an error for excessive stack consumption
 (over 1KB). Use a heap allocated payload buffer instead.
 
-Fixes: e7ea5f304f0f ("common/sfc_efx/base: support selecting RSS table entry count")
+Fixes: 60fb370c7bc9 ("common/sfc_efx/base: support NIC DMA memory regions API")
 Cc: stable@dpdk.org
 
 Signed-off-by: Andy Moreton <andy.moreton@amd.com>
 Reviewed-by: Ivan Malov <ivan.malov@arknetworks.am>
 Reviewed-by: Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>
 ---
- drivers/common/sfc_efx/base/ef10_rx.c | 22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+ drivers/common/sfc_efx/base/efx_mcdi.c | 26 ++++++++++++++++++++------
+ 1 file changed, 20 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/common/sfc_efx/base/ef10_rx.c b/drivers/common/sfc_efx/base/ef10_rx.c
-index afc9cf025f..ed9943dc2c 100644
---- a/drivers/common/sfc_efx/base/ef10_rx.c
-+++ b/drivers/common/sfc_efx/base/ef10_rx.c
-@@ -394,11 +394,10 @@ efx_mcdi_rss_context_write_table(
- 	__in			unsigned int nentries)
+diff --git a/drivers/common/sfc_efx/base/efx_mcdi.c b/drivers/common/sfc_efx/base/efx_mcdi.c
+index 670b0d5cda..7dc58992be 100644
+--- a/drivers/common/sfc_efx/base/efx_mcdi.c
++++ b/drivers/common/sfc_efx/base/efx_mcdi.c
+@@ -3439,15 +3439,24 @@ efx_mcdi_get_nic_addr_regions(
+ 	__in		efx_nic_t *enp,
+ 	__out		efx_nic_dma_region_info_t *endrip)
  {
- 	const efx_nic_cfg_t *encp = efx_nic_cfg_get(enp);
+-	EFX_MCDI_DECLARE_BUF(payload, MC_CMD_GET_DESC_ADDR_REGIONS_IN_LEN,
+-		MC_CMD_GET_DESC_ADDR_REGIONS_OUT_LENMAX_MCDI2);
 +	uint8_t *payload = NULL;
+ 	efx_xword_t *regions;
  	efx_mcdi_req_t req;
--	EFX_MCDI_DECLARE_BUF(payload,
--	     MC_CMD_RSS_CONTEXT_WRITE_TABLE_IN_LENMAX_MCDI2,
--	     MC_CMD_RSS_CONTEXT_WRITE_TABLE_OUT_LEN);
- 	unsigned int i;
 +	size_t size;
- 	int rc;
+ 	efx_rc_t rc;
+ 	size_t alloc_size;
+ 	unsigned int nregions;
+ 	unsigned int i;
  
- 	if (nentries >
-@@ -413,6 +412,15 @@ efx_mcdi_rss_context_write_table(
- 		goto fail2;
- 	}
- 
-+	size = MAX(MC_CMD_RSS_CONTEXT_WRITE_TABLE_IN_LEN(nentries),
-+	    MC_CMD_RSS_CONTEXT_WRITE_TABLE_OUT_LEN);
++	size = MAX(MC_CMD_GET_DESC_ADDR_REGIONS_IN_LEN,
++	    MC_CMD_GET_DESC_ADDR_REGIONS_OUT_LENMAX_MCDI2);
 +
 +	EFSYS_KMEM_ALLOC(enp->en_esip, size, payload);
 +	if (payload == NULL) {
 +		rc = ENOMEM;
-+		goto fail3;
++		goto fail1;
 +	}
 +
- 	req.emr_cmd = MC_CMD_RSS_CONTEXT_WRITE_TABLE;
+ 	req.emr_cmd = MC_CMD_GET_DESC_ADDR_REGIONS;
  	req.emr_in_buf = payload;
- 	req.emr_in_length = MC_CMD_RSS_CONTEXT_WRITE_TABLE_IN_LEN(nentries);
-@@ -425,7 +433,7 @@ efx_mcdi_rss_context_write_table(
- 	for (i = 0; i < nentries; ++i) {
- 		if (table[i] >= encp->enc_rx_scale_indirection_max_nqueues) {
- 			rc = EINVAL;
--			goto fail3;
-+			goto fail4;
- 		}
+ 	req.emr_in_length = MC_CMD_GET_DESC_ADDR_REGIONS_IN_LEN;
+@@ -3458,13 +3467,13 @@ efx_mcdi_get_nic_addr_regions(
  
- 		MCDI_IN_POPULATE_INDEXED_DWORD_2(req,
-@@ -437,13 +445,17 @@ efx_mcdi_rss_context_write_table(
- 	efx_mcdi_execute(enp, &req);
  	if (req.emr_rc != 0) {
  		rc = req.emr_rc;
+-		goto fail1;
++		goto fail2;
+ 	}
+ 
+ 	if (req.emr_out_length_used <
+ 	    MC_CMD_GET_DESC_ADDR_REGIONS_OUT_LENMIN) {
+ 		rc = EMSGSIZE;
+-		goto fail2;
++		goto fail3;
+ 	}
+ 
+ 	nregions = MC_CMD_GET_DESC_ADDR_REGIONS_OUT_REGIONS_NUM(
+@@ -3477,7 +3486,7 @@ efx_mcdi_get_nic_addr_regions(
+ 	alloc_size = nregions * sizeof(endrip->endri_regions[0]);
+ 	if (alloc_size / sizeof (endrip->endri_regions[0]) != nregions) {
+ 		rc = ENOMEM;
+-		goto fail3;
++		goto fail4;
+ 	}
+ 
+ 	EFSYS_KMEM_ALLOC(enp->en_esip,
+@@ -3485,7 +3494,7 @@ efx_mcdi_get_nic_addr_regions(
+ 	    endrip->endri_regions);
+ 	if (endrip->endri_regions == NULL) {
+ 		rc = ENOMEM;
 -		goto fail4;
 +		goto fail5;
  	}
  
+ 	endrip->endri_count = nregions;
+@@ -3517,14 +3526,19 @@ efx_mcdi_get_nic_addr_regions(
+ 		        DESC_ADDR_REGION_TRGT_ADDR_ALIGN_LOG2);
+ 	}
+ 
 +	EFSYS_KMEM_FREE(enp->en_esip, size, payload);
++
  	return (0);
  
 +fail5:
 +	EFSYS_PROBE(fail5);
  fail4:
  	EFSYS_PROBE(fail4);
-+	EFSYS_KMEM_FREE(enp->en_esip, size, payload);
  fail3:
  	EFSYS_PROBE(fail3);
  fail2:
+ 	EFSYS_PROBE(fail2);
++	EFSYS_KMEM_FREE(enp->en_esip, size, payload);
+ fail1:
+ 	EFSYS_PROBE1(fail1, efx_rc_t, rc);
+ 
 -- 
 2.47.3
 
