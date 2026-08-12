@@ -2,76 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38339C5B56A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 11 Aug 2026 21:05:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B2C6C5B572
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 01:48:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 147994025F;
-	Tue, 11 Aug 2026 23:05:58 +0200 (CEST)
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com
- [209.85.216.45]) by mails.dpdk.org (Postfix) with ESMTP id 894984021E
- for <dev@dpdk.org>; Tue, 11 Aug 2026 23:05:56 +0200 (CEST)
-Received: by mail-pj1-f45.google.com with SMTP id
- 98e67ed59e1d1-383cb94f742so458743a91.3
- for <dev@dpdk.org>; Tue, 11 Aug 2026 14:05:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786482355;
- x=1787087155; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=xXr7S9SD4pj2KDcSa4TuAhU5Y17tiE8ykzoQGVrhIes=;
- b=v1Va6+sVjIIn7hNhuw/KPm/DjKpT3rDwPqDI6xP2mkVPNON6CuAO0CUsKq8us5Zl+M
- P9zwRYtmfooC4oTaOlXcfGdEj1G4l1UG1ljnIh5Lit5wKCDPDBWXZrbjSzm8M/l5Wu/i
- vZWWCG4YD7QPE2QjuG22zH3tXWwKC+cnkjNpAqUnYGPxc2Y3bFtxohUq5oaBU7phjzA6
- KqdKiWnaeK0b0vAzuecCwLHkbssNFibAKDL5coX6pE013uPCgmByc7LcFdbMvjgxDfB7
- bilCnXaFBKU3Mlg/u72LRdK/L5AGYEuC1D7inqTn/5kdITq1zaBL+AVc1FbDktk8spml
- tUzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786482355; x=1787087155;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=xXr7S9SD4pj2KDcSa4TuAhU5Y17tiE8ykzoQGVrhIes=;
- b=fPBEWmeSz+KRSpTrCyEcMef5qx5kQUULDRlkLZ4AIKDFgwZHm8EmNl55eykUhyd57K
- Rr/0OpJW/TE2ivvAGk5iGgwEWfDTfC6wv2kzmDmIbbpVhTvoQPqcVVW5hovRaq/yrPkk
- gqCiLnP8lb2zJ2cne/8tI6a5AWszX0pI6nfab1ow0cElmZkaRdquq01iv5aoORTXSukJ
- FcBh94quYLJB9hLwHUWbX82+e1Wk4M7nQ6ByRUTMUxI6YuGczeav5+IDvxCVZk9i2zA8
- e+l2VHRSQ/N4SeatNnm6hz2I5AU6KWhhS+e/ZzeiYk+GSEnWEakpDGm6a//2lVi7+tUa
- PAmw==
-X-Gm-Message-State: AOJu0YxlpF/sjg6vyCG+qO5Mdctjpv9nUwMLLA9K8V+1tUm0cKioTSS6
- baMtjgQblsFEvORgvZN+iSjodsJ/NcTMDZooZIrTyYIOnSGjZP6lgJwWv1XKcy3wQIo=
-X-Gm-Gg: AR+sD12mxcHxqX2NmoM9cSBPyBXRWS91DYhhwwKSOL8XgUTu/4wvDIlR1RnO41KVqSp
- u+lob+k84nVNWiME2KcQth7gFqm3xd0dHX1fe9VQvHToTsZc4C/B4I7Uwa3BNTfGwLIIg63N9a4
- GOaUfD30SM0UmJeu0w/N/xDQ5RGkxYRgL+Tpe6Aw7ekw3sIoOUXZMcrj8XSbx1ZTZ7DbxOITNwg
- aZUmTuMC2KfIlWyr0YQOUBJSrBxtuxPJP1rwuonqUhKfsT6RB4TJnOMxK0z6oe2LfJFXYV19qsU
- u9MKvsDDqOIQQCSftSfVXoOmVsb4Cs2Vudtb6CnyV7RyqXQRLX9Rido4iVhtoBildKupSm8hsvv
- WlOY3hqKFH1r9lrMlileRxPndPHZQISc19fovpzf9BAyv9/G+rs9njgLCN9jMp0uYZD97OHMmGS
- Fu5/GCsx36wsfE9jwwA7UivH3WldafOxti6XCKKGU8EKDqywq0gth/4IveHZRe6qVx8pmTTc5+F
- TXbfhUhr1LqPoVk3WR4D4Ly0l4LMw==
-X-Received: by 2002:a17:90b:3c8b:b0:38e:f6eb:2b38 with SMTP id
- 98e67ed59e1d1-392ec68540amr7130566a91.17.1786482355359; 
- Tue, 11 Aug 2026 14:05:55 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-31cf67912d0sm3815334eec.24.2026.08.11.14.05.54
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 11 Aug 2026 14:05:55 -0700 (PDT)
-Date: Tue, 11 Aug 2026 14:05:51 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Ivan Malov <ivan.malov@arknetworks.am>
-Cc: dev@dpdk.org, Andy Moreton <andy.moreton@amd.com>, Viacheslav
- Galaktionov <viacheslav.galaktionov@arknetworks.am>, Roman Zhukov
- <Roman.Zhukov@arknetworks.am>, Pieter Jansen van Vuuren
- <pieter.jansen-van-vuuren@amd.com>, Andrew Rybchenko
- <andrew.rybchenko@oktetlabs.ru>
-Subject: Re: [PATCH 0/6] common/sfc_efx/base: add Medford4 VF support
-Message-ID: <20260811140551.7824a762@phoenix.local>
-In-Reply-To: <20260811175025.9019-1-ivan.malov@arknetworks.am>
-References: <20260811175025.9019-1-ivan.malov@arknetworks.am>
+	by mails.dpdk.org (Postfix) with ESMTP id 540C0406B8;
+	Wed, 12 Aug 2026 03:48:39 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+ by mails.dpdk.org (Postfix) with ESMTP id DC006402EB
+ for <dev@dpdk.org>; Wed, 12 Aug 2026 03:48:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1786499317; x=1818035317;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=PoC935NwQRdcIjAPCHk/H4e5RRVcoBcdIQ5DcSSFU38=;
+ b=j2jrn3QS0I5crY60uRlp2xr0VCAr95SyF5hntrq/Vt7XgjiSgvGvEWHG
+ ++nAvy5/BiHm1w9XE9h47scxuvwOclCC6+FZ50U0qt7hQ24om6msAQzZ8
+ w6QavV4OLk4M5anWau4n/LftoWbCMM6EjFR8YP7xnH7OYqD4Poyp7kmzL
+ Bo8MnE1UUeQgH5Ecjgo1v8mWYMNMdzDKAhnPOGz+QdkcGlDwOjcBpqWjd
+ HbZ3JuBuEmAZSe+Ft65o+u5dKO3+E5r70e1N9pLLbGw15r+3R1v42yP+L
+ tLQoNEzXOtAIkg08VQY5D4DjA2EXz2SOAWbVygwHDHOvTP9J9oUmTCcb/ w==;
+X-CSE-ConnectionGUID: yY12ERrxTdiZbPCH15Vpvw==
+X-CSE-MsgGUID: yDO/JUa3TWmipQsxFZfX7g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11872"; a="98399586"
+X-IronPort-AV: E=Sophos;i="6.25,218,1779174000"; d="scan'208";a="98399586"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+ by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Aug 2026 18:48:35 -0700
+X-CSE-ConnectionGUID: pRHEP2c7SMi8eJIEaSGP9w==
+X-CSE-MsgGUID: zhrl9qoFT/22NPdY1XK2+g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,218,1779174000"; d="scan'208";a="262181775"
+Received: from pae-14.iind.intel.com ([10.190.203.153])
+ by orviesa010.jf.intel.com with ESMTP; 11 Aug 2026 18:48:33 -0700
+From: Anurag Mandal <anurag.mandal@intel.com>
+To: dev@dpdk.org
+Cc: ciara.loftus@intel.com, mtahhan@redhat.com, stephen@networkplumber.org,
+ Anurag Mandal <anurag.mandal@intel.com>
+Subject: [PATCH v3] net/af_xdp: fix default device plugin path
+Date: Wed, 12 Aug 2026 01:47:42 +0000
+Message-Id: <20260812014742.1124468-1-anurag.mandal@intel.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260810101158.1011356-1-anurag.mandal@intel.com>
+References: <20260810101158.1011356-1-anurag.mandal@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,93 +60,308 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 11 Aug 2026 21:50:19 +0400
-Ivan Malov <ivan.malov@arknetworks.am> wrote:
+When use_cni=1 or use_pinned_map=1 is passed without an explicit
+dp_path, the PMD builds the path to the AF_XDP device plugin
+endpoint itself.
+That default was hardcoded to /tmp/afxdp_dp/<if_name>/.
 
-> This series enables DPDK to use the sfc driver
-> on a Medford4 VF alongside the PF.
-> 
-> The first patch wires EVB switch operations into the Medford4
-> libefx implementation, allowing the PF to manage VFs.
-> 
-> Starting with MCFW 1.4.0.8, VFs may use the netport MCDI for basic port
-> configuration, though several operations remain restricted. The
-> remaining four patches address each restriction: dummy fixed
-> port properties, suppressed event subscription, denied FCS
-> and flow control, and ENOTSUP for periodic MAC stats DMA.
-> 
-> This series depends on the VADAPTER statistics series.
-> 
-> Ivan Malov (6):
->   common/sfc_efx/base: let Medford4 PF manage VFs
->   common/sfc_efx/base: indicate dummy netport properties on VF
->   common/sfc_efx/base: skip netport event subscriptions on VFs
->   common/sfc_efx/base: deny tuning FCS and flow control to VFs
->   common/sfc_efx/base: deny periodic MAC stats delivery to VFs
->   doc: announce VF support of AMD Solarflare X45xx family NICs
-> 
->  doc/guides/rel_notes/release_26_11.rst |  4 ++
->  drivers/common/sfc_efx/base/efx_evb.c  |  6 ++
->  drivers/common/sfc_efx/base/efx_np.c   | 91 ++++++++++++++++++++++----
->  3 files changed, 89 insertions(+), 12 deletions(-)
-> 
+A unix domain socket and a pinned map are runtime state.
+DPDK exposes a location for such state through
+rte_eal_get_runtime_dir(), which is per user, per
+file prefix, and created with mode 0700, unlike
+the shared /tmp/afxdp_dp directory.
 
-Some AI feedback, no real errors
+The location cannot simply be moved as it is a contract
+duplicated in the AF_XDP Device Plugin for Kubernetes,
+which creates the socket and mounts it into the pod at
+the /tmp path the PMD expects.
+Changing only the PMD would break every existing deployment.
 
-Series: [PATCH 0/6] SFC Medford4 VF support (Ivan Malov)
-Reviewed against DPDK main @ c1a46b9; all 6 patches apply with git am.
-Full-series build (gcc 13, -Dwerror=true) is clean.
+This patch fixes the default so that the endpoint is looked
+up below the EAL runtime directory first, and /tmp/afxdp_dp
+is only used when nothing is found there.
+Use of the fallback is logged at notice level.
+Existing plugin deployments keep working unchanged, while
+a deployment that places the endpoint in the runtime
+directory no longer has to pass dp_path.
+An explicit dp_path still overrides both.
 
-Patch 2/6: common/sfc_efx/base: indicate dummy netport properties on VF
+The <if_name> component is kept in both layouts. It is what
+keeps the endpoints of several interfaces distinct when more
+than one UDS server is mounted in a single pod.
 
-Warning: The dummy capability mask makes the VF report a 1 Gbps port.
+The runtime directory prefix makes the built path longer,
+so reject a dp_path that does not fit the sun_path field
+of struct sockaddr_un instead of letting strlcpy()
+silently truncate it.
 
-  efx_np_get_fixed_port_props() returns only EFX_PHY_CAP_1000FDX as the
-  supported link speed. That value flows to epp->ep_phy_cap_mask, then to
-  sfc_port_attach() via efx_phy_adv_cap_get(EFX_PHY_CAP_PERM), and finally
-  to dev_info.speed_capa in sfc_dev_infos_get(). A VF on an X4522/X4542
-  will therefore advertise RTE_ETH_LINK_SPEED_1G and nothing else.
+The interface name check is moved ahead of the path
+construction, as the default path is now built from it.
 
-  The consequence is not cosmetic. sfc_check_conf() computes
+Bugzilla ID: 1973
+Fixes: 9c1323736cf9 ("net/af_xdp: fix multi-interface support for k8s")
+Fixes: 8a324b1c6464 ("net/af_xdp: support AF_XDP device plugin pinned maps")
 
-      sa->port.phy_adv_cap = sfc_phy_cap_from_link_speeds(conf->link_speeds)
-                             & sa->port.phy_adv_cap_mask;
+Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
+---
+V3: Added release note
+V2: Addressed Stephen Hemminger's AI review comments
 
-  and fails configure with EINVAL if the result is empty. An application
-  that requests a specific speed (RTE_ETH_LINK_SPEED_25G, for example)
-  rather than autoneg cannot configure the VF at all, and one that reads
-  speed_capa to pick a speed will pick 1G.
+ doc/guides/howto/af_xdp_dp.rst         | 32 +++++++++--
+ doc/guides/nics/af_xdp.rst             | 35 ++++++++++--
+ doc/guides/rel_notes/release_26_11.rst | 13 +++++
+ drivers/net/af_xdp/rte_eth_af_xdp.c    | 73 +++++++++++++++++++++++---
+ 4 files changed, 139 insertions(+), 14 deletions(-)
 
-  efx_np_link_state() is called a few lines later in efx_np_attach() and
-  does work on a VF; ls.enls_adv_cap_mask holds the real advertised
-  abilities. Suggest deriving the VF capability mask from that instead of
-  hardcoding 1000FDX, e.g. fold ls.enls_adv_cap_mask into
-  epp->ep_phy_cap_mask for VFs after the efx_np_link_state() call.
+diff --git a/doc/guides/howto/af_xdp_dp.rst b/doc/guides/howto/af_xdp_dp.rst
+index c194ead250..7227f29a73 100644
+--- a/doc/guides/howto/af_xdp_dp.rst
++++ b/doc/guides/howto/af_xdp_dp.rst
+@@ -68,7 +68,28 @@ arguments to explicitly tell the AF_XDP PMD where to find either:
+ 2. The pinned xskmap to use when creating AF_XDP sockets.
+ 
+ If this argument is not passed alongside the ``use_cni`` or ``use_pinned_map`` arguments
+-then the AF_XDP PMD configures it internally to the `AF_XDP Device Plugin for Kubernetes`_.
++then the AF_XDP PMD builds the path itself.
++It looks for ``afxdp_dp/<if_name>/afxdp.sock``
++(or ``afxdp_dp/<if_name>/xsks_map``) in the EAL runtime directory,
++the conventional location for runtime state such as sockets.
++When no such entry exists, the PMD falls back to the same file
++below ``/tmp/afxdp_dp``, the location used by the
++`AF_XDP Device Plugin for Kubernetes`_.
++
++.. note::
++
++   The ``/tmp/afxdp_dp`` fallback exists only for compatibility with
++   deployments of the `AF_XDP Device Plugin for Kubernetes`_
++   that mount the endpoint there.
++   New deployments should mount the endpoint
++   below the EAL runtime directory,
++   or point at it explicitly with ``dp_path``.
++   A pinned map lives on a bpffs mount,
++   so it has to be bind mounted into that directory;
++   it cannot be pinned into the runtime directory itself.
++   The ``<if_name>`` component of the path must be kept in either location:
++   it is what distinguishes the endpoints
++   when several interfaces are mounted in a single pod.
+ 
+ .. note::
+ 
+@@ -80,8 +101,9 @@ then the AF_XDP PMD configures it internally to the `AF_XDP Device Plugin for Ku
+    DPDK AF_XDP PMD > v23.11 will work with latest version of the AF_XDP Device Plugin
+    through a combination of the ``dp_path`` and/or the ``use_cni`` parameter.
+    In these versions of the PMD if a user doesn't explicitly set the ``dp_path`` parameter
+-   when using ``use_cni`` then that path is transparently configured in the AF_XDP PMD
+-   to the default `AF_XDP Device Plugin for Kubernetes`_ mount point path.
++   when using ``use_cni`` then the PMD looks for the endpoint
++   below the EAL runtime directory first,
++   and falls back to the default `AF_XDP Device Plugin for Kubernetes`_ mount point path.
+    The path can be overridden by explicitly setting the ``dp_path`` param.
+ 
+ .. note::
+@@ -339,4 +361,6 @@ Run dpdk-testpmd with the AF_XDP Device Plugin + CNI
+ .. note::
+ 
+    If the ``dp_path`` parameter isn't explicitly set with ``use_cni`` or ``use_pinned_map``
+-   the AF_XDP PMD will set the parameter values to the `AF_XDP Device Plugin for Kubernetes`_ defaults.
++   the AF_XDP PMD looks for the endpoint below the EAL runtime directory first,
++   and only then below the ``/tmp/afxdp_dp`` location
++   used by the `AF_XDP Device Plugin for Kubernetes`_.
+diff --git a/doc/guides/nics/af_xdp.rst b/doc/guides/nics/af_xdp.rst
+index c455b4c066..4d2ee48ff7 100644
+--- a/doc/guides/nics/af_xdp.rst
++++ b/doc/guides/nics/af_xdp.rst
+@@ -199,18 +199,45 @@ to explicitly tell the AF_XDP PMD where to find either:
+ 1. The UDS to interact with the AF_XDP Device Plugin. OR
+ 2. The pinned xskmap to use when creating AF_XDP sockets.
+ 
+-If this argument is not passed alongside the ``use_cni`` or ``use_pinned_map`` arguments then
+-the AF_XDP PMD configures it internally to the `AF_XDP Device Plugin for Kubernetes`_.
++If this argument is not passed alongside the ``use_cni`` or ``use_pinned_map`` arguments,
++the AF_XDP PMD builds the path itself.
++It looks for ``afxdp_dp/<<interface name>>/afxdp.sock``
++(or ``afxdp_dp/<<interface name>>/xsks_map``) in the EAL runtime directory,
++the conventional location for runtime state such as sockets.
++When no such entry exists, the PMD falls back to the same file
++below ``/tmp/afxdp_dp``, the location used by the
++`AF_XDP Device Plugin for Kubernetes`_.
++
++``<runtime_dir>`` below is the EAL runtime directory
++returned by ``rte_eal_get_runtime_dir()``.
++It is not a fixed path:
++it depends on the user ID the application runs as
++and on the ``--file-prefix`` EAL option.
+ 
+ .. _AF_XDP Device Plugin for Kubernetes: https://github.com/redhat-et/afxdp-plugins-for-kubernetes
+ 
++.. note::
++
++   The ``/tmp/afxdp_dp`` fallback exists only for compatibility with
++   deployments of the `AF_XDP Device Plugin for Kubernetes`_
++   that mount the endpoint there.
++   New deployments should mount the endpoint
++   below the EAL runtime directory,
++   or point at it explicitly with ``dp_path``.
++   A pinned map lives on a bpffs mount,
++   so it has to be bind mounted into that directory;
++   it cannot be pinned into the runtime directory itself.
++   The interface name component of the path must be kept in either location:
++   it is what distinguishes the endpoints
++   when several interfaces are mounted in a single pod.
++
+ .. code-block:: console
+ 
+-   --vdev=net_af_xdp0,use_cni=1,dp_path="/tmp/afxdp_dp/<<interface name>>/afxdp.sock"
++   --vdev=net_af_xdp0,use_cni=1,dp_path="<runtime_dir>/afxdp_dp/<<interface name>>/afxdp.sock"
+ 
+ .. code-block:: console
+ 
+-   --vdev=net_af_xdp0,use_pinned_map=1,dp_path="/tmp/afxdp_dp/<<interface name>>/xsks_map"
++   --vdev=net_af_xdp0,use_pinned_map=1,dp_path="<runtime_dir>/afxdp_dp/<<interface name>>/xsks_map"
+ 
+ Limitations
+ -----------
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index c8cc86295d..97a6a0e0bb 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -55,6 +55,19 @@ New Features
+      Also, make sure to start the actual text at the margin.
+      =======================================================
+ 
++* **Updated AF_XDP driver.**
++
++  * Changed the default AF_XDP Device Plugin endpoint location.
++
++    When set without ``dp_path``, the PMD first looks for
++    ``afxdp_dp/<if_name>/`` in the EAL runtime directory,
++    and would fall back to ``/tmp/afxdp_dp/<if_name>/`` only when
++    nothing is found there.
++    Existing AF_XDP Device Plugin deployments keep working unchanged.
++
++  * A ``dp_path`` value that does not fit the ``sun_path`` field
++    of ``struct sockaddr_un`` is now rejected with ``ENAMETOOLONG``
++    instead of being silently truncated.
+ 
+ Removed Items
+ -------------
+diff --git a/drivers/net/af_xdp/rte_eth_af_xdp.c b/drivers/net/af_xdp/rte_eth_af_xdp.c
+index 2cdb533276..54bd095c92 100644
+--- a/drivers/net/af_xdp/rte_eth_af_xdp.c
++++ b/drivers/net/af_xdp/rte_eth_af_xdp.c
+@@ -83,7 +83,9 @@ RTE_LOG_REGISTER_DEFAULT(af_xdp_logtype, NOTICE);
+ 
+ #define ETH_AF_XDP_MP_KEY "afxdp_mp_send_fds"
+ 
+-#define DP_BASE_PATH			"/tmp/afxdp_dp"
++/* Directory holding the per interface device plugin endpoints. */
++#define DP_DIR_NAME			"afxdp_dp"
++#define DP_LEGACY_BASE_PATH		"/tmp/" DP_DIR_NAME
+ #define DP_UDS_SOCK             "afxdp.sock"
+ #define DP_XSK_MAP				"xsks_map"
+ #define MAX_LONG_OPT_SZ			64
+@@ -2459,6 +2461,47 @@ afxdp_mp_send_fds(const struct rte_mp_msg *request, const void *peer)
+ 	return 0;
+ }
+ 
++/*
++ * Build the default device plugin path for an interface.
++ *
++ * Unix domain sockets and pinned maps are runtime state, so the EAL runtime
++ * directory is preferred: it is per user and per file prefix, and both of its
++ * levels are created with mode 0700. The AF_XDP Device Plugin for Kubernetes
++ * still creates and mounts these endpoints below DP_LEGACY_BASE_PATH, so that
++ * location is used when the runtime directory holds no usable entry.
++ *
++ * The interface name is always part of the path: it keeps the endpoints of
++ * several interfaces distinct when more than one is mounted in a single pod.
++ *
++ * "size" is the longest path the caller can use, which may be shorter than the
++ * destination buffer. A runtime directory candidate that does not fit is
++ * skipped rather than rejected, so the shorter legacy path stays reachable.
++ */
++static int
++get_dflt_dp_path(char *dp_path, size_t size, const char *if_name,
++		 const char *entry)
++{
++	int ret;
++
++	ret = snprintf(dp_path, size, "%s/%s/%s/%s", rte_eal_get_runtime_dir(),
++		       DP_DIR_NAME, if_name, entry);
++	if (ret >= 0 && (size_t)ret < size && access(dp_path, F_OK) == 0)
++		return 0;
++
++	ret = snprintf(dp_path, size, "%s/%s/%s", DP_LEGACY_BASE_PATH, if_name,
++		       entry);
++	if (ret < 0 || (size_t)ret >= size) {
++		AF_XDP_LOG_LINE(ERR, "Device plugin path for %s is too long", if_name);
++		return -ENAMETOOLONG;
++	}
++
++	AF_XDP_LOG_LINE(NOTICE,
++		"No usable '%s' entry for %s below '%s', falling back to '%s'",
++		entry, if_name, rte_eal_get_runtime_dir(), DP_LEGACY_BASE_PATH);
++
++	return 0;
++}
++
+ static int
+ rte_pmd_af_xdp_probe(struct rte_vdev_device *dev)
+ {
+@@ -2522,6 +2565,11 @@ rte_pmd_af_xdp_probe(struct rte_vdev_device *dev)
+ 		return -EINVAL;
+ 	}
+ 
++	if (strlen(if_name) == 0) {
++		AF_XDP_LOG_LINE(ERR, "Network interface must be specified");
++		return -EINVAL;
++	}
++
+ 	if (use_cni && use_pinned_map) {
+ 		AF_XDP_LOG_LINE(ERR, "When '%s' parameter is used, '%s' parameter is not valid",
+ 			ETH_AF_XDP_USE_CNI_ARG, ETH_AF_XDP_USE_PINNED_MAP_ARG);
+@@ -2543,13 +2591,20 @@ rte_pmd_af_xdp_probe(struct rte_vdev_device *dev)
+ 	}
+ 
+ 	if (use_cni && !strnlen(dp_path, PATH_MAX)) {
+-		snprintf(dp_path, sizeof(dp_path), "%s/%s/%s", DP_BASE_PATH, if_name, DP_UDS_SOCK);
++		/* The UDS path is bounded by sun_path, not by PATH_MAX. */
++		ret = get_dflt_dp_path(dp_path,
++				RTE_SIZEOF_FIELD(struct sockaddr_un, sun_path),
++				if_name, DP_UDS_SOCK);
++		if (ret < 0)
++			return ret;
+ 		AF_XDP_LOG_LINE(INFO, "'%s' parameter not provided, setting value to '%s'",
+ 			ETH_AF_XDP_DP_PATH_ARG, dp_path);
+ 	}
+ 
+ 	if (use_pinned_map && !strnlen(dp_path, PATH_MAX)) {
+-		snprintf(dp_path, sizeof(dp_path), "%s/%s/%s", DP_BASE_PATH, if_name, DP_XSK_MAP);
++		ret = get_dflt_dp_path(dp_path, sizeof(dp_path), if_name, DP_XSK_MAP);
++		if (ret < 0)
++			return ret;
+ 		AF_XDP_LOG_LINE(INFO, "'%s' parameter not provided, setting value to '%s'",
+ 			ETH_AF_XDP_DP_PATH_ARG, dp_path);
+ 	}
+@@ -2561,9 +2616,15 @@ rte_pmd_af_xdp_probe(struct rte_vdev_device *dev)
+ 		return -EINVAL;
+ 	}
+ 
+-	if (strlen(if_name) == 0) {
+-		AF_XDP_LOG_LINE(ERR, "Network interface must be specified");
+-		return -EINVAL;
++	/*
++	 * The socket address is copied into sun_path which is much shorter than
++	 * PATH_MAX, reject an oversized path instead of silently truncating it.
++	 */
++	if (use_cni && strnlen(dp_path, PATH_MAX) >=
++		       RTE_SIZEOF_FIELD(struct sockaddr_un, sun_path)) {
++		AF_XDP_LOG_LINE(ERR, "'%s' value '%s' is too long for a unix socket address",
++				ETH_AF_XDP_DP_PATH_ARG, dp_path);
++		return -ENAMETOOLONG;
+ 	}
+ 
+ 	/* get numa node id from net sysfs */
+-- 
+2.34.1
 
-Info: sup_cap_rawp and loopback_cap_maskp are left untouched on the VF
-  path. This is not a use-of-uninitialised bug -- efx_nic_create() uses
-  EFSYS_KMEM_ALLOC, which is rte_zmalloc, so epp->ep_np_cap_data_raw and
-  ep_np_loopback_cap_mask are zero. Worth a note in the commit message
-  that zero is the intended value, since efx_np_assign_lane_counts() and
-  efx_np_assign_loopback_props() both consume them.
-
-Info: The dummy mask sets EFX_PHY_CAP_AN, and efx_np_attach() sets the
-  same bit again from ls.enls_an_supported at line 1026. Harmless, but
-  one of the two is redundant.
-
-Patch 6/6: doc: announce VF support of AMD Solarflare X45xx family NICs
-
-Warning: Commit message claims work that is not in this series.
-
-  "The Solarflare PMD has been updated to support VADAPTER statistics and
-  to let the user attach to the X4 VFs". There is no VADAPTER statistics
-  change in this series, and grep finds no vadaptor/VADAPTER reference in
-  drivers/net/sfc or in the release notes hunk. Either drop that clause or
-  add the corresponding release notes entry.
-
-Warning: doc/guides/nics/sfc_efx.rst is not updated.
-
-  The feature list has "SR-IOV PF" but not VF. The features matrix
-  (doc/guides/nics/features/sfc.ini) already has SR-IOV = Y, so only the
-  prose list is stale. Since the series makes VF attach work on Medford4,
-  the driver guide should say so.
