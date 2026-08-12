@@ -2,34 +2,141 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1FFEC5B56A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 13:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 255F7C5B572
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 14:08:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 806CC40298;
-	Wed, 12 Aug 2026 15:48:06 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 7FFB44025F
- for <dev@dpdk.org>; Wed, 12 Aug 2026 15:48:04 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 3F00F20FD2
- for <dev@dpdk.org>; Wed, 12 Aug 2026 15:48:04 +0200 (CEST)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Wed, 12 Aug 2026 15:48:03 +0200
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-To: dev@dpdk.org
-Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH] stack: introduce pile
-Date: Wed, 12 Aug 2026 13:47:56 +0000
-Message-ID: <20260812134756.1829613-1-mb@smartsharesystems.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id 0F38940298;
+	Wed, 12 Aug 2026 16:08:35 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+ by mails.dpdk.org (Postfix) with ESMTP id C59034025F;
+ Wed, 12 Aug 2026 16:08:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1786543713; x=1818079713;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=URq3sSY8or5KSl8LFIUIr4Hk1vY719Ps6sksYbFrY6Y=;
+ b=SUhDgs/OVIwfVQPEZ+gTLJKa9oekSalPPXl851ZC/uXoMdedNdFaFe8b
+ M38bsJWecNdb52TtH5Dfb7pTs99AlfrPNuFxVDNGeishihCKlnsMzwYQs
+ eCLn6ljX2KYrB3u66ltO3wQBTLpAldCDM+Xpsc0e6S6olg0sBrABFG2x3
+ B2Q9YoYCUqWvpbs7aTJ6H9QKM0OtuEk9fhzJCCKHdzd7lQOCigzb7Ycvs
+ XQDSi4vOoJJK9Th+ezWOcAwdmavBKmv3E0Y/677H/AqG90IeCurVBjtZh
+ bdVPFJg6vv6i/8PXbgffRM9ApCh+hMlH8h1BiON1dwMj4L99tmIGrTyjh Q==;
+X-CSE-ConnectionGUID: IjLNbrzCQ3uc494ZP6VknQ==
+X-CSE-MsgGUID: 7i5Y3HgWRfuMFzpaJpf+OA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11872"; a="86865065"
+X-IronPort-AV: E=Sophos;i="6.25,219,1779174000"; d="scan'208";a="86865065"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+ by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 12 Aug 2026 07:08:32 -0700
+X-CSE-ConnectionGUID: +6WCWHS4QsCBgfsyRpsb5w==
+X-CSE-MsgGUID: ZIoojadYSOOvmYaTc2ZTKQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,219,1779174000"; d="scan'208";a="293601383"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 12 Aug 2026 07:08:32 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Wed, 12 Aug 2026 07:08:31 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45 via Frontend Transport; Wed, 12 Aug 2026 07:08:31 -0700
+Received: from BN1PR04CU002.outbound.protection.outlook.com (52.101.56.1) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Wed, 12 Aug 2026 07:08:31 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=S0kHf5x7XyCQS4Lmht7WQfcHvNJNupWlvviVRmN0CuTQcXEivfxYuhY4LSU0TY6ZbaLs8HmHrz8EfAdF5XJrmMSAlDBE8CpsHglt7ZQsxaA/l2jspbHEYv7GeyUxTOzAOR3Pt4iIGL3v+HM4+jybtqpzZAKieD8k1qGmWKvYavloUEjvXDh1BUqa12di6AF+D4x3Y2+uGGXoQS+10tH3LBCQK8N7hSj9HPGxxLB6LQH+ZI3+G0z2czsytKKXh7hJN6Gfoht5cog6nRtyQ96525QR6q+C3yl6sCgW2OtVLmqiHOJU7UI9Xj/pJKkTXyiJKCFwV61mYM7L8jQU6IWlvQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=N1fLHZkGA0St+1bz3iJjChVMoi7GxJyzy0jG6s9xAGM=;
+ b=lFP4oaubEaNWMEXCqkgwOFky8aMkRjjsHLxZvekkMt1o7SFvC4+TvNa6CAJRBmqmd3HU3t27j3C/HATpxdMqQfdWcoT3/BR0nu6+BPti0x36/7NJqHG9NSFe5vAzDo9gSEh6bQUwn6pHQaTPRkrrb7dEcxYP3jACzc2b1Ics4q+et9yAglTBvG5ownM91/ie1HOU9rDfXbAfElT0Tn0SnA9LuKOYn3Awe+EggNMprwy42dbKNnI0A+13J0KcFLXxYB5k5Bu3c3B0eAjnIH0IFAbo0jNZkUgkDo1kfaRNht/QbQ/SqA5hd1Oxbvbefbn8fRwAKrQ77dppMEaoKl/Vrg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ5PPFED9C9AC99.namprd11.prod.outlook.com
+ (2603:10b6:a0f:fc02::85d) by CY8PR11MB6841.namprd11.prod.outlook.com
+ (2603:10b6:930:62::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.315.11; Wed, 12 Aug
+ 2026 14:08:27 +0000
+Received: from SJ5PPFED9C9AC99.namprd11.prod.outlook.com
+ ([fe80::a6e3:dc11:48e:b2e0]) by SJ5PPFED9C9AC99.namprd11.prod.outlook.com
+ ([fe80::a6e3:dc11:48e:b2e0%7]) with mapi id 15.21.0315.014; Wed, 12 Aug 2026
+ 14:08:27 +0000
+Date: Wed, 12 Aug 2026 15:08:23 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: <dev@dpdk.org>, <stable@dpdk.org>
+Subject: Re: [PATCH] app/test: rewrite telemetry test in python
+Message-ID: <anx-VwXODYao_COj@bricha3-mobl1.ger.corp.intel.com>
+References: <20260724201541.801099-1-stephen@networkplumber.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20260724201541.801099-1-stephen@networkplumber.org>
+X-ClientProxiedBy: DU7PR01CA0023.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:50f::20) To SJ5PPFED9C9AC99.namprd11.prod.outlook.com
+ (2603:10b6:a0f:fc02::85d)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 12 Aug 2026 13:48:03.0973 (UTC)
- FILETIME=[3293E350:01DD2A61]
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PPFED9C9AC99:EE_|CY8PR11MB6841:EE_
+X-MS-Office365-Filtering-Correlation-Id: b6ed08ad-7627-4f21-37ae-08def87b2e29
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|366016|376014|1800799024|23010399003|9063799003|6133799003|22082099003|18002099003|11063799006|56012099006|10067099003|3023799007;
+X-Microsoft-Antispam-Message-Info: 7oxj7AAnhlfV4+0Ya21VXXY4PvKQ2Aqa/dKjNq9dnhbpS7/TES5Ppzwp41pUlUjHEgSB0njmTebZBgUcFtUqwUTxA06ftRbf+c4SjTuseeryujVGqD+QES+2rCAbIdOTD+pLsFd+MiduEVe61f8t7LG4F+ewT/NRuzSRDnsoyTVgeZmyaIJTjBjiLbquiJGM2zb3dVYaBdl2hp8Gg+PjoCrO2Hn0zxrt4OaQAxnxPADXFZFel6CBVLqCIdM5AlQ1bIYqqjkvXot9Xj9SQGRyycSGRKbJKUVGfA/xatxFCOZv4k89uSLB4vgmAG4cwcWQl08Q3qYuwNpOUB5tT7yoSanK3XjAA/TS2Bv0BS9RJVwiv/eZbi36MvAfFuxcKMC5zWcFdCuAFNN/nfxuyDy+W3TJE4y2zqNdm/+p5qSNRQbKwUntfm8+GyOMZHoE1ByDZwH1e/rZFHxebg6WRWMbixYGFxk0E86j5yHiXPtcnlnb8sH4s6hut/wSqq7OZFkgrVIeimRml5f0nbjFjMxvtja4q4ITEWQnZz0p8Ay4dQG7j1Ndjl1+K8KHdqawUusxW68zbKmskUDsVS3f3GnLgcIhryLdx2MzNY3J0x/4Bk0A6EdhT1eWTTHhc1Gj2moLb5gPOQmzdiENqduLoDDHTxjFk8/OxDlEEGzg/YJ9a3E=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SJ5PPFED9C9AC99.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(376014)(1800799024)(23010399003)(9063799003)(6133799003)(22082099003)(18002099003)(11063799006)(56012099006)(10067099003)(3023799007);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?xYXVxHZB3iFiu9IfFL6LprJpanXAQ/pFBELugw5pINcjwO8ZJOTOhLU3Jhm0?=
+ =?us-ascii?Q?atXXTy5IftcCbbt4xeM/825XtEwZRRcJds4hhBJs3VbEFoMk3YF3kw4xeedO?=
+ =?us-ascii?Q?dLcq1+N1AXxH0FAjxJYYg+MAJOrheUW3TqzONl9s5mityq6OqRBbxzdhDbBX?=
+ =?us-ascii?Q?uCx9mGiViVOt+freHVXXT2JI3efJxeGIs27S3nURMeh6rn2wZzkg8IN24J9Z?=
+ =?us-ascii?Q?TEDNfjdW8W4bW5g7IlTU82t7wtG/O1f+3RrICipgkzVGZnSI4H8cAZHJZEcT?=
+ =?us-ascii?Q?MBUStYcjMlANGxYw4c2lA1PT/nyNqE78FEx0lDnhshrbDnf/GYPzGCFWDHna?=
+ =?us-ascii?Q?naQnCRz/SnKZnHCRrVQW/RpGvV1JjZ4KDtdXpIPS+2i//ae6UbyABf06Caaq?=
+ =?us-ascii?Q?G+v13AwUsefOKDvJG15Br4ccEGCfTzx3X8QMg2d1Q2oJzDhDii7fY1x8XQKv?=
+ =?us-ascii?Q?ernxx0fbt1a/pAq4zWEkCCX4daCQh/K4vuXQCpNwLBQMP1JyJt4qsxPcT2b1?=
+ =?us-ascii?Q?wPFmCb+n86dD3+IQ+RVC/D9ImhWespReY9X+AJNb58FpSlY79Z/T7xaUuAYB?=
+ =?us-ascii?Q?hQ5mwFquHr2qscJis0ZN2ZCZnzc+3mt3hJmeU4mJGD8dRUZCbgLDF/kg/IOb?=
+ =?us-ascii?Q?cbvStmGKqf41XfZGztTqvm2fE6y37xK6G2DLqgLvvS1l+MRdDak0m+3PlQR0?=
+ =?us-ascii?Q?YEP8/GpSY3hiv0UTugz//yFNzrsWaLdjZi24GqhIEKBiI1yfPC+YMccpH8eW?=
+ =?us-ascii?Q?2TqtSSzarBMrnYPhoxliOYBGS6QpNMtWQOy0hIJTQmIFLMruRDCOw005MfRo?=
+ =?us-ascii?Q?+9z1pXHcaa6/XU70ltSWitEbZCmgeOsjPoTjH8zoljQbQJGjH1v97QHyD3EQ?=
+ =?us-ascii?Q?dmeatJ0mOzcQMVkeEheoBlto1zLNL8ZdRhAUgO8HGHEUdHSjcTtJTeGJeP4j?=
+ =?us-ascii?Q?+bZHRUVENtry3o5iqZzdgrFovDk+tn15tlrSEK5KP1bjLzL00jc8Ci57UDYl?=
+ =?us-ascii?Q?0STC5/YbFgUQ7P6VwDsKAsfuYODrk1TRMd3TbHD8o9c+O6Ihrl5xOSCN3eDC?=
+ =?us-ascii?Q?bD5+pq37BoFfUZZXG+i1HU4KN5TO8gpFhMITgjN4w0Ap/UG7OXHQ9z8h5mza?=
+ =?us-ascii?Q?6wpRIQLtwYUp6WFyZUhASQ/ByNHelujTAJ8D/iAtdWMM0szh7LePom7UJkzl?=
+ =?us-ascii?Q?gxgt1X5hD5cO/K9CwJ+i2xc/I5gJgvJiEYr1f4TsmDPqfUONLUbFAVrVkv3B?=
+ =?us-ascii?Q?PpPmllMHctGSSdAVtxnlnG1ZJjPVMJr6wd+yojhIzDJGjkxnN5b9W1/wY25e?=
+ =?us-ascii?Q?JIDe4X+k3kQaEHFlIeZmxejKfVP7ygpaeCcIfeAOlvTkrr6x+iXQk54DS+jH?=
+ =?us-ascii?Q?nsf3NZCU0SAruMKcO60Feg9WLVwuzl9nx/AB83e2646uDEeX+ySBkVjtVU06?=
+ =?us-ascii?Q?2BGK5bYB1oTlpYd70N53E24XdJ6OH9mzdR80h/TL0Zp+8Ol0WVWO4bjApYWJ?=
+ =?us-ascii?Q?0bvoOqERKDGpLK0ek9qaFr4U7fNydTRtlD6OYZxzUvDgkwxUSE1xDKS6m6uZ?=
+ =?us-ascii?Q?6iE2oBMjGNdGH+PhO/4e6ggItHqsxUGanSJu3rRiKzmJG5VXcx6uqc83FAyc?=
+ =?us-ascii?Q?fXava7ukQ6iXUf7zFwoGZH9Lsz+Wz9S3dIENkT0I9MG9dLJipDjObbrtIFWb?=
+ =?us-ascii?Q?Oazh3ieQ3hphAmOu/HJqV5nHFfiNiB0Q3uy7GJNrqTzzFD2b/UKAJU+nu71j?=
+ =?us-ascii?Q?cc6RK2E/ZU0sTfAG9YWZjBm/fpYF5iQ=3D?=
+X-Exchange-RoutingPolicyChecked: Mh4vNP88MwEmz9Y34RPqrrjr+su8qX273whM7tNbtdzJ22qEhOsXUqOIYnQ1btFG83UuHYWtBq0fjXVVv7pxZ1qPHe3KtVE2EPOEN2eUkXnXTDQOCCB/ZmoLSiMXvA1rtyScUJzsz3YpuO6xVXabkJeTxc92vLJ2KxJa3KYw/BnDY6kEuGUE94YWzz3lwz5X2j95rtFubTwvLLscqrdRu9bkNaKH8Nf+idoL6byDwSssYVYiTS/JhiWWYmJCYHe1/sT395wdYjFSihSXDNbGrVs1tCgmiFNgyCDcev7+5g5N2JQzeOgrp91OHZzOnhII8qfTfdZkXKKK0zSQde1JLw==
+X-MS-Exchange-CrossTenant-Network-Message-Id: b6ed08ad-7627-4f21-37ae-08def87b2e29
+X-MS-Exchange-CrossTenant-AuthSource: SJ5PPFED9C9AC99.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2026 14:08:27.4711 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MHkAZxU8jMtL4MYBlH50Sv6smby/7AKZoQfZhEnjW1tCb8CqPThDPZlz7AA3xcZf0V9VJVsRP0fwp9FHmZSBsUf3ZsM85DYZhBwlD/Lbl4A=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB6841
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -43,946 +150,227 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Added a new high-performance lock-free "pile", using the Stack API.
-The pile behaves roughly like a stack, but is not strictly LIFO.
+On Fri, Jul 24, 2026 at 01:15:41PM -0700, Stephen Hemminger wrote:
+> The test_telemetry.sh was failing with test timeout.
+> This was caused by the overhead of spawning a fresh dpdk-telemetry.py
+> for every command it walked. With every endpoint queried three times,
+> that is several hundred Python interpreter startups per run.
+> 
+> Replace the shell script with a python test that opens the telemetry
+> socket once and issues every command over that single connection.
+> 
+> Each reply is parsed as JSON and checked directly in Python.
+> This also drops the jq dependency.
+> 
+> Bugzilla ID: 1972
+> Fixes: 9da71dc4f96e ("test: add test case for scripted telemetry commands")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> ---
+>  app/test/suites/meson.build       |   2 +-
+>  app/test/suites/test_telemetry.py | 129 ++++++++++++++++++++++++++++++
+>  app/test/suites/test_telemetry.sh |  30 -------
+>  3 files changed, 130 insertions(+), 31 deletions(-)
+>  create mode 100755 app/test/suites/test_telemetry.py
+>  delete mode 100755 app/test/suites/test_telemetry.sh
+> 
+> diff --git a/app/test/suites/meson.build b/app/test/suites/meson.build
+> index 786c459c24..ec1de99154 100644
+> --- a/app/test/suites/meson.build
+> +++ b/app/test/suites/meson.build
+> @@ -145,7 +145,7 @@ if not is_windows and dpdk_conf.has('RTE_LIB_TELEMETRY')
+>          test_args += ['--vdev=rawdev_skeleton0']
+>      endif
+>      test_args += ['-a', '0000:00:00.0']
+> -    test('telemetry_all', find_program('test_telemetry.sh'),
+> +    test('telemetry_all', find_program('test_telemetry.py'),
+>              args: test_args,
+>              timeout : timeout_seconds_fast,
+>              is_parallel : false,
+> diff --git a/app/test/suites/test_telemetry.py b/app/test/suites/test_telemetry.py
+> new file mode 100755
+> index 0000000000..f37eccabcc
+> --- /dev/null
+> +++ b/app/test/suites/test_telemetry.py
+> @@ -0,0 +1,129 @@
+> +#!/usr/bin/env python3
+> +# SPDX-License-Identifier: BSD-3-Clause
+> +# Copyright (c) 2022 Red Hat, Inc.
+> +
+> +"""Exercise every telemetry command exported by an application.
+> +
+> +Spawns the DPDK test binary (passed as arguments), waits for its telemetry
+> +socket to appear, then walks every command reported by "/", calling each one
+> +with no parameter and with dummy parameters "0" and "z". Every reply is parsed
+> +as JSON and checked, so a malformed, empty or missing response fails the test
+> +immediately and names the offending command, rather than relying on a shell
+> +pipeline not erroring.
+> +
+> +A single connection is reused for the whole walk: the previous shell version
+> +spawned a fresh dpdk-telemetry.py (Python interpreter + new connection) per
+> +command, which scaled with process-startup cost and timed out under load.
+> +"""
+> +
+> +import json
+> +import os
+> +import socket
+> +import subprocess
+> +import sys
+> +import time
+> +
+> +SOCKET_NAME = "dpdk_telemetry.v2"
+> +
+> +
+> +def runtime_dir():
+> +    """DPDK runtime dir for the default 'rte' file-prefix, matching EAL."""
+> +    run = os.environ.get("RUNTIME_DIRECTORY")
+> +    if not run:
+> +        run = (
+> +            "/var/run"
+> +            if os.getuid() == 0
+> +            else os.environ.get("XDG_RUNTIME_DIR", "/tmp")
+> +        )
+> +    return os.path.join(run, "dpdk", "rte")
+> +
+> +
+> +def wait_for_socket(path, proc, timeout=10):
+> +    """Wait for the telemetry socket, failing fast if the app dies first."""
+> +    deadline = time.time() + timeout
+> +    while time.time() < deadline:
+> +        if os.path.exists(path):
+> +            return
+> +        if proc.poll() is not None:
+> +            raise RuntimeError(
+> +                "application exited (code %d) before telemetry socket appeared"
+> +                % proc.returncode
+> +            )
+> +        time.sleep(0.05)
+> +    raise RuntimeError("timed out waiting for telemetry socket %s" % path)
+> +
+> +
+> +class TelemetryClient:
+> +    def __init__(self, path):
+> +        self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET)
+> +        self.sock.connect(path)
+> +        info = json.loads(self.sock.recv(1024))
+> +        self.buf_len = info["max_output_len"]
+> +
+> +    def command(self, cmd):
+> +        self.sock.send(cmd.encode())
+> +        reply = self.sock.recv(self.buf_len).decode()
+> +        try:
+> +            return json.loads(reply)
+> +        except json.JSONDecodeError as e:
+> +            raise AssertionError(
+> +                "invalid JSON reply for %r: %s (raw: %r)" % (cmd, e, reply)
+> +            )
+> +
+> +    def close(self):
+> +        self.sock.close()
+> +
+> +
+> +def check_reply(cmd, reply):
+> +    """A telemetry reply must be a dict keyed by the command name."""
+> +    if not isinstance(reply, dict) or list(reply.keys()) != [cmd.split(",")[0]]:
+> +        raise AssertionError("unexpected reply for %r: %r" % (cmd, reply))
+> +
+> +
+> +def walk(client):
+> +    listing = client.command("/")
+> +    check_reply("/", listing)
+> +    count = 0
+> +    for cmd in listing["/"]:
+> +        for arg in ("", ",0", ",z"):
+> +            full = cmd + arg
+> +            reply = client.command(full)
+> +            check_reply(full, reply)
+> +            count += 1
+> +    return count
+> +
 
-The pile is optimized for pushing/popping bulks of objects, which
-it does significantly faster than the lock-free stack.
+Not necessary to fix in this patch, but this iteration can be improved
+using a few heuristics. For example, each node of type /*dev/list should
+take no parameters and return a list of devices that can be passed to the
+equivalent /*dev/info and /*dev/stats or xstats nodes. This existing simple
+logic can then be used as a fallback for anything not meeting that
+pattern.
 
-Pushing/popping a number of objects not divisible by the compile time
-configurable bulk size is handled gracefully, but not as fast as
-complete bulks.
+For this whole shell to python replacement:
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
-Performance examples, stack_pile_perf_autotest vs. stack_lf_autotest:
 
-On a single core, pushing/popping 1 or 8 objects is similar speed.
-On a single core, pushing/popping 32 objects is 2x faster.
-On a single core, pushing/popping 512 objects is 10x faster.
-
-On four cores, pushing/popping 1, 8 or 32 objects is slightly faster.
-On four cores, pushing/popping 512 objects is 4x faster.
-
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
----
- app/test/test_stack.c               |  71 +++++-
- app/test/test_stack_perf.c          |  15 +-
- config/rte_config.h                 |   3 +
- doc/guides/prog_guide/stack_lib.rst |  67 +++++-
- lib/mempool/rte_mempool.h           |   2 +-
- lib/stack/meson.build               |   3 +-
- lib/stack/rte_stack.c               |  18 +-
- lib/stack/rte_stack.h               |  79 +++++++
- lib/stack/rte_stack_lf.h            |   1 +
- lib/stack/rte_stack_pile.c          |  35 +++
- lib/stack/rte_stack_pile.h          | 334 ++++++++++++++++++++++++++++
- 11 files changed, 609 insertions(+), 19 deletions(-)
- create mode 100644 lib/stack/rte_stack_pile.c
- create mode 100644 lib/stack/rte_stack_pile.h
-
-diff --git a/app/test/test_stack.c b/app/test/test_stack.c
-index 5517982774..928f63e9e0 100644
---- a/app/test/test_stack.c
-+++ b/app/test/test_stack.c
-@@ -11,8 +11,8 @@
- 
- #include "test.h"
- 
--#define STACK_SIZE 4096
--#define MAX_BULK 32
-+#define STACK_SIZE 65536
-+#define MAX_BULK 512
- 
- static int
- test_stack_push_pop(struct rte_stack *s, void **obj_table, unsigned int bulk_sz)
-@@ -81,13 +81,37 @@ test_stack_push_pop(struct rte_stack *s, void **obj_table, unsigned int bulk_sz)
- 		}
- 	}
- 
--	for (i = 0; i < STACK_SIZE; i++) {
--		if (obj_table[i] != popped_objs[STACK_SIZE - i - 1]) {
--			printf("[%s():%u] Incorrect value %p at index 0x%x\n",
--			       __func__, __LINE__,
--			       popped_objs[STACK_SIZE - i - 1], i);
--			rte_free(popped_objs);
--			return -1;
-+	if (!(s->flags & RTE_STACK_F_PILE)) {
-+		/* Normal stack. */
-+lifo:
-+		for (i = 0; i < STACK_SIZE; i++) {
-+			if (obj_table[i] != popped_objs[STACK_SIZE - i - 1]) {
-+				printf("[%s():%u] Incorrect value %p at index 0x%x\n",
-+				       __func__, __LINE__,
-+				       popped_objs[STACK_SIZE - i - 1], i);
-+				rte_free(popped_objs);
-+				return -1;
-+			}
-+		}
-+	} else {
-+		/* Pile. Ordering not strictly LIFO. */
-+		if (bulk_sz < RTE_STACK_PILE_BULK_SIZE)
-+			goto lifo;
-+		if ((bulk_sz & (RTE_STACK_PILE_BULK_SIZE - 1)) == 0) {
-+			for (i = 0; i < STACK_SIZE; i += RTE_STACK_PILE_BULK_SIZE) {
-+				if (memcmp(&obj_table[i],
-+						&popped_objs[STACK_SIZE - RTE_STACK_PILE_BULK_SIZE -
-+						i],
-+						sizeof(void *) * RTE_STACK_PILE_BULK_SIZE) != 0) {
-+					printf("[%s():%u] Incorrect values %p at 0x%x, bulk %u\n",
-+					       __func__, __LINE__,
-+					       popped_objs[STACK_SIZE - RTE_STACK_PILE_BULK_SIZE -
-+					       i],
-+					       i, bulk_sz);
-+					rte_free(popped_objs);
-+					return -1;
-+				}
-+			}
- 		}
- 	}
- 
-@@ -152,12 +176,24 @@ test_stack_basic(uint32_t flags)
- 		goto fail_test;
- 	}
- 
--	ret = rte_stack_push(s, obj_table, 2 * STACK_SIZE);
-+	ret = rte_stack_push(s, obj_table, STACK_SIZE);
-+	if (ret == 0) {
-+		printf("[%s():%u] All objects push failed\n",
-+		       __func__, __LINE__);
-+		goto fail_test;
-+	}
-+	ret = rte_stack_push(s, obj_table, STACK_SIZE);
- 	if (ret != 0) {
- 		printf("[%s():%u] Excess objects push succeeded\n",
- 		       __func__, __LINE__);
- 		goto fail_test;
- 	}
-+	ret = rte_stack_pop(s, obj_table, STACK_SIZE);
-+	if (ret == 0) {
-+		printf("[%s():%u] All objects pop failed\n",
-+		       __func__, __LINE__);
-+		goto fail_test;
-+	}
- 
- 	ret = rte_stack_pop(s, obj_table, 1);
- 	if (ret != 0) {
-@@ -167,8 +203,12 @@ test_stack_basic(uint32_t flags)
- 	}
- 
- 	ret = 0;
-+	goto done;
- 
- fail_test:
-+	ret = -1;
-+
-+done:
- 	rte_stack_free(s);
- 
- 	rte_free(obj_table);
-@@ -384,5 +424,16 @@ test_lf_stack(void)
- #endif
- }
- 
-+static int
-+test_pile(void)
-+{
-+#if defined(RTE_STACK_PILE_SUPPORTED)
-+	return __test_stack(RTE_STACK_F_PILE);
-+#else
-+	return TEST_SKIPPED;
-+#endif
-+}
-+
- REGISTER_FAST_TEST(stack_autotest, NOHUGE_SKIP, ASAN_OK, test_stack);
- REGISTER_FAST_TEST(stack_lf_autotest, NOHUGE_SKIP, ASAN_OK, test_lf_stack);
-+REGISTER_FAST_TEST(stack_pile_autotest, NOHUGE_SKIP, ASAN_OK, test_pile);
-diff --git a/app/test/test_stack_perf.c b/app/test/test_stack_perf.c
-index 3f17a2606c..e46251d687 100644
---- a/app/test/test_stack_perf.c
-+++ b/app/test/test_stack_perf.c
-@@ -14,14 +14,14 @@
- #include "test.h"
- 
- #define STACK_NAME "STACK_PERF"
--#define MAX_BURST 32
-+#define MAX_BURST 512
- #define STACK_SIZE (RTE_MAX_LCORE * MAX_BURST)
- 
- /*
-  * Push/pop bulk sizes, marked volatile so they aren't treated as compile-time
-  * constants.
-  */
--static volatile unsigned int bulk_sizes[] = {8, MAX_BURST};
-+static volatile unsigned int bulk_sizes[] = {1, 8, 32, MAX_BURST};
- 
- static RTE_ATOMIC(uint32_t) lcore_barrier;
- 
-@@ -354,5 +354,16 @@ test_lf_stack_perf(void)
- #endif
- }
- 
-+static int
-+test_pile_perf(void)
-+{
-+#if defined(RTE_STACK_PILE_SUPPORTED)
-+	return __test_stack_perf(RTE_STACK_F_PILE);
-+#else
-+	return TEST_SKIPPED;
-+#endif
-+}
-+
- REGISTER_PERF_TEST(stack_perf_autotest, test_stack_perf);
- REGISTER_PERF_TEST(stack_lf_perf_autotest, test_lf_stack_perf);
-+REGISTER_PERF_TEST(stack_pile_perf_autotest, test_pile_perf);
-diff --git a/config/rte_config.h b/config/rte_config.h
-index 0447cdf2ad..907140fc6a 100644
---- a/config/rte_config.h
-+++ b/config/rte_config.h
-@@ -64,6 +64,9 @@
- #define RTE_MBUF_DEFAULT_MEMPOOL_OPS "ring_mp_mc"
- /* RTE_MBUF_HISTORY_DEBUG is not set */
- 
-+/* stack defines */
-+#define RTE_STACK_PILE_BULK_SIZE 32
-+
- /* ether defines */
- #define RTE_MAX_QUEUES_PER_PORT 1024
- #define RTE_ETHDEV_RXTX_CALLBACKS 1
-diff --git a/doc/guides/prog_guide/stack_lib.rst b/doc/guides/prog_guide/stack_lib.rst
-index fdf056730c..d5a498e778 100644
---- a/doc/guides/prog_guide/stack_lib.rst
-+++ b/doc/guides/prog_guide/stack_lib.rst
-@@ -1,5 +1,6 @@
- ..  SPDX-License-Identifier: BSD-3-Clause
-     Copyright(c) 2019 Intel Corporation.
-+    Copyright(c) 2026 SmartShare Systems.
- 
- Stack Library
- =============
-@@ -9,9 +10,10 @@ stack of pointers.
- 
- The stack library provides the following basic operations:
- 
--*  Create a uniquely named stack of a user-specified size and using a
-+*  Create a uniquely named stack (or pile) of a user-specified size and using a
-    user-specified socket, with either standard (lock-based) or lock-free
-    behavior.
-+   The pile resembles a lock-free stack, but is not strictly LIFO.
- 
- *  Push and pop a burst of one or more stack objects (pointers).
-    These functions are multi-thread safe.
-@@ -25,8 +27,9 @@ The stack library provides the following basic operations:
- Implementation
- --------------
- 
--The library supports two types of stacks: standard (lock-based) and lock-free.
--Both types use the same set of interfaces, but their implementations differ.
-+The library supports three types of stacks: standard (lock-based), lock-free,
-+and pile (lock-free, not strictly LIFO, optimized for bulk operations).
-+All types use the same set of interfaces, but their implementations differ.
- 
- .. _Stack_Library_Std_Stack:
- 
-@@ -64,7 +67,7 @@ The linked list elements themselves are maintained in a lock-free LIFO, and are
- allocated before stack pushes and freed after stack pops. Since the stack has a
- fixed maximum depth, these elements do not need to be dynamically created.
- 
--The lock-free behavior is selected by passing the *RTE_STACK_F_LF* flag to
-+The lock-free behavior is selected by passing the ``RTE_STACK_F_LF`` flag to
- ``rte_stack_create()``.
- 
- Preventing the ABA problem
-@@ -86,3 +89,59 @@ both pop stale data and incorrectly change the head pointer. By adding a
- modification counter that is updated on every push and pop as part of the
- compare-and-swap, the algorithm can detect when the list changes even if the
- head pointer remains the same.
-+
-+.. _Stack_Library_Pile:
-+
-+Pile
-+~~~~
-+
-+The pile is a stack-like implementation, optimized for bulk operations.
-+It is only LIFO on bulk level, not on object level; i.e. arrays of bulks are
-+pushed and popped in LIFO manner, but objects within each bulk are not ordered
-+as expected by a stack.
-+
-+The pile implementation generally resembles that of the lock-free stack.
-+In addition to the lock-free stack's linked list of solo (single-object) elements,
-+it also contains a linked list of bulk (multi-object) elements.
-+And similar to the linked list of free elements, it contains two linked lists of
-+free elements, one for each element type (bulk and solo).
-+The lock-free property means that multiple threads can push and pop simultaneously.
-+One thread being preempted/delayed in a push or pop operation will not
-+impede the forward progress of any other thread.
-+
-+Push operations are performed by splitting the burst in two: objects fitting into
-+bulk elements, and any remaining objects (after filling bulk elements) into
-+solo elements, and then performing two lock-free push operations,
-+one for each element type (solo and bulk).
-+
-+Pop operations are performed by splitting the burst in two: objects fitting into
-+bulk elements, and any remaining objects (not filling a bulk element) into
-+solo elements. Two lock-free pop operations are performed,
-+first for bulk elements, and then for solo elements.
-+If the pop operation for bulk elements fails, it keeps retrying, requesting one
-+less bulk element. The number of solo elements in the following request is
-+correspondingly increased.
-+
-+The pile's lock-free list push and pop operations use the lock-free stack's
-+implementations (and uses type casting to mimic C++ class inheritance).
-+
-+The linked list elements themselves are maintained in two lock-free LIFOs,
-+one for bulk elements and one for solo elements, and are
-+allocated before pushes and freed after pops. Since the pile has a
-+fixed maximum depth, these elements do not need to be dynamically created.
-+
-+The pile behavior is selected by passing the ``RTE_STACK_F_PILE`` flag to
-+``rte_stack_create()``.
-+
-+The pile bulk size can be changed by modifying ``RTE_STACK_PILE_BULK_SIZE`` in
-+``config/rte_config.h``.
-+For optimal performance when using the pile mempool driver, the
-+mempool cache size / 2 should be divisible by the pile bulk size.
-+
-+.. note::
-+    The pile is designed and optimized for use with bulks of objects.
-+    Bursts not a multiple of the bulk size are still handled in a lock-free,
-+    forward-progress-guaranteed manner. However, pop operations may exhibit
-+    significantly lower performance in instances where the optimal number of
-+    bulk elements is unavailable, and it is necessary to retry (fetching
-+    increasingly fewer bulk elements and correspondingly more solo elements).
-diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
-index 50d958c7c6..3e161bfdb9 100644
---- a/lib/mempool/rte_mempool.h
-+++ b/lib/mempool/rte_mempool.h
-@@ -718,7 +718,7 @@ struct __rte_cache_aligned rte_mempool_ops {
- 	rte_mempool_dequeue_contig_blocks_t dequeue_contig_blocks;
- };
- 
--#define RTE_MEMPOOL_MAX_OPS_IDX 16  /**< Max registered ops structs */
-+#define RTE_MEMPOOL_MAX_OPS_IDX 32  /**< Max registered ops structs */
- 
- /**
-  * Structure storing the table of registered ops structs, each of which contain
-diff --git a/lib/stack/meson.build b/lib/stack/meson.build
-index 18177a742f..50e688522e 100644
---- a/lib/stack/meson.build
-+++ b/lib/stack/meson.build
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: BSD-3-Clause
- # Copyright(c) 2019 Intel Corporation
- 
--sources = files('rte_stack.c', 'rte_stack_std.c', 'rte_stack_lf.c')
-+sources = files('rte_stack.c', 'rte_stack_std.c', 'rte_stack_lf.c', 'rte_stack_pile.c')
- headers = files('rte_stack.h')
- # subheaders, not for direct inclusion by apps
- indirect_headers += files(
-@@ -10,4 +10,5 @@ indirect_headers += files(
-         'rte_stack_lf_generic.h',
-         'rte_stack_lf_c11.h',
-         'rte_stack_lf_stubs.h',
-+        'rte_stack_pile.h',
- )
-diff --git a/lib/stack/rte_stack.c b/lib/stack/rte_stack.c
-index 4c78fe4b4b..a4bbf8a4d7 100644
---- a/lib/stack/rte_stack.c
-+++ b/lib/stack/rte_stack.c
-@@ -1,5 +1,6 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  * Copyright(c) 2019 Intel Corporation
-+ * Copyright(c) 2026 SmartShare Systems
-  */
- 
- #include <stdalign.h>
-@@ -32,6 +33,8 @@ rte_stack_init(struct rte_stack *s, unsigned int count, uint32_t flags)
- 
- 	if (flags & RTE_STACK_F_LF)
- 		rte_stack_lf_init(s, count);
-+	else if (flags & RTE_STACK_F_PILE)
-+		rte_stack_pile_init(s, count);
- 	else
- 		rte_stack_std_init(s);
- }
-@@ -41,6 +44,8 @@ rte_stack_get_memsize(unsigned int count, uint32_t flags)
- {
- 	if (flags & RTE_STACK_F_LF)
- 		return rte_stack_lf_get_memsize(count);
-+	else if (flags & RTE_STACK_F_PILE)
-+		return rte_stack_pile_get_memsize(count);
- 	else
- 		return rte_stack_std_get_memsize(count);
- }
-@@ -58,7 +63,11 @@ rte_stack_create(const char *name, unsigned int count, int socket_id,
- 	unsigned int sz;
- 	int ret;
- 
--	if (flags & ~(RTE_STACK_F_LF)) {
-+	if (flags & ~(RTE_STACK_F_LF | RTE_STACK_F_PILE)) {
-+		STACK_LOG_ERR("Unsupported stack flags %#x", flags);
-+		return NULL;
-+	}
-+	if ((flags & RTE_STACK_F_LF) && (flags & RTE_STACK_F_PILE)) {
- 		STACK_LOG_ERR("Unsupported stack flags %#x", flags);
- 		return NULL;
- 	}
-@@ -73,6 +82,13 @@ rte_stack_create(const char *name, unsigned int count, int socket_id,
- 		return NULL;
- 	}
- #endif
-+#if !defined(RTE_STACK_PILE_SUPPORTED)
-+	if (flags & RTE_STACK_F_PILE) {
-+		STACK_LOG_ERR("Pile is not supported on your platform");
-+		rte_errno = ENOTSUP;
-+		return NULL;
-+	}
-+#endif
- 
- 	sz = rte_stack_get_memsize(count, flags);
- 
-diff --git a/lib/stack/rte_stack.h b/lib/stack/rte_stack.h
-index fd17ac791d..ca11f1d296 100644
---- a/lib/stack/rte_stack.h
-+++ b/lib/stack/rte_stack.h
-@@ -1,5 +1,6 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  * Copyright(c) 2019 Intel Corporation
-+ * Copyright(c) 2026 SmartShare Systems
-  */
- 
- /**
-@@ -28,11 +29,47 @@
- #define RTE_STACK_NAMESIZE (RTE_MEMZONE_NAMESIZE - \
- 			   sizeof(RTE_STACK_MZ_PREFIX) + 1)
- 
-+static_assert(((sizeof(void *) * RTE_STACK_PILE_BULK_SIZE) & RTE_CACHE_LINE_MASK) == 0,
-+		"Pile bulk size must be divisible by CPU cache line size");
-+static_assert(RTE_IS_POWER_OF_2(RTE_STACK_PILE_BULK_SIZE),
-+		"Pile bulk size must be power of 2");
-+
-+/* Note: Also used as solo (single-object) pile element. */
- struct rte_stack_lf_elem {
- 	void *data;			/**< Data pointer */
- 	struct rte_stack_lf_elem *next;	/**< Next pointer */
- };
- 
-+/*
-+ * Bulk (multi-object) pile element.
-+ * Inherited from the rte_stack_lf_elem (single-object) class,
-+ * and extended with an array for holding a bulk of object pointers.
-+ */
-+struct rte_stack_pile_bulk_elem {
-+	/* The first part must be ABI compatible with the rte_stack_lf_elem parent class. */
-+	void *data;                             /**< Unused, for rte_stack_lf_elem compatibility */
-+	struct rte_stack_pile_bulk_elem *next;  /**< Next pointer */
-+	/* The second part differs. */
-+	alignas(RTE_CACHE_LINE_SIZE)
-+	void *objs[RTE_STACK_PILE_BULK_SIZE];   /**< Bulk (multi-object) pointers */
-+};
-+
-+static_assert(sizeof(struct rte_stack_lf_elem) ==
-+		sizeof(struct rte_stack_lf_elem *) + sizeof(void *),
-+		"Parent type has changed");
-+static_assert(RTE_SIZEOF_FIELD(struct rte_stack_lf_elem, next) ==
-+		RTE_SIZEOF_FIELD(struct rte_stack_pile_bulk_elem, next),
-+		"Inherited type mismatch");
-+static_assert(offsetof(struct rte_stack_lf_elem, next) ==
-+		offsetof(struct rte_stack_pile_bulk_elem, next),
-+		"Inherited type mismatch");
-+static_assert(RTE_SIZEOF_FIELD(struct rte_stack_lf_elem, data) ==
-+		RTE_SIZEOF_FIELD(struct rte_stack_pile_bulk_elem, data),
-+		"Inherited type mismatch");
-+static_assert(offsetof(struct rte_stack_lf_elem, data) ==
-+		offsetof(struct rte_stack_pile_bulk_elem, data),
-+		"Inherited type mismatch");
-+
- struct __rte_aligned(16) rte_stack_lf_head {
- 	struct rte_stack_lf_elem *top; /**< Stack top */
- 	uint64_t cnt; /**< Modification counter for avoiding ABA problem */
-@@ -51,12 +88,36 @@ struct rte_stack_lf_list {
- struct rte_stack_lf {
- 	/** LIFO list of elements */
- 	alignas(RTE_CACHE_LINE_SIZE) struct rte_stack_lf_list used;
-+	RTE_CACHE_GUARD;
- 	/** LIFO list of free elements */
- 	alignas(RTE_CACHE_LINE_SIZE) struct rte_stack_lf_list free;
-+	RTE_CACHE_GUARD;
- 	/** LIFO elements */
- 	alignas(RTE_CACHE_LINE_SIZE) struct rte_stack_lf_elem elems[];
- };
- 
-+/* Pile structure containing three lock-free LIFO-like lists:
-+ *  - A list of elements, each element holding a bulk of pointers to objects.
-+ *  - A list of elements, each element holding one pointer to an object.
-+ *  - A list of free linked-list elements.
-+ */
-+struct rte_stack_pile {
-+	/** LIFO list of bulk (multi-object) elements */
-+	alignas(RTE_CACHE_LINE_SIZE) struct rte_stack_lf_list bulk;
-+	RTE_CACHE_GUARD;
-+	/** LIFO list of solo (single-object) elements */
-+	alignas(RTE_CACHE_LINE_SIZE) struct rte_stack_lf_list solo;
-+	RTE_CACHE_GUARD;
-+	/** LIFO list of free bulk elements */
-+	alignas(RTE_CACHE_LINE_SIZE) struct rte_stack_lf_list free_bulk;
-+	RTE_CACHE_GUARD;
-+	/** LIFO list of free solo elements */
-+	alignas(RTE_CACHE_LINE_SIZE) struct rte_stack_lf_list free_solo;
-+	RTE_CACHE_GUARD;
-+	/** LIFO elements follow, first bulk, then solo */
-+	alignas(RTE_CACHE_LINE_SIZE) void *elems[];
-+};
-+
- /* Structure containing the LIFO, its current length, and a lock for mutual
-  * exclusion.
-  */
-@@ -78,6 +139,7 @@ struct __rte_cache_aligned rte_stack {
- 	uint32_t flags; /**< Flags supplied at creation. */
- 	union {
- 		struct rte_stack_lf stack_lf; /**< Lock-free LIFO structure. */
-+		struct rte_stack_pile stack_pile; /**< Lock-free pile (LIFO-like) structure. */
- 		struct rte_stack_std stack_std;	/**< LIFO structure. */
- 	};
- };
-@@ -88,8 +150,19 @@ struct __rte_cache_aligned rte_stack {
-  */
- #define RTE_STACK_F_LF 0x0001
- 
-+/**
-+ * The stack-like pile uses lock-free push and pop functions.
-+ * It is optimized for bulks of objects, and is not strictly LIFO.
-+ * This flag is only supported on x86_64 or arm64 platforms, currently.
-+ *
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change, or be removed, without prior notice.
-+ */
-+#define RTE_STACK_F_PILE 0x0002
-+
- #include "rte_stack_std.h"
- #include "rte_stack_lf.h"
-+#include "rte_stack_pile.h"
- 
- #ifdef __cplusplus
- extern "C" {
-@@ -115,6 +188,8 @@ rte_stack_push(struct rte_stack *s, void * const *obj_table, unsigned int n)
- 
- 	if (s->flags & RTE_STACK_F_LF)
- 		return __rte_stack_lf_push(s, obj_table, n);
-+	else if (s->flags & RTE_STACK_F_PILE)
-+		return __rte_stack_pile_push(s, obj_table, n);
- 	else
- 		return __rte_stack_std_push(s, obj_table, n);
- }
-@@ -139,6 +214,8 @@ rte_stack_pop(struct rte_stack *s, void **obj_table, unsigned int n)
- 
- 	if (s->flags & RTE_STACK_F_LF)
- 		return __rte_stack_lf_pop(s, obj_table, n);
-+	else if (s->flags & RTE_STACK_F_PILE)
-+		return __rte_stack_pile_pop(s, obj_table, n);
- 	else
- 		return __rte_stack_std_pop(s, obj_table, n);
- }
-@@ -158,6 +235,8 @@ rte_stack_count(struct rte_stack *s)
- 
- 	if (s->flags & RTE_STACK_F_LF)
- 		return __rte_stack_lf_count(s);
-+	else if (s->flags & RTE_STACK_F_PILE)
-+		return __rte_stack_pile_count(s);
- 	else
- 		return __rte_stack_std_count(s);
- }
-diff --git a/lib/stack/rte_stack_lf.h b/lib/stack/rte_stack_lf.h
-index f2b012cd0e..1ee9330c57 100644
---- a/lib/stack/rte_stack_lf.h
-+++ b/lib/stack/rte_stack_lf.h
-@@ -79,6 +79,7 @@ __rte_stack_lf_pop(struct rte_stack *s, void **obj_table, unsigned int n)
- 		return 0;
- 
- 	/* Pop n used elements */
-+	__rte_assume(obj_table != NULL);
- 	first = __rte_stack_lf_pop_elems(&s->stack_lf.used,
- 					 n, obj_table, &last);
- 	if (unlikely(first == NULL))
-diff --git a/lib/stack/rte_stack_pile.c b/lib/stack/rte_stack_pile.c
-new file mode 100644
-index 0000000000..5884163313
---- /dev/null
-+++ b/lib/stack/rte_stack_pile.c
-@@ -0,0 +1,35 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 SmartShare Systems
-+ */
-+
-+#include "rte_stack.h"
-+
-+void
-+rte_stack_pile_init(struct rte_stack *s, unsigned int count)
-+{
-+	unsigned int bulk = (count + RTE_STACK_PILE_BULK_SIZE - 1) / RTE_STACK_PILE_BULK_SIZE;
-+	struct rte_stack_pile_bulk_elem *bulk_elems =
-+			(struct rte_stack_pile_bulk_elem *)(s->stack_pile.elems);
-+	struct rte_stack_lf_elem *solo_elems = (struct rte_stack_lf_elem *)&bulk_elems[bulk];
-+	unsigned int i;
-+
-+	for (i = 0; i < bulk; i++)
-+		__rte_stack_pile_bulk_push_elems(&s->stack_pile.free_bulk,
-+					  &bulk_elems[i], &bulk_elems[i], 1);
-+	for (i = 0; i < count; i++)
-+		__rte_stack_lf_push_elems(&s->stack_pile.free_solo,
-+					  &solo_elems[i], &solo_elems[i], 1);
-+}
-+
-+ssize_t
-+rte_stack_pile_get_memsize(unsigned int count)
-+{
-+	unsigned int bulk = (count + RTE_STACK_PILE_BULK_SIZE - 1) / RTE_STACK_PILE_BULK_SIZE;
-+	ssize_t sz = offsetof(struct rte_stack, stack_pile.elems);
-+	sz += bulk * sizeof(struct rte_stack_pile_bulk_elem);
-+	sz += count * sizeof(struct rte_stack_lf_elem);
-+	sz = RTE_CACHE_LINE_ROUNDUP(sz);
-+	sz += RTE_CACHE_GUARD_LINES * RTE_CACHE_LINE_SIZE;
-+
-+	return sz;
-+}
-diff --git a/lib/stack/rte_stack_pile.h b/lib/stack/rte_stack_pile.h
-new file mode 100644
-index 0000000000..b747434f3b
---- /dev/null
-+++ b/lib/stack/rte_stack_pile.h
-@@ -0,0 +1,334 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 SmartShare Systems
-+ */
-+
-+#ifndef _RTE_STACK_PILE_H_
-+#define _RTE_STACK_PILE_H_
-+
-+#include <rte_memcpy.h>
-+
-+#include "rte_stack_lf.h"
-+#ifdef RTE_STACK_LF_SUPPORTED
-+/**
-+ * Indicates that RTE_STACK_F_PILE is supported.
-+ */
-+#define RTE_STACK_PILE_SUPPORTED
-+#endif
-+
-+static __rte_always_inline unsigned int
-+__rte_stack_pile_count(struct rte_stack *s)
-+{
-+	/* stack_lf_push() and stack_lf_pop() do not update the list's contents
-+	 * and stack_lf->len atomically, which can cause the list to appear
-+	 * shorter than it actually is if this function is called while other
-+	 * threads are modifying the list.
-+	 *
-+	 * However, given the inherently approximate nature of the get_count
-+	 * callback -- even if the list and its size were updated atomically,
-+	 * the size could change between when get_count executes and when the
-+	 * value is returned to the caller -- this is acceptable.
-+	 *
-+	 * The stack_lf->len updates are placed such that the list may appear to
-+	 * have fewer elements than it does, but will never appear to have more
-+	 * elements. If the mempool is near-empty to the point that this is a
-+	 * concern, the user should consider increasing the mempool size.
-+	 */
-+#ifdef RTE_USE_C11_MEM_MODEL
-+	return RTE_MIN((unsigned int)s->capacity,
-+			(unsigned int)rte_atomic_load_explicit(&s->stack_pile.bulk.len,
-+			rte_memory_order_relaxed) * RTE_STACK_PILE_BULK_SIZE +
-+			(unsigned int)rte_atomic_load_explicit(&s->stack_pile.solo.len,
-+			rte_memory_order_relaxed));
-+#else /* FIXME: Remove if removed from lock-free stack. */
-+	/* NOTE: review for potential ordering optimization */
-+	return RTE_MIN((unsigned int)s->capacity,
-+			(unsigned int)rte_atomic_load_explicit(&s->stack_pile.bulk.len,
-+			rte_memory_order_seq_cst) * RTE_STACK_PILE_BULK_SIZE +
-+			(unsigned int)rte_atomic_load_explicit(&s->stack_pile.solo.len,
-+			rte_memory_order_seq_cst));
-+#endif
-+}
-+
-+static __rte_always_inline void
-+__rte_stack_pile_bulk_push_elems(struct rte_stack_lf_list *list,
-+		struct rte_stack_pile_bulk_elem *first,
-+		struct rte_stack_pile_bulk_elem *last,
-+		unsigned int num)
-+{
-+	__rte_stack_lf_push_elems(list,
-+		(struct rte_stack_lf_elem *)first,
-+		(struct rte_stack_lf_elem *)last,
-+		num);
-+}
-+
-+static __rte_always_inline struct rte_stack_pile_bulk_elem *
-+__rte_stack_pile_bulk_pop_elems(struct rte_stack_lf_list *list,
-+		unsigned int num,
-+		void **obj_table,
-+		struct rte_stack_pile_bulk_elem **last)
-+{
-+	struct rte_stack_pile_bulk_elem *first = (struct rte_stack_pile_bulk_elem *)
-+			__rte_stack_lf_pop_elems(list, num, NULL,
-+			(struct rte_stack_lf_elem **)last);
-+	if (first == NULL)
-+		return NULL;
-+
-+	if (obj_table != NULL) {
-+		/*
-+		 * Traverse the list to copy the bulks.
-+		 * Note:
-+		 * Done here to minimize the time spent in the retry loop in
-+		 * __rte_stack_lf_pop_elems(),
-+		 * and to avoid modifying __rte_stack_lf_pop_elems().
-+		 */
-+		struct rte_stack_pile_bulk_elem *tmp = first;
-+		for (unsigned int i = 0; i < num; i++, tmp = tmp->next)
-+			rte_memcpy(&obj_table[i * RTE_STACK_PILE_BULK_SIZE], tmp->objs,
-+					sizeof(void *) * RTE_STACK_PILE_BULK_SIZE);
-+	}
-+
-+	return first;
-+}
-+
-+/**
-+ * Push several objects on the pile (lock-free, MT-safe).
-+ *
-+ * @param s
-+ *   A pointer to the pile structure.
-+ * @param obj_table
-+ *   A pointer to a table of void * pointers (objects).
-+ * @param n
-+ *   The number of objects to push on the pile from the obj_table.
-+ * @return
-+ *   Actual number of objects pushed (either 0 or *n*).
-+ */
-+static __rte_always_inline unsigned int
-+__rte_stack_pile_push(struct rte_stack *s,
-+		void * const *obj_table,
-+		unsigned int n)
-+{
-+	RTE_ASSERT(s != NULL);
-+	RTE_ASSERT(obj_table != NULL);
-+
-+	struct rte_stack_pile *pile = &s->stack_pile;
-+	struct rte_stack_pile_bulk_elem *bulk_first = NULL, *bulk_last = NULL, *tmp_bulk;
-+	struct rte_stack_lf_elem *solo_first = NULL, *solo_last = NULL, *tmp_solo;
-+	unsigned int n_bulk = n / RTE_STACK_PILE_BULK_SIZE;
-+	unsigned int n_solo = n & (RTE_STACK_PILE_BULK_SIZE - 1);
-+	unsigned int i;
-+
-+	if (unlikely(n_bulk == 0)) {
-+		if (unlikely(n_solo == 0))
-+			return 0;
-+		goto solo;
-+	}
-+
-+	/* Allocate n_bulk elements from the free list. */
-+	bulk_first = __rte_stack_pile_bulk_pop_elems(&pile->free_bulk, n_bulk, NULL, &bulk_last);
-+	if (unlikely(bulk_first == NULL))
-+		return 0; /* Failed. */
-+
-+	if (likely(n_solo == 0))
-+		goto bulk;
-+
-+solo:
-+	/* Allocate n_solo elements from the free list. */
-+	solo_first = __rte_stack_lf_pop_elems(&pile->free_solo, n_solo, NULL, &solo_last);
-+	if (unlikely(solo_first == NULL)) {
-+		/* Failed. Roll back. */
-+		if (n_bulk > 0)
-+			__rte_stack_pile_bulk_push_elems(&pile->free_bulk,
-+					bulk_first, bulk_last, n_bulk);
-+		return 0;
-+	}
-+
-+	/*
-+	 * Construct the solo elements.
-+	 * Copy objects in reverse order.
-+	 */
-+	tmp_solo = solo_first;
-+	__rte_assume(n_solo > 0);
-+	__rte_assume(n_solo < RTE_STACK_PILE_BULK_SIZE);
-+	for (i = 0; i < n_solo; i++, tmp_solo = tmp_solo->next)
-+		tmp_solo->data = obj_table[n_bulk * RTE_STACK_PILE_BULK_SIZE + n_solo - i - 1];
-+
-+	/* Push them to the solo list. */
-+	__rte_stack_lf_push_elems(&pile->solo, solo_first, solo_last, n_solo);
-+
-+	if (unlikely(n_bulk == 0))
-+		return n; /* Done. */
-+
-+bulk:
-+	/*
-+	 * Construct the bulk elements.
-+	 * Copy bulks in reverse order, but ignore the object order within each bulk.
-+	 */
-+	tmp_bulk = bulk_first;
-+	__rte_assume(n_bulk > 0);
-+	for (i = 0; i < n_bulk; i++, tmp_bulk = tmp_bulk->next)
-+		rte_memcpy(tmp_bulk->objs, &obj_table[(n_bulk - i - 1) * RTE_STACK_PILE_BULK_SIZE],
-+				sizeof(void *) * RTE_STACK_PILE_BULK_SIZE);
-+
-+	/* Push them to the bulk list. */
-+	__rte_stack_pile_bulk_push_elems(&pile->bulk, bulk_first, bulk_last, n_bulk);
-+
-+	return n;
-+}
-+
-+/**
-+ * Pop several objects from the pile (lock-free, MT-safe).
-+ *
-+ * @param s
-+ *   A pointer to the pile structure.
-+ * @param obj_table
-+ *   A pointer to a table of void * pointers (objects).
-+ * @param n
-+ *   The number of objects to pull from the pile.
-+ * @return
-+ *   Actual number of objects popped (either 0 or *n*).
-+ */
-+static __rte_always_inline unsigned int
-+__rte_stack_pile_pop(struct rte_stack *s,
-+		void **obj_table,
-+		unsigned int n)
-+{
-+	RTE_ASSERT(s != NULL);
-+	RTE_ASSERT(obj_table != NULL);
-+
-+	struct rte_stack_pile *pile = &s->stack_pile;
-+	struct rte_stack_pile_bulk_elem *bulk_first = NULL, *bulk_last = NULL;
-+	struct rte_stack_lf_elem *solo_first = NULL, *solo_last = NULL, *tmp_solo;
-+	alignas(RTE_CACHE_LINE_SIZE) void *obj_frag[RTE_STACK_PILE_BULK_SIZE];
-+	struct rte_stack_pile_bulk_elem *frag = NULL;
-+	unsigned int n_bulk = n / RTE_STACK_PILE_BULK_SIZE;
-+	unsigned int n_solo = n & (RTE_STACK_PILE_BULK_SIZE - 1);
-+	unsigned int i;
-+
-+	if (unlikely(n_bulk == 0)) {
-+		if (unlikely(n_solo == 0))
-+			return 0;
-+		goto solo;
-+	}
-+
-+bulk:
-+	/* Fetch n_bulk * RTE_STACK_PILE_BULK_SIZE objects as bulk elements. */
-+	bulk_first = __rte_stack_pile_bulk_pop_elems(&pile->bulk, n_bulk, obj_table, &bulk_last);
-+	if (unlikely(bulk_first == NULL)) {
-+		/*
-+		 * Not available.
-+		 * Retry with fewer bulk elements; objects to be fetched as solo elements instead.
-+		 */
-+		n_solo += RTE_STACK_PILE_BULK_SIZE;
-+		n_bulk--;
-+		if (n_bulk > 0)
-+			goto bulk;
-+		else
-+			goto solo;
-+	}
-+
-+	if (likely(n_solo == 0))
-+		goto done;
-+
-+solo:
-+	/* Fetch n_solo objects as solo elements. */
-+	solo_first = __rte_stack_lf_pop_elems(&pile->solo, n_solo,
-+			&obj_table[n_bulk * RTE_STACK_PILE_BULK_SIZE], &solo_last);
-+	if (solo_first != NULL)
-+		goto done;
-+
-+	/* Solo elements not available. Try fragmentation. */
-+	if (unlikely(n_solo >= RTE_STACK_PILE_BULK_SIZE))
-+		goto fail; /* Ran out of bulk elements above. Don't try to fetch one more. */
-+
-+	/* Fetch a fragmentation element as a bulk element. */
-+	frag = __rte_stack_pile_bulk_pop_elems(&pile->bulk, 1, obj_frag, NULL);
-+	if (unlikely(frag == NULL))
-+		goto fail;
-+
-+	/* Get n_solo objects from the fragmentation element. */
-+	__rte_assume(n_solo > 0);
-+	__rte_assume(n_solo < RTE_STACK_PILE_BULK_SIZE);
-+	for (i = 0; i < n_solo; i++)
-+		obj_table[n_bulk * RTE_STACK_PILE_BULK_SIZE + i] = obj_frag[i];
-+
-+	/* Fetch free elements for the excess objects. */
-+	__rte_assume(RTE_STACK_PILE_BULK_SIZE - n_solo > 0);
-+	__rte_assume(RTE_STACK_PILE_BULK_SIZE - n_solo < RTE_STACK_PILE_BULK_SIZE);
-+	solo_first = __rte_stack_lf_pop_elems(&pile->free_solo,
-+			RTE_STACK_PILE_BULK_SIZE - n_solo, NULL, &solo_last);
-+	if (unlikely(solo_first == NULL))
-+		goto fail;
-+
-+	/* Construct the solo elements from the excess objects. */
-+	tmp_solo = solo_first;
-+	__rte_assume(n_solo > 0);
-+	__rte_assume(n_solo < RTE_STACK_PILE_BULK_SIZE);
-+	for (i = n_solo; i < RTE_STACK_PILE_BULK_SIZE; i++, tmp_solo = tmp_solo->next)
-+		tmp_solo->data = obj_frag[i];
-+
-+	/* Push the excess objects as solo elements. */
-+	__rte_stack_lf_push_elems(&pile->solo, solo_first, solo_last,
-+			RTE_STACK_PILE_BULK_SIZE - n_solo);
-+	n_solo = 0;
-+
-+	/* Add the fragmentation element to the bulk elements, so it can be freed with them. */
-+	if (n_bulk > 0)
-+		bulk_last->next = frag;
-+	else
-+		bulk_first = frag;
-+	bulk_last = frag;
-+	n_bulk++;
-+
-+done:
-+	/* Success. Free the elements. */
-+	if (n_bulk > 0)
-+		__rte_stack_pile_bulk_push_elems(&pile->free_bulk, bulk_first, bulk_last, n_bulk);
-+	if (n_solo > 0)
-+		__rte_stack_lf_push_elems(&pile->free_solo, solo_first, solo_last, n_solo);
-+
-+	return n;
-+
-+fail:
-+	/* Failed. Roll back. */
-+	if (frag != NULL) {
-+		/*
-+		 * No further action than this is required to roll the fragmentation
-+		 * element back into the pile of bulk elements, as the objects in
-+		 * the fragmentation element are intact.
-+		 */
-+		if (n_bulk > 0)
-+			bulk_last->next = frag;
-+		else
-+			bulk_first = frag;
-+		bulk_last = frag;
-+		n_bulk += 1;
-+	}
-+	if (n_bulk > 0)
-+		__rte_stack_pile_bulk_push_elems(&pile->bulk, bulk_first, bulk_last, n_bulk);
-+
-+	return 0;
-+}
-+
-+/**
-+ * @internal Initialize a pile stack.
-+ *
-+ * @param s
-+ *   A pointer to the stack structure.
-+ * @param count
-+ *   The size of the stack.
-+ */
-+void
-+rte_stack_pile_init(struct rte_stack *s, unsigned int count);
-+
-+/**
-+ * @internal Return the memory required for a pile stack.
-+ *
-+ * @param count
-+ *   The size of the stack.
-+ * @return
-+ *   The bytes to allocate for a pile stack.
-+ */
-+ssize_t
-+rte_stack_pile_get_memsize(unsigned int count);
-+
-+#endif /* _RTE_STACK_PILE_H_ */
--- 
-2.43.0
-
+> +
+> +def main():
+> +    if len(sys.argv) < 2:
+> +        print("usage: %s <dpdk-app> [eal args...]" % sys.argv[0], file=sys.stderr)
+> +        return 1
+> +
+> +    sock_path = os.path.join(runtime_dir(), SOCKET_NAME)
+> +    proc = subprocess.Popen(sys.argv[1:], stdin=subprocess.PIPE)
+> +    try:
+> +        wait_for_socket(sock_path, proc)
+> +        client = TelemetryClient(sock_path)
+> +        try:
+> +            count = walk(client)
+> +        finally:
+> +            client.close()
+> +        print("telemetry: walked %d commands" % count)
+> +    finally:
+> +        # tell the interactive prompt to exit, then ensure the app is gone
+> +        try:
+> +            proc.stdin.write(b"quit\n")
+> +            proc.stdin.flush()
+> +            proc.stdin.close()
+> +        except (BrokenPipeError, OSError):
+> +            pass
+> +        try:
+> +            proc.wait(timeout=5)
+> +        except subprocess.TimeoutExpired:
+> +            proc.terminate()
+> +            proc.wait()
+> +
+> +    return 0 if proc.returncode == 0 else proc.returncode
+> +
+> +
+> +if __name__ == "__main__":
+> +    sys.exit(main())
+> diff --git a/app/test/suites/test_telemetry.sh b/app/test/suites/test_telemetry.sh
+> deleted file mode 100755
+> index 3c5b629b63..0000000000
+> --- a/app/test/suites/test_telemetry.sh
+> +++ /dev/null
+> @@ -1,30 +0,0 @@
+> -#!/bin/sh -e
+> -# SPDX-License-Identifier: BSD-3-Clause
+> -# Copyright (c) 2022 Red Hat, Inc.
+> -
+> -which jq || {
+> -    echo "No jq available, skipping test."
+> -    exit 77
+> -}
+> -
+> -rootdir=$(readlink -f $(dirname $(readlink -f $0))/../../..)
+> -tmpoutput=$(mktemp -t dpdk.test_telemetry.XXXXXX)
+> -trap "cat $tmpoutput; rm -f $tmpoutput" EXIT
+> -
+> -call_all_telemetry() {
+> -    telemetry_script=$rootdir/usertools/dpdk-telemetry.py
+> -    echo >$tmpoutput
+> -    echo "Telemetry commands log:" >>$tmpoutput
+> -    echo / | $telemetry_script | jq -r '.["/"][]' | while read cmd
+> -    do
+> -        for input in $cmd $cmd,0 $cmd,z
+> -        do
+> -            echo Calling $input >> $tmpoutput
+> -            echo $input | $telemetry_script >> $tmpoutput 2>&1
+> -        done
+> -    done
+> -}
+> -
+> -! set -o | grep -q errtrace || set -o errtrace
+> -! set -o | grep -q pipefail || set -o pipefail
+> -(sleep 1 && call_all_telemetry && echo quit) | $@
+> -- 
+> 2.53.0
+> 
