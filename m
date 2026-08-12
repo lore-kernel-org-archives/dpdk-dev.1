@@ -2,69 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41125C5B56A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 17:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42208C5AD5A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 19:02:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 61C40402B8;
-	Wed, 12 Aug 2026 19:55:41 +0200 (CEST)
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com
- [209.85.214.180])
- by mails.dpdk.org (Postfix) with ESMTP id 6106440264
- for <dev@dpdk.org>; Wed, 12 Aug 2026 19:55:40 +0200 (CEST)
-Received: by mail-pl1-f180.google.com with SMTP id
- d9443c01a7336-2cc97653887so19165715ad.1
- for <dev@dpdk.org>; Wed, 12 Aug 2026 10:55:40 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id DB389402DF;
+	Wed, 12 Aug 2026 21:02:36 +0200 (CEST)
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com
+ [209.85.215.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 828674026E
+ for <dev@dpdk.org>; Wed, 12 Aug 2026 21:02:35 +0200 (CEST)
+Received: by mail-pg1-f181.google.com with SMTP id
+ 41be03b00d2f7-cbedbaba5fdso701097a12.0
+ for <dev@dpdk.org>; Wed, 12 Aug 2026 12:02:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786557339;
- x=1787162139; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=t94sQToyJwcz2QxbSbIHjhlXwogfsfV1+LBPF2zFmkk=;
- b=VnXWPdJjWGpauz70XjU3qwdPoO5ns/YkL+FkVZetZ8M2SXPQJxyzld6TdD0ZsXs0oO
- sCtzFd/sSgBuyF4SSaQ+kBin7pJYeXCSSBXipQw3GqmbPi4NEQT1J2+n9EYIk9oiESLC
- qr5Qi894NhSU2z/eWtIm0Kl7EeU+ORakHIyl7os7z+9RKIHrgacpKAyWmM2vaEUKFJjd
- diRllVGdtDnBK/k+P5yTqNu4OJt1SqT9p1Zp1jyVcLlzsABqNr4o3xm0VlwGtGU0st8/
- 87jFmZA/2Rrzuvk/sa1PC7fCR+1Y/glz8tzlum2PmQ2JirFxP4cSlCEfj8tR8OdbLj5E
- Nmzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786557339; x=1787162139;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786561354;
+ x=1787166154; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=t94sQToyJwcz2QxbSbIHjhlXwogfsfV1+LBPF2zFmkk=;
- b=m5BuRdM6hlxKrwB2O8OdqNt386B0jvx6oAgryPgeo1HoQM1zAJkRIZBbh+orv1ZcdO
- OXcpxQb8uRbTD54c31UVL2Hc7cumrrjnFe0g30JLUOU5YYFPlWx+JI2qsSerjcTgaU5p
- xQlfR5lO/yoNW8Fjp19metEDr7M0M46jPvFNqAWxmXB8qndVHRz6xOb6UBR8ql8rKy9J
- V6bb4+tVu0ZPuRoGYDYfXE0Q9g7cU4ZY+WDBrtaqIeU6HWIlZtlQLT7TYnKQSQRIALJw
- /euWbPHq+oJm/mE9TbsoEzj0ZFmV/RhvkkGiEZxm7LTkV32fDYMcz5Y/66gweYUlfbag
- 2sIg==
-X-Gm-Message-State: AOJu0YwSTvgF0TOEvlxvc/brYql6UOvoF6Jj3eWP9PtrOldvg20SD6Ol
- 1UNIfbRJ/z28xuXMbV3k13pPPJvEKxm28Z1/oAu8VpqYJC9tA4t1L8R82R9Nni/BUEFVhTKe6SO
- gXQDq
-X-Gm-Gg: AR+sD12cFQSR25ARiqNx0ToZWaJg6ggIzjn4W+fGECnZlYmW5lPC0/1BzqRfcyfir1j
- r5RnGRGq7lynlXrQPcP6874+wmsnFZxj5rgWRt8IQq6yCtj6033M3a5Mu3DvS/zwm92SuNYRIYK
- HyhbuJme9qi12uCBwCCzjHd7z+u7gqtwm+qZ05Sr45ZQTjq2sHwz/IJYp+Bi0jIse9EZI97CsrT
- GpA15JeAjrmNM1PKJcd+nAOsH9L9gnZct5EY7OjtKtMeK0i8xZrZIAW/M/vrMhP0uO9Yu3YjCIk
- 2ccw6+IsV0E4g2IqSNfOR3RC8K9+qunAkiPkTCG3fAU3tu/uCbGY6zA28Dxwd4ewafsTqGO82/l
- LcWpeEOnbnGcbgmFlsUsQCz05CDDKzzjAhwwnI/7HtivNq7fHm4XcabG4JB+hz/a7Ywn0UM++8B
- pH6kr3n4LS3hoN8s7X9FfRZRreT3tAIp5lSAX6nCrzJZgO39BFIZ3X3cdfrgnJAmDtB7tqq1PHt
- BcPLjkShzUiP0YkdTimIrfH630=
-X-Received: by 2002:a17:90b:3c11:b0:38e:2860:253f with SMTP id
- 98e67ed59e1d1-39301480f31mr8253379a91.12.1786557339258; 
- Wed, 12 Aug 2026 10:55:39 -0700 (PDT)
+ bh=h5qQmovgZ4vbCuYEQQ2CJMJBUJEh2efF/O+mRhUXz1U=;
+ b=CfGCl4xjFr7C6Ecmy4UEhz2MYIhZ6k1PB/v6DyYkAjom3f6VrKCvJWe/VbDLBnupGK
+ 0LXqDaHvlc0x6OCHXvN2oMoMfaoR+ZDyWnHL39I5VEGPvNcMHW4osDlDuwvJkDvJvJLQ
+ ZmLuefW3QXQbeiHejxNN205Agf/bcz/dGbFqw90pPD8x/ZlAK3IuEF71ouVmwCPhDoj7
+ uTLTR1Mvgye41vPpcGR6M0akz6h7Fw10xiKALg0Ka+LKNHqv6tjzwScm5twtQwTlRR/2
+ I6AeG/EP1AgAZO21EiH5L9i2wI1ckkU9tL0f9PXSZtuX5pWRVdcmEIYtJxi3lsqc0eh7
+ r2/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1786561354; x=1787166154;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=h5qQmovgZ4vbCuYEQQ2CJMJBUJEh2efF/O+mRhUXz1U=;
+ b=fDwz8TF5FCBOHnCxd8SFH8ycx9rGxI1vcGt5ZmMgqvnlv34hsL0SxfdRUymxG7sQaZ
+ f4aH6/RiqIHTad6UEl7LzLJy1vma5y6yuijzK9ddFtvTw14fbndcGwhgvDs9tdyI/KKr
+ DnJE3oKs9lif3htOhuC7CRnHHUdcdlDBZLDaC2clJx4ufL8/Lcug85QrGPy8mbq28EZe
+ gMpWu++YG6mHspaySuLAZ9QeZx75TDWay5beWuzXhWNhlqkNPYTM0EGFf7OiyXogpMsl
+ MEFW+rTBtJahWumVn8yTXAJ5UglzERfN+aO+CJVLnjujujOZ7RKFlcIL7iGDZD2Us53L
+ 0Zug==
+X-Gm-Message-State: AOJu0YyQSGritbG2NLSWiUSn4k/+GJbvyHBK2QHDmMYMaB3XEHRpmI6m
+ MeenGDR0JS06KdBLpMPDUePQsuplw7AHHdNUdo81isQptBOhUzektIeACNDo/H7J6dsczK4zzXA
+ bZpV1
+X-Gm-Gg: AR+sD135g07f0TCwjGHm+1hgAb5GG1OD2KBsGDpRQRXpLzk3cUwj4Z6Yiq7e9uD8pu0
+ YFuphXxhUaSxlsh51WQsB4zgqKYiMjKUfS+1/gyaZcFHMHtRUxhLo705UsJfsHYUwZXt/qRddVt
+ lQr8JO3iMBFqUvxRfk3CGSYqcPSre+HjBfmvodcTMnVrnsQIcHw9+C7e1grDrTKvykAY74GD39J
+ pOlqBohlHmo6bqYRQV0aBOQLkawwIpRELzBpI5Gb2aUYydsrdldyf1CSLtDvHVwA10RwhxXBX89
+ BelhQDD3zL4h0ZDogzrsPMEDLqdr0+MkcfIjwMOryRLAI/ZXnVzNx4NNZ4YxEK4MuBCSH3eJMoa
+ u2u0cTr/bkf+uP4CeJj0LBm9zOGBARHXuzW2Fk+FvAAAyBnOhw/xKnNmksdMiw6QGUqk7YoKTu1
+ hmZRb0IMMsquIND/uriZtxDjy57GLqwbSTlr5m7XREI8oTIuUypD1fyri1rlScGGT3CJ4FrLuq7
+ 64yX+azCdDFwSVDE5YyAbbNlEM=
+X-Received: by 2002:a05:6a20:d12e:b0:3c4:3112:3b with SMTP id
+ adf61e73a8af0-3cc551f9869mr847699637.18.1786561354147; 
+ Wed, 12 Aug 2026 12:02:34 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3931cd91899sm283249a91.14.2026.08.12.10.55.36
+ a92af1059eb24-1412d8d0c3esm357721c88.6.2026.08.12.12.02.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 12 Aug 2026 10:55:38 -0700 (PDT)
+ Wed, 12 Aug 2026 12:02:33 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH] net/sxe2: fix build when optional libraries are disabled
-Date: Wed, 12 Aug 2026 10:55:31 -0700
-Message-ID: <20260812175531.375636-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Thomas Monjalon <thomas@monjalon.net>
+Subject: [PATCH v2] app/test: rewrite telemetry test in python
+Date: Wed, 12 Aug 2026 12:01:09 -0700
+Message-ID: <20260812190224.678892-1-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260724201541.801099-1-stephen@networkplumber.org>
+References: <20260724201541.801099-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -80,72 +84,272 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This was found by AI sandbox build when doing other fixes
-to EAL. The sxe2 driver was doing handrolled meson to pick
-up AVX which fails if security library not present.
+The test_telemetry.sh was failing with test timeout.
+This was caused by the overhead of spawning a fresh dpdk-telemetry.py
+for every command it walked. With every endpoint queried three times,
+that is several hundred Python interpreter startups per run.
 
-Fix build failure when building with
-"meson setup build -Denable_libs=eal":
+Replace the shell script with a python test that opens the telemetry
+socket once and issues every command over that single connection.
 
-  drivers/net/sxe2/meson.build:37:24: ERROR:
-  Unknown variable name "static_rte_security".
+Each reply is parsed as JSON and checked directly in Python.
+This also drops the jq dependency.
 
-Use sources_avx2 and sources_avx512 instead of hand-rolled
-static libraries.
+Bugzilla ID: 1972
+Fixes: 9da71dc4f96e ("test: add test case for scripted telemetry commands")
+Cc: stable@dpdk.org
 
-Fixes: 59d866861188 ("net/sxe2: add AVX2 Rx and Tx")
-Fixes: 0af0bdcdcf83 ("net/sxe2: add AVX512 Rx and Tx")
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- drivers/net/sxe2/meson.build | 35 ++---------------------------------
- 1 file changed, 2 insertions(+), 33 deletions(-)
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
-diff --git a/drivers/net/sxe2/meson.build b/drivers/net/sxe2/meson.build
-index d653d071a9..409e3be248 100644
---- a/drivers/net/sxe2/meson.build
-+++ b/drivers/net/sxe2/meson.build
-@@ -15,39 +15,8 @@ includes += include_directories('../../common/sxe2')
+---
+v2 - incorporate Bruce's suggestion
+   - add MAINTAINERS change
+
+ MAINTAINERS                       |   2 +-
+ app/test/suites/meson.build       |   2 +-
+ app/test/suites/test_telemetry.py | 168 ++++++++++++++++++++++++++++++
+ app/test/suites/test_telemetry.sh |  30 ------
+ 4 files changed, 170 insertions(+), 32 deletions(-)
+ create mode 100644 app/test/suites/test_telemetry.py
+ delete mode 100755 app/test/suites/test_telemetry.sh
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e99a65d197..e978b068ad 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1912,7 +1912,7 @@ M: Bruce Richardson <bruce.richardson@intel.com>
+ F: lib/telemetry/
+ F: doc/guides/prog_guide/telemetry_lib.rst
+ F: app/test/test_telemetry*
+-F: app/test/suites/test_telemetry.sh
++F: app/test/suites/test_telemetry.*
+ F: usertools/dpdk-telemetry*
+ F: doc/guides/howto/telemetry.rst
  
- if arch_subdir == 'x86'
-         sources += files('sxe2_txrx_vec_sse.c')
+diff --git a/app/test/suites/meson.build b/app/test/suites/meson.build
+index 786c459c24..ec1de99154 100644
+--- a/app/test/suites/meson.build
++++ b/app/test/suites/meson.build
+@@ -145,7 +145,7 @@ if not is_windows and dpdk_conf.has('RTE_LIB_TELEMETRY')
+         test_args += ['--vdev=rawdev_skeleton0']
+     endif
+     test_args += ['-a', '0000:00:00.0']
+-    test('telemetry_all', find_program('test_telemetry.sh'),
++    test('telemetry_all', find_program('test_telemetry.py'),
+             args: test_args,
+             timeout : timeout_seconds_fast,
+             is_parallel : false,
+diff --git a/app/test/suites/test_telemetry.py b/app/test/suites/test_telemetry.py
+new file mode 100644
+index 0000000000..68490d8fe4
+--- /dev/null
++++ b/app/test/suites/test_telemetry.py
+@@ -0,0 +1,168 @@
++#!/usr/bin/env python3
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright (c) 2022 Red Hat, Inc.
++
++"""Exercise every telemetry command exported by an application.
++
++Spawns the DPDK test binary (passed as arguments), waits for its telemetry
++socket to appear, then walks every command reported by "/". Every reply is
++parsed as JSON and checked, so a malformed, empty or missing response fails
++the test immediately and names the offending command.
++
++Commands are called with dummy parameters ("", "0" and "z"). In addition,
++any node of the form /*dev/list is queried first and the identifiers it
++returns are passed to the other nodes in the same namespace (/*dev/info,
++/*dev/stats, /*dev/xstats, ...), so those are exercised with real arguments
++rather than only rejecting garbage. The dummy parameters remain the fallback
++for anything not matching that pattern.
++
++A single connection is reused for the whole walk: the previous shell version
++spawned a fresh dpdk-telemetry.py (Python interpreter + new connection) per
++command, which scaled with process-startup cost and timed out under load.
++"""
++
++import json
++import os
++import socket
++import subprocess
++import sys
++import time
++
++SOCKET_NAME = "dpdk_telemetry.v2"
++DUMMY_ARGS = ("", ",0", ",z")
++LIST_SUFFIX = "/list"
++
++
++def runtime_dir():
++    """DPDK runtime dir for the default 'rte' file-prefix, matching EAL."""
++    run = os.environ.get("RUNTIME_DIRECTORY")
++    if not run:
++        run = (
++            "/var/run"
++            if os.getuid() == 0
++            else os.environ.get("XDG_RUNTIME_DIR", "/tmp")
++        )
++    return os.path.join(run, "dpdk", "rte")
++
++
++def wait_for_socket(path, proc, timeout=10):
++    """Wait for the telemetry socket, failing fast if the app dies first."""
++    deadline = time.time() + timeout
++    while time.time() < deadline:
++        if os.path.exists(path):
++            return
++        if proc.poll() is not None:
++            raise RuntimeError(
++                "application exited (code %d) before telemetry socket appeared"
++                % proc.returncode
++            )
++        time.sleep(0.05)
++    raise RuntimeError("timed out waiting for telemetry socket %s" % path)
++
++
++class TelemetryClient:
++    def __init__(self, path):
++        self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_SEQPACKET)
++        self.sock.connect(path)
++        info = json.loads(self.sock.recv(1024))
++        self.buf_len = info["max_output_len"]
++
++    def command(self, cmd):
++        self.sock.send(cmd.encode())
++        reply = self.sock.recv(self.buf_len).decode()
++        try:
++            return json.loads(reply)
++        except json.JSONDecodeError as e:
++            raise AssertionError(
++                "invalid JSON reply for %r: %s (raw: %r)" % (cmd, e, reply)
++            )
++
++    def close(self):
++        self.sock.close()
++
++
++def check_reply(cmd, reply):
++    """A telemetry reply must be a dict keyed by the command name."""
++    if not isinstance(reply, dict) or list(reply.keys()) != [cmd.split(",")[0]]:
++        raise AssertionError("unexpected reply for %r: %r" % (cmd, reply))
++
++
++def device_ids(client, listing):
++    """Map namespace to identifiers, from the /*dev/list nodes.
++
++    /ethdev/list, /cryptodev/list and friends take no parameter and return
++    the identifiers accepted by the other nodes under the same namespace.
++    """
++    devices = {}
++    for cmd in listing:
++        if not cmd.endswith(LIST_SUFFIX):
++            continue
++        namespace = cmd[: -len(LIST_SUFFIX)]
++        if not namespace.endswith("dev"):
++            continue
++        reply = client.command(cmd)
++        check_reply(cmd, reply)
++        ids = reply[cmd]
++        if isinstance(ids, list):
++            devices[namespace] = ids
++    return devices
++
++
++def args_for(cmd, devices):
++    """Parameters to try for a command: real identifiers where known."""
++    if cmd.endswith(LIST_SUFFIX):
++        return DUMMY_ARGS
++    for namespace, ids in devices.items():
++        if cmd.startswith(namespace + "/"):
++            return DUMMY_ARGS + tuple("," + str(i) for i in ids)
++    return DUMMY_ARGS
++
++
++def walk(client):
++    listing = client.command("/")
++    check_reply("/", listing)
++    devices = device_ids(client, listing["/"])
++    count = 0
++    for cmd in listing["/"]:
++        for arg in args_for(cmd, devices):
++            full = cmd + arg
++            reply = client.command(full)
++            check_reply(full, reply)
++            count += 1
++    return count
++
++
++def main():
++    if len(sys.argv) < 2:
++        print("usage: %s <dpdk-app> [eal args...]" % sys.argv[0], file=sys.stderr)
++        return 1
++
++    sock_path = os.path.join(runtime_dir(), SOCKET_NAME)
++    proc = subprocess.Popen(sys.argv[1:], stdin=subprocess.PIPE)
++    try:
++        wait_for_socket(sock_path, proc)
++        client = TelemetryClient(sock_path)
++        try:
++            count = walk(client)
++        finally:
++            client.close()
++        print("telemetry: walked %d commands" % count)
++    finally:
++        # tell the interactive prompt to exit, then ensure the app is gone
++        try:
++            proc.stdin.write(b"quit\n")
++            proc.stdin.flush()
++            proc.stdin.close()
++        except (BrokenPipeError, OSError):
++            pass
++        try:
++            proc.wait(timeout=5)
++        except subprocess.TimeoutExpired:
++            proc.terminate()
++            proc.wait()
++
++    return 0 if proc.returncode == 0 else proc.returncode
++
++
++if __name__ == "__main__":
++    sys.exit(main())
+diff --git a/app/test/suites/test_telemetry.sh b/app/test/suites/test_telemetry.sh
+deleted file mode 100755
+index 3c5b629b63..0000000000
+--- a/app/test/suites/test_telemetry.sh
++++ /dev/null
+@@ -1,30 +0,0 @@
+-#!/bin/sh -e
+-# SPDX-License-Identifier: BSD-3-Clause
+-# Copyright (c) 2022 Red Hat, Inc.
 -
--        sxe2_avx512_cpu_support =(
--                cc.get_define('__AVX512F__', args: machine_args) != '' and
--                cc.get_define('__AVX512BW__', args: machine_args) != '')
+-which jq || {
+-    echo "No jq available, skipping test."
+-    exit 77
+-}
 -
--        sxe2_avx512_cc_support = (
--                not machine_args.contains('-mno-avx512f') and
--                cc.has_argument('-mavx512f') and
--                cc.has_argument('-mavx512bw'))
+-rootdir=$(readlink -f $(dirname $(readlink -f $0))/../../..)
+-tmpoutput=$(mktemp -t dpdk.test_telemetry.XXXXXX)
+-trap "cat $tmpoutput; rm -f $tmpoutput" EXIT
 -
--        if sxe2_avx512_cpu_support == true or sxe2_avx512_cc_support == true
--                cflags += ['-DCC_AVX512_SUPPORT']
--                avx512_args = [cflags, '-mavx512f', '-mavx512bw']
--                if cc.has_argument('-march=skylake-avx512')
--                        avx512_args += '-march=skylake-avx512'
--                endif
--                sxe2_avx512_lib = static_library('sxe2_avx512_lib', 'sxe2_txrx_vec_avx512.c',
--                        dependencies: [static_rte_ethdev,
--                        static_rte_kvargs, static_rte_hash,
--                        static_rte_security, static_rte_cryptodev, static_rte_bus_pci],
--                        include_directories: includes,
--                        c_args: avx512_args)
--                objs += sxe2_avx512_lib.extract_objects('sxe2_txrx_vec_avx512.c')
--        endif
--        sxe2_avx2_lib = static_library('sxe2_avx2_lib',
--                'sxe2_txrx_vec_avx2.c',
--                dependencies: [static_rte_ethdev,
--                        static_rte_kvargs, static_rte_hash,
--                        static_rte_security, static_rte_cryptodev,
--                        static_rte_bus_pci],
--                include_directories: includes,
--                c_args: [cflags, '-mavx2'])
--        objs += sxe2_avx2_lib.extract_objects('sxe2_txrx_vec_avx2.c')
-+        sources_avx2 += files('sxe2_txrx_vec_avx2.c')
-+        sources_avx512 += files('sxe2_txrx_vec_avx512.c')
- elif arch_subdir == 'arm'
-         sources += files('sxe2_txrx_vec_neon.c')
- endif
+-call_all_telemetry() {
+-    telemetry_script=$rootdir/usertools/dpdk-telemetry.py
+-    echo >$tmpoutput
+-    echo "Telemetry commands log:" >>$tmpoutput
+-    echo / | $telemetry_script | jq -r '.["/"][]' | while read cmd
+-    do
+-        for input in $cmd $cmd,0 $cmd,z
+-        do
+-            echo Calling $input >> $tmpoutput
+-            echo $input | $telemetry_script >> $tmpoutput 2>&1
+-        done
+-    done
+-}
+-
+-! set -o | grep -q errtrace || set -o errtrace
+-! set -o | grep -q pipefail || set -o pipefail
+-(sleep 1 && call_all_telemetry && echo quit) | $@
 -- 
 2.53.0
 
