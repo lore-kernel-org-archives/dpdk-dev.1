@@ -2,35 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A8C3C5AD5A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 09:58:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07643C5CFEB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 11:03:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9414B4068E;
-	Wed, 12 Aug 2026 11:58:41 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id CAF24402B8
- for <dev@dpdk.org>; Wed, 12 Aug 2026 11:58:39 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id A081222820;
- Wed, 12 Aug 2026 11:58:39 +0200 (CEST)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Wed, 12 Aug 2026 11:58:39 +0200
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-To: dev@dpdk.org,
-	Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [RFC PATCH v2] mempool: optimizations
-Date: Wed, 12 Aug 2026 09:58:36 +0000
-Message-ID: <20260812095836.1771949-1-mb@smartsharesystems.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id C8588402B8;
+	Wed, 12 Aug 2026 13:03:55 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+ by mails.dpdk.org (Postfix) with ESMTP id 886BD40279
+ for <dev@dpdk.org>; Wed, 12 Aug 2026 13:03:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1786532634; x=1818068634;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=4i7NeEFfGwoJyPNlpVh8ymwQNDHGWHvk128Q0WXhpPM=;
+ b=mZ14Sdp5ogvsF2AVyRg9opF7OCP71cu3gtBQ8/+wce9mVTvbYyQ0Jpiv
+ wCRCyS4sz6myLCUwj2gTp+9te562Jsxe5N6lGvkpsVk61s16ViKO/hxlx
+ 55RLxohgvnO/Y0kNwxwVn2slfh5J7W3CcTKzpQfEK1eAQaD90aaL1YNeG
+ SqCe9DgQIDuB+gAn1QAjqcplkpFRLbvh9PniooMr29FrqimP4HPpHEKnr
+ 4QbJ+/wXQ+bTXjW0t1qL+yR6Nt4yMSUcqaa2lL74eJySpxbWGG4iLainf
+ JnuIM1YdtSaX0aMqxwJchKVIXZfIuUur6hJJbfEvJsTpISpWcuz6eZYvy Q==;
+X-CSE-ConnectionGUID: jOdi40+kQWOMi+nDJN1Mqg==
+X-CSE-MsgGUID: nwHO9jESQG6C3WCKUcX+6Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11872"; a="87093345"
+X-IronPort-AV: E=Sophos;i="6.25,219,1779174000"; d="scan'208";a="87093345"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+ by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 12 Aug 2026 04:03:53 -0700
+X-CSE-ConnectionGUID: fnLxrbbmRhCQpE79SuQeNA==
+X-CSE-MsgGUID: 5YUH4HZUTMOKYhfvIwTiIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,219,1779174000"; d="scan'208";a="263146161"
+Received: from pae-14.iind.intel.com ([10.190.203.153])
+ by orviesa008.jf.intel.com with ESMTP; 12 Aug 2026 04:03:50 -0700
+From: Anurag Mandal <anurag.mandal@intel.com>
+To: dev@dpdk.org
+Cc: stephen@networkplumber.org, mb@smartsharesystems.com,
+ vladimir.medvedkin@intel.com, Anurag Mandal <anurag.mandal@intel.com>
+Subject: [PATCH] lib: fix mempool name prefixes
+Date: Wed, 12 Aug 2026 11:02:58 +0000
+Message-Id: <20260812110258.1128632-1-anurag.mandal@intel.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 12 Aug 2026 09:58:39.0422 (UTC)
- FILETIME=[264415E0:01DD2A41]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -44,530 +58,622 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch introduces some mempool optimizations, which might be
-controvesial.
+The RIB library named the mempool holding its nodes "MP_<name>".
+That prefix is the one the mempool library itself prepends to
+the backing memzone, so the memzone ended up named
+"MP_MP_<name>" which is improper.
 
-1. Access local cache without first accessing the mempool header struct.
+The FIB library passed its own name unchanged to the underlying
+RIB and did not add a prefix to the RIB name.
 
-When getting/putting objects in a mempool cache, it required accessing
-the "size" field and "local_cache" pointer in the mempool structure, to
-determine if the local cache was present.
+This patch makes name each object after its owner.
+The node mempool of a RIB is now "RIB_<name>" or "RIB6_<name>",
+and the RIB owned by a FIB is now "FIB_<name>" or "FIB6_<name>".
 
-The mempool structure was changed, so the local cache array is now an
-integral part of the mempool structure.
-This means that local cache can be accessed directly, without first
-checking the "size" and "local_cache" fields in the mempool header
-structure.
-This avoids a couple of load operations with a potential CPU cache miss
-when the mempool header itself is not hot in the CPU cache.
-The "local_cache" field was changed from being a pointer to the local
-cache array, and instead became the local cache array itself.
+A mempool name is limited to RTE_MEMPOOL_NAMESIZE, which is much
+shorter than RTE_RIB_NAMESIZE.
+The name was passed down silently and an oversized one surfaced
+as an opaque rte_mempool_create() failure, so check the derived
+name up front and return ENAMETOOLONG instead. B
+ecause the prefixes now stack, a name is limited to 21 characters
+for a RIB, 20 for a RIB6, 17 for a FIB and 15 for a FIB6.
+Hence, shortening  the names used by the graph nodes, the l3fwd
+example and the unit tests accordingly.
 
-This change similarly speeds up rte_mempool_get_priv(), because it no
-longer needs to access the mempool header structure (specifically, the
-"cache_size" field) to determine the address of the mempool's private
-data.
+Bugzilla ID: 1981 1982
+Fixes: 5a5793a5ffa2 ("rib: add RIB library")
+Fixes: f7e861e21c46 ("rib: support IPv6")
+Fixes: 39e927248416 ("fib: add FIB library")
+Fixes: 40d41a8a7b34 ("fib: support IPv6")
 
-Disadvantage: Memory for local cache is also consumed by mempools
-configured without cache.
-
-Related changes:
-- The mempool cache audit function was improved.
-- The mempool autotest accessed the internal RTE_MEMPOOL_HEADER_SIZE
-  macro, and was updated accordingly.
-
-2. Move objects in mempool cache as 32-byte chunks at CPU cache line
-   aligned addresses.
-
-Improved memory copy performance by ensuring that objects in mempool cache
-can be moved as 32-byte chunks at CPU cache line aligned addresses.
-
-Disadvantage: Mempool cache size must be divisible by 32.
-For compatibility purposes, a requested cache size not divisible by 32
-is handled by a graceful fallback at mempool cache creation and
-mempool creation.
-
-Related changes:
-- The TAP driver used a mempool cache size of 4 mbufs for GSO,
-  and was updated to a cache size of 32 mbufs.
-
-Other changes:
-- The description of the RTE_MEMPOOL_NAMESIZE macro was expanded to
-  explain how the value is derived.
-
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
+Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
 ---
-v2:
-* Removed patch dependency, and included dependent patch instead.
-  Trying to fix apply patch failure.
----
- app/test/test_mempool.c                 |  3 +-
- doc/guides/rel_notes/release_26_11.rst  |  6 ++
- drivers/net/sxe2/sxe2_txrx_vec_avx512.c |  2 +-
- drivers/net/tap/rte_eth_tap.c           |  2 +-
- lib/eal/include/rte_common.h            | 12 +++
- lib/mempool/mempool_trace.h             |  1 -
- lib/mempool/rte_mempool.c               | 76 +++++++++++++------
- lib/mempool/rte_mempool.h               | 97 ++++++++++++++-----------
- 8 files changed, 131 insertions(+), 68 deletions(-)
+ app/test/test_fib.c                    | 34 ++++++++++-----------
+ app/test/test_fib6.c                   | 42 +++++++++++++-------------
+ doc/guides/rel_notes/release_26_11.rst |  5 +++
+ examples/l3fwd/l3fwd_fib.c             |  4 +--
+ lib/fib/rte_fib.c                      | 11 +++++--
+ lib/fib/rte_fib6.c                     | 11 +++++--
+ lib/node/ip4_lookup_fib.c              |  4 +--
+ lib/node/ip6_lookup_fib.c              |  4 +--
+ lib/rib/rte_rib.c                      | 14 +++++++--
+ lib/rib/rte_rib6.c                     | 14 +++++++--
+ 10 files changed, 89 insertions(+), 54 deletions(-)
 
-diff --git a/app/test/test_mempool.c b/app/test/test_mempool.c
-index e54249ce61..76d45cea2a 100644
---- a/app/test/test_mempool.c
-+++ b/app/test/test_mempool.c
-@@ -112,8 +112,7 @@ test_mempool_basic(struct rte_mempool *mp, int use_external_cache)
- 		GOTO_ERR(ret, out);
+diff --git a/app/test/test_fib.c b/app/test/test_fib.c
+index bd73399d56..3f5bbb3061 100644
+--- a/app/test/test_fib.c
++++ b/app/test/test_fib.c
+@@ -49,24 +49,24 @@ test_create_invalid(void)
+ 		"Call succeeded with invalid parameters\n");
  
- 	printf("get private data\n");
--	if (rte_mempool_get_priv(mp) != (char *)mp +
--			RTE_MEMPOOL_HEADER_SIZE(mp, mp->cache_size))
-+	if (rte_mempool_get_priv(mp) != (char *)mp + sizeof(struct rte_mempool))
- 		GOTO_ERR(ret, out);
+ 	/* rte_fib_create: config == NULL */
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, NULL);
++	fib = rte_fib_create("test_create_inv", SOCKET_ID_ANY, NULL);
+ 	RTE_TEST_ASSERT(fib == NULL,
+ 		"Call succeeded with invalid parameters\n");
  
- #ifndef RTE_EXEC_ENV_FREEBSD /* rte_mem_virt2iova() not supported on bsd */
+ 	/* socket_id < -1 is invalid */
+-	fib = rte_fib_create(__func__, -2, &config);
++	fib = rte_fib_create("test_create_inv", -2, &config);
+ 	RTE_TEST_ASSERT(fib == NULL,
+ 		"Call succeeded with invalid parameters\n");
+ 
+ 	/* rte_fib_create: max_routes = 0 */
+ 	config.max_routes = 0;
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib_create("test_create_inv", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib == NULL,
+ 		"Call succeeded with invalid parameters\n");
+ 	config.max_routes = MAX_ROUTES;
+ 
+ 	config.type = RTE_FIB_DIR24_8 + 1;
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib_create("test_create_inv", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib == NULL,
+ 		"Call succeeded with invalid parameters\n");
+ 
+@@ -74,13 +74,13 @@ test_create_invalid(void)
+ 	config.dir24_8.num_tbl8 = MAX_TBL8;
+ 
+ 	config.dir24_8.nh_sz = RTE_FIB_DIR24_8_8B + 1;
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib_create("test_create_inv", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib == NULL,
+ 		"Call succeeded with invalid parameters\n");
+ 	config.dir24_8.nh_sz = RTE_FIB_DIR24_8_8B;
+ 
+ 	config.dir24_8.num_tbl8 = 0;
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib_create("test_create_inv", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib == NULL,
+ 		"Call succeeded with invalid parameters\n");
+ 
+@@ -104,7 +104,7 @@ test_multiple_create(void)
+ 
+ 	for (i = 0; i < 100; i++) {
+ 		config.max_routes = MAX_ROUTES - i;
+-		fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++		fib = rte_fib_create("test_mult_create", SOCKET_ID_ANY, &config);
+ 		RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 		rte_fib_free(fib);
+ 	}
+@@ -129,7 +129,7 @@ test_free_null(void)
+ 	config.default_nh = 0;
+ 	config.type = RTE_FIB_DUMMY;
+ 
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib_create("test_free_null", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	rte_fib_free(fib);
+@@ -167,7 +167,7 @@ test_add_del_invalid(void)
+ 		"Call succeeded with invalid parameters\n");
+ 
+ 	/*Create valid fib to use in rest of test. */
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib_create("test_add_del_inv", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	/* rte_fib_add: depth > RTE_FIB_MAXDEPTH */
+@@ -331,7 +331,7 @@ test_lookup(void)
+ 	config.default_nh = def_nh;
+ 	config.type = RTE_FIB_DUMMY;
+ 
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib_create("test_lookup", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 	ret = check_fib(fib);
+ 	RTE_TEST_ASSERT(ret == TEST_SUCCESS,
+@@ -342,7 +342,7 @@ test_lookup(void)
+ 
+ 	config.dir24_8.nh_sz = RTE_FIB_DIR24_8_1B;
+ 	config.dir24_8.num_tbl8 = 127;
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib_create("test_lookup", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 	ret = check_fib(fib);
+ 	RTE_TEST_ASSERT(ret == TEST_SUCCESS,
+@@ -351,7 +351,7 @@ test_lookup(void)
+ 
+ 	config.dir24_8.nh_sz = RTE_FIB_DIR24_8_2B;
+ 	config.dir24_8.num_tbl8 = MAX_TBL8 - 1;
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib_create("test_lookup", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 	ret = check_fib(fib);
+ 	RTE_TEST_ASSERT(ret == TEST_SUCCESS,
+@@ -360,7 +360,7 @@ test_lookup(void)
+ 
+ 	config.dir24_8.nh_sz = RTE_FIB_DIR24_8_4B;
+ 	config.dir24_8.num_tbl8 = MAX_TBL8;
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib_create("test_lookup", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 	ret = check_fib(fib);
+ 	RTE_TEST_ASSERT(ret == TEST_SUCCESS,
+@@ -369,7 +369,7 @@ test_lookup(void)
+ 
+ 	config.dir24_8.nh_sz = RTE_FIB_DIR24_8_8B;
+ 	config.dir24_8.num_tbl8 = MAX_TBL8;
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib_create("test_lookup", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 	ret = check_fib(fib);
+ 	RTE_TEST_ASSERT(ret == TEST_SUCCESS,
+@@ -401,7 +401,7 @@ test_invalid_rcu(void)
+ 	config.rib_ext_sz = 0;
+ 	config.default_nh = def_nh;
+ 
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib_create("test_invalid_rcu", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	/* Create RCU QSBR variable */
+@@ -426,7 +426,7 @@ test_invalid_rcu(void)
+ 	config.type = RTE_FIB_DIR24_8;
+ 	config.dir24_8.nh_sz = RTE_FIB_DIR24_8_4B;
+ 	config.dir24_8.num_tbl8 = MAX_TBL8;
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib_create("test_invalid_rcu", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	/* Call rte_fib_rcu_qsbr_add without fib or config */
+@@ -532,7 +532,7 @@ test_fib_rcu_sync_rw(void)
+ 	config.dir24_8.nh_sz = RTE_FIB_DIR24_8_4B;
+ 	config.dir24_8.num_tbl8 = 1;
+ 
+-	g_fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	g_fib = rte_fib_create("test_rcu_sync_rw", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(g_fib != NULL, "Failed to create FIB\n");
+ 
+ 	/* Create RCU QSBR variable */
+diff --git a/app/test/test_fib6.c b/app/test/test_fib6.c
+index ad68645428..32937a7c99 100644
+--- a/app/test/test_fib6.c
++++ b/app/test/test_fib6.c
+@@ -56,24 +56,24 @@ test_create_invalid(void)
+ 		"Call succeeded with invalid parameters\n");
+ 
+ 	/* rte_fib6_create: config == NULL */
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, NULL);
++	fib = rte_fib6_create("test_create_inv", SOCKET_ID_ANY, NULL);
+ 	RTE_TEST_ASSERT(fib == NULL,
+ 		"Call succeeded with invalid parameters\n");
+ 
+ 	/* socket_id < -1 is invalid */
+-	fib = rte_fib6_create(__func__, -2, &config);
++	fib = rte_fib6_create("test_create_inv", -2, &config);
+ 	RTE_TEST_ASSERT(fib == NULL,
+ 		"Call succeeded with invalid parameters\n");
+ 
+ 	/* rte_fib6_create: max_routes = 0 */
+ 	config.max_routes = 0;
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_create_inv", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib == NULL,
+ 		"Call succeeded with invalid parameters\n");
+ 	config.max_routes = MAX_ROUTES;
+ 
+ 	config.type = RTE_FIB6_TRIE + 1;
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_create_inv", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib == NULL,
+ 		"Call succeeded with invalid parameters\n");
+ 
+@@ -81,13 +81,13 @@ test_create_invalid(void)
+ 	config.trie.num_tbl8 = MAX_TBL8;
+ 
+ 	config.trie.nh_sz = RTE_FIB6_TRIE_8B + 1;
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_create_inv", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib == NULL,
+ 		"Call succeeded with invalid parameters\n");
+ 	config.trie.nh_sz = RTE_FIB6_TRIE_8B;
+ 
+ 	config.trie.num_tbl8 = 0;
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_create_inv", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib == NULL,
+ 		"Call succeeded with invalid parameters\n");
+ 
+@@ -111,7 +111,7 @@ test_multiple_create(void)
+ 
+ 	for (i = 0; i < 100; i++) {
+ 		config.max_routes = MAX_ROUTES - i;
+-		fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++		fib = rte_fib6_create("test_mult_crt", SOCKET_ID_ANY, &config);
+ 		RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 		rte_fib6_free(fib);
+ 	}
+@@ -136,7 +136,7 @@ test_free_null(void)
+ 	config.default_nh = 0;
+ 	config.type = RTE_FIB6_DUMMY;
+ 
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_free_null", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	rte_fib6_free(fib);
+@@ -175,7 +175,7 @@ test_add_del_invalid(void)
+ 		"Call succeeded with invalid parameters\n");
+ 
+ 	/*Create valid fib to use in rest of test. */
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_adddel_inv", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	/* rte_fib6_add: depth > RTE_IPV6_MAX_DEPTH */
+@@ -356,7 +356,7 @@ test_lookup(void)
+ 	config.default_nh = def_nh;
+ 	config.type = RTE_FIB6_DUMMY;
+ 
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_lookup", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 	ret = check_fib(fib);
+ 	RTE_TEST_ASSERT(ret == TEST_SUCCESS,
+@@ -367,7 +367,7 @@ test_lookup(void)
+ 
+ 	config.trie.nh_sz = RTE_FIB6_TRIE_2B;
+ 	config.trie.num_tbl8 = MAX_TBL8 - 1;
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_lookup", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 	ret = check_fib(fib);
+ 	RTE_TEST_ASSERT(ret == TEST_SUCCESS,
+@@ -376,7 +376,7 @@ test_lookup(void)
+ 
+ 	config.trie.nh_sz = RTE_FIB6_TRIE_4B;
+ 	config.trie.num_tbl8 = MAX_TBL8;
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_lookup", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 	ret = check_fib(fib);
+ 	RTE_TEST_ASSERT(ret == TEST_SUCCESS,
+@@ -385,7 +385,7 @@ test_lookup(void)
+ 
+ 	config.trie.nh_sz = RTE_FIB6_TRIE_8B;
+ 	config.trie.num_tbl8 = MAX_TBL8;
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_lookup", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 	ret = check_fib(fib);
+ 	RTE_TEST_ASSERT(ret == TEST_SUCCESS,
+@@ -417,7 +417,7 @@ test_invalid_rcu(void)
+ 	config.rib_ext_sz = 0;
+ 	config.default_nh = def_nh;
+ 
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_inval_rcu", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	/* Create RCU QSBR variable */
+@@ -442,7 +442,7 @@ test_invalid_rcu(void)
+ 	config.type = RTE_FIB6_TRIE;
+ 	config.trie.nh_sz = RTE_FIB6_TRIE_4B;
+ 	config.trie.num_tbl8 = MAX_TBL8;
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_inval_rcu", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	/* Call rte_fib6_rcu_qsbr_add without fib or config */
+@@ -548,7 +548,7 @@ test_fib_rcu_sync_rw(void)
+ 	config.trie.nh_sz = RTE_FIB6_TRIE_4B;
+ 	config.trie.num_tbl8 = 1;
+ 
+-	g_fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	g_fib = rte_fib6_create("test_rcu_sync", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(g_fib != NULL, "Failed to create FIB\n");
+ 
+ 	/* Create RCU QSBR variable */
+@@ -642,7 +642,7 @@ test_drift(void)
+ 	config.trie.nh_sz = RTE_FIB6_TRIE_2B;
+ 	config.trie.num_tbl8 = 256;
+ 
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_drift", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	ret = rte_fib6_add(fib, &parent, 28, 0xa);
+@@ -706,7 +706,7 @@ test_drift_compression(void)
+ 	config.trie.nh_sz = RTE_FIB6_TRIE_2B;
+ 	config.trie.num_tbl8 = 256;
+ 
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_drift_comp", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	/* Compressed: child shares the parent's nh, modify_dp is skipped */
+@@ -767,7 +767,7 @@ test_drift_multilevel(void)
+ 	config.trie.nh_sz = RTE_FIB6_TRIE_2B;
+ 	config.trie.num_tbl8 = 256;
+ 
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_drift_ml", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	ret = rte_fib6_add(fib, &grand, 28, 1);
+@@ -831,7 +831,7 @@ test_drift_stress(void)
+ 	config.trie.nh_sz = RTE_FIB6_TRIE_2B;
+ 	config.trie.num_tbl8 = 256;
+ 
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_drift_str", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	for (i = 0; i < 2000; i++) {
+@@ -902,7 +902,7 @@ test_drift_tight_pool(void)
+ 	config.trie.nh_sz = RTE_FIB6_TRIE_2B;
+ 	config.trie.num_tbl8 = 3;
+ 
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_drift_tp", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	ret = rte_fib6_add(fib, &parent, 28, 1);
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index c8cc86295d..e31325585a 100644
+index c8cc86295d..043ce8fc2d 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -68,6 +68,8 @@ Removed Items
+@@ -93,6 +93,11 @@ API Changes
     Also, make sure to start the actual text at the margin.
     =======================================================
  
-+* mempool: The obsolete ``flushthresh`` field was removed from the ``rte_mempool_cache`` structure.
++* rib: The node mempool created by ``rte_rib_create()`` and ``rte_rib6_create()``
++  is now named ``RIB_<name>`` and ``RIB6_<name>`` instead of ``MP_<name>``.
 +
- * Removed deprecated symbols:
- 
-   * fib: ``RTE_FIB6_IPV6_ADDR_SIZE``, ``RTE_FIB6_MAXDEPTH``
-@@ -93,6 +95,10 @@ API Changes
-    Also, make sure to start the actual text at the margin.
-    =======================================================
- 
-+* mempool: The ``rte_mempool_cache`` structure was updated as follows:
-+  - The obsolete ``flushthresh`` field was removed.
-+  - The size of the ``objs`` array was reduced from ``RTE_MEMPOOL_CACHE_MAX_SIZE`` * 2 to ``RTE_MEMPOOL_CACHE_MAX_SIZE``.
-+
++* fib: The RIB created by ``rte_fib_create()`` and ``rte_fib6_create()``
++  is now named ``FIB_<name>`` and ``FIB6_<name>``.
  
  ABI Changes
  -----------
-diff --git a/drivers/net/sxe2/sxe2_txrx_vec_avx512.c b/drivers/net/sxe2/sxe2_txrx_vec_avx512.c
-index a830c7a33b..2e680f4027 100644
---- a/drivers/net/sxe2/sxe2_txrx_vec_avx512.c
-+++ b/drivers/net/sxe2/sxe2_txrx_vec_avx512.c
-@@ -67,7 +67,7 @@ static __rte_always_inline int32_t sxe2_tx_bufs_free_vec_avx512(struct sxe2_tx_q
- 		}
- 		cache->len += rs_thresh;
+diff --git a/examples/l3fwd/l3fwd_fib.c b/examples/l3fwd/l3fwd_fib.c
+index 4fc6bf90d5..0ff5c2c6de 100644
+--- a/examples/l3fwd/l3fwd_fib.c
++++ b/examples/l3fwd/l3fwd_fib.c
+@@ -654,7 +654,7 @@ setup_fib(const int socketid)
+ 	config_ipv4.default_nh = FIB_DEFAULT_HOP;
+ 	config_ipv4.dir24_8.nh_sz = RTE_FIB_DIR24_8_4B;
+ 	config_ipv4.dir24_8.num_tbl8 = (1 << 15);
+-	snprintf(s, sizeof(s), "IPV4_L3FWD_FIB_%d", socketid);
++	snprintf(s, sizeof(s), "L3FWD_FIB_%d", socketid);
+ 	ipv4_l3fwd_fib_lookup_struct[socketid] =
+ 			rte_fib_create(s, socketid, &config_ipv4);
+ 	if (ipv4_l3fwd_fib_lookup_struct[socketid] == NULL)
+@@ -705,7 +705,7 @@ setup_fib(const int socketid)
+ 	/* >8 End of setup fib. */
  
--		if (cache->len >= cache->flushthresh) {
-+		if (cache->len >= cache->size) {
- 			(void)rte_mempool_ops_enqueue_bulk(mp,
- 					&cache->objs[cache->size], cache->len - cache->size);
- 			cache->len = cache->size;
-diff --git a/drivers/net/tap/rte_eth_tap.c b/drivers/net/tap/rte_eth_tap.c
-index b93452f168..b3142561c2 100644
---- a/drivers/net/tap/rte_eth_tap.c
-+++ b/drivers/net/tap/rte_eth_tap.c
-@@ -61,7 +61,7 @@
- #define TAP_MAX_MAC_ADDRS	16
- #define TAP_GSO_MBUFS_PER_CORE	128
- #define TAP_GSO_MBUF_SEG_SIZE	128
--#define TAP_GSO_MBUF_CACHE_SIZE	4
-+#define TAP_GSO_MBUF_CACHE_SIZE	32
- #define TAP_GSO_MBUFS_NUM \
- 	(TAP_GSO_MBUFS_PER_CORE * TAP_GSO_MBUF_CACHE_SIZE)
+ 	/* Create the fib IPv6 table. */
+-	snprintf(s, sizeof(s), "IPV6_L3FWD_FIB_%d", socketid);
++	snprintf(s, sizeof(s), "L3FWD_FIB6_%d", socketid);
  
-diff --git a/lib/eal/include/rte_common.h b/lib/eal/include/rte_common.h
-index 79d2a0ab93..0fd0906506 100644
---- a/lib/eal/include/rte_common.h
-+++ b/lib/eal/include/rte_common.h
-@@ -567,6 +567,15 @@ static void __attribute__((destructor(RTE_PRIO(prio)), used)) func(void)
- #define __rte_assume(condition) __assume(condition)
+ 	config.type = RTE_FIB6_TRIE;
+ 	config.max_routes = (1 << 16) - 1;
+diff --git a/lib/fib/rte_fib.c b/lib/fib/rte_fib.c
+index 184210f380..e032eca91d 100644
+--- a/lib/fib/rte_fib.c
++++ b/lib/fib/rte_fib.c
+@@ -37,6 +37,9 @@ EAL_REGISTER_TAILQ(rte_fib_tailq)
+ #define FIB_RETURN_IF_TRUE(cond, retval)
  #endif
  
-+/**
-+ * Alignment hint precondition
-+ */
-+#ifdef RTE_TOOLCHAIN_MSVC
-+#define __rte_assume_aligned(ptr, alignment) (ptr)
-+#else
-+#define __rte_assume_aligned(ptr, alignment) __builtin_assume_aligned(ptr, alignment)
-+#endif
++/* Prefix used for the memory objects owned by a FIB. */
++#define FIB_MEM_PREFIX		"FIB_"
 +
- /**
-  * Disable AddressSanitizer on some code
-  */
-@@ -775,6 +784,9 @@ rte_is_aligned(const void * const __rte_restrict ptr, const unsigned int align)
- /** Force minimum cache line alignment. */
- #define __rte_cache_min_aligned __rte_aligned(RTE_CACHE_LINE_MIN_SIZE)
+ struct rte_fib {
+ 	char			name[RTE_FIB_NAMESIZE];
+ 	enum rte_fib_type	type;	/**< Type of FIB struct */
+@@ -173,14 +176,16 @@ rte_fib_create(const char *name, int socket_id, struct rte_fib_conf *conf)
+ 	rib_conf.ext_sz = conf->rib_ext_sz;
+ 	rib_conf.max_nodes = conf->max_routes * 2;
  
-+/** Cache alignment hint precondition */
-+#define __rte_assume_cache_aligned(ptr) __rte_assume_aligned(ptr, RTE_CACHE_LINE_SIZE)
+-	rib = rte_rib_create(name, socket_id, &rib_conf);
++	/* Add FIB Prefix to its mempool name */
++	snprintf(mem_name, sizeof(mem_name), FIB_MEM_PREFIX "%s", name);
 +
- #define _RTE_CACHE_GUARD_HELPER2(unique) \
- 	alignas(RTE_CACHE_LINE_SIZE) \
- 	char cache_guard_ ## unique[RTE_CACHE_LINE_SIZE * RTE_CACHE_GUARD_LINES]
-diff --git a/lib/mempool/mempool_trace.h b/lib/mempool/mempool_trace.h
-index 23cda1473c..60e47cf67b 100644
---- a/lib/mempool/mempool_trace.h
-+++ b/lib/mempool/mempool_trace.h
-@@ -119,7 +119,6 @@ RTE_TRACE_POINT(
- 	rte_trace_point_emit_i32(socket_id);
- 	rte_trace_point_emit_ptr(cache);
- 	rte_trace_point_emit_u32(cache->len);
--	rte_trace_point_emit_u32(cache->flushthresh);
- )
++	rib = rte_rib_create(mem_name, socket_id, &rib_conf);
+ 	if (rib == NULL) {
+ 		FIB_LOG(ERR,
+-			"Can not allocate RIB %s", name);
++			"Can not allocate RIB %s", mem_name);
+ 		return NULL;
+ 	}
  
- RTE_TRACE_POINT(
-diff --git a/lib/mempool/rte_mempool.c b/lib/mempool/rte_mempool.c
-index 817e2b8dc1..5d43c7c98b 100644
---- a/lib/mempool/rte_mempool.c
-+++ b/lib/mempool/rte_mempool.c
-@@ -753,14 +753,13 @@ static void
- mempool_cache_init(struct rte_mempool_cache *cache, uint32_t size)
- {
- 	cache->size = size;
--	cache->flushthresh = size; /* Obsolete; for API/ABI compatibility purposes only */
- 	cache->len = 0;
- }
+-	snprintf(mem_name, sizeof(mem_name), "FIB_%s", name);
+ 	fib_list = RTE_TAILQ_CAST(rte_fib_tailq.head, rte_fib_list);
  
- /*
-  * Create and initialize a cache for objects that are retrieved from and
-  * returned to an underlying mempool. This structure is identical to the
-- * local_cache[lcore_id] pointed to by the mempool structure.
-+ * local_cache[lcore_id] entry in the mempool structure.
-  */
- RTE_EXPORT_SYMBOL(rte_mempool_cache_create)
- struct rte_mempool_cache *
-@@ -768,6 +767,23 @@ rte_mempool_cache_create(uint32_t size, int socket_id)
- {
- 	struct rte_mempool_cache *cache;
+ 	rte_mcfg_tailq_write_lock();
+diff --git a/lib/fib/rte_fib6.c b/lib/fib/rte_fib6.c
+index 770becdb61..dbe88fa25c 100644
+--- a/lib/fib/rte_fib6.c
++++ b/lib/fib/rte_fib6.c
+@@ -37,6 +37,9 @@ EAL_REGISTER_TAILQ(rte_fib6_tailq)
+ #define FIB6_RETURN_IF_TRUE(cond, retval)
+ #endif
  
-+	/*
-+	 * Alignment requirement for performance optimized move within the mempool cache.
-+	 * @ref rte_mempool_do_generic_put() implementation.
-+	 */
-+	if (size < 32) {
-+		RTE_MEMPOOL_LOG(WARNING,
-+				"Tiny cache size %u not divisible by 32, rounding up to 32.",
-+				size);
-+		size = 32;
-+	} else if (size & 31) {
-+		uint32_t rounded = RTE_ALIGN_MUL_FLOOR(size, 32);
-+		RTE_MEMPOOL_LOG(INFO,
-+				"Cache size %u not divisible by 32, rounding down to %u.",
-+				size, rounded);
-+		size = rounded;
++/* Prefix used for the memory objects owned by a FIB6. */
++#define FIB6_MEM_PREFIX		"FIB6_"
++
+ struct rte_fib6 {
+ 	char			name[RTE_FIB6_NAMESIZE];
+ 	enum rte_fib6_type	type;	/**< Type of FIB struct */
+@@ -172,14 +175,16 @@ rte_fib6_create(const char *name, int socket_id, struct rte_fib6_conf *conf)
+ 	rib_conf.ext_sz = conf->rib_ext_sz;
+ 	rib_conf.max_nodes = conf->max_routes * 2;
+ 
+-	rib = rte_rib6_create(name, socket_id, &rib_conf);
++	/* Add FIB6 Prefix to its mempool name */
++	snprintf(mem_name, sizeof(mem_name), FIB6_MEM_PREFIX "%s", name);
++
++	rib = rte_rib6_create(mem_name, socket_id, &rib_conf);
+ 	if (rib == NULL) {
+ 		FIB_LOG(ERR,
+-			"Can not allocate RIB %s", name);
++			"Can not allocate RIB %s", mem_name);
+ 		return NULL;
+ 	}
+ 
+-	snprintf(mem_name, sizeof(mem_name), "FIB6_%s", name);
+ 	fib_list = RTE_TAILQ_CAST(rte_fib6_tailq.head, rte_fib6_list);
+ 
+ 	rte_mcfg_tailq_write_lock();
+diff --git a/lib/node/ip4_lookup_fib.c b/lib/node/ip4_lookup_fib.c
+index 0857d889fc..750bf69255 100644
+--- a/lib/node/ip4_lookup_fib.c
++++ b/lib/node/ip4_lookup_fib.c
+@@ -205,7 +205,7 @@ rte_node_ip4_fib_create(int socket, struct rte_fib_conf *conf)
+ 		return 0;
+ 
+ 	conf->default_nh = FIB_DEFAULT_NH;
+-	snprintf(s, sizeof(s), "IPV4_LOOKUP_FIB_%d", socket);
++	snprintf(s, sizeof(s), "IP4_FIB_%d", socket);
+ 	nm->fib[socket] = rte_fib_create(s, socket, conf);
+ 	if (nm->fib[socket] == NULL)
+ 		return -rte_errno;
+@@ -266,7 +266,7 @@ setup_fib(int socket)
+ 	conf.dir24_8.nh_sz = RTE_FIB_DIR24_8_4B;
+ 	conf.dir24_8.num_tbl8 = FIB_DEFAULT_NUM_TBL8;
+ 	conf.flags = 0;
+-	snprintf(s, sizeof(s), "IPV4_LOOKUP_FIB_%d", socket);
++	snprintf(s, sizeof(s), "IP4_FIB_%d", socket);
+ 	nm->fib[socket] = rte_fib_create(s, socket, &conf);
+ 	if (nm->fib[socket] == NULL)
+ 		return -rte_errno;
+diff --git a/lib/node/ip6_lookup_fib.c b/lib/node/ip6_lookup_fib.c
+index 40c5c753df..f460838396 100644
+--- a/lib/node/ip6_lookup_fib.c
++++ b/lib/node/ip6_lookup_fib.c
+@@ -199,7 +199,7 @@ rte_node_ip6_fib_create(int socket, struct rte_fib6_conf *conf)
+ 		return 0;
+ 
+ 	conf->default_nh = FIB6_DEFAULT_NH;
+-	snprintf(s, sizeof(s), "IPV6_LOOKUP_FIB_%u", socket);
++	snprintf(s, sizeof(s), "IP6_FIB_%u", socket);
+ 	nm->fib6[socket] = rte_fib6_create(s, socket, conf);
+ 	if (nm->fib6[socket] == NULL)
+ 		return -rte_errno;
+@@ -257,7 +257,7 @@ setup_fib6(int socket)
+ 	conf.rib_ext_sz = 0;
+ 	conf.trie.nh_sz = RTE_FIB6_TRIE_4B;
+ 	conf.trie.num_tbl8 = FIB6_DEFAULT_NUM_TBL8;
+-	snprintf(s, sizeof(s), "IPV6_LOOKUP_FIB_%u", socket);
++	snprintf(s, sizeof(s), "IP6_FIB_%u", socket);
+ 	nm->fib6[socket] = rte_fib6_create(s, socket, &conf);
+ 	if (nm->fib6[socket] == NULL)
+ 		return -rte_errno;
+diff --git a/lib/rib/rte_rib.c b/lib/rib/rte_rib.c
+index 046db131ca..55802f0060 100644
+--- a/lib/rib/rte_rib.c
++++ b/lib/rib/rte_rib.c
+@@ -32,6 +32,8 @@ EAL_REGISTER_TAILQ(rte_rib_tailq)
+ #define RIB_MAXDEPTH		32
+ /* Maximum length of a RIB name. */
+ #define RTE_RIB_NAMESIZE	64
++/* Prefix used for the memory objects owned by a RIB. */
++#define RIB_MEM_PREFIX		"RIB_"
+ 
+ struct rte_rib_node {
+ 	struct rte_rib_node	*left;
+@@ -417,6 +419,7 @@ rte_rib_create(const char *name, int socket_id, const struct rte_rib_conf *conf)
+ 	struct rte_tailq_entry *te;
+ 	struct rte_rib_list *rib_list;
+ 	struct rte_mempool *node_pool;
++	int ret;
+ 
+ 	/* Check user arguments. */
+ 	if (unlikely(name == NULL || conf == NULL || conf->max_nodes <= 0)) {
+@@ -424,7 +427,15 @@ rte_rib_create(const char *name, int socket_id, const struct rte_rib_conf *conf)
+ 		return NULL;
+ 	}
+ 
+-	snprintf(mem_name, sizeof(mem_name), "MP_%s", name);
++	/* Add RIB Prefix to its node mempool name */
++	ret = snprintf(mem_name, sizeof(mem_name), RIB_MEM_PREFIX "%s", name);
++	if (unlikely(ret < 0 || ret >= (int)RTE_MEMPOOL_NAMESIZE)) {
++		RIB_LOG(ERR, "RIB name %s is too long, limit is %zu characters",
++			name, RTE_MEMPOOL_NAMESIZE - sizeof(RIB_MEM_PREFIX));
++		rte_errno = ENAMETOOLONG;
++		return NULL;
 +	}
 +
- 	if (size == 0 || size > RTE_MEMPOOL_CACHE_MAX_SIZE) {
- 		rte_errno = EINVAL;
- 		return NULL;
-@@ -838,6 +854,26 @@ rte_mempool_create_empty(const char *name, unsigned n, unsigned elt_size,
+ 	node_pool = rte_mempool_create(mem_name, conf->max_nodes,
+ 		sizeof(struct rte_rib_node) + conf->ext_sz, 0, 0,
+ 		NULL, NULL, NULL, NULL, socket_id, 0);
+@@ -435,7 +446,6 @@ rte_rib_create(const char *name, int socket_id, const struct rte_rib_conf *conf)
  		return NULL;
  	}
  
-+	/*
-+	 * Alignment requirement for performance optimized move within the mempool cache.
-+	 * @ref rte_mempool_do_generic_put() implementation.
-+	 */
-+	RTE_BUILD_BUG_ON(((sizeof(void *) * RTE_MEMPOOL_CACHE_MAX_SIZE / 2) &
-+			RTE_CACHE_LINE_MASK) != 0);
-+	RTE_BUILD_BUG_ON((RTE_MEMPOOL_CACHE_MAX_SIZE & 31) != 0);
-+	if (cache_size & 31) {
-+		unsigned int rounded = RTE_ALIGN_MUL_FLOOR(cache_size, 32);
-+		if (rounded == 0)
-+			RTE_MEMPOOL_LOG(WARNING,
-+					"Tiny cache size %u not divisible by 32, disabling cache.",
-+					cache_size);
-+		else
-+			RTE_MEMPOOL_LOG(INFO,
-+					"Cache size %u not divisible by 32, rounding down to %u.",
-+					cache_size, rounded);
-+		cache_size = rounded;
+-	snprintf(mem_name, sizeof(mem_name), "RIB_%s", name);
+ 	rib_list = RTE_TAILQ_CAST(rte_rib_tailq.head, rte_rib_list);
+ 
+ 	rte_mcfg_tailq_write_lock();
+diff --git a/lib/rib/rte_rib6.c b/lib/rib/rte_rib6.c
+index 918ddbdfd3..7d9a0ba36f 100644
+--- a/lib/rib/rte_rib6.c
++++ b/lib/rib/rte_rib6.c
+@@ -24,6 +24,8 @@
+ #define RTE_RIB_VALID_NODE	1
+ /* Maximum length of a RIB6 name. */
+ #define RTE_RIB6_NAMESIZE	64
++/* Prefix used for the memory objects owned by a RIB6. */
++#define RIB6_MEM_PREFIX		"RIB6_"
+ 
+ TAILQ_HEAD(rte_rib6_list, rte_tailq_entry);
+ static struct rte_tailq_elem rte_rib6_tailq = {
+@@ -480,6 +482,7 @@ rte_rib6_create(const char *name, int socket_id,
+ 	struct rte_tailq_entry *te;
+ 	struct rte_rib6_list *rib6_list;
+ 	struct rte_mempool *node_pool;
++	int ret;
+ 
+ 	/* Check user arguments. */
+ 	if (unlikely(name == NULL || conf == NULL || conf->max_nodes <= 0)) {
+@@ -487,7 +490,15 @@ rte_rib6_create(const char *name, int socket_id,
+ 		return NULL;
+ 	}
+ 
+-	snprintf(mem_name, sizeof(mem_name), "MP_%s", name);
++	/* Add RIB6 Prefix to its node mempool name */
++	ret = snprintf(mem_name, sizeof(mem_name), RIB6_MEM_PREFIX "%s", name);
++	if (unlikely(ret < 0 || ret >= (int)RTE_MEMPOOL_NAMESIZE)) {
++		RIB_LOG(ERR, "RIB6 name %s is too long, limit is %zu characters",
++			name, RTE_MEMPOOL_NAMESIZE - sizeof(RIB6_MEM_PREFIX));
++		rte_errno = ENAMETOOLONG;
++		return NULL;
 +	}
 +
- 	/* asked cache too big */
- 	if (cache_size > RTE_MEMPOOL_CACHE_MAX_SIZE ||
- 	    cache_size > n) {
-@@ -884,7 +920,7 @@ rte_mempool_create_empty(const char *name, unsigned n, unsigned elt_size,
- 		goto exit_unlock;
- 	}
- 
--	mempool_size = RTE_MEMPOOL_HEADER_SIZE(mp, cache_size);
-+	mempool_size = sizeof(struct rte_mempool);
- 	mempool_size += private_data_size;
- 	mempool_size = RTE_ALIGN_CEIL(mempool_size, RTE_MEMPOOL_ALIGN);
- 
-@@ -900,7 +936,7 @@ rte_mempool_create_empty(const char *name, unsigned n, unsigned elt_size,
- 
- 	/* init the mempool structure */
- 	mp = mz->addr;
--	memset(mp, 0, RTE_MEMPOOL_HEADER_SIZE(mp, cache_size));
-+	memset(mp, 0, mempool_size);
- 	ret = strlcpy(mp->name, name, sizeof(mp->name));
- 	if (ret < 0 || ret >= (int)sizeof(mp->name)) {
- 		rte_errno = ENAMETOOLONG;
-@@ -937,13 +973,6 @@ rte_mempool_create_empty(const char *name, unsigned n, unsigned elt_size,
- 		goto exit_unlock;
- 	}
- 
--	/*
--	 * local_cache pointer is set even if cache_size is zero.
--	 * The local_cache points to just past the elt_pa[] array.
--	 */
--	mp->local_cache = (struct rte_mempool_cache *)
--		RTE_PTR_ADD(mp, RTE_MEMPOOL_HEADER_SIZE(mp, 0));
--
- 	/* Init all default caches. */
- 	if (cache_size != 0) {
- 		for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++)
-@@ -1197,6 +1226,7 @@ mempool_obj_audit(struct rte_mempool *mp, __rte_unused void *opaque,
- 	RTE_MEMPOOL_CHECK_COOKIES(mp, &obj, 1, 2);
- }
- 
-+/* check cookies before and after objects */
- static void
- mempool_audit_cookies(struct rte_mempool *mp)
- {
-@@ -1213,23 +1243,28 @@ mempool_audit_cookies(struct rte_mempool *mp)
- #define mempool_audit_cookies(mp) do {} while(0)
- #endif
- 
--/* check cookies before and after objects */
-+/* check cache size consistency */
- static void
- mempool_audit_cache(const struct rte_mempool *mp)
- {
--	/* check cache size consistency */
- 	unsigned lcore_id;
-+	const uint32_t cache_size = mp->cache_size;
- 
--	if (mp->cache_size == 0)
--		return;
-+	if (cache_size > RTE_MEMPOOL_CACHE_MAX_SIZE) {
-+		RTE_MEMPOOL_LOG(CRIT, "badness on cache size");
-+		rte_panic("MEMPOOL: invalid cache size\n");
-+	}
- 
- 	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
- 		const struct rte_mempool_cache *cache;
- 		cache = &mp->local_cache[lcore_id];
--		if (cache->len > RTE_DIM(cache->objs)) {
--			RTE_MEMPOOL_LOG(CRIT, "badness on cache[%u]",
--				lcore_id);
--			rte_panic("MEMPOOL: invalid cache len\n");
-+		if (cache->size != cache_size) {
-+			RTE_MEMPOOL_LOG(CRIT, "badness on cache[%u] size", lcore_id);
-+			rte_panic("MEMPOOL: invalid cache[%u] size\n", lcore_id);
-+		}
-+		if (cache->len > cache_size) {
-+			RTE_MEMPOOL_LOG(CRIT, "badness on cache[%u] len", lcore_id);
-+			rte_panic("MEMPOOL: invalid cache[%u] len\n", lcore_id);
- 		}
- 	}
- }
-@@ -1241,9 +1276,6 @@ rte_mempool_audit(struct rte_mempool *mp)
- {
- 	mempool_audit_cache(mp);
- 	mempool_audit_cookies(mp);
--
--	/* For case where mempool DEBUG is not set, and cache size is 0 */
--	RTE_SET_USED(mp);
- }
- 
- /* dump the status of the mempool on the console */
-diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
-index 50d958c7c6..a5578b3a93 100644
---- a/lib/mempool/rte_mempool.h
-+++ b/lib/mempool/rte_mempool.h
-@@ -89,14 +89,14 @@ struct __rte_cache_aligned rte_mempool_debug_stats {
-  */
- struct __rte_cache_aligned rte_mempool_cache {
- 	uint32_t size;	      /**< Size of the cache */
--	uint32_t flushthresh; /**< Obsolete; for API/ABI compatibility purposes only */
- 	uint32_t len;	      /**< Current cache count */
- #ifdef RTE_LIBRTE_MEMPOOL_STATS
--	uint32_t unused;
- 	/*
- 	 * Alternative location for the most frequently updated mempool statistics (per-lcore),
- 	 * providing faster update access when using a mempool cache.
-+	 * Note: 16-byte aligned for optimal SIMD access, when updating pairs of counters.
- 	 */
-+	alignas(16)
- 	struct {
- 		uint64_t put_bulk;          /**< Number of puts. */
- 		uint64_t put_objs;          /**< Number of objects successfully put. */
-@@ -104,15 +104,9 @@ struct __rte_cache_aligned rte_mempool_cache {
- 		uint64_t get_success_objs;  /**< Objects successfully allocated. */
- 	} stats;                        /**< Statistics */
- #endif
--	/**
--	 * Cache objects
--	 *
--	 * Note:
--	 * Cache is allocated at double size for API/ABI compatibility purposes only.
--	 * When reducing its size at an API/ABI breaking release,
--	 * remember to add a cache guard after it.
--	 */
--	alignas(RTE_CACHE_LINE_SIZE) void *objs[RTE_MEMPOOL_CACHE_MAX_SIZE * 2];
-+	/** Cache objects */
-+	alignas(RTE_CACHE_LINE_SIZE) void *objs[RTE_MEMPOOL_CACHE_MAX_SIZE];
-+	RTE_CACHE_GUARD;
- };
- 
- /**
-@@ -126,9 +120,26 @@ struct rte_mempool_objsz {
- 	/**< Total size of an object (header + elt + trailer). */
- };
- 
--/**< Maximum length of a memory pool's name. */
--#define RTE_MEMPOOL_NAMESIZE (RTE_RING_NAMESIZE - \
--			      sizeof(RTE_MEMPOOL_MZ_PREFIX) + 1)
-+/* Represents the memzone prefix of the default mempool driver. */
-+#define RTE_MEMPOOL_DRIVER_REPRESENTATIVE_MZ_PREFIX "RG_"
-+
-+/**
-+ * Maximum length of a memory pool's name.
-+ *
-+ * Needs room for memzone prefix indicating "mempool" type:
-+ * "MP_<name>"
-+ * Note:
-+ * The mempool driver needs room for its own memzone prefix too, e.g.:
-+ * "RG_MP_<name>" (ring driver) or "STK_MP_<name>" (stack driver)
-+ * In order to fail early on too long names when creating the mempool,
-+ * the length of the memzone name reserved by various mempool drivers is
-+ * not considered; only the default driver (ring) is considered here.
-+ * If the name eventually turns out to be too long for the chosen mempool driver,
-+ * populating the mempool will fail.
-+ */
-+#define RTE_MEMPOOL_NAMESIZE (RTE_MEMZONE_NAMESIZE - \
-+		(sizeof(RTE_MEMPOOL_DRIVER_REPRESENTATIVE_MZ_PREFIX) - 1) - \
-+		(sizeof(RTE_MEMPOOL_MZ_PREFIX) - 1))
- #define RTE_MEMPOOL_MZ_PREFIX "MP_"
- 
- /* "MP_<name>" */
-@@ -240,8 +251,7 @@ struct __rte_cache_aligned rte_mempool {
- 	unsigned int flags;              /**< Flags of the mempool. */
- 	int socket_id;                   /**< Socket id passed at create. */
- 	uint32_t size;                   /**< Max size of the mempool. */
--	uint32_t cache_size;
--	/**< Size of per-lcore default local cache. */
-+	uint32_t cache_size;             /**< Size of per-lcore default local cache. */
- 
- 	uint32_t elt_size;               /**< Size of an element. */
- 	uint32_t header_size;            /**< Size of header (before elt). */
-@@ -257,13 +267,13 @@ struct __rte_cache_aligned rte_mempool {
- 	 */
- 	int32_t ops_index;
- 
--	struct rte_mempool_cache *local_cache; /**< Per-lcore local cache */
--
- 	uint32_t populated_size;         /**< Number of populated objects. */
- 	struct rte_mempool_objhdr_list elt_list; /**< List of objects in pool */
- 	uint32_t nb_mem_chunks;          /**< Number of memory chunks */
- 	struct rte_mempool_memhdr_list mem_list; /**< List of memory chunks */
- 
-+	struct rte_mempool_cache local_cache[RTE_MAX_LCORE]; /**< Per-lcore local cache */
-+
- #ifdef RTE_LIBRTE_MEMPOOL_STATS
- 	/** Per-lcore statistics.
- 	 *
-@@ -271,6 +281,8 @@ struct __rte_cache_aligned rte_mempool {
- 	 */
- 	struct rte_mempool_debug_stats stats[RTE_MAX_LCORE + 1];
- #endif
-+
-+	/* Private data are located immediately after the mempool structure. */
- };
- 
- /** Spreading among memory channels not required. */
-@@ -362,18 +374,6 @@ struct __rte_cache_aligned rte_mempool {
- #define RTE_MEMPOOL_CACHE_STAT_ADD(cache, name, n) do {} while (0)
- #endif
- 
--/**
-- * @internal Calculate the size of the mempool header.
-- *
-- * @param mp
-- *   Pointer to the memory pool.
-- * @param cs
-- *   Size of the per-lcore cache.
-- */
--#define RTE_MEMPOOL_HEADER_SIZE(mp, cs) \
--	(sizeof(*(mp)) + (((cs) == 0) ? 0 : \
--	(sizeof(struct rte_mempool_cache) * RTE_MAX_LCORE)))
--
- /* return the header of a mempool object (internal) */
- static inline struct rte_mempool_objhdr *
- rte_mempool_get_header(void *obj)
-@@ -1049,7 +1049,7 @@ rte_mempool_free(struct rte_mempool *mp);
-  *   If cache_size is non-zero, the rte_mempool library will try to
-  *   limit the accesses to the common lockless pool, by maintaining a
-  *   per-lcore object cache. This argument must be lower or equal to
-- *   RTE_MEMPOOL_CACHE_MAX_SIZE and n.
-+ *   RTE_MEMPOOL_CACHE_MAX_SIZE and n, and it must be divisible by 32.
-  *   The access to the per-lcore table is of course
-  *   faster than the multi-producer/consumer pool. The cache can be
-  *   disabled if the cache_size argument is set to 0; it can be useful to
-@@ -1368,15 +1368,16 @@ rte_mempool_cache_free(struct rte_mempool_cache *cache);
- static __rte_always_inline struct rte_mempool_cache *
- rte_mempool_default_cache(struct rte_mempool *mp, unsigned lcore_id)
- {
--	if (unlikely(mp->cache_size == 0))
-+	if (unlikely(lcore_id == LCORE_ID_ANY))
+ 	node_pool = rte_mempool_create(mem_name, conf->max_nodes,
+ 		sizeof(struct rte_rib6_node) + conf->ext_sz, 0, 0,
+ 		NULL, NULL, NULL, NULL, socket_id, 0);
+@@ -498,7 +509,6 @@ rte_rib6_create(const char *name, int socket_id,
  		return NULL;
+ 	}
  
--	if (unlikely(lcore_id == LCORE_ID_ANY))
-+	struct rte_mempool_cache *cache = &mp->local_cache[lcore_id];
-+
-+	if (unlikely(cache->size == 0))
- 		return NULL;
+-	snprintf(mem_name, sizeof(mem_name), "RIB6_%s", name);
+ 	rib6_list = RTE_TAILQ_CAST(rte_rib6_tailq.head, rte_rib6_list);
  
--	rte_mempool_trace_default_cache(mp, lcore_id,
--		&mp->local_cache[lcore_id]);
--	return &mp->local_cache[lcore_id];
-+	rte_mempool_trace_default_cache(mp, lcore_id, cache);
-+	return cache;
- }
- 
- /**
-@@ -1445,9 +1446,24 @@ rte_mempool_do_generic_put(struct rte_mempool *mp, void * const *obj_table,
- 		 * are more hot, from the upper half of the cache.
- 		 */
- 		__rte_assume(cache->len > cache->size / 2);
--		rte_mempool_ops_enqueue_bulk(mp, &cache->objs[0], cache->size / 2);
--		rte_memcpy(&cache->objs[0], &cache->objs[cache->size / 2],
--				sizeof(void *) * (cache->len - cache->size / 2));
-+		rte_mempool_ops_enqueue_bulk(mp, cache->objs, cache->size / 2);
-+		/*
-+		 * For improved rte_memcpy() performance, move down objects
-+		 * from CPU cache line aligned address in chunks of 32 bytes.
-+		 * Note: For cache->objs[cache->size / 2] to be cache line aligned, cache->size
-+		 * must be divisible by 32 on 32-bit architecture with 64-byte cache line,
-+		 * divisible by 32 on 64-bit architecture with 128-byte cache line, and
-+		 * be divisible by 16 on 64-bit architecture with 64-byte cache line.
-+		 * For API consistency, require mempool cache size is divisible by 32.
-+		 * This requirement is enforced when creating the cache.
-+		 * @ref rte_mempool_create_empty() implementation.
-+		 */
-+		const size_t move = RTE_ALIGN_MUL_CEIL(
-+				sizeof(void *) * (cache->len - cache->size / 2), 32);
-+		__rte_assume(move >= 32);
-+		__rte_assume((move & 31) == 0);
-+		rte_memcpy(cache->objs, __rte_assume_cache_aligned(&cache->objs[cache->size / 2]),
-+				move);
- 		cache_objs = &cache->objs[cache->len - cache->size / 2];
- 		cache->len = cache->len - cache->size / 2 + n;
- 	} else {
-@@ -1892,8 +1908,7 @@ void rte_mempool_audit(struct rte_mempool *mp);
-  */
- static inline void *rte_mempool_get_priv(struct rte_mempool *mp)
- {
--	return (char *)mp +
--		RTE_MEMPOOL_HEADER_SIZE(mp, mp->cache_size);
-+	return (char *)mp + sizeof(struct rte_mempool);
- }
- 
- /**
+ 	rte_mcfg_tailq_write_lock();
 -- 
-2.43.0
+2.34.1
 
