@@ -2,32 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A70A4C5B572
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 17:47:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 776B9C5B572
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 17:47:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A0A8D427AE;
-	Wed, 12 Aug 2026 19:46:28 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 07399427AA
- for <dev@dpdk.org>; Wed, 12 Aug 2026 19:46:26 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D71DB1A0046;
- Wed, 12 Aug 2026 19:46:25 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A93C9427AA;
+	Wed, 12 Aug 2026 19:46:29 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 2E2D4427C1
+ for <dev@dpdk.org>; Wed, 12 Aug 2026 19:46:27 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 121E520004D;
+ Wed, 12 Aug 2026 19:46:27 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9E48B1A0043;
- Wed, 12 Aug 2026 19:46:25 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D0A4920003D;
+ Wed, 12 Aug 2026 19:46:26 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 43DC31800088;
- Thu, 13 Aug 2026 01:46:24 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 5449818000B1;
+ Thu, 13 Aug 2026 01:46:25 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
-Subject: [PATCH v9 09/25] net/dpaa: optimize FM deconfig
-Date: Wed, 12 Aug 2026 23:15:52 +0530
-Message-Id: <20260812174609.1100111-10-hemant.agrawal@nxp.com>
+Cc: Jun Yang <jun.yang@nxp.com>
+Subject: [PATCH v9 10/25] net/dpaa: optimize FMC MAC type parsing
+Date: Wed, 12 Aug 2026 23:15:53 +0530
+Message-Id: <20260812174609.1100111-11-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260812174609.1100111-1-hemant.agrawal@nxp.com>
 References: <20260811115731.3421032-1-hemant.agrawal@nxp.com>
@@ -48,111 +49,127 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Consolidate FM deconfiguration to avoid duplicate calls.
-Move the fm_deconfig call to a single location and remove
-redundant checks in the device close path.
+From: Jun Yang <jun.yang@nxp.com>
 
-Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
+For ls104xa, MAC9 and MAC10's type could be either of 10G/2.5G/1G
+up to serdes configuration, MAC index should be identified by
+port name instead of parsing MAC type and port number.
+
+Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- drivers/net/dpaa/dpaa_ethdev.c | 42 +++++++++++++++-------------------
- drivers/net/dpaa/dpaa_flow.c   |  9 ++++----
- 2 files changed, 24 insertions(+), 27 deletions(-)
+ drivers/net/dpaa/dpaa_fmc.c | 73 ++++++++++++++++++++++---------------
+ 1 file changed, 44 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
-index a03eb8f5f2..74e60a0e4e 100644
---- a/drivers/net/dpaa/dpaa_ethdev.c
-+++ b/drivers/net/dpaa/dpaa_ethdev.c
-@@ -531,15 +531,6 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
- 		return -ENOENT;
- 	}
+diff --git a/drivers/net/dpaa/dpaa_fmc.c b/drivers/net/dpaa/dpaa_fmc.c
+index 7dc42f6e23..3404b27bea 100644
+--- a/drivers/net/dpaa/dpaa_fmc.c
++++ b/drivers/net/dpaa/dpaa_fmc.c
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2017-2023 NXP
++ * Copyright 2017-2026 NXP
+  */
  
--	/* DPAA FM deconfig */
--	if (!(default_q || fmc_q)) {
--		ret = dpaa_fm_deconfig(dpaa_intf, dev->process_private);
--		if (ret) {
--			DPAA_PMD_WARN("%s: FM deconfig failed(%d)",
--				dev->data->name, ret);
--		}
+ /* System headers */
+@@ -204,6 +204,36 @@ struct fmc_model_t {
+ 
+ struct fmc_model_t *g_fmc_model;
+ 
++#define FMC_PORT_NAME_MAC "MAC/"
++#define FMC_PORT_NAME_OFFLINE "OFFLINE/"
++
++static int
++dpaa_port_fmc_get_idx_from_name(const char *name)
++{
++	const char *found;
++	int idx_str_start = -1, idx;
++
++	found = strstr(name, FMC_PORT_NAME_MAC);
++	if (!found) {
++		found = strstr(name, FMC_PORT_NAME_OFFLINE);
++		if (found)
++			idx_str_start = strlen(FMC_PORT_NAME_OFFLINE);
++	} else {
++		idx_str_start = strlen(FMC_PORT_NAME_MAC);
++	}
++
++	if (!found) {
++		DPAA_PMD_ERR("Invalid fmc port name: %s", name);
++		return -EINVAL;
++	}
++
++	idx = atoi(&found[idx_str_start]);
++
++	DPAA_PMD_INFO("MAC index of %s is %d", name, idx);
++
++	return idx;
++}
++
+ static int
+ dpaa_port_fmc_port_parse(struct fman_if *fif,
+ 	const struct fmc_model_t *fmc_model,
+@@ -211,7 +241,10 @@ dpaa_port_fmc_port_parse(struct fman_if *fif,
+ {
+ 	int current_port = fmc_model->apply_order[apply_idx].index;
+ 	const fmc_port *pport = &fmc_model->port[current_port];
+-	uint32_t num;
++	int num = dpaa_port_fmc_get_idx_from_name(pport->name);
++
++	if (num < 0)
++		return num;
+ 
+ 	if (pport->type == e_FM_PORT_TYPE_OH_OFFLINE_PARSING &&
+ 	    pport->number == fif->mac_idx &&
+@@ -219,40 +252,22 @@ dpaa_port_fmc_port_parse(struct fman_if *fif,
+ 	     fif->mac_type == fman_onic))
+ 		return current_port;
+ 
+-	if (fif->mac_type == fman_mac_1g) {
+-		if (pport->type != e_FM_PORT_TYPE_RX)
+-			return -ENODEV;
+-		num = pport->number + DPAA_1G_MAC_START_IDX;
+-		if (fif->mac_idx == num)
+-			return current_port;
+-
++	if (fif->mac_type == fman_mac_1g &&
++		pport->type != e_FM_PORT_TYPE_RX)
+ 		return -ENODEV;
 -	}
 -
- 	dpaa_dev = RTE_CLASS_TO_BUS_DEVICE(dev, *dpaa_dev);
- 	intr_handle = dpaa_dev->intr_handle;
- 	__fif = container_of(fif, struct __fman_if, __if);
-@@ -580,7 +571,26 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
+-	if (fif->mac_type == fman_mac_2_5g) {
+-		if (pport->type != e_FM_PORT_TYPE_RX_2_5G)
+-			return -ENODEV;
+-		num = pport->number + DPAA_2_5G_MAC_START_IDX;
+-		if (fif->mac_idx == num)
+-			return current_port;
  
- 	/* release configuration memory */
- 	rte_free(dpaa_intf->fc_conf);
-+	dpaa_intf->fc_conf = NULL;
- 
-+	/* For FMCLESS mode of share MAC, deconfig FM to direct
-+	 * ingress traffic to kernel before fq shutdown.
-+	 */
-+	if (!(default_q || fmc_q) && dpaa_intf->port_handle) {
-+		ret = dpaa_fm_deconfig(dpaa_intf, dev->process_private);
-+		if (ret) {
-+			DPAA_PMD_WARN("%s: FM deconfig failed(%d)",
-+				dev->data->name, ret);
-+		}
-+	}
-+	if (fif->num_profiles) {
-+		ret = dpaa_port_vsp_cleanup(dpaa_intf, fif);
-+		if (ret) {
-+			DPAA_PMD_WARN("%s: cleanup VSP failed(%d)",
-+				dev->data->name, ret);
-+		}
-+	}
-+	/* Release congestion Groups after releasing FQIDs */
- 	/* Release RX congestion Groups */
- 	if (dpaa_intf->cgr_rx) {
- 		for (loop = 0; loop < dpaa_intf->nb_rx_queues; loop++) {
-@@ -624,20 +634,6 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
- 
- 	rte_free(dpaa_intf->tx_queues);
- 	dpaa_intf->tx_queues = NULL;
--	if (dpaa_intf->port_handle) {
--		ret = dpaa_fm_deconfig(dpaa_intf, fif);
--		if (ret) {
--			DPAA_PMD_WARN("%s: FM deconfig failed(%d)",
--				dev->data->name, ret);
--		}
++	if (fif->mac_type == fman_mac_2_5g &&
++		pport->type != e_FM_PORT_TYPE_RX_2_5G)
+ 		return -ENODEV;
 -	}
--	if (fif->num_profiles) {
--		ret = dpaa_port_vsp_cleanup(dpaa_intf, fif);
--		if (ret) {
--			DPAA_PMD_WARN("%s: cleanup VSP failed(%d)",
--				dev->data->name, ret);
--		}
+-
+-	if (fif->mac_type == fman_mac_10g) {
+-		if (pport->type != e_FM_PORT_TYPE_RX_10G)
+-			return -ENODEV;
+-		num = pport->number + DPAA_10G_MAC_START_IDX;
+-		if (fif->mac_idx == num)
+-			return current_port;
+ 
++	if (fif->mac_type == fman_mac_10g &&
++		pport->type != e_FM_PORT_TYPE_RX_10G)
+ 		return -ENODEV;
 -	}
  
- 	return ret;
+-	DPAA_PMD_ERR("Invalid MAC(mac_idx=%d) type(%d)",
+-		fif->mac_idx, fif->mac_type);
++	if (fif->mac_idx == num)
++		return current_port;
+ 
+-	return -EINVAL;
++	return -ENODEV;
  }
-diff --git a/drivers/net/dpaa/dpaa_flow.c b/drivers/net/dpaa/dpaa_flow.c
-index f21950f64d..bfe294d21d 100644
---- a/drivers/net/dpaa/dpaa_flow.c
-+++ b/drivers/net/dpaa/dpaa_flow.c
-@@ -728,6 +728,9 @@ int dpaa_fm_deconfig(struct dpaa_if *dpaa_intf,
  
- 	PMD_INIT_FUNC_TRACE();
- 
-+	if (!dpaa_intf->port_handle)
-+		return 0;
-+
- 	/* FM PORT Disable */
- 	ret = fm_port_disable(dpaa_intf->port_handle);
- 	if (ret != E_OK) {
-@@ -787,10 +790,8 @@ int dpaa_fm_config(struct rte_eth_dev *dev, uint64_t req_dist_set)
- 	unsigned int i = 0;
- 	PMD_INIT_FUNC_TRACE();
- 
--	if (dpaa_intf->port_handle) {
--		if (dpaa_fm_deconfig(dpaa_intf, fif))
--			DPAA_PMD_ERR("DPAA FM deconfig failed");
--	}
-+	if (dpaa_fm_deconfig(dpaa_intf, fif))
-+		DPAA_PMD_ERR("DPAA FM deconfig failed");
- 
- 	if (!dev->data->nb_rx_queues)
- 		return 0;
+ static int
 -- 
 2.25.1
 
