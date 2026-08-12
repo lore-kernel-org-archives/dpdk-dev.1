@@ -2,61 +2,62 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAEA6C5AD5A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 23:37:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B09F4C5CFDB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 23:37:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CD2D84026E;
-	Thu, 13 Aug 2026 01:37:29 +0200 (CEST)
-Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
- [209.85.128.199])
- by mails.dpdk.org (Postfix) with ESMTP id 531A140264
- for <dev@dpdk.org>; Thu, 13 Aug 2026 01:37:29 +0200 (CEST)
-Received: by mail-yw1-f199.google.com with SMTP id
- 00721157ae682-81e7b95cd84so24638827b3.0
- for <dev@dpdk.org>; Wed, 12 Aug 2026 16:37:29 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D79F440431;
+	Thu, 13 Aug 2026 01:37:31 +0200 (CEST)
+Received: from mail-yx1-f72.google.com (mail-yx1-f72.google.com
+ [74.125.224.72]) by mails.dpdk.org (Postfix) with ESMTP id 8AA41402C8
+ for <dev@dpdk.org>; Thu, 13 Aug 2026 01:37:30 +0200 (CEST)
+Received: by mail-yx1-f72.google.com with SMTP id
+ 956f58d0204a3-66aafa833c0so4308301d50.3
+ for <dev@dpdk.org>; Wed, 12 Aug 2026 16:37:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1786577848; x=1787182648; darn=dpdk.org;
+ d=google.com; s=20251104; t=1786577850; x=1787182650; darn=dpdk.org;
  h=content-type:cc:to:from:subject:message-id:references:mime-version
  :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=41t0acPxYFMpa5QFWbpwiMCtebZbALEaBaDuNdBqSnY=;
- b=OmU1MLsP5DYaIInpHa3RNrf6znJHPva3fiaop0u0wPGiAKVd32rv5kKooYIVI6c8to
- HIN83MWIEL0nh8dbVgQKKHdgaiL+xywbPeQLiTTnuTRTY5iOUFGAFJfl6o9GT7+MP4jB
- 4t0abUbC+a+gLI363xJuTaPvTMc63yWG0U8JvIcMptyBfbfUXsbU9Wrd8rk8TrhGafqy
- 0iQiAAf942tSMwQGI+UJvd3CzsNiHCxIb6giJ1c9kmDZMzZiB+777NJ6M62H5+PtKngK
- 0/0Mpgbw6mkfy8k3PnEUuzW9opT4mT/yyH/TdfUvbYXGvLozTi3QUG7mfcRxARxYCUfn
- iLHQ==
+ :content-type; bh=dtMS6gIZ8/AWfyR/uW23wLEKrOYuXw05wOkajx00/wg=;
+ b=VmeLHPrGP1U9pbytxpjOX7S+4eEz63kvT6bNm9hJ0N7bS4eA+06A5IhDAFQAyWfOA8
+ VjTAqoBSovB/l7H+EKYsL8/N375AFic600E+QHXsy8kJTtISG8kTWpWCy9fwW9RULO49
+ 90+YfmDJJqRf5Tq7zRGdfu7ab+sF0NCOU0+YS+SxTqoNv112/s8hj4QgEfHNlz80MQna
+ mYsL0/C8igmxMw8S73GDBxph41x5fessIWHSf7dTfQwagps/T0oMqXy9QYhjtxieSviM
+ 6xFZ7ey/NLKeVBNGCY5bXHnXJkXUL9uejuFUIdt2slS4lsQLv5lfPfRcd+iYuQmP2sRC
+ 74fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786577848; x=1787182648;
+ d=1e100.net; s=20251104; t=1786577850; x=1787182650;
  h=content-type:cc:to:from:subject:message-id:references:mime-version
  :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=41t0acPxYFMpa5QFWbpwiMCtebZbALEaBaDuNdBqSnY=;
- b=iXGCk0+N0lWWdbWwEjSQ+BMh5rSc/iI0DuHRX/KH+H5/KupYb8/krP8LEKEWgsv4UX
- /YeEC74nLyLOxaFFTJTRfVCa+oLOv68vyL4QVx/nB1iRcrXZ+qKsN+jiM9Z3IhyNabKQ
- RxqoFs2OXhHgBF9Szypeb+oeDKws/9U/4CXPgp9ZZvV9YkILyYf9X8Y94xIjGf6pUkSN
- VhJSoG7wrxvEy7+sH/8NOnAvK6n5rG6qgjXT1sJg6lMSrbQHeUd1LssfNZKOKkWozx3T
- I9fIVtzGJvFMAlALeg2smb5JQcuubWmzUpKrjn4r/XTasutFy5IB3hYXhndAjEs1DkZi
- ge9w==
-X-Gm-Message-State: AOJu0YzCs70qZ7ZmTld/blt3J9y5daxpHkXTeYO3K4EvK12jInG2LKtf
- 9VNG59rDgXR4JOYHmWXo5Q4uD/kWts4glsPKDwEwgcCcZDfEsdKb1sl2NTo6iwNEGyxPRKmDKh4
- 3MBLA9Txv8ajjUcaB2zgMVXOnEHA5EFAx+XQ/Ra1pK4s8UVhzaJ0sZoVTC2dHqTRDVJs4b/ka80
- IseuAEy52l/3dTgZHY5JUps8I=
-X-Received: from yxqu18.prod.google.com ([2002:a53:ea12:0:b0:667:7e4b:4cdd])
+ bh=dtMS6gIZ8/AWfyR/uW23wLEKrOYuXw05wOkajx00/wg=;
+ b=fyN5Coh4b4EtMEdwMG3WGSVb6c5DgqHO7/GAsn+dpfkHe82e4jkMPCb04i65pvqPJh
+ ydo2SfUGX4ep7o0MyuYOlb8eAFUR+Q45m08k09oAQR+zieg6Q+YdRGG13iTVVnCi642Z
+ r93frttOSkYOBXPKXGA4SzSBQZzzoWRZKjlpekXXowQknOOe44+z9E/Gews0+IEW0ubB
+ +s9cuBHBqvLoj9rqs1pixelZ+dyqZ69bevs3cQbCr9IkNa3Gst1H03XqEt8Wn1u34owM
+ u2SLBD7FHUY5SZwNYlT8dgGgDgZbaz7M1VYLgGKjou2WLLzPZ0OyAjbdElo0MTP/gMNB
+ 299Q==
+X-Gm-Message-State: AOJu0YybKUTo3XUDno/RyqVFLftDy67BBt7M1LCcNHSFlQNCwA7tT7mH
+ KT3jlUM57Vifqh6vrGLnrnLD+kQ0CDrtMW+TEdKugyc0ijsNH126UaOidVPQPt1vzyL7BA17mqx
+ bZgRcD31MkZ2dDkIZW32L4cFZnRvZcKVGMpoAwyAX9RqM+NDsTwlg44zH3mt1uc+bPpQm1WVJwe
+ gwM4UjIBEPNcoz8gFXfeVdJeQ=
+X-Received: from yxza7.prod.google.com ([2002:a05:690e:ec7:b0:667:c780:a370])
  (user=blasko job=prod-delivery.src-stubby-dispatcher) by
- 2002:a53:ccc6:0:b0:66b:178c:936
- with SMTP id 956f58d0204a3-66c517febfbmr595563d50.43.1786577848044; Wed, 12
- Aug 2026 16:37:28 -0700 (PDT)
-Date: Wed, 12 Aug 2026 23:36:34 +0000
-In-Reply-To: <20260623215325.814776-1-blasko@google.com>
+ 2002:a05:690e:4802:b0:66b:2a4c:1fa7
+ with SMTP id 956f58d0204a3-66c51496fd6mr704223d50.12.1786577849533; Wed, 12
+ Aug 2026 16:37:29 -0700 (PDT)
+Date: Wed, 12 Aug 2026 23:36:35 +0000
+In-Reply-To: <20260812233637.1968454-1-blasko@google.com>
 Mime-Version: 1.0
 References: <20260623215325.814776-1-blasko@google.com>
+ <20260812233637.1968454-1-blasko@google.com>
 X-Mailer: git-send-email 2.55.0.691.gc56d675ccc-goog
-Message-ID: <20260812233637.1968454-1-blasko@google.com>
-Subject: [PATCH v5 0/2] net/af_xdp: add Rx timestamping and read_clock support
+Message-ID: <20260812233637.1968454-2-blasko@google.com>
+Subject: [PATCH v5 1/2] net/af_xdp: add af_xdp rx metadata and dynamic
+ timestamping support
 From: Mark Blasko <blasko@google.com>
-To: dev@dpdk.org
-Cc: ciara.loftus@intel.com, mtahhan@redhat.com, joshwash@google.com, 
- jtranoleary@google.com, blasko@google.com
+To: dev@dpdk.org, Ciara Loftus <ciara.loftus@intel.com>, 
+ Maryam Tahhan <mtahhan@redhat.com>
+Cc: joshwash@google.com, jtranoleary@google.com, blasko@google.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -71,26 +72,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch series introduces support for dynamic RX timestamping and
-clock querying in the AF_XDP Poll Mode Driver.
+Enable dynamic RX timestamping in the AF_XDP Poll Mode Driver using
+layout-agnostic metadata offsets and validity verification.
 
-The first patch introduces three new vdev devargs to specify
-layout-agnostic metadata offsets and bitmasks for extracting hardware
-RX timestamps from XDP metadata into the mbuf dynamic timestamp field.
+This introduces three new vdev devargs to describe the metadata layout:
+1. xdp_meta_rx_ts_offset: byte offset of the RX timestamp in metadata.
+2. xdp_meta_valid_hint_offset: byte offset of the validity flag byte.
+3. xdp_meta_rx_ts_valid_mask: bitmask to verify timestamp validity.
 
-The second patch implements the read_clock ethdev operation, querying
-ethtool for the interface's PTP Hardware Clock index at start and using
-clock_gettime to query the NIC hardware clock time.
+If validation parameters are configured, the PMD verifies the validity
+bit at the target offset on a per-packet basis before copying the
+timestamp to the standard EAL dynamic field. Otherwise, the timestamp
+is assumed valid if metadata space is available.
+
+Signed-off-by: Mark Blasko <blasko@google.com>
+Reviewed-by: Joshua Washington <joshwash@google.com>
 ---
 v5:
-- Patch 1:
-  - Fix rx_timestamp_enabled check in eth_rx_queue_setup().
-  - Update af_xdp.rst documentation and code example.
-  - Update release notes for 26.11.
-- Patch 2:
-  - Update release notes for 26.11.
+  - Remove timestamp_dynfield_offset check from eth_rx_queue_setup()
+    to avoid latching rx_timestamp_enabled to false prior to
+    eth_dev_start().
+  - Update af_xdp.rst documentation to clarify offset direction
+    (backwards from mtod), specify hex format for validity mask, and
+    update code example with non-overlapping offsets.
+  - Update release notes to target release_26_11.rst.
 v4:
-- Patch 1:
   - Validate rx_timestamp_offset (8 <= offset <= 256) and valid_hint_offset
     (1 <= offset <= 256) bounds.
   - Revert parse_integer_arg() to base 10 and add dedicated parse_hex_arg()
@@ -98,48 +104,482 @@ v4:
   - Optimize fast-path check and use rte_pktmbuf_mtod_offset() macro.
   - Preserve config.tx_type in SIOCSHWTSTAMP instead of forcing
     HWTSTAMP_TX_OFF.
-  - Return -errno on socket failure and replace (caddr_t) cast with
+  - Return -errno on socket failure and replace (caddr_t) casts with
     (void *).
   - Advertise RTE_ETH_RX_OFFLOAD_TIMESTAMP conditionally when
     rx_timestamp_offset >= 0.
   - Update af_xdp.ini features matrix with Timestamp offload = Y.
   - Document CAP_NET_ADMIN requirement and persistent HW filter side
     effect in af_xdp.rst.
-- Patch 2:
-  - Move ptp_fd into pmd_process_private for multi-process safety.
-  - Decouple /dev/ptpX opening from RTE_ETH_RX_OFFLOAD_TIMESTAMP.
-  - Move read_clock documentation out of "Options" into its own section
-    in af_xdp.rst.
-  - Add #ifndef guards around CLOCKFD and FD_TO_CLOCKID macro definitions.
-  - Replace (caddr_t) cast with (void *).
 v3:
-- Patch 1:
-  - Add PMD documentation and release notes entry.
-  - Move dynamic mbuf timestamp field registration to eth_dev_start().
-  - Replace 64-bit pointer casting with memcpy.
-  - Add devargs validation and support auto-base integer parsing.
-- Patch 2:
-  - Add documentation and release notes entry.
-  - Add PTP file descriptor cleanup on device start, stop, and close.
-  - Return -errno on clock_gettime() failure and fix PTP open error logging.
+  - Add PMD documentation in doc/guides/nics/af_xdp.rst.
+  - Add release notes entry in doc/guides/rel_notes/release_26_07.rst.
+  - Move dynamic mbuf timestamp field registration to eth_dev_start(),
+    conditioned on RTE_ETH_RX_OFFLOAD_TIMESTAMP.
+  - Replace 64-bit pointer casting with memcpy to fix ARM unaligned access
+    faults.
+  - Add devargs validation (validity mask <= 255) and support base 0
+    integer parsing.
 v2:
-- Patch 1:
-  - Replace static metadata struct assumption with configurable vdev devargs
-    for layout-agnostic timestamp offset extraction and validity verification.
-- Patch 2:
-  - New patch introduced in v2 to support read_clock ethdev operation.
+  - Replace static metadata struct assumption with layout-agnostic devargs
+    (xdp_meta_rx_ts_offset, xdp_meta_valid_hint_offset, and
+    xdp_meta_rx_ts_valid_mask).
+  - Support per-packet timestamp validity verification via metadata hint
+    flag.
+  - Reject PMD probe if validity mask is zero when validity offset
+    is set.
 ---
-
-Mark Blasko (2):
-  net/af_xdp: add af_xdp rx metadata and dynamic timestamping support
-  net/af_xdp: add read_clock support to AF_XDP PMD
-
- doc/guides/nics/af_xdp.rst             |  48 ++++
+ doc/guides/nics/af_xdp.rst             |  37 +++++
  doc/guides/nics/features/af_xdp.ini    |   1 +
- doc/guides/rel_notes/release_26_11.rst |   7 +
- drivers/net/af_xdp/rte_eth_af_xdp.c    | 321 ++++++++++++++++++++++++-
- 4 files changed, 372 insertions(+), 5 deletions(-)
+ doc/guides/rel_notes/release_26_11.rst |   6 +
+ drivers/net/af_xdp/rte_eth_af_xdp.c    | 222 ++++++++++++++++++++++++-
+ 4 files changed, 261 insertions(+), 5 deletions(-)
 
+diff --git a/doc/guides/nics/af_xdp.rst b/doc/guides/nics/af_xdp.rst
+index c455b4c066..304470bcf7 100644
+--- a/doc/guides/nics/af_xdp.rst
++++ b/doc/guides/nics/af_xdp.rst
+@@ -212,6 +212,43 @@ the AF_XDP PMD configures it internally to the `AF_XDP Device Plugin for Kuberne
+ 
+    --vdev=net_af_xdp0,use_pinned_map=1,dp_path="/tmp/afxdp_dp/<<interface name>>/xsks_map"
+ 
++xdp_meta_rx_ts_offset
++~~~~~~~~~~~~~~~~~~~~~
++
++The ``xdp_meta_rx_ts_offset`` argument specifies the byte offset of the 64-bit RX
++timestamp within the XDP metadata headroom area. All metadata offsets are measured
++backwards from the start of packet data (``rte_pktmbuf_mtod()``).
++
++.. code-block:: console
++
++    --vdev net_af_xdp,iface=ens786f1,xdp_meta_rx_ts_offset=8
++
++xdp_meta_valid_hint_offset
++~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++The ``xdp_meta_valid_hint_offset`` argument specifies the byte offset of the validity
++flag byte within the XDP metadata headroom area, measured backwards from the start of
++packet data.
++
++.. code-block:: console
++
++    --vdev net_af_xdp,iface=ens786f1,xdp_meta_rx_ts_offset=8,xdp_meta_valid_hint_offset=12
++
++xdp_meta_rx_ts_valid_mask
++~~~~~~~~~~~~~~~~~~~~~~~~~
++
++The ``xdp_meta_rx_ts_valid_mask`` argument specifies the bitmask (in hex) used
++to verify timestamp validity at ``xdp_meta_valid_hint_offset``.
++
++.. code-block:: console
++
++    --vdev net_af_xdp,iface=ens786f1,xdp_meta_rx_ts_offset=8,xdp_meta_valid_hint_offset=12,xdp_meta_rx_ts_valid_mask=0x1
++
++Enabling dynamic Rx timestamping configures ``HWTSTAMP_FILTER_ALL`` on the kernel
++netdev interface via ``SIOCSHWTSTAMP`` (which requires ``CAP_NET_ADMIN``). This
++hardware filter setting persists on the netdev interface after the DPDK application
++exits.
++
+ Limitations
+ -----------
+ 
+diff --git a/doc/guides/nics/features/af_xdp.ini b/doc/guides/nics/features/af_xdp.ini
+index d2461dacfa..6fc70ec153 100644
+--- a/doc/guides/nics/features/af_xdp.ini
++++ b/doc/guides/nics/features/af_xdp.ini
+@@ -5,6 +5,7 @@
+ ;
+ [Features]
+ Link status          = Y
++Timestamp offload    = Y
+ Power mgmt address monitor = Y
+ MTU update           = Y
+ Promiscuous mode     = Y
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index c8cc86295d..91c517ec66 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -55,6 +55,12 @@ New Features
+      Also, make sure to start the actual text at the margin.
+      =======================================================
+ 
++* **Updated AF_XDP PMD.**
++
++  * Added support for RX metadata hardware timestamping via vdev devargs
++    ``xdp_meta_rx_ts_offset``, ``xdp_meta_valid_hint_offset``, and
++    ``xdp_meta_rx_ts_valid_mask``.
++
+ 
+ Removed Items
+ -------------
+diff --git a/drivers/net/af_xdp/rte_eth_af_xdp.c b/drivers/net/af_xdp/rte_eth_af_xdp.c
+index 2cdb533276..2a35570f07 100644
+--- a/drivers/net/af_xdp/rte_eth_af_xdp.c
++++ b/drivers/net/af_xdp/rte_eth_af_xdp.c
+@@ -15,6 +15,7 @@
+ #include <linux/if_link.h>
+ #include <linux/ethtool.h>
+ #include <linux/sockios.h>
++#include <linux/net_tstamp.h>
+ #include "af_xdp_deps.h"
+ 
+ #include <rte_ethdev.h>
+@@ -62,6 +63,9 @@
+ #define PF_XDP AF_XDP
+ #endif
+ 
++static int timestamp_dynfield_offset = -1;
++static uint64_t timestamp_dynflag;
++
+ RTE_LOG_REGISTER_DEFAULT(af_xdp_logtype, NOTICE);
+ #define RTE_LOGTYPE_NET_AF_XDP af_xdp_logtype
+ 
+@@ -144,6 +148,10 @@ struct pkt_rx_queue {
+ 	struct pollfd fds[1];
+ 	int xsk_queue_idx;
+ 	int busy_budget;
++	bool rx_timestamp_enabled;
++	int rx_timestamp_offset;
++	int rx_timestamp_valid_offset;
++	uint8_t rx_timestamp_valid_mask;
+ };
+ 
+ struct tx_stats {
+@@ -183,6 +191,9 @@ struct pmd_internals {
+ 
+ 	struct pkt_rx_queue *rx_queues;
+ 	struct pkt_tx_queue *tx_queues;
++	int rx_timestamp_offset;
++	int rx_timestamp_valid_offset;
++	uint8_t rx_timestamp_valid_mask;
+ };
+ 
+ struct pmd_process_private {
+@@ -200,6 +211,9 @@ struct pmd_process_private {
+ #define ETH_AF_XDP_USE_PINNED_MAP_ARG	"use_pinned_map"
+ #define ETH_AF_XDP_DP_PATH_ARG			"dp_path"
+ #define ETH_AF_XDP_MODE_ARG				"mode"
++#define ETH_AF_XDP_RX_TIMESTAMP_OFFSET_ARG	"xdp_meta_rx_ts_offset"
++#define ETH_AF_XDP_RX_TIMESTAMP_VALID_OFFSET_ARG	"xdp_meta_valid_hint_offset"
++#define ETH_AF_XDP_RX_TIMESTAMP_VALID_MASK_ARG	"xdp_meta_rx_ts_valid_mask"
+ 
+ /* Define different modes for af_xdp prog to attach */
+ #define ETH_AF_XDP_DRV_MODE_ARG			"drv"
+@@ -232,6 +246,9 @@ static const char * const valid_arguments[] = {
+ 	ETH_AF_XDP_USE_PINNED_MAP_ARG,
+ 	ETH_AF_XDP_DP_PATH_ARG,
+ 	ETH_AF_XDP_MODE_ARG,
++	ETH_AF_XDP_RX_TIMESTAMP_OFFSET_ARG,
++	ETH_AF_XDP_RX_TIMESTAMP_VALID_OFFSET_ARG,
++	ETH_AF_XDP_RX_TIMESTAMP_VALID_MASK_ARG,
+ 	NULL
+ };
+ 
+@@ -398,6 +415,28 @@ af_xdp_rx_zc(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 
+ 		rte_pktmbuf_pkt_len(bufs[i]) = len;
+ 		rte_pktmbuf_data_len(bufs[i]) = len;
++
++		if (rxq->rx_timestamp_enabled) {
++			/*
++			 * Copy timestamp if validity offset is not defined or
++			 * flag is valid.
++			 */
++			if (rxq->rx_timestamp_valid_offset < 0 ||
++			    (*rte_pktmbuf_mtod_offset(bufs[i], uint8_t *,
++						      -rxq->rx_timestamp_valid_offset) &
++			     rxq->rx_timestamp_valid_mask)) {
++				uint64_t ts;
++				memcpy(&ts,
++				       rte_pktmbuf_mtod_offset(bufs[i], char *,
++							       -rxq->rx_timestamp_offset),
++				       sizeof(ts));
++				*RTE_MBUF_DYNFIELD(bufs[i],
++						   timestamp_dynfield_offset,
++						   uint64_t *) = ts;
++				bufs[i]->ol_flags |= timestamp_dynflag;
++			}
++		}
++
+ 		rx_bytes += len;
+ 	}
+ 
+@@ -457,6 +496,26 @@ af_xdp_rx_cp(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 		len = desc->len;
+ 		pkt = xsk_umem__get_data(rxq->umem->mz->addr, addr);
+ 
++		if (rxq->rx_timestamp_enabled) {
++			/*
++			 * Copy timestamp if validity offset is not defined or
++			 * flag is valid.
++			 */
++			if (rxq->rx_timestamp_valid_offset < 0 ||
++			    (*(uint8_t *)((char *)pkt -
++					  rxq->rx_timestamp_valid_offset) &
++			     rxq->rx_timestamp_valid_mask)) {
++				uint64_t ts;
++				memcpy(&ts,
++				       (char *)pkt - rxq->rx_timestamp_offset,
++				       sizeof(ts));
++				*RTE_MBUF_DYNFIELD(mbufs[i],
++						   timestamp_dynfield_offset,
++						   uint64_t *) = ts;
++				mbufs[i]->ol_flags |= timestamp_dynflag;
++			}
++		}
++
+ 		rte_memcpy(rte_pktmbuf_mtod(mbufs[i], void *), pkt, len);
+ 		rte_ring_enqueue(umem->buf_ring, (void *)addr);
+ 		rte_pktmbuf_pkt_len(mbufs[i]) = len;
+@@ -738,11 +797,79 @@ eth_af_xdp_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ #endif
+ }
+ 
++static int
++eth_af_xdp_enable_hw_timestamping(const char *if_name)
++{
++	struct hwtstamp_config config = {0};
++	struct ifreq ifr = {0};
++	int fd, ret;
++
++	fd = socket(AF_INET, SOCK_DGRAM, 0);
++	if (fd < 0)
++		return -errno;
++
++	ifr.ifr_data = (void *)&config;
++	strlcpy(ifr.ifr_name, if_name, IFNAMSIZ);
++
++	ret = ioctl(fd, SIOCGHWTSTAMP, &ifr);
++	if (ret == 0) {
++		if (config.rx_filter != HWTSTAMP_FILTER_NONE) {
++			close(fd);
++			return 0;
++		}
++	}
++
++	config.flags = 0;
++	config.rx_filter = HWTSTAMP_FILTER_ALL;
++
++	ret = ioctl(fd, SIOCSHWTSTAMP, &ifr);
++	close(fd);
++
++	if (ret < 0)
++		return -errno;
++
++	if (config.rx_filter == HWTSTAMP_FILTER_NONE)
++		return -ENOTSUP;
++
++	return 0;
++}
++
+ static int
+ eth_dev_start(struct rte_eth_dev *dev)
+ {
++	struct pmd_internals *internals = dev->data->dev_private;
+ 	uint16_t i;
+ 
++	if (dev->data->dev_conf.rxmode.offloads &
++	    RTE_ETH_RX_OFFLOAD_TIMESTAMP) {
++		int rc;
++
++		if (internals->rx_timestamp_offset < 0) {
++			AF_XDP_LOG_LINE(ERR,
++				"Timestamp offload requested but xdp_meta_rx_ts_offset parameter not configured");
++			return -EINVAL;
++		}
++
++		rc = rte_mbuf_dyn_rx_timestamp_register(&timestamp_dynfield_offset,
++							&timestamp_dynflag);
++		if (rc) {
++			AF_XDP_LOG_LINE(ERR,
++				"Failed to register mbuf timestamp field");
++			return rc;
++		}
++		AF_XDP_LOG_LINE(INFO,
++			"Registered mbuf timestamp field, offset: %d",
++			timestamp_dynfield_offset);
++
++		rc = eth_af_xdp_enable_hw_timestamping(internals->if_name);
++		if (rc < 0) {
++			AF_XDP_LOG_LINE(ERR,
++				"Could not enable HW timestamping on %s: %s",
++				internals->if_name, strerror(-rc));
++			return rc;
++		}
++	}
++
+ 	dev->data->dev_link.link_status = RTE_ETH_LINK_UP;
+ 	for (i = 0; i < dev->data->nb_rx_queues; i++) {
+ 		dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
+@@ -870,6 +997,11 @@ eth_dev_info(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
+ 	dev_info->max_rx_queues = internals->queue_cnt;
+ 	dev_info->max_tx_queues = internals->queue_cnt;
+ 
++	if (internals->rx_timestamp_offset >= 0) {
++		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_TIMESTAMP;
++		dev_info->rx_queue_offload_capa |= RTE_ETH_RX_OFFLOAD_TIMESTAMP;
++	}
++
+ 	dev_info->min_mtu = RTE_ETHER_MIN_MTU;
+ #if defined(XDP_UMEM_UNALIGNED_CHUNK_FLAG)
+ 	dev_info->max_rx_pktlen = getpagesize() -
+@@ -1873,7 +2005,12 @@ eth_rx_queue_setup(struct rte_eth_dev *dev,
+ 	process_private->rxq_xsk_fds[rx_queue_id] = rxq->fds[0].fd;
+ 
+ 	rxq->port = dev->data->port_id;
+-
++	rxq->rx_timestamp_offset = internals->rx_timestamp_offset;
++	rxq->rx_timestamp_valid_offset = internals->rx_timestamp_valid_offset;
++	rxq->rx_timestamp_valid_mask = internals->rx_timestamp_valid_mask;
++	rxq->rx_timestamp_enabled = (rxq->rx_timestamp_offset >= 0) &&
++				    !!(dev->data->dev_conf.rxmode.offloads &
++				       RTE_ETH_RX_OFFLOAD_TIMESTAMP);
+ 	dev->data->rx_queues[rx_queue_id] = rxq;
+ 	return 0;
+ 
+@@ -2032,6 +2169,24 @@ parse_integer_arg(const char *key __rte_unused,
+ 	return 0;
+ }
+ 
++/** parse hex from argument */
++static int
++parse_hex_arg(const char *key __rte_unused,
++	      const char *value, void *extra_args)
++{
++	int *i = (int *)extra_args;
++	char *end;
++
++	unsigned long val = strtoul(value, &end, 16);
++	if (val > UINT8_MAX) {
++		AF_XDP_LOG_LINE(ERR, "Validity mask must be a valid hex byte (0-0xFF).");
++		return -EINVAL;
++	}
++
++	*i = (int)val;
++	return 0;
++}
++
+ /** parse name argument */
+ static int
+ parse_name_arg(const char *key __rte_unused,
+@@ -2146,7 +2301,9 @@ static int
+ parse_parameters(struct rte_kvargs *kvlist, char *if_name, int *start_queue,
+ 		 int *queue_cnt, int *shared_umem, char *prog_path,
+ 		 int *busy_budget, int *force_copy, int *use_cni,
+-		 int *use_pinned_map, char *dp_path, uint32_t *xdp_mode)
++		 int *use_pinned_map, char *dp_path, uint32_t *xdp_mode,
++		 int *rx_timestamp_offset, int *rx_timestamp_valid_offset,
++		 int *rx_timestamp_valid_mask)
+ {
+ 	int ret;
+ 
+@@ -2209,6 +2366,21 @@ parse_parameters(struct rte_kvargs *kvlist, char *if_name, int *start_queue,
+ 	if (ret < 0)
+ 		goto free_kvlist;
+ 
++	ret = rte_kvargs_process(kvlist, ETH_AF_XDP_RX_TIMESTAMP_OFFSET_ARG,
++				 &parse_integer_arg, rx_timestamp_offset);
++	if (ret < 0)
++		goto free_kvlist;
++
++	ret = rte_kvargs_process(kvlist, ETH_AF_XDP_RX_TIMESTAMP_VALID_OFFSET_ARG,
++				 &parse_integer_arg, rx_timestamp_valid_offset);
++	if (ret < 0)
++		goto free_kvlist;
++
++	ret = rte_kvargs_process(kvlist, ETH_AF_XDP_RX_TIMESTAMP_VALID_MASK_ARG,
++				 &parse_hex_arg, rx_timestamp_valid_mask);
++	if (ret < 0)
++		goto free_kvlist;
++
+ free_kvlist:
+ 	rte_kvargs_free(kvlist);
+ 	return ret;
+@@ -2248,7 +2420,9 @@ static struct rte_eth_dev *
+ init_internals(struct rte_vdev_device *dev, const char *if_name,
+ 	       int start_queue_idx, int queue_cnt, int shared_umem,
+ 	       const char *prog_path, int busy_budget, int force_copy,
+-	       int use_cni, int use_pinned_map, const char *dp_path, uint32_t xdp_mode)
++	       int use_cni, int use_pinned_map, const char *dp_path, uint32_t xdp_mode,
++	       int rx_timestamp_offset, int rx_timestamp_valid_offset,
++	       int rx_timestamp_valid_mask)
+ {
+ 	const char *name = rte_vdev_device_name(dev);
+ 	const unsigned int numa_node = dev->device.numa_node;
+@@ -2281,6 +2455,9 @@ init_internals(struct rte_vdev_device *dev, const char *if_name,
+ 	internals->use_pinned_map = use_pinned_map;
+ 	internals->mode_flag = XDP_FLAGS_UPDATE_IF_NOEXIST | xdp_mode;
+ 	strlcpy(internals->dp_path, dp_path, PATH_MAX);
++	internals->rx_timestamp_offset = rx_timestamp_offset;
++	internals->rx_timestamp_valid_offset = rx_timestamp_valid_offset;
++	internals->rx_timestamp_valid_mask = (uint8_t)rx_timestamp_valid_mask;
+ 
+ 	if (xdp_get_channels_info(if_name, &internals->max_queue_cnt,
+ 				  &internals->configured_queue_cnt)) {
+@@ -2474,6 +2651,9 @@ rte_pmd_af_xdp_probe(struct rte_vdev_device *dev)
+ 	int use_pinned_map = 0;
+ 	uint32_t xdp_mode = 0;
+ 	char dp_path[PATH_MAX] = {'\0'};
++	int rx_timestamp_offset = -1;
++	int rx_timestamp_valid_offset = -1;
++	int rx_timestamp_valid_mask = 0;
+ 	struct rte_eth_dev *eth_dev = NULL;
+ 	const char *name = rte_vdev_device_name(dev);
+ 
+@@ -2517,11 +2697,42 @@ rte_pmd_af_xdp_probe(struct rte_vdev_device *dev)
+ 	if (parse_parameters(kvlist, if_name, &xsk_start_queue_idx,
+ 			     &xsk_queue_cnt, &shared_umem, prog_path,
+ 			     &busy_budget, &force_copy, &use_cni, &use_pinned_map,
+-			     dp_path, &xdp_mode) < 0) {
++			     dp_path, &xdp_mode, &rx_timestamp_offset,
++			     &rx_timestamp_valid_offset, &rx_timestamp_valid_mask) < 0) {
+ 		AF_XDP_LOG_LINE(ERR, "Invalid kvargs value");
+ 		return -EINVAL;
+ 	}
+ 
++	if (rx_timestamp_offset >= 0) {
++		if (rx_timestamp_offset < (int)sizeof(uint64_t) ||
++		    rx_timestamp_offset > XDP_PACKET_HEADROOM) {
++			AF_XDP_LOG_LINE(ERR,
++				"Timestamp offset must be between %zu and %u bytes",
++				sizeof(uint64_t), XDP_PACKET_HEADROOM);
++			return -EINVAL;
++		}
++	}
++
++	if (rx_timestamp_valid_offset >= 0) {
++		if (rx_timestamp_offset < 0) {
++			AF_XDP_LOG_LINE(ERR,
++				"Timestamp offset must be configured when validity offset is configured");
++			return -EINVAL;
++		}
++		if (rx_timestamp_valid_offset < 1 ||
++		    rx_timestamp_valid_offset > XDP_PACKET_HEADROOM) {
++			AF_XDP_LOG_LINE(ERR,
++				"Validity hint offset must be between 1 and %u bytes",
++				XDP_PACKET_HEADROOM);
++			return -EINVAL;
++		}
++		if (rx_timestamp_valid_mask == 0) {
++			AF_XDP_LOG_LINE(ERR,
++				"Validity mask cannot be zero when validity offset is configured");
++			return -EINVAL;
++		}
++	}
++
+ 	if (use_cni && use_pinned_map) {
+ 		AF_XDP_LOG_LINE(ERR, "When '%s' parameter is used, '%s' parameter is not valid",
+ 			ETH_AF_XDP_USE_CNI_ARG, ETH_AF_XDP_USE_PINNED_MAP_ARG);
+@@ -2585,7 +2796,8 @@ rte_pmd_af_xdp_probe(struct rte_vdev_device *dev)
+ 	eth_dev = init_internals(dev, if_name, xsk_start_queue_idx,
+ 				 xsk_queue_cnt, shared_umem, prog_path,
+ 				 busy_budget, force_copy, use_cni, use_pinned_map,
+-				 dp_path, xdp_mode);
++				 dp_path, xdp_mode, rx_timestamp_offset,
++				 rx_timestamp_valid_offset, rx_timestamp_valid_mask);
+ 	if (eth_dev == NULL) {
+ 		AF_XDP_LOG_LINE(ERR, "Failed to init internals");
+ 		return -1;
 -- 
 2.55.0.679.g6767b8d81c-goog
 
