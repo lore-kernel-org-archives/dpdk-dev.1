@@ -2,39 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79529C5AD5A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 09:30:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0BE8C5B56A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 09:53:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 663F540A6C;
-	Wed, 12 Aug 2026 11:29:41 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 9B57E40679
- for <dev@dpdk.org>; Wed, 12 Aug 2026 11:29:35 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7F5F820033F;
- Wed, 12 Aug 2026 11:29:35 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com
- (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 51AE9200307;
- Wed, 12 Aug 2026 11:29:35 +0200 (CEST)
-Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
- [92.120.147.250])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 735A618000B6;
- Wed, 12 Aug 2026 17:29:34 +0800 (+08)
-From: Gagandeep Singh <g.singh@nxp.com>
-To: dev@dpdk.org
-Cc: hemant.agrawal@nxp.com, Gagandeep Singh <g.singh@nxp.com>,
- Prashant Gupta <prashant.gupta_3@nxp.com>
-Subject: [PATCH v4 5/5] dma/imx_edma5: add statistics and dump
-Date: Wed, 12 Aug 2026 14:59:29 +0530
-Message-Id: <20260812092929.563973-6-g.singh@nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20260812092929.563973-1-g.singh@nxp.com>
-References: <20260811104933.3843522-1-g.singh@nxp.com>
- <20260812092929.563973-1-g.singh@nxp.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 06EBA402B8;
+	Wed, 12 Aug 2026 11:53:07 +0200 (CEST)
+Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com
+ [113.46.200.222])
+ by mails.dpdk.org (Postfix) with ESMTP id AB67C40279
+ for <dev@dpdk.org>; Wed, 12 Aug 2026 11:53:04 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=d2IyQFoGA7zTYvTNOdVRs3XxiCBIMkFZKa4VNofFuGI=;
+ b=ndFV/WnrbToNMhcfwIlI3ppQdwMGlT525R60mUvSivwgvl6h89rFm+7WpvIMHSkT6xZf7F0NJ
+ 1r0xO8HO29HIhzO2ZjUOGaGeKt3m4pc+RKmMT/8vO9ikUF76ySZWz01DMBP+cnLcghk78NpTUkc
+ gLbLyWG05BzGdq8JrUtBlVg=
+Received: from mail.maildlp.com (unknown [172.19.163.127])
+ by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4hKk6l5lhvzLlTg;
+ Wed, 12 Aug 2026 17:42:23 +0800 (CST)
+Received: from kwepemo100005.china.huawei.com (unknown [7.202.195.212])
+ by mail.maildlp.com (Postfix) with ESMTPS id AFC9E402AB;
+ Wed, 12 Aug 2026 17:53:00 +0800 (CST)
+Received: from localhost.localdomain (10.90.31.46) by
+ kwepemo100005.china.huawei.com (7.202.195.212) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Wed, 12 Aug 2026 17:53:00 +0800
+From: Huisong Li <lihuisong@huawei.com>
+To: <anatoly.burakov@intel.com>, <sivaprasad.tummala@amd.com>
+CC: <dev@dpdk.org>, <thomas@monjalon.net>, <stephen@networkplumber.org>,
+ <fengchengwen@huawei.com>, <yangxingui@huawei.com>, <zhanjie9@hisilicon.com>, 
+ <lihuisong@huawei.com>
+Subject: [PATCH v5 0/6] power: uncore power improvements and auto-detection
+Date: Wed, 12 Aug 2026 17:49:50 +0800
+Message-ID: <20260812094956.3356537-1-lihuisong@huawei.com>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain
+X-Originating-IP: [10.90.31.46]
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemo100005.china.huawei.com (7.202.195.212)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,166 +55,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add per-vchan statistics, virtual channel status reporting and a device
-dump callback to the eDMA5 dmadev.
+- Fix uncore deinitialization for non-legacy modes.
+- Enable power QoS for all modes (not just legacy).
+- Fix uncore help text and log messages.
+- Relocate uncore initialization from arg parsing to init_power_library().
+- Support automatic probing of uncore drivers in AUTO_DETECT and delete
+  useless code for auto-detection uncore environment.
 
-stats_get and stats_reset expose the submitted, completed and error
-counters maintained by the data path, supporting both a single vchan and
-the RTE_DMA_ALL_VCHAN aggregate. vchan_status reports whether a channel is
-idle, active or halted on an unreaped error by inspecting the outstanding
-jobs in the software ring. dev_dump prints the device and per-vchan
-software state to aid debugging.
+Note:
+There are still some power state rollback issues that haven't been
+addressed, but they were originally present and are relatively trivial to
+implement. These rollbacks will be handled after this patchset.
 
-Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
-Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
 ---
- drivers/dma/imx_edma5/imx_edma5_dmadev.c | 126 +++++++++++++++++++++++
- 1 file changed, 126 insertions(+)
+ v5:
+ - Fix some comments from AI in patch 4/6 and 5/6.
+ v4 link:
+  https://inbox.dpdk.org/dev/20260729025149.2158868-1-lihuisong@huawei.com/
 
-diff --git a/drivers/dma/imx_edma5/imx_edma5_dmadev.c b/drivers/dma/imx_edma5/imx_edma5_dmadev.c
-index 82eb1c87cb..0793c9aa7a 100644
---- a/drivers/dma/imx_edma5/imx_edma5_dmadev.c
-+++ b/drivers/dma/imx_edma5/imx_edma5_dmadev.c
-@@ -929,6 +929,126 @@ imx_edma5_burst_capacity(const void *dev_private, uint16_t vchan)
- 	return vc->nb_desc - 1 - vc->nb_enqueued;
- }
- 
-+static int
-+imx_edma5_vchan_status(const struct rte_dma_dev *dev, uint16_t vchan,
-+		       enum rte_dma_vchan_status *status)
-+{
-+	const struct imx_edma5_dev *ed = dev->data->dev_private;
-+	const struct imx_edma5_vchan *vc = &ed->vchans[vchan];
-+	uint16_t idx;
-+
-+	/*
-+	 * HALTED_ERROR if an errored job is still unreaped, ACTIVE while any job
-+	 * is outstanding (not done, or enqueued but not submitted), else IDLE.
-+	 */
-+	*status = RTE_DMA_VCHAN_IDLE;
-+
-+	for (idx = vc->tail; idx != vc->head; idx = (idx + 1) & vc->desc_mask) {
-+		const struct imx_edma5_job *job = &vc->jobs[idx];
-+
-+		if (job->submitted && job->done && job->error) {
-+			*status = RTE_DMA_VCHAN_HALTED_ERROR;
-+			break;
-+		}
-+
-+		if (!job->submitted || !job->done) {
-+			*status = RTE_DMA_VCHAN_ACTIVE;
-+			break;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+imx_edma5_stats_get(const struct rte_dma_dev *dev, uint16_t vchan,
-+		    struct rte_dma_stats *stats, uint32_t stats_sz)
-+{
-+	const struct imx_edma5_dev *ed = dev->data->dev_private;
-+
-+	RTE_SET_USED(stats_sz);
-+
-+	stats->submitted = 0;
-+	stats->completed = 0;
-+	stats->errors = 0;
-+
-+	/* RTE_DMA_ALL_VCHAN requests the aggregate across every vchan. */
-+	if (vchan == RTE_DMA_ALL_VCHAN) {
-+		uint16_t i;
-+
-+		for (i = 0; i < ed->nb_vchans; i++) {
-+			const struct imx_edma5_vchan *vc = &ed->vchans[i];
-+
-+			stats->submitted += vc->submitted_count;
-+			stats->completed += vc->completed_count;
-+			stats->errors += vc->errors_count;
-+		}
-+	} else if (vchan < ed->nb_vchans) {
-+		const struct imx_edma5_vchan *vc = &ed->vchans[vchan];
-+
-+		stats->submitted = vc->submitted_count;
-+		stats->completed = vc->completed_count;
-+		stats->errors = vc->errors_count;
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+imx_edma5_stats_reset(struct rte_dma_dev *dev, uint16_t vchan)
-+{
-+	struct imx_edma5_dev *ed = dev->data->dev_private;
-+
-+	/* RTE_DMA_ALL_VCHAN requests a reset of every vchan. */
-+	if (vchan == RTE_DMA_ALL_VCHAN) {
-+		uint16_t i;
-+
-+		for (i = 0; i < ed->nb_vchans; i++) {
-+			struct imx_edma5_vchan *vc = &ed->vchans[i];
-+
-+			vc->submitted_count = 0;
-+			vc->completed_count = 0;
-+			vc->errors_count = 0;
-+		}
-+	} else if (vchan < ed->nb_vchans) {
-+		struct imx_edma5_vchan *vc = &ed->vchans[vchan];
-+
-+		vc->submitted_count = 0;
-+		vc->completed_count = 0;
-+		vc->errors_count = 0;
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+imx_edma5_dump(const struct rte_dma_dev *dev, FILE *f)
-+{
-+	const struct imx_edma5_dev *ed = dev->data->dev_private;
-+	uint16_t i;
-+
-+	fprintf(f, "  imx_edma5 nb_channels=%u nb_vchans=%u\n",
-+		      ed->nb_channels, ed->nb_vchans);
-+	for (i = 0; i < ed->nb_vchans; i++) {
-+		const struct imx_edma5_vchan *vc = &ed->vchans[i];
-+
-+		fprintf(f,
-+			"    vchan %u: hw_chan=%u nb_desc=%u enqueued=%u "
-+			"submitted=%" PRIu64 " completed=%" PRIu64
-+			" errors=%" PRIu64 "\n",
-+			i, vc->hw_chan, vc->nb_desc, vc->nb_enqueued,
-+			vc->submitted_count, vc->completed_count,
-+			vc->errors_count);
-+		/* Hardware register snapshot for debug (CH_CSR, CH_ES). */
-+		fprintf(f,
-+			"      hw: CH_CSR=0x%08x CH_ES=0x%08x\n",
-+			imx_edma5_read32(vc->ch_regs, IMX_EDMA5_CH_CSR),
-+			imx_edma5_read32(vc->ch_regs, IMX_EDMA5_CH_ES));
-+	}
-+
-+	return 0;
-+}
-+
- static const struct rte_dma_dev_ops imx_edma5_ops = {
- 	.dev_info_get	= imx_edma5_info_get,
- 	.dev_configure	= imx_edma5_configure,
-@@ -937,6 +1057,12 @@ static const struct rte_dma_dev_ops imx_edma5_ops = {
- 	.dev_close	= imx_edma5_close,
- 
- 	.vchan_setup	= imx_edma5_vchan_setup,
-+	.vchan_status	= imx_edma5_vchan_status,
-+
-+	.stats_get	= imx_edma5_stats_get,
-+	.stats_reset	= imx_edma5_stats_reset,
-+
-+	.dev_dump	= imx_edma5_dump,
- };
- 
- static int
+ v4:
+ - Fix '!global_uncore_ops' to 'global_uncore_ops == NULL' from AI review.
+ v3 link:
+  https://inbox.dpdk.org/dev/20260728120208.1858832-1-lihuisong@huawei.com/
+
+ v3:
+ - update feature to release_26_11.rst.
+ - add a new patch to delte useless for automatic detection environment.
+ v2 link:
+  https://inbox.dpdk.org/dev/20260526081138.1434947-1-lihuisong@huawei.com/
+
+ v2:
+ - Remove the patch which add global uncore init and deinit interface.
+ - Remove the last patch in l3fwd-power about these new interface.
+   Will send them after this series.
+ v1 link:
+  https://inbox.dpdk.org/dev/20260512023513.460169-1-lihuisong@huawei.com/
+
+Huisong Li (6):
+  examples/l3fwd-power: fix uncore deinit for non-legacy
+  examples/l3fwd-power: enable power QoS for all modes
+  examples/l3fwd-power: fix uncore help and log info
+  examples/l3fwd-power: relocate uncore initialization
+  power: support automatic detection of uncore driver
+  power: remove unused auto-detection uncore
+
+ doc/guides/rel_notes/release_26_11.rst        |   6 +
+ .../sample_app_ug/l3_forward_power_man.rst    |   2 +-
+ examples/l3fwd-power/main.c                   | 256 +++++++++---------
+ lib/power/rte_power_uncore.c                  |  81 +++---
+ 4 files changed, 188 insertions(+), 157 deletions(-)
+
 -- 
-2.25.1
+2.33.0
 
