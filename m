@@ -2,40 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19D9FC5B572
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 16:28:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11911C5B56A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 17:08:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3E0D840264;
-	Wed, 12 Aug 2026 18:28:40 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 33D214025F
- for <dev@dpdk.org>; Wed, 12 Aug 2026 18:28:39 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 0C10520FD2;
- Wed, 12 Aug 2026 18:28:39 +0200 (CEST)
-Content-class: urn:content-classes:message
-Subject: RE: [PATCH] stack: introduce pile
+	by mails.dpdk.org (Postfix) with ESMTP id F2FC740264;
+	Wed, 12 Aug 2026 19:08:45 +0200 (CEST)
+Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
+ by mails.dpdk.org (Postfix) with ESMTP id 9BACD4025F
+ for <dev@dpdk.org>; Wed, 12 Aug 2026 19:08:44 +0200 (CEST)
+Received: from localhost.localdomain (unknown [78.109.70.176])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by agw.arknetworks.am (Postfix) with ESMTPSA id D76ACE0AD0;
+ Wed, 12 Aug 2026 21:08:42 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am D76ACE0AD0
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
+ s=default; t=1786554523;
+ bh=vvxTrt/TzJFjwWAn82NwZTfcEThOthDawNvF0Zz39hs=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=dtrX25o3YhE1CSshHLstZht7v6+Rif+PEwxQtqdS7pXcx0qSus7NmovDopnIJQ+qZ
+ UdM521RrOypwnV8hmH8eHSuDugWx9xnhWLe6WPESaQafvL/vD8W9oKWOIlXzW/KMXl
+ kTxDltl/IcIYVMNfn+ScEwjC8PXC58iJItYRL1/0QwpMW90xKQMjOh4gg1ti1kyKcf
+ +yKcY2ksAFYT2ZLxL+miK2OTOmNvOaqbwRWHYZFbP6aIrDl1DcFLs2sl9XlPeObK4/
+ +bVNloK6FBBF+EGfGSFGCiGNU6arSz/mkoJKZZC0fT3LUkOqTiM7T+6H6Urltylzn9
+ MTiR15YqZxDpg==
+From: Ivan Malov <ivan.malov@arknetworks.am>
+To: dev@dpdk.org
+Cc: Andy Moreton <andy.moreton@amd.com>,
+ Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>,
+ Roman Zhukov <Roman.Zhukov@arknetworks.am>,
+ Pieter Jansen van Vuuren <pieter.jansen-van-vuuren@amd.com>,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: [PATCH v2 00/14] common/sfc_efx/base: fix code analysis issues
+Date: Wed, 12 Aug 2026 21:08:20 +0400
+Message-ID: <20260812170834.8443-1-ivan.malov@arknetworks.am>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260811174821.8930-1-ivan.malov@arknetworks.am>
+References: <20260811174821.8930-1-ivan.malov@arknetworks.am>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 12 Aug 2026 18:28:36 +0200
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F659DC@smartserver.smartshare.dk>
-In-Reply-To: <anycOPsfQs2cbZLf@bricha3-mobl1.ger.corp.intel.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH] stack: introduce pile
-Thread-Index: Ad0qdeEhuyqJYJ9XRNm4T9MUmnPEfgAAGMaA
-References: <20260812134756.1829613-1-mb@smartsharesystems.com>
- <anyEWVXfFEHBbsAJ@bricha3-mobl1.ger.corp.intel.com>
- <98CBD80474FA8B44BF855DF32C47DC35F659DB@smartserver.smartshare.dk>
- <anycOPsfQs2cbZLf@bricha3-mobl1.ger.corp.intel.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Bruce Richardson" <bruce.richardson@intel.com>
-Cc: <dev@dpdk.org>
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,97 +56,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> Sent: Wednesday, 12 August 2026 18.16
->=20
-> On Wed, Aug 12, 2026 at 06:01:31PM +0200, Morten Br=F8rup wrote:
-> > > From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> > > Sent: Wednesday, 12 August 2026 16.34
-> > >
-> > > On Wed, Aug 12, 2026 at 01:47:56PM +0000, Morten Br=F8rup wrote:
-> > > > Added a new high-performance lock-free "pile", using the Stack
-> API.
-> > > > The pile behaves roughly like a stack, but is not strictly LIFO.
-> > > >
-> > > > The pile is optimized for pushing/popping bulks of objects, =
-which
-> > > > it does significantly faster than the lock-free stack.
-> > > >
-> > > > Pushing/popping a number of objects not divisible by the compile
-> time
-> > > > configurable bulk size is handled gracefully, but not as fast as
-> > > > complete bulks.
-> > > >
-> > > > Performance examples, stack_pile_perf_autotest vs.
-> stack_lf_autotest:
-> > > >
-> > > > On a single core, pushing/popping 1 or 8 objects is similar
-> speed.
-> > > > On a single core, pushing/popping 32 objects is 2x faster.
-> > > > On a single core, pushing/popping 512 objects is 10x faster.
-> > > >
-> > > > On four cores, pushing/popping 1, 8 or 32 objects is slightly
-> faster.
-> > > > On four cores, pushing/popping 512 objects is 4x faster.
-> > > >
-> > > How does it differ, or what are the benefits vs the standard =
-stack.
-> >
-> > The standard stack is generally faster on single core.
-> > Only pushing/popping 512 objects is slightly faster than the =
-standard
-> stack, but maybe the standard stack could be microoptimized to fix
-> that.
-> >
-> > On four cores, it is slightly faster than the standard stack with
-> multiple objects:
-> >
-> > stack_perf_autotest
-> > Average cycles per object push/pop (bulk size: 1): 3806.65
-> > Average cycles per object push/pop (bulk size: 8): 554.77
-> > Average cycles per object push/pop (bulk size: 32): 144.70
-> > Average cycles per object push/pop (bulk size: 512): 13.52
-> >
-> > stack_pile_perf_autotest
-> > Average cycles per object push/pop (bulk size: 1): 4012.39
-> > Average cycles per object push/pop (bulk size: 8): 459.82
-> > Average cycles per object push/pop (bulk size: 32): 122.40
-> > Average cycles per object push/pop (bulk size: 512): 9.60
-> >
-> >
-> > > The
-> > > LF
-> > > stack I'd view as a strange edge case, since even with the =
-standard
-> > > MP/MC
-> > > ring mempool driver you still have atomics on the fast-path and =
-you
-> > > will
-> > > still get stalls if a thread gets context switched out in the
-> middle of
-> > > a
-> > > mempool operation.
-> >
-> > Yes, the no-stall guarantee is a key benefit of the lock-free stack
-> and the pile.
-> >
->=20
-> Ok, that is good. Next question, rather than adding a whole new =
-mempool
-> driver implementation, can we use this to replace one of the existing
-> stack
-> implementations? Do we need to have so many mempool stack drivers
-> generally?
+This series addresses code analysis defects in the
+common/sfc_efx/base library.
 
-We could consider replacing the lock-free stack implementation by the =
-pile implementation, but the pile is not strictly LIFO, so it seems =
-risky.
+The first four patches fix excessive stack consumption in
+MCDI helper functions, each exceeding 1 KB on-stack, by
+switching to heap-allocated payload buffers.
 
-For a mempool holding mbufs, there's probably no harm in the difference.
-But for a mempool holding some other object type, it could be harmful. I =
-don't know.
-IMO, not worth the risk.
+The remaining ten patches correct SAL annotations, add NULL
+checks across netport and filter helpers, resolving
+uninitialised memory, buffer overrun, and potential
+dereference issues. The final patch widens loop
+variable types to address a CodeQL warning.
 
-Good idea, though!
-I'm usually in favor of cleaning up. Just not this one. :-)
+
+v2:
+
+- note for the future AI reviews: apply this on top of
+  the 'next-net-main' branch
+
+- addressed https://mails.dpdk.org/archives/dev/2026-August/343072.html
+  -- fixed the MAC_STATISTICS_DESCRIPTOR_OUT_MORE_ENTRIES accessor
+  -- fixed the FEC hardware enum selection from the software mask
+  -- remaining notes do not seem to point at factual defects
+
+
+Andy Moreton (14):
+  common/sfc_efx/base: reduce stack in RSS context table write
+  common/sfc_efx/base: reduce stack in get addr regions MCDI
+  common/sfc_efx/base: reduce stack in set addr regions MCDI
+  common/sfc_efx/base: reduce stack in netport stat describe
+  common/sfc_efx/base: fix filter saved spec handling
+  common/sfc_efx/base: fix annotations in client MAC addr get
+  common/sfc_efx/base: fix annotations in HW-SW mask converter
+  common/sfc_efx/base: fix annotations in get fixed port props
+  common/sfc_efx/base: fix annotations in SW-HW enum converter
+  common/sfc_efx/base: fix annotation in netport stat describe
+  common/sfc_efx/base: fix flex array in netport stat describe
+  common/sfc_efx/base: fix filter in SW-HW mask converter
+  common/sfc_efx/base: rework SW mask to HW enum converter
+  common/sfc_efx/base: cleanup wider type comparisons in loops
+
+ drivers/common/sfc_efx/base/ef10_filter.c |  11 +-
+ drivers/common/sfc_efx/base/ef10_mcdi.c   |   2 +-
+ drivers/common/sfc_efx/base/ef10_nvram.c  |   4 +-
+ drivers/common/sfc_efx/base/ef10_rx.c     |  22 ++-
+ drivers/common/sfc_efx/base/efx.h         |   3 +-
+ drivers/common/sfc_efx/base/efx_bootcfg.c |   2 +-
+ drivers/common/sfc_efx/base/efx_mcdi.c    |  50 +++++--
+ drivers/common/sfc_efx/base/efx_np.c      | 156 +++++++++++++---------
+ drivers/common/sfc_efx/base/mcdi_mon.c    |   2 +-
+ 9 files changed, 159 insertions(+), 93 deletions(-)
+
+-- 
+2.47.3
 
