@@ -2,49 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B926EC5B56A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 17:11:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE520C5B56A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 17:46:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4098842D28;
-	Wed, 12 Aug 2026 19:11:13 +0200 (CEST)
-Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id F3523427CF
- for <dev@dpdk.org>; Wed, 12 Aug 2026 19:11:09 +0200 (CEST)
-Received: from localhost.localdomain (unknown [78.109.70.176])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id 4CC6FE0AD0;
- Wed, 12 Aug 2026 21:11:09 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 4CC6FE0AD0
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
- s=default; t=1786554669;
- bh=D8tJ3Ix/aWjFMepSkBtLtZTXJeHr2TIx6KQSvqXEg8M=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=5gojJnFkHuksGxAKJfTtBMjmSevPWRKp3M1mUl0DOKFaSRlp46xzk3i5p22Gt43Z6
- H+K8G2K+TKR8rUZP8gRdDcz2vPJjUve2FMqRWvjxGaWP290upxq8CJOHxDKyfk3aJ7
- 2tu6lai/zdNPX4jNOBGv+q5PFQJfVZvaRDQVFuMPBhnHc9vyfaqP3gkPFsyaYxhnS7
- bibsyqv0eGLieQRJlfj036DJvDFAxWspzTQl4pGwhF/0Su/LZwMBJ7qj+5jcXyJoKw
- OHsmMUYmmi2ysTidryvs5KgoB9T12wBecKnwLEGXHCNn9/uW9He7+82nn/C9cO9vVD
- sZVHzYjUPyuGw==
-From: Ivan Malov <ivan.malov@arknetworks.am>
-To: dev@dpdk.org
-Cc: Andy Moreton <andy.moreton@amd.com>,
- Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>,
- Roman Zhukov <Roman.Zhukov@arknetworks.am>,
- Pieter Jansen van Vuuren <pieter.jansen-van-vuuren@amd.com>,
- Stephen Hemminger <stephen@networkplumber.org>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: [PATCH v2 6/6] doc: announce VF support of AMD Solarflare X45xx
- family NICs
-Date: Wed, 12 Aug 2026 21:11:03 +0400
-Message-ID: <20260812171103.8553-7-ivan.malov@arknetworks.am>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260812171103.8553-1-ivan.malov@arknetworks.am>
-References: <20260811175025.9019-1-ivan.malov@arknetworks.am>
- <20260812171103.8553-1-ivan.malov@arknetworks.am>
+	by mails.dpdk.org (Postfix) with ESMTP id 20ADD402DF;
+	Wed, 12 Aug 2026 19:46:16 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id D49FB40264
+ for <dev@dpdk.org>; Wed, 12 Aug 2026 19:46:14 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 94010200048;
+ Wed, 12 Aug 2026 19:46:14 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com
+ (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5CACF20003D;
+ Wed, 12 Aug 2026 19:46:14 +0200 (CEST)
+Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
+ [92.120.146.12])
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 05F0818000B0;
+ Thu, 13 Aug 2026 01:46:12 +0800 (+08)
+From: Hemant Agrawal <hemant.agrawal@nxp.com>
+To: stephen@networkplumber.org,
+	thomas@monjalon.net,
+	dev@dpdk.org
+Subject: [PATCH v9 00/25] DPAA driver fixes and improvements
+Date: Wed, 12 Aug 2026 23:15:43 +0530
+Message-Id: <20260812174609.1100111-1-hemant.agrawal@nxp.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20260811115731.3421032-1-hemant.agrawal@nxp.com>
+References: <20260811115731.3421032-1-hemant.agrawal@nxp.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,31 +47,113 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The Solarflare PMD has been updated to support VADAPTER statistics and to
-let the user attach to the X4 VFs (created by the PF that is attached
-either to the DPDK application or to the Solarflare Linux net driver).
+v9: fix bissect issue and other AI review comments
 
-Signed-off-by: Ivan Malov <ivan.malov@arknetworks.am>
-Reviewed-by: Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>
----
- doc/guides/rel_notes/release_26_11.rst | 4 ++++
- 1 file changed, 4 insertions(+)
+This series collects a set of correctness fixes, cleanups and feature
+additions across the NXP DPAA bus, net, mempool and DMA drivers.
 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index c8cc86295d..a4a8a67d8c 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -55,6 +55,10 @@ New Features
-      Also, make sure to start the actual text at the margin.
-      =======================================================
- 
-+* **Updated Solarflare network driver.**
-+
-+  * Added VF support on AMD Solarflare X45xx adapters.
-+
- 
- Removed Items
- -------------
+1. Bus/fman infrastructure cleanups (patches 01, 02, 12)
+   - bus/dpaa: refine fman naming and fix global scope
+   - bus/dpaa: scan max BPID from DTS
+   - bus/dpaa: improve log macro and fix bus detection
+
+2. Process-type guards (patch 03)
+   - drivers: add process-type guards to prevent segfaults in secondary
+
+3. FQ shutdown hardening (patches 04-08)
+   - bus/dpaa: define helpers for qman channel and wq
+   - bus/dpaa: shutdown DPAA FQ by fq descriptor
+   - bus/dpaa: improve FQ shutdown with channel validation
+   - bus/dpaa: enhance DPAA FQ shutdown
+   - bus/dpaa: add DPAA cgrid cleanup support
+
+4. net/dpaa improvements (patches 09, 11, 13)
+   - net/dpaa: add ONIC port checks
+   - net/dpaa: optimize FM deconfig
+   - net/dpaa: optimize FMC MAC type parsing
+
+5. Statistics (patch 10)
+   - drivers: add BMI Tx statistics
+
+6. mempool/dpaa (patches 14-15)
+   - drivers: optimize DPAA multi-entry buffer pool operations
+   - drivers: release DPAA bpid on driver destructor
+
+7. dma/dpaa (patch 16)
+   - dma/dpaa: add SG data validation and ERR050757 fix
+
+Gagandeep Singh (3):
+  net/dpaa: fix device remove
+  dma/dpaa: add SG data validation and ERR050757
+  drivers: add offline (O/H) port device support
+
+Hemant Agrawal (6):
+  net/dpaa: optimize FM deconfig
+  net/dpaa: support Rx/Tx taildrop threshold devarg
+  net/dpaa: add Tx rate limiting API
+  net/dpaa: support non fmX-macY type of shared Ethernet name
+  bus/dpaa: improve log macro and fix bus detection
+  doc: add 26.11 release notes for NXP DPAA new features
+
+Jun Yang (14):
+  bus/dpaa: refine fman naming and fix global scope
+  bus/dpaa: scan max BPID from DTS
+  drivers: shutdown DPAA FQ by fq descriptor
+  bus/dpaa: improve FQ shutdown with channel validation
+  bus/dpaa: add DPAA cgrid cleanup support
+  drivers: add BMI Tx statistics
+  net/dpaa: optimize FMC MAC type parsing
+  drivers: release DPAA bpid on driver destructor
+  bus/dpaa: orp queue create and burst enqueue
+  net/dpaa: support fmcless rxq number as devargs
+  bus/dpaa: optimize DPAA multi-entry buffer pool operations
+  drivers: improve shutdown fq with channel
+  drivers: improve  crypto fq resource handling
+  drivers: add dpaax destructor to gate EAL memory frees
+
+Prashant Gupta (1):
+  drivers: add process-type guards for secondary process
+
+Vanshika Shukla (1):
+  net/dpaa: enhance VSP port support
+
+ doc/guides/dmadevs/dpaa.rst               |  29 +-
+ doc/guides/nics/dpaa.rst                  |  39 +-
+ doc/guides/rel_notes/release_26_11.rst    |  29 +
+ drivers/bus/dpaa/base/fman/fman.c         |  23 +-
+ drivers/bus/dpaa/base/fman/fman_hw.c      | 111 ++--
+ drivers/bus/dpaa/base/qbman/bman.c        |  59 +-
+ drivers/bus/dpaa/base/qbman/bman_driver.c |  45 +-
+ drivers/bus/dpaa/base/qbman/qman.c        | 200 ++++--
+ drivers/bus/dpaa/base/qbman/qman.h        |  23 +-
+ drivers/bus/dpaa/base/qbman/qman_driver.c |  29 +-
+ drivers/bus/dpaa/bus_dpaa_driver.h        |  11 +-
+ drivers/bus/dpaa/dpaa_bus.c               | 164 +++--
+ drivers/bus/dpaa/dpaa_bus_base_symbols.c  |   4 +
+ drivers/bus/dpaa/include/fman.h           |  20 +-
+ drivers/bus/dpaa/include/fsl_bman.h       |  49 +-
+ drivers/bus/dpaa/include/fsl_qman.h       |  54 +-
+ drivers/common/dpaax/compat.h             |  22 +-
+ drivers/common/dpaax/dpaax_iova_table.c   |  25 +-
+ drivers/crypto/dpaa_sec/dpaa_sec.c        | 106 +++-
+ drivers/dma/dpaa/dpaa_qdma.c              | 110 +++-
+ drivers/mempool/dpaa/dpaa_mempool.c       |  62 +-
+ drivers/mempool/dpaa/dpaa_mempool.h       |   3 +-
+ drivers/net/dpaa/dpaa_ethdev.c            | 301 ++++++++--
+ drivers/net/dpaa/dpaa_ethdev.h            |  25 +-
+ drivers/net/dpaa/dpaa_flow.c              | 221 +++++--
+ drivers/net/dpaa/dpaa_flow.h              |   7 +-
+ drivers/net/dpaa/dpaa_fmc.c               |  73 ++-
+ drivers/net/dpaa/dpaa_oldev.c             | 701 ++++++++++++++++++++++
+ drivers/net/dpaa/fmlib/fm_lib.c           |  32 +-
+ drivers/net/dpaa/fmlib/fm_port_ext.h      |   4 +-
+ drivers/net/dpaa/meson.build              |  11 +-
+ drivers/net/dpaa/rte_pmd_dpaa.h           |  22 +-
+ drivers/net/dpaa/rte_pmd_dpaa_oldev.h     |  92 +++
+ 33 files changed, 2254 insertions(+), 452 deletions(-)
+ create mode 100644 drivers/net/dpaa/dpaa_oldev.c
+ create mode 100644 drivers/net/dpaa/rte_pmd_dpaa_oldev.h
+
 -- 
-2.47.3
+2.25.1
 
