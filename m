@@ -2,42 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFC12C5CFEB
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Aug 2026 06:56:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C96B3C5CFDB
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Aug 2026 07:47:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9D3304026E;
-	Thu, 13 Aug 2026 08:56:16 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 9A9DE4026A
- for <dev@dpdk.org>; Thu, 13 Aug 2026 08:56:15 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 5C23720FD1;
- Thu, 13 Aug 2026 08:56:15 +0200 (CEST)
-Content-class: urn:content-classes:message
-Subject: RE: [PATCH v9] graph: add optional profiling stats
+	by mails.dpdk.org (Postfix) with ESMTP id 8FBC44026A;
+	Thu, 13 Aug 2026 09:47:23 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+ by mails.dpdk.org (Postfix) with ESMTP id 0F9804014F
+ for <dev@dpdk.org>; Thu, 13 Aug 2026 09:47:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1786607242; x=1818143242;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=ovmFlb5jM7G6mB7IYlwuIyEPomKK/iwoxpue6G0V83k=;
+ b=IKTEYmhlcRjM9JqN7xWmaMgpKFXThP99t75WbLqdg03cMn6+fMEtIgAX
+ B3heHsZWsPoEpRwilLxwlLHvCsyV6rV+carrWavoy/X4FCAW0BwZziuVc
+ 0meHDMGhulejdRBdwrUsAppSs8E9u2BTVAeIbU10uqsAGLzTHqUPOt04o
+ h80QA8TzHxwPbZ7yPd/Mvq2ZM9lT3Va22+lweX8SGbybf6OJUn9TCJUXf
+ W+UuXxqACGk0dUjo4Grb4B3RptbC792BA7jEejPBQukn+FNzDANO0c/Xh
+ eDH5EPacutZcqwYxFMJ99s6+pCx2l0jyKdYviTLFgHti2fFpHhHSAEDjk A==;
+X-CSE-ConnectionGUID: wWNvJC6hRcOHRm/65liPuA==
+X-CSE-MsgGUID: yYZxczafSYa5wDT+aLxttQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11873"; a="86293781"
+X-IronPort-AV: E=Sophos;i="6.25,220,1779174000"; d="scan'208";a="86293781"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+ by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 13 Aug 2026 00:47:21 -0700
+X-CSE-ConnectionGUID: 7ItO5WQZTYuRSVc0kuCoSw==
+X-CSE-MsgGUID: QOZKbtUeTRGfa9PMTCY7Hw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,220,1779174000"; d="scan'208";a="264447383"
+Received: from pae-14.iind.intel.com ([10.190.203.153])
+ by orviesa009.jf.intel.com with ESMTP; 13 Aug 2026 00:47:18 -0700
+From: Anurag Mandal <anurag.mandal@intel.com>
+To: dev@dpdk.org
+Cc: stephen@networkplumber.org, mb@smartsharesystems.com,
+ vladimir.medvedkin@intel.com, Anurag Mandal <anurag.mandal@intel.com>
+Subject: [PATCH v2] fib, rib: fix name prefixes
+Date: Thu, 13 Aug 2026 07:46:26 +0000
+Message-Id: <20260813074626.1134195-1-anurag.mandal@intel.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260812110258.1128632-1-anurag.mandal@intel.com>
+References: <20260812110258.1128632-1-anurag.mandal@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Date: Thu, 13 Aug 2026 08:56:14 +0200
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F659DD@smartserver.smartshare.dk>
-In-Reply-To: <20260703154357.3068739-1-mb@smartsharesystems.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v9] graph: add optional profiling stats
-Thread-Index: Ad0LAsgVDY/4ScKiRHGCKbyYKkFNzQf7XmOg
-References: <20260619202047.2809165-1-mb@smartsharesystems.com>
- <20260703154357.3068739-1-mb@smartsharesystems.com>
-From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: <dev@dpdk.org>, "Jerin Jacob" <jerinj@marvell.com>,
- "Kiran Kumar K" <kirankumark@marvell.com>,
- "Nithin Dabilpuram" <ndabilpuram@marvell.com>,
- "Zhirun Yan" <yanzhirun_163@163.com>,
- "Saeed Bishara" <saeed.bishara.os@gmail.com>
-Cc: "Robin Jarry" <rjarry@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,174 +61,648 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-UElORyBmb3IgcmV2aWV3Lg0KDQooQW5kIG9idmlvdXNseSwgdGhlIHJlbGVhc2Ugbm90ZXMgbmVl
-ZHMgdG8gYmUgZm9yIDI2LjExLCBub3QgMjYuMDcuKQ0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2Fn
-ZS0tLS0tDQo+IEZyb206IE1vcnRlbiBCcsO4cnVwIFttYWlsdG86bWJAc21hcnRzaGFyZXN5c3Rl
-bXMuY29tXQ0KPiBTZW50OiBGcmlkYXksIDMgSnVseSAyMDI2IDE3LjQ0DQo+IA0KPiBncmFwaDog
-YWRkIG9wdGlvbmFsIHByb2ZpbGluZyBzdGF0cw0KPiANCj4gQWRkZWQgZ3JhcGggbm9kZSBwcm9m
-aWxpbmcgc3RhdHMsIGJ1aWxkIHRpbWUgY29uZmlndXJhYmxlIGJ5IGVuYWJsaW5nDQo+IFJURV9H
-UkFQSF9QUk9GSUxFIGluIHJ0ZV9jb25maWcuaC4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IE1vcnRl
-biBCcsO4cnVwIDxtYkBzbWFydHNoYXJlc3lzdGVtcy5jb20+DQo+IC0tLQ0KPiB2OToNCj4gKiBG
-aXhlZCBjb21tZW50IHN0aWxsIG1lbnRpb25pbmcgMzIgb2JqZWN0cy4NCj4gKiBNb3ZlZCBzYW1w
-bGUgc2l6ZSBhcnJheSBvdXRzaWRlIGxvb3AuIChBSSkNCj4gKiBBZGRlZCByZWxlYXNlIG5vdGUu
-IChBSSkNCj4gdjg6DQo+ICogQWRkZWQgc3RhdGljIGNvbnN0IGFycmF5IGFzIGxvY2FsIHZhcmlh
-YmxlLCBpbnN0ZWFkIG9mIGluZGV4aW5nDQo+IGRpcmVjdGx5DQo+ICAgaW50byBjb25zdCBhcnJh
-eS4gKEFJKQ0KPiAgIFRoaXMgYWxzbyBlbGltaW5hdGVzIHRoZSBzcGFjZSByZXF1aXJlZCBiZXR3
-ZWVuICJ9IFtpZHhdOyIgd2VpcmRuZXNzLg0KPiAqIEFkZGVkIGJ1aWxkIHRpbWUgY29uZmlndXJh
-YmxlIFJURV9HUkFQSF9QUk9GSUxFX0JVUlNUX1NJWkUgdG8gcmVwbGFjZQ0KPiAgIHRoZSBoYXJk
-Y29kZWQgYnVyc3Qgc2l6ZSBvZiAzMi4gKEFJKQ0KPiB2NzoNCj4gKiBVc2UgUlRFX0RJTSgpIGlu
-IGhpc3RvZ3JhbSBmb3IgbG9vcC4NCj4gKiBBZGRlZCBzdGF0aWNfYXNzZXJ0IGZvciBoaXN0b2dy
-YW0gaW5kZXggdmFsdWVzLg0KPiAqIE1pbm9yIGRldGFpbHMgdG8gcGxlYXNlIGNoZWNrcGF0Y2gu
-DQo+ICAgQWx0aG91Z2ggSSBkaXNhZ3JlZSB3aXRoIHJlcXVpcmluZyBhIHNwYWNlIHdoZW4gaW5k
-ZXhpbmcgaW50bw0KPiAgIGEgY29uc3RhbnQgYXJyYXkgIihjb25zdCB0eXBlIFtdKXt2YWx1ZXN9
-IFtpZHhdOyIsDQo+ICAgSSBoYXZlIGNoYW5nZWQgdGhlIGNvZGUgdG8gY29tcGx5Lg0KPiB2NjoN
-Cj4gKiBDb25zb2xpZGF0ZSB0aGUgZm91ciBoaXN0b2dyYW0gZW50cmllcyBpbnRvIG9uZSBhcnJh
-eS4gKFNhZWVkDQo+IEJpc2hhcmEpDQo+ICogU2FtcGxlIGF0IDMyIG9ianMgaW5zdGVhZCBvZiBh
-IGhhbGYgYnVyc3QuIChTYWVlZCBCaXNoYXJhKQ0KPiAqIE1vdmVkIHN0YXRzIHRvIGRpZmZlcmVu
-dCBsb2NhdGlvbiBpbiBydGVfbm9kZSBzdHJ1Y3R1cmUuIChKZXJpbikNCj4gKiBNaW5vciBkZXRh
-aWxzIHRvIHBsZWFzZSBjaGVja3BhdGNoLg0KPiB2NToNCj4gKiBBZGRlZCBzdGF0cyBmb3IgYSBo
-YWxmIGJ1cnN0IGFuZCBhIGZ1bGwgYnVyc3QuDQo+IHY0Og0KPiAqIEFkZGVkIGRvY3VtZW50YXRp
-b24uIChBSSkNCj4gKiBBZGRlZCBtb3JlIGNvbW1lbnRzLiAoQUkpDQo+ICogSW1wcm92ZWQgZHVt
-cC4gKEFJKQ0KPiAqIERlYnVnIHNob3dzIGJvdGggY3ljbGVzL2NhbGwgYW5kIGN5Y2xlcy9vYmou
-DQo+IHYzOg0KPiAqIERlYnVnIHNob3dzIGN5Y2xlcy9vYmogaW5zdGVhZCBvZiBjeWNsZXMvY2Fs
-bC4NCj4gKiBGaXhlZCBtaXNzaW5nIC0taW4tcmVwbHktdG8uDQo+IHYyOg0KPiAqIEZpeGVkIGlu
-ZGVudGF0aW9uLg0KPiAtLS0NCj4gIGNvbmZpZy9ydGVfY29uZmlnLmggICAgICAgICAgICAgICAg
-ICAgIHwgIDIgKysNCj4gIGRvYy9ndWlkZXMvcHJvZ19ndWlkZS9ncmFwaF9saWIucnN0ICAgIHwg
-IDMgKysNCj4gIGRvYy9ndWlkZXMvcmVsX25vdGVzL3JlbGVhc2VfMjZfMDcucnN0IHwgIDcgKysr
-Kw0KPiAgbGliL2dyYXBoL2dyYXBoX2RlYnVnLmMgICAgICAgICAgICAgICAgfCA1MCArKysrKysr
-KysrKysrKysrKysrKysrKysrKw0KPiAgbGliL2dyYXBoL25vZGUuYyAgICAgICAgICAgICAgICAg
-ICAgICAgfCAgMiArKw0KPiAgbGliL2dyYXBoL3J0ZV9ncmFwaF93b3JrZXJfY29tbW9uLmggICAg
-fCAzMiArKysrKysrKysrKysrKystLQ0KPiAgNiBmaWxlcyBjaGFuZ2VkLCA5MyBpbnNlcnRpb25z
-KCspLCAzIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2NvbmZpZy9ydGVfY29uZmln
-LmggYi9jb25maWcvcnRlX2NvbmZpZy5oDQo+IGluZGV4IDA0NDdjZGYyYWQuLjc3MDNhNjMyNWIg
-MTAwNjQ0DQo+IC0tLSBhL2NvbmZpZy9ydGVfY29uZmlnLmgNCj4gKysrIGIvY29uZmlnL3J0ZV9j
-b25maWcuaA0KPiBAQCAtMTA2LDYgKzEwNiw4IEBADQo+ICAvKiBydGVfZ3JhcGggZGVmaW5lcyAq
-Lw0KPiAgI2RlZmluZSBSVEVfR1JBUEhfQlVSU1RfU0laRSAyNTYNCj4gICNkZWZpbmUgUlRFX0xJ
-QlJURV9HUkFQSF9TVEFUUyAxDQo+ICsvKiBSVEVfR1JBUEhfUFJPRklMRSBpcyBub3Qgc2V0ICov
-DQo+ICsjZGVmaW5lIFJURV9HUkFQSF9QUk9GSUxFX0JVUlNUX1NJWkUgMzINCj4gDQo+ICAvKioq
-KioqIGRyaXZlciBkZWZpbmVzICoqKioqKioqLw0KPiANCj4gZGlmZiAtLWdpdCBhL2RvYy9ndWlk
-ZXMvcHJvZ19ndWlkZS9ncmFwaF9saWIucnN0DQo+IGIvZG9jL2d1aWRlcy9wcm9nX2d1aWRlL2dy
-YXBoX2xpYi5yc3QNCj4gaW5kZXggOGRkNDljMTlkMi4uNDMxMWMzN2NjMiAxMDA2NDQNCj4gLS0t
-IGEvZG9jL2d1aWRlcy9wcm9nX2d1aWRlL2dyYXBoX2xpYi5yc3QNCj4gKysrIGIvZG9jL2d1aWRl
-cy9wcm9nX2d1aWRlL2dyYXBoX2xpYi5yc3QNCj4gQEAgLTQ5LDYgKzQ5LDkgQEAgUGVyZm9ybWFu
-Y2UgdHVuaW5nIHBhcmFtZXRlcnMNCj4gICAgUlRFX0dSQVBIX0JVUlNUX1NJWkUgY29uZmlnIG9w
-dGlvbi4NCj4gICAgVGhlIHRlc3Rpbmcgc2hvd3MsIG9uIHg4NiBhbmQgYXJtNjQgc2VydmVycywg
-VGhlIHN3ZWV0IHNwb3QgaXMgMjU2DQo+IGJ1cnN0DQo+ICAgIHNpemUuIFdoaWxlIG9uIGFybTY0
-IGVtYmVkZGVkIFNvQ3MsIGl0IGlzIGVpdGhlciA2NCBvciAxMjguDQo+ICstIEVuYWJsZSB0aGUg
-YGBSVEVfR1JBUEhfUFJPRklMRWBgIGNvbmZpZyBvcHRpb24gZm9yIG1vcmUgcHJvZmlsaW5nDQo+
-IGRldGFpbHMuDQo+ICsgIFNldCB0aGUgYGBSVEVfR1JBUEhfUFJPRklMRV9CVVJTVF9TSVpFYGAg
-Y29uZmlnIG9wdGlvbiB0byBzYW1wbGUgYQ0KPiBzcGVjaWZpYw0KPiArICBidXJzdCBzaXplLg0K
-PiAgLSBEaXNhYmxlIG5vZGUgc3RhdGlzdGljcyAodXNpbmcgYGBSVEVfTElCUlRFX0dSQVBIX1NU
-QVRTYGAgY29uZmlnDQo+IG9wdGlvbikNCj4gICAgaWYgbm90IG5lZWRlZC4NCj4gDQo+IGRpZmYg
-LS1naXQgYS9kb2MvZ3VpZGVzL3JlbF9ub3Rlcy9yZWxlYXNlXzI2XzA3LnJzdA0KPiBiL2RvYy9n
-dWlkZXMvcmVsX25vdGVzL3JlbGVhc2VfMjZfMDcucnN0DQo+IGluZGV4IDhiMWJkYWRhMWEuLmNi
-N2Q0OGVlYWMgMTAwNjQ0DQo+IC0tLSBhL2RvYy9ndWlkZXMvcmVsX25vdGVzL3JlbGVhc2VfMjZf
-MDcucnN0DQo+ICsrKyBiL2RvYy9ndWlkZXMvcmVsX25vdGVzL3JlbGVhc2VfMjZfMDcucnN0DQo+
-IEBAIC04Myw2ICs4MywxMyBAQCBOZXcgRmVhdHVyZXMNCj4gICAgKiBUaGUgc2l6ZSBvZiB0aGUg
-YGBzdHJ1Y3QgcnRlX21lbXBvb2xfY2FjaGVgYCB3YXMga2VwdA0KPiAgICAgIGZvciBBUEkvQUJJ
-IGNvbXBhdGliaWxpdHkgcHVycG9zZXMuDQo+IA0KPiArKiAqKkFkZGVkIG9wdGlvbmFsIGdyYXBo
-IHByb2ZpbGluZyBzdGF0aXN0aWNzLioqDQo+ICsNCj4gKyAgQWRkZWQgYnVpbGQtdGltZSBjb25m
-aWd1cmFibGUgZ3JhcGggbm9kZSBwcm9maWxpbmcgc3RhdGlzdGljcyB2aWENCj4gKyAgYGBSVEVf
-R1JBUEhfUFJPRklMRWBgIGluIGBgcnRlX2NvbmZpZy5oYGAuIFdoZW4gZW5hYmxlZCwgdHJhY2tz
-DQo+IGN5Y2xlcw0KPiArICBzcGVudCBwcm9jZXNzaW5nIGJ1cnN0cyBvZiAwLCAxLCBgYFJURV9H
-UkFQSF9QUk9GSUxFX0JVUlNUX1NJWkVgYCwNCj4gKyAgYW5kIGBgUlRFX0dSQVBIX0JVUlNUX1NJ
-WkVgYCBvYmplY3RzIHBlciBub2RlLg0KPiArDQo+ICAqICoqQWRkZWQgUklTQy1WIHZlY3RvciBw
-YXRocy4qKg0KPiANCj4gICAgKiBJbmNyZWFzZWQgdGhlIGRlZmF1bHQgU0lNRCBiaXR3aWR0aCB0
-byBhbGxvdyB1c2luZyB0aGUgdmVjdG9yDQo+IGV4dGVuc2lvbi4NCj4gZGlmZiAtLWdpdCBhL2xp
-Yi9ncmFwaC9ncmFwaF9kZWJ1Zy5jIGIvbGliL2dyYXBoL2dyYXBoX2RlYnVnLmMNCj4gaW5kZXgg
-ZTNiOGNjY2RjMS4uYjk5OWZhNDE0MCAxMDA2NDQNCj4gLS0tIGEvbGliL2dyYXBoL2dyYXBoX2Rl
-YnVnLmMNCj4gKysrIGIvbGliL2dyYXBoL2dyYXBoX2RlYnVnLmMNCj4gQEAgLTkzLDYgKzkzLDU2
-IEBAIHJ0ZV9ncmFwaF9vYmpfZHVtcChGSUxFICpmLCBzdHJ1Y3QgcnRlX2dyYXBoICpnLA0KPiBi
-b29sIGFsbCkNCj4gIAkJCQluLT5kaXNwYXRjaC50b3RhbF9zY2hlZF9mYWlsKTsNCj4gIAkJfQ0K
-PiAgCQlmcHJpbnRmKGYsICIgICAgICAgdG90YWxfY2FsbHM9JSIgUFJJZDY0ICJcbiIsIG4tDQo+
-ID50b3RhbF9jYWxscyk7DQo+ICsJCWlmIChydGVfZ3JhcGhfaGFzX3N0YXRzX2ZlYXR1cmUoKSkN
-Cj4gKwkJCWZwcmludGYoZiwgIiAgICAgICB0b3RhbF9jeWNsZXM9JSIgUFJJdTY0ICIsIGF2Zw0K
-PiBjeWNsZXMvY2FsbD0lLjFmXG4iLA0KPiArCQkJCQluLT50b3RhbF9jeWNsZXMsDQo+ICsJCQkJ
-CW4tPnRvdGFsX2NhbGxzID09IDAgPyAwLjAgOg0KPiArCQkJCQkoZG91YmxlKW4tPnRvdGFsX2N5
-Y2xlcyAvIChkb3VibGUpbi0NCj4gPnRvdGFsX2NhbGxzKTsNCj4gKyNpZmRlZiBSVEVfR1JBUEhf
-UFJPRklMRQ0KPiArCQlzdGF0aWMgY29uc3QgdWludDE2X3QgcHJvZmlsZV9zYW1wbGVfc2l6ZXNb
-XSA9IHsNCj4gKwkJCQkwLCAxLCBSVEVfR1JBUEhfUFJPRklMRV9CVVJTVF9TSVpFLA0KPiBSVEVf
-R1JBUEhfQlVSU1RfU0laRX07DQo+ICsJCXN0YXRpY19hc3NlcnQoUlRFX0RJTShwcm9maWxlX3Nh
-bXBsZV9zaXplcykgPT0gUlRFX0RJTShuLQ0KPiA+dXNhZ2Vfc3RhdHMpLA0KPiArCQkJCSJ1c2Fn
-ZV9zdGF0cyBhcnJheSBzaXplIG1pc21hdGNoIik7DQo+ICsJCWludDY0X3QgY2FsbHNfb3RoZXIg
-PSBuLT50b3RhbF9jYWxsczsNCj4gKwkJaW50NjRfdCBjeWNsZXNfb3RoZXIgPSBuLT50b3RhbF9j
-eWNsZXM7DQo+ICsJCWludDY0X3Qgb2Jqc19vdGhlciA9IG4tPnRvdGFsX29ianM7DQo+ICsJCWZv
-ciAoaW50IGlkeCA9IDA7IGlkeCA8IFJURV9ESU0obi0+dXNhZ2Vfc3RhdHMpICsgMTsgaWR4Kysp
-DQo+IHsNCj4gKwkJCXVpbnQ2NF90IGNhbGxzOw0KPiArCQkJdWludDY0X3QgY3ljbGVzOw0KPiAr
-CQkJZG91YmxlIG9ianNfcGVyX2NhbGw7DQo+ICsJCQlpZiAoaWR4IDwgUlRFX0RJTShuLT51c2Fn
-ZV9zdGF0cykpIHsNCj4gKwkJCQl1aW50MTZfdCBpZHhfb2JqcyA9IHByb2ZpbGVfc2FtcGxlX3Np
-emVzW2lkeF07DQo+ICsJCQkJZnByaW50ZihmLCAiICAgICAgIG9ianNbJXVdXG4iLCBpZHhfb2Jq
-cyk7DQo+ICsJCQkJY2FsbHMgPSBuLT51c2FnZV9zdGF0c1tpZHhdLmNhbGxzOw0KPiArCQkJCWN5
-Y2xlcyA9IG4tPnVzYWdlX3N0YXRzW2lkeF0uY3ljbGVzOw0KPiArCQkJCW9ianNfcGVyX2NhbGwg
-PSAoZG91YmxlKWlkeF9vYmpzOw0KPiArCQkJCWNhbGxzX290aGVyIC09IGNhbGxzOw0KPiArCQkJ
-CWN5Y2xlc19vdGhlciAtPSBjeWNsZXM7DQo+ICsJCQkJb2Jqc19vdGhlciAtPSBpZHhfb2JqcyAq
-IGNhbGxzOw0KPiArCQkJfSBlbHNlIHsNCj4gKwkJCQlmcHJpbnRmKGYsICIgICAgICAgb2Jqc1tv
-dGhlcl1cbiIpOw0KPiArCQkJCWlmIChjYWxsc19vdGhlciA+IDAgJiYgY3ljbGVzX290aGVyID4g
-MCAmJg0KPiBvYmpzX290aGVyID4gMCkgew0KPiArCQkJCQljYWxscyA9IGNhbGxzX290aGVyOw0K
-PiArCQkJCQljeWNsZXMgPSBjeWNsZXNfb3RoZXI7DQo+ICsJCQkJCW9ianNfcGVyX2NhbGwgPSAo
-ZG91YmxlKW9ianNfb3RoZXIgLw0KPiAoZG91YmxlKWNhbGxzX290aGVyOw0KPiArCQkJCQlmcHJp
-bnRmKGYsICIgICAgICAgICBhdmcNCj4gb2Jqcy9jYWxsPSUuMWZcbiIsIG9ianNfcGVyX2NhbGwp
-Ow0KPiArCQkJCX0gZWxzZSB7DQo+ICsJCQkJCWNhbGxzID0gMDsNCj4gKwkJCQkJY3ljbGVzID0g
-MDsNCj4gKwkJCQkJb2Jqc19wZXJfY2FsbCA9IDAuMDsNCj4gKwkJCQl9DQo+ICsJCQl9DQo+ICsJ
-CQlmcHJpbnRmKGYsICIgICAgICAgICBjYWxscz0lIiBQUkl1NjQsIGNhbGxzKTsNCj4gKwkJCWlm
-IChjYWxscyAhPSAwKQ0KPiArCQkJCWZwcmludGYoZiwgIiwgY3ljbGVzPSUiIFBSSXU2NCAiLCBh
-dmcNCj4gY3ljbGVzL2NhbGw9JS4xZiIsDQo+ICsJCQkJCQljeWNsZXMsDQo+ICsJCQkJCQkoZG91
-YmxlKWN5Y2xlcyAvIChkb3VibGUpY2FsbHMpOw0KPiArCQkJaWYgKGNhbGxzICE9IDAgJiYgb2Jq
-c19wZXJfY2FsbCAhPSAwLjApDQo+ICsJCQkJZnByaW50ZihmLCAiLCBhdmcgY3ljbGVzL29iaj0l
-LjFmIiwNCj4gKwkJCQkJCShkb3VibGUpY3ljbGVzIC8gKGRvdWJsZSljYWxscyAvDQo+IG9ianNf
-cGVyX2NhbGwpOw0KPiArCQkJZnByaW50ZihmLCAiXG4iKTsNCj4gKwkJfQ0KPiArI2VuZGlmDQo+
-ICAJCWZvciAoaSA9IDA7IGkgPCBuLT5uYl9lZGdlczsgaSsrKQ0KPiAgCQkJZnByaW50ZihmLCAi
-ICAgICAgICAgIGVkZ2VbJWRdIDwlcz5cbiIsIGksDQo+ICAJCQkJbi0+bm9kZXNbaV0tPm5hbWUp
-Ow0KPiBkaWZmIC0tZ2l0IGEvbGliL2dyYXBoL25vZGUuYyBiL2xpYi9ncmFwaC9ub2RlLmMNCj4g
-aW5kZXggMWZjZTNlNjYzMi4uMTliMzg4ODFhZSAxMDA2NDQNCj4gLS0tIGEvbGliL2dyYXBoL25v
-ZGUuYw0KPiArKysgYi9saWIvZ3JhcGgvbm9kZS5jDQo+IEBAIC0xMTAsMTAgKzExMCwxMiBAQCBf
-X3J0ZV9ub2RlX3JlZ2lzdGVyKGNvbnN0IHN0cnVjdA0KPiBydGVfbm9kZV9yZWdpc3RlciAqcmVn
-KQ0KPiAgCXJ0ZV9lZGdlX3QgaTsNCj4gIAlzaXplX3Qgc3o7DQo+IA0KPiArI2lmbmRlZiBSVEVf
-R1JBUEhfUFJPRklMRQ0KPiAgCS8qIExpbWl0IE5vZGUgc3BlY2lmaWMgbWV0YWRhdGEgdG8gb25l
-IGNhY2hlbGluZSBvbiA2NEIgQ0wNCj4gbWFjaGluZSAqLw0KPiAgCVJURV9CVUlMRF9CVUdfT04o
-KG9mZnNldG9mKHN0cnVjdCBydGVfbm9kZSwgbm9kZXMpIC0NCj4gIAkJCSAgb2Zmc2V0b2Yoc3Ry
-dWN0IHJ0ZV9ub2RlLCBjdHgpKSAhPQ0KPiAgCQkJIFJURV9DQUNIRV9MSU5FX01JTl9TSVpFKTsN
-Cj4gKyNlbmRpZg0KPiANCj4gIAlncmFwaF9zcGlubG9ja19sb2NrKCk7DQo+IA0KPiBkaWZmIC0t
-Z2l0IGEvbGliL2dyYXBoL3J0ZV9ncmFwaF93b3JrZXJfY29tbW9uLmgNCj4gYi9saWIvZ3JhcGgv
-cnRlX2dyYXBoX3dvcmtlcl9jb21tb24uaA0KPiBpbmRleCA0YWI1M2E1MzNlLi4wMGU4ZjU4NTlk
-IDEwMDY0NA0KPiAtLS0gYS9saWIvZ3JhcGgvcnRlX2dyYXBoX3dvcmtlcl9jb21tb24uaA0KPiAr
-KysgYi9saWIvZ3JhcGgvcnRlX2dyYXBoX3dvcmtlcl9jb21tb24uaA0KPiBAQCAtMTIxLDYgKzEy
-MSwxNyBAQCBzdHJ1Y3QgX19ydGVfY2FjaGVfYWxpZ25lZCBydGVfbm9kZSB7DQo+ICAJcnRlX2dy
-YXBoX29mZl90IHhzdGF0X29mZjsgLyoqPCBPZmZzZXQgdG8geHN0YXQgY291bnRlcnMuICovDQo+
-IA0KPiAgCS8qKiBGYXN0IHBhdGggYXJlYSBjYWNoZSBsaW5lIDIuICovDQo+ICsjaWZkZWYgUlRF
-X0dSQVBIX1BST0ZJTEUNCj4gKwkvKioNCj4gKwkgKiBVc2FnZSB3aGVuIHRoaXMgbm9kZSBwcm9j
-ZXNzZWQgMCwgMSwNCj4gUlRFX0dSQVBIX1BST0ZJTEVfQlVSU1RfU0laRSwNCj4gKwkgKiBvciBS
-VEVfR1JBUEhfQlVSU1RfU0laRSBvYmplY3RzLg0KPiArCSAqLw0KPiArCXN0cnVjdCBfX3J0ZV9j
-YWNoZV9hbGlnbmVkIHsNCj4gKwkJdWludDY0X3QgY2FsbHM7ICAgICAvKio8IENhbGxzIGRvbmUu
-ICovDQo+ICsJCXVpbnQ2NF90IGN5Y2xlczsgICAgLyoqPCBDeWNsZXMgc3BlbnQuICovDQo+ICsJ
-fSB1c2FnZV9zdGF0c1s0XTsNCj4gKwkvKiogRmFzdCBwYXRoIGFyZWEgY2FjaGUgbGluZSAzLiAq
-Lw0KPiArI2VuZGlmDQo+ICAJX19leHRlbnNpb25fXyBzdHJ1Y3QgX19ydGVfY2FjaGVfYWxpZ25l
-ZCB7DQo+ICAjZGVmaW5lIFJURV9OT0RFX0NUWF9TWiAxNg0KPiAgCQl1bmlvbiB7DQo+IEBAIC0x
-NDgsOCArMTU5LDEwIEBAIHN0cnVjdCBfX3J0ZV9jYWNoZV9hbGlnbmVkIHJ0ZV9ub2RlIHsNCj4g
-IAl9Ow0KPiAgfTsNCj4gDQo+ICsjaWZuZGVmIFJURV9HUkFQSF9QUk9GSUxFDQo+ICBzdGF0aWNf
-YXNzZXJ0KG9mZnNldG9mKHN0cnVjdCBydGVfbm9kZSwgbm9kZXMpIC0gb2Zmc2V0b2Yoc3RydWN0
-DQo+IHJ0ZV9ub2RlLCBjdHgpDQo+ICAJPT0gUlRFX0NBQ0hFX0xJTkVfTUlOX1NJWkUsICJydGVf
-bm9kZSBmYXN0IHBhdGggYXJlYSBtdXN0IGZpdCBpbg0KPiA2NCBieXRlcyIpOw0KPiArI2VuZGlm
-DQo+IA0KPiAgLyoqDQo+ICAgKiBAaW50ZXJuYWwNCj4gQEAgLTE5Nyw3ICsyMTAsNyBAQCB2b2lk
-IF9fcnRlX25vZGVfc3RyZWFtX2FsbG9jX3NpemUoc3RydWN0IHJ0ZV9ncmFwaA0KPiAqZ3JhcGgs
-DQo+ICBzdGF0aWMgX19ydGVfYWx3YXlzX2lubGluZSB2b2lkDQo+ICBfX3J0ZV9ub2RlX3Byb2Nl
-c3Moc3RydWN0IHJ0ZV9ncmFwaCAqZ3JhcGgsIHN0cnVjdCBydGVfbm9kZSAqbm9kZSkNCj4gIHsN
-Cj4gLQl1aW50NjRfdCBzdGFydDsNCj4gKwl1aW50NjRfdCBjeWNsZXM7DQo+ICAJdWludDE2X3Qg
-cmM7DQo+ICAJdm9pZCAqKm9ianM7DQo+IA0KPiBAQCAtMjA2LDExICsyMTksMjQgQEAgX19ydGVf
-bm9kZV9wcm9jZXNzKHN0cnVjdCBydGVfZ3JhcGggKmdyYXBoLA0KPiBzdHJ1Y3QgcnRlX25vZGUg
-Km5vZGUpDQo+ICAJcnRlX3ByZWZldGNoMChvYmpzKTsNCj4gDQo+ICAJaWYgKHJ0ZV9ncmFwaF9o
-YXNfc3RhdHNfZmVhdHVyZSgpKSB7DQo+IC0JCXN0YXJ0ID0gcnRlX3JkdHNjKCk7DQo+ICsJCWN5
-Y2xlcyA9IC1ydGVfcmR0c2MoKTsNCj4gIAkJcmMgPSBub2RlLT5wcm9jZXNzKGdyYXBoLCBub2Rl
-LCBvYmpzLCBub2RlLT5pZHgpOw0KPiAtCQlub2RlLT50b3RhbF9jeWNsZXMgKz0gcnRlX3JkdHNj
-KCkgLSBzdGFydDsNCj4gKwkJY3ljbGVzICs9IHJ0ZV9yZHRzYygpOw0KPiArCQlub2RlLT50b3Rh
-bF9jeWNsZXMgKz0gY3ljbGVzOw0KPiAgCQlub2RlLT50b3RhbF9jYWxscysrOw0KPiAgCQlub2Rl
-LT50b3RhbF9vYmpzICs9IHJjOw0KPiArI2lmZGVmIFJURV9HUkFQSF9QUk9GSUxFDQo+ICsJCWlm
-IChyYyA8PSAxKSB7DQo+ICsJCQlub2RlLT51c2FnZV9zdGF0c1tyY10uY2FsbHMrKzsNCj4gKwkJ
-CW5vZGUtPnVzYWdlX3N0YXRzW3JjXS5jeWNsZXMgKz0gY3ljbGVzOw0KPiArCQl9IGVsc2UgaWYg
-KHJjID09IFJURV9HUkFQSF9QUk9GSUxFX0JVUlNUX1NJWkUpIHsNCj4gKwkJCW5vZGUtPnVzYWdl
-X3N0YXRzWzJdLmNhbGxzKys7DQo+ICsJCQlub2RlLT51c2FnZV9zdGF0c1syXS5jeWNsZXMgKz0g
-Y3ljbGVzOw0KPiArCQl9IGVsc2UgaWYgKHJjID09IFJURV9HUkFQSF9CVVJTVF9TSVpFKSB7DQo+
-ICsJCQlub2RlLT51c2FnZV9zdGF0c1szXS5jYWxscysrOw0KPiArCQkJbm9kZS0+dXNhZ2Vfc3Rh
-dHNbM10uY3ljbGVzICs9IGN5Y2xlczsNCj4gKwkJfQ0KPiArI2VuZGlmDQo+ICAJfSBlbHNlIHsN
-Cj4gIAkJbm9kZS0+cHJvY2VzcyhncmFwaCwgbm9kZSwgb2Jqcywgbm9kZS0+aWR4KTsNCj4gIAl9
-DQo+IC0tDQo+IDIuNDMuMA0KDQo=
+The RIB library named the mempool holding its nodes "MP_<name>".
+That prefix is the one the mempool library itself prepends to
+the backing memzone, so the memzone ended up named
+"MP_MP_<name>" which is improper.
+
+The FIB library passed its own name unchanged to the underlying
+RIB and did not add a prefix to the RIB name.
+
+This patch makes name each object after its owner.
+The node mempool of a RIB is now "RIB_<name>" or "RIB6_<name>",
+and the RIB owned by a FIB is now "FIB_<name>" or "FIB6_<name>".
+
+A mempool name is limited to RTE_MEMPOOL_NAMESIZE, which is much
+shorter than RTE_RIB_NAMESIZE.
+The name was passed down silently and an oversized one surfaced
+as an opaque rte_mempool_create() failure, so check the derived
+name up front and return ENAMETOOLONG instead.
+As the prefixes above are added on top of the name, the new
+maximum length of a name is limited to the following:
+RIB : 21 characters
+RIB6: 20 characters
+FIB : 17 characters
+FIB6: 15 characters
+Hence, shortening  the names used by the graph nodes, the l3fwd
+example and the unit tests accordingly.
+
+Bugzilla ID: 1981 1982
+Fixes: 5a5793a5ffa2 ("rib: add RIB library")
+Fixes: f7e861e21c46 ("rib: support IPv6")
+Fixes: 39e927248416 ("fib: add FIB library")
+Fixes: 40d41a8a7b34 ("fib: support IPv6")
+
+Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
+Acked-by: Morten Brørup <mb@smartsharesystems.com>
+---
+V2: Addressed Morten Brørup's review comments
+
+ app/test/test_fib.c                    | 34 ++++++++++-----------
+ app/test/test_fib6.c                   | 42 +++++++++++++-------------
+ doc/guides/rel_notes/release_26_11.rst | 14 +++++++++
+ examples/l3fwd/l3fwd_fib.c             |  4 +--
+ lib/fib/rte_fib.c                      | 16 ++++++++--
+ lib/fib/rte_fib6.c                     | 16 ++++++++--
+ lib/node/ip4_lookup_fib.c              |  4 +--
+ lib/node/ip6_lookup_fib.c              |  4 +--
+ lib/rib/rte_rib.c                      | 14 +++++++--
+ lib/rib/rte_rib6.c                     | 14 +++++++--
+ 10 files changed, 108 insertions(+), 54 deletions(-)
+
+diff --git a/app/test/test_fib.c b/app/test/test_fib.c
+index bd73399d56..3f5bbb3061 100644
+--- a/app/test/test_fib.c
++++ b/app/test/test_fib.c
+@@ -49,24 +49,24 @@ test_create_invalid(void)
+ 		"Call succeeded with invalid parameters\n");
+ 
+ 	/* rte_fib_create: config == NULL */
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, NULL);
++	fib = rte_fib_create("test_create_inv", SOCKET_ID_ANY, NULL);
+ 	RTE_TEST_ASSERT(fib == NULL,
+ 		"Call succeeded with invalid parameters\n");
+ 
+ 	/* socket_id < -1 is invalid */
+-	fib = rte_fib_create(__func__, -2, &config);
++	fib = rte_fib_create("test_create_inv", -2, &config);
+ 	RTE_TEST_ASSERT(fib == NULL,
+ 		"Call succeeded with invalid parameters\n");
+ 
+ 	/* rte_fib_create: max_routes = 0 */
+ 	config.max_routes = 0;
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib_create("test_create_inv", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib == NULL,
+ 		"Call succeeded with invalid parameters\n");
+ 	config.max_routes = MAX_ROUTES;
+ 
+ 	config.type = RTE_FIB_DIR24_8 + 1;
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib_create("test_create_inv", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib == NULL,
+ 		"Call succeeded with invalid parameters\n");
+ 
+@@ -74,13 +74,13 @@ test_create_invalid(void)
+ 	config.dir24_8.num_tbl8 = MAX_TBL8;
+ 
+ 	config.dir24_8.nh_sz = RTE_FIB_DIR24_8_8B + 1;
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib_create("test_create_inv", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib == NULL,
+ 		"Call succeeded with invalid parameters\n");
+ 	config.dir24_8.nh_sz = RTE_FIB_DIR24_8_8B;
+ 
+ 	config.dir24_8.num_tbl8 = 0;
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib_create("test_create_inv", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib == NULL,
+ 		"Call succeeded with invalid parameters\n");
+ 
+@@ -104,7 +104,7 @@ test_multiple_create(void)
+ 
+ 	for (i = 0; i < 100; i++) {
+ 		config.max_routes = MAX_ROUTES - i;
+-		fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++		fib = rte_fib_create("test_mult_create", SOCKET_ID_ANY, &config);
+ 		RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 		rte_fib_free(fib);
+ 	}
+@@ -129,7 +129,7 @@ test_free_null(void)
+ 	config.default_nh = 0;
+ 	config.type = RTE_FIB_DUMMY;
+ 
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib_create("test_free_null", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	rte_fib_free(fib);
+@@ -167,7 +167,7 @@ test_add_del_invalid(void)
+ 		"Call succeeded with invalid parameters\n");
+ 
+ 	/*Create valid fib to use in rest of test. */
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib_create("test_add_del_inv", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	/* rte_fib_add: depth > RTE_FIB_MAXDEPTH */
+@@ -331,7 +331,7 @@ test_lookup(void)
+ 	config.default_nh = def_nh;
+ 	config.type = RTE_FIB_DUMMY;
+ 
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib_create("test_lookup", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 	ret = check_fib(fib);
+ 	RTE_TEST_ASSERT(ret == TEST_SUCCESS,
+@@ -342,7 +342,7 @@ test_lookup(void)
+ 
+ 	config.dir24_8.nh_sz = RTE_FIB_DIR24_8_1B;
+ 	config.dir24_8.num_tbl8 = 127;
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib_create("test_lookup", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 	ret = check_fib(fib);
+ 	RTE_TEST_ASSERT(ret == TEST_SUCCESS,
+@@ -351,7 +351,7 @@ test_lookup(void)
+ 
+ 	config.dir24_8.nh_sz = RTE_FIB_DIR24_8_2B;
+ 	config.dir24_8.num_tbl8 = MAX_TBL8 - 1;
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib_create("test_lookup", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 	ret = check_fib(fib);
+ 	RTE_TEST_ASSERT(ret == TEST_SUCCESS,
+@@ -360,7 +360,7 @@ test_lookup(void)
+ 
+ 	config.dir24_8.nh_sz = RTE_FIB_DIR24_8_4B;
+ 	config.dir24_8.num_tbl8 = MAX_TBL8;
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib_create("test_lookup", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 	ret = check_fib(fib);
+ 	RTE_TEST_ASSERT(ret == TEST_SUCCESS,
+@@ -369,7 +369,7 @@ test_lookup(void)
+ 
+ 	config.dir24_8.nh_sz = RTE_FIB_DIR24_8_8B;
+ 	config.dir24_8.num_tbl8 = MAX_TBL8;
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib_create("test_lookup", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 	ret = check_fib(fib);
+ 	RTE_TEST_ASSERT(ret == TEST_SUCCESS,
+@@ -401,7 +401,7 @@ test_invalid_rcu(void)
+ 	config.rib_ext_sz = 0;
+ 	config.default_nh = def_nh;
+ 
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib_create("test_invalid_rcu", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	/* Create RCU QSBR variable */
+@@ -426,7 +426,7 @@ test_invalid_rcu(void)
+ 	config.type = RTE_FIB_DIR24_8;
+ 	config.dir24_8.nh_sz = RTE_FIB_DIR24_8_4B;
+ 	config.dir24_8.num_tbl8 = MAX_TBL8;
+-	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib_create("test_invalid_rcu", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	/* Call rte_fib_rcu_qsbr_add without fib or config */
+@@ -532,7 +532,7 @@ test_fib_rcu_sync_rw(void)
+ 	config.dir24_8.nh_sz = RTE_FIB_DIR24_8_4B;
+ 	config.dir24_8.num_tbl8 = 1;
+ 
+-	g_fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
++	g_fib = rte_fib_create("test_rcu_sync_rw", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(g_fib != NULL, "Failed to create FIB\n");
+ 
+ 	/* Create RCU QSBR variable */
+diff --git a/app/test/test_fib6.c b/app/test/test_fib6.c
+index ad68645428..32937a7c99 100644
+--- a/app/test/test_fib6.c
++++ b/app/test/test_fib6.c
+@@ -56,24 +56,24 @@ test_create_invalid(void)
+ 		"Call succeeded with invalid parameters\n");
+ 
+ 	/* rte_fib6_create: config == NULL */
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, NULL);
++	fib = rte_fib6_create("test_create_inv", SOCKET_ID_ANY, NULL);
+ 	RTE_TEST_ASSERT(fib == NULL,
+ 		"Call succeeded with invalid parameters\n");
+ 
+ 	/* socket_id < -1 is invalid */
+-	fib = rte_fib6_create(__func__, -2, &config);
++	fib = rte_fib6_create("test_create_inv", -2, &config);
+ 	RTE_TEST_ASSERT(fib == NULL,
+ 		"Call succeeded with invalid parameters\n");
+ 
+ 	/* rte_fib6_create: max_routes = 0 */
+ 	config.max_routes = 0;
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_create_inv", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib == NULL,
+ 		"Call succeeded with invalid parameters\n");
+ 	config.max_routes = MAX_ROUTES;
+ 
+ 	config.type = RTE_FIB6_TRIE + 1;
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_create_inv", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib == NULL,
+ 		"Call succeeded with invalid parameters\n");
+ 
+@@ -81,13 +81,13 @@ test_create_invalid(void)
+ 	config.trie.num_tbl8 = MAX_TBL8;
+ 
+ 	config.trie.nh_sz = RTE_FIB6_TRIE_8B + 1;
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_create_inv", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib == NULL,
+ 		"Call succeeded with invalid parameters\n");
+ 	config.trie.nh_sz = RTE_FIB6_TRIE_8B;
+ 
+ 	config.trie.num_tbl8 = 0;
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_create_inv", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib == NULL,
+ 		"Call succeeded with invalid parameters\n");
+ 
+@@ -111,7 +111,7 @@ test_multiple_create(void)
+ 
+ 	for (i = 0; i < 100; i++) {
+ 		config.max_routes = MAX_ROUTES - i;
+-		fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++		fib = rte_fib6_create("test_mult_crt", SOCKET_ID_ANY, &config);
+ 		RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 		rte_fib6_free(fib);
+ 	}
+@@ -136,7 +136,7 @@ test_free_null(void)
+ 	config.default_nh = 0;
+ 	config.type = RTE_FIB6_DUMMY;
+ 
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_free_null", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	rte_fib6_free(fib);
+@@ -175,7 +175,7 @@ test_add_del_invalid(void)
+ 		"Call succeeded with invalid parameters\n");
+ 
+ 	/*Create valid fib to use in rest of test. */
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_adddel_inv", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	/* rte_fib6_add: depth > RTE_IPV6_MAX_DEPTH */
+@@ -356,7 +356,7 @@ test_lookup(void)
+ 	config.default_nh = def_nh;
+ 	config.type = RTE_FIB6_DUMMY;
+ 
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_lookup", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 	ret = check_fib(fib);
+ 	RTE_TEST_ASSERT(ret == TEST_SUCCESS,
+@@ -367,7 +367,7 @@ test_lookup(void)
+ 
+ 	config.trie.nh_sz = RTE_FIB6_TRIE_2B;
+ 	config.trie.num_tbl8 = MAX_TBL8 - 1;
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_lookup", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 	ret = check_fib(fib);
+ 	RTE_TEST_ASSERT(ret == TEST_SUCCESS,
+@@ -376,7 +376,7 @@ test_lookup(void)
+ 
+ 	config.trie.nh_sz = RTE_FIB6_TRIE_4B;
+ 	config.trie.num_tbl8 = MAX_TBL8;
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_lookup", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 	ret = check_fib(fib);
+ 	RTE_TEST_ASSERT(ret == TEST_SUCCESS,
+@@ -385,7 +385,7 @@ test_lookup(void)
+ 
+ 	config.trie.nh_sz = RTE_FIB6_TRIE_8B;
+ 	config.trie.num_tbl8 = MAX_TBL8;
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_lookup", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 	ret = check_fib(fib);
+ 	RTE_TEST_ASSERT(ret == TEST_SUCCESS,
+@@ -417,7 +417,7 @@ test_invalid_rcu(void)
+ 	config.rib_ext_sz = 0;
+ 	config.default_nh = def_nh;
+ 
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_inval_rcu", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	/* Create RCU QSBR variable */
+@@ -442,7 +442,7 @@ test_invalid_rcu(void)
+ 	config.type = RTE_FIB6_TRIE;
+ 	config.trie.nh_sz = RTE_FIB6_TRIE_4B;
+ 	config.trie.num_tbl8 = MAX_TBL8;
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_inval_rcu", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	/* Call rte_fib6_rcu_qsbr_add without fib or config */
+@@ -548,7 +548,7 @@ test_fib_rcu_sync_rw(void)
+ 	config.trie.nh_sz = RTE_FIB6_TRIE_4B;
+ 	config.trie.num_tbl8 = 1;
+ 
+-	g_fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	g_fib = rte_fib6_create("test_rcu_sync", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(g_fib != NULL, "Failed to create FIB\n");
+ 
+ 	/* Create RCU QSBR variable */
+@@ -642,7 +642,7 @@ test_drift(void)
+ 	config.trie.nh_sz = RTE_FIB6_TRIE_2B;
+ 	config.trie.num_tbl8 = 256;
+ 
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_drift", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	ret = rte_fib6_add(fib, &parent, 28, 0xa);
+@@ -706,7 +706,7 @@ test_drift_compression(void)
+ 	config.trie.nh_sz = RTE_FIB6_TRIE_2B;
+ 	config.trie.num_tbl8 = 256;
+ 
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_drift_comp", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	/* Compressed: child shares the parent's nh, modify_dp is skipped */
+@@ -767,7 +767,7 @@ test_drift_multilevel(void)
+ 	config.trie.nh_sz = RTE_FIB6_TRIE_2B;
+ 	config.trie.num_tbl8 = 256;
+ 
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_drift_ml", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	ret = rte_fib6_add(fib, &grand, 28, 1);
+@@ -831,7 +831,7 @@ test_drift_stress(void)
+ 	config.trie.nh_sz = RTE_FIB6_TRIE_2B;
+ 	config.trie.num_tbl8 = 256;
+ 
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_drift_str", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	for (i = 0; i < 2000; i++) {
+@@ -902,7 +902,7 @@ test_drift_tight_pool(void)
+ 	config.trie.nh_sz = RTE_FIB6_TRIE_2B;
+ 	config.trie.num_tbl8 = 3;
+ 
+-	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	fib = rte_fib6_create("test_drift_tp", SOCKET_ID_ANY, &config);
+ 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
+ 
+ 	ret = rte_fib6_add(fib, &parent, 28, 1);
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index c8cc86295d..67ad23eaa3 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -93,6 +93,20 @@ API Changes
+    Also, make sure to start the actual text at the margin.
+    =======================================================
+ 
++* rib: The node mempool created by ``rte_rib_create()`` and ``rte_rib6_create()``
++  is now named ``RIB_<name>`` and ``RIB6_<name>`` instead of ``MP_<name>``.
++
++* fib: The RIB created by ``rte_fib_create()`` and ``rte_fib6_create()``
++  is now named ``FIB_<name>`` and ``FIB6_<name>``.
++
++* rib, fib: The name of a RIB, RIB6, FIB or FIB6 is used to derive the name of
++  its node mempool, which is bounded by ``RTE_MEMPOOL_NAMESIZE``.
++  As the prefixes above are added on top of the name,the new maximum length of
++  a name are the following:
++  RIB  - 21 characters.
++  RIB6 - 20 characters.
++  FIB  - 17 characters.
++  FIB6 - 15 characters.
+ 
+ ABI Changes
+ -----------
+diff --git a/examples/l3fwd/l3fwd_fib.c b/examples/l3fwd/l3fwd_fib.c
+index 4fc6bf90d5..0ff5c2c6de 100644
+--- a/examples/l3fwd/l3fwd_fib.c
++++ b/examples/l3fwd/l3fwd_fib.c
+@@ -654,7 +654,7 @@ setup_fib(const int socketid)
+ 	config_ipv4.default_nh = FIB_DEFAULT_HOP;
+ 	config_ipv4.dir24_8.nh_sz = RTE_FIB_DIR24_8_4B;
+ 	config_ipv4.dir24_8.num_tbl8 = (1 << 15);
+-	snprintf(s, sizeof(s), "IPV4_L3FWD_FIB_%d", socketid);
++	snprintf(s, sizeof(s), "L3FWD_FIB_%d", socketid);
+ 	ipv4_l3fwd_fib_lookup_struct[socketid] =
+ 			rte_fib_create(s, socketid, &config_ipv4);
+ 	if (ipv4_l3fwd_fib_lookup_struct[socketid] == NULL)
+@@ -705,7 +705,7 @@ setup_fib(const int socketid)
+ 	/* >8 End of setup fib. */
+ 
+ 	/* Create the fib IPv6 table. */
+-	snprintf(s, sizeof(s), "IPV6_L3FWD_FIB_%d", socketid);
++	snprintf(s, sizeof(s), "L3FWD_FIB6_%d", socketid);
+ 
+ 	config.type = RTE_FIB6_TRIE;
+ 	config.max_routes = (1 << 16) - 1;
+diff --git a/lib/fib/rte_fib.c b/lib/fib/rte_fib.c
+index 184210f380..7a587820ad 100644
+--- a/lib/fib/rte_fib.c
++++ b/lib/fib/rte_fib.c
+@@ -37,6 +37,9 @@ EAL_REGISTER_TAILQ(rte_fib_tailq)
+ #define FIB_RETURN_IF_TRUE(cond, retval)
+ #endif
+ 
++/* Prefix used for the memory objects owned by a FIB. */
++#define FIB_MEM_PREFIX		"FIB_"
++
+ struct rte_fib {
+ 	char			name[RTE_FIB_NAMESIZE];
+ 	enum rte_fib_type	type;	/**< Type of FIB struct */
+@@ -173,14 +176,21 @@ rte_fib_create(const char *name, int socket_id, struct rte_fib_conf *conf)
+ 	rib_conf.ext_sz = conf->rib_ext_sz;
+ 	rib_conf.max_nodes = conf->max_routes * 2;
+ 
+-	rib = rte_rib_create(name, socket_id, &rib_conf);
++	/* Add FIB Prefix to its mempool name */
++	ret = snprintf(mem_name, sizeof(mem_name), FIB_MEM_PREFIX "%s", name);
++	if (ret < 0 || ret >= (int)sizeof(mem_name)) {
++		FIB_LOG(ERR, "FIB name %s is too long", name);
++		rte_errno = ENAMETOOLONG;
++		return NULL;
++	}
++
++	rib = rte_rib_create(mem_name, socket_id, &rib_conf);
+ 	if (rib == NULL) {
+ 		FIB_LOG(ERR,
+-			"Can not allocate RIB %s", name);
++			"Can not allocate RIB for FIB: %s", mem_name);
+ 		return NULL;
+ 	}
+ 
+-	snprintf(mem_name, sizeof(mem_name), "FIB_%s", name);
+ 	fib_list = RTE_TAILQ_CAST(rte_fib_tailq.head, rte_fib_list);
+ 
+ 	rte_mcfg_tailq_write_lock();
+diff --git a/lib/fib/rte_fib6.c b/lib/fib/rte_fib6.c
+index 770becdb61..1a31ab09aa 100644
+--- a/lib/fib/rte_fib6.c
++++ b/lib/fib/rte_fib6.c
+@@ -37,6 +37,9 @@ EAL_REGISTER_TAILQ(rte_fib6_tailq)
+ #define FIB6_RETURN_IF_TRUE(cond, retval)
+ #endif
+ 
++/* Prefix used for the memory objects owned by a FIB6. */
++#define FIB6_MEM_PREFIX		"FIB6_"
++
+ struct rte_fib6 {
+ 	char			name[RTE_FIB6_NAMESIZE];
+ 	enum rte_fib6_type	type;	/**< Type of FIB struct */
+@@ -172,14 +175,21 @@ rte_fib6_create(const char *name, int socket_id, struct rte_fib6_conf *conf)
+ 	rib_conf.ext_sz = conf->rib_ext_sz;
+ 	rib_conf.max_nodes = conf->max_routes * 2;
+ 
+-	rib = rte_rib6_create(name, socket_id, &rib_conf);
++	/* Add FIB6 Prefix to its mempool name */
++	ret = snprintf(mem_name, sizeof(mem_name), FIB6_MEM_PREFIX "%s", name);
++	if (ret < 0 || ret >= (int)sizeof(mem_name)) {
++		FIB_LOG(ERR, "FIB6 name %s is too long", name);
++		rte_errno = ENAMETOOLONG;
++		return NULL;
++	}
++
++	rib = rte_rib6_create(mem_name, socket_id, &rib_conf);
+ 	if (rib == NULL) {
+ 		FIB_LOG(ERR,
+-			"Can not allocate RIB %s", name);
++			"Can not allocate RIB6 for FIB6 %s", mem_name);
+ 		return NULL;
+ 	}
+ 
+-	snprintf(mem_name, sizeof(mem_name), "FIB6_%s", name);
+ 	fib_list = RTE_TAILQ_CAST(rte_fib6_tailq.head, rte_fib6_list);
+ 
+ 	rte_mcfg_tailq_write_lock();
+diff --git a/lib/node/ip4_lookup_fib.c b/lib/node/ip4_lookup_fib.c
+index 0857d889fc..750bf69255 100644
+--- a/lib/node/ip4_lookup_fib.c
++++ b/lib/node/ip4_lookup_fib.c
+@@ -205,7 +205,7 @@ rte_node_ip4_fib_create(int socket, struct rte_fib_conf *conf)
+ 		return 0;
+ 
+ 	conf->default_nh = FIB_DEFAULT_NH;
+-	snprintf(s, sizeof(s), "IPV4_LOOKUP_FIB_%d", socket);
++	snprintf(s, sizeof(s), "IP4_FIB_%d", socket);
+ 	nm->fib[socket] = rte_fib_create(s, socket, conf);
+ 	if (nm->fib[socket] == NULL)
+ 		return -rte_errno;
+@@ -266,7 +266,7 @@ setup_fib(int socket)
+ 	conf.dir24_8.nh_sz = RTE_FIB_DIR24_8_4B;
+ 	conf.dir24_8.num_tbl8 = FIB_DEFAULT_NUM_TBL8;
+ 	conf.flags = 0;
+-	snprintf(s, sizeof(s), "IPV4_LOOKUP_FIB_%d", socket);
++	snprintf(s, sizeof(s), "IP4_FIB_%d", socket);
+ 	nm->fib[socket] = rte_fib_create(s, socket, &conf);
+ 	if (nm->fib[socket] == NULL)
+ 		return -rte_errno;
+diff --git a/lib/node/ip6_lookup_fib.c b/lib/node/ip6_lookup_fib.c
+index 40c5c753df..f460838396 100644
+--- a/lib/node/ip6_lookup_fib.c
++++ b/lib/node/ip6_lookup_fib.c
+@@ -199,7 +199,7 @@ rte_node_ip6_fib_create(int socket, struct rte_fib6_conf *conf)
+ 		return 0;
+ 
+ 	conf->default_nh = FIB6_DEFAULT_NH;
+-	snprintf(s, sizeof(s), "IPV6_LOOKUP_FIB_%u", socket);
++	snprintf(s, sizeof(s), "IP6_FIB_%u", socket);
+ 	nm->fib6[socket] = rte_fib6_create(s, socket, conf);
+ 	if (nm->fib6[socket] == NULL)
+ 		return -rte_errno;
+@@ -257,7 +257,7 @@ setup_fib6(int socket)
+ 	conf.rib_ext_sz = 0;
+ 	conf.trie.nh_sz = RTE_FIB6_TRIE_4B;
+ 	conf.trie.num_tbl8 = FIB6_DEFAULT_NUM_TBL8;
+-	snprintf(s, sizeof(s), "IPV6_LOOKUP_FIB_%u", socket);
++	snprintf(s, sizeof(s), "IP6_FIB_%u", socket);
+ 	nm->fib6[socket] = rte_fib6_create(s, socket, &conf);
+ 	if (nm->fib6[socket] == NULL)
+ 		return -rte_errno;
+diff --git a/lib/rib/rte_rib.c b/lib/rib/rte_rib.c
+index 046db131ca..55802f0060 100644
+--- a/lib/rib/rte_rib.c
++++ b/lib/rib/rte_rib.c
+@@ -32,6 +32,8 @@ EAL_REGISTER_TAILQ(rte_rib_tailq)
+ #define RIB_MAXDEPTH		32
+ /* Maximum length of a RIB name. */
+ #define RTE_RIB_NAMESIZE	64
++/* Prefix used for the memory objects owned by a RIB. */
++#define RIB_MEM_PREFIX		"RIB_"
+ 
+ struct rte_rib_node {
+ 	struct rte_rib_node	*left;
+@@ -417,6 +419,7 @@ rte_rib_create(const char *name, int socket_id, const struct rte_rib_conf *conf)
+ 	struct rte_tailq_entry *te;
+ 	struct rte_rib_list *rib_list;
+ 	struct rte_mempool *node_pool;
++	int ret;
+ 
+ 	/* Check user arguments. */
+ 	if (unlikely(name == NULL || conf == NULL || conf->max_nodes <= 0)) {
+@@ -424,7 +427,15 @@ rte_rib_create(const char *name, int socket_id, const struct rte_rib_conf *conf)
+ 		return NULL;
+ 	}
+ 
+-	snprintf(mem_name, sizeof(mem_name), "MP_%s", name);
++	/* Add RIB Prefix to its node mempool name */
++	ret = snprintf(mem_name, sizeof(mem_name), RIB_MEM_PREFIX "%s", name);
++	if (unlikely(ret < 0 || ret >= (int)RTE_MEMPOOL_NAMESIZE)) {
++		RIB_LOG(ERR, "RIB name %s is too long, limit is %zu characters",
++			name, RTE_MEMPOOL_NAMESIZE - sizeof(RIB_MEM_PREFIX));
++		rte_errno = ENAMETOOLONG;
++		return NULL;
++	}
++
+ 	node_pool = rte_mempool_create(mem_name, conf->max_nodes,
+ 		sizeof(struct rte_rib_node) + conf->ext_sz, 0, 0,
+ 		NULL, NULL, NULL, NULL, socket_id, 0);
+@@ -435,7 +446,6 @@ rte_rib_create(const char *name, int socket_id, const struct rte_rib_conf *conf)
+ 		return NULL;
+ 	}
+ 
+-	snprintf(mem_name, sizeof(mem_name), "RIB_%s", name);
+ 	rib_list = RTE_TAILQ_CAST(rte_rib_tailq.head, rte_rib_list);
+ 
+ 	rte_mcfg_tailq_write_lock();
+diff --git a/lib/rib/rte_rib6.c b/lib/rib/rte_rib6.c
+index 918ddbdfd3..7d9a0ba36f 100644
+--- a/lib/rib/rte_rib6.c
++++ b/lib/rib/rte_rib6.c
+@@ -24,6 +24,8 @@
+ #define RTE_RIB_VALID_NODE	1
+ /* Maximum length of a RIB6 name. */
+ #define RTE_RIB6_NAMESIZE	64
++/* Prefix used for the memory objects owned by a RIB6. */
++#define RIB6_MEM_PREFIX		"RIB6_"
+ 
+ TAILQ_HEAD(rte_rib6_list, rte_tailq_entry);
+ static struct rte_tailq_elem rte_rib6_tailq = {
+@@ -480,6 +482,7 @@ rte_rib6_create(const char *name, int socket_id,
+ 	struct rte_tailq_entry *te;
+ 	struct rte_rib6_list *rib6_list;
+ 	struct rte_mempool *node_pool;
++	int ret;
+ 
+ 	/* Check user arguments. */
+ 	if (unlikely(name == NULL || conf == NULL || conf->max_nodes <= 0)) {
+@@ -487,7 +490,15 @@ rte_rib6_create(const char *name, int socket_id,
+ 		return NULL;
+ 	}
+ 
+-	snprintf(mem_name, sizeof(mem_name), "MP_%s", name);
++	/* Add RIB6 Prefix to its node mempool name */
++	ret = snprintf(mem_name, sizeof(mem_name), RIB6_MEM_PREFIX "%s", name);
++	if (unlikely(ret < 0 || ret >= (int)RTE_MEMPOOL_NAMESIZE)) {
++		RIB_LOG(ERR, "RIB6 name %s is too long, limit is %zu characters",
++			name, RTE_MEMPOOL_NAMESIZE - sizeof(RIB6_MEM_PREFIX));
++		rte_errno = ENAMETOOLONG;
++		return NULL;
++	}
++
+ 	node_pool = rte_mempool_create(mem_name, conf->max_nodes,
+ 		sizeof(struct rte_rib6_node) + conf->ext_sz, 0, 0,
+ 		NULL, NULL, NULL, NULL, socket_id, 0);
+@@ -498,7 +509,6 @@ rte_rib6_create(const char *name, int socket_id,
+ 		return NULL;
+ 	}
+ 
+-	snprintf(mem_name, sizeof(mem_name), "RIB6_%s", name);
+ 	rib6_list = RTE_TAILQ_CAST(rte_rib6_tailq.head, rte_rib6_list);
+ 
+ 	rte_mcfg_tailq_write_lock();
+-- 
+2.34.1
+
