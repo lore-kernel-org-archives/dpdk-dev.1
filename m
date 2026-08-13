@@ -2,76 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB23C5AD5A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Aug 2026 02:56:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F33C1C5AC67
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Aug 2026 03:37:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9EA2E40281;
-	Thu, 13 Aug 2026 04:56:14 +0200 (CEST)
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com
- [209.85.214.173])
- by mails.dpdk.org (Postfix) with ESMTP id D6F794026E
- for <dev@dpdk.org>; Thu, 13 Aug 2026 04:56:12 +0200 (CEST)
-Received: by mail-pl1-f173.google.com with SMTP id
- d9443c01a7336-2cfbbdfa60bso16361165ad.3
- for <dev@dpdk.org>; Wed, 12 Aug 2026 19:56:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786589772;
- x=1787194572; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=UAL76M5PeBtH2cLnxzZk7w9GZZESwLjrU8HisvFNX3M=;
- b=ouOZN4bibCLJ70btK3ql7DMyy5oU7dzbFCnVpLFh2gv+z9CZx0luYqXYlK5du6wLYL
- uaAuBESWwWm6TAOJGy2bk9vfW2ebK7A3IRy4T+I3JrRdN3+Tvpm365OlSJpdCIprrUnL
- FxsMmzh2SYNatEKU+KEBdWfY5KxLDUdmTCEXV2X7DNQtInrtw/PGX5RkFUX11LBgYJlP
- rckKtp7TeOXPSdEb+pmyJyjqpUr2B/ssbNeKjh5j9Pq3pNDE8dyNs0dG/fyoIMzuMm4u
- l63+/tdVv0nRKCB9Y4039Au+/W3RWis3xAFJoiW1X0bDPm8E0EQupOXrWCV1k3JtAP4k
- sNBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786589772; x=1787194572;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=UAL76M5PeBtH2cLnxzZk7w9GZZESwLjrU8HisvFNX3M=;
- b=YlR1yUi2u0UvcE99eJOS4L62lmZ4MGMRuhiuZhiq+ikRN1UyX1BMVcL3xJj4HtJpvY
- upqq5Q5jt4kLOeuVemlCIDXWvcmWrHeSbsRvkmLujovQ0aMzix8VUAqbUjwdSaU0fzG2
- IYvmiox4btDRDnhwJsRHVAiu4Xf65WEb87bTqTKl+I1WRRedPgM1FpxERSVj1A+SVSfe
- tiRb/brZ7rfci4MmxKPlqW6PcaWGoF6qOAGkY0r3kBTiOtU3UGBZq4gmDjJYFhWz/lKb
- 6tIqyLegapf0If07jiqmRLB0/Iz8b5HJRRCFbWSgNTM50tUndao/leQ+tKl5N/0/Ji9J
- csIg==
-X-Gm-Message-State: AOJu0YyRqw7Lfq9cPM9vIGiIKjoBLC78j8eQIHyFsHeTNuOOPI+wt/Mi
- yw8LF4ZknYg4U2RbHWtVm0my82BlBHPDZV7TbCZ6BRZ26X7wR0MnY6oPfdYdDi2unLI=
-X-Gm-Gg: AR+sD12SMRz3k22R+4jRxq1A6qDZbcFBAi4TLmz3PlglRFJVa3w3T6NSdn10mAUofnI
- vCIPCYpxMbI8IVty5xoNdAFpsUgBWDSp/fG637RobBbTZ+/1UHI+cVjUoooUD1JRZeZ7uv0T09j
- dkvG7k/WK7fcIxmOIn0lQrjh/ljsdfOiJLVfsIisb4/2gTyR8FlbRr9odflRxYdOX+P8KwDbpvy
- P68BgUgKerpgGgXy5OZ/50JeIX2B0lmRx0JMeqxVopTPxe/E5gIMAXNOBlRjEOtAdqzEVtZv6uJ
- H5VU80rENXl5GIdcpefLivSUVN6FE9U27FfJLJUdIg8KtchAlxUSIcEdA7JKpFfKLLbcmSDB/gk
- hOLb7ximjYVagXgGRHOVpkIrbrkZ68t2d3319RUsD4NBfFXFaXSFZAxwWIecO9gZX+iSP6a+MV9
- Vf4Keow4rr8Dm4v69fTM4mEYQOtvirnerwDjX24AKEqGfm4enbYraFlIwa+12F0WPNBZ2GZ+YnH
- PPFlVzWigjPXje5zkiBplFTl+wgNw==
-X-Received: by 2002:a05:6a20:7486:b0:3c3:8d4c:6673 with SMTP id
- adf61e73a8af0-3cc554929dbmr3298446637.37.1786589771513; 
- Wed, 12 Aug 2026 19:56:11 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-31ec08284f4sm2119913eec.31.2026.08.12.19.56.08
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 12 Aug 2026 19:56:11 -0700 (PDT)
-Date: Wed, 12 Aug 2026 19:56:00 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Mark Blasko <blasko@google.com>
-Cc: dev@dpdk.org, ciara.loftus@intel.com, mtahhan@redhat.com,
- joshwash@google.com, jtranoleary@google.com
-Subject: Re: [PATCH v5 0/2] net/af_xdp: add Rx timestamping and read_clock
- support
-Message-ID: <20260812195600.3ab13287@phoenix.local>
-In-Reply-To: <20260812233637.1968454-1-blasko@google.com>
-References: <20260623215325.814776-1-blasko@google.com>
- <20260812233637.1968454-1-blasko@google.com>
+	by mails.dpdk.org (Postfix) with ESMTP id BE1EF40281;
+	Thu, 13 Aug 2026 05:37:36 +0200 (CEST)
+Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
+ by mails.dpdk.org (Postfix) with ESMTP id 248BB4026E
+ for <dev@dpdk.org>; Thu, 13 Aug 2026 05:37:35 +0200 (CEST)
+Received: from debian (unknown [78.109.70.176])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by agw.arknetworks.am (Postfix) with ESMTPSA id 4FF27E0BA6;
+ Thu, 13 Aug 2026 07:37:33 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 4FF27E0BA6
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
+ s=default; t=1786592253;
+ bh=+rJNTZXeByYmQ5jpNlD228xK2n6WszHckCqcUqECsCE=;
+ h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+ b=XhXTbbYYRSoZC5v3uTl48raAyI2QY+IR3a/mLzJaEeJ1+Ga6NjYXCWyBIkGDsqoP2
+ mxZWRd9MD04ngltf8Zg+2/pWPLmHqNnJnP4FTJ+GdRWhc9TVNowD14AOklyL6aw1aF
+ Rw2oAYx5Hgd4CSetAZNYUJGwfWG5ZgnC9y8jaG56H4qLsXMpwAoLdWrrnHAKQ4Obi7
+ DfB5HaqV4h2DXxuSAoGBoN0hHK4IGJX1t0UrHFo+4q8o5cF7B6hQynoAtttNCyQqul
+ XhLj9DFUoPqq2JagARxtFM2qWry9pkQ9HBZb+UBk2YvyJFna4lye64cGG67cUhBWjK
+ vA23EEjI4XMQw==
+Date: Thu, 13 Aug 2026 07:37:31 +0400 (+04)
+From: Ivan Malov <ivan.malov@arknetworks.am>
+To: Stephen Hemminger <stephen@networkplumber.org>
+cc: dev@dpdk.org, Andy Moreton <andy.moreton@amd.com>, 
+ Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>, 
+ Roman Zhukov <Roman.Zhukov@arknetworks.am>, 
+ Pieter Jansen van Vuuren <pieter.jansen-van-vuuren@amd.com>, 
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: Re: [PATCH v2 00/14] common/sfc_efx/base: fix code analysis issues
+In-Reply-To: <20260812193503.46521753@phoenix.local>
+Message-ID: <321130e3-7247-0b91-4f87-76ee7ac0b7cf@arknetworks.am>
+References: <20260811174821.8930-1-ivan.malov@arknetworks.am>
+ <20260812170834.8443-1-ivan.malov@arknetworks.am>
+ <20260812193503.46521753@phoenix.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="8323328-1505296835-1786592253=:7384"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,137 +56,154 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 12 Aug 2026 23:36:34 +0000
-Mark Blasko <blasko@google.com> wrote:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-> This patch series introduces support for dynamic RX timestamping and
-> clock querying in the AF_XDP Poll Mode Driver.
-> 
-> The first patch introduces three new vdev devargs to specify
-> layout-agnostic metadata offsets and bitmasks for extracting hardware
-> RX timestamps from XDP metadata into the mbuf dynamic timestamp field.
-> 
-> The second patch implements the read_clock ethdev operation, querying
-> ethtool for the interface's PTP Hardware Clock index at start and using
-> clock_gettime to query the NIC hardware clock time.
-> ---
+--8323328-1505296835-1786592253=:7384
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8BIT
 
-AI still reports some things that should be addressed.
-I can fixup the long lines and check-git-log complaints if needed.
+Dear Stephen,
 
+If I may, I should like to point out the following:
 
-Patch 1/2: net/af_xdp: add af_xdp rx metadata and dynamic timestamping
- 
-Warning: rx_queue_offload_capa still claims a per-queue capability the
-driver does not implement.
- 
-	if (internals->rx_timestamp_offset >= 0) {
-		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_TIMESTAMP;
-		dev_info->rx_queue_offload_capa |= RTE_ETH_RX_OFFLOAD_TIMESTAMP;
-	}
- 
-  eth_rx_queue_setup() still takes rx_conf as __rte_unused and derives
-  rx_timestamp_enabled solely from dev_conf.rxmode.offloads.  An
-  application that enables the offload per queue rather than port-wide
-  gets a silent no-op: no dynfield write, no SIOCSHWTSTAMP, no error.
-  doc/guides/nics/features.rst is explicit that "Timestamp offload"
-  [uses] rte_eth_rxconf as well as rte_eth_rxmode, so claiming it in
-  af_xdp.ini implies honouring rx_conf->offloads.  Either OR
-  rx_conf->offloads into the condition, or drop rx_queue_offload_capa.
- 
-Warning: eth_af_xdp_enable_hw_timestamping() still treats any
-pre-existing filter as good enough.
- 
-	ret = ioctl(fd, SIOCGHWTSTAMP, &ifr);
-	if (ret == 0) {
-		if (config.rx_filter != HWTSTAMP_FILTER_NONE) {
-			close(fd);
-			return 0;
-		}
-	}
- 
-  If the netdev is already set to a narrow filter -- ptp4l leaves
-  HWTSTAMP_FILTER_PTP_V2_EVENT, for instance -- most packets carry no
-  valid timestamp, but the PMD reports the offload as active.  With no
-  validity mask configured it then copies whatever is in the metadata
-  area into every mbuf and sets RTE_MBUF_F_RX_TIMESTAMP, which is worse
-  than reporting nothing.  Accept only HWTSTAMP_FILTER_ALL and
-  HWTSTAMP_FILTER_SOME, or at minimum log the filter that was found so
-  the mismatch is diagnosable.
- 
-  Related: config.flags = 0 on the line below discards the flags read
-  back by SIOCGHWTSTAMP.
- 
-Warning: doc/guides/nics/features/af_xdp.ini entry is in the wrong
-place.  The order in the .ini files has to match default.ini, where
-"Timestamp offload" sits between "Promiscuous mode" and "Basic stats".
-It is currently immediately after "Link status".
- 
-Warning: parse_hex_arg() does not validate the conversion.
- 
-	unsigned long val = strtoul(value, &end, 16);
-	if (val > UINT8_MAX) {
- 
-  end is passed to strtoul() and then never looked at, and errno is
-  neither cleared nor checked.  "=junk" silently yields 0 and "=0x1zz"
-  silently yields 1.  The zero case is caught later only when a validity
-  offset was also given.  Checking end != value && *end == '\0' is two
-  lines.  parse_integer_arg() above has the same gap, so if you would
-  rather fix both in one place that is fine by me.
- 
-Info: "RX" should be "Rx" per devtools/words-case.txt, in the
-af_xdp.rst sentence about the 64-bit timestamp and in the release notes
-entry.
- 
-Info: the accepted ranges are not documented.  probe rejects a
-timestamp offset outside 8..256 and a validity offset outside 1..256,
-but af_xdp.rst does not say so, and the lower bound on the timestamp
-offset in particular is non-obvious.  Worth one sentence per argument.
- 
-Info: nothing rejects a validity offset that lands inside the eight
-timestamp bytes.  The example was fixed in v5, but
-xdp_meta_rx_ts_offset=8,xdp_meta_valid_hint_offset=4 is still accepted
-and cannot be what anyone meant.  A check at probe would be cheap.
- 
-Info: the CAP_NET_ADMIN and HWTSTAMP_FILTER_ALL paragraph is appended
-to the xdp_meta_rx_ts_valid_mask subsection but describes behaviour of
-all three arguments.  It reads as if it applied only to the mask.
- 
-Info: errno is read after close() in
-eth_af_xdp_enable_hw_timestamping().
- 
-	ret = ioctl(fd, SIOCSHWTSTAMP, &ifr);
-	close(fd);
- 
-	if (ret < 0)
-		return -errno;
- 
-  close() may overwrite errno.  Save it before closing.
- 
-Info: the zc and cp paths express the same computation two different
-ways (rte_pktmbuf_mtod_offset() vs manual (char *)pkt - off).  A small
-static inline taking a base pointer would keep them from drifting.
- 
- 
-Patch 2/2: net/af_xdp: add read_clock support to AF_XDP PMD
- 
-Info: the ptp_fd cleanup in eth_dev_close() still sits above the "out:"
-label, so it is skipped on the path that does
- 
-	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-		goto out;
- 
-  and "out:" then frees process_private with the fd still in it.  This
-  is unreachable today because the secondary installs dummy burst
-  functions and never starts, but the patch does initialise ptp_fd in
-  the secondary probe path, which implies otherwise.  Moving the close
-  below "out:" and before rte_free() makes the pairing obvious and
-  costs nothing.
- 
-Info: the PTP device is opened on every dev_start regardless of whether
-the application will ever call rte_eth_read_clock(), and a failure is
-logged at WARNING.  On a PTP-capable NIC without permission to open
-/dev/ptpX that is a warning on every start for applications that do not
-use the feature.  INFO or DEBUG would be quieter, and the -ENOTSUP from
-read_clock still tells anyone who cares.
- 
+- Patch 11/14:
+   The classification of the issue as an 'error' does not hold water. First of all, no real operability issue is observed in practice; hence, this warrants, at most, the status of a warning, not an error. Secondly, the 'count' and 'stride' are fields of the firmware's own response. A successful MCDI response is self-consistent and shall not be treated as adversarial. Furthermore, the MCDI layer explicitly clamps 'emr_out_length_used' to 'emr_out_length', the allocated output buffer size, so a buffer overrun should not be possible. The note thus does not meet the threshold of an actual defect.
+
+- Patch 13/14:
+   The default of 'TECH_AUTO' when 'flags_seen == 0' is deliberate: it is the correct instruction to the firmware when the capability map yields no technology preference, and 'TECH_NONE' would be semantically incorrect in a fixed-link context. The commit message describes the refactoring; exhaustive documentation of an edge-case path does not belong in such changes. Therefore, the review note does not meet the threshold of an actual defect.
+
+- Patches 01–04:
+   The comment on 'EFX_MCDI_BUF_SIZE' [1] explains in no uncertain terms that the rounding requirement exists to accommodate Siena on-chip buffers. The note does not apply to the modern adapters currently supported by the DPDK driver. No actual defect.
+
+- Patch 05/14:
+   In production builds, 'EFSYS_ASSERT' is elided. A NULL check is the correct defensive posture for upstream code and accurately reflects the '__in_opt' semantics at the call site.
+
+- Patches 09/14 and 13/14:
+   The convention cited applies to 'boolean_t'-returning functions carrying '__checkReturn', where '__success', '__checkReturn', and the return type all annotate the return value and naturally share a line. The functions in question, however, return 'void', carry no '__checkReturn', and express the success condition on an output parameter. The note is thus not valid at all; the placement stands.
+
+On these premises, I respectfully suggest that the series be put forward for reconsideration and integration.
+
+[1] https://github.com/DPDK/dpdk/blob/c1a46b9d9243e922428e8a5f87fa3c6ac177dc5a/drivers/common/sfc_efx/base/efx_mcdi.h#L582
+
+Thank you.
+
+On Wed, 12 Aug 2026, Stephen Hemminger wrote:
+
+> On Wed, 12 Aug 2026 21:08:20 +0400
+> Ivan Malov <ivan.malov@arknetworks.am> wrote:
+>
+>> This series addresses code analysis defects in the
+>> common/sfc_efx/base library.
+>>
+>> The first four patches fix excessive stack consumption in
+>> MCDI helper functions, each exceeding 1 KB on-stack, by
+>> switching to heap-allocated payload buffers.
+>>
+>> The remaining ten patches correct SAL annotations, add NULL
+>> checks across netport and filter helpers, resolving
+>> uninitialised memory, buffer overrun, and potential
+>> dereference issues. The final patch widens loop
+>> variable types to address a CodeQL warning.
+>>
+>>
+>> v2:
+>>
+>> - note for the future AI reviews: apply this on top of
+>>   the 'next-net-main' branch
+>
+>
+> Still has AI review issues.
+>
+> Reviewed v2 applied on c1a46b9 ("doc: remove unreferenced KNI and
+> examples figures"). All 14 apply cleanly. Comparing commit contents
+> against v1, only patches 11 and 13 have real changes; 12 differs only
+> in hunk offsets.
+>
+> Addressed since v1, all correct as far as I can tell:
+>
+> - 11/14 now reads MORE_ENTRIES with MCDI_OUT_DWORD_FIELD against
+>   MAC_STATISTICS_DESCRIPTOR_OUT_FLAGS, so only LBN 0 is tested.
+> - 13/14 adds matched_mask so *enum_hwp is written only on the first
+>   match per SW flag. That restores the original selection order that
+>   the removed "mask_sw &= ~(flag_sw)" used to provide, including the
+>   case where several distinct SW flags are set.
+> - 13/14 passes cap_enum_hw rather than MC_CMD_FEC_AUTO as the default,
+>   so a request with no FEC bits keeps MC_CMD_FEC_NONE.
+> - __success() placement is now consistent between 09/14 and 13/14.
+>
+> Patch 11/14: common/sfc_efx/base: fix flex array in netport stat describe
+>
+> Error: count and stride are still used to index the response buffer with
+> no bound derived from the response length. This was the main finding on
+> v1 and is unchanged:
+>
+> 	stride = MCDI_OUT_DWORD(req, MAC_STATISTICS_DESCRIPTOR_OUT_ENTRY_SIZE);
+> 	count = MCDI_OUT_DWORD(req, MAC_STATISTICS_DESCRIPTOR_OUT_ENTRY_COUNT);
+> 	...
+> 		for (i = 0; i < count; ++i) {
+> 			efx_np_stat_describe(entries + i * stride,
+>
+> Both fields come from firmware. entries points at payload + 20 in a
+> 1020-byte allocation and efx_np_stat_describe() reads 8 bytes per entry,
+> so any count above (out_sz - 20) / stride reads bytes that were never
+> written, and count * stride above 1000 reads past the end of the
+> allocation. The old ENTRIES_NUM(out_sz) expression was wrong for
+> stride > 8, as the commit message says, but it did bound the loop by the
+> data actually received; nothing replaces that bound.
+>
+> 	if (stride < MC_CMD_STAT_DESC_LEN ||
+> 	    count > (out_sz -
+> 		     MC_CMD_MAC_STATISTICS_DESCRIPTOR_OUT_ENTRIES_OFST) /
+> 		    stride) {
+> 		rc = EMSGSIZE;
+> 		goto fail4;
+> 	}
+>
+> The stride test has to come first, otherwise stride == 0 divides by
+> zero.
+>
+> Patch 13/14: common/sfc_efx/base: rework SW mask to HW enum converter
+>
+> Warning: In the fixed-link branch the programmed technology still
+> changes. link_tech is initialised to MC_CMD_ETH_TECH_NONE and previously
+> stayed NONE when no requested tech bit was present in the map; passing
+> MC_CMD_ETH_TECH_AUTO as enum_hw_def now overwrites it. Unlike the FEC
+> call, which v2 changed to pass the pre-computed value, this one keeps
+> the hardcoded default. That may well be the intent, but the commit
+> message is unchanged from v1 and still describes the patch only as a
+> refactor plus annotation fix; it does not mention the new enum_hw_def
+> parameter or this behaviour change. Please say so in the commit message,
+> or pass link_tech to keep the old value.
+>
+> Patch 01-04: common/sfc_efx/base: reduce stack in ...
+>
+> Info: Unchanged from v1, repeating for the record. The four conversions
+> open-code MAX(IN_LEN, OUT_LEN) where EFX_MCDI_BUF_SIZE() exists and also
+> rounds up to a dword multiple and enforces a two-dword minimum. The
+> rounding matters because ef10_mcdi_send_request() reads the payload a
+> full dword at a time. All four current lengths are dword multiples so
+> there is no defect today, but the property is lost for future length
+> changes.
+>
+> Patch 05/14: common/sfc_efx/base: fix filter saved spec handling
+>
+> Info: Unchanged from v1. Both added NULL checks are unreachable:
+> saved_spec == NULL forces EF10_FILTER_ADD_NEW in
+> ef10_filter_add_select_action(), so ADD_STORE and ADD_REPLACE both imply
+> a non-NULL saved_spec. The __in_opt annotations are right; the STORE
+> branch already asserts its sibling invariant one line above, so
+> EFSYS_ASSERT(saved_spec != NULL) would match local style rather than
+> silently skipping the efs_overridden_spec assignment.
+>
+> Patch 09/14 and 13/14
+>
+> Info: The two are consistent with each other now, but both put
+> __success() on its own line above "static". Existing uses in the tree
+> put it on the return type line, e.g. ef10_nvram.c:941
+>
+> 	__checkReturn	__success(return != B_FALSE)	boolean_t
+> 	ef10_nvram_buffer_find_item(
+>
+>
+--8323328-1505296835-1786592253=:7384--
