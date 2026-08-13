@@ -2,141 +2,60 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 754E2C5CFCF
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Aug 2026 17:16:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6374C5B572
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Aug 2026 17:22:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E22A6427E7;
-	Thu, 13 Aug 2026 19:16:54 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
- by mails.dpdk.org (Postfix) with ESMTP id AAC454026E;
- Thu, 13 Aug 2026 19:16:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1786641413; x=1818177413;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=kXyWSmPwvsVtp2GeRyywD5Ty1353DV1SqffQehSSUXQ=;
- b=CcbKq/g3FG1qTx0XPeoSMKaRvsQJqo0Z74axN+EzIEBNrNpImPpBnSf9
- QBI7BX5w6RFJJbMHOaQqNLn3NzZ93pgjch375JLHfV2vQGEUkdkBOlai5
- sR/OitmalGH/slCsi/YheRUYZhvvDPCwKQGwHWlaI5fHBnSMlsdp/fl2M
- 6iEJBVFhH3wvdeY+ckDKQbTsEvMuMnkzuchJDscvbxVAPk1YjGO51tJzB
- OzbD3lOd/IwKfsaAbdu7gCO3Cmcr07gX5PRpqnrZog7hDCgpS7iE9VOx5
- O+ftyjSKHELYzgmHzeU0xL2fvez7oBQCr+Eu65XtCT1SB3s/rVWxPQX38 A==;
-X-CSE-ConnectionGUID: NKLUiDfLThapb/XAlltPIA==
-X-CSE-MsgGUID: gw2OpS1kSa+y75OeZJszew==
-X-IronPort-AV: E=McAfee;i="6800,10657,11874"; a="112767392"
-X-IronPort-AV: E=Sophos;i="6.25,221,1779174000"; d="scan'208";a="112767392"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
- by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Aug 2026 10:16:51 -0700
-X-CSE-ConnectionGUID: 242j4xVXQMq3WX+rLAGZKQ==
-X-CSE-MsgGUID: jKKYXujgThqgZ0kI/NrNjQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,221,1779174000"; d="scan'208";a="293922359"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Aug 2026 10:16:52 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Thu, 13 Aug 2026 10:16:51 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45 via Frontend Transport; Thu, 13 Aug 2026 10:16:51 -0700
-Received: from BN8PR05CU002.outbound.protection.outlook.com (52.101.57.60) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Thu, 13 Aug 2026 10:16:50 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=btaSdk14DYYP/FNXJd0dM8vOUi9Sl4SiL1Qwvi4CnEmahlEFSsExLUQ7qQWSeUBFov2qZxO6Ma36KKhVbdpt/PmYjidwBsEegXUGRuN5MeZ6XAK5+5QKk47oZE8ETdcQpO7vCtR8KzN1F+zizFGHF6spwKTOvGdBH0IVFGdT5HB5slSFMMPApjMv+f9YMeMdKLRXgCoUJShF5EzOK1JIs2pNzs5pRd5piAORFpCs5yYaSL/Ld0JPL5HSdoS0BqtRvrJ2xFlY47zV2hivzfh1fnykfFsIkP5kJ4b/DHF9pweobjPPBryFEdp96W/1M45Y7/LmfF0kLFTl/RLmR3v/IQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OhrsOLmRGu1F/MnMG8SskyWnsNoEaC0t1sbmEUY/LYA=;
- b=Qbs3UyRFJYnmy+oNViWXnq/2kxhpPjJfX3I8zzgwGEn/XqkeD0SI/eQhG5xuj05xedZOmwVllHNIrbQyyR6D5EaV1N2ssOd9/tDq5LOeVMnGjyzcuHzuHJ7+uxFd5np2qhwrOsxfgUe89KDR94zhZhYZ6GyGkP4eAtQ9GwpPaUQZQ3PudL/qox1OAKZbjTS98oyLheIPvbLfjOHLs2giX1NKqPAg1AFKXExYo881Cxoi/PdA5HRNb3TNGigq2k808lMq1DRmGk7fVc87C0f48I90ureilzVX6dnmfJZgdFaeUsq5vFc9Zehl4uaVT6BYkfWnq1ke94m/CQhp4iMh2Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from IA3PR11MB9421.namprd11.prod.outlook.com (2603:10b6:208:578::9)
- by IA3PR11MB140164.namprd11.prod.outlook.com (2603:10b6:208:548::5)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.315.15; Thu, 13 Aug
- 2026 17:16:49 +0000
-Received: from IA3PR11MB9421.namprd11.prod.outlook.com
- ([fe80::1b70:3d93:d363:155f]) by IA3PR11MB9421.namprd11.prod.outlook.com
- ([fe80::1b70:3d93:d363:155f%4]) with mapi id 15.21.0315.014; Thu, 13 Aug 2026
- 17:16:49 +0000
-Date: Thu, 13 Aug 2026 18:16:44 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Shaiq Wani <shaiq.wani@intel.com>
-CC: <dev@dpdk.org>, <aman.deep.singh@intel.com>, <stable@dpdk.org>
-Subject: Re: [PATCH] net/idpf: propagate PCI NUMA node to vport ethdev
-Message-ID: <an37_Ny0wGfR0MfZ@bricha3-mobl1.ger.corp.intel.com>
-References: <20260811042635.465194-1-shaiq.wani@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20260811042635.465194-1-shaiq.wani@intel.com>
-X-ClientProxiedBy: DB9PR02CA0014.eurprd02.prod.outlook.com
- (2603:10a6:10:1d9::19) To IA3PR11MB9421.namprd11.prod.outlook.com
- (2603:10b6:208:578::9)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA3PR11MB9421:EE_|IA3PR11MB140164:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0806af68-2ddb-470c-4ef6-08def95ea8cf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|1800799024|366016|23010399003|22082099003|18002099003|56012099006|10067099003|11063799006;
-X-Microsoft-Antispam-Message-Info: lMOtdnw8by865mRe4IJonCX7TBVF8iu5/Tn8o1xYzs8d7BlMyV93R3sMTzM2tvNABHwB4VxQyQo9nHV+rTfboa3JHX14Vn7BnEO/0VQkAn1Op92yEYVbIWa0ooSjx2XqCxFYqPQMcs+/RVUTaJRo7XT0oErOlEWPCIJ0VjGWVaOtKSByDVlh6OAf8YA4/tNerIH1nQNA2Ai9X3QgC31waV7T1uQRABH9LKryfpjk9a1gABYyBE6BvUo68RaZk0kbKbhUpltQ/VgbdUfuydUHzNsb7S5oy/a5qFxI8aqOvTdWKRRGAJu1no0o9HSnRQvnodhES0wNbqGZpcB8MQh/+uFjDmjrxt2Me0A23iCXUQri78Z7metVsTCm1OBQQDPwaGE9/QSFdBejP6srMqvZCpJZ6pHTFrmOIAaLEjj62ZZBtccJ7VwMe1LsKFPHK/B7wkcmLXNGkciOeeb3MtIUtx7I0IX26j/COl93i9WEF7h+NE603Iq5Cg0RXTr5xuCiX3fqSabVsj6rQVRIgDx3UnajfJUERAGz9c8gP31jlM3xOCmZ9NXhc9k7hhrGuRqRyj/uPCbOLb1lfvKuL5SmhxEoLU3r7/fWh9jXGuDyocDFHqLbzpq9AYrZPZt+53lU/5hcByuXRlrIW96qREk5T4tIFR5XY/vrh6D1CXSiRg4=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:IA3PR11MB9421.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(23010399003)(22082099003)(18002099003)(56012099006)(10067099003)(11063799006);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?TWFAzeUM6yW+b6rT12PzeWwkEJGBancyB5cEwn3R8PtMxIIw8P3cO0D6h6Mi?=
- =?us-ascii?Q?+p69JKudqBNHxcfT0mVlVmlLBBx1Hq3RtxTXirVQE82o019ph16TGEDmGpnD?=
- =?us-ascii?Q?OMQ1h308JgCsMrSQ3GOiFCkaurfBuSVPcAZLsBbYEWjqts/h11pejixj30W5?=
- =?us-ascii?Q?jhsahaPZBFbY89XaEhBqdyrgcUIthEz8xy+15k61uAcgZpukQwFeQFu6vUDt?=
- =?us-ascii?Q?qOIcdrU1g1+qPIJZRQvEmfRlJS0jpLimcnwFEpMLVxwHs9ci01uaP4CYaIRE?=
- =?us-ascii?Q?pj1osYUHZWVXj5kWPqv+yd2D/xzQs2IAFWqTR+r0eirQUOiTCAEvK4l+AC5a?=
- =?us-ascii?Q?2WKkrRCbZhFOph+qxcxQa5n2nGg0aeN90r72e4DACPH4wucA7dy05anEo3LU?=
- =?us-ascii?Q?ue2kkZed86y4Lj5czGOoT0QZiMIZ+gmZGaVsRC2ZtNtxRQjwvFh2IWvIqF7f?=
- =?us-ascii?Q?p8dSK9a6LLNDC6fw48mDlxmOfPoSxzuhs8FVNywQX/HrcIt+p20wC/dF8t2v?=
- =?us-ascii?Q?mTTTqQ0JyqHM2NzywFWGMud8RTjCoW72zfrjuZ3qMe+zo4RrjI1ElWVCCWAj?=
- =?us-ascii?Q?lODzHfLtD/xl26BeQCiyOtZnZZNiOxOWuIHvZtbGaFGyG9FRituz/YxdiDLW?=
- =?us-ascii?Q?QlO7Fw3bktidKWiuzyZJnfQUsihWoZPgAu+KrwWKICqLFpPIjTss6lo464jP?=
- =?us-ascii?Q?OObeoyFg31AkXGq8XLAjr7JZiqL1pcA4EtuXG2/tRYnHRU+EAp2C4+LRfsNr?=
- =?us-ascii?Q?PK6T9WVGroavfLxYSNTA8SteWy1pJ1xKURtsUabhLeM5HmlgXKo0/UDWIdn5?=
- =?us-ascii?Q?ic2SwUwQ5ftcyIaCHRMCBIMI3pN5KiCKls2/9uqBf3mmzt25tm3JbNcSyfbj?=
- =?us-ascii?Q?/YoSF/zRbas6jNOzW2ivfv6AnLVvfLK1VLq74zQ8ev0a2F/mmUZ/kmMpa2LS?=
- =?us-ascii?Q?o4wPe0lSm+v7gpVmUz/VDmby3Lg2cppHhEuJvZWgzPANkfOEwM1TshPMCiCF?=
- =?us-ascii?Q?uKQWtroSesNIBtBDWdU8ZcZ4yuSxsklMe1q8xei4tUck1BGgQamapaTSEkCN?=
- =?us-ascii?Q?/w+HaWs9esk56ucvSv3qCHfVeyuLjP2mTkfsKj6W3p8bq9JL91RacRleFN3p?=
- =?us-ascii?Q?oRcisIj1/d5tDRFx4JctwYZXrjZUYQH8xP/odvqdl97F23bCyHnZFiDvGPF8?=
- =?us-ascii?Q?U2D7nNaP52GRf3v1ymFnYXm5+vNeC4G/+PrPBqrlAaNTTqDtBoY/ZBIzbCxO?=
- =?us-ascii?Q?7/zRGXYt5Vu9p/5fWD13AAxnz2UiuYRLztLUwG2/cR6FxfR65T5uRSSakzKb?=
- =?us-ascii?Q?lfzQ4Ph7lSuNiAihZK3kKI6QNzguFptn2roYzG8LMevhSZkwagRqbi/0FAi9?=
- =?us-ascii?Q?IR1HYNSds1ZEFuosS7F256MWPfPJ/GI4SnmLiWjCD4zmejDHObIluzki/Wum?=
- =?us-ascii?Q?97PS3jQDc4q4RZf6PPJFiegJPFoQq8IwCYQ0TMvB0cMPsKw1W10cDcc5zrhE?=
- =?us-ascii?Q?5qKUOXBzhepFDtNxV3H1EarfYDM/o0opbK/l0PtLFgfAeKE9UZszaBaRyqBf?=
- =?us-ascii?Q?fEFOIMXVRGNsYVvOJVjGI8c4hp9IahXb53RtuuldtiqXl2MtuoDUYpQ9lg/m?=
- =?us-ascii?Q?yxZlm7tHRExWQozNCUxlpU9gIB4RmKfYtsLj9FC6CbRdmbjoQCXMwj/wq+tc?=
- =?us-ascii?Q?xTr4xrb8zaxDCZ+SYFylU/8TcLc8/p1oEWL7NyBMQuK7ZQgHEzPMehzst0wv?=
- =?us-ascii?Q?jQxQw/lszHfUKyE/+S11mdr6xiFVWTE=3D?=
-X-Exchange-RoutingPolicyChecked: fyj8ax6iNGlwKkWqi2rQhIWho4TLUqxsU1GAuZVufih/cEF7kekgKSm64q+JIISnAolaR/yeSMN8yNAScWti/BhJkoFg2zBSJcmpyApHJN+4z28LwYwGGAJaiTu44eHQC9tp60EXjB9l1qk/kWBvBBKaX2MvxdLnVMFMkDAxCMq1pAhuEPj759o6YIdeSy3GNeN13n/kF+07OKMCPQjylvuPp7qEC0uNfkwgGG2gIxqvP6F3WYh0ryhxDT4UWsTyjJ0hqzyMM5MAF5y62us3NhE992Zn4FGe4WVqJYL+UrlXYt+4ygve59f5AwMN1a3QQRiptJcQdfDd0GzR77ouUg==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0806af68-2ddb-470c-4ef6-08def95ea8cf
-X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB9421.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2026 17:16:48.9299 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: I/FG3j0fktP/8Myrpt6Mi60ZUuqsyWDD+wdEjBZ2OvgNjz/vqBeQeCNhwV8FqQc/rh3RDqgKWDB1eiUPaz03xkvrpQJCM7vz3YxGbbcXCbM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR11MB140164
-X-OriginatorOrg: intel.com
+	by mails.dpdk.org (Postfix) with ESMTP id B610A40298;
+	Thu, 13 Aug 2026 19:22:45 +0200 (CEST)
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
+ [209.85.210.200])
+ by mails.dpdk.org (Postfix) with ESMTP id 79BC44026E
+ for <dev@dpdk.org>; Thu, 13 Aug 2026 19:22:44 +0200 (CEST)
+Received: by mail-pf1-f200.google.com with SMTP id
+ d2e1a72fcca58-8484ba00601so2911618b3a.1
+ for <dev@dpdk.org>; Thu, 13 Aug 2026 10:22:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=google.com; s=20251104; t=1786641763; x=1787246563; darn=dpdk.org;
+ h=content-type:cc:from:subject:message-id:references:mime-version
+ :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=d3/ySvzGIP/dshe15WGq+svAIzbBKdSj5xElFjdYNYc=;
+ b=O/gaIjM2OT9qj8CpdT1Ho9KXXRjkWS2b7+jnNvg2HMTl6M54X4oZYDk2YnA0yxBowK
+ ArkpK1nPvimu1S2d+0t7qLrAMMqkKbTgjhU+WXNqb+OKpjz0/PO3wvMaBuATw7fUxx23
+ 8W19b8/gkNO7xOZg0LdeSRV5pSGedloXiq/HD6uYCyVLnkBsS6BZ3lKGqZiMN+j3xYbS
+ /kaZpupCA1o/9wbNpS9luAyqrGPcInQjW0FijzqmOis3+LnHFWMQeWlKswhLUaVD8qfe
+ oebicsqRaFZUF4/lzBKtTLuYiYb/0l69NnvJcNf8cfAI/VakS+ElXG8xm33ZYj4WMbmD
+ crnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1786641763; x=1787246563;
+ h=content-type:cc:from:subject:message-id:references:mime-version
+ :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=d3/ySvzGIP/dshe15WGq+svAIzbBKdSj5xElFjdYNYc=;
+ b=LPp13r2TRCCBttW39sroXLPrjEsQ3Hgj8I8fxZPQ0mU5p91CnE3pBYcY9g6LAFhXzE
+ 22t1eAZvXvkfEBXl54nNE3zyYwij9b7cTCuJ9JcR3VWSRgtBMs8UBSawz5UTP2Hu1pmg
+ XFrfHebvfhFMcle2MeYslv/KB+W3B5nxyPDWXLrriNnaSkf4qgKEru3xrGLW1d1VtHXl
+ u2aGY5b2WC5BViQFIFqmlT7Jjl8ihEs6Kh5sCylidOxcPdZpKd06yOjOW9GcEiNfSJpH
+ mvrVQ/OF3dnskrqI1Q9yXb/QfG2OJqRqkdTZoOryur6EejKSjj1eIDpk5iAOtfwGWLAR
+ 9xXw==
+X-Gm-Message-State: AOJu0YwJ8Cg8VphPF7X73WmKChRczEXxPRD+8roes3W5ZpdiayYCg0ny
+ lHSydBepvudynZHL8798MbYW6BfWYMgRxmDkG8noHAo0OhWOckLsc75en6STJ3OqMmC6DLD5x82
+ Y1J03cH3T4V4RNRp2mNfZqIae9mkaTH1kJHTHqAbEQXU/4/ot5laIvR+YCYCU7XcmFVZ0BrQ/7m
+ 4k+pYdslbPcr4GGNxLxe1at5EvI0o5CPLxrA==
+X-Received: from pfiu3.prod.google.com ([2002:a05:6a00:1243:b0:84a:2dcb:5abe])
+ (user=joshwash job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a00:1704:b0:847:9315:fb8b with SMTP id
+ d2e1a72fcca58-84fc6e03c6cmr7374226b3a.6.1786641763066; 
+ Thu, 13 Aug 2026 10:22:43 -0700 (PDT)
+Date: Thu, 13 Aug 2026 10:22:25 -0700
+In-Reply-To: <20260812223017.2980190-1-joshwash@google.com>
+Mime-Version: 1.0
+References: <20260812223017.2980190-1-joshwash@google.com>
+X-Mailer: git-send-email 2.55.0.691.gc56d675ccc-goog
+Message-ID: <20260813172241.964736-1-joshwash@google.com>
+Subject: [PATCH v2 00/14] Introduce RTE_DIV_ROUND_UP
+From: Joshua Washington <joshwash@google.com>
+Cc: dev@dpdk.org, Joshua Washington <joshwash@google.com>
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -150,29 +69,64 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Aug 11, 2026 at 09:56:35AM +0530, Shaiq Wani wrote:
-> The IDPF driver creates vport ethdevs via rte_eth_dev_create() with a
-> NULL bus_specific_init callback, bypassing the standard PCI probe path
-> that normally copies the PCI device's NUMA node into
-> eth_dev->data->numa_node via rte_eth_copy_pci_info().
-> 
-> As a result, rte_eth_dev_socket_id() always returns 0 regardless of
-> which NUMA node the device is attached to, causing NUMA-unaware memory
-> allocations for mempools and queue descriptors on multi-socket systems.
-> 
-> Set dev->data->numa_node explicitly from the parent PCI device in
-> idpf_dev_vport_init() to restore correct NUMA affinity.
-> 
-> Fixes: 5e0f60527e5b ("net/idpf: remove vport req and recv info from adapter")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
-> ---
->  drivers/net/intel/idpf/idpf_ethdev.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+Numerous drivers independently define the DIV_ROUND_UP macro, using the
+same definition. Attempt to commonize by introducing RTE_DIV_ROUND_UP to
+rte_common.h and replacing usages of DIV_ROUND_UP with RTE_DIV_ROUND_UP.
 
-Applied to dpdk-next-net-intel.
-Thanks,
-/Bruce
+Changes in v2:
+  - Split single patch into series.
+
+Joshua Washington (14):
+  eal: introduce division round up macro
+  net/i40e: use common division round up macro
+  net/idpf: use common division round up macro
+  net/ice: use common division round up macro
+  net/qede: use common division round up macro
+  net/rnp: use common division round up macro
+  net/hns3: use common division round up macro
+  net/hinic: use common division round up macro
+  net/bnx2x: use common division round up macro
+  net/cxgbe: use common division round up macro
+  net/ena: use common division round up macro
+  raw/ifpga/base: use common division round up macro
+  drivers: use common division round up macro
+  app/procinfo: use common division round up macro
+
+ app/proc-info/main.c                        |  3 +--
+ drivers/common/nfp/nfp_platform.h           |  2 --
+ drivers/net/bnx2x/bnx2x.c                   |  4 ++--
+ drivers/net/bnx2x/bnx2x.h                   | 11 ++++-------
+ drivers/net/cxgbe/base/t4_hw.c              |  4 ++--
+ drivers/net/cxgbe/base/t4vf_hw.c            | 10 +++++-----
+ drivers/net/cxgbe/cxgbe_compat.h            |  3 +--
+ drivers/net/cxgbe/cxgbe_filter.c            |  6 +++---
+ drivers/net/cxgbe/cxgbe_ofld.h              |  4 ++--
+ drivers/net/cxgbe/sge.c                     | 14 +++++++-------
+ drivers/net/ena/base/ena_eth_com.h          |  4 ++--
+ drivers/net/ena/base/ena_plat_dpdk.h        |  1 -
+ drivers/net/hinic/base/hinic_compat.h       |  5 +----
+ drivers/net/hns3/hns3_ethdev.h              |  2 --
+ drivers/net/hns3/hns3_fdir.c                |  2 +-
+ drivers/net/hns3/hns3_regs.c                |  8 ++++----
+ drivers/net/hns3/hns3_rss.c                 |  8 ++++----
+ drivers/net/intel/i40e/base/i40e_osdep.h    |  3 +--
+ drivers/net/intel/ice/base/ice_osdep.h      |  3 +--
+ drivers/net/intel/idpf/base/idpf_osdep.h    |  3 +--
+ drivers/net/nfp/nfdk/nfp_nfdk.h             |  5 +++--
+ drivers/net/nfp/nfdk/nfp_nfdk_dp.c          |  3 ++-
+ drivers/net/nfp/nfpcore/nfp_nsp.c           |  2 +-
+ drivers/net/qede/base/bcm_osal.h            |  2 --
+ drivers/net/qede/base/ecore_chain.h         |  2 +-
+ drivers/net/qede/base/ecore_cxt.c           | 20 +++++++++++---------
+ drivers/net/qede/base/ecore_init_fw_funcs.c | 21 ++++++++++++---------
+ drivers/net/qede/base/ecore_mcp.c           |  6 +++---
+ drivers/net/qede/qede_debug.c               | 16 ++++++++--------
+ drivers/net/rnp/base/rnp_osdep.h            |  5 ++---
+ drivers/net/rnp/rnp_rxtx.c                  |  2 +-
+ drivers/raw/ifpga/base/opae_osdep.h         |  3 +--
+ lib/eal/include/rte_common.h                |  5 +++++
+ 33 files changed, 92 insertions(+), 100 deletions(-)
+
+-- 
+2.55.0.691.gc56d675ccc-goog
+
