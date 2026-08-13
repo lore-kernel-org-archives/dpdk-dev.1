@@ -2,59 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FC5DC5B572
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Aug 2026 11:50:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88B5AC5B572
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Aug 2026 11:56:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 425B44279E;
-	Thu, 13 Aug 2026 13:50:38 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
- by mails.dpdk.org (Postfix) with ESMTP id D72764026A
- for <dev@dpdk.org>; Thu, 13 Aug 2026 13:50:35 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id BE9B240E20;
+	Thu, 13 Aug 2026 13:56:42 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+ by mails.dpdk.org (Postfix) with ESMTP id CA45D40B9C
+ for <dev@dpdk.org>; Thu, 13 Aug 2026 13:56:38 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1786621836; x=1818157836;
+ t=1786622200; x=1818158200;
  h=date:from:to:cc:subject:message-id:references:
  content-transfer-encoding:in-reply-to:mime-version;
- bh=q4mU2uOt+7lB34hLPWjgfTugjtMvesxOvJvwpxPPz4c=;
- b=GsgIc39l0GFX4xTNfnZYXxrG0yjr+dnD37kgutaHWPXVlGe5n6NV7pGE
- NLM745O9MeBi2xP+ZNJtWPc8APwH8UtMQHlhOCPCwqNFLHGWypShiX16T
- Kn3ItXfGgbnBlqJKiilrh8nUNIOyw2BuWBGCiCE+lt4wJaiPSiLjU0MQE
- WwaIwoGAxnLUTiYBbijHORugSTDlmS2oZziUk+f9DjmRh/s/bhss3kr+H
- Vr4A9T1+ookBM0eFDjQiPdlBpnmFJQwOpTobGiVs31UxtVJ/HErBx13zj
- xuGDWodubdKXNqOKmA/nLJGPIb5dIMFdq3Cym0VSgZ7QsaCpPtDuuuk1O Q==;
-X-CSE-ConnectionGUID: +6j2vaZVSCO9zPLBAJf3uQ==
-X-CSE-MsgGUID: mruNC7yiStKuM17YTCdw4w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11873"; a="98345926"
-X-IronPort-AV: E=Sophos;i="6.25,221,1779174000"; d="scan'208";a="98345926"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
- by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Aug 2026 04:50:35 -0700
-X-CSE-ConnectionGUID: RA2lo1oAS0eTejwga12rhQ==
-X-CSE-MsgGUID: oUFpyXvORBS4xXFITjf23w==
+ bh=GkF+AytRpcC0gWoAJjty1RP+jGmG58m2UkELNXXJKto=;
+ b=ffmaSHxtqNUCxr5cESPyOmlZtaNDnZDPBsRmSv4jiVgt084zd9JhKroi
+ 8tZC69bI0qPc0MGOT682zvuKaPYlR8kwGBC715Gl+vlkqDx2nLEmSdvaG
+ fFXaXvCZb18pg+gpv09I+Mfyd8PpybyDhGqXAfnJ3Yjs6SCOSkchjQ5cv
+ ZDQgLXplrWmcOPffVA/nPdsyu+Kdz3WmBmYBwlJtBbUaipq6PhDpBQeA4
+ AeVV7Cp12vrVwNXjvgH1ZruEr3bPeWJVpBV/Pmq9OH03H3zoyC+OhGdzJ
+ CUyQkJkoSlj3vJPbuPsyzg0CqW+fGI/c+g3umw8R0sQnGh8QdPg1QtLlH w==;
+X-CSE-ConnectionGUID: T3mzAZy5QEy8RegCFrPN7A==
+X-CSE-MsgGUID: yZImI43OT5GELia3b3S2rQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11873"; a="89713641"
+X-IronPort-AV: E=Sophos;i="6.25,221,1779174000"; d="scan'208";a="89713641"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+ by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 13 Aug 2026 04:56:34 -0700
+X-CSE-ConnectionGUID: Ki6jrWylQ4mBgo996Nha6Q==
+X-CSE-MsgGUID: wRQ6OjvMTyG70fFxD0iWgg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,221,1779174000"; d="scan'208";a="287357926"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
- by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Aug 2026 04:50:34 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+X-IronPort-AV: E=Sophos;i="6.25,221,1779174000"; d="scan'208";a="269114145"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+ by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 13 Aug 2026 04:56:33 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Thu, 13 Aug 2026 04:50:34 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ 15.2.2562.45; Thu, 13 Aug 2026 04:56:33 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45 via Frontend Transport; Thu, 13 Aug 2026 04:50:34 -0700
-Received: from BL0PR03CU003.outbound.protection.outlook.com (52.101.53.24) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ 15.2.2562.45 via Frontend Transport; Thu, 13 Aug 2026 04:56:33 -0700
+Received: from BL0PR03CU003.outbound.protection.outlook.com (52.101.53.28) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Thu, 13 Aug 2026 04:50:34 -0700
+ 15.2.2562.45; Thu, 13 Aug 2026 04:56:33 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JmK6AsOJCJ0yktQNTWe9UGclm8JEADx4qS53xATizXvRjiVRXiHqhbc2tuyC6efjFgzo+qBXwJRi/WTVRA7Za88I625AV5AqGBlfSvMQuBtOOIc3cXV0QmP3XRKiNU50mQr7p0t/ED2MZd6rAwKn8fjDCq4ucPgS4R/GwPLt6bUr+ofY1w92gXL0yaQKBBXHroiPCmZV5Faq/nM+xNegdX6D6va68phKoxi+3LdXqQqvRdf3oKs9vNxJUp6gHepFFcq/0sKPSyAdhDnVLHuQ0Tb5oxANduqcW6xbl8PoQb/DD6C/kdfsa6vbT8dQYpIEvijqHisSekPdzMGhVUXIuw==
+ b=tXgEK+TwblY+uVwPtq7qvvVVKnTvWnvxCIM67wjYRz4FAWWOOKjhMwi7MMt9FSOps+yhpA3RA28BkNMdo0BA49NB1TaD5Pq3qS1dkedbO0gQ9sP/SEKoYaobxjt+ocTBcSmRCfS0zMFV/jaiuhoNEvzJwfRmctzpUie8n4+PoBe+YSf+hLezcDFI5/gX7V3hn2hS8iHrM8RokgLgCx4nj51ursoDNlpZ8KeFWkNnqKmiQX/M6BfDkgd8zFJA6/axBdIVVZtEa+rSoeH5h2CP8FMDFsZRN7+22umcfrO9MH3h8lL7ONlOz6D6qtsKEZ8sOkz/9vRAk1ygxQvEwnOSFA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=q4ebWyoVT+hwPvAcVB5K+PU5PUI/4oZ9Tkr7wMFe7Qg=;
- b=RuncnsuzvzmetNHtNvyZi6rDK/EGX98PVfTsCJo87Udaz4EcIMW5hSvyXBJALHbUJxkxRA8ykboZCfWDRQyYPldjKVQ/vcrvwH2ZVDh8xB9aVFBODUmkKm7tFIxKYV/nEFsYkeYTtkipQdz5VpiYnwfXLC5nSAFuacX7CvbgaulbYcG22DGtL1QgYrGVNV9OsfxBuivdaJIg4VyU1lI27+7WpIOfDjO4yUp9v6nG/1cnwc7t/f9YAH+hc58S7BKc/2U5XNhxY0HR5Wf+ouRn7OWQ5zMdAcs6J1FJIzTIsOmmtlj1A02rTTq43blLiJjQTBreKBqLbjB76T51pV1S+w==
+ bh=cbg6gYIoPmQFozR04NELqppReTruNpmRuswBBo4ISUQ=;
+ b=UV1MaUeLp6P4qy6s0linDl7sBB7whlwh1diblRpfCmSEddTXIH/cbntix9yhcSaG7zj3UTJpW3YTRFWm1pQtnMh+R+2pG3srSAMOfVbKM5U2a8zeBjAPLHN56hZUy6T//Dgn39e6JP8Wcr1lCEWDQxbcurp0ts7AYo8eOaJuq/mL8CtbN0eyU8K3gkD/z9vDYYOKlAUrPITFINt8fql3nuCTHCmUAZcrugBkNVMkIajFqzzsAE84N6EXNq9md/UfERFNJqDdgfQk+ZzUKASGMpt7PirBnmb/60GUg8fJojqQdPJi7Ebjr1M1thfZRY9zil2jJCZH36brUpXuHs5jyA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
@@ -64,83 +64,80 @@ Received: from IA3PR11MB9421.namprd11.prod.outlook.com (2603:10b6:208:578::9)
  by SA3PR11MB689426.namprd11.prod.outlook.com (2603:10b6:806:58b::19)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.315.15; Thu, 13 Aug
- 2026 11:50:32 +0000
+ 2026 11:56:31 +0000
 Received: from IA3PR11MB9421.namprd11.prod.outlook.com
  ([fe80::1b70:3d93:d363:155f]) by IA3PR11MB9421.namprd11.prod.outlook.com
  ([fe80::1b70:3d93:d363:155f%4]) with mapi id 15.21.0315.014; Thu, 13 Aug 2026
- 11:50:31 +0000
-Date: Thu, 13 Aug 2026 12:50:27 +0100
+ 11:56:31 +0000
+Date: Thu, 13 Aug 2026 12:56:27 +0100
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: Morten =?iso-8859-1?Q?Br=F8rup?= <mb@smartsharesystems.com>
-CC: <dev@dpdk.org>
-Subject: Re: [PATCH] stack: introduce pile
-Message-ID: <an2vg8NMp9MRtbwO@bricha3-mobl1.ger.corp.intel.com>
-References: <20260812134756.1829613-1-mb@smartsharesystems.com>
- <anyEWVXfFEHBbsAJ@bricha3-mobl1.ger.corp.intel.com>
- <98CBD80474FA8B44BF855DF32C47DC35F659DB@smartserver.smartshare.dk>
- <anycOPsfQs2cbZLf@bricha3-mobl1.ger.corp.intel.com>
- <98CBD80474FA8B44BF855DF32C47DC35F659DC@smartserver.smartshare.dk>
+CC: <dev@dpdk.org>, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: Re: [RFC PATCH v2] mempool: optimizations
+Message-ID: <an2w6xvcssfVEjTB@bricha3-mobl1.ger.corp.intel.com>
+References: <20260812090723.1771628-1-mb@smartsharesystems.com>
+ <20260812120626.1772120-1-mb@smartsharesystems.com>
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F659DC@smartserver.smartshare.dk>
-X-ClientProxiedBy: DU2PR04CA0353.eurprd04.prod.outlook.com
- (2603:10a6:10:2b4::13) To IA3PR11MB9421.namprd11.prod.outlook.com
+In-Reply-To: <20260812120626.1772120-1-mb@smartsharesystems.com>
+X-ClientProxiedBy: DUZPR01CA0053.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:469::11) To IA3PR11MB9421.namprd11.prod.outlook.com
  (2603:10b6:208:578::9)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: IA3PR11MB9421:EE_|SA3PR11MB689426:EE_
-X-MS-Office365-Filtering-Correlation-Id: d2f956a1-5036-44e6-f5e7-08def93113d6
+X-MS-Office365-Filtering-Correlation-Id: 57dbaf42-697f-4a32-43e2-08def931ea5e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
  ARA:13230040|23010399003|376014|1800799024|366016|10067099003|4143699003|11063799006|56012099006|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info: pQTniD6gmYRsdy4RKIrWKQNX1OFmtC+q6Chq57iyMM0qOiAcOo4xeB58xRF3ml9Mml4LqaA8gnqLbUJbbQxfMptwYWHwYq+dL2902du9v4hiQfvKKyMpq1sMP9dh/x1kCUDf92lRGBt4YotHJuOVQgOtTeNnBBV40u36KlcJSY80gIljlIEelQWA1oM4qrr4qQ4CIHRT5Cr2vCXjWAI02UVHAQqaHDyY/leOI31uQn1Xmubt0piYgQQy8cBc53f3stYRLMxDdEDSqiji3dyhUpnq1FQK6OCB35PZ7sqJeqZniWiqVBbPR8oCTMJZ/yq97bbyLDvgYEkWPzLtN25bQpbVIMA0tyNsHsI2cG48gIu+uKKRCEjxHlSptfSCS/IXYY4Owu/RXrIHFDjrF+Kj4PjEdJzU2MXCHZsdWPdicA/t5G4/LoOc/XcYRIBDiUkdALg1cIc9aE9OXGRHO6APjBJvacEfiOJXMjOsO72peLb18bFv/nrfecY8BBLfdKH74OPvV30yZv5CdtYzpIfAOyN9rfnXRUrlAr2WOr988KE7E/wYTlF7lyEt72WDlBXsV4kvVNg1hnADnX7EkmNZxDNJ85++n7hrPuNBcfn0bmDRHzLpprRcnKTDRYrQbLrza5AY4IF0isGbfHJ7jJkkh9M7/o+T6eeQrLvNG7nCpNA=
+X-Microsoft-Antispam-Message-Info: BRMA09Nx/2FzKscQRC0sKdTM4fsy4EXvH8AhR1K3zNRTpmBmCQWX4ey6W8b5QWV7btc/cW0CCAAZCdCnjk01iEB/22AmRXWROjqBiwSgaIIoeZPDJMGpV3GO5Zua20i0bXOQROZh5+NdDeSQmsgyiEi7ZNfuodq8dZQtDshFuSXemJ06tekBADPQdmpkZ9Vk33Bgpyv/72VXo/VxCrIQnTxdIHYyaBtgM8l2VcerLTNITHcTBOefc0oTZT7to5CCmnH8OXXn6vyl68oz9MtWuLP3C/BYrAONXTLsmMMNwLs+DnlcpP691BUOGVRbocMza/diwDdlVEGTelgHJpTe1o0tI6Mb8uI2W8wLZOA8+E6YOCN+hLpCvUvDDp3gngl06kAI00lGx69qZwQElAI5S96whcHwI4XN9G5J3QIR6gf+B0MqSV2a4urmW/r2/crY/F9a5REpFGcnchYB8g2a/YsdM4tzYj1E6xrdzVZHCKGvW/GF0KgGN3G40WFVHMj+HrW9FABfMPLPxPdJ1Y00l+/7TLTtAmNxJISwifRSfCvCvIUf5vxVSPZfUTSRUF4ErezlVFUyG0r++2aXCn10lJsfkvcj8lRRSx6A6rJMVWNNUu+9KIoOVSx8CUhwd1eoKMrcniG2vimdHsiyjx3XhI2tyBc83tMHKn4S5Yo6KkY=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:IA3PR11MB9421.namprd11.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(23010399003)(376014)(1800799024)(366016)(10067099003)(4143699003)(11063799006)(56012099006)(22082099003)(18002099003);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?Cp3FmTTW5mFYc1DdK8SayCbBiMC5gAj1DghKDR8199yo303xAVW9/P7jyU?=
- =?iso-8859-1?Q?BpdACKlbzdNTuhjuM6f1wInEXtV0c0bwWnv4U8pXY22IQdoKkGa2iKDTeZ?=
- =?iso-8859-1?Q?TFs2Ez9XhPY6lT//yAjxc3TchcuanDT2RJfJ+nJUpaChfmRQI0sOcr4IVI?=
- =?iso-8859-1?Q?emXk5+XRsoyHVC+ahMetg5Rbi24Y7KHPlyzdl17sCa2VKw4U+k+1o/r3S6?=
- =?iso-8859-1?Q?OFtExmVlrvCx7iJY2BUByerIjhxuLzDa11++v8E5DZT/39fcAyzc5Uv9g2?=
- =?iso-8859-1?Q?gVDGlesG64j2vldsfCoV88g+RzEeFAiKzOQkK7ChFPcBVIkwxSz3bOossH?=
- =?iso-8859-1?Q?GJSfrJZe8reuR0rZFUDFco2Hz2zgQjPeZwdd7W1Mu0NZk4pEawaU+rHc+G?=
- =?iso-8859-1?Q?8XHkBks2CtQd0Drk6zNY98uFOlOVRnWuy8noLpuslZDEGegGN7nCCKCUDF?=
- =?iso-8859-1?Q?JY9h+dk3Q47ZyLgI3d41PQ0a897O+r9VdWdO8ci4x4xwnUIxxJJgC7EozZ?=
- =?iso-8859-1?Q?raEcHoYtDo8D2e5hlT8sr2uLRhPw7VUy9aH8zSKzIXtgMKHIiIKHMwVuM6?=
- =?iso-8859-1?Q?bOkFfV/P8K3sFsZe7LKAJz3ptZ0OVv26siJGnfYHrorfEaCXqN9LI5Njs0?=
- =?iso-8859-1?Q?ylNTFJLRpRMnAQMqoXM9ldlB9YkLpoKzyZGBpNXxgFyHM+osj4+3JGqE0w?=
- =?iso-8859-1?Q?KY4AanaDP26OpGYCzuyzvsMbdnQJ7qSQsem4q/ILEQM/t1Bwe3q8wHQRH4?=
- =?iso-8859-1?Q?LyarC4TSGUBF3nWsvev5zJk04utmydNcq2+iiJZBi14dYaLgvxTOGNNWrA?=
- =?iso-8859-1?Q?jvh05ZLjMfmZ2n+0UIBxFQbapHuZQ8I8eJTw0LlFvI5cVRCbLeBeJiyC2/?=
- =?iso-8859-1?Q?vPy707G8Xy7K1A2h03RYVXMFd+DdZ5gfIAvGQ3JLUAWgO7CpuwVqzk5WSG?=
- =?iso-8859-1?Q?hdLBe6Fae1fJ7kxUpHMhrotXrVR+x1zMrqmsrMZYnoe5LT9rFyDFOGZUaV?=
- =?iso-8859-1?Q?f+qGDK7AJ+z4YjCeIuPJYx0otBo0WcU9BPNf1R2/aBI5wUs21IqjHDLFBN?=
- =?iso-8859-1?Q?tX+0NkUQnj2tG6CFUX8JYtbaCXBlFF0NuQ7uFDKuLFkkAl3YjpWNsiMaIU?=
- =?iso-8859-1?Q?LIeP4MhsQ3ImAY11jaUNek+Y/jcTBW0jm4Egj+ml26meueowt8Qjlb2SMW?=
- =?iso-8859-1?Q?uul1YjkZYtJQO6aG2s9ZeAy2eQm1zOdYBzkNFeTnDPAnlS4+lOKk+D6yDZ?=
- =?iso-8859-1?Q?uO9lS0hRstmDAcFKRSVPymQ3oeuDK7IptBaJlDI8Igd5OhexmZ/tfLeMKo?=
- =?iso-8859-1?Q?jsJtuA2zsMC+7vqmK0Khjx+N6fZvrAA6wd7QiLlWY0SjzSu+OdaWpZ2CM+?=
- =?iso-8859-1?Q?li+kRSj7Sx31+KhiCkPfjaK+xSOAHkYEy4OQZ6ny4r9sEUC2cOZnM3fd9V?=
- =?iso-8859-1?Q?kftplY9T/Qn5zjkNtMd/2k1rKazsF4Jcs/jkrr0KdBwC8lCp/TuqUF44WD?=
- =?iso-8859-1?Q?BmHxOLG5HV8nvbQJPeYBJckgGBngJvcG6wlkmUi8AgmBYCHz4sagFqXxes?=
- =?iso-8859-1?Q?6PwiJYjek3cEgMwBqUtDBk1F4y1vsCByB5qqUG2lZMdt3ZJYaHjFSgwSsc?=
- =?iso-8859-1?Q?NigWAkprySEiD2iw8GHVnff3zFK5IJxO8vJHhb0G6wa9OR8n8C/gEDiAQ5?=
- =?iso-8859-1?Q?N9DlMFK0AlQGsk+9+tVx7BS1tvvkegETNsItZ2V34kom31ZExBwV/VTWAO?=
- =?iso-8859-1?Q?yosMC0v5bcrWMdrfrma1aV7NM/xGiWb40JAO9eK2WjZhsKygP46XFwVNt8?=
- =?iso-8859-1?Q?Xh/trZPJjjY1vHgXdY2Ck1z0BMpOxuQ=3D?=
-X-Exchange-RoutingPolicyChecked: OYtR2QJHo2yWdanPCCUyoPgG8yfhJ2qq5n/ejjvrxIKczATfzh6RqAVPsvJcOJHu6zTPD6nBGHJIKIM2shCq7Aa59+iK9YL+REGwVN8cdypM/IDKM4tWWy7K7aV2ZiN2mE0IKUa0k47JQdyUJdWTxq3M2PUL8eQdLkthNXe0Guq5D/6sog30UoLjDmw1BFkZPJFqav64qhCtFGOoUT3BWho5Fs3Btxc2Q2+IPE0qRMPNCIX5Ez0FsacjZh8L/Fk2OZP7dnYfrX48u6ttV4/H3lXFvIQu3/Kc0a+0TNRvHFXkIai8VgYBDdwtZDKn8yumgTTKM8IK7OR0TfwSty9Agg==
-X-MS-Exchange-CrossTenant-Network-Message-Id: d2f956a1-5036-44e6-f5e7-08def93113d6
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?/rCPQjhLBPQWPq9F+pon/ya3ANnQaDfsIAdYHvHBctnOCSQsxZYeY4qgAE?=
+ =?iso-8859-1?Q?xEQEIjnauVjVNvVDrefDRcLjGyHV4TrFMiX6XWbtXr94pPpzPxskSi6/Om?=
+ =?iso-8859-1?Q?NpUrvA+T9LaIGJLU05hI4uHaGeGiXtuSWihW/WXqjd3WHFWQw6cksDLpJQ?=
+ =?iso-8859-1?Q?n3rDhPEajNzdE5Kx+lgNwaIXYn+2MMnI3qffeETMUBjaIvYxltDx3WkSJP?=
+ =?iso-8859-1?Q?AvEkJb8fRoybfdlE0tbOOj6R64JYSrIHJ/jzrsTZG7fukOJrPCVzSHXD2M?=
+ =?iso-8859-1?Q?lRv8K+4ZVH6d8cIpLXiQBLzdld82U2AAj8JLNPcH8ZF5igWMjMgwIyUW80?=
+ =?iso-8859-1?Q?OkcwCjw9l1gEmU0yKbAS8VZYc7J3Se6ySjO1Wu/L6i5RPmYAS56rvwBxtC?=
+ =?iso-8859-1?Q?G+CzZyB68JepfBKOWYj7RaM1H1J7UDZvbexrReB2C1tHHdWYTdc5Uxtq5I?=
+ =?iso-8859-1?Q?TnYfSLkOVVS8M9j9iMtE4wkS7VC5B/bf302RalW63Ig3YcHeIhvh7UzB5y?=
+ =?iso-8859-1?Q?YD833EWtDYZAmviMx6VzPfcqriTWotrDybY17SGvstfLLxaw+xV+b3IBgY?=
+ =?iso-8859-1?Q?G2D4Nap4DmEsOyLGrrWsXcLKhHNFWQ3Gds2Cio7cYUkrLD0iOC9W8RidAa?=
+ =?iso-8859-1?Q?Y+2QwHZLADe3ZuTkv3GYGqkaACIKwnbCqZN6C7cuxbz0L5PfB2CEB93+jV?=
+ =?iso-8859-1?Q?7yhcvdb3domieLglsJlgotVSBFdj1hdxeGoWKpjLtyt//GWOn/9LDEU702?=
+ =?iso-8859-1?Q?jSUjaxDUTpP+iX/uIdNG2aFNImYIaArdKGUbgiNqTXVID4xp8ZrPKoA+RP?=
+ =?iso-8859-1?Q?45oJFYpBDmRy9bavqffugB6C/G8ErttotLSPTIjgUMeAZ+TJQhCqaadJ9/?=
+ =?iso-8859-1?Q?2BrzSIAKoFFwf5Pp2jWUXac7WimYdRx5kI8O/Lahcdaz0UC2mJcAGJZw68?=
+ =?iso-8859-1?Q?0V8L/uP7JaDdP22fgQCizBeTBwowhM1nrQZOycA3SNjT06jCZLLtmOyrqn?=
+ =?iso-8859-1?Q?umLZwPe5TdXqRPIgTojdNR0Hu1gD88VVArAMv6bHoTF9TglniEvR/C1DoA?=
+ =?iso-8859-1?Q?9EN31h6lKYSBN7ab1h1rwvSUZCLTbhivpqOoi+UJMLtSX6a0lxMRmFs345?=
+ =?iso-8859-1?Q?QaOts3jMDjqMYSrPGwBtSaY+PvkvPVtf6G9w566QLQ8GGnNAa1VrK8IX6V?=
+ =?iso-8859-1?Q?w850rl8c5ApwrgEPCf6oJHsVTHyqNylVf1Ci/lwdamSfoEftAvTj/JAM/f?=
+ =?iso-8859-1?Q?Q3f1Xj3KNPgTdbjltD3gFuzMzsdtRi2jd8elkbVX4tfhT6YfslD7o8OPUW?=
+ =?iso-8859-1?Q?btoXlIFq2GuX6oZYGBwV2Tll3NZJAYIL5Cc0jUxkyfnEvd7bjgySpU2U3O?=
+ =?iso-8859-1?Q?5xiKvm42rPYNPfK2bjnm1P+b+2IaWwEfCQl9sua7WMRHjIquCg1hwc8z/E?=
+ =?iso-8859-1?Q?Eib4NC0EcYI2KnfbmWsrEwYwUlClXkU25UGMSlxMDlh4JOs1qpv/HjZAnm?=
+ =?iso-8859-1?Q?KdhazXGY5EM0pYGFhLnjrPU+RSbI/tC638Psm7fY5kaV/1XO97BmSvA5gN?=
+ =?iso-8859-1?Q?SxDnLFNWW1G92T0e17vKcrGifDgcWh6oyinWxOLaSKtj07CNUtm1147vfq?=
+ =?iso-8859-1?Q?fcY8EjWjoAA9bJ7rYrzOgfm1N/MInH1hVgsBc1/yvRksbO+LSgBcBYZBf6?=
+ =?iso-8859-1?Q?0tmRhvQ9HbDJy0qUVfYhMeGfa8E5VPX7ByFFfb+iE0T2sQm/0YzoQtfMNp?=
+ =?iso-8859-1?Q?5Tt5V1AifxjZVwBdpv+/awOpbTn4wUUmVb0sjPIreaPiJibCjDX+QEbHLy?=
+ =?iso-8859-1?Q?Beo6yKuLKa/76JE5Gj60tm1Zyv8WxdA=3D?=
+X-Exchange-RoutingPolicyChecked: bQ4pBOO6QKgnkOr8SuW0Hl0n6gCXfwwP5O4sEqgK6LoCoZZBuRc3GQwZ2sHHxmUhwqPX6eHvZLGDrTU4tT1j0YapgOd93+EsAiT3Hh9IcMEp7zN4RVuZKJ31pdrd3dHDrRjA4Vgw5KpVy9jjUQXizxrVKT0JWXlFRL7gOM8lTbhAh17nckc6PBvzUkg/iVynRgorsFc040o4rWV7tVqQKXrvdNLMR2uH8iHF1fVIHRob2lM/hdBk2T0xKzEH7yPrS6VLhJB4Cx+JdPMi10yFRSRwT+fF3MqgS9eABneUJZP1S/q7k60jkQQLeOf3VBux3ayQ1ns+1AIV2rOqhq+wMw==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 57dbaf42-697f-4a32-43e2-08def931ea5e
 X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB9421.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2026 11:50:31.7870 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2026 11:56:31.6159 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4ITOEJXo+IMbYSILInm9mV4JOYclNaP2KLqc4/YHBuwMRz+xtVkfPPl1DSgFkeKsxaYC5+1Xkw6oL0OsOlhyuY8mTVQ+IBs5PLmgJ3MTM30=
+X-MS-Exchange-CrossTenant-UserPrincipalName: NNPnBQQ3SiBHibnpiswIjqt1DGcIEMrSKoXAZaJPnxiUmPp1IWHqignTKnGH/3Cihk5anEifnLmHOEdvl3eouc2WiB6unD2oSTFKwWHO8Ys=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB689426
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
@@ -156,107 +153,96 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Aug 12, 2026 at 06:28:36PM +0200, Morten Brørup wrote:
-> > From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> > Sent: Wednesday, 12 August 2026 18.16
-> > 
-> > On Wed, Aug 12, 2026 at 06:01:31PM +0200, Morten Brørup wrote:
-> > > > From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> > > > Sent: Wednesday, 12 August 2026 16.34
-> > > >
-> > > > On Wed, Aug 12, 2026 at 01:47:56PM +0000, Morten Brørup wrote:
-> > > > > Added a new high-performance lock-free "pile", using the Stack
-> > API.
-> > > > > The pile behaves roughly like a stack, but is not strictly LIFO.
-> > > > >
-> > > > > The pile is optimized for pushing/popping bulks of objects, which
-> > > > > it does significantly faster than the lock-free stack.
-> > > > >
-> > > > > Pushing/popping a number of objects not divisible by the compile
-> > time
-> > > > > configurable bulk size is handled gracefully, but not as fast as
-> > > > > complete bulks.
-> > > > >
-> > > > > Performance examples, stack_pile_perf_autotest vs.
-> > stack_lf_autotest:
-> > > > >
-> > > > > On a single core, pushing/popping 1 or 8 objects is similar
-> > speed.
-> > > > > On a single core, pushing/popping 32 objects is 2x faster.
-> > > > > On a single core, pushing/popping 512 objects is 10x faster.
-> > > > >
-> > > > > On four cores, pushing/popping 1, 8 or 32 objects is slightly
-> > faster.
-> > > > > On four cores, pushing/popping 512 objects is 4x faster.
-> > > > >
-> > > > How does it differ, or what are the benefits vs the standard stack.
-> > >
-> > > The standard stack is generally faster on single core.
-> > > Only pushing/popping 512 objects is slightly faster than the standard
-> > stack, but maybe the standard stack could be microoptimized to fix
-> > that.
-> > >
-> > > On four cores, it is slightly faster than the standard stack with
-> > multiple objects:
-> > >
-> > > stack_perf_autotest
-> > > Average cycles per object push/pop (bulk size: 1): 3806.65
-> > > Average cycles per object push/pop (bulk size: 8): 554.77
-> > > Average cycles per object push/pop (bulk size: 32): 144.70
-> > > Average cycles per object push/pop (bulk size: 512): 13.52
-> > >
-> > > stack_pile_perf_autotest
-> > > Average cycles per object push/pop (bulk size: 1): 4012.39
-> > > Average cycles per object push/pop (bulk size: 8): 459.82
-> > > Average cycles per object push/pop (bulk size: 32): 122.40
-> > > Average cycles per object push/pop (bulk size: 512): 9.60
-> > >
-> > >
-> > > > The
-> > > > LF
-> > > > stack I'd view as a strange edge case, since even with the standard
-> > > > MP/MC
-> > > > ring mempool driver you still have atomics on the fast-path and you
-> > > > will
-> > > > still get stalls if a thread gets context switched out in the
-> > middle of
-> > > > a
-> > > > mempool operation.
-> > >
-> > > Yes, the no-stall guarantee is a key benefit of the lock-free stack
-> > and the pile.
-> > >
-> > 
-> > Ok, that is good. Next question, rather than adding a whole new mempool
-> > driver implementation, can we use this to replace one of the existing
-> > stack
-> > implementations? Do we need to have so many mempool stack drivers
-> > generally?
+On Wed, Aug 12, 2026 at 12:06:26PM +0000, Morten Brørup wrote:
+> This patch introduces some mempool optimizations, which might be
+> controversial.
 > 
-> We could consider replacing the lock-free stack implementation by the pile implementation, but the pile is not strictly LIFO, so it seems risky.
+> 1. Access local cache without first accessing the mempool header struct.
 > 
-> For a mempool holding mbufs, there's probably no harm in the difference.
-> But for a mempool holding some other object type, it could be harmful. I don't know.
-> IMO, not worth the risk.
+> When getting/putting objects in a mempool cache, it required accessing
+> the "size" field and "local_cache" pointer in the mempool structure, to
+> determine if the local cache was present.
 > 
-> Good idea, though!
-> I'm usually in favor of cleaning up. Just not this one. :-)
+> The mempool structure was changed, so the local cache array is now an
+> integral part of the mempool structure.  This means that local cache can
+> be accessed directly, without first checking the "size" and "local_cache"
+> fields in the mempool header structure.  This avoids a couple of load
+> operations with a potential CPU cache miss when the mempool header itself
+> is not hot in the CPU cache.  The "local_cache" field was changed from
+> being a pointer to the local cache array, and instead became the local
+> cache array itself.
 > 
+> This change similarly speeds up rte_mempool_get_priv(), because it no
+> longer needs to access the mempool header structure (specifically, the
+> "cache_size" field) to determine the address of the mempool's private
+> data.
+> 
+> Disadvantage: Memory for local cache is also consumed by mempools
+> configured without cache.
+> 
+> Related changes: - The mempool cache audit function was improved.  - The
+> mempool autotest accessed the internal RTE_MEMPOOL_HEADER_SIZE macro, and
+> was updated accordingly.
+> 
+> 2. Move objects in mempool cache as 32-byte chunks at CPU cache line
+> aligned addresses.
+> 
+> Improved memory copy performance by ensuring that objects in mempool
+> cache can be moved as 32-byte chunks at CPU cache line aligned addresses.
+> 
+> This introduces a new requirement: The mempool cache size must be
+> divisible by 32.  The new requirement may be beneficial for future
+> purposes.
+> 
+> Disadvantage: Mempool cache size must be divisible by 32.  For
+> compatibility purposes, a requested cache size not divisible by 32 is
+> handled by a graceful fallback at mempool cache creation and mempool
+> creation.
+> 
+> Related changes: - The TAP driver used a mempool cache size of 4 mbufs
+> for GSO, and was updated to a cache size of 32 mbufs.
+> 
+> Other changes: - The description of the RTE_MEMPOOL_NAMESIZE macro was
+> expanded to explain how the value is derived.
+> 
+> Signed-off-by: Morten Brørup <mb@smartsharesystems.com> --- v2: * Removed
+> patch dependency, and included dependent patch instead.  Trying to fix
+> apply patch failure.  v2 resend: * Improved patch description.  ---
+> app/test/test_mempool.c                 |  3 +-
+> doc/guides/rel_notes/release_26_11.rst  |  6 ++
+> drivers/net/sxe2/sxe2_txrx_vec_avx512.c |  2 +-
+> drivers/net/tap/rte_eth_tap.c           |  2 +-
+> lib/eal/include/rte_common.h            | 12 +++
+> lib/mempool/mempool_trace.h             |  1 - lib/mempool/rte_mempool.c
+> | 76 +++++++++++++------ lib/mempool/rte_mempool.h               | 97
+> ++++++++++++++----------- 8 files changed, 131 insertions(+), 68
+> deletions(-)
+> 
+> diff --git a/app/test/test_mempool.c b/app/test/test_mempool.c index
+> e54249ce61..76d45cea2a 100644 --- a/app/test/test_mempool.c +++
+> b/app/test/test_mempool.c @@ -112,8 +112,7 @@ test_mempool_basic(struct
+> rte_mempool *mp, int use_external_cache) GOTO_ERR(ret, out);
+>  
+>  	printf("get private data\n"); -	if (rte_mempool_get_priv(mp) !=
+>  	(char *)mp + -			RTE_MEMPOOL_HEADER_SIZE(mp,
+>  	mp->cache_size)) +	if (rte_mempool_get_priv(mp) != (char *)mp
+>  	+ sizeof(struct rte_mempool)) GOTO_ERR(ret, out);
+>  
+>  #ifndef RTE_EXEC_ENV_FREEBSD /* rte_mem_virt2iova() not supported on bsd
+>  */ diff --git a/doc/guides/rel_notes/release_26_11.rst
+>  b/doc/guides/rel_notes/release_26_11.rst index c8cc86295d..e31325585a
+>  100644 --- a/doc/guides/rel_notes/release_26_11.rst +++
+>  b/doc/guides/rel_notes/release_26_11.rst @@ -68,6 +68,8 @@ Removed Items
+>  Also, make sure to start the actual text at the margin.
+>  =======================================================
+>  
+> +* mempool: The obsolete ``flushthresh`` field was removed from the
+> ``rte_mempool_cache`` structure.  + * Removed deprecated symbols:
+>  
+I'm not convinced about removing this field at this point. Based on
+previous discussions around run-to-completion vs pipeline apps, and the
+reported performance degradations due to recent cache changes, I could
+see a scenario where it's useful to track a separate flushthreshold or
+cache-keep threshold for a mempool.
 
-Having not reviewed the code yet, I can't fully comment, but I would look
-for a strong differentiator before adding yet another stack implementation
-to DPDK. Just because it's not strictly LIFO doesn't rule-out it being
-a drop-in replacement for the existing stack_lf implementation, for
-example, so long as it's pretty close. We have a habit of accumulating lots
-of different implementations of things with slight variances, leading both
-to having lots of stuff to maintain and also then to confusion from users
-as to what to use. Therefore, as we look to have "better" implementations
-of structures, I believe that we should always replace old with new, rather
-than just adding new alongside old all the time - unless there is a very
-strong reason not to.
-
-Hope to review your new implementation in the coming days, and hope to have
-more feedback then.
-
-Thanks,
 /Bruce
