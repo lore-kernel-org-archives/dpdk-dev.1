@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1B0DC5CFEB
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Aug 2026 14:43:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84087C5CFEB
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Aug 2026 14:43:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7A5ED42E5F;
-	Thu, 13 Aug 2026 16:42:26 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6CD0A42E62;
+	Thu, 13 Aug 2026 16:42:27 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id B44CA42E10
- for <dev@dpdk.org>; Thu, 13 Aug 2026 16:42:22 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 04B0342E12
+ for <dev@dpdk.org>; Thu, 13 Aug 2026 16:42:24 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9976620007B;
- Thu, 13 Aug 2026 16:42:22 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E0FD8200084;
+ Thu, 13 Aug 2026 16:42:23 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6B0B5200085;
- Thu, 13 Aug 2026 16:42:22 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A711B200053;
+ Thu, 13 Aug 2026 16:42:23 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 36CFC1800088;
- Thu, 13 Aug 2026 22:42:21 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 6F54018000BA;
+ Thu, 13 Aug 2026 22:42:22 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
 Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v11 10/25] net/dpaa: optimize FMC MAC type parsing
-Date: Thu, 13 Aug 2026 20:11:50 +0530
-Message-Id: <20260813144205.2505031-11-hemant.agrawal@nxp.com>
+Subject: [PATCH v11 11/25] drivers: release DPAA bpid on driver destructor
+Date: Thu, 13 Aug 2026 20:11:51 +0530
+Message-Id: <20260813144205.2505031-12-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260813144205.2505031-1-hemant.agrawal@nxp.com>
 References: <20260813104405.2313474-1-hemant.agrawal@nxp.com>
@@ -51,125 +51,219 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jun Yang <jun.yang@nxp.com>
 
-For ls104xa, MAC9 and MAC10's type could be either of 10G/2.5G/1G
-up to serdes configuration, MAC index should be identified by
-port name instead of parsing MAC type and port number.
+Track allocated BPIDs in a static per-BPID flag table and register a
+driver destructor that releases any BPIDs still marked as in use at
+process exit. This prevents BPID leaks when an application exits without
+calling rte_mempool_free(). Also tune the per-lcore mempool cache flush
+threshold to match the hardware bulk release size (DPAA_MBUF_MAX_ACQ_REL)
+so that buffers are returned to HW in optimal burst sizes.
 
 Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- drivers/net/dpaa/dpaa_fmc.c | 73 ++++++++++++++++++++++---------------
- 1 file changed, 44 insertions(+), 29 deletions(-)
+ drivers/bus/dpaa/base/qbman/bman.c       |  8 +++
+ drivers/bus/dpaa/dpaa_bus_base_symbols.c |  1 +
+ drivers/bus/dpaa/include/fsl_bman.h      |  3 ++
+ drivers/mempool/dpaa/dpaa_mempool.c      | 62 +++++++++++++++++++++---
+ drivers/mempool/dpaa/dpaa_mempool.h      |  3 +-
+ 5 files changed, 69 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/dpaa/dpaa_fmc.c b/drivers/net/dpaa/dpaa_fmc.c
-index 7dc42f6e23..3404b27bea 100644
---- a/drivers/net/dpaa/dpaa_fmc.c
-+++ b/drivers/net/dpaa/dpaa_fmc.c
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright 2017-2023 NXP
-+ * Copyright 2017-2026 NXP
-  */
+diff --git a/drivers/bus/dpaa/base/qbman/bman.c b/drivers/bus/dpaa/base/qbman/bman.c
+index ee4232d0a0..0ae1160973 100644
+--- a/drivers/bus/dpaa/base/qbman/bman.c
++++ b/drivers/bus/dpaa/base/qbman/bman.c
+@@ -251,6 +251,14 @@ void bman_free_pool(struct bman_pool *pool)
+ 	kfree(pool);
+ }
  
- /* System headers */
-@@ -204,6 +204,36 @@ struct fmc_model_t {
- 
- struct fmc_model_t *g_fmc_model;
- 
-+#define FMC_PORT_NAME_MAC "MAC/"
-+#define FMC_PORT_NAME_OFFLINE "OFFLINE/"
-+
-+static int
-+dpaa_port_fmc_get_idx_from_name(const char *name)
++void bman_free_bpid(u8 bpid, u32 flags)
 +{
-+	const char *found;
-+	int idx_str_start = -1, idx;
-+
-+	found = strstr(name, FMC_PORT_NAME_MAC);
-+	if (!found) {
-+		found = strstr(name, FMC_PORT_NAME_OFFLINE);
-+		if (found)
-+			idx_str_start = strlen(FMC_PORT_NAME_OFFLINE);
-+	} else {
-+		idx_str_start = strlen(FMC_PORT_NAME_MAC);
-+	}
-+
-+	if (!found) {
-+		DPAA_PMD_ERR("Invalid fmc port name: %s", name);
-+		return -EINVAL;
-+	}
-+
-+	idx = atoi(&found[idx_str_start]);
-+
-+	DPAA_PMD_INFO("MAC index of %s is %d", name, idx);
-+
-+	return idx;
++	if (flags & BMAN_POOL_FLAG_THRESH)
++		bm_pool_set(bpid, zero_thresholds);
++	if (flags & BMAN_POOL_FLAG_DYNAMIC_BPID)
++		bman_release_bpid(bpid);
 +}
 +
- static int
- dpaa_port_fmc_port_parse(struct fman_if *fif,
- 	const struct fmc_model_t *fmc_model,
-@@ -211,7 +241,10 @@ dpaa_port_fmc_port_parse(struct fman_if *fif,
+ const struct bman_pool_params *bman_get_params(const struct bman_pool *pool)
  {
- 	int current_port = fmc_model->apply_order[apply_idx].index;
- 	const fmc_port *pport = &fmc_model->port[current_port];
--	uint32_t num;
-+	int num = dpaa_port_fmc_get_idx_from_name(pport->name);
+ 	return &pool->params;
+diff --git a/drivers/bus/dpaa/dpaa_bus_base_symbols.c b/drivers/bus/dpaa/dpaa_bus_base_symbols.c
+index 02b245cd50..5d91ada52d 100644
+--- a/drivers/bus/dpaa/dpaa_bus_base_symbols.c
++++ b/drivers/bus/dpaa/dpaa_bus_base_symbols.c
+@@ -57,6 +57,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(qman_alloc_cgrid_range)
+ RTE_EXPORT_INTERNAL_SYMBOL(qman_release_cgrid_range)
+ RTE_EXPORT_INTERNAL_SYMBOL(dpaa_get_qm_channel_pool_num)
+ RTE_EXPORT_INTERNAL_SYMBOL(qman_find_fq_by_cgrid)
++RTE_EXPORT_INTERNAL_SYMBOL(bman_free_bpid)
+ RTE_EXPORT_INTERNAL_SYMBOL(dpaa_intr_enable)
+ RTE_EXPORT_INTERNAL_SYMBOL(dpaa_intr_disable)
+ RTE_EXPORT_INTERNAL_SYMBOL(dpaa_get_ioctl_version_number)
+diff --git a/drivers/bus/dpaa/include/fsl_bman.h b/drivers/bus/dpaa/include/fsl_bman.h
+index 2d24b89889..9c949d1baa 100644
+--- a/drivers/bus/dpaa/include/fsl_bman.h
++++ b/drivers/bus/dpaa/include/fsl_bman.h
+@@ -287,6 +287,9 @@ struct bman_pool *bman_new_pool(const struct bman_pool_params *params);
+ __rte_internal
+ void bman_free_pool(struct bman_pool *pool);
+ 
++__rte_internal
++void bman_free_bpid(u8 bpid, u32 flags);
 +
-+	if (num < 0)
-+		return num;
+ /**
+  * bman_get_params - Returns a pool object's parameters.
+  * @pool: the pool object
+diff --git a/drivers/mempool/dpaa/dpaa_mempool.c b/drivers/mempool/dpaa/dpaa_mempool.c
+index 2f8555a026..3d44739028 100644
+--- a/drivers/mempool/dpaa/dpaa_mempool.c
++++ b/drivers/mempool/dpaa/dpaa_mempool.c
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+  *
+- *   Copyright 2017,2019,2023-2025 NXP
++ *   Copyright 2017,2019,2023-2026 NXP
+  *
+  */
  
- 	if (pport->type == e_FM_PORT_TYPE_OH_OFFLINE_PARSING &&
- 	    pport->number == fif->mac_idx &&
-@@ -219,40 +252,22 @@ dpaa_port_fmc_port_parse(struct fman_if *fif,
- 	     fif->mac_type == fman_onic))
- 		return current_port;
+@@ -25,10 +25,22 @@
+ #include <rte_eal.h>
+ #include <rte_malloc.h>
+ #include <rte_ring.h>
++#include <rte_common.h>
  
--	if (fif->mac_type == fman_mac_1g) {
--		if (pport->type != e_FM_PORT_TYPE_RX)
--			return -ENODEV;
--		num = pport->number + DPAA_1G_MAC_START_IDX;
--		if (fif->mac_idx == num)
--			return current_port;
--
-+	if (fif->mac_type == fman_mac_1g &&
-+		pport->type != e_FM_PORT_TYPE_RX)
- 		return -ENODEV;
--	}
--
--	if (fif->mac_type == fman_mac_2_5g) {
--		if (pport->type != e_FM_PORT_TYPE_RX_2_5G)
--			return -ENODEV;
--		num = pport->number + DPAA_2_5G_MAC_START_IDX;
--		if (fif->mac_idx == num)
--			return current_port;
+ #include <dpaa_mempool.h>
+ #include <dpaax_iova_table.h>
  
-+	if (fif->mac_type == fman_mac_2_5g &&
-+		pport->type != e_FM_PORT_TYPE_RX_2_5G)
- 		return -ENODEV;
--	}
--
--	if (fif->mac_type == fman_mac_10g) {
--		if (pport->type != e_FM_PORT_TYPE_RX_10G)
--			return -ENODEV;
--		num = pport->number + DPAA_10G_MAC_START_IDX;
--		if (fif->mac_idx == num)
--			return current_port;
++struct dpaa_bpid_flag {
++	uint32_t flags;
++	bool used;
++};
++
++/** Be referenced in destructor to release bpid allocated.
++ * Destructor can't access bman_pool from eal mem,
++ * we release ID with flag directly.
++ */
++static struct dpaa_bpid_flag s_dpaa_bpid_allocated_flag[DPAA_MAX_BPOOLS];
++
+ #define FMAN_ERRATA_BOUNDARY ((uint64_t)4096)
+ #define FMAN_ERRATA_BOUNDARY_MASK (~(FMAN_ERRATA_BOUNDARY - 1))
  
-+	if (fif->mac_type == fman_mac_10g &&
-+		pport->type != e_FM_PORT_TYPE_RX_10G)
- 		return -ENODEV;
--	}
+@@ -50,7 +62,7 @@ static int
+ dpaa_mbuf_create_pool(struct rte_mempool *mp)
+ {
+ 	struct bman_pool *bp;
+-	struct bm_buffer bufs[8];
++	struct bm_buffer bufs[FSL_BM_BURST_MAX];
+ 	struct dpaa_bp_info *bp_info;
+ 	uint8_t bpid;
+ 	int num_bufs = 0, ret = 0;
+@@ -83,8 +95,8 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
+ 		 * then in 1s for the remainder.
+ 		 */
+ 		if (ret != 1)
+-			ret = bman_acquire(bp, bufs, 8, 0);
+-		if (ret < 8)
++			ret = bman_acquire(bp, bufs, FSL_BM_BURST_MAX, 0);
++		if (ret < FSL_BM_BURST_MAX)
+ 			ret = bman_acquire(bp, bufs, 1, 0);
+ 		if (ret > 0)
+ 			num_bufs += ret;
+@@ -115,7 +127,7 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
+ 	rte_dpaa_bpid_info[bpid].ptov_off = 0;
+ 	rte_dpaa_bpid_info[bpid].flags = 0;
  
--	DPAA_PMD_ERR("Invalid MAC(mac_idx=%d) type(%d)",
--		fif->mac_idx, fif->mac_type);
-+	if (fif->mac_idx == num)
-+		return current_port;
+-	bp_info = rte_malloc(NULL,
++	bp_info = rte_zmalloc(NULL,
+ 			     sizeof(struct dpaa_bp_info),
+ 			     RTE_CACHE_LINE_SIZE);
+ 	if (!bp_info) {
+@@ -127,6 +139,8 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
+ 	rte_memcpy(bp_info, (void *)&rte_dpaa_bpid_info[bpid],
+ 		   sizeof(struct dpaa_bp_info));
+ 	mp->pool_data = (void *)bp_info;
++	s_dpaa_bpid_allocated_flag[bpid].flags = params.flags;
++	s_dpaa_bpid_allocated_flag[bpid].used = true;
  
--	return -EINVAL;
-+	return -ENODEV;
+ 	DPAA_MEMPOOL_INFO("BMAN pool created for bpid =%d", bpid);
+ 	return 0;
+@@ -136,6 +150,7 @@ static void
+ dpaa_mbuf_free_pool(struct rte_mempool *mp)
+ {
+ 	struct dpaa_bp_info *bp_info = DPAA_MEMPOOL_TO_POOL_INFO(mp);
++	uint16_t i;
+ 
+ 	MEMPOOL_INIT_FUNC_TRACE();
+ 
+@@ -143,10 +158,25 @@ dpaa_mbuf_free_pool(struct rte_mempool *mp)
+ 		bman_free_pool(bp_info->bp);
+ 		DPAA_MEMPOOL_INFO("BMAN pool freed for bpid =%d",
+ 				  bp_info->bpid);
+-		rte_free(mp->pool_data);
+-		bp_info->bp = NULL;
++		rte_dpaa_bpid_info[bp_info->bpid].mp = NULL;
++		rte_dpaa_bpid_info[bp_info->bpid].bp = NULL;
++		s_dpaa_bpid_allocated_flag[bp_info->bpid].used = false;
++		rte_free(bp_info);
+ 		mp->pool_data = NULL;
+ 	}
++
++	if (!rte_dpaa_bpid_info)
++		return;
++
++	for (i = 0; i < DPAA_MAX_BPOOLS; i++) {
++		if (rte_dpaa_bpid_info[i].mp)
++			break;
++	}
++
++	if (i == DPAA_MAX_BPOOLS) {
++		rte_free(rte_dpaa_bpid_info);
++		rte_dpaa_bpid_info = NULL;
++	}
  }
  
  static int
+@@ -481,4 +511,22 @@ static const struct rte_mempool_ops dpaa_mpool_ops = {
+ 	.populate = dpaa_populate,
+ };
+ 
++#define RTE_PRIORITY_104 104
++
++RTE_FINI_PRIO(dpaa_mpool_finish, RTE_PRIORITY_104)
++{
++	uint16_t bpid;
++
++	for (bpid = 0; bpid < DPAA_MAX_BPOOLS; bpid++) {
++		if (s_dpaa_bpid_allocated_flag[bpid].used) {
++			bman_free_bpid(bpid, s_dpaa_bpid_allocated_flag[bpid].flags);
++			s_dpaa_bpid_allocated_flag[bpid].used = false;
++		}
++	}
++	if (rte_dpaa_bpid_info) {
++		rte_free(rte_dpaa_bpid_info);
++		rte_dpaa_bpid_info = NULL;
++	}
++}
++
+ RTE_MEMPOOL_REGISTER_OPS(dpaa_mpool_ops);
+diff --git a/drivers/mempool/dpaa/dpaa_mempool.h b/drivers/mempool/dpaa/dpaa_mempool.h
+index 865b533b8f..d7ee49b557 100644
+--- a/drivers/mempool/dpaa/dpaa_mempool.h
++++ b/drivers/mempool/dpaa/dpaa_mempool.h
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+  *
+- *   Copyright 2017,2019,2024 -2025 NXP
++ *   Copyright 2017,2019,2024 -2026 NXP
+  *
+  */
+ #ifndef __DPAA_MEMPOOL_H__
+@@ -24,6 +24,7 @@
+ 
+ /* total number of bpools on SoC */
+ #define DPAA_MAX_BPOOLS	256
++#define DPAA_INVALID_BPID DPAA_MAX_BPOOLS
+ 
+ /* Maximum release/acquire from BMAN */
+ #define DPAA_MBUF_MAX_ACQ_REL  FSL_BM_BURST_MAX
 -- 
 2.25.1
 
