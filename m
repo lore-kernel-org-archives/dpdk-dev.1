@@ -2,62 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F51C5CFDB
-	for <dpdk-dev@archiver.kernel.org>; Wed, 12 Aug 2026 23:37:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4080FC5CFCF
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Aug 2026 01:30:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 00F5440B9C;
-	Thu, 13 Aug 2026 01:37:35 +0200 (CEST)
-Received: from mail-yx1-f69.google.com (mail-yx1-f69.google.com
- [74.125.224.69]) by mails.dpdk.org (Postfix) with ESMTP id BC183402C8
- for <dev@dpdk.org>; Thu, 13 Aug 2026 01:37:31 +0200 (CEST)
-Received: by mail-yx1-f69.google.com with SMTP id
- 956f58d0204a3-667d6c4384dso303227d50.3
- for <dev@dpdk.org>; Wed, 12 Aug 2026 16:37:31 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1478040298;
+	Thu, 13 Aug 2026 03:30:06 +0200 (CEST)
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com
+ [209.85.214.169])
+ by mails.dpdk.org (Postfix) with ESMTP id 2078F4026E
+ for <dev@dpdk.org>; Thu, 13 Aug 2026 03:30:04 +0200 (CEST)
+Received: by mail-pl1-f169.google.com with SMTP id
+ d9443c01a7336-2d049069377so16523345ad.0
+ for <dev@dpdk.org>; Wed, 12 Aug 2026 18:30:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1786577851; x=1787182651; darn=dpdk.org;
- h=content-type:cc:to:from:subject:message-id:references:mime-version
- :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=Tmdc76k7jJxqlFvxGuOuwyN+zVXKPjbNZCKYUgQJagM=;
- b=domL39ITiu476t0Jxbr646P2S6gB6T+MZifGEdyGI0sk3B7+qsnbkTqeSpYA4KpLuQ
- +8LMO+j5YPcWp00xsv4V3egUEtrQDHwKGXkBRCUGeCLWTsnLXevmaHyBYSS0dxKm7sQf
- ALskM8aJ8Q8Vwaww5bLxg5qTAR72/L8BNjjfB9fdbx5OJz2pLKwoiG0FzIu6ufLAjn9Q
- C/PuZABhBR3wJWEMd4FsieZ+9wwHfFzQlFLr9l9HuYtOv6Nmir46BR65CXRq1gXS/wET
- L5t+JUDGmQRS9A5hg8AmmXaxB03/U+jvmUoFoL4fLtK8IQEIjWXoX69Zqb8j6ZRW4c2I
- RAZw==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786584603;
+ x=1787189403; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=TIP0xKgmHnoTp3Z6cjT+SwFa/Xv7YVs7B2jTQM3QqGI=;
+ b=ZukE/DKMu9jXSpK8La4TA9FbMxgKpx1hhaCIN0g+NtS1bjuADGqBztsAM5wlNL0BMe
+ SxQT80xNDZgIh1T0M87sbrRKMTtx3z9B6uWACFxLfdIGPSsDoOK/WkX9TvFv+R/dXjTK
+ /kNWpu7Gqs5hlSCBvC/DX9eqhVgOF3lm6gmSSJNFlxc7ZWiM5xo3XZKAwQXXbIkSkDQY
+ Cmn5sg80fQSiil115AURmzSPb92xnSD+KC3yCwDpWjqWDKHtqHi/lvSh1HN7xAlSMe9t
+ D9Kbz1don4H7mCaMex+YjRyOp/zY/9LIdL3pXb+/ixP+iZlTqwlVVSuioNLXQoMLzsKR
+ pGyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786577851; x=1787182651;
- h=content-type:cc:to:from:subject:message-id:references:mime-version
- :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=Tmdc76k7jJxqlFvxGuOuwyN+zVXKPjbNZCKYUgQJagM=;
- b=ngwAVprwl/ZzcISycUnHnF59qviF312lrQJFKVxK16UdC6DVbol1fEnYYfp7mzb6TF
- 7sIc+owgZDzk8Y87uU0Y7ncwTj8l9Pxxy3MPA3b0KaUvzTcrYjg4lQ5zY5CGwyp5oJtk
- X6r+ptsePhv8bY5zF2pnQGsRlh4AtZvBHOvGl8IYu6xSBxSXIyUMnH1kgf7Cef3R1vaU
- Thx3ei9815dCMq+N6aKLkoh/HFNSwnkX+VzGszU8NFEynxv/7o8aJIo1v2s8g4wEBpcT
- 7EXvBcabl6R3+Ng3sr/yxddPKWT9Djb1BX1hHzKRXgb5om0ds2J3e74nYZE5PuwgOG0o
- VUbQ==
-X-Gm-Message-State: AOJu0Yx1RM6wGdZ3ApxHcki9tlGnvzeIwh1I/+q9MgML9EqHyvlZAOac
- TQ+JorC210NAWx/d57aLw+gFPL0dXjRMeBTFruetQWBCnXkV148z17I6mGvywMYbWANuAAMpxiE
- ZxsK9ZqQfHju08KGLeV1h+PYnicUMNyLaMuBpJgLWT2+kbA/QKyIg2JjOU6FO7II0492wV9MyNA
- V9FoiCLtSns4EcTF64PVoz3hM=
-X-Received: from yxxz17.prod.google.com ([2002:a05:690e:3d1:b0:669:90b3:79f9])
- (user=blasko job=prod-delivery.src-stubby-dispatcher) by
- 2002:a53:c8cf:0:b0:667:b503:4d2c
- with SMTP id 956f58d0204a3-66c515c81dbmr757265d50.34.1786577850759; Wed, 12
- Aug 2026 16:37:30 -0700 (PDT)
-Date: Wed, 12 Aug 2026 23:36:36 +0000
-In-Reply-To: <20260812233637.1968454-1-blasko@google.com>
-Mime-Version: 1.0
-References: <20260623215325.814776-1-blasko@google.com>
- <20260812233637.1968454-1-blasko@google.com>
-X-Mailer: git-send-email 2.55.0.691.gc56d675ccc-goog
-Message-ID: <20260812233637.1968454-3-blasko@google.com>
-Subject: [PATCH v5 2/2] net/af_xdp: add read_clock support to AF_XDP PMD
-From: Mark Blasko <blasko@google.com>
-To: dev@dpdk.org, Ciara Loftus <ciara.loftus@intel.com>, 
- Maryam Tahhan <mtahhan@redhat.com>
-Cc: joshwash@google.com, jtranoleary@google.com, blasko@google.com
-Content-Type: text/plain; charset="UTF-8"
+ d=1e100.net; s=20251104; t=1786584603; x=1787189403;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=TIP0xKgmHnoTp3Z6cjT+SwFa/Xv7YVs7B2jTQM3QqGI=;
+ b=UZc+jDUeLMKpch3s+CXW6ps3Zr9Iv9oNb50QxUU6UiPDikGYNAkNKMS8hTF8nLuiMQ
+ cNaHTBfhQqOWWxDU/1dmetgppUL1J0kpq+cHtv5B6+cSGdrddsjrUgPF0FUTsN28BCkk
+ Swu2uZcVk9Kw+Gkh/2lBXZgxrQV/PEHTPgfYF/bohZhROR+3H2i2DDszpG9SzZ+gVVP0
+ 82xAvS0bwZAja9p+5fSv42iiHzU6+Td64bA/2OTuLwVYASffKa21z8PlCBUhwmvnML+K
+ G9iWXLZcfeMuZMr5klV6PV1XdW22eI9yxKlOjVl1jwih8Y93w9Cg/mEH3quXXV5Z37eX
+ Yypw==
+X-Forwarded-Encrypted: i=1;
+ AHgh+RpO+6b+nETVcV9AeahXw0WgoL1urcpu5CT+y+icsqQOngGYv+LH0ipvTI3WMBgj3tRY64U=@dpdk.org
+X-Gm-Message-State: AOJu0YwdeiJCe7zaAYLnUn7FSOYI8XtsaLFD69mQKnj+uI92ZhB4WagF
+ tg+z9Uv18JspH0sGd2oL3kSWEyPZJnKVCVrUdSXry7Ty9Ny54KfP4FXb/qTjEXkOGkk=
+X-Gm-Gg: AR+sD11YLJLArubRgXUH67Q1IGlfVqOy+dAyHBCnEPfylBMrf4S7TbyV0kTLavIfj4g
+ lBD31px4yRbkG3RgZYaN/YzmPd5V2101QTlyY9Kq/H+XXD7C/yHF566xisUmVwzUzepyk65AO9e
+ /U+NixrvfZULcD/xHRoNvBuk40qH0QLWgIwP2TZ7D0WDwBBG1Bhp0YWCx4S1HTTE4INUxJmQYvO
+ inWxa4gPXqDhwoweLNnMDdtxLNhtwcIcWE2n7nxdtT4mZ/835p2SjRAeo0zbmHo9+pyWLtsfLry
+ jNLY58lEVlgSeXW7vPWkOxoNsJusSfKPegh8uqCyA+uo8N3qp/b6F83BGDjORAUUZkkMN1X+vtv
+ MiYJLIsJ39dacvx97eIWME1eW70ukYTVTliL+V+qC62xwMs3Nf8b3JhDE/TVdTNbbTexeyW5uN5
+ jg73kr0mGr1G6ErsQ9klz7iMJ57bmaqAkjTrLOJWFQ/8VnGueh+kFsOnIy9ONrbUM/Q9WjEXvPM
+ 2oN0l1flP8tkM40guSBBbgQSSiY4vIRClHxVM00
+X-Received: by 2002:a17:902:f64a:b0:2d2:da8e:9017 with SMTP id
+ d9443c01a7336-2d37d54ff55mr27096205ad.8.1786584602814; 
+ Wed, 12 Aug 2026 18:30:02 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-31ebf732166sm2212259eec.18.2026.08.12.18.29.54
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 12 Aug 2026 18:30:02 -0700 (PDT)
+Date: Wed, 12 Aug 2026 18:29:46 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Joshua Washington <joshwash@google.com>
+Cc: Reshma Pattan <reshma.pattan@intel.com>, Chaoyong He
+ <chaoyong.he@corigine.com>, Julien Aube <julien_dpdk@jaube.fr>, Potnuri
+ Bharat Teja <bharat@chelsio.com>, Shai Brandes <shaibran@amazon.com>,
+ Evgeny Schemeilin <evgenys@amazon.com>, Amit Bernstein
+ <amitbern@amazon.com>, Wajeeh Atrash <atrwajee@amazon.com>, Xiaoyun Wang
+ <cloud.wangxiaoyun@huawei.com>, Xingui Yang <yangxingui@huawei.com>,
+ Chengwen Feng <fengchengwen@huawei.com>, Bruce Richardson
+ <bruce.richardson@intel.com>, Anatoly Burakov <anatoly.burakov@intel.com>,
+ Jingjing Wu <jingjing.wu@intel.com>, Praveen Shetty
+ <praveen.shetty@intel.com>, Devendra Singh Rawat <dsinghrawat@marvell.com>,
+ Alok Prasad <palok@marvell.com>, Wenbo Cao <caowenbo@mucse.com>, Rosen Xu
+ <rosen.xu@altera.com>, dev@dpdk.org
+Subject: Re: [PATCH] eal: introduce division round up macro
+Message-ID: <20260812182946.16d1e889@phoenix.local>
+In-Reply-To: <20260812223017.2980190-1-joshwash@google.com>
+References: <20260812223017.2980190-1-joshwash@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -71,281 +95,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Implement the ethdev read_clock operation in the AF_XDP Poll Mode
-Driver. This allows DPDK applications to query the current time of the
-NIC hardware clock.
+On Wed, 12 Aug 2026 15:30:17 -0700
+Joshua Washington <joshwash@google.com> wrote:
 
-At device start, the PMD queries ethtool for the interface's PTP
-Hardware Clock index and opens the corresponding PTP device node. The
-read_clock operation queries the current time via clock_gettime.
+> A number of drivers define the DIV_ROUND_UP macro -- add it to
+> RTE_COMMON so that other code looking to use that functionality doesn't
+> have to re-define it.
+> 
+> Replace usage of DIV_ROUND_UP in existing places with RTE_DIV_ROUND_UP.
+> 
+> Signed-off-by: Joshua Washington <joshwash@google.com>
+> ---
 
-Signed-off-by: Mark Blasko <blasko@google.com>
-Reviewed-by: Joshua Washington <joshwash@google.com>
----
-v5:
-  - Update release notes to target release_26_11.rst.
-v4:
-  - Move ptp_fd into pmd_process_private for multi-process safety.
-  - Decouple /dev/ptpX opening from RTE_ETH_RX_OFFLOAD_TIMESTAMP.
-  - Move read_clock documentation out of "Options" into its own section
-    in af_xdp.rst.
-  - Add #ifndef guards around CLOCKFD and FD_TO_CLOCKID macro definitions.
-  - Replace (caddr_t) cast with (void *).
-v3:
-  - Add feature description and PTP hardware clock prerequisites in
-    doc/guides/nics/af_xdp.rst.
-  - Add release notes entry in doc/guides/rel_notes/release_26_07.rst.
-  - Add PTP file descriptor cleanup in eth_dev_start(), eth_dev_stop(),
-    and eth_dev_close().
-  - Return -errno on clock_gettime() failure.
-  - Add strerror(errno) error logging on PTP device open failure.
-v2:
-  - New patch introduced in v2 to support read_clock ethdev operation.
----
- doc/guides/nics/af_xdp.rst             | 11 +++
- doc/guides/rel_notes/release_26_11.rst |  1 +
- drivers/net/af_xdp/rte_eth_af_xdp.c    | 99 ++++++++++++++++++++++++++
- 3 files changed, 111 insertions(+)
-
-diff --git a/doc/guides/nics/af_xdp.rst b/doc/guides/nics/af_xdp.rst
-index 304470bcf7..6f2e41699c 100644
---- a/doc/guides/nics/af_xdp.rst
-+++ b/doc/guides/nics/af_xdp.rst
-@@ -37,6 +37,9 @@ Prerequisites
-    header is used to determine the kernel version at compile time.
- *  A kernel with version 5.4 or later is required for 32-bit OS.
- *  The busy polling feature requires kernel version >= v5.11.
-+*  The ``read_clock`` feature requires a network interface with PTP
-+   Hardware Clock support (capable of exposing a ``/dev/ptpX`` device via
-+   ethtool ``ETHTOOL_GET_TS_INFO``).
- 
- 
- Options
-@@ -249,6 +252,14 @@ netdev interface via ``SIOCSHWTSTAMP`` (which requires ``CAP_NET_ADMIN``). This
- hardware filter setting persists on the netdev interface after the DPDK application
- exits.
- 
-+read_clock
-+----------
-+
-+The PMD supports querying the underlying PTP hardware clock time via
-+``rte_eth_read_clock()``. During device start, the PMD automatically discovers
-+the hardware PHC index via ethtool and opens the PTP character device
-+(``/dev/ptpX``).
-+
- Limitations
- -----------
- 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 91c517ec66..806abbe185 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -60,6 +60,7 @@ New Features
-   * Added support for RX metadata hardware timestamping via vdev devargs
-     ``xdp_meta_rx_ts_offset``, ``xdp_meta_valid_hint_offset``, and
-     ``xdp_meta_rx_ts_valid_mask``.
-+  * Added ``read_clock`` operation to query the PTP hardware clock.
- 
- 
- Removed Items
-diff --git a/drivers/net/af_xdp/rte_eth_af_xdp.c b/drivers/net/af_xdp/rte_eth_af_xdp.c
-index 2a35570f07..5b0c82e1be 100644
---- a/drivers/net/af_xdp/rte_eth_af_xdp.c
-+++ b/drivers/net/af_xdp/rte_eth_af_xdp.c
-@@ -5,6 +5,8 @@
- #include <errno.h>
- #include <stdlib.h>
- #include <string.h>
-+#include <fcntl.h>
-+#include <time.h>
- #include <netinet/in.h>
- #include <net/if.h>
- #include <sys/un.h>
-@@ -29,6 +31,7 @@
- #include <dev_driver.h>
- #include <rte_eal.h>
- #include <rte_ether.h>
-+#include <rte_time.h>
- #include <rte_lcore.h>
- #include <rte_log.h>
- #include <rte_memory.h>
-@@ -198,6 +201,7 @@ struct pmd_internals {
- 
- struct pmd_process_private {
- 	int rxq_xsk_fds[RTE_MAX_QUEUES_PER_PORT];
-+	int ptp_fd;
- };
- 
- #define ETH_AF_XDP_IFACE_ARG			"iface"
-@@ -834,10 +838,35 @@ eth_af_xdp_enable_hw_timestamping(const char *if_name)
- 	return 0;
- }
- 
-+static int
-+eth_af_xdp_get_ptp_index(const char *if_name)
-+{
-+	struct ethtool_ts_info info = {0};
-+	struct ifreq ifr = {0};
-+	int fd, ret;
-+
-+	fd = socket(AF_INET, SOCK_DGRAM, 0);
-+	if (fd < 0)
-+		return -1;
-+
-+	ifr.ifr_data = (void *)&info;
-+	info.cmd = ETHTOOL_GET_TS_INFO;
-+	strlcpy(ifr.ifr_name, if_name, IFNAMSIZ);
-+
-+	ret = ioctl(fd, SIOCETHTOOL, &ifr);
-+	close(fd);
-+
-+	if (ret < 0)
-+		return -1;
-+
-+	return info.phc_index;
-+}
-+
- static int
- eth_dev_start(struct rte_eth_dev *dev)
- {
- 	struct pmd_internals *internals = dev->data->dev_private;
-+	struct pmd_process_private *process_private = dev->process_private;
- 	uint16_t i;
- 
- 	if (dev->data->dev_conf.rxmode.offloads &
-@@ -870,6 +899,28 @@ eth_dev_start(struct rte_eth_dev *dev)
- 		}
- 	}
- 
-+	if (process_private != NULL) {
-+		int phc_index = eth_af_xdp_get_ptp_index(internals->if_name);
-+		if (phc_index >= 0) {
-+			char ptp_dev[32];
-+			snprintf(ptp_dev, sizeof(ptp_dev), "/dev/ptp%d", phc_index);
-+			if (process_private->ptp_fd >= 0) {
-+				close(process_private->ptp_fd);
-+				process_private->ptp_fd = -1;
-+			}
-+			process_private->ptp_fd = open(ptp_dev, O_RDONLY);
-+			if (process_private->ptp_fd >= 0) {
-+				AF_XDP_LOG_LINE(INFO,
-+					"Opened PTP device %s for read_clock",
-+					ptp_dev);
-+			} else {
-+				AF_XDP_LOG_LINE(WARNING,
-+					"Failed to open PTP device %s for read_clock: %s",
-+					ptp_dev, strerror(errno));
-+			}
-+		}
-+	}
-+
- 	dev->data->dev_link.link_status = RTE_ETH_LINK_UP;
- 	for (i = 0; i < dev->data->nb_rx_queues; i++) {
- 		dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
-@@ -883,6 +934,7 @@ eth_dev_start(struct rte_eth_dev *dev)
- static int
- eth_dev_stop(struct rte_eth_dev *dev)
- {
-+	struct pmd_process_private *process_private = dev->process_private;
- 	uint16_t i;
- 
- 	dev->data->dev_link.link_status = RTE_ETH_LINK_DOWN;
-@@ -891,6 +943,11 @@ eth_dev_stop(struct rte_eth_dev *dev)
- 		dev->data->tx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
- 	}
- 
-+	if (process_private != NULL && process_private->ptp_fd >= 0) {
-+		close(process_private->ptp_fd);
-+		process_private->ptp_fd = -1;
-+	}
-+
- 	return 0;
- }
- 
-@@ -1227,6 +1284,14 @@ eth_dev_close(struct rte_eth_dev *dev)
- 		}
- 	}
- 
-+	if (dev->process_private != NULL) {
-+		struct pmd_process_private *process_private = dev->process_private;
-+		if (process_private->ptp_fd >= 0) {
-+			close(process_private->ptp_fd);
-+			process_private->ptp_fd = -1;
-+		}
-+	}
-+
- out:
- 	rte_free(dev->process_private);
- 
-@@ -2096,6 +2161,35 @@ eth_dev_promiscuous_disable(struct rte_eth_dev *dev)
- 	return eth_dev_change_flags(internals->if_name, 0, ~IFF_PROMISC);
- }
- 
-+/*
-+ * In Linux, dynamic POSIX clock IDs from file descriptors (such as /dev/ptpX)
-+ * are encoded with CLOCKFD (3) in the lower 3 bits and ~fd in the upper bits.
-+ * As this is not defined in user-space UAPI headers, define the macro here.
-+ */
-+#ifndef CLOCKFD
-+#define CLOCKFD 3
-+#endif
-+#ifndef FD_TO_CLOCKID
-+#define FD_TO_CLOCKID(fd)	((clockid_t)(~(unsigned int)(fd) << 3 | CLOCKFD))
-+#endif
-+
-+static int
-+eth_af_xdp_read_clock(struct rte_eth_dev *dev, uint64_t *timestamp)
-+{
-+	struct pmd_process_private *process_private = dev->process_private;
-+	struct timespec ts;
-+
-+	if (process_private == NULL || process_private->ptp_fd < 0)
-+		return -ENOTSUP;
-+
-+	clockid_t clkid = FD_TO_CLOCKID(process_private->ptp_fd);
-+	if (clock_gettime(clkid, &ts) < 0)
-+		return -errno;
-+
-+	*timestamp = rte_timespec_to_ns(&ts);
-+	return 0;
-+}
-+
- static const struct eth_dev_ops ops = {
- 	.dev_start = eth_dev_start,
- 	.dev_stop = eth_dev_stop,
-@@ -2111,6 +2205,7 @@ static const struct eth_dev_ops ops = {
- 	.stats_get = eth_stats_get,
- 	.stats_reset = eth_stats_reset,
- 	.get_monitor_addr = eth_get_monitor_addr,
-+	.read_clock = eth_af_xdp_read_clock,
- };
- 
- /* AF_XDP Device Plugin option works in unprivileged
-@@ -2132,6 +2227,7 @@ static const struct eth_dev_ops ops_afxdp_dp = {
- 	.stats_get = eth_stats_get,
- 	.stats_reset = eth_stats_reset,
- 	.get_monitor_addr = eth_get_monitor_addr,
-+	.read_clock = eth_af_xdp_read_clock,
- };
- 
- /** parse busy_budget argument */
-@@ -2525,6 +2621,7 @@ init_internals(struct rte_vdev_device *dev, const char *if_name,
- 	eth_dev->tx_pkt_burst = eth_af_xdp_tx;
- 	eth_dev->process_private = process_private;
- 
-+	process_private->ptp_fd = -1;
- 	for (i = 0; i < queue_cnt; i++)
- 		process_private->rxq_xsk_fds[i] = -1;
- 
-@@ -2680,6 +2777,8 @@ rte_pmd_af_xdp_probe(struct rte_vdev_device *dev)
- 			return -ENOMEM;
- 		}
- 
-+		((struct pmd_process_private *)eth_dev->process_private)->ptp_fd = -1;
-+
- 		/* Obtain the xsk fds from the primary process. */
- 		if (afxdp_mp_request_fds(name, eth_dev))
- 			return -1;
--- 
-2.55.0.679.g6767b8d81c-goog
-
+Makes sense, but this is the kind of change that is best done as a patch series
+so that each driver vendor looks at their code; and if something is broken
+only one change needs to be reverted. Make blast radius smaller
