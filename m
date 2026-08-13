@@ -2,60 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDABCC5CFCF
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Aug 2026 17:23:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 089D5C5CFCF
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Aug 2026 17:23:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6A2C042E3A;
-	Thu, 13 Aug 2026 19:23:07 +0200 (CEST)
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
- [209.85.210.198])
- by mails.dpdk.org (Postfix) with ESMTP id 9A22F42E36
- for <dev@dpdk.org>; Thu, 13 Aug 2026 19:23:06 +0200 (CEST)
-Received: by mail-pf1-f198.google.com with SMTP id
- d2e1a72fcca58-8487ed7f7beso4713b3a.0
- for <dev@dpdk.org>; Thu, 13 Aug 2026 10:23:06 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 4B7F142E5B;
+	Thu, 13 Aug 2026 19:23:09 +0200 (CEST)
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
+ [209.85.210.199])
+ by mails.dpdk.org (Postfix) with ESMTP id AA0E242E60
+ for <dev@dpdk.org>; Thu, 13 Aug 2026 19:23:08 +0200 (CEST)
+Received: by mail-pf1-f199.google.com with SMTP id
+ d2e1a72fcca58-84e048a801dso1299192b3a.3
+ for <dev@dpdk.org>; Thu, 13 Aug 2026 10:23:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1786641786; x=1787246586; darn=dpdk.org;
+ d=google.com; s=20251104; t=1786641788; x=1787246588; darn=dpdk.org;
  h=content-type:cc:to:from:subject:message-id:references:mime-version
  :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=b7LWtsTC3UAmjqSEv6T+NZHX3XI2BJzpHNsmKhMUk8o=;
- b=skzP4q91/snODoW5qsY1kEWIcUA4grSvC9W+b47C7yHVeLPTVmyQ9tygQwoan3ciIR
- GFAR3CxaPU7H5Fje3e4QVvYll2iurv2iVkvGHtXgbFp3t+w7LjBHkkLA9qxuWSMLp7Q9
- sA6HHM/r76gR6mo8K0Ubi89GbssBPtMCkVU1gRMdHzgLHE6rd8bDrxrZoX5GELmnlCaM
- WxoeazNZT2lgxhwbUaX+4FsI844RE7wJdGFzgosTxJj3j9fVd/m4Jp1GVDofG++JaBmn
- xEItWnpyU5q2AfpCbdMemarxsx+z2LcMeGc/FKBg+ZLtii2fXtUHXJjh1Eie35h29AmJ
- VT/w==
+ :content-type; bh=K1SUewbUKkCfg3g2uAIGnCMc9JTInR7VKiWSM0l9h44=;
+ b=UzT/x85ibnY7j3yj/eciD9qvIwhO3u4KGwbRyhxEpVC5JIvRr+vmDle5xRJTT8h2ZZ
+ 6/fNZMQsqhaRX65vD2LODZXJNIZ6j0f/YOje1hj5m4tJudWc13YqbS9S+gYdxDqz4Tyk
+ DMN+iFRa/oTyhGJ2vFuP4xjR109m4dBaJvGj+I0o5QLsYYkToSfzsJEvs0O6n6LoMax3
+ mK7geKizR3A6E0J75BWNWFIa1rIaRWPzpbP2oEzJMIlJmzXd3ZHLtxQGFAuXWqyZpuE8
+ 6/rXWGujEOA2ZJUxmyLoZfGRC7JnOTmdd+mhyieAQPwefNRSNxPs7Qbot/eTak621WAv
+ VKIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786641786; x=1787246586;
+ d=1e100.net; s=20251104; t=1786641788; x=1787246588;
  h=content-type:cc:to:from:subject:message-id:references:mime-version
  :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=b7LWtsTC3UAmjqSEv6T+NZHX3XI2BJzpHNsmKhMUk8o=;
- b=VbMayCc8uDjnEGo53nyfzjrJzvr9SRiPV0v+K2lNIkO99hkJx/uISU7vCQOq4L+MJ3
- rXFOT2OPgNa2w2AvEP1oorYcJqzy6MaAXz6pyM2n7ZytDUIQeJTajyLLm5FZRlucw+Fk
- GOQg/TNMbTQSWe6tVpeTIVPpo96FVideliRVtykXTF5iAxe7P+bjXmyo9yg27KIHFtrq
- c+xaVHKoa74VYfXcnOoEy0XXVfr1Ybyt1MXc7FVIty9yi+BZyvYx3G4K4UenC58LCfgB
- NC+HlnGvM0aG+dtgbV0RraLSHpLCiPGxoEYHisNasp/qCB3OXRRmrsqs4FJomEL0SSVB
- NV8A==
-X-Gm-Message-State: AOJu0YwF7/oCgzAE9mW09GMR3BGvPiZfRH8xh+Ethp1XNfAX8KMzPoxn
- hHT9Col0ojocVx1ljLhoZ69JqaQX00uHbkBuRTmWg9q84+sxPWaTRpzPpeoA4tA48Xnu2nKBzQa
- IOBng2DScL/hwlg==
-X-Received: from pfbhj23.prod.google.com
- ([2002:a05:6a00:8717:b0:84c:23c5:6759])
+ bh=K1SUewbUKkCfg3g2uAIGnCMc9JTInR7VKiWSM0l9h44=;
+ b=NzlbZERvoXn7yBxgpM7XbAsoIubw5HhB2CXcnO9hAvjhjox51c4o3QEb5tu6h7/HE3
+ Q8JViBU099qVeVmQjEZQRhPoB/+IHUh/ZW/UVClaHKSGzse3Cw5oI9yu+OK/2r2HKvCA
+ pBQOWGOIyS+xy/GaPUB0t0D/ISDB7Lct/JpebbEkyuoWPTkWwxmtyakTVUSuVx3qowae
+ ctHbkmt8TVyan0SBlb/HMiqgFNvoB/J1R5Y4HRtoV6EE/wq0MBe/b/1JqFUONX1XGDnZ
+ FrcelLBTa44RvT6iV8pgOJGIH5nkPPl44BRe7m+/4P6pjrfwMlqYsE2HMaxYNK/6maoh
+ k8Xg==
+X-Gm-Message-State: AOJu0YzVAMcj3QMo0hzufAiz7E9GO3b7WmuftGVA0ZnuhCh4mGbh1TSh
+ owxtJptnfxCpEcMqhTboonrzJ3Otlubrsia3qYjyX2t0tghdmzoGFxHwVfwxPsMikt7a2dvDEW+
+ h62ec1Z0O75dVoQ==
+X-Received: from pfej18.prod.google.com ([2002:aa7:8d12:0:b0:846:5d01:2319])
  (user=joshwash job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:1828:b0:84e:216d:7e4e with SMTP id
- d2e1a72fcca58-84fc6e02b19mr7463780b3a.1.1786641785432; 
- Thu, 13 Aug 2026 10:23:05 -0700 (PDT)
-Date: Thu, 13 Aug 2026 10:22:34 -0700
+ 2002:a05:6a00:7482:b0:84f:d7e4:3453 with SMTP id
+ d2e1a72fcca58-84fd7e45b33mr2335213b3a.38.1786641787590; 
+ Thu, 13 Aug 2026 10:23:07 -0700 (PDT)
+Date: Thu, 13 Aug 2026 10:22:35 -0700
 In-Reply-To: <20260813172241.964736-1-joshwash@google.com>
 Mime-Version: 1.0
 References: <20260812223017.2980190-1-joshwash@google.com>
  <20260813172241.964736-1-joshwash@google.com>
 X-Mailer: git-send-email 2.55.0.691.gc56d675ccc-goog
-Message-ID: <20260813172241.964736-10-joshwash@google.com>
-Subject: [PATCH v2 09/14] net/bnx2x: use common division round up macro
+Message-ID: <20260813172241.964736-11-joshwash@google.com>
+Subject: [PATCH v2 10/14] net/cxgbe: use common division round up macro
 From: Joshua Washington <joshwash@google.com>
-To: Julien Aube <julien_dpdk@jaube.fr>
+To: Potnuri Bharat Teja <bharat@chelsio.com>
 Cc: dev@dpdk.org, Joshua Washington <joshwash@google.com>
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
@@ -75,75 +74,201 @@ The RTE_DIV_ROUND_UP in rte_common.h makes DIV_ROUND_UP redundant.
 
 Signed-off-by: Joshua Washington <joshwash@google.com>
 ---
- drivers/net/bnx2x/bnx2x.c |  4 ++--
- drivers/net/bnx2x/bnx2x.h | 11 ++++-------
- 2 files changed, 6 insertions(+), 9 deletions(-)
+ drivers/net/cxgbe/base/t4_hw.c   |  4 ++--
+ drivers/net/cxgbe/base/t4vf_hw.c | 10 +++++-----
+ drivers/net/cxgbe/cxgbe_compat.h |  3 +--
+ drivers/net/cxgbe/cxgbe_filter.c |  6 +++---
+ drivers/net/cxgbe/cxgbe_ofld.h   |  4 ++--
+ drivers/net/cxgbe/sge.c          | 14 +++++++-------
+ 6 files changed, 20 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/net/bnx2x/bnx2x.c b/drivers/net/bnx2x/bnx2x.c
-index 8790c858d5..ce9dbdf7c6 100644
---- a/drivers/net/bnx2x/bnx2x.c
-+++ b/drivers/net/bnx2x/bnx2x.c
-@@ -2334,8 +2334,8 @@ static void bnx2x_ilt_set_info(struct bnx2x_softc *sc)
- 		ilt_client->start = line;
+diff --git a/drivers/net/cxgbe/base/t4_hw.c b/drivers/net/cxgbe/base/t4_hw.c
+index d02da39b84..944e173da2 100644
+--- a/drivers/net/cxgbe/base/t4_hw.c
++++ b/drivers/net/cxgbe/base/t4_hw.c
+@@ -2630,8 +2630,8 @@ static int t4_get_exprom_version(struct adapter *adapter, u32 *vers)
+ 		unsigned char hdr_arr[16];      /* must start with 0x55aa */
+ 		unsigned char hdr_ver[4];       /* Expansion ROM version */
+ 	} *hdr;
+-	u32 exprom_header_buf[DIV_ROUND_UP(sizeof(struct exprom_header),
+-					   sizeof(u32))];
++	u32 exprom_header_buf[RTE_DIV_ROUND_UP(sizeof(struct exprom_header),
++					       sizeof(u32))];
+ 	int ret;
  
- 		/* 4 bytes for each cid */
--		line += DIV_ROUND_UP(sc->qm_cid_count * QM_QUEUES_PER_FUNC * 4,
--				     QM_ILT_PAGE_SZ);
-+		line += RTE_DIV_ROUND_UP(sc->qm_cid_count * QM_QUEUES_PER_FUNC * 4,
-+					 QM_ILT_PAGE_SZ);
+ 	ret = t4_read_flash(adapter, FLASH_EXP_ROM_START,
+diff --git a/drivers/net/cxgbe/base/t4vf_hw.c b/drivers/net/cxgbe/base/t4vf_hw.c
+index 573ccb1b05..561e4a91a4 100644
+--- a/drivers/net/cxgbe/base/t4vf_hw.c
++++ b/drivers/net/cxgbe/base/t4vf_hw.c
+@@ -362,8 +362,8 @@ int t4vf_query_params(struct adapter *adapter, unsigned int nparams,
+ 	cmd.op_to_vfn = cpu_to_be32(V_FW_CMD_OP(FW_PARAMS_CMD) |
+ 				    F_FW_CMD_REQUEST |
+ 				    F_FW_CMD_READ);
+-	len16 = DIV_ROUND_UP(offsetof(struct fw_params_cmd,
+-			     param[nparams]), 16);
++	len16 = RTE_DIV_ROUND_UP(offsetof(struct fw_params_cmd,
++					  param[nparams]), 16);
+ 	cmd.retval_len16 = cpu_to_be32(V_FW_CMD_LEN16(len16));
+ 	for (i = 0, p = &cmd.param[0]; i < nparams; i++, p++)
+ 		p->mnem = cpu_to_be32(*params++);
+@@ -458,8 +458,8 @@ int t4vf_set_params(struct adapter *adapter, unsigned int nparams,
+ 	cmd.op_to_vfn = cpu_to_be32(V_FW_CMD_OP(FW_PARAMS_CMD) |
+ 				    F_FW_CMD_REQUEST |
+ 				    F_FW_CMD_WRITE);
+-	len16 = DIV_ROUND_UP(offsetof(struct fw_params_cmd,
+-			     param[nparams]), 16);
++	len16 = RTE_DIV_ROUND_UP(offsetof(struct fw_params_cmd,
++					  param[nparams]), 16);
+ 	cmd.retval_len16 = cpu_to_be32(V_FW_CMD_LEN16(len16));
+ 	for (i = 0, p = &cmd.param[0]; i < nparams; i++, p++) {
+ 		p->mnem = cpu_to_be32(*params++);
+@@ -626,7 +626,7 @@ static int t4vf_get_port_stats_fw(struct adapter *adapter, int pidx,
+ 		struct fw_vi_stats_cmd cmd, rpl;
+ 		size_t len = (offsetof(struct fw_vi_stats_cmd, u) +
+ 			      sizeof(struct fw_vi_stats_ctl));
+-		size_t len16 = DIV_ROUND_UP(len, 16);
++		size_t len16 = RTE_DIV_ROUND_UP(len, 16);
+ 		int ret;
  
- 		ilt_client->end = (line - 1);
- 	}
-diff --git a/drivers/net/bnx2x/bnx2x.h b/drivers/net/bnx2x/bnx2x.h
-index 35206b4758..0cdd118ad5 100644
---- a/drivers/net/bnx2x/bnx2x.h
-+++ b/drivers/net/bnx2x/bnx2x.h
-@@ -37,9 +37,6 @@
- #ifndef ARRAY_SIZE
- #define ARRAY_SIZE(arr) RTE_DIM(arr)
+ 		memset(&cmd, 0, sizeof(cmd));
+diff --git a/drivers/net/cxgbe/cxgbe_compat.h b/drivers/net/cxgbe/cxgbe_compat.h
+index e74d476f6d..14ebe914eb 100644
+--- a/drivers/net/cxgbe/cxgbe_compat.h
++++ b/drivers/net/cxgbe/cxgbe_compat.h
+@@ -166,11 +166,10 @@ typedef uint64_t  dma_addr_t;
+ typedef char *caddr_t;
  #endif
--#ifndef DIV_ROUND_UP
+ 
 -#define DIV_ROUND_UP(n, d) (((n) + (d) - 1) / (d))
--#endif
- #ifndef roundup
- #define roundup(x, y) ((((x) + ((y) - 1)) / (y)) * (y))
- #endif
-@@ -393,7 +390,7 @@ union cdu_context {
- #define CNIC_ISCSI_CID_MAX 256
- #define CNIC_FCOE_CID_MAX  2048
- #define CNIC_CID_MAX       (CNIC_ISCSI_CID_MAX + CNIC_FCOE_CID_MAX)
--#define CNIC_ILT_LINES     DIV_ROUND_UP(CNIC_CID_MAX, ILT_PAGE_CIDS)
-+#define CNIC_ILT_LINES     RTE_DIV_ROUND_UP(CNIC_CID_MAX, ILT_PAGE_CIDS)
+ #define DELAY(x) rte_delay_us(x)
+ #define udelay(x) DELAY(x)
+ #define msleep(x) DELAY(1000 * (x))
+-#define usleep_range(min, max) msleep(DIV_ROUND_UP(min, 1000))
++#define usleep_range(min, max) msleep(RTE_DIV_ROUND_UP(min, 1000))
  
- #define QM_ILT_PAGE_SZ_HW  0
- #define QM_ILT_PAGE_SZ     (4096 << QM_ILT_PAGE_SZ_HW) /* 4K */
-@@ -405,7 +402,7 @@ union cdu_context {
- /*#define TM_CONN_NUM        (CNIC_STARTING_CID+CNIC_ISCSI_CXT_MAX) */
- #define TM_CONN_NUM        1024
- #define TM_ILT_SZ          (8 * TM_CONN_NUM)
--#define TM_ILT_LINES       DIV_ROUND_UP(TM_ILT_SZ, TM_ILT_PAGE_SZ)
-+#define TM_ILT_LINES       RTE_DIV_ROUND_UP(TM_ILT_SZ, TM_ILT_PAGE_SZ)
+ static inline uint8_t hweight32(uint32_t word32)
+ {
+diff --git a/drivers/net/cxgbe/cxgbe_filter.c b/drivers/net/cxgbe/cxgbe_filter.c
+index 5a7efe7a73..83f86a747a 100644
+--- a/drivers/net/cxgbe/cxgbe_filter.c
++++ b/drivers/net/cxgbe/cxgbe_filter.c
+@@ -219,7 +219,7 @@ static inline void mk_set_tcb_field_ulp(struct filter_entry *f,
  
- /* SRC (Searcher) host DB constants */
- #define SRC_ILT_PAGE_SZ_HW 0
-@@ -414,7 +411,7 @@ union cdu_context {
- #define SRC_CONN_NUM       (1 << SRC_HASH_BITS) /* 1024 */
- #define SRC_ILT_SZ         (sizeof(struct src_ent) * SRC_CONN_NUM)
- #define SRC_T2_SZ          SRC_ILT_SZ
--#define SRC_ILT_LINES      DIV_ROUND_UP(SRC_ILT_SZ, SRC_ILT_PAGE_SZ)
-+#define SRC_ILT_LINES      RTE_DIV_ROUND_UP(SRC_ILT_SZ, SRC_ILT_PAGE_SZ)
+ 	txpkt->cmd_dest = cpu_to_be32(V_ULPTX_CMD(ULP_TX_PKT) |
+ 				      V_ULP_TXPKT_DEST(0));
+-	txpkt->len = cpu_to_be32(DIV_ROUND_UP(sizeof(*req), 16));
++	txpkt->len = cpu_to_be32(RTE_DIV_ROUND_UP(sizeof(*req), 16));
+ 	sc->cmd_more = cpu_to_be32(V_ULPTX_CMD(ULP_TX_SC_IMM));
+ 	sc->len = cpu_to_be32(sizeof(*req) - sizeof(struct work_request_hdr));
+ 	OPCODE_TID(req) = cpu_to_be32(MK_OPCODE_TID(CPL_SET_TCB_FIELD, f->tid));
+@@ -371,7 +371,7 @@ static void mk_abort_req_ulp(struct cpl_abort_req *abort_req,
  
- struct hw_context {
-     struct bnx2x_dma    vcxt_dma;
-@@ -1258,7 +1255,7 @@ struct bnx2x_softc {
- #define BNX2X_L2_CID_COUNT(sc)                                             \
- 	(BNX2X_NUM_ETH_QUEUES(sc) * ECORE_MULTI_TX_COS + 2 * CNIC_SUPPORT(sc))
- #define L2_ILT_LINES(sc)                                \
--	(DIV_ROUND_UP(BNX2X_L2_CID_COUNT(sc), ILT_PAGE_CIDS))
-+	(RTE_DIV_ROUND_UP(BNX2X_L2_CID_COUNT(sc), ILT_PAGE_CIDS))
+ 	txpkt->cmd_dest = cpu_to_be32(V_ULPTX_CMD(ULP_TX_PKT) |
+ 				      V_ULP_TXPKT_DEST(0));
+-	txpkt->len = cpu_to_be32(DIV_ROUND_UP(sizeof(*abort_req), 16));
++	txpkt->len = cpu_to_be32(RTE_DIV_ROUND_UP(sizeof(*abort_req), 16));
+ 	sc->cmd_more = cpu_to_be32(V_ULPTX_CMD(ULP_TX_SC_IMM));
+ 	sc->len = cpu_to_be32(sizeof(*abort_req) -
+ 			      sizeof(struct work_request_hdr));
+@@ -395,7 +395,7 @@ static void mk_abort_rpl_ulp(struct cpl_abort_rpl *abort_rpl,
  
- 	int qm_cid_count;
+ 	txpkt->cmd_dest = cpu_to_be32(V_ULPTX_CMD(ULP_TX_PKT) |
+ 				      V_ULP_TXPKT_DEST(0));
+-	txpkt->len = cpu_to_be32(DIV_ROUND_UP(sizeof(*abort_rpl), 16));
++	txpkt->len = cpu_to_be32(RTE_DIV_ROUND_UP(sizeof(*abort_rpl), 16));
+ 	sc->cmd_more = cpu_to_be32(V_ULPTX_CMD(ULP_TX_SC_IMM));
+ 	sc->len = cpu_to_be32(sizeof(*abort_rpl) -
+ 			      sizeof(struct work_request_hdr));
+diff --git a/drivers/net/cxgbe/cxgbe_ofld.h b/drivers/net/cxgbe/cxgbe_ofld.h
+index fd1e7d8002..ef56eef426 100644
+--- a/drivers/net/cxgbe/cxgbe_ofld.h
++++ b/drivers/net/cxgbe/cxgbe_ofld.h
+@@ -14,7 +14,7 @@
+ 	(w)->wr.wr_hi = cpu_to_be32(V_FW_WR_OP(FW_TP_WR) | \
+ 				V_FW_WR_IMMDLEN(sizeof(*w) - sizeof(w->wr))); \
+ 	(w)->wr.wr_mid = cpu_to_be32( \
+-				V_FW_WR_LEN16(DIV_ROUND_UP(sizeof(*w), 16)) | \
++				V_FW_WR_LEN16(RTE_DIV_ROUND_UP(sizeof(*w), 16)) | \
+ 				V_FW_WR_FLOWID(tid)); \
+ 	(w)->wr.wr_lo = cpu_to_be64(0); \
+ } while (0)
+@@ -27,7 +27,7 @@
+ #define INIT_ULPTX_WR(w, wrlen, atomic, tid) do { \
+ 	(w)->wr.wr_hi = cpu_to_be32(V_FW_WR_OP(FW_ULPTX_WR) | \
+ 				    V_FW_WR_ATOMIC(atomic)); \
+-	(w)->wr.wr_mid = cpu_to_be32(V_FW_WR_LEN16(DIV_ROUND_UP(wrlen, 16)) | \
++	(w)->wr.wr_mid = cpu_to_be32(V_FW_WR_LEN16(RTE_DIV_ROUND_UP(wrlen, 16)) | \
+ 				     V_FW_WR_FLOWID(tid)); \
+ 	(w)->wr.wr_lo = cpu_to_be64(0); \
+ } while (0)
+diff --git a/drivers/net/cxgbe/sge.c b/drivers/net/cxgbe/sge.c
+index e9d45f24c4..eb25d80e33 100644
+--- a/drivers/net/cxgbe/sge.c
++++ b/drivers/net/cxgbe/sge.c
+@@ -459,7 +459,7 @@ static inline unsigned int sgl_len(unsigned int n)
+  */
+ static inline unsigned int flits_to_desc(unsigned int n)
+ {
+-	return DIV_ROUND_UP(n, 8);
++	return RTE_DIV_ROUND_UP(n, 8);
+ }
  
+ /**
+@@ -505,7 +505,7 @@ static inline unsigned int calc_tx_flits(const struct rte_mbuf *m,
+ 
+ 	hdrlen = is_eth_imm(m);
+ 	if (hdrlen)
+-		return DIV_ROUND_UP(m->pkt_len + hdrlen, sizeof(__be64));
++		return RTE_DIV_ROUND_UP(m->pkt_len + hdrlen, sizeof(__be64));
+ 
+ 	/*
+ 	 * Otherwise, we're going to have to construct a Scatter gather list
+@@ -779,7 +779,7 @@ static inline void ship_tx_pkt_coalesce_wr(struct adapter *adap,
+ 	wr = (void *)&q->desc[q->pidx];
+ 	vmwr = (void *)&q->desc[q->pidx];
+ 
+-	wr_mid = V_FW_WR_LEN16(DIV_ROUND_UP(q->coalesce.flits, 2));
++	wr_mid = V_FW_WR_LEN16(RTE_DIV_ROUND_UP(q->coalesce.flits, 2));
+ 	ndesc = flits_to_desc(q->coalesce.flits);
+ 	wr->equiq_to_len16 = htonl(wr_mid);
+ 	wr->plen = cpu_to_be16(q->coalesce.len);
+@@ -866,7 +866,7 @@ static inline int should_tx_packet_coalesce(struct sge_eth_txq *txq,
+ 
+ 	/* If coalescing is on, the mbuf is added to a pkts WR */
+ 	if (q->coalesce.idx) {
+-		ndesc = DIV_ROUND_UP(q->coalesce.flits + flits, 8);
++		ndesc = RTE_DIV_ROUND_UP(q->coalesce.flits + flits, 8);
+ 		credits = txq_avail(q) - ndesc;
+ 
+ 		if (unlikely(wraps_around(q, ndesc)))
+@@ -950,7 +950,7 @@ static inline int tx_do_packet_coalesce(struct sge_eth_txq *txq,
+ 		mc->cmd_dest = htonl(V_ULPTX_CMD(4) | V_ULP_TXPKT_DEST(0) |
+ 				     V_ULP_TXPKT_FID(adap->sge.fw_evtq.cntxt_id) |
+ 				     F_ULP_TXPKT_RO);
+-		mc->len = htonl(DIV_ROUND_UP(flits, 2));
++		mc->len = htonl(RTE_DIV_ROUND_UP(flits, 2));
+ 		sc_imm = (struct ulptx_idata *)(mc + 1);
+ 		sc_imm->cmd_more = htonl(V_ULPTX_CMD(ULP_TX_SC_IMM) |
+ 					 F_ULP_TX_SC_MORE);
+@@ -1116,7 +1116,7 @@ int t4_eth_xmit(struct sge_eth_txq *txq, struct rte_mbuf *mbuf,
+ 		goto out_free;
+ 	}
+ 
+-	wr_mid = V_FW_WR_LEN16(DIV_ROUND_UP(flits, 2));
++	wr_mid = V_FW_WR_LEN16(RTE_DIV_ROUND_UP(flits, 2));
+ 	if (Q_IDXDIFF(&txq->q, equeidx)  >= 64) {
+ 		txq->q.equeidx = txq->q.pidx;
+ 		wr_mid |= F_FW_WR_EQUEQ;
+@@ -1322,7 +1322,7 @@ static int ctrl_xmit(struct sge_ctrl_txq *q, struct rte_mbuf *mbuf)
+ 	}
+ 
+ 	reclaim_completed_tx_imm(&q->q);
+-	ndesc = DIV_ROUND_UP(mbuf->pkt_len, sizeof(struct tx_desc));
++	ndesc = RTE_DIV_ROUND_UP(mbuf->pkt_len, sizeof(struct tx_desc));
+ 	t4_os_lock(&q->ctrlq_lock);
+ 
+ 	q->full = txq_avail(&q->q) < ndesc ? 1 : 0;
 -- 
 2.55.0.691.gc56d675ccc-goog
 
