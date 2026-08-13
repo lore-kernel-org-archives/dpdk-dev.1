@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59792C5CFDB
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Aug 2026 10:46:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9825C5B572
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Aug 2026 10:46:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2860742D6A;
-	Thu, 13 Aug 2026 12:46:45 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2387E42831;
+	Thu, 13 Aug 2026 12:46:50 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTP id CC6CB427E5
- for <dev@dpdk.org>; Thu, 13 Aug 2026 12:46:42 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id F2D3A42D2B
+ for <dev@dpdk.org>; Thu, 13 Aug 2026 12:46:45 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1786618003; x=1818154003;
+ t=1786618006; x=1818154006;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=EYumMrtBeSr3CqQ6Bera9OxwMJV0AejFCbH6V/AVVBs=;
- b=B7TvK9PpzW7DRttmC27jpKTMz+w5qPrQEbbiun4aseRZBl0bbKiW6Yl4
- nayV4CIC08vnPx6WJnh4aQasPZxHtNTlzR96vMX/pkP8YD5mnpZnQaR70
- Cg/rPn8hZX1Hns4ZLSC9zFoxJV3Ixt3wSZydk5nx/437qwv2Fp11fcUkP
- BP8k+aoWW5/Qzsn1EbBs1lSqboIlxizaMWxCEBHUMIheFA+uKj3sN/Y2g
- 5boO/1I7ReLd8OCo30fQ/gsNPTJ5Nn2dW3i8cZ+E0nlCL2G5FONSHwulM
- dPWbFgjqUR7AaIv0U619rm9IEQnBumxr17WHjyl7cLsDKycVbtqCKTc1y g==;
-X-CSE-ConnectionGUID: otNN10VCRHSOTeR0Ip4GLQ==
-X-CSE-MsgGUID: af8/KizsR9qK24y7X57lfg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11873"; a="89708990"
-X-IronPort-AV: E=Sophos;i="6.25,221,1779174000"; d="scan'208";a="89708990"
+ bh=yk2tgI3DID5MHp2ml35KrWV3unyAjOaKee+DHzLPLBY=;
+ b=WP3f63c9+9sHOzZ1XcG1LcQDtULooDhozumL3hOgm008q740+XkI4rJT
+ qsoif7xf0Ox2cNtKKjpXfEB075neK/2CmQ304vqXqCBnUheGwf5UdfiOl
+ NkJW4P1KeKRal07PKYoX0CvOX18kHwQrdFhS2+g0iktp2b2BizDIWQM2e
+ YVBEnPJqiPudw+dpFGlWeTTx13F8pE6vZfFU6CrekTpx680QDfYEaghJr
+ 3C6q171Oqwthn4hhJyt+5lXB97i/FGRGs0Yd4OVlu7Quft8oZE/4UQPXw
+ oWjuZCn/wFHuzHO0R6plohxiE5ZXwIH4VcokSShRpILb5EBElKLidaEv7 w==;
+X-CSE-ConnectionGUID: BbCsSaH5QRuZECGYZvDMwA==
+X-CSE-MsgGUID: d78zmt2TSre+YdhOSg3lFA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11873"; a="89708992"
+X-IronPort-AV: E=Sophos;i="6.25,221,1779174000"; d="scan'208";a="89708992"
 Received: from orviesa009.jf.intel.com ([10.64.159.149])
  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Aug 2026 03:46:42 -0700
-X-CSE-ConnectionGUID: Ese7dX8qQK22G8GlubuQLg==
-X-CSE-MsgGUID: e/41h1+JTk64gmXQlw4rpA==
+ 13 Aug 2026 03:46:45 -0700
+X-CSE-ConnectionGUID: zlN2AnP0RdCxi2yoM+dKPQ==
+X-CSE-MsgGUID: UIjeyjpSQMq5PvmUfDLGGA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,221,1779174000"; d="scan'208";a="264491556"
+X-IronPort-AV: E=Sophos;i="6.25,221,1779174000"; d="scan'208";a="264491562"
 Received: from pae-14.iind.intel.com ([10.190.203.153])
- by orviesa009.jf.intel.com with ESMTP; 13 Aug 2026 03:46:41 -0700
+ by orviesa009.jf.intel.com with ESMTP; 13 Aug 2026 03:46:44 -0700
 From: Anurag Mandal <anurag.mandal@intel.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com, vladimir.medvedkin@intel.com,
  ciara.loftus@intel.com, Anurag Mandal <anurag.mandal@intel.com>
-Subject: [PATCH v2 3/7] net/iavf: drain in-flight Tx before reset
-Date: Thu, 13 Aug 2026 10:45:31 +0000
-Message-Id: <23c3da01137840cdd06bba5237c1b622fb7c1191.1786617159.git.anurag.mandal@intel.com>
+Subject: [PATCH v2 4/7] net/iavf: change no_poll flag to atomic
+Date: Thu, 13 Aug 2026 10:45:32 +0000
+Message-Id: <1c5f2d854da4181f8cbd2b1806a926da75deea59.1786617159.git.anurag.mandal@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1786617159.git.anurag.mandal@intel.com>
 References: <cover.1786617159.git.anurag.mandal@intel.com>
@@ -60,198 +60,98 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On a link-down or impending PF reset, in-flight Tx descriptors
-were left pending when the queues were torn down, which could
-trigger Malicious Driver Detection (MDD) events and
-leak descriptors.
+The no_poll gate that pauses the Rx/Tx data path during reset and
+link-down was a plain bool written on the control path and read on
+the data-plane lcores without synchronization, allowing stale reads
+that either keep dropping traffic or trigger spurious reset detection.
 
-Added iavf_dev_tx_drain() to let already-posted Tx bursts
-complete and flush the rings within a bounded budget,
-and call it on link-down and reset-impending events
-before teardown, preventing MDD events and descriptor leaks.
-The drain selects the cleanup routine that matches the
-active Tx path.
+Made no_poll an RTE_ATOMIC(bool) and access it with release stores and
+acquire loads so data-plane lcores reliably observe gate changes.
+
+Fixes: 5b3124a0a6ef ("net/iavf: support no polling when link down")
 
 Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
+Acked-by: Ciara Loftus <ciara.loftus@intel.com>
 ---
- drivers/net/intel/iavf/iavf_rxtx.c  | 100 ++++++++++++++++++++++++++++
- drivers/net/intel/iavf/iavf_rxtx.h  |   6 ++
- drivers/net/intel/iavf/iavf_vchnl.c |   6 ++
- 3 files changed, 112 insertions(+)
+ drivers/net/intel/iavf/iavf.h        | 2 +-
+ drivers/net/intel/iavf/iavf_ethdev.c | 6 +++++-
+ drivers/net/intel/iavf/iavf_rxtx.c   | 8 ++++++--
+ drivers/net/intel/iavf/iavf_vchnl.c  | 4 +++-
+ 4 files changed, 15 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
-index 4f2ffe6188..e08f0ef253 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx.c
-@@ -32,6 +32,7 @@
+diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
+index e76c3bb410..605e9dd3aa 100644
+--- a/drivers/net/intel/iavf/iavf.h
++++ b/drivers/net/intel/iavf/iavf.h
+@@ -392,7 +392,7 @@ struct iavf_adapter {
+ 	alignas(RTE_CACHE_LINE_MIN_SIZE) uint32_t ptype_tbl[IAVF_MAX_PKT_TYPE];
+ 	bool stopped;
+ 	bool closed;
+-	bool no_poll;
++	RTE_ATOMIC(bool) no_poll;
+ 	enum iavf_rx_func_type rx_func_type;
+ 	enum iavf_tx_func_type tx_func_type;
+ 	uint16_t fdir_ref_cnt;
+diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+index ebe0183a77..0f5eb57bbe 100644
+--- a/drivers/net/intel/iavf/iavf_ethdev.c
++++ b/drivers/net/intel/iavf/iavf_ethdev.c
+@@ -3604,9 +3604,13 @@ void
+ iavf_set_no_poll(struct iavf_adapter *adapter, bool link_change)
+ {
+ 	struct iavf_info *vf = &adapter->vf;
++	bool no_poll;
  
- #include "iavf.h"
- #include "iavf_rxtx.h"
-+#include "iavf_rxtx_vec_common.h"
- #include "iavf_ipsec_crypto.h"
- #include "rte_pmd_iavf.h"
- 
-@@ -4025,6 +4026,105 @@ iavf_tx_done_cleanup_full(struct ci_tx_queue *txq,
- 	return (int)pkt_cnt;
+-	adapter->no_poll = (link_change & !vf->link_up) ||
++	no_poll = (link_change & !vf->link_up) ||
+ 		vf->vf_reset || vf->in_reset_recovery;
++
++	rte_atomic_store_explicit(&adapter->no_poll, no_poll,
++				  rte_memory_order_release);
  }
  
-+/*
-+ * Reclaim completed Tx descriptors for a single queue using the cleanup
-+ * routine that matches the active Tx path.
-+ * Returns true if any descriptors were reclaimed.
-+ */
-+static bool
-+iavf_tx_drain_cleanup(struct ci_tx_queue *txq,
-+		      enum iavf_tx_func_type tx_func_type)
-+{
-+	switch (tx_func_type) {
-+	case IAVF_TX_AVX2_CTX:
-+	case IAVF_TX_AVX2_CTX_OFFLOAD:
-+	case IAVF_TX_AVX512_CTX:
-+	case IAVF_TX_AVX512_CTX_OFFLOAD:
-+		return ci_tx_free_bufs_vec(txq, iavf_tx_desc_done, true) != 0;
-+	case IAVF_TX_NEON:
-+	case IAVF_TX_AVX2:
-+	case IAVF_TX_AVX2_OFFLOAD:
-+	case IAVF_TX_AVX512:
-+	case IAVF_TX_AVX512_OFFLOAD:
-+		return ci_tx_free_bufs_vec(txq, iavf_tx_desc_done, false) != 0;
-+	case IAVF_TX_DEFAULT:
-+	default:
-+		return ci_tx_xmit_cleanup(txq) == 0;
-+	}
-+}
-+
-+/*
-+ * iavf_dev_tx_drain - drain in-flight Tx descriptors after a link-down or
-+ * impending PF reset event.
-+ */
-+void
-+iavf_dev_tx_drain(struct rte_eth_dev *dev)
-+{
-+	struct iavf_adapter *adapter =
-+		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
-+	enum iavf_tx_func_type tx_func_type = adapter->tx_func_type;
-+	struct ci_tx_queue *txq;
-+	uint64_t hz, deadline;
-+	int idle_iters = 0;
-+	uint16_t qid;
-+
-+	/*
-+	 * Allow any Tx burst already in flight on a data-plane lcore to
-+	 * write its remaining descriptors and notify. After
-+	 * this window, the no_poll gate set by the caller is observed at
-+	 * the next burst-entry and no new descriptors will be posted.
-+	 */
-+	rte_delay_us_block(IAVF_TX_DRAIN_SETTLE_US);
-+
-+	hz = rte_get_timer_hz();
-+	deadline = rte_get_timer_cycles() +
-+		(hz * IAVF_TX_DRAIN_TIMEOUT_US) / 1000000ULL;
-+
-+	while (rte_get_timer_cycles() < deadline) {
-+		bool any_pending = false;
-+		bool any_progress = false;
-+
-+		for (qid = 0; qid < dev->data->nb_tx_queues; qid++) {
-+			txq = dev->data->tx_queues[qid];
-+			if (txq == NULL ||
-+			    dev->data->tx_queue_state[qid] !=
-+				RTE_ETH_QUEUE_STATE_STARTED)
-+				continue;
-+
-+			/*
-+			 * nb_tx_free == nb_tx_desc - 1 means the ring is
-+			 * empty (one descriptor is always reserved).
-+			 */
-+			if (txq->nb_tx_free >= txq->nb_tx_desc - 1)
-+				continue;
-+
-+			any_pending = true;
-+			if (iavf_tx_drain_cleanup(txq, tx_func_type))
-+				any_progress = true;
-+		}
-+
-+		if (!any_pending)
-+			return;
-+
-+		if (any_progress) {
-+			idle_iters = 0;
-+		} else if (++idle_iters >= IAVF_TX_DRAIN_IDLE_MAX) {
-+			/*
-+			 * HW has not advanced the RS-bit write-back for
-+			 * several polling intervals; either the queue is
-+			 * quiescent except for the sub-rs_thresh tail
-+			 * (which we cannot observe here) or HW is no
-+			 * longer fetching. Further polling is unlikely to
-+			 * help, and the PF teardown path has its own
-+			 * grace period for the remainder.
-+			 */
-+			break;
-+		}
-+
-+		rte_delay_us_block(IAVF_TX_DRAIN_POLL_US);
-+	}
-+}
-+
- int
- iavf_dev_tx_done_cleanup(void *txq, uint32_t free_cnt)
- {
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.h b/drivers/net/intel/iavf/iavf_rxtx.h
-index 22ea415f44..4088bc421c 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.h
-+++ b/drivers/net/intel/iavf/iavf_rxtx.h
-@@ -506,6 +506,11 @@ enum iavf_tx_ctx_desc_tunnel_l4_tunnel_type {
- /* Valid indicator bit for the time_stamp_low field */
- #define IAVF_RX_FLX_DESC_TS_VALID	(0x1UL)
+ static int
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
+index e08f0ef253..5f7d3831a3 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.c
++++ b/drivers/net/intel/iavf/iavf_rxtx.c
+@@ -3723,7 +3723,9 @@ iavf_recv_pkts_no_poll(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 	struct ci_rx_queue *rxq = rx_queue;
+ 	enum iavf_rx_func_type rx_func_type;
  
-+#define IAVF_TX_DRAIN_TIMEOUT_US	10000	/* total drain budget: 10 ms */
-+#define IAVF_TX_DRAIN_SETTLE_US		100	/* let in-flight burst land  */
-+#define IAVF_TX_DRAIN_POLL_US		50	/* poll interval             */
-+#define IAVF_TX_DRAIN_IDLE_MAX		20	/* ~1 ms of no RS write-back */
-+
- int iavf_dev_rx_queue_setup(struct rte_eth_dev *dev,
- 			   uint16_t queue_idx,
- 			   uint16_t nb_desc,
-@@ -641,6 +646,7 @@ void iavf_set_default_ptype_table(struct rte_eth_dev *dev);
- void iavf_rx_queue_release_mbufs_vec(struct ci_rx_queue *rxq);
- void iavf_rx_queue_release_mbufs_neon(struct ci_rx_queue *rxq);
- enum rte_vect_max_simd iavf_get_max_simd_bitwidth(void);
-+void iavf_dev_tx_drain(struct rte_eth_dev *dev);
+-	if (!rxq->iavf_vsi || rxq->iavf_vsi->adapter->no_poll)
++	if (!rxq->iavf_vsi ||
++	    rte_atomic_load_explicit(&rxq->iavf_vsi->adapter->no_poll,
++				     rte_memory_order_acquire))
+ 		return 0;
  
- static inline
- void iavf_dump_rx_descriptor(struct ci_rx_queue *rxq,
+ 	rx_func_type = rxq->iavf_vsi->adapter->rx_func_type;
+@@ -3739,7 +3741,9 @@ iavf_xmit_pkts_no_poll(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	struct ci_tx_queue *txq = tx_queue;
+ 	enum iavf_tx_func_type tx_func_type;
+ 
+-	if (!txq->iavf_vsi || txq->iavf_vsi->adapter->no_poll)
++	if (!txq->iavf_vsi ||
++	    rte_atomic_load_explicit(&txq->iavf_vsi->adapter->no_poll,
++				     rte_memory_order_acquire))
+ 		return 0;
+ 
+ 	tx_func_type = txq->iavf_vsi->adapter->tx_func_type;
 diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
-index b6864d8d69..83c2789cda 100644
+index 83c2789cda..e04afe1d6a 100644
 --- a/drivers/net/intel/iavf/iavf_vchnl.c
 +++ b/drivers/net/intel/iavf/iavf_vchnl.c
-@@ -269,6 +269,8 @@ iavf_handle_link_change_event(struct rte_eth_dev *dev,
+@@ -268,7 +268,9 @@ iavf_handle_link_change_event(struct rte_eth_dev *dev,
+ 	if (adapter->devargs.no_poll_on_link_down) {
  		iavf_set_no_poll(adapter, true);
  		PMD_DRV_LOG(DEBUG, "VF no poll turned %s",
- 			    adapter->no_poll ? "on" : "off");
-+		if (!vf->link_up)
-+			iavf_dev_tx_drain(dev);
+-			    adapter->no_poll ? "on" : "off");
++			    rte_atomic_load_explicit(&adapter->no_poll,
++						     rte_memory_order_relaxed) ?
++						     "on" : "off");
+ 		if (!vf->link_up)
+ 			iavf_dev_tx_drain(dev);
  	}
- 
- 	/* Retry a dev_start deferred by reset recovery, before the LSC post. */
-@@ -330,6 +332,8 @@ iavf_read_msg_from_pf(struct iavf_adapter *adapter, uint16_t buf_len,
- 			if (!vf->vf_reset) {
- 				vf->vf_reset = true;
- 				iavf_set_no_poll(adapter, false);
-+				if (adapter->devargs.no_poll_on_link_down)
-+					iavf_dev_tx_drain(vf->eth_dev);
- 				iavf_dev_event_post(vf->eth_dev,
- 					RTE_ETH_EVENT_INTR_RESET,
- 					NULL, 0);
-@@ -568,6 +572,8 @@ iavf_handle_pf_event_msg(struct rte_eth_dev *dev, uint8_t *msg,
- 		if (!vf->vf_reset) {
- 			vf->vf_reset = true;
- 			iavf_set_no_poll(adapter, false);
-+			if (adapter->devargs.no_poll_on_link_down)
-+				iavf_dev_tx_drain(dev);
- 			iavf_dev_event_post(dev, RTE_ETH_EVENT_INTR_RESET,
- 				NULL, 0);
- 		}
 -- 
 2.34.1
 
