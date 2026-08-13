@@ -2,59 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 164D6C5CFCF
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Aug 2026 17:23:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B6C6C5B572
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Aug 2026 17:23:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0941642DC1;
-	Thu, 13 Aug 2026 19:23:18 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0C54642E6D;
+	Thu, 13 Aug 2026 19:23:19 +0200 (CEST)
 Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
  [209.85.210.199])
- by mails.dpdk.org (Postfix) with ESMTP id 59BFB42E6F
- for <dev@dpdk.org>; Thu, 13 Aug 2026 19:23:15 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 8C93142DC1
+ for <dev@dpdk.org>; Thu, 13 Aug 2026 19:23:17 +0200 (CEST)
 Received: by mail-pf1-f199.google.com with SMTP id
- d2e1a72fcca58-8486c3411c8so1334724b3a.2
- for <dev@dpdk.org>; Thu, 13 Aug 2026 10:23:15 -0700 (PDT)
+ d2e1a72fcca58-848474825ffso79283b3a.0
+ for <dev@dpdk.org>; Thu, 13 Aug 2026 10:23:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1786641795; x=1787246595; darn=dpdk.org;
+ d=google.com; s=20251104; t=1786641797; x=1787246597; darn=dpdk.org;
  h=content-type:cc:to:from:subject:message-id:references:mime-version
  :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=lrI9X/YHm61dzQbBYMk0qg8057xIbpcSq9Cc1SyC82s=;
- b=MPoqmaa4W9v04ZA4ApzN7y++9l8M+mZSdeyFhCoQ6eB9WDR99R57yWtCYirCEhEey6
- 0YudXb9oPelB4t4X02CPylWRBQpdDVfsyVaBoGjfSdIfrK8+EhedfFbxcOfyHC72/KfB
- 2hT8HQfEJyD7ERv491wf5Xkjs8qKTtUi8UJIB116Ernu+N6rW2g/WiegQ8auiheAD/XS
- HYzu55BLkP3bqgp+vdUHuLj+F6twFiayg+De2vfNntqcFB9+seg1i7fU9abyB1v8EHZv
- G/2iMYBiBSww+DITvSQL3Zk2115WfkXZaXFUycnlmawIicXT403C/F8NKD8B2BsIibhl
- IIiw==
+ :content-type; bh=pnhxIf34BeD2LPKlcRYUfYynrr87KCSKkOgsNukgFrI=;
+ b=dsPOngIuNjr4DUnIawFHcV6+M5uY/EFjKrJB3NFCkm6dSFqI3TzVQV4NbAmrvIHWYv
+ a0vRX05RFKWdgwbuXduDSMbp04IagSlad1UD9vevyVX3uczaWcyeaxEK3anNOpb5wkh6
+ hU8KcvROycplvhz+YjWfcs6Nt/pqh8pdyASmoonACpnNViwIwtAReuuI4j4T2wp24Ojw
+ 01OxtA45JcXRuC+/j1cN65HfWXm66MounueCqMynYuQPXkjiTDAN8/Xc1VS/DxZ8tjOL
+ cQNvDolCpTwtRQZPOSaTW3uS2g4ooDf/BnXeBHWdGb1t6TlDB1SLFoiIemAkO5H1Y6U3
+ iEGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786641795; x=1787246595;
+ d=1e100.net; s=20251104; t=1786641797; x=1787246597;
  h=content-type:cc:to:from:subject:message-id:references:mime-version
  :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=lrI9X/YHm61dzQbBYMk0qg8057xIbpcSq9Cc1SyC82s=;
- b=i5mKEGZ71LXzpsmKxpT0iDT9hoHG4BSr9BF0g4fYs1HZAY1Pw8wXufJpujJStJUGNs
- xVwyCA7iVK7wRPzu35wbBca8y6j1OYCwYWbBdsWscHJU3DyN21Gtra0EaDD+KxeLN7vZ
- reoxzSpALlEIUpcuNQgMNWwZ5kA2eYknkVNGiyBd1HlEDSPUhW653K+XfH8bKwaC8PUt
- rQbDQZxGRQfdoEufyDqooZT5iwV2I2xOoHgg5RX2j9QYJV8/+PxALVLNj61vqbVlABzJ
- +/rXaqTVYwJEfTfkKw7Z/jkvVI8mTvmDKFbOiAWnp6LdwTYvLwhTVemjChzYbKMyBT9V
- JUyg==
-X-Gm-Message-State: AOJu0YyjWC17xbK2c+jdXsrRwonrFv25L+VrFMAZiRYVkvgvg+qEjrot
- ejaxPmwPL6wBaNOxuCmeM5x1utNwHrt3tVRkNso8WNG1QScpG26rll/KIm58NdFLE41GqxGUGi3
- Hmbgvz6JGBa1lIg==
-X-Received: from pfx15.prod.google.com ([2002:a05:6a00:a44f:b0:848:7bbd:284b])
+ bh=pnhxIf34BeD2LPKlcRYUfYynrr87KCSKkOgsNukgFrI=;
+ b=kt/8jvjRv8ZOKqeOo1i2e5NptQpDG/vt7ClNqSfaks6ImYuFY9/R+UaKRZ8oFcvxZd
+ Pwte2Ye8tFIGIu8JPnSfKuPtxFZvXzVGDsYua3R2GFIuY5PgHazErHyiUcbu0QgdBBdl
+ B+X23F9NVcOUnBIXNvyB4tmDbJaoNRL0pLvbg6nAyT7WxNWYw9IAypVXpRGbhXnY5+mZ
+ v9Cz94+xy6s94wMTykeGSCdzn67Ez//t0ZJvrxu/M8pseLvBzb2wbW2n1U/2SI4Cr4P4
+ 30k66pHzFsz9BlV5t1Bkxa4mGmt9Ydz5XNEc8uR8F1iOOMUri8fISrlROzkUAkc/n8TK
+ 3Vrw==
+X-Gm-Message-State: AOJu0Ywzap1J3c0DNwnrIDGi1z7yg2kFz73XnLi0O/FdCo8AKvaB5urA
+ hpHe9dtwgj0OQLF8w/qBypnGxFhqVRY5l1g8hxqr8JqN7W9qRD5XRaEsQuRflbMtUZmqC+28cME
+ IM8sceAWPFyG8mQ==
+X-Received: from pfij2.prod.google.com ([2002:aa7:8002:0:b0:848:56a2:f6a9])
  (user=joshwash job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:b4c:b0:84e:24f:2677 with SMTP id
- d2e1a72fcca58-84fc6ce905fmr6896390b3a.4.1786641794395; 
- Thu, 13 Aug 2026 10:23:14 -0700 (PDT)
-Date: Thu, 13 Aug 2026 10:22:38 -0700
+ 2002:a05:6a00:1254:b0:84a:2b96:5986 with SMTP id
+ d2e1a72fcca58-84fc7b46bc8mr7239652b3a.8.1786641796558; 
+ Thu, 13 Aug 2026 10:23:16 -0700 (PDT)
+Date: Thu, 13 Aug 2026 10:22:39 -0700
 In-Reply-To: <20260813172241.964736-1-joshwash@google.com>
 Mime-Version: 1.0
 References: <20260812223017.2980190-1-joshwash@google.com>
  <20260813172241.964736-1-joshwash@google.com>
 X-Mailer: git-send-email 2.55.0.691.gc56d675ccc-goog
-Message-ID: <20260813172241.964736-14-joshwash@google.com>
-Subject: [PATCH v2 13/14] drivers: use common division round up macro
+Message-ID: <20260813172241.964736-15-joshwash@google.com>
+Subject: [PATCH v2 14/14] app/procinfo: use common division round up macro
 From: Joshua Washington <joshwash@google.com>
-To: Chaoyong He <chaoyong.he@corigine.com>
+To: Reshma Pattan <reshma.pattan@intel.com>
 Cc: dev@dpdk.org, Joshua Washington <joshwash@google.com>
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
@@ -74,68 +74,30 @@ The RTE_DIV_ROUND_UP in rte_common.h makes DIV_ROUND_UP redundant.
 
 Signed-off-by: Joshua Washington <joshwash@google.com>
 ---
- drivers/common/nfp/nfp_platform.h  | 2 --
- drivers/net/nfp/nfdk/nfp_nfdk.h    | 5 +++--
- drivers/net/nfp/nfdk/nfp_nfdk_dp.c | 3 ++-
- drivers/net/nfp/nfpcore/nfp_nsp.c  | 2 +-
- 4 files changed, 6 insertions(+), 6 deletions(-)
+ app/proc-info/main.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/common/nfp/nfp_platform.h b/drivers/common/nfp/nfp_platform.h
-index 0b02fcf1e8..814f90b5a2 100644
---- a/drivers/common/nfp/nfp_platform.h
-+++ b/drivers/common/nfp/nfp_platform.h
-@@ -10,8 +10,6 @@
+diff --git a/app/proc-info/main.c b/app/proc-info/main.c
+index 5925bbb765..9c22fb8f01 100644
+--- a/app/proc-info/main.c
++++ b/app/proc-info/main.c
+@@ -48,7 +48,6 @@
  
- #include <rte_bitops.h>
+ #define ETHDEV_FWVERS_LEN 32
+ #define RTE_RETA_CONF_GROUP_NUM 32
+-#define DIV_ROUND_UP(n, d) (((n) + (d) - 1) / (d))
+ #define EEPROM_DUMP_CHUNKSIZE 1024
  
--#define DIV_ROUND_UP(n, d)             (((n) + (d) - 1) / (d))
--
- #define DMA_BIT_MASK(n)    ((1ULL << (n)) - 1)
+ #define STATS_BDR_FMT "========================================"
+@@ -1830,7 +1829,7 @@ show_port_rss_reta_info(void)
+ 			return;
+ 		}
  
- #define BITS_PER_LONG      (__SIZEOF_LONG__ * 8)
-diff --git a/drivers/net/nfp/nfdk/nfp_nfdk.h b/drivers/net/nfp/nfdk/nfp_nfdk.h
-index 64c2b31308..b831e0d69e 100644
---- a/drivers/net/nfp/nfdk/nfp_nfdk.h
-+++ b/drivers/net/nfp/nfdk/nfp_nfdk.h
-@@ -168,8 +168,9 @@ static inline uint16_t
- nfp_net_nfdk_headlen_to_segs(uint16_t headlen)
- {
- 	/* First descriptor fits less data, so adjust for that */
--	return DIV_ROUND_UP(headlen + NFDK_TX_MAX_DATA_PER_DESC - NFDK_TX_MAX_DATA_PER_HEAD,
--			NFDK_TX_MAX_DATA_PER_DESC);
-+	return RTE_DIV_ROUND_UP(headlen + NFDK_TX_MAX_DATA_PER_DESC -
-+				NFDK_TX_MAX_DATA_PER_HEAD,
-+				NFDK_TX_MAX_DATA_PER_DESC);
- }
- 
- /* Set TX CSUM offload flags in TX descriptor of nfdk */
-diff --git a/drivers/net/nfp/nfdk/nfp_nfdk_dp.c b/drivers/net/nfp/nfdk/nfp_nfdk_dp.c
-index 15867ab62f..86b3c5b64a 100644
---- a/drivers/net/nfp/nfdk/nfp_nfdk_dp.c
-+++ b/drivers/net/nfp/nfdk/nfp_nfdk_dp.c
-@@ -103,7 +103,8 @@ nfp_net_nfdk_tx_maybe_close_block(struct nfp_net_txq *txq,
- 	n_descs = nfp_net_nfdk_headlen_to_segs(pkt_temp->data_len);
- 	while (pkt_temp->next != NULL) {
- 		pkt_temp = pkt_temp->next;
--		n_descs += DIV_ROUND_UP(pkt_temp->data_len, NFDK_TX_MAX_DATA_PER_DESC);
-+		n_descs += RTE_DIV_ROUND_UP(pkt_temp->data_len,
-+					    NFDK_TX_MAX_DATA_PER_DESC);
- 	}
- 
- 	if (unlikely(n_descs > NFDK_TX_DESC_GATHER_MAX))
-diff --git a/drivers/net/nfp/nfpcore/nfp_nsp.c b/drivers/net/nfp/nfpcore/nfp_nsp.c
-index 43c13baabe..bd02efcc4a 100644
---- a/drivers/net/nfp/nfpcore/nfp_nsp.c
-+++ b/drivers/net/nfp/nfpcore/nfp_nsp.c
-@@ -542,7 +542,7 @@ nfp_nsp_command_buf_dma_sg(struct nfp_nsp *nsp,
- 	struct nfp_nsp_dma_desc *descs;
- 
- 	chunk_size = RTE_BIT64(chunk_order);
--	nseg = DIV_ROUND_UP(max_size, chunk_size);
-+	nseg = RTE_DIV_ROUND_UP(max_size, chunk_size);
- 
- 	/* Malloc memory */
- 	total_len = sizeof(struct nfp_nsp_dma_buf) +
+-		num = DIV_ROUND_UP(dev_info.reta_size, RTE_ETH_RETA_GROUP_SIZE);
++		num = RTE_DIV_ROUND_UP(dev_info.reta_size, RTE_ETH_RETA_GROUP_SIZE);
+ 		memset(reta_conf, 0, sizeof(reta_conf));
+ 		for (i = 0; i < num; i++)
+ 			reta_conf[i].mask = ~0ULL;
 -- 
 2.55.0.691.gc56d675ccc-goog
 
