@@ -2,71 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CD2EC5B572
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Aug 2026 18:04:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED1D1C5CFCF
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Aug 2026 18:04:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6638A40E09;
-	Thu, 13 Aug 2026 20:04:13 +0200 (CEST)
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
- [209.85.214.178])
- by mails.dpdk.org (Postfix) with ESMTP id 9BE234026E
- for <dev@dpdk.org>; Thu, 13 Aug 2026 20:04:11 +0200 (CEST)
-Received: by mail-pl1-f178.google.com with SMTP id
- d9443c01a7336-2cab973140bso3976195ad.3
- for <dev@dpdk.org>; Thu, 13 Aug 2026 11:04:11 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 4F8FC42D35;
+	Thu, 13 Aug 2026 20:04:17 +0200 (CEST)
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
+ [209.85.214.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 3BE2742D89
+ for <dev@dpdk.org>; Thu, 13 Aug 2026 20:04:15 +0200 (CEST)
+Received: by mail-pl1-f182.google.com with SMTP id
+ d9443c01a7336-2caced6038eso1237635ad.0
+ for <dev@dpdk.org>; Thu, 13 Aug 2026 11:04:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786644250;
- x=1787249050; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786644254;
+ x=1787249054; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=VB9bgDpf87qlJAwIwRKgYhY3qS08iZ0rQs1DuI3fKjA=;
- b=i4nUEb77ZjL2WfgszVPS/jDYjqfz+rd2X7ZmKjmTWCLVMm7Ytl2cdeINkzGoezTWqP
- fqKys+KyUIxKJ8LDVeIPFzrAX5L9hQ1+cnBWF6uAFUnPPxBi8S97/inC84LRTUGlCsne
- d2uhbe/dJMneABKDqDBfsnFwmjJc/lxzpxwHH/jZAoXki13gw/Zk6qtPeijUQ8D02O2E
- JaCojPgA5YcP59J8fcuZLkTasZZkxKxse98LjcGG0TjR0GpbNA9J1X9APs+a3przNnur
- 0qHZaS1Kec2ob2Zp3XG5poLxwUGl428tPQifvvZ2vM1lHDIdv5n+eoetisW7WzkntasN
- sH1Q==
+ bh=q2L/tlKQ9ZUN3ps9/EoqdJRE/TFwkDU3ZjKlWThVP4Q=;
+ b=GiNVXbSlRvINKIekC4g+sfh7oTWRGcIbmtatF+rrQfOp3D2/ju20r7zzCVUqA6Z1CS
+ ds9oFRDcQDiNLOclqkYOWjQtQYlRqUk8cYAs9eE8f3K75NJgAcYcmoCu2q7mf+qkImUa
+ ID5Bz+0rK3eV8m/75pAk7gXakLa6Ttzvr1vF/4uS6sUCQRVXy+6c03B/LBh2CqxNzXE0
+ pFNUDBX7khrotSga8W2C/qyTYWU3JdPYWDh079ljCk0uJj2f8NwSUZkCp2gefQbBUFgQ
+ okT1z0hY95dK0y/vb0GDsY/nR8YEcU8Cmi1iuX0Yo/nmZ6NOTnulrKHSG6XZcczmP51d
+ 6ygA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786644250; x=1787249050;
+ d=1e100.net; s=20251104; t=1786644254; x=1787249054;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=VB9bgDpf87qlJAwIwRKgYhY3qS08iZ0rQs1DuI3fKjA=;
- b=pJo68zKdoZLzEYYqCF3yokrQObYEeuBqAbWOyosqeMkkMPEaRn46KyCW1Nepn1Q6HY
- oljq42fHPa3BocnRyC7YAEylDSinXp5jddk9OcvOPZqvMcErVr7t6OlHMVJcLQjqlBSs
- Bsti7PtXVMOZR048Rzfwthuu7QgjYgg6+RHgwnxPn9GccnBCcYK+4H806srajJx+gmI7
- 0/CSS34cWV1i+bXS0b6WhBeLfzLNtHu9EAApgTZFkPdPaaZI3wlIV++Q41RFnXqeR6cl
- RA7JjYGUnCyYIR9b0LAsathvVWlmYvPDvSlCGfzrO1CuUjN4kdO9aYnZPrDUYTnL9yhc
- /EpA==
-X-Gm-Message-State: AOJu0Yxnnx9jR4WKpq+ShRkDfezpFc3UNOn6C8NRzHLSS8sOlICEitRa
- 5QvxyFrDJm6X30q7l9sYvRPYEQJjM7mlK83qiZEYgSOhBO6lGSSEulifXSh4rsX5WAV8ZL97ax1
- B1xA5
-X-Gm-Gg: AR+sD10wtbUeBjdABej/kIsvUMObqrHxg2tIR7eHFoqyhgvd53GnGM5Uaq2vgGJ4AUU
- tK/7gIb7RDpp4ED+KivucMDHesTWMwA4XKO3OPAZbGHXecOhkFClqIDtrohGD0V3N0EGahEdD/9
- iDUX1rb0RAB6kxPyYFKmM8woBb6rd5wieZHCrOMLCEjLyalVgC6IFiIwJrnZnZX7zJ1s/6YiNhZ
- ayXzklXD88Fhr3z5+MuT+uRfWW8S1ymJAnQnNw+1YtDfjO9Wxl0XfX/9bXMpQJhgR4elKtzpvhB
- iaHeXCi8zxPXb/ymASv/DS2B8RDd6i+Bmu+Ha2NqpEhEc9Oa9Ik5Sa5Gr6ii5uQ+/1+HrY8R+Qc
- nWVTbB8uIeVjZ/Qt3xV+EAmoO0+3bumLmVsDlaeL3/JRwlZgdCB3sEUE/dQETdGe92DjzRNHsD1
- MVYhT40l1vuZ2Oc+2CI86jdLjXowH27Tvh7AhV16h5Yp45Rc1l3xYbqdMGcX9Vv1afmE58mXxAM
- nq9hg3NWYRhkGANLb4pamWywhk=
-X-Received: by 2002:a05:6a21:697:b0:3c3:875d:c538 with SMTP id
- adf61e73a8af0-3cc54f9bb27mr11371740637.8.1786644250398; 
- Thu, 13 Aug 2026 11:04:10 -0700 (PDT)
+ bh=q2L/tlKQ9ZUN3ps9/EoqdJRE/TFwkDU3ZjKlWThVP4Q=;
+ b=oxfPbmXh4r/kBNp5khy6p4WJOQvUtk9sp0sYN/EZLybtWFJhAhGEBlCU8VuCEtvQNZ
+ spr5oXuai9d2fEdgihvamNsX/SvYcobkxLYGMR+3+bG/mg+K3MtBU9HXf/dSW0an+sdm
+ knPFSqCslcaZqH9mbj5QPDWLonmSZSKAMKeKom/bsdGEFRrHggxt5LHfZxSR3n3mYZrz
+ vsEXkBsh6iMzNhOd6PeXnFCglszl6CtEDk/B+NaggDgw3RxuKiu6Sh+t5MIew07ENdxE
+ o1rYp0WBcq/rjdmQOTnX3s9nBeoeuyVMBXQQ2Eo5SVmUXNLimO0Xe7oAIQy9G5WV0DFI
+ jDRg==
+X-Gm-Message-State: AOJu0YwywOzwaN6UXHrNtK9sr07R/HRVvInrfpGE8ly0AhA8E6dZbgCF
+ HaKIp6xaAgrdfSSjL8WIiI/ujhttiYJjq2yUn9PFWeTyq20hIg3yuxXnVwPATMxnT/K2d9lcRzP
+ Cjcii
+X-Gm-Gg: AR+sD13RicYaop3AcGISMQIfcW7EHdAvRqwumWLYysnjqv3jdoEeEEn5MnW8pWg2gXR
+ kaIM2UknrzSKJaTCs2Mxf9wfci7wuxAP9FGzwbPzInC62mbRDb/B5UoImH+2O+9Sl8ZCyFfqIpE
+ +1xJgdHw0s1Lt8BkrGIoZmxrVx0D31iPOc9snyjli3rZPSk1/hcSLttjaVmnAsNjMiTcumdIKmc
+ kTzaT1JI9OAz8NvN0fdcCML7Kd9U2j7rGjgpoVl3kwggkvvMq9vBUdEMgCMx61mQ1oB+elXdnJ9
+ jnaH6d7DBmuy31kxxNPlovmizdTklsK+WpLa0BO1gYJuw4B5YAdiqurTnei0au0dFqB+9JUpmxV
+ 07XyOf3EfS86wkDSTyAtVbjPULksLPVoEQ5bq1hmKnnkzngoi6iqAvAKOm4zq27IJNd25vWzxsM
+ VWM0ykGIZtwMCv3nlOuFj6Qpo3vEEa4J/8uZB/TpapnbBAa+O5mGORonvACATjkW6jCag8Px0TI
+ 8cHh/EAqEAdUMWUibCFJr21O8E=
+X-Received: by 2002:a17:903:22cb:b0:2ca:53f7:3c69 with SMTP id
+ d9443c01a7336-2d37f72fad4mr86386585ad.9.1786644254041; 
+ Thu, 13 Aug 2026 11:04:14 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-31f7c8018cdsm3658930eec.13.2026.08.13.11.04.07
+ 5a478bee46e88-31f7c8018cdsm3658930eec.13.2026.08.13.11.04.10
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 13 Aug 2026 11:04:09 -0700 (PDT)
+ Thu, 13 Aug 2026 11:04:13 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v3 00/16] remove stats mapping an RTE_ETHDEV_QUEUE_STAT_CNTRS
-Date: Thu, 13 Aug 2026 10:54:59 -0700
-Message-ID: <20260813180402.622784-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Maxime Coquelin <maxime.coquelin@redhat.com>,
+ Chenbo Xia <chenbox@nvidia.com>
+Subject: [PATCH v3 01/16] net/virtio: remove unused queue stats mapping
+Date: Thu, 13 Aug 2026 10:55:00 -0700
+Message-ID: <20260813180402.622784-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260530161151.873199-1-stephen@networkplumber.org>
+In-Reply-To: <20260813180402.622784-1-stephen@networkplumber.org>
 References: <20260530161151.873199-1-stephen@networkplumber.org>
+ <20260813180402.622784-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -82,137 +85,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch series completes the removal (with help of AI) of the queue
-stats counters an mapping. There are also a couple of uncovered bugs
-in the process.
+The queue_stats_mapping op in virtio looks like a vestige
+from when it was needed to get per queue stats. That hasn't
+been true since 25.11 release.
 
-The per-queue stats mapping mechanism (rte_eth_dev_set_{rx,tx}_queue_stats_mapping
-and the queue_stats_mapping_set ethdev op) was a workaround for hardware that
-could only expose a limited number of queue stat registers. It let an application
-fold many queues onto a small set of counters. Since 25.11 queue statistics are
-filled in directly by the ethdev layer indexed by queue id, so the mapping is no
-longer needed; the functions were deprecated then by commit 2863cbd9ee6d.
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ drivers/net/virtio/virtio_ethdev.c | 21 ---------------------
+ 1 file changed, 21 deletions(-)
 
-Tried to split out the bug fixes where possible.
-
-The big patch is a tree wide removal of RTE_ETHDEV_QUEUE_STAT_CNTRS.
-Instead the rte_ethdev allocates the temporary qstats array based
-on what the driver reports as number of queues; before querying the
-driver for its stats. The error counters are no longer per-queue
-because that wasn't that helpful, instead error counters are global.
-
-The same logic to map per-queue stats into xstats still exists and
-the user visible xstats remain the same. The impact is only to the
-driver API.
-
-Also added test for statistics in pmd_ring test to make sure
-there is test coverage.
-
-Stephen Hemminger (16):
-  net/virtio: remove unused queue stats mapping
-  app/testpmd: remove leftover set qmap
-  net/enic: remove unneeded ops initialization
-  net/cnxk: fix Tx drops added to Rx queue errors
-  net/cnxk: remove queue stats mapping
-  net/e1000: remove queue stats mapping
-  net/ixgbe: remove queue stats mapping
-  net/txgbe: remove queue stats mapping
-  net/sxe2: fix null dereference in stats get
-  net/sxe2: remove queue stats mapping
-  ethdev: remove support for queue stats mapping
-  net/mvpp2: fix out of range Tx queue stats write
-  net/ntnic: fix Tx errors reported as Rx queue errors
-  net/xsc: fix Tx errors added to Rx queue errors
-  ethdev: remove queue stats counter limit
-  test/pmd_ring: test per-queue xstats
-
- app/test-pmd/cmdline.c                        |   6 -
- app/test-pmd/testpmd.h                        |   2 -
- app/test/test_pmd_ring.c                      | 145 ++++++++++++++++++
- doc/guides/howto/debug_troubleshoot.rst       |   5 +-
- doc/guides/nics/bnxt.rst                      |   4 +-
- doc/guides/nics/features.rst                  |  12 +-
- doc/guides/rel_notes/deprecation.rst          |   6 -
- doc/guides/rel_notes/release_26_11.rst        |   9 ++
- doc/guides/testpmd_app_ug/testpmd_funcs.rst   |  11 --
- drivers/net/af_packet/rte_eth_af_packet.c     |  15 +-
- drivers/net/af_xdp/rte_eth_af_xdp.c           |  13 +-
- drivers/net/ark/ark_ethdev_rx.c               |   7 +-
- drivers/net/ark/ark_ethdev_tx.c               |   6 +-
- drivers/net/atlantic/atl_ethdev.c             |  13 +-
- drivers/net/atlantic/atl_rxtx.c               |   8 +-
- drivers/net/atlantic/atl_types.h              |  15 +-
- drivers/net/avp/avp_ethdev.c                  |  13 +-
- drivers/net/axgbe/axgbe_ethdev.c              |  13 +-
- drivers/net/bnxt/bnxt_ethdev.c                |   5 -
- drivers/net/bnxt/bnxt_reps.c                  |   9 +-
- drivers/net/bnxt/bnxt_stats.c                 |  40 ++---
- drivers/net/cnxk/cnxk_ethdev.c                |   1 -
- drivers/net/cnxk/cnxk_ethdev.h                |   6 -
- drivers/net/cnxk/cnxk_rep_ops.c               |   8 +-
- drivers/net/cnxk/cnxk_stats.c                 |  67 +++-----
- drivers/net/dpaa2/dpaa2_ethdev.c              |  17 +-
- drivers/net/ena/ena_ethdev.c                  |  21 +--
- drivers/net/enic/enic_ethdev.c                |  11 --
- drivers/net/hinic/hinic_pmd_ethdev.c          |  17 +-
- drivers/net/hinic3/hinic3_ethdev.c            |  13 +-
- drivers/net/intel/e1000/igc_ethdev.c          |  57 ++-----
- drivers/net/intel/e1000/igc_ethdev.h          |   2 -
- drivers/net/intel/fm10k/fm10k_ethdev.c        |  16 +-
- drivers/net/intel/ixgbe/ixgbe_ethdev.c        | 137 ++++-------------
- drivers/net/intel/ixgbe/ixgbe_ethdev.h        |   9 --
- drivers/net/ionic/ionic_lif.c                 |  24 +--
- drivers/net/mana/mana.c                       |  12 +-
- drivers/net/memif/rte_eth_memif.c             |  16 +-
- drivers/net/mlx4/mlx4_ethdev.c                |  14 +-
- drivers/net/mlx5/mlx5_rx.h                    |   3 +-
- drivers/net/mlx5/mlx5_stats.c                 |  22 ++-
- drivers/net/mvpp2/mrvl_ethdev.c               |  21 ++-
- drivers/net/nbl/nbl_dev/nbl_dev.c             |   2 -
- drivers/net/nbl/nbl_hw/nbl_txrx.c             |  12 +-
- drivers/net/netvsc/hn_ethdev.c                |  12 +-
- drivers/net/netvsc/hn_vf.c                    |   3 +-
- drivers/net/nfb/nfb_stats.c                   |  12 +-
- drivers/net/nfp/flower/nfp_flower.c           |   8 +-
- .../net/nfp/flower/nfp_flower_representor.c   |  32 ++--
- .../net/nfp/flower/nfp_flower_representor.h   |   4 +-
- drivers/net/nfp/nfp_ethdev.c                  |  13 ++
- drivers/net/nfp/nfp_ethdev_vf.c               |  13 ++
- drivers/net/nfp/nfp_net_common.c              |  36 ++---
- drivers/net/nfp/nfp_net_common.h              |   3 +-
- drivers/net/ngbe/ngbe_ethdev.c                |  34 +---
- drivers/net/ngbe/ngbe_ethdev.h                |  12 --
- drivers/net/ntnic/ntnic_ethdev.c              |  13 +-
- drivers/net/null/rte_eth_null.c               |  12 +-
- drivers/net/octeon_ep/otx_ep_ethdev.c         |  13 +-
- drivers/net/pcap/pcap_ethdev.c                |  14 +-
- drivers/net/qede/qede_ethdev.c                |  36 +----
- drivers/net/ring/rte_eth_ring.c               |  10 +-
- drivers/net/rnp/rnp_ethdev.c                  |  12 +-
- drivers/net/sxe2/sxe2_cmd_chnl.c              | 119 ++------------
- drivers/net/sxe2/sxe2_cmd_chnl.h              |  10 --
- drivers/net/sxe2/sxe2_ethdev.c                |   5 -
- drivers/net/sxe2/sxe2_mp.c                    |  17 +-
- drivers/net/sxe2/sxe2_mp.h                    |   7 +-
- drivers/net/sxe2/sxe2_stats.c                 |  84 +---------
- drivers/net/sxe2/sxe2_stats.h                 |   5 -
- drivers/net/tap/rte_eth_tap.c                 |  12 +-
- drivers/net/thunderx/nicvf_ethdev.c           |  24 +--
- drivers/net/txgbe/txgbe_ethdev.c              |  89 +----------
- drivers/net/txgbe/txgbe_ethdev.h              |  13 --
- drivers/net/vhost/rte_eth_vhost.c             |  14 +-
- drivers/net/virtio/virtio_ethdev.c            |  33 +---
- drivers/net/vmxnet3/vmxnet3_ethdev.c          |  13 +-
- drivers/net/xsc/xsc_ethdev.c                  |  15 +-
- drivers/net/zxdh/zxdh_ethdev_ops.c            |  24 +--
- lib/ethdev/ethdev_driver.h                    |  38 ++---
- lib/ethdev/ethdev_private.c                   |   2 -
- lib/ethdev/ethdev_trace.h                     |  20 ---
- lib/ethdev/ethdev_trace_points.c              |   6 -
- lib/ethdev/rte_ethdev.c                       | 128 +++++-----------
- lib/ethdev/rte_ethdev.h                       |  45 ------
- 85 files changed, 665 insertions(+), 1215 deletions(-)
-
+diff --git a/drivers/net/virtio/virtio_ethdev.c b/drivers/net/virtio/virtio_ethdev.c
+index 9fd746b80f..0b2574bd02 100644
+--- a/drivers/net/virtio/virtio_ethdev.c
++++ b/drivers/net/virtio/virtio_ethdev.c
+@@ -90,12 +90,6 @@ static int virtio_intr_disable(struct rte_eth_dev *dev);
+ static int virtio_get_monitor_addr(void *rx_queue,
+ 				struct rte_power_monitor_cond *pmc);
+ 
+-static int virtio_dev_queue_stats_mapping_set(
+-	struct rte_eth_dev *eth_dev,
+-	uint16_t queue_id,
+-	uint8_t stat_idx,
+-	uint8_t is_rx);
+-
+ static void virtio_notify_peers(struct rte_eth_dev *dev);
+ static void virtio_ack_link_announce(struct rte_eth_dev *dev);
+ 
+@@ -672,8 +666,6 @@ static const struct eth_dev_ops virtio_eth_dev_ops = {
+ 	.rss_hash_conf_get       = virtio_dev_rss_hash_conf_get,
+ 	.reta_update             = virtio_dev_rss_reta_update,
+ 	.reta_query              = virtio_dev_rss_reta_query,
+-	/* collect stats per queue */
+-	.queue_stats_mapping_set = virtio_dev_queue_stats_mapping_set,
+ 	.vlan_filter_set         = virtio_vlan_filter_set,
+ 	.mac_addr_add            = virtio_mac_addr_add,
+ 	.mac_addr_remove         = virtio_mac_addr_remove,
+@@ -693,8 +685,6 @@ const struct eth_dev_ops virtio_user_secondary_eth_dev_ops = {
+ 	.xstats_get_names        = virtio_dev_xstats_get_names,
+ 	.stats_reset             = virtio_dev_stats_reset,
+ 	.xstats_reset            = virtio_dev_stats_reset,
+-	/* collect stats per queue */
+-	.queue_stats_mapping_set = virtio_dev_queue_stats_mapping_set,
+ };
+ 
+ static void
+@@ -2823,16 +2813,5 @@ virtio_dev_info_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
+ 	return 0;
+ }
+ 
+-/*
+- * It enables testpmd to collect per queue stats.
+- */
+-static int
+-virtio_dev_queue_stats_mapping_set(__rte_unused struct rte_eth_dev *eth_dev,
+-__rte_unused uint16_t queue_id, __rte_unused uint8_t stat_idx,
+-__rte_unused uint8_t is_rx)
+-{
+-	return 0;
+-}
+-
+ RTE_LOG_REGISTER_SUFFIX(virtio_logtype_init, init, NOTICE);
+ RTE_LOG_REGISTER_SUFFIX(virtio_logtype_driver, driver, NOTICE);
 -- 
 2.53.0
 
