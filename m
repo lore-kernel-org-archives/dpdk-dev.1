@@ -2,72 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC26C5B572
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Aug 2026 18:04:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53133C5B572
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Aug 2026 18:04:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5C99642E5B;
-	Thu, 13 Aug 2026 20:04:29 +0200 (CEST)
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com
- [209.85.216.53]) by mails.dpdk.org (Postfix) with ESMTP id BBB4B42E15
- for <dev@dpdk.org>; Thu, 13 Aug 2026 20:04:27 +0200 (CEST)
-Received: by mail-pj1-f53.google.com with SMTP id
- 98e67ed59e1d1-38d489b6b71so166489a91.0
- for <dev@dpdk.org>; Thu, 13 Aug 2026 11:04:27 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id A020442E24;
+	Thu, 13 Aug 2026 20:04:34 +0200 (CEST)
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com
+ [209.85.216.52]) by mails.dpdk.org (Postfix) with ESMTP id 15C4042E50
+ for <dev@dpdk.org>; Thu, 13 Aug 2026 20:04:33 +0200 (CEST)
+Received: by mail-pj1-f52.google.com with SMTP id
+ 98e67ed59e1d1-3856d6fbcb3so126014a91.2
+ for <dev@dpdk.org>; Thu, 13 Aug 2026 11:04:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786644267;
- x=1787249067; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786644272;
+ x=1787249072; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=7AxFmUcGxix1vMn+PXUzjSr+UBJcOAMb6q9tg+CsvQg=;
- b=SGM65/YhRIuqCtyKmcbOA+6gCQN2hwA5WP6W9eIAQpX4xvFrQ0XdIO/LdWM+c+Ol04
- iCAsuHcfdNu3x0yjBh0Y5SxG/33+DaKnv896N3o0hY8OpEaAfPQyZGoUsPoWpM7JbolE
- EWI8OlyDCuz/gUDyJh7ANPebqJ4On1HiF2A98R3QhhjIyE04zaHHZCJginyGDPOxNZ5k
- TrTCJTMmq3Dp/XS8cL9FkuQHfDBrFC5NLMNBQXIlQg2L5003QLP3Wl3M2B1VG+VCLHrF
- 7cb9tb1vRX1fR6MiKH75eQK4orqyDHW78q3cGcbF1P2xqNqffmQbY7rD+VpEbdMD/bbA
- c7bQ==
+ bh=D3rQam7HPhji/AF3sQqOuTR5kO7LR5rh3+Vaxj8ePeQ=;
+ b=wVOJE2PxjVZ1CaQNDDv9f4cJqp/6yeRszc9c9mkiab6muEq0xHC2vKXHQ3IsIydl06
+ M9+ky9jfHqiqs1cAh5EkBWOxFePTWTN0GQ8B1rswLXGp+MwZa90lmywY4L+MNY5wk+XL
+ KvC/HznB8CHLYJK/BhkAqqH0tKv0S2tIVcDN2E2OUSM3vhRmD3CI3iM60YspUCEllTIH
+ vGhYeFTQfjB6wjEuXvBB4fry085PwigZvrWow9a8k7Fe6Yv0V5lyM0iiNnr/Pm0CFhJ/
+ +TZPUeju6orSjgy+65SIJ/RaxQoE9NAEz89UgPAEH+4+TDLjKCakU4zDdnqvtIukgKPO
+ pWEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786644267; x=1787249067;
+ d=1e100.net; s=20251104; t=1786644272; x=1787249072;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=7AxFmUcGxix1vMn+PXUzjSr+UBJcOAMb6q9tg+CsvQg=;
- b=a5S5q1FZ3cQG4A1bkPExeNbW5p6e4IvKXLQPqtYGc+yer/shm43kncqLd71qL39/qK
- eQDiMJVvwDnipcF4x+0wldYShZ98vXsdOPE/EoT8k15HgGD1D7vjqkeXQQqr3aHq0rkv
- 58VzNsQ4fH41iERJ3jQ/Ay6Xrj1EG8g/5ifQfjj26rJttCxI1KBCeOU6mRof/Sok+Dky
- tp+qnGVGdowmLwlopaRwWTlFkC9O3+ZPUpjFBiFVon6UgX8Xo8ig3BgCxgodYDPbByIT
- jMqYDkKNVIWaYh2/nSUq3iWC/4uakJGi6sJUNBOG6tAiF+PxEEWS6PRZ8j8RRC9mYOAE
- YZbg==
-X-Gm-Message-State: AOJu0Yy/gv1ZBNx/NMcdAy6iTQbItjn/hPcJnk8J4b4CBwnAczWl9bbd
- Ev6GorakeKJ9QC++RakJAgMMcJbeeUb8TvHeQKav1nLujFnE5ve5P2hc2XQTNJWgKgib8GBW7Cz
- 7fo3m
-X-Gm-Gg: AR+sD10CDy/A2hMsj+8mXiwSGufApK5pf1F6NnqdH5SE75I/7Yk/2AXGNOs7xQlW5Sr
- opT/84u3kAsjMoub3nlMRolnYhTO00aXhOusMjMwMLMNIxE8rSC72/OUyn3lmLvaFT0aP0luRjr
- 9OEBp2xkeU7npCmDApdQrZriDx8Sn0bR9Iua0BrdZEjne50nolr60EpYo3ITN5DiDSXaRijm8RY
- qS4TRUm2Q5szCz09XQCcBMO8QKyUrhmrR87E4fv7OygaFt1LIKe0qKGpusD5k0RnrHMMInimzK9
- ZpXw9QeZjWp2oPCPyZKUFHe1PQEYskLl72UwPChE6dhtfYzVGHdjYUHLhhNrtEJmXKs4ud2vbvu
- d4ZWWM1gJES7tVPaVfjYoNFm34taq/cilQX+WBewqtNxkxd5lsNB4AVgn8kUsx72xHPWIPN0m9f
- FPYvaO1Xl46+w0MRw3H3FxrH9SuZ1yIoDwsSaxk4W2EMwf8l7dlJQA+q7MmCFQ3SjN/Ft1r7tzs
- UFCHE79JySHrKdJ9mfHghODN10=
-X-Received: by 2002:a17:90b:5203:b0:381:6c5:3f63 with SMTP id
- 98e67ed59e1d1-3931e03d800mr8880345a91.6.1786644266880; 
- Thu, 13 Aug 2026 11:04:26 -0700 (PDT)
+ bh=D3rQam7HPhji/AF3sQqOuTR5kO7LR5rh3+Vaxj8ePeQ=;
+ b=fw/zu0I8HSGefZWQlqefJrKrYTevaIynx1z8GthppCUkaa2AzgqH0d6v3ktQDjtb0u
+ mAVfkic55Tt6JCELcE/GkeVbZfesMwfUu1YlP6PyqeVSKd5cMP8QcKCGx+DfWCNFibJV
+ 6uF3/srfcttc4mRcyleb3eTs6+/wLTPnd9DJDyiICdPNvsXMmd/QdS+NTg1nrOrJgIVx
+ sxbT40dsIlKlOWSqEoaCbKA1mwuq2klCCwvA10RNA28XQxVU4p7Wa0D5hHAPQUXMvkYT
+ aagehNC7ZmbstL2limxD0EWyFwDeI5xfkuV6LRCXj+24dqrx/JqWkL/catd/mIVBV1Ir
+ B+4A==
+X-Gm-Message-State: AOJu0YysQAjVeT9hSz0IMbOh2yRwTGmzKTvM1PZzpQEYVnCiCMPD59tT
+ LGMsqR30YU0D+O7PubP5PQMvgAOzUVDioPUkm4VakL0zUjdGJ0GhHwcwaDbaDC/sHpDux/PTC+M
+ RDVy0
+X-Gm-Gg: AR+sD12lsqCSc3nj8t2F4UOGd7rCyC3YrrZFhcN/m/QBcmUHOkp9qSt8vvK7lYNFmtf
+ K+wGnRhkKtJVKTMHgQ5xxy9TEDwkQAKIw/3ZbWYojRjEnc1kWQA3Op1cuQuAey/9EGlaFRy6cJk
+ wL5zZfaWe6ygAT8tS4kUJYLQ8ncGw6iCjnMXNitVD89gq1cySj65RAagZbAV4z5+x1ogwgYiOac
+ V3qzUjm/1PcazW1mSDEuHY81VbO+tLwe2fhnjKqBFsorRFZ7D63eTztrvPEGTUuTQ7kxHWcCbe5
+ 4ElG0/gQZgyf47+rOByYjjm6qMPK6ekUPdLNbVGSqTQqlbYInTCDzpdb/hIRV18KFytv+Py8bJU
+ jpWCEmCEAFMo8BO60c5HZRUERTlz9ZbGv0hTFvgbnW+3K+IVVcPK6mG13vRTvEaFIHzfXEq27Fi
+ DZEnO1fuxWZMQM6ITCOAH3qCkqjgEG6Ysr16I07/NrYRyiDErKb/kW/NZSBrVMnSRdJm2nbdtlr
+ KXDTsQSK6+TB6aOW1ubksY05X8=
+X-Received: by 2002:a17:90a:ec8f:b0:38e:485c:ebd3 with SMTP id
+ 98e67ed59e1d1-3931e291d2dmr9404155a91.15.1786644271388; 
+ Thu, 13 Aug 2026 11:04:31 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-31f7c8018cdsm3658930eec.13.2026.08.13.11.04.22
+ 5a478bee46e88-31f7c8018cdsm3658930eec.13.2026.08.13.11.04.27
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 13 Aug 2026 11:04:26 -0700 (PDT)
+ Thu, 13 Aug 2026 11:04:30 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Nithin Dabilpuram <ndabilpuram@marvell.com>,
  Kiran Kumar K <kirankumark@marvell.com>,
  Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
- Harman Kalra <hkalra@marvell.com>, Hemant Agrawal <hemant.agrawal@nxp.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v3 04/16] net/cnxk: fix Tx drops added to Rx queue errors
-Date: Thu, 13 Aug 2026 10:55:03 -0700
-Message-ID: <20260813180402.622784-5-stephen@networkplumber.org>
+ Harman Kalra <hkalra@marvell.com>
+Subject: [PATCH v3 05/16] net/cnxk: remove queue stats mapping
+Date: Thu, 13 Aug 2026 10:55:04 -0700
+Message-ID: <20260813180402.622784-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260813180402.622784-1-stephen@networkplumber.org>
 References: <20260530161151.873199-1-stephen@networkplumber.org>
@@ -87,43 +86,150 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-q_errors counts received packets dropped, and is reported as the
-rx_qN_errors xstat. The Tx branch assigns the Tx drop count and the Rx
-branch adds to it, so rx_qN_errors reports both. Stat indexes with only
-a Tx mapping hold Tx drops alone.
-
-Tx drops are already counted in oerrors, so drop the assignment and
-store the Rx drop count directly.
-
-Fixes: 58ae74244c90 ("ethdev: remove queue stats from basic stats structure")
-Cc: stable@dpdk.org
+The queue stats mapping feature has been deprecated since 25.11.
+Remove support in this driver for stats map.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/cnxk/cnxk_stats.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/cnxk/cnxk_ethdev.c |  1 -
+ drivers/net/cnxk/cnxk_ethdev.h |  6 ---
+ drivers/net/cnxk/cnxk_stats.c  | 73 ++++++++++++++--------------------
+ 3 files changed, 29 insertions(+), 51 deletions(-)
 
+diff --git a/drivers/net/cnxk/cnxk_ethdev.c b/drivers/net/cnxk/cnxk_ethdev.c
+index c41959173b..9a4da870cd 100644
+--- a/drivers/net/cnxk/cnxk_ethdev.c
++++ b/drivers/net/cnxk/cnxk_ethdev.c
+@@ -2103,7 +2103,6 @@ struct eth_dev_ops cnxk_eth_dev_ops = {
+ 	.rx_queue_intr_enable = cnxk_nix_rx_queue_intr_enable,
+ 	.rx_queue_intr_disable = cnxk_nix_rx_queue_intr_disable,
+ 	.pool_ops_supported = cnxk_nix_pool_ops_supported,
+-	.queue_stats_mapping_set = cnxk_nix_queue_stats_mapping,
+ 	.stats_get = cnxk_nix_stats_get,
+ 	.stats_reset = cnxk_nix_stats_reset,
+ 	.xstats_get = cnxk_nix_xstats_get,
+diff --git a/drivers/net/cnxk/cnxk_ethdev.h b/drivers/net/cnxk/cnxk_ethdev.h
+index fc66135c66..5dd74de577 100644
+--- a/drivers/net/cnxk/cnxk_ethdev.h
++++ b/drivers/net/cnxk/cnxk_ethdev.h
+@@ -423,10 +423,6 @@ struct cnxk_eth_dev {
+ 	/* LSO Tunnel format indices */
+ 	uint64_t lso_tun_fmt;
+ 
+-	/* Per queue statistics counters */
+-	uint32_t txq_stat_map[RTE_ETHDEV_QUEUE_STAT_CNTRS];
+-	uint32_t rxq_stat_map[RTE_ETHDEV_QUEUE_STAT_CNTRS];
+-
+ 	/* Security data */
+ 	struct cnxk_eth_dev_sec_inb inb;
+ 	struct cnxk_eth_dev_sec_outb outb;
+@@ -700,8 +696,6 @@ void cnxk_eth_dev_link_status_get_cb(struct roc_nix *nix,
+ void cnxk_eth_dev_q_err_cb(struct roc_nix *nix, void *data);
+ int cnxk_nix_link_info_configure(struct rte_eth_dev *eth_dev);
+ int cnxk_nix_link_update(struct rte_eth_dev *eth_dev, int wait_to_complete);
+-int cnxk_nix_queue_stats_mapping(struct rte_eth_dev *dev, uint16_t queue_id,
+-				 uint8_t stat_idx, uint8_t is_rx);
+ int cnxk_nix_stats_reset(struct rte_eth_dev *dev);
+ int cnxk_nix_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats,
+ 		       struct eth_queue_stats *qstats);
 diff --git a/drivers/net/cnxk/cnxk_stats.c b/drivers/net/cnxk/cnxk_stats.c
-index d57659ef51..6c812bd732 100644
+index 6c812bd732..469a18f93e 100644
 --- a/drivers/net/cnxk/cnxk_stats.c
 +++ b/drivers/net/cnxk/cnxk_stats.c
-@@ -45,7 +45,6 @@ cnxk_nix_stats_get(struct rte_eth_dev *eth_dev, struct rte_eth_stats *stats,
- 					goto exit;
- 				qstats->q_opackets[i] = qstats_data.tx_pkts;
- 				qstats->q_obytes[i] = qstats_data.tx_octs;
--				qstats->q_errors[i] = qstats_data.tx_drop_pkts;
- 			}
+@@ -14,7 +14,7 @@ cnxk_nix_stats_get(struct rte_eth_dev *eth_dev, struct rte_eth_stats *stats,
+ 	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
+ 	struct roc_nix *nix = &dev->nix;
+ 	struct roc_nix_stats nix_stats;
+-	int rc = 0, i;
++	int rc, i;
  
- 			if (dev->rxq_stat_map[i] & (1U << 31)) {
-@@ -55,7 +54,7 @@ cnxk_nix_stats_get(struct rte_eth_dev *eth_dev, struct rte_eth_stats *stats,
- 					goto exit;
- 				qstats->q_ipackets[i] = qstats_data.rx_pkts;
- 				qstats->q_ibytes[i] = qstats_data.rx_octs;
--				qstats->q_errors[i] += qstats_data.rx_drop_pkts;
-+				qstats->q_errors[i] = qstats_data.rx_drop_pkts;
- 			}
- 		}
+ 	rc = roc_nix_stats_get(nix, &nix_stats);
+ 	if (rc)
+@@ -33,30 +33,34 @@ cnxk_nix_stats_get(struct rte_eth_dev *eth_dev, struct rte_eth_stats *stats,
+ 	stats->ibytes = nix_stats.rx_octs;
+ 	stats->ierrors = nix_stats.rx_err;
+ 
+-	if (qstats != NULL) {
+-		for (i = 0; i < RTE_ETHDEV_QUEUE_STAT_CNTRS; i++) {
+-			struct roc_nix_stats_queue qstats_data;
+-			uint16_t qidx;
+-
+-			if (dev->txq_stat_map[i] & (1U << 31)) {
+-				qidx = dev->txq_stat_map[i] & 0xFFFF;
+-				rc = roc_nix_stats_queue_get(nix, qidx, 0, &qstats_data);
+-				if (rc)
+-					goto exit;
+-				qstats->q_opackets[i] = qstats_data.tx_pkts;
+-				qstats->q_obytes[i] = qstats_data.tx_octs;
+-			}
+-
+-			if (dev->rxq_stat_map[i] & (1U << 31)) {
+-				qidx = dev->rxq_stat_map[i] & 0xFFFF;
+-				rc = roc_nix_stats_queue_get(nix, qidx, 1, &qstats_data);
+-				if (rc)
+-					goto exit;
+-				qstats->q_ipackets[i] = qstats_data.rx_pkts;
+-				qstats->q_ibytes[i] = qstats_data.rx_octs;
+-				qstats->q_errors[i] = qstats_data.rx_drop_pkts;
+-			}
+-		}
++	if (qstats == NULL)
++		goto exit;
++
++	for (i = 0; i < eth_dev->data->nb_tx_queues; i++) {
++		struct roc_nix_stats_queue qstats_data;
++
++		if (i >= RTE_ETHDEV_QUEUE_STAT_CNTRS)
++			break;
++
++		rc = roc_nix_stats_queue_get(nix, i, 0, &qstats_data);
++		if (rc)
++			goto exit;
++		qstats->q_opackets[i] = qstats_data.tx_pkts;
++		qstats->q_obytes[i] = qstats_data.tx_octs;
++	}
++
++	for (i = 0; i < eth_dev->data->nb_rx_queues; i++) {
++		struct roc_nix_stats_queue qstats_data;
++
++		if (i >= RTE_ETHDEV_QUEUE_STAT_CNTRS)
++			break;
++
++		rc = roc_nix_stats_queue_get(nix, i, 1, &qstats_data);
++		if (rc)
++			goto exit;
++		qstats->q_ipackets[i] = qstats_data.rx_pkts;
++		qstats->q_ibytes[i] = qstats_data.rx_octs;
++		qstats->q_errors[i] = qstats_data.rx_drop_pkts;
  	}
+ exit:
+ 	return rc;
+@@ -70,25 +74,6 @@ cnxk_nix_stats_reset(struct rte_eth_dev *eth_dev)
+ 	return roc_nix_stats_reset(&dev->nix);
+ }
+ 
+-int
+-cnxk_nix_queue_stats_mapping(struct rte_eth_dev *eth_dev, uint16_t queue_id,
+-			     uint8_t stat_idx, uint8_t is_rx)
+-{
+-	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
+-
+-	if (is_rx) {
+-		if (queue_id >= dev->nb_rxq)
+-			return -EINVAL;
+-		dev->rxq_stat_map[stat_idx] = ((1U << 31) | queue_id);
+-	} else {
+-		if (queue_id >= dev->nb_txq)
+-			return -EINVAL;
+-		dev->txq_stat_map[stat_idx] = ((1U << 31) | queue_id);
+-	}
+-
+-	return 0;
+-}
+-
+ int
+ cnxk_nix_xstats_get(struct rte_eth_dev *eth_dev, struct rte_eth_xstat *xstats,
+ 		    unsigned int n)
 -- 
 2.53.0
 
