@@ -2,122 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF63EC5CFDB
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Aug 2026 21:41:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C33AC5CFDB
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Aug 2026 22:06:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B730040658;
-	Thu, 13 Aug 2026 23:41:49 +0200 (CEST)
-Received: from MW6PR02CU001.outbound.protection.outlook.com
- (mail-westus2azon11022108.outbound.protection.outlook.com [52.101.48.108])
- by mails.dpdk.org (Postfix) with ESMTP id B18AD4026E
- for <dev@dpdk.org>; Thu, 13 Aug 2026 23:41:48 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MbU/YVApbnZeiiKWf6hqHkUya9sK8Q12RLQD+u/2WNm1YmtfLtz7A8jONEzuWtbFzPNGirKLzMAMcJYfgZMAKudbtHYg623DHBr46t7TTPwTLS7J1iyNPUprwjErkCQjHYzVf6usRkJrC4AkVdnaxf+BTFcicc5QLcCn4LE1HBhxMcFa8s1DIMNuIfkDAbUCuIO5juyAOy+Uxde7Tvm+5LJ09KabPpbImN4weq9RK0XSVYdM68N/7CDqsKcnajxmMDRb+/CwoJ574DJX9ACsj4j/UG7DaD/ED7pQvzW75QsNkNpiZGKf6RFT1tt4NlwO9Rppif04OUP9braYBV0HZw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qyfNMpp7j91AbQdrqFLicImXMXKvMme9NWCPPSAqTXE=;
- b=ZHoam/6ZiEouUDK0WODyQAoBP1IxycTXzE3Y860dOXuv/Pi7C25T69gMlmLXFcK8HnhbVk3s95q269GDcCyDVUjEVaSnonQn3cPM1sNua3ISsTkbWNp0UmnoiBesIi3ROkE7Cva7PJ5jXVGvKsW70s+w7aU5f9Hs2OqTKGW0gSPZwFUm9NV7qcIxIDG7DR5yDF7v/vIxjT6iuIUFi4UjcRLFjvDuaE0QQim9Sg/V3Am4jOGFOhVCu3ORKJUOHkBVjHquDMv3w5ESzY23v+P4NhlIQAPA7iP+tiN5DNTl1WAHzTv32/aTf9bMatpovViTJenIw3cYfFbkLHNUH/Gghw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qyfNMpp7j91AbQdrqFLicImXMXKvMme9NWCPPSAqTXE=;
- b=a+6/miJtWSKMz8W8QE2/JgNc54fyOf6226zB5iMh4n0XJOdIx+PGMbOi1DXdu7g3tZPRl9qiupEyV6GSAI1uoNeEfOZ9p3evg5IrnUa82UnWL0Lmsocwy2ndQkMjaIhMKMKpucwyju+7Z+pGd8R8Cu90F7L+cXxYtE+zZXK4lFM=
-Received: from SA1PR21MB6683.namprd21.prod.outlook.com (2603:10b6:806:4a4::6)
- by DS0PR21MB4659.namprd21.prod.outlook.com (2603:10b6:8:1ce::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.339.5; Thu, 13 Aug
- 2026 21:41:45 +0000
-Received: from SA1PR21MB6683.namprd21.prod.outlook.com
- ([fe80::8bad:6294:8a07:fe18]) by SA1PR21MB6683.namprd21.prod.outlook.com
- ([fe80::8bad:6294:8a07:fe18%6]) with mapi id 15.21.0315.008; Thu, 13 Aug 2026
- 21:41:45 +0000
-From: Long Li <longli@microsoft.com>
-To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
- <dev@dpdk.org>
-CC: Wei Hu <weh@microsoft.com>
-Subject: RE: [EXTERNAL] [RFC 05/32] bus/vmbus: replace SMP barriers with C11
- memory fences
-Thread-Topic: [EXTERNAL] [RFC 05/32] bus/vmbus: replace SMP barriers with C11
- memory fences
-Thread-Index: AQHdH4O3F/ZKEFV0YEOuTHX+ZTK9Uracmfcg
-Date: Thu, 13 Aug 2026 21:41:45 +0000
-Message-ID: <SA1PR21MB6683D2C66C69A918DC596C65CEDB2@SA1PR21MB6683.namprd21.prod.outlook.com>
-References: <20260729175715.165120-1-stephen@networkplumber.org>
- <20260729175715.165120-6-stephen@networkplumber.org>
-In-Reply-To: <20260729175715.165120-6-stephen@networkplumber.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=0e0aeb9f-7427-4763-949a-88b519dcaba7;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2026-08-13T21:41:28Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10, 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR21MB6683:EE_|DS0PR21MB4659:EE_
-x-ms-office365-filtering-correlation-id: 0c7fc6cd-a5b6-4bd4-db6f-08def983abec
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|366016|23010399003|376014|1800799024|11063799006|4143699003|38070700021|10067099003|56012099006|7146999003|22082099003|18002099003;
-x-microsoft-antispam-message-info: 4X5Tl19Ev7pKqm3oLQBdvNssNjkHyax6l0M0b6YUML4MuXKng2g9H8Tr9Yd1Tdx9zOAzy9XrpoNhscdOXd98aYGX+opfjr89XughPutJ0L2KZvbnbk2NnuToyFT/8OG3mxp+SHGuXxf/CF8U/QgYjQMWqgKgC71Y/3WaOD2XNNdlJuhx4Z/zwXqh5NF1MyfuEqAGtiQ5LxdWVAXqdZ9yLoaq1O45Fj+6sohocg52x/qVZ//7ZdYMSCpmMQNFZu01iv48y56eaitWj0N0tfn9Lwi2J0oUVlTBYUCQxAyZrZmj8wcVCIyxyG6Jg1cSwcn59i/LwRciu7Q5sbGK1Ji+SUf2RQANWb8Q8IOlnaIoHhc9qiv4uMmV/YDV5jTLl6pjZtkKe6QDaPHO5cnUcpQDpaFhc6zKpqFKKqTcGmdS1hs2Ay3MktdapoiE7xspsnjv0VJgLKtqviv+/aykvg+chZUw8LaP/7SyMXeSeqaTA6EFnJ8U03VmFne6eiHYr2NzdSzKCZJPYgAhJrXGmSgBxlJTdAz1E/rCwXDGaCcFLitTkVgxFcCSeYb/k1mKzeukaKiTpc3vcWxaJDKVTDA+1WrjUpNEm68t7TSuXGCCbT5lLQvYzsfnJxw5A9GVKM9swfNe9kI2oUPrBABC5PTPVdNkUJXu760eIiTWHMwLfhRQeYz3P0xf/swfAvcy5sWu2h99SEG9h2seXDaVsd21j9jLAk/b0Av4AbCRnERbaSU=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SA1PR21MB6683.namprd21.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(23010399003)(376014)(1800799024)(11063799006)(4143699003)(38070700021)(10067099003)(56012099006)(7146999003)(22082099003)(18002099003);
- DIR:OUT; SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?S0JCg1aTLFwDV6KPAonygOQrHGvee5PD+KEAENOQQkr0zFFrq5TiATyhJLPu?=
- =?us-ascii?Q?kyaHsMyG8aGGJUa6xtzbjVQgDkEeiUZdxDOfPNZi/sbT1IE5t54XUGLmTZmk?=
- =?us-ascii?Q?tx+5GPl1z+Bo5Eil7MxDJbvWtLCYzwjuV3IhmZ+AwGbwnBdAaNam1iGZI7pa?=
- =?us-ascii?Q?m5XlazAOD4iqGlBizRN/EUs6FPhK2xODhlPO5IEjuwrnHX+NXJZ9RZmmwn+U?=
- =?us-ascii?Q?qXhmPpCCQDT6TeLMOUkmEp5PuMauD3g1+T2/z2ni+qEMYH8mSaujGffU1qgT?=
- =?us-ascii?Q?+1wPW9NxfJ6eDxstO5VbGns0HR/4SyyG2UQtsf0rB8e+X6lMOKuvcz5dHHSJ?=
- =?us-ascii?Q?iCIABc8f2arXTc1FF+piaAYCHBsRKmNAOvHqG8z1wnqPECTDThK/xYfGpXPq?=
- =?us-ascii?Q?eL0GlKgzPxTKge2V5dmRb5PdLMQqMLCNY5oZvIi2mYc3NB1zjx+mzaJ6Zmle?=
- =?us-ascii?Q?nlz+XsCyz4n6eejoGr2p/WslcqR+pOrt1Si26BWqlxoJ4PdLCDkdqnXV7d3H?=
- =?us-ascii?Q?360XLb1XNDWeJbpe26b3sY32JUU7B1xG7YEl4+c8z1taatQ+Wsk6lgiKPS0q?=
- =?us-ascii?Q?PnY6EcXZqgq7pWzFruhlN7520p5yiHmQndqbweUsWltc9g7p6Vp3hpi7OFcG?=
- =?us-ascii?Q?2BVcDqA8v9YqdX1zLJaYNmJtIWzyS56DvVuWaX9wN3cqQaImoWdiY6thqqt4?=
- =?us-ascii?Q?tSru/41n/yEaEFd4dBkCbSyyKHhaSoaY40RT4Cnxg8Gaof1jqLGIVyI8Yuw/?=
- =?us-ascii?Q?F9tSYB898lftAv/eL7apkzIRjO9J3EaBP6BtkY3FRhAEpzDpneHaXo9/pQU9?=
- =?us-ascii?Q?E7uvlSh8FaLFgocYCCuGPkzAN9EIP5YTUE2DfTDA56xcF6/bPFkwO1S4vSVl?=
- =?us-ascii?Q?y3F+LP201kjwDXCZi9Gt6ypTraAUlpl4vmkDLhp8DIjbjfLSdysbFEwX+7aQ?=
- =?us-ascii?Q?87f7Bn/uQs9j/A7dAan24FZKXZZTQS+RxEefIBbJ6QcfuoRHptS5ZmJzlIvW?=
- =?us-ascii?Q?7xmPhg4RXjeluLuvt/PPPAeOq/XGH9U8r0labGuGK3EMfPlgm9uq8rVgShUH?=
- =?us-ascii?Q?aidWvxmeTfJXO72TnLHeBPHHfXdoHjQpuHQ5otP9TeMPQ2v8qZJZ95uynDwe?=
- =?us-ascii?Q?LMir6RAe3xwakThnit4f9N15XCGcFrGQC6clXCEnQxEEhbM3inBLMkkmtkop?=
- =?us-ascii?Q?GfWtIxbQfe7tl7AJgUPPk3/z2wzcD2oZi3Snh0vWEpjYehUlkzHrYJyLPVKR?=
- =?us-ascii?Q?7uwWf3Jo5bOETYYDuOPPJoVys1XES/US8lSUMIerKRBNX5HzVP/5jn8QXbOE?=
- =?us-ascii?Q?gfRT7fkwpbgcmBtLvkOArt19vDixpGz1R2B4lZbUSYBt7NQjNDVgRPF+B+qf?=
- =?us-ascii?Q?4lmqnlrO2u/DM0vlYWu3u1p4EpRF3C4azRV1B9M5rF+xBT+rMIwJOTU7LPEp?=
- =?us-ascii?Q?mNmEpo6RheTBbGBhQKC050wL2k2OTTiAB+/cC0t3sT1VLRUvHkCsDGE6FsIg?=
- =?us-ascii?Q?anSkZOCMvTHMG5JTrgwpHFyhyY3mpu5LIWeafZgJM7X9shYya943ZDkmTA9y?=
- =?us-ascii?Q?GQlpbiYjM3VzpEUgFG7wHHPRN2cztFw8bKgSD1beQhKmkG0LOngcAP6iWIuu?=
- =?us-ascii?Q?BABJXBeeaMSEP5zuNWVVh/hspeYF8CkFsZKJShR5FTbix0s3imx773IWdqEE?=
- =?us-ascii?Q?CFiWN9XKgdkU2tSL18m5kBKiuiGaYVjOLekXVAovh6LVgJEd?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id 7538740287;
+	Fri, 14 Aug 2026 00:06:43 +0200 (CEST)
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
+ [209.85.214.176])
+ by mails.dpdk.org (Postfix) with ESMTP id 3DB324026E
+ for <dev@dpdk.org>; Fri, 14 Aug 2026 00:06:41 +0200 (CEST)
+Received: by mail-pl1-f176.google.com with SMTP id
+ d9443c01a7336-2ce7d2adef4so6895385ad.3
+ for <dev@dpdk.org>; Thu, 13 Aug 2026 15:06:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786658800;
+ x=1787263600; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=wfiJP//hqPOwsDtE6yuz+48PYB38qCDKUKsbCytR780=;
+ b=FdxPn61Ul+GIR99nhvgal1UUKIZCwCXljeF9x2p0Hfnrr//dGifrd3pie9/mXgAAK4
+ RAdDVuN6jwmMQro5nyjl0amsGUUhkyJJM1JzdJgRGrzeF9SjJWPMHFuhY84h1Y092rI3
+ LR6QHQaRkaM3IA86bj1yed1nvKpvnliRPqm5QM5CER/6eZ9fClZeY3HKNVGQADsS+Dut
+ 2LzbKtmvc8V/uB4jLbcK6fyPuSd5WLf+fiUS+k6StXZQOcWZZP3TvGAxdcm1VwZ3+88N
+ 43FGIjHw3VQKCRy8zInGM8Sh0nT8jBC7D+7Lt5n2dF1MMbxW57yIxTcRlUQUenFVLFdF
+ e9Bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1786658800; x=1787263600;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=wfiJP//hqPOwsDtE6yuz+48PYB38qCDKUKsbCytR780=;
+ b=mfADgWe7GzYdMzzMn3AvI26S39wtfljUloAVGpL7yWQkwPRrK/em0PgmTZKg7nvnxn
+ QkddMrDTxXit4vdBBns6NlWI3i7jyRTg68LWMyQjtk7zstUjYXRKuZNU4d2JvMa9oMfR
+ N77M/YeUgWySZmKlgxqzUDIR+erASJQaykK3/FnbP3/XbEacbGqou3f02v4ETMEX4rie
+ 6vKpUjcC/KVmf0G2+TsLBPplfv3dssC15C/UJARuUswMVVblAhI7IobFD6dnYsCuEm96
+ bsPIkkYvf/RjXDQiR0X5A5Zg09TDkz6Nq3VeyDuncUHSQzrcOZvKl5RFe/qKT38UKjjQ
+ /L1g==
+X-Gm-Message-State: AOJu0Yxa69OrwSyPRjrql75CWT5IYuoASr8vi5ul+xBht5IG8ePULi8d
+ bxEzkUQvALOBeaSLuwP+qyEAYFeK86k/7aGrg46MrfIt2LZjihOUgG9c5+dj+a8h59hqUwjvWQu
+ qZ91y
+X-Gm-Gg: AR+sD11GN4BA1EEnX3uVGkU2LjKvkejZ/0T/h9Bh6vuM3iQc9UkoHSHQ69R1zUjQftC
+ 9yRf5s86bpc/SqF91uUN4bQIKPMTEopdSQ3AVuZfMonQLGUwJNuxRovI/r7xXXNpgU9+Uxx1RoV
+ 9WPgU9e4qbsqBunAT3+/QZ67OizlenQRhAHnC8CO0RWQ8iDoGFU/tQFn3vr/BVzbnY5+bOVqwKE
+ QVkAmFnxANmWRx1OVOZ4A7fLZlObZlrlewBb2vI+L6+BnWLkCqW+sajN71saaU/IUUirsLwuNbf
+ QgdhuAIv+jhLbW6fWEarROqJ5KKEymGH5HuGTjLqO381m3vmNgJkR6i86bK7g0k7ZFYs2ZqxoOR
+ vPkKWp0olofkj0xIrYodtjhj3GJ0pFEXK1rzfHBJKRPqKhQE9SOHeGazpNuzGAf7cpJ6G/5CXto
+ vkCMO/q45ux/2x+rDNaqYmaYo5TRl7bTj2cZhJ81ch6l82ReG991lEkj61STm13/+nldlVG5wmC
+ E9wetXha+m7LWm6H7RnWalI1xw=
+X-Received: by 2002:a05:6a20:d497:b0:3c3:bb13:438 with SMTP id
+ adf61e73a8af0-3cc71d4a14cmr1036654637.32.1786658800132; 
+ Thu, 13 Aug 2026 15:06:40 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-31ebf731dbasm13735901eec.17.2026.08.13.15.06.37
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 13 Aug 2026 15:06:39 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Thomas Monjalon <thomas@monjalon.net>
+Subject: [PATCH] MAINTAINERS: update for NFP drivers
+Date: Thu, 13 Aug 2026 15:06:31 -0700
+Message-ID: <20260813220631.41472-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR21MB6683.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0c7fc6cd-a5b6-4bd4-db6f-08def983abec
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Aug 2026 21:41:45.2492 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jRDBnkSUEI5cyFxlBwrkUWf4VjwZz1jBxG8grkPMOE+DKCFcenrEijZ8yzkX0V8BPTtcU0a0aqdwH6RJkkJpMw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR21MB4659
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -131,89 +80,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
->=20
-> Full barriers order the preceding index store against the following load =
-of the
-> interrupt mask or pending size and stay seq_cst; read barriers become
-> acquire fences. Same code generated on x86 and arm64.
->=20
-> The write barrier before publishing the transmit index becomes a release
-> fence. Nominally stronger on arm64, but it is immediately followed by a f=
-ull
-> barrier cmpset; converting that to a release compare-exchange is left for=
- the
-> rte_atomic32 removal series.
->=20
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Mail to chaoyong.he@corigine.com now bounces with
+"Address not found" error.
 
-Reviewed-by: Long Li <longli@microsoft.com>
+No other maintainer listed, so this leaves these drivers as
+unmaintained.
 
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ MAINTAINERS | 2 --
+ 1 file changed, 2 deletions(-)
 
-
-> ---
->  drivers/bus/vmbus/vmbus_bufring.c | 6 +++---
-> drivers/bus/vmbus/vmbus_channel.c | 6 +++---
->  2 files changed, 6 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/bus/vmbus/vmbus_bufring.c
-> b/drivers/bus/vmbus/vmbus_bufring.c
-> index f622869974..31478d3bfa 100644
-> --- a/drivers/bus/vmbus/vmbus_bufring.c
-> +++ b/drivers/bus/vmbus/vmbus_bufring.c
-> @@ -58,11 +58,11 @@ void vmbus_br_setup(struct vmbus_br *br, void *buf,
-> unsigned int blen)  static inline bool  vmbus_txbr_need_signal(const stru=
-ct
-> vmbus_bufring *vbr, uint32_t old_windex)  {
-> -	rte_smp_mb();
-> +	rte_atomic_thread_fence(rte_memory_order_seq_cst);
->  	if (vbr->imask)
->  		return false;
->=20
-> -	rte_smp_rmb();
-> +	rte_atomic_thread_fence(rte_memory_order_acquire);
->=20
->  	/*
->  	 * This is the only case we need to signal when the @@ -158,7 +158,7
-> @@ vmbus_txbr_write(struct vmbus_br *tbr, const struct iovec iov[], int
-> iovlen,
->  	RTE_ASSERT(windex =3D=3D next_windex);
->=20
->  	/* Ensure that data is available before updating host index */
-> -	rte_smp_wmb();
-> +	rte_atomic_thread_fence(rte_memory_order_release);
->=20
->  	/* Checkin for our reservation. wait for our turn to update host */
->  	while (!rte_atomic32_cmpset(&vbr->windex, old_windex,
-> next_windex)) diff --git a/drivers/bus/vmbus/vmbus_channel.c
-> b/drivers/bus/vmbus/vmbus_channel.c
-> index 2648d8e3fd..10293f59be 100644
-> --- a/drivers/bus/vmbus/vmbus_channel.c
-> +++ b/drivers/bus/vmbus/vmbus_channel.c
-> @@ -211,7 +211,7 @@ bool rte_vmbus_chan_rx_empty(const struct
-> vmbus_channel *channel)  {
->  	const struct vmbus_br *br =3D &channel->rxbr;
->=20
-> -	rte_smp_rmb();
-> +	rte_atomic_thread_fence(rte_memory_order_acquire);
->  	return br->vbr->rindex =3D=3D br->vbr->windex;  }
->=20
-> @@ -229,13 +229,13 @@ void rte_vmbus_chan_signal_read(struct
-> rte_vmbus_device *dev,
->  		return;
->=20
->  	/* Make sure reading of pending happens after new read index */
-> -	rte_smp_mb();
-> +	rte_atomic_thread_fence(rte_memory_order_seq_cst);
->=20
->  	pending_sz =3D rbr->vbr->pending_send;
->  	if (!pending_sz)
->  		return;
->=20
-> -	rte_smp_rmb();
-> +	rte_atomic_thread_fence(rte_memory_order_acquire);
->  	write_sz =3D vmbus_br_availwrite(rbr, rbr->vbr->windex);
->=20
->  	/* If there was space before then host was not blocked */
-> --
-> 2.53.0
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e99a65d197..2f7972540c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -964,7 +964,6 @@ F: doc/guides/nics/nfb.rst
+ F: doc/guides/nics/features/nfb.ini
+ 
+ Netronome nfp
+-M: Chaoyong He <chaoyong.he@corigine.com>
+ F: drivers/common/nfp/
+ F: drivers/net/nfp/
+ F: doc/guides/nics/nfp.rst
+@@ -1458,7 +1457,6 @@ T: git://dpdk.org/next/dpdk-next-virtio
+ F: drivers/vdpa/meson.build
+ 
+ Corigine nfp vDPA
+-M: Chaoyong He <chaoyong.he@corigine.com>
+ F: drivers/vdpa/nfp/
+ F: doc/guides/vdpadevs/nfp.rst
+ F: doc/guides/vdpadevs/features/nfp.ini
+-- 
+2.53.0
 
