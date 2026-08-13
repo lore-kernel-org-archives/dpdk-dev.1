@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7713C5B572
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Aug 2026 10:46:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59792C5CFDB
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Aug 2026 10:46:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6D7E8427D0;
-	Thu, 13 Aug 2026 12:46:42 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2860742D6A;
+	Thu, 13 Aug 2026 12:46:45 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTP id 45361427AF
- for <dev@dpdk.org>; Thu, 13 Aug 2026 12:46:40 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id CC6CB427E5
+ for <dev@dpdk.org>; Thu, 13 Aug 2026 12:46:42 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1786618000; x=1818154000;
+ t=1786618003; x=1818154003;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=I3Bwe+9v4Q35nVcNQZnoeqJaaXMMwEKLY+eMgzLZ1ng=;
- b=ZE1lcn4NRZWvqgUe1p4wS6lY3Ry8gTn6mYj95pQE1FpUhlhcoMKQDqxl
- 2QbyVmuaN7EpvzQJUERSNCAO5x6tBz5UCIRF26AUAHu/1Z0SOVQAGwXXq
- BaIEm7ayO+v9QkFdf/FQH/ecaqfEO3EbyLKEI61m0OQ9+i6Kf2HEfaTKq
- AJiBJYSHRZkvPB6q5msrh/vcznO/yYJBGyIqRAeHipONNHm25I9yZJoR+
- jSMz2HfyI07hwV0zDz5Qr9fSiD1HXOQhTUOJsDIzIWQQNaCiQ+eahDKl8
- QUmE/Y5kXOJvIGLlZPjATGHqjVcv2lg+NYjsiIbPSoqnifBmUoo6FKtvv w==;
-X-CSE-ConnectionGUID: VUiGuRSLQAiIEECQGDHtWw==
-X-CSE-MsgGUID: JDCIsTODRzC4uXr90WxiMg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11873"; a="89708987"
-X-IronPort-AV: E=Sophos;i="6.25,221,1779174000"; d="scan'208";a="89708987"
+ bh=EYumMrtBeSr3CqQ6Bera9OxwMJV0AejFCbH6V/AVVBs=;
+ b=B7TvK9PpzW7DRttmC27jpKTMz+w5qPrQEbbiun4aseRZBl0bbKiW6Yl4
+ nayV4CIC08vnPx6WJnh4aQasPZxHtNTlzR96vMX/pkP8YD5mnpZnQaR70
+ Cg/rPn8hZX1Hns4ZLSC9zFoxJV3Ixt3wSZydk5nx/437qwv2Fp11fcUkP
+ BP8k+aoWW5/Qzsn1EbBs1lSqboIlxizaMWxCEBHUMIheFA+uKj3sN/Y2g
+ 5boO/1I7ReLd8OCo30fQ/gsNPTJ5Nn2dW3i8cZ+E0nlCL2G5FONSHwulM
+ dPWbFgjqUR7AaIv0U619rm9IEQnBumxr17WHjyl7cLsDKycVbtqCKTc1y g==;
+X-CSE-ConnectionGUID: otNN10VCRHSOTeR0Ip4GLQ==
+X-CSE-MsgGUID: af8/KizsR9qK24y7X57lfg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11873"; a="89708990"
+X-IronPort-AV: E=Sophos;i="6.25,221,1779174000"; d="scan'208";a="89708990"
 Received: from orviesa009.jf.intel.com ([10.64.159.149])
  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Aug 2026 03:46:40 -0700
-X-CSE-ConnectionGUID: fJhvvS9dTGWKLy0vivRCxw==
-X-CSE-MsgGUID: WrgY1VLlTHuYDx6bVNIOIQ==
+ 13 Aug 2026 03:46:42 -0700
+X-CSE-ConnectionGUID: Ese7dX8qQK22G8GlubuQLg==
+X-CSE-MsgGUID: e/41h1+JTk64gmXQlw4rpA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,221,1779174000"; d="scan'208";a="264491553"
+X-IronPort-AV: E=Sophos;i="6.25,221,1779174000"; d="scan'208";a="264491556"
 Received: from pae-14.iind.intel.com ([10.190.203.153])
- by orviesa009.jf.intel.com with ESMTP; 13 Aug 2026 03:46:38 -0700
+ by orviesa009.jf.intel.com with ESMTP; 13 Aug 2026 03:46:41 -0700
 From: Anurag Mandal <anurag.mandal@intel.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com, vladimir.medvedkin@intel.com,
  ciara.loftus@intel.com, Anurag Mandal <anurag.mandal@intel.com>
-Subject: [PATCH v2 2/7] net/iavf: defer device start when PF VSI not ready
-Date: Thu, 13 Aug 2026 10:45:30 +0000
-Message-Id: <3bb2a6e50c1ba06f4929fa9bc8374416d15096eb.1786617159.git.anurag.mandal@intel.com>
+Subject: [PATCH v2 3/7] net/iavf: drain in-flight Tx before reset
+Date: Thu, 13 Aug 2026 10:45:31 +0000
+Message-Id: <23c3da01137840cdd06bba5237c1b622fb7c1191.1786617159.git.anurag.mandal@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1786617159.git.anurag.mandal@intel.com>
 References: <cover.1786617159.git.anurag.mandal@intel.com>
@@ -60,157 +60,198 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-During reset recovery iavf_dev_start() might fail (typically -EIO
-from VIRTCHNL_OP_CONFIG_VSI_QUEUES) because the PF VSI is not yet
-active, leaving the VF down and requiring manual intervention
-to recover.
+On a link-down or impending PF reset, in-flight Tx descriptors
+were left pending when the queues were torn down, which could
+trigger Malicious Driver Detection (MDD) events and
+leak descriptors.
 
-Added a start_pending flag: when device start fails during recovery,
-defer it instead of erroring out and resume it from newly added
-iavf_resume_pending_start() on the next link-up event, so the
-VF comes back automatically.
-
-Fixes: 105d9fcefbee ("net/iavf: fix race condition on link status change")
+Added iavf_dev_tx_drain() to let already-posted Tx bursts
+complete and flush the rings within a bounded budget,
+and call it on link-down and reset-impending events
+before teardown, preventing MDD events and descriptor leaks.
+The drain selects the cleanup routine that matches the
+active Tx path.
 
 Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
 ---
- drivers/net/intel/iavf/iavf.h        |  2 +
- drivers/net/intel/iavf/iavf_ethdev.c | 61 ++++++++++++++++++++++++++--
- drivers/net/intel/iavf/iavf_vchnl.c  |  3 ++
- 3 files changed, 62 insertions(+), 4 deletions(-)
+ drivers/net/intel/iavf/iavf_rxtx.c  | 100 ++++++++++++++++++++++++++++
+ drivers/net/intel/iavf/iavf_rxtx.h  |   6 ++
+ drivers/net/intel/iavf/iavf_vchnl.c |   6 ++
+ 3 files changed, 112 insertions(+)
 
-diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
-index 293adaf6c9..e76c3bb410 100644
---- a/drivers/net/intel/iavf/iavf.h
-+++ b/drivers/net/intel/iavf/iavf.h
-@@ -293,6 +293,7 @@ struct iavf_info {
- 	bool in_reset_recovery;
- 	bool reset_pending;
- 	bool pf_reset_in_progress;
-+	bool start_pending;
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
+index 4f2ffe6188..e08f0ef253 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.c
++++ b/drivers/net/intel/iavf/iavf_rxtx.c
+@@ -32,6 +32,7 @@
  
- 	uint32_t ptp_caps;
- 	rte_spinlock_t phc_time_aq_lock;
-@@ -533,4 +534,5 @@ void iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset);
- void iavf_set_no_poll(struct iavf_adapter *adapter, bool link_change);
- bool is_iavf_supported(struct rte_eth_dev *dev);
- void iavf_hash_uninit(struct iavf_adapter *ad);
-+void iavf_resume_pending_start(struct rte_eth_dev *dev);
- #endif /* _IAVF_ETHDEV_H_ */
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index e475b64971..ebe0183a77 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -1093,6 +1093,9 @@ iavf_dev_start(struct rte_eth_dev *dev)
+ #include "iavf.h"
+ #include "iavf_rxtx.h"
++#include "iavf_rxtx_vec_common.h"
+ #include "iavf_ipsec_crypto.h"
+ #include "rte_pmd_iavf.h"
  
- 	iavf_phc_sync_alarm_start(dev);
- 
-+	/* An explicit start supersedes any pending deferred start */
-+	vf->start_pending = false;
-+
- 	return 0;
- 
- error:
-@@ -1131,6 +1134,9 @@ iavf_dev_stop(struct rte_eth_dev *dev)
- 	adapter->stopped = 1;
- 	dev->data->dev_started = 0;
- 
-+	/* An explicit stop cancels any pending deferred start */
-+	vf->start_pending = false;
-+
- 	return 0;
+@@ -4025,6 +4026,105 @@ iavf_tx_done_cleanup_full(struct ci_tx_queue *txq,
+ 	return (int)pkt_cnt;
  }
  
-@@ -3425,6 +3431,7 @@ iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset)
- 
- 	vf->in_reset_recovery = true;
- 	vf->pf_reset_in_progress = !vf_initiated_reset;
-+	vf->start_pending = false;
- 	iavf_set_no_poll(adapter, false);
- 
- 	/* Call the pre reset callback */
-@@ -3445,10 +3452,17 @@ iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset)
- 	if (!vf_initiated_reset || restart_device) {
- 		/* start the device */
- 		ret = iavf_dev_start(dev);
--		if (ret)
--			goto error;
--
--		dev->data->dev_started = 1;
-+		if (ret == 0) {
-+			dev->data->dev_started = 1;
-+		} else {
-+			PMD_DRV_LOG(WARNING,
-+				    "dev_start failed during reset recovery (rc=%d);"
-+				    "deferring to next link-up event",
-+				    ret);
-+			vf->start_pending = true;
-+			dev->data->dev_started = 0;
-+			ret = 0;
-+		}
- 	}
- 
- 	/* Restore settings after the reset */
-@@ -3662,6 +3676,45 @@ bool is_iavf_supported(struct rte_eth_dev *dev)
- 	return !strcmp(dev->device->driver->name, rte_iavf_pmd.driver.name);
- }
- 
-+void
-+iavf_resume_pending_start(struct rte_eth_dev *dev)
++/*
++ * Reclaim completed Tx descriptors for a single queue using the cleanup
++ * routine that matches the active Tx path.
++ * Returns true if any descriptors were reclaimed.
++ */
++static bool
++iavf_tx_drain_cleanup(struct ci_tx_queue *txq,
++		      enum iavf_tx_func_type tx_func_type)
 +{
-+	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(dev->data->dev_private);
-+	int ret;
-+
-+	if (!vf->start_pending)
-+		return;
-+
-+	if (vf->vf_reset || vf->in_reset_recovery)
-+		return;
-+
-+	/*
-+	 * If the application has already (re)started the port itself, the
-+	 * deferred start is stale, the application's action is honoured
-+	 * and resume pending is dropped to avoid starting an
-+	 * already-running port a second time.
-+	 */
-+	if (dev->data->dev_started) {
-+		vf->start_pending = false;
-+		return;
-+	}
-+
-+	if (!vf->link_up)
-+		return;
-+
-+	vf->start_pending = false;
-+	PMD_DRV_LOG(DEBUG, "PF link back up; resuming deferred dev_start");
-+	ret = iavf_dev_start(dev);
-+	if (ret == 0) {
-+		dev->data->dev_started = 1;
-+	} else {
-+		PMD_DRV_LOG(ERR,
-+			    "deferred dev_start failed (ret=%d); will retry on next link-up",
-+			    ret);
-+		vf->start_pending = true;
++	switch (tx_func_type) {
++	case IAVF_TX_AVX2_CTX:
++	case IAVF_TX_AVX2_CTX_OFFLOAD:
++	case IAVF_TX_AVX512_CTX:
++	case IAVF_TX_AVX512_CTX_OFFLOAD:
++		return ci_tx_free_bufs_vec(txq, iavf_tx_desc_done, true) != 0;
++	case IAVF_TX_NEON:
++	case IAVF_TX_AVX2:
++	case IAVF_TX_AVX2_OFFLOAD:
++	case IAVF_TX_AVX512:
++	case IAVF_TX_AVX512_OFFLOAD:
++		return ci_tx_free_bufs_vec(txq, iavf_tx_desc_done, false) != 0;
++	case IAVF_TX_DEFAULT:
++	default:
++		return ci_tx_xmit_cleanup(txq) == 0;
 +	}
 +}
 +
- RTE_PMD_REGISTER_PCI(net_iavf, rte_iavf_pmd);
- RTE_PMD_REGISTER_PCI_TABLE(net_iavf, pci_id_iavf_map);
- RTE_PMD_REGISTER_KMOD_DEP(net_iavf, "* igb_uio | vfio-pci");
++/*
++ * iavf_dev_tx_drain - drain in-flight Tx descriptors after a link-down or
++ * impending PF reset event.
++ */
++void
++iavf_dev_tx_drain(struct rte_eth_dev *dev)
++{
++	struct iavf_adapter *adapter =
++		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
++	enum iavf_tx_func_type tx_func_type = adapter->tx_func_type;
++	struct ci_tx_queue *txq;
++	uint64_t hz, deadline;
++	int idle_iters = 0;
++	uint16_t qid;
++
++	/*
++	 * Allow any Tx burst already in flight on a data-plane lcore to
++	 * write its remaining descriptors and notify. After
++	 * this window, the no_poll gate set by the caller is observed at
++	 * the next burst-entry and no new descriptors will be posted.
++	 */
++	rte_delay_us_block(IAVF_TX_DRAIN_SETTLE_US);
++
++	hz = rte_get_timer_hz();
++	deadline = rte_get_timer_cycles() +
++		(hz * IAVF_TX_DRAIN_TIMEOUT_US) / 1000000ULL;
++
++	while (rte_get_timer_cycles() < deadline) {
++		bool any_pending = false;
++		bool any_progress = false;
++
++		for (qid = 0; qid < dev->data->nb_tx_queues; qid++) {
++			txq = dev->data->tx_queues[qid];
++			if (txq == NULL ||
++			    dev->data->tx_queue_state[qid] !=
++				RTE_ETH_QUEUE_STATE_STARTED)
++				continue;
++
++			/*
++			 * nb_tx_free == nb_tx_desc - 1 means the ring is
++			 * empty (one descriptor is always reserved).
++			 */
++			if (txq->nb_tx_free >= txq->nb_tx_desc - 1)
++				continue;
++
++			any_pending = true;
++			if (iavf_tx_drain_cleanup(txq, tx_func_type))
++				any_progress = true;
++		}
++
++		if (!any_pending)
++			return;
++
++		if (any_progress) {
++			idle_iters = 0;
++		} else if (++idle_iters >= IAVF_TX_DRAIN_IDLE_MAX) {
++			/*
++			 * HW has not advanced the RS-bit write-back for
++			 * several polling intervals; either the queue is
++			 * quiescent except for the sub-rs_thresh tail
++			 * (which we cannot observe here) or HW is no
++			 * longer fetching. Further polling is unlikely to
++			 * help, and the PF teardown path has its own
++			 * grace period for the remainder.
++			 */
++			break;
++		}
++
++		rte_delay_us_block(IAVF_TX_DRAIN_POLL_US);
++	}
++}
++
+ int
+ iavf_dev_tx_done_cleanup(void *txq, uint32_t free_cnt)
+ {
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.h b/drivers/net/intel/iavf/iavf_rxtx.h
+index 22ea415f44..4088bc421c 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.h
++++ b/drivers/net/intel/iavf/iavf_rxtx.h
+@@ -506,6 +506,11 @@ enum iavf_tx_ctx_desc_tunnel_l4_tunnel_type {
+ /* Valid indicator bit for the time_stamp_low field */
+ #define IAVF_RX_FLX_DESC_TS_VALID	(0x1UL)
+ 
++#define IAVF_TX_DRAIN_TIMEOUT_US	10000	/* total drain budget: 10 ms */
++#define IAVF_TX_DRAIN_SETTLE_US		100	/* let in-flight burst land  */
++#define IAVF_TX_DRAIN_POLL_US		50	/* poll interval             */
++#define IAVF_TX_DRAIN_IDLE_MAX		20	/* ~1 ms of no RS write-back */
++
+ int iavf_dev_rx_queue_setup(struct rte_eth_dev *dev,
+ 			   uint16_t queue_idx,
+ 			   uint16_t nb_desc,
+@@ -641,6 +646,7 @@ void iavf_set_default_ptype_table(struct rte_eth_dev *dev);
+ void iavf_rx_queue_release_mbufs_vec(struct ci_rx_queue *rxq);
+ void iavf_rx_queue_release_mbufs_neon(struct ci_rx_queue *rxq);
+ enum rte_vect_max_simd iavf_get_max_simd_bitwidth(void);
++void iavf_dev_tx_drain(struct rte_eth_dev *dev);
+ 
+ static inline
+ void iavf_dump_rx_descriptor(struct ci_rx_queue *rxq,
 diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
-index 23e4107743..b6864d8d69 100644
+index b6864d8d69..83c2789cda 100644
 --- a/drivers/net/intel/iavf/iavf_vchnl.c
 +++ b/drivers/net/intel/iavf/iavf_vchnl.c
-@@ -271,6 +271,9 @@ iavf_handle_link_change_event(struct rte_eth_dev *dev,
+@@ -269,6 +269,8 @@ iavf_handle_link_change_event(struct rte_eth_dev *dev,
+ 		iavf_set_no_poll(adapter, true);
+ 		PMD_DRV_LOG(DEBUG, "VF no poll turned %s",
  			    adapter->no_poll ? "on" : "off");
++		if (!vf->link_up)
++			iavf_dev_tx_drain(dev);
  	}
  
-+	/* Retry a dev_start deferred by reset recovery, before the LSC post. */
-+	iavf_resume_pending_start(dev);
-+
- 	iavf_dev_event_post(dev, RTE_ETH_EVENT_INTR_LSC, NULL, 0);
- 
- 	PMD_DRV_LOG(INFO, "Link status update:%s",
+ 	/* Retry a dev_start deferred by reset recovery, before the LSC post. */
+@@ -330,6 +332,8 @@ iavf_read_msg_from_pf(struct iavf_adapter *adapter, uint16_t buf_len,
+ 			if (!vf->vf_reset) {
+ 				vf->vf_reset = true;
+ 				iavf_set_no_poll(adapter, false);
++				if (adapter->devargs.no_poll_on_link_down)
++					iavf_dev_tx_drain(vf->eth_dev);
+ 				iavf_dev_event_post(vf->eth_dev,
+ 					RTE_ETH_EVENT_INTR_RESET,
+ 					NULL, 0);
+@@ -568,6 +572,8 @@ iavf_handle_pf_event_msg(struct rte_eth_dev *dev, uint8_t *msg,
+ 		if (!vf->vf_reset) {
+ 			vf->vf_reset = true;
+ 			iavf_set_no_poll(adapter, false);
++			if (adapter->devargs.no_poll_on_link_down)
++				iavf_dev_tx_drain(dev);
+ 			iavf_dev_event_post(dev, RTE_ETH_EVENT_INTR_RESET,
+ 				NULL, 0);
+ 		}
 -- 
 2.34.1
 
