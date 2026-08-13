@@ -2,52 +2,143 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C96B3C5CFDB
-	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Aug 2026 07:47:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57CCDC5CFDB
+	for <dpdk-dev@archiver.kernel.org>; Thu, 13 Aug 2026 10:18:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8FBC44026A;
-	Thu, 13 Aug 2026 09:47:23 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
- by mails.dpdk.org (Postfix) with ESMTP id 0F9804014F
- for <dev@dpdk.org>; Thu, 13 Aug 2026 09:47:21 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 234234026A;
+	Thu, 13 Aug 2026 12:18:01 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 502CD4014F
+ for <dev@dpdk.org>; Thu, 13 Aug 2026 12:17:59 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1786607242; x=1818143242;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=ovmFlb5jM7G6mB7IYlwuIyEPomKK/iwoxpue6G0V83k=;
- b=IKTEYmhlcRjM9JqN7xWmaMgpKFXThP99t75WbLqdg03cMn6+fMEtIgAX
- B3heHsZWsPoEpRwilLxwlLHvCsyV6rV+carrWavoy/X4FCAW0BwZziuVc
- 0meHDMGhulejdRBdwrUsAppSs8E9u2BTVAeIbU10uqsAGLzTHqUPOt04o
- h80QA8TzHxwPbZ7yPd/Mvq2ZM9lT3Va22+lweX8SGbybf6OJUn9TCJUXf
- W+UuXxqACGk0dUjo4Grb4B3RptbC792BA7jEejPBQukn+FNzDANO0c/Xh
- eDH5EPacutZcqwYxFMJ99s6+pCx2l0jyKdYviTLFgHti2fFpHhHSAEDjk A==;
-X-CSE-ConnectionGUID: wWNvJC6hRcOHRm/65liPuA==
-X-CSE-MsgGUID: yYZxczafSYa5wDT+aLxttQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11873"; a="86293781"
-X-IronPort-AV: E=Sophos;i="6.25,220,1779174000"; d="scan'208";a="86293781"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
- by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Aug 2026 00:47:21 -0700
-X-CSE-ConnectionGUID: 7ItO5WQZTYuRSVc0kuCoSw==
-X-CSE-MsgGUID: QOZKbtUeTRGfa9PMTCY7Hw==
+ t=1786616280; x=1818152280;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=9gl0OnuHx23t65oTHQMfR8M1eiekSWD0ppXxkP5Uia4=;
+ b=cHZr1Jo3Gyd3K4DCKreHTYYaXrn8nmuX3xdYu3q1N54KPtFhBmxqVpUB
+ T87QeEHna0X5CGTtOsoaOhCnHGnNaEzjYKc53p2wgbHNdSAeccxGWxOUA
+ 5mzW8IetW/eDggHjK1KDEmjkNSKqFKMGPl+55N96W/sfBco3pWaMBwbRh
+ uNG06HbnjIFxiuzrkqgLlJgEwv5LGZSKmXBGAD/R52ktfhxxyH/XkHR1F
+ 7Xj8MXUY5gz2RGqccOq1wtz36AcNWrNRgcTb+kXnV9R38Sw0o6pX55wcb
+ cHOd0eiPxvOsI3E3pOjZxBfcIrypQDVcFlk43KJcXzZuEAY8F1+LlOiAg A==;
+X-CSE-ConnectionGUID: 1oHtevXiQ9WLOh/Rj+Ltqw==
+X-CSE-MsgGUID: Yv/kkEvlRZCAVO6OIhO8fw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11873"; a="91061065"
+X-IronPort-AV: E=Sophos;i="6.25,221,1779174000"; d="scan'208";a="91061065"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+ by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 13 Aug 2026 03:17:58 -0700
+X-CSE-ConnectionGUID: d8A6bA3nTpiKY+i37xKgsw==
+X-CSE-MsgGUID: fW5ViGLtR7e7v/SpIpT2EA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,220,1779174000"; d="scan'208";a="264447383"
-Received: from pae-14.iind.intel.com ([10.190.203.153])
- by orviesa009.jf.intel.com with ESMTP; 13 Aug 2026 00:47:18 -0700
-From: Anurag Mandal <anurag.mandal@intel.com>
-To: dev@dpdk.org
-Cc: stephen@networkplumber.org, mb@smartsharesystems.com,
- vladimir.medvedkin@intel.com, Anurag Mandal <anurag.mandal@intel.com>
-Subject: [PATCH v2] fib, rib: fix name prefixes
-Date: Thu, 13 Aug 2026 07:46:26 +0000
-Message-Id: <20260813074626.1134195-1-anurag.mandal@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260812110258.1128632-1-anurag.mandal@intel.com>
-References: <20260812110258.1128632-1-anurag.mandal@intel.com>
+X-IronPort-AV: E=Sophos;i="6.25,221,1779174000"; d="scan'208";a="259653463"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+ by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 13 Aug 2026 03:17:57 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Thu, 13 Aug 2026 03:17:57 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45 via Frontend Transport; Thu, 13 Aug 2026 03:17:57 -0700
+Received: from CO1PR03CU002.outbound.protection.outlook.com (52.101.46.57) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Thu, 13 Aug 2026 03:17:57 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JRYIILs8nMvYf3HNXsXp40yNDnFsHft9LeRGdXw8aaRi3QjZe/S6ze3KIQLl0Yql7t6Lydi/K801TC1SJs4sVWw6pxsFBdZar8fquWYrWTA5RjB4N3emj6ELDkdQDfM2juD//gLmhh7q2jFik3CpSzBXb5qUs1TsZsxjB21WKoWiHC7r6xjLW/SbG/YjdGWjY143TXf6gC4bnkY/LwaUT6hLmROOWnkSFgUO9ucYZs47CRyHiimSvIgtGnE2ezQIwRZ6184Ik1nsvyccVGCnDkRLCpWjGatvEAOtWmgiJRwcQB6LPBglFBRqbIGBYva6hn9b+yBOxjv6njQKDR5MGA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=i5kowh84LF4CuBVYts8Eu/fag0+F01eAj/W1eAyu2gs=;
+ b=dQGUYgbeigG+PFL3HupkvMCfNDNXCKu0zwXUYcHbrBioF5tndj633El8amF5L8JrEaycoVpumU6Qn9PK12HStvCeMTslIPZHk4o3w02+J+FNDBMdesjmFiGsnuBqdpXSCCGml1Qw5xUMyZmnjHMDdtzQvrDurAp7gM28Ul3LpGLHgpKmS3i2Nw9aFCnh90sKCiSNNBBS4dOr5LHuQyUa7BX6JRCXWUVRoDFT8pwaEuvG6hrWSoglZhiO3PHCqj4Ms0niHGg7iN7GNWEx3o8AwkN0YjuMhLBY5IOTIjvFIaOaaSyrFHjChhAZf+b2qPyzsuy1ugmHSxK190zmkR4E0A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from IA3PR11MB9421.namprd11.prod.outlook.com (2603:10b6:208:578::9)
+ by MN7PR11MB765673.namprd11.prod.outlook.com (2603:10b6:208:5f2::17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.315.15; Thu, 13 Aug
+ 2026 10:17:53 +0000
+Received: from IA3PR11MB9421.namprd11.prod.outlook.com
+ ([fe80::1b70:3d93:d363:155f]) by IA3PR11MB9421.namprd11.prod.outlook.com
+ ([fe80::1b70:3d93:d363:155f%4]) with mapi id 15.21.0315.014; Thu, 13 Aug 2026
+ 10:17:53 +0000
+Date: Thu, 13 Aug 2026 11:17:49 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: <dev@dpdk.org>, Anatoly Burakov <anatoly.burakov@intel.com>, "Vladimir
+ Medvedkin" <vladimir.medvedkin@intel.com>
+Subject: Re: [RFC 08/32] net/intel: replace rte_smp_rmb
+Message-ID: <an2ZzTKocmpHwfIS@bricha3-mobl1.ger.corp.intel.com>
+References: <20260729175715.165120-1-stephen@networkplumber.org>
+ <20260729175715.165120-9-stephen@networkplumber.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20260729175715.165120-9-stephen@networkplumber.org>
+X-ClientProxiedBy: DUZP191CA0006.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:10:4f9::16) To IA3PR11MB9421.namprd11.prod.outlook.com
+ (2603:10b6:208:578::9)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA3PR11MB9421:EE_|MN7PR11MB765673:EE_
+X-MS-Office365-Filtering-Correlation-Id: 52de786f-6b4c-45d7-22e5-08def9242307
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|366016|1800799024|23010399003|18002099003|22082099003|4143699003|11063799006|56012099006|10067099003;
+X-Microsoft-Antispam-Message-Info: TJGPJ0ten/SzEnemyKlDlyiZFzufjYOT/X+iIMWzuG5lKGxJ0bI31SmrRNzp6tQo+k+D+EOsF0bgzdm3p78eMHPUTcoRNYcwcaOQNhgGAYQSafYAUv0K2mWZNEB1a1dWtALfDlP88OxxRlm7hGe+6kYk2TSQ/Hi0CKy8LEN2B+bIVJsOfc7UdsgMRQvyTqieKCo31nZTNy9cXR7S1jt2+f2FBRC0jgKqIsC9XnYbl3eOG4fT5oi/1ABkSldSTMkcs+vwn3hcg0wdmXiePKUsAUssk61r898v8IgFhg7oNfO1oGIVvB8+MVot28WihiyTuTf52SOF9MCVq3gxQvyp4zWkcvU34UAEBO+HmA9PU4kTo0MLeO4BN1djsLsmFVD/RIkuG85rv2TQYOgiA8Dh2vyvvlaDKsHDNBRH2ixli7/+Q4bEPg+kATMidezzwI1Dfh/XDkeb+08k9EuQUNn/ojOeDPcInCJAbOwzDmdHbiFOdqkfrigWoAFRHTSf0I7fgKo4PyALG5pttId7ab9cqnXbuet7Xe0VBc10M52Uptbd0Bs6YtwVQMR/DV69BpTIfdJfVgCdT26bh1ZPLaqePc9FOqC57P3I1+FH1NtW1pIBnH7hnpA+B2tnRYzNy9StD7mKPm+wYgP7aO3sfoV7ihPv5RbrXeW8U85/SiF+Cks=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:IA3PR11MB9421.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(366016)(1800799024)(23010399003)(18002099003)(22082099003)(4143699003)(11063799006)(56012099006)(10067099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Z8/Igoh90SN4e5TQIB5Pe0V2vGUG7aMKAbDhcwo3JZ9WdXK853zKgYLoDhqo?=
+ =?us-ascii?Q?bv47SCUsaNBUpc/QwUHPOp6ycmptGiz7GsoJ1SBUGwIKOJc0FZIzWZ6TTETk?=
+ =?us-ascii?Q?MueJRxWI575JRSzHOFcI2SepwUUzW8OxB0tUT3oZJchbLaM/T+mhnpSHknht?=
+ =?us-ascii?Q?2XfokyrFr7jztFpi3CRk4R9mTwbFhEd9H6qicXoGpmRWzH9M8EXIRC3pM5rg?=
+ =?us-ascii?Q?FAklDilu7AO4VyZigiAazDSCBNGzKDEW1pMvTmn93NTX0rV8zfixBhD4A91S?=
+ =?us-ascii?Q?XjTfh0r7sXeAN0b4TsGTKoqs7HaGj+GuD/fTBDrX/2tSWtVJnrreenkmnC+1?=
+ =?us-ascii?Q?plV2ltDWFPkYwdirflis+Sc1b+wSJAxtk2CWHyFSYxsjJ4poPB5y9rDMAcSV?=
+ =?us-ascii?Q?E0XCbl0ap7jCiiKqtW/Z2RFLZWvhZnqpnsOMvpxEO1mH873Dks4Q8Ub+zoJe?=
+ =?us-ascii?Q?hEheGzl6wLvJ5V095MWZJJ6szddvj9CDY/uHjQ/yffPlf9qRsVd+CGdBgvJy?=
+ =?us-ascii?Q?pgyVrauzEeYkgWCNKsjm5I+0CVxBmHyOA0DhsMW9mPiJK15GzTN7f3bPuJoc?=
+ =?us-ascii?Q?HYeoGLQetglvj79fp44xbd9BORyctZfmhzj8v4sBBOnT+eFB6VVApiFOlsPd?=
+ =?us-ascii?Q?lMGtXhN7l9RYsWuhGC4cZOEjd96H7H4C8OHV87dt6W6KXPifdHrCMXa0Xurm?=
+ =?us-ascii?Q?AlcI3oZMkvsY+mhE9GWL5wGLBIvr4Rus7+5XenUrLHzbcNayde5jvQOwA0F+?=
+ =?us-ascii?Q?gZCkylVFacKYoYCAzLhWCMw2685pBnxzsIqJKieP7zlwNJ4tDMYrNMaOcOwS?=
+ =?us-ascii?Q?LVcMj231O34aJ0LGQiSsAJVZvpKYP28ftvieSAWOdCeXBX34ggNTpvPrNq9N?=
+ =?us-ascii?Q?RHb8V8qlO25BVihe+RtSNQf8isNkePvl8zUylWYPXHzpqArqse3ibzEsebTm?=
+ =?us-ascii?Q?g6dlDhbF4j8RzvHdfoDq5ZrtLH1SvZlGJPFnOE4kxX1qtjCk5XjX3UKCY8FB?=
+ =?us-ascii?Q?lnM45mp2ncBcHKj98MFBRsodiInNx4ohKTkPA1QWWb25ZRb4jjkXFhEW2r5h?=
+ =?us-ascii?Q?DSZJ9C6WzGcX4HwNQSbRxAOcDKAPUJ7ua9KcJLXsI7ePIJSLmsYdV7kkuGB9?=
+ =?us-ascii?Q?c1Uad6zYpNYl3cYyVo2TWwa07n2CsCNAuqa83v9rAjHhN3AmOY15Gh8FjEUY?=
+ =?us-ascii?Q?lb2Tre/NzeakoUraciH9XqtIWAH4W09jBkcppRIOEOkt9Ico2pyp3q/UmomH?=
+ =?us-ascii?Q?D18puCAExyTfgwUIdLeRHuKeuSyl5p+imrOv9LSXUHcFHhx7/YcDHoT7EdNe?=
+ =?us-ascii?Q?gf1NtiyQ+VlSDGLMMB8jn5Nf4CxzQmjHzWjHxr5ThH0AbSdV72JA2DBxKqy8?=
+ =?us-ascii?Q?6HYwNA/8DL0O+TNxslEr+jyWlLzD5PVL3bwRmi9fggFn+9J0j1ORTaiaCq5O?=
+ =?us-ascii?Q?/nCUj/ZT/nAVvZBY+iDZPQOJ2++2a3f3ynP3sN++vR9FLWvzkehmNtWicrPf?=
+ =?us-ascii?Q?lRPV3KrE37R4bi/r0El5KwjY5gLZwiFRfhTpjkERtxNynxJlP55EeIRL7FKJ?=
+ =?us-ascii?Q?hGueJMXhAzRDqqTMty8EWLZvgsbT8KfgudnqRxSGTfRtQDGd6UnNULpAi/L4?=
+ =?us-ascii?Q?atLimuKtwtg+RKvOpYl2XmItAYRmHeE7BcXRhrpE7pHxZUlWyJaOaFqXJEs4?=
+ =?us-ascii?Q?JluEQC1PgP0gI8wMg2uYN2is98FL1ETuY/dzAbhHC4L1q9UCaaXqaZE76iH+?=
+ =?us-ascii?Q?N2r1H4h4H8C59/zxsEWvMHIMcYaYwr8=3D?=
+X-Exchange-RoutingPolicyChecked: Aa94qoYqpYzwISzBbB2PenCiY2CwGu8JAf46KWJbQib0jVOAm6vd8ZqcBIk9bc/qKL22L9pSd8GS1e7Nsz260er47VmpF0A0bOMHohy+rOIm0arzv58gdnmtMRKYsmltI2w5HMhKg/ubMulXM3n/2DoJnPKiGfMu7hiBVek6JnXqvSeHca+FLj5QVOZXufJe6xq6Fcke4R21fyClnntp98epnRtVrXZ7LMcXyKft5+xZpOZEaJ2f6t2dDSi2ANnU83+XJudn6+xiGyd/IYsjg7tRM2jjmreHUHaXPYXrYyRcCZCSVn8bBZK86f91M0gOfKBiTAudx7osXy0jDDY+xw==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 52de786f-6b4c-45d7-22e5-08def9242307
+X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB9421.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2026 10:17:53.7079 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8X7XmVXyMTBxJxrYjnCEQOriP403BL8i2SgHC/05GAEKPkZ4A9XoZKu4RsRUwXeTqQqRG6Vq2lugnGekVaRiEdVvLjDcbk0G4US0gTCGQWs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN7PR11MB765673
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,648 +152,11 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The RIB library named the mempool holding its nodes "MP_<name>".
-That prefix is the one the mempool library itself prepends to
-the backing memzone, so the memzone ended up named
-"MP_MP_<name>" which is improper.
-
-The FIB library passed its own name unchanged to the underlying
-RIB and did not add a prefix to the RIB name.
-
-This patch makes name each object after its owner.
-The node mempool of a RIB is now "RIB_<name>" or "RIB6_<name>",
-and the RIB owned by a FIB is now "FIB_<name>" or "FIB6_<name>".
-
-A mempool name is limited to RTE_MEMPOOL_NAMESIZE, which is much
-shorter than RTE_RIB_NAMESIZE.
-The name was passed down silently and an oversized one surfaced
-as an opaque rte_mempool_create() failure, so check the derived
-name up front and return ENAMETOOLONG instead.
-As the prefixes above are added on top of the name, the new
-maximum length of a name is limited to the following:
-RIB : 21 characters
-RIB6: 20 characters
-FIB : 17 characters
-FIB6: 15 characters
-Hence, shortening  the names used by the graph nodes, the l3fwd
-example and the unit tests accordingly.
-
-Bugzilla ID: 1981 1982
-Fixes: 5a5793a5ffa2 ("rib: add RIB library")
-Fixes: f7e861e21c46 ("rib: support IPv6")
-Fixes: 39e927248416 ("fib: add FIB library")
-Fixes: 40d41a8a7b34 ("fib: support IPv6")
-
-Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
-Acked-by: Morten Brørup <mb@smartsharesystems.com>
----
-V2: Addressed Morten Brørup's review comments
-
- app/test/test_fib.c                    | 34 ++++++++++-----------
- app/test/test_fib6.c                   | 42 +++++++++++++-------------
- doc/guides/rel_notes/release_26_11.rst | 14 +++++++++
- examples/l3fwd/l3fwd_fib.c             |  4 +--
- lib/fib/rte_fib.c                      | 16 ++++++++--
- lib/fib/rte_fib6.c                     | 16 ++++++++--
- lib/node/ip4_lookup_fib.c              |  4 +--
- lib/node/ip6_lookup_fib.c              |  4 +--
- lib/rib/rte_rib.c                      | 14 +++++++--
- lib/rib/rte_rib6.c                     | 14 +++++++--
- 10 files changed, 108 insertions(+), 54 deletions(-)
-
-diff --git a/app/test/test_fib.c b/app/test/test_fib.c
-index bd73399d56..3f5bbb3061 100644
---- a/app/test/test_fib.c
-+++ b/app/test/test_fib.c
-@@ -49,24 +49,24 @@ test_create_invalid(void)
- 		"Call succeeded with invalid parameters\n");
- 
- 	/* rte_fib_create: config == NULL */
--	fib = rte_fib_create(__func__, SOCKET_ID_ANY, NULL);
-+	fib = rte_fib_create("test_create_inv", SOCKET_ID_ANY, NULL);
- 	RTE_TEST_ASSERT(fib == NULL,
- 		"Call succeeded with invalid parameters\n");
- 
- 	/* socket_id < -1 is invalid */
--	fib = rte_fib_create(__func__, -2, &config);
-+	fib = rte_fib_create("test_create_inv", -2, &config);
- 	RTE_TEST_ASSERT(fib == NULL,
- 		"Call succeeded with invalid parameters\n");
- 
- 	/* rte_fib_create: max_routes = 0 */
- 	config.max_routes = 0;
--	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib_create("test_create_inv", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib == NULL,
- 		"Call succeeded with invalid parameters\n");
- 	config.max_routes = MAX_ROUTES;
- 
- 	config.type = RTE_FIB_DIR24_8 + 1;
--	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib_create("test_create_inv", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib == NULL,
- 		"Call succeeded with invalid parameters\n");
- 
-@@ -74,13 +74,13 @@ test_create_invalid(void)
- 	config.dir24_8.num_tbl8 = MAX_TBL8;
- 
- 	config.dir24_8.nh_sz = RTE_FIB_DIR24_8_8B + 1;
--	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib_create("test_create_inv", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib == NULL,
- 		"Call succeeded with invalid parameters\n");
- 	config.dir24_8.nh_sz = RTE_FIB_DIR24_8_8B;
- 
- 	config.dir24_8.num_tbl8 = 0;
--	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib_create("test_create_inv", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib == NULL,
- 		"Call succeeded with invalid parameters\n");
- 
-@@ -104,7 +104,7 @@ test_multiple_create(void)
- 
- 	for (i = 0; i < 100; i++) {
- 		config.max_routes = MAX_ROUTES - i;
--		fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
-+		fib = rte_fib_create("test_mult_create", SOCKET_ID_ANY, &config);
- 		RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
- 		rte_fib_free(fib);
- 	}
-@@ -129,7 +129,7 @@ test_free_null(void)
- 	config.default_nh = 0;
- 	config.type = RTE_FIB_DUMMY;
- 
--	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib_create("test_free_null", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
- 
- 	rte_fib_free(fib);
-@@ -167,7 +167,7 @@ test_add_del_invalid(void)
- 		"Call succeeded with invalid parameters\n");
- 
- 	/*Create valid fib to use in rest of test. */
--	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib_create("test_add_del_inv", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
- 
- 	/* rte_fib_add: depth > RTE_FIB_MAXDEPTH */
-@@ -331,7 +331,7 @@ test_lookup(void)
- 	config.default_nh = def_nh;
- 	config.type = RTE_FIB_DUMMY;
- 
--	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib_create("test_lookup", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
- 	ret = check_fib(fib);
- 	RTE_TEST_ASSERT(ret == TEST_SUCCESS,
-@@ -342,7 +342,7 @@ test_lookup(void)
- 
- 	config.dir24_8.nh_sz = RTE_FIB_DIR24_8_1B;
- 	config.dir24_8.num_tbl8 = 127;
--	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib_create("test_lookup", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
- 	ret = check_fib(fib);
- 	RTE_TEST_ASSERT(ret == TEST_SUCCESS,
-@@ -351,7 +351,7 @@ test_lookup(void)
- 
- 	config.dir24_8.nh_sz = RTE_FIB_DIR24_8_2B;
- 	config.dir24_8.num_tbl8 = MAX_TBL8 - 1;
--	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib_create("test_lookup", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
- 	ret = check_fib(fib);
- 	RTE_TEST_ASSERT(ret == TEST_SUCCESS,
-@@ -360,7 +360,7 @@ test_lookup(void)
- 
- 	config.dir24_8.nh_sz = RTE_FIB_DIR24_8_4B;
- 	config.dir24_8.num_tbl8 = MAX_TBL8;
--	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib_create("test_lookup", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
- 	ret = check_fib(fib);
- 	RTE_TEST_ASSERT(ret == TEST_SUCCESS,
-@@ -369,7 +369,7 @@ test_lookup(void)
- 
- 	config.dir24_8.nh_sz = RTE_FIB_DIR24_8_8B;
- 	config.dir24_8.num_tbl8 = MAX_TBL8;
--	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib_create("test_lookup", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
- 	ret = check_fib(fib);
- 	RTE_TEST_ASSERT(ret == TEST_SUCCESS,
-@@ -401,7 +401,7 @@ test_invalid_rcu(void)
- 	config.rib_ext_sz = 0;
- 	config.default_nh = def_nh;
- 
--	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib_create("test_invalid_rcu", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
- 
- 	/* Create RCU QSBR variable */
-@@ -426,7 +426,7 @@ test_invalid_rcu(void)
- 	config.type = RTE_FIB_DIR24_8;
- 	config.dir24_8.nh_sz = RTE_FIB_DIR24_8_4B;
- 	config.dir24_8.num_tbl8 = MAX_TBL8;
--	fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib_create("test_invalid_rcu", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
- 
- 	/* Call rte_fib_rcu_qsbr_add without fib or config */
-@@ -532,7 +532,7 @@ test_fib_rcu_sync_rw(void)
- 	config.dir24_8.nh_sz = RTE_FIB_DIR24_8_4B;
- 	config.dir24_8.num_tbl8 = 1;
- 
--	g_fib = rte_fib_create(__func__, SOCKET_ID_ANY, &config);
-+	g_fib = rte_fib_create("test_rcu_sync_rw", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(g_fib != NULL, "Failed to create FIB\n");
- 
- 	/* Create RCU QSBR variable */
-diff --git a/app/test/test_fib6.c b/app/test/test_fib6.c
-index ad68645428..32937a7c99 100644
---- a/app/test/test_fib6.c
-+++ b/app/test/test_fib6.c
-@@ -56,24 +56,24 @@ test_create_invalid(void)
- 		"Call succeeded with invalid parameters\n");
- 
- 	/* rte_fib6_create: config == NULL */
--	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, NULL);
-+	fib = rte_fib6_create("test_create_inv", SOCKET_ID_ANY, NULL);
- 	RTE_TEST_ASSERT(fib == NULL,
- 		"Call succeeded with invalid parameters\n");
- 
- 	/* socket_id < -1 is invalid */
--	fib = rte_fib6_create(__func__, -2, &config);
-+	fib = rte_fib6_create("test_create_inv", -2, &config);
- 	RTE_TEST_ASSERT(fib == NULL,
- 		"Call succeeded with invalid parameters\n");
- 
- 	/* rte_fib6_create: max_routes = 0 */
- 	config.max_routes = 0;
--	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib6_create("test_create_inv", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib == NULL,
- 		"Call succeeded with invalid parameters\n");
- 	config.max_routes = MAX_ROUTES;
- 
- 	config.type = RTE_FIB6_TRIE + 1;
--	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib6_create("test_create_inv", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib == NULL,
- 		"Call succeeded with invalid parameters\n");
- 
-@@ -81,13 +81,13 @@ test_create_invalid(void)
- 	config.trie.num_tbl8 = MAX_TBL8;
- 
- 	config.trie.nh_sz = RTE_FIB6_TRIE_8B + 1;
--	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib6_create("test_create_inv", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib == NULL,
- 		"Call succeeded with invalid parameters\n");
- 	config.trie.nh_sz = RTE_FIB6_TRIE_8B;
- 
- 	config.trie.num_tbl8 = 0;
--	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib6_create("test_create_inv", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib == NULL,
- 		"Call succeeded with invalid parameters\n");
- 
-@@ -111,7 +111,7 @@ test_multiple_create(void)
- 
- 	for (i = 0; i < 100; i++) {
- 		config.max_routes = MAX_ROUTES - i;
--		fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
-+		fib = rte_fib6_create("test_mult_crt", SOCKET_ID_ANY, &config);
- 		RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
- 		rte_fib6_free(fib);
- 	}
-@@ -136,7 +136,7 @@ test_free_null(void)
- 	config.default_nh = 0;
- 	config.type = RTE_FIB6_DUMMY;
- 
--	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib6_create("test_free_null", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
- 
- 	rte_fib6_free(fib);
-@@ -175,7 +175,7 @@ test_add_del_invalid(void)
- 		"Call succeeded with invalid parameters\n");
- 
- 	/*Create valid fib to use in rest of test. */
--	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib6_create("test_adddel_inv", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
- 
- 	/* rte_fib6_add: depth > RTE_IPV6_MAX_DEPTH */
-@@ -356,7 +356,7 @@ test_lookup(void)
- 	config.default_nh = def_nh;
- 	config.type = RTE_FIB6_DUMMY;
- 
--	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib6_create("test_lookup", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
- 	ret = check_fib(fib);
- 	RTE_TEST_ASSERT(ret == TEST_SUCCESS,
-@@ -367,7 +367,7 @@ test_lookup(void)
- 
- 	config.trie.nh_sz = RTE_FIB6_TRIE_2B;
- 	config.trie.num_tbl8 = MAX_TBL8 - 1;
--	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib6_create("test_lookup", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
- 	ret = check_fib(fib);
- 	RTE_TEST_ASSERT(ret == TEST_SUCCESS,
-@@ -376,7 +376,7 @@ test_lookup(void)
- 
- 	config.trie.nh_sz = RTE_FIB6_TRIE_4B;
- 	config.trie.num_tbl8 = MAX_TBL8;
--	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib6_create("test_lookup", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
- 	ret = check_fib(fib);
- 	RTE_TEST_ASSERT(ret == TEST_SUCCESS,
-@@ -385,7 +385,7 @@ test_lookup(void)
- 
- 	config.trie.nh_sz = RTE_FIB6_TRIE_8B;
- 	config.trie.num_tbl8 = MAX_TBL8;
--	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib6_create("test_lookup", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
- 	ret = check_fib(fib);
- 	RTE_TEST_ASSERT(ret == TEST_SUCCESS,
-@@ -417,7 +417,7 @@ test_invalid_rcu(void)
- 	config.rib_ext_sz = 0;
- 	config.default_nh = def_nh;
- 
--	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib6_create("test_inval_rcu", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
- 
- 	/* Create RCU QSBR variable */
-@@ -442,7 +442,7 @@ test_invalid_rcu(void)
- 	config.type = RTE_FIB6_TRIE;
- 	config.trie.nh_sz = RTE_FIB6_TRIE_4B;
- 	config.trie.num_tbl8 = MAX_TBL8;
--	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib6_create("test_inval_rcu", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
- 
- 	/* Call rte_fib6_rcu_qsbr_add without fib or config */
-@@ -548,7 +548,7 @@ test_fib_rcu_sync_rw(void)
- 	config.trie.nh_sz = RTE_FIB6_TRIE_4B;
- 	config.trie.num_tbl8 = 1;
- 
--	g_fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
-+	g_fib = rte_fib6_create("test_rcu_sync", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(g_fib != NULL, "Failed to create FIB\n");
- 
- 	/* Create RCU QSBR variable */
-@@ -642,7 +642,7 @@ test_drift(void)
- 	config.trie.nh_sz = RTE_FIB6_TRIE_2B;
- 	config.trie.num_tbl8 = 256;
- 
--	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib6_create("test_drift", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
- 
- 	ret = rte_fib6_add(fib, &parent, 28, 0xa);
-@@ -706,7 +706,7 @@ test_drift_compression(void)
- 	config.trie.nh_sz = RTE_FIB6_TRIE_2B;
- 	config.trie.num_tbl8 = 256;
- 
--	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib6_create("test_drift_comp", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
- 
- 	/* Compressed: child shares the parent's nh, modify_dp is skipped */
-@@ -767,7 +767,7 @@ test_drift_multilevel(void)
- 	config.trie.nh_sz = RTE_FIB6_TRIE_2B;
- 	config.trie.num_tbl8 = 256;
- 
--	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib6_create("test_drift_ml", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
- 
- 	ret = rte_fib6_add(fib, &grand, 28, 1);
-@@ -831,7 +831,7 @@ test_drift_stress(void)
- 	config.trie.nh_sz = RTE_FIB6_TRIE_2B;
- 	config.trie.num_tbl8 = 256;
- 
--	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib6_create("test_drift_str", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
- 
- 	for (i = 0; i < 2000; i++) {
-@@ -902,7 +902,7 @@ test_drift_tight_pool(void)
- 	config.trie.nh_sz = RTE_FIB6_TRIE_2B;
- 	config.trie.num_tbl8 = 3;
- 
--	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
-+	fib = rte_fib6_create("test_drift_tp", SOCKET_ID_ANY, &config);
- 	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
- 
- 	ret = rte_fib6_add(fib, &parent, 28, 1);
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index c8cc86295d..67ad23eaa3 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -93,6 +93,20 @@ API Changes
-    Also, make sure to start the actual text at the margin.
-    =======================================================
- 
-+* rib: The node mempool created by ``rte_rib_create()`` and ``rte_rib6_create()``
-+  is now named ``RIB_<name>`` and ``RIB6_<name>`` instead of ``MP_<name>``.
-+
-+* fib: The RIB created by ``rte_fib_create()`` and ``rte_fib6_create()``
-+  is now named ``FIB_<name>`` and ``FIB6_<name>``.
-+
-+* rib, fib: The name of a RIB, RIB6, FIB or FIB6 is used to derive the name of
-+  its node mempool, which is bounded by ``RTE_MEMPOOL_NAMESIZE``.
-+  As the prefixes above are added on top of the name,the new maximum length of
-+  a name are the following:
-+  RIB  - 21 characters.
-+  RIB6 - 20 characters.
-+  FIB  - 17 characters.
-+  FIB6 - 15 characters.
- 
- ABI Changes
- -----------
-diff --git a/examples/l3fwd/l3fwd_fib.c b/examples/l3fwd/l3fwd_fib.c
-index 4fc6bf90d5..0ff5c2c6de 100644
---- a/examples/l3fwd/l3fwd_fib.c
-+++ b/examples/l3fwd/l3fwd_fib.c
-@@ -654,7 +654,7 @@ setup_fib(const int socketid)
- 	config_ipv4.default_nh = FIB_DEFAULT_HOP;
- 	config_ipv4.dir24_8.nh_sz = RTE_FIB_DIR24_8_4B;
- 	config_ipv4.dir24_8.num_tbl8 = (1 << 15);
--	snprintf(s, sizeof(s), "IPV4_L3FWD_FIB_%d", socketid);
-+	snprintf(s, sizeof(s), "L3FWD_FIB_%d", socketid);
- 	ipv4_l3fwd_fib_lookup_struct[socketid] =
- 			rte_fib_create(s, socketid, &config_ipv4);
- 	if (ipv4_l3fwd_fib_lookup_struct[socketid] == NULL)
-@@ -705,7 +705,7 @@ setup_fib(const int socketid)
- 	/* >8 End of setup fib. */
- 
- 	/* Create the fib IPv6 table. */
--	snprintf(s, sizeof(s), "IPV6_L3FWD_FIB_%d", socketid);
-+	snprintf(s, sizeof(s), "L3FWD_FIB6_%d", socketid);
- 
- 	config.type = RTE_FIB6_TRIE;
- 	config.max_routes = (1 << 16) - 1;
-diff --git a/lib/fib/rte_fib.c b/lib/fib/rte_fib.c
-index 184210f380..7a587820ad 100644
---- a/lib/fib/rte_fib.c
-+++ b/lib/fib/rte_fib.c
-@@ -37,6 +37,9 @@ EAL_REGISTER_TAILQ(rte_fib_tailq)
- #define FIB_RETURN_IF_TRUE(cond, retval)
- #endif
- 
-+/* Prefix used for the memory objects owned by a FIB. */
-+#define FIB_MEM_PREFIX		"FIB_"
-+
- struct rte_fib {
- 	char			name[RTE_FIB_NAMESIZE];
- 	enum rte_fib_type	type;	/**< Type of FIB struct */
-@@ -173,14 +176,21 @@ rte_fib_create(const char *name, int socket_id, struct rte_fib_conf *conf)
- 	rib_conf.ext_sz = conf->rib_ext_sz;
- 	rib_conf.max_nodes = conf->max_routes * 2;
- 
--	rib = rte_rib_create(name, socket_id, &rib_conf);
-+	/* Add FIB Prefix to its mempool name */
-+	ret = snprintf(mem_name, sizeof(mem_name), FIB_MEM_PREFIX "%s", name);
-+	if (ret < 0 || ret >= (int)sizeof(mem_name)) {
-+		FIB_LOG(ERR, "FIB name %s is too long", name);
-+		rte_errno = ENAMETOOLONG;
-+		return NULL;
-+	}
-+
-+	rib = rte_rib_create(mem_name, socket_id, &rib_conf);
- 	if (rib == NULL) {
- 		FIB_LOG(ERR,
--			"Can not allocate RIB %s", name);
-+			"Can not allocate RIB for FIB: %s", mem_name);
- 		return NULL;
- 	}
- 
--	snprintf(mem_name, sizeof(mem_name), "FIB_%s", name);
- 	fib_list = RTE_TAILQ_CAST(rte_fib_tailq.head, rte_fib_list);
- 
- 	rte_mcfg_tailq_write_lock();
-diff --git a/lib/fib/rte_fib6.c b/lib/fib/rte_fib6.c
-index 770becdb61..1a31ab09aa 100644
---- a/lib/fib/rte_fib6.c
-+++ b/lib/fib/rte_fib6.c
-@@ -37,6 +37,9 @@ EAL_REGISTER_TAILQ(rte_fib6_tailq)
- #define FIB6_RETURN_IF_TRUE(cond, retval)
- #endif
- 
-+/* Prefix used for the memory objects owned by a FIB6. */
-+#define FIB6_MEM_PREFIX		"FIB6_"
-+
- struct rte_fib6 {
- 	char			name[RTE_FIB6_NAMESIZE];
- 	enum rte_fib6_type	type;	/**< Type of FIB struct */
-@@ -172,14 +175,21 @@ rte_fib6_create(const char *name, int socket_id, struct rte_fib6_conf *conf)
- 	rib_conf.ext_sz = conf->rib_ext_sz;
- 	rib_conf.max_nodes = conf->max_routes * 2;
- 
--	rib = rte_rib6_create(name, socket_id, &rib_conf);
-+	/* Add FIB6 Prefix to its mempool name */
-+	ret = snprintf(mem_name, sizeof(mem_name), FIB6_MEM_PREFIX "%s", name);
-+	if (ret < 0 || ret >= (int)sizeof(mem_name)) {
-+		FIB_LOG(ERR, "FIB6 name %s is too long", name);
-+		rte_errno = ENAMETOOLONG;
-+		return NULL;
-+	}
-+
-+	rib = rte_rib6_create(mem_name, socket_id, &rib_conf);
- 	if (rib == NULL) {
- 		FIB_LOG(ERR,
--			"Can not allocate RIB %s", name);
-+			"Can not allocate RIB6 for FIB6 %s", mem_name);
- 		return NULL;
- 	}
- 
--	snprintf(mem_name, sizeof(mem_name), "FIB6_%s", name);
- 	fib_list = RTE_TAILQ_CAST(rte_fib6_tailq.head, rte_fib6_list);
- 
- 	rte_mcfg_tailq_write_lock();
-diff --git a/lib/node/ip4_lookup_fib.c b/lib/node/ip4_lookup_fib.c
-index 0857d889fc..750bf69255 100644
---- a/lib/node/ip4_lookup_fib.c
-+++ b/lib/node/ip4_lookup_fib.c
-@@ -205,7 +205,7 @@ rte_node_ip4_fib_create(int socket, struct rte_fib_conf *conf)
- 		return 0;
- 
- 	conf->default_nh = FIB_DEFAULT_NH;
--	snprintf(s, sizeof(s), "IPV4_LOOKUP_FIB_%d", socket);
-+	snprintf(s, sizeof(s), "IP4_FIB_%d", socket);
- 	nm->fib[socket] = rte_fib_create(s, socket, conf);
- 	if (nm->fib[socket] == NULL)
- 		return -rte_errno;
-@@ -266,7 +266,7 @@ setup_fib(int socket)
- 	conf.dir24_8.nh_sz = RTE_FIB_DIR24_8_4B;
- 	conf.dir24_8.num_tbl8 = FIB_DEFAULT_NUM_TBL8;
- 	conf.flags = 0;
--	snprintf(s, sizeof(s), "IPV4_LOOKUP_FIB_%d", socket);
-+	snprintf(s, sizeof(s), "IP4_FIB_%d", socket);
- 	nm->fib[socket] = rte_fib_create(s, socket, &conf);
- 	if (nm->fib[socket] == NULL)
- 		return -rte_errno;
-diff --git a/lib/node/ip6_lookup_fib.c b/lib/node/ip6_lookup_fib.c
-index 40c5c753df..f460838396 100644
---- a/lib/node/ip6_lookup_fib.c
-+++ b/lib/node/ip6_lookup_fib.c
-@@ -199,7 +199,7 @@ rte_node_ip6_fib_create(int socket, struct rte_fib6_conf *conf)
- 		return 0;
- 
- 	conf->default_nh = FIB6_DEFAULT_NH;
--	snprintf(s, sizeof(s), "IPV6_LOOKUP_FIB_%u", socket);
-+	snprintf(s, sizeof(s), "IP6_FIB_%u", socket);
- 	nm->fib6[socket] = rte_fib6_create(s, socket, conf);
- 	if (nm->fib6[socket] == NULL)
- 		return -rte_errno;
-@@ -257,7 +257,7 @@ setup_fib6(int socket)
- 	conf.rib_ext_sz = 0;
- 	conf.trie.nh_sz = RTE_FIB6_TRIE_4B;
- 	conf.trie.num_tbl8 = FIB6_DEFAULT_NUM_TBL8;
--	snprintf(s, sizeof(s), "IPV6_LOOKUP_FIB_%u", socket);
-+	snprintf(s, sizeof(s), "IP6_FIB_%u", socket);
- 	nm->fib6[socket] = rte_fib6_create(s, socket, &conf);
- 	if (nm->fib6[socket] == NULL)
- 		return -rte_errno;
-diff --git a/lib/rib/rte_rib.c b/lib/rib/rte_rib.c
-index 046db131ca..55802f0060 100644
---- a/lib/rib/rte_rib.c
-+++ b/lib/rib/rte_rib.c
-@@ -32,6 +32,8 @@ EAL_REGISTER_TAILQ(rte_rib_tailq)
- #define RIB_MAXDEPTH		32
- /* Maximum length of a RIB name. */
- #define RTE_RIB_NAMESIZE	64
-+/* Prefix used for the memory objects owned by a RIB. */
-+#define RIB_MEM_PREFIX		"RIB_"
- 
- struct rte_rib_node {
- 	struct rte_rib_node	*left;
-@@ -417,6 +419,7 @@ rte_rib_create(const char *name, int socket_id, const struct rte_rib_conf *conf)
- 	struct rte_tailq_entry *te;
- 	struct rte_rib_list *rib_list;
- 	struct rte_mempool *node_pool;
-+	int ret;
- 
- 	/* Check user arguments. */
- 	if (unlikely(name == NULL || conf == NULL || conf->max_nodes <= 0)) {
-@@ -424,7 +427,15 @@ rte_rib_create(const char *name, int socket_id, const struct rte_rib_conf *conf)
- 		return NULL;
- 	}
- 
--	snprintf(mem_name, sizeof(mem_name), "MP_%s", name);
-+	/* Add RIB Prefix to its node mempool name */
-+	ret = snprintf(mem_name, sizeof(mem_name), RIB_MEM_PREFIX "%s", name);
-+	if (unlikely(ret < 0 || ret >= (int)RTE_MEMPOOL_NAMESIZE)) {
-+		RIB_LOG(ERR, "RIB name %s is too long, limit is %zu characters",
-+			name, RTE_MEMPOOL_NAMESIZE - sizeof(RIB_MEM_PREFIX));
-+		rte_errno = ENAMETOOLONG;
-+		return NULL;
-+	}
-+
- 	node_pool = rte_mempool_create(mem_name, conf->max_nodes,
- 		sizeof(struct rte_rib_node) + conf->ext_sz, 0, 0,
- 		NULL, NULL, NULL, NULL, socket_id, 0);
-@@ -435,7 +446,6 @@ rte_rib_create(const char *name, int socket_id, const struct rte_rib_conf *conf)
- 		return NULL;
- 	}
- 
--	snprintf(mem_name, sizeof(mem_name), "RIB_%s", name);
- 	rib_list = RTE_TAILQ_CAST(rte_rib_tailq.head, rte_rib_list);
- 
- 	rte_mcfg_tailq_write_lock();
-diff --git a/lib/rib/rte_rib6.c b/lib/rib/rte_rib6.c
-index 918ddbdfd3..7d9a0ba36f 100644
---- a/lib/rib/rte_rib6.c
-+++ b/lib/rib/rte_rib6.c
-@@ -24,6 +24,8 @@
- #define RTE_RIB_VALID_NODE	1
- /* Maximum length of a RIB6 name. */
- #define RTE_RIB6_NAMESIZE	64
-+/* Prefix used for the memory objects owned by a RIB6. */
-+#define RIB6_MEM_PREFIX		"RIB6_"
- 
- TAILQ_HEAD(rte_rib6_list, rte_tailq_entry);
- static struct rte_tailq_elem rte_rib6_tailq = {
-@@ -480,6 +482,7 @@ rte_rib6_create(const char *name, int socket_id,
- 	struct rte_tailq_entry *te;
- 	struct rte_rib6_list *rib6_list;
- 	struct rte_mempool *node_pool;
-+	int ret;
- 
- 	/* Check user arguments. */
- 	if (unlikely(name == NULL || conf == NULL || conf->max_nodes <= 0)) {
-@@ -487,7 +490,15 @@ rte_rib6_create(const char *name, int socket_id,
- 		return NULL;
- 	}
- 
--	snprintf(mem_name, sizeof(mem_name), "MP_%s", name);
-+	/* Add RIB6 Prefix to its node mempool name */
-+	ret = snprintf(mem_name, sizeof(mem_name), RIB6_MEM_PREFIX "%s", name);
-+	if (unlikely(ret < 0 || ret >= (int)RTE_MEMPOOL_NAMESIZE)) {
-+		RIB_LOG(ERR, "RIB6 name %s is too long, limit is %zu characters",
-+			name, RTE_MEMPOOL_NAMESIZE - sizeof(RIB6_MEM_PREFIX));
-+		rte_errno = ENAMETOOLONG;
-+		return NULL;
-+	}
-+
- 	node_pool = rte_mempool_create(mem_name, conf->max_nodes,
- 		sizeof(struct rte_rib6_node) + conf->ext_sz, 0, 0,
- 		NULL, NULL, NULL, NULL, socket_id, 0);
-@@ -498,7 +509,6 @@ rte_rib6_create(const char *name, int socket_id,
- 		return NULL;
- 	}
- 
--	snprintf(mem_name, sizeof(mem_name), "RIB6_%s", name);
- 	rib6_list = RTE_TAILQ_CAST(rte_rib6_tailq.head, rte_rib6_list);
- 
- 	rte_mcfg_tailq_write_lock();
--- 
-2.34.1
+On Wed, Jul 29, 2026 at 10:54:01AM -0700, Stephen Hemminger wrote:
+> Replace deprecated rte_smp_rmb with equivalent
+> rte_atomic_thread_fence(rte_memory_order_acquire).
+> 
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> ---
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
