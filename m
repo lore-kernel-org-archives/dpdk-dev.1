@@ -2,70 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 707D5C5B572
-	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Aug 2026 20:20:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96C59C5CFC1
+	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Aug 2026 20:20:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DFED44028F;
-	Fri, 14 Aug 2026 22:20:01 +0200 (CEST)
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com
- [209.85.215.176])
- by mails.dpdk.org (Postfix) with ESMTP id 7901A4028D
- for <dev@dpdk.org>; Fri, 14 Aug 2026 22:20:00 +0200 (CEST)
-Received: by mail-pg1-f176.google.com with SMTP id
- 41be03b00d2f7-cc11a30a259so497501a12.3
- for <dev@dpdk.org>; Fri, 14 Aug 2026 13:20:00 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id A4B8440288;
+	Fri, 14 Aug 2026 22:20:05 +0200 (CEST)
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com
+ [209.85.215.175])
+ by mails.dpdk.org (Postfix) with ESMTP id DA7E7402DF
+ for <dev@dpdk.org>; Fri, 14 Aug 2026 22:20:03 +0200 (CEST)
+Received: by mail-pg1-f175.google.com with SMTP id
+ 41be03b00d2f7-cbed97fa26fso935562a12.0
+ for <dev@dpdk.org>; Fri, 14 Aug 2026 13:20:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786738799;
- x=1787343599; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786738803;
+ x=1787343603; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=gtBFUn4LVAbHzA850SWpOnoyY143F4d2DK6KtGi9H3g=;
- b=X0ApG/RuCX4lHt3UNqXbZWCrLO85nMXIKDxkNMlmVoxzDUQh5cnIzbjAMfP1NirZhB
- 63kw6COUY+AXPAMLpTywhKeBmzYnUoFxRBVWuAlq/7mEw3JEwgEffmTlzgzBuyoIk3qn
- YGYOmpU7CgMUf74jp8lU653BnuHv1YX9fOdhGjnylUhljakic7CrVNOOYukO93NftXuQ
- iBS7+bhqxHUJVIHpy/x6MIj8QnAY6fNzj1rUvAhzAOMWLhXPwgXLdlNdPei7/0uc2eGE
- 4VXuRx7J8pMZ9D24R5g3Iob3tk5XkQmi/7y9+BWTXw/wjxucxfG9Gf1p3L24jBtfeSC1
- OEfQ==
+ bh=EbS3+sjzFFKeOy2b9UxtL0PnguDIJr/SUVsbw7JV4f8=;
+ b=MbdKyJmJ+aNirLwKIjjb91L3UCY0XSZ1C3oHI6Uefwih5lQ+HoPpb1vyoHcEQNiRof
+ 6FuwdTZ+7GLS3Pebfo3tIq+rjrJhcDdbsVNH7cu7BGX+gRsCj6ce4VZrYs7pgHiOfb0/
+ uJFaV+vH6aiv1SjavDfYHP+z89yY5z/LMAUGrCIeVVKo/Xpp2CalLWPbmcvj0fWYy6Bt
+ a/iisdQUZYMsjryv8/G3ybwKLp0Ohjpc25A3uyRx9eglF3Hlyuz6suDfRBRGN8/mkAGn
+ UKZppF2B2EKTbzelQRHCp8J+IoIEYACZsjgfudWqvQiBIycmKoxwWU9uM/fBZtVI459c
+ l+Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786738799; x=1787343599;
+ d=1e100.net; s=20251104; t=1786738803; x=1787343603;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=gtBFUn4LVAbHzA850SWpOnoyY143F4d2DK6KtGi9H3g=;
- b=kifsoVgxo30dGP81FLZJjDWB2pr95ZhnluBIg41o7nVcDTYN8cW0CX8Tu6Zp+BCcFu
- //kYdXUnClq0INx5FuC8D4/m9RVWyfHX5YFpMILPvGoaALTZNjvRrc/myiLAslqlresZ
- PG6g7sHtjrYyr9N9PX0vstVYP4WK2nDyVCos7pkVPV8N/+W7yzef3oxfIbDdiPvsIyZg
- GInXWeAv516Y9EZ6ARjTXv8OhjYXcAlklpoiAo+XPk4ohOQZaxcTBuBvraB6XMZqIjJd
- AmEprMJ2SHLScu8COTAI7mKaXS0w77Pqif9tcvT8wRQJ5L1Q4fhyvKSYlmYbmm3jaxbw
- QbSQ==
-X-Gm-Message-State: AOJu0YzcQnh9rIOX5du6RT3xPtH/xgUGV8SM4VU3wXc4GUEvruE4pVdJ
- 9R16g8yE8llPv30ZUUoBwvwVGxyedj0R8izVk3QARVjCETnX+QiYA5pH2Q3wXnkntHSaen0D8F6
- X9BWF
-X-Gm-Gg: AR+sD13QMRIAecjB7RUvtYUZbx0Jy++KxavHtob6gnp+3ucp8dRiPVqPEyH2u5fRtUu
- smrq+tjMCAVkHimSWYRicrWbSEZer94TqsfzQa/l6TvFS40XYqJkqVVWD6BIFVNCB58neHv7bTN
- I8ZXgLgzpi1jK4/KHLE3KbnSX9MQi4pJex4ZH7/CHHVCqf06xlECZCPOD7tsSXnsao0t/lkaoXp
- HTduXJ/n9LnEi/ufI4m8z7HhHa/w8YWbIK/6Ae/bmMn/Ia5u359bD6X3P9kPcxmMW+Ay+fifpgV
- nt03QW95Ah/2n2yaBO40mRCTG2t3hH0fFnpsoSMUEPhySeF1jUUf1lOy6X2TmV/NwThx6JzfFyA
- hyThZNeF4Fy4RAAlBmrH7Wo5unrQjpzqeBYOsRjBj6C05vPf+Shrs6OMqFb2tFfTJFrd58Kr+ZE
- bOBrEVY8qfmZ67+4W8kJXf/i8yoc+mvbPr6Vf6/+wmmv5ipfibJSxa36R3CkLI8kmLnFHTMJmri
- tGT26tM2c8vj5aCtkGFUKoplag=
-X-Received: by 2002:a05:6a21:a4a:b0:3c3:9070:96b3 with SMTP id
- adf61e73a8af0-3cc71af165bmr10339182637.3.1786738799482; 
- Fri, 14 Aug 2026 13:19:59 -0700 (PDT)
+ bh=EbS3+sjzFFKeOy2b9UxtL0PnguDIJr/SUVsbw7JV4f8=;
+ b=QcKXM+kA9WPkWD/uhjwr37rP/6BMFtyxbJYcLtXTLVSqplidzxfEAN+Zeg6lFidpYy
+ ssql0sIbylHW394EV22JnIqZKZLWT8MRA8UfEc8bSbakSsS1kjcJbwS9BHPEvSyQhu/z
+ xjWLuDSSrjpEX2CJf1ZEj495Rqu5besMidZnt8NgTGkat6UvzKqhJYcxFMJY9TRciier
+ ck14X8sBhonbeQidYDUpyRPuA02EFR03Fbos/nraQHpaauaaYrpBFhGLBEk+1KJV6Lnv
+ RMofHs3NJUfu2F2ex3X7A9kDrqmLINW3WT7gk2GrtZA3gxyUXM4VkjJWltFCGvB/qYLh
+ NhDA==
+X-Gm-Message-State: AOJu0YzegziysMhjUjgc5dW7QsKHVF5fLX+9FJQ6215Yeh8TVNj0tLZe
+ 7v+3b6uO7gPUOSQ7h1O7aYK6TIbcZV0oLp9GGZMA8HK0FXEP8NcP6utVO5JsN9/QkD3cYiSkdyh
+ +FBFD
+X-Gm-Gg: AR+sD13ApiXI6/dQ3KwFL6CGxGjuFC4abqEH8hCzbi6dGqwmNQVl24X/+6RSoRDCX66
+ wePDSFF2HVFha/qWzssgagTfLSzK+C4aulogPneAvS32EldKCU/3HJV/4RTZn+XhR37v1vCVd4l
+ +7/FImx55G7zYC9Ty+vF9ZPwYLwdczAAS7rV9th887rrkKi9+YdocEHG/wJyGT/KbnUSiy7rI+p
+ S+66j9rHBYlKkUgc01hfE7eprtANa/loM4Q6qvpCU8654NeXsLcY8oGzF4NeAmxHXuc8Wr0qQf3
+ w4p815hAw8hNbAylh1HeBah6QijPEe6X96wmmhg7ZLWICDRlLAh/zbbzAYLdI8T6tXzF/u6vJKN
+ OYk6cRREEnYNpEtP7mcWsViw+mh017XFCE0gzyIdJh8FO588o68okSqHxk6F5XenpH3/RDYv19m
+ OnVk/o67Z+mTSNI187yAy8WoOd5e2Yt7EjpFVuK8wDec4nyvt6Gx5EoWDQJuChyGQvQo0V/ik8E
+ vke/f0C8DKxMHgDMUWTgBQHe8v8xHpSXyxniwo=
+X-Received: by 2002:a17:90b:5445:b0:380:8bb9:aba9 with SMTP id
+ 98e67ed59e1d1-3931f450eb6mr12439732a91.3.1786738803002; 
+ Fri, 14 Aug 2026 13:20:03 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-141388bd5a7sm15553695c88.15.2026.08.14.13.19.56
+ a92af1059eb24-141388bd5a7sm15553695c88.15.2026.08.14.13.20.00
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 14 Aug 2026 13:19:59 -0700 (PDT)
+ Fri, 14 Aug 2026 13:20:02 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Aman Singh <aman.deep.singh@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v4 02/16] app/testpmd: remove leftover set qmap
-Date: Fri, 14 Aug 2026 12:45:58 -0700
-Message-ID: <20260814194757.329424-3-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Hyong Youb Kim <hyonkim@cisco.com>, John Daley <johndale@cisco.com>
+Subject: [PATCH v4 03/16] net/enic: remove unneeded ops initialization
+Date: Fri, 14 Aug 2026 12:45:59 -0700
+Message-ID: <20260814194757.329424-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260814194757.329424-1-stephen@networkplumber.org>
 References: <20260530161151.873199-1-stephen@networkplumber.org>
@@ -85,73 +84,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The function set_qmap was removed in 25.11 release but
-the prototype was still there.
-
-Also, remove leftover help text.
-
-Fixes: 2863cbd9ee6d ("ethdev: deprecate queue stats mapping functions")
-Cc: stable@dpdk.org
+Better to just let compiler initialize fields to NULL since then
+if fields change that driver doesn't use, the driver source
+will not need to be changed.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Hyong Youb Kim <hyonkim@cisco.com>
 ---
- app/test-pmd/cmdline.c                      |  6 ------
- app/test-pmd/testpmd.h                      |  2 --
- doc/guides/testpmd_app_ug/testpmd_funcs.rst | 11 -----------
- 3 files changed, 19 deletions(-)
+ drivers/net/enic/enic_ethdev.c | 11 -----------
+ 1 file changed, 11 deletions(-)
 
-diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-index 10ee7c5179..d299edb88e 100644
---- a/app/test-pmd/cmdline.c
-+++ b/app/test-pmd/cmdline.c
-@@ -581,12 +581,6 @@ static void cmd_help_long_parsed(void *parsed_result,
- 			"set port (port_id) rxq (queue_id) avail_thresh (0..99)>\n "
- 			"    set available descriptors threshold for Rx queue\n\n"
- 
--			"set stat_qmap (tx|rx) (port_id) (queue_id) (qmapping)\n"
--			"    Set statistics mapping (qmapping 0..15) for RX/TX"
--			" queue on port.\n"
--			"    e.g., 'set stat_qmap rx 0 2 5' sets rx queue 2"
--			" on port 0 to mapping 5.\n\n"
--
- 			"set xstats-hide-zero on|off\n"
- 			"    Set the option to hide the zero values"
- 			" for xstats display.\n"
-diff --git a/app/test-pmd/testpmd.h b/app/test-pmd/testpmd.h
-index 083171853c..b5643e74f5 100644
---- a/app/test-pmd/testpmd.h
-+++ b/app/test-pmd/testpmd.h
-@@ -1158,8 +1158,6 @@ void tx_qinq_set(portid_t port_id, uint16_t vlan_tci, uint16_t vlan_tci_outer);
- void tx_vlan_reset(portid_t port_id);
- void tx_vlan_pvid_set(portid_t port_id, uint16_t vlan_id, int on);
- 
--void set_qmap(portid_t port_id, uint8_t is_rx, uint16_t queue_id, uint8_t map_value);
--
- void set_xstats_hide_zero(uint8_t on_off);
- void set_xstats_show_state(uint8_t on_off);
- void set_xstats_hide_disabled(uint8_t on_off);
-diff --git a/doc/guides/testpmd_app_ug/testpmd_funcs.rst b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-index e65376df54..30cac0ad8c 100644
---- a/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-+++ b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-@@ -1554,17 +1554,6 @@ Set available descriptors threshold for a specific Rx queue of port::
- 
- Use 0 value to disable the threshold and corresponding event.
- 
--set stat_qmap
--~~~~~~~~~~~~~
--
--Set statistics mapping (qmapping 0..15) for RX/TX queue on port::
--
--   testpmd> set stat_qmap (tx|rx) (port_id) (queue_id) (qmapping)
--
--For example, to set rx queue 2 on port 0 to mapping 5::
--
--   testpmd>set stat_qmap rx 0 2 5
--
- set xstats-hide-zero
- ~~~~~~~~~~~~~~~~~~~~
- 
+diff --git a/drivers/net/enic/enic_ethdev.c b/drivers/net/enic/enic_ethdev.c
+index 2e5cd186f9..648aa67a85 100644
+--- a/drivers/net/enic/enic_ethdev.c
++++ b/drivers/net/enic/enic_ethdev.c
+@@ -1119,8 +1119,6 @@ static const struct eth_dev_ops enicpmd_eth_dev_ops = {
+ 	.dev_configure        = enicpmd_dev_configure,
+ 	.dev_start            = enicpmd_dev_start,
+ 	.dev_stop             = enicpmd_dev_stop,
+-	.dev_set_link_up      = NULL,
+-	.dev_set_link_down    = NULL,
+ 	.dev_close            = enicpmd_dev_close,
+ 	.promiscuous_enable   = enicpmd_dev_promiscuous_enable,
+ 	.promiscuous_disable  = enicpmd_dev_promiscuous_disable,
+@@ -1129,14 +1127,10 @@ static const struct eth_dev_ops enicpmd_eth_dev_ops = {
+ 	.link_update          = enicpmd_dev_link_update,
+ 	.stats_get            = enicpmd_dev_stats_get,
+ 	.stats_reset          = enicpmd_dev_stats_reset,
+-	.queue_stats_mapping_set = NULL,
+ 	.dev_infos_get        = enicpmd_dev_info_get,
+ 	.dev_supported_ptypes_get = enicpmd_dev_supported_ptypes_get,
+ 	.mtu_set              = enicpmd_mtu_set,
+-	.vlan_filter_set      = NULL,
+-	.vlan_tpid_set        = NULL,
+ 	.vlan_offload_set     = enicpmd_vlan_offload_set,
+-	.vlan_strip_queue_set = NULL,
+ 	.rx_queue_start       = enicpmd_dev_rx_queue_start,
+ 	.rx_queue_stop        = enicpmd_dev_rx_queue_stop,
+ 	.tx_queue_start       = enicpmd_dev_tx_queue_start,
+@@ -1151,11 +1145,6 @@ static const struct eth_dev_ops enicpmd_eth_dev_ops = {
+ 	.txq_info_get         = enicpmd_dev_txq_info_get,
+ 	.rx_burst_mode_get    = enicpmd_dev_rx_burst_mode_get,
+ 	.tx_burst_mode_get    = enicpmd_dev_tx_burst_mode_get,
+-	.dev_led_on           = NULL,
+-	.dev_led_off          = NULL,
+-	.flow_ctrl_get        = NULL,
+-	.flow_ctrl_set        = NULL,
+-	.priority_flow_ctrl_set = NULL,
+ 	.mac_addr_add         = enicpmd_add_mac_addr,
+ 	.mac_addr_remove      = enicpmd_remove_mac_addr,
+ 	.mac_addr_set         = enicpmd_set_mac_addr,
 -- 
 2.53.0
 
