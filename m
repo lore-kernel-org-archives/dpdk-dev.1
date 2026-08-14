@@ -2,70 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2E17C5CFC1
-	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Aug 2026 20:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D88BC5CFC1
+	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Aug 2026 20:21:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 04D7E40616;
-	Fri, 14 Aug 2026 22:20:49 +0200 (CEST)
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com
- [209.85.216.48]) by mails.dpdk.org (Postfix) with ESMTP id EC7074014F
- for <dev@dpdk.org>; Fri, 14 Aug 2026 22:20:47 +0200 (CEST)
-Received: by mail-pj1-f48.google.com with SMTP id
- 98e67ed59e1d1-383cb94f742so1709683a91.3
- for <dev@dpdk.org>; Fri, 14 Aug 2026 13:20:47 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 51F274067C;
+	Fri, 14 Aug 2026 22:21:20 +0200 (CEST)
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com
+ [209.85.215.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 01E4440395
+ for <dev@dpdk.org>; Fri, 14 Aug 2026 22:21:18 +0200 (CEST)
+Received: by mail-pg1-f178.google.com with SMTP id
+ 41be03b00d2f7-ca12086c06eso1074315a12.0
+ for <dev@dpdk.org>; Fri, 14 Aug 2026 13:21:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786738847;
- x=1787343647; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786738878;
+ x=1787343678; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=IehSravqjWTjUhdjD95SSmcPASHMBFUi9+H9ZoDY/7A=;
- b=NPmCE27nC/VY6lkYeUt7M/Q4gYzddOjcu7dWGmJLGrbE80ZtHAxcJMCW3qH1RYtAaB
- CM/KsPypUAP/W6z0MPD1hBcpb/I1phKQhe0pG0nArWGZnjvl2ysMiNif0uXto+OkI5Hm
- n4f7zsry8/vQ3/CreMNygP6RlULjJY6WCnDKhWyqvdD9hK/OikX997NPUGVp3xdjFrSL
- ZvvQZ33cWYUdd56CEYFZ72472eekkW6dsAbvCKtrwJ864S5cRjXCWnsym6iah/d41VsX
- YmgeT6bqhQgTUM4hZYIVqR084K1Byw7n3v/EhK2YLgq0YP5JBJoWJL+Y9d+hBnLaWOkG
- gELQ==
+ bh=dF9i+55tKc/SovdqOqxuOBvl5cFWvNyAIAbUsbC5AmI=;
+ b=ELRnUht5+dWZUrRMOLBkxpEWR2E5Nr7wAaXaXfiRbSETuHo0SHOLxReeX61rSdKvDQ
+ yUrvh1e8cUlcSv/cAdhsqufDkxeyxfvqMbrqfCUVyU98GaBrXEveHm/3O5TpaHR9kS0l
+ X4LzSjEcTUJJlefBQjCFcMWNTo+PgRq7NUpaWdCAHF049FwNys7qKVeSnGIep3f5dZzD
+ e1N5swrk0YFG8HtoICtdQ2clQuE+atee6/ZeVZ5WKG6TWAJjwGp06Svpb5XGAk3UOHGe
+ nydbxUrcBIguCIDr2CzCEV1TUFKz4XTdEC0q1q0AYkZvI/VdScetaaHcp88LqkNaz7kA
+ 2+EA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786738847; x=1787343647;
+ d=1e100.net; s=20251104; t=1786738878; x=1787343678;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=IehSravqjWTjUhdjD95SSmcPASHMBFUi9+H9ZoDY/7A=;
- b=ek5VFJyU1Z+VG8NxXKBvHdiYqPoX9/7ouZZ2aAbJ03a5HTE3C9UqHoUynTxT808USN
- lMLQjztE/X1+TwCsNBWsjQ9+oqit1FNCzrkMNV2T+NYywdyWONEy7nvFLsmZuNhOUQTa
- /Vgt+yfxl1Nd5DWFrjck7QMUoVXzQRWob/Io2AbYkh+6RywA2Bv0dwqC3bGtjnBsDm1W
- fZsaM8s9ewcrlliXO8O8PlETuQA+wjxmwviaLOSHtuh+9+g2AI0aZFwlrR1IWVPZfkek
- AIjNEyFfeBfGjjSalt5WQtnAFULjhJTNFy2okoqOzgWhZWo4g78lMO3tpmeCv2dgAjjj
- 68xA==
-X-Gm-Message-State: AOJu0YwFXUwRBAIypDXzBsdTcsWdLDmhdpW6Daj8LK0kcjTUUqgnz6pM
- VyH1d4OLKe0nY6gFhzw1GgQMefjXETVUWf8RAgc70jsriYHPjgp7zndaY4l4ZnV62sYNGYDjVIE
- qWbdj
-X-Gm-Gg: AR+sD11e8d65sTCCmfE/+iqsT4rvL5i8G6j0OhH7uWcPN3jquiATDjWSar/xn9Efjfn
- z79um3TASTc57AZ31We0XM+fe3SFAWwMuKSQYlWRc4S006o72gUngAuxJwXBqbTI74ufwg5LIeo
- AoDbe+KYhZ7omTBtgPSVA8l7RynEXRSXa1RmaSpSxdMsYEf6Lm6VREJIFFyyRHAYA/3pMJ/F3JU
- UCTrL9ipHgK6+mNmRu2lUvDKiiFCmP9PwfsXif3LrZB4FMwbPssLNG/vXDgQCGKNdOnmsBhHDXI
- ppw2ECH5qxhHJOGGFRVBMcBIm3+5z8cGSTE2evubgYKdAC95KowxFbGqiqsiVhGCRqpKgef+cMO
- YJCoF2ZEcSDgO7bsnluYsRS1jyQ3uwKbnsfXmlYIcb7LiOr2BHIVNdQZLoIgOVFR/+bbsXUAQiF
- KaFKW0bqfup4mOomYoXWfZBnYG1DUEH3s2JaMoEm8c2PUx6jIYXLdplc9UF5PLnTBkPgcrpiKPb
- oSKMT67G2GjL16k+dzGjFmnRh8=
-X-Received: by 2002:a17:90b:498f:b0:38e:97f0:aa4b with SMTP id
- 98e67ed59e1d1-3933e5d333bmr9476012a91.13.1786738847090; 
- Fri, 14 Aug 2026 13:20:47 -0700 (PDT)
+ bh=dF9i+55tKc/SovdqOqxuOBvl5cFWvNyAIAbUsbC5AmI=;
+ b=imHDn4CFOBKJvVLM8F62FAMQkShGeIlM9f8PLoc2MSxR9zh6uQYUoE1jvf2Z+ZrPxu
+ sCMbzHDjCrAjpT6xVDioQPprlWJnesNcIuvyGdwHeX6OLDwPFazQNkbbsT0cl93f52/v
+ y3MTpR5QFSLeQC3+kVVT/PL03de8h9aPyMvjhrWyz3el1iVr+hLu1Nv1qGzqXE7CE6tR
+ 7oEszXAu01z8hg0nYPeTbdLLuuAG7wVE2YF29l+cj8cx7vGQ+zqX+9UglrXx35kwdm+t
+ 7kRhS5D9z8KOuIjqpsIJjV7naHeVFfaBIodPnkVaLHwGtGRnnRiHeja7S4sCle6OupQ9
+ oCQA==
+X-Gm-Message-State: AOJu0YxOoTZL8kJKaR/sYbkUqVvJL09YmWr7yDWWZ5eMnVDF/LOFafg/
+ jPEUNmlkiEXVllSD3yTxwnrC75ZYftqB4H/3xVwX1C/f3fjSDfZNzAZX1pPVUTpsY8PUhZvh4EL
+ xe8SS
+X-Gm-Gg: AR+sD13falC3oIZeweKoD7Xx8CGjaRZ0RmcTkTTSj9+sWx5imUeGGv/7BwyZ1LQqzSt
+ ol5NE5Wopdi8XqNPIwPiSu7sNVae1K4xlfitxrJKni5hQ20oMOhqwMHeuHQ2Sy1+TCLdpkLWzDR
+ tZdCpIHS9d/F4F1Mo1fQ4VsvkXLrz2kYW+uMR2PajJod+XDEIIe0siVlmJCttWzExkT8EYObPp7
+ KTAFo9H5hTPqDA/syKh2cuy4L9t9mi+Vv+V8UeL0twNS2bZaiIw56IPL+a593b6V0RjhVT7Ba2w
+ 4BeF73Zuyu57C6yi2F67kGdWGXk6dOk7Hx55xrKAvvWItA6/jFFAPrTv11xGV9904K2+UUCQ1jF
+ V9LPk/Ll6az2angvOdSFnyJWfyWZBvpuDNr+nBuCuLNI0mPXhjueE6KQtDojQ1yi2jyya4GfY4a
+ gc9ZYwxvJwI45WqVx2qpAXi23lfEHXFXSiA0mZpe3CyPax2IOLhg+qTLJJlgPFnRYjy6S2EB8c6
+ O+GsnNdvOkkGltvAnVPfjeB9zs=
+X-Received: by 2002:a05:6a21:33a2:b0:3c4:3321:4fe8 with SMTP id
+ adf61e73a8af0-3cc71be2ba0mr9162896637.14.1786738877981; 
+ Fri, 14 Aug 2026 13:21:17 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-141388bd5a7sm15553695c88.15.2026.08.14.13.20.42
+ a92af1059eb24-141388bd5a7sm15553695c88.15.2026.08.14.13.21.15
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 14 Aug 2026 13:20:46 -0700 (PDT)
+ Fri, 14 Aug 2026 13:21:17 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Renyong Wan <wanry@yunsilicon.com>, Na Na <nana@yunsilicon.com>,
- Rong Qian <qianr@yunsilicon.com>, Xiaoxiong Zhang <zhangxx@yunsilicon.com>,
- Dongwei Xu <xudw@yunsilicon.com>
-Subject: [PATCH v4 14/16] net/xsc: fix Tx errors added to Rx queue errors
-Date: Fri, 14 Aug 2026 12:46:10 -0700
-Message-ID: <20260814194757.329424-15-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v4 16/16] test/pmd_ring: test per-queue xstats
+Date: Fri, 14 Aug 2026 12:46:12 -0700
+Message-ID: <20260814194757.329424-17-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260814194757.329424-1-stephen@networkplumber.org>
 References: <20260530161151.873199-1-stephen@networkplumber.org>
@@ -85,32 +84,186 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-q_errors counts received packets dropped, and is reported as the
-rx_qN_errors xstat. The Rx loop fills it correctly, then the Tx loop
-adds the Tx error count, so rx_qN_errors reports both.
-
-Tx errors are already counted in oerrors, so drop the assignment.
-
-Fixes: c80ab1a551cc ("net/xsc: support basic statistics")
-Cc: stable@dpdk.org
+Add a test that per-queue xstats are reported for every configured
+queue, and only for those. Uses different Rx and Tx queue counts so
+that each direction is checked independently.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/xsc/xsc_ethdev.c | 1 -
- 1 file changed, 1 deletion(-)
+ app/test/test_pmd_ring.c | 145 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 145 insertions(+)
 
-diff --git a/drivers/net/xsc/xsc_ethdev.c b/drivers/net/xsc/xsc_ethdev.c
-index 39a67ff8cd..505f973d66 100644
---- a/drivers/net/xsc/xsc_ethdev.c
-+++ b/drivers/net/xsc/xsc_ethdev.c
-@@ -614,7 +614,6 @@ xsc_ethdev_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats,
- 		if (qstats != NULL && idx < RTE_ETHDEV_QUEUE_STAT_CNTRS) {
- 			qstats->q_opackets[idx] += txq->stats.tx_pkts;
- 			qstats->q_obytes[idx] += txq->stats.tx_bytes;
--			qstats->q_errors[idx] += txq->stats.tx_errors;
- 		}
- 		stats->opackets += txq->stats.tx_pkts;
- 		stats->obytes += txq->stats.tx_bytes;
+diff --git a/app/test/test_pmd_ring.c b/app/test/test_pmd_ring.c
+index cb08dcf1d9..1f245f5ad5 100644
+--- a/app/test/test_pmd_ring.c
++++ b/app/test/test_pmd_ring.c
+@@ -4,7 +4,10 @@
+ #include "test.h"
+ #include <string.h>
+ 
++#include <inttypes.h>
++#include <stdbool.h>
+ #include <stdio.h>
++#include <stdlib.h>
+ 
+ #include <rte_eth_ring.h>
+ #include <rte_ethdev.h>
+@@ -557,6 +560,147 @@ test_ethdev_configure_ports(void)
+ 	return TEST_SUCCESS;
+ }
+ 
++/*
++ * Per-queue xstats are added by ethdev for all configured queues.
++ * Use a port with different Rx and Tx queue counts to check that each
++ * direction is reported independently.
++ */
++#define QSTATS_NB_RXQ 3
++#define QSTATS_NB_TXQ 5
++#define QSTATS_NB_RINGS 5 /* RTE_MAX(QSTATS_NB_RXQ, QSTATS_NB_TXQ) */
++
++static int
++test_queue_xstats(void)
++{
++	struct rte_ring *qrings[QSTATS_NB_RINGS] = { };
++	struct rte_eth_xstat_name *names = NULL;
++	struct rte_eth_xstat *xstats = NULL;
++	struct rte_eth_conf null_conf;
++	unsigned int i, nb_names, found;
++	char expected[RTE_ETH_XSTATS_NAME_SIZE];
++	int port = -1, nb_xstats, ret = -1;
++	uint16_t q;
++
++	for (q = 0; q < QSTATS_NB_RINGS; q++) {
++		char name[RTE_RING_NAMESIZE];
++
++		snprintf(name, sizeof(name), "RQ%u", q);
++		qrings[q] = rte_ring_create(name, RING_SIZE, SOCKET0,
++				RING_F_SP_ENQ | RING_F_SC_DEQ);
++		if (qrings[q] == NULL) {
++			printf("rte_ring_create %s failed\n", name);
++			goto out;
++		}
++	}
++
++	port = rte_eth_from_rings("net_ringq", qrings, QSTATS_NB_RXQ,
++			qrings, QSTATS_NB_TXQ, SOCKET0);
++	if (port < 0) {
++		printf("failed to create port\n");
++		goto out;
++	}
++
++	memset(&null_conf, 0, sizeof(null_conf));
++	if (rte_eth_dev_configure(port, QSTATS_NB_RXQ, QSTATS_NB_TXQ,
++			&null_conf) < 0) {
++		printf("configure failed\n");
++		goto out;
++	}
++
++	for (q = 0; q < QSTATS_NB_RXQ; q++) {
++		if (rte_eth_rx_queue_setup(port, q, RING_SIZE, SOCKET0,
++				NULL, mp) < 0) {
++			printf("Rx queue %u setup failed\n", q);
++			goto out;
++		}
++	}
++	for (q = 0; q < QSTATS_NB_TXQ; q++) {
++		if (rte_eth_tx_queue_setup(port, q, RING_SIZE, SOCKET0,
++				NULL) < 0) {
++			printf("Tx queue %u setup failed\n", q);
++			goto out;
++		}
++	}
++
++	nb_xstats = rte_eth_xstats_get_names(port, NULL, 0);
++	if (nb_xstats <= 0) {
++		printf("no xstats reported\n");
++		goto out;
++	}
++
++	names = calloc(nb_xstats, sizeof(*names));
++	xstats = calloc(nb_xstats, sizeof(*xstats));
++	if (names == NULL || xstats == NULL) {
++		printf("out of memory\n");
++		goto out;
++	}
++
++	nb_names = rte_eth_xstats_get_names(port, names, nb_xstats);
++	if (nb_names != (unsigned int)nb_xstats) {
++		printf("got %u names, expected %d\n", nb_names, nb_xstats);
++		goto out;
++	}
++
++	if (rte_eth_xstats_get(port, xstats, nb_xstats) != nb_xstats) {
++		printf("xstats count does not match names count\n");
++		goto out;
++	}
++
++	/* No traffic has passed, so every counter must still be zero. */
++	for (i = 0; i < (unsigned int)nb_xstats; i++) {
++		if (xstats[i].value != 0) {
++			printf("xstat '%s' is %"PRIu64", expected 0\n",
++					names[xstats[i].id].name, xstats[i].value);
++			goto out;
++		}
++	}
++
++	/* Every configured queue must have its counters, in both directions. */
++	for (q = 0; q < QSTATS_NB_RXQ + QSTATS_NB_TXQ; q++) {
++		bool rx = q < QSTATS_NB_RXQ;
++
++		snprintf(expected, sizeof(expected), "%s_q%u_packets",
++				rx ? "rx" : "tx", rx ? q : q - QSTATS_NB_RXQ);
++
++		for (i = 0, found = 0; i < nb_names; i++)
++			if (strcmp(names[i].name, expected) == 0)
++				found++;
++
++		if (found != 1) {
++			printf("expected one '%s', got %u\n", expected, found);
++			goto out;
++		}
++	}
++
++	/* Queues beyond the configured count must not be reported. */
++	snprintf(expected, sizeof(expected), "rx_q%u_packets", QSTATS_NB_RXQ);
++	for (i = 0; i < nb_names; i++) {
++		if (strcmp(names[i].name, expected) == 0) {
++			printf("unexpected stat '%s'\n", expected);
++			goto out;
++		}
++	}
++
++	snprintf(expected, sizeof(expected), "tx_q%u_packets", QSTATS_NB_TXQ);
++	for (i = 0; i < nb_names; i++) {
++		if (strcmp(names[i].name, expected) == 0) {
++			printf("unexpected stat '%s'\n", expected);
++			goto out;
++		}
++	}
++
++	ret = TEST_SUCCESS;
++out:
++	free(names);
++	free(xstats);
++	if (port >= 0)
++		rte_eth_dev_close(port);
++	for (q = 0; q < QSTATS_NB_RINGS; q++)
++		rte_ring_free(qrings[q]);
++
++	return ret;
++}
++
+ static int
+ test_get_stats_for_port(void)
+ {
+@@ -581,6 +725,7 @@ unit_test_suite test_pmd_ring_suite  = {
+ 		TEST_CASE(test_send_basic_packets),
+ 		TEST_CASE(test_get_stats_for_port),
+ 		TEST_CASE(test_stats_reset_for_port),
++		TEST_CASE(test_queue_xstats),
+ 		TEST_CASE(test_pmd_ring_pair_create_attach),
+ 		TEST_CASE(test_command_line_ring_port),
+ 		TEST_CASES_END()
 -- 
 2.53.0
 
