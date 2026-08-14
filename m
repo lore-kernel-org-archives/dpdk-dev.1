@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C952DC5CFDB
-	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Aug 2026 12:56:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E817C5CFDB
+	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Aug 2026 12:56:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 95ED44068E;
-	Fri, 14 Aug 2026 14:55:53 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id CEE0640A71;
+	Fri, 14 Aug 2026 14:56:11 +0200 (CEST)
 Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id 09B18406B6;
- Fri, 14 Aug 2026 14:55:50 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 4D784402DF
+ for <dev@dpdk.org>; Fri, 14 Aug 2026 14:56:10 +0200 (CEST)
 Received: from localhost.localdomain (unknown [78.109.78.39])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id 3F8D7E0F53;
- Fri, 14 Aug 2026 16:55:49 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 3F8D7E0F53
+ by agw.arknetworks.am (Postfix) with ESMTPSA id 87F46E0ADB;
+ Fri, 14 Aug 2026 16:56:09 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 87F46E0ADB
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
- s=default; t=1786712149;
- bh=lQnUDhpgveXbEO6Ql/VOBRuxxcZyf+uffgUUKqgXYJU=;
+ s=default; t=1786712170;
+ bh=MvvlDNVZX1mcLiQGRTFADXw0D33ix8xvYcU0Czj1ZBo=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=eMH8CsPq6nig9/jq2sHitTsvi0v7j9YxYO1mj4oSR/ToxCZRA2rrLYks0JrPeHCV+
- sIqjM8pmilGOvCOBKjouF2mUWexBzlxJ0R/lhIBgkcbnsIhb2JRu8gQ6Qf+DMOo5FV
- GLVA8Tjjyj9tD9zj5Jhz7L624Ktn5pw6zCvMiBZcvNgiRzRzbycPdBhyFyVorlGzc/
- odsKE31R2P1a+XIW9S+mmfnvGvcK/oPd5Zos58WTMqWpVpOwEE38rHVB8guBtINaRo
- rIR2IChJ2aIf8b3pae4HxRlUyJt/g/JFrhcRVNY7/6vLQE9mEUQl03tZTt25NGA6pZ
- 9AQnmvfqRzj+Q==
+ b=lkCuRp4P42oJXiycvjJRnD8bNBuih9+z8R5g0plygvzlZLA+cwR9sIB8l7WRuKQWA
+ lMRdAV9KGv9KWUf0odbzC5CE64cHzCKESajogcQ1WE8WUycSd/WDSiJvqLD1o7cJ4n
+ pcYaybA2+jharkOoNFC21iqfmqgPhGzEYKVckiY5BvA9FlC7b159GTkQb9VPRiHFyQ
+ CGt+CKwkd3JbanJbjrd5qOYgvEptHjmDATz8sOrqvDPhsEvrhdv5TqVNQfIdaDd28z
+ 1Bh+qs5qT6jYG1DQ5qwcWdaydry4T+XeQt9kr/u7yWblmgBlKwgigetH1ljzHx7g4+
+ r6tFjKGWdyymQ==
 From: Ivan Malov <ivan.malov@arknetworks.am>
 To: dev@dpdk.org
 Cc: Andy Moreton <andy.moreton@amd.com>,
@@ -34,15 +34,14 @@ Cc: Andy Moreton <andy.moreton@amd.com>,
  Roman Zhukov <Roman.Zhukov@arknetworks.am>,
  Pieter Jansen van Vuuren <pieter.jansen-van-vuuren@amd.com>,
  Stephen Hemminger <stephen@networkplumber.org>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, stable@dpdk.org
-Subject: [PATCH v3 3/3] common/sfc_efx/base: fix reading advertised autoneg
- ability
-Date: Fri, 14 Aug 2026 16:55:45 +0400
-Message-ID: <20260814125545.13343-4-ivan.malov@arknetworks.am>
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: [PATCH v3 0/3] common/sfc_efx/base: add VADAPTER statistics for
+ Medford4
+Date: Fri, 14 Aug 2026 16:56:05 +0400
+Message-ID: <20260814125608.13358-1-ivan.malov@arknetworks.am>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260814125545.13343-1-ivan.malov@arknetworks.am>
+In-Reply-To: <20260811174821.8930-1-ivan.malov@arknetworks.am>
 References: <20260811174821.8930-1-ivan.malov@arknetworks.am>
- <20260814125545.13343-1-ivan.malov@arknetworks.am>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -58,80 +57,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The issue is that when the user disables auto-negotiation by removing
-the capability bit from the 'advertised mask' (set method) and then
-reads the resulting capabilities, which involves querying MCDI, the
-bit reappears in the mask irrespective of the user's intent.
+This series adds support for per-VF (VADAPTER) MAC
+statistics on Medford4 in the libefx base layer.
 
-Fix this by remembering the user's intent before any link-state queries.
+The first patch selectively updates the MCDI headers, adding
+new definitions needed by the subsequent patches.
 
-Depends-on: series-38976 ("common/sfc_efx/base: fix code analysis issues")
-Fixes: 2a5cf77e6de8 ("common/sfc_efx/base: provide PHY link get method on Medford4")
-Fixes: 06f569de6c06 ("common/sfc_efx/base: decode netport link state on probe path")
-Cc: stable@dpdk.org
+The second patch introduces netport VADAPTER statistics IDs,
+which identify the per-VF counter set returned by the NIC.
 
-Suggested-by: Andy Moreton <andy.moreton@amd.com>
-Signed-off-by: Ivan Malov <ivan.malov@arknetworks.am>
-Reviewed-by: Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>
-Reviewed-by: Andy Moreton <andy.moreton@amd.com>
----
- drivers/common/sfc_efx/base/efx_np.c       | 11 +++++------
- drivers/common/sfc_efx/base/medford4_phy.c |  5 ++++-
- 2 files changed, 9 insertions(+), 7 deletions(-)
+The third patch switches the netport statistics call to use
+GET_NETPORT_STATISTICS_V2, passing the EVB port handle so
+that the correct per-VF counters are retrieved.
 
-diff --git a/drivers/common/sfc_efx/base/efx_np.c b/drivers/common/sfc_efx/base/efx_np.c
-index 06cb33e39b..6dba75f23d 100644
---- a/drivers/common/sfc_efx/base/efx_np.c
-+++ b/drivers/common/sfc_efx/base/efx_np.c
-@@ -436,9 +436,6 @@ efx_np_link_state(
- 	    MCDI_OUT2(req, const uint8_t, LINK_STATE_OUT_ADVERTISED_ABILITIES),
- 	    &lsp->enls_adv_cap_mask);
- 
--	if (lsp->enls_an_supported != B_FALSE)
--		lsp->enls_adv_cap_mask |= 1U << EFX_PHY_CAP_AN;
--
- 	efx_np_cap_hw_data_to_sw_mask(
- 	    MCDI_OUT2(req, const uint8_t,
- 		    LINK_STATE_OUT_LINK_PARTNER_ABILITIES),
-@@ -1030,11 +1027,13 @@ efx_np_attach(
- 	if (rc != 0)
- 		goto fail3;
- 
--	if (ls.enls_an_supported != B_FALSE)
--		epp->ep_phy_cap_mask |= 1U << EFX_PHY_CAP_AN;
--
- 	epp->ep_adv_cap_mask = ls.enls_adv_cap_mask;
- 
-+	if (ls.enls_an_supported != B_FALSE) {
-+		epp->ep_adv_cap_mask |= 1U << EFX_PHY_CAP_AN;
-+		epp->ep_phy_cap_mask |= 1U << EFX_PHY_CAP_AN;
-+	}
-+
- #if EFSYS_OPT_LOOPBACK
- 	efx_np_assign_loopback_props(enp);
- #endif /* EFSYS_OPT_LOOPBACK */
-diff --git a/drivers/common/sfc_efx/base/medford4_phy.c b/drivers/common/sfc_efx/base/medford4_phy.c
-index 7b456c9b8a..17aa068041 100644
---- a/drivers/common/sfc_efx/base/medford4_phy.c
-+++ b/drivers/common/sfc_efx/base/medford4_phy.c
-@@ -34,13 +34,16 @@ medford4_phy_get_link(
- 	efx_np_handle_t nph = enp->en_port.ep_np_handle;
- 	efx_np_link_state_t ls;
- 	efx_np_mac_state_t ms;
-+	uint32_t preserve_an;
- 	efx_rc_t rc;
- 
-+	preserve_an = enp->en_port.ep_adv_cap_mask & (1U << EFX_PHY_CAP_AN);
-+
- 	rc = efx_np_link_state(enp, nph, &ls);
- 	if (rc != 0)
- 		goto fail1;
- 
--	elsp->epls.epls_adv_cap_mask = ls.enls_adv_cap_mask;
-+	elsp->epls.epls_adv_cap_mask = ls.enls_adv_cap_mask | preserve_an;
- 	elsp->epls.epls_lp_cap_mask = ls.enls_lp_cap_mask;
- 	elsp->epls.epls_lane_count = ls.enls_lane_count;
- 	elsp->els_loopback = ls.enls_loopback;
+
+v3:
+
+- addressed https://mails.dpdk.org/archives/dev/2026-August/343074.html
+  -- patch 3/3: documented why V2 is used unconditionally
+
+
+v2:
+
+- note for the future AI reviews: apply this on top of
+  the 'net/sfc: miscellaneous bug fixes' series
+
+- v1 review notes do not seem to point at factual defects
+
+
+
+Andy Moreton (2):
+  common/sfc_efx/base: add support for VADAPTER statistics IDs
+  common/sfc_efx/base: switch netport stats to use EVB port ID
+
+Ivan Malov (1):
+  common/sfc_efx/base: update MCDI headers
+
+ drivers/common/sfc_efx/base/efx_impl.h      |   3 +-
+ drivers/common/sfc_efx/base/efx_mcdi.c      |   2 +-
+ drivers/common/sfc_efx/base/efx_np.c        |  60 +++-
+ drivers/common/sfc_efx/base/efx_regs_mcdi.h | 313 +++++++++++++++++++-
+ drivers/common/sfc_efx/base/medford4_mac.c  |  12 +-
+ 5 files changed, 373 insertions(+), 17 deletions(-)
+
 -- 
 2.47.3
 
