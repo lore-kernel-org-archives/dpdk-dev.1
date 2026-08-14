@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7745AC5CFDB
-	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Aug 2026 12:57:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 630F8C5CFDB
+	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Aug 2026 12:57:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6552540687;
-	Fri, 14 Aug 2026 14:56:28 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 611F940B95;
+	Fri, 14 Aug 2026 14:56:29 +0200 (CEST)
 Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id C6E75402AC
- for <dev@dpdk.org>; Fri, 14 Aug 2026 14:56:26 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 8FFE94028D
+ for <dev@dpdk.org>; Fri, 14 Aug 2026 14:56:27 +0200 (CEST)
 Received: from localhost.localdomain (unknown [78.109.78.39])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id 193F7E0AD0;
+ by agw.arknetworks.am (Postfix) with ESMTPSA id D832AE0ADB;
  Fri, 14 Aug 2026 16:56:26 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 193F7E0AD0
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am D832AE0ADB
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
- s=default; t=1786712186;
- bh=MoN1nkomH8820ZMyDYkTwJOhGOKdQBaNzfmu4sVlbO8=;
+ s=default; t=1786712187;
+ bh=shpB+sYdwP959siTtsTf8tU0YrnugcyAhRv9zfFbW/4=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=u1pDQaelrdRsah+DutQMclGaJf5NoHmXVB2rn7nqi6GSa84emfden6VS2zm2PVRdl
- A0sLW8ylAfGUBHcUpnpwMXDgwI88WTb5xOQZu84AJ5JpO0iSG0cZSvFS620w8JqLo4
- FkDf1tgZ87QMzDpRn9XUPQCcRMYZMaps6bhc60cPFMw+nUdaDg7kfnvHhqi5YaTkUq
- 1F4WEQ9m+oIXQ5TaFlOR48oip4E36mjopo+bWDodtuLiEEk+pAWUILBWc9GVfs8ypi
- GIOrlHuF4huRStsvRJZ/QWyGZGD2eAx7v/lxDsvRXV27TYyrnct065+fmDdAk84fTE
- y1xxX6Bg4PMDQ==
+ b=AJ/6gjlLITfeL5TtBv1bwgMggWprPhzzDgw/WJDu8KajKmjJ0za7csGHX62e9tMJ1
+ 4LIzJzhQaO0OmKsrt0npnRWlM+bQzWVQSEHrv60119yAnEGdSUK9/VAyb1NwFfU3TJ
+ JS72ydtozxQ1xZQ9QweRsZ+4VoHZHYWA4lODclc7kzsFoWt+4Bg+kYTiWf5Z2ec2B/
+ jk6+hGOo+0eA9w+43yccnMlUcnYZ7X9tJRHVRNcGrRrVKgYr723cip6AfEZ7fwbmiL
+ gfLsBVd1LLr/55PU4xU9gD9UBtov3p0pn/Oz4AmEsrMVXLRihOYNfbtDmsfDFzKxop
+ pCWm93CMIutrA==
 From: Ivan Malov <ivan.malov@arknetworks.am>
 To: dev@dpdk.org
 Cc: Andy Moreton <andy.moreton@amd.com>,
@@ -35,12 +35,13 @@ Cc: Andy Moreton <andy.moreton@amd.com>,
  Pieter Jansen van Vuuren <pieter.jansen-van-vuuren@amd.com>,
  Stephen Hemminger <stephen@networkplumber.org>,
  Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: [PATCH v3 0/6] common/sfc_efx/base: add Medford4 VF support
-Date: Fri, 14 Aug 2026 16:56:18 +0400
-Message-ID: <20260814125624.13372-1-ivan.malov@arknetworks.am>
+Subject: [PATCH v3 1/6] common/sfc_efx/base: let Medford4 PF manage VFs
+Date: Fri, 14 Aug 2026 16:56:19 +0400
+Message-ID: <20260814125624.13372-2-ivan.malov@arknetworks.am>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260811174821.8930-1-ivan.malov@arknetworks.am>
+In-Reply-To: <20260814125624.13372-1-ivan.malov@arknetworks.am>
 References: <20260811174821.8930-1-ivan.malov@arknetworks.am>
+ <20260814125624.13372-1-ivan.malov@arknetworks.am>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -56,53 +57,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This series enables DPDK to use the sfc driver
-on a Medford4 VF alongside the PF.
+When the user binds the PF to 'vfio-pci', enables SR-IOV
+and instantiates a VF, looking to attach both the PF and
+the VF to DPDK, the DPDK driver has to instantiate the
+EVB switch on the PF. Wire the necessary methods into
+the Medford4 EVB implementation in libefx.
 
-The first patch wires EVB switch operations into the Medford4
-libefx implementation, allowing the PF to manage VFs.
+Signed-off-by: Ivan Malov <ivan.malov@arknetworks.am>
+Reviewed-by: Andy Moreton <andy.moreton@amd.com>
+---
+ drivers/common/sfc_efx/base/efx_evb.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Starting with MCFW 1.4.0.8, VFs may use the netport MCDI for basic port
-configuration, though several operations remain restricted. The
-remaining four patches address each restriction: dummy fixed
-port properties, suppressed event subscription, denied FCS
-and flow control, and ENOTSUP for periodic MAC stats DMA.
-
-This series depends on the VADAPTER statistics series.
-
-
-v3:
-
-- addressed https://mails.dpdk.org/archives/dev/2026-August/343075.html
-  -- patch 6/6: dropped erroneous VADAPTER mention from
-     the commit message; added SR-IOV VF to sfc_efx.rst
-
-
-v2:
-
-- note for the future AI reviews: apply this on top of
-  the 'common/sfc_efx/base: add VADAPTER statistics for Medford4' series
-
-- addressed https://mails.dpdk.org/archives/dev/2026-August/343075.html
-  -- fixed reporting of the factual link speed when running on VFs
-  -- remaining notes do not seem to point at factual defects
-
-
-
-Ivan Malov (6):
-  common/sfc_efx/base: let Medford4 PF manage VFs
-  common/sfc_efx/base: indicate dummy netport properties on VF
-  common/sfc_efx/base: skip netport event subscriptions on VFs
-  common/sfc_efx/base: deny tuning FCS and flow control to VFs
-  common/sfc_efx/base: deny periodic MAC stats delivery to VFs
-  doc: announce VF support of AMD Solarflare X45xx family NICs
-
- doc/guides/nics/sfc_efx.rst            |  2 +
- doc/guides/rel_notes/release_26_11.rst |  4 ++
- drivers/common/sfc_efx/base/efx_evb.c  |  6 ++
- drivers/common/sfc_efx/base/efx_np.c   | 90 ++++++++++++++++++++++----
- 4 files changed, 90 insertions(+), 12 deletions(-)
-
+diff --git a/drivers/common/sfc_efx/base/efx_evb.c b/drivers/common/sfc_efx/base/efx_evb.c
+index 5933c5d883..79db77c635 100644
+--- a/drivers/common/sfc_efx/base/efx_evb.c
++++ b/drivers/common/sfc_efx/base/efx_evb.c
+@@ -107,6 +107,12 @@ efx_evb_init(
+ 		break;
+ #endif /* EFSYS_OPT_RIVERHEAD */
+ 
++#if EFSYS_OPT_MEDFORD4
++	case EFX_FAMILY_MEDFORD4:
++		eeop = &__efx_evb_ef10_ops;
++		break;
++#endif /* EFSYS_OPT_MEDFORD4 */
++
+ 	default:
+ 		EFSYS_ASSERT(0);
+ 		rc = ENOTSUP;
 -- 
 2.47.3
 
