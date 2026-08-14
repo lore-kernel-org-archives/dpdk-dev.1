@@ -2,31 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CECEC5CFDB
-	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Aug 2026 12:55:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E817AC5CFC1
+	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Aug 2026 12:55:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D5EED40664;
-	Fri, 14 Aug 2026 14:54:52 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E715E4067C;
+	Fri, 14 Aug 2026 14:54:53 +0200 (CEST)
 Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id 92B21402D4;
+ by mails.dpdk.org (Postfix) with ESMTP id 952BE402E1;
  Fri, 14 Aug 2026 14:54:50 +0200 (CEST)
 Received: from localhost.localdomain (unknown [78.109.78.39])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id E3F5FE0F0C;
- Fri, 14 Aug 2026 16:54:48 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am E3F5FE0F0C
+ by agw.arknetworks.am (Postfix) with ESMTPSA id C4D68E0F53;
+ Fri, 14 Aug 2026 16:54:49 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am C4D68E0F53
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
- s=default; t=1786712089;
- bh=b7eO4qX2M3e6r7NmSdoevvgl0x4OGt8TIrif8PrT1R0=;
+ s=default; t=1786712090;
+ bh=Bj1DqJquVlbzROzal6vfXv12z0ha9KMPE2AxNmAhIMo=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=q59d86y60aui1vbWtEa8aNZNUNd1/2TRnJVQEH9NgG7zHtcu1cXZ9xuMff1U69Sno
- WNL/fp2dpHydy8KLvJx3d8TIDCF8nPvzqmgDcYr7WoABl10qaLVAXzjOgxDrFWXFtx
- vZvxSIgp+bSviIj/rGjxnrnsFU1+CEbcJ97vJM9cjR2mvWezUeuWPB+kU84jPAbuQr
- 8hQV39O9fxp9FilBvGVeFPQtrN2iZmi5kFR8X8bs2VEek6dj5nrok3A5OqavAXCh2j
- hfKGJYrQAxVucmXLo5VPYbdY8JJPu+c+JcMP7dadCU3m3fx+gP4ZZcqKci4jCjCErT
- pmAlddoVNek3g==
+ b=S2VNU3Z8ANMNkx9iPsXeVCGziB1flU69m1z5jr+jkIudj/EYZ03KceEuzqfCK7SuS
+ kGbRGveJQlx2vLC4hBul1WT6TSk5RU2naQ2wjVhiX01toV+ppoLGEkJs+8UQz+3+wS
+ apJFWPNKLs0r1683RtboW++Yn/zaQFeAiZDN0URPnnLnJezABYVxZfw1NI5iH5de8/
+ Gt6or1J/DLre0kPcOvf/A8nwlelXvz/8cidXLJoIsi+Op3oPPexUNHcJIRir96H5an
+ o1S/vlRz7BIg8QqfiDULvR5TmrtN1bHHzEMc38+gs9LLa9oNe3qL9m+C6QUJZNTKgW
+ FA/V02/mvuDAw==
 From: Ivan Malov <ivan.malov@arknetworks.am>
 To: dev@dpdk.org
 Cc: Andy Moreton <andy.moreton@amd.com>,
@@ -35,10 +35,10 @@ Cc: Andy Moreton <andy.moreton@amd.com>,
  Pieter Jansen van Vuuren <pieter.jansen-van-vuuren@amd.com>,
  Stephen Hemminger <stephen@networkplumber.org>,
  Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, stable@dpdk.org
-Subject: [PATCH v3 03/14] common/sfc_efx/base: reduce stack in set addr
- regions MCDI
-Date: Fri, 14 Aug 2026 16:54:27 +0400
-Message-ID: <20260814125438.13283-4-ivan.malov@arknetworks.am>
+Subject: [PATCH v3 04/14] common/sfc_efx/base: reduce stack in netport stat
+ describe
+Date: Fri, 14 Aug 2026 16:54:28 +0400
+Message-ID: <20260814125438.13283-5-ivan.malov@arknetworks.am>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260814125438.13283-1-ivan.malov@arknetworks.am>
 References: <20260811174821.8930-1-ivan.malov@arknetworks.am>
@@ -63,70 +63,111 @@ From: Andy Moreton <andy.moreton@amd.com>
 Code analysis reports an error for excessive stack consumption
 (over 1KB). Use a heap allocated payload buffer instead.
 
-Fixes: 60fb370c7bc9 ("common/sfc_efx/base: support NIC DMA memory regions API")
+Fixes: f2f77453cb9f ("common/sfc_efx/base: fill in software LUT for MAC statistics")
 Cc: stable@dpdk.org
 
 Signed-off-by: Andy Moreton <andy.moreton@amd.com>
 Reviewed-by: Ivan Malov <ivan.malov@arknetworks.am>
 Reviewed-by: Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>
 ---
- drivers/common/sfc_efx/base/efx_mcdi.c | 22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
+ drivers/common/sfc_efx/base/efx_np.c | 37 +++++++++++++++++++---------
+ 1 file changed, 25 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/common/sfc_efx/base/efx_mcdi.c b/drivers/common/sfc_efx/base/efx_mcdi.c
-index 4be736dcb9..04f2c99c0b 100644
---- a/drivers/common/sfc_efx/base/efx_mcdi.c
-+++ b/drivers/common/sfc_efx/base/efx_mcdi.c
-@@ -3550,12 +3550,11 @@ efx_mcdi_set_nic_addr_regions(
- 	__in		efx_nic_t *enp,
- 	__in		const efx_nic_dma_region_info_t *endrip)
+diff --git a/drivers/common/sfc_efx/base/efx_np.c b/drivers/common/sfc_efx/base/efx_np.c
+index 45f3cd07ed..3ac9094a30 100644
+--- a/drivers/common/sfc_efx/base/efx_np.c
++++ b/drivers/common/sfc_efx/base/efx_np.c
+@@ -778,22 +778,30 @@ efx_np_stats_describe(
+ 	__out_opt			uint32_t *nprocessedp,
+ 	__out_opt			uint32_t *nstats_maxp)
  {
 -	EFX_MCDI_DECLARE_BUF(payload,
--		MC_CMD_SET_DESC_ADDR_REGIONS_IN_LENMAX_MCDI2,
--		MC_CMD_SET_DESC_ADDR_REGIONS_OUT_LEN);
- 	efx_qword_t *trgt_addr_base;
+-	    MC_CMD_MAC_STATISTICS_DESCRIPTOR_IN_LEN,
+-	    MC_CMD_MAC_STATISTICS_DESCRIPTOR_OUT_LENMAX_MCDI2);
 +	uint8_t *payload = NULL;
+ 	uint32_t nprocessed;
  	efx_mcdi_req_t req;
+ 	uint8_t *entries;
+ 	uint32_t stride;
  	unsigned int i;
+ 	size_t out_sz;
 +	size_t size;
  	efx_rc_t rc;
  
- 	if (endrip->endri_count >
-@@ -3564,6 +3563,16 @@ efx_mcdi_set_nic_addr_regions(
- 		goto fail1;
- 	}
- 
-+	size = EFX_MCDI_BUF_SIZE(
-+	    MC_CMD_SET_DESC_ADDR_REGIONS_IN_LEN(endrip->endri_count),
-+	    MC_CMD_SET_DESC_ADDR_REGIONS_OUT_LEN);
+-	req.emr_out_length = MC_CMD_MAC_STATISTICS_DESCRIPTOR_OUT_LENMAX_MCDI2;
+-	req.emr_in_length = MC_CMD_MAC_STATISTICS_DESCRIPTOR_IN_LEN;
++	size = EFX_MCDI_BUF_SIZE(MC_CMD_MAC_STATISTICS_DESCRIPTOR_IN_LEN,
++	    MC_CMD_MAC_STATISTICS_DESCRIPTOR_OUT_LENMAX_MCDI2);
 +
 +	EFSYS_KMEM_ALLOC(enp->en_esip, size, payload);
 +	if (payload == NULL) {
 +		rc = ENOMEM;
-+		goto fail2;
++		goto fail1;
 +	}
 +
- 	req.emr_cmd = MC_CMD_SET_DESC_ADDR_REGIONS;
+ 	req.emr_cmd = MC_CMD_MAC_STATISTICS_DESCRIPTOR;
+-	req.emr_out_buf = payload;
  	req.emr_in_buf = payload;
- 	req.emr_in_length =
-@@ -3598,11 +3607,16 @@ efx_mcdi_set_nic_addr_regions(
++	req.emr_in_length = MC_CMD_MAC_STATISTICS_DESCRIPTOR_IN_LEN;
++	req.emr_out_buf = payload;
++	req.emr_out_length = MC_CMD_MAC_STATISTICS_DESCRIPTOR_OUT_LENMAX_MCDI2;
+ 
+ 	MCDI_IN_SET_DWORD(req, MAC_STATISTICS_DESCRIPTOR_IN_PORT_HANDLE, nph);
+ 	MCDI_IN_SET_DWORD(req, MAC_STATISTICS_DESCRIPTOR_IN_OFFSET, req_ofst);
+@@ -802,13 +810,13 @@ efx_np_stats_describe(
  
  	if (req.emr_rc != 0) {
  		rc = req.emr_rc;
+-		goto fail1;
++		goto fail2;
+ 	}
+ 
+ 	out_sz = req.emr_out_length_used;
+ 	if (out_sz < MC_CMD_MAC_STATISTICS_DESCRIPTOR_OUT_LENMIN) {
+ 		rc = EMSGSIZE;
 -		goto fail2;
 +		goto fail3;
  	}
  
+ 	if (nstats_maxp != NULL) {
+@@ -818,13 +826,13 @@ efx_np_stats_describe(
+ 	}
+ 
+ 	if (lut_nentries == 0 || lut == NULL || nprocessedp == NULL)
+-		return (0);
++		goto out;
+ 
+ 	stride = MCDI_OUT_DWORD(req, MAC_STATISTICS_DESCRIPTOR_OUT_ENTRY_SIZE);
+ 	nprocessed = MC_CMD_MAC_STATISTICS_DESCRIPTOR_OUT_ENTRIES_NUM(out_sz);
+ 	if (nprocessed == 0) {
+ 		rc = EMSGSIZE;
+-		goto fail3;
++		goto fail4;
+ 	}
+ 
+ 	entries = MCDI_OUT2(req, uint8_t,
+@@ -834,14 +842,19 @@ efx_np_stats_describe(
+ 		efx_np_stat_describe(entries + i * stride, lut_nentries, lut);
+ 
+ 	*nprocessedp = nprocessed;
++
++out:
 +	EFSYS_KMEM_FREE(enp->en_esip, size, payload);
 +
  	return (0);
  
-+fail3:
-+	EFSYS_PROBE(fail3);
-+	EFSYS_KMEM_FREE(enp->en_esip, size, payload);
++fail4:
++	EFSYS_PROBE(fail4);
+ fail3:
+ 	EFSYS_PROBE(fail3);
+-
  fail2:
  	EFSYS_PROBE(fail2);
+-
++	EFSYS_KMEM_FREE(enp->en_esip, size, payload);
  fail1:
+ 	EFSYS_PROBE1(fail1, efx_rc_t, rc);
+ 	return (rc);
 -- 
 2.47.3
 
