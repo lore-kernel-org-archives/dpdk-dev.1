@@ -2,76 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA676C5CFCF
-	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Aug 2026 15:19:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C31BCC5CFC1
+	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Aug 2026 15:38:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CC3494013F;
-	Fri, 14 Aug 2026 17:19:12 +0200 (CEST)
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
- [209.85.214.171])
- by mails.dpdk.org (Postfix) with ESMTP id AF2E4400D5
- for <dev@dpdk.org>; Fri, 14 Aug 2026 17:19:11 +0200 (CEST)
-Received: by mail-pl1-f171.google.com with SMTP id
- d9443c01a7336-2caced6038eso13380285ad.0
- for <dev@dpdk.org>; Fri, 14 Aug 2026 08:19:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786720751;
- x=1787325551; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=Nxuvu54pD2EfTvqWng4Y7lCY0YrZcXjwXGjCrsQICGs=;
- b=qArwkzmBziMBG2jm5zhJSfzeqY679Ff9yKpd75PnqXeO9TmKKu+79BsY1MdBDJQtzV
- FuUrwZQuRIJMFiJjpFXTsGwbJ6NxNTqUcdmUFiaM+/X1lz5DwrgbvkQKDD03XafFTVSH
- eJtDolG0OM6NrDHbbyQDZdhUYqckU3LgS6N4h6W7ceXsFY0mduGW3ULt6liKwLN3hc98
- nwjDmnvgi9/2my0IjtqqmdGB6yWTuTzlQPLnhRGd36jOqzm/HBtkEq5755KDGwPlSMH+
- p3excqbHg+DGiSmwdRncSPQ2BYO36W0a+pqtRyvWGWLo3/NMH/tFEVe6TA3V4NVZvbEl
- Of1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786720751; x=1787325551;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=Nxuvu54pD2EfTvqWng4Y7lCY0YrZcXjwXGjCrsQICGs=;
- b=mFDtT4xMPRtJ8KytoVMAXkitKlw9PoElUV3gENY4BQUgwtZHh1FctPVRhu7o5dcg5x
- Ikl/mrjD9qIRqWECdsetRoNEOWLPwX9rUQ6/bL623EtbPoAQN91Nb9njEtK7hTRy3SPG
- 4ZOGWoyfoUh1eF0jY7SJTHpb5RpztDT9/yXDDy/X9myLr8+UWvtqU82Vqp5Qi1WazWJ5
- VAc2Ysc6NIz8FLQc04xT6STSwHD4Rcic/J7RfvllJqcxusdrj4XB/0at6YJSEwm/+Nyg
- 2JwBEZFHP7JwVzTI43lFxhp0jebc2l2ky+N5kOgnU1PKLNcHqyq9Hr8sK+oRn6RbpMV3
- 1y9Q==
-X-Gm-Message-State: AOJu0YymZ9QhUtwYPFkBo/eODh8P25K9ytAZI3Iwus50uAKIMTdvlfHN
- Orjb1QY480qzs2xbCfelxi5WWNjV8I8BefKElvLXFYwQP2xFQHotO7Ky3WLSl3KD1s4=
-X-Gm-Gg: AR+sD10LGH2+g1MkW3igWojtG8DcddDPQaENk1PdXuRYFyD3hjbr9C9nqOtta5C2gad
- x24/6HxpmBdPUMTV+RMA/0/2QKU9wuVtP+EffQ8ThB3pHPn1K6X8dve6QP+ecwFxxowRhWT0hDM
- kSGq8/4sC9PHhTT1txH1ObpSFzTht1ftyy3T85raDm8fvpMZNhBsoJy4x/XLPr4hx17mmHk8bRM
- 9dHRaJpykXjwXhfj3HQNWUKTFTAA/Gi+AhYNiTtEX2VEr8/C/R2lXF0jd/g+5ACb06gOc2Q1HN9
- fgrSd81zGgAKVelLsdGCkIBLQZv4shFTXEL+nE5KWCJIVf8W/t/LJAfP4R/QiTH5YA1EIjdxrmX
- i9LlIKdZ7UIhWf6afrZOIldk8eN+LIxXzaRWdYIZziewelocYwZ2UOf8bU0GtnGzBi+kOkb2ydS
- ECBy3Oo1OOr7Dt5fDOVBP6P2pPPAL7vOBZRuErb2Qof2gOT9RniyPPqKK4P4ibVDm5Co51IOjP/
- X97+hDW/a52ks2fCUpU3tcNF27E1A==
-X-Received: by 2002:a17:902:f64e:b0:2cf:70d2:da7c with SMTP id
- d9443c01a7336-2d37f77fdfemr165440955ad.12.1786720750443; 
- Fri, 14 Aug 2026 08:19:10 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-320d5bdc5c4sm5926443eec.5.2026.08.14.08.19.07
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 14 Aug 2026 08:19:10 -0700 (PDT)
-Date: Fri, 14 Aug 2026 08:19:00 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: <dev@dpdk.org>, "Anatoly Burakov" <anatoly.burakov@intel.com>,
- "Konstantin Ananyev" <konstantin.ananyev@huawei.com>, "Wathsala Vithanage"
- <wathsala.vithanage@arm.com>
-Subject: Re: [RFC] increase name sizes and reorder structures
-Message-ID: <20260814081900.296bd8ca@phoenix.local>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F659E4@smartserver.smartshare.dk>
-References: <20260813171418.568620-1-stephen@networkplumber.org>
- <98CBD80474FA8B44BF855DF32C47DC35F659E4@smartserver.smartshare.dk>
+	by mails.dpdk.org (Postfix) with ESMTP id 00DD44013F;
+	Fri, 14 Aug 2026 17:38:07 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+ by mails.dpdk.org (Postfix) with ESMTP id 1BB9D400D5
+ for <dev@dpdk.org>; Fri, 14 Aug 2026 17:38:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1786721885; x=1818257885;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=68PQKHqRD55E8tpV5M6HS/UcnduDTtkXoZM+tQ6dTS8=;
+ b=mML+LGwD7AeTDJo2Agw3A+pnzdyNyd9nwqDG1P8XoQQGUW1eDd1mvn+C
+ 6dPU2o2EsFC6smLX1BNRklKlIl3LOvPPNLPbwNK6T0jBN/wyPEi3AthM3
+ 7z8Wq58fJV+TkvOOVaMrEQgj2qRh1hqE9/j7Kk+k7GhKPlAcK81v32YPR
+ 2QzTL+aOJ86pD3xJicC5s3KTHQEIZZUdJaZFDOAvM8LjtdkN8Og5cCsr+
+ 3G8rmkCcblhqhyNlDGdwPxWRQeZu6n2fH3FHU4smQBZ7UfgV8A1/O8vRn
+ V9s14300ZFrVDU+fY+GKH4nMDRsPypZ+wMhPVCkuZyOUBY8jLce7QBNZq A==;
+X-CSE-ConnectionGUID: 6TLqsKgfQdGLmghOgBibBw==
+X-CSE-MsgGUID: bFlEAYcXTQeOzfuUA1D8VQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11875"; a="87430604"
+X-IronPort-AV: E=Sophos;i="6.25,222,1779174000"; d="scan'208";a="87430604"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+ by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 14 Aug 2026 08:38:03 -0700
+X-CSE-ConnectionGUID: SQ3F9s+7T1GHdzVYFH9ulQ==
+X-CSE-MsgGUID: 1JvE6y7/R22V7jwSKoxuaA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,222,1779174000"; d="scan'208";a="264297071"
+Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
+ by orviesa007.jf.intel.com with ESMTP; 14 Aug 2026 08:38:03 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH 0/8] remove non-base files from base folders
+Date: Fri, 14 Aug 2026 16:37:43 +0100
+Message-ID: <20260814153755.940302-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,122 +57,83 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 14 Aug 2026 14:12:11 +0200
-Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
+The base code folders for intel drivers contained the compatibility
+*_osdep.h files as well as meson.build files, both of which are
+editable via regular DPDK patches. Although the DPDK documentation
+allows this arrangement, I (for one) have always found it a little
+awkward and confusing to have editable and non-editable files mixed.
 
-> > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
-> > Sent: Thursday, 13 August 2026 19.13
-> >=20
-> > This is a trial balloon to see what Morten's suggestion would
-> > look like.
-> >=20
-> > Increase memzone name size to 64 and reorder structure
-> > to keep it cache friendly.  Move the zone name to the end of
-> > struct rte_memzone and order the remaining members by size.
-> > The structure is then naturally aligned
-> > with no internal padding on both 64-bit and 32-bit targets, so the
-> > __rte_packed_begin/end markers can be removed.
-> >=20
-> > With memzone size of 64 but don't need all that for stack names.
-> > Increase the size to 32 which adds some space without impacting
-> > cache layout.
-> >=20
-> > The memzone increase to 64 allows ring names to grow to 32 characters.
-> > Don't need to go larger which could cause cache changes when ring is
-> > embedded in structures.
-> >=20
-> > Bugzilla ID: 1984
-> >=20
-> > Reported-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
-> > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> > --- =20
->=20
-> Not as much as I hoped for, but non-intrusive.
-> A small improvement is still an improvement!
->=20
-> Typo in the release notes:
-> "incre   " -> "increased"
->=20
-> Reviewed-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
->=20
+For Intel drivers only, this patchset moves osdep file out of base,
+and merges the (in most cases trivial) meson.build files from base
+into the main driver meson.build file.
 
-Only took baby first steps here. I asked AI for analysis on going further.
+After this patch we have a clean separation - any files in base,
+with no exceptions, should be updated only via snapshot update
+patchsets from Intel. All files outside base are normal DPDK files
+that can be modified by any patch.
 
-On the question of going bigger than 64/32, here is what I found looking
-at the actual constraints in the tree.
+Bruce Richardson (8):
+  net/e1000: move editable files out of base folder
+  net/fm10k: move editable files out of base folder
+  net/i40e: move editable files out of base folder
+  net/iavf: move editable files out of base folder
+  net/ice: move editable files out of base folder
+  net/idpf: move editable files out of base folder
+  net/ixgbe: move editable files out of base folder
+  net/ice: consolidate the sources list
 
-The memzone derivation is the artificial coupling
--------------------------------------------------
+ drivers/net/intel/cpfl/cpfl_actions.h         |  2 +-
+ drivers/net/intel/cpfl/cpfl_controlq.h        |  2 +-
+ drivers/net/intel/e1000/base/README           |  9 ---
+ drivers/net/intel/e1000/base/meson.build      | 24 -------
+ .../net/intel/e1000/{base => }/e1000_osdep.c  |  0
+ .../net/intel/e1000/{base => }/e1000_osdep.h  |  4 +-
+ drivers/net/intel/e1000/em_rxtx.c             |  2 +-
+ drivers/net/intel/e1000/igc_ethdev.h          |  2 +-
+ drivers/net/intel/e1000/meson.build           | 22 ++++++-
+ drivers/net/intel/fm10k/base/meson.build      | 11 ----
+ .../net/intel/fm10k/{base => }/fm10k_osdep.h  |  4 +-
+ drivers/net/intel/fm10k/meson.build           |  9 ++-
+ drivers/net/intel/i40e/base/README            |  8 ---
+ drivers/net/intel/i40e/base/meson.build       | 12 ----
+ .../net/intel/i40e/{base => }/i40e_osdep.h    |  4 +-
+ drivers/net/intel/i40e/meson.build            | 10 ++-
+ drivers/net/intel/iavf/base/README            |  8 ---
+ .../iavf/{base/iavf_impl.c => iavf_osdep.c}   |  0
+ .../net/intel/iavf/{base => }/iavf_osdep.h    |  2 +
+ drivers/net/intel/iavf/meson.build            |  2 +-
+ drivers/net/intel/ice/base/README             |  8 ---
+ drivers/net/intel/ice/base/meson.build        | 51 ---------------
+ drivers/net/intel/ice/{base => }/ice_osdep.h  |  4 +-
+ drivers/net/intel/ice/meson.build             | 62 ++++++++++++++++---
+ drivers/net/intel/idpf/base/README            |  8 ---
+ drivers/net/intel/idpf/base/meson.build       |  7 ---
+ .../net/intel/idpf/{base => }/idpf_osdep.h    |  4 +-
+ drivers/net/intel/idpf/idpf_ptp.h             |  2 +-
+ drivers/net/intel/idpf/meson.build            |  5 +-
+ drivers/net/intel/ixgbe/base/README           |  9 ---
+ drivers/net/intel/ixgbe/base/meson.build      | 19 ------
+ drivers/net/intel/ixgbe/ixgbe_ethdev.c        | 12 ++--
+ drivers/net/intel/ixgbe/ixgbe_flow.c          | 12 ++--
+ .../net/intel/ixgbe/{base => }/ixgbe_osdep.h  |  2 +
+ drivers/net/intel/ixgbe/meson.build           | 17 ++++-
+ 35 files changed, 148 insertions(+), 211 deletions(-)
+ delete mode 100644 drivers/net/intel/e1000/base/meson.build
+ rename drivers/net/intel/e1000/{base => }/e1000_osdep.c (100%)
+ rename drivers/net/intel/e1000/{base => }/e1000_osdep.h (98%)
+ delete mode 100644 drivers/net/intel/fm10k/base/meson.build
+ rename drivers/net/intel/fm10k/{base => }/fm10k_osdep.h (98%)
+ delete mode 100644 drivers/net/intel/i40e/base/meson.build
+ rename drivers/net/intel/i40e/{base => }/i40e_osdep.h (98%)
+ rename drivers/net/intel/iavf/{base/iavf_impl.c => iavf_osdep.c} (100%)
+ rename drivers/net/intel/iavf/{base => }/iavf_osdep.h (98%)
+ delete mode 100644 drivers/net/intel/ice/base/meson.build
+ rename drivers/net/intel/ice/{base => }/ice_osdep.h (99%)
+ delete mode 100644 drivers/net/intel/idpf/base/meson.build
+ rename drivers/net/intel/idpf/{base => }/idpf_osdep.h (99%)
+ delete mode 100644 drivers/net/intel/ixgbe/base/meson.build
+ rename drivers/net/intel/ixgbe/{base => }/ixgbe_osdep.h (99%)
 
-rte_ring_lookup(), rte_mempool_lookup() and rte_stack_lookup() all walk
-their tailq and strncmp() against the object's own name field.  None of
-them go through rte_memzone_lookup().  So RTE_MEMZONE_NAMESIZE does not
-bound anything functional; it only bounds the derived string "RG_%s"
-used to reserve the backing memzone, which is a debug label plus a
-uniqueness token.
-
-If the derived name became something like
-
-	"RG_%.16s_%08x"   /* truncated prefix + hash of full name */
-
-then RTE_RING_NAMESIZE, RTE_STACK_NAMESIZE and RTE_MEMPOOL_NAMESIZE are
-decoupled from memzone entirely and both static_asserts go away.  Each
-library's limit then becomes a storage-cost decision rather than an
-inherited one.
-
-Two things need handling:
-
-- Hash collisions make rte_memzone_reserve() fail with EEXIST, so the
-  reserve path needs a retry with a disambiguating counter.
-- memzone dumps and telemetry output get less greppable.  Keeping a
-  truncated prefix of the real name mostly covers this.
-
-Self-relative offset instead of a flexible array
-------------------------------------------------
-
-Two of the blockers (embedded structures, structures that already have a
-flexible array) exist only because C requires a flexible array to be
-last.  An offset has no position requirement:
-
-	uint32_t name_off;  /* byte offset from struct start to name */
-
-This works when the struct is embedded (rte_event_ring wraps rte_ring),
-coexists with an existing trailing flexible array (rte_node_register is
-the case: name[RTE_NODE_NAMESIZE] plus next_nodes[]), and keeps the
-record fixed size so fbarray stride is preserved.
-
-A plain const char * would probably also work since rte_mempool already
-stores a const struct rte_memzone *mz into shared memory, but an offset
-avoids depending on identical secondary process mappings.
-
-Cost is source churn: every mz->name becomes rte_memzone_name(mz).  Only
-28 sites in tree, but out-of-tree consumers exist, so this wants a
-deprecation notice ahead of an ABI break release.
-
-Side table (least disruptive)
------------------------------
-
-Keep the inline char name[N] untouched for compatibility and add a
-shared registry keyed by object index holding the full name only when it
-exceeds N.  Lookup checks inline first, then the registry.
-
-No stride change, no ABI change, no flexible arrays, unlimited length.
-The tradeoff is that mz->name and r->name stay truncated for anything
-reading them directly, so it fixes lookup but not display.
-
-Numbers on ring growth
-----------------------
-
-Measured on x86-64:
-
-	RTE_RING_NAMESIZE=3D32   sizeof(struct rte_ring)=3D384  prod at 128
-	RTE_RING_NAMESIZE=3D61   sizeof(struct rte_ring)=3D448  prod at 192
-
-One extra cache line per ring plus a shifted hot region, inherited by
-rte_event_ring.  That is the concrete argument for capping ring names at
-32 rather than following memzone to 64.
-
-memzone is the opposite case: 104 bytes x 2560 default entries is about
-266KB, so a larger fixed name there is nearly free.  The fbarray stride
-constraint blocks variable-length names, not bigger ones.
+--
+2.53.0
 
