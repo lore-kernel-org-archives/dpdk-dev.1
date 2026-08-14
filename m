@@ -2,70 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AE37C5B572
-	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Aug 2026 20:20:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57842C5CFC1
+	for <dpdk-dev@archiver.kernel.org>; Fri, 14 Aug 2026 20:20:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E0E0E40696;
-	Fri, 14 Aug 2026 22:20:35 +0200 (CEST)
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com
- [209.85.216.43]) by mails.dpdk.org (Postfix) with ESMTP id CEDC5406B4
- for <dev@dpdk.org>; Fri, 14 Aug 2026 22:20:34 +0200 (CEST)
-Received: by mail-pj1-f43.google.com with SMTP id
- 98e67ed59e1d1-38759bcd877so1885208a91.2
- for <dev@dpdk.org>; Fri, 14 Aug 2026 13:20:34 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E1204406B6;
+	Fri, 14 Aug 2026 22:20:39 +0200 (CEST)
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com
+ [209.85.214.179])
+ by mails.dpdk.org (Postfix) with ESMTP id EC082406B6
+ for <dev@dpdk.org>; Fri, 14 Aug 2026 22:20:38 +0200 (CEST)
+Received: by mail-pl1-f179.google.com with SMTP id
+ d9443c01a7336-2cc891373e0so20945615ad.2
+ for <dev@dpdk.org>; Fri, 14 Aug 2026 13:20:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786738834;
- x=1787343634; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786738838;
+ x=1787343638; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=hM1D33GRh2UhI46NXhgcgjCfE1ApsvNUCZMb5Ri57KI=;
- b=FJXlB3zxtGoD1OI6yKsnJ9QWfml3mnyhLQaym57skraM3Z4fWxdpoTJw8p8eYMs/mM
- GdoFdQFindVVsShf9ps5idFsPFMrJecP05Xqa6BUq7eTbO+BPNFwk1ltnkoZCpfRa5fv
- Q2kc5gW6kdqCHTMqsr1J9t4Ixb6Lvb3SaMMv6XKA8ypohLwFn6FObC8MVfvsm6VkMQ/r
- 405zcBfYvcFg/oVCJ7VPIwh07cJerSlr6l5dCUsBftUaORJ3Zpp+wRFRJNf2xO0+Ep7r
- WmEXiBXbV/3L/WEVILoxRDOW1P7aIJZSFgGubnsXRC2UClDWyRlGjmb42wa1gzj7oY9D
- /UJQ==
+ bh=AJnzJGD7o62kHjLlXNyobGT5RHdeN6M1yGuq52c6nNQ=;
+ b=WjDjurNmwnxK/IvwTai2am6Cbid1gN4I3rO3CbnROrNKyhcPGgKlZi3TO6nrMyqFej
+ 5enejnGprVX279YqsUCb8KciQ25nxxMhJieb2M6tlMyiMvoFlJEclr4832GuKxHSelYo
+ mrTbNXIYO34tXKa9g/1soalBg7OFHjOiYIHm3/kn6/0EILFR0eWZuwB+ol/Yx+PARJ5y
+ G47kqPJyENuXX57VFLMewsahMFF5DFU7MaqaBieebVSrpNCdXCDB1pEHZd45sln3Y21d
+ z9610r4xxfaWN7xI3NsCXbstwOP3SHo4nbaRFLL9QiLJP0zJw3NUJ/wf4sqMCBUqkkqj
+ AH8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786738834; x=1787343634;
+ d=1e100.net; s=20251104; t=1786738838; x=1787343638;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=hM1D33GRh2UhI46NXhgcgjCfE1ApsvNUCZMb5Ri57KI=;
- b=llX0gM7DW4cRuONtGhuVoCNu9jeihK5rNlTyq4koGDhAxFHqVko5H5uUmynqY8MuRV
- M1E6w2aYmiqoCg5YoHl1MKqm1khnJt51Py0s0ciA2Am+qW5rzYsIuPPS3THbZWwiET1e
- CIeUoT7B8BJ9f8i1WAVyCaXafTqJRivL9Q1FrFpjDjJc5RAjIv2Ti7Z7dlPhPZBeBEO1
- bP8LZN4uscOLG+0l1OmbHDi3npei6450eRYgoyA3AVn8A+o7+PnmR/SZhZUm86Fvffxv
- GvPnR+YsE4rDshSYgoJBgvntOniegjIzOdrvQ/vziVufG3WYzrLe69R1eYSDMPqtYjFh
- Cb2w==
-X-Gm-Message-State: AOJu0YxeETAhgYAyAieHDNZpoYSQmI8C6K/msxg3PcPUIE1p0zR8/8r3
- 3jD6fVOZqqY7oh78wALvQsJBGi9F0Rn3zqAf5bCj6qgv7OL9UUOMg9XMZdKYvzUsCZd/7aQTRu9
- DwZzY
-X-Gm-Gg: AR+sD10B7mrHs6qRZZZBrLPzLJdogtrnuB8OC8ZxTTmzRX3wLh2h1+8FsXhnJxchJOh
- Y3Sx/n2YWXzXXOrZ57tbTgFg70xaH8fr84n68Jw/IV5E8LcRgb323CeLtT2Aqtjdj84WOOInA81
- 6CdUJPsOyfUyVn9TAN4BAKSdh+EBu5ny77KFwLntMfkuxdEXACWyzs9VSKo02f5rbpc0sTOt1J3
- k8gUsGBBESjkkPiQfNaIm/bFp4mjDRRf8QLL6/YyoDfXi4RS2Q9EnGBxEOnXyX8G+R7iIVzf3gc
- 2vUdiRYVHBiexDlpzxiPjT8QGyO0hdsFKgIivAYmO+r11PVQfGyJqMVHccEqfgaQ7lmzsVtesh4
- rtMv0bamZjmC8tGz0dWW1g8A3TFpuYFJhyz+iC++2bwRtTB1wtUEqFhJ1Tymp7NOyE2eqABZogy
- 703BFIRfKO57yjf+qYfJfsr+ZZptvjQHTgguQR4U48v0hB59OU2G1nxCCG7AeHDNQw66ERZDVvJ
- MQVwAfLX8WHlsfEslEJQmhHZVU=
-X-Received: by 2002:a17:90b:2f86:b0:37c:607b:2cd9 with SMTP id
- 98e67ed59e1d1-3933b84973fmr9717769a91.0.1786738833898; 
- Fri, 14 Aug 2026 13:20:33 -0700 (PDT)
+ bh=AJnzJGD7o62kHjLlXNyobGT5RHdeN6M1yGuq52c6nNQ=;
+ b=MS1TzuRgFTuvML2KBBgdSLx+ENYZA0ZslCV/qBNCAZYV28tlELqtsLf9PGLvKHAEAE
+ ckBPeOI+4m5VbgrJxPZRrEWUTqWV8tYPDUmDIY8mAgYHFmcq2/gCq960ErAjfdIPqfHt
+ l3uVE79fVQM3dJpQzNaXC6W/A8TYPqjw3XWDR0APTgX/+xN7PWUC7I1ieqSRxHUqqWY+
+ +eK/TmoQuumUiSTfDQ8DM4TvlFHfaZQkS2ithmKLQOVRX802bqaNhG1P3Q1Znqr2jcD3
+ NmVL24kzTIgyjJ9/pII6BFLwMoxnlTURVjQNvWXCJoxyMY7fi6LeVQ4vlvTUQax/r3Lt
+ OYmw==
+X-Gm-Message-State: AOJu0YxhXmw0R2YnlZDxLtJiBLNgTShtLtRwQ16BtDE4/03gaDgPDz/1
+ J5VK+4G0gZvysIMP6Ygc3Z4hY0XZ+426qJqi+XTZd1ZpKUcRy254+MPDxFlpztWMgjuQK+wPs7x
+ Q/JWe
+X-Gm-Gg: AR+sD10Non03+jzy+0xGJ8Pow4VVJd6FuTxpXE6OAyHtyoA9Qc7kVWVCYgEwpzJ6NjF
+ TMfQakxDobwU26h1dOPswzsVKmsRwLqJbpjaoroXohjR7TieDSR8e1wSeX4PSxLOpIlzKEKzQnO
+ igJPTCg8fvMxnhR/0hU/FCr1gHrcWLRDmbjp/c2HoWUeRObA72uA9XxOkH2SRfcIz9cU+mhtX7m
+ JVHcZzcvcfyNEg5xLocWP++ltx6LQiwQYlo1HN6vAQoBhco80NQaV64ntOCrUf1Y2Wb+u3UFAa0
+ FxyAjRMpDpqxsigY8QO3CFJqGuyVsGxFOJ4NWZjsNbxhuVmYf2Xkot/FXCGUcqRTka8MDT50iJ+
+ wccPa8viAB3K5Q7qbyUphMI6VBg57rgx3k4fiYj1Irk1HuMDww4Gc84CK9VNfSWgR+E5/Vb1shb
+ WSP2mw4IXdZ72YYoCVgMN0OhcisBQ9sZvjvzhBgvyFHvftikHbJZRiH5Xldg33kS5g417Cx5A0f
+ 7D4gJDXRVg2Ts7mzY3gXK07FBw=
+X-Received: by 2002:a05:6a21:7a9b:b0:3bf:a543:e7f5 with SMTP id
+ adf61e73a8af0-3cc71d533f1mr9807239637.3.1786738838026; 
+ Fri, 14 Aug 2026 13:20:38 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-141388bd5a7sm15553695c88.15.2026.08.14.13.20.30
+ a92af1059eb24-141388bd5a7sm15553695c88.15.2026.08.14.13.20.34
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 14 Aug 2026 13:20:33 -0700 (PDT)
+ Fri, 14 Aug 2026 13:20:37 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Chengwen Feng <fengchengwen@huawei.com>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Thomas Monjalon <thomas@monjalon.net>
-Subject: [PATCH v4 11/16] ethdev: remove support for queue stats mapping
-Date: Fri, 14 Aug 2026 12:46:07 -0700
-Message-ID: <20260814194757.329424-12-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Liron Himi <lironh@marvell.com>, Jacek Siuda <jck@semihalf.com>,
+ Tomasz Duszynski <tduszynski@marvell.com>
+Subject: [PATCH v4 12/16] net/mvpp2: fix out of range Tx queue stats write
+Date: Fri, 14 Aug 2026 12:46:08 -0700
+Message-ID: <20260814194757.329424-13-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260814194757.329424-1-stephen@networkplumber.org>
 References: <20260530161151.873199-1-stephen@networkplumber.org>
@@ -85,290 +85,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The support for queue stats mapping has been deprecated since 25.11
-release by commit 2863cbd9ee6d ("ethdev: deprecate queue stats mapping
-functions")
+The Tx queue stats loop logs an error when the queue index is out of
+range, then writes q_opackets[idx] and q_obytes[idx] anyway. The Rx loop
+skips the queue in this case.
 
-This patch completes final removal from ethdev and documentation.
+Add the missing continue. Latent today since MRVL_PP2_TXQ_MAX (8) is
+below RTE_ETHDEV_QUEUE_STAT_CNTRS (16), but the check is wrong.
+
+Fixes: bdffe0c70a0b ("net/mrvl: support basic stats")
+Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Chengwen Feng <fengchengwen@huawei.com>
-Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
 ---
- doc/guides/nics/features.rst           |  7 ---
- doc/guides/rel_notes/deprecation.rst   |  6 ---
- doc/guides/rel_notes/release_26_11.rst |  5 +++
- lib/ethdev/ethdev_driver.h             | 11 -----
- lib/ethdev/ethdev_trace.h              | 20 ---------
- lib/ethdev/ethdev_trace_points.c       |  6 ---
- lib/ethdev/rte_ethdev.c                | 62 --------------------------
- lib/ethdev/rte_ethdev.h                | 45 -------------------
- 8 files changed, 5 insertions(+), 157 deletions(-)
+ drivers/net/mvpp2/mrvl_ethdev.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/doc/guides/nics/features.rst b/doc/guides/nics/features.rst
-index 0b0c69e7cd..d6852b063c 100644
---- a/doc/guides/nics/features.rst
-+++ b/doc/guides/nics/features.rst
-@@ -764,13 +764,6 @@ If driver does not support this feature the per queue stats will be zero.
- * **[implements] eth_dev_ops**: ``stats_get``, ``stats_reset``.
- * **[related]    API**: ``rte_eth_stats_get``, ``rte_eth_stats_reset()``.
+diff --git a/drivers/net/mvpp2/mrvl_ethdev.c b/drivers/net/mvpp2/mrvl_ethdev.c
+index 1074092d43..bc947ff52e 100644
+--- a/drivers/net/mvpp2/mrvl_ethdev.c
++++ b/drivers/net/mvpp2/mrvl_ethdev.c
+@@ -1546,6 +1546,7 @@ mrvl_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats,
+ 			MRVL_LOG(ERR,
+ 				"tx queue %d stats out of range (0 - %d)",
+ 				idx, RTE_ETHDEV_QUEUE_STAT_CNTRS - 1);
++			continue;
+ 		}
  
--May also support configuring per-queue stat counter mapping.
--Used by some drivers to workaround HW limitations.
--
--* **[implements] eth_dev_ops**: ``queue_stats_mapping_set``.
--* **[related]    API**: ``rte_eth_dev_set_rx_queue_stats_mapping()``,
--  ``rte_eth_dev_set_tx_queue_stats_mapping()``.
--
- 
- .. _nic_features_extended_stats:
- 
-diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
-index 6ad7698c6b..aaa2918865 100644
---- a/doc/guides/rel_notes/deprecation.rst
-+++ b/doc/guides/rel_notes/deprecation.rst
-@@ -83,12 +83,6 @@ Deprecation Notices
-   and the header struct ``rte_vxlan_gpe_hdr`` with the macro ``RTE_ETHER_VXLAN_GPE_HLEN``
-   will be removed in DPDK 25.11.
- 
--* ethdev: The queue stats mapping functions
--  ``rte_eth_dev_set_tx_queue_stats_mapping`` and ``rte_eth_dev_set_rx_queue_stats_mapping``
--  are deprecated and will be removed in a future release.
--  Following the removal of queue statistics from the main ethdev statistics structure,
--  these functions are no longer needed.
--
- * ethdev: The flow API matching pattern structures, ``struct rte_flow_item_*``,
-   should start with relevant protocol header structure from lib/net/.
-   The individual protocol header fields and the protocol header struct
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index c8cc86295d..d29d7591e9 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -77,6 +77,11 @@ Removed Items
-     ``rte_rib6_is_equal``
-   * table: ``RTE_LPM_IPV6_ADDR_SIZE``
- 
-+* ethdev: Removed support for ethdev queue stats mapping.
-+
-+  ``rte_eth_dev_set_tx_queue_stats_mapping`` and ``rte_eth_dev_set_rx_queue_stats_mapping``
-+  were deprecated and are now removed.
-+
- 
- API Changes
- -----------
-diff --git a/lib/ethdev/ethdev_driver.h b/lib/ethdev/ethdev_driver.h
-index 0f336f9567..0477579cc3 100644
---- a/lib/ethdev/ethdev_driver.h
-+++ b/lib/ethdev/ethdev_driver.h
-@@ -567,15 +567,6 @@ typedef int (*eth_xstats_disable_counter_t)(struct rte_eth_dev *dev, uint64_t id
- /** @internal Query the state of an xstat the can be enabled and disabled in runtime. */
- typedef int (*eth_xstats_query_state_t)(struct rte_eth_dev *dev, uint64_t id);
- 
--/**
-- * @internal
-- * Set a queue statistics mapping for a Tx/Rx queue of an Ethernet device.
-- */
--typedef int (*eth_queue_stats_mapping_set_t)(struct rte_eth_dev *dev,
--					     uint16_t queue_id,
--					     uint8_t stat_idx,
--					     uint8_t is_rx);
--
- /** @internal Get specific information of an Ethernet device. */
- typedef int (*eth_dev_infos_get_t)(struct rte_eth_dev *dev,
- 				   struct rte_eth_dev_info *dev_info);
-@@ -1454,8 +1445,6 @@ struct eth_dev_ops {
- 	eth_xstats_reset_t         xstats_reset;
- 	/** Get names of extended statistics */
- 	eth_xstats_get_names_t     xstats_get_names;
--	/** Configure per queue stat counter mapping */
--	eth_queue_stats_mapping_set_t queue_stats_mapping_set;
- 
- 	eth_dev_infos_get_t        dev_infos_get; /**< Get device info */
- 	/** Retrieve Rx queue information */
-diff --git a/lib/ethdev/ethdev_trace.h b/lib/ethdev/ethdev_trace.h
-index 6554cc1a21..6f1804a765 100644
---- a/lib/ethdev/ethdev_trace.h
-+++ b/lib/ethdev/ethdev_trace.h
-@@ -310,26 +310,6 @@ RTE_TRACE_POINT(
- 	rte_trace_point_emit_int(ret);
- )
- 
--RTE_TRACE_POINT(
--	rte_ethdev_trace_set_rx_queue_stats_mapping,
--	RTE_TRACE_POINT_ARGS(uint16_t port_id, uint16_t rx_queue_id,
--		uint8_t stat_idx, int ret),
--	rte_trace_point_emit_u16(port_id);
--	rte_trace_point_emit_u16(rx_queue_id);
--	rte_trace_point_emit_u8(stat_idx);
--	rte_trace_point_emit_int(ret);
--)
--
--RTE_TRACE_POINT(
--	rte_ethdev_trace_set_tx_queue_stats_mapping,
--	RTE_TRACE_POINT_ARGS(uint16_t port_id, uint16_t tx_queue_id,
--		uint8_t stat_idx, int ret),
--	rte_trace_point_emit_u16(port_id);
--	rte_trace_point_emit_u16(tx_queue_id);
--	rte_trace_point_emit_u8(stat_idx);
--	rte_trace_point_emit_int(ret);
--)
--
- RTE_TRACE_POINT(
- 	rte_ethdev_trace_fw_version_get,
- 	RTE_TRACE_POINT_ARGS(uint16_t port_id, const char *fw_version,
-diff --git a/lib/ethdev/ethdev_trace_points.c b/lib/ethdev/ethdev_trace_points.c
-index 0a28378a56..b0644ea489 100644
---- a/lib/ethdev/ethdev_trace_points.c
-+++ b/lib/ethdev/ethdev_trace_points.c
-@@ -230,12 +230,6 @@ RTE_TRACE_POINT_REGISTER(rte_eth_trace_xstats_get,
- RTE_TRACE_POINT_REGISTER(rte_eth_trace_xstats_reset,
- 	lib.ethdev.xstats_reset)
- 
--RTE_TRACE_POINT_REGISTER(rte_ethdev_trace_set_tx_queue_stats_mapping,
--	lib.ethdev.set_tx_queue_stats_mapping)
--
--RTE_TRACE_POINT_REGISTER(rte_ethdev_trace_set_rx_queue_stats_mapping,
--	lib.ethdev.set_rx_queue_stats_mapping)
--
- RTE_TRACE_POINT_REGISTER(rte_ethdev_trace_fw_version_get,
- 	lib.ethdev.fw_version_get)
- 
-diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-index 9efeaf77cb..d6915a6b08 100644
---- a/lib/ethdev/rte_ethdev.c
-+++ b/lib/ethdev/rte_ethdev.c
-@@ -160,11 +160,6 @@ static const struct {
- 	{RTE_ETH_DEV_CAPA_FLOW_SHARED_OBJECT_KEEP, "FLOW_SHARED_OBJECT_KEEP"},
- };
- 
--enum {
--	STAT_QMAP_TX = 0,
--	STAT_QMAP_RX
--};
--
- static const struct {
- 	enum rte_eth_hash_function algo;
- 	const char *name;
-@@ -4005,63 +4000,6 @@ rte_eth_xstats_query_state(uint16_t port_id, uint64_t id)
- 	return -ENOTSUP;
- }
- 
--static int
--eth_dev_set_queue_stats_mapping(uint16_t port_id, uint16_t queue_id,
--		uint8_t stat_idx, uint8_t is_rx)
--{
--	struct rte_eth_dev *dev;
--
--	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -ENODEV);
--	dev = &rte_eth_devices[port_id];
--
--	if (is_rx && (queue_id >= dev->data->nb_rx_queues))
--		return -EINVAL;
--
--	if (!is_rx && (queue_id >= dev->data->nb_tx_queues))
--		return -EINVAL;
--
--	if (stat_idx >= RTE_ETHDEV_QUEUE_STAT_CNTRS)
--		return -EINVAL;
--
--	if (dev->dev_ops->queue_stats_mapping_set == NULL)
--		return -ENOTSUP;
--	return dev->dev_ops->queue_stats_mapping_set(dev, queue_id, stat_idx, is_rx);
--}
--
--RTE_EXPORT_SYMBOL(rte_eth_dev_set_tx_queue_stats_mapping)
--int
--rte_eth_dev_set_tx_queue_stats_mapping(uint16_t port_id, uint16_t tx_queue_id,
--		uint8_t stat_idx)
--{
--	int ret;
--
--	ret = eth_err(port_id, eth_dev_set_queue_stats_mapping(port_id,
--						tx_queue_id,
--						stat_idx, STAT_QMAP_TX));
--
--	rte_ethdev_trace_set_tx_queue_stats_mapping(port_id, tx_queue_id,
--						    stat_idx, ret);
--
--	return ret;
--}
--
--RTE_EXPORT_SYMBOL(rte_eth_dev_set_rx_queue_stats_mapping)
--int
--rte_eth_dev_set_rx_queue_stats_mapping(uint16_t port_id, uint16_t rx_queue_id,
--		uint8_t stat_idx)
--{
--	int ret;
--
--	ret = eth_err(port_id, eth_dev_set_queue_stats_mapping(port_id,
--						rx_queue_id,
--						stat_idx, STAT_QMAP_RX));
--
--	rte_ethdev_trace_set_rx_queue_stats_mapping(port_id, rx_queue_id,
--						    stat_idx, ret);
--
--	return ret;
--}
--
- RTE_EXPORT_SYMBOL(rte_eth_dev_fw_version_get)
- int
- rte_eth_dev_fw_version_get(uint16_t port_id, char *fw_version, size_t fw_size)
-diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
-index ee400b386f..3aa7a22fbc 100644
---- a/lib/ethdev/rte_ethdev.h
-+++ b/lib/ethdev/rte_ethdev.h
-@@ -3491,51 +3491,6 @@ int rte_eth_xstats_query_state(uint16_t port_id, uint64_t id);
-  */
- int rte_eth_xstats_reset(uint16_t port_id);
- 
--/**
-- *  Set a mapping for the specified transmit queue to the specified per-queue
-- *  statistics counter.
-- *
-- * @param port_id
-- *   The port identifier of the Ethernet device.
-- * @param tx_queue_id
-- *   The index of the transmit queue for which a queue stats mapping is required.
-- *   The value must be in the range [0, nb_tx_queue - 1] previously supplied
-- *   to rte_eth_dev_configure().
-- * @param stat_idx
-- *   The per-queue packet statistics functionality number that the transmit
-- *   queue is to be assigned.
-- *   The value must be in the range [0, RTE_ETHDEV_QUEUE_STAT_CNTRS - 1].
-- *   Max RTE_ETHDEV_QUEUE_STAT_CNTRS being 256.
-- * @return
-- *   Zero if successful. Non-zero otherwise.
-- */
--__rte_deprecated
--int rte_eth_dev_set_tx_queue_stats_mapping(uint16_t port_id,
--		uint16_t tx_queue_id, uint8_t stat_idx);
--
--/**
-- *  Set a mapping for the specified receive queue to the specified per-queue
-- *  statistics counter.
-- *
-- * @param port_id
-- *   The port identifier of the Ethernet device.
-- * @param rx_queue_id
-- *   The index of the receive queue for which a queue stats mapping is required.
-- *   The value must be in the range [0, nb_rx_queue - 1] previously supplied
-- *   to rte_eth_dev_configure().
-- * @param stat_idx
-- *   The per-queue packet statistics functionality number that the receive
-- *   queue is to be assigned.
-- *   The value must be in the range [0, RTE_ETHDEV_QUEUE_STAT_CNTRS - 1].
-- *   Max RTE_ETHDEV_QUEUE_STAT_CNTRS being 256.
-- * @return
-- *   Zero if successful. Non-zero otherwise.
-- */
--__rte_deprecated
--int rte_eth_dev_set_rx_queue_stats_mapping(uint16_t port_id,
--					   uint16_t rx_queue_id,
--					   uint8_t stat_idx);
--
- /**
-  * Retrieve the Ethernet address of an Ethernet device.
-  *
+ 		ret = pp2_ppio_outq_get_statistics(priv->ppio, idx,
 -- 
 2.53.0
 
