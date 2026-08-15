@@ -2,73 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF1E0C5DF67
-	for <dpdk-dev@archiver.kernel.org>; Sat, 15 Aug 2026 15:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C861C5AD5A
+	for <dpdk-dev@archiver.kernel.org>; Sat, 15 Aug 2026 15:44:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A6A2040278;
-	Sat, 15 Aug 2026 17:43:05 +0200 (CEST)
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com
- [209.85.214.180])
- by mails.dpdk.org (Postfix) with ESMTP id 0B22840272
- for <dev@dpdk.org>; Sat, 15 Aug 2026 17:43:04 +0200 (CEST)
-Received: by mail-pl1-f180.google.com with SMTP id
- d9443c01a7336-2caea3f742bso34628955ad.0
- for <dev@dpdk.org>; Sat, 15 Aug 2026 08:43:03 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B556E40278;
+	Sat, 15 Aug 2026 17:44:40 +0200 (CEST)
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
+ [209.85.214.171])
+ by mails.dpdk.org (Postfix) with ESMTP id F045E40272
+ for <dev@dpdk.org>; Sat, 15 Aug 2026 17:44:38 +0200 (CEST)
+Received: by mail-pl1-f171.google.com with SMTP id
+ d9443c01a7336-2cf452def93so24433295ad.1
+ for <dev@dpdk.org>; Sat, 15 Aug 2026 08:44:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786808583;
- x=1787413383; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786808678;
+ x=1787413478; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=Nb6Vz8SFlFR6G+eNlW+Wki1UwwW6+B+KqrLxhvoamcU=;
- b=DOc0jvHRE4F1ENJcGnXtipdvKQHzcx1FLRLnBWQ4hqOJzuvTVXvP4IeiTc9Lw/Qi9a
- CIbVaAoBi0We477gVlkCRuTcFoHg4Dlkvfb5SLwqBvI4zc+6pkYzve1Zcu/YuNogf9c9
- 0iHmbnIybu7MohmVFEfTfNYNMYoErbio3Guqh3efPBqXmW4Z54qPAhfyG8mzbLcxqPzM
- LqS2Q6Z5sglf3sWMoML5BOH8MDMk5PckLcOhezT80pO+jF75wJ24M/dOwg360yMRl3xA
- PTp7QABidu/3Byi4xWNJtXodAQgx8Nq+NEfmdvG0JtHc8Byn910gEmXz4uASPl/DI5nR
- OaQg==
+ bh=B1OzVeXPpDdJZr3hoHJ2QBVqY2M2AgRk750kBbr92B8=;
+ b=R2XhFzytijFZyX2nPd+YpM7T2n0gfI87e5yMGVy9CN+n9e4oCmNWN38uPOdqD1aXY6
+ X7Pu4/zo9bUhrsM2NL2odALFohGMjCLV+Q3iCCz3zdQTaMMU9Mf/QqacglfRUZN4UmLD
+ o9+KUc98FUYLo4AgMbuZlgFIDG/xoKn/De6I60Oh8JzU6NJD4kuUHAAHA/k4lrUR4GQ6
+ UUPqk7BA7KadiVtv1Eis9cH8h90XjtiipM9jh4i42QI7gL4yahtVqQtNGl9yuPq2MZXg
+ 6YtOZ/zEXmWY6rVdWJaQHD7lujqfXTbheTbTgwfxIMjubosXdH19eVwGM0MWpC+7f4mV
+ u4Qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786808583; x=1787413383;
+ d=1e100.net; s=20251104; t=1786808678; x=1787413478;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=Nb6Vz8SFlFR6G+eNlW+Wki1UwwW6+B+KqrLxhvoamcU=;
- b=Gu5s+xiZuZjrOeyJDvkQrAdlNGWSF4PSf+SfKCsUwA7OeH/wocu8Wb/FtHsGukvlNk
- NCxRR7/YRas5eRwYqmINu9VBg2wE1U4lcSSY39PJOp8UfryW+zRAbkhThvWhrGxGQ1TP
- Kc1GRlfw7Gt2tklT2P1KjOAol3nfZQufjUJ20yxfo0X2VRpQJAuUjgs5jfWQH7ZZ3hmJ
- jVnVf6ZB8A+JrBBp0nUTHOctATHw18IkIOHdG/d2Vam0cowzi/KejSSfM5ZzRWRZlhrk
- LlqA/hHvh4PGq7Nbo97qZFd3gkuKbke8ffqA5hYuqOeC3YUqpR4Xs+ktvsEKoT+DpV9+
- ipgw==
-X-Gm-Message-State: AOJu0YyBIyE5nYdVzrYrM5yr1FddaFKr0q4+O4/ViI+cWr0E0W++CHhP
- u7Z6L65gIM/2H4B6uKM6z1Dj30L4DAegU+nkW3y+6sK1gcDHi5/6HhyN3tQpoDcDvlg=
-X-Gm-Gg: AR+sD13kRIkmFwW3YkDhk70O9DpQJ2EMoXyWJryWUdDFoJekmP9PWiF6FGbgRxu0s3Z
- uYtE8jlFDgzCJ7SGZPOtFjQS/VCRMRoCLVH+WgkXN2E6Coge4dv7ysFEvGy9lXUZKqFRW38DiJX
- cil1+OoDaHSIaLzrHrfcES1MZ5SPvzxs1auPcJkyJHR0NgxOLPqYpzVG+XFvYQUc5PpHvVsiJ+9
- dEQ4zEHXmaTA/w42xPuSXUDxF5v5DpSi4NqqvLmL9y5kWGd+NZllFXeHvTv8Z3IViGLAqm7DpM7
- 7y3yDt/pzWT0+WZdGcHiEWA3LLJ4ofNC+zjoJmwFPGwH5O/i/n9tGKU/vk2WAX8HfR0oPXhx3aA
- V9D6nIT9AyujO7n08npnXwtHW8T/EVcXJJVGwd68sIVfZl4BcCya+4SQ6qLVgCFh7TW0pzJKuhL
- cS9VL6FqTuDHVBdI4GAyOnYxOlwuUyZhYw5oNmw7VnK9FNdg9FgbtftH6fk0vR0PGNXtBbux1p7
- A3HHPekAEIwMYdYXDq4uTh0HD+uiw==
-X-Received: by 2002:a05:6a20:c90b:b0:3b4:6a23:6ba with SMTP id
- adf61e73a8af0-3cc71de3abcmr16257082637.26.1786808583013; 
- Sat, 15 Aug 2026 08:43:03 -0700 (PDT)
+ bh=B1OzVeXPpDdJZr3hoHJ2QBVqY2M2AgRk750kBbr92B8=;
+ b=WdXIj3rmw8xtBTITX47prX9W6QBcoLsyLO0cF4eEzCq1Oh4NK6lxKBTRl90v0V6q90
+ 6sF75yA9hDf8Nadj+xVR/8ARZZqF72uUZa55q1upzte4xQfMpTf9CaDfLHBXMcxbQ4/L
+ FNslEc58RBRrS+t2rYnQXtxsrW04AeOUz7vvz/MpmKf2OJ552eX5Bil+jLK/dfXzzZB3
+ ziUueJNTvUKf8u2ijxZQURf6vL6P7e6CJIftLMXb40AGO8F68veQsjFgOQbbnZsMnOWr
+ zSvATglUQWPDP/KrMXRe+Yp0jJkpdZyLXxt7jO6aNKGtgXrXpKsUrnfNX35x5dqsLY4Y
+ vgEw==
+X-Gm-Message-State: AOJu0Yyy7cMVTWjuVYEPJbVe2utpH6slubZE6wT6+V+kuPJGUBWKIXVA
+ WjtpSSzWq2xkRELQjMbhm0rptcbNF5RQOs10p5CpqkYB2pkCmRiX8JKsiAvYk9QWlT8=
+X-Gm-Gg: AR+sD10WN6on0r7d+IxmrO2zDGlfaYKjJksSu3T2ruUVznqGuK7B3J8cGYdUkXp+aHi
+ BU14QsvFNDuQhcUc3FVt2P7aAKDdANkobXzywrl0q5kEk0bVkHSaayoYX/aUtZrf5abiugYUCiG
+ X7esnT4DPy5RREoHTA7KQGWmDCdYyANmowjWzRrYk2qf42qt+PprCJQt0zIf1n1bHlMGcMQI47X
+ /KUuk4wZHCc0xpAvUZaUvm7wDlfI18UC5XpW2404lAHoLOliq73j5E/whC5cq26lPMMYsQ7Ltdf
+ CU+YZATAJGtrWWIAwjeNo+S28MvVIuYdp7uZ4NKfk44LGwToND8BNkwJqggPcIDp8ij1DzzSujy
+ GW5QREkpYSIhv2mCHJYVwlajEoaBOGi5rJXLwJC1hPgA3He5nEV5weFMRrJ16BWWcw4zA6V4YEE
+ 3FPdKVwYE669W4+m7uS55h251I4m+c/OaUi+Ep9WZh5vSYhnkVuDGj7R6JnMT/dg2jA8Ut/c9Pr
+ xE1AJ+fQHeVnNFs45pMpOFTbW46lOwO0+cXNUSX
+X-Received: by 2002:a17:903:28f:b0:2cc:db7a:251 with SMTP id
+ d9443c01a7336-2d37f5cdcebmr223960565ad.2.1786808677969; 
+ Sat, 15 Aug 2026 08:44:37 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-141387accdbsm29334418c88.3.2026.08.15.08.42.59
+ 5a478bee46e88-320d5bd9fd3sm16200855eec.4.2026.08.15.08.44.34
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 15 Aug 2026 08:43:02 -0700 (PDT)
-Date: Sat, 15 Aug 2026 08:42:52 -0700
+ Sat, 15 Aug 2026 08:44:37 -0700 (PDT)
+Date: Sat, 15 Aug 2026 08:44:27 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Mark Blasko <blasko@google.com>
-Cc: dev@dpdk.org, ciara.loftus@intel.com, mtahhan@redhat.com,
- joshwash@google.com, jtranoleary@google.com
-Subject: Re: [PATCH v6 0/2] net/af_xdp: add Rx timestamping and read_clock
- support
-Message-ID: <20260815084252.30d6e382@phoenix.local>
-In-Reply-To: <20260815004553.3479994-1-blasko@google.com>
-References: <20260623215325.814776-1-blasko@google.com>
- <20260815004553.3479994-1-blasko@google.com>
+To: Ivan Malov <ivan.malov@arknetworks.am>
+Cc: dev@dpdk.org, Andy Moreton <andy.moreton@amd.com>, Viacheslav
+ Galaktionov <viacheslav.galaktionov@arknetworks.am>, Roman Zhukov
+ <Roman.Zhukov@arknetworks.am>, Pieter Jansen van Vuuren
+ <pieter.jansen-van-vuuren@amd.com>, Andrew Rybchenko
+ <andrew.rybchenko@oktetlabs.ru>
+Subject: Re: [PATCH v3 00/14] common/sfc_efx/base: fix code analysis issues
+Message-ID: <20260815084427.0bfc0aa6@phoenix.local>
+In-Reply-To: <20260814125438.13283-1-ivan.malov@arknetworks.am>
+References: <20260811174821.8930-1-ivan.malov@arknetworks.am>
+ <20260814125438.13283-1-ivan.malov@arknetworks.am>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -85,109 +87,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat, 15 Aug 2026 00:45:50 +0000
-Mark Blasko <blasko@google.com> wrote:
+On Fri, 14 Aug 2026 16:54:24 +0400
+Ivan Malov <ivan.malov@arknetworks.am> wrote:
 
-> This patch series introduces support for dynamic Rx timestamping and
-> clock querying in the AF_XDP Poll Mode Driver.
+> This series addresses code analysis defects in the
+> common/sfc_efx/base library.
 > 
-> The first patch introduces three new vdev devargs to specify
-> layout-agnostic metadata offsets and bitmasks for extracting hardware
-> Rx timestamps from XDP metadata into the mbuf dynamic timestamp field.
+> The first four patches fix excessive stack consumption in
+> MCDI helper functions, each exceeding 1 KB on-stack, by
+> switching to heap-allocated payload buffers.
 > 
-> The second patch implements the read_clock ethdev operation, querying
-> ethtool for the interface's PTP Hardware Clock index at start and using
-> clock_gettime to query the NIC hardware clock time.
-> ---
-> v6:
-> - Patch 1:
->   - Add per-queue Rx timestamp offload support.
->   - Refine SIOCGHWTSTAMP filter check and preserve flags.
->   - Fix feature matrix ordering in af_xdp.ini.
->   - Add conversion and overlap validation for devargs.
->   - Unify timestamp extraction for ZC and CP paths.
->   - Update documentation formatting, bounds, and casing.
-> - Patch 2:
->   - Fix ptp_fd cleanup path in eth_dev_close().
->   - Lower PTP open failure log level to INFO.
-> v5:
-> - Patch 1:
->   - Fix rx_timestamp_enabled check in eth_rx_queue_setup().
->   - Update af_xdp.rst documentation and code example.
->   - Update release notes for 26.11.
-> - Patch 2:
->   - Update release notes for 26.11.
-> v4:
-> - Patch 1:
->   - Validate rx_timestamp_offset (8 <= offset <= 256) and valid_hint_offset
->     (1 <= offset <= 256) bounds.
->   - Revert parse_integer_arg() to base 10 and add dedicated parse_hex_arg()
->     for validity mask.
->   - Optimize fast-path check and use rte_pktmbuf_mtod_offset() macro.
->   - Preserve config.tx_type in SIOCSHWTSTAMP instead of forcing
->     HWTSTAMP_TX_OFF.
->   - Return -errno on socket failure and replace (caddr_t) cast with
->     (void *).
->   - Advertise RTE_ETH_RX_OFFLOAD_TIMESTAMP conditionally when
->     rx_timestamp_offset >= 0.
->   - Update af_xdp.ini features matrix with Timestamp offload = Y.
->   - Document CAP_NET_ADMIN requirement and persistent HW filter side
->     effect in af_xdp.rst.
-> - Patch 2:
->   - Move ptp_fd into pmd_process_private for multi-process safety.
->   - Decouple /dev/ptpX opening from RTE_ETH_RX_OFFLOAD_TIMESTAMP.
->   - Move read_clock documentation out of "Options" into its own section
->     in af_xdp.rst.
->   - Add #ifndef guards around CLOCKFD and FD_TO_CLOCKID macro definitions.
->   - Replace (caddr_t) cast with (void *).
+> The remaining ten patches correct SAL annotations, add
+> assertions and bounds checks across netport and filter
+> helpers to address uninitialised memory, buffer overrun,
+> and potential dereference issues. The final patch widens
+> loop variable types to address a CodeQL warning.
+> 
+> 
 > v3:
-> - Patch 1:
->   - Add PMD documentation and release notes entry.
->   - Move dynamic mbuf timestamp field registration to eth_dev_start().
->   - Replace 64-bit pointer casting with memcpy.
->   - Add devargs validation and support auto-base integer parsing.
-> - Patch 2:
->   - Add documentation and release notes entry.
->   - Add PTP file descriptor cleanup on device start, stop, and close.
->   - Return -errno on clock_gettime() failure and fix PTP open error logging.
-> v2:
-> - Patch 1:
->   - Replace static metadata struct assumption with configurable vdev devargs
->     for layout-agnostic timestamp offset extraction and validity verification.
 > 
-> Mark Blasko (2):
->   net/af_xdp: add af_xdp rx metadata and dynamic timestamping support
->   net/af_xdp: add read_clock support to AF_XDP PMD
-> 
->  doc/guides/nics/af_xdp.rst             |  51 ++++
->  doc/guides/nics/features/af_xdp.ini    |   1 +
->  doc/guides/rel_notes/release_26_11.rst |   7 +
->  drivers/net/af_xdp/rte_eth_af_xdp.c    | 340 ++++++++++++++++++++++++-
->  4 files changed, 390 insertions(+), 9 deletions(-)
-> 
+> - addressed https://mails.dpdk.org/archives/dev/2026-August/343201.html
+>   -- patches 01-04: switched to EFX_MCDI_BUF_SIZE
+>   -- patch 05: replaced the unreachable NULL guard with
+>      EFSYS_ASSERT; corrected the commit message
+>   -- patches 09, 13: moved __success to the declaration line
+>   -- patch 11: added stride and count bounds check before the loop
+>   -- patch 13: documented the TECH_AUTO default behaviour
 
-Reading through the AI review chaff, all I see left as a minor
-issue is:
 
- 
-Warning 1: eth_af_xdp_enable_hw_timestamping() writes an all-zero
-hwtstamp_config when SIOCGHWTSTAMP fails.
- 
-    struct hwtstamp_config config = {0};
-    ...
-    ret = ioctl(fd, SIOCGHWTSTAMP, &ifr);
-    if (ret == 0) {
-            if (config.rx_filter == HWTSTAMP_FILTER_ALL || ...)
-                    ...
-    }
- 
-    config.rx_filter = HWTSTAMP_FILTER_ALL;
-    ret = ioctl(fd, SIOCSHWTSTAMP, &ifr);
- 
-The v6 changelog says config.flags is preserved, but that only holds
-when the GET succeeded.  Some drivers implement SET without GET; on
-those the SET goes out with tx_type = HWTSTAMP_TX_OFF and flags = 0,
-which turns off any Tx hardware timestamping another user of that
-netdev had configured.  Since the setting is not restored on stop,
-that is permanent.  Either fail when the GET fails, or only issue the
-SET with a config that was actually read back.
+This all looks good, applied to next-net.
+Still going through the later patches.
