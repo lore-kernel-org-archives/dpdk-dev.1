@@ -2,71 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EBBAC5B572
-	for <dpdk-dev@archiver.kernel.org>; Sun, 16 Aug 2026 22:32:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB3FBC5DF66
+	for <dpdk-dev@archiver.kernel.org>; Sun, 16 Aug 2026 22:33:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CEBB340294;
-	Mon, 17 Aug 2026 00:32:46 +0200 (CEST)
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
- [209.85.214.178])
- by mails.dpdk.org (Postfix) with ESMTP id 7DDFC4027A
- for <dev@dpdk.org>; Mon, 17 Aug 2026 00:32:45 +0200 (CEST)
-Received: by mail-pl1-f178.google.com with SMTP id
- d9443c01a7336-2d01663d816so23441665ad.1
- for <dev@dpdk.org>; Sun, 16 Aug 2026 15:32:45 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B439140294;
+	Mon, 17 Aug 2026 00:33:47 +0200 (CEST)
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com
+ [209.85.216.52]) by mails.dpdk.org (Postfix) with ESMTP id BDCF84027A
+ for <dev@dpdk.org>; Mon, 17 Aug 2026 00:33:46 +0200 (CEST)
+Received: by mail-pj1-f52.google.com with SMTP id
+ 98e67ed59e1d1-383cb94f742so3308186a91.3
+ for <dev@dpdk.org>; Sun, 16 Aug 2026 15:33:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786919564;
- x=1787524364; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786919626;
+ x=1787524426; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=JzUh/o6STfP8YsG9Encha9wQjbsFyOxG1lWwjyUfGZg=;
- b=Af2t52NKlUpXzP/QSinrc+ZwOsqaVe7M5uAD4q86K5KCg3jpeGokfMJQx67Q1jQXkO
- ilEI7uSL+A6sWsaA8f+n9w2e2T+S48AXxK9THZY/V3P0Pp3Iu59b2uOgNreAAAJ2k6rx
- d67n7JkocJT4P0/fKWiE1AMP6vllrmf+rSzUXi0fPFDTnI+3rzc8KwIK6HhCUcdKiin6
- S15X1UNlHWQ68MJwyoeFsHEdLOVKOvqG+AYzhuEohvzSb5l9mQE+tlKpTkp/kzxEproI
- 253jIMyDqBKt3EVtEwoqFBrt3Cb/hakuUEu1rCuEibX+fuXJ+aNBk+2Qc74M0WP6AEv+
- WINw==
+ bh=8GWXaBw0dpOUHhuWSp5jeGbzMHZWt1v8ONMTkRoiea4=;
+ b=ZTc6gjoqpdAVDVYHDoMOOasuPNmcVKX9VipoqHW1TL/9miDOrCKpwrNnnqm0NmGxVY
+ AL8uI6fOJgYg3TkGzNbUw4pIwQl0wEIKZnwh7pWKkro2psuLSoijlW04vlMep+2lq+Dk
+ 2VBlBoIcUF8/alv+Wz3RGa3rkTjLHUqIPYn90ddYLZbxvZRoDeV39gPQxy+P3wjO4QkU
+ 7o2w8aKcj9UOQmUyhxE0cPmAfsg5QB6yHSOZjVJ5AE8EKBTPqVTkQoMt64srU5p83f0k
+ bNAdRGrHGThZXXCwJeWC4nB1Xcc3uU5Mxq88eA4JJ/nf2xweL6fGdjZhZjvxVa6Klo2f
+ 5v3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786919564; x=1787524364;
+ d=1e100.net; s=20251104; t=1786919626; x=1787524426;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=JzUh/o6STfP8YsG9Encha9wQjbsFyOxG1lWwjyUfGZg=;
- b=olOSERj7anbwiyPXwIRLA4ltvTOqNSvhBgIwDbN+jwsBWRaGY6WK6o4ozZ25yUeb9S
- x4zVvDOU1BtOaNSG3JOjN6qz/kQ7imYqO5nlLr5I3xObU7K20zlxjQmyW9uPec0yZkvP
- kAO3EIb7Grv03QjsrffXWJjUIKnG8xZE9s7Bguem7qhhW3xsYJ0128e2cKrgg+acR5z1
- WmRkK6AtJ3Qjz7Oj+5WLkFrhRS9sltZ1vqHeZWkAty+/8fuxGPFmWXUdelaw+RRc3Jpa
- YiwhVyt8pjUmpNXzDjCa6k4bisnmYyPb4SX/Ws1oRiD69te0F/OJ7OYQN9+Jsxb0jDAt
- kdBw==
-X-Gm-Message-State: AOJu0YzUGosgEUZaAKE7NAlReljMQ4FKfKXO/9jpwhRmJtrrOsSLSR1T
- UqzF+TaiDJwecjUoCvxR3sDNhFnRfwXrs6x9gCCxFjVoIAeDba+v8SSxieEz/7mYNvQ=
-X-Gm-Gg: AR+sD13gLDkFbr7rQLUCShtT8AkTawT+Gu2dwiPtSkuWB4HT0E8X6E/GFyggQmBEkHe
- eVFPmq3Zke1+aokizpn0tFbNuim8vOO81EElgLm31BSEofnaySJHbcUDgUJWaiJNpTXb90xupc/
- dsN2hQYIEkFe/V0M9432VEKEv0IhUFqJvUDRJ+b27VM9FiQvfCauZ2gIHgGl/DbY5FdSQPR/8P/
- WvqDn4X/oPiv4BXsAgM4KVmN8MM5hcG6AQT4EP1PU5cyR7DuzYnwwJJmbwXvKKf1lQ7Uhj+K/qG
- eBspTSZ7tqHVOnxT1UHyBAzLekeYi9BeQqRT68e9vukregGbZ9JYwhaAJvpNE4CGFHymt9Nlzd6
- +P07oHDmVI7sMgC6O6PVDOx4VIrPBsx3vnT/Z+N2wEXFcKAfDiR9VFuCvHTcceDvJj7ABNPSD6m
- BsyY3zYHfkkmMorlH6+3E17fB47UWO64TPDyOYHp4ejrXXkQxcL2PYTToZUYo+QXnuZXiTdC6o5
- PW0cLOajDtnJ0hUUGvGTuv/l8wQfUhtVaI=
-X-Received: by 2002:a05:6a21:10e:b0:3bf:7994:ddca with SMTP id
- adf61e73a8af0-3cc71d5074cmr23501781637.29.1786919564346; 
- Sun, 16 Aug 2026 15:32:44 -0700 (PDT)
+ bh=8GWXaBw0dpOUHhuWSp5jeGbzMHZWt1v8ONMTkRoiea4=;
+ b=KN/mRK8gX9ppx75etkru5gTCr2xdI0VDEI75ly0F8McuZ3m32Ya7HyYnhEQ0cE+Czg
+ kikjDKpsqKLPfpDXRGJQ++Mx3O909j81e7+2h9oHVI65WvUjM0/Y/b6pJramCPsGtWeK
+ WYSaoGCweFwUJZWqYQVF46eFv36Gzp6m2DPLD3i6WT0uE46DFhRph/H90TtHIYMzB8Qy
+ bgYgnICdyGhs5qHPBJlY1tpf24KoCN9Bel0KY/k9ubiAMHCvK2vhdp28uiHIfHas6uVE
+ uY26zmfaPV7VBE2+LDEAEnID8cMn8SuSKXMVzvlbX6eygPutY/ilnWC+UN+jyRtzvtYi
+ ktaA==
+X-Gm-Message-State: AOJu0Yxxtn+o9ruuneUDIQ1e//t4x+AYpuQXxCk+URXPH7nc/Kpja+aE
+ Qs/nOe2RSO6zKM+DIbG/dETZL1g24fcM6S9JHcQ81cDRIzifLYcAzrbI6Y1Fo0N/l5Y=
+X-Gm-Gg: AR+sD12ic3xoiCJTao+Tx0e2nbfjf2vdo+J4amCihe69jto6+M1DEVhDPY7jOLdgSKY
+ SY/EHpNAFgQ1Ya/4jXKZFjxQc50VYCOd6gYBryCqWUlfAFJngjAT9eur8ihoefLYTCas4BKg/oA
+ 0F5h9HJbOcRcq36CCGc/2/mz07dtzHUPci8NNEPtL+EWRtuxD9GB7gY8j4fWbHsqwXTJAJVEo8K
+ ThSduP1+OR9rmy3QYDsZzx9N2YVjWlyD8YGfH49NFODOATnSnizv/EBAjzg3F9Vht6zm1dkwNpd
+ 6wAQ9at2/19Bn9P4qw5pGSf+7ysdXacwPfLu9yPGYdqzpM8rkcgv+Cae/IyTXVFdBJ0JGcXEF8p
+ 22JYBf0WIV+JczBHdkjTN+K8A6SLAGSzls2VmcSLeBbaqPJ0oVB1lpa4ebwLN3qg4mO1naWt1mX
+ G/V764NrskQ3xwP6rsBy28ELkJgjWwJSNdxuYV+hiYZC1f6XwfBsPqG/SWVG0S2EtUVpDjdkqhx
+ s3w2i5EAWfIAPyeF1oLFM8whWBUQ+YYPJEx6ls/
+X-Received: by 2002:a05:6a21:1786:b0:3c8:e140:63c3 with SMTP id
+ adf61e73a8af0-3cc720d1fc3mr24956034637.37.1786919625744; 
+ Sun, 16 Aug 2026 15:33:45 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-141387af4adsm32596999c88.1.2026.08.16.15.32.42
+ a92af1059eb24-141387ed5b1sm57200559c88.8.2026.08.16.15.33.43
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 16 Aug 2026 15:32:44 -0700 (PDT)
-Date: Sun, 16 Aug 2026 15:32:34 -0700
+ Sun, 16 Aug 2026 15:33:45 -0700 (PDT)
+Date: Sun, 16 Aug 2026 15:33:37 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Pengpeng Hou <pengpeng@iscas.ac.cn>
-Cc: dev@dpdk.org, Cristian Dumitrescu <cristian.dumitrescu@intel.com>
-Subject: Re: [PATCH 1/2] lib/pipeline: bound token concatenation when
- parsing instructions
-Message-ID: <20260816153234.55ec12c2@phoenix.local>
-In-Reply-To: <20260321021627.96424-1-pengpeng@iscas.ac.cn>
-References: <20260321021627.96424-1-pengpeng@iscas.ac.cn>
+Cc: dev@dpdk.org, Praveen Shetty <praveen.shetty@intel.com>
+Subject: Re: [PATCH 2/2] net/cpfl: validate fieldvector offsets before
+ copying keys
+Message-ID: <20260816153337.1e078d8d@phoenix.local>
+In-Reply-To: <20260321021634.96514-1-pengpeng@iscas.ac.cn>
+References: <20260321021634.96514-1-pengpeng@iscas.ac.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -83,132 +82,94 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat, 21 Mar 2026 10:16:27 +0800
+On Sat, 21 Mar 2026 10:16:34 +0800
 Pengpeng Hou <pengpeng@iscas.ac.cn> wrote:
 
-> action_block_parse() and apply_block_parse() build instruction strings by concatenating untrusted tokens into a fixed-size stack buffer. Replace the open-coded strcat() loop with a helper that tracks the remaining capacity and fails when the assembled instruction would exceed RTE_SWX_INSTRUCTION_SIZE.
+> The CPFL JSON parser accepts fieldvector offsets and SEM key sizes straight from the input description. Reject offsets that would write past the 64-byte SEM fieldvector storage and reject key sizes that would later overread the fixed source buffer or overflow the destination key buffer.
 > 
 > Signed-off-by: Pengpeng Hou <pengpeng@iscas.ac.cn>
 > ---
 
-This patch has serious problems. Finally ran it through AI.
+This patch does not build which makes it a complete NAK.
+
+Also, lots of AI reported issues.
 
 
-General: these two patches touch unrelated subsystems (lib/pipeline
-and net/cpfl), have different maintainers, and are not threaded
-(each has its own Message-ID with no In-Reply-To).  They should be
-sent as two independent submissions rather than a 1/2, 2/2 series.
+Patch 2/2: net/cpfl: validate fieldvector offsets
 
-Neither patch carries a Fixes: tag or Cc: stable@dpdk.org.  Both
-claim to fix buffer overflows in code that shipped years ago, so
-both need them.
+Error: does not compile
 
+  In cpfl_flow_js_pattern_per_act():
 
-Patch 1/2: lib/pipeline: bound token concatenation
+	if (js_act->sem.keysize > sizeof(js_act->sem.cpfl_flow_pr_fv)) {
 
-Error: resource leak in rte_swx_pipeline_table_config()
+  js_act is struct cpfl_flow_js_pr_action *, so js_act->sem is
+  struct cpfl_flow_js_pr_action_sem, whose members are prof,
+  subprof, keysize, fv and fv_size.  There is no cpfl_flow_pr_fv
+  member.  That name belongs to struct cpfl_flow_pr_action_sem, a
+  different type (cpfl_flow_parser.h:236-241).  The JSON spec
+  structure and the runtime action structure have been confused.
+  The intended bound is CPFL_JS_SEM_FV_KEY_NUM_MAX.
 
-  CHECK_STRLCPY(t->args, args, EINVAL);
+Error: the fv_proto offset check bounds the wrong value and is
+       discarded
 
-  CHECK() expands to a bare "return -(err_code)".  This call site
-  sits after six successful calloc() calls (t, t->fields,
-  t->actions, t->default_action_data,
-  t->action_is_for_table_entries, t->action_is_for_default_entry).
-  Every other failure past "t = calloc(...)" in that function uses
-  "goto error", which frees all of them.  A long args string now
-  returns -EINVAL and leaks all six allocations.
+  The check added to cpfl_flow_js_pattern_act_fv_proto() applies to
+  the offset stored in js_fv->proto.offset.  That is a byte offset
+  into the matched rte_flow item's spec buffer, consumed in
+  cpfl_parse_fv_protocol() as
 
-  This is the concrete hazard in wrapping strlcpy() in a macro that
-  hides control flow: the macro is correct in isolation and wrong
-  at the only site where it matters.
+	pointer = &(((const uint8_t *)(items[j].spec))[v_offset]);
 
-  The rest of the function validates its string inputs up front
-  with CHECK_NAME(), before any allocation.  Doing the same here
-  fixes the overflow with no new macro and no leak:
+  It is not a field-vector index, so bounding it by
+  CPFL_JS_SEM_FV_KEY_NUM_MAX / 2 rejects legitimate protocol
+  offsets while preventing no overflow.
 
-	if (args && args[0])
-		CHECK_NAME(args, EINVAL);
+  It also has no effect at all: both callers ignore the return
+  value.
 
-  placed next to the existing CHECK_NAME(name, EINVAL), leaving the
-  strcpy() in the node-initialization block alone.
+	cpfl_flow_js_pattern_act_fv_proto(ob_value, js_fv);
+	cpfl_flow_js_pattern_act_fv_proto(cjson_value, js_fv);
 
-Error: err_line / err_msg left unset on the new failure path
+  in cpfl_flow_js_pattern_act_fv() and
+  cpfl_flow_js_pattern_act_fv_lem().  The same is true of
+  cpfl_flow_js_pattern_act_fv_metadata().  Those unchecked returns
+  are a pre-existing bug worth fixing, but they mean this hunk is
+  dead code as written.
 
-  In both action_block_parse() and apply_block_parse():
+  The check added in cpfl_flow_js_pattern_act_fv() is the correct
+  one: js_fv->offset is what indexes fv[2 * offset] and
+  fv[2 * offset + 1] in cpfl_parse_fieldvectors(), and the SEM
+  vector is CPFL_JS_SEM_FV_KEY_NUM_MAX (64) bytes, so offset < 32
+  is right.
 
-	if (buffer_append_tokens(buffer, sizeof(buffer), tokens, n_tokens))
-		return -ENAMETOOLONG;
+Error: the LEM path has the identical bugs and is left unfixed
 
-  Every other error return in these functions sets *err_line and
-  *err_msg before returning.  pipeline_spec_parse() does not
-  initialize them either, and callers pass uninitialized locals.
-  See examples/pipeline/cli.c:586, which declares
+  cpfl_flow_js_pattern_act_fv_lem() reads js_fv->offset with no
+  bound.  cpfl_parse_fieldvectors() writes fv[2 * offset] and
+  fv[2 * offset + 1] into pr_action->lem.cpfl_flow_pr_fv, which is
+  CPFL_JS_LEM_FV_KEY_NUM_MAX (32) bytes, so the LEM bound is
+  offset < 16, not 32.
 
-	uint32_t err_line;
-	const char *err_msg;
+  cpfl_fxp_parse_pattern() likewise guards only the SEM branch:
 
-  and on failure does
+	memcpy(rinfo->lem.key, pr_action->lem.cpfl_flow_pr_fv,
+	       rinfo->lem.key_byte_len);
 
-	snprintf(out, out_size, "Error %d at line %u: %s\n.",
-		 status, err_line, err_msg);
+  key_byte_len comes from the unvalidated uint16_t lem.keysize, the
+  source is 32 bytes and rinfo->lem.key is 128, so this both
+  overreads the source by up to ~64 KB and overflows the
+  destination.  That is the same bug the patch fixes for SEM.
 
-  So this path prints an uninitialized pointer through %s.  Set
-  both fields, and propagate the helper's return value instead of
-  re-hardcoding -ENAMETOOLONG.
+Info: second condition in the SEM check is unreachable
 
-Warning: 11 of the 12 strcpy() conversions are dead code
+	if (pr_action->sem.keysize > sizeof(pr_action->sem.cpfl_flow_pr_fv) ||
+	    pr_action->sem.keysize > sizeof(rinfo->sem.key)) {
 
-  instr_translate() already validates every token as it is
-  tokenized:
-
-	CHECK(n_tokens < RTE_SWX_INSTRUCTION_TOKENS_MAX, EINVAL);
-	CHECK_NAME(token, EINVAL);
-
-  CHECK_NAME enforces strnlen(token, RTE_SWX_NAME_SIZE) <
-  RTE_SWX_NAME_SIZE, and both instruction_data.label and
-  instruction_data.jmp_label are char[RTE_SWX_NAME_SIZE].  No token
-  reaching instr_jmp*_translate() or the label handling in
-  instr_translate() can overflow, so none of those eleven sites can
-  overflow today.  That check was added in commit 0dde44843b
-  ("pipeline: fix string copy into fixed size buffer") for exactly
-  this class of Coverity report.
-
-  t->args is the one genuinely unchecked destination: it comes
-  straight from the public rte_swx_pipeline_table_config() argument
-  and from the .spec file table args, with no length validation
-  anywhere.  Fixing that one site is worthwhile; the other eleven
-  add code without removing a bug.
-
-Warning: commit message describes only half the patch
-
-  The message covers action_block_parse() and apply_block_parse()
-  in rte_swx_pipeline_spec.c.  It says nothing about the twelve
-  changes to rte_swx_pipeline.c or about the new CHECK_STRLCPY
-  macro, which is where the reviewable behaviour change is.
+  cpfl_flow_pr_fv is 64 bytes, rinfo->sem.key is
+  MEV_SEM_RULE_KEY_SIZE (128).  The first condition always fires
+  first; the second can be dropped.
 
 Warning: missing Fixes: and Cc: stable@dpdk.org
 
-  For the strcat() loops:
-  Fixes: 3ca60ceed79a ("pipeline: add SWX pipeline specification file")
-
-  For the t->args copy:
-  Fixes: e9d870dd93e1 ("pipeline: add SWX pipeline tables")
-
-Info: CHECK_STRLCPY() is fragile if it survives
-
-  sizeof(dst) is silently the pointer size if dst is ever a
-  pointer or an array parameter.  All twelve current uses are true
-  arrays, so it works, but the file's existing idiom (CHECK_NAME,
-  CHECK_INSTRUCTION with an explicit size constant) does not have
-  that trap.  If the macro stays, take the size as an explicit
-  argument.
-
-Info: the strcat() fix itself is correct
-
-  buffer_append_tokens() is sound: the loop invariant keeps len <
-  buffer_size, and the snprintf() return check catches truncation.
-  The joined line really can exceed RTE_SWX_INSTRUCTION_SIZE (256),
-  since the spec tokenizer accepts lines up to MAX_LINE_LENGTH
-  (2048) and up to MAX_TOKENS (256) tokens, so this part of the
-  patch fixes a real stack overflow.
-
+  Fixes: 41f20298ee8c ("net/cpfl: parse flow offloading hint from JSON")
