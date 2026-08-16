@@ -2,34 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 701A6C5CFC1
-	for <dpdk-dev@archiver.kernel.org>; Sun, 16 Aug 2026 02:53:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5452C5CFC1
+	for <dpdk-dev@archiver.kernel.org>; Sun, 16 Aug 2026 02:53:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 07B3440696;
+	by mails.dpdk.org (Postfix) with ESMTP id 00620406B4;
 	Sun, 16 Aug 2026 04:52:53 +0200 (CEST)
 Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
- by mails.dpdk.org (Postfix) with ESMTP id 620EC4028B
- for <dev@dpdk.org>; Sun, 16 Aug 2026 04:52:45 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id A57F14064A
+ for <dev@dpdk.org>; Sun, 16 Aug 2026 04:52:46 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-01 (Coremail) with SMTP id qwCowAAn+u32JYFqrYDQBQ--.14967S9;
- Sun, 16 Aug 2026 10:52:44 +0800 (CST)
+ by APP-01 (Coremail) with SMTP id qwCowAAn+u32JYFqrYDQBQ--.14967S10;
+ Sun, 16 Aug 2026 10:52:45 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v2 07/13] net/sxe2: validate IPsec key length against maximum
- limit
-Date: Sun, 16 Aug 2026 10:52:27 +0800
-Message-ID: <20260816025233.2727226-8-liujie5@linkdatatechnology.com>
+Subject: [PATCH v2 08/13] net/sxe2: enhance repr event handling and  MP code
+Date: Sun, 16 Aug 2026 10:52:28 +0800
+Message-ID: <20260816025233.2727226-9-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260816025233.2727226-1-liujie5@linkdatatechnology.com>
 References: <20260816025233.2727226-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: qwCowAAn+u32JYFqrYDQBQ--.14967S9
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr18JrW3Gw17uFy5Wr4kWFg_yoW8Gr18pr
- 48WF1ruF15G3W5Xw4rXa1SgFyYg347WrykC39Iy3WfJFyDA34UCrs8KFyFkw1UArsxXF1S
- yw47ArW3Gwsxtr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: qwCowAAn+u32JYFqrYDQBQ--.14967S10
+X-Coremail-Antispam: 1UD129KBjvJXoW3GrWrJr43WFyxWw13KryrCrg_yoW3XrWrpF
+ WFgF1rXF18XF1Ivw13Aa18ZFnI9rWrJryUKFZIk34ft3WUtFy0yFW5tr90y3WFk3s8Zw1S
+ ya17KFyDG3W7CFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUBv14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
  rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
  kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -60,45 +59,223 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Add validation check in sxe2_security_valid_key to ensure source key
-length does not exceed SXE2_IPSEC_MAX_KEY_LEN. This prevents potential
-buffer overflows when processing security keys that are longer than
-the supported maximum length.
+This patch improves representor link state event handling and refactors
+multi-process message processing:
+
+- Add representor link state event propagation:
+  * Propagate LSC events to all VF representors when PF link changes
+  * Get link status and trigger callbacks for each representor
+  * Only process in primary process for representor callbacks
+  * Change OICR log format to hexadecimal for better readability
+
+- Refactor primary process message handling:
+  * Extract work logic to sxe2_mp_do_primary_work helper function
+  * Use parameter copy to avoid side effects on original message
+  * Simplify reply construction in primary handler
+
+- Simplify statistics interface:
+  * Remove qstats parameter from sxe2_mp_req_get_stats
+  * Remove qstats copy from shared memory
+  * Update function signature in header and implementation
+
+- Improve error handling and cleanup:
+  * Change error return from EINVAL to ENODATA when no response
+  * Simplify sxe2_link_update_init error path
+  * Remove unnecessary goto statements and cleanup labels
+  * Remove extra whitespace
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_ipsec.c    | 5 +++++
- drivers/net/sxe2/sxe2_security.c | 1 +
- 2 files changed, 6 insertions(+)
+ drivers/net/sxe2/sxe2_irq.c | 27 +++++++++++++----
+ drivers/net/sxe2/sxe2_mac.c | 10 ++-----
+ drivers/net/sxe2/sxe2_mp.c  | 59 +++++++++++++++++++++----------------
+ 3 files changed, 58 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/net/sxe2/sxe2_ipsec.c b/drivers/net/sxe2/sxe2_ipsec.c
-index e783a51b85..622fd1adfe 100644
---- a/drivers/net/sxe2/sxe2_ipsec.c
-+++ b/drivers/net/sxe2/sxe2_ipsec.c
-@@ -254,6 +254,11 @@ static bool sxe2_security_valid_key(uint16_t src_key, uint16_t max_key,
- 		goto l_end;
- 	}
+diff --git a/drivers/net/sxe2/sxe2_irq.c b/drivers/net/sxe2/sxe2_irq.c
+index 3306504761..7fe500b229 100644
+--- a/drivers/net/sxe2/sxe2_irq.c
++++ b/drivers/net/sxe2/sxe2_irq.c
+@@ -77,14 +77,32 @@ static int32_t sxe2_fc_state_callback(struct rte_eth_dev *dev)
+ static void sxe2_event_irq_common_handler(struct sxe2_adapter *adapter, uint64_t oicr)
+ {
+ 	struct rte_eth_dev *dev = &rte_eth_devices[adapter->dev_info.dev_data->port_id];
++	struct rte_eth_dev *repr_eth_dev;
++	struct sxe2_adapter *repr_adapter;
++	uint8_t vf_id;
  
-+	if (src_key > SXE2_IPSEC_MAX_KEY_LEN) {
-+		is_valid = false;
-+		goto l_end;
-+	}
+ 	if (oicr & RTE_BIT32(SXE2_COM_EC_LINK_CHG)) {
+-		PMD_DEV_LOG_INFO(adapter, DRV, "OICR=%" PRIu64, oicr);
++		PMD_DEV_LOG_INFO(adapter, DRV, "OICR=0x%" PRIx64, oicr);
+ 		(void)sxe2_drv_mac_link_status_get(adapter);
+-		if (rte_eal_process_type() == RTE_PROC_PRIMARY)
++		if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
+ 			rte_eth_dev_callback_process(dev,
+ 						     RTE_ETH_EVENT_INTR_LSC,
+ 						     NULL);
++		}
++		if (adapter->switchdev_info.is_switchdev) {
++			for (vf_id = 0; vf_id < adapter->repr_ctxt.nb_repr_vf; vf_id++) {
++				repr_eth_dev = adapter->repr_ctxt.vf_rep_eth_dev[vf_id];
++				if (!repr_eth_dev)
++					continue;
++				repr_adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(repr_eth_dev);
++				(void)sxe2_drv_mac_link_status_get(repr_adapter);
++				if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
++					rte_eth_dev_callback_process(repr_eth_dev,
++								     RTE_ETH_EVENT_INTR_LSC,
++								     NULL);
++				}
++			}
++		}
+ 	}
+ 	if (oicr & RTE_BIT32(SXE2_COM_SW_MODE_SWITCHDEV)) {
+ 		PMD_DEV_LOG_INFO(adapter, DRV, "event notify switchdev");
+@@ -863,12 +881,11 @@ static void sxe2_rxq_intr_unregister(struct rte_eth_dev *dev)
+ 			(void)sxe2_drv_dev_rxq_irq_set(adapter->cdev, i, &efd, 1);
+ 			sxe2_rxq_intr_efd_free(irq_ctxt->rxq_event_fd[i]);
+ 		}
++		rte_free(irq_ctxt->rxq_event_fd);
++		irq_ctxt->rxq_event_fd = NULL;
+ 	}
+-	rte_free(irq_ctxt->rxq_event_fd);
+-	irq_ctxt->rxq_event_fd = NULL;
+ 
+ 	rte_intr_vec_list_free(intr_handle);
+-
+ 	rte_intr_nb_efd_set(intr_handle, 0);
+ 	rte_intr_max_intr_set(intr_handle, 0);
+ }
+diff --git a/drivers/net/sxe2/sxe2_mac.c b/drivers/net/sxe2/sxe2_mac.c
+index 729c804ac3..e65c578262 100644
+--- a/drivers/net/sxe2/sxe2_mac.c
++++ b/drivers/net/sxe2/sxe2_mac.c
+@@ -448,20 +448,14 @@ int32_t sxe2_link_update_init(struct rte_eth_dev *dev)
+ 	int32_t ret;
+ 
+ 	PMD_INIT_FUNC_TRACE();
+-
+ 	rte_spinlock_init(&adapter->link_ctxt.link_lock);
+-
+ 	ret = sxe2_drv_mac_link_status_get(adapter);
+-	if (ret) {
++	if (ret)
+ 		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to get link status, ret=%d", ret);
+-		goto l_end;
+-	}
+-
+-	(void)sxe2_link_update(dev, 0);
+ 
+-l_end:
+ 	return ret;
+ }
 +
- 	is_valid = true;
+ int32_t sxe2_link_update(struct rte_eth_dev *dev, __rte_unused int32_t wait_to_complete)
+ {
+ 	struct rte_eth_link new_link;
+diff --git a/drivers/net/sxe2/sxe2_mp.c b/drivers/net/sxe2/sxe2_mp.c
+index a4a5c76495..4eb42d0d13 100644
+--- a/drivers/net/sxe2/sxe2_mp.c
++++ b/drivers/net/sxe2/sxe2_mp.c
+@@ -29,16 +29,11 @@ static int32_t sxe2_mp_secondary_handle(const struct rte_mp_msg *mp_msg,
+ 					 const void *peer);
  
- l_end:
-diff --git a/drivers/net/sxe2/sxe2_security.c b/drivers/net/sxe2/sxe2_security.c
-index bc59d1b880..8f31067942 100644
---- a/drivers/net/sxe2/sxe2_security.c
-+++ b/drivers/net/sxe2/sxe2_security.c
-@@ -326,6 +326,7 @@ void sxe2_security_uinit(struct rte_eth_dev *dev)
- 	if (sctx != NULL) {
- 		rte_free(sctx);
- 		sctx = NULL;
-+		dev->security_ctx = NULL;
+ static int32_t
+-sxe2_mp_primary_handle(const struct rte_mp_msg *mp_msg, const void *peer)
++sxe2_mp_do_primary_work(struct sxe2_mp_param *param)
+ {
+-	struct rte_mp_msg reply;
+-	const struct sxe2_mp_param *param =
+-			(const struct sxe2_mp_param *)mp_msg->param;
+-	struct sxe2_mp_param *reply_param = (struct sxe2_mp_param *)reply.param;
+ 	struct rte_eth_dev *dev;
+-	int32_t ret = 0;
+ 	struct sxe2_mp_shared_data *mz_data;
+-	int32_t send_reply = 0;
++	int32_t ret = 0;
+ 	int32_t cnt = 0;
+ 
+ 	if (!rte_eth_dev_is_valid_port(param->port_id)) {
+@@ -49,24 +44,21 @@ sxe2_mp_primary_handle(const struct rte_mp_msg *mp_msg, const void *peer)
  	}
  
- 	sxe2_ipsec_uinit(adapter);
+ 	dev = &rte_eth_devices[param->port_id];
+-	sxe2_mp_mz = rte_memzone_lookup(SXE2_MP_MZ_NAME);
++
+ 	if (sxe2_mp_mz == NULL) {
+-		PMD_LOG_ERR(DRV, "Failed to lookup memzone %s", SXE2_MP_MZ_NAME);
+-		ret = -ENOENT;
+-		goto out;
++		sxe2_mp_mz = rte_memzone_lookup(SXE2_MP_MZ_NAME);
++		if (sxe2_mp_mz == NULL) {
++			PMD_LOG_ERR(DRV, "Failed to lookup memzone %s",
++					SXE2_MP_MZ_NAME);
++			ret = -ENOENT;
++			goto out;
++		}
+ 	}
+ 
+ 	mz_data = (struct sxe2_mp_shared_data *)sxe2_mp_mz->addr;
+-	send_reply = 1;
+-
+-	memset(&reply, 0, sizeof(reply));
+-	(void)strlcpy(reply.name, SXE2_MP_NAME, sizeof(reply.name));
+-	reply.len_param = sizeof(*reply_param);
+-
+ 	switch (param->type) {
+ 	case SXE2_MP_REQ_GET_STATS:
+-		ret = sxe2_stats_info_get(dev,
+-					  &mz_data->payload.stats_blk.stats,
++		ret = sxe2_stats_info_get(dev, &mz_data->payload.stats_blk.stats,
+ 					  &mz_data->payload.stats_blk.qstats);
+ 		break;
+ 	case SXE2_MP_REQ_GET_XSTATS:
+@@ -88,15 +80,32 @@ sxe2_mp_primary_handle(const struct rte_mp_msg *mp_msg, const void *peer)
+ 	default:
+ 		PMD_LOG_ERR(DRV, "primary process: unrecognized msg type: %d",
+ 				param->type);
+-		send_reply = false;
+ 		ret = -EINVAL;
+-		goto out;
++		break;
+ 	}
++
+ out:
+-	if (!send_reply)
+-		return ret;
++	param->result = ret;
++	return ret;
++}
+ 
+-	reply_param->result = ret;
++static int32_t
++sxe2_mp_primary_handle(const struct rte_mp_msg *mp_msg, const void *peer)
++{
++	struct rte_mp_msg reply;
++	struct sxe2_mp_param *reply_param = (struct sxe2_mp_param *)reply.param;
++	const struct sxe2_mp_param *param =
++			(const struct sxe2_mp_param *)mp_msg->param;
++	struct sxe2_mp_param param_copy;
++
++	memset(&reply, 0, sizeof(reply));
++	(void)strlcpy(reply.name, SXE2_MP_NAME, sizeof(reply.name));
++	reply.len_param = sizeof(*reply_param);
++
++	param_copy = *param;
++	(void)sxe2_mp_do_primary_work(&param_copy);
++
++	reply_param->result = param_copy.result;
+ 	reply_param->type = param->type;
+ 	reply_param->port_id = param->port_id;
+ 
+@@ -275,7 +284,7 @@ int32_t sxe2_mp_request_simple(struct rte_eth_dev *dev,
+ 	if (reply.nb_received == 0) {
+ 		PMD_LOG_ERR(DRV, "No response received from primary for type=%d, port %u",
+ 			type, dev->data->port_id);
+-		ret = -EINVAL;
++		ret = -ENODATA;
+ 		goto out;
+ 	}
+ 
 -- 
 2.52.0
 
