@@ -2,78 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4428BC5DF66
-	for <dpdk-dev@archiver.kernel.org>; Sun, 16 Aug 2026 03:29:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0C98C5B572
+	for <dpdk-dev@archiver.kernel.org>; Sun, 16 Aug 2026 06:20:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 942CF4021F;
-	Sun, 16 Aug 2026 05:29:55 +0200 (CEST)
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com
- [209.85.215.174])
- by mails.dpdk.org (Postfix) with ESMTP id 94FF640144
- for <dev@dpdk.org>; Sun, 16 Aug 2026 05:29:54 +0200 (CEST)
-Received: by mail-pg1-f174.google.com with SMTP id
- 41be03b00d2f7-c9d1fff21edso1584854a12.1
- for <dev@dpdk.org>; Sat, 15 Aug 2026 20:29:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1786850994;
- x=1787455794; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=o9j5sef8ufoSys0A6srwSMMmmIatk4mXq6o780XAL40=;
- b=m9yijvJnrr7MNCBGdoW44CPxL5K17yKFzcYpNxhsMQO79RwGIEcHz6s24Rh8RsHsrf
- +P6OKMT7lgETBI0tx1JQ4ntdKCKVdfzREskuuwRExQ9Okkzjyl3E1jlQ8/2djnjjohgK
- 3UwXoqE7qxJ2fCGR6cZ1ChMMyx353iEAkj/hcJnz5A5GnNAB2ZCuHtG4EwcjDsgshtoq
- iH948w4F7ArXsJIOG5FoCnHqXc6HjD/tnWbNcQHtrXWcaXJnwSqD1JjjsxdkEKF24HcR
- nm7zXPCT+qwGAtMdR95T8U9Oo4aSIe+YnMlerIvVYq+yXR79kn+QzEZJ+q9wnb3SSZgr
- LU7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1786850994; x=1787455794;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=o9j5sef8ufoSys0A6srwSMMmmIatk4mXq6o780XAL40=;
- b=UrIFWQ0DMW87OkjKYSVBu6qEDjlh+LOexoipWuwpC4YSzkAPhyuQzPg7jpI32ysMqS
- mlccE9H/ntm6kFepTP2jW2cM2RDjVAMgSWYJJPR0geB+VuceKNlaohCE/uWBUCp6l4k1
- 9hprlBwrUszNaRE9Jbm8RixfDq6kd239FpfBhpEtgTcCRI6NKSI0ozFwejQIJw8XaSLD
- HEFGZ3uTskT2UGy30/fdulYNnP97vRZcoSkaAHMcqh5wkltCPlIaQaNxbd/F3O30GpF+
- iKB8zA6f1PoMzcteMDSDegb2uXd8fzd+yz297ackLsMWGIedzR2ZkHmRIf3p3uNp6sih
- 3BWw==
-X-Gm-Message-State: AOJu0YyfWdWzhnG7lp5W1Y1f1TOw4mQCWA8AhPoJJGZcdflq5D/fy4jB
- tyQSAS+6AlTRwT1ksjaQ/Qkrv0MUkh6HtgnWMuJSSaowKPOTq2bpVxywKU8+wLkfkAo=
-X-Gm-Gg: AR+sD13j+i2cmpjSWFNhzIvlzoycNEOdpMiQI5NkNJBjDkLJaV1MPW8DngyIN5crIaK
- FHU/obQuOI7tmSAtJEdapj53+gFmQD8HdLNaR2nPA1e/Mea8MuPPye1k6a2q9e0b3U1sUfpNuCH
- +1CHSuk/DJ3u8hAv75h3Lc0dIARrqQaSWk/DovAb3wEC3HGlef8ln5ZjW0dLFuWds9UQeSgFKc7
- +XCC/uKbC9a71BCGhi0ORMHTHcfSUAD9EUW079nLj8NF/dHGXlL4aG5iuLun98wSNYZsoQQxUcy
- jRsTurxOKOYdQWiIJA1IVgbmGVPm7DwYufiCx7L9NGiEcPYtSPYpgCMgtLwFTDDeJWylExPqqcV
- O9l5GPUxvWfNgb1bHvCqzdHdGlm2G6iuO94a9/41zcMdnVBvorUzAHHD94lyeIkbiFRpKMxa5gW
- f+0BHB4/pA/ajDLsEHeBM8vSOOgAHcxTaNK44VxzlBdY1Mv4chzLSY7Ceknfe3xvvI6fo2Pj14B
- /n81A0plpvPnjns7L2KjEAsvkOwYA==
-X-Received: by 2002:a05:6a20:914b:b0:3cb:eca6:ce5 with SMTP id
- adf61e73a8af0-3cc71d1e8admr17478781637.24.1786850993620; 
- Sat, 15 Aug 2026 20:29:53 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-320ea8fe3cdsm21318779eec.28.2026.08.15.20.29.50
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 15 Aug 2026 20:29:53 -0700 (PDT)
-Date: Sat, 15 Aug 2026 20:29:44 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Ivan Malov <ivan.malov@arknetworks.am>
-Cc: dev@dpdk.org, Andy Moreton <andy.moreton@amd.com>, Viacheslav
- Galaktionov <viacheslav.galaktionov@arknetworks.am>, Roman Zhukov
- <Roman.Zhukov@arknetworks.am>, Pieter Jansen van Vuuren
- <pieter.jansen-van-vuuren@amd.com>, Andrew Rybchenko
- <andrew.rybchenko@oktetlabs.ru>
-Subject: Re: [PATCH v2 0/3] net/sfc: miscellaneous bug fixes
-Message-ID: <20260815202944.6ec230f4@phoenix.local>
-In-Reply-To: <20260812171017.8521-1-ivan.malov@arknetworks.am>
-References: <20260811174913.8961-1-ivan.malov@arknetworks.am>
- <20260812171017.8521-1-ivan.malov@arknetworks.am>
+	by mails.dpdk.org (Postfix) with ESMTP id 93EDC4021F;
+	Sun, 16 Aug 2026 08:20:51 +0200 (CEST)
+Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
+ by mails.dpdk.org (Postfix) with ESMTP id 29A5E40144
+ for <dev@dpdk.org>; Sun, 16 Aug 2026 08:20:50 +0200 (CEST)
+Received: from localhost.localdomain (unknown [78.109.77.214])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by agw.arknetworks.am (Postfix) with ESMTPSA id DA7EFE0883;
+ Sun, 16 Aug 2026 10:20:48 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am DA7EFE0883
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
+ s=default; t=1786861249;
+ bh=0V2MM5L70YwYx9YPcyxCtfJgqUrDD08jta/46DyiLmI=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=UmEb3fI5tlU7rsJilI8hpgIs5O9QwsNRaFr7UmN7OwBVvCSMCZl16DSoS7yao6mPl
+ 3pWz4A4MxxB13GsEkvtKCAsTQzAYM8qYdLRwsuMuftSXVlBXJBaUntUN3/FS/sfHjk
+ s7FCbEo5JyTs8aWCdZTCqVcymIScwRRJoRJe/scgfGTMDLFft/OGDUxEgxlr6oi1KQ
+ 2RsHhylr6RXio1Zl+6QWggwApGOwKcLZJJKXAIVE0CfbTUirJyF7CPeHCLKKKCNJSE
+ 6JqqkMUIIt8r59RLE+32TsE01kXGXl2fVIWqMb+1gzojrtRR9sbk38E+iQmWOBrCJO
+ eKm5euDdxEFRg==
+From: Ivan Malov <ivan.malov@arknetworks.am>
+To: dev@dpdk.org
+Cc: Andy Moreton <andy.moreton@amd.com>,
+ Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>,
+ Roman Zhukov <Roman.Zhukov@arknetworks.am>,
+ Pieter Jansen van Vuuren <pieter.jansen-van-vuuren@amd.com>,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: [PATCH v4 0/6] common/sfc_efx/base: add Medford4 VF support
+Date: Sun, 16 Aug 2026 10:20:34 +0400
+Message-ID: <20260816062040.15562-1-ivan.malov@arknetworks.am>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260811175025.9019-1-ivan.malov@arknetworks.am>
+References: <20260811175025.9019-1-ivan.malov@arknetworks.am>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,22 +56,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 12 Aug 2026 21:10:14 +0400
-Ivan Malov <ivan.malov@arknetworks.am> wrote:
+This series enables DPDK to use the sfc driver
+on a Medford4 VF alongside the PF.
 
-> Three independent fixes. The first ensures that Rx queue
-> type flags are derived from scratch on every queue setup,
-> preventing flags from a prior configuration persisting
-> when an offload is disabled.
-> 
-> The second patch removes an erroneous static qualifier
-> from a flow RSS iterator variable, which incorrectly
-> shared state between multiple interfaces.
-> 
-> The third patch corrects reading of the advertised
-> autoneg capability. When the user disables it, the
-> corresponding bit was re-added upon the next
-> link-state query.
-> 
+The first patch wires EVB switch operations into the Medford4
+libefx implementation, allowing the PF to manage VFs.
 
-These are applied to next-net
+Starting with MCFW 1.4.0.8, VFs may use the netport MCDI for basic port
+configuration, though several operations remain restricted. The
+remaining four patches address each restriction: dummy fixed
+port properties, suppressed event subscription, denied FCS
+and flow control, and ENOTSUP for periodic MAC stats DMA.
+
+This series depends on the VADAPTER statistics series.
+
+
+v4:
+
+- addressed https://mails.dpdk.org/archives/dev/2026-August/343468.html
+  -- patch 2/6: fixed VF PERM mask derivation; all speeds
+     from the tech table are now used unconditionally,
+     rather than the advertised abilities, which are empty
+     when the PF operates in fixed-speed mode; output
+     params of efx_np_get_fixed_port_props are now
+     zeroed on the VF early-return path
+  -- patch 3/6: noted the no-op for VFs in the call
+     site comment of efx_np_set_event_mask
+  -- patch 6/6: added SR-IOV VF limitations subsection
+     to the Limitations section of sfc_efx.rst
+
+
+v3:
+
+- addressed https://mails.dpdk.org/archives/dev/2026-August/343075.html
+  -- patch 6/6: dropped erroneous VADAPTER mention from
+     the commit message; added SR-IOV VF to sfc_efx.rst
+
+
+v2:
+
+- note for the future AI reviews: apply this on top of
+  the 'common/sfc_efx/base: add VADAPTER statistics for Medford4' series
+
+- addressed https://mails.dpdk.org/archives/dev/2026-August/343075.html
+  -- fixed reporting of the factual link speed when running on VFs
+  -- remaining notes do not seem to point at factual defects
+
+
+Ivan Malov (6):
+  common/sfc_efx/base: let Medford4 PF manage VFs
+  common/sfc_efx/base: indicate dummy netport properties on VF
+  common/sfc_efx/base: skip netport event subscriptions on VFs
+  common/sfc_efx/base: deny tuning FCS and flow control to VFs
+  common/sfc_efx/base: deny periodic MAC stats delivery to VFs
+  doc: announce VF support of AMD Solarflare X45xx family NICs
+
+ doc/guides/nics/sfc_efx.rst            |  23 ++++++
+ doc/guides/rel_notes/release_26_11.rst |   4 +
+ drivers/common/sfc_efx/base/efx_evb.c  |   6 ++
+ drivers/common/sfc_efx/base/efx_np.c   | 107 ++++++++++++++++++++++---
+ 4 files changed, 127 insertions(+), 13 deletions(-)
+
+-- 
+2.47.3
+
