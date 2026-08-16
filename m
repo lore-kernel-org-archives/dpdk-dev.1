@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BAA7C5CFC1
-	for <dpdk-dev@archiver.kernel.org>; Sun, 16 Aug 2026 02:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32EDAC5DF67
+	for <dpdk-dev@archiver.kernel.org>; Sun, 16 Aug 2026 02:53:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 094FE406BC;
-	Sun, 16 Aug 2026 04:52:55 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0F22B40A4B;
+	Sun, 16 Aug 2026 04:52:56 +0200 (CEST)
 Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
- by mails.dpdk.org (Postfix) with ESMTP id 39E8C4029D
+ by mails.dpdk.org (Postfix) with ESMTP id D591240653
  for <dev@dpdk.org>; Sun, 16 Aug 2026 04:52:47 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-01 (Coremail) with SMTP id qwCowAAn+u32JYFqrYDQBQ--.14967S12;
+ by APP-01 (Coremail) with SMTP id qwCowAAn+u32JYFqrYDQBQ--.14967S13;
  Sun, 16 Aug 2026 10:52:46 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v2 10/13] common/sxe2: allow munmap during kernel reset
-Date: Sun, 16 Aug 2026 10:52:30 +0800
-Message-ID: <20260816025233.2727226-11-liujie5@linkdatatechnology.com>
+Subject: [PATCH v2 11/13] net/sxe2: clean up duplicate function declarations
+Date: Sun, 16 Aug 2026 10:52:31 +0800
+Message-ID: <20260816025233.2727226-12-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260816025233.2727226-1-liujie5@linkdatatechnology.com>
 References: <20260816025233.2727226-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: qwCowAAn+u32JYFqrYDQBQ--.14967S12
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr1rGFWxJF4DurW3trWfGrg_yoW8tr4UpF
- 48XFy3uFWUtF4UWr4DJa47ua4FgwsIq34UCrZrK3savryDZry8ua48W3Way345CryrJFsY
- yFW2yF1UG3WrArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: qwCowAAn+u32JYFqrYDQBQ--.14967S13
+X-Coremail-Antispam: 1UD129KBjvJXoWxAr4fAFyxGF1kJF4fGw4UArb_yoW5Ww48pF
+ 48Xw15JFWFqF1kur4UJ3yxua42grW8t3yj9a98W34Fka4DZFZFva45tF1ay3WrC3srXwna
+ ywsrWr4DGr1rArUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUBv14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
  rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
  kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -59,61 +59,69 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-This patch improves error handling and resource management:
+This commit removes duplicate function declarations in the sxe2
+driver header files.
 
-- Add NULL pointer protection in driver remove path:
-  * Check cdrv and cdrv->remove before calling remove function
-  * Prevent NULL pointer dereference in sxe2_classes_driver_remove
-  * Return SXE2_SUCCESS if no driver or remove handler exists
-
-- Allow memory unmap during kernel reset:
-  * Remove kernel_reset restriction in sxe2_drv_dev_munmap
-  * Enable cleanup operations even when kernel has been reset
+- Remove duplicate sxe2_drv_promisc_config declaration
+  in sxe2_cmd_chnl.h
+- Remove duplicate sxe2_drv_vsi_info_get declaration
+  in sxe2_cmd_chnl.h
+- Remove duplicate sxe2_drv_mac_link_status_get declaration
+  in sxe2_cmd_chnl.h
+- Remove duplicate sxe2_drv_rxq_mapping_set declaration
+  in sxe2_cmd_chnl.h
+- Remove duplicate sxe2_dev_pci_seg_unmap declaration
+  in sxe2_ethdev.h
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/common/sxe2/sxe2_common.c     | 5 ++++-
- drivers/common/sxe2/sxe2_ioctl_chnl.c | 8 +-------
- 2 files changed, 5 insertions(+), 8 deletions(-)
+ drivers/net/sxe2/sxe2_cmd_chnl.h | 6 ------
+ drivers/net/sxe2/sxe2_ethdev.h   | 2 --
+ 2 files changed, 8 deletions(-)
 
-diff --git a/drivers/common/sxe2/sxe2_common.c b/drivers/common/sxe2/sxe2_common.c
-index 5c5db85f29..3f60b2be11 100644
---- a/drivers/common/sxe2/sxe2_common.c
-+++ b/drivers/common/sxe2/sxe2_common.c
-@@ -465,8 +465,11 @@ static int32_t sxe2_classes_driver_probe(struct sxe2_common_device *cdev,
- static int32_t sxe2_classes_driver_remove(struct sxe2_common_device *cdev)
- {
- 	struct sxe2_class_driver *cdrv = cdev->cdrv;
-+	int32_t ret = 0;
+diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.h b/drivers/net/sxe2/sxe2_cmd_chnl.h
+index 7d75a91061..7d07068bfc 100644
+--- a/drivers/net/sxe2/sxe2_cmd_chnl.h
++++ b/drivers/net/sxe2/sxe2_cmd_chnl.h
+@@ -65,8 +65,6 @@ int32_t sxe2_drv_ipsec_rxsa_delete(struct sxe2_adapter *adapter,
+ int32_t sxe2_drv_ipsec_txsa_delete(struct sxe2_adapter *adapter,
+ 			       uint16_t sa_id);
  
--	return cdrv->remove(cdev);
-+	if (cdrv != NULL && cdrv->remove != NULL)
-+		ret = cdrv->remove(cdev);
-+	return ret;
- }
- 
- static int32_t sxe2_kvargs_validate(struct sxe2_dev_kvargs_info *kv_info)
-diff --git a/drivers/common/sxe2/sxe2_ioctl_chnl.c b/drivers/common/sxe2/sxe2_ioctl_chnl.c
-index a233a78136..3e2fbf572f 100644
---- a/drivers/common/sxe2/sxe2_ioctl_chnl.c
-+++ b/drivers/common/sxe2/sxe2_ioctl_chnl.c
-@@ -367,16 +367,10 @@ void
- 
- RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_dev_munmap)
- int32_t
--sxe2_drv_dev_munmap(struct sxe2_common_device *cdev, void *virt, uint64_t len)
-+sxe2_drv_dev_munmap(struct sxe2_common_device *cdev __rte_unused, void *virt, uint64_t len)
- {
- 	int32_t ret = 0;
- 
--	if (cdev->config.kernel_reset) {
--		ret = -EPERM;
--		PMD_LOG_WARN(COM, "kernel reset, need restart app.");
--		goto l_end;
--	}
+-int32_t sxe2_drv_promisc_config(struct sxe2_adapter *adapter, bool set);
 -
- 	PMD_LOG_DEBUG(COM, "Munmap virt=%p, len=0x%"PRIx64"",
- 		virt, len);
+ int32_t sxe2_drv_udp_tunnel_add(struct sxe2_adapter *adapter,
+ 			    enum sxe2_udp_tunnel_protocol tunnel_proto,
+ 			    uint16_t udp_port);
+@@ -84,8 +82,6 @@ int32_t sxe2_drv_get_udp_tunnel_port(struct sxe2_adapter *adapter,
+ 
+ int32_t sxe2_drv_vsi_info_get(struct sxe2_adapter *adapter, struct sxe2_vsi *vsi);
+ 
+-int32_t sxe2_drv_vsi_info_get(struct sxe2_adapter *adapter, struct sxe2_vsi *vsi);
+-
+ int32_t sxe2_drv_mac_link_status_get(struct sxe2_adapter *adapter);
+ 
+ int32_t sxe2_drv_get_mac_stats(struct sxe2_adapter *adapter);
+@@ -110,8 +106,6 @@ int32_t sxe2_drv_mapping_reset(struct rte_eth_dev *eth_dev);
+ 
+ int32_t sxe2_drv_mapping_stats_info_clear(struct rte_eth_dev *eth_dev);
+ 
+-int32_t sxe2_drv_rxq_mapping_set(struct rte_eth_dev *eth_dev, uint16_t queue_id, uint8_t pool_idx);
+-
+ int32_t sxe2_drv_allmulti_config(struct sxe2_adapter *adapter, bool set);
+ 
+ int32_t sxe2_drv_uc_config(struct sxe2_adapter *adapter, struct rte_ether_addr *addr, bool add);
+diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
+index 36f4cc9353..b43030deab 100644
+--- a/drivers/net/sxe2/sxe2_ethdev.h
++++ b/drivers/net/sxe2/sxe2_ethdev.h
+@@ -387,8 +387,6 @@ void sxe2_dev_pci_seg_unmap(struct sxe2_adapter *adapter, uint32_t res_type);
+ 
+ int32_t sxe2_dev_pci_map_init(struct rte_eth_dev *dev);
+ 
+-void sxe2_dev_pci_seg_unmap(struct sxe2_adapter *adapter, uint32_t res_type);
+-
+ int32_t sxe2_udp_tunnel_port_del_common(struct sxe2_adapter *ad,
+ 		enum sxe2_udp_tunnel_protocol tunnel_proto, uint16_t udp_port);
  
 -- 
 2.52.0
