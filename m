@@ -2,52 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A65C5B572
-	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Aug 2026 14:59:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31BCBC5DF66
+	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Aug 2026 14:59:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 88F344067B;
-	Mon, 17 Aug 2026 16:59:09 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 67CD140689;
+	Mon, 17 Aug 2026 16:59:10 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
- by mails.dpdk.org (Postfix) with ESMTP id 215DF402BA
- for <dev@dpdk.org>; Mon, 17 Aug 2026 16:59:06 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 49BC34064A
+ for <dev@dpdk.org>; Mon, 17 Aug 2026 16:59:08 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1786978748; x=1818514748;
+ t=1786978749; x=1818514749;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=uFZbEYp523x8bYb4ZSRfMuFZlnjPGWBEldsmF3m5ezQ=;
- b=OLW+800ZN0gy1HRHTE7v3oe19I5r791fy+I2kFGyRBuFefqCpc7V15TE
- kkWUY892X6Wza/gIGKCkpBeykTpy+RBhkaOlsS1w+xzfmsdYx44Bk8imD
- 6GGx+q7qoxyg5Z54oFozLYyFg/wfFQnM+C518nBVx+a7Rftt8w6Ktqv3r
- dfzSTnK9gbcbnQpGL79R6juPX2kYNYej//MwBQ8e5mOn/75zga43D2t+b
- qAcKHJez53N87Bcf401vmNJpj1YOmdcaMY1E/dEpiUZnJftIWyW6Gau9N
- SHZhMQZU4VJbgZp0RcYmpRTBbSrbdwm11j6TA6eMJJdurHgaCZ4n4ZTCV Q==;
-X-CSE-ConnectionGUID: 6ybtu/xsQB+qHwy+MTpVPA==
-X-CSE-MsgGUID: rWUV/4r6TPKY7Ownz8Elqg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11877"; a="87311446"
-X-IronPort-AV: E=Sophos;i="6.25,229,1779174000"; d="scan'208";a="87311446"
+ bh=BdmjwzpGg2o8XgKJCuBtRwjBJe4Wmu7LFePY+Akiioc=;
+ b=oG7TiJcEzQoUqkBt/P6xP7ufRSfJupXcL8y9VPH7ztD0OH8nNqkUMn1F
+ DGs2PtYPBnM+JJw8mOZwt9VpVzItXNLh9Q8bm8Iqcm4oVyFwLAIvHyD5k
+ tNWIZML9aDcoMBa/IrrN0K9g1gTBdPDzZVg0Bqb2kmIPyRGfG/51r6W0w
+ KgFcFRKVBH6k/syyV2W2GiOkd2Zf0FSUQHD68B5SfgE7AmK6GiRZDzybw
+ IJE8B4FtQdQGKi/Se8QaDb31sOqkV8/FAeC/FyQmjGTkt+/7sXmq391gY
+ +rgMvoelrZh1icrjZXR4yJqNkb5CUiw/oCinJrsNNhith8/ZeHvTDj48z w==;
+X-CSE-ConnectionGUID: W36dOPHuSgCmZ9vQErJW5w==
+X-CSE-MsgGUID: NVEt9qFrRAS17KG7n+R2KA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11877"; a="87311449"
+X-IronPort-AV: E=Sophos;i="6.25,229,1779174000"; d="scan'208";a="87311449"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 17 Aug 2026 07:59:07 -0700
-X-CSE-ConnectionGUID: 3NJBQY20Q9CeXpVGpyGrrQ==
-X-CSE-MsgGUID: 4sYrpJWoTci4Mk5Ge99m6g==
+ 17 Aug 2026 07:59:08 -0700
+X-CSE-ConnectionGUID: ZPMHNvThS8yvGPvWFQhKpw==
+X-CSE-MsgGUID: MLG6Y8u3SNOau8IshtQ2sg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,229,1779174000"; d="scan'208";a="264972590"
+X-IronPort-AV: E=Sophos;i="6.25,229,1779174000"; d="scan'208";a="264972594"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa007.jf.intel.com with ESMTP; 17 Aug 2026 07:59:06 -0700
+ by orviesa007.jf.intel.com with ESMTP; 17 Aug 2026 07:59:07 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Cristian Dumitrescu <cristian.dumitrescu@intel.com>,
  Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v2 3/4] test/cfgfile: verify file modification API
-Date: Mon, 17 Aug 2026 15:57:23 +0100
-Message-ID: <20260817145855.1421504-4-bruce.richardson@intel.com>
+Subject: [PATCH v2 4/4] test/cfgfile: test for long lines in file
+Date: Mon, 17 Aug 2026 15:57:24 +0100
+Message-ID: <20260817145855.1421504-5-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260817145855.1421504-1-bruce.richardson@intel.com>
 References: <20260706162348.460489-1-bruce.richardson@intel.com>
  <20260817145855.1421504-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,90 +61,103 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Check that the has_entry API correctly reports the presence of a valid
-entry, and then verify that if we use set_entry we can modify the value
-- a modification that persists if we use the save API. In the same test,
-also check that we can't use add_entry to modify an existing entry, and
-that we can't use set_entry to add a missing entry.
+The test_cfgfiles directory already had a line_too_long.ini file in it,
+but this a) did not exceed the line length that the library could manage
+and b) was not actually used in any test case.
+
+Fix this by expanding the long line so it does trigger an error, and
+adding a test case for it.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- app/test/test_cfgfile.c | 55 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+ app/test/test_cfgfile.c                  | 20 ++++++++++++++++++++
+ app/test/test_cfgfiles/line_too_long.ini |  2 +-
+ 2 files changed, 21 insertions(+), 1 deletion(-)
 
 diff --git a/app/test/test_cfgfile.c b/app/test/test_cfgfile.c
-index 5ed116866d..12da87aa5a 100644
+index 12da87aa5a..f056fe2d4d 100644
 --- a/app/test/test_cfgfile.c
 +++ b/app/test/test_cfgfile.c
-@@ -491,6 +491,60 @@ test_cfgfile_empty_file(void)
+@@ -376,6 +376,25 @@ test_cfgfile_invalid_key_value_pair(void)
  	return 0;
  }
- 
+=20
 +static int
-+test_cfgfile_modify_entry(void)
++test_cfgfile_line_too_long(void)
 +{
 +	struct rte_cfgfile *cfgfile;
-+	struct rte_cfgfile *loaded;
-+	const char *value;
 +	char filename[PATH_MAX];
 +	int ret;
 +
-+	ret = make_tmp_file(filename, "sample1_set", sample1_ini);
++	ret =3D make_tmp_file(filename, "line_too_long", line_too_long_ini);
 +	TEST_ASSERT_SUCCESS(ret, "Failed to setup temp file");
 +
-+	cfgfile = rte_cfgfile_load(filename, 0);
-+	TEST_ASSERT_NOT_NULL(cfgfile, "Failed to load config file");
++	cfgfile =3D rte_cfgfile_load(filename, 0);
++	TEST_ASSERT_NULL(cfgfile, "Expected failure did not occur");
 +
-+	ret = rte_cfgfile_has_entry(cfgfile, "section2", "key2");
-+	TEST_ASSERT(ret == 1, "section2 key2 entry missing");
-+
-+	ret = rte_cfgfile_has_entry(cfgfile, "section2", "invalid_key");
-+	TEST_ASSERT(ret == 0, "section2 'invalid_key' entry should be missing");
-+
-+	ret = rte_cfgfile_set_entry(cfgfile, "section2", "key2", "value_of_key2");
-+	TEST_ASSERT_SUCCESS(ret, "Failed to set section2 key2");
-+
-+	/* check we can't set a nonexistent key */
-+	ret = rte_cfgfile_set_entry(cfgfile, "section2", "invalid_key", "value_of_key4");
-+	TEST_ASSERT(ret < 0, "Error, unexpectedly able to set nonexistent 'invalid_key'");
-+
-+	/* check we can't add an existing key */
-+	ret = rte_cfgfile_add_entry(cfgfile, "section2", "key2", "value_of_key2");
-+	TEST_ASSERT(ret < 0, "Error, unexpectedly able to add existing key2");
-+
-+	ret = rte_cfgfile_save(cfgfile, filename);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to save cfgfile");
-+
-+	ret = rte_cfgfile_close(cfgfile);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to close cfgfile");
-+
-+	loaded = rte_cfgfile_load(filename, 0);
-+	TEST_ASSERT_NOT_NULL(loaded, "Failed to reload saved cfgfile");
-+
-+	value = rte_cfgfile_get_entry(loaded, "section2", "key2");
-+	TEST_ASSERT(strcmp("value_of_key2", value) == 0,
-+			"Unexpected section2 key2 value: %s", value);
-+
-+	ret = rte_cfgfile_close(loaded);
-+	TEST_ASSERT_SUCCESS(ret, "Failed to close reloaded cfgfile");
-+
-+	ret = remove(filename);
++	ret =3D remove(filename);
 +	TEST_ASSERT_SUCCESS(ret, "Failed to remove file");
 +
 +	return 0;
 +}
 +
- static struct
- unit_test_suite test_cfgfile_suite  = {
- 	.suite_name = "Test Cfgfile Unit Test Suite",
-@@ -506,6 +560,7 @@ unit_test_suite test_cfgfile_suite  = {
+ static int
+ test_cfgfile_empty_key_value_pair(void)
+ {
+@@ -555,6 +574,7 @@ unit_test_suite test_cfgfile_suite  =3D {
+ 		TEST_CASE(test_cfgfile_invalid_section_header),
+ 		TEST_CASE(test_cfgfile_invalid_comment),
+ 		TEST_CASE(test_cfgfile_invalid_key_value_pair),
++		TEST_CASE(test_cfgfile_line_too_long),
+ 		TEST_CASE(test_cfgfile_empty_key_value_pair),
+ 		TEST_CASE(test_cfgfile_missing_section),
  		TEST_CASE(test_cfgfile_global_properties),
- 		TEST_CASE(test_cfgfile_empty_file),
- 		TEST_CASE(test_cfgfile_create_add_save_reload),
-+		TEST_CASE(test_cfgfile_modify_entry),
- 
- 		TEST_CASES_END()
- 	}
--- 
+diff --git a/app/test/test_cfgfiles/line_too_long.ini b/app/test/test_cfgfi=
+les/line_too_long.ini
+index 1dce164838..2683cd2938 100644
+--- a/app/test/test_cfgfiles/line_too_long.ini
++++ b/app/test/test_cfgfiles/line_too_long.ini
+@@ -1,3 +1,3 @@
+ [section1]
+ ; this is section 1
+-01234567890123456789012345678901234567890123456789012345678901234567890123=
+456789012345678901234567890123456789012345678901234567890123456789012345678=
+901234567890123456789012345678901234567890123456789012345678901234567890123=
+4567890123456789012345678901234567890123456789012345678901234567890123456789
++01234567890123456789012345678901234567890123456789012345678901234567890123=
+456789012345678901234567890123456789012345678901234567890123456789012345678=
+901234567890123456789012345678901234567890123456789012345678901234567890123=
+456789012345678901234567890123456789012345678901234567890123456789012345678=
+901234567890123456789012345678901234567890123456789012345678901234567890123=
+456789012345678901234567890123456789012345678901234567890123456789012345678=
+901234567890123456789012345678901234567890123456789012345678901234567890123=
+456789012345678901234567890123456789012345678901234567890123456789012345678=
+901234567890123456789012345678901234567890123456789012345678901234567890123=
+456789012345678901234567890123456789012345678901234567890123456789012345678=
+901234567890123456789012345678901234567890123456789012345678901234567890123=
+456789012345678901234567890123456789012345678901234567890123456789012345678=
+901234567890123456789012345678901234567890123456789012345678901234567890123=
+456789012345678901234567890123456789012345678901234567890123456789012345678=
+901234567890123456789012345678901234567890123456789012345678901234567890123=
+456789012345678901234567890123456789012345678901234567890123456789012345678=
+901234567890123456789012345678901234567890123456789012345678901234567890123=
+456789012345678901234567890123456789012345678901234567890123456789012345678=
+901234567890123456789012345678901234567890123456789012345678901234567890123=
+456789012345678901234567890123456789012345678901234567890123456789012345678=
+901234567890123456789012345678901234567890123456789012345678901234567890123=
+456789012345678901234567890123456789012345678901234567890123456789012345678=
+901234567890123456789012345678901234567890123456789012345678901234567890123=
+456789012345678901234567890123456789012345678901234567890123456789012345678=
+901234567890123456789012345678901234567890123456789012345678901234567890123=
+456789012345678901234567890123456789012345678901234567890123456789012345678=
+901234567890123456789012345678901234567890123456789012345678901234567890123=
+456789012345678901234567890123456789012345678901234567890123456789012345678=
+901234567890123456789012345678901234567890123456789012345678901234567890123=
+456789012345678901234567890123456789012345678901234567890123456789012345678=
+901234567890123456789012345678901234567890123456789012345678901234567890123=
+456789012345678901234567890123456789012345678901234567890123456789012345678=
+901234567890123456789012345678901234567890123456789012345678901234567890123=
+45678901234567890123456789
+--=20
 2.53.0
 
