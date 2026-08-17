@@ -2,51 +2,142 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 144FCC5DF70
-	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Aug 2026 09:40:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 307F0C5DF70
+	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Aug 2026 10:46:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5116F40294;
-	Mon, 17 Aug 2026 11:40:03 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id C3C274021F
- for <dev@dpdk.org>; Mon, 17 Aug 2026 11:40:01 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1317140269;
+	Mon, 17 Aug 2026 12:46:23 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 358C74021F
+ for <dev@dpdk.org>; Mon, 17 Aug 2026 12:46:20 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1786959602; x=1818495602;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=6mS/muchK514DVTOmM6ts4xwoRxs2MAfSDNibAm1LHs=;
- b=XQLmpMnov/Y3Fy640pT9FOPywry+VNpAm/hTDh6Xc+zX6/z9UKGjBUhM
- WYGLyXH2FJe19rGnoqhX6YYIiaIwzVQSJMVAyKHDPwL/tvp88aDB+50Pg
- d1RnRVBGfAb0uwAAmiGn/Zq7kAXdUGDKtEC4rAc2kkBQKjDDLzXQkCd+X
- s+BAc/n8PBwn6V5t32bcmuLHHTxALRcR9QqI3qHkWMn1eHN4F6fcIw6dm
- klnZSOz8uqNPwPV/mpvdaEuKZ/ck32ADz+7e2D7tsSa9MloXk1ZQh7Dj4
- /rzceyHmzPlnVsUvuRj8UZB7Dd33gjwuGi/SH6xB4gPcu0lfAX6v8N6H/ g==;
-X-CSE-ConnectionGUID: NgCSPnL7SG+7Vfp1Ys8RmQ==
-X-CSE-MsgGUID: CPE58c/mQMuXKGXyO+293w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11877"; a="104965270"
-X-IronPort-AV: E=Sophos;i="6.25,228,1779174000"; d="scan'208";a="104965270"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
- by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 17 Aug 2026 02:40:01 -0700
-X-CSE-ConnectionGUID: 5YVj0tJiSkmrD3ChJnTzGw==
-X-CSE-MsgGUID: YJQiEoZrSJWt22Nr0f3Hpw==
+ t=1786963582; x=1818499582;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=Hum8X8xU85mz3JcS9YbtkJEgO6/GaDmDKxzfP9x7LAE=;
+ b=SbZR+9vSdGJnv3ysP9gP61uD4sBghkXq+2+CWFz8SG8bokuRgRc//Cc8
+ W0Ija4OBb0+z6V8Vp/+Dk+yLeIba85fN3PA+fO3nXOnR2Q1qlXl7LLvlM
+ WPGkDhtH5FM/YK23Dtn6lX9e43IpstXoUpXgVh7zR8jreg4eNAePClFY3
+ Et6900CoKOGZmWFUWbV3vNIIo0Y0jxJpVgUB98/Z4ISON+DBkIVAuDce0
+ 4IuQj1A2t91fFVvovDezug7tmcANesuBfH6IFtL4FcZNOtvU+8MwhhoGx
+ VSOSlHVQtiW9MRnVbBbgwik2DaYGLiLbNJ6wZ9dZpkXLN5PkKXik4qzyO Q==;
+X-CSE-ConnectionGUID: OmjEQVI4T8ajNNcwtS/X6w==
+X-CSE-MsgGUID: bjJIEMDvQLCMAoHz3DjjSQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11877"; a="98589160"
+X-IronPort-AV: E=Sophos;i="6.25,228,1779174000"; d="scan'208";a="98589160"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+ by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 17 Aug 2026 03:46:20 -0700
+X-CSE-ConnectionGUID: g7Li6CNbTaeDMh3BUjjT4w==
+X-CSE-MsgGUID: NF4DDdadQvCEQrrKmbHocg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,228,1779174000"; d="scan'208";a="264415921"
-Received: from silpixa00401749.ir.intel.com ([10.20.224.233])
- by orviesa008.jf.intel.com with ESMTP; 17 Aug 2026 02:39:59 -0700
-From: Radu Nicolau <radu.nicolau@intel.com>
-To: dev@dpdk.org
-Cc: Radu Nicolau <radu.nicolau@intel.com>, Kai Ji <kai.ji@intel.com>,
- Pablo de Lara <pablo.de.lara.guarch@intel.com>
-Subject: [PATCH v2] crypto/ipsec_mb: require minimum version 2.0 for IPsec MB
-Date: Mon, 17 Aug 2026 09:39:03 +0000
-Message-ID: <20260817093934.139988-1-radu.nicolau@intel.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260811112636.4106950-1-radu.nicolau@intel.com>
-References: <20260811112636.4106950-1-radu.nicolau@intel.com>
+X-IronPort-AV: E=Sophos;i="6.25,228,1779174000"; d="scan'208";a="263539257"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+ by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 17 Aug 2026 03:46:20 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Mon, 17 Aug 2026 03:46:19 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45 via Frontend Transport; Mon, 17 Aug 2026 03:46:19 -0700
+Received: from DM1PR04CU001.outbound.protection.outlook.com (52.101.61.52) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Mon, 17 Aug 2026 03:46:19 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OvADdFrtU/8gKwR/axGzUBmpniM+7z5bLUeCNSRk2Gm4T1ZEKoOg76EIstGGXo6SqGiPG0fa9Cozw1/MXDaNTT7hSgETtq0TLBj8L4nltP+e0+D55jcM6n+cdolX8uWs24QHE3XGbZmG6sagkIQntEE9XEc7xrZ+wIWiJZw6YfHWq/zdjKYKWdSHYkDJrYMn1gxZRqOyFKtQcHrWznOlJlvif04Bf7RCP4/6zk07DDQlgSTfRR7WjIo9CgZwYGwk5gJy90mq9Mzrt961yUo22rlT0YmQYqap9Fsra2qviNyEiJfBvDclXrYR/qBArkrlBeR6ItM9IJQtyLyPUFGcfw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=E3uy0kpHAQbU+3C9NXb4LCYufXwaQKGWh5GTAy8ykc0=;
+ b=JC1EKHNbj/DRQ9XmtmeTH1S8DG89+NJ+JGCNOP8N2QffEmkF2aNPe3PLgv3fJ7iAXmsvu8e5KiS2P3k1jv6eV1/hKnKD2a74GO5ATAtlNgZ+pXNkRIi6ScOPnNGpMybryowKOzRHKvFHwa6YXdmT9pk4jkvuHmZP2Qec9JoxEkhfXTEvmiox1u+ghoDnSPTNPlhG6XDY/5c8h/hRBmO9SdLzmlsrH6ry3v1zDIMkOSpomGYVy7Fx2vBcfmFJADR99/S1cx1E3Hr53wezlSsC/zJSR27VvHTrvN85kavqYTZwMNlhXqkf3bFpXmNAH5aDHzTqHF1Me/y1RkxrCQOeAQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from IA3PR11MB9421.namprd11.prod.outlook.com (2603:10b6:208:578::9)
+ by PH7PR11MB6499.namprd11.prod.outlook.com (2603:10b6:510:1f0::13)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.315.17; Mon, 17 Aug
+ 2026 10:46:17 +0000
+Received: from IA3PR11MB9421.namprd11.prod.outlook.com
+ ([fe80::1b70:3d93:d363:155f]) by IA3PR11MB9421.namprd11.prod.outlook.com
+ ([fe80::1b70:3d93:d363:155f%4]) with mapi id 15.21.0315.016; Mon, 17 Aug 2026
+ 10:46:16 +0000
+Date: Mon, 17 Aug 2026 11:46:12 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Anurag Mandal <anurag.mandal@intel.com>
+CC: <dev@dpdk.org>, <vladimir.medvedkin@intel.com>, <ciara.loftus@intel.com>
+Subject: Re: [PATCH v3 3/7] net/iavf: drain in-flight Tx before reset
+Message-ID: <aoLmdIZKxCpA4V84@bricha3-mobl1.ger.corp.intel.com>
+References: <cover.1786948817.git.anurag.mandal@intel.com>
+ <dad85e16c65b7966dcf767eee5000d8d5d127d06.1786948817.git.anurag.mandal@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <dad85e16c65b7966dcf767eee5000d8d5d127d06.1786948817.git.anurag.mandal@intel.com>
+X-ClientProxiedBy: DB8P191CA0021.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:10:130::31) To IA3PR11MB9421.namprd11.prod.outlook.com
+ (2603:10b6:208:578::9)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA3PR11MB9421:EE_|PH7PR11MB6499:EE_
+X-MS-Office365-Filtering-Correlation-Id: 617bc052-5413-4910-e859-08defc4cc3bf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|366016|1800799024|376014|23010399003|22082099003|18002099003|6133799003|56012099006|10067099003|4143699003|11063799006;
+X-Microsoft-Antispam-Message-Info: DZ8LyNwVyR4wLB3/EpSewTUk5nOVu+nVlEV2A5fC01/glPY8P6+O3owYC5OM6vs9Bj39k8C/EvQ0LDiDY1Ogvj9qKDhhaN4Fz2nr2CEPEOKhF2CURVK3sRNAFRgZD9n+iqt0qANELcysVNlUKm2G04VyLcrBPJmDap+DdP7FbW1CxSd+Kw4+bAScqYr4Kt8O3JZ3IHw5z1yDyqGSK/pwBuG0Q8/WdQXoawah3WIVFMfaXPgRYTX9FuPV4AwDCvpICEsc4FHWSCnyeGYlpTcjdNk8Fhm/2voJX/vUu9lFbtLoH9jBzm6IGnfhknflGXyYErZ7KG5a8DrKVLQ6b9byIODHFxZ+J3zFjgrlMDM+DcE993JD3TiKN77vJ+6tTgmzpYaDuvDfJsgvEK8onEG6HoX7FU45h3j3vk1m7oxSSowWf/DLi/C+P2e2C+76TJekjRHZGZRtjn74NeBa+59YBS6uY+/xdrq0lW2pZUmkepSFdWx263xdn/MEmCktwnYXOzvWbQ/DGafSlGosd2EU1ypL6Jc8s9W7OMOLhs2EwMEG8E+qSEs/eOMe7svfiZfopvXtS+QsmQbgEjG99Wd/kTbq/mu5vLzgfVhGyz+KJcJEiC6JPvviTzFhHWdK7OXtCGy/CIEUHrxh9Xlb6hMqQs+6Hs/Kse4X9pvfyvXGwzk=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:IA3PR11MB9421.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(376014)(23010399003)(22082099003)(18002099003)(6133799003)(56012099006)(10067099003)(4143699003)(11063799006);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?2Ohtn1DqVXUWGoCSpelE8eCSUy1SJ4dVpV6fV8xqZcdU/ceGya87BwQLZLVT?=
+ =?us-ascii?Q?uZkrNlzB+Q+FKHZaJiBwHw855U7cX95dGZxdrvfXJ+5LPwbc5/aEbsJib4IW?=
+ =?us-ascii?Q?x58/9nNkQgpnd33rneUEAyiCGCrP7y89Z1op4C0SnH9fppEprdzkA+flRNEP?=
+ =?us-ascii?Q?LbIfdjF7SGmThXNAPhAuRiD8w1+1KTc4o9IRnTPTzM0j1TwO1cNheR4+VDhO?=
+ =?us-ascii?Q?A+Zx4frov2sh5ANF6uamIS7M3qvn6fDZIC2ooteUA+eHv1bagsi3m6FulLH7?=
+ =?us-ascii?Q?Yh4o3ovXZebdRt/vuNj7X+GvUp0OlgzqdDikdQ2SYWzMDEPb8xwib77FzNzX?=
+ =?us-ascii?Q?1M4VgnbO8H6+IiT7bam5wdhA2/FOHDzMCWwYnsdctDC1xKkPLuYINYiC2GmK?=
+ =?us-ascii?Q?xJIuEE+PnOh56NQKZ9yRo6vfbhcnIFiL/eb1t7IsNhDwE4YdQYqWzAEsHyu4?=
+ =?us-ascii?Q?Bf2bY9sIalnR0ZMsMbBttzZCFF3pJ0SJlybtuRBE4vZNEfkrRbvf62YpWNgM?=
+ =?us-ascii?Q?glVHJ3u+NXxnSxt8Xqn53ZBGtOCKaOEMZSIVk7lLaP7B27aShPshy0MUnnPT?=
+ =?us-ascii?Q?VCRb1CaDSCf9oQTCoIsiol+A3rera5YbuEju/UEgZDxqUhUBV4GUW1dc/nk1?=
+ =?us-ascii?Q?KuGgMLkr4VXLnbhbrq8g7w+Pal8ZgUJQbexpLEQqBocAvykYrvSp5aee6HG8?=
+ =?us-ascii?Q?xMzOnLSlMIhwte64rphfXcWbFYN6aPwWSPz1TfZAYlOUlN2A9tMe//cJGL5P?=
+ =?us-ascii?Q?3DAcxt1qsg4sKEvWnuzrpxHYmC54BNplJDPScz+X6dX5sq7sV6Dt/sl3Fm+1?=
+ =?us-ascii?Q?3lDihWeBh4AgcjjLYkIsf6txEVEAbtcP3ScKsVkFlbWgbM+uPokwhkcjLSW4?=
+ =?us-ascii?Q?pjEH562hXpySghZhtIbgpXZJS8xThI9pHTtO/sp0+Xi8kfRZRPZLH2hEO7g7?=
+ =?us-ascii?Q?jSYoWH58v24mtd1/ArOA66KXTXQfivEiJGvB4cPkPMoBCO/uF9Bndd+6+N8J?=
+ =?us-ascii?Q?bgcFZszb6eNzrANwaNCbMk/dFp2J2eqXLGXHsfECah3QyGfimxNwdw7TElnV?=
+ =?us-ascii?Q?jnxOvjnCApY7uOrSy+BHNSceKAXJUHKZw/UZsH4//9hSMzBurgtASwc0UN3W?=
+ =?us-ascii?Q?G7ANGFKlJaBvSLMwSOTpv4gqM8U35dopcOVBxTL9fvtag0/ohWrZA5lfVau5?=
+ =?us-ascii?Q?fTgtgHKFe8crdXda/uH8qlG5PKbl8e2pUiaIASzcAyLzlSj67prZUFonaTeG?=
+ =?us-ascii?Q?ZixqZr9ccYAni7riADkXNli/8zM9wSq8/e72PjZgkFINd4f83O7PznaraogM?=
+ =?us-ascii?Q?jdgUV82JkSfVWNE9cw5KfQIaNCvtwy3J/0nELDKSQ/Quw46qA6T2nYi9EvU4?=
+ =?us-ascii?Q?+hv1WGM9/h0ksK1x48azVBYv4MTsrNIxlqTf1UOHp1yt5q8xnJcDK/+DF93l?=
+ =?us-ascii?Q?83Y/lJ3dY/zcvxJTVkNF4a7t6swqaLEa6h7uqKpoz2zjfQVAGSrNvaXRTcBL?=
+ =?us-ascii?Q?EsoTXSK8TvCu/0JXoLfNRh/BWjAs+PalRAgSCTFwUH9kB5vgoTEzX/9aCl4n?=
+ =?us-ascii?Q?qcxoDYpuaOPX1EPFu/iyO+yxlFiLgPpmaFuexX63hJ4TzZP1zlBLSsu4ieao?=
+ =?us-ascii?Q?77rT8ADv3z7Q3ZGrvlOXGWaMWTAM/tiaiIFMmyc/7rDYoBQ4lXCWgDZHIewC?=
+ =?us-ascii?Q?GY1IdaDjOTzI5Skn6Bi9f7qXFSBtXpz727pSufyzDICcAH0fFH+PR/1l7yIp?=
+ =?us-ascii?Q?v9YVjDdmwL/sRdKfNoYiOwOLyzFf66Y=3D?=
+X-Exchange-RoutingPolicyChecked: oGHonX7A1CVwc7KqDrFzwpIMAYG5LezgsVlXHWr2dP2Bj8hbYhCWmywQ1dlDp9NqkazMktk7JG/8hM3BmKVLNE6A3QZqnsrNIoQ5NE0vO2Iiux85d+3VRRvTAZDEqiLcLfUqKCGv+GVHKSeWDYUSmSZ5VUJeDjeik4F360+q+tzZCYqe24d7TYh3kOPpzXRvmII/0QBBQn+7fzi6bIYNweNjTAECUglEyzDBhGpksP3oZwa2qjfBl45Mgu8jDr5ZDA2VBcYVW7Y+JcSaAQHGNtTUbEyB3usjefgoNISOrIkoaM0BglYsq1ATwgbCa15/ufyS1dK3ARRC2uADhwzHgw==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 617bc052-5413-4910-e859-08defc4cc3bf
+X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB9421.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Aug 2026 10:46:16.6357 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +iOjPYNGEo2I7s3q73O3+Ql4EeUzfMdxiah2CBxM8OUGmD5ykCERqkhHUHFr9K/IcOzxVLEJV6HYl73MtfqDzpWnACegMnZhvgL/+9sXOAc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6499
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,346 +151,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Increase the minimum required IPsec MB library version to 2.0
-As a consequence, clean up the aesni_mb PMD code.
+On Mon, Aug 17, 2026 at 06:48:42AM +0000, Anurag Mandal wrote:
+> On a link-down or impending PF reset, in-flight Tx descriptors
+> were left pending when the queues were torn down, which could
+> trigger Malicious Driver Detection (MDD) events and
+> leak descriptors.
+> 
 
-Signed-off-by: Radu Nicolau <radu.nicolau@intel.com>
----
-v2: preserve old requirement for ARM versions of the PMDs
+I agree that this is a good idea on reset, but what about on link down? In
+most of our drivers, if the link goes down, the Tx packets are left in the
+descriptor ring to be sent when the link comes back up again. Can we manage
+without the cleanup on link down? If the link is down to reconfigure,
+the cleanup should be done as part of the reconfigure, I would think.
+Am I missing something?
 
- doc/guides/cryptodevs/aesni_gcm.rst         |  7 +++---
- doc/guides/cryptodevs/aesni_mb.rst          |  7 +++---
- doc/guides/cryptodevs/qat.rst               |  2 +-
- doc/guides/rel_notes/release_26_11.rst      |  4 +++
- drivers/common/qat/meson.build              |  4 +--
- drivers/crypto/ipsec_mb/meson.build         |  3 ++-
- drivers/crypto/ipsec_mb/pmd_aesni_mb.c      | 28 +++------------------
- drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h |  8 ------
- 8 files changed, 20 insertions(+), 43 deletions(-)
+Also, if this prevents MDD events should it have a fixes tag and be
+backported?
 
-diff --git a/doc/guides/cryptodevs/aesni_gcm.rst b/doc/guides/cryptodevs/aesni_gcm.rst
-index 4683e9dd86..aefc1cedcb 100644
---- a/doc/guides/cryptodevs/aesni_gcm.rst
-+++ b/doc/guides/cryptodevs/aesni_gcm.rst
-@@ -40,8 +40,8 @@ Installation
- To build DPDK with the AESNI_GCM_PMD the user is required to download the multi-buffer
- library from `here <https://github.com/01org/intel-ipsec-mb>`_
- and compile it on their user system before building DPDK.
--The latest version of the library supported by this PMD is v1.5, which
--can be downloaded in `<https://github.com/01org/intel-ipsec-mb/archive/v1.5.zip>`_.
-+The latest version of the library supported by this PMD is v2.0, which
-+can be downloaded from `<https://github.com/01org/intel-ipsec-mb/archive/v2.0.zip>`_.
- 
- For Arm system, ARM64 port of the multi-buffer library can be downloaded from
- https://gitlab.arm.com/arm-reference-solutions/ipsec-mb/-/tree/main/.
-@@ -77,7 +77,8 @@ and the external crypto libraries supported by them:
-    =============  ================================
-    20.11 - 21.08  Multi-buffer library 0.53 - 1.3
-    21.11 - 24.07  Multi-buffer library 1.0  - 1.5
--   24.11+         Multi-buffer library 1.4+
-+   24.11 - 26.07  Multi-buffer library 1.4  - 2.0
-+   26.11+         Multi-buffer library 2.0+
-    =============  ================================
- 
- Initialization
-diff --git a/doc/guides/cryptodevs/aesni_mb.rst b/doc/guides/cryptodevs/aesni_mb.rst
-index ab7a6138a8..add3c03b74 100644
---- a/doc/guides/cryptodevs/aesni_mb.rst
-+++ b/doc/guides/cryptodevs/aesni_mb.rst
-@@ -96,8 +96,8 @@ Installation
- To build DPDK with the AESNI_MB_PMD the user is required to download the multi-buffer
- library from `here <https://github.com/01org/intel-ipsec-mb>`_
- and compile it on their user system before building DPDK.
--The latest version of the library supported by this PMD is v1.5, which
--can be downloaded from `<https://github.com/01org/intel-ipsec-mb/archive/v1.5.zip>`_.
-+The latest version of the library supported by this PMD is v2.0, which
-+can be downloaded from `<https://github.com/01org/intel-ipsec-mb/archive/v2.0.zip>`_.
- 
- For Arm system, ARM64 port of the multi-buffer library can be downloaded from
- https://gitlab.arm.com/arm-reference-solutions/ipsec-mb/-/tree/main/.
-@@ -132,7 +132,8 @@ and the Multi-Buffer library version supported by them:
-    ==============  ============================
-    20.11 - 21.08   0.53 - 1.3
-    21.11 - 24.07   1.0  - 1.5
--   24.11+          1.4+
-+   24.11 - 26.07   1.4  - 2.0
-+   26.11+          2.0+
-    ==============  ============================
- 
- Initialization
-diff --git a/doc/guides/cryptodevs/qat.rst b/doc/guides/cryptodevs/qat.rst
-index 6c96c5f88d..1738152435 100644
---- a/doc/guides/cryptodevs/qat.rst
-+++ b/doc/guides/cryptodevs/qat.rst
-@@ -360,7 +360,7 @@ that were previously used for HMAC precomputes.
- 
- **On x86 platforms:**
- 
--* Intel IPsec MB library (v1.4.0+) is required for HMAC precomputes.
-+* Intel IPsec MB library (v2.0+) is required for HMAC precomputes.
- * OpenSSL (3.0+) is optional for DOCSIS BPI cipher fallback.
- 
- **On ARM platforms:**
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index c8cc86295d..7fc97ca4c9 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -59,6 +59,10 @@ New Features
- Removed Items
- -------------
- 
-+* **Updated AESNI_MB crypto driver.**
-+
-+  * Remove support for versions older than 2.0 of IPsec MB Library.
-+
- .. This section should contain removed items in this release. Sample format:
- 
-    * Add a short 1-2 sentence description of the removed item
-diff --git a/drivers/common/qat/meson.build b/drivers/common/qat/meson.build
-index b946354a42..17526d3940 100644
---- a/drivers/common/qat/meson.build
-+++ b/drivers/common/qat/meson.build
-@@ -38,7 +38,7 @@ endif
- 
- # IPsec MB is REQUIRED for HMAC precomputes (no OpenSSL 3.0 alternative)
- # OpenSSL is OPTIONAL for DOCSIS BPI cipher fallback
--IMB_required_ver = '1.4.0'
-+IMB_required_ver = '2.0.0'
- 
- # Only check IPsec MB if qat_crypto wasn't already disabled
- if qat_crypto
-@@ -47,8 +47,6 @@ if qat_crypto
-     else
-         IMB_header = '#include<intel-ipsec-mb.h>'
-     endif
--
--    # Check for IPsec MB library (required)
-     libipsecmb = cc.find_library('IPSec_MB', required: false)
-     if libipsecmb.found() and cc.links(
-             'int main(void) {return 0;}', dependencies: libipsecmb)
-diff --git a/drivers/crypto/ipsec_mb/meson.build b/drivers/crypto/ipsec_mb/meson.build
-index eb2085725b..e6cf3f7e33 100644
---- a/drivers/crypto/ipsec_mb/meson.build
-+++ b/drivers/crypto/ipsec_mb/meson.build
-@@ -9,10 +9,11 @@ endif
- 
- cflags += no_wvla_cflag
- 
--IMB_required_ver = '1.4.0'
-+IMB_required_ver = '2.0.0'
- IMB_header = '#include<intel-ipsec-mb.h>'
- if arch_subdir == 'arm'
-     IMB_header = '#include<ipsec-mb.h>'
-+    IMB_required_ver = '1.4.0'
- endif
- lib = cc.find_library('IPSec_MB', required: false)
- if not lib.found()
-diff --git a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c b/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
-index 4c5b6e70b5..02bacd020b 100644
---- a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
-+++ b/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
-@@ -20,10 +20,8 @@ is_aead_algo(IMB_HASH_ALG hash_alg, IMB_CIPHER_MODE cipher_mode)
- {
- 	return (hash_alg == IMB_AUTH_CHACHA20_POLY1305 ||
- 		hash_alg == IMB_AUTH_AES_CCM ||
--		cipher_mode == IMB_CIPHER_GCM
--#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
--		|| cipher_mode == IMB_CIPHER_SM4_GCM
--#endif
-+		cipher_mode == IMB_CIPHER_GCM ||
-+		cipher_mode == IMB_CIPHER_SM4_GCM
- 		);
- }
- 
-@@ -295,14 +293,12 @@ aesni_mb_set_session_auth_parameters(IMB_MGR *mb_mgr,
- 		sess->template_job.hash_alg = IMB_AUTH_SHA_512;
- 		auth_precompute = 0;
- 		break;
--#if IMB_VERSION(1, 5, 0) <= IMB_VERSION_NUM
- 	case RTE_CRYPTO_AUTH_SM3:
- 		sess->template_job.hash_alg = IMB_AUTH_SM3;
- 		break;
- 	case RTE_CRYPTO_AUTH_SM3_HMAC:
- 		sess->template_job.hash_alg = IMB_AUTH_HMAC_SM3;
- 		break;
--#endif
- 	default:
- 		IPSEC_MB_LOG(ERR,
- 			"Unsupported authentication algorithm selection");
-@@ -353,9 +349,7 @@ aesni_mb_set_session_cipher_parameters(const IMB_MGR *mb_mgr,
- 	uint8_t is_zuc = 0;
- 	uint8_t is_snow3g = 0;
- 	uint8_t is_kasumi = 0;
--#if IMB_VERSION(1, 5, 0) <= IMB_VERSION_NUM
- 	uint8_t is_sm4 = 0;
--#endif
- 
- 	if (xform == NULL) {
- 		sess->template_job.cipher_mode = IMB_CIPHER_NULL;
-@@ -426,7 +420,6 @@ aesni_mb_set_session_cipher_parameters(const IMB_MGR *mb_mgr,
- 		sess->iv.offset = xform->cipher.iv.offset;
- 		sess->template_job.iv_len_in_bytes = xform->cipher.iv.length;
- 		return 0;
--#if IMB_VERSION(1, 5, 0) <= IMB_VERSION_NUM
- 	case RTE_CRYPTO_CIPHER_SM4_CBC:
- 		sess->template_job.cipher_mode = IMB_CIPHER_SM4_CBC;
- 		is_sm4 = 1;
-@@ -435,13 +428,10 @@ aesni_mb_set_session_cipher_parameters(const IMB_MGR *mb_mgr,
- 		sess->template_job.cipher_mode = IMB_CIPHER_SM4_ECB;
- 		is_sm4 = 1;
- 		break;
--#endif
--#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
- 	case RTE_CRYPTO_CIPHER_SM4_CTR:
- 		sess->template_job.cipher_mode = IMB_CIPHER_SM4_CNTR;
- 		is_sm4 = 1;
- 		break;
--#endif
- 	default:
- 		IPSEC_MB_LOG(ERR, "Unsupported cipher mode parameter");
- 		return -ENOTSUP;
-@@ -576,7 +566,6 @@ aesni_mb_set_session_cipher_parameters(const IMB_MGR *mb_mgr,
- 					&sess->cipher.pKeySched_kasumi_cipher);
- 		sess->template_job.enc_keys = &sess->cipher.pKeySched_kasumi_cipher;
- 		sess->template_job.dec_keys = &sess->cipher.pKeySched_kasumi_cipher;
--#if IMB_VERSION(1, 5, 0) <= IMB_VERSION_NUM
- 	} else if (is_sm4) {
- 		sess->template_job.key_len_in_bytes = IMB_KEY_128_BYTES;
- 		IMB_SM4_KEYEXP(mb_mgr, xform->cipher.key.data,
-@@ -584,7 +573,6 @@ aesni_mb_set_session_cipher_parameters(const IMB_MGR *mb_mgr,
- 				sess->cipher.expanded_sm4_keys.decode);
- 		sess->template_job.enc_keys = sess->cipher.expanded_sm4_keys.encode;
- 		sess->template_job.dec_keys = sess->cipher.expanded_sm4_keys.decode;
--#endif
- 	} else {
- 		if (xform->cipher.key.length != 8) {
- 			IPSEC_MB_LOG(ERR, "Invalid cipher key length");
-@@ -724,7 +712,6 @@ aesni_mb_set_session_aead_parameters(IMB_MGR *mb_mgr,
- 			return -EINVAL;
- 		}
- 		break;
--#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
- 	case RTE_CRYPTO_AEAD_SM4_GCM:
- 		sess->template_job.cipher_mode = IMB_CIPHER_SM4_GCM;
- 		sess->template_job.hash_alg = IMB_AUTH_SM4_GCM;
-@@ -739,7 +726,6 @@ aesni_mb_set_session_aead_parameters(IMB_MGR *mb_mgr,
- 		sess->template_job.enc_keys = &sess->cipher.gcm_key;
- 		sess->template_job.dec_keys = &sess->cipher.gcm_key;
- 		break;
--#endif
- 	default:
- 		IPSEC_MB_LOG(ERR, "Unsupported aead mode parameter");
- 		return -ENOTSUP;
-@@ -1065,11 +1051,11 @@ set_cpu_mb_job_params(IMB_JOB *job, struct aesni_mb_session *session,
- 		job->u.CHACHA20_POLY1305.aad = aad->va;
- 		break;
- 
--#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
-+
- 	case IMB_AUTH_SM4_GCM:
- 		job->u.GCM.aad = aad->va;
- 		break;
--#endif
-+
- 
- 	default:
- 		break;
-@@ -1618,11 +1604,9 @@ set_mb_job_params(IMB_JOB *job, struct ipsec_mb_qp *qp,
- 			imb_set_session(mb_mgr, job);
- 		}
- 		break;
--#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
- 	case IMB_AUTH_SM4_GCM:
- 		job->u.GCM.aad = op->sym->aead.aad.data;
- 		break;
--#endif
- 	default:
- 		break;
- 	}
-@@ -1753,7 +1737,6 @@ set_mb_job_params(IMB_JOB *job, struct ipsec_mb_qp *qp,
- 		job->iv = rte_crypto_op_ctod_offset(op, uint8_t *,
- 			session->iv.offset);
- 		break;
--#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
- 	case IMB_AUTH_SM4_GCM:
- 		job->hash_start_src_offset_in_bytes = 0;
- 		/*
-@@ -1766,7 +1749,6 @@ set_mb_job_params(IMB_JOB *job, struct ipsec_mb_qp *qp,
- 		job->iv = rte_crypto_op_ctod_offset(op, uint8_t *,
- 				session->iv.offset);
- 		break;
--#endif
- 
- 	default:
- 		job->hash_start_src_offset_in_bytes = auth_start_offset(
-@@ -1813,11 +1795,9 @@ set_mb_job_params(IMB_JOB *job, struct ipsec_mb_qp *qp,
- 		job->msg_len_to_cipher_in_bytes = 0;
- 		job->cipher_start_src_offset_in_bytes = 0;
- 		break;
--#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
- 	case IMB_CIPHER_SM4_GCM:
- 		job->msg_len_to_cipher_in_bytes = op->sym->aead.data.length;
- 		break;
--#endif
- 	default:
- 		job->cipher_start_src_offset_in_bytes =
- 					op->sym->cipher.data.offset;
-diff --git a/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h b/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h
-index 6dc90a9849..ad38a1e28a 100644
---- a/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h
-+++ b/drivers/crypto/ipsec_mb/pmd_aesni_mb_priv.h
-@@ -725,7 +725,6 @@ static const struct rte_cryptodev_capabilities aesni_mb_capabilities[] = {
- 			}, }
- 		}, }
- 	},
--#if IMB_VERSION(1, 5, 0) <= IMB_VERSION_NUM
- 	{	/* SM3 */
- 		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
- 		{.sym = {
-@@ -804,8 +803,6 @@ static const struct rte_cryptodev_capabilities aesni_mb_capabilities[] = {
- 			}, }
- 		}, }
- 	},
--#endif
--#if IMB_VERSION(1, 5, 0) < IMB_VERSION_NUM
- 	{	/* SM4 CTR */
- 		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
- 		{.sym = {
-@@ -856,7 +853,6 @@ static const struct rte_cryptodev_capabilities aesni_mb_capabilities[] = {
- 			}, }
- 		}, }
- 	},
--#endif
- 	RTE_CRYPTODEV_END_OF_CAPABILITIES_LIST()
- };
- 
-@@ -964,10 +960,8 @@ static const unsigned int auth_digest_byte_lengths[] = {
- 		[IMB_AUTH_ZUC_EIA3_BITLEN]	= 4,
- 		[IMB_AUTH_SNOW3G_UIA2_BITLEN]	= 4,
- 		[IMB_AUTH_KASUMI_UIA1]		= 4,
--#if IMB_VERSION(1, 5, 0) <= IMB_VERSION_NUM
- 		[IMB_AUTH_SM3]			= 32,
- 		[IMB_AUTH_HMAC_SM3]		= 32,
--#endif
- 	/**< Vector mode dependent pointer table of the multi-buffer APIs */
- 
- };
-@@ -1029,7 +1023,6 @@ struct __rte_cache_aligned aesni_mb_session {
- 			/* *< SNOW3G scheduled cipher key */
- 			kasumi_key_sched_t pKeySched_kasumi_cipher;
- 			/* *< KASUMI scheduled cipher key */
--#if IMB_VERSION(1, 5, 0) <= IMB_VERSION_NUM
- 			struct {
- 				alignas(16) uint32_t encode[IMB_SM4_KEY_SCHEDULE_ROUNDS];
- 				/* *< encode key */
-@@ -1039,7 +1032,6 @@ struct __rte_cache_aligned aesni_mb_session {
- 			/* *< Expanded SM4 keys - Original 128 bit key is
- 			 * expanded into 32 round keys, each 32 bits.
- 			 */
--#endif
- 		};
- 	} cipher;
- 
--- 
-2.52.0
+/Bruce
 
