@@ -2,32 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF35C5CFC1
-	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Aug 2026 06:35:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03EC9C5DF6E
+	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Aug 2026 06:35:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5661F40687;
-	Mon, 17 Aug 2026 08:35:09 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 28BF540693;
+	Mon, 17 Aug 2026 08:35:10 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id A810E40275
- for <dev@dpdk.org>; Mon, 17 Aug 2026 08:35:00 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 05D7440275
+ for <dev@dpdk.org>; Mon, 17 Aug 2026 08:35:01 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 89A5E1A01C0;
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D91B41A01A7;
  Mon, 17 Aug 2026 08:35:00 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5446B1A01BF;
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A1B031A01B5;
  Mon, 17 Aug 2026 08:35:00 +0200 (CEST)
 Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
  [92.120.147.250])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id D2C3218000B1;
- Mon, 17 Aug 2026 14:34:59 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 27E0F18000B0;
+ Mon, 17 Aug 2026 14:35:00 +0800 (+08)
 From: Gagandeep Singh <g.singh@nxp.com>
 To: dev@dpdk.org
 Cc: hemant.agrawal@nxp.com,
 	Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v10 06/14] net/enetc: support registers dump
-Date: Mon, 17 Aug 2026 12:04:46 +0530
-Message-Id: <20260817063454.3290854-7-g.singh@nxp.com>
+Subject: [PATCH v10 07/14] net/enetc: support ethtool ring parameters
+Date: Mon, 17 Aug 2026 12:04:47 +0530
+Message-Id: <20260817063454.3290854-8-g.singh@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260817063454.3290854-1-g.singh@nxp.com>
 References: <20260813121358.1321196-1-g.singh@nxp.com>
@@ -48,270 +48,103 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Implement the .get_reg operation for the ENETC4 PF and VF PMDs to dump
-the device registers via rte_eth_dev_get_reg_info.
+The ethtool ring parameter query relies on the queue info ethdev
+ops (.rxq_info_get/.txq_info_get) together with the descriptor
+limits reported in dev_info. The PF already registered these ops,
+but the VF ops tables did not, so ring parameter queries failed on
+the VF.
 
-The VF dumps the registers reachable by a virtual station interface
-(VSI): the station interface and per-ring BD ring registers. Port
-registers are not accessible by a VF.
-
-The PF additionally dumps the port registers, which are only
-accessible by the physical station interface (PSI).
+Make enetc4_rxq_info_get() and enetc4_txq_info_get() non-static and
+register them in both VF ops tables so ring parameters are reported
+for both the PF and VF.
 
 Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
- doc/guides/nics/enetc4.rst             |  1 +
- doc/guides/nics/features/enetc4.ini    |  1 +
- doc/guides/rel_notes/release_26_11.rst |  1 +
- drivers/net/enetc/enetc.h              |  4 ++
- drivers/net/enetc/enetc4_ethdev.c      | 81 ++++++++++++++++++++++++++
- drivers/net/enetc/enetc4_vf.c          | 62 ++++++++++++++++++++
- 6 files changed, 150 insertions(+)
+ doc/guides/rel_notes/release_26_11.rst | 1 +
+ drivers/net/enetc/enetc.h              | 4 ++++
+ drivers/net/enetc/enetc4_ethdev.c      | 4 ++--
+ drivers/net/enetc/enetc4_vf.c          | 4 ++++
+ 4 files changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/doc/guides/nics/enetc4.rst b/doc/guides/nics/enetc4.rst
-index fa93f40b22..16389aee5b 100644
---- a/doc/guides/nics/enetc4.rst
-+++ b/doc/guides/nics/enetc4.rst
-@@ -60,6 +60,7 @@ Key functionality includes:
-   requested. RSC requires the FCS to be stripped, so it cannot be combined
-   with the KEEP_CRC Rx offload.
- - Firmware version: The NETC IP version is reported via ``rte_eth_dev_fw_version_get``.
-+- Registers dump: The station interface, port (PF only) and BD ring registers are dumped via ``rte_eth_dev_get_reg_info``.
- 
- 
- Prerequisites
-diff --git a/doc/guides/nics/features/enetc4.ini b/doc/guides/nics/features/enetc4.ini
-index eaf474e7ba..6540a43909 100644
---- a/doc/guides/nics/features/enetc4.ini
-+++ b/doc/guides/nics/features/enetc4.ini
-@@ -17,6 +17,7 @@ RSS hash             = Y
- Packet type parsing  = Y
- Basic stats          = Y
- FW version           = Y
-+Registers dump       = Y
- L3 checksum offload  = Y
- L4 checksum offload  = Y
- CRC offload          = Y
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index d212cce000..6fece98f28 100644
+index 6fece98f28..ec223a93ba 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -67,6 +67,7 @@ New Features
-     Users running a PF kernel older than 6.18.37 must pass ``vf_link_legacy=1``
+@@ -68,6 +68,7 @@ New Features
      as a device argument, otherwise link speed reporting will be incorrect.
    * Added firmware version reporting for the ENETC4 VF.
-+  * Added register dump support for ENETC4 PF and VF.
+   * Added register dump support for ENETC4 PF and VF.
++  * Added ring parameters support for the ENETC4 VF (rxq_info_get / txq_info_get).
  
  Removed Items
  -------------
 diff --git a/drivers/net/enetc/enetc.h b/drivers/net/enetc/enetc.h
-index c4a55626f8..bdcee9deb6 100644
+index bdcee9deb6..fb286537a6 100644
 --- a/drivers/net/enetc/enetc.h
 +++ b/drivers/net/enetc/enetc.h
-@@ -395,6 +395,10 @@ enetc_bd_unused(struct enetc_bdr *bdr)
- 	return bdr->bd_count + bdr->next_to_clean - bdr->next_to_use - 1;
- }
+@@ -338,6 +338,10 @@ int enetc4_tx_queue_stop(struct rte_eth_dev *dev, uint16_t qidx);
+ void enetc4_tx_queue_release(struct rte_eth_dev *dev, uint16_t qid);
+ const uint32_t *enetc4_supported_ptypes_get(struct rte_eth_dev *dev __rte_unused,
+ 			size_t *no_of_elements);
++void enetc4_rxq_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
++			 struct rte_eth_rxq_info *qinfo);
++void enetc4_txq_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
++			 struct rte_eth_txq_info *qinfo);
  
-+/* Per-ring BDR registers dumped by .get_reg (shared by PF and VF) */
-+extern const uint32_t enetc4_txbdr_regs[6];
-+extern const uint32_t enetc4_rxbdr_regs[8];
-+
- /* CBDR prototypes */
- int enetc4_setup_cbdr(struct rte_eth_dev *dev, struct enetc_hw *hw,
- 			int bd_count, struct netc_cbdr *cbdr);
+ /*
+  * enetc4_vf function prototype
 diff --git a/drivers/net/enetc/enetc4_ethdev.c b/drivers/net/enetc/enetc4_ethdev.c
-index f3232c7532..5922d8bf56 100644
+index 5922d8bf56..5d1c0ad828 100644
 --- a/drivers/net/enetc/enetc4_ethdev.c
 +++ b/drivers/net/enetc/enetc4_ethdev.c
-@@ -11,6 +11,17 @@
- #include "enetc_logs.h"
- #include "enetc.h"
- 
-+/* Per-ring Tx/Rx BDR registers dumped by .get_reg (shared by PF and VF) */
-+const uint32_t enetc4_txbdr_regs[] = {
-+	ENETC_TBMR, ENETC_TBSR, ENETC_TBBAR0, ENETC_TBBAR1,
-+	ENETC_TBCIR, ENETC_TBLENR,
-+};
-+
-+const uint32_t enetc4_rxbdr_regs[] = {
-+	ENETC_RBMR, ENETC_RBSR, ENETC_RBBSR, ENETC_RBCIR,
-+	ENETC_RBBAR0, ENETC_RBBAR1, ENETC_RBPIR, ENETC_RBLENR,
-+};
-+
- /* Supported Rx offloads */
- static uint64_t dev_rx_offloads_sup =
- 	RTE_ETH_RX_OFFLOAD_IPV4_CKSUM |
-@@ -1190,6 +1201,75 @@ enetc4_supported_ptypes_get(struct rte_eth_dev *dev __rte_unused,
- 	return ptypes;
- }
- 
-+/* Station interface registers dumped by .get_reg */
-+static const uint32_t enetc4_pf_si_regs[] = {
-+	ENETC_SIMR, ENETC_SICAPR0, ENETC_SIPMAR0, ENETC_SIPMAR1,
-+	ENETC4_SIROCT0, ENETC4_SIRFRM0, ENETC4_SITOCT0, ENETC4_SITFRM0,
-+	ENETC4_SITDFCR,
-+};
-+
-+/* Port registers dumped by .get_reg (accessible only by the PF) */
-+static const uint32_t enetc4_pf_port_regs[] = {
-+	ENETC4_PMR, ENETC4_PSIPMMR, ENETC4_PMAR0, ENETC4_PMAR1,
-+	ENETC4_PM_CMD_CFG(0), ENETC4_PM_MAXFRM(0), ENETC4_PM_IF_MODE(0),
-+	ENETC4_PM_IF_STATUS(0),
-+};
-+
-+/*
-+ * Dump the PF-accessible registers: station interface, port and per-ring
-+ * BD ring registers. When info->data is NULL, only the register count and
-+ * width are reported so the caller can size its buffer.
-+ */
-+static int
-+enetc4_get_regs(struct rte_eth_dev *dev, struct rte_dev_reg_info *regs)
-+{
-+	struct enetc_eth_hw *hw = ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	struct enetc_hw *enetc_hw = &hw->hw;
-+	uint32_t count, addr;
-+	uint32_t *buf;
-+	uint16_t i, j;
-+
-+	count = RTE_DIM(enetc4_pf_si_regs);
-+	count += RTE_DIM(enetc4_pf_port_regs);
-+	count += RTE_DIM(enetc4_txbdr_regs) * dev->data->nb_tx_queues;
-+	count += RTE_DIM(enetc4_rxbdr_regs) * dev->data->nb_rx_queues;
-+
-+	if (regs->data == NULL) {
-+		regs->length = count;
-+		regs->width = sizeof(uint32_t);
-+		return 0;
-+	}
-+
-+	if (regs->length && regs->length < count)
-+		return -ENOTSUP;
-+
-+	buf = regs->data;
-+
-+	for (i = 0; i < RTE_DIM(enetc4_pf_si_regs); i++)
-+		*buf++ = enetc4_rd(enetc_hw, enetc4_pf_si_regs[i]);
-+
-+	for (i = 0; i < RTE_DIM(enetc4_pf_port_regs); i++)
-+		*buf++ = enetc4_port_rd(enetc_hw, enetc4_pf_port_regs[i]);
-+
-+	for (i = 0; i < dev->data->nb_tx_queues; i++) {
-+		for (j = 0; j < RTE_DIM(enetc4_txbdr_regs); j++) {
-+			addr = ENETC_BDR(TX, i, enetc4_txbdr_regs[j]);
-+			*buf++ = enetc4_rd(enetc_hw, addr);
-+		}
-+	}
-+
-+	for (i = 0; i < dev->data->nb_rx_queues; i++) {
-+		for (j = 0; j < RTE_DIM(enetc4_rxbdr_regs); j++) {
-+			addr = ENETC_BDR(RX, i, enetc4_rxbdr_regs[j]);
-+			*buf++ = enetc4_rd(enetc_hw, addr);
-+		}
-+	}
-+
-+	regs->version = (uint32_t)hw->device_id << 16 | hw->revision_id;
-+
-+	return 0;
-+}
-+
- /*
-  * The set of PCI devices this driver supports
-  */
-@@ -1208,6 +1288,7 @@ static const struct eth_dev_ops enetc4_ops = {
- 	.link_update          = enetc4_link_update,
- 	.stats_get            = enetc4_stats_get,
- 	.stats_reset          = enetc4_stats_reset,
-+	.get_reg              = enetc4_get_regs,
- 	.promiscuous_enable   = enetc4_promiscuous_enable,
- 	.promiscuous_disable  = enetc4_promiscuous_disable,
- 	.rx_queue_setup       = enetc4_rx_queue_setup,
-diff --git a/drivers/net/enetc/enetc4_vf.c b/drivers/net/enetc/enetc4_vf.c
-index 41f915be18..ec9a2e2bf8 100644
---- a/drivers/net/enetc/enetc4_vf.c
-+++ b/drivers/net/enetc/enetc4_vf.c
-@@ -934,6 +934,66 @@ enetc4_vf_fw_version_get(struct rte_eth_dev *dev, char *fw_version, size_t fw_si
+@@ -1150,7 +1150,7 @@ enetc4_tx_queue_stop(struct rte_eth_dev *dev, uint16_t qidx)
  	return 0;
  }
  
-+/* VF station interface registers dumped by .get_reg */
-+static const uint32_t enetc4_vf_si_regs[] = {
-+	ENETC_SIMR, ENETC_SICAPR0, ENETC_SIPMAR0, ENETC_SIPMAR1,
-+	ENETC4_SIROCT0, ENETC4_SIRFRM0, ENETC4_SITOCT0, ENETC4_SITFRM0,
-+	ENETC4_SITDFCR, ENETC4_SIMSIVR, ENETC4_VSIIER, ENETC4_VSIIDR,
-+	ENETC4_VSIMSGSR, ENETC4_VSIMSGRR,
-+};
-+
-+/*
-+ * Dump the VF-accessible registers. Only station interface and per-ring
-+ * BD ring registers are reachable by a VF; port registers are not.
-+ * When info->data is NULL, only the register count and width are
-+ * reported so the caller can size its buffer.
-+ */
-+static int
-+enetc4_vf_get_regs(struct rte_eth_dev *dev, struct rte_dev_reg_info *regs)
-+{
-+	struct enetc_eth_hw *hw = ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	struct enetc_hw *enetc_hw = &hw->hw;
-+	uint32_t count, addr;
-+	uint32_t *buf;
-+	uint16_t i, j;
-+
-+	count = RTE_DIM(enetc4_vf_si_regs);
-+	count += RTE_DIM(enetc4_txbdr_regs) * dev->data->nb_tx_queues;
-+	count += RTE_DIM(enetc4_rxbdr_regs) * dev->data->nb_rx_queues;
-+
-+	if (regs->data == NULL) {
-+		regs->length = count;
-+		regs->width = sizeof(uint32_t);
-+		return 0;
-+	}
-+
-+	if (regs->length && regs->length < count)
-+		return -ENOTSUP;
-+
-+	buf = regs->data;
-+
-+	for (i = 0; i < RTE_DIM(enetc4_vf_si_regs); i++)
-+		*buf++ = enetc_rd(enetc_hw, enetc4_vf_si_regs[i]);
-+
-+	for (i = 0; i < dev->data->nb_tx_queues; i++) {
-+		for (j = 0; j < RTE_DIM(enetc4_txbdr_regs); j++) {
-+			addr = ENETC_BDR(TX, i, enetc4_txbdr_regs[j]);
-+			*buf++ = enetc_rd(enetc_hw, addr);
-+		}
-+	}
-+
-+	for (i = 0; i < dev->data->nb_rx_queues; i++) {
-+		for (j = 0; j < RTE_DIM(enetc4_rxbdr_regs); j++) {
-+			addr = ENETC_BDR(RX, i, enetc4_rxbdr_regs[j]);
-+			*buf++ = enetc_rd(enetc_hw, addr);
-+		}
-+	}
-+
-+	regs->version = (uint32_t)hw->device_id << 16 | hw->revision_id;
-+
-+	return 0;
-+}
-+
- static int
- enetc4_vf_link_update_dummy(struct rte_eth_dev *dev __rte_unused,
- 			    int wait_to_complete __rte_unused)
-@@ -1472,6 +1532,7 @@ static const struct eth_dev_ops enetc4_vf_ops_no_vsi_m = {
- 	.dev_close            = enetc4_dev_close,
- 	.stats_get            = enetc4_vf_stats_get,
- 	.dev_infos_get        = enetc4_vf_dev_infos_get,
-+	.get_reg              = enetc4_vf_get_regs,
- 	.mtu_set              = enetc4_vf_mtu_set,
- 	.link_update	      = enetc4_vf_link_update_dummy,
- 	.rx_queue_setup       = enetc4_rx_queue_setup,
-@@ -1493,6 +1554,7 @@ static const struct eth_dev_ops enetc4_vf_ops = {
- 	.stats_get            = enetc4_vf_stats_get,
- 	.dev_infos_get        = enetc4_vf_dev_infos_get,
- 	.fw_version_get       = enetc4_vf_fw_version_get,
-+	.get_reg              = enetc4_vf_get_regs,
- 	.mtu_set              = enetc4_vf_mtu_set,
- 	.mac_addr_set         = enetc4_vf_set_mac_addr,
- 	.mac_addr_add	      = enetc4_vf_mac_addr_add,
+-static void
++void
+ enetc4_rxq_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
+ 			struct rte_eth_rxq_info *qinfo)
+ {
+@@ -1164,7 +1164,7 @@ enetc4_rxq_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
+ 	qinfo->conf.rx_drop_en = 0;
+ }
+ 
+-static void
++void
+ enetc4_txq_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
+ 			struct rte_eth_txq_info *qinfo)
+ {
+diff --git a/drivers/net/enetc/enetc4_vf.c b/drivers/net/enetc/enetc4_vf.c
+index ec9a2e2bf8..3da84941a2 100644
+--- a/drivers/net/enetc/enetc4_vf.c
++++ b/drivers/net/enetc/enetc4_vf.c
+@@ -1539,10 +1539,12 @@ static const struct eth_dev_ops enetc4_vf_ops_no_vsi_m = {
+ 	.rx_queue_start       = enetc4_rx_queue_start,
+ 	.rx_queue_stop        = enetc4_rx_queue_stop,
+ 	.rx_queue_release     = enetc4_rx_queue_release,
++	.rxq_info_get         = enetc4_rxq_info_get,
+ 	.tx_queue_setup       = enetc4_tx_queue_setup,
+ 	.tx_queue_start       = enetc4_tx_queue_start,
+ 	.tx_queue_stop        = enetc4_tx_queue_stop,
+ 	.tx_queue_release     = enetc4_tx_queue_release,
++	.txq_info_get         = enetc4_txq_info_get,
+ 	.dev_supported_ptypes_get = enetc4_supported_ptypes_get,
+ };
+ 
+@@ -1569,10 +1571,12 @@ static const struct eth_dev_ops enetc4_vf_ops = {
+ 	.rx_queue_start       = enetc4_rx_queue_start,
+ 	.rx_queue_stop        = enetc4_rx_queue_stop,
+ 	.rx_queue_release     = enetc4_rx_queue_release,
++	.rxq_info_get         = enetc4_rxq_info_get,
+ 	.tx_queue_setup       = enetc4_tx_queue_setup,
+ 	.tx_queue_start       = enetc4_tx_queue_start,
+ 	.tx_queue_stop        = enetc4_tx_queue_stop,
+ 	.tx_queue_release     = enetc4_tx_queue_release,
++	.txq_info_get         = enetc4_txq_info_get,
+ 	.dev_supported_ptypes_get = enetc4_supported_ptypes_get,
+ };
+ 
 -- 
 2.25.1
 
