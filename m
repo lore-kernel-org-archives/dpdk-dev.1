@@ -2,80 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD3E3C5B572
-	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Aug 2026 19:24:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DFB2C5B572
+	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Aug 2026 19:24:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 91AEB4028E;
-	Mon, 17 Aug 2026 21:24:21 +0200 (CEST)
-Received: from alln-iport-6.cisco.com (alln-iport-6.cisco.com [173.37.142.93])
- by mails.dpdk.org (Postfix) with ESMTP id 4AB9A40275
- for <dev@dpdk.org>; Mon, 17 Aug 2026 21:24:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cisco.com; i=@cisco.com; l=1416; q=dns/txt;
- s=iport01; t=1786994659; x=1788204259;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=sqguxI71I4WMYQAgafTo3ZZltmgYmyv+f2Gg94g6NEY=;
- b=e50eQ69AqJGBNaKe4BURdCquwPio0Yys1R1BK98eTALo4sbz8xibfu9I
- FPAhEajMMXqe1GIskvwHZsnI2lcuHbTakpLqhIlKWJlGl2qB14xmNpg9l
- s0HWT4tLcpj5DdcXpe9MpzORbmwaLqT5w2JIrXqL4+H6swvWzXoNNJiv8
- zskUcOk1kHgyKjXwrISonQ/OU96HUxyjbogHwDQfHAVMOOD0gbc3Rm7Aa
- kgqXb1m3mL7+g5QnNeBcccS6ZgcLzFFNrdi0Bazti5pmCB+gz0v1S0F1i
- sK0EIJ1GpGf2X2/dIHIr2akF+gAbbEg/Dm4nQL8YDW3iSbdn5ocWhPKib w==;
-X-CSE-ConnectionGUID: qgRzPcdjQ/+SphhXeCvCdA==
-X-CSE-MsgGUID: /GCEtmG0SKGE+9p3+57YZw==
-X-IPAS-Result: =?us-ascii?q?A0BAAgA7X4Nq/44QJK1aHgEBCxIMggULgleBUkNJlkqeH?=
- =?us-ascii?q?oF+DwEBAQ9RBAEBhQUCjWkCJjQJDgECBAMCAwEBAQEBAQEBAQEBCwEBBQEBA?=
- =?us-ascii?q?QIBBwWBDhOGXIZbAgEDMgFGEFFWGYMCgnUDxhWCLIEBhH3ZSoFmAQsUAYE4j?=
- =?us-ascii?q?WF2hHwnG4FJRIEVg2mEGnaFeASCIoEMkxtIgR4DWSwBVRMNCgsHBYFmAzUSK?=
- =?us-ascii?q?hVuMh2BIz4XgQ0bBgWBHYEohDcjGTZ6gQlegSsqYQESF4EJggoCgnOCBgIBS?=
- =?us-ascii?q?SELGA1IESw3FBkEPm4HjiAggkgObRNBCy9JUCvHHoQooVsaM6psmQiCAaF8X?=
- =?us-ascii?q?YRpgWg8gVkzGggbFYMiUxkPji0W0BUrMj8HAgcPApFzgX4BAQ?=
-IronPort-Data: A9a23:pVoxg6A53ZhK8RVW/5jhw5YqxClBgxIJ4kV8jS/XYbTApDkg0TxRx
- 2tNXG3Sbv/cajamc4t1Otnl8EwEupXVxocwOVdlrnsFo1CmBibm6XV1Cm+qYkt+++WaFBoPA
- /02M4eGdIZvCCeA+n9BC5C5xVFkz6aEW7HgP+DNPyF1VGdMRTwo4f5Zs7ZRbrVA357jXmthh
- fuo+5eBYA/8hGYuWo4pw/vrRC1H7ayaVAww5jTSVdgT1HfCmn8cCo4oJK3ZBxPQXolOE+emc
- P3Ixbe/83mx109F5gSNy+uTnuUiG9Y+DCDW4pZkc/HKbitq+kTe5p0G2M80Mi+7vdkmc+dZk
- 72hvbToIesg0zaldO41C3G0GAkmVUFKFSOuzXWX6aSuI0P6n3TE2vpUHnk9MY8hvaVMGWFOx
- fEzNhsBR0XW7w626OrTpuhEj8AnKozveYgYoHwllWyfBvc9SpeFSKLPjTNa9G5v3YYVQ7CHO
- YxANWAHgBfoO3WjPn8NFJM1kc+jh2L0dHtTr1f9Sa8fszCCkF0sgeCyWDbTUpulbuhJm2nAn
- UHp0ieoGkpZaYOu+yXQpxpAgceKx0sXQrk6GLCm3vJyjF7VwXYcYCD6TnOypf2/z0r7UNVFJ
- glMp2wlrLM58wqgSdyVswCEnUNodyU0A7J4e9DWIinTokYIy2513lQ5cwM=
-IronPort-HdrOrdr: A9a23:dBObRqzsyQkYgVFz30nwKrPw5r1zdoMgy1knxilNoNJuHvBw8P
- re+MjzuiWbtN98YhsdcJW7Scq9qBDnhPtICOsqXItKNTOO0ACVxcNZnOnfKlbbdBEWmNQx6Y
- 5QN4BjFdz9CkV7h87m7AT9L8wt27C8gceVbJ/lr0tFfEVNd7xq6Rt/B0KwF017QxQDOL8Cfa
- DsgPauY1GbCAwqhgPRPAh9Y9T+
-X-Talos-CUID: 9a23:d4w0AGAI9kmn5n/6EzBozlwsEcwnSzqe92/QI3+1InhCRJTAHA==
-X-Talos-MUID: =?us-ascii?q?9a23=3Azt0AJA3QDreiOm+ELrAKvpdNuzUjpIuFJVwIvs0?=
- =?us-ascii?q?9mOapdn1oYHTA0wWFXdpy?=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-AV: E=Sophos;i="6.25,229,1779148800"; d="scan'208";a="809495907"
-Received: from alln-l-core-05.cisco.com ([173.36.16.142])
- by alln-iport-6.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384;
- 17 Aug 2026 19:24:16 +0000
-Received: from rtice-VMware20-1 (unknown [10.189.17.96])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- (Authenticated sender: rtice@cisco.com)
- by alln-l-core-05.cisco.com (Postfix) with ESMTPSA id EEB6F18000144;
- Mon, 17 Aug 2026 19:24:15 +0000 (GMT)
-From: Randy Tice <rtice@cisco.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 985F340612;
+	Mon, 17 Aug 2026 21:24:27 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+ by mails.dpdk.org (Postfix) with ESMTP id F2E1540275
+ for <dev@dpdk.org>; Mon, 17 Aug 2026 21:24:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1786994665; x=1818530665;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=NVSDSb9zPl850shnHnVUXvZy+V1xVBgKKCzxDVFwX40=;
+ b=Oxtm2uOc6WuRa/M9N2F4DVtcBa5mAX6zARdq0T9Mg0XLQCnd4/lort+K
+ EXLugytnk5kMFv1DhuFZt27IwmEI1FEeoSDpHrqAjrfwiaelXrmJGAai5
+ vM2HAj15X6TKK3CKcoYRrbMCTEXKtm0l4HwPOfTeYDUTf7GPaHIwLG7r0
+ exC4rS1nYg/PtlcdOv5QZWuZarTe9JUnMc95DnSOv/WZlldKpFSgTz518
+ Q+vy3GUduw11CM8UWPw1JntwfEr7L8YObmr1DJlBS/llQrvf2iZS0TmPN
+ 8D+KedssOLA7xNqdS8esaYRyWG8Gt9vMpSB1Uwa6EO3Cd4aEH+dy/AmNy Q==;
+X-CSE-ConnectionGUID: gmi21RiwRd+8EZpjwenC3Q==
+X-CSE-MsgGUID: si3nq/N3TUya29jSgNNVSw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11878"; a="113020421"
+X-IronPort-AV: E=Sophos;i="6.25,229,1779174000"; d="scan'208";a="113020421"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+ by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 17 Aug 2026 12:24:22 -0700
+X-CSE-ConnectionGUID: 5bNaWBB5TtSSMNrTgLB4jw==
+X-CSE-MsgGUID: 3oX2u74GQIecMfTS4EUtDQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,229,1779174000"; d="scan'208";a="266977744"
+Received: from icx008.iind.intel.com ([10.190.212.196])
+ by fmviesa004.fm.intel.com with ESMTP; 17 Aug 2026 12:24:21 -0700
+From: Rajesh Kumar <rajesh3.kumar@intel.com>
 To: dev@dpdk.org
-Cc: Randy Tice <rtice@cisco.com>
-Subject: [PATCH v3] eal/linux: harden uevent recv error handling
-Date: Mon, 17 Aug 2026 15:23:33 -0400
-Message-ID: <20260817192333.119549-1-rtice@cisco.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260813201656.65649-1-rtice@cisco.com>
-References: <20260813201656.65649-1-rtice@cisco.com>
+Cc: thomas@monjalon.net, bruce.richardson@intel.com,
+ andrew.rybchenko@oktetlabs.ru, Rajesh Kumar <rajesh3.kumar@intel.com>
+Subject: [RFC 0/1] ethdev: per-packet Tx timestamp slot management
+Date: Tue, 18 Aug 2026 00:54:14 +0530
+Message-ID: <20260817192417.3009990-1-rajesh3.kumar@intel.com>
+X-Mailer: git-send-email 2.54.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Authenticated-User: rtice@cisco.com
-X-Outbound-Client-TLS: ANONYMOUS; unknown [10.189.17.96]; TLSv1.3;
- TLS_AES_256_GCM_SHA384; 256
-X-Outbound-SMTP-Client: 10.189.17.96, [10.189.17.96]
-X-Outbound-Node: alln-l-core-05.cisco.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -89,46 +58,77 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The Linux uevent handler is harded for non-blocking receive behavior
-and transient ENOBUF issue during hot plug/unplug testing with MANA.
+The current DPDK ethdev time synchronization framework is architected
+around a single, shared hardware latch. The existing API,
+`rte_eth_timesync_read_tx_timestamp()`, assumes a serialization model
+where only one TX timestamp is outstanding at any given time.
 
-Signed-off-by: Randy Tice <rtice@cisco.com>
----
+This model creates severe limitations for modern high-throughput network
+interface cards (NICs). When multiple packets requiring precise
+transmit timestamps are sent concurrently, the shared latch becomes a
+race-condition bottleneck. It makes timestamp retrieval unreliable and
+drops accuracy. Furthermore, Poll Mode Drivers (PMDs) backed by
+hardware that supports independent, per-packet timestamping slots have
+no way to expose this capability to the user.
 
-v3:
-Fixed build issue with bitwise operator vs test against errno.
+To solve this, this RFC introduces a formal slot-based lifecycle API
+for per-packet Tx timestamp management. The API decouples timestamp
+tracking from the global latch model, enabling true asynchronous,
+parallel hardware timestamping.
 
-v2:
-Addressed review comments regarding spelling and missing code comments.
-Limited the transient memory issue to just ENOBUF which was the only
-original error observed.
----
- lib/eal/linux/eal_dev.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+Key Components of the Proposal:
+================================
+1. **Slot Lifecycle Management APIs**:
+   - `rte_eth_timesync_tx_timestamp_slot_alloc()`: Allocates and locks
+     a unique hardware slot prior to frame transmission.
+   - `rte_eth_timesync_tx_timestamp_stamp_mbuf()`: Embeds the allocated
+     slot handle into an mbuf dynamic field, allowing the PMD to
+     program the specific hardware descriptor during the Tx burst.
+   - `rte_eth_timesync_read_tx_timestamp_slot()`: Asynchronously polls
+     a specific slot for its captured value, safely returning `-EAGAIN`
+     if the hardware has not yet written back the timestamp.
+   - `rte_eth_timesync_tx_timestamp_slot_release()`: Recycles the
+     hardware slot back to the PMD resource pool after successful
+     retrieval or an application timeout.
 
-diff --git a/lib/eal/linux/eal_dev.c b/lib/eal/linux/eal_dev.c
-index ec408649d0..f1d2bc3d34 100644
---- a/lib/eal/linux/eal_dev.c
-+++ b/lib/eal/linux/eal_dev.c
-@@ -241,9 +241,16 @@ dev_uev_handler(__rte_unused void *param)
- 
- 	ret = recv(rte_intr_fd_get(intr_handle), buf, EAL_UEV_MSG_LEN,
- 		   MSG_DONTWAIT);
--	if (ret < 0 && errno == EAGAIN)
-+	if (ret < 0 &&
-+		(errno == EAGAIN || errno == EWOULDBLOCK || EINTR)) {
-+		/* non-blocking or interrupted */
- 		return;
--	else if (ret <= 0) {
-+	} else if (ret < 0 && (errno == ENOBUFS)) {
-+		/* non-fatal transient memory condition */
-+		EAL_LOG(ERR, "unexpected error on uevent recv: %s",
-+			strerror(errno));
-+		return;
-+	} else if (ret <= 0) {
- 		/* connection is closed or broken, can not up again. */
- 		EAL_LOG(ERR, "uevent socket connection is broken.");
- 		rte_eal_alarm_set(1, dev_delayed_unregister, NULL);
+2. **Dual-Domain Timing Mechanics**:
+   - Introduces `struct rte_eth_timesync_dual_domain_timestamp` to
+     simultaneously capture both the adjusted PTP Hardware Clock (PHC)
+     domain (`adjusted_ns`) and the raw, free-running cycles domain
+     (`cycles_ns`).
+   - A dedicated `valid_mask` tracks the validity of each time domain
+     independently, giving applications granular telemetry options.
+
+Scope of this RFC & Open Questions for the Community:
+======================================================
+This RFC establishes the structural definition of the APIs and driver
+interfaces. Before proceeding to a full `v1` patch with active PMD
+implementations, we would highly appreciate the community's feedback
+on the following design choices:
+
+- **Mbuf Dynamic Field Layout**: Is the encapsulation of the slot
+  handle into an mbuf dynamic field using standard dynamic registration
+  the preferred mechanism for passing steering context to the Tx
+  descriptor path?
+- **Dual-Domain Structure**: Does tracking both the adjusted PHC and
+  the cycle counter within `rte_eth_timesync_dual_domain_timestamp`
+  cover the needs of other hardware vendors supporting concurrent
+  domains?
+- **Error States**: Is `-EAGAIN` an acceptable return code for
+  non-blocking polling of incomplete timestamps, or should we consider
+  an explicit bitmask status?
+
+Please review the proposed design. We welcome your feedback, design
+suggestions, and critique.
+
+Rajesh Kumar (1):
+  ethdev: add per-packet Tx timestamp slot APIs
+
+ lib/ethdev/ethdev_driver.h |  19 ++++++
+ lib/ethdev/rte_ethdev.c    | 121 +++++++++++++++++++++++++++++++++++++
+ lib/ethdev/rte_ethdev.h    | 108 +++++++++++++++++++++++++++++++++
+ 3 files changed, 248 insertions(+)
+
 -- 
-2.51.0
+2.54.0
 
