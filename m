@@ -2,52 +2,80 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC14C5B572
-	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Aug 2026 19:21:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD3E3C5B572
+	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Aug 2026 19:24:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 408794028E;
-	Mon, 17 Aug 2026 21:21:30 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id 3D31340275
- for <dev@dpdk.org>; Mon, 17 Aug 2026 21:21:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1786994488; x=1818530488;
+	by mails.dpdk.org (Postfix) with ESMTP id 91AEB4028E;
+	Mon, 17 Aug 2026 21:24:21 +0200 (CEST)
+Received: from alln-iport-6.cisco.com (alln-iport-6.cisco.com [173.37.142.93])
+ by mails.dpdk.org (Postfix) with ESMTP id 4AB9A40275
+ for <dev@dpdk.org>; Mon, 17 Aug 2026 21:24:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=cisco.com; i=@cisco.com; l=1416; q=dns/txt;
+ s=iport01; t=1786994659; x=1788204259;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=E/1T6Uh/1KAsnLx3xdV7g41vKi94MZb3zpkLrRAtNC8=;
- b=HVyfl9HBPR3r9a/v8Q5C+u4ZzH81++oo4nGcrK0Iqiv/7pcY22a0gRva
- cJdqh69KvaXZ4vInVx/Q8lOTVXYHmOf38ZHcSHIZcyo3GywB4UHGfaSAQ
- gGljCQq/390Ck3hTyXHe6fWfpy34ZK/eMPGPqCxkk2PUy4dabjRpG9Hzc
- RzyFGA7HTKEVO7qxW2qZ71XCu4cfmAU0hQCgnkj5Xx6t1h9VWxv/pfXl4
- Jby3ZxD87sakpgVrpQo9ZecBG8Erbem9q/RnB8UXfr5+os0c2U8O0SCD5
- zGqgpfoGV8Ff2Zf5yES2DJV8VdpeHusucEXu3w7GENSWGQKAHsaMMzGu3 w==;
-X-CSE-ConnectionGUID: Wwh+M31dRGOfyuEtcqhSYg==
-X-CSE-MsgGUID: 12mULPKxTMWXD/jh9wsKQg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11878"; a="75007975"
-X-IronPort-AV: E=Sophos;i="6.25,229,1779174000"; d="scan'208";a="75007975"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
- by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 17 Aug 2026 12:21:28 -0700
-X-CSE-ConnectionGUID: 9M68cgTtQoOVvIwK8v9FPQ==
-X-CSE-MsgGUID: fLgO/sM8S/WwkpGLY+CXsw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,229,1779174000"; d="scan'208";a="262372267"
-Received: from icx008.iind.intel.com ([10.190.212.196])
- by fmviesa008.fm.intel.com with ESMTP; 17 Aug 2026 12:21:26 -0700
-From: Rajesh Kumar <rajesh3.kumar@intel.com>
+ bh=sqguxI71I4WMYQAgafTo3ZZltmgYmyv+f2Gg94g6NEY=;
+ b=e50eQ69AqJGBNaKe4BURdCquwPio0Yys1R1BK98eTALo4sbz8xibfu9I
+ FPAhEajMMXqe1GIskvwHZsnI2lcuHbTakpLqhIlKWJlGl2qB14xmNpg9l
+ s0HWT4tLcpj5DdcXpe9MpzORbmwaLqT5w2JIrXqL4+H6swvWzXoNNJiv8
+ zskUcOk1kHgyKjXwrISonQ/OU96HUxyjbogHwDQfHAVMOOD0gbc3Rm7Aa
+ kgqXb1m3mL7+g5QnNeBcccS6ZgcLzFFNrdi0Bazti5pmCB+gz0v1S0F1i
+ sK0EIJ1GpGf2X2/dIHIr2akF+gAbbEg/Dm4nQL8YDW3iSbdn5ocWhPKib w==;
+X-CSE-ConnectionGUID: qgRzPcdjQ/+SphhXeCvCdA==
+X-CSE-MsgGUID: /GCEtmG0SKGE+9p3+57YZw==
+X-IPAS-Result: =?us-ascii?q?A0BAAgA7X4Nq/44QJK1aHgEBCxIMggULgleBUkNJlkqeH?=
+ =?us-ascii?q?oF+DwEBAQ9RBAEBhQUCjWkCJjQJDgECBAMCAwEBAQEBAQEBAQEBCwEBBQEBA?=
+ =?us-ascii?q?QIBBwWBDhOGXIZbAgEDMgFGEFFWGYMCgnUDxhWCLIEBhH3ZSoFmAQsUAYE4j?=
+ =?us-ascii?q?WF2hHwnG4FJRIEVg2mEGnaFeASCIoEMkxtIgR4DWSwBVRMNCgsHBYFmAzUSK?=
+ =?us-ascii?q?hVuMh2BIz4XgQ0bBgWBHYEohDcjGTZ6gQlegSsqYQESF4EJggoCgnOCBgIBS?=
+ =?us-ascii?q?SELGA1IESw3FBkEPm4HjiAggkgObRNBCy9JUCvHHoQooVsaM6psmQiCAaF8X?=
+ =?us-ascii?q?YRpgWg8gVkzGggbFYMiUxkPji0W0BUrMj8HAgcPApFzgX4BAQ?=
+IronPort-Data: A9a23:pVoxg6A53ZhK8RVW/5jhw5YqxClBgxIJ4kV8jS/XYbTApDkg0TxRx
+ 2tNXG3Sbv/cajamc4t1Otnl8EwEupXVxocwOVdlrnsFo1CmBibm6XV1Cm+qYkt+++WaFBoPA
+ /02M4eGdIZvCCeA+n9BC5C5xVFkz6aEW7HgP+DNPyF1VGdMRTwo4f5Zs7ZRbrVA357jXmthh
+ fuo+5eBYA/8hGYuWo4pw/vrRC1H7ayaVAww5jTSVdgT1HfCmn8cCo4oJK3ZBxPQXolOE+emc
+ P3Ixbe/83mx109F5gSNy+uTnuUiG9Y+DCDW4pZkc/HKbitq+kTe5p0G2M80Mi+7vdkmc+dZk
+ 72hvbToIesg0zaldO41C3G0GAkmVUFKFSOuzXWX6aSuI0P6n3TE2vpUHnk9MY8hvaVMGWFOx
+ fEzNhsBR0XW7w626OrTpuhEj8AnKozveYgYoHwllWyfBvc9SpeFSKLPjTNa9G5v3YYVQ7CHO
+ YxANWAHgBfoO3WjPn8NFJM1kc+jh2L0dHtTr1f9Sa8fszCCkF0sgeCyWDbTUpulbuhJm2nAn
+ UHp0ieoGkpZaYOu+yXQpxpAgceKx0sXQrk6GLCm3vJyjF7VwXYcYCD6TnOypf2/z0r7UNVFJ
+ glMp2wlrLM58wqgSdyVswCEnUNodyU0A7J4e9DWIinTokYIy2513lQ5cwM=
+IronPort-HdrOrdr: A9a23:dBObRqzsyQkYgVFz30nwKrPw5r1zdoMgy1knxilNoNJuHvBw8P
+ re+MjzuiWbtN98YhsdcJW7Scq9qBDnhPtICOsqXItKNTOO0ACVxcNZnOnfKlbbdBEWmNQx6Y
+ 5QN4BjFdz9CkV7h87m7AT9L8wt27C8gceVbJ/lr0tFfEVNd7xq6Rt/B0KwF017QxQDOL8Cfa
+ DsgPauY1GbCAwqhgPRPAh9Y9T+
+X-Talos-CUID: 9a23:d4w0AGAI9kmn5n/6EzBozlwsEcwnSzqe92/QI3+1InhCRJTAHA==
+X-Talos-MUID: =?us-ascii?q?9a23=3Azt0AJA3QDreiOm+ELrAKvpdNuzUjpIuFJVwIvs0?=
+ =?us-ascii?q?9mOapdn1oYHTA0wWFXdpy?=
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-AV: E=Sophos;i="6.25,229,1779148800"; d="scan'208";a="809495907"
+Received: from alln-l-core-05.cisco.com ([173.36.16.142])
+ by alln-iport-6.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384;
+ 17 Aug 2026 19:24:16 +0000
+Received: from rtice-VMware20-1 (unknown [10.189.17.96])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ (Authenticated sender: rtice@cisco.com)
+ by alln-l-core-05.cisco.com (Postfix) with ESMTPSA id EEB6F18000144;
+ Mon, 17 Aug 2026 19:24:15 +0000 (GMT)
+From: Randy Tice <rtice@cisco.com>
 To: dev@dpdk.org
-Cc: thomas@monjalon.net, bruce.richardson@intel.com,
- andrew.rybchenko@oktetlabs.ru, Rajesh Kumar <rajesh3.kumar@intel.com>
-Subject: [RFC 1/1] ethdev: add per-packet Tx timestamp slot APIs
-Date: Tue, 18 Aug 2026 00:51:16 +0530
-Message-ID: <20260817192117.3009211-2-rajesh3.kumar@intel.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260817192117.3009211-1-rajesh3.kumar@intel.com>
-References: <20260817192117.3009211-1-rajesh3.kumar@intel.com>
+Cc: Randy Tice <rtice@cisco.com>
+Subject: [PATCH v3] eal/linux: harden uevent recv error handling
+Date: Mon, 17 Aug 2026 15:23:33 -0400
+Message-ID: <20260817192333.119549-1-rtice@cisco.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260813201656.65649-1-rtice@cisco.com>
+References: <20260813201656.65649-1-rtice@cisco.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Authenticated-User: rtice@cisco.com
+X-Outbound-Client-TLS: ANONYMOUS; unknown [10.189.17.96]; TLSv1.3;
+ TLS_AES_256_GCM_SHA384; 256
+X-Outbound-SMTP-Client: 10.189.17.96, [10.189.17.96]
+X-Outbound-Node: alln-l-core-05.cisco.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,324 +89,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add ethdev public and driver-facing APIs for per-packet Tx
-hardware timestamp slot management.
+The Linux uevent handler is harded for non-blocking receive behavior
+and transient ENOBUF issue during hot plug/unplug testing with MANA.
 
-The existing `rte_eth_timesync_read_tx_timestamp()` exposes a
-single shared latch, making it unreliable when multiple Tx
-timestamps are outstanding concurrently. PMDs with per-packet
-slot hardware cannot be exploited through this interface.
-
-Introduce a slot lifecycle API:
-- `rte_eth_timesync_tx_timestamp_slot_alloc()`: reserve a
-  hardware slot before transmit
-- `rte_eth_timesync_tx_timestamp_stamp_mbuf()`: embed slot
-  handle into mbuf dynfield for per-packet NIC steering
-- `rte_eth_timesync_read_tx_timestamp_slot()`: poll slot for
-  a captured timestamp; returns -EAGAIN if not ready
-- `rte_eth_timesync_tx_timestamp_slot_release()`: return slot
-  to PMD after readback or timeout
-
-Introduce `rte_eth_timesync_dual_domain_timestamp` to carry
-both the adjusted PHC time (`adjusted_ns`) and free-running
-cycles-domain time (`cycles_ns`), each with an individual
-validity bit in `valid_mask`.
-
-Signed-off-by: Rajesh Kumar <rajesh3.kumar@intel.com>
+Signed-off-by: Randy Tice <rtice@cisco.com>
 ---
- lib/ethdev/ethdev_driver.h |  19 ++++++
- lib/ethdev/rte_ethdev.c    | 121 +++++++++++++++++++++++++++++++++++++
- lib/ethdev/rte_ethdev.h    | 108 +++++++++++++++++++++++++++++++++
- 3 files changed, 248 insertions(+)
 
-diff --git a/lib/ethdev/ethdev_driver.h b/lib/ethdev/ethdev_driver.h
-index 0f336f9567..61dadcea49 100644
---- a/lib/ethdev/ethdev_driver.h
-+++ b/lib/ethdev/ethdev_driver.h
-@@ -795,6 +795,19 @@ typedef int (*eth_timesync_read_rx_timestamp_t)(struct rte_eth_dev *dev,
- typedef int (*eth_timesync_read_tx_timestamp_t)(struct rte_eth_dev *dev,
- 						struct timespec *timestamp);
+v3:
+Fixed build issue with bitwise operator vs test against errno.
+
+v2:
+Addressed review comments regarding spelling and missing code comments.
+Limited the transient memory issue to just ENOBUF which was the only
+original error observed.
+---
+ lib/eal/linux/eal_dev.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/lib/eal/linux/eal_dev.c b/lib/eal/linux/eal_dev.c
+index ec408649d0..f1d2bc3d34 100644
+--- a/lib/eal/linux/eal_dev.c
++++ b/lib/eal/linux/eal_dev.c
+@@ -241,9 +241,16 @@ dev_uev_handler(__rte_unused void *param)
  
-+/** @internal Allocate a per-packet TX timestamp slot handle. */
-+typedef int (*eth_timesync_tx_timestamp_slot_alloc_t)(struct rte_eth_dev *dev,
-+		uint16_t tx_queue_id, uint32_t *slot_id);
-+
-+/** @internal Read TX timestamp by slot handle. */
-+typedef int (*eth_timesync_read_tx_timestamp_slot_t)(struct rte_eth_dev *dev,
-+		uint32_t slot_id,
-+		struct rte_eth_timesync_dual_domain_timestamp *timestamp);
-+
-+/** @internal Release a previously allocated TX timestamp slot handle. */
-+typedef int (*eth_timesync_tx_timestamp_slot_release_t)(struct rte_eth_dev *dev,
-+		uint32_t slot_id);
-+
- /** @internal Function used to adjust the device clock. */
- typedef int (*eth_timesync_adjust_time)(struct rte_eth_dev *dev, int64_t);
- 
-@@ -1561,6 +1574,12 @@ struct eth_dev_ops {
- 	eth_timesync_read_rx_timestamp_t timesync_read_rx_timestamp;
- 	/** Read the IEEE1588/802.1AS Tx timestamp */
- 	eth_timesync_read_tx_timestamp_t timesync_read_tx_timestamp;
-+	/** Allocate a TX timestamp slot handle */
-+	eth_timesync_tx_timestamp_slot_alloc_t timesync_tx_timestamp_slot_alloc;
-+	/** Read a TX timestamp using a slot handle */
-+	eth_timesync_read_tx_timestamp_slot_t timesync_read_tx_timestamp_slot;
-+	/** Release a TX timestamp slot handle */
-+	eth_timesync_tx_timestamp_slot_release_t timesync_tx_timestamp_slot_release;
- 	/** Adjust the device clock */
- 	eth_timesync_adjust_time   timesync_adjust_time;
- 	/** Adjust the clock frequency */
-diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-index 9efeaf77cb..b955784594 100644
---- a/lib/ethdev/rte_ethdev.c
-+++ b/lib/ethdev/rte_ethdev.c
-@@ -6699,6 +6699,127 @@ rte_eth_timesync_read_tx_timestamp(uint16_t port_id,
- 
- }
- 
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_timesync_tx_timestamp_slot_alloc, 26.11)
-+int
-+rte_eth_timesync_tx_timestamp_slot_alloc(uint16_t port_id,
-+					 uint16_t tx_queue_id,
-+					 uint32_t *slot_id)
-+{
-+	struct rte_eth_dev *dev;
-+
-+	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -ENODEV);
-+	dev = &rte_eth_devices[port_id];
-+
-+	if (slot_id == NULL) {
-+		RTE_ETHDEV_LOG_LINE(ERR,
-+			"Cannot allocate ethdev port %u Tx timestamp slot to NULL",
-+			port_id);
-+		return -EINVAL;
-+	}
-+
-+	if (dev->dev_ops->timesync_tx_timestamp_slot_alloc == NULL)
-+		return -ENOTSUP;
-+
-+	return eth_err(port_id,
-+			dev->dev_ops->timesync_tx_timestamp_slot_alloc(dev,
-+				tx_queue_id, slot_id));
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_timesync_read_tx_timestamp_slot, 26.11)
-+int
-+rte_eth_timesync_read_tx_timestamp_slot(uint16_t port_id,
-+					uint32_t slot_id,
-+					struct rte_eth_timesync_dual_domain_timestamp *timestamp)
-+{
-+	struct rte_eth_dev *dev;
-+
-+	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -ENODEV);
-+	dev = &rte_eth_devices[port_id];
-+
-+	if (timestamp == NULL) {
-+		RTE_ETHDEV_LOG_LINE(ERR,
-+			"Cannot read ethdev port %u Tx timestamp slot to NULL",
-+			port_id);
-+		return -EINVAL;
-+	}
-+
-+	if (dev->dev_ops->timesync_read_tx_timestamp_slot == NULL)
-+		return -ENOTSUP;
-+
-+	return eth_err(port_id,
-+			dev->dev_ops->timesync_read_tx_timestamp_slot(dev,
-+				slot_id, timestamp));
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_timesync_tx_timestamp_slot_release, 26.11)
-+int
-+rte_eth_timesync_tx_timestamp_slot_release(uint16_t port_id, uint32_t slot_id)
-+{
-+	struct rte_eth_dev *dev;
-+
-+	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -ENODEV);
-+	dev = &rte_eth_devices[port_id];
-+
-+	if (dev->dev_ops->timesync_tx_timestamp_slot_release == NULL)
-+		return -ENOTSUP;
-+
-+	return eth_err(port_id,
-+			dev->dev_ops->timesync_tx_timestamp_slot_release(dev,
-+				slot_id));
-+}
-+
-+static int rte_eth_timesync_tx_slot_dynfield_offset = -1;
-+static uint64_t rte_eth_timesync_tx_slot_dynflag;
-+
-+static int
-+rte_eth_timesync_tx_slot_dynfield_register(void)
-+{
-+	const struct rte_mbuf_dynfield slot_dynfield = {
-+		.name  = RTE_ETH_TIMESYNC_TX_SLOT_DYNFIELD_NAME,
-+		.size  = sizeof(uint32_t),
-+		.align = alignof(uint32_t),
-+	};
-+
-+	if (rte_eth_timesync_tx_slot_dynfield_offset >= 0)
-+		return 0;
-+
-+	rte_eth_timesync_tx_slot_dynfield_offset =
-+			rte_mbuf_dynfield_register(&slot_dynfield);
-+	if (rte_eth_timesync_tx_slot_dynfield_offset < 0)
-+		rte_eth_timesync_tx_slot_dynfield_offset =
-+				rte_mbuf_dynfield_lookup(
-+					RTE_ETH_TIMESYNC_TX_SLOT_DYNFIELD_NAME, NULL);
-+	if (rte_eth_timesync_tx_slot_dynfield_offset < 0)
-+		return -ENOTSUP;
-+
-+	{
-+		int flag_bit = rte_mbuf_dynflag_register(
-+			&(const struct rte_mbuf_dynflag){
-+				.name = RTE_ETH_TIMESYNC_TX_SLOT_DYNFIELD_NAME "_flag"});
-+		if (flag_bit < 0)
-+			flag_bit = rte_mbuf_dynflag_lookup(
-+				RTE_ETH_TIMESYNC_TX_SLOT_DYNFIELD_NAME "_flag", NULL);
-+		if (flag_bit >= 0)
-+			rte_eth_timesync_tx_slot_dynflag = RTE_BIT64(flag_bit);
-+	}
-+	return 0;
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_timesync_tx_timestamp_stamp_mbuf, 26.11)
-+int
-+rte_eth_timesync_tx_timestamp_stamp_mbuf(uint16_t port_id __rte_unused,
-+					 uint32_t slot_id, struct rte_mbuf *m)
-+{
-+	if (m == NULL)
-+		return -EINVAL;
-+	if (rte_eth_timesync_tx_slot_dynfield_register() != 0)
-+		return -ENOTSUP;
-+	*RTE_MBUF_DYNFIELD(m, rte_eth_timesync_tx_slot_dynfield_offset,
-+			   uint32_t *) = slot_id;
-+	m->ol_flags |= rte_eth_timesync_tx_slot_dynflag;
-+	return 0;
-+}
-+
- RTE_EXPORT_SYMBOL(rte_eth_timesync_adjust_time)
- int
- rte_eth_timesync_adjust_time(uint16_t port_id, int64_t delta)
-diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
-index ee400b386f..339c39fcdd 100644
---- a/lib/ethdev/rte_ethdev.h
-+++ b/lib/ethdev/rte_ethdev.h
-@@ -5528,6 +5528,114 @@ int rte_eth_timesync_read_rx_timestamp(uint16_t port_id,
- int rte_eth_timesync_read_tx_timestamp(uint16_t port_id,
- 		struct timespec *timestamp);
- 
-+/** Valid bit for rte_eth_timesync_dual_domain_timestamp.adjusted_ns. */
-+#define RTE_ETH_TIMESYNC_DUAL_DOMAIN_TIMESTAMP_ADJUSTED_VALID	RTE_BIT32(0)
-+/** Valid bit for rte_eth_timesync_dual_domain_timestamp.cycles_ns. */
-+#define RTE_ETH_TIMESYNC_DUAL_DOMAIN_TIMESTAMP_CYCLES_VALID	RTE_BIT32(1)
-+
-+/**
-+ * Dual-domain TX timestamp payload.
-+ */
-+struct rte_eth_timesync_dual_domain_timestamp {
-+	int64_t adjusted_ns;
-+	int64_t cycles_ns;
-+	uint32_t valid_mask;
-+};
-+
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * Allocate a TX timestamp slot handle for per-packet correlation.
-+ *
-+ * @param port_id
-+ *   The port identifier of the Ethernet device.
-+ * @param tx_queue_id
-+ *   TX queue used by the packet to be transmitted.
-+ * @param slot_id
-+ *   Output handle identifying the allocated slot.
-+ *
-+ * @return
-+ *   - 0: Success.
-+ *   - -ENODEV: The port ID is invalid.
-+ *   - -EIO: if device is removed.
-+ *   - -ENOTSUP: The function is not supported by the Ethernet driver.
-+ *   - -EINVAL: Invalid parameters.
-+ */
-+__rte_experimental
-+int rte_eth_timesync_tx_timestamp_slot_alloc(uint16_t port_id,
-+		uint16_t tx_queue_id, uint32_t *slot_id);
-+
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * Read a per-packet TX timestamp using a previously allocated slot handle.
-+ *
-+ * @param port_id
-+ *   The port identifier of the Ethernet device.
-+ * @param slot_id
-+ *   Slot handle returned by rte_eth_timesync_tx_timestamp_slot_alloc().
-+ * @param timestamp
-+ *   Output dual-domain timestamp payload.
-+ *
-+ * @return
-+ *   - 0: Success.
-+ *   - -EAGAIN: Timestamp is not ready yet.
-+ *   - -ENODEV: The port ID is invalid.
-+ *   - -EIO: if device is removed.
-+ *   - -ENOTSUP: The function is not supported by the Ethernet driver.
-+ *   - -EINVAL: Invalid parameters.
-+ */
-+__rte_experimental
-+int rte_eth_timesync_read_tx_timestamp_slot(uint16_t port_id,
-+		uint32_t slot_id,
-+		struct rte_eth_timesync_dual_domain_timestamp *timestamp);
-+
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * Release a previously allocated TX timestamp slot handle.
-+ *
-+ * @param port_id
-+ *   The port identifier of the Ethernet device.
-+ * @param slot_id
-+ *   Slot handle to release.
-+ *
-+ * @return
-+ *   - 0: Success.
-+ *   - -ENODEV: The port ID is invalid.
-+ *   - -EIO: if device is removed.
-+ *   - -ENOTSUP: The function is not supported by the Ethernet driver.
-+ *   - -EINVAL: Invalid parameters.
-+ */
-+__rte_experimental
-+int rte_eth_timesync_tx_timestamp_slot_release(uint16_t port_id,
-+		uint32_t slot_id);
-+
-+/** Mbuf dynfield name for the TX timestamp slot handle. */
-+#define RTE_ETH_TIMESYNC_TX_SLOT_DYNFIELD_NAME "rte_eth_timesync_tx_slot"
-+
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * Stamp an mbuf with a TX timestamp slot handle so the TX path steers the
-+ * NIC to capture the timestamp in the correct per-packet slot.
-+ *
-+ * Must be called after rte_eth_timesync_tx_timestamp_slot_alloc() and before
-+ * rte_eth_tx_burst(). Safe for concurrent callers — slot is stored per-mbuf.
-+ *
-+ * @param port_id  The port identifier (unused; reserved for future PMD use).
-+ * @param slot_id  Slot handle from rte_eth_timesync_tx_timestamp_slot_alloc().
-+ * @param m        Mbuf to stamp.
-+ * @return 0 on success, -ENOTSUP if dynfield registration failed.
-+ */
-+__rte_experimental
-+int rte_eth_timesync_tx_timestamp_stamp_mbuf(uint16_t port_id,
-+		uint32_t slot_id, struct rte_mbuf *m);
-+
- /**
-  * Adjust the timesync clock on an Ethernet device.
-  *
+ 	ret = recv(rte_intr_fd_get(intr_handle), buf, EAL_UEV_MSG_LEN,
+ 		   MSG_DONTWAIT);
+-	if (ret < 0 && errno == EAGAIN)
++	if (ret < 0 &&
++		(errno == EAGAIN || errno == EWOULDBLOCK || EINTR)) {
++		/* non-blocking or interrupted */
+ 		return;
+-	else if (ret <= 0) {
++	} else if (ret < 0 && (errno == ENOBUFS)) {
++		/* non-fatal transient memory condition */
++		EAL_LOG(ERR, "unexpected error on uevent recv: %s",
++			strerror(errno));
++		return;
++	} else if (ret <= 0) {
+ 		/* connection is closed or broken, can not up again. */
+ 		EAL_LOG(ERR, "uevent socket connection is broken.");
+ 		rte_eal_alarm_set(1, dev_delayed_unregister, NULL);
 -- 
-2.54.0
+2.51.0
 
