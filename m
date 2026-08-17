@@ -2,59 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE6F3C5DF66
-	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Aug 2026 09:18:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0697AC5DF66
+	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Aug 2026 09:18:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9CE7A40275;
-	Mon, 17 Aug 2026 11:18:29 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0FFBA40275;
+	Mon, 17 Aug 2026 11:18:49 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
- by mails.dpdk.org (Postfix) with ESMTP id 8AA234021F
- for <dev@dpdk.org>; Mon, 17 Aug 2026 11:18:27 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 992F34021F
+ for <dev@dpdk.org>; Mon, 17 Aug 2026 11:18:46 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1786958308; x=1818494308;
+ t=1786958327; x=1818494327;
  h=from:to:cc:subject:date:message-id:references:
  in-reply-to:content-transfer-encoding:mime-version;
- bh=MGKUi92i/haJJ0FdckWk6G/ygm7KFrFdccHX6BCgDRc=;
- b=BpWAgKCFSHx54GixwhL0pnUwnjw4ZzrHEK5GHStLmddLAzQb0aPaevKK
- CSkeL8QObUNdpoLC9GwQyUmr+91DllumEClC68+SIstMJdRoiVCHkUYos
- MyQG/yMt8+/UUw2kv82OIM2eYzYSKy4SDmS/UBMKRNoXwhzh2DMM5DZsE
- tFEmzFxrS9i2GHlF0pK68jIyMDNK4EiNAHbLa2mznUz52hxONZjkekKQG
- jlKsB3sfld8tQV4Blcm07yZSrXgTg6Yb6Co6aB3djIaiZh0A3ErpiwOgB
- i9LK8xuXfgux2Wu4+zlTftvQQhIXGDdUf//h9G1oFP2WpED5Now9nIe41 g==;
-X-CSE-ConnectionGUID: BVaXZaOhQi+wwzqNaIYthg==
-X-CSE-MsgGUID: b4hl2cV8QKiPSJaK1ig5ug==
-X-IronPort-AV: E=McAfee;i="6800,10657,11877"; a="86387355"
-X-IronPort-AV: E=Sophos;i="6.25,228,1779174000"; d="scan'208";a="86387355"
+ bh=UuZIweZ7aKMoBEyQaXaen0E3kHJA8nrqlprWw6prNhA=;
+ b=XXE7/7UoGdQ+dB+U3/kVZo36a+CDt2waXWfHfSRw5bCBAReqrrXqh4h7
+ Kyqbqdr7IMObmeicrSz5MylnWoIgZU6Rj1iy23bfDM+7p9cvCIn5oPFCN
+ XtHjBIZMfWGc7N2MeF7NEhKmfGs6ajECfjqqM1wSLXkKdfa5gu0EfZkb4
+ oClewgXt+co/aromUxzS48SnsTBilyI5O2l7Bu0kUmIAg4n42l5ODKVCX
+ 6+NSkJVB8NWP7CW0mVSbvSVMa1MPTiMMTkzp0kUfUfLCewjjDwxO51bmh
+ +veco8cW4fP/CLixsndn7Jrx/P8sQuyRrfFtvk347PzpQ00P2k+jv3Oto Q==;
+X-CSE-ConnectionGUID: nnYxlx0dRFmdhNeY1o/nWA==
+X-CSE-MsgGUID: JLKVciLRQi2OtR3VkeeAGQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11877"; a="86387373"
+X-IronPort-AV: E=Sophos;i="6.25,228,1779174000"; d="scan'208";a="86387373"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 17 Aug 2026 02:18:27 -0700
-X-CSE-ConnectionGUID: Jd0kwgznSVu3OiqvRo0q3Q==
-X-CSE-MsgGUID: 3yKa8QlyQ8CZPiY+cIt+1w==
+ 17 Aug 2026 02:18:46 -0700
+X-CSE-ConnectionGUID: OIozYnFNR6eo1snHoAW5qA==
+X-CSE-MsgGUID: 8P+rRVHXTaaBEeaQ4/W7hg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,228,1779174000"; d="scan'208";a="263098749"
+X-IronPort-AV: E=Sophos;i="6.25,228,1779174000"; d="scan'208";a="263098793"
 Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 17 Aug 2026 02:18:26 -0700
+ 17 Aug 2026 02:18:45 -0700
 Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
  fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Mon, 17 Aug 2026 02:18:26 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ 15.2.2562.45; Mon, 17 Aug 2026 02:18:45 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
  FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45 via Frontend Transport; Mon, 17 Aug 2026 02:18:26 -0700
-Received: from BN8PR05CU002.outbound.protection.outlook.com (52.101.57.58) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ 15.2.2562.45 via Frontend Transport; Mon, 17 Aug 2026 02:18:45 -0700
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (40.93.194.4) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Mon, 17 Aug 2026 02:18:25 -0700
+ 15.2.2562.45; Mon, 17 Aug 2026 02:18:44 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IpCZiGUfOM8ExYQ4YpQrNs16iV878oMO5PVWzx1wYL1gSoh2y1EwFom6YcVhEQtHXLvAB/Sqrhjsay2GXrdf2qMNqvjxEwS4fjeoHNCwbjScpnIX2PrWCCjVn8e8Fp/fxxStwU/Q6PWis/WPFo54L0rgCdaNOR2ow/SC8qqMWAuAGgTe9hmFNIwL1uMZz+55jV7FVTIjQ5vCL9fMT2iQ2I5iMTrLw633FTolWHaKffbmS3ezTHZ57lLLpCjMSfazvwFSytY7ZjJwb7o63A33CQRd0ilAD4cUMT/0EKw06Da1pmcYlXLF08KyfimPxuEhkL8kxzJlmahnvKn9E4duvQ==
+ b=gq+dJyjqgMHOuIoY1AHOcbm0mvTMTwm08WeIVCCzcQSmo+v9kEWtIerXjoedHLR3iCiVPfVzMfYmkRZGBXPt8PrJsoMOANxccY0w8aSOpK/S8i4e2TcEW8KAqgxOhQ2AohheEWkiaePGq+uDEiOvTCcUGgiaXPMRA/FH83AHKL72n3y5/6kYXAtgypOzUygsntHDuWoOVJaJgxTbati5Dh4K7kkQ9RHRgiRtsMig0iYPuJ+lXx67EdG1htahSKUW/ko/xuYNzirMEKLl0vhDwzdHSk2xvRqW0JicKRbpNSeglbHpFta5t+CBeVcwzxBmqOm3V8I4sqkyBwo65KPqiA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FmKXoYwUs9FV0I7tHwoqyRglYoTOnlvyq+TOkxhgMts=;
- b=TPAdcAScMyrZaeLU0bBjOcz4ZKSIplQ8ZKieFS1F2kF0eXCCyI3NH/e07J+aY3c27eZFxnQxwFadS4fx3k7A5jBZElwQG8N+6Yn3uqODHRcjJi0mF2hqHH1+zBoYbpSn0cgJPhfJ+jSGhgvKLOIK18tqFPhiBpwL8AVtuw+x42lkdXCOYwHKRYc2dgC5JVQOCEBTPO8+FZXu/ZHmWpEGYlCg75w2kWuJM0+W01zZ0qnCWpWyNyYAhIA9TPYRDVxaFR67gBaR/TmLP6k9ThwE7d+qS50u9I/kyKawXdbemTPP2+O4n2vZ5JiItZ2t+Vt71p373/lxhyKXAKTD5IrfGQ==
+ bh=xPVGZBu5p0/l0m+rvuGYcRNgrouSFklqktgy4CU9f68=;
+ b=TqPwgCPVtn31EobdoCTewWcF8lgrWdYb3BUov5NIh5Q/5kNqnwQAANKV8gWnKK8tSZ3LmeHjc9psC6HapIsgycWzBGjsFpOwiWUyeSKLeHiqUREBJJpo9W/C5Uva10uN3gMILr0R/Z9sfJXv+NmYMwbclUwI7syEgOMte1CPNTO2kw6zHUqRjVwOxxEZ2SHbTrC+JJ4HbtfdXw2shMPi6gIe3xtQBbePAr4ltnF3VCsEE5vmFKnqNimjN2obFUy3eZwfS+vu0YqKDrTI6CG7bUqVjxbOEc5UUEEb8t9VWIwo/IpadBw5yV3E0XEoEmfS/qQJWYkPbuNqH9aCy6TXiw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
@@ -62,23 +62,23 @@ Received: from SA1PR11MB6782.namprd11.prod.outlook.com (2603:10b6:806:25e::11)
  by SA1PR11MB8280.namprd11.prod.outlook.com (2603:10b6:806:25d::21)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.315.11; Mon, 17 Aug
- 2026 09:18:16 +0000
+ 2026 09:18:42 +0000
 Received: from SA1PR11MB6782.namprd11.prod.outlook.com
  ([fe80::cd29:ea71:32e6:ff0b]) by SA1PR11MB6782.namprd11.prod.outlook.com
  ([fe80::cd29:ea71:32e6:ff0b%5]) with mapi id 15.21.0315.011; Mon, 17 Aug 2026
- 09:18:16 +0000
+ 09:18:42 +0000
 From: "Mandal, Anurag" <anurag.mandal@intel.com>
 To: "dev@dpdk.org" <dev@dpdk.org>
-CC: "Richardson, Bruce" <bruce.richardson@intel.com>, "Shetty, Praveen"
- <praveen.shetty@intel.com>
-Subject: RE: [PATCH v2] net/cpfl: add timesync support
-Thread-Topic: [PATCH v2] net/cpfl: add timesync support
-Thread-Index: AQHdIyrY2eXR2a7tkEeP+9q8YSFZzLaiDEig
-Date: Mon, 17 Aug 2026 09:18:16 +0000
-Message-ID: <SA1PR11MB67825EC0A3DAC9E8282B44FEE4A72@SA1PR11MB6782.namprd11.prod.outlook.com>
-References: <20260728102008.860157-1-anurag.mandal@intel.com>
- <20260803093027.870965-1-anurag.mandal@intel.com>
-In-Reply-To: <20260803093027.870965-1-anurag.mandal@intel.com>
+CC: "Richardson, Bruce" <bruce.richardson@intel.com>, "Medvedkin, Vladimir"
+ <vladimir.medvedkin@intel.com>
+Subject: RE: [PATCH v2] net/iavf: add clock read support
+Thread-Topic: [PATCH v2] net/iavf: add clock read support
+Thread-Index: AQHdHcmIdIJmlGACvkW8Ok59M+Be1raiFyNg
+Date: Mon, 17 Aug 2026 09:18:41 +0000
+Message-ID: <SA1PR11MB67820B908B21E2F7A30F189FE4A72@SA1PR11MB6782.namprd11.prod.outlook.com>
+References: <20260727102444.789833-1-anurag.mandal@intel.com>
+ <20260727131016.790792-1-anurag.mandal@intel.com>
+In-Reply-To: <20260727131016.790792-1-anurag.mandal@intel.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -87,59 +87,59 @@ authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 x-ms-publictraffictype: Email
 x-ms-traffictypediagnostic: SA1PR11MB6782:EE_|SA1PR11MB8280:EE_
-x-ms-office365-filtering-correlation-id: 828048c6-6261-417a-5aeb-08defc407898
+x-ms-office365-filtering-correlation-id: c1568c8a-77b5-4079-bbfc-08defc4087d0
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
  ARA:13230040|23010399003|376014|366016|1800799024|11063799006|56012099006|10067099003|22082099003|18002099003|4143699003|6133799003|38070700021;
-x-microsoft-antispam-message-info: NqhIkYwP3IoFMm4Zf5p1xV71lSpt1tBhtcoMZbdTsjqrSSeDyZIMxunEInAqV9XhaL2PYR0gn0b6PYd7LZZxBreYMJK5Jztf00x+COm+TysAc+SW+RLTSW50d9trsdm3xT2Ip/YqaRLikqQ4pnmAX6cCLUz/y4XA7HEDoHwrL+tLkNZMhpgfurDMvkAI/L328ykpyDfQrmJk/6UDqlsT/TOwlG3MK1g/7pTbMMzRzxinHiBTUEZMiDeaNkR88clOyLu78z976pjgHpqK6qADJ6KRMiuWWzdVXj0wVIsSoctkxBOcXkVGotqx9IVMzfXJwRonnmf+sj4YMnhvx4yq2WBRRercOm+q2/0+06sy7GZ2tDp6i1yBGgIDpVnf53FQUwhdlMIyMVzlgqdLsgzHTxLY3y4WI9u1+fXDklitUgL1JwBx9SGFSepnMXuhu8IisHcFpl8LXgzMlzbUKo9Sbkq8betz4/LcmCCVeR/4yei+flcUgBXHGycmkpVt6pkz7fUw9kjiHPNK9WoUW+vyCbhsmQHERAXy/3Qxh/LJiy+hM3BzeNNyq0ZZcur1fHVQjweGgjyItzRaqFFgP0GGqylsiMqEiPOlxeXE6xVYbJboq0Iezk8knTA0nIujgr7l1GLcFY52Pqc4kScks5IlMZDwAuTwUTcUSJt6KV7THAc2V6s7rrBniD0O1N+5nuCOxV7FmqnYQbLRiOx1JKztpA==
+x-microsoft-antispam-message-info: HOd5sSrpjZr7q/EwyBOlroOQLkryscnUPaIP0AdJmJ5IDJRJXadgpEXYS/XMxajdtvqgMjQc8mu883JadvzHVDiqMcEtwCEGvlk/WI75bEuI2gYbL0Xyx0mwj9dFxIyJA8KHE5uaXNB8XPRCvqP/+gDzPviUO9ewKsoqFPZRdIxgaG3tebfjk/qwqQ/ZPDxMXBcHvuZo04cDJzKN/AC2c4irxJ+L9txzack7v+iHaLvXNrtDW7NIlcdwx7OxA7fT+oLnbEWDHqWpnSzlxX9KhZHoGa8BwT10lwIjCGVC1YHesgHKDaViLI0Xy50hG/4rljegxhyF5OngdpK5MvnYUDqEVFcodgS7KXYUjJjFytQVKo7spX5KRh3WVEwJYGhfdsa2noXyw6AXyDc87BVEdl9lrbvuqiu0mxH1JgUcx3D+Sg8l/5C+nDzSDPYNptzCFIVam36sVyDMJf6oFr2kqZvILXGgXVlZ4sFnL4Y7ljFFlkM+GvEAHld1nVzK2YVkHoyz/c8Gp3ljT4REm5TB2Qzxkd2G/oRSBFsQ+JfikL+be79qR+6/H7QQT0SIs71FxIBc5Qgnidj941q51ExV5l6FH4lbGcE3ny4LV/zv3ah2LkoFoCtFjcnlpEOo2njREoTarG2FEio6HXRyz7DC4amk6Yc8j4p1aCxqSuFYoUTQbO5Ul06zTc6PqdUpkhvGEM5fsXgzzhIkAS+z623l/DTzvCWgaaBPKCZoyjwEsWE=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:SA1PR11MB6782.namprd11.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(23010399003)(376014)(366016)(1800799024)(11063799006)(56012099006)(10067099003)(22082099003)(18002099003)(4143699003)(6133799003)(38070700021);
  DIR:OUT; SFP:1101; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?PGmAzgJ0WX74Wuqi80GGoFAV6Vr1P9IqE1cqppCAD4L1QIQ0aH3x4VoxxkgM?=
- =?us-ascii?Q?n6mlBlVSaIrBrKByxsy0IfvKZsE4yd5K/nmuokfQ7OdB8K9BA6vdhm6A3RiO?=
- =?us-ascii?Q?ijM2NhgkrDGBMsWs5wzU0v+VETNDUtVR7aHoZHDvbfCR5XZXhENZ6UYZreHe?=
- =?us-ascii?Q?XE6kyhiiOfeI2kyTuudRZ/Ee3LvoG9OZxRZNkKvaKlg8rvofBAzNkgi8Bqym?=
- =?us-ascii?Q?M75Jqn43YbsE4rqIAYMB7kre9CekILMqQr59YMMZTMR4pZgr4uHkuFKePb9w?=
- =?us-ascii?Q?h/hEpR5s90XeN9U9Aolfm4fJKRNF8+ZmQXQqW0FwTDPqGHvWp4bNDOM3ytkQ?=
- =?us-ascii?Q?M+zBFbpTbXuLwTrIHQWdQUqI3geNNsktgbAI4qur2qYqfm2XdlDJoWjHGLQL?=
- =?us-ascii?Q?wo+NdkffdWJMBHnpee9w8p884qqu34bgV7EcqsVPKf42aHI6J7uHqSJplCqW?=
- =?us-ascii?Q?J86Sp5xlTVAUQNRnkBtttPNLukBigpJCYzH4dozNXranAWKuhoBN7ibQZZWI?=
- =?us-ascii?Q?AB/FJ+HUOPq+2bgUwAYrwf26ZcEM2yQaSmKobgyhPQWGW2x9mmIwbeC248bD?=
- =?us-ascii?Q?JYN7eP44K/BwLbQmYR27E4qAq/wuFTpVjjhQin6WQ5j2BUsROAGfT7+QnfI6?=
- =?us-ascii?Q?JDo7ShnGxWJKzQy1UjV/4zAaNyagZUcXMVQJTPNiH9Lgk7GhcJfZ94aMReG+?=
- =?us-ascii?Q?fvXZhdGfrMlyKvrE6KsSuYWcJ5KquVNdQ2watt0BKyzUNgcTH5J+a8AuiHmD?=
- =?us-ascii?Q?MnIqQc6XVvywHGR0S5VaKEZwaee2g5DAEjqFuOOH1Escrw40Ql36IO7e4jym?=
- =?us-ascii?Q?Ede6bpP1M7rh3iwCgJmaRVJ6+Y/rKDDH8HctxbQh++3tj58hgCKtmdG9hJfL?=
- =?us-ascii?Q?uc0JPw+pLBxiCD7u5OSTprwohLYy9X8TQdbzHSNhCDn3Puf5nM+x3QwiGou9?=
- =?us-ascii?Q?YRLjQQ51bD91brduhepTSBBrmzM6gqgSK2krEQR0c9mXGyNXWBLU13fdkC+m?=
- =?us-ascii?Q?nawVSxo+3j9qLos+KQNTbGC2jfQU6YH2uS1zh+imesOoRu9LoU7zRgVDjYmR?=
- =?us-ascii?Q?9L429cAs4J0TLL+aMPPlCZpevhULaYNRHFLh4x8lytYMTyBhuBfwxN1SeGDP?=
- =?us-ascii?Q?Id6sAGPbPFYJ/dVc5d38M8uY/A3QW2czxdeOz0/9N8LZwvVZwSWHjkjEvv4m?=
- =?us-ascii?Q?k9PYPF8t9jWuHxIJsszLzRe4HaEPHnFlnTPv/rKMzIKi3xUan1G4xGtpGRHg?=
- =?us-ascii?Q?DkoMyaQnMUggweix0iVjRZeTb8YG4VK6xmXriYGrZMhy7+wji+sKcCunyu92?=
- =?us-ascii?Q?YRYY8OdfpMTUyvCbG6V5na1JwRC8/bAh0N3o0B7ECodTnkigDaq4dJE6C7iS?=
- =?us-ascii?Q?xQctv3MLOC60v6nsmrNukrUBM2U00btbjEpcvhG3g+FFNXTRgfqOmskRFNNm?=
- =?us-ascii?Q?aFyOsLw1Fujo5G5qR0BFhniRakAoq5QtH288VnvqtdAJt1WEv74GuC03iaf2?=
- =?us-ascii?Q?nOZCaXOaLdP1aJNSgFAoHBQ69Drt3J18Ne3k9qqr4y70LVZwZgFAsBObVZd3?=
- =?us-ascii?Q?+c4ZrYHChYyPXxF3htpTDFvNAUKQAv9bsQCrrJzNbZVpPTtyRkev4UfQADrB?=
- =?us-ascii?Q?+yHl2q4vifrs8PCABVxTzDEqIbFwJPq1F5TsmYWbWgDyxk4eXs4DGJfTm79t?=
- =?us-ascii?Q?GGHlq5T+eKw2K8DMb2kJVTd12i9IfCirRG9jJO0Fj7az3UqfCj0yzI/sVFTm?=
- =?us-ascii?Q?IN46BmWe7A=3D=3D?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?JRRnDqy73SZ8OtGSfL4ja++CTVsRtDG1niIJLfDgeDNBXxjxKCUw2GcbA6PZ?=
+ =?us-ascii?Q?UiLXEscs/MbW/LBxsRJ9XTC0Lb/MNrqgy5CG906hghW4R3eN+dumn7fajKHD?=
+ =?us-ascii?Q?h+SThHmxPrecrFKBHaAFAvaAZRl3kk+xkr4SXMZtGPYANH/b4jlZSjGenWaT?=
+ =?us-ascii?Q?oA8Z+ItwaxFchxIRKJr00X7bcVF8ZLfUZzEXsM5RJ1l0Qnmd11nvIQzS9GYF?=
+ =?us-ascii?Q?lzRZKVP8cimENpxl2k0v/qlz1BZAyzCFK5qJwNxoXIFyQQ3ElxoLuLDZBzT1?=
+ =?us-ascii?Q?zXIbU299yvN1cicc1EaZCPYmwmUyGYU35/GcMnSlMrm6ZdG/znHg5H9tD68j?=
+ =?us-ascii?Q?yE0VjHfQmgf4vgvmCzSK031E1Ps/rLVhDaGsRV3XJ1JEU2s/4xm+io58IWgB?=
+ =?us-ascii?Q?GvH5pgEiOf+qc05qq+Aq+DwuJuxuNKm1sGm2fXSk4k0TZOunHEFjm2p40HQt?=
+ =?us-ascii?Q?HjM9DlBhDOCxc6MtIQr2Au+ji9tJv1fZEM3pcz7Wgf0Wo91yMZeRJ7L+sPzf?=
+ =?us-ascii?Q?fqz8iVELlGeq84uSEdor8QMlFi9Begf04Jr5wPvAetLsBYG8Xw+8RtBihlxD?=
+ =?us-ascii?Q?i3WzoJp83vfC+7jyV46K4dglbDyWbXSx21MqaKLaHWv6DUBlw7Km2j+kwnsf?=
+ =?us-ascii?Q?4LSNaTXqHRjBC7+jsgdtU5QgdW/QdyckKX6RaET7bCfvjVLRkB1QDOACsGlP?=
+ =?us-ascii?Q?NhHQGKcenURwW5shQFVbsYhJ9yHG0m6nVZQE2yYUb8kLnrp9BisdYaqAKXon?=
+ =?us-ascii?Q?Ri4Jk209Jp8qi2kSZl7A/u3LVimPo8a1Fk/lt0dhRUzSfTBq2bCHSPIefSun?=
+ =?us-ascii?Q?DAyl0AP+1SQ0b66H7pWHtlm65+AkKY1weSyOHOsl7iMzXG1lJLaLn2AoYDc6?=
+ =?us-ascii?Q?ybqBMM81Tgx5rMgPCdt/Zk+6nXYWjoMxZWdrSLAjvpYDV9VWRgle2bhjDbko?=
+ =?us-ascii?Q?t8nTSQgRLdIrIdIFCxC7wVGlHF++ckSrqutpKkH99Wxof1kvDyOwLMpCxu9b?=
+ =?us-ascii?Q?+BAGVRi+DLJI2aJvShawTjnnpIjGnO4boBfCaiTBgeVtZw2up0OoqyxIQDKj?=
+ =?us-ascii?Q?1jd/sRO9pPizU4zL7BOrckg7ODlvKrfg9U2i5T4WRyyw1ZkI5c0ptPiWQrov?=
+ =?us-ascii?Q?RYbWpgydxPpJ9GxP1v4pS7PtKwkHBxwMZfm1vVbTxMBiK+ZDrmRApnEh10vi?=
+ =?us-ascii?Q?38wNM2KufI783fkgMZ95cpwvOlN+Ql9Dcera3iY+nf46Zb+f16RHyUvFAQq5?=
+ =?us-ascii?Q?ZpzMWJZN6O4NmFwoUAobmSaqmt2i/jn3vOn1lvoNS1oV7szkIJ3gcyg9svlp?=
+ =?us-ascii?Q?B9piby77oQy/3P0hW5pVMLy1iCP7YLr11zQ0NIV0+ZMnHizG/R8Xr4l7YtF3?=
+ =?us-ascii?Q?NFntO1urqgmlTzGqr/jzE1Xz8sobWTa2q50eGDZ7pzydpwXQxWePHGPUFUSW?=
+ =?us-ascii?Q?KzxzmxxsCXuJh59mBONO/XNiSIFwu8JlJLqMRJKjPTflb3yZuiy/2e9zsXqp?=
+ =?us-ascii?Q?tlLuTvDl8Tnt4cN395fQaU9XWo6qxPEIiIqZQjGOCLhBvmj59xP6Dj+nheuY?=
+ =?us-ascii?Q?pk/TroEUqFPR4FCYmWDHC1rTzKNv6Rr/GplFR3NRCW9FXRBUBMtj+HUhejNQ?=
+ =?us-ascii?Q?QaH7GppH29HIfhiMtQfD6Kfhd7W5N3q1VXhyuNxkjm7JnL6A2dKyAJXLlCfg?=
+ =?us-ascii?Q?n2TKvzafD5UljXAkrguerzfYyKo60R2QV67/ZFn8xqIYutlHkRJfFkysOtbQ?=
+ =?us-ascii?Q?oQ/fUD+Zmw=3D=3D?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: b6ez24Pas5fJCUKJPyjq7Lu3p3sSfrJNPX5nBWN9wuICt3TZcPqhgbZc9GECkPTKLZX+T7kB/f41LQECiNQfASIzv76ErASN3UtfjBaFjZ6WJsmoTVjiITh9jIda4ZodguPMYdLeETIuYRJot/6w/P5/KMlDzF5WKrWaMnzc+7P8dZSC+0F871nrGKTLj5y0LOnvxN14rGhAufWtf8A5i+MxN+tW2+2rJOlSvA0kgnqnXgIvjLkmR19ZrMxSzi0XO1/Nx64E0utYhQmA0wVn/C91rfV79Ca7OPlYu6tqfcU2wcoQb8tdMEe9lBacpAg8HyUhpAgSw9qAIHBF8yoWlg==
+X-Exchange-RoutingPolicyChecked: T3R6N2gBH7cX1oh+vBe3BvhzbyvL5jLbxhRvIONKKSUQrlX64xW+Dr3p2fEhbIbM5sY2+C6x/ISLEY9ym8HzME6lyCGDn3hq8GbcP+Dlrq0mTjbNHS87OV1IFbaef0GQOly9K1Avu32WXgz7J1qw568ExrnJVzGJBTr1XGrcsmNl7w/875UsQy5sgWaqo2SvKUrCIY27O4VDpoaAoQhHeXsPq8OWAxLAbnOkxBKz18rblMVWFyAMhMYQv3/WZGCfBskwUMzCXKS0B4iHT7vu19NsxC7Ddqro8W1XeP8M+A1dJY2VzZfM9Squ6ESIcYlp9tS/Om7gyc2zPUZVRbkTOg==
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6782.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 828048c6-6261-417a-5aeb-08defc407898
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Aug 2026 09:18:16.3951 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c1568c8a-77b5-4079-bbfc-08defc4087d0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Aug 2026 09:18:41.9522 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: lRwucC5bIYqDc2Q9l1ofLFo5P7H9nHlAXNl5dEduJghZ0dm2HMK5Q3du8KGjIFiXxS2+Z4/sW+5GnwtFMbsuhw==
+X-MS-Exchange-CrossTenant-userprincipalname: XUJJXQ8BD8ZIZJxTzEMg0QpF7AfbJcCgka5WnbaZYgRokGeeay6nTudm20IBMPg0TDqGJnSurC5vjDaplkyPWg==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8280
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
@@ -163,271 +163,128 @@ Thank you.
 
 Regards,
 Anurag M
+
 > -----Original Message-----
 > From: Mandal, Anurag <anurag.mandal@intel.com>
-> Sent: 03 August 2026 15:00
+> Sent: 27 July 2026 18:40
 > To: dev@dpdk.org
-> Cc: Richardson, Bruce <bruce.richardson@intel.com>; Shetty, Praveen
-> <praveen.shetty@intel.com>; Mandal, Anurag <anurag.mandal@intel.com>
-> Subject: [PATCH v2] net/cpfl: add timesync support
+> Cc: Richardson, Bruce <bruce.richardson@intel.com>; Medvedkin, Vladimir
+> <vladimir.medvedkin@intel.com>; Mandal, Anurag
+> <anurag.mandal@intel.com>
+> Subject: [PATCH v2] net/iavf: add clock read support
 >=20
-> The cpfl PMD advertises RTE_ETH_RX_OFFLOAD_TIMESTAMP, so received
-> packets carry a 32-bit hardware timestamp that the common idpf Rx path
-> extends to 64-bit nanoseconds using the device PTP clock (PHC).
-> However, it never initialised the PHC, so the timestamp conversion had no
-> reference time.
-> Applications had no way to enable timestamping or to read the current dev=
-ice
-> clock to correlate the mbuf timestamps.
->=20
-> This patch adds PTP support by reusing the idpf common PTP helpers:
->=20
-> - timesync_enable: allocate and initialise the adapter PTP state,
->   query the PTP capabilities, program the base increment value
->   and set the device clock to the current system time.
->   The PTP state is shared by all vports of an adapter, so it
->   is initialised only once.
->=20
-> - timesync_read_time: return the current device clock as a timespec.
->=20
-> - timesync_disable: release the PTP state.
->=20
-> Once timesync is enabled, the common Rx path resolves the cached PHC time=
-,
-> so the mbuf Rx timestamp dynfield reports valid nanosecond values and
-> applications can read the device clock with rte_eth_timesync_read_time().
+> Implemented read_clock ethdev operation by adding
+> iavf_dev_read_clock() feature to get current time in nanoseconds for
+> scheduling packets based on transmit time.
 >=20
 > Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
 > ---
-> V2: Removed read_clock support
+> V2: Addressed minor typo
 >=20
->  drivers/net/intel/cpfl/cpfl_ethdev.c | 107 +++++++++++++++++++++++++++
->  drivers/net/intel/cpfl/cpfl_ethdev.h |   1 +
->  drivers/net/intel/idpf/idpf_ptp.c    |   5 ++
->  drivers/net/intel/idpf/idpf_ptp.h    |   4 +
->  4 files changed, 117 insertions(+)
+>  drivers/net/intel/iavf/iavf.h        |  1 +
+>  drivers/net/intel/iavf/iavf_ethdev.c | 24 ++++++++++++++++++++++++
+> drivers/net/intel/iavf/iavf_vchnl.c  | 13 ++++++++++---
+>  3 files changed, 35 insertions(+), 3 deletions(-)
 >=20
-> diff --git a/drivers/net/intel/cpfl/cpfl_ethdev.c
-> b/drivers/net/intel/cpfl/cpfl_ethdev.c
-> index 4315adb68c..e4dabd8043 100644
-> --- a/drivers/net/intel/cpfl/cpfl_ethdev.c
-> +++ b/drivers/net/intel/cpfl/cpfl_ethdev.c
-> @@ -1335,6 +1335,110 @@ cpfl_hairpin_unbind(struct rte_eth_dev *dev,
-> uint16_t rx_port)
->  	return 0;
->  }
+> diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.=
+h index
+> 293adaf6c9..416625d9fb 100644
+> --- a/drivers/net/intel/iavf/iavf.h
+> +++ b/drivers/net/intel/iavf/iavf.h
+> @@ -533,4 +533,5 @@ void iavf_handle_hw_reset(struct rte_eth_dev *dev,
+> bool vf_initiated_reset);  void iavf_set_no_poll(struct iavf_adapter *ada=
+pter,
+> bool link_change);  bool is_iavf_supported(struct rte_eth_dev *dev);  voi=
+d
+> iavf_hash_uninit(struct iavf_adapter *ad);
+> +int iavf_phc_get_time(struct iavf_adapter *adapter, uint64_t *time);
+>  #endif /* _IAVF_ETHDEV_H_ */
+> diff --git a/drivers/net/intel/iavf/iavf_ethdev.c
+> b/drivers/net/intel/iavf/iavf_ethdev.c
+> index e475b64971..1a36885107 100644
+> --- a/drivers/net/intel/iavf/iavf_ethdev.c
+> +++ b/drivers/net/intel/iavf/iavf_ethdev.c
+> @@ -165,6 +165,7 @@ static int iavf_set_mc_addr_list(struct rte_eth_dev
+> *dev,
+>  			struct rte_ether_addr *mc_addrs,
+>  			uint32_t mc_addrs_num);
+>  static int iavf_tm_ops_get(struct rte_eth_dev *dev __rte_unused, void
+> *arg);
+> +static int iavf_dev_read_clock(struct rte_eth_dev *dev, uint64_t
+> +*clock);
 >=20
-> +static int
-> +cpfl_timesync_enable(struct rte_eth_dev *dev) {
-> +	struct cpfl_vport *cpfl_vport =3D dev->data->dev_private;
-> +	struct idpf_vport *vport =3D &cpfl_vport->base;
-> +	struct idpf_adapter *adapter =3D vport->adapter;
-> +	struct timespec sys_ts;
-> +	uint64_t ns;
-> +	int ret;
-> +
-> +	if (dev->data->dev_started && !(dev->data-
-> >dev_conf.rxmode.offloads &
-> +	    RTE_ETH_RX_OFFLOAD_TIMESTAMP)) {
-> +		PMD_DRV_LOG(ERR, "Rx timestamp offload not configured");
-> +		return -1;
-> +	}
-> +
-> +	/* PTP state is shared by all vports of the adapter. */
-> +	if (adapter->ptp !=3D NULL)
-> +		return 0;
-> +
-> +	adapter->ptp =3D rte_zmalloc(NULL, sizeof(struct idpf_ptp), 0);
-> +	if (adapter->ptp =3D=3D NULL) {
-> +		PMD_DRV_LOG(ERR, "Failed to allocate memory for PTP");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	ret =3D idpf_ptp_get_caps(adapter);
-> +	if (ret) {
-> +		PMD_DRV_LOG(ERR, "Failed to get PTP capabilities, err=3D%d",
-> ret);
-> +		goto fail_ptp;
-> +	}
-> +
-> +	/*
-> +	 * Write the default increment time value if the clock adjustments
-> +	 * are enabled.
-> +	 */
-> +	if (adapter->ptp->adj_dev_clk_time_access !=3D IDPF_PTP_NONE) {
-> +		ret =3D idpf_ptp_adj_dev_clk_fine(adapter, adapter->ptp-
-> >base_incval);
-> +		if (ret) {
-> +			PMD_DRV_LOG(ERR, "PTP set incval failed, err=3D%d",
-> ret);
-> +			goto fail_ptp;
-> +		}
-> +	}
-> +
-> +	/* Do not initialize the PTP if the device clock time cannot be read. *=
-/
-> +	if (adapter->ptp->get_dev_clk_time_access =3D=3D IDPF_PTP_NONE) {
-> +		PMD_DRV_LOG(ERR, "Getting device clock time is not
-> supported");
-> +		ret =3D -EIO;
-> +		goto fail_ptp;
-> +	}
-> +
-> +	/* Set the device clock time to system time. */
-> +	if (adapter->ptp->set_dev_clk_time_access !=3D IDPF_PTP_NONE) {
-> +		clock_gettime(CLOCK_REALTIME, &sys_ts);
-> +		ns =3D rte_timespec_to_ns(&sys_ts);
-> +		ret =3D idpf_ptp_set_dev_clk_time(adapter, ns);
-> +		if (ret) {
-> +			PMD_DRV_LOG(ERR, "PTP set clock time failed,
-> err=3D%d", ret);
-> +			goto fail_ptp;
-> +		}
-> +	}
-> +
-> +	adapter->ptp->cmd.shtime_enable_mask =3D
-> PF_GLTSYN_CMD_SYNC_SHTIME_EN_M;
-> +	adapter->ptp->cmd.exec_cmd_mask =3D
-> PF_GLTSYN_CMD_SYNC_EXEC_CMD_M;
-> +
-> +	return 0;
-> +
-> +fail_ptp:
-> +	rte_free(adapter->ptp);
-> +	adapter->ptp =3D NULL;
-> +	return ret;
-> +}
-> +
-> +static int
-> +cpfl_timesync_read_time(struct rte_eth_dev *dev, struct timespec *ts) {
-> +	struct cpfl_vport *cpfl_vport =3D dev->data->dev_private;
-> +	struct idpf_adapter *adapter =3D cpfl_vport->base.adapter;
-> +	uint64_t time;
-> +	int ret;
-> +
-> +	ret =3D idpf_ptp_read_src_clk_reg(adapter, &time);
-> +	if (ret)
-> +		PMD_DRV_LOG(ERR, "PTP read time failed, err %d", ret);
-> +	else
-> +		*ts =3D rte_ns_to_timespec(time);
-> +
-> +	return ret;
-> +}
-> +
-> +static int
-> +cpfl_timesync_disable(struct rte_eth_dev *dev) {
-> +	struct cpfl_vport *cpfl_vport =3D dev->data->dev_private;
-> +	struct idpf_adapter *adapter =3D cpfl_vport->base.adapter;
-> +
-> +	if (adapter->ptp !=3D NULL) {
-> +		rte_free(adapter->ptp);
-> +		adapter->ptp =3D NULL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static const struct eth_dev_ops cpfl_eth_dev_ops =3D {
->  	.dev_configure			=3D cpfl_dev_configure,
->  	.dev_close			=3D cpfl_dev_close,
-> @@ -1368,6 +1472,9 @@ static const struct eth_dev_ops cpfl_eth_dev_ops =
-=3D
-> {
->  	.hairpin_get_peer_ports         =3D cpfl_hairpin_get_peer_ports,
->  	.hairpin_bind                   =3D cpfl_hairpin_bind,
->  	.hairpin_unbind                 =3D cpfl_hairpin_unbind,
-> +	.timesync_enable                =3D cpfl_timesync_enable,
-> +	.timesync_read_time             =3D cpfl_timesync_read_time,
-> +	.timesync_disable               =3D cpfl_timesync_disable,
+>  static const struct rte_pci_id pci_id_iavf_map[] =3D {
+>  	{ RTE_PCI_DEVICE(IAVF_INTEL_VENDOR_ID,
+> IAVF_DEV_ID_ADAPTIVE_VF) }, @@ -264,6 +265,7 @@ static const struct
+> eth_dev_ops iavf_eth_dev_ops =3D {
+>  	.tx_done_cleanup	    =3D iavf_dev_tx_done_cleanup,
+>  	.get_monitor_addr           =3D iavf_get_monitor_addr,
+>  	.tm_ops_get                 =3D iavf_tm_ops_get,
+> +	.read_clock                 =3D iavf_dev_read_clock,
 >  };
 >=20
 >  static int
-> diff --git a/drivers/net/intel/cpfl/cpfl_ethdev.h
-> b/drivers/net/intel/cpfl/cpfl_ethdev.h
-> index d41aa93191..a9e532a46c 100644
-> --- a/drivers/net/intel/cpfl/cpfl_ethdev.h
-> +++ b/drivers/net/intel/cpfl/cpfl_ethdev.h
-> @@ -16,6 +16,7 @@
+> @@ -3662,6 +3664,28 @@ bool is_iavf_supported(struct rte_eth_dev *dev)
+>  	return !strcmp(dev->device->driver->name,
+> rte_iavf_pmd.driver.name);  }
 >=20
->  #include <idpf_common_device.h>
->  #include <idpf_common_virtchnl.h>
-> +#include <idpf_ptp.h>
->  #include <base/idpf_prototype.h>
->  #include <base/virtchnl2.h>
+> +static int
+> +iavf_dev_read_clock(struct rte_eth_dev *dev, uint64_t *clock) {
+> +	struct iavf_adapter *adapter =3D
+> +		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
+> +	struct iavf_info *vf =3D IAVF_DEV_PRIVATE_TO_VF(adapter);
+> +	int ret;
+> +
+> +	if (adapter->closed)
+> +		return -EIO;
+> +
+> +	if (!(vf->vf_res->vf_cap_flags & VIRTCHNL_VF_CAP_PTP) ||
+> +	    !(vf->ptp_caps & VIRTCHNL_1588_PTP_CAP_READ_PHC))
+> +		return -ENOTSUP;
+> +
+> +	ret =3D iavf_phc_get_time(adapter, clock);
+> +	if (ret !=3D 0)
+> +		return -EIO;
+> +
+> +	return 0;
+> +}
+> +
+>  RTE_PMD_REGISTER_PCI(net_iavf, rte_iavf_pmd);
+> RTE_PMD_REGISTER_PCI_TABLE(net_iavf, pci_id_iavf_map);
+> RTE_PMD_REGISTER_KMOD_DEP(net_iavf, "* igb_uio | vfio-pci"); diff --git
+> a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl=
+.c
+> index f346837bf1..a63639549c 100644
+> --- a/drivers/net/intel/iavf/iavf_vchnl.c
+> +++ b/drivers/net/intel/iavf/iavf_vchnl.c
+> @@ -2521,9 +2521,8 @@ iavf_get_ptp_cap(struct iavf_adapter *adapter)  }
 >=20
-> diff --git a/drivers/net/intel/idpf/idpf_ptp.c
-> b/drivers/net/intel/idpf/idpf_ptp.c
-> index 5c3fcb90e4..47830de239 100644
-> --- a/drivers/net/intel/idpf/idpf_ptp.c
-> +++ b/drivers/net/intel/idpf/idpf_ptp.c
-> @@ -2,6 +2,7 @@
->   * Copyright(c) 2025 Intel Corporation
->   */
->=20
-> +#include <eal_export.h>
->  #include "idpf_ptp.h"
->  #include "idpf_common_virtchnl.h"
->  #include "base/virtchnl2.h"
-> @@ -38,6 +39,7 @@ idpf_ptp_get_features_access(const struct idpf_adapter
-> *adapter)
->  		IDPF_PTP_ACCESS(adapter,
-> VIRTCHNL2_CAP_PTP_TX_TSTAMPS);  }
->=20
-> +RTE_EXPORT_INTERNAL_SYMBOL(idpf_ptp_get_caps)
 >  int
->  idpf_ptp_get_caps(struct idpf_adapter *adapter)  { @@ -212,6 +214,7 @@
-> idpf_ptp_get_cross_time(struct idpf_adapter *adapter,
+> -iavf_get_phc_time(struct ci_rx_queue *rxq)
+> +iavf_phc_get_time(struct iavf_adapter *adapter, uint64_t *time)
+>  {
+> -	struct iavf_adapter *adapter =3D rxq->iavf_vsi->adapter;
+>  	struct iavf_info *vf =3D IAVF_DEV_PRIVATE_TO_VF(adapter);
+>  	uint8_t msg_buf[IAVF_AQ_BUF_SZ] =3D {0};
+>  	struct virtchnl_phc_time phc_time;
+> @@ -2543,9 +2542,17 @@ iavf_get_phc_time(struct ci_rx_queue *rxq)
+>  			    "Failed to execute command of
+> VIRTCHNL_OP_1588_PTP_GET_TIME");
+>  		goto out;
+>  	}
+> -	rxq->phc_time =3D ((struct virtchnl_phc_time *)args.out_buffer)->time;
+> +	*time =3D ((struct virtchnl_phc_time *)args.out_buffer)->time;
+>=20
+>  out:
+>  	rte_spinlock_unlock(&vf->phc_time_aq_lock);
 >  	return err;
 >  }
->=20
-> +RTE_EXPORT_INTERNAL_SYMBOL(idpf_ptp_set_dev_clk_time)
->  int
->  idpf_ptp_set_dev_clk_time(struct idpf_adapter *adapter, uint64_t time)  =
-{
-> @@ -256,6 +259,7 @@ idpf_ptp_adj_dev_clk_time(struct idpf_adapter
-> *adapter, int64_t delta)
->  	return err;
->  }
->=20
-> +RTE_EXPORT_INTERNAL_SYMBOL(idpf_ptp_adj_dev_clk_fine)
->  int
->  idpf_ptp_adj_dev_clk_fine(struct idpf_adapter *adapter, uint64_t incval)=
-  {
-> @@ -487,6 +491,7 @@ idpf_ptp_read_src_clk_reg_mailbox(struct
-> idpf_adapter *adapter,
->   *
->   * Return: 0 on success, -errno otherwise.
->   */
-> +RTE_EXPORT_INTERNAL_SYMBOL(idpf_ptp_read_src_clk_reg)
->  int
->  idpf_ptp_read_src_clk_reg(struct idpf_adapter *adapter, uint64_t *src_cl=
-k)  {
-> diff --git a/drivers/net/intel/idpf/idpf_ptp.h
-> b/drivers/net/intel/idpf/idpf_ptp.h
-> index 0c901440fb..851cdad027 100644
-> --- a/drivers/net/intel/idpf/idpf_ptp.h
-> +++ b/drivers/net/intel/idpf/idpf_ptp.h
-> @@ -88,13 +88,17 @@ struct idpf_ptp_dev_timers {
->  	uint64_t dev_clk_time_ns;
->  };
->=20
-> +__rte_internal
->  int idpf_ptp_get_caps(struct idpf_adapter *adapter);
-> +__rte_internal
->  int idpf_ptp_read_src_clk_reg(struct idpf_adapter *adapter, uint64_t
-> *src_clk);  int idpf_ptp_get_dev_clk_time(struct idpf_adapter *adapter,
->  			     struct idpf_ptp_dev_timers *dev_clk_time);  int
-> idpf_ptp_get_cross_time(struct idpf_adapter *adapter,
->  			    struct idpf_ptp_dev_timers *cross_time);
-> +__rte_internal
->  int idpf_ptp_set_dev_clk_time(struct idpf_adapter *adapter, uint64_t tim=
-e);
-> +__rte_internal
->  int idpf_ptp_adj_dev_clk_fine(struct idpf_adapter *adapter, uint64_t inc=
-val);
-> int idpf_ptp_adj_dev_clk_time(struct idpf_adapter *adapter, int64_t delta=
-);
-> int idpf_ptp_get_vport_tstamps_caps(struct idpf_vport *vport);
+> +
+> +int
+> +iavf_get_phc_time(struct ci_rx_queue *rxq) {
+> +	struct iavf_adapter *adapter =3D rxq->iavf_vsi->adapter;
+> +
+> +	return iavf_phc_get_time(adapter, &rxq->phc_time); }
 > --
 > 2.34.1
 
