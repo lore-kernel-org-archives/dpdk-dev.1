@@ -2,77 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 499CDC5B572
-	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Aug 2026 05:29:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6486DC5CFC1
+	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Aug 2026 06:35:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 117AE40294;
-	Mon, 17 Aug 2026 07:29:39 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 1A37D40275
- for <dev@dpdk.org>; Mon, 17 Aug 2026 07:29:37 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 67GNgGSQ876231; Sun, 16 Aug 2026 22:29:37 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=S
- jQC0ZLaqCEPs2O3x9MvgRDM4WfHiB1RbJyL6Wcj/2Y=; b=Yxhsmwopdtmz263T2
- SJ5HnrV8yCEJXTR4wPMhXvxLVBeQ1vX4LdNymKOymCRYigafipx/0sBrLNYxu4V3
- 90uYXPs2ky0CuaGYQ/Am0RwlExXKCi9j6lo4qEvi3AQMzdjqWLTWF6HFKRQCncqT
- VOtrW6fig43e0dCZ9GMt4A65a0xpcntaPA/d+oc4+adiNsYdsH/f4aTVnr5A/5Bs
- GDXxqQwVqUbUPQQ23hKnbQoQmiCMi1DrGGMjPzYg5iWY+948ORQLzLdylsxOHuZV
- N0Gvfy1azW4yi2jDN8GWGdN5ppJ+5oqrD2Cx6exGFRYW60wsJDuGSfjBM0y1LcPB
- i5I7Q==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4g36v39j9p-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Sun, 16 Aug 2026 22:29:37 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Sun, 16 Aug 2026 22:29:35 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Sun, 16 Aug 2026 22:29:35 -0700
-Received: from hyd11149.marvell.com (unknown [10.29.44.105])
- by maili.marvell.com (Postfix) with ESMTP id EE56D3F7040;
- Sun, 16 Aug 2026 22:29:32 -0700 (PDT)
-From: Rupesh Chiluka <rchiluka@marvell.com>
-To: <rchiluka@marvell.com>
-CC: <dev@dpdk.org>, <gakhil@marvell.com>, <ktejasree@marvell.com>,
- <jerinj@marvell.com>, <stephen@networkplumber.org>, Anoob Joseph
- <anoobj@marvell.com>
-Subject: [PATCH v2] common/cpt: use timing-safe digest comparison
-Date: Mon, 17 Aug 2026 10:59:30 +0530
-Message-ID: <a6599af7606f89822590df4285edec38bb86b865.1786943875.git.rchiluka@marvell.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <89e98b3ccc1ad93ed67fb5750c88df94f0c1ecf7.1785737875.git.rchiluka@marvell.com>
-References: <89e98b3ccc1ad93ed67fb5750c88df94f0c1ecf7.1785737875.git.rchiluka@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 3819240297;
+	Mon, 17 Aug 2026 08:35:01 +0200 (CEST)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 5A8F840275
+ for <dev@dpdk.org>; Mon, 17 Aug 2026 08:34:59 +0200 (CEST)
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1BEB21A01A3;
+ Mon, 17 Aug 2026 08:34:59 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com
+ (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D6EB91A01A5;
+ Mon, 17 Aug 2026 08:34:58 +0200 (CEST)
+Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
+ [92.120.147.250])
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 1A4D21800229;
+ Mon, 17 Aug 2026 14:34:58 +0800 (+08)
+From: Gagandeep Singh <g.singh@nxp.com>
+To: dev@dpdk.org
+Cc: hemant.agrawal@nxp.com
+Subject: [PATCH v10 00/14]  net/enetc: add new features for ENETC4 on i.MX95
+Date: Mon, 17 Aug 2026 12:04:40 +0530
+Message-Id: <20260817063454.3290854-1-g.singh@nxp.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20260813121358.1321196-1-g.singh@nxp.com>
+References: <20260813121358.1321196-1-g.singh@nxp.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODE3MDAzOCBTYWx0ZWRfX7rPdx7uTpZxt
- GSoTl1ux3l3uHUR6VN0qjZOmRpuV5a2wFDZPinI2xrShy/1inN6T0/Im658ISOxG2HUHluGJNaz
- 9O8REXejHriXMY1UzCWRhSBI0h0KjBc=
-X-Proofpoint-ORIG-GUID: DrgKRL0Y7j_pfgvu6qPdZBF6x-4zvLUN
-X-Authority-Analysis: v=2.4 cv=MatcfZ/f c=1 sm=1 tr=0 ts=6a829c41 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=Sv0fKeRqtYgA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=QXcCYyLzdtTjyudCfB6f:22 a=M5GUcnROAAAA:8 a=cY9KfOWxWkrY88BNaiwA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: DrgKRL0Y7j_pfgvu6qPdZBF6x-4zvLUN
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODE3MDAzOCBTYWx0ZWRfX6txHY/e6S3hC
- 4wSiUkKdhrd07tAgnG0zGv534V+zc/jfvr4dML0AFd9fX+xTLTEry3kJ72uc36aRVCljpXaMzZR
- LpuTUzGgQWdEpQWKmMAM2zyjcch4fo+eVMmbM89PY8tdIURzdaaqdH0SXw8haQCIUgBbi3sYHkG
- jybCOILQsLQ0JYCmoVSeIpVDsm1+wDV8F7O/Ys1gNNku8bG7ScjzgQEk5Ko5Rsq1FqkFYSlWmug
- U5+vjzpBYehiWzdiSFJll/rI4phriVLApYaAtCHo6Y2941FeGGzDbeJQcZOeT8fepS0ue24TJMQ
- upZlhmOpOonHzn27Vu6M0Y43Kmins4kq5fAotCeuYMLNyh/EcFnrFOoMJU/P86zH2kiX4/PqQw7
- CyAP2qpLwkHikjWLaOFQCDsZyjOaUtqz5ezPccL6u0mI6QDtnsTXVLd2aPpIMK2pvEKTZvyPA74
- XpC7dWg1d9gl+tsRnhA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-16_06,2026-08-12_01,2025-10-01_01
+X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,41 +46,122 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-compl_auth_verify() compared the generated and received MAC with
-memcmp(), which returns early on the first differing byte and leaks
-the number of matching leading bytes through timing.
+V10-Changes:
+ - Fixed enetc4_txq_prior and enetc4_txq_wrr have no effect at queue
+   setup issue.
+ - Updated ENETC_CLASS_ID_SI_VLAN_ISO reply check.
+ - Updated enetc4.ini for VLAN offload.
+ - Added else part for burst functions selection for RSC and TSO.
+ - Updated enetc4_rd64()
+ - Fixed RBICR0 issue.
+ - Removed GENMASK.
 
-Use rte_memeq_timingsafe() for the verify comparison.
+V9-Changes:
+ - Mid-body variable declaration moved to top of the function.
+ - ret=0 dead code is removed.
+ - Added check on return value of rte_intr_callback_unregister()
+ - The pre-existing reply_msg leak fixed.
+ - Added primary-process guard in enetc4_vf_dev_init
+ - Removed Flow control from enetc4.ini
+ - Fixed VF stats_reset baseline underflows on counter wrap
+ - Fixed VF vlan_pvid_set fails on every successful command
 
-Bugzilla ID: 1773
+V8-changes:
+ - Fixed Warning RBMR RMW races between threads by adding lock
+ - Fixed `static const` arrays in `enetc.h`
+ - Proper pthread_mutexattr_t initialization added as suggested by AI
+ - VSIMSGSR stale re-read race is eliminated
 
-Signed-off-by: Rupesh Chiluka <rchiluka@marvell.com>
----
-v2:
-  - dropped salt and MAC address patches (comparisons operate on
-    non-secret data; timing-safe compare unnecessary)
+V7-changes:
+ - added missing 14th patch.
 
- drivers/common/cpt/cpt_ucode.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+V6-changes:
+ - fixed free() on memory allocated with rte_zmalloc().
+ - fixed eventfd and vector-list leak on interrupt teardown
+ - fixed Rx ring doubling still bypasses
+ - fixed VSI-PSI transaction issued from the interrupt handler
+ - fixed the free-and-reallocate of msg is unnecessary churn
+ - fixed unsynchronized access to tx_pause_active and RBMR
+ - fixed signed shift overflow in the register-dump version field
+ - fixed the fw_size == 0 early return reports the length of "0.0"
+ - unwanted blank lines removed.
+ - parse_txq_prior() returns updated.
 
-diff --git a/drivers/common/cpt/cpt_ucode.h b/drivers/common/cpt/cpt_ucode.h
-index 636f93604e..a6ecbaf429 100644
---- a/drivers/common/cpt/cpt_ucode.h
-+++ b/drivers/common/cpt/cpt_ucode.h
-@@ -3354,10 +3354,10 @@ compl_auth_verify(struct rte_crypto_op *op,
- 		return;
- 	}
- 
--	if (memcmp(mac, gen_mac, mac_len))
--		op->status = RTE_CRYPTO_OP_STATUS_AUTH_FAILED;
--	else
-+	if (rte_memeq_timingsafe(mac, gen_mac, mac_len))
- 		op->status = RTE_CRYPTO_OP_STATUS_SUCCESS;
-+	else
-+		op->status = RTE_CRYPTO_OP_STATUS_AUTH_FAILED;
- }
- 
- static __rte_always_inline void
+V5-changes:
+ - Patch 1 Build fixes which includes:
+    'prev_seg' undeclared fixed.
+    redefinition of 'dev_rx_offloads_sup' fixed.
+    Error: duplicate rx_enable declaration fixed.
+   PF loses Scattered Rx and Multi-segment Tx
+ - mbuf leak in enetc_xmit_pkts_lso() fixed.
+ - fixed conversion on ENETC4_TXBD_FLAGS_F issue.
+ - fixed link speed decode has no upper bound.
+ - fixed mailbox ops added to the no-VSI ops table.
+ - new devargs documented.
+
+V4-changes:
+ - fix doc build issue: WARNING: undefined label: pmd_build_and_test
+
+v3-changes:
+ - fix doc build issue.
+ - fix compilation issue on fedore:43-gcc-minsize
+
+V2-changes:
+ - compilation fixes.
+
+V1-changes:
+This series adds new PMD features to the ENETC4 driver targeting the
+NXP i.MX95 NETC IP.
+
+The series covers:
+
+ - KEEP_CRC Rx offload: preserve the Ethernet FCS in the receive buffer.
+ - TSO: TCP Segmentation Offload for the VF Tx path.
+ - RSC/LRO: hardware Receive Segment Coalesce for PF and VF Rx paths.
+ - Link speed code: extend the PF-to-VF mailbox field from 4-bit to
+   8-bit to support speeds beyond 10G.
+ - Firmware version: report the NETC IP version via fw_version_get.
+ - Register dump: dump SI, port (PF) and BD ring registers.
+ - Ring parameters: implement rxq_info_get / txq_info_get for the VF.
+ - Link-up interrupt: refresh the cached link speed on each VF link-up
+   interrupt so that link_update returns the current speed immediately.
+ - Stats reset: software snapshot/delta approach for VF counter reset.
+ - Per-queue Rx interrupt: MSI-X per-queue Rx interrupts for the VF,
+   enabling interrupt-driven receive with l3fwd-power.
+ - SI VLAN: hardware port VLAN insertion/removal for PF and VF.
+ - VF link status bitmask: switch VF link status to bitmask encoding
+   to align with the PF and newer kernel driver conventions.
+ - TX PAUSE: VF sets Rx congestion mode when the PF signals TX PAUSE
+   negotiated on the wire; adds Flow control = Y to enetc4.ini.
+ - WRR Tx scheduler: per-ring WRR weights via enetc4_txq_wrr devarg.
+
+Gagandeep Singh (14):
+  net/enetc: add keep-CRC Rx offload for ENETC4
+  net/enetc: add TSO support for ENETC4 VF
+  net/enetc: add RSC (hardware LRO) support for ENETC4
+  net/enetc: extend PF-VF link speed field to 8 bits
+  net/enetc: support firmware version get for VF
+  net/enetc: support registers dump
+  net/enetc: support ethtool ring parameters
+  net/enetc: refresh link speed on VF link-up interrupt
+  net/enetc: support stats reset for VF
+  net/enetc4: add per-queue Rx interrupt support for VF
+  net/enetc4: add SI-based port VLAN insertion and removal
+  net/enetc4: update VF link status to bitmask encoding
+  net/enetc4: enable Tx PAUSE via VF Rx congestion mode
+  net/enetc4: add WRR Tx scheduler devarg for VF rings
+
+ doc/guides/nics/enetc4.rst             | 100 +++
+ doc/guides/nics/features/enetc4.ini    |   6 +
+ doc/guides/rel_notes/release_26_11.rst |  21 +
+ drivers/net/enetc/base/enetc4_hw.h     | 139 +++-
+ drivers/net/enetc/base/enetc_hw.h      |   6 +
+ drivers/net/enetc/enetc.h              | 132 +++-
+ drivers/net/enetc/enetc4_ethdev.c      | 478 +++++++++++--
+ drivers/net/enetc/enetc4_vf.c          | 886 +++++++++++++++++++++----
+ drivers/net/enetc/enetc_rxtx.c         | 530 ++++++++++++++-
+ 9 files changed, 2117 insertions(+), 181 deletions(-)
+
 -- 
-2.48.1
+2.25.1
 
