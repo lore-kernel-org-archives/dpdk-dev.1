@@ -2,32 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45CFDC5DF6E
-	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Aug 2026 06:35:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6052C5B572
+	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Aug 2026 06:36:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D33EF406FF;
-	Mon, 17 Aug 2026 08:35:11 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2469F40A6C;
+	Mon, 17 Aug 2026 08:35:13 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 8A91C402E3
- for <dev@dpdk.org>; Mon, 17 Aug 2026 08:35:01 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 28EFA40608
+ for <dev@dpdk.org>; Mon, 17 Aug 2026 08:35:02 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6EAAB1A01B6;
- Mon, 17 Aug 2026 08:35:01 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0C9321A01A7;
+ Mon, 17 Aug 2026 08:35:02 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 35B821A01B9;
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D34831A01A4;
  Mon, 17 Aug 2026 08:35:01 +0200 (CEST)
 Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
  [92.120.147.250])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id B5E9E18000B1;
- Mon, 17 Aug 2026 14:35:00 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 56BBE1800226;
+ Mon, 17 Aug 2026 14:35:01 +0800 (+08)
 From: Gagandeep Singh <g.singh@nxp.com>
 To: dev@dpdk.org
 Cc: hemant.agrawal@nxp.com,
 	Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v10 09/14] net/enetc: support stats reset for VF
-Date: Mon, 17 Aug 2026 12:04:49 +0530
-Message-Id: <20260817063454.3290854-10-g.singh@nxp.com>
+Subject: [PATCH v10 11/14] net/enetc4: add SI-based port VLAN insertion and
+ removal
+Date: Mon, 17 Aug 2026 12:04:51 +0530
+Message-Id: <20260817063454.3290854-12-g.singh@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260817063454.3290854-1-g.singh@nxp.com>
 References: <20260813121358.1321196-1-g.singh@nxp.com>
@@ -48,198 +49,303 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The NETC SI-level hardware counters (SIROCT0, SIRFRM0, SITOCT0,
-SITFRM0, SITDFCR) are read-only for a VF and cannot be directly
-zeroed. No VSI-PSI command class exists for stats reset, and using
-FLR/soft-reset to clear counters is not reliable due to a known
-hardware erratum on some NETC platforms.
+Implement hardware VLAN tag insertion on Tx and removal on Rx
+via the per-SI VLAN isolation (pvid) mechanism on ENETC4.
 
-Implement stats_reset for the enetc4 VF PMD using a software
-snapshot/delta approach: on stats_reset, the current HW counter
-values are captured as a baseline in a new per-device
-enetc4_vf_stats_saved struct. stats_get then reports the delta
-(current_hw_value - saved_baseline), so counters appear to start
-from zero after each reset call. Per-ring software Rx error
-accumulators (ierrors) are zeroed directly on reset.
+On a PF, the driver writes directly to PSIaVLANR(0) (VID + enable
+bit) and PSIaCFGR0(0) (SIVIE for Tx insertion, VTE for Rx removal,
+SIVC_CVLAN to allow C-VLAN 0x8100 TPID).
 
-Register the stats_reset callback in both VF ops tables
-(enetc4_vf_ops and enetc4_vf_ops_no_vsi_m) so the feature is
-available regardless of whether the VSI messaging path is enabled.
+On a privileged VF, the request is forwarded to the kernel PF via
+the VSI-PSI mailbox using a new command class 0x24 (SI VLAN
+isolation, cmd ID 0x1). The kernel PF handler programs the same
+registers on behalf of the VF's station interface. The class 0x24
+reply is added to the pass-through list in enetc4_msg_vsi_send() so
+it is handled correctly alongside the existing command classes
 
 Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
+ doc/guides/nics/enetc4.rst             |  4 ++
  doc/guides/rel_notes/release_26_11.rst |  1 +
- drivers/net/enetc/base/enetc4_hw.h     | 11 +++++
- drivers/net/enetc/enetc.h              | 17 +++++++
- drivers/net/enetc/enetc4_vf.c          | 61 +++++++++++++++++++++++---
- 4 files changed, 85 insertions(+), 5 deletions(-)
+ drivers/net/enetc/base/enetc4_hw.h     | 14 ++++
+ drivers/net/enetc/enetc.h              | 23 +++++++
+ drivers/net/enetc/enetc4_ethdev.c      | 39 +++++++++++
+ drivers/net/enetc/enetc4_vf.c          | 91 ++++++++++++++++++++++++++
+ 6 files changed, 172 insertions(+)
 
+diff --git a/doc/guides/nics/enetc4.rst b/doc/guides/nics/enetc4.rst
+index 2b73916682..262e2fe703 100644
+--- a/doc/guides/nics/enetc4.rst
++++ b/doc/guides/nics/enetc4.rst
+@@ -65,6 +65,10 @@ Key functionality includes:
+   See `Rx Interrupt Mode (VF)`_ for setup details.
+ - Firmware version: The NETC IP version is reported via ``rte_eth_dev_fw_version_get``.
+ - Registers dump: The station interface, port (PF only) and BD ring registers are dumped via ``rte_eth_dev_get_reg_info``.
++- SI-based port VLAN (pvid): Hardware VLAN tag insertion on Tx and removal on Rx, configured
++  via ``rte_eth_dev_set_vlan_pvid``. On a PF the registers are written directly; on a privileged
++  VF the request is forwarded to the kernel PF through the VSI-PSI mailbox (class 0x24).
++  Use the testpmd command ``tx_vlan set pvid <port_id> <vlan_id> on|off`` to enable or disable.
+ 
+ 
+ Prerequisites
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 1765adc1bc..a42577c681 100644
+index c182495118..190d77ecee 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -70,6 +70,7 @@ New Features
-   * Added register dump support for ENETC4 PF and VF.
-   * Added ring parameters support for the ENETC4 VF (rxq_info_get / txq_info_get).
+@@ -72,6 +72,7 @@ New Features
    * Refreshed VF link speed on the link-up interrupt in the ENETC4 VF driver.
-+  * Added stats reset for the ENETC4 VF using a software snapshot/delta approach.
+   * Added stats reset for the ENETC4 VF using a software snapshot/delta approach.
+   * Added per-queue MSI-X Rx interrupt support for the ENETC4 VF.
++  * Added SI-based port VLAN insertion (Tx) and removal (Rx) for ENETC4 PF and VF.
  
  Removed Items
  -------------
 diff --git a/drivers/net/enetc/base/enetc4_hw.h b/drivers/net/enetc/base/enetc4_hw.h
-index d42c04df4b..01b267edb6 100644
+index 8c522b69cd..15cea5a83d 100644
 --- a/drivers/net/enetc/base/enetc4_hw.h
 +++ b/drivers/net/enetc/base/enetc4_hw.h
-@@ -8,6 +8,7 @@
- #ifndef _ENETC4_HW_H_
- #define _ENETC4_HW_H_
- #include <rte_io.h>
-+#include "enetc_hw.h"
+@@ -277,6 +277,20 @@ struct enetc_rx_bd_ext {
+ #define ENETC4_SICTR0		0x18
+ #define ENETC4_SICTR1		0x1c
  
- #define BIT(x)		((uint64_t)1 << ((x)))
- 
-@@ -279,6 +280,16 @@ struct enetc_rx_bd_ext {
- #define enetc4_wr_reg(reg, val)  rte_write32((val), (void *)(reg))
- 
- #define enetc4_rd(hw, off)	 enetc4_rd_reg((size_t)(hw)->reg + (off))
-+static inline uint64_t
-+enetc4_rd64(struct enetc_hw *hw, uint32_t off)
-+{
-+	size_t base = (size_t)hw->reg + off;
-+	uint32_t lo, hi;
++/* PSI SI VLAN register: per-SI VLAN tag for insertion/removal */
++#define ENETC4_PSIVLANR(a)		((a) * 0x80 + 0x2008)
++#define ENETC4_PSIVLANR_E		BIT(31)  /* enable SI VLAN processing */
++#define ENETC4_PSIVLANR_VTEA		BIT(30)  /* 0=strip tag, 1=zero VID */
++#define ENETC4_PSIVLANR_PCP(v)		(((uint32_t)(v) & 0x7) << 13)
++#define ENETC4_PSIVLANR_DEI		BIT(12)
++#define ENETC4_PSIVLANR_VID(v)		((uint32_t)(v) & 0xfff)
 +
-+	lo = enetc4_rd_reg(base);
-+	hi = enetc4_rd_reg(base + 4);
-+	return (uint64_t)hi << 32 | lo;
-+}
- #define enetc4_wr(hw, off, val)  enetc4_wr_reg((size_t)(hw)->reg + (off), val)
- /* port register accessors - PF only */
- #define enetc4_port_rd(hw, off)  enetc4_rd_reg((size_t)(hw)->port + (off))
++/* PSI SI configuration register 0 */
++#define ENETC4_PSICFGR0(a)		((a) * 0x80 + 0x2010)
++#define ENETC4_PSICFGR0_SIVC_CVLAN	BIT(24)  /* allow C-VLAN 0x8100 */
++#define ENETC4_PSICFGR0_SIVIE		BIT(14)  /* SI VLAN insertion enable */
++#define ENETC4_PSICFGR0_VTE		BIT(12)  /* SI VLAN removal enable */
++
+ /* general register accessors */
+ #define enetc4_rd_reg(reg)	rte_read32((void *)(reg))
+ #define enetc4_wr_reg(reg, val)  rte_write32((val), (void *)(reg))
 diff --git a/drivers/net/enetc/enetc.h b/drivers/net/enetc/enetc.h
-index 85826c5ab2..895d11a30d 100644
+index 07c2038b68..8e679e6aa2 100644
 --- a/drivers/net/enetc/enetc.h
 +++ b/drivers/net/enetc/enetc.h
-@@ -105,6 +105,21 @@ struct enetc_bdr {
- 	uint8_t rsc_enable;
+@@ -188,6 +188,8 @@ struct enetc_eth_adapter {
+ enum enetc_msg_cmd_class_id {
+ 	ENETC_CLASS_ID_MAC_FILTER = 0x20,
+ 	ENETC_CLASS_ID_VLAN_FILTER = 0x21,
++	/* Configure SI VLAN isolation (insert / remove) */
++	ENETC_CLASS_ID_SI_VLAN_ISO = 0x24,
+ 	ENETC_CLASS_ID_LINK_STATUS = 0x80,
+ 	ENETC_CLASS_ID_LINK_SPEED = 0x81,
+ 	ENETC_CLASS_ID_GET_IP_VER = 0xF0
+@@ -213,6 +215,11 @@ enum enetc_msg_cmd_id {
+ 	ENETC_CMD_ID_GET_IP_CFG = 4
  };
  
-+/*
-+ * Saved SI counter baseline for VF stats reset. Since the SI-level
-+ * hardware counters (SIROCT0, SIRFRM0, SITOCT0, SITFRM0, SITDFCR)
-+ * are read-only for a VF and cannot be directly zeroed, stats_reset
-+ * captures the current counter values as a baseline. stats_get then
-+ * reports the delta: current_hw_value - baseline.
-+ */
-+struct enetc4_vf_stats_saved {
-+	uint64_t ipackets;
-+	uint64_t opackets;
-+	uint64_t ibytes;
-+	uint64_t obytes;
-+	uint64_t oerrors;
++/* Command IDs for class ID 0x24 (SI VLAN isolation) */
++enum enetc_msg_si_vlan_cmd_id {
++	ENETC_CMD_ID_SET_SI_VLAN_ISO = 1,
 +};
 +
- struct enetc_eth_hw {
- 	struct rte_eth_dev *ndev;
- 	struct enetc_hw hw;
-@@ -125,6 +140,8 @@ struct enetc_eth_hw {
- 	 */
- 	uint8_t vf_link_legacy;
- 	pthread_mutex_t vsi_lock; /* serializes all VSI-PSI mailbox transactions */
-+	/* Baseline snapshot for VF stats reset (software delta approach). */
-+	struct enetc4_vf_stats_saved vf_stats_saved;
+ /* IP_VER value returned when the version is not available */
+ #define ENETC_IP_VER_NOT_AVAILABLE	0xFF
+ 
+@@ -324,6 +331,22 @@ struct enetc_msg_vlan_exact_filter {
+ 	uint8_t reserved2;
  };
  
- /*
-diff --git a/drivers/net/enetc/enetc4_vf.c b/drivers/net/enetc/enetc4_vf.c
-index d245d7b0e8..5fa088b3ce 100644
---- a/drivers/net/enetc/enetc4_vf.c
-+++ b/drivers/net/enetc/enetc4_vf.c
-@@ -224,15 +224,64 @@ enetc4_vf_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats,
- 	uint8_t i;
++/* VSI-PSI SI VLAN isolation message (class 0x24, cmd 0x1) */
++struct enetc_msg_si_vlan_iso {
++	struct enetc_msg_cmd_header header;
++	uint8_t ctrl;          /* E[7], VTEA[6], TPID[1:0] */
++	uint8_t pcp_dei_vid_hi; /* PCP[7:5], DEI[4], VID[11:8] */
++	uint8_t vid_lo;        /* VID[7:0] */
++	uint8_t reserved_0;
++	uint8_t flags;         /* SVIE[2], VTE[1] */
++	uint8_t reserved_1[3];
++};
++
++#define ENETC_SI_VLAN_ISO_E	BIT(7)  /* ctrl: enable SI VLAN */
++#define ENETC_SI_VLAN_ISO_VTEA	BIT(6)  /* ctrl: 0=strip, 1=zero VID */
++#define ENETC_SI_VLAN_ISO_SVIE	BIT(2)  /* flags: Tx insertion enable */
++#define ENETC_SI_VLAN_ISO_VTE	BIT(1)  /* flags: Rx removal enable */
++
+ struct enetc_psi_reply_msg {
+ 	uint8_t class_id;
+ 	uint8_t status;
+diff --git a/drivers/net/enetc/enetc4_ethdev.c b/drivers/net/enetc/enetc4_ethdev.c
+index 1857f21f56..f77b595f58 100644
+--- a/drivers/net/enetc/enetc4_ethdev.c
++++ b/drivers/net/enetc/enetc4_ethdev.c
+@@ -898,6 +898,44 @@ enetc4_dev_close(struct rte_eth_dev *dev)
+ 	return ret;
+ }
  
- 	PMD_INIT_FUNC_TRACE();
--	stats->ipackets = enetc4_rd(enetc_hw, ENETC4_SIRFRM0);
--	stats->opackets = enetc4_rd(enetc_hw, ENETC4_SITFRM0);
--	stats->ibytes = enetc4_rd(enetc_hw, ENETC4_SIROCT0);
--	stats->obytes = enetc4_rd(enetc_hw, ENETC4_SITOCT0);
--	stats->oerrors = enetc4_rd(enetc_hw, ENETC4_SITDFCR);
-+
-+	/*
-+	 * The SI-level counters are read-only for a VF; they cannot be
-+	 * zeroed directly. Instead, stats_reset captures a baseline
-+	 * snapshot, and stats_get reports the delta so that the reported
-+	 * values appear to start from zero after each reset call.
-+	 */
-+	stats->ipackets = enetc4_rd64(enetc_hw, ENETC4_SIRFRM0) -
-+			  hw->vf_stats_saved.ipackets;
-+	stats->opackets = enetc4_rd64(enetc_hw, ENETC4_SITFRM0) -
-+			  hw->vf_stats_saved.opackets;
-+	stats->ibytes   = enetc4_rd64(enetc_hw, ENETC4_SIROCT0) -
-+			  hw->vf_stats_saved.ibytes;
-+	stats->obytes   = enetc4_rd64(enetc_hw, ENETC4_SITOCT0) -
-+			  hw->vf_stats_saved.obytes;
-+	stats->oerrors  = (uint32_t)enetc4_rd(enetc_hw, ENETC4_SITDFCR) -
-+			  (uint32_t)hw->vf_stats_saved.oerrors;
-+
- 	for (i = 0; i < dev->data->nb_rx_queues; i++) {
- 		rx_ring = dev->data->rx_queues[i];
- 		stats->ierrors += rx_ring->ierrors;
- 	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * Reset VF statistics by capturing a new baseline snapshot of the
-+ * SI-level hardware counters. Because those counters are read-only
-+ * for a VF (hardware erratum prevents reliable clear via FLR/soft
-+ * reset too), the driver uses a software delta approach: every
-+ * stats_get call reports current_hw_value - saved_baseline.
-+ */
++/* Configure SI-based VLAN insertion (Tx) and removal (Rx) for the PF. */
 +static int
-+enetc4_vf_stats_reset(struct rte_eth_dev *dev)
++enetc4_vlan_pvid_set(struct rte_eth_dev *dev, uint16_t vlan_id, int on)
 +{
 +	struct enetc_eth_hw *hw =
 +		ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
 +	struct enetc_hw *enetc_hw = &hw->hw;
-+	struct enetc_bdr *rx_ring;
-+	uint8_t i;
++	uint32_t psivlanr, psicfgr0;
 +
 +	PMD_INIT_FUNC_TRACE();
 +
-+	/* Snapshot current HW SI counter values as the new zero baseline. */
-+	hw->vf_stats_saved.ipackets = enetc4_rd64(enetc_hw, ENETC4_SIRFRM0);
-+	hw->vf_stats_saved.opackets = enetc4_rd64(enetc_hw, ENETC4_SITFRM0);
-+	hw->vf_stats_saved.ibytes   = enetc4_rd64(enetc_hw, ENETC4_SIROCT0);
-+	hw->vf_stats_saved.obytes   = enetc4_rd64(enetc_hw, ENETC4_SITOCT0);
-+	hw->vf_stats_saved.oerrors  = enetc4_rd(enetc_hw, ENETC4_SITDFCR);
++	psicfgr0 = enetc4_port_rd(enetc_hw, ENETC4_PSICFGR0(0));
 +
-+	/* Reset the per-ring software Rx error accumulators. */
-+	for (i = 0; i < dev->data->nb_rx_queues; i++) {
-+		rx_ring = dev->data->rx_queues[i];
-+		if (rx_ring)
-+			rx_ring->ierrors = 0;
++	if (on) {
++		/* Build the VLAN register: enable bit + VID (PCP/DEI left 0) */
++		psivlanr = (uint32_t)ENETC4_PSIVLANR_E |
++			   ENETC4_PSIVLANR_VID(vlan_id);
++		enetc4_port_wr(enetc_hw, ENETC4_PSIVLANR(0), psivlanr);
++
++		/* Allow C-VLAN TPID, enable Tx insertion and Rx removal */
++		psicfgr0 |= ENETC4_PSICFGR0_SIVC_CVLAN |
++			    ENETC4_PSICFGR0_SIVIE |
++			    ENETC4_PSICFGR0_VTE;
++		enetc4_port_wr(enetc_hw, ENETC4_PSICFGR0(0), psicfgr0);
++	} else {
++		/* Clear Tx insertion, Rx removal and C-VLAN allow bits */
++		psicfgr0 &= ~(ENETC4_PSICFGR0_SIVC_CVLAN |
++			      ENETC4_PSICFGR0_SIVIE |
++			      ENETC4_PSICFGR0_VTE);
++		enetc4_port_wr(enetc_hw, ENETC4_PSICFGR0(0), psicfgr0);
++
++		/* Clear the VLAN register (disable SI VLAN processing) */
++		enetc4_port_wr(enetc_hw, ENETC4_PSIVLANR(0), 0);
 +	}
 +
++	return 0;
++}
++
+ static int
+ enetc4_promiscuous_enable(struct rte_eth_dev *dev)
+ {
+@@ -1293,6 +1331,7 @@ static const struct eth_dev_ops enetc4_ops = {
+ 	.get_reg              = enetc4_get_regs,
+ 	.promiscuous_enable   = enetc4_promiscuous_enable,
+ 	.promiscuous_disable  = enetc4_promiscuous_disable,
++	.vlan_pvid_set        = enetc4_vlan_pvid_set,
+ 	.rx_queue_setup       = enetc4_rx_queue_setup,
+ 	.rx_queue_start       = enetc4_rx_queue_start,
+ 	.rx_queue_stop        = enetc4_rx_queue_stop,
+diff --git a/drivers/net/enetc/enetc4_vf.c b/drivers/net/enetc/enetc4_vf.c
+index 9f92e813ab..b66fde64f1 100644
+--- a/drivers/net/enetc/enetc4_vf.c
++++ b/drivers/net/enetc/enetc4_vf.c
+@@ -615,6 +615,7 @@ enetc4_msg_vsi_send(struct enetc_eth_hw *hw, struct enetc_msg_swbd *msg,
+ 		case ENETC_CLASS_ID_LINK_STATUS:
+ 		case ENETC_CLASS_ID_LINK_SPEED:
+ 		case ENETC_CLASS_ID_GET_IP_VER:
++		case ENETC_CLASS_ID_SI_VLAN_ISO:
+ 			break;
+ 		default:
+ 			err = -EIO;
+@@ -1524,6 +1525,95 @@ static int enetc4_vf_vlan_offload_set(struct rte_eth_dev *dev, int mask __rte_un
  	return 0;
  }
  
-@@ -1545,6 +1594,7 @@ static const struct eth_dev_ops enetc4_vf_ops_no_vsi_m = {
- 	.dev_stop             = enetc4_vf_dev_stop,
- 	.dev_close            = enetc4_dev_close,
- 	.stats_get            = enetc4_vf_stats_get,
-+	.stats_reset          = enetc4_vf_stats_reset,
- 	.dev_infos_get        = enetc4_vf_dev_infos_get,
- 	.get_reg              = enetc4_vf_get_regs,
- 	.mtu_set              = enetc4_vf_mtu_set,
-@@ -1568,6 +1618,7 @@ static const struct eth_dev_ops enetc4_vf_ops = {
- 	.dev_stop             = enetc4_vf_dev_stop,
- 	.dev_close            = enetc4_dev_close,
- 	.stats_get            = enetc4_vf_stats_get,
-+	.stats_reset          = enetc4_vf_stats_reset,
- 	.dev_infos_get        = enetc4_vf_dev_infos_get,
- 	.fw_version_get       = enetc4_vf_fw_version_get,
- 	.get_reg              = enetc4_vf_get_regs,
++/* Configure SI-based VLAN insertion/removal via VSI-PSI mailbox (class 0x24). */
++static int
++enetc4_vf_vlan_pvid_set(struct rte_eth_dev *dev, uint16_t vlan_id, int on)
++{
++	struct enetc_eth_hw *hw = ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
++	struct enetc_msg_si_vlan_iso *cmd;
++	struct enetc_msg_swbd *msg;
++	struct enetc_psi_reply_msg *reply_msg;
++	uint32_t msg_size;
++	int err = 0;
++	int vsimsgsr_pvid = 0;
++
++	PMD_INIT_FUNC_TRACE();
++
++	reply_msg = rte_zmalloc(NULL, sizeof(*reply_msg), RTE_CACHE_LINE_SIZE);
++	if (!reply_msg) {
++		ENETC_PMD_ERR("Failed to alloc memory for reply_msg");
++		return -ENOMEM;
++	}
++
++	msg = rte_zmalloc(NULL, sizeof(*msg), RTE_CACHE_LINE_SIZE);
++	if (!msg) {
++		ENETC_PMD_ERR("Failed to alloc msg");
++		rte_free(reply_msg);
++		return -ENOMEM;
++	}
++
++	msg_size = RTE_ALIGN(sizeof(struct enetc_msg_si_vlan_iso),
++			     ENETC_VSI_PSI_MSG_SIZE);
++	msg->vaddr = rte_zmalloc(NULL, msg_size, 0);
++	if (!msg->vaddr) {
++		ENETC_PMD_ERR("Failed to alloc memory for msg body");
++		rte_free(msg);
++		rte_free(reply_msg);
++		return -ENOMEM;
++	}
++	msg->dma = rte_mem_virt2iova((const void *)msg->vaddr);
++	if (msg->dma == RTE_BAD_IOVA) {
++		ENETC_PMD_ERR("Failed to get IOVA for SI VLAN isolation msg body");
++		rte_free(msg->vaddr);
++		rte_free(msg);
++		rte_free(reply_msg);
++		return -ENOMEM;
++	}
++	msg->size = msg_size;
++
++	cmd = (struct enetc_msg_si_vlan_iso *)msg->vaddr;
++
++	if (on) {
++		cmd->ctrl = (uint8_t)ENETC_SI_VLAN_ISO_E;
++		cmd->pcp_dei_vid_hi = (uint8_t)((vlan_id >> 8) & 0x0f);
++		cmd->vid_lo = (uint8_t)(vlan_id & 0xff);
++		cmd->flags = (uint8_t)(ENETC_SI_VLAN_ISO_SVIE | ENETC_SI_VLAN_ISO_VTE);
++	}
++	/* on=0: all fields zero (rte_zmalloc cleared the buffer) */
++
++	enetc_msg_vf_fill_common_hdr(msg, ENETC_CLASS_ID_SI_VLAN_ISO,
++				     ENETC_CMD_ID_SET_SI_VLAN_ISO, 0, 0, 0);
++
++	/* send the command and wait for PSI reply */
++	err = enetc4_msg_vsi_send(hw, msg, &vsimsgsr_pvid);
++	if (err) {
++		ENETC_PMD_ERR("VSI message send error for SI VLAN isolation");
++		goto end;
++	}
++
++	enetc4_msg_vsi_reply_msg(hw, vsimsgsr_pvid, reply_msg);
++
++	/*
++	 * The PSI reports command completion in the reply class_id: a
++	 * successful command returns ENETC_MSG_CLASS_ID_CMD_SUCCESS (0x1),
++	 * while any other class_id (e.g. CMD_NOT_SUPPORT 0x3) indicates a
++	 * failure. The command class value (0x24) is only used in the
++	 * outgoing VF-to-PSI header and is never echoed back in the reply,
++	 * so treat class_id != CMD_SUCCESS as failure.
++	 */
++	if (reply_msg->class_id != ENETC_MSG_CLASS_ID_CMD_SUCCESS) {
++		ENETC_PMD_ERR("SI VLAN isolation command failed: class_id=0x%x status=0x%x",
++			      reply_msg->class_id, reply_msg->status);
++		err = -EINVAL;
++	}
++
++end:
++	rte_free(msg->vaddr);
++	rte_free(msg);
++	rte_free(reply_msg);
++	return err;
++}
++
+ static int
+ enetc4_vf_mtu_set(struct rte_eth_dev *dev __rte_unused, uint16_t mtu __rte_unused)
+ {
+@@ -1688,6 +1778,7 @@ static const struct eth_dev_ops enetc4_vf_ops = {
+ 	.link_update	      = enetc4_vf_link_update,
+ 	.vlan_filter_set      = enetc4_vf_vlan_filter_set,
+ 	.vlan_offload_set     = enetc4_vf_vlan_offload_set,
++	.vlan_pvid_set        = enetc4_vf_vlan_pvid_set,
+ 	.rx_queue_setup       = enetc4_rx_queue_setup,
+ 	.rx_queue_start       = enetc4_rx_queue_start,
+ 	.rx_queue_stop        = enetc4_rx_queue_stop,
 -- 
 2.25.1
 
