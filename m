@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 727F4C5B572
-	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Aug 2026 06:36:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45550C5B572
+	for <dpdk-dev@archiver.kernel.org>; Mon, 17 Aug 2026 06:36:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0C1A540A7F;
-	Mon, 17 Aug 2026 08:35:14 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0650440A6F;
+	Mon, 17 Aug 2026 08:35:15 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 16376402C4
+ by mails.dpdk.org (Postfix) with ESMTP id 778C640611
  for <dev@dpdk.org>; Mon, 17 Aug 2026 08:35:02 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id EDBCC1A01A5;
- Mon, 17 Aug 2026 08:35:01 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5B7681A01B6;
+ Mon, 17 Aug 2026 08:35:02 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8B3D51A01BA;
- Mon, 17 Aug 2026 08:35:01 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 23A8E1A01B9;
+ Mon, 17 Aug 2026 08:35:02 +0200 (CEST)
 Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
  [92.120.147.250])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 0AE691800229;
- Mon, 17 Aug 2026 14:35:00 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id A41AF18000B0;
+ Mon, 17 Aug 2026 14:35:01 +0800 (+08)
 From: Gagandeep Singh <g.singh@nxp.com>
 To: dev@dpdk.org
 Cc: hemant.agrawal@nxp.com,
 	Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v10 10/14] net/enetc4: add per-queue Rx interrupt support for
- VF
-Date: Mon, 17 Aug 2026 12:04:50 +0530
-Message-Id: <20260817063454.3290854-11-g.singh@nxp.com>
+Subject: [PATCH v10 12/14] net/enetc4: update VF link status to bitmask
+ encoding
+Date: Mon, 17 Aug 2026 12:04:52 +0530
+Message-Id: <20260817063454.3290854-13-g.singh@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260817063454.3290854-1-g.singh@nxp.com>
 References: <20260813121358.1321196-1-g.singh@nxp.com>
@@ -49,342 +49,125 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add MSI-X per-queue Rx interrupt support to the ENETC4 VF PMD on the
-cacheable (default) Rx path. This allows applications such as l3fwd-power
-to block in epoll_wait when no traffic is present, reducing CPU utilization
-to near zero.
+The PF-to-VF link status notification code was previously a two-value
+enum (UP=0x0, DOWN=0x1). Change this to a bitmask so future bits can
+carry additional state alongside the link up/down indication:
 
-MSI-X vector 0 is reserved for the PSI-to-VSI mailbox. Rx queue i is
-mapped to MSI-X vector i + 1 via ENETC_SIMSIRRV. Per-ring coalescing is
-enabled with ICPT=1 so the first arriving packet fires the interrupt
-immediately. The SIRXIDR W1C detect bit is cleared before re-arming
-ENETC_RBIER to prevent spurious interrupts after traffic stops.
+  ENETC_LINK_DOWN  BIT(0)  -- set when link is down
 
-The interrupt infrastructure (rte_intr_efd_enable +
-rte_intr_vec_list_alloc) is set up before rte_intr_enable() so that
-vfio-pci can wire each MSI-X vector to its eventfd when programming
-the MSI-X table.
+Link up is now encoded as the DOWN bit being clear, which keeps the
+wire value for link-down identical (0x1) and ensures backward
+compatibility with older kernel PFs.
 
-enetc4_dev_configure() is updated to trigger interrupt setup when
-intr_conf.rxq is set (not only when intr_conf.lsc is set), as applications
-like l3fwd-power set intr_conf.rxq without setting lsc.
+Changes:
+- enetc.h: replace enum link_status with a #define bitmask;
+  drop ENETC_LINK_UP (no longer a named constant).
+- enetc4_vf.c enetc4_process_psi_msg(): replace switch/case on
+  ENETC_LINK_UP/DOWN with bitmask decode.
+- enetc4_vf.c enetc4_vf_link_update(): same bitmask decode.
 
 Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
- doc/guides/nics/enetc4.rst             | 65 ++++++++++++++++++
- doc/guides/nics/features/enetc4.ini    |  1 +
  doc/guides/rel_notes/release_26_11.rst |  1 +
- drivers/net/enetc/base/enetc4_hw.h     |  2 +
- drivers/net/enetc/enetc.h              |  1 +
- drivers/net/enetc/enetc4_ethdev.c      |  9 +--
- drivers/net/enetc/enetc4_vf.c          | 95 +++++++++++++++++++++++++-
- 7 files changed, 168 insertions(+), 6 deletions(-)
+ drivers/net/enetc/enetc.h              |  8 +++----
+ drivers/net/enetc/enetc4_vf.c          | 29 ++++++++------------------
+ 3 files changed, 14 insertions(+), 24 deletions(-)
 
-diff --git a/doc/guides/nics/enetc4.rst b/doc/guides/nics/enetc4.rst
-index 16389aee5b..2b73916682 100644
---- a/doc/guides/nics/enetc4.rst
-+++ b/doc/guides/nics/enetc4.rst
-@@ -59,6 +59,10 @@ Key functionality includes:
-   Segment Coalesce (RSC), enabled when the TCP LRO Rx offload flag is
-   requested. RSC requires the FCS to be stripped, so it cannot be combined
-   with the KEEP_CRC Rx offload.
-+- Per-queue Rx interrupts on VFs (cacheable Rx path only), enabling
-+  interrupt-driven receive with ``vfio-pci``. Applications set
-+  ``intr_conf.rxq = 1`` in ``rte_eth_conf`` to activate this feature.
-+  See `Rx Interrupt Mode (VF)`_ for setup details.
- - Firmware version: The NETC IP version is reported via ``rte_eth_dev_fw_version_get``.
- - Registers dump: The station interface, port (PF only) and BD ring registers are dumped via ``rte_eth_dev_get_reg_info``.
- 
-@@ -167,3 +171,64 @@ PF/Common devargs
-   Usage example::
- 
-     dpdk-testpmd -a 0000:00:00.0,nc=1 -- -i
-+
-+
-+Rx Interrupt Mode (VF)
-+----------------------
-+
-+The ENETC4 VF PMD supports per-queue MSI-X Rx interrupts on the cacheable
-+(default) Rx path. This allows applications to block in ``epoll_wait``
-+instead of busy-polling, reducing CPU utilization when traffic is absent.
-+
-+**MSI-X vector assignment**
-+
-+ENETC4 VF MSI-X vector 0 is reserved for the PSI-to-VSI mailbox interrupt
-+(link status notifications). Rx queue ``i`` is mapped to vector ``i + 1``.
-+The driver allocates all required eventfds before calling
-+``rte_intr_enable()`` so that ``vfio-pci`` can wire each MSI-X vector to
-+its eventfd when it programs the MSI-X table.
-+
-+**Kernel and driver requirements**
-+
-+- ``vfio-pci`` kernel module with no-IOMMU mode enabled (no SMMU required).
-+- The non-cacheable memory mode (``nc=1`` devarg) does **not** support
-+  Rx interrupts and returns ``-ENOTSUP`` from ``rx_queue_intr_enable``.
-+
-+**Host setup**
-+
-+.. code-block:: console
-+
-+   # Enable vfio-pci no-IOMMU mode (if SMMU is not available)
-+   modprobe vfio enable_unsafe_noiommu_mode=1
-+   modprobe vfio-pci
-+
-+   # Bind the VF to vfio-pci
-+   echo vfio-pci > /sys/bus/pci/devices/<vf_pci_addr>/driver_override
-+   echo <vf_pci_addr> > /sys/bus/pci/drivers_probe
-+
-+**Running l3fwd-power with a single queue and core**
-+
-+The ``l3fwd-power`` sample application demonstrates interrupt-driven Rx.
-+It sets ``intr_conf.rxq = 1`` in ``rte_eth_conf``, which triggers the VF
-+interrupt setup in the driver. The ``--vfio-intr=msix`` EAL flag instructs
-+DPDK to use MSI-X eventfds for interrupt signalling.
-+
-+.. code-block:: console
-+
-+   ./dpdk-l3fwd-power -l 0-1 -n 1 --vfio-intr=msix \
-+       -a <vf_pci_addr> -- \
-+       -p 0x1 --config="(0,0,1)" --no-numa --interrupt-only
-+
-+Where:
-+
-+- ``-l 0-1`` assigns the main thread to core 0 and the forwarding lcore to
-+  core 1.
-+- ``-a <vf_pci_addr>`` specifies the VF PCI address (e.g. ``0000:01:00.1``).
-+- ``--config="(0,0,1)"`` maps port 0, queue 0 to lcore 1.
-+- ``--interrupt-only`` enables pure interrupt mode (no busy-poll fallback).
-+
-+With no incoming traffic the forwarding lcore sleeps in ``epoll_wait``;
-+CPU utilization drops to near zero. On the first arriving packet the MSI-X
-+interrupt fires, the lcore wakes, drains the ring, disables the interrupt,
-+processes the burst, then re-enables and re-arms the interrupt before
-+returning to sleep.
-diff --git a/doc/guides/nics/features/enetc4.ini b/doc/guides/nics/features/enetc4.ini
-index 6540a43909..005c64a3ca 100644
---- a/doc/guides/nics/features/enetc4.ini
-+++ b/doc/guides/nics/features/enetc4.ini
-@@ -5,6 +5,7 @@
- ;
- [Features]
- Link status event    = Y
-+Rx interrupt         = Y
- Speed capabilities   = Y
- Link status          = Y
- LRO                  = Y
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index a42577c681..c182495118 100644
+index 190d77ecee..47090068d0 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -71,6 +71,7 @@ New Features
-   * Added ring parameters support for the ENETC4 VF (rxq_info_get / txq_info_get).
-   * Refreshed VF link speed on the link-up interrupt in the ENETC4 VF driver.
+@@ -73,6 +73,7 @@ New Features
    * Added stats reset for the ENETC4 VF using a software snapshot/delta approach.
-+  * Added per-queue MSI-X Rx interrupt support for the ENETC4 VF.
+   * Added per-queue MSI-X Rx interrupt support for the ENETC4 VF.
+   * Added SI-based port VLAN insertion (Tx) and removal (Rx) for ENETC4 PF and VF.
++  * Updated ENETC4 VF link status reporting to use bitmask encoding.
  
  Removed Items
  -------------
-diff --git a/drivers/net/enetc/base/enetc4_hw.h b/drivers/net/enetc/base/enetc4_hw.h
-index 01b267edb6..8c522b69cd 100644
---- a/drivers/net/enetc/base/enetc4_hw.h
-+++ b/drivers/net/enetc/base/enetc4_hw.h
-@@ -250,6 +250,8 @@ struct enetc_rx_bd_ext {
- #define ENETC4_VSIIDR            0xA08
- #define ENETC4_VSIIER_MRIE       BIT(9)
- #define ENETC4_SI_INT_IDX        0
-+/* MSI-X vector base for per-Rx-queue interrupts; vector 0 is the mailbox. */
-+#define ENETC4_VF_RX_VEC_BASE    1
- 
- /* VSI Registers */
- #define ENETC4_VSIMSGSR  0x204   /* RO */
 diff --git a/drivers/net/enetc/enetc.h b/drivers/net/enetc/enetc.h
-index 895d11a30d..07c2038b68 100644
+index 8e679e6aa2..9bf7cd43c6 100644
 --- a/drivers/net/enetc/enetc.h
 +++ b/drivers/net/enetc/enetc.h
-@@ -135,6 +135,7 @@ struct enetc_eth_hw {
- 	uint32_t vsi_delay;   /* VSI-PSI message wait delay (us) */
- 	uint32_t *txq_prior;  /* per-queue TX priority (TBMR priority bits) */
- 	uint8_t nc_mode;      /* 1 = non-cacheable BD memory, use _nc ops */
-+	uint8_t rxq_intr_en;  /* 1 = per-queue Rx MSI-X interrupts enabled */
- 	/* 1 = legacy PF-to-VF link message layout (4-bit speed / 4-bit cookie),
- 	 * for PF kernel versions before 6.18.37. Set via vf_link_legacy devarg.
- 	 */
-diff --git a/drivers/net/enetc/enetc4_ethdev.c b/drivers/net/enetc/enetc4_ethdev.c
-index 5f0b530c2f..1857f21f56 100644
---- a/drivers/net/enetc/enetc4_ethdev.c
-+++ b/drivers/net/enetc/enetc4_ethdev.c
-@@ -864,7 +864,8 @@ enetc4_dev_close(struct rte_eth_dev *dev)
- 		return 0;
- 
- 	if (hw->device_id == ENETC4_DEV_ID_VF) {
--		if (dev->data->dev_conf.intr_conf.lsc != 0)
-+		if (dev->data->dev_conf.intr_conf.lsc != 0 ||
-+		    dev->data->dev_conf.intr_conf.rxq != 0)
- 			enetc4_vf_dev_intr(dev, false);
- 		ret = enetc4_vf_dev_stop(dev);
- 		pthread_mutex_destroy(&hw->vsi_lock);
-@@ -987,12 +988,12 @@ enetc4_dev_configure(struct rte_eth_dev *dev)
- 	if (hw->device_id != ENETC4_DEV_ID_VF)
- 		enetc4_port_wr(enetc_hw, ENETC4_PARCSCR, checksum);
- 
--	/* Enable interrupts */
- 	if (hw->device_id == ENETC4_DEV_ID_VF) {
--		if (dev->data->dev_conf.intr_conf.lsc != 0) {
-+		if (dev->data->dev_conf.intr_conf.lsc != 0 ||
-+		    dev->data->dev_conf.intr_conf.rxq != 0) {
- 			ret = enetc4_vf_dev_intr(dev, true);
- 			if (ret)
--				ENETC_PMD_WARN("Failed to setup link interrupts");
-+				ENETC_PMD_WARN("Failed to setup VF interrupts: %d", ret);
- 		}
- 	}
- 
-diff --git a/drivers/net/enetc/enetc4_vf.c b/drivers/net/enetc/enetc4_vf.c
-index 5fa088b3ce..9f92e813ab 100644
---- a/drivers/net/enetc/enetc4_vf.c
-+++ b/drivers/net/enetc/enetc4_vf.c
-@@ -1586,6 +1586,60 @@ static const struct rte_pci_id pci_vf_id_enetc4_map[] = {
- 	{ .vendor_id = 0, /* sentinel */ },
+@@ -237,10 +237,10 @@ enum vlan_status {
+ 	ENETC_VLAN_NO_RESOURCE = 0x3
  };
  
-+static int
-+enetc4_vf_rx_queue_intr_enable(struct rte_eth_dev *dev, uint16_t queue_id)
-+{
-+	struct enetc_eth_hw *hw =
-+		ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	struct enetc_hw *enetc_hw = &hw->hw;
-+	struct enetc_bdr *rx_ring;
-+	uint16_t vec;
-+
-+	if (hw->nc_mode)
-+		return -ENOTSUP;
-+
-+	if (!hw->rxq_intr_en)
-+		return -ENOTSUP;
-+
-+	vec = queue_id + ENETC4_VF_RX_VEC_BASE;
-+	rx_ring = (struct enetc_bdr *)dev->data->rx_queues[queue_id];
-+
-+	enetc_wr(enetc_hw, ENETC_SIMSIRRV(queue_id), vec);
-+	/*
-+	 * Do not overwrite RBICR1 when RSC (LRO) is active: the timer
-+	 * programmed there is the coalesce-hold window and zeroing it
-+	 * would disable coalescing, flushing every segment individually.
-+	 */
-+	if (!rx_ring->rsc_enable)
-+		enetc4_rxbdr_wr(enetc_hw, queue_id, ENETC4_RBICR1, 0);
-+	enetc4_rxbdr_wr(enetc_hw, queue_id, ENETC4_RBICR0,
-+			ENETC4_RBICR0_ICEN | ENETC4_RBICR0_ICPT(1));
-+	enetc_wr(enetc_hw, ENETC_SIRXIDR, BIT(queue_id));
-+
-+	enetc4_rxbdr_wr(enetc_hw, queue_id, ENETC_RBIER, ENETC_RBIER_RXTIE);
-+
-+	return 0;
-+}
-+
-+static int
-+enetc4_vf_rx_queue_intr_disable(struct rte_eth_dev *dev, uint16_t queue_id)
-+{
-+	struct enetc_eth_hw *hw =
-+		ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	struct enetc_hw *enetc_hw = &hw->hw;
-+
-+	if (hw->nc_mode)
-+		return -ENOTSUP;
-+
-+	if (!hw->rxq_intr_en)
-+		return 0;
-+
-+	enetc4_rxbdr_wr(enetc_hw, queue_id, ENETC_RBIER, 0);
-+	enetc_wr(enetc_hw, ENETC_SIMSIRRV(queue_id), 0);
-+
-+	return 0;
-+}
-+
- /* Features supported by this driver */
- /* ops table used when VSI messaging is disabled */
- static const struct eth_dev_ops enetc4_vf_ops_no_vsi_m = {
-@@ -1604,6 +1658,8 @@ static const struct eth_dev_ops enetc4_vf_ops_no_vsi_m = {
- 	.rx_queue_stop        = enetc4_rx_queue_stop,
- 	.rx_queue_release     = enetc4_rx_queue_release,
- 	.rxq_info_get         = enetc4_rxq_info_get,
-+	.rx_queue_intr_enable  = enetc4_vf_rx_queue_intr_enable,
-+	.rx_queue_intr_disable = enetc4_vf_rx_queue_intr_disable,
- 	.tx_queue_setup       = enetc4_tx_queue_setup,
- 	.tx_queue_start       = enetc4_tx_queue_start,
- 	.tx_queue_stop        = enetc4_tx_queue_stop,
-@@ -1637,6 +1693,8 @@ static const struct eth_dev_ops enetc4_vf_ops = {
- 	.rx_queue_stop        = enetc4_rx_queue_stop,
- 	.rx_queue_release     = enetc4_rx_queue_release,
- 	.rxq_info_get         = enetc4_rxq_info_get,
-+	.rx_queue_intr_enable  = enetc4_vf_rx_queue_intr_enable,
-+	.rx_queue_intr_disable = enetc4_vf_rx_queue_intr_disable,
- 	.tx_queue_setup       = enetc4_tx_queue_setup,
- 	.tx_queue_start       = enetc4_tx_queue_start,
- 	.tx_queue_stop        = enetc4_tx_queue_stop,
-@@ -1893,6 +1951,34 @@ enetc4_vf_dev_intr(struct rte_eth_dev *eth_dev, bool enable)
- 		/* Vector index 0 */
- 		enetc_wr(enetc_hw, ENETC4_SIMSIVR, ENETC4_SI_INT_IDX);
+-enum link_status {
+-	ENETC_LINK_UP = 0x0,
+-	ENETC_LINK_DOWN = 0x1
+-};
++/* Link status bitmask in PF-to-VF mailbox notification.
++ * Link up is encoded as the DOWN bit being clear.
++ */
++#define ENETC_LINK_DOWN  (1u << 0)
  
-+		if (rte_intr_cap_multiple(intr_handle) &&
-+		    eth_dev->data->nb_rx_queues > 0) {
-+			uint16_t nb_rx = eth_dev->data->nb_rx_queues;
-+			uint16_t i;
-+
-+			ret = rte_intr_efd_enable(intr_handle,
-+					nb_rx + ENETC4_VF_RX_VEC_BASE);
-+			if (ret) {
-+				ENETC_PMD_WARN("Failed to enable per-queue Rx eventfds: %d",
-+					       ret);
-+				hw->rxq_intr_en = 0;
-+			} else {
-+				ret = rte_intr_vec_list_alloc(intr_handle,
-+						"enetc4_vf_rx_intr", nb_rx);
-+				if (ret) {
-+					ENETC_PMD_WARN("Failed to alloc intr vec list: %d",
-+						       ret);
-+					rte_intr_efd_disable(intr_handle);
-+					hw->rxq_intr_en = 0;
-+				} else {
-+					for (i = 0; i < nb_rx; i++)
-+						rte_intr_vec_list_index_set(intr_handle, i,
-+							i + ENETC4_VF_RX_VEC_BASE);
-+					hw->rxq_intr_en = 1;
-+				}
-+			}
-+		}
-+
- 		/* enable uio/vfio intr/eventfd mapping */
- 		ret = rte_intr_enable(intr_handle);
- 		if (ret) {
-@@ -1916,12 +2002,17 @@ enetc4_vf_dev_intr(struct rte_eth_dev *eth_dev, bool enable)
- 		ENETC_PMD_WARN("Failed to un-register link notification %d", ret);
- disable:
- 	enetc_vf_enable_mr_int(enetc_hw, false);
-+	hw->rxq_intr_en = 0;
- 	ret = rte_intr_disable(intr_handle);
- 	if (ret)
- 		ENETC_PMD_WARN("Failed to disable INTR %d", ret);
- intr_enable_fail:
--	rte_intr_callback_unregister(intr_handle,
-+	rte_intr_vec_list_free(intr_handle);
-+	rte_intr_efd_disable(intr_handle);
-+	ret = rte_intr_callback_unregister(intr_handle,
- 			enetc4_dev_interrupt_handler, eth_dev);
-+	if (ret < 0)
-+		ENETC_PMD_WARN("Failed to unregister intr callback: %d", ret);
+ enum speed {
+ 	ENETC_SPEED_UNKNOWN = 0x0,
+diff --git a/drivers/net/enetc/enetc4_vf.c b/drivers/net/enetc/enetc4_vf.c
+index b66fde64f1..435964ea4e 100644
+--- a/drivers/net/enetc/enetc4_vf.c
++++ b/drivers/net/enetc/enetc4_vf.c
+@@ -507,8 +507,10 @@ enetc4_process_psi_msg(struct rte_eth_dev *eth_dev, struct enetc_hw *enetc_hw)
+ 	enetc4_msg_get_psi_msg(enetc_hw, msg);
  
- 	return ret;
- }
-@@ -1935,7 +2026,7 @@ static struct rte_pci_driver rte_enetc4_vf_pmd = {
+ 	if (msg->class_id == ENETC_CLASS_ID_LINK_STATUS) {
+-		switch (msg->status) {
+-		case ENETC_LINK_UP:
++		if (msg->status & ENETC_LINK_DOWN) {
++			ENETC_PMD_DEBUG("Link is down");
++			link.link_status = RTE_ETH_LINK_DOWN;
++		} else {
+ 			ENETC_PMD_DEBUG("Link is up");
+ 			link.link_status = RTE_ETH_LINK_UP;
+ 			/* Re-query speed from PF so the cached value reflects
+@@ -520,14 +522,6 @@ enetc4_process_psi_msg(struct rte_eth_dev *eth_dev, struct enetc_hw *enetc_hw)
+ 				enetc4_decode_link_speed(msg->status,
+ 							hw->vf_link_legacy,
+ 							&link);
+-			break;
+-		case ENETC_LINK_DOWN:
+-			ENETC_PMD_DEBUG("Link is down");
+-			link.link_status = RTE_ETH_LINK_DOWN;
+-			break;
+-		default:
+-			ENETC_PMD_ERR("Unknown link status 0x%x", msg->status);
+-			break;
+ 		}
+ 		ret = rte_eth_linkstatus_set(eth_dev, &link);
+ 		if (!ret)
+@@ -1209,19 +1203,13 @@ enetc4_vf_link_update(struct rte_eth_dev *dev, int wait_to_complete __rte_unused
+ 	}
  
- RTE_PMD_REGISTER_PCI(net_enetc4_vf, rte_enetc4_vf_pmd);
- RTE_PMD_REGISTER_PCI_TABLE(net_enetc4_vf, pci_vf_id_enetc4_map);
--RTE_PMD_REGISTER_KMOD_DEP(net_enetc4_vf, "* igb_uio | uio_pci_generic");
-+RTE_PMD_REGISTER_KMOD_DEP(net_enetc4_vf, "* igb_uio | uio_pci_generic | vfio-pci");
- RTE_PMD_REGISTER_PARAM_STRING(net_enetc4_vf,
- 			      ENETC4_VSI_DISABLE "=<any> "
- 			      ENETC4_VSI_TIMEOUT "=<uint> "
+ 	if (reply_msg->class_id == ENETC_CLASS_ID_LINK_STATUS) {
+-		switch (reply_msg->status) {
+-		case ENETC_LINK_UP:
+-			link.link_status = RTE_ETH_LINK_UP;
+-			break;
+-		case ENETC_LINK_DOWN:
++		if (reply_msg->status & ENETC_LINK_DOWN)
+ 			link.link_status = RTE_ETH_LINK_DOWN;
+-			break;
+-		default:
+-			ENETC_PMD_ERR("Unknown link status");
+-			break;
+-		}
++		else
++			link.link_status = RTE_ETH_LINK_UP;
+ 	} else {
+ 		ENETC_PMD_ERR("Wrong reply message");
++		rte_free(reply_msg);
+ 		return -1;
+ 	}
+ 
+@@ -1237,6 +1225,7 @@ enetc4_vf_link_update(struct rte_eth_dev *dev, int wait_to_complete __rte_unused
+ 					 hw->vf_link_legacy, &link);
+ 	} else {
+ 		ENETC_PMD_ERR("Wrong reply message");
++		rte_free(reply_msg);
+ 		return -1;
+ 	}
+ 
 -- 
 2.25.1
 
