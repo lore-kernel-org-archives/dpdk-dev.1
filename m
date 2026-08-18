@@ -2,63 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D541C5DF67
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 06:50:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7467CC5DF67
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 08:11:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EC57940689;
-	Tue, 18 Aug 2026 08:50:10 +0200 (CEST)
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199])
- by mails.dpdk.org (Postfix) with ESMTP id 1D42740613
- for <dev@dpdk.org>; Tue, 18 Aug 2026 08:50:09 +0200 (CEST)
-Received: by mail-qk1-f199.google.com with SMTP id
- af79cd13be357-91931144870so551429085a.1
- for <dev@dpdk.org>; Mon, 17 Aug 2026 23:50:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1787035808; x=1787640608; darn=dpdk.org;
- h=content-type:cc:to:from:subject:message-id:references:mime-version
- :in-reply-to:date:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=VFdAXImnTZqjjnEdS45etPlDFBjcEq1LsY6SeHCzCyc=;
- b=sFEe6xsqBi8w/aDuz7CbnLnvkGi4rOAKD26+IG5grhxpa8dIQo9f6ArsUE/q61PvqP
- bWB0hQyX2e/fygB6TEaZNIVQSBKdMsI5UChRWHP5BgVcinKT++LkJd+twcc+AjHmryli
- d6EqzEOX4qgNuxwcfUnNtNy1mwDkykN6J9XfbtqOsZRMIUpWrWMQDXQF+mGCweNvQ1Lp
- C0Nz9TMXsLWxYmnPt8lPx4CBi8wNeWBgvrB18yi4NOSg+1T6VAUaCEzs2Uw+xhxES571
- wRU8kC3rD97UYzkO0iPf9r/4qL4dWdXRGdypcnPbghUrs1h6ZHeT8sBeEETj9/R+5WwG
- 9vWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787035808; x=1787640608;
- h=content-type:cc:to:from:subject:message-id:references:mime-version
- :in-reply-to:date:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=VFdAXImnTZqjjnEdS45etPlDFBjcEq1LsY6SeHCzCyc=;
- b=L3R79Az2+F9gv+DxAptgpC390Euxth5bZaV19QFfL6rnf7NTK1rXpZ6rg1A1Zkrlca
- sj4ZXxAkBYTfcM254HqT2ApOffh5rfiTplmTRguZp7wfTq7gjzd1pVgnRSz6Y1yJMEqG
- aGbcU2OP5vsKH+bNQ41AIERvKvt56EW1qUNwG06YqDj2GaO+WF0zMNCnH7w5BQo9zQMd
- v7K96AEKLMVx9N4e5PWNeYsh8baneZkFlk5mSdBKSZVd6EG0PhEbPeDX+wZEdYHnzkwf
- e1dgP6Qte0LSH8Vr7ZRKE90zulIlJ6IE2Wfl82OTifAPLE/6apnjra5YDEi3ow0oIViz
- GBng==
-X-Gm-Message-State: AOJu0YwZaP5YNdInCmlg/zDuUv6AzxmNgvvU4rc2WbKZk4ybLy/O5xLm
- G7B2YQd+RFBpdEAftnS6f7GZaWqOG31bkQwbVbB0i0RgIQL3YSzP7nGX/77QgPFkTN/SyVgZ7Z3
- zsxq6Z+g5aSnM5CPIpDb4B3EJB7Tl4GqslNUeVG3PauS9sTsg5Ec/cUwpLyYbnFMzBWV9a+vAyY
- 8+3xOrdxuk7GzPNofn86XRQho=
-X-Received: from qkll17.prod.google.com ([2002:a05:620a:2111:b0:921:4ad0:5b7e])
- (user=blasko job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:620a:7086:b0:936:af34:ea68
- with SMTP id af79cd13be357-93704bd0e9fmr586923385a.22.1787035807957; Mon, 17
- Aug 2026 23:50:07 -0700 (PDT)
-Date: Tue, 18 Aug 2026 06:49:59 +0000
-In-Reply-To: <20260818065000.1597610-1-blasko@google.com>
-Mime-Version: 1.0
-References: <20260623215325.814776-1-blasko@google.com>
- <20260818065000.1597610-1-blasko@google.com>
-X-Mailer: git-send-email 2.55.0.699.gb54405d56f-goog
-Message-ID: <20260818065000.1597610-3-blasko@google.com>
-Subject: [PATCH v7 2/2] net/af_xdp: add read_clock support to AF_XDP PMD
-From: Mark Blasko <blasko@google.com>
-To: dev@dpdk.org, Ciara Loftus <ciara.loftus@intel.com>, 
- Maryam Tahhan <mtahhan@redhat.com>
-Cc: joshwash@google.com, jtranoleary@google.com, blasko@google.com
-Content-Type: text/plain; charset="UTF-8"
+	by mails.dpdk.org (Postfix) with ESMTP id 28E1240294;
+	Tue, 18 Aug 2026 10:11:50 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id E24DD4028E
+ for <dev@dpdk.org>; Tue, 18 Aug 2026 10:11:47 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=XuYcfxPnFzDYgsMzJCIjCt4VoJIo0tKGzgbklspO09I=;
+ b=wZqRpRczE+pss9SMgCVvPBkfFSiEw+gkjeJLxK/wT0XA2INyUjaTfSHX7E/vJl1fnOfD9B0cf
+ 7+CoNR1eO36fh4d3WL3ubK4EAdDB327CIOwy8BZnR3NMVL7BdyVngd/UwhEm5ZZPmhA0lLXf32w
+ uXQKuZxrEaBzZAWn7OrH+YA=
+Received: from mail.maildlp.com (unknown [172.18.224.107])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4hPMq730BDzJ46Yt;
+ Tue, 18 Aug 2026 16:11:31 +0800 (CST)
+Received: from dubpeml500002.china.huawei.com (unknown [7.214.145.83])
+ by mail.maildlp.com (Postfix) with ESMTPS id 7EC614058D;
+ Tue, 18 Aug 2026 16:11:37 +0800 (CST)
+Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
+ dubpeml500002.china.huawei.com (7.214.145.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 18 Aug 2026 09:11:37 +0100
+Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
+ dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
+ Tue, 18 Aug 2026 09:11:37 +0100
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: Bruce Richardson <bruce.richardson@intel.com>,
+ =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>
+Subject: RE: [PATCH] stack: introduce pile
+Thread-Topic: [PATCH] stack: introduce pile
+Thread-Index: AQHdKmHxOTsi6KhTAk+e68voB41GrLaiLgIAgAFLs5A=
+Date: Tue, 18 Aug 2026 08:11:36 +0000
+Message-ID: <898dbda9dea547649b1ad6781a356090@huawei.com>
+References: <20260812134756.1829613-1-mb@smartsharesystems.com>
+ <aoMIQo7y_DyafUDg@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <aoMIQo7y_DyafUDg@bricha3-mobl1.ger.corp.intel.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.126.172.234]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -72,277 +62,97 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Implement the ethdev read_clock operation in the AF_XDP Poll Mode
-Driver. This allows DPDK applications to query the current time of the
-NIC hardware clock.
 
-At device start, the PMD queries ethtool for the interface's PTP
-Hardware Clock index and opens the corresponding PTP device node. The
-read_clock operation queries the current time via clock_gettime.
 
-Signed-off-by: Mark Blasko <blasko@google.com>
-Reviewed-by: Joshua Washington <joshwash@google.com>
----
-v6:
-- Move ptp_fd cleanup in eth_dev_close() below out: label.
-- Change PTP open failure log level from WARNING to INFO in eth_dev_start().
-v5:
-- Update release notes for 26.11.
-v4:
-- Move ptp_fd into pmd_process_private for multi-process safety.
-- Decouple /dev/ptpX opening from RTE_ETH_RX_OFFLOAD_TIMESTAMP.
-- Move read_clock documentation out of "Options" into its own section
-  in af_xdp.rst.
-- Add #ifndef guards around CLOCKFD and FD_TO_CLOCKID macro definitions.
-- Replace (caddr_t) cast with (void *).
-v3:
-- Add documentation and release notes entry.
-- Add PTP file descriptor cleanup on device start, stop, and close.
-- Return -errno on clock_gettime() failure and fix PTP open error logging.
- doc/guides/nics/af_xdp.rst             | 11 +++
- doc/guides/rel_notes/release_26_11.rst |  1 +
- drivers/net/af_xdp/rte_eth_af_xdp.c    | 99 ++++++++++++++++++++++++++
- 3 files changed, 111 insertions(+)
+> On Wed, Aug 12, 2026 at 01:47:56PM +0000, Morten Br=F8rup wrote:
+> > Added a new high-performance lock-free "pile", using the Stack API.
+> > The pile behaves roughly like a stack, but is not strictly LIFO.
+> >
+> > The pile is optimized for pushing/popping bulks of objects, which
+> > it does significantly faster than the lock-free stack.
+> >
+> > Pushing/popping a number of objects not divisible by the compile time
+> > configurable bulk size is handled gracefully, but not as fast as
+> > complete bulks.
+> >
+> > Performance examples, stack_pile_perf_autotest vs. stack_lf_autotest:
+> >
+> > On a single core, pushing/popping 1 or 8 objects is similar speed.
+> > On a single core, pushing/popping 32 objects is 2x faster.
+> > On a single core, pushing/popping 512 objects is 10x faster.
+> >
+> > On four cores, pushing/popping 1, 8 or 32 objects is slightly faster.
+> > On four cores, pushing/popping 512 objects is 4x faster.
+> >
+> > Signed-off-by: Morten Br=F8rup <mb@smartsharesystems.com>
+> > ---
+> >  app/test/test_stack.c               |  71 +++++-
+> >  app/test/test_stack_perf.c          |  15 +-
+> >  config/rte_config.h                 |   3 +
+> >  doc/guides/prog_guide/stack_lib.rst |  67 +++++-
+> >  lib/mempool/rte_mempool.h           |   2 +-
+> >  lib/stack/meson.build               |   3 +-
+> >  lib/stack/rte_stack.c               |  18 +-
+> >  lib/stack/rte_stack.h               |  79 +++++++
+> >  lib/stack/rte_stack_lf.h            |   1 +
+> >  lib/stack/rte_stack_pile.c          |  35 +++
+> >  lib/stack/rte_stack_pile.h          | 334 ++++++++++++++++++++++++++++
+> >  11 files changed, 609 insertions(+), 19 deletions(-)
+> >  create mode 100644 lib/stack/rte_stack_pile.c
+> >  create mode 100644 lib/stack/rte_stack_pile.h
+> >
+> Looking at this a little closer, and thinking some more, here are some of
+> my further thoughts/ideas on this:
+>=20
+> * For most cases using a mempool, I can't see having non-strict LIFO
+>   behaviour being an issue, and there is nothing in the mempool API that
+>   makes any ordering guarantees about what buffers get given by get/put,
+>   and in fact we can't make any guarantees because of the fact of multipl=
+e
+>   cores doing allocs and frees. Therefore, for the mempool driver, I
+>   believe one pre-emptible implementation is enough, so therefore the pil=
+e
+>   mempool driver should just replace the current LF one.
+> * For apps which may want to use the stack structs directly, not through =
+a
+>   mempool, I can see that having defined ordering behaviour may be
+>   beneficial. However, if multiple cores are involved, then we can never
+>   guarantee ordering, I believe, so I'm not sure its worth trying to
+>   enforce strict LIFO for such cases. [If you need the same elements back
+>   in the correct order from a core, then use a regular stack without shar=
+ing
+>   it].
+> * IF we decide that we really, really want LIFO ordering across multiple
+>   cores - despite the likely random ordering of allocs/frees between thos=
+e
+>   cores, I still think that this implementation should replace the LF
+>   stack. If we reverse the order of elements on enqueue (or dequeue) then
+>   we should be closer to correct LIFO ordering - and fully lifo if allocs
+>   and frees are based on multiples of the burst size.
+>=20
+> I suppose for me the main question to be resolved is - do we have scenari=
+os
+> where we a) have multi-core operation on the stacks and b) absolutely mus=
+t
+> have strict LIFO ordering? In the absense of that, I'd very much be in
+> favour of replacing the existing LF implementation completely with this
+> one.
 
-diff --git a/doc/guides/nics/af_xdp.rst b/doc/guides/nics/af_xdp.rst
-index 94e47a2ab9..d6b3cea533 100644
---- a/doc/guides/nics/af_xdp.rst
-+++ b/doc/guides/nics/af_xdp.rst
-@@ -37,6 +37,9 @@ Prerequisites
-    header is used to determine the kernel version at compile time.
- *  A kernel with version 5.4 or later is required for 32-bit OS.
- *  The busy polling feature requires kernel version >= v5.11.
-+*  The ``read_clock`` feature requires a network interface with PTP
-+   Hardware Clock support (capable of exposing a ``/dev/ptpX`` device via
-+   ethtool ``ETHTOOL_GET_TS_INFO``).
- 
- 
- Options
-@@ -252,6 +255,14 @@ to verify timestamp validity at ``xdp_meta_valid_hint_offset``.
-     hardware filter setting persists on the netdev interface after the DPDK application
-     exits.
- 
-+read_clock
-+----------
-+
-+The PMD supports querying the underlying PTP hardware clock time via
-+``rte_eth_read_clock()``. During device start, the PMD automatically discovers
-+the hardware PHC index via ethtool and opens the PTP character device
-+(``/dev/ptpX``).
-+
- Limitations
- -----------
- 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 1de3db22e9..337a717a89 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -60,6 +60,7 @@ New Features
-   * Added support for Rx metadata hardware timestamping via vdev devargs
-     ``xdp_meta_rx_ts_offset``, ``xdp_meta_valid_hint_offset``, and
-     ``xdp_meta_rx_ts_valid_mask``.
-+  * Added ``read_clock`` operation to query the PTP hardware clock.
- 
- 
- Removed Items
-diff --git a/drivers/net/af_xdp/rte_eth_af_xdp.c b/drivers/net/af_xdp/rte_eth_af_xdp.c
-index e51f40fc1a..3b5acde93c 100644
---- a/drivers/net/af_xdp/rte_eth_af_xdp.c
-+++ b/drivers/net/af_xdp/rte_eth_af_xdp.c
-@@ -5,6 +5,8 @@
- #include <errno.h>
- #include <stdlib.h>
- #include <string.h>
-+#include <fcntl.h>
-+#include <time.h>
- #include <netinet/in.h>
- #include <net/if.h>
- #include <sys/un.h>
-@@ -29,6 +31,7 @@
- #include <dev_driver.h>
- #include <rte_eal.h>
- #include <rte_ether.h>
-+#include <rte_time.h>
- #include <rte_lcore.h>
- #include <rte_log.h>
- #include <rte_memory.h>
-@@ -198,6 +201,7 @@ struct pmd_internals {
- 
- struct pmd_process_private {
- 	int rxq_xsk_fds[RTE_MAX_QUEUES_PER_PORT];
-+	int ptp_fd;
- };
- 
- #define ETH_AF_XDP_IFACE_ARG			"iface"
-@@ -822,10 +826,35 @@ eth_af_xdp_enable_hw_timestamping(const char *if_name)
- 	return 0;
- }
- 
-+static int
-+eth_af_xdp_get_ptp_index(const char *if_name)
-+{
-+	struct ethtool_ts_info info = {0};
-+	struct ifreq ifr = {0};
-+	int fd, ret;
-+
-+	fd = socket(AF_INET, SOCK_DGRAM, 0);
-+	if (fd < 0)
-+		return -1;
-+
-+	ifr.ifr_data = (void *)&info;
-+	info.cmd = ETHTOOL_GET_TS_INFO;
-+	strlcpy(ifr.ifr_name, if_name, IFNAMSIZ);
-+
-+	ret = ioctl(fd, SIOCETHTOOL, &ifr);
-+	close(fd);
-+
-+	if (ret < 0)
-+		return -1;
-+
-+	return info.phc_index;
-+}
-+
- static int
- eth_dev_start(struct rte_eth_dev *dev)
- {
- 	struct pmd_internals *internals = dev->data->dev_private;
-+	struct pmd_process_private *process_private = dev->process_private;
- 	bool rx_timestamp_enabled = false;
- 	uint16_t i;
- 
-@@ -866,6 +895,28 @@ eth_dev_start(struct rte_eth_dev *dev)
- 		}
- 	}
- 
-+	if (process_private != NULL) {
-+		int phc_index = eth_af_xdp_get_ptp_index(internals->if_name);
-+		if (phc_index >= 0) {
-+			char ptp_dev[32];
-+			snprintf(ptp_dev, sizeof(ptp_dev), "/dev/ptp%d", phc_index);
-+			if (process_private->ptp_fd >= 0) {
-+				close(process_private->ptp_fd);
-+				process_private->ptp_fd = -1;
-+			}
-+			process_private->ptp_fd = open(ptp_dev, O_RDONLY);
-+			if (process_private->ptp_fd >= 0) {
-+				AF_XDP_LOG_LINE(INFO,
-+					"Opened PTP device %s for read_clock",
-+					ptp_dev);
-+			} else {
-+				AF_XDP_LOG_LINE(INFO,
-+					"Failed to open PTP device %s for read_clock: %s",
-+					ptp_dev, strerror(errno));
-+			}
-+		}
-+	}
-+
- 	dev->data->dev_link.link_status = RTE_ETH_LINK_UP;
- 	for (i = 0; i < dev->data->nb_rx_queues; i++) {
- 		dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
-@@ -879,6 +930,7 @@ eth_dev_start(struct rte_eth_dev *dev)
- static int
- eth_dev_stop(struct rte_eth_dev *dev)
- {
-+	struct pmd_process_private *process_private = dev->process_private;
- 	uint16_t i;
- 
- 	dev->data->dev_link.link_status = RTE_ETH_LINK_DOWN;
-@@ -887,6 +939,11 @@ eth_dev_stop(struct rte_eth_dev *dev)
- 		dev->data->tx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
- 	}
- 
-+	if (process_private != NULL && process_private->ptp_fd >= 0) {
-+		close(process_private->ptp_fd);
-+		process_private->ptp_fd = -1;
-+	}
-+
- 	return 0;
- }
- 
-@@ -1224,6 +1281,14 @@ eth_dev_close(struct rte_eth_dev *dev)
- 	}
- 
- out:
-+	if (dev->process_private != NULL) {
-+		struct pmd_process_private *process_private = dev->process_private;
-+		if (process_private->ptp_fd >= 0) {
-+			close(process_private->ptp_fd);
-+			process_private->ptp_fd = -1;
-+		}
-+	}
-+
- 	rte_free(dev->process_private);
- 
- 	return 0;
-@@ -2093,6 +2158,35 @@ eth_dev_promiscuous_disable(struct rte_eth_dev *dev)
- 	return eth_dev_change_flags(internals->if_name, 0, ~IFF_PROMISC);
- }
- 
-+/*
-+ * In Linux, dynamic POSIX clock IDs from file descriptors (such as /dev/ptpX)
-+ * are encoded with CLOCKFD (3) in the lower 3 bits and ~fd in the upper bits.
-+ * As this is not defined in user-space UAPI headers, define the macro here.
-+ */
-+#ifndef CLOCKFD
-+#define CLOCKFD 3
-+#endif
-+#ifndef FD_TO_CLOCKID
-+#define FD_TO_CLOCKID(fd)	((clockid_t)(~(unsigned int)(fd) << 3 | CLOCKFD))
-+#endif
-+
-+static int
-+eth_af_xdp_read_clock(struct rte_eth_dev *dev, uint64_t *timestamp)
-+{
-+	struct pmd_process_private *process_private = dev->process_private;
-+	struct timespec ts;
-+
-+	if (process_private == NULL || process_private->ptp_fd < 0)
-+		return -ENOTSUP;
-+
-+	clockid_t clkid = FD_TO_CLOCKID(process_private->ptp_fd);
-+	if (clock_gettime(clkid, &ts) < 0)
-+		return -errno;
-+
-+	*timestamp = rte_timespec_to_ns(&ts);
-+	return 0;
-+}
-+
- static const struct eth_dev_ops ops = {
- 	.dev_start = eth_dev_start,
- 	.dev_stop = eth_dev_stop,
-@@ -2108,6 +2202,7 @@ static const struct eth_dev_ops ops = {
- 	.stats_get = eth_stats_get,
- 	.stats_reset = eth_stats_reset,
- 	.get_monitor_addr = eth_get_monitor_addr,
-+	.read_clock = eth_af_xdp_read_clock,
- };
- 
- /* AF_XDP Device Plugin option works in unprivileged
-@@ -2129,6 +2224,7 @@ static const struct eth_dev_ops ops_afxdp_dp = {
- 	.stats_get = eth_stats_get,
- 	.stats_reset = eth_stats_reset,
- 	.get_monitor_addr = eth_get_monitor_addr,
-+	.read_clock = eth_af_xdp_read_clock,
- };
- 
- /** parse busy_budget argument */
-@@ -2533,6 +2629,7 @@ init_internals(struct rte_vdev_device *dev, const char *if_name,
- 	eth_dev->tx_pkt_burst = eth_af_xdp_tx;
- 	eth_dev->process_private = process_private;
- 
-+	process_private->ptp_fd = -1;
- 	for (i = 0; i < queue_cnt; i++)
- 		process_private->rxq_xsk_fds[i] = -1;
- 
-@@ -2688,6 +2785,8 @@ rte_pmd_af_xdp_probe(struct rte_vdev_device *dev)
- 			return -ENOMEM;
- 		}
- 
-+		((struct pmd_process_private *)eth_dev->process_private)->ptp_fd = -1;
-+
- 		/* Obtain the xsk fds from the primary process. */
- 		if (afxdp_mp_request_fds(name, eth_dev))
- 			return -1;
--- 
-2.55.0.699.gb54405d56f-goog
+I am agree with Bruce - it is probably worth to replace current lfstack imp=
+lementation with this new one,
+as new one is proved to be way much faster.
+One more observation: instead of making RTE_STACK_PILE_BULK_SIZE compile ti=
+me constant,
+why not to make it configurable variable (at lfstack instance creation time=
+)?
+Then in theory we can support current behavior too - user can create a pile=
+ with no bulks,
+and all requests will go via solo code-path.   =20
+That way we'll have good perf improvement, while preserving old-behavior co=
+mpatibility for those
+who needs it.
+Though have to admit, I don't know any off-hand who will need it :)
+
+
+=20
 
