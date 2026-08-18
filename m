@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0205EC5B572
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 02:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2851C5DF74
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 02:16:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D6CE340A6D;
-	Tue, 18 Aug 2026 04:15:40 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id CE14740B95;
+	Tue, 18 Aug 2026 04:15:42 +0200 (CEST)
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id 1B0E940655
- for <dev@dpdk.org>; Tue, 18 Aug 2026 04:15:29 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id BE7AC40696
+ for <dev@dpdk.org>; Tue, 18 Aug 2026 04:15:36 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-05 (Coremail) with SMTP id zQCowADHNUA8wINq+acKBg--.60494S14;
- Tue, 18 Aug 2026 10:15:28 +0800 (CST)
+ by APP-05 (Coremail) with SMTP id zQCowADHNUA8wINq+acKBg--.60494S7;
+ Tue, 18 Aug 2026 10:15:26 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v1 12/13] net/sxe2: clean up structure definitions
-Date: Tue, 18 Aug 2026 10:15:17 +0800
-Message-ID: <20260818021518.2922515-13-liujie5@linkdatatechnology.com>
+Subject: [PATCH v1 05/13] net/sxe2: improve representor device initialization
+Date: Tue, 18 Aug 2026 10:15:10 +0800
+Message-ID: <20260818021518.2922515-6-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260818021518.2922515-1-liujie5@linkdatatechnology.com>
 References: <20260818021518.2922515-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowADHNUA8wINq+acKBg--.60494S14
-X-Coremail-Antispam: 1UD129KBjvJXoWxJw4xZw17Jw1xur18Xw13Arb_yoWrGF4kpF
- Z5W345tF45tr4jgF48Xr4xZryIgw4UC3yUAay3Xw4SyF1ftasrXFyUKr1rCa4rGrWUuw4S
- yrs3tF18Wa4rCrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: zQCowADHNUA8wINq+acKBg--.60494S7
+X-Coremail-Antispam: 1UD129KBjvJXoWxGFWxZFyxuF1fZry8WFyUZFb_yoWrJr18pF
+ 4rJa4YvFWrWFnrWwn7Aay8ur13Kr4rt34jkF1av34SkFW29ry8AF4UJ3Way34FkrWUZ3WS
+ yay2vr1DGa1vv3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUBv14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
  rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
- kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
- z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr
- 1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1U
+ kIc2x26xkF7I0E14v26r4j6ryUM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
+ z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr
+ 1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1U
  M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjx
  v20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1l
  F7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40Ew7xC0wCF04
  k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
  MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vIr4
- 1lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
- IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4
- A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUB89_UUUUU=
+ 1lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
+ IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
+ A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUwqXdUUUUU=
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -59,118 +59,110 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-This commit removes packed attributes and unused reserved fields
-from structure definitions in the sxe2 driver header file.
+This patch enhances the representor device initialization with:
 
-- Remove packed attributes and rsv[2] field from sxe2_tm_res
-  structure
-- Remove packed attributes from sxe2_tm_info structure
-- Remove packed attributes from sxe2_txq_map_info structure
-- Remove packed attributes from sxe2_rxq_map_info structure
-- Remove packed attributes from sxe2_queue_map_info structure
-- Remove packed attributes from sxe2_drv_sfp_req structure
-- Remove packed attributes from sxe2_drv_sfp_resp structure
-- Remove unused rsv[3] field from sxe2_drv_link_info_resp
-  structure
+- Add statistics initialization in sxe2_repr_dev_init
+  * Call sxe2_stats_init to setup statistics infrastructure
+  * Add proper error handling path for stats init failure
+
+- Add representor device naming and NUMA node assignment:
+  * Update device name format to use base device name prefix
+  * Set numa_node from parent device data for proper NUMA locality
+  * Ensures representor devices are allocated on the same NUMA node
+
+- Code style improvements:
+  * Align struct member fields in sxe2_adapter for consistency
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_drv_cmd.h | 30 ++++++++++++++----------------
- 1 file changed, 14 insertions(+), 16 deletions(-)
+ drivers/net/sxe2/sxe2_ethdev.h      | 24 ++++++++++++------------
+ drivers/net/sxe2/sxe2_ethdev_repr.c | 13 +++++++++++--
+ 2 files changed, 23 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/net/sxe2/sxe2_drv_cmd.h b/drivers/net/sxe2/sxe2_drv_cmd.h
-index d332d15980..297bdca820 100644
---- a/drivers/net/sxe2/sxe2_drv_cmd.h
-+++ b/drivers/net/sxe2/sxe2_drv_cmd.h
-@@ -230,7 +230,6 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_drv_vsi_info_get_resp {
- struct __rte_aligned(4) __rte_packed_begin sxe2_drv_link_info_resp {
- 	uint32_t speed;
- 	uint8_t status;
--	uint8_t rsv[3];
- } __rte_packed_end;
+diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
+index cfcb7fcf00..d0a0f41ceb 100644
+--- a/drivers/net/sxe2/sxe2_ethdev.h
++++ b/drivers/net/sxe2/sxe2_ethdev.h
+@@ -314,10 +314,10 @@ struct sxe2_fc_state_ctxt {
+ };
  
- struct __rte_aligned(4) __rte_packed_begin sxe2_switchdev_info {
-@@ -348,18 +347,17 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_rss_hf_req {
- 	uint8_t rsv1[3];
- } __rte_packed_end;
+ struct sxe2_adapter {
+-	struct sxe2_common_device      *cdev;
+-	struct sxe2_dev_info            dev_info;
+-	struct rte_pci_device            *pci_dev;
+-	struct sxe2_repr_private_data  *repr_priv_data;
++	struct sxe2_common_device     *cdev;
++	struct sxe2_dev_info          dev_info;
++	struct rte_pci_device         *pci_dev;
++	struct sxe2_repr_private_data *repr_priv_data;
+ 	struct sxe2_pci_map_context   map_ctxt;
+ 	struct sxe2_irq_context       irq_ctxt;
+ 	struct sxe2_queue_context     q_ctxt;
+@@ -338,16 +338,16 @@ struct sxe2_adapter {
+ 	bool                          rule_started;
+ 	bool                          flow_isolated;
+ 	bool                          flow_isolate_cfg;
+-	uint16_t                           dev_port_id;
++	uint16_t                      dev_port_id;
+ 	bool                          is_dev_repr;
+-	uint64_t                           cap_flags;
++	uint64_t                      cap_flags;
+ 	enum sxe2_dev_type            dev_type;
+-	struct rte_ether_addr           mac_addr;
+-	uint8_t                              port_idx;
+-	uint8_t                              pf_idx;
+-	uint32_t                             tx_mode_flags;
+-	uint32_t                             rx_mode_flags;
+-	uint8_t                              started;
++	struct rte_ether_addr         mac_addr;
++	uint8_t                       port_idx;
++	uint8_t                       pf_idx;
++	uint32_t                      tx_mode_flags;
++	uint32_t                      rx_mode_flags;
++	uint8_t                       started;
+ };
  
--struct __rte_aligned(4) __rte_packed_begin sxe2_tm_res {
-+struct sxe2_tm_res {
- 	uint16_t teid;
--	uint8_t rsv[2];
--} __rte_packed_end;
-+};
+ #define SXE2_DEV_PRIVATE_TO_ADAPTER(dev) \
+diff --git a/drivers/net/sxe2/sxe2_ethdev_repr.c b/drivers/net/sxe2/sxe2_ethdev_repr.c
+index f32318b731..b7096f5927 100644
+--- a/drivers/net/sxe2/sxe2_ethdev_repr.c
++++ b/drivers/net/sxe2/sxe2_ethdev_repr.c
+@@ -483,8 +483,16 @@ int32_t sxe2_repr_dev_init(struct rte_eth_dev *dev,
+ 		goto l_init_sw_err;
+ 	}
  
--struct __rte_aligned(4) __rte_packed_begin sxe2_tm_info {
-+struct sxe2_tm_info {
- 	uint32_t committed;
- 	uint32_t peak;
- 	uint8_t priority;
- 	uint8_t reserve;
- 	uint16_t weight;
--} __rte_packed_end;
-+};
++	ret = sxe2_stats_init(dev);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "Failed to initialize stats, ret=[%d]", ret);
++		goto l_init_irq_ctxt_err;
++	}
++
+ 	goto l_end;
  
- struct __rte_aligned(4) __rte_packed_begin sxe2_tm_add_mid_msg {
- 	uint16_t parent_teid;
-@@ -526,24 +524,24 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_drv_mac_stats_resp {
- 	uint64_t prio_xon_2_xoff[SXE2_MAX_USER_PRIORITY];
- } __rte_packed_end;
++l_init_irq_ctxt_err:
++	sxe2_sw_irq_ctxt_uninit(dev);
+ l_init_sw_err:
+ 	sxe2_eth_uinit(dev);
+ l_init_eth_err:
+@@ -544,8 +552,8 @@ int32_t sxe2_switchdev_repr_devs_init(struct sxe2_adapter *adapter,
+ 	}
  
--struct __rte_aligned(4) __rte_packed_begin sxe2_txq_map_info {
-+struct sxe2_txq_map_info {
- 	uint32_t txq_lan_pkt_cnt;
- 	uint32_t txq_lan_byte_cnt;
--} __rte_packed_end;
-+};
+ 	for (repr_idx = 0; repr_idx < req_eth_da->nb_representor_ports; ++repr_idx) {
+-		snprintf(name, sizeof(name), "sxe2_representor_c%dpf%d%s%u",
+-			 adapter->pf_idx, adapter->pf_idx,
++		snprintf(name, sizeof(name), "%s_representor_%s%u",
++			 adapter->cdev->dev->name,
+ 			 "vf",
+ 			 req_eth_da->representor_ports[repr_idx]);
  
--struct __rte_aligned(4) __rte_packed_begin sxe2_rxq_map_info {
-+struct sxe2_rxq_map_info {
- 	uint64_t rxq_lan_in_pkt_cnt;
- 	uint64_t rxq_lan_in_byte_cnt;
- 	uint64_t rxq_fd_in_pkt_cnt;
- 	uint64_t rxq_mng_in_pkt_cnt;
- 	uint64_t rxq_mng_in_byte_cnt;
- 	uint64_t rxq_mng_out_pkt_cnt;
--} __rte_packed_end;
-+};
- 
--struct __rte_aligned(4) __rte_packed_begin sxe2_queue_map_info {
-+struct sxe2_queue_map_info {
- 	struct sxe2_rxq_map_info rxq_stats_map_info[SXE2_RXQ_STATS_MAP_MAX_NUM];
- 	struct sxe2_txq_map_info txq_stats_map_info[SXE2_TXQ_STATS_MAP_MAX_NUM];
--} __rte_packed_end;
-+};
- 
- struct __rte_aligned(4) __rte_packed_begin sxe2_drv_rx_map_req {
- 	uint16_t queue_id;
-@@ -633,7 +631,7 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_drv_udp_tunnel_resp {
- 	uint8_t rsv;
- } __rte_packed_end;
- 
--struct __rte_aligned(4) __rte_packed_begin sxe2_drv_sfp_req {
-+struct sxe2_drv_sfp_req {
- 	uint8_t is_wr;
- 	uint8_t is_qsfp;
- 	uint16_t bus_addr;
-@@ -642,14 +640,14 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_drv_sfp_req {
- 	uint16_t data_len;
- 	uint16_t rvd;
- 	uint8_t data[];
--} __rte_packed_end;
-+};
- 
--struct __rte_aligned(4) __rte_packed_begin sxe2_drv_sfp_resp {
-+struct sxe2_drv_sfp_resp {
- 	uint8_t is_wr;
- 	uint8_t is_qsfp;
- 	uint16_t data_len;
- 	uint8_t data[];
--} __rte_packed_end;
-+};
- 
- enum sxe2_fc_type {
- 	SXE2_FC_T_DIS = 0,
+@@ -554,6 +562,7 @@ int32_t sxe2_switchdev_repr_devs_init(struct sxe2_adapter *adapter,
+ 			ret = -ENOMEM;
+ 			goto l_release_port;
+ 		}
++		eth_dev->data->numa_node = adapter->dev_info.dev_data->numa_node;
+ 		eth_dev->data->dev_private = rte_zmalloc_socket(name,
+ 			sizeof(struct sxe2_adapter),
+ 			RTE_CACHE_LINE_SIZE,
 -- 
 2.52.0
 
