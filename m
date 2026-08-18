@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E91C5DF7D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 13:36:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE450C5DF7D
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 13:37:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7160440E5E;
-	Tue, 18 Aug 2026 15:34:18 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C9C5740693;
+	Tue, 18 Aug 2026 15:34:19 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id 0D67840E17
- for <dev@dpdk.org>; Tue, 18 Aug 2026 15:34:10 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 8361C40E34
+ for <dev@dpdk.org>; Tue, 18 Aug 2026 15:34:12 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1787060052; x=1818596052;
+ t=1787060053; x=1818596053;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=i/+4gmmw9TeziSPo+O/WgPrZ/Jl0yzz2wcN7GPv2O0U=;
- b=NKEKk8YB0SWuaOG5MgjoXLWl7wkvoyKwEzdl+KqevI53Bw1IWV+q3P3l
- osCkgg+OHifdeQlNQ/meY/D7tmjubQkQnle7b4jLvmt96I1yF9k6U25fm
- iQixmgGSCbjzcPfVMyzPYJQlrdz2hLcWwfxDusW0YtxUBv1z0ziQLOBIH
- 3hLiUpKOsPjH8594cIHzRZUeM4R+bS9A/BC07YjRaFHbLEHemb7VY9HKR
- ifNml++Cjhcv9vMRW7Z6Tm72nJz49c/pBsfOJlZ+cxDgdOH3QiW5wLKU1
- GIgRkD2906yemEIr574hZeGxtgC2Q9N3dHxuC71bugn9tbf6AQN5R70Wd A==;
-X-CSE-ConnectionGUID: NE0igmx0TW6vCDvZTLJ/hg==
-X-CSE-MsgGUID: SIdsof0qTaG7hoGhILvfLg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11878"; a="87757673"
-X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="87757673"
+ bh=0w+GS6LlRf+CYsy3Bf6FNaerxOLrsxQKqd/SvlypD2k=;
+ b=PZqDd1XPE1+dKIEjtFgYdjKPPxG8rjDMo6MP/jOmoKkrqL7CP2o4VqGX
+ 1/tnMrd5b6D7/MBnBqXIaugf4M5JVoz6VwqSFfEAGXQlFaDK3eUzAx7AX
+ nDGrYdAI8w1z6vlS08V2PHCvJ9o2/vuTHqAuI88fy6M0F0SduGFO91a5g
+ MevMs5a5f2+Lobi3Wps1DNJqjMU7BctneBheYQ0tiZm2/3PatmCAKFVOv
+ eiwBP8JT8fWf6N3gs6NOCycN4ZVLXGYlTPEChPi2b36eTeR34bhrDQTNt
+ 8XIMkxLyc1iPK1c8L6LKj+fE2c7wHquJtwIhhuSU/uEC0Lv6wi3wdQ7nG w==;
+X-CSE-ConnectionGUID: 3MVl8AQ6SEi2JuM0D7m+kg==
+X-CSE-MsgGUID: DXJAH8wGRtuk8bM89XPTqg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11878"; a="87757675"
+X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="87757675"
 Received: from fmviesa002.fm.intel.com ([10.60.135.142])
  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Aug 2026 06:34:11 -0700
-X-CSE-ConnectionGUID: jtvKmhtxR++M0l3gbEOVvw==
-X-CSE-MsgGUID: EEkNMiK1QKSFY2YPaSgR3Q==
+ 18 Aug 2026 06:34:12 -0700
+X-CSE-ConnectionGUID: ZatUySHfRzKaijLugAPcVg==
+X-CSE-MsgGUID: VnK/fa+8SMCnMyUgsPYydQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="288736754"
+X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="288736758"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa002.fm.intel.com with ESMTP; 18 Aug 2026 06:34:09 -0700
+ by fmviesa002.fm.intel.com with ESMTP; 18 Aug 2026 06:34:10 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v2 28/39] eal: simplify internal driver path iteration APIs
-Date: Tue, 18 Aug 2026 14:33:21 +0100
-Message-ID: <20260818133334.2620165-29-bruce.richardson@intel.com>
+Subject: [PATCH v2 29/39] eal: move trace config into user config struct
+Date: Tue, 18 Aug 2026 14:33:22 +0100
+Message-ID: <20260818133334.2620165-30-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260818133334.2620165-1-bruce.richardson@intel.com>
 References: <20260429165845.2136843-1-bruce.richardson@intel.com>
@@ -60,204 +60,486 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The APIs for counting and iterating the driver paths originally iterated
-the mixed list of both user-provided paths and loaded .so paths.
-However, in practice only the user-provided paths were ever queried.
+The trace settings (pattern list, directory, buffer size, mode) were
+previously stored directly in the internal struct trace singleton during
+arg parsing, via helper functions. Move these setting into eal_user_cfg
+and drop the helper functions.
 
-Since supporting both types of iteration is duplicating the work in code
-(because we now have two different lists of different types to iterate)
-just drop the unused iteration support and update the API to only
-iterate the user-provided list. This simplifies the API (dropping a
-parameter), the implementation (removing iteration of the runtime_cfg
-list), and has no ABI impacts since the APIs are explicitly marked as
-internal. The iteration macro is updated to match the APIs too.
+NOTE: after these changes, eal_cleanup_config needs a non-const user
+config pointer to cleanup. Rather than making the pointer in
+rte_eal_cleanup non-const, make eal_cleanup_config like all the other
+functions in the cleanup chain in taking no parameters. Then it can
+define its own non-const user config pointer internally.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- app/test/process.h                  |  4 +-
- lib/eal/common/eal_common_options.c | 60 ++++++++---------------------
- lib/eal/include/rte_eal.h           | 35 ++++++-----------
- 3 files changed, 31 insertions(+), 68 deletions(-)
+ lib/eal/common/eal_common_options.c     |  53 ++++++++++--
+ lib/eal/common/eal_common_trace.c       |  30 +++++--
+ lib/eal/common/eal_common_trace_utils.c | 104 ------------------------
+ lib/eal/common/eal_internal_cfg.h       |  15 ++++
+ lib/eal/common/eal_options.h            |   2 +-
+ lib/eal/common/eal_trace.h              |  11 ---
+ lib/eal/freebsd/eal.c                   |   3 +-
+ lib/eal/linux/eal.c                     |   2 +-
+ lib/eal/windows/eal.c                   |   4 +-
+ 9 files changed, 87 insertions(+), 137 deletions(-)
 
-diff --git a/app/test/process.h b/app/test/process.h
-index 3ee899dbc8..c34c81d443 100644
---- a/app/test/process.h
-+++ b/app/test/process.h
-@@ -62,7 +62,7 @@ add_parameter_driver_path(char **argv, int max_capacity)
- 	const char *driver_path;
- 	int count = 0;
- 
--	RTE_EAL_DRIVER_PATH_FOREACH(driver_path, true) {
-+	RTE_EAL_DRIVER_PATH_FOREACH(driver_path) {
- 		if (asprintf(&argv[count], PREFIX_DRIVER_PATH"%s", driver_path) < 0)
- 			break;
- 
-@@ -100,7 +100,7 @@ process_dup(const char *const argv[], int numargs, const char *env_value)
- 		return -1;
- 	else if (pid == 0) {
- 		allow_num = rte_devargs_type_count(RTE_DEVTYPE_ALLOWED);
--		driver_path_num = rte_eal_driver_path_count(true);
-+		driver_path_num = rte_eal_driver_path_count();
- 		argv_num = numargs + allow_num + driver_path_num + 1;
- 		argv_cpy = calloc(argv_num, sizeof(char *));
- 		if (!argv_cpy)
 diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
-index 435a8ae9d6..06c919eeca 100644
+index 06c919eeca..132aca1557 100644
 --- a/lib/eal/common/eal_common_options.c
 +++ b/lib/eal/common/eal_common_options.c
-@@ -797,62 +797,36 @@ eal_plugins_init(void)
+@@ -14,6 +14,7 @@
+ #include <sys/queue.h>
+ #ifndef RTE_EXEC_ENV_WINDOWS
+ #include <dlfcn.h>
++#include <fnmatch.h>
+ #include <libgen.h>
+ #endif
+ #include <sys/stat.h>
+@@ -491,6 +492,7 @@ eal_reset_internal_config(void)
  
- RTE_EXPORT_INTERNAL_SYMBOL(rte_eal_driver_path_next)
- const char *
--rte_eal_driver_path_next(const char *start, bool cmdline_only)
-+rte_eal_driver_path_next(const char *start)
- {
--	if (cmdline_only) {
--		const struct eal_user_cfg *user_cfg = eal_get_user_configuration();
--		struct eal_plugin_path *p;
-+	const struct eal_user_cfg *user_cfg = eal_get_user_configuration();
-+	struct eal_plugin_path *p;
- 
--		if (start == NULL) {
--			p = TAILQ_FIRST(&user_cfg->plugin_list);
--		} else {
--			TAILQ_FOREACH(p, &user_cfg->plugin_list, next) {
--				if (start == p->name) {
--					p = TAILQ_NEXT(p, next);
--					break;
--				}
--			}
--			if (p == NULL)
--				return NULL;
--		}
--		return p ? p->name : NULL;
-+	if (start == NULL) {
-+		p = TAILQ_FIRST(&user_cfg->plugin_list);
- 	} else {
--		const struct eal_runtime_state *runtime_state = eal_get_runtime_state();
--		struct shared_driver *solib;
--
--		if (start == NULL) {
--			solib = TAILQ_FIRST(&runtime_state->loaded_plugins);
--		} else {
--			TAILQ_FOREACH(solib, &runtime_state->loaded_plugins, next) {
--				if (start == solib->name) {
--					solib = TAILQ_NEXT(solib, next);
--					break;
--				}
-+		TAILQ_FOREACH(p, &user_cfg->plugin_list, next) {
-+			if (start == p->name) {
-+				p = TAILQ_NEXT(p, next);
-+				break;
- 			}
--			if (solib == NULL)
--				return NULL;
+ 	TAILQ_INIT(&user_cfg->devopt_list);
+ 	TAILQ_INIT(&user_cfg->plugin_list);
++	STAILQ_INIT(&user_cfg->trace_patterns);
+ 	TAILQ_INIT(&runtime_state->loaded_plugins);
+ 	user_cfg->memory = 0;
+ 	user_cfg->force_nrank = 0;
+@@ -2321,28 +2323,56 @@ eal_parse_args(void)
+ 		EAL_LOG(WARNING, "Tracing is not supported on Windows, ignoring tracing parameters");
+ #else
+ 	TAILQ_FOREACH(arg, &args.trace, next) {
+-		if (eal_trace_args_save(arg->arg) < 0) {
+-			EAL_LOG(ERR, "invalid trace parameter, '%s'", arg->arg);
++		struct eal_trace_arg *ta = malloc(sizeof(*ta));
++		if (ta == NULL) {
++			EAL_LOG(ERR, "failed to allocate trace arg for '%s'", arg->arg);
+ 			return -1;
  		}
--		return solib ? solib->name : NULL;
-+		if (p == NULL)
-+			return NULL;
++		ta->val = strdup(arg->arg);
++		if (ta->val == NULL) {
++			EAL_LOG(ERR, "failed to allocate trace arg for '%s'", arg->arg);
++			free(ta);
++			return -1;
++		}
++		STAILQ_INSERT_TAIL(&user_cfg->trace_patterns, ta, next);
  	}
-+	return p ? p->name : NULL;
+ 	if (args.trace_dir != NULL) {
+-		if (eal_trace_dir_args_save(args.trace_dir) < 0) {
++		if (asprintf(&user_cfg->trace_dir, "%s/", args.trace_dir) == -1) {
+ 			EAL_LOG(ERR, "invalid trace directory, '%s'", args.trace_dir);
+ 			return -1;
+ 		}
+ 	}
+ 	if (args.trace_bufsz != NULL) {
+-		if (eal_trace_bufsz_args_save(args.trace_bufsz) < 0) {
++		uint64_t bufsz = rte_str_to_size(args.trace_bufsz);
++		if (bufsz == 0) {
+ 			EAL_LOG(ERR, "invalid trace buffer size, '%s'", args.trace_bufsz);
+ 			return -1;
+ 		}
++		user_cfg->trace_bufsz = bufsz;
+ 	}
+ 	if (args.trace_mode != NULL) {
+-		if (eal_trace_mode_args_save(args.trace_mode) < 0) {
++		size_t len = strlen(args.trace_mode);
++		char *pattern;
++		if (len == 0) {
++			EAL_LOG(ERR, "trace mode value is empty");
++			return -1;
++		}
++		pattern = calloc(1, len + 2);
++		if (pattern == NULL) {
++			EAL_LOG(ERR, "failed to allocate memory for trace mode");
++			return -1;
++		}
++		sprintf(pattern, "%s*", args.trace_mode);
++		if (fnmatch(pattern, "overwrite", 0) == 0)
++			user_cfg->trace_mode = RTE_TRACE_MODE_OVERWRITE;
++		else if (fnmatch(pattern, "discard", 0) == 0)
++			user_cfg->trace_mode = RTE_TRACE_MODE_DISCARD;
++		else {
+ 			EAL_LOG(ERR, "invalid trace mode, '%s'", args.trace_mode);
++			free(pattern);
+ 			return -1;
+ 		}
++		free(pattern);
+ 	}
+ #endif
+ 
+@@ -2461,8 +2491,19 @@ compute_ctrl_threads_cpuset(void)
  }
  
- RTE_EXPORT_INTERNAL_SYMBOL(rte_eal_driver_path_count)
- unsigned int
--rte_eal_driver_path_count(bool cmdline_only)
-+rte_eal_driver_path_count(void)
+ int
+-eal_cleanup_config(const struct eal_user_cfg *user_cfg)
++eal_cleanup_config(void)
  {
++	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
++	struct eal_trace_arg *ta;
++
++	/* free trace patterns list */
++	while (!STAILQ_EMPTY(&user_cfg->trace_patterns)) {
++		ta = STAILQ_FIRST(&user_cfg->trace_patterns);
++		STAILQ_REMOVE_HEAD(&user_cfg->trace_patterns, next);
++		free(ta->val);
++		free(ta);
++	}
++	free(user_cfg->trace_dir);
+ 	free(user_cfg->hugefile_prefix);
+ 	free(user_cfg->hugepage_dir);
+ 	free(user_cfg->user_mbuf_pool_ops_name);
+diff --git a/lib/eal/common/eal_common_trace.c b/lib/eal/common/eal_common_trace.c
+index a76dff0017..3d984ac8b1 100644
+--- a/lib/eal/common/eal_common_trace.c
++++ b/lib/eal/common/eal_common_trace.c
+@@ -24,7 +24,7 @@ RTE_DEFINE_PER_LCORE(void *, trace_mem);
+ static RTE_DEFINE_PER_LCORE(char *, ctf_field);
+ 
+ static struct trace_point_head tp_list = STAILQ_HEAD_INITIALIZER(tp_list);
+-static struct trace trace = { .args = STAILQ_HEAD_INITIALIZER(trace.args), };
++static struct trace trace;
+ 
+ struct trace *
+ trace_obj_get(void)
+@@ -41,7 +41,8 @@ trace_list_head_get(void)
+ int
+ eal_trace_init(void)
+ {
+-	struct trace_arg *arg;
 +	const struct eal_user_cfg *user_cfg = eal_get_user_configuration();
-+	struct eal_plugin_path *p;
- 	unsigned int count = 0;
++	const struct eal_trace_arg *arg;
  
--	if (cmdline_only) {
--		const struct eal_user_cfg *user_cfg = eal_get_user_configuration();
--		struct eal_plugin_path *p;
--		TAILQ_FOREACH(p, &user_cfg->plugin_list, next)
--			count++;
--	} else {
--		const struct eal_runtime_state *runtime_state = eal_get_runtime_state();
--		struct shared_driver *solib;
--		TAILQ_FOREACH(solib, &runtime_state->loaded_plugins, next)
--			count++;
--	}
-+	TAILQ_FOREACH(p, &user_cfg->plugin_list, next)
-+		count++;
+ 	/* Trace memory should start with 8B aligned for natural alignment */
+ 	RTE_BUILD_BUG_ON((offsetof(struct __rte_trace_header, mem) % 8) != 0);
+@@ -58,14 +59,24 @@ eal_trace_init(void)
+ 	if (trace_has_duplicate_entry())
+ 		goto fail;
  
- 	return count;
++	/* Copy trace directory from user config (trace.dir may be reallocated later) */
++	if (user_cfg->trace_dir != NULL) {
++		trace.dir = strdup(user_cfg->trace_dir);
++		if (trace.dir == NULL) {
++			rte_errno = ENOMEM;
++			goto fail;
++		}
++	}
++
++	/* Apply buffer size from user config, then fill in default if still 0 */
++	trace.buff_len = user_cfg->trace_bufsz;
++	trace_bufsz_args_apply();
++
+ 	/* Generate UUID ver 4 with total size of events and number of
+ 	 * events
+ 	 */
+ 	trace_uuid_generate();
+ 
+-	/* Apply buffer size configuration for trace output */
+-	trace_bufsz_args_apply();
+-
+ 	/* Generate CTF TDSL metadata */
+ 	if (trace_metadata_create() < 0)
+ 		goto fail;
+@@ -74,11 +85,11 @@ eal_trace_init(void)
+ 	if (trace_epoch_time_save() < 0)
+ 		goto free_meta;
+ 
+-	/* Apply global configurations */
+-	STAILQ_FOREACH(arg, &trace.args, next)
++	/* Apply trace pattern filters from user config */
++	STAILQ_FOREACH(arg, &user_cfg->trace_patterns, next)
+ 		trace_args_apply(arg->val);
+ 
+-	rte_trace_mode_set(trace.mode);
++	rte_trace_mode_set(user_cfg->trace_mode);
+ 
+ 	return 0;
+ 
+@@ -94,7 +105,8 @@ eal_trace_fini(void)
+ {
+ 	trace_mem_free();
+ 	trace_metadata_destroy();
+-	eal_trace_args_free();
++	free(trace.dir);
++	trace.dir = NULL;
  }
-diff --git a/lib/eal/include/rte_eal.h b/lib/eal/include/rte_eal.h
-index 7241f3be5d..6711ee4440 100644
---- a/lib/eal/include/rte_eal.h
-+++ b/lib/eal/include/rte_eal.h
-@@ -493,57 +493,46 @@ rte_eal_get_runtime_dir(void);
  
- /**
-  * @internal
-- * Iterate to the next driver path.
-+ * Iterate to the next user-provided driver path.
-  *
-- * This function iterates through the list of dynamically loaded drivers,
-- * or driver paths that were specified via -d or --driver-path command-line
-- * options during EAL initialization.
-+ * This function iterates through the driver paths that were specified
-+ * via -d or --driver-path command-line options during EAL initialization.
-  *
-  * @param start
-  *   Starting iteration point. The iteration will start at the first driver path if NULL.
-- * @param cmdline_only
-- *   If true, only iterate paths from command line (-d flags).
-- *   If false, iterate all paths including those expanded from directories.
-  *
-  * @return
-  *   Next driver path string, NULL if there is none.
+ RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_trace_is_enabled, 20.05)
+diff --git a/lib/eal/common/eal_common_trace_utils.c b/lib/eal/common/eal_common_trace_utils.c
+index e1996433b7..821036b4bb 100644
+--- a/lib/eal/common/eal_common_trace_utils.c
++++ b/lib/eal/common/eal_common_trace_utils.c
+@@ -2,7 +2,6 @@
+  * Copyright(C) 2020 Marvell International Ltd.
   */
- __rte_internal
- const char *
--rte_eal_driver_path_next(const char *start, bool cmdline_only);
-+rte_eal_driver_path_next(const char *start);
  
+-#include <fnmatch.h>
+ #include <pwd.h>
+ #include <sys/stat.h>
+ #include <time.h>
+@@ -132,42 +131,6 @@ trace_dir_update(const char *str)
+ 	return rc;
+ }
+ 
+-int
+-eal_trace_args_save(const char *val)
+-{
+-	struct trace *trace = trace_obj_get();
+-	struct trace_arg *arg = malloc(sizeof(*arg));
+-
+-	if (arg == NULL) {
+-		trace_err("failed to allocate memory for %s", val);
+-		return -ENOMEM;
+-	}
+-
+-	arg->val = strdup(val);
+-	if (arg->val == NULL) {
+-		trace_err("failed to allocate memory for %s", val);
+-		free(arg);
+-		return -ENOMEM;
+-	}
+-
+-	STAILQ_INSERT_TAIL(&trace->args, arg, next);
+-	return 0;
+-}
+-
+-void
+-eal_trace_args_free(void)
+-{
+-	struct trace *trace = trace_obj_get();
+-	struct trace_arg *arg;
+-
+-	while (!STAILQ_EMPTY(&trace->args)) {
+-		arg = STAILQ_FIRST(&trace->args);
+-		STAILQ_REMOVE_HEAD(&trace->args, next);
+-		free(arg->val);
+-		free(arg);
+-	}
+-}
+-
+ int
+ trace_args_apply(const char *arg)
+ {
+@@ -179,22 +142,6 @@ trace_args_apply(const char *arg)
+ 	return 0;
+ }
+ 
+-int
+-eal_trace_bufsz_args_save(char const *val)
+-{
+-	struct trace *trace = trace_obj_get();
+-	uint64_t bufsz;
+-
+-	bufsz = rte_str_to_size(val);
+-	if (bufsz == 0) {
+-		trace_err("buffer size cannot be zero");
+-		return -EINVAL;
+-	}
+-
+-	trace->buff_len = bufsz;
+-	return 0;
+-}
+-
+ void
+ trace_bufsz_args_apply(void)
+ {
+@@ -204,57 +151,6 @@ trace_bufsz_args_apply(void)
+ 		trace->buff_len = 1024 * 1024; /* 1MB */
+ }
+ 
+-int
+-eal_trace_mode_args_save(const char *val)
+-{
+-	struct trace *trace = trace_obj_get();
+-	size_t len = strlen(val);
+-	unsigned long tmp;
+-	char *pattern;
+-
+-	if (len == 0) {
+-		trace_err("value is not provided with option");
+-		return -EINVAL;
+-	}
+-
+-	pattern = (char *)calloc(1, len + 2);
+-	if (pattern == NULL) {
+-		trace_err("fail to allocate memory");
+-		return -ENOMEM;
+-	}
+-
+-	sprintf(pattern, "%s*", val);
+-
+-	if (fnmatch(pattern, "overwrite", 0) == 0)
+-		tmp = RTE_TRACE_MODE_OVERWRITE;
+-	else if (fnmatch(pattern, "discard", 0) == 0)
+-		tmp = RTE_TRACE_MODE_DISCARD;
+-	else {
+-		free(pattern);
+-		return -EINVAL;
+-	}
+-
+-	trace->mode = tmp;
+-	free(pattern);
+-	return 0;
+-}
+-
+-int
+-eal_trace_dir_args_save(char const *val)
+-{
+-	char *dir_path;
+-	int rc;
+-
+-	if (asprintf(&dir_path, "%s/", val) == -1) {
+-		trace_err("failed to copy directory: %s", strerror(errno));
+-		return -ENOMEM;
+-	}
+-
+-	rc = trace_dir_update(dir_path);
+-	free(dir_path);
+-	return rc;
+-}
+-
+ int
+ trace_epoch_time_save(void)
+ {
+diff --git a/lib/eal/common/eal_internal_cfg.h b/lib/eal/common/eal_internal_cfg.h
+index 9e3797fc86..b8699f4804 100644
+--- a/lib/eal/common/eal_internal_cfg.h
++++ b/lib/eal/common/eal_internal_cfg.h
+@@ -16,6 +16,7 @@
+ #include <rte_eal.h>
+ #include <rte_os_shim.h>
+ #include <rte_pci_dev_feature_defs.h>
++#include <rte_trace.h>
+ #include <stdint.h>
+ #include <stdbool.h>
+ 
+@@ -58,6 +59,16 @@ struct hugepage_file_discipline {
+ 	bool unlink_existing;
+ };
+ 
++/**
++ * A saved trace pattern string from --trace, staged during arg parsing.
++ * Lives in user_cfg->trace_patterns; applied during eal_trace_init().
++ */
++struct eal_trace_arg {
++	STAILQ_ENTRY(eal_trace_arg) next;
++	char *val;
++};
++STAILQ_HEAD(eal_trace_arg_list, eal_trace_arg);
++
  /**
-  * @internal
-- * Iterate over all driver paths.
-+ * Iterate over all user-provided driver paths.
-  *
-  * This macro provides a convenient way to iterate through all driver paths
-- * that were loaded via -d flags during EAL initialization.
-+ * that were specified via -d flags during EAL initialization.
-  *
-  * @param path
-  *   Iterator variable of type const char *
-- * @param cmdline_only
-- *   If true, only iterate paths from command line (-d flags).
-- *   If false, iterate all paths including those expanded from directories.
-  */
--#define RTE_EAL_DRIVER_PATH_FOREACH(path, cmdline_only) \
--	for (path = rte_eal_driver_path_next(NULL, cmdline_only); \
-+#define RTE_EAL_DRIVER_PATH_FOREACH(path) \
-+	for (path = rte_eal_driver_path_next(NULL); \
- 	     path != NULL; \
--	     path = rte_eal_driver_path_next(path, cmdline_only))
-+	     path = rte_eal_driver_path_next(path))
+  * A plugin path provided by the user via -d, staged during arg parsing.
+  * Lives in user_cfg->plugin_list; consumed by eal_plugins_init().
+@@ -86,6 +97,10 @@ TAILQ_HEAD(eal_devopt_list, device_option);
+ struct eal_user_cfg {
+ 	struct eal_devopt_list devopt_list; /**< staged device options (-a/-b/--vdev) */
+ 	struct eal_plugin_path_list plugin_list; /**< user-provided plugin paths (-d) */
++	struct eal_trace_arg_list trace_patterns; /**< saved --trace patterns */
++	char *trace_dir;        /**< trace output directory (NULL = use default) */
++	uint64_t trace_bufsz;   /**< trace buffer size in bytes (0 = use default 1 MB) */
++	enum rte_trace_mode trace_mode; /**< trace mode (default RTE_TRACE_MODE_OVERWRITE) */
+ 	size_t memory;           /**< amount of asked memory */
+ 	size_t huge_worker_stack_size; /**< worker thread stack size */
+ 	enum rte_proc_type_t process_type; /**< requested process type */
+diff --git a/lib/eal/common/eal_options.h b/lib/eal/common/eal_options.h
+index eee7339e90..1ff9291170 100644
+--- a/lib/eal/common/eal_options.h
++++ b/lib/eal/common/eal_options.h
+@@ -15,7 +15,7 @@ int eal_parse_args(void);
+ int eal_option_device_parse(void);
+ int eal_apply_hugepage_mem_sz_limits(void);
+ int eal_apply_runtime_state(void);
+-int eal_cleanup_config(const struct eal_user_cfg *user_cfg);
++int eal_cleanup_config(void);
+ enum rte_proc_type_t eal_proc_type_detect(void);
+ int eal_plugins_init(void);
+ int eal_save_args(int argc, char **argv);
+diff --git a/lib/eal/common/eal_trace.h b/lib/eal/common/eal_trace.h
+index 55262677e0..c7ef7d12f7 100644
+--- a/lib/eal/common/eal_trace.h
++++ b/lib/eal/common/eal_trace.h
+@@ -42,11 +42,6 @@ struct thread_mem_meta {
+ 	enum trace_area_e area;
+ };
  
- /**
-  * @internal
-- * Get count of driver paths.
-- *
-- * @param cmdline_only
-- *   If true, only count paths from command line (-d flags).
-- *   If false, count all paths including those expanded from directories.
-+ * Get count of user-provided driver paths.
-  *
-  * @return
-- *   Number of driver paths.
-+ *   Number of driver paths specified via -d flags during EAL initialization.
-  */
- __rte_internal
- unsigned int
--rte_eal_driver_path_count(bool cmdline_only);
-+rte_eal_driver_path_count(void);
+-struct trace_arg {
+-	STAILQ_ENTRY(trace_arg) next;
+-	char *val;
+-};
+-
+ struct trace {
+ 	char *dir;
+ 	int register_errno;
+@@ -54,7 +49,6 @@ struct trace {
+ 	enum rte_trace_mode mode;
+ 	rte_uuid_t uuid;
+ 	uint32_t buff_len;
+-	STAILQ_HEAD(, trace_arg) args;
+ 	uint32_t nb_trace_points;
+ 	uint32_t nb_trace_mem_list;
+ 	struct thread_mem_meta *lcore_meta;
+@@ -107,10 +101,5 @@ void trace_mem_per_thread_free(void);
+ /* EAL interface */
+ int eal_trace_init(void);
+ void eal_trace_fini(void);
+-int eal_trace_args_save(const char *val);
+-void eal_trace_args_free(void);
+-int eal_trace_dir_args_save(const char *val);
+-int eal_trace_mode_args_save(const char *val);
+-int eal_trace_bufsz_args_save(const char *val);
  
- #ifdef __cplusplus
+ #endif /* __EAL_TRACE_H */
+diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
+index cf13b33811..9a976e2333 100644
+--- a/lib/eal/freebsd/eal.c
++++ b/lib/eal/freebsd/eal.c
+@@ -768,7 +768,6 @@ rte_eal_cleanup(void)
+ 		return -1;
+ 	}
+ 
+-	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
+ 	rte_service_finalize();
+ 	eal_bus_cleanup();
+ 	rte_mp_channel_cleanup();
+@@ -777,7 +776,7 @@ rte_eal_cleanup(void)
+ 	eal_trace_fini();
+ 	/* after this point, any DPDK pointers will become dangling */
+ 	rte_eal_memory_detach();
+-	eal_cleanup_config(user_cfg);
++	eal_cleanup_config();
+ 	eal_lcore_var_cleanup();
+ 	return 0;
+ }
+diff --git a/lib/eal/linux/eal.c b/lib/eal/linux/eal.c
+index 8fc547172c..c1869dde2d 100644
+--- a/lib/eal/linux/eal.c
++++ b/lib/eal/linux/eal.c
+@@ -980,7 +980,7 @@ rte_eal_cleanup(void)
+ 	/* after this point, any DPDK pointers will become dangling */
+ 	rte_eal_memory_detach();
+ 	rte_eal_malloc_heap_cleanup();
+-	eal_cleanup_config(user_cfg);
++	eal_cleanup_config();
+ 	eal_lcore_var_cleanup();
+ 	rte_eal_log_cleanup();
+ 	return 0;
+diff --git a/lib/eal/windows/eal.c b/lib/eal/windows/eal.c
+index 6220ce00a0..734ad02c6a 100644
+--- a/lib/eal/windows/eal.c
++++ b/lib/eal/windows/eal.c
+@@ -136,14 +136,12 @@ RTE_EXPORT_SYMBOL(rte_eal_cleanup)
+ int
+ rte_eal_cleanup(void)
+ {
+-	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
+-
+ 	eal_intr_thread_cancel();
+ 	eal_mem_virt2iova_cleanup();
+ 	eal_bus_cleanup();
+ 	/* after this point, any DPDK pointers will become dangling */
+ 	rte_eal_memory_detach();
+-	eal_cleanup_config(user_cfg);
++	eal_cleanup_config();
+ 	eal_lcore_var_cleanup();
+ 	return 0;
  }
 -- 
 2.53.0
