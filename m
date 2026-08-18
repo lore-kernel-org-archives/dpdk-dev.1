@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5A43C5DF74
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 04:58:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86AD8C5DF67
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 04:58:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0598D4064A;
-	Tue, 18 Aug 2026 06:58:38 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1E2164065A;
+	Tue, 18 Aug 2026 06:58:41 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
- by mails.dpdk.org (Postfix) with ESMTP id B8A8140613
- for <dev@dpdk.org>; Tue, 18 Aug 2026 06:58:34 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 81BEF4028E
+ for <dev@dpdk.org>; Tue, 18 Aug 2026 06:58:37 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1787029115; x=1818565115;
+ t=1787029118; x=1818565118;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=K22L/wJbRbyfxd7YUZqcNZ8sxjfF/R/B6hZLwQ82F6s=;
- b=SAPBVV9Lnm6yvjCJ4ON3ZMX3aQyJy1ULMB8jxZSSOrmPql1ybMeRPids
- EPw4bSyJJqG2eIl4rfYHTihUl6/KQbYwGU84YS+ToG3InrHeQY7Qmwv6m
- BpU4eYq4MywMry/XAgdiar0h7XZQoKxENKrU5c9y8ZMzI3WGr0j0dSdrx
- ib0MMtBIToxtELQDznD0yaw45cfUpd4HJ8CgDuVkH0LUMq6StumeXolhy
- ZZltuXBYC+hl0743mcGvrxJAb9odDhlmp1Drh2YeYb4lPJIIwFE6x38VY
- Be7EQh0swZDRxjtfOyRQmC4XlVrv3xuu6lMp+vLK5lJPljvhK/1rmD9il A==;
-X-CSE-ConnectionGUID: lH/IrUV9TT2p2vNzsSQC0g==
-X-CSE-MsgGUID: 1FKNPU3kQj+Q3DJkWFrvHw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11878"; a="87632995"
-X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="87632995"
+ bh=SPOCLD0FibOMBfG/ZgnKcrAxAqessU+qSnzxWlpvxA0=;
+ b=FJPJ+s6uJHz1wNK81SR6T2TC6NjP8pvt4DpiGijgGrkGD+O3mQLflVHS
+ 20MaEE4W66FnjFibSfrwIIXkT6xVyhTaj5Zs62CfOKPTAkOWPg2WR+RRP
+ GnNU36DJtr2aZEhg8+/hbQpD61dKGNJwfnP/CXzq86aohq3PzSkeLSU+T
+ 1aJ1rwZYIoQXpwpW5zs9hGepmPIBWA1y6lomk/Xcvvpv7i/gzmWtTMir3
+ M8dScM4M633uB3ZFUn2FTvp0lSWD/eq7hwmbRRry0SHjGva87oFt/ZTZZ
+ l6JQ1DDQNRwKOOzZmXZJ7xZF1DLYQWxdOPT1kfaCdZCHqbBlulpuBqGZ0 A==;
+X-CSE-ConnectionGUID: 3Gvm4nVeRXiYTW2Oxal0ng==
+X-CSE-MsgGUID: g4dGqZ4/QGSh6d7+48FU6A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11878"; a="87632998"
+X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="87632998"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 17 Aug 2026 21:58:34 -0700
-X-CSE-ConnectionGUID: DjkqKGUcTdqaI/O53uZalQ==
-X-CSE-MsgGUID: DBrzm0InScieBlTeZqniow==
+ 17 Aug 2026 21:58:37 -0700
+X-CSE-ConnectionGUID: lvemolZRS6SlG7iONEvZLA==
+X-CSE-MsgGUID: QYdb3IS9QQSu1PAv+dFb3A==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="268611244"
+X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="268611250"
 Received: from pae-14.iind.intel.com ([10.190.203.153])
- by orviesa003.jf.intel.com with ESMTP; 17 Aug 2026 21:58:32 -0700
+ by orviesa003.jf.intel.com with ESMTP; 17 Aug 2026 21:58:35 -0700
 From: Anurag Mandal <anurag.mandal@intel.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com, vladimir.medvedkin@intel.com,
  ciara.loftus@intel.com, Anurag Mandal <anurag.mandal@intel.com>
-Subject: [PATCH v4 1/7] net/iavf: discard empty AdminQ descriptors on reset
-Date: Tue, 18 Aug 2026 04:57:26 +0000
-Message-Id: <31d66a7bd32d987e4a7af7c83b8991e1ee545c7a.1787028683.git.anurag.mandal@intel.com>
+Subject: [PATCH v4 2/7] net/iavf: defer device start when PF VSI not ready
+Date: Tue, 18 Aug 2026 04:57:27 +0000
+Message-Id: <370549c555858bc4966301d72a785bc4306a2208.1787028683.git.anurag.mandal@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1787028683.git.anurag.mandal@intel.com>
 References: <cover.1787028683.git.anurag.mandal@intel.com>
@@ -60,36 +60,158 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-During PF-initiated resets iavf_clean_arq_element() has been observed
-to return success with a fully zeroed descriptor (opcode 0).
-These fell through to the default arm of the dispatch switch and
-produced a "Request 0 is not supported yet" log flood in the field.
+During reset recovery iavf_dev_start() might fail (typically -EIO
+from VIRTCHNL_OP_CONFIG_VSI_QUEUES) because the PF VSI is not yet
+active, leaving the VF down and requiring manual intervention
+to recover.
 
-Skip descriptors with opcode 0 so they are silently discarded and do not
-flood log.
+Added a start_pending flag: when device start fails during recovery,
+defer it instead of erroring out and resume it from newly added
+iavf_resume_pending_start() on the next link-up event, so the
+VF comes back automatically.
+
+Fixes: 3e6a5d2d310a ("net/iavf: add devargs to enable VF auto-reset")
 
 Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
 Acked-by: Ciara Loftus <ciara.loftus@intel.com>
 ---
- drivers/net/intel/iavf/iavf_vchnl.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/intel/iavf/iavf.h        |  2 +
+ drivers/net/intel/iavf/iavf_ethdev.c | 61 ++++++++++++++++++++++++++--
+ drivers/net/intel/iavf/iavf_vchnl.c  |  3 ++
+ 3 files changed, 62 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
+index 293adaf6c9..e76c3bb410 100644
+--- a/drivers/net/intel/iavf/iavf.h
++++ b/drivers/net/intel/iavf/iavf.h
+@@ -293,6 +293,7 @@ struct iavf_info {
+ 	bool in_reset_recovery;
+ 	bool reset_pending;
+ 	bool pf_reset_in_progress;
++	bool start_pending;
+ 
+ 	uint32_t ptp_caps;
+ 	rte_spinlock_t phc_time_aq_lock;
+@@ -533,4 +534,5 @@ void iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset);
+ void iavf_set_no_poll(struct iavf_adapter *adapter, bool link_change);
+ bool is_iavf_supported(struct rte_eth_dev *dev);
+ void iavf_hash_uninit(struct iavf_adapter *ad);
++void iavf_resume_pending_start(struct rte_eth_dev *dev);
+ #endif /* _IAVF_ETHDEV_H_ */
+diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+index e475b64971..ebe0183a77 100644
+--- a/drivers/net/intel/iavf/iavf_ethdev.c
++++ b/drivers/net/intel/iavf/iavf_ethdev.c
+@@ -1093,6 +1093,9 @@ iavf_dev_start(struct rte_eth_dev *dev)
+ 
+ 	iavf_phc_sync_alarm_start(dev);
+ 
++	/* An explicit start supersedes any pending deferred start */
++	vf->start_pending = false;
++
+ 	return 0;
+ 
+ error:
+@@ -1131,6 +1134,9 @@ iavf_dev_stop(struct rte_eth_dev *dev)
+ 	adapter->stopped = 1;
+ 	dev->data->dev_started = 0;
+ 
++	/* An explicit stop cancels any pending deferred start */
++	vf->start_pending = false;
++
+ 	return 0;
+ }
+ 
+@@ -3425,6 +3431,7 @@ iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset)
+ 
+ 	vf->in_reset_recovery = true;
+ 	vf->pf_reset_in_progress = !vf_initiated_reset;
++	vf->start_pending = false;
+ 	iavf_set_no_poll(adapter, false);
+ 
+ 	/* Call the pre reset callback */
+@@ -3445,10 +3452,17 @@ iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset)
+ 	if (!vf_initiated_reset || restart_device) {
+ 		/* start the device */
+ 		ret = iavf_dev_start(dev);
+-		if (ret)
+-			goto error;
+-
+-		dev->data->dev_started = 1;
++		if (ret == 0) {
++			dev->data->dev_started = 1;
++		} else {
++			PMD_DRV_LOG(WARNING,
++				    "dev_start failed during reset recovery (rc=%d);"
++				    "deferring to next link-up event",
++				    ret);
++			vf->start_pending = true;
++			dev->data->dev_started = 0;
++			ret = 0;
++		}
+ 	}
+ 
+ 	/* Restore settings after the reset */
+@@ -3662,6 +3676,45 @@ bool is_iavf_supported(struct rte_eth_dev *dev)
+ 	return !strcmp(dev->device->driver->name, rte_iavf_pmd.driver.name);
+ }
+ 
++void
++iavf_resume_pending_start(struct rte_eth_dev *dev)
++{
++	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(dev->data->dev_private);
++	int ret;
++
++	if (!vf->start_pending)
++		return;
++
++	if (vf->vf_reset || vf->in_reset_recovery)
++		return;
++
++	/*
++	 * If the application has already (re)started the port itself, the
++	 * deferred start is stale, the application's action is honoured
++	 * and resume pending is dropped to avoid starting an
++	 * already-running port a second time.
++	 */
++	if (dev->data->dev_started) {
++		vf->start_pending = false;
++		return;
++	}
++
++	if (!vf->link_up)
++		return;
++
++	vf->start_pending = false;
++	PMD_DRV_LOG(DEBUG, "PF link back up; resuming deferred dev_start");
++	ret = iavf_dev_start(dev);
++	if (ret == 0) {
++		dev->data->dev_started = 1;
++	} else {
++		PMD_DRV_LOG(ERR,
++			    "deferred dev_start failed (ret=%d); will retry on next link-up",
++			    ret);
++		vf->start_pending = true;
++	}
++}
++
+ RTE_PMD_REGISTER_PCI(net_iavf, rte_iavf_pmd);
+ RTE_PMD_REGISTER_PCI_TABLE(net_iavf, pci_id_iavf_map);
+ RTE_PMD_REGISTER_KMOD_DEP(net_iavf, "* igb_uio | vfio-pci");
 diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
-index f346837bf1..23e4107743 100644
+index 23e4107743..b6864d8d69 100644
 --- a/drivers/net/intel/iavf/iavf_vchnl.c
 +++ b/drivers/net/intel/iavf/iavf_vchnl.c
-@@ -614,6 +614,11 @@ iavf_handle_virtchnl_msg(struct rte_eth_dev *dev)
- 			break;
- 		}
- 		aq_opc = rte_le_to_cpu_16(info.desc.opcode);
+@@ -271,6 +271,9 @@ iavf_handle_link_change_event(struct rte_eth_dev *dev,
+ 			    adapter->no_poll ? "on" : "off");
+ 	}
+ 
++	/* Retry a dev_start deferred by reset recovery, before the LSC post. */
++	iavf_resume_pending_start(dev);
 +
-+		/* opcode 0 means the descriptor is empty/zeroed, skip it */
-+		if (aq_opc == 0)
-+			continue;
-+
- 		/* For the message sent from pf to vf, opcode is stored in
- 		 * cookie_high of struct iavf_aq_desc, while return error code
- 		 * are stored in cookie_low, Which is done by PF driver.
+ 	iavf_dev_event_post(dev, RTE_ETH_EVENT_INTR_LSC, NULL, 0);
+ 
+ 	PMD_DRV_LOG(INFO, "Link status update:%s",
 -- 
 2.34.1
 
