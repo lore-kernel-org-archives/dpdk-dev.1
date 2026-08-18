@@ -2,34 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73E24C5DF80
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 11:17:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFBA7C5DF7D
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 11:17:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D502840616;
-	Tue, 18 Aug 2026 13:17:39 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 6346140269;
- Tue, 18 Aug 2026 13:17:37 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 300C8200253;
- Tue, 18 Aug 2026 13:17:37 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2861640687;
+	Tue, 18 Aug 2026 13:17:42 +0200 (CEST)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 8836840269;
+ Tue, 18 Aug 2026 13:17:38 +0200 (CEST)
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6AF611A010E;
+ Tue, 18 Aug 2026 13:17:38 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id EDCB8200122;
- Tue, 18 Aug 2026 13:17:36 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3438E1A0118;
+ Tue, 18 Aug 2026 13:17:38 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 3FC1B1800226;
- Tue, 18 Aug 2026 19:17:35 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id A64E918000BF;
+ Tue, 18 Aug 2026 19:17:36 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
-Cc: stable@dpdk.org,
-	Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v12 01/26] net/dpaa: fix device remove
-Date: Tue, 18 Aug 2026 16:47:05 +0530
-Message-Id: <20260818111730.801760-2-hemant.agrawal@nxp.com>
+Cc: stable@dpdk.org
+Subject: [PATCH v12 02/26] net/dpaa: fix Tx confirmation queue memory leak
+Date: Tue, 18 Aug 2026 16:47:06 +0530
+Message-Id: <20260818111730.801760-3-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260818111730.801760-1-hemant.agrawal@nxp.com>
 References: <20260813144205.2505031-1-hemant.agrawal@nxp.com>
@@ -50,38 +49,53 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Gagandeep Singh <g.singh@nxp.com>
+dpaa_intf->tx_conf_queues is allocated unconditionally for every port
+in dpaa_dev_init():
 
-Adds a check to not to close device if already closed.
+	dpaa_intf->tx_conf_queues = rte_zmalloc(NULL, sizeof(struct qman_fq) *
+		MAX_DPAA_CORES, MAX_CACHELINE);
 
-Fixes: 78ea4b4fcb52 ("bus/dpaa: improve cleanup")
+but it is never released. It is a driver private allocation, so
+rte_eth_dev_release_port() does not free it either. The memory is
+therefore leaked on every device close and on every probe failure that
+happens after the allocation.
+
+Free it in dpaa_eth_dev_close() next to tx_queues, and in the free_tx
+error path of dpaa_dev_init(). The private data is allocated with
+rte_zmalloc(), so the pointer is NULL on the error paths taken before
+the allocation and rte_free() is a no-op there.
+
+Fixes: 58e0420f72f8 ("net/dpaa: support Tx confirmation to enable PTP")
 Cc: stable@dpdk.org
 
-Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
+Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/net/dpaa/dpaa_ethdev.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/net/dpaa/dpaa_ethdev.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
-index 4dc4d1f10c..77730f16e3 100644
+index 77730f16e3..86b1675c29 100644
 --- a/drivers/net/dpaa/dpaa_ethdev.c
 +++ b/drivers/net/dpaa/dpaa_ethdev.c
-@@ -2677,9 +2677,12 @@ rte_dpaa_remove(struct rte_dpaa_device *dpaa_dev)
- 	PMD_INIT_FUNC_TRACE();
- 
- 	eth_dev = rte_eth_dev_allocated(dpaa_dev->device.name);
--	ret = dpaa_eth_dev_close(eth_dev);
--	if (eth_dev->state !=  RTE_ETH_DEV_UNUSED) {
--		dpaa_eth_dev_close(eth_dev);
-+	if (eth_dev && eth_dev->state != RTE_ETH_DEV_UNUSED) {
-+		int close_ret = dpaa_eth_dev_close(eth_dev);
-+
-+		if (close_ret)
-+			DPAA_PMD_WARN("%s: close failed (%d), releasing port anyway",
-+				dpaa_dev->device.name, close_ret);
- 		ret = rte_eth_dev_release_port(eth_dev);
+@@ -624,6 +624,9 @@ static int dpaa_eth_dev_close(struct rte_eth_dev *dev)
+ 		}
  	}
- 	dpaa_valid_dev--;
+ 
++	rte_free(dpaa_intf->tx_conf_queues);
++	dpaa_intf->tx_conf_queues = NULL;
++
+ 	return ret;
+ }
+ 
+@@ -2497,6 +2500,8 @@ dpaa_dev_init(struct rte_eth_dev *eth_dev)
+ 	return 0;
+ 
+ free_tx:
++	rte_free(dpaa_intf->tx_conf_queues);
++	dpaa_intf->tx_conf_queues = NULL;
+ 	rte_free(dpaa_intf->tx_queues);
+ 	dpaa_intf->tx_queues = NULL;
+ 	dpaa_intf->nb_tx_queues = 0;
 -- 
 2.25.1
 
