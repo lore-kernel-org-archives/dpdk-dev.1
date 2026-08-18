@@ -2,76 +2,143 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BFAFC5DF7D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 14:27:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 311C0C5DF74
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 14:33:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 432C44027C;
-	Tue, 18 Aug 2026 16:27:17 +0200 (CEST)
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com
- [209.85.215.177])
- by mails.dpdk.org (Postfix) with ESMTP id A9E9940269
- for <dev@dpdk.org>; Tue, 18 Aug 2026 16:27:15 +0200 (CEST)
-Received: by mail-pg1-f177.google.com with SMTP id
- 41be03b00d2f7-cbb7926836eso3427123a12.3
- for <dev@dpdk.org>; Tue, 18 Aug 2026 07:27:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787063234;
- x=1787668034; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=21hSrN6XA5Ga9Dsub4BDuLet5F89x/6nPSxSZ29aptg=;
- b=X6q27nCNhCnva1B5tYCOueRcez5IvGBUvsJAW74yyKkUOp1xvh5qJSUiQmJyOlYbic
- 0lJC5peJk2NrVwBjnvDXz07GAIE7YUbnyEsYDUec8N2TunL59qf3/9zJTUU5rX3RCazg
- M6iqLb5a0OCaV+KNScd7sxTmvWctHRdCl1gz2arnkvsYjtQeIH1Qku/KYnuBYEWZTu7v
- 9Zl6dF7lH3G18QuoszuSluUEpBwwS/TwXiGj6PhHiC97Y6SI+NCcnDVCZF1f4zwa22oC
- ENzE0/QgIMvX25gY59xnBniTuwyHAEDEld833gded22lpCZYhOU9iXKBA1hV+jVt3j1R
- hiqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787063234; x=1787668034;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=21hSrN6XA5Ga9Dsub4BDuLet5F89x/6nPSxSZ29aptg=;
- b=MA81PycT7AHWgTW2OOTWfqKKslWDM+FZD5gTdc/TG3o4+5f4iOW1+H9jbBtd0jZqI1
- Ggq02FX/w25WWKlpniqja/9dsFbjROxUVnRPl4tkjeEfCdJV1jwqptojXlJL8UntcLV2
- hn8mXPWJTkA3MmSRiI3ynye6B4p5m26yKuenu+kpwKhthGu8VpLzOJPVFb3vsbvUYqGN
- w73bAZmtoGlprI3ZRaIelnwnl5xhdN06X+FDcRRwejWrBugq3cNAwxrg2J4FGtiqC58t
- 0jQoWhuAvHuHdDq4w4gycaWbkZXe47WTP6ENZdWFUH2P+ZmPe8eIlnbiTv23wPo9BO8H
- oZlQ==
-X-Forwarded-Encrypted: i=1;
- AHgh+Rrtp336uEEvYYRqNbI8O81lETVpzEhcNhLGZggX4Sc1hJXNXDgJI02l8DYSpv4QkgdEmjs=@dpdk.org
-X-Gm-Message-State: AOJu0YxQDiCKI3VCwpdqUV5xHzpZRqfDV4KgHew1PAZT9fRQmwl7GJkD
- oA4nl2BBbI9h4LjBiI90YxJfC6LSkq5uW1SuJ43RcBJCCUIU42u0oEJeNvypXvFAW4o=
-X-Gm-Gg: AR+sD12z6ch8uZ2uKnPgbMou7B7kfsfUpllETYil08xb42aMiQLNiHXj/zrYgMQMO8i
- AsnB4XV6Mje0Uvs1KXkkyCsaoYD56wEMWQGB1I5Rr8HDSyt4dKcVl+ey9VD2AchnElX0pT8jM+D
- vEX3vjAOpKTcMeNrj/UDo/acjsNaGTxMOnAYoHmp17NBSIUTImIPZnl/M9/zL21i5q9QpDR8kvE
- MxfD6PlPYfVIBX1yky5ggARnvi1PUUIpqfK+kFSI8SJngO0BiUNn6Tiqo31AF1LeE2KymhIbv5i
- CJdoVYMoN9sf4LuPc7uKOBySXUDV5lST5QCBcLaEaPldWVEbM/XB1EOzICYq36IQfmEWI6AaRrZ
- xc8hjalEt1kmQggr+2nmSdurLudXRKZHAHLxW1WzLeyvKzqliY+F3pWSGEui5K6kV0KDOAT3fji
- Qn/o51froqyZ/rrU2+prCQtr6jU7zDRgi/W6jpmkiANyTw8PqJ5GZ0JWV67blR9Q2/ZBdpMGckN
- osZl4IL0gKFxGHx7JUQZZ2xuNT8/Q==
-X-Received: by 2002:a05:6a20:3c8d:b0:3bf:8de9:c647 with SMTP id
- adf61e73a8af0-3cc71881d83mr40066467637.0.1787063234280; 
- Tue, 18 Aug 2026 07:27:14 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-14157e53079sm9136177c88.1.2026.08.18.07.27.11
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 18 Aug 2026 07:27:13 -0700 (PDT)
-Date: Tue, 18 Aug 2026 07:27:04 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Hemant Agrawal <hemant.agrawal@nxp.com>
-Cc: thomas@monjalon.net, dev@dpdk.org
-Subject: Re: [PATCH v12 00/26] NXP DPAA driver fixes and enhancements
-Message-ID: <20260818072704.176b9dfd@phoenix.local>
-In-Reply-To: <20260818111730.801760-1-hemant.agrawal@nxp.com>
-References: <20260813144205.2505031-1-hemant.agrawal@nxp.com>
- <20260818111730.801760-1-hemant.agrawal@nxp.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0AF424027C;
+	Tue, 18 Aug 2026 16:33:00 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+ by mails.dpdk.org (Postfix) with ESMTP id CE1A140269
+ for <dev@dpdk.org>; Tue, 18 Aug 2026 16:32:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1787063579; x=1818599579;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=urKsv18kaissNAmpCDcvKMMhoISrR8uq0zQSbQP5eBE=;
+ b=habIuZaf7sn+jAIYbo9Sq4Aamgbe0xEOeqBs0gYjREqu25kWH1D7anhF
+ z7w4o+KJHZy3Bi7AvG9k0Dao02wG2W0M7uNN0jAndeTnXWCWW3u6qnYg1
+ I7sjylx2jHZBCUk6LgJg7xQjiRWtvr7lMcf/aFIuTTU2+M4do5l7Gip/d
+ 0LcRAXNBevoZfpONppWNT4zCFG3KtPrj8+WbCsG+IjkgdBJTY61HsGLcm
+ ViTyBY+eaNG8+9/eAW5wwcHvE9vWhd8n1rA5/1uN9uiF4q5tiulhI5uNO
+ +L8o3jVOe6MA8vEnsPd4vsObGs+0bZNYzi7YaSzmiJHmH1lRfQ6iy9p58 A==;
+X-CSE-ConnectionGUID: HCKkF09ITzOkmyh4SyVpiQ==
+X-CSE-MsgGUID: GS7g/wssQMO1tkxD2MuLlg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11878"; a="75086787"
+X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="75086787"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+ by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 18 Aug 2026 07:32:58 -0700
+X-CSE-ConnectionGUID: RkvTfqlGQjeP3Lz1ST0cEA==
+X-CSE-MsgGUID: dhq6iUNbR6GabsDfoi6/TQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="263511658"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 18 Aug 2026 07:32:58 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Tue, 18 Aug 2026 07:32:57 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45 via Frontend Transport; Tue, 18 Aug 2026 07:32:57 -0700
+Received: from MW6PR02CU001.outbound.protection.outlook.com (52.101.48.52) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Tue, 18 Aug 2026 07:32:56 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oSUKZJATgr+LM+NoT9Hbj0iO+r949NL2QAKr9iqrI1glNsz6qv3mM+gjCZH9Wqga9EoR94IqI5NGXOTe1+A7TRQf1xJV+1cZb+43RipsZ9RFGT4tu3lEO123KQWDB7QGptTpjLULcEVVaTclFZNaV9Qtf3BEDd8/2jhXC3IwDbx6VlDWVlP3pDkwPqJbkJxZzxNbgLpuh+P5S4ckrTV1juCU3df0L85A/5Uo95rGXOCgswXKwfyRjMniwjMzifXuIEoPGa+hoUmz2w9xi+f3sYYLeXBh4l+Fl/HGx/x1bifzCRJr8YbrFQUmzsuu4KHFqmBC/riFbVFwH+MdyLJsIg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1eT+xpCg2G8EQZj4ngf2gTWwj7B0F3JMYcUnRj4l4bY=;
+ b=mKepCmVzHQZWO4/eTbSs6Ib8qhMD6VRA2JkifuxkoahKWz6y24mnIi7j9cCI52tZAVyMBfgDAlsP/lk9NddPtUxxJykQ/uQrJeDodqLgAThYOHznSvb5B7MdykVZmuY5UVwYp0oSkuR/OS/iAw+T3sj06uy2TVdcNDP2ywOdj/O0VU8g5zFHiD5e7Kz1ypsTmGi95UCOx6wnWS4zgC32w88bUQdnpck6gIB0CG69Gwjac7XYVO67kD6+klDGpFOvvI5Qioha6Qq4cuMvXYhN9RIWYmy3yX0M3oSmIJ4CCN5akqh9irNRTW7xFbicUDYuId1r7DdO7rAbHl5sm8558g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from IA3PR11MB9421.namprd11.prod.outlook.com (2603:10b6:208:578::9)
+ by DM4PR11MB8180.namprd11.prod.outlook.com (2603:10b6:8:18d::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.339.8; Tue, 18 Aug
+ 2026 14:32:54 +0000
+Received: from IA3PR11MB9421.namprd11.prod.outlook.com
+ ([fe80::1b70:3d93:d363:155f]) by IA3PR11MB9421.namprd11.prod.outlook.com
+ ([fe80::1b70:3d93:d363:155f%4]) with mapi id 15.21.0315.016; Tue, 18 Aug 2026
+ 14:32:54 +0000
+Date: Tue, 18 Aug 2026 15:32:50 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Anurag Mandal <anurag.mandal@intel.com>
+CC: <dev@dpdk.org>, <vladimir.medvedkin@intel.com>, <ciara.loftus@intel.com>
+Subject: Re: [PATCH v4 0/7] net/iavf: harden reset recovery and data path on
+ link flap
+Message-ID: <aoRtEjd2hNx6c7Tl@bricha3-mobl1.ger.corp.intel.com>
+References: <cover.1786004043.git.anurag.mandal@intel.com>
+ <cover.1787028683.git.anurag.mandal@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <cover.1787028683.git.anurag.mandal@intel.com>
+X-ClientProxiedBy: DB9PR01CA0022.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:1d8::27) To IA3PR11MB9421.namprd11.prod.outlook.com
+ (2603:10b6:208:578::9)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA3PR11MB9421:EE_|DM4PR11MB8180:EE_
+X-MS-Office365-Filtering-Correlation-Id: d84629cf-e58a-411b-1a11-08defd35972c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|366016|23010399003|1800799024|376014|56012099006|10067099003|18002099003|22082099003|11063799006|4143699003;
+X-Microsoft-Antispam-Message-Info: aRvpkRmYrypMxVC9i7NAOlMtZ6NgATT+QvPv8kuHsprP3uIwEoKfPydC5xnMf55HK2yJS5IsfG+GelGVk2y9ewF1a5S3Ydn1Rd5PC7KQ3Xr43EK+zkR3VjAe5aL0GucF7HEjkKoUwGRU4dsCgDqTV3VDBNaIS77KXxyv1PskVKlDmEV3leMiq4LHiIp3Ws9L1xLr1gfEJuVMxbCGkhUPR1OkOynufCZIvaXWxCDPzzq1Akbr2LhPBgE+9ogVZ/uo6DDYJemJAqW6AzJoqAIptdXn95JnuVLRqblqDG8h3JJuYPWB94g6cYBvUEwiO20jjsV1kNjYyURycZ/fteyuvdtf8mHMlzHL6qdXcbZ7lBMC2dD8lH6QsYeP3N4kO9n3lzAnC9miKkns+9l0KtRYOrU6zCKKt9KEKKY8YqbrTqnuGCqOGzocvEKEMWvYYXkggtIf/Umvk4qQUex2HShNinPvyBfguEryTXp5ugOw1sIpYaclzajCwXWPArtCM0yfzzW8UHxnxcbzeQc0oDyNGbkFTggFMd4ft/i6F610g8HFkg+Ew6H7O04hVs6GJ95MyLWlR5bRj5T0WthwdFfE83E4KAE6CZ4Ojs8AJwWwfL1/LWbmvIsIeW/A8SrYO2bh6NOXD3UDZ0I6bXrZTyq9Qfj5j4bd8o+8KQI+Y5UvAKA=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:IA3PR11MB9421.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(23010399003)(1800799024)(376014)(56012099006)(10067099003)(18002099003)(22082099003)(11063799006)(4143699003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?aLrD6gJe+ds9ch169Zj8s+AIp7qYhYIQNVL/K1216VVYxNdXh47WPAfjTZsh?=
+ =?us-ascii?Q?TiClFUKVLV4Gf/tYpeuD2jmDK3C2ryMSFJc5j+ooXknxKfl8HpTGFlFHXfXi?=
+ =?us-ascii?Q?l68rKLMoQ9a+Y1HBh0ApNNWJl2vuWIWvfYJeoZ3FEZVx9gdqaQSvqlvElg47?=
+ =?us-ascii?Q?QAW/+VkOC6wbANFVSoB/KXzJxYm6pvaJnOalrE87a5dFX9I6mQarVYUJmYbH?=
+ =?us-ascii?Q?ZZVw+V8zI7xx/+ajrNGQXMoDhIIk2xs9gUI9FO9MJOBH/7GvbesS/d1MfKBB?=
+ =?us-ascii?Q?F+5HAkPeIZ14to7XHA4VvR0aQ6xg0g6qB9KLXhDRfyFuKcT6rwm9HJbUVNV2?=
+ =?us-ascii?Q?+H4MWdEmJNf6jt2y/gAhCUkZ7RUOcTYONDJGZWKChkrwpqO/t1VIdNQY3Ib2?=
+ =?us-ascii?Q?VNZxhy4qetx65PF100HwlN/wVbvY2KgoA/MvyMRGkgedbb2ToFyDQimX7MXK?=
+ =?us-ascii?Q?kSVOKhCvcc1N7QZDkO0Gst3VuTPdfCe37u30A3nSdq+0/3jmfQYuHCOppj2I?=
+ =?us-ascii?Q?irIH7BEOqaMRwnzgDTcWHkRyi07687emwoF2dOsnTV9zNPAwee5OgGo0ifFK?=
+ =?us-ascii?Q?iG8oI2krlhzj0yOcZEkELLVxqDB1Gi5KARdjvyV1lLfkdGy6uj32nMsJSswZ?=
+ =?us-ascii?Q?3YDKfv2gjjiMMQ8FPnVNacYJXYzFT+IYMlkRiJqApBscGoJ9l80sNhvWXW4w?=
+ =?us-ascii?Q?oUpeb0cJAFx5tTaYMGpxy2UdQHJ7X4beikpqmAVqs85uT4QnXXZaKDBRjyk9?=
+ =?us-ascii?Q?GYkc8UGvdDxeChBqs5bVgFRPK7RXmQ057r7BDcCLozYrCXkzgS84eiULKB+4?=
+ =?us-ascii?Q?KDndbnYYYido6h07a/DNcEYr+t+iiXQrz9qFv2snywMou0cNhleX9Z0QluwC?=
+ =?us-ascii?Q?hsHjjIGM/CuYPaLoRWh6/BNhXGg0VciocfM2kI5WFj0/Scd9HRQGVjEyK7Ao?=
+ =?us-ascii?Q?PLBbblL5K3QjnfnTS0VipV2OjPDR2+xf3HW56cMBWfx6v5CX/kv+19cEjcwT?=
+ =?us-ascii?Q?FPFJsjdo2G1XgzIWA7NUnWfVzrQIKJaQqznlHkc0t52ds76i101eevg4sOQk?=
+ =?us-ascii?Q?QkoQHPE4g+WUxb72MxkxbFc5pXIkdvyCs1fKDFL6jUEZItP8TtXS8g6+Me1Y?=
+ =?us-ascii?Q?cwzyw+AKNQN8BcApVaIfKpA4L/aYjfVa204kCeGpMd6Utock6GOD5e/iO+ux?=
+ =?us-ascii?Q?PTY+yJizinhclcQvWFsP20ao6GpWYTKnKOTLb+y792dYjWEcUuP6Wmz+xE1p?=
+ =?us-ascii?Q?+u9BsLZeapdl8dN9lLLZ4Lqlio6WBLXjoGNyOiLuGwRthH06Xsr+Jjck5XGZ?=
+ =?us-ascii?Q?YBj2sbU9QkQWN6yBTlq9jo992zK8Zaf5fDrqP6E0DxDFNg4M5yhkyorEFUcN?=
+ =?us-ascii?Q?AkBi5xnVgAt0bBFE4bJfjLJwKUEhgQ4TERrdd0YAFiJjYFU7S2jZQKnf5Efo?=
+ =?us-ascii?Q?e7D3BU2/eLz3qXCelcy3qzaZJ41fZF5ktmngaw/DBD1Lo9b2EVp30FGj2zy4?=
+ =?us-ascii?Q?bwpvCs1vstD+S1KiIl7QTFoEUd1eiKccyXOfiglO0CO/6hhz5VTnIaOxgbkg?=
+ =?us-ascii?Q?ZJTkLRRUXb4+FtCWK5K+NmupXy7UZP+pFW0VuGAFeGyXMK9MCR+b+nk26TOl?=
+ =?us-ascii?Q?/0/BQ/hNrgYJ2t3fGAZ4AwzkXomHgRBw3XdxPQ+FNGH7CyZXv7xGJev243tc?=
+ =?us-ascii?Q?QJ9qMuYInmNHZiCqBZh7HWY8alEP/nUeHDHyE+GHsQpNylFkctuzOZAv8oUD?=
+ =?us-ascii?Q?LyjzEspFXE5kvmDQ/qOU2XFBAmIr5tk=3D?=
+X-Exchange-RoutingPolicyChecked: itAXwjoyXqCfOhT6rZ+o8sGpsCFGfsrF5GullTU6iUroo8Mjod+0crs5JZQb0vEHPmQN537z5DVdsD3kfSL23aOTUlz52x6P3yup5baF7tLD6woo13iy6NTpTQhsv0vzNMazqw2HWRfV04D1lDLevv5DYvu9YKZhZwPmsgCDSa160LBHLB1QbrByyMPkNpLOlvZe50kwT4QrRPLyGru105ILICaoD1bEoeHuVSwVU4DceoyRMCUfxfzW2ufLVACHpKLSiEmkWE/Ft1JxVpCIUGSpd4MvjUYrdHBN92Mwej05bazIdxSUF6hkX4c1JM6m6XM/TCXpzvp4cQYqz9nb4A==
+X-MS-Exchange-CrossTenant-Network-Message-Id: d84629cf-e58a-411b-1a11-08defd35972c
+X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB9421.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2026 14:32:54.7049 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AS0uyuZdMSui/fBx6ptxs6INFXhdKt3DADyuXaKELiQZP3KzcSkYMcHHDuzqnXAOaWI2YT78lBH3AAjY/mA71kiRrZi50HuGUG7b7xC7M8g=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB8180
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,376 +152,64 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 18 Aug 2026 16:47:04 +0530
-Hemant Agrawal <hemant.agrawal@nxp.com> wrote:
-
-> This series contains a collection of fixes and enhancements for the NXP
-> DPAA bus, mempool, dma, crypto and net drivers. It addresses several
-> resource cleanup and shutdown issues, adds new offline (O/H) port device
-> support, and introduces a number of performance and usability
-> improvements.
+On Tue, Aug 18, 2026 at 04:57:25AM +0000, Anurag Mandal wrote:
+> V4-changes:
+>  - Addressed Bruce Richardson's review comment on Patch-3
+>  - Removed Tx drain on link down
 > 
-> Highlights:
-> - Fix device remove, Tx confirmation queue leak and FQD dest wq decoding.
-> - Add process-type guards for secondary process and improve FQ shutdown
->   and cgrid cleanup handling.
-> - Add offline (O/H) port device support with a new PMD-specific API.
-> - Add Tx rate limiting API, Rx/Tx taildrop threshold devarg, fmcless rxq
->   number devarg and non fmX-macY shared Ethernet name support.
-> - Optimize FMAN deconfig, FMC MAC type parsing and buffer pool
->   operations.
+> V3-changes:
+>  - Addressed Ciara Loftus's review comments on Fixes tag
+>  - Added missing watchdog enable in Patch-6
+>  - Removed extra space in commit msg of Patch-5
 > 
-> v11 -> v12:
-> - fixed recent AI review comments
-
-
-There are still more AI review comments to address here:
-
-Reviewed the v12 series (26 patches) applied on c1a46b9.  Series
-applies cleanly with git am.  This is a source review of the applied
-tree; I did not build it this time.
-
-All the blocking items from v11 are addressed.  Thanks for splitting
-the FQD decoding fix out into its own patch.  What is left is mostly
-commit messages that describe something other than what the patch
-does, plus the offline port driver and the destructor patch.
-
-Fixed since v11
----------------
-
-  - FQD dest_wq decoding is now patch 03 with a Fixes: tag and
-    Cc: stable@dpdk.org.  The wq/channel split is correct.
-  - BMI Tx counters are enabled and reset via fmbm_tstc, so the four
-    new tx_* xstats will actually count (patch 10).
-  - rte_pmd_dpaa_port_set_rate_limit() guards with is_dpaa_supported()
-    and always opens the Tx port (patch 16).
-  - dev_init error paths delete every created CGR before freeing
-    cgr_rx/cgr_tx and release the CGRID range, tracked by nb_rx_cgr /
-    nb_tx_cgr and the *_cgrid_allocated flags (patch 08).
-  - qman_enqueue_multi_orp() now writes all frame data, then lwsync(),
-    then the verb bytes, then dcbf, matching qman_enqueue_multi()
-    (patch 17).
-  - dpaa_eth_rx_queue_bp_check() checks vsp_bp[0] before dereferencing
-    it, and dpaa_port_vsp_configure() has the DPAA_VSP_PROFILE_MAX_NUM
-    bound back (patch 22).
-  - dpaa_create_device_list() no longer returns before creating the OL
-    device, and dpaa_ol_remove() releases queues, closes the fd and
-    releases the port (patch 23).
-  - rte_pmd_dpaa_oldev.h has Doxygen throughout and the two API structs
-    are prefixed (patch 23).
-
-Errors
-------
-
-Patch 23/26: drivers: add offline (O/H) port device support
-
-  All four OL exports still carry 25.11:
-
-      RTE_EXPORT_EXPERIMENTAL_SYMBOL(
-              rte_pmd_dpaa_ol_set_classif_info, 25.11)
-      RTE_EXPORT_EXPERIMENTAL_SYMBOL(
-              rte_pmd_dpaa_ol_reset_classif_info, 25.11)
-      RTE_EXPORT_EXPERIMENTAL_SYMBOL(
-              rte_pmd_dpaa_ol_set_lgw_info, 25.11)
-      RTE_EXPORT_EXPERIMENTAL_SYMBOL(
-              rte_pmd_dpaa_ol_reset_lgw_info, 25.11)
-
-  The series targets 26.11; patch 26 adds to release_26_11.rst and
-  patch 16 uses 26.11 correctly.
-
-  Only queue index 0 is ever initialized.  dpaa_oldev_init() sets
-
-      /* num_fqs is DPAA_DEFAULT_NUM_PCD_QUEUES */
-      dpaa_intf->nb_rx_queues = num_fqs;
-      dpaa_intf->nb_tx_queues = num_fqs;
-
-  but calls dpaa_ol_rx_queue_init(&rx_queues[0], 0) and
-  dpaa_ol_tx_queue_init(&tx_queues[0], 0) only.  dpaa_ol_dev_info()
-  reports the full count in max_rx_queues/max_tx_queues, so an
-  application that configures queue 1 gets a zeroed qman_fq, and
-  dpaa_ol_tx_queue_setup() passes fq_info.tx_fq_id = 0 to the kernel
-  ioctl.  Either initialize all num_fqs queues or advertise 1.
-
-  dpaa_ol_dev_close() is still a bare "return 0".  All the cleanup
-  lives in dpaa_ol_remove(), so an application that calls
-  rte_eth_dev_close() without removing the device leaves the FQs live
-  in hardware and the rx/tx queue allocations in place.
-
-Warnings
---------
-
-Patch 02/26: net/dpaa: fix Tx confirmation queue memory leak
-
-  The free is placed after the early return for offline ports:
-
-      if (fif->mac_type == fman_offline_internal ||
-          fif->mac_type == fman_onic)
-              return 0;
-      ...
-      rte_free(dpaa_intf->tx_conf_queues);
-
-  so for those two MAC types the leak the commit message describes is
-  still there, along with rx_queues, tx_queues, cgr_rx, cgr_tx and
-  fc_conf.  The early return predates the series, but patch 23 makes
-  offline ports a lot more interesting, so it is worth fixing here or
-  in a follow-up.
-
-Patch 08/26: drivers: add DPAA cgrid cleanup support
-
-  qman_pending_fq_by_cgrid() walks the FQID space from 1 upward, one
-  qman_query_fq_np() per FQID plus a qman_query_fq() for every FQ not
-  in OOS state, and stops only when QMan answers -ERANGE.  It is called
-  from dpaa_cgr_stale_fq_cleanup() once per CGR, and that in turn is
-  called once per Rx queue and once per Tx queue in
-  dpaa_eth_dev_close().  Worse, the caller loops:
-
-      while (qman_pending_fq_by_cgrid(cgrid, &fqid) == 0)
-
-  and each call restarts the scan at fqid = 1, so N stale FQs cost N
-  full scans.
-
-  The cgrd.i_bcnt idle check keeps this off the clean-shutdown path,
-  which is the common case, but the situation this code exists for is
-  precisely the one where the CGR is not idle.  Consider passing a
-  start FQID into the function so the caller can resume the scan, or
-  querying the congestion state once and walking only the FQs this
-  process knows about.
-
-Patch 13/26: drivers: release DPAA bpid on driver destructor
-
-  rte_dpaa_bpid_info is freed once no pool holds it:
-
-      for (i = 0; i < DPAA_MAX_BPOOLS; i++)
-              if (rte_dpaa_bpid_info[i].mp)
-                      break;
-      if (i == DPAA_MAX_BPOOLS) {
-              rte_free(rte_dpaa_bpid_info);
-              rte_dpaa_bpid_info = NULL;
-      }
-
-  but every Rx queue still holds a copy of that pointer in
-  fq->bp_array (dpaa_ethdev.c and dpaa_oldev.c both do
-  "rxq->bp_array = rte_dpaa_bpid_info"), and dpaa_eth_queue_rx() /
-  dpaa_rx_cb() reinstall it:
-
-      if (unlikely(rte_dpaa_bpid_info == NULL &&
-                   rte_eal_process_type() == RTE_PROC_SECONDARY))
-              rte_dpaa_bpid_info = fq->bp_array;
-
-  The array is rte_zmalloc'd, so it is shared.  A primary that frees
-  its last mempool while a secondary still has ports open leaves the
-  secondary reinstalling a dangling pointer on the fast path.  Freeing
-  it only from the destructor, or refcounting against open ports rather
-  than against live mempools, would avoid this.
-
-  The "if (!rte_dpaa_bpid_info) return;" guard is below the block that
-  already dereferenced rte_dpaa_bpid_info, so it does not protect
-  anything.
-
-Patch 14/26: dma/dpaa: add SG data validation and ERR050757
-
-  The commit message describes work the patch does not do.  SG support
-  and the ERR050757 workaround both already exist upstream;
-  fsl_qdma_enqueue_desc_sg() and the sdf->ssen/sss/ssd programming are
-  pre-existing.  What this patch actually adds is three devargs to turn
-  those off, plus a gate on the existing data-validation helper.  The
-  body should say that.
-
-  s_sg_enable, s_data_validation and s_pci_read are file-scope statics
-  written from per-device devargs in dpaa_qdma_init().  With more than
-  one QDMA device the last one probed silently sets the behaviour for
-  all of them.  These belong in struct fsl_qdma_engine.  (s_hw_err_check
-  has the same problem already, so this is three more of the same.)
-
-  s_data_validation, s_sg_enable and s_pci_read are int used purely as
-  booleans; s_hw_err_check next to them is already bool.
-
-Patch 15/26: net/dpaa: support Rx/Tx taildrop threshold devarg
-
-  The getenv is kept as a fallback:
-
-      if (dpaa_get_devargs_int(dev->devargs, DRIVER_TX_TAILDROP, ...)
-              ...
-      else if (getenv("DPAA_TX_TAILDROP_THRESHOLD"))
-
-  The point of the patch is to replace the environment variable with a
-  devarg.  Drop the getenv in the same patch, and note the removal in
-  the release notes if you are worried about existing users.
-
-  The new "Device Arguments" section in doc/guides/nics/dpaa.rst is a
-  bullet list where each item is a term followed by a description
-  paragraph.  A definition list reads better and produces better
-  output:
-
-      ``drv_rx_taildrop`` / ``drv_tx_taildrop``
-         Configure the Rx / Tx frame queue taildrop congestion
-         threshold.  A value of ``0`` disables taildrop.
-
-Patch 17/26: bus/dpaa: orp queue create and burst enqueue
-
-  Still no consumer.  qman_enqueue_multi_orp() has no caller in the
-  tree, force_ooo is only ever set false in qman_create_fq(), and the
-  ORP_RWS_WIN_*, ORP_AUTO_ADVANCE_* and ORP_LATE_ARRIVE_* enums added
-  to fsl_qman.h are unreferenced.  The subject says "orp queue create"
-  but there is no create path in the diff.  Please land this with the
-  code that uses it, or hold it until that code is ready.
-
-Patch 20/26: bus/dpaa: optimize DPAA multi-entry buffer pool operations
-
-  The commit message says the first descriptor is initialized and
-  copied to the remaining entries.  The code does the reverse: entry 0
-  is written on its own precisely because copying it would trip the
-  valid bit, and entries 1..n-1 are the ones memcpy'd.
-
-      r->bufs[0].opaque = bm_bufs[0].opaque;
-      if (num > 1)
-              memcpy(&r->bufs[1], &bm_bufs[1],
-                     sizeof(struct bm_buffer) * (num - 1));
-
-  BIT_SIZE, MAX_U48, HI16_OF_U48, LO32_OF_U48 and U48_BY_HI16_LO32
-  move from bman.c file scope into fsl_bman.h, where they are now
-  visible to everything that includes it, with no BM_ or RTE_ prefix.
-  BIT_SIZE in particular is generic and is wrapped in #ifndef, so it
-  will silently pick up somebody else's definition rather than warn.
-
-  U48_BY_HI16_LO32() shifts hi left by 32 with no cast:
-
-      #define U48_BY_HI16_LO32(hi, lo) \
-              (((hi) << BIT_SIZE(uint32_t)) | (lo))
-
-  The one caller declares hi as uint64_t so it is fine today, but as a
-  header macro it will be undefined behaviour the first time somebody
-  passes a 32-bit value.  Cast inside the macro.
-
-Patch 21/26: bus/dpaa: improve log macro and fix bus detection
-
-  The subject promises a bus detection fix that is not in the patch.
-  Both access(DPAA_DEV_PATH1/2) checks exist upstream unchanged, and
-  DPAA_DEV_PATH1/DPAA_DEV_PATH2 were already defined ahead of both.
-  The only change is moving the two #defines to the top of the file.
-  The commit body mentions only the log macro conversion, which is
-  what the patch does.
-
-  The conversion is also incomplete: 12 DPAA_BUS_LOG() call sites
-  remain, including two in the function the patch edits
-  (rte_dpaa_bus_scan) and three in netcfg_layer.c.
-
-Patch 23/26: drivers: add offline (O/H) port device support
-
-  rte_pmd_dpaa_oldev.h is installed as public API (it is in the
-  headers list in meson.build) and still puts unprefixed names in the
-  application namespace:
-
-      MAX_NUM_PORTS, MAX_NUM_SUBNETS
-      struct ip_pair_s, struct lgw_subnet_s
-      DPA_ISC_IPV4_ADDR_TYPE, DPA_ISC_IPV6_ADDR_TYPE
-      DPA_ISC_IPV4_SUBNET_TYPE, DPA_ISC_IPV6_SUBNET_TYPE
-      DPDK_CLASSIF_*, DPDK_TELECOM_*
-
-  MAX_NUM_PORTS is the one that will actually bite; plenty of
-  applications define that themselves.  The DPDK_ prefix is worse than
-  none since it implies these are project-wide.  Please give everything
-  in this header the rte_pmd_dpaa_ / RTE_PMD_DPAA_ prefix you already
-  used for the two structs.
-
-  struct dpaa_ip4_addr_s holds uint32_t ip_addr[4] and is used for v6
-  addresses too, so the ip4 in the name is misleading.
-
-Patch 25/26: drivers: add dpaax enter destructor
-
-  This is the same mechanism as v9 in a different shape, and it still
-  does not hold together.
-
-  dpaa_mpool_finish() (patch 13, priority 104, so it runs first) calls
-  dpaax_enter_destructor() and then, eleven lines later, calls
-  rte_free(rte_dpaa_bpid_info) directly.  It also calls
-  bman_free_bpid(), which writes CCSR through bm_pool_set().  The latch
-  gates kfree() only, so the two things in the teardown path that
-  actually touch EAL memory and hardware are not gated by it.
-
-  Gating kfree() also changes the meaning of that macro for every
-  DPAA, BMan and QMan call site, not just the teardown ones, and turns
-  it into a silent leak with a pr_debug.
-
-  If the conclusion is that freeing on the way out is not worth doing,
-  then say that directly and stop calling the frees in the destructors,
-  rather than making free a no-op globally.  Leaking at exit is fine;
-  it only shows up under a leak checker.  If the concern is hardware
-  state left behind by a process that died, the destructor cannot help
-  you there either, since it does not run on a signal kill and is not
-  async-signal-safe when it does run.  DPAA has a kernel driver behind
-  it, so the fd release handler is the natural place for that cleanup.
-
-  Could you describe the failure you are actually seeing?  If there is
-  a crash in a specific teardown ordering it would be easier to fix
-  that ordering than to add a global latch.
-
-  Minor: double blank line added in dpaax_iova_table.c before the
-  dpaax_handle_memevents() declaration, and is_dpaax_in_destructor()
-  would read better as dpaax_is_in_destructor().
-
-Info
-----
-
-Patch 03/26: bus/dpaa: fix FQD dest wq channel decoding
-
-  qm_fqid_set() and QM_FQID_MASK are added but unused; only
-  qm_fqid_get() has a caller.
-
-Patch 05/26: bus/dpaa: scan max BPID from DTS
-
-  "if (!(start + count))" as the not-found test also fires on a
-  malformed DTS entry with start = 0 and count = 0, which then takes
-  the warning path silently.  A bool found set inside the loop would be
-  clearer and would separate "no node" from "bad node".
-
-Patch 12/26: net/dpaa: optimize FMC MAC type parsing
-
-  dpaa_port_fmc_get_idx_from_name() now runs for every port, including
-  the OH/offline early-return case that does not use its result, and
-  logs DPAA_PMD_ERR for any port name that contains neither "MAC/" nor
-  "OFFLINE/".  Moving the call below the OH check would avoid the
-  spurious error on configs that used to work.
-
-  DPAA_1G_MAC_START_IDX and DPAA_2_5G_MAC_START_IDX are now unused.
-
-Patch 13/26: drivers: release DPAA bpid on driver destructor
-
-  #define RTE_PRIORITY_104 in dpaa_mempool.c squats on the EAL macro
-  namespace, as do RTE_PRIORITY_102 in dpaa_bus.c and RTE_PRIORITY_103
-  in dpaa_ethdev.c.  rte_common.h owns RTE_PRIORITY_*.  The three call
-  sites are also inconsistent: two pass a bare number to
-  RTE_FINI_PRIO() and this one passes the macro.  (Both expand
-  correctly, since RTE_FINI_PRIO's argument is expanded before it
-  reaches the ## in RTE_PRIO, so this is style not breakage.)
-
-Patch 15/26: net/dpaa: support Rx/Tx taildrop threshold devarg
-
-  td_threshold and td_tx_threshold are file-scope statics assigned
-  per-port in dpaa_dev_init().  This works today only because
-  dpaa_rx_queue_init() and dpaa_tx_queue_init() are called from
-  dpaa_dev_init() and nowhere else.  Passing the values down as
-  arguments, or storing them in struct dpaa_if, would make that
-  robust.
-
-Patch 18/26: net/dpaa: support fmcless rxq number as devargs
-
-  The FMCLESS default changes from rte_lcore_count() to
-  DPAA_MAX_NUM_PCD_QUEUES, which raises the default FQ and CGRID
-  consumption per port on any system with fewer than 8 lcores.  Worth
-  a line in the release notes since it changes existing behaviour
-  without a devarg being set.
-
-Build notes
------------
-
-I did not build this revision.  Two things worth covering when you do:
-
-  - Per-commit build with -Dwerror=true.  Patch 07 adds a memset() to
-    an inline function in fsl_qman.h, which does not include
-    <string.h> and is relying on transitive inclusion.
-  - Patch 20 adds struct bm_hw_buf_desc as a __rte_packed_begin member
-    of the __rte_aligned(8) bm_buffer union; worth confirming no
-    packed/alignment warnings on arm64.
-
-No Reviewed-by on this revision.
+> V2-changes:
+>  - Addressed Ciara Loftus's review comments.
+>  - Split Watchdog and flow flush from other patches.
+>  - Shortened multiple comments and commit msg
+>  - Prevented iavf_resume_pending_start() looping
+> 
+> During PF-initiated reset or a remote/ToR switch link-flap, the VF
+> might miss the reset event, race on the no_poll gate, leak in-flight
+> Tx descriptors, and stay down if dev_start ran before the PF VSI was
+> ready.
+> 
+> This patch series build on the earlier reset-recovery fixes with the
+> following:
+> 
+> - Reset detection: complement the ARQLEN1 check with VFGEN_RSTAT
+>   (VIRTCHNL_VFR_INPROGRESS) and poll at a 5 ms interval, matching the
+>   kernel iavf driver, so fast ARQ flips are not missed. When the VFR
+>   is still not observed, recover anyway instead of bailing out,
+>   keeping PF and VF state in sync.
+> 
+> - no_poll: make the flag atomic (RTE_ATOMIC) with release/acquire
+>   ordering so the data-plane lcores observe gate changes reliably.
+> 
+> - Tx drain: add iavf_dev_tx_drain() to flush in-flight Tx descriptors
+>   on impending-reset events before teardown, preventing
+>   MDD events and descriptor leaks.
+> 
+> - Deferred start: when dev_start fails during recovery (PF VSI inactive),
+>   defer it via start_pending and resume on the next link-up event so the
+>   VF comes back without manual intervention.
+> 
+> - AdminQ: discard zeroed (opcode 0) descriptors seen during PF-initiated
+>   resets to avoid the "Request 0 is not supported" log flood.
+> 
+> - Watchdog: keep watchdog armed for the whole reset window
+> 
+> - Flow flush: skip flow flush during PF-initiated reset
+> 
+> Anurag Mandal (7):
+>   net/iavf: discard empty AdminQ descriptors on reset
+>   net/iavf: defer device start when PF VSI not ready
+>   net/iavf: drain in-flight Tx before reset
+>   net/iavf: change no_poll flag to atomic
+>   net/iavf: improve VF reset detection on fast ARQ flip
+>   net/iavf: keep watchdog armed for the whole reset window
+>   net/iavf: skip flow flush during PF-initiated reset
+> 
+Series applied to dpdk-next-net-intel.
+
+Thanks,
+/Bruce
