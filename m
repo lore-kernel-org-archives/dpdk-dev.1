@@ -2,34 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E15D4C5DF7D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 11:19:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEB53C5DF7D
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 11:20:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2E05C40E1C;
-	Tue, 18 Aug 2026 13:18:16 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 0F2AD40E09
- for <dev@dpdk.org>; Tue, 18 Aug 2026 13:18:07 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E70AB1A0118;
- Tue, 18 Aug 2026 13:18:06 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4120740E25;
+	Tue, 18 Aug 2026 13:18:17 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 1C2F040E12
+ for <dev@dpdk.org>; Tue, 18 Aug 2026 13:18:08 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0157720025D;
+ Tue, 18 Aug 2026 13:18:08 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id AF99E1A010E;
- Tue, 18 Aug 2026 13:18:06 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id BF97A200254;
+ Tue, 18 Aug 2026 13:18:07 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 3020618000BF;
- Tue, 18 Aug 2026 19:18:05 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 665AB18000B0;
+ Tue, 18 Aug 2026 19:18:06 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
-Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v12 25/26] drivers: add dpaax enter destructor to gate EAL
- memory frees
-Date: Tue, 18 Aug 2026 16:47:29 +0530
-Message-Id: <20260818111730.801760-26-hemant.agrawal@nxp.com>
+Subject: [PATCH v12 26/26] doc: update release notes with NXP DPAA changes
+Date: Tue, 18 Aug 2026 16:47:30 +0530
+Message-Id: <20260818111730.801760-27-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260818111730.801760-1-hemant.agrawal@nxp.com>
 References: <20260813144205.2505031-1-hemant.agrawal@nxp.com>
@@ -50,147 +48,68 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jun Yang <jun.yang@nxp.com>
+Document new features added by the DPAA patch series:
+    - Offline (O/H) port device support (drv_oldev bus devarg)
+    - Rx/Tx taildrop threshold devargs (drv_rx_taildrop, drv_tx_taildrop)
+    - Fmcless Rx queue count devarg (drv_fmcless_rxq)
+    - DMA scatter-gather support and ERR050757 workaround
 
-Add a dpaax_enter_destructor() function that drivers call at the start
-of their RTE_FINI destructors to signal that the process is tearing
-down. Subsequent attempts to free EAL-backed memory (such as IOVA table
-entries) are then skipped, avoiding use-after-free crashes when the EAL
-has already unmapped hugepages before per-driver destructors run.
-
-Signed-off-by: Jun Yang <jun.yang@nxp.com>
+Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/bus/dpaa/dpaa_bus.c             |  1 +
- drivers/common/dpaax/compat.h           | 22 +++++++++++++++++-----
- drivers/common/dpaax/dpaax_iova_table.c | 25 ++++++++++++++++++++++++-
- drivers/mempool/dpaa/dpaa_mempool.c     |  2 ++
- drivers/net/dpaa/dpaa_ethdev.c          |  1 +
- 5 files changed, 45 insertions(+), 6 deletions(-)
+ doc/guides/rel_notes/release_26_11.rst | 40 ++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
-index 27e2695ef7..8e135488b0 100644
---- a/drivers/bus/dpaa/dpaa_bus.c
-+++ b/drivers/bus/dpaa/dpaa_bus.c
-@@ -915,6 +915,7 @@ RTE_FINI_PRIO(dpaa_cleanup, 102)
- 	if (!dpaa_bus_global_init)
- 		return;
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index c8cc86295d..b76d593d1d 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -55,6 +55,46 @@ New Features
+      Also, make sure to start the actual text at the margin.
+      =======================================================
  
-+	dpaax_enter_destructor();
- 	/* cleanup portals in case non-graceful exit */
- 	RTE_LCORE_FOREACH_WORKER(lcore_id) {
- 		/* Check for non zero id */
-diff --git a/drivers/common/dpaax/compat.h b/drivers/common/dpaax/compat.h
-index d0635255da..b826a55de2 100644
---- a/drivers/common/dpaax/compat.h
-+++ b/drivers/common/dpaax/compat.h
-@@ -2,7 +2,7 @@
-  *
-  * Copyright 2011 Freescale Semiconductor, Inc.
-  * All rights reserved.
-- * Copyright 2019-2020 NXP
-+ * Copyright 2019-2020, 2026 NXP
-  *
-  */
- 
-@@ -336,11 +336,23 @@ static inline void copy_bytes(void *dest, const void *src, size_t sz)
- #define copy_bytes memcpy
- #endif
- 
--/* Allocator stuff */
--#define kmalloc(sz, t)	rte_malloc(NULL, sz, 0)
--#define kzalloc(sz, t)  rte_zmalloc(NULL, sz, 0)
-+__rte_internal
-+void dpaax_enter_destructor(void);
-+__rte_internal
-+int is_dpaax_in_destructor(void);
++* **Added NXP DPAA offline (O/H) port device support.**
 +
-+/* Allocator stuff, make sure the eal memory pool is available when calling.*/
-+#define kmalloc(sz, _t) ((void)(_t), rte_malloc(NULL, sz, 0))
-+#define kzalloc(sz, _t) ((void)(_t), rte_zmalloc(NULL, sz, 0))
- #define vmalloc(sz)	rte_malloc(NULL, sz, 0)
--#define kfree(p)	rte_free(p)
++  Added support for the DPAA Offline/Host-command (O/H) port, allowing
++  a DPDK application to use an offline port for packet processing.
++  The feature is selected through the ``drv_oldev`` bus device argument.
 +
-+#define kfree(p) \
-+({ \
-+	if (!is_dpaax_in_destructor()) \
-+		rte_free(p); \
-+	else \
-+		pr_debug("Eal memory has been destroyed.\n"); \
-+})
- 
- static inline unsigned long get_zeroed_page(gfp_t __foo __rte_unused)
- {
-diff --git a/drivers/common/dpaax/dpaax_iova_table.c b/drivers/common/dpaax/dpaax_iova_table.c
-index 1220d9654b..d53b24d4f4 100644
---- a/drivers/common/dpaax/dpaax_iova_table.c
-+++ b/drivers/common/dpaax/dpaax_iova_table.c
-@@ -1,17 +1,40 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright 2018-2023 NXP
-+ * Copyright 2018-2023,2026 NXP
-  */
- 
- #include <eal_export.h>
- #include <rte_memory.h>
- 
- #include "dpaax_iova_table.h"
-+#include "compat.h"
- #include "dpaax_logs.h"
- 
- /* Global table reference */
- RTE_EXPORT_INTERNAL_SYMBOL(dpaax_iova_table_p)
- struct dpaax_iova_table *dpaax_iova_table_p;
- 
-+/*
-+ * Track whether the process is executing DPDK destructors. During
-+ * teardown the EAL memory subsystem may already be gone, so freeing
-+ * EAL memory from a DPAAx destructor is unsafe. Drivers mark the
-+ * destructor context via dpaax_enter_destructor() so that kfree()
-+ * (see compat.h) can skip rte_free() in that window.
-+ */
-+static int s_dpaax_in_destructor;
++* **Added NXP DPAA Rx/Tx taildrop threshold device arguments.**
 +
-+RTE_EXPORT_INTERNAL_SYMBOL(dpaax_enter_destructor)
-+void dpaax_enter_destructor(void)
-+{
-+	s_dpaax_in_destructor = 1;
-+}
++  Added ``drv_rx_taildrop`` and ``drv_tx_taildrop`` device arguments
++  to configure per-port frame queue taildrop congestion thresholds
++  at device probe time.
 +
-+RTE_EXPORT_INTERNAL_SYMBOL(is_dpaax_in_destructor)
-+int is_dpaax_in_destructor(void)
-+{
-+	return s_dpaax_in_destructor;
-+}
++* **Added NXP DPAA Tx rate limiting API.**
 +
++  Added ``rte_pmd_dpaa_port_set_rate_limit()`` to configure the
++  transmit rate limit (burst size and rate) on a DPAA port using the
++  FMAN port rate limiter.
 +
- static int dpaax_handle_memevents(void);
++* **Added NXP DPAA fmcless Rx queue count device argument.**
++
++  Added ``drv_fmcless_rxq`` device argument to set the number of
++  Rx queues when running without FMC configuration.
++
++* **Added NXP DPAA shared MAC kernel interface name device argument.**
++
++  Added ``drv_sh_if_name`` device argument to provide the Linux kernel
++  interface name of a shared MAC interface when it differs from the
++  ``fmX-macY`` style name used by DPDK.
++
++* **Added NXP DPAA DMA scatter-gather support and new device arguments.**
++
++  Added scatter-gather (SG) batching to the DPAA QDMA driver, enabled by
++  default, along with the ``dpaa_dma_sg_disable`` and
++  ``dpaa_dma_data_validation`` device arguments to disable SG batching and
++  to enable post-transfer data validation for debugging.
++  When the driver is built with ``RTE_DMA_DPAA_ERRATA_ERR050757``, the
++  source read type and stride are programmed to work around hardware
++  erratum ERR050757, and the ``dpaa_dma_pci_read_disable`` device argument
++  can be used to disable that programming.
++
  
- /* A structure representing the device-tree node available in /proc/device-tree.
-diff --git a/drivers/mempool/dpaa/dpaa_mempool.c b/drivers/mempool/dpaa/dpaa_mempool.c
-index 3d44739028..d0d451ca50 100644
---- a/drivers/mempool/dpaa/dpaa_mempool.c
-+++ b/drivers/mempool/dpaa/dpaa_mempool.c
-@@ -517,6 +517,8 @@ RTE_FINI_PRIO(dpaa_mpool_finish, RTE_PRIORITY_104)
- {
- 	uint16_t bpid;
- 
-+	dpaax_enter_destructor();
-+
- 	for (bpid = 0; bpid < DPAA_MAX_BPOOLS; bpid++) {
- 		if (s_dpaa_bpid_allocated_flag[bpid].used) {
- 			bman_free_bpid(bpid, s_dpaa_bpid_allocated_flag[bpid].flags);
-diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
-index b5bc7de964..6326ad1930 100644
---- a/drivers/net/dpaa/dpaa_ethdev.c
-+++ b/drivers/net/dpaa/dpaa_ethdev.c
-@@ -2868,6 +2868,7 @@ RTE_FINI_PRIO(dpaa_finish, 103)
- 	struct rte_eth_dev *dev;
- 
- 	PMD_INIT_FUNC_TRACE();
-+	dpaax_enter_destructor();
- 	/* For secondary, primary will do all the cleanup */
- 	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
- 		return;
+ Removed Items
+ -------------
 -- 
 2.25.1
 
