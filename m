@@ -2,45 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02E07C5DF7D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 13:33:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1445C5DF7D
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 13:33:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 633C040611;
-	Tue, 18 Aug 2026 15:33:46 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4D8A54067C;
+	Tue, 18 Aug 2026 15:33:47 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id 3C58F40269
- for <dev@dpdk.org>; Tue, 18 Aug 2026 15:33:44 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id CA1EC40269;
+ Tue, 18 Aug 2026 15:33:44 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1787060025; x=1818596025;
+ t=1787060026; x=1818596026;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=We+jyKeG16LrxfzkHkZ2U6RIu7Mbo6mha4a1Km5ERiQ=;
- b=JGjejoDoBqzXdiHsjTmfjHDlz3OL0juC2tT10JseMCMYZx7NCgwNW10I
- 11wm32z/6agBl2JcA/faaVOe1RmoPViqlIxQLM6QFb5LS0qONzydS+CFL
- TIgtKEdQTV7VxSFw7vNVuExved/69Uu6IGwZ7/Vls02KTby2dRmpkBkb/
- 7YvddBVgTQY2Xiq46BR0G/iMlYphGs+G9wTJfUT4CX23jFKXY605rpshY
- NbWNLBGjq/N9DFNP6IE7HMEwHGKroOvi8tzSZYprgM5AJbnjzVV9jnLV1
- hQ5DQmKDWG0mWVVp9kYapCtZs1HxbxgAwCElIeuahuLcjSy0fvtxJyTWj Q==;
-X-CSE-ConnectionGUID: zp8dSAy3TQqSR+RcEb+HHw==
-X-CSE-MsgGUID: o4IJF6+oRBisAds+j5iOwQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11878"; a="87757580"
-X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="87757580"
+ bh=ms8UlimF8SjOk1j88k4seqVcnRTZUzxL/ikwNXfRiV4=;
+ b=XQcUoxcXjYQz8AvBd5rNMyg+pA3B8nU6oc75QlD30uW5XVg9fXe21SsD
+ Ehp27zRztB1HZ7xBCnb2WHSnBS9KEUAau8Jh4aFQjlBZv9toZV3ywZFVn
+ TVTlUIAweVhfgmCNFM0xtonibaFHmM/SR1wia4c2g9t4s/9h3YAvbeBqd
+ dfZo7W4H6PWC5A1E4XahQ8dRnTabwEmE/Bhn2J5jjS0h9oJDqvbkF/fYE
+ Vj+kLRiGP+zb9PsXa9AzaLmsK0cptiaThxtCFv9giTpc1IMLDPPft+AnC
+ bwx+xC8/EzB6hQv8E0MLWDi4xFx/Gld23q81pt+6G2aKwfrdozZ9aaCsj w==;
+X-CSE-ConnectionGUID: H1a59pjPTTyLuMUdRUdFIA==
+X-CSE-MsgGUID: Jakvo+iQSYWpMW2FVAkKAQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11878"; a="87757582"
+X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="87757582"
 Received: from fmviesa002.fm.intel.com ([10.60.135.142])
  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
  18 Aug 2026 06:33:44 -0700
-X-CSE-ConnectionGUID: /4vwcobnTNqli53oxMmfLA==
-X-CSE-MsgGUID: wC+DuIgHQGaNNmq8WZ0ilw==
+X-CSE-ConnectionGUID: 9ydZiQIFSGC7aTGr8SfjYg==
+X-CSE-MsgGUID: ps0MOsFGS4mYOrf5OIVWXw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="288736522"
+X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="288736531"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa002.fm.intel.com with ESMTP; 18 Aug 2026 06:33:42 -0700
+ by fmviesa002.fm.intel.com with ESMTP; 18 Aug 2026 06:33:43 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v2 01/39] telemetry: make cpuset init parameter const
-Date: Tue, 18 Aug 2026 14:32:54 +0100
-Message-ID: <20260818133334.2620165-2-bruce.richardson@intel.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>,
+	stable@dpdk.org
+Subject: [PATCH v2 02/39] argparse: check for range overflow in CPU lists
+Date: Tue, 18 Aug 2026 14:32:55 +0100
+Message-ID: <20260818133334.2620165-3-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260818133334.2620165-1-bruce.richardson@intel.com>
 References: <20260429165845.2136843-1-bruce.richardson@intel.com>
@@ -60,50 +61,65 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The cpuset parameter to telemetry_init is not modified so can be marked
-as const. This can allow callers to pass the parameter from a const
-structure rather than a modifiable one.
+The rte_cpuset_t type cannot handle core ids greater than CPU_SETSIZE
+Add an explicit check for out of range values when processes a corelist.
+
+Fixes: d78103fb9488 ("argparse: support core lists")
+Cc: stable@dpdk.org
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/telemetry/telemetry.c          | 4 ++--
- lib/telemetry/telemetry_internal.h | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ app/test/test_argparse.c    | 10 ++++++++++
+ lib/argparse/rte_argparse.c |  5 +++++
+ 2 files changed, 15 insertions(+)
 
-diff --git a/lib/telemetry/telemetry.c b/lib/telemetry/telemetry.c
-index e591c1e283..956a261c13 100644
---- a/lib/telemetry/telemetry.c
-+++ b/lib/telemetry/telemetry.c
-@@ -56,7 +56,7 @@ static struct socket v1_socket; /* socket for v1 telemetry */
+diff --git a/app/test/test_argparse.c b/app/test/test_argparse.c
+index fdc6dd113c..318f8df9fb 100644
+--- a/app/test/test_argparse.c
++++ b/app/test/test_argparse.c
+@@ -834,9 +834,13 @@ test_argparse_parse_type_corelist(void)
+ 	char *corelist_invalid_special_chars = test_strdup("1,2@3");
+ 	char *corelist_invalid_comma_only = test_strdup(",");
+ 	char *corelist_invalid_out_of_range = test_strdup("70000");
++	char corelist_invalid_cpu_set[32];
+ 	rte_cpuset_t val_cpuset;
+ 	int ret;
  
- static const char *telemetry_version; /* save rte_version */
- static const char *socket_dir;        /* runtime directory */
--static rte_cpuset_t *thread_cpuset;
-+static const rte_cpuset_t *thread_cpuset;
++	snprintf(corelist_invalid_cpu_set, sizeof(corelist_invalid_cpu_set),
++		"0-%d", CPU_SETSIZE);
++
+ 	/* test valid single core */
+ 	CPU_ZERO(&val_cpuset);
+ 	ret = rte_argparse_parse_type(corelist_valid_single,
+@@ -966,6 +970,12 @@ test_argparse_parse_type_corelist(void)
+ 			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
+ 	TEST_ASSERT(ret != 0, "Argparse parse type for corelist (out of range) should have failed!");
  
- RTE_LOG_REGISTER_DEFAULT(logtype, WARNING);
- #define RTE_LOGTYPE_TELEMETRY logtype
-@@ -658,7 +658,7 @@ telemetry_v2_init(void)
++	/* test invalid corelist that exceeds the destination CPU set */
++	CPU_ZERO(&val_cpuset);
++	ret = rte_argparse_parse_type(corelist_invalid_cpu_set,
++			RTE_ARGPARSE_VALUE_TYPE_CORELIST, &val_cpuset);
++	TEST_ASSERT(ret != 0, "Argparse parse type for corelist outside CPU set should have failed!");
++
+ 	return 0;
+ }
  
- RTE_EXPORT_INTERNAL_SYMBOL(rte_telemetry_init)
- int32_t
--rte_telemetry_init(const char *runtime_dir, const char *rte_version, rte_cpuset_t *cpuset)
-+rte_telemetry_init(const char *runtime_dir, const char *rte_version, const rte_cpuset_t *cpuset)
- {
- 	telemetry_version = rte_version;
- 	socket_dir = runtime_dir;
-diff --git a/lib/telemetry/telemetry_internal.h b/lib/telemetry/telemetry_internal.h
-index 2fd9fbd7c1..4a6b2e9838 100644
---- a/lib/telemetry/telemetry_internal.h
-+++ b/lib/telemetry/telemetry_internal.h
-@@ -119,6 +119,6 @@ typedef int (*rte_log_fn)(uint32_t level, uint32_t logtype, const char *format,
-  */
- __rte_internal
- int
--rte_telemetry_init(const char *runtime_dir, const char *rte_version, rte_cpuset_t *cpuset);
-+rte_telemetry_init(const char *runtime_dir, const char *rte_version, const rte_cpuset_t *cpuset);
+diff --git a/lib/argparse/rte_argparse.c b/lib/argparse/rte_argparse.c
+index 88c3e7740c..158c413bdc 100644
+--- a/lib/argparse/rte_argparse.c
++++ b/lib/argparse/rte_argparse.c
+@@ -623,6 +623,11 @@ parse_arg_corelist(const struct rte_argparse_arg *arg, const char *value)
+ 				/* range from low to high */
+ 				max = idx;
+ 			}
++			if (max >= CPU_SETSIZE) {
++				ARGPARSE_LOG(ERR, "argument %s contains a core outside the CPU set range!",
++					arg->name_long);
++				return -EINVAL;
++			}
  
- #endif
+ 			for (; min <= max; min++)
+ 				CPU_SET(min, cpuset);
 -- 
 2.53.0
 
