@@ -2,48 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 470EFC5DF7D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 13:33:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02E07C5DF7D
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 13:33:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 66CCB40294;
-	Tue, 18 Aug 2026 15:33:45 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 633C040611;
+	Tue, 18 Aug 2026 15:33:46 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id 75CF540269
- for <dev@dpdk.org>; Tue, 18 Aug 2026 15:33:43 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 3C58F40269
+ for <dev@dpdk.org>; Tue, 18 Aug 2026 15:33:44 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1787060024; x=1818596024;
+ t=1787060025; x=1818596025;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=ySCtLpzRhTMa8Fa9KvdQ1GU7aTq/tznHX+tYYWy6ww4=;
- b=kCaMJ2MNCQxu9aQoaBGk4syGgMpODiepKfJ1BfAlBfyXJmgwOyvzwYkQ
- y6od793wjAIdBfih25Enhviv5F2datBX3Vq5jLqtv3Ume3jNSF5ncdc5u
- NR0XNJ7XTHDOS2fKJfutiao4NOt1v4GKxdixuPb3LZKDxmA9UvPIGeeZQ
- I7B1WTLCminjsBsCsaEo3mokwMiL6t95CAhvBZkpTj3FqwLGOO9XYhBSg
- wp4fjcuUjOUs9X1wsSgqj/YRKB0N6ic1O0WU5KuI4wSHlDZKj1oirT8GM
- UbCRYWEu/3dxihHSPmhp0REpx2eEyTjpLTDl3BQpeJE6ujXPMdicnxpan w==;
-X-CSE-ConnectionGUID: yE9XkPk9QoyWsmOjXDSfiw==
-X-CSE-MsgGUID: vqRBpJROSAeNJp5NjTBCPQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11878"; a="87757579"
-X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="87757579"
+ bh=We+jyKeG16LrxfzkHkZ2U6RIu7Mbo6mha4a1Km5ERiQ=;
+ b=JGjejoDoBqzXdiHsjTmfjHDlz3OL0juC2tT10JseMCMYZx7NCgwNW10I
+ 11wm32z/6agBl2JcA/faaVOe1RmoPViqlIxQLM6QFb5LS0qONzydS+CFL
+ TIgtKEdQTV7VxSFw7vNVuExved/69Uu6IGwZ7/Vls02KTby2dRmpkBkb/
+ 7YvddBVgTQY2Xiq46BR0G/iMlYphGs+G9wTJfUT4CX23jFKXY605rpshY
+ NbWNLBGjq/N9DFNP6IE7HMEwHGKroOvi8tzSZYprgM5AJbnjzVV9jnLV1
+ hQ5DQmKDWG0mWVVp9kYapCtZs1HxbxgAwCElIeuahuLcjSy0fvtxJyTWj Q==;
+X-CSE-ConnectionGUID: zp8dSAy3TQqSR+RcEb+HHw==
+X-CSE-MsgGUID: o4IJF6+oRBisAds+j5iOwQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11878"; a="87757580"
+X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="87757580"
 Received: from fmviesa002.fm.intel.com ([10.60.135.142])
  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Aug 2026 06:33:43 -0700
-X-CSE-ConnectionGUID: nPOwH2lvQ2q2XBGnCHht5w==
-X-CSE-MsgGUID: a5qIHCYGQGy6ZrsVkQC+tw==
+ 18 Aug 2026 06:33:44 -0700
+X-CSE-ConnectionGUID: /4vwcobnTNqli53oxMmfLA==
+X-CSE-MsgGUID: wC+DuIgHQGaNNmq8WZ0ilw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="288736514"
+X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="288736522"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa002.fm.intel.com with ESMTP; 18 Aug 2026 06:33:41 -0700
+ by fmviesa002.fm.intel.com with ESMTP; 18 Aug 2026 06:33:42 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v2 00/39] Rework EAL configuration
-Date: Tue, 18 Aug 2026 14:32:53 +0100
-Message-ID: <20260818133334.2620165-1-bruce.richardson@intel.com>
+Subject: [PATCH v2 01/39] telemetry: make cpuset init parameter const
+Date: Tue, 18 Aug 2026 14:32:54 +0100
+Message-ID: <20260818133334.2620165-2-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260429165845.2136843-1-bruce.richardson@intel.com>
+In-Reply-To: <20260818133334.2620165-1-bruce.richardson@intel.com>
 References: <20260429165845.2136843-1-bruce.richardson@intel.com>
+ <20260818133334.2620165-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -59,147 +60,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patchset reworks how configuration is stored and managed in EAL.
-The existing "internal_config", "rte_config", "lcore_config" structures,
-which sometimes have arbitrary separation between them (especially the
-first two) are replaced by three new structures with clearly defined
-roles:
+The cpuset parameter to telemetry_init is not modified so can be marked
+as const. This can allow callers to pass the parameter from a const
+structure rather than a modifiable one.
 
-- eal_platform_info - contains the raw HW info for the system, details
-  of CPUs and hugepage mounts. This is initialized on first use - even
-  before EAL init is called - and is then immutable, since our HW should
-  not change much underneath us. Its early availability means that it
-  can be used to sanity check the contents of the other structs as they
-  are being built up.
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ lib/telemetry/telemetry.c          | 4 ++--
+ lib/telemetry/telemetry_internal.h | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-- eal_user_cfg - contains the config settings passed in by the user. For
-  existing rte_eal_init, this is built up in the arg parse stage, and
-  it's contents verified against the platform info, e.g. to check core
-  masks are valid etc. Once argument parsing is completed, is also
-  immutable.
-
-- runtime_cfg - basically all the runtime settings that need to be there
-  for DPDK to run, or which change over time. Largely combined content
-  of the old rte_config, internal_config and lcore_config structs. This
-  is initialized from the other two structs by eal initialization and
-  can be modified by EAL at any time.
-
-Once that is done, we have a clean separation between user provided
-configuration and the rest of EAL, we can split EAL init into two parts,
-the first of which parses cmdline arguments and then calls the second
-which takes the eal_user_cfg struct result of that parse and does the
-actual initialization. The longer-term objective is to have other
-first-stage functions that prepare the user_cfg struct for
-initialization, so that we can move away from argc/argv as the only
-method of configuring DPDK initialization.
-
-v2: minor rework following AI review.
-
-Bruce Richardson (39):
-  telemetry: make cpuset init parameter const
-  argparse: check for range overflow in CPU lists
-  eal: define new functionally distinct config structs
-  eal: move memory request fields to user config
-  eal: move NUMA request fields to user config
-  eal: move hugepage policy fields to user config
-  eal: move process policy fields to user config
-  eal: move hugepage limit fields to new config structs
-  eal: move advanced user config options to user cfg struct
-  eal: move hugepage size info to platform info struct
-  eal: move runtime state to appropriate structure
-  eal: record details of all cpus in platform info
-  eal: use platform info for lcore lookups
-  eal: add macro for lowest set CPU bit in a set
-  eal: store lcore configuration in runtime data
-  eal: move core indices bitset to runtime state
-  eal: cleanup CPU init function
-  eal: move NUMA node information to platform info struct
-  eal: move lcore role and count to runtime state
-  eal: make lcore role a field in lcore config struct
-  eal: move main lcore setting to runtime config struct
-  eal: move IOVA mode and process type to runtime cfg
-  eal: move memory config pointer to runtime state struct
-  eal: remove rte_config structure
-  eal: separate runtime state update from arg parsing
-  eal: move device options staging list into user cfg
-  eal: separate plugin paths from loaded plugin objects
-  eal: simplify internal driver path iteration APIs
-  eal: move trace config into user config struct
-  eal: record service cores in user config struct
-  eal: store user-provided lcore info in user config struct
-  eal: clarify docs on params taking lcore IDs
-  eal: remove internal config reset function
-  eal: move functions setting runtime state
-  eal: initialize platform info on first use
-  eal: remove duplicated scan of sysfs for hugepage details
-  eal: add utilities for working with user config struct
-  eal: split EAL init into two stages
-  eal: provide hooks for init with externally supplied config
-
- app/test/process.h                        |   4 +-
- app/test/test_argparse.c                  |  10 +
- doc/guides/linux_gsg/eal_args.include.rst |  38 +-
- lib/argparse/rte_argparse.c               |   5 +
- lib/eal/common/eal_common_bus.c           |   4 +-
- lib/eal/common/eal_common_config.c        | 267 ++++++-
- lib/eal/common/eal_common_dev.c           |  10 +-
- lib/eal/common/eal_common_dynmem.c        |  70 +-
- lib/eal/common/eal_common_fbarray.c       |  10 +-
- lib/eal/common/eal_common_launch.c        |  25 +-
- lib/eal/common/eal_common_lcore.c         | 267 ++++---
- lib/eal/common/eal_common_mcfg.c          |  44 +-
- lib/eal/common/eal_common_memalloc.c      |   5 +-
- lib/eal/common/eal_common_memory.c        | 104 ++-
- lib/eal/common/eal_common_memzone.c       |  24 +-
- lib/eal/common/eal_common_options.c       | 899 ++++++++--------------
- lib/eal/common/eal_common_proc.c          |  43 +-
- lib/eal/common/eal_common_tailqs.c        |   6 +-
- lib/eal/common/eal_common_thread.c        |  67 +-
- lib/eal/common/eal_common_timer.c         |   2 +-
- lib/eal/common/eal_common_trace.c         |  30 +-
- lib/eal/common/eal_common_trace_utils.c   | 104 ---
- lib/eal/common/eal_hugepages.h            |   8 +
- lib/eal/common/eal_internal_cfg.h         | 385 +++++++--
- lib/eal/common/eal_memcfg.h               |   3 +
- lib/eal/common/eal_option_list.h          |   6 +-
- lib/eal/common/eal_options.h              |   8 +-
- lib/eal/common/eal_private.h              | 121 ++-
- lib/eal/common/eal_trace.h                |  11 -
- lib/eal/common/malloc_elem.c              |  15 +-
- lib/eal/common/malloc_heap.c              |  41 +-
- lib/eal/common/malloc_mp.c                |   2 +-
- lib/eal/common/rte_malloc.c               |  14 +-
- lib/eal/common/rte_service.c              |  17 +-
- lib/eal/freebsd/eal.c                     | 291 ++++---
- lib/eal/freebsd/eal_hugepage_info.c       |  78 +-
- lib/eal/freebsd/eal_lcore.c               |  16 +-
- lib/eal/freebsd/eal_memory.c              |  46 +-
- lib/eal/freebsd/include/rte_os.h          |   2 +
- lib/eal/include/rte_eal.h                 |  35 +-
- lib/eal/include/rte_memzone.h             |  10 +-
- lib/eal/include/rte_tailq.h               |   2 +-
- lib/eal/linux/eal.c                       | 297 ++++---
- lib/eal/linux/eal_hugepage_info.c         | 231 +++---
- lib/eal/linux/eal_lcore.c                 |  43 ++
- lib/eal/linux/eal_memalloc.c              | 168 ++--
- lib/eal/linux/eal_memory.c                | 168 ++--
- lib/eal/linux/eal_timer_hpet.c            |  21 +-
- lib/eal/linux/eal_vfio.c                  |  11 +-
- lib/eal/linux/include/rte_os.h            |  10 +
- lib/eal/unix/eal_unix_thread.c            |  11 +-
- lib/eal/windows/eal.c                     | 197 +++--
- lib/eal/windows/eal_hugepages.c           |  60 +-
- lib/eal/windows/eal_lcore.c               |   6 +
- lib/eal/windows/eal_memalloc.c            |  37 +-
- lib/eal/windows/eal_memory.c              |  14 +-
- lib/eal/windows/eal_thread.c              |  11 +-
- lib/eal/windows/eal_windows.h             |   8 -
- lib/eal/windows/include/rte_os.h          |   1 +
- lib/eal/windows/include/sched.h           |  10 +
- lib/telemetry/telemetry.c                 |   4 +-
- lib/telemetry/telemetry_internal.h        |   2 +-
- 62 files changed, 2511 insertions(+), 1948 deletions(-)
-
---
+diff --git a/lib/telemetry/telemetry.c b/lib/telemetry/telemetry.c
+index e591c1e283..956a261c13 100644
+--- a/lib/telemetry/telemetry.c
++++ b/lib/telemetry/telemetry.c
+@@ -56,7 +56,7 @@ static struct socket v1_socket; /* socket for v1 telemetry */
+ 
+ static const char *telemetry_version; /* save rte_version */
+ static const char *socket_dir;        /* runtime directory */
+-static rte_cpuset_t *thread_cpuset;
++static const rte_cpuset_t *thread_cpuset;
+ 
+ RTE_LOG_REGISTER_DEFAULT(logtype, WARNING);
+ #define RTE_LOGTYPE_TELEMETRY logtype
+@@ -658,7 +658,7 @@ telemetry_v2_init(void)
+ 
+ RTE_EXPORT_INTERNAL_SYMBOL(rte_telemetry_init)
+ int32_t
+-rte_telemetry_init(const char *runtime_dir, const char *rte_version, rte_cpuset_t *cpuset)
++rte_telemetry_init(const char *runtime_dir, const char *rte_version, const rte_cpuset_t *cpuset)
+ {
+ 	telemetry_version = rte_version;
+ 	socket_dir = runtime_dir;
+diff --git a/lib/telemetry/telemetry_internal.h b/lib/telemetry/telemetry_internal.h
+index 2fd9fbd7c1..4a6b2e9838 100644
+--- a/lib/telemetry/telemetry_internal.h
++++ b/lib/telemetry/telemetry_internal.h
+@@ -119,6 +119,6 @@ typedef int (*rte_log_fn)(uint32_t level, uint32_t logtype, const char *format,
+  */
+ __rte_internal
+ int
+-rte_telemetry_init(const char *runtime_dir, const char *rte_version, rte_cpuset_t *cpuset);
++rte_telemetry_init(const char *runtime_dir, const char *rte_version, const rte_cpuset_t *cpuset);
+ 
+ #endif
+-- 
 2.53.0
 
