@@ -2,53 +2,144 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A32C5DF74
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 13:38:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C2DC5DF74
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 13:38:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 15D5E41104;
-	Tue, 18 Aug 2026 15:34:30 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id 3DB2C40ED2
- for <dev@dpdk.org>; Tue, 18 Aug 2026 15:34:22 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id DECB04067C;
+	Tue, 18 Aug 2026 15:36:44 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+ by mails.dpdk.org (Postfix) with ESMTP id E816B4064A
+ for <dev@dpdk.org>; Tue, 18 Aug 2026 15:36:42 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1787060063; x=1818596063;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=WzBzZkjt8neVFiQUNSeXQ/eLEMs9B9QKj0hq/yPj+dE=;
- b=dB0TTn603/LZPCqGjjescuc4W6jxzBEq3cn6JixuTMo1LmxpZHmJPBz7
- MgwJZbTvbAbkea4YFy6nrpFRN51SszuxkNXnr9XVQI2UbZjt3aKYJgbq0
- zzOptmGkJioAssFf/bAf/CnWI5FhvZzfi+W8Um/uoPOksHsgpVf5IrH3k
- LwjnZoNOS+OI7PSTXBNFIVZ9K5yebiqYXD9cLk815z9QadWoICiPQdJNV
- qEMP1sOsgyWSfY3YKbCKyD6W482IqTgmgIMuQfmT4Frozgeqx+0YasL+i
- JRCr60YeHB7gU/SzrokbkLE0FDgalYnNJXbvcmOTW7e5JqK6hh8dI4jJ9 Q==;
-X-CSE-ConnectionGUID: 6Jm71WBRQVS3NRBzfmkmeQ==
-X-CSE-MsgGUID: AN3woN5ETFaZ7Md8HD1EeA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11878"; a="87757714"
-X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="87757714"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
- by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Aug 2026 06:34:22 -0700
-X-CSE-ConnectionGUID: f/ZHJWtERmy7rr+zLd2VPA==
-X-CSE-MsgGUID: ifnAdrGESPu5f4YscvpzUw==
+ t=1787060203; x=1818596203;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=ElL8jGIuk7mCBTcRY+dJMatYMrYT1XUCREyKXYJcxv0=;
+ b=BoLv384GTc5kxtYO7NpoAvw70MySHLJ7lqczXanZhoiiOes1FRz87l7q
+ psGhTY7poX96xUz0yUCtD9i5PNGfCcpfHLutKXkGZUT+NBpuLwljRj4IN
+ WZxdnzVG7lYHcpEBJ8JloPeUYry3NU+nzYTCAJ1g3E9aAxCd1tLNB+7ww
+ lP+Yc+LDpYNzgvMOmbRMxkfVeURbeO5Mfrz8xo/ZN44WaIWO+IOgvV7qy
+ PYvRXB/Udn3FcMmPHgsPN7SWA7n+4S3seAQSJNtp56y1rafUQhi3x+dQ3
+ HIKb0CeXVDa+EjctyUgExyJPNvzuAf4ZhaDVPqRKtzrfZp5Da6xlebLAW w==;
+X-CSE-ConnectionGUID: 7RCvR9vXQzaz8EtDAhhk4g==
+X-CSE-MsgGUID: JOoNqbQLTJGh8Z0Jy1W+tQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11878"; a="87468810"
+X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="87468810"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+ by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 18 Aug 2026 06:36:42 -0700
+X-CSE-ConnectionGUID: jKJNE4ivRpCzuJ488om0uQ==
+X-CSE-MsgGUID: JrGispKOTrqOaTI5/neLKA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="288736806"
-Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa002.fm.intel.com with ESMTP; 18 Aug 2026 06:34:20 -0700
+X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="261482935"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 18 Aug 2026 06:36:42 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Tue, 18 Aug 2026 06:36:41 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45 via Frontend Transport; Tue, 18 Aug 2026 06:36:41 -0700
+Received: from BN8PR05CU002.outbound.protection.outlook.com (52.101.57.70) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Tue, 18 Aug 2026 06:36:40 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fJQSFeSrpuRKY7KabzKA7s8lHgxj7kRhErUeWTx9GvnbpyD/51rLK9RgPaMJktIkr+kVEbrep3A7Cg3H7QOG6F7h8ucy9xt+wSH+U8K6tfVADG6XexvmRwLByU5DVyFHajBIOi9/oCeqfzyX7ilIEPY+srmGCDZyNGZm8N+r9N7FucZA47GA7DZcnLqVcUjsCUBjvuGLB6XI7k+/ee+S4ow6Cs44oiIvCCdVztbV05j33dAAvix/trUG0wbjAV3/jThwVb63gTTadfy8yvxLp94IHTdztryNwMshtKHXn1ylE4d0ff8JEYlQAfpx9WSQ/RrZ8uAnie5e2t3ji8/ESw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=s80I2l9vgGwfVTEMSdF1JrpNebeObcvaIRvA5g4X6lc=;
+ b=CRK+cEFN/3OnP6qh0MfIge97wS0TDwtGZROJXoitoq0Eiq8edzLLTP7ImDfopeN3Y/PeB4z7LCgZF+Tlkvvx88wExFIF40rHjKDH49IGwywtS+5fmLWYynFLUVeZ8czib+9IKRxVxJE3DIeeEABYs63WFkqvslrnQp1z95Je0y11M5tfHZ45XVbiAaEZC13UgoWdDGp3LedxXz5C/+wbWzYd/Qi0jc4RY2b90/ClMp/ouZb2r6RKFBs3hL7Grf86vXvAVqOrpoSCAiA8/uzcJ9+zvjnIMBJqTsLkl/99xDzESe0CuUOtGreFaJC+4gR30RBfVkTfK9TFXslYNz/O3w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from IA3PR11MB9421.namprd11.prod.outlook.com (2603:10b6:208:578::9)
+ by DS0PR11MB7580.namprd11.prod.outlook.com (2603:10b6:8:148::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.339.8; Tue, 18 Aug
+ 2026 13:36:36 +0000
+Received: from IA3PR11MB9421.namprd11.prod.outlook.com
+ ([fe80::1b70:3d93:d363:155f]) by IA3PR11MB9421.namprd11.prod.outlook.com
+ ([fe80::1b70:3d93:d363:155f%4]) with mapi id 15.21.0315.016; Tue, 18 Aug 2026
+ 13:36:34 +0000
+Date: Tue, 18 Aug 2026 14:36:30 +0100
 From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v2 39/39] eal: provide hooks for init with externally supplied
- config
-Date: Tue, 18 Aug 2026 14:33:32 +0100
-Message-ID: <20260818133334.2620165-40-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260818133334.2620165-1-bruce.richardson@intel.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: <dev@dpdk.org>
+Subject: Re: [PATCH 03/39] eal: define new functionally distinct config structs
+Message-ID: <aoRf3ukAxZ0epySa@bricha3-mobl1.ger.corp.intel.com>
 References: <20260429165845.2136843-1-bruce.richardson@intel.com>
- <20260818133334.2620165-1-bruce.richardson@intel.com>
+ <20260721094555.2188496-1-bruce.richardson@intel.com>
+ <20260721094555.2188496-4-bruce.richardson@intel.com>
+ <20260727110338.777d5840@phoenix.local>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20260727110338.777d5840@phoenix.local>
+X-ClientProxiedBy: DUZPR01CA0250.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4b5::6) To IA3PR11MB9421.namprd11.prod.outlook.com
+ (2603:10b6:208:578::9)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA3PR11MB9421:EE_|DS0PR11MB7580:EE_
+X-MS-Office365-Filtering-Correlation-Id: 712bbdce-71ac-42f8-b168-08defd2db84b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|366016|376014|23010399003|1800799024|56012099006|10067099003|4143699003|11063799006|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info: rV6lIiEIJdypeqJQZMlkva0L6C4VSRbBXx2ovYmeDZRipsx5ZcGgYuDaH0EwhT1VVtOptWkPgxQLpeh4CkvqMtB/JVga0kmND84O/mVn0U8Edy8Iu/ScIxMBxUK5dCT23DrAnYFpxw5FbRarNjFKU9R+BHkXEaecLrUwdnAZb1cvtRxUiqCa4LorztDJJgN71Xw2SGWxtsNFyPs4E2KuheOVaw5XlqB1ByeCRS9NOSVIe3QMbGI3KIlSpZTG4V3KuKW2HNskdFxW4+Dbf/bLssu3iPXdXH2jIa+6AT9j464MrKQhxv6pMHdmc+sXTFZgn6XpvNhw/8Fuw0NH3IavdbqwZ0Ngcnqa5jK5XlFwLjOEmPhoPpah62yhkgLaDiVLQ4s7aVWzWWU1uHBpbM5hYwHaX/6bCi9awPN9so5qQUJ9U0ZA4Nrn/h2Y2DjCHHs/jqvo5dzzgkZg9TAoClqKZcIEfwSEVY4MSODKwbCLsrXz13++Q3Yd6glFkX2r5GcHLaYHNQAA3W6M1YnoyEPZhWGx9lelPq7nwVe2ZVARrkkzMCOnEi49cihD16buErH6iZwD2Joh6kul9WTlhrIVc0bZkYq8hJvlDzrPld9KMdmomTUbndKZntx5RPgBI5RbbvQC48y5QvDfHmqJ0HL27zvvtZppL5pTXSlUGxxFZlY=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:IA3PR11MB9421.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(376014)(23010399003)(1800799024)(56012099006)(10067099003)(4143699003)(11063799006)(22082099003)(18002099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?fNngibAz10XrD4la6ZYmEDTOSmkZ/toF7ZIEgnWD43ag9d5tiScvMgoolzGQ?=
+ =?us-ascii?Q?7IDGmOuVv6sQDk3JG99pInFvFXqsHQR0WBAZ2SAtOqg5eRkMYw7j7tBXZqyl?=
+ =?us-ascii?Q?pJrjciJU5T95pBdFzn06sBxdtzkcx4cIBwV2ecS1hfWkplWpieXQ0tgKaL93?=
+ =?us-ascii?Q?7MtVVlPzyjpBuIdv26tplLyveM1YHMaC9NBmXT4EDVcPosDaHJm9xDEmWsSr?=
+ =?us-ascii?Q?M8i5ucXC7h+QnNiXpMf5WW2YB5uWpIYy7pZDBGI3rSXv/8kB+Wt7LlFgUdPW?=
+ =?us-ascii?Q?Vx1HRcvR9lcntf5D9Xtaz3aRFjQOwvZ3jWnrTfPwnUZS38FDM3LKOvusZpWW?=
+ =?us-ascii?Q?UwhDWYgrRBmABNFwedR9XHWwiUJlbFH5Rm1sgbNzHpiimxfEeAuTQJ6Dquuh?=
+ =?us-ascii?Q?pXq4mKquJj9g5HmGE4YnH5mlHbFAZO+PoApAmysYqBbScJXU7hfiET+i9VYZ?=
+ =?us-ascii?Q?lzSsL/dTIRe/0qbKuFwu0myPIcQx/d87N/N8AIrt9zsWvXcxPBuhPAb+Wo6F?=
+ =?us-ascii?Q?t1lglzyjgQOJjvPG8zIkyar4hRphpYx+m3uwe/UcAMSclS9lmfAtorjpWaoJ?=
+ =?us-ascii?Q?eIvyFqTL0SYaTSuc53/jH1HCn0lT8UICxCsIdc7f25M4sFZ6CuVVMYFXYs6Z?=
+ =?us-ascii?Q?glYNrEaEnCgFQ56m3xFHnTldHgHhcIho9EQzOmR5z7e0HEBhBFXLqh8nePYC?=
+ =?us-ascii?Q?UZ2ccRJcrTRr2GiZ0o9Ned0W32jI7S3Hw7R8k1uySzgmjSANk58WDa4BZ5R6?=
+ =?us-ascii?Q?+Akvkea+jimNHL4yOfD0T7dHUvQopc8QgZvCwiZjx0zwwR2M0mqxG5NQRHvT?=
+ =?us-ascii?Q?wgxB/O6hSCet9MIrrKAwpBU0NZsLOMUb13GxY2sAPyWKyQzuYyjq6LX49RHl?=
+ =?us-ascii?Q?A7mWmPouRQCF0u0dHTa8VqVak8m+VWWH9N2jwKVQ4Dqb2hc3wwpYOUqKsnEI?=
+ =?us-ascii?Q?dw2+dP4wldp54ry9Aqs+VhW1N87u0TKASrM8NF/7vr1+JYMypI8rSn/pBWLY?=
+ =?us-ascii?Q?WL+MSjzJ2ZlmpwH0IZyDKNUMhGWTNKw6RrqcNtaMGuDlYIfd+LRDBQhuQz5i?=
+ =?us-ascii?Q?RFlCFQoukfS1dDNPWqobW71tIW0LMvS2KbGcaJimMaTyOIJ+WOE6DhWX3ix3?=
+ =?us-ascii?Q?JxgHHOwyIrnIxPbtfY9D9sMN/blurSnrAA3nrNnT6QD3OV1q7cFqNm+fwXT8?=
+ =?us-ascii?Q?0V5E/IFt4IZo3wHBNmAO4jrbINxGOc0tDKZK2xyedPUIL7qLweFQ9VI4+Td5?=
+ =?us-ascii?Q?qXu1dIBIDYGEWkIRN4FIdDPG/Acg0Ui6KGk2+3+HE1Ske5o96n/mpAue/fqf?=
+ =?us-ascii?Q?SvuXpYW6kJdGhSpGhkVSJzDP21wtsF6ImK5efcXEs0WHbzm2w0yD9Vq5IHK/?=
+ =?us-ascii?Q?Upm7qtlwCpd9xuhrrUdbWEHgWAKLNAbdcLYHwjHX3N2hwSuV/n8VBQ+VhEai?=
+ =?us-ascii?Q?i4umUXm2MfDAyT5yJTZ6CvezkERruRZV8JYU1iK6I6+8cZBonGyj3LZgQWMQ?=
+ =?us-ascii?Q?KhQzIUqrmiq6WYAanpj2Sl8noWk04B94pz982mMLkIZP4eVGKqypzISDAnpq?=
+ =?us-ascii?Q?7IzQYo+KM7C5hdkdyjzYpQAbw8K6klhNMGECfiyf5oHkoe+RSNohYmA/WWNQ?=
+ =?us-ascii?Q?x73kEtwf8AcIGtdEA/xMHR63LiTCgWzMNjIAUzujXoB2nrFPX1qtTMShDQqA?=
+ =?us-ascii?Q?rcV/ovpsmqB94JY/+4W+eW9tqqTQbM6TTB7tmqY/S7CnrbxSpro86Cy6w/ol?=
+ =?us-ascii?Q?faP3rPtmLvwpnQLI4dh1tQ8e59OYiLU=3D?=
+X-Exchange-RoutingPolicyChecked: ngmap1xEIQjmvx/HDeCJxHfk1WwJjSwkRbxnwcjqCx7jXENsKsJrvSB8sV5kXUwjxfQDSMt3iz+cTGUjI0eiI8LIMyXZ/mDBCfjxKK/FTzxcmWAptDxz92gtG0O2DmZGHgw+ik7EC4UMg8441vvwoSx64Z2e5an91yzYuuRAESvBjex/Z41megU1UQI3OkzPHCNnvY+Hc85lwxNFefYcdKcKhWSLtcXOEpcevb7+vmHTLjWAEXbNCp45s4oKjLO6ntYbvUEw3bpQUwmXV0flocT1LqVL4pA0Uk7XJ3a1HErhTnzoARRvximcQizxldIb+/rEIATPFDL2h4KN0PLihg==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 712bbdce-71ac-42f8-b168-08defd2db84b
+X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB9421.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Aug 2026 13:36:34.3190 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0QPiCMMZhekf1QhHStychFh9ZsoyopqBbCe0+Mx5B1iUeogxCnwObtGHWwbFKl2vr58H2ZCsNxhtfKRAklTjWEFANOF4r+AEKp6gcyRGDvs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7580
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -62,525 +153,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Now that we have a split EAL init, where most work is done on a
-configured eal_user_cfg structure, add in hooks to allow other libraries
-to init EAL by passing in that structure pre-configured.
+On Mon, Jul 27, 2026 at 11:03:38AM -0700, Stephen Hemminger wrote:
+> On Tue, 21 Jul 2026 10:45:11 +0100
+> Bruce Richardson <bruce.richardson@intel.com> wrote:
+> 
+> > +/**
+> > + * Internal EAL runtime state
+> > + * May be modified at runtime, so access must be protected by locks or atomic types
+> > + * as appropriate.
+> > + */
+> > +struct eal_runtime_state {
+> > +	uint8_t reserved;
+> > +};
+> 
+> This reserved field is still left after all the patches??
 
-We export an internal function that wraps the second stage init, while
-taking care of the run_once flag, before calling the main initialization
-function with a prepopulated config.
-
-Also, export internally the platform info function so that any callers
-of this new function can do any necessary validation of parameters as
-part of their setup.
-
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
----
- lib/eal/common/eal_common_config.c  |  5 ++-
- lib/eal/common/eal_common_lcore.c   |  6 +--
- lib/eal/common/eal_common_thread.c  |  2 +-
- lib/eal/common/eal_internal_cfg.h   |  8 +++-
- lib/eal/freebsd/eal.c               | 57 ++++++++++++++++++++++++---
- lib/eal/freebsd/eal_hugepage_info.c |  2 +-
- lib/eal/freebsd/eal_memory.c        |  6 +--
- lib/eal/linux/eal.c                 | 55 ++++++++++++++++++++++++--
- lib/eal/linux/eal_hugepage_info.c   |  2 +-
- lib/eal/windows/eal.c               | 60 ++++++++++++++++++++++++++++-
- lib/eal/windows/eal_hugepages.c     |  2 +-
- lib/eal/windows/eal_memalloc.c      |  2 +-
- 12 files changed, 183 insertions(+), 24 deletions(-)
-
-diff --git a/lib/eal/common/eal_common_config.c b/lib/eal/common/eal_common_config.c
-index 110921ae93..73074f2520 100644
---- a/lib/eal/common/eal_common_config.c
-+++ b/lib/eal/common/eal_common_config.c
-@@ -68,8 +68,9 @@ eal_get_user_configuration(void)
- }
- 
- /* Return a pointer to the platform state structure */
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_eal_get_platform_info)
- const struct eal_platform_info *
--eal_get_platform_info(void)
-+rte_eal_get_platform_info(void)
- {
- 	/* platform-discovered and runtime EAL state */
- 	static struct eal_platform_info eal_platform_info;
-@@ -305,7 +306,7 @@ int
- eal_apply_hugepage_mem_sz_limits(void)
- {
- 	const struct eal_user_cfg *user_cfg = eal_get_user_configuration();
--	const struct eal_platform_info *platform_info = eal_get_platform_info();
-+	const struct eal_platform_info *platform_info = rte_eal_get_platform_info();
- 	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
- 	unsigned int i;
- 
-diff --git a/lib/eal/common/eal_common_lcore.c b/lib/eal/common/eal_common_lcore.c
-index 0020e6a178..7b2936489d 100644
---- a/lib/eal/common/eal_common_lcore.c
-+++ b/lib/eal/common/eal_common_lcore.c
-@@ -54,7 +54,7 @@ RTE_EXPORT_SYMBOL(rte_lcore_to_cpu_id)
- int rte_lcore_to_cpu_id(int lcore_id)
- {
- 	const struct eal_runtime_state *runtime_state = eal_get_runtime_state();
--	const struct eal_platform_info *platform_info = eal_get_platform_info();
-+	const struct eal_platform_info *platform_info = rte_eal_get_platform_info();
- 	unsigned int cpu;
- 
- 	if (unlikely(lcore_id >= RTE_MAX_LCORE))
-@@ -267,7 +267,7 @@ RTE_EXPORT_SYMBOL(rte_socket_count)
- unsigned int
- rte_socket_count(void)
- {
--	const struct eal_platform_info *platform_info = eal_get_platform_info();
-+	const struct eal_platform_info *platform_info = rte_eal_get_platform_info();
- 	return platform_info->numa_node_count;
- }
- 
-@@ -275,7 +275,7 @@ RTE_EXPORT_SYMBOL(rte_socket_id_by_idx)
- int
- rte_socket_id_by_idx(unsigned int idx)
- {
--	const struct eal_platform_info *platform_info = eal_get_platform_info();
-+	const struct eal_platform_info *platform_info = rte_eal_get_platform_info();
- 	if (idx >= platform_info->numa_node_count) {
- 		rte_errno = EINVAL;
- 		return -1;
-diff --git a/lib/eal/common/eal_common_thread.c b/lib/eal/common/eal_common_thread.c
-index a2e08242bd..b56dd4f2b6 100644
---- a/lib/eal/common/eal_common_thread.c
-+++ b/lib/eal/common/eal_common_thread.c
-@@ -40,7 +40,7 @@ unsigned rte_socket_id(void)
- int
- eal_cpuset_socket_id(const rte_cpuset_t *cpusetp)
- {
--	const struct eal_platform_info *platform_info = eal_get_platform_info();
-+	const struct eal_platform_info *platform_info = rte_eal_get_platform_info();
- 	int socket_id = SOCKET_ID_ANY;
- 
- 	if (cpusetp == NULL)
-diff --git a/lib/eal/common/eal_internal_cfg.h b/lib/eal/common/eal_internal_cfg.h
-index 0c4254f1e9..8e8813eb5f 100644
---- a/lib/eal/common/eal_internal_cfg.h
-+++ b/lib/eal/common/eal_internal_cfg.h
-@@ -25,6 +25,7 @@
- #include <rte_bitset.h>
- #include <rte_stdatomic.h>
- #include "eal_thread.h"
-+#include "rte_compat.h"
- 
- /* Forward declaration — full definition is in eal_memcfg.h */
- struct rte_mem_config;
-@@ -384,8 +385,13 @@ struct eal_runtime_state {
- 	struct eal_solib_list loaded_plugins; /**< all plugins loaded by eal_plugins_init() */
- };
- 
--const struct eal_platform_info *eal_get_platform_info(void);
-+__rte_internal
-+const struct eal_platform_info *rte_eal_get_platform_info(void);
- struct eal_user_cfg *eal_get_user_configuration(void);
- struct eal_runtime_state *eal_get_runtime_state(void);
- 
-+__rte_internal
-+int
-+rte_eal_runtime_init(const char *progname, const struct eal_user_cfg *user_provided_cfg);
-+
- #endif /* EAL_INTERNAL_CFG_H */
-diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
-index 307b01f840..5f1da8c8e8 100644
---- a/lib/eal/freebsd/eal.c
-+++ b/lib/eal/freebsd/eal.c
-@@ -59,6 +59,9 @@
- 
- #define MEMSIZE_IF_NO_HUGE_PAGE (64ULL * 1024ULL * 1024ULL)
- 
-+/* flag to prevent double-init of EAL */
-+static RTE_ATOMIC(uint32_t) init_has_run;
-+
- /* define fd variable here, because file needs to be kept open for the
-  * duration of the program, as we hold a write lock on it in the primary proc */
- static int mem_cfg_fd = -1;
-@@ -322,7 +325,7 @@ eal_get_hugepage_mem_size(void)
- {
- 	uint64_t size = 0;
- 	unsigned i, j;
--	const struct eal_platform_info *platform_info = eal_get_platform_info();
-+	const struct eal_platform_info *platform_info = rte_eal_get_platform_info();
- 	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
- 
- 	for (i = 0; i < platform_info->num_hugepage_sizes; i++) {
-@@ -396,7 +399,6 @@ RTE_EXPORT_SYMBOL(rte_eal_init)
- int
- rte_eal_init(int argc, char **argv)
- {
--	static uint32_t run_once;
- 	struct eal_user_cfg user_cfg_from_args = EAL_USER_CFG_INITIALIZER(user_cfg_from_args);
- 	uint32_t has_run = 0;
- 
-@@ -406,14 +408,14 @@ rte_eal_init(int argc, char **argv)
- 	 * everything below depends on a valid platform_info, so confirm it
- 	 * is available before doing anything else.
- 	 */
--	if (eal_get_platform_info() == NULL) {
-+	if (rte_eal_get_platform_info() == NULL) {
- 		rte_eal_init_alert("Cannot get platform information.");
- 		rte_errno = ENOTSUP;
- 		return -1;
- 	}
- 
- 	/* first check if we have been run before */
--	if (!rte_atomic_compare_exchange_strong_explicit(&run_once, &has_run, 1,
-+	if (!rte_atomic_compare_exchange_strong_explicit(&init_has_run, &has_run, 1,
- 					rte_memory_order_relaxed, rte_memory_order_relaxed)) {
- 		rte_eal_init_alert("already called initialization.");
- 		rte_errno = EALREADY;
-@@ -452,7 +454,7 @@ rte_eal_init(int argc, char **argv)
- 	return fctret;
- 
- err_out:
--	rte_atomic_store_explicit(&run_once, 0, rte_memory_order_relaxed);
-+	rte_atomic_store_explicit(&init_has_run, 0, rte_memory_order_relaxed);
- 	eal_clean_saved_args();
- 	eal_user_cfg_cleanup(&user_cfg_from_args);
- 	return -1;
-@@ -796,6 +798,51 @@ eal_runtime_init(const struct eal_user_cfg *user_provided_cfg)
- 	return -1;
- }
- 
-+/**
-+ * Initialize the DPDK runtime with a user-provided configuration.
-+ * This is an alternative to rte_eal_init() that allows the caller to provide
-+ * a configuration struct directly, instead of parsing command line arguments.
-+ * Both parameters to the function must be non-NULL,
-+ * and the user_provided_cfg must be fully initialized by the caller.
-+ */
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_eal_runtime_init)
-+int
-+rte_eal_runtime_init(const char *progname, const struct eal_user_cfg *user_provided_cfg)
-+{
-+	uint32_t has_run = 0;
-+
-+	rte_errno = 0;
-+	if (progname == NULL || user_provided_cfg == NULL) {
-+		rte_eal_init_alert("Invalid arguments to rte_eal_runtime_init.");
-+		rte_errno = EINVAL;
-+		return -1;
-+	}
-+
-+	if (rte_eal_get_platform_info() == NULL) {
-+		rte_eal_init_alert("Platform information is not available.");
-+		/* Set an error if previous caller has not set one.*/
-+		if (rte_errno == 0)
-+			rte_errno = ENOTSUP;
-+		return -1;
-+	}
-+
-+	/* first check if we have been run before */
-+	if (!rte_atomic_compare_exchange_strong_explicit(&init_has_run, &has_run, 1,
-+					rte_memory_order_relaxed, rte_memory_order_relaxed)) {
-+		rte_eal_init_alert("already called initialization.");
-+		rte_errno = EALREADY;
-+		return -1;
-+	}
-+
-+	eal_log_init(progname);
-+
-+	if (eal_runtime_init(user_provided_cfg) < 0) {
-+		rte_atomic_store_explicit(&init_has_run, 0, rte_memory_order_relaxed);
-+		return -1;
-+	}
-+	return 0;
-+}
-+
- RTE_EXPORT_SYMBOL(rte_eal_cleanup)
- int
- rte_eal_cleanup(void)
-diff --git a/lib/eal/freebsd/eal_hugepage_info.c b/lib/eal/freebsd/eal_hugepage_info.c
-index 9c97897cc3..28e1a04528 100644
---- a/lib/eal/freebsd/eal_hugepage_info.c
-+++ b/lib/eal/freebsd/eal_hugepage_info.c
-@@ -87,7 +87,7 @@ eal_get_platform_hp_info(struct eal_platform_info *platform_info)
- int
- eal_hugepage_info_init(void)
- {
--	const struct eal_platform_info *platform_info = eal_get_platform_info();
-+	const struct eal_platform_info *platform_info = rte_eal_get_platform_info();
- 	int num_buffers, fd;
- 	int64_t buffer_size;
- 	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
-diff --git a/lib/eal/freebsd/eal_memory.c b/lib/eal/freebsd/eal_memory.c
-index ffb44d8286..5fda56b1d3 100644
---- a/lib/eal/freebsd/eal_memory.c
-+++ b/lib/eal/freebsd/eal_memory.c
-@@ -72,7 +72,7 @@ rte_eal_hugepage_init(void)
- 	void *addr;
- 	unsigned int i, j, seg_idx = 0;
- 	const struct eal_user_cfg *user_cfg = eal_get_user_configuration();
--	const struct eal_platform_info *platform_info = eal_get_platform_info();
-+	const struct eal_platform_info *platform_info = rte_eal_get_platform_info();
- 	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
- 
- 	/* get pointer to global configuration */
-@@ -285,7 +285,7 @@ attach_segment(const struct rte_memseg_list *msl, const struct rte_memseg *ms,
- int
- rte_eal_hugepage_attach(void)
- {
--	const struct eal_platform_info *platform_info = eal_get_platform_info();
-+	const struct eal_platform_info *platform_info = rte_eal_get_platform_info();
- 	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
- 	struct hugepage_info *hpi;
- 	int fd_hugepage = -1;
-@@ -354,7 +354,7 @@ memseg_primary_init(void)
- 	int hpi_idx, msl_idx = 0;
- 	struct rte_memseg_list *msl;
- 	const struct eal_user_cfg *user_cfg = eal_get_user_configuration();
--	const struct eal_platform_info *platform_info = eal_get_platform_info();
-+	const struct eal_platform_info *platform_info = rte_eal_get_platform_info();
- 	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
- 
- 	/* no-huge does not need this at all */
-diff --git a/lib/eal/linux/eal.c b/lib/eal/linux/eal.c
-index 13f7e4cb28..1beffae936 100644
---- a/lib/eal/linux/eal.c
-+++ b/lib/eal/linux/eal.c
-@@ -61,6 +61,9 @@
- #define MEMSIZE_IF_NO_HUGE_PAGE (64ULL * 1024ULL * 1024ULL)
- #define KERNEL_IOMMU_GROUPS_PATH "/sys/kernel/iommu_groups"
- 
-+/* flag to prevent double-init of EAL */
-+static RTE_ATOMIC(uint32_t) init_has_run;
-+
- /* define fd variable here, because file needs to be kept open for the
-  * duration of the program, as we hold a write lock on it in the primary proc */
- static int mem_cfg_fd = -1;
-@@ -558,7 +561,6 @@ RTE_EXPORT_SYMBOL(rte_eal_init)
- int
- rte_eal_init(int argc, char **argv)
- {
--	static RTE_ATOMIC(uint32_t) run_once;
- 	struct eal_user_cfg user_cfg_from_args = EAL_USER_CFG_INITIALIZER(user_cfg_from_args);
- 	uint32_t has_run = 0;
- 
-@@ -568,14 +570,14 @@ rte_eal_init(int argc, char **argv)
- 	 * everything below depends on a valid platform_info, so confirm it
- 	 * is available before doing anything else.
- 	 */
--	if (eal_get_platform_info() == NULL) {
-+	if (rte_eal_get_platform_info() == NULL) {
- 		rte_eal_init_alert("Cannot get platform information.");
- 		rte_errno = ENOTSUP;
- 		return -1;
- 	}
- 
- 	/* first check if we have been run before */
--	if (!rte_atomic_compare_exchange_strong_explicit(&run_once, &has_run, 1,
-+	if (!rte_atomic_compare_exchange_strong_explicit(&init_has_run, &has_run, 1,
- 					rte_memory_order_relaxed, rte_memory_order_relaxed)) {
- 		rte_eal_init_alert("already called initialization.");
- 		rte_errno = EALREADY;
-@@ -614,7 +616,7 @@ rte_eal_init(int argc, char **argv)
- 	return fctret;
- 
- err_out:
--	rte_atomic_store_explicit(&run_once, 0, rte_memory_order_relaxed);
-+	rte_atomic_store_explicit(&init_has_run, 0, rte_memory_order_relaxed);
- 	eal_clean_saved_args();
- 	eal_user_cfg_cleanup(&user_cfg_from_args);
- 
-@@ -970,6 +972,51 @@ eal_runtime_init(const struct eal_user_cfg *user_provided_cfg)
- 	return -1;
- }
- 
-+/**
-+ * Initialize the DPDK runtime with a user-provided configuration.
-+ * This is an alternative to rte_eal_init() that allows the caller to provide
-+ * a configuration struct directly, instead of parsing command line arguments.
-+ * Both parameters to the function must be non-NULL,
-+ * and the user_provided_cfg must be fully initialized by the caller.
-+ */
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_eal_runtime_init)
-+int
-+rte_eal_runtime_init(const char *progname, const struct eal_user_cfg *user_provided_cfg)
-+{
-+	uint32_t has_run = 0;
-+
-+	rte_errno = 0;
-+	if (progname == NULL || user_provided_cfg == NULL) {
-+		rte_eal_init_alert("Invalid arguments to rte_eal_runtime_init.");
-+		rte_errno = EINVAL;
-+		return -1;
-+	}
-+
-+	if (rte_eal_get_platform_info() == NULL) {
-+		rte_eal_init_alert("Platform information is not available.");
-+		/* Set an error if previous caller has not set one.*/
-+		if (rte_errno == 0)
-+			rte_errno = ENOTSUP;
-+		return -1;
-+	}
-+
-+	/* first check if we have been run before */
-+	if (!rte_atomic_compare_exchange_strong_explicit(&init_has_run, &has_run, 1,
-+					rte_memory_order_relaxed, rte_memory_order_relaxed)) {
-+		rte_eal_init_alert("already called initialization.");
-+		rte_errno = EALREADY;
-+		return -1;
-+	}
-+
-+	eal_log_init(progname);
-+
-+	if (eal_runtime_init(user_provided_cfg) < 0) {
-+		rte_atomic_store_explicit(&init_has_run, 0, rte_memory_order_relaxed);
-+		return -1;
-+	}
-+	return 0;
-+}
-+
- static int
- mark_freeable(const struct rte_memseg_list *msl, const struct rte_memseg *ms,
- 		void *arg __rte_unused)
-diff --git a/lib/eal/linux/eal_hugepage_info.c b/lib/eal/linux/eal_hugepage_info.c
-index a6bf807f90..7be3fe3b65 100644
---- a/lib/eal/linux/eal_hugepage_info.c
-+++ b/lib/eal/linux/eal_hugepage_info.c
-@@ -518,7 +518,7 @@ hugepage_info_init(void)
- 	unsigned int reusable_pages;
- 	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
- 	const struct eal_user_cfg *user_cfg = eal_get_user_configuration();
--	const struct eal_platform_info *platform_info = eal_get_platform_info();
-+	const struct eal_platform_info *platform_info = rte_eal_get_platform_info();
- 	int failed = 0;
- 
- 	/* platform_info->hugepage_sizes[] is already sorted largest to smallest */
-diff --git a/lib/eal/windows/eal.c b/lib/eal/windows/eal.c
-index 720a1e0502..d8f5ba29ba 100644
---- a/lib/eal/windows/eal.c
-+++ b/lib/eal/windows/eal.c
-@@ -34,6 +34,9 @@
- 
- #define MEMSIZE_IF_NO_HUGE_PAGE (64ULL * 1024ULL * 1024ULL)
- 
-+/* flag to prevent double-init of EAL */
-+static RTE_ATOMIC(uint32_t) init_has_run;
-+
- /* define fd variable here, because file needs to be kept open for the
-  * duration of the program, as we hold a write lock on it in the primary proc
-  */
-@@ -154,6 +157,7 @@ int
- rte_eal_init(int argc, char **argv)
- {
- 	struct eal_user_cfg user_cfg_from_args = EAL_USER_CFG_INITIALIZER(user_cfg_from_args);
-+	uint32_t has_run = 0;
- 
- 	/*
- 	 * platform_info is lazily initialized on first use, and that
-@@ -161,12 +165,20 @@ rte_eal_init(int argc, char **argv)
- 	 * everything below depends on a valid platform_info, so confirm it
- 	 * is available before doing anything else.
- 	 */
--	if (eal_get_platform_info() == NULL) {
-+	if (rte_eal_get_platform_info() == NULL) {
- 		rte_eal_init_alert("Cannot get platform information.");
- 		rte_errno = ENOTSUP;
- 		return -1;
- 	}
- 
-+	/* first check if we have been run before */
-+	if (!rte_atomic_compare_exchange_strong_explicit(&init_has_run, &has_run, 1,
-+					rte_memory_order_relaxed, rte_memory_order_relaxed)) {
-+		rte_eal_init_alert("already called initialization.");
-+		rte_errno = EALREADY;
-+		return -1;
-+	}
-+
- 	/* clone argv to report out later in telemetry */
- 	eal_save_args(argc, argv);
- 
-@@ -199,6 +211,7 @@ rte_eal_init(int argc, char **argv)
- 	return fctret;
- 
- err_out:
-+	rte_atomic_store_explicit(&init_has_run, 0, rte_memory_order_relaxed);
- 	eal_clean_saved_args();
- 	eal_user_cfg_cleanup(&user_cfg_from_args);
- 	return -1;
-@@ -454,6 +467,51 @@ eal_runtime_init(const struct eal_user_cfg *user_provided_cfg)
- 	return -1;
- }
- 
-+/**
-+ * Initialize the DPDK runtime with a user-provided configuration.
-+ * This is an alternative to rte_eal_init() that allows the caller to provide
-+ * a configuration struct directly, instead of parsing command line arguments.
-+ * Both parameters to the function must be non-NULL,
-+ * and the user_provided_cfg must be fully initialized by the caller.
-+ */
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_eal_runtime_init)
-+int
-+rte_eal_runtime_init(const char *progname, const struct eal_user_cfg *user_provided_cfg)
-+{
-+	uint32_t has_run = 0;
-+
-+	rte_errno = 0;
-+	if (progname == NULL || user_provided_cfg == NULL) {
-+		rte_eal_init_alert("Invalid arguments to rte_eal_runtime_init.");
-+		rte_errno = EINVAL;
-+		return -1;
-+	}
-+
-+	if (rte_eal_get_platform_info() == NULL) {
-+		rte_eal_init_alert("Platform information is not available.");
-+		/* Set an error if previous caller has not set one.*/
-+		if (rte_errno == 0)
-+			rte_errno = ENOTSUP;
-+		return -1;
-+	}
-+
-+	/* first check if we have been run before */
-+	if (!rte_atomic_compare_exchange_strong_explicit(&init_has_run, &has_run, 1,
-+					rte_memory_order_relaxed, rte_memory_order_relaxed)) {
-+		rte_eal_init_alert("already called initialization.");
-+		rte_errno = EALREADY;
-+		return -1;
-+	}
-+
-+	eal_log_init(progname);
-+
-+	if (eal_runtime_init(user_provided_cfg) < 0) {
-+		rte_atomic_store_explicit(&init_has_run, 0, rte_memory_order_relaxed);
-+		return -1;
-+	}
-+	return 0;
-+}
-+
- /* Don't use MinGW asprintf() to have identical code with all toolchains. */
- int
- eal_asprintf(char **buffer, const char *format, ...)
-diff --git a/lib/eal/windows/eal_hugepages.c b/lib/eal/windows/eal_hugepages.c
-index 0c62f5ff48..0870495c78 100644
---- a/lib/eal/windows/eal_hugepages.c
-+++ b/lib/eal/windows/eal_hugepages.c
-@@ -59,7 +59,7 @@ hugepage_claim_privilege(void)
- static int
- hugepage_info_init(void)
- {
--	const struct eal_platform_info *platform_info = eal_get_platform_info();
-+	const struct eal_platform_info *platform_info = rte_eal_get_platform_info();
- 	struct hugepage_info *hpi;
- 	unsigned int socket_id;
- 	int ret = 0;
-diff --git a/lib/eal/windows/eal_memalloc.c b/lib/eal/windows/eal_memalloc.c
-index 3ab8af0466..0c34c65603 100644
---- a/lib/eal/windows/eal_memalloc.c
-+++ b/lib/eal/windows/eal_memalloc.c
-@@ -314,7 +314,7 @@ eal_memalloc_alloc_seg_bulk(struct rte_memseg **ms, int n_segs,
- 	int ret = -1;
- 	struct alloc_walk_param wa;
- 	const struct hugepage_info *hi = NULL;
--	const struct eal_platform_info *platform_info = eal_get_platform_info();
-+	const struct eal_platform_info *platform_info = rte_eal_get_platform_info();
- 	const struct eal_runtime_state *runtime_state = eal_get_runtime_state();
- 	const struct eal_user_cfg *user_cfg = eal_get_user_configuration();
- 
--- 
-2.53.0
-
+Yes, that was missed. Fixed in v2.
