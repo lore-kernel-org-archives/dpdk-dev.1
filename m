@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C0AAC5DF7D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 11:19:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C01D3C5DF7D
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 11:19:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7F50140DD3;
-	Tue, 18 Aug 2026 13:18:02 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D24EE40DFB;
+	Tue, 18 Aug 2026 13:18:03 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 6527D40B99
- for <dev@dpdk.org>; Tue, 18 Aug 2026 13:17:57 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 98CB140BA0
+ for <dev@dpdk.org>; Tue, 18 Aug 2026 13:17:58 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4AEF21A0276;
- Tue, 18 Aug 2026 13:17:57 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8130F1A0118;
+ Tue, 18 Aug 2026 13:17:58 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 14BD81A0284;
- Tue, 18 Aug 2026 13:17:57 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4B12D1A010E;
+ Tue, 18 Aug 2026 13:17:58 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 869F3180022D;
- Tue, 18 Aug 2026 19:17:55 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id BF64B18000B0;
+ Tue, 18 Aug 2026 19:17:56 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
 Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v12 17/26] bus/dpaa: orp queue create and burst enqueue
-Date: Tue, 18 Aug 2026 16:47:21 +0530
-Message-Id: <20260818111730.801760-18-hemant.agrawal@nxp.com>
+Subject: [PATCH v12 18/26] net/dpaa: support fmcless rxq number as devargs
+Date: Tue, 18 Aug 2026 16:47:22 +0530
+Message-Id: <20260818111730.801760-19-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260818111730.801760-1-hemant.agrawal@nxp.com>
 References: <20260813144205.2505031-1-hemant.agrawal@nxp.com>
@@ -51,211 +51,83 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jun Yang <jun.yang@nxp.com>
 
-Add burst orp queue create parameter and burst enqueue API.
+In FMCLESS mode, set the default number of Rx frame queues to the
+maximum queue number instead of the core count, because multiple
+queues may be processed on the same core. The value can also be
+configured per port through the 'drv_fmcless_rxq' device argument.
 
 Signed-off-by: Jun Yang <jun.yang@nxp.com>
+Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/bus/dpaa/base/qbman/qman.c  | 112 ++++++++++++++++++++++++++++
- drivers/bus/dpaa/include/fsl_qman.h |  28 +++++++
- 2 files changed, 140 insertions(+)
+ doc/guides/nics/dpaa.rst       |  4 ++++
+ drivers/net/dpaa/dpaa_ethdev.c | 27 ++++++++++++++++++++++++---
+ 2 files changed, 28 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/bus/dpaa/base/qbman/qman.c b/drivers/bus/dpaa/base/qbman/qman.c
-index b08d4d2130..87e2957179 100644
---- a/drivers/bus/dpaa/base/qbman/qman.c
-+++ b/drivers/bus/dpaa/base/qbman/qman.c
-@@ -1514,6 +1514,7 @@ int qman_create_fq(u32 fqid, u32 flags, struct qman_fq *fq)
- 	fq->flags = flags;
- 	fq->state = qman_fq_state_oos;
- 	fq->cgr_groupid = 0;
-+	fq->force_ooo = false;
- #ifdef CONFIG_FSL_QMAN_FQ_LOOKUP
- 	if (unlikely(find_empty_fq_table_entry(&fq->key, fq))) {
- 		DPAA_BUS_ERR("Find empty table entry failed");
-@@ -2401,6 +2402,113 @@ int qman_enqueue_multi(struct qman_fq *fq,
- 	return sent;
- }
+diff --git a/doc/guides/nics/dpaa.rst b/doc/guides/nics/dpaa.rst
+index ed1d1faea7..5858c63cc5 100644
+--- a/doc/guides/nics/dpaa.rst
++++ b/doc/guides/nics/dpaa.rst
+@@ -288,6 +288,10 @@ the ``-a`` EAL option (e.g. ``-a dpaa_bus:fm1-mac3,drv_rx_taildrop=64``):
+   Configure the Rx / Tx frame queue taildrop congestion threshold. A value
+   of ``0`` disables taildrop.
  
-+RTE_EXPORT_INTERNAL_SYMBOL(qman_enqueue_multi_orp)
-+int
-+qman_enqueue_multi_orp(struct qman_fq *fq,
-+	const struct qm_fd *fd, struct qman_fq *orp,
-+	uint32_t *flags, uint16_t *orp_seqnum,
-+	int frames_to_send)
-+{
-+	struct qman_portal *p = get_affine_portal();
-+	struct qm_portal *portal = &p->p;
++* ``drv_fmcless_rxq``
 +
-+	register struct qm_eqcr *eqcr = &portal->eqcr;
-+	struct qm_eqcr_entry *eq = eqcr->cursor;
++  In FMCLESS mode, override the number of Rx frame queues to create.
 +
-+	uint8_t i = 0, diff, old_ci, sent = 0;
-+	uint8_t eq_verbs[QM_EQCR_SIZE];
-+
-+	if (unlikely(!orp || !orp_seqnum || fq->force_ooo))
-+		return qman_enqueue_multi(fq, fd, flags, frames_to_send);
-+
-+	if (!eqcr->available) {
-+		old_ci = eqcr->ci;
-+		eqcr->ci = qm_cl_in(EQCR_CI) & (QM_EQCR_SIZE - 1);
-+		diff = qm_cyc_diff(QM_EQCR_SIZE, old_ci, eqcr->ci);
-+		eqcr->available += diff;
-+		if (!diff)
-+			return 0;
-+	}
-+
-+	/* try to send as many frames as possible */
-+	while (eqcr->available && frames_to_send--) {
-+		eq->fqid = fq->fqid_be;
-+		eq->fd.opaque_addr = fd->opaque_addr;
-+		eq->fd.addr = cpu_to_be40(fd->addr);
-+		eq->fd.status = cpu_to_be32(fd->status);
-+		eq->fd.opaque = cpu_to_be32(fd->opaque);
-+
-+		eq->orp = cpu_to_be32(orp->fqid);
-+
-+		if (flags && flags[i] & QMAN_ENQUEUE_FLAG_NLIS) {
-+			orp_seqnum[i] |= QM_EQCR_SEQNUM_NLIS;
-+		} else if (flags) {
-+			orp_seqnum[i] &= ~QM_EQCR_SEQNUM_NLIS;
-+			if (flags[i] & QMAN_ENQUEUE_FLAG_NESN)
-+				orp_seqnum[i] |= QM_EQCR_SEQNUM_NESN;
-+			else
-+				orp_seqnum[i] &= ~QM_EQCR_SEQNUM_NESN;
-+		}
-+		eq->seqnum = cpu_to_be16(orp_seqnum[i]);
-+
-+		/*
-+		 * Compute the per-frame verb but do NOT write it to the ring
-+		 * yet. The verb byte is what makes an EQCR entry valid to QMan,
-+		 * so it must be stored only after all frame data has been
-+		 * written and a store barrier has been issued. Stash the verb
-+		 * (without the vbit) here and apply it in the second pass. The
-+		 * vbit is added in the second pass so ring-wrap toggling stays
-+		 * in sync with the verb writes.
+ FMAN Config
+ -----------
+ 
+diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
+index 4172153af3..e9ce30b2d8 100644
+--- a/drivers/net/dpaa/dpaa_ethdev.c
++++ b/drivers/net/dpaa/dpaa_ethdev.c
+@@ -57,6 +57,7 @@
+ #define DRIVER_RECV_ERR_PKTS      "recv_err_pkts"
+ #define DRIVER_RX_TAILDROP        "drv_rx_taildrop"
+ #define DRIVER_TX_TAILDROP        "drv_tx_taildrop"
++#define DRIVER_FMCLESS_RXQ        "drv_fmcless_rxq"
+ #define RTE_PRIORITY_103 103
+ 
+ /* Supported Rx offloads */
+@@ -2381,8 +2382,27 @@ dpaa_dev_init(struct rte_eth_dev *eth_dev)
+ 				dpaa_intf->name);
+ 		}
+ 	} else {
+-		/* FMCLESS mode, load balance to multiple cores.*/
+-		num_rx_fqs = rte_lcore_count();
++		/* FMCLESS mode, default queue number is max queues
++		 * because multiple queues may be processed on same core.
 +		 */
-+		eq_verbs[i] = QM_EQCR_VERB_ORP;
-+		if (likely(!flags || !(flags[i] & (QMAN_ENQUEUE_FLAG_HOLE |
-+			QMAN_ENQUEUE_FLAG_NESN))))
-+			eq_verbs[i] |= QM_EQCR_VERB_CMD_ENQUEUE;
-+		eq_verbs[i] |= flags ? (flags[i] & (QM_EQCR_VERB_COLOUR_MASK |
-+			QM_EQCR_VERB_INTERRUPT)) : 0;
++		long fmcless_rxq = 0;
 +
-+		i++;
-+		eq++;
-+		if (unlikely(eq >= (eqcr->ring + QM_EQCR_SIZE)))
-+			eq = eqcr->ring;
-+		eqcr->available--;
-+		sent++;
-+		fd++;
-+	}
-+
-+	/*
-+	 * Ensure all frame data stores above are visible to QMan before any
-+	 * verb byte is written, so an entry never becomes valid with stale
-+	 * frame contents on weak-memory architectures.
-+	 */
-+	lwsync();
-+
-+	/* Second pass: publish each entry by writing its verb byte. */
-+	eq = eqcr->cursor;
-+	for (i = 0; i < sent; i++) {
-+		eq->__dont_write_directly__verb = eq_verbs[i] | eqcr->vbit;
-+		eq++;
-+		if (unlikely(eq >= (eqcr->ring + QM_EQCR_SIZE))) {
-+			eqcr->vbit ^= QM_EQCR_VERB_VBIT;
-+			eq = eqcr->ring;
++		if (dpaa_get_devargs_int(dev->devargs, DRIVER_FMCLESS_RXQ,
++					 &fmcless_rxq) == 1) {
++			num_rx_fqs = (int)fmcless_rxq;
++			if (num_rx_fqs < 1) {
++				DPAA_PMD_ERR("fmcless rxq number(%d) must be >= 1",
++					num_rx_fqs);
++				return -EINVAL;
++			}
++			if (num_rx_fqs > DPAA_MAX_NUM_PCD_QUEUES) {
++				DPAA_PMD_WARN("fmcless max rxq number(%d) > %d",
++					num_rx_fqs, DPAA_MAX_NUM_PCD_QUEUES);
++				num_rx_fqs = DPAA_MAX_NUM_PCD_QUEUES;
++			}
++		} else {
++			num_rx_fqs = DPAA_MAX_NUM_PCD_QUEUES;
 +		}
-+	}
-+
-+	/*
-+	 * Flush all the cache lines without load/store operations between
-+	 * them so the flushes complete faster.
-+	 */
-+	eq = eqcr->cursor;
-+	for (i = 0; i < sent; i++) {
-+		dcbf(eq);
-+		eq = (void *)((unsigned long)(eq + 1) &
-+			(~(unsigned long)(QM_EQCR_SIZE << 6)));
-+	}
-+
-+	eqcr->cursor = eq;
-+	return sent;
-+}
-+
- int
- qman_enqueue_multi_fq(struct qman_fq *fq[], const struct qm_fd *fd,
- 		      u32 *flags, int frames_to_send)
-@@ -2427,6 +2535,7 @@ qman_enqueue_multi_fq(struct qman_fq *fq[], const struct qm_fd *fd,
- 	while (eqcr->available && frames_to_send--) {
- 		eq->fqid = fq[sent]->fqid_be;
- 		eq->fd.opaque_addr = fd->opaque_addr;
-+
- 		eq->fd.addr = cpu_to_be40(fd->addr);
- 		eq->fd.status = cpu_to_be32(fd->status);
- 		eq->fd.opaque = cpu_to_be32(fd->opaque);
-@@ -2480,6 +2589,9 @@ int qman_enqueue_orp(struct qman_fq *fq, const struct qm_fd *fd, u32 flags,
- 	struct qman_portal *p  = get_affine_portal();
- 	struct qm_eqcr_entry *eq;
+ 	}
  
-+	if (unlikely(fq->force_ooo))
-+		return qman_enqueue(fq, fd, flags);
-+
- 	eq = try_p_eq_start(p, fq, fd, flags);
- 	if (!eq)
- 		return -EBUSY;
-diff --git a/drivers/bus/dpaa/include/fsl_qman.h b/drivers/bus/dpaa/include/fsl_qman.h
-index d7044c51da..2e43186cf0 100644
---- a/drivers/bus/dpaa/include/fsl_qman.h
-+++ b/drivers/bus/dpaa/include/fsl_qman.h
-@@ -584,6 +584,29 @@ static inline u32 qm_fqd_taildrop_get(const struct qm_fqd_taildrop *td)
- 	return (u32)td->mant << td->exp;
- }
- 
-+/**Order restoration point (ORP) restoration window size*/
-+enum {
-+	ORP_RWS_WIN_32_FRMS = 0,
-+	ORP_RWS_WIN_64_FRMS = 1,
-+	ORP_RWS_WIN_128_FRMS = 2,
-+	ORP_RWS_WIN_256_FRMS = 3,
-+	ORP_RWS_WIN_512_FRMS = 4,
-+	ORP_RWS_WIN_1024_FRMS = 5,
-+	ORP_RWS_WIN_2048_FRMS = 6,
-+	ORP_RWS_WIN_4096_FRMS = 7
-+};
-+
-+enum {
-+	ORP_AUTO_ADVANCE_DISABLE = 0,
-+	ORP_AUTO_ADVANCE_ENABLE = 1
-+};
-+
-+enum {
-+	ORP_LATE_ARRIVE_REJECT = 0,
-+	ORP_LATE_ARRIVE_WIN_32 = 1,
-+	ORP_LATE_ARRIVE_WIN_RWS = 2,
-+	ORP_LATE_ARRIVE_WIN_8192 = 3
-+};
- 
- /* See "Frame Queue Descriptor (FQD)" */
- /* Frame Queue Descriptor (FQD) field 'fq_ctrl' uses these constants */
-@@ -1258,6 +1281,7 @@ struct qman_fq {
- 	u16 nb_desc;
- 	u16 resv;
- 	u64 offloads;
-+	bool force_ooo;
- };
- 
- /*
-@@ -1861,6 +1885,10 @@ typedef int (*qman_cb_precommit) (void *arg);
- int qman_enqueue_orp(struct qman_fq *fq, const struct qm_fd *fd, u32 flags,
- 		     struct qman_fq *orp, u16 orp_seqnum);
- 
-+__rte_internal
-+int qman_enqueue_multi_orp(struct qman_fq *fq, const struct qm_fd *fd,
-+	struct qman_fq *orp, uint32_t *flags, uint16_t *orp_seqnum,
-+	int frames_to_send);
- /**
-  * qman_alloc_fqid_range - Allocate a contiguous range of FQIDs
-  * @result: is set by the API to the base FQID of the allocated range
+ 	/* Each device can not have more than DPAA_MAX_NUM_PCD_QUEUES RX
+@@ -2860,5 +2880,6 @@ RTE_PMD_REGISTER_DPAA(net_dpaa, rte_dpaa_pmd);
+ RTE_PMD_REGISTER_PARAM_STRING(net_dpaa,
+ 		DRIVER_RECV_ERR_PKTS "=<int> "
+ 		DRIVER_RX_TAILDROP "=<int> "
+-		DRIVER_TX_TAILDROP "=<int>");
++		DRIVER_TX_TAILDROP "=<int> "
++		DRIVER_FMCLESS_RXQ "=<int>");
+ RTE_LOG_REGISTER_DEFAULT(dpaa_logtype_pmd, NOTICE);
 -- 
 2.25.1
 
