@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03E77C5DF74
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 02:16:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB12C5DF74
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 02:16:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ECB3E406FF;
-	Tue, 18 Aug 2026 04:15:38 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id EF29940698;
+	Tue, 18 Aug 2026 04:15:39 +0200 (CEST)
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id F382740653
+ by mails.dpdk.org (Postfix) with ESMTP id E2C034064C
  for <dev@dpdk.org>; Tue, 18 Aug 2026 04:15:29 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-05 (Coremail) with SMTP id zQCowADHNUA8wINq+acKBg--.60494S13;
+ by APP-05 (Coremail) with SMTP id zQCowADHNUA8wINq+acKBg--.60494S15;
  Tue, 18 Aug 2026 10:15:28 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v1 11/13] net/sxe2: clean up duplicate function declarations
-Date: Tue, 18 Aug 2026 10:15:16 +0800
-Message-ID: <20260818021518.2922515-12-liujie5@linkdatatechnology.com>
+Subject: [PATCH v1 13/13] doc/sxe2: add acl-stat-type parameter documentation
+Date: Tue, 18 Aug 2026 10:15:18 +0800
+Message-ID: <20260818021518.2922515-14-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260818021518.2922515-1-liujie5@linkdatatechnology.com>
 References: <20260818021518.2922515-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowADHNUA8wINq+acKBg--.60494S13
-X-Coremail-Antispam: 1UD129KBjvJXoWxAr4fAFyxGF1kJF4fGw4UArb_yoW5Ww48pF
- 48Xw15JFWFqF1kur4UJ3yxua42grW8t3yj9a98W34Fka4DZFZFva45tF1ay3WrC3srXwna
- ywsrWr4DGr1rArUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: zQCowADHNUA8wINq+acKBg--.60494S15
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr15XF1fWw4ktr4rKFykKrg_yoW8tw18pa
+ 13X34Sg3Z7JF15J3y7Ca18Wr1rAa9aka43C3yjg34Ivan8CryFvay2k3yrKa9rXa48Za4U
+ Zr1qgry7CF4qv3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUBv14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
  rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
  kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -59,69 +59,61 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-This commit removes duplicate function declarations in the sxe2
-driver header files.
+This commit adds documentation for the acl-stat-type parameter
+which controls ACL statistics type used for ACL rule hit counting.
 
-- Remove duplicate sxe2_drv_promisc_config declaration
-  in sxe2_cmd_chnl.h
-- Remove duplicate sxe2_drv_vsi_info_get declaration
-  in sxe2_cmd_chnl.h
-- Remove duplicate sxe2_drv_mac_link_status_get declaration
-  in sxe2_cmd_chnl.h
-- Remove duplicate sxe2_drv_rxq_mapping_set declaration
-  in sxe2_cmd_chnl.h
-- Remove duplicate sxe2_dev_pci_seg_unmap declaration
-  in sxe2_ethdev.h
+- 1: Only count the number of packets
+- 2: Only count the number of bytes
+- 3: Count both packets and bytes (default)
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_cmd_chnl.h | 6 ------
- drivers/net/sxe2/sxe2_ethdev.h   | 2 --
- 2 files changed, 8 deletions(-)
+ doc/guides/nics/sxe2.rst | 33 ++++++++++-----------------------
+ 1 file changed, 10 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.h b/drivers/net/sxe2/sxe2_cmd_chnl.h
-index 7d75a91061..7d07068bfc 100644
---- a/drivers/net/sxe2/sxe2_cmd_chnl.h
-+++ b/drivers/net/sxe2/sxe2_cmd_chnl.h
-@@ -65,8 +65,6 @@ int32_t sxe2_drv_ipsec_rxsa_delete(struct sxe2_adapter *adapter,
- int32_t sxe2_drv_ipsec_txsa_delete(struct sxe2_adapter *adapter,
- 			       uint16_t sa_id);
+diff --git a/doc/guides/nics/sxe2.rst b/doc/guides/nics/sxe2.rst
+index 8278a5f108..008d944391 100644
+--- a/doc/guides/nics/sxe2.rst
++++ b/doc/guides/nics/sxe2.rst
+@@ -98,29 +98,16 @@ Runtime Configuration
  
--int32_t sxe2_drv_promisc_config(struct sxe2_adapter *adapter, bool set);
+   Default value is 3 (count both packets and bytes).
+ 
+-- ``drv-sw-stats`` parameter [int]
 -
- int32_t sxe2_drv_udp_tunnel_add(struct sxe2_adapter *adapter,
- 			    enum sxe2_udp_tunnel_protocol tunnel_proto,
- 			    uint16_t udp_port);
-@@ -84,8 +82,6 @@ int32_t sxe2_drv_get_udp_tunnel_port(struct sxe2_adapter *adapter,
- 
- int32_t sxe2_drv_vsi_info_get(struct sxe2_adapter *adapter, struct sxe2_vsi *vsi);
- 
--int32_t sxe2_drv_vsi_info_get(struct sxe2_adapter *adapter, struct sxe2_vsi *vsi);
+-  This parameter controls whether per-packet software statistics (SW stats)
+-  are collected in the Rx data path.
 -
- int32_t sxe2_drv_mac_link_status_get(struct sxe2_adapter *adapter);
- 
- int32_t sxe2_drv_get_mac_stats(struct sxe2_adapter *adapter);
-@@ -110,8 +106,6 @@ int32_t sxe2_drv_mapping_reset(struct rte_eth_dev *eth_dev);
- 
- int32_t sxe2_drv_mapping_stats_info_clear(struct rte_eth_dev *eth_dev);
- 
--int32_t sxe2_drv_rxq_mapping_set(struct rte_eth_dev *eth_dev, uint16_t queue_id, uint8_t pool_idx);
+-  Hardware packet statistic counters may be inaccurate for certain packet types
+-  due to hardware design limitations.
+-  When accuracy of Rx packet classification statistics is critical,
+-  enabling this parameter allows the driver to accumulate statistics in software
+-  as packets are received, providing an alternative statistical path
+-  that bypasses hardware counter inaccuracies.
 -
- int32_t sxe2_drv_allmulti_config(struct sxe2_adapter *adapter, bool set);
- 
- int32_t sxe2_drv_uc_config(struct sxe2_adapter *adapter, struct rte_ether_addr *addr, bool add);
-diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
-index 36f4cc9353..b43030deab 100644
---- a/drivers/net/sxe2/sxe2_ethdev.h
-+++ b/drivers/net/sxe2/sxe2_ethdev.h
-@@ -387,8 +387,6 @@ void sxe2_dev_pci_seg_unmap(struct sxe2_adapter *adapter, uint32_t res_type);
- 
- int32_t sxe2_dev_pci_map_init(struct rte_eth_dev *dev);
- 
--void sxe2_dev_pci_seg_unmap(struct sxe2_adapter *adapter, uint32_t res_type);
+-  - 0: Disable software statistics collection (default).
+-    The basic port statistics (``ipackets``, ``ibytes``) are reported
+-    from the hardware counters.
+-  - 1: Enable software statistics collection.
+-    Per-packet software statistics are accumulated for unicast,
+-    multicast, broadcast, and dropped packets in the Rx data path.
 -
- int32_t sxe2_udp_tunnel_port_del_common(struct sxe2_adapter *ad,
- 		enum sxe2_udp_tunnel_protocol tunnel_proto, uint16_t udp_port);
+-  When enabled, the following extended statistics (xstats) are available:
+-  ``rx_sw_unicast_packets``, ``rx_sw_multicast_packets``,
+-  ``rx_sw_broadcast_packets``, ``rx_sw_drop_packets``,
+-  and ``rx_sw_drop_bytes``.
++- ``acl-stat-type`` parameter [int]
++
++  This parameter controls the ACL statistics type
++  used for ACL rule hit counting (via ``rte_flow_query``).
++
++  - 1: Only count the number of packets.
++  - 2: Only count the number of bytes.
++  - 3: Count both packets and bytes (default).
++
++  Default value is 3 (count both packets and bytes).
+ 
+ - ``no-sched-mode`` parameter [int]
  
 -- 
 2.52.0
