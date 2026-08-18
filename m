@@ -2,39 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43FD6C5DF7E
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 12:10:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCBDCC5DF7D
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 13:19:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4FE054027C;
-	Tue, 18 Aug 2026 14:10:28 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id BE56840269
- for <dev@dpdk.org>; Tue, 18 Aug 2026 14:10:26 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 7EDB2202E1;
- Tue, 18 Aug 2026 14:10:26 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id B94E240294;
+	Tue, 18 Aug 2026 15:19:39 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+ by mails.dpdk.org (Postfix) with ESMTP id 193C340269
+ for <dev@dpdk.org>; Tue, 18 Aug 2026 15:19:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1787059178; x=1818595178;
+ h=from:to:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=wvX1vD2yGgi/mSbIL0c79Cwzn872wBuE/9wGUltfcLc=;
+ b=dybY8yQtJNlqSK9ysOQGnXhXJP2xCROJLAC8wsYhS6owNa7yZgbMgfzL
+ 35G71kAnggfAeZl4iUAjS9/ijT41fJY9oCLn6UXBFJ1msk4baYZvn6BjF
+ O6QUnPDsBN1o+2w2lI+FomNmLl1B7Ubq34RZG75NcORxy+beUQqaGVoug
+ l1kf5SRnXsuh4rYqCvyi0TwzE6KRc8Ebrv0iW7YPxVOU0NkPP305KyEZm
+ r7Fxq84IeyuCTC7NvXCukQP3lhX71G1eYS45r/As12BhY4RI9qQyQ1w2i
+ 74MsQMJz5iv6Y9SNGhXSZvE2/8uWD6nN1YuFBC844wUbEoQqnVuJwVsHy A==;
+X-CSE-ConnectionGUID: VeyLgxXhRQ6oZxoNPnn08A==
+X-CSE-MsgGUID: HCNcpWbgR8SUBXsW+diWHg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11878"; a="86669412"
+X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="86669412"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+ by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 18 Aug 2026 06:19:36 -0700
+X-CSE-ConnectionGUID: E3/cUh1hRHSG+PKXNqpz/w==
+X-CSE-MsgGUID: sbyIF6r3QA6FfkhGp3GPuA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="261015675"
+Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
+ by fmviesa006.fm.intel.com with ESMTP; 18 Aug 2026 06:19:36 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org
+Subject: [PATCH v1 0/6] IXGBE IPsec fixes
+Date: Tue, 18 Aug 2026 14:19:26 +0100
+Message-ID: <cover.1787059137.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.52.0
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH v12 16/26] net/dpaa: add Tx rate limiting API
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Tue, 18 Aug 2026 14:10:25 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F659F8@smartserver.smartshare.dk>
-In-Reply-To: <20260818111730.801760-17-hemant.agrawal@nxp.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v12 16/26] net/dpaa: add Tx rate limiting API
-Thread-Index: Ad0vA2Wc+4SKX2jcSYa7QxzhTNzeegABjUTA
-References: <20260813144205.2505031-1-hemant.agrawal@nxp.com>
- <20260818111730.801760-1-hemant.agrawal@nxp.com>
- <20260818111730.801760-17-hemant.agrawal@nxp.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Hemant Agrawal" <hemant.agrawal@nxp.com>, <stephen@networkplumber.org>,
- <thomas@monjalon.net>, <dev@dpdk.org>
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,71 +56,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Hemant Agrawal [mailto:hemant.agrawal@nxp.com]
-> Sent: Tuesday, 18 August 2026 13.17
-> To: stephen@networkplumber.org; thomas@monjalon.net; dev@dpdk.org
-> Subject: [PATCH v12 16/26] net/dpaa: add Tx rate limiting API
->=20
-> Add a DPAA PMD API to configure the transmit rate limit (rate and
-> burst) on a DPAA port, using the FMAN port rate limiter.
->=20
-> Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
-> ---
-> diff --git a/drivers/net/dpaa/rte_pmd_dpaa.h
-> b/drivers/net/dpaa/rte_pmd_dpaa.h
-> index 0a57e2097a..680ff387f8 100644
-> --- a/drivers/net/dpaa/rte_pmd_dpaa.h
-> +++ b/drivers/net/dpaa/rte_pmd_dpaa.h
-> @@ -1,11 +1,12 @@
->  /* SPDX-License-Identifier: BSD-3-Clause
-> - * Copyright 2018 NXP
-> + * Copyright 2018,2022 NXP
->   */
->=20
->  #ifndef _PMD_DPAA_H_
->  #define _PMD_DPAA_H_
->=20
->  #include <stdint.h>
-> +#include <rte_compat.h>
->=20
->  /**
->   * @file rte_pmd_dpaa.h
-> @@ -33,4 +34,24 @@
->  int
->  rte_pmd_dpaa_set_tx_loopback(uint16_t port, uint8_t on);
->=20
-> +/**
-> + * Set TX rate limit
-> + *
-> + * @param port_id
-> + *    The port identifier of the Ethernet device.
-> + * @param burst
-> + *    Max burst size(KBytes) of the Ethernet device.
-> + *    0 - Disable TX rate limit.
-> + * @param rate
-> + *    Max rate(Kb/sec) of the Ethernet device.
-> + *    0 - Disable TX rate limit.
-> + * @return
-> + *    0 - if successful.
-> + *    <0 - if failed, with proper error code.
-> + */
-> +__rte_experimental
-> +int
-> +rte_pmd_dpaa_port_set_rate_limit(uint16_t port_id, uint16_t burst,
-> +				 uint32_t rate);
-> +
->  #endif /* _PMD_DPAA_H_ */
-> --
-> 2.25.1
+Small array of fixes and refactors for IXGBE IPsec implementation.
 
-We already have a generic API for per-queue TX rate limit: =
-rte_eth_set_queue_rate_limit().
+Anatoly Burakov (6):
+  net/ixgbe: add key length check in IPsec
+  net/ixgbe: remove unnecessary dev pointer
+  net/ixgbe: harmonize return values in IPsec
+  net/ixgbe: get rid of unnecessary malloc in IPsec
+  net/ixgbe: fix missing HW write in IPsec
+  net/ixgbe: refactor IPsec code
 
-Let's have a generic API for per-port TX rate limit, instead of a =
-device-specific API.
+ drivers/net/intel/ixgbe/ixgbe_ipsec.c | 355 ++++++++++++--------------
+ drivers/net/intel/ixgbe/ixgbe_ipsec.h |   1 +
+ 2 files changed, 161 insertions(+), 195 deletions(-)
 
-The per-queue API doesn't support burst size, but the per-port API =
-could.
-It could be noted in the API description that if a port doesn't support =
-burst capacity, the "burst" parameter will be ignored.
+-- 
+2.52.0
 
