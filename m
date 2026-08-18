@@ -2,80 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0407EC5DF7D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 13:20:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 470EFC5DF7D
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 13:33:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3882240687;
-	Tue, 18 Aug 2026 15:20:06 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 2183E40294
- for <dev@dpdk.org>; Tue, 18 Aug 2026 15:20:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1787059204;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=mv4P45qIrPIBkVnR4ZosGE3au+IEUbIgNul4RhHp4Uc=;
- b=FpfucZ7uvFyV+4SAqZ+GcU/ZUHKa3UX2LP7I2qd1Nwrn933xFm0P18Nng4tL997Juo+42k
- zR31BaMv2OQ2eZoSE04FbKpYYbdQpZdsnQwPOZUpb4Hu3kAUcmvSnccj9BiDE/a7AV0CL9
- U+CYOuTdPLs+3NgfstQ0mrk1qOle21U=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-41-Ofe1LZlnNi6oJtB0CD81ng-1; Tue, 18 Aug 2026 09:19:58 -0400
-X-MC-Unique: Ofe1LZlnNi6oJtB0CD81ng-1
-X-Mimecast-MFC-AGG-ID: Ofe1LZlnNi6oJtB0CD81ng_1787059197
-Received: by mail-pj1-f69.google.com with SMTP id
- 98e67ed59e1d1-38dde0df80bso8074875a91.3
- for <dev@dpdk.org>; Tue, 18 Aug 2026 06:19:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787059197; x=1787663997;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=mv4P45qIrPIBkVnR4ZosGE3au+IEUbIgNul4RhHp4Uc=;
- b=qKhrDpVfId/yg9EgnRFfJ90hFMapp5/ptod50n2U8rXuRD885Dp/0X62yQNJCOGQTu
- rXNcP9br8/xjCke7sfhGumiAkT2qoIfF5n3OyFbNsIlRTRLyw0/EEnYY4P3G9YgWaR0+
- Pd9hqGsOohBuNCvx0XrSpIhCG3AwNERftxpkozudyWlcAxtDc+nvYC7ENSXSlXvSW/jU
- Cn2x0JcJ3LvTGtp4tzuMlGqy2RqMGtuPaxWP4biV7oaLTVU8n+V3T3Hsktd/IXLUG/I5
- K4Kv+xNwqn3ltAfWoN526S17ndYI/fEsgNqBOKPYxblaX2FgrH+MVWfkG4xfoxqMV3KO
- vnmQ==
-X-Forwarded-Encrypted: i=1;
- AHgh+RpI/AiBrCIGZA4COeuOzUDpcfClXEVq/5ZA2z7zL0lFDtakeEuXccBmSZzbikBtC4jnIBA=@dpdk.org
-X-Gm-Message-State: AOJu0YxumDuFnH4HX0naVq1KlRVAa2NILHWUMUXWPzPRPaXmsIUCmvjs
- hdNX/3jq0hVkAsjkZUvw54fPGmx+6UnaIDcgopWd9BWwYBqh4/q8b4aHpNPyj9IXtlQSDyKgecZ
- d90UFuwGiebANt7RQJNUOiNcVOxFUbAwQ5YHVj/aMJjc+HIbYRfs7rrga+ndoXhw6rcQH/0jOFT
- iULIxIUTTOuRJh9PPUU+0=
-X-Gm-Gg: AR+sD12RMdWmhzfbdUO9Iday8rL9fTJbgA9fJIu61UFfQK3mcPhruYZzgRC5jNtNKE+
- FOguzt0ZArXq26R/4P8nbc3Fh8eJTrPhN975iEa5MWMhphEgu4UINHkPIeWPClu/ToZe1Cvca6d
- k+1t30VgMXYYItACxo4xfkXw1YjRXHaJRxhv26dVtu75iTZfXSBVOeon3uy0vYtglq3sZSmECTI
- WEJLuQPU2x7XVf9qNC+7DwOhjeImnbk640v3mHWzxaxHVZdeqFEKBn8VCrua1bTvjhAqkumyM0R
- Wyi+hLS3GL1Ad0wSgHlUb+cDF2hsD7cG9IHp+3zFFY8=
-X-Received: by 2002:a17:90b:3809:b0:38d:fda6:4873 with SMTP id
- 98e67ed59e1d1-3955a79c068mr9534375a91.10.1787059197221; 
- Tue, 18 Aug 2026 06:19:57 -0700 (PDT)
-X-Received: by 2002:a17:90b:3809:b0:38d:fda6:4873 with SMTP id
- 98e67ed59e1d1-3955a79c068mr9534327a91.10.1787059196724; Tue, 18 Aug 2026
- 06:19:56 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 66CCB40294;
+	Tue, 18 Aug 2026 15:33:45 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+ by mails.dpdk.org (Postfix) with ESMTP id 75CF540269
+ for <dev@dpdk.org>; Tue, 18 Aug 2026 15:33:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1787060024; x=1818596024;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=ySCtLpzRhTMa8Fa9KvdQ1GU7aTq/tznHX+tYYWy6ww4=;
+ b=kCaMJ2MNCQxu9aQoaBGk4syGgMpODiepKfJ1BfAlBfyXJmgwOyvzwYkQ
+ y6od793wjAIdBfih25Enhviv5F2datBX3Vq5jLqtv3Ume3jNSF5ncdc5u
+ NR0XNJ7XTHDOS2fKJfutiao4NOt1v4GKxdixuPb3LZKDxmA9UvPIGeeZQ
+ I7B1WTLCminjsBsCsaEo3mokwMiL6t95CAhvBZkpTj3FqwLGOO9XYhBSg
+ wp4fjcuUjOUs9X1wsSgqj/YRKB0N6ic1O0WU5KuI4wSHlDZKj1oirT8GM
+ UbCRYWEu/3dxihHSPmhp0REpx2eEyTjpLTDl3BQpeJE6ujXPMdicnxpan w==;
+X-CSE-ConnectionGUID: yE9XkPk9QoyWsmOjXDSfiw==
+X-CSE-MsgGUID: vqRBpJROSAeNJp5NjTBCPQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11878"; a="87757579"
+X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="87757579"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+ by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 18 Aug 2026 06:33:43 -0700
+X-CSE-ConnectionGUID: nPOwH2lvQ2q2XBGnCHht5w==
+X-CSE-MsgGUID: a5qIHCYGQGy6ZrsVkQC+tw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="288736514"
+Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
+ by fmviesa002.fm.intel.com with ESMTP; 18 Aug 2026 06:33:41 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v2 00/39] Rework EAL configuration
+Date: Tue, 18 Aug 2026 14:32:53 +0100
+Message-ID: <20260818133334.2620165-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260429165845.2136843-1-bruce.richardson@intel.com>
+References: <20260429165845.2136843-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
-References: <20260726170258.8791-1-wpan3636@gmail.com>
-In-Reply-To: <20260726170258.8791-1-wpan3636@gmail.com>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Date: Tue, 18 Aug 2026 15:19:44 +0200
-X-Gm-Features: AcwNN1Vu86-2M_EiZ4SOe38BqksjPDr3t7-xV8lN5-RZq2xLjTpHBvFLLN2c3Hw
-Message-ID: <CAO55cswY7NzdOkeCgPCVsRsnaFO8HCaZe8ryidWeY+0QQ3wn9A@mail.gmail.com>
-Subject: Re: [PATCH] net/vhost: preserve Tx ownership on VLAN failure
-To: Weijun Pan <wpan3636@gmail.com>
-Cc: Chenbo Xia <chenbox@nvidia.com>, Jan Blunck <jblunck@infradead.org>,
- dev@dpdk.org, stable@dpdk.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 9cFUkzd17sUqECJW9q-5Vgzn-oJdlM4FyvauAr8ugZk_1787059197
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -89,41 +59,147 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sun, Jul 26, 2026 at 7:03=E2=80=AFPM Weijun Pan <wpan3636@gmail.com> wro=
-te:
->
-> The Tx path compacts the input mbuf array after software VLAN
-> insertion fails. Later packets are moved into the failed packet's
-> slot while the failed mbuf is freed.
->
-> The returned count then no longer identifies a prefix of the original
-> burst. An application freeing the unsent suffix can therefore free
-> duplicate or stale mbuf pointers.
->
-> Stop preprocessing at the first VLAN insertion failure and leave the
-> failed mbuf and the remaining suffix owned by the caller. Count only
-> packets prepared for vhost enqueue but not accepted as missed.
->
-> Bugzilla ID: 1884
-> Fixes: f63d356ee993 ("net/vhost: insert/strip VLAN header in software")
-> Cc: stable@dpdk.org
->
-> Signed-off-by: Weijun Pan <wpan3636@gmail.com>
-> ---
-> Cc: Jan Blunck <jblunck@infradead.org>
->
-> Tested:
-> - Full x86_64 debug build with AddressSanitizer.
-> - Two-process net_vhost and virtio-user data-path test.
-> - Forced VLAN insertion failure on packet 1 by removing its headroom.
-> - rte_eth_tx_burst() returned 1 and preserved the unsent suffix.
-> - testpmd received 1 packet with no RX errors or missed packets.
->
->  drivers/net/vhost/rte_eth_vhost.c | 14 ++++++--------
->  1 file changed, 6 insertions(+), 8 deletions(-)
->
-Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+This patchset reworks how configuration is stored and managed in EAL.
+The existing "internal_config", "rte_config", "lcore_config" structures,
+which sometimes have arbitrary separation between them (especially the
+first two) are replaced by three new structures with clearly defined
+roles:
 
-Thanks,
-Maxime
+- eal_platform_info - contains the raw HW info for the system, details
+  of CPUs and hugepage mounts. This is initialized on first use - even
+  before EAL init is called - and is then immutable, since our HW should
+  not change much underneath us. Its early availability means that it
+  can be used to sanity check the contents of the other structs as they
+  are being built up.
+
+- eal_user_cfg - contains the config settings passed in by the user. For
+  existing rte_eal_init, this is built up in the arg parse stage, and
+  it's contents verified against the platform info, e.g. to check core
+  masks are valid etc. Once argument parsing is completed, is also
+  immutable.
+
+- runtime_cfg - basically all the runtime settings that need to be there
+  for DPDK to run, or which change over time. Largely combined content
+  of the old rte_config, internal_config and lcore_config structs. This
+  is initialized from the other two structs by eal initialization and
+  can be modified by EAL at any time.
+
+Once that is done, we have a clean separation between user provided
+configuration and the rest of EAL, we can split EAL init into two parts,
+the first of which parses cmdline arguments and then calls the second
+which takes the eal_user_cfg struct result of that parse and does the
+actual initialization. The longer-term objective is to have other
+first-stage functions that prepare the user_cfg struct for
+initialization, so that we can move away from argc/argv as the only
+method of configuring DPDK initialization.
+
+v2: minor rework following AI review.
+
+Bruce Richardson (39):
+  telemetry: make cpuset init parameter const
+  argparse: check for range overflow in CPU lists
+  eal: define new functionally distinct config structs
+  eal: move memory request fields to user config
+  eal: move NUMA request fields to user config
+  eal: move hugepage policy fields to user config
+  eal: move process policy fields to user config
+  eal: move hugepage limit fields to new config structs
+  eal: move advanced user config options to user cfg struct
+  eal: move hugepage size info to platform info struct
+  eal: move runtime state to appropriate structure
+  eal: record details of all cpus in platform info
+  eal: use platform info for lcore lookups
+  eal: add macro for lowest set CPU bit in a set
+  eal: store lcore configuration in runtime data
+  eal: move core indices bitset to runtime state
+  eal: cleanup CPU init function
+  eal: move NUMA node information to platform info struct
+  eal: move lcore role and count to runtime state
+  eal: make lcore role a field in lcore config struct
+  eal: move main lcore setting to runtime config struct
+  eal: move IOVA mode and process type to runtime cfg
+  eal: move memory config pointer to runtime state struct
+  eal: remove rte_config structure
+  eal: separate runtime state update from arg parsing
+  eal: move device options staging list into user cfg
+  eal: separate plugin paths from loaded plugin objects
+  eal: simplify internal driver path iteration APIs
+  eal: move trace config into user config struct
+  eal: record service cores in user config struct
+  eal: store user-provided lcore info in user config struct
+  eal: clarify docs on params taking lcore IDs
+  eal: remove internal config reset function
+  eal: move functions setting runtime state
+  eal: initialize platform info on first use
+  eal: remove duplicated scan of sysfs for hugepage details
+  eal: add utilities for working with user config struct
+  eal: split EAL init into two stages
+  eal: provide hooks for init with externally supplied config
+
+ app/test/process.h                        |   4 +-
+ app/test/test_argparse.c                  |  10 +
+ doc/guides/linux_gsg/eal_args.include.rst |  38 +-
+ lib/argparse/rte_argparse.c               |   5 +
+ lib/eal/common/eal_common_bus.c           |   4 +-
+ lib/eal/common/eal_common_config.c        | 267 ++++++-
+ lib/eal/common/eal_common_dev.c           |  10 +-
+ lib/eal/common/eal_common_dynmem.c        |  70 +-
+ lib/eal/common/eal_common_fbarray.c       |  10 +-
+ lib/eal/common/eal_common_launch.c        |  25 +-
+ lib/eal/common/eal_common_lcore.c         | 267 ++++---
+ lib/eal/common/eal_common_mcfg.c          |  44 +-
+ lib/eal/common/eal_common_memalloc.c      |   5 +-
+ lib/eal/common/eal_common_memory.c        | 104 ++-
+ lib/eal/common/eal_common_memzone.c       |  24 +-
+ lib/eal/common/eal_common_options.c       | 899 ++++++++--------------
+ lib/eal/common/eal_common_proc.c          |  43 +-
+ lib/eal/common/eal_common_tailqs.c        |   6 +-
+ lib/eal/common/eal_common_thread.c        |  67 +-
+ lib/eal/common/eal_common_timer.c         |   2 +-
+ lib/eal/common/eal_common_trace.c         |  30 +-
+ lib/eal/common/eal_common_trace_utils.c   | 104 ---
+ lib/eal/common/eal_hugepages.h            |   8 +
+ lib/eal/common/eal_internal_cfg.h         | 385 +++++++--
+ lib/eal/common/eal_memcfg.h               |   3 +
+ lib/eal/common/eal_option_list.h          |   6 +-
+ lib/eal/common/eal_options.h              |   8 +-
+ lib/eal/common/eal_private.h              | 121 ++-
+ lib/eal/common/eal_trace.h                |  11 -
+ lib/eal/common/malloc_elem.c              |  15 +-
+ lib/eal/common/malloc_heap.c              |  41 +-
+ lib/eal/common/malloc_mp.c                |   2 +-
+ lib/eal/common/rte_malloc.c               |  14 +-
+ lib/eal/common/rte_service.c              |  17 +-
+ lib/eal/freebsd/eal.c                     | 291 ++++---
+ lib/eal/freebsd/eal_hugepage_info.c       |  78 +-
+ lib/eal/freebsd/eal_lcore.c               |  16 +-
+ lib/eal/freebsd/eal_memory.c              |  46 +-
+ lib/eal/freebsd/include/rte_os.h          |   2 +
+ lib/eal/include/rte_eal.h                 |  35 +-
+ lib/eal/include/rte_memzone.h             |  10 +-
+ lib/eal/include/rte_tailq.h               |   2 +-
+ lib/eal/linux/eal.c                       | 297 ++++---
+ lib/eal/linux/eal_hugepage_info.c         | 231 +++---
+ lib/eal/linux/eal_lcore.c                 |  43 ++
+ lib/eal/linux/eal_memalloc.c              | 168 ++--
+ lib/eal/linux/eal_memory.c                | 168 ++--
+ lib/eal/linux/eal_timer_hpet.c            |  21 +-
+ lib/eal/linux/eal_vfio.c                  |  11 +-
+ lib/eal/linux/include/rte_os.h            |  10 +
+ lib/eal/unix/eal_unix_thread.c            |  11 +-
+ lib/eal/windows/eal.c                     | 197 +++--
+ lib/eal/windows/eal_hugepages.c           |  60 +-
+ lib/eal/windows/eal_lcore.c               |   6 +
+ lib/eal/windows/eal_memalloc.c            |  37 +-
+ lib/eal/windows/eal_memory.c              |  14 +-
+ lib/eal/windows/eal_thread.c              |  11 +-
+ lib/eal/windows/eal_windows.h             |   8 -
+ lib/eal/windows/include/rte_os.h          |   1 +
+ lib/eal/windows/include/sched.h           |  10 +
+ lib/telemetry/telemetry.c                 |   4 +-
+ lib/telemetry/telemetry_internal.h        |   2 +-
+ 62 files changed, 2511 insertions(+), 1948 deletions(-)
+
+--
+2.53.0
 
