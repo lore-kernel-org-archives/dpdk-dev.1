@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39AFDC5DF7D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 13:34:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93C81C5DF7D
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 13:34:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5C6B440698;
-	Tue, 18 Aug 2026 15:33:50 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 69F04409FA;
+	Tue, 18 Aug 2026 15:33:51 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id C64EA40663
- for <dev@dpdk.org>; Tue, 18 Aug 2026 15:33:46 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id B591340684
+ for <dev@dpdk.org>; Tue, 18 Aug 2026 15:33:47 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1787060027; x=1818596027;
+ t=1787060029; x=1818596029;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=tC4rsobUS29oQP4HJ2Fj618q8q7RKSNw+b6YC/r9LGY=;
- b=KpZOVsSDROkyd2ujM47pISNmYCQp0ZJvdVpU8cZ7Uclh+W6k4ttXAohc
- uW2oI3B/54J+mb7VuoLQK9zs1wRDXguCPQeWO1b04b6/dqy+ryQ0d5HH5
- m4Aolb2SVENFAUjxLYnoOJxkse3o2W4w5wMCFJwr1Q3MVOo/ARTh8fRf8
- vmRW6db1LLtN0AY0TlZ4lHZSJESfIC6k/uyi7YJgOI2bJqPhBPqqH1GUD
- 8cDY/6c6cXt6mLKmx8pVW0RJVF9YdUZQ5MTt4N58Y9mLC/q4NDYIM7Io8
- 4/llQIMxk7k/u8mVikmhDhppaod6OBpUMh1E+pNMlfy4s+on4xz45Ci+q g==;
-X-CSE-ConnectionGUID: HoPMfy8ARleq5gYV+z8CTQ==
-X-CSE-MsgGUID: haqkQmJxS9aDgHCBowisvw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11878"; a="87757584"
-X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="87757584"
+ bh=7RpMzoGBKndVOwWjadPGgn5bHJ4TaWPxaWtV9lR5pgM=;
+ b=L9EkiDPSvBrkApXPX3msdpbr1F5g2Q2lY9M18XRhaIBs/6zpa70hQrqB
+ Xvz/YE4u6LwbHFDJZveuxYaBNRS1Eza2GO/DC1DMm/BD8yfFkqqM5jbms
+ v0hNeLTkUpYr7NR100fHmfWfL82MZG9vJh3aCY03YQAw9Ic3xd6oWC7l3
+ bIEhc3/EK9ykKiDTU0qsM5Q7L5qTqAAd10oc5DZ7SuJeNITuODhPn+kxp
+ r9o5M63kEk8Z+tJ3z+QhcxHYT2MyPZJLVf7czzRd0hUXxiBRuwYhh5UZQ
+ J5aJ1WaLTRQR5BEvbGncpvKIcN5eUty232SjcLbGlri6FsW5g74DY8ss8 w==;
+X-CSE-ConnectionGUID: Q/QVspx+Td++KTF0lbF2BQ==
+X-CSE-MsgGUID: m5+TkfZ5Su6BPF+hySrJYw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11878"; a="87757592"
+X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="87757592"
 Received: from fmviesa002.fm.intel.com ([10.60.135.142])
  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Aug 2026 06:33:46 -0700
-X-CSE-ConnectionGUID: 49f+AHOHRVeqrWeFw0kTeA==
-X-CSE-MsgGUID: 8Gk36S0oTLGvAM8BrjSEbw==
+ 18 Aug 2026 06:33:48 -0700
+X-CSE-ConnectionGUID: I/LkYIKxTBadH0uyFRK+yg==
+X-CSE-MsgGUID: mJWBlwHVSY+sjWN7KyRsTw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="288736552"
+X-IronPort-AV: E=Sophos;i="6.25,230,1779174000"; d="scan'208";a="288736560"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa002.fm.intel.com with ESMTP; 18 Aug 2026 06:33:45 -0700
+ by fmviesa002.fm.intel.com with ESMTP; 18 Aug 2026 06:33:46 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v2 04/39] eal: move memory request fields to user config
-Date: Tue, 18 Aug 2026 14:32:57 +0100
-Message-ID: <20260818133334.2620165-5-bruce.richardson@intel.com>
+Subject: [PATCH v2 05/39] eal: move NUMA request fields to user config
+Date: Tue, 18 Aug 2026 14:32:58 +0100
+Message-ID: <20260818133334.2620165-6-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260818133334.2620165-1-bruce.richardson@intel.com>
 References: <20260429165845.2136843-1-bruce.richardson@intel.com>
@@ -60,418 +60,334 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Move the basic memory request information supplied by the user from the
-internal-config to the user config structure in EAL. For the number of
-channels or ranks of memory, limit the data size to uint8_t rather than
-having a full 32-bit value per entry.
+As with basic memory user parameters, move the NUMA-specific parameters
+to the user config struct. Update flag types to bool in the process.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/eal/common/eal_common_dynmem.c  | 11 ++++---
- lib/eal/common/eal_common_memory.c  |  8 ++---
- lib/eal/common/eal_common_options.c | 47 ++++++++++++++++++++++-------
- lib/eal/common/eal_internal_cfg.h   |  8 ++---
- lib/eal/freebsd/eal.c               |  7 +++--
- lib/eal/freebsd/eal_memory.c        | 11 ++++---
- lib/eal/linux/eal.c                 |  5 +--
- lib/eal/linux/eal_memory.c          | 12 ++++----
- lib/eal/windows/eal.c               |  5 +--
- lib/eal/windows/eal_memory.c        |  3 +-
- 10 files changed, 74 insertions(+), 43 deletions(-)
+ lib/eal/common/eal_common_dynmem.c  | 15 +++++++--------
+ lib/eal/common/eal_common_options.c | 24 +++++++++++-------------
+ lib/eal/common/eal_internal_cfg.h   | 11 ++++-------
+ lib/eal/common/malloc_heap.c        |  2 +-
+ lib/eal/freebsd/eal.c               |  2 +-
+ lib/eal/linux/eal.c                 |  2 +-
+ lib/eal/linux/eal_memory.c          | 23 ++++++++++++-----------
+ lib/eal/windows/eal.c               |  2 +-
+ 8 files changed, 38 insertions(+), 43 deletions(-)
 
 diff --git a/lib/eal/common/eal_common_dynmem.c b/lib/eal/common/eal_common_dynmem.c
-index 868d274dc0..4e991d4fb1 100644
+index 4e991d4fb1..aed4f520a4 100644
 --- a/lib/eal/common/eal_common_dynmem.c
 +++ b/lib/eal/common/eal_common_dynmem.c
-@@ -358,7 +358,8 @@ eal_dynmem_calc_num_pages_per_socket(
- 	uint64_t remaining_mem, cur_mem;
- 	const struct internal_config *internal_conf =
+@@ -212,6 +212,7 @@ eal_dynmem_hugepage_init(void)
+ 	int hp_sz_idx, socket_id;
+ 	struct internal_config *internal_conf =
  		eal_get_internal_configuration();
--	uint64_t total_mem = internal_conf->memory;
 +	const struct eal_user_cfg *user_cfg = eal_get_user_configuration();
-+	uint64_t total_mem = user_cfg->memory;
  
- 	if (num_hp_info == 0)
+ 	memset(used_hp, 0, sizeof(used_hp));
+ 
+@@ -248,7 +249,7 @@ eal_dynmem_hugepage_init(void)
+ 
+ 	/* make a copy of numa_mem, needed for balanced allocation. */
+ 	for (hp_sz_idx = 0; hp_sz_idx < RTE_MAX_NUMA_NODES; hp_sz_idx++)
+-		memory[hp_sz_idx] = internal_conf->numa_mem[hp_sz_idx];
++		memory[hp_sz_idx] = user_cfg->numa_mem[hp_sz_idx];
+ 
+ 	/* calculate final number of pages */
+ 	if (eal_dynmem_calc_num_pages_per_socket(memory,
+@@ -316,10 +317,10 @@ eal_dynmem_hugepage_init(void)
+ 	}
+ 
+ 	/* if socket limits were specified, set them */
+-	if (internal_conf->force_numa_limits) {
++	if (user_cfg->force_numa_limits) {
+ 		unsigned int i;
+ 		for (i = 0; i < RTE_MAX_NUMA_NODES; i++) {
+-			uint64_t limit = internal_conf->numa_limit[i];
++			uint64_t limit = user_cfg->numa_limit[i];
+ 			if (limit == 0)
+ 				continue;
+ 			if (rte_mem_alloc_validator_register("socket-limit",
+@@ -356,8 +357,6 @@ eal_dynmem_calc_num_pages_per_socket(
+ 	unsigned int requested, available;
+ 	int total_num_pages = 0;
+ 	uint64_t remaining_mem, cur_mem;
+-	const struct internal_config *internal_conf =
+-		eal_get_internal_configuration();
+ 	const struct eal_user_cfg *user_cfg = eal_get_user_configuration();
+ 	uint64_t total_mem = user_cfg->memory;
+ 
+@@ -365,7 +364,7 @@ eal_dynmem_calc_num_pages_per_socket(
  		return -1;
-@@ -382,12 +383,12 @@ eal_dynmem_calc_num_pages_per_socket(
- 		 * sockets according to number of cores from CPU mask present
- 		 * on each socket.
- 		 */
--		total_size = internal_conf->memory;
-+		total_size = user_cfg->memory;
- 		for (socket = 0; socket < RTE_MAX_NUMA_NODES && total_size != 0;
- 				socket++) {
  
- 			/* Set memory amount per socket */
--			default_size = internal_conf->memory *
-+			default_size = user_cfg->memory *
- 				cpu_per_socket[socket] / rte_lcore_count();
+ 	/* if specific memory amounts per socket weren't requested */
+-	if (internal_conf->force_numa == 0) {
++	if (!user_cfg->force_numa) {
+ 		size_t total_size;
+ #ifdef RTE_ARCH_64
+ 		int cpu_per_socket[RTE_MAX_NUMA_NODES];
+@@ -492,8 +491,8 @@ eal_dynmem_calc_num_pages_per_socket(
  
- 			/* Limit to maximum available memory on socket */
-@@ -418,7 +419,7 @@ eal_dynmem_calc_num_pages_per_socket(
- 		/* in 32-bit mode, allocate all of the memory only on main
- 		 * lcore socket
- 		 */
--		total_size = internal_conf->memory;
-+		total_size = user_cfg->memory;
- 		for (socket = 0; socket < RTE_MAX_NUMA_NODES && total_size != 0;
- 				socket++) {
- 			struct rte_config *cfg = rte_eal_get_configuration();
-@@ -502,7 +503,7 @@ eal_dynmem_calc_num_pages_per_socket(
- 
- 	/* if we didn't satisfy total memory requirements */
- 	if (total_mem > 0) {
--		requested = internal_conf->memory / 0x100000;
-+		requested = user_cfg->memory / 0x100000;
- 		available = requested - (total_mem / 0x100000);
- 		EAL_LOG(ERR, "Not enough memory available! Requested: %uMB, available: %uMB",
- 			requested, available);
-diff --git a/lib/eal/common/eal_common_memory.c b/lib/eal/common/eal_common_memory.c
-index 91724d0732..6ae1791bad 100644
---- a/lib/eal/common/eal_common_memory.c
-+++ b/lib/eal/common/eal_common_memory.c
-@@ -681,15 +681,15 @@ static int
- rte_eal_memdevice_init(void)
- {
- 	struct rte_config *config;
--	const struct internal_config *internal_conf;
-+	const struct eal_user_cfg *user_cfg;
- 
- 	if (rte_eal_process_type() == RTE_PROC_SECONDARY)
- 		return 0;
- 
--	internal_conf = eal_get_internal_configuration();
-+	user_cfg = eal_get_user_configuration();
- 	config = rte_eal_get_configuration();
--	config->mem_config->nchannel = internal_conf->force_nchannel;
--	config->mem_config->nrank = internal_conf->force_nrank;
-+	config->mem_config->nchannel = user_cfg->force_nchannel;
-+	config->mem_config->nrank = user_cfg->force_nrank;
- 
- 	return 0;
- }
+ 		/* if we didn't satisfy all memory requirements per socket */
+ 		if (memory[socket] > 0 &&
+-				internal_conf->numa_mem[socket] != 0) {
+-			requested = internal_conf->numa_mem[socket] / 0x100000;
++				user_cfg->numa_mem[socket] != 0) {
++			requested = user_cfg->numa_mem[socket] / 0x100000;
+ 			available = requested - (memory[socket] / 0x100000);
+ 			EAL_LOG(ERR, "Not enough memory available on socket %u! Requested: %uMB, available: %uMB",
+ 				socket, requested, available);
 diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
-index 42cdef632f..e0308aa460 100644
+index e0308aa460..b189362dbd 100644
 --- a/lib/eal/common/eal_common_options.c
 +++ b/lib/eal/common/eal_common_options.c
-@@ -509,11 +509,12 @@ eal_get_hugefile_prefix(void)
- void
- eal_reset_internal_config(struct internal_config *internal_cfg)
- {
-+	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
- 	int i;
- 
--	internal_cfg->memory = 0;
--	internal_cfg->force_nrank = 0;
--	internal_cfg->force_nchannel = 0;
-+	user_cfg->memory = 0;
-+	user_cfg->force_nrank = 0;
-+	user_cfg->force_nchannel = 0;
+@@ -515,18 +515,16 @@ eal_reset_internal_config(struct internal_config *internal_cfg)
+ 	user_cfg->memory = 0;
+ 	user_cfg->force_nrank = 0;
+ 	user_cfg->force_nchannel = 0;
++	user_cfg->force_numa = false;
++	for (i = 0; i < RTE_MAX_NUMA_NODES; i++)
++		user_cfg->numa_mem[i] = 0;
++	user_cfg->force_numa_limits = false;
++	for (i = 0; i < RTE_MAX_NUMA_NODES; i++)
++		user_cfg->numa_limit[i] = 0;
  	internal_cfg->hugefile_prefix = NULL;
  	internal_cfg->hugepage_dir = NULL;
  	internal_cfg->hugepage_file.unlink_before_mapping = false;
-@@ -2072,6 +2073,7 @@ int
- eal_parse_args(void)
- {
- 	struct internal_config *int_cfg = eal_get_internal_configuration();
-+	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
- 	struct rte_config *rte_cfg = rte_eal_get_configuration();
- 	bool remap_lcores = (args.remap_lcore_ids != NULL);
- 	struct arg_list_elem *arg;
-@@ -2210,23 +2212,45 @@ eal_parse_args(void)
- 
- 	/* memory options */
- 	if (args.memory_size != NULL) {
--		int_cfg->memory = atoi(args.memory_size);
--		int_cfg->memory *= 1024ULL;
--		int_cfg->memory *= 1024ULL;
-+		char *end = NULL;
-+		unsigned long long memory_mb;
-+
-+		errno = 0;
-+		memory_mb = strtoull(args.memory_size, &end, 10);
-+		if (errno != 0 || args.memory_size[0] == '\0' || end[0] != '\0' ||
-+				memory_mb > SIZE_MAX / (1024ULL * 1024ULL)) {
-+			EAL_LOG(ERR, "invalid memory size parameter");
-+			return -1;
-+		}
-+		user_cfg->memory = (size_t)memory_mb * 1024ULL * 1024ULL;
+ 	internal_cfg->hugepage_file.unlink_existing = true;
+-	internal_cfg->force_numa = 0;
+-	/* zero out the NUMA config */
+-	for (i = 0; i < RTE_MAX_NUMA_NODES; i++)
+-		internal_cfg->numa_mem[i] = 0;
+-	internal_cfg->force_numa_limits = 0;
+-	/* zero out the NUMA limits config */
+-	for (i = 0; i < RTE_MAX_NUMA_NODES; i++)
+-		internal_cfg->numa_limit[i] = 0;
+ 	/* zero out hugedir descriptors */
+ 	for (i = 0; i < MAX_HUGEPAGE_SIZES; i++) {
+ 		memset(&internal_cfg->hugepage_info[i], 0,
+@@ -2307,18 +2305,18 @@ eal_parse_args(void)
+ 		}
  	}
- 	if (args.memory_channels != NULL) {
--		int_cfg->force_nchannel = atoi(args.memory_channels);
--		if (int_cfg->force_nchannel == 0) {
-+		char *end = NULL;
-+		unsigned long nchannel;
-+
-+		errno = 0;
-+		nchannel = strtoul(args.memory_channels, &end, 10);
-+
-+		if (errno != 0 || args.memory_channels[0] == '\0' || end[0] != '\0' ||
-+				nchannel == 0 || nchannel > UINT8_MAX) {
- 			EAL_LOG(ERR, "invalid memory channel parameter");
+ 	if (args.numa_mem != NULL) {
+-		if (eal_parse_socket_arg(args.numa_mem, int_cfg->numa_mem) < 0) {
++		if (eal_parse_socket_arg(args.numa_mem, user_cfg->numa_mem) < 0) {
+ 			EAL_LOG(ERR, "invalid numa-mem parameter: '%s'", args.numa_mem);
  			return -1;
  		}
-+		user_cfg->force_nchannel = (uint8_t)nchannel;
+-		int_cfg->force_numa = 1;
++		user_cfg->force_numa = true;
  	}
- 	if (args.memory_ranks != NULL) {
--		int_cfg->force_nrank = atoi(args.memory_ranks);
--		if (int_cfg->force_nrank == 0 || int_cfg->force_nrank > 16) {
-+		char *end = NULL;
-+		unsigned long nrank;
-+
-+		errno = 0;
-+		nrank = strtoul(args.memory_ranks, &end, 10);
-+
-+		if (errno != 0 || args.memory_ranks[0] == '\0' || end[0] != '\0' ||
-+				nrank == 0 || nrank > 16) {
- 			EAL_LOG(ERR, "invalid memory rank parameter");
+ 	if (args.numa_limit != NULL) {
+-		if (eal_parse_socket_arg(args.numa_limit, int_cfg->numa_limit) < 0) {
++		if (eal_parse_socket_arg(args.numa_limit, user_cfg->numa_limit) < 0) {
+ 			EAL_LOG(ERR, "invalid numa-limit parameter: '%s'", args.numa_limit);
  			return -1;
  		}
-+		user_cfg->force_nrank = (uint8_t)nrank;
+-		int_cfg->force_numa_limits = 1;
++		user_cfg->force_numa_limits = true;
  	}
- 	if (args.no_huge) {
- 		int_cfg->no_hugetlbfs = 1;
-@@ -2475,6 +2499,7 @@ eal_cleanup_config(struct internal_config *internal_cfg)
- int
- eal_adjust_config(struct internal_config *internal_cfg)
- {
-+	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
- 	int i;
- 
- 	if (internal_cfg->process_type == RTE_PROC_AUTO)
-@@ -2485,7 +2510,7 @@ eal_adjust_config(struct internal_config *internal_cfg)
+ 	TAILQ_FOREACH(arg, &args.pagesz_mem, next) {
+ 		if (eal_parse_pagesz_mem(arg->arg, int_cfg) < 0) {
+@@ -2510,7 +2508,7 @@ eal_adjust_config(struct internal_config *internal_cfg)
  	/* if no memory amounts were requested, this will result in 0 and
  	 * will be overridden later, right after eal_hugepage_info_init() */
  	for (i = 0; i < RTE_MAX_NUMA_NODES; i++)
--		internal_cfg->memory += internal_cfg->numa_mem[i];
-+		user_cfg->memory += internal_cfg->numa_mem[i];
+-		user_cfg->memory += internal_cfg->numa_mem[i];
++		user_cfg->memory += user_cfg->numa_mem[i];
  
  	return 0;
  }
 diff --git a/lib/eal/common/eal_internal_cfg.h b/lib/eal/common/eal_internal_cfg.h
-index 66224e7c75..0cecb30cb2 100644
+index 0cecb30cb2..2adcc518e3 100644
 --- a/lib/eal/common/eal_internal_cfg.h
 +++ b/lib/eal/common/eal_internal_cfg.h
-@@ -13,6 +13,7 @@
- #include <rte_eal.h>
- #include <rte_os_shim.h>
- #include <rte_pci_dev_feature_defs.h>
-+#include <stdint.h>
- 
- #include "eal_thread.h"
- 
-@@ -53,7 +54,9 @@ struct hugepage_file_discipline {
-  * Immutable after initialization, so no need for atomic types or locks.
-  */
- struct eal_user_cfg {
--	uint8_t reserved;
-+	size_t memory;           /**< amount of asked memory */
-+	uint8_t force_nchannel;  /**< force number of channels */
-+	uint8_t force_nrank;     /**< force number of ranks */
+@@ -57,6 +57,10 @@ struct eal_user_cfg {
+ 	size_t memory;           /**< amount of asked memory */
+ 	uint8_t force_nchannel;  /**< force number of channels */
+ 	uint8_t force_nrank;     /**< force number of ranks */
++	bool force_numa;         /**< true to request memory on specific NUMA nodes */
++	bool force_numa_limits;  /**< true to apply per-NUMA memory limits */
++	uint64_t numa_mem[RTE_MAX_NUMA_NODES];    /**< amount of memory per NUMA node */
++	uint64_t numa_limit[RTE_MAX_NUMA_NODES];  /**< limit amount of memory per NUMA node */
  };
  
  /**
-@@ -77,9 +80,6 @@ struct eal_runtime_state {
-  * internal configuration
-  */
- struct internal_config {
--	volatile size_t memory;           /**< amount of asked memory */
--	volatile unsigned force_nchannel; /**< force number of channels */
--	volatile unsigned force_nrank;    /**< force number of ranks */
- 	volatile unsigned no_hugetlbfs;   /**< true to disable hugetlbfs */
- 	struct hugepage_file_discipline hugepage_file;
- 	volatile unsigned no_pci;         /**< true to disable PCI */
+@@ -93,13 +97,6 @@ struct internal_config {
+ 	 */
+ 	volatile unsigned create_uio_dev; /**< true to create /dev/uioX devices */
+ 	volatile enum rte_proc_type_t process_type; /**< multi-process proc type */
+-	/** true to try allocating memory on specific NUMA nodes */
+-	volatile unsigned force_numa;
+-	/** amount of memory per NUMA node */
+-	volatile uint64_t numa_mem[RTE_MAX_NUMA_NODES];
+-	volatile unsigned force_numa_limits;
+-	/** limit amount of memory per NUMA node */
+-	volatile uint64_t numa_limit[RTE_MAX_NUMA_NODES];
+ 	uintptr_t base_virtaddr;          /**< base address to try and reserve memory from */
+ 	volatile unsigned legacy_mem;
+ 	/**< true to enable legacy memory behavior (no dynamic allocation,
+diff --git a/lib/eal/common/malloc_heap.c b/lib/eal/common/malloc_heap.c
+index 39240c261c..77f364158a 100644
+--- a/lib/eal/common/malloc_heap.c
++++ b/lib/eal/common/malloc_heap.c
+@@ -701,7 +701,7 @@ malloc_heap_alloc_on_heap_id(size_t size, unsigned int heap_id, unsigned int fla
+ static unsigned int
+ malloc_get_numa_socket(void)
+ {
+-	const struct internal_config *conf = eal_get_internal_configuration();
++	const struct eal_user_cfg *conf = eal_get_user_configuration();
+ 	unsigned int socket_id = rte_socket_id();
+ 	unsigned int idx;
+ 
 diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
-index 8b1ba5b99b..c348e9291a 100644
+index c348e9291a..6655f5da12 100644
 --- a/lib/eal/freebsd/eal.c
 +++ b/lib/eal/freebsd/eal.c
-@@ -415,6 +415,7 @@ rte_eal_init(int argc, char **argv)
- 	const struct rte_config *config = rte_eal_get_configuration();
- 	struct internal_config *internal_conf =
- 		eal_get_internal_configuration();
-+	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
- 	bool has_phys_addr;
- 	enum rte_iova_mode iova_mode;
- 
-@@ -593,11 +594,11 @@ rte_eal_init(int argc, char **argv)
+@@ -594,7 +594,7 @@ rte_eal_init(int argc, char **argv)
  		}
  	}
  
--	if (internal_conf->memory == 0 && internal_conf->force_numa == 0) {
-+	if (user_cfg->memory == 0 && internal_conf->force_numa == 0) {
+-	if (user_cfg->memory == 0 && internal_conf->force_numa == 0) {
++	if (user_cfg->memory == 0 && !user_cfg->force_numa) {
  		if (internal_conf->no_hugetlbfs)
--			internal_conf->memory = MEMSIZE_IF_NO_HUGE_PAGE;
-+			user_cfg->memory = MEMSIZE_IF_NO_HUGE_PAGE;
+ 			user_cfg->memory = MEMSIZE_IF_NO_HUGE_PAGE;
  		else
--			internal_conf->memory = eal_get_hugepage_mem_size();
-+			user_cfg->memory = eal_get_hugepage_mem_size();
- 	}
- 
- 	if (internal_conf->vmware_tsc_map == 1) {
-diff --git a/lib/eal/freebsd/eal_memory.c b/lib/eal/freebsd/eal_memory.c
-index a239b83420..c85ff503ac 100644
---- a/lib/eal/freebsd/eal_memory.c
-+++ b/lib/eal/freebsd/eal_memory.c
-@@ -82,11 +82,12 @@ rte_eal_hugepage_init(void)
- 		struct rte_memseg_list *msl;
- 		uint64_t mem_sz, page_sz;
- 		int n_segs;
-+		const struct eal_user_cfg *user_cfg = eal_get_user_configuration();
- 
- 		/* create a memseg list */
- 		msl = &mcfg->memsegs[0];
- 
--		mem_sz = internal_conf->memory;
-+		mem_sz = user_cfg->memory;
- 		page_sz = RTE_PGSIZE_4K;
- 		n_segs = mem_sz / page_sz;
- 
-@@ -121,7 +122,7 @@ rte_eal_hugepage_init(void)
- 		hpi = &internal_conf->hugepage_info[i];
- 		page_sz = hpi->hugepage_sz;
- 		max_pages = hpi->num_pages[0];
--		mem_needed = RTE_ALIGN_CEIL(internal_conf->memory - total_mem,
-+		mem_needed = RTE_ALIGN_CEIL(eal_get_user_configuration()->memory - total_mem,
- 				page_sz);
- 
- 		n_pages = RTE_MIN(mem_needed / page_sz, max_pages);
-@@ -244,14 +245,14 @@ rte_eal_hugepage_init(void)
- 
- 			total_mem += seg->len;
- 		}
--		if (total_mem >= internal_conf->memory)
-+		if (total_mem >= eal_get_user_configuration()->memory)
- 			break;
- 	}
--	if (total_mem < internal_conf->memory) {
-+	if (total_mem < eal_get_user_configuration()->memory) {
- 		EAL_LOG(ERR, "Couldn't reserve requested memory, "
- 				"requested: %" PRIu64 "M "
- 				"available: %" PRIu64 "M",
--				internal_conf->memory >> 20, total_mem >> 20);
-+				eal_get_user_configuration()->memory >> 20, total_mem >> 20);
- 		return -1;
- 	}
- 	return 0;
 diff --git a/lib/eal/linux/eal.c b/lib/eal/linux/eal.c
-index fc2e9b8c0e..35ab3d5413 100644
+index 35ab3d5413..bf9a245c5b 100644
 --- a/lib/eal/linux/eal.c
 +++ b/lib/eal/linux/eal.c
-@@ -577,6 +577,7 @@ rte_eal_init(int argc, char **argv)
- 	const struct rte_config *config = rte_eal_get_configuration();
- 	struct internal_config *internal_conf =
- 		eal_get_internal_configuration();
-+	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
- 
- 	/* first check if we have been run before */
- 	if (!rte_atomic_compare_exchange_strong_explicit(&run_once, &has_run, 1,
-@@ -756,9 +757,9 @@ rte_eal_init(int argc, char **argv)
+@@ -757,7 +757,7 @@ rte_eal_init(int argc, char **argv)
  		}
  	}
  
--	if (internal_conf->memory == 0 && internal_conf->force_numa == 0) {
-+	if (user_cfg->memory == 0 && internal_conf->force_numa == 0) {
+-	if (user_cfg->memory == 0 && internal_conf->force_numa == 0) {
++	if (user_cfg->memory == 0 && !user_cfg->force_numa) {
  		if (internal_conf->no_hugetlbfs)
--			internal_conf->memory = MEMSIZE_IF_NO_HUGE_PAGE;
-+			user_cfg->memory = MEMSIZE_IF_NO_HUGE_PAGE;
+ 			user_cfg->memory = MEMSIZE_IF_NO_HUGE_PAGE;
  	}
- 
- 	if (internal_conf->vmware_tsc_map == 1) {
 diff --git a/lib/eal/linux/eal_memory.c b/lib/eal/linux/eal_memory.c
-index d9d505d865..1f369f5a9d 100644
+index 1f369f5a9d..d97a31bf5a 100644
 --- a/lib/eal/linux/eal_memory.c
 +++ b/lib/eal/linux/eal_memory.c
-@@ -1165,7 +1165,7 @@ eal_legacy_hugepage_init(void)
- 		/* create a memseg list */
- 		msl = &mcfg->memsegs[0];
+@@ -274,8 +274,7 @@ map_all_hugepages(struct hugepage_file *hugepg_tbl, struct hugepage_info *hpi,
+ 	struct bitmask *oldmask = NULL;
+ 	bool have_numa = true;
+ 	unsigned long maxnode = 0;
+-	const struct internal_config *internal_conf =
+-		eal_get_internal_configuration();
++	const struct eal_user_cfg *user_cfg = eal_get_user_configuration();
  
--		mem_sz = internal_conf->memory;
-+		mem_sz = eal_get_user_configuration()->memory;
- 		page_sz = RTE_PGSIZE_4K;
- 		n_segs = mem_sz / page_sz;
- 
-@@ -1186,7 +1186,7 @@ eal_legacy_hugepage_init(void)
- 			EAL_LOG(DEBUG, "Falling back to anonymous map");
- 		} else {
- 			/* we got an fd - now resize it */
--			if (ftruncate(memfd, internal_conf->memory) < 0) {
-+			if (ftruncate(memfd, eal_get_user_configuration()->memory) < 0) {
- 				EAL_LOG(ERR, "Cannot resize memfd: %s",
- 						strerror(errno));
- 				EAL_LOG(ERR, "Falling back to anonymous map");
-@@ -1342,8 +1342,8 @@ eal_legacy_hugepage_init(void)
- 
- 	huge_recover_sigbus();
- 
--	if (internal_conf->memory == 0 && internal_conf->force_numa == 0)
--		internal_conf->memory = eal_get_hugepage_mem_size();
-+	if (eal_get_user_configuration()->memory == 0 && internal_conf->force_numa == 0)
-+		eal_get_user_configuration()->memory = eal_get_hugepage_mem_size();
- 
- 	nr_hugefiles = nr_hugepages;
- 
-@@ -1742,7 +1742,7 @@ memseg_primary_init_32(void)
- 			total_requested_mem += mem;
+ 	/* Check if kernel supports NUMA. */
+ 	if (numa_available() != 0) {
+@@ -294,7 +293,7 @@ map_all_hugepages(struct hugepage_file *hugepg_tbl, struct hugepage_info *hpi,
+ 			oldpolicy = MPOL_DEFAULT;
  		}
- 	else
--		total_requested_mem = internal_conf->memory;
-+		total_requested_mem = eal_get_user_configuration()->memory;
- 
- 	if (total_requested_mem > mem32_max_mem) {
- 		EAL_LOG(ERR, "Invalid parameters: 32-bit process can at most use %uM of memory",
-@@ -1806,7 +1806,7 @@ memseg_primary_init_32(void)
- 		/* max amount of memory on this socket */
- 		max_socket_mem = (active_sockets != 0 ?
- 					internal_conf->numa_mem[socket_id] :
--					internal_conf->memory) +
-+					eal_get_user_configuration()->memory) +
- 					extra_mem_per_socket;
- 		cur_socket_mem = 0;
- 
-diff --git a/lib/eal/windows/eal.c b/lib/eal/windows/eal.c
-index 6dacae7235..cb44cbfc88 100644
---- a/lib/eal/windows/eal.c
-+++ b/lib/eal/windows/eal.c
-@@ -161,6 +161,7 @@ rte_eal_init(int argc, char **argv)
- 	const struct rte_config *config = rte_eal_get_configuration();
- 	struct internal_config *internal_conf =
- 		eal_get_internal_configuration();
-+	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
- 	bool has_phys_addr;
- 	enum rte_iova_mode iova_mode;
- 	int ret;
-@@ -236,9 +237,9 @@ rte_eal_init(int argc, char **argv)
- 		goto err_out;
+ 		for (i = 0; i < RTE_MAX_NUMA_NODES; i++)
+-			if (internal_conf->numa_mem[i])
++			if (user_cfg->numa_mem[i])
+ 				maxnode = i + 1;
  	}
+ #endif
+@@ -313,7 +312,7 @@ map_all_hugepages(struct hugepage_file *hugepg_tbl, struct hugepage_info *hpi,
  
--	if (internal_conf->memory == 0 && !internal_conf->force_numa) {
-+	if (user_cfg->memory == 0 && !internal_conf->force_numa) {
- 		if (internal_conf->no_hugetlbfs)
--			internal_conf->memory = MEMSIZE_IF_NO_HUGE_PAGE;
-+			user_cfg->memory = MEMSIZE_IF_NO_HUGE_PAGE;
- 	}
- 
- 	if (rte_eal_intr_init() < 0) {
-diff --git a/lib/eal/windows/eal_memory.c b/lib/eal/windows/eal_memory.c
-index 9f85191016..caaa557694 100644
---- a/lib/eal/windows/eal_memory.c
-+++ b/lib/eal/windows/eal_memory.c
-@@ -680,13 +680,14 @@ eal_nohuge_init(void)
- 	mcfg = rte_eal_get_configuration()->mem_config;
+ 			if (j == maxnode) {
+ 				node_id = (node_id + 1) % maxnode;
+-				while (!internal_conf->numa_mem[node_id]) {
++				while (!user_cfg->numa_mem[node_id]) {
+ 					node_id++;
+ 					node_id %= maxnode;
+ 				}
+@@ -1134,6 +1133,7 @@ eal_legacy_hugepage_init(void)
+ 	struct hugepage_info used_hp[MAX_HUGEPAGE_SIZES];
  	struct internal_config *internal_conf =
  		eal_get_internal_configuration();
 +	const struct eal_user_cfg *user_cfg = eal_get_user_configuration();
  
- 	/* nohuge mode is legacy mode */
- 	internal_conf->legacy_mem = 1;
+ 	uint64_t memory[RTE_MAX_NUMA_NODES];
  
- 	msl = &mcfg->memsegs[0];
+@@ -1274,7 +1274,7 @@ eal_legacy_hugepage_init(void)
  
--	mem_sz = internal_conf->memory;
-+	mem_sz = user_cfg->memory;
- 	page_sz = RTE_PGSIZE_4K;
- 	n_segs = mem_sz / page_sz;
+ 	/* make a copy of numa_mem, needed for balanced allocation. */
+ 	for (i = 0; i < RTE_MAX_NUMA_NODES; i++)
+-		memory[i] = internal_conf->numa_mem[i];
++		memory[i] = user_cfg->numa_mem[i];
  
+ 	/* map all hugepages and sort them */
+ 	for (i = 0; i < (int)internal_conf->num_hugepage_sizes; i++) {
+@@ -1342,7 +1342,7 @@ eal_legacy_hugepage_init(void)
+ 
+ 	huge_recover_sigbus();
+ 
+-	if (eal_get_user_configuration()->memory == 0 && internal_conf->force_numa == 0)
++	if (eal_get_user_configuration()->memory == 0 && !user_cfg->force_numa)
+ 		eal_get_user_configuration()->memory = eal_get_hugepage_mem_size();
+ 
+ 	nr_hugefiles = nr_hugepages;
+@@ -1370,7 +1370,7 @@ eal_legacy_hugepage_init(void)
+ 
+ 	/* make a copy of numa_mem, needed for number of pages calculation */
+ 	for (i = 0; i < RTE_MAX_NUMA_NODES; i++)
+-		memory[i] = internal_conf->numa_mem[i];
++		memory[i] = user_cfg->numa_mem[i];
+ 
+ 	/* calculate final number of pages */
+ 	nr_hugepages = eal_dynmem_calc_num_pages_per_socket(memory,
+@@ -1704,6 +1704,7 @@ memseg_primary_init_32(void)
+ 	uint64_t extra_mem_per_socket, total_extra_mem, total_requested_mem;
+ 	struct internal_config *internal_conf =
+ 		eal_get_internal_configuration();
++	const struct eal_user_cfg *user_cfg = eal_get_user_configuration();
+ 
+ 	/* no-huge does not need this at all */
+ 	if (internal_conf->no_hugetlbfs)
+@@ -1728,12 +1729,12 @@ memseg_primary_init_32(void)
+ 	 */
+ 	active_sockets = 0;
+ 	total_requested_mem = 0;
+-	if (internal_conf->force_numa)
++	if (user_cfg->force_numa)
+ 		for (i = 0; i < rte_socket_count(); i++) {
+ 			uint64_t mem;
+ 
+ 			socket_id = rte_socket_id_by_idx(i);
+-			mem = internal_conf->numa_mem[socket_id];
++			mem = user_cfg->numa_mem[socket_id];
+ 
+ 			if (mem == 0)
+ 				continue;
+@@ -1790,7 +1791,7 @@ memseg_primary_init_32(void)
+ 
+ 		/* if we didn't specifically request memory on this socket */
+ 		skip = active_sockets != 0 &&
+-				internal_conf->numa_mem[socket_id] == 0;
++				user_cfg->numa_mem[socket_id] == 0;
+ 		/* ...or if we didn't specifically request memory on *any*
+ 		 * socket, and this is not main lcore
+ 		 */
+@@ -1805,7 +1806,7 @@ memseg_primary_init_32(void)
+ 
+ 		/* max amount of memory on this socket */
+ 		max_socket_mem = (active_sockets != 0 ?
+-					internal_conf->numa_mem[socket_id] :
++					user_cfg->numa_mem[socket_id] :
+ 					eal_get_user_configuration()->memory) +
+ 					extra_mem_per_socket;
+ 		cur_socket_mem = 0;
+diff --git a/lib/eal/windows/eal.c b/lib/eal/windows/eal.c
+index cb44cbfc88..338e2b4f27 100644
+--- a/lib/eal/windows/eal.c
++++ b/lib/eal/windows/eal.c
+@@ -237,7 +237,7 @@ rte_eal_init(int argc, char **argv)
+ 		goto err_out;
+ 	}
+ 
+-	if (user_cfg->memory == 0 && !internal_conf->force_numa) {
++	if (user_cfg->memory == 0 && !user_cfg->force_numa) {
+ 		if (internal_conf->no_hugetlbfs)
+ 			user_cfg->memory = MEMSIZE_IF_NO_HUGE_PAGE;
+ 	}
 -- 
 2.53.0
 
