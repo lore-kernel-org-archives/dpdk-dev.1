@@ -2,77 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 497ACC5DF70
-	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 09:03:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD530C5DF70
+	for <dpdk-dev@archiver.kernel.org>; Tue, 18 Aug 2026 09:10:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1CF044027C;
-	Tue, 18 Aug 2026 11:03:37 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C31094027C;
+	Tue, 18 Aug 2026 11:10:41 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 3B6D340269
- for <dev@dpdk.org>; Tue, 18 Aug 2026 11:03:35 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id E002A40269
+ for <dev@dpdk.org>; Tue, 18 Aug 2026 11:10:39 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1787043814;
+ s=mimecast20190719; t=1787044239;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=PjbSjlwtPaILkh6QtbXaTX/F7E895j1kgn4tbiuUAjA=;
- b=VprJWrVojlUtMA/+e/zmh322hvbFao5cOPEwvuXUl6BILGvs8pFL9+Ao3NpI7Y2OUy32YM
- c60TT76qC9PjHWPBL/M/kio26qkLKw8n6+L0meq2ggv3xAkvmAbguc97UdQynRZ7n0XSv/
- 2QlgOQ71l9+rjFGM9PAvARlTiMp4jxk=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=qqdjYLPO8UkDmL38sxliESWeCm7Kq8rnAW4/zPuTmpc=;
+ b=YZnpjK1lYBEeQ5+A/ORnAuxPlUufpihDgfvkkysanFrS1iGiUviuXNiyUhrf+ZPAOzaJve
+ PIGSM9a+qbUDsiQrmpY7cjsF9fv+k6kSPXGxLAtqFg22jRTjoD5E8dvzkVhwZTWhvupIdD
+ boTQvzrOwt+1SXtyxfeSK5KoeZTWcWY=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-561-CGBNLH3XO52cyALoOPk9Xg-1; Tue, 18 Aug 2026 05:03:33 -0400
-X-MC-Unique: CGBNLH3XO52cyALoOPk9Xg-1
-X-Mimecast-MFC-AGG-ID: CGBNLH3XO52cyALoOPk9Xg_1787043812
-Received: by mail-pg1-f200.google.com with SMTP id
- 41be03b00d2f7-cbb467e56aaso3148359a12.1
- for <dev@dpdk.org>; Tue, 18 Aug 2026 02:03:32 -0700 (PDT)
+ us-mta-442-Ifap1AikMky3CYhL0YnxGQ-1; Tue, 18 Aug 2026 05:10:33 -0400
+X-MC-Unique: Ifap1AikMky3CYhL0YnxGQ-1
+X-Mimecast-MFC-AGG-ID: Ifap1AikMky3CYhL0YnxGQ_1787044232
+Received: by mail-lf1-f70.google.com with SMTP id
+ 2adb3069b0e04-5b2b9c6d6e9so1858654e87.1
+ for <dev@dpdk.org>; Tue, 18 Aug 2026 02:10:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787043812; x=1787648612;
+ d=1e100.net; s=20251104; t=1787044232; x=1787649032;
  h=content-transfer-encoding:content-type:cc:to:subject:message-id
  :date:from:in-reply-to:references:mime-version:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=PjbSjlwtPaILkh6QtbXaTX/F7E895j1kgn4tbiuUAjA=;
- b=Fb138bV49S4EVICqrUwIQ1XAoT53b2rZ1k5nJIyq4HW5tbZd83umX62rW6ksLng7/p
- ujFLfwXlGn2s/DWCu8pgfUbuAgdENL3NDwll/Mo2EIOpY0xW6/Z6ipVhYibFJYigCBPP
- sn58U8gVyTXeVNsEcj0Dphr1ioOgYqSyZxA2UL9BQJzcKwwU8VIXCxfPQUNLDvTJUjPZ
- Et3x3tlHaKVrYXANlFMnicxG0edEqQxcWtw16ntmr5OxNUZieRXHtodO25LSRjXQFSzy
- rCaS3r1elxzcFD3WV182SmbmAt/0oUOWyjJVwEDuILPNFbhgNDAm+r1Xk5dPALEe3+o/
- 2sfw==
-X-Gm-Message-State: AOJu0YweWFWH3fMJH92McXriJq+iKtXqt/J2fuMr+kBNZ0WoIoSXQNDN
- vGeAse4cGtu477R7xwMLDCdsnRdvv//a1/b1hQYiu10dYJXrx47fU1lH/g1gP9tDOP1KXnmWBn2
- H7TdwLm+qFJc9Yfp5pEXYRkeyPWrE7BHjXPkzUAc9kYWRV7cC/C3XCresMslYYcPgZoANbZEBPM
- yHzyFgN/Kjm5CQWs5vwbg=
-X-Gm-Gg: AR+sD11WGEE3JQsY7H35nI6JsLem/8yWT2wRm5aIXEYxIaqcz4aYvfZ6eXwjTOeus5r
- R/5VRHCmMTI86EZSZU4pXksryRe7SXX1XmtCPv4CjX3v/ghFslhHtS/P0phyc6i6YSw+DTjPilt
- lNh+UTzXubBehix/jzxJXHNRgAvZK1QJcAdaIcOIoqx5E7v0tu7IKbVRdVNzruoplPV6JJ0/Sny
- nH1VVg90sMrE5JFZtodW36RwJIjuVz0rU69A1dBYNeb27p7C/Xmet4kNerIGMuwmaMFnqccMF9A
- +nbR6PPJaGY/I4WKB8vO3PbCTUaC0DJmdhGCrk+u6dY=
-X-Received: by 2002:a05:6a21:9087:b0:3c3:9aff:7a67 with SMTP id
- adf61e73a8af0-3ccda66c136mr9862212637.17.1787043811850; 
- Tue, 18 Aug 2026 02:03:31 -0700 (PDT)
-X-Received: by 2002:a05:6a21:9087:b0:3c3:9aff:7a67 with SMTP id
- adf61e73a8af0-3ccda66c136mr9862080637.17.1787043811337; Tue, 18 Aug 2026
- 02:03:31 -0700 (PDT)
+ bh=qqdjYLPO8UkDmL38sxliESWeCm7Kq8rnAW4/zPuTmpc=;
+ b=cv2nPWy590uSkVtPIrXzw/E+w/lqKSNqrh74r6yq5AJTHLGJ0GSSk3/hxEe+AjLfuR
+ ar46LYfCAS1AjXajxnBhT1tGRDPA+TzFsUrVPUnI7VmJQgUumpmqirRg+Ip9s2MlspvX
+ Ttfgrj12o82vfEpro6qikJvEOAZ24RkfyNhwvNBQIrd4Sfiyis8/BrmqevhtroJfneVo
+ zNohrirbJ5JOX/pWk3C9uvqZzshGQz4QU4ol09A7+L9+izIAjihc8Sipkwcs6NBkk2ic
+ FUiFwjSM/66kWfiRcGJDntIFWTn6NBehmD0H8lz97CyvIWT59kKW78YRiJt692wDaxvu
+ aQVQ==
+X-Gm-Message-State: AOJu0YxR0+gyMRM6ZW44j707V80vAFKCWdEh0zsWZGC3cQB4sGg0RSKs
+ EZrWh5TidX8WAm+j1jTUXJlmucy+VWatOht14cdbeZ5CR4mz47rcMl04h1q5MQlv+cocQApdcoL
+ KWqwAcMqhXwgnUzBcC/uyL18ZgPmSgDYarRJ7jdfUpjy8ESu7C904wT4AUamxxPqiOAmWY/nIwd
+ 901fsHGzFdR9wjBoEppLg=
+X-Gm-Gg: AR+sD10hYeUt9QSEgZnOwjo4IlLxdrfrEuxwhXGO+voTsrlkvgJcDF8GE/RpnSLbidi
+ lXojSfJWi+RK2FnwgPW6S4Z8QzhPQ6P+UmEOmf5YMZ6TPMHEzIXKciP8ActbyJQzF+ARb6xDw1T
+ kzdpSZLctDt8ebaNjUYVFgd3zDhEST3i4RqD9dpea59MJtcGP2kDqbm6pf1KuCOuIniM3uTcH9O
+ oB+joWj2vT8orCxQ4sNKdCSjllVYU+glMUJbArfcK4vE1EoZ8vXRfIX7MguuB7Jh15lYu4w22Jp
+ K8cu01JWcab7fb7qemHEoD9lsCGOO4W35ZHcuJXiv7I=
+X-Received: by 2002:a05:6512:8358:b0:5b2:a600:e496 with SMTP id
+ 2adb3069b0e04-5b45916c885mr3609644e87.24.1787044231691; 
+ Tue, 18 Aug 2026 02:10:31 -0700 (PDT)
+X-Received: by 2002:a05:6512:8358:b0:5b2:a600:e496 with SMTP id
+ 2adb3069b0e04-5b45916c885mr3609625e87.24.1787044231163; Tue, 18 Aug 2026
+ 02:10:31 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260629120615.2701697-1-samaryadav5@gmail.com>
- <20260703102530.133813-1-samaryadav5@gmail.com>
-In-Reply-To: <20260703102530.133813-1-samaryadav5@gmail.com>
+References: <20260723153111.3943368-1-david.marchand@redhat.com>
+In-Reply-To: <20260723153111.3943368-1-david.marchand@redhat.com>
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Date: Tue, 18 Aug 2026 11:03:19 +0200
-X-Gm-Features: AcwNN1X_ujeBRGzK7Jtu10AwDLTEvKIE0xJaYCnwaBSs_I1G3SF5sOKkkdo6_J0
-Message-ID: <CAO55cswmCsfibO9hrAEX1VZGw6qOH+Pqa4NaTt8ghQLtj4RsTA@mail.gmail.com>
-Subject: Re: [PATCH v3] net/virtio-user: fix eventfd sharing in secondary
- process
-To: Samar Yadav <samaryadav5@gmail.com>
-Cc: dev@dpdk.org, chenbox@nvidia.com, stable@dpdk.org, 
- stephen@networkplumber.org, tiwei.bie@intel.com
+Date: Tue, 18 Aug 2026 11:10:14 +0200
+X-Gm-Features: AcwNN1VNf_ffuWpPl-SMMzn1_h7fQ9aFrhB9Bq3mxN5X_hkJAQLLtSa0Q8jiBeo
+Message-ID: <CAO55cszjS0Y+Cf0F7j7crkMrRbzuQ=HFou2gN3Uor0mHhjjR-A@mail.gmail.com>
+Subject: Re: [RFC 0/3] Drop vhost async (DMA-accelerated) datapath
+To: David Marchand <david.marchand@redhat.com>, 
+ "Richardson, Bruce" <bruce.richardson@intel.com>,
+ DPDK Techboard <techboard@dpdk.org>
+Cc: dev@dpdk.org
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: e9owfB4BPMby7pK2pc4_t4Wcr5fxbQYvh0qEutA1r3k_1787043812
+X-Mimecast-MFC-PROC-ID: JZkNhQ-QjdxJdsAQkZCh62cNukPlGF75cjF7qinSzKg_1787044232
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -89,74 +88,70 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello Samar,
+Hi David,
 
-On Fri, Jul 3, 2026 at 12:25=E2=80=AFPM Samar Yadav <samaryadav5@gmail.com>=
- wrote:
+On Thu, Jul 23, 2026 at 5:31=E2=80=AFPM David Marchand
+<david.marchand@redhat.com> wrote:
 >
-> virtio_user secondary processes cannot communicate with the vhost
-> backend: the kick/call eventfds are opened by the primary and never
-> shared, so a secondary's queue notification writes to an invalid fd
-> and traffic stalls.
+> The integration of this feature in OVS has been postponed following
+> feedback how the current API forced the complexity on the application
+> side. There is no contributor working on making those changes.
 >
-> Share the fds over a dedicated virtio-user multiprocess channel. The
-> primary registers a process-wide MP action that returns a port's
-> kick/call fds (looked up by port name); a secondary requests them at
-> probe time, before the port is announced.
->
-> The received fds are stored in eth_dev->process_private, which is
-> per-process, instead of the primary-owned shared dev->kickfds and
-> dev->callfds arrays; the secondary data path notifies the backend using
-> its own kickfd. In the primary, the MP handler reads the fd arrays under
-> dev->mutex, and the teardown path takes the same lock while closing and
-> freeing them, so the two cannot race.
->
-> Also fix the pre-existing pthread_mutex_init(&dev->mutex, NULL) call in
-> virtio_user_dev_init(): POSIX requires PTHREAD_PROCESS_SHARED for a mutex
-> stored in shared memory regardless of which processes actually lock it;
-> use rte_thread_mutex_init_shared() as other multiprocess-aware drivers do=
-.
->
-> Fixes: 1c8489da561b ("net/virtio-user: fix multi-process support")
-> Cc: tiwei.bie@intel.com
-> Cc: stable@dpdk.org
->
-> Signed-off-by: Samar Yadav <samaryadav5@gmail.com>
-> ---
-> v3:
-> - Reorder new #includes: system headers first, then DPDK lib headers
->   (alphabetized), then local virtio_* headers, per project convention.
-> - Name the "2" in eventfd count/index arithmetic (kick + call per queue)
->   as VIRTIO_USER_EVENTFDS_PER_QUEUE instead of a bare literal. Leaves
->   the pre-existing max_queue_pairs * 2 vring math untouched, since that
->   is a different multiplier (vrings per queue pair) and already matches
->   this file's existing style.
-> - Name the 5-second MP reply timeout in virtio_user_sync_eventfds() as
->   VIRTIO_USER_MP_TIMEOUT_SEC with a comment on the rationale.
->
-> v2:
-> - Use rte_calloc() instead of rte_malloc() for the kick/call fd arrays
->   in virtio_user_sync_eventfds() so allocation failures are cleaner and
->   unset entries are zero-initialised before the explicit -1 sentinel loop=
-.
->   (Stephen Hemminger)
-> - Fix the pre-existing pthread_mutex_init(&dev->mutex, NULL) call in
->   virtio_user_dev_init() to use rte_thread_mutex_init_shared(), which
->   sets PTHREAD_PROCESS_SHARED as POSIX requires for a mutex in shared
->   memory. Add #include <rte_thread.h> to pull in the declaration.
->   (Stephen Hemminger)
->
->  .mailmap                                      |   1 +
->  .../net/virtio/virtio_user/virtio_user_dev.c  |  59 +++-
->  .../net/virtio/virtio_user/virtio_user_dev.h  |  23 ++
->  drivers/net/virtio/virtio_user_ethdev.c       | 276 +++++++++++++++++-
->  4 files changed, 350 insertions(+), 9 deletions(-)
->
+> The feature has no other identified opensource consumer.
 
-The patch looks good to me.
+I am not aware of any either.
 
-Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
+> On the other hand, this feature has been left unattended for some years
+> now while the "normal" datapath is actively maintained.
+> It is highly likely the async datapath code, which never underwent a
+> stabilisation phase, is riddled with bugs.
+>
+> Given the craziness around finding security bugs with AI,
+> and since the vhost library is a good target, I propose to drop
+> this feature and reduce the library attack surface.
 
-Thanks,
+This feature was introduced by Intel a while back, so their
+acknowledgement that they have no ongoing work regarding
+Vhost async would be welcome.
+
+Adding Bruce for intel (feel free to add relevant people), and tehcboard in
+case it requires a decision from it.
+
+I favor dropping this feature.
+
+Best regards,
 Maxime
+
+>
+> --
+> David Marchand
+>
+> David Marchand (3):
+>   examples: stop using vhost async datapath
+>   vhost: refuse async datapath
+>   vhost: drop async datapath
+>
+>  doc/guides/prog_guide/vhost_lib.rst    |  151 +-
+>  doc/guides/rel_notes/release_26_11.rst |   20 +
+>  examples/vhost/Makefile                |    2 -
+>  examples/vhost/main.c                  |  436 +---
+>  examples/vhost/main.h                  |   21 +-
+>  examples/vhost/meson.build             |    2 -
+>  examples/vhost_crypto/Makefile         |    1 -
+>  examples/vhost_crypto/main.c           |    3 +-
+>  examples/vhost_crypto/meson.build      |    1 -
+>  lib/vhost/meson.build                  |    3 +-
+>  lib/vhost/rte_vhost.h                  |    2 +-
+>  lib/vhost/rte_vhost_async.h            |  293 ---
+>  lib/vhost/socket.c                     |   27 +-
+>  lib/vhost/vhost.c                      |  434 ----
+>  lib/vhost/vhost.h                      |  115 -
+>  lib/vhost/vhost_user.c                 |  215 +-
+>  lib/vhost/virtio_net.c                 | 3275 +++++-------------------
+>  17 files changed, 708 insertions(+), 4293 deletions(-)
+>  delete mode 100644 lib/vhost/rte_vhost_async.h
+>
+> --
+> 2.54.0
+>
 
