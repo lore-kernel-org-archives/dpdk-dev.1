@@ -2,72 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8FA7C5DF85
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Aug 2026 19:10:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3AEEC5DF85
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Aug 2026 19:10:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8C490402DD;
-	Wed, 19 Aug 2026 21:10:47 +0200 (CEST)
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com
- [209.85.215.180])
- by mails.dpdk.org (Postfix) with ESMTP id 69E1A402CE
- for <dev@dpdk.org>; Wed, 19 Aug 2026 21:10:45 +0200 (CEST)
-Received: by mail-pg1-f180.google.com with SMTP id
- 41be03b00d2f7-ca12086c06eso925583a12.0
- for <dev@dpdk.org>; Wed, 19 Aug 2026 12:10:45 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 526664064C;
+	Wed, 19 Aug 2026 21:10:51 +0200 (CEST)
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com
+ [209.85.214.180])
+ by mails.dpdk.org (Postfix) with ESMTP id 13E9B4064C
+ for <dev@dpdk.org>; Wed, 19 Aug 2026 21:10:49 +0200 (CEST)
+Received: by mail-pl1-f180.google.com with SMTP id
+ d9443c01a7336-2d530328efbso12527575ad.0
+ for <dev@dpdk.org>; Wed, 19 Aug 2026 12:10:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787166644;
- x=1787771444; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787166649;
+ x=1787771449; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=s+J1FI1YOwKkHMsPYGu+d6AcHKLUOdpl78nf63D/23U=;
- b=sxht2vrt2WNJp85a+92zrCwzJBi7jd6V8VlsWAAyEqhUYqR0NnBX8swnArfm+Fuaq1
- bi2kKLh0vShE1453Ecur9WW0f/BlrZ6x79sASQprxHbk7pt7m/8KYFx2QoKqvn8qOvBX
- rYXGBNTxvHDZFRopg+1oqwuXFExR2+djZA6MInLYEbDlgVj2wXZ2tWok8QnHupfEnn72
- 83vrRPhsbff0XmWGDQP4uTObTSNYm3yAOcqhijhc5lX9fLVhZEbAqX9VH4TFUmPCZry3
- QKrfZRXOjAxjBDPQFNvep8HhKZl7f2SQB56XUjxaq5oPU8CC3g1+IyQYvREc8eBq2Nxp
- vmEg==
+ bh=7WzVn9PtCSgBrOHWuu9AGXN3tdFpz+2SGkHbY3meVWM=;
+ b=xj3zeVnOP1AQuOjWlDm3w1RfYvDzowhHZfo5ISLDzmV1a9/DaJVXfZiDYsk+myEGOx
+ lZAUAjgJaRq0nsx4s2lvkBCA0O4fMweNpPnGOrWL01xSAkVkXcqRt86IY6mNeWD9O8c0
+ y68PiBShs8Tx4+HIP51kS/6aFuHQZzEsRNGBiP6jiLILXjvQEgKGXqa1BT/4hoew5+Pc
+ r/KWsffFasfOxfvJ3ieuKdhRWmamrSc9uNYTId5FPhL6HcJDw0cOiDITf/pC6NjD1/NZ
+ SpA/vXGW0NgNo4xUdVvYuIIOqj/o09hnDT0AwhFXAmBG730XRH94CbuUqpdT5ibNgK1T
+ rrCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787166644; x=1787771444;
+ d=1e100.net; s=20251104; t=1787166649; x=1787771449;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=s+J1FI1YOwKkHMsPYGu+d6AcHKLUOdpl78nf63D/23U=;
- b=HsQ7Ys37zJh1wlinZVKV8Jd9AAHrJ3K7n9Kug8CmY43Zx5L2F3zre3cMFcf2/qLi9v
- WCLw2velZKbe5a73V2+EQFFtw0daLUndD3cba3nJ6CKXeJZroy1adADF0mfqZhIcBt+S
- rUfRWd+w5iqJ7CxiQ+pXi7qXA++2VklNij7b/MEGPag1pBskowiKX6QU+213vXi/TqSJ
- JYlZJvdjm6AUvEj+gBmuoiAy66yDIQdNMY9N5qv3tEbpdqWqAi85cLVP0A2n8ad9yaCt
- GJeDZld819a0kb1M1dPqssIPlSep8m0hqPW8d77qTCVZ0Mu2clIQyiAwNdAlmzZQJmQs
- HnnA==
-X-Gm-Message-State: AOJu0YxpAUrB42mvkkSrnLCxuOhlgD1QVMTImXa335xvZI9Why7Gix4O
- Q0OA+RtAwmj+JUsogGzw+lpAiVnAL86mu5HR9y2z2lCWv42xhQ36seXhrkS/uqCtMewrfs6YuhV
- 4tGYh
-X-Gm-Gg: AR+sD13kMhADk1sHAoBbOt9SehyKdV7FxVP9uCZlqgKSW1GpR1hZ6cfhJQboj6iRjVw
- neNUUbxjA3jGSb8ZsexMYnubc5UbCWYaqdUB43DKoiL5y9pTuVGM2FSnh/d6lyhnpSBODck5Yty
- osGGWjqlyGuf5p091vSv/rNAGpuN7VIBhQnPKx1mwQaqv8jBqt8cDHQXxpQg6vlvsG79HlopUpM
- pl7x+2ckI5+EcSnTts8FH6FCOQTz395GqkXqHstw3OXUC1FHwHZcON33VmvxggzAg7biX8Pgt4O
- D4bhNqMNmuEMVfLCZrf4InZJWKR6Ky9PPqxeUPhI9z5MrA7l7U7ZOa0uZtYAdS+ldrsdZpIVsX9
- bhxgfcJItDQmBGsCkm79Vu5UKkDH0lZJHcZMwmCSo83b7M7xE8B5WV2Bl0dDvjom75aRT784HB0
- F9FRylYmmgjOH50BZ/vM46PUJhnkV7bzmue5rJcU+wHebGMPDf40Q8rShZ+XqYhuiMlmnlutU5L
- O3O5uh3lAolf9C/0Un+YcKDRmY=
-X-Received: by 2002:a05:6a20:7f92:b0:3c3:a3f4:5485 with SMTP id
- adf61e73a8af0-3cd00e53f45mr12784034637.6.1787166644204; 
- Wed, 19 Aug 2026 12:10:44 -0700 (PDT)
+ bh=7WzVn9PtCSgBrOHWuu9AGXN3tdFpz+2SGkHbY3meVWM=;
+ b=h0hzBKH3BzZ6Mrv6EI3AJeTMgQc7EtaOaVJ97OmLNUVQUeR1eclo2QQi22sRoSErSJ
+ 2BjE5wkDY1qmBCnymoVFXOh6zNbYgu/025j/MnfarlkaCvZITO3O/8h7ccp19IxHr16p
+ 5q+0AQLWkQKxGWnGmstKCkQAJX5dhAJquggv3o6+vEtC5IrqP3NGdBLOKjgLi3G0Xzj1
+ kCR5U2ZUjs1VdLD998sWzjJf/20LGxcvvtFG27rVu/dh8k4qNdmrA7xRMHEGB+M4H54e
+ lxpJ98PstdVNs8oIZ2QqVudCdjCB36R4r4YnLv7j3CTkW+LWQ+0qyADrNmzbuV+pHxdy
+ 3+Vw==
+X-Gm-Message-State: AFuF++n/K25/FPUzQQCSt7YSZ6jpXTUlGKRbuS+XlUOfAHzWwqXPCEOi
+ NRYXdKP0doidB1FaZYj01WhtKhDLFm2TI9aqUBV99IqvD4TQdcZyrcH06s46Mm+AtsRNXSpVNOP
+ HfSn4
+X-Gm-Gg: AR+sD11WtNTXW44Tmk6JKN8+f7CpMMptxAKo7zwOxAz19inn6dHxkOjNV1sVUOhYZi5
+ tSnUkUzMOwKPsoL1IObKXPh10Eudzt0BG02CEvng7xazQRlNPkxLLlFUEnnOMzqMvJ913sBjyVS
+ 3pRBK0/CHMH5gTtFB/yhvnBQjz5dxNjIziuRStk8xhGBdFskTe4Hvz1wjHRsOTWi2a58Wg6gfpd
+ oS8TNojMyjCTfEeC2sGNNumXeF1nY/XFxk8VZKjyPbx80b+UBjWeSQuyvqVFIZYkdXXWUN/+C2A
+ 3dXHa9az+DnIArR7p6ac9YeaftfLzFKBtKlZIEPpo0sAxcDiZbDSiS9LpN0ia94iH55Wej+mZtJ
+ e/QAGDHKz8D2B3uylxMKmKGcH7fcOVdi/csPOL57nlj9HYhytdj4wa6WnNir8OHnX60y8monV/4
+ NSL8vOpDqS471OwglFDZQi7iHSzZ1fpIhcm9NgUhHFdZPDPEpJh3gyU6svycExTDfNjHuTSWspH
+ HaF3v8xjPS0HWKIyUYgtjjubME=
+X-Received: by 2002:a17:902:da86:b0:2cf:8131:75e8 with SMTP id
+ d9443c01a7336-2d601eb5ceemr108364935ad.13.1787166648862; 
+ Wed, 19 Aug 2026 12:10:48 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-327bef77fc0sm17305416eec.8.2026.08.19.12.10.41
+ 5a478bee46e88-327bef77fc0sm17305416eec.8.2026.08.19.12.10.44
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 19 Aug 2026 12:10:43 -0700 (PDT)
+ Wed, 19 Aug 2026 12:10:48 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Long Li <longli@microsoft.com>,
- Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v5 0/4] eal: uevent overrun mitigation
-Date: Wed, 19 Aug 2026 12:08:49 -0700
-Message-ID: <20260819191036.679330-1-stephen@networkplumber.org>
+ Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Randy Tice <rtice@cisco.com>, Thomas Monjalon <thomas@monjalon.net>,
+ Jianfeng Tan <jianfeng.tan@intel.com>, Jeff Guo <jia.guo@intel.com>
+Subject: [PATCH v5 1/4] eal/linux: filter uevent Netlink in kernel
+Date: Wed, 19 Aug 2026 12:08:50 -0700
+Message-ID: <20260819191036.679330-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260817201602.120526-1-rtice@cisco.com>
+In-Reply-To: <20260819191036.679330-1-stephen@networkplumber.org>
 References: <20260817201602.120526-1-rtice@cisco.com>
+ <20260819191036.679330-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -83,32 +86,70 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This set of patches is an extension of the proposed patch
-to handle netlink uevent socket overrun reported by Randy Tice.
-Mostly impacts users of Azure VF events (MLX5 and MANA).
+The EAL uevent only needs/wants messages from the kernel.
+Better to let kernel side do the filtering to avoid any overrun
+issues in DPDK interrupt thread.
 
-DPDK uses netlink uevent to track hotplug events reported
-by the kernel. Since this is a one-way non-blocking channel
-there is no fool proof way to prevent missing events if DPDK
-interrupt thread does not keep up.
+There is no exposed API definition here. The convention
+is kernel is 1 and libudev uses 2.
 
-What this series does is:
-  - use netlink group to only receive events from kernel
-  - increase socket buffer to have more headroom
-  - report the problem more clearly in log
-  - document requirement for control threads
+Since kernel is now filtering can remove step in uevent parsing.
 
-Stephen Hemminger (4):
-  eal/linux: filter uevent Netlink in kernel
-  eal/linux: increase uevent socket buffer
-  eal/linux: report uevent socket overrun
-  doc: add warning about control threads
+Fixes: 0d0f478d0483 ("eal/linux: add uevent parse and process")
+Cc: stable@dpdk.org
 
- .mailmap                                      |  1 +
- .../prog_guide/env_abstraction_layer.rst      | 14 +++++
- lib/eal/linux/eal_dev.c                       | 56 ++++++++++++++++---
- 3 files changed, 62 insertions(+), 9 deletions(-)
+Reported-by: Randy Tice <rtice@cisco.com>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ .mailmap                | 1 +
+ lib/eal/linux/eal_dev.c | 8 ++++----
+ 2 files changed, 5 insertions(+), 4 deletions(-)
 
+diff --git a/.mailmap b/.mailmap
+index fcb3d1bb3f..9b7713b6df 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -1380,6 +1380,7 @@ Ralf Hoffmann <ralf.hoffmann@allegro-packets.com>
+ Rami Rosen <ramirose@gmail.com> <rami.rosen@intel.com>
+ Rami Rosen <ramirose@gmail.com> <roszenrami@gmail.com>
+ Randy Schacher <stuart.schacher@broadcom.com>
++Randy Tice <rtice@cisco.com>
+ Rani Sharoni <ranish@nvidia.com>
+ Ranjit Menon <ranjit.menon@intel.com>
+ Rasesh Mody <rmody@marvell.com> <rasesh.mody@cavium.com>
+diff --git a/lib/eal/linux/eal_dev.c b/lib/eal/linux/eal_dev.c
+index ec408649d0..666967667f 100644
+--- a/lib/eal/linux/eal_dev.c
++++ b/lib/eal/linux/eal_dev.c
+@@ -29,6 +29,9 @@ static bool hotplug_handle;
+ #define EAL_UEV_MSG_LEN 4096
+ #define EAL_UEV_MSG_ELEM_LEN 128
+ 
++/* Listen only to messages from kernel (not libudev) */
++#define EAL_UEV_GROUP_KERNEL 1
++
+ /*
+  * spinlock for device hot-unplug failure handling. If it try to access bus or
+  * device, such as handle sigbus on bus or handle memory failure for device
+@@ -116,7 +119,7 @@ dev_uev_socket_fd_create(void)
+ 	memset(&addr, 0, sizeof(addr));
+ 	addr.nl_family = AF_NETLINK;
+ 	addr.nl_pid = 0;
+-	addr.nl_groups = 0xffffffff;
++	addr.nl_groups = EAL_UEV_GROUP_KERNEL;
+ 
+ 	ret = bind(fd, (struct sockaddr *) &addr, sizeof(addr));
+ 	if (ret < 0) {
+@@ -164,9 +167,6 @@ dev_uev_parse(const char *buf, struct rte_dev_event *event, int length)
+ 		 * check device uevent from kernel side, no need to check
+ 		 * uevent from udev.
+ 		 */
+-		if (!strncmp(buf, "libudev", 7)) {
+-			return -1;
+-		}
+ 		if (!strncmp(buf, "ACTION=", 7)) {
+ 			buf += 7;
+ 			i += 7;
 -- 
 2.53.0
 
