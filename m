@@ -2,34 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 180CFC5DF6D
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Aug 2026 10:50:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00FF8C5DF6D
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Aug 2026 10:50:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 527D1406A2;
-	Wed, 19 Aug 2026 12:50:20 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5D9BE406B6;
+	Wed, 19 Aug 2026 12:50:22 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 1A45840664
- for <dev@dpdk.org>; Wed, 19 Aug 2026 12:50:17 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 4EDD140695
+ for <dev@dpdk.org>; Wed, 19 Aug 2026 12:50:18 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 007781A0018;
- Wed, 19 Aug 2026 12:50:17 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3194C1A001B;
+ Wed, 19 Aug 2026 12:50:18 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id BCD0B1A0022;
- Wed, 19 Aug 2026 12:50:16 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F05881A000B;
+ Wed, 19 Aug 2026 12:50:17 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 3B98018000BF;
- Wed, 19 Aug 2026 18:50:15 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 730541800224;
+ Wed, 19 Aug 2026 18:50:16 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
-Cc: Prashant Gupta <prashant.gupta_3@nxp.com>
-Subject: [PATCH v13 06/25] drivers: add process-type guards for secondary
- process
-Date: Wed, 19 Aug 2026 16:19:45 +0530
-Message-Id: <20260819105004.2272880-7-hemant.agrawal@nxp.com>
+Cc: Jun Yang <jun.yang@nxp.com>
+Subject: [PATCH v13 07/25] drivers: shutdown DPAA FQ by fq descriptor
+Date: Wed, 19 Aug 2026 16:19:46 +0530
+Message-Id: <20260819105004.2272880-8-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260819105004.2272880-1-hemant.agrawal@nxp.com>
 References: <20260818111730.801760-1-hemant.agrawal@nxp.com>
@@ -50,57 +49,86 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Prashant Gupta <prashant.gupta_3@nxp.com>
+From: Jun Yang <jun.yang@nxp.com>
 
-Add RTE_PROC_PRIMARY checks in device initialization paths for
-dma/dpaa and net/dpaa rivers. Secondary processes should skip
-hardware initialization to prevent segfaults when accessing
-hardware registers that are only mapped in the primary process.
+Pass the full FQ descriptor to qman_shutdown_fq() instead of
+just the fqid, so that channel-affine portals can be correctly
+accessed when shutting down push-mode Rx queues.
 
-Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
+Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- drivers/dma/dpaa/dpaa_qdma.c   | 3 +++
- drivers/net/dpaa/dpaa_ethdev.c | 6 +++++-
- 2 files changed, 8 insertions(+), 1 deletion(-)
+ drivers/bus/dpaa/base/qbman/qman.c  |  9 +++++----
+ drivers/bus/dpaa/include/fsl_qman.h | 11 ++++++++++-
+ drivers/net/dpaa/dpaa_ethdev.c      |  6 +++++-
+ 3 files changed, 20 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/dma/dpaa/dpaa_qdma.c b/drivers/dma/dpaa/dpaa_qdma.c
-index e2cb157c43..3981bf277e 100644
---- a/drivers/dma/dpaa/dpaa_qdma.c
-+++ b/drivers/dma/dpaa/dpaa_qdma.c
-@@ -1351,6 +1351,9 @@ dpaa_qdma_init(struct rte_dma_dev *dmadev)
- 	int ret;
- 	uint32_t i, j, k;
+diff --git a/drivers/bus/dpaa/base/qbman/qman.c b/drivers/bus/dpaa/base/qbman/qman.c
+index 931d487de4..2315b81065 100644
+--- a/drivers/bus/dpaa/base/qbman/qman.c
++++ b/drivers/bus/dpaa/base/qbman/qman.c
+@@ -2784,18 +2784,19 @@ qm_mc_result_timeout(struct qm_portal *portal,
  
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		return 0;
+ RTE_EXPORT_INTERNAL_SYMBOL(qman_shutdown_fq)
+ int
+-qman_shutdown_fq(u32 fqid)
++qman_shutdown_fq(struct qman_fq *fq)
+ {
+-	struct qman_portal *p;
++	struct qman_portal *p = fq->qp;
+ 	struct qm_mc_command *mcc;
+ 	struct qm_mc_result *mcr;
+ 	int orl_empty, drain = 0, ret = 0;
+-	u32 res;
++	u32 res, fqid = fq->fqid;
+ 	u8 state;
+ 	u32 channel, wq;
+ 
+ 	DPAA_BUS_DEBUG("In shutdown for queue = %x", fqid);
+-	p = get_affine_portal();
++	if (!p)
++		p = get_affine_portal();
+ 	/* Determine the state of the FQID */
+ 	mcc = qm_mc_start(&p->p);
+ 	mcc->queryfq_np.fqid = cpu_to_be32(fqid);
+diff --git a/drivers/bus/dpaa/include/fsl_qman.h b/drivers/bus/dpaa/include/fsl_qman.h
+index 82269cdf99..673859ed2e 100644
+--- a/drivers/bus/dpaa/include/fsl_qman.h
++++ b/drivers/bus/dpaa/include/fsl_qman.h
+@@ -1896,7 +1896,16 @@ static inline void qman_release_fqid(u32 fqid)
+ void qman_seed_fqid_range(u32 fqid, unsigned int count);
+ 
+ __rte_internal
+-int qman_shutdown_fq(u32 fqid);
++int qman_shutdown_fq(struct qman_fq *fq);
 +
- 	if (dpaa_get_devargs(dmadev->device->devargs, DPAA_DMA_ERROR_CHECK)) {
- 		s_hw_err_check = true;
- 		DPAA_QDMA_INFO("Enable DMA error checks");
++static inline int qman_shutdown_fq_by_fqid(u32 fqid)
++{
++	struct qman_fq fq;
++
++	memset(&fq, 0, sizeof(struct qman_fq));
++	fq.fqid = fqid;
++	return qman_shutdown_fq(&fq);
++}
+ 
+ /**
+  * qman_reserve_fqid_range - Reserve the specified range of frame queue IDs
 diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
-index 00ab436ad1..b6258044c6 100644
+index b6258044c6..5d8fb062e2 100644
 --- a/drivers/net/dpaa/dpaa_ethdev.c
 +++ b/drivers/net/dpaa/dpaa_ethdev.c
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  *
-  *   Copyright 2016 Freescale Semiconductor, Inc. All rights reserved.
-- *   Copyright 2017-2020,2022-2025 NXP
-+ *   Copyright 2017-2020,2022-2026 NXP
-  *
-  */
- /* System headers */
-@@ -2682,6 +2682,10 @@ rte_dpaa_remove(struct rte_dpaa_device *dpaa_dev)
- 	PMD_INIT_FUNC_TRACE();
+@@ -1123,7 +1123,11 @@ int dpaa_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 			queue_idx, rxq->fqid);
  
- 	eth_dev = rte_eth_dev_allocated(dpaa_dev->device.name);
-+
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		return eth_dev ? rte_eth_dev_release_port(eth_dev) : 0;
-+
- 	if (eth_dev && eth_dev->state != RTE_ETH_DEV_UNUSED) {
- 		int close_ret = dpaa_eth_dev_close(eth_dev);
+ 	/* Shutdown FQ before configure */
+-	qman_shutdown_fq(rxq->fqid);
++	ret = qman_shutdown_fq_by_fqid(rxq->fqid);
++	if (ret) {
++		DPAA_PMD_WARN("%s: Failed(%d) to shutdown rxq%d's fq(fqid=0x%x)",
++			dev->data->name, ret, queue_idx, rxq->fqid);
++	}
  
+ 	if (!fif->num_profiles) {
+ 		if (dpaa_intf->bp_info && dpaa_intf->bp_info->bp &&
 -- 
 2.25.1
 
