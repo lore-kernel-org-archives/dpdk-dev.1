@@ -2,33 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BB28C5DF6D
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Aug 2026 10:52:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DB5FC5DF86
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Aug 2026 10:52:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A75C240E1B;
-	Wed, 19 Aug 2026 12:50:43 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 893B040693;
+	Wed, 19 Aug 2026 12:50:47 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 6639F40B8C
- for <dev@dpdk.org>; Wed, 19 Aug 2026 12:50:37 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id ECCC740DD0
+ for <dev@dpdk.org>; Wed, 19 Aug 2026 12:50:38 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 47AC6200024;
- Wed, 19 Aug 2026 12:50:37 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D3094200032;
+ Wed, 19 Aug 2026 12:50:38 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 117CF20001F;
- Wed, 19 Aug 2026 12:50:37 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9CFE020001F;
+ Wed, 19 Aug 2026 12:50:38 +0200 (CEST)
 Received: from lsv03583.swis.in-blr01.nxp.com (lsv03583.swis.in-blr01.nxp.com
  [92.120.146.12])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id DBA481800224;
- Wed, 19 Aug 2026 18:50:35 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 1B3AB18000B1;
+ Wed, 19 Aug 2026 18:50:36 +0800 (+08)
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 To: stephen@networkplumber.org,
 	thomas@monjalon.net,
 	dev@dpdk.org
 Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v13 23/25] crypto/dpaa_sec: improve crypto fq resource handling
-Date: Wed, 19 Aug 2026 16:20:02 +0530
-Message-Id: <20260819105004.2272880-24-hemant.agrawal@nxp.com>
+Subject: [PATCH v13 24/25] drivers: add dpaax enter destructor to gate EAL
+ memory frees
+Date: Wed, 19 Aug 2026 16:20:03 +0530
+Message-Id: <20260819105004.2272880-25-hemant.agrawal@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260819105004.2272880-1-hemant.agrawal@nxp.com>
 References: <20260818111730.801760-1-hemant.agrawal@nxp.com>
@@ -51,182 +52,144 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jun Yang <jun.yang@nxp.com>
 
-Release resource in fallback and quit processes.
-Alloc multiple FQIDs from kernel by single ioctl to reduce boot/quit time.
+Add a dpaax_enter_destructor() function that drivers call at the start
+of their RTE_FINI destructors to signal that the process is tearing
+down. Subsequent attempts to free EAL-backed memory (such as IOVA table
+entries) are then skipped, avoiding use-after-free crashes when the EAL
+has already unmapped hugepages before per-driver destructors run.
 
 Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- drivers/crypto/dpaa_sec/dpaa_sec.c | 109 ++++++++++++++++++++++++-----
- 1 file changed, 91 insertions(+), 18 deletions(-)
+ drivers/bus/dpaa/dpaa_bus.c             |  1 +
+ drivers/common/dpaax/compat.h           | 22 +++++++++++++++++-----
+ drivers/common/dpaax/dpaax_iova_table.c | 24 +++++++++++++++++++++++-
+ drivers/mempool/dpaa/dpaa_mempool.c     |  2 ++
+ drivers/net/dpaa/dpaa_ethdev.c          |  1 +
+ 5 files changed, 44 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/crypto/dpaa_sec/dpaa_sec.c b/drivers/crypto/dpaa_sec/dpaa_sec.c
-index c53ee70853..df298d14b9 100644
---- a/drivers/crypto/dpaa_sec/dpaa_sec.c
-+++ b/drivers/crypto/dpaa_sec/dpaa_sec.c
-@@ -188,16 +188,15 @@ dqrr_out_fq_cb_rx(struct qman_portal *qm __always_unused,
+diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
+index 66a193da10..62dcc79534 100644
+--- a/drivers/bus/dpaa/dpaa_bus.c
++++ b/drivers/bus/dpaa/dpaa_bus.c
+@@ -915,6 +915,7 @@ RTE_FINI_PRIO(dpaa_cleanup, 102)
+ 	if (!dpaa_bus_global_init)
+ 		return;
  
- /* caam result is put into this queue */
- static int
--dpaa_sec_init_tx(struct qman_fq *fq)
-+dpaa_sec_init_tx(struct qman_fq *fq, uint32_t fqid)
- {
- 	int ret;
- 	struct qm_mcc_initfq opts;
- 	uint32_t flags;
++	dpaax_enter_destructor();
+ 	/* cleanup portals in case non-graceful exit */
+ 	RTE_LCORE_FOREACH_WORKER(lcore_id) {
+ 		/* Check for non zero id */
+diff --git a/drivers/common/dpaax/compat.h b/drivers/common/dpaax/compat.h
+index d0635255da..a08a07b8b3 100644
+--- a/drivers/common/dpaax/compat.h
++++ b/drivers/common/dpaax/compat.h
+@@ -2,7 +2,7 @@
+  *
+  * Copyright 2011 Freescale Semiconductor, Inc.
+  * All rights reserved.
+- * Copyright 2019-2020 NXP
++ * Copyright 2019-2020, 2026 NXP
+  *
+  */
  
--	flags = QMAN_FQ_FLAG_NO_ENQUEUE | QMAN_FQ_FLAG_LOCKED |
--		QMAN_FQ_FLAG_DYNAMIC_FQID;
-+	flags = QMAN_FQ_FLAG_NO_ENQUEUE | QMAN_FQ_FLAG_LOCKED;
+@@ -336,11 +336,23 @@ static inline void copy_bytes(void *dest, const void *src, size_t sz)
+ #define copy_bytes memcpy
+ #endif
  
--	ret = qman_create_fq(0, flags, fq);
-+	ret = qman_create_fq(fqid, flags, fq);
- 	if (unlikely(ret)) {
- 		DPAA_SEC_ERR("qman_create_fq failed");
- 		return ret;
-@@ -3614,12 +3613,38 @@ static const struct rte_security_ops dpaa_sec_security_ops = {
- static int
- dpaa_sec_uninit(struct rte_cryptodev *dev)
- {
--	if (dev == NULL)
-+	struct dpaa_sec_dev_private *internals;
-+	uint32_t i, fqid;
-+	int ret;
+-/* Allocator stuff */
+-#define kmalloc(sz, t)	rte_malloc(NULL, sz, 0)
+-#define kzalloc(sz, t)  rte_zmalloc(NULL, sz, 0)
++__rte_internal
++void dpaax_enter_destructor(void);
++__rte_internal
++int dpaax_is_in_destructor(void);
 +
-+	if (!dev)
- 		return -ENODEV;
-+	internals = dev->data->dev_private;
-+	fqid = internals->qps[0].outq.fqid;
-+	for (i = 0; i < internals->max_nb_queue_pairs; i++) {
-+		ret = qman_shutdown_fq(&internals->qps[i].outq);
-+		if (ret) {
-+			DPAA_SEC_ERR("%s: Failed(%d) to shutdown TXQ(0x%08x)",
-+				dev->data->name, ret, internals->qps[i].outq.fqid);
-+		}
-+	}
-+	if (fqid)
-+		qman_release_fqid_range(fqid, internals->max_nb_queue_pairs);
++/* Allocator stuff, make sure the eal memory pool is available when calling.*/
++#define kmalloc(sz, _t) ((void)(_t), rte_malloc(NULL, sz, 0))
++#define kzalloc(sz, _t) ((void)(_t), rte_zmalloc(NULL, sz, 0))
+ #define vmalloc(sz)	rte_malloc(NULL, sz, 0)
+-#define kfree(p)	rte_free(p)
 +
-+	fqid = internals->inq[0].fqid;
-+	for (i = 0; i < RTE_DPAA_MAX_RX_QUEUE; i++) {
-+		ret = qman_shutdown_fq(&internals->inq[i]);
-+		if (ret) {
-+			DPAA_SEC_ERR("%s: Failed(%d) to shutdown RXQ[%d](0x%08x)",
-+				dev->data->name, ret, i, internals->inq[i].fqid);
-+		}
-+	}
-+	if (fqid)
-+		qman_release_fqid_range(fqid, RTE_DPAA_MAX_RX_QUEUE);
++#define kfree(p) \
++({ \
++	if (!dpaax_is_in_destructor()) \
++		rte_free(p); \
++	else \
++		pr_debug("Eal memory has been destroyed.\n"); \
++})
  
- 	rte_free(dev->security_ctx);
- 	DPAA_SEC_INFO("Closing DPAA_SEC device %s on numa socket %u",
--		      dev->data->name, rte_socket_id());
-+		dev->data->name, rte_socket_id());
+ static inline unsigned long get_zeroed_page(gfp_t __foo __rte_unused)
+ {
+diff --git a/drivers/common/dpaax/dpaax_iova_table.c b/drivers/common/dpaax/dpaax_iova_table.c
+index 1220d9654b..587f3cb179 100644
+--- a/drivers/common/dpaax/dpaax_iova_table.c
++++ b/drivers/common/dpaax/dpaax_iova_table.c
+@@ -1,17 +1,39 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2018-2023 NXP
++ * Copyright 2018-2023,2026 NXP
+  */
  
- 	return 0;
- }
-@@ -3666,10 +3691,9 @@ dpaa_sec_dev_init(struct rte_cryptodev *cryptodev)
- 	struct dpaa_sec_dev_private *internals;
- 	struct rte_security_ctx *security_instance;
- 	struct dpaa_sec_qp *qp;
--	uint32_t i, flags;
--	int ret;
-+	uint32_t i, j, flags, fqids[RTE_DPAA_MAX_RX_QUEUE];
-+	int ret, num = 0, map_fd = -1;
- 	void *cmd_map;
--	int map_fd = -1;
+ #include <eal_export.h>
+ #include <rte_memory.h>
+ 
+ #include "dpaax_iova_table.h"
++#include "compat.h"
+ #include "dpaax_logs.h"
+ 
+ /* Global table reference */
+ RTE_EXPORT_INTERNAL_SYMBOL(dpaax_iova_table_p)
+ struct dpaax_iova_table *dpaax_iova_table_p;
+ 
++/*
++ * Track whether the process is executing DPDK destructors. During
++ * teardown the EAL memory subsystem may already be gone, so freeing
++ * EAL memory from a DPAAx destructor is unsafe. Drivers mark the
++ * destructor context via dpaax_enter_destructor() so that kfree()
++ * (see compat.h) can skip rte_free() in that window.
++ */
++static int s_dpaax_in_destructor;
++
++RTE_EXPORT_INTERNAL_SYMBOL(dpaax_enter_destructor)
++void dpaax_enter_destructor(void)
++{
++	s_dpaax_in_destructor = 1;
++}
++
++RTE_EXPORT_INTERNAL_SYMBOL(dpaax_is_in_destructor)
++int dpaax_is_in_destructor(void)
++{
++	return s_dpaax_in_destructor;
++}
++
+ static int dpaax_handle_memevents(void);
+ 
+ /* A structure representing the device-tree node available in /proc/device-tree.
+diff --git a/drivers/mempool/dpaa/dpaa_mempool.c b/drivers/mempool/dpaa/dpaa_mempool.c
+index fb448a54d9..335c8ae0d0 100644
+--- a/drivers/mempool/dpaa/dpaa_mempool.c
++++ b/drivers/mempool/dpaa/dpaa_mempool.c
+@@ -513,6 +513,8 @@ RTE_FINI_PRIO(dpaa_mpool_finish, RTE_PRIORITY_104)
+ {
+ 	uint16_t bpid;
+ 
++	dpaax_enter_destructor();
++
+ 	for (bpid = 0; bpid < DPAA_MAX_BPOOLS; bpid++) {
+ 		if (s_dpaa_bpid_allocated_flag[bpid].used) {
+ 			bman_free_bpid(bpid, s_dpaa_bpid_allocated_flag[bpid].flags);
+diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
+index 26bdfd40bd..c6e84e8ec1 100644
+--- a/drivers/net/dpaa/dpaa_ethdev.c
++++ b/drivers/net/dpaa/dpaa_ethdev.c
+@@ -2874,6 +2874,7 @@ RTE_FINI_PRIO(dpaa_finish, 103)
+ 	struct rte_eth_dev *dev;
  
  	PMD_INIT_FUNC_TRACE();
- 
-@@ -3735,24 +3759,48 @@ dpaa_sec_dev_init(struct rte_cryptodev *cryptodev)
- 	security_instance->sess_cnt = 0;
- 	cryptodev->security_ctx = security_instance;
- 	rte_spinlock_init(&internals->lock);
-+	num = qman_alloc_fqid_range(fqids, internals->max_nb_queue_pairs, 0, 0);
-+	if (num < (int)internals->max_nb_queue_pairs) {
-+		if (num < 0) {
-+			DPAA_SEC_ERR("%s: Failed(%d) to alloc %d TX fqids",
-+				cryptodev->data->name, num, internals->max_nb_queue_pairs);
-+		} else {
-+			DPAA_SEC_ERR("%s: Alloc %d fqids < %d",
-+				cryptodev->data->name, num, internals->max_nb_queue_pairs);
-+			qman_release_fqid_range(fqids[0], num);
-+		}
-+		ret = -ENODEV;
-+		goto init_error;
-+	}
- 	for (i = 0; i < internals->max_nb_queue_pairs; i++) {
- 		/* init qman fq for queue pair */
- 		qp = &internals->qps[i];
--		ret = dpaa_sec_init_tx(&qp->outq);
-+		ret = dpaa_sec_init_tx(&qp->outq, fqids[i]);
- 		if (ret) {
--			DPAA_SEC_ERR("config tx of queue pair  %d", i);
--			goto init_error;
-+			DPAA_SEC_ERR("%s: Failed(%d) to init TXQ[%d](0x%08x)",
-+				cryptodev->data->name, ret, i, fqids[i]);
-+			goto init_error1;
- 		}
- 	}
- 
--	flags = QMAN_FQ_FLAG_LOCKED | QMAN_FQ_FLAG_DYNAMIC_FQID |
--		QMAN_FQ_FLAG_TO_DCPORTAL;
-+	flags = QMAN_FQ_FLAG_LOCKED | QMAN_FQ_FLAG_TO_DCPORTAL;
-+	num = qman_alloc_fqid_range(fqids, RTE_DPAA_MAX_RX_QUEUE, 0, 0);
-+	if (num < RTE_DPAA_MAX_RX_QUEUE) {
-+		if (num < 0) {
-+			DPAA_SEC_ERR("Failed(%d) to alloc %d fqids", num, RTE_DPAA_MAX_RX_QUEUE);
-+		} else {
-+			DPAA_SEC_ERR("Alloc %d fqids < %d", num, RTE_DPAA_MAX_RX_QUEUE);
-+			qman_release_fqid_range(fqids[0], num);
-+		}
-+		goto init_error2;
-+	}
- 	for (i = 0; i < RTE_DPAA_MAX_RX_QUEUE; i++) {
- 		/* create rx qman fq for sessions*/
--		ret = qman_create_fq(0, flags, &internals->inq[i]);
--		if (unlikely(ret != 0)) {
--			DPAA_SEC_ERR("sec qman_create_fq failed");
--			goto init_error;
-+		ret = qman_create_fq(fqids[i], flags, &internals->inq[i]);
-+		if (ret) {
-+			DPAA_SEC_ERR("%s: Failed(%d) to create RXQ[%d](0x%08x)",
-+				cryptodev->data->name, ret, i, fqids[i]);
-+			goto init_error3;
- 		}
- 	}
- 
-@@ -3761,6 +3809,31 @@ dpaa_sec_dev_init(struct rte_cryptodev *cryptodev)
- 	DPAA_SEC_INFO("%s cryptodev init", cryptodev->data->name);
- 	return 0;
- 
-+init_error3:
-+	for (j = 0; j < i; j++) {
-+		ret = qman_shutdown_fq(&internals->inq[j]);
-+		if (ret) {
-+			DPAA_SEC_ERR("%s: Failed(%d) to shutdown RXQ(0x%08x)",
-+				cryptodev->data->name, ret, internals->inq[j].fqid);
-+		}
-+	}
-+	/* Release all allocated FQIDs; uncreated ones were never initialized */
-+	qman_release_fqid_range(fqids[0], RTE_DPAA_MAX_RX_QUEUE);
-+init_error2:
-+	i = internals->max_nb_queue_pairs;
-+	fqids[0] = internals->qps[0].outq.fqid;
-+init_error1:
-+	for (j = 0; j < i; j++) {
-+		qp = &internals->qps[j];
-+		ret = qman_shutdown_fq(&qp->outq);
-+		if (ret) {
-+			DPAA_SEC_ERR("%s: Failed(%d) to shutdown TXQ(0x%08x)",
-+				cryptodev->data->name, ret, qp->outq.fqid);
-+		}
-+	}
-+	/* Release all allocated FQIDs; uncreated ones were never initialized */
-+	qman_release_fqid_range(fqids[0], internals->max_nb_queue_pairs);
-+
- init_error:
- 	DPAA_SEC_ERR("driver %s: create failed", cryptodev->data->name);
- 
++	dpaax_enter_destructor();
+ 	/* For secondary, primary will do all the cleanup */
+ 	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
+ 		return;
 -- 
 2.25.1
 
