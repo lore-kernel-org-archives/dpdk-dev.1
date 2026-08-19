@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D0C9C5DF6D
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Aug 2026 12:33:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D33A5C5DF6D
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Aug 2026 12:33:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A3A4C40671;
-	Wed, 19 Aug 2026 14:33:02 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 849EA4067C;
+	Wed, 19 Aug 2026 14:33:03 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
- by mails.dpdk.org (Postfix) with ESMTP id 2E109402E3
- for <dev@dpdk.org>; Wed, 19 Aug 2026 14:32:59 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 820A740655
+ for <dev@dpdk.org>; Wed, 19 Aug 2026 14:33:00 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1787142779; x=1818678779;
+ t=1787142780; x=1818678780;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=VuieRT+K13sUnur89ipPNM7CT1ckhfstYg+/TWkIGH4=;
- b=ZA9X9TurtY5Pe6WaymyPkNepon8g89ZF1Oqycmldd/v6sSufojMdXx2g
- pP+qiuwte9PPXCbq9nje+0ySVlOjSyiEcnaoAOOVg1hPIlnQaNrQvm2r+
- n0rlxqc6hPHbCBIJbEwjtbcc62tKQUejFLi195T3RHHCWOEMzMOZzlTuk
- 5YF/G6RqAQ25rrSVohI4EH+Qn8nhA0239/1uOWQhaR9tor6ArjlZfP50U
- Z0yKVwFO362lPe+TKASwKuS1KvvPr/s7gCKMq2UoA6eyfiUEZeo0n2E/e
- aO9pjn0YjJhQZ1cAzoFgdKTx54Jdmagi3bnaS9tOf4sn4keEzJ04gOVzm w==;
-X-CSE-ConnectionGUID: MRhV2jdgTCWkBtp7DRQyzw==
-X-CSE-MsgGUID: OouAtb+yS9KtQ30KEcWOQA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11879"; a="87775530"
-X-IronPort-AV: E=Sophos;i="6.25,231,1779174000"; d="scan'208";a="87775530"
+ bh=57mTH/PPAeQl+FN8B3hwMrLs+qWTdRmTrlvC2PgVBlQ=;
+ b=QgxD+hzN3gIY9/c42nriRDCiNIM2zL7UON/Phyf7AaoqtFIRFbfrhODK
+ 5nZbHfDkmyuzdySytmYJTPPLHagazW5iFOn1o+9uPo9kwBR47sMqBUrs4
+ 9gUNTV/sOOwLV3jQaKeItjcQzUB4k+XoDMBc/2FY36ctitmUZzr88pTkT
+ TW9SjrayoxfAVDHpPCLKH2fW0YhdgZ8+Y0S5lgN0zVYzcjD5KbOeCJ4l1
+ IQV2hi3A4FEegVRCZHtxUMccW5VVa0zXxcOfCr4pSybPpB5E6WoFr9AQQ
+ O71mwwjxQat0K23VpF0YwmQsjCeK7zCcUz+K9NhKVJ91Y45nlg9dHg7Y3 Q==;
+X-CSE-ConnectionGUID: pJrUA8PfSQWx/ER3CCBRaw==
+X-CSE-MsgGUID: 9VRVt1hkQhSOW16LR5/4BA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11879"; a="87775532"
+X-IronPort-AV: E=Sophos;i="6.25,231,1779174000"; d="scan'208";a="87775532"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Aug 2026 05:32:58 -0700
-X-CSE-ConnectionGUID: CWSsAjSASSuDuFl1eSBFUQ==
-X-CSE-MsgGUID: YWHaIbVbSAuTh4ThdFPBoA==
+ 19 Aug 2026 05:33:00 -0700
+X-CSE-ConnectionGUID: NxtsL0mVQmGDCy+OOwn/kw==
+X-CSE-MsgGUID: uEkvDgIqS9uaFWyZYAqUyA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,231,1779174000"; d="scan'208";a="269382549"
+X-IronPort-AV: E=Sophos;i="6.25,231,1779174000"; d="scan'208";a="269382555"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa004.jf.intel.com with ESMTP; 19 Aug 2026 05:32:58 -0700
+ by orviesa004.jf.intel.com with ESMTP; 19 Aug 2026 05:32:59 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v2 3/7] net/ixgbe: harmonize return values in IPsec
-Date: Wed, 19 Aug 2026 13:32:35 +0100
-Message-ID: <9c975187ca0a629777ac877466eaf438be8604dd.1787142684.git.anatoly.burakov@intel.com>
+Subject: [PATCH v2 4/7] net/ixgbe: get rid of unnecessary malloc in IPsec
+Date: Wed, 19 Aug 2026 13:32:36 +0100
+Message-ID: <83bc81814bf0df2994744b2bf0c1008c0e1c0964.1787142684.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1787142684.git.anatoly.burakov@intel.com>
  <cover.1787142684.git.anatoly.burakov@intel.com>
@@ -60,92 +60,77 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, some paths in add/remove SA code return negative errno values
-while others just return -1. Harmonize all of them to return appropriate
-negative errno values.
+Currently, when writing SA key to HW, a temporary buffer is allocated, to
+which the key is written. The allocation does not have to happen on the
+heap, so change the allocation to be on the stack, as key size is known at
+compile time and is pretty tiny. Also, zero it out explicitly after use.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 Acked-by: Radu Nicolau <radu.nicolau@intel.com>
 ---
- drivers/net/intel/ixgbe/ixgbe_ipsec.c | 30 +++++++++++----------------
- 1 file changed, 12 insertions(+), 18 deletions(-)
+ drivers/net/intel/ixgbe/ixgbe_ipsec.c | 16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
 
 diff --git a/drivers/net/intel/ixgbe/ixgbe_ipsec.c b/drivers/net/intel/ixgbe/ixgbe_ipsec.c
-index e2ec402b52..41fc7551ff 100644
+index 41fc7551ff..9c4937fcba 100644
 --- a/drivers/net/intel/ixgbe/ixgbe_ipsec.c
 +++ b/drivers/net/intel/ixgbe/ixgbe_ipsec.c
-@@ -119,9 +119,8 @@ ixgbe_crypto_add_sa(struct ixgbe_crypto_session *ic_session)
+@@ -94,10 +94,10 @@ ixgbe_crypto_add_sa(struct ixgbe_crypto_session *ic_session)
+ 			dev_data->dev_private);
+ 	uint32_t reg_val;
+ 	int sa_index = -1;
++	uint8_t key[16] = {0};
  
- 		/* Fail if no match and no free entries*/
- 		if (ip_index < 0) {
--			PMD_DRV_LOG(ERR,
--				    "No free entry left in the Rx IP table");
--			return -1;
-+			PMD_DRV_LOG(ERR, "No free entry left in the Rx IP table");
-+			return -ENOSPC;
- 		}
+ 	if (ic_session->op == IXGBE_OP_AUTHENTICATED_DECRYPTION) {
+ 		int i, ip_index = -1;
+-		uint8_t *key;
  
- 		/* Find a free entry in the SA table*/
-@@ -133,9 +132,8 @@ ixgbe_crypto_add_sa(struct ixgbe_crypto_session *ic_session)
- 		}
- 		/* Fail if no free entries*/
- 		if (sa_index < 0) {
--			PMD_DRV_LOG(ERR,
--				    "No free entry left in the Rx SA table");
--			return -1;
-+			PMD_DRV_LOG(ERR, "No free entry left in the Rx SA table");
-+			return -ENOSPC;
- 		}
+ 		/* Find a match in the IP table*/
+ 		for (i = 0; i < IPSEC_MAX_RX_IP_COUNT; i++) {
+@@ -191,11 +191,6 @@ ixgbe_crypto_add_sa(struct ixgbe_crypto_session *ic_session)
+ 				priv->rx_sa_tbl[sa_index].ip_index);
+ 		IXGBE_WAIT_RWRITE;
  
- 		priv->rx_ip_tbl[ip_index].ip.ipv6[0] =
-@@ -231,9 +229,8 @@ ixgbe_crypto_add_sa(struct ixgbe_crypto_session *ic_session)
- 		}
- 		/* Fail if no free entries*/
- 		if (sa_index < 0) {
--			PMD_DRV_LOG(ERR,
--				    "No free entry left in the Tx SA table");
--			return -1;
-+			PMD_DRV_LOG(ERR, "No free entry left in the Tx SA table");
-+			return -ENOSPC;
- 		}
+-		/* write Key table entry*/
+-		key = malloc(ic_session->key_len);
+-		if (!key)
+-			return -ENOMEM;
+-
+ 		memcpy(key, ic_session->key, ic_session->key_len);
  
- 		priv->tx_sa_tbl[sa_index].spi =
-@@ -289,9 +286,8 @@ ixgbe_crypto_remove_sa(struct ixgbe_crypto_session *ic_session)
+ 		reg_val = IPSRXIDX_RX_EN | IPSRXIDX_WRITE |
+@@ -214,10 +209,9 @@ ixgbe_crypto_add_sa(struct ixgbe_crypto_session *ic_session)
+ 				priv->rx_sa_tbl[sa_index].mode);
+ 		IXGBE_WAIT_RWRITE;
  
- 		/* Fail if no match*/
- 		if (ip_index < 0) {
--			PMD_DRV_LOG(ERR,
--				    "Entry not found in the Rx IP table");
--			return -1;
-+			PMD_DRV_LOG(ERR, "Entry not found in the Rx IP table");
-+			return -ENOENT;
- 		}
+-		free(key);
++		rte_memzero_explicit(key, sizeof(key));
+ 
+ 	} else { /* sess->dir == RTE_CRYPTO_OUTBOUND */
+-		uint8_t *key;
+ 		int i;
  
  		/* Find a free entry in the SA table*/
-@@ -304,9 +300,8 @@ ixgbe_crypto_remove_sa(struct ixgbe_crypto_session *ic_session)
- 		}
- 		/* Fail if no match*/
- 		if (sa_index < 0) {
--			PMD_DRV_LOG(ERR,
--				    "Entry not found in the Rx SA table");
--			return -1;
-+			PMD_DRV_LOG(ERR, "Entry not found in the Rx SA table");
-+			return -ENOENT;
- 		}
+@@ -238,10 +232,6 @@ ixgbe_crypto_add_sa(struct ixgbe_crypto_session *ic_session)
+ 		priv->tx_sa_tbl[i].used = 1;
+ 		ic_session->sa_index = sa_index;
  
- 		/* Disable and clear Rx SPI and key table entries*/
-@@ -347,9 +342,8 @@ ixgbe_crypto_remove_sa(struct ixgbe_crypto_session *ic_session)
- 		}
- 		/* Fail if no match entries*/
- 		if (sa_index < 0) {
--			PMD_DRV_LOG(ERR,
--				    "Entry not found in the Tx SA table");
--			return -1;
-+			PMD_DRV_LOG(ERR, "Entry not found in the Tx SA table");
-+			return -ENOENT;
- 		}
- 		reg_val = IPSRXIDX_WRITE | (sa_index << 3);
- 		IXGBE_WRITE_REG(hw, IXGBE_IPSTXKEY(0), 0);
+-		key = malloc(ic_session->key_len);
+-		if (!key)
+-			return -ENOMEM;
+-
+ 		memcpy(key, ic_session->key, ic_session->key_len);
+ 
+ 		/* write Key table entry*/
+@@ -258,7 +248,7 @@ ixgbe_crypto_add_sa(struct ixgbe_crypto_session *ic_session)
+ 				rte_cpu_to_be_32(ic_session->salt));
+ 		IXGBE_WAIT_TWRITE;
+ 
+-		free(key);
++		rte_memzero_explicit(key, sizeof(key));
+ 	}
+ 
+ 	return 0;
 -- 
 2.52.0
 
