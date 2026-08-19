@@ -2,70 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44EEAC5DF85
-	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Aug 2026 19:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93BD3C5DF81
+	for <dpdk-dev@archiver.kernel.org>; Wed, 19 Aug 2026 19:11:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2595E40684;
-	Wed, 19 Aug 2026 21:10:59 +0200 (CEST)
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com
- [209.85.161.48]) by mails.dpdk.org (Postfix) with ESMTP id 737C94067C
- for <dev@dpdk.org>; Wed, 19 Aug 2026 21:10:58 +0200 (CEST)
-Received: by mail-oo1-f48.google.com with SMTP id
- 006d021491bc7-6b13496112cso1079100eaf.2
- for <dev@dpdk.org>; Wed, 19 Aug 2026 12:10:58 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2273540691;
+	Wed, 19 Aug 2026 21:11:02 +0200 (CEST)
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com
+ [209.85.214.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 9E90640696
+ for <dev@dpdk.org>; Wed, 19 Aug 2026 21:11:01 +0200 (CEST)
+Received: by mail-pl1-f179.google.com with SMTP id
+ d9443c01a7336-2ccf2360620so10793455ad.3
+ for <dev@dpdk.org>; Wed, 19 Aug 2026 12:11:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787166657;
- x=1787771457; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787166661;
+ x=1787771461; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=+FEnBVimzddIZ4CARxhKUnd9IxZnpezeZxy3g2venyE=;
- b=rCT8Frjhe544syAcLvORB77OC8mAYB2SNOuBY7MEbh5B1lmbdBHMcH1nX9ebMvCfLX
- Ch3IGRW7tuO9IBtT0O/zhMqBj4yK8vLZFN13mMctBiGprv5D7JbWZ8jkLM4BFidVlDNM
- 0LaaVMDIwQsWLNdq6k3bh/thZuqxRZA9fQ8qIuuwzLG/d7FdOfFBrw4dqDoBgQUuJ46x
- jtoFLeIQ2jriLZfBHEMWlNuJ+AHydwJVKP6TZf+pAXBfd6iuW4zi7gfwr7DytDnBHTJI
- nnaxZ9EgUW8GrOKrtbCPDcFg+w1ho2BuEuaXnXMd0i6N6unETfZPKx4W8eSeOCyw9xRr
- YuHw==
+ bh=vKBvX3ncQvXGT21v8GYAzNhnSZ89RaJEfIehKF2QQkI=;
+ b=nxeIzfeywvJIe5MEYn3NL38eS68kC2Kks3uvzc35m/aJxGK3dy481uxoL+T/yDKNIP
+ FvsVcHTw72iTwlnVl/o7BwMngJEIsmHUzBMvOBmk9i16osJRbL3mNp9CLaD6Z3lV5Amc
+ fVQrariT7GZtRJFZbceTgTkeNtdDD9SfCkp0pkQTH+LQlbz+bvaA7q2u67bJTRBbHLNR
+ cJAixLJsors8xjvuyk+ZJKEAqxfUHvhNV1FUuxX4vAR8pgtvUN3+z2BroGZzBajM8iWB
+ 5kbOmjvjw/f9A2U6cDnY7f6z1VIGClb69qien+wghooWDveeq8LvktdGLuX3Mi3mrCU0
+ a9MA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787166657; x=1787771457;
+ d=1e100.net; s=20251104; t=1787166661; x=1787771461;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=+FEnBVimzddIZ4CARxhKUnd9IxZnpezeZxy3g2venyE=;
- b=OTxHgYNrITYkzdavnGXJyLPptSliTl9jRyzUiB9//70vAiQ9SRyHlzp+jctI231st/
- onKBHNbg6HJCattgVPiGPSyrgjwlGHjJNyH9BwtkUv3LVn+uzlDCywLncnetTJrRzViV
- lkdfIlxesbSd6feglvRPmiobGFH3FChaUNvLpjWUWmfFThIEs8/iMwKhVqhzmSlNVUbE
- LZYsStgax1i8piTicPvqPDKz7G9ylj2eqOysxOj8pofIOJyZp9YJ/YkZE5pHp58lB6Bf
- ZjQCGikG4e6GQoIScCzUdCskAp8M+edg3CdEpaeO7OqcKoszlQ0FjRS+fMk1XlHAG9p0
- uOFA==
-X-Gm-Message-State: AOJu0YxEAp1MmSEp7LK4ptCN+iuMHVrAEq+GR8WTs7tmBggov+P39tvU
- NJM/UGDNa0AXcz8JyiOnlprW9P25jXi18MjDHsJwtqRVK5oOwCqgJS6YMdaUBEMloyiO9caZMpn
- h37uC
-X-Gm-Gg: AR+sD11q6uwQo7FfdTQ7atTZ5g7vh0fKgEMX+8jrPKBVsGOuMyy3MtaQiha54guKH7K
- FICCb8KY7yDKGNvdRRWeSwanAaT+YuyEpflEG6oCzO+NqDSGr5yNZdQ7sJgQNHhEtfN8CFhM7WJ
- aXtX/nasdA0NJ7K+aTCaFqyXc9GiMky/Y+dgliciS0PjO7Varh23HyTe6luGS+2WrjJ5LjdEBC0
- N9dZdaUv0erFrG3Dbxk5slaBBdO4bNn9QfBZrStkgDcAqzkiohr2S5t7pFSUjWOyWXZUoqpWcos
- YRoqr+65DiDTwp5Iwx3QXhtqtRyl3Sd8tVc7nZXbvEg/SrKAIjlsYC7XMKQdjx9wwF51r9qISyG
- SKelev7Gwqbe/QIPB16xjOM0t66i8qnCkomQvcQ8fRrtLqxzAksqzsgepTf+5qyiAJax3Nltbfh
- rqC62oRA42S/XDVRU2IqOkEGrMF3UDlIUu54lixejrP4Ewq3G56LS4QX8E6hZoSk4Lk6v6rRwHt
- 8kFqq1gvGISzsu8wAy/dHjeKKU=
-X-Received: by 2002:a05:6820:4c16:b0:6b1:858:28a9 with SMTP id
- 006d021491bc7-6b13c3853femr6885930eaf.9.1787166657492; 
- Wed, 19 Aug 2026 12:10:57 -0700 (PDT)
+ bh=vKBvX3ncQvXGT21v8GYAzNhnSZ89RaJEfIehKF2QQkI=;
+ b=q25ck2iBgcrZLm9lGrRm0uz+oyW+h+EzY4DXxUoM2sSywuMNq/kQ4B2/laKNNzZnAF
+ ULSulodJ47qXfjbQSuIco6xMaPkMkKY8TBV0pwoVKVS1ac4wLBMCNL58/xO5I/a1XvAL
+ khqJICu6lf83xNQDupmR63oqVkusBuMG983N8MuDe+dnBrAlS6O6ZynOdGyCVUDhtiX8
+ NyXfJ4IX97z+p3gMBJJ2f0R2vdQFXEzqeb6Ym2Gy3BTxZ8V9K4qZ9ODvGgwsWv/VVjDZ
+ xxxGdfHZNlM/i18ECBHUuHXlwnSn1+R2PAwrQsXNpZcXbk8H6PnP8YqcgAe30maBxCMu
+ eTgA==
+X-Gm-Message-State: AFuF++nivHGwiRY/bO0tAp8bjKgOHhhJNJTmS3DjVRF65F+gxbV3uRhv
+ 3dxZ0NdXMq7sAf67m+rbnCP+caCyC8BBmP0hIyRiVEm9Muhd3fBcCKk7s5GyWdF8/HLpj9BnW4O
+ lQzjc
+X-Gm-Gg: AR+sD11alvtcUZAKA3jbHbAJMLuxKAKlxBTZ3cdo6qzJ0kPmjwZyWLf4U5gwBohZ04F
+ lVAsgKjD12JLITe/r3QrAPQlEQC9z3YVFuaicojHvZCFlLbssYBF3ax4+j0T4rMFVvVIS0NwwSF
+ gpzlHjfGwkizkdlOiiAZmHMhBpZdbHej8uAa5CGfkdqhOY0D4V6IcLilsrczNP0d59X2ZUTeDia
+ kfbunE5HkI/0xVcewhUK4LBCy/YPHKBBTPfqOjMuea1jcaP97tgt4LbOP6+jgAu4Wp96PXAHeyr
+ m+WmE7vo9ugsV6+mmYAViNAZCq+yPwIUPRjHO+T9pD0xM32uYAfJfXfBGGptDQceVLWC7Dctl/5
+ wetQ9igr+caCMt5IE4rzF7+6eii0DmOrfbjqytNwBd1NsmG32FkkNUorb4NC0T9QCwCZfMrWiCC
+ c15s87ZI0WM17aCi5h4kJAHN8rH+qMP39JDoMtkI5NVou0AHWBZ8phYw9QVV47KNU7Y6aAq2maC
+ 4ElBcuq5TA92rq81ZIAnpuu/2M=
+X-Received: by 2002:a17:902:e80d:b0:2d3:a6db:299 with SMTP id
+ d9443c01a7336-2d5fd703145mr115346175ad.6.1787166660734; 
+ Wed, 19 Aug 2026 12:11:00 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-327bef77fc0sm17305416eec.8.2026.08.19.12.10.53
+ 5a478bee46e88-327bef77fc0sm17305416eec.8.2026.08.19.12.10.58
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 19 Aug 2026 12:10:57 -0700 (PDT)
+ Wed, 19 Aug 2026 12:11:00 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Long Li <longli@microsoft.com>,
- Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Randy Tice <rtice@cisco.com>, Jianfeng Tan <jianfeng.tan@intel.com>,
- Jeff Guo <jia.guo@intel.com>
-Subject: [PATCH v5 3/4] eal/linux: report uevent socket overrun
-Date: Wed, 19 Aug 2026 12:08:52 -0700
-Message-ID: <20260819191036.679330-4-stephen@networkplumber.org>
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH v5 4/4] doc: add warning about control threads
+Date: Wed, 19 Aug 2026 12:08:53 -0700
+Message-ID: <20260819191036.679330-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260819191036.679330-1-stephen@networkplumber.org>
 References: <20260817201602.120526-1-rtice@cisco.com>
@@ -85,52 +85,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Make uevent handler handle case where kernel netlink receive
-buffer is overrun. If this happens the DPDK device state
-will potentially be out of sync, but better not to give up.
+It is not obvious enough that control threads must run for
+DPDK to work correctly. Add a caveat to EAL documentation.
 
-The code already handles the case of kernel sending a zero
-length message; it just ignores it.
-
-Fixes: 0d0f478d0483 ("eal/linux: add uevent parse and process")
-Cc: stable@dpdk.org
-
-Reported-by: Randy Tice <rtice@cisco.com>
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/eal/linux/eal_dev.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ doc/guides/prog_guide/env_abstraction_layer.rst | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/lib/eal/linux/eal_dev.c b/lib/eal/linux/eal_dev.c
-index fb5c8bf070..b535122ff6 100644
---- a/lib/eal/linux/eal_dev.c
-+++ b/lib/eal/linux/eal_dev.c
-@@ -270,11 +270,20 @@ dev_uev_handler(__rte_unused void *param)
+diff --git a/doc/guides/prog_guide/env_abstraction_layer.rst b/doc/guides/prog_guide/env_abstraction_layer.rst
+index 0e1d044190..f36f9956c6 100644
+--- a/doc/guides/prog_guide/env_abstraction_layer.rst
++++ b/doc/guides/prog_guide/env_abstraction_layer.rst
+@@ -819,6 +819,20 @@ controlled with tools like taskset (Linux) or cpuset (FreeBSD),
+ - with affinity restricted to 2-3, the Control Threads will end up on
+   CPU 2 (main lcore, which is the default when no CPU is available).
  
- 	ret = recv(rte_intr_fd_get(intr_handle), buf, EAL_UEV_MSG_LEN,
- 		   MSG_DONTWAIT);
--	if (ret < 0 && errno == EAGAIN)
--		return;
--	else if (ret <= 0) {
--		/* connection is closed or broken, can not up again. */
--		EAL_LOG(ERR, "uevent socket connection is broken.");
-+	if (ret < 0) {
-+		/* transient error */
-+		if (errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR)
-+			return;
++DPDK uses control threads internally and those threads need to be able to run.
++If all available CPUs are used as dataplane lcores,
++control threads fall back to the main lcore and compete with a busy polling loop.
++Ensure that at least a part of one CPU that is available for handling control events.
 +
-+		/* kernel netlink messages lost */
-+		if (errno == ENOBUFS) {
-+			EAL_LOG(NOTICE, "kernel receive buffer overrun");
-+			return;
-+		}
++The effects of control thread starvation are not always obvious,
++and include delayed alarms, missed device and hotplug events, unresponsive telemetry,
++and multi-process requests timing out so that secondary processes fail to start.
 +
-+		EAL_LOG(ERR, "unexpected error on uevent recv: %s",
-+			strerror(errno));
++.. warning::
++   On Linux, if DPDK lcore threads run under a real-time scheduling policy
++   such as ``SCHED_FIFO`` or ``SCHED_RR`` on the same CPU as a control thread,
++   then kernel events will be missed.
 +
- 		rte_eal_alarm_set(1, dev_delayed_unregister, NULL);
- 		return;
- 	}
+ .. _eal_known_issue_label:
+ 
+ Known Issues
 -- 
 2.53.0
 
