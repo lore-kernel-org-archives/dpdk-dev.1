@@ -2,122 +2,149 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 516BDC5B572
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Aug 2026 01:41:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE70C5DF81
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Aug 2026 04:41:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F108440663;
-	Thu, 20 Aug 2026 03:41:45 +0200 (CEST)
-Received: from BN8PR05CU002.outbound.protection.outlook.com
- (mail-eastus2azon11021112.outbound.protection.outlook.com [52.101.57.112])
- by mails.dpdk.org (Postfix) with ESMTP id EF9534014F;
- Thu, 20 Aug 2026 03:41:44 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9F34140653;
+	Thu, 20 Aug 2026 06:41:13 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+ by mails.dpdk.org (Postfix) with ESMTP id 774024026A
+ for <dev@dpdk.org>; Thu, 20 Aug 2026 06:41:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1787200872; x=1818736872;
+ h=from:to:cc:subject:date:message-id:references:
+ in-reply-to:mime-version;
+ bh=8PsKeivuUg3YhqKpGmfiQjtTq62vAaA1WZ5CCDK4DJ8=;
+ b=OPgfthYDCwigXmdmA8cvErtKOBckHiXt51VQ2JH4f+aRTdyRHVkHM3dx
+ rVADmJbkkm/wBoZKKSjMGRaGmrPEL+y39SrT+JWuUJ8dioEbV6ksNoU92
+ 9fSE+4e+7ggEEG1AEFphZtWBV3y1515/jIDr0Daz85tofWzYmt44tNAaC
+ wqkuK7zNhxm+ZMuaz5XntEBf+ux/UawF+DnvVWIL/OzqHVbF76xHvqtMH
+ 7W0fpcfKPHXTsVII3dGYZWTUKFfu8wmZchxolQsDCvTmSfhnc1bknS0aC
+ iSY/+6NewV7cf3Mv7EmszA1oaPylDA4dzis5jP/mBcKdcW5kUmUfCjnlM A==;
+X-CSE-ConnectionGUID: WlxaEjTUQcOBi3MHY+0Lvw==
+X-CSE-MsgGUID: XUSrmBebR0+L9FyTVcfCvg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11880"; a="87489685"
+X-IronPort-AV: E=Sophos;i="6.25,232,1779174000"; d="scan'208,217";a="87489685"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+ by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 19 Aug 2026 21:41:11 -0700
+X-CSE-ConnectionGUID: 3DlRZt7qTaacPrgUp1L0aQ==
+X-CSE-MsgGUID: PSdH8p7VRWqPczTxTIBVfQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,232,1779174000"; 
+ d="scan'208,217";a="262532162"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 19 Aug 2026 21:41:10 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Wed, 19 Aug 2026 21:41:09 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45 via Frontend Transport; Wed, 19 Aug 2026 21:41:09 -0700
+Received: from SA9PR02CU001.outbound.protection.outlook.com (40.93.196.12) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Wed, 19 Aug 2026 21:41:09 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=G3hAVd6bT7q805j18URW+i4fAlTq8tr9LYrEurfa+AWFx9fmx6ghCg4quEwgY/b0pJvZnlDMq82KXM2Qh7/gRvM2yCxl2nTJVCi/SqOVzbAsc8bVXdac60TQPoLIg/tD0Ca3nkF9Xj1cjKLuzb9feKh6sLp6Q6MUG/4wrqnunRLQ05bd08seUMlMdEOOPfPsR5IoiEfjGUSrIbDhImGa0IMyJYS1u6uzQUHMXAY/UUPYdliQMYoQomJgVzga8THTH2hR/57aW1D0RGf//hxP6KQI9XmMxX75vdzk0wDsBHRC6M3+ORHJoudeiucbBQ0Xp8KeYJgra+6rvy33l2otVw==
+ b=nuRe1WZQu3gWBrHWPy3n3+1NMFC4L5oP/BQ93QIHmBBc78enakIjxnY8C96mubvfev82O0R8My5ItXJO/8e7UsQN8SOIXnS3i7XdhV4TEN3tRZN721UCL2hcne4GiyiSpYZFj3Fi6JHuehhVwcSOEnrRf2g/jWgZkXOsIEXoqU9R8lM60b4PwvlB50Rri81vrjHqwnr1hskUWuZWXQlQQj0AbDtGWTrJA7FDq52+X/2TnD936qWAPAguf5xV2o+O/wNLH0tKeFzoubmK8UvAwACK4Yc6+pIJKpBOfQDgwmeow7AYDPQqieJ4/3INqa1FinAwtZFcSwzZP+yGBpN0uA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3dBDThBGFfjn1MI/L+cwzFXSibHy20mVirMGTk6pfFQ=;
- b=eqsR6bpKFMNKjzlJbratQWhqWYw7FZTMEiy3xl4sM/DehZul9CAK73Hyoplrm3c1+esBukcPklKRYaDIENEzHToioIn1tSKzSlQfu5le97g2Qme48OKYt4kXF6lTgoOlWzCB2Mc6PQcWbSJ1U2KmjVflQlE4+XjEsg13IR1x36b3u66Y5XwZmfTgTmVvhcTajxoWi8uDOpGoeQeRp14A+Y7JhiJlw86kglINqP/2iRXXsdaEvyV6dxx8LYzf053aIG3IkZRXGosR40qE76XVKwtdNowTrRUh2f6kBCxDf2Lx+P71EG0/jnU2mJCRWhj1+OBrcv/FoRzq8W0DlDGrfA==
+ bh=dT2xI2Rn/4osXaMl49o+wRXNxqYIGuvtNQUQypa+HL0=;
+ b=VCEyuVi7jW15VxgcHyozpnjHsE2d2LHD6eODmylzeNv+stLAs/VqWRDe+K1PdNUPynl7bPDeh8ceWDrHrvQyyPBJ/toJmkFr1Ww2c6qD3XaT0tMVOM0GDicfX9aRFtW282w3c8lNtMXmF5XPA4eI67IpO7Dji7CU6K4eFVnxydvmzz8Y/Jbacc7yDHbdmMSI5M69cSJL+GLUgA1BmyNHeXBYtZxYw4ImTz9e04/TijG9AkCbS+y+Ak4oO8XO2D4dUMiHTtgjRzJg4zCRtCG57j3DxnPKNzCDQWWcYTYLmKoMQWNwoOa7DAGVcqcnzQ/aK1o6wjDzwjHcqhmqbTR25w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3dBDThBGFfjn1MI/L+cwzFXSibHy20mVirMGTk6pfFQ=;
- b=hbcMbj1JqMCxfqQ+o2fZB/Qc9Xj2f55Bch4d/2sFcJErnU/IbnH4BbxtUrtSVws/rDE76ibLKNDB4Fous81l3fllJ2v7Q2GuRnZBMjMYW7nlk8egIjGu8xbGrlTD+1weueVgKIMaPy/y/h5pOP0THUQnV7ItDCDOFGivHmsHva4=
-Received: from SA1PR21MB6683.namprd21.prod.outlook.com (2603:10b6:806:4a4::6)
- by SA1PR21MB6009.namprd21.prod.outlook.com (2603:10b6:806:4a5::18)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.0; Thu, 20 Aug
- 2026 01:41:42 +0000
-Received: from SA1PR21MB6683.namprd21.prod.outlook.com
- ([fe80::8bad:6294:8a07:fe18]) by SA1PR21MB6683.namprd21.prod.outlook.com
- ([fe80::8bad:6294:8a07:fe18%6]) with mapi id 15.21.0315.008; Thu, 20 Aug 2026
- 01:41:42 +0000
-From: Long Li <longli@microsoft.com>
-To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
- <dev@dpdk.org>
-CC: "stable@dpdk.org" <stable@dpdk.org>, Randy Tice <rtice@cisco.com>,
- Jianfeng Tan <jianfeng.tan@intel.com>, Jeff Guo <jia.guo@intel.com>
-Subject: RE: [EXTERNAL] [PATCH v5 3/4] eal/linux: report uevent socket overrun
-Thread-Topic: [EXTERNAL] [PATCH v5 3/4] eal/linux: report uevent socket overrun
-Thread-Index: AQHdMA55HVznrmW6BkK/PP5GLLeuUramKefw
-Date: Thu, 20 Aug 2026 01:41:41 +0000
-Message-ID: <SA1PR21MB6683CD698B27DA7C7C31DAF9CEA42@SA1PR21MB6683.namprd21.prod.outlook.com>
-References: <20260817201602.120526-1-rtice@cisco.com>
- <20260819191036.679330-1-stephen@networkplumber.org>
- <20260819191036.679330-4-stephen@networkplumber.org>
-In-Reply-To: <20260819191036.679330-4-stephen@networkplumber.org>
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SA3PR11MB431006.namprd11.prod.outlook.com
+ (2603:10b6:806:58b::12) by DM3PR11MB8734.namprd11.prod.outlook.com
+ (2603:10b6:8:1af::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.339.8; Thu, 20 Aug
+ 2026 04:41:06 +0000
+Received: from SA3PR11MB431006.namprd11.prod.outlook.com
+ ([fe80::df97:b201:1673:934f]) by SA3PR11MB431006.namprd11.prod.outlook.com
+ ([fe80::df97:b201:1673:934f%6]) with mapi id 15.21.0339.007; Thu, 20 Aug 2026
+ 04:41:06 +0000
+From: "Naga Harish K, S V" <s.v.naga.harish.k@intel.com>
+To: "Kumar, Rajesh3" <rajesh3.kumar@intel.com>, "dev@dpdk.org" <dev@dpdk.org>
+CC: "thomas@monjalon.net" <thomas@monjalon.net>, "Richardson, Bruce"
+ <bruce.richardson@intel.com>, "andrew.rybchenko@oktetlabs.ru"
+ <andrew.rybchenko@oktetlabs.ru>
+Subject: Re: [RFC 0/1] ethdev: per-packet Tx timestamp slot management
+Thread-Topic: [RFC 0/1] ethdev: per-packet Tx timestamp slot management
+Thread-Index: AQHdLn4T1K59liIGFU2CKtNBo8DiSbamXKP2
+Date: Thu, 20 Aug 2026 04:41:06 +0000
+Message-ID: <SA3PR11MB43100661032C326636FE9E32E1A1A42@SA3PR11MB431006.namprd11.prod.outlook.com>
+References: <20260817192417.3009990-1-rajesh3.kumar@intel.com>
+In-Reply-To: <20260817192417.3009990-1-rajesh3.kumar@intel.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=25b1decf-0b0c-44cb-bec2-de8dfe71f3da;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2026-08-20T01:41:23Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10, 3, 0, 1;
+msip_labels: 
 authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
+ header.d=none;dmarc=none action=none header.from=intel.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR21MB6683:EE_|SA1PR21MB6009:EE_
-x-ms-office365-filtering-correlation-id: b68bcbf8-9f55-4760-4be4-08defe5c2f79
+x-ms-traffictypediagnostic: SA3PR11MB431006:EE_|DM3PR11MB8734:EE_
+x-ms-office365-filtering-correlation-id: 6dd573c9-1407-44ea-aeda-08defe753f77
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
- ARA:13230040|1800799024|366016|376014|23010399003|18002099003|22082099003|56012099006|38070700021|10067099003|7146999003|11063799006|4143699003;
-x-microsoft-antispam-message-info: ewtjvULyjgOZ0cXgLJgiHoBEVWlKDWJWA5m5kEB6mrF0MeLEMNSmTcqi+gpwnK7hBkgMKMj72bMQ2s7E7TnKmZ7ua4DXZbaVEL9F+laHix/Zzbrg3wUxdOULbJa093kNgX9yOWMr59RqhLtvCZhvVAdIvFOZwD6iEfznYCZLKNXPM/9pxfTjkqUvFm94G7H4FXFEAdXzK+u4HdST39eo6/w/ma60KH8KuWaQZ+FrdR9PZ8treyh/rqnJlNShxHjCmmeExhRdd3fgAYP76TqSOJTp/mvFXP972/eRsBol0c98b/yuRAa66QQbxWsauntStx6qC/GzqF/5CScHWabcfTA1XjsK6AjSjjux6kdFIhFxYKAUKGyCkJIMLHE52wpIbiTjhU4M4Q5cfbX0ghcJcRjlSz9mJ0m3vvKXmfMrt82nnUiB8bHBKPLGPPeuNv/QsMPr4dmYFfslIOOt3IicxrLF4Zdoww0GhWRfOisXRs49tmTvGyYwhIWfggDcjqLIJlp++iRBf9ro/QUHgXoqfytJhafdU0+hH9g9b/uZpIpKXZQMvXPOrOIvwdeZQqUIQ91WN2HQz7S6DAMGKRzUsgmaYagvwgyuSOEOz4GSYOr+LmRzssnSyB04Ewj4qafWR9AV4VyRlN3P1IyayB7/GUYEitU+8El/zDptMfciWMk9Qu9tGnAtSnDVrzKa1IEZhBHxnI/m1gI4a83VGOoQeCHyPHOWtozPQCa5noMeuAQ=
+ ARA:13230040|23010399003|366016|376014|1800799024|11063799006|56012099006|10067099003|8096899003|18002099003|22082099003|6133799003|38070700021;
+x-microsoft-antispam-message-info: KQqjeTqfeM9XptagU7j8gRmokEQBJmOnvi0P2THeVygeKypiFMOUPxe7ZxIsboBak+ULwGh41lxtX9BEaV3qnzZKtJHwrobkD5bze+ph1xGZXhR81chzzARlLMZ2P6PthEpi5q+lG6GX5TSPP+8EwFQky9c5G3l+b5DhrL+Q/eiL4Ip1lrJalLZ+gXO3Go2NAr1zLOx2tJ6+cqB8vE2m+UevZ6pOMZff2rUUNPhtLyeAj3Vh3vj4EyiCrleWxHkqqIfccaUqshHXFkZ3SsfHJB6Z8I+kQARg/IADH/uy20bglhvlJNJA3oh27YdzredXBBqskOLEDVRCiHKcoYT/46Q8ZWQ/76KypYcT4q1ZC7UT07nizJITqA0qTXF9W7I2YtzKgNDxttuUIV+7jJTwZ30cXkMoX816eoUNaKt0O1TaoH1tWLsk8w1pT3EcOG3rn1o23y8J/aV3k5WWlu2jK2hqD0ZmKnpYvT7Bzcnw9/+pZVN71+gL5VAkI7n4kwQmGZ7dz8TsBaY3JYIgDyPW/WP2+qOF5r7Ww7m5QTmwu+HbK8qI7C413rMciZOIbqf65C2rJBW2QZ5kHyGS6qQrfYVqVCEPsDaCZnZDCRYhy805AJkWEaYqbhC8urR77lkIom5U5sG5J/WcWYTuIfOHYUTaPhWuzvcizxGe4O7oRyWezAMaO4mNE3IGdh+5IZnwbpTyBybtgMPI62ihjiN9H165XdlxAbQKrHcQTES9qoU=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SA1PR21MB6683.namprd21.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014)(23010399003)(18002099003)(22082099003)(56012099006)(38070700021)(10067099003)(7146999003)(11063799006)(4143699003);
- DIR:OUT; SFP:1102; 
+ IPV:NLI; SFV:NSPM; H:SA3PR11MB431006.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(23010399003)(366016)(376014)(1800799024)(11063799006)(56012099006)(10067099003)(8096899003)(18002099003)(22082099003)(6133799003)(38070700021);
+ DIR:OUT; SFP:1101; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?sciaLIHlM/2SAcm+fysvyRXCJl7/qiaPmX+600w+RXcRuZjfh9haHVjFl2ZA?=
- =?us-ascii?Q?PANHNJ9zqc0h81yBc1jnhc4lgViVJBOes7n73NCl1+0bj5NkoXvYfGlOZS5S?=
- =?us-ascii?Q?bF/X6IXwkqi8kZNatnWJXy8x3LhZx7DrhOazdsWk5qIoY4bodGW8hvC/CE+M?=
- =?us-ascii?Q?yy97/X6pH1RDo0JQ8/4XKfFGpCUt7jmu/yLTGRkZLXWOBO0kSHyAWc3XTU7k?=
- =?us-ascii?Q?FEOB5Qr560lwL3LpVGEOCpsxTWotEkm4mGi7C91snXgO2mwmf96AsVGJLUlr?=
- =?us-ascii?Q?Wdh7llmE6L4aCB77ZPJvNmXZeT2TEUjsCf3SLpM9C7gciYBew0ougz+vxgOK?=
- =?us-ascii?Q?xD5SyskZdy1AWBPtVG/HMzupeOtuTLH4ca47NEFYPeQbuczjAQD8tcNrJ8Kq?=
- =?us-ascii?Q?9sDAuiTiteXQ0gKRTHgQgszFsCcJms917TxWyEQmv3FTR0G6H0WGZIJ8cCQt?=
- =?us-ascii?Q?DKKpiDbbZlORfz6yjTJszr1GTYaQnMkY4FAiIm4kvonJoL9gME3LmgDQpyvV?=
- =?us-ascii?Q?ro5xyOofJHU/ii14sse2EpsmSNebmOClsmWQjKb5w/4h7GXQOnYUIeMMCHXp?=
- =?us-ascii?Q?RfZVZGc9PXNsLqsfRB1AusCn5QlcAA9IW9YPGcXQcANwy4ETRXG42BUJ/8qA?=
- =?us-ascii?Q?RT6j5SD1bt0ZSGlDsxlCI59vhIoJzjdkwkr8qxdph7DOomMjuUIkNhCXMmqN?=
- =?us-ascii?Q?AWjekRdTQcGrxetR+IfxnRD96KYaF43wNpe4o01WgADh0OwORFdLSI46xxSm?=
- =?us-ascii?Q?LKtpDozef7MUM3h6qvw4fa6BjypNUCJf+dydMoVYsxkfKgk07DtGCB7CfVsg?=
- =?us-ascii?Q?8UgMk4pb+2KzoJxK+RXQW4KQv14PePSyhv8dwXcDrL9qpjSJ3Bl87CDkCAqj?=
- =?us-ascii?Q?D9U3qpgL3dMwkp0ZTR9gQeUcbc/okxm635X42Wji+YQD3XK0Jkm/Uil0xrGZ?=
- =?us-ascii?Q?+dWFxIQ8oCjMk75q5kVQVMp24+PC7bqq0NlPnGmnYeXkrMrusknjUx5lQNfv?=
- =?us-ascii?Q?p7Vt5lMQiyJvqzDelH4+zTGiVz99eFIJIz2eu2sHy7/y5oOmwGmdVrzE4zqa?=
- =?us-ascii?Q?EsxceSHd26eUIsCeCsvDJmpwzo1ku5Cwq/enjtclZAbeyHkvJh/rummO25AO?=
- =?us-ascii?Q?5TU2DLmaDxUmxBqJ4Z1AnNvurJ2G+wlwUAJ7U2IpxuGCbgtSGq3w0P5pezxr?=
- =?us-ascii?Q?s519x4Vsw+/hjMcCzKicahhFhX5KFSCUsfjVyEZ6ntJeSsLW2FN9LMonF78L?=
- =?us-ascii?Q?H0St8xi29wjiai9MYMdOc532DxjlicT4Xku8PKsel1xTkOdbIuiSg6cLxMdn?=
- =?us-ascii?Q?I9H0T8PljFtAU7VH1UJ/gnbYNOPavJI6KrWw6dMfEHTD0iOWk7E3eO36QmN9?=
- =?us-ascii?Q?i7WcTXQR9xZAgX/7iVmnVdhvFlrw43ioAsmwpF9Rr0QQX8E6vLisHkCIdifc?=
- =?us-ascii?Q?4wrDMls/60n1SR9ka0+f7fd126q7DwukZudyewaO67PPhkC06Yd/Hadyl30u?=
- =?us-ascii?Q?iUVJgh2VtzUwUUQepTO3s0k/JDBW1AE2eRVoqaxKQxj+tKgsYQ4EFL4J/2WJ?=
- =?us-ascii?Q?G5zZCbEm9qSzFBz3G3ZBDfFlfNleMh/BA+QLTx3KCyNSy6w8Rb1od3NaqsPc?=
- =?us-ascii?Q?k8LDONOyhFjWm5hEU83alq0mJSUSKHVSlNmKS6HfqQdMYLyicJY933DSnW/Z?=
- =?us-ascii?Q?+eIr4GHagZlPnOcixiJYm5P5iB6/5S2blT1bfcrfCnpMBd2d?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?uhydMjBbVh3ycF7mjZDiMqA8FqxB0MpWTxKp4mVBrxEqaJv8leoctgFNnh?=
+ =?iso-8859-1?Q?jg0rCmx8xUsxeEASdIDF7r53XM044k1o5XqB3sg1+MiMVshvBpk+K6an6n?=
+ =?iso-8859-1?Q?hMwEiaSUcCCWNDUWJ1T9i56vLtsdv7WCBLl650ToRdcUTFOo0ZLBb5rCle?=
+ =?iso-8859-1?Q?OSkUSlEJHGwP1v4YCLhNCWEsZJ6tNXjxNtHHZtpk0q3yWIRXE1A8zospiO?=
+ =?iso-8859-1?Q?KN4mgCuOGOMptejYIYkYU0mQFi93QG/RlaLRCqMxvWKlaMSVSq86kFelm4?=
+ =?iso-8859-1?Q?JEdA7KkQd/KaWZ9xZhiYnfl0L2WP4+/ZUCtit9b9u5ITM9q1+EhMvFg19l?=
+ =?iso-8859-1?Q?gGRevAYPc/RRQ73p3xBdJCUXq0kYaMOMKZFHuLykfBgcyFKwj+Uu2yPHbZ?=
+ =?iso-8859-1?Q?4D7PIYueDSRggWKLWZ9eB6COo2T7X8+iHp7ou8MsmKAkXak6fvYNFiMX//?=
+ =?iso-8859-1?Q?jMx+tCwPDRuhcc30EnfoVJeWfB28UUKyNamPz/7GUaLT6JNs7q22xYB83x?=
+ =?iso-8859-1?Q?57urz1YEukSKb7kK+3f1s+un3Y8FxqIT7EueJl0SI20Tstq6EkxS+RMkjv?=
+ =?iso-8859-1?Q?p9Xzs01q/UaT0e2bFvJIxpUs84VmUNTdg/Sm/FBPbetsIu98FgcDPivk//?=
+ =?iso-8859-1?Q?kpb7lAsf6zNz1gt6EtVUL4Zb5zX5sCgl1ckTJsBmod2vGwrSULiAWg3jsL?=
+ =?iso-8859-1?Q?8PqbOf7x0/Y8VKRaXzDG5AQR1Jt8g5SXJS2yxLCNJDR8tCVLcD4Cac34KK?=
+ =?iso-8859-1?Q?PqwAu8CxMX3bHCzL6FYfIG5zkI3Mbn2g8rtMbfC5ozCihWKU8RPtg6ZaV6?=
+ =?iso-8859-1?Q?lj7E8F+ytwmrP55zU0BE/2XqsljkohpR5zZMq9W3vyGXr5A3dfLw3z3Gnv?=
+ =?iso-8859-1?Q?WKWakGTjcE/Tyvd+tZfscStfhWYEZOZZwjXCMb1ksE7pNVZjBh3AC0yrNb?=
+ =?iso-8859-1?Q?cwWCiW6YyV36M5pWDrP3mkOsbseRuwQSPxuWpCRjL1Kodi92w9lb8tdjKl?=
+ =?iso-8859-1?Q?d7umENIr3JV+31bSS+h9la1B7GvlrQ7sD2DNoDMAa6N44uzOWkCSZmQoW4?=
+ =?iso-8859-1?Q?/6YP5+ewGKvvkt0zLbqNlxQue+TJ/2SGrSt974Fz0waCVKoDDVqMGNuQR6?=
+ =?iso-8859-1?Q?iL3k9FfcVieipnCQXJGClOezvVu/1YjNAYpk55UCK6/qPgzNGOYWYLFviV?=
+ =?iso-8859-1?Q?JU00D8KqgB6YQdfV2cfeQqR3j3GP0/EUM+moHtqZVlRPmQWZcw6UJBA0ee?=
+ =?iso-8859-1?Q?YaT89ZgHhlQFxDubiDT1U4GGc8qD9D8xx0cXUPk0QMaYhXTOIg9+g0LLhj?=
+ =?iso-8859-1?Q?qgo2ceeYMc60ZmAyokTwSslHEcAFMsULcoHliiGQecCJIBTEHe2SwjTaME?=
+ =?iso-8859-1?Q?k8gZxcaUFbgfuBwIPyoW8iDICAHCXSAtw2KaFX8VzS11AmcMPg+9J2eVAW?=
+ =?iso-8859-1?Q?hL998TiVd9UuFTavB7y8sUkXkKqrcUFnND+QKxF7knC6/0NvOk7d1f2EQE?=
+ =?iso-8859-1?Q?slu/0w62ojOLYCZCYB+sLUjtXwK/UkPQWH5oelNF7tpLWfS9HvExj/45IT?=
+ =?iso-8859-1?Q?ljjU7R/JEUCYRgPKfVs5/q2acRJVjrNfQRiUr5nFVzCXc5ccIS7IsxhhLI?=
+ =?iso-8859-1?Q?s2FfSXKWs18Ki9UUjiOK0pMI6/2zG7QlBoIT7x16mobdFS9RsI2nSPXG00?=
+ =?iso-8859-1?Q?niVqHni27nmCgWm5H0mHyycUfSpr96QuP8RW7VqtZewRfjfb4IiTR5+pF3?=
+ =?iso-8859-1?Q?AWe5GTW9owZDevU9NLx99ojBq+/tRq1b//9hC1Ywkhup7nFIthEcMZL2kN?=
+ =?iso-8859-1?Q?V/SCX3hWgA=3D=3D?=
+Content-Type: multipart/alternative;
+ boundary="_000_SA3PR11MB43100661032C326636FE9E32E1A1A42SA3PR11MB431006_"
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
+X-Exchange-RoutingPolicyChecked: kYqHVVDjsyAjH/eXwtdTNj1gcsbh+GywvcZoPtWdur+OqvvgxfbcWoglFJBVab80/0sQ4GSE7RJXl78yQgb/tXUC8zgOfZR0Dgl+vqF6EGZabqmCTxoSAzFqGsi095R+yT1/l2NRLWoYfP2okwv+TSlu2wLertAnG9J5HNiBROvW/PSVOxy6S1IW5VTTvHXm8Z/te9pN4HLCqwiRM/Ke5MAl3erF8gq37qfoq+4rx/7KpNCGTJU5TFsl8io/1x/8IwIeogo/VnSxPJuKsaAKfs8yLDV2x576Tg/KRH7O8zkbcEANndUw09rxKrSJzCYK1tPkCk8OEn0oWG/tlGFWHw==
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR21MB6683.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b68bcbf8-9f55-4760-4be4-08defe5c2f79
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2026 01:41:41.9821 (UTC)
+X-MS-Exchange-CrossTenant-AuthSource: SA3PR11MB431006.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6dd573c9-1407-44ea-aeda-08defe753f77
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2026 04:41:06.2129 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: bcbiPMzvDkRd5s5tcbI5eyP9ZQ5bCWtH0xczSWxTJEhCoBagfYgAfY+dFi4eLdKY1t8yWgvEcPxuac1RI+NYxA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR21MB6009
+X-MS-Exchange-CrossTenant-userprincipalname: kJnQ0hTicSN7cDkLRArpmLgBnSz5CYhQtWWWqVTJ+GQSdq1HBRMgia05Wh2DTASDKVH7Oini96JJvwsv8gHk9di2WtObV0h5JXh4I0ng5fc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR11MB8734
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -131,60 +158,251 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
->=20
-> Make uevent handler handle case where kernel netlink receive buffer is
-> overrun. If this happens the DPDK device state will potentially be out of=
- sync,
-> but better not to give up.
->=20
-> The code already handles the case of kernel sending a zero length message=
-; it
-> just ignores it.
->=20
-> Fixes: 0d0f478d0483 ("eal/linux: add uevent parse and process")
-> Cc: stable@dpdk.org
->=20
-> Reported-by: Randy Tice <rtice@cisco.com>
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-
-Reviewed-by: Long Li <longli@microsoft.com>
+--_000_SA3PR11MB43100661032C326636FE9E32E1A1A42SA3PR11MB431006_
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
 
-> ---
->  lib/eal/linux/eal_dev.c | 19 ++++++++++++++-----
->  1 file changed, 14 insertions(+), 5 deletions(-)
->=20
-> diff --git a/lib/eal/linux/eal_dev.c b/lib/eal/linux/eal_dev.c index
-> fb5c8bf070..b535122ff6 100644
-> --- a/lib/eal/linux/eal_dev.c
-> +++ b/lib/eal/linux/eal_dev.c
-> @@ -270,11 +270,20 @@ dev_uev_handler(__rte_unused void *param)
->=20
->  	ret =3D recv(rte_intr_fd_get(intr_handle), buf, EAL_UEV_MSG_LEN,
->  		   MSG_DONTWAIT);
-> -	if (ret < 0 && errno =3D=3D EAGAIN)
-> -		return;
-> -	else if (ret <=3D 0) {
-> -		/* connection is closed or broken, can not up again. */
-> -		EAL_LOG(ERR, "uevent socket connection is broken.");
-> +	if (ret < 0) {
-> +		/* transient error */
-> +		if (errno =3D=3D EAGAIN || errno =3D=3D EWOULDBLOCK || errno =3D=3D
-> EINTR)
-> +			return;
-> +
-> +		/* kernel netlink messages lost */
-> +		if (errno =3D=3D ENOBUFS) {
-> +			EAL_LOG(NOTICE, "kernel receive buffer overrun");
-> +			return;
-> +		}
-> +
-> +		EAL_LOG(ERR, "unexpected error on uevent recv: %s",
-> +			strerror(errno));
-> +
->  		rte_eal_alarm_set(1, dev_delayed_unregister, NULL);
->  		return;
->  	}
-> --
-> 2.53.0
 
+
+________________________________
+From: Rajesh Kumar <rajesh3.kumar@intel.com>
+Sent: Tuesday, August 18, 2026 12:54 AM
+To: dev@dpdk.org <dev@dpdk.org>
+Cc: thomas@monjalon.net <thomas@monjalon.net>; Richardson, Bruce <bruce.ric=
+hardson@intel.com>; andrew.rybchenko@oktetlabs.ru <andrew.rybchenko@oktetla=
+bs.ru>; Kumar, Rajesh3 <rajesh3.kumar@intel.com>
+Subject: [RFC 0/1] ethdev: per-packet Tx timestamp slot management
+
+The current DPDK ethdev time synchronization framework is architected
+around a single, shared hardware latch. The existing API,
+`rte_eth_timesync_read_tx_timestamp()`, assumes a serialization model
+where only one TX timestamp is outstanding at any given time.
+
+This model creates severe limitations for modern high-throughput network
+interface cards (NICs). When multiple packets requiring precise
+transmit timestamps are sent concurrently, the shared latch becomes a
+race-condition bottleneck. It makes timestamp retrieval unreliable and
+drops accuracy. Furthermore, Poll Mode Drivers (PMDs) backed by
+hardware that supports independent, per-packet timestamping slots have
+no way to expose this capability to the user.
+
+To solve this, this RFC introduces a formal slot-based lifecycle API
+for per-packet Tx timestamp management. The API decouples timestamp
+tracking from the global latch model, enabling true asynchronous,
+parallel hardware timestamping.
+
+Key Components of the Proposal:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+1. **Slot Lifecycle Management APIs**:
+   - `rte_eth_timesync_tx_timestamp_slot_alloc()`: Allocates and locks
+     a unique hardware slot prior to frame transmission.
+   - `rte_eth_timesync_tx_timestamp_stamp_mbuf()`: Embeds the allocated
+     slot handle into an mbuf dynamic field, allowing the PMD to
+     program the specific hardware descriptor during the Tx burst.
+   - `rte_eth_timesync_read_tx_timestamp_slot()`: Asynchronously polls
+     a specific slot for its captured value, safely returning `-EAGAIN`
+     if the hardware has not yet written back the timestamp.
+   - `rte_eth_timesync_tx_timestamp_slot_release()`: Recycles the
+     hardware slot back to the PMD resource pool after successful
+     retrieval or an application timeout.
+
+2. **Dual-Domain Timing Mechanics**:
+   - Introduces `struct rte_eth_timesync_dual_domain_timestamp` to
+     simultaneously capture both the adjusted PTP Hardware Clock (PHC)
+     domain (`adjusted_ns`) and the raw, free-running cycles domain
+     (`cycles_ns`).
+   - A dedicated `valid_mask` tracks the validity of each time domain
+     independently, giving applications granular telemetry options.
+
+Scope of this RFC & Open Questions for the Community:
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+This RFC establishes the structural definition of the APIs and driver
+interfaces. Before proceeding to a full `v1` patch with active PMD
+implementations, we would highly appreciate the community's feedback
+on the following design choices:
+
+- **Mbuf Dynamic Field Layout**: Is the encapsulation of the slot
+  handle into an mbuf dynamic field using standard dynamic registration
+  the preferred mechanism for passing steering context to the Tx
+  descriptor path?
+
+ rte_mbuf structure has "timesync" field, which can be used for the slot.
+ This way mbuf dynamic field use can be avoided.
+
+- **Dual-Domain Structure**: Does tracking both the adjusted PHC and
+  the cycle counter within `rte_eth_timesync_dual_domain_timestamp`
+  cover the needs of other hardware vendors supporting concurrent
+  domains?
+- **Error States**: Is `-EAGAIN` an acceptable return code for
+  non-blocking polling of incomplete timestamps, or should we consider
+  an explicit bitmask status?
+
+Please review the proposed design. We welcome your feedback, design
+suggestions, and critique.
+
+Rajesh Kumar (1):
+  ethdev: add per-packet Tx timestamp slot APIs
+
+ lib/ethdev/ethdev_driver.h |  19 ++++++
+ lib/ethdev/rte_ethdev.c    | 121 +++++++++++++++++++++++++++++++++++++
+ lib/ethdev/rte_ethdev.h    | 108 +++++++++++++++++++++++++++++++++
+ 3 files changed, 248 insertions(+)
+
+--
+2.54.0
+
+
+--_000_SA3PR11MB43100661032C326636FE9E32E1A1A42SA3PR11MB431006_
+Content-Type: text/html; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
+1">
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
+Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div><br>
+</div>
+<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
+: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<hr style=3D"display: inline-block; width: 98%;">
+<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
+: 12pt; color: rgb(0, 0, 0);">
+<b>From:</b> Rajesh Kumar &lt;rajesh3.kumar@intel.com&gt;<br>
+<b>Sent:</b> Tuesday, August 18, 2026 12:54 AM<br>
+<b>To:</b> dev@dpdk.org &lt;dev@dpdk.org&gt;<br>
+<b>Cc:</b> thomas@monjalon.net &lt;thomas@monjalon.net&gt;; Richardson, Bru=
+ce &lt;bruce.richardson@intel.com&gt;; andrew.rybchenko@oktetlabs.ru &lt;an=
+drew.rybchenko@oktetlabs.ru&gt;; Kumar, Rajesh3 &lt;rajesh3.kumar@intel.com=
+&gt;<br>
+<b>Subject:</b> [RFC 0/1] ethdev: per-packet Tx timestamp slot management <=
+/div>
+<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
+: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"font-size: 11pt;">The current DPDK ethdev time synchronizatio=
+n framework is architected<br>
+around a single, shared hardware latch. The existing API,<br>
+`rte_eth_timesync_read_tx_timestamp()`, assumes a serialization model<br>
+where only one TX timestamp is outstanding at any given time.<br>
+<br>
+This model creates severe limitations for modern high-throughput network<br=
+>
+interface cards (NICs). When multiple packets requiring precise<br>
+transmit timestamps are sent concurrently, the shared latch becomes a<br>
+race-condition bottleneck. It makes timestamp retrieval unreliable and<br>
+drops accuracy. Furthermore, Poll Mode Drivers (PMDs) backed by<br>
+hardware that supports independent, per-packet timestamping slots have<br>
+no way to expose this capability to the user.<br>
+<br>
+To solve this, this RFC introduces a formal slot-based lifecycle API<br>
+for per-packet Tx timestamp management. The API decouples timestamp<br>
+tracking from the global latch model, enabling true asynchronous,<br>
+parallel hardware timestamping.<br>
+<br>
+Key Components of the Proposal:<br>
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D<br>
+1. **Slot Lifecycle Management APIs**:<br>
+&nbsp;&nbsp; - `rte_eth_timesync_tx_timestamp_slot_alloc()`: Allocates and =
+locks<br>
+&nbsp;&nbsp;&nbsp;&nbsp; a unique hardware slot prior to frame transmission=
+.<br>
+&nbsp;&nbsp; - `rte_eth_timesync_tx_timestamp_stamp_mbuf()`: Embeds the all=
+ocated<br>
+&nbsp;&nbsp;&nbsp;&nbsp; slot handle into an mbuf dynamic field, allowing t=
+he PMD to<br>
+&nbsp;&nbsp;&nbsp;&nbsp; program the specific hardware descriptor during th=
+e Tx burst.<br>
+&nbsp;&nbsp; - `rte_eth_timesync_read_tx_timestamp_slot()`: Asynchronously =
+polls<br>
+&nbsp;&nbsp;&nbsp;&nbsp; a specific slot for its captured value, safely ret=
+urning `-EAGAIN`<br>
+&nbsp;&nbsp;&nbsp;&nbsp; if the hardware has not yet written back the times=
+tamp.<br>
+&nbsp;&nbsp; - `rte_eth_timesync_tx_timestamp_slot_release()`: Recycles the=
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp; hardware slot back to the PMD resource pool after =
+successful<br>
+&nbsp;&nbsp;&nbsp;&nbsp; retrieval or an application timeout.<br>
+<br>
+2. **Dual-Domain Timing Mechanics**:<br>
+&nbsp;&nbsp; - Introduces `struct rte_eth_timesync_dual_domain_timestamp` t=
+o<br>
+&nbsp;&nbsp;&nbsp;&nbsp; simultaneously capture both the adjusted PTP Hardw=
+are Clock (PHC)<br>
+&nbsp;&nbsp;&nbsp;&nbsp; domain (`adjusted_ns`) and the raw, free-running c=
+ycles domain<br>
+&nbsp;&nbsp;&nbsp;&nbsp; (`cycles_ns`).<br>
+&nbsp;&nbsp; - A dedicated `valid_mask` tracks the validity of each time do=
+main<br>
+&nbsp;&nbsp;&nbsp;&nbsp; independently, giving applications granular teleme=
+try options.<br>
+<br>
+Scope of this RFC &amp; Open Questions for the Community:<br>
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D<br>
+This RFC establishes the structural definition of the APIs and driver<br>
+interfaces. Before proceeding to a full `v1` patch with active PMD<br>
+implementations, we would highly appreciate the community's feedback<br>
+on the following design choices:<br>
+<br>
+- **Mbuf Dynamic Field Layout**: Is the encapsulation of the slot<br>
+&nbsp; handle into an mbuf dynamic field using standard dynamic registratio=
+n<br>
+&nbsp; the preferred mechanism for passing steering context to the Tx<br>
+&nbsp; descriptor path?</div>
+<div class=3D"elementToProof" style=3D"font-size: 11pt;"><br>
+</div>
+<div class=3D"elementToProof" style=3D"font-size: 11pt;">&nbsp;rte_mbuf str=
+ucture has &quot;timesync&quot; field, which can be used for the slot.</div=
+>
+<div class=3D"elementToProof" style=3D"font-size: 11pt;">&nbsp;This way mbu=
+f dynamic field use can be avoided.</div>
+<div class=3D"elementToProof" style=3D"font-size: 11pt;"><br>
+- **Dual-Domain Structure**: Does tracking both the adjusted PHC and<br>
+&nbsp; the cycle counter within `rte_eth_timesync_dual_domain_timestamp`<br=
+>
+&nbsp; cover the needs of other hardware vendors supporting concurrent<br>
+&nbsp; domains?<br>
+- **Error States**: Is `-EAGAIN` an acceptable return code for<br>
+&nbsp; non-blocking polling of incomplete timestamps, or should we consider=
+<br>
+&nbsp; an explicit bitmask status?<br>
+<br>
+Please review the proposed design. We welcome your feedback, design<br>
+suggestions, and critique.<br>
+<br>
+Rajesh Kumar (1):<br>
+&nbsp; ethdev: add per-packet Tx timestamp slot APIs<br>
+<br>
+&nbsp;lib/ethdev/ethdev_driver.h |&nbsp; 19 ++++++<br>
+&nbsp;lib/ethdev/rte_ethdev.c&nbsp;&nbsp;&nbsp; | 121 +++++++++++++++++++++=
+++++++++++++++++<br>
+&nbsp;lib/ethdev/rte_ethdev.h&nbsp;&nbsp;&nbsp; | 108 +++++++++++++++++++++=
+++++++++++++<br>
+&nbsp;3 files changed, 248 insertions(+)<br>
+<br>
+--<br>
+2.54.0<br>
+<br>
+</div>
+</body>
+</html>
+
+--_000_SA3PR11MB43100661032C326636FE9E32E1A1A42SA3PR11MB431006_--
