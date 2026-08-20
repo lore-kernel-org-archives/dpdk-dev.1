@@ -2,75 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4481C5DF85
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Aug 2026 05:24:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85A2DC5DF85
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Aug 2026 05:24:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1034C40697;
-	Thu, 20 Aug 2026 07:24:01 +0200 (CEST)
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
- [209.85.214.170])
- by mails.dpdk.org (Postfix) with ESMTP id 469704067C
- for <dev@dpdk.org>; Thu, 20 Aug 2026 07:23:59 +0200 (CEST)
-Received: by mail-pl1-f170.google.com with SMTP id
- d9443c01a7336-2caea3f742bso26248865ad.0
- for <dev@dpdk.org>; Wed, 19 Aug 2026 22:23:59 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 4DB6440B97;
+	Thu, 20 Aug 2026 07:24:04 +0200 (CEST)
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com
+ [209.85.216.50]) by mails.dpdk.org (Postfix) with ESMTP id EB3564067C
+ for <dev@dpdk.org>; Thu, 20 Aug 2026 07:24:02 +0200 (CEST)
+Received: by mail-pj1-f50.google.com with SMTP id
+ 98e67ed59e1d1-381b831d535so2841570a91.0
+ for <dev@dpdk.org>; Wed, 19 Aug 2026 22:24:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787203438;
- x=1787808238; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787203442;
+ x=1787808242; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=rbFU7ITdxdSOr7PlTvO2l1RAHGdWybsZOg/jDZhr7ak=;
- b=vk33dGjx6zwx34CVzxTtnzVqVXNwSPXc9KpVpOUoTPwGsRLYeMAS2j5rqvX1XWf9HT
- ge6WO7RKzggsOGEM1x98scY1hrWCXczJdLSDpU1DGYEO9KMrD8X/W7Cd21i2GpDjOED+
- JdXqipky4nVtaTa8HBagnj3iATHPcLDUNDjeZij68G/69SI6CzuCD/v5KtNvX+awCZdz
- JHef76F+1hq7Vk1Pi2gESoDt/Lm3RT/YdeVbz/7Xs/0LY6iz8e315NK9amkOrSM3IewQ
- KYTEXLNQ2yLxzPdVjH0a+MUM3EKJCoO2G2JfLzUcbkOptO2Ls4nlzjDwYDLB6tIKlkk0
- //Eg==
+ bh=/xAxOuQL4DiqEKwK8++aGqpSXYxxjmcl/6EMho2IdJA=;
+ b=ktsdNBy5mNXTA9M2hItQCffhBIDbIkXwLlExlgMEuSl/y9pSydx+5cR/YUEcTUPDLF
+ CjVTgJrUf5OLaAXGEe/ZV3rw62SnSS/NqOzQGP9Rt6NRPWg9Oa/+3nhFvonpv1BIIwU/
+ mvbcB4gep3lC3qye+vwocG29CsE6d7VslcLOjMADRfhZsrDU95yJV3wLYBvg4kL8vULT
+ qCR9XG/bJGypp12guIc6Tx8DiPKKjs72OWg7VLMfSt5hQRs+OoAs/MZGrBj+YWl4lCDN
+ d6JP4AtJ3EEO9fePTCrqJS+/pT4ExRt0daZj9VaSjKgadzGvXmnMlLCe/C8Y61ZrHxdG
+ MFtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787203438; x=1787808238;
+ d=1e100.net; s=20251104; t=1787203442; x=1787808242;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=rbFU7ITdxdSOr7PlTvO2l1RAHGdWybsZOg/jDZhr7ak=;
- b=VjeqaMvHtfPHEgDP5kUCAKwIceJPq3qFKhFVl9Ukpzjjgvzj7+EI2OCvQ1NHPsgTT9
- 4SUpgdoPDH42egprgrDLyJls3xGT50UXzMC68aJC3sNc6dmRxz5cw7VNzXVIMLLJkWtn
- JwDKYxR7qzwEjGQVc6FLios4d5KsNBCH0S1Ehs4cagtna4WZVoy68hZM2JMMLKL01xQw
- Sj02UHx+I8RyPxHmIaWsx5Eq1EnobFsLkPA6q2r0ckzkYpMEyJ6Ju189564pN1iaEKMS
- kmjDN6rQ6lybCF7LbOaANFOH70JRKT8xZ/GtkYEnkgG16n0xsoxBURRIq0ZDNF0qB4Gn
- Uzuw==
-X-Gm-Message-State: AFuF++lHrehu88SVKEbhhXbNlTFS6oRcd9ZP+nrFQaY1x5xXe2T8Tmkr
- /N8/NLzWFko4TXNB5Xx0jlDzYJmK1c7rTVU96IA5tSYNORNBknAdeZUrPfkFzhqtWhsspyyDcNV
- eGN4v
-X-Gm-Gg: AR+sD10TRRzP4ctz4Ax8Oss2Cbvz9wk7Be50ie7nrNP7Nsr/4x8oKu7kThB5QfbQSZs
- +JCku4siMMLfPvnphvq5tAD4EMbfd/GIUN5+r9lVnASeuZn5G8qtoG5OUsh5zPcqq/6MJEugsG7
- +JAdVmE9BEv6QgQBIoC79An5I+U/9X8P/JZfPziarKsA7WrutcSYVeylI92Z4jFcPKhJbFsuf9e
- hvnPo35NCfkj8Ji0+9HcBv+/peGqIFmzFxuhwVhrmtHiqDgpz47zZdw4RSzHNyYMb73LmD73gsw
- ZrJIldpKDW4mMLVXOpnYMvI2Cacbbdnix+HyaODi8qM8nFereCNV5XWL+ywlQSU9zBLUZnkW1Zo
- coFfib33BEnYgq/Oueu4CimDwoR++60OpMmC8n6mbwJKkOR1zmbFsmVlcT8OAZiSHR8KjrR2Kic
- rwlfCyBcZdIn7qcT8zEHWKakrPMMTkUU5ml21UwswTB48PZkKQzueEoT/LnjWgOXVepTAy2tjwC
- vUFSUAEovRWHFf7AoHAp9/6n2Q=
-X-Received: by 2002:a17:90b:3c06:b0:38e:8300:af51 with SMTP id
- 98e67ed59e1d1-39580edaf9fmr20222585a91.8.1787203438313; 
- Wed, 19 Aug 2026 22:23:58 -0700 (PDT)
+ bh=/xAxOuQL4DiqEKwK8++aGqpSXYxxjmcl/6EMho2IdJA=;
+ b=rOf850qPblKX17TbagCdDffO7sKsdWsZ+4MSJine7opbIfGg9QNBiUHmodFNs88lIS
+ wE6zXXfrYbmW6K22MHAvl/2tD3xBiRbusb/Ur2WplIx6AK8jPJ7oPqo3BH+8YCOk0igN
+ 7qN/FYQz59ECo7WNJ/KEgOiO7cqg0M03zsQB1Q9niXYfWYr/yaCATbzArVamvN57/LZ3
+ ES2BPk7DP1PsHIQQBVPkfNQMZ34X1VAQ3E6zFYjRjWBLExYIUs6Va+j3z4QILGLSTXdT
+ TsoFzuPB/HCfWR8l70q3DLYr+dTZ2kn28Luvz34K8CrtRTBMp++pN2RKL0TQwj1f30/1
+ DzHA==
+X-Gm-Message-State: AFuF++kbAcStlXk5RxidlQRDNIUNYNIqVJttdG36KKK4sYvsWCSiimfJ
+ LpVZaUZty6oY68Lg0py3lag10M5uIxEW1lIryT9umspJrfNDnE2qCelrqG8Fbt1TEBNj9H/fPPZ
+ NH8rX
+X-Gm-Gg: AR+sD127oNKe8/jlXWHDOr75B1UgGb9WHosf2e1wFoRZraQKix33+SW7WH/nrmqmQ6a
+ 870792bhvRSAnhHImMA+2P95gyJq9GT3nbLvI/7syOoPTsuNG9KtUZ2HpoBn4h52P5LETFJMe2T
+ FZ1jYTiHXpX9IS8D9Ly2iJXR8j3VIzPpwPa4ny53WvduaZLthBpdLfDm6L4KHUVFZvsH4dssS85
+ nbUmIrUVstSf5RdhTMTmwuvKBCrMshULqr1n8aVZ98r8Q4h+4vT0Xfdlv18vY+AtnZMZVyvkrVG
+ A1zHDdtikvdNyl9sDaJToahJIPxPGYVO/NjotSJNRjpmNT7y9htD17uOvefedJZQDHrwvyoWF+6
+ TFWNoCP4Sr6gHN2q3epDP2wsXLCZg6vV8XTDyNH1nxg/nPyB53vU3aJ762IXJlwjIc0PyL40YCD
+ XNaFPnbk/BXYHyzN2oRTah6mSKeJ1yYIA0LEriooWFroiSCJ8w8o6lMLNQ6s7c/PdwQqDY2nYFK
+ 6BDKi72E7U43sr4ylZKiXdhASo=
+X-Received: by 2002:a17:90b:394b:b0:38f:5801:cd76 with SMTP id
+ 98e67ed59e1d1-39580a53e78mr20183538a91.3.1787203442084; 
+ Wed, 19 Aug 2026 22:24:02 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-327bef3bb5csm13700974eec.2.2026.08.19.22.23.52
+ 5a478bee46e88-327bef3bb5csm13700974eec.2.2026.08.19.22.23.58
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 19 Aug 2026 22:23:57 -0700 (PDT)
+ Wed, 19 Aug 2026 22:24:01 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Sunil Uttarwar <sunilprakashrao.uttarwar@amd.com>,
- Ankur Dwivedi <adwivedi@marvell.com>, Anoob Joseph <anoobj@marvell.com>,
- Tejasree Kondoj <ktejasree@marvell.com>, Kai Ji <kai.ji@intel.com>,
- Pablo de Lara <pablo.de.lara.guarch@intel.com>,
- Matan Azrad <matan@nvidia.com>, Chengfei Han <han.chengfei@zte.com.cn>,
- Ming Ran <ran.ming@zte.com.cn>, Akhil Goyal <gakhil@marvell.com>,
- Fan Zhang <fanzhang.oss@gmail.com>
-Subject: [PATCH 14/61] cryptodev: replace use of rte_memcpy
-Date: Wed, 19 Aug 2026 22:12:04 -0700
-Message-ID: <20260820052251.1453273-15-stephen@networkplumber.org>
+ Rosen Xu <rosen.xu@altera.com>, Sachin Saxena <sachin.saxena@nxp.com>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>
+Subject: [PATCH 15/61] drivers/raw: use memcpy for fixed size data
+Date: Wed, 19 Aug 2026 22:12:05 -0700
+Message-ID: <20260820052251.1453273-16-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260820052251.1453273-1-stephen@networkplumber.org>
 References: <20260820052251.1453273-1-stephen@networkplumber.org>
@@ -89,251 +83,214 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Using regular memcpy is as fast and safer.
+The regular libc memcpy is inline for fix sizes and has
+better analysis coverage.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/crypto/ccp/ccp_crypto.c                    | 14 +++++---------
- drivers/crypto/cnxk/cnxk_se.h                      |  2 +-
- drivers/crypto/ipsec_mb/pmd_snow3g.c               |  4 ++--
- drivers/crypto/mlx5/mlx5_crypto_gcm.c              | 10 +++++-----
- drivers/crypto/scheduler/rte_cryptodev_scheduler.c |  6 +++---
- drivers/crypto/scheduler/scheduler_failover.c      | 12 ++++++------
- drivers/crypto/zsda/zsda_crypto_session.c          |  6 +++---
- lib/cryptodev/rte_cryptodev.c                      | 12 ++++--------
- 8 files changed, 29 insertions(+), 37 deletions(-)
+ drivers/raw/ifpga/afu_pmd_he_hssi.c         |  4 ++--
+ drivers/raw/ifpga/afu_pmd_he_lpbk.c         |  4 ++--
+ drivers/raw/ifpga/afu_pmd_he_mem.c          |  4 ++--
+ drivers/raw/ifpga/afu_pmd_n3000.c           |  8 ++++----
+ drivers/raw/ifpga/ifpga_rawdev.c            | 11 +++++------
+ drivers/raw/skeleton/skeleton_rawdev.c      |  8 +++-----
+ drivers/raw/skeleton/skeleton_rawdev_test.c |  1 -
+ 7 files changed, 18 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/crypto/ccp/ccp_crypto.c b/drivers/crypto/ccp/ccp_crypto.c
-index b07a786d8e..e754dd16dc 100644
---- a/drivers/crypto/ccp/ccp_crypto.c
-+++ b/drivers/crypto/ccp/ccp_crypto.c
-@@ -168,7 +168,7 @@ static int partial_hash_sha1(uint8_t *data_in, uint8_t *data_out)
- 	if (!SHA1_Init(&ctx))
- 		return -EFAULT;
- 	SHA1_Transform(&ctx, data_in);
--	rte_memcpy(data_out, &ctx, SHA_DIGEST_LENGTH);
-+	memcpy(data_out, &ctx, SHA_DIGEST_LENGTH);
+diff --git a/drivers/raw/ifpga/afu_pmd_he_hssi.c b/drivers/raw/ifpga/afu_pmd_he_hssi.c
+index bcb952935a..cf5ac5b459 100644
+--- a/drivers/raw/ifpga/afu_pmd_he_hssi.c
++++ b/drivers/raw/ifpga/afu_pmd_he_hssi.c
+@@ -6,6 +6,7 @@
+ #include <stdio.h>
+ #include <stdint.h>
+ #include <stdlib.h>
++#include <string.h>
+ #include <inttypes.h>
+ #include <unistd.h>
+ #include <fcntl.h>
+@@ -15,7 +16,6 @@
+ 
+ #include <rte_eal.h>
+ #include <rte_malloc.h>
+-#include <rte_memcpy.h>
+ #include <rte_io.h>
+ #include <bus_pci_driver.h>
+ #include <bus_ifpga_driver.h>
+@@ -313,7 +313,7 @@ static int he_hssi_config(struct afu_rawdev *dev, void *config,
+ 	if (cfg->port >= NUM_HE_HSSI_PORTS)
+ 		return -EINVAL;
+ 
+-	rte_memcpy(&priv->he_hssi_cfg, cfg, sizeof(priv->he_hssi_cfg));
++	memcpy(&priv->he_hssi_cfg, cfg, sizeof(priv->he_hssi_cfg));
+ 
  	return 0;
  }
+diff --git a/drivers/raw/ifpga/afu_pmd_he_lpbk.c b/drivers/raw/ifpga/afu_pmd_he_lpbk.c
+index df3b093157..9ecff2ac14 100644
+--- a/drivers/raw/ifpga/afu_pmd_he_lpbk.c
++++ b/drivers/raw/ifpga/afu_pmd_he_lpbk.c
+@@ -6,6 +6,7 @@
+ #include <stdio.h>
+ #include <stdint.h>
+ #include <stdlib.h>
++#include <string.h>
+ #include <inttypes.h>
+ #include <unistd.h>
+ #include <fcntl.h>
+@@ -15,7 +16,6 @@
  
-@@ -179,8 +179,7 @@ static int partial_hash_sha224(uint8_t *data_in, uint8_t *data_out)
- 	if (!SHA224_Init(&ctx))
- 		return -EFAULT;
- 	SHA256_Transform(&ctx, data_in);
--	rte_memcpy(data_out, &ctx,
--		   SHA256_DIGEST_LENGTH);
-+	memcpy(data_out, &ctx, SHA256_DIGEST_LENGTH);
+ #include <rte_eal.h>
+ #include <rte_malloc.h>
+-#include <rte_memcpy.h>
+ #include <rte_io.h>
+ #include <bus_pci_driver.h>
+ #include <bus_ifpga_driver.h>
+@@ -362,7 +362,7 @@ static int he_lpbk_config(struct afu_rawdev *dev, void *config,
+ 	if ((cfg->end < cfg->begin) || (cfg->end > MAX_CACHE_LINES))
+ 		return -EINVAL;
+ 
+-	rte_memcpy(&priv->he_lpbk_cfg, cfg, sizeof(priv->he_lpbk_cfg));
++	memcpy(&priv->he_lpbk_cfg, cfg, sizeof(priv->he_lpbk_cfg));
+ 
  	return 0;
  }
+diff --git a/drivers/raw/ifpga/afu_pmd_he_mem.c b/drivers/raw/ifpga/afu_pmd_he_mem.c
+index b595cd729c..b0453fbe55 100644
+--- a/drivers/raw/ifpga/afu_pmd_he_mem.c
++++ b/drivers/raw/ifpga/afu_pmd_he_mem.c
+@@ -6,6 +6,7 @@
+ #include <stdio.h>
+ #include <stdint.h>
+ #include <stdlib.h>
++#include <string.h>
+ #include <unistd.h>
+ #include <fcntl.h>
+ #include <poll.h>
+@@ -14,7 +15,6 @@
  
-@@ -191,8 +190,7 @@ static int partial_hash_sha256(uint8_t *data_in, uint8_t *data_out)
- 	if (!SHA256_Init(&ctx))
- 		return -EFAULT;
- 	SHA256_Transform(&ctx, data_in);
--	rte_memcpy(data_out, &ctx,
--		   SHA256_DIGEST_LENGTH);
-+	memcpy(data_out, &ctx, SHA256_DIGEST_LENGTH);
+ #include <rte_eal.h>
+ #include <rte_malloc.h>
+-#include <rte_memcpy.h>
+ #include <rte_io.h>
+ #include <bus_pci_driver.h>
+ #include <bus_ifpga_driver.h>
+@@ -125,7 +125,7 @@ static int he_mem_tg_config(struct afu_rawdev *dev, void *config,
+ 	if (config_size != sizeof(struct rte_pmd_afu_he_mem_tg_cfg))
+ 		return -EINVAL;
+ 
+-	rte_memcpy(&priv->he_mem_tg_cfg, config, sizeof(priv->he_mem_tg_cfg));
++	memcpy(&priv->he_mem_tg_cfg, config, sizeof(priv->he_mem_tg_cfg));
+ 
  	return 0;
  }
- 
-@@ -203,8 +201,7 @@ static int partial_hash_sha384(uint8_t *data_in, uint8_t *data_out)
- 	if (!SHA384_Init(&ctx))
- 		return -EFAULT;
- 	SHA512_Transform(&ctx, data_in);
--	rte_memcpy(data_out, &ctx,
--		   SHA512_DIGEST_LENGTH);
-+	memcpy(data_out, &ctx, SHA512_DIGEST_LENGTH);
- 	return 0;
- }
- 
-@@ -215,8 +212,7 @@ static int partial_hash_sha512(uint8_t *data_in, uint8_t *data_out)
- 	if (!SHA512_Init(&ctx))
- 		return -EFAULT;
- 	SHA512_Transform(&ctx, data_in);
--	rte_memcpy(data_out, &ctx,
--		   SHA512_DIGEST_LENGTH);
-+	memcpy(data_out, &ctx, SHA512_DIGEST_LENGTH);
- 	return 0;
- }
- 
-diff --git a/drivers/crypto/cnxk/cnxk_se.h b/drivers/crypto/cnxk/cnxk_se.h
-index 505a5fcd37..cf26373828 100644
---- a/drivers/crypto/cnxk/cnxk_se.h
-+++ b/drivers/crypto/cnxk/cnxk_se.h
-@@ -1252,7 +1252,7 @@ cpt_sm_prep(uint32_t flags, uint64_t d_offs, uint64_t d_lens, struct roc_se_fc_p
- 			void *dst = PLT_PTR_ADD(offset_vaddr, ROC_SE_OFF_CTRL_LEN);
- 			const uint64_t *src = fc_params->iv_buf;
- 
--			rte_memcpy(dst, src, 16);
-+			memcpy(dst, src, 16);
+diff --git a/drivers/raw/ifpga/afu_pmd_n3000.c b/drivers/raw/ifpga/afu_pmd_n3000.c
+index d5520a0d71..06acfbd12d 100644
+--- a/drivers/raw/ifpga/afu_pmd_n3000.c
++++ b/drivers/raw/ifpga/afu_pmd_n3000.c
+@@ -1864,8 +1864,8 @@ static int n3000_afu_config(struct afu_rawdev *dev, void *config,
+ 		if ((cfg->nlb_cfg.end < cfg->nlb_cfg.begin) ||
+ 			(cfg->nlb_cfg.end > MAX_CACHE_LINES))
+ 			return -EINVAL;
+-		rte_memcpy(&priv->nlb_cfg, &cfg->nlb_cfg,
+-			sizeof(struct rte_pmd_afu_nlb_cfg));
++		memcpy(&priv->nlb_cfg, &cfg->nlb_cfg,
++		       sizeof(struct rte_pmd_afu_nlb_cfg));
+ 	} else if (cfg->type == RTE_PMD_AFU_N3000_DMA) {
+ 		if (cfg->dma_cfg.index >= NUM_N3000_DMA)
+ 			return -EINVAL;
+@@ -1884,8 +1884,8 @@ static int n3000_afu_config(struct afu_rawdev *dev, void *config,
+ 					cfg->dma_cfg.length);
+ 			}
  		}
- 		inst->w4.u64 = cpt_inst_w4.u64;
+-		rte_memcpy(&priv->dma_cfg, &cfg->dma_cfg,
+-			sizeof(struct rte_pmd_afu_dma_cfg));
++		memcpy(&priv->dma_cfg, &cfg->dma_cfg,
++		       sizeof(struct rte_pmd_afu_dma_cfg));
  	} else {
-diff --git a/drivers/crypto/ipsec_mb/pmd_snow3g.c b/drivers/crypto/ipsec_mb/pmd_snow3g.c
-index 35fe23c157..6e84e34dc3 100644
---- a/drivers/crypto/ipsec_mb/pmd_snow3g.c
-+++ b/drivers/crypto/ipsec_mb/pmd_snow3g.c
-@@ -292,8 +292,8 @@ process_snow3g_hash_op(struct ipsec_mb_qp *qp, struct rte_crypto_op **ops,
+ 		IFPGA_RAWDEV_PMD_ERR("Invalid type of N3000 AFU");
+ 		return -EINVAL;
+diff --git a/drivers/raw/ifpga/ifpga_rawdev.c b/drivers/raw/ifpga/ifpga_rawdev.c
+index 1846cca669..b293cd626c 100644
+--- a/drivers/raw/ifpga/ifpga_rawdev.c
++++ b/drivers/raw/ifpga/ifpga_rawdev.c
+@@ -14,7 +14,6 @@
+ #include <rte_log.h>
+ #include <rte_malloc.h>
+ #include <rte_devargs.h>
+-#include <rte_memcpy.h>
+ #include <rte_pci.h>
+ #include <bus_pci_driver.h>
+ #include <rte_kvargs.h>
+@@ -258,7 +257,7 @@ static int ifpga_rawdev_fill_info(struct ifpga_rawdev *ifpga_dev)
+ 	if (point < 12)
+ 		return -1;
+ 	point -= 12;
+-	rte_memcpy(ifpga_dev->parent_bdf, &link[point], 12);
++	memcpy(ifpga_dev->parent_bdf, &link[point], 12);
  
- 			/* Copy back digest from src to auth.digest.data */
- 			if (digest_appended)
--				rte_memcpy(ops[i]->sym->auth.digest.data,
--					dst, SNOW3G_DIGEST_LENGTH);
-+				memcpy(ops[i]->sym->auth.digest.data, dst,
-+				       SNOW3G_DIGEST_LENGTH);
- 		}
- 		processed_ops++;
- 	}
-diff --git a/drivers/crypto/mlx5/mlx5_crypto_gcm.c b/drivers/crypto/mlx5/mlx5_crypto_gcm.c
-index 1a2600655a..77a0e14715 100644
---- a/drivers/crypto/mlx5/mlx5_crypto_gcm.c
-+++ b/drivers/crypto/mlx5/mlx5_crypto_gcm.c
-@@ -1061,9 +1061,9 @@ mlx5_crypto_gcm_ipsec_enqueue_burst(void *queue_pair,
- 		 * shrink AAD before payload. First backup the mem,
- 		 * then do shrink.
- 		 */
--		rte_memcpy(&qp->ipsec_mem[idx],
--			   RTE_PTR_SUB(payload, MLX5_CRYPTO_GCM_IPSEC_IV_SIZE),
--			   MLX5_CRYPTO_GCM_IPSEC_IV_SIZE);
-+		memcpy(&qp->ipsec_mem[idx],
-+		       RTE_PTR_SUB(payload, MLX5_CRYPTO_GCM_IPSEC_IV_SIZE),
-+		       MLX5_CRYPTO_GCM_IPSEC_IV_SIZE);
- 		/* If no memory overlap, do copy directly, otherwise memmove. */
- 		if (likely(pkt_iv_len >= sess->aad_len))
- 			rte_memcpy(gcm_data.src_addr, op->sym->aead.aad.data, sess->aad_len);
-@@ -1107,8 +1107,8 @@ mlx5_crypto_gcm_restore_ipsec_mem(struct mlx5_crypto_qp *qp,
- 		if (unlikely(sess->aad_len > MLX5_CRYPTO_GCM_IPSEC_IV_SIZE))
- 			memmove(op->sym->aead.aad.data,
- 				RTE_PTR_SUB(payload, sess->aad_len), sess->aad_len);
--		rte_memcpy(RTE_PTR_SUB(payload, MLX5_CRYPTO_GCM_IPSEC_IV_SIZE),
--			   &qp->ipsec_mem[idx], MLX5_CRYPTO_GCM_IPSEC_IV_SIZE);
-+		memcpy(RTE_PTR_SUB(payload, MLX5_CRYPTO_GCM_IPSEC_IV_SIZE),
-+		       &qp->ipsec_mem[idx], MLX5_CRYPTO_GCM_IPSEC_IV_SIZE);
- 		m_dst = op->sym->m_dst;
- 		if (m_dst && m_dst != m_src) {
- 			uint32_t bytes_to_copy;
-diff --git a/drivers/crypto/scheduler/rte_cryptodev_scheduler.c b/drivers/crypto/scheduler/rte_cryptodev_scheduler.c
-index 1ca8443431..95e4a69913 100644
---- a/drivers/crypto/scheduler/rte_cryptodev_scheduler.c
-+++ b/drivers/crypto/scheduler/rte_cryptodev_scheduler.c
-@@ -80,7 +80,7 @@ sync_caps(struct rte_cryptodev_capabilities *caps,
+ 	point = strlen(link1);
+ 	if (point < 26)
+@@ -949,10 +948,10 @@ ifpga_rawdev_pr(struct rte_rawdev *dev,
+ 		if (ret)
+ 			return ret;
  
- 		/* remove a uncommon cap from the array */
- 		for (j = i; j < sync_nb_caps - 1; j++)
--			rte_memcpy(&caps[j], &caps[j+1], sizeof(*cap));
-+			memcpy(&caps[j], &caps[j + 1], sizeof(*cap));
+-		rte_memcpy(&afu_pr_conf->afu_id.uuid.uuid_low, uuid.b,
+-			sizeof(u64));
+-		rte_memcpy(&afu_pr_conf->afu_id.uuid.uuid_high, uuid.b + 8,
+-			sizeof(u64));
++		memcpy(&afu_pr_conf->afu_id.uuid.uuid_low, uuid.b,
++		       sizeof(u64));
++		memcpy(&afu_pr_conf->afu_id.uuid.uuid_high, uuid.b + 8,
++		       sizeof(u64));
  
- 		memset(&caps[sync_nb_caps - 1], 0, sizeof(*cap));
- 		sync_nb_caps--;
-@@ -217,8 +217,8 @@ sync_sec_caps(uint32_t worker_idx,
- 		 * caps, from the arrays
- 		 */
- 		for (j = i; j < nb_sec_caps - 1; j++) {
--			rte_memcpy(&sec_caps[j], &sec_caps[j+1],
--					sizeof(*sec_cap));
-+			memcpy(&sec_caps[j], &sec_caps[j + 1],
-+			       sizeof(*sec_cap));
- 
- 			rte_memcpy(&sec_crypto_caps[j][0],
- 					&sec_crypto_caps[j+1][0],
-diff --git a/drivers/crypto/scheduler/scheduler_failover.c b/drivers/crypto/scheduler/scheduler_failover.c
-index 52ff2ffbb7..e7c6d19d25 100644
---- a/drivers/crypto/scheduler/scheduler_failover.c
-+++ b/drivers/crypto/scheduler/scheduler_failover.c
-@@ -171,12 +171,12 @@ scheduler_start(struct rte_cryptodev *dev)
- 		sched_ctx->workers[PRIMARY_WORKER_IDX].qp_id = i;
- 		sched_ctx->workers[SECONDARY_WORKER_IDX].qp_id = i;
- 
--		rte_memcpy(&qp_ctx->primary_worker,
--				&sched_ctx->workers[PRIMARY_WORKER_IDX],
--				sizeof(struct scheduler_worker));
--		rte_memcpy(&qp_ctx->secondary_worker,
--				&sched_ctx->workers[SECONDARY_WORKER_IDX],
--				sizeof(struct scheduler_worker));
-+		memcpy(&qp_ctx->primary_worker,
-+		       &sched_ctx->workers[PRIMARY_WORKER_IDX],
-+		       sizeof(struct scheduler_worker));
-+		memcpy(&qp_ctx->secondary_worker,
-+		       &sched_ctx->workers[SECONDARY_WORKER_IDX],
-+		       sizeof(struct scheduler_worker));
- 	}
- 
- 	return 0;
-diff --git a/drivers/crypto/zsda/zsda_crypto_session.c b/drivers/crypto/zsda/zsda_crypto_session.c
-index 5087ae248a..c01141dd94 100644
---- a/drivers/crypto/zsda/zsda_crypto_session.c
-+++ b/drivers/crypto/zsda/zsda_crypto_session.c
-@@ -178,7 +178,7 @@ u32_to_u8(uint32_t *u_int32_t_data, uint8_t *u8_data)
- {
- 	uint32_t be_data = rte_cpu_to_be_32(*u_int32_t_data);
- 
--	rte_memcpy(u8_data, &be_data, sizeof(be_data));
-+	memcpy(u8_data, &be_data, sizeof(be_data));
- }
- 
- static void
-@@ -283,8 +283,8 @@ zsda_decry_key_set(uint8_t key[64], const uint8_t *key1_ptr, uint8_t skey_len,
- 				    : ZSDA_AES512_ROUND_NUM;
- 		zsda_aes_key_expansion(aes_round_key, round_num, key1_ptr,
- 				       skey_len);
--		rte_memcpy(dec_key1,
--			   ((uint8_t *)aes_round_key + (16 * round_num)), 16);
-+		memcpy(dec_key1,
-+		       ((uint8_t *)aes_round_key + (16 * round_num)), 16);
- 
- 		if (skey_len == ZSDA_SYM_XTS_512_SKEY_LEN &&
- 			(16 * round_num) <= ZSDA_AES_MAX_EXP_BYTE_SIZE) {
-diff --git a/lib/cryptodev/rte_cryptodev.c b/lib/cryptodev/rte_cryptodev.c
-index 829a5d0846..cdbaf54e1e 100644
---- a/lib/cryptodev/rte_cryptodev.c
-+++ b/lib/cryptodev/rte_cryptodev.c
-@@ -16,7 +16,6 @@
- #include <rte_debug.h>
- #include <dev_driver.h>
+ 		IFPGA_RAWDEV_PMD_INFO("%s: uuid_l=0x%lx, uuid_h=0x%lx",
+ 			__func__,
+diff --git a/drivers/raw/skeleton/skeleton_rawdev.c b/drivers/raw/skeleton/skeleton_rawdev.c
+index 6e99d35536..256f45cb5d 100644
+--- a/drivers/raw/skeleton/skeleton_rawdev.c
++++ b/drivers/raw/skeleton/skeleton_rawdev.c
+@@ -20,7 +20,6 @@
+ #include <rte_log.h>
+ #include <rte_malloc.h>
  #include <rte_memory.h>
 -#include <rte_memcpy.h>
- #include <rte_memzone.h>
- #include <rte_eal.h>
- #include <rte_common.h>
-@@ -2566,8 +2565,7 @@ rte_cryptodev_sym_session_set_user_data(void *_sess, void *data,
- 	if (sess->user_data_sz < size)
- 		return -ENOMEM;
+ #include <rte_lcore.h>
+ #include <bus_vdev_driver.h>
  
--	rte_memcpy(sess->driver_priv_data + sess->sess_data_sz, data, size);
--
-+	memcpy(sess->driver_priv_data + sess->sess_data_sz, data, size);
- 	rte_cryptodev_trace_sym_session_set_user_data(sess, data, size);
+@@ -245,8 +244,8 @@ static int skeleton_rawdev_queue_def_conf(struct rte_rawdev *dev,
+ 	skelq = &skeldev->queues[queue_id];
+ 
+ 	if (queue_id < SKELETON_MAX_QUEUES)
+-		rte_memcpy(queue_conf, skelq,
+-			sizeof(struct skeleton_rawdev_queue));
++		memcpy(queue_conf, skelq,
++		       sizeof(struct skeleton_rawdev_queue));
  
  	return 0;
-@@ -2601,9 +2599,7 @@ rte_cryptodev_asym_session_set_user_data(void *session, void *data, uint16_t siz
- 	if (sess->user_data_sz < size)
- 		return -ENOMEM;
+ }
+@@ -281,8 +280,7 @@ static int skeleton_rawdev_queue_setup(struct rte_rawdev *dev,
  
--	rte_memcpy(sess->sess_private_data +
--			sess->max_priv_data_sz,
--			data, size);
-+	memcpy(sess->sess_private_data + sess->max_priv_data_sz, data, size);
- 
- 	rte_cryptodev_trace_asym_session_set_user_data(sess, data, size);
- 
-@@ -2750,7 +2746,7 @@ rte_cryptodev_session_event_mdata_set(uint8_t dev_id, void *sess,
- 			if (s->event_mdata == NULL)
- 				return -ENOMEM;
- 		}
--		rte_memcpy(s->event_mdata, ev_mdata, size);
-+		memcpy(s->event_mdata, ev_mdata, size);
- 
- 		return 0;
- 	} else
-@@ -3098,7 +3094,7 @@ crypto_caps_array(struct rte_tel_data *d,
- 	while ((dev_caps = &capabilities[i++])->op !=
- 			RTE_CRYPTO_OP_TYPE_UNDEFINED) {
- 		memset(&caps_val, 0, CRYPTO_CAPS_SZ * sizeof(caps_val[0]));
--		rte_memcpy(caps_val, dev_caps, sizeof(capabilities[0]));
-+		memcpy(caps_val, dev_caps, sizeof(capabilities[0]));
- 		for (j = 0; j < CRYPTO_CAPS_SZ; j++)
- 			rte_tel_data_add_array_uint(d, caps_val[j]);
- 	}
+ 	if (skeldev->num_queues > queue_id &&
+ 	    q->depth < SKELETON_QUEUE_MAX_DEPTH) {
+-		rte_memcpy(q, queue_conf,
+-			   sizeof(struct skeleton_rawdev_queue));
++		memcpy(q, queue_conf, sizeof(struct skeleton_rawdev_queue));
+ 		clear_queue_bufs(queue_id);
+ 	} else {
+ 		SKELETON_PMD_ERR("Invalid queue configuration");
+diff --git a/drivers/raw/skeleton/skeleton_rawdev_test.c b/drivers/raw/skeleton/skeleton_rawdev_test.c
+index 99765feb41..d818912f0f 100644
+--- a/drivers/raw/skeleton/skeleton_rawdev_test.c
++++ b/drivers/raw/skeleton/skeleton_rawdev_test.c
+@@ -7,7 +7,6 @@
+ #include <rte_common.h>
+ #include <rte_mbuf.h>
+ #include <rte_malloc.h>
+-#include <rte_memcpy.h>
+ #include <dev_driver.h>
+ #include <rte_rawdev.h>
+ #include <bus_vdev_driver.h>
 -- 
 2.53.0
 
