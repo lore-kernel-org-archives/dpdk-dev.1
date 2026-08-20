@@ -2,73 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 993FCC5DF81
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Aug 2026 20:18:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A0EC5DF81
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Aug 2026 20:42:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9FED240268;
-	Thu, 20 Aug 2026 22:18:55 +0200 (CEST)
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com
- [209.85.216.49]) by mails.dpdk.org (Postfix) with ESMTP id CFEAE400EF
- for <dev@dpdk.org>; Thu, 20 Aug 2026 22:18:54 +0200 (CEST)
-Received: by mail-pj1-f49.google.com with SMTP id
- 98e67ed59e1d1-38f0f132f56so970289a91.0
- for <dev@dpdk.org>; Thu, 20 Aug 2026 13:18:54 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id DA88840268;
+	Thu, 20 Aug 2026 22:42:50 +0200 (CEST)
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com
+ [209.85.218.54]) by mails.dpdk.org (Postfix) with ESMTP id A3B4B400EF
+ for <dev@dpdk.org>; Thu, 20 Aug 2026 22:42:49 +0200 (CEST)
+Received: by mail-ej1-f54.google.com with SMTP id
+ a640c23a62f3a-c15c42a45adso239635466b.0
+ for <dev@dpdk.org>; Thu, 20 Aug 2026 13:42:49 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1787258569; cv=none;
+ d=google.com; s=arc-20260327;
+ b=GULrQD9oSHRjxrtUkieBHedW3GUytJfdQr2R6ULRyk1/PSB+sRZkqNKSk4fvB9Is/q
+ skkcS0qh6EgfoWwQHHDEYLMhWzY3JhfS58qiZvvtckH07Jj7bCNftuKypPMxvWxopbax
+ akkfy/PQs0h5jLSsin/HY6Ep8ffVuuViEtNmOoHANeY+VZforAzt0nHTR1oOXCAJWMLx
+ wMyTCPBIT4TRNuvlMM97+3CjlqyIkoT+IZ/0JNb7tUKu6F7hDxrPIpYlWjfpaDtvsuqh
+ AQ6cLdup4ixjnvBSDn7AvcrUtJ4zJlTn3UJ//rJ2E7fK3EVIn2CnPYJoOOX+w40Bo0U3
+ 3rtQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=L5A1OwIG0NQPSMMebnpFrPqHs8HALaa60ZzdLg5wmX0=;
+ fh=z1K73h+yJ7HQRrUY+A9JfBaOk1E4zbg0PkouGWGfh+o=;
+ b=c+aC5W80ZCAsVmGvv07PXdmeCeZ57LQSVYweJwhVODM+OUwCFjr/FlVy7KglEn7cnC
+ vxLQRxaWqfCiKTJSvHYt14eKRyYdeGJtO3om9sO9ZXptuhZS2dZqxSGJPWWuemfS5ZpO
+ 96QO5btSWX7+rI7Py3bZ04AVh8xLrKydgyjoxPNaTSn0hQMx1vcpBrqth0QDzHUHA/LG
+ U1tQsLgqwdbeJQNxZic9TdEDi4ERUSxbVlmel1I9V6JFlw/XmQvWXPRHCv6bpMREmvg6
+ zKJ9JQSHnPTYNr3/kD9FmHrqHdPYY8f1fVtzvUJAZe2bRxKjvwGo27NVjqYOr1q1JLrt
+ DXBw==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787257134;
- x=1787861934; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ d=google.com; s=20251104; t=1787258569; x=1787863369; darn=dpdk.org;
+ h=content-transfer-encoding:content-type:cc:to:subject:message-id
+ :date:from:in-reply-to:references:mime-version:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=QiEwNionPG7fFNe4vIzCtVhWQX90VhA5ogqOKlrWkTM=;
- b=c962zQPfL88jLjAwa0U4DgbqJZJ/LxPIRxtquYBiog2Kc0g31JZY/156jh+dvgaHQA
- oCqcDFr8t2tGqFvIT0i2VYgDuans7v4xPKJEq6+HqRn5rncqXBnXfhfYeOQZVcFpcDDl
- ee2l/VC25pCwfXAl7ZIiLgcTzUoCTyvWX6rlGP7Z2JElWUPHo92XKq3QzKSIAt3+7TvK
- cSqXp31Wbb1s/xWOzDVI6qTXImsCxKnfuoDdQBAlwr/rGqBAyIM2KMc66i0k4On2XN4d
- cr+4d19dI/9P1rHMpkQRsgEdpHBtNOIjfFJuJuECjNJoUrF77N5YGfpWHfCyA3Maouq8
- Z31g==
+ bh=L5A1OwIG0NQPSMMebnpFrPqHs8HALaa60ZzdLg5wmX0=;
+ b=VC4ArV5thh/klSMMLpkxV0m0K/6emDPnUbfGIsQJ4DDILwz2PSz9+6sqKB4R2BsRk/
+ FmEEZ6+Wfs4x7Ykfhk0pPPPTMuiC3YSp/E11L8d51myHv/lHKL17vXMAWP/1wHgahRa9
+ 8dfg2TBmhyFFS6XMbK3OMINPQacWqXxvrqomPfmN5tpetbAY5qFnohXv0bSqHFvRFf2D
+ R2KwAtgiky2+xpFPLDgli/yVr9n9hkCiZR2DG0ceOw+apajwdqkANz+7JMFAy/gNl8j2
+ nFbhlRoZveofVx7a51pmpKG6TyKoclJVBdaNgJyerK0dlziThAoVLMx7fGBH7c4pr57N
+ mxOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787257134; x=1787861934;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ d=1e100.net; s=20251104; t=1787258569; x=1787863369;
+ h=content-transfer-encoding:content-type:cc:to:subject:message-id
+ :date:from:in-reply-to:references:mime-version:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=QiEwNionPG7fFNe4vIzCtVhWQX90VhA5ogqOKlrWkTM=;
- b=GjVQkibhKXgWY0jqbU9vCW5M/REedOZ5nHORnXXnYPhsYRkZO/jvrbe9PW6D6m0blc
- GteM5XnVL9Qo/VP6pwmBOozm/dNExx1sCjH71IQtD5W3o/BXY6VtbZV6ciPHDSSFKlC1
- ZhiG6HH/lQIHYQgN3jpEJEO18L2aAbMJs4NyLlrC4UcphplHgW/rKWEPLKGxxD/R0t+u
- oYDwAgThQDIX8KF8zLARU0LpxWbP0GT5RR5f8FlUgFIVnkQKkK2dyLU6/KAMMYhL/ZhO
- vwbR3psRLyOPVdAfgT9NnMS/1vc04IEBr+4bpE+/vIK4ZXYhtVCVTj3iToceNcjF2rlf
- D8wA==
-X-Gm-Message-State: AFuF++mhXeDXl5mKzAQ302x7jEy6JddbyvI6uOGF52V4U5QC4zJC9Dyy
- OT1AJ8jQcuzI+wlxVcxsE2qDk/Nsxy+10offwoqJSY5mXq65TqdKrOYbcuojv4FK1w0=
-X-Gm-Gg: AR+sD10h0vxr81QKyyufn8pe0MkXiAtG6ind7om7OyzCNBLCEE4HKWXxMOf6DQS0JGW
- PjQl64Ig7Yt4M4m7zkPtpN3cZgbGyWmNsB7RvXMKhI9AdVTUC8PvEN805z4w2UhGUJhl6lPUf+q
- PdwlUIHC18EVapD5KDe6sGgyPHmOwRYwvqahsToCG1s+VtLk3d1M9qoqh+On+N0NqjBUp17kYys
- O0FMgsoJnpNsJ02xcwa5BUGMSTFulFKMpAB67arviepR/ctJRPwzJQ38v2bvyUBKNU4nj1EPhOC
- gUtfsjZtMQOeao3Fnf9sGnje+dFrBoP4WBg/3vVGc/iXSC5vBiRqfCJOCTSg1ROIZAKEHv3ACRm
- HEBGln2CwMAMB/TYUtEIwUKfR4GCxXXXNKgKRz3rXJfEvaGh1YJYtfraiYm7819+ABaf/ok5kua
- Rf/R06duAyIdlvmubsd+YxUqOyMsLpEckUDenK4yN29a2zBf0F/yhztOToyg0anx6zubZNHRjTp
- PAt43hmZsAUWvcmfdvlczg0fdGXtQ==
-X-Received: by 2002:a17:90b:5823:b0:38e:c232:9d2c with SMTP id
- 98e67ed59e1d1-395c4bde19amr488197a91.2.1787257133853; 
- Thu, 20 Aug 2026 13:18:53 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-395c4be666bsm245735a91.11.2026.08.20.13.18.51
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 20 Aug 2026 13:18:53 -0700 (PDT)
-Date: Thu, 20 Aug 2026 13:18:45 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: <dev@dpdk.org>, "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
- "Bruce Richardson" <bruce.richardson@intel.com>
-Subject: Re: [PATCH 00/61] reduce use of rte_memcpy
-Message-ID: <20260820131845.100e3cf6@phoenix.local>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F659FD@smartserver.smartshare.dk>
-References: <20260820052251.1453273-1-stephen@networkplumber.org>
- <98CBD80474FA8B44BF855DF32C47DC35F659FD@smartserver.smartshare.dk>
+ bh=L5A1OwIG0NQPSMMebnpFrPqHs8HALaa60ZzdLg5wmX0=;
+ b=kyTKh3vnHaooXlPvMiButsyk6k8zIdUtfMU+K23KCrRkZ5g/H445wMLQtReyHHdAIn
+ NmcSeRJzSPmxQjFUuH+vNrOp0AfZMAVVDCSkeFWC1GKv/dwa10+kYNfqh/Xfi1ruT4aB
+ HrpUQUd+6SizH3UcYEI58mHq0sui1fN0/ebuvqoZEbAbFjm7mMp9yac3XwjCJSVIW//k
+ 1dSG3xUTKxT2NxOs9AI6GCS6auE1R9xDsiWkuq7EulsgNbvDihNm8tEAQPPkq5hpPJO5
+ X50lIcUTo96Nq1HD8qjCgxu4sEvPYoMJoKdXhOxf9Zkb95DHfODldeD63QqpE4LoE5uX
+ 9PhA==
+X-Gm-Message-State: AOJu0Yx0okemxlOU7uv7HQA+KZEDS0zNiX0B9sKTvGvI0srOnbjwP0x2
+ 8p2kk2gqM5s+Rc7+ic0We/eGapTq9j++vYkUiBd9IGSQ6jx44dMBMC7X98CU46r/0qYaCXRudXy
+ OdBOCsMDlNLtJiN+Q9ZOq1YgOX81/GEBtDI1PiU7YQeKsQEnXYCNf8IDy
+X-Gm-Gg: AR+sD10jRekpU1svd4CMKqd7+hpvA1dyVTuBcL82v3S4kUjX7RMHYdUlIgtkilDRiUN
+ YpKr5UHmsAsc0bHWV3QWFhl3rX9UMRHmuViyCYaT7RR7Ng/X4mHnFtoaUVPnvtfhiuEoyZHc5Qm
+ E/KuUZNAXTG6+z30mywTQ139D4BwXmAPvvZxj+tPJF2S8Ml7QQo9Ta40TxGUEQ0zFy67iv+nTfm
+ yTYm+++Bq7DcmSyQoDj62vmGIFpdp/7t8aHMr7g8r+NxL0TktqNw9B0fEGd68WkmJRSRvr1vu6i
+ F+wxUnRsSrcYpwr2iSnBan7OZDQF2hUa+EIPQAOC8iA04g==
+X-Received: by 2002:a17:907:d641:b0:c12:8a:7d7b with SMTP id
+ a640c23a62f3a-c244d45ad42mr699026166b.1.1787258568653; Thu, 20 Aug 2026
+ 13:42:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20260820052251.1453273-1-stephen@networkplumber.org>
+ <20260820052251.1453273-29-stephen@networkplumber.org>
+In-Reply-To: <20260820052251.1453273-29-stephen@networkplumber.org>
+From: Joshua Washington <joshwash@google.com>
+Date: Thu, 20 Aug 2026 13:42:36 -0700
+X-Gm-Features: AcwNN1Uzk-PHt-rtTjEkXIxC-m7MYiwiMAOqasz77Sc7IxYxOANPrJV3s45PYGk
+Message-ID: <CALuQH+XHHjcxHfQq6jm9ccSLzjZRe5pWR58KaJ_HEvDv8-8Y=A@mail.gmail.com>
+Subject: Re: [PATCH 28/61] net/gve: replace use of rte_memcpy
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, Jeroen de Borst <jeroendb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -83,29 +96,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 20 Aug 2026 09:31:40 +0200
-Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
+On Wed, Aug 19, 2026 at 10:24=E2=80=AFPM Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+>
+> Don't need rte_memcpy for fixed size value.
+>
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 
-> > Many platforms have no special rte_memcpy() and just use memcpy().
-> >=20
-> > But many analysis and test tools know that memcpy() is a special
-> > case and check for overwrite, bounds errors etc. Therefore memcpy()
-> > should be preferred wherever possible. =20
->=20
-> I think this is the only substantial benefit of replacing rte_memcpy() wi=
-th memcpy()!
-> Could we reap this benefit by having special builds for such tools, where=
- rte_memcpy() is modified to use memcpy() instead?
-> Then we wouldn't have to compromise on performance.
->=20
-> Also, rte_memcpy() used to have a pragma disabling bounds checks due to s=
-ome Intel drivers using [0] instead of []; the pragma was removed from rte_=
-memcpy() when the Intel drivers were fixed.
-> I'm not sufficiently familiar with analysis/test tools to say what they c=
-an detect when using memcpy() instead of the copy methods used by rte_memcp=
-y().
+Reviewed-by: Joshua Washington <joshwash@google.com>
 
-
-The most common one is fortify which is runtime checking and part of Ubuntu=
- etc
-build. So no doing some #ifdef FORTIFY_SOURCE really is not helping.
+> ---
+>  drivers/net/gve/base/gve_adminq.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/gve/base/gve_adminq.c b/drivers/net/gve/base/gve=
+_adminq.c
+> index 89bf669c24..b7621a1fd1 100644
+> --- a/drivers/net/gve/base/gve_adminq.c
+> +++ b/drivers/net/gve/base/gve_adminq.c
+> @@ -1083,7 +1083,7 @@ int gve_adminq_describe_device(struct gve_priv *pri=
+v)
+>         }
+>         priv->max_mtu =3D mtu;
+>         priv->num_event_counters =3D be16_to_cpu(descriptor->counters);
+> -       rte_memcpy(priv->dev_addr.addr_bytes, descriptor->mac, ETH_ALEN);
+> +       memcpy(priv->dev_addr.addr_bytes, descriptor->mac, ETH_ALEN);
+>         PMD_DRV_LOG(INFO, "MAC addr: " RTE_ETHER_ADDR_PRT_FMT,
+>                     RTE_ETHER_ADDR_BYTES(&priv->dev_addr));
+>         priv->tx_pages_per_qpl =3D be16_to_cpu(descriptor->tx_pages_per_q=
+pl);
+> --
+> 2.53.0
+>
