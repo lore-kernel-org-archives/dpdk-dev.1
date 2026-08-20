@@ -2,52 +2,80 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 518F6C5DF81
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Aug 2026 19:14:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BA87C5DF86
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Aug 2026 20:14:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1A0674026D;
-	Thu, 20 Aug 2026 21:14:28 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id 2FE0E400EF;
- Thu, 20 Aug 2026 21:14:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1787253266; x=1818789266;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=rVM1wX3uFUXwalZVQXK2n5c6/hcxnfTv0b6/b7TUV14=;
- b=hieYBNHOvPUKDB+XxQXkBZmkL245zedS3ZXXM357OsMaL/sbnfaFjr5D
- fFxjhdEwN028yTXU8HtzVOW6S9aRRqbFdpTR9d2xIFcVT3g3hF7d4bRHo
- RRtZ5UkCYkJKsJIRHGZjxzJSNcZCbQhSVhtI9OwRCMyBRrjGAVBRRPdoD
- JxR/1fjc1dtIDNGfvVUPAusCCYwKE0M5MJiraLGB7oqI9FSPdi29LNdQj
- BULYH+l5NfjPgGoryTeTvQpOfV+7am42eQJgYxH4ceR0hlPos6addQGgm
- uI+SxgFbFyISamXylwajKIFstF4huwIZCn1gcMwZl0dPmHG2e0f9VFLXP g==;
-X-CSE-ConnectionGUID: vMoSYepDROmKrcWotBNIRw==
-X-CSE-MsgGUID: 3bHKgB8sSPmTmBNrzvPBRw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11881"; a="75331445"
-X-IronPort-AV: E=Sophos;i="6.25,233,1779174000"; d="scan'208";a="75331445"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
- by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 20 Aug 2026 12:14:25 -0700
-X-CSE-ConnectionGUID: ezkmbqU0QpKKZxeZKA6KtQ==
-X-CSE-MsgGUID: WNrev4hhRpCzRTYr9RkHAg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,233,1779174000"; d="scan'208";a="289644039"
-Received: from unknown (HELO localhost.localdomain.iind.intel.com)
- ([10.49.105.104])
- by fmviesa002.fm.intel.com with ESMTP; 20 Aug 2026 12:14:23 -0700
-From: sandeep.penigalapati@intel.com
-To: dev@dpdk.org
-Cc: stable@dpdk.org, stephen@networkplumber.org, ciara.loftus@intel.com,
- Sandeep Penigalapati <sandeep.penigalapati@intel.com>
-Subject: [PATCH v6] net/af_xdp: fix shared UMEM refcount corruption
-Date: Thu, 20 Aug 2026 22:16:07 -0400
-Message-Id: <20260821021607.232149-1-sandeep.penigalapati@intel.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20260821004435.216833-1-sandeep.penigalapati@intel.com>
-References: <20260821004435.216833-1-sandeep.penigalapati@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 1C1B640268;
+	Thu, 20 Aug 2026 22:14:07 +0200 (CEST)
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com
+ [209.85.216.41]) by mails.dpdk.org (Postfix) with ESMTP id C6594400EF
+ for <dev@dpdk.org>; Thu, 20 Aug 2026 22:14:05 +0200 (CEST)
+Received: by mail-pj1-f41.google.com with SMTP id
+ 98e67ed59e1d1-39266382df6so175949a91.3
+ for <dev@dpdk.org>; Thu, 20 Aug 2026 13:14:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787256845;
+ x=1787861645; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=xqLBuj/IFrfm/9GFiITHH/+UY+lbxG5AcL3Gx7LM/ic=;
+ b=MG0tTIWWNgI4Pg0m8euir95W6NpHe1dMz1wYiRVTskVHkokhlIpTMvL2jM13iTL/6w
+ htPel04dBkevj7Ac8L5bA62RCeGFp8FCltN5aMa4M7L6L6hFWxbwXKbqf3MnmIasCfQk
+ VUZnerwjLsgFeuuUg1gYJjK2i2jyoXMG/Rpq3usYz5eS9m/wXS7foBnB5aKR/xQK3DY+
+ HhBXMdYwJ82lECyzzLQiN6tVwCXQkdG0eTPkUYd8frxhjbMEI/rYxmsdHKPNTL36z3yR
+ yFTpSB/NXMW5AcGso3iHQ8GoANrqV75wgWeev9zZCQgSfuk+9EBT11xOQS1zHGOdaARM
+ 3ikg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1787256845; x=1787861645;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=xqLBuj/IFrfm/9GFiITHH/+UY+lbxG5AcL3Gx7LM/ic=;
+ b=e8Ewo9u6M8DQ1ApAI/dXFiQ/3RYVjk9+ubamX0lxtYzmJZitzraHwkUaS7uxrhpb93
+ Cm+GnIDBaUg2Bz6tLrh3CIKizXPw7ycnyqiWw4pFt08uOlS6yWn6CxNQpZMwZvtct85d
+ RIE1Zq5d+pt0/y2h4KFdh9E0E2NS0xFrt7aEfWi3fo7Rfn1K04wpZXZOl5ST3WquZTUf
+ ki4ezaq8fT6iokDfkPMH3ClCt3V50uLIPJvdsqScVUpu2hywT3pnqrVCpp6RDb5LCDSs
+ kpaXlAH1fxRw8no21ULn3vLKrXA4Rj7Zo5TkzkGv5xB/WEO77F8OMZu3AkX0setkuMIB
+ 9L6g==
+X-Forwarded-Encrypted: i=1;
+ AHgh+RqgPWDvReRIDwK4bw333hhGS4FV+Ctq/8IVoNQPUtOZCqGCtTKsAJTUH8DjodUiA+kuTwA=@dpdk.org
+X-Gm-Message-State: AFuF++lB9BiAviZmMwi8UH4hUONwVNSSNtzEve+4TuIXTtjAGX8VI30a
+ W3+tZSKAjq+EU5PhUlaepoyIc9xmg0I0bWFpWBkgEQI3tYoNkSBZypX9qJV3i5hYZgU=
+X-Gm-Gg: AR+sD102oHaSphVmsx6o/mCWVTv/5Fbn/iiwRmwujBwqpy6oxcu+LcXH4xyBDvTrD+s
+ gz+UMG6QkQ3K6hXYAYXMgcI8E1ns/IhdL5c+iOb6XrAxQraTCXh7/bQUHgesKOzkAKwg1Mx/V/Q
+ 0ZMdCacbPTmLKPK5bbTXlvJgRI3KIPa2hrlvDaRTelExUBsJRY2iqqisFc+KYAPcl/0geamfgkq
+ kKuw6uX3TFzUYShCCPxEcsg4OFHz/fzhr5GqNZMQgsqu2L6YqChbGnhYxsluLmWKsM2Zdcb2kgr
+ EgNcRp5B7BQvBRGDSEkmVBLhL/ryc/23TZkHmenq4blQnGSLxM2ZnEDKxskga/zHSKs0p0R8gGU
+ 7viQ5m8DMeDkvrokd+xOoLMiQVc1v2sr6nV8O3Zrro2t4YC6iD/v6d72UOvVG4srzJetoCWzJqF
+ 8T1YuMmY44jDnaWdF5j2tnGjtUCMAzvmj8sBlAwmM1hVumws8LzwmvxxlNGrqmcK7Dar9VTkJXv
+ l/h1Q0kH8j9q1dBJ/9TL0Dk8kZey7STJrjf3TeJ
+X-Received: by 2002:a17:90b:1a90:b0:37f:bfd6:8b40 with SMTP id
+ 98e67ed59e1d1-395c33a0168mr1387269a91.5.1787256844565; 
+ Thu, 20 Aug 2026 13:14:04 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-395c457126esm247727a91.1.2026.08.20.13.14.01
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 20 Aug 2026 13:14:04 -0700 (PDT)
+Date: Thu, 20 Aug 2026 13:13:55 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
+Cc: "Konstantin Ananyev" <konstantin.ananyev@huawei.com>, <dev@dpdk.org>,
+ "Bruce Richardson" <bruce.richardson@intel.com>
+Subject: Re: [PATCH 00/61] reduce use of rte_memcpy
+Message-ID: <20260820131355.0b7d971a@phoenix.local>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65A06@smartserver.smartshare.dk>
+References: <20260820052251.1453273-1-stephen@networkplumber.org>
+ <98CBD80474FA8B44BF855DF32C47DC35F659FD@smartserver.smartshare.dk>
+ <42ecbb8129514f52b456549ee66757b2@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F65A01@smartserver.smartshare.dk>
+ <f469a51afd3547eca1ce56f6abb0285b@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F65A06@smartserver.smartshare.dk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,290 +89,274 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
+On Thu, 20 Aug 2026 16:00:53 +0200
+Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
 
-Shared UMEM is meant to be shared by a limited number of sockets,
-governed by the mempool size (max_xsks). When the UMEM was already at
-capacity (refcnt >= max_xsks), xdp_umem_configure() returned the UMEM
-without incrementing its refcount, so the extra socket used it
-unaccounted for.
+> > From: Konstantin Ananyev [mailto:konstantin.ananyev@huawei.com]
+> > Sent: Thursday, 20 August 2026 15.08
+> >  =20
+> > > > > About replacing rte_memcpy with memcpy()...
+> > > > > =20
+> > > > > > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
+> > > > > > Sent: Thursday, 20 August 2026 07.12
+> > > > > >
+> > > > > > The DPDK function rte_memcpy() only exists as an optimization
+> > > > > > for shortcomings in performance of libc memcpy() on some =20
+> > platforms. =20
+> > > > >
+> > > > > Yes, and those platforms should benefit from it.
+> > > > >
+> > > > > E.g. the vhost performance improvements for Haswell and Broadwell=
+ =20
+> > > > [1]. =20
+> > > > > Where similar performance improvements implemented in the =20
+> > relevant =20
+> > > > > compilers (GCC, Clang, MSVC)?
+> > > > >
+> > > > > [1]:
+> > > > > =20
+> > > > =20
+> > > =20
+> > https://github.com/DPDK/dpdk/commit/4b42e90ef0e421dc777f2b2e377eb237cd =
+=20
+> > > > > 3675fa
+> > > > >
+> > > > > IMO, performance should remain a high priority for DPDK. =20
+> > > >
+> > > > As I can read the series, good few of them do remove rte_memcpy =20
+> > from =20
+> > > > the CP,
+> > > > where it is clearly irrelevant. =20
+> > >
+> > > Agree!
+> > > =20
+> > > > For those on the DP, at least for some of them we can run perf =20
+> > tests: =20
+> > > > let say for hash we do have perf_autotest which can be used to =20
+> > measure =20
+> > > > the
+> > > > perf diff. If there is none, or neglectable - then no point to keep
+> > > > rte_memcpy here. =20
+> > >
+> > > Unless that perf test is run on all platforms, the result only shows =
+=20
+> > perf diff on =20
+> > > the tested platforms. =20
+> >=20
+> > How this patch differs from all others? =20
+>=20
+> It removes something that is supposed to be a performance optimization.
+> E.g. reference [1] fixes vhost performance on Haswell and Broadwell; if w=
+e remove rte_memcpy(), the performance of that use case on those CPU types =
+might drop back to being bad.
+>=20
+> > For each and every change we made in DPDK, to ensure that there is no
+> > perf regression introduced we rely on:
+> > 1) CI auto testing
+> > 2) manual testing from some platform vendors (once per release cycle)
+> > 3) good will of submitter to test the changes he produces as much as
+> > possible
+> > Obviously, yes we are not testing on each possible platform and yes, in
+> > theory
+> > some regressions can sneak in unseen.
+> > But that could happen with other patches too, so from my perspective -
+> > we just need our usual testing procedure here, if it shows no
+> > regression,
+> > the patch is good to go in.
+> >  =20
+> > > > =20
+> > > > > =20
+> > > > > > Many platforms have no special rte_memcpy() and just use =20
+> > memcpy(). =20
+> > > > > >
+> > > > > > But many analysis and test tools know that memcpy() is a =20
+> > special =20
+> > > > > > case and check for overwrite, bounds errors etc. Therefore =20
+> > memcpy() =20
+> > > > > > should be preferred wherever possible. =20
+> > > > >
+> > > > > I think this is the only substantial benefit of replacing =20
+> > > > rte_memcpy() with =20
+> > > > > memcpy()!
+> > > > > Could we reap this benefit by having special builds for such =20
+> > tools, =20
+> > > > where =20
+> > > > > rte_memcpy() is modified to use memcpy() instead?
+> > > > > Then we wouldn't have to compromise on performance.
+> > > > >
+> > > > > Also, rte_memcpy() used to have a pragma disabling bounds checks =
+=20
+> > due =20
+> > > > to some =20
+> > > > > Intel drivers using [0] instead of []; the pragma was removed =20
+> > from =20
+> > > > rte_memcpy() =20
+> > > > > when the Intel drivers were fixed.
+> > > > > I'm not sufficiently familiar with analysis/test tools to say =20
+> > what =20
+> > > > they can detect =20
+> > > > > when using memcpy() instead of the copy methods used by =20
+> > rte_memcpy(). =20
+> > > > > =20
+> > > > > >
+> > > > > > This patch series introduces a coccinelle script to find
+> > > > > > calls to rte_memcpy() where size is fixed, and change them to
+> > > > > > regular memcpy(). This was the starting point for this cleanup.
+> > > > > >
+> > > > > > There is also some cleanups to include rte_memcpy.h and =20
+> > string.h =20
+> > > > > > where needed. Often the includes were happening by some other
+> > > > > > header. And also removal of rte_memcpy.h where no longer =20
+> > needed. =20
+> > > > > >
+> > > > > > The result is a 46% reduction in use of rte_memcpy.
+> > > > > > The remaining rte_memcpy can be cleaned up later:
+> > > > > >  - drivers with active maintenance (like mlx5);
+> > > > > >  - changes to rte_memcpy which need benchmarking;
+> > > > > >  - test code for rte_memcpy can be removed as last step.
+> > > > > >
+> > > > > > No functional change, no warnings in all compilers including =20
+> > LTO. =20
+> > > > >
+> > > > > memcpy() does not always use inline vector instructions for fixed=
+ =20
+> > > > size copy [2]. =20
+> > > > >
+> > > > > [2]:
+> > > > > =20
+> > > https://inbox.dpdk.org/dev/98CBD80474FA8B44BF855DF32C47DC35F659B8@sma=
+ =20
+> > > > > rtserver.smartshare.dk/
+> > > > >
+> > > > >
+> > > > > Another disadvantage of rte_memcpy() is the lack of developer =20
+> > > > guidance. =20
+> > > > > It is not well documented when to use rte_memcpy() and when to =20
+> > use =20
+> > > > memcpy(). =20
+> > > > > We discussed something similar on the Tech Board meeting =20
+> > yesterday; =20
+> > > > it is not =20
+> > > > > well documented when to use which type of "ring" (normal, RTS, =20
+> > HTS), =20
+> > > > so maybe =20
+> > > > > we could remove one of them.
+> > > > > But removing an option is not an improvement, if the removed =20
+> > option =20
+> > > > would =20
+> > > > > have been the better choice for some use cases.
+> > > > >
+> > > > > PS: The general guidance for rte_memcpy() usage is something =20
+> > like: =20
+> > > > > rte_memcpy() only in fast path,
+> > > > > memcpy() everywhere else,
+> > > > > assignment "=3D" when copying fixed size structures. =20
+> > > >
+> > > > I suppose for te_memcpy() we can be even more strict:
+> > > > Use it only for DP, and only after measurement, that shows
+> > > > clear perf improvement over ordinal memcpy().
+> > > > Alnd also ask contributors to document it (in the comments), i.e.:
+> > > > /* on <platform testsed> rte_memcpy() gives X% perf boost when =20
+> > doing =20
+> > > > ...*/
+> > > > rte_memcpy(...); =20
+> > >
+> > > Disagree!
+> > > DPDK has performance optimized libs and functions.
+> > > Developers should not need to document that using a DPDK function is =
+=20
+> > faster =20
+> > > than using a libc function.
+> > > We don't require perf measurements for using DPDK rte_hash instead of=
+ =20
+> > libc =20
+> > > hashmap. =20
+> >=20
+> > Not sure what libc hashmap you are talking about?
+> > AFAIK such thing doesn't exist.. or you talking about c++ maps? =20
+>=20
+> Sorry, it was hashmap in libmba. Bad example.
+>=20
+> > If so, then I think the analogy is not correct.
+> > Why not to remember another example when we get rid of our own
+> > hand-written atomics and barriers in favor of using atomics ones. =20
+>=20
+> Great example.
+> IIRC, many people were involved in this effort, and it was thoroughly rev=
+iewed for correctness and performance.
+> And some of the old atomics still ended up remaining for performance reas=
+ons.
+> And C11 atomics is still not the default for DPDK.
+>=20
+> That level of effort doesn't seem to be on the table for migrating from r=
+te_memcpy() to memcpy().
+> The vibe I'm sensing is more like: "Compilers' built-in memcpy() is just =
+as good as rte_memcpy(), so rte_memcpy() has outlived itself."
+> And maybe that statement is true, but I just don't feel confident about i=
+t.
+> Perhaps I'm just being too cautious here.
+>=20
+> >  =20
+> > >
+> > > I agree about not using rte_memcpy() in the control plane.
+> > > And I support Stephen's effort to clean this up.
+> > >
+> > > But why the eagerness to avoid using rte_memcpy() in the fast path? =
+=20
+> >=20
+> > I think we are not talking about 'avoiding' but about 'limiting'.
+> > There are many cases, when people use rte_memcpy() just because
+> > 'it is used in other places, so it is probably better'
+> > In general memcpy()  and rte_memcpy() have same syntax,
+> > provide same functionality, plus CC vendors made a good progress in
+> > optimizing memcpy(),
+> > so now for many cases it provides nearly the same or better
+> > performance.
+> > I think no-one forces to replace rte_memcpy() in places where it does
+> > provide better results,
+> > but for the cases when there is no perf difference, I think memcpy()
+> > should have precedence. =20
+>=20
+> You prefer memcpy() over rte_memcpy() when they perform similarly.
+> That's your preference.
+> And you are not alone with that preference.
+>=20
+> When they perform similarly, I prefer rte_memcpy().
+> And it seems I'm in the minority with that preference.
+>=20
+> If we set up barriers to using rte_memcpy(), we'll see even more custom i=
+mplementations, such as in the ring [3] and stack [4] libraries.
+> But maybe (and I'm being serious here!) that might be a good thing after =
+all:
+> Use memcpy() for general cases, and use individually specialized versions=
+ for special use cases.
+> (Possibly using pragmas to tweak memcpy() for some of those special use c=
+ases.)
+>=20
+> [3]: https://elixir.bootlin.com/dpdk/v26.07/source/lib/ring/rte_ring_elem=
+_pvt.h#L65
+> [4]: https://elixir.bootlin.com/dpdk/v26.07/source/lib/stack/rte_stack_st=
+d.h#L40
+>=20
+> Here's an alternative path...
+> PowerPC rte_memcpy() uses memcpy() for fixed size copies [5].
+> And ARM makes the rte_memcpy() implementation build time optional [6].
+> We could start softly by copying these two concepts to X86 architecture.
+>=20
+> [5]: https://elixir.bootlin.com/dpdk/v26.07/source/lib/eal/ppc/include/rt=
+e_memcpy.h#L80
+> [6]: https://elixir.bootlin.com/dpdk/v26.07/source/lib/eal/arm/include/rt=
+e_memcpy_64.h#L13
+>=20
 
-This missing reference has two consequences. During queue setup the
-fill-queue reservation is chosen from the refcount, so the sharing
-socket reserves into its own uninitialised fill queue and crashes. At
-close, the under-counted refcount reaches zero while the UMEM is still
-in use, freeing it early and causing a use-after-free.
 
-Reject sharing once the UMEM is at capacity by returning NULL. The
-error is propagated from xsk_configure(), so Rx queue setup fails
-cleanly with -ENOMEM. This applies the per-mempool socket limit that
-shared UMEM was always intended to respect.
+I used to think for DPDK performance should be the highest priority.
+Now I think the priorities need to be:
+  - security. in the age of AI scanners, security has to come first.
+  - performance.
+  - architecture. code must be logical and readable as much as possible.
+  - consistency. don't do special cases if not needed for 1,2,3
 
-Harden the failure path this makes reachable:
-- clear rxq->umem and its paired txq->umem when xsk_configure() fails,
-  and skip queues whose UMEM is not yet set in get_shared_umem(), so a
-  later scan over the same mempool cannot dereference a NULL or
-  dangling UMEM;
-- free the fill-queue mbufs that were allocated but not yet handed to
-  the fill queue when a sharing socket fails to bind, so it no longer
-  leaks a burst of mbufs back out of the shared mempool;
-- propagate the map-insert failures in xsk_configure() instead of
-  returning success, so a failed xsks_map update no longer leaves the
-  caller using a deleted socket;
-- continue past, rather than stop at, a failed queue in eth_dev_close()
-  so later successful queues and their UMEM references are still freed;
-- clamp max_xsks to UINT8_MAX so the cap stays within the uint8_t
-  refcount.
-
-Also correct the UMEM refcount memory ordering: release on the shared
-increment and acquire-release on the final decrement, so the thread that
-drops the last reference observes all prior users' writes before it
-frees the UMEM.
-
-Document the shared mempool sizing requirement (4096 mbufs per socket).
-
-Note: on stable branches this is a behaviour change. Shared-UMEM setups
-that previously appeared to start, until the fill-queue crash or the
-use-after-free at close, now fail cleanly at Rx queue setup with
--ENOMEM.
-
-Fixes: 74b46340e2d4 ("net/af_xdp: support shared UMEM")
-Cc: stable@dpdk.org
-
-Signed-off-by: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
----
-v6:
-- Use release ordering on the shared refcount increment.
-- doc: note the 4096 mbufs are for the fill queue.
-- Refer to eth_rx_queue_setup() in the eth_dev_close() skip comment.
-- Log the mempool's mbuf count and the required minimum when it is too
-  small to share the UMEM, and wrap the log lines to stay under 100
-  columns.
-
-v5:
-- Use acq_rel on the final refcount decrement instead of a release
-  decrement plus a standalone acquire fence.
-- doc: one sentence per line.
-- Drop the redundant fq_bufs ownership comment.
-
-v4:
-- Free fill-queue mbufs on the failure path.
-- Propagate map-insert failures and the -ENOMEM from xsk_configure() to
-  the caller instead of a blanket -EINVAL / silent success.
-- eth_dev_close(): continue past failed queues instead of break.
-- Correct refcount memory ordering (relaxed increment, release
-  decrement, acquire fence before destroy).
-- Clamp max_xsks to UINT8_MAX so the cap fits the uint8_t refcount.
-- Clear txq->umem on the early return; clearer log when the mempool is
-  too small (max_xsks == 0).
-
-v3:
-- Move the NULL umem check after ctx_exists() so a failed queue is still
-  checked for a duplicate context, as before.
-- Shorten the "at capacity" log to one line and drop the count.
-- Also clear txq->umem, not just rxq->umem, when setup fails.
-- Clarify "AF_XDP socket" in the doc.
-
-v2:
-- Guard get_shared_umem() against a NULL umem and clear rxq->umem on the
-  xsk_configure() error path.
-- doc: "Rx queue setup fails", one sentence per line.
-- Drop unrelated reflow of the refcount increment.
-
- doc/guides/nics/af_xdp.rst          |  4 ++
- drivers/net/af_xdp/rte_eth_af_xdp.c | 64 +++++++++++++++++++++++------
- 2 files changed, 56 insertions(+), 12 deletions(-)
-
-diff --git a/doc/guides/nics/af_xdp.rst b/doc/guides/nics/af_xdp.rst
-index c455b4c066..249efc8c43 100644
---- a/doc/guides/nics/af_xdp.rst
-+++ b/doc/guides/nics/af_xdp.rst
-@@ -99,6 +99,10 @@ configured like so:
-     --vdev net_af_xdp0,iface=ens786f1,shared_umem=1 \
-     --vdev net_af_xdp1,iface=ens786f2,shared_umem=1
- 
-+The shared mempool must be large enough for every AF_XDP socket sharing the UMEM.
-+Each socket needs 4096 mbufs for its fill queue, so ``N`` sockets need at least ``4096 * N`` mbufs.
-+Rx queue setup fails if the mempool is too small to add another socket to the UMEM.
-+
- xdp_prog
- ~~~~~~~~
- 
-diff --git a/drivers/net/af_xdp/rte_eth_af_xdp.c b/drivers/net/af_xdp/rte_eth_af_xdp.c
-index 2cdb533276..5f808d1b83 100644
---- a/drivers/net/af_xdp/rte_eth_af_xdp.c
-+++ b/drivers/net/af_xdp/rte_eth_af_xdp.c
-@@ -1062,12 +1062,13 @@ eth_dev_close(struct rte_eth_dev *dev)
- 
- 	for (i = 0; i < internals->queue_cnt; i++) {
- 		rxq = &internals->rx_queues[i];
-+		/* Skip queues where eth_rx_queue_setup() was never called or failed. */
- 		if (rxq->umem == NULL)
--			break;
-+			continue;
- 		xsk_socket__delete(rxq->xsk);
- 
- 		if (rte_atomic_fetch_sub_explicit(&rxq->umem->refcnt, 1,
--				rte_memory_order_acquire) - 1 == 0)
-+				rte_memory_order_acq_rel) - 1 == 0)
- 			xdp_umem_destroy(rxq->umem);
- 	}
- 	/* Free Tx and Rx queue arrays */
-@@ -1154,6 +1155,9 @@ get_shared_umem(struct pkt_rx_queue *rxq, const char *ifname,
- 					ret = -1;
- 					goto out;
- 				}
-+				/* A failed setup leaves mb_pool set with no umem. */
-+				if (list_rxq->umem == NULL)
-+					continue;
- 				if (rte_atomic_load_explicit(&internals->rx_queues[i].umem->refcnt,
- 						    rte_memory_order_acquire)) {
- 					*umem = internals->rx_queues[i].umem;
-@@ -1188,12 +1192,29 @@ xsk_umem_info *xdp_umem_configure(struct pmd_internals *internals,
- 		if (get_shared_umem(rxq, internals->if_name, &umem) < 0)
- 			return NULL;
- 
--		if (umem != NULL &&
--			rte_atomic_load_explicit(&umem->refcnt, rte_memory_order_acquire) <
--					umem->max_xsks) {
-+		if (umem != NULL) {
-+			/* Reject sharing once the UMEM is at capacity. */
-+			if (rte_atomic_load_explicit(&umem->refcnt,
-+					rte_memory_order_acquire) >= umem->max_xsks) {
-+				if (umem->max_xsks == 0)
-+					AF_XDP_LOG_LINE(ERR,
-+						"%s,qid%i: mempool %s has %u mbufs, "
-+						"need at least %u to share UMEM",
-+						internals->if_name, rxq->xsk_queue_idx,
-+						umem->mb_pool->name,
-+						umem->mb_pool->populated_size,
-+						ETH_AF_XDP_NUM_BUFFERS);
-+				else
-+					AF_XDP_LOG_LINE(ERR,
-+						"%s,qid%i: UMEM %s already at max %u sockets",
-+						internals->if_name, rxq->xsk_queue_idx,
-+						umem->mb_pool->name, umem->max_xsks);
-+				return NULL;
-+			}
-+
- 			AF_XDP_LOG_LINE(INFO, "%s,qid%i sharing UMEM",
- 					internals->if_name, rxq->xsk_queue_idx);
--			rte_atomic_fetch_add_explicit(&umem->refcnt, 1, rte_memory_order_acquire);
-+			rte_atomic_fetch_add_explicit(&umem->refcnt, 1, rte_memory_order_release);
- 		}
- 	}
- 
-@@ -1239,8 +1260,10 @@ xsk_umem_info *xdp_umem_configure(struct pmd_internals *internals,
- 		umem->buffer = aligned_addr;
- 
- 		if (internals->shared_umem) {
--			umem->max_xsks = mb_pool->populated_size /
--						ETH_AF_XDP_NUM_BUFFERS;
-+			/* refcnt is uint8_t, so the cap cannot exceed UINT8_MAX. */
-+			umem->max_xsks = RTE_MIN(mb_pool->populated_size /
-+						ETH_AF_XDP_NUM_BUFFERS,
-+						(uint32_t)UINT8_MAX);
- 			AF_XDP_LOG_LINE(INFO, "Max xsks for UMEM %s: %u",
- 						mb_pool->name, umem->max_xsks);
- 		}
-@@ -1684,10 +1707,13 @@ xsk_configure(struct pmd_internals *internals, struct pkt_rx_queue *rxq,
- 	int reserve_size = ETH_AF_XDP_DFLT_NUM_DESCS;
- 	struct rte_mbuf *fq_bufs[reserve_size];
- 	bool reserve_before;
-+	bool free_fq_bufs = false;
- 
- 	rxq->umem = xdp_umem_configure(internals, rxq);
--	if (rxq->umem == NULL)
-+	if (rxq->umem == NULL) {
-+		txq->umem = NULL;
- 		return -ENOMEM;
-+	}
- 	txq->umem = rxq->umem;
- 	reserve_before = rte_atomic_load_explicit(&rxq->umem->refcnt,
- 			rte_memory_order_acquire) <= 1;
-@@ -1698,11 +1724,13 @@ xsk_configure(struct pmd_internals *internals, struct pkt_rx_queue *rxq,
- 		AF_XDP_LOG_LINE(DEBUG, "Failed to get enough buffers for fq.");
- 		goto out_umem;
- 	}
-+	free_fq_bufs = true;
- #endif
- 
- 	/* reserve fill queue of queues not (yet) sharing UMEM */
- 	if (reserve_before) {
- 		ret = reserve_fill_queue(rxq->umem, reserve_size, fq_bufs, &rxq->fq);
-+		free_fq_bufs = false;
- 		if (ret) {
- 			AF_XDP_LOG_LINE(ERR, "Failed to reserve fill queue.");
- 			goto out_umem;
-@@ -1759,6 +1787,7 @@ xsk_configure(struct pmd_internals *internals, struct pkt_rx_queue *rxq,
- 	if (!reserve_before) {
- 		/* reserve fill queue of queues sharing UMEM */
- 		ret = reserve_fill_queue(rxq->umem, reserve_size, fq_bufs, &rxq->fq);
-+		free_fq_bufs = false;
- 		if (ret) {
- 			AF_XDP_LOG_LINE(ERR, "Failed to reserve fill queue.");
- 			goto out_xsk;
-@@ -1774,6 +1803,7 @@ xsk_configure(struct pmd_internals *internals, struct pkt_rx_queue *rxq,
- 					  &rxq->xsk_queue_idx, &fd, 0);
- 		if (err) {
- 			AF_XDP_LOG_LINE(ERR, "Failed to insert xsk in map.");
-+			ret = -EINVAL;
- 			goto out_xsk;
- 		}
- 	}
-@@ -1786,6 +1816,7 @@ xsk_configure(struct pmd_internals *internals, struct pkt_rx_queue *rxq,
- 			map_fd = uds_get_xskmap_fd(internals->if_name, internals->dp_path);
- 			if (map_fd < 0) {
- 				AF_XDP_LOG_LINE(ERR, "Failed to receive xskmap fd from AF_XDP Device Plugin");
-+				ret = -EINVAL;
- 				goto out_xsk;
- 			}
- 		} else {
-@@ -1793,6 +1824,7 @@ xsk_configure(struct pmd_internals *internals, struct pkt_rx_queue *rxq,
- 			err = get_pinned_map(internals->dp_path, &map_fd);
- 			if (err < 0 || map_fd < 0) {
- 				AF_XDP_LOG_LINE(ERR, "Failed to retrieve pinned map fd");
-+				ret = -EINVAL;
- 				goto out_xsk;
- 			}
- 		}
-@@ -1800,6 +1832,7 @@ xsk_configure(struct pmd_internals *internals, struct pkt_rx_queue *rxq,
- 		err = update_xskmap(rxq->xsk, map_fd, rxq->xsk_queue_idx);
- 		if (err) {
- 			AF_XDP_LOG_LINE(ERR, "Failed to insert xsk in map.");
-+			ret = -EINVAL;
- 			goto out_xsk;
- 		}
- 
-@@ -1816,8 +1849,15 @@ xsk_configure(struct pmd_internals *internals, struct pkt_rx_queue *rxq,
- out_xsk:
- 	xsk_socket__delete(rxq->xsk);
- out_umem:
--	if (rte_atomic_fetch_sub_explicit(&rxq->umem->refcnt, 1, rte_memory_order_acquire) - 1 == 0)
-+	/* Free fq_bufs that were allocated but never handed to the fill queue. */
-+	if (free_fq_bufs)
-+		rte_pktmbuf_free_bulk(fq_bufs, reserve_size);
-+	if (rte_atomic_fetch_sub_explicit(&rxq->umem->refcnt, 1,
-+			rte_memory_order_acq_rel) - 1 == 0)
- 		xdp_umem_destroy(rxq->umem);
-+	/* Drop dangling pointers so a later shared-UMEM scan skips this queue. */
-+	rxq->umem = NULL;
-+	txq->umem = NULL;
- 
- 	return ret;
- }
-@@ -1858,9 +1898,9 @@ eth_rx_queue_setup(struct rte_eth_dev *dev,
- 
- 	rxq->mb_pool = mb_pool;
- 
--	if (xsk_configure(internals, rxq, nb_rx_desc)) {
-+	ret = xsk_configure(internals, rxq, nb_rx_desc);
-+	if (ret) {
- 		AF_XDP_LOG_LINE(ERR, "Failed to configure xdp socket");
--		ret = -EINVAL;
- 		goto err;
- 	}
- 
--- 
-2.27.0
-
+Also, no longer care if performance goes down for users using new releases
+on five year old tool chains. If they are on GCC over five years old=20
+(pre GCC 10) then the problem is really the tool set not DPDK.
