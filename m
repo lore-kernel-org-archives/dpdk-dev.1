@@ -2,44 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA88FC5DF81
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Aug 2026 10:02:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB2D7C5DF88
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Aug 2026 10:49:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0B43340150;
-	Thu, 20 Aug 2026 12:02:51 +0200 (CEST)
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
- by mails.dpdk.org (Postfix) with ESMTP id 63E18400EF;
- Thu, 20 Aug 2026 08:13:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
- s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
- Message-ID; bh=xNcIqIOntJh3IVqmkHlInnJA8tpRK2U7BIv0JG3+b2Q=; b=i
- 9aGnYpb4kUWhTu0Gk+E3baDAh66aUl2iq1P0yuWd6CbEeTKZPq7rl61dMdAVDsIU
- FwMJtKqsZaPMfagRgxjWmEyHQKiYxdCj4nkyJa2vJD/GzBjOad6oot4pi7Yvtdyt
- IVxLmWsgqAIJBNagvd3P/piISC32Ld+rO0f3tHJM04=
-Received: from becauseof86$163.com ( [112.21.42.50] ) by
- ajax-webmail-wmsvr-40-119 (Coremail) ; Thu, 20 Aug 2026 14:13:03 +0800
- (CST)
-X-Originating-IP: [112.21.42.50]
-Date: Thu, 20 Aug 2026 14:13:03 +0800 (CST)
-From: bb <becauseof86@163.com>
-To: users@dpdk.org
-Cc: dmitry.kozliuk@gmail.com, dev@dpdk.org, ming3.li@intel.com,
- pallavi.kadam@intel.com
-Subject: Windows 10/11 x64 signed NetUIO and virt2phys packages - listed
- Microsoft contact is no longer valid
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
- 20260511(2e539873) Copyright (c) 2002-2026 www.mailtech.cn 163com
-X-NTES-SC: AL_Qu2TBf6buUsj5SmQZOkcn0cXh+g9Xse0svgn34Bfc/8EnDHM9wcGYFZGB0nW1uK+Bw+OrjWGTj9i+uZqRaV1NxXqGTgTNtlfRw5a3F+/ew==
-Content-Type: multipart/alternative; 
- boundary="----=_Part_66081_479743880.1787206383988"
+	by mails.dpdk.org (Postfix) with ESMTP id C402F40671;
+	Thu, 20 Aug 2026 12:49:54 +0200 (CEST)
+Received: from fhigh-a7-smtp.messagingengine.com
+ (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+ by mails.dpdk.org (Postfix) with ESMTP id 6107F400EF;
+ Thu, 20 Aug 2026 12:49:53 +0200 (CEST)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id C1D901400188;
+ Thu, 20 Aug 2026 06:49:52 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-04.internal (MEProxy); Thu, 20 Aug 2026 06:49:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1787222992;
+ x=1787309392; bh=2HsORG2xl83wMrRU9Gzx8pH4f3GQqQVt0pRWVwSC788=; b=
+ CoBY+UA5aWjvbJNOG9B0Tzm3UbpGKv+2SnCd6FWYl9nNrnnJ71V+JbdajJ9BEF5L
+ W45ks6j3N83ACXQ31nr9MXemiokPXon65fZngwgifTTgmJh2iC1XyNcAAl6T2+5M
+ M83EES5JdG0XKv+VDGXZCd9kS/7Hodpi+a8Uhism6PX3lEwcx8JM7iGHZnrMblkL
+ 7rpL0Rv+YwgxJ+TNonIctABwEcG8gL/d+Zub8W9JgyVLq6F8hqBXmH0RX9mCkTOQ
+ wph5yLI0yrsmTNhJkJePQWtRj2DBrseR5ptsOf0Tky5HeyHjSAuWhhUA3VaD3Z9Z
+ bXgFH1J/ClZBJryGZ++gDQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1787222992; x=
+ 1787309392; bh=2HsORG2xl83wMrRU9Gzx8pH4f3GQqQVt0pRWVwSC788=; b=G
+ 41lo6OzAqEzv1utc0PyGIfiaSRdkY8VVpGy9HU+Fdir2xItaaKsmOnyJsyTaZ3Lx
+ LgJv5ipEPkwnBmjO8kikfYjTxqQ5pWMgf6UjfMuiN7+i9I3UIutfS5ooDXwh6hOg
+ iZrscJ5auUGQLqmLB23S9g+luEC+DJ8V1B8xId78W2MVatvwuHKqpwuhqrysCZJ8
+ ckTlN2gITVRE6zPduhEFPS8sO0o7en59s41PC2JuvSaGWhPugTQ/yAke9L62M7vv
+ wkWGa4PNRqEgSqbQwHxIcbkbGaC7nJag185XW80ChRQffRVK/pzJkZUigFVr5NPd
+ Ufs7S+aXxKvWXnaIt8dtg==
+X-ME-Sender: <xms:0NuGao_9tDRNJe9qTLpSSQYXg3kUEVXIFSFvg-UIFj5Ixa4K5l7krA>
+ <xme:0NuGakZjeGxFgXD_ndRwYNIthaNQxIVagtOtpJ8MTkYWPJsiJandTNCw-HLL6Z3xT
+ buEExKTWo0d8fODBYrm9k0JGNzcXoCQHfcD1d8yF_IGmuGz2LtjnyQ>
+X-ME-Received: <xmr:0NuGamp2clhmtt-sC0aIjEDVNU9C5XmB7KQH8VUnYfTRC_SKKXUWIdq-Cx6HBfM6>
+X-ME-Proxy-Cause: dmFkZTFaBo+Jg+zKxSPfP9ejL48x4dOCBIzupDXexLcv4zslCGzVWtfarsgejOEj1YeWhw
+ Zc2AMJpm4l+TsrkoUAycsQjUHhUBklMETSH5J32jzyg5v9dzlOJ8mVp7V+fG5ceQWt7G0z
+ Gvuyn3bg9DMakxV16HEeGBE1pB31TTyNpcjcVnrT/wIYHvyrNv40noyx6dzoTPIjA0OOMA
+ s6SDG+zRpuT/jDSQ2t8PbShr+1fxRHvjjmFodlXz1iR2mZWidGSeJvdw3BMRbUGsTOztsb
+ ZHSq4ZHqpihTZCWU/fX9VXTVvndxa/T34kGqEI08aTU99qMhg0NBBUjCFfUvAEYX3DG2mj
+ OS0mEH1we3iPdnrTgRaeSxg92vTPED0KzWmxg3itNNUTyDntlpL7TJnadF55sZjHB0WY8j
+ MJsObSn+TeBfsPLYkkrGH1vHViGvSUEMC5v4lE5srtfTK50dMI60eDTL3AZs3ChrTD+PZs
+ fy7YZIXPonOhgKEXlKO4ly+p72p48eVfklPnIiiVO3cHtclV6j4XC7HY6gHMgK4X18veAM
+ 0+ZL6EXly7C6t+ZrQzGpVzYy+bzodGJpYWm5o5f9rJiqA36I6zN6ze/XhPIzprb75acsUj
+ ojguw4xM4pKA4at5kJTPsBtEs+M/+O2I079tQOxVDBq+l8Q5iD2Njy3+71eg
+X-ME-Proxy: <xmx:0NuGap3uV8VqfHbNLBKK8HghvjB6opO1QjG7sbjaNwakUF2GB66eDg>
+ <xmx:0NuGauku-ESl6BR69At1V6iyIeviFipYhKfNwTRB4Iim_xYSPtEpWA>
+ <xmx:0NuGalaOu0Kt-VIzjc4vD6z9Uimzph0a_p96VsXHXDiGB1XCO4aTVQ>
+ <xmx:0NuGag9ygJl7ptXXHPoe6QfdZD2VG-geKchAYa7-_paijTAGN0yS2Q>
+ <xmx:0NuGamkpE4gtsItNWWP49qtOzveiRHq4FSdI4NBE4qOvN4XPlcDzZkRt>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 20 Aug 2026 06:49:50 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: bb <becauseof86@163.com>
+Cc: users@dpdk.org, dev@dpdk.org, dmitry.kozliuk@gmail.com,
+ ming3.li@intel.com, pallavi.kadam@intel.com,
+ Gena Tertychnyi <genter@microsoft.com>,
+ Andre Muezerie <andremue@linux.microsoft.com>, greg.cusanza@microsoft.com,
+ Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Itai Sharoni <isharoni@nvidia.com>, Tal Shnaiderman <talshn@nvidia.com>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: Re: Windows 10/11 x64 signed NetUIO and virt2phys packages
+Date: Thu, 20 Aug 2026 12:49:48 +0200
+Message-ID: <cGq2-0faQ9iJv0T0f8ECAA@monjalon.net>
+In-Reply-To: <1edaac48.4371.1a01dcd3974.Coremail.becauseof86@163.com>
+References: <1edaac48.4371.1a01dcd3974.Coremail.becauseof86@163.com>
 MIME-Version: 1.0
-Message-ID: <1edaac48.4371.1a01dcd3974.Coremail.becauseof86@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID: dygvCgD33_DwmoZqFHk1AA--.4981W
-X-CM-SenderInfo: 5ehft3hvhrwmqw6rljoofrz/xtbC7xAfNGqGmvDgqwAA3Z
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
-X-Mailman-Approved-At: Thu, 20 Aug 2026 12:02:50 +0200
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,86 +93,100 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-------=_Part_66081_479743880.1787206383988
-Content-Type: text/plain; charset=GBK
-Content-Transfer-Encoding: base64
+Hello,
 
-RGVhciBEUERLIFdpbmRvd3MgbWFpbnRhaW5lcnMgYW5kIHVzZXJzLAoKV2UgYXJlIGV2YWx1YXRp
-bmcgRFBESyBmb3IgcHJvZHVjdGlvbiBkZXBsb3ltZW50IG9uIFdpbmRvd3MgMTAgeDY0IGFuZCBX
-aW5kb3dzIDExIHg2NC4KCk91ciBoYXJkd2FyZSBpbmNsdWRlcyBJbnRlbCBYTDcxMCBhZGFwdGVy
-cywgTlZJRElBL01lbGxhbm94IENvbm5lY3RYIGFkYXB0ZXJzIHVzaW5nIHRoZSBtbHg1IFBNRCwg
-YW5kIG90aGVyIFBDSWUgbmV0d29yayBhZGFwdGVycy4KCldlIG5lZWQgcHJlY29tcGlsZWQsIHBy
-b2R1Y3Rpb24tcmVhZHksIE1pY3Jvc29mdC1zaWduZWQgb3IgV0hRTC1jZXJ0aWZpZWQgeDY0IGlu
-c3RhbGxhdGlvbiBwYWNrYWdlcyBmb3I6CgoxLiBOZXRVSU8KMi4gdmlydDJwaHlzCgpUaGUgTmV0
-VUlPIFJFQURNRSBjdXJyZW50bHkgc3RhdGVzIHRoYXQgYSBXSFFMLXNpZ25lZCBOZXRVSU8gZHJp
-dmVyIGNhbiBiZSByZXF1ZXN0ZWQgZnJvbSBkcGRrd2luQG1pY3Jvc29mdC5jb206CgpodHRwczov
-L2dpdC5kcGRrLm9yZy9kcGRrLWttb2RzL3RyZWUvd2luZG93cy9uZXR1aW8vUkVBRE1FLnJzdAoK
-SG93ZXZlciwgdGhhdCBhZGRyZXNzIGlzIG5vIGxvbmdlciB2YWxpZC4gTWljcm9zb2Z0IHJlamVj
-dGVkIHRoZSBtZXNzYWdlIHdpdGg6Cgo1NTAgNS40LjEgUmVjaXBpZW50IGFkZHJlc3MgcmVqZWN0
-ZWQ6IEFjY2VzcyBkZW5pZWQKCkNvdWxkIHlvdSBwbGVhc2UgY29uZmlybToKCjEuIFdoZXRoZXIg
-c2lnbmVkIE5ldFVJTyBhbmQgdmlydDJwaHlzIHBhY2thZ2VzIGN1cnJlbnRseSBleGlzdCBmb3Ig
-V2luZG93cyAxMC8xMSB4NjQuCjIuIFdoZXRoZXIgdGhleSBhcmUgcHVibGljbHkgZG93bmxvYWRh
-YmxlIG9yIGF2YWlsYWJsZSB0aHJvdWdoIGEgdmVuZG9yIG9yIGNvbW1lcmNpYWwgc3VwcG9ydCBj
-aGFubmVsLgozLiBUaGUgY3VycmVudCBjb250YWN0IHJlc3BvbnNpYmxlIGZvciBvYnRhaW5pbmcg
-dGhlc2UgcGFja2FnZXMuCjQuIFdoZXRoZXIgTmV0VUlPIHN1cHBvcnRzIEludGVsIFhMNzEwL0U4
-MTAgYW5kIG90aGVyIFBDSSBkZXZpY2UgSURzIGluIGEgc2lnbmVkIHBhY2thZ2UuCjUuIFdoZXRo
-ZXIgdmlydDJwaHlzIGlzIHN0aWxsIHJlcXVpcmVkIGZvciBtbHg1IHdpdGggV2luT0YtMiwgb3Ig
-d2hldGhlciBJT1ZBLWFzLVZBIGlzIG9mZmljaWFsbHkgc3VwcG9ydGVkIGluIHByb2R1Y3Rpb24u
-CjYuIFdoZXRoZXIgdGhlIHBhY2thZ2VzIHN1cHBvcnQgU2VjdXJlIEJvb3QgYW5kIEhWQ0kgLyBX
-aW5kb3dzIE1lbW9yeSBJbnRlZ3JpdHkuCjcuIFdoZXRoZXIgcmVkaXN0cmlidXRpb24gd2l0aCBh
-IGNvbW1lcmNpYWwgYXBwbGljYXRpb24gaXMgcGVybWl0dGVkLgo4LiBXaGV0aGVyIHRoZSBvYnNv
-bGV0ZSBkcGRrd2luQG1pY3Jvc29mdC5jb20gYWRkcmVzcyBjYW4gYmUgcmVtb3ZlZCBvciByZXBs
-YWNlZCBpbiB0aGUgZHBkay1rbW9kcyBkb2N1bWVudGF0aW9uLgoKUmVsZXZhbnQgc291cmNlIGFu
-ZCBkb2N1bWVudGF0aW9uOgoKTmV0VUlPOgpodHRwczovL2dpdC5kcGRrLm9yZy9kcGRrLWttb2Rz
-L3RyZWUvd2luZG93cy9uZXR1aW8KCnZpcnQycGh5czoKaHR0cHM6Ly9naXQuZHBkay5vcmcvZHBk
-ay1rbW9kcy90cmVlL3dpbmRvd3MvdmlydDJwaHlzCgpXaW5kb3dzIGRyaXZlciBkb2N1bWVudGF0
-aW9uOgpodHRwczovL2dpdC5kcGRrLm9yZy9kcGRrLWttb2RzL3RyZWUvd2luZG93cy9SRUFETUUu
-cnN0CgpEUERLIFdpbmRvd3MgcmVxdWlyZW1lbnRzOgpodHRwczovL2RvYy5kcGRrLm9yZy9ndWlk
-ZXMvd2luZG93c19nc2cvcnVuX2FwcHMuaHRtbAoKRFBESyBtbHg1IGRvY3VtZW50YXRpb246Cmh0
-dHBzOi8vZG9jLmRwZGsub3JnL2d1aWRlcy9uaWNzL21seDUuaHRtbAoKVGhhbmsgeW91IGZvciBh
-bnkgY3VycmVudCBpbmZvcm1hdGlvbiBvciBjb250YWN0IGRldGFpbHMgeW91IGNhbiBwcm92aWRl
-LgoKQmVzdCByZWdhcmRzLAo=
-------=_Part_66081_479743880.1787206383988
-Content-Type: text/html; charset=GBK
-Content-Transfer-Encoding: base64
+Thank you for the catch and the good questions.
+We need answers from Microsoft, Intel and NVIDIA.
 
-PGRpdiBkYXRhLW50ZXM9Im50ZXNfbWFpbF9ib2R5X3Jvb3QiIHN0eWxlPSJsaW5lLWhlaWdodDox
-Ljc7Y29sb3I6IzAwMDAwMDtmb250LXNpemU6MTRweDtmb250LWZhbWlseTpBcmlhbCI+PGRpdiBz
-dHlsZT0ibWFyZ2luOjA7Ij48cHJlIGRpcj0ibHRyIj48Y29kZT5EZWFyIERQREsgV2luZG93cyBt
-YWludGFpbmVycyBhbmQgdXNlcnMsCgpXZSBhcmUgZXZhbHVhdGluZyBEUERLIGZvciBwcm9kdWN0
-aW9uIGRlcGxveW1lbnQgb24gV2luZG93cyAxMCB4NjQgYW5kIFdpbmRvd3MgMTEgeDY0LgoKT3Vy
-IGhhcmR3YXJlIGluY2x1ZGVzIEludGVsIFhMNzEwIGFkYXB0ZXJzLCBOVklESUEvTWVsbGFub3gg
-Q29ubmVjdFggYWRhcHRlcnMgdXNpbmcgdGhlIG1seDUgUE1ELCBhbmQgb3RoZXIgUENJZSBuZXR3
-b3JrIGFkYXB0ZXJzLgoKV2UgbmVlZCBwcmVjb21waWxlZCwgcHJvZHVjdGlvbi1yZWFkeSwgTWlj
-cm9zb2Z0LXNpZ25lZCBvciBXSFFMLWNlcnRpZmllZCB4NjQgaW5zdGFsbGF0aW9uIHBhY2thZ2Vz
-IGZvcjoKCjEuIE5ldFVJTwoyLiB2aXJ0MnBoeXMKClRoZSBOZXRVSU8gUkVBRE1FIGN1cnJlbnRs
-eSBzdGF0ZXMgdGhhdCBhIFdIUUwtc2lnbmVkIE5ldFVJTyBkcml2ZXIgY2FuIGJlIHJlcXVlc3Rl
-ZCBmcm9tIGRwZGt3aW5AbWljcm9zb2Z0LmNvbToKCmh0dHBzOi8vZ2l0LmRwZGsub3JnL2RwZGst
-a21vZHMvdHJlZS93aW5kb3dzL25ldHVpby9SRUFETUUucnN0CgpIb3dldmVyLCB0aGF0IGFkZHJl
-c3MgaXMgbm8gbG9uZ2VyIHZhbGlkLiBNaWNyb3NvZnQgcmVqZWN0ZWQgdGhlIG1lc3NhZ2Ugd2l0
-aDoKCjU1MCA1LjQuMSBSZWNpcGllbnQgYWRkcmVzcyByZWplY3RlZDogQWNjZXNzIGRlbmllZAoK
-Q291bGQgeW91IHBsZWFzZSBjb25maXJtOgoKMS4gV2hldGhlciBzaWduZWQgTmV0VUlPIGFuZCB2
-aXJ0MnBoeXMgcGFja2FnZXMgY3VycmVudGx5IGV4aXN0IGZvciBXaW5kb3dzIDEwLzExIHg2NC4K
-Mi4gV2hldGhlciB0aGV5IGFyZSBwdWJsaWNseSBkb3dubG9hZGFibGUgb3IgYXZhaWxhYmxlIHRo
-cm91Z2ggYSB2ZW5kb3Igb3IgY29tbWVyY2lhbCBzdXBwb3J0IGNoYW5uZWwuCjMuIFRoZSBjdXJy
-ZW50IGNvbnRhY3QgcmVzcG9uc2libGUgZm9yIG9idGFpbmluZyB0aGVzZSBwYWNrYWdlcy4KNC4g
-V2hldGhlciBOZXRVSU8gc3VwcG9ydHMgSW50ZWwgWEw3MTAvRTgxMCBhbmQgb3RoZXIgUENJIGRl
-dmljZSBJRHMgaW4gYSBzaWduZWQgcGFja2FnZS4KNS4gV2hldGhlciB2aXJ0MnBoeXMgaXMgc3Rp
-bGwgcmVxdWlyZWQgZm9yIG1seDUgd2l0aCBXaW5PRi0yLCBvciB3aGV0aGVyIElPVkEtYXMtVkEg
-aXMgb2ZmaWNpYWxseSBzdXBwb3J0ZWQgaW4gcHJvZHVjdGlvbi4KNi4gV2hldGhlciB0aGUgcGFj
-a2FnZXMgc3VwcG9ydCBTZWN1cmUgQm9vdCBhbmQgSFZDSSAvIFdpbmRvd3MgTWVtb3J5IEludGVn
-cml0eS4KNy4gV2hldGhlciByZWRpc3RyaWJ1dGlvbiB3aXRoIGEgY29tbWVyY2lhbCBhcHBsaWNh
-dGlvbiBpcyBwZXJtaXR0ZWQuCjguIFdoZXRoZXIgdGhlIG9ic29sZXRlIGRwZGt3aW5AbWljcm9z
-b2Z0LmNvbSBhZGRyZXNzIGNhbiBiZSByZW1vdmVkIG9yIHJlcGxhY2VkIGluIHRoZSBkcGRrLWtt
-b2RzIGRvY3VtZW50YXRpb24uCgpSZWxldmFudCBzb3VyY2UgYW5kIGRvY3VtZW50YXRpb246CgpO
-ZXRVSU86Cmh0dHBzOi8vZ2l0LmRwZGsub3JnL2RwZGsta21vZHMvdHJlZS93aW5kb3dzL25ldHVp
-bwoKdmlydDJwaHlzOgpodHRwczovL2dpdC5kcGRrLm9yZy9kcGRrLWttb2RzL3RyZWUvd2luZG93
-cy92aXJ0MnBoeXMKCldpbmRvd3MgZHJpdmVyIGRvY3VtZW50YXRpb246Cmh0dHBzOi8vZ2l0LmRw
-ZGsub3JnL2RwZGsta21vZHMvdHJlZS93aW5kb3dzL1JFQURNRS5yc3QKCkRQREsgV2luZG93cyBy
-ZXF1aXJlbWVudHM6Cmh0dHBzOi8vZG9jLmRwZGsub3JnL2d1aWRlcy93aW5kb3dzX2dzZy9ydW5f
-YXBwcy5odG1sCgpEUERLIG1seDUgZG9jdW1lbnRhdGlvbjoKaHR0cHM6Ly9kb2MuZHBkay5vcmcv
-Z3VpZGVzL25pY3MvbWx4NS5odG1sCgpUaGFuayB5b3UgZm9yIGFueSBjdXJyZW50IGluZm9ybWF0
-aW9uIG9yIGNvbnRhY3QgZGV0YWlscyB5b3UgY2FuIHByb3ZpZGUuCgpCZXN0IHJlZ2FyZHMsPC9j
-b2RlPjwvcHJlPjxicj48L2Rpdj48L2Rpdj4=
-------=_Part_66081_479743880.1787206383988--
+Please see below
+
+
+20/08/2026 08:13, bb:
+> Dear DPDK Windows maintainers and users,
+> 
+> We are evaluating DPDK for production deployment on Windows 10 x64 and Windows 11 x64.
+> 
+> Our hardware includes Intel XL710 adapters, NVIDIA/Mellanox ConnectX adapters using the mlx5 PMD, and other PCIe network adapters.
+> 
+> We need precompiled, production-ready, Microsoft-signed or WHQL-certified x64 installation packages for:
+> 
+> 1. NetUIO
+> 2. virt2phys
+> 
+> The NetUIO README currently states that a WHQL-signed NetUIO driver can be requested from dpdkwin@microsoft.com:
+> 
+> https://git.dpdk.org/dpdk-kmods/tree/windows/netuio/README.rst
+> 
+> However, that address is no longer valid. Microsoft rejected the message with:
+> 
+> 550 5.4.1 Recipient address rejected: Access denied
+
+I think there is a signing procedure here:
+https://learn.microsoft.com/en-us/windows-hardware/drivers/install/whql-release-signature
+
+Unfortunately, after 7 years since first introduction of Windows support,
+the roadmap still mentions "inbox kernel-mode driver" in "Future (unscheduled)".
+
+
+> Could you please confirm:
+> 
+> 1. Whether signed NetUIO and virt2phys packages currently exist for Windows 10/11 x64.
+
+Anyone from Microsoft can answer please?
+
+> 2. Whether they are publicly downloadable or available through a vendor or commercial support channel.
+
+Anyone from Microsoft can answer please?
+
+> 3. The current contact responsible for obtaining these packages.
+
+We really need to state who is responsible in Microsoft.
+
+
+> 4. Whether NetUIO supports Intel XL710/E810 and other PCI device IDs in a signed package.
+
+The question refers to i40e and ice drivers support on Windows.
+Someone from Intel to answer please?
+
+
+> 5. Whether virt2phys is still required for mlx5 with WinOF-2,
+
+It is said "required by hardware PMDs" but I am not sure it is true with IOVA-as-VA.
+We should explain this clearly in
+https://doc.dpdk.org/guides/windows_gsg/run_apps.html#install-drivers
+
+> or whether IOVA-as-VA is officially supported in production.
+
+It is not said it is officially supported, but I suppose it should work.
+Someone from NVIDIA to confirm please?
+
+
+> 6. Whether the packages support Secure Boot and HVCI / Windows Memory Integrity.
+> 7. Whether redistribution with a commercial application is permitted.
+> 8. Whether the obsolete dpdkwin@microsoft.com address can be removed or replaced in the dpdk-kmods documentation.
+
+We need Microsoft support for these questions.
+
+
+> Relevant source and documentation:
+> 
+> NetUIO:
+> https://git.dpdk.org/dpdk-kmods/tree/windows/netuio
+> 
+> virt2phys:
+> https://git.dpdk.org/dpdk-kmods/tree/windows/virt2phys
+> 
+> Windows driver documentation:
+> https://git.dpdk.org/dpdk-kmods/tree/windows/README.rst
+> 
+> DPDK Windows requirements:
+> https://doc.dpdk.org/guides/windows_gsg/run_apps.html
+> 
+> DPDK mlx5 documentation:
+> https://doc.dpdk.org/guides/nics/mlx5.html
+> 
+> Thank you for any current information or contact details you can provide.
+> 
+> Best regards,
+
 
