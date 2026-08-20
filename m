@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10679C5DF85
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Aug 2026 05:27:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C7AC5DF81
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Aug 2026 05:27:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A09FD40E3B;
-	Thu, 20 Aug 2026 07:26:08 +0200 (CEST)
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com
- [209.85.216.48]) by mails.dpdk.org (Postfix) with ESMTP id 2B48440E3E
- for <dev@dpdk.org>; Thu, 20 Aug 2026 07:26:00 +0200 (CEST)
-Received: by mail-pj1-f48.google.com with SMTP id
- 98e67ed59e1d1-38e07ebd263so1210296a91.1
- for <dev@dpdk.org>; Wed, 19 Aug 2026 22:26:00 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7BD0940E5A;
+	Thu, 20 Aug 2026 07:26:12 +0200 (CEST)
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com
+ [209.85.215.177])
+ by mails.dpdk.org (Postfix) with ESMTP id 5022840E41
+ for <dev@dpdk.org>; Thu, 20 Aug 2026 07:26:03 +0200 (CEST)
+Received: by mail-pg1-f177.google.com with SMTP id
+ 41be03b00d2f7-c9eefcf9175so1401306a12.3
+ for <dev@dpdk.org>; Wed, 19 Aug 2026 22:26:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787203559;
- x=1787808359; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787203562;
+ x=1787808362; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=+O0gLRbcCRioBQadTTL1u3Jhr+3ioo/OhtHcDkLPfcY=;
- b=GoaP2vZhIguUGbcHoMfWGytOkT6Yk4RJZ51Nz336ZqGPgh1kox+R/Y7p2fgDv3MtBZ
- iUHrt6sxxDfXhuNfsZrK8Js+CPmnx6zFCOXDO3EIXTXXZDZyWuf2sKSoqrL8PVmF5svW
- tQUGpjUGVZpXgEeLGl9qPfNk6JMjrtMCs/Wb/Wte/rXH5iHtMZkLkIXE7VIpq/yV1+xV
- f8limkammJtsGm+9AuAMN/7x8vu51kXL7hNcDLC+F4ri86XXyGto9mcpro4dGAkuXkW3
- xXn8/kWzIGQpkjQ3vv4GlLLvbORD8fveNVGnYdeE4SedoxuhLacEnPnlzz5KD2Zrcyd5
- eRWg==
+ bh=Lo8hW2g6r3ZTBJdCFczF42DqQHibyrx9y9JL5xU6QsY=;
+ b=PhDYICj9Y1ROM4Ca70D7Qtlceizh1szphMq3L/dHPHlQZ5l60tifboXpPXwUZYO6zj
+ L6sADEgoN+HwpQv3Lof+31Md0G4m3B3rAJAaAQpBoiqORtFqpApSL2XqpaDOMYySl511
+ Z6D/JGvYHlTkr+U5NQILiSWgKDrnYSynuRxUtSf0o6XnL47dmCOAzGpmWSUo4Fy5oMcW
+ fOkS/WFPCanjnBFHewFeQoHVODLLPzQH6TwNR3cINJa/JIt+hwenN+K+O3oro4JA/yGN
+ PF+l8Ux2B1ZHYGmycXRv4xRpcye9wPCjj3YPo83VoCwLOQ1OtqsxcKYSRYLKtV4SuXre
+ 0hhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787203559; x=1787808359;
+ d=1e100.net; s=20251104; t=1787203562; x=1787808362;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=+O0gLRbcCRioBQadTTL1u3Jhr+3ioo/OhtHcDkLPfcY=;
- b=KSvTUdD5rOrtd4pxx4WU686V5n3L1ISq3FVknb18q+pBj8NGlfiZKWdqGV8Ilu72XZ
- d9sbLjf8/gQDJ4cokKSCSIYvEc7626DNQpk+K0PgIw8THpQBh4/uyAUJgLllZRCk0zyp
- LIlt+Z1WDm7npYqvY1rezx5WFudVuOKNoPJWud8wh5esGGrKso16nA6hTFdRlbRazGY2
- 0hK3dTklg5p4XgfkcxJ7QqFQGp0PYf5pl8bvXaC1m8s6up5sCj4QtaPJY5DDeQOe2Ope
- 0X56PsAjRi+imEjtRu0IRiehV4gKWWhXvherW0ydleBU5PfcSpCVlbrKOKBTs+MiZTWH
- emIA==
-X-Gm-Message-State: AFuF++nmDWumGxsSqm6zpHi7r9fvj4guvSOJJSJFvpLl62SZ9YfTE5I/
- 4TfQz4kjjms5d/vdEIEqupUJwVD/dTJ3OeMP/LpdV2RLZbNGjLpViBNccNhRqpUuAFC1iJD9e6X
- SLL8o
-X-Gm-Gg: AR+sD12ulyWt3dYu989VdJRMmpjdz+AKQ6yd+IUgSdfjnzdd4NKwd8+S4RNuR6qU6qz
- wRMj0Kr4iukYGDsuu3UShFEIHZK2jwYsYJ45vVZFtud9UsZ/7RgyqFSP+ZRqtteAibAMPg0FG5r
- 9RwK2JbWPACWpNRtp758R1JnVkrTdCGuXDhgyfHUYshDQKUaLr1uyJa1FGy+0uPJha3rkBMEy39
- 1P8pKk1IH1lXEzcWV2hroGl76rOhMTIDx6GigGzQZ0jbk8ld2XF/Gv8Gr4Ozsw4acP/uG67bWDq
- kLvCGX7uF/sHXt3k+Vd1KCDpTmSHg68Nlc9GR75W1Mc8iIcy9RwlhWg7GJSpAyA4lDOxEyChdei
- tWxqC2Ufi0XW3osfPIo/WT91eW2jRU6U4ZS2pcb1pkDyimo3vqQy38acvIEJM0nEIJJeJPxjyrK
- sK93zcnwXmRn2ZQmV3D68KoZqQNFD9Wc1H+3C5q9YX/krbMivlcCla/sUFHKNJKx52ZFJjqGbLU
- ZPdgiFI+YDMyEtLdCkvjO+6oivPglneqZyXCw==
-X-Received: by 2002:a17:90a:da90:b0:395:4de9:b30 with SMTP id
- 98e67ed59e1d1-39580a9aed7mr19985491a91.5.1787203559294; 
- Wed, 19 Aug 2026 22:25:59 -0700 (PDT)
+ bh=Lo8hW2g6r3ZTBJdCFczF42DqQHibyrx9y9JL5xU6QsY=;
+ b=B+75PKJBo4J9WrUyakHBeszmWNyi0LuNjm5tcUgjQOLT1vUslUE/S4clce5+/IYbE/
+ L1lqpuIhE4xTfAMeJuuNAvElikvc7MypEIWH7mfnrI/u3LNh3BOdQbSfOWvTzxJEBJL5
+ DduP35T7WPJrgeRulQXtGo7ZQnb09UP+1PKr3dX+gadJoBOJeKSoUO6KOIvCXvn123zY
+ Y9ycwTdJufK368o35WO7sQHX2DC/LHhNXBKEO2R9/9qptTdZE2ucQ4XDPYpwlJeNVxk6
+ AaVXru2hy8lziMpdqrGE3nstLGp5aRt+o6F/xj0d5V1YoM++G/4Wza5q+pZ4jOYN5uQR
+ HCcA==
+X-Gm-Message-State: AOJu0Yw/WIexGHi+VSCqLfpuzA5hlBOq0sBJY0xy8Z5mZZajJK8LTsEE
+ +bEemdOWlYKIxMc6C45tZEJqHxfP2gxxdKb8pte7jDk4t6m4bCnXtLhcx+KA5V0QcovC/hg3GoZ
+ /2/4q
+X-Gm-Gg: AR+sD12EqUfHJiRfFd7PMSzKyHqmbqyCkBir/Qnh2nTYeLhRbda+3yrbuj4K+GExWow
+ 4CwR+iMq+f9Hc1N16s6IuagfGbIAu+BJbGbLqij9cHzx43hOp0/HOj2ggAH6UgR6St5rhQqjmo4
+ DbZ78x/X8RMs6a+za0Ec8LjQvr7jMDfTiYfngB1HLJdonfyVCCI0Mi6j7yyLr41YdUdVGF5eAm4
+ 5Fm4A3wVTWyL+ZGgFnL6qbIKbOzpcTO5v6QdImNJf7MT1HRghUJmS068muEu+bSn6HEm73ei365
+ tCDXSZ8obxu/AiNDlzCZkUensT3dSztTuHo+DO+o3ntyYjKGRaAl80tJgAe+2IAXojcRtDZA+/c
+ S4O2xDbEEObn8QqcpjakVds2DClnJzVzdCQgvhCMheqmPGOLlsOIz/LpDj2q5vEkEWm+pbFuVUN
+ F6q/VIkZwnuFbNO/znjBXfEHb08Aey2blmtiKo9fXvyHaQUsX525CojIMkUAK95CxKN4Wm5M9t2
+ X8QP/VfK46loTaBaHlGOQYlOec=
+X-Received: by 2002:a05:6a21:6d87:b0:3c3:bbe6:95c7 with SMTP id
+ adf61e73a8af0-3cd01253cf7mr18684202637.17.1787203562407; 
+ Wed, 19 Aug 2026 22:26:02 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-327bef3bb5csm13700974eec.2.2026.08.19.22.25.56
+ 5a478bee46e88-327bef3bb5csm13700974eec.2.2026.08.19.22.25.59
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 19 Aug 2026 22:25:58 -0700 (PDT)
+ Wed, 19 Aug 2026 22:26:01 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@nxp.com>
-Subject: [PATCH 49/61] drivers/mempool: use memcpy for fixed size data
-Date: Wed, 19 Aug 2026 22:12:39 -0700
-Message-ID: <20260820052251.1453273-50-stephen@networkplumber.org>
+ Srikanth Yalavarthi <syalavarthi@marvell.com>
+Subject: [PATCH 50/61] ml/cnxk: use memcpy for fixed size data
+Date: Wed, 19 Aug 2026 22:12:40 -0700
+Message-ID: <20260820052251.1453273-51-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260820052251.1453273-1-stephen@networkplumber.org>
 References: <20260820052251.1453273-1-stephen@networkplumber.org>
@@ -88,48 +88,139 @@ better analysis coverage.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/mempool/dpaa/dpaa_mempool.c      | 4 ++--
- drivers/mempool/dpaa2/dpaa2_hw_mempool.c | 5 ++---
- 2 files changed, 4 insertions(+), 5 deletions(-)
+ drivers/ml/cnxk/cn10k_ml_model.c | 8 +++++---
+ drivers/ml/cnxk/cn10k_ml_ops.c   | 8 +++++---
+ drivers/ml/cnxk/tvmrt_ml_model.c | 9 +++++----
+ drivers/ml/cnxk/tvmrt_ml_ops.c   | 6 +++---
+ 4 files changed, 18 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/mempool/dpaa/dpaa_mempool.c b/drivers/mempool/dpaa/dpaa_mempool.c
-index 2f8555a026..d041e09942 100644
---- a/drivers/mempool/dpaa/dpaa_mempool.c
-+++ b/drivers/mempool/dpaa/dpaa_mempool.c
-@@ -124,8 +124,8 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
- 		return -ENOMEM;
+diff --git a/drivers/ml/cnxk/cn10k_ml_model.c b/drivers/ml/cnxk/cn10k_ml_model.c
+index fa978529f5..7e2c460fb4 100644
+--- a/drivers/ml/cnxk/cn10k_ml_model.c
++++ b/drivers/ml/cnxk/cn10k_ml_model.c
+@@ -564,7 +564,7 @@ cn10k_ml_model_info_set(struct cnxk_ml_dev *cnxk_mldev, struct cnxk_ml_model *mo
+ 
+ 	/* Set model info */
+ 	memset(info, 0, sizeof(struct rte_ml_model_info));
+-	rte_memcpy(info->name, metadata->model.name, MRVL_ML_MODEL_NAME_LEN);
++	memcpy(info->name, metadata->model.name, MRVL_ML_MODEL_NAME_LEN);
+ 	snprintf(info->version, RTE_ML_STR_MAX, "%u.%u.%u.%u", metadata->model.version[0],
+ 		 metadata->model.version[1], metadata->model.version[2],
+ 		 metadata->model.version[3]);
+@@ -583,7 +583,8 @@ cn10k_ml_model_info_set(struct cnxk_ml_dev *cnxk_mldev, struct cnxk_ml_model *mo
+ 
+ 	/* Set input info */
+ 	for (i = 0; i < info->nb_inputs; i++) {
+-		rte_memcpy(input[i].name, io_info->input[i].name, MRVL_ML_INPUT_NAME_LEN);
++		memcpy(input[i].name, io_info->input[i].name,
++		       MRVL_ML_INPUT_NAME_LEN);
+ 		input[i].nb_dims = io_info->input[i].nb_dims;
+ 		input[i].shape = &io_info->input[i].shape[0];
+ 		input[i].type = io_info->input[i].qtype;
+@@ -596,7 +597,8 @@ cn10k_ml_model_info_set(struct cnxk_ml_dev *cnxk_mldev, struct cnxk_ml_model *mo
+ 
+ 	/* Set output info */
+ 	for (i = 0; i < info->nb_outputs; i++) {
+-		rte_memcpy(output[i].name, io_info->output[i].name, MRVL_ML_INPUT_NAME_LEN);
++		memcpy(output[i].name, io_info->output[i].name,
++		       MRVL_ML_INPUT_NAME_LEN);
+ 		output[i].nb_dims = io_info->output[i].nb_dims;
+ 		output[i].shape = &io_info->output[i].shape[0];
+ 		output[i].type = io_info->output[i].qtype;
+diff --git a/drivers/ml/cnxk/cn10k_ml_ops.c b/drivers/ml/cnxk/cn10k_ml_ops.c
+index 597806b787..79a03dc10b 100644
+--- a/drivers/ml/cnxk/cn10k_ml_ops.c
++++ b/drivers/ml/cnxk/cn10k_ml_ops.c
+@@ -668,7 +668,8 @@ cn10k_ml_layer_load(void *device, uint16_t model_id, const char *layer_name, uin
  	}
  
--	rte_memcpy(bp_info, (void *)&rte_dpaa_bpid_info[bpid],
--		   sizeof(struct dpaa_bp_info));
-+	memcpy(bp_info, (void *)&rte_dpaa_bpid_info[bpid],
-+	       sizeof(struct dpaa_bp_info));
- 	mp->pool_data = (void *)bp_info;
+ 	/* Copy metadata to internal buffer */
+-	rte_memcpy(&layer->glow.metadata, buffer, sizeof(struct cn10k_ml_model_metadata));
++	memcpy(&layer->glow.metadata, buffer,
++	       sizeof(struct cn10k_ml_model_metadata));
+ 	cn10k_ml_model_metadata_update(&layer->glow.metadata);
  
- 	DPAA_MEMPOOL_INFO("BMAN pool created for bpid =%d", bpid);
-diff --git a/drivers/mempool/dpaa2/dpaa2_hw_mempool.c b/drivers/mempool/dpaa2/dpaa2_hw_mempool.c
-index ee001d8ce0..f20e8dbdee 100644
---- a/drivers/mempool/dpaa2/dpaa2_hw_mempool.c
-+++ b/drivers/mempool/dpaa2/dpaa2_hw_mempool.c
-@@ -17,7 +17,6 @@
- #include <rte_mbuf.h>
- #include <ethdev_driver.h>
- #include <rte_malloc.h>
--#include <rte_memcpy.h>
- #include <rte_string_fns.h>
- #include <rte_cycles.h>
- #include <rte_kvargs.h>
-@@ -143,8 +142,8 @@ rte_hw_mbuf_create_pool(struct rte_mempool *mp)
- 	rte_dpaa2_bpid_info[bpid].bp_list = bp_list;
- 	rte_dpaa2_bpid_info[bpid].bpid = bpid;
+ 	/* Enable support for batch_size of 256 */
+@@ -745,11 +746,12 @@ cn10k_ml_model_load(struct cnxk_ml_dev *cnxk_mldev, struct rte_ml_model_params *
+ 	model->subtype = ML_CNXK_MODEL_SUBTYPE_GLOW_MRVL;
  
--	rte_memcpy(bp_info, (void *)&rte_dpaa2_bpid_info[bpid],
--		   sizeof(struct dpaa2_bp_info));
-+	memcpy(bp_info, (void *)&rte_dpaa2_bpid_info[bpid],
-+	       sizeof(struct dpaa2_bp_info));
- 	mp->pool_data = (void *)bp_info;
+ 	/* Copy metadata to internal buffer */
+-	rte_memcpy(&model->glow.metadata, params->addr, sizeof(struct cn10k_ml_model_metadata));
++	memcpy(&model->glow.metadata, params->addr,
++	       sizeof(struct cn10k_ml_model_metadata));
+ 	cn10k_ml_model_metadata_update(&model->glow.metadata);
  
- 	DPAA2_MEMPOOL_DEBUG("BP List created for bpid =%d", dpbp_attr.bpid);
+ 	/* Set model name */
+-	rte_memcpy(model->name, (char *)model->glow.metadata.model.name, 64);
++	memcpy(model->name, (char *)model->glow.metadata.model.name, 64);
+ 
+ 	/* Enable support for batch_size of 256 */
+ 	if (model->glow.metadata.model.batch_size == 0)
+diff --git a/drivers/ml/cnxk/tvmrt_ml_model.c b/drivers/ml/cnxk/tvmrt_ml_model.c
+index 319c53a05b..f0bc616148 100644
+--- a/drivers/ml/cnxk/tvmrt_ml_model.c
++++ b/drivers/ml/cnxk/tvmrt_ml_model.c
+@@ -848,7 +848,7 @@ tvmrt_ml_model_info_set(struct cnxk_ml_dev *cnxk_mldev, struct cnxk_ml_model *mo
+ 	if (model->subtype == ML_CNXK_MODEL_SUBTYPE_TVM_MRVL)
+ 		goto tvm_mrvl_model;
+ 
+-	rte_memcpy(info->name, model->name, RTE_ML_STR_MAX);
++	memcpy(info->name, model->name, RTE_ML_STR_MAX);
+ 	snprintf(info->version, RTE_ML_STR_MAX, "%u.%u.%u.%u", 0, 0, 0, 0);
+ 	info->model_id = model->model_id;
+ 	info->device_id = cnxk_mldev->mldev->data->dev_id;
+@@ -863,7 +863,8 @@ tvmrt_ml_model_info_set(struct cnxk_ml_dev *cnxk_mldev, struct cnxk_ml_model *mo
+ 
+ 	/* Set input info */
+ 	for (i = 0; i < info->nb_inputs; i++) {
+-		rte_memcpy(input[i].name, model->tvmrt.info.input[i].name, MRVL_ML_INPUT_NAME_LEN);
++		memcpy(input[i].name, model->tvmrt.info.input[i].name,
++		       MRVL_ML_INPUT_NAME_LEN);
+ 		input[i].nb_dims = model->tvmrt.info.input[i].nb_dims;
+ 		input[i].shape = &model->tvmrt.info.input[i].shape[0];
+ 		input[i].type = model->tvmrt.info.input[i].qtype;
+@@ -876,8 +877,8 @@ tvmrt_ml_model_info_set(struct cnxk_ml_dev *cnxk_mldev, struct cnxk_ml_model *mo
+ 
+ 	/* Set output info */
+ 	for (i = 0; i < info->nb_outputs; i++) {
+-		rte_memcpy(output[i].name, model->tvmrt.info.output[i].name,
+-			   MRVL_ML_OUTPUT_NAME_LEN);
++		memcpy(output[i].name, model->tvmrt.info.output[i].name,
++		       MRVL_ML_OUTPUT_NAME_LEN);
+ 		output[i].nb_dims = model->tvmrt.info.output[i].nb_dims;
+ 		output[i].shape = &model->tvmrt.info.output[i].shape[0];
+ 		output[i].type = model->tvmrt.info.output[i].qtype;
+diff --git a/drivers/ml/cnxk/tvmrt_ml_ops.c b/drivers/ml/cnxk/tvmrt_ml_ops.c
+index f6b3a51c51..191f93486a 100644
+--- a/drivers/ml/cnxk/tvmrt_ml_ops.c
++++ b/drivers/ml/cnxk/tvmrt_ml_ops.c
+@@ -229,7 +229,7 @@ tvmrt_ml_model_load(struct cnxk_ml_dev *cnxk_mldev, struct rte_ml_model_params *
+ 	/* Copy mod.so */
+ 	model->tvmrt.so.buffer = mz->addr;
+ 	model->tvmrt.so.size = object[0].size;
+-	rte_memcpy(model->tvmrt.so.name, object[0].name, RTE_ML_STR_MAX);
++	memcpy(model->tvmrt.so.name, object[0].name, RTE_ML_STR_MAX);
+ 	rte_memcpy(model->tvmrt.so.buffer, object[0].buffer, object[0].size);
+ 	rte_free(object[0].buffer);
+ 
+@@ -238,7 +238,7 @@ tvmrt_ml_model_load(struct cnxk_ml_dev *cnxk_mldev, struct rte_ml_model_params *
+ 		RTE_PTR_ADD(model->tvmrt.so.buffer,
+ 			    RTE_ALIGN_CEIL(model->tvmrt.so.size, RTE_CACHE_LINE_MIN_SIZE));
+ 	model->tvmrt.json.size = object[1].size;
+-	rte_memcpy(model->tvmrt.json.name, object[1].name, RTE_ML_STR_MAX);
++	memcpy(model->tvmrt.json.name, object[1].name, RTE_ML_STR_MAX);
+ 	rte_memcpy(model->tvmrt.json.buffer, object[1].buffer, object[1].size);
+ 	rte_free(object[1].buffer);
+ 
+@@ -247,7 +247,7 @@ tvmrt_ml_model_load(struct cnxk_ml_dev *cnxk_mldev, struct rte_ml_model_params *
+ 		RTE_PTR_ADD(model->tvmrt.json.buffer,
+ 			    RTE_ALIGN_CEIL(model->tvmrt.json.size, RTE_CACHE_LINE_MIN_SIZE));
+ 	model->tvmrt.params.size = object[2].size;
+-	rte_memcpy(model->tvmrt.params.name, object[2].name, RTE_ML_STR_MAX);
++	memcpy(model->tvmrt.params.name, object[2].name, RTE_ML_STR_MAX);
+ 	rte_memcpy(model->tvmrt.params.buffer, object[2].buffer, object[2].size);
+ 	rte_free(object[2].buffer);
+ 
 -- 
 2.53.0
 
