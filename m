@@ -2,70 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C726C5DF81
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Aug 2026 05:26:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4748C5DF81
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Aug 2026 05:26:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8D8D340E17;
-	Thu, 20 Aug 2026 07:25:19 +0200 (CEST)
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
- [209.85.214.170])
- by mails.dpdk.org (Postfix) with ESMTP id EA37C40693
- for <dev@dpdk.org>; Thu, 20 Aug 2026 07:25:14 +0200 (CEST)
-Received: by mail-pl1-f170.google.com with SMTP id
- d9443c01a7336-2d5655cc850so21358075ad.3
- for <dev@dpdk.org>; Wed, 19 Aug 2026 22:25:14 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 98F2240E24;
+	Thu, 20 Aug 2026 07:25:20 +0200 (CEST)
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com
+ [209.85.216.42]) by mails.dpdk.org (Postfix) with ESMTP id 0350A40693
+ for <dev@dpdk.org>; Thu, 20 Aug 2026 07:25:18 +0200 (CEST)
+Received: by mail-pj1-f42.google.com with SMTP id
+ 98e67ed59e1d1-38e42560ebcso1581937a91.1
+ for <dev@dpdk.org>; Wed, 19 Aug 2026 22:25:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787203514;
- x=1787808314; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787203517;
+ x=1787808317; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=mHMzWHCAlTxtQ7LnNgxAJT/105wLQMiWJSNFS3PhR6k=;
- b=XAZpYbI1Gbe8spwYL+Hd/rI20si6rr472tHJJ39/gKOXgSuBHyjKsB56/3qEHGeSRM
- u/FUElAiUjPNW2yvCbeyf7nLzsPpNqOiLTlJeSZEx4hdgbV8y69lGYOFHG6lq3bwDbDR
- sVgenY4DSURTqwNSr6s5d72ZVu4Gh4c6iY8lW5Xspt2uMvxQ2Dwafg/Crclj0BKTiR9T
- ita+SyWpbzclrN6gbilZnV4l3DpWHRs+Smvbm84e8fUH+yzbncwFIKF3pT1rYpxtJ0Ko
- 5Gcvew17/dLEttX+F4C981df4Ypoi3gqI6r7MC+xh8QWAbJIhOyXBnTRhb1OxLc8qVRc
- BaJA==
+ bh=v75l1CJ1N/isvvHkXdLcvNlUKMcyRgHKUCBNhlnnEH4=;
+ b=S47JKMuBmmvN3VlfPj8B+2w8ryFScxrMVkoJIAz/4nxpqGxHpEfslJFWB6ZvyaO6pt
+ OzX7MOwnBMJ0G8FIZ/tWlwW6OkQwyq23QJ0uHohsCw9GK1NqrLC8n1V3aaPS7DB3UL61
+ uHMEaQ4sEJ8aSDNEdQVTeFx5v9DxoI4uhJZaUUoLvVzoGmdvI76FChd1jotE73M0Qgx7
+ drrdrxRUhwjZYw1674jtTGlYJ9brY/fVdgzfrFghoaxGoSHQO6gNznuFi++4A3QPu9on
+ MjGbjYYPi6wOwb151g3sLd241/YgwK6H3JjAM4nQq4oxVdVB+cs5zC8dLYHipcBACNPk
+ VGYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787203514; x=1787808314;
+ d=1e100.net; s=20251104; t=1787203517; x=1787808317;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=mHMzWHCAlTxtQ7LnNgxAJT/105wLQMiWJSNFS3PhR6k=;
- b=pfJmgfhSUvD6KDbHdbazCJiuJDuNHLxuppsukD1rxInKjHvYSRVU4ZFgYSX1yDz9ox
- iuMTxCKS2SAM0WvMNC99Ojjj2/URutd7f3/GXH7wpQnpv/ulnItAbdainJp3b+p47Xur
- ydfk+QWdB5YuEzJ5IemRPDMksHUg5OenqEwR7QXgM3Qa7G/cbMPzemszAFdkLzR8mxhb
- JhUIAjp6cwd5kphT1ox3qsEPks5bMYF+wQ6LwOlUp1hE1mtRdPOEmeaNEIWHL02IY2rE
- H4regwjcb5RUJ2KeMmB8tqN2Yl55VOQaA4OqOXL9l5jJzjEuNoV9cbNwurGJV6H8TBIO
- YQOA==
-X-Gm-Message-State: AFuF++lwxJ0hlyHQyg8DPAZJPnXfsMpMmsol3+zS7owBippCBqYlP4ke
- VWDzRwIShfib0r/9HKa9CNfTEGiIX92XuCb2meMuJNg3JBqRu3jiCNMb/kMVXaHDuoI5mxS3PMR
- DGRdz
-X-Gm-Gg: AR+sD10YH1tzUvHl9L2kuZaejgyy23GWxMZs2nN5BODg/dnABntEtPDsfF4mOrXMQjr
- NSYWdr/85/BtOBqVMHwApkbU910r8fKug41eO6KEFKuYJ4jqnZx+YyspU10yeO+mFw5o/43p+Gr
- ZPU4rqhRoyvvNyScNMhAwYH8jC8cFQnp2N0S6XGwMtMyEhuesgB4RF8JFkctqTlhyF22uU7TrU3
- qMcKvI+FpiXQC5CzGlT8SpWJRi4WoH9j5B2yZ1Se6wbdnf8kG5cDu7LRWiXctgNFvnsrJv3XVr8
- SI3uG8VyGC6bbnfEpttZkl4pExcz2gAOMojVyrcGoLwTeb+oTeVjSEgWRjHDk8bbUIN78nCq5OH
- IDnNKy5T4DEaEaq7CRBcejKypP6c3i/KCkFBz9OrSbynATlqesfrqTudGTcuBvxdk/EjWOtT+rL
- 9U8qpKSMQP667YbGCVcr6Xov8DW44K5HITF9Px+C/0fRVBY3R5cZYZ6TstPFf5hGRmZ77+hq5Wy
- iK09LTc4V0yIno2eFUXXrFtPEI=
-X-Received: by 2002:a17:90b:3806:b0:380:9f17:6df3 with SMTP id
- 98e67ed59e1d1-39580a91b8dmr19166087a91.4.1787203513949; 
- Wed, 19 Aug 2026 22:25:13 -0700 (PDT)
+ bh=v75l1CJ1N/isvvHkXdLcvNlUKMcyRgHKUCBNhlnnEH4=;
+ b=UDDhrKTzj1vsSJAEnIoBwgBLPkcsLslLNuj3ApBE64cG+LfK6YSv6xwD3zaQiutKIF
+ uzf5XGAFPl3UhmRRb7XB1kObks6lt9asrwTcc9el3TroSDexmk/77tRFEDkdpr4fWyVj
+ 92hWPBNCx8Vg+0cW3afLEuON5++qJYkpkfCsfOlv6Oyh6JjISae787PfDpdTd6kNu6QA
+ eJNxuY+fIMIWHRr2TEFy6lUhrMl6Wh0bdts1nEO1BArvwKgBTSbsCdQs6g5RiANv0YyE
+ Obc44Op22uiJz9WpKpYYogv1uKFN0BV0HLGAgWJk2QD1bCGa2NNwNG3cHG9DB288OPVd
+ tpqg==
+X-Gm-Message-State: AFuF++m8qvqDxoulj48j9L8Jyz+i1PvqA2JgD514oX2PO+GvKkSv5OOp
+ d1PkYj5pqG41KJ+0gO1HitrPx9BC0SBSRPeWf45lE1ZeqrxYQuaCVvX4Su53MCa5/+7OnXurflZ
+ xtJ9V
+X-Gm-Gg: AR+sD122AcpQBTrgUConomyxIp2ZgIsSuu2kKf7s1SnWG5ou4uoO97vkzH8ntMRhDjJ
+ 8hRO7TOXkJDZ6J3orKWHjjWZ1kVRhm6cByOVaoEIreKyG5Lb15zcqyc0VWhOu2DHPys+igNHPGB
+ o2MPWsaSB7j6De2KX5VcnlrlH4+kEQyblfwpmQ+qj727q+pV5zwT2NNe/2Qhy9aFiNNTfzZegSt
+ 82HZq5rHoGoalFkPhcnDYaHaBxvbQGASTTqBRGW15PzFvK3O9iIu9QSFRc5oiXDeoJyMjs24CoG
+ IliBqUIjocJyTcIOkNJ2SKVqH0txeVMe7tPDbbOVLoBK9tG+f4WGZIilX/kDgXpoYj2/t2dqHs1
+ G4gxqNVn4xL3A2NqPFKMEYQztacYI02LXD22ZRPkLXk4V8MPN7IGz3tBlAwqGDzibbyODYt82yM
+ HIa2cBDP2hG28GRswBkuM/CzqytoJCly4+JAVSGQBW+rl35iqlkB+nPQxNR69CGXY6wSw+m+tib
+ ul4eNDSFlzR8V6ahm/5g8/3x+g=
+X-Received: by 2002:a17:90b:28cd:b0:37f:e1b6:4c7d with SMTP id
+ 98e67ed59e1d1-395812a8b7emr19407478a91.6.1787203517061; 
+ Wed, 19 Aug 2026 22:25:17 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-327bef3bb5csm13700974eec.2.2026.08.19.22.25.11
+ 5a478bee46e88-327bef3bb5csm13700974eec.2.2026.08.19.22.25.14
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 19 Aug 2026 22:25:13 -0700 (PDT)
+ Wed, 19 Aug 2026 22:25:16 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Christian Koue Muf <ckm@napatech.com>,
- Serhii Iliushyk <sil-plv@napatech.com>
-Subject: [PATCH 36/61] net/ntnic: replace use of rte_memcpy
-Date: Wed, 19 Aug 2026 22:12:26 -0700
-Message-ID: <20260820052251.1453273-37-stephen@networkplumber.org>
+ Tetsuya Mukawa <mtetsuyah@gmail.com>
+Subject: [PATCH 37/61] net/null: replace use of rte_memcpy
+Date: Wed, 19 Aug 2026 22:12:27 -0700
+Message-ID: <20260820052251.1453273-38-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260820052251.1453273-1-stephen@networkplumber.org>
 References: <20260820052251.1453273-1-stephen@networkplumber.org>
@@ -84,61 +82,79 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The uses of rte_memcpy() in the RSS hash key update and get are
-control path only. Regular memcpy() has no performance disadvantage
-there and gets more compile time checking of the arguments.
-
-The remaining uses of rte_memcpy() are left alone since they are on
-the receive and transmit fast paths.
+The null driver is not used for high speed production traffic, so
+any marginal performance difference from using regular memcpy() does
+not matter. Regular memcpy() gets more compile time checking of the
+arguments.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/ntnic/ntnic_ethdev.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/net/null/rte_eth_null.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ntnic/ntnic_ethdev.c b/drivers/net/ntnic/ntnic_ethdev.c
-index 7cc90a7a5b..a61e675bd1 100644
---- a/drivers/net/ntnic/ntnic_ethdev.c
-+++ b/drivers/net/ntnic/ntnic_ethdev.c
-@@ -1768,7 +1768,7 @@ static int eth_dev_rss_hash_update(struct rte_eth_dev *eth_dev, struct rte_eth_r
- 			return -1;
- 		}
+diff --git a/drivers/net/null/rte_eth_null.c b/drivers/net/null/rte_eth_null.c
+index 7fba3a661b..3e21649f6e 100644
+--- a/drivers/net/null/rte_eth_null.c
++++ b/drivers/net/null/rte_eth_null.c
+@@ -4,12 +4,12 @@
+  */
  
--		rte_memcpy(&tmp_rss_conf.rss_key, rss_conf->rss_key, rss_conf->rss_key_len);
-+		memcpy(&tmp_rss_conf.rss_key, rss_conf->rss_key, rss_conf->rss_key_len);
+ #include <stdlib.h>
++#include <string.h>
+ 
+ #include <rte_mbuf.h>
+ #include <ethdev_driver.h>
+ #include <ethdev_vdev.h>
+ #include <rte_malloc.h>
+-#include <rte_memcpy.h>
+ #include <bus_vdev_driver.h>
+ #include <rte_kvargs.h>
+ #include <rte_spinlock.h>
+@@ -121,7 +121,7 @@ eth_null_copy_rx(void *q, struct rte_mbuf **bufs, uint16_t nb_bufs)
+ 		return 0;
+ 
+ 	for (i = 0; i < nb_bufs; i++) {
+-		rte_memcpy(rte_pktmbuf_mtod(bufs[i], void *), h->dummy_packet,
++		memcpy(rte_pktmbuf_mtod(bufs[i], void *), h->dummy_packet,
+ 					packet_size);
+ 		bufs[i]->data_len = (uint16_t)packet_size;
+ 		bufs[i]->pkt_len = packet_size;
+@@ -169,7 +169,7 @@ eth_null_copy_tx(void *q, struct rte_mbuf **bufs, uint16_t nb_bufs)
+ 		struct rte_mbuf *m = bufs[i];
+ 		size_t len = RTE_MIN(h->internals->packet_size, m->data_len);
+ 
+-		rte_memcpy(h->dummy_packet, rte_pktmbuf_mtod(m, void *), len);
++		memcpy(h->dummy_packet, rte_pktmbuf_mtod(m, void *), len);
+ 		bytes += m->pkt_len;
  	}
  
- 	tmp_rss_conf.algorithm = rss_conf->algorithm;
-@@ -1778,7 +1778,8 @@ static int eth_dev_rss_hash_update(struct rte_eth_dev *eth_dev, struct rte_eth_r
+@@ -465,7 +465,7 @@ eth_rss_hash_update(struct rte_eth_dev *dev, struct rte_eth_rss_conf *rss_conf)
+ 				rss_conf->rss_hf & internal->flow_type_rss_offloads;
  
- 	if (res == 0) {
- 		flow_filter_ops->nthw_mod_hsh_rcp_flush(&ndev->be, hsh_idx, 1);
--		rte_memcpy(&ndev->rss_conf, &tmp_rss_conf, sizeof(struct nt_eth_rss_conf));
-+		memcpy(&ndev->rss_conf, &tmp_rss_conf,
-+		       sizeof(struct nt_eth_rss_conf));
+ 	if (rss_conf->rss_key)
+-		rte_memcpy(internal->rss_key, rss_conf->rss_key, 40);
++		memcpy(internal->rss_key, rss_conf->rss_key, 40);
  
- 	} else {
- 		NT_LOG(ERR, NTNIC, "ERROR: - RSS hash update failed with error %i", res);
-@@ -1803,7 +1804,7 @@ static int rss_hash_conf_get(struct rte_eth_dev *eth_dev, struct rte_eth_rss_con
- 	if (rss_conf->rss_key != NULL) {
- 		int key_len = RTE_MIN(rss_conf->rss_key_len, MAX_RSS_KEY_LEN);
- 		memset(rss_conf->rss_key, 0, rss_conf->rss_key_len);
--		rte_memcpy(rss_conf->rss_key, &ndev->rss_conf.rss_key, key_len);
-+		memcpy(rss_conf->rss_key, &ndev->rss_conf.rss_key, key_len);
- 		rss_conf->rss_key_len = key_len;
- 	}
+ 	rte_spinlock_unlock(&internal->rss_lock);
  
-@@ -2555,8 +2556,8 @@ nthw_pci_dev_init(struct rte_pci_device *pci_dev)
- 		eth_dev->data->dev_private = internals;
- 		eth_dev->data->mac_addrs = rte_malloc(NULL,
- 					NUM_MAC_ADDRS_PER_PORT * sizeof(struct rte_ether_addr), 0);
--		rte_memcpy(&eth_dev->data->mac_addrs[0],
--					&internals->eth_addrs[0], RTE_ETHER_ADDR_LEN);
-+		memcpy(&eth_dev->data->mac_addrs[0], &internals->eth_addrs[0],
-+		       RTE_ETHER_ADDR_LEN);
+@@ -482,7 +482,7 @@ eth_rss_hash_conf_get(struct rte_eth_dev *dev,
  
- 		NT_LOG_DBGX(DBG, NTNIC, "Setting up RX functions for SCG");
- 		eth_dev->rx_pkt_burst = eth_dev_rx_scg;
+ 	rss_conf->rss_hf = dev->data->dev_conf.rx_adv_conf.rss_conf.rss_hf;
+ 	if (rss_conf->rss_key)
+-		rte_memcpy(rss_conf->rss_key, internal->rss_key, 40);
++		memcpy(rss_conf->rss_key, internal->rss_key, 40);
+ 
+ 	rte_spinlock_unlock(&internal->rss_lock);
+ 
+@@ -577,7 +577,7 @@ eth_dev_null_create(struct rte_vdev_device *dev, struct pmd_options *args)
+ 	internals->flow_type_rss_offloads =  RTE_ETH_RSS_PROTO_MASK;
+ 	internals->reta_size = RTE_DIM(internals->reta_conf) * RTE_ETH_RETA_GROUP_SIZE;
+ 
+-	rte_memcpy(internals->rss_key, default_rss_key, 40);
++	memcpy(internals->rss_key, default_rss_key, 40);
+ 
+ 	data = eth_dev->data;
+ 	data->nb_rx_queues = (uint16_t)nb_rx_queues;
 -- 
 2.53.0
 
