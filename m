@@ -2,119 +2,125 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29A5BC5B572
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Aug 2026 00:27:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B32CC5DF88
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Aug 2026 01:38:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E321C402A3;
-	Thu, 20 Aug 2026 02:27:38 +0200 (CEST)
-Received: from SN4PR0501CU005.outbound.protection.outlook.com
- (mail-southcentralusazon11021076.outbound.protection.outlook.com
- [40.93.194.76]) by mails.dpdk.org (Postfix) with ESMTP id 0F44D40284
- for <dev@dpdk.org>; Thu, 20 Aug 2026 02:27:38 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2D6AA40284;
+	Thu, 20 Aug 2026 03:38:23 +0200 (CEST)
+Received: from SA9PR02CU001.outbound.protection.outlook.com
+ (mail-southcentralusazon11023097.outbound.protection.outlook.com
+ [40.93.196.97]) by mails.dpdk.org (Postfix) with ESMTP id AFFAD4014F;
+ Thu, 20 Aug 2026 03:38:21 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YE862cE7jJ5GVmWSweIf1z/WaF6z0yuX4oyzwO2B4TUYTQmNSOGhlUJ9dxyUDrixx0aN0ZX8zO79tEoN6cK/7bkdYwjdZTW524Xu2PdcWlmZwohTHSHPNx028Zz7VdRB+GlPV5uP8cxO89TuQLUhwfWVQ0ikTSxZtQFjEiUN0jss3QWU0GS+DzX9RA5Quak0pF/4OVltw/fN1EbotTU5Q68nwvOOVem5KAwuI9Rj5NyNadgzqUlQCxr9S7XxeKHhMXgRFqD84LDLbb74nG2hB71xzLODuzqU6ahae71prRZMRf0cY9sfhQVpW8Ufnm2Ro0PCahdYfZNIVF6lgYJFnQ==
+ b=PDjQJ6QnR3fem3nCe3DV41u/rhg1t+K4jXtUTBxUTBYkKYhQPXjb9fMWUFZKAE0cxR8bpaTeQOP8BFR2f51Jn4IGbpyXZl1Zp+WFEvAG9GKYNLVP6DdGLeht0CTJcRa09sVeuX7dam+YK+AAmzNJtkP7B2JMUmoQIYjueSpZ1EZN8WsBHiLQFZjkZ/lH7ONa0LJAJYtSdmhk6Q3y6kll5eU5URIgo7EjICaalGd9tWA327QmlQHDpNQjxZTjyP2wr3LaApp1bsR324NEwa9aBcJlhqlnYPPL3DjIwKHBpb1xPIyutJiCX+R/NEges/cmoBr6cgd0lwlFxKOYB0PTDw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ag0rjsD3SIPaLnkwPckdC0ehEDyWIXLhzYp0PZkWgnI=;
- b=vny0Ax+TixaaJHOBvu7l/DPyh5nFi2VcUwRerZONnIQ2LUqjyFRUlFBVSZ3F4kzoTornYdCqz1OJMmvlrf+5xk/hS9pXdE18YMf/7asZeRJ0z3eNniJDfaWJ5giTMiiPp8f8Q+YOOIbsFN3w9Cfp7lZqiM/8IjxkA46wgMpYmEm3JJXr/bMr8ut4YWAxltuTOogp1VRz30zXYlWqhPRtf28xgT+WYkKL8B9rnvcBD5f09zoF5t+v3XdOSy1ZvBdC902VBXBvQ4yunjSU6dx3J9yk42GOu364ZU+mxOUxLvkTsP0pHvL4sgfPUmvZUiKUu1LKjhofJpsVveZTr5xOvA==
+ bh=NvXMd35mMwlv/J52YF01f2VhCLgMREKumTvMrS46KTo=;
+ b=I+AlJqiuqPxmxJU0gI8OHktc+/dX80SJ/lM0ZSUzqXRNbjwcP7zh0b8go+n0psDCnT2BOhu+KrTLeNjk4zw3sXdkpjWdHvv0qEGCZkhkxd2PFERt9tw+xHu89tRmpYBaQXuYnCK0XuXpRQyBQklq0A+RAZVQIz/JcBF0MfyQ0KUZpEx5sl8QyTelWnq/F1zcxKvPGd5FWuu036PviVL6/s1LY5HCNGMAFOUP/eR3mP3xnry1BYAFbbGf/AXltcdcF6EPnbh5hsTCmaLs6SrpI7t7lOOxB5vzmFmhvpNblCxzypvzbeASIOyf1r11cYPX/LK9zk6hOCtmb+wfOL394Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=microsoft.com; dmarc=pass action=none
  header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ag0rjsD3SIPaLnkwPckdC0ehEDyWIXLhzYp0PZkWgnI=;
- b=MmwLxI2/HB28UGSX/+bclpM0AU9MfdTOhfC3xCb6MVe9SFgiD+rf6g20O1CRnrBRQFHD6FaXGIfc+YBX8HX12gWwZezfXwHIPt6mskJ7OU6ZKCbT2ySCcXHFpk3T9ZCGVf14osDOyvWX89ddSr8zgoGKm+ocnQ9p4Qt9lWabv9g=
+ bh=NvXMd35mMwlv/J52YF01f2VhCLgMREKumTvMrS46KTo=;
+ b=RF6S6KrkLe2Ksh0ouU/aua04VzatfYsCmhXjFfJsS6H1VuxqpNI7RArAJZt4PZWwjS5mlZnYtN+PIUsNjWo56WEMRxKxRZPJmKTLy3YUz2Ss6sdN6AJCRusQwxD8ticybu4YD0HQe0GnOemE5CSIqkMQsJpzxEMEizVfknFnb6w=
 Received: from SA1PR21MB6683.namprd21.prod.outlook.com (2603:10b6:806:4a4::6)
- by SAWPR21MB7001.namprd21.prod.outlook.com (2603:10b6:806:4d3::16)
+ by SA1PR21MB6825.namprd21.prod.outlook.com (2603:10b6:806:4a9::5)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.0; Thu, 20 Aug
- 2026 00:27:35 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.339.5; Thu, 20 Aug
+ 2026 01:38:18 +0000
 Received: from SA1PR21MB6683.namprd21.prod.outlook.com
  ([fe80::8bad:6294:8a07:fe18]) by SA1PR21MB6683.namprd21.prod.outlook.com
  ([fe80::8bad:6294:8a07:fe18%6]) with mapi id 15.21.0315.008; Thu, 20 Aug 2026
- 00:27:34 +0000
+ 01:38:18 +0000
 From: Long Li <longli@microsoft.com>
 To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
  <dev@dpdk.org>
-Subject: RE: [EXTERNAL] [PATCH v5 0/4] eal: uevent overrun mitigation
-Thread-Topic: [EXTERNAL] [PATCH v5 0/4] eal: uevent overrun mitigation
-Thread-Index: AQHdMA5xdavNyHaHkUa5WsgogX6mdramFQhQ
-Date: Thu, 20 Aug 2026 00:27:34 +0000
-Message-ID: <SA1PR21MB6683111D3B9BC1F0AB2F0352CEA42@SA1PR21MB6683.namprd21.prod.outlook.com>
+CC: "stable@dpdk.org" <stable@dpdk.org>, Randy Tice <rtice@cisco.com>, Thomas
+ Monjalon <thomas@monjalon.net>, Jianfeng Tan <jianfeng.tan@intel.com>, Jeff
+ Guo <jia.guo@intel.com>
+Subject: RE: [EXTERNAL] [PATCH v5 1/4] eal/linux: filter uevent Netlink in
+ kernel
+Thread-Topic: [EXTERNAL] [PATCH v5 1/4] eal/linux: filter uevent Netlink in
+ kernel
+Thread-Index: AQHdMA50+wOzHqdIbUK9Li0Ev/DtAbamKPRQ
+Date: Thu, 20 Aug 2026 01:38:17 +0000
+Message-ID: <SA1PR21MB66839FA8D69C7769E6BD64E0CEA42@SA1PR21MB6683.namprd21.prod.outlook.com>
 References: <20260817201602.120526-1-rtice@cisco.com>
  <20260819191036.679330-1-stephen@networkplumber.org>
-In-Reply-To: <20260819191036.679330-1-stephen@networkplumber.org>
+ <20260819191036.679330-2-stephen@networkplumber.org>
+In-Reply-To: <20260819191036.679330-2-stephen@networkplumber.org>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=0ea9e1c3-5cfe-4763-a79c-97814b1a132e;
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=9a516598-d965-4538-995b-638e699148ba;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2026-08-20T00:26:42Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2026-08-20T01:38:00Z;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10, 3, 0, 1;
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=microsoft.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR21MB6683:EE_|SAWPR21MB7001:EE_
-x-ms-office365-filtering-correlation-id: 79b4b385-0902-4013-bac8-08defe51d4b8
+x-ms-traffictypediagnostic: SA1PR21MB6683:EE_|SA1PR21MB6825:EE_
+x-ms-office365-filtering-correlation-id: 8f74eb6e-609e-4770-73aa-08defe5bb5dd
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
- ARA:13230040|366016|1800799024|23010399003|376014|56012099006|10067099003|7146999003|22082099003|18002099003|11063799006|4143699003|38070700021;
-x-microsoft-antispam-message-info: X3cXpom1tTCyeqedu044jLLJLT5GJ9sZPu40J4eRmWfMXt1n3PcLA2X2rhaC9fjrpngGrm75Luef5usQpudYxxwL5FlzJxrGsKodTbDvXZyC6r2FYuNbcFt40uUu6dFOJusCgS88keLvg0Co7fJB4HgcTyUeTZXjdiPUtvuyObKR+PoK01va/BmoaJcgIuTG+m2QTg8VVkyYjVYiKG/pcCpqOA3DtrRm6IDzwW4AHhVKw9JC6SQdFl7GPdk7hr7TPyJgKaFWblxXXbyFV2xws62ruqxVPEvyESLRAgEP4D3+PH8s0NtpS6VJ4UYkRo4j2NOXXxkcnU3/J7GXWX29y96pv7EBBIuSr3f8IeXVfYgfQVxWt/fPNPV3mebhjjy8DgT5qCUxIPK7uDZYDZnT0zNP6jVGZHuxZ0D6VCT9xcNFydiCDWmQ/VvaQSZj9FHtAuBY5XelFnTD3Nb8mZN24Nz4Q0pRjpHQhGFVpvRugJMjy+HnaysfRMsCPpV4cL/ObMZqUOGl70KfYTC7xUdbjE2bjMQCoRDncUMl1PCW2OWSSn7dRFJRW5tQ/RDMSGZtNJBhjKIRsoce5/qM8+WihuCcwgIvC4fcU4Vai9b/yRccdJ2S5cbPf4XTYj7HOQXQ+yBMCKxDit5tmwsmHnoPqSqxR7lOPNpW+c92wTBgarY/MKhadpSihixdlx4RlkIMaeyImg8yYen7GaWqfVSRCV1+MzIREMA2C4dCo32pW+o=
+ ARA:13230040|1800799024|376014|366016|23010399003|18002099003|22082099003|38070700021|11063799006|56012099006|6133799003|10067099003|7146999003|4143699003;
+x-microsoft-antispam-message-info: GADZWJdz7dIMTtmw6uzN/SC5e3joA2ryQB5Mgk3vA4a7TAnrLQljCzTbCpUrfaKbZf/s2osBVk99XT2yWJLkt1+iV6PdD9R7Y0u21HsFxSL9RmJr+virs8Av5rF1D/4ROcqdrqpzAatz0sYOh/rZYj1JVZsM/ZbtZk9LLE357kUBuL2lG05mYdF+ije40LntkOag84y8jKRU0Tn3yAIvgcYx3TwZutz6N8fM6GgzixCSwcfzCnSscbUnggSUMKL1WUtBQneCPm6zWBmcVJ9hisyiGHWDmYYUS5f76rZvVbhRbUri7Pu+jJpnucJ/yrOBW9pKqsMpslqVKytOP9UlGQCTFK2aQYSUYZhzzaZvohDztJwoJadAMefN/dc3lxLvPhVsHXUKeWVDzKmZ3T1JFoj04U1ARfyaQGjAOdmq4B7szNJuL/feNcf2E5YTvz+XQk8+J5Smq6Tcg7BZcP23z1KZLROyu+fiDVnU6SQ/5BMXO/SYCsJQbw2+3GNA6tlNZaQ8G9qESTjWGGSeDoBGLRomM2PtVu+bZK1o2Vi6xYEL2BS2X0+Sc1rhz1Hlit1IOc8X2+luSgca5eCWOAqTea+/dJ5z3Bk5Or60dh5MFzKLb+FuQ2GEzGZYrJbJ4nde4mDAvy9WjvJNpAQ+hS0LG5QTCsdGic1I49grUdYI5E8+IgMleif9BAqumG9Nr2Guk96cGoOvlUz9BaBiUU22QSyCDgE8zAep6cui5qr/tiQ=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:SA1PR21MB6683.namprd21.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(23010399003)(376014)(56012099006)(10067099003)(7146999003)(22082099003)(18002099003)(11063799006)(4143699003)(38070700021);
+ SFS:(13230040)(1800799024)(376014)(366016)(23010399003)(18002099003)(22082099003)(38070700021)(11063799006)(56012099006)(6133799003)(10067099003)(7146999003)(4143699003);
  DIR:OUT; SFP:1102; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?sEtb7RO6bCKJIFbm0wwdh9DgL3ayfaYVjA0Bn6mzxYkab6C5vFqNTkR1vM+U?=
- =?us-ascii?Q?n5I8h2BZpbxG6JxLi0MvTlTorOYctfVPr9vGkL+yPY0zo+GgiwL7u/hC1PRH?=
- =?us-ascii?Q?lQro0LmyH540kji0PgpDPY7qyTHSrfSPfRJo7W8wWLh9kA7aeyB+qHJMJHC9?=
- =?us-ascii?Q?mEpzD2KWs3XlmOi7F9CLl7KC7dT+0eSwUvm2i7ufuNPTlbEf+4A+d1VOs6gl?=
- =?us-ascii?Q?wM3V7NX2h90XPwGRxcoUcPDYAymqxskuCQCGhPpdwd1Y2ArVt+NlOP+MM7Mr?=
- =?us-ascii?Q?BWZe3hfsHfEd3kpA6taU5hPBXCet9MigoKmEmWPSP99Lqk8yjBw4LRBrN8G7?=
- =?us-ascii?Q?ljYWPM3Iz6fsIyzRcxMzamPpTwsX7wJd3KA9lmPWx7L4oZtccdwmcUfTcwlT?=
- =?us-ascii?Q?YNoYm+JxTr9CLXVr7MATxWZnPlY/ZEGdYHkUSA1PuW4T7rqsduSBcAoJlpPp?=
- =?us-ascii?Q?qntRZVZ62cJuMVpy9ThVTLE91zWXdXLWtiFarnrpmbgJ3VQQvDEjpePYNIW7?=
- =?us-ascii?Q?2KCC18kCRAYirp3cdoo/iru90l6fL0Dz6z40+kuyitKzOt84xLozEwunAf/J?=
- =?us-ascii?Q?sUdV1PZVxmJ6T2PCNp8SdhA2OwNIWsTeMp7nTqRrDFFDOoJooK/dUqGwexR7?=
- =?us-ascii?Q?vKHS5HOQu+mXw0kbzWlfXl3+uorYjI4FLYnNZTezWz4yQ0I74ggKYOPT1oln?=
- =?us-ascii?Q?obR8KvFjyZkmmP4Pqppj1u7b2ifQ4BiJN0aIMoBlpqZftnUTsc96F2GqBO79?=
- =?us-ascii?Q?Aqa1P6z88MiyD5or52vp+6vmekJAmc3GPCU6uWPx8l7FL3FE21UqYvCKGsgJ?=
- =?us-ascii?Q?25ye6/zTurXOZy5VFwjFPJdcTFqUMq57x4l8SHuRo3ILujC+DTGiMTleleK3?=
- =?us-ascii?Q?VD/V6MyGivgqXcr69Dw3T3Jo4eqZkUeM4q38kqdfRldkDlhUWS4oqVTeYGVA?=
- =?us-ascii?Q?bijuaSIClCCOd2mTSs0vdg3hGpV/5AyZJrL8BLTUXQtYU7T3GNTqzJ+jUJGd?=
- =?us-ascii?Q?tKoe9wDMZC149ZdXEhUrSAYMCsJwPFoh7i5YZ0XDqdUwPHOfpbowN1VPdKAP?=
- =?us-ascii?Q?ONHA2la6Pjy8Tcl2D+AcVeFMN9qGnz000Icv4B7CgEzf+GssvB+HI40f+TWr?=
- =?us-ascii?Q?UPspUUD0c78w0GOMBOcvLy9VAJuM6gy0WexzshbQ6Wzjf7lnLftCFfiHuVcF?=
- =?us-ascii?Q?fWOgifWmYy3vCLUVJ4DLY41lJtO+TqRihiFgKXBMSxrUz1KnioY1rjAwneD0?=
- =?us-ascii?Q?zvyy5OjYNfcAkCbnO1BF6CHLL+u98Rl0F0s4q8ypa+pSZfAhAx0hS0HcNicf?=
- =?us-ascii?Q?GdxhjC5LlIaeeUD51jPtRpYq93vtUnG18QMpqf/Exq+pfsO85Cz51ci1xlwz?=
- =?us-ascii?Q?WZnneOUFausIhvN7L+hNEPmyKYdfFy9H6HbTyteMyPJrE6oWgjafIoyEjfK2?=
- =?us-ascii?Q?EJsFUxUh3BajonIPo4UKiDRqIH6/eFFphtTV7nGNy1CrjZueIELn0zH4t2Nh?=
- =?us-ascii?Q?w8fIKa3HUaLKa4MfN2jJATwY3D6xwUEeh0FgJt5BuWiv+jybqMv7Iyvbs8wo?=
- =?us-ascii?Q?B/yGu7A5WkTdsX0ws4mjd0hiAUG/8S8Zz9YY7RkwhI+kKlUCbag/JIKW0uje?=
- =?us-ascii?Q?1kB0eaqD+UCa8zhriC9IyZaFzolABp1303ZxEsF98JPD1XwRDzZrqGfshFz/?=
- =?us-ascii?Q?unnPOpRA48gjWzb8Dz7Y+QeDKc9iWngDVhMM5o7Hud5clkcZ?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?wrCMAye13jym4GbiQw/uILrDM8NCQcg3R96+3kGSUa6GoZnrLDGTZ3kTXRod?=
+ =?us-ascii?Q?Ea1/j3oTqDP7IZtHtMuAXGiUOpBJ4g8gGeU171kXqravYQLOl5hN8ozSXElX?=
+ =?us-ascii?Q?guD2ysFiQ9nXJ/AEh3wgKTxShQALfAxae50iVKOCze9ean055+sCCQU4SuKh?=
+ =?us-ascii?Q?2gRJhqh/pfICak1spSJFNyffyInYxctDPhgO68F4wAN60P1ohNdn5RjSePVM?=
+ =?us-ascii?Q?IFS9k3k0RIXCvrcq3Oseie3vA5ooQmVY3URAy1+DCbMe1JK5X3LuhxTfIHmr?=
+ =?us-ascii?Q?WVvXcPLVevZVwMxcwCozcOOHQriNxK3DRmpQhwAf/zVY0nr9xhVyi07mX2vy?=
+ =?us-ascii?Q?hpAA3d2cm8JXGg+CbQMa/NJb6nzdM9EcPjD9ddLh3S2YXoMZF6fTIGRdS7Wk?=
+ =?us-ascii?Q?uQMf2YM5cT0AqA0J3sZ/6shZwaR2DxgrCYGSMiiMmJSmyXJw+vjb1Kw7woNV?=
+ =?us-ascii?Q?VICFFo/X4B6fEnbWWLLW3cVrCWXHQg7ZMCLcCf82yZYKM7my61IRQPuSzkAi?=
+ =?us-ascii?Q?jVU9cEqbysvKxKBmZopbwGZMTRbUpLFI5vzC6nj/d40MQFqUxHnV5RFmiqHg?=
+ =?us-ascii?Q?9YI7hMLkKWD0yx9oPp2HP7aWkLlH5ireX91RFKntw8Z7V1QXz2tzh/fZYm+a?=
+ =?us-ascii?Q?rP5LDKFh0oHfhvSanPVM3HqE8CY57BDBwYBbGrfdOe4mWtauSTwm8jdlfEG/?=
+ =?us-ascii?Q?KF1+WzUGSnLcwzyqWL5U3WFSV70K4Tjxo+aC/DOiA4dLiaf1e7Mr//GYUXRz?=
+ =?us-ascii?Q?hrH9uCEQvbbqshzK//wEFxsY16hBn+pKh6A54Kk74UiAse5Q7CLXMVl0zjnD?=
+ =?us-ascii?Q?8FlNjKopMkdsnrfSOLFrsaCQ+tac9hpcvqnludLLTtjDxg8SPAPAUPn7ksxo?=
+ =?us-ascii?Q?7G+7jHPtlxwPBZdxIAzM8kXBUDmk+VQy6Z/T5WCZwdSGYBh3g+v5A1o6Hkp6?=
+ =?us-ascii?Q?uFGv8AU0Ma3FuYicCrGG3SFhRFRc0/TC4Ch8pr/z0KejYMToEn5gUTTs4Ikr?=
+ =?us-ascii?Q?rjtZDyw8y9mZQU9QuO4rT7tDPZrek8ZQNRRSVpzxZ+0XjJWQYAkN78Bl1QMo?=
+ =?us-ascii?Q?znPT8lKdvE87i1haAAagpALRRGJE0vNXOvXyYuGnUdHb9V5sGc0ry/tdu6Tf?=
+ =?us-ascii?Q?AxBNAiYvwnuXvBDfEDjQ3DxlJu7gJl+qjpyUBLqHbcEEga6Lh3YByyFd/USS?=
+ =?us-ascii?Q?smjiHQrb+mhwgbw1Er3ey4b3P8pLYlWCFDfwVH9Cnf9qAb68hcPGUu6Ir8zj?=
+ =?us-ascii?Q?NS3CNfLwph6o6oIZHhJy9EpB1PCJASQGyU0TH7M4NMsjMx2LL5wEc97rfJBo?=
+ =?us-ascii?Q?U/Xn1rApJyXpbpuImKAYWYxL4YqvYCcHzmBBq6TSemznxrh9KV3Pq2/uPXvN?=
+ =?us-ascii?Q?PW7/TAnRfHkuONugc2FSGWbifj3oVFIUOgd9xy7Vw1cDfMZm5js8d8JBqUPn?=
+ =?us-ascii?Q?Xaw2BjSvuimwue4PTIU127bCOWEUwbxG/tPndK4agLE2xGzYS9Gpd6V98uVd?=
+ =?us-ascii?Q?yo2GhfEfOi0ramEKvN8OsF2VVkiOGIdfM989kQx9MSinmUC7Lo7h8oN6b8bG?=
+ =?us-ascii?Q?p18o3TSu/76Sp3yQ4i43OgfP8aFKFPKEVFMvknl4mpO36pGDOTv3k5QNziVl?=
+ =?us-ascii?Q?8lmuHp4dAkq0M9Ba/JBF8KkH373y+QFlWNut9XzV/4+PmY2uq4dGBG4z8rxV?=
+ =?us-ascii?Q?9ztbZnrj63S3C/HSyCCavIsTrI1hFjZubaaxdEdRNw73E+o3?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: SA1PR21MB6683.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 79b4b385-0902-4013-bac8-08defe51d4b8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2026 00:27:34.7367 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f74eb6e-609e-4770-73aa-08defe5bb5dd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2026 01:38:17.9815 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: wMjd5Ted2gzdI7z7MRLc1Ibvvh9hiP7dobpw7K400/yRaTlX71EY8Cq+90opNXwY9r4uZ3NfZjO/miGr0OOIcg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SAWPR21MB7001
+X-MS-Exchange-CrossTenant-userprincipalname: eQ86Z3yvm6A1UWIRWuuuQ+ugsTJ8bm2fbv7OAtaG2CGLp6zK4O+p56TQKyTO7/TfJP0qPQ+DtEl/DQ8hUS7+nw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR21MB6825
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -128,37 +134,81 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> This set of patches is an extension of the proposed patch to handle netli=
-nk
-> uevent socket overrun reported by Randy Tice.
-> Mostly impacts users of Azure VF events (MLX5 and MANA).
+> The EAL uevent only needs/wants messages from the kernel.
+> Better to let kernel side do the filtering to avoid any overrun issues in=
+ DPDK
+> interrupt thread.
 >=20
-> DPDK uses netlink uevent to track hotplug events reported by the kernel. =
-Since
-> this is a one-way non-blocking channel there is no fool proof way to prev=
-ent
-> missing events if DPDK interrupt thread does not keep up.
+> There is no exposed API definition here. The convention is kernel is 1 an=
+d
+> libudev uses 2.
 >=20
-> What this series does is:
->   - use netlink group to only receive events from kernel
->   - increase socket buffer to have more headroom
->   - report the problem more clearly in log
->   - document requirement for control threads
+> Since kernel is now filtering can remove step in uevent parsing.
+>=20
+> Fixes: 0d0f478d0483 ("eal/linux: add uevent parse and process")
+> Cc: stable@dpdk.org
+>=20
+> Reported-by: Randy Tice <rtice@cisco.com>
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 
-I tested the patch series for MANA. The test passed.
+Reviewed-by: Long Li <longli@microsoft.com>
 
+
+
+
+> ---
+>  .mailmap                | 1 +
+>  lib/eal/linux/eal_dev.c | 8 ++++----
+>  2 files changed, 5 insertions(+), 4 deletions(-)
 >=20
-> Stephen Hemminger (4):
->   eal/linux: filter uevent Netlink in kernel
->   eal/linux: increase uevent socket buffer
->   eal/linux: report uevent socket overrun
->   doc: add warning about control threads
+> diff --git a/.mailmap b/.mailmap
+> index fcb3d1bb3f..9b7713b6df 100644
+> --- a/.mailmap
+> +++ b/.mailmap
+> @@ -1380,6 +1380,7 @@ Ralf Hoffmann <ralf.hoffmann@allegro-
+> packets.com>
+>  Rami Rosen <ramirose@gmail.com> <rami.rosen@intel.com>  Rami Rosen
+> <ramirose@gmail.com> <roszenrami@gmail.com>  Randy Schacher
+> <stuart.schacher@broadcom.com>
+> +Randy Tice <rtice@cisco.com>
+>  Rani Sharoni <ranish@nvidia.com>
+>  Ranjit Menon <ranjit.menon@intel.com>
+>  Rasesh Mody <rmody@marvell.com> <rasesh.mody@cavium.com> diff --git
+> a/lib/eal/linux/eal_dev.c b/lib/eal/linux/eal_dev.c index
+> ec408649d0..666967667f 100644
+> --- a/lib/eal/linux/eal_dev.c
+> +++ b/lib/eal/linux/eal_dev.c
+> @@ -29,6 +29,9 @@ static bool hotplug_handle;  #define EAL_UEV_MSG_LEN
+> 4096  #define EAL_UEV_MSG_ELEM_LEN 128
 >=20
->  .mailmap                                      |  1 +
->  .../prog_guide/env_abstraction_layer.rst      | 14 +++++
->  lib/eal/linux/eal_dev.c                       | 56 ++++++++++++++++---
->  3 files changed, 62 insertions(+), 9 deletions(-)
+> +/* Listen only to messages from kernel (not libudev) */ #define
+> +EAL_UEV_GROUP_KERNEL 1
+> +
+>  /*
+>   * spinlock for device hot-unplug failure handling. If it try to access =
+bus or
+>   * device, such as handle sigbus on bus or handle memory failure for dev=
+ice
+> @@ -116,7 +119,7 @@ dev_uev_socket_fd_create(void)
+>  	memset(&addr, 0, sizeof(addr));
+>  	addr.nl_family =3D AF_NETLINK;
+>  	addr.nl_pid =3D 0;
+> -	addr.nl_groups =3D 0xffffffff;
+> +	addr.nl_groups =3D EAL_UEV_GROUP_KERNEL;
 >=20
+>  	ret =3D bind(fd, (struct sockaddr *) &addr, sizeof(addr));
+>  	if (ret < 0) {
+> @@ -164,9 +167,6 @@ dev_uev_parse(const char *buf, struct rte_dev_event
+> *event, int length)
+>  		 * check device uevent from kernel side, no need to check
+>  		 * uevent from udev.
+>  		 */
+> -		if (!strncmp(buf, "libudev", 7)) {
+> -			return -1;
+> -		}
+>  		if (!strncmp(buf, "ACTION=3D", 7)) {
+>  			buf +=3D 7;
+>  			i +=3D 7;
 > --
 > 2.53.0
 
