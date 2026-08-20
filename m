@@ -2,70 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B87B0C5DF81
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Aug 2026 05:23:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0F50C5DF85
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Aug 2026 05:23:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B660B40693;
-	Thu, 20 Aug 2026 07:23:22 +0200 (CEST)
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com
- [209.85.214.177])
- by mails.dpdk.org (Postfix) with ESMTP id 8772440693
- for <dev@dpdk.org>; Thu, 20 Aug 2026 07:23:21 +0200 (CEST)
-Received: by mail-pl1-f177.google.com with SMTP id
- d9443c01a7336-2d049069377so15519525ad.0
- for <dev@dpdk.org>; Wed, 19 Aug 2026 22:23:21 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id ED84A402D1;
+	Thu, 20 Aug 2026 07:23:25 +0200 (CEST)
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
+ [209.85.214.170])
+ by mails.dpdk.org (Postfix) with ESMTP id C8AE74026A
+ for <dev@dpdk.org>; Thu, 20 Aug 2026 07:23:24 +0200 (CEST)
+Received: by mail-pl1-f170.google.com with SMTP id
+ d9443c01a7336-2ceab75934dso21674195ad.2
+ for <dev@dpdk.org>; Wed, 19 Aug 2026 22:23:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787203401;
- x=1787808201; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787203404;
+ x=1787808204; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=VP5AM/VofpxSHq+WOAcKHqdb/qfaELWVfK7pW3PfCQY=;
- b=JLMhgatdZPlELEYZwtlaz0Xqoj+ahuv5ZNJVP9zW5atwoBEXEGvg52sfTPtsM9i6GI
- 45gCeuY4EStr+i+G4bE5ypRIhnGmjMBSJQSl9h1bqhVjK4L0ciMe9z08q4GnFguH3z+9
- iBpCdnpGPNanSgeW3Wafg0ZN/dCTyUfoJjc/g+dQ6JwzA/j5B1PKkdF/eKKnTbsYnhzv
- /Gfp2wQ3QOkZ6fQUrqQjxBu9fblneFEIz6CRkl/SdfFfqik5uv/tYREs9CXnFCHO2EFK
- B2UEc7PiHypuIh2hDYXtqscN81e6D5EI72nUcVnaXQWAm3uOtxYVEzSIfHjFIPfLc4T+
- Eb5A==
+ bh=uI8PmimZGxw2wNA/g1huhW0zP0b2UE5DalbWUB4CMGk=;
+ b=0nwe2rW7JBX5PA9Xp4H2+c2j4+I20wmCRky8juHcfagt1w4and9q82LhZxe0ufeYQm
+ /oi7TycavlzKPxSa5B5crUlheKa4MnkymuvYtZANAzIH8TNXaLscfEKRuWr+XfQc/fDM
+ SQT4iogTzN9TK58/FZe7542vRY5Ys8L1bZCeGXJwTOObgBnyE+a46D5Jhqn1kVD3sfE+
+ FONAhaecK4+iwICNLJguOhLuQmHQxiKsZt6I/06Cc9o2Xvt8DS6XjjhNDlSxV8l7w83C
+ qdaPS2r7rUcYOXReojh4Xcy3lT3VMgZdAv3KWVgcdIScSnCxX7mxSXlMSC7qB/lrWyI8
+ MKFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787203401; x=1787808201;
+ d=1e100.net; s=20251104; t=1787203404; x=1787808204;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=VP5AM/VofpxSHq+WOAcKHqdb/qfaELWVfK7pW3PfCQY=;
- b=HbWGzJolVMXXRkjgewOSznP0VGuL+4l3W3M5Uh8EdcNvk9CW9vDoopdxh3EQgHLFrO
- 4crIY8K5T3vVN+EySbJRrqsphFDw7XRiWSGYhoaPP0vna2oK3DFsJpfnGcQkc6K/yEQe
- t1BlkzdpUw1RHyl7S49IVM7tUyqdni11a99g31w0J2uZHvGY4BkSF8NdenNLbWBokdTj
- u73zvbH4xTjlYm2dHkGEOuuW1dWrbWvQ7Fr2KQsq6U44Ib5WObWUwQSuD5GhKY20YHRl
- Nj297TrRm9MkeFI6Fs7ZCF8y7GD93VlqJvcOsPkR0vuOKhACoetLSke0b6pkD5Rsdo1q
- lgpA==
-X-Gm-Message-State: AFuF++lfBj2UR5QA7iOJze/k28g4t7aw5msTff/lHKuAviWduiYKIuNg
- yLI0lhmwCKZtibo7RqW4vFf8r7TzZoVwQ8aoptMVo3hfXOM4HXptwhShVwPcj/odG93eAJYiDkI
- /4LZV
-X-Gm-Gg: AR+sD11xvI8xTD9TJ23b/b+RhDFBtLj+yy51iOvJCR5CW5vtfELKA81NzIvgd1rXfNa
- 4mSjAzTrw6CZLtoMmzCvnJVvCBtNEQ0Z064wplho4DPFQyMXsWvB868mV22D5DdVpln3yIhOXk9
- 5qnjNsHCEQRLaU9Dyht9zphSRdj8NarLaRqwqQHzA1lzbKwoGKAtmHGo4kcCH9wuR8+yCnc+5gZ
- bP9ucMnoqGlxWbkXX/TCDggrz9bvzhI9ZCqw7fBSpIes1dWDHDYK6RnYwqXtVS4XOc02ut+UtN7
- UgAm2c9laCN6lDCYQnVu13jCK02C0ICktlBpEFOr4+BlJ+hMFIThTu1vxGmS3zOv2ydjqVXaZdZ
- +hWGIFW89IkSHGCHXl65ziBrekxOjiDmOWJrYMdBdB6FDTQjSHRZ3JgutyxffQin8ndvqt2lO/n
- pBJUNuTrlwvZXXFgqFZi9EHI8ivaG60jShRIhq2DDJM1v82HwiW6gyxwYE4aJAeus8YBWnKPSHE
- 9/a4GywZOr/rQ7BFhCN/E4pLF0=
-X-Received: by 2002:a17:90a:da90:b0:395:4de9:b30 with SMTP id
- 98e67ed59e1d1-39580a9aed7mr19959800a91.5.1787203400590; 
- Wed, 19 Aug 2026 22:23:20 -0700 (PDT)
+ bh=uI8PmimZGxw2wNA/g1huhW0zP0b2UE5DalbWUB4CMGk=;
+ b=M4oZMlSSP4SYHmxGsSv3DaG7O/uzoiVbSxXPhx2GXRNCm0/73AXHeFJLwGuVro0owB
+ E3aaoU3nj3jOc+036rGJJ67eQGCGCrMds/WqV5kK7/Yq6vE6a2wsoB1rp9ry2baC3IVl
+ mmLYw9JaplkjGzLmoeAzTnIMVXTfl3kp+3Pv2OeVoJDUNK8Xr6DK6c8FVuMMcpXYWooF
+ +MUwvmgawWWGqb5WHhqxS1tuZ21obsQMrbPgbL/sXjd5ySWpo2yPrQdOggsR5y1WkJ6L
+ AQzLZbE0/Hh6JG6EEi6ELcpRUngQc8tqpKJiLSoiMS069jWCWwVld6ISKUivJkU1YnIZ
+ VDMw==
+X-Gm-Message-State: AFuF++nBrKducipRmhuElLhyFJWq3bgcMk1F3JbOnqPr5blm30+LAAFn
+ VnHCLZBCrhCfULisaByAOljAGk3BAnuP/aGPaWpAjD4uWc6MG+uy9GValivLoJi2vpdl3XtV81m
+ QCidc
+X-Gm-Gg: AR+sD10xq68K7UeSsniI/c9CT4x6gcwAu+Um2kDM8iPaHGmFjEYeD9TNOWSKYRYv9Fv
+ GqXOmORwKHr3ZzKGSZ83Vt4XhixF18B8TYf7i9Zfp/wkyoUsoCCSQIXg04RXotxEEVLC+ftPpB3
+ 32yAUG3x1SOc9EmQIJZrIKF98TvFjCyKafUlpDhnYkDke0oDAymd0gdxEI5muhjOW76qyWRyjPy
+ //6zeLWdAtyVaLv9+uBemuUKzcEkGD5WfUnsRSYqeLfU4ks1h89A43oJiIYLX3MrPlY0swmu99S
+ IWigrmvsdcKZv9dxpl2X0G6y+uzKOzPOzwBwCqUVf9mR4eKBtO+Oe7cxW1F162jmg5b5I3LWzrv
+ h6AuY2haf4P85VzdDAw+YhYzmFeOzZbqlzKCyiHoscdHHrylPP9AI0qaJ18PKLVPflleeUwIGrE
+ uRLZ9zu/Bf6ZDi8N0bqLKnqncHzoXiCkwqZ6XQrBvnPCo1yPaz0YcQINZxCempyVg27eOzOc5Uy
+ 43LbWJTyyiP8Hfq2Te01/CrsSU=
+X-Received: by 2002:a17:90b:544f:b0:38f:de97:b06 with SMTP id
+ 98e67ed59e1d1-39580f0943emr20330446a91.5.1787203403913; 
+ Wed, 19 Aug 2026 22:23:23 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-327bef3bb5csm13700974eec.2.2026.08.19.22.23.17
+ 5a478bee46e88-327bef3bb5csm13700974eec.2.2026.08.19.22.23.21
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 19 Aug 2026 22:23:20 -0700 (PDT)
+ Wed, 19 Aug 2026 22:23:23 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Sunil Kumar Kori <skori@marvell.com>,
- Rakesh Kudurumalla <rkudurumalla@marvell.com>
-Subject: [PATCH 04/61] app/graph: replace rte_memcpy with memcpy
-Date: Wed, 19 Aug 2026 22:11:54 -0700
-Message-ID: <20260820052251.1453273-5-stephen@networkplumber.org>
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: [PATCH 05/61] lpm: remove unnecessary include of rte_memcpy.h
+Date: Wed, 19 Aug 2026 22:11:55 -0700
+Message-ID: <20260820052251.1453273-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260820052251.1453273-1-stephen@networkplumber.org>
 References: <20260820052251.1453273-1-stephen@networkplumber.org>
@@ -84,52 +84,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use libc version of memcpy for fixed sizes.
+No longer used.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/graph/neigh.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ lib/lpm/rte_lpm6.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/app/graph/neigh.c b/app/graph/neigh.c
-index 3298f63c1a..16c8257724 100644
---- a/app/graph/neigh.c
-+++ b/app/graph/neigh.c
-@@ -91,14 +91,14 @@ ip6_rewrite_node_add(struct neigh_ipv6_config *v6_config)
- 	memset(data, 0, len);
- 
- 	/* Copy dst mac */
--	rte_memcpy((void *)&data[0], (void *)&v6_config->mac, RTE_ETHER_ADDR_LEN);
-+	memcpy(data, &v6_config->mac, RTE_ETHER_ADDR_LEN);
- 
- 	/* Copy src mac */
- 	rc = rte_eth_macaddr_get(portid, &smac);
- 	if (rc < 0)
- 		return rc;
- 
--	rte_memcpy(&data[RTE_ETHER_ADDR_LEN], smac.addr_bytes, RTE_ETHER_ADDR_LEN);
-+	memcpy(&data[RTE_ETHER_ADDR_LEN], smac.addr_bytes, RTE_ETHER_ADDR_LEN);
- 
- 	return rte_node_ip6_rewrite_add(portid, data, len, portid);
- }
-@@ -121,7 +121,7 @@ ip4_rewrite_node_add(struct neigh_ipv4_config *v4_config)
- 	memset(data, 0, len);
- 
- 	/* Copy dst mac */
--	rte_memcpy((void *)&data[0], (void *)&v4_config->mac, RTE_ETHER_ADDR_LEN);
-+	memcpy(data, &v4_config->mac, RTE_ETHER_ADDR_LEN);
- 
- 	/* Copy src mac */
- 	rc = rte_eth_macaddr_get(portid, &smac);
-@@ -130,7 +130,7 @@ ip4_rewrite_node_add(struct neigh_ipv4_config *v4_config)
- 		return rc;
- 	}
- 
--	rte_memcpy(&data[RTE_ETHER_ADDR_LEN], smac.addr_bytes, RTE_ETHER_ADDR_LEN);
-+	memcpy(&data[RTE_ETHER_ADDR_LEN], smac.addr_bytes, RTE_ETHER_ADDR_LEN);
- 
- 	return rte_node_ip4_rewrite_add(portid, data, len, portid);
- }
+diff --git a/lib/lpm/rte_lpm6.c b/lib/lpm/rte_lpm6.c
+index e23c886766..c3fb795c59 100644
+--- a/lib/lpm/rte_lpm6.c
++++ b/lib/lpm/rte_lpm6.c
+@@ -12,7 +12,6 @@
+ #include <rte_log.h>
+ #include <rte_common.h>
+ #include <rte_malloc.h>
+-#include <rte_memcpy.h>
+ #include <rte_eal_memconfig.h>
+ #include <rte_string_fns.h>
+ #include <rte_errno.h>
 -- 
 2.53.0
 
