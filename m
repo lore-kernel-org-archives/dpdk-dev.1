@@ -2,47 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16A08C5DF87
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Aug 2026 13:03:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29BBBC5DF81
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Aug 2026 13:07:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 820ED406A2;
-	Thu, 20 Aug 2026 15:03:28 +0200 (CEST)
-Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
- by mails.dpdk.org (Postfix) with ESMTP id 37D9840679
- for <dev@dpdk.org>; Thu, 20 Aug 2026 15:03:25 +0200 (CEST)
-Received: from localhost.localdomain (unknown [78.109.79.191])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by agw.arknetworks.am (Postfix) with ESMTPSA id 23AF9E0CD2;
- Thu, 20 Aug 2026 17:03:24 +0400 (+04)
-DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am 23AF9E0CD2
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
- s=default; t=1787231004;
- bh=5U58fWtb2fomwGJbemaoMWXJ592KP+6vkiTsoLhS7Lg=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=z8eGf/uW4jY1SR5Rrw+V8AH8nT06qX0izL45hIhZ9AoxwYgTfMIugKoWdrRWyPqXU
- GxzJDr+8O5298PfgMuP8U+fx7FrtT/monSWYmSu9BwUxO504KS1cFU4l2LThD1Rhcl
- 91qXzzufS6vjm4AXPqv/J1ECjzgS5NaYI4gbO0PZ+EhLEjZsC3pKY4I/x51Ap1Vgxs
- qtK4zsJCQhTDdVXOy1/+NhFPcqsl7M76D5pcDD/Nc9J5dDzmjVnG9MstjNnytlRyLq
- EB1g6Lh6EBwEGnYID7v4BCoqBxIXz3+qjMJWlfObmiVV6EOrVQEEGP8/2gL2DgLJPY
- k4sVrc6KBMpfA==
-From: Ivan Malov <ivan.malov@arknetworks.am>
-To: dev@dpdk.org
-Cc: Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>,
- Roman Zhukov <Roman.Zhukov@arknetworks.am>,
- Pieter Jansen van Vuuren <pieter.jansen-van-vuuren@amd.com>,
- Stephen Hemminger <stephen@networkplumber.org>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: [PATCH 2/2] net/sfc: provide cached dev info to use in secondary
- process
-Date: Thu, 20 Aug 2026 17:03:14 +0400
-Message-ID: <20260820130314.12251-3-ivan.malov@arknetworks.am>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260820130314.12251-1-ivan.malov@arknetworks.am>
-References: <20260820130314.12251-1-ivan.malov@arknetworks.am>
+	by mails.dpdk.org (Postfix) with ESMTP id 4634340268;
+	Thu, 20 Aug 2026 15:07:44 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 9261C400EF
+ for <dev@dpdk.org>; Thu, 20 Aug 2026 15:07:43 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=Tf+5DUYA4hMaf1jy+DsC7SCDbTscgdeF95jZgztoHSk=;
+ b=jzTV3Oy+QgHtN4aClNxJ9pY3QETEsXlZDA9FBW0cVUdyyLizZ2MnDMblsZdCd56jq6FEDSZ3I
+ YFZks8gKB7oX0kqEySTrL0HOrd/1zwbiIvTwOemTcTQe/viQ4xEtMHIs+rvKRAp1BShSSAeFvoo
+ RuNHH0ec3Ce+ESvjPG6wv00=
+Received: from mail.maildlp.com (unknown [172.18.224.150])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4hQkHT06gKzHnGcs;
+ Thu, 20 Aug 2026 21:07:17 +0800 (CST)
+Received: from dubpeml500002.china.huawei.com (unknown [7.214.145.83])
+ by mail.maildlp.com (Postfix) with ESMTPS id C4FF140570;
+ Thu, 20 Aug 2026 21:07:38 +0800 (CST)
+Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
+ dubpeml500002.china.huawei.com (7.214.145.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 20 Aug 2026 14:07:38 +0100
+Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
+ dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
+ Thu, 20 Aug 2026 14:07:38 +0100
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>, "Stephen
+ Hemminger" <stephen@networkplumber.org>, "dev@dpdk.org" <dev@dpdk.org>,
+ "Bruce Richardson" <bruce.richardson@intel.com>
+Subject: RE: [PATCH 00/61] reduce use of rte_memcpy
+Thread-Topic: [PATCH 00/61] reduce use of rte_memcpy
+Thread-Index: AQHdMGQKcnXPGD6CJUuLHW36LEokwbamelUAgAAionCAAAR2IIAAPMvQ
+Date: Thu, 20 Aug 2026 13:07:38 +0000
+Message-ID: <f469a51afd3547eca1ce56f6abb0285b@huawei.com>
+References: <20260820052251.1453273-1-stephen@networkplumber.org>
+ <98CBD80474FA8B44BF855DF32C47DC35F659FD@smartserver.smartshare.dk>
+ <42ecbb8129514f52b456549ee66757b2@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F65A01@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65A01@smartserver.smartshare.dk>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.138.220]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,83 +64,170 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Secondary process support in the 'test-pmd' application now requires that
-the driver expose the 'dev_infos_get' method within that context. Use the
-cached dev info from the primary process in order to meet the requirement.
 
-Signed-off-by: Ivan Malov <ivan.malov@arknetworks.am>
-Reviewed-by: Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>
----
- drivers/net/sfc/sfc.h        |  7 +++++++
- drivers/net/sfc/sfc_ethdev.c | 29 +++++++++++++++++++++++++++++
- 2 files changed, 36 insertions(+)
 
-diff --git a/drivers/net/sfc/sfc.h b/drivers/net/sfc/sfc.h
-index 629578549f..9fcc8c9044 100644
---- a/drivers/net/sfc/sfc.h
-+++ b/drivers/net/sfc/sfc.h
-@@ -156,6 +156,13 @@ struct sfc_adapter_shared {
- 	unsigned int			nb_repr_txq;
- 
- 	struct sfc_nic_dma_info		nic_dma_info;
-+
-+	/*
-+	 * Snapshot of the 'sfc_dev_infos_get' output created by the primary
-+	 * process attach path for the secondary process to use in its own
-+	 * implementation of the 'dev_infos_get' method.
-+	 */
-+	struct rte_eth_dev_info		dev_info_cache;
- };
- 
- /* Adapter process private data */
-diff --git a/drivers/net/sfc/sfc_ethdev.c b/drivers/net/sfc/sfc_ethdev.c
-index 13619b4b9a..aa0e92b004 100644
---- a/drivers/net/sfc/sfc_ethdev.c
-+++ b/drivers/net/sfc/sfc_ethdev.c
-@@ -3163,7 +3163,22 @@ sfc_eth_dev_clear_ops(struct rte_eth_dev *dev)
- 	sa->priv.dp_rx = NULL;
- }
- 
-+static int
-+sfc_dev_infos_get_secondary(struct rte_eth_dev *dev,
-+			    struct rte_eth_dev_info *dev_info)
-+{
-+	*dev_info = sfc_adapter_shared_by_eth_dev(dev)->dev_info_cache;
-+
-+	/*
-+	 * The cache holds a stale primary-process device pointer;
-+	 * restore the process-local one passed in by the caller.
-+	 */
-+	dev_info->device = dev->device;
-+	return 0;
-+}
-+
- static const struct eth_dev_ops sfc_eth_dev_secondary_ops = {
-+	.dev_infos_get			= sfc_dev_infos_get_secondary,
- 	.dev_supported_ptypes_get	= sfc_dev_supported_ptypes_get,
- 	.reta_query			= sfc_dev_rss_reta_query,
- 	.rss_hash_conf_get		= sfc_dev_rss_hash_conf_get,
-@@ -3443,6 +3458,20 @@ sfc_eth_dev_init(struct rte_eth_dev *dev, void *init_params)
- 
- 	sa->link_ev_need_poll = encp->enc_link_ev_need_poll;
- 
-+	/*
-+	 * Pre-populate the dev info cache for the secondary process.
-+	 * All prerequisites (probe, attach) are met at this point.
-+	 * The 'sfc_dev_infos_get' helper always returns 0.
-+	 *
-+	 * Care to initialise the switch info and reset the device
-+	 * pointer as it is going to be stale in the context of
-+	 * the secondary process and it will have to fix it.
-+	 */
-+	sas->dev_info_cache.switch_info.domain_id =
-+		RTE_ETH_DEV_SWITCH_DOMAIN_ID_INVALID;
-+	(void)sfc_dev_infos_get(dev, &sas->dev_info_cache);
-+	sas->dev_info_cache.device = NULL;
-+
- 	sfc_adapter_unlock(sa);
- 
- 	sfc_log_init(sa, "done");
--- 
-2.47.3
+> > > About replacing rte_memcpy with memcpy()...
+> > >
+> > > > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
+> > > > Sent: Thursday, 20 August 2026 07.12
+> > > >
+> > > > The DPDK function rte_memcpy() only exists as an optimization
+> > > > for shortcomings in performance of libc memcpy() on some platforms.
+> > >
+> > > Yes, and those platforms should benefit from it.
+> > >
+> > > E.g. the vhost performance improvements for Haswell and Broadwell
+> > [1].
+> > > Where similar performance improvements implemented in the relevant
+> > > compilers (GCC, Clang, MSVC)?
+> > >
+> > > [1]:
+> > >
+> >
+> https://github.com/DPDK/dpdk/commit/4b42e90ef0e421dc777f2b2e377eb237cd
+> > > 3675fa
+> > >
+> > > IMO, performance should remain a high priority for DPDK.
+> >
+> > As I can read the series, good few of them do remove rte_memcpy from
+> > the CP,
+> > where it is clearly irrelevant.
+>=20
+> Agree!
+>=20
+> > For those on the DP, at least for some of them we can run perf tests:
+> > let say for hash we do have perf_autotest which can be used to measure
+> > the
+> > perf diff. If there is none, or neglectable - then no point to keep
+> > rte_memcpy here.
+>=20
+> Unless that perf test is run on all platforms, the result only shows perf=
+ diff on
+> the tested platforms.
+
+How this patch differs from all others?
+For each and every change we made in DPDK, to ensure that there is no
+perf regression introduced we rely on:
+1) CI auto testing
+2) manual testing from some platform vendors (once per release cycle)
+3) good will of submitter to test the changes he produces as much as possib=
+le
+Obviously, yes we are not testing on each possible platform and yes, in the=
+ory
+some regressions can sneak in unseen.
+But that could happen with other patches too, so from my perspective -
+we just need our usual testing procedure here, if it shows no regression,
+the patch is good to go in.
+
+> >
+> > >
+> > > > Many platforms have no special rte_memcpy() and just use memcpy().
+> > > >
+> > > > But many analysis and test tools know that memcpy() is a special
+> > > > case and check for overwrite, bounds errors etc. Therefore memcpy()
+> > > > should be preferred wherever possible.
+> > >
+> > > I think this is the only substantial benefit of replacing
+> > rte_memcpy() with
+> > > memcpy()!
+> > > Could we reap this benefit by having special builds for such tools,
+> > where
+> > > rte_memcpy() is modified to use memcpy() instead?
+> > > Then we wouldn't have to compromise on performance.
+> > >
+> > > Also, rte_memcpy() used to have a pragma disabling bounds checks due
+> > to some
+> > > Intel drivers using [0] instead of []; the pragma was removed from
+> > rte_memcpy()
+> > > when the Intel drivers were fixed.
+> > > I'm not sufficiently familiar with analysis/test tools to say what
+> > they can detect
+> > > when using memcpy() instead of the copy methods used by rte_memcpy().
+> > >
+> > > >
+> > > > This patch series introduces a coccinelle script to find
+> > > > calls to rte_memcpy() where size is fixed, and change them to
+> > > > regular memcpy(). This was the starting point for this cleanup.
+> > > >
+> > > > There is also some cleanups to include rte_memcpy.h and string.h
+> > > > where needed. Often the includes were happening by some other
+> > > > header. And also removal of rte_memcpy.h where no longer needed.
+> > > >
+> > > > The result is a 46% reduction in use of rte_memcpy.
+> > > > The remaining rte_memcpy can be cleaned up later:
+> > > >  - drivers with active maintenance (like mlx5);
+> > > >  - changes to rte_memcpy which need benchmarking;
+> > > >  - test code for rte_memcpy can be removed as last step.
+> > > >
+> > > > No functional change, no warnings in all compilers including LTO.
+> > >
+> > > memcpy() does not always use inline vector instructions for fixed
+> > size copy [2].
+> > >
+> > > [2]:
+> > >
+> https://inbox.dpdk.org/dev/98CBD80474FA8B44BF855DF32C47DC35F659B8@sma
+> > > rtserver.smartshare.dk/
+> > >
+> > >
+> > > Another disadvantage of rte_memcpy() is the lack of developer
+> > guidance.
+> > > It is not well documented when to use rte_memcpy() and when to use
+> > memcpy().
+> > > We discussed something similar on the Tech Board meeting yesterday;
+> > it is not
+> > > well documented when to use which type of "ring" (normal, RTS, HTS),
+> > so maybe
+> > > we could remove one of them.
+> > > But removing an option is not an improvement, if the removed option
+> > would
+> > > have been the better choice for some use cases.
+> > >
+> > > PS: The general guidance for rte_memcpy() usage is something like:
+> > > rte_memcpy() only in fast path,
+> > > memcpy() everywhere else,
+> > > assignment "=3D" when copying fixed size structures.
+> >
+> > I suppose for te_memcpy() we can be even more strict:
+> > Use it only for DP, and only after measurement, that shows
+> > clear perf improvement over ordinal memcpy().
+> > Alnd also ask contributors to document it (in the comments), i.e.:
+> > /* on <platform testsed> rte_memcpy() gives X% perf boost when doing
+> > ...*/
+> > rte_memcpy(...);
+>=20
+> Disagree!
+> DPDK has performance optimized libs and functions.
+> Developers should not need to document that using a DPDK function is fast=
+er
+> than using a libc function.
+> We don't require perf measurements for using DPDK rte_hash instead of lib=
+c
+> hashmap.
+
+Not sure what libc hashmap you are talking about?
+AFAIK such thing doesn't exist.. or you talking about c++ maps?
+If so, then I think the analogy is not correct.
+Why not to remember another example when we get rid of our own
+hand-written atomics and barriers in favor of using atomics ones.
+
+>=20
+> I agree about not using rte_memcpy() in the control plane.
+> And I support Stephen's effort to clean this up.
+>=20
+> But why the eagerness to avoid using rte_memcpy() in the fast path?
+
+I think we are not talking about 'avoiding' but about 'limiting'.
+There are many cases, when people use rte_memcpy() just because
+'it is used in other places, so it is probably better'=20
+In general memcpy()  and rte_memcpy() have same syntax,
+provide same functionality, plus CC vendors made a good progress in optimiz=
+ing memcpy(),
+so now for many cases it provides nearly the same or better performance.
+I think no-one forces to replace rte_memcpy() in places where it does provi=
+de better results,
+but for the cases when there is no perf difference, I think memcpy() should=
+ have precedence.
+     =20
+
 
