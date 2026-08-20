@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A630C5DF85
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Aug 2026 05:28:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D8CC5DF81
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Aug 2026 05:28:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 856B340E4C;
-	Thu, 20 Aug 2026 07:26:31 +0200 (CEST)
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com
- [209.85.216.45]) by mails.dpdk.org (Postfix) with ESMTP id 0B15B40E11
- for <dev@dpdk.org>; Thu, 20 Aug 2026 07:26:31 +0200 (CEST)
-Received: by mail-pj1-f45.google.com with SMTP id
- 98e67ed59e1d1-38e08baf860so1919346a91.2
- for <dev@dpdk.org>; Wed, 19 Aug 2026 22:26:30 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 86A2F40E22;
+	Thu, 20 Aug 2026 07:26:36 +0200 (CEST)
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com
+ [209.85.216.41]) by mails.dpdk.org (Postfix) with ESMTP id 6293640EE5
+ for <dev@dpdk.org>; Thu, 20 Aug 2026 07:26:34 +0200 (CEST)
+Received: by mail-pj1-f41.google.com with SMTP id
+ 98e67ed59e1d1-38dfe7eb825so1478350a91.0
+ for <dev@dpdk.org>; Wed, 19 Aug 2026 22:26:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787203590;
- x=1787808390; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787203593;
+ x=1787808393; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=ZFRQbyNRWDFITaJcIYqpJT+wSPrz/v1KRwdJcK1POMg=;
- b=AGrGtBP8ymmszUNxfThjbPLwXBm7aMDYq7XxF4dtGh9gZXVXwURYqSXw3Mucqxi6FD
- JK0CEuykJtsWGFZRZjxUaiKLylStg5bZCzBrdyIHKOI8Uy+Zz0ATaFRd3To/m2uqvqLy
- RUTXXSzvTImxjSv0uKJ5GguaXb/bK6o50fw+i0qwgo4XsUXRZQYVXHjJxG3nncTwdLTh
- V9kILPmMjEDAcDSMIR/eHF1XU3CG59iyLRva2ajvLMYF1iAfZe+UqeLupORwP+HGmIoi
- ZaPaJfjzeFq3ZiEK1C638v93nQ52gc/yplMRh6a/VUJ26EhZAUaYcM5/nWUfJx1bs7qm
- 840g==
+ bh=SQO5rA+xhzMkvq/qAnJO35mXbs+SUNSrql7p77lPgrs=;
+ b=UMadwXRkaj+pzkoCdbUm9yo3F530q/mcooGUObIAkkTcgCDBhMO3r7oabHmC4F8eMI
+ 2cpGwyB6SZa9V6CIBtW2AHO4Zc+M+YHm+b5DaaTbZ0TyumOsTMLrnmdUZeu4YS8xCYA3
+ SnGW4rcMV+LC7ta8NZ9irxMsgyUbJs35ebl7qBVe2GJ68H2YEmFYQwqyNSUFMZi2skuw
+ dQmKxXPutwnOEGUUXjzT/x0a2zz0+rULMIXQWfbn+NF/CbU7oG6luuFznjyLaotFJRB3
+ MCr4j0jy+eOsFtFOoMQi8Kz3RTewncrx81TJt0LsGfIsrZGDRmLSrD1iacgjTnKH3NSV
+ pQ7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787203590; x=1787808390;
+ d=1e100.net; s=20251104; t=1787203593; x=1787808393;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=ZFRQbyNRWDFITaJcIYqpJT+wSPrz/v1KRwdJcK1POMg=;
- b=ZZKa7Y9YoRM8LII2eu5hpo7Zud4fGuRO7hDWbdPKgSgbrAplWPKpBHN0Dra+35sQVz
- 3a2YrCSTe1Pyx1SWUuGG6idAMpAjtOzTYGhrtspqFPobfzZ435qQGVgAAwTKlXQ/LXPX
- J9cOxPRjKMnfgHxCAYmjvt9W75N0I77bh+0ZNBR57rFzECUV/mv2GGeRHbsRzMIWbV7+
- Pviawaxxzl3nTsd3dVlpgsMdbh0eih1ZkSj3IoWvFx9XD53efk+QWDnSqDKS/i5zEgTP
- n4Runvy6uEsrAkB8KOaXZ8fIwwm1Im6NMo5UntYzy7cNgqv/UwW3g4P1itmbA0kTTh1Y
- a/9A==
-X-Gm-Message-State: AFuF++nZtcWw8EPfbAF5M27f/jmGHzBis2TEg7aqV19WJAvBW0B/8cv9
- 7XceesfeGTpL719c6HZLEuYL4LtOihqrLA0aEYjoGmWNghWE4nPMIeIQFVRJtd3isnPbV2yWPK3
- NjIHI
-X-Gm-Gg: AR+sD12CL4OkM9/h1V8DLy9bwmkeGuhXRf3mF6FHjPUL7giWeAgXbUloLDT/xX7rgWK
- D/yZTSEINyvvhZ03fuOFMDvq+FoaYYmbI6KVy0kqHWDMM8sA754umCtJRlx3eoqhm0koSM4x5Y/
- I5tjnGtSfE33HMM86NLbMxEG5M6lEIURt37ZQ1ev01qL9FjY3hR0Kv4tCiG84Xgl0eesbQBuRbR
- r22E48zkmPGXNys3sj7MPpsheyPTxWmDYhqpMFPPfKmYpckGilk6TIdVEUw1WZC2Xp5Mj8mnEVq
- khGMc9tt+ikmDh93AjXROp/oS8n5QBEk4qENNKz0n5ddMGFwLTRE+5u2MpJopYxyMdvp6r8IqWs
- 89haH8QNhXtOD4ushLCIdgVAqIkBwxOdo3cHoD9TMx5inq5kn5HY/tpyuSQ9y4lAOQrpeb0jmxx
- lM30rN5vokyl4ty/2ulAhKqGV9/5HSDwA8JTD0UrBsmrPWecTKmZE1ORCpQcctj0VrGAHd1XvDq
- wybJ+xU6sJJSB9wkq/U7ctST4oxZuacTh/DdTE=
-X-Received: by 2002:a17:90a:ec88:b0:38e:5964:97a8 with SMTP id
- 98e67ed59e1d1-3958128686dmr20019420a91.16.1787203590097; 
- Wed, 19 Aug 2026 22:26:30 -0700 (PDT)
+ bh=SQO5rA+xhzMkvq/qAnJO35mXbs+SUNSrql7p77lPgrs=;
+ b=QgvxO0UTxgfc5yWs7zLv/PUroWzvwlGEbwcyOgB0yuZT4OxCmwvVyZcfkzSJWjJmts
+ SfuA7WSp9e3Sz8+6RkJG36ngCMdegwvU5ySU/0PhqKdDn4+atReEASsx/nPWVEXtZslb
+ Okysh9DYu8gzKXUUpI4iNM+YME+t0ZYTjtVq+s+9k2FzOMolWiLejBbZwn/dOyZh4z6z
+ p3lSLWJgPdHz2sFsezB7dYET+jzqUxoe31VKcxclioF/SfKGthiSlOGlswudTRV4tccb
+ LQtOBxTrIOm7UyEspKiRI3uRGtr8xM04t8XWcdYgEPpEcGubEaLLIG8lHmwBh1sGwoT3
+ lNwQ==
+X-Gm-Message-State: AFuF++kAQ7otEF/KoQXjThlj3E3xGZFO1nblLQ7pxzgO4atLyKidLRyw
+ iJXWYojJ5d0wlocZKlK7iEus4pTac6VXTwWeIZ2sIDGVpvr+ri/PROqn5IyPrZndVx8GEBG3Gf/
+ 9y7OA
+X-Gm-Gg: AR+sD11dtTG2TjLava95OmfflW1WzcFcTTaFaLpMkLyJxf6kf2T+40kIazPsQ9s5vTQ
+ ONznNdrDfNJ0PlOlaqgAgshSroHlw+uJ10VGf6MEQRK4WDFY2xvrqEfy44QZitHH5zvRJklXIMm
+ Y3JlTCyOAMrrvIR0LU6ytpKHZPRy7QEuOYl7tZQ11qcedZ/6HA+FcgEE2XA7BxkFhv/OMPjsjnS
+ C+vHKzc10ZnBMxw8S2669mQU9LKmK5KgrGiDf9E3hsMfp1ZbISPrVEeJVGmkD6yZOEzX1cgUVyW
+ 5vEhfa4V6rNhfJS20Dnu0XHPtDfE4r+wgnqEuxjab6YY5pcCDqT52lANHq5T2Z05mA6iPeI8aXd
+ wOm1CUkL+iLtQaXcyK8JTIccZeeAo1Y9JGViZWeQgiplso/I+0Ve0jKfIvDHDI6TA/01RuJ5kIz
+ AvhzeNHMx+JPW22Uuer89WtHw+ZG4OEZa4sZcAeHMJYBmBvgnAdy7JGjwQyXxiLc7wbi373WdpV
+ ADCt4PcO8Re/qB9m873YOC3HFU=
+X-Received: by 2002:a17:90b:4fd0:b0:38e:5b59:c2ff with SMTP id
+ 98e67ed59e1d1-39580a4d031mr19097507a91.3.1787203593456; 
+ Wed, 19 Aug 2026 22:26:33 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-327bef3bb5csm13700974eec.2.2026.08.19.22.26.27
+ 5a478bee46e88-327bef3bb5csm13700974eec.2.2026.08.19.22.26.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 19 Aug 2026 22:26:29 -0700 (PDT)
+ Wed, 19 Aug 2026 22:26:32 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Reshma Pattan <reshma.pattan@intel.com>
-Subject: [PATCH 57/61] pcapng: replace use of rte_memcpy
-Date: Wed, 19 Aug 2026 22:12:47 -0700
-Message-ID: <20260820052251.1453273-58-stephen@networkplumber.org>
+ Yipeng Wang <yipeng1.wang@intel.com>
+Subject: [PATCH 58/61] efd: replace use of rte_memcpy
+Date: Wed, 19 Aug 2026 22:12:48 -0700
+Message-ID: <20260820052251.1453273-59-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260820052251.1453273-1-stephen@networkplumber.org>
 References: <20260820052251.1453273-1-stephen@networkplumber.org>
@@ -82,27 +82,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The rte_memcpy is only in the wrapper for Windows where
-writev() is not present. Using memcpy is safer.
+Copying small key with rte_memcpy is better done with memcpy
+which enables more analysis checks.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/pcapng/rte_pcapng.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/efd/rte_efd.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/lib/pcapng/rte_pcapng.c b/lib/pcapng/rte_pcapng.c
-index b5d1026891..4c84e855cf 100644
---- a/lib/pcapng/rte_pcapng.c
-+++ b/lib/pcapng/rte_pcapng.c
-@@ -95,7 +95,7 @@ static ssize_t writev(int fd, const struct iovec *iov, int iovcnt)
+diff --git a/lib/efd/rte_efd.c b/lib/efd/rte_efd.c
+index 4dfc0ec9a4..09b0b01d90 100644
+--- a/lib/efd/rte_efd.c
++++ b/lib/efd/rte_efd.c
+@@ -18,7 +18,6 @@
+ #include <rte_malloc.h>
+ #include <rte_prefetch.h>
+ #include <rte_branch_prediction.h>
+-#include <rte_memcpy.h>
+ #include <rte_ring.h>
+ #include <rte_jhash.h>
+ #include <rte_hash_crc.h>
+@@ -1060,7 +1059,7 @@ efd_compute_update(struct rte_efd_table * const table,
+ 		rte_prefetch0(new_k);
+ 		new_idx = (uint32_t) ((uintptr_t) slot_id);
  
- 	ptr = tmp_buf;
- 	for (i = 0; i < iovcnt; i++) {
--		rte_memcpy(ptr, iov[i].iov_base, iov[i].iov_len);
-+		memcpy(ptr, iov[i].iov_base, iov[i].iov_len);
- 		ptr += iov[i].iov_len;
- 	}
- 
+-		rte_memcpy(EFD_KEY(new_idx, table), key, table->key_len);
++		memcpy(EFD_KEY(new_idx, table), key, table->key_len);
+ 		current_group->key_idx[current_group->num_rules] = new_idx;
+ 		current_group->value[current_group->num_rules] = value;
+ 		current_group->bin_id[current_group->num_rules] = *bin_id;
 -- 
 2.53.0
 
