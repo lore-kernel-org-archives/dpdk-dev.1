@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1D20C5DF81
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Aug 2026 05:27:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A40C5DF85
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Aug 2026 05:27:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 76FF040E3F;
-	Thu, 20 Aug 2026 07:25:45 +0200 (CEST)
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com
- [209.85.214.180])
- by mails.dpdk.org (Postfix) with ESMTP id DE3A840E18
- for <dev@dpdk.org>; Thu, 20 Aug 2026 07:25:40 +0200 (CEST)
-Received: by mail-pl1-f180.google.com with SMTP id
- d9443c01a7336-2d5655cc850so21360995ad.3
- for <dev@dpdk.org>; Wed, 19 Aug 2026 22:25:40 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7684840E44;
+	Thu, 20 Aug 2026 07:25:46 +0200 (CEST)
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com
+ [209.85.214.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 5E07640E18
+ for <dev@dpdk.org>; Thu, 20 Aug 2026 07:25:44 +0200 (CEST)
+Received: by mail-pl1-f173.google.com with SMTP id
+ d9443c01a7336-2ce7d2adef4so23558225ad.3
+ for <dev@dpdk.org>; Wed, 19 Aug 2026 22:25:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787203540;
- x=1787808340; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787203543;
+ x=1787808343; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=1ox+vjXMJGtspXaTY2JLA6hIxeEcWgdNQtyTPEYhvn0=;
- b=lxq4rXS9WNtwBMcdU8vx973+tMgY6H81acdK8xExQX/UFyL5aksGfm1GfjUWi13yAu
- UvBcoqDI9LfDtX9FoEgZOXPhiaeqvE4wwcdnLY2VwqKs3Fn8dbCE6OFPUbDp4DzKtl0C
- /+5H2YOWnnv54Qht1A12iLblKPq8TiCwQ3NQ0QuPQxUHv6Ud6Rc7sBFFKEOHUemeuESe
- AJvBMnc9rb9X8Xdb3DsyUSzmdxxd1Vg279RAer1Ccm5tnukF42IkIV/OgbD/Il4dCRY9
- 5JvT/0ETWCU94r302y72+0P1kwcfQU5QqOmjlvXbOQMWCsRqpg7ezagC++jCQkBWdrSD
- hHrQ==
+ bh=iUChV9PIUa8sC61LErQA3Vri3Yst4Hzf46OD5/LkuVg=;
+ b=EEYa6mLRPwbXFkBmK3323REgzrfKY7CSjlBAN9O5s2Pz5MJASGg130N8Bj5NIodeM+
+ eblLCovFYOHKQb0seMaSMlF2z5wk293YiOkSpSV1FrB0aGfREB/gvkmiUVresVjdoUVq
+ u14s2IQXBtvorzN17MvRKKsE1qGE9Ws+HNqOtLEtxVODZ5jwZBKMFVEOwOkYDbgH7LiM
+ uA7pRl+l1u+jjLHHsO6mw+P108fqyJ+k8Ywv3uVO2JGf2zRzFqxrZ74acWdJH8p8oDdI
+ KnRy73M/ppUDJu6Z/G8qPO9fVRn6njjRGAVteb9wanGZjvd6xIGUJNGi6kMW2qm8DmrP
+ 1XwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787203540; x=1787808340;
+ d=1e100.net; s=20251104; t=1787203543; x=1787808343;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=1ox+vjXMJGtspXaTY2JLA6hIxeEcWgdNQtyTPEYhvn0=;
- b=bSR6rXahUdB2fnWFnLey+dycLLUdI+aIP0h7wUh2p0Tx06zP2Ft4rQ7OHeeiDSdBUN
- MHQXMxtpkJ8/KvNWimB4dgdzSOFVL5stsbjLipk4OFSa9if6sJQnM5GsecxDc3QSiSVF
- KItL9xFm2FoSIxkv/5YGxY0doxqdvGm7FH1phHDOhuDzsvc0ePPgT44z6zQ3Ixc/SB9Y
- jd84C3UKxztsZXJKyuOUC++OU94YotMC9UbBKop4lCIz6jdFhPRvO6/crMi/nwVmqsAo
- q/a8Hj/FZKSzGmORH15BnfVp0mLeWhVGPEHlQ4MWDWqsNGzSLCmpSZZdOfkpQr6N4MdJ
- 2pfA==
-X-Gm-Message-State: AFuF++nIfA3mYnqzEwvGmu6DAlM18TJgJroUxt1G8zhCjtrKHxG/eQvA
- Z02aaFjUj6/CCf1+El9E54GmpcrKFnKz2kc1lCxk8mijXU+2GT47cDBEs4Tev0oEvu408B9+xrO
- lXbJz
-X-Gm-Gg: AR+sD112MQaWsies3rgIzimfYpL4BUD31HgHe34qhrgvcAeSyvkWODC7nTldzJIZxzP
- M6cWrt1k5gYHmsi7DXHs6h4BFMMop+j3JzNGKJZcvG6YhLlxYlLqQO1qF+8rQ6SuNvT0mrS7xFN
- tsHRFTRDrbxdfJC+pw3baIx6X5+zrFV1ZnPzauH/UYdvaNObV3G+N0Icfp20uFH+Aw2RA/6ljQf
- XeJOXmvq7pmxDCLIx+J06skWiAi80iDhyQtqlj+aBHZDN6utg9S893r/cGi/5jRx1SsrqlNfYvd
- yq8tpHIPl4bqClnWKwAIEGWE6I4JNsJuCnT6e9BNE+bK3AVEWlljMPfyJ6qFx95tztbPiv1N4YD
- 7mGoClNj8EEP7gA+BrcpqavEvNGK8+b6612PXzxcnzuNRIohA6i5QJ+1OlxeBkjOse1X7bHvMyD
- n5oGvlPobq844hboAJ5sA8oJbs/XtDwQltBni8HgTp+pcQZmw/PyTr+33tD2fa05Gq3LLThxRVi
- 1+nkMAvBenc5xy8U0BKG8W3egx1Y7357rDd3A==
-X-Received: by 2002:a17:902:ef43:b0:2d5:e9d5:8ae with SMTP id
- d9443c01a7336-2d5fd62ae4fmr195582695ad.5.1787203539963; 
- Wed, 19 Aug 2026 22:25:39 -0700 (PDT)
+ bh=iUChV9PIUa8sC61LErQA3Vri3Yst4Hzf46OD5/LkuVg=;
+ b=YgAzCpauPWSj549riAszM1x/DRyqcUjLCJ50kjgNJ+A03/ew1wGW9Djnu3uvfdUK40
+ fS/wO65dFM7mAgqQZ3kJf67HIrMcv93DUtlX8spT/cLSJNCpq1HxMunh0UgVXRYpyjc/
+ LdgiD0r8wuMGg2qqkhE1O2l00JXYMRTu3fpKz0Z4v+wsB1uPbp8qTHUy7LXA4Y++eF3P
+ MI/RKt2Rpz7gU+LO6r9jlhP6LzSscz8/FNjf1rB/l4i/UbRvNLWCnf+e5M9G7MgzbgRM
+ HkrgnUSGMN9GOx5GMazpCEI1aysrdvnLFTFrOkEZ6QBmW8b937zZT+nPFD/f2RjDhsxz
+ 5iVA==
+X-Gm-Message-State: AFuF++le9JSmxKsA/svzBa1vlDCMyASKW3DIMl3bz3rvFb5qs0pXoTt/
+ ktaZnpOn028gANxnIkhyar0UBtsvF05D7fgTd0efo+JidHJY4MMvn1WzeoQtR3odmVbEAFqdxFe
+ 4np28
+X-Gm-Gg: AR+sD10wYzTSeTbEr89sx8kqut2WWchrMCaJSIvLCnO64Edf3VP2xff36I65U1RMz4y
+ fo+REBXbrwG++YLSwSO4vABESnguhxTBkPva13Vi2iStCQJbZ2/hKeoX+DI4yS/pTOa+Mut6bA8
+ S+B/bnRXO6z8a1SbO8+Izb2tP0Qe+Tpvs8Wc+iKLuPM8nN6pMd9ijgjzt75tkFRmo3W4zmtO87I
+ QzCnLQcqpqrhe44BMxkPviFXdLP7NT17J3hVyfU/hz0JeDD4JUuNO1zaUPIy66QS6dGkJlYlsGu
+ KknDyKWvnIzn7PCi1YlaKUOuTu8vSBxDIu8bwDlEAnjB+RvK6lunIpAWxWG+mznq5TWL0x185h1
+ vhCtNzUYGVDvlASzauqJKQUgpdgh+M2DyF+xkWaIqZ61tVU+nPCdHxTP2XBWKCurko8AursFGYp
+ ceSJzteKaIRbJZVFYY4nj64TawmehIHBdzgn0WMqe39tEUSDBFISmJOXE2vjCuXD6NTm0BeSCbr
+ f9O0ozGpr0WGkX/nQpHPE3Uekw=
+X-Received: by 2002:a17:90b:3a05:b0:38e:bbf1:de34 with SMTP id
+ 98e67ed59e1d1-39580aa6b77mr19629788a91.7.1787203543513; 
+ Wed, 19 Aug 2026 22:25:43 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-327bef3bb5csm13700974eec.2.2026.08.19.22.25.37
+ 5a478bee46e88-327bef3bb5csm13700974eec.2.2026.08.19.22.25.40
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 19 Aug 2026 22:25:39 -0700 (PDT)
+ Wed, 19 Aug 2026 22:25:43 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH 44/61] net/sxe2: replace use of rte_memcpy
-Date: Wed, 19 Aug 2026 22:12:34 -0700
-Message-ID: <20260820052251.1453273-45-stephen@networkplumber.org>
+ Junlong Wang <wang.junlong1@zte.com.cn>, Ming Ran <ran.ming@zte.com.cn>
+Subject: [PATCH 45/61] net/zxdh: replace use of rte_memcpy
+Date: Wed, 19 Aug 2026 22:12:35 -0700
+Message-ID: <20260820052251.1453273-46-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260820052251.1453273-1-stephen@networkplumber.org>
 References: <20260820052251.1453273-1-stephen@networkplumber.org>
@@ -83,291 +83,407 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The uses of rte_memcpy() in the sxe2 driver are all in the control
-path. Regular memcpy() has no performance disadvantage there
-and gets more compile time checking of the arguments.
+The uses of rte_memcpy() in the control path of the zxdh driver
+have no performance benefit over regular memcpy(), and regular
+memcpy() gets more compile time checking of the arguments.
+
+The only remaining rte_memcpy() is in zxdh_xmit_fill_net_hdr()
+which is on the transmit fast path.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/sxe2/sxe2_cmd_chnl.c           |  6 ++--
- drivers/net/sxe2/sxe2_flow.c               | 11 +++----
- drivers/net/sxe2/sxe2_flow_parse_pattern.c | 36 ++++++++++++----------
- drivers/net/sxe2/sxe2_ipsec.c              |  2 +-
- drivers/net/sxe2/sxe2_rss.c                | 10 +++---
- drivers/net/sxe2/sxe2_rx.c                 |  4 +--
- drivers/net/sxe2/sxe2_stats.c              | 25 +++++++--------
- drivers/net/sxe2/sxe2_tm.c                 |  4 +--
- 8 files changed, 51 insertions(+), 47 deletions(-)
+ drivers/net/zxdh/zxdh_common.c |  7 ++--
+ drivers/net/zxdh/zxdh_flow.c   | 67 +++++++++++++++++++---------------
+ drivers/net/zxdh/zxdh_msg.c    | 15 ++++----
+ drivers/net/zxdh/zxdh_mtr.c    | 10 ++---
+ drivers/net/zxdh/zxdh_np.c     |  1 -
+ drivers/net/zxdh/zxdh_queue.c  |  8 ++--
+ drivers/net/zxdh/zxdh_tables.c | 21 ++++++-----
+ 7 files changed, 70 insertions(+), 59 deletions(-)
 
-diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.c b/drivers/net/sxe2/sxe2_cmd_chnl.c
-index b09989fe50..077e4f8c01 100644
---- a/drivers/net/sxe2/sxe2_cmd_chnl.c
-+++ b/drivers/net/sxe2/sxe2_cmd_chnl.c
-@@ -961,7 +961,7 @@ int32_t sxe2_drv_rss_key_set(struct sxe2_adapter *adapter, uint8_t *key, uint16_
+diff --git a/drivers/net/zxdh/zxdh_common.c b/drivers/net/zxdh/zxdh_common.c
+index 2b821b1dc8..1dff77aee8 100644
+--- a/drivers/net/zxdh/zxdh_common.c
++++ b/drivers/net/zxdh/zxdh_common.c
+@@ -7,7 +7,6 @@
  
- 	req->vsi_id = rte_cpu_to_le_16(adapter->vsi_ctxt.dpdk_vsi_id);
- 	req->key_size = rte_cpu_to_le_16(key_size);
--	rte_memcpy(req->key, key, key_size);
-+	memcpy(req->key, key, key_size);
+ #include <ethdev_driver.h>
+ #include <rte_malloc.h>
+-#include <rte_memcpy.h>
  
- 	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_RSS_KEY_SET,
- 				 req, buf_size,
-@@ -998,7 +998,7 @@ int32_t sxe2_drv_rss_lut_set(struct sxe2_adapter *adapter, uint8_t *lut, uint16_
+ #include "zxdh_ethdev.h"
+ #include "zxdh_logs.h"
+@@ -79,7 +78,7 @@ zxdh_fill_common_msg(struct zxdh_hw *hw, struct zxdh_pci_bar_msg *desc,
+ 	msg_data->pcie_id = hw->pcie_id;
+ 	msg_data->slen = buff_size;
+ 	if (buff_size != 0)
+-		rte_memcpy(msg_data + 1, buff, buff_size);
++		memcpy(msg_data + 1, buff, buff_size);
  
- 	req->vsi_id = rte_cpu_to_le_16(adapter->vsi_ctxt.dpdk_vsi_id);
- 	req->lut_size = rte_cpu_to_le_16(lut_size);
--	rte_memcpy(req->lut, lut, lut_size);
-+	memcpy(req->lut, lut, lut_size);
- 
- 	sxe2_drv_cmd_params_fill(adapter, &param, SXE2_DRV_CMD_RSS_LUT_SET,
- 				 req, buf_size,
-@@ -1890,7 +1890,7 @@ int32_t sxe2_drv_sfp_eeprom_read(struct sxe2_adapter *adapter, struct sxe2_sfp_r
+ 	return 0;
+ }
+@@ -123,7 +122,7 @@ zxdh_common_rsp_check(struct zxdh_msg_recviver_mem *msg_rsp,
+ 		return -1;
  	}
+ 	if (len != 0)
+-		rte_memcpy(buff, rsp_hdr + 1, len);
++		memcpy(buff, rsp_hdr + 1, len);
  
- 	ret = 0;
--	rte_memcpy(sfp_info->data, resp->data, sfp_info->len);
-+	memcpy(sfp_info->data, resp->data, sfp_info->len);
- 
- l_end:
- 	if (resp) {
-diff --git a/drivers/net/sxe2/sxe2_flow.c b/drivers/net/sxe2/sxe2_flow.c
-index 63cfc36968..84669478d1 100644
---- a/drivers/net/sxe2/sxe2_flow.c
-+++ b/drivers/net/sxe2/sxe2_flow.c
-@@ -80,8 +80,8 @@ static int32_t sxe2_flow_check_hdr_duplicate(struct sxe2_flow_item *item_new,
- 	uint16_t size = sizeof(struct sxe2_flow_item);
- 	union sxe2_flow_item_raw item_raw_new;
- 	union sxe2_flow_item_raw item_raw_exist;
--	rte_memcpy(&item_raw_new.item, item_new, size);
--	rte_memcpy(&item_raw_exist.item, item_exist, size);
-+	memcpy(&item_raw_new.item, item_new, size);
-+	memcpy(&item_raw_exist.item, item_exist, size);
- 
- 	for (i = 0; i < size; i++) {
- 		if (item_raw_new.raw[i] != item_raw_exist.raw[i])
-@@ -416,7 +416,7 @@ static int32_t sxe2_flow_src_split_proc(struct rte_eth_dev *dev,
- 					ret = -ENOMEM;
- 					goto l_end;
- 				}
--				rte_memcpy(flow_new, flow, sizeof(struct sxe2_flow));
-+				*flow_new = *flow;
- 				TAILQ_INSERT_TAIL(sxe2_flow_list, flow_new, next);
- 				flow_new->meta.flow_src_vsi =
- 						flow_src_vsi[SXE2_MAX_DRV_TYPE_DPDK][idx];
-@@ -437,7 +437,7 @@ static int32_t sxe2_flow_src_split_proc(struct rte_eth_dev *dev,
- 					ret = -ENOMEM;
- 					goto l_end;
- 				}
--				rte_memcpy(flow_new, flow, sizeof(struct sxe2_flow));
-+				*flow_new = *flow;
- 				TAILQ_INSERT_TAIL(sxe2_flow_list, flow_new, next);
- 				flow_new->meta.flow_src_vsi =
- 					flow_src_vsi[SXE2_MAX_DRV_TYPE_KERNEL][idx];
-@@ -697,8 +697,7 @@ static int32_t sxe2_flow_tunnel_split_proc(struct rte_eth_dev *dev __rte_unused,
- 					ret = -ENOMEM;
- 					goto l_end;
- 				}
--				rte_memcpy(sxe2_flow_new, sxe2_flow_exist,
--					sizeof(struct sxe2_flow));
-+				*sxe2_flow_new = *sxe2_flow_exist;
- 				pattern = &sxe2_flow_new->pattern_outer;
- 				sxe2_flow_new->meta.tunnel_type =
- 					SXE2_FLOW_TUNNEL_TYPE_GRE;
-diff --git a/drivers/net/sxe2/sxe2_flow_parse_pattern.c b/drivers/net/sxe2/sxe2_flow_parse_pattern.c
-index f5bf8922c6..d5a14398a7 100644
---- a/drivers/net/sxe2/sxe2_flow_parse_pattern.c
-+++ b/drivers/net/sxe2/sxe2_flow_parse_pattern.c
-@@ -787,20 +787,20 @@ static int32_t sxe2_flow_parse_pattern_eth(const struct rte_flow_item *item,
- 			sxe2_set_bit(SXE2_FLOW_FLD_ID_ETH_DA, pattern->map_mask);
- 
- 		sxe2_set_bit(SXE2_FLOW_FLD_ID_ETH_DA, pattern->map_spec);
--		rte_memcpy(pattern->item_spec.eth.dst_addr, dst_addr_spec,
--			RTE_ETHER_ADDR_LEN);
--		rte_memcpy(pattern->item_mask.eth.dst_addr, dst_addr_mask,
--			RTE_ETHER_ADDR_LEN);
-+		memcpy(pattern->item_spec.eth.dst_addr, dst_addr_spec,
-+		       RTE_ETHER_ADDR_LEN);
-+		memcpy(pattern->item_mask.eth.dst_addr, dst_addr_mask,
-+		       RTE_ETHER_ADDR_LEN);
+ 	return 0;
+ }
+@@ -228,7 +227,7 @@ zxdh_get_res_info(struct zxdh_res_para *dev, uint8_t field, uint8_t *res, uint16
+ 		return ret;
  	}
- 	if (!rte_is_zero_ether_addr(src_addr_mask)) {
- 		if (!rte_is_broadcast_ether_addr(src_addr_mask))
- 			sxe2_set_bit(SXE2_FLOW_FLD_ID_ETH_SA, pattern->map_mask);
- 
- 		sxe2_set_bit(SXE2_FLOW_FLD_ID_ETH_SA, pattern->map_spec);
--		rte_memcpy(pattern->item_spec.eth.src_addr, src_addr_spec,
--			RTE_ETHER_ADDR_LEN);
--		rte_memcpy(pattern->item_mask.eth.src_addr, src_addr_mask,
--			RTE_ETHER_ADDR_LEN);
-+		memcpy(pattern->item_spec.eth.src_addr, src_addr_spec,
-+		       RTE_ETHER_ADDR_LEN);
-+		memcpy(pattern->item_mask.eth.src_addr, src_addr_mask,
-+		       RTE_ETHER_ADDR_LEN);
- 	}
- 	if (type_mask != 0) {
- 		if (type_mask != UINT16_MAX) {
-@@ -1130,10 +1130,12 @@ static int32_t sxe2_flow_parse_pattern_ipv6(const struct rte_flow_item *item,
- 			   sizeof(ipv6_addr_mask)) != 0)
- 			sxe2_set_bit(SXE2_FLOW_FLD_ID_IPV6_SA, pattern->map_mask);
- 		sxe2_set_bit(SXE2_FLOW_FLD_ID_IPV6_SA, pattern->map_spec);
--		rte_memcpy(&pattern->item_spec.ipv6.saddr, &ipv6_spec->hdr.src_addr,
--			   sizeof(ipv6_spec->hdr.src_addr));
--		rte_memcpy(&pattern->item_mask.ipv6.saddr, &ipv6_mask->hdr.src_addr,
--			   sizeof(ipv6_mask->hdr.src_addr));
-+		memcpy(&pattern->item_spec.ipv6.saddr,
-+		       &ipv6_spec->hdr.src_addr,
-+		       sizeof(ipv6_spec->hdr.src_addr));
-+		memcpy(&pattern->item_mask.ipv6.saddr,
-+		       &ipv6_mask->hdr.src_addr,
-+		       sizeof(ipv6_mask->hdr.src_addr));
- 	}
- 	if (memcmp(&ipv6_mask->hdr.dst_addr, ipv6_addr_empty,
- 		    sizeof(ipv6_addr_empty)) != 0) {
-@@ -1141,10 +1143,12 @@ static int32_t sxe2_flow_parse_pattern_ipv6(const struct rte_flow_item *item,
- 			   sizeof(ipv6_addr_mask)) != 0)
- 			sxe2_set_bit(SXE2_FLOW_FLD_ID_IPV6_DA, pattern->map_mask);
- 		sxe2_set_bit(SXE2_FLOW_FLD_ID_IPV6_DA, pattern->map_spec);
--		rte_memcpy(&pattern->item_spec.ipv6.daddr, &ipv6_spec->hdr.dst_addr,
--			   sizeof(ipv6_spec->hdr.dst_addr));
--		rte_memcpy(&pattern->item_mask.ipv6.daddr, &ipv6_mask->hdr.dst_addr,
--			   sizeof(ipv6_mask->hdr.dst_addr));
-+		memcpy(&pattern->item_spec.ipv6.daddr,
-+		       &ipv6_spec->hdr.dst_addr,
-+		       sizeof(ipv6_spec->hdr.dst_addr));
-+		memcpy(&pattern->item_mask.ipv6.daddr,
-+		       &ipv6_mask->hdr.dst_addr,
-+		       sizeof(ipv6_mask->hdr.dst_addr));
- 	}
- 	if (ipv6_mask->hdr.vtc_flow) {
- 		vtc_flow_mask = rte_be_to_cpu_32(ipv6_mask->hdr.vtc_flow);
-diff --git a/drivers/net/sxe2/sxe2_ipsec.c b/drivers/net/sxe2/sxe2_ipsec.c
-index e783a51b85..81cf250fd2 100644
---- a/drivers/net/sxe2/sxe2_ipsec.c
-+++ b/drivers/net/sxe2/sxe2_ipsec.c
-@@ -1159,7 +1159,7 @@ int sxe2_ipsec_pkt_metadata_set(void *device, struct rte_security_session *sessi
- 
- 	md = RTE_MBUF_DYNFIELD(m, sxe2_sctx->ipsec_ctx.md_offset, struct sxe2_ipsec_pkt_metadata *);
- 
--	memcpy(md, &sxe2_sess->pkt_metadata_template, sizeof(struct sxe2_ipsec_pkt_metadata));
-+	*md = sxe2_sess->pkt_metadata_template;
- 	md->esp_head_offset = offset;
- 
- 	PMD_LOG_INFO(DRV, "ipsec metadata set, offset:%u, said:%u, mode:%u, algo:%u.", offset,
-diff --git a/drivers/net/sxe2/sxe2_rss.c b/drivers/net/sxe2/sxe2_rss.c
-index 1d56613043..6451096561 100644
---- a/drivers/net/sxe2/sxe2_rss.c
-+++ b/drivers/net/sxe2/sxe2_rss.c
-@@ -35,7 +35,7 @@ int32_t sxe2_rss_hash_key_init(struct rte_eth_dev *dev)
- 		for (i = 0; i < rss_ctxt->rss_key_size; i++)
- 			rss_ctxt->rss_key[i] = (uint8_t)rte_rand();
- 	} else {
--		rte_memcpy(rss_ctxt->rss_key, rss_conf->rss_key,
-+		memcpy(rss_ctxt->rss_key, rss_conf->rss_key,
- 			   RTE_MIN(rss_conf->rss_key_len, rss_ctxt->rss_key_size));
- 	}
- 
-@@ -421,7 +421,7 @@ int32_t sxe2_dev_rss_reta_update(struct rte_eth_dev *dev,
- 		ret = -ENOMEM;
- 		goto l_end;
- 	}
--	rte_memcpy(lut_tmp, rss_ctxt->rss_lut, reta_size);
-+	memcpy(lut_tmp, rss_ctxt->rss_lut, reta_size);
- 
- 	for (i = 0; i < reta_size; i++) {
- 		idx = i / RTE_ETH_RETA_GROUP_SIZE;
-@@ -436,7 +436,7 @@ int32_t sxe2_dev_rss_reta_update(struct rte_eth_dev *dev,
- 		goto l_end;
- 	}
- 
--	rte_memcpy(rss_ctxt->rss_lut, lut_tmp, reta_size);
-+	memcpy(rss_ctxt->rss_lut, lut_tmp, reta_size);
- 
- l_end:
- 	if (lut_tmp)
-@@ -514,7 +514,7 @@ static int32_t sxe2_rss_hash_key_update(struct rte_eth_dev *dev,
- 		goto l_end;
- 	}
- 
--	rte_memcpy(rss_ctxt->rss_key, rss_conf->rss_key, rss_conf->rss_key_len);
-+	memcpy(rss_ctxt->rss_key, rss_conf->rss_key, rss_conf->rss_key_len);
- l_end:
+ 	*len = tbl_reps->len;
+-	rte_memcpy(res, (recv_buf + ZXDH_REPS_HEADER_OFFSET +
++	memcpy(res, (recv_buf + ZXDH_REPS_HEADER_OFFSET +
+ 		sizeof(struct zxdh_tbl_msg_reps_header)), *len);
  	return ret;
  }
-@@ -575,7 +575,7 @@ int32_t sxe2_dev_rss_hash_conf_get(struct rte_eth_dev *dev,
+diff --git a/drivers/net/zxdh/zxdh_flow.c b/drivers/net/zxdh/zxdh_flow.c
+index 56ac34c6e3..ee6275c337 100644
+--- a/drivers/net/zxdh/zxdh_flow.c
++++ b/drivers/net/zxdh/zxdh_flow.c
+@@ -94,9 +94,9 @@ static void
+ zxdh_adjust_flow_op_rsp_memory_layout(void *old_data,
+ 		size_t old_size, void *new_data)
+ {
+-	rte_memcpy(new_data, old_data, sizeof(struct zxdh_flow));
++	memcpy(new_data, old_data, sizeof(struct zxdh_flow));
+ 	memset((char *)new_data + sizeof(struct zxdh_flow), 0, 4);
+-	rte_memcpy((char *)new_data + sizeof(struct zxdh_flow) + 4,
++	memcpy((char *)new_data + sizeof(struct zxdh_flow) + 4,
+ 		(char *)old_data + sizeof(struct zxdh_flow),
+ 		old_size - sizeof(struct zxdh_flow));
+ }
+@@ -1328,14 +1328,14 @@ static int fd_flow_parse_pattern(struct rte_eth_dev *dev, const struct rte_flow_
+ 						ipv4_mask->hdr.type_of_service;
+ 				key->frag_flag = (ipv4_spec->hdr.fragment_offset != 0) ? 1 : 0;
+ 				key_mask->frag_flag = (ipv4_mask->hdr.fragment_offset != 0) ? 1 : 0;
+-				rte_memcpy((uint32_t *)key->src_ip + 3,
+-							 &ipv4_spec->hdr.src_addr, 4);
+-				rte_memcpy((uint32_t *)key->dst_ip + 3,
+-							 &ipv4_spec->hdr.dst_addr, 4);
+-				rte_memcpy((uint32_t *)key_mask->src_ip + 3,
+-							 &ipv4_mask->hdr.src_addr, 4);
+-				rte_memcpy((uint32_t *)key_mask->dst_ip + 3,
+-							 &ipv4_mask->hdr.dst_addr, 4);
++				memcpy((uint32_t *)key->src_ip + 3,
++				       &ipv4_spec->hdr.src_addr, 4);
++				memcpy((uint32_t *)key->dst_ip + 3,
++				       &ipv4_spec->hdr.dst_addr, 4);
++				memcpy((uint32_t *)key_mask->src_ip + 3,
++				       &ipv4_mask->hdr.src_addr, 4);
++				memcpy((uint32_t *)key_mask->dst_ip + 3,
++				       &ipv4_mask->hdr.dst_addr, 4);
+ 			}
+ 			break;
+ 		case RTE_FLOW_ITEM_TYPE_IPV6:
+@@ -1364,14 +1364,14 @@ static int fd_flow_parse_pattern(struct rte_eth_dev *dev, const struct rte_flow_
+ 				key->nw_proto = ipv6_spec->hdr.proto;
+ 				key_mask->nw_proto = ipv6_mask->hdr.proto;
  
- 	if (rss_conf->rss_key) {
- 		rss_conf->rss_key_len = rss_ctxt->rss_key_size;
--		rte_memcpy(rss_conf->rss_key, rss_ctxt->rss_key, rss_ctxt->rss_key_size);
-+		memcpy(rss_conf->rss_key, rss_ctxt->rss_key, rss_ctxt->rss_key_size);
- 	}
- 	rss_conf->rss_hf = rss_ctxt->rss_hf;
- 	rss_conf->algorithm = rss_ctxt->hash_func;
-diff --git a/drivers/net/sxe2/sxe2_rx.c b/drivers/net/sxe2/sxe2_rx.c
-index d700c60083..c84e767b25 100644
---- a/drivers/net/sxe2/sxe2_rx.c
-+++ b/drivers/net/sxe2/sxe2_rx.c
-@@ -311,8 +311,8 @@ int32_t __rte_cold sxe2_rx_queue_setup(struct rte_eth_dev *dev,
- 
- 	if (rx_nseg > 1) {
- 		for (i = 0; i < rx_nseg; i++) {
--			rte_memcpy(&rxq->rx_seg[i], &rx_conf->rx_seg[i].split,
--					sizeof(struct rte_eth_rxseg_split));
-+			memcpy(&rxq->rx_seg[i], &rx_conf->rx_seg[i].split,
-+			       sizeof(struct rte_eth_rxseg_split));
+-				rte_memcpy(key->src_ip,
+-							 &ipv6_spec->hdr.src_addr, 16);
+-				rte_memcpy(key->dst_ip,
+-							 &ipv6_spec->hdr.dst_addr, 16);
+-				rte_memcpy(key_mask->src_ip,
+-							 &ipv6_mask->hdr.src_addr, 16);
+-				rte_memcpy(key_mask->dst_ip,
+-							 &ipv6_mask->hdr.dst_addr, 16);
++				memcpy(key->src_ip, &ipv6_spec->hdr.src_addr,
++				       16);
++				memcpy(key->dst_ip, &ipv6_spec->hdr.dst_addr,
++				       16);
++				memcpy(key_mask->src_ip,
++				       &ipv6_mask->hdr.src_addr, 16);
++				memcpy(key_mask->dst_ip,
++				       &ipv6_mask->hdr.dst_addr, 16);
+ 			}
+ 			break;
+ 		case RTE_FLOW_ITEM_TYPE_TCP:
+@@ -1477,8 +1477,8 @@ static int fd_flow_parse_pattern(struct rte_eth_dev *dev, const struct rte_flow_
+ 								 "Invalid vxlan mask");
+ 					return -rte_errno;
+ 			}
+-			rte_memcpy(key->vni, vxlan_spec->vni, 3);
+-			rte_memcpy(key_mask->vni, vxlan_mask->vni, 3);
++			memcpy(key->vni, vxlan_spec->vni, 3);
++			memcpy(key_mask->vni, vxlan_mask->vni, 3);
+ 			break;
  		}
- 		rxq->mb_pool = rxq->rx_seg[0].mp;
- 	} else {
-diff --git a/drivers/net/sxe2/sxe2_stats.c b/drivers/net/sxe2/sxe2_stats.c
-index 3ad8fe2fe9..6dc52ac4ab 100644
---- a/drivers/net/sxe2/sxe2_stats.c
-+++ b/drivers/net/sxe2/sxe2_stats.c
-@@ -288,18 +288,19 @@ static void sxe2_stats_update(struct sxe2_adapter *adapter)
- 		stats->rx_frame_good_bad = hw_stats->rx_frame_good_bad;
- 		stats->rx_unicast_good = hw_stats->rx_unicast_good;
- 		stats->rx_vlan_packets = hw_stats->rx_vlan_packets;
--		rte_memcpy(stats->rx_prio_buf_discard, hw_stats->rx_prio_buf_discard,
--				sizeof(hw_stats->rx_prio_buf_discard));
--		rte_memcpy(stats->prio_xoff_rx, hw_stats->prio_xoff_rx,
--				sizeof(hw_stats->prio_xoff_rx));
--		rte_memcpy(stats->prio_xon_rx, hw_stats->prio_xon_rx,
--				sizeof(hw_stats->prio_xon_rx));
--		rte_memcpy(stats->prio_xon_tx, hw_stats->prio_xon_tx,
--				sizeof(hw_stats->prio_xon_tx));
--		rte_memcpy(stats->prio_xoff_tx, hw_stats->prio_xoff_tx,
--				sizeof(hw_stats->prio_xoff_tx));
--		rte_memcpy(stats->prio_xon_2_xoff, hw_stats->prio_xon_2_xoff,
--				sizeof(hw_stats->prio_xon_2_xoff));
-+		memcpy(stats->rx_prio_buf_discard,
-+		       hw_stats->rx_prio_buf_discard,
-+		       sizeof(hw_stats->rx_prio_buf_discard));
-+		memcpy(stats->prio_xoff_rx, hw_stats->prio_xoff_rx,
-+		       sizeof(hw_stats->prio_xoff_rx));
-+		memcpy(stats->prio_xon_rx, hw_stats->prio_xon_rx,
-+		       sizeof(hw_stats->prio_xon_rx));
-+		memcpy(stats->prio_xon_tx, hw_stats->prio_xon_tx,
-+		       sizeof(hw_stats->prio_xon_tx));
-+		memcpy(stats->prio_xoff_tx, hw_stats->prio_xoff_tx,
-+		       sizeof(hw_stats->prio_xoff_tx));
-+		memcpy(stats->prio_xon_2_xoff, hw_stats->prio_xon_2_xoff,
-+		       sizeof(hw_stats->prio_xon_2_xoff));
+ 		case RTE_FLOW_ACTION_TYPE_VOID:
+@@ -1573,10 +1573,14 @@ fd_flow_parse_vxlan_encap(struct rte_eth_dev *dev __rte_unused,
+ 		switch (items->type) {
+ 		case RTE_FLOW_ITEM_TYPE_ETH:
+ 			item_eth = items->spec;
+-			rte_memcpy(&dh_flow->encap0.dst_mac1, item_eth->dst.addr_bytes, 2);
+-			rte_memcpy(&dh_flow->encap1.src_mac1, item_eth->src.addr_bytes, 2);
+-			rte_memcpy(&dh_flow->encap0.dst_mac2, &item_eth->dst.addr_bytes[2], 4);
+-			rte_memcpy(&dh_flow->encap1.src_mac2, &item_eth->src.addr_bytes[2], 4);
++			memcpy(&dh_flow->encap0.dst_mac1,
++			       item_eth->dst.addr_bytes, 2);
++			memcpy(&dh_flow->encap1.src_mac1,
++			       item_eth->src.addr_bytes, 2);
++			memcpy(&dh_flow->encap0.dst_mac2,
++			       &item_eth->dst.addr_bytes[2], 4);
++			memcpy(&dh_flow->encap1.src_mac2,
++			       &item_eth->src.addr_bytes[2], 4);
+ 			dh_flow->encap0.dst_mac1 = rte_bswap16(dh_flow->encap0.dst_mac1);
+ 			dh_flow->encap1.src_mac1 = rte_bswap16(dh_flow->encap1.src_mac1);
+ 			dh_flow->encap0.dst_mac2 = rte_bswap32(dh_flow->encap0.dst_mac2);
+@@ -1592,9 +1596,11 @@ fd_flow_parse_vxlan_encap(struct rte_eth_dev *dev __rte_unused,
+ 			dh_flow->encap0.tos = item_ipv4->hdr.type_of_service;
+ 			dh_flow->encap0.ttl = item_ipv4->hdr.time_to_live;
+ 			addr = rte_bswap32(item_ipv4->hdr.src_addr);
+-			rte_memcpy((uint32_t *)dh_flow->encap1.sip.ip_addr + 3, &addr, 4);
++			memcpy((uint32_t *)dh_flow->encap1.sip.ip_addr + 3,
++			       &addr, 4);
+ 			addr = rte_bswap32(item_ipv4->hdr.dst_addr);
+-			rte_memcpy((uint32_t *)dh_flow->encap0.dip.ip_addr + 3, &addr, 4);
++			memcpy((uint32_t *)dh_flow->encap0.dip.ip_addr + 3,
++			       &addr, 4);
+ 			break;
+ 		case RTE_FLOW_ITEM_TYPE_IPV6:
+ 			item_ipv6 = items->spec;
+@@ -1603,7 +1609,8 @@ fd_flow_parse_vxlan_encap(struct rte_eth_dev *dev __rte_unused,
+ 					(item_ipv6->hdr.vtc_flow & RTE_IPV6_HDR_TC_MASK) >>
+ 						RTE_IPV6_HDR_TC_SHIFT;
+ 			dh_flow->encap0.ttl = item_ipv6->hdr.hop_limits;
+-			rte_memcpy(dh_flow->encap1.sip.ip_addr, &item_ipv6->hdr.src_addr, 16);
++			memcpy(dh_flow->encap1.sip.ip_addr,
++			       &item_ipv6->hdr.src_addr, 16);
+ 			dh_flow->encap1.sip.ip_addr[0] =
+ 				rte_bswap32(dh_flow->encap1.sip.ip_addr[0]);
+ 			dh_flow->encap1.sip.ip_addr[1] =
+@@ -1612,7 +1619,8 @@ fd_flow_parse_vxlan_encap(struct rte_eth_dev *dev __rte_unused,
+ 				rte_bswap32(dh_flow->encap1.sip.ip_addr[2]);
+ 			dh_flow->encap1.sip.ip_addr[3] =
+ 				rte_bswap32(dh_flow->encap1.sip.ip_addr[3]);
+-			rte_memcpy(dh_flow->encap0.dip.ip_addr, &item_ipv6->hdr.dst_addr, 16);
++			memcpy(dh_flow->encap0.dip.ip_addr,
++			       &item_ipv6->hdr.dst_addr, 16);
+ 			dh_flow->encap0.dip.ip_addr[0] =
+ 					rte_bswap32(dh_flow->encap0.dip.ip_addr[0]);
+ 			dh_flow->encap0.dip.ip_addr[1] =
+@@ -1909,7 +1917,8 @@ vf_flow_msg_process(enum zxdh_msg_type msg_type, struct rte_eth_dev *dev,
+ 	if (msg_type == ZXDH_FLOW_HW_ADD)
+ 		dh_flow->flowentry.hw_idx = flow_rsp->dh_flow.flowentry.hw_idx;
+ 	if (count)
+-		rte_memcpy((void *)count, &flow_rsp->count, sizeof(flow_rsp->count));
++		memcpy((void *)count, &flow_rsp->count,
++		       sizeof(flow_rsp->count));
  
- 		stats->imissed = hw_stats->rx_out_of_buffer +
- 				hw_stats->rx_qblock_drop;
-diff --git a/drivers/net/sxe2/sxe2_tm.c b/drivers/net/sxe2/sxe2_tm.c
-index 4c4f793cd5..893e1afa6d 100644
---- a/drivers/net/sxe2/sxe2_tm.c
-+++ b/drivers/net/sxe2/sxe2_tm.c
-@@ -421,8 +421,8 @@ static int32_t sxe2_tm_shaper_profile_add(struct rte_eth_dev *dev, uint32_t shap
- 		goto l_end;
+ 	return ret;
+ }
+diff --git a/drivers/net/zxdh/zxdh_msg.c b/drivers/net/zxdh/zxdh_msg.c
+index 4b01daf37a..64aa0ac5f9 100644
+--- a/drivers/net/zxdh/zxdh_msg.c
++++ b/drivers/net/zxdh/zxdh_msg.c
+@@ -3,9 +3,9 @@
+  */
+ 
+ #include <stdbool.h>
++#include <string.h>
+ 
+ #include <rte_common.h>
+-#include <rte_memcpy.h>
+ #include <rte_spinlock.h>
+ #include <rte_cycles.h>
+ #include <inttypes.h>
+@@ -899,7 +899,7 @@ zxdh_bar_msg_ack_async_msg_proc(struct zxdh_bar_msg_header *msg_header,
+ 	}
+ 	uint8_t *reps_buffer = (uint8_t *)reps_info->reps_addr;
+ 
+-	rte_memcpy(reps_buffer + 4, receiver_buff, msg_header->len);
++	memcpy(reps_buffer + 4, receiver_buff, msg_header->len);
+ 	*(uint16_t *)(reps_buffer + 1) = msg_header->len;
+ 	*(uint8_t *)(reps_info->reps_addr) = ZXDH_REPS_HEADER_REPLYED;
+ 
+@@ -1406,13 +1406,13 @@ zxdh_vf_port_uninit(struct zxdh_hw *pf_hw, uint16_t vport,
  	}
  
--	rte_memcpy(&shaper_profile->profile, profile,
--					sizeof(struct rte_tm_shaper_params));
-+	memcpy(&shaper_profile->profile, profile,
-+	       sizeof(struct rte_tm_shaper_params));
- 	shaper_profile->id = shaper_profile_id;
+ 	*res_len += strlen(str);
+-	rte_memcpy(reply_data_addr, str, strlen(str) + 1);
++	memcpy(reply_data_addr, str, strlen(str) + 1);
+ 	ZXDH_SET(msg_reply_body, res_info, flag, ZXDH_REPS_SUCC);
+ 	return ret;
  
- 	TAILQ_INSERT_TAIL(&adapter->tm_ctxt.profile_list, shaper_profile, node);
+ proc_end:
+ 	*res_len += strlen(str);
+-	rte_memcpy(reply_data_addr, str, strlen(str) + 1);
++	memcpy(reply_data_addr, str, strlen(str) + 1);
+ 	ZXDH_SET(msg_reply_body, res_info, flag, ZXDH_REPS_FAIL);
+ 	return ret;
+ }
+@@ -1458,7 +1458,7 @@ zxdh_add_vf_mac_table(struct zxdh_hw *hw, uint16_t vport,
+ success:
+ 	sprintf(str, " vport 0x%x set mac ret 0x%x\n", port.vport, ret);
+ 	*reply_len =  strlen(str) + ZXDH_MSG_REPLYBODY_HEAD;
+-	rte_memcpy(reply_data_addr, str, strlen(str) + 1);
++	memcpy(reply_data_addr, str, strlen(str) + 1);
+ 	ZXDH_SET(msg_reply_body, reply_body, flag, ZXDH_REPS_SUCC);
+ 	PMD_DRV_LOG(DEBUG, " reply len %d", *reply_len);
+ 	return ret;
+@@ -1499,7 +1499,7 @@ zxdh_del_vf_mac_table(struct zxdh_hw *hw, uint16_t vport,
+ 
+ 	sprintf(str, "vport 0x%x del mac ret 0x%x\n", port.vport, ret);
+ 	*res_len =  strlen(str) + ZXDH_MSG_REPLYBODY_HEAD;
+-	rte_memcpy(reply_data_addr, str, strlen(str) + 1);
++	memcpy(reply_data_addr, str, strlen(str) + 1);
+ 	ZXDH_SET(msg_reply_body, res_info, flag, ZXDH_REPS_SUCC);
+ 	return ret;
+ 
+@@ -2331,7 +2331,8 @@ zxdh_vf_flow_hw_get(struct zxdh_hw *pf_hw, uint16_t vport,
+ 	}
+ 	PMD_DRV_LOG(INFO, " res len :%d", *res_len);
+ 	dh_flow = flow_rsp_addr;
+-	rte_memcpy(&dh_flow->flowentry, &flow_entry->dh_flow.flowentry, sizeof(dh_flow->flowentry));
++	memcpy(&dh_flow->flowentry, &flow_entry->dh_flow.flowentry,
++	       sizeof(dh_flow->flowentry));
+ 	ZXDH_SET(msg_reply_body, res_info, flag, ZXDH_REPS_SUCC);
+ 	return 0;
+ }
+diff --git a/drivers/net/zxdh/zxdh_mtr.c b/drivers/net/zxdh/zxdh_mtr.c
+index b23f6535a8..48318a6941 100644
+--- a/drivers/net/zxdh/zxdh_mtr.c
++++ b/drivers/net/zxdh/zxdh_mtr.c
+@@ -590,9 +590,8 @@ static int zxdh_hw_profile_config(struct rte_eth_dev *dev, uint16_t hw_profile_i
+ 		zxdh_plcr_profile_cfg->car_type = CAR_A;
+ 		zxdh_plcr_profile_cfg->packet_mode = mp->profile.packet_mode;
+ 		zxdh_plcr_profile_cfg->hw_profile_id = hw_profile_id;
+-		rte_memcpy(&zxdh_plcr_profile_cfg->plcr_param,
+-			&mp->plcr_param,
+-			sizeof(zxdh_plcr_profile_cfg->plcr_param));
++		memcpy(&zxdh_plcr_profile_cfg->plcr_param, &mp->plcr_param,
++		       sizeof(zxdh_plcr_profile_cfg->plcr_param));
+ 
+ 		zxdh_msg_head_build(hw, ZXDH_PLCR_CAR_PROFILE_CFG_SET, &msg_info);
+ 		ret = zxdh_vf_send_msg_to_pf(dev,
+@@ -685,7 +684,7 @@ zxdh_meter_profile_add(struct rte_eth_dev *dev,
+ 	mp->meter_profile_id = meter_profile_id;
+ 	mp->dpdk_port_id = dev->data->port_id;
+ 	mp->hw_profile_id = UINT16_MAX;
+-	rte_memcpy(&mp->profile, profile, sizeof(struct rte_mtr_meter_profile));
++	memcpy(&mp->profile, profile, sizeof(struct rte_mtr_meter_profile));
+ 
+ 	ret = zxdh_mtr_profile_offload(dev, mp, profile, error);
+ 	if (ret) {
+@@ -772,7 +771,8 @@ zxdh_meter_policy_add(struct rte_eth_dev *dev,
+ 	memset(mtr_policy, 0, sizeof(struct zxdh_meter_policy));
+ 	mtr_policy->policy_id = policy_id;
+ 	mtr_policy->dpdk_port_id = dev->data->port_id;
+-	rte_memcpy(&mtr_policy->policy, policy, sizeof(struct rte_mtr_meter_policy_params));
++	memcpy(&mtr_policy->policy, policy,
++	       sizeof(struct rte_mtr_meter_policy_params));
+ 	/* Add to list. */
+ 	TAILQ_INSERT_TAIL(&zxdh_shared_data->mtr_policy_list, mtr_policy, next);
+ 	mtr_policy->ref_cnt++;
+diff --git a/drivers/net/zxdh/zxdh_np.c b/drivers/net/zxdh/zxdh_np.c
+index b078ec5b6c..41542a89d8 100644
+--- a/drivers/net/zxdh/zxdh_np.c
++++ b/drivers/net/zxdh/zxdh_np.c
+@@ -9,7 +9,6 @@
+ #include <rte_log.h>
+ #include <rte_debug.h>
+ #include <rte_malloc.h>
+-#include <rte_memcpy.h>
+ 
+ #include "zxdh_np.h"
+ #include "zxdh_logs.h"
+diff --git a/drivers/net/zxdh/zxdh_queue.c b/drivers/net/zxdh/zxdh_queue.c
+index 7162593b16..c47bc44710 100644
+--- a/drivers/net/zxdh/zxdh_queue.c
++++ b/drivers/net/zxdh/zxdh_queue.c
+@@ -244,8 +244,8 @@ zxdh_dev_rx_queue_setup(struct rte_eth_dev *dev,
+ 		hw->queue_conf->queue_changed = 1;
+ 	}
+ 
+-	rte_memcpy(&hw->queue_conf->conf[queue_idx].zxdh_rx_conf,
+-		rx_conf, sizeof(struct rte_eth_rxconf));
++	memcpy(&hw->queue_conf->conf[queue_idx].zxdh_rx_conf, rx_conf,
++	       sizeof(struct rte_eth_rxconf));
+ 	hw->queue_conf->conf[queue_idx].rx_nb_desc = valid_nb_desc;
+ 	hw->queue_conf->conf[queue_idx].queue_mp = mp;
+ 
+@@ -336,8 +336,8 @@ zxdh_dev_tx_queue_setup(struct rte_eth_dev *dev,
+ 		hw->queue_conf->queue_changed = 1;
+ 	}
+ 
+-	rte_memcpy(&hw->queue_conf->conf[queue_idx].zxdh_tx_conf,
+-		tx_conf, sizeof(struct rte_eth_txconf));
++	memcpy(&hw->queue_conf->conf[queue_idx].zxdh_tx_conf, tx_conf,
++	       sizeof(struct rte_eth_txconf));
+ 	hw->queue_conf->conf[queue_idx].tx_nb_desc = valid_nb_desc;
+ 
+ 	return 0;
+diff --git a/drivers/net/zxdh/zxdh_tables.c b/drivers/net/zxdh/zxdh_tables.c
+index 233d53a7e8..5ee1a7dea8 100644
+--- a/drivers/net/zxdh/zxdh_tables.c
++++ b/drivers/net/zxdh/zxdh_tables.c
+@@ -248,7 +248,8 @@ zxdh_add_mac_table(struct zxdh_hw *hw, uint16_t vport, struct rte_ether_addr *ad
+ 	int32_t ret;
+ 
+ 	if (rte_is_unicast_ether_addr(addr)) {
+-		rte_memcpy(unicast_table.key.dmac_addr, addr, sizeof(struct rte_ether_addr));
++		memcpy(unicast_table.key.dmac_addr, addr,
++		       sizeof(struct rte_ether_addr));
+ 		unicast_table.key.sriov_vlan_tpid = srv_tpid;
+ 		unicast_table.key.sriov_vlan_id = srv_vlanid;
+ 
+@@ -286,8 +287,8 @@ zxdh_add_mac_table(struct zxdh_hw *hw, uint16_t vport, struct rte_ether_addr *ad
+ 	} else {
+ 		for (group_id = 0; group_id < 4; group_id++) {
+ 			multicast_table.key.vf_group_id = group_id;
+-			rte_memcpy(multicast_table.key.mac_addr,
+-					addr, sizeof(struct rte_ether_addr));
++			memcpy(multicast_table.key.mac_addr, addr,
++			       sizeof(struct rte_ether_addr));
+ 			ZXDH_DTB_HASH_ENTRY_INFO_T dtb_hash_entry = {
+ 				.p_actu_key = (uint8_t *)&multicast_table.key,
+ 				.p_rst = (uint8_t *)&multicast_table.entry
+@@ -353,7 +354,8 @@ zxdh_del_mac_table(struct zxdh_hw *hw, uint16_t vport, struct rte_ether_addr *ad
+ 	int32_t ret = 0;
+ 
+ 	if (rte_is_unicast_ether_addr(addr)) {
+-		rte_memcpy(unicast_table.key.dmac_addr, addr, sizeof(struct rte_ether_addr));
++		memcpy(unicast_table.key.dmac_addr, addr,
++		       sizeof(struct rte_ether_addr));
+ 		unicast_table.key.sriov_vlan_id = srv_vlanid;
+ 		unicast_table.key.sriov_vlan_tpid = srv_tpid;
+ 		unicast_table.entry.hit_flag = 0;
+@@ -385,7 +387,8 @@ zxdh_del_mac_table(struct zxdh_hw *hw, uint16_t vport, struct rte_ether_addr *ad
+ 		}
+ 	} else {
+ 		multicast_table.key.vf_group_id = vport_num.vfid / 64;
+-		rte_memcpy(multicast_table.key.mac_addr, addr, sizeof(struct rte_ether_addr));
++		memcpy(multicast_table.key.mac_addr, addr,
++		       sizeof(struct rte_ether_addr));
+ 
+ 		ZXDH_DTB_HASH_ENTRY_INFO_T dtb_hash_entry = {
+ 			.p_actu_key = (uint8_t *)&multicast_table.key,
+@@ -416,8 +419,8 @@ zxdh_del_mac_table(struct zxdh_hw *hw, uint16_t vport, struct rte_ether_addr *ad
+ 
+ 		for (group_id = 0; group_id < ZXDH_MC_GROUP_NUM; group_id++) {
+ 			multicast_table.key.vf_group_id = group_id;
+-			rte_memcpy(multicast_table.key.mac_addr, addr,
+-				sizeof(struct rte_ether_addr));
++			memcpy(multicast_table.key.mac_addr, addr,
++			       sizeof(struct rte_ether_addr));
+ 			ZXDH_DTB_HASH_ENTRY_INFO_T dtb_hash_entry = {
+ 				.p_actu_key = (uint8_t *)&multicast_table.key,
+ 				.p_rst = (uint8_t *)&multicast_table.entry
+@@ -441,8 +444,8 @@ zxdh_del_mac_table(struct zxdh_hw *hw, uint16_t vport, struct rte_ether_addr *ad
+ 		if (del_flag) {
+ 			for (group_id = 0; group_id < ZXDH_MC_GROUP_NUM; group_id++) {
+ 				multicast_table.key.vf_group_id = group_id;
+-				rte_memcpy(multicast_table.key.mac_addr, addr,
+-					sizeof(struct rte_ether_addr));
++				memcpy(multicast_table.key.mac_addr, addr,
++				       sizeof(struct rte_ether_addr));
+ 				ZXDH_DTB_HASH_ENTRY_INFO_T dtb_hash_entry = {
+ 					.p_actu_key  = (uint8_t *)&multicast_table.key,
+ 					.p_rst = (uint8_t *)&multicast_table.entry
 -- 
 2.53.0
 
