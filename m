@@ -2,76 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4572C5DF8C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Aug 2026 19:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBC94C5DF8C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Aug 2026 19:28:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3B3004067D;
-	Fri, 21 Aug 2026 21:28:01 +0200 (CEST)
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com
- [209.85.215.177])
- by mails.dpdk.org (Postfix) with ESMTP id DB3834067D
- for <dev@dpdk.org>; Fri, 21 Aug 2026 21:27:59 +0200 (CEST)
-Received: by mail-pg1-f177.google.com with SMTP id
- 41be03b00d2f7-cbb7926836eso1051693a12.3
- for <dev@dpdk.org>; Fri, 21 Aug 2026 12:27:59 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 347AD406B7;
+	Fri, 21 Aug 2026 21:28:07 +0200 (CEST)
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com
+ [209.85.210.175])
+ by mails.dpdk.org (Postfix) with ESMTP id 4284A40658
+ for <dev@dpdk.org>; Fri, 21 Aug 2026 21:28:06 +0200 (CEST)
+Received: by mail-pf1-f175.google.com with SMTP id
+ d2e1a72fcca58-8486672f03cso1384470b3a.0
+ for <dev@dpdk.org>; Fri, 21 Aug 2026 12:28:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787340479;
- x=1787945279; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787340485;
+ x=1787945285; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=wIbkMNpgVWIkidp+NMwuPrNQG8+S+OVVZEDNSpfW4Fc=;
- b=GxbQCiR48a0iu512RjO5/lKXSenObsANTRbGopZzcO0Ja2Ajzmg6nevx+G5oNg3DhK
- zjyrjlYzqioBcv8A01VU9xjLSF9vq8Zg/YTydG8Q4LrMCc3uK8gaL90QNpNpmBjtvoFL
- 4wehy7Hm9GO9Ilz3hJH3WeUB+diUW9CuhTwflFawWNMviBWif81CLryaUfs4zET0aTVH
- H/4D+UX8cfGylNybSlY2a/+zXBXMv+Wt/n6CKmHKAaqtdkH84LiD3td00V+fqB0IC90N
- 1xA9wk7voFo1UOyWdlGaZRS/hKzngfpYPPIwu6Cr15wZX+LHcODWQAmaSCmcNXQ/4TMe
- Y3LA==
+ bh=1D2Q4Xy9wt0oZIIwSCUH1aC/zT+San5Lzeq8obj1t6w=;
+ b=qh4TAxbAwMAoJdVWSlNe4os7OavN8lvV7CIPL8uKpCq/r67j0Ed0OVo8GSSKZeUmxl
+ XMpXVL3kDRefqwD6fSCYUQdq+VzWmEU4/QuWrqpR3xoJ5AkD0RJxyLOSlt2paQy6FRgK
+ sM56Y2KTynQgl9Pp1qT0mAgVSmxVtKwKPStyjGZrv1cnYhtOOR9tkx87h+JjstQVhl0p
+ tT7dcZGp0DxOXB2bDjx5j9QmS4SH3MeqVBjKn+jc55tUk6hv7I8pqLQxg+2fU3Thwj5q
+ HhQMXqV3P4+bCVcBtKhGOEvSunFeMlWGrGSVnL8HWBdSb++mYGzWHm43geNNBUsirlwM
+ OpGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787340479; x=1787945279;
+ d=1e100.net; s=20251104; t=1787340485; x=1787945285;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=wIbkMNpgVWIkidp+NMwuPrNQG8+S+OVVZEDNSpfW4Fc=;
- b=BFOMn380OfgzNA1A/934BaRd52FtvpTAu9lgFXnN+7QDZsEVXUPEPFbQcaGrebKnS3
- bvFH53tG5Hk0ZuVrc2aJIBVU8TQGR6LuJg3rqHLWfEb09/+cNvTRvh9LtQ2ncvRFheyo
- XsG0ScvCy4mdUAbcYVQqhSIq8NdZ+LlYs78pOFE/JdF4DeS+poeQMx5kkiEROSw3b16z
- Z/TR/kk5PJ1vBAlPwQV2zOA8VwR5Wym6Xg/wAENBX/DB5LCmC1jAVsoC+ddB36wVg5+U
- jv22JScozstYCVzlFb16T+A+/EzEv1vUv3POMW89DCwJd8LQ/VkjEF/iQigMTaRJtt32
- 86DA==
-X-Gm-Message-State: AFuF++nmVHXXsMPv0OaUol7Qacmld/P1sZo6CHmD44DBbF2ZUmnqg0aX
- FknHqv9m33DcaeYlKwaZ9SJ7uOE7TLE+YIqLny4BehzEHyhbql5+NQ/b8KNHa1Q4o1Asd/CpJ99
- kfwei
-X-Gm-Gg: AR+sD13ox14QZdgDLaBwZYVywBwuBsSXcO6a3gEHhvd/XL3KkrC1bCJpU5MZ7w46kSX
- xRtcCTJndqnK/xn5Eksm/KZo6v3c4XDlxJHOU6zHS/zYZ09AsaxbWWTgdIQlQGf1MRcs5uabUOM
- 01Obd81m2/Jq2TvEecoBN8VZzPh/5igl/+2KMWn4Eqt615MH939eHN7USCd4Any1/CCemTMqKuL
- U6fe/VM32iDHeORZQo6U5HACricg9SqnBKh5fju30gpPdCrGuZtLHXNpbM0id4Np4KLb2mHQ5os
- fyIfun/uMtK+rwCoVh5Rg6hi3Os0YjeRCYTcNnN9Y2lVPA+TuJ04FH4HP6LqfoAAYup60SjG4lA
- JDWWCBXMjcllZ1tTBTtPQ9eRDAj8WgnUWYdtYziLr+QWniwU+AY6li23J36OOzOtqhAfrSoULDN
- VzCJjkf/HtKmL+knHEoJXSkA80AhH9z0wRNLMKrdNmNxvV9eWvHIRHwtIQguNkf+V9gRjlTou1e
- jdef/tkJ/rbyf/d0MhGCe4F17lOK2J/YJsRnwY=
-X-Received: by 2002:a05:6a21:3293:b0:3cc:9618:f51a with SMTP id
- adf61e73a8af0-3cd4ba80d89mr1548335637.8.1787340478998; 
- Fri, 21 Aug 2026 12:27:58 -0700 (PDT)
+ bh=1D2Q4Xy9wt0oZIIwSCUH1aC/zT+San5Lzeq8obj1t6w=;
+ b=cNH8+jeiQ7QdPLTLJl7aXpQtssAOF7hvk5vWMAOJJM8lVs6KeTu6rNK/TbU2vokw94
+ xHFI2kJH9lykg88xavh4zT3BQ/KujH386fNcbyzmk24YJf3drz9yfQeYzce30irbZ+lq
+ i7f1ODHovJzakrGwk7310TQJp1ZoBUxImLMuR19qjCcWYBXyncUwtRyGPsyAxZ5nq/O0
+ YM24Z6are5rPnoURyNdVFju4T+LAfGcFoPDyXGai85wcDo0kzZC5IjjaX57crhp+4Ir/
+ dmdQNhDVcLi0GDDycqkEFvtnMJEiJJ+1q52TM1BPK5WNVUwM/effumW9pp+Xl5OjgpKU
+ IfMw==
+X-Gm-Message-State: AFuF++nbH2bOxTJfDq7issMnxicZEDmvhz40J4nr5n7BXerviSUAiMY9
+ w03yci10N4mi6I1P+wlP8cJDYTZRKtw4ZOGDB8Q/pV7SQAZ4ft5GkolQOqZg6FCvzalQpk4G3UI
+ 9O+Po
+X-Gm-Gg: AR+sD13HZ6219zp4Ev48Je1n5pb0pseoFgbk3pRl2NTYqx7jRCmSaqrCHibonB2uSSl
+ o0ECTDo5lddQ6fVMicTL3H8bw+2cU9sXzLqt1kaVCQwzSZDsyCYRrcIJDARfSnjcc2eoCnXysMw
+ P2FNlSk7qvcvf2o5vdaJFE8k4aQrVGsOS6Gu6SQ70aLH9ktfTYgbSUX1BY03uoIl7Jbw3xzSqEp
+ CklRYc011D803Y8694w8b+bZVAbcHeAFlNtd5Kj8yWkWzPI92BKLbyta+HjdABGOgEryyyODDzK
+ DYonN+mU3jlHtWig7WEPIkSQMCRbi56sauaAQfAdjNqN2wH/viHvtSjccqJEkKgQ+u47Pvy+BEz
+ 55983sRyG+t73IFUO2+OLikl5plWhxYCJTHeahDUwdgvuTpmL1Eytnx5W0IW9Wsrg8LYPXs0NVn
+ rb3bAF2KH59dJTVJCoBcNahwp/MYSpGcGFTOEz9smuPrcONKPnqX4cB5I30crctyhI5GYmWDNYf
+ ceE04NTOD3zfRIKBIOnd/Rffms=
+X-Received: by 2002:a05:6a21:7113:b0:3cc:9620:5816 with SMTP id
+ adf61e73a8af0-3cd4ba674e3mr1926712637.8.1787340485365; 
+ Fri, 21 Aug 2026 12:28:05 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-cc16c6dd2f4sm1860304a12.17.2026.08.21.12.27.52
+ 41be03b00d2f7-cc16c6dd2f4sm1860304a12.17.2026.08.21.12.27.59
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 21 Aug 2026 12:27:58 -0700 (PDT)
+ Fri, 21 Aug 2026 12:28:05 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Jack Bond-Preston <jack.bond-preston@foss.arm.com>,
+ Nicolas Chautru <nicolas.chautru@intel.com>,
+ Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>,
  Gagandeep Singh <g.singh@nxp.com>, Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sunil Uttarwar <sunilprakashrao.uttarwar@amd.com>,
- Ankur Dwivedi <adwivedi@marvell.com>, Anoob Joseph <anoobj@marvell.com>,
- Tejasree Kondoj <ktejasree@marvell.com>, Kai Ji <kai.ji@intel.com>,
- Pablo de Lara <pablo.de.lara.guarch@intel.com>,
- Matan Azrad <matan@nvidia.com>, Michael Shamis <michaelsh@marvell.com>,
- Liron Himi <lironh@marvell.com>, Jay Zhou <jianjay.zhou@huawei.com>
-Subject: [PATCH v2 04/68] crypto: add missing include of rte_memcpy.h
-Date: Fri, 21 Aug 2026 12:23:59 -0700
-Message-ID: <20260821192646.146382-5-stephen@networkplumber.org>
+ Srikanth Yalavarthi <syalavarthi@marvell.com>
+Subject: [PATCH v2 05/68] drivers: add missing include of rte_memcpy.h
+Date: Fri, 21 Aug 2026 12:24:00 -0700
+Message-ID: <20260821192646.146382-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260821192646.146382-1-stephen@networkplumber.org>
 References: <20260820052251.1453273-1-stephen@networkplumber.org>
@@ -98,281 +97,125 @@ rte_memcpy.h do not break the build.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/crypto/armv8/rte_armv8_pmd.c               | 1 +
- drivers/crypto/caam_jr/caam_jr.c                   | 1 +
- drivers/crypto/ccp/ccp_crypto.c                    | 1 +
- drivers/crypto/cnxk/cn10k_tls_ops.h                | 1 +
- drivers/crypto/cnxk/cn20k_tls_ops.h                | 1 +
- drivers/crypto/cnxk/cnxk_ae.h                      | 1 +
- drivers/crypto/cnxk/cnxk_se.h                      | 1 +
- drivers/crypto/dpaa2_sec/dpaa2_sec_raw_dp.c        | 1 +
- drivers/crypto/dpaa_sec/dpaa_sec_raw_dp.c          | 1 +
- drivers/crypto/ipsec_mb/pmd_aesni_mb.c             | 1 +
- drivers/crypto/ipsec_mb/pmd_snow3g.c               | 1 +
- drivers/crypto/mlx5/mlx5_crypto_gcm.c              | 1 +
- drivers/crypto/mvsam/rte_mrvl_pmd.c                | 1 +
- drivers/crypto/openssl/rte_openssl_pmd.c           | 1 +
- drivers/crypto/qat/asym/qat_asym.c                 | 1 +
- drivers/crypto/qat/dev/qat_crypto_pmd_gen3.c       | 1 +
- drivers/crypto/qat/dev/qat_crypto_pmd_gen_lce.c    | 1 +
- drivers/crypto/qat/dev/qat_crypto_pmd_gens.h       | 1 +
- drivers/crypto/scheduler/rte_cryptodev_scheduler.c | 1 +
- drivers/crypto/virtio/virtio_cryptodev.c           | 1 +
- drivers/crypto/virtio/virtio_rxtx.c                | 1 +
- 21 files changed, 21 insertions(+)
+ drivers/baseband/turbo_sw/bbdev_turbo_software.c | 1 +
+ drivers/common/mlx5/mlx5_common_mr.c             | 1 +
+ drivers/dma/dpaa2/dpaa2_qdma.c                   | 1 +
+ drivers/ml/cnxk/cn10k_ml_dev.c                   | 1 +
+ drivers/ml/cnxk/cn10k_ml_model.c                 | 1 +
+ drivers/ml/cnxk/cn10k_ml_ops.c                   | 1 +
+ drivers/ml/cnxk/cnxk_ml_io.c                     | 1 +
+ drivers/ml/cnxk/tvmrt_ml_ops.c                   | 1 +
+ drivers/regex/mlx5/mlx5_rxp.c                    | 1 +
+ 9 files changed, 9 insertions(+)
 
-diff --git a/drivers/crypto/armv8/rte_armv8_pmd.c b/drivers/crypto/armv8/rte_armv8_pmd.c
-index a7caac186d..f99f7ef636 100644
---- a/drivers/crypto/armv8/rte_armv8_pmd.c
-+++ b/drivers/crypto/armv8/rte_armv8_pmd.c
-@@ -11,6 +11,7 @@
- #include <bus_vdev_driver.h>
- #include <rte_malloc.h>
- #include <rte_cpuflags.h>
-+#include <rte_memcpy.h>
- 
- #include "AArch64cryptolib.h"
- 
-diff --git a/drivers/crypto/caam_jr/caam_jr.c b/drivers/crypto/caam_jr/caam_jr.c
-index a57dc56b80..77958f9340 100644
---- a/drivers/crypto/caam_jr/caam_jr.c
-+++ b/drivers/crypto/caam_jr/caam_jr.c
-@@ -14,6 +14,7 @@
- #include <rte_cryptodev.h>
- #include <bus_vdev_driver.h>
- #include <rte_malloc.h>
-+#include <rte_memcpy.h>
- #include <rte_security_driver.h>
- #include <rte_hexdump.h>
- 
-diff --git a/drivers/crypto/ccp/ccp_crypto.c b/drivers/crypto/ccp/ccp_crypto.c
-index b07a786d8e..a8e085d6db 100644
---- a/drivers/crypto/ccp/ccp_crypto.c
-+++ b/drivers/crypto/ccp/ccp_crypto.c
-@@ -17,6 +17,7 @@
- #include <openssl/evp.h> /*sub key apis*/
- 
- #include <rte_hexdump.h>
-+#include <rte_memcpy.h>
- #include <rte_memzone.h>
- #include <rte_malloc.h>
- #include <rte_memory.h>
-diff --git a/drivers/crypto/cnxk/cn10k_tls_ops.h b/drivers/crypto/cnxk/cn10k_tls_ops.h
-index 90600bd850..9ba625d4d9 100644
---- a/drivers/crypto/cnxk/cn10k_tls_ops.h
-+++ b/drivers/crypto/cnxk/cn10k_tls_ops.h
-@@ -6,6 +6,7 @@
- #define __CN10K_TLS_OPS_H__
- 
- #include <rte_crypto_sym.h>
-+#include <rte_memcpy.h>
- #include <rte_security.h>
- 
- #include "roc_ie.h"
-diff --git a/drivers/crypto/cnxk/cn20k_tls_ops.h b/drivers/crypto/cnxk/cn20k_tls_ops.h
-index e7a8ba34ae..39d5242f8d 100644
---- a/drivers/crypto/cnxk/cn20k_tls_ops.h
-+++ b/drivers/crypto/cnxk/cn20k_tls_ops.h
-@@ -6,6 +6,7 @@
- #define __CN20K_TLS_OPS_H__
- 
- #include <rte_crypto_sym.h>
-+#include <rte_memcpy.h>
- #include <rte_security.h>
- 
- #include "roc_ie.h"
-diff --git a/drivers/crypto/cnxk/cnxk_ae.h b/drivers/crypto/cnxk/cnxk_ae.h
-index f2aa5d5a2e..93e2627f15 100644
---- a/drivers/crypto/cnxk/cnxk_ae.h
-+++ b/drivers/crypto/cnxk/cnxk_ae.h
+diff --git a/drivers/baseband/turbo_sw/bbdev_turbo_software.c b/drivers/baseband/turbo_sw/bbdev_turbo_software.c
+index 2cab495294..cb4aaea6d2 100644
+--- a/drivers/baseband/turbo_sw/bbdev_turbo_software.c
++++ b/drivers/baseband/turbo_sw/bbdev_turbo_software.c
 @@ -8,6 +8,7 @@
  #include <rte_common.h>
- #include <rte_crypto_asym.h>
+ #include <bus_vdev_driver.h>
  #include <rte_malloc.h>
 +#include <rte_memcpy.h>
- #include <rte_memory.h>
- 
- #include "roc_ae.h"
-diff --git a/drivers/crypto/cnxk/cnxk_se.h b/drivers/crypto/cnxk/cnxk_se.h
-index 505a5fcd37..d267122fdd 100644
---- a/drivers/crypto/cnxk/cnxk_se.h
-+++ b/drivers/crypto/cnxk/cnxk_se.h
-@@ -7,6 +7,7 @@
- #include <stdbool.h>
- 
- #include <rte_cryptodev.h>
-+#include <rte_memcpy.h>
- 
- #include "cnxk_cryptodev.h"
- #include "cnxk_cryptodev_ops.h"
-diff --git a/drivers/crypto/dpaa2_sec/dpaa2_sec_raw_dp.c b/drivers/crypto/dpaa2_sec/dpaa2_sec_raw_dp.c
-index fb0408f8ad..ada410048f 100644
---- a/drivers/crypto/dpaa2_sec/dpaa2_sec_raw_dp.c
-+++ b/drivers/crypto/dpaa2_sec/dpaa2_sec_raw_dp.c
-@@ -12,6 +12,7 @@
- #include "dpaa2_sec_logs.h"
- 
- #include <desc/algo.h>
-+#include <rte_memcpy.h>
- 
- struct dpaa2_sec_raw_dp_ctx {
- 	dpaa2_sec_session *session;
-diff --git a/drivers/crypto/dpaa_sec/dpaa_sec_raw_dp.c b/drivers/crypto/dpaa_sec/dpaa_sec_raw_dp.c
-index f62c803894..5ad8c3256c 100644
---- a/drivers/crypto/dpaa_sec/dpaa_sec_raw_dp.c
-+++ b/drivers/crypto/dpaa_sec/dpaa_sec_raw_dp.c
-@@ -7,6 +7,7 @@
- #include <cryptodev_pmd.h>
- #include <rte_crypto.h>
- #include <rte_cryptodev.h>
-+#include <rte_memcpy.h>
- #include <rte_security_driver.h>
- 
- /* RTA header files */
-diff --git a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c b/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
-index 4c5b6e70b5..c170743a4d 100644
---- a/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
-+++ b/drivers/crypto/ipsec_mb/pmd_aesni_mb.c
-@@ -5,6 +5,7 @@
- #include <unistd.h>
- 
- #include "pmd_aesni_mb_priv.h"
-+#include <rte_memcpy.h>
- 
- RTE_DEFINE_PER_LCORE(pid_t, pid);
- 
-diff --git a/drivers/crypto/ipsec_mb/pmd_snow3g.c b/drivers/crypto/ipsec_mb/pmd_snow3g.c
-index 35fe23c157..8ce951a03e 100644
---- a/drivers/crypto/ipsec_mb/pmd_snow3g.c
-+++ b/drivers/crypto/ipsec_mb/pmd_snow3g.c
-@@ -3,6 +3,7 @@
-  */
- 
- #include "pmd_snow3g_priv.h"
-+#include <rte_memcpy.h>
- 
- /** Parse crypto xform chain and set private session parameters. */
- static int
-diff --git a/drivers/crypto/mlx5/mlx5_crypto_gcm.c b/drivers/crypto/mlx5/mlx5_crypto_gcm.c
-index 1a2600655a..f9ac00c7ed 100644
---- a/drivers/crypto/mlx5/mlx5_crypto_gcm.c
-+++ b/drivers/crypto/mlx5/mlx5_crypto_gcm.c
-@@ -3,6 +3,7 @@
-  */
- 
- #include <rte_malloc.h>
-+#include <rte_memcpy.h>
- #include <rte_mempool.h>
+ #include <rte_ring.h>
+ #include <rte_kvargs.h>
+ #include <rte_cycles.h>
+diff --git a/drivers/common/mlx5/mlx5_common_mr.c b/drivers/common/mlx5/mlx5_common_mr.c
+index aa2d5e88a4..929b47dcc8 100644
+--- a/drivers/common/mlx5/mlx5_common_mr.c
++++ b/drivers/common/mlx5/mlx5_common_mr.c
+@@ -8,6 +8,7 @@
+ #include <rte_eal_memconfig.h>
  #include <rte_eal_paging.h>
  #include <rte_errno.h>
-diff --git a/drivers/crypto/mvsam/rte_mrvl_pmd.c b/drivers/crypto/mvsam/rte_mrvl_pmd.c
-index a824719fb0..1129b68ef5 100644
---- a/drivers/crypto/mvsam/rte_mrvl_pmd.c
-+++ b/drivers/crypto/mvsam/rte_mrvl_pmd.c
-@@ -8,6 +8,7 @@
- #include <rte_hexdump.h>
- #include <rte_cryptodev.h>
- #include <cryptodev_pmd.h>
 +#include <rte_memcpy.h>
- #include <rte_security_driver.h>
- #include <bus_vdev_driver.h>
+ #include <rte_mempool.h>
  #include <rte_malloc.h>
-diff --git a/drivers/crypto/openssl/rte_openssl_pmd.c b/drivers/crypto/openssl/rte_openssl_pmd.c
-index 2319c7cfa9..2784fc5581 100644
---- a/drivers/crypto/openssl/rte_openssl_pmd.c
-+++ b/drivers/crypto/openssl/rte_openssl_pmd.c
+ #include <rte_rwlock.h>
+diff --git a/drivers/dma/dpaa2/dpaa2_qdma.c b/drivers/dma/dpaa2/dpaa2_qdma.c
+index f7d94bb799..84281844b3 100644
+--- a/drivers/dma/dpaa2/dpaa2_qdma.c
++++ b/drivers/dma/dpaa2/dpaa2_qdma.c
 @@ -10,6 +10,7 @@
- #include <bus_vdev_driver.h>
- #include <rte_malloc.h>
- #include <rte_cpuflags.h>
-+#include <rte_memcpy.h>
  
- #include <openssl/cmac.h>
- #include <openssl/hmac.h>
-diff --git a/drivers/crypto/qat/asym/qat_asym.c b/drivers/crypto/qat/asym/qat_asym.c
-index 9276b86c0e..0792b0116a 100644
---- a/drivers/crypto/qat/asym/qat_asym.c
-+++ b/drivers/crypto/qat/asym/qat_asym.c
-@@ -14,6 +14,7 @@
- #include "icp_qat_fw.h"
- #include "qat_pke.h"
- #include "qat_ec.h"
-+#include <rte_memcpy.h>
+ #include <mc/fsl_dpdmai.h>
  
- #define ASYM_ENQ_THRESHOLD_NAME "qat_asym_enq_threshold"
- #define RSA_MODULUS_2048_BITS 2048
-diff --git a/drivers/crypto/qat/dev/qat_crypto_pmd_gen3.c b/drivers/crypto/qat/dev/qat_crypto_pmd_gen3.c
-index 91546046f1..202d76b94d 100644
---- a/drivers/crypto/qat/dev/qat_crypto_pmd_gen3.c
-+++ b/drivers/crypto/qat/dev/qat_crypto_pmd_gen3.c
-@@ -3,6 +3,7 @@
-  */
- 
- #include <rte_cryptodev.h>
 +#include <rte_memcpy.h>
- #include <cryptodev_pmd.h>
- #include "qat_sym_session.h"
- #include "qat_sym.h"
-diff --git a/drivers/crypto/qat/dev/qat_crypto_pmd_gen_lce.c b/drivers/crypto/qat/dev/qat_crypto_pmd_gen_lce.c
-index ec075bbf68..9a49d1c4ed 100644
---- a/drivers/crypto/qat/dev/qat_crypto_pmd_gen_lce.c
-+++ b/drivers/crypto/qat/dev/qat_crypto_pmd_gen_lce.c
-@@ -3,6 +3,7 @@
-  */
- 
- #include <rte_cryptodev.h>
-+#include <rte_memcpy.h>
- #include <cryptodev_pmd.h>
- #include "qat_sym_session.h"
- #include "qat_sym.h"
-diff --git a/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h b/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h
-index aacbb405e9..b2b53e4b70 100644
---- a/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h
-+++ b/drivers/crypto/qat/dev/qat_crypto_pmd_gens.h
-@@ -8,6 +8,7 @@
- #include <rte_cryptodev.h>
- #include <rte_common.h>
- #include <rte_branch_prediction.h>
-+#include <rte_memcpy.h>
- #include "qat_crypto.h"
- #include "qat_sym_session.h"
- #include "qat_sym.h"
-diff --git a/drivers/crypto/scheduler/rte_cryptodev_scheduler.c b/drivers/crypto/scheduler/rte_cryptodev_scheduler.c
-index 1ca8443431..7434c7021e 100644
---- a/drivers/crypto/scheduler/rte_cryptodev_scheduler.c
-+++ b/drivers/crypto/scheduler/rte_cryptodev_scheduler.c
-@@ -2,6 +2,7 @@
-  * Copyright(c) 2017 Intel Corporation
-  */
- #include <eal_export.h>
-+#include <rte_memcpy.h>
- #include <rte_string_fns.h>
- #include <rte_reorder.h>
- #include <rte_cryptodev.h>
-diff --git a/drivers/crypto/virtio/virtio_cryptodev.c b/drivers/crypto/virtio/virtio_cryptodev.c
-index d70651646e..38615b969e 100644
---- a/drivers/crypto/virtio/virtio_cryptodev.c
-+++ b/drivers/crypto/virtio/virtio_cryptodev.c
+ #include <rte_pmd_dpaax_qdma.h>
+ #include "dpaa2_hw_dpio.h"
+ #include "dpaa2_qdma.h"
+diff --git a/drivers/ml/cnxk/cn10k_ml_dev.c b/drivers/ml/cnxk/cn10k_ml_dev.c
+index c35895dc14..5880770630 100644
+--- a/drivers/ml/cnxk/cn10k_ml_dev.c
++++ b/drivers/ml/cnxk/cn10k_ml_dev.c
 @@ -6,6 +6,7 @@
+ #include <rte_dev.h>
+ #include <rte_devargs.h>
+ #include <rte_kvargs.h>
++#include <rte_memcpy.h>
+ #include <rte_mldev.h>
+ #include <rte_mldev_pmd.h>
+ #include <rte_pci.h>
+diff --git a/drivers/ml/cnxk/cn10k_ml_model.c b/drivers/ml/cnxk/cn10k_ml_model.c
+index fa978529f5..58eebbf076 100644
+--- a/drivers/ml/cnxk/cn10k_ml_model.c
++++ b/drivers/ml/cnxk/cn10k_ml_model.c
+@@ -3,6 +3,7 @@
+  */
+ 
+ #include <rte_hash_crc.h>
++#include <rte_memcpy.h>
+ 
+ #include <mldev_utils.h>
+ 
+diff --git a/drivers/ml/cnxk/cn10k_ml_ops.c b/drivers/ml/cnxk/cn10k_ml_ops.c
+index 597806b787..ffe3356720 100644
+--- a/drivers/ml/cnxk/cn10k_ml_ops.c
++++ b/drivers/ml/cnxk/cn10k_ml_ops.c
+@@ -2,6 +2,7 @@
+  * Copyright (c) 2022 Marvell.
+  */
+ 
++#include <rte_memcpy.h>
+ #include <rte_mldev.h>
+ #include <rte_mldev_pmd.h>
+ 
+diff --git a/drivers/ml/cnxk/cnxk_ml_io.c b/drivers/ml/cnxk/cnxk_ml_io.c
+index a418b7e684..33d95e5574 100644
+--- a/drivers/ml/cnxk/cnxk_ml_io.c
++++ b/drivers/ml/cnxk/cnxk_ml_io.c
+@@ -2,6 +2,7 @@
+  * Copyright (c) 2023 Marvell.
+  */
+ 
++#include <rte_memcpy.h>
+ #include <rte_mldev.h>
+ 
+ #include <mldev_utils.h>
+diff --git a/drivers/ml/cnxk/tvmrt_ml_ops.c b/drivers/ml/cnxk/tvmrt_ml_ops.c
+index f6b3a51c51..01493077bb 100644
+--- a/drivers/ml/cnxk/tvmrt_ml_ops.c
++++ b/drivers/ml/cnxk/tvmrt_ml_ops.c
+@@ -16,6 +16,7 @@
  
  #include <rte_common.h>
- #include <rte_errno.h>
+ #include <rte_cycles.h>
 +#include <rte_memcpy.h>
- #include <rte_pci.h>
- #include <bus_pci_driver.h>
- #include <rte_cryptodev.h>
-diff --git a/drivers/crypto/virtio/virtio_rxtx.c b/drivers/crypto/virtio/virtio_rxtx.c
-index 4204e1f77e..079446f289 100644
---- a/drivers/crypto/virtio/virtio_rxtx.c
-+++ b/drivers/crypto/virtio/virtio_rxtx.c
-@@ -7,6 +7,7 @@
- #include "virtio_ring.h"
- #include "virtio_cryptodev.h"
- #include "virtio_crypto_algs.h"
-+#include <rte_memcpy.h>
+ #include <rte_mldev.h>
+ #include <rte_mldev_pmd.h>
  
- static void
- vq_ring_free_chain(struct virtqueue *vq, uint16_t desc_idx)
+diff --git a/drivers/regex/mlx5/mlx5_rxp.c b/drivers/regex/mlx5/mlx5_rxp.c
+index b865c08b53..42aa82d62a 100644
+--- a/drivers/regex/mlx5/mlx5_rxp.c
++++ b/drivers/regex/mlx5/mlx5_rxp.c
+@@ -5,6 +5,7 @@
+ #include <rte_log.h>
+ #include <rte_errno.h>
+ #include <rte_malloc.h>
++#include <rte_memcpy.h>
+ #include <rte_regexdev.h>
+ #include <rte_regexdev_core.h>
+ #include <rte_regexdev_driver.h>
 -- 
 2.53.0
 
