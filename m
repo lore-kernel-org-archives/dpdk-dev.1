@@ -2,122 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 282ABC5DF7D
-	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Aug 2026 20:08:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C9DC5DF8C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Aug 2026 23:45:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4F8544028C;
-	Fri, 21 Aug 2026 22:08:38 +0200 (CEST)
-Received: from CH1PR05CU001.outbound.protection.outlook.com
- (mail-northcentralusazon11020127.outbound.protection.outlook.com
- [52.101.193.127])
- by mails.dpdk.org (Postfix) with ESMTP id A7F1140274
- for <dev@dpdk.org>; Fri, 21 Aug 2026 22:08:36 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lJ5Bogwdrrx/UXV44tc0bAubrOJ6JNFSg7G7mkHGdS3haNDdG05N1r5Tp9pr8a8Ylc8svclqO4gl3c94rkFEE7pPQ9XFVtBQ4SoWvFMKHCB3MFg5A8sWBVsNZRzJtn5JPkNxDDbEPVyTJkkoYV5Sh6vHtzSoQdZ88KuK18TbjmFvKd6kohInefWEeRz5hqVdYSkbNFHYKwBAzGsKa3lo9KBdZqNxB0mRPn/0jwOqQOugoc0Yhlg3c88erupxUrHXXTqtGRfUl0K81+pO64AVvv0uwHR1YYDx7TJ4NSWTZEa80GUl790kf5BG2PgzKJ7e1MG2Tl4+gXBsUzsWehjAxA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4f50pAjIPVS8TXLtrCZMpxn7yg1WBBeM8Tp32EUeuTc=;
- b=O0v445HOzhbmyRXjF7eT6ZfueHeb9+Kfk6ph1exr/tTkTx12o0thIkhOkUUp5deg/Kjt1qqYjiFw6GoB7eceExMAl2+7q0jUaZ0Q0dFi04r12PNV7Ce7PYzrlZlYkZFv1mF2aZmdripqpRIWEtaVFYUEhsP6EOxv/zt+pCIbgpeYOgkH+AOkRLO1u7l2W2JN47SKfW9uLypG/+p16PbLM+23BQ1zdwhXlZYXMxamBZLCqaoM3+f4D0cG2DY30rrVbJBcqHOqgCTk3+IA42r2Vq/iDyuLdmPYC5/GiEGIBCjOb6bS5Pg4v3PAur8ZBWAu+Z5wZk4SQK0rSuyUmvMPPA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4f50pAjIPVS8TXLtrCZMpxn7yg1WBBeM8Tp32EUeuTc=;
- b=a7KxQ/Swh5+VwAXMcxD+qPG9SdmSQ0F7pdDxT0e/QDw6eZkI8fXrZpTmm5ofThddXdXokKrLQmYlYI6TL+XV+ueuiJRVlBksNmRbGHQ8tMKMOZ+XYb/hkUc//clJVrquzsjkPhv+j7YvhRD7RwrsX7zEUIgSx6in+kIB4CSPM2M=
-Received: from SA1PR21MB6683.namprd21.prod.outlook.com (2603:10b6:806:4a4::6)
- by SA3PR21MB5696.namprd21.prod.outlook.com (2603:10b6:806:493::22)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.339.1; Fri, 21 Aug
- 2026 20:08:33 +0000
-Received: from SA1PR21MB6683.namprd21.prod.outlook.com
- ([fe80::8bad:6294:8a07:fe18]) by SA1PR21MB6683.namprd21.prod.outlook.com
- ([fe80::8bad:6294:8a07:fe18%6]) with mapi id 15.21.0315.008; Fri, 21 Aug 2026
- 20:08:33 +0000
-From: Long Li <longli@microsoft.com>
-To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
- <dev@dpdk.org>
-CC: Wei Hu <weh@microsoft.com>
-Subject: RE: [EXTERNAL] [PATCH v2 40/68] net/netvsc: replace use of rte_memcpy
-Thread-Topic: [EXTERNAL] [PATCH v2 40/68] net/netvsc: replace use of rte_memcpy
-Thread-Index: AQHdMaOD4xBWY5pAGEq2Xsfnd24+Orao7kcw
-Date: Fri, 21 Aug 2026 20:08:33 +0000
-Message-ID: <SA1PR21MB66835A682DDE11668B9E13CACEA32@SA1PR21MB6683.namprd21.prod.outlook.com>
-References: <20260820052251.1453273-1-stephen@networkplumber.org>
- <20260821192646.146382-1-stephen@networkplumber.org>
- <20260821192646.146382-41-stephen@networkplumber.org>
-In-Reply-To: <20260821192646.146382-41-stephen@networkplumber.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=e988c9d9-6b56-44d5-a534-2c424e7190c9;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2026-08-21T20:08:05Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10, 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR21MB6683:EE_|SA3PR21MB5696:EE_
-x-ms-office365-filtering-correlation-id: d2529fdb-6348-48cc-97f0-08deffbffa1e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|376014|366016|1800799024|23010399003|38070700021|10067099003|56012099006|7146999003|18002099003|11063799006|4143699003|22082099003;
-x-microsoft-antispam-message-info: Q+LfZcwAOzPrkSlO6s3SBjqyQjizJzNwIGcEiqPNe2me+g3u8rq4s6YbCnz1u8bvlNP6DzqQvLDYlDibofKjPJKGDquXuDgktviwGNJbIS/TGxYU/Bc74uY1A46ni8vWGpTrwD2c/Y4wTZhnU/jhkbp/rILosM+d+J2YAqiFi+VOocn9+K55Vk5TCUVEioWf5uzlxtLe+unSaTBi/1xrF8rtc+VVUDsnecQ0fYiw1CAusj0dQvFsH0WJYu4Xp2U0vAwV0Kh27Ii2dtdxpO7fKPviy04ZpJMkOUTvIqtl5IaWrWP2b+ATi9Qm9ymaLkNWSOgDzRksO5QPDcF3ZepFG3mz4vLRg85Xe3JFME8HI4qFbzufI8s539xEhBU68vVzvhMDRQ2zEsadtwFe4VXuC2jrfJsqPTktgXaWBunZvH3qlH9TDgi6Pk2d9a6bxSJ1DrsRlWfPxdX40JUCPAEBhghlcpJzPXlHVfplu/EeKMXj1P+VdYpeKIKDsDpx1Lvo2CwHBg92HvFxkaludnin47WxN6fGzBI4GcM7/ToMxQNNlBDa3CVvAuju1sxCd1AOkCDabk8jcdFzYwNNrXJEirDEzMrJAyyA848CURjQQTI4QJXJ/TLX7Uqhm0MGZhN1I7y6H8NmGI78UgFsXEFquoB9wwJRwZFaFACmaDwd+mAUXSQ0eOshK0c9uETINzHxMx6mosoBtTYpzNan/mcNdGtIQ9gMG/ygNa5d8ONz/aM=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SA1PR21MB6683.namprd21.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024)(23010399003)(38070700021)(10067099003)(56012099006)(7146999003)(18002099003)(11063799006)(4143699003)(22082099003);
- DIR:OUT; SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?S9DxiBtQWzmMPyuU2qrIPmDPsMBwh6dVvRcwaW8DeuLfWjiihwwXLoMZzdYp?=
- =?us-ascii?Q?8zDRAELkn7k8zH4yUSQQ3Xs/hhbft3KSH+okQw/gOM2xPBYRTtgoDBoKjUuU?=
- =?us-ascii?Q?sXoIxzBxUoUgmmKXn2KNjZLr2X2Uomr/IEBYeIWT3slIUM0Ht0AfLZ01IvHb?=
- =?us-ascii?Q?GuCNqOklln5F3Vg9Uwf+4TnJlcP8JhoDAY4a/xprIHJM42qW/ep7sd0Ty/01?=
- =?us-ascii?Q?WnwqzhLrLr4yr3q2AlFxxdIh/7z2YqBM72F9XFzH84NnUphCMAn8c2ieaow/?=
- =?us-ascii?Q?2XHGJbq3S3GStTWZ8snhqzya5cnkqX4TLPPAmbxxhl73UE9TJRXxYXslpWKE?=
- =?us-ascii?Q?JZYhoC+0ljZxlYD3o913e/Z4TDXrvtgMi5WTn1i31xIiDzpPq8/qnMB3/Z6i?=
- =?us-ascii?Q?NqChb4SpHF02+3VKT97EXD585tuiULYW5VTYKLoRDc5OSJn4bQHymT75nS19?=
- =?us-ascii?Q?q0w+nO2NWLWGT4S1rGQz3u/HJ/qPKiqcllnLQ1nq4CEPI7mn5Y6cuC2kzGzx?=
- =?us-ascii?Q?S9WxX54e0aAkM9j7JQNDG3MoS46CGaPifAArZAO0Z3djRxkxV0U650rZ2UCw?=
- =?us-ascii?Q?zT2Na2fCBK5AtBHeqozOKilExYHERnACQnsUqCf7z0JVQUXyTrWp0732ZYGq?=
- =?us-ascii?Q?BI1a4luPZArTrltdXCRxSfHsHoGt7Qmw3biND1pxXc9eOwwIEgBvDY/rSjUf?=
- =?us-ascii?Q?KMl1LuZM9t7NHbSMzsBSKWsW2GRyJ4u+Haq+qmugIJsC1ssr7gml6RiXqsqA?=
- =?us-ascii?Q?h+OBcbD4d1PTGKEcWVeQE4YcQCtJeHvPv646iZphniIHbTcXX4vs3L+foAa/?=
- =?us-ascii?Q?qnjAy9slYNeMkSf6SgFJvnWXj+C+kTvbkxi3QY4DfFssZv+jPmOSM4Spol9s?=
- =?us-ascii?Q?UqjhyX+cfRoQ3lQGbq9FvP5f+EWOdM5tPgToqFK3dLTGMbOgLatnN22Ee2oO?=
- =?us-ascii?Q?l6EVkI2O58/ZtgTNEQxR6921IjXD6yyYby+ZYu92jR+CG/zgJce7cL+ilyUS?=
- =?us-ascii?Q?YrNw4DK7Ael6QOTJrKnwMr8F3jMV4br2z4Tv2HluXwS/lRFERpHdyC4OyMKS?=
- =?us-ascii?Q?9VHHqzTeao0vqUJlhKdR5/NOLj+3h/fZj1PzoU3ZF1ywXWDUfTckDKF2LDbO?=
- =?us-ascii?Q?/h0yNmgCAqbUqHbUuD1TXUhGZdAUfVwTQFqQAx2VxLvzoe/YrvnDQ4KFecqR?=
- =?us-ascii?Q?oUDiytTUIldJi4M3O7iDnOfRy8EqLwlo34M7yjSTMxxiG+yV3Dk74MV8Z94d?=
- =?us-ascii?Q?yxdM+op8qUziusXd4bj9AqJuTksfOSKuBf5wITb/MQwoGIPuXsK7N+oCZ75h?=
- =?us-ascii?Q?jVuliOOFRb/7FLtNDGO9S4HEwvd1VmF0G/B0Ue5ofL4WrYgY6nX5Up5u/hlF?=
- =?us-ascii?Q?UNEYqC+UjlIbwTdJwDH9HTEa1hrB7FwToG+bIlCRKilDKGs5XLFu5SRdp7KA?=
- =?us-ascii?Q?7luonLkD2bkLgj6XkzMOCVB0jDW+uXr0yvL8yvDo1oiGiHoLBPVmJS7o54z+?=
- =?us-ascii?Q?Tv1LDbRiFCEj2AaADoDqyslqGABs3uqSqEkwbcv5LZvpr30AnB+tIdKjIwJ/?=
- =?us-ascii?Q?kyRUSMBF5VBFGRtFMPPxJRjAc3qCpQLxj03gMdruHM7iF7DDSk6ndqJuAhn5?=
- =?us-ascii?Q?11KyT9p8V6nBn0kSxe4dOuZlj3vHRa5PU2suhDYFv5bnuq9CGwdGSAuQ/WDS?=
- =?us-ascii?Q?5vtwh1v9HXOYM+uDMxcNP7gTkBuEyjU27ONfMflWENootRUP?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id 6F2114027B;
+	Sat, 22 Aug 2026 01:45:17 +0200 (CEST)
+Received: from agw.arknetworks.am (agw.arknetworks.am [79.141.165.80])
+ by mails.dpdk.org (Postfix) with ESMTP id EF94E4027B
+ for <dev@dpdk.org>; Sat, 22 Aug 2026 01:45:16 +0200 (CEST)
+Received: from localhost.localdomain (unknown [78.109.67.244])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by agw.arknetworks.am (Postfix) with ESMTPSA id E3733E0986;
+ Sat, 22 Aug 2026 03:45:15 +0400 (+04)
+DKIM-Filter: OpenDKIM Filter v2.11.0 agw.arknetworks.am E3733E0986
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arknetworks.am;
+ s=default; t=1787355916;
+ bh=8Guy2AISi4smSOb8FNxxWZ3yk0ocdLmlBrLIRIYBlfc=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=f9F/uZCppky3fjb1GuJpVHfYYJTBQ5Kr4nwT99k5Cexj89qfuDDhzrAQ5Z3ALaKKH
+ AoSpc+FB6Y3ca5jALZNOayfJUIobrC05CnFy6gvgGbpO3HVKKDKKAHm+T1s4DdeBC2
+ /epCOexn0IKXNWl6RP+qC/vxUrS2sbo9flVG6pVV5sYL0wJyz7KVG+XqyAsNXdWryj
+ Li2kj8BZGN78JGy+lt1JnUDT3vBcA2kHSZjyY5+mpha4rYP95saeEhgBjWH6EEmuqd
+ Uy8dq6v4KWh5qWgamnIoz8Rg4WT616LBPnjDa1Hivi6u7HFdRs6kVQun092PPsKKmz
+ MWHmWw60NFh2w==
+From: Ivan Malov <ivan.malov@arknetworks.am>
+To: dev@dpdk.org
+Cc: Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>,
+ Roman Zhukov <Roman.Zhukov@arknetworks.am>,
+ Pieter Jansen van Vuuren <pieter.jansen-van-vuuren@amd.com>,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: [PATCH v2 2/2] net/sfc: provide cached dev info to use in secondary
+ process
+Date: Sat, 22 Aug 2026 03:45:06 +0400
+Message-ID: <20260821234506.12049-3-ivan.malov@arknetworks.am>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260821234506.12049-1-ivan.malov@arknetworks.am>
+References: <20260820130314.12251-1-ivan.malov@arknetworks.am>
+ <20260821234506.12049-1-ivan.malov@arknetworks.am>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR21MB6683.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d2529fdb-6348-48cc-97f0-08deffbffa1e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Aug 2026 20:08:33.3151 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 8hOPW5qjbB38Tkw7Te+WMsgd+NmRCQN/8g0NAOtR0MqCrwxdDaTbH4tblRJYNlKfZhWpxCZSRiEGdu4C1DPECA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR21MB5696
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -131,30 +57,130 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Don't need rte_memcpy for fixed size value.
->=20
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Secondary process support in the 'test-pmd' application now requires that
+the driver expose the 'dev_infos_get' method within that context. Use the
+cached dev info from the primary process in order to meet the requirement.
 
-Reviewed-by: Long Li <longli@microsoft.com>
+Signed-off-by: Ivan Malov <ivan.malov@arknetworks.am>
+Reviewed-by: Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>
+---
+ drivers/net/sfc/sfc.h        | 19 ++++++++++++++
+ drivers/net/sfc/sfc_ethdev.c | 49 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 68 insertions(+)
 
-
-> ---
->  drivers/net/netvsc/hn_ethdev.c | 1 -
->  1 file changed, 1 deletion(-)
->=20
-> diff --git a/drivers/net/netvsc/hn_ethdev.c b/drivers/net/netvsc/hn_ethde=
-v.c
-> index 9a193e4a7a..c1bd55e6b5 100644
-> --- a/drivers/net/netvsc/hn_ethdev.c
-> +++ b/drivers/net/netvsc/hn_ethdev.c
-> @@ -16,7 +16,6 @@
->  #include <sys/ioctl.h>
->=20
->  #include <rte_ethdev.h>
-> -#include <rte_memcpy.h>
->  #include <rte_string_fns.h>
->  #include <rte_memzone.h>
->  #include <rte_devargs.h>
-> --
-> 2.53.0
+diff --git a/drivers/net/sfc/sfc.h b/drivers/net/sfc/sfc.h
+index 629578549f..809ad59148 100644
+--- a/drivers/net/sfc/sfc.h
++++ b/drivers/net/sfc/sfc.h
+@@ -156,6 +156,25 @@ struct sfc_adapter_shared {
+ 	unsigned int			nb_repr_txq;
+ 
+ 	struct sfc_nic_dma_info		nic_dma_info;
++
++	/*
++	 * Snapshot of the 'rte_eth_dev_info_get' output created by the primary
++	 * process attach path for the secondary process to use in its own
++	 * implementation of the 'dev_infos_get' method.
++	 *
++	 * Some driver-computed fields derived from mutable post-attach state
++	 * are knowingly stale, which is acceptable for the secondary process.
++	 *
++	 * This also contains a handful of stale fields which are normally
++	 * set by the ethdev layer upon invocation of the 'dev_infos_get',
++	 * so they will be overridden anyway in the secondary process.
++	 */
++	struct rte_eth_dev_info		dev_info_cache;
++	/*
++	 * Set to 'true' by the probe function from the primary process. The
++	 * secondary 'dev_infos_get' returns '-EAGAIN' when this is 'false'.
++	 */
++	RTE_ATOMIC(bool)		dev_info_cache_is_valid;
+ };
+ 
+ /* Adapter process private data */
+diff --git a/drivers/net/sfc/sfc_ethdev.c b/drivers/net/sfc/sfc_ethdev.c
+index 13619b4b9a..2739985bab 100644
+--- a/drivers/net/sfc/sfc_ethdev.c
++++ b/drivers/net/sfc/sfc_ethdev.c
+@@ -16,7 +16,9 @@
+ #include <bus_pci_driver.h>
+ #include <rte_errno.h>
+ #include <rte_string_fns.h>
++#include <rte_stdatomic.h>
+ #include <rte_bitops.h>
++#include <rte_ethdev.h>
+ #include <rte_ether.h>
+ 
+ #include "efx.h"
+@@ -3163,7 +3165,32 @@ sfc_eth_dev_clear_ops(struct rte_eth_dev *dev)
+ 	sa->priv.dp_rx = NULL;
+ }
+ 
++static int
++sfc_dev_infos_get_secondary(struct rte_eth_dev *dev,
++			    struct rte_eth_dev_info *dev_info)
++{
++	const struct sfc_adapter_shared *sas =
++		sfc_adapter_shared_by_eth_dev(dev);
++	bool valid = rte_atomic_load_explicit(&sas->dev_info_cache_is_valid,
++					      rte_memory_order_acquire);
++
++	if (!valid)
++		return -EAGAIN;
++
++	*dev_info = sas->dev_info_cache;
++
++	/*
++	 * The cache holds stale primary-process pointers; restore
++	 * the process-local values from the caller-supplied 'dev'.
++	 */
++	if (dev_info->switch_info.name != NULL)
++		dev_info->switch_info.name = dev->device->driver->name;
++	dev_info->device = dev->device;
++	return 0;
++}
++
+ static const struct eth_dev_ops sfc_eth_dev_secondary_ops = {
++	.dev_infos_get			= sfc_dev_infos_get_secondary,
+ 	.dev_supported_ptypes_get	= sfc_dev_supported_ptypes_get,
+ 	.reta_query			= sfc_dev_rss_reta_query,
+ 	.rss_hash_conf_get		= sfc_dev_rss_hash_conf_get,
+@@ -3749,6 +3776,7 @@ static int sfc_eth_dev_pci_probe(struct rte_pci_driver *pci_drv __rte_unused,
+ 	struct rte_pci_device *pci_dev)
+ {
+ 	struct sfc_ethdev_init_data init_data;
++	struct sfc_adapter_shared *sas;
+ 	struct rte_eth_devargs eth_da;
+ 	struct rte_eth_dev *dev;
+ 	bool dev_created;
+@@ -3787,6 +3815,27 @@ static int sfc_eth_dev_pci_probe(struct rte_pci_driver *pci_drv __rte_unused,
+ 	if (rc != 0)
+ 		return rc;
+ 
++	sas = sfc_adapter_shared_by_eth_dev(dev);
++
++	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
++		struct sfc_adapter *sa = sfc_adapter_by_eth_dev(dev);
++
++		/*
++		 * Pre-fill the dev info cache for the secondary
++		 * process. The port has been registered at this
++		 * point, allowing use of the public API.
++		 */
++		rc = rte_eth_dev_info_get(dev->data->port_id,
++					  &sas->dev_info_cache);
++		if (rc == 0) {
++			sas->dev_info_cache.device = NULL;
++			rte_atomic_store_explicit(&sas->dev_info_cache_is_valid,
++				true, rte_memory_order_release);
++		} else {
++			sfc_warn(sa, "failed to cache dev info for the secondary process");
++		}
++	}
++
+ 	rc = sfc_eth_dev_create_representors(dev, &eth_da);
+ 	if (rc != 0) {
+ 		if (dev_created)
+-- 
+2.47.3
 
