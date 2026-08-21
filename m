@@ -2,73 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F5B2C5DF8C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Aug 2026 19:29:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 874CBC5DF8C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Aug 2026 19:29:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 77A1A40B90;
-	Fri, 21 Aug 2026 21:28:51 +0200 (CEST)
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com
- [209.85.210.171])
- by mails.dpdk.org (Postfix) with ESMTP id B162440B90
- for <dev@dpdk.org>; Fri, 21 Aug 2026 21:28:48 +0200 (CEST)
-Received: by mail-pf1-f171.google.com with SMTP id
- d2e1a72fcca58-84f38f3b36eso956443b3a.1
- for <dev@dpdk.org>; Fri, 21 Aug 2026 12:28:48 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 78B7140A6E;
+	Fri, 21 Aug 2026 21:28:53 +0200 (CEST)
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com
+ [209.85.210.169])
+ by mails.dpdk.org (Postfix) with ESMTP id 247E440678
+ for <dev@dpdk.org>; Fri, 21 Aug 2026 21:28:52 +0200 (CEST)
+Received: by mail-pf1-f169.google.com with SMTP id
+ d2e1a72fcca58-84eb992a881so1018773b3a.2
+ for <dev@dpdk.org>; Fri, 21 Aug 2026 12:28:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787340528;
- x=1787945328; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787340531;
+ x=1787945331; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=f3S/ert9Zu5h/9H9vgbIId5n4Ogwf0Sx2leUgmzPTRA=;
- b=ci15CmELTZ8xZgngR8bZXwpiYBxbVqHvw+jEkyi6k4PybbFQZVroUZcqkrVcsuTCJ0
- pLyrcIJc8U6b5q5L6diDugSNnxhGaKtNr4OWWCmfahKRe1IP7Blvxnp3R9QA22GkV38H
- 15APxgBMzhlz0nl0N93ADXsA1vcvUFHjixvwFwbWoxtHFXjk8O8tgT9UKy8nMPpt2dCk
- ob53Bxx3i4jjjsEJ/FCLD7VGE5isTcfG5nbhQiiWNXD3cOx759wr5aXRbGd/NjhT75Jo
- 3ItNMtxqIjwTGDHlGg6TWxZJAJnZ4qVBWjdZlOZZezK0uah3b++GV5ihGkEmN3cKgqEa
- o9GA==
+ bh=+epHBW1bC2XIkz4PgfHnxjvw7Mqz5efyojRyBM8ijyA=;
+ b=IiydnNt91rw9DnEHt+BfT7oKwY57TPHdZRY99mEj5GI/kaBlbmLow3eCEEayIgVY05
+ yhbgrmyqiaESn2fYsvLpdYSaqgRNoi3w+Aqkb04R7KwiK8gM5faRnHp6pmYVNQP2l+Yf
+ t5RmzSyluR/mZC7+z3BHpi9UzAc/NJgsfjcS05iC9p9JChyYh0xak51mzqd7K4arXQiy
+ Qc+f2AEsRcd2Ifyc8BZ7AGsy2jQ+VOM+4pejZBfEFNu0if1BPhKppoze55xpZ6N4dhLn
+ fmUFIebabLxY+G/Ig5E9yQ+Sx3Pg9Bf4ptHllFIGeRBEcRiSl/kK6EHnkAuxBveZWphK
+ h4Jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787340528; x=1787945328;
+ d=1e100.net; s=20251104; t=1787340531; x=1787945331;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=f3S/ert9Zu5h/9H9vgbIId5n4Ogwf0Sx2leUgmzPTRA=;
- b=JegiZ+Jl9Qapuhc7xTwAVwQ/mGkPd0q2yXyoKx6AzRd/LIUs+EX1RknG8Qa94y+0ct
- cWdFlTB1r8g7cjthZ9H/KkHcS88nNPyAHM4yhPVkXZZx0KW2cf6IoMAsWNH0ac5+vpz7
- yByoORODsf2Sm6K3zZ7QnzOmLLPuGzFIdjhMNrmtRFKjkthUfQvhGi/ucx86pRvvKsVi
- nDQTvJ8QZ0dzwYeiLwseiwlH9iqLYXPwxrJTaWqIcGZK8x/F92xtMkK+bfIb80Lm3yBo
- YkVAddyM7fyPbdJ9zOcf8gTI9Z1KyPwlWmG0WTWR6DtW1v27fiXrtlMk5Cyv8hv4KOAq
- 4VfQ==
-X-Gm-Message-State: AFuF++mPzr/IR6HHgEbEg/x75MavIbx9XjMnMpMgz3lbTdoaDBY0SVbV
- xQrDe39abdpN6qQiCok51S8RO4cbuao3uZkU17gHbem6w/Hcw+hqGAJ3khU9m4p+z2I7n0Mb5PL
- VOnBC
-X-Gm-Gg: AR+sD11CpdPIj7SC9gL/1afciAA3dRyclb60ZxRGshRww1jPQbSiAdE6Ecp6rBOmsVz
- 1kDv+n/r9BPxtzjc5KuAz0Ur9Gu7lz27n2rhf8OutcNRUck/yUX1t8eeAIxoguNPo+AiT3EmSJu
- QgAv3IQXSRu8kEDdSV3A2oHSG+gz7j1W7lgTTZUDAloaPB4lc8pGr9vziOEQeipHHeb/mY4IXiN
- ex4fQ0sj0Y7jt8Q4REmPiOJF2VCCQHlDKv10PnmnKFIqZzlZHYYWr5aN/61zY3RDMQqUYoCjNpZ
- f3wBw1DDBl6Uk74LTpmMtOyhg1MgvHoK3FovfTh5nZJCM2cRz7tMyD7LwJRijArhfuX0lCiThOO
- +oWX3NbSv/ovEhGBmAdE0k0HPJaYjKkPUgVPVrZlgNMb6V8iqn+i10YW886uYir3OORGFkhAmBj
- yH9Q28u3XG0zBDIjoSSe2owtvCUKGm+XZjHFIijK9KpRq0PAoI6TMMdeSsnxkYkGgo/0mtobIV1
- pDW9ScNnHMlUmXLufrrvbB5CSQ=
-X-Received: by 2002:a05:6a00:3a1f:b0:84e:909:ac03 with SMTP id
- d2e1a72fcca58-851f9a4e57dmr13456215b3a.10.1787340527861; 
- Fri, 21 Aug 2026 12:28:47 -0700 (PDT)
+ bh=+epHBW1bC2XIkz4PgfHnxjvw7Mqz5efyojRyBM8ijyA=;
+ b=Qhgc2/Nq36GunmGspIv1rpx9yDyn8IILBkAfrJUHhpEP6z7rdzDqcJMJGeaEnr+eBS
+ 4CJzQycreeNOTepDCYuqLjv7XtdabM7VRsDIF/mb7yyM6KyX9UD6aivYbi4RohPsNVgJ
+ H1GKu5BY2wxHwfe6H77ahTnuJcA94aH5IRfHOdcU70940VeprWeP4Humpi8V94bsNEsf
+ oEkTlWwXYdFcfhcHbDpcnJH/6MrhXwKBZUKltkwjovsXWPSHnLsYJXWASxY+zuIc9zrR
+ /Tetfb9hqFHnCd1li22odxrLAkr0v8LuX3o2Rjy1n1AsKXaEX+v3qiAGYHU9shY9whVF
+ W0Nw==
+X-Gm-Message-State: AFuF++mDLnEBkdml3VF8KGHoC0ZK1c054uJUiDVQc52GDPa3BHa63VDo
+ 29s+SzboRHsi7cV5biARwa2LMal/CCElA28etnI6/Zs6KkH7gfjwM7A8tN/s6KBHizl6+7Ap2lF
+ D8LwP
+X-Gm-Gg: AR+sD13oUwm6eYFP5hjbuL0NYjWsLyFqrAhb8w4tpMdUVpc8Y/DssnpcxVnrzszDLTA
+ Loe1QiNhiRd53vt7BxplHD0FMsdcHtuNQMNKARjWpVqfxCSJzDU2htdCsicwtmBf9StLzAH9vYf
+ Jgd+QwG2Erx5hycNNIZaxSn+X2kt2mpWOQqcOw5gNsUiQsuzoATcOH+x2d6i1dLM2Ut1zXik1yh
+ RlE+CWShnJUWQB1fTb+olQBjWEcvrmcyUnnEv9bE2xNebK3qVa9hCF5bGMigdl2nkXM8JYytL7e
+ NA+Sm65M9EnQ4J233UQdXCi9iTcIUe+7hAZ/tx94pXn4S64JheXG8GT5rt+Zn5veLYrv+iKObfz
+ 2YqZUm/WnXlEc38YRyLMPUCbj4e2XgiZEOfi5iubat0xBLcsmpQPQPQHazI9EzNqS/0ElTh/P0u
+ sR89GCrQ4RfVeuOU2IUM1iFC3t/WkXx9yrjrDUxYhSfVs051xtT6Vil/tQd8mhg7q9BAxta3m1L
+ +1EEsifcVmYfspv5hqBm3X744vGUicOosECgA==
+X-Received: by 2002:a05:6a21:32a2:b0:3b4:5ff3:45cb with SMTP id
+ adf61e73a8af0-3cd2fecf725mr13301730637.8.1787340531290; 
+ Fri, 21 Aug 2026 12:28:51 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-cc16c6dd2f4sm1860304a12.17.2026.08.21.12.28.43
+ 41be03b00d2f7-cc16c6dd2f4sm1860304a12.17.2026.08.21.12.28.48
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 21 Aug 2026 12:28:47 -0700 (PDT)
+ Fri, 21 Aug 2026 12:28:50 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Parav Pandit <parav@nvidia.com>, Xueming Li <xuemingl@nvidia.com>,
- Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@nxp.com>, Chenbo Xia <chenbox@nvidia.com>,
- Nipun Gupta <nipun.gupta@amd.com>
-Subject: [PATCH v2 14/68] drivers/bus: remove unnecessary include of
- rte_memcpy.h
-Date: Fri, 21 Aug 2026 12:24:09 -0700
-Message-ID: <20260821192646.146382-15-stephen@networkplumber.org>
+ Akhil Goyal <gakhil@marvell.com>, Anoob Joseph <anoobj@marvell.com>
+Subject: [PATCH v2 15/68] security: replace fixed size rte_memcpy
+Date: Fri, 21 Aug 2026 12:24:10 -0700
+Message-ID: <20260821192646.146382-16-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260821192646.146382-1-stephen@networkplumber.org>
 References: <20260820052251.1453273-1-stephen@networkplumber.org>
@@ -88,116 +84,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The file is included but rte_memcpy() no longer used here.
+Use memcpy for better compiler checks.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/bus/auxiliary/linux/auxiliary.c   | 1 -
- drivers/bus/fslmc/fslmc_bus.c             | 1 -
- drivers/bus/fslmc/fslmc_vfio.c            | 1 -
- drivers/bus/fslmc/portal/dpaa2_hw_dpbp.c  | 1 -
- drivers/bus/fslmc/portal/dpaa2_hw_dpci.c  | 1 -
- drivers/bus/fslmc/portal/dpaa2_hw_dpcon.c | 1 -
- drivers/bus/fslmc/portal/dpaa2_hw_dpio.c  | 1 -
- drivers/bus/pci/linux/pci.c               | 1 -
- 8 files changed, 8 deletions(-)
+ lib/security/rte_security.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/bus/auxiliary/linux/auxiliary.c b/drivers/bus/auxiliary/linux/auxiliary.c
-index 3a2dca2865..26d48efedb 100644
---- a/drivers/bus/auxiliary/linux/auxiliary.c
-+++ b/drivers/bus/auxiliary/linux/auxiliary.c
-@@ -8,7 +8,6 @@
- #include <rte_log.h>
- #include <rte_malloc.h>
- #include <rte_devargs.h>
--#include <rte_memcpy.h>
- #include <eal_filesystem.h>
- 
- #include "../private.h"
-diff --git a/drivers/bus/fslmc/fslmc_bus.c b/drivers/bus/fslmc/fslmc_bus.c
-index 3626b12316..638f541d32 100644
---- a/drivers/bus/fslmc/fslmc_bus.c
-+++ b/drivers/bus/fslmc/fslmc_bus.c
-@@ -14,7 +14,6 @@
- #include <bus_driver.h>
- #include <rte_malloc.h>
- #include <rte_devargs.h>
--#include <rte_memcpy.h>
- #include <ethdev_driver.h>
- #include <rte_mbuf_dyn.h>
- #include <rte_vfio.h>
-diff --git a/drivers/bus/fslmc/fslmc_vfio.c b/drivers/bus/fslmc/fslmc_vfio.c
-index 412b70e5ae..d7f6f2819f 100644
---- a/drivers/bus/fslmc/fslmc_vfio.c
-+++ b/drivers/bus/fslmc/fslmc_vfio.c
-@@ -28,7 +28,6 @@
- #include <rte_mbuf.h>
- #include <ethdev_driver.h>
- #include <rte_malloc.h>
--#include <rte_memcpy.h>
- #include <rte_string_fns.h>
- #include <rte_cycles.h>
- #include <rte_kvargs.h>
-diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_dpbp.c b/drivers/bus/fslmc/portal/dpaa2_hw_dpbp.c
-index 925e83e97d..eacfbe1df8 100644
---- a/drivers/bus/fslmc/portal/dpaa2_hw_dpbp.c
-+++ b/drivers/bus/fslmc/portal/dpaa2_hw_dpbp.c
-@@ -15,7 +15,6 @@
- 
- #include <eal_export.h>
- #include <rte_malloc.h>
--#include <rte_memcpy.h>
- #include <rte_string_fns.h>
- #include <rte_cycles.h>
- #include <rte_kvargs.h>
-diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_dpci.c b/drivers/bus/fslmc/portal/dpaa2_hw_dpci.c
-index b546da82f6..3d582d1154 100644
---- a/drivers/bus/fslmc/portal/dpaa2_hw_dpci.c
-+++ b/drivers/bus/fslmc/portal/dpaa2_hw_dpci.c
-@@ -14,7 +14,6 @@
- 
- #include <eal_export.h>
- #include <rte_malloc.h>
--#include <rte_memcpy.h>
- #include <rte_string_fns.h>
- #include <rte_cycles.h>
- #include <rte_kvargs.h>
-diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_dpcon.c b/drivers/bus/fslmc/portal/dpaa2_hw_dpcon.c
-index 6fd96ec0b9..fd34f31518 100644
---- a/drivers/bus/fslmc/portal/dpaa2_hw_dpcon.c
-+++ b/drivers/bus/fslmc/portal/dpaa2_hw_dpcon.c
-@@ -13,7 +13,6 @@
- #include <errno.h>
- 
- #include <rte_malloc.h>
--#include <rte_memcpy.h>
- #include <rte_string_fns.h>
- #include <rte_cycles.h>
- #include <rte_kvargs.h>
-diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
-index e17050b625..be878c2fff 100644
---- a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
-+++ b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
-@@ -29,7 +29,6 @@
- #include <rte_mbuf.h>
- #include <ethdev_driver.h>
- #include <rte_malloc.h>
--#include <rte_memcpy.h>
- #include <rte_string_fns.h>
- #include <rte_cycles.h>
- #include <rte_kvargs.h>
-diff --git a/drivers/bus/pci/linux/pci.c b/drivers/bus/pci/linux/pci.c
-index 9aae0a5d14..45b42b16e4 100644
---- a/drivers/bus/pci/linux/pci.c
-+++ b/drivers/bus/pci/linux/pci.c
-@@ -10,7 +10,6 @@
- #include <rte_bus_pci.h>
- #include <rte_malloc.h>
- #include <rte_devargs.h>
--#include <rte_memcpy.h>
- #include <rte_vfio.h>
- 
- #include <eal_export.h>
+diff --git a/lib/security/rte_security.c b/lib/security/rte_security.c
+index 0d89f8af3f..2e60b9ec64 100644
+--- a/lib/security/rte_security.c
++++ b/lib/security/rte_security.c
+@@ -406,7 +406,7 @@ crypto_caps_array(struct rte_tel_data *d,
+ 	while ((dev_caps = &capabilities[i++])->op !=
+ 	   RTE_CRYPTO_OP_TYPE_UNDEFINED) {
+ 		memset(&caps_val, 0, CRYPTO_CAPS_SZ * sizeof(caps_val[0]));
+-		rte_memcpy(caps_val, dev_caps, sizeof(capabilities[0]));
++		memcpy(caps_val, dev_caps, sizeof(capabilities[0]));
+ 		for (j = 0; j < CRYPTO_CAPS_SZ; j++)
+ 			rte_tel_data_add_array_uint(d, caps_val[j]);
+ 	}
+@@ -431,7 +431,7 @@ sec_caps_array(struct rte_tel_data *d,
+ 	while ((dev_caps = &capabilities[i++])->action !=
+ 	   RTE_SECURITY_ACTION_TYPE_NONE) {
+ 		memset(&caps_val, 0, SEC_CAPS_SZ * sizeof(caps_val[0]));
+-		rte_memcpy(caps_val, dev_caps, sizeof(capabilities[0]));
++		memcpy(caps_val, dev_caps, sizeof(capabilities[0]));
+ 		for (j = 0; j < SEC_CAPS_SZ; j++)
+ 			rte_tel_data_add_array_uint(d, caps_val[j]);
+ 	}
 -- 
 2.53.0
 
