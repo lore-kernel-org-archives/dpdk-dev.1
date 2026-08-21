@@ -2,70 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BEE2C5DF8C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Aug 2026 19:29:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B46C5DF8C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Aug 2026 19:29:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EE5BD40BA6;
-	Fri, 21 Aug 2026 21:29:22 +0200 (CEST)
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com
- [209.85.210.170])
- by mails.dpdk.org (Postfix) with ESMTP id D251940678
- for <dev@dpdk.org>; Fri, 21 Aug 2026 21:29:21 +0200 (CEST)
-Received: by mail-pf1-f170.google.com with SMTP id
- d2e1a72fcca58-84862b0d5f8so1009656b3a.3
- for <dev@dpdk.org>; Fri, 21 Aug 2026 12:29:21 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id F1B6A40A82;
+	Fri, 21 Aug 2026 21:29:25 +0200 (CEST)
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com
+ [209.85.210.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 4455140DCE
+ for <dev@dpdk.org>; Fri, 21 Aug 2026 21:29:25 +0200 (CEST)
+Received: by mail-pf1-f181.google.com with SMTP id
+ d2e1a72fcca58-8485ef63b68so1014123b3a.1
+ for <dev@dpdk.org>; Fri, 21 Aug 2026 12:29:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787340561;
- x=1787945361; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787340564;
+ x=1787945364; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=fZZ26sHsFrrQrWLcA4MWbNCbw8+eJnOIrl07RqDwiK0=;
- b=SGA5qvjeAvuMOuiXUYQTnQD4hJzujbztTWUCIy8anzcNXzLkNoL+ls0bZCELtnhRf7
- uDqFbY26lgO8LATNJ8JvD6ynWXTP0IHhldSUOdXYRPlRoa2RglYjhH9C046fTvDfSou6
- AKBEYX0bhbRyUnpi761f+4UKCWAZvC1FbBLI8QmHGVRaBvcytJqyODaxwy9Fcf90fixO
- +zu5vjpgWfFt784/ImOYzuY7FgUtW67DD0Fq+WNFTlcugExOdv9uqkjT3HxisbYjNF8a
- CjnA/kEqmGM25XdyCtTLMtfHLAwSOBUX4qx6dqTQwCIYw+IhYu/uzNdVAplqpk/7BskP
- 0uCg==
+ bh=6vbcxqOFs1GdQJ09eZ1Pw+ZZLpsn9w1NPX+ZuZsOB0A=;
+ b=dKsMabKrmsZRfSMtrcu/mkzk0XdycFTLKM4rBSq5a1oqc/u/7lzS5ed04XO/gPkDif
+ F26TbVJThKIztuB82VId6NJTtjoLdgei2hmz379j2xETvjcT0/DggtkH2QLRS+K0PaRS
+ LiJLGGybJ1D1q97vClFaQBOcy9j9J7SkL9zADq6sKTvgfOZ0ndexH+bScyAtsVkbhDSR
+ n0aJst09n8Q/KegUR6QkYyHwXEYKkdwyetQxex4DefYBsi3hAvAOV4HoGfqdHLrFAm7J
+ VdY/Mx3s1SzMR59hqVsuUuGrMWG4j1U0CaL7fr3NM3mDZPpUC84gDhHnH4q9Db81ihca
+ QtJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787340561; x=1787945361;
+ d=1e100.net; s=20251104; t=1787340564; x=1787945364;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=fZZ26sHsFrrQrWLcA4MWbNCbw8+eJnOIrl07RqDwiK0=;
- b=Z0QFnijnxQJkXoR95Am0EkVbRChp+3YzRjeptEI76ZmhMCYH6fsPcYlypMl3m3IJtg
- AWqPJPxVgWWfOSPbgtM62vn6/18vcn8niAN1xFBkaQy9kGNv4gm0SzA83jtwXUmnBT/G
- QTdygAWjqj0GVadyrhvpmmXdLjKxIxuEcsjDjoAk++AgZs3fzI+XsYgCNdUGo4jpHCCG
- JFkI2EgzcN6MLaOxhBYHtCTkkIRk+rURASSTTr4f4Aa86m18JSs72V5ERHt9ZlaAcqcX
- Xaryjm7iOy3JTFHUnk4jQIVYgeyS8pk83fH2JrTbDNgBvCT4s2gwIgDeOLXJnbM8lrj5
- ssfA==
-X-Gm-Message-State: AFuF++lcsny8kIOYx8BPnV3H44h+s2oMAHYDVcsTAUReC/SqFwBzVqqo
- E1BoygZNwrxj7rlnsn/XIk3ZRhwQKlYwBQeiVP2ddlqaYNGW0ZSJbqm+T6bRln7BiJI15sqqZXC
- BmF9e
-X-Gm-Gg: AR+sD12Pivra/0hsFD2OfEoPmIzv19vZmQsg+jxnYp9QXe0mgtQuW2Fsk9ELirTbNTt
- 6a09zPWWHBySJJqagIURxee7clUl5v7b2AaU6r8B0zlTQMHhK+S5ZjTWYVbZbGrIKbfGDUHs4RL
- aX2LEwK2fTpjX2N/TOTMOm/f+Ug+eMUD2JOW0ZrZq5MA5LuuR+h5XTp8YLG2dMxzNyMq6IGEcVW
- 3wLHEx/RIGZJ9UTVsJlFK0tuep2yehrr2o9NaPKyx7K3HuTqqwD09OUbKe8o+lSgx/NDIpS+paI
- U7fuxycSFKfpOgPg4dk8e8pZtzsN/plWh4mmS8ElK9HL2AugruSWBhrzd3GYrpn0+YAtTednr8v
- EfODX9cqVLNpGLxyHg9tqP2zFBauEKtiCmMFWPeART9ejUItNJ0SFaYWfB6FVsPLUzFymi8Sf+q
- lijeoIlK8h/ZLNb2Myq/5EvQC5ZSAqGSo4e/jlZhsnBHYJby/zFMNTE3A7ySGK8guKW4fndmbJU
- Z24k190TtL8PZ+2MhTqoiGClBQ=
-X-Received: by 2002:a05:6a00:4fca:b0:845:dfef:75b8 with SMTP id
- d2e1a72fcca58-851f9f115e5mr11921608b3a.15.1787340561053; 
- Fri, 21 Aug 2026 12:29:21 -0700 (PDT)
+ bh=6vbcxqOFs1GdQJ09eZ1Pw+ZZLpsn9w1NPX+ZuZsOB0A=;
+ b=gWkap9OwttpxIhOk0C/Gvh1ipDeSj69MI8wp17+1z8OWl070z3XTwIY52FeMF3upXO
+ 2iWnmTq2omtpYFwShduM8BTVnYkjDH0JPWX15X22AShUUmEwt+RuQ6UldlrD6dy1aiJw
+ 7U0D6pv90yvR1kU6ssQBJsrqsl4S3dhRMNMcLmaz4xbj+ynyTJHAwYSzDznCQnhKv33O
+ iIZx+qN40bHvnmel/INzCkJs7uMk5Do1VB8MeoDSQKcKmY9/hN23XI1KMfbym0hpEPRj
+ 5lzMPSmOIluTeBhXqHZv4yEWl4QbIJXMOjiInpNFATqd+DCCIEBM6yaZ0rImOI34SBn9
+ JfpA==
+X-Gm-Message-State: AFuF++lZuPrPq97N+u8eo7kEgQiPCnjSqNshVHXxY9/iNBpf3enFX7fW
+ RznpPVOXFxfAOXjMrs2AJzr516/+1UoicKaMk6tQB7Z4nI8Fc5mnawhR3/lVvDC+ei91aBjPBW1
+ I97iu
+X-Gm-Gg: AR+sD11JCm4ht+jiIqAPNyDRxJL8Y3E1ttgF7PD9eZ4Ppi4FBJQ88is0kBxQJqT2fAa
+ 2kX6IHigoJaMseovAY7vbbs3wLdrE/8+o4LqY0YAU6IrJqY0VLMhpV1oQrg+taznQob/USRHLEM
+ W4tTADc5d20plfANPQLxEtXre9wnNyfFAG9Bng2W8Cm0mA5D6NsQ66UOL6F1GJlOWuT4aOjquTP
+ iuOEUhDTcI9RGLE0WCNJYbLZ7AZal4GyV3nqPGugdtZjYbdkITp7HpW03+puyzzqyAmMZN3Ydlk
+ EHW40yIOt8DiTDwSyriI8eWzohhL3TNhIbLFWB6TWCNzZHRjMIDKZ9zX178CLaGXHe5v0GM2l7y
+ i8aws+C4gpWrSaAkh36696a5WZt5VCXg+ImswuirxhiOfOVim3Wp7vC92DX85CDigGvMjWjk9VX
+ h8ldpOCGeBNFdgcuFMMbdJWfgbVY823IGZjpAMJRbCnViUBPaMc0Px5ky8tS+v7yJf7F5YdPd0H
+ mX8whc3LG1Q5a+yx+YLiGIuNRg=
+X-Received: by 2002:a05:6a20:12d3:b0:3c0:b943:f984 with SMTP id
+ adf61e73a8af0-3cd2fdd1cd6mr13554476637.3.1787340564407; 
+ Fri, 21 Aug 2026 12:29:24 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-cc16c6dd2f4sm1860304a12.17.2026.08.21.12.29.18
+ 41be03b00d2f7-cc16c6dd2f4sm1860304a12.17.2026.08.21.12.29.21
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 21 Aug 2026 12:29:20 -0700 (PDT)
+ Fri, 21 Aug 2026 12:29:24 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Jerin Jacob <jerinj@marvell.com>,
- Cristian Dumitrescu <cristian.dumitrescu@intel.com>
-Subject: [PATCH v2 23/68] test-pipeline: replace use of rte_memcpy
-Date: Fri, 21 Aug 2026 12:24:18 -0700
-Message-ID: <20260821192646.146382-24-stephen@networkplumber.org>
+ Ciara Loftus <ciara.loftus@intel.com>, Maryam Tahhan <mtahhan@redhat.com>
+Subject: [PATCH v2 24/68] net/af_xdp: replace use of rte_memcpy
+Date: Fri, 21 Aug 2026 12:24:19 -0700
+Message-ID: <20260821192646.146382-25-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260821192646.146382-1-stephen@networkplumber.org>
 References: <20260820052251.1453273-1-stephen@networkplumber.org>
@@ -85,96 +84,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Using regular memcpy is safer and as fast here.
+Don't need rte_memcpy for fixed size value.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/test-eventdev/test_pipeline_common.c | 8 ++++----
- app/test-pipeline/config.c               | 1 -
- app/test-pipeline/init.c                 | 1 -
- app/test-pipeline/main.c                 | 1 -
- app/test-pipeline/runtime.c              | 1 -
- 5 files changed, 4 insertions(+), 8 deletions(-)
+ drivers/net/af_xdp/rte_eth_af_xdp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/app/test-eventdev/test_pipeline_common.c b/app/test-eventdev/test_pipeline_common.c
-index eaf895869f..dd3021fa79 100644
---- a/app/test-eventdev/test_pipeline_common.c
-+++ b/app/test-eventdev/test_pipeline_common.c
-@@ -153,22 +153,22 @@ pipeline_tx_first(struct test_pipeline *t, struct evt_options *opt)
- 			mbuf->pkt_len = pkt_sz;
+diff --git a/drivers/net/af_xdp/rte_eth_af_xdp.c b/drivers/net/af_xdp/rte_eth_af_xdp.c
+index 8f976b80d3..4303c780cc 100644
+--- a/drivers/net/af_xdp/rte_eth_af_xdp.c
++++ b/drivers/net/af_xdp/rte_eth_af_xdp.c
+@@ -2235,7 +2235,7 @@ get_iface_info(const char *if_name,
+ 	if (ioctl(sock, SIOCGIFHWADDR, &ifr))
+ 		goto error;
  
- 			/* Copy Ethernet header */
--			rte_memcpy(rte_pktmbuf_mtod_offset(mbuf, char *, 0),
-+			memcpy(rte_pktmbuf_mtod_offset(mbuf, char *, 0),
- 				   &eth_hdr, sizeof(struct rte_ether_hdr));
+-	rte_memcpy(eth_addr, ifr.ifr_hwaddr.sa_data, RTE_ETHER_ADDR_LEN);
++	memcpy(eth_addr, ifr.ifr_hwaddr.sa_data, RTE_ETHER_ADDR_LEN);
  
- 			/* Copy Ipv4 header */
--			rte_memcpy(rte_pktmbuf_mtod_offset(
-+			memcpy(rte_pktmbuf_mtod_offset(
- 					   mbuf, char *,
- 					   sizeof(struct rte_ether_hdr)),
- 				   &ip_hdr, sizeof(struct rte_ipv4_hdr));
- 
- 			/* Copy UDP header */
--			rte_memcpy(
-+			memcpy(
- 				rte_pktmbuf_mtod_offset(
- 					mbuf, char *,
- 					sizeof(struct rte_ipv4_hdr) +
- 						sizeof(struct rte_ether_hdr)),
--				&udp_hdr, sizeof(struct rte_udp_hdr));
-+			       &udp_hdr, sizeof(struct rte_udp_hdr));
- 			pkt_udp_hdr = rte_pktmbuf_mtod_offset(
- 				mbuf, struct rte_udp_hdr *,
- 				sizeof(struct rte_ipv4_hdr) +
-diff --git a/app/test-pipeline/config.c b/app/test-pipeline/config.c
-index daf838948b..f4d5d435ad 100644
---- a/app/test-pipeline/config.c
-+++ b/app/test-pipeline/config.c
-@@ -17,7 +17,6 @@
- #include <rte_byteorder.h>
- #include <rte_log.h>
- #include <rte_memory.h>
--#include <rte_memcpy.h>
- #include <rte_eal.h>
- #include <rte_per_lcore.h>
- #include <rte_launch.h>
-diff --git a/app/test-pipeline/init.c b/app/test-pipeline/init.c
-index 558f0e428d..8028192306 100644
---- a/app/test-pipeline/init.c
-+++ b/app/test-pipeline/init.c
-@@ -17,7 +17,6 @@
- #include <rte_byteorder.h>
- #include <rte_log.h>
- #include <rte_memory.h>
--#include <rte_memcpy.h>
- #include <rte_eal.h>
- #include <rte_per_lcore.h>
- #include <rte_launch.h>
-diff --git a/app/test-pipeline/main.c b/app/test-pipeline/main.c
-index e5efafdf28..5782c55032 100644
---- a/app/test-pipeline/main.c
-+++ b/app/test-pipeline/main.c
-@@ -19,7 +19,6 @@
- #include <rte_byteorder.h>
- #include <rte_log.h>
- #include <rte_memory.h>
--#include <rte_memcpy.h>
- #include <rte_eal.h>
- #include <rte_per_lcore.h>
- #include <rte_launch.h>
-diff --git a/app/test-pipeline/runtime.c b/app/test-pipeline/runtime.c
-index 752f783370..a6457488c0 100644
---- a/app/test-pipeline/runtime.c
-+++ b/app/test-pipeline/runtime.c
-@@ -17,7 +17,6 @@
- #include <rte_byteorder.h>
- #include <rte_log.h>
- #include <rte_memory.h>
--#include <rte_memcpy.h>
- #include <rte_eal.h>
- #include <rte_per_lcore.h>
- #include <rte_launch.h>
+ 	close(sock);
+ 	return 0;
 -- 
 2.53.0
 
