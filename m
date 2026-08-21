@@ -2,70 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 113C3C5DF94
-	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Aug 2026 15:27:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73315C5DF7D
+	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Aug 2026 15:49:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CF6594028C;
-	Fri, 21 Aug 2026 17:27:25 +0200 (CEST)
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com
- [209.85.215.182])
- by mails.dpdk.org (Postfix) with ESMTP id 27ED74027B
- for <dev@dpdk.org>; Fri, 21 Aug 2026 17:27:24 +0200 (CEST)
-Received: by mail-pg1-f182.google.com with SMTP id
- 41be03b00d2f7-c9eefcf9175so1155421a12.3
- for <dev@dpdk.org>; Fri, 21 Aug 2026 08:27:23 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7A2E64028C;
+	Fri, 21 Aug 2026 17:49:41 +0200 (CEST)
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com
+ [209.85.216.54]) by mails.dpdk.org (Postfix) with ESMTP id E8EAC4027B
+ for <dev@dpdk.org>; Fri, 21 Aug 2026 17:49:39 +0200 (CEST)
+Received: by mail-pj1-f54.google.com with SMTP id
+ 98e67ed59e1d1-38e7109321dso729336a91.3
+ for <dev@dpdk.org>; Fri, 21 Aug 2026 08:49:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787326043;
- x=1787930843; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787327379;
+ x=1787932179; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=QJWBLDOzOPBC/6Jd1ksWYezaI/5Dp0O154BXbmyU9iI=;
- b=JcUgDMAvxc68UJ9fI/W91Lz3mTXanQpwssTMmzN0SoJxEEaCpu+Pyv9EBoUqarJ1A2
- NiddVleI8X66JWVBLlIPxbAdRsoBQhI7uQRSVXrM81HZHYa4ACUVedHSDi09uAVeBQdm
- oLwfu3VLBjuFwoK/2AJmBpwNM1v6TjDIU0s3XZcpjhCHF5dWIqZQ5MPD5Lsp5Oay1gUR
- Ok2tkifbvryKkFMm6z0ChFOsZnpXQl0Ds3fLaL4ajf+M1lcZyugwSo2fNaZujkD1AKIV
- QiKoHdVjrnlpAn7bFtFRS+5/CWQUu7mCW3Ot9ejwrWWDjKF88gbFx5+7HeJiKapSdlIJ
- slQg==
+ bh=K1T8MwItSOSgTcPQZMMo9ik9uajLaGAAYxQ5pQjbYz4=;
+ b=0xWvnDS3uOQbPkMaNkxvoZHkVGfu3Ad8HRaXq7gD+C/Rvp9QC1ytovi3avCXkUyHLG
+ OgI5T22Ct0RZ+G10OSsg7Sz7RCjmMeVxwdUscYteEu1qg0hJINdBIJA1Y7C5VReadjyv
+ lWuoCKEap/Sy/tKHLwj/iE/P563c2ljazaPsvTUz9u7zY1aZrAPN4j2+BbvZ+ILeJa4v
+ oBBWKwS0JSG9u3mrHslZuB5NWdaH7slk9CXEFuoRTmSo7XK2VIkyyP5ayanQE0w7zVGs
+ de8F9+HL/qxN8HdCQk5mXakmulTmy8Osqzm0SmiOlzXBHMWYSChj0M5TSMNyIoaU7W/y
+ ptvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787326043; x=1787930843;
+ d=1e100.net; s=20251104; t=1787327379; x=1787932179;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=QJWBLDOzOPBC/6Jd1ksWYezaI/5Dp0O154BXbmyU9iI=;
- b=ntm/hNCzNr5jUcSzYbPB7wTU2vfAcl8wPnIhQl1qTskrKXfrSLuBzf1YDYLr/sONj2
- sVr7a3c1niNhYcSzQ20lXpzWP/B6Clvw49/6Qnu1toGrbGUT0u+++4g82Sufh/+S9RZT
- AZsOWE/SAivMRT6NGPNXfOTrxZpJTlP5CjnqHEdIhW/7YuLOrIgZmGXGbqDX4aGe2NsG
- aeYLoAH+UZkXVbTJNicfbvgzDn5uU9a2QkHYvuejRG2QQtHVmhaJ0zgKv1KZiI4kxND5
- 8nZ2GlsTU5/x/D5sh/7fxhWnb5ldSZ5TzZOllWcpQMpTFpKF9aqYI+RdXX/q27A5mkgg
- Zj9g==
-X-Gm-Message-State: AFuF++nzs3VSNkrdJJ7mFWv1Or4uo4BTlOKerxzfHRn2INbfYv1eMN5c
- Q8A2f+z3r/vVuGeNc9mgZrG88A0m/kTII8jBv90pJJfOYH16WJ840WHMbROY/UsUbTI=
-X-Gm-Gg: AR+sD117hQdNWZYx+wr/c86lK7aI34TN8gXrfzkd7+qE4x3hfiHbKNqxKUAB+DMtVy4
- P5zKjExzcKGWIz4GUxDlxoU5z0kvRq4Xogx+FW/KjeOhCsXXxl06XZQxqNSbg0sY9heuvgISu3a
- tUGUagDwvv2/vJZBLk+2+/UvEeOoFrJ+cwC9UbXxmv+QqWLvLwHo5H7CprfXXVTt0QM/5jjfajD
- OBviAhx2ktaD40Cb258xFJVG7fe2dzkbIkfR0/rywr2hSie0ro9DZbew9e4v/57oCNOORSk9kmf
- hhJlYfnClZlvwlGHuktcsEHZX2DJyWDl2Mezp7mdsyeYWxNKhDp6JgHx0OU1vy+foE5lnP3K572
- Gd8ePGxlrRNUkfXWuRCB2m8hGwQLJsct2L88qtxkBFODsVvSngowYhOfCMpTeVw9V8aPLCUno42
- BUt85X0mmSkuPn0jrSspVQOohkt9G8m4e4X7JbQfKBDU6d6cNti+ghNOXbNrfK0rvBoim4PuLun
- UQ/DAbRmkRzfy4IM4LEvatG4OTKIW4=
-X-Received: by 2002:a17:90b:3c84:b0:390:b41a:b92b with SMTP id
- 98e67ed59e1d1-395c3542369mr14178213a91.4.1787326042516; 
- Fri, 21 Aug 2026 08:27:22 -0700 (PDT)
+ bh=K1T8MwItSOSgTcPQZMMo9ik9uajLaGAAYxQ5pQjbYz4=;
+ b=NoG+MTZfWmO7JhLWb7mFWYl2A0AZqCxNCFVvluIrEb5QPSHw9nJxMpFjcMvUysQFNB
+ FtP6PFTP5QWv2yBp10mxcDONCTlOxR5wQI+JqoE3M2tND10KxekSLjRkH0HPR0Gt88cu
+ YAft0L6L70xksHfpfQYP1iokuGb6b9r4G4o6VD7rFKcG+30SIbWLJPkI0Z/7AsZWv7J3
+ QndE2W6iE46uWRIG0dJVahSZScy+Yb0lVGX50YH8YcDlHccRgNQnXhN002nkT8INcd7R
+ LHpVWeP9LZdVQHwWgWEq/ej/jAat0OxzGUBcK/nA+1RQ/yo22RHsRSDaM35Y0Ve1fvab
+ saeg==
+X-Gm-Message-State: AFuF++mNm6UTp3h7zmYCp5M76mMH2QvAj5f1vjTLiVP6HCT+KY9Fm2pi
+ A2volMsYQUSRYkuz9K/i8Kt51tIsP5gm8ioTtbWjdClafYRcAPLN7elepHNp1dN6L08=
+X-Gm-Gg: AR+sD127FLNGOA6b03MtzIcTB0MFEa3g/zKG3vtTwmPKegDyPzPXgu0+35Lg+j6n4bV
+ zzcBBiwgFS4OBNcHErIAlfUjHl+s5YXWzBE1DJNo+3reSGIHWY7DOlfNpBxoZNtlL/3/4Wx+QhX
+ /BuaVXRHO/KyG3BEzxZwQhuLjPxepep5D/q186wVYLNDnKNTWon5ei8J1JWZTz/LfOmvoOgumpG
+ D93TOOO45iHG81calfNXgPH0Haf7eXIU+juOhW/lUmQowhr9t0iug+wW5fFBxC2QVO3N8sNVRph
+ e9/atAXpb5gEELd/HNKuFY3om8EbjVFh/LgnHIsrv5JKLeeBIOG6VtvsFhrZUhlikc5kDpWBIYa
+ /o6i/MIj6BDqfoOOVGoyo4maLXEZHD/Rx/NK4yTHeiPeSEDjtCa+WY7IojPL/24tLMGTIfo0hs2
+ gL+y+8soWQyaKeGRbPo1g87IxqylxWuCqUI1uCVYnFQkSQ6MOSHgMiBTnpCuT7VKvAEX0BhSLjo
+ FTI5UukLZYHUH9ap/opTyt4S7sH5Q==
+X-Received: by 2002:a17:90b:5805:b0:38e:485c:ebd3 with SMTP id
+ 98e67ed59e1d1-395c3a514a5mr13804774a91.15.1787327378480; 
+ Fri, 21 Aug 2026 08:49:38 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-395c4b82e5csm3744668a91.16.2026.08.21.08.27.20
+ 98e67ed59e1d1-395c4c18fa7sm4012800a91.14.2026.08.21.08.49.36
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 21 Aug 2026 08:27:22 -0700 (PDT)
-Date: Fri, 21 Aug 2026 08:27:11 -0700
+ Fri, 21 Aug 2026 08:49:38 -0700 (PDT)
+Date: Fri, 21 Aug 2026 08:49:27 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Anatoly Burakov <anatoly.burakov@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v1 00/21] Building a better rte_flow parser
-Message-ID: <20260821082711.6a37838d@phoenix.local>
-In-Reply-To: <cover.1787233986.git.anatoly.burakov@intel.com>
-References: <cover.1787233986.git.anatoly.burakov@intel.com>
+To: Gagandeep Singh <g.singh@nxp.com>
+Cc: dev@dpdk.org, hemant.agrawal@nxp.com
+Subject: Re: [PATCH v12 00/15] et/enetc: add new features for ENETC4 on i.MX95
+Message-ID: <20260821084927.6e6aa27f@phoenix.local>
+In-Reply-To: <20260821055643.1359277-1-g.singh@nxp.com>
+References: <20260819053415.645865-1-g.singh@nxp.com>
+ <20260821055643.1359277-1-g.singh@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,454 +82,276 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 20 Aug 2026 15:00:45 +0100
-Anatoly Burakov <anatoly.burakov@intel.com> wrote:
+On Fri, 21 Aug 2026 11:26:28 +0530
+Gagandeep Singh <g.singh@nxp.com> wrote:
 
-> Most rte_flow parsers in DPDK suffer from huge implementation complexity because
-> even though 99% of what people use rte_flow parsers for is parsing protocol
-> graphs, no parser is written explicitly as a graph. This patchset attempts to
-> suggest a viable model to build rte_flow parsers as graphs, by offering a
-> lightweight header only library to build rte_flow parsering graphs without too
-> much boilerplate and complexity.
+> V12-Changes:
+>  - Fixed documentation for:
+>    - missing double quotes for enetc4_txq_prior
+>    - In accurate comment related to secondary process burst functions.
+>    - Added a note related to LRO and its BD size chosen.
+>  - Fixed secondary process burst functions selection.
+>  - Removed "Unicast MAC filter" from vf, but comment regarding "RSS
+>    hash" is false positive as or RSS hash, the only mandatory
+>    requirement is `[provides] rte_eth_dev_info: flow_type_rss_offloads
+>    , which the VF sets in enetc4_vf_dev_infos_get
+>    (`dev_info->flow_type_rss_offloads = ENETC_RSS_OFFLOAD_ALL`).
+>  - Fixed lro and scattered_rx configuration by enabling only after
+>    rsc_enable branch.
 > 
-> Most of the patchset is about Intel drivers, but they are meant as
-> reimplementations as well as examples for the rest of the community to assess
-> how to build parsers using this new infrastructure. I expect the first two
-> patches will be of most interest to non-Intel reviewers, as they deal with
-> building two reusable parser architecture pieces.
+> V11-Changes:
+>  - Added enetc4_vf.ini for VF only features.
+>  - Fixed the secondary-process guards leave the burst function
+>    pointers NULL
+>  - Fixed rxq_info_get and txq_info_get report the doubled ring size
+>  - Move the VFs only features to enetc4_vf.ini
+>  - Setting the dev->data->lro
+>  - Added a comment to use devargs to change delay and timeout to process
+>    PSI message to avoid any interrupts stall.
+>  - Fixed link_update() now rewrites RBMR on every Rx ring.
+>  - Regestering - enetc4_txq_wr in VF
+>  - Updated enetc4_rd64 with re-read to confirm the correctness.
+>  - Removed the dead code and un-used macros.
+>  - Added Vlan check for maximum allowed value.
+>  - fixed pre-existing ring write function for TX path.
 > 
-> The first piece is a new flow graph helper in ethdev. Its purpose is
-> deliberately narrow: it targets the protocol-graph part of rte_flow pattern
-> parsing, where drivers walk packet headers and validate legal item sequences and
-> parameters. That does not cover all possible rte_flow features, especially more
-> exotic flow items, but it does cover a large and widely shared part of what
-> existing drivers need to do. Or, to put it in other words, the only flow items
-> this infrastructure *doesn't* cover is things that do not lend themselves well
-> to be parsed as a graph of protocol headers (e.g. conntrack items). Everything
-> else should be covered or cover-able. In practice, just about all drivers will
-> benefit from graph parsing as all but one of them implement only the protocol
-> stack parts, which are the ones targeted by the graph helper.
+> V10-Changes:
+>  - Fixed enetc4_txq_prior and enetc4_txq_wrr have no effect at queue
+>    setup issue.
+>  - Updated ENETC_CLASS_ID_SI_VLAN_ISO reply check.
+>  - Updated enetc4.ini for VLAN offload.
+>  - Added else part for burst functions selection for RSC and TSO.
+>  - Updated enetc4_rd64()
+>  - Fixed RBICR0 issue.
+>  - Removed GENMASK.
 > 
-> The second piece is a reusable flow engine framework for Intel Ethernet drivers.
-> This is kept Intel-local because I do not feel it is even appropriate to define
-> such a framework for all drivers to use in the first place. Even so, the intent
-> is to establish a cleaner parser architecture with a defined interaction model,
-> explicit memory ownership rules, and engine definitions that do not block
-> secondary-process-safe usage. It is my hope that this would serve as a model for
-> other drivers to follow, expand on, rework, and improve, so that maybe down the
-> line we *might* have a common rte_flow infrastructure for drivers to use.
+> V9-Changes:
+>  - Mid-body variable declaration moved to top of the function.
+>  - ret=0 dead code is removed.
+>  - Added check on return value of rte_intr_callback_unregister()
+>  - The pre-existing reply_msg leak fixed.
+>  - Added primary-process guard in enetc4_vf_dev_init
+>  - Removed Flow control from enetc4.ini
+>  - Fixed VF stats_reset baseline underflows on counter wrap
+>  - Fixed VF vlan_pvid_set fails on every successful command
 > 
-> Most of the rest of the series is parser reimplementation, but that is mainly
-> the vehicle for demonstrating and validating those two pieces. ixgbe and i40e
-> are wired into the new common parsing path, and their existing parsers are
-> migrated incrementally to the graph-based model. Besides reducing ad hoc parser
-> code, this also makes validation more explicit and more consistent with the
-> actual install path. In a few places that means invalid inputs that were
-> previously ignored, deferred, or interpreted loosely are now rejected earlier
-> and more strictly, without any increase in code complexity (in fact, with marked
-> *decrease* of it!).
+> V8-changes:
+>  - Fixed Warning RBMR RMW races between threads by adding lock
+>  - Fixed `static const` arrays in `enetc.h`
+>  - Proper pthread_mutexattr_t initialization added as suggested by AI
+>  - VSIMSGSR stale re-read race is eliminated
 > 
-> For now, there is a hack in
+> V7-changes:
+>  - added missing 14th patch.
 > 
-> RFC -> v1:
-> - Fixed a lot of bugs, concurrency issues, and init/uninit sequence problems in
->   Intel common flow engine implementation
-> - Fixed a few copypaste errors in various engines
-> - Improved comment documentation and flow engine docs
+> V6-changes:
+>  - fixed free() on memory allocated with rte_zmalloc().
+>  - fixed eventfd and vector-list leak on interrupt teardown
+>  - fixed Rx ring doubling still bypasses
+>  - fixed VSI-PSI transaction issued from the interrupt handler
+>  - fixed the free-and-reallocate of msg is unnecessary churn
+>  - fixed unsynchronized access to tx_pause_active and RBMR
+>  - fixed signed shift overflow in the register-dump version field
+>  - fixed the fw_size == 0 early return reports the length of "0.0"
+>  - unwanted blank lines removed.
+>  - parse_txq_prior() returns updated.
 > 
-> Anatoly Burakov (21):
->   ethdev: add flow graph API
->   net/intel/common: add flow engines infrastructure
->   net/intel/common: add utility functions
->   net/ixgbe: add support for common flow parsing
->   net/ixgbe: reimplement ethertype parser
->   net/ixgbe: reimplement syn parser
->   net/ixgbe: reimplement L2 tunnel parser
->   net/ixgbe: reimplement ntuple parser
->   net/ixgbe: reimplement security parser
->   net/ixgbe: reimplement FDIR parser
->   net/ixgbe: reimplement hash parser
->   net/i40e: add support for common flow parsing
->   net/i40e: reimplement ethertype parser
->   net/i40e: reimplement FDIR parser
->   net/i40e: reimplement tunnel QinQ parser
->   net/i40e: reimplement VXLAN parser
->   net/i40e: reimplement NVGRE parser
->   net/i40e: reimplement MPLS parser
->   net/i40e: reimplement gtp parser
->   net/i40e: reimplement L4 cloud parser
->   net/i40e: reimplement hash parser
+> V5-changes:
+>  - Patch 1 Build fixes which includes:
+>     'prev_seg' undeclared fixed.
+>     redefinition of 'dev_rx_offloads_sup' fixed.
+>     Error: duplicate rx_enable declaration fixed.
+>    PF loses Scattered Rx and Multi-segment Tx
+>  - mbuf leak in enetc_xmit_pkts_lso() fixed.
+>  - fixed conversion on ENETC4_TXBD_FLAGS_F issue.
+>  - fixed link speed decode has no upper bound.
+>  - fixed mailbox ops added to the no-VSI ops table.
+>  - new devargs documented.
 > 
->  doc/guides/prog_guide/ethdev/flow_graph.rst   |  748 +++
->  doc/guides/prog_guide/ethdev/index.rst        |    1 +
->  doc/guides/rel_notes/release_26_11.rst        |    7 +
->  drivers/net/intel/common/flow_engine.h        | 1373 ++++++
->  drivers/net/intel/common/flow_util.h          |  183 +
->  drivers/net/intel/i40e/i40e_ethdev.c          |   69 +-
->  drivers/net/intel/i40e/i40e_ethdev.h          |   66 +-
->  drivers/net/intel/i40e/i40e_fdir.c            |   78 +-
->  drivers/net/intel/i40e/i40e_flow.c            | 4181 +----------------
->  drivers/net/intel/i40e/i40e_flow.h            |   30 +
->  drivers/net/intel/i40e/i40e_flow_ethertype.c  |  250 +
->  drivers/net/intel/i40e/i40e_flow_fdir.c       | 1834 ++++++++
->  drivers/net/intel/i40e/i40e_flow_hash.c       | 1298 +++++
->  drivers/net/intel/i40e/i40e_flow_tunnel.c     | 1504 ++++++
->  drivers/net/intel/i40e/i40e_hash.c            | 1037 +---
->  drivers/net/intel/i40e/i40e_hash.h            |    9 +-
->  drivers/net/intel/i40e/meson.build            |    4 +
->  drivers/net/intel/i40e/rte_pmd_i40e.c         |    3 +-
->  drivers/net/intel/ixgbe/ixgbe_ethdev.c        |   43 +-
->  drivers/net/intel/ixgbe/ixgbe_ethdev.h        |   17 +-
->  drivers/net/intel/ixgbe/ixgbe_fdir.c          |    1 -
->  drivers/net/intel/ixgbe/ixgbe_flow.c          | 3208 +------------
->  drivers/net/intel/ixgbe/ixgbe_flow.h          |   27 +
->  .../net/intel/ixgbe/ixgbe_flow_ethertype.c    |  245 +
->  drivers/net/intel/ixgbe/ixgbe_flow_fdir.c     | 1553 ++++++
->  drivers/net/intel/ixgbe/ixgbe_flow_hash.c     |  178 +
->  drivers/net/intel/ixgbe/ixgbe_flow_l2tun.c    |  230 +
->  drivers/net/intel/ixgbe/ixgbe_flow_ntuple.c   |  493 ++
->  drivers/net/intel/ixgbe/ixgbe_flow_security.c |  320 ++
->  drivers/net/intel/ixgbe/ixgbe_flow_syn.c      |  283 ++
->  drivers/net/intel/ixgbe/ixgbe_ipsec.c         |   54 +-
->  drivers/net/intel/ixgbe/ixgbe_ipsec.h         |    4 +-
->  drivers/net/intel/ixgbe/meson.build           |    7 +
->  lib/ethdev/meson.build                        |    1 +
->  lib/ethdev/rte_flow_graph.h                   |  532 +++
->  35 files changed, 11289 insertions(+), 8582 deletions(-)
->  create mode 100644 doc/guides/prog_guide/ethdev/flow_graph.rst
->  create mode 100644 drivers/net/intel/common/flow_engine.h
->  create mode 100644 drivers/net/intel/common/flow_util.h
->  create mode 100644 drivers/net/intel/i40e/i40e_flow.h
->  create mode 100644 drivers/net/intel/i40e/i40e_flow_ethertype.c
->  create mode 100644 drivers/net/intel/i40e/i40e_flow_fdir.c
->  create mode 100644 drivers/net/intel/i40e/i40e_flow_hash.c
->  create mode 100644 drivers/net/intel/i40e/i40e_flow_tunnel.c
->  create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow.h
->  create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_ethertype.c
->  create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_fdir.c
->  create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_hash.c
->  create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_l2tun.c
->  create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_ntuple.c
->  create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_security.c
->  create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_syn.c
->  create mode 100644 lib/ethdev/rte_flow_graph.h
+> V4-changes:
+>  - fix doc build issue: WARNING: undefined label: pmd_build_and_test
+> 
+> v3-changes:
+>  - fix doc build issue.
+>  - fix compilation issue on fedore:43-gcc-minsize
+> 
+> V2-changes:
+>  - compilation fixes.
+> 
+> V1-changes:
+> This series adds new PMD features to the ENETC4 driver targeting the
+> NXP i.MX95 NETC IP.
+> 
+> The series covers:
+> 
+>  - KEEP_CRC Rx offload: preserve the Ethernet FCS in the receive buffer.
+>  - TSO: TCP Segmentation Offload for the VF Tx path.
+>  - RSC/LRO: hardware Receive Segment Coalesce for PF and VF Rx paths.
+>  - Link speed code: extend the PF-to-VF mailbox field from 4-bit to
+>    8-bit to support speeds beyond 10G.
+>  - Firmware version: report the NETC IP version via fw_version_get.
+>  - Register dump: dump SI, port (PF) and BD ring registers.
+>  - Ring parameters: implement rxq_info_get / txq_info_get for the VF.
+>  - Link-up interrupt: refresh the cached link speed on each VF link-up
+>    interrupt so that link_update returns the current speed immediately.
+>  - Stats reset: software snapshot/delta approach for VF counter reset.
+>  - Per-queue Rx interrupt: MSI-X per-queue Rx interrupts for the VF,
+>    enabling interrupt-driven receive with l3fwd-power.
+>  - SI VLAN: hardware port VLAN insertion/removal for PF and VF.
+>  - VF link status bitmask: switch VF link status to bitmask encoding
+>    to align with the PF and newer kernel driver conventions.
+>  - TX PAUSE: VF sets Rx congestion mode when the PF signals TX PAUSE
+>    negotiated on the wire; adds Flow control = Y to enetc4.ini.
+>  - WRR Tx scheduler: per-ring WRR weights via enetc4_txq_wrr devarg.
+> 
+> Gagandeep Singh (15):
+>   net/enetc: add keep-CRC Rx offload for ENETC4
+>   net/enetc: add TSO support for ENETC4 VF
+>   net/enetc: add RSC (hardware LRO) support for ENETC4
+>   net/enetc: extend PF-VF link speed field to 8 bits
+>   net/enetc: add VF supported features file
+>   net/enetc: support firmware version get for VF
+>   net/enetc: support registers dump
+>   net/enetc: support ethtool ring parameters
+>   net/enetc: refresh link speed on VF link-up interrupt
+>   net/enetc: support stats reset for VF
+>   net/enetc4: add per-queue Rx interrupt support for VF
+>   net/enetc4: add SI-based port VLAN insertion and removal
+>   net/enetc4: update VF link status to bitmask encoding
+>   net/enetc4: enable Tx PAUSE via VF Rx congestion mode
+>   net/enetc4: add WRR Tx scheduler devarg for VF rings
+> 
+>  MAINTAINERS                            |   1 +
+>  doc/guides/nics/enetc4.rst             | 114 ++-
+>  doc/guides/nics/features/enetc4.ini    |   4 +
+>  doc/guides/nics/features/enetc4_vf.ini |  28 +
+>  doc/guides/rel_notes/release_26_11.rst |  21 +
+>  drivers/net/enetc/base/enetc4_hw.h     | 148 +++-
+>  drivers/net/enetc/base/enetc_hw.h      |   6 +
+>  drivers/net/enetc/enetc.h              | 133 +++-
+>  drivers/net/enetc/enetc4_ethdev.c      | 527 ++++++++++++--
+>  drivers/net/enetc/enetc4_vf.c          | 928 ++++++++++++++++++++++---
+>  drivers/net/enetc/enetc_rxtx.c         | 530 +++++++++++++-
+>  11 files changed, 2254 insertions(+), 186 deletions(-)
+>  create mode 100644 doc/guides/nics/features/enetc4_vf.ini
 > 
 
-It doesn't build:
+Much better, really close. I apologize for the AI review being so long
+winded, but what is complaining about now looks valid.
 
-Best taken up in next-net-intel tree.
+ENETC4 v11 series review - 15 patches
 
-AI had some insights.
-
-Review of "[PATCH v1 00/21] Intel flow parser rework" (bundle 2069)
-Anatoly Burakov <anatoly.burakov@intel.com>
-
-Applied on top of DPDK main (c1a46b9).  Patches 01-08 and 12-20 apply
-cleanly; 09, 10, 11 and 21 need the prerequisite series noted in the
-"Depends-on: series-39013 (I40E refactors)" tag, so those four were
-reviewed from the diffs only.
-
-Patch 01: ethdev: add flow graph API
------------------------------------
-
-Error: RTE_FLOW_GRAPH_LOG assumes a logtype variable that is not a
-DPDK-wide convention.
-
-  +#ifdef RTE_COMPONENT_NAME
-  +extern int RTE_CONCAT(RTE_COMPONENT_NAME, _logtype_driver);
-
-RTE_COMPONENT_NAME is defined by both drivers/meson.build (line 278)
-and lib/meson.build (line 241), so in an in-tree build the #ifdef
-branch is always taken and the #else branch (rte_eth_dev_logtype) is
-dead.  That means every component that includes this header must
-happen to define <name>_logtype_driver or it fails to link.  That
-holds for the Intel PMDs but is not a project-wide guarantee -- only
-67 of the net drivers define such a symbol -- and it is certainly not
-true for lib/ethdev itself.
-
-This pattern was borrowed from drivers/net/intel/common/log.h, where
-it is reasonable because the header is documented as Intel-driver-only.
-A lib/ethdev driver-SDK header should not carry that assumption.
-Suggest either always using rte_eth_dev_logtype (rte_ethdev.h is
-already pulled in via rte_flow.h, so the symbol is visible), or
-passing a logtype into rte_flow_graph_parse().
-
-Error: reserved identifiers.  The internal helpers are named
-__flow_graph_node_check_constraint, __flow_graph_node_is_expected,
-__flow_graph_node_is_ignored, __flow_graph_get_node_index,
-__flow_graph_node_is_valid, __flow_graph_find_next_node and
-__flow_graph_visit_node.  Identifiers beginning with two underscores
-are reserved to the implementation in all scopes (C11 7.1.3).  These
-are static inline in an installed header, so they are injected into
-every driver translation unit.  Use a single leading underscore-free
-prefix instead, e.g. rte_flow_graph_node_check_constraint(), or drop
-them behind a naming scheme the project already uses.
-
-Warning: the ALLOW_EXPERIMENTAL_API conditional makes the header
-behave differently depending on build flags.
-
-  +#ifdef ALLOW_EXPERIMENTAL_API
-  +	ret = rte_flow_conv(RTE_FLOW_CONV_OP_ITEM_NAME_PTR, ...
-
-The 20-line comment above it already concedes this is a workaround
-("a hack of monumental proportions", "hopefully we'll come up with a
-proper solution in one of the next versions of this patchset").  As
-written, item names silently become "UNKNOWN" in one of the three
-configurations chkincs builds, so the debug messages this whole
-function exists to produce are configuration-dependent.  Either fix
-chkincs to skip experimental-disabled builds for driver_sdk headers,
-or drop the name lookup and log the numeric item type, which needs no
-experimental API at all.
-
-Warning: RTE_FLOW_NODE_EDGE_END is defined as ((size_t)~0U), which is
-0xFFFFFFFF on LP64, not SIZE_MAX.  It works because producers and
-consumers both use the macro, but it reads like a bug and will trip
-anyone who writes SIZE_MAX in a driver edge table.  Use
-((size_t)-1) or SIZE_MAX.
-
-Info: struct rte_flow_graph holds non-const pointers:
-
-  +struct rte_flow_graph {
-  +	struct rte_flow_graph_node *nodes;
-  +	struct rte_flow_graph_edge *edges;
-
-Everything in the traversal path treats the graph as read-only, and
-the design notes in patch 02 explicitly require engine definitions to
-live in read-only memory.  Making both members const would let
-drivers declare the tables const without casting.
-
-Info: struct rte_flow_graph_node declares two members const
-(type, constraints) and two non-const.  A struct with const members
-cannot be assigned or memcpy'd as a whole; the mix is arbitrary.
-Either const the whole struct at the point of definition or none of
-the members.
-
-Info: the guide is added under doc/guides/prog_guide/ethdev/, which is
-the application programmer's guide, but the header's own @file block
-says "This is an internal API for PMD drivers only.  Applications must
-not use it."  Consider placing it where the other driver-facing
-material lives.
-
-Info: doc/guides/prog_guide/ethdev/flow_graph.rst says "It is not
-recommended to create loops in the graph, as these loops will be
-unbounded."  Traversal is driven by the pattern array, not by the
-graph, so a cycle in the edge tables is bounded by pattern length.
-The statement is misleading as written.
-
-Patch 02: net/intel/common: add flow engines infrastructure
------------------------------------------------------------
-
-Error: ci_flow_alloc() converts an engine's "out of capacity" signal
-into a successful generic allocation.
-
-  +	if (engine->ops->flow_alloc != NULL)
-  +		flow = engine->ops->flow_alloc(engine, engine_conf->dev_data, priv);
-  +	if (flow == NULL) {
-  +		flow = (struct ci_flow *)rte_zmalloc(NULL, engine->flow_size, 0);
-  +		if (flow != NULL && engine->ops->flow_alloc != NULL)
-  +			fallback = true;
-
-The only engine in the series with a custom allocator is i40e fdir
-(patch 14), whose flow_alloc() returns NULL for two distinct reasons:
-the hardware table is full (fdir_actual_cnt >= fdir_space_size) and
-the flow pool bitmap is exhausted.  Both are capacity limits, and both
-are silently overridden here: the framework hands back a heap flow,
-ci_flow_create() proceeds to flow_install(), and ci_flow_free() then
-takes the rte_free() path so the engine never learns the flow existed.
-The pool index accounting in i40e_fdir_flow_free() is bypassed
-entirely.
-
-A NULL from flow_alloc() should be treated as "this engine cannot take
-this flow" and move on to the next engine, or be an outright failure.
-If a fallback is genuinely wanted, the engine needs a way to
-distinguish "allocation failed, try the generic path" from "no
-capacity".
-
-Warning: ci_flow_validate() frees the trial flow with plain free()
-after running the full parse chain including ctx_to_flow():
-
-  +		flow = (struct ci_flow *)calloc(1, engine_ref.engine->flow_size);
-  ...
-  +		ret = ci_flow_parse(engine_conf, engine_ref.engine, attr, pattern,
-  +				actions, flow, error);
-  +		free(flow);
-
-The header's own design notes say "Engines may still allocate
-auxiliary data (for per-engine private state or pointers stored inside
-flows) ... [which] should follow engine_init/engine_uninit or flow
-lifetime as appropriate."  Any engine that honours that contract by
-allocating in ctx_to_flow() will leak on every rte_flow_validate()
-call.  No engine in this series does so yet, so this is latent, but
-the framework contract and the framework implementation disagree.
-Either document that ctx_to_flow() must not allocate, or give the
-validate path a teardown hook.
-
-Warning: ci_flow_flush() frees flows whose uninstall failed.
-
-  +		/* ignore failures */
-  +		ci_flow_uninstall(engine_ref, flow, error);
-  +
-  +		TAILQ_REMOVE(&engine_conf->flows, flow, node);
-  +		ci_flow_free(engine_ref, flow);
-
-If flow_uninstall() fails the rule is still programmed in hardware,
-but the software object is destroyed and removed from the list, so
-there is no longer any way to retry or to account for it.  Worth at
-least logging the failure and returning non-zero from ci_flow_flush()
-rather than unconditionally returning 0.  The same &error is also
-reused across iterations, so only the last failure survives.
-
-Warning: ci_flow_engine_conf_reset() takes the write lock and is
-documented "thread-safe", but ci_flow_engine_conf_init() calls
-rte_rwlock_init() on the same lock without holding it, and is
-documented "thread-unsafe".  The pairing is confusing.  Since both are
-primary-process-only setup/teardown per the design notes, dropping the
-lock from reset() and documenting both as serialised by the caller
-would be clearer than the current asymmetry.
-
-Info: ci_flow_alloc() uses rte_zmalloc(NULL, ...) for the flow object.
-Flows are stored in the shared per-device flow list and the whole
-design goal is secondary-process compatibility, so
-rte_zmalloc_socket() with the device's socket_id would keep the
-allocation NUMA-local to the port.  Same for the priv_size allocation
-in ci_flow_engine_init() and the pool/bitmap allocations in i40e fdir
-engine_init.
-
-Info: struct ci_flow_engine_list is a fixed 64-entry array
-(CI_FLOW_ENGINE_MAX), so every driver pays 512 bytes for what is
-currently four or five engines.  A pointer plus count would be no
-harder to use with the FOREACH macro and would drop the NULL-
-termination requirement.
-
-Patch 03: net/intel/common: add utility functions
---------------------------------------------------
-
-Info: header guard comment does not match the guard.
-
-  +#ifndef _COMMON_INTEL_FLOW_UTIL_H_
-  ...
-  +#endif /* _INTEL_COMMON_FLOW_UTIL_H_ */
-
-Patch 04: net/ixgbe: add support for common flow parsing
----------------------------------------------------------
-
-Warning: ixgbe_flow_destroy() misreports a failed uninstall as
-"Flow not found".
-
-  +	ret = ci_flow_destroy(&adapter->flow_engine_conf, flow, error);
-  +	if (ret == 0)
-  +		return 0;
-  +
-  +	/* fall back to legacy engines */
-
-ci_flow_destroy() returns non-zero for two unrelated cases: the handle
-does not belong to the new engine (correct: fall through to legacy),
-and the handle does belong to it but flow_uninstall() failed.  In the
-second case control falls into the legacy path, the ownership scan
-over adapter->flow_list does not find the handle, and the caller gets
-EINVAL "Flow not found for this port" while the rule is still
-programmed and still on the engine's flow list.  ci_flow_destroy()
-needs to distinguish "not mine" from "mine, and it failed" -- e.g.
-return -ENOENT for the former -- so the driver can propagate the real
-error.
-
-Warning: the same function reads through the handle before ownership
-is established:
-
-  +	struct rte_flow *pmd_flow = flow;
-  +	enum rte_filter_type filter_type = pmd_flow->filter_type;
-
-struct rte_flow embeds struct ci_flow as its first member, so a legacy
-flow is a valid ci_flow, but the reverse does not hold: a flow created
-by the new engine is sized by engine->flow_size and the bytes at that
-offset are engine-private state.  The value is unused when
-ci_flow_destroy() succeeds, so this is not currently exploitable, but
-it is a type-punned read on every destroy.  Move the initialisation
-below the ci_flow_destroy() early return.
-
-Info: ixgbe_flow_create() falls through to the legacy engines even
-when ci_flow_create() failed for a non-recoverable reason (ENOMEM from
-ci_flow_alloc(), which does "goto unlock" precisely because "this is a
-serious error so don't continue").  Distinguishing ENOTSUP from ENOMEM
-at the driver boundary would preserve that intent.  The stale
-rte_flow_error left behind by the failed ci_flow_create() call is also
-overwritten only if the legacy path itself sets one.
-
-Patch 14: net/i40e: reimplement FDIR parser
---------------------------------------------
-
-Error: i40e_fdir_flow_uninstall() marks its error parameter
-__rte_unused and then uses it.
-
-  +i40e_fdir_flow_uninstall(struct ci_flow *flow, struct rte_flow_error *error __rte_unused)
-  ...
-  +		return rte_flow_error_set(error, ENOTSUP,
-  +				RTE_FLOW_ERROR_TYPE_HANDLE,
-  +				NULL, "Failed to delete fdir filter.");
-
-__rte_unused is __attribute__((unused)), which suppresses the warning
-rather than forbidding use, so this compiles -- but the annotation is
-wrong and will mislead the next reader.  Drop it.
-
-Info: i40e_fdir_flow_engine_uninit() does rte_free(priv->bmp), which
-relies on rte_bitmap_init() returning its mem argument unchanged.
-That is true today but it is an implementation detail of
-rte_bitmap.h.  Storing bmp_mem alongside bmp in
-struct i40e_fdir_engine_priv, and freeing that, would not depend on it.
-
-General notes
--------------
-
-The cover letter's "Depends-on: series-39013" is on patch 01 only.
-Since 09/10/11 and 21 are the patches that actually fail to apply
-without it, it would help to repeat the tag on the cover letter so it
-shows up in patchwork for the whole series.
+No Reviewed-by, but this is close.  Everything reported against v10 is
+addressed and nothing new is broken; what remains is four
+documentation/state-hygiene warnings and no errors.  Applied cleanly
+onto c1a46b9.  Built this time: full driver build with
+-Dwerror=true -Denable_drivers=common/dpaax,bus/pci,bus/vdev,
+mempool/ring,net/enetc is clean, and all five enetc translation units
+compile with no diagnostics at every one of the 15 commits, so the
+series bisects.
 
 
-Overlap with the testpmd flow-parser rework
---------------------------------------------
+Fixed from v10
 
-No overlap.  The two efforts sit on opposite sides of the rte_flow
-API:
+The features matrix is split.  enetc4_vf.ini is a new file added in
+patch 05 with only the entries that hold at that point; FW version,
+Registers dump and Rx interrupt are added by the later patches that
+implement them, so doc and code land together.  "Rx interrupt" and
+"FW version" are out of enetc4.ini, and MAINTAINERS covers the new
+file.
 
-  - The testpmd work is about app/test-pmd/cmdline_flow.c, the CLI
-    grammar that turns "flow create 0 ingress pattern eth / ipv4 /
-    end actions queue index 3 / end" into arrays of struct
-    rte_flow_item and struct rte_flow_action.  That is a text parser,
-    which is why lex/yacc is a natural fit.
+rxq_info_get and txq_info_get divide by two when rsc_enable /
+lso_enable is set, so the application gets back the descriptor count it
+asked for.  enetc4_rd64() reads high / low / high again and retries on a
+carry.  enetc4_dev_configure() resets the Tx rings with
+enetc4_txbdr_wr() instead of enetc4_rxbdr_wr(), which also fixes the
+pre-existing bug where the Tx rings were never reset.
+enetc4_vf_set_congestion_mode() returns early when tx_pause_active
+already matches, so link_update() no longer rewrites RBMR on every
+poll.  Both pvid setters range-check vlan_id.  enetc4_txq_prior and
+enetc4_txq_wrr are in the VF param string.  ENETC4_TXBD_EXT_FLAGS_F and
+ENETC_SPEED_MAX are gone, the rsc_size == 0 fallback is gone, and the
+BDR register arrays carry explicit dimensions in both the declaration
+and the definition so a drift becomes a compile error.
 
-  - This series is about what a PMD does with those arrays once
-    rte_flow_create() hands them over.  rte_flow_graph_parse() walks
-    an already-constructed rte_flow_item array against a driver's
-    protocol graph and extracts hardware register fields.  There is
-    no text anywhere in it.
+ENETC_CLASS_ID_SI_VLAN_ISO is out of the enetc4_msg_vsi_send()
+whitelist, which is now consistent with the reply handling in
+enetc4_vf_vlan_pvid_set() and with your explanation that 0x24 is never
+echoed back.
 
-Concretely, no patch in the series touches app/ at all -- the 21
-patches are confined to lib/ethdev, doc/, and drivers/net/intel.
-The only shared surface is rte_flow_conv(RTE_FLOW_CONV_OP_ITEM_NAME_PTR),
-which patch 01 uses for debug strings and cmdline_flow.c uses for
-token names; if the yacc/lex rework changes rte_flow_conv semantics
-both would need to follow, but that is a soft coupling, not a
-conflict.  A merge conflict between the two is not possible on the
-current file sets.
+The 200 ms interrupt-thread stall is documented rather than changed.
+That is a reasonable call, and the devarg names in the new comment
+("enetc4_vsi_timeout", "enetc4_vsi_delay") do match the macros, so the
+advice is actionable.
+
+RSC now refuses to start unless the application asked for
+RTE_ETH_RX_OFFLOAD_SCATTER, and sets dev->data->lro and
+dev->data->scattered_rx.  That closes the gap where the driver built
+multi-segment clusters for an application that had not opted in.
 
 
-Tree routing
-------------
+Warnings
 
-Mostly agreed, with one caveat.
+Patch 09 - the secondary-process burst pointers still do not match what
+the primary is running.
 
-Patches 02-21 are entirely under drivers/net/intel (common, ixgbe,
-i40e) and belong in dpdk-next-net-intel.  The Depends-on series is
-also i40e, which reinforces that.
+The NULL dereference is gone, which was the point.  But both branches
+hardcode enetc_recv_pkts_cacheable / enetc_xmit_pkts_cacheable, and the
+comment claims this "matches the pre-guard behaviour where
+enetc4_dev_hw_init() set these defaults in both processes".  It does
+not: dev_hw_init() parses the nc devarg and switches to
+enetc_recv_pkts_nc / enetc_xmit_pkts_nc when nc_mode is set, and the
+guard returns before that.
 
-Patch 01 is the exception: it adds lib/ethdev/rte_flow_graph.h,
-lib/ethdev/meson.build, a prog_guide chapter and a release note.
-MAINTAINERS covers it under "F: lib/ethdev/rte_flow*", i.e. the Flow
-API section, so it wants an ack from the flow API and ethdev
-maintainers before it moves, even if it ultimately travels with the
-rest of the series through next-net-intel to keep the series
-bisectable.  Given that patch 01 is the one with the design questions
-above (logtype coupling, reserved identifiers, the
-ALLOW_EXPERIMENTAL_API workaround), it is probably worth asking for it
-to be settled on-list before the driver patches are queued.
+For nc the mismatch is the harmless direction.  For RSC and LSO it is
+not: those rings are 2 slots per descriptor, and a secondary polling
+one with the 16-byte-stride cacheable burst reads the extension half as
+a descriptor.  That is silent garbage rather than a crash.
+
+hw->nc_mode lives in dev_private, which is shared, so the secondary can
+at least honour it.  RSC and LSO cannot be resolved at probe time,
+since they come from offloads chosen later by the primary.  If
+multi-process is meant to work here, the burst selection needs to
+happen after the primary has configured; if it is not, saying so in
+enetc4.rst and rejecting LRO/TSO in that case would be clearer than
+handing the secondary a burst function for the wrong ring layout.
+
+Patch 03 - the new RSC restrictions are not in enetc4.rst.
+
+enetc4_rx_queue_setup() now returns -EINVAL for LRO in three cases:
+with KEEP_CRC, with nc=1, and without RTE_ETH_RX_OFFLOAD_SCATTER.  The
+guide documents only the first.  An application that enables LRO
+without SCATTER now fails queue setup with no hint in the docs; both of
+the new conditions belong in the LRO bullet next to the FCS one.
+
+Patch 03 - dev->data->lro and dev->data->scattered_rx are set but never
+cleared.
+
+Both are assigned 1 in enetc4_rx_queue_setup() when RSC is on, and
+nothing assigns 0 anywhere.  After dev_stop plus a reconfigure without
+LRO, they keep the stale value, so rxq_info_get() reports
+scattered_rx = 1 on a non-scattered ring and telemetry reports lro = 1
+for a port that is not doing LRO.  Assign from rsc_enable
+unconditionally rather than only in the rsc_enable branch, or clear
+both in dev_configure().
+
+Patch 05 - two entries in the new enetc4_vf.ini do not hold.
+
+"Unicast MAC filter" requires mac_addr_set, mac_addr_add and
+mac_addr_remove per features.rst; enetc4_vf_ops has the first two and
+no mac_addr_remove.  "RSS hash" lists
+offloads:RTE_ETH_RX_OFFLOAD_RSS_HASH, which is not in the VF
+dev_rx_offloads_sup, though flow_type_rss_offloads is provided.  Both
+were inherited from enetc4.ini, so they are not new claims, but a new
+file is the right moment to drop the ones that do not match.
+
+
+Info
+
+doc/guides/nics/enetc4.rst line 167 still has
+
+  dpdk-testpmd -a 0000:00:00.0,enetc4_txq_prior=1|2|3 -- -i
+
+Unquoted, the shell reads the pipes as a pipeline.  Pre-existing, but
+the enetc4_txq_wrr example added twelve lines below quotes its value,
+so the two now disagree on the same page.
