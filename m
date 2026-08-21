@@ -2,52 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A76BC5DF88
-	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Aug 2026 06:37:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE02FC5DF7D
+	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Aug 2026 09:15:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A54804028C;
-	Fri, 21 Aug 2026 08:37:02 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 4C45A4027B
- for <dev@dpdk.org>; Fri, 21 Aug 2026 08:37:01 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 2072D20FDE;
- Fri, 21 Aug 2026 08:37:01 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 71AAB40292;
+	Fri, 21 Aug 2026 11:15:37 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+ by mails.dpdk.org (Postfix) with ESMTP id 2D36E4027B
+ for <dev@dpdk.org>; Fri, 21 Aug 2026 11:15:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1787303737; x=1818839737;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=yC2EdQvmW+Mlun3IW4ZtBLMYYqju4RgKvWxyaTgV4fM=;
+ b=fTY2frNu5cGed6dPM8w3ABx99hgDwz/+l8jljRBW/+ZOeyaDYNrS+l/L
+ t7n1mmOeEw+NsuvqBlQpOXlh3lkKCJSVaTzxr+n5NrWipfmWPeYLg4SAX
+ z39XcCMrnzU/51cmVp3+xjW+GY3iTcm+SsMMfCNSOAs6/asx2xFuqZfju
+ jZS5kkaTPgBAJuO+QF4NxHVPGA6wLTYJwC9zLtjVvOi9ZDU4oxUE6jsbJ
+ rWLnRl/qUXkW82FGLeX9wF2oQRY75jrddloz6OT1VX5KmhMBV8sYd6Bee
+ OB7bi2JUqdNfslK37FeKf7K4I7cQxUxHZG5SZpmxht98qKgykg+zvq6/O g==;
+X-CSE-ConnectionGUID: ank6pVWbRP6OpzIUF64krA==
+X-CSE-MsgGUID: GbJrejUQQTSCOtF0t/McdA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11881"; a="87979119"
+X-IronPort-AV: E=Sophos;i="6.25,234,1779174000"; d="scan'208";a="87979119"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+ by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 21 Aug 2026 02:15:35 -0700
+X-CSE-ConnectionGUID: 3ZlJsWuDQvW6+8EfaTU1GQ==
+X-CSE-MsgGUID: lh8zx/zhT5eohDymfSBDCw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,234,1779174000"; d="scan'208";a="269763850"
+Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
+ by orviesa003.jf.intel.com with ESMTP; 21 Aug 2026 02:15:34 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org
+Subject: [PATCH v2 0/2] I40E refactors
+Date: Fri, 21 Aug 2026 10:15:29 +0100
+Message-ID: <cover.1787303683.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <cover.1787149329.git.anatoly.burakov@intel.com>
+References: <cover.1787149329.git.anatoly.burakov@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH 03/61] test: use memcpy instead of rte_memcpy
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Fri, 21 Aug 2026 08:37:01 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65A09@smartserver.smartshare.dk>
-In-Reply-To: <20260820092248.06008fc0@phoenix.local>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH 03/61] test: use memcpy instead of rte_memcpy
-Thread-Index: Ad0wwC9o2ukqM7MPTGSV+hnD7TwV2wAdtSNA
-References: <20260820052251.1453273-1-stephen@networkplumber.org><20260820052251.1453273-4-stephen@networkplumber.org><98CBD80474FA8B44BF855DF32C47DC35F659FC@smartserver.smartshare.dk>
- <20260820092248.06008fc0@phoenix.local>
-From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Stephen Hemminger" <stephen@networkplumber.org>
-Cc: <dev@dpdk.org>, "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
- "Marat Khalili" <marat.khalili@huawei.com>,
- "Jasvinder Singh" <jasvinder.singh@intel.com>,
- "Akhil Goyal" <gakhil@marvell.com>, "Fan Zhang" <fanzhang.oss@gmail.com>,
- "Yipeng Wang" <yipeng1.wang@intel.com>,
- "Abhinandan Gujjar" <abhinandan.gujjar@intel.com>,
- "Jerin Jacob" <jerinj@marvell.com>, "Chas Williams" <3chas3@gmail.com>,
- "Min Hu (Connor)" <humin29@huawei.com>,
- "Sameh Gobriel" <sameh.gobriel@intel.com>,
- "Sachin Saxena" <sachin.saxena@nxp.com>,
- "Hemant Agrawal" <hemant.agrawal@nxp.com>,
- "Wathsala Vithanage" <wathsala.vithanage@arm.com>,
- "Anoob Joseph" <anoobj@marvell.com>,
- "Bruce Richardson" <bruce.richardson@intel.com>,
- "Vladimir Medvedkin" <vladimir.medvedkin@intel.com>
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,28 +58,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1iZXIu
-b3JnXQ0KPiBTZW50OiBUaHVyc2RheSwgMjAgQXVndXN0IDIwMjYgMTguMjMNCj4gDQo+IE9uIFRo
-dSwgMjAgQXVnIDIwMjYgMDg6MjI6MDkgKzAyMDANCj4gTW9ydGVuIEJyw7hydXAgPG1iQHNtYXJ0
-c2hhcmVzeXN0ZW1zLmNvbT4gd3JvdGU6DQo+IA0KPiA+ID4NCj4gPiA+ICBzdGF0aWMgaW5saW5l
-IHZvaWQNCj4gPiA+ICBjb3B5X2J1Zl90b19wa3Qodm9pZCAqYnVmLCB1bnNpZ25lZCBsZW4sIHN0
-cnVjdCBydGVfbWJ1ZiAqcGt0LA0KPiA+ID4gdW5zaWduZWQgb2Zmc2V0KQ0KPiA+ID4gIHsNCj4g
-PiA+ICAJaWYgKG9mZnNldCArIGxlbiA8PSBwa3QtPmRhdGFfbGVuKSB7DQo+ID4gPiAtCQlydGVf
-bWVtY3B5KHJ0ZV9wa3RtYnVmX210b2Rfb2Zmc2V0KHBrdCwgY2hhciAqLCBvZmZzZXQpLA0KPiA+
-ID4gYnVmLA0KPiA+ID4gKwkJbWVtY3B5KHJ0ZV9wa3RtYnVmX210b2Rfb2Zmc2V0KHBrdCwgY2hh
-ciAqLCBvZmZzZXQpLCBidWYsDQo+ID4gPiAgCQkJICAgKHNpemVfdCkgbGVuKTsNCj4gPg0KPiA+
-IEl0IGxvb2tzIGxpa2Ugc2l6ZSBpcyBub3QgY29uc3RhbnQgaW4gdGhlIGFib3ZlIGluc3RhbmNl
-cy4NCj4gPg0KPiA+IFRyeSB3cml0aW5nIGFuIGludGVybWVkaWF0ZSB3cmFwcGVyIHVzaW5nIF9f
-cnRlX2NvbnN0YW50KCkgdG8gdmVyaWZ5DQo+IGF0IGJ1aWxkIHRpbWUuDQo+ID4gU29tZXRoaW5n
-IGxpa2UgKGFzc3VtaW5nIHRoZSByZXR1cm4gdmFsdWUgaXMgdW51c2VkKToNCj4gPg0KPiA+ICNk
-ZWZpbmUgcnRlX21lbWNweV9jb25zdF9zaXplKGRzdCwgc3JjLCBuKSBcDQo+ID4gZG8geyBcDQo+
-ID4gCVJURV9CVUlMRF9CVUdfT04oIV9fcnRlX2NvbnN0YW50KG4pKTsgXA0KPiA+IAltZW1jcHko
-ZHN0LCBzcmMsIG4pOyBcDQo+ID4gfSB3aGlsZSAoMCkNCj4gDQo+IFRoZSBnb2FsIG9mIHRoaXMg
-c2VyaWVzIGlzIHRvIGhpdCBhcyBtYW55IHBsYWNlcyB3aGVyZSBydGVfbWVtY3B5DQo+IGlzIHVu
-bmVjZXNzYXJ5LiBGb3IgdGVzdHMsIHRoaXMgaW5jbHVkZXMgYWxsIHRlc3RzIGV4Y2VwdCB0aG9z
-ZSB0ZXN0cw0KPiBzcGVjaWZpY2FsbHkgdGFyZ2V0aW5nIHRlc3RpbmcgcnRlX21lbWNweS4NCg0K
-T0suIEkgYWdyZWUgd2l0aCB0aGF0Lg0KVGhlbiB0aGUgcGF0Y2ggZGVzY3JpcHRpb24gbmVlZHMg
-YW4gdXBkYXRlOyBpdCBvbmx5IG1lbnRpb25zIGZpeGVkLXNpemUgY29waWVzLg0KQWxzbyB0aGUg
-Y292ZXIgbGV0dGVyIHNob3VsZCBtZW50aW9uIHRoYXQgdGVzdHMgcmVwbGFjZSBhbGwgdXNlcyBv
-ZiBydGVfbWVtY3B5KCksIG5vdCBqdXN0IGZpeGVkLXNpemUgY29waWVzLg0KDQpBY2tlZC1ieTog
-TW9ydGVuIEJyw7hydXAgPG1iQHNtYXJ0c2hhcmVzeXN0ZW1zLmNvbT4NCg0K
+A small amount of refactor in hash engine to prepare for future
+code. Specifically, disentangling the mutable filter list metadata
+from immutable RSS configuration supplied from rte_flow API, and
+getting rid of embedded rte_flow RSS conf struct and replacing it
+with direct values embedded in config struct.
+
+v1 -> v2:
+- Fix patch 1 returning non-NULL pointers to queue/key when lengths
+  of either are 0
+
+Anatoly Burakov (2):
+  net/i40e: do not use flow RSS conf struct
+  net/i40e: move mutable fields out of RSS config
+
+ drivers/net/intel/i40e/i40e_ethdev.h |  18 +++-
+ drivers/net/intel/i40e/i40e_flow.c   |  13 ++-
+ drivers/net/intel/i40e/i40e_hash.c   | 125 +++++++++++++--------------
+ drivers/net/intel/i40e/i40e_hash.h   |   1 -
+ 4 files changed, 83 insertions(+), 74 deletions(-)
+
+-- 
+2.52.0
+
