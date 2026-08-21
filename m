@@ -2,182 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 711C7C5DF85
-	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Aug 2026 16:48:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45F4CC5DF85
+	for <dpdk-dev@archiver.kernel.org>; Thu, 20 Aug 2026 17:42:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5B6AD4060B;
-	Thu, 20 Aug 2026 18:48:22 +0200 (CEST)
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com
- [205.220.165.32])
- by mails.dpdk.org (Postfix) with ESMTP id C93394026D;
- Thu, 20 Aug 2026 18:48:20 +0200 (CEST)
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
- by mx0b-00069f02.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 67KDSehd317162; Thu, 20 Aug 2026 16:48:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
- :content-type:date:from:in-reply-to:message-id:mime-version
- :references:subject:to; s=corp-2025-04-25; bh=OL1FHI91LVaZF8HQmq
- 1q97LDX5HOJ86GF8RjMm3bWV0=; b=LeU6kYbdm/c4rI4kCSc4+1wKAU40XDaaPr
- ouenitilh0KrKCaVYFOR+ZuMJpVbjPKpPMEl4Iv3YIOdBzzcis58YKpp7REGK9/L
- TB++V2PaJr7SHlTdZOsU8V3zGUS7QdbchSGNNEgzhnB6LmZOqhOWQzzlk1oS6PuH
- I0qItJjej4SA9S4xhwLhkXE8x6COueJNBYEWqIVB5GBGNt9fhTWVaBzMXKgRLYtJ
- I3Ysgd8SMMVriwV545GDGNeTfwpNh7KImz6g2DiNJbutrpsUw3PC6pNTgHj1Psog
- 0qRIPXwmzJ8/MJtQQ/H6k6dx8U7kDz1JLxXfORWB75WY+2s0NPNQ==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com
- (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
- by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4g4ydgkp6q-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
- Thu, 20 Aug 2026 16:48:19 +0000 (GMT)
-Received: from pps.filterd
- (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
- by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.7/8.18.1.7)
- with ESMTP id 67KGebYx035025; Thu, 20 Aug 2026 16:48:18 GMT
-Received: from bn1pr04cu002.outbound.protection.outlook.com
- (mail-eastus2azon11010040.outbound.protection.outlook.com [52.101.56.40])
- by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id
- 4g32htek29-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
- Thu, 20 Aug 2026 16:48:18 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vlcHfMmVJDH0ukJhiNxvqIUpavjtVG8lw7/5zmNbnmkKWdIJcFXn6ppfPxFb7ojZoLzqtjKqU7c6hscW7mp732YP49Vm5AYFbPR8XnUAet5LRCAZUuPkd+A0MxjV3cOGWqN3Hnu67sYlBXBw8SoHNRiedubwPlfNJ9d9TjU1oIWTJiSTgaygwza4hDBK2UGhYRi9NUkKQdjiwpMUn/pXgk0N0iA/cUfmqcRSM2ZhIC+dKjih+Ed/3WJKbPSJjZaRa0/fpC1wTyZDBNuNFB5UNcFF8nLi5Giyc7B5PQ5UVkUzwvT/TqdFBxhiRsjaDoD5imZnmDJNXTAObOEnozQUfg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OL1FHI91LVaZF8HQmq1q97LDX5HOJ86GF8RjMm3bWV0=;
- b=vRI6m5Jx+XgWinDUqV2LGHb2be62ykKynuRZeKCyP+o++V2nQTU9KU+MhdcDDXpyBJsgH2QfV2ybkB+/NchTNBCtGjrM5lWL1BCyZHtRziZRE469nXBmqWPnXYTCM6rWh2ePBAHKebSKsfbpfyhAZnBwEQrCGSBkoAusrXlNTka14OBJrBjIjAp5Cl6K0tQ+Pa9yfHLHkOYqIpbT8qbZd5vkftuQTyw26h/LN8EV2kb6RYvjcthhaieZErrqeJUzI9715Tpor0dQG5WQly0xHxGSPbXR7xGoE72loSzxqv7T0tvwgCCTV9wz5KSAuz5cELXa2SBpJO/uWWLuzj82Yw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OL1FHI91LVaZF8HQmq1q97LDX5HOJ86GF8RjMm3bWV0=;
- b=hClFm8poirZGg2oqfq7hDikuKEt+Vnwb7JftfKUR14Y/7vsL2ZzNnMd/zR4tN5uh4Tg9CysQ7zSG4ai+1Ml7Yk3PTYXoSR30sJtJXzPiObrIea3BXq+ZnAIuTyiRblkdUwCChGaZO/hctAJpzmfEauYVFrp/xUHqZtqhGllslFY=
-Received: from CY8PR10MB7219.namprd10.prod.outlook.com (2603:10b6:930:77::8)
- by CY5PR10MB6261.namprd10.prod.outlook.com (2603:10b6:930:43::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.339.8; Thu, 20 Aug
- 2026 16:48:08 +0000
-Received: from CY8PR10MB7219.namprd10.prod.outlook.com
- ([fe80::89b7:32d6:3ede:185e]) by CY8PR10MB7219.namprd10.prod.outlook.com
- ([fe80::89b7:32d6:3ede:185e%6]) with mapi id 15.21.0339.007; Thu, 20 Aug 2026
- 16:48:08 +0000
-From: Banoth Saikumar <banoth.saikumar@oracle.com>
-To: Dariusz Sosnowski <dsosnowski@nvidia.com>
-CC: "viacheslavo@nvidia.com" <viacheslavo@nvidia.com>, "bingz@nvidia.com"
- <bingz@nvidia.com>, "dev@dpdk.org" <dev@dpdk.org>, "stable@dpdk.org"
- <stable@dpdk.org>, Banoth Saikumar <banoth.saikumar@oracle.com>
-Subject: Re: [External] : Re: [PATCH v2] net/mlx5: fallback to verbs for Tx
- memory allocation if devx unsupported
-Thread-Topic: [External] : Re: [PATCH v2] net/mlx5: fallback to verbs for Tx
- memory allocation if devx unsupported
-Thread-Index: AQHdCHqMx9spdv6vXE+cWihqlOrYpLZrYNiAgDwVLpQ=
-Date: Thu, 20 Aug 2026 16:48:08 +0000
-Message-ID: <CY8PR10MB721959A164FE57489EC14C6788A42@CY8PR10MB7219.namprd10.prod.outlook.com>
-References: <'20260323113403.1984-1-banoth.saikumar@oracle.com'>
- <20260630102311.1050-1-banoth.saikumar@oracle.com>
- <alpmogwsv3466g33by7pyw4quhbbu27l3ieqgiexjvqj2ebux7@xuevtradpj73>
-In-Reply-To: <alpmogwsv3466g33by7pyw4quhbbu27l3ieqgiexjvqj2ebux7@xuevtradpj73>
-Accept-Language: en-IN, en-US
-Content-Language: en-IN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_94b7886c-3e74-443c-a58e-890de065ec46_Enabled=True;
- MSIP_Label_94b7886c-3e74-443c-a58e-890de065ec46_SiteId=4e2c6054-71cb-48f1-bd6c-3a9705aca71b;
- MSIP_Label_94b7886c-3e74-443c-a58e-890de065ec46_SetDate=2026-08-20T16:48:07.155Z;
- MSIP_Label_94b7886c-3e74-443c-a58e-890de065ec46_Name=Including
- External
- Recipients; MSIP_Label_94b7886c-3e74-443c-a58e-890de065ec46_ContentBits=1;
- MSIP_Label_94b7886c-3e74-443c-a58e-890de065ec46_Method=Standard; 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CY8PR10MB7219:EE_|CY5PR10MB6261:EE_
-x-ms-office365-filtering-correlation-id: 3effdfe8-c25e-4f30-c9cd-08defedad013
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|23010399003|376014|366016|1800799024|38070700021|6133799003|10067099003|4143699003|56012099006|22082099003|18002099003|8096899003;
-x-microsoft-antispam-message-info: XwQnELyxb1K8XOUlK/bAB4nOxXM8Uf3P8z5MnSEkYxSTSIANI9N2Mx/OnkG/cfwLGhXAfezzlO/lujsj9T5d3UZiA7Mr9+fu9fLovzL4All7f3QbZy4vwLSDwmMO/XxXu3laBz3mMb/eEGnxyKk/5IRGf3jDOK0KnCC4UPRHDc5HS15rn9B5snZaOuulLehaEtQjTqoHwNRPusjj3+BgsZw3NWgXHS5nP3PEMNyqtoZ/Uu0yGrIpMufzAS9JyNLG3bqsdD6/uc9cFG8+zlvDQJ5tSf/b2N0ACdJMkFYHO/6k7743gG0Qi1B58a8IwVUXe9PjvIXs0RZk8vC0Yp0MjQSlkEuySw29Dg387hNDP7QFmg9wLCz+USK5A3q9rB+iZHCMPJ2dtWi+e42NlEgh8B56Mki338YrPQOVlwTVaMtHYMCY+oce/OnWOe5ZJdQQFZce0ReqNgS6PTdLx8IiuG1D31MDd3TyQJzKv4iyejqZJrevEJjNoK2zAhAC+2j/y4nsDuvBgTYyVOz3zbGqaEx8ipapYcQ69XM158xY7SSYmijQlbuu4q9z6LtKV2X6tJUA2+5+F79cl84A1bJ3wCByouMzvO5kIbr9VxNVDp75tgv2oJ2ukJBNATisKVWyqJk1SCTY51VFgNyI7viot0n37S+PRsY/yCjBx6PamrlQQW67jUoodUUQrP42OakFDqnNfuJV4iD7yC4gxThY2+fHk/9LJp4Y2jtNW5acSpc=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:CY8PR10MB7219.namprd10.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(23010399003)(376014)(366016)(1800799024)(38070700021)(6133799003)(10067099003)(4143699003)(56012099006)(22082099003)(18002099003)(8096899003);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?Q+SqKU/C8vuV0F4ImBbFHH5ghYNDeQIGFgb8Ds7sGDsWOpcSr2vBRilDLfsj?=
- =?us-ascii?Q?ZyWoHiXbr46VSF64sUV87Q2gxi7uMF9MDfX8nsr8fJGZJA7q5JTzjQu1Z1qH?=
- =?us-ascii?Q?iagqv3uqQd853pUrDMK/EEkhBICfzuvgZ8tjrudig1XPO2EO7sv2bKPCiPZ5?=
- =?us-ascii?Q?igJRCoDsBQE23qk3LTX8RPvLdndzJidlgdgN5cU5xP2OzPaJClU/e8kOfvwT?=
- =?us-ascii?Q?eP7337+HCU4xQcVKeu7ulgxgIOL15VUtYw5K1kdCivjyRnwpEaBt3APVo82O?=
- =?us-ascii?Q?mDixtzH/WZAwasdaf+MqgGLKfctZfsx7Ahxqfpn58xPWMlK3L2yIdKBU3Ov3?=
- =?us-ascii?Q?6BbEPW927v68rcKr+KYhSvJeq/+QfSf4JHLDCWI6nv/UxzU0Dkn56liZcxCj?=
- =?us-ascii?Q?X+G917BvpIvEiP3EFVZdzOr/9g9F/KcX4UylATzqgvHvNksugIKlCDaoN31Y?=
- =?us-ascii?Q?F+jWTjaTXZTW8NuEETxzBciGysXmchQ5IX0OpspB+PSh6Ksu68u9Yi81gVju?=
- =?us-ascii?Q?ULAVLiZkmBXrjTmHApRCSHrhNjQy7Uvh65TPyv1SHobqY95+KPQQUe1qLUF0?=
- =?us-ascii?Q?j3kw65pcBS49Y51y0Gzylwd9VYCS2h22dKuPj/HCsmQuNGJaEaa/0tz2C9ru?=
- =?us-ascii?Q?zMV+wLhAJ5OX/5B3C7UfQQ+Dqm4eK7OXNrobtcjy7gYNoy3rxq2QcsTPJCJg?=
- =?us-ascii?Q?4pLLxAeKocj8E9ADWrJTXOaXauwSk9zMiczpccpSJ0ACr1hNcInYuy9xcYuP?=
- =?us-ascii?Q?PAovTY2ullCFI6tmPntRKh5AAkg3P/gXvEeuPpUG9StVLHJpYAlxEQu05Qwx?=
- =?us-ascii?Q?2kBGl8U9BtThHOhFsTEoJDlVPcwLX9vPTlB33f3V0gHEAj5qAVWeu6tr4D+z?=
- =?us-ascii?Q?qdNnsHsGmWFB5se+JgUu6FKyqtPUVOqIWmCvVWe1RWNXevCST5vJLZF6ii+9?=
- =?us-ascii?Q?Hxkt+EKBc5juJtqjDouG54YZVMRZrh5jYC7mgelXgEQEraTcrlzTJwvoftJ+?=
- =?us-ascii?Q?aam9iBGqkcWd9fIaTOiahlZSRfPRxEAcswBIJaU9WBLCJ9KQLaqNW5bm7bLe?=
- =?us-ascii?Q?rZJMy1qmI395mwQ6f/gJcFnw+XhKdgquAQUCEBeHNG9ouRf1P0DJto3WvAuW?=
- =?us-ascii?Q?wQFu2mPbbihbEsJpWkrUUAKY/3QK5L0LWdG33/Uqtk48kEY1JC1zzyZC9we0?=
- =?us-ascii?Q?YdgjaYJYJYshXuSYnlaT+LFhl09oBHWLdwIAYLhswmb2Mu2zl9IY/DpjTbCz?=
- =?us-ascii?Q?psWUbse1ftqAAPmWamLSpy4kMbOQMU3Jwz1pgVigRTvwJQFRaRkw8txU/bp3?=
- =?us-ascii?Q?NOvWIBmCoEL2KtKP20+dbO5+GVRXujJMDwN5ijHKJkU5g8HgxHcaBklODO1k?=
- =?us-ascii?Q?284rNhHtZxW4HCwSdZ9MwJ3FWzWz5ET8fzRpWLDNTCGh78wkrpRh9H+xBMfp?=
- =?us-ascii?Q?hn9hGSEtfkqJgEB6whxj7qj3s6Vj9Up1/9T+FV498hF2CeoI3PbXb3X+ACaM?=
- =?us-ascii?Q?j3GorHaoWznRKW+62WyCH8plzgVmomc7MtbKZqvhA2IMqFVzowyMPetbZ0tn?=
- =?us-ascii?Q?bKaF9ImEDyJeswILOp2vl4dm2mGr30VRYww9c++o6dqv51t/sxNT+VdqQ538?=
- =?us-ascii?Q?fSZWQeZ4QQdaezQKIxVF87RKrSMyxssZ6WWdJBbIiP4EZMq/cYIJLhiYGDw9?=
- =?us-ascii?Q?2+v9inaIS3z/tEdIv06bR4n7YGtMg4GFcoKS4Qem1B04BjRawTNfER2/h14B?=
- =?us-ascii?Q?IP9lEX8pGQ=3D=3D?=
-Content-Type: multipart/alternative;
- boundary="_000_CY8PR10MB721959A164FE57489EC14C6788A42CY8PR10MB7219namp_"
+	by mails.dpdk.org (Postfix) with ESMTP id 2776740279;
+	Thu, 20 Aug 2026 19:42:41 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 6E90B4026D;
+ Thu, 20 Aug 2026 19:42:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1787247760; x=1818783760;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=kcE2pbxkqsms8iLST5IZMAS0ZwTaP0dh7DCrKTz17rI=;
+ b=D8Q1GvTuIs836xUbWqYxp0FjxVPK0SVJpQWWENBbIw8KzbwaRe7SMyEs
+ MgypnBUEedxQ2W42Oqq6theSq+/waEVDbLsN3wBXHa7acZcpzz2YZqT10
+ 4589wgIlCqhnoA9wVK+NHMh2LOORUdwZ42y0lzqOJKJITpvY9JHn0yPul
+ poRPFmu/51nCaYCtC94J4qAbaU5SsClD1CM4sGAJfzARnF1/BCuZas7V4
+ IBNA/lrrU31C3i7DWfAgPn/PV58M8q3wzsGaTLgrmivgiylA4OQsVc/Bi
+ FiuvgEkD4ZpbWLZ7AnU1RrS2RiXOS+EreyYoQ9tADH/1Do9LooPSNBP0F w==;
+X-CSE-ConnectionGUID: G+HRmWR3QkarY7tI+zwU9w==
+X-CSE-MsgGUID: 56zHe9RJS1GW30QXdOIFwQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11881"; a="87813172"
+X-IronPort-AV: E=Sophos;i="6.25,233,1779174000"; d="scan'208";a="87813172"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+ by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 20 Aug 2026 10:42:38 -0700
+X-CSE-ConnectionGUID: 12aEYcmDRH2W0IGBwHInHQ==
+X-CSE-MsgGUID: 41GEGHNKQniYq2JXCWgPXQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,233,1779174000"; d="scan'208";a="266713454"
+Received: from unknown (HELO localhost.localdomain.iind.intel.com)
+ ([10.49.105.104])
+ by orviesa009.jf.intel.com with ESMTP; 20 Aug 2026 10:42:36 -0700
+From: sandeep.penigalapati@intel.com
+To: dev@dpdk.org
+Cc: stable@dpdk.org, stephen@networkplumber.org, ciara.loftus@intel.com,
+ Sandeep Penigalapati <sandeep.penigalapati@intel.com>
+Subject: [PATCH v5] net/af_xdp: fix shared UMEM refcount corruption
+Date: Thu, 20 Aug 2026 20:44:35 -0400
+Message-Id: <20260821004435.216833-1-sandeep.penigalapati@intel.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20260820230521.199048-1-sandeep.penigalapati@intel.com>
+References: <20260820230521.199048-1-sandeep.penigalapati@intel.com>
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: N904Xj+D4MOjLjRKMhfLA5rvDv5fo6QyyHQJKCNrwQsb3d7gVsZUrxgDMrkhM9SAZZcCsgCQ8tLLV/sPcXGTja+Ad2r1AFj8tDHesPVGVLpO+xieyZpry0qdxMFXVrUt7/2UAM2SMRNmzkmzGzC0eKfW7q2kTzVo4r6UelMSysMNJPz3DslsZvW6TKWRZ8BGAnf5dvqLwm8UeieccYv+mTIAjAJy7w+Vz9uVH3vgpBhOIBqzqcxA7O2xJOOKGjP7uDfkdMXo42U/NDX/VOtYd4IqQ/ZHRi7+Jx+Sd+F4RDBM3UmbEB1cUWcp5FWcv7GtFoM/yftzAjXIjFeVYBfrdg==
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: dw3+B1n0Zk2ms35goqn8v0lYfQ6tUgpb2UxU13/XC5k/zTq0pAkxtratYNujl5GDgwrYdfho/U5iKA/7HUtt3GmSU2GGfdKC8NaqoQFlV6w9nEum0sL37mdiYLPc1cBukXWQ/oYLRyzexXyMIoDhulYhObq32oy5az4rwXk4N+YHtolCOu0bBcgFfLROj+Pfx3a/7eViZh2HuzjAasjGR4EAhPMD9/rgINxvlHpOUslyf2eE6rPpG/B+nKLiMt7mNv/GRpbTAN9OxrSIRyZCT04NY2zMp9eupnMR7noBpeBLsZnEFKjQlgc74kz5lsFQVkINz8Z50+6iIKazGiD6H9oD49DpbfSwGgJgK8CVvIwmda2KsxK6lpASTxi74w1hTa5+ROkubhE5ESV97qhiTJEK08X9vDVQP/agnm41ko6tGT89+vKXebGeoQwViE32gTJNWJn7vfFu2e66cyUH7cYQMZc1fheyCmMSG/VhoFUL9+Jn3Hvo/vicP5f5thNn4Un92aZErfhqtFIKCWJI3g0FOTpjqwBTxFVzdFf5MTK2/g9uB2gQbikX22NLQFWS7ad4wmHqFOGvjbb/hJ5A9UYnXwZGCEyGWh6e2zyZpv0=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR10MB7219.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3effdfe8-c25e-4f30-c9cd-08defedad013
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2026 16:48:08.0287 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: etobu6PP3MoCZnLlOjKxsXkf5ZnBmEeDPwNd5HOHPJH2R/ht/wz1KbaIYguriRNOjtbncHLEwOQNjS3qz7w4H/1dFhZNofq8eM7fP4HvpbM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR10MB6261
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-20_01,2026-08-20_01,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0
- malwarescore=0 adultscore=0 mlxlogscore=999 lowpriorityscore=0 mlxscore=0
- suspectscore=0 phishscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2606160000 definitions=main-2608200126
-X-Proofpoint-ORIG-GUID: 1TFtciLuQZR8bW5kSBi4gyZ2etBrsV9k
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODIwMDEyNyBTYWx0ZWRfX5rU9VcYSmIdX
- oYPO+nA+uyOZzWb+8gHFR1VoVP0ivNu3x2PqwYYbePnVmjGMgQ/p3Yu8SVTkL/slFQIjQ98huZQ
- THhWjqiaHnr/gsQ76pBAQPmHh/xu+x0iDHIdMQMziKU/Krin0lR3ETfxmuNMjZrzhpOUh/WENiv
- YUTEa4zJ3m7URsitfmzKQtI9SauZQqwnrmYBa16AKKQy19ReXfWTAPgNYGQ0+UmZp+TxL0fr7Oo
- 2CP6Cny4xiF9UGePctG7p2YX0i9LPMOFg7jwoSF3IxZwbuij6sfvuf1hRogB4zVtH4YKQ0cedKm
- 36B6hWPtSzAzeJqaWIPEyGwjv8hId8eMMnKGe7XEU+2PNmywyo1jyHcGD+waYGm9+JSfLsbSF8f
- UMmFxw+8VJOhuXbgtp+FpuL5wm8HKIM0ZTzeTExi/1AInzPqRHP/cHKljFEctbdCIQamDGNv40s
- VsaM8FYniQb16jKQBzrZfqH1mMpQ7f1AvMR/61Dw=
-X-Proofpoint-GUID: 1TFtciLuQZR8bW5kSBi4gyZ2etBrsV9k
-X-Authority-Analysis: v=2.4 cv=ZIDnX37b c=1 sm=1 tr=0 ts=6a872fd3 b=1 cx=c_pps
- a=qoll8+KPOyaMroiJ2sR5sw==:117
- a=qoll8+KPOyaMroiJ2sR5sw==:17
- a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=xqWC_Br6kY4A:10 a=Sv0fKeRqtYgA:10 a=GoEa3M9JfhUA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=jiCTI4zE5U7BLdzWsZGv:22 a=EIcjfB9IiI4px24ztqRk:22
- a=Ikd4Dj_1AAAA:8 a=yPCof4ZbAAAA:8 a=8rWy6zfcAAAA:8 a=y8ldvKm-MKo9SYDbi5AA:9
- a=CjuIK1q_8ugA:10 a=BA8cjTSUzlSicA1H:21 a=frz4AuCg-hUA:10 a=_W_S_7VecoQA:10
- a=YjdVzJdQTyZRADMV7wFX:22 a=5yU3S35YU4bGjq-dph-N:22 a=Bho9c0fBagfJEIQBS7DQ:22
- cc=ntf awl=host:12102
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODIwMDEyNyBTYWx0ZWRfX9R7J1Yynw0PD
- 4n4mwrNraE789vVdj18xneQ0nCFJSzdMX/jAiOhOfCkkGTUaa2lJEXfiPB0gLlZaGF55zAs+/ux
- 8erTiD+gLbxpC8LliWdSq9jTY0WBEJDZWCqCskV49EL9rBc1S2gY
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -191,216 +61,276 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_CY8PR10MB721959A164FE57489EC14C6788A42CY8PR10MB7219namp_
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+From: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
 
-Oracle Confidential
+Shared UMEM is meant to be shared by a limited number of sockets,
+governed by the mempool size (max_xsks). When the UMEM was already at
+capacity (refcnt >= max_xsks), xdp_umem_configure() returned the UMEM
+without incrementing its refcount, so the extra socket used it
+unaccounted for.
 
-Hi Dariusz,
+This missing reference has two consequences. During queue setup the
+fill-queue reservation is chosen from the refcount, so the sharing
+socket reserves into its own uninitialised fill queue and crashes. At
+close, the under-counted refcount reaches zero while the UMEM is still
+in use, freeing it early and causing a use-after-free.
 
-I noticed that this patch was later reverted by:
+Reject sharing once the UMEM is at capacity by returning NULL. The
+error is propagated from xsk_configure(), so Rx queue setup fails
+cleanly with -ENOMEM. This applies the per-mempool socket limit that
+shared UMEM was always intended to respect.
 
-> net/mlx5: revert fallback to Verbs Tx allocation
+Harden the failure path this makes reachable:
+- clear rxq->umem and its paired txq->umem when xsk_configure() fails,
+  and skip queues whose UMEM is not yet set in get_shared_umem(), so a
+  later scan over the same mempool cannot dereference a NULL or
+  dangling UMEM;
+- free the fill-queue mbufs that were allocated but not yet handed to
+  the fill queue when a sharing socket fails to bind, so it no longer
+  leaks a burst of mbufs back out of the shared mempool;
+- propagate the map-insert failures in xsk_configure() instead of
+  returning success, so a failed xsks_map update no longer leaves the
+  caller using a deleted socket;
+- continue past, rather than stop at, a failed queue in eth_dev_close()
+  so later successful queues and their UMEM references are still freed;
+- clamp max_xsks to UINT8_MAX so the cap stays within the uint8_t
+  refcount.
 
-The revert mentions that on Windows, DevX CQ creation was failing due to
-a different allocation fallback behavior.
+Also correct the UMEM refcount memory ordering: relaxed on the shared
+increment and acquire-release on the final decrement, so the thread that
+drops the last reference observes all prior users' writes before it
+frees the UMEM.
 
-Could you please clarify what specific behavior needs to be addressed
-for Windows?
+Document the shared mempool sizing requirement (4096 mbufs per socket).
 
-Should the original fallback be reworked to handle the Windows case,
-or should the fallback be avoided entirely when running on Windows?
+Note: on stable branches this is a behaviour change. Shared-UMEM setups
+that previously appeared to start, until the fill-queue crash or the
+use-after-free at close, now fail cleanly at Rx queue setup with
+-ENOMEM.
 
-I would like to understand the expected behavior so I can work on a
-correct fix.
+Fixes: 74b46340e2d4 ("net/af_xdp: support shared UMEM")
+Cc: stable@dpdk.org
 
-Thanks,
-Banoth Saikumar
+Signed-off-by: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
+---
+v5:
+- Use acq_rel on the final refcount decrement instead of a release
+  decrement plus a standalone acquire fence.
+- doc: one sentence per line.
+- Drop the redundant fq_bufs ownership comment.
 
-Oracle Confidential
-________________________________
-From: Dariusz Sosnowski <dsosnowski@nvidia.com>
-Sent: 13 July 2026 16:45
-To: Banoth Saikumar <banoth.saikumar@oracle.com>
-Cc: viacheslavo@nvidia.com <viacheslavo@nvidia.com>; bingz@nvidia.com <bing=
-z@nvidia.com>; dev@dpdk.org <dev@dpdk.org>; stable@dpdk.org <stable@dpdk.or=
-g>
-Subject: [External] : Re: [PATCH v2] net/mlx5: fallback to verbs for Tx mem=
-ory allocation if devx unsupported
+v4:
+- Free fill-queue mbufs on the failure path.
+- Propagate map-insert failures and the -ENOMEM from xsk_configure() to
+  the caller instead of a blanket -EINVAL / silent success.
+- eth_dev_close(): continue past failed queues instead of break.
+- Correct refcount memory ordering (relaxed increment, release
+  decrement, acquire fence before destroy).
+- Clamp max_xsks to UINT8_MAX so the cap fits the uint8_t refcount.
+- Clear txq->umem on the early return; clearer log when the mempool is
+  too small (max_xsks == 0).
 
-On Tue, Jun 30, 2026 at 03:53:11PM +0530, banoth.saikumar@oracle.com wrote:
-> From: Banoth Saikumar <banoth.saikumar@oracle.com>
->
-> Previously, the mlx5 PMD attempted to allocate consecutive Tx memory
-> using DevX without checking whether the NIC actually supported DevX.
-> This led to allocation failures on legacy or unsupported NICs.
->
-> This patch adds a fallback mechanism: if DevX is not available, the PMD
-> skips DevX-based allocation and allows the verbs path to handle memory
-> allocation and registration. This improves compatibility with older
-> NICs and ensures Tx queue setup proceeds correctly.
->
-> Fixes: bbfab2eb2528 ("net/mlx5: allocate and release unique
-> resources for Tx queues")
-> Cc: stable@dpdk.org
->
-> Signed-off-by: Banoth Saikumar <banoth.saikumar@oracle.com>
+v3:
+- Move the NULL umem check after ctx_exists() so a failed queue is still
+  checked for a duplicate context, as before.
+- Shorten the "at capacity" log to one line and drop the count.
+- Also clear txq->umem, not just rxq->umem, when setup fails.
+- Clarify "AF_XDP socket" in the doc.
 
-Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+v2:
+- Guard get_shared_umem() against a NULL umem and clear rxq->umem on the
+  xsk_configure() error path.
+- doc: "Rx queue setup fails", one sentence per line.
+- Drop unrelated reflow of the refcount increment.
+ doc/guides/nics/af_xdp.rst          |  4 ++
+ drivers/net/af_xdp/rte_eth_af_xdp.c | 59 +++++++++++++++++++++++------
+ 2 files changed, 51 insertions(+), 12 deletions(-)
 
---_000_CY8PR10MB721959A164FE57489EC14C6788A42CY8PR10MB7219namp_
-Content-Type: text/html; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+diff --git a/doc/guides/nics/af_xdp.rst b/doc/guides/nics/af_xdp.rst
+index c455b4c066..1fff910795 100644
+--- a/doc/guides/nics/af_xdp.rst
++++ b/doc/guides/nics/af_xdp.rst
+@@ -99,6 +99,10 @@ configured like so:
+     --vdev net_af_xdp0,iface=ens786f1,shared_umem=1 \
+     --vdev net_af_xdp1,iface=ens786f2,shared_umem=1
+ 
++The shared mempool must be large enough for every AF_XDP socket sharing the UMEM.
++Each socket needs 4096 mbufs, so ``N`` sockets need at least ``4096 * N`` mbufs.
++Rx queue setup fails if the mempool is too small to add another socket to the UMEM.
++
+ xdp_prog
+ ~~~~~~~~
+ 
+diff --git a/drivers/net/af_xdp/rte_eth_af_xdp.c b/drivers/net/af_xdp/rte_eth_af_xdp.c
+index 2cdb533276..16d9a62a7c 100644
+--- a/drivers/net/af_xdp/rte_eth_af_xdp.c
++++ b/drivers/net/af_xdp/rte_eth_af_xdp.c
+@@ -1062,12 +1062,13 @@ eth_dev_close(struct rte_eth_dev *dev)
+ 
+ 	for (i = 0; i < internals->queue_cnt; i++) {
+ 		rxq = &internals->rx_queues[i];
++		/* Skip queues whose setup failed (umem left NULL). */
+ 		if (rxq->umem == NULL)
+-			break;
++			continue;
+ 		xsk_socket__delete(rxq->xsk);
+ 
+ 		if (rte_atomic_fetch_sub_explicit(&rxq->umem->refcnt, 1,
+-				rte_memory_order_acquire) - 1 == 0)
++				rte_memory_order_acq_rel) - 1 == 0)
+ 			xdp_umem_destroy(rxq->umem);
+ 	}
+ 	/* Free Tx and Rx queue arrays */
+@@ -1154,6 +1155,9 @@ get_shared_umem(struct pkt_rx_queue *rxq, const char *ifname,
+ 					ret = -1;
+ 					goto out;
+ 				}
++				/* A failed setup leaves mb_pool set with no umem. */
++				if (list_rxq->umem == NULL)
++					continue;
+ 				if (rte_atomic_load_explicit(&internals->rx_queues[i].umem->refcnt,
+ 						    rte_memory_order_acquire)) {
+ 					*umem = internals->rx_queues[i].umem;
+@@ -1188,12 +1192,24 @@ xsk_umem_info *xdp_umem_configure(struct pmd_internals *internals,
+ 		if (get_shared_umem(rxq, internals->if_name, &umem) < 0)
+ 			return NULL;
+ 
+-		if (umem != NULL &&
+-			rte_atomic_load_explicit(&umem->refcnt, rte_memory_order_acquire) <
+-					umem->max_xsks) {
++		if (umem != NULL) {
++			/* Reject sharing once the UMEM is at capacity. */
++			if (rte_atomic_load_explicit(&umem->refcnt,
++					rte_memory_order_acquire) >= umem->max_xsks) {
++				if (umem->max_xsks == 0)
++					AF_XDP_LOG_LINE(ERR, "%s,qid%i: mempool %s too small to share UMEM",
++							internals->if_name, rxq->xsk_queue_idx,
++							umem->mb_pool->name);
++				else
++					AF_XDP_LOG_LINE(ERR, "%s,qid%i: UMEM %s already at max %u sockets",
++							internals->if_name, rxq->xsk_queue_idx,
++							umem->mb_pool->name, umem->max_xsks);
++				return NULL;
++			}
++
+ 			AF_XDP_LOG_LINE(INFO, "%s,qid%i sharing UMEM",
+ 					internals->if_name, rxq->xsk_queue_idx);
+-			rte_atomic_fetch_add_explicit(&umem->refcnt, 1, rte_memory_order_acquire);
++			rte_atomic_fetch_add_explicit(&umem->refcnt, 1, rte_memory_order_relaxed);
+ 		}
+ 	}
+ 
+@@ -1239,8 +1255,10 @@ xsk_umem_info *xdp_umem_configure(struct pmd_internals *internals,
+ 		umem->buffer = aligned_addr;
+ 
+ 		if (internals->shared_umem) {
+-			umem->max_xsks = mb_pool->populated_size /
+-						ETH_AF_XDP_NUM_BUFFERS;
++			/* refcnt is uint8_t, so the cap cannot exceed UINT8_MAX. */
++			umem->max_xsks = RTE_MIN(mb_pool->populated_size /
++						ETH_AF_XDP_NUM_BUFFERS,
++						(uint32_t)UINT8_MAX);
+ 			AF_XDP_LOG_LINE(INFO, "Max xsks for UMEM %s: %u",
+ 						mb_pool->name, umem->max_xsks);
+ 		}
+@@ -1684,10 +1702,13 @@ xsk_configure(struct pmd_internals *internals, struct pkt_rx_queue *rxq,
+ 	int reserve_size = ETH_AF_XDP_DFLT_NUM_DESCS;
+ 	struct rte_mbuf *fq_bufs[reserve_size];
+ 	bool reserve_before;
++	bool free_fq_bufs = false;
+ 
+ 	rxq->umem = xdp_umem_configure(internals, rxq);
+-	if (rxq->umem == NULL)
++	if (rxq->umem == NULL) {
++		txq->umem = NULL;
+ 		return -ENOMEM;
++	}
+ 	txq->umem = rxq->umem;
+ 	reserve_before = rte_atomic_load_explicit(&rxq->umem->refcnt,
+ 			rte_memory_order_acquire) <= 1;
+@@ -1698,11 +1719,13 @@ xsk_configure(struct pmd_internals *internals, struct pkt_rx_queue *rxq,
+ 		AF_XDP_LOG_LINE(DEBUG, "Failed to get enough buffers for fq.");
+ 		goto out_umem;
+ 	}
++	free_fq_bufs = true;
+ #endif
+ 
+ 	/* reserve fill queue of queues not (yet) sharing UMEM */
+ 	if (reserve_before) {
+ 		ret = reserve_fill_queue(rxq->umem, reserve_size, fq_bufs, &rxq->fq);
++		free_fq_bufs = false;
+ 		if (ret) {
+ 			AF_XDP_LOG_LINE(ERR, "Failed to reserve fill queue.");
+ 			goto out_umem;
+@@ -1759,6 +1782,7 @@ xsk_configure(struct pmd_internals *internals, struct pkt_rx_queue *rxq,
+ 	if (!reserve_before) {
+ 		/* reserve fill queue of queues sharing UMEM */
+ 		ret = reserve_fill_queue(rxq->umem, reserve_size, fq_bufs, &rxq->fq);
++		free_fq_bufs = false;
+ 		if (ret) {
+ 			AF_XDP_LOG_LINE(ERR, "Failed to reserve fill queue.");
+ 			goto out_xsk;
+@@ -1774,6 +1798,7 @@ xsk_configure(struct pmd_internals *internals, struct pkt_rx_queue *rxq,
+ 					  &rxq->xsk_queue_idx, &fd, 0);
+ 		if (err) {
+ 			AF_XDP_LOG_LINE(ERR, "Failed to insert xsk in map.");
++			ret = -EINVAL;
+ 			goto out_xsk;
+ 		}
+ 	}
+@@ -1786,6 +1811,7 @@ xsk_configure(struct pmd_internals *internals, struct pkt_rx_queue *rxq,
+ 			map_fd = uds_get_xskmap_fd(internals->if_name, internals->dp_path);
+ 			if (map_fd < 0) {
+ 				AF_XDP_LOG_LINE(ERR, "Failed to receive xskmap fd from AF_XDP Device Plugin");
++				ret = -EINVAL;
+ 				goto out_xsk;
+ 			}
+ 		} else {
+@@ -1793,6 +1819,7 @@ xsk_configure(struct pmd_internals *internals, struct pkt_rx_queue *rxq,
+ 			err = get_pinned_map(internals->dp_path, &map_fd);
+ 			if (err < 0 || map_fd < 0) {
+ 				AF_XDP_LOG_LINE(ERR, "Failed to retrieve pinned map fd");
++				ret = -EINVAL;
+ 				goto out_xsk;
+ 			}
+ 		}
+@@ -1800,6 +1827,7 @@ xsk_configure(struct pmd_internals *internals, struct pkt_rx_queue *rxq,
+ 		err = update_xskmap(rxq->xsk, map_fd, rxq->xsk_queue_idx);
+ 		if (err) {
+ 			AF_XDP_LOG_LINE(ERR, "Failed to insert xsk in map.");
++			ret = -EINVAL;
+ 			goto out_xsk;
+ 		}
+ 
+@@ -1816,8 +1844,15 @@ xsk_configure(struct pmd_internals *internals, struct pkt_rx_queue *rxq,
+ out_xsk:
+ 	xsk_socket__delete(rxq->xsk);
+ out_umem:
+-	if (rte_atomic_fetch_sub_explicit(&rxq->umem->refcnt, 1, rte_memory_order_acquire) - 1 == 0)
++	/* Free fq_bufs that were allocated but never handed to the fill queue. */
++	if (free_fq_bufs)
++		rte_pktmbuf_free_bulk(fq_bufs, reserve_size);
++	if (rte_atomic_fetch_sub_explicit(&rxq->umem->refcnt, 1,
++			rte_memory_order_acq_rel) - 1 == 0)
+ 		xdp_umem_destroy(rxq->umem);
++	/* Drop dangling pointers so a later shared-UMEM scan skips this queue. */
++	rxq->umem = NULL;
++	txq->umem = NULL;
+ 
+ 	return ret;
+ }
+@@ -1858,9 +1893,9 @@ eth_rx_queue_setup(struct rte_eth_dev *dev,
+ 
+ 	rxq->mb_pool = mb_pool;
+ 
+-	if (xsk_configure(internals, rxq, nb_rx_desc)) {
++	ret = xsk_configure(internals, rxq, nb_rx_desc);
++	if (ret) {
+ 		AF_XDP_LOG_LINE(ERR, "Failed to configure xdp socket");
+-		ret = -EINVAL;
+ 		goto err;
+ 	}
+ 
+-- 
+2.27.0
 
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
->
-<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
-ttom:0;} </style>
-</head>
-<body dir=3D"ltr">
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-<div>
-<div style=3D"font-family: Calibri; text-align: left; color: rgb(0, 0, 0); =
-margin-left: 5pt; font-size: 10pt;">
-Oracle Confidential</div>
-<br>
-</div>
-Hi Dariusz,</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-I noticed that this patch was later reverted by:</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-&gt; net/mlx5: revert fallback to Verbs Tx allocation</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-The revert mentions that on Windows, DevX CQ creation was failing due to</d=
-iv>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-a different allocation fallback behavior.</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-Could you please clarify what specific behavior needs to be addressed</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-for Windows?</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-Should the original fallback be reworked to handle the Windows case,</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-or should the fallback be avoided entirely when running on Windows?</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-I would like to understand the expected behavior so I can work on a</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-correct fix.</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 12pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-Thanks,</div>
-<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
-nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 12pt; c=
-olor: rgb(0, 0, 0);">
-Banoth Saikumar</div>
-<div><br>
-<div style=3D"font-family: Calibri; text-align: left; color: rgb(0, 0, 0); =
-margin-left: 5pt; font-size: 10pt;">
-Oracle Confidential</div>
-</div>
-<div id=3D"appendonsend"></div>
-<hr style=3D"display:inline-block;width:98%" tabindex=3D"-1">
-<div id=3D"divRplyFwdMsg" dir=3D"ltr"><font face=3D"Calibri, sans-serif" st=
-yle=3D"font-size:11pt" color=3D"#000000"><b>From:</b> Dariusz Sosnowski &lt=
-;dsosnowski@nvidia.com&gt;<br>
-<b>Sent:</b> 13 July 2026 16:45<br>
-<b>To:</b> Banoth Saikumar &lt;banoth.saikumar@oracle.com&gt;<br>
-<b>Cc:</b> viacheslavo@nvidia.com &lt;viacheslavo@nvidia.com&gt;; bingz@nvi=
-dia.com &lt;bingz@nvidia.com&gt;; dev@dpdk.org &lt;dev@dpdk.org&gt;; stable=
-@dpdk.org &lt;stable@dpdk.org&gt;<br>
-<b>Subject:</b> [External] : Re: [PATCH v2] net/mlx5: fallback to verbs for=
- Tx memory allocation if devx unsupported</font>
-<div>&nbsp;</div>
-</div>
-<div class=3D"BodyFragment"><font size=3D"2"><span style=3D"font-size:11pt;=
-">
-<div class=3D"PlainText">On Tue, Jun 30, 2026 at 03:53:11PM +0530, banoth.s=
-aikumar@oracle.com wrote:<br>
-&gt; From: Banoth Saikumar &lt;banoth.saikumar@oracle.com&gt;<br>
-&gt; <br>
-&gt; Previously, the mlx5 PMD attempted to allocate consecutive Tx memory<b=
-r>
-&gt; using DevX without checking whether the NIC actually supported DevX.<b=
-r>
-&gt; This led to allocation failures on legacy or unsupported NICs.<br>
-&gt; <br>
-&gt; This patch adds a fallback mechanism: if DevX is not available, the PM=
-D<br>
-&gt; skips DevX-based allocation and allows the verbs path to handle memory=
-<br>
-&gt; allocation and registration. This improves compatibility with older<br=
->
-&gt; NICs and ensures Tx queue setup proceeds correctly.<br>
-&gt; <br>
-&gt; Fixes: bbfab2eb2528 (&quot;net/mlx5: allocate and release unique<br>
-&gt; resources for Tx queues&quot;)<br>
-&gt; Cc: stable@dpdk.org<br>
-&gt; <br>
-&gt; Signed-off-by: Banoth Saikumar &lt;banoth.saikumar@oracle.com&gt;<br>
-<br>
-Acked-by: Dariusz Sosnowski &lt;dsosnowski@nvidia.com&gt;<br>
-</div>
-</span></font></div>
-</body>
-</html>
-
---_000_CY8PR10MB721959A164FE57489EC14C6788A42CY8PR10MB7219namp_--
