@@ -2,75 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBC94C5DF8C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Aug 2026 19:28:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD23BC5DF8C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Aug 2026 19:28:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 347AD406B7;
-	Fri, 21 Aug 2026 21:28:07 +0200 (CEST)
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com
- [209.85.210.175])
- by mails.dpdk.org (Postfix) with ESMTP id 4284A40658
- for <dev@dpdk.org>; Fri, 21 Aug 2026 21:28:06 +0200 (CEST)
-Received: by mail-pf1-f175.google.com with SMTP id
- d2e1a72fcca58-8486672f03cso1384470b3a.0
- for <dev@dpdk.org>; Fri, 21 Aug 2026 12:28:06 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 210AC4069D;
+	Fri, 21 Aug 2026 21:28:14 +0200 (CEST)
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com
+ [209.85.210.176])
+ by mails.dpdk.org (Postfix) with ESMTP id C0A3540658
+ for <dev@dpdk.org>; Fri, 21 Aug 2026 21:28:12 +0200 (CEST)
+Received: by mail-pf1-f176.google.com with SMTP id
+ d2e1a72fcca58-8486ac3f347so2146224b3a.1
+ for <dev@dpdk.org>; Fri, 21 Aug 2026 12:28:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787340485;
- x=1787945285; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787340492;
+ x=1787945292; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=1D2Q4Xy9wt0oZIIwSCUH1aC/zT+San5Lzeq8obj1t6w=;
- b=qh4TAxbAwMAoJdVWSlNe4os7OavN8lvV7CIPL8uKpCq/r67j0Ed0OVo8GSSKZeUmxl
- XMpXVL3kDRefqwD6fSCYUQdq+VzWmEU4/QuWrqpR3xoJ5AkD0RJxyLOSlt2paQy6FRgK
- sM56Y2KTynQgl9Pp1qT0mAgVSmxVtKwKPStyjGZrv1cnYhtOOR9tkx87h+JjstQVhl0p
- tT7dcZGp0DxOXB2bDjx5j9QmS4SH3MeqVBjKn+jc55tUk6hv7I8pqLQxg+2fU3Thwj5q
- HhQMXqV3P4+bCVcBtKhGOEvSunFeMlWGrGSVnL8HWBdSb++mYGzWHm43geNNBUsirlwM
- OpGw==
+ bh=W8uNKxjMy37OwOjMCzOtx+bkGJTNDUmJoPP2zDTWvPs=;
+ b=G/eUA55EOfVjjtxPIkOHd1cKNvkTUn3Z5q/y6W3gqBWfNGPyQLJtvpV/nPCfxznxnM
+ 9fE+p/b/O/NZLvfJmD/xcbNCko82Kdm7mV1SioRWH8OUhWciUGMmDxJWfOM4GDvAczZc
+ lC3sAcBf1BvB3xJtOAC4gHw/YGmmLV57FSvtTxBYwX/RNIqTbpocRXjV1n3sbt5xamew
+ jCMta1YJQuAh3sUnpdy3ovWZIA7ovhZ/H/xhmVJmgiiVqWN1SmJs0fRLLR0ylio3Dcq3
+ ko1fNPdLY8ttbpW4n2xivDzSUbLWTC/QZyj2nZ3F+55eLWMxRlnl+nfMHPNrhyd4xF1H
+ uWAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787340485; x=1787945285;
+ d=1e100.net; s=20251104; t=1787340492; x=1787945292;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=1D2Q4Xy9wt0oZIIwSCUH1aC/zT+San5Lzeq8obj1t6w=;
- b=cNH8+jeiQ7QdPLTLJl7aXpQtssAOF7hvk5vWMAOJJM8lVs6KeTu6rNK/TbU2vokw94
- xHFI2kJH9lykg88xavh4zT3BQ/KujH386fNcbyzmk24YJf3drz9yfQeYzce30irbZ+lq
- i7f1ODHovJzakrGwk7310TQJp1ZoBUxImLMuR19qjCcWYBXyncUwtRyGPsyAxZ5nq/O0
- YM24Z6are5rPnoURyNdVFju4T+LAfGcFoPDyXGai85wcDo0kzZC5IjjaX57crhp+4Ir/
- dmdQNhDVcLi0GDDycqkEFvtnMJEiJJ+1q52TM1BPK5WNVUwM/effumW9pp+Xl5OjgpKU
- IfMw==
-X-Gm-Message-State: AFuF++nbH2bOxTJfDq7issMnxicZEDmvhz40J4nr5n7BXerviSUAiMY9
- w03yci10N4mi6I1P+wlP8cJDYTZRKtw4ZOGDB8Q/pV7SQAZ4ft5GkolQOqZg6FCvzalQpk4G3UI
- 9O+Po
-X-Gm-Gg: AR+sD13HZ6219zp4Ev48Je1n5pb0pseoFgbk3pRl2NTYqx7jRCmSaqrCHibonB2uSSl
- o0ECTDo5lddQ6fVMicTL3H8bw+2cU9sXzLqt1kaVCQwzSZDsyCYRrcIJDARfSnjcc2eoCnXysMw
- P2FNlSk7qvcvf2o5vdaJFE8k4aQrVGsOS6Gu6SQ70aLH9ktfTYgbSUX1BY03uoIl7Jbw3xzSqEp
- CklRYc011D803Y8694w8b+bZVAbcHeAFlNtd5Kj8yWkWzPI92BKLbyta+HjdABGOgEryyyODDzK
- DYonN+mU3jlHtWig7WEPIkSQMCRbi56sauaAQfAdjNqN2wH/viHvtSjccqJEkKgQ+u47Pvy+BEz
- 55983sRyG+t73IFUO2+OLikl5plWhxYCJTHeahDUwdgvuTpmL1Eytnx5W0IW9Wsrg8LYPXs0NVn
- rb3bAF2KH59dJTVJCoBcNahwp/MYSpGcGFTOEz9smuPrcONKPnqX4cB5I30crctyhI5GYmWDNYf
- ceE04NTOD3zfRIKBIOnd/Rffms=
-X-Received: by 2002:a05:6a21:7113:b0:3cc:9620:5816 with SMTP id
- adf61e73a8af0-3cd4ba674e3mr1926712637.8.1787340485365; 
- Fri, 21 Aug 2026 12:28:05 -0700 (PDT)
+ bh=W8uNKxjMy37OwOjMCzOtx+bkGJTNDUmJoPP2zDTWvPs=;
+ b=eDmCaYT9/J5t6H+5oqvOP88odU79fY3TNI9Kw8AWBEbHiT88s8B1ZITrLuboFg8FJO
+ 0zQFaYjW4chwRiS6tD/knM/tNQhEIjfgKX5ASaZX1t1hDsAuaLXbp/mV9Sa6t2Cxw1/z
+ I1MrLrmC1aSpQT2E5/w9VlEaksYANlyd/Z9fhA7M2Q+SxkhopxiNiXYpVZDGMzHXroEL
+ VHJyfupMkEoWpL6kTvfpEjIhiQik6u0Oq6b07Ez2/K7hRPUreAKee9k35VoHBGa/ueJF
+ QBhhCwVGaKAqcd0DAYLHioHTEHyqxcFXlgaBH3EgoHZTZXycgJWNdter8HP51yC7w8B4
+ LhoA==
+X-Gm-Message-State: AFuF++nORAdBcLMsiOAZZRfn+iXQdDK+VsfYjsZ4lUtsniCdhrJnoQj/
+ Kx5b3s/hRX/BLYdUTKDb8UiMLJxnKOZxw3ye9PT3wVFi8A6HF1X0NqL9bIy7V7XnPUWR0b1Cwmo
+ UYjNi
+X-Gm-Gg: AR+sD1386Zl6gHjB/YNPbJ1n3rITEue0XlI2Dh/oH9RegdB71i8aqkLwH8ZtaeFpJAz
+ 1xcd2GGGvqXnZax8JsV0eYrgXZ5/1k1ePWghINzYx+gnTnfWyuSd1ksMGtVe6t8K3cIMM2iHcrj
+ pbD+2vyh9WDDySkxFJgkGbNQbavGebd0n1HDCr8q2ibfS6ElfklOjDIPn0zcPhzkFKd3Yg8HhGG
+ uBTxhKMYAMAga1JrG2xUG8NnThr5hGPPV88+jTSxuJRf7QAE++1uUDANziOlIb4hvl5geMd+1+H
+ LiXd53OVg6E72v/L06ubt1YbaVmzMLSzI5fz+Fe3NOJlbrbpXT2wxsJT/xgX+8ho9rabJD8KnCd
+ z01Q1Z9IT1pj7gOk27g/mE9lj1zM3NQ+u+aas8rxDQ+J1Mcn7pWjCGoUYSiOuwRR5tdzB74HpzV
+ DGUyBXHOIDK0IE86t6OLOcvQeRAu+g6+0b5evONeUTuzVH91USAKlvcZk9erozF/fNb5queKa1s
+ +pnU+xqVv6L7XHxVTvSzqQVbks=
+X-Received: by 2002:a05:6a21:58d:b0:3cc:9294:5b2e with SMTP id
+ adf61e73a8af0-3cd31281fb6mr9403363637.0.1787340491908; 
+ Fri, 21 Aug 2026 12:28:11 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-cc16c6dd2f4sm1860304a12.17.2026.08.21.12.27.59
+ 41be03b00d2f7-cc16c6dd2f4sm1860304a12.17.2026.08.21.12.28.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 21 Aug 2026 12:28:05 -0700 (PDT)
+ Fri, 21 Aug 2026 12:28:11 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Sunil Kumar Kori <skori@marvell.com>,
+ Rakesh Kudurumalla <rkudurumalla@marvell.com>,
  Nicolas Chautru <nicolas.chautru@intel.com>,
- Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
- Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>,
- Gagandeep Singh <g.singh@nxp.com>, Hemant Agrawal <hemant.agrawal@nxp.com>,
- Srikanth Yalavarthi <syalavarthi@marvell.com>
-Subject: [PATCH v2 05/68] drivers: add missing include of rte_memcpy.h
-Date: Fri, 21 Aug 2026 12:24:00 -0700
-Message-ID: <20260821192646.146382-6-stephen@networkplumber.org>
+ Cheng Jiang <honest.jiang@foxmail.com>,
+ Chengwen Feng <fengchengwen@huawei.com>,
+ Srikanth Yalavarthi <syalavarthi@marvell.com>,
+ Fan Zhang <fanzhang.oss@gmail.com>, Ashish Gupta <ashishg@marvell.com>,
+ Akhil Goyal <gakhil@marvell.com>,
+ Abhinandan Gujjar <abhinandan.gujjar@intel.com>
+Subject: [PATCH v2 06/68] app: add missing include of rte_memcpy.h
+Date: Fri, 21 Aug 2026 12:24:01 -0700
+Message-ID: <20260821192646.146382-7-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260821192646.146382-1-stephen@networkplumber.org>
 References: <20260820052251.1453273-1-stephen@networkplumber.org>
@@ -97,125 +99,138 @@ rte_memcpy.h do not break the build.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/baseband/turbo_sw/bbdev_turbo_software.c | 1 +
- drivers/common/mlx5/mlx5_common_mr.c             | 1 +
- drivers/dma/dpaa2/dpaa2_qdma.c                   | 1 +
- drivers/ml/cnxk/cn10k_ml_dev.c                   | 1 +
- drivers/ml/cnxk/cn10k_ml_model.c                 | 1 +
- drivers/ml/cnxk/cn10k_ml_ops.c                   | 1 +
- drivers/ml/cnxk/cnxk_ml_io.c                     | 1 +
- drivers/ml/cnxk/tvmrt_ml_ops.c                   | 1 +
- drivers/regex/mlx5/mlx5_rxp.c                    | 1 +
- 9 files changed, 9 insertions(+)
+ app/graph/ip4_output_hook.c                    | 1 +
+ app/test-bbdev/test_bbdev_perf.c               | 1 +
+ app/test-compress-perf/comp_perf_test_common.c | 1 +
+ app/test-compress-perf/comp_perf_test_verify.c | 1 +
+ app/test-dma-perf/benchmark.c                  | 1 +
+ app/test-mldev/test_common.c                   | 1 +
+ app/test-mldev/test_inference_common.c         | 1 +
+ app/test/test_compressdev.c                    | 1 +
+ app/test/test_cryptodev_crosscheck.c           | 1 +
+ app/test/test_event_crypto_adapter.c           | 1 +
+ 10 files changed, 10 insertions(+)
 
-diff --git a/drivers/baseband/turbo_sw/bbdev_turbo_software.c b/drivers/baseband/turbo_sw/bbdev_turbo_software.c
-index 2cab495294..cb4aaea6d2 100644
---- a/drivers/baseband/turbo_sw/bbdev_turbo_software.c
-+++ b/drivers/baseband/turbo_sw/bbdev_turbo_software.c
-@@ -8,6 +8,7 @@
- #include <rte_common.h>
- #include <bus_vdev_driver.h>
- #include <rte_malloc.h>
+diff --git a/app/graph/ip4_output_hook.c b/app/graph/ip4_output_hook.c
+index 8757f294cb..16e81d39d9 100644
+--- a/app/graph/ip4_output_hook.c
++++ b/app/graph/ip4_output_hook.c
+@@ -5,6 +5,7 @@
+ #include <rte_graph.h>
+ #include <rte_graph_worker.h>
+ #include <rte_graph_feature_arc_worker.h>
 +#include <rte_memcpy.h>
- #include <rte_ring.h>
- #include <rte_kvargs.h>
+ 
+ #include "rte_node_ip4_api.h"
+ 
+diff --git a/app/test-bbdev/test_bbdev_perf.c b/app/test-bbdev/test_bbdev_perf.c
+index 9fb0a25948..d6f49549eb 100644
+--- a/app/test-bbdev/test_bbdev_perf.c
++++ b/app/test-bbdev/test_bbdev_perf.c
+@@ -15,6 +15,7 @@
  #include <rte_cycles.h>
-diff --git a/drivers/common/mlx5/mlx5_common_mr.c b/drivers/common/mlx5/mlx5_common_mr.c
-index aa2d5e88a4..929b47dcc8 100644
---- a/drivers/common/mlx5/mlx5_common_mr.c
-+++ b/drivers/common/mlx5/mlx5_common_mr.c
-@@ -8,6 +8,7 @@
- #include <rte_eal_memconfig.h>
- #include <rte_eal_paging.h>
- #include <rte_errno.h>
-+#include <rte_memcpy.h>
- #include <rte_mempool.h>
+ #include <rte_lcore.h>
  #include <rte_malloc.h>
- #include <rte_rwlock.h>
-diff --git a/drivers/dma/dpaa2/dpaa2_qdma.c b/drivers/dma/dpaa2/dpaa2_qdma.c
-index f7d94bb799..84281844b3 100644
---- a/drivers/dma/dpaa2/dpaa2_qdma.c
-+++ b/drivers/dma/dpaa2/dpaa2_qdma.c
++#include <rte_memcpy.h>
+ #include <rte_random.h>
+ #include <rte_hexdump.h>
+ #include <rte_interrupts.h>
+diff --git a/app/test-compress-perf/comp_perf_test_common.c b/app/test-compress-perf/comp_perf_test_common.c
+index 78487196ad..0841e27cce 100644
+--- a/app/test-compress-perf/comp_perf_test_common.c
++++ b/app/test-compress-perf/comp_perf_test_common.c
+@@ -6,6 +6,7 @@
+ #include <rte_eal.h>
+ #include <rte_log.h>
+ #include <rte_compressdev.h>
++#include <rte_memcpy.h>
+ 
+ #include "comp_perf.h"
+ #include "comp_perf_options.h"
+diff --git a/app/test-compress-perf/comp_perf_test_verify.c b/app/test-compress-perf/comp_perf_test_verify.c
+index 66425d7e3c..12a5f8b764 100644
+--- a/app/test-compress-perf/comp_perf_test_verify.c
++++ b/app/test-compress-perf/comp_perf_test_verify.c
+@@ -8,6 +8,7 @@
+ #include <rte_eal.h>
+ #include <rte_log.h>
+ #include <rte_compressdev.h>
++#include <rte_memcpy.h>
+ 
+ #include "comp_perf_test_verify.h"
+ #include "comp_perf_test_common.h"
+diff --git a/app/test-dma-perf/benchmark.c b/app/test-dma-perf/benchmark.c
+index c0ffc859bd..f415f73cb2 100644
+--- a/app/test-dma-perf/benchmark.c
++++ b/app/test-dma-perf/benchmark.c
+@@ -7,6 +7,7 @@
+ #include <stdlib.h>
+ #include <unistd.h>
+ 
++#include <rte_memcpy.h>
+ #include <rte_time.h>
+ #include <rte_mbuf.h>
+ #include <rte_dmadev.h>
+diff --git a/app/test-mldev/test_common.c b/app/test-mldev/test_common.c
+index 90e591f205..3c095d3abf 100644
+--- a/app/test-mldev/test_common.c
++++ b/app/test-mldev/test_common.c
+@@ -6,6 +6,7 @@
+ 
+ #include <rte_common.h>
+ #include <rte_malloc.h>
++#include <rte_memcpy.h>
+ #include <rte_memory.h>
+ #include <rte_mldev.h>
+ 
+diff --git a/app/test-mldev/test_inference_common.c b/app/test-mldev/test_inference_common.c
+index 3b77f37010..e21d1311b3 100644
+--- a/app/test-mldev/test_inference_common.c
++++ b/app/test-mldev/test_inference_common.c
+@@ -13,6 +13,7 @@
+ #include <rte_launch.h>
+ #include <rte_lcore.h>
+ #include <rte_malloc.h>
++#include <rte_memcpy.h>
+ #include <rte_memzone.h>
+ #include <rte_mldev.h>
+ 
+diff --git a/app/test/test_compressdev.c b/app/test/test_compressdev.c
+index 293d1d757f..73e2d4bbbe 100644
+--- a/app/test/test_compressdev.c
++++ b/app/test/test_compressdev.c
 @@ -10,6 +10,7 @@
  
- #include <mc/fsl_dpdmai.h>
- 
-+#include <rte_memcpy.h>
- #include <rte_pmd_dpaax_qdma.h>
- #include "dpaa2_hw_dpio.h"
- #include "dpaa2_qdma.h"
-diff --git a/drivers/ml/cnxk/cn10k_ml_dev.c b/drivers/ml/cnxk/cn10k_ml_dev.c
-index c35895dc14..5880770630 100644
---- a/drivers/ml/cnxk/cn10k_ml_dev.c
-+++ b/drivers/ml/cnxk/cn10k_ml_dev.c
-@@ -6,6 +6,7 @@
- #include <rte_dev.h>
- #include <rte_devargs.h>
- #include <rte_kvargs.h>
-+#include <rte_memcpy.h>
- #include <rte_mldev.h>
- #include <rte_mldev_pmd.h>
- #include <rte_pci.h>
-diff --git a/drivers/ml/cnxk/cn10k_ml_model.c b/drivers/ml/cnxk/cn10k_ml_model.c
-index fa978529f5..58eebbf076 100644
---- a/drivers/ml/cnxk/cn10k_ml_model.c
-+++ b/drivers/ml/cnxk/cn10k_ml_model.c
-@@ -3,6 +3,7 @@
-  */
- 
- #include <rte_hash_crc.h>
-+#include <rte_memcpy.h>
- 
- #include <mldev_utils.h>
- 
-diff --git a/drivers/ml/cnxk/cn10k_ml_ops.c b/drivers/ml/cnxk/cn10k_ml_ops.c
-index 597806b787..ffe3356720 100644
---- a/drivers/ml/cnxk/cn10k_ml_ops.c
-+++ b/drivers/ml/cnxk/cn10k_ml_ops.c
-@@ -2,6 +2,7 @@
-  * Copyright (c) 2022 Marvell.
-  */
- 
-+#include <rte_memcpy.h>
- #include <rte_mldev.h>
- #include <rte_mldev_pmd.h>
- 
-diff --git a/drivers/ml/cnxk/cnxk_ml_io.c b/drivers/ml/cnxk/cnxk_ml_io.c
-index a418b7e684..33d95e5574 100644
---- a/drivers/ml/cnxk/cnxk_ml_io.c
-+++ b/drivers/ml/cnxk/cnxk_ml_io.c
-@@ -2,6 +2,7 @@
-  * Copyright (c) 2023 Marvell.
-  */
- 
-+#include <rte_memcpy.h>
- #include <rte_mldev.h>
- 
- #include <mldev_utils.h>
-diff --git a/drivers/ml/cnxk/tvmrt_ml_ops.c b/drivers/ml/cnxk/tvmrt_ml_ops.c
-index f6b3a51c51..01493077bb 100644
---- a/drivers/ml/cnxk/tvmrt_ml_ops.c
-+++ b/drivers/ml/cnxk/tvmrt_ml_ops.c
-@@ -16,6 +16,7 @@
- 
- #include <rte_common.h>
  #include <rte_cycles.h>
-+#include <rte_memcpy.h>
- #include <rte_mldev.h>
- #include <rte_mldev_pmd.h>
- 
-diff --git a/drivers/regex/mlx5/mlx5_rxp.c b/drivers/regex/mlx5/mlx5_rxp.c
-index b865c08b53..42aa82d62a 100644
---- a/drivers/regex/mlx5/mlx5_rxp.c
-+++ b/drivers/regex/mlx5/mlx5_rxp.c
-@@ -5,6 +5,7 @@
- #include <rte_log.h>
- #include <rte_errno.h>
  #include <rte_malloc.h>
 +#include <rte_memcpy.h>
- #include <rte_regexdev.h>
- #include <rte_regexdev_core.h>
- #include <rte_regexdev_driver.h>
+ #include <rte_mempool.h>
+ #include <rte_mbuf.h>
+ #include <rte_compressdev.h>
+diff --git a/app/test/test_cryptodev_crosscheck.c b/app/test/test_cryptodev_crosscheck.c
+index bb21c3bc50..84e05b8359 100644
+--- a/app/test/test_cryptodev_crosscheck.c
++++ b/app/test/test_cryptodev_crosscheck.c
+@@ -3,6 +3,7 @@
+  */
+ #include <rte_cryptodev.h>
+ #include <rte_malloc.h>
++#include <rte_memcpy.h>
+ 
+ #include "test.h"
+ #include "test_cryptodev.h"
+diff --git a/app/test/test_event_crypto_adapter.c b/app/test/test_event_crypto_adapter.c
+index cac1584f40..d1674a5ba1 100644
+--- a/app/test/test_event_crypto_adapter.c
++++ b/app/test/test_event_crypto_adapter.c
+@@ -7,6 +7,7 @@
+ #include <string.h>
+ #include <rte_common.h>
+ #include <rte_malloc.h>
++#include <rte_memcpy.h>
+ #include <rte_mempool.h>
+ #include <rte_mbuf.h>
+ #include <rte_cryptodev.h>
 -- 
 2.53.0
 
