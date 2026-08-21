@@ -2,69 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84B01C5DF7D
-	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Aug 2026 19:32:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40723C5DF8C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Aug 2026 19:32:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CA66B40EE1;
-	Fri, 21 Aug 2026 21:31:08 +0200 (CEST)
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com
- [209.85.210.176])
- by mails.dpdk.org (Postfix) with ESMTP id 3688340678
- for <dev@dpdk.org>; Fri, 21 Aug 2026 21:31:04 +0200 (CEST)
-Received: by mail-pf1-f176.google.com with SMTP id
- d2e1a72fcca58-848643382fcso1302514b3a.1
- for <dev@dpdk.org>; Fri, 21 Aug 2026 12:31:04 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id C899F40ED0;
+	Fri, 21 Aug 2026 21:31:09 +0200 (CEST)
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com
+ [209.85.215.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 9AF804067B
+ for <dev@dpdk.org>; Fri, 21 Aug 2026 21:31:07 +0200 (CEST)
+Received: by mail-pg1-f173.google.com with SMTP id
+ 41be03b00d2f7-cb5b8572b70so1760981a12.2
+ for <dev@dpdk.org>; Fri, 21 Aug 2026 12:31:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787340663;
- x=1787945463; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787340667;
+ x=1787945467; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=4eJUm0hlE5+G9Uj0m9Y4ZJRN3aqrSCJwDQdpYkNj0iY=;
- b=KDegHOWMvdj8lYtedWbvrJsJl++5iizHTAA73MDXuAnRoHGMcf2rKsQJnzYT6kWoOg
- SdcZ48zdsL8uT0NgAOgwPajDU/COTcYJnKBPa8wkRBmLYM2TG1ryevezpJmP2XGL46WV
- vpBZri1wxXh51mwZPb6ImnADG93Hrj7SS29B6vCD2F1dIjhaWah/Pb/NHp+5bqRqWdK0
- dib/cDZfL6orh5oTcVLU2tUR3svHZle4yTW9QP9K2k5PDcV9mRAXYI8qPbHUXGtuTz/h
- zf7+sG666DMmuQR28Dtzu9tfPdIcd6HXLPobIDAW6Gjt1qQc0P39edTiJIi+x51EeWnz
- KwZA==
+ bh=xc8mWfG14T8pk+ZRbvLkA+2dS/EZ3ZPSInLsvJxFjl0=;
+ b=sdun/EOfrKhJCM3a/Pf4mvvyOvXppcl3ttSNUeHULvKn0jhEoPl9LHhkSkyryPCSBN
+ jIFnBuMHuh5tqx68owVCmoeT/1dCaoUIv2YFOe9+qiAPtRW/oz24ke+zZJ24bbNbFmlr
+ Ft1hqDUr8qhn/boaw7JRBo99Q4bRm4GuQHrItLbDEB64tk2yRzKUXh02OJ4RAWQ6zrz5
+ SKSnXVudKNXaIZL3GLihvdCQXla+QXUHefVFihlF2oN3zU6lgddO77VBUiOuoKg+H8iR
+ datU+NeYL4mp0pTCzO1jOzrHLtmn75zkEJZUcIjg9LXMkIXQ+knVwCOcMm3Nwf8xSgY5
+ vfbw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787340663; x=1787945463;
+ d=1e100.net; s=20251104; t=1787340667; x=1787945467;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=4eJUm0hlE5+G9Uj0m9Y4ZJRN3aqrSCJwDQdpYkNj0iY=;
- b=fUjYYrAU9OGG4piIQ8Fi00ZF6Ig/PzXxMZv5seUmYu74VglljRc3eDRWwmmBxe8H2u
- iGkHq4ufpc21jqmjLK0hS8puP4ERLu9T2Z1+sAS+j2+eZMzLpaiHFoUJPfdPyImwitYQ
- YYjTMtMt9JGpTx/eGoKdcCvrNbfiGQ048lwvhPEFIVnwI3oD8tJdZXKSywi4Nemd9bzm
- b/zTSy4qaSVoObu9+OlJqV1uuW2Ke7ki2j/0IJo3tS4sSeHuo7YP3G1SLkzzIjHle15r
- J2gR9fo/E7GtKdMw6GrPB7S5Y6m9GTiSqLYiN3s7u9myGg724EejPNorTJPxOSxKC5hn
- hyxw==
-X-Gm-Message-State: AFuF++kNxtN7kwLyj+qb4xcyHaXBNIwC0XvP2eZv9pNaXpOV5MNE15f9
- 5RQTjQugZ6adpNDBWjYblTSYxaCQ8Ivf4hYLoYK5mSgD8j3govupEbULWKVKtvrV4RKNfA3bl6T
- 4Qpwibys=
-X-Gm-Gg: AR+sD11+rBjNQDAlZ7SmWXpM3YGEnqmMlk+BUsXqChjD3GUjwI2/KTTSgzhmPVg4U5h
- a8daddMU7XbdZ5ewPSLAXMjZw02foTKwIi0RCpns23yfs+oKagEFB/xgeZZhAaJ1saRXecuKAI2
- kvVkH1/7xZSjP0X7nhjVLYC8sBZkTrk+duiHhK4fsD6A85lRfFcSF7XxWedd4Q3NiF9fM/k3lDi
- PH2qPLmDEA28ZceC2twecb1yJ4wGQ9uOBHs3LpsbYAObkWjTUlAHXfAJWjUdjllL0aLYYRDbBIs
- G61X9X2nLQlEyKOwbIRDy1eGeflR3kopDvfg+xb5bUEHH/c9fruvL0Ry7iiAUYZBbtmFaDqgRSa
- +gmOKUFiMWDmE8FrWPr2G+QmO6MSf+QFYToKU7xBLjX1TScX6PxoUfx0bugWuTwgI9lcSBKnyno
- b5SMaC23xbgXfK+odluj4lE4aiagHtEL9a4v1IvMhIvXyuCnowVuRUhyVmz4WCR6a27EVnI0oSH
- eiFs4klG7j310luhiT0ZlVePMk=
-X-Received: by 2002:a05:6a20:6f04:b0:3c4:1916:9d3c with SMTP id
- adf61e73a8af0-3cd301428ebmr18228851637.15.1787340663452; 
- Fri, 21 Aug 2026 12:31:03 -0700 (PDT)
+ bh=xc8mWfG14T8pk+ZRbvLkA+2dS/EZ3ZPSInLsvJxFjl0=;
+ b=boGvZjHjkrcXAxGjbmPyQYNL0X2OJBZ/VKRsR0rh3bh5tcMO2/7tiaumhT/GzCjyO8
+ BzpCNphmYX1ca4TuVInUvp/Q911z24DO6a6+4uyHD/3DXP9tCejnkxZM7ivVIzxmiqVE
+ 7naCpjX+JVQSX8K5XpTnZ8pgG6lw+sPFLwpLMqfnJKj5NjRxBUXkfnEOQSus029NqjLI
+ LygmJuafqiOQPUcKnv4Toz3vIXZ1Gi/uThWJlcIYgEdHWj3t66TSAjum7gG6VPTaISdH
+ iBjPY4aTPuUV3G750PetI5XuskoL9HcHtneYsw4BWmSPSnAh8oV7XJ6SzWE74lJCRFZh
+ 5pUQ==
+X-Gm-Message-State: AFuF++mpoTVCMllnmjFMViHZC/6vELIKaTNzth4wc4pdISuy9sxfNhmL
+ J0a0H7lU3QP6Yah3y4OPCF5G/VHZ0jygLX6sgnOMst3EwGjYTe5+SfKUEG2K+bPY2ovsxq3hpN5
+ jeAoQi74=
+X-Gm-Gg: AR+sD13kxuiyX/y0s447nkZkSZZKYAfRwmD50W4ZiRMS1q1rgN0v6C8RvlbpwPMZF2i
+ Sqd+BgwvicZsLB6ZJMfN5WoJJLKl4IUWScuGLfCV4UliT9LhTt4UGduCU5OpV+dAYZLthe3oMMw
+ BSxUPau48ycN5pptsqWA+ubkYBxG6r4oMTBb2A8fTFK16ePNSJ2Cn1d8TNZ6lEbVKvHgvdYqI2n
+ LRQVqZJp3UMXA6vpQKm7db76FzIuaxyMUe5VQ67QpvDlYN4NEOGT5OpBjSFbrM+Fw0fqCOh6s1M
+ ljRF3ybD6HC7Nwj7oPgQ6TKL0XyZW0TNRVghjPo6suRnuU6HMGdJrNbfHToHAEoRiT48ZjIgzrb
+ uNFp4ksTr99AWQAzh4ddUgJ6UJ12CJP3PAmzspEYvmEVsWYeUE3cNvxH8FHYVMaei/GuLSvHWyR
+ vrVChomwqPkQzbom31ckZ6GIL0l8FrstpYFglTFmVLeqV+jZN5SxSSKpKfhM+D+NCKPXkBGM6DI
+ LTq9/jOUvJNVdsH1XdUhsFLpmGhD8mgsjKkbvY=
+X-Received: by 2002:a05:6a21:600c:b0:3b4:61f:1fec with SMTP id
+ adf61e73a8af0-3cd2fd8e339mr18251912637.2.1787340666816; 
+ Fri, 21 Aug 2026 12:31:06 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-cc16c6dd2f4sm1860304a12.17.2026.08.21.12.31.00
+ 41be03b00d2f7-cc16c6dd2f4sm1860304a12.17.2026.08.21.12.31.04
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 21 Aug 2026 12:31:03 -0700 (PDT)
+ Fri, 21 Aug 2026 12:31:06 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Jakub Grajciar <jgrajcia@cisco.com>
-Subject: [PATCH v2 53/68] net/memif: use memcpy for fixed size data
-Date: Fri, 21 Aug 2026 12:24:48 -0700
-Message-ID: <20260821192646.146382-54-stephen@networkplumber.org>
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH v2 54/68] net/ice: use memcpy for fixed size data
+Date: Fri, 21 Aug 2026 12:24:49 -0700
+Message-ID: <20260821192646.146382-55-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260821192646.146382-1-stephen@networkplumber.org>
 References: <20260820052251.1453273-1-stephen@networkplumber.org>
@@ -89,31 +90,24 @@ better analysis coverage.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/memif/memif_socket.c | 4 ++--
+ drivers/net/intel/ice/ice_fdir_filter.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/memif/memif_socket.c b/drivers/net/memif/memif_socket.c
-index 649f8d0e61..f5a3354c46 100644
---- a/drivers/net/memif/memif_socket.c
-+++ b/drivers/net/memif/memif_socket.c
-@@ -48,7 +48,7 @@ memif_msg_send(int fd, memif_msg_t *msg, int afd)
- 		cmsg->cmsg_len = CMSG_LEN(sizeof(int));
- 		cmsg->cmsg_level = SOL_SOCKET;
- 		cmsg->cmsg_type = SCM_RIGHTS;
--		rte_memcpy(CMSG_DATA(cmsg), &afd, sizeof(int));
-+		memcpy(CMSG_DATA(cmsg), &afd, sizeof(int));
- 	}
+diff --git a/drivers/net/intel/ice/ice_fdir_filter.c b/drivers/net/intel/ice/ice_fdir_filter.c
+index d7ddd32f90..6d6fa04e72 100644
+--- a/drivers/net/intel/ice/ice_fdir_filter.c
++++ b/drivers/net/intel/ice/ice_fdir_filter.c
+@@ -2873,8 +2873,8 @@ ice_fdir_parse_action(struct ice_adapter *ad,
+ 			const struct rte_flow_action_count *act_count = act->conf;
  
- 	return sendmsg(fd, &mh, 0);
-@@ -675,7 +675,7 @@ memif_msg_receive(struct memif_control_channel *cc)
- 			if (cmsg->cmsg_type == SCM_CREDENTIALS)
- 				cr = (struct ucred *)CMSG_DATA(cmsg);
- 			else if (cmsg->cmsg_type == SCM_RIGHTS)
--				rte_memcpy(&afd, CMSG_DATA(cmsg), sizeof(int));
-+				memcpy(&afd, CMSG_DATA(cmsg), sizeof(int));
+ 			filter->input.cnt_ena = ICE_FXD_FLTR_QW0_STAT_ENA_PKTS;
+-			rte_memcpy(&filter->act_count, act_count,
+-						sizeof(filter->act_count));
++			memcpy(&filter->act_count, act_count,
++			       sizeof(filter->act_count));
+ 			break;
  		}
- 		cmsg = CMSG_NXTHDR(&mh, cmsg);
- 	}
+ 		default:
 -- 
 2.53.0
 
