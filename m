@@ -2,76 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FE87C5DF7D
-	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Aug 2026 18:03:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B782FC5DF7D
+	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Aug 2026 18:11:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D362940289;
-	Fri, 21 Aug 2026 20:03:41 +0200 (CEST)
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
- [209.85.214.178])
- by mails.dpdk.org (Postfix) with ESMTP id 2B3814027B
- for <dev@dpdk.org>; Fri, 21 Aug 2026 20:03:40 +0200 (CEST)
-Received: by mail-pl1-f178.google.com with SMTP id
- d9443c01a7336-2cc61541f8cso27046075ad.0
- for <dev@dpdk.org>; Fri, 21 Aug 2026 11:03:39 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9021E40289;
+	Fri, 21 Aug 2026 20:11:03 +0200 (CEST)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com
+ [209.85.214.172])
+ by mails.dpdk.org (Postfix) with ESMTP id BE0794027B
+ for <dev@dpdk.org>; Fri, 21 Aug 2026 20:11:01 +0200 (CEST)
+Received: by mail-pl1-f172.google.com with SMTP id
+ d9443c01a7336-2cf50c6f235so16276325ad.0
+ for <dev@dpdk.org>; Fri, 21 Aug 2026 11:11:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787335419;
- x=1787940219; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787335861;
+ x=1787940661; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=yy8Ayzh6p5zhIscFYgwPYAh56SRPLJYN+9WzHDt8gZ8=;
- b=CtvcjnISnn1n1C+8GqrzZFgMHc+IbMq3X/cyrkxNlYmbswUCy2ocDlmc463Q1QkEFu
- QOhOxKNkVTP5Bm9uoLtxzJAy2fttFLkp8pjNxvxnX0YEn2gANtxE+m6XzEn+7CNalHe4
- OPhiE9ZOh99s3li/mtef2uANFXZbUqQGswshi2EebEWMR4tLyPCDAnu/OgHrLKCVqcAq
- kW//XkT7e9n0+Db3aZazPYjreu/tDQr7glCLDlbGUjVMOtSTP1/+olYS3/DbT6wVW5R6
- uZAfCLmKIEFRUTaIM8hNUCRWnsytFQLYwx6gzjEWYXjkqgV19MwbZtocHBiKI0ui0ktI
- GFXg==
+ bh=H++SEAQkeQjCNBQ3mSJ4gVtwAe61t0tO6DCkgX01Gmo=;
+ b=TZjAuLIoE9uOscM4HPCM5Zdo12es34q6+e8U3X6OTSR+PfOeaFikiXsXgHLVyuTy6u
+ 2RhQ45iPK6iAsw3W5Y3qTHwLqnume+bY4wRxMOeetkUsdSYGAFG4TraYsdFfWnykT8Il
+ eZp4WEFJLrSE0YQWmCKD0JN1g5BhW6h4Pqd5lnaD7JnMx9QurZxtqy4f/uonUnikwttj
+ cj8JP7RhYJ5Izz7uG2Nm+DUa/ct2+NxY0ipbYRd21tJ+Py9ID1kZOfb+zRqs5/+pOV7h
+ QxbXhWOe72kwdDVT/P2x7mZKR86ZQ08XgkgjQcG4nd0DJVhtgwakbIMCeibak6c+V/46
+ xhiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787335419; x=1787940219;
+ d=1e100.net; s=20251104; t=1787335861; x=1787940661;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=yy8Ayzh6p5zhIscFYgwPYAh56SRPLJYN+9WzHDt8gZ8=;
- b=ey5VZC713LNhMhmWJlxhIaNXIkB51oJMC0RVVJDqRH1Eqi8+SzEFjF5UGu6mQAd/vV
- YhaQUekx6wf+dLGzAPxt0IamsMbDzQa4WvV/Tc6WpaI5a6K/bEG7z0EHdIN76hYQxDb4
- RWncmDyxl36I3+QMHcgsKPxISx95TdiajZUJ6F07+VzjKVTrW5eouB3P785qgZ215NN7
- dR+wmqWUbryrIYZWJkU+ZzeVY59s+X6jyCHqM1uglQMMQj7sNbruoHz54tb8kfveYYUd
- TcUYJzxQAOYQ3M2+sgD5vLAFNrNPPr+a1AB3dbA8OENGopd55pXy+/5RdjM2I6EB3vTp
- BXJg==
-X-Gm-Message-State: AFuF++nZIEFq3JOSQ6Qa55aBKySmgB8IrCz3W9Sk/zR08rVD1mBZIKOU
- 9CBKRa04HZwkD9SrwisUW3DCN2UkGPdClm8sb8txmmoSIqlTRUNGZPG7uceeXMfnl8Q=
-X-Gm-Gg: AR+sD12WUCa+dzfxGUAW1JcyBvUuUo8BBykip2U/zxUP8HUgwrAxUORK0CMGpyZRDJD
- 5oaCPhr6xSDQES9FHqSs0WEvWawDofhxQ9hc7KGJ1J2u5glU1ov6B8ejv3r+hNrc7QhR/zfFuvm
- lbgOwT2SlDpuRs1PVTJAOpIpSOdhu2L8XeSnVj9h+M2qO7F+/AyGe9408dtDiZmfMr4CPAd6GPq
- 4TN78o0yu/Ws6xZwsjPAnJ3K2v1hlNx7QjeyQ7DY6bV6TySV6fAmw8I7shJ1i7PqJU5NVHfVxl4
- uqam/asCy6WKSWo2776eSmxddG3oPl1ckRCanCWy223UxI/TPOP9Q68qT5/ie4QKw3/x0AMfjNu
- p/Rzzt6WBmBDybyA4HRoX/a5jFiHhZfCZwkmkGpVZkxWCF3q5OZyv1rXaAKL7Xxbltr798rTJKC
- lVz8D8iDi4GGf91U4cVF5VddB/O68DpgFLA1TbfBkjKyLXViipkEESvjfd2YnxtZR2kkEKV0zKV
- hX2tWRjrFiLUrrOUnJ41WRlH8TQQA==
-X-Received: by 2002:a17:90b:3e8d:b0:38e:9ca8:e99 with SMTP id
- 98e67ed59e1d1-395c4fa444bmr1150958a91.5.1787335418910; 
- Fri, 21 Aug 2026 11:03:38 -0700 (PDT)
+ bh=H++SEAQkeQjCNBQ3mSJ4gVtwAe61t0tO6DCkgX01Gmo=;
+ b=SHBjfqCWX895LjqwBnhYgj34OApORGT32j4QpLQ7/eRu9WY7VEvgl1vKABJVveL4uT
+ ESn06rchG3ZXJ01HBQyjphyyDbw3R34+c63G3JJUY23FhqJvg7JJ2BJ3y28t9lmfLUbj
+ HKCmmiVCb0yq6TfyE+YZYkxnm9wsj193rCxgiIoAMFyiFmuDV/wIx50xEp/5HSqa2KAt
+ fKqkh4KvQWGSiaJ7HlDh85sshXUMHcwiGM6sciuj7wsS/I8NHEj/Hw92OCSsj0QIo7O4
+ /LNd5gbgiW6Y6q78K+P8ypN4NZd+79xB4WL+SIaFCN213iynnNKR14wcH7gCJ0iVOsbE
+ KEjw==
+X-Gm-Message-State: AFuF++ktmvjPgK4SfVfN8qwKb0f3jOTUQpo9YwQvtKdaZkNj9xzXtIW+
+ 8uPT9IWfLWJHCmHBtFuGQLJZc+z6Vq8e38z7yct9qSSK1stn5YnzBxmTOvfMuD/qiKw=
+X-Gm-Gg: AR+sD12Za0KSZylX+LW6f4Ooxw8LzWIY8rmTjJlAO2z51prvgbySjLwVcgG8+abDTKG
+ rRsyUf05ACviRupXac91ml3ifxc/dqqwlIKDQRy2hiP18wZ1f+Z3VOVgFVV0IEABn36SeuvlFjj
+ vAQu5Zj11MmXT1oul8tKyjfgqxlMnKDtX10mOJuIYqXDEGThJ7othd00rG8pSQgXVBT5kh8ulcR
+ jh5pSQUrbbodPUgRyyY1/Lo7hQgkBajbNZijdxSkAYxl78C0oEAQ+Su5vRpFFKgCI/YB+lpYCfm
+ buKSBetf+mAR6Xl1Jkwp2fST7lgLzBjozfQ92Ij14jQDhgPGii/35//zstX4nslcTraFdHO5Bul
+ BH71I2kQPpEkPlTcgg2r7lxcyG+bS5w/Qt/48L9BTHLgiBLdISnfbNmnu7bOCj70kFbBhQMqmZk
+ nFPGaU6caf6iqsMG6jgHgfVxFFxUw8fdZlOzK1syxSt3s5iSKL9ASvoIE1HyRLU3BVr0dXBV6qe
+ MDfwndKTkHPei2Rr0ei8CW3pvhYsA==
+X-Received: by 2002:a17:902:e785:b0:2ca:6eca:492f with SMTP id
+ d9443c01a7336-2d64b0e2c7fmr173272305ad.14.1787335860696; 
+ Fri, 21 Aug 2026 11:11:00 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-395c4b47ae8sm4152166a91.13.2026.08.21.11.03.35
+ d9443c01a7336-2d62d58a851sm22342175ad.19.2026.08.21.11.10.58
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 21 Aug 2026 11:03:38 -0700 (PDT)
-Date: Fri, 21 Aug 2026 11:03:28 -0700
+ Fri, 21 Aug 2026 11:11:00 -0700 (PDT)
+Date: Fri, 21 Aug 2026 11:10:52 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Kai Ji <kai.ji@intel.com>
-Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>, Konstantin
- Ananyev <konstantin.ananyev@huawei.com>, Jie Liu
- <liujie5@linkdatatechnology.com>
-Subject: Re: [dpdk-dev v1] net/sxe2: replace private mempool cache bypass
- with rte_mbuf_raw_free_bulk
-Message-ID: <20260821110328.25240bf9@phoenix.local>
-In-Reply-To: <20260820155008.1989965-1-kai.ji@intel.com>
-References: <20260820155008.1989965-1-kai.ji@intel.com>
+To: sandeep.penigalapati@intel.com
+Cc: dev@dpdk.org, stable@dpdk.org, ciara.loftus@intel.com
+Subject: Re: [PATCH v6] net/af_xdp: fix shared UMEM refcount corruption
+Message-ID: <20260821111052.0985727f@phoenix.local>
+In-Reply-To: <20260821021607.232149-1-sandeep.penigalapati@intel.com>
+References: <20260821004435.216833-1-sandeep.penigalapati@intel.com>
+ <20260821021607.232149-1-sandeep.penigalapati@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,59 +83,112 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 20 Aug 2026 15:50:08 +0000
-Kai Ji <kai.ji@intel.com> wrote:
+On Thu, 20 Aug 2026 22:16:07 -0400
+sandeep.penigalapati@intel.com wrote:
 
-> The AVX-512 TX completion path directly manipulated the mempool cache
-> internals (cache->objs, cache->len, cache->flushthresh) instead of using
-> the mempool API.  This pattern is the same private bypass that existed in
-> the Intel common TX library before it was removed by commit 062d6fe5d0e4
-> ("net/intel: do not bypass mbuf lib for buffer fast-free") for the same
-> reason: it omits mbuf instrumentation (history marking) and contains
-> dead flush code that accesses cache->objs[cache->size], which is one
-> past the end of the array when cache_size =3D=3D RTE_MEMPOOL_CACHE_MAX_SI=
-ZE.
->=20
-> Replace with a single rte_mbuf_raw_free_bulk() call, matching the Intel
-> common library.  The MBUF_FAST_FREE offload guarantee (single pool,
-> refcnt =3D=3D 1) makes this correct and the compiler inlines the bulk-free
-> call to eliminate the overhead difference.
->=20
-> Signed-off-by: Kai Ji <kai.ji@intel.com>
-> ---
+> From: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
+> 
+> Shared UMEM is meant to be shared by a limited number of sockets,
+> governed by the mempool size (max_xsks). When the UMEM was already at
+> capacity (refcnt >= max_xsks), xdp_umem_configure() returned the UMEM
+> without incrementing its refcount, so the extra socket used it
+> unaccounted for.
+> 
+> This missing reference has two consequences. During queue setup the
+> fill-queue reservation is chosen from the refcount, so the sharing
+> socket reserves into its own uninitialised fill queue and crashes. At
+> close, the under-counted refcount reaches zero while the UMEM is still
+> in use, freeing it early and causing a use-after-free.
+> 
+> Reject sharing once the UMEM is at capacity by returning NULL. The
+> error is propagated from xsk_configure(), so Rx queue setup fails
+> cleanly with -ENOMEM. This applies the per-mempool socket limit that
+> shared UMEM was always intended to respect.
+> 
+> Harden the failure path this makes reachable:
+> - clear rxq->umem and its paired txq->umem when xsk_configure() fails,
+>   and skip queues whose UMEM is not yet set in get_shared_umem(), so a
+>   later scan over the same mempool cannot dereference a NULL or
+>   dangling UMEM;
+> - free the fill-queue mbufs that were allocated but not yet handed to
+>   the fill queue when a sharing socket fails to bind, so it no longer
+>   leaks a burst of mbufs back out of the shared mempool;
+> - propagate the map-insert failures in xsk_configure() instead of
+>   returning success, so a failed xsks_map update no longer leaves the
+>   caller using a deleted socket;
+> - continue past, rather than stop at, a failed queue in eth_dev_close()
+>   so later successful queues and their UMEM references are still freed;
+> - clamp max_xsks to UINT8_MAX so the cap stays within the uint8_t
+>   refcount.
+> 
+> Also correct the UMEM refcount memory ordering: release on the shared
+> increment and acquire-release on the final decrement, so the thread that
+> drops the last reference observes all prior users' writes before it
+> frees the UMEM.
+> 
+> Document the shared mempool sizing requirement (4096 mbufs per socket).
+> 
+> Note: on stable branches this is a behaviour change. Shared-UMEM setups
+> that previously appeared to start, until the fill-queue crash or the
+> use-after-free at close, now fail cleanly at Rx queue setup with
+> -ENOMEM.
+> 
+> Fixes: 74b46340e2d4 ("net/af_xdp: support shared UMEM")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
 
-Looks good but still some leftovers to remove.
+I am ok with it as is but AI still has some Info level comments.
+Will take it as is, or you can revise (your choice).
 
-FAILED: drivers/net/sxe2/libsxe2_avx512_lib.a.p/sxe2_txrx_vec_avx512.c.o=20
-gcc -Idrivers/net/sxe2/libsxe2_avx512_lib.a.p -Idrivers/net/sxe2 -I../drive=
-rs/net/sxe2 -Idrivers/common/sxe2 -I../drivers/common/sxe2 -Ilib/ethdev -I.=
-./lib/ethdev -Ilib/eal/common -I../lib/eal/common -I. -I.. -Iconfig -I../co=
-nfig -Ilib/eal/include -I../lib/eal/include -Ilib/eal/linux/include -I../li=
-b/eal/linux/include -Ilib/eal/x86/include -I../lib/eal/x86/include -I../ker=
-nel/linux -Ilib/eal -I../lib/eal -Ilib/kvargs -I../lib/kvargs -Ilib/log -I.=
-./lib/log -Ilib/metrics -I../lib/metrics -Ilib/telemetry -I../lib/telemetry=
- -Ilib/argparse -I../lib/argparse -Ilib/net -I../lib/net -Ilib/mbuf -I../li=
-b/mbuf -Ilib/mempool -I../lib/mempool -Ilib/ring -I../lib/ring -Ilib/meter =
--I../lib/meter -Ilib/hash -I../lib/hash -Ilib/rcu -I../lib/rcu -Ilib/securi=
-ty -I../lib/security -Ilib/cryptodev -I../lib/cryptodev -Idrivers/bus/pci -=
-I../drivers/bus/pci -I../drivers/bus/pci/linux -Ilib/pci -I../lib/pci -fdia=
-gnostics-color=3Dalways -D_FILE_OFFSET_BITS=3D64 -Wall -Winvalid-pch -Wextr=
-a -Werror -std=3Dc11 -O3 -include rte_config.h -Wvla -Wcast-qual -Wdeprecat=
-ed -Wformat -Wformat-nonliteral -Wformat-security -Wmissing-declarations -W=
-missing-prototypes -Wnested-externs -Wold-style-definition -Wpointer-arith =
--Wshadow -Wsign-compare -Wstrict-prototypes -Wundef -Wwrite-strings -Wno-pa=
-cked-not-aligned -Wno-missing-field-initializers -D_GNU_SOURCE -fPIC -march=
-=3Dnative -mrtm -DALLOW_EXPERIMENTAL_API -DALLOW_INTERNAL_API -Wno-format-t=
-runcation -g -DCC_AVX512_SUPPORT -mavx512f -mavx512bw -march=3Dskylake-avx5=
-12 -MD -MQ drivers/net/sxe2/libsxe2_avx512_lib.a.p/sxe2_txrx_vec_avx512.c.o=
- -MF drivers/net/sxe2/libsxe2_avx512_lib.a.p/sxe2_txrx_vec_avx512.c.o.d -o =
-drivers/net/sxe2/libsxe2_avx512_lib.a.p/sxe2_txrx_vec_avx512.c.o -c ../driv=
-ers/net/sxe2/sxe2_txrx_vec_avx512.c
-../drivers/net/sxe2/sxe2_txrx_vec_avx512.c: In function =E2=80=98sxe2_tx_bu=
-fs_free_vec_avx512=E2=80=99:
-../drivers/net/sxe2/sxe2_txrx_vec_avx512.c:47:1: error: label =E2=80=98norm=
-al=E2=80=99 defined but not used [-Werror=3Dunused-label]
- normal:
- ^~~~~~
-cc1: all warnings being treated as errors
-[2434/3759] Generating drivers/rte_net_sxe2_ma
+Trimmed away the noise..
+
+Review of [PATCH v6] net/af_xdp: fix shared UMEM refcount corruption
+
+
+1. The refcount increment does not need release ordering.
+
+	rte_atomic_fetch_add_explicit(&umem->refcnt, 1,
+			rte_memory_order_release);
+
+   rte_memory_order_relaxed is the correct weakest choice here.  The
+   incrementing thread has no prior writes to publish; the UMEM was
+   built by whoever created it, and that publication is already covered
+   by the release store of refcnt = 1 at the end of
+   xdp_umem_configure().
+
+   The commit message attributes the guarantee to the wrong operation:
+   "release on the shared increment ... so the thread that drops the
+   last reference observes all prior users' writes" is what the acq_rel
+   on the fetch_sub provides, not the increment.  Worth correcting in
+   the message even if the ordering is left as is; it is harmless but
+   the rationale will outlive the patch in git history.
+
+2. The capacity check and the increment are still not atomic, and
+   rxq->umem is mutated outside internal_list_lock.
+
+   get_shared_umem() releases internal_list_lock before returning, so
+   the load of refcnt in xdp_umem_configure() and the fetch_add that
+   follows are separate steps; two threads configuring queues on the
+   same mempool can both observe refcnt < max_xsks and both increment.
+   Separately, xsk_configure() and eth_dev_close() write rxq->umem
+   without the lock that get_shared_umem() holds when reading it, so a
+   concurrent failure could in principle free a UMEM between the NULL
+   check and the dereference.
+
+   Both are pre-existing and control-path setup is single threaded in
+   practice, so this is a note rather than a request.  A
+   compare-exchange loop on refcnt would make the cap the patch adds
+   actually enforceable if that ever changes.
+
+3. Mbufs already submitted to the fill queue are still lost at
+   out_xsk.
+
+   Once reserve_fill_queue() succeeds, the 2048 mbufs live in rxq->fq.
+   A later failure (map insert, busy-poll config) deletes the socket
+   and takes out_umem, and nothing drains the fill ring, so those mbufs
+   never return to the mempool.  free_fq_bufs is correctly false at
+   that point, so this is not a regression from the patch, and
+   recovering them would mean unwinding the fill ring.  Noting it as a
+   remaining gap rather than something to fix here.
+
