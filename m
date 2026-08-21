@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA084C5DF8C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Aug 2026 19:33:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE94BC5DF7D
+	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Aug 2026 19:33:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4E40440E20;
-	Fri, 21 Aug 2026 21:31:31 +0200 (CEST)
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com
- [209.85.210.175])
- by mails.dpdk.org (Postfix) with ESMTP id 9838040E20
- for <dev@dpdk.org>; Fri, 21 Aug 2026 21:31:28 +0200 (CEST)
-Received: by mail-pf1-f175.google.com with SMTP id
- d2e1a72fcca58-848761b5897so572807b3a.3
- for <dev@dpdk.org>; Fri, 21 Aug 2026 12:31:28 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 596BA40EA5;
+	Fri, 21 Aug 2026 21:31:36 +0200 (CEST)
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com
+ [209.85.210.179])
+ by mails.dpdk.org (Postfix) with ESMTP id BD9D8410D5
+ for <dev@dpdk.org>; Fri, 21 Aug 2026 21:31:33 +0200 (CEST)
+Received: by mail-pf1-f179.google.com with SMTP id
+ d2e1a72fcca58-84a2c90e383so1844078b3a.0
+ for <dev@dpdk.org>; Fri, 21 Aug 2026 12:31:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787340688;
- x=1787945488; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787340693;
+ x=1787945493; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=stRrWZoQEX4kr1F3klxIwmXy5/C++KOH3Lkgvgd4s2I=;
- b=O57xgF0oIa2QFqDWZgz/ZjnlvcXfCd8OkKJ5NdZ3WBBVl9qv/vFt3owcxxJgKzlrzy
- 8IjxrbQZa1rboNZOLRAHd3jRU8hQPUw7xmw/l4ZTrIVrhDVFHBnwD0VB2goNdNoaXK5/
- fS9aWISAZ5/25STS78+/3FMu0lBn74A+RUFwtDgAtN4WFNKhQFC4M8NuGzl2gxp6h6OK
- Gv2pa33DJsfv0hWgwx8wIWF2XfV8x558xR9xgC+gjVjHlIppimrBnX1vlp6SlSKIB6LQ
- HF64DJxEhv8CvSm1ZUerM4doZK2B5vuE28HH3eqgYn1dk29paIvVlVo4HtxNgEfBz7yl
- AGpg==
+ bh=m5DsNOoPGK0YQgkZarHzZ+sDTxJFMGyQUhWlndMIv8g=;
+ b=z6LJxO3RQJZ6/rFVE9QIxkCk0hOCEh9r0B4dSp8NPdtvnjlWfyOnRWTnxuPdQNbXaq
+ q4N4v7XOlVYAdV7X46rMdaBQbofE9UV9Tx+nag76FWMdCah+tAuuKTbsYgJeW83e7JWg
+ 2EhHD0yfIh71eBOadv2bSiLVGWlwMGFShLJrlBt9xF5LCmkxNSPUYJYHFjMt20m6XR/T
+ 0T9CTdgP2hJjktb3U+Nn8CXtBEUr8SJYceyWffhdSqhI/pV6gPhGyOY42GsuvTe0XNQq
+ F0qSg+TV/dfnFM9P5IBL3CBYjTO/Z6sVO1ow3E3SOnWzL8Icd1J5baO2RHjm1rShg11l
+ VJ1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787340688; x=1787945488;
+ d=1e100.net; s=20251104; t=1787340693; x=1787945493;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=stRrWZoQEX4kr1F3klxIwmXy5/C++KOH3Lkgvgd4s2I=;
- b=fNZ0ZuYlKVPWgE3qYQ2aHRvABKpJS7wnBRemv/AXBM8i+ooAJy8DprGsF9VTa7Q2Do
- y9UtgoNUaDis3VS1AHoxTaCmJAn6f7YL4zpMh+V87zHt1iowefOGc5dSsFlFwXPmhDKI
- yKnmXV1CdsjXV4NFH/dzp0HS6MqiGtE9sXEot2+wJwnVy45Mr2oNi1ctCA3Gd7ngvcgc
- eVqq7zW7/9r+IWVv3787kZjsMei61XSSGOu/A8uBkPW2UiuH6qEL6IVE8r4wAGvDIDjL
- f+1toES+C6Kgmjis/8Qw7WByZCxTtwRR7HkVvHoK7LbUkR3AOrXekeVavnthcwyQI7Z/
- 6xdQ==
-X-Gm-Message-State: AFuF++lJ9sEQLKvLMeKNQC5M179wyCVHGcXwfG4sGcG1yNMU00juo8hF
- JCOg4ej4n0BMFWoFVyTkKMjLkTtPfnTgYyQOyxjJy39d0WRXxRwfXH3L3szJ1S4I153ygcaX46+
- L+7dMMH4=
-X-Gm-Gg: AR+sD12xeaZubOz+oXhXDrael+4uxmDrgsLK7oFBH1NNo6egD6cmP66Cr8UrZyzmviA
- rj9ZkIlKqEJqbK/o04ibWSZu2k9mN3cqFCHkmWYOcoJU2SQcLiZ+M0kKo893sTPitv6DQfgaygI
- aW89Lhwl+F9XOIgSW1PyxZ3waIC7yxZBrsoN+ZnCjmrSzAA46laE5o971Bd8NOEUerIPVFTWeiE
- UbIuo8qiLkfKVMSg5un5LP90dTT+4cw4WwJIWg7qcJfGD3Yd+QW/R0iDka0CLaiZIeiJVZs2B2+
- eHP/wDSCku5UTJiZyxrPw5D90H8vrG0r9UG65rbbiSXFyIM9PIVfS9SI5YwnhqIrPThG5Z/axG0
- DCM8VWEePS4UaBWMFE/QwbKx2QzkmoO4u5PLaONUjPKmrBJgAminw6igeXGZDeAEcIBKPWrqo33
- To5ICVn78iy7fuNZpDS4+hsLTTBmUavg4BVrudg4OlOzHEPUZIiX7uXuFgDoYF8KzRFOiGKaHNB
- zreyxaGwspC2Hpy49ZGegWlnCA=
-X-Received: by 2002:a05:6a21:a96:b0:3c3:954d:278d with SMTP id
- adf61e73a8af0-3cd3009cf0emr18107258637.9.1787340687744; 
- Fri, 21 Aug 2026 12:31:27 -0700 (PDT)
+ bh=m5DsNOoPGK0YQgkZarHzZ+sDTxJFMGyQUhWlndMIv8g=;
+ b=KJYzP4OVcNQp0xhINrUbKzy4l+f2cLdPA/pETDnqds/JrD1JM507e7D2bBgSZQa/C5
+ WFfO1u1ZZ92h5IH2Gjf0mCq9zPNJaVbgbfagrm1aorVq1S7DUaDzHI2wLx55kz9GmpYI
+ tU5pMx0mOItLG7LwFkXifcQrDu01kTQZaDBhD1mvsNgmGorqoP63y9AavfZVCUrE6bPN
+ uDjwqqTzaWnV3fVo+/Lh1kKKmq8gRFNt6mN24Kv0uvXhigm85cyMFh87UcYvpjBAKycC
+ 4rHhN+4TWFWk+oRa+vk2UVEtMk1m2xshjJewcQFiZP0q1ihaDPJ4RLdnZsqtUC93faoq
+ E3Cg==
+X-Gm-Message-State: AFuF++nAI/xRBlVKn32BYlObERvMpwGPR/oRpbG7OAkkB3EW6ZTl1HaI
+ hqqHUG5u3iQsx0s2mjpb9te0PyZfttJFDAKUoxCZ6llmNts505mNnZKWkIzn1+3XUOkaViRVkFH
+ s0fcQ2lo=
+X-Gm-Gg: AR+sD12OvQZyXmNfDtEIbtMbU4bibn35bfh1GOW3Uf6oERryVdZlNkf+PYcZk8T5aPk
+ sgm9Ro0c43TFBIdK4790nenGuauZDRW06dJ3hyxQlTOD3u+7Xtvta+mJeQZPIHbC3Jk0y+5S/bb
+ V6UGG42h1k0MtaZ3CKeOZQ53dOO6YHAMXQwmtovZiZwExrboau9MbrMiRvlI8BQ/yets2ztb0/L
+ o7pl0R7OY9R02sKVsZgMEnIb8VHRTXlNueBi9GweWbpZ+X7A6IW8bhkvDiljrgFEZ6yeTLO6sl3
+ IjOXxLjbHJc1CUA9RzIwj01s2E1BIp2eS5zFg0kvI6GxOErFqUa/dXNGsIXStsTSj5e7Cprl9HG
+ zAYHAOsxf3KZArn1E0YXzP5/4tp79qJ9ZUMjepwWKhDxuKdE3mBxe1v6MSNC6XEsNPFSgxC9gpu
+ 2vD1MnB0tht3KjvO2YhCSn/cU0LMhc4oUB/xQMmOUxTnfKq/+jwNOdWRZH0SLAm9+3Za4GrlbAM
+ Jl6oR3kU05EYVZnqkJ3qR/VfAc=
+X-Received: by 2002:a05:6a21:482:b0:3bf:9bd9:cf60 with SMTP id
+ adf61e73a8af0-3cd14d30051mr20249719637.6.1787340691518; 
+ Fri, 21 Aug 2026 12:31:31 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-cc16c6dd2f4sm1860304a12.17.2026.08.21.12.31.25
+ 41be03b00d2f7-cc16c6dd2f4sm1860304a12.17.2026.08.21.12.31.28
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 21 Aug 2026 12:31:27 -0700 (PDT)
+ Fri, 21 Aug 2026 12:31:31 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Nicolas Chautru <nicolas.chautru@intel.com>
-Subject: [PATCH v2 60/68] baseband/acc: replace use of rte_memcpy
-Date: Fri, 21 Aug 2026 12:24:55 -0700
-Message-ID: <20260821192646.146382-61-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, Kai Ji <kai.ji@intel.com>,
+ Fan Zhang <fanzhang.oss@gmail.com>, Ashish Gupta <ashishg@marvell.com>
+Subject: [PATCH v2 61/68] drivers/*/qat: use memcpy for fixed size data
+Date: Fri, 21 Aug 2026 12:24:56 -0700
+Message-ID: <20260821192646.146382-62-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260821192646.146382-1-stephen@networkplumber.org>
 References: <20260820052251.1453273-1-stephen@networkplumber.org>
@@ -84,108 +84,177 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Using rte_memcpy is not needed here.
+The regular libc memcpy is inline for fix sizes and has
+better analysis coverage.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/baseband/acc/rte_acc100_pmd.c |  7 ++++---
- drivers/baseband/acc/rte_vrb_pmd.c    | 21 ++++++++++-----------
- 2 files changed, 14 insertions(+), 14 deletions(-)
+ drivers/common/qat/qat_qp.c          | 10 ++++-----
+ drivers/compress/qat/qat_comp.c      |  8 +++----
+ drivers/crypto/qat/qat_sym_session.c | 33 ++++++++++++++--------------
+ 3 files changed, 24 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/baseband/acc/rte_acc100_pmd.c b/drivers/baseband/acc/rte_acc100_pmd.c
-index cbcacc7aa3..7261ac937d 100644
---- a/drivers/baseband/acc/rte_acc100_pmd.c
-+++ b/drivers/baseband/acc/rte_acc100_pmd.c
-@@ -2890,7 +2890,7 @@ enqueue_ldpc_dec_one_op_cb(struct acc_queue *q, struct rte_bbdev_dec_op *op,
- 		dec->q_m = 1;
- 		dec->cb_params.e = dec->n_cb - dec->n_filler;
- 		dec->rv_index = 0;
--		rte_memcpy(in, q->derm_buffer, dec->cb_params.e);
-+		memcpy(in, q->derm_buffer, dec->cb_params.e);
- 		/* Capture counter when pre-processing is used */
- 		q_data->queue_stats.enqueue_warn_count++;
- 		#else
-@@ -2988,7 +2988,8 @@ enqueue_ldpc_dec_one_op_tb(struct acc_queue *q, struct rte_bbdev_dec_op *op,
- 		desc = acc_desc(q, total_enqueued_cbs);
- 		desc->req.data_ptrs[0].address = q->ring_addr_iova + fcw_offset;
- 		desc->req.data_ptrs[0].blen = ACC_FCW_LD_BLEN;
--		rte_memcpy(&desc->req.fcw_ld, &desc_first->req.fcw_ld, ACC_FCW_LD_BLEN);
-+		memcpy(&desc->req.fcw_ld, &desc_first->req.fcw_ld,
-+		       ACC_FCW_LD_BLEN);
- 		ret = acc100_dma_desc_ld_fill(op, &desc->req, &input,
- 				h_output, &in_offset, &h_out_offset,
- 				&h_out_length,
-@@ -4266,7 +4267,7 @@ acc100_configure(const char *dev_name, struct rte_acc_conf *conf)
- 	struct acc_device *d = bbdev->data->dev_private;
+diff --git a/drivers/common/qat/qat_qp.c b/drivers/common/qat/qat_qp.c
+index fe28cb160d..6ea4548bba 100644
+--- a/drivers/common/qat/qat_qp.c
++++ b/drivers/common/qat/qat_qp.c
+@@ -871,9 +871,8 @@ qat_cq_get_fw_cipher_crc_cap(struct qat_qp *qp)
+ 		return -EINVAL;
+ 	}
  
- 	/* Store configuration */
--	rte_memcpy(&d->acc_conf, conf, sizeof(d->acc_conf));
-+	memcpy(&d->acc_conf, conf, sizeof(d->acc_conf));
+-	rte_memcpy(src_data_addr,
+-			cipher_crc_cap_check_plaintext,
+-			sizeof(cipher_crc_cap_check_plaintext));
++	memcpy(src_data_addr, cipher_crc_cap_check_plaintext,
++	       sizeof(cipher_crc_cap_check_plaintext));
  
- 	value = acc_reg_read(d, HwPfPcieGpexBridgeControl);
- 	bool firstCfg = (value != ACC100_CFG_PCI_BRIDGE);
-diff --git a/drivers/baseband/acc/rte_vrb_pmd.c b/drivers/baseband/acc/rte_vrb_pmd.c
-index 1f85e33462..cb3ef51fcb 100644
---- a/drivers/baseband/acc/rte_vrb_pmd.c
-+++ b/drivers/baseband/acc/rte_vrb_pmd.c
-@@ -2593,15 +2593,13 @@ vrb_enqueue_ldpc_dec_one_op_cb(struct acc_queue *q, struct rte_bbdev_dec_op *op,
- 		uint8_t *prev_ptr = (uint8_t *) prev_desc;
- 		uint8_t *new_ptr = (uint8_t *) desc;
- 		/* Copy first 4 words and BDESCs. */
--		rte_memcpy(new_ptr, prev_ptr, ACC_5GUL_SIZE_0);
--		rte_memcpy(new_ptr + ACC_5GUL_OFFSET_0,
--				prev_ptr + ACC_5GUL_OFFSET_0,
--				ACC_5GUL_SIZE_1);
-+		memcpy(new_ptr, prev_ptr, ACC_5GUL_SIZE_0);
-+		memcpy(new_ptr + ACC_5GUL_OFFSET_0,
-+		       prev_ptr + ACC_5GUL_OFFSET_0, ACC_5GUL_SIZE_1);
- 		desc->req.op_addr = prev_desc->req.op_addr;
- 		/* Copy FCW. */
--		rte_memcpy(new_ptr + ACC_DESC_FCW_OFFSET,
--				prev_ptr + ACC_DESC_FCW_OFFSET,
--				ACC_FCW_LD_BLEN);
-+		memcpy(new_ptr + ACC_DESC_FCW_OFFSET,
-+		       prev_ptr + ACC_DESC_FCW_OFFSET, ACC_FCW_LD_BLEN);
- 		vrb_dma_desc_ld_update(op, &desc->req, input, h_output,
- 				&in_offset, &h_out_offset,
- 				&h_out_length, harq_layout);
-@@ -2709,7 +2707,8 @@ vrb_enqueue_ldpc_dec_one_op_tb(struct acc_queue *q, struct rte_bbdev_dec_op *op,
- 		fcw_offset = (desc_idx << 8) + ACC_DESC_FCW_OFFSET;
- 		desc->req.data_ptrs[0].address = q->ring_addr_iova + fcw_offset;
- 		desc->req.data_ptrs[0].blen = ACC_FCW_LD_BLEN;
--		rte_memcpy(&desc->req.fcw_ld, &desc_first->req.fcw_ld, ACC_FCW_LD_BLEN);
-+		memcpy(&desc->req.fcw_ld, &desc_first->req.fcw_ld,
-+		       ACC_FCW_LD_BLEN);
- 		desc->req.fcw_ld.tb_trailer_size = (c - r - 1) * trail_len;
- 		ret = vrb_dma_desc_ld_fill(op, &desc->req, &input,
- 				h_output, &in_offset, &h_out_offset,
-@@ -4140,7 +4139,7 @@ enqueue_mldts_split_op(struct acc_queue *q, struct rte_bbdev_mldts_op *op,
- 		if (symb == 0)
- 			desc->req.cbs_in_tb = num_syms;
- 		else
--			rte_memcpy(&desc->req.fcw_mldts, fcw, ACC_FCW_MLDTS_BLEN);
-+			memcpy(&desc->req.fcw_mldts, fcw, ACC_FCW_MLDTS_BLEN);
- 		desc->req.data_ptrs[1].address = rte_pktmbuf_iova_offset(input_q, in_offset);
- 		desc->req.data_ptrs[1].blen = q_size;
- 		in_offset += q_size;
-@@ -4490,7 +4489,7 @@ vrb1_configure(const char *dev_name, struct rte_acc_conf *conf)
- 	struct acc_device *d = bbdev->data->dev_private;
+ 	phy_src_addr = rte_mem_virt2iova(src_data_addr);
+ 	if (phy_src_addr == 0 || phy_src_addr == RTE_BAD_IOVA) {
+@@ -892,9 +891,8 @@ qat_cq_get_fw_cipher_crc_cap(struct qat_qp *qp)
+ 	auth_param = (void *)((uint8_t *)cipher_param +
+ 			ICP_QAT_FW_HASH_REQUEST_PARAMETERS_OFFSET);
  
- 	/* Store configuration. */
--	rte_memcpy(&d->acc_conf, conf, sizeof(d->acc_conf));
-+	memcpy(&d->acc_conf, conf, sizeof(d->acc_conf));
+-	rte_memcpy(cipher_param->u.cipher_IV_array,
+-			cipher_crc_cap_check_iv,
+-			sizeof(cipher_crc_cap_check_iv));
++	memcpy(cipher_param->u.cipher_IV_array, cipher_crc_cap_check_iv,
++	       sizeof(cipher_crc_cap_check_iv));
  
- 	/* Check we are already out of PG. */
- 	status = acc_reg_read(d, VRB1_PfHiSectionPowerGatingAck);
-@@ -4897,7 +4896,7 @@ vrb2_configure(const char *dev_name, struct rte_acc_conf *conf)
- 	struct acc_device *d = bbdev->data->dev_private;
+ 	cipher_param->cipher_offset = cipher_crc_cap_check_cipher_offset;
+ 	cipher_param->cipher_length =
+diff --git a/drivers/compress/qat/qat_comp.c b/drivers/compress/qat/qat_comp.c
+index 559948a46a..5bcbefe395 100644
+--- a/drivers/compress/qat/qat_comp.c
++++ b/drivers/compress/qat/qat_comp.c
+@@ -375,7 +375,7 @@ qat_comp_build_multiple_requests(void *in_op, struct qat_qp *qp,
+ 	QAT_DP_LOG(DEBUG, "op %p, parent_cookie %p", op, parent_cookie);
  
- 	/* Store configuration. */
--	rte_memcpy(&d->acc_conf, conf, sizeof(d->acc_conf));
-+	memcpy(&d->acc_conf, conf, sizeof(d->acc_conf));
+ 	/* copy original op to the local variable for restoring later */
+-	rte_memcpy(&op_backup, op, sizeof(op_backup));
++	memcpy(&op_backup, op, sizeof(op_backup));
  
- 	/* Explicitly releasing AXI as this may be stopped after PF FLR/BME. */
- 	address = VRB2_PfDmaAxiControl;
+ 	parent_cookie->nb_child_responses = 0;
+ 	parent_cookie->nb_children = 0;
+@@ -401,7 +401,7 @@ qat_comp_build_multiple_requests(void *in_op, struct qat_qp *qp,
+ 	}
+ 
+ 	/* prepare local dst mbuf */
+-	rte_memcpy(&dst_mbuf, op->m_dst, sizeof(dst_mbuf));
++	memcpy(&dst_mbuf, op->m_dst, sizeof(dst_mbuf));
+ 	rte_pktmbuf_reset(&dst_mbuf);
+ 	dst_mbuf.buf_len = dst_data_size;
+ 	dst_mbuf.data_len = dst_data_size;
+@@ -457,7 +457,7 @@ qat_comp_build_multiple_requests(void *in_op, struct qat_qp *qp,
+ 		if (ret < 0) {
+ 			QAT_DP_LOG(WARNING, "Failed to build child descriptor");
+ 			/* restore op and clear cookie */
+-			rte_memcpy(op, &op_backup, sizeof(op_backup));
++			memcpy(op, &op_backup, sizeof(op_backup));
+ 			parent_cookie->split_op = 0;
+ 			parent_cookie->nb_children = 0;
+ 			return ret;
+@@ -468,7 +468,7 @@ qat_comp_build_multiple_requests(void *in_op, struct qat_qp *qp,
+ 	}
+ 
+ 	/* restore backed up original op */
+-	rte_memcpy(op, &op_backup, sizeof(op_backup));
++	memcpy(op, &op_backup, sizeof(op_backup));
+ 
+ 	if (nb_descr != num_descriptors_built)
+ 		QAT_DP_LOG(ERR, "split op. expected %d, built %d",
+diff --git a/drivers/crypto/qat/qat_sym_session.c b/drivers/crypto/qat/qat_sym_session.c
+index d89c20cad6..1197537545 100644
+--- a/drivers/crypto/qat/qat_sym_session.c
++++ b/drivers/crypto/qat/qat_sym_session.c
+@@ -1585,8 +1585,8 @@ static int qat_sym_do_precomputes_ipsec_mb(enum icp_qat_hw_auth_algo hash_alg,
+ 
+ 		uint8_t *input = in;
+ 		uint8_t *out = p_state_buf;
+-		rte_memcpy(input, qat_aes_xcbc_key_seed,
+-				ICP_QAT_HW_AES_XCBC_MAC_STATE2_SZ);
++		memcpy(input, qat_aes_xcbc_key_seed,
++		       ICP_QAT_HW_AES_XCBC_MAC_STATE2_SZ);
+ 		for (i = 0; i < HASH_XCBC_PRECOMP_KEY_NUM; i++) {
+ 			if (aes_ipsecmb_job(input, out, m, auth_key, auth_keylen)) {
+ 				memset(input -
+@@ -2101,8 +2101,8 @@ static int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
+ 	cdesc->cd_cur_ptr += sizeof(struct icp_qat_hw_auth_setup);
+ 	switch (cdesc->qat_hash_alg) {
+ 	case ICP_QAT_HW_AUTH_ALGO_SM3:
+-		rte_memcpy(cdesc->cd_cur_ptr, sm3InitialState,
+-				sizeof(sm3InitialState));
++		memcpy(cdesc->cd_cur_ptr, sm3InitialState,
++		       sizeof(sm3InitialState));
+ 		state1_size = qat_hash_get_state1_size(
+ 				cdesc->qat_hash_alg);
+ 		state2_size = ICP_QAT_HW_SM3_STATE2_SZ;
+@@ -2113,9 +2113,8 @@ static int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
+ 		hash_2->auth_config.config =
+ 			ICP_QAT_HW_AUTH_CONFIG_BUILD(ICP_QAT_HW_AUTH_MODE2,
+ 				cdesc->qat_hash_alg, digestsize);
+-		rte_memcpy(cdesc->cd_cur_ptr + state1_size + state2_size +
+-			sizeof(*hash_2), sm3InitialState,
+-			sizeof(sm3InitialState));
++		memcpy(cdesc->cd_cur_ptr + state1_size + state2_size + sizeof(*hash_2),
++		       sm3InitialState, sizeof(sm3InitialState));
+ 		hash_cd_ctrl->inner_state1_sz = state1_size;
+ 		hash_cd_ctrl->inner_state2_sz  = state2_size;
+ 		hash_cd_ctrl->inner_state2_offset =
+@@ -2154,8 +2153,8 @@ static int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
+ 	case ICP_QAT_HW_AUTH_ALGO_SHA1:
+ 		if (cdesc->auth_mode == ICP_QAT_HW_AUTH_MODE0) {
+ 			/* Plain SHA-1 */
+-			rte_memcpy(cdesc->cd_cur_ptr, sha1InitialState,
+-					sizeof(sha1InitialState));
++			memcpy(cdesc->cd_cur_ptr, sha1InitialState,
++			       sizeof(sha1InitialState));
+ 			state1_size = qat_hash_get_state1_size(
+ 					cdesc->qat_hash_alg);
+ 			break;
+@@ -2174,8 +2173,8 @@ static int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
+ 	case ICP_QAT_HW_AUTH_ALGO_SHA224:
+ 		if (cdesc->auth_mode == ICP_QAT_HW_AUTH_MODE0) {
+ 			/* Plain SHA-224 */
+-			rte_memcpy(cdesc->cd_cur_ptr, sha224InitialState,
+-					sizeof(sha224InitialState));
++			memcpy(cdesc->cd_cur_ptr, sha224InitialState,
++			       sizeof(sha224InitialState));
+ 			state1_size = qat_hash_get_state1_size(
+ 					cdesc->qat_hash_alg);
+ 			break;
+@@ -2193,8 +2192,8 @@ static int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
+ 	case ICP_QAT_HW_AUTH_ALGO_SHA256:
+ 		if (cdesc->auth_mode == ICP_QAT_HW_AUTH_MODE0) {
+ 			/* Plain SHA-256 */
+-			rte_memcpy(cdesc->cd_cur_ptr, sha256InitialState,
+-					sizeof(sha256InitialState));
++			memcpy(cdesc->cd_cur_ptr, sha256InitialState,
++			       sizeof(sha256InitialState));
+ 			state1_size = qat_hash_get_state1_size(
+ 					cdesc->qat_hash_alg);
+ 			break;
+@@ -2212,8 +2211,8 @@ static int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
+ 	case ICP_QAT_HW_AUTH_ALGO_SHA384:
+ 		if (cdesc->auth_mode == ICP_QAT_HW_AUTH_MODE0) {
+ 			/* Plain SHA-384 */
+-			rte_memcpy(cdesc->cd_cur_ptr, sha384InitialState,
+-					sizeof(sha384InitialState));
++			memcpy(cdesc->cd_cur_ptr, sha384InitialState,
++			       sizeof(sha384InitialState));
+ 			state1_size = qat_hash_get_state1_size(
+ 					cdesc->qat_hash_alg);
+ 			break;
+@@ -2231,8 +2230,8 @@ static int qat_sym_cd_auth_set(struct qat_sym_session *cdesc,
+ 	case ICP_QAT_HW_AUTH_ALGO_SHA512:
+ 		if (cdesc->auth_mode == ICP_QAT_HW_AUTH_MODE0) {
+ 			/* Plain SHA-512 */
+-			rte_memcpy(cdesc->cd_cur_ptr, sha512InitialState,
+-					sizeof(sha512InitialState));
++			memcpy(cdesc->cd_cur_ptr, sha512InitialState,
++			       sizeof(sha512InitialState));
+ 			state1_size = qat_hash_get_state1_size(
+ 					cdesc->qat_hash_alg);
+ 			break;
 -- 
 2.53.0
 
