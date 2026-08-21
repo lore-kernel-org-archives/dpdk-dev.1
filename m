@@ -2,69 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B78DEC5DF8C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Aug 2026 19:30:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F32CC5DF8C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 21 Aug 2026 19:30:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1B169406B7;
-	Fri, 21 Aug 2026 21:29:51 +0200 (CEST)
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com
- [209.85.215.169])
- by mails.dpdk.org (Postfix) with ESMTP id A4401406B7
- for <dev@dpdk.org>; Fri, 21 Aug 2026 21:29:49 +0200 (CEST)
-Received: by mail-pg1-f169.google.com with SMTP id
- 41be03b00d2f7-cb5b8572b70so1759197a12.2
- for <dev@dpdk.org>; Fri, 21 Aug 2026 12:29:49 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 127D540E11;
+	Fri, 21 Aug 2026 21:29:55 +0200 (CEST)
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com
+ [209.85.210.177])
+ by mails.dpdk.org (Postfix) with ESMTP id 2544D40685
+ for <dev@dpdk.org>; Fri, 21 Aug 2026 21:29:53 +0200 (CEST)
+Received: by mail-pf1-f177.google.com with SMTP id
+ d2e1a72fcca58-84faf0fa17eso1344206b3a.2
+ for <dev@dpdk.org>; Fri, 21 Aug 2026 12:29:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787340589;
- x=1787945389; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787340592;
+ x=1787945392; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=2JKxy/A3XDVfMBFVLdmkTfrWLNJQgOwTu6pG9J8D0pg=;
- b=ZKr2IytnhwgiuAdUwmCe/no3wxQW7JfUyJGPRKMN4wxkV4bq0FXzF6R6xqgAtM9CrF
- Yijg0W9zweETTNklCjBh3DaSpQXubyH89VY0qQV8iYeaHJ8/24IVt16q1Cd3SkwA7HnE
- 8LsAABzINJqvERj9bpl1yvGXZRQB/5LiXrOMAZ4usOkgAIMuPfem4vBXJJRXOJKA5QYq
- aEOIDZjlQH2noUK9FSlRM23fGTOd36gxZaZqXyzmTViZSPfRW4zxdL1rlvgtpc1bB5kt
- c/+kZtiyU3MrmUgVRXXkv0zSufonZ/HGWGCSny55DO5gWoNXqEWaRuEwy5pUBmvdhW5y
- mbAQ==
+ bh=zLAEd6Rg3iMRqPOIjbS0ze3Rhcny/PVxR3fx0hj6ZOM=;
+ b=zkMPwoSaCVyDqKBMsXQxZy4meSDwVpnVJE7yVL2HU27WEuej57tBEOKsWzL553hpOr
+ tl+e0GUzuHAyMcoDWIBiIaHCss4xWCPDcoI9dVL1tRoRpKRcXQnb7pX7yW3kL3umxzhc
+ 981Mh7/z9oJWxfruPNU6HEbLLVFtiF5CeX2e+DhCiZ53pbBYUZbOglkCLrur45waNLpp
+ Exw7kA0Yp+8XeG+chA+AotSPn7bM2Y8KUgai5Zp1w4l49325mClHkj+CL0TvC3k+tfKw
+ gY4Q6tHcqCbtlzSDYURSu1lqJ+UUx3KGY8r79bgWZsVDm3nDHTzf2+lTBNmwHVcMs3AP
+ AMhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787340589; x=1787945389;
+ d=1e100.net; s=20251104; t=1787340592; x=1787945392;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=2JKxy/A3XDVfMBFVLdmkTfrWLNJQgOwTu6pG9J8D0pg=;
- b=Xo7UqWDqhzElTBv8/2N/hUwB9joD4+mlPQFx+0sDoJuxkvo+XeNctvzy/dhKoo4jx9
- ns1aa21kJF59LIAYtX/MlpiTf31v/TZrpu6F4K0MAp0cTvIy/TOq87IBA0z0BH2F600W
- 23eQD3YtAb3wo/i3cvEPnmVuSt8qCcUB2E2Zv9dSQjq4mFT7KgtIBrJe01nMTx8Ibg6B
- u01Y6Z8D5Ssc2SoBU5CpsE61dP5va/fSxbGrfvv6AZ637YlZJ8d5ww+ZaESl0wU4G3ep
- NfZzUt0YIrNcHBcDPmtDTpjx6tDkW39JMrBTdfrmYQHbKakiFktg/tZ6dGabQ5iO/vdW
- lavQ==
-X-Gm-Message-State: AFuF++lWA2SsbBvFoGw9OP6Vtxp1T8JBYgwWqWdM7gRe6wcrTYEYAjh8
- zLQ+TQgAql5PTb8Ddywp++QGXW8oKlrEaJPg2L1m/5DS7k8r5u4lpKGdk6UcMzbcVsalYfZR4kn
- eSM1v
-X-Gm-Gg: AR+sD13wlRw7O2Er8PHe3j7SIrIN06FNTUOKwsJug2A+14smzEUwaeHM1NTeUaAnhyZ
- PG6wO+EzmW/CnA/G+Cywr/0hZZGNwFqtHVlYu9R8OLUI6Ycb7aDkJ7tRfnw1NdKVbS/jD0KsUUV
- Mh6QVMOGEFotSkMOsI6kNxFDvurWXIBN7WhGrsZVJFglpU6ADizsVyhBa5xz39um0awLPAroCOX
- Xql6MXkyfiW1ooz75jUMwxhTyJdNE8gKNecGr0xCfXC+7M03h6DTepc9n/ht5Y5FV6uP4Cy8+qw
- tA2BvRZgppyOD9uQHDTaPUZv+bUt0xe64cPgfKmJyJFheUm8nuNpiAWGN66uqHPfHuHRcVMC3BN
- LvIFXiLcjKggWS2vSmmF1wfiA25yXUCd7grUiciE4AfpZTjNy1w1gPbUiWAlxhyjBG5OshIyhbh
- Q5+ZeVL7EOGfM9rijM+vI7c+OlnEogmzMkldpVCrG1x4KtU+qaY1ooZ4tivVwETAyiVMKOKM86a
- vg1Z1w0fSVboBRfQZZ8Fge6A84=
-X-Received: by 2002:a05:6300:67c8:b0:3cc:2552:ddd7 with SMTP id
- adf61e73a8af0-3cd2fe76849mr17461823637.5.1787340588856; 
- Fri, 21 Aug 2026 12:29:48 -0700 (PDT)
+ bh=zLAEd6Rg3iMRqPOIjbS0ze3Rhcny/PVxR3fx0hj6ZOM=;
+ b=X94EvqU+8fb6Xx4qcjNHtURg1gCh+rlW19lREuCd4KlkAhyTHyo7ydQH02zP4mCDcR
+ 75mCHvyEufnEC1z9KEu420fGSOFNeZJutFA33GI6n7nvMS6EY5A4VSXIAnMmq/HVFJQc
+ JYPG7AEuYM0kylAFo8TGCMQskAy1XvDeJi1IXrgCPOles39p6zVZHOzGNMiTbI5HyaL+
+ gXB0iud1NuekbM89/B+ntN/jYPCaLqBrjz3xgLH1sQlAeh7/FosAZc5Y5XtLJKL0vRZh
+ 8AbN3Z58WaRVcSkrUQ/e1KWIW21QWLum8npxDqfZ044lQJExNbX3/k199cHJ061pZLdR
+ V6JQ==
+X-Gm-Message-State: AFuF++lPUkwyk7buUS2l6J926vUUOJDKcB5uF0LAXPZfpwJZeyxbg8uc
+ VUN4NC+X0J8zaeJRXHSC4imU0He4mWsI2QuGgUx9/4mozaf+0ViJmWj4eyJmfPAQas4aztojkX4
+ EVvZpwEQ=
+X-Gm-Gg: AR+sD13rm6+W8tdaaaF6guuu+JFv2HVbi9iiCASyu4zFh4jgv2lo/hA8NY86L4sbLem
+ mG4fSUqoyI6c2gXnbWo1XWaH+SyLgSmChTvzRClLqL4+g/aYH/FsZEWkiYFp0FuoriIJIfz4vBU
+ bQxsLj2n+nF8U3GIsRET2YnJRjj/HefNBZ2sfYiYlDh8V/++E00Ohg+b4jMznUJAckICLJvwJck
+ 2jEnK2rgq+Y4XUp2bqmARnDgGmm0ySuPIuKsujxPsyOyvhwBPcIfdQdoAJ/hmjR2WIwu5Tg3BBy
+ FP4LyIfBJBLnkZfKKTmkZIsjlp/RyEjW6wALjHns1ajGYM5fb1oOcdQrizcyLA6qsx7CxDk+yl0
+ ifKiVUQY9QYSUyri14gFPm8wNFLr2LFhGJK5iCyOJZiDHW0HOkhb2oCdTJ/ktMgJFoQJ39+yBlv
+ rcbd11iAtxMQNpoW3lz+5VIM/euo11+CtQePaTaO9WWANZgYgR39Z7Kc89yR3WCGU8SyVIT0JzA
+ 4i23ARh/hledsQdwa/jsciKbIONf3dpBQ2Bgg==
+X-Received: by 2002:a05:6a00:1884:b0:852:2ef:c05c with SMTP id
+ d2e1a72fcca58-8520beb3763mr1176153b3a.17.1787340592204; 
+ Fri, 21 Aug 2026 12:29:52 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-cc16c6dd2f4sm1860304a12.17.2026.08.21.12.29.46
+ 41be03b00d2f7-cc16c6dd2f4sm1860304a12.17.2026.08.21.12.29.49
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 21 Aug 2026 12:29:48 -0700 (PDT)
+ Fri, 21 Aug 2026 12:29:51 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Potnuri Bharat Teja <bharat@chelsio.com>
-Subject: [PATCH v2 31/68] net/cxgbe: replace use of rte_memcpy
-Date: Fri, 21 Aug 2026 12:24:26 -0700
-Message-ID: <20260821192646.146382-32-stephen@networkplumber.org>
+ Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>
+Subject: [PATCH v2 32/68] net/dpaa2: replace use of rte_memcpy
+Date: Fri, 21 Aug 2026 12:24:27 -0700
+Message-ID: <20260821192646.146382-33-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260821192646.146382-1-stephen@networkplumber.org>
 References: <20260820052251.1453273-1-stephen@networkplumber.org>
@@ -88,123 +89,160 @@ Don't need rte_memcpy for fixed size value.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/cxgbe/clip_tbl.c     |  2 +-
- drivers/net/cxgbe/cxgbe_filter.c |  8 ++++----
- drivers/net/cxgbe/l2t.c          |  4 ++--
- drivers/net/cxgbe/smt.c          | 20 +++++++++-----------
- 4 files changed, 16 insertions(+), 18 deletions(-)
+ drivers/net/dpaa2/base/dpaa2_hw_dpni.c |  1 -
+ drivers/net/dpaa2/dpaa2_ethdev.c       |  1 -
+ drivers/net/dpaa2/dpaa2_mux.c          | 36 +++++++++++++-------------
+ drivers/net/dpaa2/dpaa2_recycle.c      |  1 -
+ drivers/net/dpaa2/dpaa2_rxtx.c         |  1 -
+ drivers/net/dpaa2/dpaa2_sparser.c      |  1 -
+ drivers/net/dpaa2/dpaa2_tm.c           |  2 +-
+ 7 files changed, 19 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/net/cxgbe/clip_tbl.c b/drivers/net/cxgbe/clip_tbl.c
-index 8588b88158..ba7c9f19e4 100644
---- a/drivers/net/cxgbe/clip_tbl.c
-+++ b/drivers/net/cxgbe/clip_tbl.c
-@@ -115,7 +115,7 @@ static struct clip_entry *t4_clip_alloc(struct rte_eth_dev *dev,
- 	if (ce) {
- 		t4_os_lock(&ce->lock);
- 		if (rte_atomic_load_explicit(&ce->refcnt, rte_memory_order_relaxed) == 0) {
--			rte_memcpy(ce->addr, lip, sizeof(ce->addr));
-+			memcpy(ce->addr, lip, sizeof(ce->addr));
- 			if (v6) {
- 				ce->type = FILTER_TYPE_IPV6;
- 				rte_atomic_store_explicit(&ce->refcnt, 1,
-diff --git a/drivers/net/cxgbe/cxgbe_filter.c b/drivers/net/cxgbe/cxgbe_filter.c
-index 5a7efe7a73..3d1d087ec2 100644
---- a/drivers/net/cxgbe/cxgbe_filter.c
-+++ b/drivers/net/cxgbe/cxgbe_filter.c
-@@ -851,10 +851,10 @@ static int set_filter_wr(struct rte_eth_dev *dev, unsigned int fidx)
- 	fwr->ivlanm = cpu_to_be16(f->fs.mask.ivlan);
- 	fwr->ovlan = cpu_to_be16(f->fs.val.ovlan);
- 	fwr->ovlanm = cpu_to_be16(f->fs.mask.ovlan);
--	rte_memcpy(fwr->lip, f->fs.val.lip, sizeof(fwr->lip));
--	rte_memcpy(fwr->lipm, f->fs.mask.lip, sizeof(fwr->lipm));
--	rte_memcpy(fwr->fip, f->fs.val.fip, sizeof(fwr->fip));
--	rte_memcpy(fwr->fipm, f->fs.mask.fip, sizeof(fwr->fipm));
-+	memcpy(fwr->lip, f->fs.val.lip, sizeof(fwr->lip));
-+	memcpy(fwr->lipm, f->fs.mask.lip, sizeof(fwr->lipm));
-+	memcpy(fwr->fip, f->fs.val.fip, sizeof(fwr->fip));
-+	memcpy(fwr->fipm, f->fs.mask.fip, sizeof(fwr->fipm));
- 	fwr->lp = cpu_to_be16(f->fs.val.lport);
- 	fwr->lpm = cpu_to_be16(f->fs.mask.lport);
- 	fwr->fp = cpu_to_be16(f->fs.val.fport);
-diff --git a/drivers/net/cxgbe/l2t.c b/drivers/net/cxgbe/l2t.c
-index ecb5fec911..19a190314f 100644
---- a/drivers/net/cxgbe/l2t.c
-+++ b/drivers/net/cxgbe/l2t.c
-@@ -82,7 +82,7 @@ static int write_l2e(struct rte_eth_dev *dev, struct l2t_entry *e, int sync,
- 				  V_L2T_W_NOREPLY(!sync));
- 	req->l2t_idx = cpu_to_be16(l2t_idx);
- 	req->vlan = cpu_to_be16(e->vlan);
--	rte_memcpy(req->dst_mac, e->dmac, RTE_ETHER_ADDR_LEN);
-+	memcpy(req->dst_mac, e->dmac, RTE_ETHER_ADDR_LEN);
+diff --git a/drivers/net/dpaa2/base/dpaa2_hw_dpni.c b/drivers/net/dpaa2/base/dpaa2_hw_dpni.c
+index 26ad105c73..33b20c35f7 100644
+--- a/drivers/net/dpaa2/base/dpaa2_hw_dpni.c
++++ b/drivers/net/dpaa2/base/dpaa2_hw_dpni.c
+@@ -12,7 +12,6 @@
+ #include <rte_mbuf.h>
+ #include <ethdev_driver.h>
+ #include <rte_malloc.h>
+-#include <rte_memcpy.h>
+ #include <rte_string_fns.h>
+ #include <rte_cycles.h>
+ #include <rte_kvargs.h>
+diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
+index f211357919..d6786b5cb0 100644
+--- a/drivers/net/dpaa2/dpaa2_ethdev.c
++++ b/drivers/net/dpaa2/dpaa2_ethdev.c
+@@ -12,7 +12,6 @@
+ #include <rte_mbuf.h>
+ #include <ethdev_driver.h>
+ #include <rte_malloc.h>
+-#include <rte_memcpy.h>
+ #include <rte_string_fns.h>
+ #include <rte_cycles.h>
+ #include <rte_kvargs.h>
+diff --git a/drivers/net/dpaa2/dpaa2_mux.c b/drivers/net/dpaa2/dpaa2_mux.c
+index 7b7bf4161c..19b9388d41 100644
+--- a/drivers/net/dpaa2/dpaa2_mux.c
++++ b/drivers/net/dpaa2/dpaa2_mux.c
+@@ -151,12 +151,12 @@ rte_pmd_dpaa2_mux_flow_create(uint32_t dpdmux_id,
  
- 	if (loopback)
- 		memset(req->dst_mac, 0, RTE_ETHER_ADDR_LEN);
-@@ -155,7 +155,7 @@ static struct l2t_entry *t4_l2t_alloc_switching(struct rte_eth_dev *dev,
- 			e->state = L2T_STATE_SWITCHING;
- 			e->vlan = vlan;
- 			e->lport = port;
--			rte_memcpy(e->dmac, eth_addr, RTE_ETHER_ADDR_LEN);
-+			memcpy(e->dmac, eth_addr, RTE_ETHER_ADDR_LEN);
- 			rte_atomic_store_explicit(&e->refcnt, 1, rte_memory_order_relaxed);
- 			ret = write_l2e(dev, e, 0, !L2T_LPBK, !L2T_ARPMISS);
- 			if (ret < 0)
-diff --git a/drivers/net/cxgbe/smt.c b/drivers/net/cxgbe/smt.c
-index 2f961c1ead..8f26dc572a 100644
---- a/drivers/net/cxgbe/smt.c
-+++ b/drivers/net/cxgbe/smt.c
-@@ -55,26 +55,24 @@ static int write_smt_entry(struct rte_eth_dev *dev, struct smt_entry *e)
- 		 */
- 		if (e->idx & 1) {
- 			req->pfvf1 = 0x0;
--			rte_memcpy(req->src_mac1, e->src_mac,
--				   RTE_ETHER_ADDR_LEN);
-+			memcpy(req->src_mac1, e->src_mac, RTE_ETHER_ADDR_LEN);
+ 			spec = pattern[loop].spec;
+ 			mask = pattern[loop].mask;
+-			rte_memcpy(&key_va[key_size],
+-				&spec->hdr.next_proto_id, sizeof(uint8_t));
++			memcpy(&key_va[key_size], &spec->hdr.next_proto_id,
++			       sizeof(uint8_t));
+ 			if (mask) {
+-				rte_memcpy(&mask_va[key_size],
+-					&mask->hdr.next_proto_id,
+-					sizeof(uint8_t));
++				memcpy(&mask_va[key_size],
++				       &mask->hdr.next_proto_id,
++				       sizeof(uint8_t));
+ 			} else {
+ 				mask_va[key_size] = 0xff;
+ 			}
+@@ -179,11 +179,11 @@ rte_pmd_dpaa2_mux_flow_create(uint32_t dpdmux_id,
  
- 			/* fill pfvf0/src_mac0 with entry
- 			 * at prev index from smt-tab.
- 			 */
- 			req->pfvf0 = 0x0;
--			rte_memcpy(req->src_mac0, s->smtab[e->idx - 1].src_mac,
--				   RTE_ETHER_ADDR_LEN);
-+			memcpy(req->src_mac0, s->smtab[e->idx - 1].src_mac,
-+			       RTE_ETHER_ADDR_LEN);
- 		} else {
- 			req->pfvf0 = 0x0;
--			rte_memcpy(req->src_mac0, e->src_mac,
--				   RTE_ETHER_ADDR_LEN);
-+			memcpy(req->src_mac0, e->src_mac, RTE_ETHER_ADDR_LEN);
+ 			spec = pattern[loop].spec;
+ 			mask = pattern[loop].mask;
+-			rte_memcpy(&key_va[key_size],
+-				&spec->tci, sizeof(uint16_t));
++			memcpy(&key_va[key_size], &spec->tci,
++			       sizeof(uint16_t));
+ 			if (mask) {
+-				rte_memcpy(&mask_va[key_size],
+-					&mask->tci, sizeof(uint16_t));
++				memcpy(&mask_va[key_size], &mask->tci,
++				       sizeof(uint16_t));
+ 			} else {
+ 				memset(&mask_va[key_size], 0xff,
+ 					sizeof(rte_be16_t));
+@@ -206,12 +206,12 @@ rte_pmd_dpaa2_mux_flow_create(uint32_t dpdmux_id,
  
- 			/* fill pfvf1/src_mac1 with entry
- 			 * at next index from smt-tab
- 			 */
- 			req->pfvf1 = 0x0;
--			rte_memcpy(req->src_mac1, s->smtab[e->idx + 1].src_mac,
--				   RTE_ETHER_ADDR_LEN);
-+			memcpy(req->src_mac1, s->smtab[e->idx + 1].src_mac,
-+			       RTE_ETHER_ADDR_LEN);
- 		}
- 		row = (e->hw_idx >> 1);
- 	} else {
-@@ -87,8 +85,8 @@ static int write_smt_entry(struct rte_eth_dev *dev, struct smt_entry *e)
+ 			spec = pattern[loop].spec;
+ 			mask = pattern[loop].mask;
+-			rte_memcpy(&key_va[key_size],
+-				&spec->hdr.dst_port, sizeof(rte_be16_t));
++			memcpy(&key_va[key_size], &spec->hdr.dst_port,
++			       sizeof(rte_be16_t));
+ 			if (mask) {
+-				rte_memcpy(&mask_va[key_size],
+-					&mask->hdr.dst_port,
+-					sizeof(rte_be16_t));
++				memcpy(&mask_va[key_size],
++				       &mask->hdr.dst_port,
++				       sizeof(rte_be16_t));
+ 			} else {
+ 				memset(&mask_va[key_size], 0xff,
+ 					sizeof(rte_be16_t));
+@@ -234,11 +234,11 @@ rte_pmd_dpaa2_mux_flow_create(uint32_t dpdmux_id,
  
- 		/* fill pfvf0/src_mac0 from smt-tab */
- 		t6req->pfvf0 = 0x0;
--		rte_memcpy(t6req->src_mac0, s->smtab[e->idx].src_mac,
--			   RTE_ETHER_ADDR_LEN);
-+		memcpy(t6req->src_mac0, s->smtab[e->idx].src_mac,
-+		       RTE_ETHER_ADDR_LEN);
- 		row = e->hw_idx;
- 		req = (struct cpl_smt_write_req *)t6req;
- 	}
-@@ -158,7 +156,7 @@ static struct smt_entry *t4_smt_alloc_switching(struct rte_eth_dev *dev,
- 		t4_os_lock(&e->lock);
- 		if (rte_atomic_load_explicit(&e->refcnt, rte_memory_order_relaxed) == 0) {
- 			e->pfvf = pfvf;
--			rte_memcpy(e->src_mac, smac, RTE_ETHER_ADDR_LEN);
-+			memcpy(e->src_mac, smac, RTE_ETHER_ADDR_LEN);
- 			ret = write_smt_entry(dev, e);
- 			if (ret) {
- 				e->pfvf = 0;
+ 			spec = pattern[loop].spec;
+ 			mask = pattern[loop].mask;
+-			rte_memcpy(&key_va[key_size],
+-				&spec->type, sizeof(rte_be16_t));
++			memcpy(&key_va[key_size], &spec->type,
++			       sizeof(rte_be16_t));
+ 			if (mask) {
+-				rte_memcpy(&mask_va[key_size],
+-					&mask->type, sizeof(rte_be16_t));
++				memcpy(&mask_va[key_size], &mask->type,
++				       sizeof(rte_be16_t));
+ 			} else {
+ 				memset(&mask_va[key_size], 0xff,
+ 					sizeof(rte_be16_t));
+diff --git a/drivers/net/dpaa2/dpaa2_recycle.c b/drivers/net/dpaa2/dpaa2_recycle.c
+index f78d12362e..8dd10738ab 100644
+--- a/drivers/net/dpaa2/dpaa2_recycle.c
++++ b/drivers/net/dpaa2/dpaa2_recycle.c
+@@ -8,7 +8,6 @@
+ #include <rte_mbuf.h>
+ #include <ethdev_driver.h>
+ #include <rte_malloc.h>
+-#include <rte_memcpy.h>
+ #include <rte_string_fns.h>
+ #include <rte_cycles.h>
+ #include <rte_kvargs.h>
+diff --git a/drivers/net/dpaa2/dpaa2_rxtx.c b/drivers/net/dpaa2/dpaa2_rxtx.c
+index c31d6556ad..baaaacc2e0 100644
+--- a/drivers/net/dpaa2/dpaa2_rxtx.c
++++ b/drivers/net/dpaa2/dpaa2_rxtx.c
+@@ -12,7 +12,6 @@
+ #include <rte_mbuf.h>
+ #include <ethdev_driver.h>
+ #include <rte_malloc.h>
+-#include <rte_memcpy.h>
+ #include <rte_string_fns.h>
+ #include <dev_driver.h>
+ #include <rte_hexdump.h>
+diff --git a/drivers/net/dpaa2/dpaa2_sparser.c b/drivers/net/dpaa2/dpaa2_sparser.c
+index 6c3e6eb573..60dadb4776 100644
+--- a/drivers/net/dpaa2/dpaa2_sparser.c
++++ b/drivers/net/dpaa2/dpaa2_sparser.c
+@@ -5,7 +5,6 @@
+ #include <rte_mbuf.h>
+ #include <rte_ethdev.h>
+ #include <rte_malloc.h>
+-#include <rte_memcpy.h>
+ #include <rte_string_fns.h>
+ #include <dev_driver.h>
+ 
+diff --git a/drivers/net/dpaa2/dpaa2_tm.c b/drivers/net/dpaa2/dpaa2_tm.c
+index 36e815c356..497cd2dc84 100644
+--- a/drivers/net/dpaa2/dpaa2_tm.c
++++ b/drivers/net/dpaa2/dpaa2_tm.c
+@@ -324,7 +324,7 @@ dpaa2_shaper_profile_add(struct rte_eth_dev *dev, uint32_t shaper_profile_id,
+ 					 NULL, NULL);
+ 
+ 	profile->id = shaper_profile_id;
+-	rte_memcpy(&profile->params, params, sizeof(profile->params));
++	memcpy(&profile->params, params, sizeof(profile->params));
+ 
+ 	LIST_INSERT_HEAD(&priv->shaper_profiles, profile, next);
+ 
 -- 
 2.53.0
 
