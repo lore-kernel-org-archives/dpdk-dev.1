@@ -2,22 +2,22 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89219C5DF8C
-	for <dpdk-dev@archiver.kernel.org>; Sun, 23 Aug 2026 10:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B58D3C5DF8C
+	for <dpdk-dev@archiver.kernel.org>; Sun, 23 Aug 2026 10:58:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7842540270;
-	Sun, 23 Aug 2026 12:40:11 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B5B0840270;
+	Sun, 23 Aug 2026 12:57:59 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 79E5240265
- for <dev@dpdk.org>; Sun, 23 Aug 2026 12:40:08 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 44A9440265
+ for <dev@dpdk.org>; Sun, 23 Aug 2026 12:57:57 +0200 (CEST)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 51E1920443;
- Sun, 23 Aug 2026 12:40:07 +0200 (CEST)
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id E187C20443;
+ Sun, 23 Aug 2026 12:57:56 +0200 (CEST)
 Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
  smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Sun, 23 Aug 2026 12:40:07 +0200
+ Sun, 23 Aug 2026 12:57:56 +0200
 From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
 To: dev@dpdk.org, Jerin Jacob <jerinj@marvell.com>,
  Kiran Kumar K <kirankumark@marvell.com>,
@@ -25,17 +25,17 @@ To: dev@dpdk.org, Jerin Jacob <jerinj@marvell.com>,
  Zhirun Yan <yanzhirun_163@163.com>,
  Saeed Bishara <saeed.bishara.os@gmail.com>
 Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH v11] graph: add optional profiling stats
-Date: Sun, 23 Aug 2026 10:40:00 +0000
-Message-ID: <20260823104000.418898-1-mb@smartsharesystems.com>
+Subject: [PATCH v12] graph: add optional profiling stats
+Date: Sun, 23 Aug 2026 10:57:55 +0000
+Message-ID: <20260823105755.441824-1-mb@smartsharesystems.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260619202047.2809165-1-mb@smartsharesystems.com>
 References: <20260619202047.2809165-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 23 Aug 2026 10:40:07.0087 (UTC)
- FILETIME=[C392E3F0:01DD32EB]
+X-OriginalArrivalTime: 23 Aug 2026 10:57:56.0627 (UTC)
+ FILETIME=[4111BE30:01DD32EE]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,6 +54,9 @@ RTE_GRAPH_PROFILE in rte_config.h.
 
 Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
 ---
+v12:
+* Multiply printed percent values by 100.0. (AI)
+* Added to release note that this feature is disabled by default. (AI)
 v11:
 * Fixed signedness comparison and copy-paste bug.
 v10:
@@ -137,7 +140,7 @@ index 1c2cd1ef31..03caaaad7e 100644
    if not needed.
  
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index c8cc86295d..b4c9739262 100644
+index c8cc86295d..5403f913b4 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
 @@ -55,6 +55,15 @@ New Features
@@ -147,8 +150,8 @@ index c8cc86295d..b4c9739262 100644
 +* **Added optional graph profiling statistics.**
 +
 +  Added build-time configurable graph node profiling statistics via
-+  ``RTE_GRAPH_PROFILE`` in ``rte_config.h``. When enabled, tracks cycles
-+  spent processing various burst size intervals per node.
++  ``RTE_GRAPH_PROFILE`` in ``rte_config.h`` (disabled by default). When enabled,
++  tracks cycles spent processing various burst size intervals per node.
 +  The interval edges are build-time configurable via
 +  ``RTE_GRAPH_PROFILE_BURST_SMALL``, ``RTE_GRAPH_PROFILE_BURST_MEDIUM``, and
 +  ``RTE_GRAPH_PROFILE_BURST_LARGE`` in ``rte_config.h``.
@@ -157,7 +160,7 @@ index c8cc86295d..b4c9739262 100644
  Removed Items
  -------------
 diff --git a/lib/graph/graph_debug.c b/lib/graph/graph_debug.c
-index e3b8cccdc1..bd0793bfd6 100644
+index e3b8cccdc1..37b2b2e9d1 100644
 --- a/lib/graph/graph_debug.c
 +++ b/lib/graph/graph_debug.c
 @@ -60,6 +60,7 @@ rte_graph_obj_dump(FILE *f, struct rte_graph *g, bool all)
@@ -191,7 +194,7 @@ index e3b8cccdc1..bd0793bfd6 100644
 +			fprintf(f, "       total_cycles=%" PRIu64 " (%.1f%% of all nodes), avg cycles/call=%.1f\n",
 +				n->total_cycles,
 +				all_total_cycles == 0 ? 0.0 :
-+				(double)n->total_cycles / (double)all_total_cycles,
++				(double)n->total_cycles / (double)all_total_cycles * 100.0,
 +				n->total_calls == 0 ? 0.0 :
 +				(double)n->total_cycles / (double)n->total_calls);
 +#ifdef RTE_GRAPH_PROFILE
@@ -232,11 +235,11 @@ index e3b8cccdc1..bd0793bfd6 100644
 +			if (calls != 0) {
 +				fprintf(f, " (%.1f%% of this node)\n",
 +					n->total_calls == 0 ? 0.0 :
-+					(double)calls / (double)n->total_calls);
++					(double)calls / (double)n->total_calls * 100.0);
 +				fprintf(f, "         cycles=%" PRIu64 " (%.1f%% of this node), avg cycles/call=%.1f",
 +					cycles,
 +					n->total_cycles == 0 ? 0.0 :
-+					(double)cycles / (double)n->total_cycles,
++					(double)cycles / (double)n->total_cycles * 100.0,
 +					(double)cycles / (double)calls);
 +				if (objs_per_call != 0.0)
 +					fprintf(f, ", avg cycles/obj=%.1f",
