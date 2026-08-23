@@ -2,96 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBFA9C5DF97
-	for <dpdk-dev@archiver.kernel.org>; Sun, 23 Aug 2026 14:07:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FC6DC5DF81
+	for <dpdk-dev@archiver.kernel.org>; Sun, 23 Aug 2026 14:25:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 67FF240693;
-	Sun, 23 Aug 2026 16:07:28 +0200 (CEST)
-Received: from BN1PR04CU002.outbound.protection.outlook.com
- (mail-eastus2azon11010011.outbound.protection.outlook.com [52.101.56.11])
- by mails.dpdk.org (Postfix) with ESMTP id C7D6840265
- for <dev@dpdk.org>; Sun, 23 Aug 2026 16:07:24 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=n1+C/9/UBWL7y6fggh0T88wOhbcLOkpg6vFgDCfLNC/PycdEU5vLNL2sWtLfcOXaTBLvF9SkTM6TMrONMhG0Jkkl+GDfGg0jA1TzN1Dg7YEd9NocTTlYtPXeCDusJHmZipx/OwBiQO3kAoQYLwh4kwJT6OZGyKUGvpQjug8ElXvRVdQC/9ffRLDuuAGiPxBWqvj6BFby/s9gBnFJEB9D5V+awSSzV0eZFLNyDeBe0kaEaCTAQl9l9W2tPDkwgCZYzzdAvIHYZgXsvTpDprP1nCVVvIAQSdVIMjqdlzD9XYPisdLv5oxVSOGwtIdM6n/SQsInumqECULIs8PnkYhg3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HxtCUx25LwBDnR+3xIPvtw/W90KyEM363+fcdYCOT+E=;
- b=hnZTGqt4+Nf/6KTiC9+POJZDSvrvCDmBUjUSPAF3ebvIsI4gaUv2GaAtweV3w8vAqShbTf0mEH4emXMicgdlSWA6gp6xdYzX3CBFuPCKAqMLhLxYXg6JHYIIiOQ/KtTNgwWpXmbLi96JMxdSt8gcyt7Mw1gaQB3FL/ApI/LyQ+oIeHYsYm9EhjUfNDxcMtCbZgwYCf6Ml4Rd03Ff6bIIB+ViH1olthofUP8Ys1pojI1c2InPjfbxH6hwbpGafDan3FIy5UbLMY/wv77zGHdDPjavSCZdH7Qr4HRUJIJVnbgkGlaXzXiqqsE5+8ySA1i9inI1uYKdaNPk6zoQUcvQCw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=dpdk.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HxtCUx25LwBDnR+3xIPvtw/W90KyEM363+fcdYCOT+E=;
- b=3ZXKzRxX2RxgBPUbE9DNtw7cOpYoLgZLQ+OhKIhXR1okvf0hS7DALSGrH2NQEMsOiIoU2s/W5hoErMVnVO7rNMOumDeFWmZNKceDb17fTC/FEktEIQUqJ3L2bs2nt9nxoF41qqGpkPH/BcDjWX713/ep92Tg4pvNRDh9W2yUctQ=
-Received: from SJ0PR03CA0269.namprd03.prod.outlook.com (2603:10b6:a03:3a0::34)
- by PH7PR12MB6395.namprd12.prod.outlook.com (2603:10b6:510:1fd::14)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.339.12; Sun, 23 Aug
- 2026 14:07:11 +0000
-Received: from CO1PEPF000075F1.namprd03.prod.outlook.com
- (2603:10b6:a03:3a0:cafe::86) by SJ0PR03CA0269.outlook.office365.com
- (2603:10b6:a03:3a0::34) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.339.12 via Frontend Transport; Sun,
- 23 Aug 2026 14:07:10 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- CO1PEPF000075F1.mail.protection.outlook.com (10.167.249.40) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.360.3 via Frontend Transport; Sun, 23 Aug 2026 14:07:10 +0000
-Received: from cae-QUARTZ.amd.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.45; Sun, 23 Aug
- 2026 09:07:07 -0500
-From: Raghavendra Ningoji <raghavendra.ningoji@amd.com>
-To: <dev@dpdk.org>
-CC: <jingjing.wu@intel.com>, <rjarry@redhat.com>, <thomas@monjalon.net>,
- <selwin.sebastian@amd.com>, <bhagyada.modali@amd.com>, Raghavendra Ningoji
- <raghavendra.ningoji@amd.com>
-Subject: [PATCH v1 1/3] raw/ntb: generalize framework for multiple vendors
-Date: Sun, 23 Aug 2026 19:36:37 +0530
-Message-ID: <20260823140639.153997-2-raghavendra.ningoji@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260823140639.153997-1-raghavendra.ningoji@amd.com>
-References: <20260823140639.153997-1-raghavendra.ningoji@amd.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 7021240275;
+	Sun, 23 Aug 2026 16:25:20 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 2A32240270
+ for <dev@dpdk.org>; Sun, 23 Aug 2026 16:25:19 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 0343C20443;
+ Sun, 23 Aug 2026 16:25:19 +0200 (CEST)
+Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
+ smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
+ Sun, 23 Aug 2026 16:25:18 +0200
+From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+To: dev@dpdk.org, Jerin Jacob <jerinj@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Zhirun Yan <yanzhirun_163@163.com>,
+ Saeed Bishara <saeed.bishara.os@gmail.com>, Robin Jarry <rjarry@redhat.com>
+Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+Subject: [PATCH v16] graph: add optional profiling stats
+Date: Sun, 23 Aug 2026 14:25:12 +0000
+Message-ID: <20260823142512.490247-1-mb@smartsharesystems.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260619202047.2809165-1-mb@smartsharesystems.com>
+References: <20260619202047.2809165-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.180.168.240]
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000075F1:EE_|PH7PR12MB6395:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3a9d1934-5b85-45ca-ccad-08df011fd2e8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|23010399003|1800799024|36860700016|82310400026|3023799007|11063799006|10067099003|56012099006|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info: M6oebH297vV87OWuGYbH7ExEX4KkhsKH76d5YAtjRgzDy0xyXO4UN5BCuw9RuOdNuku9s6xb+y/x+QTE65vTF3ipATJAmUaW8Gm721El+TS8n/EDc5BTWfOgEl8R3iCGOsC1q5WRFOrYft2E4i0IncsV4aBsMDJU3/4JDKyIMUCQF92tY5R59NMhnU5IYrmmKRJe73264UDqbikmPbAwUmjOXVkF4j21WVMeLoWV6o21U91u7Nm4C8iSprsSbpw+1SQTc5CUkuCglBJorQ5RJqfcQ1hvLuWXcG5PxJ5+s2u1bI3A7MxF0TuItFjzZlYw1BfZotMPiH0f4PvQQ6xmDn9ZqC32lBubwET4EdrGxmGXgHwZjQkG0naZdSR8KbWAJX+Y528XmQLnY4NfHjrMJb5cmD8XTdUUzFtzG4VUZ/nFFTPFkoOKbXkiVooQY3QXMgxYQRG0HU/JHqNr9mJcyVJHkSbM/7wfEgFXTRea7ovwXHsiqbEF/VFMz4zrg2Fe5ncvBfGesLJBWa0o8WuIi7pDmpzotqxLAe5PwqDECzkWz41LMxFlHPeGvzcbbvOLBu2pjNRs6V3B+lH3HEWvqGf+YebZJYabdqZW66SyZXBK0EzDV6BuBSe0sYty956c6IarG63yjo2LoITP2NrStPAkp3YLALNSIUo+lsvww1gm1IUjWQnQfm5D8PllaJZZfIjeV41g3kcIDIMlOhEZFg==
-X-Forefront-Antispam-Report: CIP:165.204.84.17; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:satlexmb07.amd.com; PTR:InfoDomainNonexistent; CAT:NONE;
- SFS:(13230040)(376014)(23010399003)(1800799024)(36860700016)(82310400026)(3023799007)(11063799006)(10067099003)(56012099006)(18002099003)(22082099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: AJvmFrjoJF7h18NUkjhx2NbAJ1EApAyALqcmNX11/pZOWU3E0TGZ421e4ABvxDx4Mex756F2M/eBQJMUkgcJtmoA99vucbBuThx33E5Ak8plTRBFEc6gvzav0L04Gz06x3qveBP5XY6Odsfn6JlgUrWCyFjw49dNGSuBJKlizmUevPBcfUH025uHKPDsl0oGf2/txFp6cHgMYteF57Q8iYoZtDrbFzRNNfI36MPOWg6E6AzQpe0cx/Z/mtJPej1eUu8osE8AeeAXK+a6st5d5Pa8MQO+T5mtzaLm7Mc97alWvH4zipLoHZkHAsUuG45lhzCfOnE8ZnM2KeWoUeF6lBHQvxXlsLk049yEa9hkVLcmHg6T/sMRV0jt7H6ByK4zNr+sWrOOm7Syms04RvbDZq6FvWh3VjY01AJoyxrWRHLMTgV4NMVOBS6kSI9vnuwX
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2026 14:07:10.3134 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3a9d1934-5b85-45ca-ccad-08df011fd2e8
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d; Ip=[165.204.84.17];
- Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1PEPF000075F1.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6395
+X-OriginalArrivalTime: 23 Aug 2026 14:25:18.0735 (UTC)
+ FILETIME=[3924C1F0:01DD330B]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -105,215 +49,331 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The NTB rawdev framework was written around the Intel back-to-back
-topology and the built-in scratchpad handshake protocol. To allow
-other vendors to plug into the same framework, add vendor-neutral
-hooks and make the common code dispatch through them:
+Added graph node profiling stats, build time configurable by enabling
+RTE_GRAPH_PROFILE in rte_config.h.
 
-- Add NTB_TOPO_PRI/NTB_TOPO_SEC topology types for hardware that uses
-  a primary/secondary topology instead of back-to-back.
-- Add optional ntb_dev_ops hooks: interrupt_handler (vendor-specific
-  MSI-X handler), dev_handshake (vendor-specific link handshake) and
-  read_peer_config (vendor-specific peer-config read at start). When a
-  hook is NULL the common code keeps using the existing built-in path,
-  so the Intel driver is unaffected.
-- Add a pmd_private pointer to struct ntb_hw for vendor-specific state.
-- Guard the receive path against a malformed stream with no end-of-packet
-  marker so it cannot overflow the descriptor ring.
-
-Signed-off-by: Raghavendra Ningoji <raghavendra.ningoji@amd.com>
+Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
 ---
- drivers/raw/ntb/ntb.c | 94 ++++++++++++++++++++++++++++---------------
- drivers/raw/ntb/ntb.h | 18 +++++++++
- 2 files changed, 80 insertions(+), 32 deletions(-)
+v16:
+* Refactored range bucketing for clarity and performance. (AI)
+v15:
+* Used the term "ranges" instead of "intervals". (AI)
+* Described the last range as "%u+" instead of "[%u;[".
+  Correct would be "[%u;+∞[", but prefer ASCII here.
+v14:
+* Changed some minor details suggested by AI.
+v13:
+* Fixed cache alignment; array should be aligned, not struct.
+* Changed some minor details suggested by AI.
+v12:
+* Multiply printed percent values by 100.0. (AI)
+* Added to release note that this feature is disabled by default. (AI)
+v11:
+* Fixed signedness comparison and copy-paste bug.
+v10:
+* Use intervals instead of point samples. (Robin Jarry)
+* Do not double-indent printf continuations.
+  Follows existing coding style in the file, and
+  avoids a long line warning from checkpatch.
+* Rebased.
+  Moved release note to 26.11 file.
+v9:
+* Fixed comment still mentioning 32 objects.
+* Moved sample size array outside loop. (AI)
+* Added release note. (AI)
+v8:
+* Added static const array as local variable, instead of indexing directly
+  into const array. (AI)
+  This also eliminates the space required between "} [idx];" weirdness.
+* Added build time configurable RTE_GRAPH_PROFILE_BURST_SIZE to replace
+  the hardcoded burst size of 32. (AI)
+v7:
+* Use RTE_DIM() in histogram for loop.
+* Added static_assert for histogram index values.
+* Minor details to please checkpatch.
+  Although I disagree with requiring a space when indexing into
+  a constant array "(const type []){values} [idx];",
+  I have changed the code to comply.
+v6:
+* Consolidate the four histogram entries into one array. (Saeed Bishara)
+* Sample at 32 objs instead of a half burst. (Saeed Bishara)
+* Moved stats to different location in rte_node structure. (Jerin)
+* Minor details to please checkpatch.
+v5:
+* Added stats for a half burst and a full burst.
+v4:
+* Added documentation. (AI)
+* Added more comments. (AI)
+* Improved dump. (AI)
+* Debug shows both cycles/call and cycles/obj.
+v3:
+* Debug shows cycles/obj instead of cycles/call.
+* Fixed missing --in-reply-to.
+v2:
+* Fixed indentation.
+---
+ config/rte_config.h                    |  4 ++
+ doc/guides/prog_guide/graph_lib.rst    |  5 ++
+ doc/guides/rel_notes/release_26_11.rst |  9 ++++
+ lib/graph/graph_debug.c                | 67 ++++++++++++++++++++++++++
+ lib/graph/node.c                       |  2 +
+ lib/graph/rte_graph_worker_common.h    | 57 ++++++++++++++++++++--
+ 6 files changed, 141 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/raw/ntb/ntb.c b/drivers/raw/ntb/ntb.c
-index d54f2fb783..3a6a299081 100644
---- a/drivers/raw/ntb/ntb.c
-+++ b/drivers/raw/ntb/ntb.c
-@@ -746,6 +746,11 @@ ntb_dequeue_bufs(struct rte_rawdev *dev,
- 	for (nb_rx = 0; nb_rx < count; nb_rx++) {
- 		i = 0;
- 		while (true) {
-+			if (unlikely(nb_mbufs >= rxq->nb_rx_desc)) {
-+				NTB_LOG(ERR, "Malformed rx stream (no EOP); "
-+					"aborting to avoid desc overflow.");
-+				goto end_of_rx;
-+			}
- 			rx_item = rxq->rx_used_ring + rxq->last_used;
- 			rxm_t = sw_ring[rxq->last_used].mbuf;
- 			rxm_t->data_len = rx_item->len;
-@@ -882,8 +887,13 @@ ntb_dev_configure(const struct rte_rawdev *dev, rte_rawdev_obj_t config,
- 	hw->ntb_xstats_off = rte_zmalloc("ntb_xstats_off", xstats_num *
- 					 sizeof(uint64_t), 0);
+diff --git a/config/rte_config.h b/config/rte_config.h
+index 0447cdf2ad..6beee01b09 100644
+--- a/config/rte_config.h
++++ b/config/rte_config.h
+@@ -106,6 +106,10 @@
+ /* rte_graph defines */
+ #define RTE_GRAPH_BURST_SIZE 256
+ #define RTE_LIBRTE_GRAPH_STATS 1
++/* RTE_GRAPH_PROFILE is not set */
++#define RTE_GRAPH_PROFILE_BURST_SMALL 8
++#define RTE_GRAPH_PROFILE_BURST_MEDIUM 32
++#define RTE_GRAPH_PROFILE_BURST_LARGE RTE_GRAPH_BURST_SIZE
  
--	/* Start handshake with the peer. */
--	ret = ntb_handshake_work(dev);
-+	/* Start handshake with the peer. Use the vendor-specific handshake
-+	 * if provided, otherwise the built-in scratchpad protocol.
-+	 */
-+	if (hw->ntb_ops->dev_handshake != NULL)
-+		ret = (*hw->ntb_ops->dev_handshake)(dev);
-+	else
-+		ret = ntb_handshake_work(dev);
- 	if (ret < 0) {
- 		rte_free(hw->rx_queues);
- 		rte_free(hw->tx_queues);
-@@ -929,35 +939,44 @@ ntb_dev_start(struct rte_rawdev *dev)
- 		goto err_q_init;
- 	}
+ /****** driver defines ********/
  
--	if (hw->ntb_ops->spad_read == NULL) {
--		ret = -ENOTSUP;
--		goto err_up;
--	}
-+	/* Read/validate peer config. Use the vendor-specific reader if
-+	 * provided, otherwise the built-in scratchpad reads.
-+	 */
-+	if (hw->ntb_ops->read_peer_config != NULL) {
-+		ret = (*hw->ntb_ops->read_peer_config)(dev);
-+		if (ret < 0)
-+			goto err_up;
-+	} else {
-+		if (hw->ntb_ops->spad_read == NULL) {
-+			ret = -ENOTSUP;
-+			goto err_up;
-+		}
+diff --git a/doc/guides/prog_guide/graph_lib.rst b/doc/guides/prog_guide/graph_lib.rst
+index 1c2cd1ef31..aa5faf4e82 100644
+--- a/doc/guides/prog_guide/graph_lib.rst
++++ b/doc/guides/prog_guide/graph_lib.rst
+@@ -49,6 +49,11 @@ Performance tuning parameters
+   RTE_GRAPH_BURST_SIZE config option.
+   The testing shows, on x86 and arm64 servers, The sweet spot is 256 burst
+   size. While on arm64 embedded SoCs, it is either 64 or 128.
++- Enable the ``RTE_GRAPH_PROFILE`` config option for more profiling details
++  (disabled by default).
++  Set the ``RTE_GRAPH_PROFILE_BURST_SMALL``, ``RTE_GRAPH_PROFILE_BURST_MEDIUM``,
++  and ``RTE_GRAPH_PROFILE_BURST_LARGE`` config options to sample specific
++  burst size ranges.
+ - Disable node statistics (using ``RTE_LIBRTE_GRAPH_STATS`` config option)
+   if not needed.
  
--	peer_val = (*hw->ntb_ops->spad_read)(dev, SPAD_Q_SZ, 0);
--	if (peer_val != hw->queue_size) {
--		NTB_LOG(ERR, "Inconsistent queue size! (local: %u peer: %u)",
--			hw->queue_size, peer_val);
--		ret = -EINVAL;
--		goto err_up;
--	}
-+		peer_val = (*hw->ntb_ops->spad_read)(dev, SPAD_Q_SZ, 0);
-+		if (peer_val != hw->queue_size) {
-+			NTB_LOG(ERR, "Inconsistent queue size! (local: %u peer: %u)",
-+				hw->queue_size, peer_val);
-+			ret = -EINVAL;
-+			goto err_up;
-+		}
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index c8cc86295d..2c822b6eee 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -55,6 +55,15 @@ New Features
+      Also, make sure to start the actual text at the margin.
+      =======================================================
  
--	peer_val = (*hw->ntb_ops->spad_read)(dev, SPAD_NUM_QPS, 0);
--	if (peer_val != hw->queue_pairs) {
--		NTB_LOG(ERR, "Inconsistent number of queues! (local: %u peer:"
--			" %u)", hw->queue_pairs, peer_val);
--		ret = -EINVAL;
--		goto err_up;
--	}
-+		peer_val = (*hw->ntb_ops->spad_read)(dev, SPAD_NUM_QPS, 0);
-+		if (peer_val != hw->queue_pairs) {
-+			NTB_LOG(ERR, "Inconsistent number of queues! (local: %u peer:"
-+				" %u)", hw->queue_pairs, peer_val);
-+			ret = -EINVAL;
-+			goto err_up;
-+		}
- 
--	hw->peer_used_mws = (*hw->ntb_ops->spad_read)(dev, SPAD_USED_MWS, 0);
-+		hw->peer_used_mws = (*hw->ntb_ops->spad_read)(dev, SPAD_USED_MWS, 0);
- 
--	for (i = 0; i < hw->peer_used_mws; i++) {
--		peer_base_h = (*hw->ntb_ops->spad_read)(dev,
--				SPAD_MW0_BA_H + 2 * i, 0);
--		peer_base_l = (*hw->ntb_ops->spad_read)(dev,
--				SPAD_MW0_BA_L + 2 * i, 0);
--		hw->peer_mw_base[i] = (peer_base_h << 32) + peer_base_l;
-+		for (i = 0; i < hw->peer_used_mws; i++) {
-+			peer_base_h = (*hw->ntb_ops->spad_read)(dev,
-+					SPAD_MW0_BA_H + 2 * i, 0);
-+			peer_base_l = (*hw->ntb_ops->spad_read)(dev,
-+					SPAD_MW0_BA_L + 2 * i, 0);
-+			hw->peer_mw_base[i] = (peer_base_h << 32) + peer_base_l;
-+		}
- 	}
- 
- 	dev->started = 1;
-@@ -1057,8 +1076,13 @@ ntb_dev_close(struct rte_rawdev *dev)
- 	rte_intr_disable(intr_handle);
- 
- 	/* Unregister callback func to eal lib */
--	rte_intr_callback_unregister(intr_handle,
--				     ntb_dev_intr_handler, dev);
-+	if (hw->ntb_ops->interrupt_handler != NULL)
-+		rte_intr_callback_unregister(intr_handle,
-+					     hw->ntb_ops->interrupt_handler,
-+					     dev);
-+	else
-+		rte_intr_callback_unregister(intr_handle,
-+					     ntb_dev_intr_handler, dev);
- 
- 	return 0;
- }
-@@ -1409,9 +1433,15 @@ ntb_init_hw(struct rte_rawdev *dev, struct rte_pci_device *pci_dev)
- 	(*hw->ntb_ops->db_clear)(dev, hw->db_valid_mask);
- 
- 	intr_handle = pci_dev->intr_handle;
--	/* Register callback func to eal lib */
--	rte_intr_callback_register(intr_handle,
--				   ntb_dev_intr_handler, dev);
-+	/* Register callback func to eal lib. Use the vendor-specific handler
-+	 * if provided, otherwise fall back to the built-in handler.
-+	 */
-+	if (hw->ntb_ops->interrupt_handler != NULL)
-+		rte_intr_callback_register(intr_handle,
-+					   hw->ntb_ops->interrupt_handler, dev);
-+	else
-+		rte_intr_callback_register(intr_handle,
-+					   ntb_dev_intr_handler, dev);
- 
- 	ret = rte_intr_efd_enable(intr_handle, hw->db_cnt);
- 	if (ret)
-diff --git a/drivers/raw/ntb/ntb.h b/drivers/raw/ntb/ntb.h
-index 8c7a2230f9..270f9f9046 100644
---- a/drivers/raw/ntb/ntb.h
-+++ b/drivers/raw/ntb/ntb.h
-@@ -42,6 +42,9 @@ enum ntb_topo {
- 	NTB_TOPO_NONE = 0,
- 	NTB_TOPO_B2B_USD,
- 	NTB_TOPO_B2B_DSD,
-+	/* Primary/secondary topology (e.g. AMD NTB). */
-+	NTB_TOPO_PRI,
-+	NTB_TOPO_SEC,
- };
- 
- enum ntb_link {
-@@ -100,6 +103,8 @@ enum ntb_spad_idx {
-  * for those db bits.
-  * @peer_db_set: Set doorbell bit to generate peer interrupt for that bit.
-  * @vector_bind: Bind vector source [intr] to msix vector [msix].
-+ * @interrupt_handler: Vendor-specific interrupt handler. If NULL, the
-+ * built-in handler is used.
-  */
- struct ntb_dev_ops {
- 	int (*ntb_dev_init)(const struct rte_rawdev *dev);
-@@ -119,6 +124,16 @@ struct ntb_dev_ops {
- 	int (*peer_db_set)(const struct rte_rawdev *dev, uint8_t db_bit);
- 	int (*vector_bind)(const struct rte_rawdev *dev, uint8_t intr,
- 			   uint8_t msix);
-+	void (*interrupt_handler)(void *param);
-+	/* Optional vendor-specific handshake. If NULL, the built-in
-+	 * scratchpad handshake is used. Used by hardware (e.g. AMD) whose
-+	 * scratchpad layout differs from the built-in protocol.
-+	 */
-+	int (*dev_handshake)(const struct rte_rawdev *dev);
-+	/* Optional vendor-specific peer-config read at device start. If NULL,
-+	 * the built-in scratchpad reads are used.
-+	 */
-+	int (*read_peer_config)(const struct rte_rawdev *dev);
- };
- 
- struct ntb_desc {
-@@ -208,6 +223,9 @@ struct ntb_hw {
- 
- 	const struct ntb_dev_ops *ntb_ops;
- 
-+	/* Vendor-specific hardware private data. */
-+	void *pmd_private;
++* **Added optional graph profiling statistics.**
 +
- 	struct rte_pci_device *pci_dev;
- 	char *hw_addr;
++  Added build time configurable graph node profiling statistics via
++  ``RTE_GRAPH_PROFILE`` in ``rte_config.h`` (disabled by default). When enabled,
++  tracks cycles spent processing various burst size ranges per node.
++  The edges of the ranges are build time configurable via
++  ``RTE_GRAPH_PROFILE_BURST_SMALL``, ``RTE_GRAPH_PROFILE_BURST_MEDIUM``, and
++  ``RTE_GRAPH_PROFILE_BURST_LARGE`` in ``rte_config.h``.
++
  
+ Removed Items
+ -------------
+diff --git a/lib/graph/graph_debug.c b/lib/graph/graph_debug.c
+index e3b8cccdc1..a2aef9918f 100644
+--- a/lib/graph/graph_debug.c
++++ b/lib/graph/graph_debug.c
+@@ -60,6 +60,7 @@ rte_graph_obj_dump(FILE *f, struct rte_graph *g, bool all)
+ 	rte_graph_off_t off;
+ 	struct rte_node *n;
+ 	rte_edge_t i;
++	uint64_t all_total_cycles = 0;
+ 
+ 	fprintf(f, "graph <%s> @ %p\n", g->name, g);
+ 	fprintf(f, "  id=%" PRIu32 "\n", g->id);
+@@ -72,6 +73,12 @@ rte_graph_obj_dump(FILE *f, struct rte_graph *g, bool all)
+ 	fprintf(f, "  nodes_start=0x%" PRIx32 "\n", g->nodes_start);
+ 	fprintf(f, "  cir_start=%p\n", g->cir_start);
+ 
++	rte_graph_foreach_node(count, off, g, n) {
++		if (!all && n->idx == 0)
++			continue;
++		all_total_cycles += n->total_cycles;
++	}
++
+ 	rte_graph_foreach_node(count, off, g, n) {
+ 		if (!all && n->idx == 0)
+ 			continue;
+@@ -93,6 +100,66 @@ rte_graph_obj_dump(FILE *f, struct rte_graph *g, bool all)
+ 				n->dispatch.total_sched_fail);
+ 		}
+ 		fprintf(f, "       total_calls=%" PRId64 "\n", n->total_calls);
++		if (rte_graph_has_stats_feature())
++			fprintf(f, "       total_cycles=%" PRIu64 " (%.1f%% of all nodes), avg cycles/call=%.1f\n",
++				n->total_cycles,
++				all_total_cycles == 0 ? 0.0 :
++				(double)n->total_cycles / (double)all_total_cycles * 100.0,
++				n->total_calls == 0 ? 0.0 :
++				(double)n->total_cycles / (double)n->total_calls);
++
++#ifdef RTE_GRAPH_PROFILE
++		static const uint16_t sample_sizes[] = {
++				0, 1, 2, RTE_GRAPH_PROFILE_BURST_SMALL,
++				RTE_GRAPH_PROFILE_BURST_MEDIUM, RTE_GRAPH_PROFILE_BURST_LARGE};
++		static_assert(RTE_DIM(sample_sizes) == 2U + RTE_DIM(n->usage_stats),
++				"usage_stats array size mismatch");
++		for (unsigned int idx = 0; idx < RTE_DIM(sample_sizes); idx++) {
++			uint64_t calls;
++			uint64_t cycles;
++			double objs_per_call;
++			if (idx < 2) {
++				calls = n->usage_stats_01[idx].calls;
++				cycles = n->usage_stats_01[idx].cycles;
++				objs_per_call = (double)idx;
++				fprintf(f, "       for %u objs/call\n",
++					idx);
++			} else {
++				calls = n->usage_stats[idx - 2].calls;
++				cycles = n->usage_stats[idx - 2].cycles;
++				objs_per_call = calls == 0 ? 0.0 :
++						(double)n->usage_stats[idx - 2].objs /
++						(double)calls;
++				if (idx < RTE_DIM(sample_sizes) - 1)
++					fprintf(f, "       for [%u;%u[ objs/call",
++						sample_sizes[idx], sample_sizes[idx + 1]);
++				else
++					fprintf(f, "       for %u+ objs/call",
++						sample_sizes[idx]);
++				if (calls != 0)
++					fprintf(f, ", avg %.1f objs/call\n",
++						objs_per_call);
++				fprintf(f, "\n");
++			}
++			fprintf(f, "         calls=%" PRIu64,
++				calls);
++			if (calls != 0) {
++				fprintf(f, " (%.1f%% of this node)\n",
++					n->total_calls == 0 ? 0.0 :
++					(double)calls / (double)n->total_calls * 100.0);
++				fprintf(f, "         cycles=%" PRIu64 " (%.1f%% of this node), avg cycles/call=%.1f",
++					cycles,
++					n->total_cycles == 0 ? 0.0 :
++					(double)cycles / (double)n->total_cycles * 100.0,
++					(double)cycles / (double)calls);
++				if (objs_per_call != 0.0)
++					fprintf(f, ", avg cycles/obj=%.1f",
++						(double)cycles / (double)calls / objs_per_call);
++			}
++			fprintf(f, "\n");
++		}
++#endif /* RTE_GRAPH_PROFILE */
++
+ 		for (i = 0; i < n->nb_edges; i++)
+ 			fprintf(f, "          edge[%d] <%s>\n", i,
+ 				n->nodes[i]->name);
+diff --git a/lib/graph/node.c b/lib/graph/node.c
+index 1fce3e6632..19b38881ae 100644
+--- a/lib/graph/node.c
++++ b/lib/graph/node.c
+@@ -110,10 +110,12 @@ __rte_node_register(const struct rte_node_register *reg)
+ 	rte_edge_t i;
+ 	size_t sz;
+ 
++#ifndef RTE_GRAPH_PROFILE
+ 	/* Limit Node specific metadata to one cacheline on 64B CL machine */
+ 	RTE_BUILD_BUG_ON((offsetof(struct rte_node, nodes) -
+ 			  offsetof(struct rte_node, ctx)) !=
+ 			 RTE_CACHE_LINE_MIN_SIZE);
++#endif
+ 
+ 	graph_spinlock_lock();
+ 
+diff --git a/lib/graph/rte_graph_worker_common.h b/lib/graph/rte_graph_worker_common.h
+index 4ab53a533e..e312f1fd40 100644
+--- a/lib/graph/rte_graph_worker_common.h
++++ b/lib/graph/rte_graph_worker_common.h
+@@ -121,6 +121,27 @@ struct __rte_cache_aligned rte_node {
+ 	rte_graph_off_t xstat_off; /**< Offset to xstat counters. */
+ 
+ 	/** Fast path area cache line 2. */
++#ifdef RTE_GRAPH_PROFILE
++	/** Usage when this node processed 0 or 1 objects. */
++	alignas(RTE_CACHE_LINE_MIN_SIZE)
++	struct {
++		uint64_t calls;     /**< Calls done. */
++		uint64_t cycles;    /**< Cycles spent. */
++	} usage_stats_01[2];
++	/**
++	 * Usage when this node processed N objects:
++	 * - index 0 (micro): 2 <= N < RTE_GRAPH_PROFILE_BURST_SMALL
++	 * - index 1 (small): RTE_GRAPH_PROFILE_BURST_SMALL <= N < RTE_GRAPH_PROFILE_BURST_MEDIUM
++	 * - index 2 (medium): RTE_GRAPH_PROFILE_BURST_MEDIUM <= N < RTE_GRAPH_PROFILE_BURST_LARGE
++	 * - index 3 (large): RTE_GRAPH_PROFILE_BURST_LARGE <= N
++	 */
++	struct {
++		uint64_t calls;     /**< Calls done. */
++		uint64_t cycles;    /**< Cycles spent. */
++		uint64_t objs;      /**< Objects processed. */
++	} usage_stats[4];
++	/** Fast path area cache line 4. */
++#endif
+ 	__extension__ struct __rte_cache_aligned {
+ #define RTE_NODE_CTX_SZ 16
+ 		union {
+@@ -148,8 +169,10 @@ struct __rte_cache_aligned rte_node {
+ 	};
+ };
+ 
++#ifndef RTE_GRAPH_PROFILE
+ static_assert(offsetof(struct rte_node, nodes) - offsetof(struct rte_node, ctx)
+ 	== RTE_CACHE_LINE_MIN_SIZE, "rte_node fast path area must fit in 64 bytes");
++#endif
+ 
+ /**
+  * @internal
+@@ -197,7 +220,7 @@ void __rte_node_stream_alloc_size(struct rte_graph *graph,
+ static __rte_always_inline void
+ __rte_node_process(struct rte_graph *graph, struct rte_node *node)
+ {
+-	uint64_t start;
++	uint64_t cycles;
+ 	uint16_t rc;
+ 	void **objs;
+ 
+@@ -206,11 +229,39 @@ __rte_node_process(struct rte_graph *graph, struct rte_node *node)
+ 	rte_prefetch0(objs);
+ 
+ 	if (rte_graph_has_stats_feature()) {
+-		start = rte_rdtsc();
++		cycles = -rte_rdtsc();
+ 		rc = node->process(graph, node, objs, node->idx);
+-		node->total_cycles += rte_rdtsc() - start;
++		cycles += rte_rdtsc();
++		node->total_cycles += cycles;
+ 		node->total_calls++;
+ 		node->total_objs += rc;
++#ifdef RTE_GRAPH_PROFILE
++		static_assert(RTE_GRAPH_PROFILE_BURST_SMALL >= 2,
++			"BURST_SMALL must be >= 2");
++		static_assert(RTE_GRAPH_PROFILE_BURST_SMALL < RTE_GRAPH_PROFILE_BURST_MEDIUM,
++			"BURST_SMALL must be < BURST_MEDIUM");
++		static_assert(RTE_GRAPH_PROFILE_BURST_MEDIUM < RTE_GRAPH_PROFILE_BURST_LARGE,
++			"BURST_MEDIUM must be < BURST_LARGE");
++		if (rc < 2) {
++			node->usage_stats_01[rc].calls++;
++			node->usage_stats_01[rc].cycles += cycles;
++		} else {
++			unsigned int index;
++
++			if (rc >= RTE_GRAPH_PROFILE_BURST_LARGE)
++				index = 3;
++			else if (rc >= RTE_GRAPH_PROFILE_BURST_MEDIUM)
++				index = 2;
++			else if (rc >= RTE_GRAPH_PROFILE_BURST_SMALL)
++				index = 1;
++			else
++				index = 0;
++
++			node->usage_stats[index].calls++;
++			node->usage_stats[index].cycles += cycles;
++			node->usage_stats[index].objs += rc;
++		}
++#endif
+ 	} else {
+ 		node->process(graph, node, objs, node->idx);
+ 	}
 -- 
-2.34.1
+2.43.0
 
