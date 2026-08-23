@@ -2,22 +2,22 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FC6DC5DF81
-	for <dpdk-dev@archiver.kernel.org>; Sun, 23 Aug 2026 14:25:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9003C5DF97
+	for <dpdk-dev@archiver.kernel.org>; Sun, 23 Aug 2026 15:01:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7021240275;
-	Sun, 23 Aug 2026 16:25:20 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id BC83E40270;
+	Sun, 23 Aug 2026 17:01:44 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 2A32240270
- for <dev@dpdk.org>; Sun, 23 Aug 2026 16:25:19 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 6242D40265
+ for <dev@dpdk.org>; Sun, 23 Aug 2026 17:01:42 +0200 (CEST)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 0343C20443;
- Sun, 23 Aug 2026 16:25:19 +0200 (CEST)
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 2DEAB20443;
+ Sun, 23 Aug 2026 17:01:42 +0200 (CEST)
 Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
  smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Sun, 23 Aug 2026 16:25:18 +0200
+ Sun, 23 Aug 2026 17:01:41 +0200
 From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
 To: dev@dpdk.org, Jerin Jacob <jerinj@marvell.com>,
  Kiran Kumar K <kirankumark@marvell.com>,
@@ -25,17 +25,17 @@ To: dev@dpdk.org, Jerin Jacob <jerinj@marvell.com>,
  Zhirun Yan <yanzhirun_163@163.com>,
  Saeed Bishara <saeed.bishara.os@gmail.com>, Robin Jarry <rjarry@redhat.com>
 Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH v16] graph: add optional profiling stats
-Date: Sun, 23 Aug 2026 14:25:12 +0000
-Message-ID: <20260823142512.490247-1-mb@smartsharesystems.com>
+Subject: [PATCH v17] graph: add optional profiling stats
+Date: Sun, 23 Aug 2026 15:01:27 +0000
+Message-ID: <20260823150127.490511-1-mb@smartsharesystems.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260619202047.2809165-1-mb@smartsharesystems.com>
 References: <20260619202047.2809165-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 23 Aug 2026 14:25:18.0735 (UTC)
- FILETIME=[3924C1F0:01DD330B]
+X-OriginalArrivalTime: 23 Aug 2026 15:01:41.0955 (UTC)
+ FILETIME=[4E71B130:01DD3310]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,6 +54,9 @@ RTE_GRAPH_PROFILE in rte_config.h.
 
 Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
 ---
+v17:
+* Snapshot cycles as positive number, and subtract after processing.
+  (Robin Jarry)
 v16:
 * Refactored range bucketing for clarity and performance. (AI)
 v15:
@@ -281,7 +284,7 @@ index 1fce3e6632..19b38881ae 100644
  	graph_spinlock_lock();
  
 diff --git a/lib/graph/rte_graph_worker_common.h b/lib/graph/rte_graph_worker_common.h
-index 4ab53a533e..e312f1fd40 100644
+index 4ab53a533e..89c1f3dbf9 100644
 --- a/lib/graph/rte_graph_worker_common.h
 +++ b/lib/graph/rte_graph_worker_common.h
 @@ -121,6 +121,27 @@ struct __rte_cache_aligned rte_node {
@@ -337,10 +340,10 @@ index 4ab53a533e..e312f1fd40 100644
  
  	if (rte_graph_has_stats_feature()) {
 -		start = rte_rdtsc();
-+		cycles = -rte_rdtsc();
++		cycles = rte_rdtsc();
  		rc = node->process(graph, node, objs, node->idx);
 -		node->total_cycles += rte_rdtsc() - start;
-+		cycles += rte_rdtsc();
++		cycles = rte_rdtsc() - cycles;
 +		node->total_cycles += cycles;
  		node->total_calls++;
  		node->total_objs += rc;
