@@ -2,40 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9003C5DF97
-	for <dpdk-dev@archiver.kernel.org>; Sun, 23 Aug 2026 15:01:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4866EC5DF81
+	for <dpdk-dev@archiver.kernel.org>; Sun, 23 Aug 2026 15:17:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BC83E40270;
-	Sun, 23 Aug 2026 17:01:44 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 6242D40265
- for <dev@dpdk.org>; Sun, 23 Aug 2026 17:01:42 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 2DEAB20443;
- Sun, 23 Aug 2026 17:01:42 +0200 (CEST)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Sun, 23 Aug 2026 17:01:41 +0200
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-To: dev@dpdk.org, Jerin Jacob <jerinj@marvell.com>,
- Kiran Kumar K <kirankumark@marvell.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Zhirun Yan <yanzhirun_163@163.com>,
- Saeed Bishara <saeed.bishara.os@gmail.com>, Robin Jarry <rjarry@redhat.com>
-Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH v17] graph: add optional profiling stats
-Date: Sun, 23 Aug 2026 15:01:27 +0000
-Message-ID: <20260823150127.490511-1-mb@smartsharesystems.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260619202047.2809165-1-mb@smartsharesystems.com>
-References: <20260619202047.2809165-1-mb@smartsharesystems.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 2A88340270;
+	Sun, 23 Aug 2026 17:17:10 +0200 (CEST)
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com
+ [209.85.219.53]) by mails.dpdk.org (Postfix) with ESMTP id 4DEF740265
+ for <dev@dpdk.org>; Sun, 23 Aug 2026 17:17:09 +0200 (CEST)
+Received: by mail-qv1-f53.google.com with SMTP id
+ 6a1803df08f44-8eeb4508f29so16521406d6.0
+ for <dev@dpdk.org>; Sun, 23 Aug 2026 08:17:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1787498228; x=1788103028; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=oUySUztmcDLOecWWYpmfOLoEfMBlOSWDV9a6SQtMzW8=;
+ b=aAZU4iXgfSvhsfl8W310h/wBaE1d8eCj/lULDftYWDpKnpNRYRixdylcbksMnpYrjV
+ COLRo/+K98Dxy5CaROntUkKGL9EX8sXP4w7dyI/r8AoM+PtWPAjb/JTXCRD2qyqH7C7g
+ WNbjMU5s7XG2J8u4DjvK2ga6u2YaEgSyByiuUJ+00fdaPtPbnnjqtRMrD5pVkA45vz7r
+ ODPXkMiguii4+uDjVFDmvgMPv6rkr4Q6KK4Ux9NHpg6MAGvRIVCB8RSLSwuuPDRear6f
+ /5A4suf98mCW5DaEdAPjWL4lah60qTtBYIWsFaFHq/jtk82DsPXHbYtQN0NHoItTbN0e
+ D6Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1787498228; x=1788103028;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=oUySUztmcDLOecWWYpmfOLoEfMBlOSWDV9a6SQtMzW8=;
+ b=IMokgX1JwYeGC9Y/87cNGhjjV0Pmt3dOUGk8Ht8ZjV6ra5Wu9/fIr53svb+1scn2lt
+ DOLGqebB6+01sQJFn7DKuYeU4R4S7zVrEhEqU1jMx/auNGcOJ0Z4ZkNTENtN9y3uyc/T
+ zn9IYoQVJHPjOgiy7W5K4wQ5EN8J8VYKwi2i6h4JBmvleffcwefJy5jKmwzX8B5oNDXd
+ bqp0EHXN+dC2tlVDa51oheeM+QhybXcVK10rdTHGELDgqU7sk/GeJwRPKqoUXSOlcNN/
+ yQtBcUMR7OsMa2wkTCObCRxaqxBlj2mB3R/VP96OghJY62S0prFdQKh5jLHIN97TFmq8
+ WuZw==
+X-Gm-Message-State: AFuF++nI18nbVwKOC1uxUiceaz6y+LoADsNK+RcldG2689WBe8PJg0f9
+ ylVVhN8dNGyA33SLA9Qc335pvgmWy6K0bvubqRLo/KISrNGOoMzDNiqH
+X-Gm-Gg: AR+sD12dlCgWLsxEYhYiPvQylOWvZ5gGKZ8TYip/KxaSFrFuw8AE9JMGBzy80UzWSoQ
+ oY4iExar2MiMZllzgu2ChUNMxZ8DUcTXEzb6rBpLsf3xqvSbffxjIBUjcjCKJor9mtgZwvddt5/
+ IFvQSSqjVV4ScfNxA/QCqt64Ji8FH1g+dds9chKyfPiRkwpgQmUP2zdAaqm2hnnVN9iA+GmfHkc
+ +TKqPYboachjHOB0z/3sjZkZniniAeH+iOTcflFlalO43MiM1uJazv95vkt5oWsH3sZ/f8WDTz0
+ rQ4i2Rp8C8FJlOfrkQQHcEucdPcEcPi1vosHAg7JCkNPHg/SWdcOWXtZPpcY9/QHThkj8RWmdDu
+ eck2HKewxyK7yFh1uGiTsnKiybR7SvIoz3Nwo28GiqIhRPipShULiVw/ajLiXO2vKH3Sd255tlg
+ PqIVD8R4neegWMl262yrxpReUxjKpb3YfhX/EpAdWtVAK5WQOtS4IZ4Q==
+X-Received: by 2002:a05:6214:3288:b0:8ce:e651:5d63 with SMTP id
+ 6a1803df08f44-90c8fa8cb2dmr126972766d6.31.1787498228285; 
+ Sun, 23 Aug 2026 08:17:08 -0700 (PDT)
+Received: from gmail.com ([50.93.222.110]) by smtp.gmail.com with ESMTPSA id
+ 6a1803df08f44-90c935e4437sm40040876d6.2.2026.08.23.08.17.07
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sun, 23 Aug 2026 08:17:07 -0700 (PDT)
+From: Weijun Pan <wpan3636@gmail.com>
+To: Chas Williams <3chas3@gmail.com>, "Min Hu (Connor)" <humin29@huawei.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Cc: dev@dpdk.org,
+	Weijun Pan <wpan3636@gmail.com>
+Subject: [RFC PATCH v2] net/bonding: restrict secondary control operations
+Date: Sun, 23 Aug 2026 10:16:25 -0500
+Message-Id: <20260823151625.18687-1-wpan3636@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260708174204.72574-1-wpan3636@gmail.com>
+References: <20260708174204.72574-1-wpan3636@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 23 Aug 2026 15:01:41.0955 (UTC)
- FILETIME=[4E71B130:01DD3310]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -49,334 +79,370 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Added graph node profiling stats, build time configurable by enabling
-RTE_GRAPH_PROFILE in rte_config.h.
+The bonding PMD currently supports secondary attach with safe fallback
+burst functions, but bonding configuration and LACP state are owned by
+the primary process.
 
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
----
-v17:
-* Snapshot cycles as positive number, and subtract after processing.
-  (Robin Jarry)
-v16:
-* Refactored range bucketing for clarity and performance. (AI)
-v15:
-* Used the term "ranges" instead of "intervals". (AI)
-* Described the last range as "%u+" instead of "[%u;[".
-  Correct would be "[%u;+∞[", but prefer ASCII here.
-v14:
-* Changed some minor details suggested by AI.
-v13:
-* Fixed cache alignment; array should be aligned, not struct.
-* Changed some minor details suggested by AI.
-v12:
-* Multiply printed percent values by 100.0. (AI)
-* Added to release note that this feature is disabled by default. (AI)
-v11:
-* Fixed signedness comparison and copy-paste bug.
-v10:
-* Use intervals instead of point samples. (Robin Jarry)
-* Do not double-indent printf continuations.
-  Follows existing coding style in the file, and
-  avoids a long line warning from checkpatch.
-* Rebased.
-  Moved release note to 26.11 file.
-v9:
-* Fixed comment still mentioning 32 objects.
-* Moved sample size array outside loop. (AI)
-* Added release note. (AI)
-v8:
-* Added static const array as local variable, instead of indexing directly
-  into const array. (AI)
-  This also eliminates the space required between "} [idx];" weirdness.
-* Added build time configurable RTE_GRAPH_PROFILE_BURST_SIZE to replace
-  the hardcoded burst size of 32. (AI)
-v7:
-* Use RTE_DIM() in histogram for loop.
-* Added static_assert for histogram index values.
-* Minor details to please checkpatch.
-  Although I disagree with requiring a space when indexing into
-  a constant array "(const type []){values} [idx];",
-  I have changed the code to comply.
-v6:
-* Consolidate the four histogram entries into one array. (Saeed Bishara)
-* Sample at 32 objs instead of a half burst. (Saeed Bishara)
-* Moved stats to different location in rte_node structure. (Jerin)
-* Minor details to please checkpatch.
-v5:
-* Added stats for a half burst and a full burst.
-v4:
-* Added documentation. (AI)
-* Added more comments. (AI)
-* Improved dump. (AI)
-* Debug shows both cycles/call and cycles/obj.
-v3:
-* Debug shows cycles/obj instead of cycles/call.
-* Fixed missing --in-reply-to.
-v2:
-* Fixed indentation.
----
- config/rte_config.h                    |  4 ++
- doc/guides/prog_guide/graph_lib.rst    |  5 ++
- doc/guides/rel_notes/release_26_11.rst |  9 ++++
- lib/graph/graph_debug.c                | 67 ++++++++++++++++++++++++++
- lib/graph/node.c                       |  2 +
- lib/graph/rte_graph_worker_common.h    | 57 ++++++++++++++++++++--
- 6 files changed, 141 insertions(+), 3 deletions(-)
+Use a secondary-specific dev_ops table so unsupported operations are
+rejected by ethdev before PMD callbacks can mutate shared device state.
+Also reject bonding-specific control APIs from non-primary processes,
+while keeping secondary detach and query paths available.
 
-diff --git a/config/rte_config.h b/config/rte_config.h
-index 0447cdf2ad..6beee01b09 100644
---- a/config/rte_config.h
-+++ b/config/rte_config.h
-@@ -106,6 +106,10 @@
- /* rte_graph defines */
- #define RTE_GRAPH_BURST_SIZE 256
- #define RTE_LIBRTE_GRAPH_STATS 1
-+/* RTE_GRAPH_PROFILE is not set */
-+#define RTE_GRAPH_PROFILE_BURST_SMALL 8
-+#define RTE_GRAPH_PROFILE_BURST_MEDIUM 32
-+#define RTE_GRAPH_PROFILE_BURST_LARGE RTE_GRAPH_BURST_SIZE
+This keeps secondary process behavior safe while leaving room for future
+limited datapath support.
+
+Bugzilla ID: 1900
+
+Signed-off-by: Weijun Pan <wpan3636@gmail.com>
+---
+ .../link_bonding_poll_mode_drv_lib.rst        | 13 ++++++
+ doc/guides/rel_notes/release_26_11.rst        |  6 +++
+ drivers/net/bonding/eth_bond_private.h        |  8 ++++
+ drivers/net/bonding/rte_eth_bond_8023ad.c     | 45 +++++++++++++++++++
+ drivers/net/bonding/rte_eth_bond_api.c        | 44 ++++++++++++++++++
+ drivers/net/bonding/rte_eth_bond_pmd.c        | 12 ++++-
+ 6 files changed, 127 insertions(+), 1 deletion(-)
+
+diff --git a/doc/guides/prog_guide/link_bonding_poll_mode_drv_lib.rst b/doc/guides/prog_guide/link_bonding_poll_mode_drv_lib.rst
+index 2fa1ac4028..7ecb05d407 100644
+--- a/doc/guides/prog_guide/link_bonding_poll_mode_drv_lib.rst
++++ b/doc/guides/prog_guide/link_bonding_poll_mode_drv_lib.rst
+@@ -254,6 +254,19 @@ Like all other PMD, all functions exported by a PMD are lock-free functions
+ that are assumed not to be invoked in parallel on different logical cores to
+ work on the same target object.
  
- /****** driver defines ********/
- 
-diff --git a/doc/guides/prog_guide/graph_lib.rst b/doc/guides/prog_guide/graph_lib.rst
-index 1c2cd1ef31..aa5faf4e82 100644
---- a/doc/guides/prog_guide/graph_lib.rst
-+++ b/doc/guides/prog_guide/graph_lib.rst
-@@ -49,6 +49,11 @@ Performance tuning parameters
-   RTE_GRAPH_BURST_SIZE config option.
-   The testing shows, on x86 and arm64 servers, The sweet spot is 256 burst
-   size. While on arm64 embedded SoCs, it is either 64 or 128.
-+- Enable the ``RTE_GRAPH_PROFILE`` config option for more profiling details
-+  (disabled by default).
-+  Set the ``RTE_GRAPH_PROFILE_BURST_SMALL``, ``RTE_GRAPH_PROFILE_BURST_MEDIUM``,
-+  and ``RTE_GRAPH_PROFILE_BURST_LARGE`` config options to sample specific
-+  burst size ranges.
- - Disable node statistics (using ``RTE_LIBRTE_GRAPH_STATS`` config option)
-   if not needed.
- 
++Bonding device configuration is owned by the primary process. Secondary
++processes may attach to an existing bonding device for query and detach
++operations, but must not change bonding configuration or device state.
++
++In a secondary process, bonding control operations such as configuring,
++starting or stopping the device, setting up queues, changing members,
++changing the bonding mode, updating RSS, changing MAC addresses, changing
++MTU, or configuring ``rte_flow`` rules are not supported.
++
++Secondary process datapath support is limited and bonding mode specific.
++Applications should not rely on secondary processes for bonding datapath
++operation unless support for the selected mode is explicitly documented.
++
+ It should also be noted that the PMD receive function should not be invoked
+ directly on a member devices after they have been to a bonding device since
+ packets read directly from the member device will no longer be available to the
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index c8cc86295d..2c822b6eee 100644
+index c8cc86295d..8df012c99b 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -55,6 +55,15 @@ New Features
+@@ -55,6 +55,12 @@ New Features
       Also, make sure to start the actual text at the margin.
       =======================================================
  
-+* **Added optional graph profiling statistics.**
++* **Updated bonding PMD secondary process handling.**
 +
-+  Added build time configurable graph node profiling statistics via
-+  ``RTE_GRAPH_PROFILE`` in ``rte_config.h`` (disabled by default). When enabled,
-+  tracks cycles spent processing various burst size ranges per node.
-+  The edges of the ranges are build time configurable via
-+  ``RTE_GRAPH_PROFILE_BURST_SMALL``, ``RTE_GRAPH_PROFILE_BURST_MEDIUM``, and
-+  ``RTE_GRAPH_PROFILE_BURST_LARGE`` in ``rte_config.h``.
-+
++  Bonding devices now use a secondary-process device operations table to
++  keep query and detach paths available while rejecting unsupported control
++  operations before shared ethdev state can be modified. Bonding-specific
++  control APIs are also restricted to the primary process.
  
  Removed Items
  -------------
-diff --git a/lib/graph/graph_debug.c b/lib/graph/graph_debug.c
-index e3b8cccdc1..a2aef9918f 100644
---- a/lib/graph/graph_debug.c
-+++ b/lib/graph/graph_debug.c
-@@ -60,6 +60,7 @@ rte_graph_obj_dump(FILE *f, struct rte_graph *g, bool all)
- 	rte_graph_off_t off;
- 	struct rte_node *n;
- 	rte_edge_t i;
-+	uint64_t all_total_cycles = 0;
+diff --git a/drivers/net/bonding/eth_bond_private.h b/drivers/net/bonding/eth_bond_private.h
+index 378bbba4e6..750e5925df 100644
+--- a/drivers/net/bonding/eth_bond_private.h
++++ b/drivers/net/bonding/eth_bond_private.h
+@@ -7,12 +7,14 @@
  
- 	fprintf(f, "graph <%s> @ %p\n", g->name, g);
- 	fprintf(f, "  id=%" PRIu32 "\n", g->id);
-@@ -72,6 +73,12 @@ rte_graph_obj_dump(FILE *f, struct rte_graph *g, bool all)
- 	fprintf(f, "  nodes_start=0x%" PRIx32 "\n", g->nodes_start);
- 	fprintf(f, "  cir_start=%p\n", g->cir_start);
+ #include <stdint.h>
+ #include <sys/queue.h>
++#include <stdbool.h>
  
-+	rte_graph_foreach_node(count, off, g, n) {
-+		if (!all && n->idx == 0)
-+			continue;
-+		all_total_cycles += n->total_cycles;
-+	}
+ #include <ethdev_driver.h>
+ #include <rte_flow.h>
+ #include <rte_spinlock.h>
+ #include <rte_bitmap.h>
+ #include <rte_flow_driver.h>
++#include <rte_eal.h>
+ 
+ #include "rte_eth_bond.h"
+ #include "eth_bond_8023ad_private.h"
+@@ -212,6 +214,12 @@ find_member_by_id(uint16_t *members, uint16_t members_count, uint16_t member_id)
+ 	return pos;
+ }
+ 
++static inline bool
++bond_process_is_primary(void)
++{
++	return rte_eal_process_type() == RTE_PROC_PRIMARY;
++}
 +
- 	rte_graph_foreach_node(count, off, g, n) {
- 		if (!all && n->idx == 0)
- 			continue;
-@@ -93,6 +100,66 @@ rte_graph_obj_dump(FILE *f, struct rte_graph *g, bool all)
- 				n->dispatch.total_sched_fail);
- 		}
- 		fprintf(f, "       total_calls=%" PRId64 "\n", n->total_calls);
-+		if (rte_graph_has_stats_feature())
-+			fprintf(f, "       total_cycles=%" PRIu64 " (%.1f%% of all nodes), avg cycles/call=%.1f\n",
-+				n->total_cycles,
-+				all_total_cycles == 0 ? 0.0 :
-+				(double)n->total_cycles / (double)all_total_cycles * 100.0,
-+				n->total_calls == 0 ? 0.0 :
-+				(double)n->total_cycles / (double)n->total_calls);
+ int
+ valid_port_id(uint16_t port_id);
+ 
+diff --git a/drivers/net/bonding/rte_eth_bond_8023ad.c b/drivers/net/bonding/rte_eth_bond_8023ad.c
+index d1f30229d0..e3d02f0539 100644
+--- a/drivers/net/bonding/rte_eth_bond_8023ad.c
++++ b/drivers/net/bonding/rte_eth_bond_8023ad.c
+@@ -1428,6 +1428,16 @@ rte_eth_bond_8023ad_conf_get(uint16_t port_id,
+ 	return 0;
+ }
+ 
++static int
++bond_8023ad_check_primary(const char *op)
++{
++	if (bond_process_is_primary())
++		return 0;
 +
-+#ifdef RTE_GRAPH_PROFILE
-+		static const uint16_t sample_sizes[] = {
-+				0, 1, 2, RTE_GRAPH_PROFILE_BURST_SMALL,
-+				RTE_GRAPH_PROFILE_BURST_MEDIUM, RTE_GRAPH_PROFILE_BURST_LARGE};
-+		static_assert(RTE_DIM(sample_sizes) == 2U + RTE_DIM(n->usage_stats),
-+				"usage_stats array size mismatch");
-+		for (unsigned int idx = 0; idx < RTE_DIM(sample_sizes); idx++) {
-+			uint64_t calls;
-+			uint64_t cycles;
-+			double objs_per_call;
-+			if (idx < 2) {
-+				calls = n->usage_stats_01[idx].calls;
-+				cycles = n->usage_stats_01[idx].cycles;
-+				objs_per_call = (double)idx;
-+				fprintf(f, "       for %u objs/call\n",
-+					idx);
-+			} else {
-+				calls = n->usage_stats[idx - 2].calls;
-+				cycles = n->usage_stats[idx - 2].cycles;
-+				objs_per_call = calls == 0 ? 0.0 :
-+						(double)n->usage_stats[idx - 2].objs /
-+						(double)calls;
-+				if (idx < RTE_DIM(sample_sizes) - 1)
-+					fprintf(f, "       for [%u;%u[ objs/call",
-+						sample_sizes[idx], sample_sizes[idx + 1]);
-+				else
-+					fprintf(f, "       for %u+ objs/call",
-+						sample_sizes[idx]);
-+				if (calls != 0)
-+					fprintf(f, ", avg %.1f objs/call\n",
-+						objs_per_call);
-+				fprintf(f, "\n");
-+			}
-+			fprintf(f, "         calls=%" PRIu64,
-+				calls);
-+			if (calls != 0) {
-+				fprintf(f, " (%.1f%% of this node)\n",
-+					n->total_calls == 0 ? 0.0 :
-+					(double)calls / (double)n->total_calls * 100.0);
-+				fprintf(f, "         cycles=%" PRIu64 " (%.1f%% of this node), avg cycles/call=%.1f",
-+					cycles,
-+					n->total_cycles == 0 ? 0.0 :
-+					(double)cycles / (double)n->total_cycles * 100.0,
-+					(double)cycles / (double)calls);
-+				if (objs_per_call != 0.0)
-+					fprintf(f, ", avg cycles/obj=%.1f",
-+						(double)cycles / (double)calls / objs_per_call);
-+			}
-+			fprintf(f, "\n");
-+		}
-+#endif /* RTE_GRAPH_PROFILE */
++	RTE_BOND_LOG(ERR, "%s not supported in non-primary process", op);
++	return -ENOTSUP;
++}
 +
- 		for (i = 0; i < n->nb_edges; i++)
- 			fprintf(f, "          edge[%d] <%s>\n", i,
- 				n->nodes[i]->name);
-diff --git a/lib/graph/node.c b/lib/graph/node.c
-index 1fce3e6632..19b38881ae 100644
---- a/lib/graph/node.c
-+++ b/lib/graph/node.c
-@@ -110,10 +110,12 @@ __rte_node_register(const struct rte_node_register *reg)
- 	rte_edge_t i;
- 	size_t sz;
+ RTE_EXPORT_SYMBOL(rte_eth_bond_8023ad_agg_selection_set)
+ int
+ rte_eth_bond_8023ad_agg_selection_set(uint16_t port_id,
+@@ -1436,6 +1446,11 @@ rte_eth_bond_8023ad_agg_selection_set(uint16_t port_id,
+ 	struct rte_eth_dev *bond_dev;
+ 	struct bond_dev_private *internals;
+ 	struct mode8023ad_private *mode4;
++	int ret;
++
++	ret = bond_8023ad_check_primary(__func__);
++	if (ret != 0)
++		return ret;
  
-+#ifndef RTE_GRAPH_PROFILE
- 	/* Limit Node specific metadata to one cacheline on 64B CL machine */
- 	RTE_BUILD_BUG_ON((offsetof(struct rte_node, nodes) -
- 			  offsetof(struct rte_node, ctx)) !=
- 			 RTE_CACHE_LINE_MIN_SIZE);
-+#endif
- 
- 	graph_spinlock_lock();
- 
-diff --git a/lib/graph/rte_graph_worker_common.h b/lib/graph/rte_graph_worker_common.h
-index 4ab53a533e..89c1f3dbf9 100644
---- a/lib/graph/rte_graph_worker_common.h
-+++ b/lib/graph/rte_graph_worker_common.h
-@@ -121,6 +121,27 @@ struct __rte_cache_aligned rte_node {
- 	rte_graph_off_t xstat_off; /**< Offset to xstat counters. */
- 
- 	/** Fast path area cache line 2. */
-+#ifdef RTE_GRAPH_PROFILE
-+	/** Usage when this node processed 0 or 1 objects. */
-+	alignas(RTE_CACHE_LINE_MIN_SIZE)
-+	struct {
-+		uint64_t calls;     /**< Calls done. */
-+		uint64_t cycles;    /**< Cycles spent. */
-+	} usage_stats_01[2];
-+	/**
-+	 * Usage when this node processed N objects:
-+	 * - index 0 (micro): 2 <= N < RTE_GRAPH_PROFILE_BURST_SMALL
-+	 * - index 1 (small): RTE_GRAPH_PROFILE_BURST_SMALL <= N < RTE_GRAPH_PROFILE_BURST_MEDIUM
-+	 * - index 2 (medium): RTE_GRAPH_PROFILE_BURST_MEDIUM <= N < RTE_GRAPH_PROFILE_BURST_LARGE
-+	 * - index 3 (large): RTE_GRAPH_PROFILE_BURST_LARGE <= N
-+	 */
-+	struct {
-+		uint64_t calls;     /**< Calls done. */
-+		uint64_t cycles;    /**< Cycles spent. */
-+		uint64_t objs;      /**< Objects processed. */
-+	} usage_stats[4];
-+	/** Fast path area cache line 4. */
-+#endif
- 	__extension__ struct __rte_cache_aligned {
- #define RTE_NODE_CTX_SZ 16
- 		union {
-@@ -148,8 +169,10 @@ struct __rte_cache_aligned rte_node {
- 	};
- };
- 
-+#ifndef RTE_GRAPH_PROFILE
- static_assert(offsetof(struct rte_node, nodes) - offsetof(struct rte_node, ctx)
- 	== RTE_CACHE_LINE_MIN_SIZE, "rte_node fast path area must fit in 64 bytes");
-+#endif
- 
- /**
-  * @internal
-@@ -197,7 +220,7 @@ void __rte_node_stream_alloc_size(struct rte_graph *graph,
- static __rte_always_inline void
- __rte_node_process(struct rte_graph *graph, struct rte_node *node)
+ 	if (valid_bonding_port_id(port_id) != 0)
+ 		return -EINVAL;
+@@ -1508,6 +1523,11 @@ rte_eth_bond_8023ad_setup(uint16_t port_id,
  {
--	uint64_t start;
-+	uint64_t cycles;
- 	uint16_t rc;
- 	void **objs;
- 
-@@ -206,11 +229,39 @@ __rte_node_process(struct rte_graph *graph, struct rte_node *node)
- 	rte_prefetch0(objs);
- 
- 	if (rte_graph_has_stats_feature()) {
--		start = rte_rdtsc();
-+		cycles = rte_rdtsc();
- 		rc = node->process(graph, node, objs, node->idx);
--		node->total_cycles += rte_rdtsc() - start;
-+		cycles = rte_rdtsc() - cycles;
-+		node->total_cycles += cycles;
- 		node->total_calls++;
- 		node->total_objs += rc;
-+#ifdef RTE_GRAPH_PROFILE
-+		static_assert(RTE_GRAPH_PROFILE_BURST_SMALL >= 2,
-+			"BURST_SMALL must be >= 2");
-+		static_assert(RTE_GRAPH_PROFILE_BURST_SMALL < RTE_GRAPH_PROFILE_BURST_MEDIUM,
-+			"BURST_SMALL must be < BURST_MEDIUM");
-+		static_assert(RTE_GRAPH_PROFILE_BURST_MEDIUM < RTE_GRAPH_PROFILE_BURST_LARGE,
-+			"BURST_MEDIUM must be < BURST_LARGE");
-+		if (rc < 2) {
-+			node->usage_stats_01[rc].calls++;
-+			node->usage_stats_01[rc].cycles += cycles;
-+		} else {
-+			unsigned int index;
+ 	struct rte_eth_dev *bond_dev;
+ 	int err;
++	int ret;
 +
-+			if (rc >= RTE_GRAPH_PROFILE_BURST_LARGE)
-+				index = 3;
-+			else if (rc >= RTE_GRAPH_PROFILE_BURST_MEDIUM)
-+				index = 2;
-+			else if (rc >= RTE_GRAPH_PROFILE_BURST_SMALL)
-+				index = 1;
-+			else
-+				index = 0;
++	ret = bond_8023ad_check_primary(__func__);
++	if (ret != 0)
++		return ret;
+ 
+ 	err = bond_8023ad_setup_validate(port_id, conf);
+ 	if (err != 0)
+@@ -1592,6 +1612,11 @@ rte_eth_bond_8023ad_ext_collect(uint16_t port_id, uint16_t member_id,
+ {
+ 	struct port *port;
+ 	int res;
++	int ret;
 +
-+			node->usage_stats[index].calls++;
-+			node->usage_stats[index].cycles += cycles;
-+			node->usage_stats[index].objs += rc;
-+		}
-+#endif
- 	} else {
- 		node->process(graph, node, objs, node->idx);
++	ret = bond_8023ad_check_primary(__func__);
++	if (ret != 0)
++		return ret;
+ 
+ 	res = bond_8023ad_ext_validate(port_id, member_id);
+ 	if (res != 0)
+@@ -1614,6 +1639,11 @@ rte_eth_bond_8023ad_ext_distrib(uint16_t port_id, uint16_t member_id,
+ {
+ 	struct port *port;
+ 	int res;
++	int ret;
++
++	ret = bond_8023ad_check_primary(__func__);
++	if (ret != 0)
++		return ret;
+ 
+ 	res = bond_8023ad_ext_validate(port_id, member_id);
+ 	if (res != 0)
+@@ -1666,6 +1696,11 @@ rte_eth_bond_8023ad_ext_slowtx(uint16_t port_id, uint16_t member_id,
+ {
+ 	struct port *port;
+ 	int res;
++	int ret;
++
++	ret = bond_8023ad_check_primary(__func__);
++	if (ret != 0)
++		return ret;
+ 
+ 	res = bond_8023ad_ext_validate(port_id, member_id);
+ 	if (res != 0)
+@@ -1727,6 +1762,11 @@ rte_eth_bond_8023ad_dedicated_queues_enable(uint16_t port)
+ {
+ 	struct rte_eth_dev *dev;
+ 	struct bond_dev_private *internals;
++	int ret;
++
++	ret = bond_8023ad_check_primary(__func__);
++	if (ret != 0)
++		return ret;
+ 
+ 	if (valid_bonding_port_id(port) != 0)
+ 		return -EINVAL;
+@@ -1756,6 +1796,11 @@ rte_eth_bond_8023ad_dedicated_queues_disable(uint16_t port)
+ {
+ 	struct rte_eth_dev *dev;
+ 	struct bond_dev_private *internals;
++	int ret;
++
++	ret = bond_8023ad_check_primary(__func__);
++	if (ret != 0)
++		return ret;
+ 
+ 	if (valid_bonding_port_id(port) != 0)
+ 		return -EINVAL;
+diff --git a/drivers/net/bonding/rte_eth_bond_api.c b/drivers/net/bonding/rte_eth_bond_api.c
+index d9b6f1c417..c4f055bfa5 100644
+--- a/drivers/net/bonding/rte_eth_bond_api.c
++++ b/drivers/net/bonding/rte_eth_bond_api.c
+@@ -150,6 +150,17 @@ deactivate_member(struct rte_eth_dev *eth_dev, uint16_t port_id)
  	}
+ }
+ 
++static int
++bond_api_check_primary(const char *op)
++{
++	if (bond_process_is_primary())
++		return 0;
++
++	RTE_BOND_LOG(ERR, "%s not supported in non-primary process", op);
++	return -1;
++}
++
++
+ RTE_EXPORT_SYMBOL(rte_eth_bond_create)
+ int
+ rte_eth_bond_create(const char *name, uint8_t mode, uint8_t socket_id)
+@@ -159,6 +170,9 @@ rte_eth_bond_create(const char *name, uint8_t mode, uint8_t socket_id)
+ 	char devargs[52];
+ 	int ret;
+ 
++	if (bond_api_check_primary(__func__) != 0)
++		return -1;
++
+ 	if (name == NULL) {
+ 		RTE_BOND_LOG(ERR, "Invalid name specified");
+ 		return -EINVAL;
+@@ -643,6 +657,9 @@ rte_eth_bond_member_add(uint16_t bonding_port_id, uint16_t member_port_id)
+ 
+ 	int retval;
+ 
++	if (bond_api_check_primary(__func__) != 0)
++		return -1;
++
+ 	if (valid_bonding_port_id(bonding_port_id) != 0)
+ 		return -1;
+ 
+@@ -781,6 +798,9 @@ rte_eth_bond_member_remove(uint16_t bonding_port_id, uint16_t member_port_id)
+ 	struct bond_dev_private *internals;
+ 	int retval;
+ 
++	if (bond_api_check_primary(__func__) != 0)
++		return -1;
++
+ 	if (valid_bonding_port_id(bonding_port_id) != 0)
+ 		return -1;
+ 
+@@ -802,6 +822,9 @@ rte_eth_bond_mode_set(uint16_t bonding_port_id, uint8_t mode)
+ {
+ 	struct rte_eth_dev *bonding_eth_dev;
+ 
++	if (bond_api_check_primary(__func__) != 0)
++		return -1;
++
+ 	if (valid_bonding_port_id(bonding_port_id) != 0)
+ 		return -1;
+ 
+@@ -834,6 +857,9 @@ rte_eth_bond_primary_set(uint16_t bonding_port_id, uint16_t member_port_id)
+ {
+ 	struct bond_dev_private *internals;
+ 
++	if (bond_api_check_primary(__func__) != 0)
++		return -1;
++
+ 	if (valid_bonding_port_id(bonding_port_id) != 0)
+ 		return -1;
+ 
+@@ -924,6 +950,9 @@ rte_eth_bond_mac_address_set(uint16_t bonding_port_id,
+ 	struct rte_eth_dev *bonding_eth_dev;
+ 	struct bond_dev_private *internals;
+ 
++	if (bond_api_check_primary(__func__) != 0)
++		return -1;
++
+ 	if (valid_bonding_port_id(bonding_port_id) != 0)
+ 		return -1;
+ 
+@@ -950,6 +979,9 @@ rte_eth_bond_mac_address_reset(uint16_t bonding_port_id)
+ 	struct rte_eth_dev *bonding_eth_dev;
+ 	struct bond_dev_private *internals;
+ 
++	if (bond_api_check_primary(__func__) != 0)
++		return -1;
++
+ 	if (valid_bonding_port_id(bonding_port_id) != 0)
+ 		return -1;
+ 
+@@ -991,6 +1023,9 @@ rte_eth_bond_xmit_policy_set(uint16_t bonding_port_id, uint8_t policy)
+ {
+ 	struct bond_dev_private *internals;
+ 
++	if (bond_api_check_primary(__func__) != 0)
++		return -1;
++
+ 	if (valid_bonding_port_id(bonding_port_id) != 0)
+ 		return -1;
+ 
+@@ -1036,6 +1071,9 @@ rte_eth_bond_link_monitoring_set(uint16_t bonding_port_id, uint32_t internal_ms)
+ {
+ 	struct bond_dev_private *internals;
+ 
++	if (bond_api_check_primary(__func__) != 0)
++		return -1;
++
+ 	if (valid_bonding_port_id(bonding_port_id) != 0)
+ 		return -1;
+ 
+@@ -1065,6 +1103,9 @@ rte_eth_bond_link_down_prop_delay_set(uint16_t bonding_port_id,
+ {
+ 	struct bond_dev_private *internals;
+ 
++	if (bond_api_check_primary(__func__) != 0)
++		return -1;
++
+ 	if (valid_bonding_port_id(bonding_port_id) != 0)
+ 		return -1;
+ 
+@@ -1093,6 +1134,9 @@ rte_eth_bond_link_up_prop_delay_set(uint16_t bonding_port_id, uint32_t delay_ms)
+ {
+ 	struct bond_dev_private *internals;
+ 
++	if (bond_api_check_primary(__func__) != 0)
++		return -1;
++
+ 	if (valid_bonding_port_id(bonding_port_id) != 0)
+ 		return -1;
+ 
+diff --git a/drivers/net/bonding/rte_eth_bond_pmd.c b/drivers/net/bonding/rte_eth_bond_pmd.c
+index 6a4f997b5a..f7fb562cee 100644
+--- a/drivers/net/bonding/rte_eth_bond_pmd.c
++++ b/drivers/net/bonding/rte_eth_bond_pmd.c
+@@ -3644,6 +3644,16 @@ bond_ethdev_priv_dump(struct rte_eth_dev *dev, FILE *f)
+ 	return 0;
+ }
+ 
++static const struct eth_dev_ops secondary_dev_ops = {
++	.dev_close         = bond_ethdev_close,
++	.dev_infos_get     = bond_ethdev_info,
++	.link_update       = bond_ethdev_link_update,
++	.stats_get         = bond_ethdev_stats_get,
++	.reta_query        = bond_ethdev_rss_reta_query,
++	.rss_hash_conf_get = bond_ethdev_rss_hash_conf_get,
++	.eth_dev_priv_dump = bond_ethdev_priv_dump,
++};
++
+ const struct eth_dev_ops default_dev_ops = {
+ 	.dev_start            = bond_ethdev_start,
+ 	.dev_stop             = bond_ethdev_stop,
+@@ -3828,7 +3838,7 @@ bond_probe(struct rte_vdev_device *dev)
+ 			return -1;
+ 		}
+ 
+-		eth_dev->dev_ops = &default_dev_ops;
++		eth_dev->dev_ops = &secondary_dev_ops;
+ 		eth_dev->device = &dev->device;
+ 
+ 		/*
 -- 
-2.43.0
+2.34.1
 
