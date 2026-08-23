@@ -2,22 +2,22 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B58D3C5DF8C
-	for <dpdk-dev@archiver.kernel.org>; Sun, 23 Aug 2026 10:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BFF6C5DF81
+	for <dpdk-dev@archiver.kernel.org>; Sun, 23 Aug 2026 11:57:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B5B0840270;
-	Sun, 23 Aug 2026 12:57:59 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id F320940270;
+	Sun, 23 Aug 2026 13:57:55 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 44A9440265
- for <dev@dpdk.org>; Sun, 23 Aug 2026 12:57:57 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 4DC4340265
+ for <dev@dpdk.org>; Sun, 23 Aug 2026 13:57:53 +0200 (CEST)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id E187C20443;
- Sun, 23 Aug 2026 12:57:56 +0200 (CEST)
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 11BD120443;
+ Sun, 23 Aug 2026 13:57:53 +0200 (CEST)
 Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
  smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Sun, 23 Aug 2026 12:57:56 +0200
+ Sun, 23 Aug 2026 13:57:52 +0200
 From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
 To: dev@dpdk.org, Jerin Jacob <jerinj@marvell.com>,
  Kiran Kumar K <kirankumark@marvell.com>,
@@ -25,17 +25,17 @@ To: dev@dpdk.org, Jerin Jacob <jerinj@marvell.com>,
  Zhirun Yan <yanzhirun_163@163.com>,
  Saeed Bishara <saeed.bishara.os@gmail.com>
 Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH v12] graph: add optional profiling stats
-Date: Sun, 23 Aug 2026 10:57:55 +0000
-Message-ID: <20260823105755.441824-1-mb@smartsharesystems.com>
+Subject: [PATCH v13] graph: add optional profiling stats
+Date: Sun, 23 Aug 2026 11:57:51 +0000
+Message-ID: <20260823115751.464953-1-mb@smartsharesystems.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260619202047.2809165-1-mb@smartsharesystems.com>
 References: <20260619202047.2809165-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 23 Aug 2026 10:57:56.0627 (UTC)
- FILETIME=[4111BE30:01DD32EE]
+X-OriginalArrivalTime: 23 Aug 2026 11:57:52.0838 (UTC)
+ FILETIME=[A093FE60:01DD32F6]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,6 +54,9 @@ RTE_GRAPH_PROFILE in rte_config.h.
 
 Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
 ---
+v13:
+* Fixed cache alignment; array should be aligned, not struct.
+* Changed minor details suggested by AI.
 v12:
 * Multiply printed percent values by 100.0. (AI)
 * Added to release note that this feature is disabled by default. (AI)
@@ -104,10 +107,10 @@ v2:
  config/rte_config.h                    |  4 ++
  doc/guides/prog_guide/graph_lib.rst    |  4 ++
  doc/guides/rel_notes/release_26_11.rst |  9 ++++
- lib/graph/graph_debug.c                | 67 ++++++++++++++++++++++++++
+ lib/graph/graph_debug.c                | 69 ++++++++++++++++++++++++++
  lib/graph/node.c                       |  2 +
- lib/graph/rte_graph_worker_common.h    | 51 ++++++++++++++++++--
- 6 files changed, 134 insertions(+), 3 deletions(-)
+ lib/graph/rte_graph_worker_common.h    | 58 ++++++++++++++++++++--
+ 6 files changed, 143 insertions(+), 3 deletions(-)
 
 diff --git a/config/rte_config.h b/config/rte_config.h
 index 0447cdf2ad..6beee01b09 100644
@@ -160,7 +163,7 @@ index c8cc86295d..5403f913b4 100644
  Removed Items
  -------------
 diff --git a/lib/graph/graph_debug.c b/lib/graph/graph_debug.c
-index e3b8cccdc1..37b2b2e9d1 100644
+index e3b8cccdc1..272a662bb0 100644
 --- a/lib/graph/graph_debug.c
 +++ b/lib/graph/graph_debug.c
 @@ -60,6 +60,7 @@ rte_graph_obj_dump(FILE *f, struct rte_graph *g, bool all)
@@ -186,7 +189,7 @@ index e3b8cccdc1..37b2b2e9d1 100644
  	rte_graph_foreach_node(count, off, g, n) {
  		if (!all && n->idx == 0)
  			continue;
-@@ -93,6 +102,64 @@ rte_graph_obj_dump(FILE *f, struct rte_graph *g, bool all)
+@@ -93,6 +102,66 @@ rte_graph_obj_dump(FILE *f, struct rte_graph *g, bool all)
  				n->dispatch.total_sched_fail);
  		}
  		fprintf(f, "       total_calls=%" PRId64 "\n", n->total_calls);
@@ -197,17 +200,18 @@ index e3b8cccdc1..37b2b2e9d1 100644
 +				(double)n->total_cycles / (double)all_total_cycles * 100.0,
 +				n->total_calls == 0 ? 0.0 :
 +				(double)n->total_cycles / (double)n->total_calls);
++
 +#ifdef RTE_GRAPH_PROFILE
 +		static const uint16_t sample_sizes[] = {
 +				0, 1, 2, RTE_GRAPH_PROFILE_BURST_SMALL,
 +				RTE_GRAPH_PROFILE_BURST_MEDIUM, RTE_GRAPH_PROFILE_BURST_LARGE};
-+		static_assert(RTE_DIM(sample_sizes) == 2 + RTE_DIM(n->usage_stats),
++		static_assert(RTE_DIM(sample_sizes) == 2U + RTE_DIM(n->usage_stats),
 +				"usage_stats array size mismatch");
 +		for (unsigned int idx = 0; idx < RTE_DIM(sample_sizes); idx++) {
 +			uint64_t calls;
 +			uint64_t cycles;
 +			double objs_per_call;
-+			if (idx <= 1) {
++			if (idx < 2) {
 +				calls = n->usage_stats_01[idx].calls;
 +				cycles = n->usage_stats_01[idx].cycles;
 +				objs_per_call = (double)idx;
@@ -247,7 +251,8 @@ index e3b8cccdc1..37b2b2e9d1 100644
 +			}
 +			fprintf(f, "\n");
 +		}
-+#endif
++#endif /* RTE_GRAPH_PROFILE */
++
  		for (i = 0; i < n->nb_edges; i++)
  			fprintf(f, "          edge[%d] <%s>\n", i,
  				n->nodes[i]->name);
@@ -269,27 +274,28 @@ index 1fce3e6632..19b38881ae 100644
  	graph_spinlock_lock();
  
 diff --git a/lib/graph/rte_graph_worker_common.h b/lib/graph/rte_graph_worker_common.h
-index 4ab53a533e..264694836e 100644
+index 4ab53a533e..608f566ea7 100644
 --- a/lib/graph/rte_graph_worker_common.h
 +++ b/lib/graph/rte_graph_worker_common.h
-@@ -121,6 +121,26 @@ struct __rte_cache_aligned rte_node {
+@@ -121,6 +121,27 @@ struct __rte_cache_aligned rte_node {
  	rte_graph_off_t xstat_off; /**< Offset to xstat counters. */
  
  	/** Fast path area cache line 2. */
 +#ifdef RTE_GRAPH_PROFILE
 +	/** Usage when this node processed 0 or 1 objects. */
-+	struct __rte_cache_aligned {
++	alignas(RTE_CACHE_LINE_MIN_SIZE)
++	struct {
 +		uint64_t calls;     /**< Calls done. */
 +		uint64_t cycles;    /**< Cycles spent. */
 +	} usage_stats_01[2];
 +	/**
 +	 * Usage when this node processed N objects:
-+	 * index 0 (micro): 2 <= N < RTE_GRAPH_PROFILE_BURST_SMALL
-+	 * index 1 (small): RTE_GRAPH_PROFILE_BURST_SMALL <= N < RTE_GRAPH_PROFILE_BURST_MEDIUM
-+	 * index 2 (medium): RTE_GRAPH_PROFILE_BURST_MEDIUM <= N < RTE_GRAPH_PROFILE_BURST_LARGE
-+	 * index 3 (large): RTE_GRAPH_PROFILE_BURST_LARGE <= N
++	 * - index 0 (micro): 2 <= N < RTE_GRAPH_PROFILE_BURST_SMALL
++	 * - index 1 (small): RTE_GRAPH_PROFILE_BURST_SMALL <= N < RTE_GRAPH_PROFILE_BURST_MEDIUM
++	 * - index 2 (medium): RTE_GRAPH_PROFILE_BURST_MEDIUM <= N < RTE_GRAPH_PROFILE_BURST_LARGE
++	 * - index 3 (large): RTE_GRAPH_PROFILE_BURST_LARGE <= N
 +	 */
-+	struct __rte_cache_aligned {
++	struct {
 +		uint64_t calls;     /**< Calls done. */
 +		uint64_t cycles;    /**< Cycles spent. */
 +		uint64_t objs;      /**< Objects processed. */
@@ -299,7 +305,7 @@ index 4ab53a533e..264694836e 100644
  	__extension__ struct __rte_cache_aligned {
  #define RTE_NODE_CTX_SZ 16
  		union {
-@@ -148,8 +168,10 @@ struct __rte_cache_aligned rte_node {
+@@ -148,8 +169,10 @@ struct __rte_cache_aligned rte_node {
  	};
  };
  
@@ -310,7 +316,7 @@ index 4ab53a533e..264694836e 100644
  
  /**
   * @internal
-@@ -197,7 +219,7 @@ void __rte_node_stream_alloc_size(struct rte_graph *graph,
+@@ -197,7 +220,7 @@ void __rte_node_stream_alloc_size(struct rte_graph *graph,
  static __rte_always_inline void
  __rte_node_process(struct rte_graph *graph, struct rte_node *node)
  {
@@ -319,7 +325,7 @@ index 4ab53a533e..264694836e 100644
  	uint16_t rc;
  	void **objs;
  
-@@ -206,11 +228,34 @@ __rte_node_process(struct rte_graph *graph, struct rte_node *node)
+@@ -206,11 +229,40 @@ __rte_node_process(struct rte_graph *graph, struct rte_node *node)
  	rte_prefetch0(objs);
  
  	if (rte_graph_has_stats_feature()) {
@@ -332,6 +338,12 @@ index 4ab53a533e..264694836e 100644
  		node->total_calls++;
  		node->total_objs += rc;
 +#ifdef RTE_GRAPH_PROFILE
++		static_assert(RTE_GRAPH_PROFILE_BURST_SMALL >= 2,
++			"BURST_SMALL must be >= 2");
++		static_assert(RTE_GRAPH_PROFILE_BURST_SMALL < RTE_GRAPH_PROFILE_BURST_MEDIUM,
++			"BURST_SMALL must be < BURST_MEDIUM");
++		static_assert(RTE_GRAPH_PROFILE_BURST_MEDIUM < RTE_GRAPH_PROFILE_BURST_LARGE,
++			"BURST_MEDIUM must be < BURST_LARGE");
 +		if (rc < 2) {
 +			node->usage_stats_01[rc].calls++;
 +			node->usage_stats_01[rc].cycles += cycles;
