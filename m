@@ -2,22 +2,22 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84987C5DF97
-	for <dpdk-dev@archiver.kernel.org>; Sun, 23 Aug 2026 09:26:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89219C5DF8C
+	for <dpdk-dev@archiver.kernel.org>; Sun, 23 Aug 2026 10:40:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 511C740270;
-	Sun, 23 Aug 2026 11:26:05 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7842540270;
+	Sun, 23 Aug 2026 12:40:11 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 1DD2C40265
- for <dev@dpdk.org>; Sun, 23 Aug 2026 11:25:54 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 79E5240265
+ for <dev@dpdk.org>; Sun, 23 Aug 2026 12:40:08 +0200 (CEST)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id C16C520443;
- Sun, 23 Aug 2026 11:25:53 +0200 (CEST)
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 51E1920443;
+ Sun, 23 Aug 2026 12:40:07 +0200 (CEST)
 Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
  smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Sun, 23 Aug 2026 11:25:53 +0200
+ Sun, 23 Aug 2026 12:40:07 +0200
 From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
 To: dev@dpdk.org, Jerin Jacob <jerinj@marvell.com>,
  Kiran Kumar K <kirankumark@marvell.com>,
@@ -25,17 +25,17 @@ To: dev@dpdk.org, Jerin Jacob <jerinj@marvell.com>,
  Zhirun Yan <yanzhirun_163@163.com>,
  Saeed Bishara <saeed.bishara.os@gmail.com>
 Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH v10] graph: add optional profiling stats
-Date: Sun, 23 Aug 2026 09:25:46 +0000
-Message-ID: <20260823092546.390788-1-mb@smartsharesystems.com>
+Subject: [PATCH v11] graph: add optional profiling stats
+Date: Sun, 23 Aug 2026 10:40:00 +0000
+Message-ID: <20260823104000.418898-1-mb@smartsharesystems.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260619202047.2809165-1-mb@smartsharesystems.com>
 References: <20260619202047.2809165-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 23 Aug 2026 09:25:53.0523 (UTC)
- FILETIME=[650AF430:01DD32E1]
+X-OriginalArrivalTime: 23 Aug 2026 10:40:07.0087 (UTC)
+ FILETIME=[C392E3F0:01DD32EB]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,6 +54,8 @@ RTE_GRAPH_PROFILE in rte_config.h.
 
 Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
 ---
+v11:
+* Fixed signedness comparison and copy-paste bug.
 v10:
 * Use intervals instead of point samples. (Robin Jarry)
 * Do not double-indent printf continuations.
@@ -155,7 +157,7 @@ index c8cc86295d..b4c9739262 100644
  Removed Items
  -------------
 diff --git a/lib/graph/graph_debug.c b/lib/graph/graph_debug.c
-index e3b8cccdc1..6aeaff9b2d 100644
+index e3b8cccdc1..bd0793bfd6 100644
 --- a/lib/graph/graph_debug.c
 +++ b/lib/graph/graph_debug.c
 @@ -60,6 +60,7 @@ rte_graph_obj_dump(FILE *f, struct rte_graph *g, bool all)
@@ -198,7 +200,7 @@ index e3b8cccdc1..6aeaff9b2d 100644
 +				RTE_GRAPH_PROFILE_BURST_MEDIUM, RTE_GRAPH_PROFILE_BURST_LARGE};
 +		static_assert(RTE_DIM(sample_sizes) == 2 + RTE_DIM(n->usage_stats),
 +				"usage_stats array size mismatch");
-+		for (int idx = 0; idx < RTE_DIM(sample_sizes); idx++) {
++		for (unsigned int idx = 0; idx < RTE_DIM(sample_sizes); idx++) {
 +			uint64_t calls;
 +			uint64_t cycles;
 +			double objs_per_call;
@@ -264,7 +266,7 @@ index 1fce3e6632..19b38881ae 100644
  	graph_spinlock_lock();
  
 diff --git a/lib/graph/rte_graph_worker_common.h b/lib/graph/rte_graph_worker_common.h
-index 4ab53a533e..824eb09b36 100644
+index 4ab53a533e..264694836e 100644
 --- a/lib/graph/rte_graph_worker_common.h
 +++ b/lib/graph/rte_graph_worker_common.h
 @@ -121,6 +121,26 @@ struct __rte_cache_aligned rte_node {
@@ -287,7 +289,7 @@ index 4ab53a533e..824eb09b36 100644
 +	struct __rte_cache_aligned {
 +		uint64_t calls;     /**< Calls done. */
 +		uint64_t cycles;    /**< Cycles spent. */
-+		uint64_t cycles;    /**< Objects processed. */
++		uint64_t objs;      /**< Objects processed. */
 +	} usage_stats[4];
 +	/** Fast path area cache line 4. */
 +#endif
