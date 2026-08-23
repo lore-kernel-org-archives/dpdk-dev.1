@@ -2,43 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44B9DC5DF97
-	for <dpdk-dev@archiver.kernel.org>; Sat, 22 Aug 2026 10:18:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84987C5DF97
+	for <dpdk-dev@archiver.kernel.org>; Sun, 23 Aug 2026 09:26:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 353E34027A;
-	Sat, 22 Aug 2026 12:18:58 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 511C740270;
+	Sun, 23 Aug 2026 11:26:05 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id AAC884025F
- for <dev@dpdk.org>; Sat, 22 Aug 2026 12:18:56 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 1DD2C40265
+ for <dev@dpdk.org>; Sun, 23 Aug 2026 11:25:54 +0200 (CEST)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 6877B20440;
- Sat, 22 Aug 2026 12:18:56 +0200 (CEST)
-Content-class: urn:content-classes:message
-MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH v9] graph: add optional profiling stats
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Sat, 22 Aug 2026 12:18:54 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65A0D@smartserver.smartshare.dk>
-In-Reply-To: <DKVDPNOPM64I.DMED3KJABMT@redhat.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v9] graph: add optional profiling stats
-Thread-Index: Ad0yG/65bM/8ZCV2RzOZUFheJ6l+xQAAX89A
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id C16C520443;
+ Sun, 23 Aug 2026 11:25:53 +0200 (CEST)
+Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
+ smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
+ Sun, 23 Aug 2026 11:25:53 +0200
+From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+To: dev@dpdk.org, Jerin Jacob <jerinj@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Zhirun Yan <yanzhirun_163@163.com>,
+ Saeed Bishara <saeed.bishara.os@gmail.com>
+Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+Subject: [PATCH v10] graph: add optional profiling stats
+Date: Sun, 23 Aug 2026 09:25:46 +0000
+Message-ID: <20260823092546.390788-1-mb@smartsharesystems.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260619202047.2809165-1-mb@smartsharesystems.com>
 References: <20260619202047.2809165-1-mb@smartsharesystems.com>
- <20260703154357.3068739-1-mb@smartsharesystems.com>
- <DKVDPNOPM64I.DMED3KJABMT@redhat.com>
-From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Robin Jarry" <rjarry@redhat.com>, <dev@dpdk.org>,
- "Jerin Jacob" <jerinj@marvell.com>,
- "Kiran Kumar K" <kirankumark@marvell.com>,
- "Nithin Dabilpuram" <ndabilpuram@marvell.com>,
- "Zhirun Yan" <yanzhirun_163@163.com>,
- "Saeed Bishara" <saeed.bishara.os@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 23 Aug 2026 09:25:53.0523 (UTC)
+ FILETIME=[650AF430:01DD32E1]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,59 +49,308 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBSb2JpbiBKYXJyeSBbbWFpbHRvOnJqYXJyeUByZWRoYXQuY29tXQ0KPiBTZW50OiBT
-YXR1cmRheSwgMjIgQXVndXN0IDIwMjYgMTEuNTMNCj4gDQo+IEhleSBNb3J0ZW4sDQo+IA0KPiBJ
-IGhhdmUgc29tZSBjb25jZXJucyB3aXRoIHRoZSAiaGlzdG9ncmFtIiBpbXBsZW1lbnRhdGlvbi4g
-VGhlcmUgYXJlDQo+IGhvbGVzIGluIHRoZSBkYXRhLiBZb3Ugd2lsbCBvbmx5IGNhcHR1cmUgc3Bl
-Y2lmaWMgYmF0Y2ggc2l6ZXMuDQo+IA0KPiBOQjogZGlkIHlvdSBub3RpY2Ugd2UgYWxyZWFkeSBo
-YXZlIGEgYnVyc3Qgc2l6ZSBoaXN0b2dyYW0gZXhwb3J0ZWQgaW4NCj4gdGhlIGdyb3V0IG1ldHJp
-Y3M6DQo+IA0KPiBodHRwczovL2dpdGh1Yi5jb20vRFBESy9ncm91dC9ibG9iL3YwLjE3LjEvbW9k
-dWxlcy9pbmZyYS9hcGkvc3RhdHMuYyNMMw0KPiAxMy1MMzM2DQoNClRoYW5rcyBmb3IgdGhlIHBv
-aW50ZXIuDQpUaGUgZXhpc3RpbmcgaGlzdG9ncmFtIG9ubHkgY292ZXJzIHBhY2tldCBidXJzdCBz
-aXplLg0KSSB3YW50IHRvIGNhcHR1cmUgcGVyZm9ybWFuY2UgZGF0YSBmb3IgZGV2ZWxvcG1lbnQg
-KG9wdGltaXphdGlvbikgcHVycG9zZXMuDQoNCkknbGwgdGFrZSBhIGxvb2sgYXQgaXQsIHRvIHNl
-ZSBpZiBzb21ldGhpbmcgc2ltaWxhciBjb3VsZCBiZSByZWxldmFudCBmb3IgdGhlIGRhdGEgSSdt
-IGFpbWluZyB0byBjb2xsZWN0Lg0KDQo+IA0KPiBNb3J0ZW4gQnLDuHJ1cCwgSnVsIDAzLCAyMDI2
-IGF0IDE3OjQzOg0KDQpbLi4uXQ0KDQo+ID4gIAlpZiAocnRlX2dyYXBoX2hhc19zdGF0c19mZWF0
-dXJlKCkpIHsNCj4gPiAtCQlzdGFydCA9IHJ0ZV9yZHRzYygpOw0KPiA+ICsJCWN5Y2xlcyA9IC1y
-dGVfcmR0c2MoKTsNCj4gDQo+IEkgcHJlc3VtZSB0aGlzIHdvcmtzIGJ1dCBpdCBmZWVscyBjb25m
-dXNpbmcgdGFraW5nIGEgIm5lZ2F0aXZlIiB2YWx1ZQ0KPiBvZiBhbiB1bnNpZ25lZCBpbnRlZ2Vy
-Lg0KDQpNYXliZSB0aGlzIGlzIG1vcmUgcmVhZGFibGU6DQpjeWNsZXMgPSBydGVfcmR0c2MoKTsN
-CnJjID0gbm9kZS0+cHJvY2VzcyhncmFwaCwgbm9kZSwgb2Jqcywgbm9kZS0+aWR4KTsNCmN5Y2xl
-cyA9IHJ0ZV9yZHRzYygpIC0gY3ljbGVzOw0KDQo+IA0KPiA+ICAJCXJjID0gbm9kZS0+cHJvY2Vz
-cyhncmFwaCwgbm9kZSwgb2Jqcywgbm9kZS0+aWR4KTsNCj4gPiAtCQlub2RlLT50b3RhbF9jeWNs
-ZXMgKz0gcnRlX3JkdHNjKCkgLSBzdGFydDsNCj4gPiArCQljeWNsZXMgKz0gcnRlX3JkdHNjKCk7
-DQo+ID4gKwkJbm9kZS0+dG90YWxfY3ljbGVzICs9IGN5Y2xlczsNCj4gPiAgCQlub2RlLT50b3Rh
-bF9jYWxscysrOw0KPiA+ICAJCW5vZGUtPnRvdGFsX29ianMgKz0gcmM7DQo+ID4gKyNpZmRlZiBS
-VEVfR1JBUEhfUFJPRklMRQ0KPiA+ICsJCWlmIChyYyA8PSAxKSB7DQo+ID4gKwkJCW5vZGUtPnVz
-YWdlX3N0YXRzW3JjXS5jYWxscysrOw0KPiA+ICsJCQlub2RlLT51c2FnZV9zdGF0c1tyY10uY3lj
-bGVzICs9IGN5Y2xlczsNCj4gPiArCQl9IGVsc2UgaWYgKHJjID09IFJURV9HUkFQSF9QUk9GSUxF
-X0JVUlNUX1NJWkUpIHsNCj4gPiArCQkJbm9kZS0+dXNhZ2Vfc3RhdHNbMl0uY2FsbHMrKzsNCj4g
-PiArCQkJbm9kZS0+dXNhZ2Vfc3RhdHNbMl0uY3ljbGVzICs9IGN5Y2xlczsNCj4gPiArCQl9IGVs
-c2UgaWYgKHJjID09IFJURV9HUkFQSF9CVVJTVF9TSVpFKSB7DQo+ID4gKwkJCW5vZGUtPnVzYWdl
-X3N0YXRzWzNdLmNhbGxzKys7DQo+ID4gKwkJCW5vZGUtPnVzYWdlX3N0YXRzWzNdLmN5Y2xlcyAr
-PSBjeWNsZXM7DQo+IA0KPiBJZiB5b3Ugd2FudCBhIHJlbGlhYmxlIGhpc3RvZ3JhbSwgeW91IHdv
-dWxkIG5lZWQgdG8gY2hhbmdlIHRoZXNlIHRlc3RzDQo+IHRvIHRoZSBmb2xsb3dpbmc6DQo+IA0K
-PiAJCWlkIChyYyA+PSBSVEVfR1JBUEhfQlVSU1RfU0laRSkgew0KPiAJCQlub2RlLT51c2FnZV9z
-dGF0c1szXS5jYWxscysrOw0KPiAJCQlub2RlLT51c2FnZV9zdGF0c1szXS5jeWNsZXMgKz0gY3lj
-bGVzOw0KPiAJCX0gZWxzZSBpZiAocmMgPj0gUlRFX0dSQVBIX1BST0ZJTEVfQlVSU1RfU0laRSkg
-ew0KPiAJCQlub2RlLT51c2FnZV9zdGF0c1syXS5jYWxscysrOw0KPiAJCQlub2RlLT51c2FnZV9z
-dGF0c1syXS5jeWNsZXMgKz0gY3ljbGVzOw0KPiAJCX0gZWxzZSBpZiAocmMgIT0gMCkgew0KPiAJ
-CQlub2RlLT51c2FnZV9zdGF0c1sxXS5jYWxscysrOw0KPiAJCQlub2RlLT51c2FnZV9zdGF0c1sx
-XS5jeWNsZXMgKz0gY3ljbGVzOw0KPiAJCX0gZWxzZSB7DQo+IAkJCW5vZGUtPnVzYWdlX3N0YXRz
-WzBdLmNhbGxzKys7DQo+IAkJCW5vZGUtPnVzYWdlX3N0YXRzWzBdLmN5Y2xlcyArPSBjeWNsZXM7
-DQo+IAkJfQ0KPiANCj4gT3RoZXJ3aXNlLCB5b3Ugd2lsbCBtaXNzIGxvdHMgb2Ygb2RkLXNpemVk
-IGJhdGNoZXMgaW4geW91ciBoaXN0b2dyYW0NCj4gZGF0YS4NCg0KQ29ycmVjdC4NCkhvd2V2ZXIs
-IEkgb25seSBuZWVkIGEgZmV3IHJlcHJlc2VudGF0aXZlIHNuYXBzaG90cyB0byBoZWxwIGlkZW50
-aWZ5IHdoYXQgdG8gb3B0aW1pemUuDQpaZXJvIGFuZCBvbmUgb2JqZWN0IHByb2Nlc3NlZCBhcmUg
-cXVpdGUgZnJlcXVlbnRseSwgc28gSSB3YW50IHRvIGtub3cgaG93IGZyZXF1ZW50IHRoZXkgb2Nj
-dXIuDQpCVFcsIHRoZSBjeWNsZXMvb2JqZWN0IGZvciBwcm9jZXNzaW5nIG9uZSBvYmplY3QgaXMg
-c3Vic3RhbnRpYWxseSBoaWdoZXIgdGhhbiB3aGVuIHByb2Nlc3NpbmcgYSBidXJzdC4NCg0KRm9y
-IGJ1cnN0cywgSSB3YW50IHRvIGJlIGFibGUgdG8gY2FsY3VsYXRlIHRoZSBjeWNsZXMvb2JqZWN0
-Lg0KSSBhbHNvIHdhbnQgdG8gYmUgYWJsZSB0byBzZWUgaG93IGZyZXF1ZW50IHRoZXkgb2NjdXIu
-DQoNCkkgd2FudGVkIHRoZSBkYXRhIHRvIHN0YXkgd2l0aGluIG9uZSBjYWNoZSBsaW5lLCBzbyBJ
-IGNvbXByb21pc2VkLg0KU2luY2UgSSBkb24ndCBuZWVkIHRvIHN0YXkgd2l0aGluIG9uZSBjYWNo
-ZSBsaW5lLCBJIGNhbiBpbXByb3ZlIGl0IHdpdGggYmV0dGVyIGNvdmVyYWdlLg0KDQo+IA0KPiAN
-Cj4gPiArCQl9DQo+ID4gKyNlbmRpZg0KPiA+ICAJfSBlbHNlIHsNCj4gPiAgCQlub2RlLT5wcm9j
-ZXNzKGdyYXBoLCBub2RlLCBvYmpzLCBub2RlLT5pZHgpOw0KPiA+ICAJfQ0KPiANCj4gDQo+IC0t
-DQo+IFJvYmluDQo+IA0KPiAjIE5vdCBhIGZseWluZyB0b3kuDQoNCg==
+Added graph node profiling stats, build time configurable by enabling
+RTE_GRAPH_PROFILE in rte_config.h.
+
+Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
+---
+v10:
+* Use intervals instead of point samples. (Robin Jarry)
+* Do not double-indent printf continuations.
+  Follows existing coding style in the file, and
+  avoids a long line warning from checkpatch.
+* Rebased.
+  Moved release note to 26.11 file.
+v9:
+* Fixed comment still mentioning 32 objects.
+* Moved sample size array outside loop. (AI)
+* Added release note. (AI)
+v8:
+* Added static const array as local variable, instead of indexing directly
+  into const array. (AI)
+  This also eliminates the space required between "} [idx];" weirdness.
+* Added build time configurable RTE_GRAPH_PROFILE_BURST_SIZE to replace
+  the hardcoded burst size of 32. (AI)
+v7:
+* Use RTE_DIM() in histogram for loop.
+* Added static_assert for histogram index values.
+* Minor details to please checkpatch.
+  Although I disagree with requiring a space when indexing into
+  a constant array "(const type []){values} [idx];",
+  I have changed the code to comply.
+v6:
+* Consolidate the four histogram entries into one array. (Saeed Bishara)
+* Sample at 32 objs instead of a half burst. (Saeed Bishara)
+* Moved stats to different location in rte_node structure. (Jerin)
+* Minor details to please checkpatch.
+v5:
+* Added stats for a half burst and a full burst.
+v4:
+* Added documentation. (AI)
+* Added more comments. (AI)
+* Improved dump. (AI)
+* Debug shows both cycles/call and cycles/obj.
+v3:
+* Debug shows cycles/obj instead of cycles/call.
+* Fixed missing --in-reply-to.
+v2:
+* Fixed indentation.
+---
+ config/rte_config.h                    |  4 ++
+ doc/guides/prog_guide/graph_lib.rst    |  4 ++
+ doc/guides/rel_notes/release_26_11.rst |  9 ++++
+ lib/graph/graph_debug.c                | 67 ++++++++++++++++++++++++++
+ lib/graph/node.c                       |  2 +
+ lib/graph/rte_graph_worker_common.h    | 51 ++++++++++++++++++--
+ 6 files changed, 134 insertions(+), 3 deletions(-)
+
+diff --git a/config/rte_config.h b/config/rte_config.h
+index 0447cdf2ad..6beee01b09 100644
+--- a/config/rte_config.h
++++ b/config/rte_config.h
+@@ -106,6 +106,10 @@
+ /* rte_graph defines */
+ #define RTE_GRAPH_BURST_SIZE 256
+ #define RTE_LIBRTE_GRAPH_STATS 1
++/* RTE_GRAPH_PROFILE is not set */
++#define RTE_GRAPH_PROFILE_BURST_SMALL 8
++#define RTE_GRAPH_PROFILE_BURST_MEDIUM 32
++#define RTE_GRAPH_PROFILE_BURST_LARGE RTE_GRAPH_BURST_SIZE
+ 
+ /****** driver defines ********/
+ 
+diff --git a/doc/guides/prog_guide/graph_lib.rst b/doc/guides/prog_guide/graph_lib.rst
+index 1c2cd1ef31..03caaaad7e 100644
+--- a/doc/guides/prog_guide/graph_lib.rst
++++ b/doc/guides/prog_guide/graph_lib.rst
+@@ -49,6 +49,10 @@ Performance tuning parameters
+   RTE_GRAPH_BURST_SIZE config option.
+   The testing shows, on x86 and arm64 servers, The sweet spot is 256 burst
+   size. While on arm64 embedded SoCs, it is either 64 or 128.
++- Enable the ``RTE_GRAPH_PROFILE`` config option for more profiling details.
++  Set the ``RTE_GRAPH_PROFILE_BURST_SMALL``, ``RTE_GRAPH_PROFILE_BURST_MEDIUM``,
++  and ``RTE_GRAPH_PROFILE_BURST_LARGE`` config options to sample specific
++  burst size intervals.
+ - Disable node statistics (using ``RTE_LIBRTE_GRAPH_STATS`` config option)
+   if not needed.
+ 
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index c8cc86295d..b4c9739262 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -55,6 +55,15 @@ New Features
+      Also, make sure to start the actual text at the margin.
+      =======================================================
+ 
++* **Added optional graph profiling statistics.**
++
++  Added build-time configurable graph node profiling statistics via
++  ``RTE_GRAPH_PROFILE`` in ``rte_config.h``. When enabled, tracks cycles
++  spent processing various burst size intervals per node.
++  The interval edges are build-time configurable via
++  ``RTE_GRAPH_PROFILE_BURST_SMALL``, ``RTE_GRAPH_PROFILE_BURST_MEDIUM``, and
++  ``RTE_GRAPH_PROFILE_BURST_LARGE`` in ``rte_config.h``.
++
+ 
+ Removed Items
+ -------------
+diff --git a/lib/graph/graph_debug.c b/lib/graph/graph_debug.c
+index e3b8cccdc1..6aeaff9b2d 100644
+--- a/lib/graph/graph_debug.c
++++ b/lib/graph/graph_debug.c
+@@ -60,6 +60,7 @@ rte_graph_obj_dump(FILE *f, struct rte_graph *g, bool all)
+ 	rte_graph_off_t off;
+ 	struct rte_node *n;
+ 	rte_edge_t i;
++	uint64_t all_total_cycles = 0;
+ 
+ 	fprintf(f, "graph <%s> @ %p\n", g->name, g);
+ 	fprintf(f, "  id=%" PRIu32 "\n", g->id);
+@@ -72,6 +73,14 @@ rte_graph_obj_dump(FILE *f, struct rte_graph *g, bool all)
+ 	fprintf(f, "  nodes_start=0x%" PRIx32 "\n", g->nodes_start);
+ 	fprintf(f, "  cir_start=%p\n", g->cir_start);
+ 
++	if (rte_graph_has_stats_feature()) {
++		rte_graph_foreach_node(count, off, g, n) {
++			if (!all && n->idx == 0)
++				continue;
++			all_total_cycles += n->total_cycles;
++		}
++	}
++
+ 	rte_graph_foreach_node(count, off, g, n) {
+ 		if (!all && n->idx == 0)
+ 			continue;
+@@ -93,6 +102,64 @@ rte_graph_obj_dump(FILE *f, struct rte_graph *g, bool all)
+ 				n->dispatch.total_sched_fail);
+ 		}
+ 		fprintf(f, "       total_calls=%" PRId64 "\n", n->total_calls);
++		if (rte_graph_has_stats_feature())
++			fprintf(f, "       total_cycles=%" PRIu64 " (%.1f%% of all nodes), avg cycles/call=%.1f\n",
++				n->total_cycles,
++				all_total_cycles == 0 ? 0.0 :
++				(double)n->total_cycles / (double)all_total_cycles,
++				n->total_calls == 0 ? 0.0 :
++				(double)n->total_cycles / (double)n->total_calls);
++#ifdef RTE_GRAPH_PROFILE
++		static const uint16_t sample_sizes[] = {
++				0, 1, 2, RTE_GRAPH_PROFILE_BURST_SMALL,
++				RTE_GRAPH_PROFILE_BURST_MEDIUM, RTE_GRAPH_PROFILE_BURST_LARGE};
++		static_assert(RTE_DIM(sample_sizes) == 2 + RTE_DIM(n->usage_stats),
++				"usage_stats array size mismatch");
++		for (int idx = 0; idx < RTE_DIM(sample_sizes); idx++) {
++			uint64_t calls;
++			uint64_t cycles;
++			double objs_per_call;
++			if (idx <= 1) {
++				calls = n->usage_stats_01[idx].calls;
++				cycles = n->usage_stats_01[idx].cycles;
++				objs_per_call = (double)idx;
++				fprintf(f, "       for %u objs/call\n",
++					idx);
++			} else {
++				calls = n->usage_stats[idx - 2].calls;
++				cycles = n->usage_stats[idx - 2].cycles;
++				objs_per_call = calls == 0 ? 0.0 :
++						(double)n->usage_stats[idx - 2].objs /
++						(double)calls;
++				if (idx < RTE_DIM(sample_sizes) - 1)
++					fprintf(f, "       for [%u;%u[ objs/call",
++						sample_sizes[idx], sample_sizes[idx + 1]);
++				else
++					fprintf(f, "       for [%u;[ objs/call",
++						sample_sizes[idx]);
++				if (calls != 0)
++					fprintf(f, ", avg %.1f objs/call\n",
++						objs_per_call);
++				fprintf(f, "\n");
++			}
++			fprintf(f, "         calls=%" PRIu64,
++				calls);
++			if (calls != 0) {
++				fprintf(f, " (%.1f%% of this node)\n",
++					n->total_calls == 0 ? 0.0 :
++					(double)calls / (double)n->total_calls);
++				fprintf(f, "         cycles=%" PRIu64 " (%.1f%% of this node), avg cycles/call=%.1f",
++					cycles,
++					n->total_cycles == 0 ? 0.0 :
++					(double)cycles / (double)n->total_cycles,
++					(double)cycles / (double)calls);
++				if (objs_per_call != 0.0)
++					fprintf(f, ", avg cycles/obj=%.1f",
++						(double)cycles / (double)calls / objs_per_call);
++			}
++			fprintf(f, "\n");
++		}
++#endif
+ 		for (i = 0; i < n->nb_edges; i++)
+ 			fprintf(f, "          edge[%d] <%s>\n", i,
+ 				n->nodes[i]->name);
+diff --git a/lib/graph/node.c b/lib/graph/node.c
+index 1fce3e6632..19b38881ae 100644
+--- a/lib/graph/node.c
++++ b/lib/graph/node.c
+@@ -110,10 +110,12 @@ __rte_node_register(const struct rte_node_register *reg)
+ 	rte_edge_t i;
+ 	size_t sz;
+ 
++#ifndef RTE_GRAPH_PROFILE
+ 	/* Limit Node specific metadata to one cacheline on 64B CL machine */
+ 	RTE_BUILD_BUG_ON((offsetof(struct rte_node, nodes) -
+ 			  offsetof(struct rte_node, ctx)) !=
+ 			 RTE_CACHE_LINE_MIN_SIZE);
++#endif
+ 
+ 	graph_spinlock_lock();
+ 
+diff --git a/lib/graph/rte_graph_worker_common.h b/lib/graph/rte_graph_worker_common.h
+index 4ab53a533e..824eb09b36 100644
+--- a/lib/graph/rte_graph_worker_common.h
++++ b/lib/graph/rte_graph_worker_common.h
+@@ -121,6 +121,26 @@ struct __rte_cache_aligned rte_node {
+ 	rte_graph_off_t xstat_off; /**< Offset to xstat counters. */
+ 
+ 	/** Fast path area cache line 2. */
++#ifdef RTE_GRAPH_PROFILE
++	/** Usage when this node processed 0 or 1 objects. */
++	struct __rte_cache_aligned {
++		uint64_t calls;     /**< Calls done. */
++		uint64_t cycles;    /**< Cycles spent. */
++	} usage_stats_01[2];
++	/**
++	 * Usage when this node processed N objects:
++	 * index 0 (micro): 2 <= N < RTE_GRAPH_PROFILE_BURST_SMALL
++	 * index 1 (small): RTE_GRAPH_PROFILE_BURST_SMALL <= N < RTE_GRAPH_PROFILE_BURST_MEDIUM
++	 * index 2 (medium): RTE_GRAPH_PROFILE_BURST_MEDIUM <= N < RTE_GRAPH_PROFILE_BURST_LARGE
++	 * index 3 (large): RTE_GRAPH_PROFILE_BURST_LARGE <= N
++	 */
++	struct __rte_cache_aligned {
++		uint64_t calls;     /**< Calls done. */
++		uint64_t cycles;    /**< Cycles spent. */
++		uint64_t cycles;    /**< Objects processed. */
++	} usage_stats[4];
++	/** Fast path area cache line 4. */
++#endif
+ 	__extension__ struct __rte_cache_aligned {
+ #define RTE_NODE_CTX_SZ 16
+ 		union {
+@@ -148,8 +168,10 @@ struct __rte_cache_aligned rte_node {
+ 	};
+ };
+ 
++#ifndef RTE_GRAPH_PROFILE
+ static_assert(offsetof(struct rte_node, nodes) - offsetof(struct rte_node, ctx)
+ 	== RTE_CACHE_LINE_MIN_SIZE, "rte_node fast path area must fit in 64 bytes");
++#endif
+ 
+ /**
+  * @internal
+@@ -197,7 +219,7 @@ void __rte_node_stream_alloc_size(struct rte_graph *graph,
+ static __rte_always_inline void
+ __rte_node_process(struct rte_graph *graph, struct rte_node *node)
+ {
+-	uint64_t start;
++	uint64_t cycles;
+ 	uint16_t rc;
+ 	void **objs;
+ 
+@@ -206,11 +228,34 @@ __rte_node_process(struct rte_graph *graph, struct rte_node *node)
+ 	rte_prefetch0(objs);
+ 
+ 	if (rte_graph_has_stats_feature()) {
+-		start = rte_rdtsc();
++		cycles = -rte_rdtsc();
+ 		rc = node->process(graph, node, objs, node->idx);
+-		node->total_cycles += rte_rdtsc() - start;
++		cycles += rte_rdtsc();
++		node->total_cycles += cycles;
+ 		node->total_calls++;
+ 		node->total_objs += rc;
++#ifdef RTE_GRAPH_PROFILE
++		if (rc < 2) {
++			node->usage_stats_01[rc].calls++;
++			node->usage_stats_01[rc].cycles += cycles;
++		} else if (rc >= RTE_GRAPH_PROFILE_BURST_LARGE) {
++			node->usage_stats[3].calls++;
++			node->usage_stats[3].cycles += cycles;
++			node->usage_stats[3].objs += rc;
++		} else if (rc >= RTE_GRAPH_PROFILE_BURST_MEDIUM) {
++			node->usage_stats[2].calls++;
++			node->usage_stats[2].cycles += cycles;
++			node->usage_stats[2].objs += rc;
++		} else if (rc >= RTE_GRAPH_PROFILE_BURST_SMALL) {
++			node->usage_stats[1].calls++;
++			node->usage_stats[1].cycles += cycles;
++			node->usage_stats[1].objs += rc;
++		} else {
++			node->usage_stats[0].calls++;
++			node->usage_stats[0].cycles += cycles;
++			node->usage_stats[0].objs += rc;
++		}
++#endif
+ 	} else {
+ 		node->process(graph, node, objs, node->idx);
+ 	}
+-- 
+2.43.0
+
