@@ -2,51 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 201B0C5DF81
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Aug 2026 15:47:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 041C2C5DF81
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Aug 2026 15:47:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0782140270;
-	Mon, 24 Aug 2026 17:47:19 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 1D90D400D6
- for <dev@dpdk.org>; Mon, 24 Aug 2026 17:47:18 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=b8iu1Qwgmi+i3p+hftF2UFsg9wfdqzhC0mIAyICeLV4=;
- b=eh92AllpoVHFMb2ccY0l5W6RW43fVu2qNV43flw2G99R5dsh/t/oy3ULCGmhpPYTfel5T3sso
- J8ggnx7U7jikZ3SGLlRx+owHWyYdiSEjxLhKMw6juF1bhlepUMMujCYDgNq8QXBspJxk3XX9IV1
- pXUh4FIczFO7NNDM409IkL0=
-Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4hTFdt2gtWzJ46Yg;
- Mon, 24 Aug 2026 23:46:58 +0800 (CST)
-Received: from frapema100004.china.huawei.com (unknown [7.182.19.128])
- by mail.maildlp.com (Postfix) with ESMTPS id ED2044057A;
- Mon, 24 Aug 2026 23:47:14 +0800 (CST)
-Received: from frapema500003.china.huawei.com (7.182.19.114) by
- frapema100004.china.huawei.com (7.182.19.128) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Mon, 24 Aug 2026 17:47:14 +0200
-Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
- frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.2562.045;
- Mon, 24 Aug 2026 17:47:14 +0200
-From: Marat Khalili <marat.khalili@huawei.com>
-To: Yang Xiaoliang <yang_xiaoliang1990@163.com>, "dev@dpdk.org" <dev@dpdk.org>
-CC: "thomas@monjalon.net" <thomas@monjalon.net>
-Subject: RE: [PATCH] doc: fix typo in l3fwd sample app guide
-Thread-Topic: [PATCH] doc: fix typo in l3fwd sample app guide
-Thread-Index: AQHdJj1UguOpOuRUiEGogW5rqRHlU7atcfCw
-Date: Mon, 24 Aug 2026 15:47:14 +0000
-Message-ID: <597077b248584bab83f148098acb6cd5@huawei.com>
-References: <20260807071546.13795-1-yang_xiaoliang1990@163.com>
-In-Reply-To: <20260807071546.13795-1-yang_xiaoliang1990@163.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.137.78]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id F37D440698;
+	Mon, 24 Aug 2026 17:47:20 +0200 (CEST)
+Received: from fout-a6-smtp.messagingengine.com
+ (fout-a6-smtp.messagingengine.com [103.168.172.149])
+ by mails.dpdk.org (Postfix) with ESMTP id 4A50640697
+ for <dev@dpdk.org>; Mon, 24 Aug 2026 17:47:20 +0200 (CEST)
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+ by mailfout.phl.internal (Postfix) with ESMTP id BBFA7EC01FE;
+ Mon, 24 Aug 2026 11:47:19 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-06.internal (MEProxy); Mon, 24 Aug 2026 11:47:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1787586439;
+ x=1787672839; bh=kMkZ0Ip7qXQgpc3Uy5qp2O+0WkLRM/nTPeef75vWuBM=; b=
+ JJIMHOMCYd/nlWBBs3A4+/bwDBcrOGCKiL3gzl3RuY+7Hv8GM1xfAMt4toeXcAEd
+ U1i7SMI03BbWDcxxVtSIKGqEEbQkCBhYAvbc/HSIT2dcPLOcHkj+AVdJAFt8igqq
+ t1zNWsWAhDNCgLWm2N7inb1+7/9ziTDBrdtsWsEK1fxsH3lppfg6XD2znlGV3mF8
+ tBY5At31HMS0PDIN+t3VqORpSlcVli1HspO1nFRxIjdDeVj61Pgycb6a+PfeYG+4
+ M2Zr4Zpyo+/zF/QRQaLew8IyCpkwBJFtzQr6oatcJZLtczqwr67LDxuOuf4bCb3g
+ iKuE+wa7uYAXWGIg7z9kEQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1787586439; x=
+ 1787672839; bh=kMkZ0Ip7qXQgpc3Uy5qp2O+0WkLRM/nTPeef75vWuBM=; b=J
+ 88ZkKd3T7kl0FbgE7eB2rnnMVmi/0gOH+eIpRt+L3zC/Az5XZriJy4kgCkec9gE9
+ yTUEo9xySM62vX8EMXCOAYA8rMfoDTS+fF9faCNv5RxJAc+fzR9yUD7rZXzNjg9M
+ ow1oalssKF/vmfcb5YQxdPtMU8RV7Be+Lr3n9A31fSTETefV8U66zP/6qJ+roemm
+ BTH30yCVFZ1wB86+2QBcSt4Au0bcgNWDQNfGhjXdGkVz4spw1DX376pMteF4y0xv
+ A9gonafl6EKsuBZ9iITBzPBD2m3NcZhntcuANVVhwn5a2tzMXkoKLb1PR71qg5AM
+ WzzO/+ZuPBWIb22/8aJMw==
+X-ME-Sender: <xms:h2eMah7gHYMA3nWr6dTe-Hbs_S36Fpr_UvXvAAisxntExAOPE0byXQ>
+ <xme:h2eMavDhTFWGuqv2X1Xb0IovTAzINLpJuzzz9966j3Jxa0rp2Ljn0RinWq0j6lUHa
+ zN1wcVVMnoIiW8wpRp2wsLrFIwxSkuCvIcbfM3UzhlLXGYj0R043ks>
+X-ME-Received: <xmr:h2eMagbdzDtUh68DnsVeIq8fvWeNFiey2U8NrKL3kEWQQKDk-SxRDaHWnXqsBmcB>
+X-ME-Proxy-Cause: dmFkZTEWlVx/WzgI1juU010AsNvLZsloRaV9dT4voYBkjRVRPX2WGbotf9CuiFbFrPN8eF
+ omdFPEv+q7B/BCfvVoK/M6irC7ty9Ib6t1zghXbvWwVV2zsRxsX1aVzPfcQlw9tq9iKSK5
+ dUyZPdu8XHnxF+LU5qFdwF0CC3uEjdKjYrpuPvPGRlqr8uTqCqcDhuRQwUJ0pkGN9YZ4jx
+ IwoXxrk11wODZ4+LIXx+LZd6HQDhGmS1/oh6Gfvp+lOSxSzYyKlHT02w+kA++EjtmYo3uL
+ rHFvH5AXmaB4WqjzPuPaoiqt72KS9I0y//ljYhH94HvJtuMrKhMleUb3fC+C/KYkqhOoXE
+ /losuN/ZEC1Ju9hj1o8VPYB5DYQ/VxuKaFY3X4Wb9H42bKHfZs6X4qClVzLPbl3q9PEifW
+ p0+FSJCzAAzgkR1OVbP8mPls69Sv/ITaNqEgvfr8xcliYCpl1ikwcpy4tKU/Oeqfm0fhXr
+ /Qw929Kx9Mz3RI5XIvVDpw0UuwXSjAewUQHK8nPtcrUsatPImTfJUXlE+JeeRzEZzkuAcs
+ Ic1Gmp5ikv13etBs3OFgi8wwF0lasDs+VIEAKtZB613rRF5tR8KQEEd22MC16FkbNEA7T3
+ viHpSMyXN7IJOQ1lQ0iH083xR7XUphjtcrOZr5J51+7eCjn4cQXn5MpYNHDg
+X-ME-Proxy: <xmx:h2eMaiZAhN04ezxvjh9sA4-W6Cja0fDOR-8YyxW9IFQ4GKQsN2Dvzg>
+ <xmx:h2eMav-B46fm3ld4XZbKLVol6MKHN8qdI_rdUYlr33Rqb_J9x_gIlw>
+ <xmx:h2eMapiB3bR5DIXfzWR7zAKNrHjd1nJehmpcWtu0zf9OPb4eqdHHVg>
+ <xmx:h2eManfzH_oPj9nHP4OaRgnvm2rhft4cdh_U-xKQzqdKPtTvxql5_w>
+ <xmx:h2eManvoAhXasc5TflJRDZnY4cYqjqytookIpPLvcldGqxuVVuwgc9XV>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 24 Aug 2026 11:47:18 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org, Chenbo Xia <chenbox@nvidia.com>,
+ Gaetan Rivet <grive@u256.net>
+Subject: Re: [PATCH 2/2] pci: remove deprecated catch-all flag
+Date: Mon, 24 Aug 2026 17:47:16 +0200
+Message-ID: <ZXWdfjrPRRuXz-Bm5UCJ1A@monjalon.net>
+In-Reply-To: <20260727070210.1281566-2-david.marchand@redhat.com>
+References: <20260727070210.1281566-1-david.marchand@redhat.com>
+ <20260727070210.1281566-2-david.marchand@redhat.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,41 +88,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> -----Original Message-----
-> From: Yang Xiaoliang <yang_xiaoliang1990@163.com>
-> Sent: Friday 7 August 2026 08:16
-> To: dev@dpdk.org
-> Cc: thomas@monjalon.net; Yang Xiaoliang <yang_xiaoliang1990@163.com>
-> Subject: [PATCH] doc: fix typo in l3fwd sample app guide
->=20
-> Fix "menthod" typo, should be "method".
->=20
-> Signed-off-by: Yang Xiaoliang <yang_xiaoliang1990@163.com>
-> ---
->  doc/guides/sample_app_ug/l3_forward.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/doc/guides/sample_app_ug/l3_forward.rst b/doc/guides/sample_=
-app_ug/l3_forward.rst
-> index 452bd8cc6c..0395474337 100644
-> --- a/doc/guides/sample_app_ug/l3_forward.rst
-> +++ b/doc/guides/sample_app_ug/l3_forward.rst
-> @@ -210,7 +210,7 @@ In this command:
->=20
->  *   The --mode option defines PMD to be used for packet I/O.
->=20
-> -*   The --eventq-sched option enables synchronization menthod of event q=
-ueue so that packets will be
-> scheduled accordingly.
-> +*   The --eventq-sched option enables synchronization method of event qu=
-eue so that packets will be
-> scheduled accordingly.
->=20
->  If application uses S/W scheduler, it uses following DPDK services:
->=20
-> --
-> 2.43.0
+27/07/2026 09:02, David Marchand:
+> This flag got replaced by RTE_PCI_ID_ANY in v21.05.
 
-Acked-by: Marat Khalili <marat.khalili@huawei.com>
+Thank you for cleaning the place :-)
 
-Consider also running this line through an LLM for better flow.
+>  /** Any PCI device identifier (vendor, device, ...) */
+>  #define RTE_PCI_ANY_ID (0xffff)
+> -/** @deprecated Replaced with RTE_PCI_ANY_ID */
+> -#define PCI_ANY_ID RTE_DEPRECATED(PCI_ANY_ID) RTE_PCI_ANY_ID
+>  #define RTE_CLASS_ANY_ID (0xffffff)
+
+Series Acked-by: Thomas Monjalon <thomas@monjalon.net>
+
+
+
