@@ -2,73 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E474C5DF9C
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Aug 2026 16:23:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D0AEC5DF81
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Aug 2026 16:24:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5216B40270;
-	Mon, 24 Aug 2026 18:23:40 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9722640270;
+	Mon, 24 Aug 2026 18:24:47 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 6E755400D6
- for <dev@dpdk.org>; Mon, 24 Aug 2026 18:23:38 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 09B6A400D6
+ for <dev@dpdk.org>; Mon, 24 Aug 2026 18:24:45 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1787588618;
+ s=mimecast20190719; t=1787588685;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=Rv7uflmBnrbiKwVYkIDFWCoCZ8jlem/J67Q5RmhC4m4=;
- b=Aq9RsGvVC39O1WUWu/p031ccB4VJFzyKDeuuDFnoY0LRLJMeN4o3ltCk4At7mMb6+hElbp
- 9bLZJZ0d7OGF9SRyY9YqhWNhmKpUYFIOyPBtBrvr8JRbT58VpcACIjwnWeEL9BPDWqGes4
- VT7+AcsbghXVcTA7suELbRwJIJAbyTQ=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=0GUPgPJhtqTRmEcHWmLcTcGTBkeTQGe+XPLTM+6/5tw=;
+ b=SaGMGBxcN1Fcgj/w9xVj2+uAxXIO8VjkTVnO37FCMdjnbSD1rtuV4n44nuqpAnFYUbYUh0
+ hPOz1tGWc1CdO8WtpUaQBRfOzQpXGXuvNX8tI8iKz3vl3Jp2GaL6DHBMqfSbGPFDJhnCa7
+ RhVf+0neAFBpNR8S4/rabVk6QMzuibk=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-537-EooEjleKPC2kBKkwMiltBA-1; Mon, 24 Aug 2026 12:23:36 -0400
-X-MC-Unique: EooEjleKPC2kBKkwMiltBA-1
-X-Mimecast-MFC-AGG-ID: EooEjleKPC2kBKkwMiltBA_1787588615
-Received: by mail-lj1-f199.google.com with SMTP id
- 38308e7fff4ca-3a16eeb1474so288721fa.0
- for <dev@dpdk.org>; Mon, 24 Aug 2026 09:23:36 -0700 (PDT)
+ us-mta-553-6x4kMeWLP1aJiur-S8R2lA-1; Mon, 24 Aug 2026 12:24:44 -0400
+X-MC-Unique: 6x4kMeWLP1aJiur-S8R2lA-1
+X-Mimecast-MFC-AGG-ID: 6x4kMeWLP1aJiur-S8R2lA_1787588682
+Received: by mail-lf1-f72.google.com with SMTP id
+ 2adb3069b0e04-5aebb33d6b8so2577988e87.0
+ for <dev@dpdk.org>; Mon, 24 Aug 2026 09:24:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787588615; x=1788193415;
+ d=1e100.net; s=20251104; t=1787588682; x=1788193482;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to:content-type;
- bh=Rv7uflmBnrbiKwVYkIDFWCoCZ8jlem/J67Q5RmhC4m4=;
- b=gHgGGApkTXkaQ3osCl1o7kJqKS/73Vr7N4ELFzoZbHXobjWEdTGvdN++2HH1EJ3Ipq
- kwcdx1DNNYozRDuDYaNjONopBux9CKxtxTn10BcA2YumiaaDOMdvRTPkO4Ah8aS8Ecbh
- VTHSFmrtZXCZ8l9CxShbKnsvtRscDPiK8cqtrPB8cSlKr2YBrFl4A96SF2rB/rtkH5m+
- dywsdbt2P/kEVp4eibBLRuCbfYPVLbifk6EBiPBwxWgxxiue91FAfr6NjVxq/1Ej+cMQ
- sGWCP+UPC+/9FYTXoPLR+7QfhmJ8Qi1vETpMyhwPvy3FIB1pcjN3XV3FeERaxkgL5kjG
- qAJA==
-X-Gm-Message-State: AFuF++kFZbO8UPzbj8GresoGjpzRRy8k7GVGYEh/aA9+oXSgxqRbQNOE
- AtA0oCe3d94u9srORslurG6Ok0XVrv4O7hRJHScUVy2NPaO9CTlJ4lPPX4GKsLqJMxu1LsDeJW0
- 8DXRSyzvzYUENv4kLMI1ilXJeGTBdSdhXIQy3BvkhDybATJ7Uiy7UCuxgRxCIqGDJtoOyqScxEu
- qlN/24GIOiUTklVbq8mRI=
-X-Gm-Gg: AR+sD12cdHguVo/XxSXbVmSxgMEkJkqIPldKRD7IMdkep5sfb1FG0kf+1nOzWE16743
- khigOlrttX9n0dw10OnG1FHkQb9Oxf44g//s+4OMNEvw2T7ykrH9AiLrKtc8bhdDnajbv+3PCFS
- S+fWVsDTUPJ5COk8ajN3XPFozWfP8HF2K/vKIjzk+6WP6zpCh1kZXEecbG1RjAcdqz8fQxamHLL
- pAMfoCG8EyPNQ+FsIjAb2loH58gDXsVVM3haqFJsuibpENN
-X-Received: by 2002:a05:6512:1110:b0:5b1:5e19:c496 with SMTP id
- 2adb3069b0e04-5b49c7a9c83mr69684e87.14.1787588614911; 
- Mon, 24 Aug 2026 09:23:34 -0700 (PDT)
-X-Received: by 2002:a05:6512:1110:b0:5b1:5e19:c496 with SMTP id
- 2adb3069b0e04-5b49c7a9c83mr69668e87.14.1787588614368; Mon, 24 Aug 2026
- 09:23:34 -0700 (PDT)
+ bh=0GUPgPJhtqTRmEcHWmLcTcGTBkeTQGe+XPLTM+6/5tw=;
+ b=MwG8A45jt4LkWAHi8I+QpNRPmS5ykLq43h0Y5gE9mzDsFNkiGgR51RTvnz1GxszrJx
+ Fx0r2Qvfhl0aqZD2oO7Zl1IusGT0ta3D2gnqSKvRbWa1iyapTjFCpxsWRhcBgtB1Zy3q
+ jgPFhh88eOfivsjbZCPmQWqw2Y639A8uA6aN7yHsLm9sKbXlBVBN4RZtPmcCZl5cZM1l
+ MBoTJovUVzcBfCKEZ9s8PfYmK8cOr+Ix9sWBtD1kPCM2aQZKf+CFYCA8r1wzeAaahNLZ
+ PyODBkXlOiXjmOxxUD7mfp/nT6vGSyrTaUdBQf0YQVuv8XE/a/PMmX5oNvwsBxeVIh3Y
+ oMZA==
+X-Gm-Message-State: AFuF++nzWN+6OT6/iJ6SXup00H6Yxldi8YxpqDhU7lqIjWnPmNziLaFJ
+ aX5Cxh6js/ORXjJR2iSbsvakXvMjJ8qX2NwEHlqPdbgPn2NOLtLjp8QwY4bVyhYHvJoyE4Pm9vO
+ uGiG9eDuGgbNgK3/hSCJcLsFnULLfvj7AErvCnK6mr1nslsF1qfHeGcIzCYixyrZ/TDO0epX6X0
+ acWWx3AfqlABNEHq//yvA=
+X-Gm-Gg: AR+sD11JWiQUwptZdSa3rh8nix0zWcWRAiUmpAJ8hS4+XhReCTTs0dk3WIkq+FSgZcb
+ Un2vAe2NrYahZZjZ9AOkztIMG7v/jMAuMimcsuOWb7ReA/6ijKJYUDS+0oo7y8/FmiIA0sTTNzz
+ o6TV42c4KjGSrvpWs2a9fzr1wU/QkZ1trb1PNEtwvKwG5hKevw6g+mozm+kOoXYqM5pqw2j0c8Y
+ AmCRO74rYRTO/ab5iSB1T/IQ0bOkocb/IlW7WLBefL2JTLR
+X-Received: by 2002:a05:6512:1092:b0:5ae:af98:497f with SMTP id
+ 2adb3069b0e04-5b484219259mr7976414e87.7.1787588682347; 
+ Mon, 24 Aug 2026 09:24:42 -0700 (PDT)
+X-Received: by 2002:a05:6512:1092:b0:5ae:af98:497f with SMTP id
+ 2adb3069b0e04-5b484219259mr7976394e87.7.1787588681893; Mon, 24 Aug 2026
+ 09:24:41 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260814153755.940302-1-bruce.richardson@intel.com>
- <20260814153755.940302-8-bruce.richardson@intel.com>
-In-Reply-To: <20260814153755.940302-8-bruce.richardson@intel.com>
+References: <20260403091836.1073484-1-david.marchand@redhat.com>
+ <20260824114207.312513-1-david.marchand@redhat.com>
+ <20260824114207.312513-3-david.marchand@redhat.com>
+ <20260824092125.4d074c3a@phoenix.local>
+In-Reply-To: <20260824092125.4d074c3a@phoenix.local>
 From: David Marchand <david.marchand@redhat.com>
-Date: Mon, 24 Aug 2026 18:23:22 +0200
-X-Gm-Features: AcwNN1Vqa-tqJmR-SjmIlz1PdnU3q6Vic5dyQ1kPpEgdOQ3K4MenqHRcwcbULsk
-Message-ID: <CAJFAV8zYSCsbKBJPYc_bH-QhJoZff+vU-va5Po5NJbptX9Q9qA@mail.gmail.com>
-Subject: Re: [PATCH 7/8] net/ixgbe: move editable files out of base folder
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, Anatoly Burakov <anatoly.burakov@intel.com>, 
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Date: Mon, 24 Aug 2026 18:24:29 +0200
+X-Gm-Features: AcwNN1UwTIbgsPWvungkntj-R8pVVXnrG0wnTN8fF9mEtrOy940wgH2M2tFGASI
+Message-ID: <CAJFAV8zjxCTcRV39H73cZs8N=AxqQm6NJahwAnXPxDOSLUQExQ@mail.gmail.com>
+Subject: Re: [PATCH v6 2/3] ethdev: skip VMDq pools unless configured
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, rjarry@redhat.com, cfontain@redhat.com, 
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>, 
+ Kiran Kumar K <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, 
+ Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>, 
+ Thomas Monjalon <thomas@monjalon.net>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: TzKL171cTE6EjTs3LPFLtShY8eWLW9IYI2cvr6KRxZw_1787588615
+X-Mimecast-MFC-PROC-ID: X68WoIAZYDztHEy4KULWoDOh2LFmxzQhqUiZ6oNc9zk_1787588682
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
@@ -84,38 +90,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 14 Aug 2026 at 17:39, Bruce Richardson
-<bruce.richardson@intel.com> wrote:
-> diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-> index 3d4f4fb7fc..8e44bb3a09 100644
-> --- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-> +++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-> @@ -36,15 +36,15 @@
->  #include <rte_os_shim.h>
+On Mon, 24 Aug 2026 at 18:21, Stephen Hemminger
+<stephen@networkplumber.org> wrote:
 >
->  #include "ixgbe_logs.h"
-> -#include "base/ixgbe_api.h"
-> -#include "base/ixgbe_vf.h"
-> -#include "base/ixgbe_common.h"
-> +#include "ixgbe_api.h"
-> +#include "ixgbe_vf.h"
-> +#include "ixgbe_common.h"
->  #include "ixgbe_ethdev.h"
->  #include "ixgbe_bypass.h"
->  #include "ixgbe_rxtx.h"
-> -#include "base/ixgbe_type.h"
-> -#include "base/ixgbe_phy.h"
-> -#include "base/ixgbe_osdep.h"
-> +#include "ixgbe_type.h"
-> +#include "ixgbe_phy.h"
-> +#include "ixgbe_osdep.h"
->  #include "ixgbe_regs.h"
+> On Mon, 24 Aug 2026 13:42:06 +0200
+> David Marchand <david.marchand@redhat.com> wrote:
+>
+> > The mac_addr_add API describes that only the 0 pool should be passed
+> > unless VMDq has been enabled, though there was no validation so far.
+> > Add such a check, then cleanup the MAC related operations (adding,
+> > removing, restoring).
+> >
+> > As a side effect, the net/cnxk does not need to manually reset the
+> > mac_pool_sel[] array.
+> >
+> > Signed-off-by: David Marchand <david.marchand@redhat.com>
+> > Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+> > ---
+>
+> Claude Fable AI review has some warnings.
 
-While I agree with the base/ixgbe_osdep.h -> ixgbe_osdep.h conversion,
-I don't get why you *need* to change other base headers inclusions
-above.
+Enough bikeshedding please.
+I requested a merge one month ago and got ignored.
 
-The rest of the series looks good to me.
+Those warnings below are pointless.
+
+Thanks.
 
 
 -- 
