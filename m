@@ -2,78 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E668BC5DF9C
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Aug 2026 16:39:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43347C5DF81
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Aug 2026 16:41:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2C62640270;
-	Mon, 24 Aug 2026 18:39:32 +0200 (CEST)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
- [209.85.214.182])
- by mails.dpdk.org (Postfix) with ESMTP id A9E34400D6
- for <dev@dpdk.org>; Mon, 24 Aug 2026 18:39:30 +0200 (CEST)
-Received: by mail-pl1-f182.google.com with SMTP id
- d9443c01a7336-2caed617615so37274455ad.3
- for <dev@dpdk.org>; Mon, 24 Aug 2026 09:39:30 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 8EF9440270;
+	Mon, 24 Aug 2026 18:41:13 +0200 (CEST)
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com
+ [209.85.215.178])
+ by mails.dpdk.org (Postfix) with ESMTP id EB9AD400D6
+ for <dev@dpdk.org>; Mon, 24 Aug 2026 18:41:11 +0200 (CEST)
+Received: by mail-pg1-f178.google.com with SMTP id
+ 41be03b00d2f7-ca7bea5e5b3so3029514a12.1
+ for <dev@dpdk.org>; Mon, 24 Aug 2026 09:41:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787589570;
- x=1788194370; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787589671;
+ x=1788194471; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=n3er7yhckeE424L5EJ+dcdaS43n4jz4gMKQ888Ub+NE=;
- b=mTcAndFagGpDM1KI8Gjv19daiGPnUd7rR+467hikIdtPeIf5GGoK3qzz7KGChVBLa6
- +5tROJNUrHWRL/M47Q6o8i76HGXP10Oly3gS2YOBze4zgacpw3W6Q4FcOBLXOmIqQrmh
- 7BXyPhjsxEIP91kgW4MvJJ711CWUESsRqZDKvkF0EbBxsk4VSHBr2ks5npmN8qAkl25W
- TPQbZskXExcCsr1m/Qfzf708UYWeUBELdpclfFPnKIcVL9xUz5J8LCQMKFQfkxI51+ku
- m9Q6RwWmP+I6Qw3b5iOIiQ3uDCcImcfhdxnuEQI58wdLv1BDPObvjRziwkysdV7LaKv/
- FF7g==
+ bh=pcjedu504AuCsJdw3J9qNKZPgI+152aDCpaaBElwuxk=;
+ b=XJl/O4707ijMwxQcI2ZUZQYPyjnRbhP6Z6Gr4Yn/Kv2imH88/2QwNa+BGhVw9UQYYa
+ Rr83578WmyystlJIi1m31dRf4ABceh0w9PTbmI7IzCuvYQ/nBxnhwFkbs+A7vGed9xfT
+ ch2hoqSx0Pjo0ymcCAKFHV8VhQU0sILhsLhAuTzNMfs0gbcim2dOcCMbvKSg1Fit/25C
+ AyYgn1YaCb+qY1QBAHjCqRkcgp3Y7oga0q1HIrtnQmDf7dEwOLpdTK0KPzlbxSuhyLR0
+ vGQ7q2pMbCmpqhlWCaBs91HzknbC+o1Zimvfc/hpUtn6u82Fzpp/s4BdjAxCOIaHJEvO
+ 6Urg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787589570; x=1788194370;
+ d=1e100.net; s=20251104; t=1787589671; x=1788194471;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=n3er7yhckeE424L5EJ+dcdaS43n4jz4gMKQ888Ub+NE=;
- b=eiAXU55qOj5IZJogb4opOPLbkLMzmA7HpqLa69PuP4+OD/76WVVhzfCLbyuiNrzCYR
- 0hWLcqANoiT996d2g1bd/HqxNZxyhmwtnfHTeoCxa1qNMKQkBXykKLDeg+6Nb8sfmKwl
- lYUZSIIZ5usq12HZkhQhjuRk3gFTRMvhk1hIurkd+Ovqo34vOMmb2EF/bf8plAbTV+6C
- szGrxrSvnTKH20RU7t0OLyXgIMGGtOM69bXMheXQqPaol92g2Nd6A+XG3uNPyr2K+nat
- uhUJgXWXAnWomUaAU6Xf4bJa62lV3rt9t3TsFdIFB+wVHbqZYCMNlou6jzODJfNkeZtk
- xqIA==
-X-Gm-Message-State: AFuF++mqCP4sTrpgaEZeCFURhkPbWh6/E0dZ/ad2aVvno086M2nK4HPT
- 16Rx3od9VLQdJfHL25roWw1Nmi+Ie7OVjFDmBqFtl6nfuG9U9nxzlAJRsR1xjOl+CV4=
-X-Gm-Gg: AR+sD12iX1mmvAmx8vwIJi6dYYILYW/FMbChUpShtFlgMdnqFDJg6BtY5egk4m0zF91
- afRcTKfAn9PnNfYo7qSud1bMTzRApdwCTezxIwgkQsGvmgbBkLkBb1/7b7hInWNusqpfMAwwoue
- x8zNAKX9baIcmLM1AmP0HNkhEPtcKF2RpxzIwDeSy4A+s0tKOZHkibyy3x7s5TVlXwr+Y27WmjF
- vr27pfJpAxCBfz+UOGsPYsQL82ZS4f38B5Oo+1/1JO5ZXD67QZfYrvIsxJDuofKFzp2A2OPWoYo
- eLynr1WbjF/lef3S+b7CCpWRhX2NW0FUGNTKBYOA3THVYkPbdp+vIr9eNqyddaWX/u1MEIepJ6z
- On/NsgX2yUEYnpyMZ2F4csBfXXz3wbYz/5IBuocsRdutsKJMHXVbtOouQI5vCu1SkbTXX29eZJX
- okpT2tPzwkhlnAJBjVv83fZ5ZmicymCUQh7PU8HZp2uHfcCeZGULplr5mz13McbRuYpTdFFqw3W
- riRjVYnsBkWVYZIMQrYPudutUER3A==
-X-Received: by 2002:a17:903:fa6:b0:2d6:5beb:8692 with SMTP id
- d9443c01a7336-2d670bb5042mr397111635ad.6.1787589569786; 
- Mon, 24 Aug 2026 09:39:29 -0700 (PDT)
+ bh=pcjedu504AuCsJdw3J9qNKZPgI+152aDCpaaBElwuxk=;
+ b=E7AXgf6hX4xQYm9VDqvhWjY+VxOZICH7kyNH79yW5ZLxHGZKpyTOqRslU8hg/eo97/
+ ynRd75hPq6Cwe/kv+WnSWq9/fgoJhxC2f6O/JV9SlzDnk0IU03TZ+I/KzXHjw4MyySlc
+ RJUyCeCsKqWKpD/+TBv4OcrXHmMBRmeCveGo4zWQ4tK4xIVfmCsc265BKziGygowqixK
+ d5RLMNgio8rVlk9rsjhMlegNXMA8FDfWYIC6A9+0DbzNYx8GanXz4m+GM+Lp/UGhGIE4
+ hjCUrKchY/Tmuh7/NqK69pBs8aeYgLG71BZ+MI8evOdxIep390Lv+on/g6KBUvrLT2vN
+ Fbvg==
+X-Gm-Message-State: AFuF++kBCOHVkj/w97EXEKvj7mzb2iiXj+ANW2nlzBebtzE/TwQP9gyb
+ aLeJ3d/x5O0yJjQibpdrHFc/hDmvU8e0CeC5OLjQyh0nBA/IpA4ZhBhQepf8fcOoT9g=
+X-Gm-Gg: AR+sD11wqOCtVYWIk/qe2rhs+52oNQaIjl5KdZel2XdkTxAxT5aMn+os54xI0ck1mcr
+ bJsIVzZIK7uRsKtpFFpqfphShznaqCD6QEkGr16YgULp8CpLOiuiaAtbvcXfB/k91rMEgs4kYBX
+ 0rxCSGuKO1yacalGztBuKgHsfUYafr9nCSztE6d5tSugUEH6Bdbe8wrhPZqwNBPkpOoCI4gHG2e
+ h/4ve89muP/ZdxOMFeQfcmk8odQ/FRVVa7WAxhO9iidZ1wrmOFN3Effkz8xSUkHu1n0EGj1geRq
+ YEAxkzmumbe5FYhzftIwkc9SJ3vMsulFoaegUc4/yoEg3DR1a7ibyEGG6T3//DhH/a4lZxfafEQ
+ msYjQ/w3ny7hc5RliTCurQFFqQmtgNrwgrJv5JUH31lsdEKIWDzeNOoQ6t4HtKg+lWwKkTy7Ula
+ Mn0UCbalaRvKN+f8OMP8h4IyUm/I8lDXp1Puzy/CEaZvoBwcF7ln1e9POEYimdjPNZb9ZPRhfRF
+ OP6p41Ja5tCR47+KFJCHLlkSyPTYxvYnwKSPfjU
+X-Received: by 2002:a05:6a20:6f87:b0:3c3:33df:4d9a with SMTP id
+ adf61e73a8af0-3cd4b9ae0b1mr39425323637.1.1787589670933; 
+ Mon, 24 Aug 2026 09:41:10 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2d6768b9ad3sm19982555ad.58.2026.08.24.09.39.24
+ 41be03b00d2f7-cc199e60ddesm1176184a12.28.2026.08.24.09.41.08
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 24 Aug 2026 09:39:29 -0700 (PDT)
-Date: Mon, 24 Aug 2026 09:39:16 -0700
+ Mon, 24 Aug 2026 09:41:10 -0700 (PDT)
+Date: Mon, 24 Aug 2026 09:41:01 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, rjarry@redhat.com, cfontain@redhat.com, Andrew Rybchenko
- <andrew.rybchenko@oktetlabs.ru>, Nithin Dabilpuram
- <ndabilpuram@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>, Sunil
- Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>, Harman
- Kalra <hkalra@marvell.com>, Thomas Monjalon <thomas@monjalon.net>
-Subject: Re: [PATCH v6 2/3] ethdev: skip VMDq pools unless configured
-Message-ID: <20260824093916.6ea3a84b@phoenix.local>
-In-Reply-To: <CAJFAV8zjxCTcRV39H73cZs8N=AxqQm6NJahwAnXPxDOSLUQExQ@mail.gmail.com>
-References: <20260403091836.1073484-1-david.marchand@redhat.com>
- <20260824114207.312513-1-david.marchand@redhat.com>
- <20260824114207.312513-3-david.marchand@redhat.com>
- <20260824092125.4d074c3a@phoenix.local>
- <CAJFAV8zjxCTcRV39H73cZs8N=AxqQm6NJahwAnXPxDOSLUQExQ@mail.gmail.com>
+To: Gagandeep Singh <G.Singh@nxp.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>, Hemant Agrawal <hemant.agrawal@nxp.com>
+Subject: Re: [PATCH v12 00/15] et/enetc: add new features for ENETC4 on i.MX95
+Message-ID: <20260824094101.32d4e42b@phoenix.local>
+In-Reply-To: <AMBPR04MB122819F9F9BA58ABDD22A114AE1A02@AMBPR04MB12281.eurprd04.prod.outlook.com>
+References: <20260819053415.645865-1-g.singh@nxp.com>
+ <20260821055643.1359277-1-g.singh@nxp.com>
+ <20260821084927.6e6aa27f@phoenix.local>
+ <AMBPR04MB122819F9F9BA58ABDD22A114AE1A02@AMBPR04MB12281.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -90,35 +85,13 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 24 Aug 2026 18:24:29 +0200
-David Marchand <david.marchand@redhat.com> wrote:
+On Mon, 24 Aug 2026 07:52:57 +0000
+Gagandeep Singh <G.Singh@nxp.com> wrote:
 
-> On Mon, 24 Aug 2026 at 18:21, Stephen Hemminger
-> <stephen@networkplumber.org> wrote:
-> >
-> > On Mon, 24 Aug 2026 13:42:06 +0200
-> > David Marchand <david.marchand@redhat.com> wrote:
-> >  
-> > > The mac_addr_add API describes that only the 0 pool should be passed
-> > > unless VMDq has been enabled, though there was no validation so far.
-> > > Add such a check, then cleanup the MAC related operations (adding,
-> > > removing, restoring).
-> > >
-> > > As a side effect, the net/cnxk does not need to manually reset the
-> > > mac_pool_sel[] array.
-> > >
-> > > Signed-off-by: David Marchand <david.marchand@redhat.com>
-> > > Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-> > > ---  
-> >
-> > Claude Fable AI review has some warnings.  
+> Hi,
 > 
-> Enough bikeshedding please.
-> I requested a merge one month ago and got ignored.
 > 
-> Those warnings below are pointless.
-> 
-> Thanks.
+> NXP Confidential
 
-I was going to merge. Just wanted to post the current AI reviews
-to make sure.
+Please fix your  mail response system. This a public list so
+any response like is violating that statement.
