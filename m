@@ -2,50 +2,142 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27F01C5DF94
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Aug 2026 10:23:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E7D0C5DF81
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Aug 2026 11:09:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 916A94067B;
-	Mon, 24 Aug 2026 12:23:12 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
- by mails.dpdk.org (Postfix) with ESMTP id C202740685
- for <dev@dpdk.org>; Mon, 24 Aug 2026 12:23:10 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 78F4D4027C;
+	Mon, 24 Aug 2026 13:09:04 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+ by mails.dpdk.org (Postfix) with ESMTP id A47F840270
+ for <dev@dpdk.org>; Mon, 24 Aug 2026 13:09:02 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1787566991; x=1819102991;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=KjQu5UCHqWAKEtxsZx7DCokZ6D6k6S8luU8f1REdoI4=;
- b=ZyrBlPCIM53xkurMk1zTpsBO5unjw13VLjVSEUc/QvBpbo+oM9NO6oNh
- oL6v/iTJphi5ZshoORt7G7+QBV58zOTq+CurZdTHGcJB6EjIY3EQhArdf
- LBUIkLIOp09VWR1eIKTO0qBfAqL66/CP/1Uw5y8RBQohQHoDYG973hPAq
- sG+YUdEl4f8e7W+hjzMp3c+w6A507qETg31r4goX02AiQ7WQzJDkHSCZ1
- WnkkfWsQqiyTmllGwcXyPokJexMqUl1BLE592IYRDLshZtNY6JQ4a6nnB
- z+5OPdaQrWHLntVYbLUh8euy1aVQ3cTHmWm+EBAvKTryiMJntTUpqg8Ia w==;
-X-CSE-ConnectionGUID: covPn6elQoqL8uiqWRakoQ==
-X-CSE-MsgGUID: kLuIIFscTlOjTY5u9yrezw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11884"; a="87884929"
-X-IronPort-AV: E=Sophos;i="6.25,240,1779174000"; d="scan'208";a="87884929"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
- by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 24 Aug 2026 03:23:10 -0700
-X-CSE-ConnectionGUID: 2rsG85k9SSqN/zMQMPJiPA==
-X-CSE-MsgGUID: bZETsAthSe6+XsIXokd6OA==
+ t=1787569743; x=1819105743;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=vmlGu2cDfcDCsrsMGxvZBoNYIBdXgRPA8p8I8TmBCDI=;
+ b=ZPJzuHnRjyt/eS+sYkd79xXm+U9/LxeklWcZoxjovxEYUSIVWURp3HMb
+ MqPEgItBIupbuAq/YN2oi++p3qdBD9snqlyqsc92hdNh/Du29au+Fx83T
+ imi2rv9YO43Nx2Qv0hA4VRm1xeFL/a68+UAJ0P9DAx/jxOHzc6kK9Uaiz
+ y/9j24ILDTldsYMsNl9OYZ+kIrE7Agz1FWD6XVTmmRpDXrRDILdZUaC40
+ hVZSUY30MqFz6mVCHy2EmQPWEQfNfItr/m0/NQa51fTSK73KS7AKnYPIu
+ EAuMN9fe0HsAmJGCy014i/cw6UINgjz51tJDboxhFwz3++9qRh5GEOLMr g==;
+X-CSE-ConnectionGUID: w/DeMUSNQPaGx6pgFQoCag==
+X-CSE-MsgGUID: WNW3wK+jTmCV1HcHbbTeQg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11884"; a="87938626"
+X-IronPort-AV: E=Sophos;i="6.25,240,1779174000"; d="scan'208";a="87938626"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+ by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 24 Aug 2026 04:09:00 -0700
+X-CSE-ConnectionGUID: I8Fk1GU2Rh+FJYZRtaZFrg==
+X-CSE-MsgGUID: jwBkzGGtSOOZdQwZn1rKLw==
 X-ExtLoop1: 1
-Received: from pae-14.iind.intel.com ([10.190.203.153])
- by fmviesa003.fm.intel.com with ESMTP; 24 Aug 2026 03:23:09 -0700
-From: Anurag Mandal <anurag.mandal@intel.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, anatoly.burakov@intel.com,
- Anurag Mandal <anurag.mandal@intel.com>
-Subject: [PATCH 4/4] net/ice: add AVX-512 context descriptor Tx path
-Date: Mon, 24 Aug 2026 10:21:54 +0000
-Message-Id: <8debe67c2d0f83625675d7abbada584b62ef6efb.1787566677.git.anurag.mandal@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1787566677.git.anurag.mandal@intel.com>
-References: <cover.1787566677.git.anurag.mandal@intel.com>
+X-IronPort-AV: E=Sophos;i="6.25,240,1779174000"; d="scan'208";a="267018687"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+ by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 24 Aug 2026 04:09:00 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Mon, 24 Aug 2026 04:08:59 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45 via Frontend Transport; Mon, 24 Aug 2026 04:08:59 -0700
+Received: from BL2PR02CU003.outbound.protection.outlook.com (52.101.52.43) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Mon, 24 Aug 2026 04:08:59 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=K9VdlS6RP1UXL7PW1k3lorxcwPDiTc1JHTm9LzxJfTOKSi/hEhk3oOJsMAq+gJNxhQzFzcbKsjtVWmJi9nkysLLjowe0GSC+xR+MLgaVYFN/JjPnmq/1TXHpc+vH/3oM0/q9Gov+g6djB81CaQWVFi8kNEuvKakpmxYH7y0DaPcL2UlU2FYBAzwxIt62DZKj3q2j/zU3dovZ9DfRVNNaxT7/ZD7FqUSRERZY3TEJCF2BtYHk8ZUr9yLIq8gn8sQ8OgvVwlBy4XiM+7WlqGRGNlrB+lhJLC6CkRfO9Ih3Q4PdwsEt/+f9rACmgDL9ju20+FI9bQa5v6EhzE0K6pOW2A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+WsmMmptHX3jQukhftiMt/mQWhzKWfroQpcve1x2OxY=;
+ b=s0HxtQIZaLu5MIg+GOojZkCZ6jO7sky6aUuZDNufl/5/OBiHo1xxg9zJxt3eX0y/RXRxO33hU0XK2r0mlBuRxc0kEkZeo2ybWyZwKWl4GTy0F8xorJrVpf7A0+nrytDzW70djIU5rzHnTLr7frk9Sthc+Gfma9a50LkqsX6yXUbBYSG8B4dXkAJIfLxnMdV0Pdp8EJJN0WFCw4K5LCYI1Z1TpAPmTXCzYKu6N2AuQAdU89wGUbvkYYRVSXvM4bs0ZeiCSQ7LE5cbJFJOOiVWq5xH4PL1IS9vfkPdB6Y/Z9HAJryQemRWAvvLMWFiXNphlRveO91OiZzwqG9aJnfrbA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from IA3PR11MB9421.namprd11.prod.outlook.com (2603:10b6:208:578::9)
+ by LV8PR11MB8558.namprd11.prod.outlook.com (2603:10b6:408:1ed::13)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.339.12; Mon, 24 Aug
+ 2026 11:08:51 +0000
+Received: from IA3PR11MB9421.namprd11.prod.outlook.com
+ ([fe80::1b70:3d93:d363:155f]) by IA3PR11MB9421.namprd11.prod.outlook.com
+ ([fe80::1b70:3d93:d363:155f%4]) with mapi id 15.21.0339.012; Mon, 24 Aug 2026
+ 11:08:51 +0000
+Date: Mon, 24 Aug 2026 12:08:46 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: David Marchand <david.marchand@redhat.com>
+CC: <dev@dpdk.org>, Praveen Shetty <praveen.shetty@intel.com>
+Subject: Re: [PATCH] net/cpfl: remove unused macro definition
+Message-ID: <aowmPuZLglReyKnW@bricha3-mobl1.ger.corp.intel.com>
+References: <20260820080542.3414447-1-bruce.richardson@intel.com>
+ <CAJFAV8yg9wgPuMsoZPwQfB=bHo1WD8URb_wtJ=w70Y-j3jeKFg@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAJFAV8yg9wgPuMsoZPwQfB=bHo1WD8URb_wtJ=w70Y-j3jeKFg@mail.gmail.com>
+X-ClientProxiedBy: DUZPR01CA0122.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4bc::26) To IA3PR11MB9421.namprd11.prod.outlook.com
+ (2603:10b6:208:578::9)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA3PR11MB9421:EE_|LV8PR11MB8558:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8253beb8-24b0-4953-7f07-08df01d013ef
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|23010399003|366016|1800799024|10067099003|4143699003|11063799006|56012099006|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info: 6c5N7DRcb7qcSmdkeWm+sZPVs/9HsVa2XLTtSRHEh0cMszg7SyE+ETdWHz8ml/k6zQNIYkYQ/PSI0GE8L/m4mnkEoK+u8iM9ryd5B7wy/A4eC4+M/5l8MvQRJczwp0LRG7OJLAELZPXQJq7WdOHpk4/7+UoRYRnw4O7Qy4QjwA+M7uIk9TCCYX3z/UNPdqNoLZxyPqK18hLiK6RhmtjtnuXB3eGUSDcCneDKCG+H9cvqhw0LO2K1e1XPr4pikaAb/fYx6ujVEoCvd50ig1CbTo9CIUBFJUcydEigP0ByKCdCWBHTQ1BhBF3lLXcizv6k5zyy3C3Yukt/+kgaRoFx3AS5PE5bAUkipJYz+uKSIMx8Gi0v24V/4ninE0+TBx6loSburyTuJ+UL6kkq2FX8IYF0qDOIuBT6OMSG5lUJCywk5EnPQ2rcldAVjO0F5iZo6EZJa30JpIej2m+FQdqXcKJUtLZwVaQzOuZ8E2vNmlhnyuHrKJbjeHRs+PlRKFR0MLtr7EKOjJkIYhhtB+L5y9/rX/Kz6PuE/IJ7YHLwLPeXYjeidgNX/mqSthIjI4l1hEQjLDYQjAR2/oPZ/qpbK2vue7WsUhcipFTKKGG2Ojn0nPOgOqOSyp8c1B0BVC464felqaMrghEbxL1JxyFcENr8W67Gsg1Mqojzk2T3P7o=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:IA3PR11MB9421.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(23010399003)(366016)(1800799024)(10067099003)(4143699003)(11063799006)(56012099006)(18002099003)(22082099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?hHnHd20JzCox8izRkZK1p9xK1FzOkVvRV1IgNGP5j1Ydv3OA3SEClEUaS8Rk?=
+ =?us-ascii?Q?YaOy91Yyy0KGQn/YZ66UvYMWcgCaIo+W3AtkDRKexke6MF0DmALIx4cnW26j?=
+ =?us-ascii?Q?rSmm0vnFY/wyhnCUbS+rGqZvjH66LHFbLhiD801G+FnJKfh9p4e5b0zkAlPY?=
+ =?us-ascii?Q?W/DkKuza0RmAwi1nlO64zTksc68lp2cSPMkyQixwKWQzr/fGYlPs/hC8MjlY?=
+ =?us-ascii?Q?Ib6nfwnWnUT0e36OLMAKYxAHNXUjVbekypLyewYzH6Tmf41r9XcSPRFkYMJT?=
+ =?us-ascii?Q?N6ThvfwfJ/BS+LdMmcWrx8M+Z925cpbf/6/gKLuIMqx9c+E//kNkPvOyS9wj?=
+ =?us-ascii?Q?P1haHi4vT/YTZ9XIwEIyEYXNR3lWd/wK5Oyr3AjF6N2P6FyDwdd1Bpc/KOt9?=
+ =?us-ascii?Q?YlRa1hJvQ8WpN07RBEtdikh6gySmnkcAO5TDrXpiu8LnRoH/30rY2hFbW1VJ?=
+ =?us-ascii?Q?r54sLVAsAlJL+mWZBPRLD3lTdc5jT5+OccIzG1w/w03izmzgRqCPxWHSBMYF?=
+ =?us-ascii?Q?Cln1teCzq1af/+UVjYulelkPeeL6ePvZmMp0/u3nQmP9Z5wemGBkfEs0Focq?=
+ =?us-ascii?Q?FaHbYnoWAx9BO3VYytRlvV97htILTuS8hQ/n7tiZJrTbwY1OIiqw22Kzjrl0?=
+ =?us-ascii?Q?Cc6Qgdxqg0lmXtVikYbpzTO32Xh5VJuNfrSN/d53s0k7IrnL9c7bPv+iOGxW?=
+ =?us-ascii?Q?FMqrx80UGbumtRt9ZFEvdJHV/OOod7UZIzMrRLK/Y55uVfXhNt3ZPp0Xxre3?=
+ =?us-ascii?Q?kV++3nvHKsoDj2QoIJVk2jmQCok6omTOrHdukVHeTMmV5QyMJ0IkCXRlV3sv?=
+ =?us-ascii?Q?PaK7mPtiVdU6r+KF5fOjV+9+N5qQ8NKi0M737Epiec7DkNZbPqZDmuY6g2lj?=
+ =?us-ascii?Q?nSXl7Lz1oNHrlDO15RbpI3Ihsxesnajh6WM24kRZq3BNB0uQeK0LpP9MU2lu?=
+ =?us-ascii?Q?v9ZHvtLIalCJy1W64R7NIQaCTFpXEVUF7jjJv+uwfDWqxapUn4pyDIXqNEK4?=
+ =?us-ascii?Q?Qvvpvy4dRIIuoNunGkdW8WnJpYSpoRSssSxLKTR/P9RjIBw0z8NjwEY/gGMH?=
+ =?us-ascii?Q?VcQX+R+nxrX1NLL5Y/Y8kmVE5J7EISmzqOxkDT4TDQWoWUR83Dp8Ha/vdE6w?=
+ =?us-ascii?Q?sABzG7BNOhaqUr26S3EymUWR8qfY5wPkj4rLpiufsP0UXHdxyh0FFAJIpxg0?=
+ =?us-ascii?Q?pK2bjDOCGia24dA6VuJ6iXJqRz7jMGaWhX6bSP3kUtTCtLJMhOYzBHkfbfLP?=
+ =?us-ascii?Q?HwxIoqUhjsHrfZNdBn+nbZ0QrJ6ZIlNWtySIUtVDcevax4M5bBk76St/Yy7z?=
+ =?us-ascii?Q?kgedXnWF4418o9FHAjMYbDfVl6vzLmQn2+49g6+8Om5SkuXq8JvpjxwJHRyF?=
+ =?us-ascii?Q?TNb8v/0bhnl7/EOC47AjrtcVz/HA1IknSr3USr24vRb3Y38zRn1HKRfUsDAQ?=
+ =?us-ascii?Q?+ydyQ8j9gwAt72QzjQ/lSxJmD9rROpLR8Q0kWZIScWBcVCr+sEYqsS0C8v4a?=
+ =?us-ascii?Q?Ar8bT/U0+iFVx6L5qQiZh+V6c/NtvCs/jzAzGUIsHS3hcHDmfEnb2M47dObj?=
+ =?us-ascii?Q?ZlV1gFRt8X9MLc5CZQ4AAaTpTgglN1R5D7ru7v+JSAUXMMUIsajy4InIwtOQ?=
+ =?us-ascii?Q?i1DpyRFikY2B5GhWOhtlEbiam5BxqeZIDkgM8VRTujsXkkfoQpOUC4eYSWwY?=
+ =?us-ascii?Q?6GQtL6hn+w5aKxW34gVGIdJE8tkAl3eC9qIY+ZtxkPrEpum2o1vOaUon4d3v?=
+ =?us-ascii?Q?ym644U38QTv02GXbEYF1omnzGcbGMpA=3D?=
+X-Exchange-RoutingPolicyChecked: gZK317Qr54aDA82acv9IcdOiIPnEhYAga6pU14s0dStk31WQQ9dwpPgQfO57ZJ6Ea+aPrB2kCWnd82EA1O16kDmLV2aumOwenpXthtgpVoo8tP9+W3yC/HGTe8bRep50QSy73F/ndfDD1uQzMxpsKNQIXAihsN3ZESiLGwX07I2GYu0hm3tEXx2zrstfQ231aSozW6jbCUVHQSu7qoDZtHG+mF1k22SDd88QX5jgqd7uO8RZ+VcSSUwsRH8KEu/C1udMJoN9DIxiGYLYdvnHNJkWEzBXMvVwBQ8tYyTnUTrtHqyaWN7AfbPmy7gsnGRFny8WOk7tJy8FJpGjVXtWig==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8253beb8-24b0-4953-7f07-08df01d013ef
+X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB9421.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Aug 2026 11:08:51.1436 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JEVciQoAd/3zksNRjzv6S6g/OyoCXjIKZSAM7Sni4CN4qLCALzXTi/dIIFC/GnZBv41xPa06Y8lieGl6gTFHahXGjRBJrfF4BI69GJ7hGRU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR11MB8558
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,233 +151,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Added an AVX-512 context descriptor path for tunneled
-outer IPv4 and UDP checksum offloads.
-
-Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
----
- doc/guides/rel_notes/release_26_11.rst      |   5 +-
- drivers/net/intel/ice/ice_ethdev.h          |   1 +
- drivers/net/intel/ice/ice_rxtx.c            |  10 ++
- drivers/net/intel/ice/ice_rxtx.h            |   3 +
- drivers/net/intel/ice/ice_rxtx_vec_avx512.c | 141 ++++++++++++++++++++
- 5 files changed, 158 insertions(+), 2 deletions(-)
-
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 8ce1875843..1239f1ab0d 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -57,8 +57,9 @@ New Features
- 
- * **Updated Intel ice driver.**
- 
--  Added an AVX2 Tx path using context descriptors, allowing tunneled outer IPv4
--  and UDP checksum offloads without falling back to scalar Tx.
-+  * Added AVX2 and AVX-512 context-descriptor Tx paths,
-+    enabling outer IPv4 and UDP checksum offloads for
-+    tunneled packets without falling back to scalar Tx.
- 
- * **Updated Intel iavf driver.**
- 
-diff --git a/drivers/net/intel/ice/ice_ethdev.h b/drivers/net/intel/ice/ice_ethdev.h
-index 0e74f8d776..00facd48bd 100644
---- a/drivers/net/intel/ice/ice_ethdev.h
-+++ b/drivers/net/intel/ice/ice_ethdev.h
-@@ -216,6 +216,7 @@ enum ice_tx_func_type {
- 	ICE_TX_AVX2_CTX_OFFLOAD,
- 	ICE_TX_AVX512,
- 	ICE_TX_AVX512_OFFLOAD,
-+	ICE_TX_AVX512_CTX_OFFLOAD,
- 	ICE_TX_NEON,
- };
- 
-diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
-index 5ec0b4d1fd..a3ee235edf 100644
---- a/drivers/net/intel/ice/ice_rxtx.c
-+++ b/drivers/net/intel/ice/ice_rxtx.c
-@@ -3583,6 +3583,16 @@ static const struct ci_tx_path_info ice_tx_path_infos[] = {
- 		},
- 		.pkt_prep = ice_prep_pkts
- 	},
-+	[ICE_TX_AVX512_CTX_OFFLOAD] = {
-+		.pkt_burst = ice_xmit_pkts_vec_avx512_ctx_offload,
-+		.info = "Context Offload Vector AVX512",
-+		.features = {
-+			.tx_offloads = ICE_TX_VECTOR_CTX_OFFLOAD_OFFLOADS,
-+			.simd_width = RTE_VECT_SIMD_512,
-+			.ctx_desc = true
-+		},
-+		.pkt_prep = ice_prep_pkts
-+	},
- #endif
- #elif defined(RTE_ARCH_ARM64)
- 	[ICE_TX_NEON] = {
-diff --git a/drivers/net/intel/ice/ice_rxtx.h b/drivers/net/intel/ice/ice_rxtx.h
-index 37e346fe39..7aef372136 100644
---- a/drivers/net/intel/ice/ice_rxtx.h
-+++ b/drivers/net/intel/ice/ice_rxtx.h
-@@ -308,6 +308,9 @@ uint16_t ice_xmit_pkts_vec_avx512(void *tx_queue, struct rte_mbuf **tx_pkts,
- uint16_t ice_xmit_pkts_vec_avx512_offload(void *tx_queue,
- 					  struct rte_mbuf **tx_pkts,
- 					  uint16_t nb_pkts);
-+uint16_t ice_xmit_pkts_vec_avx512_ctx_offload(void *tx_queue,
-+					     struct rte_mbuf **tx_pkts,
-+					     uint16_t nb_pkts);
- int ice_fdir_programming(struct ice_pf *pf, struct ice_fltr_desc *fdir_desc);
- int ice_tx_done_cleanup(void *txq, uint32_t free_cnt);
- int ice_get_monitor_addr(void *rx_queue, struct rte_power_monitor_cond *pmc);
-diff --git a/drivers/net/intel/ice/ice_rxtx_vec_avx512.c b/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
-index 309ab9fca7..f598caef47 100644
---- a/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
-+++ b/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
-@@ -901,6 +901,147 @@ ice_vtx(volatile struct ci_tx_desc *txdp, struct rte_mbuf **pkt,
- 	}
- }
- 
-+static inline void
-+ice_ctx_vtx1(volatile struct ci_tx_desc *txdp, struct rte_mbuf *pkt,
-+	     uint64_t flags, bool offload)
-+{
-+	uint64_t high_data_qw = CI_TX_DESC_DTYPE_DATA |
-+			(flags << CI_TXD_QW1_CMD_S) |
-+			((uint64_t)pkt->data_len << CI_TXD_QW1_TX_BUF_SZ_S);
-+	const uint64_t low_ctx_qw = offload ? ice_txd_tunneling_ctx(pkt) : 0;
-+
-+	if (offload)
-+		ice_txd_enable_offload(pkt, &high_data_qw);
-+
-+	const __m256i ctx_data_desc = _mm256_set_epi64x(high_data_qw,
-+			rte_pktmbuf_iova(pkt), CI_TX_DESC_DTYPE_CTX, low_ctx_qw);
-+
-+	_mm256_store_si256(RTE_CAST_PTR(__m256i *, txdp), ctx_data_desc);
-+}
-+
-+static inline void
-+ice_ctx_vtx(volatile struct ci_tx_desc *txdp, struct rte_mbuf **pkt,
-+	    uint16_t nb_pkts, uint64_t flags, bool offload)
-+{
-+	while (nb_pkts > 1) {
-+		uint64_t high_data_qw1 = CI_TX_DESC_DTYPE_DATA |
-+				(flags << CI_TXD_QW1_CMD_S) |
-+				((uint64_t)pkt[1]->data_len << CI_TXD_QW1_TX_BUF_SZ_S);
-+		uint64_t high_data_qw0 = CI_TX_DESC_DTYPE_DATA |
-+				(flags << CI_TXD_QW1_CMD_S) |
-+				((uint64_t)pkt[0]->data_len << CI_TXD_QW1_TX_BUF_SZ_S);
-+		const uint64_t low_ctx_qw1 = offload ? ice_txd_tunneling_ctx(pkt[1]) : 0;
-+		const uint64_t low_ctx_qw0 = offload ? ice_txd_tunneling_ctx(pkt[0]) : 0;
-+
-+		if (offload) {
-+			ice_txd_enable_offload(pkt[1], &high_data_qw1);
-+			ice_txd_enable_offload(pkt[0], &high_data_qw0);
-+		}
-+
-+		const __m512i ctx_data_desc = _mm512_set_epi64(high_data_qw1,
-+				rte_pktmbuf_iova(pkt[1]), CI_TX_DESC_DTYPE_CTX, low_ctx_qw1,
-+				high_data_qw0, rte_pktmbuf_iova(pkt[0]),
-+				CI_TX_DESC_DTYPE_CTX, low_ctx_qw0);
-+
-+		_mm512_storeu_si512(RTE_CAST_PTR(void *, txdp), ctx_data_desc);
-+		txdp += 4;
-+		pkt += 2;
-+		nb_pkts -= 2;
-+	}
-+
-+	if (nb_pkts)
-+		ice_ctx_vtx1(txdp, *pkt, flags, offload);
-+}
-+
-+static inline uint16_t
-+ice_xmit_fixed_burst_vec_avx512_ctx(void *tx_queue, struct rte_mbuf **tx_pkts,
-+				   uint16_t nb_pkts, bool offload)
-+{
-+	struct ci_tx_queue *txq = tx_queue;
-+	volatile struct ci_tx_desc *txdp;
-+	struct ci_tx_entry_vec *txep;
-+	uint16_t n, nb_commit, nb_mbuf, tx_id;
-+	const uint64_t flags = CI_TX_DESC_CMD_DEFAULT;
-+	const uint64_t rs = CI_TX_DESC_CMD_RS | flags;
-+
-+	if (txq->nb_tx_free < txq->tx_free_thresh)
-+		ci_tx_free_bufs_vec(txq, ice_tx_desc_done, true);
-+
-+	nb_commit = (uint16_t)RTE_MIN(txq->nb_tx_free,
-+			(uint32_t)nb_pkts * 2);
-+	nb_commit &= (uint16_t)~1;
-+	if (unlikely(nb_commit == 0))
-+		return 0;
-+
-+	nb_pkts = nb_commit >> 1;
-+	tx_id = txq->tx_tail;
-+	txdp = &txq->ci_tx_ring[tx_id];
-+	txep = &txq->sw_ring_vec[tx_id >> 1];
-+
-+	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_commit);
-+	n = (uint16_t)(txq->nb_tx_desc - tx_id);
-+
-+	if (nb_commit >= n) {
-+		nb_mbuf = n >> 1;
-+		ci_tx_backlog_entry_vec(txep, tx_pkts, nb_mbuf);
-+
-+		ice_ctx_vtx(txdp, tx_pkts, nb_mbuf - 1, flags, offload);
-+		tx_pkts += nb_mbuf - 1;
-+		txdp += n - 2;
-+		ice_ctx_vtx1(txdp, *tx_pkts++, rs, offload);
-+
-+		nb_commit = (uint16_t)(nb_commit - n);
-+		txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
-+		tx_id = 0;
-+		txdp = txq->ci_tx_ring;
-+		txep = txq->sw_ring_vec;
-+	}
-+
-+	nb_mbuf = nb_commit >> 1;
-+	ci_tx_backlog_entry_vec(txep, tx_pkts, nb_mbuf);
-+	ice_ctx_vtx(txdp, tx_pkts, nb_mbuf, flags, offload);
-+	tx_id = (uint16_t)(tx_id + nb_commit);
-+
-+	if (tx_id > txq->tx_next_rs) {
-+		txq->ci_tx_ring[txq->tx_next_rs].cmd_type_offset_bsz |=
-+			rte_cpu_to_le_64((uint64_t)CI_TX_DESC_CMD_RS << CI_TXD_QW1_CMD_S);
-+		txq->tx_next_rs = (uint16_t)(txq->tx_next_rs + txq->tx_rs_thresh);
-+	}
-+
-+	txq->tx_tail = tx_id;
-+	ICE_PCI_REG_WC_WRITE(txq->qtx_tail, txq->tx_tail);
-+
-+	return nb_pkts;
-+}
-+
-+static inline uint16_t
-+ice_xmit_pkts_vec_avx512_ctx_common(void *tx_queue, struct rte_mbuf **tx_pkts,
-+				   uint16_t nb_pkts, bool offload)
-+{
-+	struct ci_tx_queue *txq = tx_queue;
-+	uint16_t nb_tx = 0;
-+
-+	while (nb_pkts) {
-+		const uint16_t num = RTE_MIN(nb_pkts, txq->tx_rs_thresh >> 1);
-+		const uint16_t ret = ice_xmit_fixed_burst_vec_avx512_ctx(tx_queue,
-+				&tx_pkts[nb_tx], num, offload);
-+
-+		nb_tx += ret;
-+		nb_pkts -= ret;
-+		if (ret < num)
-+			break;
-+	}
-+
-+	return nb_tx;
-+}
-+
-+uint16_t
-+ice_xmit_pkts_vec_avx512_ctx_offload(void *tx_queue,
-+		struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
-+{
-+	return ice_xmit_pkts_vec_avx512_ctx_common(tx_queue, tx_pkts, nb_pkts, true);
-+}
-+
- static __rte_always_inline uint16_t
- ice_xmit_fixed_burst_vec_avx512(void *tx_queue, struct rte_mbuf **tx_pkts,
- 				uint16_t nb_pkts, bool do_offload)
--- 
-2.34.1
+On Mon, Aug 24, 2026 at 10:06:54AM +0200, David Marchand wrote:
+> On Thu, 20 Aug 2026 at 10:06, Bruce Richardson
+> <bruce.richardson@intel.com> wrote:
+> >
+> > The CC_AVX512_SUPPORT macro was never used in the cpfl source code
+> > files, so there is need to define it in the meson.build file.
+> >
+> > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+> 
+> Acked-by: David Marchand <david.marchand@redhat.com>
+> 
+Patch applied to dpdk-next-net-intel.
 
