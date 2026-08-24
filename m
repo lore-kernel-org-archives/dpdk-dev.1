@@ -2,76 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82423C5DF9C
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Aug 2026 16:19:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD9A7C5DF81
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Aug 2026 16:21:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CBEF040270;
-	Mon, 24 Aug 2026 18:19:19 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 2DFAD400D6
- for <dev@dpdk.org>; Mon, 24 Aug 2026 18:19:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1787588358;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=iMAPWu9uXuNnEbpjN+ImU3ObIXY+0PfVQ7TH7xYUimM=;
- b=GMC7T7wpIriH288Q36hlJR1fTxZma8lqKdVoP4tsjbHm48B6FRc9BJ0t58zDqj5N5AmIUx
- Bdp5R0El68IjjK+6zIoI21FdCRQnf448h+7ilPPiMvrosSOswa97tibi3yGWEx5QBL/H54
- MpVk3cS/VwBqkNuWMGNadxBtrbmLzSk=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-263-oJCQGIgOMmCG7ALeIXoJjw-1; Mon, 24 Aug 2026 12:19:15 -0400
-X-MC-Unique: oJCQGIgOMmCG7ALeIXoJjw-1
-X-Mimecast-MFC-AGG-ID: oJCQGIgOMmCG7ALeIXoJjw_1787588354
-Received: by mail-lf1-f71.google.com with SMTP id
- 2adb3069b0e04-5aec6240ddbso2218114e87.3
- for <dev@dpdk.org>; Mon, 24 Aug 2026 09:19:15 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 07D2B40270;
+	Mon, 24 Aug 2026 18:21:44 +0200 (CEST)
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com
+ [209.85.216.47]) by mails.dpdk.org (Postfix) with ESMTP id 103DE400D6
+ for <dev@dpdk.org>; Mon, 24 Aug 2026 18:21:43 +0200 (CEST)
+Received: by mail-pj1-f47.google.com with SMTP id
+ 98e67ed59e1d1-38dfe7eb825so3221683a91.0
+ for <dev@dpdk.org>; Mon, 24 Aug 2026 09:21:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787588502;
+ x=1788193302; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=8krdk5PL2hh/+2uDrZ4CclBe66QkxuN9seLrJjsN0sw=;
+ b=PBr4pjyQBoYrbXo2RxpwJ16WtLfHWu5PQhFT87D4o5vd9W/pAeZv1r1yL1CyGLGxdo
+ Z7Xj6lt1EwDNhP7Tf1feOA6uoi771ntaIIdERNQyPaI19R4zLd1qpP9VX7OEixiWDJjn
+ DRU+BQJ5+Sn/BqTYa78hTCuqyNe2zjkJFEmOkbMRRRmwYb+NU3nO6dyCch8CbxP514qJ
+ hs/E8OXjl+9MhlOhnhw0vataG9SARclYz3LHJdkSm9ETHQ5s2hOf+P7kyTmA7Rc9AaCp
+ wubjD5xVaCAmn5YqhsL2w45qSOUYgjDKxaZEGxxquk4PnCypjopEyW8rQR4rsGjic+dW
+ OVgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787588354; x=1788193154;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=iMAPWu9uXuNnEbpjN+ImU3ObIXY+0PfVQ7TH7xYUimM=;
- b=KSRmn8SRRmFeDPRTf/xSYoGc9zGsAju4YBvFkf2QBkm8oSkMJcpPRQTxkW9vKuYm+a
- WHcjWPGYzJ2kBxy2RpVocCHzLSg2Mchi/sCTfUmZ/K4GPtU1LHF4icamlB0SSkaJ8L/t
- 2rkcAl9rWmAtsHGEhgLwjDxv8nRZ6NkjLw8EzGbh07g2FbdERxuUT+8JFgFv1B3GNgW+
- SRKeo2q0grZHxhLhKiHkerPclTmSzx1TXcmrMCkXTo6oBG6XpS8doPmz+5WCrmLtpWtW
- xlsWbbVhO3I6Wvgv22psoC7MDJPjrulQaIeBUgHVKUcaSmoZJGHp6mRFMQM7idOQgQdB
- pfVA==
-X-Gm-Message-State: AFuF++mtxgcioC4j0PSwvH4DhOr1930DVjozXj+bxb+im5b+lqBoyMKB
- gPakJ2jDrWcgU+ZGrtKFgcOEYUrUhQhrLvsK1gABq0ntQ91nO76C3JSBakec3tq0xbSuQUsfSeQ
- LqXtKxF1z1fU1wuLwDrwgD3DpaVnE83Qc2OFpF5QEHIVC8m6xIfkI06oNc1EkGyiYAYyMKa/OZH
- KBTal+YLoxiJicqLBiGlQ=
-X-Gm-Gg: AR+sD11rXHYzNyfg+DViU6PqoLY8e4VNDDxTM5NtxRoYaNrSvHpgQaWiv05rATTvCND
- FZJ6TFqXb23XxvxU1/2dGfHA2FGR26mR/ZeK9QCsDp9Z81N6x35xxtDJvgiXR8mtya8nX1DfKYH
- bSlI80vQ7vruoXSTAZM+QQtwnV9VYZ3J9n48nUKvOnjwYFoG0X/gvs1jqZdHBPfYaj/IaZSKJbP
- iGTB5dFbingmZs+I2Be4d5JL8E5EDwHF34DAA/Qwe/bvOvi
-X-Received: by 2002:a05:6512:2528:b0:5b0:1b78:495d with SMTP id
- 2adb3069b0e04-5b48b8b548fmr5744312e87.24.1787588354181; 
- Mon, 24 Aug 2026 09:19:14 -0700 (PDT)
-X-Received: by 2002:a05:6512:2528:b0:5b0:1b78:495d with SMTP id
- 2adb3069b0e04-5b48b8b548fmr5744282e87.24.1787588353672; Mon, 24 Aug 2026
- 09:19:13 -0700 (PDT)
-MIME-Version: 1.0
-References: <20260727070210.1281566-1-david.marchand@redhat.com>
- <20260727070210.1281566-2-david.marchand@redhat.com>
- <ZXWdfjrPRRuXz-Bm5UCJ1A@monjalon.net>
-In-Reply-To: <ZXWdfjrPRRuXz-Bm5UCJ1A@monjalon.net>
-From: David Marchand <david.marchand@redhat.com>
-Date: Mon, 24 Aug 2026 18:19:00 +0200
-X-Gm-Features: AcwNN1XBiSUWeeoukI7vN8xWPHWvOWHKKJXmpYsEafU0fNzQKUz0rkRl8HkhY10
-Message-ID: <CAJFAV8xVA4x97jDsfsLTM7CKJ_PYJvPAxjSSK3WApgu25ZWboA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] pci: remove deprecated catch-all flag
+ d=1e100.net; s=20251104; t=1787588502; x=1788193302;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=8krdk5PL2hh/+2uDrZ4CclBe66QkxuN9seLrJjsN0sw=;
+ b=H4llc7SzppIQEKYCSNrmkh/uwUW1M5dXm8W53kOWw6Eu6onBEObKSVhWse64qzzX6t
+ mGotcain9VsyS8DbTZLLZIZeQYu0g5EV54iSSuMYjHDaR4XGnmjM2oJXJ2bLghW9Lzpy
+ WXEJ8lQTsephvUEUYK8flLXy+PW5KOrsvBZpNrZ/1A/NokohTRagmOcy6AaEqodlHmaJ
+ XvVXGXPvpdw9qw67lt/7Eky9vt2tQeDMerMlJqsW+ok3+znjUd2m9UsyhTcR5NlanOEZ
+ ouSfSkyCQlxZVX1xGJ4+BXXmi2pP5QLxLr0gZ8tpcpAJnev4VEqkPf8Fq8nVPmz0Bbnp
+ +iRw==
+X-Gm-Message-State: AFuF++m2pBs4DuVlnxv/SGBIkbFvKKPzLR4iA4CgcB5hUPPBQyzJyy3Q
+ 3H1tX54ztsDpHMN2b6QyJE/iyaCcF4NgngYpx9Rzf8tvhHAZT6PvVbPEY5HHn/5Hkqc=
+X-Gm-Gg: AR+sD13CTMy5FVA9f1tNgiTHnB2QtMxPYs9dFi3Up8/X+OI2nMvdEkk1bn9ucbwg7Yg
+ mYZaV0oE7Ji3If2tgf1GIe3yE7hI8CYQCNecVbIttI+cup2HoRQaN9Of3Yv47J9bROEruqZQd4e
+ b4AYGZdCrnWlt7braSxbP08JM5zBvnGbgTyeBuZWC4YWGv/luZotBhzLu6JpPs3XsEzEI/0wAOi
+ 742wKAU/n7bqRMT6jLYki1J6cxP4kk+0ynjnNauBIJxCmC6xbeFzAHA42zT6JdvHjKhtdHFrXZR
+ h1ady6dQAm7IrKUCGrhCdAQR5vWefqGcFbxnYqibRZ11iDqA8WSkIHNtB+77XkIdzfyN0sOGvkS
+ 6ooMxCPBobxhggHn1DG8RDK9iUADLnX20cXtYQ8BR2xKWbHN7quOaewaAIzWDznagq1vLluBzi0
+ MDTZauBMMXReoCmFsFdu1PVzkkMAmZNutJrV39AZfHmM+YeDnIXt304veEaxRxU0ob78XAZhKDR
+ S9FmqTmhvTuxViIN7NTtpwtQ3O9hg==
+X-Received: by 2002:a17:90b:53c5:b0:381:528a:808c with SMTP id
+ 98e67ed59e1d1-3964652ad89mr5110a91.12.1787588498642; 
+ Mon, 24 Aug 2026 09:21:38 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-39645b17ef5sm144422a91.2.2026.08.24.09.21.33
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 24 Aug 2026 09:21:38 -0700 (PDT)
+Date: Mon, 24 Aug 2026 09:21:25 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
 To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, Chenbo Xia <chenbox@nvidia.com>,
- Gaetan Rivet <grive@u256.net>, Thomas Monjalon <thomas@monjalon.net>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: c5NX1sD6UJv_KyMai18q-FZLd2C0KvfGKCuxQI4ZiHg_1787588354
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Cc: dev@dpdk.org, rjarry@redhat.com, cfontain@redhat.com, Andrew Rybchenko
+ <andrew.rybchenko@oktetlabs.ru>, Nithin Dabilpuram
+ <ndabilpuram@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>, Sunil
+ Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>, Harman
+ Kalra <hkalra@marvell.com>, Thomas Monjalon <thomas@monjalon.net>
+Subject: Re: [PATCH v6 2/3] ethdev: skip VMDq pools unless configured
+Message-ID: <20260824092125.4d074c3a@phoenix.local>
+In-Reply-To: <20260824114207.312513-3-david.marchand@redhat.com>
+References: <20260403091836.1073484-1-david.marchand@redhat.com>
+ <20260824114207.312513-1-david.marchand@redhat.com>
+ <20260824114207.312513-3-david.marchand@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,24 +87,91 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 24 Aug 2026 at 17:47, Thomas Monjalon <thomas@monjalon.net> wrote:
->
-> 27/07/2026 09:02, David Marchand:
-> > This flag got replaced by RTE_PCI_ID_ANY in v21.05.
->
-> Thank you for cleaning the place :-)
->
-> >  /** Any PCI device identifier (vendor, device, ...) */
-> >  #define RTE_PCI_ANY_ID (0xffff)
-> > -/** @deprecated Replaced with RTE_PCI_ANY_ID */
-> > -#define PCI_ANY_ID RTE_DEPRECATED(PCI_ANY_ID) RTE_PCI_ANY_ID
-> >  #define RTE_CLASS_ANY_ID (0xffffff)
->
-> Series Acked-by: Thomas Monjalon <thomas@monjalon.net>
+On Mon, 24 Aug 2026 13:42:06 +0200
+David Marchand <david.marchand@redhat.com> wrote:
 
-Series applied, thanks.
+> The mac_addr_add API describes that only the 0 pool should be passed
+> unless VMDq has been enabled, though there was no validation so far.
+> Add such a check, then cleanup the MAC related operations (adding,
+> removing, restoring).
+> 
+> As a side effect, the net/cnxk does not need to manually reset the
+> mac_pool_sel[] array.
+> 
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+> ---
 
+Claude Fable AI review has some warnings.
 
--- 
-David Marchand
+Review of [PATCH v6 0/3] ethdev: VMDq cleanups
 
+Applied cleanly on current main (c1a46b9). Build testing not done
+here per your note; findings below are from reading the applied tree.
+
+Patches 1/3 and 3/3: no findings.
+
+Patch 2/3 - ethdev: skip VMDq pools unless configured
+-----------------------------------------------------
+
+Error: MAC removal no longer reaches hardware on i40e and bnxt when
+VMDq is not configured.
+
+Both drivers read dev->data->mac_pool_sel[index] inside their
+mac_addr_remove callback to decide which VSI / VNIC to delete the
+filter from:
+
+  drivers/net/intel/i40e/i40e_ethdev.c:4516  i40e_macaddr_remove()
+  drivers/net/bnxt/bnxt_ethdev.c:2027        bnxt_mac_addr_remove_op()
+
+Before this patch rte_eth_dev_mac_addr_add() always did
+mac_pool_sel[index] |= RTE_BIT64(pool), so a non-VMDq add left bit 0
+set and the drivers deleted from pool 0 (main VSI / VNIC 0). After
+this patch the bitmap update is guarded by "if (vmdq)", so in RSS or
+NONE mode mac_pool_sel[index] stays 0. rte_eth_dev_mac_addr_remove()
+then calls dev_ops->mac_addr_remove() while the bitmap is still 0,
+both drivers iterate an empty mask, and the hardware filter is never
+removed. The software copy in mac_addrs[] is cleared, so the address
+looks gone from the API but still receives traffic.
+
+bnxt_restore_mac_filters() (bnxt_ethdev.c:4566) has the same
+dependency on the recovery path: with a zero mask it replays nothing.
+
+A second, less common consequence of the guards: after a VMDq ->
+non-VMDq reconfigure, rte_eth_dev_mac_addr_remove() no longer clears
+mac_pool_sel[index], so stale pool bits survive. A later VMDq
+reconfigure that places a new address at the same index does |= on
+top of the stale bits and eth_dev_mac_restore() replays the address
+into pools it was never added to.
+
+Since ethdev_driver.h documents mac_pool_sel as "Bitmap associating
+MAC addresses to VMDq pools" and drivers are entitled to consume it,
+ethdev should keep it coherent in all modes. The minimal fix is to
+drop the two guards and keep the bitmap always up to date (pool is
+already forced to 0 when !vmdq, so bit 0 is recorded):
+
+  In rte_eth_dev_mac_addr_add():
+
+	if (ret == 0) {
+		/* Update address in NIC data structure */
+		rte_ether_addr_copy(addr, &dev->data->mac_addrs[index]);
+
+		/* Update pool bitmap in NIC data structure */
+		dev->data->mac_pool_sel[index] |= RTE_BIT64(pool);
+	}
+
+  In rte_eth_dev_mac_addr_remove():
+
+	/* reset pool bitmap */
+	dev->data->mac_pool_sel[index] = 0;
+
+The new "if (!vmdq) return 0;" early-return for an already-present
+address, the !vmdq branch in eth_dev_mac_restore(), and the cnxk
+cleanup all remain valid with this change.
+
+The alternative is to make i40e and bnxt stop depending on
+mac_pool_sel[] in non-VMDq mode, but that would need to land in the
+same series and is more invasive.
+
+Info: "Port %u: VMDq is not configured (pool %d)" - pool is uint32_t,
+use %u.
