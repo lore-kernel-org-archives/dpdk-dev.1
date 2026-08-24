@@ -2,81 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F9DC5DF81
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Aug 2026 15:34:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 201B0C5DF81
+	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Aug 2026 15:47:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8C6B940270;
-	Mon, 24 Aug 2026 17:34:15 +0200 (CEST)
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com
- [209.85.210.180])
- by mails.dpdk.org (Postfix) with ESMTP id 74238400D6
- for <dev@dpdk.org>; Mon, 24 Aug 2026 17:34:14 +0200 (CEST)
-Received: by mail-pf1-f180.google.com with SMTP id
- d2e1a72fcca58-84f77cc7302so1295766b3a.3
- for <dev@dpdk.org>; Mon, 24 Aug 2026 08:34:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787585653;
- x=1788190453; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=6HjZkB3UaUXnK22XZQKuMYP7AFcc5ezD4K//6mWGFxE=;
- b=VXr2grBo6hOt7VXTV06UdfI84FknHJ25zfCviFaRJYCXhCup/Z1RN1iv1M0j151/yh
- xcxilM6FFDz8dwarY6yYPgC4cKjeX7B4LObyyNiMUXOsV/G/sYPnX8dTkz8dBDBg6/jw
- RyYS1BwJqH5wS1yInG0o3+pW86jRMx8G5/Vo4c6KMz/TSjyhk+D0/KPkUIPnyJLa3Igo
- XphfLw2yWNz9DZGxyy49fqT9jBPp8mu6KD4jXwxKi/+kVHMY0Xe17qcx7E5wNMwaFeyb
- aNfz2x7uOD5HdmCR9mZmSLUA55Uu7U5yirme8JQYEg9E+p365d8m+m0OVPKSSEFF7eyx
- lYSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787585653; x=1788190453;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=6HjZkB3UaUXnK22XZQKuMYP7AFcc5ezD4K//6mWGFxE=;
- b=DxLIFW9QQxr48FLFgkjJfpASVi7Iojh5mN9OfwZV8JiuSKQyDj0/h8W1xqXlncoP3M
- slcS1KOiDK4Dm5arG2zMT1lKEHW1CtMrMnbJRIOYDSemOPzDtTTaHdS7Trv5rXDlTCY7
- z5SlY9JL2OgbPT/2Va0hSHGlswnLNhEzhhYzMra4FP9IfnF5wC+aslG5cuH2jKOm6kg2
- ix1MeXAe7w1200BcueF23EYwSCXtsT40EXouQ89tPT8+zKT7bAmwvdns8kM8rCz3o7Qe
- 1UHmOn+T5weSHOKqSr2wyn49lCfh6koIRzh6p9AzfplUqkAMjkd2LeTrPO8x3RA/f8Zy
- NLqg==
-X-Gm-Message-State: AFuF++msBGbVhdWdeLSD+hDhTBZ7oR0qiV2w/N9nLRGfuKyA5wlwZMc+
- 5p/ytMrktMT3mb9QI0fwM430K/qNPKESkGBZ+cuubDn9wkR1pnGHZEYZBGobap3amvEJOVl0Sor
- zDlPQ
-X-Gm-Gg: AR+sD11jmITEtQhhAF+avCWF5RKPTWkNV4IIL+KnoMAder97/6ElhWnOP3tc5hMKt+f
- sDZFnPWSZVeHmdRnCe0ciBg1VNQXBYv1+fL4YbNjMFQoEG0RbmGRxLchCj5Xqf4dgmFyI/1wOsD
- FTzOXQOuz5Fx572gULTg3FjT5ufKSEQsfxt0c+4igyqRa0l/PZBYcArmuBqa9ipAoLx1zm8wIvL
- J4jnWqlDeR9HesB7lJTGsPSfnI0ClrXmo/2eoLzuhIrVK7c9RVX4zm65PT8lgCNzZtGR6wLkGWv
- rcOU2g3aSQ8VE/BK6G+GMZ9p+8Y0iLn5HDBe8rPTCpD2iD7BDppmoX9sv553Ajl8PGSNlMJOZdB
- WXof0TiVD8YkUJ3GUSeDYVYkyyOyMHZMW0proPSWDheRgI8AY2qmRb13lqF2Io76PhXCyZapquL
- 5zkE6AwKoIKatF/cWzVI9k6aYVcphFaMvLOIOygQBPTFYzy0uJl4eLCOpu/IYIDNwak6MJFPQn0
- wabDZM2Vhx3++4yDQggUd5rZbIswIH9sjgJ65s1
-X-Received: by 2002:a05:6a21:1fc8:b0:3cc:9316:cad3 with SMTP id
- adf61e73a8af0-3cd2fa367c0mr55341881637.0.1787585653504; 
- Mon, 24 Aug 2026 08:34:13 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-cc199daee0bsm1144950a12.2.2026.08.24.08.34.10
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 24 Aug 2026 08:34:13 -0700 (PDT)
-Date: Mon, 24 Aug 2026 08:34:03 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Ivan Malov <ivan.malov@arknetworks.am>
-Cc: dev@dpdk.org, Viacheslav Galaktionov
- <viacheslav.galaktionov@arknetworks.am>, Roman Zhukov
- <Roman.Zhukov@arknetworks.am>, Pieter Jansen van Vuuren
- <pieter.jansen-van-vuuren@amd.com>, Andrew Rybchenko
- <andrew.rybchenko@oktetlabs.ru>
-Subject: Re: [PATCH v3 2/2] net/sfc: provide cached dev info to use in
- secondary process
-Message-ID: <20260824083403.6561e6cc@phoenix.local>
-In-Reply-To: <20260822000646.12718-3-ivan.malov@arknetworks.am>
-References: <20260820130314.12251-1-ivan.malov@arknetworks.am>
- <20260822000646.12718-1-ivan.malov@arknetworks.am>
- <20260822000646.12718-3-ivan.malov@arknetworks.am>
+	by mails.dpdk.org (Postfix) with ESMTP id 0782140270;
+	Mon, 24 Aug 2026 17:47:19 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 1D90D400D6
+ for <dev@dpdk.org>; Mon, 24 Aug 2026 17:47:18 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=b8iu1Qwgmi+i3p+hftF2UFsg9wfdqzhC0mIAyICeLV4=;
+ b=eh92AllpoVHFMb2ccY0l5W6RW43fVu2qNV43flw2G99R5dsh/t/oy3ULCGmhpPYTfel5T3sso
+ J8ggnx7U7jikZ3SGLlRx+owHWyYdiSEjxLhKMw6juF1bhlepUMMujCYDgNq8QXBspJxk3XX9IV1
+ pXUh4FIczFO7NNDM409IkL0=
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4hTFdt2gtWzJ46Yg;
+ Mon, 24 Aug 2026 23:46:58 +0800 (CST)
+Received: from frapema100004.china.huawei.com (unknown [7.182.19.128])
+ by mail.maildlp.com (Postfix) with ESMTPS id ED2044057A;
+ Mon, 24 Aug 2026 23:47:14 +0800 (CST)
+Received: from frapema500003.china.huawei.com (7.182.19.114) by
+ frapema100004.china.huawei.com (7.182.19.128) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Mon, 24 Aug 2026 17:47:14 +0200
+Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
+ frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.2562.045;
+ Mon, 24 Aug 2026 17:47:14 +0200
+From: Marat Khalili <marat.khalili@huawei.com>
+To: Yang Xiaoliang <yang_xiaoliang1990@163.com>, "dev@dpdk.org" <dev@dpdk.org>
+CC: "thomas@monjalon.net" <thomas@monjalon.net>
+Subject: RE: [PATCH] doc: fix typo in l3fwd sample app guide
+Thread-Topic: [PATCH] doc: fix typo in l3fwd sample app guide
+Thread-Index: AQHdJj1UguOpOuRUiEGogW5rqRHlU7atcfCw
+Date: Mon, 24 Aug 2026 15:47:14 +0000
+Message-ID: <597077b248584bab83f148098acb6cd5@huawei.com>
+References: <20260807071546.13795-1-yang_xiaoliang1990@163.com>
+In-Reply-To: <20260807071546.13795-1-yang_xiaoliang1990@163.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.137.78]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -90,36 +60,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat, 22 Aug 2026 04:06:46 +0400
-Ivan Malov <ivan.malov@arknetworks.am> wrote:
-
-> Secondary process support in the 'test-pmd' application now requires that
-> the driver expose the 'dev_infos_get' method within that context. Use the
-> cached dev info from the primary process in order to meet the requirement.
-> 
-> Signed-off-by: Ivan Malov <ivan.malov@arknetworks.am>
-> Reviewed-by: Viacheslav Galaktionov <viacheslav.galaktionov@arknetworks.am>
+> -----Original Message-----
+> From: Yang Xiaoliang <yang_xiaoliang1990@163.com>
+> Sent: Friday 7 August 2026 08:16
+> To: dev@dpdk.org
+> Cc: thomas@monjalon.net; Yang Xiaoliang <yang_xiaoliang1990@163.com>
+> Subject: [PATCH] doc: fix typo in l3fwd sample app guide
+>=20
+> Fix "menthod" typo, should be "method".
+>=20
+> Signed-off-by: Yang Xiaoliang <yang_xiaoliang1990@163.com>
 > ---
+>  doc/guides/sample_app_ug/l3_forward.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/doc/guides/sample_app_ug/l3_forward.rst b/doc/guides/sample_=
+app_ug/l3_forward.rst
+> index 452bd8cc6c..0395474337 100644
+> --- a/doc/guides/sample_app_ug/l3_forward.rst
+> +++ b/doc/guides/sample_app_ug/l3_forward.rst
+> @@ -210,7 +210,7 @@ In this command:
+>=20
+>  *   The --mode option defines PMD to be used for packet I/O.
+>=20
+> -*   The --eventq-sched option enables synchronization menthod of event q=
+ueue so that packets will be
+> scheduled accordingly.
+> +*   The --eventq-sched option enables synchronization method of event qu=
+eue so that packets will be
+> scheduled accordingly.
+>=20
+>  If application uses S/W scheduler, it uses following DPDK services:
+>=20
+> --
+> 2.43.0
 
-Looks like AI does see one valid race in the use of the cache.
-Sorry for the word salad. It is hard to get it be concise.
+Acked-by: Marat Khalili <marat.khalili@huawei.com>
 
-Review of [PATCH v3 2/2] net/sfc: provide cached dev info to use in
-secondary process
-
-Error: the driver sets RTE_PCI_DRV_PROBE_AGAIN, and re-probe of an
-existing device (to add representors) runs this code again when the
-ethdev already exists, dev_info_cache_is_valid is already true, and
-secondary processes are attached and may call dev_infos_get at any
-time.  rte_eth_dev_info_get() begins by memset()ing the structure it
-is given, which here is the shared cache, so it is zeroed and then
-refilled while the flag stays true; a secondary reading during that
-window gets zeroed or partially refilled dev info reported as valid.
-This is not the initial-fill race raised on v2 -- there the release
-store after the fill does order things correctly.
-
-Fix: only fill the cache when the ethdev was just created, since the
-values do not change between probes of the same device.  dev_created
-is already in scope:
-
-	if (dev_created && rte_eal_process_type() == RTE_PROC_PRIMARY) {
+Consider also running this line through an LLM for better flow.
