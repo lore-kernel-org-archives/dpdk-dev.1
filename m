@@ -2,77 +2,104 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 981FEC61DB6
-	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Aug 2026 08:07:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD2FDC5DF94
+	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Aug 2026 08:17:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AB1D14014F;
-	Tue, 25 Aug 2026 10:07:36 +0200 (CEST)
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com
- [209.85.128.175])
- by mails.dpdk.org (Postfix) with ESMTP id 5A5EE400D5
- for <dev@dpdk.org>; Tue, 25 Aug 2026 10:07:35 +0200 (CEST)
-Received: by mail-yw1-f175.google.com with SMTP id
- 00721157ae682-855de2d0d4dso2481267b3.0
- for <dev@dpdk.org>; Tue, 25 Aug 2026 01:07:35 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1787645255; cv=none;
- d=google.com; s=arc-20260327;
- b=ihu71f4wxw1qtBBiemZojKQvHAgDtjhsCkEMSO6WeNFxuh2RS2QGH1zyO8SehpUCvo
- RmA+G98AnieHsUP4BSkojcKD06uYvqDnE25Lh5lwxCbPh6fulv9PZfqM8P9Y6EsSG1dw
- W80iT0DbOl9ozf+Sr/EgDXq9WSqLa3QWjSOVgf+p8R3IrTJ7itNZeJ4zAqZgpv5IJ4if
- PuSrXTIYVW6j9ncTLSA6J88ey/MT4Ux46VLcnPX7mivjNCYxxeCzY5Eum5LyrRvQdiYE
- 5VNKjcLNO0ycl9AbvOkhjO7pZzwfvBTNN/OeyL4tIpNi81oqY5U26hzuYZ1t+4Bz0mK9
- UnPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version;
- bh=Mb1M+CpbIAK/3LCnD7CiM+ykAMgDNYkE9KJWCWNA+yM=;
- fh=9ZT2eOi9U3FP9pJtTX5ym15ySzxhByyLbKLS7StDchY=;
- b=PnOUNCwuhrZ/s0TSVohHPbISNj0HMxU5/omwtr6ZH8oLH+WWNkGshlPcL8PRvJxPO6
- EbJV3FHv5thbu6PC6RvWLB+wSNv0pp6nSc8yXBTjrz/DUO4wVHD8VQ+FFQjitNBfjARV
- gYL30SYAC4IX1Gx1VZms20SwzTELRg8fKL+wr69M/10P28HqS5Qp6+TfLjbRpMqU5x2H
- KGIEUGjgWW8jrRiCjQSEVJTU5/WHJYPCj9L68QIAzMYZ0JwOHKBC3bbJku9PN5bc28f9
- hWFDCP7yUY/lVuYaq59ecsN+XKYNi46Od7fBHE3HjPjk3mFDOYb9dEvmYpo3iZB+MAEh
- icTw==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787645255; x=1788250055;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=Mb1M+CpbIAK/3LCnD7CiM+ykAMgDNYkE9KJWCWNA+yM=;
- b=UwmG+phOR23GkOauTKqHl09tujUyAEazV5XwDwV29w2w+8YQsR8CvKMeCTfzwb3/hf
- omL9kPabvAZmJtPmQ+yYCzR01q2j3Oj1FnC0tTxaI20ffSHVRGz+JxowmbQxxqrZOlox
- dxVFUxzzGDK1jcnl9ySf5wVG1Z5DgRr/hm5jxTEOrApf+Fu0d73XOC6m8ex2CI9wdYDA
- f48RSJ7HU8AVYRwVfa5iq3/lj19A71DvOxz91PWxASFM7u6nCGc9TarBviDNdzoy0Bdl
- 6GNw2/Pg1p30b4PlcAdAi5d4c1h8SrClmbmsz4qbmQtvfkefpR8LvxQXA9Om9LWJUjwu
- XMCw==
-X-Gm-Message-State: AFuF++kM392mpeEye4i6Rvuak2A8ukBrjNoIb012BPTH1XNRw39gEcqT
- 9gka3G+rVzfh1z5TJLat9UoaRGnxaLgRqXtCN0Ua+mLNhoznIYlVy+4z9ha0uzE9BRh1tgvnoAt
- Snxuf1GQ6SrIsXG+PmoFYMA6AZlSFP34=
-X-Gm-Gg: AR+sD109a+ZCtzCZI9N+T+4k/tTF7+7JXtMCm8d+KjA9Ms+hqkzQDCoU/C6az30sUE0
- 6Xezf/vHifOrr/CDI7nClgURzJ9pOc0aEY4b4a/1pFUhndxQ3qUVG3Ymjk5z3GYx5vxdtFpe3jw
- ApsuLBC1rAsvnFatBN7IKsaPPwb2PYeDbyN9X3Z2hyELWYgk8mmhMz7OXFY/ZHDFlSyzEwoy1OQ
- EAM6yM+Ktb4ieDWuqSfLZd4DZ3619uoivS4018T5mzR3oTeKZZJE5uP/wQEAUnTlit35DDJSSu6
- UlkX5L1uZhM59cr26p/79Bob9UhAaei+j7Ir2vyOcaEiQiRTBXGN0lAPh3BYOwdura1wxBaEkOM
- AWUw=
-X-Received: by 2002:a05:690c:370a:b0:845:2054:2365 with SMTP id
- 00721157ae682-85474e2bd4dmr20364217b3.14.1787645254683; Tue, 25 Aug 2026
- 01:07:34 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5F894402D4;
+	Tue, 25 Aug 2026 10:17:36 +0200 (CEST)
+Received: from SA9PR02CU001.outbound.protection.outlook.com
+ (mail-southcentralusazon11013008.outbound.protection.outlook.com
+ [40.93.196.8]) by mails.dpdk.org (Postfix) with ESMTP id 88386400D5;
+ Tue, 25 Aug 2026 10:17:34 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XzKpxb+2Q5K3nKya6wNF3wS5fLIEJTOfk5mNyROHi7ZGw0xngabmDd91s21YyXytg09D6SotiFZ7si+QuP6ptKcAdOgoo5w0pdLMbv2nrpUFn4j3lDLBunq3KidqfnnI5h3+yzR1zbvTb3EGO2fLI4Jw+iajR/ob3Vpjwfu2WVBYN7opv67qGZkbC17MhHZQ6A3/K8B37sfi8IgpsNyO2IvtxzAOXBBMM/FBFQrE0IetS/dWtL49nLPgj+3eiPmmu7ywEr8f+X5adF+UGYp75rKs+JaXLM86fPtDBZtz6xhetX1+uEDtBkghLLmsBW8bMaDEwiwgO2sQrPvlaHwpqQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AVLWkHRbeUUWp6s81FFkLt602ybDZthLo4qLrutI+uw=;
+ b=KgHNSuLznA3hUdMr04LIx6fc5eRKkHrDAF3hy3GlVFx5fxhL5TRjzD89nbSylPtknfg2tlWAt0RHY6y9FWmEYPBf1gpiduWoDpqTK4O0K8qJ8m4AiGvJz+/6g8dD4oaDeuQzhGg+72YHyVcMxXWpqACVebXrHaVY8SspE4o30/UXZXUlPjnmo55XXH3O9Shhyj2jZ2t3pOXlOiYiwSdu/XcEG68DkVTMsQelMLisE0UCEILwcWSWF+GUbWLFI4lJha76McXiqn8w3EqeG4TmbR2gWC55sINulfpaKtH2peo8Xwztx7wwgX1Qt14ykZajLHGqQH+Q0mspT9JXN5BpAA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AVLWkHRbeUUWp6s81FFkLt602ybDZthLo4qLrutI+uw=;
+ b=GhvgDDMH9Vchldx4dvw/LssgilYjUufWRSToF17gDsQk/VAXVr+5kWTCSmKamfDrlMYssMYcrAPZVqVaTIBcGz2l2W99EtUJoa61xcJloQoi91yuDn2DzG8gRB5JZUaCL00LlxWlw6cyT3hOZT7yLd/eEnyJ3/p+uJY94RPQ9kpKQE80YjjC58v/RjwxjG8aBJQahwL2KYUwpYWg07lgjwW3VoMu7Be165dYOMPQ7wzjXf68vC4DESFILyNxGzxzcfTe9vYszkqmvt+EW4+EjV1zFbviFWqh2z+AdeXCP1nJSvq5J0corwtSLpUl0hNhajKjV0R+y2n4PRUE9qYpmw==
+Received: from BN9PR03CA0898.namprd03.prod.outlook.com (2603:10b6:408:13c::33)
+ by MN2PR12MB4406.namprd12.prod.outlook.com (2603:10b6:208:268::23)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.6; Tue, 25 Aug
+ 2026 08:17:31 +0000
+Received: from BL6PEPF0001AB75.namprd02.prod.outlook.com
+ (2603:10b6:408:13c:cafe::8f) by BN9PR03CA0898.outlook.office365.com
+ (2603:10b6:408:13c::33) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.339.12 via Frontend Transport; Tue,
+ 25 Aug 2026 08:17:31 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BL6PEPF0001AB75.mail.protection.outlook.com (10.167.242.168) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.360.3 via Frontend Transport; Tue, 25 Aug 2026 08:17:30 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Tue, 25 Aug
+ 2026 01:17:14 -0700
+Received: from nvidia.com (10.126.231.37) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Tue, 25 Aug
+ 2026 01:17:12 -0700
+Date: Tue, 25 Aug 2026 10:17:09 +0200
+From: Dariusz Sosnowski <dsosnowski@nvidia.com>
+To: David Marchand <david.marchand@redhat.com>
+CC: <dev@dpdk.org>, <stable@dpdk.org>, Viacheslav Ovsiienko
+ <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
+ <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
+ <matan@nvidia.com>, Adrien Mazarguil <adrien.mazarguil@6wind.com>, "Nelio
+ Laranjeiro" <nelio.laranjeiro@6wind.com>
+Subject: Re: [PATCH 1/2] net/mlx5: fix promiscuous inconsistency on port start
+Message-ID: <udf3vw7jofx6mfnvybtvkisczr5sigjmmyghhrxndrosac5o7l@y62zc5yjcgea>
+References: <20260731092332.3833632-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-References: <20260720080035.673782-1-maxime@leroys.fr>
-In-Reply-To: <20260720080035.673782-1-maxime@leroys.fr>
-From: Maxime Leroy <maxime@leroys.fr>
-Date: Tue, 25 Aug 2026 10:07:23 +0200
-X-Gm-Features: AcwNN1UKk1vqGYDH5D64Q7-QJBTAxJ7mIYlDGgzeN1SLNxoxSdOVVoiY_I3ExcI
-Message-ID: <CAHHRULX+n4ujtrx-y3SwigiKcCOzaKvQTCamhkgdhAZ0qiF4zQ@mail.gmail.com>
-Subject: Re: [PATCH 0/6] examples/l3fwd-power: fix Rx interrupt mode for
- shared FD PMDs
-To: anatoly.burakov@intel.com, sivaprasad.tummala@amd.com
-Cc: dev <dev@dpdk.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20260731092332.3833632-1-david.marchand@redhat.com>
+X-Originating-IP: [10.126.231.37]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB75:EE_|MN2PR12MB4406:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7261d614-45fc-4a0e-10b5-08df02814f0f
+X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|23010399003|36860700016|376014|1800799024|82310400026|10067099003|18002099003|22082099003|11063799006|56012099006;
+X-Microsoft-Antispam-Message-Info: n09N7POmI5D0r6kjjQ/QydFnFT7FqnpTqJL28pLnSsevOXTbNQ1CUE5te/aXlzyQie9Uht0UOccRLzS4tNIjLxMHxbuxTnTXAWwJHy6SV8MsU60PZ2OtnV7mLr++rx1LZ0xhAzJbPmNokCjv466cptcwukCE5FGF3dUJy8rXA37H6RuUSdGRtlZxiaQLA6LEelPhii3V3rcPerpi2Li6bUP/7YbONv3TD0vSbV8G10qK420018DJtyw5TtpgQl9uVl1yStOpIMxWrsPy1qP1FDPbC/zqHK+nt/D1G4SpJBZR3w2TAZmyE5r+YpGTeGuNK4zinoDyquysqyTffGta0w8pd3p86Lbmw/QgaHQdi2m+iQgQDfEl6wMZ2cWhn2EGIILmfQT/yFL9Ei4/WQF+FRbYG9/b1c+K8eXzMgOJeLT6QsIOn+4ZSOY1ztzS1vtz7wNTVltMp/atmNfFDMQY9iIGHwzk3EseO/x+e2OUOx1j3cRQJ+22Oy21qleB3EMgmliKMr5xvQJd5iui+kW/ON6El6QIW5KisGUsB4Y5ZYgoPDOTB6+G5oxzMVod7wlFuLOllPh4spruvric2oBvfnalvLouZxQeVWY/yBMB82tlQtrro//FQWQdvrmDtptGU4mtPtqh6vZozta9lh5xtCVnxyASj+Zm0Y4fXGm6HeFYRCPTHsgJtGZLZGZzzBEEhVEyaGPf1564gVTaShc8ng==
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(23010399003)(36860700016)(376014)(1800799024)(82310400026)(10067099003)(18002099003)(22082099003)(11063799006)(56012099006);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 33aaR3VOkwy2LLT1ZS+y+2TArfCLLwPkUBOSBdsbS4c8u3GxisoAEkecEDmysXSq76T3NhnhGTbC10qTKk84edJwN0JKIqO8jqynpHNihIQH+8CpHT21yUm5gEpRNNteykDCvHY1U3cUhm+2k7Ms4LEtktdQGuvyyv+7WNmQbxXiJSza200SfXDP8UJMBWPqmjKXIe9y4T9fOUCIumcAyzIvPiHpYnWD6H9WjvqqKURVOCSaQF6WxEfNYibFlOiylpTtFGpaiRAy5ecH3H7h6yK9o1ByvJIvZ6MGUSDr2DqYfrmMpq+vkxBV6BN/5nSAfhCG+Y/S60z0HpRvR08dN9R+3i4x5xNqlf3IkhHtLVd4kzUHzNxivKgJv9EP6bJmUERogqIE2hsxIzsSMP5NxsDO/BkRuH7lwPuBbRaaDe7xRIxYrjUcGVpwXX5LCRE/
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Aug 2026 08:17:30.8519 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7261d614-45fc-4a0e-10b5-08df02814f0f
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BL6PEPF0001AB75.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4406
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,57 +113,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Anatoly, hi Sivaprasad,
+On Fri, Jul 31, 2026 at 11:23:31AM +0200, David Marchand wrote:
+> The kernel netdev promiscuous or all multicast mode could be enabled
+> before DPDK starts the port. This would cause an inconsistency between
+> the kernel state and DPDK's expected state
+> (dev->data->promiscuous / dev->data->all_multicast).
+> 
+> Add mlx5_os_get_promisc() and mlx5_os_get_allmulti() to query the
+> current kernel state via netlink. On port start, compare the kernel
+> state with DPDK's state and sync if they differ.
+> 
+> On Windows, these getters always return false as there seems to be no
+> API for getting the states.
+> 
+> Fixes: dd4bb90bc3cb ("net/mlx5: use Netlink to enable promisc/allmulti mode")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
 
-On Mon, Jul 20, 2026 at 10:00=E2=80=AFAM Maxime Leroy <maxime@leroys.fr> wr=
-ote:
->
-> l3fwd-power's Rx interrupt (one-shot) mode was written around NICs whose
-> interrupt fd is assigned per queue at setup, stays fixed and is
-> level-triggered, as on MSI-X hardware. PMDs that do not fit that model
-> never sleep on interrupts: they either fail to arm, watch an unbound fd,
-> or miss the wake, and the 10 ms poll timeout hides all of it.
->
-> dpaa2 is the motivating example: it delivers Rx interrupts through one
-> QBMan portal per lcore, so the queues of a lcore share a single fd that
-> is bound when the interrupt is enabled, not at queue setup; the
-> notification is edge-triggered on an empty to non-empty transition; and
-> arming a queue that already holds traffic returns -EAGAIN with the queue
-> left unarmed.
->
-> This series makes the interrupt and legacy loops handle those cases
-> while leaving MSI-X NICs unchanged:
->
->   1/6 factor the duplicated arm/sleep/disarm block into a helper.
->   2/6 check the arm return: on -EAGAIN poll and retry, on any other
->       error drop interrupt mode for the lcore instead of sleeping on
->       unarmed queues.
->   3/6 register the fd in the epoll set after arming, not before, so a
->       fd bound at enable time is watched only once it exists.
->   4/6 accept -EEXIST when several queues share one fd.
->   5/6 recheck the queues before sleeping so a packet that arrived during
->       the arm window is not missed under edge-triggered interrupts.
->   6/6 block indefinitely instead of on a 10 ms timeout, and wake the
->       workers through an eventfd on exit, so a broken interrupt path no
->       longer hides behind periodic polling.
->
-> Maxime Leroy (6):
->   examples/l3fwd-power: factor out Rx interrupt sleep path
->   examples/l3fwd-power: check Rx interrupt enable errors
->   examples/l3fwd-power: enable Rx interrupt before epoll add
->   examples/l3fwd-power: accept shared Rx interrupt FD
->   examples/l3fwd-power: recheck Rx queues before sleeping
->   examples/l3fwd-power: block until Rx interrupt or exit
->
->  examples/l3fwd-power/main.c | 184 +++++++++++++++++++++++++++++-------
->  1 file changed, 150 insertions(+), 34 deletions(-)
->
-> --
-> 2.43.0
->
-
-Gentle ping on this series.
-
-Thanks,
-
-Maxime
+Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
