@@ -2,44 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA54CC61CE2
-	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Aug 2026 09:55:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6388EC61DBD
+	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Aug 2026 11:06:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 618414014F;
-	Tue, 25 Aug 2026 11:55:58 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3B518402A3;
+	Tue, 25 Aug 2026 13:06:47 +0200 (CEST)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
  [185.176.79.56])
- by mails.dpdk.org (Postfix) with ESMTP id 9E903400D5;
- Tue, 25 Aug 2026 11:55:56 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 6C9F5400D5;
+ Tue, 25 Aug 2026 13:06:45 +0200 (CEST)
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=1VCw9cztlp/5zCvWC8smOlbP9LObLqS0cPeui719G2s=;
- b=2VjhnEGUFzuE+dHLjwyKQZu7P7X6w7OV9tAj/LpQanp8AvO9D8PbfKDknS7oBZYHGu5UJoyTY
- DCYNw70N2xJMtUDw8DWZnqUc3GMHPcREhkpXyK9ZqfR0TeRArB6h5MGvXOUmijddK1kwkKXyPM6
- aYqO31zlG4GQzVFybkTrzPc=
+ bh=LJCeAMjQQvH0ubRJ16fkD5R4O+Tn+ycHtdmQU7+NGPQ=;
+ b=jkQdGYwLRLAg8e77dlt6RdvY2Z5iquj8ck81FPhiXTEcP0/yPmpSNDQ5ci2HJwPa0ycB4xf8J
+ +jnGM0Y279M3f88mcku7vEJKcHy42IRh7ILDhiM/2TcltJoQgcIIL4O6qNGqy0rxbn0pJYAnvL7
+ 1/uzbZaUxlh0EdyHyRj5XuM=
 Received: from mail.maildlp.com (unknown [172.18.224.107])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4hTjp00TQdzJ467X;
- Tue, 25 Aug 2026 17:55:36 +0800 (CST)
-Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id DE82E4058D;
- Tue, 25 Aug 2026 17:55:53 +0800 (CST)
-Received: from localhost.localdomain (10.220.239.45) by
- frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4hTlMS0jwJzHnGcp;
+ Tue, 25 Aug 2026 19:06:12 +0800 (CST)
+Received: from frapema100007.china.huawei.com (unknown [7.182.19.38])
+ by mail.maildlp.com (Postfix) with ESMTPS id B1E614058B;
+ Tue, 25 Aug 2026 19:06:43 +0800 (CST)
+Received: from frapema500003.china.huawei.com (7.182.19.114) by
+ frapema100007.china.huawei.com (7.182.19.38) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Tue, 25 Aug 2026 11:55:53 +0200
+ 15.2.2562.45; Tue, 25 Aug 2026 13:06:43 +0200
+Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
+ frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.2562.045;
+ Tue, 25 Aug 2026 13:06:43 +0200
 From: Marat Khalili <marat.khalili@huawei.com>
-To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-CC: <dev@dpdk.org>, <stable@dpdk.org>, Sebti Mouelhi <sebti.mouelhi@huawei.com>
-Subject: [PATCH] bpf/validate: fix 32-bit BPF_AND/OR/XOR shift UBs
-Date: Tue, 25 Aug 2026 10:55:29 +0100
-Message-ID: <20260825095530.41354-1-marat.khalili@huawei.com>
-X-Mailer: git-send-email 2.43.0
+To: "dev@dpdk.org" <dev@dpdk.org>
+CC: "stable@dpdk.org" <stable@dpdk.org>, Sebti Mouelhi
+ <sebti.mouelhi@huawei.com>, Konstantin Ananyev
+ <konstantin.ananyev@huawei.com>, Marat Khalili <marat.khalili@huawei.com>
+Subject: RE: [PATCH] bpf/validate: fix 32-bit BPF_AND/OR/XOR shift UBs
+Thread-Topic: [PATCH] bpf/validate: fix 32-bit BPF_AND/OR/XOR shift UBs
+Thread-Index: AQHdNHgC1orGxHc0XEynl4+ZlV4tpraumaZA
+Date: Tue, 25 Aug 2026 11:06:43 +0000
+Message-ID: <3f1e8b3ad7d94ba7b8cef46be591698a@huawei.com>
+References: <20260825095530.41354-1-marat.khalili@huawei.com>
+In-Reply-To: <20260825095530.41354-1-marat.khalili@huawei.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.137.78]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.220.239.45]
-X-ClientProxiedBy: frapema100007.china.huawei.com (7.182.19.38) To
- frapema500003.china.huawei.com (7.182.19.114)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,262 +63,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Function `eval_umax_bits`  when calculating the mask matching the
-register value counted leading zeroes in 64-bit representation but then
-subtracted it from the instruction width (32 for BPF_ALU instructions)
-producing zero or negative mask length, all unsupported by macro
-`RTE_LEN2MASK`. This function is used by functions `eval_and`, `eval_or`
-and `eval_xor` evaluating `BPF_ALU | BPF_AND`, `BPF_ALU | BPF_OR` and
-`BPF_ALU | BPF_XOR` correspondingly
+Answering the multiple AI reviews (why are there 3 of them, all via Claude?=
+):
 
-E.g. consider the following program with the current validation code:
 
-    Tested program:
-        0:  mov r0, #0x0
-        1:  ldxdw r2, [r1 + 0]
-        2:  jgt r2, #0x7fffffff, L7
-        3:  jslt r2, #0x0, L7
-        4:  jsgt r2, #0x7fffffff, L7
-        5:  and32 r2, #0x7fffffff  ; tested instruction
-        6:  mov r0, #0x1
-        7:  exit
-    Pre-state:
-       r2:  0..INT32_MAX
-    Post-state:
-       r2:  0..INT64_MAX
+1. Test naming
 
-At step 6 validator presumed that r2 may have values up to INT64_MAX,
-which is impossible for the 32-bit bitwise operation on 32-bit operands
-and could cause false positives.
+> +/* 32-bit bitwise AND between a scalar range and immediate, triggering U=
+B. */
+> +static int
+> +test_alu32_and_k_ub(void)
 
-With sanitizer the following diagnostic is generated:
+I agree with the AI that test names (and comments) are somewhat minimalist =
+and
+would require reader to check the commit message to find out what's going o=
+n.
+The suggestion by AI to replace `_ui` with `_range` is not improving things
+much however, so only doing it to placate the AI in case of another iterati=
+on.
 
-    lib/bpf/bpf_validate.c:821:9: runtime error: shift exponent 65 is
-    too large for 64-bit type 'long unsigned int'
-        #0 0x00000837d9b5 in eval_umax_bits lib/bpf/bpf_validate.c:821
-        #1 0x00000837d9f3 in eval_uand_max lib/bpf/bpf_validate.c:828
-        #2 0x00000837df83 in eval_and lib/bpf/bpf_validate.c:851
-        #3 0x000008384faf in eval_alu lib/bpf/bpf_validate.c:1155
-        #4 0x000008396c24 in evaluate lib/bpf/bpf_validate.c:2999
+As far as I know DPDK does not have a strict policy for cross-referencing b=
+ugs,
+fixes and tests, so in the interest of time and code brevity not putting a =
+huge
+effort into it unless asked by actual humans.
 
-Similarly for `or32 r2, #0x0`, `xor32 r2, #0x0`.
 
-Found using ESBMC (https://esbmc.github.io/docs/) through an agentic
-verification workflow, with integer-overflow and undefined-shift checks
-enabled.
+2. Test coverage
 
-To fix the issue change to subtracting clz64 result from 64 instead of
-instruction width, add tests. Remove no-longer-used opsz argument
-(truncation of inputs to 32 bits is handled by the caller `eval_alu`).
+Not contesting that current test coverage of these instructions is rudiment=
+ary
+and needs to be expanded; 32-bit instructions as a whole need a lot of work=
+.
+It is all out of scope of this patch however, the added tests are sufficien=
+t
+for reproducing the specific bug and confirming the fix.
 
-Fixes: 8021917293d0 ("bpf: add extra validation for input BPF program")
-Cc: stable@dpdk.org
 
-Reported-by: Sebti Mouelhi <sebti.mouelhi@huawei.com>
-Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
-Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
----
- app/test/test_bpf_validate.c | 45 ++++++++++++++++++++++++++++++++++++
- lib/bpf/bpf_validate.c       | 43 ++++++++++++++++------------------
- 2 files changed, 65 insertions(+), 23 deletions(-)
-
-diff --git a/app/test/test_bpf_validate.c b/app/test/test_bpf_validate.c
-index 066f1fa156ae..e1c35a41a4f9 100644
---- a/app/test/test_bpf_validate.c
-+++ b/app/test/test_bpf_validate.c
-@@ -1277,6 +1277,48 @@ verify_comparison(struct verify_instruction_param prm, bool also_signed)
- 
- /* TESTS FOR SPECIFIC INSTRUCTIONS */
- 
-+/* 32-bit bitwise AND between a scalar range and immediate, triggering UB. */
-+static int
-+test_alu32_and_k_ub(void)
-+{
-+	return verify_instruction((struct verify_instruction_param){
-+		.tested_instruction = {
-+			.code = (BPF_ALU | BPF_AND | BPF_K),
-+			.imm = INT32_MAX,
-+		},
-+		.pre.dst = make_unsigned_domain(0, INT32_MAX),
-+		.post.dst = make_unsigned_domain(0, INT32_MAX),
-+	});
-+}
-+
-+/* 32-bit bitwise OR between a scalar range and immediate, triggering UB. */
-+static int
-+test_alu32_or_k_ub(void)
-+{
-+	return verify_instruction((struct verify_instruction_param){
-+		.tested_instruction = {
-+			.code = (BPF_ALU | BPF_OR | BPF_K),
-+			.imm = 0,
-+		},
-+		.pre.dst = make_unsigned_domain(0, INT32_MAX),
-+		.post.dst = make_unsigned_domain(0, INT32_MAX),
-+	});
-+}
-+
-+/* 32-bit bitwise XOR between a scalar range and immediate, triggering UB. */
-+static int
-+test_alu32_xor_k_ub(void)
-+{
-+	return verify_instruction((struct verify_instruction_param){
-+		.tested_instruction = {
-+			.code = (BPF_ALU | BPF_XOR | BPF_K),
-+			.imm = 0,
-+		},
-+		.pre.dst = make_unsigned_domain(0, INT32_MAX),
-+		.post.dst = make_unsigned_domain(0, INT32_MAX),
-+	});
-+}
-+
- /* 64-bit addition of immediate to a range. */
- static int
- test_alu64_add_k(void)
-@@ -2187,6 +2229,9 @@ static struct
- unit_test_suite test_bpf_validate_suite  = {
- 	.suite_name = "Test BPF Validate Unit Test Suite",
- 	.unit_test_cases = {
-+		TEST_CASE(test_alu32_and_k_ub),
-+		TEST_CASE(test_alu32_or_k_ub),
-+		TEST_CASE(test_alu32_xor_k_ub),
- 		TEST_CASE(test_alu64_add_k),
- 		TEST_CASE(test_alu64_add_k_pointer),
- 		TEST_CASE(test_alu64_add_x_pointer_pointer),
-diff --git a/lib/bpf/bpf_validate.c b/lib/bpf/bpf_validate.c
-index f9960088a285..d3cd14f24683 100644
---- a/lib/bpf/bpf_validate.c
-+++ b/lib/bpf/bpf_validate.c
-@@ -812,43 +812,42 @@ eval_arsh(struct bpf_reg_val *rd, const struct bpf_reg_val *rs, size_t opsz,
- }
- 
- static uint64_t
--eval_umax_bits(uint64_t v, size_t opsz)
-+eval_umax_bits(uint64_t v)
- {
- 	if (v == 0)
- 		return 0;
- 
- 	v = rte_clz64(v);
--	return RTE_LEN2MASK(opsz - v, uint64_t);
-+	return RTE_LEN2MASK(64 - v, uint64_t);
- }
- 
- /* estimate max possible value for (v1 & v2) */
- static uint64_t
--eval_uand_max(uint64_t v1, uint64_t v2, size_t opsz)
-+eval_uand_max(uint64_t v1, uint64_t v2)
- {
--	v1 = eval_umax_bits(v1, opsz);
--	v2 = eval_umax_bits(v2, opsz);
-+	v1 = eval_umax_bits(v1);
-+	v2 = eval_umax_bits(v2);
- 	return (v1 & v2);
- }
- 
- /* estimate max possible value for (v1 | v2) */
- static uint64_t
--eval_uor_max(uint64_t v1, uint64_t v2, size_t opsz)
-+eval_uor_max(uint64_t v1, uint64_t v2)
- {
--	v1 = eval_umax_bits(v1, opsz);
--	v2 = eval_umax_bits(v2, opsz);
-+	v1 = eval_umax_bits(v1);
-+	v2 = eval_umax_bits(v2);
- 	return (v1 | v2);
- }
- 
- static void
--eval_and(struct bpf_reg_val *rd, const struct bpf_reg_val *rs, size_t opsz,
--	uint64_t msk)
-+eval_and(struct bpf_reg_val *rd, const struct bpf_reg_val *rs, uint64_t msk)
- {
- 	/* both operands are constants */
- 	if (rd->u.min == rd->u.max && rs->u.min == rs->u.max) {
- 		rd->u.min &= rs->u.min;
- 		rd->u.max &= rs->u.max;
- 	} else {
--		rd->u.max = eval_uand_max(rd->u.max, rs->u.max, opsz);
-+		rd->u.max = eval_uand_max(rd->u.max, rs->u.max);
- 		rd->u.min = 0;
- 	}
- 
-@@ -859,22 +858,21 @@ eval_and(struct bpf_reg_val *rd, const struct bpf_reg_val *rs, size_t opsz,
- 	/* at least one of operand is non-negative */
- 	} else if (rd->s.min >= 0 || rs->s.min >= 0) {
- 		rd->s.max = eval_uand_max(rd->s.max & (msk >> 1),
--			rs->s.max & (msk >> 1), opsz);
-+			rs->s.max & (msk >> 1));
- 		rd->s.min = 0;
- 	} else
- 		eval_smax_bound(rd, msk);
- }
- 
- static void
--eval_or(struct bpf_reg_val *rd, const struct bpf_reg_val *rs, size_t opsz,
--	uint64_t msk)
-+eval_or(struct bpf_reg_val *rd, const struct bpf_reg_val *rs, uint64_t msk)
- {
- 	/* both operands are constants */
- 	if (rd->u.min == rd->u.max && rs->u.min == rs->u.max) {
- 		rd->u.min |= rs->u.min;
- 		rd->u.max |= rs->u.max;
- 	} else {
--		rd->u.max = eval_uor_max(rd->u.max, rs->u.max, opsz);
-+		rd->u.max = eval_uor_max(rd->u.max, rs->u.max);
- 		rd->u.min = RTE_MAX(rd->u.min, rs->u.min);
- 	}
- 
-@@ -885,22 +883,21 @@ eval_or(struct bpf_reg_val *rd, const struct bpf_reg_val *rs, size_t opsz,
- 
- 	/* both operands are non-negative */
- 	} else if (rd->s.min >= 0 && rs->s.min >= 0) {
--		rd->s.max = eval_uor_max(rd->s.max, rs->s.max, opsz);
-+		rd->s.max = eval_uor_max(rd->s.max, rs->s.max);
- 		rd->s.min = RTE_MAX(rd->s.min, rs->s.min);
- 	} else
- 		eval_smax_bound(rd, msk);
- }
- 
- static void
--eval_xor(struct bpf_reg_val *rd, const struct bpf_reg_val *rs, size_t opsz,
--	uint64_t msk)
-+eval_xor(struct bpf_reg_val *rd, const struct bpf_reg_val *rs, uint64_t msk)
- {
- 	/* both operands are constants */
- 	if (rd->u.min == rd->u.max && rs->u.min == rs->u.max) {
- 		rd->u.min ^= rs->u.min;
- 		rd->u.max ^= rs->u.max;
- 	} else {
--		rd->u.max = eval_uor_max(rd->u.max, rs->u.max, opsz);
-+		rd->u.max = eval_uor_max(rd->u.max, rs->u.max);
- 		rd->u.min = 0;
- 	}
- 
-@@ -911,7 +908,7 @@ eval_xor(struct bpf_reg_val *rd, const struct bpf_reg_val *rs, size_t opsz,
- 
- 	/* both operands are non-negative */
- 	} else if (rd->s.min >= 0 && rs->s.min >= 0) {
--		rd->s.max = eval_uor_max(rd->s.max, rs->s.max, opsz);
-+		rd->s.max = eval_uor_max(rd->s.max, rs->s.max);
- 		rd->s.min = 0;
- 	} else
- 		eval_smax_bound(rd, msk);
-@@ -1152,11 +1149,11 @@ eval_alu(struct bpf_verifier *bvf, const struct ebpf_insn *ins)
- 	else if (op == EBPF_ARSH)
- 		eval_arsh(rd, &rs, opsz, msk);
- 	else if (op == BPF_AND)
--		eval_and(rd, &rs, opsz, msk);
-+		eval_and(rd, &rs, msk);
- 	else if (op == BPF_OR)
--		eval_or(rd, &rs, opsz, msk);
-+		eval_or(rd, &rs, msk);
- 	else if (op == BPF_XOR)
--		eval_xor(rd, &rs, opsz, msk);
-+		eval_xor(rd, &rs, msk);
- 	else if (op == BPF_MUL)
- 		eval_mul(rd, &rs, opsz, msk);
- 	else if (op == BPF_DIV || op == BPF_MOD)
--- 
-2.43.0
-
+Not addressing the rest of AI comments, they are all non-issues IMO.
