@@ -2,38 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1048C61DB6
-	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Aug 2026 09:21:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA54CC61CE2
+	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Aug 2026 09:55:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B312A4014F;
-	Tue, 25 Aug 2026 11:21:12 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id EEF9C400D5
- for <dev@dpdk.org>; Tue, 25 Aug 2026 11:21:10 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id B18EA20440;
- Tue, 25 Aug 2026 11:21:08 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 618414014F;
+	Tue, 25 Aug 2026 11:55:58 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56])
+ by mails.dpdk.org (Postfix) with ESMTP id 9E903400D5;
+ Tue, 25 Aug 2026 11:55:56 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=1VCw9cztlp/5zCvWC8smOlbP9LObLqS0cPeui719G2s=;
+ b=2VjhnEGUFzuE+dHLjwyKQZu7P7X6w7OV9tAj/LpQanp8AvO9D8PbfKDknS7oBZYHGu5UJoyTY
+ DCYNw70N2xJMtUDw8DWZnqUc3GMHPcREhkpXyK9ZqfR0TeRArB6h5MGvXOUmijddK1kwkKXyPM6
+ aYqO31zlG4GQzVFybkTrzPc=
+Received: from mail.maildlp.com (unknown [172.18.224.107])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4hTjp00TQdzJ467X;
+ Tue, 25 Aug 2026 17:55:36 +0800 (CST)
+Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
+ by mail.maildlp.com (Postfix) with ESMTPS id DE82E4058D;
+ Tue, 25 Aug 2026 17:55:53 +0800 (CST)
+Received: from localhost.localdomain (10.220.239.45) by
+ frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Tue, 25 Aug 2026 11:55:53 +0200
+From: Marat Khalili <marat.khalili@huawei.com>
+To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+CC: <dev@dpdk.org>, <stable@dpdk.org>, Sebti Mouelhi <sebti.mouelhi@huawei.com>
+Subject: [PATCH] bpf/validate: fix 32-bit BPF_AND/OR/XOR shift UBs
+Date: Tue, 25 Aug 2026 10:55:29 +0100
+Message-ID: <20260825095530.41354-1-marat.khalili@huawei.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH] stack: introduce pile
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Tue, 25 Aug 2026 11:21:06 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65A11@smartserver.smartshare.dk>
-In-Reply-To: <b8aec95f030c4c1bb995f3741a57af95@huawei.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH] stack: introduce pile
-Thread-Index: AQHdKmHxOTsi6KhTAk+e68voB41GrLauZrVAgAApgOA=
-References: <20260812134756.1829613-1-mb@smartsharesystems.com>
- <b8aec95f030c4c1bb995f3741a57af95@huawei.com>
-From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Konstantin Ananyev" <konstantin.ananyev@huawei.com>
-Cc: <dev@dpdk.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.220.239.45]
+X-ClientProxiedBy: frapema100007.china.huawei.com (7.182.19.38) To
+ frapema500003.china.huawei.com (7.182.19.114)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -47,126 +53,262 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBLb25zdGFudGluIEFuYW55ZXYgW21haWx0bzprb25zdGFudGluLmFuYW55ZXZAaHVh
-d2VpLmNvbV0NCj4gU2VudDogVHVlc2RheSwgMjUgQXVndXN0IDIwMjYgMDkuMDUNCj4gPg0KPiA+
-IEFkZGVkIGEgbmV3IGhpZ2gtcGVyZm9ybWFuY2UgbG9jay1mcmVlICJwaWxlIiwgdXNpbmcgdGhl
-IFN0YWNrIEFQSS4NCj4gPiBUaGUgcGlsZSBiZWhhdmVzIHJvdWdobHkgbGlrZSBhIHN0YWNrLCBi
-dXQgaXMgbm90IHN0cmljdGx5IExJRk8uDQo+ID4NCj4gPiBUaGUgcGlsZSBpcyBvcHRpbWl6ZWQg
-Zm9yIHB1c2hpbmcvcG9wcGluZyBidWxrcyBvZiBvYmplY3RzLCB3aGljaA0KPiA+IGl0IGRvZXMg
-c2lnbmlmaWNhbnRseSBmYXN0ZXIgdGhhbiB0aGUgbG9jay1mcmVlIHN0YWNrLg0KPiA+DQo+ID4g
-UHVzaGluZy9wb3BwaW5nIGEgbnVtYmVyIG9mIG9iamVjdHMgbm90IGRpdmlzaWJsZSBieSB0aGUg
-Y29tcGlsZSB0aW1lDQo+ID4gY29uZmlndXJhYmxlIGJ1bGsgc2l6ZSBpcyBoYW5kbGVkIGdyYWNl
-ZnVsbHksIGJ1dCBub3QgYXMgZmFzdCBhcw0KPiA+IGNvbXBsZXRlIGJ1bGtzLg0KPiA+DQo+ID4g
-UGVyZm9ybWFuY2UgZXhhbXBsZXMsIHN0YWNrX3BpbGVfcGVyZl9hdXRvdGVzdCB2cy4gc3RhY2tf
-bGZfYXV0b3Rlc3Q6DQo+ID4NCj4gPiBPbiBhIHNpbmdsZSBjb3JlLCBwdXNoaW5nL3BvcHBpbmcg
-MSBvciA4IG9iamVjdHMgaXMgc2ltaWxhciBzcGVlZC4NCj4gPiBPbiBhIHNpbmdsZSBjb3JlLCBw
-dXNoaW5nL3BvcHBpbmcgMzIgb2JqZWN0cyBpcyAyeCBmYXN0ZXIuDQo+ID4gT24gYSBzaW5nbGUg
-Y29yZSwgcHVzaGluZy9wb3BwaW5nIDUxMiBvYmplY3RzIGlzIDEweCBmYXN0ZXIuDQo+ID4NCj4g
-PiBPbiBmb3VyIGNvcmVzLCBwdXNoaW5nL3BvcHBpbmcgMSwgOCBvciAzMiBvYmplY3RzIGlzIHNs
-aWdodGx5IGZhc3Rlci4NCj4gPiBPbiBmb3VyIGNvcmVzLCBwdXNoaW5nL3BvcHBpbmcgNTEyIG9i
-amVjdHMgaXMgNHggZmFzdGVyLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogTW9ydGVuIEJyw7hy
-dXAgPG1iQHNtYXJ0c2hhcmVzeXN0ZW1zLmNvbT4NCj4gPiAtLS0NCj4gDQo+IC4uLg0KPiA+ICsN
-Cj4gPiArLyoqDQo+ID4gKyAqIFBvcCBzZXZlcmFsIG9iamVjdHMgZnJvbSB0aGUgcGlsZSAobG9j
-ay1mcmVlLCBNVC1zYWZlKS4NCj4gPiArICoNCj4gPiArICogQHBhcmFtIHMNCj4gPiArICogICBB
-IHBvaW50ZXIgdG8gdGhlIHBpbGUgc3RydWN0dXJlLg0KPiA+ICsgKiBAcGFyYW0gb2JqX3RhYmxl
-DQo+ID4gKyAqICAgQSBwb2ludGVyIHRvIGEgdGFibGUgb2Ygdm9pZCAqIHBvaW50ZXJzIChvYmpl
-Y3RzKS4NCj4gPiArICogQHBhcmFtIG4NCj4gPiArICogICBUaGUgbnVtYmVyIG9mIG9iamVjdHMg
-dG8gcHVsbCBmcm9tIHRoZSBwaWxlLg0KPiA+ICsgKiBAcmV0dXJuDQo+ID4gKyAqICAgQWN0dWFs
-IG51bWJlciBvZiBvYmplY3RzIHBvcHBlZCAoZWl0aGVyIDAgb3IgKm4qKS4NCj4gPiArICovDQo+
-ID4gK3N0YXRpYyBfX3J0ZV9hbHdheXNfaW5saW5lIHVuc2lnbmVkIGludA0KPiA+ICtfX3J0ZV9z
-dGFja19waWxlX3BvcChzdHJ1Y3QgcnRlX3N0YWNrICpzLA0KPiA+ICsJCXZvaWQgKipvYmpfdGFi
-bGUsDQo+ID4gKwkJdW5zaWduZWQgaW50IG4pDQo+ID4gK3sNCj4gPiArCVJURV9BU1NFUlQocyAh
-PSBOVUxMKTsNCj4gPiArCVJURV9BU1NFUlQob2JqX3RhYmxlICE9IE5VTEwpOw0KPiA+ICsNCj4g
-PiArCXN0cnVjdCBydGVfc3RhY2tfcGlsZSAqcGlsZSA9ICZzLT5zdGFja19waWxlOw0KPiA+ICsJ
-c3RydWN0IHJ0ZV9zdGFja19waWxlX2J1bGtfZWxlbSAqYnVsa19maXJzdCA9IE5VTEwsICpidWxr
-X2xhc3QgPQ0KPiBOVUxMOw0KPiA+ICsJc3RydWN0IHJ0ZV9zdGFja19sZl9lbGVtICpzb2xvX2Zp
-cnN0ID0gTlVMTCwgKnNvbG9fbGFzdCA9IE5VTEwsDQo+ID4gKnRtcF9zb2xvOw0KPiA+ICsJYWxp
-Z25hcyhSVEVfQ0FDSEVfTElORV9TSVpFKSB2b2lkDQo+ID4gKm9ial9mcmFnW1JURV9TVEFDS19Q
-SUxFX0JVTEtfU0laRV07DQo+ID4gKwlzdHJ1Y3QgcnRlX3N0YWNrX3BpbGVfYnVsa19lbGVtICpm
-cmFnID0gTlVMTDsNCj4gPiArCXVuc2lnbmVkIGludCBuX2J1bGsgPSBuIC8gUlRFX1NUQUNLX1BJ
-TEVfQlVMS19TSVpFOw0KPiA+ICsJdW5zaWduZWQgaW50IG5fc29sbyA9IG4gJiAoUlRFX1NUQUNL
-X1BJTEVfQlVMS19TSVpFIC0gMSk7DQo+ID4gKwl1bnNpZ25lZCBpbnQgaTsNCj4gPiArDQo+ID4g
-KwlpZiAodW5saWtlbHkobl9idWxrID09IDApKSB7DQo+ID4gKwkJaWYgKHVubGlrZWx5KG5fc29s
-byA9PSAwKSkNCj4gPiArCQkJcmV0dXJuIDA7DQo+ID4gKwkJZ290byBzb2xvOw0KPiA+ICsJfQ0K
-PiA+ICsNCj4gPiArYnVsazoNCj4gPiArCS8qIEZldGNoIG5fYnVsayAqIFJURV9TVEFDS19QSUxF
-X0JVTEtfU0laRSBvYmplY3RzIGFzIGJ1bGsNCj4gZWxlbWVudHMuDQo+ID4gKi8NCj4gPiArCWJ1
-bGtfZmlyc3QgPSBfX3J0ZV9zdGFja19waWxlX2J1bGtfcG9wX2VsZW1zKCZwaWxlLT5idWxrLCBu
-X2J1bGssDQo+ID4gb2JqX3RhYmxlLCAmYnVsa19sYXN0KTsNCj4gPiArCWlmICh1bmxpa2VseShi
-dWxrX2ZpcnN0ID09IE5VTEwpKSB7DQo+ID4gKwkJLyoNCj4gPiArCQkgKiBOb3QgYXZhaWxhYmxl
-Lg0KPiA+ICsJCSAqIFJldHJ5IHdpdGggZmV3ZXIgYnVsayBlbGVtZW50czsgb2JqZWN0cyB0byBi
-ZSBmZXRjaGVkIGFzDQo+IHNvbG8NCj4gPiBlbGVtZW50cyBpbnN0ZWFkLg0KPiA+ICsJCSAqLw0K
-PiA+ICsJCW5fc29sbyArPSBSVEVfU1RBQ0tfUElMRV9CVUxLX1NJWkU7DQo+ID4gKwkJbl9idWxr
-LS07DQo+ID4gKwkJaWYgKG5fYnVsayA+IDApDQo+ID4gKwkJCWdvdG8gYnVsazsNCj4gPiArCQll
-bHNlDQo+ID4gKwkJCWdvdG8gc29sbzsNCj4gPiArCX0NCj4gPiArDQo+ID4gKwlpZiAobGlrZWx5
-KG5fc29sbyA9PSAwKSkNCj4gPiArCQlnb3RvIGRvbmU7DQo+ID4gKw0KPiA+ICtzb2xvOg0KPiA+
-ICsJLyogRmV0Y2ggbl9zb2xvIG9iamVjdHMgYXMgc29sbyBlbGVtZW50cy4gKi8NCj4gPiArCXNv
-bG9fZmlyc3QgPSBfX3J0ZV9zdGFja19sZl9wb3BfZWxlbXMoJnBpbGUtPnNvbG8sIG5fc29sbywN
-Cj4gPiArCQkJJm9ial90YWJsZVtuX2J1bGsgKiBSVEVfU1RBQ0tfUElMRV9CVUxLX1NJWkVdLA0K
-PiA+ICZzb2xvX2xhc3QpOw0KPiA+ICsJaWYgKHNvbG9fZmlyc3QgIT0gTlVMTCkNCj4gPiArCQln
-b3RvIGRvbmU7DQo+IA0KPiBBIHF1ZXN0aW9uOiBkb2VzIGl0IG1lYW4gdGhhdCBpZiB1c2VyIGFz
-a2VkIHRvIHBvcCAganVzdCBvbmUgZWxlbSwgaXQNCj4gY2FuIGZhaWwNCj4gSWYgc29sbyBsaXN0
-IGlzIGVtcHR5LCB3aGlsZSB0aGVyZSBhcmUgcGxlbnR5IG9mIGVsZW1lbnRzIGluIGJ1bGsNCj4g
-c2VjdGlvbj8NCg0KTm8uDQpJbiB0aGF0IGNhc2UsIGl0IHByb2NlZWRzIHRvIGZyYWdtZW50YXRp
-b246DQpJdCBmZXRjaGVzIGEgYnVsayBlbGVtZW50LCByZXR1cm5zIHRoZSBvbmUgYXNrZWQgb2Jq
-ZWN0IHRvIHRoZSBjYWxsZXIsDQphbmQgcHV0cyB0aGUgcmVtYWluaW5nIG9iamVjdHMgb2YgdGhl
-IGJ1bGsgaW50byB0aGUgc29sbyBzZWN0aW9uLg0KDQo+IA0KPiA+ICsNCj4gPiArCS8qIFNvbG8g
-ZWxlbWVudHMgbm90IGF2YWlsYWJsZS4gVHJ5IGZyYWdtZW50YXRpb24uICovDQo+ID4gKwlpZiAo
-dW5saWtlbHkobl9zb2xvID49IFJURV9TVEFDS19QSUxFX0JVTEtfU0laRSkpDQo+ID4gKwkJZ290
-byBmYWlsOyAvKiBSYW4gb3V0IG9mIGJ1bGsgZWxlbWVudHMgYWJvdmUuIERvbid0IHRyeSB0bw0K
-PiBmZXRjaA0KPiA+IG9uZSBtb3JlLiAqLw0KPiA+ICsNCj4gPiArCS8qIEZldGNoIGEgZnJhZ21l
-bnRhdGlvbiBlbGVtZW50IGFzIGEgYnVsayBlbGVtZW50LiAqLw0KPiA+ICsJZnJhZyA9IF9fcnRl
-X3N0YWNrX3BpbGVfYnVsa19wb3BfZWxlbXMoJnBpbGUtPmJ1bGssIDEsIG9ial9mcmFnLA0KPiBO
-VUxMKTsNCj4gPiArCWlmICh1bmxpa2VseShmcmFnID09IE5VTEwpKQ0KPiA+ICsJCWdvdG8gZmFp
-bDsNCj4gPiArDQo+ID4gKwkvKiBHZXQgbl9zb2xvIG9iamVjdHMgZnJvbSB0aGUgZnJhZ21lbnRh
-dGlvbiBlbGVtZW50LiAqLw0KPiA+ICsJX19ydGVfYXNzdW1lKG5fc29sbyA+IDApOw0KPiA+ICsJ
-X19ydGVfYXNzdW1lKG5fc29sbyA8IFJURV9TVEFDS19QSUxFX0JVTEtfU0laRSk7DQo+ID4gKwlm
-b3IgKGkgPSAwOyBpIDwgbl9zb2xvOyBpKyspDQo+ID4gKwkJb2JqX3RhYmxlW25fYnVsayAqIFJU
-RV9TVEFDS19QSUxFX0JVTEtfU0laRSArIGldID0NCj4gb2JqX2ZyYWdbaV07DQo+ID4gKw0KPiA+
-ICsJLyogRmV0Y2ggZnJlZSBlbGVtZW50cyBmb3IgdGhlIGV4Y2VzcyBvYmplY3RzLiAqLw0KPiA+
-ICsJX19ydGVfYXNzdW1lKFJURV9TVEFDS19QSUxFX0JVTEtfU0laRSAtIG5fc29sbyA+IDApOw0K
-PiA+ICsJX19ydGVfYXNzdW1lKFJURV9TVEFDS19QSUxFX0JVTEtfU0laRSAtIG5fc29sbyA8DQo+
-ID4gUlRFX1NUQUNLX1BJTEVfQlVMS19TSVpFKTsNCj4gPiArCXNvbG9fZmlyc3QgPSBfX3J0ZV9z
-dGFja19sZl9wb3BfZWxlbXMoJnBpbGUtPmZyZWVfc29sbywNCj4gPiArCQkJUlRFX1NUQUNLX1BJ
-TEVfQlVMS19TSVpFIC0gbl9zb2xvLCBOVUxMLCAmc29sb19sYXN0KTsNCj4gPiArCWlmICh1bmxp
-a2VseShzb2xvX2ZpcnN0ID09IE5VTEwpKQ0KPiA+ICsJCWdvdG8gZmFpbDsNCj4gPiArDQo+ID4g
-KwkvKiBDb25zdHJ1Y3QgdGhlIHNvbG8gZWxlbWVudHMgZnJvbSB0aGUgZXhjZXNzIG9iamVjdHMu
-ICovDQo+ID4gKwl0bXBfc29sbyA9IHNvbG9fZmlyc3Q7DQo+ID4gKwlfX3J0ZV9hc3N1bWUobl9z
-b2xvID4gMCk7DQo+ID4gKwlfX3J0ZV9hc3N1bWUobl9zb2xvIDwgUlRFX1NUQUNLX1BJTEVfQlVM
-S19TSVpFKTsNCj4gPiArCWZvciAoaSA9IG5fc29sbzsgaSA8IFJURV9TVEFDS19QSUxFX0JVTEtf
-U0laRTsgaSsrLCB0bXBfc29sbyA9DQo+IHRtcF9zb2xvLQ0KPiA+ID5uZXh0KQ0KPiA+ICsJCXRt
-cF9zb2xvLT5kYXRhID0gb2JqX2ZyYWdbaV07DQo+ID4gKw0KPiA+ICsJLyogUHVzaCB0aGUgZXhj
-ZXNzIG9iamVjdHMgYXMgc29sbyBlbGVtZW50cy4gKi8NCj4gPiArCV9fcnRlX3N0YWNrX2xmX3B1
-c2hfZWxlbXMoJnBpbGUtPnNvbG8sIHNvbG9fZmlyc3QsIHNvbG9fbGFzdCwNCj4gPiArCQkJUlRF
-X1NUQUNLX1BJTEVfQlVMS19TSVpFIC0gbl9zb2xvKTsNCj4gPiArCW5fc29sbyA9IDA7DQo+ID4g
-Kw0KPiA+ICsJLyogQWRkIHRoZSBmcmFnbWVudGF0aW9uIGVsZW1lbnQgdG8gdGhlIGJ1bGsgZWxl
-bWVudHMsIHNvIGl0IGNhbg0KPiBiZQ0KPiA+IGZyZWVkIHdpdGggdGhlbS4gKi8NCj4gPiArCWlm
-IChuX2J1bGsgPiAwKQ0KPiA+ICsJCWJ1bGtfbGFzdC0+bmV4dCA9IGZyYWc7DQo+ID4gKwllbHNl
-DQo+ID4gKwkJYnVsa19maXJzdCA9IGZyYWc7DQo+ID4gKwlidWxrX2xhc3QgPSBmcmFnOw0KPiA+
-ICsJbl9idWxrKys7DQo+ID4gKw0KPiA+ICtkb25lOg0KPiA+ICsJLyogU3VjY2Vzcy4gRnJlZSB0
-aGUgZWxlbWVudHMuICovDQo+ID4gKwlpZiAobl9idWxrID4gMCkNCj4gPiArCQlfX3J0ZV9zdGFj
-a19waWxlX2J1bGtfcHVzaF9lbGVtcygmcGlsZS0+ZnJlZV9idWxrLA0KPiBidWxrX2ZpcnN0LA0K
-PiA+IGJ1bGtfbGFzdCwgbl9idWxrKTsNCj4gPiArCWlmIChuX3NvbG8gPiAwKQ0KPiA+ICsJCV9f
-cnRlX3N0YWNrX2xmX3B1c2hfZWxlbXMoJnBpbGUtPmZyZWVfc29sbywgc29sb19maXJzdCwNCj4g
-PiBzb2xvX2xhc3QsIG5fc29sbyk7DQo+ID4gKw0KPiA+ICsJcmV0dXJuIG47DQo+ID4gKw0KPiA+
-ICtmYWlsOg0KPiA+ICsJLyogRmFpbGVkLiBSb2xsIGJhY2suICovDQo+ID4gKwlpZiAoZnJhZyAh
-PSBOVUxMKSB7DQo+ID4gKwkJLyoNCj4gPiArCQkgKiBObyBmdXJ0aGVyIGFjdGlvbiB0aGFuIHRo
-aXMgaXMgcmVxdWlyZWQgdG8gcm9sbCB0aGUNCj4gPiBmcmFnbWVudGF0aW9uDQo+ID4gKwkJICog
-ZWxlbWVudCBiYWNrIGludG8gdGhlIHBpbGUgb2YgYnVsayBlbGVtZW50cywgYXMgdGhlDQo+IG9i
-amVjdHMgaW4NCj4gPiArCQkgKiB0aGUgZnJhZ21lbnRhdGlvbiBlbGVtZW50IGFyZSBpbnRhY3Qu
-DQo+ID4gKwkJICovDQo+ID4gKwkJaWYgKG5fYnVsayA+IDApDQo+ID4gKwkJCWJ1bGtfbGFzdC0+
-bmV4dCA9IGZyYWc7DQo+ID4gKwkJZWxzZQ0KPiA+ICsJCQlidWxrX2ZpcnN0ID0gZnJhZzsNCj4g
-PiArCQlidWxrX2xhc3QgPSBmcmFnOw0KPiA+ICsJCW5fYnVsayArPSAxOw0KPiA+ICsJfQ0KPiA+
-ICsJaWYgKG5fYnVsayA+IDApDQo+ID4gKwkJX19ydGVfc3RhY2tfcGlsZV9idWxrX3B1c2hfZWxl
-bXMoJnBpbGUtPmJ1bGssIGJ1bGtfZmlyc3QsDQo+ID4gYnVsa19sYXN0LCBuX2J1bGspOw0KPiA+
-ICsNCj4gPiArCXJldHVybiAwOw0KPiA+ICt9DQo+ID4gKw0KPiA+ICsvKioNCj4gPiArICogQGlu
-dGVybmFsIEluaXRpYWxpemUgYSBwaWxlIHN0YWNrLg0KPiA+ICsgKg0KPiA+ICsgKiBAcGFyYW0g
-cw0KPiA+ICsgKiAgIEEgcG9pbnRlciB0byB0aGUgc3RhY2sgc3RydWN0dXJlLg0KPiA+ICsgKiBA
-cGFyYW0gY291bnQNCj4gPiArICogICBUaGUgc2l6ZSBvZiB0aGUgc3RhY2suDQo+ID4gKyAqLw0K
-PiA+ICt2b2lkDQo+ID4gK3J0ZV9zdGFja19waWxlX2luaXQoc3RydWN0IHJ0ZV9zdGFjayAqcywg
-dW5zaWduZWQgaW50IGNvdW50KTsNCj4gPiArDQo+ID4gKy8qKg0KPiA+ICsgKiBAaW50ZXJuYWwg
-UmV0dXJuIHRoZSBtZW1vcnkgcmVxdWlyZWQgZm9yIGEgcGlsZSBzdGFjay4NCj4gPiArICoNCj4g
-PiArICogQHBhcmFtIGNvdW50DQo+ID4gKyAqICAgVGhlIHNpemUgb2YgdGhlIHN0YWNrLg0KPiA+
-ICsgKiBAcmV0dXJuDQo+ID4gKyAqICAgVGhlIGJ5dGVzIHRvIGFsbG9jYXRlIGZvciBhIHBpbGUg
-c3RhY2suDQo+ID4gKyAqLw0KPiA+ICtzc2l6ZV90DQo+ID4gK3J0ZV9zdGFja19waWxlX2dldF9t
-ZW1zaXplKHVuc2lnbmVkIGludCBjb3VudCk7DQo+ID4gKw0KPiA+ICsjZW5kaWYgLyogX1JURV9T
-VEFDS19QSUxFX0hfICovDQo+ID4gLS0NCj4gPiAyLjQzLjANCg0K
+Function `eval_umax_bits`  when calculating the mask matching the
+register value counted leading zeroes in 64-bit representation but then
+subtracted it from the instruction width (32 for BPF_ALU instructions)
+producing zero or negative mask length, all unsupported by macro
+`RTE_LEN2MASK`. This function is used by functions `eval_and`, `eval_or`
+and `eval_xor` evaluating `BPF_ALU | BPF_AND`, `BPF_ALU | BPF_OR` and
+`BPF_ALU | BPF_XOR` correspondingly
+
+E.g. consider the following program with the current validation code:
+
+    Tested program:
+        0:  mov r0, #0x0
+        1:  ldxdw r2, [r1 + 0]
+        2:  jgt r2, #0x7fffffff, L7
+        3:  jslt r2, #0x0, L7
+        4:  jsgt r2, #0x7fffffff, L7
+        5:  and32 r2, #0x7fffffff  ; tested instruction
+        6:  mov r0, #0x1
+        7:  exit
+    Pre-state:
+       r2:  0..INT32_MAX
+    Post-state:
+       r2:  0..INT64_MAX
+
+At step 6 validator presumed that r2 may have values up to INT64_MAX,
+which is impossible for the 32-bit bitwise operation on 32-bit operands
+and could cause false positives.
+
+With sanitizer the following diagnostic is generated:
+
+    lib/bpf/bpf_validate.c:821:9: runtime error: shift exponent 65 is
+    too large for 64-bit type 'long unsigned int'
+        #0 0x00000837d9b5 in eval_umax_bits lib/bpf/bpf_validate.c:821
+        #1 0x00000837d9f3 in eval_uand_max lib/bpf/bpf_validate.c:828
+        #2 0x00000837df83 in eval_and lib/bpf/bpf_validate.c:851
+        #3 0x000008384faf in eval_alu lib/bpf/bpf_validate.c:1155
+        #4 0x000008396c24 in evaluate lib/bpf/bpf_validate.c:2999
+
+Similarly for `or32 r2, #0x0`, `xor32 r2, #0x0`.
+
+Found using ESBMC (https://esbmc.github.io/docs/) through an agentic
+verification workflow, with integer-overflow and undefined-shift checks
+enabled.
+
+To fix the issue change to subtracting clz64 result from 64 instead of
+instruction width, add tests. Remove no-longer-used opsz argument
+(truncation of inputs to 32 bits is handled by the caller `eval_alu`).
+
+Fixes: 8021917293d0 ("bpf: add extra validation for input BPF program")
+Cc: stable@dpdk.org
+
+Reported-by: Sebti Mouelhi <sebti.mouelhi@huawei.com>
+Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
+Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+---
+ app/test/test_bpf_validate.c | 45 ++++++++++++++++++++++++++++++++++++
+ lib/bpf/bpf_validate.c       | 43 ++++++++++++++++------------------
+ 2 files changed, 65 insertions(+), 23 deletions(-)
+
+diff --git a/app/test/test_bpf_validate.c b/app/test/test_bpf_validate.c
+index 066f1fa156ae..e1c35a41a4f9 100644
+--- a/app/test/test_bpf_validate.c
++++ b/app/test/test_bpf_validate.c
+@@ -1277,6 +1277,48 @@ verify_comparison(struct verify_instruction_param prm, bool also_signed)
+ 
+ /* TESTS FOR SPECIFIC INSTRUCTIONS */
+ 
++/* 32-bit bitwise AND between a scalar range and immediate, triggering UB. */
++static int
++test_alu32_and_k_ub(void)
++{
++	return verify_instruction((struct verify_instruction_param){
++		.tested_instruction = {
++			.code = (BPF_ALU | BPF_AND | BPF_K),
++			.imm = INT32_MAX,
++		},
++		.pre.dst = make_unsigned_domain(0, INT32_MAX),
++		.post.dst = make_unsigned_domain(0, INT32_MAX),
++	});
++}
++
++/* 32-bit bitwise OR between a scalar range and immediate, triggering UB. */
++static int
++test_alu32_or_k_ub(void)
++{
++	return verify_instruction((struct verify_instruction_param){
++		.tested_instruction = {
++			.code = (BPF_ALU | BPF_OR | BPF_K),
++			.imm = 0,
++		},
++		.pre.dst = make_unsigned_domain(0, INT32_MAX),
++		.post.dst = make_unsigned_domain(0, INT32_MAX),
++	});
++}
++
++/* 32-bit bitwise XOR between a scalar range and immediate, triggering UB. */
++static int
++test_alu32_xor_k_ub(void)
++{
++	return verify_instruction((struct verify_instruction_param){
++		.tested_instruction = {
++			.code = (BPF_ALU | BPF_XOR | BPF_K),
++			.imm = 0,
++		},
++		.pre.dst = make_unsigned_domain(0, INT32_MAX),
++		.post.dst = make_unsigned_domain(0, INT32_MAX),
++	});
++}
++
+ /* 64-bit addition of immediate to a range. */
+ static int
+ test_alu64_add_k(void)
+@@ -2187,6 +2229,9 @@ static struct
+ unit_test_suite test_bpf_validate_suite  = {
+ 	.suite_name = "Test BPF Validate Unit Test Suite",
+ 	.unit_test_cases = {
++		TEST_CASE(test_alu32_and_k_ub),
++		TEST_CASE(test_alu32_or_k_ub),
++		TEST_CASE(test_alu32_xor_k_ub),
+ 		TEST_CASE(test_alu64_add_k),
+ 		TEST_CASE(test_alu64_add_k_pointer),
+ 		TEST_CASE(test_alu64_add_x_pointer_pointer),
+diff --git a/lib/bpf/bpf_validate.c b/lib/bpf/bpf_validate.c
+index f9960088a285..d3cd14f24683 100644
+--- a/lib/bpf/bpf_validate.c
++++ b/lib/bpf/bpf_validate.c
+@@ -812,43 +812,42 @@ eval_arsh(struct bpf_reg_val *rd, const struct bpf_reg_val *rs, size_t opsz,
+ }
+ 
+ static uint64_t
+-eval_umax_bits(uint64_t v, size_t opsz)
++eval_umax_bits(uint64_t v)
+ {
+ 	if (v == 0)
+ 		return 0;
+ 
+ 	v = rte_clz64(v);
+-	return RTE_LEN2MASK(opsz - v, uint64_t);
++	return RTE_LEN2MASK(64 - v, uint64_t);
+ }
+ 
+ /* estimate max possible value for (v1 & v2) */
+ static uint64_t
+-eval_uand_max(uint64_t v1, uint64_t v2, size_t opsz)
++eval_uand_max(uint64_t v1, uint64_t v2)
+ {
+-	v1 = eval_umax_bits(v1, opsz);
+-	v2 = eval_umax_bits(v2, opsz);
++	v1 = eval_umax_bits(v1);
++	v2 = eval_umax_bits(v2);
+ 	return (v1 & v2);
+ }
+ 
+ /* estimate max possible value for (v1 | v2) */
+ static uint64_t
+-eval_uor_max(uint64_t v1, uint64_t v2, size_t opsz)
++eval_uor_max(uint64_t v1, uint64_t v2)
+ {
+-	v1 = eval_umax_bits(v1, opsz);
+-	v2 = eval_umax_bits(v2, opsz);
++	v1 = eval_umax_bits(v1);
++	v2 = eval_umax_bits(v2);
+ 	return (v1 | v2);
+ }
+ 
+ static void
+-eval_and(struct bpf_reg_val *rd, const struct bpf_reg_val *rs, size_t opsz,
+-	uint64_t msk)
++eval_and(struct bpf_reg_val *rd, const struct bpf_reg_val *rs, uint64_t msk)
+ {
+ 	/* both operands are constants */
+ 	if (rd->u.min == rd->u.max && rs->u.min == rs->u.max) {
+ 		rd->u.min &= rs->u.min;
+ 		rd->u.max &= rs->u.max;
+ 	} else {
+-		rd->u.max = eval_uand_max(rd->u.max, rs->u.max, opsz);
++		rd->u.max = eval_uand_max(rd->u.max, rs->u.max);
+ 		rd->u.min = 0;
+ 	}
+ 
+@@ -859,22 +858,21 @@ eval_and(struct bpf_reg_val *rd, const struct bpf_reg_val *rs, size_t opsz,
+ 	/* at least one of operand is non-negative */
+ 	} else if (rd->s.min >= 0 || rs->s.min >= 0) {
+ 		rd->s.max = eval_uand_max(rd->s.max & (msk >> 1),
+-			rs->s.max & (msk >> 1), opsz);
++			rs->s.max & (msk >> 1));
+ 		rd->s.min = 0;
+ 	} else
+ 		eval_smax_bound(rd, msk);
+ }
+ 
+ static void
+-eval_or(struct bpf_reg_val *rd, const struct bpf_reg_val *rs, size_t opsz,
+-	uint64_t msk)
++eval_or(struct bpf_reg_val *rd, const struct bpf_reg_val *rs, uint64_t msk)
+ {
+ 	/* both operands are constants */
+ 	if (rd->u.min == rd->u.max && rs->u.min == rs->u.max) {
+ 		rd->u.min |= rs->u.min;
+ 		rd->u.max |= rs->u.max;
+ 	} else {
+-		rd->u.max = eval_uor_max(rd->u.max, rs->u.max, opsz);
++		rd->u.max = eval_uor_max(rd->u.max, rs->u.max);
+ 		rd->u.min = RTE_MAX(rd->u.min, rs->u.min);
+ 	}
+ 
+@@ -885,22 +883,21 @@ eval_or(struct bpf_reg_val *rd, const struct bpf_reg_val *rs, size_t opsz,
+ 
+ 	/* both operands are non-negative */
+ 	} else if (rd->s.min >= 0 && rs->s.min >= 0) {
+-		rd->s.max = eval_uor_max(rd->s.max, rs->s.max, opsz);
++		rd->s.max = eval_uor_max(rd->s.max, rs->s.max);
+ 		rd->s.min = RTE_MAX(rd->s.min, rs->s.min);
+ 	} else
+ 		eval_smax_bound(rd, msk);
+ }
+ 
+ static void
+-eval_xor(struct bpf_reg_val *rd, const struct bpf_reg_val *rs, size_t opsz,
+-	uint64_t msk)
++eval_xor(struct bpf_reg_val *rd, const struct bpf_reg_val *rs, uint64_t msk)
+ {
+ 	/* both operands are constants */
+ 	if (rd->u.min == rd->u.max && rs->u.min == rs->u.max) {
+ 		rd->u.min ^= rs->u.min;
+ 		rd->u.max ^= rs->u.max;
+ 	} else {
+-		rd->u.max = eval_uor_max(rd->u.max, rs->u.max, opsz);
++		rd->u.max = eval_uor_max(rd->u.max, rs->u.max);
+ 		rd->u.min = 0;
+ 	}
+ 
+@@ -911,7 +908,7 @@ eval_xor(struct bpf_reg_val *rd, const struct bpf_reg_val *rs, size_t opsz,
+ 
+ 	/* both operands are non-negative */
+ 	} else if (rd->s.min >= 0 && rs->s.min >= 0) {
+-		rd->s.max = eval_uor_max(rd->s.max, rs->s.max, opsz);
++		rd->s.max = eval_uor_max(rd->s.max, rs->s.max);
+ 		rd->s.min = 0;
+ 	} else
+ 		eval_smax_bound(rd, msk);
+@@ -1152,11 +1149,11 @@ eval_alu(struct bpf_verifier *bvf, const struct ebpf_insn *ins)
+ 	else if (op == EBPF_ARSH)
+ 		eval_arsh(rd, &rs, opsz, msk);
+ 	else if (op == BPF_AND)
+-		eval_and(rd, &rs, opsz, msk);
++		eval_and(rd, &rs, msk);
+ 	else if (op == BPF_OR)
+-		eval_or(rd, &rs, opsz, msk);
++		eval_or(rd, &rs, msk);
+ 	else if (op == BPF_XOR)
+-		eval_xor(rd, &rs, opsz, msk);
++		eval_xor(rd, &rs, msk);
+ 	else if (op == BPF_MUL)
+ 		eval_mul(rd, &rs, opsz, msk);
+ 	else if (op == BPF_DIV || op == BPF_MOD)
+-- 
+2.43.0
+
