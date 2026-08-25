@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 520C7C61DB9
-	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Aug 2026 15:16:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F1CBC61DB9
+	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Aug 2026 15:16:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0F29B40697;
+	by mails.dpdk.org (Postfix) with ESMTP id E61D1406B6;
 	Tue, 25 Aug 2026 17:16:07 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
- by mails.dpdk.org (Postfix) with ESMTP id 6BB12402D6
+ by mails.dpdk.org (Postfix) with ESMTP id 8C2DA4064A
  for <dev@dpdk.org>; Tue, 25 Aug 2026 17:16:01 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1787670962; x=1819206962;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=ODYhggnHcbBDdlLL8ZmiuyvCEIEn7bPs/1bqOMTSUYk=;
- b=gSwtFklYztCQ6PSM04zFzLRi6xSGnrVMeCIwOBCWdoTMnpNjcai6JOfE
- 81pUcDMO7YdX1w8uIRFPwnylmBJWvVmNqko/aqwzPL8DuPDkFK3cL1IZB
- yVYIKMaAfDCG1BSScwnZU5WDchfYbwu0krr0wKYMVE76cebE7x8NxfZqO
- u6sSjguLwTSaQY5hXmaalK5D113fk1xnvMZHLfiyzoyrZ/JNg7I+kdZMU
- lcf+UbJULQMz/4ZkzYAyWfZg3e5vZAR3q74CDr+3ohpD9OdkhNEGyMMJQ
- OyitOWi4PNc3PAau2DNiyNP32eiLvUD4GRJDaFvS50lYuf8+cQiMLAi9w g==;
-X-CSE-ConnectionGUID: 54eNMpU0SvW/iIWcl7c48g==
-X-CSE-MsgGUID: SjnjexIsR6CbKB87t/EJmA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11885"; a="88270700"
-X-IronPort-AV: E=Sophos;i="6.25,242,1779174000"; d="scan'208";a="88270700"
+ bh=F+vK7fbkgvb2YAboIO8p89NcBrHJhe5l7l6YRqfQpcU=;
+ b=Rat/h/61UCg2RCkISxLubhTjNYg64QoU8i5DGaCP1Y8L63S+mNZfiNbJ
+ HOEi+gsRjHXIOumppiSYCEVSC3lUwajfBPTUla0H2qq6HbroOXaEf+2FX
+ xOZGnZTxx5pEfV5/jUvepglM4eBnkq/e2j47tHePaJk/y+x3x/cEIHKhp
+ AMG0X4gj0JgVA4nW23X0CVYM3KKlJIXjaKzWHTPMDEydbUGwHe8lWvr0h
+ yfTSJlSRnpmlgXIsClCtjwaNATdGnQiRF9ufblSS78U3GfMy0aTsEodBi
+ XdnlaCr/fpOM1nwuECsoRz6DWlseIGEWDIrdo1C7cLVN/Flg7nNYvFv5D g==;
+X-CSE-ConnectionGUID: CDu5wZDYQBGhaFI9E9tUwg==
+X-CSE-MsgGUID: EkK6OrH1SSSA3uOa5USohQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11885"; a="88270712"
+X-IronPort-AV: E=Sophos;i="6.25,242,1779174000"; d="scan'208";a="88270712"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 25 Aug 2026 08:15:45 -0700
-X-CSE-ConnectionGUID: vEGxX56jRECFZb0xTZ8kpA==
-X-CSE-MsgGUID: NyTjVDGZQaizrlTDKhUJjQ==
+ 25 Aug 2026 08:15:46 -0700
+X-CSE-ConnectionGUID: K8UTFykLTkmIDND/T0qp6A==
+X-CSE-MsgGUID: bjQBL7fLQWOpoQaqfOAzYQ==
 X-ExtLoop1: 1
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa003.fm.intel.com with ESMTP; 25 Aug 2026 08:15:43 -0700
+ by fmviesa003.fm.intel.com with ESMTP; 25 Aug 2026 08:15:44 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>,
  Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v2 4/8] net/iavf: move editable files out of base folder
-Date: Tue, 25 Aug 2026 16:15:19 +0100
-Message-ID: <20260825151533.535102-5-bruce.richardson@intel.com>
+Subject: [PATCH v2 5/8] net/ice: move editable files out of base folder
+Date: Tue, 25 Aug 2026 16:15:20 +0100
+Message-ID: <20260825151533.535102-6-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260825151533.535102-1-bruce.richardson@intel.com>
 References: <20260814153755.940302-1-bruce.richardson@intel.com>
@@ -61,11 +61,12 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The osdep header and iavf_impl.c file contain the macros and other
-definitions needed to allow the base code to compile as part of DPDK.
-Although they are stored in the base code folder, but are an exception
-in that they can be modified by regular DPDK patches, and not just as
-part of a base code snapshot update.
+The osdep headers contain the macros and other definitions needed to
+allow the base code to compile as part of DPDK. They traditionally tend
+to reside in the base code folder, but are an exception in that they can
+be modified by regular DPDK patches, and not just as part of a base code
+snapshot update. Similarly the meson.build file in the base folder is
+not part of the snapshots and is an editable file in the base folder.
 
 Therefore, we can simplify the rules around base code by moving these
 files into the main driver folder, leaving the base code C files all as
@@ -74,70 +75,178 @@ uneditable except via snapshot update.
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/iavf/base/README                        | 8 --------
- drivers/net/intel/iavf/{base/iavf_impl.c => iavf_osdep.c} | 0
- drivers/net/intel/iavf/{base => }/iavf_osdep.h            | 2 ++
- drivers/net/intel/iavf/meson.build                        | 2 +-
- 4 files changed, 3 insertions(+), 9 deletions(-)
- rename drivers/net/intel/iavf/{base/iavf_impl.c => iavf_osdep.c} (100%)
- rename drivers/net/intel/iavf/{base => }/iavf_osdep.h (98%)
+ drivers/net/intel/ice/base/README            |  8 ---
+ drivers/net/intel/ice/base/meson.build       | 51 --------------------
+ drivers/net/intel/ice/{base => }/ice_osdep.h |  4 +-
+ drivers/net/intel/ice/meson.build            | 51 +++++++++++++++++++-
+ 4 files changed, 52 insertions(+), 62 deletions(-)
+ delete mode 100644 drivers/net/intel/ice/base/meson.build
+ rename drivers/net/intel/ice/{base => }/ice_osdep.h (99%)
 
-diff --git a/drivers/net/intel/iavf/base/README b/drivers/net/intel/iavf/base/README
-index 61bcf0ef0e..d6a1dfbc96 100644
---- a/drivers/net/intel/iavf/base/README
-+++ b/drivers/net/intel/iavf/base/README
-@@ -7,11 +7,3 @@ Intel® IAVF driver
- 
- This directory contains a snapshot of the iavf shared, or base, driver code.
- The snapshot was generated on 2024.09.17.
+diff --git a/drivers/net/intel/ice/base/README b/drivers/net/intel/ice/base/README
+index ca82e1ec86..6e17debcb2 100644
+--- a/drivers/net/intel/ice/base/README
++++ b/drivers/net/intel/ice/base/README
+@@ -17,11 +17,3 @@ This driver is valid for the product(s) listed below
+ * Intel® Ethernet Network Adapters E825
+ * Intel® Ethernet Network Adapters E830
+ * Intel® Ethernet Network Adapters E835
 -
 -Updating the driver
 -===================
 -
--NOTE: The source code in this directory should not be modified apart from the following files:
+-NOTE: The source code in this directory should not be modified apart from
+-the following file(s):
 -
--    iavf_osdep.h
--    iavf_impl.c
-diff --git a/drivers/net/intel/iavf/base/iavf_impl.c b/drivers/net/intel/iavf/iavf_osdep.c
-similarity index 100%
-rename from drivers/net/intel/iavf/base/iavf_impl.c
-rename to drivers/net/intel/iavf/iavf_osdep.c
-diff --git a/drivers/net/intel/iavf/base/iavf_osdep.h b/drivers/net/intel/iavf/iavf_osdep.h
-similarity index 98%
-rename from drivers/net/intel/iavf/base/iavf_osdep.h
-rename to drivers/net/intel/iavf/iavf_osdep.h
-index cb95b848b6..dc2145b8c2 100644
---- a/drivers/net/intel/iavf/base/iavf_osdep.h
-+++ b/drivers/net/intel/iavf/iavf_osdep.h
+-    ice_osdep.h
+diff --git a/drivers/net/intel/ice/base/meson.build b/drivers/net/intel/ice/base/meson.build
+deleted file mode 100644
+index da961f0752..0000000000
+--- a/drivers/net/intel/ice/base/meson.build
++++ /dev/null
+@@ -1,51 +0,0 @@
+-# SPDX-License-Identifier: BSD-3-Clause
+-# Copyright(c) 2018-2021 Intel Corporation
+-
+-base_sources = files(
+-        'ice_controlq.c',
+-        'ice_common.c',
+-        'ice_sched.c',
+-        'ice_switch.c',
+-        'ice_nvm.c',
+-        'ice_flex_pipe.c',
+-        'ice_flow.c',
+-        'ice_dcb.c',
+-        'ice_fdir.c',
+-        'ice_acl.c',
+-        'ice_acl_ctrl.c',
+-        'ice_vlan_mode.c',
+-        'ice_ptp_hw.c',
+-        'ice_parser.c',
+-        'ice_imem.c',
+-        'ice_metainit.c',
+-        'ice_pg_cam.c',
+-        'ice_bst_tcam.c',
+-        'ice_ptype_mk.c',
+-        'ice_mk_grp.c',
+-        'ice_proto_grp.c',
+-        'ice_flg_rd.c',
+-        'ice_xlt_kb.c',
+-        'ice_parser_rt.c',
+-        'ice_ddp.c',
+-        'ice_fwlog.c',
+-        'ice_vf_mbx.c',
+-)
+-
+-if is_ms_compiler
+-    error_cflags = [
+-            '/wd4101', # unreferenced local variable
+-            '/wd4334', # result of 32-bit shift implicitly converted to 64 bits
+-            '/wd4319', # zero extending 'unsigned long' to 'u64' of greater size
+-    ]
+-else
+-    error_cflags = [
+-            '-Wno-unused-but-set-variable',
+-            '-Wno-unused-parameter',
+-    ]
+-endif
+-
+-foreach flag: error_cflags
+-    if cc.has_argument(flag)
+-        base_cflags += flag
+-    endif
+-endforeach
+diff --git a/drivers/net/intel/ice/base/ice_osdep.h b/drivers/net/intel/ice/ice_osdep.h
+similarity index 99%
+rename from drivers/net/intel/ice/base/ice_osdep.h
+rename to drivers/net/intel/ice/ice_osdep.h
+index 5d92cf5aa4..599bd4086b 100644
+--- a/drivers/net/intel/ice/base/ice_osdep.h
++++ b/drivers/net/intel/ice/ice_osdep.h
 @@ -5,6 +5,8 @@
- #ifndef _IAVF_OSDEP_H_
- #define _IAVF_OSDEP_H_
+ #ifndef _ICE_OSDEP_H_
+ #define _ICE_OSDEP_H_
  
 +/* File containing OS dependencies for base code */
 +
  #include <string.h>
  #include <stdint.h>
- #include <stdbool.h>
-diff --git a/drivers/net/intel/iavf/meson.build b/drivers/net/intel/iavf/meson.build
-index 50630a88c8..9b071a3a4b 100644
---- a/drivers/net/intel/iavf/meson.build
-+++ b/drivers/net/intel/iavf/meson.build
-@@ -12,7 +12,6 @@ deps += ['security', 'cryptodev']
- sources = files(
-         'base/iavf_adminq.c',
-         'base/iavf_common.c',
--        'base/iavf_impl.c',
+ #include <stdio.h>
+@@ -24,7 +26,7 @@
  
-         'iavf_base_symbols.c',
-         'iavf_ethdev.c',
-@@ -21,6 +20,7 @@ sources = files(
-         'iavf_generic_flow.c',
-         'iavf_fdir.c',
-         'iavf_hash.c',
-+        'iavf_osdep.c',
-         'iavf_tm.c',
-         'iavf_ipsec_crypto.c',
-         'iavf_fsub.c',
+ #include "ice_alloc.h"
+ 
+-#include "../ice_logs.h"
++#include "ice_logs.h"
+ 
+ #ifndef __INTEL_NET_BASE_OSDEP__
+ #define __INTEL_NET_BASE_OSDEP__
+diff --git a/drivers/net/intel/ice/meson.build b/drivers/net/intel/ice/meson.build
+index a205304c89..b12077f7bd 100644
+--- a/drivers/net/intel/ice/meson.build
++++ b/drivers/net/intel/ice/meson.build
+@@ -1,8 +1,6 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ # Copyright(c) 2018 Intel Corporation
+ 
+-subdir('base')
+-
+ sources = files(
+         'ice_acl_filter.c',
+         'ice_diagnose.c',
+@@ -46,3 +44,52 @@ sources += files(
+ )
+ 
+ require_iova_in_mbuf = false
++
++base_sources = files(
++        'base/ice_controlq.c',
++        'base/ice_common.c',
++        'base/ice_sched.c',
++        'base/ice_switch.c',
++        'base/ice_nvm.c',
++        'base/ice_flex_pipe.c',
++        'base/ice_flow.c',
++        'base/ice_dcb.c',
++        'base/ice_fdir.c',
++        'base/ice_acl.c',
++        'base/ice_acl_ctrl.c',
++        'base/ice_vlan_mode.c',
++        'base/ice_ptp_hw.c',
++        'base/ice_parser.c',
++        'base/ice_imem.c',
++        'base/ice_metainit.c',
++        'base/ice_pg_cam.c',
++        'base/ice_bst_tcam.c',
++        'base/ice_ptype_mk.c',
++        'base/ice_mk_grp.c',
++        'base/ice_proto_grp.c',
++        'base/ice_flg_rd.c',
++        'base/ice_xlt_kb.c',
++        'base/ice_parser_rt.c',
++        'base/ice_ddp.c',
++        'base/ice_fwlog.c',
++        'base/ice_vf_mbx.c',
++)
++
++if is_ms_compiler
++    base_error_cflags = [
++            '/wd4101', # unreferenced local variable
++            '/wd4334', # result of 32-bit shift implicitly converted to 64 bits
++            '/wd4319', # zero extending 'unsigned long' to 'u64' of greater size
++    ]
++else
++    base_error_cflags = [
++            '-Wno-unused-but-set-variable',
++            '-Wno-unused-parameter',
++    ]
++endif
++
++foreach flag: base_error_cflags
++    if cc.has_argument(flag)
++        base_cflags += flag
++    endif
++endforeach
 -- 
 2.53.0
 
