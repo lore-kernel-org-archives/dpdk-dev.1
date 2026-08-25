@@ -2,37 +2,129 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 291ACC5DF81
-	for <dpdk-dev@archiver.kernel.org>; Mon, 24 Aug 2026 23:18:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99221C5DF81
+	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Aug 2026 04:10:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E0FDD400D6;
-	Tue, 25 Aug 2026 01:18:28 +0200 (CEST)
-Received: from mail-244118.protonmail.ch (mail-244118.protonmail.ch
- [109.224.244.118])
- by mails.dpdk.org (Postfix) with ESMTP id 88E7E400D5
- for <dev@dpdk.org>; Tue, 25 Aug 2026 01:18:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mcgov.dev;
- s=protonmail3; t=1787613506; x=1787872706;
- bh=l6oaEfm+bJ2+zwIzoYz2tGayvkFCaHAnL8gSYUbKjOs=;
- h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
- Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
- b=HrOuw//0pmgBuHbqzMbqOeTrN2djEOg80aTs+6AjT4+EI97Z/8ACh2uRDY0tzHy4N
- 9DhVU5Lstqxt2eeZsmoHjVQedObG86ljG/IGIrRQ+IGOwT9C42ZyCZSI2v5gMgiUC8
- pmkHyZOiN1S9EHdh7viDjz6dkaqiN9z2KNgTlyFg4eUgw7rkYWySz4Kpq2XFCxO9EY
- DswCCacIvP3eOi0sLUluDyPoqni1IA08YJZwEk1lFOeycQUrqAF2J9VveabbBLCVFT
- XXHErzGMl64KnXWNHXzrAXrmn/mYfiITytstI902SwA4QMVZBDnrutQaQr2IXtPVyQ
- AZhAuHokW8R0A==
-Date: Mon, 24 Aug 2026 23:18:21 +0000
-To: Aman Singh <aman.deep.singh@intel.com>
-From: "Matthew G. McGovern" <matthew@mcgov.dev>
-Cc: dev@dpdk.org
-Subject: [PATCH] testpmd: allow --tx-ip definitions per-port
-Message-ID: <20260824231805.256714-1-matthew@mcgov.dev>
-Feedback-ID: 45755057:user:proton
-X-Pm-Message-ID: 981307cb664c9fd9c5957bd0dbc457ad3716fa30
+	by mails.dpdk.org (Postfix) with ESMTP id 799BB4014F;
+	Tue, 25 Aug 2026 06:10:46 +0200 (CEST)
+Received: from GVXPR05CU001.outbound.protection.outlook.com
+ (mail-swedencentralazon11013030.outbound.protection.outlook.com
+ [52.101.83.30]) by mails.dpdk.org (Postfix) with ESMTP id BAD00400D5
+ for <dev@dpdk.org>; Tue, 25 Aug 2026 06:10:45 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=j8D20+VM3UHoVwgQZhQXp/QCOeQRNXLO7Y1tm/du+hRaFvJbl7PO+sZgztgrGiovpG3oX1sigz3JbSLtsThduiYlO1ao3mlMf4Lz67c19+HX4DdfMFcvrOWCKwzl2PAwU2eLVBcb4rQFnqMOg2afuRueaIgu8/nvgpEdvZTyg65gkU9aRh/PUYEou4xM/Af4qajB9Uuo5UXfY/yLa6w5jDb6stMlIWknSqvRRD4gwiVpamRpx0myh1T0pvkWSDS0bwJj3tNCleFEnNCU7138O3rpfr50oth7VLWmYQC2WZ+9SZyQHfNwgnTKJCDlxeuCcX6nnlxJFOiOwLBS3yR1mw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=d+bWVZePy6wic6KTIoOAvAUZWKi5pxW3Bq3egRGK/7Q=;
+ b=KxNqqQD0UO7sCiyxz4ZeYgjEUaObHlWMzbKO/UX1nk7mNhLHnz7+ONFA3JmpCpy5QVZkfyBxP6MwPhHP5/8bS9UBAmu51ABXWkjNOn0VDui7IiSuCUZibRnFNSJTc7al+NlgDMW9IHr8kXfViXO2lBHOgHx5n2FKZj0mqEBSjLf24ynPhLK76WiVCaxBn8/HxNocMrEZtRQF0zbO6ACIdgt/AygQ8Tl8Vc+qEhHB3oveMCdAhLyRdIfXKcNnDCn7T12M0WMn1QvS4FkLmESj8D+W9aanCX9iajodW7R6sKJm+Ddm6BxkKGDJwnVgXTcyrXrn97RVt01KAQ74AkOYnA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=d+bWVZePy6wic6KTIoOAvAUZWKi5pxW3Bq3egRGK/7Q=;
+ b=iYxBAUA3plSLO0VnRLVg1yjQyIV1XBm+Q0XjrhqR9n1XqkYgz5VWmbED7/kS50RVmgRdNLr2DGpnOteLJh5kdLA4QwadBSsAz+lsas+fR2ZSGvT48C25kVZqxOd4d1kMrs4UNTtQVwpHQehvj55fnAzKdqFrZEMbxNT8xJzcQEpz/T9rmT2dltlRKaBy7YODRnrGwFqnMIbs0EyW3Usu1ihhFh75xZOob4qBGNI1AgAXnAmn/HkDl5Hlkkjj63VpCDgkQ1ly64YmkMn4+9PINk4s+YBezE42zP09iZPfrCWgD6t2lkjc64YohCyR/wP31gX6pT33h/02T/beQsQH8Q==
+Received: from VI0PR04MB12262.eurprd04.prod.outlook.com
+ (2603:10a6:800:326::13) by VE1PR04MB7229.eurprd04.prod.outlook.com
+ (2603:10a6:800:1a3::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.339.12; Tue, 25 Aug
+ 2026 04:10:43 +0000
+Received: from VI0PR04MB12262.eurprd04.prod.outlook.com
+ ([fe80::66ea:7fc2:5d39:e826]) by VI0PR04MB12262.eurprd04.prod.outlook.com
+ ([fe80::66ea:7fc2:5d39:e826%4]) with mapi id 15.21.0339.012; Tue, 25 Aug 2026
+ 04:10:43 +0000
+From: Gagandeep Singh <G.Singh@nxp.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: "dev@dpdk.org" <dev@dpdk.org>, Hemant Agrawal <hemant.agrawal@nxp.com>
+Subject: RE: [PATCH v12 00/15] et/enetc: add new features for ENETC4 on i.MX95
+Thread-Topic: [PATCH v12 00/15] et/enetc: add new features for ENETC4 on i.MX95
+Thread-Index: AQHdMTHf5qHuroLYvUadQtECBFnjw7aopuaAgAQxWtCAAJQNgIAAv62g
+Date: Tue, 25 Aug 2026 04:10:43 +0000
+Message-ID: <VI0PR04MB12262856BB8CC5CCFA182738AE1AF2@VI0PR04MB12262.eurprd04.prod.outlook.com>
+References: <20260819053415.645865-1-g.singh@nxp.com>
+ <20260821055643.1359277-1-g.singh@nxp.com>
+ <20260821084927.6e6aa27f@phoenix.local>
+ <AMBPR04MB122819F9F9BA58ABDD22A114AE1A02@AMBPR04MB12281.eurprd04.prod.outlook.com>
+ <20260824094101.32d4e42b@phoenix.local>
+In-Reply-To: <20260824094101.32d4e42b@phoenix.local>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f6375508-4f8d-4bf0-98ed-14865d40f2d8_Enabled=True;
+ MSIP_Label_f6375508-4f8d-4bf0-98ed-14865d40f2d8_SiteId=686ea1d3-bc2b-4c6f-a92c-d99c5c301635;
+ MSIP_Label_f6375508-4f8d-4bf0-98ed-14865d40f2d8_SetDate=2026-08-25T04:07:06.0000000Z;
+ MSIP_Label_f6375508-4f8d-4bf0-98ed-14865d40f2d8_Name=NXP
+ Public; MSIP_Label_f6375508-4f8d-4bf0-98ed-14865d40f2d8_ContentBits=3;
+ MSIP_Label_f6375508-4f8d-4bf0-98ed-14865d40f2d8_Method=Privileged
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: VI0PR04MB12262:EE_|VE1PR04MB7229:EE_
+x-ms-office365-filtering-correlation-id: 794aeb3a-8ab9-4753-2549-08df025ed50f
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|376014|23010399003|366016|19092799006|1800799024|38070700021|10067099003|4143699003|11063799006|56012099006|18002099003|22082099003;
+x-microsoft-antispam-message-info: AawFONGIicIMK6keoKqSsOvoa6HwPggf/rvl3Z+6ZCb2VhHVBR+/CPp7Oy7V3h6kX9JRcEXzVNkAFSBpM7F8okaXmREFaYyedTuTJeKCRz9k1SQX1vorDNT8Z903P7zTEG9twMSMTF7GefXgSSN6qmYbXLZ/WqT9+D1aPOI0Ku1YpuzwSANzCsKvhymj405ADzMOnecCpxFMOxC0adEY6kIwrtoLMGSV4NOo9+yG66CC/t/8C/4sRfAR2+/n4YS/VUwVNctf9/O6AVt4fQtrwOQMlJBmkNBWJe8XSp4RvacFGn1Zj9L9VAU/GXcReHAhaGKixaS+EQINHCeAKEVkI6A9/Db5WB0j+7n1dTARanYCpH4Z8MEOhq20kXP65j03h/BE4YUcABSSvjpDSyYIckMA8wlJyb9sUHVWDIl/vQWAp7BzFCrNH0+DDCygijVAOiVfRPQn9FgMiwgW1qC5TmxwpICkfAQeFEs7k8y7YIUiRH2MfffojR2Iv/8YbQ874yAGW6ZnFwv5+PDLsvs9kuy0id3AXPPFeF3wt/EoB1fz7lmnUnqgVq74WEgLvZcJ0bOsJnZDgrkwdEb4l59wfpjEMadb3bxepWiXWhMqb3BNa7DCRuvRSjRDwu/iyMPWjx6tYyShNjBF9h2FvJHFcKtCcTD1Is8YfOe00XgP2hiZr/vADrAOXdGQp5mdSwRgSvbHDFpIiWQh2eWSb1pjjAr4CEisGRRfJvVdRykhm9o=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:VI0PR04MB12262.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(23010399003)(366016)(19092799006)(1800799024)(38070700021)(10067099003)(4143699003)(11063799006)(56012099006)(18002099003)(22082099003);
+ DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?UFlBQ242eDZWMm9oSkQ4MlZZMHN5TEZKU0pjSUlPR1JKM1prWUJ4YnNrS1o3?=
+ =?utf-8?B?UkNVWUhQMzdlRkJqYzczWks4VmQ4dUdHQ0pZV25ha0F5c2tNK0kwN2c5TWRz?=
+ =?utf-8?B?b05ESUJXbm0wd3VOWEY5bWtIaVBNaGx4TnhqeUtOSVJUVU1RU1JZWmdpbjY2?=
+ =?utf-8?B?djR6cEU5Ty95WHVuMExBbE1wR04rVXM0NzVOZlQ5d01wcnVtQmQxS0d1Zjdl?=
+ =?utf-8?B?S0VmanV6ODFJWktYcTZnc0x5ZTdTbUJTM0pwOWk1aUR5ajdFUkFLMmZiQUtR?=
+ =?utf-8?B?N3pSZG1vSGFRYkpPMTdHUVZFdktNSWw3dnczN2lzOTVYcjBuL3JvcytPbmxp?=
+ =?utf-8?B?TU9vR0UvS05OZ2lxRGZLK2FxRTBDZ3NKNFplNDc4d3pxeHBkKzJWL3RBdGZh?=
+ =?utf-8?B?OG9PY0dIMWgrdWx2UnhNN2tQRzEvOTFNQkhKbWV3VjBXYUhkVHkwREt6RHB6?=
+ =?utf-8?B?UnA1Tnh3STlHUzNxQURkOXhZOFJvQ2YvMHVncll2SC9zVytjV21EdGtWeSs0?=
+ =?utf-8?B?Sy9uSzM4dkQvcCtNWkdqTG1NRzhwem5PMHVueG5nOXpuSlFoVHFzTWpoVTZh?=
+ =?utf-8?B?S01WS3JFU2xxa3U3TmR0dmNnVVh6NWVyTVJhRndScnhIWTVVa1ZzTHBxbERa?=
+ =?utf-8?B?S3ZNUkliRFBDc3AwUlFFdDBPTHRNYjZPTVZobWJZV1dvNnExWXBWcDZ6Tnlx?=
+ =?utf-8?B?MU0wYy9sWUovdDRpditYdDloeFpOZjB6aW03Q1pDRk4zdlF0S3dmT2RkUnUr?=
+ =?utf-8?B?Q3FycGNDQ28vWTl5SSsxMjdGS1MxNmtaTWIvVkhyVkwvVGxDU2w1bTMvSTZo?=
+ =?utf-8?B?dlA3Nzh1d2psRXVzSk9rVm1KbXAxamEvY2lzYVN4dmE1ZlRiak96dXdoOStz?=
+ =?utf-8?B?OWFrNDhWUnV5MEtldmF2YjhyWFh1ODVncVhoUE92Y0ZJWnlrRjRQMFh6aGZy?=
+ =?utf-8?B?MSt6eDN4YVc4bGIvQVJiT01pSTY2MzN5VGJKZjZWOVZDQXh5TE1WMmNxR0to?=
+ =?utf-8?B?cmYxakdwMU9jaDRsRklHbk5rVjNxRjhVRHA0NmF3M1pSbG9GRDgyOVc4dldl?=
+ =?utf-8?B?SSttU3RZZWU0NjBSMjIrenl2eTNXaDNGNi80MGt4VS9qQi8wVlNYN0dCc2Ja?=
+ =?utf-8?B?UDdOTE5mYkpiT2l1TkhhSXc1SmVRYWxoSy8zQTVCMDBWcnhxeTN4OE1CbW9r?=
+ =?utf-8?B?b3FCRDhOanNSclNlUTFHMENjMlVZZ3dqZnZrNVA1anB4NExCa0ZVYVBoVG9S?=
+ =?utf-8?B?K3NjMDlFRVROT2p6TGZtbEdPQ0xlVFoxTmo4WGpZWUVRa3lpMWhrcThSSEpI?=
+ =?utf-8?B?K01vTHZuaUg0bmE3U3hYQ2taRHNpQ282RE1RS1RoM0ZiYlZaaFZ1SHBBdlZU?=
+ =?utf-8?B?QzV4R3ZKZTJ2cHhYcDArY0VTVXBXWUg4RjJOVU1VWFpON045UjhIRWFlQjhv?=
+ =?utf-8?B?dUhTS1MyUlhHVldKTGtwWWgwaytMYnB0UkZuTzdpcTYrYVNpejc3TjdVcUd0?=
+ =?utf-8?B?S3FDWFI0cXpJWkcwVjV4Q0lKZ0NFcCtGREdYYm5idG5Dcit4MHYra01wdzY5?=
+ =?utf-8?B?d25rd1ptcm53dlFQM3ZJWGFRODJ5MlB0cmRmbE1JUjgycXI5WXNFWG9taUc0?=
+ =?utf-8?B?Z2duT2hGdEIrbzZBT3IyMHA0dzZackgxUTQvZUpDelcxQ2lzWUdRa2JURkkw?=
+ =?utf-8?B?ZlRBRGo2M0JjcUNDMHJMWFNCMDZUSnV0Y3JUTDZpOGE2czJOMGlGY25mV2ZW?=
+ =?utf-8?B?K2VjT092ZTZyRUl0Wmw1RDBrcWVZQkZCZndTMDdVRVNKbGZBQzlEakRSQ0Jx?=
+ =?utf-8?B?dldnQmRXYzJrRlVMZnZGUXBUQTg2SE8zdHRhS2pIK0E4cjBHSUR5REQxMHBW?=
+ =?utf-8?B?UUVsMVcycTFvYzRqakZiNU91NU5NTkN1L040NGx6VzdXR1hYU2pQOUtCR0FX?=
+ =?utf-8?B?TVZoUGVXUnFSTGxPU2hLTzBwZmZjRStiSHFtd3AxS0ViZUJqQXlyL00wMHM0?=
+ =?utf-8?B?WjNsL29jUnd6Z3R1ckN0aG5rWlNkMy9UTWJlZ25LRVUzNXo0TysrWTZybXdN?=
+ =?utf-8?B?WExKZmFheVh0ZGh6bGJBL1hIdUpGTnE2MENqMnN4dnVvcWV2SG1HSWdyMGZ5?=
+ =?utf-8?B?aVRXTVEwd3pBV0RRckl4U2krc1o5SGJ3MUtrWk43SW9ETnVza1BIN2NML3VY?=
+ =?utf-8?B?OXFtMXhSVU5nWG5LYm0xRVVoU2ZrWE1sdzh6QUhPYzUyQ2RGbGZGbUJJam8x?=
+ =?utf-8?B?anl6QkRiVitpT3JIL2pHNnFkMkxuSytERjZsaUkrRnFFaU96S3ZkWmgwcXo0?=
+ =?utf-8?Q?Ee4gj6KZriEy9nZM76?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: VI0PR04MB12262.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 794aeb3a-8ab9-4753-2549-08df025ed50f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Aug 2026 04:10:43.4555 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: GNYUvN/TcdYT4ABL6NYaHZKd2ZoRfONdUw3gOGSYe+GTqtVS5J2uRi2Z2T0Ih1kB
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7229
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -46,232 +138,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Modifies --tx-ip flag to be of the form:
-
---tx-ip=3D[port_id:]src,dest
-
-to allow setting the addresses for each port.
-
-Signed-off-by: Matthew G. McGovern <matthew@mcgov.dev>
----
- app/test-pmd/parameters.c             | 57 +++++++++++++++++++++------
- app/test-pmd/testpmd.h                |  4 +-
- app/test-pmd/txonly.c                 | 31 +++++++++++----
- doc/guides/testpmd_app_ug/run_app.rst | 10 ++++-
- 4 files changed, 80 insertions(+), 22 deletions(-)
-
-diff --git a/app/test-pmd/parameters.c b/app/test-pmd/parameters.c
-index 0032ea4e25..833b14eda4 100644
---- a/app/test-pmd/parameters.c
-+++ b/app/test-pmd/parameters.c
-@@ -504,7 +504,9 @@ usage(char* progname)
- =09printf("  --txonly-multi-flow: generate multiple flows in txonly mode\n=
-");
- =09printf("  --txonly-nb-flows=3DN: number of flows per lcore in txonly"
- =09       " multi-flow mode (1-64, default 64)\n");
--=09printf("  --tx-ip=3Dsrc,dst: IP addresses in Tx-only mode\n");
-+=09printf("  --tx-ip=3D[port:]src,dst: IP addresses in Tx-only mode.\n"
-+=09       "    Without a port prefix the addresses apply to all ports.\n"
-+=09       "    May be given several times to configure ports individually.=
-\n");
- =09printf("  --tx-udp=3Dsrc[,dst]: UDP ports in Tx-only mode\n");
- =09printf("  --eth-link-speed: force link speed.\n");
- =09printf("  --rxq-share: enable Rx queue sharing per switch and Rx domain=
-\n");
-@@ -1039,26 +1041,59 @@ launch_args_parse(int argc, char** argv)
- =09=09=09break;
- =09=09}
- =09=09case TESTPMD_OPT_TX_IP_NUM: {
-+=09=09=09uint32_t src_addr, dst_addr;
-+=09=09=09unsigned long port_num;
-+=09=09=09bool port_given =3D false;
-+=09=09=09char *addrs =3D optarg;
- =09=09=09struct in_addr in;
--=09=09=09char *end;
-+=09=09=09portid_t port_id =3D 0;
-+=09=09=09char *sep, *end;
-+
-+=09=09=09/* Optional "PORT:" prefix selects a single Tx port. */
-+=09=09=09sep =3D strchr(addrs, ':');
-+=09=09=09if (sep !=3D NULL) {
-+=09=09=09=09*sep =3D '\0';
-+=09=09=09=09errno =3D 0;
-+=09=09=09=09port_num =3D strtoul(addrs, &end, 0);
-+=09=09=09=09if (errno !=3D 0 || end =3D=3D addrs ||
-+=09=09=09=09=09=09*end !=3D '\0' ||
-+=09=09=09=09=09=09port_num >=3D RTE_MAX_ETHPORTS)
-+=09=09=09=09=09rte_exit(EXIT_FAILURE,
-+=09=09=09=09=09=09"Invalid tx-ip port: %s\n",
-+=09=09=09=09=09=09addrs);
-+=09=09=09=09port_id =3D (portid_t)port_num;
-+=09=09=09=09port_given =3D true;
-+=09=09=09=09addrs =3D sep + 1;
-+=09=09=09}
-=20
--=09=09=09end =3D strchr(optarg, ',');
--=09=09=09if (end =3D=3D optarg || !end)
-+=09=09=09end =3D strchr(addrs, ',');
-+=09=09=09if (end =3D=3D addrs || end =3D=3D NULL)
- =09=09=09=09rte_exit(EXIT_FAILURE,
--=09=09=09=09=09"Invalid tx-ip: %s", optarg);
-+=09=09=09=09=09"Invalid tx-ip: %s\n", addrs);
-=20
--=09=09=09*end++ =3D 0;
--=09=09=09if (inet_pton(AF_INET, optarg, &in) =3D=3D 0)
-+=09=09=09*end++ =3D '\0';
-+=09=09=09if (inet_pton(AF_INET, addrs, &in) =3D=3D 0)
- =09=09=09=09rte_exit(EXIT_FAILURE,
- =09=09=09=09=09"Invalid source IP address: %s\n",
--=09=09=09=09=09optarg);
--=09=09=09tx_ip_src_addr =3D rte_be_to_cpu_32(in.s_addr);
-+=09=09=09=09=09addrs);
-+=09=09=09src_addr =3D rte_be_to_cpu_32(in.s_addr);
-=20
- =09=09=09if (inet_pton(AF_INET, end, &in) =3D=3D 0)
- =09=09=09=09rte_exit(EXIT_FAILURE,
- =09=09=09=09=09"Invalid destination IP address: %s\n",
--=09=09=09=09=09optarg);
--=09=09=09tx_ip_dst_addr =3D rte_be_to_cpu_32(in.s_addr);
-+=09=09=09=09=09end);
-+=09=09=09dst_addr =3D rte_be_to_cpu_32(in.s_addr);
-+
-+=09=09=09if (port_given) {
-+=09=09=09=09tx_ip_src_addr[port_id] =3D src_addr;
-+=09=09=09=09tx_ip_dst_addr[port_id] =3D dst_addr;
-+=09=09=09} else {
-+=09=09=09=09/* No port given: apply to every port. */
-+=09=09=09=09for (pid =3D 0; pid < RTE_MAX_ETHPORTS; pid++) {
-+=09=09=09=09=09tx_ip_src_addr[pid] =3D src_addr;
-+=09=09=09=09=09tx_ip_dst_addr[pid] =3D dst_addr;
-+=09=09=09=09}
-+=09=09=09}
- =09=09=09break;
- =09=09}
- =09=09case TESTPMD_OPT_TX_UDP_NUM: {
-diff --git a/app/test-pmd/testpmd.h b/app/test-pmd/testpmd.h
-index 083171853c..71092dea9e 100644
---- a/app/test-pmd/testpmd.h
-+++ b/app/test-pmd/testpmd.h
-@@ -691,8 +691,8 @@ extern int8_t tx_wthresh;
- extern uint16_t tx_udp_src_port;
- extern uint16_t tx_udp_dst_port;
-=20
--extern uint32_t tx_ip_src_addr;
--extern uint32_t tx_ip_dst_addr;
-+extern uint32_t tx_ip_src_addr[RTE_MAX_ETHPORTS];
-+extern uint32_t tx_ip_dst_addr[RTE_MAX_ETHPORTS];
-=20
- extern struct fwd_config cur_fwd_config;
- extern struct fwd_engine *cur_fwd_eng;
-diff --git a/app/test-pmd/txonly.c b/app/test-pmd/txonly.c
-index a4acb85d29..da197720a9 100644
---- a/app/test-pmd/txonly.c
-+++ b/app/test-pmd/txonly.c
-@@ -50,12 +50,26 @@ uint16_t tx_udp_src_port =3D 9;
- uint16_t tx_udp_dst_port =3D 9;
-=20
- /* use RFC5735 / RFC2544 reserved network test addresses */
--uint32_t tx_ip_src_addr =3D (198U << 24) | (18 << 16) | (0 << 8) | 1;
--uint32_t tx_ip_dst_addr =3D (198U << 24) | (18 << 16) | (0 << 8) | 2;
-+#define TX_IP_SRC_ADDR_DEF ((198U << 24) | (18 << 16) | (0 << 8) | 1)
-+#define TX_IP_DST_ADDR_DEF ((198U << 24) | (18 << 16) | (0 << 8) | 2)
-+
-+uint32_t tx_ip_src_addr[RTE_MAX_ETHPORTS];
-+uint32_t tx_ip_dst_addr[RTE_MAX_ETHPORTS];
-+
-+RTE_INIT(tx_ip_addr_init)
-+{
-+=09portid_t pid;
-+
-+=09for (pid =3D 0; pid < RTE_MAX_ETHPORTS; pid++) {
-+=09=09tx_ip_src_addr[pid] =3D TX_IP_SRC_ADDR_DEF;
-+=09=09tx_ip_dst_addr[pid] =3D TX_IP_DST_ADDR_DEF;
-+=09}
-+}
-=20
- #define IP_DEFTTL  64   /* from RFC 1340. */
-=20
--static struct rte_ipv4_hdr pkt_ip_hdr; /**< IP header of transmitted packe=
-ts. */
-+/** IP header of transmitted packets, per Tx port. */
-+static struct rte_ipv4_hdr pkt_ip_hdr[RTE_MAX_ETHPORTS];
- RTE_DEFINE_PER_LCORE(uint8_t, _src_port_var); /**< Source port variation *=
-/
- static struct rte_udp_hdr pkt_udp_hdr; /**< UDP header of tx packets. */
-=20
-@@ -104,7 +118,8 @@ copy_buf_to_pkt(void* buf, unsigned len, struct rte_mbu=
-f *pkt, unsigned offset)
- static void
- setup_pkt_udp_ip_headers(struct rte_ipv4_hdr *ip_hdr,
- =09=09=09 struct rte_udp_hdr *udp_hdr,
--=09=09=09 uint16_t pkt_data_len)
-+=09=09=09 uint16_t pkt_data_len,
-+=09=09=09 portid_t port_id)
- {
- =09uint16_t pkt_len;
-=20
-@@ -128,8 +143,8 @@ setup_pkt_udp_ip_headers(struct rte_ipv4_hdr *ip_hdr,
- =09ip_hdr->next_proto_id =3D IPPROTO_UDP;
- =09ip_hdr->packet_id =3D 0;
- =09ip_hdr->total_length   =3D RTE_CPU_TO_BE_16(pkt_len);
--=09ip_hdr->src_addr =3D rte_cpu_to_be_32(tx_ip_src_addr);
--=09ip_hdr->dst_addr =3D rte_cpu_to_be_32(tx_ip_dst_addr);
-+=09ip_hdr->src_addr =3D rte_cpu_to_be_32(tx_ip_src_addr[port_id]);
-+=09ip_hdr->dst_addr =3D rte_cpu_to_be_32(tx_ip_dst_addr[port_id]);
-=20
- =09/*
- =09 * Compute IP header checksum.
-@@ -208,7 +223,7 @@ pkt_burst_prepare(struct rte_mbuf *pkt, struct rte_memp=
-ool *mbp,
- =09 * Copy headers in first packet segment(s).
- =09 */
- =09copy_buf_to_pkt(eth_hdr, sizeof(*eth_hdr), pkt, 0);
--=09copy_buf_to_pkt(&pkt_ip_hdr, sizeof(pkt_ip_hdr), pkt,
-+=09copy_buf_to_pkt(&pkt_ip_hdr[fs->tx_port], sizeof(*pkt_ip_hdr), pkt,
- =09=09=09sizeof(struct rte_ether_hdr));
- =09copy_buf_to_pkt(&pkt_udp_hdr, sizeof(pkt_udp_hdr), pkt,
- =09=09=09sizeof(struct rte_ether_hdr) +
-@@ -416,7 +431,7 @@ tx_only_begin(portid_t pi)
- =09=09return -EINVAL;
- =09}
-=20
--=09setup_pkt_udp_ip_headers(&pkt_ip_hdr, &pkt_udp_hdr, pkt_data_len);
-+=09setup_pkt_udp_ip_headers(&pkt_ip_hdr[pi], &pkt_udp_hdr, pkt_data_len, p=
-i);
-=20
- =09timestamp_enable =3D false;
- =09timestamp_mask =3D 0;
-diff --git a/doc/guides/testpmd_app_ug/run_app.rst b/doc/guides/testpmd_app=
-_ug/run_app.rst
-index 52699efa78..bcfbf33f92 100644
---- a/doc/guides/testpmd_app_ug/run_app.rst
-+++ b/doc/guides/testpmd_app_ug/run_app.rst
-@@ -155,13 +155,21 @@ The command line options are:
-     Set the MAC address ``XX:XX:XX:XX:XX:XX`` of the peer port N,
-     where 0 <=3D N < ``RTE_MAX_ETHPORTS``.
-=20
--*   ``--tx-ip=3DSRC,DST``
-+*   ``--tx-ip=3D[N:]SRC,DST``
-=20
-     Set the source and destination IP address used when doing transmit onl=
-y test.
-     The defaults address values are source 198.18.0.1 and
-     destination 198.18.0.2. These are special purpose addresses
-     reserved for benchmarking (RFC 5735).
-=20
-+    Without the optional port prefix, the addresses apply to all ports.
-+    With the prefix ``N:``, where 0 <=3D N < ``RTE_MAX_ETHPORTS``,
-+    the addresses apply only to port N.
-+    The option may be given several times to configure ports individually,
-+    and later options override earlier ones::
-+
-+       --tx-ip=3D198.18.0.1,198.18.0.2 --tx-ip=3D1:10.1.0.3,10.1.0.4
-+
- *   ``--tx-udp=3DSRC[,DST]``
-=20
-     Set the source and destination UDP port number for transmit test only =
-test.
---=20
-2.55.0
-
-
+SGkNCg0KDQpOWFAgUHVibGljDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206
+IFN0ZXBoZW4gSGVtbWluZ2VyIDxzdGVwaGVuQG5ldHdvcmtwbHVtYmVyLm9yZz4NCj4gU2VudDog
+TW9uZGF5LCBBdWd1c3QgMjQsIDIwMjYgMTA6MTEgUE0NCj4gVG86IEdhZ2FuZGVlcCBTaW5naCA8
+Ry5TaW5naEBueHAuY29tPg0KPiBDYzogZGV2QGRwZGsub3JnOyBIZW1hbnQgQWdyYXdhbCA8aGVt
+YW50LmFncmF3YWxAbnhwLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MTIgMDAvMTVdIGV0
+L2VuZXRjOiBhZGQgbmV3IGZlYXR1cmVzIGZvciBFTkVUQzQgb24gaS5NWDk1DQo+DQo+IE9uIE1v
+biwgMjQgQXVnIDIwMjYgMDc6NTI6NTcgKzAwMDANCj4gR2FnYW5kZWVwIFNpbmdoIDxHLlNpbmdo
+QG54cC5jb20+IHdyb3RlOg0KPg0KPiA+IEhpLA0KPiA+DQo+ID4NCj4gPiBOWFAgQ29uZmlkZW50
+aWFsDQo+DQo+IFBsZWFzZSBmaXggeW91ciAgbWFpbCByZXNwb25zZSBzeXN0ZW0uIFRoaXMgYSBw
+dWJsaWMgbGlzdCBzbyBhbnkgcmVzcG9uc2UgbGlrZSBpcw0KPiB2aW9sYXRpbmcgdGhhdCBzdGF0
+ZW1lbnQuDQoNClRoYW5rcyBmb3IgcG9pbnRpbmcgdGhhdCBvdXQsIHRoZSBkZWZhdWx0cyBhcmUg
+Y29uZmlkZW50aWFsLiBJJ2xsIHRha2UgY2FyZSBvZiB0aGF0IGluIGZ1dHVyZSBlbWFpbHMuDQo=
