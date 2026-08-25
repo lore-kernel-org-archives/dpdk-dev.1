@@ -2,55 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF4F9C61DB6
-	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Aug 2026 07:05:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 630E6C61DB6
+	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Aug 2026 07:43:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AC7B04014F;
-	Tue, 25 Aug 2026 09:05:15 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id DDBB3400D5
- for <dev@dpdk.org>; Tue, 25 Aug 2026 09:05:13 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=hgE3odzlA0r5OYCy1WNMqXJoVSJrIdg2h9ZQT9xd73o=;
- b=HCSd+XkH+pe7OU0WuuOmRjLq00RH1+rkCtACdyTv+zm2Pe9Lw3PW2hDJr6NYLqhgJQBvSgT8j
- LXJr7KTBQAPdFqw6fqpjplL2afRDEc3/v7mgDCi/ZCVjusJMl6I2YjFXjJMW8zsRimYn2HOxJ+C
- f15A9alZDHuxi/sXhV1RRYc=
-Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4hTf0f5wqpzHnGd9;
- Tue, 25 Aug 2026 15:04:34 +0800 (CST)
-Received: from dubpeml500007.china.huawei.com (unknown [7.214.146.172])
- by mail.maildlp.com (Postfix) with ESMTPS id 1666A40569;
- Tue, 25 Aug 2026 15:05:06 +0800 (CST)
-Received: from dubpemt100001.china.huawei.com (7.214.147.107) by
- dubpeml500007.china.huawei.com (7.214.146.172) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.45; Tue, 25 Aug 2026 08:05:05 +0100
-Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpemt100001.china.huawei.com (7.214.147.107) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 25 Aug 2026 08:05:05 +0100
-Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
- dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.2562.045; 
- Tue, 25 Aug 2026 08:05:05 +0100
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>,
- "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH] stack: introduce pile
-Thread-Topic: [PATCH] stack: introduce pile
-Thread-Index: AQHdKmHxOTsi6KhTAk+e68voB41GrLauZrVA
-Date: Tue, 25 Aug 2026 07:05:05 +0000
-Message-ID: <b8aec95f030c4c1bb995f3741a57af95@huawei.com>
-References: <20260812134756.1829613-1-mb@smartsharesystems.com>
-In-Reply-To: <20260812134756.1829613-1-mb@smartsharesystems.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.195.245.230]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id 5A62E4014F;
+	Tue, 25 Aug 2026 09:43:25 +0200 (CEST)
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com
+ [209.85.221.42]) by mails.dpdk.org (Postfix) with ESMTP id 0164C400D5
+ for <dev@dpdk.org>; Tue, 25 Aug 2026 09:43:23 +0200 (CEST)
+Received: by mail-wr1-f42.google.com with SMTP id
+ ffacd0b85a97d-47f84023916so3082684f8f.3
+ for <dev@dpdk.org>; Tue, 25 Aug 2026 00:43:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1787643803; x=1788248603; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=Nw0RWo7tzHcMGyj9KEpYMaMPZ+Y5/hkxr+9xuHPC2KY=;
+ b=D1MJb9yb/UNebeVD16Das5apj4p1J+rPK17S1T+BFifQP3vBlg/w5gQopd8JCq6ztB
+ Y0udliLqoIuEJekKJTH2FAqY29N2DEjoxuTnI9poxm+SytJkkGLQdyzuq6PQ/htkQsdj
+ VNmDrbmGz/y47Jzn14K5bboFH3fjUYWoaPrktQIIs56JXiS2IFmemBFdyA7f2QmVh6xX
+ VT6SflCkShzfVc+RJHJVnGGgpIfkBaJ+xZP7rvX6N0awF5LWKX9/slBFkSCQ0dvcmjEV
+ 2wkfCjdzPxrmNgW2TJpcRtm2RYDuxsa+a+gI566fRjfDDRta8hIxlk11KqSHsqPdvjX8
+ MXMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1787643803; x=1788248603;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:sender:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=Nw0RWo7tzHcMGyj9KEpYMaMPZ+Y5/hkxr+9xuHPC2KY=;
+ b=LtqrfbWT4Ths6Ed8XB4K8AoPxuvqWEDvCejCSVx3KA2Mp+zY5o5YD76bDHhnYEeRHs
+ b/cii3+psE/atTLPLA/qew+gaSwApk0tDPl+7LT94xT6hAp9EWPRo+M59dYYeoIuJD1C
+ lAYDW0ihubj3JkkVBkUQVwRzgXx/7hhMEJ2H9Ur6AiQIxzhqZM/4jlWX7eNnJDWahApj
+ 9bDDYT/sgpg6Jbrn3aMFICke2rwR39+c1FLyhqycRcAPdIkFOBZKlinnZOBOg3gwaVjB
+ fJUOZn54OjS4TKjmGMPAWxgU5w5Mbeoq6C4rpFPvj4K7MuSCiNMGXJvLyP5grPazHV7I
+ kaJQ==
+X-Gm-Message-State: AFuF++mSqSbUWs+KdRSTKYPlnRbSM9mmNr3M8YgsvDkNXC+00gqpTorD
+ A9u0H70lgQxSagOPBWrZ0ndw77XqxPgsifienBg6sG13eGqrVacEingq
+X-Gm-Gg: AR+sD102/cqRO20ePwkGJVc2U6Mb4T4KHnvDTlzcoT+l4QNYuY4enI45zyFzD8U/zJQ
+ EmXac9c64uK0BTp3whMVnbWvFOFV+x2+wwsQxq7FM/aqMFnpezY05GHU6E+/M8dy61cEwkSpP3C
+ BQ53qE54pTwj7DMdIQI80C3kCi2d3Ibr9rD+f7KPaoMlDKz/WJvBHohWgSS29BWUw4+RVXUZpHk
+ Ns5WkzHwDXrPOPmbwfA5aaJ0y1cPpOsPGyE46oRyHeZO7py9E/DcQ6LktOKbIu1r5eB0yJl7Lv8
+ JfJw6l1q2LeKf8x4qspQUsA2hzJic9agYuzq4eHxVVD77tyDUh7upYLcJ2mj2uY6NF19QSqO46Z
+ aq/2qhdn2sOftshcLzjjy5tz1GttkUKAAd0ISkS3OyFNMOfj4hfI2eZ2hT7bgn6HmoIDG8ZIVE8
+ FPMSWr+Js8TPRQfa8Mtdr1r+z4ZwMyb25/2f5VwN3O3JHNFTQa+8/uqEzW
+X-Received: by 2002:a5d:5d89:0:b0:47f:eac2:6f55 with SMTP id
+ ffacd0b85a97d-482c0b94872mr38042284f8f.19.1787643803207; 
+ Tue, 25 Aug 2026 00:43:23 -0700 (PDT)
+Received: from freepad.. ([2a01:e0a:1248:bd70:72a8:57c7:d75d:3066])
+ by smtp.gmail.com with ESMTPSA id
+ ffacd0b85a97d-482c9c0abfcsm10656529f8f.28.2026.08.25.00.43.22
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 25 Aug 2026 00:43:22 -0700 (PDT)
+Sender: Maxime Leroy <maxime.leroys@gmail.com>
+From: Maxime Leroy <maxime@leroys.fr>
+To: Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>
+Cc: dev@dpdk.org, stephen@networkplumber.org, Maxime Leroy <maxime@leroys.fr>
+Subject: [PATCH v3] net/dpaa2: hash inner IP for tunnelled traffic
+Date: Tue, 25 Aug 2026 09:42:55 +0200
+Message-ID: <20260825074255.367302-1-maxime@leroys.fr>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260723093540.1839619-1-maxime@leroys.fr>
+References: <20260723093540.1839619-1-maxime@leroys.fr>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -64,113 +81,161 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQoNCj4gDQo+IEFkZGVkIGEgbmV3IGhpZ2gtcGVyZm9ybWFuY2UgbG9jay1mcmVlICJwaWxlIiwg
-dXNpbmcgdGhlIFN0YWNrIEFQSS4NCj4gVGhlIHBpbGUgYmVoYXZlcyByb3VnaGx5IGxpa2UgYSBz
-dGFjaywgYnV0IGlzIG5vdCBzdHJpY3RseSBMSUZPLg0KPiANCj4gVGhlIHBpbGUgaXMgb3B0aW1p
-emVkIGZvciBwdXNoaW5nL3BvcHBpbmcgYnVsa3Mgb2Ygb2JqZWN0cywgd2hpY2gNCj4gaXQgZG9l
-cyBzaWduaWZpY2FudGx5IGZhc3RlciB0aGFuIHRoZSBsb2NrLWZyZWUgc3RhY2suDQo+IA0KPiBQ
-dXNoaW5nL3BvcHBpbmcgYSBudW1iZXIgb2Ygb2JqZWN0cyBub3QgZGl2aXNpYmxlIGJ5IHRoZSBj
-b21waWxlIHRpbWUNCj4gY29uZmlndXJhYmxlIGJ1bGsgc2l6ZSBpcyBoYW5kbGVkIGdyYWNlZnVs
-bHksIGJ1dCBub3QgYXMgZmFzdCBhcw0KPiBjb21wbGV0ZSBidWxrcy4NCj4gDQo+IFBlcmZvcm1h
-bmNlIGV4YW1wbGVzLCBzdGFja19waWxlX3BlcmZfYXV0b3Rlc3QgdnMuIHN0YWNrX2xmX2F1dG90
-ZXN0Og0KPiANCj4gT24gYSBzaW5nbGUgY29yZSwgcHVzaGluZy9wb3BwaW5nIDEgb3IgOCBvYmpl
-Y3RzIGlzIHNpbWlsYXIgc3BlZWQuDQo+IE9uIGEgc2luZ2xlIGNvcmUsIHB1c2hpbmcvcG9wcGlu
-ZyAzMiBvYmplY3RzIGlzIDJ4IGZhc3Rlci4NCj4gT24gYSBzaW5nbGUgY29yZSwgcHVzaGluZy9w
-b3BwaW5nIDUxMiBvYmplY3RzIGlzIDEweCBmYXN0ZXIuDQo+IA0KPiBPbiBmb3VyIGNvcmVzLCBw
-dXNoaW5nL3BvcHBpbmcgMSwgOCBvciAzMiBvYmplY3RzIGlzIHNsaWdodGx5IGZhc3Rlci4NCj4g
-T24gZm91ciBjb3JlcywgcHVzaGluZy9wb3BwaW5nIDUxMiBvYmplY3RzIGlzIDR4IGZhc3Rlci4N
-Cj4gDQo+IFNpZ25lZC1vZmYtYnk6IE1vcnRlbiBCcsO4cnVwIDxtYkBzbWFydHNoYXJlc3lzdGVt
-cy5jb20+DQo+IC0tLQ0KDQouLi4NCj4gKw0KPiArLyoqDQo+ICsgKiBQb3Agc2V2ZXJhbCBvYmpl
-Y3RzIGZyb20gdGhlIHBpbGUgKGxvY2stZnJlZSwgTVQtc2FmZSkuDQo+ICsgKg0KPiArICogQHBh
-cmFtIHMNCj4gKyAqICAgQSBwb2ludGVyIHRvIHRoZSBwaWxlIHN0cnVjdHVyZS4NCj4gKyAqIEBw
-YXJhbSBvYmpfdGFibGUNCj4gKyAqICAgQSBwb2ludGVyIHRvIGEgdGFibGUgb2Ygdm9pZCAqIHBv
-aW50ZXJzIChvYmplY3RzKS4NCj4gKyAqIEBwYXJhbSBuDQo+ICsgKiAgIFRoZSBudW1iZXIgb2Yg
-b2JqZWN0cyB0byBwdWxsIGZyb20gdGhlIHBpbGUuDQo+ICsgKiBAcmV0dXJuDQo+ICsgKiAgIEFj
-dHVhbCBudW1iZXIgb2Ygb2JqZWN0cyBwb3BwZWQgKGVpdGhlciAwIG9yICpuKikuDQo+ICsgKi8N
-Cj4gK3N0YXRpYyBfX3J0ZV9hbHdheXNfaW5saW5lIHVuc2lnbmVkIGludA0KPiArX19ydGVfc3Rh
-Y2tfcGlsZV9wb3Aoc3RydWN0IHJ0ZV9zdGFjayAqcywNCj4gKwkJdm9pZCAqKm9ial90YWJsZSwN
-Cj4gKwkJdW5zaWduZWQgaW50IG4pDQo+ICt7DQo+ICsJUlRFX0FTU0VSVChzICE9IE5VTEwpOw0K
-PiArCVJURV9BU1NFUlQob2JqX3RhYmxlICE9IE5VTEwpOw0KPiArDQo+ICsJc3RydWN0IHJ0ZV9z
-dGFja19waWxlICpwaWxlID0gJnMtPnN0YWNrX3BpbGU7DQo+ICsJc3RydWN0IHJ0ZV9zdGFja19w
-aWxlX2J1bGtfZWxlbSAqYnVsa19maXJzdCA9IE5VTEwsICpidWxrX2xhc3QgPSBOVUxMOw0KPiAr
-CXN0cnVjdCBydGVfc3RhY2tfbGZfZWxlbSAqc29sb19maXJzdCA9IE5VTEwsICpzb2xvX2xhc3Qg
-PSBOVUxMLA0KPiAqdG1wX3NvbG87DQo+ICsJYWxpZ25hcyhSVEVfQ0FDSEVfTElORV9TSVpFKSB2
-b2lkDQo+ICpvYmpfZnJhZ1tSVEVfU1RBQ0tfUElMRV9CVUxLX1NJWkVdOw0KPiArCXN0cnVjdCBy
-dGVfc3RhY2tfcGlsZV9idWxrX2VsZW0gKmZyYWcgPSBOVUxMOw0KPiArCXVuc2lnbmVkIGludCBu
-X2J1bGsgPSBuIC8gUlRFX1NUQUNLX1BJTEVfQlVMS19TSVpFOw0KPiArCXVuc2lnbmVkIGludCBu
-X3NvbG8gPSBuICYgKFJURV9TVEFDS19QSUxFX0JVTEtfU0laRSAtIDEpOw0KPiArCXVuc2lnbmVk
-IGludCBpOw0KPiArDQo+ICsJaWYgKHVubGlrZWx5KG5fYnVsayA9PSAwKSkgew0KPiArCQlpZiAo
-dW5saWtlbHkobl9zb2xvID09IDApKQ0KPiArCQkJcmV0dXJuIDA7DQo+ICsJCWdvdG8gc29sbzsN
-Cj4gKwl9DQo+ICsNCj4gK2J1bGs6DQo+ICsJLyogRmV0Y2ggbl9idWxrICogUlRFX1NUQUNLX1BJ
-TEVfQlVMS19TSVpFIG9iamVjdHMgYXMgYnVsayBlbGVtZW50cy4NCj4gKi8NCj4gKwlidWxrX2Zp
-cnN0ID0gX19ydGVfc3RhY2tfcGlsZV9idWxrX3BvcF9lbGVtcygmcGlsZS0+YnVsaywgbl9idWxr
-LA0KPiBvYmpfdGFibGUsICZidWxrX2xhc3QpOw0KPiArCWlmICh1bmxpa2VseShidWxrX2ZpcnN0
-ID09IE5VTEwpKSB7DQo+ICsJCS8qDQo+ICsJCSAqIE5vdCBhdmFpbGFibGUuDQo+ICsJCSAqIFJl
-dHJ5IHdpdGggZmV3ZXIgYnVsayBlbGVtZW50czsgb2JqZWN0cyB0byBiZSBmZXRjaGVkIGFzIHNv
-bG8NCj4gZWxlbWVudHMgaW5zdGVhZC4NCj4gKwkJICovDQo+ICsJCW5fc29sbyArPSBSVEVfU1RB
-Q0tfUElMRV9CVUxLX1NJWkU7DQo+ICsJCW5fYnVsay0tOw0KPiArCQlpZiAobl9idWxrID4gMCkN
-Cj4gKwkJCWdvdG8gYnVsazsNCj4gKwkJZWxzZQ0KPiArCQkJZ290byBzb2xvOw0KPiArCX0NCj4g
-Kw0KPiArCWlmIChsaWtlbHkobl9zb2xvID09IDApKQ0KPiArCQlnb3RvIGRvbmU7DQo+ICsNCj4g
-K3NvbG86DQo+ICsJLyogRmV0Y2ggbl9zb2xvIG9iamVjdHMgYXMgc29sbyBlbGVtZW50cy4gKi8N
-Cj4gKwlzb2xvX2ZpcnN0ID0gX19ydGVfc3RhY2tfbGZfcG9wX2VsZW1zKCZwaWxlLT5zb2xvLCBu
-X3NvbG8sDQo+ICsJCQkmb2JqX3RhYmxlW25fYnVsayAqIFJURV9TVEFDS19QSUxFX0JVTEtfU0la
-RV0sDQo+ICZzb2xvX2xhc3QpOw0KPiArCWlmIChzb2xvX2ZpcnN0ICE9IE5VTEwpDQo+ICsJCWdv
-dG8gZG9uZTsNCg0KQSBxdWVzdGlvbjogZG9lcyBpdCBtZWFuIHRoYXQgaWYgdXNlciBhc2tlZCB0
-byBwb3AgIGp1c3Qgb25lIGVsZW0sIGl0IGNhbiBmYWlsDQpJZiBzb2xvIGxpc3QgaXMgZW1wdHks
-IHdoaWxlIHRoZXJlIGFyZSBwbGVudHkgb2YgZWxlbWVudHMgaW4gYnVsayBzZWN0aW9uPw0KDQo+
-ICsNCj4gKwkvKiBTb2xvIGVsZW1lbnRzIG5vdCBhdmFpbGFibGUuIFRyeSBmcmFnbWVudGF0aW9u
-LiAqLw0KPiArCWlmICh1bmxpa2VseShuX3NvbG8gPj0gUlRFX1NUQUNLX1BJTEVfQlVMS19TSVpF
-KSkNCj4gKwkJZ290byBmYWlsOyAvKiBSYW4gb3V0IG9mIGJ1bGsgZWxlbWVudHMgYWJvdmUuIERv
-bid0IHRyeSB0byBmZXRjaA0KPiBvbmUgbW9yZS4gKi8NCj4gKw0KPiArCS8qIEZldGNoIGEgZnJh
-Z21lbnRhdGlvbiBlbGVtZW50IGFzIGEgYnVsayBlbGVtZW50LiAqLw0KPiArCWZyYWcgPSBfX3J0
-ZV9zdGFja19waWxlX2J1bGtfcG9wX2VsZW1zKCZwaWxlLT5idWxrLCAxLCBvYmpfZnJhZywgTlVM
-TCk7DQo+ICsJaWYgKHVubGlrZWx5KGZyYWcgPT0gTlVMTCkpDQo+ICsJCWdvdG8gZmFpbDsNCj4g
-Kw0KPiArCS8qIEdldCBuX3NvbG8gb2JqZWN0cyBmcm9tIHRoZSBmcmFnbWVudGF0aW9uIGVsZW1l
-bnQuICovDQo+ICsJX19ydGVfYXNzdW1lKG5fc29sbyA+IDApOw0KPiArCV9fcnRlX2Fzc3VtZShu
-X3NvbG8gPCBSVEVfU1RBQ0tfUElMRV9CVUxLX1NJWkUpOw0KPiArCWZvciAoaSA9IDA7IGkgPCBu
-X3NvbG87IGkrKykNCj4gKwkJb2JqX3RhYmxlW25fYnVsayAqIFJURV9TVEFDS19QSUxFX0JVTEtf
-U0laRSArIGldID0gb2JqX2ZyYWdbaV07DQo+ICsNCj4gKwkvKiBGZXRjaCBmcmVlIGVsZW1lbnRz
-IGZvciB0aGUgZXhjZXNzIG9iamVjdHMuICovDQo+ICsJX19ydGVfYXNzdW1lKFJURV9TVEFDS19Q
-SUxFX0JVTEtfU0laRSAtIG5fc29sbyA+IDApOw0KPiArCV9fcnRlX2Fzc3VtZShSVEVfU1RBQ0tf
-UElMRV9CVUxLX1NJWkUgLSBuX3NvbG8gPA0KPiBSVEVfU1RBQ0tfUElMRV9CVUxLX1NJWkUpOw0K
-PiArCXNvbG9fZmlyc3QgPSBfX3J0ZV9zdGFja19sZl9wb3BfZWxlbXMoJnBpbGUtPmZyZWVfc29s
-bywNCj4gKwkJCVJURV9TVEFDS19QSUxFX0JVTEtfU0laRSAtIG5fc29sbywgTlVMTCwgJnNvbG9f
-bGFzdCk7DQo+ICsJaWYgKHVubGlrZWx5KHNvbG9fZmlyc3QgPT0gTlVMTCkpDQo+ICsJCWdvdG8g
-ZmFpbDsNCj4gKw0KPiArCS8qIENvbnN0cnVjdCB0aGUgc29sbyBlbGVtZW50cyBmcm9tIHRoZSBl
-eGNlc3Mgb2JqZWN0cy4gKi8NCj4gKwl0bXBfc29sbyA9IHNvbG9fZmlyc3Q7DQo+ICsJX19ydGVf
-YXNzdW1lKG5fc29sbyA+IDApOw0KPiArCV9fcnRlX2Fzc3VtZShuX3NvbG8gPCBSVEVfU1RBQ0tf
-UElMRV9CVUxLX1NJWkUpOw0KPiArCWZvciAoaSA9IG5fc29sbzsgaSA8IFJURV9TVEFDS19QSUxF
-X0JVTEtfU0laRTsgaSsrLCB0bXBfc29sbyA9IHRtcF9zb2xvLQ0KPiA+bmV4dCkNCj4gKwkJdG1w
-X3NvbG8tPmRhdGEgPSBvYmpfZnJhZ1tpXTsNCj4gKw0KPiArCS8qIFB1c2ggdGhlIGV4Y2VzcyBv
-YmplY3RzIGFzIHNvbG8gZWxlbWVudHMuICovDQo+ICsJX19ydGVfc3RhY2tfbGZfcHVzaF9lbGVt
-cygmcGlsZS0+c29sbywgc29sb19maXJzdCwgc29sb19sYXN0LA0KPiArCQkJUlRFX1NUQUNLX1BJ
-TEVfQlVMS19TSVpFIC0gbl9zb2xvKTsNCj4gKwluX3NvbG8gPSAwOw0KPiArDQo+ICsJLyogQWRk
-IHRoZSBmcmFnbWVudGF0aW9uIGVsZW1lbnQgdG8gdGhlIGJ1bGsgZWxlbWVudHMsIHNvIGl0IGNh
-biBiZQ0KPiBmcmVlZCB3aXRoIHRoZW0uICovDQo+ICsJaWYgKG5fYnVsayA+IDApDQo+ICsJCWJ1
-bGtfbGFzdC0+bmV4dCA9IGZyYWc7DQo+ICsJZWxzZQ0KPiArCQlidWxrX2ZpcnN0ID0gZnJhZzsN
-Cj4gKwlidWxrX2xhc3QgPSBmcmFnOw0KPiArCW5fYnVsaysrOw0KPiArDQo+ICtkb25lOg0KPiAr
-CS8qIFN1Y2Nlc3MuIEZyZWUgdGhlIGVsZW1lbnRzLiAqLw0KPiArCWlmIChuX2J1bGsgPiAwKQ0K
-PiArCQlfX3J0ZV9zdGFja19waWxlX2J1bGtfcHVzaF9lbGVtcygmcGlsZS0+ZnJlZV9idWxrLCBi
-dWxrX2ZpcnN0LA0KPiBidWxrX2xhc3QsIG5fYnVsayk7DQo+ICsJaWYgKG5fc29sbyA+IDApDQo+
-ICsJCV9fcnRlX3N0YWNrX2xmX3B1c2hfZWxlbXMoJnBpbGUtPmZyZWVfc29sbywgc29sb19maXJz
-dCwNCj4gc29sb19sYXN0LCBuX3NvbG8pOw0KPiArDQo+ICsJcmV0dXJuIG47DQo+ICsNCj4gK2Zh
-aWw6DQo+ICsJLyogRmFpbGVkLiBSb2xsIGJhY2suICovDQo+ICsJaWYgKGZyYWcgIT0gTlVMTCkg
-ew0KPiArCQkvKg0KPiArCQkgKiBObyBmdXJ0aGVyIGFjdGlvbiB0aGFuIHRoaXMgaXMgcmVxdWly
-ZWQgdG8gcm9sbCB0aGUNCj4gZnJhZ21lbnRhdGlvbg0KPiArCQkgKiBlbGVtZW50IGJhY2sgaW50
-byB0aGUgcGlsZSBvZiBidWxrIGVsZW1lbnRzLCBhcyB0aGUgb2JqZWN0cyBpbg0KPiArCQkgKiB0
-aGUgZnJhZ21lbnRhdGlvbiBlbGVtZW50IGFyZSBpbnRhY3QuDQo+ICsJCSAqLw0KPiArCQlpZiAo
-bl9idWxrID4gMCkNCj4gKwkJCWJ1bGtfbGFzdC0+bmV4dCA9IGZyYWc7DQo+ICsJCWVsc2UNCj4g
-KwkJCWJ1bGtfZmlyc3QgPSBmcmFnOw0KPiArCQlidWxrX2xhc3QgPSBmcmFnOw0KPiArCQluX2J1
-bGsgKz0gMTsNCj4gKwl9DQo+ICsJaWYgKG5fYnVsayA+IDApDQo+ICsJCV9fcnRlX3N0YWNrX3Bp
-bGVfYnVsa19wdXNoX2VsZW1zKCZwaWxlLT5idWxrLCBidWxrX2ZpcnN0LA0KPiBidWxrX2xhc3Qs
-IG5fYnVsayk7DQo+ICsNCj4gKwlyZXR1cm4gMDsNCj4gK30NCj4gKw0KPiArLyoqDQo+ICsgKiBA
-aW50ZXJuYWwgSW5pdGlhbGl6ZSBhIHBpbGUgc3RhY2suDQo+ICsgKg0KPiArICogQHBhcmFtIHMN
-Cj4gKyAqICAgQSBwb2ludGVyIHRvIHRoZSBzdGFjayBzdHJ1Y3R1cmUuDQo+ICsgKiBAcGFyYW0g
-Y291bnQNCj4gKyAqICAgVGhlIHNpemUgb2YgdGhlIHN0YWNrLg0KPiArICovDQo+ICt2b2lkDQo+
-ICtydGVfc3RhY2tfcGlsZV9pbml0KHN0cnVjdCBydGVfc3RhY2sgKnMsIHVuc2lnbmVkIGludCBj
-b3VudCk7DQo+ICsNCj4gKy8qKg0KPiArICogQGludGVybmFsIFJldHVybiB0aGUgbWVtb3J5IHJl
-cXVpcmVkIGZvciBhIHBpbGUgc3RhY2suDQo+ICsgKg0KPiArICogQHBhcmFtIGNvdW50DQo+ICsg
-KiAgIFRoZSBzaXplIG9mIHRoZSBzdGFjay4NCj4gKyAqIEByZXR1cm4NCj4gKyAqICAgVGhlIGJ5
-dGVzIHRvIGFsbG9jYXRlIGZvciBhIHBpbGUgc3RhY2suDQo+ICsgKi8NCj4gK3NzaXplX3QNCj4g
-K3J0ZV9zdGFja19waWxlX2dldF9tZW1zaXplKHVuc2lnbmVkIGludCBjb3VudCk7DQo+ICsNCj4g
-KyNlbmRpZiAvKiBfUlRFX1NUQUNLX1BJTEVfSF8gKi8NCj4gLS0NCj4gMi40My4wDQoNCg==
+The RSS key only extracted the outer IP header. Tunnelled traffic whose
+outer headers are fixed then carries no entropy for the hash, so every
+flow lands on a single Rx queue.
+
+Extract both the outer IP (header index 0) and the innermost IP instance
+(HDR_INDEX_LAST). Plain frames keep being hashed on their only IP header;
+the inner extract resolves to nothing and adds no entropy. Tunnelled
+frames are also hashed on their inner IP and spread across the Rx queues.
+
+That a lone IP header does not resolve HDR_INDEX_LAST is the regression
+reverted by commit 2b375df07e48 ("net/dpaa2: revert inner RSS level
+support"): extracted only at HDR_INDEX_LAST, every plain frame hashed to
+the same value and landed on one Rx queue.
+
+The worst case, requesting every type the PMD advertises, is 16 extracts
+out of the DPKG_MAX_NUM_OF_EXTRACTS 20. On LX2160A
+dpni_set_rx_hash_dist() accepts the key, and plain IPv4, plain IPv6, VLAN
+tagged and tunnelled IPv6 traffic all spread across the Rx queues.
+
+This is the PMD default hash: dpaa2 does not expose the ethdev RSS level
+selector, so it applies to every RSS request. The hardware cannot hash
+the inner IP alone, as HDR_INDEX_LAST only resolves when several IP
+headers are stacked and a plain frame would hash to a constant. Folding
+the outer IP into the key is therefore unavoidable, and two tunnelled
+flows that share an inner IP but differ in their outer IP may hash to
+different queues. This is documented in the dpaa2 guide.
+
+Signed-off-by: Maxime Leroy <maxime@leroys.fr>
+---
+
+v3:
+* Drop the DPAA2_DIST_HDR_INDEX_LAST define and take (uint8_t)LAST_HDR_INDEX
+  directly at its single use site, rather than adding a second name for a
+  constant the driver already has (Stephen Hemminger).
+* Record the extract budget and the LX2160A results in the commit log
+  (Stephen Hemminger).
+* Re-added the release notes entry dropped in v2, now under 26.11.
+
+v2:
+* Sent standalone: patch 1/2 of v1, the revert of the inner RSS level
+  support, was applied as 2b375df07e48.
+* Dropped the release_26_07.rst entry, that release having been tagged.
+  Unchanged otherwise.
+
+ doc/guides/nics/dpaa2.rst              |  3 ++
+ doc/guides/rel_notes/release_26_11.rst |  5 +++
+ drivers/net/dpaa2/base/dpaa2_hw_dpni.c | 60 +++++++++++++-------------
+ 3 files changed, 37 insertions(+), 31 deletions(-)
+
+diff --git a/doc/guides/nics/dpaa2.rst b/doc/guides/nics/dpaa2.rst
+index ae8b32af2c..aaaf5f9713 100644
+--- a/doc/guides/nics/dpaa2.rst
++++ b/doc/guides/nics/dpaa2.rst
+@@ -588,6 +588,9 @@ Other Limitations
+ 
+ - RSS hash key cannot be modified.
+ - RSS RETA cannot be configured.
++- RSS hashes on both the outer and the inner IP header. Tunnelled flows
++  that share the same inner IP but differ in their outer IP may therefore
++  be steered to different Rx queues.
+ 
+ .. _dpaa2_dptmapi:
+ 
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index 87c7e81bde..4887bccbc0 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -55,6 +55,11 @@ New Features
+      Also, make sure to start the actual text at the margin.
+      =======================================================
+ 
++* **Updated NXP dpaa2 driver.**
++
++  * Added the inner IP header to the RSS hash so tunnelled traffic is
++    distributed across the Rx queues.
++
+ 
+ Removed Items
+ -------------
+diff --git a/drivers/net/dpaa2/base/dpaa2_hw_dpni.c b/drivers/net/dpaa2/base/dpaa2_hw_dpni.c
+index 26ad105c73..83694133f1 100644
+--- a/drivers/net/dpaa2/base/dpaa2_hw_dpni.c
++++ b/drivers/net/dpaa2/base/dpaa2_hw_dpni.c
+@@ -381,42 +381,40 @@ dpaa2_distset_to_dpkg_profile_cfg(
+ 			case RTE_ETH_RSS_IPV6:
+ 			case RTE_ETH_RSS_FRAG_IPV6:
+ 			case RTE_ETH_RSS_NONFRAG_IPV6_OTHER:
+-			case RTE_ETH_RSS_IPV6_EX:
++			case RTE_ETH_RSS_IPV6_EX: {
++				static const uint32_t ip_fields[] = {
++					NH_FLD_IP_SRC, NH_FLD_IP_DST,
++					NH_FLD_IP_PROTO };
++				static const uint8_t ip_hdr_index[] = {
++					0, (uint8_t)LAST_HDR_INDEX };
++				unsigned int f, h;
+ 
+ 				if (l3_configured)
+ 					break;
+ 				l3_configured = 1;
+ 
+-				kg_cfg->extracts[i].extract.from_hdr.prot =
+-					NET_PROT_IP;
+-				kg_cfg->extracts[i].extract.from_hdr.field =
+-					NH_FLD_IP_SRC;
+-				kg_cfg->extracts[i].type =
+-					DPKG_EXTRACT_FROM_HDR;
+-				kg_cfg->extracts[i].extract.from_hdr.type =
+-					DPKG_FULL_FIELD;
+-				i++;
+-
+-				kg_cfg->extracts[i].extract.from_hdr.prot =
+-					NET_PROT_IP;
+-				kg_cfg->extracts[i].extract.from_hdr.field =
+-					NH_FLD_IP_DST;
+-				kg_cfg->extracts[i].type =
+-					DPKG_EXTRACT_FROM_HDR;
+-				kg_cfg->extracts[i].extract.from_hdr.type =
+-					DPKG_FULL_FIELD;
+-				i++;
+-
+-				kg_cfg->extracts[i].extract.from_hdr.prot =
+-					NET_PROT_IP;
+-				kg_cfg->extracts[i].extract.from_hdr.field =
+-					NH_FLD_IP_PROTO;
+-				kg_cfg->extracts[i].type =
+-					DPKG_EXTRACT_FROM_HDR;
+-				kg_cfg->extracts[i].extract.from_hdr.type =
+-					DPKG_FULL_FIELD;
+-				i++;
+-			break;
++				/* Hash on the outer IP (index 0) and the innermost
++				 * IP instance. A plain frame has a single IP header,
++				 * so only the outer extract resolves; a tunnelled
++				 * frame resolves both and is also spread on its inner
++				 * IP.
++				 */
++				for (h = 0; h < RTE_DIM(ip_hdr_index); h++)
++					for (f = 0; f < RTE_DIM(ip_fields); f++) {
++						kg_cfg->extracts[i].extract.from_hdr.prot =
++							NET_PROT_IP;
++						kg_cfg->extracts[i].extract.from_hdr.hdr_index =
++							ip_hdr_index[h];
++						kg_cfg->extracts[i].extract.from_hdr.field =
++							ip_fields[f];
++						kg_cfg->extracts[i].type =
++							DPKG_EXTRACT_FROM_HDR;
++						kg_cfg->extracts[i].extract.from_hdr.type =
++							DPKG_FULL_FIELD;
++						i++;
++					}
++				break;
++			}
+ 
+ 			case RTE_ETH_RSS_NONFRAG_IPV4_TCP:
+ 			case RTE_ETH_RSS_NONFRAG_IPV6_TCP:
+-- 
+2.43.0
+
