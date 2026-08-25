@@ -2,53 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD709C61DBC
-	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Aug 2026 16:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B45FDC61DBC
+	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Aug 2026 16:28:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B399340A6E;
-	Tue, 25 Aug 2026 18:27:37 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A992A40A72;
+	Tue, 25 Aug 2026 18:27:40 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
- by mails.dpdk.org (Postfix) with ESMTP id 662C64069D
- for <dev@dpdk.org>; Tue, 25 Aug 2026 18:27:33 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 70FC94013F
+ for <dev@dpdk.org>; Tue, 25 Aug 2026 18:27:34 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1787675253; x=1819211253;
+ t=1787675254; x=1819211254;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=WscEtxO2ZB8dlGbhnbsDb0iA0MF3hv/WA+5smPZHKHg=;
- b=mwfYQIT4m8nTMH8QGBKqz9HsLTE1RxHCupHdrsM+QaZQdBf83s/iLkSR
- 9kc6KJVR6tkKoouevQ7+kUG9ZndLsunGXf+Tg9Z3IX423MQ4hr004iEZ2
- k+MIu26y3zmJXQQ+35xFqZCRFJ4BNSz3lJ2sMS6LSk94GB4ne1TerMdSe
- zipwSBWV5cp6HTPYUEusTs3gnLEjQacoaTbnZ6kpPTRaJU0Akv1/89S7Q
- OzSardriv+NFs2K0RFOe4w1QB3O0HLwo1aagT5bNFWPez843TCeskLDAi
- kFrpX2cl60ZRGiqHW4qCt6mofuIOlA/f7kAiGlxHE+7BYsC1Pv5pIaVmY A==;
-X-CSE-ConnectionGUID: oL5WMOdtQFqGEG9H/RXhSQ==
-X-CSE-MsgGUID: h9S1alLPRsCtM22Et2wyQA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11886"; a="88277672"
-X-IronPort-AV: E=Sophos;i="6.25,243,1779174000"; d="scan'208";a="88277672"
+ bh=TDbVWhIo7mJ1NiLznSjMuweL0ckxANJ156gQJ7VSSPE=;
+ b=gyWwpw2Sq1Ca+cK4nXpqdwNWCiEqk53Rzyo9Runjvch1EtFZHnhDBxCX
+ 9b1nzdjkd9sPzdukOQXohGQamPkO3TtHTVi3ZFNYHpMjdD3uClmjyMCmy
+ 9GhQb2r5Kwl76TvRdjNMB9imJt0L7RIgseKqFKC3DrrhhEMXsD/YQogXg
+ 7Yg+nIPYkOug28HYbNQUSnkK9QuAEaLNPYQTjlHjaJhS1sKur7zJzUFmA
+ PwQU7C2+w0Jb7IpOf/yENWVfzIaabNQXsYwtyyJH9SEnypVAlb65EUgbb
+ S3kBD6iDcnwYdfUIhvyXsyv6JpBFeliXJ8jvj12j2cDNNlMSNRLFG2zYW A==;
+X-CSE-ConnectionGUID: oOmrznrIRh6YKwJJREarIg==
+X-CSE-MsgGUID: lpTfEQfPSL+JGqjYsVedyg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11886"; a="88277675"
+X-IronPort-AV: E=Sophos;i="6.25,243,1779174000"; d="scan'208";a="88277675"
 Received: from fmviesa004.fm.intel.com ([10.60.135.144])
  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 25 Aug 2026 09:27:33 -0700
-X-CSE-ConnectionGUID: by086UsTQBW5gyYkvteXFQ==
-X-CSE-MsgGUID: VpE5bNZPTDmjqgLzLFXjCw==
+ 25 Aug 2026 09:27:34 -0700
+X-CSE-ConnectionGUID: iO5lsmoFRvCPCKay1yoqDQ==
+X-CSE-MsgGUID: 9aD+ZZE6TdWoB/vbbPDj2g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,243,1779174000"; d="scan'208";a="269286200"
+X-IronPort-AV: E=Sophos;i="6.25,243,1779174000"; d="scan'208";a="269286215"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa004.fm.intel.com with ESMTP; 25 Aug 2026 09:27:32 -0700
+ by fmviesa004.fm.intel.com with ESMTP; 25 Aug 2026 09:27:33 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>,
  Anatoly Burakov <anatoly.burakov@intel.com>,
  David Marchand <david.marchand@redhat.com>
-Subject: [PATCH v3 7/8] net/ixgbe: move editable files out of base folder
-Date: Tue, 25 Aug 2026 17:27:11 +0100
-Message-ID: <20260825162714.1049272-8-bruce.richardson@intel.com>
+Subject: [PATCH v3 8/8] net/ice: consolidate the sources list
+Date: Tue, 25 Aug 2026 17:27:12 +0100
+Message-ID: <20260825162714.1049272-9-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260825162714.1049272-1-bruce.richardson@intel.com>
 References: <20260814153755.940302-1-bruce.richardson@intel.com>
  <20260825162714.1049272-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -63,143 +62,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The osdep headers contain the macros and other definitions needed to
-allow the base code to compile as part of DPDK. They traditionally tend
-to reside in the base code folder, but are an exception in that they can
-be modified by regular DPDK patches, and not just as part of a base code
-snapshot update. Similarly the meson.build file in the base folder is
-not part of the snapshots and is an editable file in the base folder.
-
-Therefore, we can simplify the rules around base code by moving these
-files into the main driver folder, leaving the base code C files all as
-uneditable except via snapshot update.
+The sources list for DCF part of ice driver was separated out for no
+functional reason. Merge these into the main sources list for ice
+driver.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
 Acked-by: David Marchand <david.marchand@redhat.com>
 ---
- drivers/net/intel/ixgbe/base/README           |  9 ---------
- drivers/net/intel/ixgbe/base/meson.build      | 19 -------------------
- drivers/net/intel/ixgbe/ixgbe_ethdev.c        |  2 +-
- drivers/net/intel/ixgbe/ixgbe_flow.c          |  2 +-
- .../net/intel/ixgbe/{base => }/ixgbe_osdep.h  |  2 ++
- drivers/net/intel/ixgbe/meson.build           | 17 ++++++++++++++++-
- 6 files changed, 20 insertions(+), 31 deletions(-)
- delete mode 100644 drivers/net/intel/ixgbe/base/meson.build
- rename drivers/net/intel/ixgbe/{base => }/ixgbe_osdep.h (99%)
+ drivers/net/intel/ice/meson.build | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/intel/ixgbe/base/README b/drivers/net/intel/ixgbe/base/README
-index b48438f1db..bea5061abc 100644
---- a/drivers/net/intel/ixgbe/base/README
-+++ b/drivers/net/intel/ixgbe/base/README
-@@ -25,12 +25,3 @@ This driver is valid for the product(s) listed below
- * Intel® Ethernet Server Adapter X520-T2
- * Intel® Ethernet Controller X550 Series
- * Intel® Ethernet Controller E610 Series
--
--Updating the driver
--===================
--
--NOTE: The source code in this directory should not be modified apart from
--the following file(s):
--
--    ixgbe_osdep.h
--    ixgbe_osdep.c
-diff --git a/drivers/net/intel/ixgbe/base/meson.build b/drivers/net/intel/ixgbe/base/meson.build
-deleted file mode 100644
-index c0b14a1db3..0000000000
---- a/drivers/net/intel/ixgbe/base/meson.build
-+++ /dev/null
-@@ -1,19 +0,0 @@
--# SPDX-License-Identifier: BSD-3-Clause
--# Copyright(c) 2017-2024 Intel Corporation
--
--base_sources = files(
--        'ixgbe_82598.c',
--        'ixgbe_82599.c',
--        'ixgbe_api.c',
--        'ixgbe_common.c',
--        'ixgbe_dcb_82598.c',
--        'ixgbe_dcb_82599.c',
--        'ixgbe_dcb.c',
--        'ixgbe_e610.c',
--        'ixgbe_hv_vf.c',
--        'ixgbe_mbx.c',
--        'ixgbe_phy.c',
--        'ixgbe_vf.c',
--        'ixgbe_x540.c',
--        'ixgbe_x550.c',
+diff --git a/drivers/net/intel/ice/meson.build b/drivers/net/intel/ice/meson.build
+index 5dff99f4a9..322d9597d2 100644
+--- a/drivers/net/intel/ice/meson.build
++++ b/drivers/net/intel/ice/meson.build
+@@ -3,6 +3,11 @@
+ 
+ sources = files(
+         'ice_acl_filter.c',
++        'ice_dcf.c',
++        'ice_dcf_vf_representor.c',
++        'ice_dcf_ethdev.c',
++        'ice_dcf_parent.c',
++        'ice_dcf_sched.c',
+         'ice_diagnose.c',
+         'ice_ethdev.c',
+         'ice_fdir_filter.c',
+@@ -38,14 +43,6 @@ elif arch_subdir == 'arm' and dpdk_conf.get('RTE_ARCH_64')
+     sources += files('ice_rxtx_vec_neon.c')
+ endif
+ 
+-sources += files(
+-        'ice_dcf.c',
+-        'ice_dcf_vf_representor.c',
+-        'ice_dcf_ethdev.c',
+-        'ice_dcf_parent.c',
+-        'ice_dcf_sched.c',
 -)
-diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-index 3d4f4fb7fc..4b7f51ce13 100644
---- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-@@ -44,7 +44,7 @@
- #include "ixgbe_rxtx.h"
- #include "base/ixgbe_type.h"
- #include "base/ixgbe_phy.h"
--#include "base/ixgbe_osdep.h"
-+#include "ixgbe_osdep.h"
- #include "ixgbe_regs.h"
+-
+ require_iova_in_mbuf = false
  
- /*
-diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.c b/drivers/net/intel/ixgbe/ixgbe_flow.c
-index 7f1241951f..c702119eb0 100644
---- a/drivers/net/intel/ixgbe/ixgbe_flow.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_flow.c
-@@ -38,7 +38,7 @@
- #include "base/ixgbe_api.h"
- #include "base/ixgbe_vf.h"
- #include "base/ixgbe_common.h"
--#include "base/ixgbe_osdep.h"
-+#include "ixgbe_osdep.h"
- #include "ixgbe_ethdev.h"
- #include "ixgbe_bypass.h"
- #include "ixgbe_rxtx.h"
-diff --git a/drivers/net/intel/ixgbe/base/ixgbe_osdep.h b/drivers/net/intel/ixgbe/ixgbe_osdep.h
-similarity index 99%
-rename from drivers/net/intel/ixgbe/base/ixgbe_osdep.h
-rename to drivers/net/intel/ixgbe/ixgbe_osdep.h
-index 4dfed02137..9f4f5e8038 100644
---- a/drivers/net/intel/ixgbe/base/ixgbe_osdep.h
-+++ b/drivers/net/intel/ixgbe/ixgbe_osdep.h
-@@ -5,6 +5,8 @@
- #ifndef _IXGBE_OS_H_
- #define _IXGBE_OS_H_
- 
-+/* File containing OS dependencies for base code */
-+
- #include <pthread.h>
- #include <string.h>
- #include <stdint.h>
-diff --git a/drivers/net/intel/ixgbe/meson.build b/drivers/net/intel/ixgbe/meson.build
-index 7e737ee7b4..0531d37acd 100644
---- a/drivers/net/intel/ixgbe/meson.build
-+++ b/drivers/net/intel/ixgbe/meson.build
-@@ -3,7 +3,22 @@
- 
- cflags += ['-DRTE_LIBRTE_IXGBE_BYPASS']
- 
--subdir('base')
-+base_sources = files(
-+        'base/ixgbe_82598.c',
-+        'base/ixgbe_82599.c',
-+        'base/ixgbe_api.c',
-+        'base/ixgbe_common.c',
-+        'base/ixgbe_dcb_82598.c',
-+        'base/ixgbe_dcb_82599.c',
-+        'base/ixgbe_dcb.c',
-+        'base/ixgbe_e610.c',
-+        'base/ixgbe_hv_vf.c',
-+        'base/ixgbe_mbx.c',
-+        'base/ixgbe_phy.c',
-+        'base/ixgbe_vf.c',
-+        'base/ixgbe_x540.c',
-+        'base/ixgbe_x550.c',
-+)
- 
- sources += files(
-         'ixgbe_82599_bypass.c',
+ base_sources = files(
 -- 
 2.53.0
 
