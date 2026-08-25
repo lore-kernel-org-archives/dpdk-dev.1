@@ -2,71 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C36E1C61DBE
-	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Aug 2026 14:14:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8961C61DBE
+	for <dpdk-dev@archiver.kernel.org>; Tue, 25 Aug 2026 14:15:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E4B694013F;
-	Tue, 25 Aug 2026 16:14:01 +0200 (CEST)
-Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com
- [209.85.210.50]) by mails.dpdk.org (Postfix) with ESMTP id 10993400D7
- for <dev@dpdk.org>; Tue, 25 Aug 2026 16:14:01 +0200 (CEST)
-Received: by mail-ot1-f50.google.com with SMTP id
- 46e09a7af769-7e6b5737bb2so6984749a34.1
- for <dev@dpdk.org>; Tue, 25 Aug 2026 07:14:00 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 02D124013F;
+	Tue, 25 Aug 2026 16:15:10 +0200 (CEST)
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com
+ [209.85.216.41]) by mails.dpdk.org (Postfix) with ESMTP id 55D90400D7
+ for <dev@dpdk.org>; Tue, 25 Aug 2026 16:15:08 +0200 (CEST)
+Received: by mail-pj1-f41.google.com with SMTP id
+ 98e67ed59e1d1-39647184c73so847626a91.1
+ for <dev@dpdk.org>; Tue, 25 Aug 2026 07:15:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787667240;
- x=1788272040; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787667307;
+ x=1788272107; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=jk+cAYoM07duMXJ19WsadoCXwUQF1lELWykqwSqjqZM=;
- b=bSDyshoUJXZAXcMIHJHriEW48Xb/g/Dk7866nS/bXVWT/aKcx7CNA2iB/2Wnw3x2to
- dD8Jl8ZpPMXz6S9yXw17Ktnr7ko9D851Eu6Hlo1GVXPszLR/kLGtSJQ6oJVSkBDe6kc0
- he05ONmxQ/OmZAJ0W6za0fScMxa3d73ol9u+SLTF0h2POh7zDIRQYDu92YsVFH34hmee
- RDTFpVp57mrNr7mgs9oh/asgJLQudQEs7LEBCEVKhkzdUPuW8usHO1O/6K36Sbe+FCsK
- TAnlmIlbDgNrWliilHOLh2ilfE1eK4z14MSmHhLpAAndUnkhF+D6zHcb3x8dGBCJdHOO
- uKXg==
+ bh=PYDZ7BTUUd0ChGShGeVbNwwuDf/ij9iUBLOGshNh4Js=;
+ b=QvA8cBTrjvjfid/PbOkr66+t8Q1S+/Ah9OTNYUcZuvAZZQGLyq+4173W9hnKlGMnNc
+ mSrpAfP9CaHXB+p+I7xTYusRQ2siToN0HuYc1+8m8vdJcNI6ti41DO39069e6TP2ZEOX
+ sQ9DPagEJ/XVZZqG+haexDsTGZHfVJEjbK9ZPTR87t4+bHOnRR+v/gMj87/ba66AG/Ji
+ rTYdTWCUwJ1SzsVVHzh1zg/Z+ziTwS8Xd67KLNvTTRYOw8u4x13T5TEWuEbqS6sVevRc
+ XUFvgBdKrB3RExzr49d/+Vm3ABZDxyPY3uVvdaiskJANJXvUGl2/NzcI6K4S6n8gyHmI
+ +F4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787667240; x=1788272040;
+ d=1e100.net; s=20251104; t=1787667307; x=1788272107;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=jk+cAYoM07duMXJ19WsadoCXwUQF1lELWykqwSqjqZM=;
- b=VlLKuLPQvLqx27AU4+08JP3YsqTm7QFOKeWQFy4XsVTxZq+GxshUN/E4fY/jy98Ohx
- xeCL+XvONJmgf+omvdeDGxVWDtnYqf4i7cZU5uTgJiLBzDmMP8mNSTE2uHmBcsC+OWOo
- McdEtOwHqmRy6RHEd7Tw9j6gLR3fP3qqoXR5/oZeDw9j6vl1bPEmMVG8Ef+9jD2/4nb6
- 7MnVv6WclJyqdu8428bmGcesPuiY1yRzXrttniacVqZiSwv1hHbFj21lzWkCiKXABuqH
- j6ROkKaEruvtzTPikypB5Qc0aZtHeQlBws/13RfimFz5OHT93+32AYGutu7Gkkj0LY7W
- rlpQ==
+ bh=PYDZ7BTUUd0ChGShGeVbNwwuDf/ij9iUBLOGshNh4Js=;
+ b=S5odE9Cvs/6VcmdppfCBPifat3jBnmnB9JGsX9t7VuEzw9BrrQ6RyxHB7xGvchUnfE
+ qoPSwdunMxQjYwe3y84BI5c/A+Xdob65nToN8MNxNW01Cfdu1ckkGw9Qk2Xv3fvLNa33
+ JIwDY8uZV262c4O0f+EGzEdWsAjTbujk1tGgUcbjKMnBHZXSN+0YIqJlsT7FTaJrkCz3
+ uKHqzwod89U4L7IjPaKJfMFjP0msQqmq9W70HHuOK9Ge4cUnBPaYGzlIIscfpnLXBYbE
+ HJJtCmeI77+LsJyTV7mTqL17SWDWqeS+vFJn5HHXlcKsWk84WPyMCyUIV4Sk5s3LDukA
+ 98yQ==
 X-Forwarded-Encrypted: i=1;
- AHgh+RpBh5Qt90+/zT0bbYVD6eAd3OJgu3/hTYqQgY4ihLwb519k5Xvb5W1lzHXEO9DC00xoRqI=@dpdk.org
-X-Gm-Message-State: AFuF++lzu0QgjfKBME/NwTTlyqM6wtv6ifjqjUUzUU19LSEIQ2umZpFY
- sFOmP1WadiT5+VYxDC/MkZuYpENZ70uMUoTtSh2Lz0a03vvN4wXLcNljbNgAAJjJRKY=
-X-Gm-Gg: AR+sD12pozSN9Icx6ykn6QO7BW/kbmpq2/wCZfA35AAK0wLXF2P8exRWDI+SyH5SLjt
- mcQ44wSDJp5FgI8XrQaUHYxl+U2uYYQJrslp9xmGFwqjBfL4rLCDB2agfD/h/wIWQ4n1DhbTpw0
- lxtdOnU4StDQvEArRiT+jp0PnB7h7wHMXBhwVGxc90SY/odaf0zNXEAjfGB8Bg4151x4xdzFTBY
- FCsQqPeH/Cmc7Cc89kypnymZKB1nAlqT7mej8QcaPpMkZ0sOA4JxHGfswgFTatpalWqeO5hv7QF
- 13VyuS8ydxvx21dwP6ghGFnC+liRQgP5OjzYYcdoxZknBNatxd53zbV0Tvv9LyPOxocXI4TU1ak
- 6CgIfEjFnsRXwhisnbqgu81a0GoWgt/77/UrtjO3vTTr26G8hm9iwrqbdLBtYob3wU4uzXse+wt
- 0F4q/CCkWDzXzw887wKOWOGZWDpZYMgLedHyuPjIQaRcPkQcKcminakvjwJe1fPc6sDGAA+P1RV
- 06MKlNf5GnHZM4KwQ5EYbrxMWtNRonWFRgFcubOK91dfg==
-X-Received: by 2002:a4a:ec4b:0:b0:69d:e4c8:86f6 with SMTP id
- 006d021491bc7-6b1592b8c96mr33422412eaf.15.1787667240188; 
- Tue, 25 Aug 2026 07:14:00 -0700 (PDT)
+ AHgh+RoD+C4bO07LO+4tkOPGLT6iL88hNpx13Y2jv2eCWJVLw6HeZhGfJR0uMmOzADUXAtrqGlo=@dpdk.org
+X-Gm-Message-State: AFuF++mE5SExFTBpqCN7K/bVi8DblOKTxUlsLBkzf3XlZankxzvemHqE
+ fzulffCpNBw+/z/9Ocqzpo0ugEZV01nVxYJsz7D+1z+byRwhjHF7MelweBExxN0zsqk=
+X-Gm-Gg: AR+sD121PJD3CBrwZPp7bjniHYrqVBmRVw/tq329TpkETKM++NEIbUjXJ6tStNcGC6v
+ TIjtVe3Kq/HsW7GZ8tdW2/Nsiu0xGfVg6kL6eD0f+xpXSPm78f0tBxErttYLlycvKwbvmHqaOeB
+ t1Imr2TxDw/GAQSaJyc5xstMiTgi2yO/eH4oQk4lrEwqWUNZorMQW4Q3xqIilKudQlzEhE9KsZB
+ T0z4wLjET3g3HUt1ZzJL1hTMaqFELp6XihDM2rRkBZxerWr9Rz20Jsk1+NXlAaLvkYxj+VVpdZE
+ 7eAwLQvfJZFIn29mEi/beix2c5pNcK91cMwiKcIoUElEPEkSghtjvSmmAknapvQscP9TZJRZGMe
+ +1dnKh2aOYBvjEpiqpSPYb0WXz0bmhHtYF/G3cr+Oz6W87ky0HEZm82W1FJnC87/Z69mjX3EfAv
+ jv794RKXSr8TEkjsh1OJ4LyjwlElOOuCaLY8IbMFHB6Of3AppW90llKq/bcAv0r4ExJg35GKBE7
+ f1YvLDvzvYfKmB+mF3SSVEw3t35Hw==
+X-Received: by 2002:a17:90b:3c45:b0:38e:4f31:8412 with SMTP id
+ 98e67ed59e1d1-39645a56fb0mr9204254a91.11.1787667305780; 
+ Tue, 25 Aug 2026 07:15:05 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-14186183f31sm31228120c88.13.2026.08.25.07.13.57
+ 5a478bee46e88-327f9209fafsm62621928eec.23.2026.08.25.07.15.03
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 25 Aug 2026 07:13:59 -0700 (PDT)
-Date: Tue, 25 Aug 2026 07:13:51 -0700
+ Tue, 25 Aug 2026 07:15:05 -0700 (PDT)
+Date: Tue, 25 Aug 2026 07:14:55 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: "Matthew G. McGovern" <matthew@mcgov.dev>
-Cc: Aman Singh <aman.deep.singh@intel.com>, dev@dpdk.org
-Subject: Re: [PATCH] testpmd: allow --tx-ip definitions per-port
-Message-ID: <20260825071351.4e258b6f@phoenix.local>
-In-Reply-To: <20260824231805.256714-1-matthew@mcgov.dev>
-References: <20260824231805.256714-1-matthew@mcgov.dev>
+To: Maxime Leroy <maxime@leroys.fr>
+Cc: Hemant Agrawal <hemant.agrawal@nxp.com>, Sachin Saxena
+ <sachin.saxena@nxp.com>, dev@dpdk.org
+Subject: Re: [PATCH v3] net/dpaa2: hash inner IP for tunnelled traffic
+Message-ID: <20260825071455.4bc37db0@phoenix.local>
+In-Reply-To: <20260825074255.367302-1-maxime@leroys.fr>
+References: <20260723093540.1839619-1-maxime@leroys.fr>
+ <20260825074255.367302-1-maxime@leroys.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -83,16 +85,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 24 Aug 2026 23:18:21 +0000
-"Matthew G. McGovern" <matthew@mcgov.dev> wrote:
+On Tue, 25 Aug 2026 09:42:55 +0200
+Maxime Leroy <maxime@leroys.fr> wrote:
 
-> Modifies --tx-ip flag to be of the form:
+> The RSS key only extracted the outer IP header. Tunnelled traffic whose
+> outer headers are fixed then carries no entropy for the hash, so every
+> flow lands on a single Rx queue.
 > 
-> --tx-ip=[port_id:]src,dest
+> Extract both the outer IP (header index 0) and the innermost IP instance
+> (HDR_INDEX_LAST). Plain frames keep being hashed on their only IP header;
+> the inner extract resolves to nothing and adds no entropy. Tunnelled
+> frames are also hashed on their inner IP and spread across the Rx queues.
 > 
-> to allow setting the addresses for each port.
+> That a lone IP header does not resolve HDR_INDEX_LAST is the regression
+> reverted by commit 2b375df07e48 ("net/dpaa2: revert inner RSS level
+> support"): extracted only at HDR_INDEX_LAST, every plain frame hashed to
+> the same value and landed on one Rx queue.
 > 
-> Signed-off-by: Matthew G. McGovern <matthew@mcgov.dev>
+> The worst case, requesting every type the PMD advertises, is 16 extracts
+> out of the DPKG_MAX_NUM_OF_EXTRACTS 20. On LX2160A
+> dpni_set_rx_hash_dist() accepts the key, and plain IPv4, plain IPv6, VLAN
+> tagged and tunnelled IPv6 traffic all spread across the Rx queues.
+> 
+> This is the PMD default hash: dpaa2 does not expose the ethdev RSS level
+> selector, so it applies to every RSS request. The hardware cannot hash
+> the inner IP alone, as HDR_INDEX_LAST only resolves when several IP
+> headers are stacked and a plain frame would hash to a constant. Folding
+> the outer IP into the key is therefore unavoidable, and two tunnelled
+> flows that share an inner IP but differ in their outer IP may hash to
+> different queues. This is documented in the dpaa2 guide.
+> 
+> Signed-off-by: Maxime Leroy <maxime@leroys.fr>
 > ---
 
-Looks good, applied to next-net
+Applied to next-net
