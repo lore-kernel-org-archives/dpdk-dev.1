@@ -2,32 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA13C5DF97
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Aug 2026 08:58:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD345C61DC2
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Aug 2026 08:58:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2098C40E11;
-	Wed, 26 Aug 2026 10:57:43 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4E6F340DFB;
+	Wed, 26 Aug 2026 10:57:48 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 0AE71400EF
- for <dev@dpdk.org>; Wed, 26 Aug 2026 10:57:40 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 9FB7840E03
+ for <dev@dpdk.org>; Wed, 26 Aug 2026 10:57:46 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowACXmzmCqo5qF+dMBg--.29193S2;
- Wed, 26 Aug 2026 16:57:39 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowADHzz2Iqo5qhedMBg--.38053S2;
+ Wed, 26 Aug 2026 16:57:44 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org
-Subject: [PATCH v3 41/51] net/sxe2: skip tunnel config fill on get failure
-Date: Wed, 26 Aug 2026 16:57:38 +0800
-Message-ID: <20260826085738.992497-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v3 42/51] net/sxe2: skip flow id assignment on filter add
+ failure
+Date: Wed, 26 Aug 2026 16:57:44 +0800
+Message-ID: <20260826085744.992627-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260818021518.2922515-14-liujie5@linkdatatechnology.com>
 References: <20260818021518.2922515-14-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowACXmzmCqo5qF+dMBg--.29193S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr18XFy5Ar1rAF1UJw1kZrb_yoW8Gr45pF
- Z7uw1YkFyrta4rXw48ta1xXF45KFn7Jayqgw45Wa1SyFyDZwn7Z398KFyrXa4Durs7Xw1S
- yayxXFy0krn5ArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: rQCowADHzz2Iqo5qhedMBg--.38053S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr18Kw4UWr4xXF4fWw17KFg_yoW8JFWDpF
+ 43Wr1YvFWYq3WUAw45Jw4xXF9093WDuF98ua18uw4xAa4DXr1v9r4Ygas3Kw18ZFsxJryS
+ yFZFvF1UGrs5JrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUkSb7Iv0xC_Cr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
  0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
  A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xII
@@ -57,44 +58,39 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-sxe2_drv_udp_tunnel_get() fills tunnel_config fields even when the
-firmware command fails, so a failed get overwrites the config with
-the (zero-initialized) response data instead of leaving it intact.
+sxe2_drv_flow_filter_add() assigns flow->flow_id from the response
+even when the firmware command fails, overwriting any previously
+set flow id with the zero-initialized response value.
 
-Return early with the error code when sxe2_drv_cmd_exec() fails,
-matching the V3 implementation.
+Return early on command failure so flow->flow_id is preserved, and
+set flow->create_err on both the success and error paths.
 
 Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_cmd_chnl.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/sxe2/sxe2_cmd_chnl.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.c b/drivers/net/sxe2/sxe2_cmd_chnl.c
-index 5102890107..8c45554637 100644
+index 8c45554637..e0c45ae0e3 100644
 --- a/drivers/net/sxe2/sxe2_cmd_chnl.c
 +++ b/drivers/net/sxe2/sxe2_cmd_chnl.c
-@@ -1669,15 +1669,17 @@ int32_t sxe2_drv_udp_tunnel_get(struct sxe2_adapter *adapter,
- 				 &req, sizeof(req),
- 				 &resp, sizeof(resp));
+@@ -1837,9 +1837,13 @@ int32_t sxe2_drv_flow_filter_add(struct sxe2_adapter *adapter, struct sxe2_flow
+ 	sxe2_drv_cmd_params_fill(adapter, &cmd, SXE2_DRV_CMD_FLOW_FILTER_ADD, &req,
+ 			   sizeof(req), &resp, sizeof(resp));
  	ret = sxe2_drv_cmd_exec(cdev, &cmd);
 -	if (ret)
 +	if (ret) {
- 		PMD_LOG_ERR(DRV, "Failed to get udp proto %d port, ret=%d", req.type, ret);
+ 		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to add flow filter, ret: %d.", ret);
 +		goto l_end;
 +	}
- 
- 	tunnel_config->fw_port   = resp.port;
- 	tunnel_config->fw_status = resp.enable;
- 	tunnel_config->fw_dst_en = resp.dst;
- 	tunnel_config->fw_src_en = resp.src;
- 	tunnel_config->fw_used   = resp.fw_used;
--
+ 	flow->flow_id = resp.flow_id;
++
 +l_end:
+ 	flow->create_err = ret;
  	return ret;
  }
- 
 -- 
 2.52.0
 
