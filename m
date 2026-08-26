@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E172CC61DC2
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Aug 2026 08:56:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A695EC5DF97
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Aug 2026 08:56:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3DCDA40A82;
-	Wed, 26 Aug 2026 10:56:11 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 45B0140B8F;
+	Wed, 26 Aug 2026 10:56:12 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 95DF540A6E
- for <dev@dpdk.org>; Wed, 26 Aug 2026 10:56:03 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 010E640A6D
+ for <dev@dpdk.org>; Wed, 26 Aug 2026 10:56:07 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowABXXDofqo5qM+FMBg--.45334S2;
- Wed, 26 Aug 2026 16:56:00 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowACXnjwlqo5qmOFMBg--.30344S2;
+ Wed, 26 Aug 2026 16:56:05 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org
-Subject: [PATCH v3 24/51] net/sxe2: probe all requested PF ports
-Date: Wed, 26 Aug 2026 16:55:59 +0800
-Message-ID: <20260826085559.991336-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v3 25/51] net/sxe2: rename fnav cid manager symbols to flow
+Date: Wed, 26 Aug 2026 16:56:05 +0800
+Message-ID: <20260826085605.991385-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260818021518.2922515-14-liujie5@linkdatatechnology.com>
 References: <20260818021518.2922515-14-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowABXXDofqo5qM+FMBg--.45334S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr18Ww1kXFWfCr45Xr17trb_yoW8WF4kpa
- 1kXFyFvFW5JF1a9w1Fva1rZFn3Ka10yrWUGrWjk34fJa4UJr18ZF1DKFn0v3WFkr9rJF1F
- yFW3JFyDW3ySgr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUkab7Iv0xC_Cr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
+X-CM-TRANSID: rQCowACXnjwlqo5qmOFMBg--.30344S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3JF13CryDtr4kGFW5CF43trb_yoWfKF1DpF
+ 4rJr13ZF48XF18ua13Jr4xuryagw18JryYkFyrCwnYya18AFsFkF15Ka15Aw13Cr4kA3s3
+ t3y29r1DCa1kWr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUkSb7Iv0xC_Cr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
  0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
  A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xII
  jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4
@@ -37,9 +37,9 @@ X-Coremail-Antispam: 1UD129KBjvJXoW7Kr18Ww1kXFWfCr45Xr17trb_yoW8WF4kpa
  0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4kE6xkIj40Ew7xC0wCF
  04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r
  18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vI
- r41lIxAIcVC0I7IYx2IY67AKxVW5JVW7JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr
- 1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvE
- x4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jzBT5UUUUU=
+ r41lIxAIcVC0I7IYx2IY67AKxVW5JVW7JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr
+ 1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY
+ 6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU4KZXUUUUU
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -57,53 +57,232 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-sxe2_eth_pmd_probe() always probes a single PF port (index 0) even
-when multiple ports are requested in the device arguments, so
-additional PF ports are never created.
+Rename the sxe2_fnav_cid_mgr, sxe2_fnav_cid_mgr_list_t,
+sxe2_fnav_count_resource and sxe2_fnav_get_filter_cid symbols to the
+sxe2_flow_* prefix for consistency with the flow module naming.
 
-Loop over eth_da.nb_ports and probe each requested port, falling
-back to a single probe when no ports are specified.
-
-Fixes: d8e4e075ac ("net/sxe2: add probing skeleton")
-Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_ethdev.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/net/sxe2/sxe2_cmd_chnl.c    |  2 +-
+ drivers/net/sxe2/sxe2_cmd_chnl.h    |  2 +-
+ drivers/net/sxe2/sxe2_flow.c        | 46 ++++++++++++++---------------
+ drivers/net/sxe2/sxe2_flow.h        |  6 ++--
+ drivers/net/sxe2/sxe2_flow_define.h | 12 ++++----
+ 5 files changed, 34 insertions(+), 34 deletions(-)
 
-diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index 1dd10cd515..8e3afd6eed 100644
---- a/drivers/net/sxe2/sxe2_ethdev.c
-+++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -2325,6 +2325,7 @@ static int32_t sxe2_eth_pmd_probe(struct sxe2_common_device *cdev,
+diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.c b/drivers/net/sxe2/sxe2_cmd_chnl.c
+index b09989fe50..3229c72597 100644
+--- a/drivers/net/sxe2/sxe2_cmd_chnl.c
++++ b/drivers/net/sxe2/sxe2_cmd_chnl.c
+@@ -1800,7 +1800,7 @@ int32_t sxe2_drv_flow_fnav_free_stat(struct sxe2_adapter *adapter, uint32_t stat
+ }
+ 
+ int32_t sxe2_drv_flow_fnav_query_stat(struct sxe2_adapter *adapter,
+-		struct sxe2_fnav_cid_mgr *mgr)
++		struct sxe2_flow_cid_mgr *mgr)
  {
- 	struct rte_eth_devargs eth_da = { .nb_ports = 0 };
- 	int32_t ret = 0;
-+	uint16_t port;
+ 	struct sxe2_drv_flow_fnav_query_stat_req req = { 0 };
+ 	struct sxe2_drv_flow_fnav_query_stat_resp resp = { 0 };
+diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.h b/drivers/net/sxe2/sxe2_cmd_chnl.h
+index 294ac15db4..cfea1a1f0e 100644
+--- a/drivers/net/sxe2/sxe2_cmd_chnl.h
++++ b/drivers/net/sxe2/sxe2_cmd_chnl.h
+@@ -159,7 +159,7 @@ int32_t sxe2_drv_flow_fnav_get_stat_id(struct sxe2_adapter *adapter, uint32_t *s
+ int32_t sxe2_drv_flow_fnav_free_stat(struct sxe2_adapter *adapter, uint32_t stat_id);
  
- 	ret = sxe2_parse_eth_devargs(cdev->dev, &eth_da);
- 	if (ret != 0) {
-@@ -2332,7 +2333,18 @@ static int32_t sxe2_eth_pmd_probe(struct sxe2_common_device *cdev,
- 		goto l_end;
- 	}
+ int32_t sxe2_drv_flow_fnav_query_stat(struct sxe2_adapter *adapter,
+-		struct sxe2_fnav_cid_mgr *mgr);
++		struct sxe2_flow_cid_mgr *mgr);
  
--	ret = sxe2_eth_pmd_probe_pf(cdev, &eth_da, 0, kvargs);
-+	if (eth_da.nb_ports > 0) {
-+		for (port = 0; port < eth_da.nb_ports; port++) {
-+			ret = sxe2_eth_pmd_probe_pf(cdev, &eth_da, port, kvargs);
-+			if (ret != 0) {
-+				PMD_LOG_ERR(INIT, "sxe2 eth pmd probe failed, ret=%d", ret);
-+				(void)sxe2_eth_pmd_remove(cdev);
-+				goto l_end;
-+			}
-+		}
-+	} else {
-+		ret = sxe2_eth_pmd_probe_pf(cdev, &eth_da, 0, kvargs);
-+	}
+ int32_t sxe2_drv_srcvsi_prune_config(struct sxe2_adapter *adapter,
+ 		uint16_t *vsi_list, uint16_t vsi_cnt, bool set);
+diff --git a/drivers/net/sxe2/sxe2_flow.c b/drivers/net/sxe2/sxe2_flow.c
+index cf54803301..a33b8606df 100644
+--- a/drivers/net/sxe2/sxe2_flow.c
++++ b/drivers/net/sxe2/sxe2_flow.c
+@@ -857,7 +857,7 @@ static int32_t sxe2_flow_rte_list_free(struct sxe2_adapter *adapter,
+ 	struct rte_flow *flow_temp = NULL;
+ 	struct sxe2_flow *hw_flow = NULL;
+ 	struct sxe2_flow *hw_flow_temp = NULL;
+-	struct sxe2_fnav_cid_mgr *mgr = NULL;
++	struct sxe2_flow_cid_mgr *mgr = NULL;
+ 	rte_spinlock_lock(&adapter->flow_ctxt.flow_list_lock);
+ 	TAILQ_FOREACH(flow_temp, &adapter->flow_ctxt.rte_flow_list, next) {
+ 		if (flow_temp == flow)
+@@ -1028,7 +1028,7 @@ static struct rte_flow *sxe2_flow_create(struct rte_eth_dev *dev,
+ 		goto l_free_flow;
  
- l_end:
+ 	TAILQ_FOREACH(flow, &flow_list->sxe2_flow_list, next) {
+-		ret = sxe2_fnav_get_filter_cid(adapter, flow);
++		ret = sxe2_flow_get_filter_cid(adapter, flow);
+ 		if (ret != 0) {
+ 			PMD_LOG_ERR(DRV, "fnav get stats id failed, ret:%d", ret);
+ 			rte_flow_error_set(error, EIO,
+@@ -1088,16 +1088,16 @@ static int32_t sxe2_flow_flush(struct rte_eth_dev *dev, struct rte_flow_error *e
  	return ret;
+ }
+ 
+-int32_t sxe2_fnav_get_filter_cid(struct sxe2_adapter *adapter, struct sxe2_flow *flow)
++int32_t sxe2_flow_get_filter_cid(struct sxe2_adapter *adapter, struct sxe2_flow *flow)
+ {
+ 	int32_t ret = 0;
+-	struct sxe2_fnav_cid_mgr_list_t *cid_mgr_list =
+-				&adapter->flow_ctxt.hw_res.fnav_cid_mgr_list;
++	struct sxe2_flow_cid_mgr_list_t *cid_mgr_list =
++				&adapter->flow_ctxt.hw_res.flow_cid_mgr_list;
+ 	uint32_t stat_index;
+ 	uint32_t user_id;
+ 	uint32_t driver_id;
+-	struct sxe2_fnav_cid_mgr *temp = NULL;
+-	struct sxe2_fnav_cid_mgr *mgr = NULL;
++	struct sxe2_flow_cid_mgr *temp = NULL;
++	struct sxe2_flow_cid_mgr *mgr = NULL;
+ 
+ 	if (sxe2_test_bit(SXE2_FLOW_ACTION_COUNT, flow->action.act_types)) {
+ 		user_id = flow->action.count.user_id;
+@@ -1112,7 +1112,7 @@ int32_t sxe2_fnav_get_filter_cid(struct sxe2_adapter *adapter, struct sxe2_flow
+ 		}
+ 		if (mgr == NULL) {
+ 			mgr = rte_zmalloc("sxe2_fnav_cid_mgr",
+-				sizeof(struct sxe2_fnav_cid_mgr), 0);
++				sizeof(struct sxe2_flow_cid_mgr), 0);
+ 			if (!mgr) {
+ 				PMD_LOG_ERR(DRV,
+ 					"Failed to alloc sxe2vf_fnav_cid_mgr memory.");
+@@ -1143,13 +1143,13 @@ int32_t sxe2_fnav_get_filter_cid(struct sxe2_adapter *adapter, struct sxe2_flow
+ 
+ int32_t sxe2_flow_free_mgr(struct sxe2_adapter *adapter,
+ 		       struct sxe2_flow *flow,
+-		       struct sxe2_fnav_cid_mgr **mgr_ptr,
++		       struct sxe2_flow_cid_mgr **mgr_ptr,
+ 		       struct rte_flow_error *error)
+ {
+ 	int32_t ret = 0;
+-	struct sxe2_fnav_cid_mgr_list_t *cid_mgr_list =
+-				&adapter->flow_ctxt.hw_res.fnav_cid_mgr_list;
+-	struct sxe2_fnav_cid_mgr *mgr = *mgr_ptr;
++	struct sxe2_flow_cid_mgr_list_t *cid_mgr_list =
++				&adapter->flow_ctxt.hw_res.flow_cid_mgr_list;
++	struct sxe2_flow_cid_mgr *mgr = *mgr_ptr;
+ 	uint32_t user_id = flow->action.count.user_id;
+ 	if (user_id == 0) {
+ 		TAILQ_REMOVE(cid_mgr_list, mgr, next);
+@@ -1170,14 +1170,14 @@ int32_t sxe2_flow_free_mgr(struct sxe2_adapter *adapter,
+ 
+ int32_t sxe2_flow_query_mgr(struct sxe2_adapter *adapter,
+ 			struct sxe2_flow *flow,
+-			struct sxe2_fnav_cid_mgr **mgr_ptr,
++			struct sxe2_flow_cid_mgr **mgr_ptr,
+ 			struct rte_flow_error *error)
+ {
+ 	int32_t ret = 0;
+-	struct sxe2_fnav_cid_mgr_list_t *cid_mgr_list =
+-				&adapter->flow_ctxt.hw_res.fnav_cid_mgr_list;
+-	struct sxe2_fnav_cid_mgr *temp = NULL;
+-	struct sxe2_fnav_cid_mgr *mgr = NULL;
++	struct sxe2_flow_cid_mgr_list_t *cid_mgr_list =
++				&adapter->flow_ctxt.hw_res.flow_cid_mgr_list;
++	struct sxe2_flow_cid_mgr *temp = NULL;
++	struct sxe2_flow_cid_mgr *mgr = NULL;
+ 	uint32_t user_id = flow->action.count.user_id;
+ 	uint32_t driver_id = flow->action.count.driver_id;
+ 
+@@ -1218,7 +1218,7 @@ static int32_t sxe2_flow_query_count(struct sxe2_adapter *adapter,
+ 				 struct rte_flow_error *error)
+ {
+ 	int32_t ret = 0;
+-	struct sxe2_fnav_cid_mgr *mgr = NULL;
++	struct sxe2_flow_cid_mgr *mgr = NULL;
+ 	switch (flow->action.count.stat_ctrl) {
+ 	case SXE2_FNAV_STAT_ENA_NONE:
+ 		count->hits_set = 0;
+@@ -1348,7 +1348,7 @@ int32_t sxe2_flow_init(struct rte_eth_dev *dev)
+ 	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
+ 	int32_t ret = 0;
+ 	TAILQ_INIT(&adapter->flow_ctxt.rte_flow_list);
+-	TAILQ_INIT(&adapter->flow_ctxt.hw_res.fnav_cid_mgr_list);
++	TAILQ_INIT(&adapter->flow_ctxt.hw_res.flow_cid_mgr_list);
+ 	if (adapter->devargs.fnav_stat_type)
+ 		adapter->flow_ctxt.hw_res.count_type =
+ 			adapter->devargs.fnav_stat_type;
+@@ -1370,10 +1370,10 @@ int32_t sxe2_flow_uninit(struct rte_eth_dev *dev)
+ 	int32_t ret = 0;
+ 	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
+ 	struct rte_flow_error error;
+-	struct sxe2_fnav_cid_mgr *mgr = NULL;
+-	struct sxe2_fnav_cid_mgr *temp = NULL;
+-	struct sxe2_fnav_cid_mgr_list_t *cid_mgr_list =
+-						&adapter->flow_ctxt.hw_res.fnav_cid_mgr_list;
++	struct sxe2_flow_cid_mgr *mgr = NULL;
++	struct sxe2_flow_cid_mgr *temp = NULL;
++	struct sxe2_flow_cid_mgr_list_t *cid_mgr_list =
++						&adapter->flow_ctxt.hw_res.flow_cid_mgr_list;
+ 
+ 	ret = sxe2_flow_flush(dev, &error);
+ 	if (ret)
+diff --git a/drivers/net/sxe2/sxe2_flow.h b/drivers/net/sxe2/sxe2_flow.h
+index daaeedd4dc..8d47b11ff4 100644
+--- a/drivers/net/sxe2/sxe2_flow.h
++++ b/drivers/net/sxe2/sxe2_flow.h
+@@ -14,16 +14,16 @@ int32_t sxe2_flow_init(struct rte_eth_dev *dev);
+ 
+ int32_t sxe2_flow_uninit(struct rte_eth_dev *dev);
+ 
+-int32_t sxe2_fnav_get_filter_cid(struct sxe2_adapter *adapter, struct sxe2_flow *flow);
++int32_t sxe2_flow_get_filter_cid(struct sxe2_adapter *adapter, struct sxe2_flow *flow);
+ 
+ int32_t sxe2_flow_free_mgr(struct sxe2_adapter *adapter,
+ 		       struct sxe2_flow *flow,
+-		       struct sxe2_fnav_cid_mgr **mgr_ptr,
++		       struct sxe2_flow_cid_mgr **mgr_ptr,
+ 		       struct rte_flow_error *error);
+ 
+ int32_t sxe2_flow_query_mgr(struct sxe2_adapter *adapter,
+ 			struct sxe2_flow *flow,
+-			struct sxe2_fnav_cid_mgr **mgr_ptr,
++			struct sxe2_flow_cid_mgr **mgr_ptr,
+ 			struct rte_flow_error *error);
+ 
+ int32_t sxe2_flow_init_udp_tunnel_port(struct rte_eth_dev *dev);
+diff --git a/drivers/net/sxe2/sxe2_flow_define.h b/drivers/net/sxe2/sxe2_flow_define.h
+index 263a573f04..8a5d871978 100644
+--- a/drivers/net/sxe2/sxe2_flow_define.h
++++ b/drivers/net/sxe2/sxe2_flow_define.h
+@@ -98,8 +98,8 @@ struct rte_flow {
+ };
+ TAILQ_HEAD(rte_flow_list_t, rte_flow);
+ 
+-struct sxe2_fnav_cid_mgr {
+-	TAILQ_ENTRY(sxe2_fnav_cid_mgr) next;
++struct sxe2_flow_cid_mgr {
++	TAILQ_ENTRY(sxe2_flow_cid_mgr) next;
+ 	uint16_t stat_index;
+ 	uint32_t user_id;
+ 	uint32_t driver_id;
+@@ -107,18 +107,18 @@ struct sxe2_fnav_cid_mgr {
+ 	uint64_t hits;
+ 	uint64_t bytes;
+ };
+-TAILQ_HEAD(sxe2_fnav_cid_mgr_list_t, sxe2_fnav_cid_mgr);
++TAILQ_HEAD(sxe2_flow_cid_mgr_list_t, sxe2_flow_cid_mgr);
+ 
+-struct sxe2_fnav_count_resource {
++struct sxe2_flow_count_resource {
+ 	uint32_t count_type;
+ 	uint32_t global_index;
+-	struct sxe2_fnav_cid_mgr_list_t fnav_cid_mgr_list;
++	struct sxe2_flow_cid_mgr_list_t flow_cid_mgr_list;
+ };
+ 
+ struct sxe2_flow_context {
+ 	struct rte_flow_list_t rte_flow_list;
+ 	rte_spinlock_t flow_list_lock;
+-	struct sxe2_fnav_count_resource hw_res;
++	struct sxe2_flow_count_resource hw_res;
+ 	uint16_t tunnel_port_list[SXE2_FLOW_UDP_TUNNEL_MAX];
+ 	uint32_t fnav_inited;
+ };
 -- 
 2.52.0
 
