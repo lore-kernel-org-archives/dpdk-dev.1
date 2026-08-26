@@ -2,44 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5D67C61DC2
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Aug 2026 08:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3C04C5DF97
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Aug 2026 08:55:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 937CB40698;
-	Wed, 26 Aug 2026 10:54:59 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 01B7F40697;
+	Wed, 26 Aug 2026 10:55:05 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id C39184026D
- for <dev@dpdk.org>; Wed, 26 Aug 2026 10:54:56 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 0BA3A4065A
+ for <dev@dpdk.org>; Wed, 26 Aug 2026 10:55:02 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowADHzz3eqY5q9t1MBg--.38040S2;
- Wed, 26 Aug 2026 16:54:55 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowAD3+znkqY5qOd5MBg--.49783S2;
+ Wed, 26 Aug 2026 16:55:01 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org
-Subject: [PATCH v3 13/51] net/sxe2: fix null VSI dereference in device info
-Date: Wed, 26 Aug 2026 16:54:54 +0800
-Message-ID: <20260826085454.990716-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v3 14/51] net/sxe2: fill MAC and queue counts in device info
+Date: Wed, 26 Aug 2026 16:55:00 +0800
+Message-ID: <20260826085500.990770-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260818021518.2922515-14-liujie5@linkdatatechnology.com>
 References: <20260818021518.2922515-14-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowADHzz3eqY5q9t1MBg--.38040S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7JrWfKF1UXrWruw4DWrWUtwb_yoWktFg_CF
- Z5Zr13CFyrAr95K34I9F4fZr9Y9rWUXrs3ZF9IqFWfZF13Xr1a93s8ZrZFyFs2gayUAFZr
- JF18GF1fGrZ8CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
- 9fnUUIcSsGvfJTRUUUb2xYjsxI4VWxJwAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I
- 6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
- 8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0
- cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I
- 8E87Iv6xkF7I0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
- F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jw0_WrylYx0Ex4A2jsIE14v26r4j6F
- 4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwAKzVCY07xG64k0F24l42xK
- 82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGw
- C20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAKI48J
- MIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMI
- IF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E
- 87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU4KZXUUUUU
+X-CM-TRANSID: rQCowAD3+znkqY5qOd5MBg--.49783S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr18GrWDtryDXrW5GF1xKrg_yoW8XF13pF
+ W5tFyrZa13JF18Kwn8ua1xu3WjgF1DGr4xWr97t34ruFyDX347urWqyFyIy3yIyFWxJF1F
+ va1xXrsxuFn0vaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUkIb7Iv0xC_Zr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
+ 0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+ A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
+ jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwV
+ C2z280aVCY1x0267AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
+ Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q6rW5McIj6I8E87Iv67AKxVW8JV
+ WxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lw4CEc2x0rVAKj4xxMxAI
+ w28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr
+ 4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0EwIxG
+ rwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJw
+ CI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2
+ z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0wa93UUUUU==
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -57,35 +57,37 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-sxe2_dev_infos_get() dereferences adapter->vsi_ctxt.main_vsi without
-checking for NULL, which can crash when the main VSI has not been
-created yet.
+Fill max_mac_addrs, nb_rx_queues and nb_tx_queues in
+sxe2_dev_infos_get() so applications can query the maximum number of
+MAC addresses and the queue counts.
 
-Add an early NULL check on vsi and return -EINVAL.
-
-Fixes: d8e4e075ac ("net/sxe2: add probing skeleton")
-Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_ethdev.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/sxe2/sxe2_ethdev.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index 2e14c372f8..02f9ce3d32 100644
+index 02f9ce3d32..e85dee6b2c 100644
 --- a/drivers/net/sxe2/sxe2_ethdev.c
 +++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -781,6 +781,10 @@ static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev,
- 	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
- 	struct sxe2_vsi *vsi = adapter->vsi_ctxt.main_vsi;
+@@ -792,6 +792,7 @@ static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev,
+ 	dev_info->max_lro_pkt_size = SXE2_FRAME_SIZE_MAX * SXE2_RX_LRO_DESC_MAX_NUM;
+ 	dev_info->max_mtu = dev_info->max_rx_pktlen - SXE2_ETH_OVERHEAD;
+ 	dev_info->min_mtu = RTE_ETHER_MIN_MTU;
++	dev_info->max_mac_addrs = SXE2_NUM_MACADDR_MAX;
  
-+	if (unlikely(vsi == NULL)) {
-+		PMD_LOG_ERR(INIT, "main vsi is NULL");
-+		return -EINVAL;
-+	}
- 	dev_info->max_rx_queues = vsi->rxqs.q_cnt;
- 	dev_info->max_tx_queues = vsi->txqs.q_cnt;
- 	dev_info->min_rx_bufsize = SXE2_MIN_BUF_SIZE;
+ 	dev_info->rx_offload_capa =
+ 		RTE_ETH_RX_OFFLOAD_VLAN_STRIP |
+@@ -912,6 +913,8 @@ static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev,
+ 
+ 	dev_info->speed_capa = RTE_ETH_LINK_SPEED_10G | RTE_ETH_LINK_SPEED_25G |
+ 				RTE_ETH_LINK_SPEED_50G | RTE_ETH_LINK_SPEED_100G;
++	dev_info->nb_rx_queues = dev->data->nb_rx_queues;
++	dev_info->nb_tx_queues = dev->data->nb_tx_queues;
+ 
+ 	dev_info->default_rxportconf.burst_size = SXE2_RX_MAX_BURST;
+ 	dev_info->default_txportconf.burst_size = SXE2_TX_MAX_BURST;
 -- 
 2.52.0
 
