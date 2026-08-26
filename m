@@ -2,33 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 541FAC5DF97
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Aug 2026 08:58:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 175B9C5DF97
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Aug 2026 08:58:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4F95340DDA;
-	Wed, 26 Aug 2026 10:57:54 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5878D40DCF;
+	Wed, 26 Aug 2026 10:58:01 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id A3C3640DCF
- for <dev@dpdk.org>; Wed, 26 Aug 2026 10:57:52 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5C71340DCF
+ for <dev@dpdk.org>; Wed, 26 Aug 2026 10:57:59 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowACnc0GOqo5qy+dMBg--.38024S2;
- Wed, 26 Aug 2026 16:57:50 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowACnrjyUqo5qHOhMBg--.54251S2;
+ Wed, 26 Aug 2026 16:57:56 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org
-Subject: [PATCH v3 43/51] net/sxe2: fix command channel log messages
-Date: Wed, 26 Aug 2026 16:57:50 +0800
-Message-ID: <20260826085750.992715-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v3 44/51] net/sxe2: align command structs with historical
+ kernel layout
+Date: Wed, 26 Aug 2026 16:57:56 +0800
+Message-ID: <20260826085756.992802-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260818021518.2922515-14-liujie5@linkdatatechnology.com>
 References: <20260818021518.2922515-14-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowACnc0GOqo5qy+dMBg--.38024S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxCry7KrWDWFyxZFy7KFWxWFg_yoWrJw48pr
- sFgF1ay3y0qF429F45Ja1fX3W2gF1rKayDuw1fC3WFyasY9F1qqFZ0qr1YyFs5Cw1DXws5
- tan7WFZ5Kr18KrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUkqb7Iv0xC_Zr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
+X-CM-TRANSID: rQCowACnrjyUqo5qHOhMBg--.54251S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxGF43KryDGFWrGFW5XFy5Arb_yoW5uryxpF
+ Z5G343tF45tr1jgF48Xr4fZFySgrWDA3yUJay7Xw1Sya4ftasrXryUKr1rCa4rK3yUuw1S
+ yrsxKr1UGa4fCrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUkqb7Iv0xC_Cr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
  0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
  A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xII
  jxv20xvEc7CjxVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjc
@@ -39,7 +40,7 @@ X-Coremail-Antispam: 1UD129KBjvJXoWxCry7KrWDWFyxZFy7KFWxWFg_yoWrJw48pr
  WUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAK
  I48JMIIF0xvE2Ix0cI8IcVAFwI0_Ar0_tr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r
  4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAI
- cVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUnwmRUUUUUU==
+ cVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0iL0UUUUUU==
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -57,100 +58,109 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Several error/warning messages in sxe2_cmd_chnl.c are inaccurate or
-lost context:
+The sxe2_drv_cmd.h command structures must match the layout used by
+historical SXE2 kernel versions so the same firmware command ABI is
+shared. Several structures were declared with __rte_packed_begin/
+__rte_packed_end and extra rsv padding that the kernel layout does
+not have:
 
-- vsi_info_get: message lost the vsi id; restore it
-- rxq_bind_irq/rxq_unbind_irq: message lost the rxq index; restore it
-- promisc_config: fix "promic" typo in the message
-- queue_info_get_update/rxq_mapping_set: incorrect "get queue info
-  map"/"get dev caps" wording; use "rx queue mapping failed"
-- txq_mapping_set: "Rx queue" should read "Tx queue"; incorrect
-  "get dev caps" wording should read "tx queue mapping failed"
+- sxe2_drv_link_info_resp: drop rsv[3] padding
+- sxe2_tm_res: drop rsv[2] padding and packed attribute
+- sxe2_tm_info: drop packed attribute
+- sxe2_tm_add_mid_msg: drop packed attribute
+- sxe2_tm_add_queue_msg: drop packed attribute
+- sxe2_drv_sfp_req: drop packed attribute
+- sxe2_drv_sfp_resp: drop packed attribute
+
+Keep the structure members as-is so the command ABI is compatible
+with the historical kernel driver.
 
 Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_cmd_chnl.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/net/sxe2/sxe2_drv_cmd.h | 26 ++++++++++++--------------
+ 1 file changed, 12 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.c b/drivers/net/sxe2/sxe2_cmd_chnl.c
-index e0c45ae0e3..b4f8b337b5 100644
---- a/drivers/net/sxe2/sxe2_cmd_chnl.c
-+++ b/drivers/net/sxe2/sxe2_cmd_chnl.c
-@@ -498,7 +498,7 @@ int32_t sxe2_drv_vsi_info_get(struct sxe2_adapter *adapter, struct sxe2_vsi *vsi
- 			&vsi_info_get_resp, sizeof(vsi_info_get_resp));
- 	ret = sxe2_drv_cmd_exec(cdev, &param);
- 	if (ret) {
--		PMD_DEV_LOG_ERR(adapter, DRV, "switchdev cpvsi info get failed, ret=%d", ret);
-+		PMD_DEV_LOG_ERR(adapter, DRV, "vsi %u info get failed, ret=%d", vsi->vsi_id, ret);
- 		goto l_end;
- 	}
+diff --git a/drivers/net/sxe2/sxe2_drv_cmd.h b/drivers/net/sxe2/sxe2_drv_cmd.h
+index d332d15980..f66b574e83 100644
+--- a/drivers/net/sxe2/sxe2_drv_cmd.h
++++ b/drivers/net/sxe2/sxe2_drv_cmd.h
+@@ -230,7 +230,6 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_drv_vsi_info_get_resp {
+ struct __rte_aligned(4) __rte_packed_begin sxe2_drv_link_info_resp {
+ 	uint32_t speed;
+ 	uint8_t status;
+-	uint8_t rsv[3];
+ } __rte_packed_end;
  
-@@ -556,7 +556,7 @@ int32_t sxe2_drv_rxq_bind_irq(struct sxe2_adapter *adapter, uint16_t rxq_idx, ui
- 				 NULL, 0);
- 	ret = sxe2_drv_cmd_exec(cdev, &param);
- 	if (ret)
--		PMD_DEV_LOG_ERR(adapter, DRV, "rxq bind irq failed, ret=%d", ret);
-+		PMD_DEV_LOG_ERR(adapter, DRV, "rxq %u bind irq failed, ret=%d", rxq_idx, ret);
+ struct __rte_aligned(4) __rte_packed_begin sxe2_switchdev_info {
+@@ -348,31 +347,30 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_rss_hf_req {
+ 	uint8_t rsv1[3];
+ } __rte_packed_end;
  
- 	return ret;
- }
-@@ -576,7 +576,7 @@ int32_t sxe2_drv_rxq_unbind_irq(struct sxe2_adapter *adapter, uint16_t rxq_idx)
- 				 NULL, 0);
- 	ret = sxe2_drv_cmd_exec(cdev, &param);
- 	if (ret)
--		PMD_DEV_LOG_ERR(adapter, DRV, "rxq unbind irq failed, ret=%d", ret);
-+		PMD_DEV_LOG_ERR(adapter, DRV, "rxq %u unbind irq failed, ret=%d", rxq_idx, ret);
+-struct __rte_aligned(4) __rte_packed_begin sxe2_tm_res {
++struct sxe2_tm_res {
+ 	uint16_t teid;
+-	uint8_t rsv[2];
+-} __rte_packed_end;
++};
  
- 	return ret;
- }
-@@ -777,7 +777,7 @@ int32_t sxe2_drv_promisc_config(struct sxe2_adapter *adapter, bool set)
+-struct __rte_aligned(4) __rte_packed_begin sxe2_tm_info {
++struct sxe2_tm_info {
+ 	uint32_t committed;
+ 	uint32_t peak;
+ 	uint8_t priority;
+ 	uint8_t reserve;
+ 	uint16_t weight;
+-} __rte_packed_end;
++};
  
- 	ret = sxe2_drv_cmd_exec(cdev, &param);
- 	if (ret)
--		PMD_DEV_LOG_WARN(adapter, DRV, "promic config failed, ret=%d", ret);
-+		PMD_DEV_LOG_WARN(adapter, DRV, "promisc config failed, ret=%d", ret);
+-struct __rte_aligned(4) __rte_packed_begin sxe2_tm_add_mid_msg {
++struct sxe2_tm_add_mid_msg {
+ 	uint16_t parent_teid;
+ 	uint8_t adj_lvl;
+ 	struct sxe2_tm_info info;
+-} __rte_packed_end;
++};
  
- 	return ret;
- }
-@@ -1702,7 +1702,7 @@ int32_t sxe2_drv_queue_info_get_update(struct sxe2_adapter *adapter, struct eth_
- 				 &resp, sizeof(resp));
- 	ret = sxe2_drv_cmd_exec(cdev, &param);
- 	if (ret) {
--		PMD_LOG_ERR(DRV, "get queue info map failed, ret=%d", ret);
-+		PMD_LOG_ERR(DRV, "rx queue mapping failed, ret=%d", ret);
- 		goto l_end;
- 	}
+-struct __rte_aligned(4) __rte_packed_begin sxe2_tm_add_queue_msg {
++struct sxe2_tm_add_queue_msg {
+ 	uint16_t parent_teid;
+ 	uint16_t queue_id;
+ 	uint8_t adj_lvl;
+ 	struct sxe2_tm_info info;
+-} __rte_packed_end;
++};
  
-@@ -1746,7 +1746,7 @@ int32_t sxe2_drv_rxq_mapping_set(struct rte_eth_dev *eth_dev, uint16_t queue_id,
+ struct __rte_aligned(4) __rte_packed_begin sxe2_drv_ipsec_capa_resq {
+ 	uint16_t tx_sa_cnt;
+@@ -633,7 +631,7 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_drv_udp_tunnel_resp {
+ 	uint8_t rsv;
+ } __rte_packed_end;
  
- 	ret = sxe2_drv_cmd_exec(cdev, &param);
- 	if (ret)
--		PMD_LOG_ERR(DRV, "get dev caps failed, ret=%d", ret);
-+		PMD_LOG_ERR(DRV, "rx queue mapping failed, ret=%d", ret);
+-struct __rte_aligned(4) __rte_packed_begin sxe2_drv_sfp_req {
++struct sxe2_drv_sfp_req {
+ 	uint8_t is_wr;
+ 	uint8_t is_qsfp;
+ 	uint16_t bus_addr;
+@@ -642,14 +640,14 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_drv_sfp_req {
+ 	uint16_t data_len;
+ 	uint16_t rvd;
+ 	uint8_t data[];
+-} __rte_packed_end;
++};
  
- l_end:
- 	return ret;
-@@ -1763,7 +1763,7 @@ int32_t sxe2_drv_txq_mapping_set(struct rte_eth_dev *eth_dev, uint16_t queue_id,
+-struct __rte_aligned(4) __rte_packed_begin sxe2_drv_sfp_resp {
++struct sxe2_drv_sfp_resp {
+ 	uint8_t is_wr;
+ 	uint8_t is_qsfp;
+ 	uint16_t data_len;
+ 	uint8_t data[];
+-} __rte_packed_end;
++};
  
- 	txq = eth_dev->data->tx_queues[queue_id];
- 	if (txq == NULL) {
--		PMD_LOG_ERR(DRV, "Rx queue %u is not available or setup", queue_id);
-+		PMD_LOG_ERR(DRV, "Tx queue %u is not available or setup", queue_id);
- 		ret = -EINVAL;
- 		goto l_end;
- 	}
-@@ -1777,7 +1777,7 @@ int32_t sxe2_drv_txq_mapping_set(struct rte_eth_dev *eth_dev, uint16_t queue_id,
- 
- 	ret = sxe2_drv_cmd_exec(cdev, &param);
- 	if (ret)
--		PMD_LOG_ERR(DRV, "get dev caps failed, ret=%d", ret);
-+		PMD_LOG_ERR(DRV, "tx queue mapping failed, ret=%d", ret);
- 
- l_end:
- 	return ret;
+ enum sxe2_fc_type {
+ 	SXE2_FC_T_DIS = 0,
 -- 
 2.52.0
 
