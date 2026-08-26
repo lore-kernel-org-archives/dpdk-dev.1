@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53FE0C61DC2
-	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Aug 2026 08:58:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE96C61DC2
+	for <dpdk-dev@archiver.kernel.org>; Wed, 26 Aug 2026 08:58:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 57B0740DF8;
-	Wed, 26 Aug 2026 10:58:17 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 34DBC40E1D;
+	Wed, 26 Aug 2026 10:58:18 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 2943F40E19
- for <dev@dpdk.org>; Wed, 26 Aug 2026 10:58:14 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 8253B40B9E
+ for <dev@dpdk.org>; Wed, 26 Aug 2026 10:58:15 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowAD3+zmfqo5qyehMBg--.49802S2;
- Wed, 26 Aug 2026 16:58:07 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowACXmzmlqo5qN+lMBg--.29194S2;
+ Wed, 26 Aug 2026 16:58:13 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org
-Subject: [PATCH v3 46/51] doc/sxe2: remove drv-sw-stats parameter documentation
-Date: Wed, 26 Aug 2026 16:58:07 +0800
-Message-ID: <20260826085807.992979-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v3 47/51] net/sxe2: harden ACL flow count resource handling
+Date: Wed, 26 Aug 2026 16:58:13 +0800
+Message-ID: <20260826085813.993075-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260818021518.2922515-14-liujie5@linkdatatechnology.com>
 References: <20260818021518.2922515-14-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowAD3+zmfqo5qyehMBg--.49802S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxZr4xJFW5CrWxtFWUJw1fZwb_yoWrJFW5pa
- y3Z34IvFykAr1Ut397Aw18Gry8ZFsaya43CrWUWayIvan8AryFvw47KayFga9rGFy0y34Y
- qr1DWFyUCayDZrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUkqb7Iv0xC_KF4lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
+X-CM-TRANSID: rQCowACXmzmlqo5qN+lMBg--.29194S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxZFyxuF13JrW7Kr48tF4kXrb_yoW5Wr4Dpr
+ 48Wry3ZFWaqFnxGw4rJw4fZFyY93W7Jry2kFW09w4Sv3WUXry7urs8Ka45Kw1DCr4xJr1f
+ tFW2vF15Can5A3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUkqb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
  0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
  A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xII
  jxv20xvEc7CjxVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjc
@@ -39,7 +39,7 @@ X-Coremail-Antispam: 1UD129KBjvJXoWxZr4xJFW5CrWxtFWUJw1fZwb_yoWrJFW5pa
  WUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAK
  I48JMIIF0xvE2Ix0cI8IcVAFwI0_Ar0_tr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r
  4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAI
- cVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUneHq7UUUUU==
+ cVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUn0D77UUUUU==
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -57,86 +57,75 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-The drv-sw-stats devarg and the software receive statistics xstats
-that depend on it are no longer supported. Remove the parameter
-description from the Runtime Configuration section and the
-corresponding "Receive Software Statistics" subsection under
-Extended Statistics to keep the documentation consistent.
+Fix issues found in the ACL flow count (statistics) support:
+
+- sxe2_flow_free_mgr(): when the flow engine type is neither ACL nor
+  FNAV, the code skipped the TAILQ_REMOVE but still called rte_free()
+  on the manager, leaving a freed pointer on the list. Return -ENOTSUP
+  for an unknown engine type instead.
+- sxe2_flow_cid_mgr.stat_index is uint16_t while the firmware returns
+  and consumes a uint32_t stat id; widen it to uint32_t to avoid silent
+  truncation.
+- sxe2_drv_cmd_code: write the ACL STAT_ALLOC/STAT_FREE entries with an
+  explicit SXE2_MK_DRV_CMD() value instead of relying on implicit
+  increment over the encoded QUERY value.
 
 Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- doc/guides/nics/sxe2.rst | 49 ----------------------------------------
- 1 file changed, 49 deletions(-)
+ drivers/net/sxe2/sxe2_drv_cmd.h     | 6 ++++--
+ drivers/net/sxe2/sxe2_flow.c        | 6 ++++++
+ drivers/net/sxe2/sxe2_flow_define.h | 2 +-
+ 3 files changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/doc/guides/nics/sxe2.rst b/doc/guides/nics/sxe2.rst
-index c5b400a8ba..d9be5ab693 100644
---- a/doc/guides/nics/sxe2.rst
-+++ b/doc/guides/nics/sxe2.rst
-@@ -109,30 +109,6 @@ Runtime Configuration
+diff --git a/drivers/net/sxe2/sxe2_drv_cmd.h b/drivers/net/sxe2/sxe2_drv_cmd.h
+index f66b574e83..8d907b3843 100644
+--- a/drivers/net/sxe2/sxe2_drv_cmd.h
++++ b/drivers/net/sxe2/sxe2_drv_cmd.h
+@@ -836,8 +836,10 @@ enum sxe2_drv_cmd_code {
  
-   Default value is 3 (count both packets and bytes).
+ 	SXE2_DRV_CMD_FLOW_ACL_STAT_QUERY =
+ 		SXE2_MK_DRV_CMD(SXE2_DRV_CMD_MODULE_ACL, 1),
+-	SXE2_DRV_CMD_FLOW_ACL_STAT_ALLOC,
+-	SXE2_DRV_CMD_FLOW_ACL_STAT_FREE,
++	SXE2_DRV_CMD_FLOW_ACL_STAT_ALLOC =
++		SXE2_MK_DRV_CMD(SXE2_DRV_CMD_MODULE_ACL, 2),
++	SXE2_DRV_CMD_FLOW_ACL_STAT_FREE =
++		SXE2_MK_DRV_CMD(SXE2_DRV_CMD_MODULE_ACL, 3),
  
--- ``drv-sw-stats`` parameter [int]
--
--  This parameter controls whether per-packet software statistics (SW stats)
--  are collected in the Rx data path.
--
--  Hardware packet statistic counters may be inaccurate for certain packet types
--  due to hardware design limitations.
--  When accuracy of Rx packet classification statistics is critical,
--  enabling this parameter allows the driver to accumulate statistics in software
--  as packets are received, providing an alternative statistical path
--  that bypasses hardware counter inaccuracies.
--
--  - 0: Disable software statistics collection (default).
--    The basic port statistics (``ipackets``, ``ibytes``) are reported
--    from the hardware counters.
--  - 1: Enable software statistics collection.
--    Per-packet software statistics are accumulated for unicast,
--    multicast, broadcast, and dropped packets in the Rx data path.
--
--  When enabled, the following extended statistics (xstats) are available:
--  ``rx_sw_unicast_packets``, ``rx_sw_multicast_packets``,
--  ``rx_sw_broadcast_packets``, ``rx_sw_drop_packets``,
--  and ``rx_sw_drop_bytes``.
--
- - ``no-sched-mode`` parameter [int]
+ };
  
-   This parameter enables non-scheduling mode (no-sched mode).
-@@ -197,31 +173,6 @@ Runtime Configuration
- Extended Statistics (xstats)
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+diff --git a/drivers/net/sxe2/sxe2_flow.c b/drivers/net/sxe2/sxe2_flow.c
+index 037d9e6f9c..45ace5b848 100644
+--- a/drivers/net/sxe2/sxe2_flow.c
++++ b/drivers/net/sxe2/sxe2_flow.c
+@@ -1288,6 +1288,12 @@ int32_t sxe2_flow_free_mgr(struct sxe2_adapter *adapter,
+ 			cid_mgr_list = &adapter->flow_ctxt.fnav_hw_res.flow_cid_mgr_list;
+ 			TAILQ_REMOVE(cid_mgr_list, mgr, next);
+ 			ret = sxe2_drv_flow_fnav_free_stat(adapter, mgr->stat_index);
++		} else {
++			PMD_LOG_ERR(DRV,
++				"Failed to free flow count, unknown engine type: %d.",
++				flow->engine_type);
++			ret = -ENOTSUP;
++			return ret;
+ 		}
+ 		if (ret) {
+ 			rte_flow_error_set(error, EIO,
+diff --git a/drivers/net/sxe2/sxe2_flow_define.h b/drivers/net/sxe2/sxe2_flow_define.h
+index f56f687dc7..d04499f5cb 100644
+--- a/drivers/net/sxe2/sxe2_flow_define.h
++++ b/drivers/net/sxe2/sxe2_flow_define.h
+@@ -100,7 +100,7 @@ TAILQ_HEAD(rte_flow_list_t, rte_flow);
  
--The PMD provides the following extended statistics (xstats)
--for detailed monitoring of receive-side packet classification
--and software-level accounting.
--The software statistics path is provided as a workaround
--for hardware counter inaccuracies on certain packet types ---
--it accumulates per-packet statistics directly in the Rx data path,
--ensuring that unicast, multicast, broadcast, and drop counts
--reflect the actual packets processed by the driver.
--
--Receive Software Statistics
--  These counters are collected in the Rx data path
--  when ``drv-sw-stats=1`` is configured (see the ``drv-sw-stats`` devarg above).
--  When ``drv-sw-stats`` is disabled (default), these xstats report zero.
--
--  - ``rx_sw_unicast_packets``: Number of unicast packets received.
--  - ``rx_sw_multicast_packets``: Number of multicast packets received.
--  - ``rx_sw_broadcast_packets``: Number of broadcast packets received.
--  - ``rx_sw_drop_packets``: Number of packets dropped in the Rx data path.
--  - ``rx_sw_drop_bytes``: Number of bytes dropped in the Rx data path.
--
--  When ``drv-sw-stats`` is enabled, the basic counters
--  ``ipackets`` and ``ibytes`` (from ``rte_eth_stats``)
--  also reflect the software-accumulated packet and byte counts.
--  Otherwise, they are reported from hardware counters.
--
- Fnav Flow Engine Statistics
-   The Fnav flow engine statistics type is controlled by
-   the ``fnav-stat-type`` devarg (see above).
+ struct sxe2_flow_cid_mgr {
+ 	TAILQ_ENTRY(sxe2_flow_cid_mgr) next;
+-	uint16_t stat_index;
++	uint32_t stat_index;
+ 	uint32_t user_id;
+ 	uint32_t driver_id;
+ 	uint32_t count_type;
 -- 
 2.52.0
 
