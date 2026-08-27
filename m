@@ -2,71 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 311B4C61DC4
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 21:42:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6530AC61DC4
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 21:43:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CCFB24042C;
-	Thu, 27 Aug 2026 23:42:50 +0200 (CEST)
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com
- [209.85.214.180])
- by mails.dpdk.org (Postfix) with ESMTP id 5B14B40280
- for <dev@dpdk.org>; Thu, 27 Aug 2026 23:42:49 +0200 (CEST)
-Received: by mail-pl1-f180.google.com with SMTP id
- d9443c01a7336-2d6d28aa26cso2659715ad.2
- for <dev@dpdk.org>; Thu, 27 Aug 2026 14:42:49 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1222D40284;
+	Thu, 27 Aug 2026 23:42:55 +0200 (CEST)
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com
+ [209.85.210.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 27BDD4003C
+ for <dev@dpdk.org>; Thu, 27 Aug 2026 23:42:53 +0200 (CEST)
+Received: by mail-pf1-f171.google.com with SMTP id
+ d2e1a72fcca58-855d2bfae95so744749b3a.1
+ for <dev@dpdk.org>; Thu, 27 Aug 2026 14:42:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787866968;
- x=1788471768; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787866972;
+ x=1788471772; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=5h0mDzXrRZcbbwBxDTX5uc6w3dLxgQ+BFFRtFERvrIw=;
- b=H8kN5GDeGD69Qs5nT5/hYkeAWquLA5sP4wermgYhcQ8bWZYHoQCVG362TuRGG0AAt0
- r6YQcDi95us3DhHO/TUwa4hArADZzP625CCUatmJPacAH5m/33jGOdRlP6x5WbgTZ9t/
- p3jVKZp5dPWIbD4ck3K+yWTTYKbQD0QNdWY/y4VurOlxRghU45HKBlLMvaQ4QyGdTEVh
- cpB+nfT8XTPsZkBnqua83gy/tuMM1iohYKyZ+/z5Ux/kP3w+YtNItgZNTazYP1d5QULg
- vWCz5+d4uzZRMR6TvADx80xAIvUKmD6/ZU8V9FjL2av46obdhMAbvnGXdmhWCvXhK4ZN
- OUng==
+ bh=aWnqGvfYXu70jIEKM2VKj6WjCsJFxO956lCJg+fLFeA=;
+ b=pj2Z8PskfcpdZGgWIcD0XeT25Hl1JsngQ+pY2FqbkDblo8EIhSHXQwbVNea/a32RmK
+ G6r3beLFoeKu/jPVAIAau9BNdE154gfQiKdRKse3imyGPSqtT0jrxP7lbsaYoGCWt8wq
+ zpVGu/l93OjMxtFAkuKo0hUBfGssXhcXIexmEpWnLuRK3eUkhUSsmbba8kNfbj5+8HiN
+ 8ZDAI+Xy27lHeynVlE862p/h6vZ1Iin76onbiQYAIdkJvOLZjJmxptHPrBLhsvQLEH2h
+ j+g94H0NrzMOGREFtT8+weBaJ5xIvpWKyRsmbvngTQle6xDfzzYONpgr6F0wNmO+qtCZ
+ nIUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787866968; x=1788471768;
+ d=1e100.net; s=20251104; t=1787866972; x=1788471772;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=5h0mDzXrRZcbbwBxDTX5uc6w3dLxgQ+BFFRtFERvrIw=;
- b=LNhlpnGEThz8k7Z+e10mnNjE1UZ4W75P9zLdNIaAnxRsFkDTwOuuPl57nGcTtGgAS3
- ZyIIUPlB4cTTDB/PYkrjROl+9wB1hbGKm6eZdyerH+UGoXT5yGccMopLnW3pkSJt3E6g
- uOZXgrde9Ge11JkhVu0/PYpetcC3rpvKz28mr2eK+f5BTmZaNqpNWTAH3MZ0fnkmLs68
- /+Ss47Z6MTaqRUUGS+FR0aqX6kl7OCX90bJsTA6LNSyzGAdv7AxYRYBB5xrKInDn5HB6
- ncsmHKy5RGh4LySlOrUZ/HjwdL3rtXIL2wCdyKOWfMeR6p7DV704Ij5K70ie6ymzRB+P
- nFEA==
-X-Gm-Message-State: AFuF++nbDxebbZ1BFQLe/OL0c5EpvVUdHuKhc7GvPSKCSFp0IlPRBLE/
- na8ls27SlKIoLmzXypPPvKalfjl/Z4i9WIvjqP4WGLMvmoNw14Zjejf9t4QrGqE5VMZ2XshISor
- oiqiG
-X-Gm-Gg: AR+sD103EKCQ72lX3xjQwEDXZ7jLIYkgpr9fedRROipb0pETNA3Xgk8PfVSsw+9VgkX
- 0wDpY+cQhAeoQslWVaALdFS+7kdU6Q8m/V7DvHm4gOUDimW1C+IvzawhmF+YKwwQ4wH0DkWVpYZ
- P9m4qAV9WEYBtiuIDvPEPjy3IV2EkaqzSwzLsDDOm9eapBnGMhqad0rOcQ6ASNbYJp6pGspiVB3
- 0RC62HrCbhFpUWKB8fC+314w7bT0dcub02apuDpiJ1ZFGqDlE0FnICUAHNnWybbw0c5kdYe0cZI
- qgeXljNBPBCL4k1BKTTAwu5Kqt12FNaQaDMWPAtUsrAoFbEl3/imxbXgaMMFgPJn8HmJqyjGGdv
- cjOiTA5MzjP6QmboxF8XinDM/cP06/hZgWwU1p3XfucnAa4wMQK13WFTW0Q0OAHYHH8lRqGtIby
- jO+cy0ogzftUg48IyEP7fWe+zkSLcjKDG5FgeofUxTxqvkhAE8ekwfd4f8RVdM4O2Tom0oPxPiF
- bUd148J40ohUsMLMWKPZkQz+MGtvFI5lJ4koQ==
-X-Received: by 2002:a17:90b:39a7:b0:381:28e0:6259 with SMTP id
- 98e67ed59e1d1-396d0fd46d9mr3361219a91.9.1787866968319; 
- Thu, 27 Aug 2026 14:42:48 -0700 (PDT)
+ bh=aWnqGvfYXu70jIEKM2VKj6WjCsJFxO956lCJg+fLFeA=;
+ b=NS/dcYzCpnWfUzWBp1Mb80u8YZE7L7dNXCn+LvLytm86kNG4BmKzQuqWkcMkAM8JaI
+ Eedn0mTXys0QRN9WMTvsB5KlIHQXzgl0z0lP1wULzg3vtcI+JqVx4qFc7mXi0tX4JsX7
+ O9Cy6SrG0JkmNNQkcxbKJfAtleOEX2uPbhTUFL2AwjFFEGQDTxAmSQ1KMvUsAdwAh1BY
+ ao2mbJ2GHLKbAF3SnunzRM4wOeFKxgkLlsTPj5dlT+hafKSd1UyAPCr4UvpW5ltbqSBG
+ NhWrgMuKFcRK+EIGMdH7IfpJ60IqCOxwdv9laio9+Vo3L74Y178I84BMYEXJf5aVQ1bm
+ shTA==
+X-Gm-Message-State: AFuF++kUMGjRtfLhLwOsjzt3+Wk0D6+rIe44YaiUg0+0OkAGfpqksJos
+ ltoqXW76Z/3EMljwiyrzvOo+GIovXTXB9NoWUNPpURe0T0myOOw0hcB8UwaE8/9UnQMY2Pfc+8z
+ D8RQJ
+X-Gm-Gg: AR+sD12RACW+WMly00VsLm5xxbiQ7cZ6zvifhcjzigLQ6H8QSnivaK9pKb1fDTP7Udv
+ pp4upi/XHHjQgECtRzqpaAua3kk0QiQShoXuQEpZDGZ0YJ60iTsgm5TqPItXenoMR4uyIpqpGkY
+ aP+U8OSC2lt32v1Vo21rVrPEwphGtMhxGWRG85w84yNchLPQUeXc7d4OpN0a1ELlsz8YAy2BdYO
+ bVsOP5EK08aXYuDjPUdsHOChKz8Lk7e2j+j2MwEyG6WuClYgDcR8dP/Esb0TuhR2v3pXoZsYNTT
+ Zoz8ZPfgXim40QI9aB3613WgnnFurkzepKSpKPYdRdHkPMuthU0Ipun4tyHAMtopdbyyYgI/k3z
+ aY2z1uaFd6XItvgPqxSR2Ru3EFL84r9IBu7YevvIIORUHxD/X43zF5pfzdkW47nH/cJHJnDI6Yp
+ zXCkmW71czhbuaG0u3oDyOc+Rr8PNTibU4TacDZtdXa8jArD+oOfDfZ0qYeWdKoF8gS0KwJ2tOU
+ Ee1sLagSPPHfIHseTpi6sTukgWa
+X-Received: by 2002:a05:6a21:3d88:b0:3b3:a66e:3911 with SMTP id
+ adf61e73a8af0-3d0f762b513mr10573521637.19.1787866972153; 
+ Thu, 27 Aug 2026 14:42:52 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3285d1075ddsm9642445eec.29.2026.08.27.14.42.44
+ 5a478bee46e88-3285d1075ddsm9642445eec.29.2026.08.27.14.42.48
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 27 Aug 2026 14:42:47 -0700 (PDT)
+ Thu, 27 Aug 2026 14:42:51 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Marat Khalili <marat.khalili@huawei.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Ferruh Yigit <ferruh.yigit@amd.com>
-Subject: [PATCH v8 01/10] bpf/x86: fix JIT encoding of fixed-width immediates
-Date: Thu, 27 Aug 2026 14:41:40 -0700
-Message-ID: <20260827214236.1415047-2-stephen@networkplumber.org>
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Subject: [PATCH v8 02/10] test/bpf: add JSET test with small immediate
+Date: Thu, 27 Aug 2026 14:41:41 -0700
+Message-ID: <20260827214236.1415047-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260827214236.1415047-1-stephen@networkplumber.org>
 References: <0260608203322.1116296-1-stephen@networkplumber.org>
@@ -86,66 +85,112 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Several places in the x86 JIT size an immediate with imm_size(), which
-returns 1 or 4 bytes depending on the value. That is wrong for opcodes
-whose immediate width is fixed by the encoding, and it breaks in both
-directions.
-
-TEST (0xF7 /0, used for BPF_JSET) has no imm8 form; the immediate is
-always 32 bits. For a small mask such as BPF_JSET | BPF_K #0x1,
-imm_size() returns 1, so the JIT emits a 1-byte immediate. The CPU
-still consumes 4, swallowing 3 bytes of the following Jcc. The
-instruction stream desyncs and the program crashes.
-
-ROR and the shifts (0xC1 group) have the opposite problem: their
-immediate is always imm8. For a count >= 128, imm_size() returns 4 and
-the JIT emits 3 stray bytes, again desyncing the stream.
-
-Size each immediate by its encoding: 32 bits for TEST, 8 bits for ROR
-and the shifts.
-
-Bugzilla ID: 1959
-Fixes: cc752e43e079 ("bpf: add JIT compilation for x86_64 ISA")
-Cc: stable@dpdk.org
+The existing jump test only used a 32-bit JSET mask,
+so the broken imm8 encoding of TEST in the x86 JIT was never exercised.
+Add a case with a byte-sized mask;
+run_test() runs it through the interpreter and the JIT.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 Acked-by: Marat Khalili <marat.khalili@huawei.com>
 Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 ---
- lib/bpf/bpf_jit_x86.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ app/test/test_bpf.c | 82 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 82 insertions(+)
 
-diff --git a/lib/bpf/bpf_jit_x86.c b/lib/bpf/bpf_jit_x86.c
-index 54eb279643..912d3f69bc 100644
---- a/lib/bpf/bpf_jit_x86.c
-+++ b/lib/bpf/bpf_jit_x86.c
-@@ -300,7 +300,7 @@ emit_ror_imm(struct bpf_jit_state *st, uint32_t dreg, uint32_t imm)
- 	emit_rex(st, BPF_ALU, 0, dreg);
- 	emit_bytes(st, &ops, sizeof(ops));
- 	emit_modregrm(st, MOD_DIRECT, mods, dreg);
--	emit_imm(st, imm, imm_size(imm));
-+	emit_imm(st, imm, sizeof(uint8_t));
+diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
+index 3205afaa63..f4286bcefe 100644
+--- a/app/test/test_bpf.c
++++ b/app/test/test_bpf.c
+@@ -3229,7 +3229,89 @@ test_int64min_umod_uint64max_check(uint64_t rc, const void *arg)
  }
  
- /*
-@@ -441,7 +441,7 @@ emit_shift_imm(struct bpf_jit_state *st, uint32_t op, uint32_t dreg,
- 	uint32_t imm)
- {
- 	emit_shift(st, op, dreg);
--	emit_imm(st, imm, imm_size(imm));
-+	emit_imm(st, imm, sizeof(uint8_t));
- }
- 
- /*
-@@ -921,7 +921,7 @@ emit_tst_imm(struct bpf_jit_state *st, uint32_t op, uint32_t dreg, uint32_t imm)
- 	emit_rex(st, op, 0, dreg);
- 	emit_bytes(st, &ops, sizeof(ops));
- 	emit_modregrm(st, MOD_DIRECT, mods, dreg);
--	emit_imm(st, imm, imm_size(imm));
-+	emit_imm(st, imm, sizeof(int32_t));
- }
- 
- static void
+ /* all bpf test cases */
++/*
++ * JSET with a byte-sized mask: exercises the imm8 path of the TEST
++ * encoding in the x86 JIT (a 32-bit mask takes a different path).
++ */
++static const struct ebpf_insn test_jset1_prog[] = {
++	{
++		.code = (BPF_ALU | EBPF_MOV | BPF_K),
++		.dst_reg = EBPF_REG_0,
++		.imm = 0,
++	},
++	{
++		.code = (BPF_LDX | BPF_MEM | BPF_B),
++		.dst_reg = EBPF_REG_2,
++		.src_reg = EBPF_REG_1,
++		.off = offsetof(struct dummy_offset, u8),
++	},
++	/* bit 0 is set in the input: branch is taken */
++	{
++		.code = (BPF_JMP | BPF_JSET | BPF_K),
++		.dst_reg = EBPF_REG_2,
++		.imm = 0x1,
++		.off = 1,
++	},
++	{
++		.code = (BPF_JMP | BPF_JA),
++		.off = 1,
++	},
++	{
++		.code = (EBPF_ALU64 | BPF_OR | BPF_K),
++		.dst_reg = EBPF_REG_0,
++		.imm = 0x1,
++	},
++	/* bit 1 is clear in the input: branch is not taken */
++	{
++		.code = (BPF_JMP | BPF_JSET | BPF_K),
++		.dst_reg = EBPF_REG_2,
++		.imm = 0x2,
++		.off = 1,
++	},
++	{
++		.code = (BPF_JMP | BPF_JA),
++		.off = 1,
++	},
++	{
++		.code = (EBPF_ALU64 | BPF_OR | BPF_K),
++		.dst_reg = EBPF_REG_0,
++		.imm = 0x2,
++	},
++	{
++		.code = (BPF_JMP | EBPF_EXIT),
++	},
++};
++
++static void
++test_jset1_prepare(void *arg)
++{
++	struct dummy_offset *df = arg;
++
++	memset(df, 0, sizeof(*df));
++	df->u8 = 0x1;	/* bit 0 set, bit 1 clear */
++}
++
++static int
++test_jset1_check(uint64_t rc, const void *arg)
++{
++	return cmp_res(__func__, 0x1, rc, arg, arg, 0);
++}
++
+ static const struct bpf_test tests[] = {
++	{
++		.name = "test_jset1",
++		.arg_sz = sizeof(struct dummy_offset),
++		.prm = {
++			.ins = test_jset1_prog,
++			.nb_ins = RTE_DIM(test_jset1_prog),
++			.prog_arg = {
++				.type = RTE_BPF_ARG_PTR,
++				.size = sizeof(struct dummy_offset),
++			},
++		},
++		.prepare = test_jset1_prepare,
++		.check_result = test_jset1_check,
++	},
+ 	{
+ 		.name = "test_store1",
+ 		.arg_sz = sizeof(struct dummy_offset),
 -- 
 2.53.0
 
