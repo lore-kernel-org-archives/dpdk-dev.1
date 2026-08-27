@@ -2,70 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 607F9C61DC4
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 21:43:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F5DC61DC4
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 21:43:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 54A644067C;
-	Thu, 27 Aug 2026 23:43:08 +0200 (CEST)
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com
- [209.85.215.169])
- by mails.dpdk.org (Postfix) with ESMTP id 217A240150
- for <dev@dpdk.org>; Thu, 27 Aug 2026 23:43:07 +0200 (CEST)
-Received: by mail-pg1-f169.google.com with SMTP id
- 41be03b00d2f7-cc1c3d79b9bso376032a12.3
- for <dev@dpdk.org>; Thu, 27 Aug 2026 14:43:07 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3F5BE40695;
+	Thu, 27 Aug 2026 23:43:13 +0200 (CEST)
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com
+ [209.85.214.175])
+ by mails.dpdk.org (Postfix) with ESMTP id CE88D40150
+ for <dev@dpdk.org>; Thu, 27 Aug 2026 23:43:11 +0200 (CEST)
+Received: by mail-pl1-f175.google.com with SMTP id
+ d9443c01a7336-2d5335cf904so3092595ad.2
+ for <dev@dpdk.org>; Thu, 27 Aug 2026 14:43:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787866986;
- x=1788471786; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787866991;
+ x=1788471791; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=aHkab7ovWVpVsJ8hdtI7YC045R7XRC9vCRGx6oPAtfM=;
- b=H582/vL3T68DyWNTuWPCS5HAflI89ihh8u8prESK4n01my4/2SAdQktjQWqzFkE1oa
- ag6AGcyVN19ecMRAD96dAcMI4nGwIxdeMIzpB31BWKXnQAb7UlDa84otak6Nyx6Z74z7
- CLAg4qJ+1VmOgvKaJntpvbkUDYdaycEBBJkToJlAGXProH9QKlPWwnjwBFzlRNlahilA
- 3ZnBxfLgaCrCOYgB6/44RQYVMGy3rzWz6eorEG2BO7dh69jgvqZa4AGW67sCbPpUxwW0
- YTIrWQ3cLD05A9CY8GlN2Y/iALwguX/+PlvZvalc632f8GsBOBrVXxRz1LrDoRjNlJ6H
- ODyw==
+ bh=5jhZcu7R0c2Niw5UfBt3KpuoD+2pTKZJZWUFn2woelQ=;
+ b=Fc5GSA/6jFTHvE6BPGpWIbXiWr1qd8h/xUdvHLXQU23Rdx30Nt9LrzKyzoNo7471aF
+ yiNW4+J6abTsBrFKotIjEtw8XyUT5MLzotpNZgb1J4JxtqB6LJlpO1Hkx2WIWfJO/IMX
+ riuFyFR1SBW3MfblcThcAfCiahArnXs7c5VIH1K0oDQc4miuTsWK2Ku3YmB/IX5KimKO
+ h6g1D0TGRFhw3hY0KlnQXYYlDIu5Y6riOGm0VjN/mbp506jTvw8w4yWLg//ZLVuoV1G0
+ GjxgAGt9Z+Lh8NqS9h1QcyG4A+eRsNEt16o+nIb3q/lMIU7ZOCFD0eCBUEloUAeqpe1i
+ Z/iA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787866986; x=1788471786;
+ d=1e100.net; s=20251104; t=1787866991; x=1788471791;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=aHkab7ovWVpVsJ8hdtI7YC045R7XRC9vCRGx6oPAtfM=;
- b=F+UczBgbNtjDimJhyumAA1FOr5ziJHRIOz4F/u0Y0b04O4jF/r/awcDZDU7dguWFfM
- wzDTGexPl0a89SeMOeBobGyxcg/pv4siPOW6ZhkLOjiwZAuT1OfaiiKVake5E1WpgXMg
- f8S9Gtg9mXiDOO3rATdvrr7d8bpCW+waQ0l9zqrrq3ao7JGE5eDsEDWry3tPmg5eCU+T
- ZQCmEtKra0A+f2Zm8Z8ytvscoSSisFpca7mxM9iSvCbKETy8xn5aUwaxPQbyUZIMYe1r
- to76LhRe2q6vr2YJD+3iQQLqATlZqmTuIsvfgDLrGVsf/3A+0ni3NZ7WMVYnlDM0soQE
- hWpQ==
-X-Gm-Message-State: AFuF++ka5uEAg8BCx0QuwBdTmtxsV4Ym6NR0XVA7B6f3iL9s9XUlDorW
- 9AGoDBzhgXN29g0a+IYfimtqiX3BKPC8IBTTdubsa81uqwS7Fzj7BeSUJY4TXtc3wV3lXOx32Ww
- AAnSF
-X-Gm-Gg: AR+sD11qHyrfm0UYnr9NvTXI7jqz7GH4SBbvrnFdEUtDbZLfu0Cuzicxg6M6Hd1Hiwd
- jeCy4bWzNx9iFlH1x3zozhrvbnnLzqeKSpb6MsutWLvXxYJS08Z04XswMU5na5ScvAlZ+AJDpXA
- xoAtqudKEB+VHhoC0pzmYCwdOtOvsYwOMc4RCx8O8KnVXhUiG2YjNRRSLBPMo0It+pabY5c/Ssw
- ZJMeYMgsHE+SUz1D7qO7k3fkJpUG+9QD4fuQOyB2imvT7VU8kMAG7Ddbe9Zk8A08nBwCUAXHxe0
- A5fTmZSj+LEu6qZ9bpPIrv6S/w5jZBgKxCxYs+cfC0eSmVOEHzQC61SM2+C8XKoLm6G92YrVUqs
- Os/wGqzIjPN9ycCbucRVwMaRUhNjO21ObDUjxI5mXdOOJDzIKpmKQ69/HE1wqYaB/sBwAJij7HC
- OiEfaj8luGFKR0YOOH7pmGAXA3ERo532UcdWdMtD6itZlNJV4FXoE5HXeCpM8DuOKcWyH7hWIO3
- n3dCt+NqLdL3ieOV/tCDoLBoOA=
-X-Received: by 2002:a05:6a20:1582:b0:3cd:2e96:5929 with SMTP id
- adf61e73a8af0-3d2681a9fcemr2960237637.14.1787866986234; 
- Thu, 27 Aug 2026 14:43:06 -0700 (PDT)
+ bh=5jhZcu7R0c2Niw5UfBt3KpuoD+2pTKZJZWUFn2woelQ=;
+ b=JZbv/7VFdMIcuPoag2NReNOBxTQTn/dH4bInG0yWdll80FPoi32KjQvS8dCikl0s9v
+ jpJpCrlo3ouV+B8N1rbxNzMdl/qfQAN8AWJsdDei0Ok5rq5+Dg0hxe8BAk8np7dWKNrU
+ g4y1LFuOeXdoLmXEMCK01gQPZiNpL/gbZDq1lXPTZA+FFIrcDNjUQkFFz/8Szijs0FLg
+ /qHiXPih/YcmAsRapDz7mKlgZQaecqRLn8g7ntkrMGrfb7Fn8wigQ3uYs7mTWjNeR32d
+ +JfBEopD/goqwGT5BkFM2S10LriVZb2Mdr80cwvM6+FPzkKtT2EFt0IsWH397vPoKniy
+ PaNA==
+X-Gm-Message-State: AFuF++nOT5YDVAe0lpiE42YI3eu5+UVoaMWjkCa3ZesL1tlSrawAWIMq
+ e9iy2gYQzugAVLqmdc6zQ+aTw2RxHqaqQsl+GC1XS77rMhp117V+AWA2yPVDHZNf+v6smKXuytN
+ nlQO5
+X-Gm-Gg: AR+sD11bikC0ndHrPmbxBEImrrl7Ul/RdM9+f4B8yOM4ANMxBbKivxqNorqZvS1Mbpu
+ Lw0uPBswVdeLfbUsh6gZ5rufXdb7+Y3yGAnVcWY/CR0BAXwh0BZyp+1d6AQO7TNfyWipDY89N5h
+ M2ms87k4KzCFGETF5wzs2YABYUVXKAVDPFBHL4ui+M5Tjeax4JjKP91jwPV1UUF6D1TkD1wzT6y
+ S/OkwgEFd9qPGF3z2A1eSewapOoIgMco0yFAJC0tH4aH3a4fqPICPRKf5rCUyq1gUIGeFO6MvWo
+ 9FuUcLjKghzzhVbiGfPNSaIK2DqiSMZBPVV08I7hnU7fz4eIrlIsFwyiOmyDWbzD1/C+EHC88jF
+ wM3td3g6gtpRtFRZn19JIpug4db9gp/LtEIa92i160IOdSE9nO4V3RGf/GD5PhlC3Olem/msH9F
+ 6TrROEWgWdjPLFecDvOcMqHTMgKlml7GzfJoV+ZrE1Yv6RUfCMkDPf3icFsT/kO+tiuiZVpQtBe
+ 7aTVwaKLvkZHa0HFAG2NL3up/OM
+X-Received: by 2002:a17:902:f549:b0:2d5:e9d5:8ae with SMTP id
+ d9443c01a7336-2d74dc5e8c2mr29435285ad.5.1787866990959; 
+ Thu, 27 Aug 2026 14:43:10 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3285d1075ddsm9642445eec.29.2026.08.27.14.43.03
+ 5a478bee46e88-3285d1075ddsm9642445eec.29.2026.08.27.14.43.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 27 Aug 2026 14:43:05 -0700 (PDT)
+ Thu, 27 Aug 2026 14:43:10 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
+Cc: Christophe Fontaine <cfontain@redhat.com>, stable@dpdk.org,
+ Stephen Hemminger <stephen@networkplumber.org>,
  Marat Khalili <marat.khalili@huawei.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Subject: [PATCH v8 05/10] test/bpf: add test for large shift
-Date: Thu, 27 Aug 2026 14:41:44 -0700
-Message-ID: <20260827214236.1415047-6-stephen@networkplumber.org>
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Wathsala Vithanage <wathsala.vithanage@arm.com>,
+ Jerin Jacob <jerinj@marvell.com>
+Subject: [PATCH v8 06/10] bpf/arm64: fix offset type to allow a negative jump
+Date: Thu, 27 Aug 2026 14:41:45 -0700
+Message-ID: <20260827214236.1415047-7-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260827214236.1415047-1-stephen@networkplumber.org>
 References: <0260608203322.1116296-1-stephen@networkplumber.org>
@@ -85,95 +88,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-There were multiple bugs with immediate values in shift instructions.
-The code was not masking as required by RFC.
+From: Christophe Fontaine <cfontain@redhat.com>
 
-Add new tests that cover these instructions.
+The DPDK BPF JIT standalone test test_ld_mbuf1 fails on arm64.
+It does:
+	r6 = r1                    // mbuf
+	r0 = *(u8 *)pkt[0]         // BPF_ABS
+	if ((r0 & 0xf0) == 0x40)
+		goto parse
+	r0 = 0
+	exit                       // epilogue E0
+parse:
+	r0 = *(u8 *)pkt[r0 + 3]    // BPF_IND
+	...
+	exit
 
+emit_return_zero_if_src_zero() returns 0 by branching to a function
+epilogue. The target may be a previous epilogue so branch
+might be backwards; therefore the offset needs to be negative.
+
+The offset was stored in a uint16_t, so a negative value wrapped to a
+large positive number; emit_b() then branched past the end of the
+program and faulted at run time.
+
+Fixes: 111e2a747a4f ("bpf/arm: add basic arithmetic operations")
+Cc: stable@dpdk.org
+
+Signed-off-by: Christophe Fontaine <cfontain@redhat.com>
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 Acked-by: Marat Khalili <marat.khalili@huawei.com>
 Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 ---
- app/test/test_bpf.c | 59 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
+ lib/bpf/bpf_jit_arm64.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
-index f4286bcefe..413d47357f 100644
---- a/app/test/test_bpf.c
-+++ b/app/test/test_bpf.c
-@@ -2012,6 +2012,51 @@ test_div1_check(uint64_t rc, const void *arg)
- 	return cmp_res(__func__, 0, rc, dve.out, dvt->out, sizeof(dve.out));
+diff --git a/lib/bpf/bpf_jit_arm64.c b/lib/bpf/bpf_jit_arm64.c
+index 7582370062..51906c7f0d 100644
+--- a/lib/bpf/bpf_jit_arm64.c
++++ b/lib/bpf/bpf_jit_arm64.c
+@@ -965,10 +965,12 @@ static void
+ emit_return_zero_if_src_zero(struct a64_jit_ctx *ctx, bool is64, uint8_t src)
+ {
+ 	uint8_t r0 = ebpf_to_a64_reg(ctx, EBPF_REG_0);
+-	uint16_t jump_to_epilogue;
++	int32_t jump_to_epilogue;
+ 
+ 	emit_cbnz(ctx, is64, src, 3);
+ 	emit_mov_imm(ctx, is64, r0, 0);
++
++	/* maybe backwards branch to earlier epilogue */
+ 	jump_to_epilogue = (ctx->program_start + ctx->program_sz) - ctx->idx;
+ 	emit_b(ctx, jump_to_epilogue);
  }
- 
-+/*
-+ * Shift counts are masked to the operand width (RFC 9669: 0x3f for 64-bit,
-+ * 0x1f for 32-bit). Counts >= 128 also exercise the x86 imm_size() path that
-+ * used to desync the stream, and the arm64 UBFM/SBFM immediate encoding.
-+ */
-+static const struct ebpf_insn test_shift_big_imm_prog[] = {
-+	{
-+		.code = (EBPF_ALU64 | EBPF_MOV | BPF_K),
-+		.dst_reg = EBPF_REG_0,
-+		.imm = 1
-+	},
-+	{
-+		.code = (EBPF_ALU64 | BPF_LSH | BPF_K),
-+		.dst_reg = EBPF_REG_0,
-+		.imm = 191
-+	},
-+	{
-+		.code = (EBPF_ALU64 | EBPF_ARSH | BPF_K),
-+		.dst_reg = EBPF_REG_0,
-+		.imm = 200
-+	},
-+	{
-+		.code = (EBPF_ALU64 | BPF_RSH | BPF_K),
-+		.dst_reg = EBPF_REG_0,
-+		.imm = 130
-+	},
-+	{
-+		.code = (BPF_JMP | EBPF_EXIT)
-+	},
-+};
-+
-+static void
-+test_shift_big_imm_prepare(void *arg)
-+{
-+	memset(arg, 0, sizeof(struct dummy_offset));
-+}
-+
-+static int
-+test_shift_big_imm_check(uint64_t rc, const void *arg)
-+{
-+	uint64_t expect = 0x3FE0000000000000ULL;
-+
-+	return cmp_res(__func__, expect, rc, arg, arg, 0);
-+}
-+
- /* call test-cases */
- static const struct ebpf_insn test_call1_prog[] = {
- 
-@@ -3480,6 +3525,20 @@ static const struct bpf_test tests[] = {
- 		.prepare = test_mul1_prepare,
- 		.check_result = test_div1_check,
- 	},
-+	{
-+		.name = "test_shift_big_imm",
-+		.arg_sz = sizeof(struct dummy_offset),
-+		.prm = {
-+			.ins = test_shift_big_imm_prog,
-+			.nb_ins = RTE_DIM(test_shift_big_imm_prog),
-+			.prog_arg = {
-+				.type = RTE_BPF_ARG_PTR,
-+				.size = sizeof(struct dummy_offset),
-+			},
-+		},
-+		.prepare = test_shift_big_imm_prepare,
-+		.check_result = test_shift_big_imm_check,
-+	},
- 	{
- 		.name = "test_call1",
- 		.arg_sz = sizeof(struct dummy_offset),
 -- 
 2.53.0
 
