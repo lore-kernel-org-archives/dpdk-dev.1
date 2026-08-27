@@ -2,32 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A534EC61DBE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 02:37:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B1AC61DBD
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 02:37:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B191F406A2;
-	Thu, 27 Aug 2026 04:37:46 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A893440A4B;
+	Thu, 27 Aug 2026 04:37:58 +0200 (CEST)
 Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
- by mails.dpdk.org (Postfix) with ESMTP id B48BC4026D
- for <dev@dpdk.org>; Thu, 27 Aug 2026 04:37:44 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id B6BB84026F
+ for <dev@dpdk.org>; Thu, 27 Aug 2026 04:37:56 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-01 (Coremail) with SMTP id qwCowAC3i+_2oo9qa4+jBg--.32559S2;
- Thu, 27 Aug 2026 10:37:42 +0800 (CST)
+ by APP-01 (Coremail) with SMTP id qwCowAB3Su4Co49qApCjBg--.64882S2;
+ Thu, 27 Aug 2026 10:37:54 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org
-Subject: [PATCH v4 14/44] net/sxe2: fill MAC and queue counts in device info
-Date: Thu, 27 Aug 2026 10:37:42 +0800
-Message-ID: <20260827023742.1430642-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v4 16/44] net/sxe2: use regular write for mapped registers
+Date: Thu, 27 Aug 2026 10:37:53 +0800
+Message-ID: <20260827023753.1430747-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260826085836.993490-1-liujie5@linkdatatechnology.com>
 References: <20260826085836.993490-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: qwCowAC3i+_2oo9qa4+jBg--.32559S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr18GrWDtryDXrW5GF1xKrg_yoW8XF13pF
- W5tFyrZa13JF18Kwn8ua1xu3WjgF1DGr4xWr97t34ruFyDX347urWqyFyIy3yIyFWxJF1F
- va1xXrsxuFn0vaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: qwCowAB3Su4Co49qApCjBg--.64882S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr18WFWfXryruF4kWw1xZrb_yoW8AryfpF
+ WFqryYvF1YqF45tws8GayxZF90gF1DJr9FkayYv34fZF1DJr1UCFs0ga4rtw4Ykr47JF4F
+ vrW3Ar1UWa95Zr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUkYb7Iv0xC_Zr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
  0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
  A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
@@ -57,37 +57,49 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Fill max_mac_addrs, nb_rx_queues and nb_tx_queues in
-sxe2_dev_infos_get() so applications can query the maximum number of
-MAC addresses and the queue counts.
+sxe2_pci_map_write_reg() uses the write-combined store
+(SXE2_PCI_REG_WRITE_WC) to write control registers, which is intended
+for doorbell/tail writes and can be lossy or delayed for ordering
+sensitive register updates.
 
+Add SXE2_PCI_REG_WRITE macro using a regular rte_write32() and use it
+in sxe2_pci_map_write_reg().
+
+Fixes: 8cebf80f1eda ("net/sxe2: support Rx interrupt")
+Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_ethdev.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/sxe2/sxe2_ethdev.c | 2 +-
+ drivers/net/sxe2/sxe2_ethdev.h | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index 02f9ce3d32..e85dee6b2c 100644
+index fb7f14fd44..96b437c6a9 100644
 --- a/drivers/net/sxe2/sxe2_ethdev.c
 +++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -792,6 +792,7 @@ static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev,
- 	dev_info->max_lro_pkt_size = SXE2_FRAME_SIZE_MAX * SXE2_RX_LRO_DESC_MAX_NUM;
- 	dev_info->max_mtu = dev_info->max_rx_pktlen - SXE2_ETH_OVERHEAD;
- 	dev_info->min_mtu = RTE_ETHER_MIN_MTU;
-+	dev_info->max_mac_addrs = SXE2_NUM_MACADDR_MAX;
+@@ -1443,7 +1443,7 @@ void sxe2_pci_map_write_reg(struct sxe2_adapter *adapter,
+ 		goto l_ret;
+ 	}
  
- 	dev_info->rx_offload_capa =
- 		RTE_ETH_RX_OFFLOAD_VLAN_STRIP |
-@@ -912,6 +913,8 @@ static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev,
+-	SXE2_PCI_REG_WRITE_WC(reg_addr, value);
++	SXE2_PCI_REG_WRITE(reg_addr, value);
+ l_ret:
+ 	return;
+ }
+diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
+index 1409be74d3..cf1104144c 100644
+--- a/drivers/net/sxe2/sxe2_ethdev.h
++++ b/drivers/net/sxe2/sxe2_ethdev.h
+@@ -355,6 +355,8 @@ struct sxe2_adapter {
+ #define SXE2_DEV_PRIVATE_TO_ADAPTER(dev) \
+ 	((struct sxe2_adapter *)(dev)->data->dev_private)
  
- 	dev_info->speed_capa = RTE_ETH_LINK_SPEED_10G | RTE_ETH_LINK_SPEED_25G |
- 				RTE_ETH_LINK_SPEED_50G | RTE_ETH_LINK_SPEED_100G;
-+	dev_info->nb_rx_queues = dev->data->nb_rx_queues;
-+	dev_info->nb_tx_queues = dev->data->nb_tx_queues;
- 
- 	dev_info->default_rxportconf.burst_size = SXE2_RX_MAX_BURST;
- 	dev_info->default_txportconf.burst_size = SXE2_TX_MAX_BURST;
++#define SXE2_PCI_REG_WRITE(reg, value) rte_write32((rte_cpu_to_le_32(value)), (reg))
++
+ void *sxe2_pci_map_addr_get(struct sxe2_adapter *adapter,
+ 			    enum sxe2_pci_map_resource res_type,
+ 			    uint16_t idx_in_func);
 -- 
 2.52.0
 
