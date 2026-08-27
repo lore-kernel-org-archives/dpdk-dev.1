@@ -2,31 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A91B7C61DC6
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 11:44:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4671C61DC2
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 11:44:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 84CAE40679;
-	Thu, 27 Aug 2026 13:44:13 +0200 (CEST)
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
- by mails.dpdk.org (Postfix) with ESMTP id CC34940678;
- Thu, 27 Aug 2026 13:44:10 +0200 (CEST)
-X-QQ-mid: esmtpgz13t1787831047t65e1a5ee
-X-QQ-Originating-IP: cTyTQ/SNv2CnkEZXrvz8D2iSLWAcnShDCLGIM3NjMls=
+	by mails.dpdk.org (Postfix) with ESMTP id 89AB540698;
+	Thu, 27 Aug 2026 13:44:16 +0200 (CEST)
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+ by mails.dpdk.org (Postfix) with ESMTP id 2E8704069D;
+ Thu, 27 Aug 2026 13:44:13 +0200 (CEST)
+X-QQ-mid: esmtpgz13t1787831050tc03ded29
+X-QQ-Originating-IP: gq7JJTY3JcQonU6hFJVZPVLXzlhlkjDXr195UbkoT4A=
 Received: from DSK-zaiyuwang.trustnetic.com ( [122.233.170.62])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Thu, 27 Aug 2026 19:44:04 +0800 (CST)
+ id ; Thu, 27 Aug 2026 19:44:08 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 18348504478640002781
+X-BIZMAIL-ID: 8609732540424383190
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH 09/13] net/txgbe: fix DAC hot-plug on 40G NIC with
- auto-negotiation
-Date: Thu, 27 Aug 2026 19:42:01 +0800
-Message-ID: <E8E6FE7736F0B569+20260827114309.10530-10-zaiyuwang@trustnetic.com>
+Subject: [PATCH 10/13] net/txgbe: add backplane FFE and capability devargs
+Date: Thu, 27 Aug 2026 19:42:02 +0800
+Message-ID: <353723D51C5A3785+20260827114309.10530-11-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.55.0.windows.2
 In-Reply-To: <20260827114309.10530-1-zaiyuwang@trustnetic.com>
 References: <20260827114309.10530-1-zaiyuwang@trustnetic.com>
@@ -34,24 +33,24 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpgz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: MLbAtvpy5B1PAl6lmZQLNHbKrsYhMuBksQ+TvfIGF3XIoyR7d2cuvCh6
- 1sCrI8WBOWie4YkRNp+WbWx1adZStvG4bJTqIzDavYBS0zK+2r8slmEjyxDm+jx/8ugpd0J
- XtNRRVbPhPreKutQPcXII1oIHKbx9KMMRXVDMmscQ+D5Edi2W36X87Z/sUlanC4WOyEpT3+
- kAvy75y8PmvVuTGju+vqWO6U/IULW5VtjD5Lpy7Zh1LdO1D0c/btG5ezTBklbqISd2KPEi2
- pvWroxeXCclac8iE6Gq4StP1z6bxrr6fp00e+8lu3BfIphkF1C/2uix14PNjXXI0uPGJZtF
- LEn/3dDfxvY1Sn1IDC1MoQIe2rOC2Rgebvl3o/d1E/42ohhLlQB+EqXb2MamKEMCYpK4ChY
- pipX6zuK2atDaMUrqeULdKMpeEDkVUC0YT7EtaHR+YOeQ+iWA/qmM8ZUg313IxojZJI3H9w
- 2aaWlN/itAz+JT0I2B64uEeZL2bDVKFN+6ey2z/IQQMLlAitoYym/9RFiF7Rj7W/nzdODM1
- lDOOAat5WxvsGMq75UtYRAGGa8GYjzltxAQGQ8ndLSZlxra16ZNe9q/604+k100NYT8/VAl
- xvQYwCRlpb7bi3dkwoa1iKB50zButJSHD1s/KxSdS26gxOzN6RChw5usNiDG+5cbbTCI++1
- y8Krh+Q1Iy0EZg5L3zgYxRtPggS5DMoKxiiBD9cpqHjCtV6ktSei1kAHJN5FbMCKZW+v5ml
- LLbrekZEIN8J9r6JfbVuFMYNsgeOCNIdJUfgXM+j5wDnf4UO1+h4rv58lF9OumOFN3JvMUp
- YvFdzDsymacVSEICeA03Y3Kfi/XM93O1G54X3HI3N+JGd8DgnUfTZLsFBLMDGu+kW9M5dkM
- vVDf6UwYofBE8sJG3Lwbl6mjlyjlUpAb44VlJsTtCWLaYhkxysfCAcGIoef8L+XAjcYLnlj
- /87U47jYdDpE8pxziW3pHimsJm3OL9gcbrvcq4a9ARTp3foYKX/EsWnHAb4zQrK/0sqpNBv
- eVzOgMfFgRbm30NtrAY1HXfDLV5NAAU9wv3GJrK2kUmfqLp4gTmdTOUJVd4QVPODbXomQh1
- N6TFxInGGwawVs7p+kFsaQITObuu5n5HQ==
-X-QQ-XMRINFO: Mp0Kj//9VHAxzExpfF+O8yhSrljjwrznVg==
+X-QQ-XMAILINFO: MpF2fip8b+qQsnqmce+mINt2FXZAW6Qz4jbjPiHb85Y3s24hNCpruiAd
+ 7koMAwjvWnC7XbnQ0q6ZtxiAfd51+N9o6SChnNTdWYx5d6Jwm7hjSdZbTjKYnJ+liS6StJm
+ UzFit+H7rBv/CCjBc7d5axTbfG0AV8jaY49bBOAym2JOE5RaiUyCRpGU6f4GF1wngp+LtBb
+ MlBqkQhPEPAy1lM5ov2EeFx8Eb7eXIB9rGEllAVB99a3BoIFTBQ3APJTntNTiafnhXv0nYk
+ adOwSwpswpZAcom+s4PdG+oehaxg/RsZJmGb8Ul47H4TLsVDrpy3UG6LJAF41JDyBy37Vvn
+ LfCiikQO9yTCN3cEnQV5S+U/qH6nxz6keIbIJ4qC/+MJyGijjLkvMzAOl0eeFDyZVTF9kTQ
+ wL/T0TcBB7/Eb9B8zRTdziVPWs7D72NCAWrdBly20t+MjAnRIqm1fAoABchdHJdlKtvf0Em
+ 36jaDBQgYZDHBpuye3u6XDQ6fqWHvcNy/saEHTaDVbxXIBj3YJS117VWhGoTjHQy3wFWtdB
+ NojNgriWFIyDTgR5h4c1vKOKrac7+g6aAeMTvJmzpRZ8zr527w9A4PZ20HbDLUoWA0l4Zbu
+ 4D2S1lezLrxQKIEUFXJSZ8Nr1hfo1LOPNwcO8tljo2I58XJCkyQOATlSg7eOCaYvgNycSrE
+ ecF24FCCHutI/abZQ0hX0Upu6Y5gNLpoROLqOfhhf7o+idQA0xF6D6N7Rd0WOJ53jDaEDhk
+ x6sra1mqO8x+YR+/mSIRbHjVNUr9Kswbfmh6p8HDYsZHsVUwqp/G84G/j+UUgzajOFpdGoO
+ lbXE3lILojByuhzv5EsBnBrfWP3D52wPs2f8tM6sgJ7pr5q76T5PQwVfWjAVYcqKMLP9gXd
+ HmV50VPVaaEYwmYuevj3VhFCrSmsFGaN8x/g8/EsKPEQAZKWGn0EiqQhEUP8mxF5angh4J1
+ W3Y2hmc3XoKkqOSqz6ENum6eXvowPkw1Doro2xYeM8Ug+fOIyFZSiOw/+/XkqhRR1Jp7gPW
+ yz+m/vT+/+51ZZxQRCqVGREuUQYOB7mnd7W5xpHJ5ty3NaAhk5znuMzF4KlX/ls0KZC+tsZ
+ 23oIpD2FZo+y5svh42294cD053bc4Kkf7bruJUX3kSzRukfFQZJMog=
+X-QQ-XMRINFO: OWPUhxQsoeAVwkVaQIEGSKwwgKCxK/fD5g==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -66,101 +65,232 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hot-plugging a DAC cable while an Amber-Lite 40G port is running
-does not bring the link up. Two problems are in the way.
+Two backplane configuration knobs are missing.
 
-First, the 40G NIC never delivers the GPIO interrupt for module
-insertion or removal, so txgbe_dev_detect_sfp() is not called and the
-new module is never identified (the 25G part is not affected). Poll
-the module-present level every 2 seconds instead. The poll skips the
-identify step while the level is unchanged, and only re-arms itself
-while the port is started, so that it cannot survive txgbe_dev_stop().
+The 25G E56 PHY has a second pre-cursor tap that cannot be tuned:
+with ffe_set enabled, the pre2 value is never applied. On the 40G
+PHY, a user supplied FFE value only reaches the first lane, because
+the register holds one FFE byte per lane and the value is not
+replicated over the four lanes.
 
-Second, when the port is started with no module plugged in,
-txgbe_set_link_to_amlite() times out and leaves hw->link_valid false.
-The xpcs path of txgbe_setup_phy_link_aml40() never restores it, so
-txgbe_e56_check_phy_link() and txgbe_check_mac_link_aml40() keep
-forcing the link down even once AN73 has brought it up. Restore
-link_valid on the xpcs path, as the non-xpcs path already does.
+The advertised 40G backplane capability is hardwired to KR4+CR4;
+there is no way to advertise only 40GBASE-KR4 or only 40GBASE-CR4.
 
-Fixes: a2d92608d3b0 ("net/txgbe: add GPIO configuration")
-Fixes: f7cfc21e9f75 ("net/txgbe: fix link stability for 40G NIC")
+Add the ffe_pre2 and bp_capa devargs, use the E56 PHY FFE defaults
+for AML/AML40 when ffe_set is enabled, and replicate the user FFE
+value over the four 40G lanes. The devargs are parsed after the
+shared code init so the MAC type is known when picking the defaults.
+
+Fixes: 6104fd11086e ("net/txgbe: fix link stability for 25G NIC")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_aml40.c |  7 +++++++
- drivers/net/txgbe/txgbe_ethdev.c     | 17 ++++++++++++++++-
- 2 files changed, 23 insertions(+), 1 deletion(-)
+ doc/guides/nics/txgbe.rst           | 11 ++++++++
+ drivers/net/txgbe/base/txgbe_e56.h  |  5 ++++
+ drivers/net/txgbe/base/txgbe_type.h | 12 ++++++---
+ drivers/net/txgbe/txgbe_ethdev.c    | 39 +++++++++++++++++++++++++++--
+ 4 files changed, 61 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
-index 90d4453b06..bfb8a4bc7f 100644
---- a/drivers/net/txgbe/base/txgbe_aml40.c
-+++ b/drivers/net/txgbe/base/txgbe_aml40.c
-@@ -176,6 +176,13 @@ s32 txgbe_setup_phy_link_aml40(struct txgbe_hw *hw,
- 		rte_spinlock_lock(&hw->phy_lock);
- 		txgbe_e56_set_phy_link_mode(hw, 40, autoneg_wait_to_complete);
- 		rte_spinlock_unlock(&hw->phy_lock);
-+		/* Restore link_valid, as the non-xpcs path below does. An
-+		 * earlier txgbe_set_link_to_amlite() timeout, for example when
-+		 * the port was started with no module plugged in, left it
-+		 * false, which keeps the check_phy_link and check_mac_link
-+		 * gates forcing the link down even after AN73 brings it up.
-+		 */
-+		hw->link_valid = true;
- 		return status;
- 	}
+diff --git a/doc/guides/nics/txgbe.rst b/doc/guides/nics/txgbe.rst
+index 90c55141f1..d56fb3b99a 100644
+--- a/doc/guides/nics/txgbe.rst
++++ b/doc/guides/nics/txgbe.rst
+@@ -142,6 +142,11 @@ Please note that following ``devargs`` are only set for backplane NICs.
+   PHY parameter used for user debugging. Setting other values to
+   take effect requires setting the ``ffe_set``.
+ 
++- ``ffe_pre2`` (default **0**)
++
++  PHY parameter used for user debugging, only for the Amber-Lite E56 PHY.
++  Setting other values to take effect requires setting the ``ffe_set``.
++
+ - ``ffe_post`` (default **44**)
+ 
+   PHY parameter used for user debugging. Setting other values to
+@@ -177,6 +182,12 @@ Please note that following ``devargs`` are only set for Amber-Lite NICs.
+   In this mode, the hardware merges and writes back a group of RX descriptors
+   together to reduce memory access times, which helps improve performance.
+ 
++- ``bp_capa`` (default **0**)
++
++  Backplane capability selection for the 40G NIC. Set 0 for both
++  40GBASE-KR4 and 40GBASE-CR4, set 1 for 40GBASE-KR4 only, set 2 for
++  40GBASE-CR4 only.
++
+ Driver compilation and testing
+ ------------------------------
+ 
+diff --git a/drivers/net/txgbe/base/txgbe_e56.h b/drivers/net/txgbe/base/txgbe_e56.h
+index 1922a2eb92..fe9a83ae01 100644
+--- a/drivers/net/txgbe/base/txgbe_e56.h
++++ b/drivers/net/txgbe/base/txgbe_e56.h
+@@ -1714,6 +1714,11 @@ typedef union {
+ #define S40G_TX_FFE_CFG_PRE2        0x0
+ #define S40G_TX_FFE_CFG_POST        0x11111111
+ 
++/* The 40G PHY holds one FFE byte per lane, so a user supplied value has to
++ * be replicated over the four lanes.
++ */
++#define S40G_TX_FFE_4LANE(v)        ((u32)((v) & 0xFF) * 0x01010101u)
++
+ #define BYPASS_CTLE_TAG             0x0
+ 
+ #define S10G_PHY_RX_CTLE_TAPWT_WEIGHT1      0x1
+diff --git a/drivers/net/txgbe/base/txgbe_type.h b/drivers/net/txgbe/base/txgbe_type.h
+index f9b5cbe61a..f56cd70c6f 100644
+--- a/drivers/net/txgbe/base/txgbe_type.h
++++ b/drivers/net/txgbe/base/txgbe_type.h
+@@ -739,10 +739,10 @@ struct txgbe_phy_info {
+ 
+ 	/* Some features need tri-state capability */
+ 	u16 ffe_set;
+-	u16 ffe_main;
+-	u16 ffe_pre;
+-	u16 ffe_pre2;
+-	u16 ffe_post;
++	u32 ffe_main;
++	u32 ffe_pre;
++	u32 ffe_pre2; /* only for the Amber-Lite E56 PHY */
++	u32 ffe_post;
+ 	u16 fec_mode;
+ 	u16 bp_capa;
+ };
+@@ -754,12 +754,14 @@ struct txgbe_phy_info {
+ #define TXGBE_DEVARG_FFE_SET		"ffe_set"
+ #define TXGBE_DEVARG_FFE_MAIN		"ffe_main"
+ #define TXGBE_DEVARG_FFE_PRE		"ffe_pre"
++#define TXGBE_DEVARG_FFE_PRE2		"ffe_pre2"
+ #define TXGBE_DEVARG_FFE_POST		"ffe_post"
+ #define TXGBE_DEVARG_FDIR_PBALLOC	"pkt-filter-size"
+ #define TXGBE_DEVARG_FDIR_DROP_QUEUE	"pkt-filter-drop-queue"
+ #define TXGBE_DEVARG_TX_HEAD_WB		"tx_headwb"
+ #define TXGBE_DEVARG_TX_HEAD_WB_SIZE	"tx_headwb_size"
+ #define TXGBE_DEVARG_RX_DESC_MERGE	"rx_desc_merge"
++#define TXGBE_DEVARG_BP_CAPA		"bp_capa"
+ 
+ static const char * const txgbe_valid_arguments[] = {
+ 	TXGBE_DEVARG_BP_AUTO,
+@@ -769,12 +771,14 @@ static const char * const txgbe_valid_arguments[] = {
+ 	TXGBE_DEVARG_FFE_SET,
+ 	TXGBE_DEVARG_FFE_MAIN,
+ 	TXGBE_DEVARG_FFE_PRE,
++	TXGBE_DEVARG_FFE_PRE2,
+ 	TXGBE_DEVARG_FFE_POST,
+ 	TXGBE_DEVARG_FDIR_PBALLOC,
+ 	TXGBE_DEVARG_FDIR_DROP_QUEUE,
+ 	TXGBE_DEVARG_TX_HEAD_WB,
+ 	TXGBE_DEVARG_TX_HEAD_WB_SIZE,
+ 	TXGBE_DEVARG_RX_DESC_MERGE,
++	TXGBE_DEVARG_BP_CAPA,
+ 	NULL
+ };
  
 diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
-index 9a29539f14..38c58323e7 100644
+index 38c58323e7..181a1df523 100644
 --- a/drivers/net/txgbe/txgbe_ethdev.c
 +++ b/drivers/net/txgbe/txgbe_ethdev.c
-@@ -2015,6 +2015,11 @@ txgbe_dev_start(struct rte_eth_dev *dev)
- 	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40) {
- 		rte_eal_alarm_set(hw->bp_event_interval, txgbe_dev_e56_check_bp_event, dev);
- 		rte_eal_alarm_set(1000 * 1000 * 2, txgbe_dev_check_aml_temp_event, dev);
-+		/* The 40G NIC does not deliver a GPIO interrupt on module
-+		 * insertion or removal, so poll the module-present level.
-+		 */
-+		if (hw->mac.type == txgbe_mac_aml40 && !txgbe_is_backplane(hw))
-+			rte_eal_alarm_set(2000 * 1000, txgbe_dev_detect_sfp, dev);
- 	}
- 
- 	if (tm_conf->root && !tm_conf->committed)
-@@ -3096,7 +3101,7 @@ txgbe_dev_detect_sfp(void *param)
- 	struct rte_eth_dev *dev = (struct rte_eth_dev *)param;
- 	struct txgbe_hw *hw = TXGBE_DEV_HW(dev);
- 	u32 value = 0;
--	s32 err;
-+	s32 err = 0;
- 
- 	if (hw->mac.type == txgbe_mac_aml40) {
- 		value = rd32(hw, TXGBE_GPIOEXT);
-@@ -3104,6 +3109,11 @@ txgbe_dev_detect_sfp(void *param)
- 			err = TXGBE_ERR_SFP_NOT_PRESENT;
- 			goto out;
- 		}
-+		/* The level is unchanged since the last poll, so the cached
-+		 * module type is still valid and identify can be skipped.
-+		 */
-+		if (hw->phy.sfp_type != txgbe_sfp_type_not_present)
-+			goto rearm;
- 	}
- 
- 	if (hw->mac.type == txgbe_mac_aml) {
-@@ -3142,6 +3152,11 @@ txgbe_dev_detect_sfp(void *param)
- 		}
- 		txgbe_dev_link_update(dev, 0);
- 	}
+@@ -531,6 +531,7 @@ txgbe_parse_devargs(struct rte_eth_dev *dev)
+ 	u16 ffe_set = 0;
+ 	u16 ffe_main = 27;
+ 	u16 ffe_pre = 8;
++	u16 ffe_pre2 = 0;
+ 	u16 ffe_post = 44;
+ 	/* FDIR args */
+ 	u8 pballoc = 0;
+@@ -539,6 +540,22 @@ txgbe_parse_devargs(struct rte_eth_dev *dev)
+ 	u16 tx_headwb = 1;
+ 	u16 tx_headwb_size = 16;
+ 	u16 rx_desc_merge = 1;
++	u16 bp_capa = 0;
 +
-+rearm:
-+	if (hw->mac.type == txgbe_mac_aml40 && !txgbe_is_backplane(hw) &&
-+	    dev->data->dev_started)
-+		rte_eal_alarm_set(2000 * 1000, txgbe_dev_detect_sfp, dev);
- }
++	/* The E56 PHY needs its own FFE defaults, as the ones above only
++	 * apply to the Sapphire PHY.
++	 */
++	if (hw->mac.type == txgbe_mac_aml) {
++		ffe_main = S25G_TX_FFE_CFG_DAC_MAIN;
++		ffe_pre = S25G_TX_FFE_CFG_DAC_PRE1;
++		ffe_pre2 = S25G_TX_FFE_CFG_DAC_PRE2;
++		ffe_post = S25G_TX_FFE_CFG_DAC_POST;
++	} else if (hw->mac.type == txgbe_mac_aml40) {
++		ffe_main = S40G_TX_FFE_CFG_MAIN & 0xFF;
++		ffe_pre = S40G_TX_FFE_CFG_PRE1 & 0xFF;
++		ffe_pre2 = S40G_TX_FFE_CFG_PRE2 & 0xFF;
++		ffe_post = S40G_TX_FFE_CFG_POST & 0xFF;
++	}
  
- static void
+ 	if (devargs == NULL)
+ 		goto null;
+@@ -561,6 +578,8 @@ txgbe_parse_devargs(struct rte_eth_dev *dev)
+ 			   &txgbe_handle_devarg, &ffe_main);
+ 	rte_kvargs_process(kvlist, TXGBE_DEVARG_FFE_PRE,
+ 			   &txgbe_handle_devarg, &ffe_pre);
++	rte_kvargs_process(kvlist, TXGBE_DEVARG_FFE_PRE2,
++			   &txgbe_handle_devarg, &ffe_pre2);
+ 	rte_kvargs_process(kvlist, TXGBE_DEVARG_FFE_POST,
+ 			   &txgbe_handle_devarg, &ffe_post);
+ 	rte_kvargs_process(kvlist, TXGBE_DEVARG_FDIR_PBALLOC,
+@@ -573,6 +592,8 @@ txgbe_parse_devargs(struct rte_eth_dev *dev)
+ 			   &txgbe_handle_devarg, &tx_headwb_size);
+ 	rte_kvargs_process(kvlist, TXGBE_DEVARG_RX_DESC_MERGE,
+ 			   &txgbe_handle_devarg, &rx_desc_merge);
++	rte_kvargs_process(kvlist, TXGBE_DEVARG_BP_CAPA,
++			   &txgbe_handle_devarg, &bp_capa);
+ 	rte_kvargs_free(kvlist);
+ 
+ null:
+@@ -586,7 +607,17 @@ txgbe_parse_devargs(struct rte_eth_dev *dev)
+ 	hw->phy.ffe_set = ffe_set;
+ 	hw->phy.ffe_main = ffe_main;
+ 	hw->phy.ffe_pre = ffe_pre;
++	hw->phy.ffe_pre2 = ffe_pre2;
+ 	hw->phy.ffe_post = ffe_post;
++	hw->phy.bp_capa = bp_capa;
++
++	/* The 40G PHY expects one FFE byte per lane. */
++	if (hw->mac.type == txgbe_mac_aml40) {
++		hw->phy.ffe_main = S40G_TX_FFE_4LANE(ffe_main);
++		hw->phy.ffe_pre = S40G_TX_FFE_4LANE(ffe_pre);
++		hw->phy.ffe_pre2 = S40G_TX_FFE_4LANE(ffe_pre2);
++		hw->phy.ffe_post = S40G_TX_FFE_4LANE(ffe_post);
++	}
+ 
+ 	fdir_conf->pballoc = pballoc;
+ 	fdir_conf->drop_queue = drop_queue;
+@@ -690,7 +721,6 @@ eth_txgbe_dev_init(struct rte_eth_dev *eth_dev, void *init_params __rte_unused)
+ 	hw->isb_dma = TMZ_PADDR(mz);
+ 	hw->isb_mem = TMZ_VADDR(mz);
+ 
+-	txgbe_parse_devargs(eth_dev);
+ 	/* Initialize the shared code (base driver) */
+ 	err = txgbe_init_shared_code(hw);
+ 	if (err != 0) {
+@@ -698,6 +728,9 @@ eth_txgbe_dev_init(struct rte_eth_dev *eth_dev, void *init_params __rte_unused)
+ 		return -EIO;
+ 	}
+ 
++	/* Parsing the devargs requires a known MAC type. */
++	txgbe_parse_devargs(eth_dev);
++
+ 	if (hw->mac.type == txgbe_mac_aml)
+ 		txgbe_override_mac_ops(hw);
+ 
+@@ -6478,12 +6511,14 @@ RTE_PMD_REGISTER_PARAM_STRING(net_txgbe,
+ 			      TXGBE_DEVARG_FFE_SET "=<0-4>"
+ 			      TXGBE_DEVARG_FFE_MAIN "=<uint16>"
+ 			      TXGBE_DEVARG_FFE_PRE "=<uint16>"
++			      TXGBE_DEVARG_FFE_PRE2 "=<uint16>"
+ 			      TXGBE_DEVARG_FFE_POST "=<uint16>"
+ 			      TXGBE_DEVARG_FDIR_PBALLOC "=<0|1|2>"
+ 			      TXGBE_DEVARG_FDIR_DROP_QUEUE "=<uint8>"
+ 			      TXGBE_DEVARG_TX_HEAD_WB "=<0|1>"
+ 			      TXGBE_DEVARG_TX_HEAD_WB_SIZE "=<1|16>"
+-			      TXGBE_DEVARG_RX_DESC_MERGE "=<0|1>");
++			      TXGBE_DEVARG_RX_DESC_MERGE "=<0|1>"
++			      TXGBE_DEVARG_BP_CAPA "=<0|1|2>");
+ 
+ RTE_LOG_REGISTER_SUFFIX(txgbe_logtype_init, init, NOTICE);
+ RTE_LOG_REGISTER_SUFFIX(txgbe_logtype_driver, driver, NOTICE);
 -- 
 2.55.0.windows.2
-
 
