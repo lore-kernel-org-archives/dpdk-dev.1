@@ -2,32 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC32BC61DBE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 02:38:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06738C61DBE
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 02:38:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8538B40B8D;
-	Thu, 27 Aug 2026 04:38:27 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 70DEB40A8B;
+	Thu, 27 Aug 2026 04:38:34 +0200 (CEST)
 Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
- by mails.dpdk.org (Postfix) with ESMTP id E67F340A8B
- for <dev@dpdk.org>; Thu, 27 Aug 2026 04:38:25 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 42ECD40B8C
+ for <dev@dpdk.org>; Thu, 27 Aug 2026 04:38:32 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-01 (Coremail) with SMTP id qwCowAAn+u0eo49qR5GjBg--.25169S2;
- Thu, 27 Aug 2026 10:38:23 +0800 (CST)
+ by APP-01 (Coremail) with SMTP id qwCowACHWe0ko49qiJGjBg--.64024S2;
+ Thu, 27 Aug 2026 10:38:28 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org
-Subject: [PATCH v4 21/44] net/sxe2: fix duplicated cleanup in dev close
-Date: Thu, 27 Aug 2026 10:38:22 +0800
-Message-ID: <20260827023822.1431015-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v4 22/44] net/sxe2: align dev init and cleanup order
+Date: Thu, 27 Aug 2026 10:38:28 +0800
+Message-ID: <20260827023828.1431065-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260826085836.993490-1-liujie5@linkdatatechnology.com>
 References: <20260826085836.993490-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: qwCowAAn+u0eo49qR5GjBg--.25169S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr15CrW8WrWDAF1UGw1kAFb_yoW8XF47pF
- WfX3WrAF1FvFs7XwnxJayIgFyUK3WfJ3yDKr4Yv34fGa18Cw1akryktFyYkw1vv39xZF1F
- yFy7Ar1UJw4kZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: qwCowACHWe0ko49qiJGjBg--.64024S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr18tFy7GFWkJryxCF4rKrg_yoW8AFWfpF
+ 4Sg3W5AF12yFsrXw43AayxWF1UKayfKrWjkr4Sk3WfXa48ur1YkFy8Jr1ak34kC3y7AF1F
+ ya12ywn8Gw4vgaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUkFb7Iv0xC_Cr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
  0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
  A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xII
@@ -57,45 +57,61 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-sxe2_dev_close() calls sxe2_switchdev_uninit() and
-sxe2_dev_pci_map_uinit() twice, and releases resources in an order
-that does not match the initialization sequence.
+Move sxe2_eth_init() to be called before sxe2_sw_init() and
+rearrange the error cleanup labels so that resources are torn down
+in the reverse order of initialization.
 
-Remove the duplicated calls and align the teardown order with the
-device init order.
-
-Fixes: 8cebf80f1eda ("net/sxe2: support Rx interrupt")
-Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_ethdev.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/net/sxe2/sxe2_ethdev.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index 6222a319af..1ffaf9cb9f 100644
+index 1ffaf9cb9f..72aae84ae3 100644
 --- a/drivers/net/sxe2/sxe2_ethdev.c
 +++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -2045,17 +2045,15 @@ static int32_t sxe2_dev_close(struct rte_eth_dev *dev)
- 	(void)sxe2_queues_release(dev);
- 	sxe2_mp_uninit(dev);
- 	(void)sxe2_sched_uinit(dev);
--	(void)sxe2_rss_disable(dev);
- 	(void)sxe2_flow_uninit(dev);
-+	(void)sxe2_rss_disable(dev);
- 	(void)sxe2_udp_tunnel_port_clear(dev);
--	sxe2_vsi_uninit(dev);
+@@ -1946,6 +1946,12 @@ static int32_t sxe2_dev_init(struct rte_eth_dev *dev,
+ 		goto init_switchdev_err;
+ 	}
+ 
++	ret = sxe2_eth_init(dev);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "Failed to initialize eth parameters, ret=%d", ret);
++		goto init_eth_err;
++	}
++
+ 	ret = sxe2_sw_init(dev);
+ 	if (ret) {
+ 		PMD_LOG_ERR(INIT, "Failed to initialize sw parameters, ret=[%d]", ret);
+@@ -1958,12 +1964,6 @@ static int32_t sxe2_dev_init(struct rte_eth_dev *dev,
+ 		goto init_irq_err;
+ 	}
+ 
+-	ret = sxe2_eth_init(dev);
+-	if (ret) {
+-		PMD_LOG_ERR(INIT, "Failed to initialize eth parameters, ret=%d", ret);
+-		goto init_eth_err;
+-	}
+-
+ 	ret = sxe2_security_init(dev);
+ 	if (ret) {
+ 		PMD_LOG_ERR(INIT, "Failed to initialize security, ret=%d", ret);
+@@ -2018,12 +2018,12 @@ static int32_t sxe2_dev_init(struct rte_eth_dev *dev,
+ init_rss_err:
  	sxe2_security_uinit(dev);
+ init_security_err:
+-	sxe2_eth_uinit(dev);
+-init_eth_err:
  	sxe2_intr_uninit(dev);
- 	(void)sxe2_switchdev_uninit(dev);
+ init_irq_err:
  	sxe2_sw_uninit(dev);
--	(void)sxe2_switchdev_uninit(dev);
--	sxe2_dev_pci_map_uinit(dev);
- 	sxe2_eth_uinit(dev);
-+	sxe2_vsi_uninit(dev);
- 	sxe2_dev_pci_map_uinit(dev);
- 	sxe2_free_repr_info(dev);
- 	sxe2_fc_state_uinit(dev);
+ init_sw_err:
++	sxe2_eth_uinit(dev);
++init_eth_err:
+ 	(void)sxe2_switchdev_uninit(dev);
+ init_switchdev_err:
+ init_dev_info_err:
 -- 
 2.52.0
 
