@@ -2,36 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C801AC61DBD
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 02:38:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D74EC61DBD
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 02:38:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 90A66409FA;
-	Thu, 27 Aug 2026 04:38:03 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id AF51A40A76;
+	Thu, 27 Aug 2026 04:38:09 +0200 (CEST)
 Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
- by mails.dpdk.org (Postfix) with ESMTP id D327A4067C
- for <dev@dpdk.org>; Thu, 27 Aug 2026 04:38:01 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5398C40A76
+ for <dev@dpdk.org>; Thu, 27 Aug 2026 04:38:07 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-01 (Coremail) with SMTP id qwCowACXa+8Ho49qPZCjBg--.3154S2;
- Thu, 27 Aug 2026 10:38:00 +0800 (CST)
+ by APP-01 (Coremail) with SMTP id qwCowACXa+8No49qhJCjBg--.3155S2;
+ Thu, 27 Aug 2026 10:38:05 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org
-Subject: [PATCH v4 17/44] net/sxe2: move PCI register read macro to common
- header
-Date: Thu, 27 Aug 2026 10:37:59 +0800
-Message-ID: <20260827023759.1430802-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v4 18/44] net/sxe2: validate PCI map resource type
+Date: Thu, 27 Aug 2026 10:38:05 +0800
+Message-ID: <20260827023805.1430851-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260826085836.993490-1-liujie5@linkdatatechnology.com>
 References: <20260826085836.993490-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: qwCowACXa+8Ho49qPZCjBg--.3154S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr18Cw1DXr4rCFWDGFW3Jrb_yoW8XF4xpF
- W8ZFyYvF1YqF4DKw1kGa1xZFnIg3ZrXryDCa9Y93ySvF1DJr18Zrs0gFyrKw4rCr48XF4F
- vr17Zr1Uuan8Xw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: qwCowACXa+8No49qhJCjBg--.3155S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr1UuF1rAw1DArWxCryUJrb_yoW8Gr18pF
+ 4Sqr1UZF1YqF1agr45Ja1xZFy5Kw45JrWv9FZxW3sakFyxXryUXr15ta4UKr1UCws7X3WS
+ yr43Aa1DW3s0vaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUkYb7Iv0xC_Cr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
  0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
- A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
+ A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xII
  jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4
  A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
  64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q6rW5McIj6I8E87Iv67AKxVW8JVWxJw
@@ -58,42 +57,37 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Move SXE2_PCI_REG_READ to sxe2_ethdev.h so the PCI register access
-macros are kept together in the common header, matching
-SXE2_PCI_REG_WRITE.
+sxe2_dev_pci_res_seg_map() indexes adapter->map_ctxt.addr_info[] with
+res_type without bounds checking, which can access out of bounds when
+an invalid resource type is passed.
 
+Add a bounds check on res_type and return -EINVAL.
+
+Fixes: 66a10eb60ebe ("net/sxe2: add PCI BAR mapping")
+Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_ethdev.h | 1 +
- drivers/net/sxe2/sxe2_queue.h  | 2 --
- 2 files changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/sxe2/sxe2_ethdev.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
-index cf1104144c..f2557b28c3 100644
---- a/drivers/net/sxe2/sxe2_ethdev.h
-+++ b/drivers/net/sxe2/sxe2_ethdev.h
-@@ -356,6 +356,7 @@ struct sxe2_adapter {
- 	((struct sxe2_adapter *)(dev)->data->dev_private)
+diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
+index 96b437c6a9..7646f6b309 100644
+--- a/drivers/net/sxe2/sxe2_ethdev.c
++++ b/drivers/net/sxe2/sxe2_ethdev.c
+@@ -1556,6 +1556,12 @@ int32_t sxe2_dev_pci_res_seg_map(struct sxe2_adapter *adapter,
+ 	struct sxe2_pci_map_addr_info *addr_info = NULL;
+ 	int32_t ret = 0;
  
- #define SXE2_PCI_REG_WRITE(reg, value) rte_write32((rte_cpu_to_le_32(value)), (reg))
-+#define SXE2_PCI_REG_READ(reg)         rte_read32(reg)
- 
- void *sxe2_pci_map_addr_get(struct sxe2_adapter *adapter,
- 			    enum sxe2_pci_map_resource res_type,
-diff --git a/drivers/net/sxe2/sxe2_queue.h b/drivers/net/sxe2/sxe2_queue.h
-index a300b66771..10bdaf5b8d 100644
---- a/drivers/net/sxe2/sxe2_queue.h
-+++ b/drivers/net/sxe2/sxe2_queue.h
-@@ -12,8 +12,6 @@
- #include "sxe2_drv_cmd.h"
- #include "sxe2_txrx_common.h"
- 
--#define SXE2_PCI_REG_READ(reg)			\
--		rte_read32(reg)
- #define SXE2_PCI_REG_WRITE_WC(reg, value)			\
- 		rte_write32_wc((rte_cpu_to_le_32(value)), reg)
- #define SXE2_PCI_REG_WRITE_WC_RELAXED(reg, value)		\
++	if (unlikely(res_type >= SXE2_PCI_MAP_RES_MAX_COUNT)) {
++		PMD_DEV_LOG_ERR(adapter, INIT, "Invalid resource type %u", res_type);
++		ret = -EINVAL;
++		goto l_end;
++	}
++
+ 	addr_info = &adapter->map_ctxt.addr_info[res_type];
+ 	if (!addr_info || addr_info->bar_idx == SXE2_PCI_MAP_BAR_INVALID) {
+ 		PMD_DEV_LOG_ERR(adapter, INIT, "Invalid bar index with resource type %d", res_type);
 -- 
 2.52.0
 
