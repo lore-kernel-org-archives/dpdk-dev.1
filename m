@@ -2,47 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6751DC61DC4
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 03:28:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5948EC61DBD
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 04:45:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4F47F40EE2;
-	Fri, 28 Aug 2026 05:27:37 +0200 (CEST)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 5308A40E3F
- for <dev@dpdk.org>; Fri, 28 Aug 2026 05:27:34 +0200 (CEST)
-Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowADX2zkjAJFq+S5wBg--.211S2;
- Fri, 28 Aug 2026 11:27:31 +0800 (CST)
-From: liujie5@linkdatatechnology.com
-To: stephen@networkplumber.org
-Cc: dev@dpdk.org
-Subject: [PATCH v5 45/45] net/sxe2: remove ineffective queue counts in
- representor info
-Date: Fri, 28 Aug 2026 11:27:31 +0800
-Message-ID: <20260828032731.2109423-1-liujie5@linkdatatechnology.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260827024035.1432256-1-liujie5@linkdatatechnology.com>
-References: <20260827024035.1432256-1-liujie5@linkdatatechnology.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 2255640151;
+	Fri, 28 Aug 2026 06:45:49 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+ by mails.dpdk.org (Postfix) with ESMTP id BEE6F40150
+ for <dev@dpdk.org>; Fri, 28 Aug 2026 06:45:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1787892348; x=1819428348;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=thBX8x3K1P0MFQzeDBl6J6TuI356OQtkRENA6Tq8yJk=;
+ b=nFesj+F16YgP5agl/T+mXC61FC4e4I+5Vup5+Oh+VsEGph7XU7eLXxW5
+ GIPHLbI0bOh6Jxb/Xn/R5AQe1kAYO7YkZloF4CtXNJk7GSnvLHOB9vL8e
+ HsGRsbOwtgdnyPIt2Q8JG+dWfOwPpwBU5Huo+eDtZzdgrB8TR9XlhKXcQ
+ MtnEsyodeFEuvz4ZJnAaXlidPVGkeahv3K+gtj3+cI5BaykU2YRsxsamo
+ KrOmoGPAUP5fplr/XU50Trh49pPcfpJj0ZHEGtQzYWBenZooXB5FPF1C/
+ 8bXimnRgHFh5PwoMvOVzIRKUWE31oKF9z5cPLo5C/+eOUPKaOYTHapBZk g==;
+X-CSE-ConnectionGUID: RQSy+6RRR8egeRhTaoSsFw==
+X-CSE-MsgGUID: lx/XSUL6RL+wgqOVOYyinw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11888"; a="99915187"
+X-IronPort-AV: E=Sophos;i="6.25,248,1779174000"; d="scan'208";a="99915187"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+ by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 27 Aug 2026 21:45:47 -0700
+X-CSE-ConnectionGUID: n6U/OteLR5q9rPFp1+hhdQ==
+X-CSE-MsgGUID: r1iJEWPXTxmj/TBhgkrj4w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,248,1779174000"; d="scan'208";a="297954085"
+Received: from spr4.iind.intel.com ([10.138.182.75])
+ by orviesa002.jf.intel.com with ESMTP; 27 Aug 2026 21:45:45 -0700
+From: Atul Patel <atul.patel@intel.com>
+To: bruce.richardson@intel.com,
+	aman.deep.singh@intel.com
+Cc: dev@dpdk.org, praveen.shetty@intel.com, atul.patel@intel.com,
+ dhananjay.shukla@intel.com
+Subject: [PATCH] net/cpfl: fix VF ID calculation for vCPF
+Date: Fri, 28 Aug 2026 02:52:16 +0530
+Message-Id: <20260827212216.765057-1-atul.patel@intel.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowADX2zkjAJFq+S5wBg--.211S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr15GFyUWry8uw4ruF4rZrb_yoW8Jw1xpF
- 4FqFy5CF4rXF15Kwn5Ca1xWa4YgF4UG3y7CrZrt34fu34UZ34UZFyDJFySvayvyr48XF40
- vws7XrsIgFnYvF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUkSb7Iv0xC_Zr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
- 0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
- A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xII
- jxv20xvEc7CjxVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4
- vEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
- FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWrXVW3AwAv7VC2z280aVAFwI0_Gr
- 0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4kE6xkIj40Ew7xC0wCF
- 04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r
- 18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vI
- r41lIxAIcVC0I7IYx2IY67AKxVW7JVWDJwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr
- 1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY
- 6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU3NB_UUUUU
-X-Originating-IP: [118.112.177.181]
-X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,34 +59,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jie Liu <liujie5@linkdatatechnology.com>
+The VF ID was incorrectly set to only the PCI function number,
+which fails when VFs span multiple PCI devices (device IDs > 0).
+Calculate the VF ID as (device_id * 8) + function to correctly
+map VFs across devices.
 
-rte_eth_dev_info_get() overwrites dev_info->nb_rx_queues and
-dev_info->nb_tx_queues from dev->data after the PMD dev_infos_get
-callback returns, so assigning them in sxe2_repr_dev_infos_get() has
-no effect. Remove the ineffective assignments.
+Fixes: f1ab44fb0ebf ("net/cpfl: add vCPF port info")
 
-Fixes: 635084db5d57 ("net/sxe2: support VF representors")
-Cc: stable@dpdk.org
-Cc: stephen@networkplumber.org
-Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
+Signed-off-by: Praveen Shetty <praveen.shetty@intel.com>
+Signed-off-by: Atul Patel <atul.patel@intel.com>
+Signed-off-by: Dhananjay Shukla <dhananjay.shukla@intel.com>
 ---
- drivers/net/sxe2/sxe2_ethdev_repr.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/net/intel/cpfl/cpfl_ethdev.c |  3 ++-
+ drivers/net/intel/cpfl/cpfl_ethdev.h | 10 ++++++++++
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/sxe2/sxe2_ethdev_repr.c b/drivers/net/sxe2/sxe2_ethdev_repr.c
-index b7096f5927..5490fea10b 100644
---- a/drivers/net/sxe2/sxe2_ethdev_repr.c
-+++ b/drivers/net/sxe2/sxe2_ethdev_repr.c
-@@ -195,8 +195,6 @@ static int32_t sxe2_repr_dev_infos_get(struct rte_eth_dev *dev,
- 	dev_info->speed_capa = RTE_ETH_LINK_SPEED_10G | RTE_ETH_LINK_SPEED_25G |
- 			 RTE_ETH_LINK_SPEED_50G | RTE_ETH_LINK_SPEED_100G;
+diff --git a/drivers/net/intel/cpfl/cpfl_ethdev.c b/drivers/net/intel/cpfl/cpfl_ethdev.c
+index 4315adb68c..01e1b57cc8 100644
+--- a/drivers/net/intel/cpfl/cpfl_ethdev.c
++++ b/drivers/net/intel/cpfl/cpfl_ethdev.c
+@@ -2839,7 +2839,8 @@ cpfl_dev_vport_init(struct rte_eth_dev *dev, void *init_params)
+ 		pci_dev = RTE_CLASS_TO_BUS_DEVICE(dev, *pci_dev);
+ 		vi.func_type = VCPF_CPCHNL2_FTYPE_LAN_VF;
+ 		vi.pf_id = CPFL_HOST0_CPF_ID;
+-		vi.vf_id = pci_dev->addr.function;
++		vi.vf_id = VCPF_VF_ID_FROM_PCI(pci_dev->addr.devid,
++						pci_dev->addr.function);
  
--	dev_info->nb_rx_queues = dev->data->nb_rx_queues;
--	dev_info->nb_tx_queues = dev->data->nb_tx_queues;
+ 		v_id.vport_id = cpfl_vport->base.vport_info.info.vport_id;
+ 		v_id.vport_type = cpfl_vport->base.vport_info.info.vport_type;
+diff --git a/drivers/net/intel/cpfl/cpfl_ethdev.h b/drivers/net/intel/cpfl/cpfl_ethdev.h
+index d41aa93191..97ec128128 100644
+--- a/drivers/net/intel/cpfl/cpfl_ethdev.h
++++ b/drivers/net/intel/cpfl/cpfl_ethdev.h
+@@ -103,6 +103,16 @@
+ 	((((type) & 0x3) << 14) + (((host_id) & 0x1) << 13) +	\
+ 	 (((pf_id) & 0x1) << 12) + ((vf_id) & 0xfff))
  
- 	dev_info->default_rxportconf.burst_size = SXE2_RX_MAX_BURST;
- 	dev_info->default_txportconf.burst_size = SXE2_TX_MAX_BURST;
++/* Max VFs per PCI device (functions 0-7) */
++#define VCPF_VFS_PER_PCI_DEV	8
++
++/* Calculate VF ID from PCI device and function IDs.
++ * VFs span multiple PCI devices, e.g.:
++ *   device 0: VF 0-7, device 1: VF 8-15, etc.
++ */
++#define VCPF_VF_ID_FROM_PCI(device_id, function) \
++	(((device_id) * VCPF_VFS_PER_PCI_DEV) + (function))
++
+ struct cpfl_vport_param {
+ 	struct cpfl_adapter_ext *adapter;
+ 	uint16_t devarg_id; /* arg id from user */
 -- 
-2.52.0
+2.34.1
 
