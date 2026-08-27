@@ -2,32 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B1AC61DBD
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 02:37:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26336C61DBE
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 02:38:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A893440A4B;
-	Thu, 27 Aug 2026 04:37:58 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7D9C840A71;
+	Thu, 27 Aug 2026 04:37:59 +0200 (CEST)
 Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
- by mails.dpdk.org (Postfix) with ESMTP id B6BB84026F
+ by mails.dpdk.org (Postfix) with ESMTP id D525740284
  for <dev@dpdk.org>; Thu, 27 Aug 2026 04:37:56 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-01 (Coremail) with SMTP id qwCowAB3Su4Co49qApCjBg--.64882S2;
- Thu, 27 Aug 2026 10:37:54 +0800 (CST)
+ by APP-01 (Coremail) with SMTP id qwCowACnQPT8oo9qrY+jBg--.25367S2;
+ Thu, 27 Aug 2026 10:37:48 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org
-Subject: [PATCH v4 16/44] net/sxe2: use regular write for mapped registers
-Date: Thu, 27 Aug 2026 10:37:53 +0800
-Message-ID: <20260827023753.1430747-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v4 15/44] net/sxe2: fix QinQ and RSS offload capability report
+Date: Thu, 27 Aug 2026 10:37:48 +0800
+Message-ID: <20260827023748.1430691-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260826085836.993490-1-liujie5@linkdatatechnology.com>
 References: <20260826085836.993490-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: qwCowAB3Su4Co49qApCjBg--.64882S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr18WFWfXryruF4kWw1xZrb_yoW8AryfpF
- WFqryYvF1YqF45tws8GayxZF90gF1DJr9FkayYv34fZF1DJr1UCFs0ga4rtw4Ykr47JF4F
- vrW3Ar1UWa95Zr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: qwCowACnQPT8oo9qrY+jBg--.25367S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWFWrXFy7GFW5ZFW8Jry7ZFb_yoW5CFWUpF
+ 4rJa4rJFs8tFySqwn5uan7uF909r1kKw4qkF43A34rtFyUJr17XFsrtFy3Aw12kFy7XFnY
+ qa43Z343C3WUGF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUkYb7Iv0xC_Zr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
  0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
  A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
@@ -57,49 +57,82 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-sxe2_pci_map_write_reg() uses the write-combined store
-(SXE2_PCI_REG_WRITE_WC) to write control registers, which is intended
-for doorbell/tail writes and can be lossy or delayed for ordering
-sensitive register updates.
+Make the QINQ offload capabilities conditional on the port VLAN
+setting: only advertise RTE_ETH_TX_OFFLOAD_QINQ_INSERT,
+RTE_ETH_RX_OFFLOAD_QINQ_STRIP and RTE_ETH_RX_OFFLOAD_VLAN_FILTER
+when no port VLAN is configured. Advertise RTE_ETH_RX_OFFLOAD_RSS_HASH
+unconditionally and report the buffer split supported header ptypes
+count in sxe2_buffer_split_supported_hdr_ptypes_get().
 
-Add SXE2_PCI_REG_WRITE macro using a regular rte_write32() and use it
-in sxe2_pci_map_write_reg().
-
-Fixes: 8cebf80f1eda ("net/sxe2: support Rx interrupt")
+Fixes: a2b79a93515e ("net/sxe2: support L2 filtering and MAC config")
 Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_ethdev.c | 2 +-
- drivers/net/sxe2/sxe2_ethdev.h | 2 ++
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/sxe2/sxe2_ethdev.c | 23 +++++++++++++++--------
+ 1 file changed, 15 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index fb7f14fd44..96b437c6a9 100644
+index e85dee6b2c..fb7f14fd44 100644
 --- a/drivers/net/sxe2/sxe2_ethdev.c
 +++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -1443,7 +1443,7 @@ void sxe2_pci_map_write_reg(struct sxe2_adapter *adapter,
- 		goto l_ret;
+@@ -804,11 +804,9 @@ static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev,
+ 		RTE_ETH_RX_OFFLOAD_SCTP_CKSUM |
+ 		RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM |
+ 		RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT |
+-#ifndef RTE_LIBRTE_SXE2_16BYTE_RX_DESC
+-		RTE_ETH_RX_OFFLOAD_QINQ_STRIP |
+-#endif
+ 		RTE_ETH_RX_OFFLOAD_VLAN_EXTEND |
+-		RTE_ETH_RX_OFFLOAD_TCP_LRO;
++		RTE_ETH_RX_OFFLOAD_TCP_LRO |
++		RTE_ETH_RX_OFFLOAD_RSS_HASH;
+ 
+ 	dev_info->tx_offload_capa =
+ 		RTE_ETH_TX_OFFLOAD_VLAN_INSERT |
+@@ -855,14 +853,22 @@ static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev,
+ 		RTE_ETH_TX_OFFLOAD_GENEVE_TNL_TSO;
+ 
+ 
+-	if (adapter->cap_flags & SXE2_DEV_CAPS_OFFLOAD_PTP)
+-		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_TIMESTAMP;
+-
+ 	if (sxe2_ipsec_supported(adapter)) {
+ 		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_SECURITY;
+ 		dev_info->tx_offload_capa |= RTE_ETH_TX_OFFLOAD_SECURITY;
  	}
  
--	SXE2_PCI_REG_WRITE_WC(reg_addr, value);
-+	SXE2_PCI_REG_WRITE(reg_addr, value);
- l_ret:
- 	return;
- }
-diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
-index 1409be74d3..cf1104144c 100644
---- a/drivers/net/sxe2/sxe2_ethdev.h
-+++ b/drivers/net/sxe2/sxe2_ethdev.h
-@@ -355,6 +355,8 @@ struct sxe2_adapter {
- #define SXE2_DEV_PRIVATE_TO_ADAPTER(dev) \
- 	((struct sxe2_adapter *)(dev)->data->dev_private)
- 
-+#define SXE2_PCI_REG_WRITE(reg, value) rte_write32((rte_cpu_to_le_32(value)), (reg))
++	if (adapter->cap_flags & SXE2_DEV_CAPS_OFFLOAD_PTP)
++		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_TIMESTAMP;
 +
- void *sxe2_pci_map_addr_get(struct sxe2_adapter *adapter,
- 			    enum sxe2_pci_map_resource res_type,
- 			    uint16_t idx_in_func);
++	if (!sxe2_dev_port_vlan_check(dev)) {
++		dev_info->tx_offload_capa |= RTE_ETH_TX_OFFLOAD_QINQ_INSERT;
++#ifndef RTE_LIBRTE_SXE2_16BYTE_RX_DESC
++		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_QINQ_STRIP;
++#endif
++		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_VLAN_FILTER;
++	}
++
+ 	if (adapter->cap_flags & SXE2_DEV_CAPS_OFFLOAD_RSS) {
+ 		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_RSS_HASH;
+ 		dev_info->flow_type_rss_offloads  |= SXE2_RSS_HF_SUPPORT_ALL;
+@@ -936,7 +942,7 @@ static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev,
+ 
+ static const uint32_t *
+ sxe2_buffer_split_supported_hdr_ptypes_get(struct rte_eth_dev *dev __rte_unused,
+-					   size_t *no_of_elements __rte_unused)
++					   size_t *no_of_elements)
+ {
+ 	static const uint32_t ptypes[] = {
+ 		RTE_PTYPE_L2_ETHER,
+@@ -974,6 +980,7 @@ sxe2_buffer_split_supported_hdr_ptypes_get(struct rte_eth_dev *dev __rte_unused,
+ 
+ 		RTE_PTYPE_UNKNOWN
+ 	};
++	*no_of_elements = RTE_DIM(ptypes) - 1;
+ 
+ 	return ptypes;
+ }
 -- 
 2.52.0
 
