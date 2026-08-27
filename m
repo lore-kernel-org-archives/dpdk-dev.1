@@ -2,44 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8997C61DB9
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 15:16:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A4DC61DB9
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 15:16:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 90DCE40BA4;
-	Thu, 27 Aug 2026 17:15:11 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7A25B40B99;
+	Thu, 27 Aug 2026 17:15:12 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id 4824240B8F
- for <dev@dpdk.org>; Thu, 27 Aug 2026 17:15:07 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5722840A6D
+ for <dev@dpdk.org>; Thu, 27 Aug 2026 17:15:08 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1787843707; x=1819379707;
+ t=1787843708; x=1819379708;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=1EReeE6gvv/fG7gUp+EsTmlNmi9rvXzJWobCSoDUfNQ=;
- b=GEL9GSI/+PSe7PTMzSOqVzAoZv4gWrBswzuCwIK9CYXkoAX/oUkNFgmk
- 3ZA9E0xAwWsnChuW7PrwBZACKlHa/3P3DftVYLK8v+dvrXQgnlTFAMo0J
- 0eZOHag3pPV0+bQ7RqAAkk5PLkh/SfD6liT4GPn2xYyMra+tpaL7opOAI
- 2dEM4paFkKldtn3XPn6CUNa2JOWht+nz4yMyBq2aefBipOEsngH55WeJV
- DopKMq5jiq3/GK9+hRNJngmTYqUtR9kGN8dAyVDdKpGrxL/vRLN/ZMfIq
- V09fTKIbq6uuxOR+c3BlXYEJK3z9ojfyfCHaSTp2wyz1ki87s+tb2rwPV w==;
-X-CSE-ConnectionGUID: HmOZSkqAR3+mH047t9K9AA==
-X-CSE-MsgGUID: 85d8xfaYTmeoKJ2qKh/aEQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11888"; a="88371634"
-X-IronPort-AV: E=Sophos;i="6.25,246,1779174000"; d="scan'208";a="88371634"
+ bh=2Rs7VabA39C2dPdP4RlcGCs76TxXwZYD65RFpZQtyoA=;
+ b=OgF6/NH5/jsiHKZb/KoxaOLvp/UAk0EzeYPqdsglji1qN48HYkY617CC
+ cPnmRs1Xr9ay4L4vxGzIGfdt4PPBzybm34dNctewUSG/LFhXVkMYq2UaO
+ DT/hBz1krpKQUlqGbYbepU9HpB1ppmKGRqKRqcEMLSZUUgrXH4CTaCyxS
+ oEUy6F+FJmr6h4MdHUr/fe4pMzeVsWpZK5lSATmu+5YeIix0mSYzkMMxW
+ qnguJYyjfijQoTQ6BJ/+e0CsDDDEOVjuXK/cmagnIafweEBu4HEOPfrFJ
+ a2plJ58nCa1lEGUcn2IBLYxbIWKN5fC85NLgj5Hk4zisJckm92rtXRXdc w==;
+X-CSE-ConnectionGUID: kvvcIK0vSSurCkHBQfEHww==
+X-CSE-MsgGUID: WL8aaXyQR+61gDamPEczIA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11888"; a="88371635"
+X-IronPort-AV: E=Sophos;i="6.25,246,1779174000"; d="scan'208";a="88371635"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 Aug 2026 08:15:07 -0700
-X-CSE-ConnectionGUID: EYVEt46UQ1+2sTLmMPwrFg==
-X-CSE-MsgGUID: aQZzgSaYR2Oeyp5iKov27g==
+ 27 Aug 2026 08:15:08 -0700
+X-CSE-ConnectionGUID: QFF4LnDJSRuWQGPp/8Ls/A==
+X-CSE-MsgGUID: zGiWzOvOQBqbn+U+iKItNA==
 X-ExtLoop1: 1
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa003.fm.intel.com with ESMTP; 27 Aug 2026 08:15:06 -0700
+ by fmviesa003.fm.intel.com with ESMTP; 27 Aug 2026 08:15:07 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
-	Chaoyong He <chaoyong.he@corigine.com>
-Subject: [PATCH v13 13/24] vdpa/nfp: use container device assignment API
-Date: Thu, 27 Aug 2026 16:14:16 +0100
-Message-ID: <8579c1a90cb191aa54c51aaeab75f883616eff8f.1787843386.git.anatoly.burakov@intel.com>
+	Vijay Kumar Srivastava <vsrivast@xilinx.com>
+Subject: [PATCH v13 14/24] vdpa/sfc: use container device assignment API
+Date: Thu, 27 Aug 2026 16:14:17 +0100
+Message-ID: <1f3d1f96421e1a31fb06f3309fdf6533ca51cb69.1787843386.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1787843385.git.anatoly.burakov@intel.com>
  <cover.1787843385.git.anatoly.burakov@intel.com>
@@ -59,108 +59,95 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The NFP vDPA driver uses VFIO group bind/unbind functionality for container
+The SFC vDPA driver uses VFIO group bind/unbind functionality for container
 device assignment purposes. Use the new container device assignment API
-instead to provide clearer semantics. Since group API is no longer used
-after these changes, remove its implementation.
+instead to provide clearer semantics.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/vdpa/nfp/nfp_vdpa.c | 37 +++++--------------------------------
- 1 file changed, 5 insertions(+), 32 deletions(-)
+ drivers/vdpa/sfc/sfc_vdpa.c | 39 +++++++------------------------------
+ drivers/vdpa/sfc/sfc_vdpa.h |  2 --
+ 2 files changed, 7 insertions(+), 34 deletions(-)
 
-diff --git a/drivers/vdpa/nfp/nfp_vdpa.c b/drivers/vdpa/nfp/nfp_vdpa.c
-index 94740e768d..76d7d616a6 100644
---- a/drivers/vdpa/nfp/nfp_vdpa.c
-+++ b/drivers/vdpa/nfp/nfp_vdpa.c
-@@ -36,9 +36,7 @@ struct nfp_vdpa_dev {
- 	struct nfp_vdpa_hw hw;
+diff --git a/drivers/vdpa/sfc/sfc_vdpa.c b/drivers/vdpa/sfc/sfc_vdpa.c
+index c65f716a15..bd5420cfa5 100644
+--- a/drivers/vdpa/sfc/sfc_vdpa.c
++++ b/drivers/vdpa/sfc/sfc_vdpa.c
+@@ -80,22 +80,12 @@ sfc_vdpa_vfio_setup(struct sfc_vdpa_adapter *sva)
+ 		goto fail_container_create;
+ 	}
  
- 	int vfio_container_fd;
--	int vfio_group_fd;
- 	int vfio_dev_fd;
--	int iommu_group;
- 
- 	rte_thread_t tid;    /**< Thread for notify relay */
- 	int epoll_fd;
-@@ -120,33 +118,26 @@ nfp_vdpa_vfio_setup(struct nfp_vdpa_dev *device)
- 	struct rte_pci_device *pci_dev = device->pci_dev;
- 
- 	rte_pci_device_name(&pci_dev->addr, dev_name, RTE_DEV_NAME_MAX_LEN);
--	ret = dev_vfio_get_group_num(rte_pci_get_sysfs_path(), dev_name,
--			&device->iommu_group);
--	if (ret <= 0)
--		return -1;
- 
- 	device->vfio_container_fd = dev_vfio_container_create();
- 	if (device->vfio_container_fd < 0)
- 		return -1;
- 
--	device->vfio_group_fd = dev_vfio_container_group_bind(
--			device->vfio_container_fd, device->iommu_group);
--	if (device->vfio_group_fd < 0)
-+	ret = dev_vfio_container_assign_device(device->vfio_container_fd,
-+			rte_pci_get_sysfs_path(), dev_name);
-+	if (ret < 0)
- 		goto container_destroy;
- 
--	DRV_VDPA_LOG(DEBUG, "The container_fd=%d, group_fd=%d.",
--			device->vfio_container_fd, device->vfio_group_fd);
-+	DRV_VDPA_LOG(DEBUG, "container_fd=%d", device->vfio_container_fd);
- 
- 	ret = rte_pci_map_device(pci_dev);
- 	if (ret != 0)
--		goto group_unbind;
-+		goto container_destroy;
- 
- 	device->vfio_dev_fd = rte_intr_dev_fd_get(pci_dev->intr_handle);
- 
- 	return 0;
- 
--group_unbind:
--	dev_vfio_container_group_unbind(device->vfio_container_fd, device->iommu_group);
- container_destroy:
- 	dev_vfio_container_destroy(device->vfio_container_fd);
- 
-@@ -157,7 +148,6 @@ static void
- nfp_vdpa_vfio_teardown(struct nfp_vdpa_dev *device)
- {
- 	rte_pci_unmap_device(device->pci_dev);
--	dev_vfio_container_group_unbind(device->vfio_container_fd, device->iommu_group);
- 	dev_vfio_container_destroy(device->vfio_container_fd);
- }
- 
-@@ -1023,22 +1013,6 @@ nfp_vdpa_dev_close(int vid)
- 	return 0;
- }
- 
--static int
--nfp_vdpa_get_vfio_group_fd(int vid)
--{
--	struct rte_vdpa_device *vdev;
--	struct nfp_vdpa_dev_node *node;
--
--	vdev = rte_vhost_get_vdpa_device(vid);
--	node = nfp_vdpa_find_node_by_vdev(vdev);
--	if (node == NULL) {
--		DRV_VDPA_LOG(ERR, "Invalid vDPA device: %p.", vdev);
--		return -ENODEV;
+-	rc = dev_vfio_get_group_num(rte_pci_get_sysfs_path(), dev_name,
+-				    &sva->iommu_group_num);
+-	if (rc <= 0) {
+-		sfc_vdpa_err(sva, "failed to get IOMMU group for %s : %s",
+-			     dev_name, rte_strerror(-rc));
+-		goto fail_get_group_num;
 -	}
 -
--	return node->device->vfio_group_fd;
--}
+-	sva->vfio_group_fd =
+-		dev_vfio_container_group_bind(sva->vfio_container_fd,
+-					      sva->iommu_group_num);
+-	if (sva->vfio_group_fd < 0) {
+-		sfc_vdpa_err(sva,
+-			     "failed to bind IOMMU group %d to container %d",
+-			     sva->iommu_group_num, sva->vfio_container_fd);
+-		goto fail_group_bind;
++	rc = dev_vfio_container_assign_device(sva->vfio_container_fd,
++			rte_pci_get_sysfs_path(), dev_name);
++	if (rc < 0) {
++		sfc_vdpa_err(sva, "failed to assign device %s to container %d",
++			     dev_name, sva->vfio_container_fd);
++		goto fail_device_assign;
+ 	}
+ 
+ 	if (rte_pci_map_device(dev) != 0) {
+@@ -109,15 +99,7 @@ sfc_vdpa_vfio_setup(struct sfc_vdpa_adapter *sva)
+ 	return 0;
+ 
+ fail_pci_map_device:
+-	if (dev_vfio_container_group_unbind(sva->vfio_container_fd,
+-					sva->iommu_group_num) != 0) {
+-		sfc_vdpa_err(sva,
+-			     "failed to unbind IOMMU group %d from container %d",
+-			     sva->iommu_group_num, sva->vfio_container_fd);
+-	}
 -
- static int
- nfp_vdpa_get_vfio_device_fd(int vid)
+-fail_group_bind:
+-fail_get_group_num:
++fail_device_assign:
+ 	if (dev_vfio_container_destroy(sva->vfio_container_fd) != 0) {
+ 		sfc_vdpa_err(sva, "failed to destroy container %d",
+ 			     sva->vfio_container_fd);
+@@ -132,13 +114,6 @@ sfc_vdpa_vfio_teardown(struct sfc_vdpa_adapter *sva)
  {
-@@ -1190,7 +1164,6 @@ struct rte_vdpa_dev_ops nfp_vdpa_ops = {
- 	.dev_close = nfp_vdpa_dev_close,
- 	.set_vring_state = nfp_vdpa_set_vring_state,
- 	.set_features = nfp_vdpa_set_features,
--	.get_vfio_group_fd = nfp_vdpa_get_vfio_group_fd,
- 	.get_vfio_device_fd = nfp_vdpa_get_vfio_device_fd,
- 	.get_notify_area = nfp_vdpa_get_notify_area,
+ 	rte_pci_unmap_device(sva->pdev);
+ 
+-	if (dev_vfio_container_group_unbind(sva->vfio_container_fd,
+-					    sva->iommu_group_num) != 0) {
+-		sfc_vdpa_err(sva,
+-			     "failed to unbind IOMMU group %d from container %d",
+-			     sva->iommu_group_num, sva->vfio_container_fd);
+-	}
+-
+ 	if (dev_vfio_container_destroy(sva->vfio_container_fd) != 0) {
+ 		sfc_vdpa_err(sva,
+ 			     "failed to destroy container %d",
+diff --git a/drivers/vdpa/sfc/sfc_vdpa.h b/drivers/vdpa/sfc/sfc_vdpa.h
+index 2b843e563d..99a81fd1b0 100644
+--- a/drivers/vdpa/sfc/sfc_vdpa.h
++++ b/drivers/vdpa/sfc/sfc_vdpa.h
+@@ -70,10 +70,8 @@ struct sfc_vdpa_adapter {
+ 
+ 	sfc_vdpa_filter_t		filters;
+ 
+-	int				vfio_group_fd;
+ 	int				vfio_dev_fd;
+ 	int				vfio_container_fd;
+-	int				iommu_group_num;
+ 	struct sfc_vdpa_ops_data	*ops_data;
  };
+ 
 -- 
 2.52.0
 
