@@ -2,44 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C41F0C61DBE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 02:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CC86C61DBE
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 02:36:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DC53540280;
-	Thu, 27 Aug 2026 04:36:32 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1012B4060A;
+	Thu, 27 Aug 2026 04:36:39 +0200 (CEST)
 Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
- by mails.dpdk.org (Postfix) with ESMTP id 57FAB40150
- for <dev@dpdk.org>; Thu, 27 Aug 2026 04:36:31 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 3C92B40150
+ for <dev@dpdk.org>; Thu, 27 Aug 2026 04:36:37 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-01 (Coremail) with SMTP id qwCowABnOe2soo9q84ujBg--.27158S2;
- Thu, 27 Aug 2026 10:36:28 +0800 (CST)
+ by APP-01 (Coremail) with SMTP id qwCowADHYPSxoo9qP4yjBg--.25242S2;
+ Thu, 27 Aug 2026 10:36:34 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org
-Subject: [PATCH v4 01/44] common/sxe2: fix null pointer in class driver remove
-Date: Thu, 27 Aug 2026 10:36:27 +0800
-Message-ID: <20260827023627.1429735-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v4 02/44] common/sxe2: allow munmap during kernel reset
+Date: Thu, 27 Aug 2026 10:36:33 +0800
+Message-ID: <20260827023633.1429818-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260826085836.993490-1-liujie5@linkdatatechnology.com>
 References: <20260826085836.993490-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: qwCowABnOe2soo9q84ujBg--.27158S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr15KFyDAF43Ar4DXw43Wrg_yoW8GF1xpF
- 48JryfuFy8tF47WwsrJ3W5ZFyfKa13XFyUC39rGas3Zrs8ZFW8Za4UKa4ay3s5CrWrJFsa
- yFWayF1rCF17ZF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: qwCowADHYPSxoo9qP4yjBg--.25242S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr15ZFW3tF4xJr1Dtw1UZFb_yoW8Xw17pF
+ 1xXFyYqFWrtF1UWw4DX3WI9FyF93Z8tw4UCFyUKwnavFyDZryku34FgF15tw1UGr95JF1r
+ ZrnFvF4ag3WrurDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUk0b7Iv0xC_Cr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
  0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
  A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xII
  jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4
  A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
- 64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8Jw
+ 64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8Jw
  Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lw4CEc2x0rVAKj4xxMxAIw28I
  cxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2
  IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0EwIxGrwCI
  42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42
  IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280
- aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU2YiiDUUUU
+ aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUcj2MUUUUU
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -57,40 +57,46 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-sxe2_classes_driver_remove() calls cdrv->remove(cdev) without
-checking whether cdrv or cdrv->remove is NULL. If the class driver
-was never probed, cdev->cdrv remains NULL, and the unconditional
-call dereferences a NULL pointer, crashing during device removal.
+sxe2_drv_dev_munmap() refuses to unmap the BAR region when
+cdev->config.kernel_reset is set, returning -EPERM. After a kernel
+reset the application still needs to release the previously mapped
+regions during cleanup; blocking munmap leaves stale mappings and
+prevents a clean teardown.
 
-Add NULL checks for cdrv and cdrv->remove, returning 0 when either
-is NULL.
+Remove the kernel_reset check from sxe2_drv_dev_munmap() so the
+mapping is always released. The cdev parameter is no longer used,
+so mark it __rte_unused.
 
-Fixes: 83866f8d7638 ("common/sxe2: add base driver skeleton")
+Fixes: 66a10eb60ebe ("net/sxe2: add PCI BAR mapping")
 Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/common/sxe2/sxe2_common.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/common/sxe2/sxe2_ioctl_chnl.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/common/sxe2/sxe2_common.c b/drivers/common/sxe2/sxe2_common.c
-index 5c5db85f29..6e387a8a73 100644
---- a/drivers/common/sxe2/sxe2_common.c
-+++ b/drivers/common/sxe2/sxe2_common.c
-@@ -465,8 +465,12 @@ static int32_t sxe2_classes_driver_probe(struct sxe2_common_device *cdev,
- static int32_t sxe2_classes_driver_remove(struct sxe2_common_device *cdev)
+diff --git a/drivers/common/sxe2/sxe2_ioctl_chnl.c b/drivers/common/sxe2/sxe2_ioctl_chnl.c
+index a233a78136..3e2fbf572f 100644
+--- a/drivers/common/sxe2/sxe2_ioctl_chnl.c
++++ b/drivers/common/sxe2/sxe2_ioctl_chnl.c
+@@ -367,16 +367,10 @@ void
+ 
+ RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_dev_munmap)
+ int32_t
+-sxe2_drv_dev_munmap(struct sxe2_common_device *cdev, void *virt, uint64_t len)
++sxe2_drv_dev_munmap(struct sxe2_common_device *cdev __rte_unused, void *virt, uint64_t len)
  {
- 	struct sxe2_class_driver *cdrv = cdev->cdrv;
-+	int32_t ret = 0;
-+
-+	if (cdrv != NULL && cdrv->remove != NULL)
-+		ret = cdrv->remove(cdev);
+ 	int32_t ret = 0;
  
--	return cdrv->remove(cdev);
-+	return ret;
- }
+-	if (cdev->config.kernel_reset) {
+-		ret = -EPERM;
+-		PMD_LOG_WARN(COM, "kernel reset, need restart app.");
+-		goto l_end;
+-	}
+-
+ 	PMD_LOG_DEBUG(COM, "Munmap virt=%p, len=0x%"PRIx64"",
+ 		virt, len);
  
- static int32_t sxe2_kvargs_validate(struct sxe2_dev_kvargs_info *kv_info)
 -- 
 2.52.0
 
