@@ -2,38 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF23C61DC2
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 13:56:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 573DAC61DC4
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 14:09:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3CF0E40678;
-	Thu, 27 Aug 2026 15:56:15 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 34B0C4003C
- for <dev@dpdk.org>; Thu, 27 Aug 2026 15:56:08 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 21D2A22529;
- Thu, 27 Aug 2026 15:56:08 +0200 (CEST)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Thu, 27 Aug 2026 15:56:07 +0200
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-To: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH v3 2/2] mempool: introduce pile driver
-Date: Thu, 27 Aug 2026 13:55:56 +0000
-Message-ID: <20260827135556.522443-3-mb@smartsharesystems.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260827135556.522443-1-mb@smartsharesystems.com>
-References: <20260812134756.1829613-1-mb@smartsharesystems.com>
- <20260827135556.522443-1-mb@smartsharesystems.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 69F5840150;
+	Thu, 27 Aug 2026 16:09:25 +0200 (CEST)
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com
+ [209.85.128.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 5462D4003C
+ for <dev@dpdk.org>; Thu, 27 Aug 2026 16:09:24 +0200 (CEST)
+Received: by mail-yw1-f179.google.com with SMTP id
+ 00721157ae682-836cb2fa1bcso36494597b3.1
+ for <dev@dpdk.org>; Thu, 27 Aug 2026 07:09:24 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1787839763; cv=none;
+ d=google.com; s=arc-20260327;
+ b=iKqpzbcL3UETXqRlenOM29s/ikv1/EQOO3H69Z2rLN6aQGpfz7C+6Szd+Vets+J0nZ
+ 0qYkAaoTT0rSLOdnPyP/jJZtIpsaBb2nm66832XuZ6BHWrd+blRlCSLCzX8Cc6yvIy3L
+ tAzddclRxcJUphPeLwPnFTbkzjwePH8SQBJG/MZJ7jM629Ls2jt8pnBd7Te11cPqYEAt
+ t/xufXo/iSrxZTW0zfsjGaIdyfcGlrOpS70QEY3YuPs82UAC8vteccDGgzSV82tBtxGr
+ 0SU+gYICB0cLQKcLpm0rqsXZryht/ghWZs73IZ+vGLgUf2YAgJAMGiVJn2NJT8wfxYDn
+ +aog==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=to:subject:message-id:date:from:mime-version:dkim-signature;
+ bh=FPUHVdzP/lBzwUKFDyb7y9gMvePsPEYNcGadt7iBu80=;
+ fh=eUqWHLlhrxpykrabbQYbmT5B5FclN6p18glcXqrZikU=;
+ b=F3glEaQABlyW9mFLHCieJzs8w+NFxnYROcFnSxzYjtN/ySLNsq8pJADcKHmb+OLyA+
+ +GXzX0mSqyvIvRSc/Y43pztas4g1jL+yMkUQdKaPwkqYn/g66NfjTEP1YexNJ2GMdV28
+ La4wbAbxhrwlYWRbayELtWTgZpIM3Uo0Lqu7gSB/htNQqSdDvLFcgdh6snSVnpQzerBP
+ 6eBP3XdrJBQhxoC9+zj6b+u5C0jDs8kBt8R+ArJUWFT6NATogm1PJ1N8256Dm64KcCot
+ iVrvrodV41251MfLk8nVax2PGhWPx5+wOOIH2AWVXIralxihDqhFNl0If7Mqjmo7tES/
+ pyQg==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1787839763; x=1788444563; darn=dpdk.org;
+ h=content-type:to:subject:message-id:date:from:mime-version:from:to
+ :cc:subject:date:message-id:reply-to:content-type;
+ bh=FPUHVdzP/lBzwUKFDyb7y9gMvePsPEYNcGadt7iBu80=;
+ b=L+7MGO/sApKWl9++NlEKjQdaWhuCE9MgcQ/vj6SGBGIWUancp6rKNP4iiq7pgNKDuW
+ D5DlEWuQ6rQgr/f3bVGuL0Jwi/1rLuZ8mFIXD8E2M7lmf1nR2cil0X55HuRegLEJpPIw
+ wDr1xSJM5E92MuzW1aJKj9Bq7YfyBNbPttzv4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1787839763; x=1788444563;
+ h=content-type:to:subject:message-id:date:from:mime-version:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=FPUHVdzP/lBzwUKFDyb7y9gMvePsPEYNcGadt7iBu80=;
+ b=mZUavQgZ8JPFscy9x5bg6Xbyr+7B0NfvKDrJ2YzT1a9XST2dX96ThI9tHmAyib18AI
+ 1usReJOouqxWEUJaZLaCJghFTdmvvpLe7ez+iADsO23w3FnlVO37f+VW5Onc/XjPo6Bm
+ BFVliMONWD/SygFJ/g8mXF+Djlqu2A6Xb/T6FZipywis0YbeRSXafQQ4dkY/a1HJrxTk
+ qIcjreBsUhEs1eLUkNtjVnvK/6Fri96RMIhGQJBdb5nrD49xG/LITy5H+413tp+LnbvD
+ +sNWfkYKqsdkr9MMupaIZfRrorDZQ1c8o+0rmcH4qHNcJgCbrq5XcOHyEGjx+2o9/+tY
+ f62w==
+X-Gm-Message-State: AFuF++le2UiHOui6NcFZHLX4dwPiq14vZV5755zoOcR+3jpwVZFIuDPG
+ 5+R3ylfl6GnaCvmS8bCP3VBuZuAPzVAYT8LR1N43ogntU/Gl3G77A+boG2+aWKeyA6cC64U0WsK
+ P2VAKXYonkC9VxSW8D8JF/hMbmu1kLid0jqF+ZLXFyZnAy121hEKE9zW04w==
+X-Gm-Gg: AR+sD11er8THbdDiaQOVGOC1fgOixvKcnlZchv2r9k+QwqlxnNrLcY9t46QKH8X0ZXR
+ Lry/37Q/Hv94JN5uRfQkNxOOTBZp7By3gy1Oj/XjybZsnsssyN9w2Y3Mw5K5xwfdr2GcosN6X+I
+ TUpH4zMTBoNpez5BUdY83Qxd7QY50W3GOTGYV4KO7Xp1hq3kHI3JvWPInoLQSCaj4AqZyO5IKY2
+ IdzxSEm6EOR4St0S/PHm3Qo8CipYfpaWAK/f00ViqXg9HYq/nzK8mT69unxurcDCCDzvJUk5f0G
+ B6TJCGOAN14khxN5t6j2+MJa10TNraD7r/kaHgFXOou5Ka/Dlghu8r1nNSalJgiC8PkcbZGH6bT
+ k1d99BKMdcnM=
+X-Received: by 2002:a05:690c:7091:b0:845:a433:c337 with SMTP id
+ 00721157ae682-8573d78d6f9mr75971997b3.0.1787839763354; Thu, 27 Aug 2026
+ 07:09:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 27 Aug 2026 13:56:07.0612 (UTC)
- FILETIME=[CF0B97C0:01DD362B]
+From: Dillon Ladd <dladd@iol.unh.edu>
+Date: Thu, 27 Aug 2026 10:08:47 -0400
+X-Gm-Features: AcwNN1XsSPqJeaDQKxMgJL6LqliJU1NXsVQh880X89z5cxL5F35HqWgi6HKo8UM
+Message-ID: <CAJA6v3xoq00oVzr1cJoM6zdYwNc5eN1Ane1-r0TvQ-rTaX488A@mail.gmail.com>
+Subject: August 27, 2026 DTS Working Group Meeting Notes
+To: dev@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -47,274 +87,77 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Added a new "pile" mempool driver, based on the high-performance lock-free
-"pile" stack variant.
+Attendees
+################################################
 
-Changed other stack drivers to call their specific push/pop functions,
-instead of calling the generic stack push/pop API.
+Lincoln Lavoie, UNH-IOL
+Dillon Ladd, UNH-IOL
+Andrew Bailey, UNH-IOL
+Koushik Bhargav Nimoji, UNH-IOL
 
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
----
-v3:
-* Call other stack types' specific push/pop functions.
-v2:
-* There is no v2.
----
- doc/guides/mempool/stack.rst              | 12 ++-
- drivers/mempool/stack/rte_mempool_stack.c | 90 ++++++++++++++++++++---
- lib/mempool/rte_mempool.h                 |  2 +
- lib/mempool/rte_mempool_ops.c             | 27 +++++--
- 4 files changed, 114 insertions(+), 17 deletions(-)
+General Discussions
+==============================================
+Patrick is reaching out to Thomas about the code coverage patch being
+merged to main.
 
-diff --git a/doc/guides/mempool/stack.rst b/doc/guides/mempool/stack.rst
-index 80ea07e65d..c06ab2dc56 100644
---- a/doc/guides/mempool/stack.rst
-+++ b/doc/guides/mempool/stack.rst
-@@ -1,5 +1,6 @@
- ..  SPDX-License-Identifier: BSD-3-Clause
-     Copyright(c) 2020 Intel Corporation.
-+    Copyright(c) 2026 SmartShare Systems.
- 
- Stack Mempool Driver
- ====================
-@@ -28,6 +29,12 @@ can be selected as described in :ref:`Mempool_Handlers`:
-   The underlying **rte_stack** operates in lock-free mode. For more
-   information please refer to :ref:`Stack_Library_LF_Stack`.
- 
-+- ``pile``
-+
-+  The underlying **rte_stack** operates in lock-free mode,
-+  and is optimized for bulks of objects.
-+  For more information please refer to :ref:`Stack_Library_Pile`.
-+
- The standard stack outperforms the lock-free stack on average, however the
- standard stack is non-preemptive: if a mempool user is preempted while holding
- the stack lock, that thread will block all other mempool accesses until it
-@@ -35,9 +42,12 @@ returns and releases the lock. As a result, an application using the standard
- stack whose threads can be preempted can suffer from brief, infrequent
- performance hiccups.
- 
--The lock-free stack, by design, is not susceptible to this problem; one thread can
-+The lock-free stack and the pile, by design, are not susceptible to this problem; one thread can
- be preempted at any point during a push or pop operation and will not impede
- the progress of any other thread.
- 
-+The pile is not LIFO per object, but per bulk of objects.
-+Although the pile is optimized for bulks of objects, it can handle any request size.
-+
- For a more detailed description of the stack implementations, please refer to
- :doc:`/prog_guide/stack_lib`.
-diff --git a/drivers/mempool/stack/rte_mempool_stack.c b/drivers/mempool/stack/rte_mempool_stack.c
-index 1476905227..11c1243bec 100644
---- a/drivers/mempool/stack/rte_mempool_stack.c
-+++ b/drivers/mempool/stack/rte_mempool_stack.c
-@@ -30,7 +30,7 @@ __stack_alloc(struct rte_mempool *mp, uint32_t flags)
- }
- 
- static int
--stack_alloc(struct rte_mempool *mp)
-+std_stack_alloc(struct rte_mempool *mp)
- {
- 	return __stack_alloc(mp, 0);
- }
-@@ -42,21 +42,81 @@ lf_stack_alloc(struct rte_mempool *mp)
- }
- 
- static int
--stack_enqueue(struct rte_mempool *mp, void * const *obj_table,
-+pile_alloc(struct rte_mempool *mp)
-+{
-+	return __stack_alloc(mp, RTE_STACK_F_PILE);
-+}
-+
-+static int
-+std_stack_enqueue(struct rte_mempool *mp, void * const *obj_table,
-+	      unsigned int n)
-+{
-+	struct rte_stack *s = mp->pool_data;
-+
-+	RTE_ASSERT(s != NULL);
-+	RTE_ASSERT(obj_table != NULL);
-+
-+	return __rte_stack_std_push(s, obj_table, n) == 0 ? -ENOBUFS : 0;
-+}
-+
-+static int
-+std_stack_dequeue(struct rte_mempool *mp, void **obj_table,
-+	      unsigned int n)
-+{
-+	struct rte_stack *s = mp->pool_data;
-+
-+	RTE_ASSERT(s != NULL);
-+	RTE_ASSERT(obj_table != NULL);
-+
-+	return __rte_stack_std_pop(s, obj_table, n) == 0 ? -ENOBUFS : 0;
-+}
-+
-+static int
-+lf_stack_enqueue(struct rte_mempool *mp, void * const *obj_table,
-+	      unsigned int n)
-+{
-+	struct rte_stack *s = mp->pool_data;
-+
-+	RTE_ASSERT(s != NULL);
-+	RTE_ASSERT(obj_table != NULL);
-+
-+	return __rte_stack_lf_push(s, obj_table, n) == 0 ? -ENOBUFS : 0;
-+}
-+
-+static int
-+lf_stack_dequeue(struct rte_mempool *mp, void **obj_table,
- 	      unsigned int n)
- {
- 	struct rte_stack *s = mp->pool_data;
- 
--	return rte_stack_push(s, obj_table, n) == 0 ? -ENOBUFS : 0;
-+	RTE_ASSERT(s != NULL);
-+	RTE_ASSERT(obj_table != NULL);
-+
-+	return __rte_stack_lf_pop(s, obj_table, n) == 0 ? -ENOBUFS : 0;
- }
- 
- static int
--stack_dequeue(struct rte_mempool *mp, void **obj_table,
-+pile_enqueue(struct rte_mempool *mp, void * const *obj_table,
- 	      unsigned int n)
- {
- 	struct rte_stack *s = mp->pool_data;
- 
--	return rte_stack_pop(s, obj_table, n) == 0 ? -ENOBUFS : 0;
-+	RTE_ASSERT(s != NULL);
-+	RTE_ASSERT(obj_table != NULL);
-+
-+	return __rte_stack_pile_push(s, obj_table, n) == 0 ? -ENOBUFS : 0;
-+}
-+
-+static int
-+pile_dequeue(struct rte_mempool *mp, void **obj_table,
-+	      unsigned int n)
-+{
-+	struct rte_stack *s = mp->pool_data;
-+
-+	RTE_ASSERT(s != NULL);
-+	RTE_ASSERT(obj_table != NULL);
-+
-+	return __rte_stack_pile_pop(s, obj_table, n) == 0 ? -ENOBUFS : 0;
- }
- 
- static unsigned
-@@ -77,10 +137,10 @@ stack_free(struct rte_mempool *mp)
- 
- static struct rte_mempool_ops ops_stack = {
- 	.name = "stack",
--	.alloc = stack_alloc,
-+	.alloc = std_stack_alloc,
- 	.free = stack_free,
--	.enqueue = stack_enqueue,
--	.dequeue = stack_dequeue,
-+	.enqueue = std_stack_enqueue,
-+	.dequeue = std_stack_dequeue,
- 	.get_count = stack_get_count
- };
- 
-@@ -88,10 +148,20 @@ static struct rte_mempool_ops ops_lf_stack = {
- 	.name = "lf_stack",
- 	.alloc = lf_stack_alloc,
- 	.free = stack_free,
--	.enqueue = stack_enqueue,
--	.dequeue = stack_dequeue,
-+	.enqueue = lf_stack_enqueue,
-+	.dequeue = lf_stack_dequeue,
-+	.get_count = stack_get_count
-+};
-+
-+static struct rte_mempool_ops ops_pile = {
-+	.name = "pile",
-+	.alloc = pile_alloc,
-+	.free = stack_free,
-+	.enqueue = pile_enqueue,
-+	.dequeue = pile_dequeue,
- 	.get_count = stack_get_count
- };
- 
- RTE_MEMPOOL_REGISTER_OPS(ops_stack);
- RTE_MEMPOOL_REGISTER_OPS(ops_lf_stack);
-+RTE_MEMPOOL_REGISTER_OPS(ops_pile);
-diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
-index 3e161bfdb9..db7def9096 100644
---- a/lib/mempool/rte_mempool.h
-+++ b/lib/mempool/rte_mempool.h
-@@ -979,6 +979,8 @@ rte_mempool_set_ops_byname(struct rte_mempool *mp, const char *name,
-  *   - >=0: Success; return the index of the ops struct in the table.
-  *   - -EINVAL - some missing callbacks while registering ops struct.
-  *   - -ENOSPC - the maximum number of ops structs has been reached.
-+ *   - -ENAMETOOLONG - the name of the ops is too long.
-+ *   - -EEXIST - the name of the ops is already registered.
-  */
- int rte_mempool_register_ops(const struct rte_mempool_ops *ops);
- 
-diff --git a/lib/mempool/rte_mempool_ops.c b/lib/mempool/rte_mempool_ops.c
-index 066bec36fc..261ad217ee 100644
---- a/lib/mempool/rte_mempool_ops.c
-+++ b/lib/mempool/rte_mempool_ops.c
-@@ -27,7 +27,7 @@ int
- rte_mempool_register_ops(const struct rte_mempool_ops *h)
- {
- 	struct rte_mempool_ops *ops;
--	int16_t ops_index;
-+	unsigned int ops_index;
- 
- 	rte_spinlock_lock(&rte_mempool_ops_table.sl);
- 
-@@ -47,12 +47,21 @@ rte_mempool_register_ops(const struct rte_mempool_ops *h)
- 		return -EINVAL;
- 	}
- 
--	if (strlen(h->name) >= sizeof(ops->name) - 1) {
-+	if (strlen(h->name) > sizeof(ops->name) - 1) {
- 		rte_spinlock_unlock(&rte_mempool_ops_table.sl);
--		RTE_MEMPOOL_LOG(DEBUG, "%s(): mempool_ops <%s>: name too long",
-+		RTE_MEMPOOL_LOG(ERR, "%s(): mempool_ops <%s>: name too long",
- 				__func__, h->name);
--		rte_errno = EEXIST;
--		return -EEXIST;
-+		return -ENAMETOOLONG;
-+	}
-+
-+	for (ops_index = 0; ops_index < rte_mempool_ops_table.num_ops; ops_index++) {
-+		if (!strcmp(h->name,
-+				rte_mempool_ops_table.ops[ops_index].name)) {
-+			rte_spinlock_unlock(&rte_mempool_ops_table.sl);
-+			RTE_MEMPOOL_LOG(ERR, "%s(): mempool_ops <%s>: name exists",
-+					__func__, h->name);
-+			return -EEXIST;
-+		}
- 	}
- 
- 	ops_index = rte_mempool_ops_table.num_ops++;
-@@ -68,6 +77,9 @@ rte_mempool_register_ops(const struct rte_mempool_ops *h)
- 	ops->get_info = h->get_info;
- 	ops->dequeue_contig_blocks = h->dequeue_contig_blocks;
- 
-+	RTE_MEMPOOL_LOG(DEBUG,
-+		"Registered mempool_ops[%u] <%s>", ops_index, h->name);
-+
- 	rte_spinlock_unlock(&rte_mempool_ops_table.sl);
- 
- 	return ops_index;
-@@ -185,8 +197,11 @@ rte_mempool_set_ops_byname(struct rte_mempool *mp, const char *name,
- 		}
- 	}
- 
--	if (ops == NULL)
-+	if (ops == NULL) {
-+		RTE_MEMPOOL_LOG(ERR,
-+			"Unknown mempool_ops <%s>, of %u ops registered", name, i);
- 		return -EINVAL;
-+	}
- 
- 	mp->ops_index = i;
- 	mp->pool_config = pool_config;
--- 
-2.43.0
+Patch Discussions
+==============================================
+[v7] dts: refactor flow suite with generator pattern
+https://patches.dpdk.org/project/dpdk/patch/20260811170433.517663-1-abailey@iol.unh.edu/
+Pending Review
 
+[v1] dts: add PVVP case to virtio suite
+https://patches.dpdk.org/project/dpdk/patch/20260811171235.519323-1-abailey@iol.unh.edu/
+Pending Review
+
+dts: update verbose output regex for VXLAN packets
+https://patches.dpdk.org/project/dpdk/list/?series=38925
+Pending Review
+
+[v1] dts: update configuration for performance test
+https://patchwork.dpdk.org/project/dpdk/patch/20260805153658.345207-1-abailey@iol.unh.edu/
+Pending review
+
+DTS: Rebase from Dean (API updates)
+https://patches.dpdk.org/project/dpdk/list/?series=38902&state=%2A&archive=both
+Reviewed by Luca, needs some adjustments.
+
+[v1] dts: fix TRex packet stream handling for line rate testing
+https://patches.dpdk.org/project/dpdk/patch/20260805192732.464422-1-dladd@iol.unh.edu/
+Merged
+
+[v1] dts: remove crypto test type
+https://patches.dpdk.org/project/dpdk/patch/20260806164505.642928-1-abailey@iol.unh.edu/
+Pending Review
+
+[v3,3/3] dts: add verify coverage for cryptodev testing
+https://patches.dpdk.org/project/dpdk/list/?series=38682
+Pending Review
+
+[RFC] dts: restore unbinded ports to initial state
+https://patches.dpdk.org/project/dpdk/patch/20260812194428.296334-1-knimoji@iol.unh.edu/
+Pending Review
+
+[RFC] dts: resolve trex driver binding issue
+https://patches.dpdk.org/project/dpdk/patch/20260811185509.1650102-1-knimoji@iol.unh.edu/
+Prioritize review, sizable change of DTS and it would be helpful for
+Koushik to have feedback sooner opposed to later.
+
+26.11 DTS Roadmap
+==============================================
+26.11 Roadmap Document:
+https://docs.google.com/document/d/12ZR59qHriYcdCINc7r-jLv0TxYyZXEChxqZiIH5ozSs/edit?usp=sharing
+
+Andrew has recently finished extending cryptodev to allow for
+configuration of algorithms and amount of operations, this patch will
+be out soon.
+
+We got the go-ahead from Thomas to work on porting over the following
+test suites:
+eventdev_pipeline_perf
+pvp_multi_paths_virtio_single_core_performance
+pvp_multi_paths_vhost_single_core_performance
+
+Any other business
+==============================================
+Next Meeting: September 10, 2026
