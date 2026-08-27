@@ -2,71 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF2CC61DC4
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 21:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 706E3C61DC4
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 21:43:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1956E40682;
-	Thu, 27 Aug 2026 23:43:00 +0200 (CEST)
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
- [209.85.214.178])
- by mails.dpdk.org (Postfix) with ESMTP id 6F7194064E
- for <dev@dpdk.org>; Thu, 27 Aug 2026 23:42:58 +0200 (CEST)
-Received: by mail-pl1-f178.google.com with SMTP id
- d9443c01a7336-2d049069377so4508365ad.0
- for <dev@dpdk.org>; Thu, 27 Aug 2026 14:42:58 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 43CFF4027D;
+	Thu, 27 Aug 2026 23:43:04 +0200 (CEST)
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com
+ [209.85.214.179])
+ by mails.dpdk.org (Postfix) with ESMTP id BE2104027D
+ for <dev@dpdk.org>; Thu, 27 Aug 2026 23:43:03 +0200 (CEST)
+Received: by mail-pl1-f179.google.com with SMTP id
+ d9443c01a7336-2d049069377so4508775ad.0
+ for <dev@dpdk.org>; Thu, 27 Aug 2026 14:43:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787866977;
- x=1788471777; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787866983;
+ x=1788471783; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=NzsdI6V9RO/klxdKckmO6SY1qNEgN1a6Mn7pZB/K1Yc=;
- b=eCLTkyWHBKiXm3s01gzFm8bykSyo2awJS1Gf5GbRbS3+BKWN6pLWCISF0FQxJAZGEQ
- 1WR9Spmj9OwuOnn/7D6Th26e4E2di6TsjudkYHgGXpFOsdcmAMIEhgw/aXcjzlDjwEBg
- S+FPe76aYM1GMb65tn8dooZG3PFSBzfxrFvG6bsGQxHs0A0nUvIgpSK57EsNPqZBuDRY
- 4xuNf/+lZwb0TytUt6wL7euvVM+zo9uNa2q+6TJk1gPXEuY/FFSku6X7yyzfP5YTQtUe
- 5ZyyWo6qzdx0SRnlf1BT2NM21IxHBf2pwrA68IEiFF6BgDAi6M5PcRJhDOt436aTljXv
- VnMA==
+ bh=6Po0DN3G0H/j8p0pmtvYiNKnzm0591nFIe3ONJZzlo0=;
+ b=f7u4ajle2VxveFb8fSM+pqvLdGcYO9kaP9cSLmHKkQPggFWsCnWsyYFNtGBbfHqNBq
+ zMMfm0m+unqXNXkfs1fQ6OhXtzqz9/MxnXaoR3xOJd0n8xm54gOTuJxCHr0ktoX2cYLs
+ RqTZHanrLPoDFvaQP71orq1bWZIQ9ghTqrA9SaabUqkOJWjnw6CjY7XGkIEQXAEy3Iug
+ p0bnwW5ZeIyb9nu/2k0x5ZDsQ5AY3iIBtO9IPQDTNqSoHe6G4yQcQ18BbljTEiv8yhkJ
+ PrZcmYHlJ9e2eQo+bZRPhVCLNmuKH8sajrwGM6MS+AkvwaE6K4GrezdwWkF2Bp7EAtcA
+ nTBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787866977; x=1788471777;
+ d=1e100.net; s=20251104; t=1787866983; x=1788471783;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=NzsdI6V9RO/klxdKckmO6SY1qNEgN1a6Mn7pZB/K1Yc=;
- b=CXrYS0BU+MQj8LxqUbj+UY35O37dkRsfOfPHnFUOuN+jA5m6UTDseieFQrWu4V9Vx8
- GKg3ywPib9t8AJzMy/8MtrWTn3jP7eUI5Q85tQ7NKnWRn7FOun4vdqEoQVd7AiXfRu+z
- 2/k2lgMtzRF/CBjBo4mcyXRDjaiqVE1pzSBLGFSg+bD1sxy40JGuBa9XEjqcVEVmeMDx
- ws+nSPgBcaN0jrVURUKeWBACkrDqTMF+4ihyiiekLvy3skLQI6YFaZjCY1hXius9U9qS
- mxGyGaVLC/HfJLW8Q3tJJ64o30YuQNe7cS41ablKkI59xBVphVcUIz+4MUm1Q6BKutwm
- /o9g==
-X-Gm-Message-State: AFuF++kBkCSA17xbJOC63Q4R79/G2Jxmn3VjUFnbZ/AbqyIf5KuhUqDc
- GqeTkY0G8zUyACLaGefxdaRDrVf2JC4O2osJtEH1Gz+D9LnMSNAxLSXmeqD7uayr+qRXpCksw/g
- Pq9mS
-X-Gm-Gg: AR+sD10zzQWFdyJTNtTn7Mecqt27ep/Mal6tf8yR6qomc0N/MuToV6MVKdvt5i7NOZU
- RMnzob+NwE4gchEiW5DaaC/Wkdhnrksaz6Uv1y2I+k4b4G810TIbO314vs0wM9UL3nDBeP96tLe
- wXB680dg5edFtlOrSoXZxUkNbbpWZALFKCPrdYKajKogJadNTyaoR0HYAlR8AmAV9TIsDdBqZMX
- D1anjfEv9d/1xFx/34atEAlhitWNlbkb4z6N3yaTa5LuZ5NR9Gada4GFPV6CuPxTe6qcbMYeKrT
- 7uYG6OauqIgDRGs7gAIVULG1nGKDI6SYktW35Vmk6tIHvHmhJxJVhoKFmwZcBy305k8MKP44cpa
- 2B90RvASx1CdHHe5dFGRwEu7XbE2NoXk25IviDmM2kVyjD4lAES9gf40DMn4xE8PecfIkKhhFz9
- HjORPaGGbInflguMavY3y8oswH4sSl6p26JxMWuT+yaLw91fdvLCNucOtoUOXr3jvncqnWz7Hjz
- 5wpd8Tki21bFriroefZfWZcIzEi
-X-Received: by 2002:a17:903:f8d:b0:2ca:f21a:a6c5 with SMTP id
- d9443c01a7336-2d74dbea25bmr41583135ad.1.1787866977508; 
- Thu, 27 Aug 2026 14:42:57 -0700 (PDT)
+ bh=6Po0DN3G0H/j8p0pmtvYiNKnzm0591nFIe3ONJZzlo0=;
+ b=IWErMKefQGcisHn+u9oakejQuC4uu6tAGXA5roNu19AxjQZuaQkkVrus1HkkvC4lW6
+ ZAhuqnzsvB10uwTzKAOw7TZYb/Pbq9DwHIc4ZUMCywXpKax9O4OjR/fMmdvXOKfOQPiP
+ A15EN6lNqCS86KQzS2SYi8JJbbY829bc5G+ArI+Wk2MfsxzN5GODYfOF274uO/7MNPxc
+ dug2pfxkft3eRjFYoB/maietPtimazGzyP+tfqCkic3DbdNvbBBPMm12VALnEOWB/YT6
+ UUj1r8jgykUxnwgGTjZvArX9A2d1qgD3O4nEaZDCYQx6Ryzdxj7Gp6ZgLzBObdu2Y861
+ I9jA==
+X-Gm-Message-State: AFuF++kxAtfJK8GmbIn9jRAnF7+/CJ0D+83v0bV/ZgRvtxzir46Hjw7l
+ DUeMuOlAYHvdM5NR4bjVR7XcinpymcBTcjKPy7UjNnKOE9EjTfA7DeaUghg/1d2WWGhdRA4NIh+
+ aBqxo
+X-Gm-Gg: AR+sD13UJVBOCLJau7eAhMruWItHP2oSkJ7zN5jLY3WJoWOgeRwktmRwHe7jygqs5NY
+ MBABzNscL7c0V01j0PrxGlOiDzXQYrDBvaKu3wBXry/wkiIn4Mfh2sR5Goy6aBcTRa9fRkEoX6e
+ idXAF4RIwdevFeTPCFpQ2Q17+n/hH9SUqMtIgSNvoJM1cPYPUN05CQXiSV0g4InnmN8ZdmpICkV
+ HKr/RtcUQSN4R6roURSkR2bSCNb4RnWK8hF0YxdwPzkYeGlwEVPX2bKaI2HwW3srfLmlfOzg4+F
+ XdC9C28VHjjNye69Jy9fY98USoqvk3qC4R2iXlKIn7aN/5IgtHigj1cGRhFgoNJPyDssOqrJ35x
+ F35QJ8t9pv+0L+j1P1s5qToNJxCa3+KUwtqalaQ0gtPZT2C1QSoB9nl5+dqADxNk5Y+9Dog3ywx
+ f417AXHVuGxosh1y6AunzLToGkXkh3FhYS6lQo7797YM8BduX2My74mRP1Z4S5WicTltFaXbA4N
+ EBDl22bWJkho9PcLD1WTn9F9yw=
+X-Received: by 2002:a17:902:d58a:b0:2d2:da8e:9017 with SMTP id
+ d9443c01a7336-2d74dc797cemr38408295ad.8.1787866982940; 
+ Thu, 27 Aug 2026 14:43:02 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3285d1075ddsm9642445eec.29.2026.08.27.14.42.52
+ 5a478bee46e88-3285d1075ddsm9642445eec.29.2026.08.27.14.42.58
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 27 Aug 2026 14:42:55 -0700 (PDT)
+ Thu, 27 Aug 2026 14:43:01 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
  Marat Khalili <marat.khalili@huawei.com>,
  Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Ferruh Yigit <ferruh.yigit@amd.com>
-Subject: [PATCH v8 03/10] bpf: mask shift count in interpreter per RFC 9669
-Date: Thu, 27 Aug 2026 14:41:42 -0700
-Message-ID: <20260827214236.1415047-4-stephen@networkplumber.org>
+ Wathsala Vithanage <wathsala.vithanage@arm.com>,
+ Jerin Jacob <jerinj@marvell.com>
+Subject: [PATCH v8 04/10] bpf/arm64: mask shift count per RFC 9669
+Date: Thu, 27 Aug 2026 14:41:43 -0700
+Message-ID: <20260827214236.1415047-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260827214236.1415047-1-stephen@networkplumber.org>
 References: <0260608203322.1116296-1-stephen@networkplumber.org>
@@ -86,110 +87,62 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The interpreter shifted by the raw immediate or register value, which
-is undefined behavior in C when the count is >= the operand width and
-trips UBSan. RFC 9669 masks shift counts (0x3f for 64-bit, 0x1f for
-32-bit); mask the count in the LSH/RSH/ARSH cases.
+The ARM JIT was not masking the shift count as required by RFC 9669
+(0x3f for 64-bit, 0x1f for 32-bit), so large immediate shift counts
+overflowed the UBFM/SBFM encoding and failed the JIT. Mask the
+immediate in emit_lsl/emit_lsr/emit_asr.
 
-Fixes: 94972f35a02e ("bpf: add BPF loading and execution framework")
+Fixes: 9f4469d9e83a ("bpf/arm: add logical operations")
 Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 Acked-by: Marat Khalili <marat.khalili@huawei.com>
 Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 ---
- lib/bpf/bpf_exec.c | 31 +++++++++++++++++++++----------
- 1 file changed, 21 insertions(+), 10 deletions(-)
+ lib/bpf/bpf_jit_arm64.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/lib/bpf/bpf_exec.c b/lib/bpf/bpf_exec.c
-index d423ef28f5..bb03c9cc2c 100644
---- a/lib/bpf/bpf_exec.c
-+++ b/lib/bpf/bpf_exec.c
-@@ -4,6 +4,7 @@
- 
- #include <stdio.h>
- #include <stdint.h>
-+#include <limits.h>
- 
- #include <eal_export.h>
- #include <rte_common.h>
-@@ -43,6 +44,16 @@
- 	((reg)[(ins)->dst_reg] = \
- 		(type)(reg)[(ins)->dst_reg] op (type)(ins)->imm)
- 
-+#define BPF_OP_SHIFT_IMM(reg, ins, op, type)	\
-+	((reg)[(ins)->dst_reg] =		\
-+		(type)(reg)[(ins)->dst_reg] op	\
-+		((ins)->imm & (sizeof(type) * CHAR_BIT - 1)))
+diff --git a/lib/bpf/bpf_jit_arm64.c b/lib/bpf/bpf_jit_arm64.c
+index ba7ae4d680..7582370062 100644
+--- a/lib/bpf/bpf_jit_arm64.c
++++ b/lib/bpf/bpf_jit_arm64.c
+@@ -545,12 +545,14 @@ emit_bitfield(struct a64_jit_ctx *ctx, bool is64, uint8_t rd, uint8_t rn,
+ 	emit_insn(ctx, insn, check_reg(rd) || check_reg(rn) ||
+ 		  check_immr_imms(is64, immr, imms));
+ }
 +
-+#define BPF_OP_SHIFT_REG(reg, ins, op, type)	\
-+	((reg)[(ins)->dst_reg] =		\
-+		(type)(reg)[(ins)->dst_reg] op	\
-+		((reg)[(ins)->src_reg] & (sizeof(type) * CHAR_BIT - 1)))
+ static void
+ emit_lsl(struct a64_jit_ctx *ctx, bool is64, uint8_t rd, uint8_t imm)
+ {
+ 	const unsigned int width = is64 ? 64 : 32;
+ 	uint8_t imms, immr;
+ 
++	imm &= width - 1;
+ 	immr = (width - imm) & (width - 1);
+ 	imms = width - 1 - imm;
+ 
+@@ -560,13 +562,19 @@ emit_lsl(struct a64_jit_ctx *ctx, bool is64, uint8_t rd, uint8_t imm)
+ static void
+ emit_lsr(struct a64_jit_ctx *ctx, bool is64, uint8_t rd, uint8_t imm)
+ {
+-	emit_bitfield(ctx, is64, rd, rd, imm, is64 ? 63 : 31, A64_UBFM);
++	const unsigned int width = is64 ? 64 : 32;
 +
- #define BPF_DIV_ZERO_CHECK(bpf, reg, ins, type) do { \
- 	if ((type)(reg)[(ins)->src_reg] == 0) { \
- 		RTE_BPF_LOG_LINE(ERR, \
-@@ -183,10 +194,10 @@ bpf_exec(const struct rte_bpf *bpf, uint64_t reg[EBPF_REG_NUM])
- 			BPF_OP_ALU_IMM(reg, ins, |, uint32_t);
- 			break;
- 		case (BPF_ALU | BPF_LSH | BPF_K):
--			BPF_OP_ALU_IMM(reg, ins, <<, uint32_t);
-+			BPF_OP_SHIFT_IMM(reg, ins, <<, uint32_t);
- 			break;
- 		case (BPF_ALU | BPF_RSH | BPF_K):
--			BPF_OP_ALU_IMM(reg, ins, >>, uint32_t);
-+			BPF_OP_SHIFT_IMM(reg, ins, >>, uint32_t);
- 			break;
- 		case (BPF_ALU | BPF_XOR | BPF_K):
- 			BPF_OP_ALU_IMM(reg, ins, ^, uint32_t);
-@@ -217,10 +228,10 @@ bpf_exec(const struct rte_bpf *bpf, uint64_t reg[EBPF_REG_NUM])
- 			BPF_OP_ALU_REG(reg, ins, |, uint32_t);
- 			break;
- 		case (BPF_ALU | BPF_LSH | BPF_X):
--			BPF_OP_ALU_REG(reg, ins, <<, uint32_t);
-+			BPF_OP_SHIFT_REG(reg, ins, <<, uint32_t);
- 			break;
- 		case (BPF_ALU | BPF_RSH | BPF_X):
--			BPF_OP_ALU_REG(reg, ins, >>, uint32_t);
-+			BPF_OP_SHIFT_REG(reg, ins, >>, uint32_t);
- 			break;
- 		case (BPF_ALU | BPF_XOR | BPF_X):
- 			BPF_OP_ALU_REG(reg, ins, ^, uint32_t);
-@@ -262,13 +273,13 @@ bpf_exec(const struct rte_bpf *bpf, uint64_t reg[EBPF_REG_NUM])
- 			BPF_OP_ALU_IMM(reg, ins, |, uint64_t);
- 			break;
- 		case (EBPF_ALU64 | BPF_LSH | BPF_K):
--			BPF_OP_ALU_IMM(reg, ins, <<, uint64_t);
-+			BPF_OP_SHIFT_IMM(reg, ins, <<, uint64_t);
- 			break;
- 		case (EBPF_ALU64 | BPF_RSH | BPF_K):
--			BPF_OP_ALU_IMM(reg, ins, >>, uint64_t);
-+			BPF_OP_SHIFT_IMM(reg, ins, >>, uint64_t);
- 			break;
- 		case (EBPF_ALU64 | EBPF_ARSH | BPF_K):
--			BPF_OP_ALU_IMM(reg, ins, >>, int64_t);
-+			BPF_OP_SHIFT_IMM(reg, ins, >>, int64_t);
- 			break;
- 		case (EBPF_ALU64 | BPF_XOR | BPF_K):
- 			BPF_OP_ALU_IMM(reg, ins, ^, uint64_t);
-@@ -299,13 +310,13 @@ bpf_exec(const struct rte_bpf *bpf, uint64_t reg[EBPF_REG_NUM])
- 			BPF_OP_ALU_REG(reg, ins, |, uint64_t);
- 			break;
- 		case (EBPF_ALU64 | BPF_LSH | BPF_X):
--			BPF_OP_ALU_REG(reg, ins, <<, uint64_t);
-+			BPF_OP_SHIFT_REG(reg, ins, <<, uint64_t);
- 			break;
- 		case (EBPF_ALU64 | BPF_RSH | BPF_X):
--			BPF_OP_ALU_REG(reg, ins, >>, uint64_t);
-+			BPF_OP_SHIFT_REG(reg, ins, >>, uint64_t);
- 			break;
- 		case (EBPF_ALU64 | EBPF_ARSH | BPF_X):
--			BPF_OP_ALU_REG(reg, ins, >>, int64_t);
-+			BPF_OP_SHIFT_REG(reg, ins, >>, int64_t);
- 			break;
- 		case (EBPF_ALU64 | BPF_XOR | BPF_X):
- 			BPF_OP_ALU_REG(reg, ins, ^, uint64_t);
++	imm &= width - 1;
++	emit_bitfield(ctx, is64, rd, rd, imm, width - 1, A64_UBFM);
+ }
+ 
+ static void
+ emit_asr(struct a64_jit_ctx *ctx, bool is64, uint8_t rd, uint8_t imm)
+ {
+-	emit_bitfield(ctx, is64, rd, rd, imm, is64 ? 63 : 31, A64_SBFM);
++	const unsigned int width = is64 ? 64 : 32;
++
++	imm &= width - 1;
++	emit_bitfield(ctx, is64, rd, rd, imm, width - 1, A64_SBFM);
+ }
+ 
+ #define A64_AND 0
 -- 
 2.53.0
 
