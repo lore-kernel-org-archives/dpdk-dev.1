@@ -2,48 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C33EFC61DB9
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 15:15:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA2AC61DC4
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 15:16:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0EDC840A6C;
+	by mails.dpdk.org (Postfix) with ESMTP id CCC8440A8B;
 	Thu, 27 Aug 2026 17:15:04 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id 2BEE3406A2
- for <dev@dpdk.org>; Thu, 27 Aug 2026 17:15:01 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id D9539406A2
+ for <dev@dpdk.org>; Thu, 27 Aug 2026 17:15:02 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1787843702; x=1819379702;
+ t=1787843703; x=1819379703;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=pQKy7Air/L/YZtgTQmLA4f15nCS4nnkki598j3lKtqk=;
- b=lAlys0WJ1sJsXSsuv0UXrat8DqZkFX3npDeIV7W8/3ZwaOrHwfCyrx3m
- mNBQfFiu9dcEWlUqT/4c1Nx2SvoZ0fCVkL49l0Lj6debg9UwaAeqhT6Qa
- I7bxfqifmrpwrsG8m391oSsjao+hlyTi0Pu/e+mCnWRI2NTpSOgC4DQhW
- tX5UZf2pdJ/U7GwfNFVGOyUjm/9oLgai+e1fFQgCYqTPVJqPwAcKK5BRb
- wkpnvnBabAsKk5pFq2sctNhY8ZuGRlpOMveLjdayYozhsa8tV14+gHx10
- Wi6xiKuQdaCUqEb/7AwIVbb+LFcX7ZLlcmLXIcl7rIjFEHUyqKKEF80ln g==;
-X-CSE-ConnectionGUID: cdGFcdIUTv6nBqf8Ah5msg==
-X-CSE-MsgGUID: WprS35jIQSKPAHhO073T8g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11888"; a="88371623"
-X-IronPort-AV: E=Sophos;i="6.25,246,1779174000"; d="scan'208";a="88371623"
+ bh=y0vgPg+ezNzYawqe+9kPoipOUFOrce93oCkcCT+iHTU=;
+ b=a7Izlpjnn6a8yMCe9dym36OFG264yvXpzaLk13dqKy5t3uMV9Z8JMsB1
+ a9YSS3Nf0LHdBgYqSvAi0Q3Qfbk8JcuK9jnD6Hx1WrMKdsaeYxiOy87ge
+ teIoNykB+pjmRPXd0L+Vpu47vft9mQ4LPJh19DALKDPYZGm/5IpDgTRQm
+ pLdYaye8P9XncPZEX6QLXU8U6mZT1musUz9VlDhAYHFOmQYgyxE5Sc5mS
+ UCmq6jqDziOM4HGwZG0awSPCdZbQ+9FC/hZW4X0E07ClKG0FGGwBVNdCo
+ SUds5RfJam0RM3ZlafiKCPAArZcfm8VHFydfDggFuxuTRcKVCQxv7TwXW g==;
+X-CSE-ConnectionGUID: 1hCxbuGNSLSbgbBYusSiyA==
+X-CSE-MsgGUID: w0eHkxleQY+l6gIBRS6jhw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11888"; a="88371629"
+X-IronPort-AV: E=Sophos;i="6.25,246,1779174000"; d="scan'208";a="88371629"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 Aug 2026 08:15:01 -0700
-X-CSE-ConnectionGUID: /hI9T6/dTkC96HosHHc1EA==
-X-CSE-MsgGUID: WPB3P4ZpTny2YnytQQ8tfg==
+ 27 Aug 2026 08:15:02 -0700
+X-CSE-ConnectionGUID: 4b5QrH8mTFSX64xmhIXMZw==
+X-CSE-MsgGUID: FB8GVexbQmqo6/oImGDkVQ==
 X-ExtLoop1: 1
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa003.fm.intel.com with ESMTP; 27 Aug 2026 08:14:59 -0700
+ by fmviesa003.fm.intel.com with ESMTP; 27 Aug 2026 08:15:01 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Nipun Gupta <nipun.gupta@amd.com>,
- Nikhil Agarwal <nikhil.agarwal@amd.com>, Chenbo Xia <chenbox@nvidia.com>,
- Tomasz Duszynski <tduszynski@marvell.com>,
- Ajit Khaparde <ajit.khaparde@broadcom.com>,
- Vikas Gupta <vikas.gupta@broadcom.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v13 08/24] vfio: split get device info from setup
-Date: Thu, 27 Aug 2026 16:14:11 +0100
-Message-ID: <43478c4a51da24bf52bb781874cc315a45916586.1787843386.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org,
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v13 09/24] vfio: add container device assignment API
+Date: Thu, 27 Aug 2026 16:14:12 +0100
+Message-ID: <291f878ffaaa7b53d66f6470139308d8a7668cff.1787843386.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1787843385.git.anatoly.burakov@intel.com>
  <cover.1787843385.git.anatoly.burakov@intel.com>
@@ -63,310 +59,121 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, setup gets device info as part of setup, while the separate get
-device info API also calls setup if the fd is zero. Untangle these two APIs
-and make each do one thing, and adjust all existing callers.
+Currently, VFIO has explicit group bind API's, but the way they're used is
+such that no one actually cares about VFIO groups, and the real goal of
+everyone using VFIO group bind API is to bind devices to particular VFIO
+container, such that when `dev_vfio_setup_device` call eventually comes,
+VFIO will pick up the correct container.
+
+To remove dependency on group API's, add a new "container assign device"
+API call that will do the same thing, but will not depend on managing VFIO
+group fd's.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/bus/cdx/cdx_vfio.c        | 12 ++++++++--
- drivers/bus/pci/linux/pci_vfio.c  | 18 ++++++++++----
- drivers/bus/platform/platform.c   |  9 ++++++-
- drivers/crypto/bcmfs/bcmfs_vfio.c |  8 ++++++-
- lib/eal/freebsd/eal.c             |  3 +--
- lib/eal/include/dev_vfio.h        | 23 +++++++-----------
- lib/eal/linux/eal_vfio.c          | 40 +++++++++----------------------
- 7 files changed, 59 insertions(+), 54 deletions(-)
+ lib/eal/freebsd/eal.c      | 10 ++++++++++
+ lib/eal/include/dev_vfio.h | 26 ++++++++++++++++++++++++++
+ lib/eal/linux/eal_vfio.c   | 32 ++++++++++++++++++++++++++++++++
+ 3 files changed, 68 insertions(+)
 
-diff --git a/drivers/bus/cdx/cdx_vfio.c b/drivers/bus/cdx/cdx_vfio.c
-index 02a34d6f18..531e4ccc8d 100644
---- a/drivers/bus/cdx/cdx_vfio.c
-+++ b/drivers/bus/cdx/cdx_vfio.c
-@@ -401,10 +401,14 @@ cdx_vfio_map_resource_primary(struct rte_cdx_device *dev)
- 		return -1;
- 
- 	ret = dev_vfio_setup_device(RTE_CDX_BUS_DEVICES_PATH, dev_name,
--				    &vfio_dev_fd, &device_info);
-+				    &vfio_dev_fd);
- 	if (ret)
- 		return ret;
- 
-+	ret = dev_vfio_get_device_info(vfio_dev_fd, &device_info);
-+	if (ret)
-+		goto err_vfio_dev_fd;
-+
- 	/* allocate vfio_res and get region info */
- 	vfio_res = rte_zmalloc("VFIO_RES", sizeof(*vfio_res), 0);
- 	if (vfio_res == NULL) {
-@@ -510,10 +514,14 @@ cdx_vfio_map_resource_secondary(struct rte_cdx_device *dev)
- 	}
- 
- 	ret = dev_vfio_setup_device(RTE_CDX_BUS_DEVICES_PATH, dev_name,
--					&vfio_dev_fd, &device_info);
-+					&vfio_dev_fd);
- 	if (ret)
- 		return ret;
- 
-+	ret = dev_vfio_get_device_info(vfio_dev_fd, &device_info);
-+	if (ret)
-+		goto err_vfio_dev_fd;
-+
- 	/* map MMIO regions */
- 	maps = vfio_res->maps;
- 
-diff --git a/drivers/bus/pci/linux/pci_vfio.c b/drivers/bus/pci/linux/pci_vfio.c
-index 2d8144deb0..3cc7458419 100644
---- a/drivers/bus/pci/linux/pci_vfio.c
-+++ b/drivers/bus/pci/linux/pci_vfio.c
-@@ -753,10 +753,14 @@ pci_vfio_map_resource_primary(struct rte_pci_device *dev)
- 			loc->domain, loc->bus, loc->devid, loc->function);
- 
- 	ret = dev_vfio_setup_device(rte_pci_get_sysfs_path(), pci_addr,
--					&vfio_dev_fd, &device_info);
-+					&vfio_dev_fd);
- 	if (ret)
- 		return ret;
- 
-+	ret = dev_vfio_get_device_info(vfio_dev_fd, &device_info);
-+	if (ret)
-+		goto err_vfio_dev_fd;
-+
- 	if (rte_intr_dev_fd_set(dev->intr_handle, vfio_dev_fd))
- 		goto err_vfio_dev_fd;
- 
-@@ -962,10 +966,14 @@ pci_vfio_map_resource_secondary(struct rte_pci_device *dev)
- 	}
- 
- 	ret = dev_vfio_setup_device(rte_pci_get_sysfs_path(), pci_addr,
--					&vfio_dev_fd, &device_info);
-+					&vfio_dev_fd);
- 	if (ret)
- 		return ret;
- 
-+	ret = dev_vfio_get_device_info(vfio_dev_fd, &device_info);
-+	if (ret)
-+		goto err_vfio_dev_fd;
-+
- 	ret = pci_vfio_fill_regions(dev, vfio_dev_fd, &device_info);
- 	if (ret)
- 		goto err_vfio_dev_fd;
-@@ -1195,12 +1203,14 @@ pci_vfio_ioport_map(struct rte_pci_device *dev, int bar,
- 		if (vfio_dev_fd < 0) {
- 			return -1;
- 		} else if (vfio_dev_fd == 0) {
--			if (dev_vfio_get_device_info(rte_pci_get_sysfs_path(), pci_addr,
--				&vfio_dev_fd, &device_info) != 0)
-+			if (dev_vfio_setup_device(rte_pci_get_sysfs_path(), pci_addr,
-+				&vfio_dev_fd) != 0)
- 				return -1;
- 			/* save vfio_dev_fd so it can be used during release */
- 			if (rte_intr_dev_fd_set(dev->intr_handle, vfio_dev_fd) != 0)
- 				return -1;
-+			if (dev_vfio_get_device_info(vfio_dev_fd, &device_info) != 0)
-+				return -1;
- 
- 			if (pci_vfio_fill_regions(dev, vfio_dev_fd, &device_info) != 0)
- 				return -1;
-diff --git a/drivers/bus/platform/platform.c b/drivers/bus/platform/platform.c
-index 9d7df9be80..950306e2d9 100644
---- a/drivers/bus/platform/platform.c
-+++ b/drivers/bus/platform/platform.c
-@@ -292,12 +292,19 @@ device_setup(struct rte_platform_device *pdev)
- 	const char *name = pdev->name;
- 	int ret;
- 
--	ret = dev_vfio_setup_device(PLATFORM_BUS_DEVICES_PATH, name, &pdev->dev_fd, &dev_info);
-+	ret = dev_vfio_setup_device(PLATFORM_BUS_DEVICES_PATH, name, &pdev->dev_fd);
- 	if (ret) {
- 		PLATFORM_LOG_LINE(ERR, "failed to setup %s", name);
- 		return -ENODEV;
- 	}
- 
-+	ret = dev_vfio_get_device_info(pdev->dev_fd, &dev_info);
-+	if (ret) {
-+		PLATFORM_LOG_LINE(ERR, "failed to get device info for %s", name);
-+		ret = -ENODEV;
-+		goto out;
-+	}
-+
- 	/* This is an extra check to confirm that platform device was initialized
- 	 * by a kernel vfio-platform driver. On kernels that predate vfio-platform
- 	 * driver this flag obviously does not exist. In such scenarios this
-diff --git a/drivers/crypto/bcmfs/bcmfs_vfio.c b/drivers/crypto/bcmfs/bcmfs_vfio.c
-index 053af0d227..ad244d9756 100644
---- a/drivers/crypto/bcmfs/bcmfs_vfio.c
-+++ b/drivers/crypto/bcmfs/bcmfs_vfio.c
-@@ -25,12 +25,18 @@ vfio_map_dev_obj(const char *path, const char *dev_obj,
- 	struct vfio_device_info d_info = { .argsz = sizeof(d_info) };
- 	struct vfio_region_info reg_info = { .argsz = sizeof(reg_info) };
- 
--	ret = dev_vfio_setup_device(path, dev_obj, dev_fd, &d_info);
-+	ret = dev_vfio_setup_device(path, dev_obj, dev_fd);
- 	if (ret) {
- 		BCMFS_LOG(ERR, "VFIO Setting for device failed");
- 		return ret;
- 	}
- 
-+	ret = dev_vfio_get_device_info(*dev_fd, &d_info);
-+	if (ret) {
-+		BCMFS_LOG(ERR, "VFIO Getting device info failed");
-+		goto map_failed;
-+	}
-+
- 	/* getting device region info*/
- 	ret = ioctl(*dev_fd, VFIO_DEVICE_GET_REGION_INFO, &reg_info);
- 	if (ret < 0) {
 diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
-index d6f75af20b..2990cf14cd 100644
+index 2990cf14cd..0650abf406 100644
 --- a/lib/eal/freebsd/eal.c
 +++ b/lib/eal/freebsd/eal.c
-@@ -822,8 +822,7 @@ rte_eal_vfio_get_vf_token(__rte_unused rte_uuid_t vf_token)
- RTE_EXPORT_INTERNAL_SYMBOL(dev_vfio_setup_device)
- int dev_vfio_setup_device(__rte_unused const char *sysfs_base,
- 		      __rte_unused const char *dev_addr,
--		      __rte_unused int *vfio_dev_fd,
--		      __rte_unused struct vfio_device_info *device_info)
-+		      __rte_unused int *vfio_dev_fd)
- {
+@@ -950,3 +950,13 @@ dev_vfio_container_dma_unmap(__rte_unused int container_fd,
  	rte_errno = ENOTSUP;
  	return -1;
+ }
++
++RTE_EXPORT_INTERNAL_SYMBOL(dev_vfio_container_assign_device)
++int
++dev_vfio_container_assign_device(__rte_unused int vfio_container_fd,
++		__rte_unused const char *sysfs_base,
++		__rte_unused const char *dev_addr)
++{
++	rte_errno = ENOTSUP;
++	return -1;
++}
 diff --git a/lib/eal/include/dev_vfio.h b/lib/eal/include/dev_vfio.h
-index 712ceed058..3719cc6adc 100644
+index 3719cc6adc..85b4dbd3fc 100644
 --- a/lib/eal/include/dev_vfio.h
 +++ b/lib/eal/include/dev_vfio.h
-@@ -55,10 +55,7 @@ struct vfio_device_info;
-  *   device location.
-  *
-  * @param vfio_dev_fd
-- *   VFIO fd.
-- *
-- * @param device_info
-- *   Device information.
-+ *   Pointer to VFIO fd, will be set to the opened device fd on success.
-  *
-  * @return
-  *   0 on success.
-@@ -67,7 +64,7 @@ struct vfio_device_info;
-  */
- __rte_internal
- int dev_vfio_setup_device(const char *sysfs_base, const char *dev_addr,
--		int *vfio_dev_fd, struct vfio_device_info *device_info);
-+		int *vfio_dev_fd);
- 
- /**
-  * @internal
-@@ -196,19 +193,16 @@ dev_vfio_get_group_num(const char *sysfs_base,
-  * @internal
-  * Get device information.
-  *
-+ * This function retrieves VFIO device information from an already opened
-+ * device. The device must be opened with `dev_vfio_setup_device()` first.
-+ *
-  * This function is only relevant to Linux and will return an error on BSD.
-  *
-- * @param sysfs_base
-- *   sysfs path prefix.
-- *
-- * @param dev_addr
-- *   device location.
-- *
-  * @param vfio_dev_fd
-- *   VFIO fd.
-+ *   VFIO device fd (must be a valid, already opened fd).
-  *
-  * @param device_info
-- *   Device information.
-+ *   Pointer to device information structure to be filled.
-  *
-  * @return
-  *   0 on success.
-@@ -216,8 +210,7 @@ dev_vfio_get_group_num(const char *sysfs_base,
-  */
- __rte_internal
+@@ -280,6 +280,32 @@ __rte_internal
  int
--dev_vfio_get_device_info(const char *sysfs_base, const char *dev_addr,
--		int *vfio_dev_fd, struct vfio_device_info *device_info);
-+dev_vfio_get_device_info(int vfio_dev_fd, struct vfio_device_info *device_info);
+ dev_vfio_container_destroy(int container_fd);
  
++/**
++ * @internal
++ *
++ * Assign a device to a VFIO container.
++ *
++ * Doing so will cause `dev_vfio_setup_device()` call to set up the device with
++ * the VFIO container specified in this assign operation.
++ *
++ * This function is only relevant on Linux.
++ *
++ * @param vfio_container_fd
++ *   VFIO container file descriptor.
++ * @param sysfs_base
++ *   Sysfs path prefix.
++ * @param dev_addr
++ *   Device identifier.
++ *
++ * @return
++ *   0 on success.
++ *   <0 on failure.
++ */
++__rte_internal
++int
++dev_vfio_container_assign_device(int vfio_container_fd, const char *sysfs_base,
++		const char *dev_addr);
++
  /**
   * @internal
+  * Bind a IOMMU group to a container.
 diff --git a/lib/eal/linux/eal_vfio.c b/lib/eal/linux/eal_vfio.c
-index 162202d32e..a64173fe7f 100644
+index a64173fe7f..29c03d01b4 100644
 --- a/lib/eal/linux/eal_vfio.c
 +++ b/lib/eal/linux/eal_vfio.c
-@@ -761,7 +761,7 @@ dev_vfio_clear_group(int vfio_group_fd)
- RTE_EXPORT_INTERNAL_SYMBOL(dev_vfio_setup_device)
- int
- dev_vfio_setup_device(const char *sysfs_base, const char *dev_addr,
--		int *vfio_dev_fd, struct vfio_device_info *device_info)
-+		int *vfio_dev_fd)
- {
- 	struct vfio_group_status group_status = {
- 			.argsz = sizeof(group_status)
-@@ -978,7 +978,7 @@ dev_vfio_setup_device(const char *sysfs_base, const char *dev_addr,
- 		*vfio_dev_fd = ioctl(vfio_group_fd, VFIO_GROUP_GET_DEVICE_FD,
- 				     dev);
- 		if (*vfio_dev_fd >= 0)
--			goto dev_get_info;
-+			goto out;
- 	}
- 
- 	/* get a file descriptor for the device */
-@@ -995,18 +995,8 @@ dev_vfio_setup_device(const char *sysfs_base, const char *dev_addr,
- 		return -1;
- 	}
- 
--	/* test and setup the device */
--dev_get_info:
--	ret = ioctl(*vfio_dev_fd, VFIO_DEVICE_GET_INFO, device_info);
--	if (ret) {
--		EAL_LOG(ERR, "%s cannot get device info, "
--				"error %i (%s)", dev_addr, errno,
--				strerror(errno));
--		close(*vfio_dev_fd);
--		close(vfio_group_fd);
--		dev_vfio_clear_group(vfio_group_fd);
--		return -1;
--	}
-+	/* device is now set up */
-+out:
- 	vfio_group_device_get(vfio_group_fd);
- 
+@@ -2109,6 +2109,38 @@ dev_vfio_container_destroy(int container_fd)
  	return 0;
-@@ -1222,26 +1212,18 @@ vfio_set_iommu_type(int vfio_container_fd)
+ }
  
- RTE_EXPORT_INTERNAL_SYMBOL(dev_vfio_get_device_info)
- int
--dev_vfio_get_device_info(const char *sysfs_base, const char *dev_addr,
--		int *vfio_dev_fd, struct vfio_device_info *device_info)
-+dev_vfio_get_device_info(int vfio_dev_fd, struct vfio_device_info *device_info)
- {
- 	int ret;
- 
--	if (device_info == NULL || *vfio_dev_fd < 0)
-+	if (device_info == NULL || vfio_dev_fd < 0)
- 		return -1;
- 
--	if (*vfio_dev_fd == 0) {
--		ret = dev_vfio_setup_device(sysfs_base, dev_addr,
--				vfio_dev_fd, device_info);
--		if (ret)
--			return -1;
--	} else {
--		ret = ioctl(*vfio_dev_fd, VFIO_DEVICE_GET_INFO, device_info);
--		if (ret) {
--			EAL_LOG(ERR, "%s cannot get device info, error %i (%s)",
--					dev_addr, errno, strerror(errno));
--			return -1;
--		}
-+	ret = ioctl(vfio_dev_fd, VFIO_DEVICE_GET_INFO, device_info);
-+	if (ret) {
-+		EAL_LOG(ERR, "Cannot get device info, error %i (%s)",
-+				errno, strerror(errno));
++RTE_EXPORT_INTERNAL_SYMBOL(dev_vfio_container_assign_device)
++int
++dev_vfio_container_assign_device(int vfio_container_fd, const char *sysfs_base,
++		const char *dev_addr)
++{
++	int iommu_group_num;
++	int ret;
++
++	ret = dev_vfio_get_group_num(sysfs_base, dev_addr, &iommu_group_num);
++	if (ret < 0) {
++		EAL_LOG(ERR, "Cannot get IOMMU group number for device %s",
++			dev_addr);
 +		return -1;
- 	}
- 
- 	return 0;
++	} else if (ret == 0) {
++		EAL_LOG(ERR,
++			"Device %s is not assigned to any IOMMU group",
++			dev_addr);
++		return -1;
++	}
++
++	ret = dev_vfio_container_group_bind(vfio_container_fd,
++			iommu_group_num);
++	if (ret < 0) {
++		EAL_LOG(ERR,
++			"Cannot bind IOMMU group %d for device %s",
++			iommu_group_num, dev_addr);
++		return -1;
++	}
++
++	return 0;
++}
++
+ RTE_EXPORT_INTERNAL_SYMBOL(dev_vfio_container_group_bind)
+ int
+ dev_vfio_container_group_bind(int container_fd, int iommu_group_num)
 -- 
 2.52.0
 
