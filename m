@@ -2,47 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D504C61DC2
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 12:18:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C13F5C61DC7
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 12:22:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5720140150;
-	Thu, 27 Aug 2026 14:18:22 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
- by mails.dpdk.org (Postfix) with ESMTP id EA9BD4003C
- for <dev@dpdk.org>; Thu, 27 Aug 2026 14:18:20 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E8A4E40150;
+	Thu, 27 Aug 2026 14:22:06 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+ by mails.dpdk.org (Postfix) with ESMTP id 0C4E54003C
+ for <dev@dpdk.org>; Thu, 27 Aug 2026 14:22:04 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1787833101; x=1819369101;
+ t=1787833325; x=1819369325;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
  bh=kJ9b9znC5Ao517bGqW/9wRtJXe11X/AXTaokY762hGA=;
- b=OoI8Se2fqOBNhn/mdhM/ajLqSoAhkMghvHisf1aXk3/leEok/pcUcZv7
- RyiHJ7HFYdfyUHakibMEQDEf89QFbzQ9S895QEo8c3nz37rApIyiQ13JL
- ICLFjhA+MiXWuqRsh3O+TnKWpyeQ2vKWrRGIRVkCc1SjG5tnNjPj1brMS
- 7aRTn2K+fFj62v2ocNu1kMYTC/+WdZy4XQF+1ixagPwVz4LmseQrXWVli
- LRw1BiilCxPIkLhLj5xJa5HZFj9bthT2ACbevMMd2mFo523euEJGaYDjF
- j2Q9ypQnYVUYTYV2QBAEIU835c6edLflZ2L/7tPVahQxhQuCpBWLlaIPW g==;
-X-CSE-ConnectionGUID: lRs5TQUeScWTaCYmJG0erw==
-X-CSE-MsgGUID: gmnDok/VQPO7biHwAucDRg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11887"; a="98665710"
-X-IronPort-AV: E=Sophos;i="6.25,246,1779174000"; d="scan'208";a="98665710"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
- by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 Aug 2026 05:18:20 -0700
-X-CSE-ConnectionGUID: trCIbhvgQw6M8d7WQ+WRfg==
-X-CSE-MsgGUID: 5kdtojQ0S12FKy9mzDyHNQ==
+ b=dCtn6/ulbPure+IFt8jlWEVQRrZTajYiayT2tjuIoHpqPBKmbSOGbS13
+ gwOPoWik3P4nUoJXDLrPBKVBR+BUDa/mr4AE7LUY48+0dr/WKVIJiouIE
+ 2bdiFvQqcMmWBjtByY5qD4QOfbwIxgbyDQXGMm5mvHzlRS6kXZcs9S2bx
+ VGUFXYgEPNUYLOv9QEn2yn09slNi0IhKRxEu1Dk8B+Ca2Epj3jq5p6sIf
+ GjWh9TnQSR5+BwWRkrb0kS7TftkNgOWCcL3f4atjdGZDEA9XMTmQobJYd
+ u4+rzy06bAaLH/Gq+ec6U/P0SqUxxV/ZLBY3JgiSZxNnwIqhNd16pW/WH Q==;
+X-CSE-ConnectionGUID: 6p4wOVdKS1u3+dtzA0evNQ==
+X-CSE-MsgGUID: bB91YrYzSxqC6y67zrZ49Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11887"; a="105706930"
+X-IronPort-AV: E=Sophos;i="6.25,246,1779174000"; d="scan'208";a="105706930"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+ by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 27 Aug 2026 05:22:04 -0700
+X-CSE-ConnectionGUID: Z1EK0AvbTEmK4Exg0fKLKQ==
+X-CSE-MsgGUID: pakVRIb8SSau1mCv7Behrw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,246,1779174000"; d="scan'208";a="266559821"
 Received: from unknown (HELO icx008-fc43.iind.intel.com) ([10.190.212.196])
- by orviesa010.jf.intel.com with ESMTP; 27 Aug 2026 05:18:18 -0700
+ by fmviesa003.fm.intel.com with ESMTP; 27 Aug 2026 05:22:02 -0700
 From: Rajesh Kumar <rajesh3.kumar@intel.com>
 To: dev@dpdk.org
 Cc: thomas@monjalon.net, bruce.richardson@intel.com,
  andrew.rybchenko@oktetlabs.ru, stephen@networkplumber.org,
  aman.deep.singh@intel.com, Rajesh Kumar <rajesh3.kumar@intel.com>
 Subject: [RFC PATCH v3 0/1] ethdev: add Tx timestamp slot APIs
-Date: Thu, 27 Aug 2026 17:48:15 +0530
-Message-ID: <20260827121815.339114-1-rajesh3.kumar@intel.com>
+Date: Thu, 27 Aug 2026 17:51:58 +0530
+Message-ID: <20260827122200.339388-1-rajesh3.kumar@intel.com>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260817192417.3009990-1-rajesh3.kumar@intel.com>
 References: <20260817192417.3009990-1-rajesh3.kumar@intel.com>
