@@ -2,78 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 573DAC61DC4
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 14:09:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E2CC61DB9
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 14:57:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 69F5840150;
-	Thu, 27 Aug 2026 16:09:25 +0200 (CEST)
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com
- [209.85.128.179])
- by mails.dpdk.org (Postfix) with ESMTP id 5462D4003C
- for <dev@dpdk.org>; Thu, 27 Aug 2026 16:09:24 +0200 (CEST)
-Received: by mail-yw1-f179.google.com with SMTP id
- 00721157ae682-836cb2fa1bcso36494597b3.1
- for <dev@dpdk.org>; Thu, 27 Aug 2026 07:09:24 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1787839763; cv=none;
- d=google.com; s=arc-20260327;
- b=iKqpzbcL3UETXqRlenOM29s/ikv1/EQOO3H69Z2rLN6aQGpfz7C+6Szd+Vets+J0nZ
- 0qYkAaoTT0rSLOdnPyP/jJZtIpsaBb2nm66832XuZ6BHWrd+blRlCSLCzX8Cc6yvIy3L
- tAzddclRxcJUphPeLwPnFTbkzjwePH8SQBJG/MZJ7jM629Ls2jt8pnBd7Te11cPqYEAt
- t/xufXo/iSrxZTW0zfsjGaIdyfcGlrOpS70QEY3YuPs82UAC8vteccDGgzSV82tBtxGr
- 0SU+gYICB0cLQKcLpm0rqsXZryht/ghWZs73IZ+vGLgUf2YAgJAMGiVJn2NJT8wfxYDn
- +aog==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=to:subject:message-id:date:from:mime-version:dkim-signature;
- bh=FPUHVdzP/lBzwUKFDyb7y9gMvePsPEYNcGadt7iBu80=;
- fh=eUqWHLlhrxpykrabbQYbmT5B5FclN6p18glcXqrZikU=;
- b=F3glEaQABlyW9mFLHCieJzs8w+NFxnYROcFnSxzYjtN/ySLNsq8pJADcKHmb+OLyA+
- +GXzX0mSqyvIvRSc/Y43pztas4g1jL+yMkUQdKaPwkqYn/g66NfjTEP1YexNJ2GMdV28
- La4wbAbxhrwlYWRbayELtWTgZpIM3Uo0Lqu7gSB/htNQqSdDvLFcgdh6snSVnpQzerBP
- 6eBP3XdrJBQhxoC9+zj6b+u5C0jDs8kBt8R+ArJUWFT6NATogm1PJ1N8256Dm64KcCot
- iVrvrodV41251MfLk8nVax2PGhWPx5+wOOIH2AWVXIralxihDqhFNl0If7Mqjmo7tES/
- pyQg==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id DBDF340280;
+	Thu, 27 Aug 2026 16:57:32 +0200 (CEST)
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
+ [209.85.214.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 09D594003C
+ for <dev@dpdk.org>; Thu, 27 Aug 2026 16:57:31 +0200 (CEST)
+Received: by mail-pl1-f171.google.com with SMTP id
+ d9443c01a7336-2d530328efbso8537515ad.0
+ for <dev@dpdk.org>; Thu, 27 Aug 2026 07:57:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1787839763; x=1788444563; darn=dpdk.org;
- h=content-type:to:subject:message-id:date:from:mime-version:from:to
- :cc:subject:date:message-id:reply-to:content-type;
- bh=FPUHVdzP/lBzwUKFDyb7y9gMvePsPEYNcGadt7iBu80=;
- b=L+7MGO/sApKWl9++NlEKjQdaWhuCE9MgcQ/vj6SGBGIWUancp6rKNP4iiq7pgNKDuW
- D5DlEWuQ6rQgr/f3bVGuL0Jwi/1rLuZ8mFIXD8E2M7lmf1nR2cil0X55HuRegLEJpPIw
- wDr1xSJM5E92MuzW1aJKj9Bq7YfyBNbPttzv4=
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787842651;
+ x=1788447451; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=/QU+JFjApJwdpnGI59K6tOW0My+iisb0n9c/v1/4Pss=;
+ b=frbiQFGdiaxPdNcDVOoW75hIkut26+4JI2X8CI8ZGrrrelxDGn2FDOq39QHpWRZEQT
+ aK2MUTpUOECzJVIzkJqIfiZCOrgtk3+z6n/b0j5eJfAOif62K//9/KLMwsOygbodm6xJ
+ 5ZUG24Rn7IR3qpxlrFzoEI817TkqBV6nMmPcs0757d8jjP4nsYgTrF89OhD24pG6aA8X
+ FPchTnKWiHFdw+AqIj46DKQVlpPT88Pz9ZmEN+tFFbMVwX2yGwUI5x8clpmaFhjD9cas
+ 2UggICIhVvJ8fA9t/HPOjdlSyBydGSrF6ze011OyP/77nBatznxZqMBuQFWNS+qbhFIX
+ hPkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787839763; x=1788444563;
- h=content-type:to:subject:message-id:date:from:mime-version:x-gm-gg
+ d=1e100.net; s=20251104; t=1787842651; x=1788447451;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=FPUHVdzP/lBzwUKFDyb7y9gMvePsPEYNcGadt7iBu80=;
- b=mZUavQgZ8JPFscy9x5bg6Xbyr+7B0NfvKDrJ2YzT1a9XST2dX96ThI9tHmAyib18AI
- 1usReJOouqxWEUJaZLaCJghFTdmvvpLe7ez+iADsO23w3FnlVO37f+VW5Onc/XjPo6Bm
- BFVliMONWD/SygFJ/g8mXF+Djlqu2A6Xb/T6FZipywis0YbeRSXafQQ4dkY/a1HJrxTk
- qIcjreBsUhEs1eLUkNtjVnvK/6Fri96RMIhGQJBdb5nrD49xG/LITy5H+413tp+LnbvD
- +sNWfkYKqsdkr9MMupaIZfRrorDZQ1c8o+0rmcH4qHNcJgCbrq5XcOHyEGjx+2o9/+tY
- f62w==
-X-Gm-Message-State: AFuF++le2UiHOui6NcFZHLX4dwPiq14vZV5755zoOcR+3jpwVZFIuDPG
- 5+R3ylfl6GnaCvmS8bCP3VBuZuAPzVAYT8LR1N43ogntU/Gl3G77A+boG2+aWKeyA6cC64U0WsK
- P2VAKXYonkC9VxSW8D8JF/hMbmu1kLid0jqF+ZLXFyZnAy121hEKE9zW04w==
-X-Gm-Gg: AR+sD11er8THbdDiaQOVGOC1fgOixvKcnlZchv2r9k+QwqlxnNrLcY9t46QKH8X0ZXR
- Lry/37Q/Hv94JN5uRfQkNxOOTBZp7By3gy1Oj/XjybZsnsssyN9w2Y3Mw5K5xwfdr2GcosN6X+I
- TUpH4zMTBoNpez5BUdY83Qxd7QY50W3GOTGYV4KO7Xp1hq3kHI3JvWPInoLQSCaj4AqZyO5IKY2
- IdzxSEm6EOR4St0S/PHm3Qo8CipYfpaWAK/f00ViqXg9HYq/nzK8mT69unxurcDCCDzvJUk5f0G
- B6TJCGOAN14khxN5t6j2+MJa10TNraD7r/kaHgFXOou5Ka/Dlghu8r1nNSalJgiC8PkcbZGH6bT
- k1d99BKMdcnM=
-X-Received: by 2002:a05:690c:7091:b0:845:a433:c337 with SMTP id
- 00721157ae682-8573d78d6f9mr75971997b3.0.1787839763354; Thu, 27 Aug 2026
- 07:09:23 -0700 (PDT)
+ bh=/QU+JFjApJwdpnGI59K6tOW0My+iisb0n9c/v1/4Pss=;
+ b=czfMLZR/JYxAxv2bBYY7QYXHHYRXcQ3x7FOYfXoRkqv21BywuHIH6kVMoxsFkPVJ95
+ hYBC8Vau2iGY2i3jW5rXNv8mJQ+FaBVmFwqPcvkpmEAZUZlUQjUh1h8SmtwS3bWt3t8c
+ vCxPnUHmAJr2tDEZnCgYnboNabBCQLQJe77peWqi6r7nKj1sUkG4smpWY+e00Z3HcWI7
+ TF0ZiXjpMDJ6mSgXmP8EwNhWTYNYJ7Dd0uKXbJVMj7laTyave/2Ip4Q6KxU0hFTNKqd0
+ VM+Pbvld93C2YbAXv5gRNTOLwY8OKTxsO7dIBj52pa5DUNsf9+RhEaWeh//xpIfC5JQr
+ uSIg==
+X-Gm-Message-State: AFuF++lqCA8Vh3sAwmXCSZjY32xT8T7imSdmbF32hq5cVIbv4CIMgp14
+ V79Wi9WnjLO/EwjgVthuJiSyla7UoJ3eiwxGVSahT2Z01fwD5ghS+Ew67CVtkPMXBN8=
+X-Gm-Gg: AR+sD11G8VmDIopQZiJADNYd73SayqEfr5JR27ngaFdrugPgpbaJxCjhXxuTBZ6H7tr
+ stsb4zmuqFGwAsEWmBJauxX51IYmgg3EuoUIpdolI9lkEQR49Jg5raGhRu9JeDNb1VCnpPxB2/F
+ ZPAwc5503TUOWB2zcX43CwHHF4mZqaloerPc48F+zV5jpoMVESQ0zOJw4I826hlbzjGP4CpsKpc
+ DxWnnJmFMRtU6Gs+kntwdl25e0rgrwS2jWn9643XKG3u1hQyAaAo+r2+SK0F5es5N70AanXPiHG
+ MG+Zki0Vu45XQg6jXmUWgx0oFgYoxl4Jsjix1l2pH/xzshdI15WJIxFe9dcoWeObRWcmBN36i+h
+ NXDx4+du+0VGUzP8aEhuilpnUksE5Jo/HOyOhHRointDggK9AyK//ypzF4DsjUvslot3DHixm4M
+ j+Bd6cZkBA51wFAoOXg8MM8HdhgwRIMHZa3p0aOA/RrnM8WSwqLy0JB8wTrQ70CD0hjiw+4SByY
+ 2jE1F/Oc10eOhkr1pJ4BEZXZtNA6Qk=
+X-Received: by 2002:a17:903:b45:b0:2cf:afe8:b722 with SMTP id
+ d9443c01a7336-2d707af1729mr307904415ad.11.1787842650914; 
+ Thu, 27 Aug 2026 07:57:30 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-3283d60b59dsm20599909eec.3.2026.08.27.07.57.27
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 27 Aug 2026 07:57:30 -0700 (PDT)
+Date: Thu, 27 Aug 2026 07:57:21 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org, stable@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>
+Subject: Re: [PATCH 1/4] common/dpaax: fix unused variable warning in
+ non-debug build
+Message-ID: <20260827075721.1344582e@phoenix.local>
+In-Reply-To: <CAJFAV8x62b_zeyF5P-X4KSMxaD4Sd=XanED-7PitDztxtnUFFw@mail.gmail.com>
+References: <20260826235933.194681-1-stephen@networkplumber.org>
+ <20260826235933.194681-2-stephen@networkplumber.org>
+ <CAJFAV8x62b_zeyF5P-X4KSMxaD4Sd=XanED-7PitDztxtnUFFw@mail.gmail.com>
 MIME-Version: 1.0
-From: Dillon Ladd <dladd@iol.unh.edu>
-Date: Thu, 27 Aug 2026 10:08:47 -0400
-X-Gm-Features: AcwNN1XsSPqJeaDQKxMgJL6LqliJU1NXsVQh880X89z5cxL5F35HqWgi6HKo8UM
-Message-ID: <CAJA6v3xoq00oVzr1cJoM6zdYwNc5eN1Ane1-r0TvQ-rTaX488A@mail.gmail.com>
-Subject: August 27, 2026 DTS Working Group Meeting Notes
-To: dev@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,77 +86,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Attendees
-################################################
+On Thu, 27 Aug 2026 11:07:50 +0200
+David Marchand <david.marchand@redhat.com> wrote:
 
-Lincoln Lavoie, UNH-IOL
-Dillon Ladd, UNH-IOL
-Andrew Bailey, UNH-IOL
-Koushik Bhargav Nimoji, UNH-IOL
+> On Thu, 27 Aug 2026 at 02:00, Stephen Hemminger
+> <stephen@networkplumber.org> wrote:
+> >
+> > Fix compiler warning on clang-23.
+> >
+> >   dpaa_of.c:14:12: warning: variable 'alive' set but not used
+> >         [-Wunused-but-set-global]
+> >
+> > The 'alive' flag is only read by DPAAX_HWWARN, which expands to an empty
+> > statement and discards its condition unless RTE_LIBRTE_DPAAX_DEBUG is
+> > defined. Make the empty expansion consume its argument so the condition
+> > is still checked in a non-debug build.
+> >
+> > Fixes: 8c83f28cc8a4 ("common/dpaax: move OF library from DPAA bus")  
+> 
+> Not that important, the issue probably predates this commit.
+> And looking at this change, it seems DPAA_BUS_HWWARN is dead code since then.
 
-General Discussions
-==============================================
-Patrick is reaching out to Thomas about the code coverage patch being
-merged to main.
+That is when the device-tree warning was added.
+The history scan looks right.
 
-Patch Discussions
-==============================================
-[v7] dts: refactor flow suite with generator pattern
-https://patches.dpdk.org/project/dpdk/patch/20260811170433.517663-1-abailey@iol.unh.edu/
-Pending Review
-
-[v1] dts: add PVVP case to virtio suite
-https://patches.dpdk.org/project/dpdk/patch/20260811171235.519323-1-abailey@iol.unh.edu/
-Pending Review
-
-dts: update verbose output regex for VXLAN packets
-https://patches.dpdk.org/project/dpdk/list/?series=38925
-Pending Review
-
-[v1] dts: update configuration for performance test
-https://patchwork.dpdk.org/project/dpdk/patch/20260805153658.345207-1-abailey@iol.unh.edu/
-Pending review
-
-DTS: Rebase from Dean (API updates)
-https://patches.dpdk.org/project/dpdk/list/?series=38902&state=%2A&archive=both
-Reviewed by Luca, needs some adjustments.
-
-[v1] dts: fix TRex packet stream handling for line rate testing
-https://patches.dpdk.org/project/dpdk/patch/20260805192732.464422-1-dladd@iol.unh.edu/
-Merged
-
-[v1] dts: remove crypto test type
-https://patches.dpdk.org/project/dpdk/patch/20260806164505.642928-1-abailey@iol.unh.edu/
-Pending Review
-
-[v3,3/3] dts: add verify coverage for cryptodev testing
-https://patches.dpdk.org/project/dpdk/list/?series=38682
-Pending Review
-
-[RFC] dts: restore unbinded ports to initial state
-https://patches.dpdk.org/project/dpdk/patch/20260812194428.296334-1-knimoji@iol.unh.edu/
-Pending Review
-
-[RFC] dts: resolve trex driver binding issue
-https://patches.dpdk.org/project/dpdk/patch/20260811185509.1650102-1-knimoji@iol.unh.edu/
-Prioritize review, sizable change of DTS and it would be helpful for
-Koushik to have feedback sooner opposed to later.
-
-26.11 DTS Roadmap
-==============================================
-26.11 Roadmap Document:
-https://docs.google.com/document/d/12ZR59qHriYcdCINc7r-jLv0TxYyZXEChxqZiIH5ozSs/edit?usp=sharing
-
-Andrew has recently finished extending cryptodev to allow for
-configuration of algorithms and amount of operations, this patch will
-be out soon.
-
-We got the go-ahead from Thomas to work on porting over the following
-test suites:
-eventdev_pipeline_perf
-pvp_multi_paths_virtio_single_core_performance
-pvp_multi_paths_vhost_single_core_performance
-
-Any other business
-==============================================
-Next Meeting: September 10, 2026
+It seems like it should either be removed as irrelevant or made into
+a regular warning. But that is up to Hemant and Sachin to decide;
+I just want clean builds for now.
