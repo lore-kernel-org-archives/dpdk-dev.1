@@ -2,129 +2,124 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50886C61DB9
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 15:55:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B359C61DB9
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 15:57:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5E7024027D;
-	Thu, 27 Aug 2026 17:55:36 +0200 (CEST)
-Received: from PA4PR04CU001.outbound.protection.outlook.com
- (mail-francecentralazon11013037.outbound.protection.outlook.com
- [40.107.162.37])
- by mails.dpdk.org (Postfix) with ESMTP id DDCCD40150;
- Thu, 27 Aug 2026 17:55:34 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C37244064E;
+	Thu, 27 Aug 2026 17:57:48 +0200 (CEST)
+Received: from AM0PR02CU008.outbound.protection.outlook.com
+ (mail-westeuropeazon11013012.outbound.protection.outlook.com [52.101.72.12])
+ by mails.dpdk.org (Postfix) with ESMTP id 6274540150;
+ Thu, 27 Aug 2026 17:57:47 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZY0nJ/2ewGLRrjkNXX4LDB4B/Lk4sTlMOl3T1sC0lPG98QMNPOi0YyiVkjIjC4qZjmfRx1e1Sbwatlk4hxD6dTFm/J1yhRleDrhFu9/eeKM/Zoi7czoWrugK1Zh7PUdVtr0HCuwnAUOL6oCg+xsKCvWg8HYvp4+vYabxyKVVvjd5M2O3gyBZUf8Otgfaimk0s2KCbGaPBTHwIa8JPLsHIL1NRRR1P+tOZKviPTr9JJ6mgNNiaUcrSw1zUYGzag/zTBgIsRl27mv9DoJ87S/PfpyAjX/DS9Mb5kyGoU9yftPx2mRBLCxGmeRQdGJ8jqVxNT2SWr+SoJwz9+bAG5R6XQ==
+ b=eOgYxebNxHZsg6lSHDGUa4PtThStcqlN/qHTmJY8TX801rSlRVxrndX/xrxPWwpkcEt7a6SM0gHozTTqWHj0P1AqCNkTgeNGDBH4Vs3SFa5gKhMbbo68ymNZ5bzQOoqVoUGnP511/v97ERBTcb/fm0Kbzaka4jP4EtgRAZPBua0u1MZdisF1tbbll0I11NLfgp/VzQ7BS9YWb18rIzGqIKzhEyvcaN1iJkdUrPF7ra98uSmCMskyPDB5JvbsO8sv+kd+YTZH+qGX/9sQuRoPzPLZvqISDniuAJ/K809kN/dxtP+lhU1kDmBPcv0cDKAiCduZLJbA87uLsf5vPBp5dQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GdJ2hmXRKifi2H+GwhOP0FqOCtaE/1B5AYWbwis9BfQ=;
- b=ypw4cFpeE+Q+woFLZ3Ka9okZxMWDudbtOSoC1aa40ytaGOzJnGF33DnhcpuSOtts5vy5/tapV1pM3csV1UC3GpXoAxfyc8VaI+Lg2fwLLeToXtJEiNKJJdOwuJCNRGi3mrYnyQAlWw1XXh/wXpVPawOd1f11Rb5DB0Xm4Dk/Qn12dMvNsLj/DEnNfVJDk0FXra42O0C8gL0jj2w583W4aJf5IzHKUhhZmm+zKoDqu3PLfCMkXmGMbEIwBWqlGz8sSI8IDQYYuOiQbb5kKxzHrKNni3mVaWTdLstuqQ9a7lrwKflpump1LBxMPqHTR+VlAh8TRbWMoLJIb/v5fYPD5Q==
+ bh=cTzTOfdrXuNycq20Wa4mMADAf1RSN1k9GPTzfURZyeI=;
+ b=eqe4qqWJSOOuxhjlWcDNr9omRuQjV84WVMxV3yz8tYugPzVQQzt2WXKbzDaQKXUCORzvYiQsGSm0EShmS3EWU9tn+dA6rIVPyJEvofeONCm2bG2jus6WvXDJpnhn/Y1wM0an3wQij2O6P384fmJ7OEnckgmNewHE3lggEqsi9BD7vZnmeqyY2AMHooeto4lKO1hCSkE3w8z6HBoXhlKeFSqefotrCIJROTyXmmMbLUyGrSfiHdj+S2T7ILhRAXcqbkDyQBmW3PzIqjXdJVeWXSP3xdDXEzBjqMxf17ryUplXoWb89RbJBvIMnGI8g6ZYLvFOzAr2qxge1KVHY8CFdQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
  dkim=pass header.d=oss.nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com; 
  s=selector1-NXP1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GdJ2hmXRKifi2H+GwhOP0FqOCtaE/1B5AYWbwis9BfQ=;
- b=Q/DAGMFClowiDTl1v+i5iM3GfIIhddGU4aqhiT6awtTaJ0ywvysmo9WynylChK2JaMQkYUFdGoDJMtH5JDHdfDhTcPKjDBxM2cDbF1s87V8Cfw1EKRyh03YR3h0MQfgLGD7BmOT0NU8aAL/XJ3nRwyp2LtDmCOWIvXBqWX2kkXcm3KKEqwkFecp4RaOhRyGJDBhZRpwjjoIlPCc9qLEWakeyuEk1PpJtmZwrDrDFx2ioXdDDUWH4VmXXi4raM1pqFUadSEWoBH2jSSkJuBu+LvsPHF+Ezig2ElU1Gy4plnY8S4lakK8V2fGRFWvmxjmkdLXiXby3xdX4eTkGKl/6dw==
+ bh=cTzTOfdrXuNycq20Wa4mMADAf1RSN1k9GPTzfURZyeI=;
+ b=NLPZ13Ws9WdWkQqbds+0DsP2ATkec19/bSpNSxwESXRZnTCrkPUW/Qsypp8tkMWz/ZNfHzVruNlCaAKdFapTMV+zPaaIb5icZAAjBvkVNlRYk/VOwIgm5MhUy6nLIFC5qe0RWdFZ0Ed8SPaXPIoy6rhv24srTy8SrHVL5OMPd/EnARzTXneRf+qUuRZNvRoHT5bzWHUklfd7Ymhob9uEo++8aTKR+jhKd5/dM1WQlITt1LHokbdPD9SVKKBTBlrYNht6PKprXFUJQwCV/jzZgj/jcZcP47phTcdvVTgsMneabjIUDUNUjhACboBj44u5Kq35tTe2w7eODGobqBQ7IA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=oss.nxp.com;
 Received: from GV1PR04MB10750.eurprd04.prod.outlook.com
- (2603:10a6:150:212::14) by AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14) with Microsoft SMTP Server (version=TLS1_2,
+ (2603:10a6:150:212::14) by AS8PR04MB8947.eurprd04.prod.outlook.com
+ (2603:10a6:20b:42e::22) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.10; Thu, 27 Aug
- 2026 15:55:29 +0000
+ 2026 15:57:45 +0000
 Received: from GV1PR04MB10750.eurprd04.prod.outlook.com
  ([fe80::9985:c5d3:961:2003]) by GV1PR04MB10750.eurprd04.prod.outlook.com
  ([fe80::9985:c5d3:961:2003%6]) with mapi id 15.21.0360.006; Thu, 27 Aug 2026
- 15:55:29 +0000
+ 15:57:44 +0000
 Content-Type: multipart/alternative;
- boundary="------------QEgjLwXxSYXBLkH4UbmwlR2v"
-Message-ID: <690d2c85-b716-4400-aeb2-8f2fb3dec266@oss.nxp.com>
-Date: Thu, 27 Aug 2026 21:25:23 +0530
+ boundary="------------H99oRIF4epCyv6hZ9IXUZwh1"
+Message-ID: <46971371-5153-44ce-8e19-8be869876559@oss.nxp.com>
+Date: Thu, 27 Aug 2026 21:27:37 +0530
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] common/dpaax: fix unused variable warning in
- non-debug build
-To: Stephen Hemminger <stephen@networkplumber.org>,
- David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, stable@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@nxp.com>
+Subject: Re: [PATCH 2/4] bus/dpaa: remove unused qman_clk variable
+To: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org
+Cc: stable@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>, Geoff Thorpe <geoff.thorpe@nxp.com>,
+ Shreyansh Jain <shreyansh.jain@nxp.com>, Roy Pledge <roy.pledge@nxp.com>
 References: <20260826235933.194681-1-stephen@networkplumber.org>
- <20260826235933.194681-2-stephen@networkplumber.org>
- <CAJFAV8x62b_zeyF5P-X4KSMxaD4Sd=XanED-7PitDztxtnUFFw@mail.gmail.com>
- <20260827075721.1344582e@phoenix.local>
+ <20260826235933.194681-3-stephen@networkplumber.org>
 Content-Language: en-US
 From: Hemant Agrawal <hemant.agrawal@oss.nxp.com>
-In-Reply-To: <20260827075721.1344582e@phoenix.local>
-X-ClientProxiedBy: SI3PR01CA0004.apcprd01.prod.exchangelabs.com
- (2603:1096:4:296::15) To GV1PR04MB10750.eurprd04.prod.outlook.com
- (2603:10a6:150:212::14)
+In-Reply-To: <20260826235933.194681-3-stephen@networkplumber.org>
+X-ClientProxiedBy: SG2P153CA0008.APCP153.PROD.OUTLOOK.COM (2603:1096::18) To
+ GV1PR04MB10750.eurprd04.prod.outlook.com (2603:10a6:150:212::14)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV1PR04MB10750:EE_|AM8PR04MB7779:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8cd8dbf1-0817-4f25-e528-08df04539e55
+X-MS-TrafficTypeDiagnostic: GV1PR04MB10750:EE_|AS8PR04MB8947:EE_
+X-MS-Office365-Filtering-Correlation-Id: 95a3ec0c-4706-4cbe-aa2a-08df0453eed1
 X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|23010399003|19092799006|366016|1800799024|376014|10067099003|8096899003|18002099003|22082099003|11063799006|4143699003|56012099006;
-X-Microsoft-Antispam-Message-Info: 4NIQIb+RGlBzs5hmhJ3ojkKZX0JF/BW4I6k7cUDyrzMIlTY73ObJVw0aG9LgKF3toqzKojlfpN0DM9JKsLhParixtDIyk+cSozYLmHq/mxWH7pG8azKAhZ9u5I41XX88q1YmknLWsb2i9iKCSq94ds4E0whMOcYwLbGJo+2cLqdhJp9q1vwE0YiOZTqp5Bb1GzCCaSBUVLqH3+bbG2TDchSFIphrEmvD4b/ypORKm44Nn2hk0SDN6spJ2OILxayAnurxDJ8VdGaLQnUEk1m4+Q58nx3IlvVMQ63fCESTHBawWcbRSPsKDP3UYpU4K9cGGXDEt00BIIUr9/nyiSdhzXrEl+KYpqGgmm6OOvbw9r9Gf5/WB9ND6OI8d0IYiwTr4P3YlKBNxFEYSpCNdKcD265nfSG7IrU9hGHcEKXLvCLMLZ2dsM0agCbr8YotOyPDoHtc4Ive4Ap7Ux22JkdL7JIEJTiTJkfJXZW1SsVCjwkZR+gFdxvEhaPutDh0Sus4mUQR0YaBl4hMBHv1jgNyeGrYqJlNZl1jd/opNGDRnrmULA1rGy8F+6zDE7MqWrTnVHitIHdzfGyqknf6buu8UtqVsG41/JX8cocv5vlno0vhp4BYNiBKn/4bsnYKd5FNlwKacGRNV3omX9ZWlccaEtrR8+VZKbLg0ClNUh8VnCU=
+ ARA:13230040|1800799024|23010399003|366016|376014|19092799006|10067099003|11063799006|4143699003|56012099006|8096899003|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info: 4F0jdvEgIvcSDO6pe0PaVPtZ5YAPaVoKHmEa+0Wm3S8gr+9TIrUEVprI3BJl9Ssm0tHsKh7yRPwp1aP6R35XcmWV0cJyoVTrJBqoa7TRHbFF2aLqzGQevkX33+7PHT2Y2RTdO7yF2w/Jrp5pHNy8HpMNHm+Kjahx3TAyektR0b4A331MEy/3COM03B0NjNVSFDK6/f5DYvnJptdmaAnCmwOxk8rEoWJUDe+NCbsqlkoAV2K4w7PfyyBRG8uG9xJFBSGNwehHIqGFWqWQ9YEbTdE2JJszWX6cmvZSj5zluvWoot8nZcEIS+zKOeLYSJDR0pwI+KbbvHo2eLYH1/cqOSi7xcB6qQzQOTfrTtQzMvz4RosaYS4b1tBzQsgQQNoZg1loJx/vOYSr5mHzX9bv4BtJdDoZj/GfcJ+wFyDFZFzTn5Kp2htyGNEa8vqVAWF7HwBjGGq7+J5Uux9K3h5xM1DBhpWrponMQvUTqlit6DAdCkZbvo0QjUDCOwyB+reO+P3AtVDpICeJKD3WFBy7QZXrGO3LHq/kz9hcaclXVlLDdIxoEfH1+slzsTZlplb9PKyiCLcay6NKZ4o1lrmlE2UB8kpEt1Y2oADyJCTSyMjwNqFB6YheB5pBOBZ1/PL/5X0OPNcXTghu7sGEzSTnQd2a3aGs6cfWXuav+sNbmu0=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:GV1PR04MB10750.eurprd04.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(23010399003)(19092799006)(366016)(1800799024)(376014)(10067099003)(8096899003)(18002099003)(22082099003)(11063799006)(4143699003)(56012099006);
+ SFS:(13230040)(1800799024)(23010399003)(366016)(376014)(19092799006)(10067099003)(11063799006)(4143699003)(56012099006)(8096899003)(18002099003)(22082099003);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZDZYeWhUREZsS1l4MzQrUTYzWmNHYTdCR2ZaR1ZDSWFiUjdKZ0RnQWRtSTVs?=
- =?utf-8?B?WFl0YmQrTW4rSUNwMTBqU3RKc0xPZ0tsdFJibmNnQ2dXWkM5YWc0V20yQlYy?=
- =?utf-8?B?L2ZwZC9QWXpnbU9yR3piN3UrbllUZUdPakNQVGJRNTE4M3VjR2VicDQyNG43?=
- =?utf-8?B?aHZMT3oyMUovQm1WWWJqSWJpam42aU1DOGJaeUJQMmNyQUZ5RDJKSHNxRVJD?=
- =?utf-8?B?cW9CTHNkTmFnVmhyNnhIZWhMaFQ2Ny94eENMRTZqZjhkeDUrMkVYdmt5eW9Z?=
- =?utf-8?B?dzM5Y2FJRWduQkRFS2gzWUxiUDlSY0p2TzlRMDdsR2d0MWk4dEFYQ3ZoczdV?=
- =?utf-8?B?WG90ZnBOTkJDS3Rvc2pWaDhlekFxV3NtTmswYVFTNWlRVUNrVE5yamR5SWFQ?=
- =?utf-8?B?SVNla1RDYjBEYjRTbExzU1pHV3ZVQnlQb2RxRTZtRkxJVEhzU25hbTRpT0NT?=
- =?utf-8?B?Qm9abHdpL1RZV2M3TytrS0xSc0l3QUY2cjdOaGhWVHNBRWFWVkQ0VmlPd2p5?=
- =?utf-8?B?THlFd3NuSTUvZThNMTM5aHNGMVdWcDQ0YUZ1R2Q2YmZMcHZnUml5ZXN1ckRR?=
- =?utf-8?B?RVFvaXhqWGFNaUxZZ0FNWTUxdXF0eDQxMWZDd0IrUWlDVjZrcmlBUUxWTjdq?=
- =?utf-8?B?VkNLREdXMjV1SmJwNzBrVTFYM01lbnFabVNXUGxsb0tEdUlzc3NmQnhJdFR0?=
- =?utf-8?B?YUVYWS9zNHhnd1FqSDZBT0s5b0lYaDZUbXB3cXlNcEgxaVp3OUpYNnBpVm9h?=
- =?utf-8?B?b2hiZlFXTTdzang5aVA0R0JGWW9CRHhlQmowSk9lL1NWalZtNU5yOU9HT09Z?=
- =?utf-8?B?MFovSTNTSTlUeFdFUk9HRGh4b0p5SiswZ2ZqQ2RhWXlpa3A0L3dVY2FzaEVV?=
- =?utf-8?B?c0NjM0R2dERTYWl3UlBGeERUdGhFcXdML2ZMZ2JLalE0ZXc5MHNHODlHVlIy?=
- =?utf-8?B?c0k5dnlhZ1NodzFiVjZ4Wlc3Q3RzNnZ3RS8zUTVMNG5yMW8rRFFnMzhFbU05?=
- =?utf-8?B?NE1PbEFpY3dqRFpuaFk2YXlReGJiMzh2azU5RWZ1ZjVIVkdJQ056L1c5eW51?=
- =?utf-8?B?aTBkNEJCNllHMFVVUmFtMklRUThTQ3FaeElrYTZocWZJQ3JaZWdRL01xVGc5?=
- =?utf-8?B?dGpoUWJxMm11d0t3eXltR1RSV2hwODIyS2dqL21KQnhLV1l1SUlIQ3htZFk2?=
- =?utf-8?B?K3o3d3FOSkxLRWYzRGxDWFlqZUNWL2QrWklGZm5NSk9scGt1WTUrVUFzNHR6?=
- =?utf-8?B?bVlsb1lhK0NlbDJkMlRGVlBGZlROeXhqV0NiQlVNR2E1T2FrTmVOR2MzSHhT?=
- =?utf-8?B?RlFlRldzREVOMDRtcloyTkdGWHJBSUJNajA4SVhvWW1yT3R2WmkzRzZla3hK?=
- =?utf-8?B?MnZYbW1rM3F2UTRobG1IbW0xQ0N1QnpYZ1Uvd09JYmhab245MFB2RVlrdktV?=
- =?utf-8?B?dy8wY1RON0tkUmxXZ0svK25sZTdSZ3RQSVRIaWk0bkVha1BzL0pPamJxdUR2?=
- =?utf-8?B?QmMvbHE0eG54MEJnNFpXM09CTnI0UHFJUnRPRnJCUUxmb1llaU9VRU1abG1W?=
- =?utf-8?B?Q0J0R1hWZG1tRjdsV2NpVk9DemFxOWFodFhmb2FGUllyN29BaXBIcG9sdW9V?=
- =?utf-8?B?bTB6YmtEVEhyeDVtR0xSZk0vTFh1SkhFRXc4a3RFT1BDeFZkUW8zMzljU3U2?=
- =?utf-8?B?WXhxdU42YlJPN0E1VmdEWmlmTi9UV2lZeXpCcWVMZkEyMlZBT3JDbktaY0hV?=
- =?utf-8?B?SFd6N1BFWTdrMjRWSnNGRmpBaWV0MzZGRWtvT1pSZFRFZ1E0NjIzQktZenY0?=
- =?utf-8?B?Nm9VekhlTGpXTUdBV01OVTFxRmR4Z3JBV1BGTW1ZQThBckJxWEk3UjhablA4?=
- =?utf-8?B?RW1wMm9Da3pucDFnektYNXVDdHNkaWpQQkFDUVhrN2dCLzdEM2xKK1pwMThQ?=
- =?utf-8?B?VDhLTlZUa2hNcHhHVWVpVFdqTlBkTnZuN3l3Y3ZXamx6YVM1OGh6L0dHcmli?=
- =?utf-8?B?N0IwcTB4VVBPLzhhNm1vaUo5d3RCelZ3dERBdmg1N1RqQ0ZWUjFGR3k5VEpB?=
- =?utf-8?B?WWpPUXVBWWZVWTZRUEtTV0R3WjcrajRYU29TUjZqUFRkQzRqTFUvYXlkVmhh?=
- =?utf-8?B?R1BZWmc2VXM0YjBESGZHSGV3SVJHcldsSU1HTW1UdzdLSU1pUWh3RHFYU2NG?=
- =?utf-8?B?S2tOMlNZNXRHZDE0VXBudEVOOFQ0QjFoTUMwMGRlUlovellBeXZiNVdVcUlO?=
- =?utf-8?B?MkY5RU8zeXdUNThCL1pqaGJGN0RZS1I4YVdYL1k0WFZyUFFyL3BkUG9vdnhM?=
- =?utf-8?B?SDZkT0NPOUNVcUNPaUI3Y2JsUXhoRGd3RStpTXNTN1IyVWZuK214b3BEd001?=
- =?utf-8?Q?f+NKq76zJcZd4HgM=3D?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?U245RUF5S3hsUzM2VzlxOTRwZW4zMktLYzdrTitPbjNKTTJPZHZCNWJ2UzRo?=
+ =?utf-8?B?OHo2eFdRWWVodWNKOVFBZC9KVjNkMmZFRy9XU1JvN0VNckJjdENRMkU4SU50?=
+ =?utf-8?B?bHA0bGdpSXNyWXN5Tk9OWFhLN1IwYVB1OURtdCtUYWRjaU5BeFRBcW9HUmxj?=
+ =?utf-8?B?UXByVmNUM3hLSGVIbkpNSlgrZ1cra1VOUlZtdTRWdzlvS2RTeGFyS01NNkV6?=
+ =?utf-8?B?cEtjQ3I3bmNXSU1vY090RnVkZm92bnkyTlJ0NEkxdk9HTE5mV2xQZGlwS2FL?=
+ =?utf-8?B?Q3l4a2diV01DWE10R2syNGxtaEtEUTBEaDJHWUc3UytaT0FTL01MNlFVRjVJ?=
+ =?utf-8?B?Y2xyQVBmVnNyN2xyNHRGcHhka1N2b0RBVFBoZmx2NjNNOWZSakY5bmVDR0NO?=
+ =?utf-8?B?aEIxSG5SVDQ1aHk3REVmMHgvM29QODBhWHhpaVNTanhGdjRydTMzb0psNGZ6?=
+ =?utf-8?B?S242VmRSYkRNbzRxaThDSDlMcGg0cjhMVCtsUE5USHlra3BxU0J1ejgyb3k5?=
+ =?utf-8?B?OSszdTBxK0lMQnRlWjBLUHYvOURpYmFYQjZ5REE0SnlPdllWWjVuck9vWFFH?=
+ =?utf-8?B?QzVKYWppaklCZVBwcm4ySXpNdGoraDFMbktvd2FPVUM1VmpaRTJWYnp3bkdW?=
+ =?utf-8?B?S0lhSVM1ZmJnckJ2WEFyWGJocmNhamowSlk3QWM3WUpTZ1NkWW1iOGVJSCtW?=
+ =?utf-8?B?RTk1aTlLRnM5T3BRK1BaZi9mamduR01xVDhid2FzSy9YR0laM2NoRng3MWtR?=
+ =?utf-8?B?cTcrYTNEQXlqa3NsTVNiYnlFaDE4U2ZEOUF2LzdWREZGY01vb3BBeEVpdTJp?=
+ =?utf-8?B?dzZZVUswa0RwK05tOXlWLzJheEhBTFBCQ29LajJ1LzhuTXNqS0ZWaE96bmFT?=
+ =?utf-8?B?ME02Q0Rsc24wZVNpRldtOUV4N0hReU1pYUdlWk1zVUxHZW8rWWYyV0Fqa2Yy?=
+ =?utf-8?B?alpSemtzZEh0R25YVU1iN2lTczNDbEYzTGx2L3RkRHh1L1NLVE9CU3N6Rmky?=
+ =?utf-8?B?STMyVWxiT2N6cmpRVS91aytYRkJpd0lIWS9QZEVtenR4ZnlDWmdNSEJHbWl2?=
+ =?utf-8?B?RU8wOVVVbjFITVJJTU5QUG1yeGRKK2lyM2ZWb3pweldtTkMzY2V3Vk1zb0Vq?=
+ =?utf-8?B?aWdxaEVIMVd0TlVlbEk1anp4aDAwNHpyZWxueEZCb2VrVnVhaFJRSHQ1WHR1?=
+ =?utf-8?B?cGFjOExvbGh0UzJXUlFEaVFPZlFyQzdFT1h3Q28xc1I0Q1AzVEhwMkJRZWxT?=
+ =?utf-8?B?aE1xcGVlVG43SlBCcnczZzd1OWdPN3kxbXJLVFZRRUZBRGZQTmZQNTZYVlln?=
+ =?utf-8?B?L0VKTVVudVkvZFYxMG5sUG8rajUzTEYvUjNyaUtvbThIWURTUzFyZDdCSTZi?=
+ =?utf-8?B?MXNmY2dsbHVSa2VLUk5FTTNGQXpnSTN5UDlCOHZrZEdrb1dKREJQWGNpOE5k?=
+ =?utf-8?B?ZmFtT0FyczlsODZDWHlHYkVlS2loL2pUcnFWd3JzQVlLVzcwYVd3djdBNitY?=
+ =?utf-8?B?ZVp6UDNkdUt6TlFlY1lSVFpkTDk2RTRpTDZkdVJNNE1Idk5iajNQQlM4WThz?=
+ =?utf-8?B?OHk3cVFacnZUVnpFU3Y4UHB0aWhraXZXMEYzWXFJck5HU0JRamVsUmxRVWh6?=
+ =?utf-8?B?V2wyN1ZjZGF1WHlCS0hsVVdGSmRKUzJHSWgyd3RxZWNrR0tJK3FLUDYzZHJh?=
+ =?utf-8?B?Q1VMa3NQYmMwTmFaa3pDSldWVTNTbHFZZ0lrVVN4eTZVSEh1UnpZa2JyTU1N?=
+ =?utf-8?B?OHRhLy8vWEF5OTd2c3hRMEg2UEtqS3hrc0NzYnF2Qms1NnFJZk16UndUMUZH?=
+ =?utf-8?B?R29GVSsySzVyZStZRDlONnFXb3BXQVdsR0NlTkgwcFFCTCs3SXFpdGJtME83?=
+ =?utf-8?B?KytFUW9IODZpZ1BKdGtFU2NIMlJCa2lxdi9zYldvNnJtQzVudzhMbUVzbkRO?=
+ =?utf-8?B?ZEU4eFlTVC9KSSt2Y3ZZeDAvTE1MMFQzUFZ5NWZqbWRmc1EzOG9mV3NnQSsv?=
+ =?utf-8?B?Y2VpRWpWaUErbHprcGRBaUhIdmhxaWswUkp5Z1B4d3Y1MGN0WXp5NjBpRFBy?=
+ =?utf-8?B?TlAwVSsyQm5WZ0Z5d2RnVkIvdjNndTlUcGd1enFXTm5nanc4MFZ1THozdkwz?=
+ =?utf-8?B?VVQvRVJYMGJzZ0FCaUc1ZGVZVEZYckNXbWMrN0l6RWQ5SWx5SmtpOGl4L2lw?=
+ =?utf-8?B?dTFFM2oveTFKMGNSTCtBbGZCQ1FtV3hBdjZZb0V1M0JoMUl4UmJ0ayt0M1ov?=
+ =?utf-8?B?RU1Ka2lUQzliK3FZTGI3SDlCNGpUZ0hBamF1N2NYM2lJaVFwbTBnUlNnc3Vi?=
+ =?utf-8?B?cHdVdlFkZ2M4QmRLODhOVFAzSU1rRGlwRFZQVFkzQzEvZzM0NzF2NjVTWWhp?=
+ =?utf-8?Q?LhY6qJXkP0vQVBx4=3D?=
 X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8cd8dbf1-0817-4f25-e528-08df04539e55
+X-MS-Exchange-CrossTenant-Network-Message-Id: 95a3ec0c-4706-4cbe-aa2a-08df0453eed1
 X-MS-Exchange-CrossTenant-AuthSource: GV1PR04MB10750.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2026 15:55:29.7361 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2026 15:57:44.8419 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nqKmTCKaForLnPjRU3Mrl9fnEkZ4Fb3/ZubGXmmylwdeLdcasO9aEC9CRoDxOBt46dLv1d7Z7yyMyMEpJNKKQA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7779
+X-MS-Exchange-CrossTenant-UserPrincipalName: F10ZCkc62Cw5JV4dnnynnjwimldfqElwZ5RAyzU0Jprb/ZulSW8Rge1DkDT4N1Yd1uYoENYANCPFo9YJ9HcFNg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8947
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -138,99 +133,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---------------QEgjLwXxSYXBLkH4UbmwlR2v
+--------------H99oRIF4epCyv6hZ9IXUZwh1
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+Acked-by: Hemant Agrawal <hemant.agrawal@nxp.com>return 
+qman_setup_fq_lookup_table(CONFIG_FSL_QMAN_FQ_LOOKUP_MAX);
 
-On 27-08-2026 20:27, Stephen Hemminger wrote:
-> On Thu, 27 Aug 2026 11:07:50 +0200
-> David Marchand<david.marchand@redhat.com> wrote:
->
->> On Thu, 27 Aug 2026 at 02:00, Stephen Hemminger
->> <stephen@networkplumber.org> wrote:
->>> Fix compiler warning on clang-23.
->>>
->>>    dpaa_of.c:14:12: warning: variable 'alive' set but not used
->>>          [-Wunused-but-set-global]
->>>
->>> The 'alive' flag is only read by DPAAX_HWWARN, which expands to an empty
->>> statement and discards its condition unless RTE_LIBRTE_DPAAX_DEBUG is
->>> defined. Make the empty expansion consume its argument so the condition
->>> is still checked in a non-debug build.
->>>
->>> Fixes: 8c83f28cc8a4 ("common/dpaax: move OF library from DPAA bus")
->> Not that important, the issue probably predates this commit.
->> And looking at this change, it seems DPAA_BUS_HWWARN is dead code since then.
-> That is when the device-tree warning was added.
-> The history scan looks right.
->
-> It seems like it should either be removed as irrelevant or made into
-> a regular warning. But that is up to Hemant and Sachin to decide;
-> I just want clean builds for now.We need to remove this define.
-We will plan to remove this definition in future.
-
-Acked-by: Hemant Agrawal <hemant.agrawal@nxp.com>
-
---------------QEgjLwXxSYXBLkH4UbmwlR2v
+--------------H99oRIF4epCyv6hZ9IXUZwh1
 Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
 <!DOCTYPE html><html><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   </head>
   <body>
-    <p><br>
-    </p>
-    <div class="moz-cite-prefix">On 27-08-2026 20:27, Stephen Hemminger
-      wrote:<br>
-    </div>
-    <blockquote type="cite" cite="mid:20260827075721.1344582e@phoenix.local">
-      <pre wrap="" class="moz-quote-pre">On Thu, 27 Aug 2026 11:07:50 +0200
-David Marchand <a class="moz-txt-link-rfc2396E" href="mailto:david.marchand@redhat.com">&lt;david.marchand@redhat.com&gt;</a> wrote:
-
-</pre>
-      <blockquote type="cite">
-        <pre wrap="" class="moz-quote-pre">On Thu, 27 Aug 2026 at 02:00, Stephen Hemminger
-<a class="moz-txt-link-rfc2396E" href="mailto:stephen@networkplumber.org">&lt;stephen@networkplumber.org&gt;</a> wrote:
-</pre>
-        <blockquote type="cite">
-          <pre wrap="" class="moz-quote-pre">
-Fix compiler warning on clang-23.
-
-  dpaa_of.c:14:12: warning: variable 'alive' set but not used
-        [-Wunused-but-set-global]
-
-The 'alive' flag is only read by DPAAX_HWWARN, which expands to an empty
-statement and discards its condition unless RTE_LIBRTE_DPAAX_DEBUG is
-defined. Make the empty expansion consume its argument so the condition
-is still checked in a non-debug build.
-
-Fixes: 8c83f28cc8a4 (&quot;common/dpaax: move OF library from DPAA bus&quot;)  
-</pre>
-        </blockquote>
-        <pre wrap="" class="moz-quote-pre">
-Not that important, the issue probably predates this commit.
-And looking at this change, it seems DPAA_BUS_HWWARN is dead code since then.
-</pre>
-      </blockquote>
-      <pre wrap="" class="moz-quote-pre">
-That is when the device-tree warning was added.
-The history scan looks right.
-
-It seems like it should either be removed as irrelevant or made into
-a regular warning. But that is up to Hemant and Sachin to decide;
-I just want clean builds for now.<span style="white-space: normal">We need to remove this define.&nbsp;</span></pre>
-    </blockquote>
-    We will plan to remove this definition in future.
-    <p>Acked-by: Hemant Agrawal <a class="moz-txt-link-rfc2396E" href="mailto:hemant.agrawal@nxp.com">&lt;hemant.agrawal@nxp.com&gt;</a><br>
-      <br>
-    </p>
-    <blockquote type="cite" cite="mid:20260827075721.1344582e@phoenix.local">
-      <pre wrap="" class="moz-quote-pre">
-</pre>
-    </blockquote>
+    <p>Acked-by: Hemant Agrawal <a class="moz-txt-link-rfc2396E" href="mailto:hemant.agrawal@nxp.com">&lt;hemant.agrawal@nxp.com&gt;</a><span style="white-space: pre-wrap"> 	return qman_setup_fq_lookup_table(CONFIG_FSL_QMAN_FQ_LOOKUP_MAX);</span></p>
   </body>
 </html>
 
---------------QEgjLwXxSYXBLkH4UbmwlR2v--
+--------------H99oRIF4epCyv6hZ9IXUZwh1--
