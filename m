@@ -2,33 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B33FC61DBE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 02:39:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69AB1C61DBE
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 02:39:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E827F40BA3;
-	Thu, 27 Aug 2026 04:39:23 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id DA48F40C35;
+	Thu, 27 Aug 2026 04:39:34 +0200 (CEST)
 Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
- by mails.dpdk.org (Postfix) with ESMTP id BC0A440B9C
- for <dev@dpdk.org>; Thu, 27 Aug 2026 04:39:05 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 1896C40BA6
+ for <dev@dpdk.org>; Thu, 27 Aug 2026 04:39:10 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-01 (Coremail) with SMTP id qwCowAB3Se1Ho49qB5OjBg--.18405S2;
- Thu, 27 Aug 2026 10:39:03 +0800 (CST)
+ by APP-01 (Coremail) with SMTP id qwCowADnvPBNo49qSJOjBg--.23606S2;
+ Thu, 27 Aug 2026 10:39:09 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org
-Subject: [PATCH v4 28/44] net/sxe2: refactor primary process MP message
- handling
-Date: Thu, 27 Aug 2026 10:39:03 +0800
-Message-ID: <20260827023903.1431394-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v4 29/44] net/sxe2: refactor Tx queue reset operations
+Date: Thu, 27 Aug 2026 10:39:08 +0800
+Message-ID: <20260827023908.1431448-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260826085836.993490-1-liujie5@linkdatatechnology.com>
 References: <20260826085836.993490-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: qwCowAB3Se1Ho49qB5OjBg--.18405S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxXw47Kr1xCF48ury5ZrW8Zwb_yoWrXFy3pF
- 1fKr1rXF1xXw129r13Ja1kZFn0krWxJr1UCFZxt34ftw15tF18CF45tr90y3WFk3sxAr1F
- ka17tF98G3W2vaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: qwCowADnvPBNo49qSJOjBg--.23606S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxtF4DXrWrAw43Aryxtw18Zrb_yoWxGry3pF
+ sYgr43AF1rXF47Ww15GF4fZF1F9F10qr1jkFWxK34Syry2gF1qvF1UtF15uw1rCr95Cw4S
+ va17JFsrWa1UGFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUk2b7Iv0xC_Zr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
  0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
  A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xII
@@ -58,125 +57,165 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Extract the multi-process work logic into the sxe2_mp_do_primary_work
-helper and operate on a copy of the request in the primary handler so
-the original message is not modified. Simplify the reply construction
-and return -ENOENT instead of -EINVAL when no response is received
-from the primary process.
+Extract the descriptor ring reset loop into a sxe2_tx_queue_desc_ring_reset
+helper and reuse it from both the scalar and vectorized queue reset paths.
+Add a sxe2_tx_queue_reset_vec entry point for vectorized queues, export
+sxe2_tx_buffer_ring_free for reuse outside the module (clearing the buffer
+ring pointer after freeing it), and add sxe2_tx_vec_ops_get to build the
+vectorized Tx queue operations table used by the vector path setup.
 
-Fixes: 5db446ba97b0 ("net/sxe2: support statistics and multi-process")
-Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_mp.c | 59 ++++++++++++++++++++++----------------
- 1 file changed, 34 insertions(+), 25 deletions(-)
+ drivers/net/sxe2/sxe2_tx.c       | 42 +++++++++++++++++++++++---------
+ drivers/net/sxe2/sxe2_tx.h       |  4 +++
+ drivers/net/sxe2/sxe2_txrx_vec.c | 16 +++++++++++-
+ drivers/net/sxe2/sxe2_txrx_vec.h |  1 +
+ 4 files changed, 51 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/sxe2/sxe2_mp.c b/drivers/net/sxe2/sxe2_mp.c
-index a4a5c76495..93a11150a9 100644
---- a/drivers/net/sxe2/sxe2_mp.c
-+++ b/drivers/net/sxe2/sxe2_mp.c
-@@ -29,16 +29,11 @@ static int32_t sxe2_mp_secondary_handle(const struct rte_mp_msg *mp_msg,
- 					 const void *peer);
+diff --git a/drivers/net/sxe2/sxe2_tx.c b/drivers/net/sxe2/sxe2_tx.c
+index f49238ceef..94a6e9afc7 100644
+--- a/drivers/net/sxe2/sxe2_tx.c
++++ b/drivers/net/sxe2/sxe2_tx.c
+@@ -19,6 +19,17 @@ static void *sxe2_tx_doorbell_addr_get(struct sxe2_adapter *adapter, uint16_t qu
+ 				     queue_id);
+ }
  
- static int32_t
--sxe2_mp_primary_handle(const struct rte_mp_msg *mp_msg, const void *peer)
-+sxe2_mp_do_primary_work(struct sxe2_mp_param *param)
- {
--	struct rte_mp_msg reply;
--	const struct sxe2_mp_param *param =
--			(const struct sxe2_mp_param *)mp_msg->param;
--	struct sxe2_mp_param *reply_param = (struct sxe2_mp_param *)reply.param;
- 	struct rte_eth_dev *dev;
--	int32_t ret = 0;
- 	struct sxe2_mp_shared_data *mz_data;
--	int32_t send_reply = 0;
-+	int32_t ret = 0;
- 	int32_t cnt = 0;
- 
- 	if (!rte_eth_dev_is_valid_port(param->port_id)) {
-@@ -49,24 +44,21 @@ sxe2_mp_primary_handle(const struct rte_mp_msg *mp_msg, const void *peer)
- 	}
- 
- 	dev = &rte_eth_devices[param->port_id];
--	sxe2_mp_mz = rte_memzone_lookup(SXE2_MP_MZ_NAME);
-+
- 	if (sxe2_mp_mz == NULL) {
--		PMD_LOG_ERR(DRV, "Failed to lookup memzone %s", SXE2_MP_MZ_NAME);
--		ret = -ENOENT;
--		goto out;
-+		sxe2_mp_mz = rte_memzone_lookup(SXE2_MP_MZ_NAME);
-+		if (sxe2_mp_mz == NULL) {
-+			PMD_LOG_ERR(DRV, "Failed to lookup memzone %s",
-+					SXE2_MP_MZ_NAME);
-+			ret = -ENOENT;
-+			goto out;
-+		}
- 	}
- 
- 	mz_data = (struct sxe2_mp_shared_data *)sxe2_mp_mz->addr;
--	send_reply = 1;
--
--	memset(&reply, 0, sizeof(reply));
--	(void)strlcpy(reply.name, SXE2_MP_NAME, sizeof(reply.name));
--	reply.len_param = sizeof(*reply_param);
--
- 	switch (param->type) {
- 	case SXE2_MP_REQ_GET_STATS:
--		ret = sxe2_stats_info_get(dev,
--					  &mz_data->payload.stats_blk.stats,
-+		ret = sxe2_stats_info_get(dev, &mz_data->payload.stats_blk.stats,
- 					  &mz_data->payload.stats_blk.qstats);
- 		break;
- 	case SXE2_MP_REQ_GET_XSTATS:
-@@ -88,15 +80,32 @@ sxe2_mp_primary_handle(const struct rte_mp_msg *mp_msg, const void *peer)
- 	default:
- 		PMD_LOG_ERR(DRV, "primary process: unrecognized msg type: %d",
- 				param->type);
--		send_reply = false;
- 		ret = -EINVAL;
--		goto out;
-+		break;
- 	}
-+
- out:
--	if (!send_reply)
--		return ret;
-+	param->result = ret;
-+	return ret;
-+}
- 
--	reply_param->result = ret;
-+static int32_t
-+sxe2_mp_primary_handle(const struct rte_mp_msg *mp_msg, const void *peer)
++static void sxe2_tx_queue_desc_ring_reset(struct sxe2_tx_queue *txq)
 +{
-+	struct rte_mp_msg reply;
-+	struct sxe2_mp_param *reply_param = (struct sxe2_mp_param *)reply.param;
-+	const struct sxe2_mp_param *param =
-+			(const struct sxe2_mp_param *)mp_msg->param;
-+	struct sxe2_mp_param param_copy;
++	uint16_t i;
++	static const union sxe2_tx_data_desc zeroed_desc = {{0}};
 +
-+	memset(&reply, 0, sizeof(reply));
-+	(void)strlcpy(reply.name, SXE2_MP_NAME, sizeof(reply.name));
-+	reply.len_param = sizeof(*reply_param);
++	for (i = 0; i < txq->ring_depth; i++) {
++		txq->desc_ring[i] = zeroed_desc;
++		txq->desc_ring[i].wb.dd = rte_cpu_to_le_64(SXE2_TX_DESC_DTYPE_DESC_DONE);
++	}
++}
 +
-+	param_copy = *param;
-+	(void)sxe2_mp_do_primary_work(&param_copy);
-+
-+	reply_param->result = param_copy.result;
- 	reply_param->type = param->type;
- 	reply_param->port_id = param->port_id;
+ static void sxe2_tx_tail_init(struct sxe2_adapter *adapter, struct sxe2_tx_queue *txq)
+ {
+ 	txq->tdt_reg_addr = sxe2_tx_doorbell_addr_get(adapter, txq->queue_id);
+@@ -28,20 +39,12 @@ static void sxe2_tx_tail_init(struct sxe2_adapter *adapter, struct sxe2_tx_queue
+ void __rte_cold sxe2_tx_queue_reset(struct sxe2_tx_queue *txq)
+ {
+ 	uint16_t prev, i;
+-	volatile union sxe2_tx_data_desc *txd;
+-	static const union sxe2_tx_data_desc zeroed_desc = {{0}};
+ 	struct sxe2_tx_buffer *tx_buffer = txq->buffer_ring;
  
-@@ -275,7 +284,7 @@ int32_t sxe2_mp_request_simple(struct rte_eth_dev *dev,
- 	if (reply.nb_received == 0) {
- 		PMD_LOG_ERR(DRV, "No response received from primary for type=%d, port %u",
- 			type, dev->data->port_id);
--		ret = -EINVAL;
-+		ret = -ENOENT;
- 		goto out;
+-	for (i = 0; i < txq->ring_depth; i++)
+-		txq->desc_ring[i] = zeroed_desc;
++	sxe2_tx_queue_desc_ring_reset(txq);
+ 
+ 	prev = txq->ring_depth - 1;
+ 	for (i = 0; i < txq->ring_depth; i++) {
+-		txd = &txq->desc_ring[i];
+-		if (txd == NULL)
+-			continue;
+-
+-		txd->wb.dd = rte_cpu_to_le_64(SXE2_TX_DESC_DTYPE_DESC_DONE);
+ 		tx_buffer[i].mbuf       = NULL;
+ 		tx_buffer[i].last_id    = i;
+ 		tx_buffer[prev].next_id = i;
+@@ -56,6 +59,21 @@ void __rte_cold sxe2_tx_queue_reset(struct sxe2_tx_queue *txq)
+ 	txq->next_rs       = txq->rs_thresh  - 1;
+ }
+ 
++void __rte_cold sxe2_tx_queue_reset_vec(struct sxe2_tx_queue *txq)
++{
++	sxe2_tx_queue_desc_ring_reset(txq);
++
++	memset(txq->buffer_ring, 0,
++		sizeof(struct sxe2_tx_buffer) * txq->ring_depth);
++
++	txq->desc_used_num = 0;
++	txq->desc_free_num = txq->ring_depth - 1;
++	txq->next_use      = 0;
++	txq->next_clean    = txq->ring_depth - 1;
++	txq->next_dd       = txq->rs_thresh  - 1;
++	txq->next_rs       = txq->rs_thresh  - 1;
++}
++
+ void __rte_cold sxe2_tx_queue_mbufs_release(struct sxe2_tx_queue *txq)
+ {
+ 	uint32_t i;
+@@ -70,10 +88,12 @@ void __rte_cold sxe2_tx_queue_mbufs_release(struct sxe2_tx_queue *txq)
  	}
+ }
  
+-static void sxe2_tx_buffer_ring_free(struct sxe2_tx_queue *txq)
++void __rte_cold sxe2_tx_buffer_ring_free(struct sxe2_tx_queue *txq)
+ {
+-	if (txq != NULL && txq->buffer_ring != NULL)
++	if (txq != NULL && txq->buffer_ring != NULL) {
+ 		rte_free(txq->buffer_ring);
++		txq->buffer_ring = NULL;
++	}
+ }
+ 
+ const struct sxe2_txq_ops sxe2_default_txq_ops = {
+diff --git a/drivers/net/sxe2/sxe2_tx.h b/drivers/net/sxe2/sxe2_tx.h
+index f4823126b3..bc5ff1c2bc 100644
+--- a/drivers/net/sxe2/sxe2_tx.h
++++ b/drivers/net/sxe2/sxe2_tx.h
+@@ -9,6 +9,10 @@
+ 
+ void __rte_cold sxe2_tx_queue_reset(struct sxe2_tx_queue *txq);
+ 
++void __rte_cold sxe2_tx_queue_reset_vec(struct sxe2_tx_queue *txq);
++
++void __rte_cold sxe2_tx_buffer_ring_free(struct sxe2_tx_queue *txq);
++
+ int32_t __rte_cold sxe2_tx_queue_start(struct rte_eth_dev *dev, uint16_t queue_id);
+ 
+ void sxe2_tx_queue_mbufs_release(struct sxe2_tx_queue *txq);
+diff --git a/drivers/net/sxe2/sxe2_txrx_vec.c b/drivers/net/sxe2/sxe2_txrx_vec.c
+index cf004f5eb2..9cfa565548 100644
+--- a/drivers/net/sxe2/sxe2_txrx_vec.c
++++ b/drivers/net/sxe2/sxe2_txrx_vec.c
+@@ -8,6 +8,19 @@
+ #include "sxe2_ethdev.h"
+ #include "sxe2_common_log.h"
+ 
++static void sxe2_tx_queue_mbufs_release_vec(struct sxe2_tx_queue *txq);
++
++struct sxe2_txq_ops sxe2_tx_vec_ops_get(void)
++{
++	static const struct sxe2_txq_ops ops = {
++		.queue_reset      = sxe2_tx_queue_reset_vec,
++		.mbufs_release    = sxe2_tx_queue_mbufs_release_vec,
++		.buffer_ring_free = sxe2_tx_buffer_ring_free,
++	};
++
++	return ops;
++}
++
+ int32_t __rte_cold sxe2_rx_vec_support_check(struct rte_eth_dev *dev, uint32_t *vec_flags)
+ {
+ 	struct sxe2_rx_queue *rxq;
+@@ -233,7 +246,8 @@ int32_t __rte_cold sxe2_tx_queues_vec_prepare(struct rte_eth_dev *dev)
+ 			PMD_LOG_INFO(TX, "Failed to prepare tx queue, txq[%d] is NULL", i);
+ 			continue;
+ 		}
+-		txq->ops.mbufs_release = sxe2_tx_queue_mbufs_release_vec;
++		txq->ops = sxe2_tx_vec_ops_get();
++		txq->ops.queue_reset(txq);
+ 	}
+ 	return ret;
+ }
+diff --git a/drivers/net/sxe2/sxe2_txrx_vec.h b/drivers/net/sxe2/sxe2_txrx_vec.h
+index c139aed776..b9bc4f9c27 100644
+--- a/drivers/net/sxe2/sxe2_txrx_vec.h
++++ b/drivers/net/sxe2/sxe2_txrx_vec.h
+@@ -89,6 +89,7 @@ uint16_t sxe2_rx_pkts_scattered_vec_neon_offload(void *rx_queue, struct rte_mbuf
+ uint16_t sxe2_tx_pkts_vec_neon_simple(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
+ uint16_t sxe2_tx_pkts_vec_neon(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts);
+ #endif
++struct sxe2_txq_ops sxe2_tx_vec_ops_get(void);
+ int32_t __rte_cold sxe2_tx_vec_support_check(struct rte_eth_dev *dev, uint32_t *vec_flags);
+ int32_t __rte_cold sxe2_tx_queues_vec_prepare(struct rte_eth_dev *dev);
+ int32_t __rte_cold sxe2_rx_vec_support_check(struct rte_eth_dev *dev, uint32_t *vec_flags);
 -- 
 2.52.0
 
