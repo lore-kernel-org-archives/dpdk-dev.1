@@ -2,76 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE2C2C61DC4
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 14:59:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45267C61DC6
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 15:10:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 52F0740280;
-	Thu, 27 Aug 2026 16:59:52 +0200 (CEST)
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com
- [209.85.216.46]) by mails.dpdk.org (Postfix) with ESMTP id 3921940150
- for <dev@dpdk.org>; Thu, 27 Aug 2026 16:59:51 +0200 (CEST)
-Received: by mail-pj1-f46.google.com with SMTP id
- 98e67ed59e1d1-3964e76d0f4so51634a91.3
- for <dev@dpdk.org>; Thu, 27 Aug 2026 07:59:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1787842790;
- x=1788447590; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=arKb/ycx+gIE91IoByaTK8CecSQ8KD/d3coP5URzthQ=;
- b=knJRh3tXjMLdxgXbtiMmGRhaR6UGUyDqQ5JjnrJslHFKlPOaSLmd2CR/GfKRFPsqCD
- IZZqBwdncYXvd26qGHgT7sepQsaiF87OdHbzpSAQbSqW+fzjWqrbN2Jm3AOkiXH8abFY
- nilwawWmxHfhbXzoO8/llEQ+eR1mN34UXZnQEsvgkEmG6EKx6yh3o23x9i4/VtJHa0qv
- Wqa3XJYqCoPgysPx7VmKOry04QzaFwPMKUPQRljpSIKEEZ/ovpDiw/nbz5rabKsaVt0/
- OP5TfD+4VPAVK4059sOm4OEXOgI5Kb1+K62jVcvJZIwTL5SYUDGhKgZyi3Bnd4jq/tf5
- YZiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1787842790; x=1788447590;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=arKb/ycx+gIE91IoByaTK8CecSQ8KD/d3coP5URzthQ=;
- b=AWDHhyctNxfHqueiNFsp/0gwBbGF/3c1BPBYMOJ8CnVUh+m/R/gqX0XrBEkONbvrqP
- 87Tgz2yuBY3weQsz5CF3UHSgMbk/+71ClGxcOiciipYLBN3t9Pwjsc1VxJF57odQpKPx
- mybiFn+pDWp2IiuegTnO5x+K6MewPXvw4ft3G8gItgp9ca1Z6Qn5SSfkh8V5vHuti0JU
- bsI5ptJSW5qCxmS3KA66ZfrIaOwchh16tXxoObTPkeg12JPZd5+FGUxVrvc9OwS610OR
- Vkxm4j4Vfk7GfhH66D6DWBGT6j7Gwq/DsTWdiRR7igORCF8bkpGCE/yC+QXPqWtGok7U
- jjkw==
-X-Gm-Message-State: AFuF++kTPCQ6BfLFhgfjEPzHnBT/aC3VcpSLIUcu5MjT9IBxn2fp9iQd
- vDb3DDWeRxsk1OxASElRassOY8op2dwejDfLCO93cs22t5N53pt+RMcDBke14zsCdpI=
-X-Gm-Gg: AR+sD11sUvLRrsD1ynduhvsvtZ8E3StFJkDCJjaMg7VG+ZvFpfstZcWrwOGvFgc70km
- RZZuzTiBYyHbHTJs+Tjnhl+zwDxShH6dZDw4gqsB2Asd+NewyXBP0UH7MCQLQ9+qH926pupNxKW
- dGLJJ9qdLFJrZVWCNd5fhe3ZH2rdoB3s3nPLXoOpHp/ooMAfNzVPW6R1P9TdN8UYPkfCowTvayx
- TpKUwVWeppe42M863pyT7Tpyz5NogoIMBpwrz1pZBNjTsxLNEWVj5Pft7ky4m55yZkrr5+Clkea
- 90H2de31k3uKKX0oR16p5jirgCBLGmwXqNmG1xnHtZVC24XZVo0pTFAiJ2Xq/OinFXHGFobfDKC
- EFiS3WfMcxL3uFyO6FXiz2GDxCjEEDUXkL4bjPSehEZPr6Y6Bi8ayY6I2g3u/rekOE0N/IF35Pf
- 1QBIWHX8Zhvoc0oRNo/PV4NoE0ojLWuJVBGWYCAb+NARtENcHBUGivMHfh0J5sV3Iyktqum8OeA
- Phbt0VWLpEAY7G8biANyqboyzO4ww==
-X-Received: by 2002:a17:90b:586d:b0:396:4cbf:45bc with SMTP id
- 98e67ed59e1d1-3966d491c45mr33764680a91.16.1787842790156; 
- Thu, 27 Aug 2026 07:59:50 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-141a905cf38sm26369642c88.12.2026.08.27.07.59.46
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 27 Aug 2026 07:59:49 -0700 (PDT)
-Date: Thu, 27 Aug 2026 07:59:40 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, stable@dpdk.org, Devendra Singh Rawat
- <dsinghrawat@marvell.com>, Alok Prasad <palok@marvell.com>, Rasesh Mody
- <rmody@marvell.com>, Igor Russkikh <irusskikh@marvell.com>
-Subject: Re: [PATCH 4/4] net/qede: remove unused app version variable
-Message-ID: <20260827075940.5bafd493@phoenix.local>
-In-Reply-To: <CAJFAV8xy6SKarAo6Vx3VA4Cnv5c3o=crOzvH3_u64XLH8GW7HQ@mail.gmail.com>
-References: <20260826235933.194681-1-stephen@networkplumber.org>
- <20260826235933.194681-5-stephen@networkplumber.org>
- <CAJFAV8xy6SKarAo6Vx3VA4Cnv5c3o=crOzvH3_u64XLH8GW7HQ@mail.gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0DF5B40150;
+	Thu, 27 Aug 2026 17:10:19 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+ by mails.dpdk.org (Postfix) with ESMTP id 91AB04003C
+ for <dev@dpdk.org>; Thu, 27 Aug 2026 17:10:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1787843417; x=1819379417;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=G7cMKLFQL3mNXMMz+wOOCF8z2N60GCzywf3cehbOzZM=;
+ b=WTUOev6EGuTQtn9gM6KK2ks7vn4RCMsYMXNyKHoIbj484k+qeOYEDNxM
+ 8WHzsdqtVZZfPlzUdWKxkliEOeLCKxlnhC54nFpHLQCpO80TAU3R3IQ/c
+ K2Wteg+h1hJ6i0sLPU2NsQQZ405oCHlicAD+3/5vkuqimehxwE12lh7Xh
+ ZfzE75fUCXJDplOGgU8ZYes+U7I8JV9yUr1v3jC9ejKKn/8KdQRozYVUo
+ rQwbdu1fBEWnuoTApL0xouVCpaZJNIIu7IPYQkX11t1WtI5MJcTrpYLEd
+ FQePY++/QUkFgVNEVw81sFKZ5+yNXq/Xml0v5nSWqzFqCpJv9TVkLw2GP g==;
+X-CSE-ConnectionGUID: nDD3PnQFSJe6v4Z4e3V+WQ==
+X-CSE-MsgGUID: vtKP6NI2Q36ff9VYbK1/cw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11888"; a="75886659"
+X-IronPort-AV: E=Sophos;i="6.25,246,1779174000"; d="scan'208";a="75886659"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+ by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 27 Aug 2026 08:10:16 -0700
+X-CSE-ConnectionGUID: cxLS2C/fQYeIMCa5b0IcNg==
+X-CSE-MsgGUID: EfpMzisQTXSpU6bhNyx2Iw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,246,1779174000"; d="scan'208";a="271420895"
+Received: from silpixa00400465.ir.intel.com ([10.20.224.190])
+ by orviesa003.jf.intel.com with ESMTP; 27 Aug 2026 08:10:15 -0700
+From: Kai Ji <kai.ji@intel.com>
+To: dev@dpdk.org
+Cc: Kai Ji <kai.ji@intel.com>, Bruce Richardson <bruce.richardson@intel.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Jie Liu <liujie5@linkdatatechnology.com>
+Subject: [dpdk-dev v2] net/sxe2: replace private mempool cache bypass with
+ rte_mbuf_raw_free_bulk
+Date: Thu, 27 Aug 2026 15:10:10 +0000
+Message-ID: <20260827151011.2122104-1-kai.ji@intel.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260820155008.1989965-1-kai.ji@intel.com>
+References: <20260820155008.1989965-1-kai.ji@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,23 +62,84 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 27 Aug 2026 11:08:07 +0200
-David Marchand <david.marchand@redhat.com> wrote:
+The AVX-512 TX completion path directly manipulated the mempool cache
+internals (cache->objs, cache->len, cache->flushthresh) instead of using
+the mempool API.  This pattern is the same private bypass that existed in
+the Intel common TX library before it was removed by commit 062d6fe5d0e4
+("net/intel: do not bypass mbuf lib for buffer fast-free") for the same
+reason: it omits mbuf instrumentation (history marking) and contains
+dead flush code that accesses cache->objs[cache->size], which is one
+past the end of the array when cache_size == RTE_MEMPOOL_CACHE_MAX_SIZE.
 
-> On Thu, 27 Aug 2026 at 02:00, Stephen Hemminger
-> <stephen@networkplumber.org> wrote:
-> >
-> > qed_dbg_set_app_ver() validates the caller's version and stores it.
-> > But the variable s_app_ver is never used in DPDK driver.
-> >
-> > clang 23 reports:
-> >
-> >   qede_debug.c:820:12: warning: variable 's_app_ver' set but not used
-> >         [-Wunused-but-set-global]
-> >
-> > Remove the variable and the dead store.  
-> 
-> Maybe go one step further?
-> qed_dbg_set_app_ver() looks useless.
+Replace with a single rte_mbuf_raw_free_bulk() call, matching the Intel
+common library.  The MBUF_FAST_FREE offload guarantee (single pool,
+refcnt == 1) makes this correct and the compiler inlines the bulk-free
+call to eliminate the overhead difference.
 
-Yes it is useless code. Looks like inherited from Linux driver.
+Signed-off-by: Kai Ji <kai.ji@intel.com>
+---
+ drivers/net/sxe2/sxe2_txrx_vec_avx512.c | 38 ++-----------------------
+ 1 file changed, 3 insertions(+), 35 deletions(-)
+
+diff --git a/drivers/net/sxe2/sxe2_txrx_vec_avx512.c b/drivers/net/sxe2/sxe2_txrx_vec_avx512.c
+index a830c7a33b..7311c9d35a 100644
+--- a/drivers/net/sxe2/sxe2_txrx_vec_avx512.c
++++ b/drivers/net/sxe2/sxe2_txrx_vec_avx512.c
+@@ -18,9 +18,6 @@ static __rte_always_inline int32_t sxe2_tx_bufs_free_vec_avx512(struct sxe2_tx_q
+ 	struct rte_mbuf *mbuf;
+ 	struct rte_mbuf *mbuf_free_arr[SXE2_TX_FREE_BUFFER_SIZE_MAX_VEC];
+ 	struct rte_mempool *mp;
+-	struct rte_mempool_cache *cache;
+-	void **cache_objs;
+-	uint32_t copied;
+ 	uint32_t i;
+ 	int32_t ret;
+ 	uint16_t rs_thresh;
+@@ -41,41 +38,12 @@ static __rte_always_inline int32_t sxe2_tx_bufs_free_vec_avx512(struct sxe2_tx_q
+ 	if ((txq->offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE) &&
+ 			(rs_thresh & 31) == 0) {
+ 		mp = buffer[0].mbuf->pool;
+-		cache = rte_mempool_default_cache(mp, rte_lcore_id());
+-
+-		if (cache == NULL || cache->len)
+-			goto normal;
+-
+-		if (rs_thresh > RTE_MEMPOOL_CACHE_MAX_SIZE) {
+-			(void)rte_mempool_ops_enqueue_bulk(mp, (void *)buffer, rs_thresh);
+-			goto done;
+-		}
+-		cache_objs = &cache->objs[cache->len];
+-
+-		copied = 0;
+-		while (copied < rs_thresh) {
+-			const __m512i objs0 = _mm512_loadu_si512(&buffer[copied]);
+-			const __m512i objs1 = _mm512_loadu_si512(&buffer[copied + 8]);
+-			const __m512i objs2 = _mm512_loadu_si512(&buffer[copied + 16]);
+-			const __m512i objs3 = _mm512_loadu_si512(&buffer[copied + 24]);
+-
+-			_mm512_storeu_si512(&cache_objs[copied], objs0);
+-			_mm512_storeu_si512(&cache_objs[copied + 8], objs1);
+-			_mm512_storeu_si512(&cache_objs[copied + 16], objs2);
+-			_mm512_storeu_si512(&cache_objs[copied + 24], objs3);
+-			copied += 32;
+-		}
+-		cache->len += rs_thresh;
+-
+-		if (cache->len >= cache->flushthresh) {
+-			(void)rte_mempool_ops_enqueue_bulk(mp,
+-					&cache->objs[cache->size], cache->len - cache->size);
+-			cache->len = cache->size;
+-		}
++		static_assert(sizeof(buffer[0]) == sizeof(struct rte_mbuf *),
++			"sxe2_tx_buffer_vec must be pointer-sized for bulk free cast");
++		rte_mbuf_raw_free_bulk(mp, (void *)buffer, rs_thresh);
+ 		goto done;
+ 	}
+ 
+-normal:
+ 	mbuf = rte_pktmbuf_prefree_seg(buffer[0].mbuf);
+ 
+ 	if (likely(mbuf)) {
+-- 
+2.43.0
+
