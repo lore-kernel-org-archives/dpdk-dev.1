@@ -2,44 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC9BC61DB9
-	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 15:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CC68C61DC4
+	for <dpdk-dev@archiver.kernel.org>; Thu, 27 Aug 2026 15:15:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1838240689;
-	Thu, 27 Aug 2026 17:14:55 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0300040698;
+	Thu, 27 Aug 2026 17:14:56 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id C960D4003C
- for <dev@dpdk.org>; Thu, 27 Aug 2026 17:14:51 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5404240689
+ for <dev@dpdk.org>; Thu, 27 Aug 2026 17:14:53 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1787843692; x=1819379692;
+ t=1787843693; x=1819379693;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=lpezrGjdjCXDK2EYlxTjCRbrUFpdjOcYFVe0Q/lc+xs=;
- b=W25zlnTXyrybKPpx+nuwAr+Nn0cZa6yxRXyAJ5FCPS44Tt+c3Mp9PD1T
- 9zgqOI2VaiQuJiTtV8zl/lPu3Tn6IBFPfBdahVvX2AoVV2aD60SxzjIvH
- ao1aeFpg8DzK4rh5/7zXLSoFpYXBa8SEKto/rMiPA3/243LIMtgYBvBKE
- EdJEbQfKUTxAKVVdXuR1DenATcpD4K+ydO0zhs0c2wA5BmwKQYxXEUyer
- EiQ1hCUe5Bu0EzAqJZgI9FpFmwicL2Esbh4WVB1n+FKeHdwP8Xm6liclv
- AaABkq6K87lOIhoCxWNtnxchZiyHzIJZgbzoj2GABGAQxigIoP/nZnkWn g==;
-X-CSE-ConnectionGUID: EZZrp1XcSWOBUERnP1EhHg==
-X-CSE-MsgGUID: gN7s2dW/QR6CkxGdYflzuw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11888"; a="88371583"
-X-IronPort-AV: E=Sophos;i="6.25,246,1779174000"; d="scan'208";a="88371583"
+ bh=5Z0HWp3zCRXv80lscfm3J71jdNHcRSp4oJOdHohxdTQ=;
+ b=L1ycRhhVxcTiaspwDeZAaGfuLEvtxGa/onOD2iTru3SabIJHZSts1k0t
+ KYAf4pLtCaDXhkSjs2jP6XIaRigJ8h0IvJNa/UDvmRdO2f2V6Hdz8oW6/
+ JflTef3qZAI8rlvVfAEjEdCksJZLNhicBd1MaZld56GHZ38QcdhefoPUO
+ bHCQtFFW+Qra6RbvNvJIPkIOOfmlbrZvsKAEy2Bn0P7ckMq5M8D+I27Af
+ 0eRQCauJ0QKcQ34z01XpAWb/DqO4FpU02RJem3P+snn+bwAAImkTochiE
+ IKzZoADNKHJZbDHuTAcrjv984FWDezD1HWUYYwO1CqW/OjUHCg1ouPZZb A==;
+X-CSE-ConnectionGUID: f0KDrYgnSaGIroaracVSWA==
+X-CSE-MsgGUID: Fk6HnDiDRV203bpqn11ZHQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11888"; a="88371586"
+X-IronPort-AV: E=Sophos;i="6.25,246,1779174000"; d="scan'208";a="88371586"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 Aug 2026 08:14:51 -0700
-X-CSE-ConnectionGUID: mi9ULzlQSFGgpw0HOS27Uw==
-X-CSE-MsgGUID: 8udq59ijRiiofXeNDXEplw==
+ 27 Aug 2026 08:14:53 -0700
+X-CSE-ConnectionGUID: 9t9myPi+SpywpNKXXVHcEg==
+X-CSE-MsgGUID: nImSqvWmSteVmR8MOBJzvg==
 X-ExtLoop1: 1
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa003.fm.intel.com with ESMTP; 27 Aug 2026 08:14:50 -0700
+ by fmviesa003.fm.intel.com with ESMTP; 27 Aug 2026 08:14:51 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@nxp.com>
-Subject: [PATCH v13 03/24] bus/fslmc: decouple from EAL VFIO
-Date: Thu, 27 Aug 2026 16:14:06 +0100
-Message-ID: <0c5a1dd7d75511514e8e5b4fe881f359268f63da.1787843386.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
+ Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
+Subject: [PATCH v13 04/24] vfio: decouple EAL from VFIO internals
+Date: Thu, 27 Aug 2026 16:14:07 +0100
+Message-ID: <e5df1adf888ca5e84ff9ab2a744a9edaea044f0e.1787843386.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1787843385.git.anatoly.burakov@intel.com>
  <cover.1787843385.git.anatoly.burakov@intel.com>
@@ -59,173 +59,111 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-FSLMC bus has its own VFIO implementation which is completely separate from
-one in EAL or rte_vfio. Yet, it references a couple of macros and uses a
-struct definition. Fully decoupling them is not a huge lift, so do that.
+Currently, the multiprocess cleanup for VFIO is called via an internal-only
+API, and this is the only thing `eal_vfio.h` is used for in EAL. In order
+to make `eal_vfio.h` truly VFIO-internal, export a cleanup function from
+`rte_vfio` API instead, and call that. This allows us to remove all EAL
+references to `eal_vfio.h` in non-VFIO related files.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/bus/fslmc/fslmc_vfio.c | 50 +++++++++++++++++++++-------------
- drivers/bus/fslmc/meson.build  |  1 -
- 2 files changed, 31 insertions(+), 20 deletions(-)
+ lib/eal/freebsd/eal.c      | 6 ++++++
+ lib/eal/include/rte_vfio.h | 9 +++++++++
+ lib/eal/linux/eal.c        | 3 +--
+ lib/eal/linux/eal_vfio.c   | 7 +++++++
+ lib/eal/windows/eal.c      | 6 ++++++
+ 5 files changed, 29 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/bus/fslmc/fslmc_vfio.c b/drivers/bus/fslmc/fslmc_vfio.c
-index 412b70e5ae..8d39895bac 100644
---- a/drivers/bus/fslmc/fslmc_vfio.c
-+++ b/drivers/bus/fslmc/fslmc_vfio.c
-@@ -35,7 +35,6 @@
- #include <dev_driver.h>
- #include <rte_eal_memconfig.h>
- #include <rte_vfio.h>
--#include <eal_vfio.h>
+diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
+index 0fe54a9dd7..991ca45064 100644
+--- a/lib/eal/freebsd/eal.c
++++ b/lib/eal/freebsd/eal.c
+@@ -845,6 +845,12 @@ int rte_vfio_enable(__rte_unused const char *modname)
+ 	return -1;
+ }
  
- #include "private.h"
- #include "fslmc_vfio.h"
-@@ -73,8 +72,21 @@ struct fslmc_dmaseg_list fslmc_iosegs =
- static uint64_t fslmc_mem_va2iova = RTE_BAD_IOVA;
- static int fslmc_mem_map_num;
- 
-+#define FSLMC_VFIO_SOCKET_OK 0x0
-+#define FSLMC_VFIO_SOCKET_NO_FD 0x1
-+#define FSLMC_VFIO_SOCKET_ERR 0xFF
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_cleanup)
++void
++rte_vfio_cleanup(void)
++{
++}
 +
-+struct fslmc_vfio_mp_param {
-+	int req;
-+	int result;
-+	union {
-+		int group_num;
-+		int iommu_type_id;
-+	};
-+};
+ RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_is_enabled)
+ int rte_vfio_is_enabled(__rte_unused const char *modname)
+ {
+diff --git a/lib/eal/include/rte_vfio.h b/lib/eal/include/rte_vfio.h
+index 0ddeb08f94..e76181c83c 100644
+--- a/lib/eal/include/rte_vfio.h
++++ b/lib/eal/include/rte_vfio.h
+@@ -109,6 +109,15 @@ int rte_vfio_release_device(const char *sysfs_base, const char *dev_addr, int fd
+ __rte_internal
+ int rte_vfio_enable(const char *modname);
+ 
++/**
++ * @internal
++ * Cleanup VFIO resources.
++ *
++ * This function is only relevant to Linux.
++ */
++__rte_internal
++void rte_vfio_cleanup(void);
 +
- struct fslmc_mem_param {
--	struct vfio_mp_param mp_param;
-+	struct fslmc_vfio_mp_param mp_param;
- 	struct fslmc_dmaseg_list memsegs;
- 	struct fslmc_dmaseg_list iosegs;
- 	uint64_t mem_va2iova;
-@@ -386,7 +398,7 @@ fslmc_vfio_open_group_fd(const char *group_name)
- 	struct rte_mp_msg mp_req, *mp_rep;
- 	struct rte_mp_reply mp_reply = {0};
- 	struct timespec ts = {.tv_sec = 5, .tv_nsec = 0};
--	struct vfio_mp_param *p = (struct vfio_mp_param *)mp_req.param;
-+	struct fslmc_vfio_mp_param *p = (struct fslmc_vfio_mp_param *)mp_req.param;
- 	int iommu_group_num, ret;
+ /**
+  * @internal
+  * Check whether a VFIO-related kmod is enabled.
+diff --git a/lib/eal/linux/eal.c b/lib/eal/linux/eal.c
+index fc2e9b8c0e..5577bab24a 100644
+--- a/lib/eal/linux/eal.c
++++ b/lib/eal/linux/eal.c
+@@ -54,7 +54,6 @@
+ #include "eal_memcfg.h"
+ #include "eal_trace.h"
+ #include "eal_options.h"
+-#include "eal_vfio.h"
+ #include "hotplug_mp.h"
+ #include "log_internal.h"
  
- 	vfio_group_fd = fslmc_vfio_group_fd_by_name(group_name);
-@@ -417,10 +429,10 @@ fslmc_vfio_open_group_fd(const char *group_name)
- 	if (rte_mp_request_sync(&mp_req, &mp_reply, &ts) == 0 &&
- 	    mp_reply.nb_received == 1) {
- 		mp_rep = &mp_reply.msgs[0];
--		p = (struct vfio_mp_param *)mp_rep->param;
--		if (p->result == SOCKET_OK && mp_rep->num_fds == 1)
-+		p = (struct fslmc_vfio_mp_param *)mp_rep->param;
-+		if (p->result == FSLMC_VFIO_SOCKET_OK && mp_rep->num_fds == 1)
- 			vfio_group_fd = mp_rep->fds[0];
--		else if (p->result == SOCKET_NO_FD)
-+		else if (p->result == FSLMC_VFIO_SOCKET_NO_FD)
- 			DPAA2_BUS_ERR("Bad VFIO group fd");
- 	}
+@@ -986,7 +985,7 @@ rte_eal_cleanup(void)
  
-@@ -490,7 +502,7 @@ fslmc_vfio_open_container_fd(void)
- 	struct rte_mp_msg mp_req, *mp_rep;
- 	struct rte_mp_reply mp_reply = {0};
- 	struct timespec ts = {.tv_sec = 5, .tv_nsec = 0};
--	struct vfio_mp_param *p = (void *)mp_req.param;
-+	struct fslmc_vfio_mp_param *p = (void *)mp_req.param;
+ 	rte_service_finalize();
+ 	eal_bus_cleanup();
+-	vfio_mp_sync_cleanup();
++	rte_vfio_cleanup();
+ 	rte_mp_channel_cleanup();
+ 	rte_eal_alarm_cleanup();
+ 	rte_trace_save();
+diff --git a/lib/eal/linux/eal_vfio.c b/lib/eal/linux/eal_vfio.c
+index 33fa04feaf..6c77076bc3 100644
+--- a/lib/eal/linux/eal_vfio.c
++++ b/lib/eal/linux/eal_vfio.c
+@@ -2217,3 +2217,10 @@ rte_vfio_container_dma_unmap(int container_fd, uint64_t vaddr, uint64_t iova,
  
- 	if (fslmc_vfio_container_fd() > 0)
- 		return fslmc_vfio_container_fd();
-@@ -551,7 +563,7 @@ fslmc_vfio_open_container_fd(void)
+ 	return container_dma_unmap(vfio_cfg, vaddr, iova, len);
+ }
++
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_cleanup)
++void
++rte_vfio_cleanup(void)
++{
++	vfio_mp_sync_cleanup();
++}
+diff --git a/lib/eal/windows/eal.c b/lib/eal/windows/eal.c
+index de7a89a829..b8771d4d85 100644
+--- a/lib/eal/windows/eal.c
++++ b/lib/eal/windows/eal.c
+@@ -152,6 +152,12 @@ rte_eal_cleanup(void)
+ 	return 0;
+ }
  
- 	mp_rep = &mp_reply.msgs[0];
- 	p = (void *)mp_rep->param;
--	if (p->result == SOCKET_OK && mp_rep->num_fds == 1) {
-+	if (p->result == FSLMC_VFIO_SOCKET_OK && mp_rep->num_fds == 1) {
- 		vfio_container_fd = mp_rep->fds[0];
- 		free(mp_reply.msgs);
- 	}
-@@ -594,8 +606,8 @@ fslmc_vfio_mp_primary(const struct rte_mp_msg *msg,
- 	int fd = -1;
- 	int ret;
- 	struct rte_mp_msg reply;
--	struct vfio_mp_param *r = (void *)reply.param;
--	const struct vfio_mp_param *m = (const void *)msg->param;
-+	struct fslmc_vfio_mp_param *r = (void *)reply.param;
-+	const struct fslmc_vfio_mp_param *m = (const void *)msg->param;
- 	struct fslmc_mem_param *map;
- 
- 	if (msg->len_param != sizeof(*m)) {
-@@ -612,13 +624,13 @@ fslmc_vfio_mp_primary(const struct rte_mp_msg *msg,
- 		r->group_num = m->group_num;
- 		fd = fslmc_vfio_group_fd_by_id(m->group_num);
- 		if (fd < 0) {
--			r->result = SOCKET_ERR;
-+			r->result = FSLMC_VFIO_SOCKET_ERR;
- 		} else if (!fd) {
- 			/* if group exists but isn't bound to VFIO driver */
--			r->result = SOCKET_NO_FD;
-+			r->result = FSLMC_VFIO_SOCKET_NO_FD;
- 		} else {
- 			/* if group exists and is bound to VFIO driver */
--			r->result = SOCKET_OK;
-+			r->result = FSLMC_VFIO_SOCKET_OK;
- 			reply.num_fds = 1;
- 			reply.fds[0] = fd;
- 		}
-@@ -628,9 +640,9 @@ fslmc_vfio_mp_primary(const struct rte_mp_msg *msg,
- 		r->req = FSLMC_VFIO_SOCKET_REQ_CONTAINER;
- 		fd = fslmc_vfio_container_fd();
- 		if (fd <= 0) {
--			r->result = SOCKET_ERR;
-+			r->result = FSLMC_VFIO_SOCKET_ERR;
- 		} else {
--			r->result = SOCKET_OK;
-+			r->result = FSLMC_VFIO_SOCKET_OK;
- 			reply.num_fds = 1;
- 			reply.fds[0] = fd;
- 		}
-@@ -640,7 +652,7 @@ fslmc_vfio_mp_primary(const struct rte_mp_msg *msg,
- 		map = (void *)reply.param;
- 		r = &map->mp_param;
- 		r->req = FSLMC_VFIO_SOCKET_REQ_MEM;
--		r->result = SOCKET_OK;
-+		r->result = FSLMC_VFIO_SOCKET_OK;
- 		map->memsegs = fslmc_memsegs;
- 		map->iosegs = fslmc_iosegs;
- 		map->mem_va2iova = fslmc_mem_va2iova;
-@@ -666,19 +678,19 @@ fslmc_vfio_mp_sync_mem_req(void)
- 	struct rte_mp_reply mp_reply = {0};
- 	struct timespec ts = {.tv_sec = 5, .tv_nsec = 0};
- 	int ret = 0;
--	struct vfio_mp_param *mp_param;
-+	struct fslmc_vfio_mp_param *mp_param;
- 	struct fslmc_mem_param *mem_rsp;
- 
- 	mp_param = (void *)mp_req.param;
- 	memset(&mp_req, 0, sizeof(struct rte_mp_msg));
- 	mp_param->req = FSLMC_VFIO_SOCKET_REQ_MEM;
- 	rte_strscpy(mp_req.name, FSLMC_VFIO_MP, sizeof(mp_req.name));
--	mp_req.len_param = sizeof(struct vfio_mp_param);
-+	mp_req.len_param = sizeof(struct fslmc_vfio_mp_param);
- 	if (rte_mp_request_sync(&mp_req, &mp_reply, &ts) == 0 &&
- 		mp_reply.nb_received == 1) {
- 		mp_rep = &mp_reply.msgs[0];
- 		mem_rsp = (struct fslmc_mem_param *)mp_rep->param;
--		if (mem_rsp->mp_param.result == SOCKET_OK) {
-+		if (mem_rsp->mp_param.result == FSLMC_VFIO_SOCKET_OK) {
- 			fslmc_memsegs = mem_rsp->memsegs;
- 			fslmc_mem_va2iova = mem_rsp->mem_va2iova;
- 			fslmc_mem_map_num = mem_rsp->mem_map_num;
-diff --git a/drivers/bus/fslmc/meson.build b/drivers/bus/fslmc/meson.build
-index 50d9e91a37..55f9d2e808 100644
---- a/drivers/bus/fslmc/meson.build
-+++ b/drivers/bus/fslmc/meson.build
-@@ -30,4 +30,3 @@ sources = files(
- )
- 
- includes += include_directories('mc', 'qbman/include', 'portal')
--includes += include_directories('../../../lib/eal/linux')
++RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_cleanup)
++void
++rte_vfio_cleanup(void)
++{
++}
++
+ /* Launch threads, called at application init(). */
+ RTE_EXPORT_SYMBOL(rte_eal_init)
+ int
 -- 
 2.52.0
 
