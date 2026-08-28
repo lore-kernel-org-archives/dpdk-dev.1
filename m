@@ -2,32 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6300C61DCD
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 07:40:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F29C61DCD
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 07:40:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0B78C40DCE;
+	by mails.dpdk.org (Postfix) with ESMTP id D249840E12;
 	Fri, 28 Aug 2026 09:40:18 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 7C2A640DDE
- for <dev@dpdk.org>; Fri, 28 Aug 2026 09:40:02 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 7E355402B6
+ for <dev@dpdk.org>; Fri, 28 Aug 2026 09:40:06 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowABncD5OO5Fq+dRzBg--.19397S2;
- Fri, 28 Aug 2026 15:39:59 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowACXnDpUO5FqW9VzBg--.53474S2;
+ Fri, 28 Aug 2026 15:40:04 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org
-Subject: [PATCH v6 35/45] net/sxe2: validate representor ID against VF count
-Date: Fri, 28 Aug 2026 15:39:58 +0800
-Message-ID: <20260828073958.2249609-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v6 36/45] net/sxe2: use primary VSI ID for representor VSI
+Date: Fri, 28 Aug 2026 15:40:04 +0800
+Message-ID: <20260828074004.2249664-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260828032731.2109423-1-liujie5@linkdatatechnology.com>
 References: <20260828032731.2109423-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowABncD5OO5Fq+dRzBg--.19397S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr15Zw4fCF1ftr48uF1ftFb_yoW8XF13pr
- ZFgw45Zry5GFnxX3WDG3Z3uFyYkw4rG34jka1Fvw1fCF17CryUCr98Ka4rta4qkwsrZw1f
- Aa17ZryUWw1rZF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: rQCowACXnDpUO5FqW9VzBg--.53474S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr18uF48Gry8tw43uFyDJrb_yoW8XFyfpr
+ Z8XrZ0qF4ktFnxX3WDW3Z29Fyj9w18ta4jgF4Fv3WfZF1qkr1UCry5Ka4rta4ktrZrZr13
+ Aa47Zr1UXw1UCF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUkmb7Iv0xC_Cr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
  0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
  A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xII
@@ -57,39 +57,39 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-sxe2_switchdev_repr_private_data_init() indexes
-parent_adapter->repr_ctxt.repr_vf_id[repr_id] without checking that
-repr_id is within the number of configured VFs, which can access out
-of bounds when an invalid representor ID is passed.
+repr_priv_data->repr_vf_vsi_id is assigned with a ternary that falls
+back to the backup (dpdk) VSI ID when the kernel VSI ID is invalid.
+The V3 implementation assigns it directly from
+repr_vf_primary_vsi_id.
 
-Add a bounds check on repr_id against repr_ctxt.nb_vf and return
--EINVAL on the error path.
+Align with the V3 implementation by assigning repr_vf_vsi_id from
+repr_vf_primary_vsi_id.
 
 Fixes: 635084db5d57 ("net/sxe2: support VF representors")
 Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_switchdev.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/sxe2/sxe2_switchdev.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
 diff --git a/drivers/net/sxe2/sxe2_switchdev.c b/drivers/net/sxe2/sxe2_switchdev.c
-index efb1468b91..d0304ccc94 100644
+index d0304ccc94..81ced7b855 100644
 --- a/drivers/net/sxe2/sxe2_switchdev.c
 +++ b/drivers/net/sxe2/sxe2_switchdev.c
-@@ -312,6 +312,12 @@ int32_t sxe2_switchdev_repr_private_data_init(struct rte_eth_dev *dev,
- 	repr_priv_data->repr_q_id = repr_id;
- 	repr_priv_data->repr_pf_id = parent_adapter->pf_idx;
- 	repr_priv_data->repr_vf_id = repr_id;
-+	if (repr_id >= parent_adapter->repr_ctxt.nb_vf) {
-+		PMD_LOG_ERR(INIT, "repr_id %u exceed max vf %u",
-+			repr_id, parent_adapter->repr_ctxt.nb_vf);
-+		ret = -EINVAL;
-+		goto l_free;
-+	}
- 	repr_priv_data->repr_vf_primary_vsi_id =
- 		parent_adapter->repr_ctxt.repr_vf_id[repr_id].kernel_vsi_id;
+@@ -323,11 +323,7 @@ int32_t sxe2_switchdev_repr_private_data_init(struct rte_eth_dev *dev,
  	repr_priv_data->repr_vf_backup_vsi_id =
+ 		parent_adapter->repr_ctxt.repr_vf_id[repr_id].dpdk_vsi_id;
+ 
+-	repr_priv_data->repr_vf_vsi_id =
+-		parent_adapter->repr_ctxt.repr_vf_id[repr_id].kernel_vsi_id !=
+-		SXE2_INVALID_VSI_ID ?
+-		parent_adapter->repr_ctxt.repr_vf_id[repr_id].kernel_vsi_id :
+-		parent_adapter->repr_ctxt.repr_vf_id[repr_id].dpdk_vsi_id;
++	repr_priv_data->repr_vf_vsi_id = repr_priv_data->repr_vf_primary_vsi_id;
+ 
+ 	adapter->repr_priv_data = repr_priv_data;
+ 	goto l_end;
 -- 
 2.52.0
 
