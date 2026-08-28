@@ -2,21 +2,21 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7569C61DB9
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 09:09:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F165C61DB9
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 09:28:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D4DF64025A;
-	Fri, 28 Aug 2026 11:09:44 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 63C084025A;
+	Fri, 28 Aug 2026 11:28:49 +0200 (CEST)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id BDD5B40150
- for <dev@dpdk.org>; Fri, 28 Aug 2026 11:09:43 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id A62D040150
+ for <dev@dpdk.org>; Fri, 28 Aug 2026 11:28:47 +0200 (CEST)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id AD5534D08E; Fri, 28 Aug 2026 11:09:43 +0200 (CEST)
+ id 8F8484BDD9; Fri, 28 Aug 2026 11:28:47 +0200 (CEST)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/cryptodev Bug 1987] OpenSSL AES-128-CBC encryption with
- scatter-gather buffer overflow
-Date: Fri, 28 Aug 2026 09:09:43 +0000
+Subject: [DPDK/cryptodev Bug 1988] CCP session cipher configuration
+ out-of-bounds write
+Date: Fri, 28 Aug 2026 09:28:47 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -35,7 +35,7 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone bug_group
-Message-ID: <bug-1987-3@https.bugs.dpdk.org/>
+Message-ID: <bug-1988-3@https.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: https://bugs.dpdk.org/
@@ -55,11 +55,10 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1987
+https://bugs.dpdk.org/show_bug.cgi?id=3D1988
 
-            Bug ID: 1987
-           Summary: OpenSSL AES-128-CBC encryption with scatter-gather
-                    buffer overflow
+            Bug ID: 1988
+           Summary: CCP session cipher configuration out-of-bounds write
            Product: DPDK
            Version: unspecified
           Hardware: All
@@ -73,72 +72,93 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D1987
   Target Milestone: ---
              Group: security
 
-Report date: 2025-02-20
-Reported by: Gowtham Suresh Kumar <Gowtham.SureshKumar@arm.com>
+Report date: 2026-03-09
+Reported by: =E4=BE=AF=E6=9C=8B=E6=9C=8B <pengpeng@iscas.ac.cn>
 
-Subject: Security Vulnerability: Buffer Overflow in DPDK function
-process_openssl_encryption_update() for segmented in-place operations
+Project: DPDK
+Component: drivers/crypto/ccp
+Affected path: session cipher configuration in ccp_set_session_parameters()=
+ /
+ccp_configure_session_cipher()
+Tested current code: tested on the then-current main/master branch as of
+2026-03-08
+Affected versions: I have confirmed this on current head; I can provide
+additional version verification if useful
 
-Dear DPDK Security Team,
-
-I would like to report a buffer overflow vulnerability in DPDK that occurs =
-in
-AES-128-CBC Encryption with Scatter-Gather, Inplace configuration for a
-particular corner case. This issue leads to out-of-bounds writes, potential=
-ly
-overwriting sensitive information such as plaintext or ciphertext outside t=
-he
-allocated buffer.
-Issue Description:
-
-The vulnerability can be reproduced by modifying sgl_segs parameter in
-AES-128-CBC Encryption Scatter-Gather (Inplace) test case increasing the
-segment count from 3 to 128, in test_cryptodev_aes_test_vectors.h. When usi=
+The issue appears to be an out-of-bounds write caused by copying a
+user-provided cipher key into a fixed-size in-struct buffer before validati=
 ng
-small segment sizes (e.g., 4 bytes per segment), incorrect pointer handling
-results in OpenSSL writing ciphertext outside the expected buffer bounds.
+whether the key length is supported.
 
-Key Findings:
-- Incorrect Pointer Updates: The dst pointer is updated incorrectly across
-consecutive EVP_EncryptUpdate() calls, even when OpenSSL buffers input inst=
-ead
-of producing immediate ciphertext.
-- Buffer Overflow in EVP_Final(): When OpenSSL finally encrypts the accumul=
-ated
-data, it writes beyond the allocated buffer, overwriting adjacent memory.
-- Segment Size Dependency: The issue occurs for small segment sizes
-specifically when sizes of consecutive segments together is smaller than bl=
-ock
-size of the cipher
+In the affected path, the code stores the requested key length and copies t=
+he
+key material first:
 
-Root Cause Analysis:
-- dst pointer is updated incorrectly even when OpenSSL does not generate ou=
-tput
-(outl =3D 0).
-- Small segments cause OpenSSL to delay encryption, leading to misalignment=
- in
-buffer usage.
-- On final encryption (EVP_Final()), OpenSSL writes ciphertext at an incorr=
-ect
-memory location, causing a buffer overflow.
+sess->cipher.key_length =3D cipher_xform->key.length;
+rte_memcpy(sess->cipher.key, cipher_xform->key.data,
+           cipher_xform->key.length);
+...
+if (sess->cipher.key_length =3D=3D 16) ...
+else if (sess->cipher.key_length =3D=3D 24) ...
+else if (sess->cipher.key_length =3D=3D 32) ...
+else {
+    return -1;
+}
+The relevant object layout in drivers/crypto/ccp/ccp_crypto.h includes adja=
+cent
+live fields:
 
-Impact & Security Concerns:
-This issue presents a critical security risk, as it allows OpenSSL to:
-- Write sensitive plaintext or ciphertext outside the allocated buffer,
-potentially exposing cryptographic data.
-- Corrupt adjacent memory, leading to unpredictable behavior or crashes.
-- Introduce vulnerabilities that could be exploited depending on the deploy=
-ment
-context.
+uint8_t key[32];
+uint8_t key_ccp[32];
+phys_addr_t key_phys;
+uint8_t nonce[32];
+Based on this logic, a key longer than 32 bytes overwrites the adjacent key=
+_ccp
+member before the function rejects the key length.
 
-Proposed Fix:
-- Modify process_openssl_encryption_update() to ensure dst pointer is updat=
-ed
-only when valid ciphertext is produced.
-- Introduce additional checks to prevent buffer overflows when segment sizes
-are small.
-- Expand test cases to include non-block-aligned segment sizes to detect
-similar issues.
+Why I believe this is a real issue:
+
+* the key copy occurs before the supported-length validation
+* the destination is a fixed-size in-struct array
+* the first adjacent victim is a live semantic field (key_ccp)
+* the overwrite occurs even when the function later returns -1
+
+My current local proof results are:
+
+distance_key_to_key_ccp =3D 32
+requested_key_len =3D 40
+returned =3D -1
+overflow_bytes_into_key_ccp =3D 8
+key_ccp_prefix_hex =3D 4242424242424242
+
+These results indicate that the first 8 bytes beyond key[32] overwrite the
+adjacent key_ccp field before the function reports invalid parameters.
+
+At a minimum, this appears capable of causing memory corruption, crash
+conditions, or corrupted crypto session state. I am not claiming code
+execution.
+
+I would also like to be explicit about the current trust-boundary uncertain=
+ty:
+I have confirmed the memory corruption condition locally, but I am not maki=
+ng a
+stronger claim about exploitability beyond the fact that this path copies
+caller-controlled key material before validation. If you would like, I can
+provide additional analysis regarding the most realistic attacker-controlled
+entry conditions in deployed environments.
+
+Suggested remediation:
+
+* validate supported key lengths before copying into sess->cipher.key
+* add a hard upper-bound check before the copy, for example rejecting lengt=
+hs
+greater than sizeof(sess->cipher.key)
+* review similar =E9=88=A5=E6=B8=83opy before validate=E9=88=A5=EF=BF=BD pa=
+tterns in related crypto session
+setup paths
+
+Please credit the issue to: Pengpeng Hou
+Embargo preference: no special embargo requested
 
 --=20
 You are receiving this mail because:
