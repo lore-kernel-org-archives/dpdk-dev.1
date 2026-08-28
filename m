@@ -2,33 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ED74C61DC4
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 03:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6751DC61DC4
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 03:28:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2277040E7C;
-	Fri, 28 Aug 2026 05:27:29 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4F47F40EE2;
+	Fri, 28 Aug 2026 05:27:37 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 1037840ED6
- for <dev@dpdk.org>; Fri, 28 Aug 2026 05:27:26 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5308A40E3F
+ for <dev@dpdk.org>; Fri, 28 Aug 2026 05:27:34 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowACXmzkdAJFqri5wBg--.51566S2;
- Fri, 28 Aug 2026 11:27:25 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowADX2zkjAJFq+S5wBg--.211S2;
+ Fri, 28 Aug 2026 11:27:31 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org
-Subject: [PATCH v5 44/45] doc/sxe2: remove drv-sw-stats parameter documentation
-Date: Fri, 28 Aug 2026 11:27:25 +0800
-Message-ID: <20260828032725.2109365-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v5 45/45] net/sxe2: remove ineffective queue counts in
+ representor info
+Date: Fri, 28 Aug 2026 11:27:31 +0800
+Message-ID: <20260828032731.2109423-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260827024035.1432256-1-liujie5@linkdatatechnology.com>
 References: <20260827024035.1432256-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowACXmzkdAJFqri5wBg--.51566S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxXFW7CF4ruw4rCFW3XryUGFg_yoW5ur1rpa
- 9xZ34IyFykZr1Ut3yxAw48Wr18ZFsaya45G34UWayIvan8AryrZw4DKayFga9rGFy8A345
- Zr1DuryUAa1DA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUkSb7Iv0xC_KF4lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
+X-CM-TRANSID: rQCowADX2zkjAJFq+S5wBg--.211S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr15GFyUWry8uw4ruF4rZrb_yoW8Jw1xpF
+ 4FqFy5CF4rXF15Kwn5Ca1xWa4YgF4UG3y7CrZrt34fu34UZ34UZFyDJFySvayvyr48XF40
+ vws7XrsIgFnYvF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUkSb7Iv0xC_Zr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
  0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
  A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xII
  jxv20xvEc7CjxVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4
@@ -39,7 +40,7 @@ X-Coremail-Antispam: 1UD129KBjvJXoWxXFW7CF4ruw4rCFW3XryUGFg_yoW5ur1rpa
  18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vI
  r41lIxAIcVC0I7IYx2IY67AKxVW7JVWDJwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr
  1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY
- 6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU3hL0UUUUU
+ 6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU3NB_UUUUU
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -57,77 +58,32 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-The drv-sw-stats devarg is no longer supported. Remove its
-parameter description from the Runtime Configuration section.
-The "Receive Software Statistics" xstats section is kept because
-the rx_sw_* counters are still accumulated in the Rx data path
-and reported through rte_eth_xstats_get().
+rte_eth_dev_info_get() overwrites dev_info->nb_rx_queues and
+dev_info->nb_tx_queues from dev->data after the PMD dev_infos_get
+callback returns, so assigning them in sxe2_repr_dev_infos_get() has
+no effect. Remove the ineffective assignments.
 
-Fixes: 9e95b2b3859c ("doc: update sxe2 guide and features")
+Fixes: 635084db5d57 ("net/sxe2: support VF representors")
 Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- doc/guides/nics/sxe2.rst | 31 ++-----------------------------
- 1 file changed, 2 insertions(+), 29 deletions(-)
+ drivers/net/sxe2/sxe2_ethdev_repr.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/doc/guides/nics/sxe2.rst b/doc/guides/nics/sxe2.rst
-index c5b400a8ba..fe4f9f916b 100644
---- a/doc/guides/nics/sxe2.rst
-+++ b/doc/guides/nics/sxe2.rst
-@@ -109,30 +109,6 @@ Runtime Configuration
+diff --git a/drivers/net/sxe2/sxe2_ethdev_repr.c b/drivers/net/sxe2/sxe2_ethdev_repr.c
+index b7096f5927..5490fea10b 100644
+--- a/drivers/net/sxe2/sxe2_ethdev_repr.c
++++ b/drivers/net/sxe2/sxe2_ethdev_repr.c
+@@ -195,8 +195,6 @@ static int32_t sxe2_repr_dev_infos_get(struct rte_eth_dev *dev,
+ 	dev_info->speed_capa = RTE_ETH_LINK_SPEED_10G | RTE_ETH_LINK_SPEED_25G |
+ 			 RTE_ETH_LINK_SPEED_50G | RTE_ETH_LINK_SPEED_100G;
  
-   Default value is 3 (count both packets and bytes).
+-	dev_info->nb_rx_queues = dev->data->nb_rx_queues;
+-	dev_info->nb_tx_queues = dev->data->nb_tx_queues;
  
--- ``drv-sw-stats`` parameter [int]
--
--  This parameter controls whether per-packet software statistics (SW stats)
--  are collected in the Rx data path.
--
--  Hardware packet statistic counters may be inaccurate for certain packet types
--  due to hardware design limitations.
--  When accuracy of Rx packet classification statistics is critical,
--  enabling this parameter allows the driver to accumulate statistics in software
--  as packets are received, providing an alternative statistical path
--  that bypasses hardware counter inaccuracies.
--
--  - 0: Disable software statistics collection (default).
--    The basic port statistics (``ipackets``, ``ibytes``) are reported
--    from the hardware counters.
--  - 1: Enable software statistics collection.
--    Per-packet software statistics are accumulated for unicast,
--    multicast, broadcast, and dropped packets in the Rx data path.
--
--  When enabled, the following extended statistics (xstats) are available:
--  ``rx_sw_unicast_packets``, ``rx_sw_multicast_packets``,
--  ``rx_sw_broadcast_packets``, ``rx_sw_drop_packets``,
--  and ``rx_sw_drop_bytes``.
--
- - ``no-sched-mode`` parameter [int]
- 
-   This parameter enables non-scheduling mode (no-sched mode).
-@@ -208,8 +184,7 @@ reflect the actual packets processed by the driver.
- 
- Receive Software Statistics
-   These counters are collected in the Rx data path
--  when ``drv-sw-stats=1`` is configured (see the ``drv-sw-stats`` devarg above).
--  When ``drv-sw-stats`` is disabled (default), these xstats report zero.
-+  on every received packet.
- 
-   - ``rx_sw_unicast_packets``: Number of unicast packets received.
-   - ``rx_sw_multicast_packets``: Number of multicast packets received.
-@@ -217,10 +192,8 @@ Receive Software Statistics
-   - ``rx_sw_drop_packets``: Number of packets dropped in the Rx data path.
-   - ``rx_sw_drop_bytes``: Number of bytes dropped in the Rx data path.
- 
--  When ``drv-sw-stats`` is enabled, the basic counters
--  ``ipackets`` and ``ibytes`` (from ``rte_eth_stats``)
-+  The basic counters ``ipackets`` and ``ibytes`` (from ``rte_eth_stats``)
-   also reflect the software-accumulated packet and byte counts.
--  Otherwise, they are reported from hardware counters.
- 
- Fnav Flow Engine Statistics
-   The Fnav flow engine statistics type is controlled by
+ 	dev_info->default_rxportconf.burst_size = SXE2_RX_MAX_BURST;
+ 	dev_info->default_txportconf.burst_size = SXE2_TX_MAX_BURST;
 -- 
 2.52.0
 
