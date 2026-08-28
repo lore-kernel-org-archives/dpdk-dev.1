@@ -2,44 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B1D5C61DC4
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 03:23:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD5BC61DC4
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 03:23:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8D75E40150;
-	Fri, 28 Aug 2026 05:23:28 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A406440280;
+	Fri, 28 Aug 2026 05:23:33 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 4C43F40655
- for <dev@dpdk.org>; Fri, 28 Aug 2026 05:23:26 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id AC34E4003C
+ for <dev@dpdk.org>; Fri, 28 Aug 2026 05:23:31 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowACXnjwr_5BquR1wBg--.52033S2;
- Fri, 28 Aug 2026 11:23:23 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowAC3wkAx_5BqMB5wBg--.18280S2;
+ Fri, 28 Aug 2026 11:23:29 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org
-Subject: [PATCH v5 03/45] net/sxe2: fix VF PCI device ID
-Date: Fri, 28 Aug 2026 11:23:23 +0800
-Message-ID: <20260828032323.2104767-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v5 04/45] net/sxe2: fix MSIX register width in PF map table
+Date: Fri, 28 Aug 2026 11:23:29 +0800
+Message-ID: <20260828032329.2104822-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260827024035.1432256-1-liujie5@linkdatatechnology.com>
 References: <20260827024035.1432256-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowACXnjwr_5BquR1wBg--.52033S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7JrWfZrW3JFWUGw17try3twb_yoWkJwc_CF
- nxWrnruFn8C34kKrZYyw45Zwnayw45Xw1xCrnI9F92yw1UtryfZwn8K39rtr9rGay5Arsx
- ZF1DKrnYv3y3KjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
- 9fnUUIcSsGvfJTRUUUb7kYjsxI4VWxJwAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I
- 6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
- 8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0
- cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4
- A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
- 64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8Jw
- Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lw4CEc2x0rVAKj4xxMxAIw28I
- cxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2
- IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0EwIxGrwCI
- 42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42
- IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280
- aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUcj2MUUUUU
+X-CM-TRANSID: rQCowAC3wkAx_5BqMB5wBg--.18280S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr15Ww1fur4fZw1fKryUZFb_yoW8GryDpF
+ WfWry2qF1FqFn8KF4rGa18Zr9Fka1UJryj9FsrW34akF98JrW8ZryDGay5Ka42yrW8XF1F
+ yF42kw1Yga15tw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUkYb7Iv0xC_Zr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
+ 0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+ A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
+ jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I
+ 8E87Iv6xkF7I0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+ 0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Jr0_Gr
+ 1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4kE6xkIj40Ew7xC0wCF04k2
+ 0xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI
+ 8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vIr41l
+ IxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIx
+ AIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2
+ jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8XyCJUUUUU==
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -57,15 +57,18 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-The VF PCI device ID is defined as 0x10b2 per the hardware specification,
-but the code incorrectly uses 0x10b.
+The MSIX entry in sxe2_net_map_addr_info_pf sets a register width
+of 10 (decimal), but each PCIe MSIX table entry is 16 bytes (0x10).
+The VF map table already uses 0x10.
 
-As a result, the VF driver never binds to the device, making VF
-functionality completely unusable.
+Since reg_width is used as the stride between MSIX entries in
+sxe2_dev_pci_seg_map(), the wrong value makes the mapped region too
+short and places the entries at incorrect offsets.
 
-Fix this by changing SXE2_PCI_DEVICE_ID_VF_1 from 0x10b to 0x10b2.
+Change .reg_width from 10 to 0x10 for the SXE2_PCI_MAP_RES_IRQ_MSIX
+entry to match the VF table.
 
-Fixes: d8e4e075acb4 ("net/sxe2: add probing skeleton")
+Fixes: 66a10eb60ebe ("net/sxe2: add PCI BAR mapping")
 Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
@@ -74,18 +77,18 @@ Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index 8bbfdc3a15..ec376b76dc 100644
+index ec376b76dc..5d8cfca6cf 100644
 --- a/drivers/net/sxe2/sxe2_ethdev.c
 +++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -44,7 +44,7 @@
+@@ -94,7 +94,7 @@ static struct sxe2_pci_map_addr_info sxe2_net_map_addr_info_pf[SXE2_PCI_MAP_RES_
+ 				      .reg_width = 4},
+ 	[SXE2_PCI_MAP_RES_IRQ_MSIX] = {.addr_base = SXE2_BAR4_MSIX_CTL(0),
+ 				      .bar_idx = 4,
+-				      .reg_width = 10},
++				      .reg_width = 0x10},
+ };
  
- #define SXE2_PCI_VENDOR_ID_1    0x1ff2
- #define SXE2_PCI_DEVICE_ID_PF_1 0x10b1
--#define SXE2_PCI_DEVICE_ID_VF_1 0x10b
-+#define SXE2_PCI_DEVICE_ID_VF_1 0x10b2
- 
- #define SXE2_PCI_VENDOR_ID_2    0x1d94
- #define SXE2_PCI_DEVICE_ID_PF_2 0x1260
+ static struct sxe2_pci_map_addr_info sxe2_net_map_addr_info_vf[SXE2_PCI_MAP_RES_MAX_COUNT] = {
 -- 
 2.52.0
 
