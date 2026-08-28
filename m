@@ -2,20 +2,20 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E445C61DBD
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 17:38:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA0B2C61DCB
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 17:42:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A66F34025A;
-	Fri, 28 Aug 2026 19:38:58 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E24134025A;
+	Fri, 28 Aug 2026 19:42:05 +0200 (CEST)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 2980640151
- for <dev@dpdk.org>; Fri, 28 Aug 2026 19:38:57 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 0CD5F40151
+ for <dev@dpdk.org>; Fri, 28 Aug 2026 19:42:05 +0200 (CEST)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 1D6DD4CFA5; Fri, 28 Aug 2026 19:38:57 +0200 (CEST)
+ id EA38E4CFAA; Fri, 28 Aug 2026 19:42:04 +0200 (CEST)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 2015] memif: ring semantics differ from VPP
-Date: Fri, 28 Aug 2026 17:38:57 +0000
+Subject: [DPDK/ethdev Bug 2016] memif: no connectivity or negative tests
+Date: Fri, 28 Aug 2026 17:42:05 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -33,8 +33,8 @@ X-Bugzilla-Target-Milestone: ---
 X-Bugzilla-Flags: 
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-2015-3@https.bugs.dpdk.org/>
+ target_milestone attachments.created
+Message-ID: <bug-2016-3@https.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: https://bugs.dpdk.org/
@@ -54,10 +54,10 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D2015
+https://bugs.dpdk.org/show_bug.cgi?id=3D2016
 
-            Bug ID: 2015
-           Summary: memif: ring semantics differ from VPP
+            Bug ID: 2016
+           Summary: memif: no connectivity or negative tests
            Product: DPDK
            Version: 26.11
           Hardware: All
@@ -70,32 +70,53 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D2015
           Reporter: stephen@networkplumber.org
   Target Milestone: ---
 
-Found when doing AI assisted analysis and comparison of DPDK memif with VPP.
+Created attachment 366
+  --> https://bugs.dpdk.org/attachment.cgi?id=3D366&action=3Dedit
+memif test script
 
+memif has no test in CI. Nothing checks that a server and a client can
+connect and forward traffic, and nothing checks that a malformed peer is
+rejected rather than crashing or corrupting the server.
 
-The two memif implementations disagree by one about what the hello
-limit fields mean.
+The driver takes its input from another process over shared memory, so
+the second of those matters more here than it would for a NIC driver.
 
-DPDK sends h->max_region =3D ETH_MEMIF_MAX_REGION_NUM - 1, treating the
-field as an inclusive maximum index, and checks received indices with
->=3D against ETH_MEMIF_MAX_REGION_NUM.
+Two pieces of work, which can be separate patches:
 
-VPP sends h->max_region =3D MEMIF_MAX_REGION (256) and checks received
-indices with > rather than >=3D, so it accepts index 256 and therefore
-257 regions. The same > form is used for its ring index checks.
+1. Connectivity baseline
 
-Nothing is memory-unsafe on either side today, because both clamp what
-they actually use, and VPP's regions are vectors. But the accepted range
-and the advertised range do not agree, and the two stacks do not agree
-with each other.
+A black box test that launches a memif server and a memif client as two
+testpmd processes connected over a shared socket, and checks that
+traffic flows in both directions. This exercises the connection path
+over a real link without depending on any internal driver API, and gives
+a two-instance harness that an adversarial peer can be driven from
+later. Skipping with exit 77 when fewer than four cores are online keeps
+it usable in constrained CI, since two primary processes need two cores
+each.
 
-There is no memif specification outside VPP's tree, so this is the kind
-of thing that only gets settled by writing it down. It should be pinned
-in whatever wire contract comes out of the current memif hardening work,
-and DPDK's side adjusted to match once the meaning is agreed.
+A candidate script is attached. Two things to settle before it lands:
 
-Raised here so it is on the record and does not get fixed unilaterally
-in one stack in a way that breaks the other.
+  - It greps the logs for a "bad descriptor" line that nothing currently
+    emits. That log only exists once descriptor validation is added, so
+    the check is either premature or should be dropped.
+  - It assumes the server and client must be separate processes. Worth
+    checking whether a server vdev and a client vdev can be instantiated
+    in a single testpmd process. If they can, the whole thing becomes a
+    plain unit test with no core requirement and no process
+    orchestration.
+
+2. Negative test
+
+A standalone client that speaks the control protocol over the socket
+directly and sends malformed messages, asserting that the server
+disconnects cleanly and does not crash. Written that way it needs no VPP
+dependency and no second DPDK process, and it can cover every
+control-channel case: wrong-direction messages, oversized rings, rings
+outside their region, repeated ring indices, regions whose fd is smaller
+than the claimed size.
+
+The negative test is the more valuable of the two, and it is the natural
+place for a fuzz driver to be attached later.
 
 --=20
 You are receiving this mail because:
