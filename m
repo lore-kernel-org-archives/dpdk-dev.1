@@ -2,20 +2,21 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F78C61DBD
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 10:29:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF47EC61DB9
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 10:30:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E635140151;
-	Fri, 28 Aug 2026 12:29:58 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 049E540151;
+	Fri, 28 Aug 2026 12:30:57 +0200 (CEST)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id CEAFE40150
- for <dev@dpdk.org>; Fri, 28 Aug 2026 12:29:57 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 350C240150
+ for <dev@dpdk.org>; Fri, 28 Aug 2026 12:30:56 +0200 (CEST)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id C97464CF72; Fri, 28 Aug 2026 12:29:57 +0200 (CEST)
+ id 312014C4E4; Fri, 28 Aug 2026 12:30:56 +0200 (CEST)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/cryptodev Bug 1997] CN20K inline IPsec 3DES key overflow
-Date: Fri, 28 Aug 2026 10:29:57 +0000
+Subject: [DPDK/cryptodev Bug 1998] CN9K inline inbound AES-XCBC auth key
+ overflow
+Date: Fri, 28 Aug 2026 10:30:56 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -34,7 +35,7 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone bug_group
-Message-ID: <bug-1997-3@https.bugs.dpdk.org/>
+Message-ID: <bug-1998-3@https.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: https://bugs.dpdk.org/
@@ -54,10 +55,10 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1997
+https://bugs.dpdk.org/show_bug.cgi?id=3D1998
 
-            Bug ID: 1997
-           Summary: CN20K inline IPsec 3DES key overflow
+            Bug ID: 1998
+           Summary: CN9K inline inbound AES-XCBC auth key overflow
            Product: DPDK
            Version: unspecified
           Hardware: All
@@ -77,139 +78,142 @@ Reported by: =E4=BE=AF=E6=9C=8B=E6=9C=8B <pengpeng@iscas.ac.cn>
 Hello DPDK maintainers,
 
 
-I am reporting what looks like a real current-head intra-object overflow in=
- the
-`cn20k` inline-IPsec Ethernet security path. I rechecked current `main`
-(`8dc80afda7a52a1bd28088fe34102e7c1ba17282`) on 2026-03-10 before writing t=
-his
-mail.
+I would like to report what appears to be a real current-head intra-object
+overflow in the `cn9k` inline IPsec inbound path for `AES_XCBC_MAC`. I
+rechecked current `main` (`8dc80afda7a52a1bd28088fe34102e7c1ba17282`) on
+2026-03-10 before writing this report.
 
 
-As on `cn10k`, the DPDK security core forwards the caller-provided
-configuration directly into the driver callback:
+The relevant inline caller path is:
 
 
 ```c
-if (instance->ops->session_create(instance->device, conf, sess)) {
-    rte_mempool_put(mp, (void *)sess);
-    return NULL;
-}
-```
-
-
-For the `cn20k` inline path, current head then calls the `OW` SA fill helpe=
-rs
-directly:
-
-
-```c
-rc =3D cnxk_ow_ipsec_outb_sa_fill(outb_sa_dptr, ipsec, crypto, 0);
-...
-rc =3D cnxk_ow_ipsec_outb_sa_fill(outb_sa_dptr, ipsec, crypto, 0);
-```
-
-
-and again does not first call `cnxk_ipsec_xform_verify()`.
-
-
-In the shared `OW` helper, `3DES` is accepted by setting `enc_type`, but th=
-ere
-is no exact `=3D=3D 24` check before the key copy:
-
-
-```c
-case RTE_CRYPTO_CIPHER_3DES_CBC:
-    w2->s.enc_type =3D ROC_IE_SA_ENC_3DES_CBC;
-    break;
-...
-key =3D cipher_xfrm->cipher.key.data;
-length =3D cipher_xfrm->cipher.key.length;
-...
-if (key !=3D NULL && length !=3D 0) {
-    memcpy(cipher_key, key, length);
+cn9k_eth_sec_session_create(...)
+{
+    ...
+    rc =3D cnxk_on_ipsec_inb_sa_create(ipsec, crypto, inb_sa);
     ...
 }
 ```
 
 
-The same `cn20k` driver publishes exact `24` for `3DES` in its capability
-table:
+This inline path does not call `cnxk_ipsec_xform_verify()`.
+
+
+That matters because the exact-length check for XCBC exists in the reusable
+verifier:
+
+
+```c
+if (crypto_xform->auth.algo =3D=3D RTE_CRYPTO_AUTH_AES_XCBC_MAC &&
+    keylen =3D=3D ROC_CPT_AES_XCBC_KEY_LENGTH)
+    return 0;
+```
+
+
+But the inline inbound path bypasses that verifier and reaches this sink
+instead:
+
+
+```c
+case RTE_CRYPTO_AUTH_AES_XCBC_MAC:
+    memcpy(in_sa->aes_xcbc.key, auth_key, auth_key_len);
+    ctx_len =3D offsetof(struct roc_ie_on_inb_sa, aes_xcbc.selector);
+    break;
+```
+
+
+The relevant object layout is:
+
+
+```c
+struct {
+    uint8_t key[16];
+    uint8_t unused[32];
+    struct roc_ie_on_traffic_selector selector;
+} aes_xcbc;
+```
+
+
+So the first live adjacent member starts `48` bytes after the beginning of
+`aes_xcbc.key`.
+
+
+The key point here is narrow and specific:
+
+
+- if the claim is only =E2=80=9Ccopy into `key[16]` without a bound=E2=80=
+=9D, then any
+`auth.key.length > 16` is already a real overwrite into adjacent in-object
+storage
+- if the claim is specifically =E2=80=9Ccorrupts the live `selector` member=
+=E2=80=9D, then the
+clean threshold is `auth.key.length > 48`
+
+
+This report is about that second, narrower claim.
+
+
+The same driver advertises `AES_XCBC_MAC` as exact-size only:
 
 
 ```c
 .key_size =3D {
-    .min =3D 24,
-    .max =3D 24,
+    .min =3D 16,
+    .max =3D 16,
     .increment =3D 0
 },
 ```
 
 
-But the runtime inline path still copies the full user-provided `length` in=
-to a
-fixed object field.
-
-
-The destination object is:
-
-
-```c
-struct roc_ow_ipsec_outb_sa {
-    ...
-    uint8_t cipher_key[ROC_CTX_MAX_CKEY_LEN];
-    union roc_ow_ipsec_outb_iv iv;
-    ...
-};
-```
-
-
-with `ROC_CTX_MAX_CKEY_LEN =3D=3D 32`.
-
-
-So any `3DES` key longer than `32` bytes writes into the adjacent live `iv`.
-
-
-The cleanest concrete case is a `40`-byte `RTE_CRYPTO_CIPHER_3DES_CBC` key:
-
-
-- first `32` bytes fill `cipher_key`
-- next `8` bytes overwrite the beginning of `iv`
-- the helper returns `0`
-- `cn20k_eth_sec_session_create()` proceeds with SA installation
-
-
-Why I think this should be accepted as a real bug:
-
-
-- the path is current-head and reachable from the public session-create API
-- capability metadata is not a runtime guard in this path
-- the runtime code bypasses the verifier that would have enforced exact-len=
+But the runtime inline inbound path still copies the full user-provided len=
 gth
-constraints
-- the sink writes through a fixed in-object array into the next live member
-- the corrupted SA is still treated as successfully created
+into `key[16]`.
 
 
-The local proof results for the narrow `40`-byte case are:
+The clean concrete case is a `64`-byte `AES_XCBC_MAC` key:
 
 
-- `distance_cipher_key_to_iv=3D32`
-- `advertised_3des_key_max=3D24`
-- `provided_key_len=3D40`
-- `returned=3D0`
-- `overflow_bytes_into_iv=3D8`
-- `iv_prefix_hex=3D4242424242424242`
+- bytes `0..15` fill `key[16]`
+- bytes `16..47` fill `unused[32]`
+- bytes `48..63` overwrite the first `16` bytes of live `selector`
+
+
+The later `roc_aes_xcbc_key_derive()` call does not repair that selector
+overwrite, because it only writes derived material into the first `48` byte=
+s of
+the union region.
+
+
+The local proof results for this narrow case are:
+
+
+- `distance_key_to_selector=3D48`
+- `advertised_aes_xcbc_key_max=3D16`
+- `provided_key_len=3D64`
+- `returned_ctx_len=3D120`
+- `overflow_bytes_into_selector=3D16`
+- `selector_prefix_hex=3D4242424242424242`
 - `guard_unchanged=3D1`
 
 
+Why I think this is a real bug:
+- the sink is current-head shared security code
+- the caller is a production inline session-create path
+- the verifier that would have enforced exact XCBC length exists but is
+bypassed here
+- the destination is a fixed in-object field, not a flexible array
+- the overwritten bytes belong to a live adjacent member, `selector`
+
+
 Suggested fix:
-1. Enforce exact `3DES` key length before `cnxk_ow_ipsec_*_sa_fill()` is ca=
-lled
-on the inline path.
-2. Add a direct upper-bound guard before `memcpy(cipher_key, key, length)`.
-3. Reuse the same xform-length verification logic across inline and non-inl=
-ine
-`cnxk` IPsec paths.
+1. Reject `AES_XCBC_MAC` keys whose length is not exactly `16` before
+`cnxk_on_ipsec_inb_sa_create()` is reached on this inline path.
+2. Add a local check such as `if (auth_key_len !=3D sizeof(in_sa->aes_xcbc.=
+key))
+return -EINVAL;` before the `memcpy()`.
+3. Reuse the same xform verification logic for inline callers that already
+exists for the lookaside path.
 
 --=20
 You are receiving this mail because:
