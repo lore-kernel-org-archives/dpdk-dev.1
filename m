@@ -2,21 +2,20 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B189C61DBD
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 09:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D51DC61DB9
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 09:36:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B653640151;
-	Fri, 28 Aug 2026 11:33:37 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1ECD040151;
+	Fri, 28 Aug 2026 11:36:27 +0200 (CEST)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id BCFF540150
- for <dev@dpdk.org>; Fri, 28 Aug 2026 11:33:35 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 1DEBA40150
+ for <dev@dpdk.org>; Fri, 28 Aug 2026 11:36:25 +0200 (CEST)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 9F2DA4C987; Fri, 28 Aug 2026 11:33:35 +0200 (CEST)
+ id 073B54CC73; Fri, 28 Aug 2026 11:36:24 +0200 (CEST)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/cryptodev Bug 1989] CN9K inline inbound IPsec HMAC SA creation
- out-of-bounds write
-Date: Fri, 28 Aug 2026 09:33:35 +0000
+Subject: [DPDK/cryptodev Bug 1990] cnxk DES3 session key out-of-bounds write
+Date: Fri, 28 Aug 2026 09:36:25 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -35,7 +34,7 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone bug_group
-Message-ID: <bug-1989-3@https.bugs.dpdk.org/>
+Message-ID: <bug-1990-3@https.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: https://bugs.dpdk.org/
@@ -55,11 +54,10 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1989
+https://bugs.dpdk.org/show_bug.cgi?id=3D1990
 
-            Bug ID: 1989
-           Summary: CN9K inline inbound IPsec HMAC SA creation
-                    out-of-bounds write
+            Bug ID: 1990
+           Summary: cnxk DES3 session key out-of-bounds write
            Product: DPDK
            Version: unspecified
           Hardware: All
@@ -76,82 +74,89 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D1989
 Report date: 2026-03-09
 Reported by: =E4=BE=AF=E6=9C=8B=E6=9C=8B <pengpeng@iscas.ac.cn>
 
+Subject: [SECURITY] Potential out-of-bounds write in DPDK cnxk DES3 session=
+ key
+handling
+
 Hello DPDK Security Team,
 
 I would like to report a potential security vulnerability in DPDK affecting=
  the
-CN9K inline inbound IPsec SA creation path.
+`cnxk` crypto driver session configuration path.
 
 Project: DPDK
-Component: `drivers/common/cnxk` / CN9K inbound inline IPsec
-Affected path: inbound SA creation path leading to
-`cnxk_on_ipsec_inb_sa_create()`
+Component: `drivers/crypto/cnxk` / `drivers/common/cnxk`
+Affected path: DES3 session cipher setup in `fill_sess_cipher()` leading to
+`roc_se_ciph_key_set()`
 Tested current code: tested on the then-current main/master branch as of
 2026-03-08
 Affected versions: I have confirmed this on current head; I can provide
 additional version verification if useful.
 
-The issue appears to be an out-of-bounds write caused by copying
-caller-provided HMAC keys into fixed-size in-struct arrays without enforcin=
-g an
-algorithm-appropriate upper bound in the CN9K inbound inline IPsec path.
+The issue appears to be an out-of-bounds write caused by accepting oversized
+DES3 keys in the `cnxk` session configuration path and then copying the full
+caller-provided length into a fixed-size in-struct key buffer.
 
-Based on the current logic, the inbound SA creation code copies the provided
-authentication key into fixed internal fields for different HMAC variants. =
-The
-relevant destination layout includes adjacent live members, and the copy le=
-ngth
-is based on the provided key length.
+Based on the current logic, the DES3 path treats the algorithm as having a
+24-byte key, but only rejects keys shorter than 24 bytes. Keys longer than =
+24
+bytes are forwarded unchanged into the lower-level key setup routine. The s=
+ink
+then copies the full provided length into the encryption key field inside t=
+he
+session context.
 
-The relevant in-struct layout includes cases such as:
+The relevant destination layout includes adjacent live fields in this order:
 
-* `sha1_or_gcm.hmac_key[48]` followed by `selector`
-* `sha2.hmac_key[64]` followed by `hmac_iv[64]` and `selector`
+* `encr_key[32]`
+* `encr_iv[16]`
 
-Based on this logic, if the provided key length exceeds the destination arr=
-ay
-size for the selected algorithm, the copy overwrites adjacent live fields
-inside the same object.
+Based on this logic, a DES3 key longer than 32 bytes overwrites the adjacent
+`encr_iv` member.
 
 Why I believe this is a real issue:
 
-* the inbound CN9K path copies caller-provided authentication key material =
-into
-fixed-size in-struct arrays
-* the first adjacent victims are live semantic fields rather than padding
-* in the SHA1 HMAC case, the destination buffer is 48 bytes but a 64-byte k=
-ey
-can be copied
-* the overwrite occurs in a live inbound SA construction path
+* the DES3 path enforces only a lower bound rather than the exact expected =
+key
+length
+* the oversized caller-provided key length is forwarded unchanged into the =
+sink
+* the destination is a fixed-size in-struct array
+* the first adjacent victim is a live semantic field (`encr_iv`)
+* the path still returns success after the adjacent overwrite
 
-My current local proof results for the SHA1 HMAC case are:
+My current local proof results are:
 
-* `sha1_distance_to_selector =3D 48`
-* `sha1_key_len =3D 64`
-* `sha1_selector_prefix_hex =3D 4141414141414141`
+* `distance_encr_key_to_encr_iv =3D 32`
+* `provided_key_len =3D 40`
+* `returned =3D 0`
+* `overflow_bytes_into_encr_iv =3D 8`
+* `encr_iv_prefix_hex =3D 4242424242424242`
 
-These results indicate that the bytes beyond `hmac_key[48]` overwrite the
-adjacent selector object with caller-controlled data.
+These results indicate that a 40-byte DES3 key is accepted by the current p=
+ath,
+and the first 8 bytes beyond `encr_key[32]` overwrite the adjacent `encr_iv`
+field with caller-controlled data.
 
-At a minimum, this appears capable of causing memory corruption, crash
-conditions, or corrupted inbound IPsec SA state. I am not claiming code
-execution.
+At a minimum, this appears capable of causing memory corruption or corrupted
+crypto session state. I am not claiming code execution.
 
 I would also like to be explicit about the current trust-boundary uncertain=
 ty:
 I have confirmed the memory corruption condition locally, but I am not maki=
 ng a
-stronger claim about exploitability beyond the fact that this path copies
-caller-controlled key material into fixed-size in-struct buffers without a
-sufficiently strict upper bound.
+stronger claim about exploitability beyond the fact that this path accepts
+oversized caller-controlled key material and copies it into a fixed-size
+in-struct buffer.
 
 Suggested remediation:
 
-* enforce explicit per-algorithm upper bounds before copying authentication
-keys
-* ensure the inbound CN9K path applies the same effective key-length
-constraints as the capability model and verification logic
-* review similar authentication-key copy paths in related CNXK IPsec setup =
+* enforce the exact DES3 key length in the session setup path rather than o=
+nly
+a lower bound
+* add a hard upper-bound check in the lower-level key setup routine before
+copying into the destination buffer
+* review similar key-length validation paths in related crypto session setup
 code
 
 I can provide the following in follow-up if helpful:
