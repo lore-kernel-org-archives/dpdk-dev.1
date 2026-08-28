@@ -2,44 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ED1CC61DCD
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 07:37:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0DFAC61DCD
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 07:37:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 53907406BC;
-	Fri, 28 Aug 2026 09:37:44 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4340E406B6;
+	Fri, 28 Aug 2026 09:37:45 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 5991F40268
- for <dev@dpdk.org>; Fri, 28 Aug 2026 09:37:37 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 7AAD34067C
+ for <dev@dpdk.org>; Fri, 28 Aug 2026 09:37:43 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowAAXIkC_OpFq7MlzBg--.56915S2;
- Fri, 28 Aug 2026 15:37:35 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowACnsT_FOpFqWcpzBg--.56778S2;
+ Fri, 28 Aug 2026 15:37:41 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org
-Subject: [PATCH v6 10/45] net/sxe2: clear security context pointer on uninit
-Date: Fri, 28 Aug 2026 15:37:35 +0800
-Message-ID: <20260828073735.2248074-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v6 11/45] net/sxe2: rename representor VSI ID fields
+Date: Fri, 28 Aug 2026 15:37:40 +0800
+Message-ID: <20260828073740.2248124-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260828032731.2109423-1-liujie5@linkdatatechnology.com>
 References: <20260828032731.2109423-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowAAXIkC_OpFq7MlzBg--.56915S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7JrWDAr4rWF43Ar1fKF1rZwb_yoWfWFc_Gr
- Z7ArW8Ar1UAa45KrW2kFWfZFsYgryrWa1IgasrKFy3Za13ur1xWr9rXrZ7t3W7Gw13GrZr
- KFnFgFy8KasrGjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
- 9fnUUIcSsGvfJTRUUUbc8YjsxI4VWxJwAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I
- 6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
- 8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0
- cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I
- 8E87Iv6xkF7I0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
- F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jw0_WrylYx0Ex4A2jsIE14v26F4j6r
- 4UJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lw4CEc2x0rVAKj4xxMxAI
- w28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr
- 4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0EwIxG
- rwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJw
- CI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Cr0_Gr1UMIIF0xvE
- x4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjxU2oGQDUUUU
+X-CM-TRANSID: rQCowACnsT_FOpFqWcpzBg--.56778S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWF1fJFW7Ww15CF1DZFy8uFg_yoWrGryrpr
+ Z8XrZ8ZF4xtFnxtwnrG3WfuFy5Kr18t3409F4Syw1fuF1UJr4UurW5KFyFyw1vkrZrZr1S
+ y3W7Zw1UXw1YyaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUkqb7Iv0xC_Cr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
+ 0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+ A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
+ jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwV
+ C2z280aVCY1x0267AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
+ Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q6rW5McIj6I8E87Iv67AKxVWxJV
+ W8Jr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4kE6xkIj40Ew7xC0wCF
+ 04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r
+ 18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vI
+ r41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr
+ 1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26F4j6r4UJwCI42IY
+ 6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU8c_-PUUUUU==
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -57,29 +57,91 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-sxe2_security_uinit() frees the security session but leaves
-dev->security_ctx pointing at the freed memory. Set
-dev->security_ctx to NULL after releasing the security context
-so a later access does not dereference a dangling pointer.
+Rename repr_vf_k_vsi_id/repr_vf_u_vsi_id to
+repr_vf_primary_vsi_id/repr_vf_backup_vsi_id in
+sxe2_repr_private_data and update all references.
 
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_security.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/sxe2/sxe2_dump.c      | 8 ++++----
+ drivers/net/sxe2/sxe2_ethdev.h    | 4 ++--
+ drivers/net/sxe2/sxe2_flow.c      | 4 ++--
+ drivers/net/sxe2/sxe2_switchdev.c | 4 ++--
+ 4 files changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/net/sxe2/sxe2_security.c b/drivers/net/sxe2/sxe2_security.c
-index bc59d1b880..8f31067942 100644
---- a/drivers/net/sxe2/sxe2_security.c
-+++ b/drivers/net/sxe2/sxe2_security.c
-@@ -326,6 +326,7 @@ void sxe2_security_uinit(struct rte_eth_dev *dev)
- 	if (sctx != NULL) {
- 		rte_free(sctx);
- 		sctx = NULL;
-+		dev->security_ctx = NULL;
+diff --git a/drivers/net/sxe2/sxe2_dump.c b/drivers/net/sxe2/sxe2_dump.c
+index d43473e083..590219f502 100644
+--- a/drivers/net/sxe2/sxe2_dump.c
++++ b/drivers/net/sxe2/sxe2_dump.c
+@@ -211,16 +211,16 @@ sxe2_dump_switchdev_info(FILE *file, struct rte_eth_dev *dev)
+ 			"\t  -- repr_pf_id: %u\n"
+ 			"\t  -- repr_vf_id: %u\n"
+ 			"\t  -- repr_vf_vsi_id: %u\n"
+-			"\t  -- repr_vf_k_vsi_id: %s\n"
+-			"\t  -- repr_vf_u_vsi_id: %s\n",
++			"\t  -- repr_vf_primary_vsi_id: %s\n"
++			"\t  -- repr_vf_backup_vsi_id: %s\n",
+ 			adapter->repr_priv_data->repr_id,
+ 			adapter->repr_priv_data->repr_q_id,
+ 			adapter->repr_priv_data->repr_pf_id,
+ 			adapter->repr_priv_data->repr_vf_id,
+ 			adapter->repr_priv_data->repr_vf_vsi_id,
+-			sxe2_vsi_id_str(adapter->repr_priv_data->repr_vf_k_vsi_id,
++			sxe2_vsi_id_str(adapter->repr_priv_data->repr_vf_primary_vsi_id,
+ 					k_vsi_buf, sizeof(k_vsi_buf)),
+-			sxe2_vsi_id_str(adapter->repr_priv_data->repr_vf_u_vsi_id,
++			sxe2_vsi_id_str(adapter->repr_priv_data->repr_vf_backup_vsi_id,
+ 					u_vsi_buf, sizeof(u_vsi_buf)));
+ 		goto l_end;
+ 	}
+diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
+index c54e8a435e..158198d74b 100644
+--- a/drivers/net/sxe2/sxe2_ethdev.h
++++ b/drivers/net/sxe2/sxe2_ethdev.h
+@@ -263,8 +263,8 @@ struct sxe2_repr_private_data {
+ 	uint16_t repr_pf_id;
+ 	uint16_t repr_vf_id;
+ 	uint16_t repr_vf_vsi_id;
+-	uint16_t repr_vf_k_vsi_id;
+-	uint16_t repr_vf_u_vsi_id;
++	uint16_t repr_vf_primary_vsi_id;
++	uint16_t repr_vf_backup_vsi_id;
+ };
+ 
+ struct sxe2_sched_hw_cap {
+diff --git a/drivers/net/sxe2/sxe2_flow.c b/drivers/net/sxe2/sxe2_flow.c
+index 63cfc36968..cf54803301 100644
+--- a/drivers/net/sxe2/sxe2_flow.c
++++ b/drivers/net/sxe2/sxe2_flow.c
+@@ -380,9 +380,9 @@ static int32_t sxe2_flow_src_split_proc(struct rte_eth_dev *dev,
+ 	if (adapter->switchdev_info.is_switchdev && adapter->is_dev_repr) {
+ 		flow_bond_num = 1;
+ 		flow_src_vsi[SXE2_MAX_DRV_TYPE_DPDK][0] =
+-			adapter->repr_priv_data->repr_vf_u_vsi_id;
++			adapter->repr_priv_data->repr_vf_backup_vsi_id;
+ 		flow_src_vsi[SXE2_MAX_DRV_TYPE_KERNEL][0] =
+-			adapter->repr_priv_data->repr_vf_k_vsi_id;
++			adapter->repr_priv_data->repr_vf_primary_vsi_id;
  	}
  
- 	sxe2_ipsec_uinit(adapter);
+ 	for (idx = 0; idx < flow_bond_num; idx++) {
+diff --git a/drivers/net/sxe2/sxe2_switchdev.c b/drivers/net/sxe2/sxe2_switchdev.c
+index 44703cfb5c..efb1468b91 100644
+--- a/drivers/net/sxe2/sxe2_switchdev.c
++++ b/drivers/net/sxe2/sxe2_switchdev.c
+@@ -312,9 +312,9 @@ int32_t sxe2_switchdev_repr_private_data_init(struct rte_eth_dev *dev,
+ 	repr_priv_data->repr_q_id = repr_id;
+ 	repr_priv_data->repr_pf_id = parent_adapter->pf_idx;
+ 	repr_priv_data->repr_vf_id = repr_id;
+-	repr_priv_data->repr_vf_k_vsi_id =
++	repr_priv_data->repr_vf_primary_vsi_id =
+ 		parent_adapter->repr_ctxt.repr_vf_id[repr_id].kernel_vsi_id;
+-	repr_priv_data->repr_vf_u_vsi_id =
++	repr_priv_data->repr_vf_backup_vsi_id =
+ 		parent_adapter->repr_ctxt.repr_vf_id[repr_id].dpdk_vsi_id;
+ 
+ 	repr_priv_data->repr_vf_vsi_id =
 -- 
 2.52.0
 
