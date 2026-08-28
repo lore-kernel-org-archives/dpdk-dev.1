@@ -2,21 +2,21 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F165C61DB9
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 09:28:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B189C61DBD
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 09:33:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 63C084025A;
-	Fri, 28 Aug 2026 11:28:49 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B653640151;
+	Fri, 28 Aug 2026 11:33:37 +0200 (CEST)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id A62D040150
- for <dev@dpdk.org>; Fri, 28 Aug 2026 11:28:47 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id BCFF540150
+ for <dev@dpdk.org>; Fri, 28 Aug 2026 11:33:35 +0200 (CEST)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 8F8484BDD9; Fri, 28 Aug 2026 11:28:47 +0200 (CEST)
+ id 9F2DA4C987; Fri, 28 Aug 2026 11:33:35 +0200 (CEST)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/cryptodev Bug 1988] CCP session cipher configuration
+Subject: [DPDK/cryptodev Bug 1989] CN9K inline inbound IPsec HMAC SA creation
  out-of-bounds write
-Date: Fri, 28 Aug 2026 09:28:47 +0000
+Date: Fri, 28 Aug 2026 09:33:35 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -35,7 +35,7 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone bug_group
-Message-ID: <bug-1988-3@https.bugs.dpdk.org/>
+Message-ID: <bug-1989-3@https.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: https://bugs.dpdk.org/
@@ -55,10 +55,11 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1988
+https://bugs.dpdk.org/show_bug.cgi?id=3D1989
 
-            Bug ID: 1988
-           Summary: CCP session cipher configuration out-of-bounds write
+            Bug ID: 1989
+           Summary: CN9K inline inbound IPsec HMAC SA creation
+                    out-of-bounds write
            Product: DPDK
            Version: unspecified
           Hardware: All
@@ -75,67 +76,65 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D1988
 Report date: 2026-03-09
 Reported by: =E4=BE=AF=E6=9C=8B=E6=9C=8B <pengpeng@iscas.ac.cn>
 
+Hello DPDK Security Team,
+
+I would like to report a potential security vulnerability in DPDK affecting=
+ the
+CN9K inline inbound IPsec SA creation path.
+
 Project: DPDK
-Component: drivers/crypto/ccp
-Affected path: session cipher configuration in ccp_set_session_parameters()=
- /
-ccp_configure_session_cipher()
+Component: `drivers/common/cnxk` / CN9K inbound inline IPsec
+Affected path: inbound SA creation path leading to
+`cnxk_on_ipsec_inb_sa_create()`
 Tested current code: tested on the then-current main/master branch as of
 2026-03-08
 Affected versions: I have confirmed this on current head; I can provide
-additional version verification if useful
+additional version verification if useful.
 
-The issue appears to be an out-of-bounds write caused by copying a
-user-provided cipher key into a fixed-size in-struct buffer before validati=
-ng
-whether the key length is supported.
+The issue appears to be an out-of-bounds write caused by copying
+caller-provided HMAC keys into fixed-size in-struct arrays without enforcin=
+g an
+algorithm-appropriate upper bound in the CN9K inbound inline IPsec path.
 
-In the affected path, the code stores the requested key length and copies t=
-he
-key material first:
+Based on the current logic, the inbound SA creation code copies the provided
+authentication key into fixed internal fields for different HMAC variants. =
+The
+relevant destination layout includes adjacent live members, and the copy le=
+ngth
+is based on the provided key length.
 
-sess->cipher.key_length =3D cipher_xform->key.length;
-rte_memcpy(sess->cipher.key, cipher_xform->key.data,
-           cipher_xform->key.length);
-...
-if (sess->cipher.key_length =3D=3D 16) ...
-else if (sess->cipher.key_length =3D=3D 24) ...
-else if (sess->cipher.key_length =3D=3D 32) ...
-else {
-    return -1;
-}
-The relevant object layout in drivers/crypto/ccp/ccp_crypto.h includes adja=
-cent
-live fields:
+The relevant in-struct layout includes cases such as:
 
-uint8_t key[32];
-uint8_t key_ccp[32];
-phys_addr_t key_phys;
-uint8_t nonce[32];
-Based on this logic, a key longer than 32 bytes overwrites the adjacent key=
-_ccp
-member before the function rejects the key length.
+* `sha1_or_gcm.hmac_key[48]` followed by `selector`
+* `sha2.hmac_key[64]` followed by `hmac_iv[64]` and `selector`
+
+Based on this logic, if the provided key length exceeds the destination arr=
+ay
+size for the selected algorithm, the copy overwrites adjacent live fields
+inside the same object.
 
 Why I believe this is a real issue:
 
-* the key copy occurs before the supported-length validation
-* the destination is a fixed-size in-struct array
-* the first adjacent victim is a live semantic field (key_ccp)
-* the overwrite occurs even when the function later returns -1
+* the inbound CN9K path copies caller-provided authentication key material =
+into
+fixed-size in-struct arrays
+* the first adjacent victims are live semantic fields rather than padding
+* in the SHA1 HMAC case, the destination buffer is 48 bytes but a 64-byte k=
+ey
+can be copied
+* the overwrite occurs in a live inbound SA construction path
 
-My current local proof results are:
+My current local proof results for the SHA1 HMAC case are:
 
-distance_key_to_key_ccp =3D 32
-requested_key_len =3D 40
-returned =3D -1
-overflow_bytes_into_key_ccp =3D 8
-key_ccp_prefix_hex =3D 4242424242424242
+* `sha1_distance_to_selector =3D 48`
+* `sha1_key_len =3D 64`
+* `sha1_selector_prefix_hex =3D 4141414141414141`
 
-These results indicate that the first 8 bytes beyond key[32] overwrite the
-adjacent key_ccp field before the function reports invalid parameters.
+These results indicate that the bytes beyond `hmac_key[48]` overwrite the
+adjacent selector object with caller-controlled data.
 
 At a minimum, this appears capable of causing memory corruption, crash
-conditions, or corrupted crypto session state. I am not claiming code
+conditions, or corrupted inbound IPsec SA state. I am not claiming code
 execution.
 
 I would also like to be explicit about the current trust-boundary uncertain=
@@ -143,21 +142,26 @@ ty:
 I have confirmed the memory corruption condition locally, but I am not maki=
 ng a
 stronger claim about exploitability beyond the fact that this path copies
-caller-controlled key material before validation. If you would like, I can
-provide additional analysis regarding the most realistic attacker-controlled
-entry conditions in deployed environments.
+caller-controlled key material into fixed-size in-struct buffers without a
+sufficiently strict upper bound.
 
 Suggested remediation:
 
-* validate supported key lengths before copying into sess->cipher.key
-* add a hard upper-bound check before the copy, for example rejecting lengt=
-hs
-greater than sizeof(sess->cipher.key)
-* review similar =E9=88=A5=E6=B8=83opy before validate=E9=88=A5=EF=BF=BD pa=
-tterns in related crypto session
-setup paths
+* enforce explicit per-algorithm upper bounds before copying authentication
+keys
+* ensure the inbound CN9K path applies the same effective key-length
+constraints as the capability model and verification logic
+* review similar authentication-key copy paths in related CNXK IPsec setup =
+code
 
-Please credit the issue to: Pengpeng Hou
+I can provide the following in follow-up if helpful:
+
+* a minimal reproducer
+* local proof notes / output
+* exact tested revision details
+* a proposed patch
+
+Please credit the issue to: pengpeng@iscas.ac.cn
 Embargo preference: no special embargo requested
 
 --=20
