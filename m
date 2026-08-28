@@ -2,44 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA1A6C61DCB
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 03:24:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F32CDC61DB9
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 03:24:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4AD9140A7D;
-	Fri, 28 Aug 2026 05:24:33 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 56D7B40A89;
+	Fri, 28 Aug 2026 05:24:39 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 1AABC40A84
- for <dev@dpdk.org>; Fri, 28 Aug 2026 05:24:30 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 1620340A7A
+ for <dev@dpdk.org>; Fri, 28 Aug 2026 05:24:36 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowAD3+zlt_5BqJSJwBg--.6780S2;
- Fri, 28 Aug 2026 11:24:29 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowADn6jhz_5BqjSJwBg--.58283S2;
+ Fri, 28 Aug 2026 11:24:35 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org
-Subject: [PATCH v5 14/45] net/sxe2: fill MAC and queue counts in device info
-Date: Fri, 28 Aug 2026 11:24:28 +0800
-Message-ID: <20260828032428.2106128-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v5 15/45] net/sxe2: fix QinQ and RSS offload capability report
+Date: Fri, 28 Aug 2026 11:24:34 +0800
+Message-ID: <20260828032434.2106214-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260827024035.1432256-1-liujie5@linkdatatechnology.com>
 References: <20260827024035.1432256-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowAD3+zlt_5BqJSJwBg--.6780S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7JrWfZF4fWr45Cr1fKF4xXrb_yoWDAFX_uF
- 98Zry3CFy5ArZ5K34SkF4fZwnYyr18Wr4rX3WqqFWfZw15tF1fuw1qvFsrtFsrJr4UAFZI
- 9F13J34Sv390kjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
- 9fnUUIcSsGvfJTRUUUb7AYjsxI4VWxJwAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I
- 6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
- 8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0
- cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4
- A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
- 64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q6rW5McIj6I8E87Iv67AKxVW8JVWxJw
- Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lw4CEc2x0rVAKj4xxMxAIw28I
- cxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2
- IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0EwIxGrwCI
- 42IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42
- IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280
- aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8iSdDUUUUU==
+X-CM-TRANSID: rQCowADn6jhz_5BqjSJwBg--.58283S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWFWrXFy7Gw13XF48JrW3GFg_yoW5ZrWfpF
+ 4rJa4rJFs8tFySqwn5ua1xuF90kr1kKw4qkF43A34FyFyUJr17XFsrtFy3Aw12kry7X3ZY
+ qa43Z343C3WUGF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUkFb7Iv0xC_Zr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
+ 0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+ A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xII
+ jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I
+ 8E87Iv6xkF7I0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+ 0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Gr0_Cr
+ 1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4kE6xkIj40Ew7xC0wCF04k2
+ 0xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI
+ 8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vIr41l
+ IxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIx
+ AIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2
+ jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07j49a9UUUUU=
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -57,28 +57,84 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Fill max_mac_addrs, nb_rx_queues and nb_tx_queues in
-sxe2_dev_infos_get() so applications can query the maximum number of
-MAC addresses and the queue counts.
+Make the QINQ offload capabilities conditional on the port VLAN
+setting: only advertise RTE_ETH_TX_OFFLOAD_QINQ_INSERT,
+RTE_ETH_RX_OFFLOAD_QINQ_STRIP and RTE_ETH_RX_OFFLOAD_VLAN_FILTER
+when no port VLAN is configured. Advertise RTE_ETH_RX_OFFLOAD_RSS_HASH
+unconditionally and report the buffer split supported header ptypes
+count in sxe2_buffer_split_supported_hdr_ptypes_get().
 
+Fixes: a2b79a93515e ("net/sxe2: support L2 filtering and MAC config")
+Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_ethdev.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/sxe2/sxe2_ethdev.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index 02f9ce3d32..e85e34aa1a 100644
+index e85e34aa1a..7a11a93dff 100644
 --- a/drivers/net/sxe2/sxe2_ethdev.c
 +++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -792,6 +792,7 @@ static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev,
- 	dev_info->max_lro_pkt_size = SXE2_FRAME_SIZE_MAX * SXE2_RX_LRO_DESC_MAX_NUM;
- 	dev_info->max_mtu = dev_info->max_rx_pktlen - SXE2_ETH_OVERHEAD;
- 	dev_info->min_mtu = RTE_ETHER_MIN_MTU;
-+	dev_info->max_mac_addrs = SXE2_NUM_MACADDR_MAX;
+@@ -804,15 +804,11 @@ static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev,
+ 		RTE_ETH_RX_OFFLOAD_SCTP_CKSUM |
+ 		RTE_ETH_RX_OFFLOAD_OUTER_IPV4_CKSUM |
+ 		RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT |
+-#ifndef RTE_LIBRTE_SXE2_16BYTE_RX_DESC
+-		RTE_ETH_RX_OFFLOAD_QINQ_STRIP |
+-#endif
+ 		RTE_ETH_RX_OFFLOAD_VLAN_EXTEND |
+ 		RTE_ETH_RX_OFFLOAD_TCP_LRO;
  
- 	dev_info->rx_offload_capa =
- 		RTE_ETH_RX_OFFLOAD_VLAN_STRIP |
+ 	dev_info->tx_offload_capa =
+ 		RTE_ETH_TX_OFFLOAD_VLAN_INSERT |
+-		RTE_ETH_TX_OFFLOAD_QINQ_INSERT |
+ 		RTE_ETH_TX_OFFLOAD_MULTI_SEGS |
+ 		RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE |
+ 		RTE_ETH_TX_OFFLOAD_IPV4_CKSUM |
+@@ -855,14 +851,22 @@ static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev,
+ 		RTE_ETH_TX_OFFLOAD_GENEVE_TNL_TSO;
+ 
+ 
+-	if (adapter->cap_flags & SXE2_DEV_CAPS_OFFLOAD_PTP)
+-		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_TIMESTAMP;
+-
+ 	if (sxe2_ipsec_supported(adapter)) {
+ 		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_SECURITY;
+ 		dev_info->tx_offload_capa |= RTE_ETH_TX_OFFLOAD_SECURITY;
+ 	}
+ 
++	if (adapter->cap_flags & SXE2_DEV_CAPS_OFFLOAD_PTP)
++		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_TIMESTAMP;
++
++	if (!sxe2_dev_port_vlan_check(dev)) {
++		dev_info->tx_offload_capa |= RTE_ETH_TX_OFFLOAD_QINQ_INSERT;
++#ifndef RTE_LIBRTE_SXE2_16BYTE_RX_DESC
++		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_QINQ_STRIP;
++#endif
++		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_VLAN_FILTER;
++	}
++
+ 	if (adapter->cap_flags & SXE2_DEV_CAPS_OFFLOAD_RSS) {
+ 		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_RSS_HASH;
+ 		dev_info->flow_type_rss_offloads  |= SXE2_RSS_HF_SUPPORT_ALL;
+@@ -934,7 +938,7 @@ static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev,
+ 
+ static const uint32_t *
+ sxe2_buffer_split_supported_hdr_ptypes_get(struct rte_eth_dev *dev __rte_unused,
+-					   size_t *no_of_elements __rte_unused)
++					   size_t *no_of_elements)
+ {
+ 	static const uint32_t ptypes[] = {
+ 		RTE_PTYPE_L2_ETHER,
+@@ -972,6 +976,7 @@ sxe2_buffer_split_supported_hdr_ptypes_get(struct rte_eth_dev *dev __rte_unused,
+ 
+ 		RTE_PTYPE_UNKNOWN
+ 	};
++	*no_of_elements = RTE_DIM(ptypes) - 1;
+ 
+ 	return ptypes;
+ }
 -- 
 2.52.0
 
