@@ -2,48 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5948EC61DBD
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 04:45:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 522E6C61DBD
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 05:36:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2255640151;
-	Fri, 28 Aug 2026 06:45:49 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
- by mails.dpdk.org (Postfix) with ESMTP id BEE6F40150
- for <dev@dpdk.org>; Fri, 28 Aug 2026 06:45:47 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1E6A940150;
+	Fri, 28 Aug 2026 07:36:55 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+ by mails.dpdk.org (Postfix) with ESMTP id 18A554003C
+ for <dev@dpdk.org>; Fri, 28 Aug 2026 07:36:52 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1787892348; x=1819428348;
+ t=1787895413; x=1819431413;
  h=from:to:cc:subject:date:message-id:mime-version:
  content-transfer-encoding;
- bh=thBX8x3K1P0MFQzeDBl6J6TuI356OQtkRENA6Tq8yJk=;
- b=nFesj+F16YgP5agl/T+mXC61FC4e4I+5Vup5+Oh+VsEGph7XU7eLXxW5
- GIPHLbI0bOh6Jxb/Xn/R5AQe1kAYO7YkZloF4CtXNJk7GSnvLHOB9vL8e
- HsGRsbOwtgdnyPIt2Q8JG+dWfOwPpwBU5Huo+eDtZzdgrB8TR9XlhKXcQ
- MtnEsyodeFEuvz4ZJnAaXlidPVGkeahv3K+gtj3+cI5BaykU2YRsxsamo
- KrOmoGPAUP5fplr/XU50Trh49pPcfpJj0ZHEGtQzYWBenZooXB5FPF1C/
- 8bXimnRgHFh5PwoMvOVzIRKUWE31oKF9z5cPLo5C/+eOUPKaOYTHapBZk g==;
-X-CSE-ConnectionGUID: RQSy+6RRR8egeRhTaoSsFw==
-X-CSE-MsgGUID: lx/XSUL6RL+wgqOVOYyinw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11888"; a="99915187"
-X-IronPort-AV: E=Sophos;i="6.25,248,1779174000"; d="scan'208";a="99915187"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
- by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 Aug 2026 21:45:47 -0700
-X-CSE-ConnectionGUID: n6U/OteLR5q9rPFp1+hhdQ==
-X-CSE-MsgGUID: r1iJEWPXTxmj/TBhgkrj4w==
+ bh=65hAXoQJ85KmriqPWZ4hRoZcgT3S9AqUr8cA7t5dzHM=;
+ b=OSVNC5FJBaFeYJC+eOiLiolsN81Agv5P3OaKiaLnX/RO3Hix/rAZ8+ym
+ VcoCZhdZb8idqc7aIpwgujkYUAXtHvFKiceck9QIQDRiYpSlP1IELNqhg
+ lksV5JmKfS8vcjsP2e27zinA8EpoO2FNABi86SeBJuLUS9+M/Dw56SYsJ
+ cHzwH9Iv/SYgl8GbWyZe87aBwT7sEjQcLUSYAtrN92fzH/P91HhMZYMrx
+ 9zMJ/bIbbgwsvUN9wQPexhnyDpPoHaTHXMEXRYH/z4fJ4d3UcHe20FR3R
+ BIOmXB2Ey08o+pcsWKq5MkYgRe96BhMrfx+RcKuPr1BgVluv3j/jPDMDy g==;
+X-CSE-ConnectionGUID: 0z8w3WkjQQm0Uw8M42I0yQ==
+X-CSE-MsgGUID: Up11YUZ0QAinTm28B2nDOQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11888"; a="88425711"
+X-IronPort-AV: E=Sophos;i="6.25,248,1779174000"; d="scan'208";a="88425711"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+ by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 27 Aug 2026 22:36:51 -0700
+X-CSE-ConnectionGUID: FgXBNTZmSQ2A/Q9+v2hOfw==
+X-CSE-MsgGUID: aiL4XiyoS+GkhotbGf2NfA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,248,1779174000"; d="scan'208";a="297954085"
-Received: from spr4.iind.intel.com ([10.138.182.75])
- by orviesa002.jf.intel.com with ESMTP; 27 Aug 2026 21:45:45 -0700
-From: Atul Patel <atul.patel@intel.com>
-To: bruce.richardson@intel.com,
-	aman.deep.singh@intel.com
-Cc: dev@dpdk.org, praveen.shetty@intel.com, atul.patel@intel.com,
- dhananjay.shukla@intel.com
-Subject: [PATCH] net/cpfl: fix VF ID calculation for vCPF
-Date: Fri, 28 Aug 2026 02:52:16 +0530
-Message-Id: <20260827212216.765057-1-atul.patel@intel.com>
-X-Mailer: git-send-email 2.34.1
+X-IronPort-AV: E=Sophos;i="6.25,248,1779174000"; d="scan'208";a="267477063"
+Received: from unknown (HELO gnrd02..) ([10.190.212.69])
+ by orviesa008.jf.intel.com with ESMTP; 27 Aug 2026 22:36:50 -0700
+From: Prudvi Deti <prudvi.deti@intel.com>
+To: dev@dpdk.org
+Cc: bruce.richardson@intel.com, orika@nvidia.com, nirint.shah@intel.com,
+ prudvi.deti@intel.com
+Subject: [RFC 0/7] regex/hs: introduce Hyperscan regex PMD
+Date: Fri, 28 Aug 2026 11:05:49 +0530
+Message-ID: <20260828053629.1224611-1-prudvi.deti@intel.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -59,56 +58,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The VF ID was incorrectly set to only the PCI function number,
-which fails when VFs span multiple PCI devices (device IDs > 0).
-Calculate the VF ID as (device_id * 8) + function to correctly
-map VFs across devices.
+This RFC series adds a new regexdev PMD based on Hyperscan.
 
-Fixes: f1ab44fb0ebf ("net/cpfl: add vCPF port info")
+Goal: provide a software regex PMD for environments without regex HW,
+while keeping compatibility with the standard ``rte_regexdev`` API.
+The PMD is a virtual device, created with ``--vdev=regex_hs`` at EAL
+init.
 
-Signed-off-by: Praveen Shetty <praveen.shetty@intel.com>
-Signed-off-by: Atul Patel <atul.patel@intel.com>
-Signed-off-by: Dhananjay Shukla <dhananjay.shukla@intel.com>
----
- drivers/net/intel/cpfl/cpfl_ethdev.c |  3 ++-
- drivers/net/intel/cpfl/cpfl_ethdev.h | 10 ++++++++++
- 2 files changed, 12 insertions(+), 1 deletion(-)
+The series introduces:
+- a new vdev driver under ``drivers/regex/hs``
+- device and queue pair configuration, start/stop/close lifecycle,
+  and device dump support
+- rule database update, compile+activate, import/export of serialized
+  Hyperscan databases
+- enqueue/dequeue burst paths with per-queue-pair scratch usage and
+  per-queue-pair extended statistics (enqueued/dequeued/matches)
+- PMD-private rule flag mappings for common Hyperscan compile options
+  (singlematch, prefilter, SOM-leftmost, combination, quiet)
 
-diff --git a/drivers/net/intel/cpfl/cpfl_ethdev.c b/drivers/net/intel/cpfl/cpfl_ethdev.c
-index 4315adb68c..01e1b57cc8 100644
---- a/drivers/net/intel/cpfl/cpfl_ethdev.c
-+++ b/drivers/net/intel/cpfl/cpfl_ethdev.c
-@@ -2839,7 +2839,8 @@ cpfl_dev_vport_init(struct rte_eth_dev *dev, void *init_params)
- 		pci_dev = RTE_CLASS_TO_BUS_DEVICE(dev, *pci_dev);
- 		vi.func_type = VCPF_CPCHNL2_FTYPE_LAN_VF;
- 		vi.pf_id = CPFL_HOST0_CPF_ID;
--		vi.vf_id = pci_dev->addr.function;
-+		vi.vf_id = VCPF_VF_ID_FROM_PCI(pci_dev->addr.devid,
-+						pci_dev->addr.function);
- 
- 		v_id.vport_id = cpfl_vport->base.vport_info.info.vport_id;
- 		v_id.vport_type = cpfl_vport->base.vport_info.info.vport_type;
-diff --git a/drivers/net/intel/cpfl/cpfl_ethdev.h b/drivers/net/intel/cpfl/cpfl_ethdev.h
-index d41aa93191..97ec128128 100644
---- a/drivers/net/intel/cpfl/cpfl_ethdev.h
-+++ b/drivers/net/intel/cpfl/cpfl_ethdev.h
-@@ -103,6 +103,16 @@
- 	((((type) & 0x3) << 14) + (((host_id) & 0x1) << 13) +	\
- 	 (((pf_id) & 0x1) << 12) + ((vf_id) & 0xfff))
- 
-+/* Max VFs per PCI device (functions 0-7) */
-+#define VCPF_VFS_PER_PCI_DEV	8
-+
-+/* Calculate VF ID from PCI device and function IDs.
-+ * VFs span multiple PCI devices, e.g.:
-+ *   device 0: VF 0-7, device 1: VF 8-15, etc.
-+ */
-+#define VCPF_VF_ID_FROM_PCI(device_id, function) \
-+	(((device_id) * VCPF_VFS_PER_PCI_DEV) + (function))
-+
- struct cpfl_vport_param {
- 	struct cpfl_adapter_ext *adapter;
- 	uint16_t devarg_id; /* arg id from user */
+Behavior notes relevant for review:
+- per-op match counters are bounded by API field width
+  (``nb_matches``/``nb_actual_matches`` are ``uint16_t``)
+- payload size exposed through regexdev is ``max_payload_size = 65535``
+  bytes, while Hyperscan block mode itself supports larger scan buffers
+- queue pairs are intended for single-thread ownership (SPSC model)
+  with dedicated scratch per queue pair
+
+Documentation, feature matrix integration, meson integration, and
+maintainers metadata are included.
+
+Prudvi Deti (7):
+  regex/hs: add driver skeleton and build integration
+  regex/hs: add device configure and queue pair setup
+  regex/hs: add rule database update and compilation
+  regex/hs: add enqueue and dequeue burst paths
+  regex/hs: add per-queue-pair extended statistics
+  regex/hs: add start stop close and device dump
+  regex/hs: add Hyperscan compile flag support
+
+ .mailmap                               |    1 +
+ MAINTAINERS                            |    6 +
+ doc/guides/regexdevs/features/hs.ini   |    8 +
+ doc/guides/regexdevs/hs.rst            |  158 +++
+ doc/guides/regexdevs/index.rst         |    1 +
+ doc/guides/rel_notes/release_26_11.rst |    7 +
+ drivers/regex/hs/hs_regex.c            | 1342 ++++++++++++++++++++++++
+ drivers/regex/hs/hs_regex.h            |   89 ++
+ drivers/regex/hs/meson.build           |   19 +
+ drivers/regex/meson.build              |    1 +
+ 10 files changed, 1632 insertions(+)
+ create mode 100644 doc/guides/regexdevs/features/hs.ini
+ create mode 100644 doc/guides/regexdevs/hs.rst
+ create mode 100644 drivers/regex/hs/hs_regex.c
+ create mode 100644 drivers/regex/hs/hs_regex.h
+ create mode 100644 drivers/regex/hs/meson.build
+
 -- 
-2.34.1
+2.43.0
 
