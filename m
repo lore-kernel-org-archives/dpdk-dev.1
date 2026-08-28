@@ -2,44 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3651DC61DC4
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 03:24:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56E6DC61DC4
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 03:24:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 51A2240A73;
-	Fri, 28 Aug 2026 05:24:22 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4A55640A7F;
+	Fri, 28 Aug 2026 05:24:27 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 67EC540A72
- for <dev@dpdk.org>; Fri, 28 Aug 2026 05:24:20 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id D27FA40A80
+ for <dev@dpdk.org>; Fri, 28 Aug 2026 05:24:24 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowAAXHz1h_5BqNyFwBg--.50991S2;
- Fri, 28 Aug 2026 11:24:17 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowABXXDpn_5BquSFwBg--.2079S2;
+ Fri, 28 Aug 2026 11:24:23 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org
-Subject: [PATCH v5 12/45] net/sxe2: clean up duplicate function declarations
-Date: Fri, 28 Aug 2026 11:24:16 +0800
-Message-ID: <20260828032416.2105912-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v5 13/45] net/sxe2: fix null VSI dereference in device info
+Date: Fri, 28 Aug 2026 11:24:22 +0800
+Message-ID: <20260828032422.2106021-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260827024035.1432256-1-liujie5@linkdatatechnology.com>
 References: <20260827024035.1432256-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowAAXHz1h_5BqNyFwBg--.50991S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAFW7AF1UAr48XrWfAry7ZFb_yoW5tF13pF
- 48Xry5AFWYqF18ur4UJa1fuFyagrW8tryj9FZ8W34FkayDZFZFvFy5tF1Fy3WrC34DGwna
- yanrXa1DG3yrXrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUkFb7Iv0xC_Cr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
- 0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
- A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xII
- jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I
- 8E87Iv6xkF7I0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
- 0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Gr0_Cr
- 1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4kE6xkIj40Ew7xC0wCF04k2
- 0xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI
- 8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vIr41l
- IxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIx
- AIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2
- jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jzBT5UUUUU=
+X-CM-TRANSID: rQCowABXXDpn_5BquSFwBg--.2079S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7JrWfKF1UXrWruw4DWrWUtwb_yoWktwb_CF
+ Z5Zr13CFyrAr95K34I9F4fZr9Y9rWUXrs3ZF9IqFWfZF13Xr1a93s0vrZFyFs2gayUAFZr
+ JF18GF1fGrZ8CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+ 9fnUUIcSsGvfJTRUUUb7AYjsxI4VWxJwAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I
+ 6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+ 8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0
+ cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4
+ A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+ 64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q6rW5McIj6I8E87Iv67AKxVW8JVWxJw
+ Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lw4CEc2x0rVAKj4xxMxAIw28I
+ cxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2
+ IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0EwIxGrwCI
+ 42IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42
+ IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280
+ aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8iSdDUUUUU==
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -57,77 +57,35 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Remove duplicate function declarations from the sxe2 driver headers:
-- sxe2_drv_promisc_config, sxe2_drv_vsi_info_get and
-  sxe2_drv_rxq_mapping_set in sxe2_cmd_chnl.h
-- sxe2_dev_pci_seg_unmap in sxe2_ethdev.h
-- sxe2_rx_pkts_scattered in sxe2_txrx_poll.h
+sxe2_dev_infos_get() dereferences adapter->vsi_ctxt.main_vsi without
+checking for NULL, which can crash when the main VSI has not been
+created yet.
 
+Add an early NULL check on vsi and return -EINVAL.
+
+Fixes: d8e4e075acb4 ("net/sxe2: add probing skeleton")
+Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_cmd_chnl.h  | 6 ------
- drivers/net/sxe2/sxe2_ethdev.h    | 2 --
- drivers/net/sxe2/sxe2_txrx_poll.h | 2 --
- 3 files changed, 10 deletions(-)
+ drivers/net/sxe2/sxe2_ethdev.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.h b/drivers/net/sxe2/sxe2_cmd_chnl.h
-index d63caad526..294ac15db4 100644
---- a/drivers/net/sxe2/sxe2_cmd_chnl.h
-+++ b/drivers/net/sxe2/sxe2_cmd_chnl.h
-@@ -65,8 +65,6 @@ int32_t sxe2_drv_ipsec_rxsa_delete(struct sxe2_adapter *adapter,
- int32_t sxe2_drv_ipsec_txsa_delete(struct sxe2_adapter *adapter,
- 			       uint16_t sa_id);
+diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
+index 2e14c372f8..02f9ce3d32 100644
+--- a/drivers/net/sxe2/sxe2_ethdev.c
++++ b/drivers/net/sxe2/sxe2_ethdev.c
+@@ -781,6 +781,10 @@ static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev,
+ 	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
+ 	struct sxe2_vsi *vsi = adapter->vsi_ctxt.main_vsi;
  
--int32_t sxe2_drv_promisc_config(struct sxe2_adapter *adapter, bool set);
--
- int32_t sxe2_drv_udp_tunnel_add(struct sxe2_adapter *adapter,
- 			    enum sxe2_udp_tunnel_protocol tunnel_proto,
- 			    uint16_t udp_port);
-@@ -84,8 +82,6 @@ int32_t sxe2_drv_get_udp_tunnel_port(struct sxe2_adapter *adapter,
- 
- int32_t sxe2_drv_vsi_info_get(struct sxe2_adapter *adapter, struct sxe2_vsi *vsi);
- 
--int32_t sxe2_drv_vsi_info_get(struct sxe2_adapter *adapter, struct sxe2_vsi *vsi);
--
- int32_t sxe2_drv_mac_link_status_get(struct sxe2_adapter *adapter);
- 
- int32_t sxe2_drv_get_mac_stats(struct sxe2_adapter *adapter);
-@@ -110,8 +106,6 @@ int32_t sxe2_drv_mapping_reset(struct rte_eth_dev *eth_dev);
- 
- int32_t sxe2_drv_mapping_stats_info_clear(struct rte_eth_dev *eth_dev);
- 
--int32_t sxe2_drv_rxq_mapping_set(struct rte_eth_dev *eth_dev, uint16_t queue_id, uint8_t pool_idx);
--
- int32_t sxe2_drv_allmulti_config(struct sxe2_adapter *adapter, bool set);
- 
- int32_t sxe2_drv_uc_config(struct sxe2_adapter *adapter, struct rte_ether_addr *addr, bool add);
-diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
-index 158198d74b..1409be74d3 100644
---- a/drivers/net/sxe2/sxe2_ethdev.h
-+++ b/drivers/net/sxe2/sxe2_ethdev.h
-@@ -385,8 +385,6 @@ void sxe2_dev_pci_seg_unmap(struct sxe2_adapter *adapter, uint32_t res_type);
- 
- int32_t sxe2_dev_pci_map_init(struct rte_eth_dev *dev);
- 
--void sxe2_dev_pci_seg_unmap(struct sxe2_adapter *adapter, uint32_t res_type);
--
- int32_t sxe2_udp_tunnel_port_del_common(struct sxe2_adapter *ad,
- 		enum sxe2_udp_tunnel_protocol tunnel_proto, uint16_t udp_port);
- 
-diff --git a/drivers/net/sxe2/sxe2_txrx_poll.h b/drivers/net/sxe2/sxe2_txrx_poll.h
-index 708e3839d7..bfa099c097 100644
---- a/drivers/net/sxe2/sxe2_txrx_poll.h
-+++ b/drivers/net/sxe2/sxe2_txrx_poll.h
-@@ -13,8 +13,6 @@ uint16_t sxe2_tx_pkts_simple(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t
- 
- uint16_t sxe2_rx_pkts_scattered(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
- 
--uint16_t sxe2_rx_pkts_scattered(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
--
- uint16_t sxe2_rx_pkts_scattered_split(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
- 
- #endif /* SXE2_TXRX_POLL_H */
++	if (unlikely(vsi == NULL)) {
++		PMD_LOG_ERR(INIT, "main vsi is NULL");
++		return -EINVAL;
++	}
+ 	dev_info->max_rx_queues = vsi->rxqs.q_cnt;
+ 	dev_info->max_tx_queues = vsi->txqs.q_cnt;
+ 	dev_info->min_rx_bufsize = SXE2_MIN_BUF_SIZE;
 -- 
 2.52.0
 
