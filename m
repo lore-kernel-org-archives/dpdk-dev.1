@@ -2,20 +2,20 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF394C61DBD
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 10:23:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0097C61DB9
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 10:27:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A444840151;
-	Fri, 28 Aug 2026 12:23:13 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D14F640151;
+	Fri, 28 Aug 2026 12:27:20 +0200 (CEST)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 9BA4140150
- for <dev@dpdk.org>; Fri, 28 Aug 2026 12:23:12 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 74D7C40150
+ for <dev@dpdk.org>; Fri, 28 Aug 2026 12:27:19 +0200 (CEST)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 880EF4C54D; Fri, 28 Aug 2026 12:23:12 +0200 (CEST)
+ id 5C22D4CF73; Fri, 28 Aug 2026 12:27:19 +0200 (CEST)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/cryptodev Bug 1994] CN10K inline inbound AES-GMAC key overflow
-Date: Fri, 28 Aug 2026 10:23:12 +0000
+Subject: [DPDK/cryptodev Bug 1995] CN10K inline IPsec 3DES keys overflow
+Date: Fri, 28 Aug 2026 10:27:19 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -34,7 +34,7 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone bug_group
-Message-ID: <bug-1994-3@https.bugs.dpdk.org/>
+Message-ID: <bug-1995-3@https.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: https://bugs.dpdk.org/
@@ -54,10 +54,10 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D1994
+https://bugs.dpdk.org/show_bug.cgi?id=3D1995
 
-            Bug ID: 1994
-           Summary: CN10K inline inbound AES-GMAC key overflow
+            Bug ID: 1995
+           Summary: CN10K inline IPsec 3DES keys overflow
            Product: DPDK
            Version: unspecified
           Hardware: All
@@ -77,72 +77,84 @@ Reported by: =E4=BE=AF=E6=9C=8B=E6=9C=8B <pengpeng@iscas.ac.cn>
 Hello DPDK maintainers,
 
 
-I would like to report what appears to be a real current-head intra-object
-overflow in the `cn10k` inline inbound IPsec path for `AES_GMAC`. I recheck=
-ed
-current `main` (`8dc80afda7a52a1bd28088fe34102e7c1ba17282`) on 2026-03-10
-before writing this report.
+I am reporting what looks like a real current-head intra-object overflow in=
+ the
+`cn10k` inline-IPsec Ethernet security path. I rechecked current `main`
+(`8dc80afda7a52a1bd28088fe34102e7c1ba17282`) on 2026-03-10 before writing t=
+his
+mail.
 
 
-The relevant current-head path is:
+The important point is that the public DPDK security API forwards the
+configuration directly into the driver callback:
 
 
 ```c
-cn10k_eth_sec_session_create(...)
-{
-    ...
-    rc =3D cnxk_ot_ipsec_inb_sa_fill(inb_sa_dptr, ipsec, crypto, 0);
-    ...
+if (instance->ops->session_create(instance->device, conf, sess)) {
+    rte_mempool_put(mp, (void *)sess);
+    return NULL;
 }
 ```
 
 
-and the update path reaches the same helper as well.
-
-
-The problem is the order of operations in the shared helper. For `AES_GMAC`=
-, it
-first selects the auth key, then copies it into a fixed field, and only
-afterwards validates whether the AES-family key length is one of `16/24/32`:
+For `cn10k`, the inline Ethernet path then goes straight into the SA fill
+helpers:
 
 
 ```c
-case RTE_CRYPTO_AUTH_AES_GMAC:
-    w2->s.auth_type =3D ROC_IE_SA_AUTH_AES_GMAC;
-    key =3D auth_xfrm->auth.key.data;
-    length =3D auth_xfrm->auth.key.length;
-    ...
+rc =3D cnxk_ot_ipsec_outb_sa_fill(outb_sa_dptr, ipsec, crypto, 0);
+...
+rc =3D cnxk_ot_ipsec_outb_sa_fill(outb_sa_dptr, ipsec, crypto, 0);
+```
+
+
+and does not first call `cnxk_ipsec_xform_verify()`.
+
+
+In the shared helper, `3DES` is accepted by setting `enc_type`, but there i=
+s no
+exact `=3D=3D 24` runtime check before the copy:
+
+
+```c
+case RTE_CRYPTO_CIPHER_3DES_CBC:
+    w2->s.enc_type =3D ROC_IE_SA_ENC_3DES_CBC;
     break;
+...
+key =3D cipher_xfrm->cipher.key.data;
+length =3D cipher_xfrm->cipher.key.length;
 ...
 if (key !=3D NULL && length !=3D 0) {
     memcpy(cipher_key, key, length);
-}
-...
-switch (length) {
-case 16:
-case 24:
-case 32:
-    break;
-default:
-    return -EINVAL;
+    ...
 }
 ```
 
 
-The destination object on this inbound `cn10k` path is:
+The capability table for this same path advertises `3DES` as exact-size onl=
+y:
 
 
 ```c
-struct roc_ot_ipsec_inb_sa {
+.key_size =3D {
+    .min =3D 24,
+    .max =3D 24,
+    .increment =3D 0
+},
+```
+
+
+But the runtime inline path above does not enforce that before the copy.
+
+
+The destination object is:
+
+
+```c
+struct roc_ot_ipsec_outb_sa {
     ...
     uint8_t cipher_key[ROC_CTX_MAX_CKEY_LEN];
-    union {
-        struct {
-            uint32_t rsvd8;
-            uint8_t salt[4];
-        } s;
-        uint64_t u64;
-    } w8;
+    union roc_ot_ipsec_outb_iv iv;
     ...
 };
 ```
@@ -151,56 +163,52 @@ struct roc_ot_ipsec_inb_sa {
 with `ROC_CTX_MAX_CKEY_LEN =3D=3D 32`.
 
 
-So a `40`-byte `AES_GMAC` key does this before the function returns `-EINVA=
-L`:
+So any `3DES` key longer than `32` bytes writes through `cipher_key[32]` and
+into the adjacent live `iv`.
 
 
-- bytes `0..31` fill `cipher_key[32]`
-- bytes `32..39` overwrite adjacent `w8`
-- bytes `36..39` overwrite the live `salt[4]`
+The cleanest current-head case is a `40`-byte `RTE_CRYPTO_CIPHER_3DES_CBC` =
+key:
 
 
-Why I think this is a real bug even though the helper later rejects the key:
+- first `32` bytes fill `cipher_key`
+- next `8` bytes overwrite the beginning of `iv`
+- the helper still returns `0`
+- the session-create path proceeds with SA installation
 
 
-- the overwrite happens first, then the error is returned
-- the DPDK security-session contract expects invalid inputs to be rejected
-safely
-- the overwritten bytes are in a real adjacent live member, not padding or =
-tail
-allocation
-- the path is a current-head production inline session-create / update path
+This is why I think this is a strong bug:
 
 
-The local proof results for the narrow `40`-byte case are:
+- the caller chain is current-head and production, not test code
+- the exact-size constraint is published by the driver itself
+- the runtime path bypasses the verifier that would have enforced it
+- the sink writes attacker-controlled data into a fixed in-object array
+- the overwrite reaches a live adjacent member and the path still succeeds
 
 
-- `distance_cipher_key_to_w8=3D32`
-- `distance_cipher_key_to_salt=3D36`
-- `advertised_aes_gmac_key_max=3D32`
+I also prepared a local proof mirroring the current-head layout and write
+order. The key outputs are:
+
+
+- `distance_cipher_key_to_iv=3D32`
+- `advertised_3des_key_max=3D24`
 - `provided_key_len=3D40`
-- `returned=3D-22`
-- `overflow_bytes_into_w8=3D8`
-- `overflow_bytes_into_salt=3D4`
-- `w8_u64_hex=3D4242424242424242`
-- `salt_prefix_hex=3D42424242`
+- `returned=3D0`
+- `overflow_bytes_into_iv=3D8`
+- `iv_prefix_hex=3D4242424242424242`
 - `guard_unchanged=3D1`
 
 
-That is enough to show controlled corruption of the adjacent `w8/salt` memb=
-er
-before the helper reports failure.
-
-
 Suggested fix:
-1. Validate `AES_GMAC` key length before the copy on the inline `cn10k` pat=
-h.
-2. Add a local bound such as `if (length > sizeof(cipher_key)) return -EINV=
-AL;`
-before `memcpy(cipher_key, key, length)`.
-3. Reuse the same crypto-length verification logic across inline and non-in=
-line
-`cnxk` IPsec paths.
+1. Enforce exact `3DES` length before `cnxk_ot_ipsec_*_sa_fill()` is reache=
+d on
+the inline path.
+2. Add a local `length <=3D sizeof(cipher_key)` guard inside the helper bef=
+ore
+`memcpy()`.
+3. Reuse the same xform verification logic on this inline path that already
+exists elsewhere in the `cnxk` IPsec stack.
 
 --=20
 You are receiving this mail because:
