@@ -2,44 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 606EDC61DB9
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 03:23:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A203EC61DB9
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 03:23:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B674540653;
-	Fri, 28 Aug 2026 05:23:48 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A56074068E;
+	Fri, 28 Aug 2026 05:23:50 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 42D284003C
- for <dev@dpdk.org>; Fri, 28 Aug 2026 05:23:47 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id D566A40682
+ for <dev@dpdk.org>; Fri, 28 Aug 2026 05:23:48 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowACnrjw9_5Bq8R5wBg--.11627S2;
- Fri, 28 Aug 2026 11:23:41 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowADn7DpD_5BqWB9wBg--.55404S2;
+ Fri, 28 Aug 2026 11:23:47 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org
-Subject: [PATCH v5 06/45] net/sxe2: fix VSI lifecycle management
-Date: Fri, 28 Aug 2026 11:23:40 +0800
-Message-ID: <20260828032340.2104930-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v5 07/45] net/sxe2: initialize stats in representor device init
+Date: Fri, 28 Aug 2026 11:23:46 +0800
+Message-ID: <20260828032346.2104988-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260827024035.1432256-1-liujie5@linkdatatechnology.com>
 References: <20260827024035.1432256-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowACnrjw9_5Bq8R5wBg--.11627S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr1rXF18tF1xAFy8Kw4UArb_yoW8tw4Upr
- s3Zr1FqF40qFn0k3y7Jw1rZF15KFWrtry093WF9w1fJasrJ345Cas5Xr1rG3WxCw4kXwn3
- Aan7W34UJrn5CFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUkFb7Iv0xC_Zr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
- 0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
- A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
- jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I
- 8E87Iv6xkF7I0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
- 0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Jr0_Gr
- 1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4kE6xkIj40Ew7xC0wCF04k2
- 0xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI
- 8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vIr41l
- IxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIx
- AIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2
- jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jrPEfUUUUU=
+X-CM-TRANSID: rQCowADn7DpD_5BqWB9wBg--.55404S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7JrWfAr1rAw45ZFyUAr4rAFb_yoWkGFX_Cr
+ 1Yvr9xArW0k3W5tryI9r4rZryvkrWkXrn7CFZIqFWUZwsaq34xAw1FqF9Fgws7Wr13ArZr
+ uF43Zw18Kw13WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+ 9fnUUIcSsGvfJTRUUUb7AYjsxI4VWxJwAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I
+ 6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+ 8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0
+ cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4
+ A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+ 64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVWUJVW8Jw
+ Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lw4CEc2x0rVAKj4xxMxAIw28I
+ cxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2
+ IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0EwIxGrwCI
+ 42IY6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42
+ IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280
+ aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8gBMtUUUUU==
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -57,69 +57,38 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Fix several VSI create/destroy issues introduced by VF representor
-support:
+Add sxe2_stats_init() call in sxe2_repr_dev_init to set up the
+statistics infrastructure for representor devices, and add the
+l_init_irq_ctxt_err error path to uninitialize the software irq
+context if stats initialization fails.
 
-- Initialize other_vsi_list with TAILQ_INIT in sxe2_vsi_init before
-  any VSI is inserted into it.
-- Treat -EPERM as a non-fatal error when destroying VSIs, since the
-  kernel may have already removed the VSI.
-- Set main_vsi to NULL after destroy/free to avoid a dangling pointer
-  if the VSI is destroyed again.
-
-Fixes: 635084db5d57 ("net/sxe2: support VF representors")
-Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_vsi.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/net/sxe2/sxe2_ethdev_repr.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/net/sxe2/sxe2_vsi.c b/drivers/net/sxe2/sxe2_vsi.c
-index d29480b931..dea3f58997 100644
---- a/drivers/net/sxe2/sxe2_vsi.c
-+++ b/drivers/net/sxe2/sxe2_vsi.c
-@@ -131,6 +131,8 @@ static int32_t sxe2_vsi_destroy(struct sxe2_adapter *adapter, struct sxe2_vsi *v
+diff --git a/drivers/net/sxe2/sxe2_ethdev_repr.c b/drivers/net/sxe2/sxe2_ethdev_repr.c
+index f32318b731..c698baafe0 100644
+--- a/drivers/net/sxe2/sxe2_ethdev_repr.c
++++ b/drivers/net/sxe2/sxe2_ethdev_repr.c
+@@ -483,8 +483,16 @@ int32_t sxe2_repr_dev_init(struct rte_eth_dev *dev,
+ 		goto l_init_sw_err;
  	}
  
- l_free:
-+	if (vsi->vsi_type == SXE2_VSI_T_DPDK_ESW)
-+		TAILQ_REMOVE(&adapter->vsi_ctxt.other_vsi_list, vsi, next);
- 	rte_free(vsi);
- 	vsi = NULL;
++	ret = sxe2_stats_init(dev);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "Failed to initialize stats, ret=[%d]", ret);
++		goto l_init_irq_ctxt_err;
++	}
++
+ 	goto l_end;
  
-@@ -230,7 +232,7 @@ int32_t sxe2_vsi_init(struct rte_eth_dev *dev)
- 	uint16_t srcvsi_cnt;
- 
- 	PMD_INIT_FUNC_TRACE();
--
-+	TAILQ_INIT(&adapter->vsi_ctxt.other_vsi_list);
- 	ret = sxe2_main_vsi_create(adapter);
- 	if (ret) {
- 		PMD_LOG_ERR(DRV, "Failed to create main VSI, ret=%d", ret);
-@@ -283,13 +285,14 @@ void sxe2_vsi_uninit(struct rte_eth_dev *dev)
- 
- l_free:
- 	ret = sxe2_vsi_destroy(adapter, adapter->vsi_ctxt.main_vsi);
--	if (ret) {
-+	if (ret && ret != -EPERM) {
- 		PMD_LOG_ERR(DRV, "Failed to del vsi from fw, ret=%d", ret);
- 		goto l_end;
- 	}
-+	adapter->vsi_ctxt.main_vsi = NULL;
- 	RTE_TAILQ_FOREACH_SAFE(var, &adapter->vsi_ctxt.other_vsi_list, next, tvar) {
- 		ret = sxe2_vsi_destroy(adapter, var);
--		if (ret) {
-+		if (ret && ret != -EPERM) {
- 			PMD_LOG_ERR(DRV, "Failed to del vsi from fw, ret=%d", ret);
- 			break;
- 		}
-@@ -357,4 +360,5 @@ void sxe2_vsi_repr_main_vsi_destroy(struct rte_eth_dev *dev)
- 	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
- 
- 	sxe2_vsi_node_free(adapter->vsi_ctxt.main_vsi);
-+	adapter->vsi_ctxt.main_vsi = NULL;
- }
++l_init_irq_ctxt_err:
++	sxe2_sw_irq_ctxt_uninit(dev);
+ l_init_sw_err:
+ 	sxe2_eth_uinit(dev);
+ l_init_eth_err:
 -- 
 2.52.0
 
