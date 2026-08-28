@@ -2,50 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5049DC61DBD
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 05:37:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BF81C61DB9
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 05:37:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 48F3740696;
-	Fri, 28 Aug 2026 07:37:22 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3D980402BB;
+	Fri, 28 Aug 2026 07:37:27 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id 3D6BB40279
- for <dev@dpdk.org>; Fri, 28 Aug 2026 07:37:20 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5911040695
+ for <dev@dpdk.org>; Fri, 28 Aug 2026 07:37:24 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1787895440; x=1819431440;
+ t=1787895445; x=1819431445;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=ZlByxfcBvfwAL/bVNmZ5fQNZCsW8ukdilKAT11gs7xg=;
- b=GIgzlcshi/qbUyBDS6ONB8w/3JkjFrkeOO2TUnKMu8EnVmUU/hjITqtk
- EkmfQqhvTNZ+5i2rfa1bMx+JsTPJkOh1a3ZsvliWDB8V3Pk4DPz2B3E9r
- zSngvIliCUZYbZmcZEhZ5OQuLKmSCB9dyUzj86xUQvAt4w57ZKNfLmxYS
- jJNUBMrH5Ca5Lp7XwXbTKYO7RM2p0gRVVfdU3sh740uA5sSThCOVbJOiE
- 4lLZeZ97Jn5+mE7fY5weY7ubVS9BGC3Nps+lJE1R/1uM/FP61o8yJw+QL
- +zItYXheEpD37gZyM2jyRyvw2qUOGaGKg3HaFcMTXIypYBZOWJb/rPKzU w==;
-X-CSE-ConnectionGUID: 6CrAf00OS8iSUJLaFMBLRQ==
-X-CSE-MsgGUID: pdAwhtS4TPSS/QUbjeBeXA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11888"; a="88425735"
-X-IronPort-AV: E=Sophos;i="6.25,248,1779174000"; d="scan'208";a="88425735"
+ bh=Pc6vCdCN3D08fYeaUKxpNL+6njhljQx3kjr+hQOwzfk=;
+ b=CxGdomaDCnO8QwiDPIxtFy53jTNYhoY9Ddfbmgq+5uAh1n3C90xDF6LQ
+ TL4Zv+JW0HDRPuAi1E9KQf5RauRhDA2UOkW4R/ZshgnkX0h5TXhxj/Sc6
+ tGPu3fAS1Q2LCsRWc+oY9+hbHpr82ixoJeDRkdOLIVukhPLU4XNU1Ydii
+ c0AsvFyEHZWSJeD5uCwLeqccMFap+lsQaBbI1hAuNee9VlbFBmyIsKICL
+ F7T55nndlFNpXJa5uryZEcg8gLpMdpsUcXJTVgG+r3zoiKfCY7VgjgeLg
+ feICv5Ej245M8vpHU6Tx+PJJB4c6mNAHKQfgeDOeqe5EnN6HW3HNizcr0 g==;
+X-CSE-ConnectionGUID: tpZn/xXeS56mNjCEQwzJoQ==
+X-CSE-MsgGUID: UCTsNtXZTQCBDeo6/VKO5Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11888"; a="88425737"
+X-IronPort-AV: E=Sophos;i="6.25,248,1779174000"; d="scan'208";a="88425737"
 Received: from orviesa008.jf.intel.com ([10.64.159.148])
  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 Aug 2026 22:37:20 -0700
-X-CSE-ConnectionGUID: CA6QIsMFRBW8XoFgv8HdkA==
-X-CSE-MsgGUID: 1i3Tai6xRD+IhcN4TCHwYw==
+ 27 Aug 2026 22:37:24 -0700
+X-CSE-ConnectionGUID: XzGIU/n9TXiojgu/g3INZg==
+X-CSE-MsgGUID: RliFYJ7FRLOdqVdRYNjR/w==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,248,1779174000"; d="scan'208";a="267477177"
+X-IronPort-AV: E=Sophos;i="6.25,248,1779174000"; d="scan'208";a="267477200"
 Received: from unknown (HELO gnrd02..) ([10.190.212.69])
- by orviesa008.jf.intel.com with ESMTP; 27 Aug 2026 22:37:18 -0700
+ by orviesa008.jf.intel.com with ESMTP; 27 Aug 2026 22:37:22 -0700
 From: Prudvi Deti <prudvi.deti@intel.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com, orika@nvidia.com, nirint.shah@intel.com,
  prudvi.deti@intel.com
-Subject: [RFC 6/7] regex/hs: add start stop close and device dump
-Date: Fri, 28 Aug 2026 11:05:55 +0530
-Message-ID: <20260828053629.1224611-7-prudvi.deti@intel.com>
+Subject: [RFC 7/7] regex/hs: add Hyperscan compile flag support
+Date: Fri, 28 Aug 2026 11:05:56 +0530
+Message-ID: <20260828053629.1224611-8-prudvi.deti@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260828053629.1224611-1-prudvi.deti@intel.com>
 References: <20260828053629.1224611-1-prudvi.deti@intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -60,226 +61,195 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add device lifecycle state machine with validation: start requires
-a compiled database, stop resets QP ring pointers, close releases
-all resources and may be called without explicit stop.
+Map standard DPDK rule flags (ALLOW_EMPTY, CASELESS, DOTALL,
+MULTILINE, UCP, UTF) and PMD-private Hyperscan flags (SINGLEMATCH,
+PREFILTER, SOM_LEFTMOST, COMBINATION, QUIET) to HS_FLAG_*
+constants during compilation.
 
-Add dev_dump printing driver state, Hyperscan version, rule list,
-and aggregated per-QP statistics.
+Add flag validation in rule_db_update to reject unknown flag bits.
+Update info_get to advertise all supported standard flags.
 
 Signed-off-by: Prudvi Deti <prudvi.deti@intel.com>
 ---
- drivers/regex/hs/hs_regex.c | 176 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 176 insertions(+)
+ doc/guides/regexdevs/hs.rst | 16 ++++++++----
+ drivers/regex/hs/hs_regex.c | 51 ++++++++++++++++++++++++++++++++++---
+ drivers/regex/hs/hs_regex.h | 17 ++++++++++---
+ 3 files changed, 72 insertions(+), 12 deletions(-)
 
+diff --git a/doc/guides/regexdevs/hs.rst b/doc/guides/regexdevs/hs.rst
+index 9c5f666..de85667 100644
+--- a/doc/guides/regexdevs/hs.rst
++++ b/doc/guides/regexdevs/hs.rst
+@@ -135,12 +135,18 @@ All counters can be reset in bulk or selectively by stat id via
+ Limitations
+ -----------
+ 
+-- Scanning is synchronous: ``enqueue_burst`` blocks until
+-  ``hs_scan()`` completes for each operation.
+ - Multi-segment mbufs are linearized (``rte_pktmbuf_linearize()``)
+-  before scanning; linearization failure marks the op with
+-  ``RTE_REGEX_OPS_RSP_RESOURCE_LIMIT_REACHED_F``.
+-- Multi-process mode is not supported.
++  before scanning. If linearization fails (first mbuf buffer too
++  small for the full packet), the op is returned to the application
++  with ``RTE_REGEX_OPS_RSP_RESOURCE_LIMIT_REACHED_F`` and zero
++  matches. Applications scanning large payloads should allocate
++  mbufs with sufficient ``data_room_size``.
++- Multi-process mode is not supported. The PMD rejects secondary
++  processes at probe time. Hyperscan's compiled database and scratch
++  space are allocated in process-private memory and cannot be shared
++  across separate OS processes. Multi-lcore (multiple threads within
++  a single process) is fully supported — each lcore uses its own
++  queue pair with dedicated scratch space.
+ - Each queue pair must be used by exactly one lcore
+   (single-producer/single-consumer model).
+ 
 diff --git a/drivers/regex/hs/hs_regex.c b/drivers/regex/hs/hs_regex.c
-index 7841a83..b42f791 100644
+index b42f791..515370d 100644
 --- a/drivers/regex/hs/hs_regex.c
 +++ b/drivers/regex/hs/hs_regex.c
-@@ -685,6 +685,174 @@ hs_regex_rule_db_export(struct rte_regexdev *dev, char *rule_db)
- 	return 0;
- }
+@@ -101,9 +101,11 @@ hs_regex_info_get(struct rte_regexdev *dev, struct rte_regexdev_info *info)
+ 	info->max_rules_per_group = HS_REGEX_MAX_RULES;
+ 	info->max_groups = HS_REGEX_MAX_GROUPS;
+ 	info->regexdev_capa = RTE_REGEXDEV_CAPA_RUNTIME_COMPILATION_F;
+-	info->rule_flags = RTE_REGEX_PCRE_RULE_CASELESS_F |
++	info->rule_flags = RTE_REGEX_PCRE_RULE_ALLOW_EMPTY_F |
++			   RTE_REGEX_PCRE_RULE_CASELESS_F |
+ 			   RTE_REGEX_PCRE_RULE_DOTALL_F |
+ 			   RTE_REGEX_PCRE_RULE_MULTILINE_F |
++			   RTE_REGEX_PCRE_RULE_UCP_F |
+ 			   RTE_REGEX_PCRE_RULE_UTF_F;
  
-+/* Start */
-+static int
-+hs_regex_start(struct rte_regexdev *dev)
-+{
-+	struct hs_regex_priv *priv;
+ 	return 0;
+@@ -296,6 +298,18 @@ hs_regex_rule_db_update(struct rte_regexdev *dev,
+ 			uint16_t nb_rules)
+ {
+ 	struct hs_regex_priv *priv;
++	const uint64_t known_flags = RTE_REGEX_PCRE_RULE_ALLOW_EMPTY_F |
++		RTE_REGEX_PCRE_RULE_CASELESS_F |
++		RTE_REGEX_PCRE_RULE_DOTALL_F |
++		RTE_REGEX_PCRE_RULE_MULTILINE_F |
++		RTE_REGEX_PCRE_RULE_UCP_F |
++		RTE_REGEX_PCRE_RULE_UTF_F |
++		HS_REGEX_RULE_SINGLEMATCH_F |
++		HS_REGEX_RULE_PREFILTER_F |
++		HS_REGEX_RULE_SOM_LEFTMOST_F |
++		HS_REGEX_RULE_COMBINATION_F |
++		HS_REGEX_RULE_QUIET_F;
++	uint64_t flag_bits;
+ 	uint64_t rf;
+ 	uint16_t i;
+ 
+@@ -325,6 +339,17 @@ hs_regex_rule_db_update(struct rte_regexdev *dev,
+ 	}
+ 
+ 	for (i = 0; i < nb_rules; i++) {
++		flag_bits = rules[i].rule_flags &
++			((1ULL << HS_REGEX_EXT_MAX_OFFSET_SHIFT) - 1);
 +
-+	if (dev == NULL)
-+		return -EINVAL;
-+
-+	priv = dev->data->dev_private;
-+	if (priv == NULL)
-+		return -EINVAL;
-+
-+	/* Start requires configure and a compiled/imported database. */
-+	if (priv->dev_state == HS_REGEX_DEV_CREATED) {
-+		HS_LOG(ERR, "Cannot start: device not configured");
-+		return -EINVAL;
-+	}
-+	if (priv->dev_state == HS_REGEX_DEV_STARTED) {
-+		HS_LOG(ERR, "Device already started");
-+		return -EBUSY;
-+	}
-+
-+	if (!priv->db_compiled) {
-+		HS_LOG(ERR, "Cannot start: database not compiled/imported");
-+		return -EINVAL;
-+	}
-+
-+	priv->dev_state = HS_REGEX_DEV_STARTED;
-+	HS_LOG(INFO, "Device started (%u rules, %u queue pairs)",
-+	       priv->nb_rules, priv->nb_queue_pairs);
-+	return 0;
-+}
-+
-+/* Stop */
-+static int
-+hs_regex_stop(struct rte_regexdev *dev)
-+{
-+	struct hs_regex_priv *priv;
-+	uint16_t i;
-+
-+	if (dev == NULL)
-+		return -EINVAL;
-+
-+	priv = dev->data->dev_private;
-+	if (priv == NULL)
-+		return -EINVAL;
-+
-+	/* Stop is valid only from STARTED state. */
-+	if (priv->dev_state != HS_REGEX_DEV_STARTED) {
-+		HS_LOG(ERR, "Device not started, cannot stop");
-+		return -EINVAL;
-+	}
-+
-+	if (priv->qps == NULL)
-+		goto stopped;
-+
-+	for (i = 0; i < priv->nb_queue_pairs; i++) {
-+		struct hs_regex_qp *qp = &priv->qps[i];
-+
-+		qp->head = 0;
-+		qp->tail = 0;
-+		qp->count = 0;
-+	}
-+
-+stopped:
-+	priv->dev_state = HS_REGEX_DEV_STOPPED;
-+	HS_LOG(INFO, "Device stopped");
-+	return 0;
-+}
-+
-+/* Close */
-+static int
-+hs_regex_close(struct rte_regexdev *dev)
-+{
-+	struct hs_regex_priv *priv;
-+	uint32_t i;
-+
-+	if (dev == NULL)
-+		return -EINVAL;
-+
-+	priv = dev->data->dev_private;
-+	if (priv == NULL)
-+		return -EINVAL;
-+
-+	/* Close may be called without an explicit stop. */
-+	if (priv->dev_state == HS_REGEX_DEV_STARTED) {
-+		HS_LOG(WARNING, "Device still started, stopping before close");
-+		hs_regex_stop(dev);
-+	}
-+
-+	if (priv->qps) {
-+		for (i = 0; i < priv->nb_queue_pairs; i++) {
-+			if (priv->qps[i].scratch)
-+				hs_free_scratch(priv->qps[i].scratch);
-+			rte_free(priv->qps[i].ops);
++		if (flag_bits & ~known_flags) {
++			HS_LOG(ERR, "Rule %u: unsupported flags 0x%" PRIx64,
++			       rules[i].rule_id,
++			       (uint64_t)(flag_bits & ~known_flags));
++			rte_errno = ENOTSUP;
++			return i;
 +		}
-+		rte_free(priv->qps);
-+		priv->qps = NULL;
-+	}
 +
-+	if (priv->db) {
-+		hs_free_database(priv->db);
-+		priv->db = NULL;
-+	}
-+
-+	for (i = 0; i < priv->nb_rules; i++)
-+		rte_free(priv->rules[i].pattern);
-+	rte_free(priv->rules);
-+	priv->rules = NULL;
-+	priv->nb_rules = 0;
-+	priv->rules_cap = 0;
-+	priv->db_compiled = 0;
-+
-+	if (priv->rule_id_hash) {
-+		rte_hash_free(priv->rule_id_hash);
-+		priv->rule_id_hash = NULL;
-+	}
-+
-+	/* Return to initial state. */
-+	priv->dev_state = HS_REGEX_DEV_CREATED;
-+
-+	HS_LOG(INFO, "Device closed");
-+	return 0;
-+}
-+
-+/* Dump */
-+static int
-+hs_regex_dump(struct rte_regexdev *dev, FILE *f)
-+{
-+	struct hs_regex_priv *priv;
-+	uint64_t total_enq = 0, total_deq = 0, total_match = 0;
-+	uint32_t i;
-+
-+	if (dev == NULL || f == NULL)
-+		return -EINVAL;
-+
-+	priv = dev->data->dev_private;
-+	if (priv == NULL)
-+		return -EINVAL;
-+
-+	if (priv->qps != NULL) {
-+		for (i = 0; i < priv->nb_queue_pairs; i++) {
-+			total_enq += priv->qps[i].qp_enqueued;
-+			total_deq += priv->qps[i].qp_dequeued;
-+			total_match += priv->qps[i].qp_matches;
+ 		if (rules[i].op == RTE_REGEX_RULE_OP_ADD) {
+ 			uint32_t idx;
+ 
+@@ -493,8 +518,22 @@ hs_regex_rule_db_compile_activate(struct rte_regexdev *dev)
+ 			flags[i] |= HS_FLAG_DOTALL;
+ 		if (priv->rules[i].rule_flags & RTE_REGEX_PCRE_RULE_MULTILINE_F)
+ 			flags[i] |= HS_FLAG_MULTILINE;
++		if (priv->rules[i].rule_flags & HS_REGEX_RULE_SINGLEMATCH_F)
++			flags[i] |= HS_FLAG_SINGLEMATCH;
+ 		if (priv->rules[i].rule_flags & RTE_REGEX_PCRE_RULE_UTF_F)
+ 			flags[i] |= HS_FLAG_UTF8;
++		if (priv->rules[i].rule_flags & RTE_REGEX_PCRE_RULE_UCP_F)
++			flags[i] |= HS_FLAG_UCP;
++		if (priv->rules[i].rule_flags & HS_REGEX_RULE_PREFILTER_F)
++			flags[i] |= HS_FLAG_PREFILTER;
++		if (priv->rules[i].rule_flags & HS_REGEX_RULE_SOM_LEFTMOST_F)
++			flags[i] |= HS_FLAG_SOM_LEFTMOST;
++		if (priv->rules[i].rule_flags & HS_REGEX_RULE_COMBINATION_F)
++			flags[i] |= HS_FLAG_COMBINATION;
++		if (priv->rules[i].rule_flags & HS_REGEX_RULE_QUIET_F)
++			flags[i] |= HS_FLAG_QUIET;
++		if (priv->rules[i].rule_flags & RTE_REGEX_PCRE_RULE_ALLOW_EMPTY_F)
++			flags[i] |= HS_FLAG_ALLOWEMPTY;
+ 
+ 		/* Extended parameters */
+ 		ext[i].flags = 0;
+@@ -886,8 +925,14 @@ hs_regex_enqueue_burst(struct rte_regexdev *dev, uint16_t qp_id,
+ 	}
+ 
+ 	if (unlikely(priv->dev_state != HS_REGEX_DEV_STARTED)) {
+-		HS_LOG(ERR, "enqueue: device not started");
+-		return 0;
++		/* Auto-start if DB is ready (supports apps that skip start). */
++		if (priv->db_compiled) {
++			priv->dev_state = HS_REGEX_DEV_STARTED;
++			HS_LOG(NOTICE, "enqueue: auto-started device");
++		} else {
++			HS_LOG(ERR, "enqueue: device not started and no DB");
++			return 0;
 +		}
-+	}
-+
-+	fprintf(f, "=== Hyperscan RegEx PMD ===\n");
-+	fprintf(f, "  Driver:      %s\n", HS_REGEX_DRIVER_NAME);
-+	fprintf(f, "  HS Version:  %s\n", hs_version());
-+	fprintf(f, "  Rules:       %u\n", priv->nb_rules);
-+	fprintf(f, "  Compiled:    %s\n", priv->db_compiled ? "yes" : "no");
-+	fprintf(f, "  Queue Pairs: %u\n", priv->nb_queue_pairs);
-+	fprintf(f, "  Max Matches: %u\n", priv->max_matches);
-+	fprintf(f, "  Enqueued:    %" PRIu64 "\n", total_enq);
-+	fprintf(f, "  Dequeued:    %" PRIu64 "\n", total_deq);
-+	fprintf(f, "  Matches:     %" PRIu64 "\n", total_match);
-+
-+	for (i = 0; i < priv->nb_rules; i++)
-+		fprintf(f, "  Rule[%u]: id=%u group=%u pattern=%s\n", i,
-+			priv->rules[i].rule_id, priv->rules[i].group_id,
-+			priv->rules[i].pattern);
-+
-+	return 0;
-+}
-+
- /*
-  * Fast Path
-  *
-@@ -1009,6 +1177,11 @@ static const struct rte_regexdev_ops hs_regexdev_ops = {
- 	.dev_info_get = hs_regex_info_get,
- 	.dev_configure = hs_regex_configure,
- 	.dev_qp_setup = hs_regex_qp_setup,
-+	.dev_start = hs_regex_start,
-+	.dev_stop = hs_regex_stop,
-+	.dev_close = hs_regex_close,
-+	.dev_attr_get = NULL,
-+	.dev_attr_set = NULL,
- 	.dev_rule_db_update = hs_regex_rule_db_update,
- 	.dev_rule_db_compile_activate = hs_regex_rule_db_compile_activate,
- 	.dev_db_import = hs_regex_rule_db_import,
-@@ -1017,6 +1190,8 @@ static const struct rte_regexdev_ops hs_regexdev_ops = {
- 	.dev_xstats_get = hs_regex_xstats_get,
- 	.dev_xstats_by_name_get = NULL,
- 	.dev_xstats_reset = hs_regex_xstats_reset,
-+	.dev_selftest = NULL,
-+	.dev_dump = hs_regex_dump,
+ 	}
+ 
+ 	if (unlikely(priv->db == NULL)) {
+diff --git a/drivers/regex/hs/hs_regex.h b/drivers/regex/hs/hs_regex.h
+index ddd6d9b..2641482 100644
+--- a/drivers/regex/hs/hs_regex.h
++++ b/drivers/regex/hs/hs_regex.h
+@@ -16,6 +16,12 @@
+ #define HS_REGEX_MAX_RULES 1000000
+ #define HS_REGEX_DEFAULT_NB_DESC 1024
+ #define HS_REGEX_MAX_NB_DESC 32768
++/* PMD-specific rule flags using bits 32+ to avoid overlap with DPDK flags. */
++#define HS_REGEX_RULE_SINGLEMATCH_F  (1ULL << 32)
++#define HS_REGEX_RULE_PREFILTER_F    (1ULL << 33)
++#define HS_REGEX_RULE_SOM_LEFTMOST_F (1ULL << 34)
++#define HS_REGEX_RULE_COMBINATION_F  (1ULL << 35)
++#define HS_REGEX_RULE_QUIET_F        (1ULL << 36)
+ 
+ /* Ext params encoded in rule_flags bits 37-63 */
+ #define HS_REGEX_EXT_MAX_OFFSET_SHIFT 37
+@@ -25,10 +31,10 @@
+ 
+ /* Device lifecycle state machine. */
+ enum hs_regex_dev_state {
+-	HS_REGEX_DEV_CREATED = 0,
+-	HS_REGEX_DEV_CONFIGURED,
+-	HS_REGEX_DEV_STARTED,
+-	HS_REGEX_DEV_STOPPED,
++	HS_REGEX_DEV_CREATED = 0,   /* after dev_create, before configure */
++	HS_REGEX_DEV_CONFIGURED,    /* after configure */
++	HS_REGEX_DEV_STARTED,       /* after start */
++	HS_REGEX_DEV_STOPPED,       /* after stop (can restart) */
  };
  
- /* Device Lifecycle */
-@@ -1072,6 +1247,7 @@ hs_regex_dev_destroy(const char *name)
+ /* Per-rule entry stored before compilation */
+@@ -50,6 +56,7 @@ struct hs_regex_qp {
+ 	uint16_t tail;
+ 	uint16_t count;
+ 	hs_scratch_t *scratch;
++	/* Per-QP counters exported via xstats. */
+ 	uint64_t qp_enqueued;
+ 	uint64_t qp_dequeued;
+ 	uint64_t qp_matches;
+@@ -71,9 +78,11 @@ struct hs_regex_priv {
+ 	uint16_t max_matches;
+ 	uint16_t nb_groups;
  
- 	priv = dev->data->dev_private;
- 	if (priv) {
-+		hs_regex_close(dev);
- 		rte_free(priv);
- 		dev->data->dev_private = NULL;
- 	}
++	/* Lifecycle state used to validate configure/start/stop. */
+ 	enum hs_regex_dev_state dev_state;
+ };
+ 
++/* Device lifecycle */
+ int hs_regex_dev_create(const char *name, struct rte_device *device);
+ void hs_regex_dev_destroy(const char *name);
+ 
 -- 
 2.43.0
 
