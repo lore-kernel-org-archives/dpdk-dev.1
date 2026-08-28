@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F17EC61DB9
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 03:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 606EDC61DB9
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 03:23:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B7D4C402BB;
-	Fri, 28 Aug 2026 05:23:39 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B674540653;
+	Fri, 28 Aug 2026 05:23:48 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id A5A714003C
- for <dev@dpdk.org>; Fri, 28 Aug 2026 05:23:37 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 42D284003C
+ for <dev@dpdk.org>; Fri, 28 Aug 2026 05:23:47 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowABHUD43_5Bqjx5wBg--.7936S2;
- Fri, 28 Aug 2026 11:23:35 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowACnrjw9_5Bq8R5wBg--.11627S2;
+ Fri, 28 Aug 2026 11:23:41 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org
-Subject: [PATCH v5 05/45] net/sxe2: restore pf and port index caps assignment
-Date: Fri, 28 Aug 2026 11:23:35 +0800
-Message-ID: <20260828032335.2104876-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v5 06/45] net/sxe2: fix VSI lifecycle management
+Date: Fri, 28 Aug 2026 11:23:40 +0800
+Message-ID: <20260828032340.2104930-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260827024035.1432256-1-liujie5@linkdatatechnology.com>
 References: <20260827024035.1432256-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowABHUD43_5Bqjx5wBg--.7936S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr18Ww4ftrWxCrykuF48JFb_yoW8Wr1rpF
- 48WF15AF9YqF1Dtw48Ja1xuFyjgr4Fq340kFyrt34fCFyDuryUAF9xt34Yq3Z5Cw1xX3Wv
- yrZrX34vg3ySvF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUkFb7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
+X-CM-TRANSID: rQCowACnrjw9_5Bq8R5wBg--.11627S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr1rXF18tF1xAFy8Kw4UArb_yoW8tw4Upr
+ s3Zr1FqF40qFn0k3y7Jw1rZF15KFWrtry093WF9w1fJasrJ345Cas5Xr1rG3WxCw4kXwn3
+ Aan7W34UJrn5CFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUkFb7Iv0xC_Zr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
  0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
  A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
  jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I
@@ -39,7 +39,7 @@ X-Coremail-Antispam: 1UD129KBjvJXoW7Kr18Ww4ftrWxCrykuF48JFb_yoW8Wr1rpF
  8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vIr41l
  IxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIx
  AIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2
- jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jOsqXUUUUU=
+ jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jrPEfUUUUU=
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -57,45 +57,69 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-sxe2_func_caps_get() never assigns adapter->pf_idx from the device
-capabilities, leaving it at its zero-initialized value. Switchdev
-requests and representor setup that use pf_idx then report the wrong
-PF index on multi-PF configurations.
+Fix several VSI create/destroy issues introduced by VF representor
+support:
 
-Restore the pf_idx and port_idx assignments in sxe2_func_caps_get()
-and drop the now-redundant port_idx assignment from
-sxe2_drv_dev_caps_set().
+- Initialize other_vsi_list with TAILQ_INIT in sxe2_vsi_init before
+  any VSI is inserted into it.
+- Treat -EPERM as a non-fatal error when destroying VSIs, since the
+  kernel may have already removed the VSI.
+- Set main_vsi to NULL after destroy/free to avoid a dangling pointer
+  if the VSI is destroyed again.
 
-Fixes: d8e4e075acb4 ("net/sxe2: add probing skeleton")
+Fixes: 635084db5d57 ("net/sxe2: support VF representors")
 Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_ethdev.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/sxe2/sxe2_vsi.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index 5d8cfca6cf..2e14c372f8 100644
---- a/drivers/net/sxe2/sxe2_ethdev.c
-+++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -1284,8 +1284,6 @@ void sxe2_eth_uinit(struct rte_eth_dev *dev __rte_unused)
- static void sxe2_drv_dev_caps_set(struct sxe2_adapter *adapter,
- 			struct sxe2_drv_dev_caps_resp *dev_caps)
- {
--	adapter->port_idx = dev_caps->port_idx;
+diff --git a/drivers/net/sxe2/sxe2_vsi.c b/drivers/net/sxe2/sxe2_vsi.c
+index d29480b931..dea3f58997 100644
+--- a/drivers/net/sxe2/sxe2_vsi.c
++++ b/drivers/net/sxe2/sxe2_vsi.c
+@@ -131,6 +131,8 @@ static int32_t sxe2_vsi_destroy(struct sxe2_adapter *adapter, struct sxe2_vsi *v
+ 	}
+ 
+ l_free:
++	if (vsi->vsi_type == SXE2_VSI_T_DPDK_ESW)
++		TAILQ_REMOVE(&adapter->vsi_ctxt.other_vsi_list, vsi, next);
+ 	rte_free(vsi);
+ 	vsi = NULL;
+ 
+@@ -230,7 +232,7 @@ int32_t sxe2_vsi_init(struct rte_eth_dev *dev)
+ 	uint16_t srcvsi_cnt;
+ 
+ 	PMD_INIT_FUNC_TRACE();
 -
- 	adapter->cap_flags = 0;
++	TAILQ_INIT(&adapter->vsi_ctxt.other_vsi_list);
+ 	ret = sxe2_main_vsi_create(adapter);
+ 	if (ret) {
+ 		PMD_LOG_ERR(DRV, "Failed to create main VSI, ret=%d", ret);
+@@ -283,13 +285,14 @@ void sxe2_vsi_uninit(struct rte_eth_dev *dev)
  
- 	if (dev_caps->cap_flags & SXE2_DEV_CAPS_OFFLOAD_L2)
-@@ -1344,6 +1342,8 @@ static int32_t sxe2_func_caps_get(struct sxe2_adapter *adapter)
+ l_free:
+ 	ret = sxe2_vsi_destroy(adapter, adapter->vsi_ctxt.main_vsi);
+-	if (ret) {
++	if (ret && ret != -EPERM) {
+ 		PMD_LOG_ERR(DRV, "Failed to del vsi from fw, ret=%d", ret);
  		goto l_end;
+ 	}
++	adapter->vsi_ctxt.main_vsi = NULL;
+ 	RTE_TAILQ_FOREACH_SAFE(var, &adapter->vsi_ctxt.other_vsi_list, next, tvar) {
+ 		ret = sxe2_vsi_destroy(adapter, var);
+-		if (ret) {
++		if (ret && ret != -EPERM) {
+ 			PMD_LOG_ERR(DRV, "Failed to del vsi from fw, ret=%d", ret);
+ 			break;
+ 		}
+@@ -357,4 +360,5 @@ void sxe2_vsi_repr_main_vsi_destroy(struct rte_eth_dev *dev)
+ 	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
  
- 	adapter->dev_type = dev_caps.dev_type;
-+	adapter->port_idx = dev_caps.port_idx;
-+	adapter->pf_idx = dev_caps.pf_idx;
- 
- 	sxe2_drv_dev_caps_set(adapter,  &dev_caps);
- 
+ 	sxe2_vsi_node_free(adapter->vsi_ctxt.main_vsi);
++	adapter->vsi_ctxt.main_vsi = NULL;
+ }
 -- 
 2.52.0
 
