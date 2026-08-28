@@ -2,47 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 522E6C61DBD
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 05:36:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D3D3C61DBD
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 05:37:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1E6A940150;
-	Fri, 28 Aug 2026 07:36:55 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0D23E40279;
+	Fri, 28 Aug 2026 07:37:04 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id 18A554003C
- for <dev@dpdk.org>; Fri, 28 Aug 2026 07:36:52 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5A1AF4003C
+ for <dev@dpdk.org>; Fri, 28 Aug 2026 07:37:02 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1787895413; x=1819431413;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=65hAXoQJ85KmriqPWZ4hRoZcgT3S9AqUr8cA7t5dzHM=;
- b=OSVNC5FJBaFeYJC+eOiLiolsN81Agv5P3OaKiaLnX/RO3Hix/rAZ8+ym
- VcoCZhdZb8idqc7aIpwgujkYUAXtHvFKiceck9QIQDRiYpSlP1IELNqhg
- lksV5JmKfS8vcjsP2e27zinA8EpoO2FNABi86SeBJuLUS9+M/Dw56SYsJ
- cHzwH9Iv/SYgl8GbWyZe87aBwT7sEjQcLUSYAtrN92fzH/P91HhMZYMrx
- 9zMJ/bIbbgwsvUN9wQPexhnyDpPoHaTHXMEXRYH/z4fJ4d3UcHe20FR3R
- BIOmXB2Ey08o+pcsWKq5MkYgRe96BhMrfx+RcKuPr1BgVluv3j/jPDMDy g==;
-X-CSE-ConnectionGUID: 0z8w3WkjQQm0Uw8M42I0yQ==
-X-CSE-MsgGUID: Up11YUZ0QAinTm28B2nDOQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11888"; a="88425711"
-X-IronPort-AV: E=Sophos;i="6.25,248,1779174000"; d="scan'208";a="88425711"
+ t=1787895423; x=1819431423;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=2Uks8KB1Vy8fHGMmhI6/YSpRqMWTgsTn1pWsdO+i47Q=;
+ b=YjapD/GTnsmdMNUFHLH9rYYDFtGC7pkVNQRNFJUD6BJpVgWgSkmSWSIr
+ aImwlGfDv+eoIWjC98SL44H8UUhCzKFT2Pf84gG69hKlbkvO0N3a0U5Wz
+ o3ydv6xmiXtwuT+GiXJ7poARbqfhCaY4yQ2cSFMHZ+FTCz3u0DF3Q+gBV
+ 0TxHn4fvQ1eUY/WzEDAX9o1/MZzHCmwG0DEAblQGpFHPXijPGAqigkkC5
+ VkQn8g9seBykjGUyKYX4YK8xalNctuV0Ge/RfPHHd141cF7iIg/j3MPoF
+ 0nuuWpPCtcuXDooHaa35WkFpI8cVBgkBlKK2GMa4bkdLQ9KFpbaGt500F Q==;
+X-CSE-ConnectionGUID: YLyWM75/SvmRArjPJ0fcCA==
+X-CSE-MsgGUID: zIPk+qAXRb64TTaSLtzOHA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11888"; a="88425719"
+X-IronPort-AV: E=Sophos;i="6.25,248,1779174000"; d="scan'208";a="88425719"
 Received: from orviesa008.jf.intel.com ([10.64.159.148])
  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 Aug 2026 22:36:51 -0700
-X-CSE-ConnectionGUID: FgXBNTZmSQ2A/Q9+v2hOfw==
-X-CSE-MsgGUID: aiL4XiyoS+GkhotbGf2NfA==
+ 27 Aug 2026 22:37:02 -0700
+X-CSE-ConnectionGUID: EgTFmxoETnG1+W+BO1Er3A==
+X-CSE-MsgGUID: KpdKlQvlSpWpAAT4k1fZVg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,248,1779174000"; d="scan'208";a="267477063"
+X-IronPort-AV: E=Sophos;i="6.25,248,1779174000"; d="scan'208";a="267477114"
 Received: from unknown (HELO gnrd02..) ([10.190.212.69])
- by orviesa008.jf.intel.com with ESMTP; 27 Aug 2026 22:36:50 -0700
+ by orviesa008.jf.intel.com with ESMTP; 27 Aug 2026 22:36:59 -0700
 From: Prudvi Deti <prudvi.deti@intel.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com, orika@nvidia.com, nirint.shah@intel.com,
  prudvi.deti@intel.com
-Subject: [RFC 0/7] regex/hs: introduce Hyperscan regex PMD
-Date: Fri, 28 Aug 2026 11:05:49 +0530
-Message-ID: <20260828053629.1224611-1-prudvi.deti@intel.com>
+Subject: [RFC 1/7] regex/hs: add driver skeleton and build integration
+Date: Fri, 28 Aug 2026 11:05:50 +0530
+Message-ID: <20260828053629.1224611-2-prudvi.deti@intel.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260828053629.1224611-1-prudvi.deti@intel.com>
+References: <20260828053629.1224611-1-prudvi.deti@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -58,61 +60,559 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This RFC series adds a new regexdev PMD based on Hyperscan.
+Add a new software regex Poll Mode Driver based on Intel Hyperscan.
+This patch provides the minimal vdev skeleton: probe, remove, device
+registration, and info_get.
 
-Goal: provide a software regex PMD for environments without regex HW,
-while keeping compatibility with the standard ``rte_regexdev`` API.
-The PMD is a virtual device, created with ``--vdev=regex_hs`` at EAL
-init.
+Build is gated by meson dependency check on libhs via pkg-config.
+Only supported on 64-bit platforms.
 
-The series introduces:
-- a new vdev driver under ``drivers/regex/hs``
-- device and queue pair configuration, start/stop/close lifecycle,
-  and device dump support
-- rule database update, compile+activate, import/export of serialized
-  Hyperscan databases
-- enqueue/dequeue burst paths with per-queue-pair scratch usage and
-  per-queue-pair extended statistics (enqueued/dequeued/matches)
-- PMD-private rule flag mappings for common Hyperscan compile options
-  (singlematch, prefilter, SOM-leftmost, combination, quiet)
+Includes documentation, MAINTAINERS entry, feature matrix, and
+release notes.
 
-Behavior notes relevant for review:
-- per-op match counters are bounded by API field width
-  (``nb_matches``/``nb_actual_matches`` are ``uint16_t``)
-- payload size exposed through regexdev is ``max_payload_size = 65535``
-  bytes, while Hyperscan block mode itself supports larger scan buffers
-- queue pairs are intended for single-thread ownership (SPSC model)
-  with dedicated scratch per queue pair
-
-Documentation, feature matrix integration, meson integration, and
-maintainers metadata are included.
-
-Prudvi Deti (7):
-  regex/hs: add driver skeleton and build integration
-  regex/hs: add device configure and queue pair setup
-  regex/hs: add rule database update and compilation
-  regex/hs: add enqueue and dequeue burst paths
-  regex/hs: add per-queue-pair extended statistics
-  regex/hs: add start stop close and device dump
-  regex/hs: add Hyperscan compile flag support
-
- .mailmap                               |    1 +
- MAINTAINERS                            |    6 +
- doc/guides/regexdevs/features/hs.ini   |    8 +
- doc/guides/regexdevs/hs.rst            |  158 +++
- doc/guides/regexdevs/index.rst         |    1 +
- doc/guides/rel_notes/release_26_11.rst |    7 +
- drivers/regex/hs/hs_regex.c            | 1342 ++++++++++++++++++++++++
- drivers/regex/hs/hs_regex.h            |   89 ++
- drivers/regex/hs/meson.build           |   19 +
- drivers/regex/meson.build              |    1 +
- 10 files changed, 1632 insertions(+)
+Signed-off-by: Prudvi Deti <prudvi.deti@intel.com>
+---
+ .mailmap                               |   1 +
+ MAINTAINERS                            |   6 +
+ doc/guides/regexdevs/features/hs.ini   |   8 ++
+ doc/guides/regexdevs/hs.rst            | 143 +++++++++++++++++++
+ doc/guides/regexdevs/index.rst         |   1 +
+ doc/guides/rel_notes/release_26_11.rst |   7 +
+ drivers/regex/hs/hs_regex.c            | 186 +++++++++++++++++++++++++
+ drivers/regex/hs/hs_regex.h            |  69 +++++++++
+ drivers/regex/hs/meson.build           |  19 +++
+ drivers/regex/meson.build              |   1 +
+ 10 files changed, 441 insertions(+)
  create mode 100644 doc/guides/regexdevs/features/hs.ini
  create mode 100644 doc/guides/regexdevs/hs.rst
  create mode 100644 drivers/regex/hs/hs_regex.c
  create mode 100644 drivers/regex/hs/hs_regex.h
  create mode 100644 drivers/regex/hs/meson.build
 
+diff --git a/.mailmap b/.mailmap
+index fcb3d1b..8a8a6e4 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -1336,6 +1336,7 @@ Pravin Pathak <pravin.pathak.dev@gmail.com> <pravin.pathak@intel.com>
+ Prince Takkar <ptakkar@marvell.com>
+ Priyalee Kushwaha <priyalee.kushwaha@intel.com>
+ Priyanka Jain <priyanka.jain@nxp.com>
++Prudvi Deti <prudvi.deti@intel.com>
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>
+ Przemyslaw Ciesielski <przemyslaw.ciesielski@intel.com>
+ Przemyslaw Czesnowicz <przemyslaw.czesnowicz@intel.com>
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e99a65d..e29af50 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1433,6 +1433,12 @@ F: drivers/regex/cn9k/
+ F: doc/guides/regexdevs/cn9k.rst
+ F: doc/guides/regexdevs/features/cn9k.ini
+ 
++Intel Hyperscan
++M: Prudvi Deti <prudvi.deti@intel.com>
++F: drivers/regex/hs/
++F: doc/guides/regexdevs/hs.rst
++F: doc/guides/regexdevs/features/hs.ini
++
+ NVIDIA mlx5
+ M: Ori Kam <orika@nvidia.com>
+ F: drivers/regex/mlx5/
+diff --git a/doc/guides/regexdevs/features/hs.ini b/doc/guides/regexdevs/features/hs.ini
+new file mode 100644
+index 0000000..58cf4a2
+--- /dev/null
++++ b/doc/guides/regexdevs/features/hs.ini
+@@ -0,0 +1,8 @@
++;
++; Supported features of the 'hs' RegEx driver.
++;
++; Refer to default.ini for the full list of available driver features.
++;
++[Features]
++Run time compilation        = Y
++x86                         = Y
+diff --git a/doc/guides/regexdevs/hs.rst b/doc/guides/regexdevs/hs.rst
+new file mode 100644
+index 0000000..e94466a
+--- /dev/null
++++ b/doc/guides/regexdevs/hs.rst
+@@ -0,0 +1,143 @@
++..  SPDX-License-Identifier: BSD-3-Clause
++    Copyright(c) 2026 Intel Corporation
++
++Hyperscan RegEx PMD
++===================
++
++The Hyperscan RegEx PMD (**librte_regex_hs**) provides a poll mode
++regexdev driver backed by Intel's
++`Hyperscan <https://github.com/intel/hyperscan>`_ regular expression
++library. It is a software-only virtual device (vdev) PMD that
++implements the ``rte_regexdev`` API using Hyperscan block mode scanning.
++
++Features
++--------
++
++- Software-only virtual device (no hardware dependency)
++- Runtime pattern compilation via ``hs_compile_ext_multi()``
++- Serialized database import/export
++- Per-queue-pair scratch space for lock-free parallel scanning
++- Up to 64 queue pairs, each with up to 32768 descriptors
++- Up to 1,000,000 rules per device, with O(1) duplicate rule_id
++  detection backed by ``rte_hash``
++- Per-rule extended match parameters (minimum/maximum start offset)
++- Per-queue-pair statistics via xstats
++
++In the RegEx driver feature matrix, this PMD reports:
++
++- ``Run time compilation``
++- ``x86``
++
++Supported Regex Rule Flags (Hyperscan Mapping)
++~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++Standard DPDK flags (advertised via ``info->rule_flags``):
++
++- ``RTE_REGEX_PCRE_RULE_ALLOW_EMPTY_F`` (maps to ``HS_FLAG_ALLOWEMPTY``)
++- ``RTE_REGEX_PCRE_RULE_CASELESS_F``    (maps to ``HS_FLAG_CASELESS``)
++- ``RTE_REGEX_PCRE_RULE_DOTALL_F``      (maps to ``HS_FLAG_DOTALL``)
++- ``RTE_REGEX_PCRE_RULE_MULTILINE_F``   (maps to ``HS_FLAG_MULTILINE``)
++- ``RTE_REGEX_PCRE_RULE_UCP_F``         (maps to ``HS_FLAG_UCP``)
++- ``RTE_REGEX_PCRE_RULE_UTF_F``         (maps to ``HS_FLAG_UTF8``)
++
++PMD-private flags (accepted in ``rule_flags`` but not advertised;
++defined in ``drivers/regex/hs/hs_regex.h``):
++
++- ``HS_REGEX_RULE_SINGLEMATCH_F``  (bit 32, maps to ``HS_FLAG_SINGLEMATCH``)
++- ``HS_REGEX_RULE_PREFILTER_F``    (bit 33, maps to ``HS_FLAG_PREFILTER``)
++- ``HS_REGEX_RULE_SOM_LEFTMOST_F`` (bit 34, maps to ``HS_FLAG_SOM_LEFTMOST``)
++- ``HS_REGEX_RULE_COMBINATION_F``  (bit 35, maps to ``HS_FLAG_COMBINATION``)
++- ``HS_REGEX_RULE_QUIET_F``        (bit 36, maps to ``HS_FLAG_QUIET``)
++
++Unknown flag bits are rejected with an error during ``rule_db_update``.
++
++Extended Match Parameters
++~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++Per-rule minimum and maximum start offset constraints (Hyperscan
++``hs_expr_ext_t``) can be encoded in the upper bits of ``rule_flags``:
++
++- Bits 37-49 (13 bits, mask ``0x1FFF``): maximum start offset,
++  mapped to ``HS_EXT_FLAG_MAX_OFFSET``.
++- Bits 50-63 (14 bits, mask ``0x3FFF``): minimum start offset,
++  mapped to ``HS_EXT_FLAG_MIN_OFFSET``.
++
++A value of 0 leaves the corresponding constraint disabled. These
++constraints are applied via ``hs_compile_ext_multi()`` during
++``rule_db_compile_activate``.
++
++Prerequisites
++-------------
++
++The Hyperscan library must be installed and discoverable via
++``pkg-config``.  On Ubuntu/Debian::
++
++    sudo apt install libhyperscan-dev
++
++On Fedora/RHEL::
++
++    sudo dnf install hyperscan-devel
++
++The PMD is built automatically when ``libhs`` is found by the meson
++build system.  It is only supported on 64-bit platforms.
++
++Device Setup
++------------
++
++The Hyperscan PMD is a virtual device.  Create it with the EAL
++``--vdev`` option::
++
++    dpdk-app --vdev regex_hs -- ...
++
++Or programmatically with ``rte_vdev_init()``::
++
++    rte_vdev_init("regex_hs", NULL);
++
++Device Lifecycle
++~~~~~~~~~~~~~~~~
++
++.. code-block:: c
++
++    rte_regexdev_configure(dev, &cfg);
++    rte_regexdev_queue_pair_setup(dev, qp_id, &qp_conf);
++    rte_regexdev_rule_db_update(dev, rules, nb_rules);
++    rte_regexdev_rule_db_compile_activate(dev);
++    rte_regexdev_start(dev);
++
++    /* data path */
++    rte_regexdev_enqueue_burst(dev, qp, ops, n);
++    rte_regexdev_dequeue_burst(dev, qp, results, n);
++
++    rte_regexdev_stop(dev);
++    rte_regexdev_close(dev);
++
++Alternatively, a pre-compiled serialized database can be loaded
++during ``rte_regexdev_configure()`` via ``cfg.rule_db`` and
++``cfg.rule_db_len``, or at any time via ``rte_regexdev_rule_db_import()``.
++
++Statistics
++~~~~~~~~~~
++
++Extended statistics are reported per queue pair, with names of the
++form ``qp<N>_enqueued``, ``qp<N>_dequeued``, and ``qp<N>_matches``.
++All counters can be reset in bulk or selectively by stat id via
++``rte_regexdev_xstats_reset()``.
++
++Limitations
++-----------
++
++- Scanning is synchronous: ``enqueue_burst`` blocks until
++  ``hs_scan()`` completes for each operation.
++- Multi-segment mbufs are linearized (``rte_pktmbuf_linearize()``)
++  before scanning; linearization failure marks the op with
++  ``RTE_REGEX_OPS_RSP_RESOURCE_LIMIT_REACHED_F``.
++- Multi-process mode is not supported.
++- Each queue pair must be used by exactly one lcore
++  (single-producer/single-consumer model).
++
++Debugging Options
++-----------------
++
++Enable PMD debug logging with::
++
++    --log-level='pmd.regex.hs,8'
+diff --git a/doc/guides/regexdevs/index.rst b/doc/guides/regexdevs/index.rst
+index 4f928f9..bf4ca10 100644
+--- a/doc/guides/regexdevs/index.rst
++++ b/doc/guides/regexdevs/index.rst
+@@ -13,4 +13,5 @@ which can be used from an application through RegEx API.
+ 
+    features_overview
+    cn9k
++   hs
+    mlx5
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index c8cc862..31afd5e 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -56,6 +56,13 @@ New Features
+      =======================================================
+ 
+ 
++* **Added Hyperscan regex PMD.**
++
++  Added a software regex PMD (``regex_hs``) based on Intel Hyperscan
++  library. This virtual device PMD implements the regexdev API using
++  Hyperscan block mode scanning and supports runtime pattern compilation.
++
++
+ Removed Items
+ -------------
+ 
+diff --git a/drivers/regex/hs/hs_regex.c b/drivers/regex/hs/hs_regex.c
+new file mode 100644
+index 0000000..393283b
+--- /dev/null
++++ b/drivers/regex/hs/hs_regex.c
+@@ -0,0 +1,186 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 Intel Corporation
++ *
++ * Intel Hyperscan PMD for DPDK rte_regexdev
++ *
++ * This Poll Mode Driver wraps Intel Hyperscan behind the standard DPDK
++ * regex device API (rte_regexdev). Applications use the enqueue/dequeue
++ * burst interface with Hyperscan as the matching engine.
++ *
++ * Key design:
++ *   - Synchronous scan in enqueue (hs_scan blocks until done)
++ *   - Per-queue-pair scratch space for lock-free parallel scanning
++ *   - HS_MODE_BLOCK: each buffer scanned independently
++ *   - Runtime compilation via hs_compile_ext_multi()
++ *   - Serialized database import/export via hs_deserialize_database()
++ */
++
++#include <string.h>
++#include <stdio.h>
++#include <stdlib.h>
++
++#include <rte_common.h>
++#include <rte_malloc.h>
++#include <rte_log.h>
++#include <rte_errno.h>
++#include <bus_vdev_driver.h>
++#include <rte_regexdev.h>
++#include <rte_regexdev_core.h>
++#include <rte_regexdev_driver.h>
++#include <rte_mbuf.h>
++
++#include <hs/hs.h>
++
++#include "hs_regex.h"
++
++RTE_LOG_REGISTER_DEFAULT(hs_regex_logtype, NOTICE);
++#define RTE_LOGTYPE_HS_REGEX hs_regex_logtype
++
++#define HS_LOG(level, ...) \
++	RTE_LOG_LINE(level, HS_REGEX, __VA_ARGS__)
++
++/* Device Info */
++static int
++hs_regex_info_get(struct rte_regexdev *dev __rte_unused,
++		  struct rte_regexdev_info *info)
++{
++	info->driver_name = HS_REGEX_DRIVER_NAME;
++	info->dev = NULL;
++	info->max_matches = UINT16_MAX;
++	info->max_queue_pairs = HS_REGEX_MAX_QUEUE_PAIRS;
++	info->max_payload_size = UINT16_MAX;
++	info->max_rules_per_group = HS_REGEX_MAX_RULES;
++	info->max_groups = HS_REGEX_MAX_GROUPS;
++	info->regexdev_capa = RTE_REGEXDEV_CAPA_RUNTIME_COMPILATION_F;
++	info->rule_flags = RTE_REGEX_PCRE_RULE_CASELESS_F |
++			   RTE_REGEX_PCRE_RULE_DOTALL_F |
++			   RTE_REGEX_PCRE_RULE_MULTILINE_F |
++			   RTE_REGEX_PCRE_RULE_UTF_F;
++
++	return 0;
++}
++
++/* Fast path stubs replaced by real implementations in later patches. */
++
++static uint16_t
++hs_regex_enqueue_burst(struct rte_regexdev *dev __rte_unused,
++		       uint16_t qp_id __rte_unused,
++		       struct rte_regex_ops **ops __rte_unused,
++		       uint16_t nb_ops __rte_unused)
++{
++	return 0;
++}
++
++static uint16_t
++hs_regex_dequeue_burst(struct rte_regexdev *dev __rte_unused,
++		       uint16_t qp_id __rte_unused,
++		       struct rte_regex_ops **ops __rte_unused,
++		       uint16_t nb_ops __rte_unused)
++{
++	return 0;
++}
++
++static const struct rte_regexdev_ops hs_regexdev_ops = {
++	.dev_info_get = hs_regex_info_get,
++};
++
++/* Device Lifecycle */
++
++int
++hs_regex_dev_create(const char *name, struct rte_device *device)
++{
++	struct hs_regex_priv *priv;
++	struct rte_regexdev *dev;
++
++	if (name == NULL || device == NULL)
++		return -EINVAL;
++
++	HS_LOG(INFO, "Creating Hyperscan regex device: %s", name);
++
++	dev = rte_regexdev_register(name);
++	if (!dev) {
++		HS_LOG(ERR, "Failed to register regex device %s", name);
++		return -EINVAL;
++	}
++
++	priv = rte_zmalloc("hs_regex_priv", sizeof(*priv),
++			   RTE_CACHE_LINE_SIZE);
++	if (!priv) {
++		rte_regexdev_unregister(dev);
++		return -ENOMEM;
++	}
++
++	dev->dev_ops = &hs_regexdev_ops;
++	dev->enqueue = hs_regex_enqueue_burst;
++	dev->dequeue = hs_regex_dequeue_burst;
++	dev->device = device;
++	dev->data->dev_private = priv;
++	dev->state = RTE_REGEXDEV_READY;
++
++	HS_LOG(INFO, "Hyperscan regex PMD created (dev_id=%u, hs=%s)",
++	       dev->data->dev_id, hs_version());
++	return dev->data->dev_id;
++}
++
++void
++hs_regex_dev_destroy(const char *name)
++{
++	struct rte_regexdev *dev;
++	struct hs_regex_priv *priv;
++
++	if (name == NULL)
++		return;
++
++	dev = rte_regexdev_get_device_by_name(name);
++	if (!dev)
++		return;
++
++	priv = dev->data->dev_private;
++	if (priv) {
++		rte_free(priv);
++		dev->data->dev_private = NULL;
++	}
++
++	rte_regexdev_unregister(dev);
++	HS_LOG(INFO, "Hyperscan regex PMD destroyed: %s", name);
++}
++
++static int
++hs_regex_probe(struct rte_vdev_device *vdev)
++{
++	const char *name;
++	int ret;
++
++	name = rte_vdev_device_name(vdev);
++	if (name == NULL)
++		return -EINVAL;
++
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY) {
++		HS_LOG(ERR, "Multi-process not supported for %s", name);
++		return -EINVAL;
++	}
++
++	ret = hs_regex_dev_create(name, &vdev->device);
++	return ret < 0 ? ret : 0;
++}
++
++static int
++hs_regex_remove(struct rte_vdev_device *vdev)
++{
++	const char *name;
++
++	name = rte_vdev_device_name(vdev);
++	if (name == NULL)
++		return -EINVAL;
++
++	hs_regex_dev_destroy(name);
++	return 0;
++}
++
++static struct rte_vdev_driver hs_regex_pmd_drv = {
++	.probe = hs_regex_probe,
++	.remove = hs_regex_remove,
++};
++
++RTE_PMD_REGISTER_VDEV(regex_hs, hs_regex_pmd_drv);
++RTE_PMD_REGISTER_PARAM_STRING(regex_hs, "");
+diff --git a/drivers/regex/hs/hs_regex.h b/drivers/regex/hs/hs_regex.h
+new file mode 100644
+index 0000000..be4c2e9
+--- /dev/null
++++ b/drivers/regex/hs/hs_regex.h
+@@ -0,0 +1,69 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 Intel Corporation
++ */
++
++#ifndef HS_REGEX_H
++#define HS_REGEX_H
++
++#include <rte_regexdev.h>
++#include <hs/hs.h>
++
++#define HS_REGEX_DRIVER_NAME "regex_hs"
++#define HS_REGEX_INITIAL_RULES_CAP 64
++#define HS_REGEX_MAX_QUEUE_PAIRS 64
++#define HS_REGEX_MAX_GROUPS 64
++#define HS_REGEX_MAX_RULES 1000000
++#define HS_REGEX_DEFAULT_NB_DESC 1024
++#define HS_REGEX_MAX_NB_DESC 32768
++
++/* Device lifecycle state machine. */
++enum hs_regex_dev_state {
++	HS_REGEX_DEV_CREATED = 0,
++	HS_REGEX_DEV_CONFIGURED,
++	HS_REGEX_DEV_STARTED,
++	HS_REGEX_DEV_STOPPED,
++};
++
++/* Per-rule entry stored before compilation */
++struct hs_regex_rule {
++	char *pattern;
++	uint32_t rule_id;
++	uint16_t group_id;
++	uint64_t rule_flags;
++};
++
++/* Queue pair */
++struct hs_regex_qp {
++	struct rte_regex_ops **ops;
++	uint16_t nb_desc;
++	uint16_t head;
++	uint16_t tail;
++	uint16_t count;
++	hs_scratch_t *scratch;
++	uint64_t qp_enqueued;
++	uint64_t qp_dequeued;
++	uint64_t qp_matches;
++};
++
++/* Per-device private data */
++struct hs_regex_priv {
++	struct hs_regex_rule *rules;
++	uint32_t nb_rules;
++	uint32_t rules_cap;
++
++	hs_database_t *db;
++	int db_compiled;
++
++	struct hs_regex_qp *qps;
++	uint16_t nb_queue_pairs;
++
++	uint16_t max_matches;
++	uint16_t nb_groups;
++
++	enum hs_regex_dev_state dev_state;
++};
++
++int hs_regex_dev_create(const char *name, struct rte_device *device);
++void hs_regex_dev_destroy(const char *name);
++
++#endif /* HS_REGEX_H */
+diff --git a/drivers/regex/hs/meson.build b/drivers/regex/hs/meson.build
+new file mode 100644
+index 0000000..5c855f4
+--- /dev/null
++++ b/drivers/regex/hs/meson.build
+@@ -0,0 +1,19 @@
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright(c) 2026 Intel Corporation
++
++if not dpdk_conf.get('RTE_ARCH_64')
++    build = false
++    reason = 'only supported on 64-bit platforms'
++    subdir_done()
++endif
++
++hs_dep = dependency('libhs', required: false)
++if not hs_dep.found()
++    build = false
++    reason = 'missing dependency, "libhs"'
++    subdir_done()
++endif
++
++sources = files('hs_regex.c')
++deps += ['bus_vdev', 'hash']
++ext_deps += hs_dep
+diff --git a/drivers/regex/meson.build b/drivers/regex/meson.build
+index ff2a8fe..d5a378b 100644
+--- a/drivers/regex/meson.build
++++ b/drivers/regex/meson.build
+@@ -2,6 +2,7 @@
+ # Copyright 2020 Mellanox Technologies, Ltd
+ 
+ drivers = [
++        'hs',
+         'mlx5',
+         'cn9k',
+ ]
 -- 
 2.43.0
 
