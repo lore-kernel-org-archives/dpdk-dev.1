@@ -2,44 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 977CBC61DCD
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 07:38:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A18A4C61DCD
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 07:38:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3D03C40A72;
-	Fri, 28 Aug 2026 09:38:00 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 339FB40268;
+	Fri, 28 Aug 2026 09:38:03 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 22F31406A2
- for <dev@dpdk.org>; Fri, 28 Aug 2026 09:37:56 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 0F56040A6E
+ for <dev@dpdk.org>; Fri, 28 Aug 2026 09:37:59 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowACnsT_KOpFqx8pzBg--.56782S2;
- Fri, 28 Aug 2026 15:37:47 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowAAHED7WOpFqv8tzBg--.11060S2;
+ Fri, 28 Aug 2026 15:37:58 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org
-Subject: [PATCH v6 12/45] net/sxe2: clean up duplicate function declarations
-Date: Fri, 28 Aug 2026 15:37:46 +0800
-Message-ID: <20260828073746.2248179-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v6 14/45] net/sxe2: fill MAC and queue counts in device info
+Date: Fri, 28 Aug 2026 15:37:58 +0800
+Message-ID: <20260828073758.2248282-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260828032731.2109423-1-liujie5@linkdatatechnology.com>
 References: <20260828032731.2109423-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowACnsT_KOpFqx8pzBg--.56782S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAFW7AF1UAr48XrWfAry7ZFb_yoW5tF13pF
- 48Xry5AFWYqF18ur4UJa1fuFyagrW8tryj9FZ8W34FkayDZFZFvFy5tF1Fy3WrC34DGwna
- yanrXa1DG3yrXrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUkqb7Iv0xC_Cr1lb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I2
- 0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
- A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
- jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwV
- C2z280aVCY1x0267AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
- Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1q6rW5McIj6I8E87Iv67AKxVWxJV
- W8Jr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4kE6xkIj40Ew7xC0wCF
- 04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r
- 18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vI
- r41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr
- 1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26F4j6r4UJwCI42IY
- 6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU8c_-PUUUUU==
+X-CM-TRANSID: rQCowAAHED7WOpFqv8tzBg--.11060S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7JrWfZF4fWr45Cr1fKF4xXrb_yoWDAFX_uF
+ 98Zry3CFy5ArZ5K34SkF4fZwnYyr18Wr4rX3WqqFWfZw15tF1fuw1qvFsrtFsrJr4UAFZI
+ 9F13J34Sv390kjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+ 9fnUUIcSsGvfJTRUUUbc8YjsxI4VWxJwAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I
+ 6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+ 8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0
+ cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I
+ 8E87Iv6xkF7I0E14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+ F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jw0_WrylYx0Ex4A2jsIE14v26F4j6r
+ 4UJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lw4CEc2x0rVAKj4xxMxAI
+ w28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr
+ 4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0EwIxG
+ rwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJw
+ CI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Cr0_Gr1UMIIF0xvE
+ x4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjxU2oGQDUUUU
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -57,77 +57,28 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Remove duplicate function declarations from the sxe2 driver headers:
-- sxe2_drv_promisc_config, sxe2_drv_vsi_info_get and
-  sxe2_drv_rxq_mapping_set in sxe2_cmd_chnl.h
-- sxe2_dev_pci_seg_unmap in sxe2_ethdev.h
-- sxe2_rx_pkts_scattered in sxe2_txrx_poll.h
+Fill max_mac_addrs, nb_rx_queues and nb_tx_queues in
+sxe2_dev_infos_get() so applications can query the maximum number of
+MAC addresses and the queue counts.
 
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_cmd_chnl.h  | 6 ------
- drivers/net/sxe2/sxe2_ethdev.h    | 2 --
- drivers/net/sxe2/sxe2_txrx_poll.h | 2 --
- 3 files changed, 10 deletions(-)
+ drivers/net/sxe2/sxe2_ethdev.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.h b/drivers/net/sxe2/sxe2_cmd_chnl.h
-index d63caad526..294ac15db4 100644
---- a/drivers/net/sxe2/sxe2_cmd_chnl.h
-+++ b/drivers/net/sxe2/sxe2_cmd_chnl.h
-@@ -65,8 +65,6 @@ int32_t sxe2_drv_ipsec_rxsa_delete(struct sxe2_adapter *adapter,
- int32_t sxe2_drv_ipsec_txsa_delete(struct sxe2_adapter *adapter,
- 			       uint16_t sa_id);
+diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
+index 02f9ce3d32..e85e34aa1a 100644
+--- a/drivers/net/sxe2/sxe2_ethdev.c
++++ b/drivers/net/sxe2/sxe2_ethdev.c
+@@ -792,6 +792,7 @@ static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev,
+ 	dev_info->max_lro_pkt_size = SXE2_FRAME_SIZE_MAX * SXE2_RX_LRO_DESC_MAX_NUM;
+ 	dev_info->max_mtu = dev_info->max_rx_pktlen - SXE2_ETH_OVERHEAD;
+ 	dev_info->min_mtu = RTE_ETHER_MIN_MTU;
++	dev_info->max_mac_addrs = SXE2_NUM_MACADDR_MAX;
  
--int32_t sxe2_drv_promisc_config(struct sxe2_adapter *adapter, bool set);
--
- int32_t sxe2_drv_udp_tunnel_add(struct sxe2_adapter *adapter,
- 			    enum sxe2_udp_tunnel_protocol tunnel_proto,
- 			    uint16_t udp_port);
-@@ -84,8 +82,6 @@ int32_t sxe2_drv_get_udp_tunnel_port(struct sxe2_adapter *adapter,
- 
- int32_t sxe2_drv_vsi_info_get(struct sxe2_adapter *adapter, struct sxe2_vsi *vsi);
- 
--int32_t sxe2_drv_vsi_info_get(struct sxe2_adapter *adapter, struct sxe2_vsi *vsi);
--
- int32_t sxe2_drv_mac_link_status_get(struct sxe2_adapter *adapter);
- 
- int32_t sxe2_drv_get_mac_stats(struct sxe2_adapter *adapter);
-@@ -110,8 +106,6 @@ int32_t sxe2_drv_mapping_reset(struct rte_eth_dev *eth_dev);
- 
- int32_t sxe2_drv_mapping_stats_info_clear(struct rte_eth_dev *eth_dev);
- 
--int32_t sxe2_drv_rxq_mapping_set(struct rte_eth_dev *eth_dev, uint16_t queue_id, uint8_t pool_idx);
--
- int32_t sxe2_drv_allmulti_config(struct sxe2_adapter *adapter, bool set);
- 
- int32_t sxe2_drv_uc_config(struct sxe2_adapter *adapter, struct rte_ether_addr *addr, bool add);
-diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
-index 158198d74b..1409be74d3 100644
---- a/drivers/net/sxe2/sxe2_ethdev.h
-+++ b/drivers/net/sxe2/sxe2_ethdev.h
-@@ -385,8 +385,6 @@ void sxe2_dev_pci_seg_unmap(struct sxe2_adapter *adapter, uint32_t res_type);
- 
- int32_t sxe2_dev_pci_map_init(struct rte_eth_dev *dev);
- 
--void sxe2_dev_pci_seg_unmap(struct sxe2_adapter *adapter, uint32_t res_type);
--
- int32_t sxe2_udp_tunnel_port_del_common(struct sxe2_adapter *ad,
- 		enum sxe2_udp_tunnel_protocol tunnel_proto, uint16_t udp_port);
- 
-diff --git a/drivers/net/sxe2/sxe2_txrx_poll.h b/drivers/net/sxe2/sxe2_txrx_poll.h
-index 708e3839d7..bfa099c097 100644
---- a/drivers/net/sxe2/sxe2_txrx_poll.h
-+++ b/drivers/net/sxe2/sxe2_txrx_poll.h
-@@ -13,8 +13,6 @@ uint16_t sxe2_tx_pkts_simple(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t
- 
- uint16_t sxe2_rx_pkts_scattered(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
- 
--uint16_t sxe2_rx_pkts_scattered(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
--
- uint16_t sxe2_rx_pkts_scattered_split(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
- 
- #endif /* SXE2_TXRX_POLL_H */
+ 	dev_info->rx_offload_capa =
+ 		RTE_ETH_RX_OFFLOAD_VLAN_STRIP |
 -- 
 2.52.0
 
