@@ -2,46 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE091C61DB9
-	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 13:07:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D64F6C61DB9
+	for <dpdk-dev@archiver.kernel.org>; Fri, 28 Aug 2026 13:07:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9768C4068E;
-	Fri, 28 Aug 2026 15:07:14 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D04B74069F;
+	Fri, 28 Aug 2026 15:07:19 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
- by mails.dpdk.org (Postfix) with ESMTP id 6186F40671
- for <dev@dpdk.org>; Fri, 28 Aug 2026 15:07:12 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 9BD01406BA
+ for <dev@dpdk.org>; Fri, 28 Aug 2026 15:07:18 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1787922432; x=1819458432;
+ t=1787922439; x=1819458439;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=sAAHKBG6XJY0v0knn+vJ8fgdei3W5nOark7gJYIJDCc=;
- b=RqL2xMldVttsCXfhic7+taWYXq8gZSgU5sbfCAhJqaSuhq569JaFDFSo
- IbJwR7r9rXIAbaNcntHPthWvdEPk1jl+QGyEny47eFR8G8/EdnDNKL2FM
- eGK7JOcUFdRFPAidJ/DdccxtQSKRjItja7/5gPtMFfN671Mfp1Ar8py4F
- mAD6RvbP7Z8TAYsKmh9UL3mDD6f0oBzeCUoZKIbF3Vd3Nb69NGTut/elx
- gA1TYDV0Sw9e/FuBp7gpmED7lzOEWcepxrSjOgKsAqeCXKp7yqqvTva/R
- WdPLP4JXJ7kbiidj85wuoM8ktQHByzhMkE+J6IksWxUqNBP7qSc9UlnXA w==;
-X-CSE-ConnectionGUID: EcZJuHVhTqOQfa36hQFy9g==
-X-CSE-MsgGUID: 5kVMg7gyTmGS22yM2aDPVg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11888"; a="113964524"
-X-IronPort-AV: E=Sophos;i="6.25,248,1779174000"; d="scan'208";a="113964524"
+ bh=glmbyHUhSZ6caaMa6MeZ6gTBds6KN3bGQQubqgI2hhM=;
+ b=HKaRy8Qcna9T/mPFu7OW+RfVqlFvrEj4SHV8whRIW4bewcmwIWjjn9Bz
+ 5sLkrDclIGS+h5Pm19Yjn5Axxv1AQTM7D02JNxi/SB5T0pd0YiZrJsAje
+ /glwjhJ/YKFS6OFL5xlNRIdGxMxyBcPUdXORz8NQv9G2Zmk/Uu8kzs9fH
+ 9djY1utbIbAu2nc/PbGUFgUB5rM6vnMAHcf3G4juxLPUD3xTsD/OsyQID
+ 7lAYN0y7gwsY5QYBuUQUtTq8NrjTSffJxy5XR6b3ipwBhG1/TD1quxsJI
+ 1oFU2ebNPI8aPSYjVe+qIjinynE0tVlHPqsp8xWsks2e5i5O4x4sR0QWD g==;
+X-CSE-ConnectionGUID: DFxFRSFFTCe0M+pFG/J88w==
+X-CSE-MsgGUID: MhR0KIadT0ulP2byStLZYw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11888"; a="113964561"
+X-IronPort-AV: E=Sophos;i="6.25,248,1779174000"; d="scan'208";a="113964561"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 28 Aug 2026 06:07:12 -0700
-X-CSE-ConnectionGUID: 6Y5TQh8ZS9GmRxFII+Hl3Q==
-X-CSE-MsgGUID: iILwYJgBRYSkUepyiptMFA==
+ 28 Aug 2026 06:07:18 -0700
+X-CSE-ConnectionGUID: 1SVY3g6ARxKu3o0uImuREQ==
+X-CSE-MsgGUID: +ox9d8MERPihJCWaHb/gCA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,248,1779174000"; d="scan'208";a="271959761"
+X-IronPort-AV: E=Sophos;i="6.25,248,1779174000"; d="scan'208";a="271959877"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa004.jf.intel.com with ESMTP; 28 Aug 2026 06:07:10 -0700
+ by orviesa004.jf.intel.com with ESMTP; 28 Aug 2026 06:07:17 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org, Chenbo Xia <chenbox@nvidia.com>,
- Nipun Gupta <nipun.gupta@amd.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v14 06/25] vfio: remove modname parameter from init
-Date: Fri, 28 Aug 2026 14:06:34 +0100
-Message-ID: <b6701180c52598dbc327055c2c9491e6f5c790c5.1787922362.git.anatoly.burakov@intel.com>
+ Nipun Gupta <nipun.gupta@amd.com>
+Subject: [PATCH v14 08/25] bus/pci: rename mismatching error labels
+Date: Fri, 28 Aug 2026 14:06:36 +0100
+Message-ID: <7b349e7695d7e01224377f815616eda34a01b641.1787922363.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1787922362.git.anatoly.burakov@intel.com>
  <cover.1787922362.git.anatoly.burakov@intel.com>
@@ -61,117 +60,75 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-All VFIO initialization always happens with "vfio" module, and now that the
-API is not public, having a way to override the module name seems redundant
-as there is not going to be a use case that calls into `rte_vfio_enable`
-that isn't coming from EAL init. So, remove the parameter, and hardcode
-the modname to "vfio" instead.
+Currently, there are two VFIO map functions - primary and secondary -
+that use a very similar goto error pattern. However, the label names are
+confusing.
+
+Specifically, for primary, we have three error labels: vfio_res (release
+VFIO resource), vfio_dev_fd (close the fd), and map (unmap all the mapped
+regions). For secondary, there is vfio_dev (close the fd), and
+vfio_dev_fd (unmap all mapped regions).
+
+For consistency, align secondary process function's error labels to match
+semantics of how they work in primary process function.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/bus/pci/linux/pci_vfio.c | 2 +-
- lib/eal/freebsd/eal.c            | 2 +-
- lib/eal/include/rte_vfio.h       | 7 ++-----
- lib/eal/linux/eal.c              | 2 +-
- lib/eal/linux/eal_vfio.c         | 5 +++--
- 5 files changed, 8 insertions(+), 10 deletions(-)
+ drivers/bus/pci/linux/pci_vfio.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/bus/pci/linux/pci_vfio.c b/drivers/bus/pci/linux/pci_vfio.c
-index bc5c5c2499..f3791cce98 100644
+index 71afc383e6..3e87e759f5 100644
 --- a/drivers/bus/pci/linux/pci_vfio.c
 +++ b/drivers/bus/pci/linux/pci_vfio.c
-@@ -1303,7 +1303,7 @@ pci_vfio_is_enabled(void)
- 	int status = rte_vfio_is_enabled("vfio_pci");
+@@ -968,7 +968,7 @@ pci_vfio_map_resource_secondary(struct rte_pci_device *dev)
  
- 	if (!status) {
--		rte_vfio_enable("vfio");
-+		rte_vfio_enable();
- 		status = rte_vfio_is_enabled("vfio_pci");
+ 	ret = pci_vfio_fill_regions(dev, vfio_dev_fd, &device_info);
+ 	if (ret)
+-		goto err_vfio_dev;
++		goto err_vfio_dev_fd;
+ 
+ 	/* map BARs */
+ 	maps = vfio_res->maps;
+@@ -979,14 +979,14 @@ pci_vfio_map_resource_secondary(struct rte_pci_device *dev)
+ 			if (ret < 0) {
+ 				PCI_LOG(ERR, "%s sparse mapping BAR%i failed: %s",
+ 					pci_addr, i, strerror(errno));
+-				goto err_vfio_dev_fd;
++				goto err_map;
+ 			}
+ 		} else {
+ 			ret = pci_vfio_mmap_bar(vfio_dev_fd, vfio_res, i, MAP_FIXED);
+ 			if (ret < 0) {
+ 				PCI_LOG(ERR, "%s mapping BAR%i failed: %s",
+ 					pci_addr, i, strerror(errno));
+-				goto err_vfio_dev_fd;
++				goto err_map;
+ 			}
+ 		}
+ 
+@@ -995,17 +995,17 @@ pci_vfio_map_resource_secondary(struct rte_pci_device *dev)
+ 
+ 	/* we need save vfio_dev_fd, so it can be used during release */
+ 	if (rte_intr_dev_fd_set(dev->intr_handle, vfio_dev_fd))
+-		goto err_vfio_dev_fd;
++		goto err_map;
+ 	if (rte_intr_dev_fd_set(dev->vfio_req_intr_handle, vfio_dev_fd))
+-		goto err_vfio_dev_fd;
++		goto err_map;
+ 
+ 	return 0;
+-err_vfio_dev_fd:
++err_map:
+ 	for (j = 0; j < i; j++) {
+ 		if (maps[j].addr)
+ 			pci_unmap_resource(maps[j].addr, maps[j].size);
  	}
- 	return status;
-diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
-index aa6d4c2e16..52d265769e 100644
---- a/lib/eal/freebsd/eal.c
-+++ b/lib/eal/freebsd/eal.c
-@@ -839,7 +839,7 @@ int rte_vfio_release_device(__rte_unused const char *sysfs_base,
- }
- 
- RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_enable)
--int rte_vfio_enable(__rte_unused const char *modname)
-+int rte_vfio_enable(void)
- {
- 	rte_errno = ENOTSUP;
+-err_vfio_dev:
++err_vfio_dev_fd:
+ 	dev_vfio_release_device(rte_pci_get_sysfs_path(),
+ 			pci_addr, vfio_dev_fd);
  	return -1;
-diff --git a/lib/eal/include/rte_vfio.h b/lib/eal/include/rte_vfio.h
-index e76181c83c..b53ce56a8d 100644
---- a/lib/eal/include/rte_vfio.h
-+++ b/lib/eal/include/rte_vfio.h
-@@ -94,20 +94,17 @@ int rte_vfio_release_device(const char *sysfs_base, const char *dev_addr, int fd
- 
- /**
-  * @internal
-- * Enable a VFIO-related kmod.
-+ * Initialize VFIO.
-  *
-  * This function is only relevant to linux and will return
-  * an error on BSD.
-  *
-- * @param modname
-- *   kernel module name.
-- *
-  * @return
-  *   0 on success.
-  *   <0 on failure.
-  */
- __rte_internal
--int rte_vfio_enable(const char *modname);
-+int rte_vfio_enable(void);
- 
- /**
-  * @internal
-diff --git a/lib/eal/linux/eal.c b/lib/eal/linux/eal.c
-index 5577bab24a..17977baedc 100644
---- a/lib/eal/linux/eal.c
-+++ b/lib/eal/linux/eal.c
-@@ -771,7 +771,7 @@ rte_eal_init(int argc, char **argv)
- #endif
- 	}
- 
--	if (rte_vfio_enable("vfio")) {
-+	if (rte_vfio_enable()) {
- 		rte_eal_init_alert("Cannot init VFIO");
- 		rte_errno = EAGAIN;
- 		goto err_out;
-diff --git a/lib/eal/linux/eal_vfio.c b/lib/eal/linux/eal_vfio.c
-index d4173f7a01..da46ef2f17 100644
---- a/lib/eal/linux/eal_vfio.c
-+++ b/lib/eal/linux/eal_vfio.c
-@@ -25,6 +25,7 @@
- #include "eal_internal_cfg.h"
- 
- #define VFIO_MEM_EVENT_CLB_NAME "vfio_mem_event_clb"
-+#define VFIO_MODNAME "vfio"
- 
- /* hot plug/unplug of VFIO groups may cause all DMA maps to be dropped. we can
-  * recreate the mappings for DPDK segments, but we cannot do so for memory that
-@@ -1123,7 +1124,7 @@ rte_vfio_release_device(const char *sysfs_base, const char *dev_addr,
- 
- RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_enable)
- int
--rte_vfio_enable(const char *modname)
-+rte_vfio_enable(void)
- {
- 	/* initialize group list */
- 	unsigned int i, j;
-@@ -1154,7 +1155,7 @@ rte_vfio_enable(const char *modname)
- 	EAL_LOG(DEBUG, "Probing VFIO support...");
- 
- 	/* check if vfio module is loaded */
--	vfio_available = rte_eal_check_module(modname);
-+	vfio_available = rte_eal_check_module(VFIO_MODNAME);
- 
- 	/* return error directly */
- 	if (vfio_available == -1) {
 -- 
 2.52.0
 
