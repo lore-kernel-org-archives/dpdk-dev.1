@@ -2,75 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F00CC61DBE
-	for <dpdk-dev@archiver.kernel.org>; Sat, 29 Aug 2026 10:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C18CDC61DD6
+	for <dpdk-dev@archiver.kernel.org>; Sat, 29 Aug 2026 15:47:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 86C4E40431;
-	Sat, 29 Aug 2026 12:54:31 +0200 (CEST)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id CD25E4042F
- for <dev@dpdk.org>; Sat, 29 Aug 2026 12:54:29 +0200 (CEST)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 67TAFKVc3848716; Sat, 29 Aug 2026 03:54:29 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=H
- ELT1BSxMLzD8YuWSpF92uoNyPaY8v00mFxGWswx0eQ=; b=QaEKxVYm8MPgKvI/1
- IHuQ5jH3nG0TixCqSDgre6ENWUVBQVvP0DT8zHDGZnuOZLTgxCjc6NCvFQwDmVKy
- iu3yjfKKcLguyU00Us9Hv8WJYq67Qpls3BdWbjtF7za9LLgmjUCitj2UX13WT6oV
- wIGvM+2bbmnMZqj8aKEXbwGqOEifPeAqrAnxTcLAvie32WVSQfXeyE6iOZzqgxi/
- zVdlmvY5MM/717l4Mh76JSSP1MMADMM5YDwRMRezsiucHf7cJcBvKfPcr3thKT7g
- 0oabcsJtZY4wDqRfBi8L9FRQYw0xzhgX8jMzD3HDnVdHHJBwP5XoSILjdDqfW/8x
- dpPsg==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4gbqj88m97-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Sat, 29 Aug 2026 03:54:28 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Sat, 29 Aug 2026 03:54:27 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Sat, 29 Aug 2026 03:54:27 -0700
-Received: from cavium-VAMSI-BM.. (unknown [10.28.36.156])
- by maili.marvell.com (Postfix) with ESMTP id AFA7F3F7084;
- Sat, 29 Aug 2026 03:54:25 -0700 (PDT)
-From: Vamsi Krishna <vattunuru@marvell.com>
-To: <dev@dpdk.org>, <vattunuru@marvell.com>
-CC: <jerinj@marvell.com>, <fengchengwen@huawei.com>, <ndabilpuram@marvell.com>
-Subject: [PATCH v0 3/3] dma/cnxk: enable inter process domain DMA support
-Date: Sat, 29 Aug 2026 16:24:09 +0530
-Message-ID: <20260829105409.1160766-4-vattunuru@marvell.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260829105409.1160766-1-vattunuru@marvell.com>
-References: <20260829105409.1160766-1-vattunuru@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 7CC1F40268;
+	Sat, 29 Aug 2026 17:47:18 +0200 (CEST)
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com
+ [209.85.215.171])
+ by mails.dpdk.org (Postfix) with ESMTP id D1AF04025A
+ for <dev@dpdk.org>; Sat, 29 Aug 2026 17:47:16 +0200 (CEST)
+Received: by mail-pg1-f171.google.com with SMTP id
+ 41be03b00d2f7-cc1e1ff659bso1761943a12.0
+ for <dev@dpdk.org>; Sat, 29 Aug 2026 08:47:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788018435;
+ x=1788623235; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=I+mTWCswsvV/t1xUFOMBIRjoF5cAL8lskk/PSi2+YH8=;
+ b=NZgzyNd95eFx7jlwL6K3edM16Uy38bchu8ODAzoBzBTbubP4SwK79b9SN6C7nSupEZ
+ w5sYuAymGgxc89njqHcZMXhVLcqH5vXuN50eu1m0DJXfJuVrBePPa15bi34o5WEKYAom
+ GMW6ONgKXyrzUzu9dG33eVAjysSLx4W2lRelipoG6+f+4xJTWiJm+hlU0RgDcNGRCFbB
+ DU/SvsFMqBeYZ03iLfaexBx2syQISCZDtS1jPvIOcKfn7qHGuYj0xPJjXNgybTQcFNdC
+ 9uJJXENz0MlTMCsJQFs2eXvEuUQG8Ldv7ssxaxRNa2BkLdJPa7fl//pjfhGItR+gmmfr
+ mR0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1788018435; x=1788623235;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=I+mTWCswsvV/t1xUFOMBIRjoF5cAL8lskk/PSi2+YH8=;
+ b=JuX9tXGaDM0WYsZ7BEVA1shhShrIp7EVeEFZQpkEb6NV/K3HjOPSa1eL8TuZE4o1Se
+ dMEQyLX1o9b/AmVkEqcuLowfExwTzArtI/Y/4hzuIZRApo4O3aKWJaf6gRg0T69V2uiK
+ 2HGUzTJlbfdPraX6+UbEr5WdUFlZhhu0Zg9ZpyV/JwGnlYvp0/P+MD9uBiulAOD3qN0H
+ f48hfSY+AsynmXKhZ6gnSH6MhW+u/uRGBZQxlB7w48vyGUhLbbqY/MRPvjKPytpA1Hxj
+ KEmgHPMcigXe58MLjPMwJfeBprrXs6AnJTFOj2sR8NdgUtcTHOAlDcXafH6bWBBHpEt0
+ IySw==
+X-Gm-Message-State: AFuF++miCqn022YDKMP7cJdO3t2Zb4Q4S/53xVFvGACJwqdSVEVNqxSU
+ XMpysEGo9uP/+2becPYKph04tONCHrrtDwnyDrZBcP4SZ6L6r4j9gHuVt6QG10+PNNAnMpSRptx
+ 6RD1r
+X-Gm-Gg: AYBFou0NBW+J7+V7JQwJ4g2A4Gn4y3fsdgna86UNc1RgyaiAH/xo3kbubVWoVPJNwyq
+ /hPVid+JbYoxJrJL0fHdeGQVlJuu3Yfs2fZFr3Bw3bAT5PTB9lfhsVbH/sFxBZrIPkpHgi0Hr8a
+ rXtZPH6GD3X5MjmzBB5NwOG1jw3sT5lmlYyNE9DDjQrx5uIDv1obJj/OkHExJYug/8crFGYvBI3
+ saQqCJQJBDu5RZtb7JK88c2oB8ChTMoifsVOGXzJjR2hCO8zTxHJaT9zqgVSRsN+wz/dJxvzel5
+ pwB0CZbmvCxspx7PKM6Sq6VeJC1jnJE3GnqzyWs483Q7MuFPVlP+w8aT7BUKR762Cue8yk5in7Z
+ NrIO0MbK2nB/VSnJs35me1VFEk2t6F34ex7lzq1uHoT95d27VhJFWWZfJLflmqXXiVskChAsVli
+ btEOqDbTotvwvkfyXvGAmjdbNLZGsUxCW7rshHNxPuNHv7epqcXrXF72bmWd9z3eaSP2/y5hrG9
+ zByMFfK+PyuzCkSX26gvBXa284=
+X-Received: by 2002:a17:90b:3c45:b0:398:c292:ac80 with SMTP id
+ 98e67ed59e1d1-398c292b6b2mr1599133a91.10.1788018435516; 
+ Sat, 29 Aug 2026 08:47:15 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-142e41837c6sm13221356c88.11.2026.08.29.08.47.13
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sat, 29 Aug 2026 08:47:15 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v2 0/4] fix clang 23 unused but set warnings
+Date: Sat, 29 Aug 2026 08:44:44 -0700
+Message-ID: <20260829154706.52169-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260826235933.194681-1-stephen@networkplumber.org>
+References: <20260826235933.194681-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Info: AW1haW4tMjYwODI5MDA5MiBTYWx0ZWRfX7HsFMlHQ3lGD
- Ifi6Jq0rfRnwR1uEPSiIPwxoyqWHj/2Zi8yhsDsld+diwvUc5nhQKsCcINp/xkCbAaBo4HeBt5P
- zkmEja2IkUEm0aTGFBR0Z2yqcF9wuKo=
-X-Authority-Analysis: v=2.4 cv=EL82FVZC c=1 sm=1 tr=0 ts=6a92ba64 cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=Sv0fKeRqtYgA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=TtqV-g6YmW1Jfm2GSLaY:22 a=M5GUcnROAAAA:8 a=xhJYCCL8WsbtcfxnIMEA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: U11G-vQjcIM_up3TxpGvZFd3hV4gN72I
-X-Proofpoint-GUID: U11G-vQjcIM_up3TxpGvZFd3hV4gN72I
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODI5MDA5MiBTYWx0ZWRfX526QR7fKm5As
- TSWXWztwkCuLqSlrRuZSGQFkJLbb4VwNicSUC5rw7XDxKdtSCc5K50/bFZdjsMDariiu87WlYdl
- wrVdbkYF1SMAL2rUSWtzAihoMvSpQKLwulDt0flTG8qbS4O7dIDYEqI0hjvqKRr5HK99+bGjFmE
- ytiRHKvca7vMPxtYKy5rXDqPS3ExILGK/H8YfRRElNsxQGa/dHzIhDEUBFpS65TnMs4szJGhfHA
- GLpZjsGdNXLYgGnZ/tKibZfa4XywidQgTW6/hUMII9/tiwQa4seftj9PNzg9POJGxnC98x19Xrr
- BpgMg74YvjCfxlc2575rjxeSZCyjXgVYEmo8q8AoPdW8nyzGNFnmuhTE4RvRSaosZmGJShgSzCn
- 9G313iMLYh4nacRzve2D8qPLYl/iSa4WtW+8IWylbeDw7cmKebPx/Hd/V4cT0Z0NK99HbIKgKkt
- 9r/vNftWrMVTxIl+j/Q==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-08-29_02,2026-08-27_02,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,208 +82,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Vamsi Attunuru <vattunuru@marvell.com>
+Clang 23 adds -Wunused-but-set-global, which reports file scope
+variables that are assigned but never read. It is enabled by -Wall and
+does not appear with gcc or with clang 20 through 22.
 
-Adds support for inter domain DMA operations.
+Three of these are dead variables and are simply removed. The fourth,
+'alive' in dpaa_of.c, is a real debug aid: it is only read by
+DPAAX_HWWARN, which discards its condition when RTE_LIBRTE_DPAAX_DEBUG
+is not defined. That one is fixed by making the empty expansion consume
+its argument, which keeps the condition compiled in both builds and
+covers every other DPAAX_HWWARN user as well.
 
-Signed-off-by: Vamsi Attunuru <vattunuru@marvell.com>
----
- drivers/dma/cnxk/cnxk_dmadev.c | 148 ++++++++++++++++++++++++++++++++-
- drivers/dma/cnxk/cnxk_dmadev.h |   1 +
- 2 files changed, 148 insertions(+), 1 deletion(-)
+v2 - remove more unused code as suggested.
 
-diff --git a/drivers/dma/cnxk/cnxk_dmadev.c b/drivers/dma/cnxk/cnxk_dmadev.c
-index 3970abe1c3..faa13abc23 100644
---- a/drivers/dma/cnxk/cnxk_dmadev.c
-+++ b/drivers/dma/cnxk/cnxk_dmadev.c
-@@ -98,7 +98,7 @@ cnxk_dmadev_info_get(const struct rte_dma_dev *dev, struct rte_dma_info *dev_inf
- 		dev_info->min_desc = CN20K_DPI_MIN_DESC;
- 		dev_info->max_sges = CN20K_DPI_MAX_POINTER;
- 		dev_info->max_vchans = dpivf->max_vchans;
--		dev_info->dev_capa |= RTE_DMA_CAPA_OPS_FILL;
-+		dev_info->dev_capa |= (RTE_DMA_CAPA_OPS_FILL | RTE_DMA_CAPA_INTER_PROCESS_DOMAIN);
- 	} else {
- 		dev_info->max_desc = CNXK_DPI_MAX_DESC;
- 		dev_info->min_desc = CNXK_DPI_MIN_DESC;
-@@ -446,6 +446,13 @@ cn20k_dmadev_setup(struct cnxk_dpi_vf_s *dpivf, uint16_t vchan,
- 		break;
- 	case RTE_DMA_DIR_MEM_TO_MEM:
- 		dpi_conf->cfg.xtype = DPI_XTYPE_INTERNAL_ONLY;
-+		if (conf->domain.type == RTE_DMA_INTER_PROCESS_DOMAIN) {
-+			dpi_conf->chan_cfg.type = RTE_DMA_INTER_PROCESS_DOMAIN;
-+			dpi_conf->chan_cfg.src_key = conf->domain.src_handler;
-+			dpi_conf->chan_cfg.dst_key = conf->domain.dst_handler;
-+			header->cn20k.chan = CNXK_DPI_SRC_DST_KEY(dpi_conf->chan_cfg.src_key,
-+								  dpi_conf->chan_cfg.dst_key);
-+		}
- 		dpi_conf->cfg.rport = 0;
- 		dpi_conf->cfg.wport = 0;
- 		break;
-@@ -1015,6 +1022,140 @@ cnxk_set_fp_ops(struct rte_dma_dev *dev, uint8_t ena_enq_deq)
- 	}
- }
- 
-+static int
-+cnxk_dmadev_access_pair_group_create(const struct rte_dma_dev *dev, rte_uuid_t domain_id,
-+				       rte_uuid_t token, int16_t *group_id,
-+				       rte_dma_access_pair_group_event_cb_t cb)
-+{
-+	struct cnxk_dpi_vf_s *dpivf = dev->fp_obj->dev_private;
-+	struct roc_dpi_lf *lf;
-+	int rc;
-+
-+	RTE_SET_USED(cb);
-+
-+	if (!roc_model_is_cn20k())
-+		return -ENOTSUP;
-+
-+	if (dpivf->rdpi.lfs == NULL || dpivf->rdpi.nr_lfs == 0) {
-+		plt_err("DPI LF resources are not initialized");
-+		return -EINVAL;
-+	}
-+
-+	lf = &(dpivf->rdpi.lfs[0]);
-+
-+	rc = roc_dpi_access_pair_group_create(lf, domain_id, token, group_id);
-+
-+	return rc;
-+}
-+
-+static int
-+cnxk_dmadev_access_pair_group_destroy(const struct rte_dma_dev *dev, int16_t group_id)
-+{
-+	struct cnxk_dpi_vf_s *dpivf = dev->fp_obj->dev_private;
-+	struct roc_dpi_lf *lf;
-+	int rc;
-+
-+	if (!roc_model_is_cn20k())
-+		return -ENOTSUP;
-+
-+	if (dpivf->rdpi.lfs == NULL || dpivf->rdpi.nr_lfs == 0) {
-+		plt_err("DPI LF resources are not initialized");
-+		return -EINVAL;
-+	}
-+
-+	lf = &(dpivf->rdpi.lfs[0]);
-+
-+	if (lf->group_id != group_id) {
-+		plt_err("Invalid access pair group is passed");
-+		return -EINVAL;
-+	}
-+
-+	rc = roc_dpi_access_pair_group_destroy(lf, group_id);
-+
-+	return rc;
-+}
-+
-+static int
-+cnxk_dmadev_access_pair_group_join(const struct rte_dma_dev *dev, rte_uuid_t domain_id,
-+				   rte_uuid_t token, int16_t group_id,
-+				   rte_dma_access_pair_group_event_cb_t cb)
-+{
-+	struct cnxk_dpi_vf_s *dpivf = dev->fp_obj->dev_private;
-+	struct roc_dpi_lf *lf;
-+	int rc;
-+
-+	RTE_SET_USED(cb);
-+
-+	if (!roc_model_is_cn20k())
-+		return -ENOTSUP;
-+
-+	if (dpivf->rdpi.lfs == NULL || dpivf->rdpi.nr_lfs == 0) {
-+		plt_err("DPI LF resources are not initialized");
-+		return -EINVAL;
-+	}
-+
-+	lf = &(dpivf->rdpi.lfs[0]);
-+
-+	rc = roc_dpi_access_pair_group_join(lf, domain_id, token, group_id);
-+
-+	return rc;
-+}
-+
-+static int
-+cnxk_dmadev_access_pair_group_leave(const struct rte_dma_dev *dev, int16_t group_id)
-+{
-+	struct cnxk_dpi_vf_s *dpivf = dev->fp_obj->dev_private;
-+	struct roc_dpi_lf *lf;
-+	int rc;
-+
-+	if (!roc_model_is_cn20k())
-+		return -ENOTSUP;
-+
-+	if (dpivf->rdpi.lfs == NULL || dpivf->rdpi.nr_lfs == 0) {
-+		plt_err("DPI LF resources are not initialized");
-+		return -EINVAL;
-+	}
-+
-+	lf = &(dpivf->rdpi.lfs[0]);
-+
-+	if (lf->group_id != group_id) {
-+		plt_err("Invalid access pair group is passed");
-+		return -EINVAL;
-+	}
-+
-+	rc = roc_dpi_access_pair_group_leave(lf, group_id);
-+
-+	return rc;
-+}
-+
-+static int
-+cnxk_dmadev_access_pair_group_handler_get(const struct rte_dma_dev *dev, int16_t group_id,
-+					  rte_uuid_t domain_id, uint16_t *handler)
-+{
-+	struct cnxk_dpi_vf_s *dpivf = dev->fp_obj->dev_private;
-+	struct roc_dpi_lf *lf;
-+	int rc;
-+
-+	if (!roc_model_is_cn20k())
-+		return -ENOTSUP;
-+
-+	if (dpivf->rdpi.lfs == NULL || dpivf->rdpi.nr_lfs == 0) {
-+		plt_err("DPI LF resources are not initialized");
-+		return -EINVAL;
-+	}
-+
-+	lf = &(dpivf->rdpi.lfs[0]);
-+
-+	if (lf->group_id != group_id) {
-+		plt_err("Invalid access pair group is passed");
-+		return -EINVAL;
-+	}
-+
-+	rc = roc_dpi_access_pair_group_handler_get(lf, group_id, domain_id, handler);
-+
-+	return rc;
-+}
-+
- static const struct rte_dma_dev_ops cnxk_dmadev_ops = {
- 	.dev_close = cnxk_dmadev_close,
- 	.dev_configure = cnxk_dmadev_configure,
-@@ -1024,6 +1165,11 @@ static const struct rte_dma_dev_ops cnxk_dmadev_ops = {
- 	.stats_get = cnxk_stats_get,
- 	.stats_reset = cnxk_stats_reset,
- 	.vchan_setup = cnxk_dmadev_vchan_setup,
-+	.access_pair_group_create = cnxk_dmadev_access_pair_group_create,
-+	.access_pair_group_destroy = cnxk_dmadev_access_pair_group_destroy,
-+	.access_pair_group_join = cnxk_dmadev_access_pair_group_join,
-+	.access_pair_group_leave = cnxk_dmadev_access_pair_group_leave,
-+	.access_pair_group_handler_get = cnxk_dmadev_access_pair_group_handler_get,
- };
- 
- static int
-diff --git a/drivers/dma/cnxk/cnxk_dmadev.h b/drivers/dma/cnxk/cnxk_dmadev.h
-index 3ba404dda8..043f48cb7e 100644
---- a/drivers/dma/cnxk/cnxk_dmadev.h
-+++ b/drivers/dma/cnxk/cnxk_dmadev.h
-@@ -47,6 +47,7 @@
- 							     CNXK_DPI_MAX_POINTER)
- #define CNXK_DPI_CHUNKS_FROM_DESC(cz, desc) (((desc) / (((cz) / 8) / CNXK_DPI_MAX_CMD_SZ)) + 1)
- #define CNXK_DPI_COMPL_OFFSET		    ROC_CACHE_LINE_SZ
-+#define CNXK_DPI_SRC_DST_KEY(src, dst)	    ((0x2040) | ((src & 0x3F) << 7) | (dst & 0x3F))
- 
- #define CN20K_DPI_MAX_POINTER		    4
- #define CN20K_DPI_MAX_DESC		    2048
+Stephen Hemminger (4):
+  common/dpaax: fix unused variable warning in non-debug build
+  bus/dpaa: remove unused qman_clk variable
+  common/zsda: remove unused device counter
+  net/qede: remove unused app version variable
+
+ drivers/bus/dpaa/base/qbman/qman_driver.c |  4 ----
+ drivers/common/dpaax/dpaax_logs.h         |  3 ++-
+ drivers/common/zsda/zsda_device.c         |  5 -----
+ drivers/net/qede/qede_debug.c             | 20 --------------------
+ 4 files changed, 2 insertions(+), 30 deletions(-)
+
 -- 
-2.34.1
+2.53.0
 
