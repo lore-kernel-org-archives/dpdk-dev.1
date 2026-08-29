@@ -2,74 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 671C8C61DD9
-	for <dpdk-dev@archiver.kernel.org>; Sat, 29 Aug 2026 16:06:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04E1DC61DCB
+	for <dpdk-dev@archiver.kernel.org>; Sat, 29 Aug 2026 17:18:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A41AF4026D;
-	Sat, 29 Aug 2026 18:06:53 +0200 (CEST)
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com
- [209.85.214.172])
- by mails.dpdk.org (Postfix) with ESMTP id 126EB4025A
- for <dev@dpdk.org>; Sat, 29 Aug 2026 18:06:53 +0200 (CEST)
-Received: by mail-pl1-f172.google.com with SMTP id
- d9443c01a7336-2d71a50caa9so25187055ad.0
- for <dev@dpdk.org>; Sat, 29 Aug 2026 09:06:52 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9E02D4026D;
+	Sat, 29 Aug 2026 19:18:32 +0200 (CEST)
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com
+ [209.85.215.176])
+ by mails.dpdk.org (Postfix) with ESMTP id 7C9F14025A
+ for <dev@dpdk.org>; Sat, 29 Aug 2026 19:18:31 +0200 (CEST)
+Received: by mail-pg1-f176.google.com with SMTP id
+ 41be03b00d2f7-cc1bcdb3c4cso1495099a12.2
+ for <dev@dpdk.org>; Sat, 29 Aug 2026 10:18:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788019612;
- x=1788624412; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=/kT329+aUxib4lx/5hC6dMEfrE+Ywn0leeK1/YqTbRo=;
- b=cJ1FwHOzvbIorSG+dwb1ENFUWURkDEI7NxaQQ5tkrbE9e6cmqJFiKclYtMnbr4L5R5
- karXTXwbt7WygIv+rdO9AGcz6i51Iuf/pwugVvjPhCnW0j1dhkJCNRZQRK7b7rzw/6ZO
- dfTOlMjjhOkArfWSzNjVHswgvMJNLIVRUQ+UwOcLuzAZEeOhaBwlCROYf+j9TXVSMVBj
- Y0RHng6VyPc/vnVVFV3XitA0yzNLScY/u0o+GfrHbCvKuJiRBHcdxA50HxT+61BHbXbn
- FaDiXHttjZkVQWYb+wxpxLS0IMuW3btFrlqCSwDPcWea2OUasFW/RWvmoDZfdMZDtGcT
- AHtg==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788023910;
+ x=1788628710; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=aJ0J9P+Y/+M9UgM8Mg7bAgkmin9a2hBJdZTt0jncOtU=;
+ b=WOs3BAu+5RLJkeV3DdyhrRYgK4zORav1neF2TOpfNHr4/lDnpzZ6xdqb6BuEU/fMt7
+ 2MfMj02DrSOyOeQL+h657ltS6RFcWpV2LlNOgJWW3ZAva1z1hNTG3ZWuOWYOpej5NxiR
+ sPMDTnZ575IRdKxXKHS5ObdcyYMe1Ht/DTXCxYsYhZtq4LSwoh3TKRqWolKmSI76yl8L
+ hyr3+2JMBPu3DQboQjxukrEIbzv7RuMQDWBFyKfKwNOuJtYUYHbCMPztokIH6AkTrPKH
+ VU3dRJX9Oh+Sg0iAxujsrsQ+CLWmc3LZI3+zc7eyrES+jN0bN19SgYFklWmEyw0PvQZY
+ dgFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788019612; x=1788624412;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=/kT329+aUxib4lx/5hC6dMEfrE+Ywn0leeK1/YqTbRo=;
- b=lBZJeDKismtuh+3HXSbSyCQHbHsdCaB+rNQavflLgKS6u/kq+vl+vq7NaVvGJ5PYMx
- CYBOAtCPOHzvV4FU6kgJbPo3Dyp046dXB+I2ZKvF4STmMsmNrtOTyxreU/K6OTOEb5Jm
- stnnBvM66koKkmQYrsLPLsvzQw/a+clMZW+uursRXldQ2moBV/E4GZWKzpUP1e51M97c
- rBgV8w/tkaMQOcgrpf8xoRbq640nkVDQL3WoPp6XgYZVTGTILuYAquo5YSbY45eNU9HF
- s8WF5ZHT3FyWaDkcERc0bnmBwB13+oOnszWMvslV3B+eZQI20QWqrpLNh4seAnr4t8mu
- gNRw==
-X-Gm-Message-State: AFuF++mgVlJZ9QGUnCCtIIX+8yiqZqRT0TP5XoWGb7Oxo4b8unSmNxi3
- EKk4IMzQFK4ybN2UgdhV110MFRiVFqM2aC9LFyv9U/7c3DXR2TXyrlVbc83WLzLmGLU=
-X-Gm-Gg: AYBFou3z+NY0oYluhC80fDt18T7PvecTF1egL5i3DYyETZsdUWHS54FZCetP7HOGN5z
- c8jpYrHZuEzjgG8rsr6SBPso149mDiZ2ZxqiOMP9nLV5vLUfQQHz9k+nEM09cM5p4tib90WN60R
- ZwGqAUUX2sb60lybotmuQjRpwS91WSHix7dJzj1ro4O1qjp0BUUyEOo393uXZcI5ZwLV2Y65IGQ
- icJl7HppU5ukQ4cOSfbn4S8VDFVFB/eA6RcXKZMzN/rwioQUr4wwOLYTXuAaquoVWNIfGt6+fNl
- LFCJFkw0HXobN+Td9yncHrX+BO0gpdhxh9CS0jyM1fhRxOgg1Vc7icKcz65gp/7i0mf+QrOfaiY
- PdGmMDWKi/0UvfF5s1qQINdvl2cwyi/Is9e/w7nyuuHwmL/Z+7UYUuazYIw6cQ133C73cNUdLxA
- /LF7AQrdRzFVlD2XGK2wVKbZ/O6mYY3ViN6jDNFtXUC8NdltJpI6UzBCRiChe8migG8XofslRfU
- Rgc39hZ9uftOuQ94Tgl/nzwVnMc5MsI4izZh4W4
-X-Received: by 2002:a17:903:1b25:b0:2d8:d4cc:5bb3 with SMTP id
- d9443c01a7336-2d8d4cc5d8bmr108678605ad.19.1788019610549; 
- Sat, 29 Aug 2026 09:06:50 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ d=1e100.net; s=20251104; t=1788023910; x=1788628710;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=aJ0J9P+Y/+M9UgM8Mg7bAgkmin9a2hBJdZTt0jncOtU=;
+ b=FTlCym4pnHhfblGMwWUA0y6QdEf5nTkI5FVmmXJ3u+I/6SQOVyq5sWTLfz6Re+YEL/
+ VhaF9O3tYn85VtnDsdzf1dfAfRkK0ItRVDvTezXLLNxgoceNN0xRLKiqTS6ceeaNKAVi
+ +5N8btrQRNsAa/RfHg91XujwiOAEeJBNAv5qL5xXKPe0Er2A46oAmHj9nEEP2htsGtQy
+ YA0G1wEB5wmiVUkV+N2i6zSGo/GmkBqqLoICCjOoNVTk5Kwxpm/69sxeK2I5my4dhWmJ
+ DJbPYAI9r1pNBxppEXgNNY48n62eAV0/ORpGAseT0py1MZtzuuhtUaEKwLoXfkkUkPu+
+ EnmA==
+X-Gm-Message-State: AFuF++mZrAyNLxyxIarqkQTTe8TSGLjvTxGCiM07M3/tXDOvX0ke9CdS
+ q7krbw8A3bX7BXO82kGcTPo8oh1HiRkEQ6ZZVMwRJ6mvJPCGooJccVwhvfubfrrVyQNOUkWN8eh
+ iQ89c
+X-Gm-Gg: AYBFou0lRjna1Ep/My8EMP/tAdA7w03xjarjYQwqHNs3pdV8YJAOnChcf55VqRFIKln
+ AyRTceIxP0af8pOYO9442S8GsopqDGh1Tk/buRElUw56zuLUGRMOvZFD1nJx1ix4CBP4JkWJ+21
+ eGWBV55B2gwz6NnI1KTbBoQAn5eAFX/KMdXIjIiucK221yDiw7Y9iA49JD7hG6y/xrAoC0I7d6D
+ +3WgPDjyxL5G9mgp01CgojjmkYGFdXayMAHvR3cU995kzATyPOKEJmmNg7Mwykeksf5LErv6eKz
+ Hv4qUMuWZV54JL50nji7clbyyt2UWPcMr4nHH3AGAURc2lyEZ42u4C/qDJ+2TNjZO2nUVtmj8Y8
+ I31BtrYvN9NK+t3qo0AnDTPGzUhqc6PZWAT5vrA1FxztigYzQB3g1LmjPOLvLSIwLd2C0rKA+gA
+ xS5H4RcSng6czPBREV1xPbo+P4rPCvbj9Kfk0LbwKKqgp6B7Tfuwp78FN8pEOVY8lgbmOrC50DN
+ 05Oka2G5h4h/qulrdPqC4Yws/c=
+X-Received: by 2002:a17:90b:4fc7:b0:395:bbfe:fc6f with SMTP id
+ 98e67ed59e1d1-396d0e26cb3mr26619617a91.3.1788023909945; 
+ Sat, 29 Aug 2026 10:18:29 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3286f7bf283sm18387023eec.8.2026.08.29.09.06.48
+ 98e67ed59e1d1-396b0fcfa3asm12271619a91.6.2026.08.29.10.18.27
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 29 Aug 2026 09:06:50 -0700 (PDT)
-Date: Sat, 29 Aug 2026 09:06:42 -0700
+ Sat, 29 Aug 2026 10:18:29 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Junlong Wang <wang.junlong1@zte.com.cn>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v13 0/4] net/zxdh: optimize Rx/Tx path performance
-Message-ID: <20260829090642.60b55372@phoenix.local>
-In-Reply-To: <20260829074155.3524274-1-wang.junlong1@zte.com.cn>
-References: <20260825120007.3328990-1-wang.junlong1@zte.com.cn>
- <20260829074155.3524274-1-wang.junlong1@zte.com.cn>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Aaron Conole <aconole@redhat.com>
+Subject: [PATCH] AGENTS: reduce false positives
+Date: Sat, 29 Aug 2026 10:18:21 -0700
+Message-ID: <20260829171822.305500-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,188 +80,323 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat, 29 Aug 2026 15:41:50 +0800
-Junlong Wang <wang.junlong1@zte.com.cn> wrote:
+Revise the AGENTS.md file to reduce the number of false positives
+from in CI reviews. The existing file will make up non-existent
+functions and get confused about exposed API's.
 
-> v13:
->   - Patch 3/4: simplify `zxdh_set_rxtx_funcs()` (keep the runtime
->     `ZXDH_NET_F_MRG_RXBUF` check that is always negotiated);
->     remove the unused `size_bins[]` xstats (both Rx and Tx) and
->     the long-dead `#ifdef QUEUE_XSTAT` body.
->   - Patch 4/4: the inner `do { ... } while (curr_id != id)` is kept
->     (defensive backstop matching the commercial branch, run once
->     under the `desc[k].id == k` invariant).
+Also, reflow the text on sentence boundaries instead of hard
+limits at 70 cols.
 
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ AGENTS.md | 199 +++++++++++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 160 insertions(+), 39 deletions(-)
 
-AI review is still seeing lots of things that look concerning:
+diff --git a/AGENTS.md b/AGENTS.md
+index 813584352b..104d59ef91 100644
+--- a/AGENTS.md
++++ b/AGENTS.md
+@@ -5,13 +5,16 @@
+ 
+ ## CRITICAL INSTRUCTION - READ FIRST
+ 
+-This document has two categories of review rules with different confidence thresholds:
++This document has two categories of review rules with different confidence thresholds,
++plus rules on evidence and scope that apply to both.
+ 
+ ### 1. Correctness Bugs -- HIGHEST PRIORITY (report at >=50% confidence)
+ 
+ **Always report potential correctness bugs.** These are the most valuable findings.
+-When in doubt, report them with a note about your confidence level.
+-A possible use-after-free or resource leak is worth mentioning even if you are not certain.
++When in doubt, report them -- subject to the evidence rule below.
++Uncertainty about code you have read is fine:
++a possible use-after-free or resource leak is worth mentioning even if you are not certain.
++Uncertainty about code you have not read is not a finding at all.
+ 
+ Correctness bugs include:
+ - Use-after-free (accessing memory after `free`/`rte_free`)
+@@ -44,9 +47,65 @@ Correctness bugs include:
+ - Rx queue setup silently drops oversized packets instead of enabling scatter or returning an error
+ - Rx function selection ignores `scattered_rx` flag or MTU-vs-mbuf-size check
+ 
+-**Do NOT self-censor correctness bugs.** If you identify a code path
+-where a resource could leak or memory could be used after free, report it.
+-Do not talk yourself out of it.
++**Do NOT self-censor correctness bugs.**
++If you identify a code path where a resource could leak or memory could be used after free,
++report it -- subject to the evidence rule below.
++Do not talk yourself out of a bug you can see.
++Do not talk yourself into one you cannot.
++
++### Evidence rule (applies to every finding)
++
++Every finding must rest on code you have actually read.
++"Read" means a line in the patch, or a file you opened with a tool.
++
++This document is used in two ways and the rule is the same in both.
++
++**Diff only** -- CI, `review-patch.py`, and any run without tool access.
++All you have read is the patch: added and removed lines, plus a few lines of context.
++You cannot see the rest of the file, other callers, or any other file in the tree,
++so any claim that depends on them cannot be made.
++
++**With tool access** -- CLI or agentic use, where you can clone the tree, apply the series,
++grep, and read whole files.
++Read them.
++Check the surrounding function, the callers, and the headers before you report.
++Tool access does not lower the bar; it widens what you are able to read,
++and therefore what you are expected to have read before filing a finding.
++
++In either mode:
++
++- Report a finding only if you can name the added or changed line that causes it,
++  and quote that line verbatim from what you read.
++- Never quote, paraphrase, or reconstruct code you have not read.
++  If you are writing a code block with line numbers you did not read, you are inventing it.
++  Delete the finding.
++- If a claim depends on code you have not read -- other callers, other files,
++  the rest of the function -- either go read it or omit the claim.
++  Do not file it with a caveat, do not call it a risk,
++  and do not ask the author to verify it on your behalf.
++- "presumably", "appears to be", "if this is", "potentially", "could be" inside a finding
++  mean you lack the evidence.
++  Get the evidence or omit the finding.
++
++The >=50% bar for correctness bugs applies to your judgement about code you have read.
++It is not permission to speculate about code you have not.
++
++### Pre-existing code (applies to every finding)
++
++The unit of review is the patch.
++Code that appears only as diff context, or that you read in the tree but the patch does not touch,
++is not what this author is being asked to fix.
++A finding about such code must never be an Error or a Warning
++and must never withhold a Reviewed-by.
++
++Report it as Info, and say plainly that it is pre-existing and not introduced by this patch.
++This is worth doing: it puts the observation in front of the people working in that code
++so it can be picked up in a separate patch later.
++
++The evidence rule still applies in full.
++An Info note about surrounding code needs the same proof as any other finding:
++you must have read the code and be able to quote the line.
++"Pre-existing" is a lower severity, not a lower standard of evidence.
+ 
+ ### 2. Style, Process, and Formatting -- suppress false positives
+ 
+@@ -95,8 +154,11 @@ than one that catches every style issue but misses the bug.
+ - Check every `goto error` and early `return`: does it clean up everything allocated so far?
+ - Look for use-after-free: after `free(p)`, is `p` accessed again?
+ - Check that error codes are propagated, not silently dropped
+-- Report at >=50% confidence; note uncertainty if appropriate
+-- It is better to report a potential bug that turns out to be safe than to miss a real bug
++- Report at >=50% confidence about code you have read
++- Never substitute a confidence caveat for evidence:
++  if the reasoning depends on code you have not read, go read it or drop the finding
++- It is better to report a potential bug that turns out to be safe than to miss a real bug,
++  provided you can point to the line that causes it
+ 
+ ### Style and process review guidelines
+ - Only comment on style/process issues when you have HIGH CONFIDENCE (>80%) that an issue exists
+@@ -129,6 +191,8 @@ than one that catches every style issue but misses the bug.
+   Do not include a patch in your output just to say "no issues found"
+   or to summarize what the patch does.
+   Only include patches where you have actual findings to report.
++- Do NOT end the review with a summary section listing every patch in the series.
++  A clean patch must not appear anywhere in the output, including in a summary or status table.
+ 
+ ## Priority Areas (Review These)
+ 
+@@ -515,39 +579,52 @@ than one that catches every style issue but misses the bug.
+ 
+ ### Cryptographic and Security Code
+ 
+-Applies only when the patch touches crypto PMDs (drivers/crypto/),
+-the security or ipsec libraries, or code handling key material, IVs,
+-or authentication digests. Stays silent on all other patches.
++Applies only when the patch touches crypto PMDs (`drivers/crypto/`),
++the security or ipsec libraries,
++or code handling key material, IVs, or authentication digests.
++Stays silent on all other patches.
+ 
+ - **Non-constant-time digest/tag comparison** (Error):
+   When verifying an authentication tag, digest, MAC, or ICV --
+   comparing a computed value against an attacker-supplied one to decide accept/reject --
+-  plain memcmp leaks timing information.
+-  Use rte_memeq_timingsafe() instead.
+-  Return semantics differ from memcmp: memcmp returns 0 on equal,
+-  rte_memeq_timingsafe() returns true on equal.
+-  So `if (memcmp(tag, digest, len))` becomes
+-  `if (!rte_memeq_timingsafe(tag, digest, len))`.
+-  Do NOT flag memcmp on non-secret data: algorithm IDs, key lengths,
+-  capability/feature structs, lookup keys.
++  plain `memcmp()` leaks timing information.
++  Use `rte_memeq_timingsafe()` instead.
++  Return semantics differ: `memcmp()` returns 0 on equal,
++  `rte_memeq_timingsafe()` returns true on equal.
++  So `if (memcmp(tag, digest, len))` becomes `if (!rte_memeq_timingsafe(tag, digest, len))`.
++  Do NOT flag `memcmp()` on non-secret data:
++  algorithm IDs, key lengths, capability/feature structs, lookup keys.
+   Only flag comparisons that gate acceptance of attacker-influenced data.
+ 
+ - **Sensitive material not zeroed before free** (Error):
+-  Keys, expanded key schedules, HMAC ipad/opad, and session secrets
+-  must be wiped, not merely freed -- a plain free leaves secrets in heap.
+-  - rte_malloc/rte_zmalloc'd secret: use rte_free_sensitive() instead of rte_free()
+-  - local/stack secret going out of scope: rte_memzero_explicit()
+-    before return; plain memset() may be optimized away.
+-  Do NOT flag buffers that never held secrets (descriptors, dev_info),
+-  or memset the compiler cannot elide because the pointer escapes to free.
+-
+-- **Insecure RNG for keys/IVs** (Error):
+-  rte_rand()/rand()/random() are not cryptographically secure;
+-  do not use them to generate keys, IVs, or nonces in crypto/security code.
++  Keys, expanded key schedules, HMAC ipad/opad, and session secrets must be wiped,
++  not merely freed -- a plain free leaves secrets in the heap.
++  - `rte_malloc`/`rte_zmalloc`'d secret: use `rte_free_sensitive()` instead of `rte_free()`
++  - local or stack secret going out of scope: `rte_memzero_explicit()` before return;
++    plain `memset()` may be optimized away
++  Flag only where the patch itself allocates, copies, or frees the secret.
++  Do NOT flag buffers that never held secrets (descriptors, `dev_info`),
++  pre-existing free paths the patch does not touch,
++  or `memset()` the compiler cannot elide because the pointer escapes to `free()`.
++  `rte_memzero_explicit()` followed by a plain `rte_free()` is correct
++  and is not a missing `rte_free_sensitive()`.
++
++- **Non-cryptographic RNG for keys/IVs** (Error):
++  `rte_rand()` is seeded from system entropy (`getentropy()`, with RDSEED and TSC fallbacks),
++  but the generator itself is an LFSR and is linear:
++  an observer who sees enough output can recover the state and predict every later value.
++  Good seeding is not sufficient for key, IV, or nonce generation.
++  Use a cryptographic source instead:
++  the device's own entropy source or DRBG,
++  or `getrandom(2)` / `/dev/urandom` in the control path.
++  `rand()` and `random()` are weaker still and must not appear in crypto or security code.
++  Do NOT flag `rte_rand()` used for non-secret purposes:
++  hash seeds (`lib/ipsec/ipsec_sad.c` uses it for `hash_func_init_val`),
++  jitter, backoff, load balancing, or test data.
+ 
+ Do NOT flag:
+ - IV/nonce reuse -- a runtime property, not determinable from a patch.
+-- memcmp on lengths, algorithm selectors, or non-secret config.
++- `memcmp()` on lengths, algorithm selectors, or non-secret config.
+ 
+ ### Architecture & Patterns
+ - Code that violates existing patterns in the code base
+@@ -1585,6 +1662,25 @@ rte_foo_internal_helper(void)
+ - Export macros go in `.c` files, not headers
+ - The build system generates linker version maps automatically
+ 
++#### What Counts as ABI
++
++ABI concerns apply to symbols and types reachable from an installed header.
++A header is installed only if a meson.build lists it in `headers` or `indirect_headers`.
++
++Most drivers install nothing, but some do.
++`drivers/net/bonding/meson.build` installs `rte_eth_bond.h`,
++`drivers/net/intel/i40e/meson.build` installs `rte_pmd_i40e.h`,
++and bus/pci, bus/vdev and several baseband drivers install public headers as well.
++Check the driver's meson.build rather than assuming either way.
++
++A function declared only in a driver-private header,
++with no `RTE_EXPORT_*` annotation and no presence in an installed header, has no ABI.
++Removing it or changing its signature is not an ABI break,
++and speculation about unseen external callers is not a finding.
++
++This does not weaken the separate requirement that a *new* public function
++carry an `RTE_EXPORT_*` macro; a new public API without one is still a Warning.
++
+ #### What NOT to Review
+ 
+ - Do **NOT** flag missing `version.map` updates - maps are auto-generated
+@@ -1678,9 +1774,9 @@ Checked by `devtools/checkpatches.sh` -- not duplicated here.
+ - [ ] `bool` used for pure true/false variables, parameters, and predicate return types
+ - [ ] Shared variables use `rte_atomic_*_explicit()`, not `volatile` or bare access
+ - [ ] Memory ordering is the weakest correct choice (`relaxed` for counters, `acquire`/`release` for publish/consume)
+-- [ ] Auth tag/digest comparisons use rte_memeq_timingsafe(), not memcmp
+-- [ ] Key material zeroed before free (rte_free_sensitive / rte_memzero_explicit)
+-- [ ] Keys/IVs/nonces not generated with rte_rand()/rand()/random()
++- [ ] Auth tag/digest comparisons use `rte_memeq_timingsafe()`, not `memcmp()`
++- [ ] Key material zeroed before free (`rte_free_sensitive()` / `rte_memzero_explicit()`)
++- [ ] Keys/IVs/nonces not generated with `rte_rand()`, `rand()`, or `random()`
+ 
+ ### API Tags
+ 
+@@ -1793,8 +1889,9 @@ devtools/get-maintainer.sh <patch-file>
+ - `mtu_set` rejects valid MTU when scatter Rx is already enabled
+ - Rx function selection ignores `scattered_rx` flag or MTU-vs-mbuf-size comparison
+ - Non-constant-time comparison of auth tag/digest/MAC/ICV (timing side channel)
+-- Key material or session secrets freed without zeroing (rte_free_sensitive/rte_memzero_explicit)
+-- Non-cryptographic RNG (rte_rand/rand/random) used to generate keys, IVs, or nonces
++- Key material or session secrets freed without zeroing
++  (`rte_free_sensitive()` / `rte_memzero_explicit()`)
++- Non-cryptographic RNG (`rte_rand()`, `rand()`, `random()`) used to generate keys, IVs, or nonces
+ 
+ *Process and format errors:*
+ - Forbidden tokens in code
+@@ -1857,6 +1954,13 @@ devtools/get-maintainer.sh <patch-file>
+ - Cross-patch compilation dependencies - you cannot determine patch ordering correctness from review
+ - Claims that a symbol "was removed in patch N" causing issues in patch M - assume author ordered correctly
+ - Any speculation about whether patches will compile when applied in sequence
++- Any finding about code you have not read - reconstructed from diff context,
++  inferred from other patches, or assumed from a function name
++- Pre-existing problems in code the patch does not touch, as an Error or Warning
++  (report these as Info, labelled pre-existing)
++- ABI or "external callers" concerns for a function in a driver-private header
++  with no `RTE_EXPORT_*` annotation
++- `rte_rand()` used for hash seeds, jitter, backoff, load balancing, or test data
+ - Mutexes/locks in process-private memory (standard `malloc`, stack, static non-shared) - these don't need `PTHREAD_PROCESS_SHARED`
+ - Use of `rte_spinlock_t` or `rte_rwlock_t` in shared memory (these work correctly without special init)
+ - `volatile` used for MMIO/hardware register access in drivers (this is correct usage)
+@@ -1875,6 +1979,8 @@ devtools/get-maintainer.sh <patch-file>
+ - Minor style preferences
+ - Optimization suggestions
+ - Alternative approaches
++- Pre-existing bugs in surrounding code that the patch does not introduce,
++  labelled as pre-existing so whoever works on that code next can pick them up
+ 
+ ---
+ 
+@@ -1891,7 +1997,7 @@ Example: This could panic if the string is NULL.
+ 
+ ## FINAL CHECK BEFORE SUBMITTING REVIEW
+ 
+-Before outputting your review, do two separate passes:
++Before outputting your review, do three separate passes:
+ 
+ ### Pass 1: Verify correctness bugs are included
+ 
+@@ -1899,7 +2005,8 @@ Ask: "Did I trace every error path for resource leaks?
+ Did I check for use-after-free?
+ Did I verify error codes are propagated?"
+ 
+-If you identified a potential correctness bug but talked yourself out of it, **add it back**.
++If you identified a potential correctness bug but talked yourself out of it, **add it back**,
++provided you can point to the line that causes it.
+ It is better to report a possible bug than to miss a real one.
+ 
+ ### Pass 2: Remove style/process false positives
+@@ -1912,4 +2019,18 @@ It should not be in your output.
+ An item that says "X is wrong... actually this is correct" is a FALSE POSITIVE and must be removed.
+ This applies to style, format, and process items only.
+ 
+-**If your Errors section would be empty after this check, that's fine -- it means the patches are good.**
++### Pass 3: Verify every finding has evidence
++
++For EACH remaining item, of any severity, ask:
++"Did I read the code this claims is broken, or did I reconstruct it?"
++
++If you cannot quote the added or changed line that causes the finding, DELETE IT.
++If the finding is hedged with "presumably", "appears to be", "potentially", or "could be",
++you did not have the evidence: DELETE IT.
++If the finding is about code the patch does not touch, demote it to Info
++and label it as pre-existing -- never an Error or a Warning.
++Demoting the severity does not excuse it from the checks above:
++an Info note you cannot quote a line for is still deleted.
++
++**If your Errors section would be empty after these checks, that's fine --
++it means the patches are good.**
+-- 
+2.53.0
 
-Review of [PATCH v13 0/4] net/zxdh: optimize queue/Rx/Tx paths
-
-Resolved since v12
-------------------
-
-- Patch 3: the ZXDH_NET_F_MRG_RXBUF check is back in
-  zxdh_set_rxtx_funcs(), and zxdh_dev_start() now propagates its
-  return value instead of dropping it.  A device that did not
-  negotiate the feature now fails the start rather than running
-  with unassigned rx_pkt_burst/tx_pkt_burst.
-- Patch 3: the release note bullet is generic ("Changed the set of
-  per-queue xstats counters") rather than enumerating counters.
-- Patch 4: ndescs is removed from struct zxdh_vq_desc_extra rather
-  than renamed to rsv.
-- Patch 4: the macro is ZXDH_NEXT_CACHELINE_OFF_16B, matching the
-  prefix used everywhere else in the file.
-- Patch 4: the comment in zxdh_xmit_enqueue_append() names
-  zxdh_queue_detach_unused() as the reader of the head cookie.
-
-I also checked that nothing in the tree still references the fields
-and helpers the series removes (sw_ring, ndescs, size_bins,
-stats.full/norefill/multicast/broadcast, fake_mbuf,
-mbuf_initializer, vq_packed.cached_flags/used_wrap_counter/
-event_flags_shadow, zxdh_desc_used(), notify_queue, tx_indir,
-vq->offset).  Fixes: 7677f3871ef3 resolves to a real commit whose
-subject matches.
-
-
-Warnings
---------
-
-Patch 2/4 (net/zxdh: optimize queue structure to improve
-performance)
-
-1. Commit message, item 4
-
-       4.rename the misleading rsv_8B (uint32_t) field and remove
-         unused next_qidx member.
-
-   Neither rsv_8B nor next_qidx exists anywhere under
-   drivers/net/zxdh, before or after this patch.  The reserved
-   fields in struct zxdh_virtqueue are rsv, rsv1 and rsv2 both
-   before and after, and no member named next_qidx has ever been
-   in the driver.  This item looks left over from an earlier
-   revision; please drop it or reword it to describe what the
-   patch actually does to the struct.
-
-
-Patch 4/4 (net/zxdh: optimize Tx xmit pkts performance)
-
-2. Commit message, item 2
-
-       under the invariant the inner loop runs once, and the
-       curr_id-anchored walk backstops the case where the device
-       overwrites the id.
-
-   That holds only for the single-descriptor push path.  For
-   anything that goes through zxdh_xmit_enqueue_append() the
-   driver builds a real packed-ring chain: the head descriptor
-   carries ZXDH_VRING_DESC_F_NEXT, and one descriptor follows per
-   segment.  The device returns one used descriptor per chain, at
-   the head position, carrying the buffer id taken from the last
-   descriptor of the chain.  So in zxdh_xmit_fast_flush()
-
-	id = desc[used_idx].id;
-
-   is the index of the last descriptor, not of used_idx, and the
-
-	do { ... } while (curr_id != id);
-
-   walk is what frees the per-segment cookies and accounts
-   free_cnt.  It is the primary mechanism, not a backstop.
-
-   This is not an edge case: any mbuf that fails the can_push test
-   takes the append path, so a plain single-segment packet without
-   enough headroom already produces a two-descriptor chain.  If
-   the inner loop really ran once there, the payload mbuf would
-   leak and vq_free_cnt would be short by one on every packet.
-
-   The code looks correct as written.  The description does not
-   match it, and it is worth confirming against the hardware that
-   the device does return the last-descriptor id here rather than
-   the head's - the whole flush depends on that.
-
-
-Info
-----
-
-Patch 3/4
-
-3. drivers/net/zxdh/zxdh_rxtx.c, zxdh_dequeue_burst_rx_packed()
-   drivers/net/zxdh/zxdh_queue.c, zxdh_queue_rxvq_flush()
-
-   Both index vq_descx[] with a device-written id and neither
-   bounds-checks it:
-
-	id = desc[used_idx].id;
-	cookie = (struct rte_mbuf *)vq->vq_descx[id].cookie;
-
-   Patch 4 adds exactly this guard on the Tx side ("break on
-   id >= size"), so the two paths are now asymmetric.  The Rx
-   exposure is pre-existing, but it is a one-line check and worth
-   adding while the surrounding code is being touched.
-
-4. drivers/net/zxdh/zxdh_rxtx.c, zxdh_refill_desc_unwrap()
-
-   This is a near-copy of zxdh_enqueue_recv_refill_packed() in
-   zxdh_queue.c, which after this patch is only reached from
-   zxdh_dev_rx_queue_setup_finish().  Since the setup path is not
-   performance sensitive, it could call the new wrap-aware
-   helper (or a small wrapper over it) and the old one could go
-   away.
-
-5. drivers/net/zxdh/zxdh_rxtx.c, refill path
-
-   zxdh_queue_notify() is still called whenever vq_free_cnt > 0,
-   including when rte_pktmbuf_alloc_bulk() inside
-   zxdh_refill_que_descs() failed and no descriptor was made
-   available.  Item 4 of the commit message covers dropping the
-   kick_prepare check but not this case.  Having
-   zxdh_refill_que_descs() return the number refilled and
-   notifying only on a non-zero result would avoid an MMIO write
-   on the mempool-exhausted path.
-
-6. drivers/net/zxdh/zxdh_rxtx.c, zxdh_init_mbuf()
-
-   The first error path increments invalid_hdr_len_err only:
-
-	rte_pktmbuf_free(rxm);
-	rxvq->stats.invalid_hdr_len_err++;
-	return -1;
-
-   The second error path in the same function, and the equivalent
-   path in zxdh_recv_pkts_packed(), also increment
-   rxvq->stats.errors.  A packet dropped on the single-segment
-   fast path is therefore invisible in the "errors" counter.
-
-7. doc/guides/rel_notes/release_26_11.rst
-
-   The added block leaves a single blank line before the "Removed
-   Items" heading; the file (and every other release notes file)
-   uses two blank lines between sections.
-
-Patch 4/4
-
-8. drivers/net/zxdh/zxdh_rxtx.c, zxdh_xmit_fast_flush()
-
-	do {
-		desc[used_idx].id = used_idx;
-
-   Both enqueue paths write id unconditionally before making a
-   descriptor available - zxdh_xmit_enqueue_push() does
-   "dp->id = id" and zxdh_xmit_enqueue_append() does
-   "start_dp[idx].id = idx" for the head and for every segment -
-   so the invariant is re-established at enqueue time regardless.
-   This store is redundant, and it is a write to DMA-coherent
-   memory in the Tx fast path of a patch whose purpose is Tx
-   performance.
-
-9. drivers/net/zxdh/zxdh_queue.h
-
-   Split-ring leftovers survive the cleanup in patch 2:
-   vq_desc_head_idx and vq_desc_tail_idx are written in
-   zxdh_init_vring() and never read, and struct
-   zxdh_vq_desc_extra's "next" is written by
-   zxdh_vring_desc_init_packed() and never read.  Dropping "next"
-   would shrink vq_descx[] to a single pointer per entry.
-
-   The Doxygen-style block comment on vq_desc_head_idx also ends
-   with "**/" rather than "*/".
