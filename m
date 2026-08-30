@@ -2,71 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 699D6C61DD9
-	for <dpdk-dev@archiver.kernel.org>; Sun, 30 Aug 2026 16:35:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4415C61DB9
+	for <dpdk-dev@archiver.kernel.org>; Sun, 30 Aug 2026 19:14:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 384AF402B6;
-	Sun, 30 Aug 2026 18:35:55 +0200 (CEST)
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com
- [209.85.210.47]) by mails.dpdk.org (Postfix) with ESMTP id 58F35402BB
- for <dev@dpdk.org>; Sun, 30 Aug 2026 18:35:53 +0200 (CEST)
-Received: by mail-ot1-f47.google.com with SMTP id
- 46e09a7af769-7f18c0e03e3so1611467a34.2
- for <dev@dpdk.org>; Sun, 30 Aug 2026 09:35:53 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 649BD40264;
+	Sun, 30 Aug 2026 21:14:00 +0200 (CEST)
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com
+ [209.85.210.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 7C3494025A
+ for <dev@dpdk.org>; Sun, 30 Aug 2026 21:13:59 +0200 (CEST)
+Received: by mail-pf1-f182.google.com with SMTP id
+ d2e1a72fcca58-84f38f3b36eso2341698b3a.1
+ for <dev@dpdk.org>; Sun, 30 Aug 2026 12:13:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1788107752; x=1788712552; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=DKVkDzu4Bst92jHy7QPSPsGOru4cfG2xRCM6++RpYhE=;
- b=KOvbX88JA5KosW/5+i9+AydCiBpizLWdpEdQftsjAaso+/RERNBHte23jkK9IKNC7q
- CJXZlzo5o7EePzIlWPTSwH7zQ77l9PeEQfXZsYvQ6D3UvhhfJO+TBLgLNM2hD2LUVCYW
- 4oiKWxntfPAtUnZeTm1tObhViHCWe5uj7YJwrcBeQ4UE/3a4YZAHvgjHcyvWu0wWFltW
- Eky8dTdTRbN5QjW4E63u1Yt0UxEGpEU8HWC47c4Ev8IbrcYyEt+Hf9nG2Cx7YLzSy3q3
- 5Y07AzbfcJaxGtM+F6zQY6DOiErK6sgA7yIXROAZDMwG0vhlzIstPPkR8x9D23HUyZxp
- ucsA==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788117238;
+ x=1788722038; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=OEA84t662h1GPEsKw5ACJkwi+2SBE8BWAyGmC5bU3oA=;
+ b=sTQv1bQRZb7Kn3McSJvc9gp+b6a9bzKsthPyfLsOZSLDq5GHrgI8FhF2FXBi+mHJke
+ MIXHtmdQVdASWFJuOF0Jogug3svnlhiPj4ULignq30HFkxbeArlrJ9UOb8uQb6Zs7yfs
+ e3bdYXghnjsGKTvGuGVS468/wXHUI9SGn+VbGj4ueSz8oA6RH4+2Xv1zaIuKK3Rm2tOe
+ k17Qh/Nbjv0UYDjFF+KGSdkByRtHMM3QPvDlO4ps3N4y6fAyGG7la6VNeAwyiwAZ1CcR
+ r8yBdEw1nLolvFp10+TwKlor11byls4wRBCpLAIxlT3ZwBePnp5G1ygf42fOWmSZdTPH
+ juoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788107752; x=1788712552;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=DKVkDzu4Bst92jHy7QPSPsGOru4cfG2xRCM6++RpYhE=;
- b=g6+D+E44E5OmYUzcJsdlgkIkohvM0L7R9lBmLO9WaqqY/fA6Qo4phmY+OTMrIDYmmn
- YgRO1XlQseGgrKws6H46tlD2y/qMoTj1HfCA1R6H3zk6/l3ajxcRAXq7Wguxn7Pgdgve
- jDgxqmrpSSBbPgK91UrRak2GwgVq0zsi4HqbsklBCCesAeQuNRKmscTd2NSBwC9wG9wr
- 54cGPkoYNHgAVPWKtLj7+k6w3Sc2/fUsSc/c+BZrr+kyH3lIdomi2YwAsQWsfIrvtMAm
- 154XRC+FkgbSUfIY3ukl2s7fonw1iuFAjUO5BzIuMl+tTaWwZe+VS/CeghMuLvvSRgNN
- avSQ==
-X-Gm-Message-State: AFuF++mHhhITJavTkRFLK7fkVLoAOSgc8G5/nVQKrck+bsYHKmaFuBSR
- iC53lkPaJoaCuu792AgengbxA+9GNKdh3eg0CgRe4BXWyllBt2xI67X9
-X-Gm-Gg: AR+sD13kPjiE2vhOkgOMpuNcjisiwkiJjfZQQ4/RTk3OcFunw0hcbZa3HgtwwVhcLdH
- 88QvlHB+hh6HCV/u3SH9mlLkv8Faz+Dsjgts7JbiWlRi3ceDwf+JexkOje+huUoHXqZ03erZl4y
- RBfZsbODIlyPTqYEelNEx9bEGCYzU5MyzPGmg7ukoeFCQz7c/QICwKf/oilJukuIlMNYmB4APbV
- AfIh0sgRsH4Y+Uq3ZCDhvInmJHDYsQVUJ3C2XsGAii+5rjieMivx0jMsWDXP4d+UX3D+lp9j+Yd
- CdHy8HbFe7Sk8LCYfh0g+0ySio6dIiJ8ZlcElbLwTF4q3koOMSmkzW2KO9Preh7zMxDkVniAn2+
- /Wm6zUOF1ch7jKMWhzzaF0Q5RE4+NF4eD5hxcEgExaz6jlZkwEvMeF8H/V4RWNNkJ/74gcG3qCV
- YUcbSukm6rpSUPPprs6gE2w8hFpTJpp78w4o9mBoTEP137cypBKF45vkm7/QE6KVsy/wHZnWrfw
- QtvV0WdY2c=
-X-Received: by 2002:a05:6830:6519:b0:7e9:bf64:b70b with SMTP id
- 46e09a7af769-7f4f223b997mr24266010a34.1.1788107752371; 
- Sun, 30 Aug 2026 09:35:52 -0700 (PDT)
-Received: from gmail.com (dyn-72-33-2-213.uwnet.wisc.edu. [72.33.2.213])
+ d=1e100.net; s=20251104; t=1788117238; x=1788722038;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=OEA84t662h1GPEsKw5ACJkwi+2SBE8BWAyGmC5bU3oA=;
+ b=aAHX+/Gwza9UdtnM+/483PzoIxrn+HOsisv6bAQIxty8Gm28VLPWzEUYulirExDHj3
+ wrKv6oOQ+Faj6QY+ARwxhq6ksYHgMvV4LuKGHJn/KgI0IaPUkkyV1HziKDParq152Vqa
+ be+9LFoYeecWrwPPt8s1J1q8U/W4L1OsKCDbJDGovvieXUzsfukq/WFqgqFD28KqcMmg
+ fxacKgSHcW1K9yrWV7/NmgPzF8QFFSW7oVfhyGDi0gK/vdgWMQwQOlzcNuC96UtEPHAA
+ Wd8W7s2Ktnqd6cA1z15c/C/pf1pVGBvkeikX8C8wGgRYHTHZ32ERJ1xWqiInGEf2ulJW
+ 7BLg==
+X-Gm-Message-State: AFuF++kXdbRKdaLKM2WOJ80X+60pz78E/fUtQ99S/iGEEeXQQgxrW9LI
+ JfJFulGMyqTwN2RwP2r1vQGCxKKD0y3gdUePdoQe1HPLe6eiaziRlkV9lToCxmkwqjOhvFUmE02
+ bHlMA
+X-Gm-Gg: AR+sD10lZ0p1YoE8kiVen/X6FtAgz2NTCOm0tsW79AXfUpPJnFweQXNTRmJnpK+XMRY
+ ABHi5oU+bK4c3xIfXXtvXDytlSXZZjPzHZ42Y+BdXdxTAjZBUPeyz4RFf1+FNPxvbDN2B8LNptB
+ SWvNHFD04bVV3x5PzJpNVMMWv3cFW+d6z0C2b9WC2SxGLJPf7vTYRO9PGIl4PWzj8KEJcZSpUfr
+ nRxok6Y/pMH2d6JW5+tc50MZgHuXaTYgBkOTm4RxL1Upw1NGC9GC/Zl7DOFWnm5kVkgNJECrSpm
+ RyM7y9xcaAjzQiEfMOm2bXXXfT9HmTHkdhlGFrv/eRalAlxNSK19G2iucyEEnboo/STxMzV7O8A
+ c7SjqAZQDKhfefK6wsnl41ibQRDvGwTuqduPJ8D/Z5CGJ6cKVelxaNoIlXA9LnOGOFOty6VcTOf
+ /FnV6bubCAIHPcb18VeydeBtIryxomRkS22UX9vxTQ4GhlC6igv+bnhhJTJZ73AyCirs1MoCPyI
+ TKj8YKcz1PKqrIP4Pk9ajAYMBQ=
+X-Received: by 2002:a05:6a00:6f12:b0:857:7317:cff8 with SMTP id
+ d2e1a72fcca58-8577317d1c7mr17631170b3a.25.1788117238138; 
+ Sun, 30 Aug 2026 12:13:58 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 46e09a7af769-7f4fa99f86fsm6102334a34.22.2026.08.30.09.35.50
+ d2e1a72fcca58-856a2ea718asm2538710b3a.33.2026.08.30.12.13.55
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 30 Aug 2026 09:35:51 -0700 (PDT)
-From: Weijun Pan <wpan3636@gmail.com>
-To: Chas Williams <3chas3@gmail.com>, "Min Hu (Connor)" <humin29@huawei.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Cc: dev@dpdk.org, Stephen Hemminger <stephen@networkplumber.org>,
- Weijun Pan <wpan3636@gmail.com>
-Subject: [RFC PATCH v5 2/2] net/bonding: restrict secondary control operations
-Date: Sun, 30 Aug 2026 11:35:39 -0500
-Message-Id: <20260830163539.21099-2-wpan3636@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260830163539.21099-1-wpan3636@gmail.com>
-References: <20260830011445.168073-1-wpan3636@gmail.com>
- <20260830163539.21099-1-wpan3636@gmail.com>
+ Sun, 30 Aug 2026 12:13:57 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Marat Khalili <marat.khalili@huawei.com>
+Subject: [PATCH] test/bpf: use unit test suite
+Date: Sun, 30 Aug 2026 12:13:49 -0700
+Message-ID: <20260830191349.604934-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -82,498 +81,278 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Bonding configuration and LACP runtime state are owned by the primary
-process. Install a reduced dev_ops table in secondary processes so
-ethdev rejects control operations, and reject bonding control APIs
-when called from a secondary process.
+The BPF tests registered 23 separate autotests. Collapse them into a
+single bpf_autotest suite run by unit_test_suite_runner().
 
-Supported query and detach paths remain available, while LACP runtime
-state queries are restricted to the primary process.
+Rename the old table-driven test_bpf() to test_bpf_progs() so that
+test_bpf() can be the suite entry point.
 
-Bugzilla ID: 1900
+Move the #endif of the RTE_LIB_BPF guard to the end of the file. It
+closed mid-file, leaving the stack, ELF, convert and atomic tests
+outside the guard even though they all call rte_bpf functions.
 
-Signed-off-by: Weijun Pan <wpan3636@gmail.com>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
-v5:
-- Simplify the helper and release note wording.
+ app/test/test_bpf.c | 86 +++++++++++++++++++++++++++++----------------
+ 1 file changed, 56 insertions(+), 30 deletions(-)
 
-v4:
-- Address secondary link update, docs, and private dump handling.
-
- .../link_bonding_poll_mode_drv_lib.rst        | 30 ++++++++++
- doc/guides/rel_notes/release_26_11.rst        |  5 ++
- drivers/net/bonding/eth_bond_private.h        | 12 ++++
- drivers/net/bonding/rte_eth_bond_8023ad.c     | 30 ++++++++++
- drivers/net/bonding/rte_eth_bond_api.c        | 34 ++++++++++-
- drivers/net/bonding/rte_eth_bond_pmd.c        | 58 +++++++++++--------
- 6 files changed, 144 insertions(+), 25 deletions(-)
-
-diff --git a/doc/guides/prog_guide/link_bonding_poll_mode_drv_lib.rst b/doc/guides/prog_guide/link_bonding_poll_mode_drv_lib.rst
-index 2fa1ac4028..a3f197c8b5 100644
---- a/doc/guides/prog_guide/link_bonding_poll_mode_drv_lib.rst
-+++ b/doc/guides/prog_guide/link_bonding_poll_mode_drv_lib.rst
-@@ -254,6 +254,36 @@ Like all other PMD, all functions exported by a PMD are lock-free functions
- that are assumed not to be invoked in parallel on different logical cores to
- work on the same target object.
- 
-+Bonding device configuration and LACP runtime state are owned by the primary
-+process. Secondary processes may attach to an existing bonding device for
-+detach and supported query operations only.
-+
-+Supported secondary-process queries include device information, statistics,
-+link status, RETA query, RSS hash configuration, bonding mode, member list,
-+primary member, transmit policy, link monitoring configuration, and LACP
-+configuration. Private dump is limited to shared bonding information and skips
-+LACP runtime state in a secondary process.
-+
-+Control operations are restricted to the primary process. This includes
-+configuring, starting or stopping the device, setting up queues, changing
-+members, changing the bonding mode, selecting the primary member, changing the
-+transmit policy, changing link monitoring or propagation delays, updating RSS,
-+changing MAC addresses, changing MTU, configuring VLAN filters, changing
-+promiscuous or all-multicast mode, resetting statistics, configuring
-+``rte_flow`` rules, and changing 802.3ad settings, including aggregation
-+selection, external collect/distribute/slow-Tx controls, and dedicated queue
-+enable or disable.
-+
-+LACP runtime state queries, including ``rte_eth_bond_8023ad_member_info()``,
-+``rte_eth_bond_8023ad_ext_collect_get()``, and
-+``rte_eth_bond_8023ad_ext_distrib_get()``, are also restricted to the primary
-+process.
-+
-+Rx and Tx are not supported on a bonding device in a secondary process;
-+receive returns no packets and transmit drops packets. In a secondary process,
-+``rte_eth_dev_stop()`` returns ``-ENOTSUP`` and ``rte_eth_dev_close()`` is the
-+detach operation.
-+
- It should also be noted that the PMD receive function should not be invoked
- directly on a member devices after they have been to a bonding device since
- packets read directly from the member device will no longer be available to the
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index c8cc86295d..2a8e3a2d20 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -24,6 +24,11 @@ DPDK Release 26.11
- New Features
- ------------
- 
-+* **Added bonding PMD secondary-process support.**
-+
-+  Added support for querying and detaching bonding devices from secondary
-+  processes.
-+
- .. This section should contain new features added in this release.
-    Sample format:
- 
-diff --git a/drivers/net/bonding/eth_bond_private.h b/drivers/net/bonding/eth_bond_private.h
-index 378bbba4e6..b3c2ddf24e 100644
---- a/drivers/net/bonding/eth_bond_private.h
-+++ b/drivers/net/bonding/eth_bond_private.h
-@@ -7,12 +7,14 @@
- 
- #include <stdint.h>
- #include <sys/queue.h>
-+#include <stdbool.h>
- 
- #include <ethdev_driver.h>
- #include <rte_flow.h>
- #include <rte_spinlock.h>
- #include <rte_bitmap.h>
- #include <rte_flow_driver.h>
-+#include <rte_eal.h>
- 
- #include "rte_eth_bond.h"
- #include "eth_bond_8023ad_private.h"
-@@ -212,6 +214,16 @@ find_member_by_id(uint16_t *members, uint16_t members_count, uint16_t member_id)
- 	return pos;
+diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
+index d85e64e7fb..7f235720e7 100644
+--- a/app/test/test_bpf.c
++++ b/app/test/test_bpf.c
+@@ -27,6 +27,8 @@ test_bpf(void)
+ 	return TEST_SKIPPED;
  }
  
-+static inline bool
-+bond_check_primary(const char *op)
-+{
-+	if (rte_eal_process_type() == RTE_PROC_PRIMARY)
-+		return true;
++REGISTER_FAST_TEST(bpf_autotest, NOHUGE_OK, ASAN_OK, test_bpf);
 +
-+	RTE_BOND_LOG(ERR, "%s not supported in secondary process", op);
-+	return false;
-+}
-+
- int
- valid_port_id(uint16_t port_id);
+ #else
  
-diff --git a/drivers/net/bonding/rte_eth_bond_8023ad.c b/drivers/net/bonding/rte_eth_bond_8023ad.c
-index d1f30229d0..5f52cc2bcc 100644
---- a/drivers/net/bonding/rte_eth_bond_8023ad.c
-+++ b/drivers/net/bonding/rte_eth_bond_8023ad.c
-@@ -1437,6 +1437,9 @@ rte_eth_bond_8023ad_agg_selection_set(uint16_t port_id,
- 	struct bond_dev_private *internals;
- 	struct mode8023ad_private *mode4;
- 
-+	if (!bond_check_primary(__func__))
-+		return -ENOTSUP;
-+
- 	if (valid_bonding_port_id(port_id) != 0)
- 		return -EINVAL;
- 
-@@ -1509,6 +1512,9 @@ rte_eth_bond_8023ad_setup(uint16_t port_id,
- 	struct rte_eth_dev *bond_dev;
- 	int err;
- 
-+	if (!bond_check_primary(__func__))
-+		return -ENOTSUP;
-+
- 	err = bond_8023ad_setup_validate(port_id, conf);
- 	if (err != 0)
- 		return err;
-@@ -1532,6 +1538,9 @@ rte_eth_bond_8023ad_member_info(uint16_t port_id, uint16_t member_id,
- 	struct bond_dev_private *internals;
- 	struct port *port;
- 
-+	if (!bond_check_primary(__func__))
-+		return -ENOTSUP;
-+
- 	if (info == NULL || valid_bonding_port_id(port_id) != 0 ||
- 			rte_eth_bond_mode_get(port_id) != BONDING_MODE_8023AD)
- 		return -EINVAL;
-@@ -1593,6 +1602,9 @@ rte_eth_bond_8023ad_ext_collect(uint16_t port_id, uint16_t member_id,
- 	struct port *port;
- 	int res;
- 
-+	if (!bond_check_primary(__func__))
-+		return -ENOTSUP;
-+
- 	res = bond_8023ad_ext_validate(port_id, member_id);
- 	if (res != 0)
- 		return res;
-@@ -1615,6 +1627,9 @@ rte_eth_bond_8023ad_ext_distrib(uint16_t port_id, uint16_t member_id,
- 	struct port *port;
- 	int res;
- 
-+	if (!bond_check_primary(__func__))
-+		return -ENOTSUP;
-+
- 	res = bond_8023ad_ext_validate(port_id, member_id);
- 	if (res != 0)
- 		return res;
-@@ -1636,6 +1651,9 @@ rte_eth_bond_8023ad_ext_distrib_get(uint16_t port_id, uint16_t member_id)
- 	struct port *port;
- 	int err;
- 
-+	if (!bond_check_primary(__func__))
-+		return -ENOTSUP;
-+
- 	err = bond_8023ad_ext_validate(port_id, member_id);
- 	if (err != 0)
- 		return err;
-@@ -1651,6 +1669,9 @@ rte_eth_bond_8023ad_ext_collect_get(uint16_t port_id, uint16_t member_id)
- 	struct port *port;
- 	int err;
- 
-+	if (!bond_check_primary(__func__))
-+		return -ENOTSUP;
-+
- 	err = bond_8023ad_ext_validate(port_id, member_id);
- 	if (err != 0)
- 		return err;
-@@ -1667,6 +1688,9 @@ rte_eth_bond_8023ad_ext_slowtx(uint16_t port_id, uint16_t member_id,
- 	struct port *port;
- 	int res;
- 
-+	if (!bond_check_primary(__func__))
-+		return -ENOTSUP;
-+
- 	res = bond_8023ad_ext_validate(port_id, member_id);
- 	if (res != 0)
- 		return res;
-@@ -1728,6 +1752,9 @@ rte_eth_bond_8023ad_dedicated_queues_enable(uint16_t port)
- 	struct rte_eth_dev *dev;
- 	struct bond_dev_private *internals;
- 
-+	if (!bond_check_primary(__func__))
-+		return -ENOTSUP;
-+
- 	if (valid_bonding_port_id(port) != 0)
- 		return -EINVAL;
- 
-@@ -1757,6 +1784,9 @@ rte_eth_bond_8023ad_dedicated_queues_disable(uint16_t port)
- 	struct rte_eth_dev *dev;
- 	struct bond_dev_private *internals;
- 
-+	if (!bond_check_primary(__func__))
-+		return -ENOTSUP;
-+
- 	if (valid_bonding_port_id(port) != 0)
- 		return -EINVAL;
- 
-diff --git a/drivers/net/bonding/rte_eth_bond_api.c b/drivers/net/bonding/rte_eth_bond_api.c
-index d9b6f1c417..91207e8573 100644
---- a/drivers/net/bonding/rte_eth_bond_api.c
-+++ b/drivers/net/bonding/rte_eth_bond_api.c
-@@ -159,6 +159,9 @@ rte_eth_bond_create(const char *name, uint8_t mode, uint8_t socket_id)
- 	char devargs[52];
- 	int ret;
- 
-+	if (!bond_check_primary(__func__))
-+		return -1;
-+
- 	if (name == NULL) {
- 		RTE_BOND_LOG(ERR, "Invalid name specified");
- 		return -EINVAL;
-@@ -640,9 +643,11 @@ rte_eth_bond_member_add(uint16_t bonding_port_id, uint16_t member_port_id)
- {
- 	struct rte_eth_dev *bonding_eth_dev;
- 	struct bond_dev_private *internals;
--
- 	int retval;
- 
-+	if (!bond_check_primary(__func__))
-+		return -1;
-+
- 	if (valid_bonding_port_id(bonding_port_id) != 0)
- 		return -1;
- 
-@@ -781,6 +786,9 @@ rte_eth_bond_member_remove(uint16_t bonding_port_id, uint16_t member_port_id)
- 	struct bond_dev_private *internals;
- 	int retval;
- 
-+	if (!bond_check_primary(__func__))
-+		return -1;
-+
- 	if (valid_bonding_port_id(bonding_port_id) != 0)
- 		return -1;
- 
-@@ -802,6 +810,9 @@ rte_eth_bond_mode_set(uint16_t bonding_port_id, uint8_t mode)
- {
- 	struct rte_eth_dev *bonding_eth_dev;
- 
-+	if (!bond_check_primary(__func__))
-+		return -1;
-+
- 	if (valid_bonding_port_id(bonding_port_id) != 0)
- 		return -1;
- 
-@@ -834,6 +845,9 @@ rte_eth_bond_primary_set(uint16_t bonding_port_id, uint16_t member_port_id)
- {
- 	struct bond_dev_private *internals;
- 
-+	if (!bond_check_primary(__func__))
-+		return -1;
-+
- 	if (valid_bonding_port_id(bonding_port_id) != 0)
- 		return -1;
- 
-@@ -924,6 +938,9 @@ rte_eth_bond_mac_address_set(uint16_t bonding_port_id,
- 	struct rte_eth_dev *bonding_eth_dev;
- 	struct bond_dev_private *internals;
- 
-+	if (!bond_check_primary(__func__))
-+		return -1;
-+
- 	if (valid_bonding_port_id(bonding_port_id) != 0)
- 		return -1;
- 
-@@ -950,6 +967,9 @@ rte_eth_bond_mac_address_reset(uint16_t bonding_port_id)
- 	struct rte_eth_dev *bonding_eth_dev;
- 	struct bond_dev_private *internals;
- 
-+	if (!bond_check_primary(__func__))
-+		return -1;
-+
- 	if (valid_bonding_port_id(bonding_port_id) != 0)
- 		return -1;
- 
-@@ -991,6 +1011,9 @@ rte_eth_bond_xmit_policy_set(uint16_t bonding_port_id, uint8_t policy)
- {
- 	struct bond_dev_private *internals;
- 
-+	if (!bond_check_primary(__func__))
-+		return -1;
-+
- 	if (valid_bonding_port_id(bonding_port_id) != 0)
- 		return -1;
- 
-@@ -1036,6 +1059,9 @@ rte_eth_bond_link_monitoring_set(uint16_t bonding_port_id, uint32_t internal_ms)
- {
- 	struct bond_dev_private *internals;
- 
-+	if (!bond_check_primary(__func__))
-+		return -1;
-+
- 	if (valid_bonding_port_id(bonding_port_id) != 0)
- 		return -1;
- 
-@@ -1065,6 +1091,9 @@ rte_eth_bond_link_down_prop_delay_set(uint16_t bonding_port_id,
- {
- 	struct bond_dev_private *internals;
- 
-+	if (!bond_check_primary(__func__))
-+		return -1;
-+
- 	if (valid_bonding_port_id(bonding_port_id) != 0)
- 		return -1;
- 
-@@ -1093,6 +1122,9 @@ rte_eth_bond_link_up_prop_delay_set(uint16_t bonding_port_id, uint32_t delay_ms)
- {
- 	struct bond_dev_private *internals;
- 
-+	if (!bond_check_primary(__func__))
-+		return -1;
-+
- 	if (valid_bonding_port_id(bonding_port_id) != 0)
- 		return -1;
- 
-diff --git a/drivers/net/bonding/rte_eth_bond_pmd.c b/drivers/net/bonding/rte_eth_bond_pmd.c
-index 63f21d8522..04a2d6f1d2 100644
---- a/drivers/net/bonding/rte_eth_bond_pmd.c
-+++ b/drivers/net/bonding/rte_eth_bond_pmd.c
-@@ -2558,22 +2558,24 @@ bond_ethdev_link_update(struct rte_eth_dev *ethdev, int wait_to_complete)
- 
- 	struct bond_dev_private *bond_ctx;
- 	struct rte_eth_link member_link;
-+	struct rte_eth_link bond_link;
- 
- 	bool one_link_update_succeeded;
- 	uint32_t idx;
- 	int ret;
- 
--	bond_ctx = ethdev->data->dev_private;
-+	rte_eth_linkstatus_get(ethdev, &bond_link);
-+	bond_link.link_speed = RTE_ETH_SPEED_NUM_NONE;
- 
--	ethdev->data->dev_link.link_speed = RTE_ETH_SPEED_NUM_NONE;
-+	bond_ctx = ethdev->data->dev_private;
- 
- 	if (ethdev->data->dev_started == 0 ||
- 			bond_ctx->active_member_count == 0) {
--		ethdev->data->dev_link.link_status = RTE_ETH_LINK_DOWN;
--		return 0;
-+		bond_link.link_status = RTE_ETH_LINK_DOWN;
-+		goto out;
- 	}
- 
--	ethdev->data->dev_link.link_status = RTE_ETH_LINK_UP;
-+	bond_link.link_status = RTE_ETH_LINK_UP;
- 
- 	if (wait_to_complete)
- 		link_update = rte_eth_link_get;
-@@ -2586,7 +2588,7 @@ bond_ethdev_link_update(struct rte_eth_dev *ethdev, int wait_to_complete)
- 		 * Setting link speed to UINT32_MAX to ensure we pick up the
- 		 * value of the first active member
- 		 */
--		ethdev->data->dev_link.link_speed = UINT32_MAX;
-+		bond_link.link_speed = UINT32_MAX;
- 
- 		/**
- 		 * link speed is minimum value of all the members link speed as
-@@ -2597,19 +2599,16 @@ bond_ethdev_link_update(struct rte_eth_dev *ethdev, int wait_to_complete)
- 			ret = link_update(bond_ctx->active_members[idx],
- 					  &member_link);
- 			if (ret < 0) {
--				ethdev->data->dev_link.link_speed =
--					RTE_ETH_SPEED_NUM_NONE;
-+				bond_link.link_speed = RTE_ETH_SPEED_NUM_NONE;
- 				RTE_BOND_LOG(ERR,
- 					"Member (port %u) link get failed: %s",
- 					bond_ctx->active_members[idx],
- 					rte_strerror(-ret));
--				return 0;
-+				goto out;
- 			}
- 
--			if (member_link.link_speed <
--					ethdev->data->dev_link.link_speed)
--				ethdev->data->dev_link.link_speed =
--						member_link.link_speed;
-+			if (member_link.link_speed < bond_link.link_speed)
-+				bond_link.link_speed = member_link.link_speed;
- 		}
- 		break;
- 	case BONDING_MODE_ACTIVE_BACKUP:
-@@ -2619,15 +2618,15 @@ bond_ethdev_link_update(struct rte_eth_dev *ethdev, int wait_to_complete)
- 			RTE_BOND_LOG(ERR, "Member (port %u) link get failed: %s",
- 				bond_ctx->current_primary_port,
- 				rte_strerror(-ret));
--			return 0;
-+			goto out;
- 		}
- 
--		ethdev->data->dev_link.link_speed = member_link.link_speed;
-+		bond_link.link_speed = member_link.link_speed;
- 		break;
- 	case BONDING_MODE_8023AD:
--		ethdev->data->dev_link.link_autoneg =
-+		bond_link.link_autoneg =
- 				bond_ctx->mode4.member_link.link_autoneg;
--		ethdev->data->dev_link.link_duplex =
-+		bond_link.link_duplex =
- 				bond_ctx->mode4.member_link.link_duplex;
- 		/* fall through */
- 		/* to update link speed */
-@@ -2640,7 +2639,7 @@ bond_ethdev_link_update(struct rte_eth_dev *ethdev, int wait_to_complete)
- 		 * In theses mode the maximum theoretical link speed is the sum
- 		 * of all the members
- 		 */
--		ethdev->data->dev_link.link_speed = RTE_ETH_SPEED_NUM_NONE;
-+		bond_link.link_speed = RTE_ETH_SPEED_NUM_NONE;
- 		one_link_update_succeeded = false;
- 
- 		for (idx = 0; idx < bond_ctx->active_member_count; idx++) {
-@@ -2655,17 +2654,17 @@ bond_ethdev_link_update(struct rte_eth_dev *ethdev, int wait_to_complete)
- 			}
- 
- 			one_link_update_succeeded = true;
--			ethdev->data->dev_link.link_speed +=
--					member_link.link_speed;
-+			bond_link.link_speed += member_link.link_speed;
- 		}
- 
- 		if (!one_link_update_succeeded) {
- 			RTE_BOND_LOG(ERR, "All members link get failed");
--			return 0;
-+			goto out;
- 		}
- 	}
- 
--
-+out:
-+	rte_eth_linkstatus_set(ethdev, &bond_link);
- 	return 0;
+ #include <rte_bpf.h>
+@@ -92,7 +94,6 @@ test_no_instructions(void)
+ 	return bpf_load_test(RTE_DIM(ins), ins, EINVAL);
  }
  
-@@ -3640,12 +3639,23 @@ bond_ethdev_priv_dump(struct rte_eth_dev *dev, FILE *f)
- 	const struct bond_dev_private *internals = dev->data->dev_private;
+-REGISTER_FAST_TEST(bpf_no_instructions_autotest, NOHUGE_OK, ASAN_OK, test_no_instructions);
  
- 	dump_basic(dev, f);
--	if (internals->mode == BONDING_MODE_8023AD)
-+	if (internals->mode == BONDING_MODE_8023AD &&
-+			rte_eal_process_type() == RTE_PROC_PRIMARY)
- 		dump_lacp(dev->data->port_id, f);
+ /*
+  * Try and load a BPF program comprising single EXIT instruction.
+@@ -109,7 +110,6 @@ test_exit_only(void)
+ 	return bpf_load_test(RTE_DIM(ins), ins, EINVAL);
+ }
+ 
+-REGISTER_FAST_TEST(bpf_exit_only_autotest, NOHUGE_OK, ASAN_OK, test_exit_only);
+ 
+ /*
+  * Try and load a BPF program with no EXIT instruction.
+@@ -129,7 +129,6 @@ test_no_exit(void)
+ 	return bpf_load_test(RTE_DIM(ins), ins, EINVAL);
+ }
+ 
+-REGISTER_FAST_TEST(bpf_no_exit_autotest, NOHUGE_OK, ASAN_OK, test_no_exit);
+ 
+ /*
+  * Try and load smallest possible valid BPF program.
+@@ -151,7 +150,6 @@ test_minimal_working(void)
+ 	return bpf_load_test(RTE_DIM(ins), ins, 0);
+ }
+ 
+-REGISTER_FAST_TEST(bpf_minimal_working_autotest, NOHUGE_OK, ASAN_OK, test_minimal_working);
+ 
+ /*
+  * Try and load valid BPF program adding one to the argument.
+@@ -179,7 +177,6 @@ test_add_one(void)
+ 	return bpf_load_test(RTE_DIM(ins), ins, 0);
+ }
+ 
+-REGISTER_FAST_TEST(bpf_add_one_autotest, NOHUGE_OK, ASAN_OK, test_add_one);
+ 
+ /*
+  * Try and load valid BPF program subtracting one from the argument.
+@@ -207,7 +204,6 @@ test_subtract_one(void)
+ 	return bpf_load_test(RTE_DIM(ins), ins, 0);
+ }
+ 
+-REGISTER_FAST_TEST(bpf_subtract_one_autotest, NOHUGE_OK, ASAN_OK, test_subtract_one);
+ 
+ /*
+  * Conditionally jump over invalid operation as first instruction.
+@@ -243,8 +239,6 @@ test_jump_over_invalid_first(void)
+ 	return bpf_load_test(RTE_DIM(ins), ins, EINVAL);
+ }
+ 
+-REGISTER_FAST_TEST(bpf_jump_over_invalid_first_autotest, NOHUGE_OK, ASAN_OK,
+-	test_jump_over_invalid_first);
+ 
+ /*
+  * Conditionally jump over invalid operation as non-first instruction.
+@@ -286,8 +280,6 @@ test_jump_over_invalid_non_first(void)
+ 	return bpf_load_test(RTE_DIM(ins), ins, EINVAL);
+ }
+ 
+-REGISTER_FAST_TEST(bpf_jump_over_invalid_non_first_autotest, NOHUGE_OK, ASAN_OK,
+-	test_jump_over_invalid_non_first);
+ 
+ /*
+  * Basic functional tests for librte_bpf.
+@@ -3796,7 +3788,6 @@ test_bpf_load_null(void)
  
  	return 0;
  }
+-REGISTER_FAST_TEST(bpf_load_null_autotest, NOHUGE_OK, ASAN_OK, test_bpf_load_null);
  
-+static const struct eth_dev_ops secondary_dev_ops = {
-+	.dev_close         = bond_ethdev_close,
-+	.dev_infos_get     = bond_ethdev_info,
-+	.link_update       = bond_ethdev_link_update,
-+	.stats_get         = bond_ethdev_stats_get,
-+	.reta_query        = bond_ethdev_rss_reta_query,
-+	.rss_hash_conf_get = bond_ethdev_rss_hash_conf_get,
-+	.eth_dev_priv_dump = bond_ethdev_priv_dump,
+ /* Test calling wrong API for execution of a multi-argument eBPF program. */
+ static int
+@@ -3837,8 +3828,6 @@ test_bpf_exec_wrong_nb_prog_arg(void)
+ 
+ 	return 0;
+ }
+-REGISTER_FAST_TEST(bpf_exec_wrong_nb_prog_arg_autotest, NOHUGE_OK, ASAN_OK,
+-		test_bpf_exec_wrong_nb_prog_arg);
+ 
+ /* Test passing unsupported flags when executing an eBPF program. */
+ static int
+@@ -3876,10 +3865,9 @@ test_bpf_exec_wrong_flags(void)
+ 
+ 	return 0;
+ }
+-REGISTER_FAST_TEST(bpf_exec_wrong_flags_autotest, NOHUGE_OK, ASAN_OK, test_bpf_exec_wrong_flags);
+ 
+ static int
+-test_bpf(void)
++test_bpf_progs(void)
+ {
+ 	int32_t rc, rv;
+ 	uint32_t i;
+@@ -3894,10 +3882,6 @@ test_bpf(void)
+ 	return rc;
+ }
+ 
+-#endif /* !RTE_LIB_BPF */
+-
+-REGISTER_FAST_TEST(bpf_autotest, NOHUGE_OK, ASAN_OK, test_bpf);
+-
+ /* Tests of BPF JIT stack alignment when calling external functions (xfuncs). */
+ 
+ /* Function called from the BPF program in a test. */
+@@ -4010,7 +3994,6 @@ test_stack_alignment(void)
+ 	return TEST_SUCCESS;
+ }
+ 
+-REGISTER_FAST_TEST(bpf_stack_alignment_autotest, NOHUGE_OK, ASAN_OK, test_stack_alignment);
+ 
+ /*
+  * Test copying `__uint128_t`.
+@@ -4066,7 +4049,6 @@ test_stack_copy_uint128(void)
+ 
+ #endif
+ 
+-REGISTER_FAST_TEST(bpf_stack_copy_uint128_autotest, NOHUGE_OK, ASAN_OK, test_stack_copy_uint128);
+ 
+ /*
+  * Test SSE2 load and store intrinsics.
+@@ -4152,7 +4134,6 @@ test_stack_sse2(void)
+ 
+ #endif
+ 
+-REGISTER_FAST_TEST(bpf_stack_sse2_autotest, NOHUGE_OK, ASAN_OK, test_stack_sse2);
+ 
+ /*
+  * Run memcpy and rte_memcpy with various data sizes and offsets (unaligned and aligned).
+@@ -4285,7 +4266,6 @@ test_stack_memcpy(void)
+ 	return TEST_SUCCESS;
+ }
+ 
+-REGISTER_FAST_TEST(bpf_stack_memcpy_autotest, NOHUGE_OK, ASAN_OK, test_stack_memcpy);
+ 
+ /*
+  * The BPF elf load test needs the BPF programs to be successfully
+@@ -4801,7 +4781,6 @@ test_bpf_elf(void)
+ 
+ #endif /* !(TEST_BPF_ELF_LOAD && RTE_NULL) */
+ 
+-REGISTER_FAST_TEST(bpf_elf_autotest, NOHUGE_OK, ASAN_OK, test_bpf_elf);
+ 
+ #ifndef RTE_HAS_LIBPCAP
+ 
+@@ -5087,7 +5066,6 @@ test_bpf_convert(void)
+ 
+ #endif /* RTE_HAS_LIBPCAP */
+ 
+-REGISTER_FAST_TEST(bpf_convert_autotest, NOHUGE_OK, ASAN_OK, test_bpf_convert);
+ 
+ /*
+  * Tests of BPF atomic instructions.
+@@ -5244,7 +5222,6 @@ test_xadd32(void)
+ 	return run_xchg_test(RTE_DIM(ins), ins, expected);
+ }
+ 
+-REGISTER_FAST_TEST(bpf_xadd32_autotest, NOHUGE_OK, ASAN_OK, test_xadd32);
+ 
+ /*
+  * Test 64-bit XADD.
+@@ -5313,7 +5290,6 @@ test_xadd64(void)
+ 	return run_xchg_test(RTE_DIM(ins), ins, expected);
+ }
+ 
+-REGISTER_FAST_TEST(bpf_xadd64_autotest, NOHUGE_OK, ASAN_OK, test_xadd64);
+ 
+ /*
+  * Test 32-bit XCHG.
+@@ -5408,7 +5384,6 @@ test_xchg32(void)
+ 	return run_xchg_test(RTE_DIM(ins), ins, expected);
+ }
+ 
+-REGISTER_FAST_TEST(bpf_xchg32_autotest, NOHUGE_OK, ASAN_OK, test_xchg32);
+ 
+ /*
+  * Test 64-bit XCHG.
+@@ -5473,7 +5448,6 @@ test_xchg64(void)
+ 	return run_xchg_test(RTE_DIM(ins), ins, expected);
+ }
+ 
+-REGISTER_FAST_TEST(bpf_xchg64_autotest, NOHUGE_OK, ASAN_OK, test_xchg64);
+ 
+ /*
+  * Test invalid and unsupported atomic imm values (also valid ones for control).
+@@ -5546,4 +5520,56 @@ test_atomic_imms(void)
+ 	return TEST_SUCCESS;
+ }
+ 
+-REGISTER_FAST_TEST(bpf_atomic_imms_autotest, NOHUGE_OK, ASAN_OK, test_atomic_imms);
++static struct unit_test_suite test_bpf_suite = {
++	.suite_name = "BPF Unit Test Suite",
++	.unit_test_cases = {
++		/* Loading of the most simple programs. */
++		TEST_CASE(test_no_instructions),
++		TEST_CASE(test_exit_only),
++		TEST_CASE(test_no_exit),
++		TEST_CASE(test_minimal_working),
++		TEST_CASE(test_add_one),
++		TEST_CASE(test_subtract_one),
++		TEST_CASE(test_jump_over_invalid_first),
++		TEST_CASE(test_jump_over_invalid_non_first),
++
++		/* API misuse. */
++		TEST_CASE(test_bpf_load_null),
++		TEST_CASE(test_bpf_exec_wrong_nb_prog_arg),
++		TEST_CASE(test_bpf_exec_wrong_flags),
++
++		/* Execution of the programs in the tests[] table. */
++		TEST_CASE(test_bpf_progs),
++
++		/* JIT stack alignment when calling external functions. */
++		TEST_CASE(test_stack_alignment),
++		TEST_CASE(test_stack_copy_uint128),
++		TEST_CASE(test_stack_sse2),
++		TEST_CASE(test_stack_memcpy),
++
++		/* Loading of programs from ELF objects. */
++		TEST_CASE(test_bpf_elf),
++
++		/* Conversion of cBPF programs. */
++		TEST_CASE(test_bpf_convert),
++
++		/* Atomic instructions. */
++		TEST_CASE(test_xadd32),
++		TEST_CASE(test_xadd64),
++		TEST_CASE(test_xchg32),
++		TEST_CASE(test_xchg64),
++		TEST_CASE(test_atomic_imms),
++
++		TEST_CASES_END()
++	}
 +};
 +
- const struct eth_dev_ops default_dev_ops = {
- 	.dev_start            = bond_ethdev_start,
- 	.dev_stop             = bond_ethdev_stop,
-@@ -3830,7 +3840,7 @@ bond_probe(struct rte_vdev_device *dev)
- 			return -1;
- 		}
- 
--		eth_dev->dev_ops = &default_dev_ops;
-+		eth_dev->dev_ops = &secondary_dev_ops;
- 		eth_dev->device = &dev->device;
- 
- 		/*
++static int
++test_bpf(void)
++{
++	return unit_test_suite_runner(&test_bpf_suite);
++}
++
++REGISTER_FAST_TEST(bpf_autotest, NOHUGE_OK, ASAN_OK, test_bpf);
++
++#endif /* !RTE_LIB_BPF */
 -- 
-2.34.1
+2.53.0
 
