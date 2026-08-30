@@ -2,73 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 311F0C61DB9
-	for <dpdk-dev@archiver.kernel.org>; Sun, 30 Aug 2026 04:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75049C61DD9
+	for <dpdk-dev@archiver.kernel.org>; Sun, 30 Aug 2026 04:31:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F1C4740264;
-	Sun, 30 Aug 2026 06:30:31 +0200 (CEST)
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com
- [209.85.216.45]) by mails.dpdk.org (Postfix) with ESMTP id B6BB54025A
- for <dev@dpdk.org>; Sun, 30 Aug 2026 06:30:30 +0200 (CEST)
-Received: by mail-pj1-f45.google.com with SMTP id
- 98e67ed59e1d1-398b1e63c49so566663a91.0
- for <dev@dpdk.org>; Sat, 29 Aug 2026 21:30:30 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5492F402B3;
+	Sun, 30 Aug 2026 06:31:07 +0200 (CEST)
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
+ [209.85.214.170])
+ by mails.dpdk.org (Postfix) with ESMTP id AE3DC40264
+ for <dev@dpdk.org>; Sun, 30 Aug 2026 06:31:05 +0200 (CEST)
+Received: by mail-pl1-f170.google.com with SMTP id
+ d9443c01a7336-2d71a50caa9so29425185ad.0
+ for <dev@dpdk.org>; Sat, 29 Aug 2026 21:31:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788064230;
- x=1788669030; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788064265;
+ x=1788669065; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=LLS0iUG5joQx8JZhOXocDptRNw1fGv4bkIzG/ulByRI=;
- b=nnDthh4V7rdMgBIAY2NNFcsrSfruzPzmTrKLElLx2lx5u7uOplEykLquZWozk+xRYB
- STHt2SCOI8Q6h/wI3Xy8xrkNr/Ej3cZ1Yzjmqh9kUYV3Xc8cVnxsgw2quFmrG/dxRn1j
- 5+Z1kzRyqc+IfcBdy2EiBoBRMVyLzmjpdX3/P36LnftIkHfGeZPCSGQYZAmad3wCOQmJ
- KxQKIw3heC16O7rUBj5aKN2vFhOp9Qm5Lg6AE0S+7AZ3arkvO5c8XATjCVgYRKc75t8k
- M3YYOIvvomQyHKXMeXuKk/4UavLGvnlfmT4Ry8JEV8FUFAdx0JRiWhJ4CzHjQHzH9wiI
- qndA==
+ bh=8IuzHFzgx1dCYylveiQbauwb3wz911Tiyo2t7uLDo+c=;
+ b=pZZLXQDmtlMQzq4A09TNU6wiHtivEPMsRiI+jiBRO5zipO4qAITGjGIuXb4NB2l0d3
+ NC8hTwpVQbZWyWdUxwJ9faPOrfrPi2MjBI9khG4pO6SFaOcMG3og3AKLDfURYWPJcKnI
+ 6LmwonD+N08hzjNPY6K57ncsY9S0bBTmYh9/mirH7Qk6KZkhKyYxsLY+vq/Vrje/ckfs
+ rNU7Pm7Sak1VUMmen6bGI55oQp2jgbeIWFNtvBi5uaCMGogESFhCStRKa9IX8Pk/dLvl
+ PmP90UfqdahEkU1aiAyBQarkzdeJTSn34HSh9Oh1AJfUZGH73sDNAOziMnVGpiamoJ1P
+ b8eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788064230; x=1788669030;
+ d=1e100.net; s=20251104; t=1788064265; x=1788669065;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=LLS0iUG5joQx8JZhOXocDptRNw1fGv4bkIzG/ulByRI=;
- b=ZtnNxppPBD6h16CJdA/+Ky0WEOaWoXCdIw9x/XOsbWmEJOI2JxwX+LaGYBAiFT+Y/q
- X9fBVxIFxncO/WxzYiLYlkmMOVV1ekxV+4Dum6GOe30UkkOJkZjwkpbPvB6+k187pIBK
- KJYxPcZIjMqI1adV9aFDTIFG+YYKaBe0qo7l/blx+YhL83IzBjqSvr6/WNE1vu6cJQGa
- cz7bv2lYFlickMiOb1BGjB5nNp2zGlpZo4eOIpsIqcfBt/akF+bhixOQXI9Vc2LA+CBb
- Zd/QLNRp07F2+XydXPOV+AH5PiiDQHaaleG2GrahOG4br8ftIuVwBQrLvrTwO9vYJy/l
- WHzA==
+ bh=8IuzHFzgx1dCYylveiQbauwb3wz911Tiyo2t7uLDo+c=;
+ b=eLpqXWSUBnCTUw2OysMvG2StKbz4SIZ4yVSSk7dcLhh19P6B36V9Lznc1GKlX9CJhK
+ vTHYyVYaDrECMdBp+GqO6BeN0IdjprSi7fR6H9FDWUFYo9wbb7c7NGMA3UC/w45PDnGT
+ YR25xOIFeK+tLMRD/XiZJ8qDrUeI2T1Ns7TkiY6bxhyI9sP3WJwCQR0xSNNvF+5bReTm
+ 6ouN583TPb57C8UbATaRItvcyiuTWQAkHZuo2kgqRxm9uKv/UbOVb4l/wKZFE/Y2YRXu
+ LvgDA0QltCPerqUPw4LbF16nQVEVPwISZY0Asw4ryN+4XXAD5ygl57hVgwNEB4sGchy/
+ q2zQ==
 X-Forwarded-Encrypted: i=1;
- AKwUvBw3tJ10IeEp0twCunqftumXCdtJ9XV1jy188pSlz7NaPKVTY7dkE88BgnZ/rGzI7yJYUc0=@dpdk.org
-X-Gm-Message-State: AFuF++mdoozdbKtz24vNW5R6UDMVAh84obNN4U2U8r/ufdJQcVUPcM2U
- IJR1jrSOQ1uS1bLSajaRRIpdXp9ElYHAU5Cig7kALp8aFE2lTdgwsAuFLHz5b1cgQYE=
-X-Gm-Gg: AYBFou1c2F3PnDpklbmyxFoFhTf31HUX1nJDNwuf7ZRyxwpoEmCqvsCtjGSSF2p3C7i
- iF++Vw3nuYS9zxDDV6WNrnE0BdBbN2vcAT4NvSG3K/Bl/FEKbqnyX7yUBYR21UNq+KEieJw8Z4z
- X7kBh4HoluCSTQQhKrDrqpeLUC2qIQ5tKrzSx8TLw6XWRIeh5MSmjoZ56scAql+coSSWS56Npny
- 9xAXQ0kk8Kd/ZILj3xXBwkb4zCx1I4PiuAUQjE/lBm8iwAJU4hhgmTYzxghEcRkryaMIylJGF57
- eIaJDkTOtvAobsYNJ1r9W4STNQ7v42jI1nTftjtuOdFhgVyrRI4tozaS58mWtbC09f26xT7Ollx
- MbqJMeg9MyN/U0BJh311PbQL9mpaXsm9HsB3uPl0pC+Zc2JLOZxg9FTFWQ0L6uqcM63BaNRqQlc
- EAazL7wjeSDvBwqXk1MpgGKEPWMNNElB43ABu/R+VJMURxM4Q/YEtb2/3RDRWZXZShO21rIYwgq
- OXNtPtS4tHtcWOPQEYeVORlusNdUw==
-X-Received: by 2002:a17:90b:38ca:b0:38e:c232:9d2c with SMTP id
- 98e67ed59e1d1-398da598b19mr265397a91.2.1788064229787; 
- Sat, 29 Aug 2026 21:30:29 -0700 (PDT)
+ AKwUvBzRsTu+o5heHPXYL12kRuhgodAl/MTbouF66Htawf0S5NQD+2+XaYfZ7TWg+yINnXLQxXQ=@dpdk.org
+X-Gm-Message-State: AFuF++l2DH/1YGLHnTs4lIKXg2mbL88lubuiC+fKqM052IAgORLf4Uw9
+ kzRLiol2yY5o6PLs7UOQifw6sHVjofJ8mHg1HtADPzrTI+tD6CMxBJWcvMtxZH3uaro=
+X-Gm-Gg: AYBFou3bBbr5FXBjtoKwX7oyLx1ShgdPqYJ5oCRfTtlQ7ytzlq07QJkmDS9HIBPfnDY
+ k/oBZ42lM19CUAh3Tv5sYStnA9S5KXybhxmLobF8StNqEnswo7MCS4UiZJx4KoqYha2+fvoho6l
+ cw9G9O6fbhCusybe/3TWeqNBDijSGYwuXhkGAZ6gmdR9JU1dWIwZZEb9M4GWjyKq6Eh3o6Felra
+ UEbJ2BmH5ObWuzYfZutHaRLKxjnkT9nD6r951n12xBrjT08VuWbzb6mbXT1WcRh1evHhkQ3rV2g
+ EmbGr4gHi8pCPlu5snEMRDBhWi+IuVWRgA83lrdjMjZknw/4fWKY1y2Ct9XpqeDJ5JDRamVbzuY
+ v0QPo6sYdBrpVKdOFAWNcM4r5Gf1hgRVMGi/vMI4NlpmVjiU+5+7iioLWIuqNZ/jqmSgzl3JCk7
+ VktVu/jLOgVyBjOSqFE5wgImLCmlCt5IQydTiOyRTUH3sXgorXRxqTmFXXahqf8VQASP0akWWSB
+ ly0DHaoU5Jxp0+u7ZqpD/17ue63AA==
+X-Received: by 2002:a17:90b:49:b0:398:9be5:b41d with SMTP id
+ 98e67ed59e1d1-3989be5b4e2mr16505951a91.24.1788064264667; 
+ Sat, 29 Aug 2026 21:31:04 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-398a14d3e83sm6797688a91.10.2026.08.29.21.30.27
+ 98e67ed59e1d1-398a14d3e83sm6797688a91.10.2026.08.29.21.31.01
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 29 Aug 2026 21:30:29 -0700 (PDT)
-Date: Sat, 29 Aug 2026 21:22:25 -0700
+ Sat, 29 Aug 2026 21:31:04 -0700 (PDT)
+Date: Sat, 29 Aug 2026 21:29:57 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Weijun Pan <wpan3636@gmail.com>
 Cc: Chas Williams <3chas3@gmail.com>, "Min Hu (Connor)"
- <humin29@huawei.com>, dev@dpdk.org
-Subject: Re: [RFC PATCH v4 1/2] net/bonding: skip unavailable member stats
-Message-ID: <20260829212225.30b4821a@phoenix.local>
-In-Reply-To: <20260830011445.168073-1-wpan3636@gmail.com>
+ <humin29@huawei.com>, Anatoly Burakov <anatoly.burakov@intel.com>,
+ dev@dpdk.org
+Subject: Re: [RFC PATCH v4 2/2] net/bonding: restrict secondary control
+ operations
+Message-ID: <20260829212957.23395a9f@phoenix.local>
+In-Reply-To: <20260830011445.168073-2-wpan3636@gmail.com>
 References: <20260826161009.37875-1-wpan3636@gmail.com>
  <20260830011445.168073-1-wpan3636@gmail.com>
+ <20260830011445.168073-2-wpan3636@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -85,23 +89,77 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat, 29 Aug 2026 20:14:44 -0500
+On Sat, 29 Aug 2026 20:14:45 -0500
 Weijun Pan <wpan3636@gmail.com> wrote:
 
-> diff --git a/drivers/net/bonding/rte_eth_bond_pmd.c b/drivers/net/bonding/rte_eth_bond_pmd.c
-> index 6a4f997b5a..6f10dbb0c7 100644
-> --- a/drivers/net/bonding/rte_eth_bond_pmd.c
-> +++ b/drivers/net/bonding/rte_eth_bond_pmd.c
-> @@ -2677,9 +2677,12 @@ bond_ethdev_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats,
->  	struct bond_dev_private *internals = dev->data->dev_private;
->  	struct rte_eth_stats member_stats;
->  	int i;
-> +	int ret;
+> diff --git a/doc/guides/prog_guide/link_bonding_poll_mode_drv_lib.rst b/doc/guides/prog_guide/link_bonding_poll_mode_drv_lib.rst
+> index 2fa1ac4028..a3f197c8b5 100644
+> --- a/doc/guides/prog_guide/link_bonding_poll_mode_drv_lib.rst
+> +++ b/doc/guides/prog_guide/link_bonding_poll_mode_drv_lib.rst
+> @@ -254,6 +254,36 @@ Like all other PMD, all functions exported by a PMD are lock-free functions
+>  that are assumed not to be invoked in parallel on different logical cores to
+>  work on the same target object.
 >  
->  	for (i = 0; i < internals->member_count; i++) {
-> -		rte_eth_stats_get(internals->members[i].port_id, &member_stats);
-> +		ret = rte_eth_stats_get(internals->members[i].port_id, &member_stats);
-> +		if (ret != 0)
-> +			continue;
+> +Bonding device configuration and LACP runtime state are owned by the primary
+> +process. Secondary processes may attach to an existing bonding device for
+> +detach and supported query operations only.
+> +
+> +Supported secondary-process queries include device information, statistics,
+> +link status, RETA query, RSS hash configuration, bonding mode, member list,
+> +primary member, transmit policy, link monitoring configuration, and LACP
+> +configuration. Private dump is limited to shared bonding information and skips
+> +LACP runtime state in a secondary process.
+> +
+> +Control operations are restricted to the primary process. This includes
+> +configuring, starting or stopping the device, setting up queues, changing
+> +members, changing the bonding mode, selecting the primary member, changing the
+> +transmit policy, changing link monitoring or propagation delays, updating RSS,
+> +changing MAC addresses, changing MTU, configuring VLAN filters, changing
+> +promiscuous or all-multicast mode, resetting statistics, configuring
+> +``rte_flow`` rules, and changing 802.3ad settings, including aggregation
+> +selection, external collect/distribute/slow-Tx controls, and dedicated queue
+> +enable or disable.
+> +
+> +LACP runtime state queries, including ``rte_eth_bond_8023ad_member_info()``,
+> +``rte_eth_bond_8023ad_ext_collect_get()``, and
+> +``rte_eth_bond_8023ad_ext_distrib_get()``, are also restricted to the primary
+> +process.
+> +
+> +Rx and Tx are not supported on a bonding device in a secondary process;
+> +receive returns no packets and transmit drops packets. In a secondary process,
+> +``rte_eth_dev_stop()`` returns ``-ENOTSUP`` and ``rte_eth_dev_close()`` is the
+> +detach operation.
+> +
 
-Ok, but you really don't need the ret variable here.
+That is way too long an explanation (thanks AI). Should just be short summary here.
+
+> +* **Restricted bonding device control to the primary process.**
+> +
+> +  Bonding device configuration and LACP runtime state operations are now
+> +  rejected in secondary processes. Secondary processes may detach and use
+> +  supported query operations only.
+> +
+
+Once again, AI is being too wordy. It was always true that bonding control
+did not work for secondary. And it is not really an API change.
+Should be under Added items, like "Bonding allow data operations in secondary process"
+
+> +static inline int
+> +bond_check_primary(const char *op, int err)
+> +{
+> +	if (rte_eal_process_type() == RTE_PROC_PRIMARY)
+> +		return 0;
+> +
+> +	RTE_BOND_LOG(ERR, "%s not supported in non-primary process", op);
+> +	return err;
+> +}
+
+When ever possible avoid using negatives in English speech.
+Should just say "%s not supported in secondary process.
+And returning different errors is awkward way to handle.
+Just make helper that returns true/false and if false put that error code at
+that location in caller.
+
+Then you can eliminate lots of "int ret" in the calling code as well.
+
+
