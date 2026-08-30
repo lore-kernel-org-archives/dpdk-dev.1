@@ -2,71 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FBEAC61DEB
-	for <dpdk-dev@archiver.kernel.org>; Sun, 30 Aug 2026 20:27:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE3F4C61DEB
+	for <dpdk-dev@archiver.kernel.org>; Sun, 30 Aug 2026 20:27:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9359E40664;
-	Sun, 30 Aug 2026 22:27:04 +0200 (CEST)
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com
- [209.85.216.48]) by mails.dpdk.org (Postfix) with ESMTP id BD04C4060B
- for <dev@dpdk.org>; Sun, 30 Aug 2026 22:27:03 +0200 (CEST)
-Received: by mail-pj1-f48.google.com with SMTP id
- 98e67ed59e1d1-398b3d66515so1228979a91.0
- for <dev@dpdk.org>; Sun, 30 Aug 2026 13:27:03 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id C12654060F;
+	Sun, 30 Aug 2026 22:27:10 +0200 (CEST)
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com
+ [209.85.216.54]) by mails.dpdk.org (Postfix) with ESMTP id 540F3402EF
+ for <dev@dpdk.org>; Sun, 30 Aug 2026 22:27:09 +0200 (CEST)
+Received: by mail-pj1-f54.google.com with SMTP id
+ 98e67ed59e1d1-39647aa9d52so2716900a91.0
+ for <dev@dpdk.org>; Sun, 30 Aug 2026 13:27:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788121623;
- x=1788726423; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788121628;
+ x=1788726428; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=Ue7qsOvmgwQASfird3aDUgAmFk34jde25438kSIFPjQ=;
- b=fHGDulC0WQGmz8s19t1QwBVXD9ohh7N3HC3mo+W4JPX75SaDhIydf11QxkkyFqBNUJ
- d31/7olLi6hnVa6AC3BidHryAEK8k7jXHbtUm3e5Oe3M8Spyn6YGYv5ZndeFig5F4M4h
- OAB/K/roVYYHN3nYKR0pVckkVmT2jgyvBxX08U2ypzEm8VJtXicoToSNwTbZt/1wVgdv
- G3k9MZ2ALJ1NZwJecluFt5MUIjaDY3+MKBra18s9ZWAux7cq66bJokhXXhvC+r+YiqEE
- tkqoJG94fmbQrSDyolTuqWiXl4FKYbtZc8cNUQhYkxaPPzrXtvzI//a0E7qq8QG7g41d
- wSDg==
+ bh=3SlpkY9Svel1T44fN0IGDvxvQYY2Dhj7swjZ3dhEiJE=;
+ b=HUeTmI3K0KXfkwiC3mSU9i7/Yy+egbOwj/3OqaAEaqUNez/v8B2lgiNVyedQQkcpyW
+ kSppHExrF5cGqO16wyQnEYLOfPJpoB+J7FHqPGjSHWo06tY3KKZY+Gbf+4H6/+ChgV18
+ EV7O3xCCGd7/mgfKZTI9zklLimxmHRks4QlLDLczSsF00Nx964J1f/XBSO1S11YMvNb/
+ IPgvauvPV49bQW48rS76qGEki/QVxRBbXwpY2hClfRg7/4CmfE3hYYFLzm+E9KCRNs38
+ rOwcOnaCXB0N+9nluJvfN7mX5udbuFKFqpt0xVuNEXS9SDTGEmO+gZPsr7DVP3rpZu96
+ W40Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788121623; x=1788726423;
+ d=1e100.net; s=20251104; t=1788121628; x=1788726428;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=Ue7qsOvmgwQASfird3aDUgAmFk34jde25438kSIFPjQ=;
- b=WLp3zooVBWDJ2UlQy5QFQgkxasjW6F6Z07D7NL6pc9+D514EfjQ7Hy1DrEm//qsNXQ
- Dzcd9cS5Do2drsZ1p64OwPsolmaz7hb/6QCskpSbHkgfIGaSJvgq5CL5eFVJsd5BEED1
- aLBzIlwZYBXtCZZl5/3RjzY/WASH+v2hJ5NaqAE7pm2d1gTxYUVbx6d9y8zkVJw4bmUV
- sbf2X/gkF5IMTCav3LIZE5ci9WM9FvhUg92Y5aIjfYy+t5i6XzsqMLDrkyHBKMAMAZTS
- MfCvMcFKZFQdJ1DMcgeFYDsqALotLJRMq8tmXrFwx+5OMV+B5ums7tR4WvrOyiquE815
- Dv3w==
-X-Gm-Message-State: AFuF++lbGD4Kebkz3ToDvQC3d17qdokwNtxYlM31e4cvBwOahCPwcUAc
- yMBfU+CGlHQJ4RE/EWJTtLYyRzED59iW+/8b+G+07W4snZ/Rk1mTprbGb/umW+bX61LB5BU7Nn1
- oEBgK
-X-Gm-Gg: AYBFou0bbZY67YEFek0Z4aAp7VXJFV4b2x4ULIV4F0Ryo6NkGoaVnmRiXh9ftXvIp7l
- KF8xatAnVJOHuzmH0/yyurUvHTiUch8b5uo8cMsPateFsjTUVUzIDsyaat/OKyqhYrQ6PG6w0NA
- Bz1rL5mFACtoqPLG5kctpePUanW6bmGftecsQb355wQwK/fuz6HGKWDdGe9z+8SRsEjDOntyCpE
- wCY1yj9+3T29a5Uco4rbaFKJdVqI/fFd2U5LCM323yLFkE7QjNECVFQd1HWYs2uXQiAi/+TMfYj
- NVg2oPqqWokPhhMWjaLMwbbdnnxYnj/WVpuVQl/MK4vgubkYtlMWe3UC6aMyMmAdSh7ZqWJddeK
- GWSiPByr7Plur9XgZrksQkdN0aJcf9cURazB/GtQ2DanYKMb0REeRkXfFlABn1kLHVEIt60OcO2
- rVCLPjaaZmgVSnRlz4tmstR3/oKLjgU4mnFTln2kMWaDKm5zQZnure6gaoO720/GD6SHBZa2FZK
- noY7yOjTzlVjDJluTfMS0WIcs+lWZEEG6bdfQ==
-X-Received: by 2002:a17:90b:2552:b0:38e:9045:babe with SMTP id
- 98e67ed59e1d1-396d0f02a58mr33568627a91.7.1788121622886; 
- Sun, 30 Aug 2026 13:27:02 -0700 (PDT)
+ bh=3SlpkY9Svel1T44fN0IGDvxvQYY2Dhj7swjZ3dhEiJE=;
+ b=QdQicwkVG4+GSPnzKlttjXj8/OgVUW1mk1ghhknNVwEYqyzwZFlbK+lT2gEaARLHCr
+ +MeXugbJOX3rrK75/vIs2krAjr25Fu0qjOnLLffU1iE9QQfSUQTpX/M16WW/kotUM7XQ
+ ZCQb6SZ/R8jedhUDkvxeTfwcBu78hkPsSMC1fUDSQpaisiY2GjiL8fr5oI22oqVMr8d5
+ T4O+Sn4h7BabFYbBL8vo6EngzyD4yGhMBb9UXGIJLEVYVhjTApw1tCfQYk+yiyfHyMrD
+ sX/1foD2MWzwEblpYXivVfnN679qyqMP18dleUVzDcbymEO+dl61U4v/WzzHCA72rZj1
+ X6EA==
+X-Gm-Message-State: AFuF++kEbzdWJZ63lLsxPtmE1mzbJnFDJbLLIAsg0qQaN4NF4eOFEUoQ
+ OOgQxYC1Wz5HVW4hhjdQU/+XHHyq0GENSmq62ubM7xs+xaX5F4YrL1eS5Xii/grQqz3t7tIKlyS
+ bVwvZ
+X-Gm-Gg: AYBFou1o8ztFdGg6NZrMvGX8XtWU5WjgmaDBWN3hkZWMomWFByEJBi7QcPVDSM2zrml
+ 9BJhgRJaSinBpHp0FyouSMRu6kWhhtM2fmoHucAAOuAgSxFjir0CDk8pvRA+mq23p+ud3J5kwti
+ xlu1gurj2neDUHcGFpXeSE2S95csu3R811Gq7pX+Ik+6eq16dXo3FdUbMDD3hABJTbhpeZ0Ahdy
+ CYp3emCjQ9y/y1+PRMCgBZq7f6SHenceP4lLXwFRBkhH89Vzo7Cq4U1BmYS9chVBq20dCdDfkPg
+ 57/c4EXmWzSjALs2zP4G85xKDT7vHqcVJzMD7XQPq32trtro9lM0P/sGrQoJkOulWPnt1wRM1dR
+ mrDUivragzXEPL2uuZgvSUl66bmeBSYR9QX2j/Urgqwd6jcbTRm6cMDALQ6b7Ft68QVBuBL4mv1
+ 87bQOTzv8pvVFsavYCMMpdPdyfPHB68abqB70WniVtkQ28o1uP+GkJOKB6Amstqze639DroG6SD
+ 8iPCA6RExBHO4fz53SBaxHRSfs=
+X-Received: by 2002:a17:90b:1d0d:b0:398:9bd3:d6d1 with SMTP id
+ 98e67ed59e1d1-398da6f3ec3mr3122774a91.11.1788121628435; 
+ Sun, 30 Aug 2026 13:27:08 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-396b0fd5c34sm17683165a91.8.2026.08.30.13.26.58
+ 98e67ed59e1d1-396b0fd5c34sm17683165a91.8.2026.08.30.13.27.03
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 30 Aug 2026 13:27:02 -0700 (PDT)
+ Sun, 30 Aug 2026 13:27:08 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Chas Williams <3chas3@gmail.com>, "Min Hu (Connor)" <humin29@huawei.com>,
- Declan Doherty <declan.doherty@intel.com>,
+ Weijun Pan <wpan3636@gmail.com>, Chas Williams <3chas3@gmail.com>,
+ "Min Hu (Connor)" <humin29@huawei.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Robert Sanford <rsanford@akamai.com>,
  Pablo de Lara <pablo.de.lara.guarch@intel.com>,
- Robert Sanford <rsanford@akamai.com>
-Subject: [PATCH 4/8] net/bonding: use atomic link status accessors
-Date: Sun, 30 Aug 2026 13:23:46 -0700
-Message-ID: <20260830202636.760014-5-stephen@networkplumber.org>
+ Declan Doherty <declan.doherty@intel.com>
+Subject: [PATCH 5/8] net/bonding: restrict control operations in secondary
+ process
+Date: Sun, 30 Aug 2026 13:23:47 -0700
+Message-ID: <20260830202636.760014-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260830202636.760014-1-stephen@networkplumber.org>
 References: <20260708174204.72574-1-wpan3636@gmail.com>
@@ -86,248 +89,212 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The bonding PMD read and wrote rte_eth_dev_data.dev_link directly.
-Since a struct rte_eth_link is a 64 bit value that may be updated concurrently
-it needs to be done atomically. Use existing helpers.
+Secondary process control operations could reach memory
+not shared by primary process. Restrict the API to only
+those things that should work by reading shared state.
 
 Fixes: 2efb58cbab6e ("bond: new link bonding library")
 Cc: stable@dpdk.org
 
+Bugzilla ID: 1900
+
+Reported-by: Weijun Pan <wpan3636@gmail.com>
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/bonding/rte_eth_bond_pmd.c | 84 ++++++++++++++++----------
- 1 file changed, 51 insertions(+), 33 deletions(-)
+ drivers/net/bonding/rte_eth_bond_8023ad.c | 18 +++++++++++++++++
+ drivers/net/bonding/rte_eth_bond_api.c    | 24 +++++++++++++++++++++++
+ drivers/net/bonding/rte_eth_bond_pmd.c    | 18 +++++++++++++++--
+ 3 files changed, 58 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/net/bonding/rte_eth_bond_8023ad.c b/drivers/net/bonding/rte_eth_bond_8023ad.c
+index d1f30229d0..29d4de0e1d 100644
+--- a/drivers/net/bonding/rte_eth_bond_8023ad.c
++++ b/drivers/net/bonding/rte_eth_bond_8023ad.c
+@@ -1440,6 +1440,9 @@ rte_eth_bond_8023ad_agg_selection_set(uint16_t port_id,
+ 	if (valid_bonding_port_id(port_id) != 0)
+ 		return -EINVAL;
+ 
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
++		return -ENOTSUP;
++
+ 	bond_dev = &rte_eth_devices[port_id];
+ 	internals = bond_dev->data->dev_private;
+ 
+@@ -1509,6 +1512,9 @@ rte_eth_bond_8023ad_setup(uint16_t port_id,
+ 	struct rte_eth_dev *bond_dev;
+ 	int err;
+ 
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
++		return -ENOTSUP;
++
+ 	err = bond_8023ad_setup_validate(port_id, conf);
+ 	if (err != 0)
+ 		return err;
+@@ -1532,6 +1538,9 @@ rte_eth_bond_8023ad_member_info(uint16_t port_id, uint16_t member_id,
+ 	struct bond_dev_private *internals;
+ 	struct port *port;
+ 
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
++		return -ENOTSUP;
++
+ 	if (info == NULL || valid_bonding_port_id(port_id) != 0 ||
+ 			rte_eth_bond_mode_get(port_id) != BONDING_MODE_8023AD)
+ 		return -EINVAL;
+@@ -1564,6 +1573,9 @@ bond_8023ad_ext_validate(uint16_t port_id, uint16_t member_id)
+ 	struct bond_dev_private *internals;
+ 	struct mode8023ad_private *mode4;
+ 
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
++		return -ENOTSUP;
++
+ 	if (rte_eth_bond_mode_get(port_id) != BONDING_MODE_8023AD)
+ 		return -EINVAL;
+ 
+@@ -1728,6 +1740,9 @@ rte_eth_bond_8023ad_dedicated_queues_enable(uint16_t port)
+ 	struct rte_eth_dev *dev;
+ 	struct bond_dev_private *internals;
+ 
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
++		return -ENOTSUP;
++
+ 	if (valid_bonding_port_id(port) != 0)
+ 		return -EINVAL;
+ 
+@@ -1757,6 +1772,9 @@ rte_eth_bond_8023ad_dedicated_queues_disable(uint16_t port)
+ 	struct rte_eth_dev *dev;
+ 	struct bond_dev_private *internals;
+ 
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
++		return -ENOTSUP;
++
+ 	if (valid_bonding_port_id(port) != 0)
+ 		return -EINVAL;
+ 
+diff --git a/drivers/net/bonding/rte_eth_bond_api.c b/drivers/net/bonding/rte_eth_bond_api.c
+index d9b6f1c417..505dd86dd8 100644
+--- a/drivers/net/bonding/rte_eth_bond_api.c
++++ b/drivers/net/bonding/rte_eth_bond_api.c
+@@ -159,6 +159,9 @@ rte_eth_bond_create(const char *name, uint8_t mode, uint8_t socket_id)
+ 	char devargs[52];
+ 	int ret;
+ 
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
++		return -ENOTSUP;
++
+ 	if (name == NULL) {
+ 		RTE_BOND_LOG(ERR, "Invalid name specified");
+ 		return -EINVAL;
+@@ -643,6 +646,9 @@ rte_eth_bond_member_add(uint16_t bonding_port_id, uint16_t member_port_id)
+ 
+ 	int retval;
+ 
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
++		return -ENOTSUP;
++
+ 	if (valid_bonding_port_id(bonding_port_id) != 0)
+ 		return -1;
+ 
+@@ -781,6 +787,9 @@ rte_eth_bond_member_remove(uint16_t bonding_port_id, uint16_t member_port_id)
+ 	struct bond_dev_private *internals;
+ 	int retval;
+ 
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
++		return -ENOTSUP;
++
+ 	if (valid_bonding_port_id(bonding_port_id) != 0)
+ 		return -1;
+ 
+@@ -834,6 +843,9 @@ rte_eth_bond_primary_set(uint16_t bonding_port_id, uint16_t member_port_id)
+ {
+ 	struct bond_dev_private *internals;
+ 
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
++		return -ENOTSUP;
++
+ 	if (valid_bonding_port_id(bonding_port_id) != 0)
+ 		return -1;
+ 
+@@ -924,6 +936,9 @@ rte_eth_bond_mac_address_set(uint16_t bonding_port_id,
+ 	struct rte_eth_dev *bonding_eth_dev;
+ 	struct bond_dev_private *internals;
+ 
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
++		return -ENOTSUP;
++
+ 	if (valid_bonding_port_id(bonding_port_id) != 0)
+ 		return -1;
+ 
+@@ -950,6 +965,9 @@ rte_eth_bond_mac_address_reset(uint16_t bonding_port_id)
+ 	struct rte_eth_dev *bonding_eth_dev;
+ 	struct bond_dev_private *internals;
+ 
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
++		return -ENOTSUP;
++
+ 	if (valid_bonding_port_id(bonding_port_id) != 0)
+ 		return -1;
+ 
+@@ -991,6 +1009,9 @@ rte_eth_bond_xmit_policy_set(uint16_t bonding_port_id, uint8_t policy)
+ {
+ 	struct bond_dev_private *internals;
+ 
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
++		return -ENOTSUP;
++
+ 	if (valid_bonding_port_id(bonding_port_id) != 0)
+ 		return -1;
+ 
+@@ -1036,6 +1057,9 @@ rte_eth_bond_link_monitoring_set(uint16_t bonding_port_id, uint32_t internal_ms)
+ {
+ 	struct bond_dev_private *internals;
+ 
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
++		return -ENOTSUP;
++
+ 	if (valid_bonding_port_id(bonding_port_id) != 0)
+ 		return -1;
+ 
 diff --git a/drivers/net/bonding/rte_eth_bond_pmd.c b/drivers/net/bonding/rte_eth_bond_pmd.c
-index 7579b97b06..6f3c13d6fb 100644
+index 6f3c13d6fb..0e18ded4a5 100644
 --- a/drivers/net/bonding/rte_eth_bond_pmd.c
 +++ b/drivers/net/bonding/rte_eth_bond_pmd.c
-@@ -1461,8 +1461,12 @@ link_properties_set(struct rte_eth_dev *ethdev, struct rte_eth_link *member_link
- 		 * In any other mode the link properties are set to default
- 		 * values of AUTONEG/DUPLEX
- 		 */
--		ethdev->data->dev_link.link_autoneg = RTE_ETH_LINK_AUTONEG;
--		ethdev->data->dev_link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
-+		struct rte_eth_link link;
+@@ -3695,12 +3695,26 @@ bond_ethdev_priv_dump(struct rte_eth_dev *dev, FILE *f)
+ 	const struct bond_dev_private *internals = dev->data->dev_private;
+ 
+ 	dump_basic(dev, f);
+-	if (internals->mode == BONDING_MODE_8023AD)
 +
-+		rte_eth_linkstatus_get(ethdev, &link);
-+		link.link_autoneg = RTE_ETH_LINK_AUTONEG;
-+		link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
-+		rte_eth_linkstatus_set(ethdev, &link);
- 	}
- }
- 
-@@ -2077,6 +2081,16 @@ bond_ethdev_primary_set(struct bond_dev_private *internals,
- static int
- bond_ethdev_promiscuous_enable(struct rte_eth_dev *eth_dev);
- 
-+static void
-+bond_ethdev_link_down(struct rte_eth_dev *eth_dev)
-+{
-+	struct rte_eth_link link;
-+
-+	rte_eth_linkstatus_get(eth_dev, &link);
-+	link.link_status = RTE_ETH_LINK_DOWN;
-+	rte_eth_linkstatus_set(eth_dev, &link);
-+}
-+
- static int
- bond_ethdev_start(struct rte_eth_dev *eth_dev)
- {
-@@ -2090,7 +2104,7 @@ bond_ethdev_start(struct rte_eth_dev *eth_dev)
- 		return -1;
- 	}
- 
--	eth_dev->data->dev_link.link_status = RTE_ETH_LINK_DOWN;
-+	bond_ethdev_link_down(eth_dev);
- 	eth_dev->data->dev_started = 1;
- 
- 	internals = eth_dev->data->dev_private;
-@@ -2242,7 +2256,7 @@ bond_ethdev_stop(struct rte_eth_dev *eth_dev)
- 			tlb_last_obytets[internals->active_members[i]] = 0;
- 	}
- 
--	eth_dev->data->dev_link.link_status = RTE_ETH_LINK_DOWN;
-+	bond_ethdev_link_down(eth_dev);
- 	eth_dev->data->dev_started = 0;
- 
- 	if (internals->link_status_polling_enabled) {
-@@ -2537,6 +2551,7 @@ bond_ethdev_member_link_status_change_monitor(void *cb_arg)
- {
- 	struct rte_eth_dev *bonding_ethdev, *member_ethdev;
- 	struct bond_dev_private *internals;
-+	struct rte_eth_link member_link;
- 
- 	/* Default value for polling member found is true as we don't want to
- 	 * disable the polling thread if we cannot get the lock */
-@@ -2569,9 +2584,11 @@ bond_ethdev_member_link_status_change_monitor(void *cb_arg)
- 			member_ethdev->dev_ops->link_update(member_ethdev,
- 					      internals->members[i].link_status_wait_to_complete);
- 
-+			rte_eth_linkstatus_get(member_ethdev, &member_link);
-+
- 			/* if link status has changed since last checked then call lsc
- 			 * event callback */
--			if (member_ethdev->data->dev_link.link_status !=
-+			if (member_link.link_status !=
- 					internals->members[i].last_link_status) {
- 				bond_ethdev_lsc_event_callback(internals->members[i].port_id,
- 						RTE_ETH_EVENT_INTR_LSC,
-@@ -2595,6 +2612,7 @@ bond_ethdev_link_update(struct rte_eth_dev *ethdev, int wait_to_complete)
- 
- 	struct bond_dev_private *bond_ctx;
- 	struct rte_eth_link member_link;
-+	struct rte_eth_link link;
- 
- 	bool one_link_update_succeeded;
- 	uint32_t idx;
-@@ -2602,15 +2620,17 @@ bond_ethdev_link_update(struct rte_eth_dev *ethdev, int wait_to_complete)
- 
- 	bond_ctx = ethdev->data->dev_private;
- 
--	ethdev->data->dev_link.link_speed = RTE_ETH_SPEED_NUM_NONE;
-+	rte_eth_linkstatus_get(ethdev, &link);
-+	link.link_speed = RTE_ETH_SPEED_NUM_NONE;
- 
- 	if (ethdev->data->dev_started == 0 ||
- 			bond_ctx->active_member_count == 0) {
--		ethdev->data->dev_link.link_status = RTE_ETH_LINK_DOWN;
-+		link.link_status = RTE_ETH_LINK_DOWN;
-+		rte_eth_linkstatus_set(ethdev, &link);
- 		return 0;
- 	}
- 
--	ethdev->data->dev_link.link_status = RTE_ETH_LINK_UP;
-+	link.link_status = RTE_ETH_LINK_UP;
- 
- 	if (wait_to_complete)
- 		link_update = rte_eth_link_get;
-@@ -2623,7 +2643,7 @@ bond_ethdev_link_update(struct rte_eth_dev *ethdev, int wait_to_complete)
- 		 * Setting link speed to UINT32_MAX to ensure we pick up the
- 		 * value of the first active member
- 		 */
--		ethdev->data->dev_link.link_speed = UINT32_MAX;
-+		link.link_speed = UINT32_MAX;
- 
- 		/**
- 		 * link speed is minimum value of all the members link speed as
-@@ -2634,19 +2654,16 @@ bond_ethdev_link_update(struct rte_eth_dev *ethdev, int wait_to_complete)
- 			ret = link_update(bond_ctx->active_members[idx],
- 					  &member_link);
- 			if (ret < 0) {
--				ethdev->data->dev_link.link_speed =
--					RTE_ETH_SPEED_NUM_NONE;
-+				link.link_speed = RTE_ETH_SPEED_NUM_NONE;
- 				RTE_BOND_LOG(ERR,
- 					"Member (port %u) link get failed: %s",
- 					bond_ctx->active_members[idx],
- 					rte_strerror(-ret));
--				return 0;
-+				goto done;
- 			}
- 
--			if (member_link.link_speed <
--					ethdev->data->dev_link.link_speed)
--				ethdev->data->dev_link.link_speed =
--						member_link.link_speed;
-+			if (member_link.link_speed < link.link_speed)
-+				link.link_speed = member_link.link_speed;
- 		}
- 		break;
- 	case BONDING_MODE_ACTIVE_BACKUP:
-@@ -2656,16 +2673,14 @@ bond_ethdev_link_update(struct rte_eth_dev *ethdev, int wait_to_complete)
- 			RTE_BOND_LOG(ERR, "Member (port %u) link get failed: %s",
- 				bond_ctx->current_primary_port,
- 				rte_strerror(-ret));
--			return 0;
-+			goto done;
- 		}
- 
--		ethdev->data->dev_link.link_speed = member_link.link_speed;
-+		link.link_speed = member_link.link_speed;
- 		break;
- 	case BONDING_MODE_8023AD:
--		ethdev->data->dev_link.link_autoneg =
--				bond_ctx->mode4.member_link.link_autoneg;
--		ethdev->data->dev_link.link_duplex =
--				bond_ctx->mode4.member_link.link_duplex;
-+		link.link_autoneg = bond_ctx->mode4.member_link.link_autoneg;
-+		link.link_duplex = bond_ctx->mode4.member_link.link_duplex;
- 		/* fall through */
- 		/* to update link speed */
- 	case BONDING_MODE_ROUND_ROBIN:
-@@ -2677,7 +2692,7 @@ bond_ethdev_link_update(struct rte_eth_dev *ethdev, int wait_to_complete)
- 		 * In theses mode the maximum theoretical link speed is the sum
- 		 * of all the members
- 		 */
--		ethdev->data->dev_link.link_speed = RTE_ETH_SPEED_NUM_NONE;
-+		link.link_speed = RTE_ETH_SPEED_NUM_NONE;
- 		one_link_update_succeeded = false;
- 
- 		for (idx = 0; idx < bond_ctx->active_member_count; idx++) {
-@@ -2692,16 +2707,15 @@ bond_ethdev_link_update(struct rte_eth_dev *ethdev, int wait_to_complete)
- 			}
- 
- 			one_link_update_succeeded = true;
--			ethdev->data->dev_link.link_speed +=
--					member_link.link_speed;
-+			link.link_speed += member_link.link_speed;
- 		}
- 
--		if (!one_link_update_succeeded) {
-+		if (!one_link_update_succeeded)
- 			RTE_BOND_LOG(ERR, "All members link get failed");
--			return 0;
--		}
- 	}
- 
-+done:
-+	rte_eth_linkstatus_set(ethdev, &link);
++	/* LACP state machine data is private to the primary process. */
++	if (internals->mode == BONDING_MODE_8023AD &&
++			rte_eal_process_type() == RTE_PROC_PRIMARY)
+ 		dump_lacp(dev->data->port_id, f);
  
  	return 0;
  }
-@@ -3069,7 +3083,7 @@ bond_ethdev_lsc_event_callback(uint16_t port_id, enum rte_eth_event_type type,
- {
- 	struct rte_eth_dev *bonding_eth_dev;
- 	struct bond_dev_private *internals;
--	struct rte_eth_link link;
-+	struct rte_eth_link link, bond_link;
- 	int rc = -1;
- 	int ret;
  
-@@ -3122,7 +3136,8 @@ bond_ethdev_lsc_event_callback(uint16_t port_id, enum rte_eth_event_type type,
- 			goto link_update;
- 
- 		/* check link state properties if bonding link is up*/
--		if (bonding_eth_dev->data->dev_link.link_status == RTE_ETH_LINK_UP) {
-+		rte_eth_linkstatus_get(bonding_eth_dev, &bond_link);
-+		if (bond_link.link_status == RTE_ETH_LINK_UP) {
- 			if (link_properties_valid(bonding_eth_dev, &link) != 0)
- 				RTE_BOND_LOG(ERR, "Invalid link properties "
- 					     "for member %d in bonding mode %d",
-@@ -3137,8 +3152,10 @@ bond_ethdev_lsc_event_callback(uint16_t port_id, enum rte_eth_event_type type,
- 		 */
- 		if (internals->active_member_count < 1) {
- 			/* If first active member, then change link status */
--			bonding_eth_dev->data->dev_link.link_status =
--								RTE_ETH_LINK_UP;
-+			rte_eth_linkstatus_get(bonding_eth_dev, &bond_link);
-+			bond_link.link_status = RTE_ETH_LINK_UP;
-+			rte_eth_linkstatus_set(bonding_eth_dev, &bond_link);
++/* Restricted set of ops allowed in secondary process. */
++static const struct eth_dev_ops secondary_dev_ops = {
++	.dev_close            = bond_ethdev_close,
++	.dev_infos_get        = bond_ethdev_info,
++	.link_update          = bond_ethdev_link_update,
++	.stats_get            = bond_ethdev_stats_get,
++	.reta_query           = bond_ethdev_rss_reta_query,
++	.rss_hash_conf_get    = bond_ethdev_rss_hash_conf_get,
++	.eth_dev_priv_dump    = bond_ethdev_priv_dump,
++};
 +
- 			internals->current_primary_port = port_id;
- 			lsc_flag = 1;
+ const struct eth_dev_ops default_dev_ops = {
+ 	.dev_start            = bond_ethdev_start,
+ 	.dev_stop             = bond_ethdev_stop,
+@@ -3885,7 +3899,7 @@ bond_probe(struct rte_vdev_device *dev)
+ 			return -1;
+ 		}
  
-@@ -3194,7 +3211,8 @@ bond_ethdev_lsc_event_callback(uint16_t port_id, enum rte_eth_event_type type,
- 			rte_eal_alarm_cancel(bond_ethdev_delayed_lsc_propagation,
- 					bonding_eth_dev);
+-		eth_dev->dev_ops = &default_dev_ops;
++		eth_dev->dev_ops = &secondary_dev_ops;
+ 		eth_dev->device = &dev->device;
  
--		if (bonding_eth_dev->data->dev_link.link_status) {
-+		rte_eth_linkstatus_get(bonding_eth_dev, &bond_link);
-+		if (bond_link.link_status) {
- 			if (internals->link_up_delay_ms > 0)
- 				rte_eal_alarm_set(internals->link_up_delay_ms * 1000,
- 						bond_ethdev_delayed_lsc_propagation,
+ 		/*
 -- 
 2.53.0
 
