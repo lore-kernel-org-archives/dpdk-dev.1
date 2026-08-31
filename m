@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5204C61DE2
-	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 10:37:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DD0EC61DE2
+	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 10:37:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E068040693;
-	Mon, 31 Aug 2026 12:36:52 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E4BD04069F;
+	Mon, 31 Aug 2026 12:36:55 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
- by mails.dpdk.org (Postfix) with ESMTP id 0C8384065A
- for <dev@dpdk.org>; Mon, 31 Aug 2026 12:36:49 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 64E7840682
+ for <dev@dpdk.org>; Mon, 31 Aug 2026 12:36:52 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1788172610; x=1819708610;
+ t=1788172612; x=1819708612;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=JtCTiPvPt5Ja+c2MXe3rYAHq18mpS9G+au1SzFHj3l0=;
- b=i2n+FgX/o/W5MvYqo5NW92tOzvKL3ZR4UPn+f5HSnrtDgKvQp3u7f26m
- fLWmc/QC+CboT8YsPX8hDErX20tce+InsNfCpv+f5glOq3xqxikRXDoAO
- Pb4sp51mjZEABRagevxMEVb4pB6QTLBeDvKgO4HqL9XyzZvsaS+6KZ1dq
- ZKfNCQBNUYRvKwAGU/g8auiaHXJ8OhBk6So2bWJ79X3zeFViTaEgqhNv0
- vNUBRR1VPPw79YcRQ3OHgb82WtY/ike2ldzGIex2t79QA19NP8YGtkGdI
- LC/YFliwytbPubyuJDJMVHgVV52nlGGtWgif4RnvgXyJwPrIJhGORbNWH A==;
-X-CSE-ConnectionGUID: EWjbF5SEQtCLTPwqwfHXMg==
-X-CSE-MsgGUID: lJ69aNZ1TvOJRu/1qGTcLQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11891"; a="88625950"
-X-IronPort-AV: E=Sophos;i="6.25,252,1779174000"; d="scan'208";a="88625950"
+ bh=mBRYUKOxwV/bFogRpzEWKH8akgUA0AVXEedGgsy7dwg=;
+ b=NO9o6ad4sz/nhI3dxzSW29pbZvvk949NkKHltAoqYbnKdBi6mD1imBtG
+ ppcWY6LL70wbKpMEwnk8YWGTV8UCKZuuv0g5tgdCbyDJIc0v0kmwlUs0J
+ kF208QyfOj2p7D1gvIZMWeVQ5hQfZ2BhfolHJHFQ5Tb8LtXy3PnTZtEGh
+ A02LJFeFVZibep8yRZEJYuJwgX/bM48ZTR3OHtqj4OajwEcC0kPvs0lMT
+ V6tGYQBHFAKFoLF5G1F5bjamd2u2oZ3L1veqB/lHD5n8thPprplM725Qo
+ zWMzq1dzrxoxvEgf7INxhjRp/DrQ1TVdMSxnWoVAuKWo4zOiggmHqKIch Q==;
+X-CSE-ConnectionGUID: L4kZ0ef2RPetDo/5QN/Epg==
+X-CSE-MsgGUID: tzIDpPmGT06ViaQYpAAYQQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11891"; a="88625951"
+X-IronPort-AV: E=Sophos;i="6.25,252,1779174000"; d="scan'208";a="88625951"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 31 Aug 2026 03:36:49 -0700
-X-CSE-ConnectionGUID: F7Mo4DqcToi+bA9BFUHkjA==
-X-CSE-MsgGUID: 8cf5f93AQFaViOdVlBjz6w==
+ 31 Aug 2026 03:36:52 -0700
+X-CSE-ConnectionGUID: E6rKKU0RQS+gCI/6g8KJCw==
+X-CSE-MsgGUID: /Lb3uCThQWu9PvO39WEPsg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,252,1779174000"; d="scan'208";a="268807444"
+X-IronPort-AV: E=Sophos;i="6.25,252,1779174000"; d="scan'208";a="268807454"
 Received: from unknown (HELO pae-14.iind.intel.com) ([10.190.203.153])
- by orviesa007.jf.intel.com with ESMTP; 31 Aug 2026 03:36:48 -0700
+ by orviesa007.jf.intel.com with ESMTP; 31 Aug 2026 03:36:50 -0700
 From: Anurag Mandal <anurag.mandal@intel.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com, anatoly.burakov@intel.com,
  Anurag Mandal <anurag.mandal@intel.com>
-Subject: [PATCH v2 3/4] net/ice: add AVX2 context descriptor Tx path
-Date: Mon, 31 Aug 2026 10:35:29 +0000
-Message-Id: <eb8734d99fad03277c1f099854a7d3ad00517d58.1788171502.git.anurag.mandal@intel.com>
+Subject: [PATCH v2 4/4] net/ice: add AVX-512 context descriptor Tx path
+Date: Mon, 31 Aug 2026 10:35:30 +0000
+Message-Id: <513a99557c260187f86954b7ce289352bfae04a8.1788171502.git.anurag.mandal@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1788171502.git.anurag.mandal@intel.com>
 References: <cover.1788171502.git.anurag.mandal@intel.com>
@@ -60,210 +60,86 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Added an AVX2 context descriptor path for tunneled
+Added an AVX-512 context descriptor path for tunneled
 outer IPv4 and UDP checksum offloads.
 
 Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
 ---
- doc/guides/rel_notes/release_26_11.rst    |   5 +
- drivers/net/intel/ice/ice_dcf_ethdev.c    |   4 +-
- drivers/net/intel/ice/ice_ethdev.h        |   1 +
- drivers/net/intel/ice/ice_rxtx.c          |  39 +++++--
- drivers/net/intel/ice/ice_rxtx.h          |   8 ++
- drivers/net/intel/ice/ice_rxtx_vec_avx2.c | 119 ++++++++++++++++++++++
- 6 files changed, 166 insertions(+), 10 deletions(-)
+ doc/guides/rel_notes/release_26_11.rst      |   5 +-
+ drivers/net/intel/ice/ice_ethdev.h          |   1 +
+ drivers/net/intel/ice/ice_rxtx.c            |  10 ++
+ drivers/net/intel/ice/ice_rxtx.h            |   3 +
+ drivers/net/intel/ice/ice_rxtx_vec_avx512.c | 141 ++++++++++++++++++++
+ 5 files changed, 158 insertions(+), 2 deletions(-)
 
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 907f9013ff..8ce1875843 100644
+index 8ce1875843..1239f1ab0d 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -55,6 +55,11 @@ New Features
-      Also, make sure to start the actual text at the margin.
-      =======================================================
+@@ -57,8 +57,9 @@ New Features
  
-+* **Updated Intel ice driver.**
-+
-+  Added an AVX2 Tx path using context descriptors, allowing tunneled outer IPv4
-+  and UDP checksum offloads without falling back to scalar Tx.
-+
+ * **Updated Intel ice driver.**
+ 
+-  Added an AVX2 Tx path using context descriptors, allowing tunneled outer IPv4
+-  and UDP checksum offloads without falling back to scalar Tx.
++  * Added AVX2 and AVX-512 context-descriptor Tx paths,
++    enabling outer IPv4 and UDP checksum offloads for
++    tunneled packets without falling back to scalar Tx.
+ 
  * **Updated Intel iavf driver.**
  
-   * Runtime Rx/Tx queue setup is now automatically disabled while a
-diff --git a/drivers/net/intel/ice/ice_dcf_ethdev.c b/drivers/net/intel/ice/ice_dcf_ethdev.c
-index c78b290b0d..d1cdae6eb9 100644
---- a/drivers/net/intel/ice/ice_dcf_ethdev.c
-+++ b/drivers/net/intel/ice/ice_dcf_ethdev.c
-@@ -498,7 +498,7 @@ ice_dcf_tx_queue_stop(struct rte_eth_dev *dev, uint16_t tx_queue_id)
- 	}
- 
- 	txq = dev->data->tx_queues[tx_queue_id];
--	ci_txq_release_all_mbufs(txq, false);
-+	ci_txq_release_all_mbufs(txq, txq->use_ctx);
- 	reset_tx_queue(txq);
- 	dev->data->tx_queue_state[tx_queue_id] = RTE_ETH_QUEUE_STATE_STOPPED;
- 
-@@ -648,7 +648,7 @@ ice_dcf_stop_queues(struct rte_eth_dev *dev)
- 		txq = dev->data->tx_queues[i];
- 		if (!txq)
- 			continue;
--		ci_txq_release_all_mbufs(txq, false);
-+		ci_txq_release_all_mbufs(txq, txq->use_ctx);
- 		reset_tx_queue(txq);
- 		dev->data->tx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
- 	}
 diff --git a/drivers/net/intel/ice/ice_ethdev.h b/drivers/net/intel/ice/ice_ethdev.h
-index 7ee3ea8a70..0e74f8d776 100644
+index 0e74f8d776..00facd48bd 100644
 --- a/drivers/net/intel/ice/ice_ethdev.h
 +++ b/drivers/net/intel/ice/ice_ethdev.h
-@@ -213,6 +213,7 @@ enum ice_tx_func_type {
- 	ICE_TX_SIMPLE,
- 	ICE_TX_AVX2,
- 	ICE_TX_AVX2_OFFLOAD,
-+	ICE_TX_AVX2_CTX_OFFLOAD,
+@@ -216,6 +216,7 @@ enum ice_tx_func_type {
+ 	ICE_TX_AVX2_CTX_OFFLOAD,
  	ICE_TX_AVX512,
  	ICE_TX_AVX512_OFFLOAD,
++	ICE_TX_AVX512_CTX_OFFLOAD,
  	ICE_TX_NEON,
+ };
+ 
 diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
-index c4b5454c53..7e83541f5d 100644
+index 7e83541f5d..ea43006d79 100644
 --- a/drivers/net/intel/ice/ice_rxtx.c
 +++ b/drivers/net/intel/ice/ice_rxtx.c
-@@ -793,7 +793,6 @@ ice_tx_queue_start(struct rte_eth_dev *dev, uint16_t tx_queue_id)
- 	struct ice_aqc_add_tx_qgrp *txq_elem;
- 	struct ice_tlan_ctx tx_ctx;
- 	int buf_len;
--	struct ice_adapter *ad = ICE_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
- 	u16 q_base, q_range, cgd_idx = 0;
- 
- 	PMD_INIT_FUNC_TRACE();
-@@ -881,9 +880,6 @@ ice_tx_queue_start(struct rte_eth_dev *dev, uint16_t tx_queue_id)
- 			return -EIO;
- 		}
- 
--	/* record what kind of descriptor cleanup we need on teardown */
--	txq->use_vec_entry = ad->tx_vec_allowed || ad->tx_simple_allowed;
--
- 	if (txq->tsq != NULL && txq->tsq->ts_flag > 0) {
- 		struct ice_aqc_set_txtime_qgrp *ts_elem;
- 		struct ice_txtime_ctx txtime_ctx = { 0 };
-@@ -1193,7 +1189,7 @@ ice_tx_queue_stop(struct rte_eth_dev *dev, uint16_t tx_queue_id)
- 		return -EINVAL;
- 	}
- 
--	ci_txq_release_all_mbufs(txq, false);
-+	ci_txq_release_all_mbufs(txq, txq->use_ctx);
- 	ice_reset_tx_queue(txq);
- 	dev->data->tx_queue_state[tx_queue_id] = RTE_ETH_QUEUE_STATE_STOPPED;
- 
-@@ -1256,7 +1252,7 @@ ice_fdir_tx_queue_stop(struct rte_eth_dev *dev, uint16_t tx_queue_id)
- 		return -EINVAL;
- 	}
- 
--	ci_txq_release_all_mbufs(txq, false);
-+	ci_txq_release_all_mbufs(txq, txq->use_ctx);
- 	txq->qtx_tail = NULL;
- 
- 	return 0;
-@@ -1744,7 +1740,7 @@ ice_tx_queue_release(void *txq)
- 		return;
- 	}
- 
--	ci_txq_release_all_mbufs(q, false);
-+	ci_txq_release_all_mbufs(q, q->use_ctx);
- 	rte_free(q->sw_ring);
- 	rte_free(q->rs_last_id);
- 	if (q->tsq) {
-@@ -3522,7 +3518,8 @@ static const struct ci_tx_path_info ice_tx_path_infos[] = {
- 		.pkt_burst = ice_xmit_pkts,
- 		.info = "Scalar",
- 		.features = {
--			.tx_offloads = ICE_TX_SCALAR_OFFLOADS
-+			.tx_offloads = ICE_TX_SCALAR_OFFLOADS,
-+			.ctx_desc = true
+@@ -3580,6 +3580,16 @@ static const struct ci_tx_path_info ice_tx_path_infos[] = {
  		},
  		.pkt_prep = ice_prep_pkts
  	},
-@@ -3554,6 +3551,16 @@ static const struct ci_tx_path_info ice_tx_path_infos[] = {
- 		},
- 		.pkt_prep = ice_prep_pkts
- 	},
-+	[ICE_TX_AVX2_CTX_OFFLOAD] = {
-+		.pkt_burst = ice_xmit_pkts_vec_avx2_ctx_offload,
-+		.info = "Context Offload Vector AVX2",
++	[ICE_TX_AVX512_CTX_OFFLOAD] = {
++		.pkt_burst = ice_xmit_pkts_vec_avx512_ctx_offload,
++		.info = "Context Offload Vector AVX512",
 +		.features = {
 +			.tx_offloads = ICE_TX_VECTOR_CTX_OFFLOAD_OFFLOADS,
-+			.simd_width = RTE_VECT_SIMD_256,
++			.simd_width = RTE_VECT_SIMD_512,
 +			.ctx_desc = true
 +		},
 +		.pkt_prep = ice_prep_pkts
 +	},
- #ifdef CC_AVX512_SUPPORT
- 	[ICE_TX_AVX512] = {
- 		.pkt_burst = ice_xmit_pkts_vec_avx512,
-@@ -3755,10 +3762,17 @@ ice_set_tx_function(struct rte_eth_dev *dev)
- {
- 	struct ice_adapter *ad =
- 		ICE_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
-+	const struct ci_tx_path_features *selected_features;
-+	struct ci_tx_queue *txq;
- 	int mbuf_check = ad->devargs.mbuf_check;
-+	int i;
- 	struct ci_tx_path_features req_features = {
- 		.tx_offloads = dev->data->dev_conf.txmode.offloads,
- 		.simd_width = RTE_VECT_SIMD_DISABLED,
-+		/* outer checksum offloads are only encoded in a context descriptor */
-+		.ctx_desc = (dev->data->dev_conf.txmode.offloads &
-+			(RTE_ETH_TX_OFFLOAD_OUTER_IPV4_CKSUM |
-+			 RTE_ETH_TX_OFFLOAD_OUTER_UDP_CKSUM)) != 0,
- 	};
- 
- 	/* If the device has started the function has already been selected. */
-@@ -3785,6 +3799,15 @@ ice_set_tx_function(struct rte_eth_dev *dev)
- 	ad->tx_vec_allowed =
- 		(ice_tx_path_infos[ad->tx_func_type].features.simd_width >= RTE_VECT_SIMD_128);
  #endif
-+	selected_features = &ice_tx_path_infos[ad->tx_func_type].features;
-+	for (i = 0; i < dev->data->nb_tx_queues; i++) {
-+		txq = dev->data->tx_queues[i];
-+		if (!txq)
-+			continue;
-+		txq->use_ctx = selected_features->ctx_desc;
-+		txq->use_vec_entry = selected_features->simple_tx ||
-+			selected_features->simd_width >= RTE_VECT_SIMD_128;
-+	}
- 
- 	dev->tx_pkt_burst = mbuf_check ? ice_xmit_pkts_check :
- 					 ice_tx_path_infos[ad->tx_func_type].pkt_burst;
+ #elif defined(RTE_ARCH_ARM64)
+ 	[ICE_TX_NEON] = {
 diff --git a/drivers/net/intel/ice/ice_rxtx.h b/drivers/net/intel/ice/ice_rxtx.h
-index 999b6b30d6..37e346fe39 100644
+index 37e346fe39..8d6bb0af01 100644
 --- a/drivers/net/intel/ice/ice_rxtx.h
 +++ b/drivers/net/intel/ice/ice_rxtx.h
-@@ -136,6 +136,11 @@
- 	RTE_ETH_TX_OFFLOAD_TCP_CKSUM |		\
- 	RTE_ETH_TX_OFFLOAD_SCTP_CKSUM)
- 
-+#define ICE_TX_VECTOR_CTX_OFFLOAD_OFFLOADS (	\
-+	ICE_TX_VECTOR_OFFLOAD_OFFLOADS |		\
-+	RTE_ETH_TX_OFFLOAD_OUTER_IPV4_CKSUM |	\
-+	RTE_ETH_TX_OFFLOAD_OUTER_UDP_CKSUM)
-+
- /* Max header size can be 2K - 64 bytes */
- #define ICE_RX_HDR_BUF_SIZE    (2048 - 64)
- 
-@@ -284,6 +289,9 @@ uint16_t ice_xmit_pkts_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
- 				uint16_t nb_pkts);
- uint16_t ice_xmit_pkts_vec_avx2_offload(void *tx_queue, struct rte_mbuf **tx_pkts,
- 					uint16_t nb_pkts);
-+uint16_t ice_xmit_pkts_vec_avx2_ctx_offload(void *tx_queue,
-+					    struct rte_mbuf **tx_pkts,
-+					    uint16_t nb_pkts);
- uint16_t ice_recv_pkts_vec_avx512(void *rx_queue, struct rte_mbuf **rx_pkts,
- 				  uint16_t nb_pkts);
- uint16_t ice_recv_pkts_vec_avx512_offload(void *rx_queue,
-diff --git a/drivers/net/intel/ice/ice_rxtx_vec_avx2.c b/drivers/net/intel/ice/ice_rxtx_vec_avx2.c
-index b72f69a47b..9bfd18d82b 100644
---- a/drivers/net/intel/ice/ice_rxtx_vec_avx2.c
-+++ b/drivers/net/intel/ice/ice_rxtx_vec_avx2.c
-@@ -837,6 +837,125 @@ ice_vtx(volatile struct ci_tx_desc *txdp,
+@@ -308,6 +308,9 @@ uint16_t ice_xmit_pkts_vec_avx512(void *tx_queue, struct rte_mbuf **tx_pkts,
+ uint16_t ice_xmit_pkts_vec_avx512_offload(void *tx_queue,
+ 					  struct rte_mbuf **tx_pkts,
+ 					  uint16_t nb_pkts);
++uint16_t ice_xmit_pkts_vec_avx512_ctx_offload(void *tx_queue,
++					      struct rte_mbuf **tx_pkts,
++					      uint16_t nb_pkts);
+ int ice_fdir_programming(struct ice_pf *pf, struct ice_fltr_desc *fdir_desc);
+ int ice_tx_done_cleanup(void *txq, uint32_t free_cnt);
+ int ice_get_monitor_addr(void *rx_queue, struct rte_power_monitor_cond *pmc);
+diff --git a/drivers/net/intel/ice/ice_rxtx_vec_avx512.c b/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
+index 309ab9fca7..c8c3e103c5 100644
+--- a/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
++++ b/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
+@@ -901,6 +901,147 @@ ice_vtx(volatile struct ci_tx_desc *txdp, struct rte_mbuf **pkt,
  	}
  }
  
@@ -289,17 +165,39 @@ index b72f69a47b..9bfd18d82b 100644
 +ice_ctx_vtx(volatile struct ci_tx_desc *txdp, struct rte_mbuf **pkt,
 +	    uint16_t nb_pkts, uint64_t flags, bool offload)
 +{
-+	while (nb_pkts) {
-+		ice_ctx_vtx1(txdp, *pkt, flags, offload);
-+		txdp += 2;
-+		pkt++;
-+		nb_pkts--;
++	while (nb_pkts > 1) {
++		uint64_t high_data_qw1 = CI_TX_DESC_DTYPE_DATA |
++				(flags << CI_TXD_QW1_CMD_S) |
++				((uint64_t)pkt[1]->data_len << CI_TXD_QW1_TX_BUF_SZ_S);
++		uint64_t high_data_qw0 = CI_TX_DESC_DTYPE_DATA |
++				(flags << CI_TXD_QW1_CMD_S) |
++				((uint64_t)pkt[0]->data_len << CI_TXD_QW1_TX_BUF_SZ_S);
++		const uint64_t low_ctx_qw1 = offload ? ice_txd_tunneling_ctx(pkt[1]) : 0;
++		const uint64_t low_ctx_qw0 = offload ? ice_txd_tunneling_ctx(pkt[0]) : 0;
++
++		if (offload) {
++			ice_txd_enable_offload(pkt[1], &high_data_qw1);
++			ice_txd_enable_offload(pkt[0], &high_data_qw0);
++		}
++
++		const __m512i ctx_data_desc = _mm512_set_epi64(high_data_qw1,
++				rte_pktmbuf_iova(pkt[1]), CI_TX_DESC_DTYPE_CTX, low_ctx_qw1,
++				high_data_qw0, rte_pktmbuf_iova(pkt[0]),
++				CI_TX_DESC_DTYPE_CTX, low_ctx_qw0);
++
++		_mm512_storeu_si512(RTE_CAST_PTR(void *, txdp), ctx_data_desc);
++		txdp += 4;
++		pkt += 2;
++		nb_pkts -= 2;
 +	}
++
++	if (nb_pkts)
++		ice_ctx_vtx1(txdp, *pkt, flags, offload);
 +}
 +
 +static __rte_always_inline uint16_t
-+ice_xmit_fixed_burst_vec_avx2_ctx(void *tx_queue, struct rte_mbuf **tx_pkts,
-+				  uint16_t nb_pkts, bool offload)
++ice_xmit_fixed_burst_vec_avx512_ctx(void *tx_queue, struct rte_mbuf **tx_pkts,
++				   uint16_t nb_pkts, bool offload)
 +{
 +	struct ci_tx_queue *txq = tx_queue;
 +	volatile struct ci_tx_desc *txdp;
@@ -359,15 +257,15 @@ index b72f69a47b..9bfd18d82b 100644
 +}
 +
 +static __rte_always_inline uint16_t
-+ice_xmit_pkts_vec_avx2_ctx_common(void *tx_queue, struct rte_mbuf **tx_pkts,
-+				  uint16_t nb_pkts, bool offload)
++ice_xmit_pkts_vec_avx512_ctx_common(void *tx_queue, struct rte_mbuf **tx_pkts,
++				   uint16_t nb_pkts, bool offload)
 +{
 +	struct ci_tx_queue *txq = tx_queue;
 +	uint16_t nb_tx = 0;
 +
 +	while (nb_pkts) {
 +		const uint16_t num = RTE_MIN(nb_pkts, txq->tx_rs_thresh >> 1);
-+		const uint16_t ret = ice_xmit_fixed_burst_vec_avx2_ctx(tx_queue,
++		const uint16_t ret = ice_xmit_fixed_burst_vec_avx512_ctx(tx_queue,
 +				&tx_pkts[nb_tx], num, offload);
 +
 +		nb_tx += ret;
@@ -380,15 +278,15 @@ index b72f69a47b..9bfd18d82b 100644
 +}
 +
 +uint16_t
-+ice_xmit_pkts_vec_avx2_ctx_offload(void *tx_queue,
++ice_xmit_pkts_vec_avx512_ctx_offload(void *tx_queue,
 +		struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
 +{
-+	return ice_xmit_pkts_vec_avx2_ctx_common(tx_queue, tx_pkts, nb_pkts, true);
++	return ice_xmit_pkts_vec_avx512_ctx_common(tx_queue, tx_pkts, nb_pkts, true);
 +}
 +
  static __rte_always_inline uint16_t
- ice_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
- 			      uint16_t nb_pkts, bool offload)
+ ice_xmit_fixed_burst_vec_avx512(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 				uint16_t nb_pkts, bool do_offload)
 -- 
 2.34.1
 
