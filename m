@@ -2,35 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85B52C61DE4
-	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 02:44:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6337C61DE4
+	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 02:44:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B35744064F;
-	Mon, 31 Aug 2026 04:44:27 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D3CB840663;
+	Mon, 31 Aug 2026 04:44:30 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 732AD4025A;
- Mon, 31 Aug 2026 04:44:25 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 1F3CA40A81;
+ Mon, 31 Aug 2026 04:44:28 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowACXmzmF6pRqNtmjBg--.23054S2;
- Mon, 31 Aug 2026 10:44:21 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowADH0D6K6pRqfNmjBg--.24315S2;
+ Mon, 31 Aug 2026 10:44:27 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>,
 	stable@dpdk.org
-Subject: [PATCH v7 34/47] net/sxe2: restore PF-only guard in UDP tunnel port
- add
-Date: Mon, 31 Aug 2026 10:44:21 +0800
-Message-ID: <20260831024421.3231187-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v7 35/47] net/sxe2: restore link update call in status query
+Date: Mon, 31 Aug 2026 10:44:26 +0800
+Message-ID: <20260831024426.3231241-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260828074056.2250222-1-liujie5@linkdatatechnology.com>
 References: <20260828074056.2250222-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowACXmzmF6pRqNtmjBg--.23054S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr18Aw1xKF1DWr48trW8JFb_yoW8uw4UpF
- 4jgrWYvFyaqFsI9w4FvF4kWF1jgr9YgayDC39xWw1rZa4DZ347Aay5tF1Yv3W8CFWfJF1F
- yayagr1fWr4UZ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: rQCowADH0D6K6pRqfNmjBg--.24315S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxurW7KrWfZr4xCr4UWw47twb_yoW5Gw47pr
+ Wj9F13XFyYqanYqwn8Aa1fuFyjga48GryUKrZ0k3Z3Za4UAr48AFZ0q34ay3W0v398XFna
+ ya17XrsrJw18Zr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUkE14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
  rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
  1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
@@ -61,65 +60,71 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-sxe2_udp_tunnel_port_add_common() lost the check that restricts
-UDP tunnel port configuration to PF devices (not VF or
-representor), so VF/representor devices can now attempt to add
-UDP tunnel ports, which the hardware does not support.
+sxe2_drv_mac_link_status_get() no longer calls sxe2_link_update()
+after refreshing the link context, so the ethdev link state is only
+refreshed during device init (sxe2_link_update_init) and never
+updated when link status is queried at runtime, including on LSC
+interrupt events.
 
-Restore the PF-only guard returning -ENOTSUP, matching the V3
-implementation.
+Move the sxe2_link_update() call back into
+sxe2_drv_mac_link_status_get() and simplify sxe2_link_update_init()
+accordingly, matching the V3 implementation.
 
-Fixes: fff24885f70a ("net/sxe2: support custom UDP tunnel ports")
+Fixes: 1d7fd921beef ("net/sxe2: support link update")
 Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_ethdev.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/net/sxe2/sxe2_irq.c |  2 ++
+ drivers/net/sxe2/sxe2_mac.c | 11 +++--------
+ 2 files changed, 5 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index 77a31eb8a1..8c60c9cfde 100644
---- a/drivers/net/sxe2/sxe2_ethdev.c
-+++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -630,6 +630,10 @@ int32_t sxe2_udp_tunnel_port_add_common(struct sxe2_adapter *ad,
- 	struct sxe2_udp_tunnel_cfg *tunnel_config;
- 	int32_t ret = -1;
+diff --git a/drivers/net/sxe2/sxe2_irq.c b/drivers/net/sxe2/sxe2_irq.c
+index ba764dd5e4..4c3a29900d 100644
+--- a/drivers/net/sxe2/sxe2_irq.c
++++ b/drivers/net/sxe2/sxe2_irq.c
+@@ -84,6 +84,7 @@ static void sxe2_event_irq_common_handler(struct sxe2_adapter *adapter, uint64_t
+ 	if (oicr & RTE_BIT32(SXE2_COM_EC_LINK_CHG)) {
+ 		PMD_DEV_LOG_INFO(adapter, DRV, "OICR=0x%" PRIx64, oicr);
+ 		(void)sxe2_drv_mac_link_status_get(adapter);
++		(void)sxe2_link_update(dev, 0);
+ 		if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
+ 			rte_eth_dev_callback_process(dev,
+ 						     RTE_ETH_EVENT_INTR_LSC,
+@@ -96,6 +97,7 @@ static void sxe2_event_irq_common_handler(struct sxe2_adapter *adapter, uint64_t
+ 					continue;
+ 				repr_adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(repr_eth_dev);
+ 				(void)sxe2_drv_mac_link_status_get(repr_adapter);
++				(void)sxe2_link_update(repr_eth_dev, 0);
+ 				if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
+ 					rte_eth_dev_callback_process(repr_eth_dev,
+ 								     RTE_ETH_EVENT_INTR_LSC,
+diff --git a/drivers/net/sxe2/sxe2_mac.c b/drivers/net/sxe2/sxe2_mac.c
+index 729c804ac3..ab9bd5355b 100644
+--- a/drivers/net/sxe2/sxe2_mac.c
++++ b/drivers/net/sxe2/sxe2_mac.c
+@@ -448,18 +448,13 @@ int32_t sxe2_link_update_init(struct rte_eth_dev *dev)
+ 	int32_t ret;
  
-+	if (ad->dev_type != SXE2_DEV_T_PF || ad->is_dev_repr) {
-+		ret = -ENOTSUP;
-+		goto l_end;
-+	}
- 	rte_spinlock_lock(&ad->udp_tunnel_ctx.lock);
+ 	PMD_INIT_FUNC_TRACE();
+-
+ 	rte_spinlock_init(&adapter->link_ctxt.link_lock);
+-
+ 	ret = sxe2_drv_mac_link_status_get(adapter);
+-	if (ret) {
++	if (ret)
+ 		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to get link status, ret=%d", ret);
+-		goto l_end;
+-	}
+-
+-	(void)sxe2_link_update(dev, 0);
++	else
++		(void)sxe2_link_update(dev, 0);
  
- 	tunnel_config = &ad->udp_tunnel_ctx.tunnel_conf[tunnel_proto];
-@@ -659,6 +663,7 @@ int32_t sxe2_udp_tunnel_port_add_common(struct sxe2_adapter *ad,
- 
- l_unlock_end:
- 	rte_spinlock_unlock(&ad->udp_tunnel_ctx.lock);
-+l_end:
+-l_end:
  	return ret;
  }
- 
-@@ -669,6 +674,9 @@ int32_t sxe2_udp_tunnel_port_del_common(struct sxe2_adapter *ad,
- 	struct sxe2_udp_tunnel_cfg *tunnel_config;
- 	int32_t ret = -1;
- 
-+	if (ad->dev_type != SXE2_DEV_T_PF || ad->is_dev_repr)
-+		return -ENOTSUP;
-+
- 	rte_spinlock_lock(&ad->udp_tunnel_ctx.lock);
- 	tunnel_config = &ad->udp_tunnel_ctx.tunnel_conf[tunnel_proto];
- 
-@@ -703,6 +711,9 @@ static int32_t sxe2_udp_tunnel_port_clear(struct rte_eth_dev *dev)
- 	int32_t ret = 0;
- 	uint16_t tunnel_proto = 0;
- 
-+	if (ad->dev_type != SXE2_DEV_T_PF || ad->is_dev_repr)
-+		return -ENOTSUP;
-+
- 	rte_spinlock_lock(&ad->udp_tunnel_ctx.lock);
- 
- 	for (tunnel_proto = 0; tunnel_proto < SXE2_UDP_TUNNEL_MAX; tunnel_proto++) {
+ int32_t sxe2_link_update(struct rte_eth_dev *dev, __rte_unused int32_t wait_to_complete)
 -- 
 2.52.0
 
