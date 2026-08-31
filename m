@@ -2,34 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18A89C61DD3
-	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 06:12:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 493D0C624A5
+	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 07:18:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DBF6A4025A;
-	Mon, 31 Aug 2026 08:12:05 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1FD404025A;
+	Mon, 31 Aug 2026 09:18:31 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id BD3D8400D5;
- Mon, 31 Aug 2026 08:12:03 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 01C93400D5;
+ Mon, 31 Aug 2026 09:18:29 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A926D1A0397;
- Mon, 31 Aug 2026 08:12:03 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C23C91A02E0;
+ Mon, 31 Aug 2026 09:18:29 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 76A401A035A;
- Mon, 31 Aug 2026 08:12:03 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8BFED1A02D4;
+ Mon, 31 Aug 2026 09:18:29 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 41CBE18000B1;
- Mon, 31 Aug 2026 14:12:02 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 586381800068;
+ Mon, 31 Aug 2026 15:18:28 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: dev@dpdk.org
 Cc: stable@dpdk.org
-Subject: [PATCH v2] net/dpaa: fix Rx queue shutdown before init
-Date: Mon, 31 Aug 2026 11:41:59 +0530
-Message-ID: <20260831061159.3668135-1-prashant.gupta_3@nxp.com>
+Subject: [PATCH v3] net/dpaa: fix Rx queue shutdown before init
+Date: Mon, 31 Aug 2026 12:48:25 +0530
+Message-ID: <20260831071825.3882423-1-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260827072913.1015508-1-prashant.gupta_3@nxp.com>
-References: <20260827072913.1015508-1-prashant.gupta_3@nxp.com>
+In-Reply-To: <20260831061159.3668135-1-prashant.gupta_3@nxp.com>
+References: <20260831061159.3668135-1-prashant.gupta_3@nxp.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: ClamAV using ClamSMTP
@@ -64,7 +64,7 @@ Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
  1 file changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
-index 4dc4d1f10c..b7bc616fed 100644
+index 4dc4d1f10c..4463c56601 100644
 --- a/drivers/net/dpaa/dpaa_ethdev.c
 +++ b/drivers/net/dpaa/dpaa_ethdev.c
 @@ -1119,9 +1119,6 @@ int dpaa_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
@@ -84,7 +84,7 @@ index 4dc4d1f10c..b7bc616fed 100644
 +		/* Clean up a frame queue left behind by a previous run
 +		 * before it is initialized.
 +		 */
-+		qman_shutdown_fq(rxq->fqid);
++		qman_shutdown_fq(fqid);
 +
  		if (dpaa_intf->cgr_rx)
  			dpaa_intf->cgr_rx[loop].cgrid = cgrid[loop];
