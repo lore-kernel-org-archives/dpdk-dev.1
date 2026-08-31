@@ -2,57 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A749C61DD3
-	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 07:43:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7877DC624A5
+	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 07:46:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1B6024025A;
-	Mon, 31 Aug 2026 09:43:06 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5C1C54025A;
+	Mon, 31 Aug 2026 09:46:24 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id D4817400D5
- for <dev@dpdk.org>; Mon, 31 Aug 2026 09:43:04 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id BA1F9400D5
+ for <dev@dpdk.org>; Mon, 31 Aug 2026 09:46:22 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1788162184;
+ s=mimecast20190719; t=1788162382;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding;
- bh=pYegBasAjivQ+YHie32dx89PYK9wwhG7Tx3EAiLbMVU=;
- b=PFcFMOxCY33oAceLt4CacG3hv0qfbJNv0Fj2QsUhAEelH6jX6/dpMkHtXsb1+CvCElCMzz
- xU7tABXEYERr+Dczme1TEJqrHvl8XEiij9coMGS9Otg+jJLmD6ctwv2PcmuF/MtxZhADny
- LExKW7lfoX8eYrMM0qWMCo3f0zhgrY0=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-77--GAzP9mnMFOAosD7PhK42A-1; Mon,
- 31 Aug 2026 03:43:00 -0400
-X-MC-Unique: -GAzP9mnMFOAosD7PhK42A-1
-X-Mimecast-MFC-AGG-ID: -GAzP9mnMFOAosD7PhK42A_1788162179
-Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 679FD1831341; Mon, 31 Aug 2026 07:42:59 +0000 (UTC)
-Received: from dmarchan.home (headnet05.pony-001.prod.iad2.dc.redhat.com
- [10.2.32.117])
- by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id AEB2C362; Mon, 31 Aug 2026 07:42:57 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
-To: dev@dpdk.org
-Cc: Maxime Coquelin <maxime.coquelin@redhat.com>,
- Chenbo Xia <chenbox@nvidia.com>, Jiayu Hu <hujiayu.hu@foxmail.com>,
- Sunil Pai G <sunil.pai.g@intel.com>
-Subject: [PATCH] vhost: remove dependency on PCI library
-Date: Mon, 31 Aug 2026 09:41:59 +0200
-Message-ID: <20260831074159.1506521-1-david.marchand@redhat.com>
+ in-reply-to:in-reply-to:references:references;
+ bh=PI9KAoWN/QXil5lKhtWh2JEXGQQr0WVMz20pGcIyDTo=;
+ b=hFTo1qDGogi22AZs7Lfhm78uGFL4ZRqWqXGjMbLFOW3tZU66lJRRfHkjdT/cAelh9rIUZ7
+ 5pZaFCKr1M77Vc5OoXXuaTPwkkiMb5vdWvUhZUyFG5hNkWWnZmbQmaukHltobHkde6KVR4
+ G6U6FXRF1+tzIUA29cC6K5zxXcYxc18=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-427-YmotZtdMNz2oDZpQMIjimQ-1; Mon, 31 Aug 2026 03:46:20 -0400
+X-MC-Unique: YmotZtdMNz2oDZpQMIjimQ-1
+X-Mimecast-MFC-AGG-ID: YmotZtdMNz2oDZpQMIjimQ_1788162379
+Received: by mail-lf1-f70.google.com with SMTP id
+ 2adb3069b0e04-5b4b020612aso1886800e87.0
+ for <dev@dpdk.org>; Mon, 31 Aug 2026 00:46:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1788162379; x=1788767179;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=PI9KAoWN/QXil5lKhtWh2JEXGQQr0WVMz20pGcIyDTo=;
+ b=dmamGhnh6OJfh8EdX7Jgb1xwJirBMC4URAcaBQry0VwSLDN9TyUIh8G/KBBsx9yRSz
+ Q2v7ybG1bSd69pfODL5bKRVifS0zlMKKFInkO90fsxgWSfvlz4f0u+5junzd6eB2DziX
+ i61vkVe9R4VO1vVcRw9JRtFhciI6+I3C9Tf2c0xI6PkeymA04/4oawOy+B4mTuKDMZz7
+ eFiPXyQJ2VXkXfD4D4IcGdLcZvneou8pNK0lMCh9hlVWNqOE2iyZfp53lyU2fEdPFgZo
+ ox0/b5e3uDUa7wxpjK7HbInS6NcQ0q8C9PzZk0zqwiU6sg5yfL0opbRsx+uL0kN0earT
+ zNgw==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBwkApLY5s+r2WF3R6JAETT4V9oviV1AqsMkxtILFpu2SjnkXuUSsuKsNMc0NueGnjEDuUk=@dpdk.org
+X-Gm-Message-State: AFuF++lzKSP7M/NL7FqPbZ0S//byXxkCR2C1Zs5OJLYX59Q+uAPtkiGe
+ bKHHNXKAqnAWzvMgkqtsqKrht8yPX02JYysdr8WHW9wTpUwyPekvA9lSEWoZU5k/w/gMNpEAWQh
+ SLpsd3JwYOOIUfjGIOT6KNsOFMvLLEWfKDPSsWCdU8Z+N4bkEH3oatOp+W4sDgCWh5oSjW4MHYQ
+ 2ssmjSvmOZEK15BJoJzCwcQWg39rY=
+X-Gm-Gg: AYBFou0HRaEblVTXChEK9wpZmM9xRTR/lYc5LHVCT/b9h1klXLzTIoNaouK6BqwUWy2
+ RDjJ0LdXRWExlCl2PAgLy9TLhy8nPamaIqAo3XAMvX52YCFIyi9fi3G03V42mCgN9DvmJhJCC4p
+ yJoKwLEkU4nRywk8vHcd9ekBSzf0B1UQRK2b1GVkBtuwG0dmK6MTMczXbUI8auVvNncYnBFXOb/
+ 4WY/UBK3yXIEUNrqMfkCB7Sy7YZilv+tvPtxFbl0I5gxNgv
+X-Received: by 2002:a05:6512:450d:b0:5b4:fdc3:d3f1 with SMTP id
+ 2adb3069b0e04-5b5e68f68ffmr6704112e87.18.1788162379006; 
+ Mon, 31 Aug 2026 00:46:19 -0700 (PDT)
+X-Received: by 2002:a05:6512:450d:b0:5b4:fdc3:d3f1 with SMTP id
+ 2adb3069b0e04-5b5e68f68ffmr6704079e87.18.1788162378511; Mon, 31 Aug 2026
+ 00:46:18 -0700 (PDT)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
+References: <20260828074056.2250222-1-liujie5@linkdatatechnology.com>
+ <20260831024103.3230425-1-liujie5@linkdatatechnology.com>
+In-Reply-To: <20260831024103.3230425-1-liujie5@linkdatatechnology.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Mon, 31 Aug 2026 09:46:07 +0200
+X-Gm-Features: AcwNN1XO0wRZAMx5tX_7_r3Lu38-SeISm2kr3gqQOKppU4GEaAn13_72AIqet0k
+Message-ID: <CAJFAV8yczTmUeRNNWT5pJpfXsmYk9VGMri=m2jHz-biczkv5fQ@mail.gmail.com>
+Subject: Re: [PATCH v7 00/47] net/sxe2: re-align with reference and fix review
+ findings
+To: liujie5@linkdatatechnology.com
+Cc: stephen@networkplumber.org, dev@dpdk.org, 
+ Thomas Monjalon <thomas@monjalon.net>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 5XxKpvZRcfQQ8LKioJi5LGR3N8XofYGluJvFocO-QCc_1788162179
+X-Mimecast-MFC-PROC-ID: X_L4CENkC7kKG7-b9Aalmwr6p-RA3WsyQCt7YNZ4E6w_1788162379
 X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -66,26 +87,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Since the async datapath code switched to dmadev, there is no reason to
-depend on the pci library.
+On Mon, 31 Aug 2026 at 04:41, <liujie5@linkdatatechnology.com> wrote:
+>
+> From: Jie Liu <liujie5@linkdatatechnology.com>
+>
+> This series updates the SXE2 poll mode driver (drivers/net/sxe2) and
+> its common library (drivers/common/sxe2), fixing issues found in the
+> previous version and re-aligning the driver with the reference
+> implementation.
+>
+> Changes since v6:
+> - drop the now-trivial sxe2_vsi_node_free() helper and inline
+>   rte_free() at its call sites
+> - unify the duplicated FNAV/ACL COUNT action arms in the flow parser
+> - use a file-scope static const ops table for the vectorized Tx path
+>   and fail sxe2_tx_queues_vec_prepare() on a NULL txq
+> - split "unify vectorized Tx buffer handling" into three commits:
+>   the buffer_ring union fix, the NEON Tx 4-wide descriptor fill, and
+>   the NEON Rx ptype/memory-ordering fixes
+> - use the primary VSI id directly for representors (the kernel
+>   guarantees it is always valid)
+> - drop the packed/aligned attributes from the TM command message
+>   structs to match the historical kernel layout
+> - fix VEC mode selection in the Tx/Rx mode set functions
+> - clean up commit messages (headline case/length, missing Fixes tags)
+>
+> Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 
-Fixes: 53d3f4778c1d ("vhost: integrate dmadev in asynchronous data-path")
+It looks like this series had issues during transmission.
+Patchwork created multiple series...
 
-Signed-off-by: David Marchand <david.marchand@redhat.com>
----
- lib/vhost/meson.build | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/vhost/meson.build b/lib/vhost/meson.build
-index 6a24981d10..64698182cd 100644
---- a/lib/vhost/meson.build
-+++ b/lib/vhost/meson.build
-@@ -44,4 +44,4 @@ headers = files(
- driver_sdk_headers = files(
-         'vdpa_driver.h',
- )
--deps += ['ethdev', 'cryptodev', 'hash', 'pci', 'dmadev']
-+deps += ['ethdev', 'cryptodev', 'hash', 'dmadev']
 -- 
-2.54.0
+David Marchand
 
