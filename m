@@ -2,34 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41531C61DE4
-	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 02:42:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C28C61DE4
+	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 02:43:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AF02B40DF5;
-	Mon, 31 Aug 2026 04:42:57 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C9F6740DDA;
+	Mon, 31 Aug 2026 04:43:03 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 836A540A80;
- Mon, 31 Aug 2026 04:42:55 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 60EDB40E01;
+ Mon, 31 Aug 2026 04:43:01 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowAD3AUAt6pRqKdWjBg--.34331S2;
- Mon, 31 Aug 2026 10:42:54 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowADH0T8z6pRqdNWjBg--.54822S2;
+ Mon, 31 Aug 2026 10:42:59 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>,
 	stable@dpdk.org
-Subject: [PATCH v7 19/47] net/sxe2: guard PCI BAR unmap when not initialized
-Date: Mon, 31 Aug 2026 10:42:53 +0800
-Message-ID: <20260831024253.3230786-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v7 20/47] net/sxe2: fix null dereference in dev uninit
+Date: Mon, 31 Aug 2026 10:42:59 +0800
+Message-ID: <20260831024259.3230804-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260828074056.2250222-1-liujie5@linkdatatechnology.com>
 References: <20260828074056.2250222-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowAD3AUAt6pRqKdWjBg--.34331S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr18uw45WF13Cw15uFW3Wrg_yoW8uFyUpF
- WrZ34UJF1SqFsa9rZIq3yfZr17KFs5t3yjkanIqw13Ca4kAr1293ykta4kKr1jkr4xZrnY
- yrsxta1fZry8AFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: rQCowADH0T8z6pRqdNWjBg--.54822S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr1UAw4xCw48XFW5ZF45trb_yoW8GryUpF
+ 4xWa15tFyagF15Wa1fXa1xXF109F48t34UCrWYy343uF93Xrn7Ary3GFyrtr48GrZ7ZF1F
+ vFy7Zr1kKrnYgaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUkC14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
  rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
  1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
@@ -60,52 +60,39 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-sxe2_dev_pci_map_uinit() calls sxe2_dev_pci_seg_unmap() and walks
-bar_info unconditionally. Only perform the unmap and free when
-bar_info has been allocated, so an uninitialized map context is
-handled cleanly.
+sxe2_dev_uninit() calls rep_dev->dev_ops->dev_close() for each VF
+representor without checking that dev_ops or dev_close is present,
+which can crash when the representor device is not fully initialized.
 
-Fixes: 66a10eb60ebe ("net/sxe2: add PCI BAR mapping")
+Guard the call with NULL checks.
+
+Fixes: 635084db5d57 ("net/sxe2: support VF representors")
 Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_ethdev.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ drivers/net/sxe2/sxe2_ethdev.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index 9ef93b8076..fdff4ae10f 100644
+index fdff4ae10f..41ea67a607 100644
 --- a/drivers/net/sxe2/sxe2_ethdev.c
 +++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -1773,14 +1773,13 @@ void sxe2_dev_pci_map_uinit(struct rte_eth_dev *dev)
- 	uint8_t i = 0;
- 
- 	PMD_INIT_FUNC_TRACE();
-+	if (map_ctxt->bar_info != NULL) {
-+		(void)sxe2_dev_pci_seg_unmap(adapter, SXE2_PCI_MAP_RES_DOORBELL_RX_TAIL);
-+		(void)sxe2_dev_pci_seg_unmap(adapter, SXE2_PCI_MAP_RES_DOORBELL_TX);
-+		(void)sxe2_dev_pci_seg_unmap(adapter, SXE2_PCI_MAP_RES_IRQ_DYN);
-+		(void)sxe2_dev_pci_seg_unmap(adapter, SXE2_PCI_MAP_RES_IRQ_ITR);
-+		(void)sxe2_dev_pci_seg_unmap(adapter, SXE2_PCI_MAP_RES_IRQ_MSIX);
- 
--	(void)sxe2_dev_pci_seg_unmap(adapter, SXE2_PCI_MAP_RES_DOORBELL_RX_TAIL);
--	(void)sxe2_dev_pci_seg_unmap(adapter, SXE2_PCI_MAP_RES_DOORBELL_TX);
--	(void)sxe2_dev_pci_seg_unmap(adapter, SXE2_PCI_MAP_RES_IRQ_DYN);
--	(void)sxe2_dev_pci_seg_unmap(adapter, SXE2_PCI_MAP_RES_IRQ_ITR);
--	(void)sxe2_dev_pci_seg_unmap(adapter, SXE2_PCI_MAP_RES_IRQ_MSIX);
--
--	if (map_ctxt != NULL && map_ctxt->bar_info != NULL) {
- 		for (i = 0; i < map_ctxt->bar_cnt; i++) {
- 			bar_info = &map_ctxt->bar_info[i];
- 			if (bar_info != NULL && bar_info->seg_info != NULL) {
-@@ -1791,7 +1790,6 @@ void sxe2_dev_pci_map_uinit(struct rte_eth_dev *dev)
- 		rte_free(map_ctxt->bar_info);
- 		map_ctxt->bar_info = NULL;
- 	}
--
- 	adapter->dev_info.dev_data = NULL;
- }
- 
+@@ -2074,9 +2074,11 @@ static int32_t sxe2_dev_uninit(struct rte_eth_dev *dev)
+ 	for (i = 0; i < adapter->repr_ctxt.nb_repr_vf; i++) {
+ 		rep_dev = adapter->repr_ctxt.vf_rep_eth_dev[i];
+ 		if (rep_dev) {
+-			ret = rep_dev->dev_ops->dev_close(rep_dev);
+-			if (ret)
+-				goto l_end;
++			if (rep_dev->dev_ops && rep_dev->dev_ops->dev_close) {
++				ret = rep_dev->dev_ops->dev_close(rep_dev);
++				if (ret)
++					goto l_end;
++			}
+ 			if (rep_dev->intr_handle)
+ 				rte_intr_instance_free(rep_dev->intr_handle);
+ 			ret = rte_eth_dev_release_port(rep_dev);
 -- 
 2.52.0
 
