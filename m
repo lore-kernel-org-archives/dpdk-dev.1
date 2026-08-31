@@ -2,34 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D1EAC61DE4
-	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 02:45:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAF9DC61DE4
+	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 02:45:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 70B7E40E22;
-	Mon, 31 Aug 2026 04:45:20 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E90B440E31;
+	Mon, 31 Aug 2026 04:45:29 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 9FA7540E2D;
- Mon, 31 Aug 2026 04:45:17 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 0528140C35;
+ Mon, 31 Aug 2026 04:45:26 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowAAHET+76pRqcdujBg--.24013S2;
- Mon, 31 Aug 2026 10:45:15 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowACnrjzB6pRqotujBg--.50506S2;
+ Mon, 31 Aug 2026 10:45:24 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>,
 	stable@dpdk.org
-Subject: [PATCH v7 43/47] net/sxe2: align command structs with kernel layout
-Date: Mon, 31 Aug 2026 10:45:15 +0800
-Message-ID: <20260831024515.3231663-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v7 44/47] common/sxe2: fix ioctl channel log and close handling
+Date: Mon, 31 Aug 2026 10:45:21 +0800
+Message-ID: <20260831024521.3231684-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260828074056.2250222-1-liujie5@linkdatatechnology.com>
 References: <20260828074056.2250222-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowAAHET+76pRqcdujBg--.24013S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxGF4DZF1xtFW5Ww1kKry8Xwb_yoW5tw4UpF
- Z5G34aqF45tr1jgF48Xr4xZrySg3yUA3yUXay7X34Sy3WftasrXryUKr1rCa4rK3yUuw4S
- yrsxKr4UJa4fCFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: rQCowACnrjzB6pRqotujBg--.50506S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr15Xry8JFyDJrW7Wr18AFb_yoW8KFy8pF
+ sagry5tFyrtayagFn8AanrZFy5t3Zak3yUurWIk3y3t34DXryUZFyDGry5G3W8Cr15JF93
+ ZFnxJr13Ww1kArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUkE14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
  rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
  1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
@@ -60,110 +60,63 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-The sxe2_drv_cmd.h command structures must match the layout used by
-historical SXE2 kernel versions so the same firmware command ABI is
-shared. Several structures were declared with __rte_packed_begin/
-__rte_packed_end and extra rsv padding that the kernel layout does
-not have:
+Compare sxe2_ioctl_chnl.c against the reference implementation and
+correct the following discrepancies:
 
-- sxe2_drv_link_info_resp: drop rsv[3] padding (size unchanged)
-- sxe2_tm_res: drop rsv[2] padding and packed attribute, reducing
-  the TM command payload length from 4 to 2 bytes to match the
-  historical kernel layout
-- sxe2_tm_info: drop packed attribute, removing -Wpacked-not-aligned
-  warnings
-- sxe2_tm_add_mid_msg/sxe2_tm_add_queue_msg: drop packed attribute;
-  the message sizes (16 and 20 bytes) are unchanged, but the tm info
-  member moves to its naturally aligned offset (4 and 8)
-- sxe2_drv_sfp_req/sxe2_drv_sfp_resp: drop packed attribute
+- sxe2_drv_dev_close: only log the closed fd when it is valid, move
+  PMD_LOG_INFO inside the fd >= 0 check
+- sxe2_drv_dev_mmap: fix swapped format arguments in the debug log
+  (cmd_fd and bar_idx were passed in the wrong order)
+- sxe2_drv_dev_dma_unmap: use PMD_LOG_ERR instead of PMD_LOG_INFO
+  for the ioctl failure message
 
-Fixes: 9c894f75113f ("net/sxe2: support TM hierarchy and shaping")
+Fixes: 83866f8d7638 ("common/sxe2: add base driver skeleton")
 Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_drv_cmd.h | 26 ++++++++++++--------------
- 1 file changed, 12 insertions(+), 14 deletions(-)
+ drivers/common/sxe2/sxe2_ioctl_chnl.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/sxe2/sxe2_drv_cmd.h b/drivers/net/sxe2/sxe2_drv_cmd.h
-index 01fd813ed1..ee9d86dd4c 100644
---- a/drivers/net/sxe2/sxe2_drv_cmd.h
-+++ b/drivers/net/sxe2/sxe2_drv_cmd.h
-@@ -230,7 +230,6 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_drv_vsi_info_get_resp {
- struct __rte_aligned(4) __rte_packed_begin sxe2_drv_link_info_resp {
- 	uint32_t speed;
- 	uint8_t status;
--	uint8_t rsv[3];
- } __rte_packed_end;
+diff --git a/drivers/common/sxe2/sxe2_ioctl_chnl.c b/drivers/common/sxe2/sxe2_ioctl_chnl.c
+index 3e2fbf572f..9f455bd8d5 100644
+--- a/drivers/common/sxe2/sxe2_ioctl_chnl.c
++++ b/drivers/common/sxe2/sxe2_ioctl_chnl.c
+@@ -107,9 +107,11 @@ sxe2_drv_dev_close(struct sxe2_common_device *cdev)
+ {
+ 	int32_t fd = SXE2_CDEV_TO_CMD_FD(cdev);
  
- struct __rte_aligned(4) __rte_packed_begin sxe2_switchdev_info {
-@@ -348,31 +347,30 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_rss_hf_req {
- 	uint8_t rsv1[3];
- } __rte_packed_end;
+-	if (fd >= 0)
++	if (fd >= 0) {
+ 		close(fd);
+-	PMD_LOG_INFO(COM, "closed device fd=%d", fd);
++		PMD_LOG_INFO(COM, "closed device fd=%d", fd);
++	}
++
+ 	SXE2_CDEV_TO_CMD_FD(cdev) = SXE2_CMD_FD_INVALID;
+ }
  
--struct __rte_aligned(4) __rte_packed_begin sxe2_tm_res {
-+struct sxe2_tm_res {
- 	uint16_t teid;
--	uint8_t rsv[2];
--} __rte_packed_end;
-+};
+@@ -349,8 +351,9 @@ void
+ 		goto l_err;
+ 	}
  
--struct __rte_aligned(4) __rte_packed_begin sxe2_tm_info {
-+struct sxe2_tm_info {
- 	uint32_t committed;
- 	uint32_t peak;
- 	uint8_t priority;
- 	uint8_t reserve;
- 	uint16_t weight;
--} __rte_packed_end;
-+};
+-	PMD_LOG_DEBUG(COM, "fd=%d, bar idx=%d, len=%"PRIu64", src=0x%"PRIx64", offset=0x%"PRIx64"",
+-		bar_idx, cmd_fd, len, offset, SXE2_COM_PCI_OFFSET_GEN(bar_idx, offset));
++	PMD_LOG_DEBUG(COM, "fd=%d, bar idx=%d, len=%"PRIu64", "
++		"offset=0x%"PRIx64", pci_offset=0x%"PRIx64"",
++		cmd_fd, bar_idx, len, offset, SXE2_COM_PCI_OFFSET_GEN(bar_idx, offset));
  
--struct __rte_aligned(4) __rte_packed_begin sxe2_tm_add_mid_msg {
-+struct sxe2_tm_add_mid_msg {
- 	uint16_t parent_teid;
- 	uint8_t adj_lvl;
- 	struct sxe2_tm_info info;
--} __rte_packed_end;
-+};
- 
--struct __rte_aligned(4) __rte_packed_begin sxe2_tm_add_queue_msg {
-+struct sxe2_tm_add_queue_msg {
- 	uint16_t parent_teid;
- 	uint16_t queue_id;
- 	uint8_t adj_lvl;
- 	struct sxe2_tm_info info;
--} __rte_packed_end;
-+};
- 
- struct __rte_aligned(4) __rte_packed_begin sxe2_drv_ipsec_capa_resq {
- 	uint16_t tx_sa_cnt;
-@@ -633,7 +631,7 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_drv_udp_tunnel_resp {
- 	uint8_t rsv;
- } __rte_packed_end;
- 
--struct __rte_aligned(4) __rte_packed_begin sxe2_drv_sfp_req {
-+struct sxe2_drv_sfp_req {
- 	uint8_t is_wr;
- 	uint8_t is_qsfp;
- 	uint16_t bus_addr;
-@@ -642,14 +640,14 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_drv_sfp_req {
- 	uint16_t data_len;
- 	uint16_t rvd;
- 	uint8_t data[];
--} __rte_packed_end;
-+};
- 
--struct __rte_aligned(4) __rte_packed_begin sxe2_drv_sfp_resp {
-+struct sxe2_drv_sfp_resp {
- 	uint8_t is_wr;
- 	uint8_t is_qsfp;
- 	uint16_t data_len;
- 	uint8_t data[];
--} __rte_packed_end;
-+};
- 
- enum sxe2_fc_type {
- 	SXE2_FC_T_DIS = 0,
+ 	virt = mmap(NULL, len, PROT_READ | PROT_WRITE,
+ 		MAP_SHARED, cmd_fd, SXE2_COM_PCI_OFFSET_GEN(bar_idx, offset));
+@@ -477,7 +480,7 @@ sxe2_drv_dev_dma_unmap(struct sxe2_common_device *cdev, uint64_t iova)
+ 	pthread_mutex_lock(&cdev->config.lock);
+ 	ret = ioctl(cmd_fd, SXE2_COM_CMD_DMA_UNMAP, &cmd_params);
+ 	if (ret < 0) {
+-		PMD_LOG_INFO(COM, "Failed to dma unmap, fd=%d, ret=%d, err:%s",
++		PMD_LOG_ERR(COM, "Failed to dma unmap, fd=%d, ret=%d, err:%s",
+ 				cmd_fd, ret, strerror(errno));
+ 		ret = -EIO;
+ 		pthread_mutex_unlock(&cdev->config.lock);
 -- 
 2.52.0
 
