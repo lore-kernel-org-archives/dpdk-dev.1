@@ -2,74 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4894C61DD3
-	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 08:27:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E615C61DE2
+	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 08:35:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EFDB34025A;
-	Mon, 31 Aug 2026 10:27:39 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 26B94400D5
- for <dev@dpdk.org>; Mon, 31 Aug 2026 10:27:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1788164858;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=VwumQcREpfxrkewouxDL7bl2WJjyB0dJLH96KzWhskA=;
- b=NSJA/ICcR75wgWNFPo3t6tNAZbT+ShqwvxY/rWd7ZrIltQyjG4Cxm8Nabm1DlWXi4aYFmm
- 3pnUOzyvsqvU98HKtLkJzUUZl3tIoy9VJS817PFKivmCQwcY05hVACE95haMpJ8AEKyoN1
- BXaz2wtxzUviP6P2xYZVFML8jvGRSB4=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-132-6eV9WWAmM7CoftB_zNTkJQ-1; Mon, 31 Aug 2026 04:27:36 -0400
-X-MC-Unique: 6eV9WWAmM7CoftB_zNTkJQ-1
-X-Mimecast-MFC-AGG-ID: 6eV9WWAmM7CoftB_zNTkJQ_1788164855
-Received: by mail-lf1-f72.google.com with SMTP id
- 2adb3069b0e04-5b4a1b66efeso2665081e87.0
- for <dev@dpdk.org>; Mon, 31 Aug 2026 01:27:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788164855; x=1788769655;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=VwumQcREpfxrkewouxDL7bl2WJjyB0dJLH96KzWhskA=;
- b=dZFNdna7W3TclZTIKOlq21TNml2yq3Tm+AltRQRNeraBoGdyCi4qiL6v1Ca+DCQ3sM
- wawR2qKrqEuxvIK4lCHclW4Pp0nC3IcJ3SBUDaZK69mhKyGAdhPb7VBDqIHc6a5hBoIC
- 1R0ZlyeMfWJdB+wGcbvqS1S69T6goQUuK/SpXaB2452+IQFOcdHN3nyI62v1kCciIPmQ
- ZqbXRi4cWVpO+UDhI7Ac1VuMceEba1CnwEKcYzbjAc0M+zJ18vHt1k/7sRVkvfnfXxWn
- hnb38gDT9oInqti7A53zuwNZ5ui6hefXIe4QhjP/RuicYQKwu2S76xdeU7ztM69p8FyB
- 6ung==
-X-Gm-Message-State: AFuF++mE4EGr8bHVrVC/d9mMCm/LQ/g4OpV5LoKs9vP1FyMjfY7NIA1C
- o8VopPA5pAIClvXVcSaas+UqAaq2G7G974LAd1ymGniQcgdFGIfcmWzGyOSN6wrUQ+hXPo03VGj
- KxVzfyEE0HYPTZrllIJ4LPA0UsdfJFuiepnNMG34RQ6B5Gp7nJxec1udsp6c7/4eWYrqyBnjPPV
- /MuxTWPPnMbg9poQNtgX0=
-X-Gm-Gg: AYBFou0A+JxPXocl6EcXhwh81i6JQdn8tN2vUWTRkgWZUbuWHt0ZcKfHol9wYbGJTLy
- yIfcCGi4zHk7NbE3kzrssCVelGRZOgHGh0aT+EtsJj0yYv26LGsuonLHRalDRRIGXIrHV7/JAFO
- 0Eqm56i89Y3XnIHTUdddWaT4HL6eunewfxH0E8TeaH+99GFa6H0IikYFKRqS+yMY5RwpIo6pzGE
- FqqifenYHKhZ86vk0VznKGxNpQqwB4Ib6692DYoTWl0P+/B
-X-Received: by 2002:a05:6512:3d9e:b0:5b2:a22c:50ff with SMTP id
- 2adb3069b0e04-5b5f6716cb6mr1926198e87.19.1788164855031; 
- Mon, 31 Aug 2026 01:27:35 -0700 (PDT)
-X-Received: by 2002:a05:6512:3d9e:b0:5b2:a22c:50ff with SMTP id
- 2adb3069b0e04-5b5f6716cb6mr1926191e87.19.1788164854497; Mon, 31 Aug 2026
- 01:27:34 -0700 (PDT)
-MIME-Version: 1.0
-References: <20260826235933.194681-1-stephen@networkplumber.org>
- <20260829154706.52169-1-stephen@networkplumber.org>
-In-Reply-To: <20260829154706.52169-1-stephen@networkplumber.org>
-From: David Marchand <david.marchand@redhat.com>
-Date: Mon, 31 Aug 2026 10:27:22 +0200
-X-Gm-Features: AcwNN1VRJF4aH6h95AqDQ3t5YMzPhgbWytvVjiBSOQvX_tbwwaijxTAFPvWanGY
-Message-ID: <CAJFAV8z5MoC9ZmP=Xzef3U4+mi+imbDzkw1cgd+=B+u0dOosiA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/4] fix clang 23 unused but set warnings
+	by mails.dpdk.org (Postfix) with ESMTP id 41E5C40374;
+	Mon, 31 Aug 2026 10:35:02 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 99D6740395
+ for <dev@dpdk.org>; Mon, 31 Aug 2026 10:35:00 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=yGG5SfHRNbjU6Rb2aDjAza5QxbremN0RkJBIC0YdbAk=;
+ b=iw9NRGQ08DVYQC/WcpfmYlRE1BHPb/YTv21s5wDodEO5Eiuon5i+oqH0ytRgZbKJeID1GuOTY
+ 0IfCNmsnWVjAuxnu9rk8LRnYqrJB0PMjk1wMwKVQUN/REouSIzoDE4pTmFip+RUPSokE/Ep2y22
+ omDXR3YRsCDaqHXV242feC0=
+Received: from mail.maildlp.com (unknown [172.18.224.107])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4hYMjN0frGzHnGdK;
+ Mon, 31 Aug 2026 16:34:16 +0800 (CST)
+Received: from frapema500002.china.huawei.com (unknown [7.182.19.148])
+ by mail.maildlp.com (Postfix) with ESMTPS id 773364058D;
+ Mon, 31 Aug 2026 16:34:59 +0800 (CST)
+Received: from frapema500003.china.huawei.com (7.182.19.114) by
+ frapema500002.china.huawei.com (7.182.19.148) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Mon, 31 Aug 2026 10:34:59 +0200
+Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
+ frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.2562.045;
+ Mon, 31 Aug 2026 10:34:59 +0200
+From: Marat Khalili <marat.khalili@huawei.com>
 To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: b1voSiL9-wkaAUz6BJ3f-6t54HWRshsTeFiivMTdbsc_1788164855
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+CC: Konstantin Ananyev <konstantin.ananyev@huawei.com>, "dev@dpdk.org"
+ <dev@dpdk.org>
+Subject: RE: [PATCH] test/bpf: use unit test suite
+Thread-Topic: [PATCH] test/bpf: use unit test suite
+Thread-Index: AQHdOLO5mlj7DteyzkukSIduVk98kLa3030g
+Date: Mon, 31 Aug 2026 08:34:58 +0000
+Message-ID: <8ecd0e24395d4a5eb53c6c4355f73cf7@huawei.com>
+References: <20260830191349.604934-1-stephen@networkplumber.org>
+In-Reply-To: <20260830191349.604934-1-stephen@networkplumber.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.137.78]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,38 +61,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat, 29 Aug 2026 at 17:47, Stephen Hemminger
-<stephen@networkplumber.org> wrote:
->
-> Clang 23 adds -Wunused-but-set-global, which reports file scope
-> variables that are assigned but never read. It is enabled by -Wall and
-> does not appear with gcc or with clang 20 through 22.
->
-> Three of these are dead variables and are simply removed. The fourth,
-> 'alive' in dpaa_of.c, is a real debug aid: it is only read by
-> DPAAX_HWWARN, which discards its condition when RTE_LIBRTE_DPAAX_DEBUG
-> is not defined. That one is fixed by making the empty expansion consume
-> its argument, which keeps the condition compiled in both builds and
-> covers every other DPAAX_HWWARN user as well.
->
-> v2 - remove more unused code as suggested.
->
-> Stephen Hemminger (4):
->   common/dpaax: fix unused variable warning in non-debug build
->   bus/dpaa: remove unused qman_clk variable
->   common/zsda: remove unused device counter
->   net/qede: remove unused app version variable
->
->  drivers/bus/dpaa/base/qbman/qman_driver.c |  4 ----
->  drivers/common/dpaax/dpaax_logs.h         |  3 ++-
->  drivers/common/zsda/zsda_device.c         |  5 -----
->  drivers/net/qede/qede_debug.c             | 20 --------------------
->  4 files changed, 2 insertions(+), 30 deletions(-)
+Hi!
 
-For the series:
-Acked-by: David Marchand <david.marchand@redhat.com>
+> The BPF tests registered 23 separate autotests. Collapse them into a
+> single bpf_autotest suite run by unit_test_suite_runner().
 
+Some of these tests still don't pass with sanitizer enabled.  With them
+registered individually there was an option to ignore these failures or onl=
+y
+run the tests that are known to not contain UB. After lumping them in one s=
+uite
+running BPF tests under sanitizer is going to become much more difficult.
 
--- 
-David Marchand
+There are other reasons why more granular tests are good, like ease of trac=
+king
+or debugging failures. What are the benefits from collapsing them? What is =
+the
+ actual problem we are trying to solve?
 
+If DPDK CI is running out of tmpfs again, there is a proper fix for that.
+
+> Rename the old table-driven test_bpf() to test_bpf_progs() so that
+> test_bpf() can be the suite entry point.
+
+While having only one of the BPF tests called test_bpf was confusing, I'm n=
+ot
+sure new name is more clear.
+
+> Move the #endif of the RTE_LIB_BPF guard to the end of the file. It
+> closed mid-file, leaving the stack, ELF, convert and atomic tests
+> outside the guard even though they all call rte_bpf functions.
+
+This guard is unnecessary and I already sent a patch to delete it.
