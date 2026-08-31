@@ -2,47 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F0C0C61DE4
-	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 02:37:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EF5AC61DE4
+	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 02:41:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E6B2440DCF;
-	Mon, 31 Aug 2026 04:35:43 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id BF29A4042E;
+	Mon, 31 Aug 2026 04:41:08 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id A506640697
- for <dev@dpdk.org>; Mon, 31 Aug 2026 04:35:17 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 496E140374
+ for <dev@dpdk.org>; Mon, 31 Aug 2026 04:41:06 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowABnckBX6JRq27+jBg--.24645S14;
- Mon, 31 Aug 2026 10:35:07 +0800 (CST)
-From: Jie Liu <liujie5@linkdatatechnology.com>
-To: dev@dpdk.org
-Cc: Jie Liu <liujie5@linkdatatechnology.com>,
-	stephen@networkplumber.org
-Subject: [PATCH v7 12/47] net/sxe2: clean up duplicate function declarations
-Date: Mon, 31 Aug 2026 10:34:25 +0800
-Message-ID: <20260831023500.3229289-13-liujie5@linkdatatechnology.com>
+ by APP-03 (Coremail) with SMTP id rQCowADHyzm_6ZRqRtCjBg--.24183S2;
+ Mon, 31 Aug 2026 10:41:03 +0800 (CST)
+From: liujie5@linkdatatechnology.com
+To: stephen@networkplumber.org
+Cc: dev@dpdk.org,
+	Jie Liu <liujie5@linkdatatechnology.com>
+Subject: [PATCH v7 00/47] net/sxe2: re-align with reference and fix review
+ findings
+Date: Mon, 31 Aug 2026 10:41:03 +0800
+Message-ID: <20260831024103.3230425-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260831023500.3229289-1-liujie5@linkdatatechnology.com>
+In-Reply-To: <20260828074056.2250222-1-liujie5@linkdatatechnology.com>
 References: <20260828074056.2250222-1-liujie5@linkdatatechnology.com>
- <20260831023500.3229289-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowABnckBX6JRq27+jBg--.24645S14
-X-Coremail-Antispam: 1UD129KBjvJXoWxAFW7AF1UAr48XrWfAry7ZFb_yoW5tr1rpF
- 48Xry5AFWYqF18ur4UJa1fuFyagrW8tryj9FZ8G34FkayDZFZFvFy5tF1Yyw1rC34DGwna
- yanrXa1DG3yrXwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUU9G14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
- rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
- kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
- z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr
- 1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1U
- M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjx
- v20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1l
- F7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxAIw28IcxkI7VAKI48JMx
- C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
- wI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
- vE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v2
- 0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxV
- W8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbmZX7UUUUU==
+X-CM-TRANSID: rQCowADHyzm_6ZRqRtCjBg--.24183S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxtrWDZr45Cw45KF1DGw1DGFg_yoW7Ww4xpF
+ 48Xry3Zr1fJF43Ww1rJa1SvFyFgF1rJryjkrW7t3saqF1DAFyUArs0gF1UG34UAr1xA3WF
+ yrW7Jr15Gws5Ar7anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUvl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+ rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+ 1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+ 6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AKxVW8JV
+ W8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+ 2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+ W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lw4CEc2x0rVAKj4xx
+ MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
+ 4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
+ 67AKxVWUXVWUAwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26ryj6F1UMIIF0xvE2I
+ x0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
+ x4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
+ DU0xZFpf9x0JUk739UUUUU=
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -58,77 +58,117 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove duplicate function declarations from the sxe2 driver headers:
-- sxe2_drv_promisc_config, sxe2_drv_vsi_info_get and
-  sxe2_drv_rxq_mapping_set in sxe2_cmd_chnl.h
-- sxe2_dev_pci_seg_unmap in sxe2_ethdev.h
-- sxe2_rx_pkts_scattered in sxe2_txrx_poll.h
+From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Cc: stephen@networkplumber.org
+This series updates the SXE2 poll mode driver (drivers/net/sxe2) and
+its common library (drivers/common/sxe2), fixing issues found in the
+previous version and re-aligning the driver with the reference
+implementation.
+
+Changes since v6:
+- drop the now-trivial sxe2_vsi_node_free() helper and inline
+  rte_free() at its call sites
+- unify the duplicated FNAV/ACL COUNT action arms in the flow parser
+- use a file-scope static const ops table for the vectorized Tx path
+  and fail sxe2_tx_queues_vec_prepare() on a NULL txq
+- split "unify vectorized Tx buffer handling" into three commits:
+  the buffer_ring union fix, the NEON Tx 4-wide descriptor fill, and
+  the NEON Rx ptype/memory-ordering fixes
+- use the primary VSI id directly for representors (the kernel
+  guarantees it is always valid)
+- drop the packed/aligned attributes from the TM command message
+  structs to match the historical kernel layout
+- fix VEC mode selection in the Tx/Rx mode set functions
+- clean up commit messages (headline case/length, missing Fixes tags)
+
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
----
- drivers/net/sxe2/sxe2_cmd_chnl.h  | 6 ------
- drivers/net/sxe2/sxe2_ethdev.h    | 2 --
- drivers/net/sxe2/sxe2_txrx_poll.h | 2 --
- 3 files changed, 10 deletions(-)
 
-diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.h b/drivers/net/sxe2/sxe2_cmd_chnl.h
-index d63caad526..294ac15db4 100644
---- a/drivers/net/sxe2/sxe2_cmd_chnl.h
-+++ b/drivers/net/sxe2/sxe2_cmd_chnl.h
-@@ -65,8 +65,6 @@ int32_t sxe2_drv_ipsec_rxsa_delete(struct sxe2_adapter *adapter,
- int32_t sxe2_drv_ipsec_txsa_delete(struct sxe2_adapter *adapter,
- 			       uint16_t sa_id);
- 
--int32_t sxe2_drv_promisc_config(struct sxe2_adapter *adapter, bool set);
--
- int32_t sxe2_drv_udp_tunnel_add(struct sxe2_adapter *adapter,
- 			    enum sxe2_udp_tunnel_protocol tunnel_proto,
- 			    uint16_t udp_port);
-@@ -84,8 +82,6 @@ int32_t sxe2_drv_get_udp_tunnel_port(struct sxe2_adapter *adapter,
- 
- int32_t sxe2_drv_vsi_info_get(struct sxe2_adapter *adapter, struct sxe2_vsi *vsi);
- 
--int32_t sxe2_drv_vsi_info_get(struct sxe2_adapter *adapter, struct sxe2_vsi *vsi);
--
- int32_t sxe2_drv_mac_link_status_get(struct sxe2_adapter *adapter);
- 
- int32_t sxe2_drv_get_mac_stats(struct sxe2_adapter *adapter);
-@@ -110,8 +106,6 @@ int32_t sxe2_drv_mapping_reset(struct rte_eth_dev *eth_dev);
- 
- int32_t sxe2_drv_mapping_stats_info_clear(struct rte_eth_dev *eth_dev);
- 
--int32_t sxe2_drv_rxq_mapping_set(struct rte_eth_dev *eth_dev, uint16_t queue_id, uint8_t pool_idx);
--
- int32_t sxe2_drv_allmulti_config(struct sxe2_adapter *adapter, bool set);
- 
- int32_t sxe2_drv_uc_config(struct sxe2_adapter *adapter, struct rte_ether_addr *addr, bool add);
-diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
-index 158198d74b..1409be74d3 100644
---- a/drivers/net/sxe2/sxe2_ethdev.h
-+++ b/drivers/net/sxe2/sxe2_ethdev.h
-@@ -385,8 +385,6 @@ void sxe2_dev_pci_seg_unmap(struct sxe2_adapter *adapter, uint32_t res_type);
- 
- int32_t sxe2_dev_pci_map_init(struct rte_eth_dev *dev);
- 
--void sxe2_dev_pci_seg_unmap(struct sxe2_adapter *adapter, uint32_t res_type);
--
- int32_t sxe2_udp_tunnel_port_del_common(struct sxe2_adapter *ad,
- 		enum sxe2_udp_tunnel_protocol tunnel_proto, uint16_t udp_port);
- 
-diff --git a/drivers/net/sxe2/sxe2_txrx_poll.h b/drivers/net/sxe2/sxe2_txrx_poll.h
-index 708e3839d7..bfa099c097 100644
---- a/drivers/net/sxe2/sxe2_txrx_poll.h
-+++ b/drivers/net/sxe2/sxe2_txrx_poll.h
-@@ -13,8 +13,6 @@ uint16_t sxe2_tx_pkts_simple(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t
- 
- uint16_t sxe2_rx_pkts_scattered(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
- 
--uint16_t sxe2_rx_pkts_scattered(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
--
- uint16_t sxe2_rx_pkts_scattered_split(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
- 
- #endif /* SXE2_TXRX_POLL_H */
+Jie Liu (47):
+  common/sxe2: fix null pointer in class driver remove
+  common/sxe2: allow munmap during kernel reset
+  net/sxe2: fix VF PCI device ID
+  net/sxe2: fix MSIX register width in PF map table
+  net/sxe2: restore PF and port index caps assignment
+  net/sxe2: fix VSI lifecycle management
+  net/sxe2: initialize stats in representor device init
+  net/sxe2: use base device name for representor naming
+  net/sxe2: propagate LSC event to VF representors
+  net/sxe2: clear security context pointer on uninit
+  net/sxe2: rename representor VSI ID fields
+  net/sxe2: clean up duplicate function declarations
+  net/sxe2: fix null VSI dereference in device info
+  net/sxe2: fill MAC addresses in device info
+  net/sxe2: fix QinQ and RSS offload capability report
+  net/sxe2: use regular write for mapped registers
+  net/sxe2: move PCI register read macro to common header
+  net/sxe2: validate PCI map resource type
+  net/sxe2: guard PCI BAR unmap when not initialized
+  net/sxe2: fix null dereference in dev uninit
+  net/sxe2: fix duplicated cleanup in dev close
+  net/sxe2: align dev init and cleanup order
+  net/sxe2: simplify switchdev representor matching
+  net/sxe2: rename fnav cid manager symbols to flow
+  net/sxe2: move tunnel port helpers into flow module
+  net/sxe2: add ACL engine event statistics support
+  net/sxe2: refactor primary process MP message handling
+  net/sxe2: refactor Tx queue reset operations
+  net/sxe2: unify vectorized Tx buffer handling
+  net/sxe2: optimize NEON Tx descriptor fill
+  net/sxe2: fix NEON Rx ptype mapping and memory ordering
+  net/sxe2: refine vectorized Tx/Rx mode setup
+  net/sxe2: fix RSS action attribute validation
+  net/sxe2: restore PF-only guard in UDP tunnel port add
+  net/sxe2: restore link update call in status query
+  net/sxe2: validate representor ID against VF count
+  net/sxe2: use primary VSI ID for representor VSI
+  net/sxe2: wrap command params fill debug log in macro
+  net/sxe2: restore Rx queue buffer split fill support
+  net/sxe2: skip tunnel config fill on get failure
+  net/sxe2: skip flow ID assignment on filter add failure
+  net/sxe2: correct command channel log messages
+  net/sxe2: align command structs with kernel layout
+  common/sxe2: fix ioctl channel log and close handling
+  doc/sxe2: remove drv-SW-stats parameter documentation
+  net/sxe2: remove ineffective representor queue counts
+  net/sxe2: fix VEC mode selection in mode set functions
+
+ doc/guides/nics/sxe2.rst                   |  40 ++--
+ drivers/common/sxe2/sxe2_common.c          |   6 +-
+ drivers/common/sxe2/sxe2_ioctl_chnl.c      |  21 +-
+ drivers/net/sxe2/sxe2_cmd_chnl.c           | 199 +++++++++++++++--
+ drivers/net/sxe2/sxe2_cmd_chnl.h           |  15 +-
+ drivers/net/sxe2/sxe2_drv_cmd.h            |  33 +--
+ drivers/net/sxe2/sxe2_dump.c               |  10 +-
+ drivers/net/sxe2/sxe2_ethdev.c             | 192 ++++++++++-------
+ drivers/net/sxe2/sxe2_ethdev.h             |  13 +-
+ drivers/net/sxe2/sxe2_ethdev_repr.c        |  17 +-
+ drivers/net/sxe2/sxe2_flow.c               | 235 ++++++++++++++++++---
+ drivers/net/sxe2/sxe2_flow.h               |   6 +-
+ drivers/net/sxe2/sxe2_flow_define.h        |  15 +-
+ drivers/net/sxe2/sxe2_flow_parse_action.c  |  42 ++--
+ drivers/net/sxe2/sxe2_flow_parse_pattern.c | 113 ----------
+ drivers/net/sxe2/sxe2_flow_parse_pattern.h |   6 -
+ drivers/net/sxe2/sxe2_irq.c                |  24 ++-
+ drivers/net/sxe2/sxe2_mac.c                |  11 +-
+ drivers/net/sxe2/sxe2_mp.c                 |  59 +++---
+ drivers/net/sxe2/sxe2_queue.c              |   2 +
+ drivers/net/sxe2/sxe2_queue.h              |   7 +-
+ drivers/net/sxe2/sxe2_rx.c                 |   3 +-
+ drivers/net/sxe2/sxe2_security.c           |   1 +
+ drivers/net/sxe2/sxe2_switchdev.c          |  15 +-
+ drivers/net/sxe2/sxe2_tx.c                 |  42 +++-
+ drivers/net/sxe2/sxe2_tx.h                 |   4 +
+ drivers/net/sxe2/sxe2_txrx.c               |  34 +--
+ drivers/net/sxe2/sxe2_txrx_poll.h          |   2 -
+ drivers/net/sxe2/sxe2_txrx_vec.c           |  74 +++----
+ drivers/net/sxe2/sxe2_txrx_vec_avx2.c      |  10 +-
+ drivers/net/sxe2/sxe2_txrx_vec_avx512.c    | 133 +-----------
+ drivers/net/sxe2/sxe2_txrx_vec_common.h    |   9 +-
+ drivers/net/sxe2/sxe2_txrx_vec_neon.c      | 219 ++++++++++++-------
+ drivers/net/sxe2/sxe2_txrx_vec_sse.c       |  10 +-
+ drivers/net/sxe2/sxe2_vsi.c                |  31 +--
+ 35 files changed, 946 insertions(+), 707 deletions(-)
+
 -- 
 2.52.0
 
