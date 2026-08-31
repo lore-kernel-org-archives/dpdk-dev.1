@@ -2,37 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 493D0C624A5
-	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 07:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A749C61DD3
+	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 07:43:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1FD404025A;
-	Mon, 31 Aug 2026 09:18:31 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 01C93400D5;
- Mon, 31 Aug 2026 09:18:29 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C23C91A02E0;
- Mon, 31 Aug 2026 09:18:29 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com
- (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8BFED1A02D4;
- Mon, 31 Aug 2026 09:18:29 +0200 (CEST)
-Received: from lsv031405.swis.in-blr01.nxp.com
- (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 586381800068;
- Mon, 31 Aug 2026 15:18:28 +0800 (+08)
-From: Prashant Gupta <prashant.gupta_3@nxp.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 1B6024025A;
+	Mon, 31 Aug 2026 09:43:06 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id D4817400D5
+ for <dev@dpdk.org>; Mon, 31 Aug 2026 09:43:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1788162184;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=pYegBasAjivQ+YHie32dx89PYK9wwhG7Tx3EAiLbMVU=;
+ b=PFcFMOxCY33oAceLt4CacG3hv0qfbJNv0Fj2QsUhAEelH6jX6/dpMkHtXsb1+CvCElCMzz
+ xU7tABXEYERr+Dczme1TEJqrHvl8XEiij9coMGS9Otg+jJLmD6ctwv2PcmuF/MtxZhADny
+ LExKW7lfoX8eYrMM0qWMCo3f0zhgrY0=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-77--GAzP9mnMFOAosD7PhK42A-1; Mon,
+ 31 Aug 2026 03:43:00 -0400
+X-MC-Unique: -GAzP9mnMFOAosD7PhK42A-1
+X-Mimecast-MFC-AGG-ID: -GAzP9mnMFOAosD7PhK42A_1788162179
+Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 679FD1831341; Mon, 31 Aug 2026 07:42:59 +0000 (UTC)
+Received: from dmarchan.home (headnet05.pony-001.prod.iad2.dc.redhat.com
+ [10.2.32.117])
+ by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id AEB2C362; Mon, 31 Aug 2026 07:42:57 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
-Cc: stable@dpdk.org
-Subject: [PATCH v3] net/dpaa: fix Rx queue shutdown before init
-Date: Mon, 31 Aug 2026 12:48:25 +0530
-Message-ID: <20260831071825.3882423-1-prashant.gupta_3@nxp.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260831061159.3668135-1-prashant.gupta_3@nxp.com>
-References: <20260831061159.3668135-1-prashant.gupta_3@nxp.com>
+Cc: Maxime Coquelin <maxime.coquelin@redhat.com>,
+ Chenbo Xia <chenbox@nvidia.com>, Jiayu Hu <hujiayu.hu@foxmail.com>,
+ Sunil Pai G <sunil.pai.g@intel.com>
+Subject: [PATCH] vhost: remove dependency on PCI library
+Date: Mon, 31 Aug 2026 09:41:59 +0200
+Message-ID: <20260831074159.1506521-1-david.marchand@redhat.com>
 MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 5XxKpvZRcfQQ8LKioJi5LGR3N8XofYGluJvFocO-QCc_1788162179
+X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -46,49 +66,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The frame queue shutdown in dpaa_eth_rx_queue_setup() is too late:
-the queue has already been created and initialized by dpaa_dev_init(),
-so the shutdown forces a live FQ out of service and the queue no
-longer receives frames.
+Since the async datapath code switched to dmadev, there is no reason to
+depend on the pci library.
 
-Move the shutdown to dpaa_dev_init(), just before dpaa_rx_queue_init(),
-where it cleans up a frame queue left over from a previous run as
-intended.
+Fixes: 53d3f4778c1d ("vhost: integrate dmadev in asynchronous data-path")
 
-Fixes: 0e3c389b9e4f ("bus/dpaa: do proper cleanup of frame queues on shutdown")
-Cc: stable@dpdk.org
-
-Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
+Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- drivers/net/dpaa/dpaa_ethdev.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ lib/vhost/meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/dpaa/dpaa_ethdev.c b/drivers/net/dpaa/dpaa_ethdev.c
-index 4dc4d1f10c..4463c56601 100644
---- a/drivers/net/dpaa/dpaa_ethdev.c
-+++ b/drivers/net/dpaa/dpaa_ethdev.c
-@@ -1119,9 +1119,6 @@ int dpaa_eth_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_idx,
- 	DPAA_PMD_INFO("Rx queue setup for queue index: %d fq_id (0x%x)",
- 			queue_idx, rxq->fqid);
- 
--	/* Shutdown FQ before configure */
--	qman_shutdown_fq(rxq->fqid);
--
- 	if (!fif->num_profiles) {
- 		if (dpaa_intf->bp_info && dpaa_intf->bp_info->bp &&
- 			dpaa_intf->bp_info->mp != mp) {
-@@ -2355,6 +2352,11 @@ dpaa_dev_init(struct rte_eth_dev *eth_dev)
- 
- 		vsp_id = dev_vspids[loop];
- 
-+		/* Clean up a frame queue left behind by a previous run
-+		 * before it is initialized.
-+		 */
-+		qman_shutdown_fq(fqid);
-+
- 		if (dpaa_intf->cgr_rx)
- 			dpaa_intf->cgr_rx[loop].cgrid = cgrid[loop];
- 
+diff --git a/lib/vhost/meson.build b/lib/vhost/meson.build
+index 6a24981d10..64698182cd 100644
+--- a/lib/vhost/meson.build
++++ b/lib/vhost/meson.build
+@@ -44,4 +44,4 @@ headers = files(
+ driver_sdk_headers = files(
+         'vdpa_driver.h',
+ )
+-deps += ['ethdev', 'cryptodev', 'hash', 'pci', 'dmadev']
++deps += ['ethdev', 'cryptodev', 'hash', 'dmadev']
 -- 
-2.43.0
+2.54.0
 
