@@ -2,47 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2046C61DE4
-	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 02:44:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CBDEC61DE4
+	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 02:44:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CD92E402C1;
-	Mon, 31 Aug 2026 04:44:02 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B8647406BB;
+	Mon, 31 Aug 2026 04:44:03 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 40B794060F;
- Mon, 31 Aug 2026 04:43:59 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 8FFC4402BB
+ for <dev@dpdk.org>; Mon, 31 Aug 2026 04:43:59 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowAC3vTto6pRqytejBg--.44317S2;
- Mon, 31 Aug 2026 10:43:52 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowADH0T9t6pRqG9ijBg--.54831S2;
+ Mon, 31 Aug 2026 10:43:58 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
-	Jie Liu <liujie5@linkdatatechnology.com>,
-	stable@dpdk.org
-Subject: [PATCH v7 29/47] net/sxe2: unify vectorized Tx buffer handling
-Date: Mon, 31 Aug 2026 10:43:51 +0800
-Message-ID: <20260831024351.3231027-1-liujie5@linkdatatechnology.com>
+	Jie Liu <liujie5@linkdatatechnology.com>
+Subject: [PATCH v7 30/47] net/sxe2: optimize NEON Tx descriptor fill
+Date: Mon, 31 Aug 2026 10:43:57 +0800
+Message-ID: <20260831024357.3231065-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260828074056.2250222-1-liujie5@linkdatatechnology.com>
 References: <20260828074056.2250222-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowAC3vTto6pRqytejBg--.44317S2
-X-Coremail-Antispam: 1UD129KBjvAXoW3KFy5ZryUZw1fAF1fZFW5Wrg_yoW8WF1UXo
- WI9w40vF1Igry8ZFWUW3Z7WF9rW3yaq345GayFkFs8u3WUAwnrta47Jw1UJF1UGF1Y9F1D
- Wa48Ar48CrZ3Gr4fn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UjIYCTnIWjp_UUUYz7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20xva
- j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2
- x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8
- Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVCY1x0267AKxV
- W8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xf
- McIj6xIIjxv20xvE14v26r1q6rW5McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7
- v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40E
- w7xC0wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
- v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkG
- c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW7JVWDJwCI42IY6xIIjxv20xvEc7CjxVAFwI
- 0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Cr0_
- Gr1UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjfU8K
- sjUUUUU
+X-CM-TRANSID: rQCowADH0T9t6pRqG9ijBg--.54831S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWF1rAF13JryxuF4Utw18Xwb_yoWrAF4Dpr
+ WfXrW7CrnxJr43W34Ska15X3WYga4YgrnagFs7uF9Ivr1xJ3Wv9FyUta47Ar109Fy8Zw4F
+ vrs2kay3KayrCaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUkE14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+ rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+ 1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+ JVWxJr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
+ 4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2Wl
+ Yx0E2Ix0cI8IcVAFwI0_Jw0_WrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbV
+ WUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lw4CEc2x0rVAK
+ j4xxMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
+ 0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y
+ 0x0EwIxGrwCI42IY6xIIjxv20xvE14v26F1j6w1UMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
+ W8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWxJVW8
+ Jr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JU4v3
+ 8UUUUU=
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -60,478 +59,118 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Add a union of the scalar and vectorized buffer ring pointers to the
-Tx queue structure so the vectorized path can use sxe2_tx_buffer_vec
-directly. Rename the mbuf fill helper to sxe2_tx_pkts_mbuf_fill_vec,
-switch the vectorized Tx burst and mbuf release paths to the
-buffer_ring_vec member, and drop the AVX512-specific fill handling and
-conditional branching.
-
-Fixes: ac60f302cbef ("net/sxe2: add vectorized Rx and Tx")
-Cc: stable@dpdk.org
-Cc: stephen@networkplumber.org
+Add sxe2_tx_desc_fill_4_neon_simple() to write four data descriptors
+with a single vst1q_u64_x4 store, and use it in
+sxe2_tx_pkts_vec_neon_batch() for the non-offload path to reduce the
+number of per-packet descriptor stores.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_queue.h           |   5 +-
- drivers/net/sxe2/sxe2_txrx_vec.c        |  57 ++--------
- drivers/net/sxe2/sxe2_txrx_vec_avx2.c   |  10 +-
- drivers/net/sxe2/sxe2_txrx_vec_avx512.c | 133 +-----------------------
- drivers/net/sxe2/sxe2_txrx_vec_common.h |   9 +-
- drivers/net/sxe2/sxe2_txrx_vec_neon.c   |  10 +-
- drivers/net/sxe2/sxe2_txrx_vec_sse.c    |  10 +-
- 7 files changed, 40 insertions(+), 194 deletions(-)
+ drivers/net/sxe2/sxe2_txrx_vec_neon.c | 77 ++++++++++++++++++++++++---
+ 1 file changed, 70 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/sxe2/sxe2_queue.h b/drivers/net/sxe2/sxe2_queue.h
-index 10bdaf5b8d..e53a1ce852 100644
---- a/drivers/net/sxe2/sxe2_queue.h
-+++ b/drivers/net/sxe2/sxe2_queue.h
-@@ -62,7 +62,10 @@ struct sxe2_txq_ops {
- };
- struct sxe2_tx_queue {
- 	volatile union sxe2_tx_data_desc *desc_ring;
--	struct sxe2_tx_buffer *buffer_ring;
-+	union {
-+		struct sxe2_tx_buffer *buffer_ring;
-+		struct sxe2_tx_buffer_vec *buffer_ring_vec;
-+	};
- 	volatile uint32_t *tdt_reg_addr;
- 
- 	uint64_t offloads;
-diff --git a/drivers/net/sxe2/sxe2_txrx_vec.c b/drivers/net/sxe2/sxe2_txrx_vec.c
-index 1442d5d119..c9363444df 100644
---- a/drivers/net/sxe2/sxe2_txrx_vec.c
-+++ b/drivers/net/sxe2/sxe2_txrx_vec.c
-@@ -165,66 +165,31 @@ int32_t __rte_cold sxe2_tx_vec_support_check(struct rte_eth_dev *dev, uint32_t *
- 
- static void sxe2_tx_queue_mbufs_release_vec(struct sxe2_tx_queue *txq)
- {
--	struct sxe2_tx_buffer *buffer;
-+	struct sxe2_tx_buffer_vec *buffer_vec;
- 	uint16_t i;
- 
--	if (unlikely(txq == NULL || txq->buffer_ring == NULL)) {
-+	if (unlikely(txq == NULL || txq->buffer_ring_vec == NULL)) {
- 		PMD_LOG_ERR(TX, "Tx release mbufs vec, invalid params.");
- 		return;
- 	}
--	i = txq->next_dd - (txq->rs_thresh - 1);
--#ifdef CC_AVX512_SUPPORT
--	struct rte_eth_dev *dev;
--	struct sxe2_tx_buffer_vec *buffer_vec;
- 
--	dev = &rte_eth_devices[txq->port_id];
--
--	if (dev->tx_pkt_burst == sxe2_tx_pkts_vec_avx512 ||
--		dev->tx_pkt_burst == sxe2_tx_pkts_vec_avx512_simple) {
--		buffer_vec = (struct sxe2_tx_buffer_vec *)txq->buffer_ring;
-+	i = txq->next_dd - (txq->rs_thresh - 1);
-+	buffer_vec = txq->buffer_ring_vec;
- 
--		if (txq->next_use < i) {
--			for ( ; i < txq->ring_depth; ++i) {
--				if (buffer_vec[i].mbuf != NULL) {
--					rte_pktmbuf_free_seg(buffer_vec[i].mbuf);
--					buffer_vec[i].mbuf = NULL;
--				}
--			}
--			i = 0;
--		}
--		for ( ; i < txq->next_use; ++i) {
-+	if (txq->next_use < i) {
-+		for ( ; i < txq->ring_depth; ++i) {
- 			if (buffer_vec[i].mbuf != NULL) {
- 				rte_pktmbuf_free_seg(buffer_vec[i].mbuf);
- 				buffer_vec[i].mbuf = NULL;
- 			}
- 		}
--	} else {
--#endif
--		buffer = txq->buffer_ring;
--		buffer = txq->buffer_ring;
--		if (txq->next_use < i) {
--			for ( ; i < txq->ring_depth; ++i) {
--				if (buffer[i].mbuf != NULL) {
--					rte_pktmbuf_free_seg(buffer[i].mbuf);
--					buffer[i].mbuf = NULL;
--				}
--			}
--			i = 0;
--		}
--		for (; i < txq->next_use; ++i) {
--			if (buffer[i].mbuf != NULL) {
--				rte_pktmbuf_free_seg(buffer[i].mbuf);
--				buffer[i].mbuf = NULL;
--			}
--		}
--#ifdef CC_AVX512_SUPPORT
-+		i = 0;
- 	}
--#endif
- 
--	for (; i < txq->next_use; ++i) {
--		if (buffer[i].mbuf != NULL) {
--			rte_pktmbuf_free_seg(buffer[i].mbuf);
--			buffer[i].mbuf = NULL;
-+	for ( ; i < txq->next_use; ++i) {
-+		if (buffer_vec[i].mbuf != NULL) {
-+			rte_pktmbuf_free_seg(buffer_vec[i].mbuf);
-+			buffer_vec[i].mbuf = NULL;
- 		}
- 	}
- }
-diff --git a/drivers/net/sxe2/sxe2_txrx_vec_avx2.c b/drivers/net/sxe2/sxe2_txrx_vec_avx2.c
-index 0618e6d988..da96ca3064 100644
---- a/drivers/net/sxe2/sxe2_txrx_vec_avx2.c
-+++ b/drivers/net/sxe2/sxe2_txrx_vec_avx2.c
-@@ -115,7 +115,7 @@ sxe2_tx_pkts_vec_avx2_batch(struct sxe2_tx_queue *txq, struct rte_mbuf **tx_pkts
- 			    uint16_t nb_pkts, bool with_offloads)
- {
- 	volatile union sxe2_tx_data_desc *desc;
--	struct sxe2_tx_buffer *buffer;
-+	struct sxe2_tx_buffer_vec *buffer;
- 	uint16_t next_use;
- 	uint16_t res_num;
- 	uint16_t tx_num;
-@@ -134,14 +134,14 @@ sxe2_tx_pkts_vec_avx2_batch(struct sxe2_tx_queue *txq, struct rte_mbuf **tx_pkts
- 
- 	next_use = txq->next_use;
- 	desc     = &txq->desc_ring[next_use];
--	buffer   = &txq->buffer_ring[next_use];
-+	buffer   = &txq->buffer_ring_vec[next_use];
- 
- 	txq->desc_free_num -= nb_pkts;
- 
- 	res_num = txq->ring_depth - txq->next_use;
- 
- 	if (tx_num >= res_num) {
--		sxe2_tx_pkts_mbuf_fill(buffer, tx_pkts, res_num);
-+		sxe2_tx_pkts_mbuf_fill_vec(buffer, tx_pkts, res_num);
- 
- 		sxe2_tx_desc_fill_avx2(desc, tx_pkts, res_num,
- 				SXE2_TX_DATA_DESC_CMD_EOP, with_offloads);
-@@ -157,10 +157,10 @@ sxe2_tx_pkts_vec_avx2_batch(struct sxe2_tx_queue *txq, struct rte_mbuf **tx_pkts
- 		next_use     = 0;
- 		txq->next_rs = txq->rs_thresh - 1;
- 		desc         = &txq->desc_ring[next_use];
--		buffer       = &txq->buffer_ring[next_use];
-+		buffer       = &txq->buffer_ring_vec[next_use];
- 	}
- 
--	sxe2_tx_pkts_mbuf_fill(buffer, tx_pkts, tx_num);
-+	sxe2_tx_pkts_mbuf_fill_vec(buffer, tx_pkts, tx_num);
- 
- 	sxe2_tx_desc_fill_avx2(desc, tx_pkts, tx_num,
- 			SXE2_TX_DATA_DESC_CMD_EOP, with_offloads);
-diff --git a/drivers/net/sxe2/sxe2_txrx_vec_avx512.c b/drivers/net/sxe2/sxe2_txrx_vec_avx512.c
-index a830c7a33b..6c8415ee5a 100644
---- a/drivers/net/sxe2/sxe2_txrx_vec_avx512.c
-+++ b/drivers/net/sxe2/sxe2_txrx_vec_avx512.c
-@@ -1,8 +1,6 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
-  */
--
--#ifndef SXE2_TEST
- #include <rte_vect.h>
- 
- #include "sxe2_ethdev.h"
-@@ -12,114 +10,6 @@
- #include "sxe2_txrx_vec_common.h"
- #include "sxe2_vsi.h"
- 
--static __rte_always_inline int32_t sxe2_tx_bufs_free_vec_avx512(struct sxe2_tx_queue *txq)
--{
--	struct sxe2_tx_buffer_vec *buffer;
--	struct rte_mbuf *mbuf;
--	struct rte_mbuf *mbuf_free_arr[SXE2_TX_FREE_BUFFER_SIZE_MAX_VEC];
--	struct rte_mempool *mp;
--	struct rte_mempool_cache *cache;
--	void **cache_objs;
--	uint32_t copied;
--	uint32_t i;
--	int32_t ret;
--	uint16_t rs_thresh;
--	uint16_t free_num;
--
--	if (rte_cpu_to_le_64(SXE2_TX_DESC_DTYPE_DESC_DONE) !=
--		(txq->desc_ring[txq->next_dd].wb.dd &
--			rte_cpu_to_le_64(SXE2_TX_DESC_DTYPE_MASK))) {
--		ret = 0;
--		goto l_end;
--	}
--
--	rs_thresh = txq->rs_thresh;
--
--	buffer = (struct sxe2_tx_buffer_vec *)txq->buffer_ring;
--	buffer += txq->next_dd - (rs_thresh - 1);
--
--	if ((txq->offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE) &&
--			(rs_thresh & 31) == 0) {
--		mp = buffer[0].mbuf->pool;
--		cache = rte_mempool_default_cache(mp, rte_lcore_id());
--
--		if (cache == NULL || cache->len)
--			goto normal;
--
--		if (rs_thresh > RTE_MEMPOOL_CACHE_MAX_SIZE) {
--			(void)rte_mempool_ops_enqueue_bulk(mp, (void *)buffer, rs_thresh);
--			goto done;
--		}
--		cache_objs = &cache->objs[cache->len];
--
--		copied = 0;
--		while (copied < rs_thresh) {
--			const __m512i objs0 = _mm512_loadu_si512(&buffer[copied]);
--			const __m512i objs1 = _mm512_loadu_si512(&buffer[copied + 8]);
--			const __m512i objs2 = _mm512_loadu_si512(&buffer[copied + 16]);
--			const __m512i objs3 = _mm512_loadu_si512(&buffer[copied + 24]);
--
--			_mm512_storeu_si512(&cache_objs[copied], objs0);
--			_mm512_storeu_si512(&cache_objs[copied + 8], objs1);
--			_mm512_storeu_si512(&cache_objs[copied + 16], objs2);
--			_mm512_storeu_si512(&cache_objs[copied + 24], objs3);
--			copied += 32;
--		}
--		cache->len += rs_thresh;
--
--		if (cache->len >= cache->flushthresh) {
--			(void)rte_mempool_ops_enqueue_bulk(mp,
--					&cache->objs[cache->size], cache->len - cache->size);
--			cache->len = cache->size;
--		}
--		goto done;
--	}
--
--normal:
--	mbuf = rte_pktmbuf_prefree_seg(buffer[0].mbuf);
--
--	if (likely(mbuf)) {
--		mbuf_free_arr[0] = mbuf;
--		free_num = 1;
--
--		for (i = 1; i < rs_thresh; ++i) {
--			mbuf = rte_pktmbuf_prefree_seg(buffer[i].mbuf);
--
--			if (likely(mbuf)) {
--				if (likely(mbuf->pool == mbuf_free_arr[0]->pool)) {
--					mbuf_free_arr[free_num] = mbuf;
--					free_num++;
--				} else {
--					rte_mempool_put_bulk(mbuf_free_arr[0]->pool,
--						(void *)mbuf_free_arr, free_num);
--
--				mbuf_free_arr[0] = mbuf;
--				free_num = 1;
--			}
--			}
--		}
--
--		rte_mempool_put_bulk(mbuf_free_arr[0]->pool,
--						(void *)mbuf_free_arr, free_num);
--	} else {
--		for (i = 1; i < rs_thresh; ++i) {
--			mbuf = rte_pktmbuf_prefree_seg(buffer[i].mbuf);
--			if (mbuf != NULL)
--				rte_mempool_put(mbuf->pool, mbuf);
--		}
--	}
--
--done:
--	txq->desc_free_num += txq->rs_thresh;
--	txq->next_dd       += txq->rs_thresh;
--	if (txq->next_dd >= txq->ring_depth)
--		txq->next_dd = txq->rs_thresh - 1;
--	ret = rs_thresh;
--
--l_end:
--	return ret;
--}
--
- static __rte_always_inline void
- sxe2_tx_desc_fill_one_avx512(volatile union sxe2_tx_data_desc *desc, struct rte_mbuf *pkt,
- 	uint64_t desc_cmd, bool with_offloads)
-@@ -207,16 +97,6 @@ void sxe2_tx_desc_fill_avx512(volatile union sxe2_tx_data_desc *desc, struct rte
- 	}
- }
- 
--static __rte_always_inline void
--sxe2_tx_pkts_mbuf_fill_avx512(struct sxe2_tx_buffer_vec *buffer,
--	struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
--{
--	uint16_t i;
--
--	for (i = 0; i < nb_pkts; ++i)
--		buffer[i].mbuf = tx_pkts[i];
--}
--
- static __rte_always_inline uint16_t
- sxe2_tx_pkts_vec_avx512_batch(struct sxe2_tx_queue *txq, struct rte_mbuf **tx_pkts,
- 	uint16_t nb_pkts, bool with_offloads)
-@@ -228,7 +108,7 @@ sxe2_tx_pkts_vec_avx512_batch(struct sxe2_tx_queue *txq, struct rte_mbuf **tx_pk
- 	uint16_t tx_num;
- 
- 	if (txq->desc_free_num < txq->free_thresh)
--		(void)sxe2_tx_bufs_free_vec_avx512(txq);
-+		(void)sxe2_tx_bufs_free_vec(txq);
- 
- 	nb_pkts = RTE_MIN(txq->desc_free_num, nb_pkts);
- 	if (unlikely(nb_pkts == 0)) {
-@@ -241,15 +121,14 @@ sxe2_tx_pkts_vec_avx512_batch(struct sxe2_tx_queue *txq, struct rte_mbuf **tx_pk
- 
- 	next_use = txq->next_use;
- 	desc     = &txq->desc_ring[next_use];
--	buffer   = (struct sxe2_tx_buffer_vec *)txq->buffer_ring;
--	buffer  += next_use;
-+	buffer   = &txq->buffer_ring_vec[next_use];
- 
- 	txq->desc_free_num -= nb_pkts;
- 
- 	res_num = txq->ring_depth - txq->next_use;
- 
- 	if (tx_num >= res_num) {
--		sxe2_tx_pkts_mbuf_fill_avx512(buffer, tx_pkts, res_num);
-+		sxe2_tx_pkts_mbuf_fill_vec(buffer, tx_pkts, res_num);
- 
- 		sxe2_tx_desc_fill_avx512(desc, tx_pkts, res_num,
- 					SXE2_TX_DATA_DESC_CMD_EOP, with_offloads);
-@@ -265,10 +144,10 @@ sxe2_tx_pkts_vec_avx512_batch(struct sxe2_tx_queue *txq, struct rte_mbuf **tx_pk
- 		next_use     = 0;
- 		txq->next_rs = txq->rs_thresh - 1;
- 		desc         = txq->desc_ring;
--		buffer       = (struct sxe2_tx_buffer_vec *)txq->buffer_ring;
-+		buffer       = &txq->buffer_ring_vec[next_use];
- 	}
- 
--	sxe2_tx_pkts_mbuf_fill_avx512(buffer, tx_pkts, tx_num);
-+	sxe2_tx_pkts_mbuf_fill_vec(buffer, tx_pkts, tx_num);
- 
- 	sxe2_tx_desc_fill_avx512(desc, tx_pkts, tx_num,
- 			SXE2_TX_DATA_DESC_CMD_EOP, with_offloads);
-@@ -863,5 +742,3 @@ uint16_t sxe2_rx_pkts_scattered_vec_avx512_offload(void *rx_queue,
- 	return sxe2_rx_pkts_scattered_common_vec_avx512(rx_queue,
- 			rx_pkts, nb_pkts, true);
- }
--
--#endif
-diff --git a/drivers/net/sxe2/sxe2_txrx_vec_common.h b/drivers/net/sxe2/sxe2_txrx_vec_common.h
-index 9ac99cf0fa..ede4c236b1 100644
---- a/drivers/net/sxe2/sxe2_txrx_vec_common.h
-+++ b/drivers/net/sxe2/sxe2_txrx_vec_common.h
-@@ -25,10 +25,11 @@
- #define SXE2_TX_FREE_BUFFER_SIZE_MAX_VEC  64
- 
- static __rte_always_inline void
--sxe2_tx_pkts_mbuf_fill(struct sxe2_tx_buffer *buffer,
--		struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
-+sxe2_tx_pkts_mbuf_fill_vec(struct sxe2_tx_buffer_vec *buffer,
-+			   struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- {
- 	uint16_t i;
-+
- 	for (i = 0; i < nb_pkts; ++i)
- 		buffer[i].mbuf = tx_pkts[i];
- }
-@@ -36,7 +37,7 @@ sxe2_tx_pkts_mbuf_fill(struct sxe2_tx_buffer *buffer,
- static __rte_always_inline int32_t
- sxe2_tx_bufs_free_vec(struct sxe2_tx_queue *txq)
- {
--	struct sxe2_tx_buffer *buffer;
-+	struct sxe2_tx_buffer_vec *buffer;
- 	struct rte_mbuf *mbuf;
- 	struct rte_mbuf *mbuf_free_arr[SXE2_TX_FREE_BUFFER_SIZE_MAX_VEC];
- 	int32_t ret;
-@@ -50,7 +51,7 @@ sxe2_tx_bufs_free_vec(struct sxe2_tx_queue *txq)
- 		goto l_end;
- 	}
- 	rs_thresh = txq->rs_thresh;
--	buffer = &txq->buffer_ring[txq->next_dd - (rs_thresh - 1)];
-+	buffer = &txq->buffer_ring_vec[txq->next_dd - (rs_thresh - 1)];
- 	mbuf = rte_pktmbuf_prefree_seg(buffer[0].mbuf);
- 	if (likely(mbuf)) {
- 		mbuf_free_arr[0] = mbuf;
 diff --git a/drivers/net/sxe2/sxe2_txrx_vec_neon.c b/drivers/net/sxe2/sxe2_txrx_vec_neon.c
-index 4e5cb87cd5..b51cc55368 100644
+index b51cc55368..6b4c70c7ac 100644
 --- a/drivers/net/sxe2/sxe2_txrx_vec_neon.c
 +++ b/drivers/net/sxe2/sxe2_txrx_vec_neon.c
-@@ -39,7 +39,7 @@ sxe2_tx_pkts_vec_neon_batch(struct sxe2_tx_queue *txq, struct rte_mbuf **tx_pkts
+@@ -34,6 +34,52 @@ sxe2_tx_desc_fill_one_neon(volatile union sxe2_tx_data_desc *desc,
+ 	vst1q_u64(RTE_CAST_PTR(uint64_t *, desc), data_desc);
+ }
+ 
++static __rte_always_inline void
++sxe2_tx_desc_fill_4_neon_simple(volatile union sxe2_tx_data_desc *desc,
++				struct rte_mbuf **pkts)
++{
++	uint64x2_t d0, d1, d2, d3;
++	uint64x2x4_t v;
++	const uint64_t cmd_base = ((uint64_t)SXE2_TX_DESC_DTYPE_DATA) |
++				((uint64_t)SXE2_TX_DATA_DESC_CMD_EOP) <<
++				SXE2_TX_DATA_DESC_CMD_SHIFT;
++
++	d0 = (uint64x2_t){
++		rte_pktmbuf_iova(pkts[0]),
++		cmd_base |
++		((uint64_t)pkts[0]->data_len) << SXE2_TX_DATA_DESC_BUF_SZ_SHIFT |
++		((uint64_t)SXE2_TX_DATA_DESC_MACLEN_VAL(pkts[0]->l2_len))
++				<< SXE2_TX_DATA_DESC_OFFSET_SHIFT
++	};
++	d1 = (uint64x2_t){
++		rte_pktmbuf_iova(pkts[1]),
++		cmd_base |
++		((uint64_t)pkts[1]->data_len) << SXE2_TX_DATA_DESC_BUF_SZ_SHIFT |
++		((uint64_t)SXE2_TX_DATA_DESC_MACLEN_VAL(pkts[1]->l2_len))
++				<< SXE2_TX_DATA_DESC_OFFSET_SHIFT
++	};
++	d2 = (uint64x2_t){
++		rte_pktmbuf_iova(pkts[2]),
++		cmd_base |
++		((uint64_t)pkts[2]->data_len) << SXE2_TX_DATA_DESC_BUF_SZ_SHIFT |
++		((uint64_t)SXE2_TX_DATA_DESC_MACLEN_VAL(pkts[2]->l2_len))
++				<< SXE2_TX_DATA_DESC_OFFSET_SHIFT
++	};
++	d3 = (uint64x2_t){
++		rte_pktmbuf_iova(pkts[3]),
++		cmd_base |
++		((uint64_t)pkts[3]->data_len) << SXE2_TX_DATA_DESC_BUF_SZ_SHIFT |
++		((uint64_t)SXE2_TX_DATA_DESC_MACLEN_VAL(pkts[3]->l2_len))
++				<< SXE2_TX_DATA_DESC_OFFSET_SHIFT
++	};
++
++	v.val[0] = d0;
++	v.val[1] = d1;
++	v.val[2] = d2;
++	v.val[3] = d3;
++	vst1q_u64_x4(RTE_CAST_PTR(uint64_t *, desc), v);
++}
++
+ static __rte_always_inline uint16_t
+ sxe2_tx_pkts_vec_neon_batch(struct sxe2_tx_queue *txq, struct rte_mbuf **tx_pkts,
  			uint16_t nb_pkts, bool with_offloads)
- {
- 	volatile union sxe2_tx_data_desc *desc;
--	struct sxe2_tx_buffer *buffer;
-+	struct sxe2_tx_buffer_vec *buffer;
- 	uint16_t next_use;
- 	uint16_t res_num;
- 	uint16_t tx_num;
-@@ -59,14 +59,14 @@ sxe2_tx_pkts_vec_neon_batch(struct sxe2_tx_queue *txq, struct rte_mbuf **tx_pkts
- 
- 	next_use = txq->next_use;
- 	desc     = &txq->desc_ring[next_use];
--	buffer   = &txq->buffer_ring[next_use];
-+	buffer   = &txq->buffer_ring_vec[next_use];
- 
- 	txq->desc_free_num -= nb_pkts;
- 
- 	res_num = txq->ring_depth - txq->next_use;
+@@ -67,10 +113,18 @@ sxe2_tx_pkts_vec_neon_batch(struct sxe2_tx_queue *txq, struct rte_mbuf **tx_pkts
  
  	if (tx_num >= res_num) {
--		sxe2_tx_pkts_mbuf_fill(buffer, tx_pkts, res_num);
-+		sxe2_tx_pkts_mbuf_fill_vec(buffer, tx_pkts, res_num);
+ 		sxe2_tx_pkts_mbuf_fill_vec(buffer, tx_pkts, res_num);
+-
+-		for (i = 0; i < res_num - 1; ++i, ++tx_pkts, ++desc) {
+-			sxe2_tx_desc_fill_one_neon(desc, *tx_pkts,
+-					SXE2_TX_DATA_DESC_CMD_EOP, with_offloads);
++		if (with_offloads) {
++			for (i = 0; i < res_num - 1; ++i, ++tx_pkts, ++desc) {
++				sxe2_tx_desc_fill_one_neon(desc, *tx_pkts,
++						SXE2_TX_DATA_DESC_CMD_EOP, with_offloads);
++			}
++		} else {
++			for (i = 0; i + 3 < res_num - 1; i += 4, tx_pkts += 4, desc += 4)
++				sxe2_tx_desc_fill_4_neon_simple(desc, tx_pkts);
++			for (; i < res_num - 1; ++i, ++tx_pkts, ++desc) {
++				sxe2_tx_desc_fill_one_neon(desc, *tx_pkts,
++						SXE2_TX_DATA_DESC_CMD_EOP, false);
++			}
+ 		}
  
- 		for (i = 0; i < res_num - 1; ++i, ++tx_pkts, ++desc) {
- 			sxe2_tx_desc_fill_one_neon(desc, *tx_pkts,
-@@ -82,10 +82,10 @@ sxe2_tx_pkts_vec_neon_batch(struct sxe2_tx_queue *txq, struct rte_mbuf **tx_pkts
- 		next_use     = 0;
- 		txq->next_rs = txq->rs_thresh - 1;
- 		desc         = &txq->desc_ring[next_use];
--		buffer       = &txq->buffer_ring[next_use];
-+		buffer       = &txq->buffer_ring_vec[next_use];
+ 		sxe2_tx_desc_fill_one_neon(desc, *tx_pkts++,
+@@ -87,9 +141,18 @@ sxe2_tx_pkts_vec_neon_batch(struct sxe2_tx_queue *txq, struct rte_mbuf **tx_pkts
+ 
+ 	sxe2_tx_pkts_mbuf_fill_vec(buffer, tx_pkts, tx_num);
+ 
+-	for (i = 0; i < tx_num; ++i, ++tx_pkts, ++desc) {
+-		sxe2_tx_desc_fill_one_neon(desc, *tx_pkts,
+-				SXE2_TX_DATA_DESC_CMD_EOP, with_offloads);
++	if (with_offloads) {
++		for (i = 0; i < tx_num; ++i, ++tx_pkts, ++desc) {
++			sxe2_tx_desc_fill_one_neon(desc, *tx_pkts,
++					SXE2_TX_DATA_DESC_CMD_EOP, true);
++		}
++	} else {
++		for (i = 0; i + 3 < tx_num; i += 4, tx_pkts += 4, desc += 4)
++			sxe2_tx_desc_fill_4_neon_simple(desc, tx_pkts);
++		for (; i < tx_num; ++i, ++tx_pkts, ++desc) {
++			sxe2_tx_desc_fill_one_neon(desc, *tx_pkts,
++					SXE2_TX_DATA_DESC_CMD_EOP, false);
++		}
  	}
  
--	sxe2_tx_pkts_mbuf_fill(buffer, tx_pkts, tx_num);
-+	sxe2_tx_pkts_mbuf_fill_vec(buffer, tx_pkts, tx_num);
- 
- 	for (i = 0; i < tx_num; ++i, ++tx_pkts, ++desc) {
- 		sxe2_tx_desc_fill_one_neon(desc, *tx_pkts,
-diff --git a/drivers/net/sxe2/sxe2_txrx_vec_sse.c b/drivers/net/sxe2/sxe2_txrx_vec_sse.c
-index c3e8a2983b..181bb40041 100644
---- a/drivers/net/sxe2/sxe2_txrx_vec_sse.c
-+++ b/drivers/net/sxe2/sxe2_txrx_vec_sse.c
-@@ -40,7 +40,7 @@ sxe2_tx_pkts_vec_sse_batch(struct sxe2_tx_queue *txq,
- 		uint16_t nb_pkts, bool with_offloads)
- {
- 	volatile union sxe2_tx_data_desc *desc;
--	struct sxe2_tx_buffer *buffer;
-+	struct sxe2_tx_buffer_vec *buffer;
- 	uint16_t next_use;
- 	uint16_t res_num;
- 	uint16_t tx_num;
-@@ -57,11 +57,11 @@ sxe2_tx_pkts_vec_sse_batch(struct sxe2_tx_queue *txq,
- 	tx_num = nb_pkts;
- 	next_use = txq->next_use;
- 	desc     = &txq->desc_ring[next_use];
--	buffer   = &txq->buffer_ring[next_use];
-+	buffer   = &txq->buffer_ring_vec[next_use];
- 	txq->desc_free_num -= nb_pkts;
- 	res_num = txq->ring_depth - txq->next_use;
- 	if (tx_num >= res_num) {
--		sxe2_tx_pkts_mbuf_fill(buffer, tx_pkts, res_num);
-+		sxe2_tx_pkts_mbuf_fill_vec(buffer, tx_pkts, res_num);
- 		for (i = 0; i < res_num - 1; ++i, ++tx_pkts, ++desc) {
- 			sxe2_tx_desc_fill_one_sse(desc, *tx_pkts,
- 						  SXE2_TX_DATA_DESC_CMD_EOP,
-@@ -74,9 +74,9 @@ sxe2_tx_pkts_vec_sse_batch(struct sxe2_tx_queue *txq,
- 		next_use     = 0;
- 		txq->next_rs = txq->rs_thresh - 1;
- 		desc         = &txq->desc_ring[next_use];
--		buffer       = &txq->buffer_ring[next_use];
-+		buffer       = &txq->buffer_ring_vec[next_use];
- 	}
--	sxe2_tx_pkts_mbuf_fill(buffer, tx_pkts, tx_num);
-+	sxe2_tx_pkts_mbuf_fill_vec(buffer, tx_pkts, tx_num);
- 	for (i = 0; i < tx_num; ++i, ++tx_pkts, ++desc) {
- 		sxe2_tx_desc_fill_one_sse(desc, *tx_pkts,
- 					  SXE2_TX_DATA_DESC_CMD_EOP,
+ 	next_use += tx_num;
 -- 
 2.52.0
 
