@@ -2,73 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 906BBC624A4
-	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 15:46:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E82BAC624A4
+	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 15:47:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 26A12402EE;
-	Mon, 31 Aug 2026 17:46:55 +0200 (CEST)
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com
- [209.85.216.50]) by mails.dpdk.org (Postfix) with ESMTP id 8860440269
- for <dev@dpdk.org>; Mon, 31 Aug 2026 17:46:53 +0200 (CEST)
-Received: by mail-pj1-f50.google.com with SMTP id
- 98e67ed59e1d1-381b831d535so6298883a91.0
- for <dev@dpdk.org>; Mon, 31 Aug 2026 08:46:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788191212;
- x=1788796012; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=MMFXpPxmeMlHkL6ZJxRhMzTxaS+JHKfCCFnR7UIw8cI=;
- b=PSeBzKcxaBbbE2DOLyvGBdk08LyILYPCWG/dmbrFNhKVB1u7Jk1V5fLPi92oRvr4lE
- Sgpcw3FhO1JQayJk7HvmdIpBVwWJh/8+tueUO5G1zbFSY46SUoE4aCDl4tlE/EU4rRrr
- Yv9BrVCdJkgrNYQSFhuv3xoqw8aAgLOJmyRsT1oQrYo9ywEGiDHrB8frCk1GGPXGOh5f
- 6/jQi4oqyVB4vY/ul4YYR0dHR2avWguNGL90UtzZJDNP4yESIuGuIHnIyTrXISVLsVww
- Zn+E/9MOtC1UlT7MMkxNj2lUpBlNyV5T8lm89n7Ve2VbdwQIWBBQ5iLIOkImb/7PSpFn
- VSkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788191212; x=1788796012;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=MMFXpPxmeMlHkL6ZJxRhMzTxaS+JHKfCCFnR7UIw8cI=;
- b=kJ1f8lP25qmrq+3CG1LvdUcyjQA5HUsf5giDqpX91pSGiOyf8AnXEKP3/bvzy1k/N3
- BjhqwK7kOaP9cTYUjos5qc60hF9W1ucMD+NI/hcbgwCRm0pvQ6lEEKfSvCiTrRUfnF7b
- TfCXiFU0X9BBq2INPGOCtlmLMW6qgJ2ucTZ2Uvt1r0UCWE8BeHfZbqbWauT8MW27SD7i
- cdlp5CnBVcZ2BwH/ppvBFNAiSi/5wqpD3yzCbKQ6oyo1tDTQBpescw0WpL+kz1sZ7QCw
- 8J3Rfowt8GY3Kvp+F0IeoeG6SyScBFqzRgz+hoNI7KdzVg84Gyn+IZ9AySnH2/qMchbl
- kANA==
-X-Gm-Message-State: AFuF++lnzZ2ch0/RMGj2jPBWDVkgk+c1WZQcj7/dbucZr3Oha70Uyr95
- VZr/NnQgOhkDnagrun2ITFcJxib1t9hS2rSkADuZUOJuW1e3EFSAtIG8B7M4rfTzw4w=
-X-Gm-Gg: AYBFou1OQ/S0X+ONZz8dsjpFpsOt+NxBJPG/rFq8lGFszYtCpCXVRdwaT8AsA2O1cfE
- afPC45Q2g3jq3P44oNz2yuuck6SAofuVGY5GYMrWypV32pZ19yCqitrBLIvRvEA+wnl6pUiLklV
- VRub51Rx1wNJZz3QnRTEz4+WmOXc19cdkV17AkYXlq7BxL8XEKtVNiRkggKdex1el0NQQtSbzNd
- KSNtyBrNKBZRkaxRoqtouOQ769XQathOLu3lI7LhlIEZ++Iy0Aj62yLAiFxw43/ONZW2muo57FK
- IjoM4KidBRLxwSX0gUbKVsdvAahoDesUEiZMHYSlXKdApzDXoEiQAQNp/nEbe0M1+t6P942vdrY
- XLW8VpgnCu7RPnimyFGZURJ7CiHX1doFZHevf6xUEemVQXRVEv/F/+X12s3WzWpbCT26rbfMzp9
- uWUeU8+fApVUJ6Y/6DUOIMa8ZPOKgkUGcR1LQVevEPDwKK7VMi+7oya3zwgP6cGfjK4inCEv+jA
- XMVsqZHK00ZIIYy9B0gVx8heB1tWQ==
-X-Received: by 2002:a17:90b:2ec7:b0:395:7fff:a08f with SMTP id
- 98e67ed59e1d1-396d0c0af4bmr45350843a91.0.1788191212297; 
- Mon, 31 Aug 2026 08:46:52 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3990bd1dcfbsm90107a91.2.2026.08.31.08.46.49
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 31 Aug 2026 08:46:52 -0700 (PDT)
-Date: Mon, 31 Aug 2026 08:46:42 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Prashant Gupta <prashant.gupta_3@nxp.com>
-Cc: dev@dpdk.org, stable@dpdk.org
-Subject: Re: [PATCH v3] net/dpaa: fix Rx queue shutdown before init
-Message-ID: <20260831084642.7de76c58@phoenix.local>
-In-Reply-To: <20260831071825.3882423-1-prashant.gupta_3@nxp.com>
-References: <20260831061159.3668135-1-prashant.gupta_3@nxp.com>
- <20260831071825.3882423-1-prashant.gupta_3@nxp.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 2EF9440269;
+	Mon, 31 Aug 2026 17:47:30 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 5B4704025A
+ for <dev@dpdk.org>; Mon, 31 Aug 2026 17:47:28 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=URYDcTRqL5kVtqG0zKz8WnKwbU340nOI5dplMYCkNHU=;
+ b=X2Awhxk/FcYPrHbT65bq4KDc3a9aAwiolgXvHUur4GEiBojbgbN4hDOuwglTtWgSRJMwhCc+S
+ ckg9QghCxC+LCXuUr6m5tBjZlZam5zLD40oHJD93o4n3cKKFeJmJTgnkcRlPOOgVMWatqdGNn65
+ Gv4b8SnkuYYX2mNe22Z0f6U=
+Received: from mail.maildlp.com (unknown [172.18.224.107])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4hYYJM38HYzHnH4s;
+ Mon, 31 Aug 2026 23:46:43 +0800 (CST)
+Received: from frapema100002.china.huawei.com (unknown [7.182.19.63])
+ by mail.maildlp.com (Postfix) with ESMTPS id 6B5E14058B;
+ Mon, 31 Aug 2026 23:47:27 +0800 (CST)
+Received: from frapema500003.china.huawei.com (7.182.19.114) by
+ frapema100002.china.huawei.com (7.182.19.63) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.45; Mon, 31 Aug 2026 17:47:27 +0200
+Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
+ frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.2562.045;
+ Mon, 31 Aug 2026 17:47:27 +0200
+From: Marat Khalili <marat.khalili@huawei.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: Konstantin Ananyev <konstantin.ananyev@huawei.com>, "dev@dpdk.org"
+ <dev@dpdk.org>
+Subject: RE: [PATCH] test/bpf: use unit test suite
+Thread-Topic: [PATCH] test/bpf: use unit test suite
+Thread-Index: AQHdOLO5mlj7DteyzkukSIduVk98kLa3030ggABP54CAACJB0A==
+Date: Mon, 31 Aug 2026 15:47:26 +0000
+Message-ID: <9d5e7e1f3c4b4f7bb398fbb2eb429446@huawei.com>
+References: <20260830191349.604934-1-stephen@networkplumber.org>
+ <8ecd0e24395d4a5eb53c6c4355f73cf7@huawei.com>
+ <20260831081239.658c078d@phoenix.local>
+In-Reply-To: <20260831081239.658c078d@phoenix.local>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.137.78]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,22 +63,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 31 Aug 2026 12:48:25 +0530
-Prashant Gupta <prashant.gupta_3@nxp.com> wrote:
+> The only technical difference is that meson runs individual tests in
+> parallel and have seen some failures on my machine.
 
-> The frame queue shutdown in dpaa_eth_rx_queue_setup() is too late:
-> the queue has already been created and initialized by dpaa_dev_init(),
-> so the shutdown forces a live FQ out of service and the queue no
-> longer receives frames.
-> 
-> Move the shutdown to dpaa_dev_init(), just before dpaa_rx_queue_init(),
-> where it cleans up a frame queue left over from a previous run as
-> intended.
-> 
-> Fixes: 0e3c389b9e4f ("bus/dpaa: do proper cleanup of frame queues on shutdown")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
-> ---
+To the best of my knowledge none of the BPF tests are timing-dependent. If =
+they
+fail to run in parallel it may very well be an issue that needs to be
+investigated. If it happens again, can you save the logs and open a bug?
 
-Applied to next-net
+> But for me it is more about decluttering the output.
+
+Hard for me to argue with this one, since it is highly subjective. But note
+that for the price of 23 separate lines in the meson test output when one o=
+f
+the tests actually fails the output is significantly less cluttered, only
+showing the output of the relevant test.
+
+Do you think 20+ independent tests is too much for a single library? If we =
+set
+some hard limit like this then I suppose we have to collapse them. Then I w=
+ould
+elevate bpf_test elements to the level of test suite cases, three levels of
+containers is too much and going to be real pain to walk through in gdb.
