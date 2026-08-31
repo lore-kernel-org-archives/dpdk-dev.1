@@ -2,42 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 776F3C61DE4
-	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 02:43:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3D76C61DE2
+	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 02:43:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 10A8F40E15;
-	Mon, 31 Aug 2026 04:43:39 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 664F940611;
+	Mon, 31 Aug 2026 04:43:49 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 96CA5402C1
- for <dev@dpdk.org>; Mon, 31 Aug 2026 04:43:36 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 02EAB40264;
+ Mon, 31 Aug 2026 04:43:46 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowADn7DpW6pRq_dajBg--.28058S2;
- Mon, 31 Aug 2026 10:43:34 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowABXXDpc6pRqSdejBg--.40314S2;
+ Mon, 31 Aug 2026 10:43:40 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
-	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v7 26/47] net/sxe2: add ACL engine event statistics support
-Date: Mon, 31 Aug 2026 10:43:34 +0800
-Message-ID: <20260831024334.3230921-1-liujie5@linkdatatechnology.com>
+	Jie Liu <liujie5@linkdatatechnology.com>,
+	stable@dpdk.org
+Subject: [PATCH v7 27/47] net/sxe2: refactor primary process MP message
+ handling
+Date: Mon, 31 Aug 2026 10:43:40 +0800
+Message-ID: <20260831024340.3230938-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260828074056.2250222-1-liujie5@linkdatatechnology.com>
 References: <20260828074056.2250222-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowADn7DpW6pRq_dajBg--.28058S2
-X-Coremail-Antispam: 1UD129KBjvAXoWfZw1rWFyrAr4UCw1fCrWUXFb_yoW8tr1kto
- WxJrWUZFyxA34Iyw4kXr18uFy7Aay8Gw15Xa1fGF4q9wsrGa4jvF4qqwsxX3WDtFs5trnI
- 9w1fZayUtFs7KF95n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UjIYCTnIWjp_UUUYF7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20xva
- j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2
- x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8
- Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
+X-CM-TRANSID: rQCowABXXDpc6pRqSdejBg--.40314S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxXw47Kr1xCF48ury5ZrW8Zwb_yoWrXFy3pF
+ 1fKr1rXF1xXw129r13Ja1kZFn0krWxJr1UCFZxt34ftw15tF18CF45tr90y3WFk3sxAr1F
+ ka17tF98G3W2vaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUkK14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+ rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+ 1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+ JVWxJr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
  4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2Wl
  Yx0E2Ix0cI8IcVAFwI0_Jw0_WrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbV
  WUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lw4CEc2x0rVAK
  j4xxMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
- 0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y
+ 0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y
  0x0EwIxGrwCI42IY6xIIjxv20xvE14v26F1j6w1UMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
  W8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWx
  JwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7VUjwID7
@@ -59,560 +61,125 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Add statistics support for the ACL flow engine to track packet hits
-and bytes, enabling flow aging and traffic monitoring for ACL rules.
+Extract the multi-process work logic into the sxe2_mp_do_primary_work
+helper and operate on a copy of the request in the primary handler so
+the original message is not modified. Simplify the reply construction
+and return -ENOENT instead of -EINVAL when no response is received
+from the primary process.
 
-- Add acl-stat-type devarg to configure the statistics type
-- Implement sxe2_drv_flow_acl_get_stat_id/free_stat/query_stat
-- Handle the ACL engine in flow create/destroy/query paths
-- Add fnav_hw_res and acl_hw_res count resources
-
+Fixes: 5db446ba97b0 ("net/sxe2: support statistics and multi-process")
+Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
+
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- doc/guides/nics/sxe2.rst                  | 11 +++
- drivers/net/sxe2/sxe2_cmd_chnl.c          | 71 ++++++++++++++++++
- drivers/net/sxe2/sxe2_cmd_chnl.h          |  7 ++
- drivers/net/sxe2/sxe2_drv_cmd.h           |  7 ++
- drivers/net/sxe2/sxe2_dump.c              |  2 +
- drivers/net/sxe2/sxe2_ethdev.c            | 23 ++++--
- drivers/net/sxe2/sxe2_ethdev.h            |  1 +
- drivers/net/sxe2/sxe2_flow.c              | 90 ++++++++++++++++++-----
- drivers/net/sxe2/sxe2_flow_define.h       |  5 +-
- drivers/net/sxe2/sxe2_flow_parse_action.c | 28 ++++---
- drivers/net/sxe2/sxe2_queue.c             |  2 +
- 11 files changed, 211 insertions(+), 36 deletions(-)
+ drivers/net/sxe2/sxe2_mp.c | 59 ++++++++++++++++++++++----------------
+ 1 file changed, 34 insertions(+), 25 deletions(-)
 
-diff --git a/doc/guides/nics/sxe2.rst b/doc/guides/nics/sxe2.rst
-index 8278a5f108..c5b400a8ba 100644
---- a/doc/guides/nics/sxe2.rst
-+++ b/doc/guides/nics/sxe2.rst
-@@ -98,6 +98,17 @@ Runtime Configuration
+diff --git a/drivers/net/sxe2/sxe2_mp.c b/drivers/net/sxe2/sxe2_mp.c
+index a4a5c76495..93a11150a9 100644
+--- a/drivers/net/sxe2/sxe2_mp.c
++++ b/drivers/net/sxe2/sxe2_mp.c
+@@ -29,16 +29,11 @@ static int32_t sxe2_mp_secondary_handle(const struct rte_mp_msg *mp_msg,
+ 					 const void *peer);
  
-   Default value is 3 (count both packets and bytes).
- 
-+- ``acl-stat-type`` parameter [int]
-+
-+  This parameter controls the ACL flow engine statistics type
-+  used for flow rule hit counting (via ``rte_flow_query``).
-+
-+  - 1: Only count the number of packets.
-+  - 2: Only count the number of bytes.
-+  - 3: Count both packets and bytes (default).
-+
-+  Default value is 3 (count both packets and bytes).
-+
- - ``drv-sw-stats`` parameter [int]
- 
-   This parameter controls whether per-packet software statistics (SW stats)
-diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.c b/drivers/net/sxe2/sxe2_cmd_chnl.c
-index 3229c72597..3a55528c44 100644
---- a/drivers/net/sxe2/sxe2_cmd_chnl.c
-+++ b/drivers/net/sxe2/sxe2_cmd_chnl.c
-@@ -1829,6 +1829,77 @@ int32_t sxe2_drv_flow_fnav_query_stat(struct sxe2_adapter *adapter,
- 	return ret;
- }
- 
-+int32_t sxe2_drv_flow_acl_get_stat_id(struct sxe2_adapter *adapter, uint32_t *stat_id)
-+{
-+	struct sxe2_drv_flow_fnav_get_stat_id_req req = { 0 };
-+	struct sxe2_drv_flow_fnav_get_stat_id_resp resp = { 0 };
-+	struct sxe2_drv_cmd_params cmd             = { 0 };
-+	struct sxe2_common_device *cdev = adapter->cdev;
-+	int32_t ret                                 = -1;
-+
-+	sxe2_drv_cmd_params_fill(adapter, &cmd, SXE2_DRV_CMD_FLOW_ACL_STAT_ALLOC,
-+				&req, sizeof(req),
-+				&resp, sizeof(resp));
-+	ret = sxe2_drv_cmd_exec(cdev, &cmd);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to get acl stat id, ret: %d.", ret);
-+		goto l_end;
-+	}
-+	*stat_id = resp.stat_id;
-+
-+l_end:
-+	return ret;
-+}
-+
-+int32_t sxe2_drv_flow_acl_free_stat(struct sxe2_adapter *adapter, uint32_t stat_id)
-+{
-+	struct sxe2_drv_flow_fnav_free_stat_id_req req = { 0 };
-+	struct sxe2_drv_cmd_params cmd             = { 0 };
-+	struct sxe2_common_device *cdev = adapter->cdev;
-+	int32_t ret                                 = -1;
-+
-+	req.stat_id = stat_id;
-+	sxe2_drv_cmd_params_fill(adapter, &cmd, SXE2_DRV_CMD_FLOW_ACL_STAT_FREE,
-+				&req, sizeof(req),
-+				NULL, 0);
-+	ret = sxe2_drv_cmd_exec(cdev, &cmd);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to free acl stat id, ret: %d.", ret);
-+		goto l_end;
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
-+int32_t sxe2_drv_flow_acl_query_stat(struct sxe2_adapter *adapter,
-+				     struct sxe2_flow_cid_mgr *mgr)
-+{
-+	struct sxe2_drv_flow_fnav_query_stat_req req = { 0 };
-+	struct sxe2_drv_flow_fnav_query_stat_resp resp = { 0 };
-+	struct sxe2_drv_cmd_params cmd             = { 0 };
-+	struct sxe2_common_device *cdev = adapter->cdev;
-+	int32_t ret                                 = -1;
-+
-+	req.stat_id = mgr->stat_index;
-+	req.stat_ctrl = mgr->count_type;
-+	req.is_clear = 1;
-+
-+	sxe2_drv_cmd_params_fill(adapter, &cmd, SXE2_DRV_CMD_FLOW_ACL_STAT_QUERY,
-+				 &req, sizeof(req), &resp, sizeof(resp));
-+	ret = sxe2_drv_cmd_exec(cdev, &cmd);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, DRV, "Failed to query ACL stat, stat id: %u, ret: %d.",
-+				req.stat_id, ret);
-+		goto l_end;
-+	}
-+	mgr->hits += resp.stat_hits;
-+	mgr->bytes += resp.stat_bytes;
-+
-+l_end:
-+	return ret;
-+}
-+
- int32_t sxe2_drv_srcvsi_prune_config(struct sxe2_adapter *adapter,
- 			uint16_t *vsi_list, uint16_t vsi_cnt, bool set)
+ static int32_t
+-sxe2_mp_primary_handle(const struct rte_mp_msg *mp_msg, const void *peer)
++sxe2_mp_do_primary_work(struct sxe2_mp_param *param)
  {
-diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.h b/drivers/net/sxe2/sxe2_cmd_chnl.h
-index cfea1a1f0e..7d07068bfc 100644
---- a/drivers/net/sxe2/sxe2_cmd_chnl.h
-+++ b/drivers/net/sxe2/sxe2_cmd_chnl.h
-@@ -161,6 +161,13 @@ int32_t sxe2_drv_flow_fnav_free_stat(struct sxe2_adapter *adapter, uint32_t stat
- int32_t sxe2_drv_flow_fnav_query_stat(struct sxe2_adapter *adapter,
- 		struct sxe2_flow_cid_mgr *mgr);
+-	struct rte_mp_msg reply;
+-	const struct sxe2_mp_param *param =
+-			(const struct sxe2_mp_param *)mp_msg->param;
+-	struct sxe2_mp_param *reply_param = (struct sxe2_mp_param *)reply.param;
+ 	struct rte_eth_dev *dev;
+-	int32_t ret = 0;
+ 	struct sxe2_mp_shared_data *mz_data;
+-	int32_t send_reply = 0;
++	int32_t ret = 0;
+ 	int32_t cnt = 0;
  
-+int32_t sxe2_drv_flow_acl_get_stat_id(struct sxe2_adapter *adapter, uint32_t *stat_id);
-+
-+int32_t sxe2_drv_flow_acl_free_stat(struct sxe2_adapter *adapter, uint32_t stat_id);
-+
-+int32_t sxe2_drv_flow_acl_query_stat(struct sxe2_adapter *adapter,
-+			struct sxe2_flow_cid_mgr *mgr);
-+
- int32_t sxe2_drv_srcvsi_prune_config(struct sxe2_adapter *adapter,
- 		uint16_t *vsi_list, uint16_t vsi_cnt, bool set);
- 
-diff --git a/drivers/net/sxe2/sxe2_drv_cmd.h b/drivers/net/sxe2/sxe2_drv_cmd.h
-index 03ef3b315d..01fd813ed1 100644
---- a/drivers/net/sxe2/sxe2_drv_cmd.h
-+++ b/drivers/net/sxe2/sxe2_drv_cmd.h
-@@ -824,6 +824,13 @@ enum sxe2_drv_cmd_code {
- 	SXE2_DRV_CMD_OPT_EEP_GET =
- 		SXE2_MK_DRV_CMD(SXE2_DRV_CMD_MODULE_OPT, 1),
- 
-+	SXE2_DRV_CMD_FLOW_ACL_STAT_QUERY =
-+		SXE2_MK_DRV_CMD(SXE2_DRV_CMD_MODULE_ACL, 1),
-+	SXE2_DRV_CMD_FLOW_ACL_STAT_ALLOC =
-+		SXE2_MK_DRV_CMD(SXE2_DRV_CMD_MODULE_ACL, 2),
-+	SXE2_DRV_CMD_FLOW_ACL_STAT_FREE =
-+		SXE2_MK_DRV_CMD(SXE2_DRV_CMD_MODULE_ACL, 3),
-+
- };
- 
- #endif /* SXE2_DRV_CMD_H */
-diff --git a/drivers/net/sxe2/sxe2_dump.c b/drivers/net/sxe2/sxe2_dump.c
-index 590219f502..31f7d6ba61 100644
---- a/drivers/net/sxe2/sxe2_dump.c
-+++ b/drivers/net/sxe2/sxe2_dump.c
-@@ -80,12 +80,14 @@ sxe2_dump_dev_args_info(FILE *file, struct rte_eth_dev *dev)
- 		"\t  -- no_sched_mode: %s\n"
- 		"\t  -- flow-duplicate-pattern: %u\n"
- 		"\t  -- fnav-stat-type: %u\n"
-+		"\t  -- acl-stat-type: %u\n"
- 		"\t  -- sched_layer_mode: %u\n"
- 		"\t  -- rx_low_latency: %s\n"
- 		"\t  -- function-flow-direct: %s\n",
- 		adapter->devargs.no_sched_mode ? "On" : "Off",
- 		adapter->devargs.flow_dup_pattern_mode,
- 		adapter->devargs.fnav_stat_type,
-+		adapter->devargs.acl_stat_type,
- 		adapter->devargs.sched_layer_mode,
- 		adapter->devargs.rx_low_latency ? "On" : "Off",
- 		adapter->devargs.func_flow_direct_en ? "On" : "Off");
-diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index 08986e384f..77a31eb8a1 100644
---- a/drivers/net/sxe2/sxe2_ethdev.c
-+++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -72,6 +72,7 @@ static const struct rte_pci_id pci_id_sxe2_tbl[] = {
- #define SXE2_DEVARG_FLOW_DUP_PATTERN_MODE "flow-duplicate-pattern"
- #define SXE2_DEVARG_FUNC_FLOW_DIRCT "function-flow-direct"
- #define SXE2_DEVARG_FNAV_STAT_TYPE "fnav-stat-type"
-+#define SXE2_DEVARG_ACL_STAT_TYPE "acl-stat-type"
- #define SXE2_DEVARG_NO_SCHED_MODE "no-sched-mode"
- #define SXE2_DEVARG_SCHED_LAYER_MODE "sched-layer-mode"
- #define SXE2_DEVARG_RX_LOW_LATENCY "rx-low-latency"
-@@ -981,11 +982,11 @@ sxe2_buffer_split_supported_hdr_ptypes_get(struct rte_eth_dev *dev __rte_unused,
- 	return ptypes;
- }
- 
--static int32_t sxe2_parse_fnav_stat_type(const char *key, const char *value, void *args)
-+static int32_t sxe2_parse_stat_type(const char *key, const char *value, void *args)
- {
- 	int32_t ret = -EINVAL;
- 	uint8_t *num = (uint8_t *)args;
--	unsigned long fnav_stat_type;
-+	unsigned long stat_type;
- 	char *endptr = NULL;
- 
- 	if (value == NULL || args == NULL) {
-@@ -993,19 +994,19 @@ static int32_t sxe2_parse_fnav_stat_type(const char *key, const char *value, voi
- 		goto l_end;
- 	}
- 	errno = 0;
--	fnav_stat_type = strtoul(value, &endptr, 10);
-+	stat_type = strtoul(value, &endptr, 10);
- 	if (errno != 0 || endptr == value || *endptr != '\0') {
- 		PMD_LOG_WARN(INIT, "%s: \"%s\" is not a valid int value.",
- 			key, value);
- 		goto l_end;
- 	}
--	if (fnav_stat_type > SXE2_FNAV_STAT_ENA_ALL ||
--		fnav_stat_type == SXE2_FNAV_STAT_ENA_NONE) {
-+	if (stat_type > SXE2_FNAV_STAT_ENA_ALL ||
-+		stat_type == SXE2_FNAV_STAT_ENA_NONE) {
- 		PMD_LOG_ERR(INIT, "%s: \"%s\" out of range [1-3].",
- 			key, value);
- 		goto l_end;
- 	}
--	*num = (uint8_t)fnav_stat_type;
-+	*num = (uint8_t)stat_type;
- 	ret = 0;
- l_end:
- 	return ret;
-@@ -1187,13 +1188,20 @@ static int32_t sxe2_args_parse(struct rte_eth_dev *dev, struct sxe2_dev_kvargs_i
- 	if (kvargs == NULL)
- 		goto l_end;
- 	ret = sxe2_kvargs_process(kvargs, SXE2_DEVARG_FNAV_STAT_TYPE,
--				 &sxe2_parse_fnav_stat_type,
-+				 &sxe2_parse_stat_type,
- 				 &adapter->devargs.fnav_stat_type);
- 	if (ret) {
- 		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to parse fnav stat type, ret:%d", ret);
- 		goto l_end;
+ 	if (!rte_eth_dev_is_valid_port(param->port_id)) {
+@@ -49,24 +44,21 @@ sxe2_mp_primary_handle(const struct rte_mp_msg *mp_msg, const void *peer)
  	}
  
-+	ret = sxe2_kvargs_process(kvargs, SXE2_DEVARG_ACL_STAT_TYPE,
-+				 &sxe2_parse_stat_type, &adapter->devargs.acl_stat_type);
-+	if (ret) {
-+		PMD_DEV_LOG_ERR(adapter, INIT, "Failed to parse acl stat type, ret:%d", ret);
-+		goto l_end;
-+	}
+ 	dev = &rte_eth_devices[param->port_id];
+-	sxe2_mp_mz = rte_memzone_lookup(SXE2_MP_MZ_NAME);
 +
- 	ret = sxe2_kvargs_process(kvargs, SXE2_DEVARG_NO_SCHED_MODE,
- 				 &sxe2_parse_bool,
- 				 &adapter->devargs.no_sched_mode);
-@@ -2366,6 +2374,7 @@ RTE_PMD_REGISTER_PARAM_STRING(net_sxe2,
- 	"flow-duplicate-pattern=<0|1|2> "
- 	"function-flow-direct=<0|1> "
- 	"fnav-stat-type=<1|2|3> "
-+	"acl-stat-type=<1|2|3> "
- 	"no-sched-mode=<0|1> "
- 	"sched-layer-mode=<0-3> "
- 	"rx-low-latency=<0|1>");
-diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
-index e818578319..e9f78fe57f 100644
---- a/drivers/net/sxe2/sxe2_ethdev.h
-+++ b/drivers/net/sxe2/sxe2_ethdev.h
-@@ -135,6 +135,7 @@ struct sxe2_devargs {
- 	uint8_t flow_dup_pattern_mode;
- 	uint8_t func_flow_direct_en;
- 	uint8_t fnav_stat_type;
-+	uint8_t acl_stat_type;
- 	uint8_t no_sched_mode;
- 	uint8_t sched_layer_mode;
- 	uint8_t rx_low_latency;
-diff --git a/drivers/net/sxe2/sxe2_flow.c b/drivers/net/sxe2/sxe2_flow.c
-index cd39385340..52e332cb10 100644
---- a/drivers/net/sxe2/sxe2_flow.c
-+++ b/drivers/net/sxe2/sxe2_flow.c
-@@ -1204,13 +1204,24 @@ static int32_t sxe2_flow_flush(struct rte_eth_dev *dev, struct rte_flow_error *e
- int32_t sxe2_flow_get_filter_cid(struct sxe2_adapter *adapter, struct sxe2_flow *flow)
- {
- 	int32_t ret = 0;
--	struct sxe2_flow_cid_mgr_list_t *cid_mgr_list =
--				&adapter->flow_ctxt.hw_res.flow_cid_mgr_list;
-+	struct sxe2_flow_cid_mgr_list_t *cid_mgr_list = NULL;
- 	uint32_t stat_index;
- 	uint32_t user_id;
- 	uint32_t driver_id;
- 	struct sxe2_flow_cid_mgr *temp = NULL;
- 	struct sxe2_flow_cid_mgr *mgr = NULL;
-+	uint32_t count_type;
-+
-+	if (flow->engine_type == SXE2_FLOW_ENGINE_FNAV) {
-+		cid_mgr_list = &adapter->flow_ctxt.fnav_hw_res.flow_cid_mgr_list;
-+		count_type = adapter->flow_ctxt.fnav_hw_res.count_type;
-+	} else if (flow->engine_type == SXE2_FLOW_ENGINE_ACL) {
-+		cid_mgr_list = &adapter->flow_ctxt.acl_hw_res.flow_cid_mgr_list;
-+		count_type = adapter->flow_ctxt.acl_hw_res.count_type;
-+	} else {
-+		ret = -ENOTSUP;
-+		goto l_end;
-+	}
- 
- 	if (sxe2_test_bit(SXE2_FLOW_ACTION_COUNT, flow->action.act_types)) {
- 		user_id = flow->action.count.user_id;
-@@ -1233,7 +1244,10 @@ int32_t sxe2_flow_get_filter_cid(struct sxe2_adapter *adapter, struct sxe2_flow
- 				goto l_end;
- 			}
- 
--			ret = sxe2_drv_flow_fnav_get_stat_id(adapter, &stat_index);
-+			if (flow->engine_type == SXE2_FLOW_ENGINE_FNAV)
-+				ret = sxe2_drv_flow_fnav_get_stat_id(adapter, &stat_index);
-+			else if (flow->engine_type == SXE2_FLOW_ENGINE_ACL)
-+				ret = sxe2_drv_flow_acl_get_stat_id(adapter, &stat_index);
- 			if (ret) {
- 				PMD_LOG_ERR(DRV, "Failed to alloc fw count id.");
- 				rte_free(mgr);
-@@ -1244,7 +1258,7 @@ int32_t sxe2_flow_get_filter_cid(struct sxe2_adapter *adapter, struct sxe2_flow
- 			mgr->user_id = user_id;
- 			mgr->driver_id = driver_id;
- 			mgr->stat_index = stat_index;
--			mgr->count_type = adapter->flow_ctxt.hw_res.count_type;
-+			mgr->count_type = count_type;
- 		}
- 		flow->action.count.stat_index = mgr->stat_index;
- 		flow->action.count.stat_ctrl = mgr->count_type;
-@@ -1260,13 +1274,26 @@ int32_t sxe2_flow_free_mgr(struct sxe2_adapter *adapter,
- 		       struct rte_flow_error *error)
- {
- 	int32_t ret = 0;
--	struct sxe2_flow_cid_mgr_list_t *cid_mgr_list =
--				&adapter->flow_ctxt.hw_res.flow_cid_mgr_list;
-+	struct sxe2_flow_cid_mgr_list_t *cid_mgr_list = NULL;
- 	struct sxe2_flow_cid_mgr *mgr = *mgr_ptr;
- 	uint32_t user_id = flow->action.count.user_id;
--	if (user_id == 0) {
--		TAILQ_REMOVE(cid_mgr_list, mgr, next);
--		ret = sxe2_drv_flow_fnav_free_stat(adapter, mgr->stat_index);
-+
-+	if (user_id == 0 && mgr) {
-+		if (flow->engine_type == SXE2_FLOW_ENGINE_ACL) {
-+			cid_mgr_list = &adapter->flow_ctxt.acl_hw_res.flow_cid_mgr_list;
-+			TAILQ_REMOVE(cid_mgr_list, mgr, next);
-+			ret = sxe2_drv_flow_acl_free_stat(adapter, mgr->stat_index);
-+		} else if (flow->engine_type == SXE2_FLOW_ENGINE_FNAV) {
-+			cid_mgr_list = &adapter->flow_ctxt.fnav_hw_res.flow_cid_mgr_list;
-+			TAILQ_REMOVE(cid_mgr_list, mgr, next);
-+			ret = sxe2_drv_flow_fnav_free_stat(adapter, mgr->stat_index);
-+		} else {
-+			PMD_LOG_ERR(DRV,
-+				"Failed to free flow count, unknown engine type: %d.",
-+				flow->engine_type);
-+			ret = -ENOTSUP;
-+			return ret;
+ 	if (sxe2_mp_mz == NULL) {
+-		PMD_LOG_ERR(DRV, "Failed to lookup memzone %s", SXE2_MP_MZ_NAME);
+-		ret = -ENOENT;
+-		goto out;
++		sxe2_mp_mz = rte_memzone_lookup(SXE2_MP_MZ_NAME);
++		if (sxe2_mp_mz == NULL) {
++			PMD_LOG_ERR(DRV, "Failed to lookup memzone %s",
++					SXE2_MP_MZ_NAME);
++			ret = -ENOENT;
++			goto out;
 +		}
- 		if (ret) {
- 			rte_flow_error_set(error, EIO,
- 				RTE_FLOW_ERROR_TYPE_ACTION, NULL,
-@@ -1287,13 +1314,19 @@ int32_t sxe2_flow_query_mgr(struct sxe2_adapter *adapter,
- 			struct rte_flow_error *error)
- {
- 	int32_t ret = 0;
--	struct sxe2_flow_cid_mgr_list_t *cid_mgr_list =
--				&adapter->flow_ctxt.hw_res.flow_cid_mgr_list;
-+	struct sxe2_flow_cid_mgr_list_t *cid_mgr_list = NULL;
- 	struct sxe2_flow_cid_mgr *temp = NULL;
- 	struct sxe2_flow_cid_mgr *mgr = NULL;
- 	uint32_t user_id = flow->action.count.user_id;
- 	uint32_t driver_id = flow->action.count.driver_id;
+ 	}
  
-+	if (flow->engine_type == SXE2_FLOW_ENGINE_ACL)
-+		cid_mgr_list = &adapter->flow_ctxt.acl_hw_res.flow_cid_mgr_list;
-+	else if (flow->engine_type == SXE2_FLOW_ENGINE_FNAV)
-+		cid_mgr_list = &adapter->flow_ctxt.fnav_hw_res.flow_cid_mgr_list;
-+	else
-+		goto l_end;
-+
- 	TAILQ_FOREACH(temp, cid_mgr_list, next) {
- 		if (temp->user_id == user_id &&
- 			temp->driver_id == driver_id) {
-@@ -1310,7 +1343,15 @@ int32_t sxe2_flow_query_mgr(struct sxe2_adapter *adapter,
+ 	mz_data = (struct sxe2_mp_shared_data *)sxe2_mp_mz->addr;
+-	send_reply = 1;
+-
+-	memset(&reply, 0, sizeof(reply));
+-	(void)strlcpy(reply.name, SXE2_MP_NAME, sizeof(reply.name));
+-	reply.len_param = sizeof(*reply_param);
+-
+ 	switch (param->type) {
+ 	case SXE2_MP_REQ_GET_STATS:
+-		ret = sxe2_stats_info_get(dev,
+-					  &mz_data->payload.stats_blk.stats,
++		ret = sxe2_stats_info_get(dev, &mz_data->payload.stats_blk.stats,
+ 					  &mz_data->payload.stats_blk.qstats);
+ 		break;
+ 	case SXE2_MP_REQ_GET_XSTATS:
+@@ -88,15 +80,32 @@ sxe2_mp_primary_handle(const struct rte_mp_msg *mp_msg, const void *peer)
+ 	default:
+ 		PMD_LOG_ERR(DRV, "primary process: unrecognized msg type: %d",
+ 				param->type);
+-		send_reply = false;
  		ret = -EINVAL;
- 		goto l_end;
- 	}
--	ret = sxe2_drv_flow_fnav_query_stat(adapter, mgr);
-+
-+	if (flow->engine_type == SXE2_FLOW_ENGINE_ACL) {
-+		ret = sxe2_drv_flow_acl_query_stat(adapter, mgr);
-+	} else if (flow->engine_type == SXE2_FLOW_ENGINE_FNAV) {
-+		ret = sxe2_drv_flow_fnav_query_stat(adapter, mgr);
-+	} else {
-+		PMD_LOG_ERR(DRV, "query flow engine neither FNAV nor ACL");
-+		ret = -ENOTSUP;
-+	}
- 	if (ret) {
- 		rte_flow_error_set(error, EINVAL,
- 			RTE_FLOW_ERROR_TYPE_ITEM, NULL,
-@@ -1461,12 +1502,18 @@ int32_t sxe2_flow_init(struct rte_eth_dev *dev)
- 	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
- 	int32_t ret = 0;
- 	TAILQ_INIT(&adapter->flow_ctxt.rte_flow_list);
--	TAILQ_INIT(&adapter->flow_ctxt.hw_res.flow_cid_mgr_list);
-+	TAILQ_INIT(&adapter->flow_ctxt.fnav_hw_res.flow_cid_mgr_list);
-+	TAILQ_INIT(&adapter->flow_ctxt.acl_hw_res.flow_cid_mgr_list);
- 	if (adapter->devargs.fnav_stat_type)
--		adapter->flow_ctxt.hw_res.count_type =
-+		adapter->flow_ctxt.fnav_hw_res.count_type =
- 			adapter->devargs.fnav_stat_type;
- 	else
--		adapter->flow_ctxt.hw_res.count_type = SXE2_FNAV_STAT_ENA_ALL;
-+		adapter->flow_ctxt.fnav_hw_res.count_type = SXE2_FNAV_STAT_ENA_ALL;
-+
-+	if (adapter->devargs.acl_stat_type)
-+		adapter->flow_ctxt.acl_hw_res.count_type = adapter->devargs.acl_stat_type;
-+	else
-+		adapter->flow_ctxt.acl_hw_res.count_type = SXE2_FNAV_STAT_ENA_ALL;
- 
- 	adapter->flow_ctxt.fnav_inited = 1;
- 	rte_spinlock_init(&adapter->flow_ctxt.flow_list_lock);
-@@ -1485,13 +1532,13 @@ int32_t sxe2_flow_uninit(struct rte_eth_dev *dev)
- 	struct rte_flow_error error;
- 	struct sxe2_flow_cid_mgr *mgr = NULL;
- 	struct sxe2_flow_cid_mgr *temp = NULL;
--	struct sxe2_flow_cid_mgr_list_t *cid_mgr_list =
--						&adapter->flow_ctxt.hw_res.flow_cid_mgr_list;
-+	struct sxe2_flow_cid_mgr_list_t *cid_mgr_list = NULL;
- 
- 	ret = sxe2_flow_flush(dev, &error);
- 	if (ret)
- 		PMD_LOG_ERR(DRV, "Failed to flush flow, ret: %d.", ret);
- 
-+	cid_mgr_list = &adapter->flow_ctxt.fnav_hw_res.flow_cid_mgr_list;
- 	TAILQ_FOREACH_SAFE(mgr, cid_mgr_list, next, temp) {
- 		TAILQ_REMOVE(cid_mgr_list, mgr, next);
- 		ret = sxe2_drv_flow_fnav_free_stat(adapter, mgr->stat_index);
-@@ -1500,5 +1547,14 @@ int32_t sxe2_flow_uninit(struct rte_eth_dev *dev)
- 				"Failed to free fnav stat id, ret: %d.", ret);
- 		rte_free(mgr);
+-		goto out;
++		break;
  	}
 +
-+	cid_mgr_list = &adapter->flow_ctxt.acl_hw_res.flow_cid_mgr_list;
-+	TAILQ_FOREACH_SAFE(mgr, cid_mgr_list, next, temp) {
-+		TAILQ_REMOVE(cid_mgr_list, mgr, next);
-+		ret = sxe2_drv_flow_acl_free_stat(adapter, mgr->stat_index);
-+		if (ret)
-+			PMD_LOG_ERR(DRV, "Failed to free acl stat id, ret: %d.", ret);
-+		rte_free(mgr);
-+	}
- 	return ret;
- }
-diff --git a/drivers/net/sxe2/sxe2_flow_define.h b/drivers/net/sxe2/sxe2_flow_define.h
-index 8a5d871978..d04499f5cb 100644
---- a/drivers/net/sxe2/sxe2_flow_define.h
-+++ b/drivers/net/sxe2/sxe2_flow_define.h
-@@ -100,7 +100,7 @@ TAILQ_HEAD(rte_flow_list_t, rte_flow);
+ out:
+-	if (!send_reply)
+-		return ret;
++	param->result = ret;
++	return ret;
++}
  
- struct sxe2_flow_cid_mgr {
- 	TAILQ_ENTRY(sxe2_flow_cid_mgr) next;
--	uint16_t stat_index;
-+	uint32_t stat_index;
- 	uint32_t user_id;
- 	uint32_t driver_id;
- 	uint32_t count_type;
-@@ -118,7 +118,8 @@ struct sxe2_flow_count_resource {
- struct sxe2_flow_context {
- 	struct rte_flow_list_t rte_flow_list;
- 	rte_spinlock_t flow_list_lock;
--	struct sxe2_flow_count_resource hw_res;
-+	struct sxe2_flow_count_resource fnav_hw_res;
-+	struct sxe2_flow_count_resource acl_hw_res;
- 	uint16_t tunnel_port_list[SXE2_FLOW_UDP_TUNNEL_MAX];
- 	uint32_t fnav_inited;
- };
-diff --git a/drivers/net/sxe2/sxe2_flow_parse_action.c b/drivers/net/sxe2/sxe2_flow_parse_action.c
-index a9559e2d7e..03ada4e8a6 100644
---- a/drivers/net/sxe2/sxe2_flow_parse_action.c
-+++ b/drivers/net/sxe2/sxe2_flow_parse_action.c
-@@ -953,7 +953,8 @@ static int32_t sxe2_flow_check_actions(struct rte_eth_dev *dev __rte_unused, str
- 		}
+-	reply_param->result = ret;
++static int32_t
++sxe2_mp_primary_handle(const struct rte_mp_msg *mp_msg, const void *peer)
++{
++	struct rte_mp_msg reply;
++	struct sxe2_mp_param *reply_param = (struct sxe2_mp_param *)reply.param;
++	const struct sxe2_mp_param *param =
++			(const struct sxe2_mp_param *)mp_msg->param;
++	struct sxe2_mp_param param_copy;
++
++	memset(&reply, 0, sizeof(reply));
++	(void)strlcpy(reply.name, SXE2_MP_NAME, sizeof(reply.name));
++	reply.len_param = sizeof(*reply_param);
++
++	param_copy = *param;
++	(void)sxe2_mp_do_primary_work(&param_copy);
++
++	reply_param->result = param_copy.result;
+ 	reply_param->type = param->type;
+ 	reply_param->port_id = param->port_id;
+ 
+@@ -275,7 +284,7 @@ int32_t sxe2_mp_request_simple(struct rte_eth_dev *dev,
+ 	if (reply.nb_received == 0) {
+ 		PMD_LOG_ERR(DRV, "No response received from primary for type=%d, port %u",
+ 			type, dev->data->port_id);
+-		ret = -EINVAL;
++		ret = -ENOENT;
+ 		goto out;
  	}
  
--	if (engine_type == SXE2_FLOW_ENGINE_FNAV) {
-+	if (engine_type == SXE2_FLOW_ENGINE_FNAV ||
-+		engine_type == SXE2_FLOW_ENGINE_ACL) {
- 		if (vsi_num) {
- 			flow->action.q_region.q_index = 0;
- 			flow->action.q_region.region = 7;
-@@ -980,6 +981,7 @@ int32_t sxe2_flow_parse_action(struct rte_eth_dev *dev,
- 	uint8_t action_num[SXE2_FLOW_ACTION_MAX] = {0};
- 	enum sxe2_flow_engine_type engine_type = flow->engine_type;
- 	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_flow_count_resource *hw_res = NULL;
- 
- 	sxe2_flow_action_pre(flow);
- 
-@@ -988,7 +990,8 @@ int32_t sxe2_flow_parse_action(struct rte_eth_dev *dev,
- 		case RTE_FLOW_ACTION_TYPE_VOID:
- 			break;
- 		case RTE_FLOW_ACTION_TYPE_PASSTHRU:
--			if (engine_type == SXE2_FLOW_ENGINE_FNAV) {
-+			if (engine_type == SXE2_FLOW_ENGINE_FNAV ||
-+				engine_type == SXE2_FLOW_ENGINE_ACL) {
- 				sxe2_set_bit(SXE2_FLOW_ACTION_PASSTHRU, flow->action.act_types);
- 				action_num[SXE2_FLOW_ACTION_PASSTHRU]++;
- 			} else {
-@@ -1035,14 +1038,9 @@ int32_t sxe2_flow_parse_action(struct rte_eth_dev *dev,
- 			break;
- 		case RTE_FLOW_ACTION_TYPE_COUNT:
- 			if (engine_type == SXE2_FLOW_ENGINE_FNAV) {
--				sxe2_set_bit(SXE2_FLOW_ACTION_COUNT, flow->action.act_types);
--				act_count = action->conf;
--				flow->action.count.user_id = act_count->id;
--				flow->action.count.driver_id = 0;
--				if (flow->action.count.user_id == 0)
--					flow->action.count.driver_id =
--						++adapter->flow_ctxt.hw_res.global_index;
--				action_num[SXE2_FLOW_ACTION_COUNT]++;
-+				hw_res = &adapter->flow_ctxt.fnav_hw_res;
-+			} else if (engine_type == SXE2_FLOW_ENGINE_ACL) {
-+				hw_res = &adapter->flow_ctxt.acl_hw_res;
- 			} else {
- 				rte_flow_error_set(error, ENOTSUP,
- 					RTE_FLOW_ERROR_TYPE_ACTION, action,
-@@ -1052,6 +1050,16 @@ int32_t sxe2_flow_parse_action(struct rte_eth_dev *dev,
- 				ret = -EINVAL;
- 				goto l_end;
- 			}
-+			sxe2_set_bit(SXE2_FLOW_ACTION_COUNT, flow->action.act_types);
-+			act_count = action->conf;
-+			flow->action.count.user_id =
-+				(act_count == NULL) ? 0 : act_count->id;
-+			flow->action.count.driver_id = 0;
-+			if (flow->action.count.user_id == 0) {
-+				flow->action.count.driver_id =
-+					++hw_res->global_index;
-+			}
-+			action_num[SXE2_FLOW_ACTION_COUNT]++;
- 			break;
- 		case RTE_FLOW_ACTION_TYPE_RSS:
- 			if (engine_type == SXE2_FLOW_ENGINE_RSS) {
-diff --git a/drivers/net/sxe2/sxe2_queue.c b/drivers/net/sxe2/sxe2_queue.c
-index afb2681b72..3aaa14c685 100644
---- a/drivers/net/sxe2/sxe2_queue.c
-+++ b/drivers/net/sxe2/sxe2_queue.c
-@@ -39,6 +39,8 @@ int32_t sxe2_queues_init(struct rte_eth_dev *dev)
- 		rxq->rx_buf_len = RTE_MIN(rxq->rx_buf_len, SXE2_RX_MAX_DATA_BUF_SIZE);
- 		if (frame_size > rxq->rx_buf_len)
- 			dev->data->scattered_rx = 1;
-+		if (adapter->flow_ctxt.fnav_inited)
-+			rxq->fnav_enable = true;
- 	}
- 
- 	adapter->ptp_ctxt.mbuf_rx_ts_offset = -1;
 -- 
 2.52.0
 
