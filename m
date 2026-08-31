@@ -2,42 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 032B9C61DE2
-	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 10:09:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD8A6C61DD3
+	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 10:23:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 10AEE4025A;
-	Mon, 31 Aug 2026 12:09:45 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 4DEAD400D5
- for <dev@dpdk.org>; Mon, 31 Aug 2026 12:09:43 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 0455220441;
- Mon, 31 Aug 2026 12:09:43 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 80FD14025A;
+	Mon, 31 Aug 2026 12:23:46 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 3F2F8400D5
+ for <dev@dpdk.org>; Mon, 31 Aug 2026 12:23:44 +0200 (CEST)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 67V85d4G334296; Mon, 31 Aug 2026 03:23:43 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=m7LcsiR3R/QsWjv0O0FsikA
+ LMZs5aJQ10dfhrMHdEJc=; b=lMKzcuuJju/TndWQar5MTx4jh6wWmot5nC7dKju
+ R6iWf3b+3TYD9y1ien5l67sn95RK3WnmolxZvK0mQCoYe8c1mOOhi/8RpFO+A9lz
+ t1SHN0Yj/Un0kuQaUpWJSY5Znzk+2+hZnjYpMApKAKfc2cOV1+MbaxYw7XX+ly6o
+ VAQsqHcrwcGDvNgto5R8sgxZq3NJnaWVW2mX5/UIAXA+0BKkBtsjtDCWhxGPKN0Q
+ 67cNQsG/QRStJ3GLVaiMTYERnTD/a4Zy7DVaZNCJj6B7Wk6zYriItVWNp78rNOmw
+ FAnc4HEzHGnvyM08E9Yh9joXL+3qrnMBZUEFtr/FbBd+kow==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4gcg68j900-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Mon, 31 Aug 2026 03:23:43 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Mon, 31 Aug 2026 03:23:42 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Mon, 31 Aug 2026 03:23:42 -0700
+Received: from ssarananaga.marvell.com (unknown [10.29.57.26])
+ by maili.marvell.com (Postfix) with ESMTP id 7EA533F7062;
+ Mon, 31 Aug 2026 03:23:39 -0700 (PDT)
+From: Sucharitha Sarananaga <ssarananaga@marvell.com>
+To: <dev@dpdk.org>
+CC: <gakhil@marvell.com>, <fanzhang.oss@gmail.com>, <adwivedi@marvell.com>,
+ <anoobj@marvell.com>, <ktejasree@marvell.com>, <kai.ji@intel.com>,
+ <jianjay.zhou@huawei.com>, <radu.nicolau@intel.com>,
+ <gmuthukrishn@marvell.com>, Sucharitha Sarananaga <ssarananaga@marvell.com>
+Subject: [PATCH 00/10] cryptodev: add RSA-OAEP and RSA-PSS padding support
+Date: Mon, 31 Aug 2026 10:23:18 +0000
+Message-ID: <20260831102328.2813604-1-ssarananaga@marvell.com>
+X-Mailer: git-send-email 2.54.0
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH v3 1/2] stack: introduce pile
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Mon, 31 Aug 2026 12:09:41 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65A24@smartserver.smartshare.dk>
-In-Reply-To: <b34c20e4e0a043adb0ed7ad13a3e7352@huawei.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v3 1/2] stack: introduce pile
-Thread-Index: AQHdNivZlPLzR2W88UagmX4dOkumu7a33NkwgAACqiCAAAumgIAAAcUg
-References: <20260812134756.1829613-1-mb@smartsharesystems.com>
- <20260827135556.522443-1-mb@smartsharesystems.com>
- <20260827135556.522443-2-mb@smartsharesystems.com>
- <ec4ba9b4d8f34eb78e86a5ccc2a01a89@huawei.com>
- <98CBD80474FA8B44BF855DF32C47DC35F65A23@smartserver.smartshare.dk>
- <b34c20e4e0a043adb0ed7ad13a3e7352@huawei.com>
-From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Konstantin Ananyev" <konstantin.ananyev@huawei.com>, <dev@dpdk.org>,
- "Bruce Richardson" <bruce.richardson@intel.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: BLpSmwdc6xLrexIz0lkQZ4NIbagrnfqf
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwODMxMDA4OSBTYWx0ZWRfX7DiDUGQ0hmqV
+ yWpCS/RY9DF03c63Aa5m3t8HsPrnV/l9XEwaw9QfiYckfFctMq2aFCP9p/+b+yBwJjlRGHOOReI
+ Ec5VLkPpoOO/uD1caFkOnB72WDylbIcA3mCiCr4+pRR61e6araKHLznp2mouNT6f6UEBXmkf1Zx
+ 19yFcPv+FBDJwtIMG6hsYR+wnERcI09tNqyc7WuVBApMEHfW0n624IVEC9GLBtjMi7im8gi84GY
+ JrJeU0wx/TY+xEaiH6k4ntYIDFMS3IWBoHzBTELMVp8k2zKbruvQbiQj6D25NJt7UjZdvhGabgF
+ lwFraXxh3Ydz/koFTD7Q8q6yYfL9B2ZB3cfyDLNp9ONmBo/ScRtMfalO05fp1X3GwJ0Z5Y4nCmK
+ TPECf4k1sR+Z8HA7823d1DziRl6fpUpUsnPK458ine6YKKnl1VgANuPj4873arGtaK6NK2STYq0
+ 5s7Jcc4Fq5BaSMHTRQw==
+X-Authority-Analysis: v=2.4 cv=fZedDUQF c=1 sm=1 tr=0 ts=6a95562f cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=Sv0fKeRqtYgA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
+ a=qit2iCtTFQkLgVSMPQTB:22 a=t8gS2tw4dzSAODIcAfMA:9
+X-Proofpoint-GUID: BLpSmwdc6xLrexIz0lkQZ4NIbagrnfqf
+X-Proofpoint-Spam-Info: AW1haW4tMjYwODMxMDA4OSBTYWx0ZWRfX2wxOOA47F3IR
+ dUBpI9BhU2XG6STuS0WIAWu7DqUK4cOeWROPcVlWiYSldVkS6NEMwAC4ET4jVKziB/SlvKryPkV
+ sBGr3hcaox2/6kQ23e/oG70Thf8l3aU=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-08-31_03,2026-08-27_02,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,81 +83,64 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBLb25zdGFudGluIEFuYW55ZXYgW21haWx0bzprb25zdGFudGluLmFuYW55ZXZAaHVh
-d2VpLmNvbV0NCj4gU2VudDogTW9uZGF5LCAzMSBBdWd1c3QgMjAyNiAxMS4zOA0KPiANCj4gPiA+
-IEZyb206IEtvbnN0YW50aW4gQW5hbnlldiBbbWFpbHRvOmtvbnN0YW50aW4uYW5hbnlldkBodWF3
-ZWkuY29tXQ0KPiA+ID4gU2VudDogTW9uZGF5LCAzMSBBdWd1c3QgMjAyNiAxMC41MA0KPiA+ID4N
-Cj4gPiA+ID4gQWRkZWQgYSBuZXcgaGlnaC1wZXJmb3JtYW5jZSBsb2NrLWZyZWUgInBpbGUiLCB1
-c2luZyB0aGUgU3RhY2sNCj4gQVBJLg0KPiA+ID4gPiBUaGUgcGlsZSBiZWhhdmVzIHJvdWdobHkg
-bGlrZSBhIHN0YWNrLCBidXQgaXMgbm90IHN0cmljdGx5IExJRk8uDQo+ID4gPiA+DQo+ID4gPiA+
-IFRoZSBwaWxlIGlzIG9wdGltaXplZCBmb3IgcHVzaGluZy9wb3BwaW5nIGJ1bGtzIG9mIG9iamVj
-dHMsIHdoaWNoDQo+ID4gPiA+IGl0IGRvZXMgc2lnbmlmaWNhbnRseSBmYXN0ZXIgdGhhbiB0aGUg
-bG9jay1mcmVlIHN0YWNrLg0KPiA+ID4gPg0KPiA+ID4gPiBQdXNoaW5nL3BvcHBpbmcgYSBudW1i
-ZXIgb2Ygb2JqZWN0cyBub3QgZGl2aXNpYmxlIGJ5IHRoZSBjb21waWxlDQo+IHRpbWUNCj4gPiA+
-ID4gY29uZmlndXJhYmxlIGJ1bGsgc2l6ZSBpcyBoYW5kbGVkIGdyYWNlZnVsbHksIGJ1dCBub3Qg
-YXMgZmFzdCBhcw0KPiA+ID4gPiBjb21wbGV0ZSBidWxrcy4NCj4gPiA+ID4NCj4gPiA+ID4gUGVy
-Zm9ybWFuY2UgZXhhbXBsZXMsIHN0YWNrX3BpbGVfcGVyZl9hdXRvdGVzdCB2cy4NCj4gc3RhY2tf
-bGZfYXV0b3Rlc3Q6DQo+ID4gPiA+DQo+ID4gPiA+IE9uIGEgc2luZ2xlIGNvcmUsIHB1c2hpbmcv
-cG9wcGluZyAxIG9yIDggb2JqZWN0cyBpcyBzaW1pbGFyDQo+IHNwZWVkLg0KPiA+ID4gPiBPbiBh
-IHNpbmdsZSBjb3JlLCBwdXNoaW5nL3BvcHBpbmcgMzIgb2JqZWN0cyBpcyAyeCBmYXN0ZXIuDQo+
-ID4gPiA+IE9uIGEgc2luZ2xlIGNvcmUsIHB1c2hpbmcvcG9wcGluZyA1MTIgb2JqZWN0cyBpcyAx
-MHggZmFzdGVyLg0KPiA+ID4gPg0KPiA+ID4gPiBPbiBmb3VyIGNvcmVzLCBwdXNoaW5nL3BvcHBp
-bmcgMSwgOCBvciAzMiBvYmplY3RzIGlzIHNsaWdodGx5DQo+IGZhc3Rlci4NCj4gPiA+ID4gT24g
-Zm91ciBjb3JlcywgcHVzaGluZy9wb3BwaW5nIDUxMiBvYmplY3RzIGlzIDR4IGZhc3Rlci4NCj4g
-PiA+DQo+ID4gPiBBY2tlZC1ieTogS29uc3RhbnRpbiBBbmFueWV2IDxrb25zdGFudGluLmFuYW55
-ZXZAaHVhd2VpLmNvbT4NCj4gPiA+DQo+ID4gPiBUaGUgY29kZSBpdHNlbGYgbG9va3Mgb2sgdG8g
-bWUsIHRob3VnaHQgSSBzdGlsbCB0aGluayBpdCBpcyB3b3J0aA0KPiB0bw0KPiA+ID4gY29uc2lk
-ZXINCj4gPiA+IG1vdmluZyBsZl9waWxlIChhbmQgbGZfc3RhY2spIERQIGltcGxlbWVudGF0aW9u
-IGluIC5jLCB0byBhdm9pZA0KPiBlYWNoDQo+ID4gPiBydGVfc3RhY2tfcHVzL3BvcA0KPiA+ID4g
-dG8gaW5saW5lIGFsbCB0aHJlZSBvZiB0aGVtLg0KPiA+DQo+ID4gSWYgYSB1c2UgY2FzZSBrbm93
-cyB0aGUgc2VsZWN0ZWQgc3RhY2sgaW1wbGVtZW50IGF0IGJ1aWxkIHRpbWUsIGl0DQo+IGNhbiBj
-YWxsIHRoZQ0KPiA+IGltcGxlbWVudGF0aW9uJ3MgcHVzaC9wb3AgZnVuY3Rpb25zIGRpcmVjdGx5
-Lg0KPiA+IEkgdXBkYXRlZCB0aGUgbWVtcG9vbCBzdGFjayBkcml2ZXIgdjMgcGF0Y2ggWzFdIHRv
-IGRvIHRoaXMgZm9yIGFsbA0KPiB0aHJlZSBzdGFjaw0KPiA+IGltcGxlbWVudGF0aW9ucy4NCj4g
-DQo+IFRoYXQncyBnb29kIHRoaW5nIGZvciBzdXJlLg0KPiBUaG91Z2ggSSBhbSB0YWxraW5nIGFi
-b3V0Og0KPiAjaWZkZWYgX19jcGx1c3BsdXMNCj4gIGV4dGVybiAiQyIgew0KPiBAQCAtMTE1LDYg
-KzE3NCw4IEBAIHJ0ZV9zdGFja19wdXNoKHN0cnVjdCBydGVfc3RhY2sgKnMsIHZvaWQgKiBjb25z
-dA0KPiAqb2JqX3RhYmxlLCB1bnNpZ25lZCBpbnQgbikNCj4gDQo+ICAJaWYgKHMtPmZsYWdzICYg
-UlRFX1NUQUNLX0ZfTEYpDQo+ICAJCXJldHVybiBfX3J0ZV9zdGFja19sZl9wdXNoKHMsIG9ial90
-YWJsZSwgbik7DQo+ICsJZWxzZSBpZiAocy0+ZmxhZ3MgJiBSVEVfU1RBQ0tfRl9QSUxFKQ0KPiAr
-CQlyZXR1cm4gX19ydGVfc3RhY2tfcGlsZV9wdXNoKHMsIG9ial90YWJsZSwgbik7DQo+ICAJZWxz
-ZQ0KPiAgCQlyZXR1cm4gX19ydGVfc3RhY2tfc3RkX3B1c2gocywgb2JqX3RhYmxlLCBuKTsNCj4g
-IH0NCj4gQEAgLTEzOSw2ICsyMDAsOCBAQCBydGVfc3RhY2tfcG9wKHN0cnVjdCBydGVfc3RhY2sg
-KnMsIHZvaWQNCj4gKipvYmpfdGFibGUsIHVuc2lnbmVkIGludCBuKQ0KPiANCj4gIAlpZiAocy0+
-ZmxhZ3MgJiBSVEVfU1RBQ0tfRl9MRikNCj4gIAkJcmV0dXJuIF9fcnRlX3N0YWNrX2xmX3BvcChz
-LCBvYmpfdGFibGUsIG4pOw0KPiArCWVsc2UgaWYgKHMtPmZsYWdzICYgUlRFX1NUQUNLX0ZfUElM
-RSkNCj4gKwkJcmV0dXJuIF9fcnRlX3N0YWNrX3BpbGVfcG9wKHMsIG9ial90YWJsZSwgbik7DQo+
-ICAJZWxzZQ0KPiAgCQlyZXR1cm4gX19ydGVfc3RhY2tfc3RkX3BvcChzLCBvYmpfdGFibGUsIG4p
-Ow0KPiAgfQ0KPiANCj4gSW4gcnRlX3N0YWNrLmgNCj4gV2Ugc3RpbGwgY2FuIGhhdmUgb3VyIF9f
-cnRlX3N0YWNrX3BpbGVfcHVzaC9wbyBhcyBpbmxpbmUgZnVuY3Rpb25zIGluDQo+IHRoZSBpbnRl
-cm5hbCBoZWFkZXJzLA0KPiBzbyBtZW1wb29sIChhbmQgd2hvZXZlciBlbHNlIG5lZWRzIHRoZW0p
-IGNhbiBpbmNsdWRlIHRoZW0gZGlyZWN0bHkuDQo+IE15IHN1Z2dlc3Rpb24gdG8gaGF2ZSBydGVf
-c3RhY2tfcGlsZV9wb3AoKSBpbiAuYyBhbmQgaW52b2tlIGl0IChub3QtDQo+IGlubGluZWQgb25l
-KSBmcm9tDQo+IGdlbmVyaWMgcnRlX3N0YWNrX3BvcCgpLg0KDQpJIGdldCBpdCwgYW5kIEkgYWdy
-ZWUgaXQgd291bGQgcmVkdWNlIHRoZSBmb290cHJpbnQgb2YgdGhlIGNvbXBpbGVkIGNvZGUuDQpC
-dXQgaXQgd291bGQgZWxpbWluYXRlIGNvbXBpbGVyIG9wdGltaXphdGlvbnMgZm9yIGJ1aWxkIHRp
-bWUga25vd24gc2l6ZXMsIGUuZy4gbj0xIG9yIG49QlVSU1RfU0laRSwgc28gSSBwcmVmZXIga2Vl
-cGluZyB0aGVtIGlubGluZWQuDQoNCkRlLWlubGluaW5nIGNvdWxkIGFsc28gcnVpbiBicmFuY2gg
-cHJlZGljdGlvbiB3aGVuIHVzZWQgd2l0aCBtdWx0aXBsZSBzdGFja3MuDQpMZXQncyBzYXkgdGhl
-IHNhbWUgbnVtYmVyIG9mIG9iamVjdHMgaXMgYWx3YXlzIGRlcXVldWVkIGZyb20gYSBzcGVjaWZp
-YyBzdGFjazsgdGhlIGJyYW5jaCBwcmVkaWN0b3Igd291bGQgbGVhcm4gdGhpcy4NCk5vdywgaWYg
-dGhlIG5vbi1pbmxpbmVkIGZ1bmN0aW9uIGlzIGNhbGxlZCB0byBkZXF1ZXVlIGEgZGlmZmVyZW50
-IG51bWJlciBvZiBvYmplY3RzIGZyb20gYW5vdGhlciBzdGFjaywgaXQgd291bGQgdHJpcCB1cCB0
-aGUgYnJhbmNoIHByZWRpY3Rvci4NCg0KQlRXLA0KVGhlIHJpbmdzIHVzZSB0aGUgc2FtZSBkZXNp
-Z24gcGF0dGVybiwgd2hlcmUgdGhlIGVucXVldWUvZGVxdWV1ZSBpbXBsZW1lbnRhdGlvbiBpcyBz
-ZWxlY3RlZCBhdCBydW4tdGltZSBiYXNlZCBvbiByaW5nLT5wcm9kL2NvbnMuc3luY190eXBlLCBh
-bGwgaW5saW5lZCBmb3IgdGhlIGJlbmVmaXQgb2YgdGhlIG9wdGltaXplciB3aGVuIHZhcmlvdXMg
-cGFyYW1ldGVycyAoZWxlbWVudCBzaXplLCBudW1iZXIgb2Ygb2JqZWN0cykgYXJlIGtub3duIGF0
-IGJ1aWxkIHRpbWUsIGFuZCBmb3IgdGhlIGJlbmVmaXQgb2YgdGhlIGJyYW5jaCBwcmVkaWN0b3Iu
-DQoNCj4gDQo+ID4gWzFdOg0KPiBodHRwczovL3BhdGNod29yay5kcGRrLm9yZy9wcm9qZWN0L2Rw
-ZGsvcGF0Y2gvMjAyNjA4MjcxMzU1NTYuNTIyNDQzLTMtDQo+ID4gbWJAc21hcnRzaGFyZXN5c3Rl
-bXMuY29tLw0KPiA+DQo+ID4gPiBNeSBzcGVjdWxhdGlvbiBpcyB0aGF0IHRoZSBwZXJmIGRpZmYg
-Zm9yIGJ1bGsgZW5xdWV1ZS9kZXF1ZXVlDQo+IGJlY2F1c2UNCj4gPiA+IG9mDQo+ID4gPiB0aGF0
-IHdvdWxkIGJlIG5lZ2xpZ2libGUsIHdoaWxlIGJvdGggYXJlIHF1aXRlIGJpZyBmb3IgaW5saW5p
-bmcNCj4gdGhlbQ0KPiA+ID4gYWx3YXlzDQo+ID4gPiAoc3BlY2lhbGx5IGxmX3BpbGUpLg0KPiA+
-DQo+ID4gSWYgdGhlIG51bWJlciBvZiBvYmplY3RzIGJlaW5nIHB1c2hlZC9wb3BwZWQgaXMga25v
-d24gYXQgYnVpbGQgdGltZSwNCj4gdGhlDQo+ID4gY29tcGlsZXIgY2FuIG9wdGltaXplIHRoZSBm
-dW5jdGlvbnMgd2hlbiBpbmxpbmVkLg0KPiA+DQo+ID4gSSB0cmllZCBleHBlcmltZW50ZWQgd2l0
-aCBjb25kaXRpb25hbCBpbmxpbmluZyBkZXBlbmRpbmcgb24gdGhlDQo+IG51bWJlciBvZg0KPiA+
-IG9iamVjdHMgYmVpbmcga25vd24gYXQgYnVpbGQgdGltZSwgYnV0IEkgd2Fzbid0IHJlYWxseSBw
-bGVhc2VkIHdpdGgNCj4gaXQuDQoNCg==
+The asymmetric crypto capability structure currently reports only a
+generic modulus length and primary hash algorithm for RSA, with no
+way for a PMD to advertise which padding schemes (NONE, PKCS#1 v1.5,
+OAEP, PSS) or MGF1 hash algorithms it supports. Applications have no
+standard way to discover this, and the OpenSSL PMD itself only
+implements NONE and PKCS#1 v1.5 padding.
+
+This series first extends the capability API with a dedicated
+rte_crypto_rsa_capa (modulus length, pad_types, mgf1_hash_algos, and
+an explicit-PSS-salt flag), then updates the capability reporting in
+the virtio, octeontx, cnxk, qat, and openssl PMDs to use it.
+
+On top of that, it adds actual RSA-OAEP and RSA-PSS support to the
+OpenSSL PMD:
+ - RSA-OAEP encrypt/decrypt, with configurable OAEP hash, MGF1 hash,
+   and an optional label, defaulting MGF1 to the OAEP hash when
+   unset.
+ - RSA-PSS sign/verify, with configurable hash, MGF1 hash, and salt
+   length (rte_crypto_rsa_padding::pss_saltlen), using a dedicated
+   EVP_PKEY_verify()-based verification path since PSS does not
+   support verify-recover. The PSS salt itself is always generated
+   internally by the PMD; an application-supplied salt
+   (rte_crypto_rsa_op_param::pss_salt, gated by the new
+   pss_explicit_salt capability bit) is introduced by this series
+   for future PMD support but is not yet implemented here, so it is
+   rejected with RTE_CRYPTO_OP_STATUS_INVALID_ARGS.
+
+Test coverage for both OAEP (encrypt/decrypt, default and custom
+MGF1, with and without a label) and PSS (digest-length, maximum, and
+zero-length salt) is added to the cryptodev asymmetric test suite.
+
+Sucharitha Sarananaga (10):
+  crypto: add RSA-specific capability parameters
+  crypto/virtio: advertise RSA padding and hash capabilities
+  crypto/octeontx: advertise RSA PKCS#1 v1.5 padding support
+  crypto/cnxk: advertise RSA PKCS#1 v1.5 padding support
+  crypto/qat: advertise RSA padding capabilities
+  crypto/openssl: advertise RSA padding and hash capabilities
+  crypto/openssl: add RSA-OAEP support for OpenSSL PMD
+  app/test: add RSA OAEP asymmetric test cases
+  crypto/openssl: add RSA-PSS support for RSA operations
+  app/test: add RSA-PSS sign and verify test cases
+
+ app/test/test_cryptodev_asym.c                | 663 ++++++++++++++++++
+ app/test/test_cryptodev_rsa_test_vectors.h    | 317 +++++++++
+ .../crypto/cnxk/cnxk_cryptodev_capabilities.c |   8 +-
+ .../octeontx/otx_cryptodev_capabilities.c     |   8 +-
+ drivers/crypto/openssl/openssl_pmd_private.h  |  11 +
+ drivers/crypto/openssl/rte_openssl_pmd.c      | 367 ++++++++--
+ drivers/crypto/openssl/rte_openssl_pmd_ops.c  | 147 +++-
+ drivers/crypto/qat/asym/qat_asym.h            |  20 +
+ drivers/crypto/qat/dev/qat_asym_pmd_gen1.c    |   5 +-
+ drivers/crypto/qat/dev/qat_crypto_pmd_gen4.c  |   5 +-
+ .../virtio/virtio_crypto_capabilities.h       |  19 +-
+ lib/cryptodev/rte_crypto_asym.h               |  18 +
+ lib/cryptodev/rte_cryptodev.h                 |  50 +-
+ 13 files changed, 1567 insertions(+), 71 deletions(-)
+
+-- 
+2.54.0
+
