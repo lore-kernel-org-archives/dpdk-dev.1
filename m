@@ -2,34 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3532C61DE2
-	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 02:42:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B1C3C61DE4
+	for <dpdk-dev@archiver.kernel.org>; Mon, 31 Aug 2026 02:42:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3EE3240BA3;
-	Mon, 31 Aug 2026 04:42:25 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 805DA40A8A;
+	Mon, 31 Aug 2026 04:42:27 +0200 (CEST)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id CB7BD40374;
- Mon, 31 Aug 2026 04:42:22 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5A2C640DD1
+ for <dev@dpdk.org>; Mon, 31 Aug 2026 04:42:26 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-03 (Coremail) with SMTP id rQCowAAXGzkK6pRqftOjBg--.34011S2;
- Mon, 31 Aug 2026 10:42:19 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowAC3wT8Q6pRqzNOjBg--.29636S2;
+ Mon, 31 Aug 2026 10:42:25 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
-	Jie Liu <liujie5@linkdatatechnology.com>,
-	stable@dpdk.org
-Subject: [PATCH v7 13/47] net/sxe2: fix null VSI dereference in device info
-Date: Mon, 31 Aug 2026 10:42:18 +0800
-Message-ID: <20260831024218.3230677-1-liujie5@linkdatatechnology.com>
+	Jie Liu <liujie5@linkdatatechnology.com>
+Subject: [PATCH v7 14/47] net/sxe2: fill MAC addresses in device info
+Date: Mon, 31 Aug 2026 10:42:24 +0800
+Message-ID: <20260831024224.3230696-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260828074056.2250222-1-liujie5@linkdatatechnology.com>
 References: <20260828074056.2250222-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowAAXGzkK6pRqftOjBg--.34011S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7JrWfKF1UXrWruw4DWrWUtwb_yoWktwb_CF
- Z5Zr13CFyrAr95K34I9F4fZr9Y9rWUXrs3ZF9IqFWfZF13Xr1a93s0vrZFyFs2gayUAFZr
- JF18GF1fGrZ8CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+X-CM-TRANSID: rQCowAC3wT8Q6pRqzNOjBg--.29636S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7JrWfZF4fWr45Aw4xJw4ruFg_yoWDXrg_uF
+ 95ZrW3CFy5ArWkK34S9F4fZwnYkr1kWr4fWa4qqFWfZw1UtF1fuw1vvFs7tFs7XFWUAFZI
+ 9F13Xa4Sv39IkjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
  9fnUUIcSsGvfJTRUUUb4xFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
  6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
  A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
@@ -38,7 +37,7 @@ X-Coremail-Antispam: 1UD129KBjvdXoW7JrWfKF1UXrWruw4DWrWUtwb_yoWktwb_CF
  6xIIjxv20xvE14v26r1q6rW5McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr
  0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40Ew7xC
  0wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r
- 1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij
+ 1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij
  64vIr41lIxAIcVC0I7IYx2IY67AKxVW5JVW7JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr
  1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1l
  IxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JU4v38UUU
@@ -60,35 +59,27 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-sxe2_dev_infos_get() dereferences adapter->vsi_ctxt.main_vsi without
-checking for NULL, which can crash when the main VSI has not been
-created yet.
+Fill max_mac_addrs in sxe2_dev_infos_get() so applications can query
+the maximum number of MAC addresses supported by the device.
 
-Add an early NULL check on vsi and return -EINVAL.
-
-Fixes: d8e4e075acb4 ("net/sxe2: add probing skeleton")
-Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_ethdev.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/sxe2/sxe2_ethdev.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index 2e14c372f8..02f9ce3d32 100644
+index 02f9ce3d32..e85e34aa1a 100644
 --- a/drivers/net/sxe2/sxe2_ethdev.c
 +++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -781,6 +781,10 @@ static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev,
- 	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
- 	struct sxe2_vsi *vsi = adapter->vsi_ctxt.main_vsi;
+@@ -792,6 +792,7 @@ static int32_t sxe2_dev_infos_get(struct rte_eth_dev *dev,
+ 	dev_info->max_lro_pkt_size = SXE2_FRAME_SIZE_MAX * SXE2_RX_LRO_DESC_MAX_NUM;
+ 	dev_info->max_mtu = dev_info->max_rx_pktlen - SXE2_ETH_OVERHEAD;
+ 	dev_info->min_mtu = RTE_ETHER_MIN_MTU;
++	dev_info->max_mac_addrs = SXE2_NUM_MACADDR_MAX;
  
-+	if (unlikely(vsi == NULL)) {
-+		PMD_LOG_ERR(INIT, "main vsi is NULL");
-+		return -EINVAL;
-+	}
- 	dev_info->max_rx_queues = vsi->rxqs.q_cnt;
- 	dev_info->max_tx_queues = vsi->txqs.q_cnt;
- 	dev_info->min_rx_bufsize = SXE2_MIN_BUF_SIZE;
+ 	dev_info->rx_offload_capa =
+ 		RTE_ETH_RX_OFFLOAD_VLAN_STRIP |
 -- 
 2.52.0
 
