@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D8CAC61DFD
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 03:09:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3862BC61DFD
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 03:09:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AAF5240DDB;
-	Tue,  1 Sep 2026 05:09:05 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 821FD40DD8;
+	Tue,  1 Sep 2026 05:09:10 +0200 (CEST)
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id 5376940E1B
- for <dev@dpdk.org>; Tue,  1 Sep 2026 05:09:03 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id BED3C40DD8
+ for <dev@dpdk.org>; Tue,  1 Sep 2026 05:09:08 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-05 (Coremail) with SMTP id zQCowADHMTzNQZZqgfwhBw--.58525S2;
- Tue, 01 Sep 2026 11:09:01 +0800 (CST)
+ by APP-05 (Coremail) with SMTP id zQCowADH9kDTQZZqyPwhBw--.58271S2;
+ Tue, 01 Sep 2026 11:09:07 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v8 38/49] net/sxe2: use primary VSI ID for representor VSI
-Date: Tue,  1 Sep 2026 11:09:01 +0800
-Message-ID: <20260901030901.3685889-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v8 39/49] net/sxe2: wrap command params fill debug log in macro
+Date: Tue,  1 Sep 2026 11:09:06 +0800
+Message-ID: <20260901030906.3685943-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260831024549.3231744-1-liujie5@linkdatatechnology.com>
 References: <20260831024549.3231744-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowADHMTzNQZZqgfwhBw--.58525S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr18Xr4xXF4kXw4xXw1DWrg_yoW8Jw1rpr
- WkWF43ZF4kGFnxX3WDW3WkuF15Kw1Fq340gF4Fv3WfuF1DCryUCr9xGa48tryDJ39rZw1a
- va17Zw1UW3WrAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: zQCowADH9kDTQZZqyPwhBw--.58271S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr18Cw15uryrZw48JF1rtFb_yoW8uF45pF
+ WFvw1YqFs0qF48Arn7Jr4Iva4aka1UAa4j9a10gw1S9F9rXrWkZFWUKryrta4Duws0qF1S
+ yFsrWay8Wr1xur7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUkK14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
  rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
  1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
@@ -59,33 +59,53 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-For repr_vf_vsi_id, use the primary VSI id directly instead of
-falling back to the DPDK VSI id when the kernel VSI id is invalid.
-The kernel side guarantees the primary VSI id it provides is always
-valid in any scenario, so the fallback ternary is unnecessary.
+sxe2_drv_cmd_params_fill() passes the opcode string as a
+parameter to __sxe2_drv_cmd_params_fill() just to emit a debug
+log. The debug log is level-gated by PMD_DEV_LOG_DEBUG either
+way; moving it into the macro body only consolidates the call
+sites.
+
+Wrap the log and the fill helper in a do/while block, dropping
+the opc_str parameter so the opcode stringization happens at
+the call site. Evaluate the adapter argument exactly once
+through a local variable.
 
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_switchdev.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/net/sxe2/sxe2_cmd_chnl.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/sxe2/sxe2_switchdev.c b/drivers/net/sxe2/sxe2_switchdev.c
-index d0304ccc94..466182c55c 100644
---- a/drivers/net/sxe2/sxe2_switchdev.c
-+++ b/drivers/net/sxe2/sxe2_switchdev.c
-@@ -324,10 +324,7 @@ int32_t sxe2_switchdev_repr_private_data_init(struct rte_eth_dev *dev,
- 		parent_adapter->repr_ctxt.repr_vf_id[repr_id].dpdk_vsi_id;
+diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.c b/drivers/net/sxe2/sxe2_cmd_chnl.c
+index 3a55528c44..85098ac664 100644
+--- a/drivers/net/sxe2/sxe2_cmd_chnl.c
++++ b/drivers/net/sxe2/sxe2_cmd_chnl.c
+@@ -26,10 +26,9 @@ static void sxe2_drv_trace_id_alloc(uint64_t *trace_id)
+ }
  
- 	repr_priv_data->repr_vf_vsi_id =
--		parent_adapter->repr_ctxt.repr_vf_id[repr_id].kernel_vsi_id !=
--		SXE2_INVALID_VSI_ID ?
--		parent_adapter->repr_ctxt.repr_vf_id[repr_id].kernel_vsi_id :
--		parent_adapter->repr_ctxt.repr_vf_id[repr_id].dpdk_vsi_id;
-+		repr_priv_data->repr_vf_primary_vsi_id;
+ static void __sxe2_drv_cmd_params_fill(struct sxe2_adapter *adapter,
+-		struct sxe2_drv_cmd_params *cmd, uint32_t opc, const char *opc_str,
++		struct sxe2_drv_cmd_params *cmd, uint32_t opc,
+ 		void *in_data, uint32_t in_len, void *out_data, uint32_t out_len)
+ {
+-	PMD_DEV_LOG_DEBUG(adapter, DRV, "cmd opcode:%s", opc_str);
+ 	cmd->timeout = SXE2_DRV_CMD_DFLT_TIMEOUT;
+ 	cmd->opcode  = opc;
+ 	cmd->vsi_id  = adapter->vsi_ctxt.dpdk_vsi_id;
+@@ -44,8 +43,11 @@ static void __sxe2_drv_cmd_params_fill(struct sxe2_adapter *adapter,
+ }
  
- 	adapter->repr_priv_data = repr_priv_data;
- 	goto l_end;
+ #define sxe2_drv_cmd_params_fill(adapter, cmd, opc, in_data, in_len, out_data, out_len) \
+-	__sxe2_drv_cmd_params_fill(adapter, cmd, opc, #opc, in_data, in_len, out_data, out_len)
+-
++	do { \
++		struct sxe2_adapter *_ad = (adapter); \
++		PMD_DEV_LOG_DEBUG(_ad, DRV, "cmd opcode:%s", #opc); \
++		__sxe2_drv_cmd_params_fill(_ad, cmd, opc, in_data, in_len, out_data, out_len); \
++	} while (0)
+ 
+ int32_t sxe2_drv_dev_caps_get(struct sxe2_adapter *adapter, struct sxe2_drv_dev_caps_resp *dev_caps)
+ {
 -- 
 2.52.0
 
