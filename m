@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6287C61DD6
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 16:18:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 228B7C61DD6
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 16:18:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 326F8410D3;
-	Tue,  1 Sep 2026 18:16:16 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4894940DCD;
+	Tue,  1 Sep 2026 18:16:17 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
- by mails.dpdk.org (Postfix) with ESMTP id E01EB40B95
- for <dev@dpdk.org>; Tue,  1 Sep 2026 18:16:13 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 7891C40B95
+ for <dev@dpdk.org>; Tue,  1 Sep 2026 18:16:14 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1788279374; x=1819815374;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=JmHYwvAnKtn/6Pq9isEjibrQ6meGKuaQBi3ruOuvPRM=;
- b=hlpPL6a4sw2O7jv1H+RtWglVlcwoAl5TBnDNAxu1lUj3A7PlcaBFhH3/
- 7a1+VMhsbhwTgGR0GvH4EHRtxBstCdwCpylHjYgpeekVFAVyUQl2qs/Ww
- HTKqD3v0F4v7CUgqav1fZoln6cdk2wt4dWKIlorBvATRBe7XdFE0C1G1K
- CT5+BM2ulxorpTpqGmQnvoC1iuW7fLecZwk7rc43iAqCnuafdBNZZJ9jQ
- lQhdlFbHV5+BZ0ZoXzKGIJV57pyjEus9y2DJp2ix7Wu1lqy6t+lyu67uy
- y/L7dVN8x+nC0D9fjsztw4sGjO87kcrjVkCw/pHLWk5H90sz3g1PMffY0 g==;
-X-CSE-ConnectionGUID: 1f7NErdJSFu8YoCRiIys6Q==
-X-CSE-MsgGUID: RLEA4WlbT1eSNuItVa0+mA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11893"; a="87656121"
-X-IronPort-AV: E=Sophos;i="6.25,256,1779174000"; d="scan'208";a="87656121"
+ bh=O4/ptTsOrKImcGp/3skOtsMf5qtscvQpIAhkQEMkeNY=;
+ b=Bcqz6yzNL/qCt5BhN67qOFnz9xJgCM2T3Amtg76Gi3flG7UwEAFcNVoe
+ mt2xuWaivkrEifzUU+eW2vLXQlHd/5s5XdQ2qV/5c3p/H2fM49byjZ3KM
+ 5Hv+BLJzeiZcgI312swzB4uVFhyhrLcrg0zXoje0PXr0g27aKInNxFBK9
+ RjFcNLk+n0NMcSraw1guczbWPOU1Rs0aXnibz30xyWOd4BT2ji4kGoQkC
+ zNF9iNf21+u5AgxVtBdYhUQs4pmrJgbtReLG3te6NyPWZ4b65eH3yrXNx
+ lFimfQ16Xj1in5vvzk/K0UDgRbajg5VnG3QJ08fFKU8VVXqaoLpI6/qAS Q==;
+X-CSE-ConnectionGUID: MJqp1c9sScOPXWZ2PI5LuQ==
+X-CSE-MsgGUID: tbvS8S4tQiiwY8aE04o7Gw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11893"; a="87656123"
+X-IronPort-AV: E=Sophos;i="6.25,256,1779174000"; d="scan'208";a="87656123"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 01 Sep 2026 09:16:13 -0700
-X-CSE-ConnectionGUID: qVWgBvjQRJy5pS97fvzHzQ==
-X-CSE-MsgGUID: MTus2VWhRCaZQq2K1JpDvg==
+ 01 Sep 2026 09:16:14 -0700
+X-CSE-ConnectionGUID: 4BXswZOwQQubLlaFuVImFA==
+X-CSE-MsgGUID: Bm7Vsg81SZmnRl3QtLOkuA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,256,1779174000"; d="scan'208";a="299032597"
+X-IronPort-AV: E=Sophos;i="6.25,256,1779174000"; d="scan'208";a="299032603"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa002.jf.intel.com with ESMTP; 01 Sep 2026 09:16:12 -0700
+ by orviesa002.jf.intel.com with ESMTP; 01 Sep 2026 09:16:13 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@nxp.com>
-Subject: [PATCH v15 21/25] bus/fslmc: use the new VFIO IOMMU mode API
-Date: Tue,  1 Sep 2026 17:15:27 +0100
-Message-ID: <c034c6d2c04765954b1cc96526db982ac58a9ea8.1788278993.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org,
+	Feifei Wang <wangfeifei40@huawei.com>
+Subject: [PATCH v15 22/25] net/hinic3: use the new VFIO IOMMU mode API
+Date: Tue,  1 Sep 2026 17:15:28 +0100
+Message-ID: <0d42eea9eabde4a4f712570dc15271cff6e27875.1788278993.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1788278991.git.anatoly.burakov@intel.com>
  <cover.1788278991.git.anatoly.burakov@intel.com>
@@ -60,94 +60,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-FSLMC bus only supports operating in group mode, and relies on no-IOMMU
-mode checks. Use the new VFIO API's to query no-IOMMU status as well as to
-protect the bus from initializing in non-group mode.
+Use new VFIO IOMMU mode API to query no-IOMMU status.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-Acked-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/bus/fslmc/fslmc_bus.c  | 10 +++++++++-
- drivers/bus/fslmc/fslmc_vfio.c |  2 +-
- lib/eal/linux/eal_vfio.c       | 18 ++++++++++--------
- 3 files changed, 20 insertions(+), 10 deletions(-)
+ drivers/net/hinic3/base/hinic3_hwdev.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/bus/fslmc/fslmc_bus.c b/drivers/bus/fslmc/fslmc_bus.c
-index d55c414ead..aeef49a5ff 100644
---- a/drivers/bus/fslmc/fslmc_bus.c
-+++ b/drivers/bus/fslmc/fslmc_bus.c
-@@ -332,6 +332,13 @@ rte_fslmc_scan(void)
- 		goto scan_fail;
- 	}
+diff --git a/drivers/net/hinic3/base/hinic3_hwdev.c b/drivers/net/hinic3/base/hinic3_hwdev.c
+index 6a6cf44752..e8ad013345 100644
+--- a/drivers/net/hinic3/base/hinic3_hwdev.c
++++ b/drivers/net/hinic3/base/hinic3_hwdev.c
+@@ -78,7 +78,8 @@ hinic3_is_vfio_iommu_enable(const struct rte_eth_dev *eth_dev)
+ {
+ 	struct rte_pci_device *pci_dev = RTE_CLASS_TO_BUS_DEVICE(eth_dev, *pci_dev);
  
-+	/* for container groups to work, VFIO must be in group mode */
-+	if (dev_vfio_get_mode() != DEV_VFIO_MODE_GROUP) {
-+		DPAA2_BUS_DEBUG("DPAA2: VFIO not in group mode");
-+		ret = -EINVAL;
-+		goto scan_fail;
-+	}
-+
- 	ret = fslmc_get_container_group(group_name, &groupid);
- 	if (ret != 0)
- 		goto scan_fail;
-@@ -500,7 +507,8 @@ rte_dpaa2_get_iommu_class(void)
- 		return RTE_IOVA_DC;
+-	return pci_dev->kdrv == RTE_PCI_KDRV_VFIO && dev_vfio_noiommu_is_enabled() != 1;
++	return pci_dev->kdrv == RTE_PCI_KDRV_VFIO &&
++			dev_vfio_get_iommu_mode() == DEV_VFIO_IOMMU_MODE_SAFE;
+ }
  
- 	/* check if all devices on the bus support Virtual addressing or not */
--	if (fslmc_all_device_support_iova() != 0 && dev_vfio_noiommu_is_enabled() == 0)
-+	if (fslmc_all_device_support_iova() != 0 &&
-+			dev_vfio_get_iommu_mode() == DEV_VFIO_IOMMU_MODE_UNSAFE)
- 		return RTE_IOVA_VA;
- 
- 	return RTE_IOVA_PA;
-diff --git a/drivers/bus/fslmc/fslmc_vfio.c b/drivers/bus/fslmc/fslmc_vfio.c
-index c2b6ac1f3f..0926ec9349 100644
---- a/drivers/bus/fslmc/fslmc_vfio.c
-+++ b/drivers/bus/fslmc/fslmc_vfio.c
-@@ -204,7 +204,7 @@ fslmc_vfio_add_group(int vfio_group_fd,
- 	group->fd = vfio_group_fd;
- 	group->groupid = iommu_group_num;
- 	rte_strscpy(group->group_name, group_name, sizeof(group->group_name));
--	if (dev_vfio_noiommu_is_enabled() > 0)
-+	if (dev_vfio_get_iommu_mode() == DEV_VFIO_IOMMU_MODE_UNSAFE)
- 		group->iommu_type = VFIO_NOIOMMU_IOMMU;
- 	else
- 		group->iommu_type = VFIO_TYPE1_IOMMU;
-diff --git a/lib/eal/linux/eal_vfio.c b/lib/eal/linux/eal_vfio.c
-index 3d3a6c6bb0..f35bf77730 100644
---- a/lib/eal/linux/eal_vfio.c
-+++ b/lib/eal/linux/eal_vfio.c
-@@ -589,20 +589,22 @@ vfio_group_assign_device(struct vfio_container *cfg, const char *sysfs_base,
- 		return VFIO_EXISTS;
- 	}
- 
-+	/* allocate new device in config */
-+	dev = vfio_device_create(cfg, vfio_global_cfg.mode);
-+	if (dev == NULL) {
-+		EAL_LOG(ERR, "No space to track new VFIO device");
-+		return VFIO_NO_SPACE;
-+	}
-+
-+	/* allocate strings for sysfs path and device address */
- 	sysfs_dup = strdup(sysfs_base);
- 	dev_dup = strdup(dev_addr);
- 	if (sysfs_dup == NULL || dev_dup == NULL) {
- 		EAL_LOG(ERR, "Cannot allocate memory for device %s", dev_addr);
- 		free(sysfs_dup);
- 		free(dev_dup);
--		return VFIO_NO_MEM;
--	}
--
--	/* allocate new device in config */
--	dev = vfio_device_create(cfg, vfio_global_cfg.mode);
--	if (dev == NULL) {
--		EAL_LOG(ERR, "No space to track new VFIO device");
--		return VFIO_NO_SPACE;
-+		ret = VFIO_NO_MEM;
-+		goto device_erase;
- 	}
- 
- 	/* store sysfs path and device address */
+ int
 -- 
 2.52.0
 
