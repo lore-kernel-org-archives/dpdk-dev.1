@@ -2,34 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AA6AC61DFD
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 03:09:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0C46C624A4
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 03:10:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 32B9E40E3B;
-	Tue,  1 Sep 2026 05:09:56 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4FD6540E4A;
+	Tue,  1 Sep 2026 05:09:59 +0200 (CEST)
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id 5D6A540E3B;
- Tue,  1 Sep 2026 05:09:53 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 18BDF40E49;
+ Tue,  1 Sep 2026 05:09:56 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-05 (Coremail) with SMTP id zQCowAAHcz33QZZqPP4hBw--.58256S2;
- Tue, 01 Sep 2026 11:09:43 +0800 (CST)
+ by APP-05 (Coremail) with SMTP id zQCowABXh0ECQpZqvP4hBw--.3121S2;
+ Tue, 01 Sep 2026 11:09:55 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>,
 	stable@dpdk.org
-Subject: [PATCH v8 45/49] common/sxe2: fix ioctl channel log and close handling
-Date: Tue,  1 Sep 2026 11:09:42 +0800
-Message-ID: <20260901030942.3686413-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v8 47/49] net/sxe2: remove ineffective representor queue counts
+Date: Tue,  1 Sep 2026 11:09:54 +0800
+Message-ID: <20260901030954.3686530-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260831024549.3231744-1-liujie5@linkdatatechnology.com>
 References: <20260831024549.3231744-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowAAHcz33QZZqPP4hBw--.58256S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr15Xry8JFyDJrW7Wr18AFb_yoW8KFy8pF
- sagry5tFyrtayagFn8AanrZFy5t3Zak3yUurWIk3y3t34DXryUZFyDGry5G3W8Cr15JF93
- ZFnxJr13Ww1kArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: zQCowABXh0ECQpZqvP4hBw--.3121S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr15GFyUWry8uw4ruF4rZrb_yoW8WFW5pF
+ sYqFyrAFW5JF1jgwn8Can7ua4YgF4xG3yxGr9xt34fu34UZ34UZFyUJryay3ZFyrW8JF40
+ yan7WrsF9F4F9F7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUkK14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
  rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
  1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
@@ -60,63 +60,41 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Compare sxe2_ioctl_chnl.c against the reference implementation and
-correct the following discrepancies:
+rte_eth_dev_info_get() overwrites dev_info->nb_rx_queues and
+dev_info->nb_tx_queues from dev->data after the PMD dev_infos_get
+callback returns, so assigning them in sxe2_repr_dev_infos_get() has
+no effect. Remove the ineffective assignments.
 
-- sxe2_drv_dev_close: only log the closed fd when it is valid, move
-  PMD_LOG_INFO inside the fd >= 0 check
-- sxe2_drv_dev_mmap: fix swapped format arguments in the debug log
-  (cmd_fd and bar_idx were passed in the wrong order)
-- sxe2_drv_dev_dma_unmap: use PMD_LOG_ERR instead of PMD_LOG_INFO
-  for the ioctl failure message
-
-Fixes: 83866f8d7638 ("common/sxe2: add base driver skeleton")
+Fixes: 635084db5d57 ("net/sxe2: support VF representors")
 Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/common/sxe2/sxe2_ioctl_chnl.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ drivers/net/sxe2/sxe2_ethdev_repr.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/common/sxe2/sxe2_ioctl_chnl.c b/drivers/common/sxe2/sxe2_ioctl_chnl.c
-index 3e2fbf572f..9f455bd8d5 100644
---- a/drivers/common/sxe2/sxe2_ioctl_chnl.c
-+++ b/drivers/common/sxe2/sxe2_ioctl_chnl.c
-@@ -107,9 +107,11 @@ sxe2_drv_dev_close(struct sxe2_common_device *cdev)
- {
- 	int32_t fd = SXE2_CDEV_TO_CMD_FD(cdev);
- 
--	if (fd >= 0)
-+	if (fd >= 0) {
- 		close(fd);
--	PMD_LOG_INFO(COM, "closed device fd=%d", fd);
-+		PMD_LOG_INFO(COM, "closed device fd=%d", fd);
-+	}
-+
- 	SXE2_CDEV_TO_CMD_FD(cdev) = SXE2_CMD_FD_INVALID;
+diff --git a/drivers/net/sxe2/sxe2_ethdev_repr.c b/drivers/net/sxe2/sxe2_ethdev_repr.c
+index 6f5642ad5d..880a54bea8 100644
+--- a/drivers/net/sxe2/sxe2_ethdev_repr.c
++++ b/drivers/net/sxe2/sxe2_ethdev_repr.c
+@@ -127,7 +127,7 @@ static int32_t sxe2_repr_dev_close(struct rte_eth_dev *dev)
+ 	return 0;
  }
  
-@@ -349,8 +351,9 @@ void
- 		goto l_err;
- 	}
+-static int32_t sxe2_repr_dev_infos_get(struct rte_eth_dev *dev,
++static int32_t sxe2_repr_dev_infos_get(__rte_unused struct rte_eth_dev *dev,
+ 			struct rte_eth_dev_info *dev_info)
+ {
+ 	dev_info->max_rx_queues = 1;
+@@ -195,8 +195,6 @@ static int32_t sxe2_repr_dev_infos_get(struct rte_eth_dev *dev,
+ 	dev_info->speed_capa = RTE_ETH_LINK_SPEED_10G | RTE_ETH_LINK_SPEED_25G |
+ 			 RTE_ETH_LINK_SPEED_50G | RTE_ETH_LINK_SPEED_100G;
  
--	PMD_LOG_DEBUG(COM, "fd=%d, bar idx=%d, len=%"PRIu64", src=0x%"PRIx64", offset=0x%"PRIx64"",
--		bar_idx, cmd_fd, len, offset, SXE2_COM_PCI_OFFSET_GEN(bar_idx, offset));
-+	PMD_LOG_DEBUG(COM, "fd=%d, bar idx=%d, len=%"PRIu64", "
-+		"offset=0x%"PRIx64", pci_offset=0x%"PRIx64"",
-+		cmd_fd, bar_idx, len, offset, SXE2_COM_PCI_OFFSET_GEN(bar_idx, offset));
+-	dev_info->nb_rx_queues = dev->data->nb_rx_queues;
+-	dev_info->nb_tx_queues = dev->data->nb_tx_queues;
  
- 	virt = mmap(NULL, len, PROT_READ | PROT_WRITE,
- 		MAP_SHARED, cmd_fd, SXE2_COM_PCI_OFFSET_GEN(bar_idx, offset));
-@@ -477,7 +480,7 @@ sxe2_drv_dev_dma_unmap(struct sxe2_common_device *cdev, uint64_t iova)
- 	pthread_mutex_lock(&cdev->config.lock);
- 	ret = ioctl(cmd_fd, SXE2_COM_CMD_DMA_UNMAP, &cmd_params);
- 	if (ret < 0) {
--		PMD_LOG_INFO(COM, "Failed to dma unmap, fd=%d, ret=%d, err:%s",
-+		PMD_LOG_ERR(COM, "Failed to dma unmap, fd=%d, ret=%d, err:%s",
- 				cmd_fd, ret, strerror(errno));
- 		ret = -EIO;
- 		pthread_mutex_unlock(&cdev->config.lock);
+ 	dev_info->default_rxportconf.burst_size = SXE2_RX_MAX_BURST;
+ 	dev_info->default_txportconf.burst_size = SXE2_TX_MAX_BURST;
 -- 
 2.52.0
 
