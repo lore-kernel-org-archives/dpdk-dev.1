@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E4E7C624A4
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 03:06:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E083C624A4
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 03:06:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2DC7E40615;
-	Tue,  1 Sep 2026 05:06:07 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4EDC440689;
+	Tue,  1 Sep 2026 05:06:12 +0200 (CEST)
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id 0B32C4060B
- for <dev@dpdk.org>; Tue,  1 Sep 2026 05:06:04 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id DAA27406B6
+ for <dev@dpdk.org>; Tue,  1 Sep 2026 05:06:09 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-05 (Coremail) with SMTP id zQCowACnEDsaQZZq6vMhBw--.25628S2;
- Tue, 01 Sep 2026 11:06:02 +0800 (CST)
+ by APP-05 (Coremail) with SMTP id zQCowACX_zkfQZZqQfQhBw--.58078S2;
+ Tue, 01 Sep 2026 11:06:08 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v8 08/49] net/sxe2: use base device name for representor naming
-Date: Tue,  1 Sep 2026 11:06:01 +0800
-Message-ID: <20260901030601.3683829-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v8 09/49] net/sxe2: propagate LSC event to VF representors
+Date: Tue,  1 Sep 2026 11:06:07 +0800
+Message-ID: <20260901030607.3683884-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260831024549.3231744-1-liujie5@linkdatatechnology.com>
 References: <20260831024549.3231744-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowACnEDsaQZZq6vMhBw--.25628S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr15uF18WrWkXr43XF4Utwb_yoW8WFyUpF
- W8Xa4YyFWfXFnrZw48Za18uryY9r4ktayqka4Yvw1fCa4UXFyDCr48tr18t34qkr4UZF4F
- yF4Fqr1kGw1q9rJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: zQCowACX_zkfQZZqQfQhBw--.58078S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr15CF1ftF4kJryfKr4kWFg_yoW8uw4UpF
+ Z0gF1rJFy8X3Z2qanxCa18uryYga1rJa48KF9Iyw1a9a4kJryUC343Jr9xtF4jy34DX3Z2
+ yanxWwnrGrn7GrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUkS14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
  rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
  1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
  6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
  4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
- I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+ I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
  4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAKzVCY07xG64k0F24l
  42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJV
  WUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAK
  I48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F
  4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY
- 6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUeL0eDUUUU
+ 6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU8KsjUUUUU
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -58,45 +58,56 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Update the representor device naming to use the base device name
-prefix, and set the numa_node from the parent device data so that
-representor devices are allocated on the same NUMA node.
+When the PF link state changes in switchdev mode, refresh the link
+status of every VF representor and trigger the RTE_ETH_EVENT_INTR_LSC
+callback on each, so applications receive link events on representor
+ports. Also log OICR in hexadecimal for better readability.
 
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_ethdev_repr.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/sxe2/sxe2_irq.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/sxe2/sxe2_ethdev_repr.c b/drivers/net/sxe2/sxe2_ethdev_repr.c
-index c698baafe0..6f5642ad5d 100644
---- a/drivers/net/sxe2/sxe2_ethdev_repr.c
-+++ b/drivers/net/sxe2/sxe2_ethdev_repr.c
-@@ -552,9 +552,8 @@ int32_t sxe2_switchdev_repr_devs_init(struct sxe2_adapter *adapter,
+diff --git a/drivers/net/sxe2/sxe2_irq.c b/drivers/net/sxe2/sxe2_irq.c
+index 3306504761..ba764dd5e4 100644
+--- a/drivers/net/sxe2/sxe2_irq.c
++++ b/drivers/net/sxe2/sxe2_irq.c
+@@ -77,14 +77,32 @@ static int32_t sxe2_fc_state_callback(struct rte_eth_dev *dev)
+ static void sxe2_event_irq_common_handler(struct sxe2_adapter *adapter, uint64_t oicr)
+ {
+ 	struct rte_eth_dev *dev = &rte_eth_devices[adapter->dev_info.dev_data->port_id];
++	struct rte_eth_dev *repr_eth_dev;
++	struct sxe2_adapter *repr_adapter;
++	uint16_t vf_id;
+ 
+ 	if (oicr & RTE_BIT32(SXE2_COM_EC_LINK_CHG)) {
+-		PMD_DEV_LOG_INFO(adapter, DRV, "OICR=%" PRIu64, oicr);
++		PMD_DEV_LOG_INFO(adapter, DRV, "OICR=0x%" PRIx64, oicr);
+ 		(void)sxe2_drv_mac_link_status_get(adapter);
+-		if (rte_eal_process_type() == RTE_PROC_PRIMARY)
++		if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
+ 			rte_eth_dev_callback_process(dev,
+ 						     RTE_ETH_EVENT_INTR_LSC,
+ 						     NULL);
++		}
++		if (adapter->switchdev_info.is_switchdev) {
++			for (vf_id = 0; vf_id < adapter->repr_ctxt.nb_repr_vf; vf_id++) {
++				repr_eth_dev = adapter->repr_ctxt.vf_rep_eth_dev[vf_id];
++				if (!repr_eth_dev)
++					continue;
++				repr_adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(repr_eth_dev);
++				(void)sxe2_drv_mac_link_status_get(repr_adapter);
++				if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
++					rte_eth_dev_callback_process(repr_eth_dev,
++								     RTE_ETH_EVENT_INTR_LSC,
++								     NULL);
++				}
++			}
++		}
  	}
- 
- 	for (repr_idx = 0; repr_idx < req_eth_da->nb_representor_ports; ++repr_idx) {
--		snprintf(name, sizeof(name), "sxe2_representor_c%dpf%d%s%u",
--			 adapter->pf_idx, adapter->pf_idx,
--			 "vf",
-+		snprintf(name, sizeof(name), "%s_representor_vf%u",
-+			 adapter->cdev->dev->name,
- 			 req_eth_da->representor_ports[repr_idx]);
- 
- 		eth_dev = rte_eth_dev_allocate(name);
-@@ -562,10 +561,11 @@ int32_t sxe2_switchdev_repr_devs_init(struct sxe2_adapter *adapter,
- 			ret = -ENOMEM;
- 			goto l_release_port;
- 		}
-+		eth_dev->data->numa_node = adapter->dev_info.dev_data->numa_node;
- 		eth_dev->data->dev_private = rte_zmalloc_socket(name,
- 			sizeof(struct sxe2_adapter),
- 			RTE_CACHE_LINE_SIZE,
--			rte_socket_id());
-+			eth_dev->data->numa_node);
- 
- 		if (!eth_dev->data->dev_private) {
- 			rte_eth_dev_release_port(eth_dev);
+ 	if (oicr & RTE_BIT32(SXE2_COM_SW_MODE_SWITCHDEV)) {
+ 		PMD_DEV_LOG_INFO(adapter, DRV, "event notify switchdev");
 -- 
 2.52.0
 
