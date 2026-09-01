@@ -2,70 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9859BC61DD3
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 20:33:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 404A1C61DD3
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 20:34:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D491C40615;
-	Tue,  1 Sep 2026 22:33:24 +0200 (CEST)
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com
- [209.85.210.178])
- by mails.dpdk.org (Postfix) with ESMTP id 341F540ECF
- for <dev@dpdk.org>; Tue,  1 Sep 2026 22:33:23 +0200 (CEST)
-Received: by mail-pf1-f178.google.com with SMTP id
- d2e1a72fcca58-8558c0b26a8so229222b3a.3
- for <dev@dpdk.org>; Tue, 01 Sep 2026 13:33:23 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id CB39240EAB;
+	Tue,  1 Sep 2026 22:33:27 +0200 (CEST)
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com
+ [209.85.210.170])
+ by mails.dpdk.org (Postfix) with ESMTP id 7D2DA40EDC
+ for <dev@dpdk.org>; Tue,  1 Sep 2026 22:33:26 +0200 (CEST)
+Received: by mail-pf1-f170.google.com with SMTP id
+ d2e1a72fcca58-84864086bfeso252302b3a.1
+ for <dev@dpdk.org>; Tue, 01 Sep 2026 13:33:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788294802;
- x=1788899602; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788294806;
+ x=1788899606; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=r8j9VbmEG2m8nAOljbN9eEEoVMtO7ZbNrcLBrmU0sfc=;
- b=yzj5NPzIuvYQmDR9MZZqG33/q43P7ep8FikBtPrDT0r1Mc/2OKQN+5Pr/JXrBudo7V
- 317qm+JsUZ/PF2LvUJtSXpPfQpz8k742oF3t53jm8EDONeff1M8f19in1/lrNQXlFYA4
- Ml9ymdv7hODGdyI4iONgwvn8BreugjFFV0GkHYmUSIRCuOQC46qoWBul9kD0byIJBsmO
- QyW4SJntPOQdzxdtx3pYiWQ+bZW/YpV5Uy8TmbX+AqUNv16RhAZGmhfECULuh74XN62V
- QBEt2keY4bzns6EkmlN1d+Xryi2dhDlcL/YICXd8tptrTNpWGpBKIlLQgDBWiea1gU8Y
- v64A==
+ bh=9yWkiULgQgrU8fN7ws2Sa8Np1REBtKoMIOKwR+cg9EU=;
+ b=WaBwDmUkuwrOWlxqWRU3Pjd8/XB5zBBBO2LzQyi3kv2Tsu0GbuXeZ62qdzYh3PWjfY
+ k14NNp3JHttMk3Z7gatarEm2BW0P9mH6vbBOERxp2sNXFx2UxCOO6crsTLJ2sh3v+g1f
+ CB//mH8+9OgDVLvdYfbGSjCJoyW86rQOBDDcat/dRMVBFi4CMIvgIz2zzpQLNgjqMJ46
+ Rd7Bq+iv00YGf8LzHxDieN5zgfvoCc3w25iwOJNXRx7dsmGdZwmjgUqLqK7pQF3EYBpT
+ pQpgsx705bQmpcgVdUWUoYBmrdR8JVRhjhJ0EU2K8icls6zPMFpKhdxdmK5iUretnySz
+ rHnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788294802; x=1788899602;
+ d=1e100.net; s=20251104; t=1788294806; x=1788899606;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=r8j9VbmEG2m8nAOljbN9eEEoVMtO7ZbNrcLBrmU0sfc=;
- b=rC5AZdCMwWJKI+Lpvn0cKSoITJcYg1pGbxmGlwfTXfyZLAidt3ux8KKiehZSpemb0z
- 4xIah4NSG4WAlCDsy3G3yog+BxgOgKdqwSBaDSkf2nopqxP61qvOz0VsZAfQ+aES89Fa
- L4un0uFfDoxw74IZyQMussb+ObsdJupUY2y/CDD3GI8xbRgIg6LyAWitiVGMqX31lsHC
- 29YYnaVTZ87iAvMSntOsSMy8r6vMdCh97Gl9wiTm3e3a7+3LBAhgH5rl2sxXjq7LNrP7
- 9lGBgiBMoy3R3dnCM1f/7uXG9fQsIYqjhu4ua7L0TRQ+pdq1jptp2sIiHXtS1LWGDX4m
- lRZw==
-X-Gm-Message-State: AFuF++lOMQL8kKY6f/WpvL3qSjREQ0V5/HczAr1T0jN3HcGt86bxMvBd
- lKmkj4IPLDPXLqIgLjMMS3Zvj0hOkomW2vc0JqtvojSnweQO+cp4RneMk04uMQIwhLI3KvzofKZ
- wyZTZ
-X-Gm-Gg: AR+sD10aF/lDjUG5TqqQ64c2Rr7r8lZ0jrJgU1dISk8Bk77AcA3K6bGCf5BohEmOEQn
- yzSeSgO2L8Kjn3BRxRoIIk8zpVzFGwnPci6+8MsR5/3G5SmJGCCs3DahSUR2vhtjv6MtoBXP0qo
- b1/pNZ8IcLdNGHBpxwOBWBUNrataXdr2nwA5sD0HeGER5JxduH9b2BZEz6l+LX72HZk6Kstu/V3
- d6a6JWDSTA32s4pP2eP25fkz8273FfMt29Brd3NlSmZ6IAHLw+vYUzl7QayI9VfOno8MqPnsxvh
- iFknT1eanSQ7CSWh9sU0YnRCl7sCKPa6ujX1SPCtqFXQndy6+SCxut+gyri4BUIy/tHi9BjgVBm
- NWgrbO1+TW3AE7hS4iPepfW9k+nVFFT39iR4xwi5B98DkCXBm0vrxepBwmfzdVhlY6y/MFL4NyC
- Nu/3gOc9BXK/alzAnmZh+rpdtWoIlK1jWdvF5fW9LGRLvLg91zBNc4CQmJsDOzWgAyGAT7QjBfW
- UwhtuC0awZIoGijwROLzXBW06E=
-X-Received: by 2002:a05:6a00:8005:b0:84c:1cd2:142b with SMTP id
- d2e1a72fcca58-85ed23e979emr739545b3a.9.1788294802167; 
- Tue, 01 Sep 2026 13:33:22 -0700 (PDT)
+ bh=9yWkiULgQgrU8fN7ws2Sa8Np1REBtKoMIOKwR+cg9EU=;
+ b=ETN7mTPq3QS4eq67pToKZ/p3Z42ql0XuzxhIodVUhh/P7HM8BIjg4d0LhGQg3o95Zm
+ oV7O3m5LVYa1nHnYSDboDbc8J9xpeuPlw1RfLP9Z7QQ05U6oprv1dXaDWtvaHB5DIx+f
+ G7qa5ZIg730j28r4M2IVR2gpTLp/a6rJzQOk/cpoLbJT88vLVD69qOu32Ua8uUFhTow1
+ AoY2mxSGd+q0KKbca4neXv9PUzW4LdM1+avFfpAHegDhepp1qHvG4uhWEjLGcwytxndy
+ /xBjg9INvBdX/j0rVcWCTZ5TnqAFPR8K0udpMOpnemGX0Y6rEOORlMTzN8t5b9dW5hcG
+ HUbA==
+X-Gm-Message-State: AFuF++llCueRKzpWzOY/CJPbjDfvag8tiIPApsflWBBcwwxf8im3N2r1
+ PE12CkV9cjQ8nia4qh0/Ni1Fwu7vUXD8XZuzQ6ubox0OMEOjd2NUNc9S2js2hD982zFaBTASofE
+ aYntu
+X-Gm-Gg: AR+sD13OAeW+ms/ABWyE+wIRttvLw/Qdwgayl4fJTQdSFebcHYGkhWw3ibMipVPYVLu
+ 2JT4l/YQKJe6hwRaXTevgYGf9Uj84AWiApb90srWaAktpKZftXRp0u1lyTopjNoBbPLnR3WYxvu
+ KcZ5/aJeFnh+IP3Bc/Yo0fL4KUYYXnF4dmTM8xlAvbkMWBmZg1cgXP3Tjg2XJr/rsgiisJ72rBs
+ dhnOXeQD5OlPFfS8uaMDJS6YQJv4ymRqilYP8dmdj2Qs5CCav9hm9njazoVnXGchGXfBLjZLiTm
+ XwIszbxZ/uHf2n/fUU8B+d+7ScHB5URoGw6GgHDuzJdxPqVT4FYcQIPCKADkupzS5D5irwuzueO
+ NzY/mT578w90Nsa1/lmqyTulurLpdbyCGZwYNhAoA4MtowZZWIB4pykBdTR+GfSUTN5boWbhnu7
+ z0Fk973Xf7olzE0gK0dVjWvXuEIi3O8i3Ye63Ky6PTgUHYmo2W90ksv2bkleGVBE5vulfJUcr9l
+ 06YvsY9KXBQNZKshQRLAvvvaUHse3coVJPKhQ==
+X-Received: by 2002:a05:6a00:9090:b0:851:fb36:a701 with SMTP id
+ d2e1a72fcca58-85ed23dea91mr623757b3a.7.1788294805600; 
+ Tue, 01 Sep 2026 13:33:25 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-85dc0bffbc1sm323980b3a.48.2026.09.01.13.33.19
+ d2e1a72fcca58-85dc0bffbc1sm323980b3a.48.2026.09.01.13.33.22
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 01 Sep 2026 13:33:21 -0700 (PDT)
+ Tue, 01 Sep 2026 13:33:25 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Thomas Monjalon <thomas@monjalon.net>,
  Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: [PATCH 14/22] ethdev: promote congestion management API to stable
-Date: Tue,  1 Sep 2026 13:23:13 -0700
-Message-ID: <20260901203217.1485915-15-stephen@networkplumber.org>
+Subject: [PATCH 15/22] ethdev: promote IP reassembly offload API to stable
+Date: Tue,  1 Sep 2026 13:23:14 -0700
+Message-ID: <20260901203217.1485915-16-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260901203217.1485915-1-stephen@networkplumber.org>
 References: <20260901203217.1485915-1-stephen@networkplumber.org>
@@ -84,155 +84,113 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The congestion management interface was added in v22.11 and its four
-functions have not changed since. With this rte_ethdev_cman.c has no
-experimental symbol left.
+The IP reassembly offload configuration was added in v22.03 and the
+three functions are unchanged since.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
  doc/guides/rel_notes/release_26_11.rst |  3 +++
- lib/ethdev/rte_ethdev.h                | 22 ----------------------
- lib/ethdev/rte_ethdev_cman.c           |  8 ++++----
- 3 files changed, 7 insertions(+), 26 deletions(-)
+ lib/ethdev/rte_ethdev.c                |  6 +++---
+ lib/ethdev/rte_ethdev.h                | 12 ------------
+ 3 files changed, 6 insertions(+), 15 deletions(-)
 
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 6649a847ff..477139a2a1 100644
+index 477139a2a1..7d36e10794 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -127,6 +127,9 @@ API Changes
-   * remaining flow helpers: ``rte_flow_actions_update``, ``rte_flow_restore_info_dynflag``,
-     ``rte_flow_calc_table_hash``, ``rte_flow_group_set_miss_actions``,
-     and ``rte_flow_calc_encap_hash``
-+  * congestion management:
-+    ``rte_eth_cman_config_init``, ``rte_eth_cman_config_set``,
-+    ``rte_eth_cman_config_get`` and ``rte_eth_cman_info_get``
+@@ -130,6 +130,9 @@ API Changes
+   * congestion management:
+     ``rte_eth_cman_config_init``, ``rte_eth_cman_config_set``,
+     ``rte_eth_cman_config_get`` and ``rte_eth_cman_info_get``
++  * ip reassembly:
++    ``rte_eth_ip_reassembly_capability_get``, ``rte_eth_ip_reassembly_conf_get`` and
++    ``rte_eth_ip_reassembly_conf_set``
  
  
  ABI Changes
+diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
+index 6fda1468f9..337babe793 100644
+--- a/lib/ethdev/rte_ethdev.c
++++ b/lib/ethdev/rte_ethdev.c
+@@ -7205,7 +7205,7 @@ rte_eth_rx_metadata_negotiate(uint16_t port_id, uint64_t *features)
+ 	return ret;
+ }
+ 
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_ip_reassembly_capability_get, 22.03)
++RTE_EXPORT_SYMBOL(rte_eth_ip_reassembly_capability_get)
+ int
+ rte_eth_ip_reassembly_capability_get(uint16_t port_id,
+ 		struct rte_eth_ip_reassembly_params *reassembly_capa)
+@@ -7241,7 +7241,7 @@ rte_eth_ip_reassembly_capability_get(uint16_t port_id,
+ 	return ret;
+ }
+ 
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_ip_reassembly_conf_get, 22.03)
++RTE_EXPORT_SYMBOL(rte_eth_ip_reassembly_conf_get)
+ int
+ rte_eth_ip_reassembly_conf_get(uint16_t port_id,
+ 		struct rte_eth_ip_reassembly_params *conf)
+@@ -7275,7 +7275,7 @@ rte_eth_ip_reassembly_conf_get(uint16_t port_id,
+ 	return ret;
+ }
+ 
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_ip_reassembly_conf_set, 22.03)
++RTE_EXPORT_SYMBOL(rte_eth_ip_reassembly_conf_set)
+ int
+ rte_eth_ip_reassembly_conf_set(uint16_t port_id,
+ 		const struct rte_eth_ip_reassembly_params *conf)
 diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
-index 2a694130ea..2b40340004 100644
+index 2b40340004..d67a3bbe28 100644
 --- a/lib/ethdev/rte_ethdev.h
 +++ b/lib/ethdev/rte_ethdev.h
-@@ -6040,9 +6040,6 @@ enum rte_eth_cman_obj {
+@@ -5850,9 +5850,6 @@ struct rte_eth_ip_reassembly_params {
  };
  
  /**
 - * @warning
-- * @b EXPERIMENTAL: this structure may change, or be removed, without prior notice
+- * @b EXPERIMENTAL: this API may change without prior notice
 - *
-  * A structure used to retrieve information of ethdev congestion management.
-  */
- struct rte_eth_cman_info {
-@@ -6064,9 +6061,6 @@ struct rte_eth_cman_info {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change, or be removed, without prior notice
-- *
-  * A structure used to configure the ethdev congestion management.
-  */
- struct rte_eth_cman_config {
-@@ -6108,9 +6102,6 @@ struct rte_eth_cman_config {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change, or be removed, without prior notice
-- *
-  * Retrieve the information for ethdev congestion management
-  *
-  * @param port_id
-@@ -6124,13 +6115,9 @@ struct rte_eth_cman_config {
-  *   - (-ENODEV) if *port_id* invalid.
-  *   - (-EINVAL) if bad parameter.
+  * Get IP reassembly capabilities supported by the PMD. This is the first API
+  * to be called for enabling the IP reassembly offload feature. PMD will return
+  * the maximum values of parameters that PMD can support and user can call
+@@ -5869,14 +5866,10 @@ struct rte_eth_ip_reassembly_params {
+  *   - (-EINVAL) if device is not configured or *capa* passed is NULL.
+  *   - (0) on success.
   */
 -__rte_experimental
- int rte_eth_cman_info_get(uint16_t port_id, struct rte_eth_cman_info *info);
+ int rte_eth_ip_reassembly_capability_get(uint16_t port_id,
+ 		struct rte_eth_ip_reassembly_params *capa);
  
  /**
 - * @warning
-- * @b EXPERIMENTAL: this API may change, or be removed, without prior notice
+- * @b EXPERIMENTAL: this API may change without prior notice
 - *
-  * Initialize the ethdev congestion management configuration structure with default values.
-  *
-  * @param port_id
-@@ -6144,13 +6131,9 @@ int rte_eth_cman_info_get(uint16_t port_id, struct rte_eth_cman_info *info);
-  *   - (-ENODEV) if *port_id* invalid.
-  *   - (-EINVAL) if bad parameter.
+  * Get IP reassembly configuration parameters currently set in PMD.
+  * The API will return error if the configuration is not already
+  * set using rte_eth_ip_reassembly_conf_set() before calling this API or if
+@@ -5894,14 +5887,10 @@ int rte_eth_ip_reassembly_capability_get(uint16_t port_id,
+  *              configuration is not set using rte_eth_ip_reassembly_conf_set().
+  *   - (0) on success.
   */
 -__rte_experimental
- int rte_eth_cman_config_init(uint16_t port_id, struct rte_eth_cman_config *config);
+ int rte_eth_ip_reassembly_conf_get(uint16_t port_id,
+ 		struct rte_eth_ip_reassembly_params *conf);
  
  /**
 - * @warning
-- * @b EXPERIMENTAL: this API may change, or be removed, without prior notice
+- * @b EXPERIMENTAL: this API may change without prior notice
 - *
-  * Configure ethdev congestion management
-  *
-  * @param port_id
-@@ -6163,13 +6146,9 @@ int rte_eth_cman_config_init(uint16_t port_id, struct rte_eth_cman_config *confi
-  *   - (-ENODEV) if *port_id* invalid.
-  *   - (-EINVAL) if bad parameter.
+  * Set IP reassembly configuration parameters if the PMD supports IP reassembly
+  * offload. User should first call rte_eth_ip_reassembly_capability_get() to
+  * check the maximum values supported by the PMD before setting the
+@@ -5927,7 +5916,6 @@ int rte_eth_ip_reassembly_conf_get(uint16_t port_id,
+  *               successfully by the PMD.
+  *   - (0) on success.
   */
 -__rte_experimental
- int rte_eth_cman_config_set(uint16_t port_id, const struct rte_eth_cman_config *config);
+ int rte_eth_ip_reassembly_conf_set(uint16_t port_id,
+ 		const struct rte_eth_ip_reassembly_params *conf);
  
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change, or be removed, without prior notice
-- *
-  * Retrieve the applied ethdev congestion management parameters for the given port.
-  *
-  * @param port_id
-@@ -6186,7 +6165,6 @@ int rte_eth_cman_config_set(uint16_t port_id, const struct rte_eth_cman_config *
-  *   - (-ENODEV) if *port_id* invalid.
-  *   - (-EINVAL) if bad parameter.
-  */
--__rte_experimental
- int rte_eth_cman_config_get(uint16_t port_id, struct rte_eth_cman_config *config);
- 
- #ifdef __cplusplus
-diff --git a/lib/ethdev/rte_ethdev_cman.c b/lib/ethdev/rte_ethdev_cman.c
-index a8460e6977..3a62432bf0 100644
---- a/lib/ethdev/rte_ethdev_cman.c
-+++ b/lib/ethdev/rte_ethdev_cman.c
-@@ -12,7 +12,7 @@
- #include "ethdev_trace.h"
- 
- /* Get congestion management information for a port */
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_cman_info_get, 22.11)
-+RTE_EXPORT_SYMBOL(rte_eth_cman_info_get)
- int
- rte_eth_cman_info_get(uint16_t port_id, struct rte_eth_cman_info *info)
- {
-@@ -41,7 +41,7 @@ rte_eth_cman_info_get(uint16_t port_id, struct rte_eth_cman_info *info)
- }
- 
- /* Initialize congestion management structure with default values */
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_cman_config_init, 22.11)
-+RTE_EXPORT_SYMBOL(rte_eth_cman_config_init)
- int
- rte_eth_cman_config_init(uint16_t port_id, struct rte_eth_cman_config *config)
- {
-@@ -70,7 +70,7 @@ rte_eth_cman_config_init(uint16_t port_id, struct rte_eth_cman_config *config)
- }
- 
- /* Configure congestion management on a port */
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_cman_config_set, 22.11)
-+RTE_EXPORT_SYMBOL(rte_eth_cman_config_set)
- int
- rte_eth_cman_config_set(uint16_t port_id, const struct rte_eth_cman_config *config)
- {
-@@ -98,7 +98,7 @@ rte_eth_cman_config_set(uint16_t port_id, const struct rte_eth_cman_config *conf
- }
- 
- /* Retrieve congestion management configuration of a port */
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_cman_config_get, 22.11)
-+RTE_EXPORT_SYMBOL(rte_eth_cman_config_get)
- int
- rte_eth_cman_config_get(uint16_t port_id, struct rte_eth_cman_config *config)
- {
 -- 
 2.53.0
 
