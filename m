@@ -2,34 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0901DC61DFD
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 03:07:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FD16C624A4
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 03:07:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D702240B8D;
-	Tue,  1 Sep 2026 05:07:17 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id CC11240A77;
+	Tue,  1 Sep 2026 05:07:25 +0200 (CEST)
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id DB1C14068A;
- Tue,  1 Sep 2026 05:07:15 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 7B95B4068A;
+ Tue,  1 Sep 2026 05:07:23 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-05 (Coremail) with SMTP id zQCowADXB0JhQZZqkfchBw--.58618S2;
- Tue, 01 Sep 2026 11:07:14 +0800 (CST)
+ by APP-05 (Coremail) with SMTP id zQCowAAHN0FnQZZqvvchBw--.25354S2;
+ Tue, 01 Sep 2026 11:07:20 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>,
 	stable@dpdk.org
-Subject: [PATCH v8 20/49] net/sxe2: fix null dereference in dev uninit
-Date: Tue,  1 Sep 2026 11:07:13 +0800
-Message-ID: <20260901030713.3684657-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v8 21/49] net/sxe2: fix duplicated cleanup in dev close
+Date: Tue,  1 Sep 2026 11:07:19 +0800
+Message-ID: <20260901030719.3684714-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260831024549.3231744-1-liujie5@linkdatatechnology.com>
 References: <20260831024549.3231744-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowADXB0JhQZZqkfchBw--.58618S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr1UAw4xCw48XFW5ZF45trb_yoW8GryUpF
- 4xWa15tFyagF15Wa1fXa1xXF109F48t34UCrWYy343uF93Xrn7Ary3GFyrtr48GrZ7ZF1F
- vFy7Zr1kKrnYgaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: zQCowAAHN0FnQZZqvvchBw--.25354S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr15CrW8WrWDAF1UGw1kAFb_yoW8XF47pF
+ WfXa4rAF1FvFs7WwnxJayIgFyUKFyfJ34DGr4Yv34fuay8Aw1akryktFyYkw1vv39xZF1F
+ yry2yr1UXw4vvFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUkv14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
  rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
  1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
@@ -59,39 +59,45 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-sxe2_dev_uninit() calls rep_dev->dev_ops->dev_close() for each VF
-representor without checking that dev_ops or dev_close is present,
-which can crash when the representor device is not fully initialized.
+sxe2_dev_close() calls sxe2_switchdev_uninit() and
+sxe2_dev_pci_map_uinit() twice, and releases resources in an order
+that does not match the initialization sequence.
 
-Guard the call with NULL checks.
+Remove the duplicated calls and align the teardown order with the
+device init order.
 
-Fixes: 635084db5d57 ("net/sxe2: support VF representors")
+Fixes: 8cebf80f1eda ("net/sxe2: support Rx interrupt")
 Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_ethdev.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/net/sxe2/sxe2_ethdev.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index fdff4ae10f..41ea67a607 100644
+index 41ea67a607..5d14e28d96 100644
 --- a/drivers/net/sxe2/sxe2_ethdev.c
 +++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -2074,9 +2074,11 @@ static int32_t sxe2_dev_uninit(struct rte_eth_dev *dev)
- 	for (i = 0; i < adapter->repr_ctxt.nb_repr_vf; i++) {
- 		rep_dev = adapter->repr_ctxt.vf_rep_eth_dev[i];
- 		if (rep_dev) {
--			ret = rep_dev->dev_ops->dev_close(rep_dev);
--			if (ret)
--				goto l_end;
-+			if (rep_dev->dev_ops && rep_dev->dev_ops->dev_close) {
-+				ret = rep_dev->dev_ops->dev_close(rep_dev);
-+				if (ret)
-+					goto l_end;
-+			}
- 			if (rep_dev->intr_handle)
- 				rte_intr_instance_free(rep_dev->intr_handle);
- 			ret = rte_eth_dev_release_port(rep_dev);
+@@ -2041,17 +2041,15 @@ static int32_t sxe2_dev_close(struct rte_eth_dev *dev)
+ 	(void)sxe2_queues_release(dev);
+ 	sxe2_mp_uninit(dev);
+ 	(void)sxe2_sched_uinit(dev);
+-	(void)sxe2_rss_disable(dev);
+ 	(void)sxe2_flow_uninit(dev);
++	(void)sxe2_rss_disable(dev);
+ 	(void)sxe2_udp_tunnel_port_clear(dev);
+-	sxe2_vsi_uninit(dev);
+ 	sxe2_security_uinit(dev);
+ 	sxe2_intr_uninit(dev);
+ 	(void)sxe2_switchdev_uninit(dev);
+ 	sxe2_sw_uninit(dev);
+-	(void)sxe2_switchdev_uninit(dev);
+-	sxe2_dev_pci_map_uinit(dev);
+ 	sxe2_eth_uinit(dev);
++	sxe2_vsi_uninit(dev);
+ 	sxe2_dev_pci_map_uinit(dev);
+ 	sxe2_free_repr_info(dev);
+ 	sxe2_fc_state_uinit(dev);
 -- 
 2.52.0
 
