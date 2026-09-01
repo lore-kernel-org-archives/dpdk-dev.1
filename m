@@ -2,74 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4CFDC61DD6
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 20:34:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04D65C61DD6
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 23:10:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F172440E21;
-	Tue,  1 Sep 2026 22:34:05 +0200 (CEST)
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com
- [209.85.210.170])
- by mails.dpdk.org (Postfix) with ESMTP id 8DF9B40E8A
- for <dev@dpdk.org>; Tue,  1 Sep 2026 22:34:04 +0200 (CEST)
-Received: by mail-pf1-f170.google.com with SMTP id
- d2e1a72fcca58-8520161fdb9so378046b3a.3
- for <dev@dpdk.org>; Tue, 01 Sep 2026 13:34:04 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D539B402EA;
+	Wed,  2 Sep 2026 01:10:45 +0200 (CEST)
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com
+ [209.85.215.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 547B640281
+ for <dev@dpdk.org>; Wed,  2 Sep 2026 01:10:44 +0200 (CEST)
+Received: by mail-pg1-f173.google.com with SMTP id
+ 41be03b00d2f7-cb5b8572b70so494099a12.2
+ for <dev@dpdk.org>; Tue, 01 Sep 2026 16:10:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788294844;
- x=1788899644; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=KhyecZhVYmTdu1o55e9+cedeW2zYqLCTLkDxk2N+SjE=;
- b=mww1WkzzguOikdw2fBS9KwC1AsmmXxHytPfQKBxzCwTiaoAfzmYtLQsYhsktN8q/1z
- p0r6aZW7OyNJqmTguhVBFCb/QhfEQ9CvLIxOqxvds0IvkYRTXLG06gqP/Y2xDS/oFpS+
- v0ZbmyP8x2WEWoyjG1TLqJdrS/STthpXA2Dyjpk81KLyz839wG9PjL+EGBjYPMNyyORU
- VuoxWfWcDRNVLBUxVzpWPFT4xjW+uP6jqYu5H4R44JPOSSEUXCs9LNiSHsW6eOIk/iic
- dc+zDJDaLE5+0RMYVBza+JZVSUSfZz1eXfK50Ec6NLzgiOCRmvbWwt7COKCH/KeMPzg7
- WQZQ==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788304243;
+ x=1788909043; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=KGw4Lf68sMmI92A88TtZbiTrp7nGAVN4Vgn2A0L8Ta8=;
+ b=Rdafu0iqBFckcE3qwmS2m9CO7H3yF+7UveDLP9YcmaaxVkr7C1sS2n82NeQXFL0eEj
+ jwXwJldsKWizSBvrqMSRAtXwxDCmYGEP41VhFmL7bQfckPsXcMQdSNbxsssgnzlzWRrl
+ 6h2R/cYVkWx4ukr1sxsEXUdGMhkpymeJXF+0wkwOqw2DBZu39Zk2jOlI2OYkd6f1MPtk
+ B5boaiHkRSO13Wx5qi3lPeYngYrcEnTGmFQnAV6P8FMRt8uqa7ZcYEWhdBH2e1RrLL0A
+ hRZNxBgR6TiMQnYK6NoowQ3g7cpn1QVUTib5FJJ3U2mNDGzVjGeLGLY0d+W4YX2HQfEo
+ tR9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788294844; x=1788899644;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=KhyecZhVYmTdu1o55e9+cedeW2zYqLCTLkDxk2N+SjE=;
- b=cZfdfhEM4z1IjHZXqNbYviuBrLJB8wgztcDdVkfzLP2J7+cARuQXhGQNdX+JR3Znm6
- iPFfiRFNUVsn0o/M9Yau+PCYwsX0tFO3M68i7zZTl9BMmOh8wbklqsMXBMEv7Irhz6/6
- NK2cM8tg1x0aoMLRP5vXCjjJ9Z2J9KaVqrnlnRKXaENFdBm7KsMNvANwD7ZIkHNK9VM2
- lZVLVixWG1FvU/o3MOM6/R+K14pwLapyvZa/zHXuooQwM/QJV2iJK+CmdZCXARbcYNrb
- iFv/oJ4cAeFH1z/9LN/kEA1IH6FdtOWCNUESWN+ac7324O86Dg+KfW14t1PXFRRmGEtS
- FjVw==
-X-Gm-Message-State: AFuF++kpsgEYwf3AVPjV1qyFPq3aXRCMRRtF0Rk0tOkUXwjKtwvkY5gG
- dvcy0BghZzvsm1rS//kfP/XrJZFY6mASv+vI4/sZtohwQ56AuSexeVfoSxQmTuHiy62N4QxdDDR
- yVxVw
-X-Gm-Gg: AR+sD134ob6BN8djGRYezN3cOtYoXAi7Ntv/hihP90dvXHCVm9ZKMjb16+PmjX8qQtr
- Qlhm9LML0sUfKRZj5tUaa9+xmHH0/Mt29sU7HbScQs46pRL1IYqOi3i9rBIJujbqabKghK+khBM
- JQyhUppESff9F8a9rqkGb/zWXXoDVfPVAIXjaxNd0r52kDoxtT/oe32hSzOFa9W3Q96bK+H/8F+
- 3ORiANVj5iEIms9vSbG9T65JtoaKVJ6/yoPNtS2UoQIZGqDaGovUGwHu71Z7QgS4y4dB0bAvDLi
- vCws4dAQ1iSrAN6flFsbs6JXCEWAxMUP/BbPX9x5oGXGEEjD6051ADgfnVrh60GqFym5bztfaJd
- Dkejksw01fCcDcqxXp7s4x02SCgWniBxbjjJScf83/55+5n+IK9kFJRjz6z2A4fM1fWUVFUKrjI
- 0ZCNGeEHdvzY7/tLETkOvwusXtaHPxtp6cekXLGhslVb6bjsYlYnPTCm/A3o2M/ediWvwKsORkP
- UY+VuFSrF8P9cHpMPySUVDSDhE=
-X-Received: by 2002:a05:6a00:2d9f:b0:848:2c2e:c7a3 with SMTP id
- d2e1a72fcca58-85ed398aae1mr621382b3a.16.1788294843611; 
- Tue, 01 Sep 2026 13:34:03 -0700 (PDT)
+ d=1e100.net; s=20251104; t=1788304243; x=1788909043;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=KGw4Lf68sMmI92A88TtZbiTrp7nGAVN4Vgn2A0L8Ta8=;
+ b=bGA1ia+PaDMXbV9ks56HBxuPnHXf85ircR0Y6XgkBisF3EXuZ4VJ87Q4wGF6xkR14C
+ Si7gdTKOrxeHn7zSvcqyGi8gO3XRTQNUA3i1F1ulGWvtJVCq+QRhM87FCX9zN/UEB9Mg
+ qd5zVDgB/3Mz+Gn2fONWQU4xyH+VsR/HbaPizS1u6YNB74QrBkuKx1OFYQju9wrXUgUE
+ hBv2kgpqumYda82NMFu7PTVkCrej2XdFaDHgVdlCReySHpTmDa44QgaqpZQUpw5GRXjJ
+ 9UG/P0A/FKUTzTjlH4u0IhXhlTR4xRCVE7tUuWmtatdSAsBf1YJQ+aUlQgdzJOA2ln6t
+ xltQ==
+X-Gm-Message-State: AFuF++kn/Rdu7aFR8au6lDNM/AY9P2QNtWMx2j4wKSXM5pEFI7+5pWWq
+ k6CyMRH3UhjQnUezlbnIcLIhSbOU3z6UhpHVfjRo57oI7p4RtiSID4+GYY3RMJGwP8t0komzfVH
+ cb5je
+X-Gm-Gg: AYBFou2WHoo7D6iOST2Cu2M9Qitu02rZCuBqOnbQ63dxsY1xzVEx7uCkivaxl4hfsYa
+ KTZZhn720FqLfVR4Xgga+2y5uDBEv8gdF2AyXHxSNHkFzwzH07o38wcrW5gzr/Vd9w4412K1ZIZ
+ xuG/cURBti5Wvk79K8cikXABUA7K7wan2+TbT95LssCbppyPIRlX+YIKkGlb3JlJZJA1dT9L3TJ
+ N+8Owb9duW7m0pjqqg+My6+H+FZE0MYt1hh5fSjOu6hI4LoaNCf1lx7012ZpYqQjpnR7hba1zHA
+ JF7lNQkWlv7MGyu8MkiXSEp7lZuHM9WSy2Yg/xls81ZVLsW3MgSilHwP0BykUIc5Io6tXUqUeRJ
+ EOaK3Ji/dRHaFhzTrOGeCOJnRMSRjAehFX7zGGZCINgmN5bHttpYgGTVl/JpQTWXHh8LL6y72Cj
+ 6pb5n5pCRV6zNZX7Fh4OojE5L3+l014J3ZfgU7wN0Y8n45ONl5gDfy6fY8oG1qJYJWRkZh95IFG
+ bbdDqjuh2Wl4kAIbdZi/jQKlWo=
+X-Received: by 2002:a17:90b:268d:b0:398:ab03:95b2 with SMTP id
+ 98e67ed59e1d1-39aee023191mr630676a91.10.1788304242989; 
+ Tue, 01 Sep 2026 16:10:42 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-85dc0bffbc1sm323980b3a.48.2026.09.01.13.34.00
+ 98e67ed59e1d1-3990d80433dsm7614260a91.17.2026.09.01.16.10.39
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 01 Sep 2026 13:34:03 -0700 (PDT)
+ Tue, 01 Sep 2026 16:10:42 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Thomas Monjalon <thomas@monjalon.net>,
  Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
  Ori Kam <orika@nvidia.com>
-Subject: [PATCH 22/22] ethdev: promote experimental structures to stable
-Date: Tue,  1 Sep 2026 13:23:21 -0700
-Message-ID: <20260901203217.1485915-23-stephen@networkplumber.org>
+Subject: [PATCH 1/2] ethdev: remove deprecated flow copy API
+Date: Tue,  1 Sep 2026 16:10:32 -0700
+Message-ID: <20260901231033.169368-1-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260901203217.1485915-1-stephen@networkplumber.org>
-References: <20260901203217.1485915-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -85,655 +82,198 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The doxygen EXPERIMENTAL warnings on structures and enumerations were
-never cleaned up along with the functions that use them.  All of the
-remaining ones in ethdev are at least two years old:
+The rte_flow_copy() function and struct rte_flow_desc have been
+deprecated since 18.05. The function was only a wrapper around
+rte_flow_conv(), and struct rte_flow_desc uses a flexible array
+member which makes it unusable from C++.
 
-  21.05  rte_eth_rxseg_split, rte_eth_rxseg, rte_eth_rxseg_capa
-  22.11  rte_eth_err_handle_mode
-
-and in rte_flow every remaining item, action, template and async
-operation structure, the oldest from 21.05 and the newest
-rte_flow_action_jump_to_table_index from 24.11.
-
-These are only documentation comments; the structures themselves are
-already part of the ABI because they are embedded in stable API
-signatures.
-
-Two flex item structures had no description other than the warning
-itself, so give them one instead of leaving an empty comment block.
+Remove the function, the structure and the associated trace point.
+Users should call rte_flow_conv() with RTE_FLOW_CONV_OP_RULE instead.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/rel_notes/release_26_11.rst |   4 +
- lib/ethdev/rte_ethdev.h                |  12 --
- lib/ethdev/rte_flow.h                  | 169 +------------------------
- 3 files changed, 9 insertions(+), 176 deletions(-)
+ doc/guides/rel_notes/release_26_11.rst |  1 +
+ lib/ethdev/ethdev_trace.h              | 15 -------
+ lib/ethdev/ethdev_trace_points.c       |  3 --
+ lib/ethdev/rte_flow.c                  | 56 --------------------------
+ lib/ethdev/rte_flow.h                  | 45 ---------------------
+ 5 files changed, 1 insertion(+), 119 deletions(-)
 
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index bf31d0dc6d..760f49c496 100644
+index 760f49c496..591718253d 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -157,6 +157,10 @@ API Changes
-     ``rte_eth_timesync_adjust_freq`` and ``rte_tm_node_query``
-   * fast path inline funcs:
-     ``rte_eth_recycle_mbufs`` and ``rte_eth_tx_queue_count``
-+  * buffer split and error handling types:
-+    ``rte_eth_rxseg_split``, ``rte_eth_rxseg``, ``rte_eth_rxseg_capa``
-+    and ``rte_eth_err_handle_mode``
-+  * all remaining ``rte_flow`` item, action and async operation structures
+@@ -71,6 +71,7 @@ Removed Items
+ * Removed deprecated symbols:
  
+   * eal: ``__rte_packed``
++  * ethdev: ``rte_flow_copy``, ``struct rte_flow_desc``
+   * fib: ``RTE_FIB6_IPV6_ADDR_SIZE``, ``RTE_FIB6_MAXDEPTH``
+   * lpm: ``RTE_LPM6_IPV6_ADDR_SIZE``, ``RTE_LPM6_MAX_DEPTH``
+   * net: ``RTE_IP_ICMP_ECHO_REPLY``, ``RTE_IP_ICMP_ECHO_REQUEST``
+diff --git a/lib/ethdev/ethdev_trace.h b/lib/ethdev/ethdev_trace.h
+index 6554cc1a21..8cd95a2851 100644
+--- a/lib/ethdev/ethdev_trace.h
++++ b/lib/ethdev/ethdev_trace.h
+@@ -1402,21 +1402,6 @@ RTE_TRACE_POINT(
+ 	rte_trace_point_emit_int(ret);
+ )
  
- ABI Changes
-diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
-index ed350ae1bd..a1b0eebbe2 100644
---- a/lib/ethdev/rte_ethdev.h
-+++ b/lib/ethdev/rte_ethdev.h
-@@ -1061,9 +1061,6 @@ struct rte_eth_txmode {
- };
+-RTE_TRACE_POINT(
+-	rte_flow_trace_copy,
+-	RTE_TRACE_POINT_ARGS(struct rte_flow_desc *fd, size_t len,
+-		const struct rte_flow_attr *attr,
+-		const struct rte_flow_item *items,
+-		const struct rte_flow_action *actions, int ret),
+-	rte_trace_point_emit_ptr(fd);
+-	rte_trace_point_emit_size_t(len);
+-	rte_trace_point_emit_u32(attr->group);
+-	rte_trace_point_emit_u32(attr->priority);
+-	rte_trace_point_emit_ptr(items);
+-	rte_trace_point_emit_ptr(actions);
+-	rte_trace_point_emit_int(ret);
+-)
+-
+ RTE_TRACE_POINT(
+ 	rte_flow_trace_tunnel_decap_set,
+ 	RTE_TRACE_POINT_ARGS(uint16_t port_id,
+diff --git a/lib/ethdev/ethdev_trace_points.c b/lib/ethdev/ethdev_trace_points.c
+index 0a28378a56..a81398893f 100644
+--- a/lib/ethdev/ethdev_trace_points.c
++++ b/lib/ethdev/ethdev_trace_points.c
+@@ -503,9 +503,6 @@ RTE_TRACE_POINT_REGISTER(rte_eth_trace_count_aggr_ports,
+ RTE_TRACE_POINT_REGISTER(rte_eth_trace_map_aggr_tx_affinity,
+ 	lib.ethdev.map_aggr_tx_affinity)
  
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice.
-- *
-  * A structure used to configure an Rx packet segment to split.
-  *
-  * If RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT flag is set in offloads field,
-@@ -1149,9 +1146,6 @@ struct rte_eth_rxseg_split {
- };
+-RTE_TRACE_POINT_REGISTER(rte_flow_trace_copy,
+-	lib.ethdev.flow.copy)
+-
+ RTE_TRACE_POINT_REGISTER(rte_flow_trace_create,
+ 	lib.ethdev.flow.create)
  
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice.
-- *
-  * A common structure used to describe Rx packet segment properties.
-  */
- union rte_eth_rxseg {
-@@ -1740,9 +1734,6 @@ struct rte_eth_switch_info {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice.
-- *
-  * Ethernet device Rx buffer segmentation capabilities.
-  *
-  * @see rte_eth_rxseg_split
-@@ -1772,9 +1763,6 @@ enum rte_eth_representor_type {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this enumeration may change without prior notice.
-- *
-  * Ethernet device error handling mode.
-  */
- enum rte_eth_err_handle_mode {
-diff --git a/lib/ethdev/rte_flow.h b/lib/ethdev/rte_flow.h
-index f7523bdf8f..1bfe1b3f61 100644
---- a/lib/ethdev/rte_flow.h
-+++ b/lib/ethdev/rte_flow.h
-@@ -727,9 +727,6 @@ enum rte_flow_item_type {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * QUOTA state.
-  *
-  * @see struct rte_flow_item_quota
-@@ -1012,9 +1009,6 @@ static const struct rte_flow_item_ipv6 rte_flow_item_ipv6_mask = {
- #endif
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice.
-- *
-  * RTE_FLOW_ITEM_TYPE_IPV6_ROUTING_EXT.
-  *
-  * Matches an IPv6 routing extension header.
-@@ -1687,9 +1681,6 @@ rte_flow_item_pppoe_proto_id_mask = {
- #endif
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ITEM_TYPE_TAG
-  *
-  * Matches a specified tag value at the specified index.
-@@ -1725,9 +1716,6 @@ static const struct rte_flow_item_l2tpv3oip rte_flow_item_l2tpv3oip_mask = {
- 
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ITEM_TYPE_MARK
-  *
-  * Matches an arbitrary integer value which was set using the ``MARK`` action
-@@ -1754,9 +1742,6 @@ static const struct rte_flow_item_mark rte_flow_item_mark_mask = {
- #endif
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ITEM_TYPE_NSH
-  *
-  * Match network service header (NSH), RFC 8300
-@@ -1785,9 +1770,6 @@ static const struct rte_flow_item_nsh rte_flow_item_nsh_mask = {
- #endif
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ITEM_TYPE_IGMP
-  *
-  * Match Internet Group Management Protocol (IGMP), RFC 2236
-@@ -1807,9 +1789,6 @@ static const struct rte_flow_item_igmp rte_flow_item_igmp_mask = {
- #endif
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ITEM_TYPE_AH
-  *
-  * Match IP Authentication Header (AH), RFC 4302
-@@ -1830,9 +1809,6 @@ static const struct rte_flow_item_ah rte_flow_item_ah_mask = {
- #endif
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ITEM_TYPE_PFCP
-  *
-  * Match PFCP Header
-@@ -1853,9 +1829,6 @@ static const struct rte_flow_item_pfcp rte_flow_item_pfcp_mask = {
- #endif
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ITEM_TYPE_ECPRI
-  *
-  * Match eCPRI Header
-@@ -1896,9 +1869,6 @@ rte_flow_item_geneve_opt_mask = {
- #endif
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ITEM_TYPE_INTEGRITY
-  *
-  * Match on packet integrity check result.
-@@ -1966,9 +1936,6 @@ rte_flow_item_integrity_mask = {
- #define RTE_FLOW_CONNTRACK_PKT_STATE_BAD RTE_BIT32(4)
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ITEM_TYPE_CONNTRACK
-  *
-  * Matches the state of a packet after it passed the connection tracking
-@@ -2003,9 +1970,6 @@ static const struct rte_flow_item_ethdev rte_flow_item_ethdev_mask = {
- #endif
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ITEM_TYPE_L2TPV2
-  *
-  * Matches L2TPv2 Header
-@@ -2031,9 +1995,6 @@ static const struct rte_flow_item_l2tpv2 rte_flow_item_l2tpv2_mask = {
- #endif
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ITEM_TYPE_PPP
-  *
-  * Matches PPP Header
-@@ -2073,9 +2034,6 @@ static const struct rte_flow_item_ib_bth rte_flow_item_ib_bth_mask = {
- #endif
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice.
-- *
-  * RTE_FLOW_ITEM_TYPE_RANDOM
-  *
-  * Matches a random value.
-@@ -2132,9 +2090,6 @@ struct rte_flow_item {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ITEM_TYPE_FLEX
-  *
-  * Matches a specified set of fields within the network protocol
-@@ -2217,9 +2172,7 @@ enum rte_flow_item_flex_tunnel_mode {
- };
- 
- /**
-- *
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-+ * Description of a single field of a flex item.
-  */
- __extension__
- struct rte_flow_item_flex_field {
-@@ -2235,8 +2188,7 @@ struct rte_flow_item_flex_field {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-+ * Description of a link between a flex item and its neighbour headers.
-  */
- struct rte_flow_item_flex_link {
- 	/**
-@@ -2252,6 +2204,9 @@ struct rte_flow_item_flex_link {
- 	uint32_t next;
- };
- 
-+/**
-+ * Flex item configuration: field descriptions and neighbour links.
-+ */
- struct rte_flow_item_flex_conf {
- 	/**
- 	 * Specifies the flex item and tunnel relations and tells the PMD
-@@ -2315,9 +2270,6 @@ static const struct rte_flow_item_meter_color rte_flow_item_meter_color_mask = {
- #endif
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ITEM_TYPE_AGGR_AFFINITY
-  *
-  * For multiple ports aggregated to a single DPDK port,
-@@ -2436,9 +2388,6 @@ enum rte_flow_field_id {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice.
-- *
-  * Packet header field descriptions, used by RTE_FLOW_ACTION_TYPE_MODIFY_FIELD
-  * and RTE_FLOW_ITEM_TYPE_COMPARE.
-  */
-@@ -3262,9 +3211,6 @@ enum rte_flow_action_type {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * QUOTA operational mode.
-  *
-  * @see struct rte_flow_action_quota
-@@ -3276,9 +3222,6 @@ enum rte_flow_quota_mode {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Create QUOTA action.
-  *
-  * @see RTE_FLOW_ACTION_TYPE_QUOTA
-@@ -3289,9 +3232,6 @@ struct rte_flow_action_quota {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Query indirect QUOTA action.
-  *
-  * @see RTE_FLOW_ACTION_TYPE_QUOTA
-@@ -3301,9 +3241,6 @@ struct rte_flow_query_quota {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Indirect QUOTA update operations.
-  *
-  * @see struct rte_flow_update_quota
-@@ -3314,9 +3251,6 @@ enum rte_flow_update_quota_op {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * @see RTE_FLOW_ACTION_TYPE_QUOTA
-  *
-  * Update indirect QUOTA action.
-@@ -3341,9 +3275,6 @@ struct rte_flow_action_mark {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ACTION_TYPE_JUMP
-  *
-  * Redirects packets to a group on the current device.
-@@ -3366,9 +3297,6 @@ struct rte_flow_action_queue {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ACTION_TYPE_AGE
-  *
-  * Report flow as aged-out if timeout passed without any matching
-@@ -3400,9 +3328,6 @@ struct rte_flow_query_age {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ACTION_TYPE_AGE
-  *
-  * Update indirect AGE action attributes:
-@@ -3427,9 +3352,6 @@ struct rte_flow_update_age {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ACTION_TYPE_COUNT
-  *
-  * Adds a counter action to a matched flow.
-@@ -3606,9 +3528,6 @@ enum rte_flow_nat64_type {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice.
-- *
-  * RTE_FLOW_ACTION_TYPE_NAT64
-  *
-  * Specify the NAT64 translation type.
-@@ -3668,9 +3587,6 @@ struct rte_flow_action_of_push_mpls {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ACTION_TYPE_VXLAN_ENCAP
-  *
-  * VXLAN tunnel end-point encapsulation data definition
-@@ -3702,9 +3618,6 @@ struct rte_flow_action_vxlan_encap {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ACTION_TYPE_NVGRE_ENCAP
-  *
-  * NVGRE tunnel end-point encapsulation data definition
-@@ -3735,9 +3648,6 @@ struct rte_flow_action_nvgre_encap {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ACTION_TYPE_RAW_ENCAP
-  *
-  * Raw tunnel end-point encapsulation data definition.
-@@ -3760,9 +3670,6 @@ struct rte_flow_action_raw_encap {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ACTION_TYPE_RAW_DECAP
-  *
-  * Raw tunnel end-point decapsulation data definition.
-@@ -3780,9 +3687,6 @@ struct rte_flow_action_raw_decap {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ACTION_TYPE_SET_IPV4_SRC
-  * RTE_FLOW_ACTION_TYPE_SET_IPV4_DST
-  *
-@@ -3795,9 +3699,6 @@ struct rte_flow_action_set_ipv4 {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ACTION_TYPE_SET_IPV6_SRC
-  * RTE_FLOW_ACTION_TYPE_SET_IPV6_DST
-  *
-@@ -3810,9 +3711,6 @@ struct rte_flow_action_set_ipv6 {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice.
-- *
-  * RTE_FLOW_ACTION_TYPE_IPV6_EXT_PUSH
-  *
-  * Valid flow definition for RTE_FLOW_ACTION_TYPE_IPV6_EXT_PUSH include:
-@@ -3828,9 +3726,6 @@ struct rte_flow_action_ipv6_ext_push {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice.
-- *
-  * RTE_FLOW_ACTION_TYPE_IPV6_EXT_REMOVE
-  *
-  * Valid flow definition for RTE_FLOW_ACTION_TYPE_IPV6_EXT_REMOVE include:
-@@ -3842,9 +3737,6 @@ struct rte_flow_action_ipv6_ext_remove {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ACTION_TYPE_SET_TP_SRC
-  * RTE_FLOW_ACTION_TYPE_SET_TP_DST
-  *
-@@ -3875,9 +3767,6 @@ struct rte_flow_action_set_mac {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ACTION_TYPE_SET_TAG
-  *
-  * Set a tag which is a transient data used during flow matching. This is not
-@@ -3890,9 +3779,6 @@ struct rte_flow_action_set_tag {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ACTION_TYPE_SET_META
-  *
-  * Set metadata. Metadata set by mbuf metadata dynamic field with
-@@ -3925,9 +3811,6 @@ struct rte_flow_action_set_dscp {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ACTION_TYPE_INDIRECT
-  *
-  * Opaque type returned after successfully creating an indirect action object.
-@@ -3974,9 +3857,6 @@ enum rte_flow_conntrack_tcp_last_index {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * Configuration parameters for each direction of a TCP connection.
-  * All fields should be in host byte order.
-  * If needed, driver should convert all fields to network byte order
-@@ -4011,9 +3891,6 @@ struct rte_flow_tcp_dir_param {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ACTION_TYPE_CONNTRACK
-  *
-  * Configuration and initial state for the connection tracking module.
-@@ -4092,9 +3969,6 @@ struct rte_flow_modify_conntrack {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ACTION_TYPE_METER_COLOR
-  *
-  * The meter color should be set in the packet meta-data
-@@ -4123,9 +3997,6 @@ enum rte_flow_modify_op {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ACTION_TYPE_MODIFY_FIELD
-  *
-  * Modify a destination header field according to the specified
-@@ -4194,9 +4065,6 @@ struct rte_flow_indirect_update_flow_meter_mark {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice.
-- *
-  * Program action argument configuration parameters.
-  *
-  * For each action argument, its *size* must be non-zero and its *value* must
-@@ -4214,9 +4082,6 @@ struct rte_flow_action_prog_argument {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice.
-- *
-  * RTE_FLOW_ACTION_TYPE_PROG
-  *
-  * Program action configuration parameters.
-@@ -4262,9 +4127,6 @@ rte_flow_dynf_metadata_set(struct rte_mbuf *m, uint32_t v)
+diff --git a/lib/ethdev/rte_flow.c b/lib/ethdev/rte_flow.c
+index 1056cfd2c5..cc96190a71 100644
+--- a/lib/ethdev/rte_flow.c
++++ b/lib/ethdev/rte_flow.c
+@@ -1190,62 +1190,6 @@ rte_flow_conv(enum rte_flow_conv_op op,
+ 	return ret;
  }
  
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
+-/** Store a full rte_flow description. */
+-RTE_EXPORT_SYMBOL(rte_flow_copy)
+-size_t
+-rte_flow_copy(struct rte_flow_desc *desc, size_t len,
+-	      const struct rte_flow_attr *attr,
+-	      const struct rte_flow_item *items,
+-	      const struct rte_flow_action *actions)
+-{
+-	/*
+-	 * Overlap struct rte_flow_conv with struct rte_flow_desc in order
+-	 * to convert the former to the latter without wasting space.
+-	 */
+-	struct rte_flow_conv_rule *dst =
+-		len ?
+-		(void *)((uintptr_t)desc +
+-			 (offsetof(struct rte_flow_desc, actions) -
+-			  offsetof(struct rte_flow_conv_rule, actions))) :
+-		NULL;
+-	size_t dst_size =
+-		len > sizeof(*desc) - sizeof(*dst) ?
+-		len - (sizeof(*desc) - sizeof(*dst)) :
+-		0;
+-	struct rte_flow_conv_rule src = {
+-		.attr_ro = NULL,
+-		.pattern_ro = items,
+-		.actions_ro = actions,
+-	};
+-	int ret;
+-
+-	RTE_BUILD_BUG_ON(sizeof(struct rte_flow_desc) <
+-			 sizeof(struct rte_flow_conv_rule));
+-	if (dst_size &&
+-	    (&dst->pattern != &desc->items ||
+-	     &dst->actions != &desc->actions ||
+-	     (uintptr_t)(dst + 1) != (uintptr_t)(desc + 1))) {
+-		rte_errno = EINVAL;
+-		return 0;
+-	}
+-	ret = rte_flow_conv(RTE_FLOW_CONV_OP_RULE, dst, dst_size, &src, NULL);
+-	if (ret < 0)
+-		return 0;
+-	ret += sizeof(*desc) - sizeof(*dst);
+-	rte_memcpy(desc,
+-		   (&(struct rte_flow_desc){
+-			.size = ret,
+-			.attr = *attr,
+-			.items = dst_size ? dst->pattern : NULL,
+-			.actions = dst_size ? dst->actions : NULL,
+-		   }),
+-		   len > sizeof(*desc) ? sizeof(*desc) : len);
+-
+-	rte_flow_trace_copy(desc, len, attr, items, actions, ret);
+-
+-	return ret;
+-}
+-
+ RTE_EXPORT_SYMBOL(rte_flow_dev_dump)
+ int
+ rte_flow_dev_dump(uint16_t port_id, struct rte_flow *flow,
+diff --git a/lib/ethdev/rte_flow.h b/lib/ethdev/rte_flow.h
+index 1bfe1b3f61..dcd1dbf03e 100644
+--- a/lib/ethdev/rte_flow.h
++++ b/lib/ethdev/rte_flow.h
+@@ -4714,51 +4714,6 @@ rte_flow_error_set(struct rte_flow_error *error,
+ 		   const void *cause,
+ 		   const char *message);
+ 
+-/**
+- * @deprecated
+- * @see rte_flow_copy()
+- */
+-struct rte_flow_desc {
+-	size_t size; /**< Allocated space including data[]. */
+-	struct rte_flow_attr attr; /**< Attributes. */
+-	struct rte_flow_item *items; /**< Items. */
+-	struct rte_flow_action *actions; /**< Actions. */
+-	uint8_t data[]; /**< Storage for items/actions. */
+-};
+-
+-/**
+- * @deprecated
+- * Copy an rte_flow rule description.
 - *
-  * RTE_FLOW_ACTION_TYPE_JUMP_TO_TABLE_INDEX
+- * This interface is kept for compatibility with older applications but is
+- * implemented as a wrapper to rte_flow_conv(). It is deprecated due to its
+- * lack of flexibility and reliance on a type unusable with C++ programs
+- * (struct rte_flow_desc).
+- *
+- * @param[in] fd
+- *   Flow rule description.
+- * @param[in] len
+- *   Total size of allocated data for the flow description.
+- * @param[in] attr
+- *   Flow rule attributes.
+- * @param[in] items
+- *   Pattern specification (list terminated by the END pattern item).
+- * @param[in] actions
+- *   Associated actions (list terminated by the END action).
+- *
+- * @return
+- *   If len is greater or equal to the size of the flow, the total size of the
+- *   flow description and its data.
+- *   If len is lower than the size of the flow, the number of bytes that would
+- *   have been written to desc had it been sufficient. Nothing is written.
+- */
+-__rte_deprecated
+-size_t
+-rte_flow_copy(struct rte_flow_desc *fd, size_t len,
+-	      const struct rte_flow_attr *attr,
+-	      const struct rte_flow_item *items,
+-	      const struct rte_flow_action *actions);
+-
+ /**
+  * Flow object conversion helper.
   *
-  * Redirects packets to a particular index in a flow table.
-@@ -4309,9 +4171,6 @@ struct rte_flow_meter_profile;
- struct rte_flow_meter_policy;
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this structure may change without prior notice
-- *
-  * RTE_FLOW_ACTION_TYPE_SAMPLE
-  *
-  * Adds a sample action to a matched flow.
-@@ -5615,9 +5474,6 @@ rte_flow_configure(uint16_t port_id,
- struct rte_flow_pattern_template;
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Flow pattern template attributes.
-  */
- __extension__
-@@ -5701,9 +5557,6 @@ rte_flow_pattern_template_destroy(uint16_t port_id,
- struct rte_flow_actions_template;
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Flow actions template attributes.
-  */
- __extension__
-@@ -5987,9 +5840,6 @@ rte_flow_group_set_miss_actions(uint16_t port_id,
- 				struct rte_flow_error *error);
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Asynchronous operation attributes.
-  */
- __extension__
-@@ -6228,9 +6078,6 @@ rte_flow_push(uint16_t port_id,
- 	      struct rte_flow_error *error);
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Asynchronous operation status.
-  */
- enum rte_flow_op_status {
-@@ -6245,9 +6092,6 @@ enum rte_flow_op_status {
- };
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Asynchronous operation result.
-  */
- __extension__
-@@ -6521,9 +6365,6 @@ rte_flow_async_action_handle_query_update(uint16_t port_id, uint32_t queue_id,
- struct rte_flow_action_list_handle;
- 
- /**
-- * @warning
-- * @b EXPERIMENTAL: this API may change without prior notice.
-- *
-  * Configure INDIRECT_LIST flow action.
-  *
-  * @see RTE_FLOW_ACTION_TYPE_INDIRECT_LIST
 -- 
 2.53.0
 
