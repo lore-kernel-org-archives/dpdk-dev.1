@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09F97C624A4
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 03:10:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 199BAC61DFD
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 03:10:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5EA7F40E4C;
-	Tue,  1 Sep 2026 05:10:06 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B87AD40E6E;
+	Tue,  1 Sep 2026 05:10:11 +0200 (CEST)
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id B682240E44;
- Tue,  1 Sep 2026 05:10:03 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 41F4340E48;
+ Tue,  1 Sep 2026 05:10:10 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-05 (Coremail) with SMTP id zQCowAC35kAIQpZq__4hBw--.58291S2;
- Tue, 01 Sep 2026 11:10:01 +0800 (CST)
+ by APP-05 (Coremail) with SMTP id zQCowAAHdT8OQpZqSf8hBw--.61282S2;
+ Tue, 01 Sep 2026 11:10:06 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>,
 	stable@dpdk.org
-Subject: [PATCH v8 48/49] net/sxe2: fix VEC mode selection in mode set
- functions
-Date: Tue,  1 Sep 2026 11:10:00 +0800
-Message-ID: <20260901031000.3686584-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v8 49/49] net/sxe2: fix devargs parse error check for
+ representors
+Date: Tue,  1 Sep 2026 11:10:06 +0800
+Message-ID: <20260901031006.3686638-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260831024549.3231744-1-liujie5@linkdatatechnology.com>
 References: <20260831024549.3231744-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowAC35kAIQpZq__4hBw--.58291S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxZrWxury3KryxZF4fGry3Arb_yoWrGw1kpa
- 1rGFWFkas8XF90q3yfJrWxWr45Gr1xJryDCrWrCF15u3sFkF12yw1ftF13tFy5ZrZruFn5
- Aay0y3ZrGay8WaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUkK14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+X-CM-TRANSID: zQCowAAHdT8OQpZqSf8hBw--.61282S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr15tw4fAFy3Kr47CrW3KFg_yoW8Xr43pF
+ 4kWFyIvFW5ta1Fqw45Za1rXF1Y9w40y3yjkFW0g34SkasxJrWUAryqga4j93W0k3srAF1I
+ yF47trsFva1FgaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUkE14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
  rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
  1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
  JVWxJr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r
  4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2Wl
- Yx0E2Ix0cI8IcVAFwI0_Wrv_ZF1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbV
- WUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lw4CEc2x0rVAK
- j4xxMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
- 0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y
- 0x0EwIxGrwCI42IY6xIIjxv20xvE14v26F1j6w1UMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
- W8Jr0_Cr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWx
- JwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7sRiTmhD
- UUUUU==
+ Yx0E2Ix0cI8IcVAFwI0_Wrv_ZF1lYx0Ex4A2jsIE14v26F4j6r4UJwAm72CE4IkC6x0Yz7
+ v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40E
+ w7xC0wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+ v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkG
+ c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW7JVWDJwCI42IY6xIIjxv20xvEc7CjxVAFwI
+ 0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_
+ Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUYFA
+ JUUUUU=
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -61,86 +61,44 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-The Tx/Rx mode set functions pre-assigned tx_mode_flags/rx_mode_flags
-from vec_flags (SXE2_{TX,RX}_MODE_VEC_SIMPLE or _VEC_OFFLOAD) before
-the per-ISA capability checks. As SXE2_{TX,RX}_MODE_VEC_SET_MASK
-includes the SIMPLE and OFFLOAD bits, the subsequent
-"(flags & SET_MASK) == 0" guards never matched, so the AVX2 and SSE
-VEC mode bits were never set and the vectorized path fell back to SSE
-even when AVX2 was available.
+rte_eth_devargs_parse() returns a positive value (the number of
+representor ports) when a representor is specified in the device
+string, and a negative value on error.  The old check treated any
+non-zero return as an error, so probing a representor device always
+failed.
 
-Remove the pre-assignment and OR in "vec_flags | MODE" at each ISA
-selection branch so the correct VEC mode bit is selected on every
-architecture.
+Only treat a negative return as an error, so the positive
+representor count is not misreported.
 
-Fixes: ac60f302cbef ("net/sxe2: add vectorized Rx and Tx")
+Fixes: d8e4e075acb4 ("net/sxe2: add probing skeleton")
 Cc: stable@dpdk.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_txrx.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ drivers/net/sxe2/sxe2_ethdev.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/sxe2/sxe2_txrx.c b/drivers/net/sxe2/sxe2_txrx.c
-index 09f1dfe9fc..eb1092714a 100644
---- a/drivers/net/sxe2/sxe2_txrx.c
-+++ b/drivers/net/sxe2/sxe2_txrx.c
-@@ -319,13 +319,12 @@ void sxe2_tx_mode_func_set(struct rte_eth_dev *dev)
- 		ret = sxe2_tx_vec_support_check(dev, &vec_flags);
- 		if (ret == 0 &&
- 		    rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128) {
--			tx_mode_flags = vec_flags;
- #ifdef RTE_ARCH_X86
- 			if ((rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_512) &&
- 			    (rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512F) == 1) &&
- 			    (rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512BW) == 1)) {
- #ifdef CC_AVX512_SUPPORT
--				tx_mode_flags |= SXE2_TX_MODE_VEC_AVX512;
-+				tx_mode_flags |= (vec_flags | SXE2_TX_MODE_VEC_AVX512);
- #else
- 				PMD_LOG_INFO(TX, "AVX512 is not supported in build env.");
- #endif
-@@ -334,10 +333,10 @@ void sxe2_tx_mode_func_set(struct rte_eth_dev *dev)
- 			    ((rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX2) == 1) ||
- 			    (rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512F) == 1)) &&
- 			    (rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_256))
--				tx_mode_flags |= SXE2_TX_MODE_VEC_AVX2;
-+				tx_mode_flags |= (vec_flags | SXE2_TX_MODE_VEC_AVX2);
- 
- 			if ((0 == (tx_mode_flags & SXE2_TX_MODE_VEC_SET_MASK)))
--				tx_mode_flags |=  SXE2_TX_MODE_VEC_SSE;
-+				tx_mode_flags |= (vec_flags | SXE2_TX_MODE_VEC_SSE);
- #elif defined(RTE_ARCH_ARM64)
- 			if (rte_cpu_get_flag_enabled(RTE_CPUFLAG_NEON) == 1)
- 				tx_mode_flags |= (vec_flags | SXE2_TX_MODE_VEC_NEON);
-@@ -520,13 +519,12 @@ void sxe2_rx_mode_func_set(struct rte_eth_dev *dev)
- 		ret = sxe2_rx_vec_support_check(dev, &vec_flags);
- 		if (ret == 0 &&
- 		    rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128) {
--			rx_mode_flags = vec_flags;
- #ifdef RTE_ARCH_X86
- 			if ((rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_512) &&
- 				(rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512F) == 1) &&
- 				(rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512BW) == 1)) {
- #ifdef CC_AVX512_SUPPORT
--				rx_mode_flags |= SXE2_RX_MODE_VEC_AVX512;
-+				rx_mode_flags |= (vec_flags | SXE2_RX_MODE_VEC_AVX512);
- #else
- 				PMD_LOG_INFO(RX, "AVX512 support detected but not enabled");
- #endif
-@@ -535,11 +533,11 @@ void sxe2_rx_mode_func_set(struct rte_eth_dev *dev)
- 				((rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX2) == 1) ||
- 				(rte_cpu_get_flag_enabled(RTE_CPUFLAG_AVX512F) == 1)) &&
- 				(rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_256))
--				rx_mode_flags |= SXE2_RX_MODE_VEC_AVX2;
-+				rx_mode_flags |= (vec_flags | SXE2_RX_MODE_VEC_AVX2);
- 
- 			if (((rx_mode_flags & SXE2_RX_MODE_VEC_SET_MASK) == 0) &&
- 				rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128)
--				rx_mode_flags |= SXE2_RX_MODE_VEC_SSE;
-+				rx_mode_flags |= (vec_flags | SXE2_RX_MODE_VEC_SSE);
- 
- #elif defined(RTE_ARCH_ARM64)
- 			if (rte_cpu_get_flag_enabled(RTE_CPUFLAG_NEON) == 1) {
+diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
+index 8c60c9cfde..3871acdc77 100644
+--- a/drivers/net/sxe2/sxe2_ethdev.c
++++ b/drivers/net/sxe2/sxe2_ethdev.c
+@@ -2318,7 +2318,7 @@ static int32_t sxe2_parse_eth_devargs(struct rte_device *dev,
+ 		ret = rte_eth_devargs_parse(dev->devargs->cls_str,
+ 					    eth_da,
+ 					    1);
+-		if (ret) {
++		if (ret < 0) {
+ 			PMD_LOG_ERR(INIT, "Failed to parse device arguments: %s",
+ 				dev->devargs->cls_str);
+ 			return -rte_errno;
+@@ -2329,7 +2329,7 @@ static int32_t sxe2_parse_eth_devargs(struct rte_device *dev,
+ 		ret = rte_eth_devargs_parse(dev->devargs->args,
+ 					    eth_da,
+ 					    1);
+-		if (ret) {
++		if (ret < 0) {
+ 			PMD_LOG_ERR(INIT, "Failed to parse device arguments: %s",
+ 				dev->devargs->args);
+ 			return -rte_errno;
 -- 
 2.52.0
 
