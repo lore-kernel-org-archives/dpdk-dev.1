@@ -2,34 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B30C61DFD
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 03:09:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEAF0C624A4
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 03:09:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1ECA040E40;
-	Tue,  1 Sep 2026 05:09:42 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1A45D40E38;
+	Tue,  1 Sep 2026 05:09:53 +0200 (CEST)
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id 406F740E32;
- Tue,  1 Sep 2026 05:09:39 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 7F1914042F;
+ Tue,  1 Sep 2026 05:09:50 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-05 (Coremail) with SMTP id zQCowABXxT_xQZZq_f0hBw--.57460S2;
- Tue, 01 Sep 2026 11:09:37 +0800 (CST)
+ by APP-05 (Coremail) with SMTP id zQCowAAHcDr8QZZqef4hBw--.58462S2;
+ Tue, 01 Sep 2026 11:09:49 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>,
 	stable@dpdk.org
-Subject: [PATCH v8 44/49] net/sxe2: align command structs with kernel layout
-Date: Tue,  1 Sep 2026 11:09:37 +0800
-Message-ID: <20260901030937.3686348-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v8 46/49] doc/sxe2: remove drv-SW-stats parameter documentation
+Date: Tue,  1 Sep 2026 11:09:48 +0800
+Message-ID: <20260901030948.3686470-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260831024549.3231744-1-liujie5@linkdatatechnology.com>
 References: <20260831024549.3231744-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowABXxT_xQZZq_f0hBw--.57460S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxGF4DZF1xtFW5Ww1kKry8Xwb_yoW5tw4UpF
- Z5G34aqF45tr1jgF48Xr4xZrySg3yUA3yUXay7X34Sy3WftasrXryUKr1rCa4rK3yUuw4S
- yrsxKr4UJa4fCFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: zQCowAAHcDr8QZZqef4hBw--.58462S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxXFW7CF4ruw4rCFW3XryUGFg_yoW5ur1rpa
+ 9xZ34IyFykZr1Ut3yxAw48Wr18ZFsaya45G34UWayIvan8AryrZw4DKayFga9rGFy8A345
+ Zr1DuryUAa1DA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUkK14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
  rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
  1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
@@ -60,110 +60,77 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-The sxe2_drv_cmd.h command structures must match the layout used by
-historical SXE2 kernel versions so the same firmware command ABI is
-shared. Several structures were declared with __rte_packed_begin/
-__rte_packed_end and extra rsv padding that the kernel layout does
-not have:
+The drv-sw-stats devarg is no longer supported. Remove its
+parameter description from the Runtime Configuration section.
+The "Receive Software Statistics" xstats section is kept because
+the rx_sw_* counters are still accumulated in the Rx data path
+and reported through rte_eth_xstats_get().
 
-- sxe2_drv_link_info_resp: drop rsv[3] padding (size unchanged)
-- sxe2_tm_res: drop rsv[2] padding and packed attribute, reducing
-  the TM command payload length from 4 to 2 bytes to match the
-  historical kernel layout
-- sxe2_tm_info: drop packed attribute, removing -Wpacked-not-aligned
-  warnings
-- sxe2_tm_add_mid_msg/sxe2_tm_add_queue_msg: drop packed attribute;
-  the message sizes (16 and 20 bytes) are unchanged, but the tm info
-  member moves to its naturally aligned offset (4 and 8)
-- sxe2_drv_sfp_req/sxe2_drv_sfp_resp: drop packed attribute
-
-Fixes: 9c894f75113f ("net/sxe2: support TM hierarchy and shaping")
+Fixes: 9e95b2b3859c ("doc: update sxe2 guide and features")
 Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_drv_cmd.h | 26 ++++++++++++--------------
- 1 file changed, 12 insertions(+), 14 deletions(-)
+ doc/guides/nics/sxe2.rst | 31 ++-----------------------------
+ 1 file changed, 2 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/net/sxe2/sxe2_drv_cmd.h b/drivers/net/sxe2/sxe2_drv_cmd.h
-index 01fd813ed1..ee9d86dd4c 100644
---- a/drivers/net/sxe2/sxe2_drv_cmd.h
-+++ b/drivers/net/sxe2/sxe2_drv_cmd.h
-@@ -230,7 +230,6 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_drv_vsi_info_get_resp {
- struct __rte_aligned(4) __rte_packed_begin sxe2_drv_link_info_resp {
- 	uint32_t speed;
- 	uint8_t status;
--	uint8_t rsv[3];
- } __rte_packed_end;
+diff --git a/doc/guides/nics/sxe2.rst b/doc/guides/nics/sxe2.rst
+index c5b400a8ba..fe4f9f916b 100644
+--- a/doc/guides/nics/sxe2.rst
++++ b/doc/guides/nics/sxe2.rst
+@@ -109,30 +109,6 @@ Runtime Configuration
  
- struct __rte_aligned(4) __rte_packed_begin sxe2_switchdev_info {
-@@ -348,31 +347,30 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_rss_hf_req {
- 	uint8_t rsv1[3];
- } __rte_packed_end;
+   Default value is 3 (count both packets and bytes).
  
--struct __rte_aligned(4) __rte_packed_begin sxe2_tm_res {
-+struct sxe2_tm_res {
- 	uint16_t teid;
--	uint8_t rsv[2];
--} __rte_packed_end;
-+};
+-- ``drv-sw-stats`` parameter [int]
+-
+-  This parameter controls whether per-packet software statistics (SW stats)
+-  are collected in the Rx data path.
+-
+-  Hardware packet statistic counters may be inaccurate for certain packet types
+-  due to hardware design limitations.
+-  When accuracy of Rx packet classification statistics is critical,
+-  enabling this parameter allows the driver to accumulate statistics in software
+-  as packets are received, providing an alternative statistical path
+-  that bypasses hardware counter inaccuracies.
+-
+-  - 0: Disable software statistics collection (default).
+-    The basic port statistics (``ipackets``, ``ibytes``) are reported
+-    from the hardware counters.
+-  - 1: Enable software statistics collection.
+-    Per-packet software statistics are accumulated for unicast,
+-    multicast, broadcast, and dropped packets in the Rx data path.
+-
+-  When enabled, the following extended statistics (xstats) are available:
+-  ``rx_sw_unicast_packets``, ``rx_sw_multicast_packets``,
+-  ``rx_sw_broadcast_packets``, ``rx_sw_drop_packets``,
+-  and ``rx_sw_drop_bytes``.
+-
+ - ``no-sched-mode`` parameter [int]
  
--struct __rte_aligned(4) __rte_packed_begin sxe2_tm_info {
-+struct sxe2_tm_info {
- 	uint32_t committed;
- 	uint32_t peak;
- 	uint8_t priority;
- 	uint8_t reserve;
- 	uint16_t weight;
--} __rte_packed_end;
-+};
+   This parameter enables non-scheduling mode (no-sched mode).
+@@ -208,8 +184,7 @@ reflect the actual packets processed by the driver.
  
--struct __rte_aligned(4) __rte_packed_begin sxe2_tm_add_mid_msg {
-+struct sxe2_tm_add_mid_msg {
- 	uint16_t parent_teid;
- 	uint8_t adj_lvl;
- 	struct sxe2_tm_info info;
--} __rte_packed_end;
-+};
+ Receive Software Statistics
+   These counters are collected in the Rx data path
+-  when ``drv-sw-stats=1`` is configured (see the ``drv-sw-stats`` devarg above).
+-  When ``drv-sw-stats`` is disabled (default), these xstats report zero.
++  on every received packet.
  
--struct __rte_aligned(4) __rte_packed_begin sxe2_tm_add_queue_msg {
-+struct sxe2_tm_add_queue_msg {
- 	uint16_t parent_teid;
- 	uint16_t queue_id;
- 	uint8_t adj_lvl;
- 	struct sxe2_tm_info info;
--} __rte_packed_end;
-+};
+   - ``rx_sw_unicast_packets``: Number of unicast packets received.
+   - ``rx_sw_multicast_packets``: Number of multicast packets received.
+@@ -217,10 +192,8 @@ Receive Software Statistics
+   - ``rx_sw_drop_packets``: Number of packets dropped in the Rx data path.
+   - ``rx_sw_drop_bytes``: Number of bytes dropped in the Rx data path.
  
- struct __rte_aligned(4) __rte_packed_begin sxe2_drv_ipsec_capa_resq {
- 	uint16_t tx_sa_cnt;
-@@ -633,7 +631,7 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_drv_udp_tunnel_resp {
- 	uint8_t rsv;
- } __rte_packed_end;
+-  When ``drv-sw-stats`` is enabled, the basic counters
+-  ``ipackets`` and ``ibytes`` (from ``rte_eth_stats``)
++  The basic counters ``ipackets`` and ``ibytes`` (from ``rte_eth_stats``)
+   also reflect the software-accumulated packet and byte counts.
+-  Otherwise, they are reported from hardware counters.
  
--struct __rte_aligned(4) __rte_packed_begin sxe2_drv_sfp_req {
-+struct sxe2_drv_sfp_req {
- 	uint8_t is_wr;
- 	uint8_t is_qsfp;
- 	uint16_t bus_addr;
-@@ -642,14 +640,14 @@ struct __rte_aligned(4) __rte_packed_begin sxe2_drv_sfp_req {
- 	uint16_t data_len;
- 	uint16_t rvd;
- 	uint8_t data[];
--} __rte_packed_end;
-+};
- 
--struct __rte_aligned(4) __rte_packed_begin sxe2_drv_sfp_resp {
-+struct sxe2_drv_sfp_resp {
- 	uint8_t is_wr;
- 	uint8_t is_qsfp;
- 	uint16_t data_len;
- 	uint8_t data[];
--} __rte_packed_end;
-+};
- 
- enum sxe2_fc_type {
- 	SXE2_FC_T_DIS = 0,
+ Fnav Flow Engine Statistics
+   The Fnav flow engine statistics type is controlled by
 -- 
 2.52.0
 
