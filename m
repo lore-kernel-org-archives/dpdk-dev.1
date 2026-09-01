@@ -2,35 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B29C624A4
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 03:08:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7187C624A4
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 03:08:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AC18040BA3;
-	Tue,  1 Sep 2026 05:08:48 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id CA3C440E11;
+	Tue,  1 Sep 2026 05:08:50 +0200 (CEST)
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id 6009E40B98;
- Tue,  1 Sep 2026 05:08:46 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 4A4C140DF8;
+ Tue,  1 Sep 2026 05:08:49 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-05 (Coremail) with SMTP id zQCowACnEDu7QZZquvshBw--.25653S2;
- Tue, 01 Sep 2026 11:08:44 +0800 (CST)
+ by APP-05 (Coremail) with SMTP id zQCowAAHcDq2QZZqd_shBw--.58452S2;
+ Tue, 01 Sep 2026 11:08:38 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>,
 	stable@dpdk.org
-Subject: [PATCH v8 35/49] net/sxe2: restore PF-only guard in UDP tunnel port
- add
-Date: Tue,  1 Sep 2026 11:08:43 +0800
-Message-ID: <20260901030843.3685632-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v8 34/49] net/sxe2: fix RSS action attribute validation
+Date: Tue,  1 Sep 2026 11:08:37 +0800
+Message-ID: <20260901030837.3685573-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260831024549.3231744-1-liujie5@linkdatatechnology.com>
 References: <20260831024549.3231744-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowACnEDu7QZZquvshBw--.25653S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr18Aw1xKF1DWr48trW8JFb_yoW8uw4UpF
- 4jgrWYvFyaqFsI9w4FvF4kWF1jgr9YgayDC39xWw1rZa4DZ347Aay5tF1Yv3W8CFWfJF1F
- yayagr1fWr4UZ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: zQCowAAHcDq2QZZqd_shBw--.58452S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr1rGw4DKFWkWFyrCFW8Xrb_yoW8Cw1kpw
+ 45urn8ZrZaqa1xGw4fAr40qFyY9r1UWFWjkFZayw4fA3Wqqw4DG34q9w1jkw18CrZ8Aw40
+ gay7KF17Cr4kAFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUkC14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
  rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
  1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
@@ -61,65 +60,59 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-sxe2_udp_tunnel_port_add_common() lost the check that restricts
-UDP tunnel port configuration to PF devices (not VF or
-representor), so VF/representor devices can now attempt to add
-UDP tunnel ports, which the hardware does not support.
+The rss->level/key_len/queue_num checks only set the rte_flow_error
+but still return 0 (success), so invalid RSS configurations are
+accepted instead of being rejected with ENOTSUP.
 
-Restore the PF-only guard returning -ENOTSUP, matching the V3
-implementation.
+Return the error code from the validation checks, matching the
+behavior in the V3 implementation.
 
-Fixes: fff24885f70a ("net/sxe2: support custom UDP tunnel ports")
+Fixes: 635084db5d57 ("net/sxe2: support VF representors")
 Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_ethdev.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/net/sxe2/sxe2_flow_parse_action.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index 77a31eb8a1..8c60c9cfde 100644
---- a/drivers/net/sxe2/sxe2_ethdev.c
-+++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -630,6 +630,10 @@ int32_t sxe2_udp_tunnel_port_add_common(struct sxe2_adapter *ad,
- 	struct sxe2_udp_tunnel_cfg *tunnel_config;
- 	int32_t ret = -1;
+diff --git a/drivers/net/sxe2/sxe2_flow_parse_action.c b/drivers/net/sxe2/sxe2_flow_parse_action.c
+index 03ada4e8a6..65ddfeb47f 100644
+--- a/drivers/net/sxe2/sxe2_flow_parse_action.c
++++ b/drivers/net/sxe2/sxe2_flow_parse_action.c
+@@ -12,7 +12,7 @@
+ static int32_t sxe2_flow_check_rss_action_attr(const struct rte_flow_action_rss *rss,
+ 					   struct rte_flow_error *error)
+ {
+-	int32_t ret = ENOTSUP;
++	int32_t ret = -ENOTSUP;
+ 	switch (rss->func) {
+ 	case RTE_ETH_HASH_FUNCTION_DEFAULT:
+ 	case RTE_ETH_HASH_FUNCTION_TOEPLITZ:
+@@ -25,15 +25,21 @@ static int32_t sxe2_flow_check_rss_action_attr(const struct rte_flow_action_rss
+ 		goto l_end;
+ 	}
  
-+	if (ad->dev_type != SXE2_DEV_T_PF || ad->is_dev_repr) {
-+		ret = -ENOTSUP;
+-	if (rss->level > 2)
++	if (rss->level > 2) {
+ 		rte_flow_error_set(error, ENOTSUP, RTE_FLOW_ERROR_TYPE_ACTION, NULL,
+ 			"RSS  level is could not be greater than 2");
+-	if (rss->key_len)
 +		goto l_end;
 +	}
- 	rte_spinlock_lock(&ad->udp_tunnel_ctx.lock);
- 
- 	tunnel_config = &ad->udp_tunnel_ctx.tunnel_conf[tunnel_proto];
-@@ -659,6 +663,7 @@ int32_t sxe2_udp_tunnel_port_add_common(struct sxe2_adapter *ad,
- 
- l_unlock_end:
- 	rte_spinlock_unlock(&ad->udp_tunnel_ctx.lock);
-+l_end:
++	if (rss->key_len) {
+ 		rte_flow_error_set(error, ENOTSUP, RTE_FLOW_ERROR_TYPE_ACTION, NULL,
+ 			"a nonzero RSS key_len is not supported");
+-	if (rss->queue_num)
++		goto l_end;
++	}
++	if (rss->queue_num) {
+ 		rte_flow_error_set(error, ENOTSUP, RTE_FLOW_ERROR_TYPE_ACTION, NULL,
+ 			"a non-NULL RSS queue is not supported");
++		goto l_end;
++	}
+ 	ret = 0;
+ l_end:
  	return ret;
- }
- 
-@@ -669,6 +674,9 @@ int32_t sxe2_udp_tunnel_port_del_common(struct sxe2_adapter *ad,
- 	struct sxe2_udp_tunnel_cfg *tunnel_config;
- 	int32_t ret = -1;
- 
-+	if (ad->dev_type != SXE2_DEV_T_PF || ad->is_dev_repr)
-+		return -ENOTSUP;
-+
- 	rte_spinlock_lock(&ad->udp_tunnel_ctx.lock);
- 	tunnel_config = &ad->udp_tunnel_ctx.tunnel_conf[tunnel_proto];
- 
-@@ -703,6 +711,9 @@ static int32_t sxe2_udp_tunnel_port_clear(struct rte_eth_dev *dev)
- 	int32_t ret = 0;
- 	uint16_t tunnel_proto = 0;
- 
-+	if (ad->dev_type != SXE2_DEV_T_PF || ad->is_dev_repr)
-+		return -ENOTSUP;
-+
- 	rte_spinlock_lock(&ad->udp_tunnel_ctx.lock);
- 
- 	for (tunnel_proto = 0; tunnel_proto < SXE2_UDP_TUNNEL_MAX; tunnel_proto++) {
 -- 
 2.52.0
 
