@@ -2,193 +2,146 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD2D3C61DD6
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 16:03:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C41C61DD3
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 16:09:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6C64D4042E;
-	Tue,  1 Sep 2026 18:03:09 +0200 (CEST)
-Received: from alln-iport-5.cisco.com (alln-iport-5.cisco.com [173.37.142.92])
- by mails.dpdk.org (Postfix) with ESMTP id C0305402E2
- for <dev@dpdk.org>; Tue,  1 Sep 2026 18:03:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cisco.com; i=@cisco.com; l=20884; q=dns/txt;
- s=iport01; t=1788278587; x=1789488187;
- h=from:to:cc:subject:date:message-id:references:
- in-reply-to:mime-version;
- bh=qi0KEiE9/oYimURC9WWnjNFiHONLUMxm1O+aVVQwdVc=;
- b=P18/cyUy9UiZSHaV/1BG2tHx1oQYCyAqk3Wn96fejBWYT/naj0Mf8rFU
- DIC6F95PFBhW51HiUVObZiLhEDSbQvtisGu2GUmtsfdO7qUbQY7fAgozP
- +qraymfPl5+HgCKmrGV0/8u97W8EBUI7INlRT8RgQK3bUalr0XIaA9ytR
- g5L3t5DSp4mKLgDaeme+hvlRGUY7PQBf2FX90IsDoR3sgfXJRbox87tNf
- HXcyBvqq8YSaUplYoKIa5GKDvPKqmtVcforb/nul9A3WNBc/J6zRfgKhD
- e70gAPYsz2Vn+1zXwkk5YZjdNU+0GwFcx4fEKYRhEDcYM+bNJxQETD6yI g==;
-X-CSE-ConnectionGUID: LJpN4iBaRqq6euX6MbRs+A==
-X-CSE-MsgGUID: BEqWUy58QXOPjfXuaIVmyg==
-X-IPAS-Result: =?us-ascii?q?A0A6AACl9pZq/4sQJK1aHQEBAQEJARIBBQUBZYEXCAELA?=
- =?us-ascii?q?YE8MVOCK0mEV4NMA4RMX4h5A54bFIFqDwEBAQ0CUQQBAYUFAhaNYQImNAkOA?=
- =?us-ascii?q?QIEAwIDAQEBAQEBAQEBAQELAQEFAQEBAgEHBYEOE4ZchloBAQEBAgEjVgULA?=
- =?us-ascii?q?gEIEQMBAgEVFQICAi8dCAIEDgUIhRgwJwMBArINAooceoEygQHgORWBOAGFP?=
- =?us-ascii?q?oMfASqBNQMOg280g0KBHycbgUlEgRQBQoJpPhyDYEkeBhmDHDqCMASCDRV6E?=
- =?us-ascii?q?huBPyNLBByBJYNEgyuIX1JyIgMmMywBVRMXCwcFgSNDA4EGIw88BS0dgSMhH?=
- =?us-ascii?q?RcXHlgbBgUSICpBRCMDPoERAoFvPyMZNniBCV6BKylgAQIQF0YuFYIIAoJUg?=
- =?us-ascii?q?SdeAgFJQw4HR1MJJwkLbT03FRkDBIE1BY1rYR+CRQZZEgoigR8eASsaJQMMD?=
- =?us-ascii?q?BQIDy2SRmiDM4tiR44ZlRcKhB6BYaAxF6pslACFCKQKAYUNAgQCBAUCEAEBB?=
- =?us-ascii?q?oFoPIFZcBU7gmdTGQ+IStVyeT0CBwIHDgMLk2YBAQ?=
-IronPort-PHdr: A9a23:S3//fx+8VWboXf9uWBDoyV9kXcBvk7zwOghQ7YIolPcUNK+i5J/le
- kfY4KYlgFzIWNDD4ulfw6rNsq/mUHAd+5vJrn0YcZJNWhNEwcUblgAtGoiEXGXwLeXhaGoxG
- 8EqaQ==
-IronPort-Data: A9a23:k9k+6akLBtwlCekAjxZjdObo5gw7JERdPkR7XQ2eYbSJt1+Wr1Gzt
- xIcWDzTbPeLZGPzeNF2YYng8R8D7MDSmIAySVNppX1gEVtH+JHPbTi7wugcHM8zwunrFh8PA
- xA2M4GYRCwMZiaC4E/raf658SUUOZigHtLUEPTDNj16WThqQSIgjQMLs+Mii+aEu/Dha++2k
- Y20+ZC31GONgWYubDpFs/vb8nuDgdyr0N8mlg1mDRx0lAe2e0k9VPo3Oay3Jn3kdYhYdsbSb
- /rD1ryw4lTC9B4rDN6/+p6jGqHdauePVeQmoiM+t5mK2nCulARrukoIHKZ0hXNsttm8t4sZJ
- OOhGnCHYVxB0qXkwIzxWvTDes10FfUuFLTveRBTvSEPpqHLWyOE/hlgMK05Fak64sArAEtHz
- +UBdj0QXk6mjditg5vuH4GAhux7RCXqFIobvnclyXTSCuwrBMiZBa7L/tRfmjw3g6iiH96HO
- JFfMmQpNUqGOkYeUrsUIMpWcOOAnGX+eDBwo1OOrq1x6G/WpOB0+Oi3b4aMJYbbGq25mG6yi
- 3v5wnWkUigqE+SdxwqY+1OSg/7AyHaTtIU6UefQGuRRqFGe2EQfEBEVE1yhrpGEZlWWUtZbL
- QkQvyEpt6V3rBbtRdjmVBr+q3mB1vIBZ+dt/yQBwFjl4oLf4h2SAS4PSTspVTDsnJZsLdD2/
- jdlR+/UOAE=
-IronPort-HdrOrdr: A9a23:06ST26gULPX7ixaxZtjleJj0tHBQX+d23DAbv31ZSRFFG/FwyP
- re/8jzhCWVtN9OYhAdcIi7Sde9qBPnmaKc4eEqTNGftXrdyRqVxeBZnMTfKlLbalfDH4JmpM
- Ndmu1FeaLN5DtB/IjHCWuDYqsdKbC8mcjC65a9vhJQpENRGt1dBmxCe3+m+zhNNXJ77O0CZe
- KhD6R81l2dUEVSRP6WQlMCWO/OrcDKkpXJXT4qbiRM1CC+yRmTxPrfCRa34jcyOgkj/Z4StU
- TVmQ3w4auu98q81gLd0GHr6ZFXksvKy9dIBsCA4/JlawkEjDzGWK1RH5m5+BwlquCm71gn1P
- PWpQ07Ash143TNOkmovBrEwWDboXUTwk6n7WXdrWrooMT/Sj5/IdFGn5hlfhzQ7FdllM1g0Z
- hMw3mSu/NsfFH9dWXGlp31viNR5w2JSEkZ4KguZrtkINIjgYpq3MgiFYVuYc899WzBmdsa+a
- JVfbHhDb5tACCnhjbizylS6e3peGgvFRGbRUVHkMmU3z9K2E1d9SIjtZYidrNqzuNgd3GCjN
- 60b5hAhfVASNQbYrl6A/pEScyrCnbVSRaJK26KJ0/7fZt3cU4lhqSHqInd3tvaM6Ag3d83gt
- DMQVlYvWk9dwbnDtCPxoRC9lTITH+mVTrgx8lC79wh04eMCIbDIGmGUhQjgsGgq/IQDonSXO
- uyIotfB7vmIXH1EYhE0gXiU91ZKGUYUscSptEnMmj+7/7jO8nvrKjWYfzTLL3iHXItXX7+GG
- IKWHzpKMBJ/imQKzbFadjqKgXQk2DEjOVN+fLhjp0u4ZlIMpcJqQQcg0m44MaQQAcywJDeVH
- EOVI/arg==
-X-Talos-CUID: =?us-ascii?q?9a23=3APfYaN2n+2HP0E/EVlzBKoObSh9HXOVn/1FGMImW?=
- =?us-ascii?q?xM39wFrCIeQG18pl/0OM7zg=3D=3D?=
-X-Talos-MUID: =?us-ascii?q?9a23=3AfS6zUA2QgOBkOwS0w1sd33a4fTUjyYm3N30czMU?=
- =?us-ascii?q?/i+68NyJAJj68sjGmTdpy?=
-X-IronPort-Anti-Spam-Filtered: true
-Received: from alln-l-core-02.cisco.com ([173.36.16.139])
- by alln-iport-5.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384;
- 01 Sep 2026 16:03:06 +0000
-Received: from alln-opgw-2.cisco.com (alln-opgw-2.cisco.com [173.37.147.250])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by alln-l-core-02.cisco.com (Postfix) with ESMTPS id 5A6E518000227
- for <dev@dpdk.org>; Tue,  1 Sep 2026 16:03:06 +0000 (GMT)
-X-CSE-ConnectionGUID: +z/tkbk2RhCR1AabFkGiEg==
-X-CSE-MsgGUID: XBDd9yZjQiajCz/o2cr7iQ==
-Authentication-Results: alln-opgw-2.cisco.com;
- dkim=pass (signature verified) header.i=@cisco.com
-X-IronPort-AV: E=Sophos;i="6.25,256,1779148800"; d="scan'208,217";a="60026794"
-Received: from mail-eastus2azon11011007.outbound.protection.outlook.com (HELO
- BN8PR05CU002.outbound.protection.outlook.com) ([52.101.57.7])
- by alln-opgw-2.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384;
- 01 Sep 2026 16:03:06 +0000
+	by mails.dpdk.org (Postfix) with ESMTP id 3BF7E4042E;
+	Tue,  1 Sep 2026 18:09:40 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+ by mails.dpdk.org (Postfix) with ESMTP id 50C49402E2
+ for <dev@dpdk.org>; Tue,  1 Sep 2026 18:09:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1788278979; x=1819814979;
+ h=from:to:cc:subject:date:message-id:mime-version;
+ bh=QfPrZHH4uTWfAQ+arafTl8xE2mj2PNG6DyPG4BQw99U=;
+ b=IJtf+yKU0fFpw/mBUOQCTmQeDVZy8VZFWSZiLMG/6nAnkS9yC36pFUy8
+ jzcmauHy/dxzqVkHvnFCKHx95RPYwTBDvGGG8F55TO6OWrePSSjNVf5PA
+ 9b6bmoyZ4FkCkeB8NRzQKihQ3csp6cDyaRkowCc2dOlrpuw3rdw4J5b7K
+ z5U/ppNHttVgkM6WMQ4lcRbNhHMZd7DJHydbEX9moxfidzKeO8CexYpiU
+ j8IBD9uMhIAqVfEdPMqZ72g032Dg2IXR4pFlc/tkVBRVLxx4UtPO/e0pD
+ 4A7TVHzFMqn+lRAZVdI6SZkfFG1en/sjyc76qqVG0p2yUPK1azYpQPG0Z g==;
+X-CSE-ConnectionGUID: ShJSHu9+TUGf9vxob7aLaw==
+X-CSE-MsgGUID: yIViPxXgSnOOK7x2XXK/cQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11893"; a="106234208"
+X-IronPort-AV: E=Sophos;i="6.25,256,1779174000"; 
+ d="scan'208,217";a="106234208"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+ by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Sep 2026 09:09:37 -0700
+X-CSE-ConnectionGUID: OjvnhaaUSd6Rjx4YGR2pPQ==
+X-CSE-MsgGUID: WkCUMEn6QHSb3K8O/uaSvg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,256,1779174000"; 
+ d="scan'208,217";a="272917436"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Sep 2026 09:09:37 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Tue, 1 Sep 2026 09:09:36 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46 via Frontend Transport; Tue, 1 Sep 2026 09:09:36 -0700
+Received: from CO1PR03CU002.outbound.protection.outlook.com (52.101.46.27) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Tue, 1 Sep 2026 09:09:34 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=daWm1hqQNlyrrVRIgU0jFTLsZODNP8PrKR239wsMimN1PYNLc+78F/08GHHimntmuo62/0fnrPlbK76DPdwnvS4iwnkKVOleK6eQjdlUK58uT4l96tSfTOEEMuewVO9WUK6amSew48wovdNPWdV6IjuW/DhpZIxMFGBvqd6sb0LEKZ6CRIDERYBYaHRMWcgozto+6ZnoDp20kpreW2aEsdWoVjOXx+3as/DNsSlmIOvwG/bq+DbRishKMC0hYswcEgvy93TGg+3/LQl+6uiNlLDrPavBG4ANWzOUJT+agd+LFfjHqGlpS5b05voRn8s3laBFwa8zD38G3ooXC4O3lQ==
+ b=xz/AKxow3IYM7lVF+znrqRSjkSv2qkr1NC+5MV8BTRz7TezA6oefAI4bJC4RHeKJjukBoqdMZdhfS9pYY28QLdfz54Aymw3bB3U2+CuBN0G0a/X6AhyRO5ZsaWbT/w41OoAo50SpoZEX03O6W52U1jSBDvH4dDBC/qgQoJkBlg/EzUsP1WeJThVmDJy2Jsyb8DAg6RQ/Qg/aoi0jgU49DH7u7MeQb3vibcmpG1YlXO1ON9Uj1WXN3s8GlZdfjbh87/Okm2k1bwzrNE/Ecbq25oWuyjF+Vg0RKcimvN1VkIoTckqSY1uZtCR3aOx9ln5VAPb/4HyxbuwwQFLw19XD7g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qi0KEiE9/oYimURC9WWnjNFiHONLUMxm1O+aVVQwdVc=;
- b=VoZvdonNszaJeSjUr7PsgKdLKZBI38d8GDHajho4Kk7woNucETt3p8LCO3uiJJVPCkIweO3gfbObD9GWdBDawkTv4mA/T04+Q/cIvv8M1r5J1ATp6JM3SoRILbYQRU4a6dzB9ubNmWUXM2VgBVVWKWWOUWxqdhxfWBudGdG3Dk9xoHc8Phoi49P6e1WnyHnlT4Jvatd0MyWrwQXRoIUvbebQ9JIOcHycHKEIMBCexIjZDe+hGeqAYfhGhg6n+NQPYt4MuSrjNuLbU0C2ifDXaat0qUB2dkxuWHbjguNMVO24+WD7rHVgqB5StnqdLZ9zAAzciAKwIF5RVv/PHS3dRw==
+ bh=D7fq6UljRNPliBsFttPkiQCl5gjAkX3xDZ6Q474ZdC0=;
+ b=fBSJqN4jIhX9SypYho5IlQA9gvY22kZTFO+FzPRIpusA3hN6pCXDBiKbkzSZxRBmpG4kADeB3qodYi6gfLfRuOXkV6yXxqbjnAUPziC91LYBk/xcvqUwV9v0UDlUwC7SXBKFD00r7jEQgBx4L5PKAg0oyPsFWOndj+2glQz1o7TVeu6hUvJ29L0rdR4GKMTTGYx3/8YBGI/0psCB1NddAypA1nq5GPk1XT2SEnEOf1xQXF+sJBA5TZf4ATsYFE/WaxXnKOEAGph994Emf+/vdqvQXdg5DPcMu9fAeryHV96t+AUzB8NYR4tvCk5r3ELBezFTQ28rlx587NY4yzK9Hw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cisco.com; dmarc=pass action=none header.from=cisco.com;
- dkim=pass header.d=cisco.com; arc=none
-Received: from PH0PR11MB7616.namprd11.prod.outlook.com (2603:10b6:510:26d::20)
- by SA1PR11MB6688.namprd11.prod.outlook.com (2603:10b6:806:25b::17)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.382.10; Tue, 1 Sep
- 2026 16:03:04 +0000
-Received: from PH0PR11MB7616.namprd11.prod.outlook.com
- ([fe80::9ba7:5071:9af5:340]) by PH0PR11MB7616.namprd11.prod.outlook.com
- ([fe80::9ba7:5071:9af5:340%5]) with mapi id 15.21.0360.008; Tue, 1 Sep 2026
- 16:03:04 +0000
-From: "Randy Tice (rtice)" <rtice@cisco.com>
-To: Bruce Richardson <bruce.richardson@intel.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>
-Subject: Re: [RFC] mbuf: add configurable base private size for pktmbuf pools
-Thread-Topic: [RFC] mbuf: add configurable base private size for pktmbuf pools
-Thread-Index: AQHdOXCgdP+ENN3UFk+QdyL24xrKUra5pdSAgAA9elc=
-Date: Tue, 1 Sep 2026 16:03:04 +0000
-Message-ID: <PH0PR11MB7616978E78B442662B97D304A9A82@PH0PR11MB7616.namprd11.prod.outlook.com>
-References: <PH0PR11MB76163DCD87BB40C437CB54C8A9A92@PH0PR11MB7616.namprd11.prod.outlook.com>
- <apbDL2mTUpOojbGl@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <apbDL2mTUpOojbGl@bricha3-mobl1.ger.corp.intel.com>
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DS3PR11MB9646.namprd11.prod.outlook.com (2603:10b6:8:38f::18)
+ by LV3PR11MB8743.namprd11.prod.outlook.com (2603:10b6:408:20e::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.13; Tue, 1 Sep
+ 2026 16:09:30 +0000
+Received: from DS3PR11MB9646.namprd11.prod.outlook.com
+ ([fe80::d32a:8f92:25b:9bcd]) by DS3PR11MB9646.namprd11.prod.outlook.com
+ ([fe80::d32a:8f92:25b:9bcd%5]) with mapi id 15.21.0360.008; Tue, 1 Sep 2026
+ 16:09:30 +0000
+From: "Mcnamara, John" <john.mcnamara@intel.com>
+To: "dev@dpdk.org" <dev@dpdk.org>
+CC: Thomas Monjalon <thomas@monjalon.net>, David Marchand
+ <david.marchand@redhat.com>
+Subject: DPDK Release Status Meeting 2026-09-01
+Thread-Topic: DPDK Release Status Meeting 2026-09-01
+Thread-Index: AQHdOiwy3lwUIS7VJkWudMOcG0HCog==
+Date: Tue, 1 Sep 2026 16:09:30 +0000
+Message-ID: <DS3PR11MB96465F02B0ED3F8F78C614C3FCA82@DS3PR11MB9646.namprd11.prod.outlook.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-ms-reactions: allow
+msip_labels: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH0PR11MB7616:EE_|SA1PR11MB6688:EE_
-x-ms-office365-filtering-correlation-id: 21503b01-287e-42af-45c2-08df08428163
+x-ms-traffictypediagnostic: DS3PR11MB9646:EE_|LV3PR11MB8743:EE_
+x-ms-office365-filtering-correlation-id: 6ed5ae2c-00bc-4eb9-046a-08df084367e0
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
- ARA:13230040|376014|1800799024|366016|23010399003|38070700021|6133799003|10067099003|56012099006|11063799006|4143699003|8096899003|18002099003|22082099003;
-x-microsoft-antispam-message-info: XbO8Eax+IKr6dDVOVOfEC6SktwSIRVVTNSuJLnnC7B+cNSJBgLrfp+87c0G2QVkoCBtHSDdcJwLOXZsqEmSzw9qvlFudWofDBTDaO98iidZ/Vwzjq2IVc+ocFS79wl7i6SXu/j6JYGQkpO2pJvdYsu5j0afYAuUEGBpxtgKiHoSvEYj9ggPVHGSSCgwaCwr4HHb7tkS86zo5br1F+c0ji+9EWOYwt6BvoamLpn8Qc849R2fLKZFYDLEBRKwxz2kIK+/5Jxgesh5OW5HJMMDxS+T6rN5o5dC4V5QT6t4OCmvqSXFpTDCMv46jd8aNSFygAaTr0PG86t4dUCNgUPvD00ZRljBImTCcwNVLvbCmUmFcAm4q/LcFzltvn4v3glyJypxbvLAKVVaoevijKx7ExYoJi/etQxYaf95u58q6v/bYhZHWqYmSOc03ktpcyxV10doOyIDd11cJlmRqqoFBIl9NIAcvL4ujUPhkX/MOpg0wBArjxWtoXu+CJ5ajxdu51o3T1x4Cm4iLewlljThTsUq0qRAkv40Jlct5wVARDaclrbgjpE22kwKnkxYMQcwWChozNwwibyLrW6jzJvdszQ1Vh+EYxOePF5WnK+kuJkPwjM45q/VHucxU3NW0G2rt1TpPODs38b0UeZ6Ko9uoM2/pp3qNENt+SM1yA/FbyhYVk1SA5XrFFyCPUr8yUFN1i3jXECEk/R5wWm79EVm0A/yCMrEvKgjr41El1Mt1ihI=
+ ARA:13230040|366016|23010399003|1800799024|376014|38070700021|56012099006|10067099003|11063799006|8096899003|18002099003;
+x-microsoft-antispam-message-info: Gmucy8GIZuJa8DKHk2n+IJzOuTeLETxPhZ5t0vHy14/uD6iGalUaad4htXSUjjK7Vi6WF4WUXDHFD3ffBkBXI5jXc6BVZJnkKMh/HDXoF1rvJpJGvMky0OBg8jzze/cAcXng0334ubk5m/zO8LFOd6Pkk9JKirx+KNy3KyxnfjHi2pXilaxo17CIxQ8jVeWhRAQNLuz5GBH0nzVNEAgw+nFX4rh2jJaADIghC8AEh08pWjVZLXGHdIZUaaYipsaGmNeOVmfklO95enRwqlTAHUYE5Lx1AYDdC/DZLsYmUzCXlTGXzAM7rFD5p+2xRn7/gKDeWc5zfQ8U/zqL9erABLyBvKUi2cN1wBcZp83QHvugUXpkhU6+0KnGA1PcMRfZ1ODeNn0j6LRm4SqHcxMbdD/igK4+2WbeznJkdZWhpCs2hDoAEyK8rhhXTjj1/rHB5PFre81MRR99X14N300B5OQIW/VaU3+mJlWo8vTqL5JRQX9zsSzVi5DvQ35n5XLEX7qwXeZ4qwxRLRmIUKnEqP/MpP+OwTb6Id1mga46u+xQ84vNF5PICAGZVdy0Y94+Pu1Fr40jPy0dhHY2kr2v6ka6dNmJZocTmY6Taz5MquWOxJsQt3/8HdX3y2w3AyMd1zC9pKVzPGc4tBzX+vhGgXCuI8zoisJzXjTBQXNXRXY=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:PH0PR11MB7616.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(23010399003)(38070700021)(6133799003)(10067099003)(56012099006)(11063799006)(4143699003)(8096899003)(18002099003)(22082099003);
+ IPV:NLI; SFV:NSPM; H:DS3PR11MB9646.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(23010399003)(1800799024)(376014)(38070700021)(56012099006)(10067099003)(11063799006)(8096899003)(18002099003);
  DIR:OUT; SFP:1101; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?dXdmTHpvekRGdGxjV1BDQXhVekpaOWJBRlltakFLdkdrOEllTndvOEhaendi?=
- =?utf-8?B?ajd6eXlWWUl2VU1IZTdWRXgzaXhPbGxweFFpamw3eWR0aW04QmVuTVNxRVFH?=
- =?utf-8?B?ejFJY1JKSFJUSXdOUyt6R2RXOURIa1grTkwvOE5KcGJYUEV1WFpZL085ZDlT?=
- =?utf-8?B?ZjRvR2t2UmxnT3ovYWRFZW0rdkVMTkdlaVJudXU2YmlHaWpWcXcvUTdwcUxT?=
- =?utf-8?B?L1FLKzNyK2lLMlI3ZzdZSUdMVjQ3RnJWcWo1V0E4d2UyM216a0lEcDIrNnpt?=
- =?utf-8?B?cWc3NzBPdUptNHhTN1JkOFVyUHJEaVJzZ1FaZVpEaUx3ditxZTk2RjVvUXVi?=
- =?utf-8?B?WGl6MjR2VS9aMFNsMkVtcDdBZjRoT2NsdlRuMmt0N3pLY1dOMWZ1TXppbmdy?=
- =?utf-8?B?aEFSbDZ0V0E0c0ZkQzZWcENNaUxvcnlwRnh6MDR5c0g0b2I2bTBvT282NU5M?=
- =?utf-8?B?Z3FHRmJqQW1OaUtpa2w2ZlllUUlrdXNaaHJUMTQwdENmdzIzRlRnWmh1Z0JU?=
- =?utf-8?B?U0hQMWxKWmlkK1lzNFNEaGhPcEV3S3p2bHlPa1g0ZlRSQXNPM2hTREZoZTlM?=
- =?utf-8?B?UDQzL3N2cnBkQXBKdjdJZU9lWlBPZzFPaG4wOXhXMkJmbENoT0hrbU1JaFU2?=
- =?utf-8?B?RTBJZFhGSFNBUXcyYnlKUTk2UUp5dFhPNElGaWp2aTIwUUx1a2U3ODFWSWsz?=
- =?utf-8?B?d1E0dWhkSFNTVm5GTmNCRG1yNFVrQU5FUGNZZWxXMmhaRFcveVVLVllwcXdq?=
- =?utf-8?B?ZkVKL2dKTXppalJnL2p1K3MxQ2kyZHk3Zm44QTk4RmVWU1VSckN1dEtpejd2?=
- =?utf-8?B?aUgzNDFnTFMxL2V6VkVhMHNKcUpDVzBmN0NjcUpSNVJBeWlGVVVHeG96MnVZ?=
- =?utf-8?B?WEh3TXdmQnVJKzR1bHRaQTJZQjJNQlVTRk9Ua1ZGZmZJOHk5VENMZjdvVXd4?=
- =?utf-8?B?T3FWdisySTUveXRDWnZnMzV6MGVuckEzaGlSMjRwQWsrWkhCUE1MWkdVejl0?=
- =?utf-8?B?eXpMbWFsWEwyTlc5Slk3SFJnUmt4dGliellKSTk5bXN4N3piRlcxZTJQUmFr?=
- =?utf-8?B?bkNnVG5PNU4xV1ZpR3ZXcXlBQ0RycUhPSFFlTlhCRE1LU0RkejAvRWNLTU5r?=
- =?utf-8?B?VUJrYW9TeGt1WjR0SFpmZmpxRVhzNUM0L2k4WkVRZnF3RHBsRlJOM0JwNEhh?=
- =?utf-8?B?V2p2aU5TNGE5cDZvVksrTGJrSTVHV3g4clZDK0ZHQ1MxQS8vN0NSY1Q2dXZj?=
- =?utf-8?B?TlMwK2lmdHZ6MnhwY3FOT3ZGLzRVSklaYzBtd3JhNHdpMm9hWjVJWml3MzAr?=
- =?utf-8?B?enpIOE9wK2ZsYjdYd3EyblZmSHVYUDBiMmVkNzJOMGR5ZVZadXFjbmNkNHJJ?=
- =?utf-8?B?Mi9VSTJ1ZkR0Z2dxZHpaSXI5bmozNC9UeDAveVZIT1ZIaEN2dklIbEMxa0c1?=
- =?utf-8?B?UEtXSlJ0MzNQWURSb1pCZ1YvaGxORE1tR21FOTlFaHZQdWJTa0FHUTExc3JU?=
- =?utf-8?B?ZVFaa2NqL2VqMnNPUXEwcGhCVmZjWUlkcHNqaHFlUnZ3b01rc2VCMnZnRUdy?=
- =?utf-8?B?aVV2OXlMcG5sLzVidmZKVkttU3pGd3FVU05qbFR4N1NkcUVIOXVDU1phK1JJ?=
- =?utf-8?B?VUpoS1VJaGdpV2tXQURHcjM5QUhJcW1WTG5ob0kxSnVrSmJ0YnhCYXhQU3p5?=
- =?utf-8?B?ZDlpSnZUcnovdFZBK3hkeURBUmFNVnp4YlVnNk02elhvOS8wZlJCU2FNN3NB?=
- =?utf-8?B?K0I2TUkzanpPeUx1ZmFDUVdiaUVYRkJpdzYvZDVCbkk5bWdlcDV4ODBXNUdm?=
- =?utf-8?B?RmdlNlJORkF0SkllOEh3TU9sY2hIdUFVcThUdEJtVWJ5VW1BVUIwMFZGKzho?=
- =?utf-8?B?STJjZms4OCthbmsxWW9JQVdqanhZVmNnQzhncllNNkM1L1F0WFIyVTREcmo5?=
- =?utf-8?B?OGhOSzIvaVBJQm9qTDZEd1FtU1Z2RXNRNXBnSnhVVnFxREJIOEppR1RoQUtt?=
- =?utf-8?B?OThucUVmYTVmZlZ6UUtCTHlzYmZQNEUxYnZpeHQ0alFDcEF3L0Q0LzFpWlha?=
- =?utf-8?B?VVFNT2FhUSt6TVZTNm1Xd1pRMVpmTXNPYWI3M21DSkJXcllqdDFjMGJoS01z?=
- =?utf-8?B?K2tUNlBaOURIbnNDZjc3cjdjK2RDVGtlMGUyTE12Qm9qbmFKS082N2dLeXJZ?=
- =?utf-8?B?ZXJpSDZDaEVzMjdhbUEzNXE0RU5ZaWNRYysyTE9pQzVwdnpCV01vR2VCQlkz?=
- =?utf-8?B?b2xyaFNNdWU2WmloUHhnY0hWbU5kQ0xGQ0lCaUlGTkZPbitMNTlDYjlBZlVa?=
- =?utf-8?B?aUJ3WFBLaUZ3MmlSM2JUSTNrM01SUWFMQ0NBaEQ4ck45UURZWjU2QT09?=
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?Q4A8bz4a1IUHdjzcjSYqMtJHrIT64gOfv9OciKWdSwdR9xJqY5QQS/zQlB?=
+ =?iso-8859-1?Q?Cumn48umIkNBLruRi7oZR9CSqINPdG5FCmNHsysMOe1v4/66snxthXq6xk?=
+ =?iso-8859-1?Q?/D1lnHYp3M3D5iHv+/fSQ3ZhrJRU6j5nMNBW4Stsmig6ymUIAWFUYAMdID?=
+ =?iso-8859-1?Q?W232d8JHyLHHIjgUYOlXpSZn8M55JMTCGynHGmt/FDV8CDILm4oV4UdM/p?=
+ =?iso-8859-1?Q?ikVZq2MxisiTwaM52InzIVitFiurHtaTb2VWGg4qyBxo2/TiO1Bvkb7fqy?=
+ =?iso-8859-1?Q?NjVJXjEmY1HjqlZRYl2+ffeWqZjt/k3cTmwTGnAJHwM6kfOnmc7PkvCCpz?=
+ =?iso-8859-1?Q?mezK81ydLCCpuTjZL9fwrgedqklD0Vjud6pIlijnyD3sxlh81AFkvtAHRY?=
+ =?iso-8859-1?Q?meXJuEgRHQnLAMDpygL7oucJE9/tUOXvF8VZdcHU9a9pcxMW42BkHKPiph?=
+ =?iso-8859-1?Q?j8hBv76SiIIxTJdCmO0g8Ga+TH6ahfWikb2dnP6JbzAmqzKlX7uBdLJMIt?=
+ =?iso-8859-1?Q?GmdSVavt1FaR9kOHurCjyJ/qEomiWdg6yJ0DcrTblWJP9sTPqshuv/Eccd?=
+ =?iso-8859-1?Q?mxB3DZ8TNs3LKLnKSrunk02zejXaPpNG5KdxSQe1g/zgIH1vlH+uNySop1?=
+ =?iso-8859-1?Q?Ylm6toxfYQ1vvMHTCAItFJaxWqdoTI7Smi6XJhc9aW1Eqhk1qOvAdR5+An?=
+ =?iso-8859-1?Q?PWqqTy+6x8sGRgfQZnw56MPAv+UIRJr76n5G6m3zrQ3OuiExUcomeU3bFZ?=
+ =?iso-8859-1?Q?mc7PAyZY7Tya8ioHhAW/edtj6k+VmEbSnbLtlUklJoFtKPyQTgwc3WvKpj?=
+ =?iso-8859-1?Q?y9Z9DZhOoKK3aBQKC1iHRlmgxERUggmM6db56uWZAVEDcBAtUk4HuRSpkR?=
+ =?iso-8859-1?Q?GfM1sJyGgdaPu3VKnvW5rBs+UKEE7lIibd1739+3G7MV9o1JNH+Qqyhm3D?=
+ =?iso-8859-1?Q?CeMRwzbO6Q+uWg0aNoeE6mAk61jSFPo5HpTeds9SjPTp5GwIy6c7QFMvbV?=
+ =?iso-8859-1?Q?T+SntJee72Wm+DfrZ63AQcESHC6Plz/vo9c2TdZmvYx+0jTShswmf4JfSQ?=
+ =?iso-8859-1?Q?ukYhmO1eflyvx+K1O3jsX+bIQYSOHoli0rvbZcOKUa9eyhxhl2XP4Njym/?=
+ =?iso-8859-1?Q?XiFojU/3fSJeiQftsS6B8KsXzTWbhFtqhZCMOStGdiKpNrr7CFnOoNGTDM?=
+ =?iso-8859-1?Q?RYCQnPDAdXNEULZqdZjpHcnTQNq26ycgcL8nqDnvNHkeFRsv5a0Y6OYIiN?=
+ =?iso-8859-1?Q?rq+F7rCVs9Gotn0yti9DTNdlCviOBKZdIpjng7Pd98Bu6+mkXoHYZlLC+V?=
+ =?iso-8859-1?Q?f719VCbPYZRqX/RYV6bXNeL006vcnlsda1Rj7w/DGVtFpF/cqjdYVVYu+E?=
+ =?iso-8859-1?Q?7PhbTjbk+wRkoeBIxg1krY8/ds0FY0GhQ5MaZ4auJUuqtn7vkTuMbRRfsK?=
+ =?iso-8859-1?Q?DauLrlUjFW3aec/HVKlYq9ldYJ/+dL8gWjDGiE/H4RVJwOaclfzzX1QBdy?=
+ =?iso-8859-1?Q?Dt0xHsneOqqSGbcivuE/HhDExb5DJGfnS+xJgt34rBMI4KtHPFoFNyRfCL?=
+ =?iso-8859-1?Q?9DBKj9N/F4btx/Kc3AuQq5pwOevYwIoLg5ehUZp8sZ6P8SEOwkkX2m8IdO?=
+ =?iso-8859-1?Q?ioQIQ6pxFPLRzcanfER1uDdRzeUCR0gzYztvVihdUmxlnAzmGHyIZA+W0g?=
+ =?iso-8859-1?Q?sFUM4U66R3LkdKdO1RMDvhW76qEjo8/53KfD8+ujjDEB9T7S4Qxq4C5ZAX?=
+ =?iso-8859-1?Q?n3qpT4xGL1K83cGRZlIrFpuseYxVbbhQA85GqnNS9EckB+YwhSRGA2TxMj?=
+ =?iso-8859-1?Q?yh2BdhVy1Q=3D=3D?=
 Content-Type: multipart/alternative;
- boundary="_000_PH0PR11MB7616978E78B442662B97D304A9A82PH0PR11MB7616namp_"
+ boundary="_000_DS3PR11MB96465F02B0ED3F8F78C614C3FCA82DS3PR11MB9646namp_"
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: 5rgcwC5pQxN7ao/YjrnOEDoyP8/kfqirKY/DHMdzcMlLVHEfSWbuUrKu3OiXD/hM7XaXi/o9zSlxqj6SgEMOTAKnOVdweP1ldYL2Hamgd0PMmf+udHs9bS+jChzg0CjLmNAVIq6ixsBzJ3PZP0074Nqwb9ZS4BGy/WoZtD5kI+wqPqDvNkBR5wbPiVf/KgYKxWAP8DAdCp0x9zzy8gA449H7ixQyg1t13ZBK8Zg1AyZFOs3uibFRUb0tXtUSdfvWbZnIC38zhW9AM+nqdopJPfxvgXZm919oCENOTYb2T+aLwj0ZQDr+DnIXQ5ZN5w84/rEQu2cbWOApAMvMeXe+HQ==
-X-OriginatorOrg: cisco.com
+X-Exchange-RoutingPolicyChecked: OPaMgblx+wlfYpXuzw73a5gQVUZ5gwsVd2RuKLsep9X2Qn6tCbCu5iauiXpH8IWvNpY3xIpg/tTeQ+TG9tIuUJPMeCkJzVQTE2AIT6vq68Y3CguWpAHZKhl9svqwpxgGkla1uXDyEQZl5IW91Svia9MryGURdcB1XyeonOVDSKBi2QSEdEMN68YFrOteyFRh9JyPLcmdi0r8+5iN70qyCpA7S3m6voHDe5x50XYQWk3sT3Ugpoy6liYzD72EEQkxpN8Xl+qjomQ1zvdx474YhYR2OQR1yFzcVAxtt13kNyUIXEsOoPP6nsl0ng9FaYMeZ7uYBc1nST/GilG6YNmEdw==
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR11MB7616.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 21503b01-287e-42af-45c2-08df08428163
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Sep 2026 16:03:04.0642 (UTC)
+X-MS-Exchange-CrossTenant-AuthSource: DS3PR11MB9646.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6ed5ae2c-00bc-4eb9-046a-08df084367e0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Sep 2026 16:09:30.7874 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5ae1af62-9505-4097-a69a-c1553ef7840e
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: t9XLruztQNl5YYkOuTFaEDIUcPDTIIkbLZwE0Up5ayhymWrbBFHUpyy1GqM7a55r
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6688
-X-Outbound-Client-TLS: ANONYMOUS; alln-opgw-2.cisco.com [173.37.147.250];
- TLSv1.3; TLS_AES_256_GCM_SHA384; 256
-X-Outbound-SMTP-Client: 173.37.147.250, alln-opgw-2.cisco.com
-X-Outbound-Node: alln-l-core-02.cisco.com
+X-MS-Exchange-CrossTenant-userprincipalname: zqOaOE3gndUDnOG3uM9z/b9LEMcANvQGDtkdOErIrkvb4gYdRu9TPuXl/Rx1uhHlPLe5O3KQTZpp++CbVCgV5g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR11MB8743
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -202,278 +155,689 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_PH0PR11MB7616978E78B442662B97D304A9A82PH0PR11MB7616namp_
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+--_000_DS3PR11MB96465F02B0ED3F8F78C614C3FCA82DS3PR11MB9646namp_
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-QnJ1Y2UsDQpBZ3JlZWQuIEkgdGhpbmsgdGhhdCBsaW5lcyB1cCB3aXRoIHRoZSBmb2xsb3ctb24g
-cGF0Y2ggaW4gdGhpcyBzZXJpZXMuDQoNClRoZSBmaXJzdCBwYXRjaCBvbmx5IGFkZHMgdGhlIGNv
-bW1vbiBiYXNlIHByaXZhdGUtc2l6ZSBtZWNoYW5pc20uIFRoZSBzZWNvbmQNCnBhdGNoIGFwcGxp
-ZXMgaXQgZm9yIHRoZSBQTUQgcGF0aCBzbyB0aGUgUE1ELW93bmVkIG1idWYgcG9vbCBjcmVhdGlv
-biBjYXNlcw0KYWNjb3VudCBmb3IgdGhlIHJlcXVpcmVkIHByaXZhdGUgZGF0YSBzaXplIGNvbnNp
-c3RlbnRseS4NCg0KSSBwbGFuIHRvIGFzayB0aGUgUE1EIG93bmVyIHRvIHJldmlldy9mb2xsb3cg
-dXAgb24gdGhhdCBzZWNvbmQgcGF0Y2gsIHNpbmNlDQp0aGF0IGlzIHdoZXJlIHRoZSBwbGF0Zm9y
-bS9kcml2ZXItc3BlY2lmaWMgcG9vbCBzaXppbmcgcG9saWN5IGJlbG9uZ3MuDQoNClRoZSBpbnRl
-bnQgaXMgc3RpbGwgdG8gcHJlc2VydmUgZXhpc3RpbmcgcGVyLXBvb2wgcHJpdmF0ZSBkYXRhLCB3
-aGlsZSBhZGRpbmcNCnRoZSBjb21tb24gYmFzZSByZXNlcnZhdGlvbiBuZWVkZWQgYnkgdGhlIHNo
-YXJlZCBtZXRhZGF0YSBhY2Nlc3NvcnMuDQoNClJlZ2FyZHMsDQotcnQNCg0KDQpGcm9tOiBCcnVj
-ZSBSaWNoYXJkc29uIDxicnVjZS5yaWNoYXJkc29uQGludGVsLmNvbT4NCkRhdGU6IFR1ZXNkYXks
-IFNlcHRlbWJlciAxLCAyMDI2IGF0IDg6MjHigK9BTQ0KVG86IFJhbmR5IFRpY2UgKHJ0aWNlKSA8
-cnRpY2VAY2lzY28uY29tPg0KQ2M6IGRldkBkcGRrLm9yZyA8ZGV2QGRwZGsub3JnPg0KU3ViamVj
-dDogUmU6IFtSRkNdIG1idWY6IGFkZCBjb25maWd1cmFibGUgYmFzZSBwcml2YXRlIHNpemUgZm9y
-IHBrdG1idWYgcG9vbHMNCg0KT24gTW9uLCBBdWcgMzEsIDIwMjYgYXQgMDY6MjA6MTlQTSArMDAw
-MCwgUmFuZHkgVGljZSAocnRpY2UpIHdyb3RlOg0KPiAgICBIaSwNCj4NCj4gICAgSSB3b3VsZCBs
-aWtlIHRvIGdldCBmZWVkYmFjayBvbiBhIHByb3Bvc2VkIG1idWYgY2hhbmdlIGJlZm9yZSBzZW5k
-aW5nDQo+ICAgIHBhdGNoZXMuDQo+DQo+ICAgIFNvbWUgZGVwbG95bWVudHMgbmVlZCBhIGd1YXJh
-bnRlZWQgcHJpdmF0ZS1kYXRhIHJlc2VydmF0aW9uIGluIGV2ZXJ5DQo+ICAgIHBhY2tldCBtYnVm
-LCBhY3Jvc3MgbXVsdGlwbGUgbWJ1ZiBwb29scyBhbmQgYWNyb3NzIGRpZmZlcmVudCBjb25zdW1l
-cnMNCj4gICAgb2YgdGhlIG1idWYgQVBJcy4NCj4NCj4gICAgVG9kYXksIGVhY2ggcGt0bWJ1ZiBw
-b29sIGNhbiByZXF1ZXN0IGEgcHJpdmF0ZSBzaXplIHdoZW4gdGhlIHBvb2wgaXMNCj4gICAgY3Jl
-YXRlZC4gVGhhdCB3b3JrcyB3aGVuIHRoZSBhcHBsaWNhdGlvbiBvd25zIGFsbCBwb29sIGNyZWF0
-aW9uIHBvbGljeQ0KPiAgICBkaXJlY3RseS4gSG93ZXZlciwgbm90IGFsbCByZWxldmFudCBtYnVm
-IHBvb2xzIGFyZSBuZWNlc3NhcmlseSBjcmVhdGVkDQo+ICAgIGJ5IGFwcGxpY2F0aW9uIGNvZGUu
-IFNvbWUgcG9vbHMgbWF5IGJlIGNyZWF0ZWQgYnkgbGlicmFyaWVzLCBkcml2ZXJzLA0KPiAgICBv
-ciBvdGhlciBjb21wb25lbnRzIG91dHNpZGUgZGlyZWN0IGFwcGxpY2F0aW9uIGNvbnRyb2wuDQo+
-DQo+ICAgIE9uZSBleGFtcGxlIGFscmVhZHkgaW4gRFBESyBpcyB2aG9zdCBjcnlwdG8sIHdoaWNo
-IGNyZWF0ZXMgaXRzIG93biBtYnVmDQo+ICAgIHBvb2wgYW5kIHN1cHBsaWVzIGEgcHJpdmF0ZSBz
-aXplIGZvciBzdHJ1Y3Qgdmhvc3RfY3J5cHRvX2RhdGFfcmVxLg0KPiAgICBUaGVyZSBhcmUgYWxz
-byBkcml2ZXItY3JlYXRlZCBwa3RtYnVmLXN0eWxlIHBvb2xzLCBzdWNoIGFzIGNueGsgaW5saW5l
-DQo+ICAgIG1ldGEgcG9vbHMgYW5kIFRBUCBHU08gY29udGV4dCBwb29scy4gVGhlc2UgYXJlIGV4
-YW1wbGVzIG9mDQo+ICAgIHBvb2wtY3JlYXRpb24gcGF0aHMgd2hlcmUgdGhlIGFwcGxpY2F0aW9u
-IG1heSBub3QgZGlyZWN0bHkgY29udHJvbCB0aGUNCj4gICAgcHJpdmF0ZS1zaXplIHZhbHVlIHVz
-ZWQgYXQgY3JlYXRpb24gdGltZS4NCj4NCg0KTXkgMmMuDQoNClJhdGhlciB0aGFuIGhhdmluZyBh
-IGZpeGVkIGJ1aWxkLXRpbWUsIG9yIGEgY29uZmlndXJhYmxlIHJ1bnRpbWUgc2V0DQpwcml2YXRl
-IG1idWYgZGF0YSBzaXplLCBJIHRoaW5rIHRoZSBtYWluIHRoaW5nIHRvIGJlIGZpeGVkIGhlcmUg
-aXMgdG8NCmVuc3VyZSB0aGF0IGFsbCBjYXNlcyB3aGVyZSBtYnVmIHBvb2xzIGFyZSBjcmVhdGVk
-LCB0aGUgcHJpdmF0ZSBkYXRhIHNpemUNCmlzIGNvbmZpZ3VyYWJsZSBpbiB0aG9zZSBjYXNlcy4N
-Cg0KL0JydWNlDQoNCj4gICAgQSBQTUQtc3BlY2lmaWMgZGV2YXJnIGNvdWxkIHNvbHZlIG9uZSBp
-bnN0YW5jZSBvZiB0aGlzIHByb2JsZW0sIHN1Y2ggYXMNCj4gICAgYSBzaW5nbGUgZHJpdmVyLWNy
-ZWF0ZWQgcG9vbCwgYnV0IHRoYXQgc2VlbXMgdG9vIG5hcnJvdyBpZiB0aGUNCj4gICAgcmVxdWly
-ZW1lbnQgaXMgbm90IGluaGVyZW50bHkgUE1ELXNwZWNpZmljLiBBIGRlcGxveW1lbnQgd2l0aCBt
-dWx0aXBsZQ0KPiAgICBkcml2ZXJzLCBsaWJyYXJpZXMsIG9yIG90aGVyIHBvb2wtY3JlYXRpb24g
-cGF0aHMgb3V0c2lkZSBhcHBsaWNhdGlvbg0KPiAgICBjb250cm9sIGNvdWxkIG5lZWQgdGhlIHNh
-bWUgYmFzZSBwcml2YXRlLXNpemUgYWRqdXN0bWVudC4gSW4gdGhhdCBjYXNlLA0KPiAgICBjb25m
-aWd1cmluZyB0aGUgc2FtZSB2YWx1ZSBpbmRlcGVuZGVudGx5IHRocm91Z2ggY29tcG9uZW50LXNw
-ZWNpZmljDQo+ICAgIG9wdGlvbnMgd291bGQgYmUgZnJhZ2lsZSBhbmQgZWFzeSB0byBnZXQgd3Jv
-bmcuDQo+DQo+ICAgIFRoZSBwcm9wb3NlZCBnZW5lcmljIG1vZGVsIGlzIHRvIGFkZCBhIGNvbmZp
-Z3VyYWJsZSBiYXNlIHByaXZhdGUgc2l6ZQ0KPiAgICBmb3IgcGt0bWJ1ZiBwb29scy4gVGhlIGVm
-ZmVjdGl2ZSBwcml2YXRlIHNpemUgd291bGQgYmU6DQo+DQo+ICAgIGFsaWduKHBvb2xfcmVxdWVz
-dGVkX3ByaXZfc2l6ZSArIGFwcGxpY2F0aW9uX2Jhc2VfcHJpdl9zaXplLA0KPiAgICBSVEVfTUJV
-Rl9QUklWX0FMSUdOKQ0KPg0KPiAgICBUaGUgdGVudGF0aXZlIEVBTCBvcHRpb24gbmFtZSBpczoN
-Cj4NCj4gICAgLS1tYnVmLWJhc2UtcHJpdi1zaXplPTxzaXplPg0KPg0KPiAgICBUaGUgaW50ZW50
-IGlzOg0KPiAgICAgICogZGVmYXVsdCBiZWhhdmlvciByZW1haW5zIHVuY2hhbmdlZCB3aGVuIHRo
-ZSBvcHRpb24gaXMgbm90IHVzZWQ7DQo+ICAgICAgKiB0aGUgY29uZmlndXJlZCBiYXNlIHNpemUg
-aXMgYWRkZWQgdG8gdGhlIHByaXZhdGUgc2l6ZSByZXF1ZXN0ZWQgYnkNCj4gICAgICAgIGVhY2gg
-cGt0bWJ1ZiBwb29sOw0KPiAgICAgICogdGhlIGZpbmFsIGVmZmVjdGl2ZSBwcml2YXRlIHNpemUg
-cmVtYWlucyBhbGlnbmVkIHRvDQo+ICAgICAgICBSVEVfTUJVRl9QUklWX0FMSUdOOw0KPiAgICAg
-ICogcG9vbC1zcGVjaWZpYyBwcml2YXRlLWRhdGEgcmVxdWVzdHMgc3RpbGwgd29yayBhcyB0aGV5
-IGRvIHRvZGF5Ow0KPiAgICAgICogRFBESyBjZW50cmFsaXplcyB0aGUgcG9saWN5IHNvIHBvb2xz
-IGNyZWF0ZWQgb3V0c2lkZSBhcHBsaWNhdGlvbg0KPiAgICAgICAgY29udHJvbCBjYW4gcmVzZXJ2
-ZSB0aGUgc2FtZSBiYXNlIHByaXZhdGUtZGF0YSBzcGFjZSBhcw0KPiAgICAgICAgYXBwbGljYXRp
-b24tY3JlYXRlZCBwb29scy4NCj4NCj4gICAgVGhpcyBpcyBub3QgaW50ZW5kZWQgdG8gZGVmaW5l
-IG93bmVyc2hpcCBvciBsYXlvdXQgb2YgdGhlIHByaXZhdGUgYXJlYS4NCj4gICAgSXQgb25seSBl
-bnN1cmVzIHRoYXQgYSBkZXBsb3ltZW50IGNhbiByZXNlcnZlIGEgY29tbW9uIGJhc2UgYW1vdW50
-IG9mDQo+ICAgIHByaXZhdGUgZGF0YSBjb25zaXN0ZW50bHkuIEFwcGxpY2F0aW9ucywgZHJpdmVy
-cywgbGlicmFyaWVzLCBvcg0KPiAgICBjb21wb25lbnRzIHdvdWxkIHN0aWxsIGJlIHJlc3BvbnNp
-YmxlIGZvciB0aGVpciBvd24gaW50ZXJwcmV0YXRpb24gb2YNCj4gICAgdGhlIHJlc2VydmVkIHBy
-aXZhdGUgYXJlYS4NCj4NCj4gICAgUXVlc3Rpb25zIGZvciB0aGUgbGlzdDoNCj4gICAgIDEuIElz
-IGEgZGVwbG95bWVudC13aWRlIHBrdG1idWYgYmFzZSBwcml2YXRlLXNpemUgcmVzZXJ2YXRpb24N
-Cj4gICAgICAgIHNvbWV0aGluZyBEUERLIHdvdWxkIGNvbnNpZGVyIGFjY2VwdGFibGU/DQo+ICAg
-ICAyLiBJcyAtLW1idWYtYmFzZS1wcml2LXNpemU9PHNpemU+IGEgcmVhc29uYWJsZSBuYW1lLCBv
-ciB3b3VsZCBhbm90aGVyDQo+ICAgICAgICBuYW1lIGJldHRlciBkZXNjcmliZSB0aGUgaW50ZW50
-Pw0KPiAgICAgMy4gU2hvdWxkIERQREsgZXhwb3NlIHRoZSBlZmZlY3RpdmUtc2l6ZSBjYWxjdWxh
-dGlvbiBhcyBhIGhlbHBlciBzbw0KPiAgICAgICAgcG9vbC1jcmVhdGlvbiBwYXRocyBvdXRzaWRl
-IGFwcGxpY2F0aW9uIGNvbnRyb2wgY2FuIGFwcGx5IHRoZSBzYW1lDQo+ICAgICAgICBydWxlPw0K
-PiAgICAgNC4gV291bGQgbWFpbnRhaW5lcnMgcHJlZmVyIGNvbnN1bWVyIHVwZGF0ZXMgaW4gdGhl
-IHNhbWUgc2VyaWVzIGFzDQo+ICAgICAgICBleGFtcGxlIHVzZXJzLCBvciBhcyBmb2xsb3ctdXAg
-cGF0Y2hlcyBhZnRlciB0aGUgZ2VuZXJpYyBtYnVmL0VBTA0KPiAgICAgICAgY2hhbmdlIGlzIGFj
-Y2VwdGVkPw0KPiAgICAgNS4gV291bGQgbWFpbnRhaW5lcnMgcHJlZmVyIHRoaXMgdG8gcmVtYWlu
-IGNvbXBvbmVudC1zcGVjaWZpYywgZXZlbiBpZg0KPiAgICAgICAgbW9yZSB0aGFuIG9uZSBkcml2
-ZXIsIGxpYnJhcnksIG9yIHBvb2wtY3JlYXRpb24gcGF0aCBtYXkgbmVlZCB0bw0KPiAgICAgICAg
-YXBwbHkgdGhlIHNhbWUgYmFzZSByZXNlcnZhdGlvbj8NCj4NCj4gICAgVGhlIG1haW4gZ29hbCBp
-cyB0byBhdm9pZCBkb3duc3RyZWFtIG1idWYgbGF5b3V0IGNoYW5nZXMgYW5kIGF2b2lkDQo+ICAg
-IGNvbXBvbmVudC1zcGVjaWZpYyBjb25maWd1cmF0aW9uIGRyaWZ0LCB3aGlsZSBzdGlsbCBhbGxv
-d2luZw0KPiAgICBkZXBsb3ltZW50cyB0byByZXNlcnZlIGEgY29uc2lzdGVudCBwcml2YXRlLWRh
-dGEgYXJlYSBhY3Jvc3MgYWxsIHBhY2tldA0KPiAgICBtYnVmIHBvb2xzLCBpbmNsdWRpbmcgcG9v
-bHMgY3JlYXRlZCBvdXRzaWRlIGRpcmVjdCBhcHBsaWNhdGlvbiBjb250cm9sLg0KPg0KPiAgICBU
-aGFua3MsDQo+ICAgIFJhbmR5DQo=
+Release status meeting minutes 2026-09-01
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
---_000_PH0PR11MB7616978E78B442662B97D304A9A82PH0PR11MB7616namp_
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: base64
+Agenda:
+- Release Dates
+- Subtrees
+- Roadmaps
+- LTS
+- Defects
+- Opens
 
-PGh0bWw+DQo8aGVhZD4NCjxtZXRhIGh0dHAtZXF1aXY9IkNvbnRlbnQtVHlwZSIgY29udGVudD0i
-dGV4dC9odG1sOyBjaGFyc2V0PXV0Zi04Ij4NCjwvaGVhZD4NCjxib2R5Pg0KPGRpdiBzdHlsZT0i
-ZGlyZWN0aW9uOiBsdHI7IGZvbnQtZmFtaWx5OiBBcHRvcywgQXJpYWwsIEhlbHZldGljYSwgc2Fu
-cy1zZXJpZjsgZm9udC1zaXplOiAxMnB0OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+DQpCcnVjZSw8
-L2Rpdj4NCjxkaXYgc3R5bGU9ImRpcmVjdGlvbjogbHRyOyBmb250LWZhbWlseTogQXB0b3MsIEFy
-aWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWY7IGZvbnQtc2l6ZTogMTJwdDsgY29sb3I6IHJnYigw
-LCAwLCAwKTsiPg0KQWdyZWVkLiBJIHRoaW5rIHRoYXQgbGluZXMgdXAgd2l0aCB0aGUgZm9sbG93
-LW9uIHBhdGNoIGluIHRoaXMgc2VyaWVzLjwvZGl2Pg0KPGRpdiBzdHlsZT0iZGlyZWN0aW9uOiBs
-dHI7IGZvbnQtZmFtaWx5OiBBcHRvcywgQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZjsgZm9u
-dC1zaXplOiAxMnB0OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+DQo8YnI+DQo8L2Rpdj4NCjxkaXYg
-c3R5bGU9ImZvbnQtZmFtaWx5OiBBcHRvcywgQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZjsg
-Zm9udC1zaXplOiAxMnB0OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+DQpUaGUgZmlyc3QgcGF0Y2gg
-b25seSBhZGRzIHRoZSBjb21tb24gYmFzZSBwcml2YXRlLXNpemUgbWVjaGFuaXNtLiBUaGUgc2Vj
-b25kPC9kaXY+DQo8ZGl2IHN0eWxlPSJmb250LWZhbWlseTogQXB0b3MsIEFyaWFsLCBIZWx2ZXRp
-Y2EsIHNhbnMtc2VyaWY7IGZvbnQtc2l6ZTogMTJwdDsgY29sb3I6IHJnYigwLCAwLCAwKTsiPg0K
-cGF0Y2ggYXBwbGllcyBpdCBmb3IgdGhlIFBNRCBwYXRoIHNvIHRoZSBQTUQtb3duZWQgbWJ1ZiBw
-b29sIGNyZWF0aW9uIGNhc2VzPC9kaXY+DQo8ZGl2IHN0eWxlPSJmb250LWZhbWlseTogQXB0b3Ms
-IEFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWY7IGZvbnQtc2l6ZTogMTJwdDsgY29sb3I6IHJn
-YigwLCAwLCAwKTsiPg0KYWNjb3VudCBmb3IgdGhlIHJlcXVpcmVkIHByaXZhdGUgZGF0YSBzaXpl
-IGNvbnNpc3RlbnRseS48L2Rpdj4NCjxkaXYgc3R5bGU9ImRpcmVjdGlvbjogbHRyOyBmb250LWZh
-bWlseTogQXB0b3MsIEFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWY7IGZvbnQtc2l6ZTogMTJw
-dDsgY29sb3I6IHJnYigwLCAwLCAwKTsiPg0KPGJyPg0KPC9kaXY+DQo8ZGl2IHN0eWxlPSJmb250
-LWZhbWlseTogQXB0b3MsIEFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWY7IGZvbnQtc2l6ZTog
-MTJwdDsgY29sb3I6IHJnYigwLCAwLCAwKTsiPg0KSSBwbGFuIHRvIGFzayB0aGUgUE1EIG93bmVy
-IHRvIHJldmlldy9mb2xsb3cgdXAgb24gdGhhdCBzZWNvbmQgcGF0Y2gsIHNpbmNlPC9kaXY+DQo8
-ZGl2IHN0eWxlPSJmb250LWZhbWlseTogQXB0b3MsIEFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2Vy
-aWY7IGZvbnQtc2l6ZTogMTJwdDsgY29sb3I6IHJnYigwLCAwLCAwKTsiPg0KdGhhdCBpcyB3aGVy
-ZSB0aGUgcGxhdGZvcm0vZHJpdmVyLXNwZWNpZmljIHBvb2wgc2l6aW5nIHBvbGljeSBiZWxvbmdz
-LjwvZGl2Pg0KPGRpdiBzdHlsZT0iZGlyZWN0aW9uOiBsdHI7IGZvbnQtZmFtaWx5OiBBcHRvcywg
-QXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZjsgZm9udC1zaXplOiAxMnB0OyBjb2xvcjogcmdi
-KDAsIDAsIDApOyI+DQo8YnI+DQo8L2Rpdj4NCjxkaXYgc3R5bGU9ImZvbnQtZmFtaWx5OiBBcHRv
-cywgQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZjsgZm9udC1zaXplOiAxMnB0OyBjb2xvcjog
-cmdiKDAsIDAsIDApOyI+DQpUaGUgaW50ZW50IGlzIHN0aWxsIHRvIHByZXNlcnZlIGV4aXN0aW5n
-IHBlci1wb29sIHByaXZhdGUgZGF0YSwgd2hpbGUgYWRkaW5nPC9kaXY+DQo8ZGl2IHN0eWxlPSJm
-b250LWZhbWlseTogQXB0b3MsIEFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWY7IGZvbnQtc2l6
-ZTogMTJwdDsgY29sb3I6IHJnYigwLCAwLCAwKTsiPg0KdGhlIGNvbW1vbiBiYXNlIHJlc2VydmF0
-aW9uIG5lZWRlZCBieSB0aGUgc2hhcmVkIG1ldGFkYXRhIGFjY2Vzc29ycy48L2Rpdj4NCjxkaXYg
-c3R5bGU9ImRpcmVjdGlvbjogbHRyOyBmb250LWZhbWlseTogQXB0b3MsIEFyaWFsLCBIZWx2ZXRp
-Y2EsIHNhbnMtc2VyaWY7IGZvbnQtc2l6ZTogMTJwdDsgY29sb3I6IHJnYigwLCAwLCAwKTsiPg0K
-PGJyPg0KPC9kaXY+DQo8ZGl2IHN0eWxlPSJkaXJlY3Rpb246IGx0cjsgZm9udC1mYW1pbHk6IEFw
-dG9zLCBBcmlhbCwgSGVsdmV0aWNhLCBzYW5zLXNlcmlmOyBmb250LXNpemU6IDEycHQ7IGNvbG9y
-OiByZ2IoMCwgMCwgMCk7Ij4NClJlZ2FyZHMsPC9kaXY+DQo8ZGl2IHN0eWxlPSJmb250LWZhbWls
-eTogQXB0b3MsIEFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWY7IGZvbnQtc2l6ZTogMTJwdDsg
-Y29sb3I6IHJnYigwLCAwLCAwKTsiPg0KLXJ0PC9kaXY+DQo8ZGl2IHN0eWxlPSJkaXJlY3Rpb246
-IGx0cjsgZm9udC1mYW1pbHk6IEFwdG9zLCBBcmlhbCwgSGVsdmV0aWNhLCBzYW5zLXNlcmlmOyBm
-b250LXNpemU6IDEycHQ7IGNvbG9yOiByZ2IoMCwgMCwgMCk7Ij4NCjxicj4NCjwvZGl2Pg0KPGRp
-diBzdHlsZT0iZGlyZWN0aW9uOiBsdHI7IGZvbnQtZmFtaWx5OiBBcHRvcywgQXJpYWwsIEhlbHZl
-dGljYSwgc2Fucy1zZXJpZjsgZm9udC1zaXplOiAxMnB0OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+
-DQo8YnI+DQo8L2Rpdj4NCjxkaXYgaWQ9Im1haWwtZWRpdG9yLXJlZmVyZW5jZS1tZXNzYWdlLWNv
-bnRhaW5lciI+DQo8ZGl2IHN0eWxlPSJwYWRkaW5nOiAzcHQgMGluIDBpbjsgYm9yZGVyLXdpZHRo
-OiAxcHQgbWVkaXVtIG1lZGl1bTsgYm9yZGVyLXN0eWxlOiBzb2xpZCBub25lIG5vbmU7IGJvcmRl
-ci1jb2xvcjogcmdiKDE4MSwgMTk2LCAyMjMpIGN1cnJlbnRjb2xvciBjdXJyZW50Y29sb3I7Ij4N
-CjxkaXYgc3R5bGU9InRleHQtYWxpZ246IGxlZnQ7IGZvbnQtZmFtaWx5OiBBcHRvczsgZm9udC1z
-aXplOiAxMnB0OyBjb2xvcjogYmxhY2s7Ij4NCjxiPkZyb206IDwvYj5CcnVjZSBSaWNoYXJkc29u
-ICZsdDticnVjZS5yaWNoYXJkc29uQGludGVsLmNvbSZndDs8YnI+DQo8Yj5EYXRlOiA8L2I+VHVl
-c2RheSwgU2VwdGVtYmVyIDEsIDIwMjYgYXQgODoyMeKAr0FNPGJyPg0KPGI+VG86IDwvYj5SYW5k
-eSBUaWNlIChydGljZSkgJmx0O3J0aWNlQGNpc2NvLmNvbSZndDs8YnI+DQo8Yj5DYzogPC9iPmRl
-dkBkcGRrLm9yZyAmbHQ7ZGV2QGRwZGsub3JnJmd0Ozxicj4NCjxiPlN1YmplY3Q6IDwvYj5SZTog
-W1JGQ10gbWJ1ZjogYWRkIGNvbmZpZ3VyYWJsZSBiYXNlIHByaXZhdGUgc2l6ZSBmb3IgcGt0bWJ1
-ZiBwb29sczxicj4NCjxicj4NCjwvZGl2Pg0KPC9kaXY+DQo8ZGl2IGlkPSJtYWlsLWVkaXRvci1y
-ZWZlcmVuY2UtbWVzc2FnZS1ib2R5Ij4NCjxkaXYgY2xhc3M9Im1zLW91dGxvb2stbW9iaWxlLXJl
-ZmVyZW5jZS1tZXNzYWdlIHNraXBQcm9vZmluZyI+DQo8bWV0YSBuYW1lPSJHZW5lcmF0b3IiIGNv
-bnRlbnQ9Ik1pY3Jvc29mdCBFeGNoYW5nZSBTZXJ2ZXIiPg0KPC9kaXY+DQo8ZGl2IGNsYXNzPSJQ
-bGFpblRleHQiIHN0eWxlPSJmb250LXNpemU6IDExcHQ7Ij5PbiBNb24sIEF1ZyAzMSwgMjAyNiBh
-dCAwNjoyMDoxOVBNICswMDAwLCBSYW5keSBUaWNlIChydGljZSkgd3JvdGU6PGJyPg0KJmd0OyZu
-YnNwOyZuYnNwOyZuYnNwOyBIaSw8YnI+DQomZ3Q7PGJyPg0KJmd0OyZuYnNwOyZuYnNwOyZuYnNw
-OyBJIHdvdWxkIGxpa2UgdG8gZ2V0IGZlZWRiYWNrIG9uIGEgcHJvcG9zZWQgbWJ1ZiBjaGFuZ2Ug
-YmVmb3JlIHNlbmRpbmc8YnI+DQomZ3Q7Jm5ic3A7Jm5ic3A7Jm5ic3A7IHBhdGNoZXMuPGJyPg0K
-Jmd0Ozxicj4NCiZndDsmbmJzcDsmbmJzcDsmbmJzcDsgU29tZSBkZXBsb3ltZW50cyBuZWVkIGEg
-Z3VhcmFudGVlZCBwcml2YXRlLWRhdGEgcmVzZXJ2YXRpb24gaW4gZXZlcnk8YnI+DQomZ3Q7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7IHBhY2tldCBtYnVmLCBhY3Jvc3MgbXVsdGlwbGUgbWJ1ZiBwb29scyBh
-bmQgYWNyb3NzIGRpZmZlcmVudCBjb25zdW1lcnM8YnI+DQomZ3Q7Jm5ic3A7Jm5ic3A7Jm5ic3A7
-IG9mIHRoZSBtYnVmIEFQSXMuPGJyPg0KJmd0Ozxicj4NCiZndDsmbmJzcDsmbmJzcDsmbmJzcDsg
-VG9kYXksIGVhY2ggcGt0bWJ1ZiBwb29sIGNhbiByZXF1ZXN0IGEgcHJpdmF0ZSBzaXplIHdoZW4g
-dGhlIHBvb2wgaXM8YnI+DQomZ3Q7Jm5ic3A7Jm5ic3A7Jm5ic3A7IGNyZWF0ZWQuIFRoYXQgd29y
-a3Mgd2hlbiB0aGUgYXBwbGljYXRpb24gb3ducyBhbGwgcG9vbCBjcmVhdGlvbiBwb2xpY3k8YnI+
-DQomZ3Q7Jm5ic3A7Jm5ic3A7Jm5ic3A7IGRpcmVjdGx5LiBIb3dldmVyLCBub3QgYWxsIHJlbGV2
-YW50IG1idWYgcG9vbHMgYXJlIG5lY2Vzc2FyaWx5IGNyZWF0ZWQ8YnI+DQomZ3Q7Jm5ic3A7Jm5i
-c3A7Jm5ic3A7IGJ5IGFwcGxpY2F0aW9uIGNvZGUuIFNvbWUgcG9vbHMgbWF5IGJlIGNyZWF0ZWQg
-YnkgbGlicmFyaWVzLCBkcml2ZXJzLDxicj4NCiZndDsmbmJzcDsmbmJzcDsmbmJzcDsgb3Igb3Ro
-ZXIgY29tcG9uZW50cyBvdXRzaWRlIGRpcmVjdCBhcHBsaWNhdGlvbiBjb250cm9sLjxicj4NCiZn
-dDs8YnI+DQomZ3Q7Jm5ic3A7Jm5ic3A7Jm5ic3A7IE9uZSBleGFtcGxlIGFscmVhZHkgaW4gRFBE
-SyBpcyB2aG9zdCBjcnlwdG8sIHdoaWNoIGNyZWF0ZXMgaXRzIG93biBtYnVmPGJyPg0KJmd0OyZu
-YnNwOyZuYnNwOyZuYnNwOyBwb29sIGFuZCBzdXBwbGllcyBhIHByaXZhdGUgc2l6ZSBmb3Igc3Ry
-dWN0IHZob3N0X2NyeXB0b19kYXRhX3JlcS48YnI+DQomZ3Q7Jm5ic3A7Jm5ic3A7Jm5ic3A7IFRo
-ZXJlIGFyZSBhbHNvIGRyaXZlci1jcmVhdGVkIHBrdG1idWYtc3R5bGUgcG9vbHMsIHN1Y2ggYXMg
-Y254ayBpbmxpbmU8YnI+DQomZ3Q7Jm5ic3A7Jm5ic3A7Jm5ic3A7IG1ldGEgcG9vbHMgYW5kIFRB
-UCBHU08gY29udGV4dCBwb29scy4gVGhlc2UgYXJlIGV4YW1wbGVzIG9mPGJyPg0KJmd0OyZuYnNw
-OyZuYnNwOyZuYnNwOyBwb29sLWNyZWF0aW9uIHBhdGhzIHdoZXJlIHRoZSBhcHBsaWNhdGlvbiBt
-YXkgbm90IGRpcmVjdGx5IGNvbnRyb2wgdGhlPGJyPg0KJmd0OyZuYnNwOyZuYnNwOyZuYnNwOyBw
-cml2YXRlLXNpemUgdmFsdWUgdXNlZCBhdCBjcmVhdGlvbiB0aW1lLjxicj4NCiZndDs8YnI+DQo8
-YnI+DQpNeSAyYy48YnI+DQo8YnI+DQpSYXRoZXIgdGhhbiBoYXZpbmcgYSBmaXhlZCBidWlsZC10
-aW1lLCBvciBhIGNvbmZpZ3VyYWJsZSBydW50aW1lIHNldDxicj4NCnByaXZhdGUgbWJ1ZiBkYXRh
-IHNpemUsIEkgdGhpbmsgdGhlIG1haW4gdGhpbmcgdG8gYmUgZml4ZWQgaGVyZSBpcyB0bzxicj4N
-CmVuc3VyZSB0aGF0IGFsbCBjYXNlcyB3aGVyZSBtYnVmIHBvb2xzIGFyZSBjcmVhdGVkLCB0aGUg
-cHJpdmF0ZSBkYXRhIHNpemU8YnI+DQppcyBjb25maWd1cmFibGUgaW4gdGhvc2UgY2FzZXMuPGJy
-Pg0KPGJyPg0KL0JydWNlPGJyPg0KPGJyPg0KJmd0OyZuYnNwOyZuYnNwOyZuYnNwOyBBIFBNRC1z
-cGVjaWZpYyBkZXZhcmcgY291bGQgc29sdmUgb25lIGluc3RhbmNlIG9mIHRoaXMgcHJvYmxlbSwg
-c3VjaCBhczxicj4NCiZndDsmbmJzcDsmbmJzcDsmbmJzcDsgYSBzaW5nbGUgZHJpdmVyLWNyZWF0
-ZWQgcG9vbCwgYnV0IHRoYXQgc2VlbXMgdG9vIG5hcnJvdyBpZiB0aGU8YnI+DQomZ3Q7Jm5ic3A7
-Jm5ic3A7Jm5ic3A7IHJlcXVpcmVtZW50IGlzIG5vdCBpbmhlcmVudGx5IFBNRC1zcGVjaWZpYy4g
-QSBkZXBsb3ltZW50IHdpdGggbXVsdGlwbGU8YnI+DQomZ3Q7Jm5ic3A7Jm5ic3A7Jm5ic3A7IGRy
-aXZlcnMsIGxpYnJhcmllcywgb3Igb3RoZXIgcG9vbC1jcmVhdGlvbiBwYXRocyBvdXRzaWRlIGFw
-cGxpY2F0aW9uPGJyPg0KJmd0OyZuYnNwOyZuYnNwOyZuYnNwOyBjb250cm9sIGNvdWxkIG5lZWQg
-dGhlIHNhbWUgYmFzZSBwcml2YXRlLXNpemUgYWRqdXN0bWVudC4gSW4gdGhhdCBjYXNlLDxicj4N
-CiZndDsmbmJzcDsmbmJzcDsmbmJzcDsgY29uZmlndXJpbmcgdGhlIHNhbWUgdmFsdWUgaW5kZXBl
-bmRlbnRseSB0aHJvdWdoIGNvbXBvbmVudC1zcGVjaWZpYzxicj4NCiZndDsmbmJzcDsmbmJzcDsm
-bmJzcDsgb3B0aW9ucyB3b3VsZCBiZSBmcmFnaWxlIGFuZCBlYXN5IHRvIGdldCB3cm9uZy48YnI+
-DQomZ3Q7PGJyPg0KJmd0OyZuYnNwOyZuYnNwOyZuYnNwOyBUaGUgcHJvcG9zZWQgZ2VuZXJpYyBt
-b2RlbCBpcyB0byBhZGQgYSBjb25maWd1cmFibGUgYmFzZSBwcml2YXRlIHNpemU8YnI+DQomZ3Q7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7IGZvciBwa3RtYnVmIHBvb2xzLiBUaGUgZWZmZWN0aXZlIHByaXZh
-dGUgc2l6ZSB3b3VsZCBiZTo8YnI+DQomZ3Q7PGJyPg0KJmd0OyZuYnNwOyZuYnNwOyZuYnNwOyBh
-bGlnbihwb29sX3JlcXVlc3RlZF9wcml2X3NpemUgKyBhcHBsaWNhdGlvbl9iYXNlX3ByaXZfc2l6
-ZSw8YnI+DQomZ3Q7Jm5ic3A7Jm5ic3A7Jm5ic3A7IFJURV9NQlVGX1BSSVZfQUxJR04pPGJyPg0K
-Jmd0Ozxicj4NCiZndDsmbmJzcDsmbmJzcDsmbmJzcDsgVGhlIHRlbnRhdGl2ZSBFQUwgb3B0aW9u
-IG5hbWUgaXM6PGJyPg0KJmd0Ozxicj4NCiZndDsmbmJzcDsmbmJzcDsmbmJzcDsgLS1tYnVmLWJh
-c2UtcHJpdi1zaXplPSZsdDtzaXplJmd0Ozxicj4NCiZndDs8YnI+DQomZ3Q7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7IFRoZSBpbnRlbnQgaXM6PGJyPg0KJmd0OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
-YnNwOyAqIGRlZmF1bHQgYmVoYXZpb3IgcmVtYWlucyB1bmNoYW5nZWQgd2hlbiB0aGUgb3B0aW9u
-IGlzIG5vdCB1c2VkOzxicj4NCiZndDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgKiB0
-aGUgY29uZmlndXJlZCBiYXNlIHNpemUgaXMgYWRkZWQgdG8gdGhlIHByaXZhdGUgc2l6ZSByZXF1
-ZXN0ZWQgYnk8YnI+DQomZ3Q7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
-c3A7IGVhY2ggcGt0bWJ1ZiBwb29sOzxicj4NCiZndDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsm
-bmJzcDsgKiB0aGUgZmluYWwgZWZmZWN0aXZlIHByaXZhdGUgc2l6ZSByZW1haW5zIGFsaWduZWQg
-dG88YnI+DQomZ3Q7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IFJU
-RV9NQlVGX1BSSVZfQUxJR047PGJyPg0KJmd0OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-OyAqIHBvb2wtc3BlY2lmaWMgcHJpdmF0ZS1kYXRhIHJlcXVlc3RzIHN0aWxsIHdvcmsgYXMgdGhl
-eSBkbyB0b2RheTs8YnI+DQomZ3Q7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7ICogRFBE
-SyBjZW50cmFsaXplcyB0aGUgcG9saWN5IHNvIHBvb2xzIGNyZWF0ZWQgb3V0c2lkZSBhcHBsaWNh
-dGlvbjxicj4NCiZndDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsg
-Y29udHJvbCBjYW4gcmVzZXJ2ZSB0aGUgc2FtZSBiYXNlIHByaXZhdGUtZGF0YSBzcGFjZSBhczxi
-cj4NCiZndDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsgYXBwbGlj
-YXRpb24tY3JlYXRlZCBwb29scy48YnI+DQomZ3Q7PGJyPg0KJmd0OyZuYnNwOyZuYnNwOyZuYnNw
-OyBUaGlzIGlzIG5vdCBpbnRlbmRlZCB0byBkZWZpbmUgb3duZXJzaGlwIG9yIGxheW91dCBvZiB0
-aGUgcHJpdmF0ZSBhcmVhLjxicj4NCiZndDsmbmJzcDsmbmJzcDsmbmJzcDsgSXQgb25seSBlbnN1
-cmVzIHRoYXQgYSBkZXBsb3ltZW50IGNhbiByZXNlcnZlIGEgY29tbW9uIGJhc2UgYW1vdW50IG9m
-PGJyPg0KJmd0OyZuYnNwOyZuYnNwOyZuYnNwOyBwcml2YXRlIGRhdGEgY29uc2lzdGVudGx5LiBB
-cHBsaWNhdGlvbnMsIGRyaXZlcnMsIGxpYnJhcmllcywgb3I8YnI+DQomZ3Q7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7IGNvbXBvbmVudHMgd291bGQgc3RpbGwgYmUgcmVzcG9uc2libGUgZm9yIHRoZWlyIG93
-biBpbnRlcnByZXRhdGlvbiBvZjxicj4NCiZndDsmbmJzcDsmbmJzcDsmbmJzcDsgdGhlIHJlc2Vy
-dmVkIHByaXZhdGUgYXJlYS48YnI+DQomZ3Q7PGJyPg0KJmd0OyZuYnNwOyZuYnNwOyZuYnNwOyBR
-dWVzdGlvbnMgZm9yIHRoZSBsaXN0Ojxicj4NCiZndDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsg
-MS4gSXMgYSBkZXBsb3ltZW50LXdpZGUgcGt0bWJ1ZiBiYXNlIHByaXZhdGUtc2l6ZSByZXNlcnZh
-dGlvbjxicj4NCiZndDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsg
-c29tZXRoaW5nIERQREsgd291bGQgY29uc2lkZXIgYWNjZXB0YWJsZT88YnI+DQomZ3Q7Jm5ic3A7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7IDIuIElzIC0tbWJ1Zi1iYXNlLXByaXYtc2l6ZT0mbHQ7c2l6ZSZn
-dDsgYSByZWFzb25hYmxlIG5hbWUsIG9yIHdvdWxkIGFub3RoZXI8YnI+DQomZ3Q7Jm5ic3A7Jm5i
-c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IG5hbWUgYmV0dGVyIGRlc2NyaWJlIHRo
-ZSBpbnRlbnQ/PGJyPg0KJmd0OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyAzLiBTaG91bGQgRFBE
-SyBleHBvc2UgdGhlIGVmZmVjdGl2ZS1zaXplIGNhbGN1bGF0aW9uIGFzIGEgaGVscGVyIHNvPGJy
-Pg0KJmd0OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyBwb29sLWNy
-ZWF0aW9uIHBhdGhzIG91dHNpZGUgYXBwbGljYXRpb24gY29udHJvbCBjYW4gYXBwbHkgdGhlIHNh
-bWU8YnI+DQomZ3Q7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IHJ1
-bGU/PGJyPg0KJmd0OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyA0LiBXb3VsZCBtYWludGFpbmVy
-cyBwcmVmZXIgY29uc3VtZXIgdXBkYXRlcyBpbiB0aGUgc2FtZSBzZXJpZXMgYXM8YnI+DQomZ3Q7
-Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7IGV4YW1wbGUgdXNlcnMs
-IG9yIGFzIGZvbGxvdy11cCBwYXRjaGVzIGFmdGVyIHRoZSBnZW5lcmljIG1idWYvRUFMPGJyPg0K
-Jmd0OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyBjaGFuZ2UgaXMg
-YWNjZXB0ZWQ/PGJyPg0KJmd0OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyA1LiBXb3VsZCBtYWlu
-dGFpbmVycyBwcmVmZXIgdGhpcyB0byByZW1haW4gY29tcG9uZW50LXNwZWNpZmljLCBldmVuIGlm
-PGJyPg0KJmd0OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyBtb3Jl
-IHRoYW4gb25lIGRyaXZlciwgbGlicmFyeSwgb3IgcG9vbC1jcmVhdGlvbiBwYXRoIG1heSBuZWVk
-IHRvPGJyPg0KJmd0OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyBh
-cHBseSB0aGUgc2FtZSBiYXNlIHJlc2VydmF0aW9uPzxicj4NCiZndDs8YnI+DQomZ3Q7Jm5ic3A7
-Jm5ic3A7Jm5ic3A7IFRoZSBtYWluIGdvYWwgaXMgdG8gYXZvaWQgZG93bnN0cmVhbSBtYnVmIGxh
-eW91dCBjaGFuZ2VzIGFuZCBhdm9pZDxicj4NCiZndDsmbmJzcDsmbmJzcDsmbmJzcDsgY29tcG9u
-ZW50LXNwZWNpZmljIGNvbmZpZ3VyYXRpb24gZHJpZnQsIHdoaWxlIHN0aWxsIGFsbG93aW5nPGJy
-Pg0KJmd0OyZuYnNwOyZuYnNwOyZuYnNwOyBkZXBsb3ltZW50cyB0byByZXNlcnZlIGEgY29uc2lz
-dGVudCBwcml2YXRlLWRhdGEgYXJlYSBhY3Jvc3MgYWxsIHBhY2tldDxicj4NCiZndDsmbmJzcDsm
-bmJzcDsmbmJzcDsgbWJ1ZiBwb29scywgaW5jbHVkaW5nIHBvb2xzIGNyZWF0ZWQgb3V0c2lkZSBk
-aXJlY3QgYXBwbGljYXRpb24gY29udHJvbC48YnI+DQomZ3Q7PGJyPg0KJmd0OyZuYnNwOyZuYnNw
-OyZuYnNwOyBUaGFua3MsPGJyPg0KJmd0OyZuYnNwOyZuYnNwOyZuYnNwOyBSYW5keTxicj4NCjwv
-ZGl2Pg0KPC9kaXY+DQo8L2Rpdj4NCjwvYm9keT4NCjwvaHRtbD4NCg==
+Participants:
+- ARM [No]
+- Broadcom [No]
+- Debian [No]
+- Intel
+- Marvell
+- Nvidia
+- Red Hat [No]
+- Stephen Hemminger
 
---_000_PH0PR11MB7616978E78B442662B97D304A9A82PH0PR11MB7616namp_--
+Release Dates
+-------------
+
+The following are the proposed working dates for 26.11:
+
+| Date             | Milestone        | Description                     |
+|------------------|------------------|---------------------------------|
+| 31 August 2026   | RFC/v1 patches   | Proposal deadline               |
+| 02 October 2026  | 26.11-rc1        | API freeze                      |
+| 23 October 2026  | 26.11-rc2        | PMD features freeze             |
+| 30 October 2026  | 26.11-rc3        | Builtin apps features freeze    |
+| 06 November 2026 | 26.11-rc4        | Documentation ready             |
+| 18 November 2026 | 26.11.0          | Release                         |
+
+
+
+See https://core.dpdk.org/roadmap/
+
+
+Subtrees
+--------
+
+- next-net
+  - 100 patches pending.
+  - 60 due for review.
+
+- next-net-intel
+  - 40 merged, ready for main.
+  - 17 patches in review/waiting.
+
+- next-net-mlx
+  - No update.
+
+- next-broadcom
+  - No update.
+
+- next-net-mvl
+  - 14 patches to merge.
+
+- next-eventdev
+  - 1 patch pending.
+
+- next-baseband
+  - No update.
+
+- next-virtio
+  - No update.
+
+- next-crypto
+  - No update.
+
+- next-dts
+  - No update.
+
+- main
+  - Merging patches for deprecated symbols/API.
+
+
+
+Other
+-----
+  - None.
+
+LTS
+---
+
+See also: https://core.dpdk.org/roadmap/#stable
+
+LTS versions ongoing/released:
+
+- 25.11.3 - Available.
+- 24.11.7 - Available.
+- 23.11.8 - In progress.
+
+Older releases:
+- 20.11.10 - Will only be updated with CVE and critical fixes.
+- 19.11.14 - Will only be updated with CVE and critical fixes.
+
+- Distros
+  - Debian 13 contains DPDK v24.11
+  - Ubuntu 25.04 contains DPDK v24.11
+  - Ubuntu 24.04 LTS contains DPDK v23.11
+  - RHEL 9 contains DPDK 24.11
+
+Defects
+-------
+
+- Bugzilla links, 'Bugs',  added for hosted projects
+  - https://www.dpdk.org/hosted-projects/
+
+
+
+DPDK Release Status Meetings
+----------------------------
+
+The DPDK Release Status Meeting is intended for DPDK Committers to discuss =
+the
+status of the main tree and sub-trees, and for project managers to track
+progress or milestone dates.
+
+The meeting occurs on every Tuesday at 14:30 DST over Jitsi on https://meet=
+.jit.si/DPDK
+
+You don't need an invite to join the meeting but if you want a calendar rem=
+inder just
+send an email to "John McNamara <john.mcnamara@intel.com>" for the invite.
+
+
+
+
+--_000_DS3PR11MB96465F02B0ED3F8F78C614C3FCA82DS3PR11MB9646namp_
+Content-Type: text/html; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
+1">
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
+olor: rgb(0, 0, 0);">
+Release status meeting minutes 2026-09-01</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<b>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D</b></div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+Agenda:</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- Release Dates</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- Subtrees</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- Roadmaps</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- LTS</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- Defects</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- Opens</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+Participants:</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- ARM [No]</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- Broadcom [No]</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- Debian [No]</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- Intel</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- Marvell</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- Nvidia</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- Red Hat [No]</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- Stephen Hemminger</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+Release Dates</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<b>-------------</b></div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+The following are the proposed working dates for 26.11:</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+| Date &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | Milestone &nbsp; &nbsp; =
+&nbsp; &nbsp;| Description &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;=
+ &nbsp; &nbsp; &nbsp; |</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+|------------------|------------------|---------------------------------|</=
+div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+| 31 August 2026 &nbsp; | RFC/v1 patches &nbsp; | Proposal deadline &nbsp; =
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+| 02 October 2026 &nbsp;| 26.11-rc1 &nbsp; &nbsp; &nbsp; &nbsp;| API freeze=
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbs=
+p;|</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+| 23 October 2026 &nbsp;| 26.11-rc2 &nbsp; &nbsp; &nbsp; &nbsp;| PMD featur=
+es freeze &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+| 30 October 2026 &nbsp;| 26.11-rc3 &nbsp; &nbsp; &nbsp; &nbsp;| Builtin ap=
+ps features freeze &nbsp; &nbsp;|</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+| 06 November 2026 | 26.11-rc4 &nbsp; &nbsp; &nbsp; &nbsp;| Documentation r=
+eady &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+| 18 November 2026 | 26.11.0 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| Release &n=
+bsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; =
+&nbsp; |</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+<br>
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+See https://core.dpdk.org/roadmap/</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+Subtrees</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<b>--------</b></div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- next-net</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - 100 patches pending.</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - 60 due for review.</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- next-net-intel</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - 40 merged, ready for main.</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - 17 patches in review/waiting.</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- next-net-mlx</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - No update.</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- next-broadcom</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - No update.</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- next-net-mvl</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - 14 patches to merge.</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- next-eventdev</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - 1 patch pending.</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- next-baseband</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - No update.</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- next-virtio</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - No update.</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- next-crypto</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - No update.</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- next-dts</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - No update.</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- main</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - Merging patches for deprecated symbols/API.</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+<br>
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+Other</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<b>-----</b></div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - None.</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+LTS</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<b>---</b></div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+See also: https://core.dpdk.org/roadmap/#stable</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+LTS versions ongoing/released:</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- 25.11.3 - Available.</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- 24.11.7 - Available.</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- 23.11.8 - In progress.</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+Older releases:</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- 20.11.10 - Will only be updated with CVE and critical fixes.</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- 19.11.14 - Will only be updated with CVE and critical fixes.</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- Distros</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - Debian 13 contains DPDK v24.11</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - Ubuntu 25.04 contains DPDK v24.11</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - Ubuntu 24.04 LTS contains DPDK v23.11</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - RHEL 9 contains DPDK 24.11</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+Defects</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<b>-------</b></div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+- Bugzilla links, 'Bugs', &nbsp;added for hosted projects</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+&nbsp; - https://www.dpdk.org/hosted-projects/</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+<br>
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+DPDK Release Status Meetings</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<b>----------------------------</b></div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+The DPDK Release Status Meeting is intended for DPDK Committers to discuss =
+the</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+status of the main tree and sub-trees, and for project managers to track</d=
+iv>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+progress or milestone dates.</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+The meeting occurs on every Tuesday at 14:30 DST over Jitsi on https://meet=
+.jit.si/DPDK</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+You don't need an invite to join the meeting but if you want a calendar rem=
+inder just</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+send an email to &quot;John McNamara &lt;<u>john.mcnamara@intel.com</u>&gt;=
+&quot; for the invite.</div>
+<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: Apto=
+s, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;=
+ font-size: 11pt; color: rgb(0, 0, 0);">
+<br>
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+</body>
+</html>
+
+--_000_DS3PR11MB96465F02B0ED3F8F78C614C3FCA82DS3PR11MB9646namp_--
