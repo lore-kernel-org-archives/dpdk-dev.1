@@ -2,34 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D720C624A4
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 03:08:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B29C624A4
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 03:08:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9735740E03;
-	Tue,  1 Sep 2026 05:08:39 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id AC18040BA3;
+	Tue,  1 Sep 2026 05:08:48 +0200 (CEST)
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id BB3D140B98;
- Tue,  1 Sep 2026 05:08:37 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 6009E40B98;
+ Tue,  1 Sep 2026 05:08:46 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-05 (Coremail) with SMTP id zQCowAAHKkOwQZZqMfshBw--.7510S2;
- Tue, 01 Sep 2026 11:08:32 +0800 (CST)
+ by APP-05 (Coremail) with SMTP id zQCowACnEDu7QZZquvshBw--.25653S2;
+ Tue, 01 Sep 2026 11:08:44 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>,
 	stable@dpdk.org
-Subject: [PATCH v8 33/49] net/sxe2: refine vectorized Tx/Rx mode setup
-Date: Tue,  1 Sep 2026 11:08:31 +0800
-Message-ID: <20260901030831.3685518-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v8 35/49] net/sxe2: restore PF-only guard in UDP tunnel port
+ add
+Date: Tue,  1 Sep 2026 11:08:43 +0800
+Message-ID: <20260901030843.3685632-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260831024549.3231744-1-liujie5@linkdatatechnology.com>
 References: <20260831024549.3231744-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowAAHKkOwQZZqMfshBw--.7510S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxZr4xXw13Kw4kAFWkWw1UAwb_yoW5ZFyrpa
- yxWFWFva17JFyYgws3Xa1rXF15Kr1DXryI9rZxu3WfG34vy34DuF4jqF95Zwn8ArZ7ArZY
- yF4Utr4kG3sYgF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: zQCowACnEDu7QZZquvshBw--.25653S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr18Aw1xKF1DWr48trW8JFb_yoW8uw4UpF
+ 4jgrWYvFyaqFsI9w4FvF4kWF1jgr9YgayDC39xWw1rZa4DZ347Aay5tF1Yv3W8CFWfJF1F
+ yayagr1fWr4UZ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUkC14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
  rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
  1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
@@ -60,92 +61,65 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Set rte_eth_tx_pkt_prepare_dummy for the simple and vectorized Tx paths
-instead of leaving the prepare callback unset, and split the NEON
-simple/offload mode selection based on the offload flag. Log the selected
-Tx/Rx mode flags and apply the default Rx free threshold when the
-configured value is zero.
+sxe2_udp_tunnel_port_add_common() lost the check that restricts
+UDP tunnel port configuration to PF devices (not VF or
+representor), so VF/representor devices can now attempt to add
+UDP tunnel ports, which the hardware does not support.
 
-Fixes: ac60f302cbef ("net/sxe2: add vectorized Rx and Tx")
+Restore the PF-only guard returning -ENOTSUP, matching the V3
+implementation.
+
+Fixes: fff24885f70a ("net/sxe2: support custom UDP tunnel ports")
 Cc: stable@dpdk.org
 Cc: stephen@networkplumber.org
-
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_rx.c   |  3 ++-
- drivers/net/sxe2/sxe2_txrx.c | 20 +++++++++++++++-----
- 2 files changed, 17 insertions(+), 6 deletions(-)
+ drivers/net/sxe2/sxe2_ethdev.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/net/sxe2/sxe2_rx.c b/drivers/net/sxe2/sxe2_rx.c
-index d700c60083..3830c676d7 100644
---- a/drivers/net/sxe2/sxe2_rx.c
-+++ b/drivers/net/sxe2/sxe2_rx.c
-@@ -319,7 +319,8 @@ int32_t __rte_cold sxe2_rx_queue_setup(struct rte_eth_dev *dev,
- 		rxq->mb_pool = mp;
- 	}
+diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
+index 77a31eb8a1..8c60c9cfde 100644
+--- a/drivers/net/sxe2/sxe2_ethdev.c
++++ b/drivers/net/sxe2/sxe2_ethdev.c
+@@ -630,6 +630,10 @@ int32_t sxe2_udp_tunnel_port_add_common(struct sxe2_adapter *ad,
+ 	struct sxe2_udp_tunnel_cfg *tunnel_config;
+ 	int32_t ret = -1;
  
--	rxq->rx_free_thresh = rx_conf->rx_free_thresh;
-+	rxq->rx_free_thresh = (rx_conf->rx_free_thresh == 0) ?
-+		SXE2_DEFAULT_RX_FREE_THRESH : rx_conf->rx_free_thresh;
- 	rxq->port_id = dev->data->port_id;
- 	rxq->offloads = offloads;
- 	if (offloads & RTE_ETH_RX_OFFLOAD_KEEP_CRC)
-diff --git a/drivers/net/sxe2/sxe2_txrx.c b/drivers/net/sxe2/sxe2_txrx.c
-index 79870866d1..09f1dfe9fc 100644
---- a/drivers/net/sxe2/sxe2_txrx.c
-+++ b/drivers/net/sxe2/sxe2_txrx.c
-@@ -358,7 +358,7 @@ void sxe2_tx_mode_func_set(struct rte_eth_dev *dev)
- 	}
++	if (ad->dev_type != SXE2_DEV_T_PF || ad->is_dev_repr) {
++		ret = -ENOTSUP;
++		goto l_end;
++	}
+ 	rte_spinlock_lock(&ad->udp_tunnel_ctx.lock);
  
- 	if (tx_mode_flags & SXE2_TX_MODE_VEC_SET_MASK) {
--		dev->tx_pkt_prepare = NULL;
-+		dev->tx_pkt_prepare = rte_eth_tx_pkt_prepare_dummy;
- #ifdef RTE_ARCH_X86
- 		if (tx_mode_flags & SXE2_TX_MODE_VEC_AVX512) {
- #ifdef CC_AVX512_SUPPORT
-@@ -386,21 +386,28 @@ void sxe2_tx_mode_func_set(struct rte_eth_dev *dev)
- 		}
- #elif defined(RTE_ARCH_ARM64)
- 		if (tx_mode_flags & SXE2_TX_MODE_VEC_NEON) {
--			dev->tx_pkt_prepare = sxe2_tx_pkts_prepare;
--			dev->tx_pkt_burst = sxe2_tx_pkts_vec_neon;
-+			if (tx_mode_flags & SXE2_TX_MODE_VEC_OFFLOAD) {
-+				dev->tx_pkt_prepare = sxe2_tx_pkts_prepare;
-+				dev->tx_pkt_burst = sxe2_tx_pkts_vec_neon;
-+			} else {
-+				dev->tx_pkt_burst = sxe2_tx_pkts_vec_neon_simple;
-+			}
- 		} else {
--			dev->tx_pkt_burst = sxe2_tx_pkts_vec_neon_simple;
-+			dev->tx_pkt_prepare = sxe2_tx_pkts_prepare;
-+			dev->tx_pkt_burst = sxe2_tx_pkts;
- 		}
- #endif
- 	} else {
- 		if (tx_mode_flags & SXE2_TX_MODE_SIMPLE_BATCH) {
--			dev->tx_pkt_prepare = NULL;
-+			dev->tx_pkt_prepare = rte_eth_tx_pkt_prepare_dummy;
- 			dev->tx_pkt_burst = sxe2_tx_pkts_simple;
- 		} else {
- 			dev->tx_pkt_prepare = sxe2_tx_pkts_prepare;
- 			dev->tx_pkt_burst = sxe2_tx_pkts;
- 		}
- 	}
-+	PMD_LOG_DEBUG(TX, "Tx mode flags:0x%08x port_id:%u.",
-+				tx_mode_flags, dev->data->port_id);
+ 	tunnel_config = &ad->udp_tunnel_ctx.tunnel_conf[tunnel_proto];
+@@ -659,6 +663,7 @@ int32_t sxe2_udp_tunnel_port_add_common(struct sxe2_adapter *ad,
+ 
+ l_unlock_end:
+ 	rte_spinlock_unlock(&ad->udp_tunnel_ctx.lock);
++l_end:
+ 	return ret;
  }
  
- static const struct {
-@@ -582,6 +589,9 @@ void sxe2_rx_mode_func_set(struct rte_eth_dev *dev)
- 		dev->rx_pkt_burst = sxe2_rx_pkts_scattered_split;
- 	else
- 		dev->rx_pkt_burst = sxe2_rx_pkts_scattered;
+@@ -669,6 +674,9 @@ int32_t sxe2_udp_tunnel_port_del_common(struct sxe2_adapter *ad,
+ 	struct sxe2_udp_tunnel_cfg *tunnel_config;
+ 	int32_t ret = -1;
+ 
++	if (ad->dev_type != SXE2_DEV_T_PF || ad->is_dev_repr)
++		return -ENOTSUP;
 +
-+	PMD_LOG_DEBUG(RX, "Rx mode flags:0x%08x port_id:%u.",
-+				rx_mode_flags, dev->data->port_id);
- }
+ 	rte_spinlock_lock(&ad->udp_tunnel_ctx.lock);
+ 	tunnel_config = &ad->udp_tunnel_ctx.tunnel_conf[tunnel_proto];
  
- static const struct {
+@@ -703,6 +711,9 @@ static int32_t sxe2_udp_tunnel_port_clear(struct rte_eth_dev *dev)
+ 	int32_t ret = 0;
+ 	uint16_t tunnel_proto = 0;
+ 
++	if (ad->dev_type != SXE2_DEV_T_PF || ad->is_dev_repr)
++		return -ENOTSUP;
++
+ 	rte_spinlock_lock(&ad->udp_tunnel_ctx.lock);
+ 
+ 	for (tunnel_proto = 0; tunnel_proto < SXE2_UDP_TUNNEL_MAX; tunnel_proto++) {
 -- 
 2.52.0
 
