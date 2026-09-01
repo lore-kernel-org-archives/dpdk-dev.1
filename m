@@ -2,45 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30CF4C624A4
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 03:08:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67435C624A4
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 03:08:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A7F6540BA0;
-	Tue,  1 Sep 2026 05:07:58 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id BA91540B8F;
+	Tue,  1 Sep 2026 05:08:07 +0200 (CEST)
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id 2788A40616
- for <dev@dpdk.org>; Tue,  1 Sep 2026 05:07:56 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id E6A7D4042F;
+ Tue,  1 Sep 2026 05:08:04 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-05 (Coremail) with SMTP id zQCowADH9kCLQZZqY_khBw--.58257S2;
- Tue, 01 Sep 2026 11:07:55 +0800 (CST)
+ by APP-05 (Coremail) with SMTP id zQCowABXwjyRQZZqrvkhBw--.57766S2;
+ Tue, 01 Sep 2026 11:08:01 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
-	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v8 27/49] net/sxe2: enable FDIR on all Rx queues
-Date: Tue,  1 Sep 2026 11:07:55 +0800
-Message-ID: <20260901030755.3685063-1-liujie5@linkdatatechnology.com>
+	Jie Liu <liujie5@linkdatatechnology.com>,
+	stable@dpdk.org
+Subject: [PATCH v8 28/49] net/sxe2: refactor primary process MP message
+ handling
+Date: Tue,  1 Sep 2026 11:08:00 +0800
+Message-ID: <20260901030800.3685131-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260831024549.3231744-1-liujie5@linkdatatechnology.com>
 References: <20260831024549.3231744-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowADH9kCLQZZqY_khBw--.58257S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7JrWkGFyruF1xWr17XrWUArb_yoWDurg_W3
- y5XF9xJrW5Cr1YkF4UKrW3Xrykt3W8Z3WkZ39aqrWSvr1fAr4fAr1kXrZakwsFga17CrZr
- AF4DW3WrGw45GjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
- 9fnUUIcSsGvfJTRUUUbckFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
- 6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
- A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
- Gr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJV
- WxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
- 2Ix0cI8IcVAFwI0_Jw0_WrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
- W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lw4CEc2x0rVAKj4xx
- MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr
- 0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0E
- wIxGrwCI42IY6xIIjxv20xvE14v26ryj6F1UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJV
- W8Jr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF
- 0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JU4v38UUUUU=
+X-CM-TRANSID: zQCowABXwjyRQZZqrvkhBw--.57766S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxXw47Kr1xCF48ury5ZrW8Zwb_yoWrXFy3pF
+ 1fKr1rXF1xXw129r13Ja1kZFn0krWxJr1UCFZxt34ftw15tF18CF45tr90y3WFk3sxAr1F
+ ka17tF98G3W2vaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUkC14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+ rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+ 1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+ JVWxJr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
+ 1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
+ 7VC0I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r
+ 1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAKzVCY07xG64k0
+ F24l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxV
+ WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI
+ 7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Xr0_Ar1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
+ 4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4U
+ MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjfU8KsjUU
+ UUU
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -58,30 +61,125 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-sxe2_flow_init() always sets fnav_inited, so enable FDIR on every Rx
-queue during queue init by setting rxq->fnav_enable.  FDIR/FNAV
-flags are required for flow rules and ACL statistics, so every Rx
-queue must have them enabled.  This makes the fnav blocks in the
-vectorized Rx paths live on all queues.
+Extract the multi-process work logic into the sxe2_mp_do_primary_work
+helper and operate on a copy of the request in the primary handler so
+the original message is not modified. Simplify the reply construction
+and return -ENOENT instead of -EINVAL when no response is received
+from the primary process.
+
+Fixes: 5db446ba97b0 ("net/sxe2: support statistics and multi-process")
+Cc: stable@dpdk.org
+Cc: stephen@networkplumber.org
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_queue.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/sxe2/sxe2_mp.c | 59 ++++++++++++++++++++++----------------
+ 1 file changed, 34 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/net/sxe2/sxe2_queue.c b/drivers/net/sxe2/sxe2_queue.c
-index afb2681b72..3aaa14c685 100644
---- a/drivers/net/sxe2/sxe2_queue.c
-+++ b/drivers/net/sxe2/sxe2_queue.c
-@@ -39,6 +39,8 @@ int32_t sxe2_queues_init(struct rte_eth_dev *dev)
- 		rxq->rx_buf_len = RTE_MIN(rxq->rx_buf_len, SXE2_RX_MAX_DATA_BUF_SIZE);
- 		if (frame_size > rxq->rx_buf_len)
- 			dev->data->scattered_rx = 1;
-+		if (adapter->flow_ctxt.fnav_inited)
-+			rxq->fnav_enable = true;
+diff --git a/drivers/net/sxe2/sxe2_mp.c b/drivers/net/sxe2/sxe2_mp.c
+index a4a5c76495..93a11150a9 100644
+--- a/drivers/net/sxe2/sxe2_mp.c
++++ b/drivers/net/sxe2/sxe2_mp.c
+@@ -29,16 +29,11 @@ static int32_t sxe2_mp_secondary_handle(const struct rte_mp_msg *mp_msg,
+ 					 const void *peer);
+ 
+ static int32_t
+-sxe2_mp_primary_handle(const struct rte_mp_msg *mp_msg, const void *peer)
++sxe2_mp_do_primary_work(struct sxe2_mp_param *param)
+ {
+-	struct rte_mp_msg reply;
+-	const struct sxe2_mp_param *param =
+-			(const struct sxe2_mp_param *)mp_msg->param;
+-	struct sxe2_mp_param *reply_param = (struct sxe2_mp_param *)reply.param;
+ 	struct rte_eth_dev *dev;
+-	int32_t ret = 0;
+ 	struct sxe2_mp_shared_data *mz_data;
+-	int32_t send_reply = 0;
++	int32_t ret = 0;
+ 	int32_t cnt = 0;
+ 
+ 	if (!rte_eth_dev_is_valid_port(param->port_id)) {
+@@ -49,24 +44,21 @@ sxe2_mp_primary_handle(const struct rte_mp_msg *mp_msg, const void *peer)
  	}
  
- 	adapter->ptp_ctxt.mbuf_rx_ts_offset = -1;
+ 	dev = &rte_eth_devices[param->port_id];
+-	sxe2_mp_mz = rte_memzone_lookup(SXE2_MP_MZ_NAME);
++
+ 	if (sxe2_mp_mz == NULL) {
+-		PMD_LOG_ERR(DRV, "Failed to lookup memzone %s", SXE2_MP_MZ_NAME);
+-		ret = -ENOENT;
+-		goto out;
++		sxe2_mp_mz = rte_memzone_lookup(SXE2_MP_MZ_NAME);
++		if (sxe2_mp_mz == NULL) {
++			PMD_LOG_ERR(DRV, "Failed to lookup memzone %s",
++					SXE2_MP_MZ_NAME);
++			ret = -ENOENT;
++			goto out;
++		}
+ 	}
+ 
+ 	mz_data = (struct sxe2_mp_shared_data *)sxe2_mp_mz->addr;
+-	send_reply = 1;
+-
+-	memset(&reply, 0, sizeof(reply));
+-	(void)strlcpy(reply.name, SXE2_MP_NAME, sizeof(reply.name));
+-	reply.len_param = sizeof(*reply_param);
+-
+ 	switch (param->type) {
+ 	case SXE2_MP_REQ_GET_STATS:
+-		ret = sxe2_stats_info_get(dev,
+-					  &mz_data->payload.stats_blk.stats,
++		ret = sxe2_stats_info_get(dev, &mz_data->payload.stats_blk.stats,
+ 					  &mz_data->payload.stats_blk.qstats);
+ 		break;
+ 	case SXE2_MP_REQ_GET_XSTATS:
+@@ -88,15 +80,32 @@ sxe2_mp_primary_handle(const struct rte_mp_msg *mp_msg, const void *peer)
+ 	default:
+ 		PMD_LOG_ERR(DRV, "primary process: unrecognized msg type: %d",
+ 				param->type);
+-		send_reply = false;
+ 		ret = -EINVAL;
+-		goto out;
++		break;
+ 	}
++
+ out:
+-	if (!send_reply)
+-		return ret;
++	param->result = ret;
++	return ret;
++}
+ 
+-	reply_param->result = ret;
++static int32_t
++sxe2_mp_primary_handle(const struct rte_mp_msg *mp_msg, const void *peer)
++{
++	struct rte_mp_msg reply;
++	struct sxe2_mp_param *reply_param = (struct sxe2_mp_param *)reply.param;
++	const struct sxe2_mp_param *param =
++			(const struct sxe2_mp_param *)mp_msg->param;
++	struct sxe2_mp_param param_copy;
++
++	memset(&reply, 0, sizeof(reply));
++	(void)strlcpy(reply.name, SXE2_MP_NAME, sizeof(reply.name));
++	reply.len_param = sizeof(*reply_param);
++
++	param_copy = *param;
++	(void)sxe2_mp_do_primary_work(&param_copy);
++
++	reply_param->result = param_copy.result;
+ 	reply_param->type = param->type;
+ 	reply_param->port_id = param->port_id;
+ 
+@@ -275,7 +284,7 @@ int32_t sxe2_mp_request_simple(struct rte_eth_dev *dev,
+ 	if (reply.nb_received == 0) {
+ 		PMD_LOG_ERR(DRV, "No response received from primary for type=%d, port %u",
+ 			type, dev->data->port_id);
+-		ret = -EINVAL;
++		ret = -ENOENT;
+ 		goto out;
+ 	}
+ 
 -- 
 2.52.0
 
