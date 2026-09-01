@@ -2,33 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A5ADC624A4
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 03:06:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6F2EC61DFD
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 03:06:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 11C2D40613;
-	Tue,  1 Sep 2026 05:06:31 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0C03F4068A;
+	Tue,  1 Sep 2026 05:06:33 +0200 (CEST)
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id 7146E40613
- for <dev@dpdk.org>; Tue,  1 Sep 2026 05:06:29 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 553914068A
+ for <dev@dpdk.org>; Tue,  1 Sep 2026 05:06:31 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-05 (Coremail) with SMTP id zQCowACXAz4rQZZqAfUhBw--.58453S2;
- Tue, 01 Sep 2026 11:06:19 +0800 (CST)
+ by APP-05 (Coremail) with SMTP id zQCowABHsDoxQZZqRvUhBw--.57985S2;
+ Tue, 01 Sep 2026 11:06:26 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v8 11/49] net/sxe2: rename representor VSI ID fields
-Date: Tue,  1 Sep 2026 11:06:19 +0800
-Message-ID: <20260901030619.3684003-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v8 12/49] net/sxe2: clean up duplicate function declarations
+Date: Tue,  1 Sep 2026 11:06:24 +0800
+Message-ID: <20260901030624.3684064-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260831024549.3231744-1-liujie5@linkdatatechnology.com>
 References: <20260831024549.3231744-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowACXAz4rQZZqAfUhBw--.58453S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxWF1fJFW7Ww15CF1DZFy8uFg_yoWrGryrpr
- Z8XrZ8ZF4xtFnxtwnrG3WfuFy5Kr18t3409F4Syw1fuF1UJr4UurW5KFyFyw1vkrZrZr1S
- y3W7Zw1UXw1YyaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: zQCowABHsDoxQZZqRvUhBw--.57985S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAFW7AF1UAr48XrWfAry7ZFb_yoW5tF13pF
+ 48Xry5AFWYqF18ur4UJa1fuFyagrW8tryj9FZ8W34FkayDZFZFvFy5tF1Fy3WrC34DGwna
+ yanrXa1DG3yrXrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUkS14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
  rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
  1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
@@ -58,91 +58,77 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Rename repr_vf_k_vsi_id/repr_vf_u_vsi_id to
-repr_vf_primary_vsi_id/repr_vf_backup_vsi_id in
-sxe2_repr_private_data and update all references.
+Remove duplicate function declarations from the sxe2 driver headers:
+- sxe2_drv_promisc_config, sxe2_drv_vsi_info_get and
+  sxe2_drv_rxq_mapping_set in sxe2_cmd_chnl.h
+- sxe2_dev_pci_seg_unmap in sxe2_ethdev.h
+- sxe2_rx_pkts_scattered in sxe2_txrx_poll.h
 
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_dump.c      | 8 ++++----
- drivers/net/sxe2/sxe2_ethdev.h    | 4 ++--
- drivers/net/sxe2/sxe2_flow.c      | 4 ++--
- drivers/net/sxe2/sxe2_switchdev.c | 4 ++--
- 4 files changed, 10 insertions(+), 10 deletions(-)
+ drivers/net/sxe2/sxe2_cmd_chnl.h  | 6 ------
+ drivers/net/sxe2/sxe2_ethdev.h    | 2 --
+ drivers/net/sxe2/sxe2_txrx_poll.h | 2 --
+ 3 files changed, 10 deletions(-)
 
-diff --git a/drivers/net/sxe2/sxe2_dump.c b/drivers/net/sxe2/sxe2_dump.c
-index d43473e083..590219f502 100644
---- a/drivers/net/sxe2/sxe2_dump.c
-+++ b/drivers/net/sxe2/sxe2_dump.c
-@@ -211,16 +211,16 @@ sxe2_dump_switchdev_info(FILE *file, struct rte_eth_dev *dev)
- 			"\t  -- repr_pf_id: %u\n"
- 			"\t  -- repr_vf_id: %u\n"
- 			"\t  -- repr_vf_vsi_id: %u\n"
--			"\t  -- repr_vf_k_vsi_id: %s\n"
--			"\t  -- repr_vf_u_vsi_id: %s\n",
-+			"\t  -- repr_vf_primary_vsi_id: %s\n"
-+			"\t  -- repr_vf_backup_vsi_id: %s\n",
- 			adapter->repr_priv_data->repr_id,
- 			adapter->repr_priv_data->repr_q_id,
- 			adapter->repr_priv_data->repr_pf_id,
- 			adapter->repr_priv_data->repr_vf_id,
- 			adapter->repr_priv_data->repr_vf_vsi_id,
--			sxe2_vsi_id_str(adapter->repr_priv_data->repr_vf_k_vsi_id,
-+			sxe2_vsi_id_str(adapter->repr_priv_data->repr_vf_primary_vsi_id,
- 					k_vsi_buf, sizeof(k_vsi_buf)),
--			sxe2_vsi_id_str(adapter->repr_priv_data->repr_vf_u_vsi_id,
-+			sxe2_vsi_id_str(adapter->repr_priv_data->repr_vf_backup_vsi_id,
- 					u_vsi_buf, sizeof(u_vsi_buf)));
- 		goto l_end;
- 	}
+diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.h b/drivers/net/sxe2/sxe2_cmd_chnl.h
+index d63caad526..294ac15db4 100644
+--- a/drivers/net/sxe2/sxe2_cmd_chnl.h
++++ b/drivers/net/sxe2/sxe2_cmd_chnl.h
+@@ -65,8 +65,6 @@ int32_t sxe2_drv_ipsec_rxsa_delete(struct sxe2_adapter *adapter,
+ int32_t sxe2_drv_ipsec_txsa_delete(struct sxe2_adapter *adapter,
+ 			       uint16_t sa_id);
+ 
+-int32_t sxe2_drv_promisc_config(struct sxe2_adapter *adapter, bool set);
+-
+ int32_t sxe2_drv_udp_tunnel_add(struct sxe2_adapter *adapter,
+ 			    enum sxe2_udp_tunnel_protocol tunnel_proto,
+ 			    uint16_t udp_port);
+@@ -84,8 +82,6 @@ int32_t sxe2_drv_get_udp_tunnel_port(struct sxe2_adapter *adapter,
+ 
+ int32_t sxe2_drv_vsi_info_get(struct sxe2_adapter *adapter, struct sxe2_vsi *vsi);
+ 
+-int32_t sxe2_drv_vsi_info_get(struct sxe2_adapter *adapter, struct sxe2_vsi *vsi);
+-
+ int32_t sxe2_drv_mac_link_status_get(struct sxe2_adapter *adapter);
+ 
+ int32_t sxe2_drv_get_mac_stats(struct sxe2_adapter *adapter);
+@@ -110,8 +106,6 @@ int32_t sxe2_drv_mapping_reset(struct rte_eth_dev *eth_dev);
+ 
+ int32_t sxe2_drv_mapping_stats_info_clear(struct rte_eth_dev *eth_dev);
+ 
+-int32_t sxe2_drv_rxq_mapping_set(struct rte_eth_dev *eth_dev, uint16_t queue_id, uint8_t pool_idx);
+-
+ int32_t sxe2_drv_allmulti_config(struct sxe2_adapter *adapter, bool set);
+ 
+ int32_t sxe2_drv_uc_config(struct sxe2_adapter *adapter, struct rte_ether_addr *addr, bool add);
 diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
-index c54e8a435e..158198d74b 100644
+index 158198d74b..1409be74d3 100644
 --- a/drivers/net/sxe2/sxe2_ethdev.h
 +++ b/drivers/net/sxe2/sxe2_ethdev.h
-@@ -263,8 +263,8 @@ struct sxe2_repr_private_data {
- 	uint16_t repr_pf_id;
- 	uint16_t repr_vf_id;
- 	uint16_t repr_vf_vsi_id;
--	uint16_t repr_vf_k_vsi_id;
--	uint16_t repr_vf_u_vsi_id;
-+	uint16_t repr_vf_primary_vsi_id;
-+	uint16_t repr_vf_backup_vsi_id;
- };
+@@ -385,8 +385,6 @@ void sxe2_dev_pci_seg_unmap(struct sxe2_adapter *adapter, uint32_t res_type);
  
- struct sxe2_sched_hw_cap {
-diff --git a/drivers/net/sxe2/sxe2_flow.c b/drivers/net/sxe2/sxe2_flow.c
-index 63cfc36968..cf54803301 100644
---- a/drivers/net/sxe2/sxe2_flow.c
-+++ b/drivers/net/sxe2/sxe2_flow.c
-@@ -380,9 +380,9 @@ static int32_t sxe2_flow_src_split_proc(struct rte_eth_dev *dev,
- 	if (adapter->switchdev_info.is_switchdev && adapter->is_dev_repr) {
- 		flow_bond_num = 1;
- 		flow_src_vsi[SXE2_MAX_DRV_TYPE_DPDK][0] =
--			adapter->repr_priv_data->repr_vf_u_vsi_id;
-+			adapter->repr_priv_data->repr_vf_backup_vsi_id;
- 		flow_src_vsi[SXE2_MAX_DRV_TYPE_KERNEL][0] =
--			adapter->repr_priv_data->repr_vf_k_vsi_id;
-+			adapter->repr_priv_data->repr_vf_primary_vsi_id;
- 	}
+ int32_t sxe2_dev_pci_map_init(struct rte_eth_dev *dev);
  
- 	for (idx = 0; idx < flow_bond_num; idx++) {
-diff --git a/drivers/net/sxe2/sxe2_switchdev.c b/drivers/net/sxe2/sxe2_switchdev.c
-index 44703cfb5c..efb1468b91 100644
---- a/drivers/net/sxe2/sxe2_switchdev.c
-+++ b/drivers/net/sxe2/sxe2_switchdev.c
-@@ -312,9 +312,9 @@ int32_t sxe2_switchdev_repr_private_data_init(struct rte_eth_dev *dev,
- 	repr_priv_data->repr_q_id = repr_id;
- 	repr_priv_data->repr_pf_id = parent_adapter->pf_idx;
- 	repr_priv_data->repr_vf_id = repr_id;
--	repr_priv_data->repr_vf_k_vsi_id =
-+	repr_priv_data->repr_vf_primary_vsi_id =
- 		parent_adapter->repr_ctxt.repr_vf_id[repr_id].kernel_vsi_id;
--	repr_priv_data->repr_vf_u_vsi_id =
-+	repr_priv_data->repr_vf_backup_vsi_id =
- 		parent_adapter->repr_ctxt.repr_vf_id[repr_id].dpdk_vsi_id;
+-void sxe2_dev_pci_seg_unmap(struct sxe2_adapter *adapter, uint32_t res_type);
+-
+ int32_t sxe2_udp_tunnel_port_del_common(struct sxe2_adapter *ad,
+ 		enum sxe2_udp_tunnel_protocol tunnel_proto, uint16_t udp_port);
  
- 	repr_priv_data->repr_vf_vsi_id =
+diff --git a/drivers/net/sxe2/sxe2_txrx_poll.h b/drivers/net/sxe2/sxe2_txrx_poll.h
+index 708e3839d7..bfa099c097 100644
+--- a/drivers/net/sxe2/sxe2_txrx_poll.h
++++ b/drivers/net/sxe2/sxe2_txrx_poll.h
+@@ -13,8 +13,6 @@ uint16_t sxe2_tx_pkts_simple(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t
+ 
+ uint16_t sxe2_rx_pkts_scattered(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
+ 
+-uint16_t sxe2_rx_pkts_scattered(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
+-
+ uint16_t sxe2_rx_pkts_scattered_split(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
+ 
+ #endif /* SXE2_TXRX_POLL_H */
 -- 
 2.52.0
 
