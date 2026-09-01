@@ -2,39 +2,60 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B449CC61DE4
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 06:43:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49FE1C61DD3
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 07:00:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9157D4064E;
-	Tue,  1 Sep 2026 08:43:38 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id E913F40431
- for <dev@dpdk.org>; Tue,  1 Sep 2026 08:43:35 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id C618520AF2;
- Tue,  1 Sep 2026 08:43:35 +0200 (CEST)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Tue, 1 Sep 2026 08:43:35 +0200
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-To: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Stephen Hemminger <stephen@networkplumber.org>
-Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH v4 2/2] mempool: introduce pile driver
-Date: Tue,  1 Sep 2026 06:43:31 +0000
-Message-ID: <20260901064331.594276-3-mb@smartsharesystems.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260901064331.594276-1-mb@smartsharesystems.com>
-References: <20260812134756.1829613-1-mb@smartsharesystems.com>
- <20260901064331.594276-1-mb@smartsharesystems.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 21E3B402E9;
+	Tue,  1 Sep 2026 09:00:45 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 05DA44027E
+ for <dev@dpdk.org>; Tue,  1 Sep 2026 09:00:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1788246042;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=Ho4IWL2uSkdvJN1Ik1Kf8gPpdxOOB4CK2OGFNJ9v+LQ=;
+ b=T3ZUW7kqavu1NvUi9+Jbe7D+UcW8fAKamT/98W1EZkxzPdhbOAKi6qQSfwBNx5fZLbG8bl
+ DPsTCf8ASfREAqhdoS4s1bHwrX/fJyayHZwgm2e4BkNhdzXJji7NcRaRPI5Lr4bk8JI9NR
+ virBaFBkOf98zSEPqhWXmA1yK7DtRCM=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-121-f2iyqiFBPFS5tyQJ4DOwLA-1; Tue,
+ 01 Sept 2026 03:00:37 -0400
+X-MC-Unique: f2iyqiFBPFS5tyQJ4DOwLA-1
+X-Mimecast-MFC-AGG-ID: f2iyqiFBPFS5tyQJ4DOwLA_1788246036
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 525461944D2B; Tue,  1 Sep 2026 07:00:36 +0000 (UTC)
+Received: from dmarchan.home (headnet05.pony-001.prod.iad2.dc.redhat.com
+ [10.2.32.117])
+ by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 83C971955F0D; Tue,  1 Sep 2026 07:00:34 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
+To: dev@dpdk.org
+Cc: Maxime Coquelin <maxime.coquelin@redhat.com>,
+ Chenbo Xia <chenbox@nvidia.com>, Sunil Pai G <sunil.pai.g@intel.com>,
+ Jiayu Hu <hujiayu.hu@foxmail.com>
+Subject: [PATCH v2] vhost: remove dependency on PCI library
+Date: Tue,  1 Sep 2026 09:00:24 +0200
+Message-ID: <20260901070024.1606766-1-david.marchand@redhat.com>
+In-Reply-To: <20260831074159.1506521-1-david.marchand@redhat.com>
+References: <20260831074159.1506521-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: _O6ZZk2rrXziKnkTylIkH2FPQm6iMSQlYcqKHdEtrMU_1788246036
+X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 01 Sep 2026 06:43:35.0465 (UTC)
- FILETIME=[366CF990:01DD39DD]
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,276 +69,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Added a new "pile" mempool driver, based on the high-performance lock-free
-"pile" stack variant.
+Since the async datapath code switched to dmadev, there is no reason to
+depend on the pci library.
 
-Changed other stack drivers to call their specific push/pop functions,
-instead of calling the generic stack push/pop API.
+Fixes: 53d3f4778c1d ("vhost: integrate dmadev in asynchronous data-path")
 
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
+Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
-v4:
-* No changes.
-v3:
-* Call other stack types' specific push/pop functions.
-v2:
-* There is no v2.
----
- doc/guides/mempool/stack.rst              | 12 ++-
- drivers/mempool/stack/rte_mempool_stack.c | 90 ++++++++++++++++++++---
- lib/mempool/rte_mempool.h                 |  2 +
- lib/mempool/rte_mempool_ops.c             | 27 +++++--
- 4 files changed, 114 insertions(+), 17 deletions(-)
+Changes since v1:
+- fixed "internal" dependencies of examples,
 
-diff --git a/doc/guides/mempool/stack.rst b/doc/guides/mempool/stack.rst
-index 80ea07e65d..c06ab2dc56 100644
---- a/doc/guides/mempool/stack.rst
-+++ b/doc/guides/mempool/stack.rst
-@@ -1,5 +1,6 @@
- ..  SPDX-License-Identifier: BSD-3-Clause
-     Copyright(c) 2020 Intel Corporation.
-+    Copyright(c) 2026 SmartShare Systems.
+---
+ examples/vdpa/meson.build  | 1 +
+ examples/vhost/meson.build | 1 +
+ lib/vhost/meson.build      | 2 +-
+ 3 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/examples/vdpa/meson.build b/examples/vdpa/meson.build
+index 45f8a6fa31..3a319dd539 100644
+--- a/examples/vdpa/meson.build
++++ b/examples/vdpa/meson.build
+@@ -12,6 +12,7 @@ if not is_linux
+ endif
  
- Stack Mempool Driver
- ====================
-@@ -28,6 +29,12 @@ can be selected as described in :ref:`Mempool_Handlers`:
-   The underlying **rte_stack** operates in lock-free mode. For more
-   information please refer to :ref:`Stack_Library_LF_Stack`.
+ deps += 'vhost'
++deps += 'pci'
+ allow_experimental_apis = true
+ sources = files(
+         'main.c',
+diff --git a/examples/vhost/meson.build b/examples/vhost/meson.build
+index e938be8f45..1cf061c597 100644
+--- a/examples/vhost/meson.build
++++ b/examples/vhost/meson.build
+@@ -13,6 +13,7 @@ endif
  
-+- ``pile``
-+
-+  The underlying **rte_stack** operates in lock-free mode,
-+  and is optimized for bulks of objects.
-+  For more information please refer to :ref:`Stack_Library_Pile`.
-+
- The standard stack outperforms the lock-free stack on average, however the
- standard stack is non-preemptive: if a mempool user is preempted while holding
- the stack lock, that thread will block all other mempool accesses until it
-@@ -35,9 +42,12 @@ returns and releases the lock. As a result, an application using the standard
- stack whose threads can be preempted can suffer from brief, infrequent
- performance hiccups.
- 
--The lock-free stack, by design, is not susceptible to this problem; one thread can
-+The lock-free stack and the pile, by design, are not susceptible to this problem; one thread can
- be preempted at any point during a push or pop operation and will not impede
- the progress of any other thread.
- 
-+The pile is not LIFO per object, but per bulk of objects.
-+Although the pile is optimized for bulks of objects, it can handle any request size.
-+
- For a more detailed description of the stack implementations, please refer to
- :doc:`/prog_guide/stack_lib`.
-diff --git a/drivers/mempool/stack/rte_mempool_stack.c b/drivers/mempool/stack/rte_mempool_stack.c
-index 1476905227..11c1243bec 100644
---- a/drivers/mempool/stack/rte_mempool_stack.c
-+++ b/drivers/mempool/stack/rte_mempool_stack.c
-@@ -30,7 +30,7 @@ __stack_alloc(struct rte_mempool *mp, uint32_t flags)
- }
- 
- static int
--stack_alloc(struct rte_mempool *mp)
-+std_stack_alloc(struct rte_mempool *mp)
- {
- 	return __stack_alloc(mp, 0);
- }
-@@ -42,21 +42,81 @@ lf_stack_alloc(struct rte_mempool *mp)
- }
- 
- static int
--stack_enqueue(struct rte_mempool *mp, void * const *obj_table,
-+pile_alloc(struct rte_mempool *mp)
-+{
-+	return __stack_alloc(mp, RTE_STACK_F_PILE);
-+}
-+
-+static int
-+std_stack_enqueue(struct rte_mempool *mp, void * const *obj_table,
-+	      unsigned int n)
-+{
-+	struct rte_stack *s = mp->pool_data;
-+
-+	RTE_ASSERT(s != NULL);
-+	RTE_ASSERT(obj_table != NULL);
-+
-+	return __rte_stack_std_push(s, obj_table, n) == 0 ? -ENOBUFS : 0;
-+}
-+
-+static int
-+std_stack_dequeue(struct rte_mempool *mp, void **obj_table,
-+	      unsigned int n)
-+{
-+	struct rte_stack *s = mp->pool_data;
-+
-+	RTE_ASSERT(s != NULL);
-+	RTE_ASSERT(obj_table != NULL);
-+
-+	return __rte_stack_std_pop(s, obj_table, n) == 0 ? -ENOBUFS : 0;
-+}
-+
-+static int
-+lf_stack_enqueue(struct rte_mempool *mp, void * const *obj_table,
-+	      unsigned int n)
-+{
-+	struct rte_stack *s = mp->pool_data;
-+
-+	RTE_ASSERT(s != NULL);
-+	RTE_ASSERT(obj_table != NULL);
-+
-+	return __rte_stack_lf_push(s, obj_table, n) == 0 ? -ENOBUFS : 0;
-+}
-+
-+static int
-+lf_stack_dequeue(struct rte_mempool *mp, void **obj_table,
- 	      unsigned int n)
- {
- 	struct rte_stack *s = mp->pool_data;
- 
--	return rte_stack_push(s, obj_table, n) == 0 ? -ENOBUFS : 0;
-+	RTE_ASSERT(s != NULL);
-+	RTE_ASSERT(obj_table != NULL);
-+
-+	return __rte_stack_lf_pop(s, obj_table, n) == 0 ? -ENOBUFS : 0;
- }
- 
- static int
--stack_dequeue(struct rte_mempool *mp, void **obj_table,
-+pile_enqueue(struct rte_mempool *mp, void * const *obj_table,
- 	      unsigned int n)
- {
- 	struct rte_stack *s = mp->pool_data;
- 
--	return rte_stack_pop(s, obj_table, n) == 0 ? -ENOBUFS : 0;
-+	RTE_ASSERT(s != NULL);
-+	RTE_ASSERT(obj_table != NULL);
-+
-+	return __rte_stack_pile_push(s, obj_table, n) == 0 ? -ENOBUFS : 0;
-+}
-+
-+static int
-+pile_dequeue(struct rte_mempool *mp, void **obj_table,
-+	      unsigned int n)
-+{
-+	struct rte_stack *s = mp->pool_data;
-+
-+	RTE_ASSERT(s != NULL);
-+	RTE_ASSERT(obj_table != NULL);
-+
-+	return __rte_stack_pile_pop(s, obj_table, n) == 0 ? -ENOBUFS : 0;
- }
- 
- static unsigned
-@@ -77,10 +137,10 @@ stack_free(struct rte_mempool *mp)
- 
- static struct rte_mempool_ops ops_stack = {
- 	.name = "stack",
--	.alloc = stack_alloc,
-+	.alloc = std_stack_alloc,
- 	.free = stack_free,
--	.enqueue = stack_enqueue,
--	.dequeue = stack_dequeue,
-+	.enqueue = std_stack_enqueue,
-+	.dequeue = std_stack_dequeue,
- 	.get_count = stack_get_count
- };
- 
-@@ -88,10 +148,20 @@ static struct rte_mempool_ops ops_lf_stack = {
- 	.name = "lf_stack",
- 	.alloc = lf_stack_alloc,
- 	.free = stack_free,
--	.enqueue = stack_enqueue,
--	.dequeue = stack_dequeue,
-+	.enqueue = lf_stack_enqueue,
-+	.dequeue = lf_stack_dequeue,
-+	.get_count = stack_get_count
-+};
-+
-+static struct rte_mempool_ops ops_pile = {
-+	.name = "pile",
-+	.alloc = pile_alloc,
-+	.free = stack_free,
-+	.enqueue = pile_enqueue,
-+	.dequeue = pile_dequeue,
- 	.get_count = stack_get_count
- };
- 
- RTE_MEMPOOL_REGISTER_OPS(ops_stack);
- RTE_MEMPOOL_REGISTER_OPS(ops_lf_stack);
-+RTE_MEMPOOL_REGISTER_OPS(ops_pile);
-diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
-index 3e161bfdb9..db7def9096 100644
---- a/lib/mempool/rte_mempool.h
-+++ b/lib/mempool/rte_mempool.h
-@@ -979,6 +979,8 @@ rte_mempool_set_ops_byname(struct rte_mempool *mp, const char *name,
-  *   - >=0: Success; return the index of the ops struct in the table.
-  *   - -EINVAL - some missing callbacks while registering ops struct.
-  *   - -ENOSPC - the maximum number of ops structs has been reached.
-+ *   - -ENAMETOOLONG - the name of the ops is too long.
-+ *   - -EEXIST - the name of the ops is already registered.
-  */
- int rte_mempool_register_ops(const struct rte_mempool_ops *ops);
- 
-diff --git a/lib/mempool/rte_mempool_ops.c b/lib/mempool/rte_mempool_ops.c
-index 066bec36fc..261ad217ee 100644
---- a/lib/mempool/rte_mempool_ops.c
-+++ b/lib/mempool/rte_mempool_ops.c
-@@ -27,7 +27,7 @@ int
- rte_mempool_register_ops(const struct rte_mempool_ops *h)
- {
- 	struct rte_mempool_ops *ops;
--	int16_t ops_index;
-+	unsigned int ops_index;
- 
- 	rte_spinlock_lock(&rte_mempool_ops_table.sl);
- 
-@@ -47,12 +47,21 @@ rte_mempool_register_ops(const struct rte_mempool_ops *h)
- 		return -EINVAL;
- 	}
- 
--	if (strlen(h->name) >= sizeof(ops->name) - 1) {
-+	if (strlen(h->name) > sizeof(ops->name) - 1) {
- 		rte_spinlock_unlock(&rte_mempool_ops_table.sl);
--		RTE_MEMPOOL_LOG(DEBUG, "%s(): mempool_ops <%s>: name too long",
-+		RTE_MEMPOOL_LOG(ERR, "%s(): mempool_ops <%s>: name too long",
- 				__func__, h->name);
--		rte_errno = EEXIST;
--		return -EEXIST;
-+		return -ENAMETOOLONG;
-+	}
-+
-+	for (ops_index = 0; ops_index < rte_mempool_ops_table.num_ops; ops_index++) {
-+		if (!strcmp(h->name,
-+				rte_mempool_ops_table.ops[ops_index].name)) {
-+			rte_spinlock_unlock(&rte_mempool_ops_table.sl);
-+			RTE_MEMPOOL_LOG(ERR, "%s(): mempool_ops <%s>: name exists",
-+					__func__, h->name);
-+			return -EEXIST;
-+		}
- 	}
- 
- 	ops_index = rte_mempool_ops_table.num_ops++;
-@@ -68,6 +77,9 @@ rte_mempool_register_ops(const struct rte_mempool_ops *h)
- 	ops->get_info = h->get_info;
- 	ops->dequeue_contig_blocks = h->dequeue_contig_blocks;
- 
-+	RTE_MEMPOOL_LOG(DEBUG,
-+		"Registered mempool_ops[%u] <%s>", ops_index, h->name);
-+
- 	rte_spinlock_unlock(&rte_mempool_ops_table.sl);
- 
- 	return ops_index;
-@@ -185,8 +197,11 @@ rte_mempool_set_ops_byname(struct rte_mempool *mp, const char *name,
- 		}
- 	}
- 
--	if (ops == NULL)
-+	if (ops == NULL) {
-+		RTE_MEMPOOL_LOG(ERR,
-+			"Unknown mempool_ops <%s>, of %u ops registered", name, i);
- 		return -EINVAL;
-+	}
- 
- 	mp->ops_index = i;
- 	mp->pool_config = pool_config;
+ deps += 'vhost'
+ deps += 'dmadev'
++deps += 'pci'
+ allow_experimental_apis = true
+ sources = files(
+         'main.c',
+diff --git a/lib/vhost/meson.build b/lib/vhost/meson.build
+index 6a24981d10..64698182cd 100644
+--- a/lib/vhost/meson.build
++++ b/lib/vhost/meson.build
+@@ -44,4 +44,4 @@ headers = files(
+ driver_sdk_headers = files(
+         'vdpa_driver.h',
+ )
+-deps += ['ethdev', 'cryptodev', 'hash', 'pci', 'dmadev']
++deps += ['ethdev', 'cryptodev', 'hash', 'dmadev']
 -- 
-2.43.0
+2.54.0
 
