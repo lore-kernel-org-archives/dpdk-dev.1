@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 228B7C61DD6
-	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 16:18:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D87A4C61DD6
+	for <dpdk-dev@archiver.kernel.org>; Tue,  1 Sep 2026 16:18:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4894940DCD;
-	Tue,  1 Sep 2026 18:16:17 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 66BA2410DD;
+	Tue,  1 Sep 2026 18:16:18 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
- by mails.dpdk.org (Postfix) with ESMTP id 7891C40B95
- for <dev@dpdk.org>; Tue,  1 Sep 2026 18:16:14 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 9E35440F1A
+ for <dev@dpdk.org>; Tue,  1 Sep 2026 18:16:15 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1788279374; x=1819815374;
+ t=1788279376; x=1819815376;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=O4/ptTsOrKImcGp/3skOtsMf5qtscvQpIAhkQEMkeNY=;
- b=Bcqz6yzNL/qCt5BhN67qOFnz9xJgCM2T3Amtg76Gi3flG7UwEAFcNVoe
- mt2xuWaivkrEifzUU+eW2vLXQlHd/5s5XdQ2qV/5c3p/H2fM49byjZ3KM
- 5Hv+BLJzeiZcgI312swzB4uVFhyhrLcrg0zXoje0PXr0g27aKInNxFBK9
- RjFcNLk+n0NMcSraw1guczbWPOU1Rs0aXnibz30xyWOd4BT2ji4kGoQkC
- zNF9iNf21+u5AgxVtBdYhUQs4pmrJgbtReLG3te6NyPWZ4b65eH3yrXNx
- lFimfQ16Xj1in5vvzk/K0UDgRbajg5VnG3QJ08fFKU8VVXqaoLpI6/qAS Q==;
-X-CSE-ConnectionGUID: MJqp1c9sScOPXWZ2PI5LuQ==
-X-CSE-MsgGUID: tbvS8S4tQiiwY8aE04o7Gw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11893"; a="87656123"
-X-IronPort-AV: E=Sophos;i="6.25,256,1779174000"; d="scan'208";a="87656123"
+ bh=f5ZNOaupg92ut+Cp1QpxpwaA6B6KL9Fbr/eQyVsUKdE=;
+ b=S9v599jAodkjlo3W9PNtMh6cD+PpdDo9OH1UFhmw5hXUE6nGg4BGvzol
+ GPTEHpdKu2K/yRP4cHAsaEb/r3aaYM0BrIzeXWDQ4M/E8nWkpT6PkfdUE
+ BpK0GpNrTwMJIEv0kq9Q1l+tBnjR7swfC9wVV/IsuuY7DqcnoHDHWbko3
+ rD2RIGOVyT1VBV4OVidjXTLoHNJwlzudO5kbyu1kPGo6vLyl8zkBntab3
+ L3ThkuevDbdWdGBeeBxy0QWNGBHAs4XJoD9DPbFX/VnyLve7ktxEsS884
+ uRn5fIeaa+ajRG8o7xABJ/P3pl56/7eFf0bSvqQHd/ZYVrfBlDnqu2rqc Q==;
+X-CSE-ConnectionGUID: vT71ZxyCQBSJSoKWmrCm8w==
+X-CSE-MsgGUID: 2yaXkT7HQL+85EMciPdM7g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11893"; a="87656127"
+X-IronPort-AV: E=Sophos;i="6.25,256,1779174000"; d="scan'208";a="87656127"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 01 Sep 2026 09:16:14 -0700
-X-CSE-ConnectionGUID: 4BXswZOwQQubLlaFuVImFA==
-X-CSE-MsgGUID: Bm7Vsg81SZmnRl3QtLOkuA==
+ 01 Sep 2026 09:16:15 -0700
+X-CSE-ConnectionGUID: 7ytzZblIQwG6qEmEfUnHIQ==
+X-CSE-MsgGUID: cBObcqNuTl6k9kq4hLfxgw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,256,1779174000"; d="scan'208";a="299032603"
+X-IronPort-AV: E=Sophos;i="6.25,256,1779174000"; d="scan'208";a="299032604"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa002.jf.intel.com with ESMTP; 01 Sep 2026 09:16:13 -0700
+ by orviesa002.jf.intel.com with ESMTP; 01 Sep 2026 09:16:14 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org,
-	Feifei Wang <wangfeifei40@huawei.com>
-Subject: [PATCH v15 22/25] net/hinic3: use the new VFIO IOMMU mode API
-Date: Tue,  1 Sep 2026 17:15:28 +0100
-Message-ID: <0d42eea9eabde4a4f712570dc15271cff6e27875.1788278993.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org, Christian Koue Muf <ckm@napatech.com>,
+ Serhii Iliushyk <sil-plv@napatech.com>
+Subject: [PATCH v15 23/25] net/ntnic: use the new VFIO IOMMU mode API
+Date: Tue,  1 Sep 2026 17:15:29 +0100
+Message-ID: <db26e219a90e91e2ce111c5ef114787b9fc5de43.1788278993.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1788278991.git.anatoly.burakov@intel.com>
  <cover.1788278991.git.anatoly.burakov@intel.com>
@@ -64,23 +64,22 @@ Use new VFIO IOMMU mode API to query no-IOMMU status.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/hinic3/base/hinic3_hwdev.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ntnic/ntnic_ethdev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/hinic3/base/hinic3_hwdev.c b/drivers/net/hinic3/base/hinic3_hwdev.c
-index 6a6cf44752..e8ad013345 100644
---- a/drivers/net/hinic3/base/hinic3_hwdev.c
-+++ b/drivers/net/hinic3/base/hinic3_hwdev.c
-@@ -78,7 +78,8 @@ hinic3_is_vfio_iommu_enable(const struct rte_eth_dev *eth_dev)
- {
- 	struct rte_pci_device *pci_dev = RTE_CLASS_TO_BUS_DEVICE(eth_dev, *pci_dev);
+diff --git a/drivers/net/ntnic/ntnic_ethdev.c b/drivers/net/ntnic/ntnic_ethdev.c
+index d9744a7d05..79f4dd5279 100644
+--- a/drivers/net/ntnic/ntnic_ethdev.c
++++ b/drivers/net/ntnic/ntnic_ethdev.c
+@@ -2690,7 +2690,7 @@ nthw_pci_probe(struct rte_pci_driver *pci_drv, struct rte_pci_device *pci_dev)
+ 			(pci_dev->device.devargs->data ? pci_dev->device.devargs->data : "NULL"));
+ 	}
  
--	return pci_dev->kdrv == RTE_PCI_KDRV_VFIO && dev_vfio_noiommu_is_enabled() != 1;
-+	return pci_dev->kdrv == RTE_PCI_KDRV_VFIO &&
-+			dev_vfio_get_iommu_mode() == DEV_VFIO_IOMMU_MODE_SAFE;
- }
+-	const int n_dev_vfio_no_io_mmu_enabled = dev_vfio_noiommu_is_enabled();
++	const int n_dev_vfio_no_io_mmu_enabled = dev_vfio_get_iommu_mode() == DEV_VFIO_IOMMU_MODE_UNSAFE;
+ 	NT_LOG(DBG, NTNIC, "vfio_no_iommu_enabled=%d", n_dev_vfio_no_io_mmu_enabled);
  
- int
+ 	if (n_dev_vfio_no_io_mmu_enabled) {
 -- 
 2.52.0
 
