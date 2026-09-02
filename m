@@ -2,70 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8F6FC624D4
-	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Sep 2026 15:57:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3175C624D4
+	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Sep 2026 15:57:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6140740DD2;
-	Wed,  2 Sep 2026 17:57:43 +0200 (CEST)
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com
- [209.85.214.176])
- by mails.dpdk.org (Postfix) with ESMTP id 20CEA40ED2
- for <dev@dpdk.org>; Wed,  2 Sep 2026 17:57:42 +0200 (CEST)
-Received: by mail-pl1-f176.google.com with SMTP id
- d9443c01a7336-2d91ff7d9acso12616785ad.3
- for <dev@dpdk.org>; Wed, 02 Sep 2026 08:57:42 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5550440EE3;
+	Wed,  2 Sep 2026 17:57:46 +0200 (CEST)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com
+ [209.85.214.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 61D1B40EE3
+ for <dev@dpdk.org>; Wed,  2 Sep 2026 17:57:45 +0200 (CEST)
+Received: by mail-pl1-f172.google.com with SMTP id
+ d9443c01a7336-2d5335cf904so12119125ad.2
+ for <dev@dpdk.org>; Wed, 02 Sep 2026 08:57:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788364661;
- x=1788969461; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788364664;
+ x=1788969464; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=zgaFzOqDVx3/+SQU2ElJp/QU5geUPSLPb1Fvjv69f/A=;
- b=dIapdxoLK6kNGukiiv69rUSQzNvXFegbcE7yhLt9t3cJM6EVi6ngLkxKWXNDN+Zum1
- ujztvVfjh1GNw4zCfRT4ET6BmZ/GlTvea9rQV0Fp8dHY2VMKTMNV+bpE2SGM6txJCLUM
- PMJMbjpC708AsQMWR83twNRGhoBR84SIdZbxiKGscYz0euN9deefTK/aJp63OgrVNu4f
- nlLK2sAZTLEMnGi6hy2cS14SKlOA4Wlbzw7QUVv+YoFDcRv02hZ9eSQMECMZ7nXOysvO
- F4mYNtghVc+jyGNxWgmcOcXr4LvvwxdJcDqim05V5fcPV9NIl7jgZYP+6xsV0Iw/UGdj
- vOzA==
+ bh=+dTA+/XMPXwDuuT2Otsma9WNbuH9FXWcv0VXngBaGnA=;
+ b=W109OJrijmXt432PBmTxwZCkBNXw2pJ7YwbMA5E4RT/lhHidM2lFyObIipDhaEAyqP
+ W5WJKbYyQZkV+qHxZBnCzzfDZnVuUaaI7ZTEcVmDXLK4geveZIVd9FxqTs7tXOnYFeP5
+ hNM0lIAVk3l/JZsEsWs41WwXn0epNJiMBPEm7OY603O5g4ajm0HfHqcsmh41e0DezXn/
+ 0AKjSF6x23QELiMYNXchb2PHKMJ1BYvpFuB86zbR276h9oWbKhDBFZF+dW40Lq6K1mft
+ 9NsMg0TMu4YKACA86MDWI/ySS+TZ56tRBjPwTZV/aCvMOj5ImIkE3Id0W0YYbBVXt747
+ DefA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788364661; x=1788969461;
+ d=1e100.net; s=20251104; t=1788364664; x=1788969464;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=zgaFzOqDVx3/+SQU2ElJp/QU5geUPSLPb1Fvjv69f/A=;
- b=NGIvIfELTV0CJO1GlN0huLHqffhYCGQfRSbJL1IgpBMgLWQSatjjbf1ielCzq+CUTu
- 1kV+ypoUjLGKko8HADGMP0ntuR2jEKTLnM/6J07/ezYv26WR6CLGP1Zam8pICneGwHM1
- zrTm/5KPkD58NKchiVYrakrqKK3mTd8ZfdHypUnO2c132q03ootHlYslxlthACb/7t6J
- sUJSbIn3XJDQm8Y2Q0h+pZYsiiHSTUXoQ4Gfg1xwFWWQxZCuJ7eU5KU1DVaxT53TAZrL
- oNwtfqFSwLWR5FIXF9b5ZNDlgDt0Tg7wBmmrdcj13nXT2Z8ENG3VNTA0+y+wDZW+jvKv
- B0aA==
-X-Gm-Message-State: AFuF++mMmpmqFnjjSPrXrx4m/rkkhPhJ8Pyh3jM3OXJGPgYQOPVKTjto
- WMTjLQg7MfuEPWpu85wEh0DOtCPMUGXwWoIfYDUZ5L/gIzkSmw0dZZ+rQl6Bto8EYevhvdCbw+r
- L9JyB
-X-Gm-Gg: AR+sD11P2/Vhr3NT5W0eXA22XeZZ1ggHG/aBicwmDfEb+bEgAnguGczOtpN7i0vLc2j
- uW9sdx5TfmcwS6v3H2lw6NTfbdzTjtLV5KPofU+7MEoFj1uss8+Xa/wtjQBrhhzBfBcb7dO+V2j
- PeXhgCgDv3wqdhrNQHqkiFe1K4APvlvm9R3WB/FmVEbqhOFCLHHSYXh+WS4D/r1H0u8gsBm/Lt4
- CBEPckW+idwlOk5nDhrdX/dfzJqZ+9NbMJ8EPSckMfDw3eXs0O2NGjMGvHlv0xzdBJfNlBOhXJI
- Lbz790ut3aqUHYY4GRKt4QaCGe+0EJMWcvWdtZ0DIwLBesP6sSCvQL7yeON7RMHkV49VL14AtUQ
- xujLDzGOdQl7kJ8zEklQ0kCWngDfYote8XoegsRT8bJORI+yf4UYbZREzaYtkOCiiB3HPRBMUgP
- yAJ2oNNEtfkYEC2stK3vGu6V1HgrlZ3sCWgg4jP7CixzudirrotX7srwrxAcQMsciqrumXf17Es
- 0KJJZ3ZY8Sd1VuNchyovX+EZio=
-X-Received: by 2002:a17:903:3d0f:b0:2d8:d4d3:3fbc with SMTP id
- d9443c01a7336-2daec729406mr83877495ad.16.1788364661078; 
- Wed, 02 Sep 2026 08:57:41 -0700 (PDT)
+ bh=+dTA+/XMPXwDuuT2Otsma9WNbuH9FXWcv0VXngBaGnA=;
+ b=rDAjHwQpbeyOhzgm0UxSxxt5V9z+a5ZFqCRxog0LIFRRlnVJCEjPoPO9+a3sbS8xU/
+ PSoYwelgijCdzOL6VXzeMzKVEsr9lZ2DkhY3FjnqhEFguhxRzVK47mn6QZV/7ykSR6Uw
+ ZamZ2HTh5U5m8cjJitq/k/oAnUdaGAvJYzzyU8ybfUacJ7IUIs258BZfozRBRV8znRaK
+ w2/BopICJ0gPYNL/H9kJvEf5v5CFqurpWtCcl0EwDuiUklTeRemf+G6aSH9TkHh6PpKf
+ ydk2SwJms0u48sMiJamDBU9PhTubvOgUI7kquNux3o3mcRlfI2FmKfvlnd7G2+zut0+/
+ OuGw==
+X-Gm-Message-State: AFuF++l9RadiXf8G3Y4+hW/fsh3hpfs3FwFJXZMqYsXxYmq3o3wJMSeE
+ fgnKxxh0lWk9XSTGAqfwe0nqoOoM0BZIHlW1FI28I4VaHGWthjMCGu5Hvg+gQyOFGjBVDa/7r7a
+ FfQmh
+X-Gm-Gg: AYBFou0jkAndxZ6U7DU3aEL1kIDdj3ClqYSMuvK79bXuyNUCg9oWGqaN45fwfx/4bp+
+ Mcy7cDd1VlxDmrPxjU7qTt/XiazGp178cbUapF5PmC3g13dJaYJaMWrvzQA4XqzdSpFpjPnm9Cf
+ 0t/CucNIn8SokXk5lje8EO2weKtLCd6qRT5SbQSO2w3dzvdrggfLRYKHwIo3iFxeHmUoH80+dtN
+ FgHx1pgXhgiQ3tYbeO8WuhBI5f8eDYwqABYPLS0iv1Q3RJ2IIwyzdYOZJb9ac1mWtrzsFgbH+xS
+ TtnV5AdCwP/JcU9++x5to4dHIHg/pIbT2xIL3RC5JAXxpcXVvFnTZHFZ0WEpTrjggheuLxtdLwr
+ CrfKEsmRXgswiN2eqYOtvVQXbvKEbFu28ZSMcHI1jugj5i8I+o2U6QWH8RJbh7IkITma2pOFU1Z
+ Hu7f6724/aZK+6ncST7F/PwgGbWrANpK8BQi8YCvWUehhKq/AsY9aMOzfe6S5GlGI6pSFt29yfh
+ wKM6sD8OSSr2KObXebS6An48Tc=
+X-Received: by 2002:a17:903:22c6:b0:2d9:520c:38e7 with SMTP id
+ d9443c01a7336-2daec5d336emr77851925ad.1.1788364664519; 
+ Wed, 02 Sep 2026 08:57:44 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2dadd4bc2f2sm15778695ad.71.2026.09.02.08.57.38
+ d9443c01a7336-2dadd4bc2f2sm15778695ad.71.2026.09.02.08.57.41
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 02 Sep 2026 08:57:40 -0700 (PDT)
+ Wed, 02 Sep 2026 08:57:44 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Abhinandan Gujjar <abhinandan.gujjar@intel.com>,
+ Erik Gabriel Carrillo <erik.g.carrillo@intel.com>,
  Jerin Jacob <jerinj@marvell.com>
-Subject: [PATCH 3/6] eventdev/crypto: promote adapter runtime params to stable
-Date: Wed,  2 Sep 2026 08:53:56 -0700
-Message-ID: <20260902155722.577747-4-stephen@networkplumber.org>
+Subject: [PATCH 4/6] eventdev/timer: promote remaining ticks get to stable
+Date: Wed,  2 Sep 2026 08:53:57 -0700
+Message-ID: <20260902155722.577747-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260902155722.577747-1-stephen@networkplumber.org>
 References: <20260902155722.577747-1-stephen@networkplumber.org>
@@ -84,90 +84,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The crypto adapter runtime parameter functions were added in v23.03 and
-have not changed since.  With this rte_event_crypto_adapter.c has no
+The rte_event_timer_remaining_ticks_get() function was added in v23.03
+and has not changed since.  With this rte_event_timer_adapter.c has no
 experimental symbol left.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/rel_notes/release_26_11.rst  | 3 +++
- lib/eventdev/rte_event_crypto_adapter.c | 6 +++---
- lib/eventdev/rte_event_crypto_adapter.h | 3 ---
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ doc/guides/rel_notes/release_26_11.rst | 1 +
+ lib/eventdev/rte_event_timer_adapter.c | 2 +-
+ lib/eventdev/rte_event_timer_adapter.h | 1 -
+ 3 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 792a5a35d0..18f0641ef2 100644
+index 18f0641ef2..01aef74d0a 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -104,6 +104,9 @@ API Changes
-   * Tx adapter: ``rte_event_eth_tx_adapter_runtime_params_init``,
-     ``rte_event_eth_tx_adapter_runtime_params_set`` and
-     ``rte_event_eth_tx_adapter_runtime_params_get``
-+  * crypto adapter: ``rte_event_crypto_adapter_runtime_params_init``,
-+    ``rte_event_crypto_adapter_runtime_params_set`` and
-+    ``rte_event_crypto_adapter_runtime_params_get``
+@@ -107,6 +107,7 @@ API Changes
+   * crypto adapter: ``rte_event_crypto_adapter_runtime_params_init``,
+     ``rte_event_crypto_adapter_runtime_params_set`` and
+     ``rte_event_crypto_adapter_runtime_params_get``
++  * timer adapter: ``rte_event_timer_remaining_ticks_get``
  
  
  ABI Changes
-diff --git a/lib/eventdev/rte_event_crypto_adapter.c b/lib/eventdev/rte_event_crypto_adapter.c
-index 3f9cc7379a..6ac64cafb1 100644
---- a/lib/eventdev/rte_event_crypto_adapter.c
-+++ b/lib/eventdev/rte_event_crypto_adapter.c
-@@ -1430,7 +1430,7 @@ rte_event_crypto_adapter_stats_reset(uint8_t id)
- 	return 0;
+diff --git a/lib/eventdev/rte_event_timer_adapter.c b/lib/eventdev/rte_event_timer_adapter.c
+index e3640a3bf8..a76d10f505 100644
+--- a/lib/eventdev/rte_event_timer_adapter.c
++++ b/lib/eventdev/rte_event_timer_adapter.c
+@@ -490,7 +490,7 @@ rte_event_timer_adapter_stats_reset(struct rte_event_timer_adapter *adapter)
+ 	return adapter->ops->stats_reset(adapter);
  }
  
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_event_crypto_adapter_runtime_params_init, 23.03)
-+RTE_EXPORT_SYMBOL(rte_event_crypto_adapter_runtime_params_init)
+-RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_event_timer_remaining_ticks_get, 23.03)
++RTE_EXPORT_SYMBOL(rte_event_timer_remaining_ticks_get)
  int
- rte_event_crypto_adapter_runtime_params_init(
- 		struct rte_event_crypto_adapter_runtime_params *params)
-@@ -1469,7 +1469,7 @@ crypto_adapter_cap_check(struct event_crypto_adapter *adapter)
- 	return 0;
- }
- 
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_event_crypto_adapter_runtime_params_set, 23.03)
-+RTE_EXPORT_SYMBOL(rte_event_crypto_adapter_runtime_params_set)
- int
- rte_event_crypto_adapter_runtime_params_set(uint8_t id,
- 		struct rte_event_crypto_adapter_runtime_params *params)
-@@ -1502,7 +1502,7 @@ rte_event_crypto_adapter_runtime_params_set(uint8_t id,
- 	return 0;
- }
- 
--RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_event_crypto_adapter_runtime_params_get, 23.03)
-+RTE_EXPORT_SYMBOL(rte_event_crypto_adapter_runtime_params_get)
- int
- rte_event_crypto_adapter_runtime_params_get(uint8_t id,
- 		struct rte_event_crypto_adapter_runtime_params *params)
-diff --git a/lib/eventdev/rte_event_crypto_adapter.h b/lib/eventdev/rte_event_crypto_adapter.h
-index 9a663c6227..463c90b843 100644
---- a/lib/eventdev/rte_event_crypto_adapter.h
-+++ b/lib/eventdev/rte_event_crypto_adapter.h
-@@ -646,7 +646,6 @@ rte_event_crypto_adapter_event_port_get(uint8_t id, uint8_t *event_port_id);
-  *  -  0: Success
-  *  - <0: Error code on failure
+ rte_event_timer_remaining_ticks_get(
+ 			const struct rte_event_timer_adapter *adapter,
+diff --git a/lib/eventdev/rte_event_timer_adapter.h b/lib/eventdev/rte_event_timer_adapter.h
+index 67e65ab849..215584b10b 100644
+--- a/lib/eventdev/rte_event_timer_adapter.h
++++ b/lib/eventdev/rte_event_timer_adapter.h
+@@ -705,7 +705,6 @@ rte_event_timer_cancel_burst(const struct rte_event_timer_adapter *adapter,
+  *   the armed state or ticks_remaining is NULL
+  *   - -ENOTSUP The timer adapter implementation does not support this API.
   */
 -__rte_experimental
  int
- rte_event_crypto_adapter_runtime_params_init(
- 		struct rte_event_crypto_adapter_runtime_params *params);
-@@ -669,7 +668,6 @@ rte_event_crypto_adapter_runtime_params_init(
-  *  -  0: Success
-  *  - <0: Error code on failure
-  */
--__rte_experimental
- int
- rte_event_crypto_adapter_runtime_params_set(uint8_t id,
- 		struct rte_event_crypto_adapter_runtime_params *params);
-@@ -688,7 +686,6 @@ rte_event_crypto_adapter_runtime_params_set(uint8_t id,
-  *  -  0: Success
-  *  - <0: Error code on failure
-  */
--__rte_experimental
- int
- rte_event_crypto_adapter_runtime_params_get(uint8_t id,
- 		struct rte_event_crypto_adapter_runtime_params *params);
+ rte_event_timer_remaining_ticks_get(
+ 			const struct rte_event_timer_adapter *adapter,
 -- 
 2.53.0
 
