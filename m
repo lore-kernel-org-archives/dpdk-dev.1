@@ -2,67 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B033FC624D3
-	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Sep 2026 18:14:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6661C61DD6
+	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Sep 2026 18:14:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3238F42709;
-	Wed,  2 Sep 2026 20:14:01 +0200 (CEST)
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com
- [209.85.219.49]) by mails.dpdk.org (Postfix) with ESMTP id DE9D241153
- for <dev@dpdk.org>; Wed,  2 Sep 2026 20:13:59 +0200 (CEST)
-Received: by mail-qv1-f49.google.com with SMTP id
- 6a1803df08f44-90e7c71f86eso10718146d6.1
- for <dev@dpdk.org>; Wed, 02 Sep 2026 11:13:59 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 520C942791;
+	Wed,  2 Sep 2026 20:14:02 +0200 (CEST)
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com
+ [209.85.160.171])
+ by mails.dpdk.org (Postfix) with ESMTP id C0F75410F2
+ for <dev@dpdk.org>; Wed,  2 Sep 2026 20:14:00 +0200 (CEST)
+Received: by mail-qt1-f171.google.com with SMTP id
+ d75a77b69052e-53016020b2fso20242531cf.0
+ for <dev@dpdk.org>; Wed, 02 Sep 2026 11:14:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1788372839; x=1788977639; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1788372840; x=1788977640; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=KxHsC/HskgtROegwj309L/D2uN3VBLhIDXOjnMcGVWQ=;
- b=HOny4Ol8C498UrSUqyY5UkrNgqVJlZDILWJzKPvhi1Ku/4qxYWyOCSBGG4GK4RUcd3
- Hs0Uj9eMP5qKV4imJuLy/pfDB67xUFuw7oV+hC9juqoX4hSiKVcIZ+47MuwfIIvFuOYo
- 05mVseBhStRSw8CxUHjPDITT09UcohCjX0NV0=
+ bh=vOy101n3cQNnuYJWEFjcqIYCJ1a7xhO3uA6CKeqg+pA=;
+ b=gT/EdqITuI1Fwl+UBybj7i443yW7YRnb6pAiNoc0xrfWxKlNfO+M9J3+TNr9zoSMEZ
+ uBWIwdnZC7JyuoAj5HFfkDhNbQMMlPSE50StNd+dbUG8Vh/ObaLK4AXSmkf+8CGUJqxK
+ uaq6X1HmSrS2IL+Lzz4Qc1PRiomjhkrdL1+DI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788372839; x=1788977639;
+ d=1e100.net; s=20251104; t=1788372840; x=1788977640;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=KxHsC/HskgtROegwj309L/D2uN3VBLhIDXOjnMcGVWQ=;
- b=ICTLkzhqkb1Mk2A4g+Nqv9VMra6gvmUWG6LKLm92JctFkQesT/xiGzQoKawxfM3Vsq
- 5gH48AeaYKXr4XUvWgbcaLOTZWEI8Fcnk8BBVIkLog5n+HVmvPI9LMlCm40Cevj2Q/4D
- jKycbMFBpVaAIlvMawe89sTvghI5dUAQPkT5nDryoc+wPQZlmZ9p2HhTFJiSPPBSOTxM
- kmGIfYBmGrhMaf1x9OF6v+Txtqjpsyb2B/hsZcCLs+ezkT8Bn8iA7NsrZvtTKr4oSjjl
- ECiCutC+JU6twGPywdyE52EE+H+ms07/U9PiKrx4UPl6Bbv8UdlxlnmuL+cE9Cdl60Xz
- 7wWQ==
-X-Gm-Message-State: AFuF++mFyTydWFNWs9LPd8hB+gaH0CB8P6F9uHE79ByqiGLUHAm73vjy
- Q9nRLQWReygFG9c6B8/S9zZmtImv2ooJvXAvPk5PnwOg51GtFRKjIXhZH7VPQts/Pv5RdkK7765
- pv2gxwJtpsLSjXDhyYk4+pmYp/jSaNergk3oFBTujtRdGiWZwFFD8bNJQuDXpmVTdhEOQgi0j53
- V9326WCmBTmc9EhE/WjJElfXkOMkM=
-X-Gm-Gg: AYBFou1VYPpIzRkieL1LsI0kffYv4efIt2RMLPgIiJ1a+rPGkhxoRo3ZIjiDcbXjNfK
- uDsOjXHYlJZunpNnRthDj1S4P9IYN/w7mM/dxvY4CZK47S9EOLSUsXfQcgt1ABXQr1Homg99t/R
- xFchaOxd9F2AnUpYbWDBQKo/L7mgUAT3oPUv6zPMSemxcz8IpJnZqndPb02gvVIMbjV888L1Hpe
- x0Fu6/5Ek4tJDzOA+O6TxwBMbDZW+Kx51/8JKWaIw5xfhDRoyuFBE/MQU4utEya5r6gR3pBJ6he
- Z+hygkuOJM9PMgHf7CKy9ZpOyc6YcsMUx6kGiCMMVfi+rUiodmBg3oBFgjoUb2Zi2FQMmbwB8mv
- 3Fvz0OBG3QzHwES0AqvLQAi21vdbNrJjj+Tt3UDaMfaqWmUif2Hl1goJ8dihjrrTlrmxzavVEU1
- 8cwDeaMl3ylAdFoedNbot5t+o8zEK8yLhtzsbtDFwdQybs/WDBAoLzCeclRdfzPrj5ww1E1cNrG
- 5qx7exObiM=
-X-Received: by 2002:ac8:598e:0:b0:530:4fd:fdad with SMTP id
- d75a77b69052e-53036d498afmr72675811cf.39.1788372838619; 
- Wed, 02 Sep 2026 11:13:58 -0700 (PDT)
+ bh=vOy101n3cQNnuYJWEFjcqIYCJ1a7xhO3uA6CKeqg+pA=;
+ b=DHMoEoLvlS+yGcqZ6wMcVJdGiTaEEVUJ2B05vvLkA19mSbxhxL+ER3xSCFheDbU3Gx
+ D4UPEgFGWxrGUt4b3n0cxvHJXk9hMOjh6M5hQ52vKsdtl0C57XgJVlgV3T8f3ToQduRt
+ Pr4Pr0k1rZvhM88HgOKrx5H7LxOF5UdPHeLRCnAJjU6dRM4lymyUcGBCKN3CZORdogMn
+ LHGkpbDSJoGIq1fab+6+Dq6lPdENjZu+RqqvTBjF2Ke5K2LH52WxHxXc43r2xyoKPzCW
+ whJfqUYEuEAXC8A5uI2C+Sby+XMu0SYciVSmdBynZpMzDMAyDRg7nPhQTmlBwmnLuarp
+ taow==
+X-Gm-Message-State: AFuF++mXU/CrF05LzS3jPeu9i27OPlH2a8CccNaK17B0Q8V6BvcADy3z
+ leqeKZ7eIEvS9al8Y4uHPDBQSfpw5/HTRF+hmdLciQkEDITXvLW+2D4IbjYzAyBpULeUZztffEz
+ gxMfvNtmT1kZIjcrSVGieNkxoak5Z5mUeC2QsJAPRA8rXxhEPFb1a8aTKbJH04VGOrmuaYQ4D5w
+ d2bmRKc/KVIwchU+xxauD/1SA4Y2U=
+X-Gm-Gg: AYBFou0KhX7Iyu5uVcBqBrZHkwn8C7tjeAHfO/xh4ABjzSkzrjcugIQ6n8mXIPmTztF
+ BeQviSmRCFTPCkDEK4bixqE2vogl5JxSZFxMSLakj2YqdH9/24ZKvFv2l7fWIiYd2TM25+TIzvz
+ QwPPiaJQABIu/waau4rOpl+lCJlNh+h0A5LUbOAUbuTpZtZbHgQ5ziu9u5veaMcGUtB1STLXvQt
+ EvO50mjNHORJ0y4ELjo7P2Mi44V3vrp5nAaDblqUn9Ri1JSp1VJhyOMBpngn8JqbenswlBtCrDT
+ QsPUi7UziVD6ALj71cGoXekvHanL1MqzGKn74dXD1iFE2bbQrKNpI1W3a9ZZol+JNg3IgS0pu2D
+ U30LSkcABAtFOt1FeGddTiApWO1jPdUj+7QqlqgSpU6sTyhx1vjlwVyxRPkQgHJA/x8dAp8Iwwb
+ rTCZWR6yisCH0frFv51RnN+XZrMDDeNoG/WSzwM/YoVJwkt4ShIePsoWegbW3mGOFPJcSK9mXw2
+ 0aLpnO012Q=
+X-Received: by 2002:ac8:5a04:0:b0:52d:844c:b176 with SMTP id
+ d75a77b69052e-53036bf3a61mr78394101cf.11.1788372839830; 
+ Wed, 02 Sep 2026 11:13:59 -0700 (PDT)
 Received: from d121029.iol.unh.edu ([2606:4100:3880:1210::219])
  by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-530331d9cbcsm24660101cf.16.2026.09.02.11.13.57
+ d75a77b69052e-530331d9cbcsm24660101cf.16.2026.09.02.11.13.58
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 02 Sep 2026 11:13:57 -0700 (PDT)
+ Wed, 02 Sep 2026 11:13:59 -0700 (PDT)
 From: Andrew Bailey <abailey@iol.unh.edu>
 To: dev@dpdk.org,
 	luca.vizzarro@arm.com,
 	patrickrobb1997@gmail.com
 Cc: knimoji@iol.unh.edu, lylavoie@iol.unh.edu, dladd@iol.unh.edu,
  Andrew Bailey <abailey@iol.unh.edu>, Dean Marx <dmarx@iol.unh.edu>
-Subject: [PATCH v6 6/8] dts: move testbed model from framework to API
-Date: Wed,  2 Sep 2026 14:13:30 -0400
-Message-ID: <20260902181333.461556-7-abailey@iol.unh.edu>
+Subject: [PATCH v6 7/8] dts: move test suite module from framework to API
+Date: Wed,  2 Sep 2026 14:13:31 -0400
+Message-ID: <20260902181333.461556-8-abailey@iol.unh.edu>
 X-Mailer: git-send-email 2.55.0
 In-Reply-To: <20260902181333.461556-1-abailey@iol.unh.edu>
 References: <20260806135346.568766-1-abailey@iol.unh.edu>
@@ -82,658 +83,713 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Multiple test suites import modules from testbed model
-in the framework. Move this directory to the API.
+Currently, each test suite imports the TestSuite class
+from the DTS framework to use as a base class.
+However, the goal for 26.07 is to move all test suite
+imports to the API module. Moves and updates the test_suite
+file to the API directory, and updates all files that import
+test_suite to reflect this change.
 
 Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
 Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
 ---
- ...y.rst => api.testbed_model.capability.rst} |  2 +-
- ...el.port.rst => api.testbed_model.port.rst} |  2 +-
- ...t => api.testbed_model.virtual_device.rst} |  2 +-
- doc/api/dts/framework.testbed_model.rst       | 11 ++++--
- dts/api/capabilities.py                       |  8 ++---
- dts/api/context.py                            |  2 +-
- .../testbed_model/capability.py               |  6 ++--
- dts/api/testbed_model/cpu.py                  | 36 +++++++++++++++++++
- dts/{framework => api}/testbed_model/port.py  |  2 +-
- .../capturing_traffic_generator.py            |  2 +-
- .../traffic_generator/traffic_generator.py    |  2 +-
- .../testbed_model/virtual_device.py           |  0
- dts/framework/context.py                      |  2 +-
- dts/framework/params/eal.py                   |  6 ++--
- dts/framework/params/types.py                 |  6 ++--
- dts/framework/remote_session/dpdk.py          |  2 +-
- dts/framework/remote_session/dpdk_shell.py    |  2 +-
- dts/framework/test_run.py                     | 10 +++---
- dts/framework/test_suite.py                   |  2 +-
- dts/framework/testbed_model/linux_session.py  |  3 +-
- dts/framework/testbed_model/node.py           |  2 +-
- dts/framework/testbed_model/os_session.py     |  2 +-
- dts/framework/testbed_model/topology.py       |  3 +-
- .../testbed_model/traffic_generator/scapy.py  |  2 +-
- dts/tests/TestSuite_blocklist.py              |  2 +-
- dts/tests/TestSuite_cryptodev_latency.py      |  2 +-
- dts/tests/TestSuite_cryptodev_throughput.py   |  2 +-
- dts/tests/TestSuite_l2fwd.py                  |  2 +-
- dts/tests/TestSuite_packet_capture.py         |  2 +-
- dts/tests/TestSuite_softnic.py                |  2 +-
- dts/tests/TestSuite_virtio_forward.py         |  2 +-
- 31 files changed, 85 insertions(+), 46 deletions(-)
- rename doc/api/dts/{framework.testbed_model.capability.rst => api.testbed_model.capability.rst} (74%)
- rename doc/api/dts/{framework.testbed_model.port.rst => api.testbed_model.port.rst} (77%)
- rename doc/api/dts/{framework.testbed_model.virtual_device.rst => api.testbed_model.virtual_device.rst} (72%)
- rename dts/{framework => api}/testbed_model/capability.py (99%)
- create mode 100644 dts/api/testbed_model/cpu.py
- rename dts/{framework => api}/testbed_model/port.py (98%)
- rename dts/{framework => api}/testbed_model/virtual_device.py (100%)
+ .../dts/{framework.test_suite.rst => api.test_suite.rst}  | 2 +-
+ doc/api/dts/index.rst                                     | 2 +-
+ dts/api/capabilities.py                                   | 2 +-
+ dts/api/packet.py                                         | 2 +-
+ dts/{framework => api}/test_suite.py                      | 3 +--
+ dts/api/testbed_model/capability.py                       | 2 +-
+ dts/framework/config/__init__.py                          | 4 ++--
+ dts/framework/config/test_run.py                          | 8 ++++----
+ dts/framework/context.py                                  | 2 +-
+ dts/framework/test_run.py                                 | 2 +-
+ dts/tests/TestSuite_blocklist.py                          | 2 +-
+ dts/tests/TestSuite_buffer_scatter.py                     | 2 +-
+ dts/tests/TestSuite_checksum_offload.py                   | 2 +-
+ dts/tests/TestSuite_cryptodev_latency.py                  | 2 +-
+ dts/tests/TestSuite_cryptodev_throughput.py               | 2 +-
+ dts/tests/TestSuite_dual_vlan.py                          | 2 +-
+ dts/tests/TestSuite_dynamic_config.py                     | 2 +-
+ dts/tests/TestSuite_dynamic_queue_conf.py                 | 2 +-
+ dts/tests/TestSuite_flow_offload.py                       | 2 +-
+ dts/tests/TestSuite_hello_world.py                        | 2 +-
+ dts/tests/TestSuite_l2fwd.py                              | 2 +-
+ dts/tests/TestSuite_mac_filter.py                         | 2 +-
+ dts/tests/TestSuite_mtu.py                                | 2 +-
+ dts/tests/TestSuite_packet_capture.py                     | 2 +-
+ dts/tests/TestSuite_port_control.py                       | 2 +-
+ dts/tests/TestSuite_port_restart_config_persistency.py    | 2 +-
+ dts/tests/TestSuite_port_stats.py                         | 2 +-
+ dts/tests/TestSuite_promisc_support.py                    | 2 +-
+ dts/tests/TestSuite_qinq.py                               | 2 +-
+ dts/tests/TestSuite_queue_toggle.py                       | 2 +-
+ dts/tests/TestSuite_rss.py                                | 2 +-
+ dts/tests/TestSuite_rx_split.py                           | 2 +-
+ dts/tests/TestSuite_rx_tx_offload.py                      | 2 +-
+ dts/tests/TestSuite_single_core_forward_perf.py           | 2 +-
+ dts/tests/TestSuite_smoke_tests.py                        | 2 +-
+ dts/tests/TestSuite_softnic.py                            | 2 +-
+ dts/tests/TestSuite_speed_capabilities.py                 | 2 +-
+ dts/tests/TestSuite_unified_packet.py                     | 2 +-
+ dts/tests/TestSuite_virtio_forward.py                     | 2 +-
+ dts/tests/TestSuite_vlan.py                               | 2 +-
+ 40 files changed, 44 insertions(+), 45 deletions(-)
+ rename doc/api/dts/{framework.test_suite.rst => api.test_suite.rst} (81%)
+ rename dts/{framework => api}/test_suite.py (99%)
 
-diff --git a/doc/api/dts/framework.testbed_model.capability.rst b/doc/api/dts/api.testbed_model.capability.rst
-similarity index 74%
-rename from doc/api/dts/framework.testbed_model.capability.rst
-rename to doc/api/dts/api.testbed_model.capability.rst
-index fab91cad83..88e396dddb 100644
---- a/doc/api/dts/framework.testbed_model.capability.rst
-+++ b/doc/api/dts/api.testbed_model.capability.rst
+diff --git a/doc/api/dts/framework.test_suite.rst b/doc/api/dts/api.test_suite.rst
+similarity index 81%
+rename from doc/api/dts/framework.test_suite.rst
+rename to doc/api/dts/api.test_suite.rst
+index 9517f51a4a..4acb7b103a 100644
+--- a/doc/api/dts/framework.test_suite.rst
++++ b/doc/api/dts/api.test_suite.rst
 @@ -3,6 +3,6 @@
- capability - Testbed Capabilities
- =================================
+ test\_suite - Common Test Suite Features
+ ========================================
  
--.. automodule:: framework.testbed_model.capability
-+.. automodule:: api.testbed_model.capability
+-.. automodule:: framework.test_suite
++.. automodule:: api.test_suite
     :members:
     :show-inheritance:
-diff --git a/doc/api/dts/framework.testbed_model.port.rst b/doc/api/dts/api.testbed_model.port.rst
-similarity index 77%
-rename from doc/api/dts/framework.testbed_model.port.rst
-rename to doc/api/dts/api.testbed_model.port.rst
-index fdb7ca8a1d..d64501aef0 100644
---- a/doc/api/dts/framework.testbed_model.port.rst
-+++ b/doc/api/dts/api.testbed_model.port.rst
-@@ -3,7 +3,7 @@
- port - NIC Port Representation
- ==============================
+diff --git a/doc/api/dts/index.rst b/doc/api/dts/index.rst
+index d02bc59d2b..408946683d 100644
+--- a/doc/api/dts/index.rst
++++ b/doc/api/dts/index.rst
+@@ -30,7 +30,7 @@ Modules
  
--.. automodule:: framework.testbed_model.port
-+.. automodule:: api.testbed_model.port
-    :members:
-    :show-inheritance:
-    :noindex:
-diff --git a/doc/api/dts/framework.testbed_model.virtual_device.rst b/doc/api/dts/api.testbed_model.virtual_device.rst
-similarity index 72%
-rename from doc/api/dts/framework.testbed_model.virtual_device.rst
-rename to doc/api/dts/api.testbed_model.virtual_device.rst
-index a6b0420e75..97adc895f6 100644
---- a/doc/api/dts/framework.testbed_model.virtual_device.rst
-+++ b/doc/api/dts/api.testbed_model.virtual_device.rst
-@@ -3,6 +3,6 @@
- virtual\_device - Virtual Devices
- =================================
- 
--.. automodule:: framework.testbed_model.virtual_device
-+.. automodule:: api.testbed_model.virtual_device
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/framework.testbed_model.rst b/doc/api/dts/framework.testbed_model.rst
-index f6fb410133..2c905d735e 100644
---- a/doc/api/dts/framework.testbed_model.rst
-+++ b/doc/api/dts/framework.testbed_model.rst
-@@ -7,6 +7,11 @@ testbed\_model - Testbed Modelling Package
-    :members:
-    :show-inheritance:
- 
-+.. automodule:: api.testbed_model
-+   :members:
-+   :noindex:
-+   :show-inheritance:
-+
- .. toctree::
-    :hidden:
-    :maxdepth: 1
-@@ -15,8 +20,8 @@ testbed\_model - Testbed Modelling Package
-    framework.testbed_model.linux_session
-    framework.testbed_model.posix_session
-    framework.testbed_model.node
--   framework.testbed_model.capability
-+   api.testbed_model.capability
-    framework.testbed_model.cpu
--   framework.testbed_model.port
-+   api.testbed_model.port
-    framework.testbed_model.topology
--   framework.testbed_model.virtual_device
-+   api.testbed_model.virtual_device
+    framework.runner
+    framework.test_run
+-   framework.test_suite
++   api.test_suite
+    framework.test_result
+    framework.settings
+    api.context
 diff --git a/dts/api/capabilities.py b/dts/api/capabilities.py
-index b0c1d81d36..8ed832a588 100644
+index 8ed832a588..9e09a16246 100644
 --- a/dts/api/capabilities.py
 +++ b/dts/api/capabilities.py
-@@ -23,7 +23,7 @@
-     .. code:: python
+@@ -47,7 +47,7 @@ def test_scatter_mbuf_2048(self):
+ from typing import TYPE_CHECKING, Callable
  
-         from framework.test_suite import TestSuite, func_test
--        from framework.testbed_model.capability import LinkTopology, requires_link_topology
-+        from api.testbed_model.capability import LinkTopology, requires_link_topology
-         # The whole test suite (each test case within) doesn't require any links.
-         @requires_link_topology(LinkTopology.NO_LINK)
-         @func_test
-@@ -34,7 +34,7 @@ def hello_world_single_core(self):
-     .. code:: python
+ if TYPE_CHECKING:
+-    from framework.test_suite import TestProtocol
++    from api.test_suite import TestProtocol
  
-         from framework.test_suite import TestSuite, func_test
--        from framework.testbed_model.capability import NicCapability, requires_nic_capability
-+        from api.testbed_model.capability import NicCapability, requires_nic_capability
-         class TestPmdBufferScatter(TestSuite):
-             # only the test case requires the SCATTERED_RX_ENABLED capability
-             # other test cases may not require it
-@@ -237,7 +237,7 @@ def requires_link_topology(
-     Returns:
-         The decorated test case or test suite.
+ 
+ class LinkTopology(IntEnum):
+diff --git a/dts/api/packet.py b/dts/api/packet.py
+index c6d014765f..0bf171ed09 100644
+--- a/dts/api/packet.py
++++ b/dts/api/packet.py
+@@ -173,7 +173,7 @@ def adjust_addresses(packets: list[Packet], expected: bool = False) -> list[Pack
+     Raises:
+         InternalError: If no tests are running.
      """
--    from framework.testbed_model.capability import TopologyCapability
-+    from api.testbed_model.capability import TopologyCapability
+-    from framework.test_suite import TestSuite
++    from api.test_suite import TestSuite
  
-     def add_required_topology(
-         test_case_or_suite: type["TestProtocol"],
-@@ -260,7 +260,7 @@ def requires_nic_capability(
-     Returns:
-         The decorated test case or test suite.
-     """
--    from framework.testbed_model.capability import DecoratedNicCapability
-+    from api.testbed_model.capability import DecoratedNicCapability
- 
-     def add_required_capability(
-         test_case_or_suite: type["TestProtocol"],
-diff --git a/dts/api/context.py b/dts/api/context.py
-index a3cee7f17a..e4988b42a4 100644
---- a/dts/api/context.py
-+++ b/dts/api/context.py
-@@ -5,11 +5,11 @@
- 
- from collections.abc import Callable
- 
-+from api.testbed_model.capability import TestProtocol
- from framework.context import Context
- from framework.context import filter_cores as _filter_cores
- from framework.context import get_ctx as _get_ctx
- from framework.context import init_ctx as _init_ctx
--from framework.testbed_model.capability import TestProtocol
- from framework.testbed_model.cpu import LogicalCoreCount, LogicalCoreList
- 
- 
-diff --git a/dts/framework/testbed_model/capability.py b/dts/api/testbed_model/capability.py
+     if get_ctx().local.current_test_suite is None:
+         raise InternalError("No current test suite, tests aren't running?")
+diff --git a/dts/framework/test_suite.py b/dts/api/test_suite.py
 similarity index 99%
-rename from dts/framework/testbed_model/capability.py
-rename to dts/api/testbed_model/capability.py
-index 00b40a3b1e..06ffda673f 100644
---- a/dts/framework/testbed_model/capability.py
+rename from dts/framework/test_suite.py
+rename to dts/api/test_suite.py
+index ac30d57ac9..c30d447135 100644
+--- a/dts/framework/test_suite.py
++++ b/dts/api/test_suite.py
+@@ -33,10 +33,9 @@
+ from api.testbed_model.capability import TestProtocol
+ from api.utils import to_pascal_case
+ from framework.config.common import FrozenModel
++from framework.logger import DTSLogger, get_dts_logger
+ from framework.testbed_model.topology import Topology
+ 
+-from .logger import DTSLogger, get_dts_logger
+-
+ if TYPE_CHECKING:
+     from api.context import Context
+ 
+diff --git a/dts/api/testbed_model/capability.py b/dts/api/testbed_model/capability.py
+index 06ffda673f..3d3ca1bab7 100644
+--- a/dts/api/testbed_model/capability.py
 +++ b/dts/api/testbed_model/capability.py
-@@ -26,7 +26,7 @@
-     .. code:: python
- 
-         from framework.test_suite import TestSuite, func_test
--        from framework.testbed_model.capability import LinkTopology, requires
-+        from api.testbed_model.capability import LinkTopology, requires
-         # The whole test suite (each test case within) doesn't require any links.
-         @requires_link_topology(LinkTopology.NO_LINK)
-         @func_test
-@@ -37,7 +37,7 @@ def hello_world_single_core(self):
-     .. code:: python
- 
-         from framework.test_suite import TestSuite, func_test
--        from framework.testbed_model.capability import NicCapability, requires
-+        from api.testbed_model.capability import NicCapability, requires
-         class TestPmdBufferScatter(TestSuite):
-             # only the test case requires the SCATTERED_RX_ENABLED capability
-             # other test cases may not require it
-@@ -65,9 +65,9 @@ def test_scatter_mbuf_2048(self):
- 
- from api.capabilities import LinkTopology, NicCapability
- from api.exception import ConfigurationError, InternalError, SkippedTestException
-+from api.testbed_model.port import DriverKind
- from framework.logger import get_dts_logger
- from framework.testbed_model.node import Node
--from framework.testbed_model.port import DriverKind
+@@ -71,8 +71,8 @@ def test_scatter_mbuf_2048(self):
  from framework.testbed_model.topology import Topology
  
  if TYPE_CHECKING:
-diff --git a/dts/api/testbed_model/cpu.py b/dts/api/testbed_model/cpu.py
-new file mode 100644
-index 0000000000..cfe7a396b0
---- /dev/null
-+++ b/dts/api/testbed_model/cpu.py
-@@ -0,0 +1,36 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2023 PANTHEON.tech s.r.o.
-+# Copyright(c) 2025 Arm Limited
-+
-+"""CPU core representation and filtering.
-+
-+This module provides a unified representation of logical CPU cores along
-+with filtering capabilities.
-+
-+When symmetric multiprocessing (SMP or multithreading) is enabled on a server,
-+the physical CPU cores are split into logical CPU cores with different IDs.
-+
-+:class:`LogicalCoreCountFilter` filters by the number of logical cores. It's possible to specify
-+the socket from which to filter the number of logical cores. It's also possible to not use all
-+logical CPU cores from each physical core (e.g. only the first logical core of each physical core).
-+
-+:class:`LogicalCoreListFilter` filters by logical core IDs. This mostly checks that
-+the logical cores are actually present on the server.
-+"""
-+
-+from framework.testbed_model.cpu import LogicalCoreCount as LocgicalCoreCountBase
-+from framework.testbed_model.cpu import LogicalCoreList as LogicalCoreListBase
-+
-+
-+class LogicalCoreList(LogicalCoreListBase):
-+    r"""A unified way to store :class:`LogicalCore`\s.
-+
-+    Create a unified format used across the framework and allow the user to use
-+    either a :class:`str` representation (using ``str(instance)`` or directly in f-strings)
-+    or a :class:`list` representation (by accessing the `lcore_list` property,
-+    which stores logical core IDs).
-+    """
-+
-+
-+class LogicalCoreCount(LocgicalCoreCountBase):
-+    """Define the number of logical cores per physical cores per sockets."""
-diff --git a/dts/framework/testbed_model/port.py b/dts/api/testbed_model/port.py
-similarity index 98%
-rename from dts/framework/testbed_model/port.py
-rename to dts/api/testbed_model/port.py
-index aea3e59c25..ebae7e9bb5 100644
---- a/dts/framework/testbed_model/port.py
-+++ b/dts/api/testbed_model/port.py
-@@ -16,7 +16,7 @@
- from framework.config.node import PortConfig
++    from api.test_suite import TestCase
+     from api.testpmd import TestPmd
+-    from framework.test_suite import TestCase
+ 
+ P = ParamSpec("P")
+ TestPmdMethod = Callable[Concatenate["TestPmd", P], Any]
+diff --git a/dts/framework/config/__init__.py b/dts/framework/config/__init__.py
+index e24a351ecf..c8edf340bd 100644
+--- a/dts/framework/config/__init__.py
++++ b/dts/framework/config/__init__.py
+@@ -43,7 +43,7 @@
+ 
+ # Import only if type checking or building docs, to prevent circular imports.
+ if TYPE_CHECKING:
+-    from framework.test_suite import BaseConfig
++    from api.test_suite import BaseConfig
+ 
+ NodesConfig = Annotated[list[NodeConfiguration], Field(min_length=1)]
+ 
+@@ -184,7 +184,7 @@ def load_config(ctx: ValidationContext) -> Configuration:
+     nodes = _load_and_parse_model(ctx["settings"].nodes_config_path, NodesConfig, ctx)
+ 
+     try:
+-        from framework.test_suite import BaseConfig as BaseConfig
++        from api.test_suite import BaseConfig as BaseConfig
+ 
+         Configuration.model_rebuild()
+         return Configuration.model_validate(
+diff --git a/dts/framework/config/test_run.py b/dts/framework/config/test_run.py
+index ec3d65ecf9..97c9a7417a 100644
+--- a/dts/framework/config/test_run.py
++++ b/dts/framework/config/test_run.py
+@@ -33,7 +33,7 @@
+ from .common import FrozenModel, load_fields_from_settings
  
  if TYPE_CHECKING:
--    from .node import Node
-+    from framework.testbed_model.node import Node
- 
- DriverKind = Literal["kernel", "dpdk"]
- """The driver kind."""
-diff --git a/dts/api/testbed_model/traffic_generator/capturing_traffic_generator.py b/dts/api/testbed_model/traffic_generator/capturing_traffic_generator.py
-index dbe0e72c0f..13a13abaad 100644
---- a/dts/api/testbed_model/traffic_generator/capturing_traffic_generator.py
-+++ b/dts/api/testbed_model/traffic_generator/capturing_traffic_generator.py
-@@ -17,9 +17,9 @@
- from scapy.packet import Packet
- 
- from api.artifact import Artifact
-+from api.testbed_model.port import Port
- from api.testbed_model.traffic_generator.traffic_generator import TrafficGenerator
- from api.utils import get_packet_summaries
--from framework.testbed_model.port import Port
+-    from framework.test_suite import BaseConfig, TestCase, TestSuite, TestSuiteSpec
++    from api.test_suite import BaseConfig, TestCase, TestSuite, TestSuiteSpec
  
  
- def _get_default_capture_name() -> str:
-diff --git a/dts/api/testbed_model/traffic_generator/traffic_generator.py b/dts/api/testbed_model/traffic_generator/traffic_generator.py
-index fedce77fdf..bb5ba02f6e 100644
---- a/dts/api/testbed_model/traffic_generator/traffic_generator.py
-+++ b/dts/api/testbed_model/traffic_generator/traffic_generator.py
-@@ -13,10 +13,10 @@
+ @unique
+@@ -232,7 +232,7 @@ class TestSuiteConfig(FrozenModel):
+     @cached_property
+     def test_suite_spec(self) -> "TestSuiteSpec":
+         """The specification of the requested test suite."""
+-        from framework.test_suite import find_by_name
++        from api.test_suite import find_by_name
  
- from scapy.packet import Packet
+         test_suite_spec = find_by_name(self.test_suite_name)
+         assert test_suite_spec is not None, (
+@@ -282,7 +282,7 @@ def fetch_all_test_suites() -> list[TestSuiteConfig]:
  
-+from api.testbed_model.port import Port
- from framework.config.test_run import TrafficGeneratorConfig
- from framework.logger import DTSLogger, get_dts_logger
- from framework.testbed_model.node import Node
--from framework.testbed_model.port import Port
- from framework.testbed_model.topology import Topology
+     This function does not include the smoke tests.
+     """
+-    from framework.test_suite import AVAILABLE_TEST_SUITES
++    from api.test_suite import AVAILABLE_TEST_SUITES
  
+     return [
+         TestSuiteConfig(test_suite=test_suite.name)
+@@ -508,7 +508,7 @@ def filter_tests(
+         self, tests_config: dict[str, "BaseConfig"]
+     ) -> Iterable[tuple[type["TestSuite"], "BaseConfig", deque[type["TestCase"]]]]:
+         """Filter test suites and cases selected for execution."""
+-        from framework.test_suite import TestCaseType
++        from api.test_suite import TestCaseType
  
-diff --git a/dts/framework/testbed_model/virtual_device.py b/dts/api/testbed_model/virtual_device.py
-similarity index 100%
-rename from dts/framework/testbed_model/virtual_device.py
-rename to dts/api/testbed_model/virtual_device.py
+         test_suites = [TestSuiteConfig(test_suite="smoke_tests")]
+ 
 diff --git a/dts/framework/context.py b/dts/framework/context.py
-index 6ebe4e0249..7ec8ac4857 100644
+index 7ec8ac4857..ee210c3607 100644
 --- a/dts/framework/context.py
 +++ b/dts/framework/context.py
 @@ -16,10 +16,10 @@
  from framework.testbed_model.topology import Topology
  
  if TYPE_CHECKING:
-+    from api.testbed_model.capability import TestProtocol
++    from api.test_suite import TestCase, TestSuite
+     from api.testbed_model.capability import TestProtocol
      from api.testbed_model.traffic_generator.traffic_generator import TrafficGenerator
      from framework.remote_session.dpdk import DPDKBuildEnvironment, DPDKRuntimeEnvironment
-     from framework.test_suite import TestCase, TestSuite
--    from framework.testbed_model.capability import TestProtocol
+-    from framework.test_suite import TestCase, TestSuite
  
  P = ParamSpec("P")
  
-diff --git a/dts/framework/params/eal.py b/dts/framework/params/eal.py
-index e84a20f02f..86bfd3fcc6 100644
---- a/dts/framework/params/eal.py
-+++ b/dts/framework/params/eal.py
-@@ -6,12 +6,12 @@
- from dataclasses import dataclass, field
- from typing import TYPE_CHECKING, Literal
- 
-+from api.testbed_model.cpu import LogicalCoreList
-+from api.testbed_model.virtual_device import VirtualDevice
- from framework.params import Params, Switch
--from framework.testbed_model.cpu import LogicalCoreList
--from framework.testbed_model.virtual_device import VirtualDevice
- 
- if TYPE_CHECKING:
--    from framework.testbed_model.port import Port
-+    from api.testbed_model.port import Port
- 
- 
- def _port_to_pci(port: "Port") -> str:
-diff --git a/dts/framework/params/types.py b/dts/framework/params/types.py
-index a9f3749083..f9a51963a2 100644
---- a/dts/framework/params/types.py
-+++ b/dts/framework/params/types.py
-@@ -32,6 +32,9 @@ def create_testpmd(**kwargs: Unpack[TestPmdParamsDict]):
-     TestType,
-     TLSVersion,
- )
-+from api.testbed_model.cpu import LogicalCoreList
-+from api.testbed_model.port import Port
-+from api.testbed_model.virtual_device import VirtualDevice
- from api.testpmd.config import (
-     AnonMempoolAllocationMode,
-     EthPeer,
-@@ -55,9 +58,6 @@ def create_testpmd(**kwargs: Unpack[TestPmdParamsDict]):
- )
- from api.testpmd.types import RxOffloadCapability, TxOffloadCapability
- from framework.params import Switch, YesNoSwitch
--from framework.testbed_model.cpu import LogicalCoreList
--from framework.testbed_model.port import Port
--from framework.testbed_model.virtual_device import VirtualDevice
- 
- 
- class EalParamsDict(TypedDict, total=False):
-diff --git a/dts/framework/remote_session/dpdk.py b/dts/framework/remote_session/dpdk.py
-index 2d8bc7844e..999cfcc056 100644
---- a/dts/framework/remote_session/dpdk.py
-+++ b/dts/framework/remote_session/dpdk.py
-@@ -16,6 +16,7 @@
- from api.capabilities import LinkTopology
- from api.context import get_ctx
- from api.exception import ConfigurationError, RemoteFileNotFoundError
-+from api.testbed_model.virtual_device import VirtualDevice
- from api.utils import MesonArgs, TarCompressionFormat
- from framework.config.test_run import (
-     DPDKBuildConfiguration,
-@@ -35,7 +36,6 @@
- from framework.testbed_model.cpu import LogicalCore, LogicalCoreCount, LogicalCoreList, lcore_filter
- from framework.testbed_model.node import Node
- from framework.testbed_model.os_session import OSSession
--from framework.testbed_model.virtual_device import VirtualDevice
- 
- 
- @dataclass(slots=True, frozen=True)
-diff --git a/dts/framework/remote_session/dpdk_shell.py b/dts/framework/remote_session/dpdk_shell.py
-index a8f169787c..b807f9bdae 100644
---- a/dts/framework/remote_session/dpdk_shell.py
-+++ b/dts/framework/remote_session/dpdk_shell.py
-@@ -11,12 +11,12 @@
- from pathlib import PurePath
- 
- from api.context import get_ctx
-+from api.testbed_model.cpu import LogicalCoreList
- from framework.params.eal import EalParams
- from framework.remote_session.interactive_shell import (
-     InteractiveShell,
-     only_active,
- )
--from framework.testbed_model.cpu import LogicalCoreList
- 
- 
- def compute_eal_params(
 diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
-index 8b9ae4a49a..63f1145fe3 100644
+index 63f1145fe3..210ff25af7 100644
 --- a/dts/framework/test_run.py
 +++ b/dts/framework/test_run.py
-@@ -110,17 +110,17 @@
+@@ -110,6 +110,7 @@
  from api.capabilities import LinkTopology
  from api.context import Context, init_ctx
  from api.exception import InternalError, SkippedTestException, TestCaseVerifyError
-+from api.testbed_model.capability import (
-+    Capability,
-+    get_supported_capabilities,
-+    test_if_supported,
-+)
- from framework.config.test_run import TestRunConfiguration
- from framework.logger import DTSLogger, get_dts_logger
++from api.test_suite import BaseConfig, TestCase, TestCaseType, TestSuite
+ from api.testbed_model.capability import (
+     Capability,
+     get_supported_capabilities,
+@@ -120,7 +121,6 @@
  from framework.remote_session.dpdk import DPDKBuildEnvironment, DPDKRuntimeEnvironment
  from framework.settings import SETTINGS
  from framework.test_result import Result, ResultNode, TestRunResult
- from framework.test_suite import BaseConfig, TestCase, TestCaseType, TestSuite
--from framework.testbed_model.capability import (
--    Capability,
--    get_supported_capabilities,
--    test_if_supported,
--)
+-from framework.test_suite import BaseConfig, TestCase, TestCaseType, TestSuite
  from framework.testbed_model.node import Node
  from framework.testbed_model.topology import PortLink, Topology
  from framework.testbed_model.traffic_generator import create_traffic_generator
-diff --git a/dts/framework/test_suite.py b/dts/framework/test_suite.py
-index 6066f7a77a..ac30d57ac9 100644
---- a/dts/framework/test_suite.py
-+++ b/dts/framework/test_suite.py
-@@ -30,9 +30,9 @@
- from typing_extensions import Self
- 
- from api.exception import ConfigurationError, InternalError
-+from api.testbed_model.capability import TestProtocol
- from api.utils import to_pascal_case
- from framework.config.common import FrozenModel
--from framework.testbed_model.capability import TestProtocol
- from framework.testbed_model.topology import Topology
- 
- from .logger import DTSLogger, get_dts_logger
-diff --git a/dts/framework/testbed_model/linux_session.py b/dts/framework/testbed_model/linux_session.py
-index 13dce6455d..8cc0d09d01 100644
---- a/dts/framework/testbed_model/linux_session.py
-+++ b/dts/framework/testbed_model/linux_session.py
-@@ -24,11 +24,10 @@
-     RemoteCommandExecutionError,
- )
- from api.testbed_model.linux_session import LinuxSession as LinuxSessionBase
-+from api.testbed_model.port import Port, PortInfo
- from api.utils import expand_range
--from framework.testbed_model.port import PortInfo
- 
- from .cpu import LogicalCore
--from .port import Port
- from .posix_session import PosixSession
- 
- 
-diff --git a/dts/framework/testbed_model/node.py b/dts/framework/testbed_model/node.py
-index 40dd7f0666..115d5955d3 100644
---- a/dts/framework/testbed_model/node.py
-+++ b/dts/framework/testbed_model/node.py
-@@ -18,6 +18,7 @@
- from typing import Literal, TypeAlias
- 
- from api.exception import ConfigurationError, InternalError
-+from api.testbed_model.port import Port
- from framework.config.node import (
-     OS,
-     NodeConfiguration,
-@@ -27,7 +28,6 @@
- from .cpu import Architecture, LogicalCore
- from .linux_session import LinuxSession
- from .os_session import OSSession, OSSessionInfo
--from .port import Port
- 
- 
- class Node:
-diff --git a/dts/framework/testbed_model/os_session.py b/dts/framework/testbed_model/os_session.py
-index 85a3e36bf4..3f588acd44 100644
---- a/dts/framework/testbed_model/os_session.py
-+++ b/dts/framework/testbed_model/os_session.py
-@@ -29,6 +29,7 @@
- from enum import Flag, auto
- from pathlib import Path, PurePath, PurePosixPath
- 
-+from api.testbed_model.port import Port, PortInfo
- from api.utils import MesonArgs, TarCompressionFormat
- from framework.config.node import NodeConfiguration
- from framework.logger import DTSLogger
-@@ -37,7 +38,6 @@
- from framework.settings import SETTINGS
- 
- from .cpu import Architecture, LogicalCore
--from .port import Port, PortInfo
- 
- 
- class FilePermissions(Flag):
-diff --git a/dts/framework/testbed_model/topology.py b/dts/framework/testbed_model/topology.py
-index 6b8c5edee5..25bcba4c12 100644
---- a/dts/framework/testbed_model/topology.py
-+++ b/dts/framework/testbed_model/topology.py
-@@ -19,11 +19,10 @@
- 
- from api.capabilities import LinkTopology
- from api.exception import ConfigurationError, InternalError
-+from api.testbed_model.port import DriverKind, Port, PortConfig
- from framework.testbed_model.linux_session import LinuxSession
- from framework.testbed_model.node import Node, NodeIdentifier
- 
--from .port import DriverKind, Port, PortConfig
--
- 
- class PortLink(NamedTuple):
-     """The physical, cabled connection between the ports."""
-diff --git a/dts/framework/testbed_model/traffic_generator/scapy.py b/dts/framework/testbed_model/traffic_generator/scapy.py
-index 0bd1eb39bb..f220629e35 100644
---- a/dts/framework/testbed_model/traffic_generator/scapy.py
-+++ b/dts/framework/testbed_model/traffic_generator/scapy.py
-@@ -26,6 +26,7 @@
- from scapy.packet import Packet
- 
- from api.exception import InteractiveSSHSessionDeadError, InternalError
-+from api.testbed_model.port import Port
- from api.testbed_model.traffic_generator.capturing_traffic_generator import (
-     CapturingTrafficGenerator,
-     PacketFilteringConfig,
-@@ -34,7 +35,6 @@
- from framework.config.test_run import ScapyTrafficGeneratorConfig
- from framework.remote_session.python_shell import PythonShell
- from framework.testbed_model.node import Node
--from framework.testbed_model.port import Port
- from framework.testbed_model.topology import Topology
- 
- 
 diff --git a/dts/tests/TestSuite_blocklist.py b/dts/tests/TestSuite_blocklist.py
-index c57231de22..97e03b8fb7 100644
+index 97e03b8fb7..31e69c0de9 100644
 --- a/dts/tests/TestSuite_blocklist.py
 +++ b/dts/tests/TestSuite_blocklist.py
 @@ -11,9 +11,9 @@
      requires_link_topology,
  )
  from api.test import verify
-+from api.testbed_model.port import Port
++from api.test_suite import TestSuite, func_test
+ from api.testbed_model.port import Port
  from api.testpmd import TestPmd
- from framework.test_suite import TestSuite, func_test
--from framework.testbed_model.port import Port
+-from framework.test_suite import TestSuite, func_test
  
  
  class TestBlocklist(TestSuite):
+diff --git a/dts/tests/TestSuite_buffer_scatter.py b/dts/tests/TestSuite_buffer_scatter.py
+index 539082f2e4..cd1a52ad5e 100644
+--- a/dts/tests/TestSuite_buffer_scatter.py
++++ b/dts/tests/TestSuite_buffer_scatter.py
+@@ -28,9 +28,9 @@
+ )
+ from api.packet import send_packet_and_capture
+ from api.test import verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
+diff --git a/dts/tests/TestSuite_checksum_offload.py b/dts/tests/TestSuite_checksum_offload.py
+index 90ca798e56..a2ea13991b 100644
+--- a/dts/tests/TestSuite_checksum_offload.py
++++ b/dts/tests/TestSuite_checksum_offload.py
+@@ -25,10 +25,10 @@
+ )
+ from api.packet import send_packet_and_capture
+ from api.test import verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+ from api.testpmd.types import ChecksumOffloadOptions, PacketOffloadFlag
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ @requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_IPV4_CKSUM)
 diff --git a/dts/tests/TestSuite_cryptodev_latency.py b/dts/tests/TestSuite_cryptodev_latency.py
-index ed6423eb26..981c483a14 100644
+index 981c483a14..444a5b282c 100644
 --- a/dts/tests/TestSuite_cryptodev_latency.py
 +++ b/dts/tests/TestSuite_cryptodev_latency.py
 @@ -31,8 +31,8 @@
      CryptodevResults,
  )
  from api.test import skip, verify
-+from api.testbed_model.virtual_device import VirtualDevice
- from framework.test_suite import BaseConfig, TestSuite, crypto_test
--from framework.testbed_model.virtual_device import VirtualDevice
++from api.test_suite import BaseConfig, TestSuite, crypto_test
+ from api.testbed_model.virtual_device import VirtualDevice
+-from framework.test_suite import BaseConfig, TestSuite, crypto_test
  
  config_list: list[dict[str, int | float | str]] = [
      {"buff_size": 64, "avg_cycles": 99_999.00, "avg_time_us": 9999.0},
 diff --git a/dts/tests/TestSuite_cryptodev_throughput.py b/dts/tests/TestSuite_cryptodev_throughput.py
-index d69714e1fa..b861c52bae 100644
+index b861c52bae..59f64f2cd7 100644
 --- a/dts/tests/TestSuite_cryptodev_throughput.py
 +++ b/dts/tests/TestSuite_cryptodev_throughput.py
 @@ -31,8 +31,8 @@
      CryptodevResults,
  )
  from api.test import skip, verify
-+from api.testbed_model.virtual_device import VirtualDevice
- from framework.test_suite import BaseConfig, TestSuite, crypto_test
--from framework.testbed_model.virtual_device import VirtualDevice
++from api.test_suite import BaseConfig, TestSuite, crypto_test
+ from api.testbed_model.virtual_device import VirtualDevice
+-from framework.test_suite import BaseConfig, TestSuite, crypto_test
  
  config_list: list[dict[str, int | float | str]] = [
      {"buff_size": 64, "Gbps": 1.00},
+diff --git a/dts/tests/TestSuite_dual_vlan.py b/dts/tests/TestSuite_dual_vlan.py
+index 1b77dd2b47..f3347a6d52 100644
+--- a/dts/tests/TestSuite_dual_vlan.py
++++ b/dts/tests/TestSuite_dual_vlan.py
+@@ -21,9 +21,9 @@
+ from api.capabilities import LinkTopology, requires_link_topology
+ from api.packet import send_packet_and_capture
+ from api.test import verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ class TestDualVlan(TestSuite):
+diff --git a/dts/tests/TestSuite_dynamic_config.py b/dts/tests/TestSuite_dynamic_config.py
+index 7204ec4f73..b9e2c30da1 100644
+--- a/dts/tests/TestSuite_dynamic_config.py
++++ b/dts/tests/TestSuite_dynamic_config.py
+@@ -27,9 +27,9 @@
+ )
+ from api.packet import send_packet_and_capture
+ from api.test import verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
+diff --git a/dts/tests/TestSuite_dynamic_queue_conf.py b/dts/tests/TestSuite_dynamic_queue_conf.py
+index b62efa2b42..24584c7d60 100644
+--- a/dts/tests/TestSuite_dynamic_queue_conf.py
++++ b/dts/tests/TestSuite_dynamic_queue_conf.py
+@@ -38,9 +38,9 @@
+ from api.exception import InteractiveCommandExecutionError
+ from api.packet import send_packets
+ from api.test import fail, verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import PortTopology, SimpleForwardingModes
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ def setup_and_teardown_test(
+diff --git a/dts/tests/TestSuite_flow_offload.py b/dts/tests/TestSuite_flow_offload.py
+index 5902406a8e..09384b1983 100644
+--- a/dts/tests/TestSuite_flow_offload.py
++++ b/dts/tests/TestSuite_flow_offload.py
+@@ -28,9 +28,9 @@
+ )
+ from api.packet import send_packet_and_capture
+ from api.test import fail, log, verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.types import FlowRule
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ @dataclass
+diff --git a/dts/tests/TestSuite_hello_world.py b/dts/tests/TestSuite_hello_world.py
+index bf1a93c782..cd62eb8f3e 100644
+--- a/dts/tests/TestSuite_hello_world.py
++++ b/dts/tests/TestSuite_hello_world.py
+@@ -9,8 +9,8 @@
+ """
+ 
+ from api.test import log
++from api.test_suite import BaseConfig, TestSuite, func_test
+ from api.testpmd import TestPmd
+-from framework.test_suite import BaseConfig, TestSuite, func_test
+ 
+ 
+ class Config(BaseConfig):
 diff --git a/dts/tests/TestSuite_l2fwd.py b/dts/tests/TestSuite_l2fwd.py
-index 574842e2e4..5650366c36 100644
+index 5650366c36..f237821a04 100644
 --- a/dts/tests/TestSuite_l2fwd.py
 +++ b/dts/tests/TestSuite_l2fwd.py
 @@ -19,11 +19,11 @@
      match_all_packets,
      send_packets_and_capture,
  )
-+from api.testbed_model.cpu import LogicalCoreCount
++from api.test_suite import TestSuite, func_test
+ from api.testbed_model.cpu import LogicalCoreCount
  from api.testpmd import TestPmd
  from api.testpmd.config import EthPeer, SimpleForwardingModes
  from api.utils import generate_random_packets
- from framework.test_suite import TestSuite, func_test
--from framework.testbed_model.cpu import LogicalCoreCount
+-from framework.test_suite import TestSuite, func_test
  
  
  @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
+diff --git a/dts/tests/TestSuite_mac_filter.py b/dts/tests/TestSuite_mac_filter.py
+index b44822d31c..eb1413f336 100644
+--- a/dts/tests/TestSuite_mac_filter.py
++++ b/dts/tests/TestSuite_mac_filter.py
+@@ -26,8 +26,8 @@
+ from api.exception import InteractiveCommandExecutionError
+ from api.packet import send_packet_and_capture
+ from api.test import fail, verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
+diff --git a/dts/tests/TestSuite_mtu.py b/dts/tests/TestSuite_mtu.py
+index 8355495d33..c264db299e 100644
+--- a/dts/tests/TestSuite_mtu.py
++++ b/dts/tests/TestSuite_mtu.py
+@@ -23,8 +23,8 @@
+ )
+ from api.packet import send_packet_and_capture
+ from api.test import verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+-from framework.test_suite import TestSuite, func_test
+ 
+ STANDARD_FRAME = 1518  # --max-pkt-len will subtract l2 information at a minimum of 18 bytes.
+ JUMBO_FRAME = 9018
 diff --git a/dts/tests/TestSuite_packet_capture.py b/dts/tests/TestSuite_packet_capture.py
-index dc71991a91..041c0333ab 100644
+index 041c0333ab..b994c7cc74 100644
 --- a/dts/tests/TestSuite_packet_capture.py
 +++ b/dts/tests/TestSuite_packet_capture.py
 @@ -36,13 +36,13 @@
      send_packets_and_capture,
  )
  from api.test import verify
-+from api.testbed_model.cpu import LogicalCoreList
++from api.test_suite import TestSuite, func_test
+ from api.testbed_model.cpu import LogicalCoreList
  from api.testbed_model.traffic_generator.capturing_traffic_generator import PacketFilteringConfig
  from api.testpmd import TestPmd
  from framework.params import Params
  from framework.remote_session.blocking_app import BlockingApp
  from framework.remote_session.dpdk_shell import compute_eal_params
- from framework.test_suite import TestSuite, func_test
--from framework.testbed_model.cpu import LogicalCoreList
+-from framework.test_suite import TestSuite, func_test
  
  
  @dataclass(kw_only=True)
+diff --git a/dts/tests/TestSuite_port_control.py b/dts/tests/TestSuite_port_control.py
+index b51fdc2959..c2f2de3493 100644
+--- a/dts/tests/TestSuite_port_control.py
++++ b/dts/tests/TestSuite_port_control.py
+@@ -18,9 +18,9 @@
+ )
+ from api.packet import send_packets_and_capture
+ from api.test import verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
+diff --git a/dts/tests/TestSuite_port_restart_config_persistency.py b/dts/tests/TestSuite_port_restart_config_persistency.py
+index 4ea22b6d70..88df35d33c 100644
+--- a/dts/tests/TestSuite_port_restart_config_persistency.py
++++ b/dts/tests/TestSuite_port_restart_config_persistency.py
+@@ -14,9 +14,9 @@
+     requires_nic_capability,
+ )
+ from api.test import verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.types import TestPmdPortFlowCtrl
+-from framework.test_suite import TestSuite, func_test
+ 
+ ALTERNATIVE_MTU: int = 800
+ STANDARD_MTU: int = 1500
+diff --git a/dts/tests/TestSuite_port_stats.py b/dts/tests/TestSuite_port_stats.py
+index 3dc045f847..0328c6718c 100644
+--- a/dts/tests/TestSuite_port_stats.py
++++ b/dts/tests/TestSuite_port_stats.py
+@@ -25,10 +25,10 @@
+ )
+ from api.packet import send_packet_and_capture
+ from api.test import verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+ from api.testpmd.types import RtePTypes, TestPmdVerbosePacket
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
+diff --git a/dts/tests/TestSuite_promisc_support.py b/dts/tests/TestSuite_promisc_support.py
+index a0c65dc662..c59c8c6078 100644
+--- a/dts/tests/TestSuite_promisc_support.py
++++ b/dts/tests/TestSuite_promisc_support.py
+@@ -21,8 +21,8 @@
+     send_packets_and_capture,
+ )
+ from api.test import verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
+diff --git a/dts/tests/TestSuite_qinq.py b/dts/tests/TestSuite_qinq.py
+index 505d71dbc8..5dde37d4db 100644
+--- a/dts/tests/TestSuite_qinq.py
++++ b/dts/tests/TestSuite_qinq.py
+@@ -18,8 +18,8 @@
+ from api.capabilities import NicCapability, requires_nic_capability
+ from api.packet import send_packet_and_capture
+ from api.test import log, verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ class TestQinq(TestSuite):
+diff --git a/dts/tests/TestSuite_queue_toggle.py b/dts/tests/TestSuite_queue_toggle.py
+index e4edc89123..a9ea356b22 100644
+--- a/dts/tests/TestSuite_queue_toggle.py
++++ b/dts/tests/TestSuite_queue_toggle.py
+@@ -24,9 +24,9 @@
+ )
+ from api.packet import send_packet_and_capture
+ from api.test import verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ @requires_link_topology(LinkTopology.TWO_LINKS)
+diff --git a/dts/tests/TestSuite_rss.py b/dts/tests/TestSuite_rss.py
+index 1e60bdba07..b538e93af9 100644
+--- a/dts/tests/TestSuite_rss.py
++++ b/dts/tests/TestSuite_rss.py
+@@ -23,6 +23,7 @@
+ from api.exception import InteractiveCommandExecutionError
+ from api.packet import send_packets_and_capture
+ from api.test import verify
++from api.test_suite import BaseConfig, TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+ from api.testpmd.types import (
+@@ -31,7 +32,6 @@
+     TestPmdVerbosePacket,
+ )
+ from api.utils import StrEnum
+-from framework.test_suite import BaseConfig, TestSuite, func_test
+ 
+ 
+ class Config(BaseConfig):
+diff --git a/dts/tests/TestSuite_rx_split.py b/dts/tests/TestSuite_rx_split.py
+index 470e48d0d3..3b3e4cd620 100644
+--- a/dts/tests/TestSuite_rx_split.py
++++ b/dts/tests/TestSuite_rx_split.py
+@@ -21,10 +21,10 @@
+ from api.exception import InteractiveCommandExecutionError
+ from api.packet import adjust_addresses, send_packet_and_capture
+ from api.test import fail, verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+ from api.testpmd.types import RxOffloadCapability, TxOffloadCapability
+-from framework.test_suite import TestSuite, func_test
+ 
+ PAYLOAD = bytes(range(256))
+ ETHER_HDR_LEN = len(Ether(dst="00:00:00:00:00:00"))
+diff --git a/dts/tests/TestSuite_rx_tx_offload.py b/dts/tests/TestSuite_rx_tx_offload.py
+index b0da627d3c..c8d24baaae 100644
+--- a/dts/tests/TestSuite_rx_tx_offload.py
++++ b/dts/tests/TestSuite_rx_tx_offload.py
+@@ -13,12 +13,12 @@
+     requires_nic_capability,
+ )
+ from api.test import verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.types import (
+     OffloadConfiguration,
+     RxTxLiteralSwitch,
+ )
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ @requires_link_topology(LinkTopology.ONE_LINK)
+diff --git a/dts/tests/TestSuite_single_core_forward_perf.py b/dts/tests/TestSuite_single_core_forward_perf.py
+index 57aecdf7a4..f51ff76c4c 100644
+--- a/dts/tests/TestSuite_single_core_forward_perf.py
++++ b/dts/tests/TestSuite_single_core_forward_perf.py
+@@ -22,10 +22,10 @@
+ )
+ from api.packet import assess_performance_by_packet
+ from api.test import verify, write_performance_json
++from api.test_suite import BaseConfig, TestSuite, perf_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import RXRingParams, TXRingParams
+ from framework.params.types import TestPmdParamsDict
+-from framework.test_suite import BaseConfig, TestSuite, perf_test
+ 
+ 
+ class Config(BaseConfig):
+diff --git a/dts/tests/TestSuite_smoke_tests.py b/dts/tests/TestSuite_smoke_tests.py
+index 656e2e4bb7..b3eb325fc0 100644
+--- a/dts/tests/TestSuite_smoke_tests.py
++++ b/dts/tests/TestSuite_smoke_tests.py
+@@ -19,12 +19,12 @@
+     requires_link_topology,
+ )
+ from api.test import verify
++from api.test_suite import TestSuite, func_test
+ from api.testbed_model.linux_session import LinuxSession
+ from api.testpmd import TestPmd
+ from api.utils import REGEX_FOR_PCI_ADDRESS
+ from framework.config.node import PortConfig
+ from framework.settings import SETTINGS
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ @requires_link_topology(LinkTopology.NO_LINK)
 diff --git a/dts/tests/TestSuite_softnic.py b/dts/tests/TestSuite_softnic.py
-index c57a12c932..91a6d4eb9f 100644
+index 91a6d4eb9f..05a6d3aa18 100644
 --- a/dts/tests/TestSuite_softnic.py
 +++ b/dts/tests/TestSuite_softnic.py
 @@ -18,11 +18,11 @@
      match_all_packets,
      send_packets_and_capture,
  )
-+from api.testbed_model.virtual_device import VirtualDevice
++from api.test_suite import TestSuite, func_test
+ from api.testbed_model.virtual_device import VirtualDevice
  from api.testpmd import TestPmd
  from api.testpmd.config import EthPeer
  from api.utils import generate_random_packets
- from framework.test_suite import TestSuite, func_test
--from framework.testbed_model.virtual_device import VirtualDevice
+-from framework.test_suite import TestSuite, func_test
  
  
  @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
+diff --git a/dts/tests/TestSuite_speed_capabilities.py b/dts/tests/TestSuite_speed_capabilities.py
+index 9cbd6f1ef7..c9b0f74feb 100644
+--- a/dts/tests/TestSuite_speed_capabilities.py
++++ b/dts/tests/TestSuite_speed_capabilities.py
+@@ -13,8 +13,8 @@
+     requires_link_topology,
+ )
+ from api.test import verify
++from api.test_suite import BaseConfig, TestSuite, func_test
+ from api.testpmd import TestPmd
+-from framework.test_suite import BaseConfig, TestSuite, func_test
+ 
+ 
+ class Config(BaseConfig):
+diff --git a/dts/tests/TestSuite_unified_packet.py b/dts/tests/TestSuite_unified_packet.py
+index fcc7f7fbbb..bf3654f0d7 100644
+--- a/dts/tests/TestSuite_unified_packet.py
++++ b/dts/tests/TestSuite_unified_packet.py
+@@ -25,10 +25,10 @@
+ )
+ from api.packet import send_packet_and_capture
+ from api.test import verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+ from api.testpmd.types import RtePTypes, TestPmdVerbosePacket
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ class TestUnifiedPacket(TestSuite):
 diff --git a/dts/tests/TestSuite_virtio_forward.py b/dts/tests/TestSuite_virtio_forward.py
-index fe1257800e..ef6c2d407c 100644
+index ef6c2d407c..12cba17b7c 100644
 --- a/dts/tests/TestSuite_virtio_forward.py
 +++ b/dts/tests/TestSuite_virtio_forward.py
-@@ -13,10 +13,10 @@
+@@ -12,11 +12,11 @@
+ from api.capabilities import LinkTopology, requires_link_topology
  from api.packet import send_packets_and_capture
  from api.test import log, verify
++from api.test_suite import TestSuite, func_test
  from api.testbed_model.linux_session import LinuxSession
-+from api.testbed_model.virtual_device import VirtualDevice
+ from api.testbed_model.virtual_device import VirtualDevice
  from api.testpmd import TestPmd
  from api.testpmd.config import PortTopology, SimpleForwardingModes
- from framework.test_suite import TestSuite, func_test
--from framework.testbed_model.virtual_device import VirtualDevice
+-from framework.test_suite import TestSuite, func_test
  
  
  class TestVirtioForward(TestSuite):
+diff --git a/dts/tests/TestSuite_vlan.py b/dts/tests/TestSuite_vlan.py
+index 898673fc86..975e87b128 100644
+--- a/dts/tests/TestSuite_vlan.py
++++ b/dts/tests/TestSuite_vlan.py
+@@ -23,9 +23,9 @@
+ )
+ from api.packet import send_packet_and_capture
+ from api.test import verify
++from api.test_suite import TestSuite, func_test
+ from api.testpmd import TestPmd
+ from api.testpmd.config import SimpleForwardingModes
+-from framework.test_suite import TestSuite, func_test
+ 
+ 
+ @requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_VLAN_FILTER)
 -- 
 2.55.0
 
