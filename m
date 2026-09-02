@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0AC6C61DD6
-	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Sep 2026 01:57:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70051C61DD6
+	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Sep 2026 01:57:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A69DB40E1B;
-	Wed,  2 Sep 2026 03:57:47 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D638340E49;
+	Wed,  2 Sep 2026 03:57:49 +0200 (CEST)
 Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
- by mails.dpdk.org (Postfix) with ESMTP id B9FAB40E1B
- for <dev@dpdk.org>; Wed,  2 Sep 2026 03:57:45 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 038D840E41
+ for <dev@dpdk.org>; Wed,  2 Sep 2026 03:57:47 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-01 (Coremail) with SMTP id qwCowAAX7O+Ugpdqx48HBw--.41366S2;
- Wed, 02 Sep 2026 09:57:40 +0800 (CST)
+ by APP-01 (Coremail) with SMTP id qwCowACHWe2agpdqB5AHBw--.12646S2;
+ Wed, 02 Sep 2026 09:57:46 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v9 07/48] net/sxe2: initialize stats in representor device init
-Date: Wed,  2 Sep 2026 09:57:40 +0800
-Message-ID: <20260902015740.75272-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v9 08/48] net/sxe2: use base device name for representor naming
+Date: Wed,  2 Sep 2026 09:57:46 +0800
+Message-ID: <20260902015746.75327-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260901031006.3686638-1-liujie5@linkdatatechnology.com>
 References: <20260901031006.3686638-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: qwCowAAX7O+Ugpdqx48HBw--.41366S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7JrWfAr1rAw45ZFyUAr4rAFb_yoWkGFX_Cr
- 1Yvr9xArW0k3W5tryI9r4rZryvkrWkXrn7CFZIqFWUZwsaq34xAw1FqF9Fgws7Wr13ArZr
- uF43Zw18Kw13WjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
- 9fnUUIcSsGvfJTRUUUb2AFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
- 6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
- A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
- Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr
- 1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
- jxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
- 1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40Ew7xC0wCF
- 04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r
- 18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vI
- r41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr
- 1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvE
- x4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUqD73UUUUU=
+X-CM-TRANSID: qwCowACHWe2agpdqB5AHBw--.12646S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr15uF18WrWkXr43XF4Utwb_yoW8WFyUpF
+ W8Xa4YyFWfXFnrZw48Za18uryY9r4ktayqka4Yvw1fCa4UXFyDCr48tr18t34qkr4UZF4F
+ yF4Fqr1kGw1q9rJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUkS14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+ rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+ 1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+ 6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
+ 4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+ I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+ 4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAKzVCY07xG64k0F24l
+ 42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJV
+ WUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAK
+ I48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F
+ 4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY
+ 6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUeL0eDUUUU
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -58,38 +58,45 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Add sxe2_stats_init() call in sxe2_repr_dev_init to set up the
-statistics infrastructure for representor devices, and add the
-l_init_irq_ctxt_err error path to uninitialize the software irq
-context if stats initialization fails.
+Update the representor device naming to use the base device name
+prefix, and set the numa_node from the parent device data so that
+representor devices are allocated on the same NUMA node.
 
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_ethdev_repr.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/net/sxe2/sxe2_ethdev_repr.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/net/sxe2/sxe2_ethdev_repr.c b/drivers/net/sxe2/sxe2_ethdev_repr.c
-index f32318b731..c698baafe0 100644
+index c698baafe0..6f5642ad5d 100644
 --- a/drivers/net/sxe2/sxe2_ethdev_repr.c
 +++ b/drivers/net/sxe2/sxe2_ethdev_repr.c
-@@ -483,8 +483,16 @@ int32_t sxe2_repr_dev_init(struct rte_eth_dev *dev,
- 		goto l_init_sw_err;
+@@ -552,9 +552,8 @@ int32_t sxe2_switchdev_repr_devs_init(struct sxe2_adapter *adapter,
  	}
  
-+	ret = sxe2_stats_init(dev);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "Failed to initialize stats, ret=[%d]", ret);
-+		goto l_init_irq_ctxt_err;
-+	}
-+
- 	goto l_end;
+ 	for (repr_idx = 0; repr_idx < req_eth_da->nb_representor_ports; ++repr_idx) {
+-		snprintf(name, sizeof(name), "sxe2_representor_c%dpf%d%s%u",
+-			 adapter->pf_idx, adapter->pf_idx,
+-			 "vf",
++		snprintf(name, sizeof(name), "%s_representor_vf%u",
++			 adapter->cdev->dev->name,
+ 			 req_eth_da->representor_ports[repr_idx]);
  
-+l_init_irq_ctxt_err:
-+	sxe2_sw_irq_ctxt_uninit(dev);
- l_init_sw_err:
- 	sxe2_eth_uinit(dev);
- l_init_eth_err:
+ 		eth_dev = rte_eth_dev_allocate(name);
+@@ -562,10 +561,11 @@ int32_t sxe2_switchdev_repr_devs_init(struct sxe2_adapter *adapter,
+ 			ret = -ENOMEM;
+ 			goto l_release_port;
+ 		}
++		eth_dev->data->numa_node = adapter->dev_info.dev_data->numa_node;
+ 		eth_dev->data->dev_private = rte_zmalloc_socket(name,
+ 			sizeof(struct sxe2_adapter),
+ 			RTE_CACHE_LINE_SIZE,
+-			rte_socket_id());
++			eth_dev->data->numa_node);
+ 
+ 		if (!eth_dev->data->dev_private) {
+ 			rte_eth_dev_release_port(eth_dev);
 -- 
 2.52.0
 
