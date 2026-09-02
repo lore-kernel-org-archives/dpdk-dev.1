@@ -2,74 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6592C624D0
-	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Sep 2026 08:25:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 641FDC624D0
+	for <dpdk-dev@archiver.kernel.org>; Wed,  2 Sep 2026 09:09:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C228640374;
-	Wed,  2 Sep 2026 10:25:44 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 89DBC402F0;
- Wed,  2 Sep 2026 10:25:43 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 6826VCiW1787165; Wed, 2 Sep 2026 01:25:39 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=Mkxsh+TPbFwoMStj5n6u4Z0
- vHo5Ixqyl2sibeSwtrZM=; b=lFmDWIYCsaErLdYi1IpRENhVptKaXtt9qly2nrT
- yYzl5iDxMT4k/haW0P0lVHVv8Nk9DCaIUa/4+iHTSzgDGdr3IrNqPhSa3Ri2xxX9
- RBwRshKlgD6u6T4Kel65yqvbGQvquukSzi6OMN1aLS7cnDp6v3ifh11DYXtXKYon
- wDghVoru0ARhnxcab2YQU2bsN6wSNTADgYkmZosMTovVOW6B926i5g5p4psGl7DH
- mWPO8pXcqdrjOJf1E9Q1H0gYM9ePGPs2dJhaVrDtNG9S5iVeVzI+uLiopjQAWtW6
- /yPgdcS/6StnmV4scHUDP3o6o82ThhRo8O/517Wk2KlEOTQ==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4ge4ve1q4w-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Wed, 02 Sep 2026 01:25:38 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 2 Sep 2026 01:25:36 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Wed, 2 Sep 2026 01:25:36 -0700
-Received: from jerin-lab.marvell.com (jerin-lab.marvell.com [10.28.34.14])
- by maili.marvell.com (Postfix) with ESMTP id 917713F704D;
- Wed,  2 Sep 2026 01:25:34 -0700 (PDT)
-From: <jerinj@marvell.com>
-To: Rajesh Kumar <rajesh3.kumar@intel.com>
-CC: <dev@dpdk.org>, <thomas@monjalon.net>, <bruce.richardson@intel.com>,
- <david.marchand@redhat.com>, Jerin Jacob <jerinj@marvell.com>,
- <stable@dpdk.org>
-Subject: [dpdk-dev] [PATCH v1] examples/ptp_tap_relay_sw: fix build inclusion
-Date: Wed, 2 Sep 2026 13:55:23 +0530
-Message-ID: <20260902082523.206083-1-jerinj@marvell.com>
-X-Mailer: git-send-email 2.54.0
+	by mails.dpdk.org (Postfix) with ESMTP id 28B5A40374;
+	Wed,  2 Sep 2026 11:09:20 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 0B9BF402F0
+ for <dev@dpdk.org>; Wed,  2 Sep 2026 11:09:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1788340157;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=JiOCI0IjqU/i7r4txfberGBbA1zOLSyl26/RvDb5QN8=;
+ b=VvNwgfGm64Hvc1a9xTh2SuxZetYkoiEWOILaH1FoCFd0vbD1Fr5WZ54AmyiuNhZpL8B2E4
+ XMVWJbLULxDhlQfQxDJhL9vsornBr/yEYzGA1nDAZn0RLgyAkr9AAN5SejOQtNtsWErODJ
+ CdWaOBbPo4YtkuXtTgnsKwHXIKess/I=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-498-LcmKz8vqMOGTxBWM6pKVCA-1; Wed, 02 Sept 2026 05:09:16 -0400
+X-MC-Unique: LcmKz8vqMOGTxBWM6pKVCA-1
+X-Mimecast-MFC-AGG-ID: LcmKz8vqMOGTxBWM6pKVCA_1788340155
+Received: by mail-lj1-f197.google.com with SMTP id
+ 38308e7fff4ca-3a1e9f5a36fso4019541fa.3
+ for <dev@dpdk.org>; Wed, 02 Sep 2026 02:09:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1788340155; x=1788944955;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=JiOCI0IjqU/i7r4txfberGBbA1zOLSyl26/RvDb5QN8=;
+ b=dI2bGvg3S+hz2y3d2TlRdGBD5I1iTeoT2GMwbyh2l0EAk99lUxfg+Svets7aMIpVOE
+ bjJWDMzBSMup6it+YMaiJraGaq97V175wa1pTzG98GdUHho59GyYuRNEldyTZ3TRvwAI
+ EQWnQE4W7qUrTwPKFMaideE+nIi45Q7hHcHaNfRynY5Fy5CaFL0Vrp65bmPt3TzvhUZB
+ vcP1nzHogIBcSThh6AbHKiDkzS/9OOBFBBVtVn9x8XRPZ0eHmhSyX1f4Sn0KIkcunACp
+ IhoyrjJfjWgR4pgPzBKMmpMLOnCqiQ6IdFhjhUyB7XTVCYen9qy0gIBkyPEzXHs05kLi
+ PjgQ==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBwGMTy6P1XLm0nCbf8ixVXIf6ppLrMJ3mgxqKuyaAA+KX0yj2C0UhKmSobh5HbgjuEE7Og=@dpdk.org
+X-Gm-Message-State: AFuF++kGfK5XCYRRyfl/5akKL0TizlFg/SrdWvOZTniBXi5VoeTgdGAI
+ HqBNDShH+eicmwwz3qhuWcgLLZpPgp5SKPVVZ4DB56dwUprPxX4I32Rbkg5DMNUwR2tINLgrkgM
+ 0MrDzfaGpjpmGbWiE/FW1daa/1GY09gB8ZmcjKe2nE/wXTw5nP0sCJxzhg79NGs9JffMLzRoksA
+ CfLERkMAk6JN87uuabD28=
+X-Gm-Gg: AYBFou0w/wdEYo855BfaMdj3A7SUlVngow2toW/7EWlTJ3DfIL6+9A2zTUenKOXm50S
+ Cer8eJN+4tnki9dGvYzjhiiqM9mNOrUlb9YzX3ZBO85arag/f42zjbGkTY5juaZHrtzlqib+xPS
+ FmLQHY1dW50F9hnz6OgtYlMkU87YMbofFkVneF5b8uqj7mGaPqbRCptueTfeb2vCyuDWF60pcvR
+ 2cfQEzCuIrn2VQW1HWCgmGTive+fY+BSrjWApGN8Ld/gG/G
+X-Received: by 2002:a05:651c:41d8:b0:3a3:2a41:e33b with SMTP id
+ 38308e7fff4ca-3a34fddaabbmr7158471fa.14.1788340154669; 
+ Wed, 02 Sep 2026 02:09:14 -0700 (PDT)
+X-Received: by 2002:a05:651c:41d8:b0:3a3:2a41:e33b with SMTP id
+ 38308e7fff4ca-3a34fddaabbmr7158341fa.14.1788340154184; Wed, 02 Sep 2026
+ 02:09:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: gQclw3kGuMDqiXqs5btD1NO_OZSkxcsK
-X-Authority-Analysis: v=2.4 cv=J9aaKgnS c=1 sm=1 tr=0 ts=6a97dd82 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=QXcCYyLzdtTjyudCfB6f:22 a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8
- a=7aLAe6btT5AUPeCllDgA:9 a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
-X-Proofpoint-GUID: gQclw3kGuMDqiXqs5btD1NO_OZSkxcsK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTAyMDA3NCBTYWx0ZWRfX4Zx729b2U3Tf
- 8DUbymGfdJuofF43e4mNPpUduE50UCiMikhPiG4jb9EqOd/QG1grkEZ+YW3OmHbgcpxXA3o0YPu
- pXEE1GdEM7cpLtaqDXUJKmCbjB/t5tE3IPPVY5l5+eIxtwZIZcgoDhHDGvLJluIO3RfMnKiagb4
- c382ZVE0e16Gt73p+VhmVzfI+FS/x9SOlPewBl7lOemDC0A5qXtLQwZJ9eSCGrPbsFIvxuFwS5N
- UKdUnR5ciDVNxGVjbFvr0bUxT59hEBu0ORnDSBgaiH0DwzO35ldUro5e3P7GB+HbKzfqkaH+UNs
- dBgdqrHSfSy+DxZJT41dFvMrcQp+yJ3Tj/XIdwx8dVMh0ggeeyVnxu4e4ekjUiFHKiKyr2ST1XZ
- zV8+Hymg3y/e1sKp3K1j0zXCQmgp2z4XLCGuFzu5TZ/T/w4xWcZkpoAoi0yaWM8EtR1aVa83beu
- k5g2JeOdCdhIbQmRYVA==
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTAyMDA3NCBTYWx0ZWRfXwMXrF8ekkND3
- kCBPRhNGoXV97g0HSq+/XYkS6CjN5g9AWNK9PbzQjaoPRa37By1EY9mWlcjEIeXXvtADSu/cYHy
- i+oCMM/78391fi6JkECi/oVzwl49VXc=
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-02_01,2026-09-01_03,2025-10-01_01
+References: <20260902082523.206083-1-jerinj@marvell.com>
+In-Reply-To: <20260902082523.206083-1-jerinj@marvell.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Wed, 2 Sep 2026 11:09:02 +0200
+X-Gm-Features: AcwNN1UIJ681_fuZ_KwlTQMDXi6WWv_8EPi7ZUxaPXASQwo0DotszgbJtmtSbHU
+Message-ID: <CAJFAV8zRf5YuW3O2c7kZRmCTQ_b85DWEMqAE6UjH7ynHO6JCrw@mail.gmail.com>
+Subject: Re: [dpdk-dev] [PATCH v1] examples/ptp_tap_relay_sw: fix build
+ inclusion
+To: jerinj@marvell.com
+Cc: Rajesh Kumar <rajesh3.kumar@intel.com>, dev@dpdk.org, thomas@monjalon.net, 
+ bruce.richardson@intel.com, stable@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: rXpMUUjq2_RSueYM5OcOHi1bsXk6pyD7RTChwAwEezs_1788340155
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,31 +86,29 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jerin Jacob <jerinj@marvell.com>
+On Wed, 2 Sept 2026 at 10:25, <jerinj@marvell.com> wrote:
+>
+> From: Jerin Jacob <jerinj@marvell.com>
+>
+> The ptp_tap_relay_sw example was not building because
+> examples/meson.build was not updated to wire up this directory.
 
-The ptp_tap_relay_sw example was not building because
-examples/meson.build was not updated to wire up this directory.
+Ouch, the whole example looks like dead code.
+I wonder how it was tested by the author...
+The series that introduced it has no trace of touching
+examples/meson.build in the v6, v7 and v8 iterations :-(.
 
-Fixes: bec00deaa8fb ("examples/ptp_tap_relay_sw: add PTP transparent clock relay")
-Cc: stable@dpdk.org
 
-Signed-off-by: Jerin Jacob <jerinj@marvell.com>
----
- examples/meson.build | 1 +
- 1 file changed, 1 insertion(+)
+>
+> Fixes: bec00deaa8fb ("examples/ptp_tap_relay_sw: add PTP transparent clock relay")
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Jerin Jacob <jerinj@marvell.com>
 
-diff --git a/examples/meson.build b/examples/meson.build
-index 25d9c88457..ab82cf5fbd 100644
---- a/examples/meson.build
-+++ b/examples/meson.build
-@@ -43,6 +43,7 @@ all_examples = [
-         'packet_ordering',
-         'pipeline',
-         'ptpclient',
-+        'ptp_tap_relay_sw',
-         'qos_meter',
-         'qos_sched',
-         'rxtx_callbacks',
+The fix lgtm.
+For the record, it is the only dead example at this point in time in DPDK.
+
+
 -- 
-2.54.0
+David Marchand
 
