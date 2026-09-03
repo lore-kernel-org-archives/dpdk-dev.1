@@ -2,79 +2,144 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 514D9C624A4
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Sep 2026 08:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C45EC61DD3
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Sep 2026 09:20:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A6D3A427AC;
-	Thu,  3 Sep 2026 10:27:40 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 81222427AC
- for <dev@dpdk.org>; Thu,  3 Sep 2026 10:27:39 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 6835mWAG157564; Thu, 3 Sep 2026 01:27:39 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=P
- wxUb9HEFE/GdeepuHwS5QenxEy+AmSQEu4MfFSjPSQ=; b=SxUbq4HJWwE6cahnG
- MKCq6xHXFTcxUx7qukyAzBCGKlsFaNHwRL5wd+/zkFrzpUlETCU9YwRLu0xVA2Ty
- dvHHopZfMc7dxkK+wZkx+DQPfpfxg05MRHGeSWjFdekfVC9n2rIaaYCr24lNvvLb
- hZxsdCnJbnguSlVsFStZIVVYfRn1pZdPZP7Idjw5cn79O+D5ZCzNtP+WV3mdc8nu
- cQPRHZtUUQqGsr7Xy7a95hB9hBc3myGl5AWvv03eE5qBzkjlxqjiZ9mpvLhj//mG
- OOtOJ1qyZLvWQFGb3TRxGdzWFDWLqFwKzn43nxXc5tM+h5V0dAO0WopaWhFhL24V
- MqqgA==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4gegb63rrq-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 03 Sep 2026 01:27:38 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id CAF94402D8;
+	Thu,  3 Sep 2026 11:20:49 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+ by mails.dpdk.org (Postfix) with ESMTP id 776604028D
+ for <dev@dpdk.org>; Thu,  3 Sep 2026 11:20:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1788427248; x=1819963248;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=3ks5lwL7oZyh+WT849B1TG2Q5LV/mw/zYpX7fKgqpOs=;
+ b=mSnA2ZXKjfV2G/AwhhwkZtjMjrDEpje+Cjce9yorPLfja/kQzJDroXSr
+ hEY/vMvtIkCFo8Gi2wf+ctBJ8d1F9lRoB6+3K7ugFp2+EIDcyqSueAkox
+ OwSU6j12t66ioasfjAf9XBCS7kYR9eOq/fbHNG+hWmxhvh/6zk7IJHEx7
+ ait5zt5qdZyYSpYaUUZZFp5YbI24EEFOBcRcxkLg1WKclcXmyOWsQtpTd
+ NrAHGJoEPYplaqe1Sm1+F+cDtuUhjfiFu6fgL6a+bjB4mYOKoG3MRS3XB
+ Cgf6uNkvltG6PACuY1qOfH/I8064mgxT5Vb2hM8nbFvLzsMOK5B3pUb4B g==;
+X-CSE-ConnectionGUID: YN9+971uTlOSsInER58W7A==
+X-CSE-MsgGUID: mf/ylFdIRs2jibvDGNH4dA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11894"; a="114448643"
+X-IronPort-AV: E=Sophos;i="6.25,259,1779174000"; d="scan'208";a="114448643"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+ by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 03 Sep 2026 02:20:45 -0700
+X-CSE-ConnectionGUID: k5jueYQ7TKG6GqFuoofOjQ==
+X-CSE-MsgGUID: Q7aqT0IAQCmmgyIBwQI6Xg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,259,1779174000"; d="scan'208";a="266426700"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+ by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 03 Sep 2026 02:20:45 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 3 Sep 2026 01:27:38 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Thu, 3 Sep 2026 01:27:38 -0700
-Received: from ssarananaga.marvell.com (unknown [10.29.57.26])
- by maili.marvell.com (Postfix) with ESMTP id 95B913F7068;
- Thu,  3 Sep 2026 01:27:34 -0700 (PDT)
-From: Sucharitha Sarananaga <ssarananaga@marvell.com>
-To: <dev@dpdk.org>
-CC: <gakhil@marvell.com>, <fanzhang.oss@gmail.com>, <adwivedi@marvell.com>,
- <anoobj@marvell.com>, <ktejasree@marvell.com>, <kai.ji@intel.com>,
- <jianjay.zhou@huawei.com>, <radu.nicolau@intel.com>,
- <gmuthukrishn@marvell.com>, Sucharitha Sarananaga <ssarananaga@marvell.com>
-Subject: [PATCH v2 8/8] app/test: add RSA-PSS sign and verify test cases
-Date: Thu, 3 Sep 2026 08:26:48 +0000
-Message-ID: <20260903082648.3610676-9-ssarananaga@marvell.com>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260903082648.3610676-1-ssarananaga@marvell.com>
-References: <20260831102328.2813604-1-ssarananaga@marvell.com>
- <20260903082648.3610676-1-ssarananaga@marvell.com>
+ 15.2.2562.46; Thu, 3 Sep 2026 02:20:45 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46 via Frontend Transport; Thu, 3 Sep 2026 02:20:45 -0700
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (40.93.195.27)
+ by edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Thu, 3 Sep 2026 02:20:44 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=D1om0Xw3W8OH37AIMhMlCMFRL/2UCHDFrhbB7/l0R5tdS4oVfNIBLSQmDXS6XYMgS3CmD0Bg0Rb5kjsDNfaE+tQ0/iZO5bRHt5wefSeKLllnyshgeflj5E+k+0PpNJvX12ciu3DRwCzHOLN+hHBUInQ5FCbJRCDqRcZ2l0LoAma2jJUOZGEmvQuU0aPVHryTmnwwUJ24RWpBAz4AmxtwM40ylIWJU7JV0ybj3PK/HRmVcqC6jnPti2leScIE/Gow8xNuiCBqleIrw1SsqFHjlqSTvwPEMm2PkqlNkBT5lRP+KDpDd0Z1o3YsYQggoTsUjtxvODwKNkagfzZJor5MSQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=epoAZhYNwjeLxjJ61V47jSN3s7vIxN0u4jncyY/6uZA=;
+ b=mTBsok5MzT+FBa79vzaeQbFIaPmuC/sv3TJvRhrGwn07opJnPkYpOFcUw5iUIOPSlcUlXjDyWRMEaVIHpWgvns3sN7Ter/C0Ja7C7nuAH/i3VABqZN2BTjf872LbtOzvEIToGYkzeQglZRYwIS6j4eoS//Mv+EdwZLsgDVQqkEplB8Cu8dM1s5P7jz1rZB9KFh3JHjHeDcKHyv2SNnoMQKo4+hWfwStZNPxS38sJhOdipPiSXJGbHeKXp3BTjjW1VHnNY7MveBbiPeSl2nKdMSVEKIe/TeEA+XWqrvOg5BrGBtiCTOgaULACrOyMU8Wx+ueEqi7rfwrTxH4Vh7L6Wg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from IA3PR11MB9421.namprd11.prod.outlook.com (2603:10b6:208:578::9)
+ by SJ0PR11MB5816.namprd11.prod.outlook.com (2603:10b6:a03:427::18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.13; Thu, 3 Sep
+ 2026 09:20:35 +0000
+Received: from IA3PR11MB9421.namprd11.prod.outlook.com
+ ([fe80::1b70:3d93:d363:155f]) by IA3PR11MB9421.namprd11.prod.outlook.com
+ ([fe80::1b70:3d93:d363:155f%4]) with mapi id 15.21.0360.008; Thu, 3 Sep 2026
+ 09:20:35 +0000
+Date: Thu, 3 Sep 2026 10:20:31 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: <dev@dpdk.org>, Thomas Monjalon <thomas@monjalon.net>, Andrew Rybchenko
+ <andrew.rybchenko@oktetlabs.ru>
+Subject: Re: [PATCH v4 02/23] ethdev: use DPDK byte order conversion
+Message-ID: <apk732FF5TwghkqP@bricha3-mobl1.ger.corp.intel.com>
+References: <20260803165304.289869-1-stephen@networkplumber.org>
+ <20260806051004.166778-1-stephen@networkplumber.org>
+ <20260806051004.166778-3-stephen@networkplumber.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20260806051004.166778-3-stephen@networkplumber.org>
+X-ClientProxiedBy: DU6P191CA0071.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:10:53e::28) To IA3PR11MB9421.namprd11.prod.outlook.com
+ (2603:10b6:208:578::9)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTAzMDA3MyBTYWx0ZWRfX81dZLu1H9VYw
- 5wvGBOrzJ5K8hElINM3lQ4OTZZNWQJXS4P1O7BBtS5chTKw8rvP8o8t4wzYPLuQshj7nBBYWFDa
- ZW6OPQHVJmuHzD2ySlGIeIEKbym4mUYwIAUG6Dbxg528hY69J/rb4Gnv6b5ZHuv6dvWKBFmN99H
- laVWxAwoetYciwNxQp7Y6bAjsJYc5MVouoNeYb0jsncYX1GjGM7kANWRIC0HwxNz1r+0moDd9/e
- ZK77SperkSPvkwoRJDd3XhmIAO4/CXDa6QLmtH5WXiInmhtr86VVIp7VNN72M4DrC5koGuWGs91
- FZNGkSlYW+QDMFqtYr7gI1HJtszUn/qIuWrxbeZVOcY9eFAu4GUKhv8odIrMKOuwgQmxfQ51z3/
- wdTlY4dF88JVO3F/v1c/eg/bPHbWsgC9BRo39nqvsQ+UHd0Edz+shZwBcJ8hM5WdlMOoouoVqF8
- rGFNI3ERj8PPu9tbMeQ==
-X-Proofpoint-GUID: iGNhtlgB5xOQs-BAme-wKIH4boLErWIk
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTAzMDA3MyBTYWx0ZWRfXzLpP2h3Jev1m
- TO4yHMt+H7OYPy4TEa4U66XaphFbPYZdKaYVPwG4xAImV/e+e2mEnnc9X9AblH3sgV+UUeQhJiR
- 9eGJbkLy1zJnp+9fvUK1VYl45m8mWO8=
-X-Authority-Analysis: v=2.4 cv=GpJyPE1C c=1 sm=1 tr=0 ts=6a992f7a cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=QXcCYyLzdtTjyudCfB6f:22 a=M5GUcnROAAAA:8 a=7nnckYv93_VVNdunjAAA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: iGNhtlgB5xOQs-BAme-wKIH4boLErWIk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-03_02,2026-09-02_04,2025-10-01_01
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA3PR11MB9421:EE_|SJ0PR11MB5816:EE_
+X-MS-Office365-Filtering-Correlation-Id: 20e7f8dd-bb42-4035-b199-08df099c9c8d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|1800799024|366016|23010399003|56012099006|10067099003|5023799004|11063799006|4143699003|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info: cVMDA8pRbloYLY30t+ZZbsl9z0ecnPHva4n7FMNUgiHrR54/tUWz6x/ojpXc6Xj6XHc2URxQE6kokDKryLu3eFiOjdkhyorH/a6KXar/h2pJYabXMpsrcbw/zjuSOsBojoDqjOCcMCrL79I25FZCuylYH+Sr69hynDXf5nwbZNS9MLc+81zBWBA8tsuq2535X3pZJ49aZ2U96WQ/H+ZZ0RfdFbO3jFT/3UEN2S8RX50cCuJtJe5nBuX0GnSd2HJvSwcmGlwLHNuiYzKc0m0Zv90ItRXnnGLsnuk83/TTwKU6DpwAz2FrtJrYnzrDG1dmlVnCHWvZavFc9ugZUA93KsHqyMhzCpRsFEVgRphbQzZHa+PZbQv3VsDoeZzJZmFtYBHUHsJ6CzeAGOJdLbOu9E+iK4VIjHGgGtlAr4O+zg+um3JdssmXM0oCYkjGbrDn6W0mik9w/R9O5QT/NmewM/OSIUMxYQLZcg1yvtrZTzA2sIytk21GgAe6bJAoJ77ld+uBL6u/2sbdVSkxktc8Sk3U3tipGgl3xeUj/Yi/f9cPR4dDrp09V8GxM7n1rwmMc7c/noPqZc2sJpDaoPIdU8FYiuQnuwC6y7IgjaGCOrcrYbqZitZo8ylgjWRtDplln9noiBNUK91nst1Wg/gIP6vP6b0IPtnPeIZBXsqeHQk=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:IA3PR11MB9421.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016)(23010399003)(56012099006)(10067099003)(5023799004)(11063799006)(4143699003)(22082099003)(18002099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?+KQtDLDbrKKjvQ1M9LOBlzEH9+GhQWwIEU4YiOrDiZjlmGFlknIL4eSb+avS?=
+ =?us-ascii?Q?jYPtJnFB2aRDYMriQ+yCzMRiSuZvbkZNBK1D25BjgbG86VWEIbuoyLOK5w7i?=
+ =?us-ascii?Q?8kFQIEr50TfwpI3dnZELUY+JUNbQl5Q3dsvpt2GDozxJeTkCLXtdXpS6Rl5A?=
+ =?us-ascii?Q?/PfRpqes13eVPeJ3VBtHefbtxyNQvU50jQV7s5CjwO2GyvSTGNQma21uQHtu?=
+ =?us-ascii?Q?r6+NsJeXusi/MZq2jH7wybr31ftFSUyVPfW11QQvrCK5H24iTNm6SkpeA2EL?=
+ =?us-ascii?Q?cJppbo7oe5yX2pb8046F/ViMACLTHcNmgGTLFI2/t5OHmfQ8LYJ0D9azw37/?=
+ =?us-ascii?Q?jqzVLcdzd3V1yTf6Dq0euqcrqf9Ph7vsIQHaSGPZXAxExqa54JUwk6/00f+w?=
+ =?us-ascii?Q?lGyQ+UyLDKccCWkN2NDFgdGFkiMjytu9MRmECGTXoOzi3pPJZw0XgDhBsml2?=
+ =?us-ascii?Q?SlqAohkxMFptvg52r5+0jOJEIirBJqiXmDntlbdzPzB8qAUOFFHk8HGRsX7O?=
+ =?us-ascii?Q?iS7tPYbXZAbQ1i7i3LGN5xA0hAAxgS3MmQbkp5bSU2XzSnXaHuARK6UKCheP?=
+ =?us-ascii?Q?8oPkd9qRu1DqTfuYF3q//4OIVeYGavoSuuPiTgcsYgVpG3yda5IwztLZIRXo?=
+ =?us-ascii?Q?0Teh8vNTcVoFbAfb0zOw0qjmNFfz9DTpDv2WJaRq0O44BJ0NNzHEx81h/E5K?=
+ =?us-ascii?Q?AD203mtbrzwyvUOuoOnNV4wKCSJzMfFHf0gM3pJZ1t+TTCaKqymH+adkQ9Hv?=
+ =?us-ascii?Q?czHDR6GYaCpG/hmKlB1j6jj87seDaT69N91QMoPFTiFz4NGkPK/OZGLFyzph?=
+ =?us-ascii?Q?SzPArCACCddoCq3KudN1QZ7sOudH+P1THxH0a7JmPyhnK9X+XbvTCm9uz1v9?=
+ =?us-ascii?Q?02qG0Be7BhiSkh4UX3tHa5qkN9G5F8bcJYpdToPm9cb4xjdzPdrx2A//T5Ix?=
+ =?us-ascii?Q?q1IwP7VkiwDEU6LNLLpW3aJRgUz3gKmLbPtTYoUlXCeCjKUK6HCIi3Q9J4vO?=
+ =?us-ascii?Q?HtkomGqeTHOkRUtpulHjFOKw02nN9hzY0UVZbueX7bIZA27xAiCuRUA4vfDh?=
+ =?us-ascii?Q?z8U9bJqRwXX54yEmBv5jSITylbuwx8V6/2CLM5Oodnm9wSF6ThjRWII4r8Je?=
+ =?us-ascii?Q?oznmKhXx6kcWMWlV+64V0VNE+vPEThVMLVKoNEdrAIArDhdeS8Bg8l7aFgUu?=
+ =?us-ascii?Q?pzRliMia/Jcbs0u/D9E9iRdWsLNIkISXlNrewBXpUjfQrKmnB1nEVVBzSlvn?=
+ =?us-ascii?Q?dY7d0buvUM85OsmxVfK2xKgqNhniFR/LwcfSNgc2CynzOWKjOnifQuEu1y88?=
+ =?us-ascii?Q?A6j78cG0RN4DDhc+LyYQVmqRllWoUVkJYrySrn3Uk6ksBQ8KUsx+9Rh5G5pB?=
+ =?us-ascii?Q?SNrceaY1XOmovhiM/T05A6AaFrKYn3Q14Q1PX53CmS5iksPS8UEnHV2qa1BD?=
+ =?us-ascii?Q?HTuyEllOipjHSYwySzpgRZDGtpO4rgrmBcH6zCFgu7uIW2XC6MI7hGMwjpJF?=
+ =?us-ascii?Q?qiIFUpsU6NqCVTaR/C4SqE7HP3PVWZnjL8LiYnbiSfPuD/KTLMavQQyM7RWZ?=
+ =?us-ascii?Q?RHfprp/dBcVBN0urSx9REjbLAsmgsp4xh6C5sE9qa8SUGKD/tCFF+g/gPJcU?=
+ =?us-ascii?Q?YUdBoA4C31qoc0oTC8QlZ3+gi7GzTCAE5ASwQQ4zktldefeNYxt+fAbKv3ax?=
+ =?us-ascii?Q?5h1VSGbL7FmJah8W2pauz4gGgfP8Uqtp/jAIr7k2GBDjehVwtwMVyjC1grbg?=
+ =?us-ascii?Q?U2E60g91Ep2FnKMfbYqnK0iXq39ML7Q=3D?=
+X-Exchange-RoutingPolicyChecked: R5tQd/O7BUQ4iCzG8TS4X/DyPGJ+H8oJtKZLy7M4Je2FUw0PLfFKvJxs8DvCIm8OVqXA5p8Tmv6qKAoRnWdUAnW7VAketNQ3Ujqux7jGbb0L5gVrLnxX76v59bre8ieDmHG17+ttiHXmKXem4/F3f/2oW36fpUOWZutPzncuHwrDlUa/OK08k6xEVuryZGn9kEP18t+0VeaEWQGJXoU+cq+ISeXRRURSmXfjN2F6QyXDrNg1J+C8Zt+X2BiL9zuAjWP9iTemt1zAJolm7E98gSQbrKDFxWLyGEkZUvnUznEAHRL/f9ErtMX81ucaGteZeOuTDBpGF5hUYWIsXySJtw==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 20e7f8dd-bb42-4035-b199-08df099c9c8d
+X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB9421.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Sep 2026 09:20:35.7471 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +O4YplPu5qH9KPqBVGOog8OKYgjoX3tYrxLBLODkJn9QgUj23b8MXr9x4/EESjo0ygqjc/Q5bHIrXF5wtiLGBcoMvMmRP+KpgvWpzYMAIRQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5816
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,524 +153,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add OpenSSL asymmetric tests for RSA-PSS sign and verify
-operations using SHA-256 with different salt length settings.
+On Wed, Aug 05, 2026 at 10:08:56PM -0700, Stephen Hemminger wrote:
+> DPDK has its own byte order macros which are preferred
+> over the POSIX/libc ones in arpa/inet.h
+> This resolves issue where this code was inheriting the
+> inclusion of arpa/inet.h from rte_ethdev.h -> rte_eth_ctrl.h.
+> 
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> ---
+>  lib/ethdev/sff_8472.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
 
-Introduce test vectors covering digest-length salt, maximum
-supported salt length, and zero-length salt. Update the
-OpenSSL asym test suite to validate RSA-PSS functionality
-when supported by the device capabilities.
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
-Signed-off-by: Sucharitha Sarananaga <ssarananaga@marvell.com>
----
- app/test/test_cryptodev_asym.c             | 307 +++++++++++++++++++++
- app/test/test_cryptodev_rsa_test_vectors.h | 163 +++++++++++
- 2 files changed, 470 insertions(+)
+Ok fix, though I would note that this fix is nothing to do with the removal
+of flow director material.
 
-diff --git a/app/test/test_cryptodev_asym.c b/app/test/test_cryptodev_asym.c
-index ceae029a4a..718b06aefa 100644
---- a/app/test/test_cryptodev_asym.c
-+++ b/app/test/test_cryptodev_asym.c
-@@ -606,6 +606,307 @@ test_rsa_oaep_labeled_default_mgf1_enc_dec_crt(void)
- 	return status;
- }
- 
-+/*
-+ * Check that the device supports RSA-PSS padding, the hash used for
-+ * the signature digest, and, if explicitly set, the MGF1 hash (this
-+ * PMD defaults MGF1 to the same hash as the digest when unset).
-+ */
-+static int
-+rsa_pss_supported(uint8_t dev_id, const struct rte_crypto_rsa_padding *padding)
-+{
-+	struct rte_cryptodev_asym_capability_idx idx = {
-+		.type = RTE_CRYPTO_ASYM_XFORM_RSA,
-+	};
-+	const struct rte_cryptodev_asymmetric_xform_capability *capa;
-+
-+	capa = rte_cryptodev_asym_capability_get(dev_id, &idx);
-+	if (capa == NULL) {
-+		RTE_LOG(INFO, USER1, "RSA capability not reported by device\n");
-+		return 0;
-+	}
-+
-+	if (capa->rsa_capa.pad_types != 0 &&
-+			(capa->rsa_capa.pad_types & (1 << RTE_CRYPTO_RSA_PADDING_PSS)) == 0) {
-+		RTE_LOG(INFO, USER1,
-+			"RSA PSS padding not supported by device. Supported pad_types=%#x\n",
-+			capa->rsa_capa.pad_types);
-+		return 0;
-+	}
-+
-+	if (!rte_cryptodev_asym_xform_capability_check_hash(capa, padding->hash)) {
-+		RTE_LOG(INFO, USER1,
-+			"RSA PSS hash %u not supported by device capabilities "
-+			"(supported hash_algos=%#"PRIx64")\n",
-+			padding->hash, capa->hash_algos);
-+		return 0;
-+	}
-+
-+	if (padding->mgf1hash != 0 &&
-+			(capa->rsa_capa.mgf1_hash_algos & RTE_BIT64(padding->mgf1hash)) == 0) {
-+		RTE_LOG(INFO, USER1,
-+			"RSA PSS MGF1 hash %u not supported by device capabilities "
-+			"(supported mgf1_hash_algos=%#"PRIx64")\n",
-+			padding->mgf1hash, capa->rsa_capa.mgf1_hash_algos);
-+		return 0;
-+	}
-+
-+	return 1;
-+}
-+
-+/*
-+ * Sign then verify the freshly-generated signature. Unlike
-+ * queue_ops_rsa_sign_verify(), this does not include a
-+ * corrupted-signature negative test: RSA-PSS verification does not
-+ * support verify-recover, and mismatches are reported via op->status.
-+ */
-+static int
-+queue_ops_rsa_pss_sign_verify(void *sess)
-+{
-+	struct crypto_testsuite_params_asym *ts_params = &testsuite_params;
-+	struct rte_mempool *op_mpool = ts_params->op_mpool;
-+	uint8_t dev_id = ts_params->valid_devs[0];
-+	struct rte_crypto_op *op, *result_op;
-+	struct rte_crypto_asym_op *asym_op;
-+	uint8_t output_buf[TEST_DATA_SIZE];
-+	int status;
-+
-+	/* Set up crypto op data structure */
-+	op = rte_crypto_op_alloc(op_mpool, RTE_CRYPTO_OP_TYPE_ASYMMETRIC);
-+	if (!op) {
-+		RTE_LOG(ERR, USER1, "Failed to allocate asymmetric crypto "
-+			"operation struct\n");
-+		return TEST_FAILED;
-+	}
-+
-+	asym_op = op->asym;
-+
-+	/* Compute sign on the test vector */
-+	asym_op->rsa.op_type = RTE_CRYPTO_ASYM_OP_SIGN;
-+
-+	/*
-+	 * RTE_CRYPTO_RSA_PADDING_PSS expects message to already be a
-+	 * digest hashed with the algorithm configured in the session's
-+	 * padding.hash (SHA-256 here), not the raw plaintext.
-+	 */
-+	asym_op->rsa.message.data = rsa_pss_digest_sha256.data;
-+	asym_op->rsa.message.length = rsa_pss_digest_sha256.len;
-+	asym_op->rsa.sign.length = RTE_DIM(rsa_n);
-+	asym_op->rsa.sign.data = output_buf;
-+
-+	debug_hexdump(stdout, "digest", asym_op->rsa.message.data,
-+		      asym_op->rsa.message.length);
-+
-+	/* Attach asymmetric crypto session to crypto operations */
-+	rte_crypto_op_attach_asym_session(op, sess);
-+
-+	RTE_LOG(DEBUG, USER1, "Process ASYM operation\n");
-+
-+	/* Process crypto operation */
-+	if (rte_cryptodev_enqueue_burst(dev_id, 0, &op, 1) != 1) {
-+		RTE_LOG(ERR, USER1, "Error sending packet for sign\n");
-+		status = TEST_FAILED;
-+		goto error_exit;
-+	}
-+
-+	while (rte_cryptodev_dequeue_burst(dev_id, 0, &result_op, 1) == 0)
-+		rte_pause();
-+
-+	if (result_op == NULL) {
-+		RTE_LOG(ERR, USER1, "Failed to process sign op\n");
-+		status = TEST_FAILED;
-+		goto error_exit;
-+	}
-+
-+	if (result_op->status != RTE_CRYPTO_OP_STATUS_SUCCESS) {
-+		RTE_LOG(ERR, USER1, "Failed to process PSS sign op\n");
-+		status = TEST_FAILED;
-+		goto error_exit;
-+	}
-+
-+	debug_hexdump(stdout, "signed message", asym_op->rsa.sign.data,
-+		      asym_op->rsa.sign.length);
-+	asym_op = result_op->asym;
-+
-+	/* Verify sign */
-+	asym_op->rsa.op_type = RTE_CRYPTO_ASYM_OP_VERIFY;
-+
-+	/* Process crypto operation */
-+	if (rte_cryptodev_enqueue_burst(dev_id, 0, &op, 1) != 1) {
-+		RTE_LOG(ERR, USER1, "Error sending packet for verify\n");
-+		status = TEST_FAILED;
-+		goto error_exit;
-+	}
-+
-+	while (rte_cryptodev_dequeue_burst(dev_id, 0, &result_op, 1) == 0)
-+		rte_pause();
-+
-+	if (result_op == NULL) {
-+		RTE_LOG(ERR, USER1, "Failed to process verify op\n");
-+		status = TEST_FAILED;
-+		goto error_exit;
-+	}
-+
-+	if (result_op->status != RTE_CRYPTO_OP_STATUS_SUCCESS) {
-+		RTE_LOG(ERR, USER1, "Failed to process PSS sign-verify op\n");
-+		status = TEST_FAILED;
-+		goto error_exit;
-+	}
-+
-+	status = TEST_SUCCESS;
-+error_exit:
-+
-+	rte_crypto_op_free(op);
-+
-+	return status;
-+}
-+
-+static int
-+test_rsa_pss_sign_verify_digest_saltlen(void)
-+{
-+	struct crypto_testsuite_params_asym *ts_params = &testsuite_params;
-+	struct rte_mempool *sess_mpool = ts_params->session_mpool;
-+	struct rte_cryptodev_asym_capability_idx idx;
-+	uint8_t dev_id = ts_params->valid_devs[0];
-+	struct rte_crypto_asym_xform xform;
-+	void *sess = NULL;
-+	struct rte_cryptodev_info dev_info;
-+	int ret, status = TEST_SUCCESS;
-+
-+	idx.type = RTE_CRYPTO_ASYM_XFORM_RSA;
-+	if (rte_cryptodev_asym_capability_get(dev_id, &idx) == NULL)
-+		return -ENOTSUP;
-+
-+	if (!rsa_pss_supported(dev_id, &rsa_pss_xform.rsa.padding)) {
-+		RTE_LOG(INFO, USER1, "RSA PSS not supported. Test skipped\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	rte_cryptodev_info_get(dev_id, &dev_info);
-+	if (!(dev_info.feature_flags &
-+				RTE_CRYPTODEV_FF_RSA_PRIV_OP_KEY_EXP)) {
-+		RTE_LOG(INFO, USER1, "Device doesn't support sign op with "
-+			"exponent key type. Test skipped\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	memcpy(&xform, &rsa_pss_xform, sizeof(rsa_pss_xform));
-+	xform.rsa.key_type = RTE_RSA_KEY_TYPE_EXP;
-+
-+	ret = rte_cryptodev_asym_session_create(dev_id, &xform, sess_mpool, &sess);
-+	if (ret < 0) {
-+		RTE_LOG(ERR, USER1, "Session creation failed for "
-+			"PSS sign_verify (saltlen = digest length)\n");
-+		status = (ret == -ENOTSUP) ? TEST_SKIPPED : TEST_FAILED;
-+		goto error_exit;
-+	}
-+
-+	status = queue_ops_rsa_pss_sign_verify(sess);
-+
-+error_exit:
-+	rte_cryptodev_asym_session_free(dev_id, sess);
-+	TEST_ASSERT_EQUAL(status, 0, "Test failed");
-+
-+	return status;
-+}
-+
-+static int
-+test_rsa_pss_sign_verify_max_saltlen(void)
-+{
-+	struct crypto_testsuite_params_asym *ts_params = &testsuite_params;
-+	struct rte_mempool *sess_mpool = ts_params->session_mpool;
-+	struct rte_cryptodev_asym_capability_idx idx;
-+	uint8_t dev_id = ts_params->valid_devs[0];
-+	struct rte_crypto_asym_xform xform;
-+	void *sess = NULL;
-+	struct rte_cryptodev_info dev_info;
-+	int ret, status = TEST_SUCCESS;
-+
-+	idx.type = RTE_CRYPTO_ASYM_XFORM_RSA;
-+	if (rte_cryptodev_asym_capability_get(dev_id, &idx) == NULL)
-+		return -ENOTSUP;
-+
-+	if (!rsa_pss_supported(dev_id, &rsa_pss_max_salt_xform.rsa.padding)) {
-+		RTE_LOG(INFO, USER1, "RSA PSS not supported. Test skipped\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	rte_cryptodev_info_get(dev_id, &dev_info);
-+	if (!(dev_info.feature_flags &
-+				RTE_CRYPTODEV_FF_RSA_PRIV_OP_KEY_EXP)) {
-+		RTE_LOG(INFO, USER1, "Device doesn't support sign op with "
-+			"exponent key type. Test skipped\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	memcpy(&xform, &rsa_pss_max_salt_xform, sizeof(rsa_pss_max_salt_xform));
-+	xform.rsa.key_type = RTE_RSA_KEY_TYPE_EXP;
-+
-+	ret = rte_cryptodev_asym_session_create(dev_id, &xform, sess_mpool, &sess);
-+	if (ret < 0) {
-+		RTE_LOG(ERR, USER1, "Session creation failed for "
-+			"PSS sign_verify (max saltlen)\n");
-+		status = (ret == -ENOTSUP) ? TEST_SKIPPED : TEST_FAILED;
-+		goto error_exit;
-+	}
-+
-+	status = queue_ops_rsa_pss_sign_verify(sess);
-+
-+error_exit:
-+	rte_cryptodev_asym_session_free(dev_id, sess);
-+	TEST_ASSERT_EQUAL(status, 0, "Test failed");
-+
-+	return status;
-+}
-+
-+static int
-+test_rsa_pss_sign_verify_zero_saltlen(void)
-+{
-+	struct crypto_testsuite_params_asym *ts_params = &testsuite_params;
-+	struct rte_mempool *sess_mpool = ts_params->session_mpool;
-+	struct rte_cryptodev_asym_capability_idx idx;
-+	uint8_t dev_id = ts_params->valid_devs[0];
-+	struct rte_crypto_asym_xform xform;
-+	void *sess = NULL;
-+	struct rte_cryptodev_info dev_info;
-+	int ret, status = TEST_SUCCESS;
-+
-+	idx.type = RTE_CRYPTO_ASYM_XFORM_RSA;
-+	if (rte_cryptodev_asym_capability_get(dev_id, &idx) == NULL)
-+		return -ENOTSUP;
-+
-+	if (!rsa_pss_supported(dev_id, &rsa_pss_zero_salt_xform.rsa.padding)) {
-+		RTE_LOG(INFO, USER1, "RSA PSS not supported. Test skipped\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	rte_cryptodev_info_get(dev_id, &dev_info);
-+	if (!(dev_info.feature_flags &
-+				RTE_CRYPTODEV_FF_RSA_PRIV_OP_KEY_EXP)) {
-+		RTE_LOG(INFO, USER1, "Device doesn't support sign op with "
-+			"exponent key type. Test skipped\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	memcpy(&xform, &rsa_pss_zero_salt_xform, sizeof(rsa_pss_zero_salt_xform));
-+	xform.rsa.key_type = RTE_RSA_KEY_TYPE_EXP;
-+
-+	ret = rte_cryptodev_asym_session_create(dev_id, &xform, sess_mpool, &sess);
-+	if (ret < 0) {
-+		RTE_LOG(ERR, USER1, "Session creation failed for "
-+			"PSS sign_verify (zero saltlen)\n");
-+		status = (ret == -ENOTSUP) ? TEST_SKIPPED : TEST_FAILED;
-+		goto error_exit;
-+	}
-+
-+	status = queue_ops_rsa_pss_sign_verify(sess);
-+
-+error_exit:
-+	rte_cryptodev_asym_session_free(dev_id, sess);
-+	TEST_ASSERT_EQUAL(status, 0, "Test failed");
-+
-+	return status;
-+}
-+
- static int
- test_rsa_sign_verify(void)
- {
-@@ -5705,6 +6006,12 @@ static struct unit_test_suite cryptodev_asym_rsa_testsuite = {
- 				test_rsa_oaep_labeled_default_mgf1_enc_dec),
- 		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym,
- 				test_rsa_oaep_labeled_default_mgf1_enc_dec_crt),
-+		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym,
-+				test_rsa_pss_sign_verify_digest_saltlen),
-+		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym,
-+				test_rsa_pss_sign_verify_max_saltlen),
-+		TEST_CASE_ST(ut_setup_asym, ut_teardown_asym,
-+				test_rsa_pss_sign_verify_zero_saltlen),
- 		/* RSA EXP */
- 		TEST_CASE_NAMED_WITH_DATA(
- 			"RSA Encryption (n=128, pt=20, e=3) EXP, Padding: NONE",
-diff --git a/app/test/test_cryptodev_rsa_test_vectors.h b/app/test/test_cryptodev_rsa_test_vectors.h
-index 6835453b6d..f35a83c016 100644
---- a/app/test/test_cryptodev_rsa_test_vectors.h
-+++ b/app/test/test_cryptodev_rsa_test_vectors.h
-@@ -251,6 +251,23 @@ struct rsa_test_data rsaplaintext = {
- 	.len = 20
- };
- 
-+/*
-+ * SHA-256 digest of rsaplaintext.data. RTE_CRYPTO_RSA_PADDING_PSS
-+ * expects rte_crypto_rsa_op_param::message to already be a digest
-+ * hashed with the algorithm configured in rte_crypto_rsa_padding::hash
-+ * (SHA-256 for the PSS xforms below), not the raw message, so PSS
-+ * sign/verify tests use this instead of rsaplaintext directly.
-+ */
-+struct rsa_test_data rsa_pss_digest_sha256 = {
-+	.data = {
-+		0x45, 0x24, 0x54, 0x32, 0x9d, 0x91, 0xda, 0x1b,
-+		0xb8, 0x76, 0x0d, 0x9b, 0xdd, 0xea, 0xe5, 0x21,
-+		0x30, 0x91, 0x72, 0xb0, 0x9c, 0x23, 0x12, 0x3f,
-+		0xb3, 0x43, 0x09, 0x5d, 0xa3, 0x10, 0x78, 0x7c
-+	},
-+	.len = 32
-+};
-+
- uint8_t rsa_n[] = {
- 	0xb3, 0xa1, 0xaf, 0xb7, 0x13, 0x08, 0x00,
- 	0x0a, 0x35, 0xdc, 0x2b, 0x20, 0x8d, 0xa1, 0xb5,
-@@ -538,4 +555,150 @@ struct rte_crypto_asym_xform rsa_oaep_labeled_default_mgf1_xform = {
- 	}
- };
- 
-+/*
-+ * RSA-PSS xforms below all use the same 1024-bit test key (rsa_n, 128
-+ * bytes) and SHA-256 (hLen = 32 bytes). For this key/hash combination:
-+ *   emBits = modBits - 1 = 1023, emLen = ceil(emBits / 8) = 128
-+ *   maxSaltLen = emLen - hLen - 2 = 128 - 32 - 2 = 94
-+ * (see RFC 8017 EMSA-PSS-ENCODE, section 9.1.1)
-+ */
-+
-+/** rsa PSS xform (SHA-256, salt length = digest length, QT private key type by default) */
-+struct rte_crypto_asym_xform rsa_pss_xform = {
-+	.next = NULL,
-+	.xform_type = RTE_CRYPTO_ASYM_XFORM_RSA,
-+	.rsa = {
-+		.padding.type = RTE_CRYPTO_RSA_PADDING_PSS,
-+		.padding.hash = RTE_CRYPTO_AUTH_SHA256,
-+		.padding.pss_saltlen = 32,
-+		.n = {
-+			.data = rsa_n,
-+			.length = sizeof(rsa_n)
-+		},
-+		.e = {
-+			.data = rsa_e,
-+			.length = sizeof(rsa_e)
-+		},
-+		.qt = {
-+			.p = {
-+				.data = rsa_p,
-+				.length = sizeof(rsa_p)
-+			},
-+			.q = {
-+				.data = rsa_q,
-+				.length = sizeof(rsa_q)
-+			},
-+			.dP = {
-+				.data = rsa_dP,
-+				.length = sizeof(rsa_dP)
-+			},
-+			.dQ = {
-+				.data = rsa_dQ,
-+				.length = sizeof(rsa_dQ)
-+			},
-+			.qInv = {
-+				.data = rsa_qInv,
-+				.length = sizeof(rsa_qInv)
-+			},
-+		},
-+		.d = {
-+			.data = rsa_d,
-+			.length = sizeof(rsa_d)
-+		},
-+		.key_type = RTE_RSA_KEY_TYPE_QT
-+	}
-+};
-+
-+/** rsa PSS xform with the maximum permissible salt length (94 bytes) */
-+struct rte_crypto_asym_xform rsa_pss_max_salt_xform = {
-+	.next = NULL,
-+	.xform_type = RTE_CRYPTO_ASYM_XFORM_RSA,
-+	.rsa = {
-+		.padding.type = RTE_CRYPTO_RSA_PADDING_PSS,
-+		.padding.hash = RTE_CRYPTO_AUTH_SHA256,
-+		.padding.pss_saltlen = 94,
-+		.n = {
-+			.data = rsa_n,
-+			.length = sizeof(rsa_n)
-+		},
-+		.e = {
-+			.data = rsa_e,
-+			.length = sizeof(rsa_e)
-+		},
-+		.qt = {
-+			.p = {
-+				.data = rsa_p,
-+				.length = sizeof(rsa_p)
-+			},
-+			.q = {
-+				.data = rsa_q,
-+				.length = sizeof(rsa_q)
-+			},
-+			.dP = {
-+				.data = rsa_dP,
-+				.length = sizeof(rsa_dP)
-+			},
-+			.dQ = {
-+				.data = rsa_dQ,
-+				.length = sizeof(rsa_dQ)
-+			},
-+			.qInv = {
-+				.data = rsa_qInv,
-+				.length = sizeof(rsa_qInv)
-+			},
-+		},
-+		.d = {
-+			.data = rsa_d,
-+			.length = sizeof(rsa_d)
-+		},
-+		.key_type = RTE_RSA_KEY_TYPE_QT
-+	}
-+};
-+
-+/** rsa PSS xform with zero-length salt (deterministic PSS, no randomization) */
-+struct rte_crypto_asym_xform rsa_pss_zero_salt_xform = {
-+	.next = NULL,
-+	.xform_type = RTE_CRYPTO_ASYM_XFORM_RSA,
-+	.rsa = {
-+		.padding.type = RTE_CRYPTO_RSA_PADDING_PSS,
-+		.padding.hash = RTE_CRYPTO_AUTH_SHA256,
-+		.padding.pss_saltlen = 0, /* no salt bytes */
-+		.n = {
-+			.data = rsa_n,
-+			.length = sizeof(rsa_n)
-+		},
-+		.e = {
-+			.data = rsa_e,
-+			.length = sizeof(rsa_e)
-+		},
-+		.qt = {
-+			.p = {
-+				.data = rsa_p,
-+				.length = sizeof(rsa_p)
-+			},
-+			.q = {
-+				.data = rsa_q,
-+				.length = sizeof(rsa_q)
-+			},
-+			.dP = {
-+				.data = rsa_dP,
-+				.length = sizeof(rsa_dP)
-+			},
-+			.dQ = {
-+				.data = rsa_dQ,
-+				.length = sizeof(rsa_dQ)
-+			},
-+			.qInv = {
-+				.data = rsa_qInv,
-+				.length = sizeof(rsa_qInv)
-+			},
-+		},
-+		.d = {
-+			.data = rsa_d,
-+			.length = sizeof(rsa_d)
-+		},
-+		.key_type = RTE_RSA_KEY_TYPE_QT
-+	}
-+};
-+
- #endif /* TEST_CRYPTODEV_RSA_TEST_VECTORS_H__ */
--- 
-2.54.0
-
+> diff --git a/lib/ethdev/sff_8472.c b/lib/ethdev/sff_8472.c
+> index 97f231854c..e29711eb74 100644
+> --- a/lib/ethdev/sff_8472.c
+> +++ b/lib/ethdev/sff_8472.c
+> @@ -5,6 +5,8 @@
+>  
+>  #include <stdio.h>
+>  
+> +#include <rte_byteorder.h>
+> +
+>  #include "sff_common.h"
+>  
+>  /* Offsets in decimal, for direct comparison with the SFF specs */
+> @@ -176,7 +178,7 @@ static float befloattoh(const uint32_t *source)
+>  		float dst;
+>  	} converter;
+>  
+> -	converter.src = ntohl(*source);
+> +	converter.src = rte_be_to_cpu_32(*source);
+>  	return converter.dst;
+>  }
+>  
