@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E666C624A4
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Sep 2026 17:02:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6A5AC624A4
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Sep 2026 17:03:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3D25F42D89;
-	Thu,  3 Sep 2026 19:02:15 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3F6BB42D9F;
+	Thu,  3 Sep 2026 19:02:16 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
- by mails.dpdk.org (Postfix) with ESMTP id 7C29A427D4
- for <dev@dpdk.org>; Thu,  3 Sep 2026 19:02:10 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 36E69427BA
+ for <dev@dpdk.org>; Thu,  3 Sep 2026 19:02:11 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1788454931; x=1819990931;
+ t=1788454932; x=1819990932;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=Fl6IbnxnyRsE/a9HwfRCVBh3qZt/a5juIrqSQKaLKXA=;
- b=eHERuiTJUAN1Jd5iwjXHctjJFX88XP9Rjlk5bBLIheLVB7hR4gASKNAR
- NKjw17FXQOislyF2vEpj5S1oPDq1XW7p9EsLiq12EmKTydNBcn4qd/gcD
- 2irLOKdq/BBJOujOmKd6d99z4xUQTNBPH4yObyg0DMk44fAu+sERQgIPW
- Dtl9kxWzC2LO6ptiBGfcKUFON1X2nhlIjl+qTaD2PquB73+IiBBu3Zxhr
- DFUnpou0ZvelBNpaRqSM3go6YsygNH2Aei6dU6+I7ZRa2bKvKJ3k35Mj1
- 9t0tmAlVmjL5EPCnmEzyqNTUM8VZAG0rjZe8jH2y3TA9RxdGXEAijc36/ Q==;
-X-CSE-ConnectionGUID: 09VqIel9SyOgwcUHl2n64Q==
-X-CSE-MsgGUID: BARW7VHRTk6d1ADDWvsg7Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11895"; a="100462994"
-X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; d="scan'208";a="100462994"
+ bh=gyULuDHGwWmIwloyMOcvGL/DWx1PY6p+ZnTrlOAPHOE=;
+ b=VUirUJmbudi7YuTX/jDvs5Uefh7tNoCKSv7dpJAV0+iQ1/MWL0jTpZLK
+ vFtZthcb/yVCr+GD/0dCr+Ti72WNL1mizbTTxNsk8uCADimatvjEiab9q
+ U/XmCaS8eFvapMqtswx3N7U124wmn/xpQfQlke93WnluhjeM3f9jVHuhh
+ 1cndcSUOh3EPKqL46AsqTqz/nfq5SJJNE+sG04r2o3VPAEWC1H8gaMyMk
+ nJAA1k30kJn6SUXqAA+CeB81uvst1CQjUxQUZxNrsCsn7iy0V8IHKq3/I
+ 8d3fTM6j6P2NHk+jVBvKkeFMNZcXh5cyiqANDon1hJ5JCnRpaR5U1yzcM A==;
+X-CSE-ConnectionGUID: y6MwNJEDTEmUxz/+59ZKJg==
+X-CSE-MsgGUID: 5Ow0cwKdR8Kl5I/OkuyPdg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11895"; a="100463005"
+X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; d="scan'208";a="100463005"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 03 Sep 2026 10:01:51 -0700
-X-CSE-ConnectionGUID: zjCjkJw4S1qxE7T+UAnKfg==
-X-CSE-MsgGUID: IGoVEU6aQ4+FcnRpGjXWqQ==
+ 03 Sep 2026 10:01:55 -0700
+X-CSE-ConnectionGUID: J3zEhpkuRoOBTC30YZT0QQ==
+X-CSE-MsgGUID: jXKgnj2TRJqeeqqazZ1F8A==
 X-ExtLoop1: 1
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa003.fm.intel.com with ESMTP; 03 Sep 2026 10:01:49 -0700
+ by fmviesa003.fm.intel.com with ESMTP; 03 Sep 2026 10:01:53 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH 05/13] net/intel: define common macros for tunneling bit-shifts
-Date: Thu,  3 Sep 2026 18:01:34 +0100
-Message-ID: <20260903170140.360477-6-bruce.richardson@intel.com>
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH 08/13] net/ice: use common descriptor creation functions
+Date: Thu,  3 Sep 2026 18:01:37 +0100
+Message-ID: <20260903170140.360477-9-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260903170140.360477-1-bruce.richardson@intel.com>
 References: <20260903170140.360477-1-bruce.richardson@intel.com>
@@ -59,330 +59,291 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Define common macros for use in iavf (for now) and other drivers
-(future) defining the shifts needed for tunnel packet Tx
+Update ice driver to use the descriptor creation functions from common
+rather than having it maintain its own copies of them.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/common/tx.h                 | 24 +++++++++++++
- drivers/net/intel/iavf/iavf_rxtx.c            | 30 ++++++++--------
- drivers/net/intel/iavf/iavf_rxtx.h            | 34 -------------------
- drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c   | 30 ++++++++--------
- drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c | 30 ++++++++--------
- 5 files changed, 69 insertions(+), 79 deletions(-)
+ drivers/net/intel/ice/ice_rxtx_vec_avx2.c   | 73 ++-------------------
+ drivers/net/intel/ice/ice_rxtx_vec_avx512.c | 64 ++----------------
+ drivers/net/intel/ice/ice_rxtx_vec_common.h | 59 -----------------
+ 3 files changed, 12 insertions(+), 184 deletions(-)
 
-diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
-index fb5268c972..c8fadee712 100644
---- a/drivers/net/intel/common/tx.h
-+++ b/drivers/net/intel/common/tx.h
-@@ -45,6 +45,30 @@
- #define CI_TX_CTX_DESC_TSYN             0x02
- #define CI_TX_CTX_DESC_IL2TAG2          0x04
+diff --git a/drivers/net/intel/ice/ice_rxtx_vec_avx2.c b/drivers/net/intel/ice/ice_rxtx_vec_avx2.c
+index b72f69a47b..68401560ce 100644
+--- a/drivers/net/intel/ice/ice_rxtx_vec_avx2.c
++++ b/drivers/net/intel/ice/ice_rxtx_vec_avx2.c
+@@ -5,6 +5,7 @@
+ #include "ice_rxtx_vec_common.h"
  
-+/* Common TX Context Descriptor QW0 Field Shifts */
-+#define CI_TXD_CTX_QW0_L2TAG2_S         32
-+#define CI_TXD_CTX_QW0_EIPT_S           0  /* 2 BITS - external IP type */
-+#define CI_TXD_CTX_QW0_EIPLEN_S         2  /* 7 BITS - external IP header length */
-+#define CI_TXD_CTX_QW0_NATT_S           9  /* 2 BITS - L4 tunnel type */
-+#define CI_TXD_CTX_QW0_EIP_NOINC_S      11 /* 1 BIT  - external IP ID not incremented */
-+#define CI_TXD_CTX_QW0_NATLEN_S         12 /* 7 BITS - L4 tunnel header length */
-+#define CI_TXD_CTX_QW0_L4T_CS_S         23 /* 1 BIT  - tunnel UDP checksum enable */
-+
-+/**
-+ * Enum for the external (outer) IP type field of a Tx context descriptor's
-+ * tunnel parameters (QW0 bits 0-1).
-+ */
-+enum ci_tx_ctx_eipt {
-+	CI_TX_CTX_EIPT_NONE,
-+	CI_TX_CTX_EIPT_IPV6,
-+	CI_TX_CTX_EIPT_IPV4_NO_CSUM,
-+	CI_TX_CTX_EIPT_IPV4,
-+};
-+
-+#define CI_TXD_CTX_UDP_TUNNELING        (0x1ULL << CI_TXD_CTX_QW0_NATT_S)
-+#define CI_TXD_CTX_GRE_TUNNELING        (0x2ULL << CI_TXD_CTX_QW0_NATT_S)
-+#define CI_TXD_CTX_QW0_L4T_CS_M         (0x1ULL << CI_TXD_CTX_QW0_L4T_CS_S)
-+
- /**
-  * Enum to specify where a VLAN tag is to be placed for packet Tx.
-  */
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
-index 80c9912ccc..849fc33dac 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx.c
-@@ -2345,7 +2345,7 @@ iavf_calc_context_desc(const struct rte_mbuf *mb, uint8_t vlan_flag, bool lldp_e
- static inline void
- iavf_fill_ctx_desc_tunnelling_field(uint64_t *qw0, uint64_t ol_flags, const struct rte_mbuf *m)
- {
--	uint64_t eip_typ = IAVF_TX_CTX_DESC_EIPT_NONE;
-+	uint64_t eip_typ = CI_TX_CTX_EIPT_NONE;
- 	uint64_t eip_len = 0;
- 	uint64_t eip_noinc = 0;
- 	/* Default - IP_ID is increment in each segment of LSO */
-@@ -2354,15 +2354,15 @@ iavf_fill_ctx_desc_tunnelling_field(uint64_t *qw0, uint64_t ol_flags, const stru
- 			RTE_MBUF_F_TX_OUTER_IPV6 |
- 			RTE_MBUF_F_TX_OUTER_IP_CKSUM)) {
- 	case RTE_MBUF_F_TX_OUTER_IPV4:
--		eip_typ = IAVF_TX_CTX_DESC_EIPT_IPV4_NO_CHECKSUM_OFFLOAD;
-+		eip_typ = CI_TX_CTX_EIPT_IPV4_NO_CSUM;
- 		eip_len = m->outer_l3_len >> 2;
- 	break;
- 	case RTE_MBUF_F_TX_OUTER_IPV4 | RTE_MBUF_F_TX_OUTER_IP_CKSUM:
--		eip_typ = IAVF_TX_CTX_DESC_EIPT_IPV4_CHECKSUM_OFFLOAD;
-+		eip_typ = CI_TX_CTX_EIPT_IPV4;
- 		eip_len = m->outer_l3_len >> 2;
- 	break;
- 	case RTE_MBUF_F_TX_OUTER_IPV6:
--		eip_typ = IAVF_TX_CTX_DESC_EIPT_IPV6;
-+		eip_typ = CI_TX_CTX_EIPT_IPV6;
- 		eip_len = m->outer_l3_len >> 2;
- 	break;
- 	}
-@@ -2377,10 +2377,10 @@ iavf_fill_ctx_desc_tunnelling_field(uint64_t *qw0, uint64_t ol_flags, const stru
- 		case RTE_MBUF_F_TX_TUNNEL_VXLAN_GPE:
- 		case RTE_MBUF_F_TX_TUNNEL_GTP:
- 		case RTE_MBUF_F_TX_TUNNEL_GENEVE:
--			eip_typ |= IAVF_TXD_CTX_UDP_TUNNELING;
-+			eip_typ |= CI_TXD_CTX_UDP_TUNNELING;
- 			break;
- 		case RTE_MBUF_F_TX_TUNNEL_GRE:
--			eip_typ |= IAVF_TXD_CTX_GRE_TUNNELING;
-+			eip_typ |= CI_TXD_CTX_GRE_TUNNELING;
- 			break;
- 		default:
- 			PMD_TX_LOG(ERR, "Tunnel type not supported");
-@@ -2397,23 +2397,23 @@ iavf_fill_ctx_desc_tunnelling_field(uint64_t *qw0, uint64_t ol_flags, const stru
- 		 * its last Ethertype.
- 		 * If MPLS labels exists, it should include them as well.
- 		 */
--		eip_typ |= (m->l2_len >> 1) << IAVF_TXD_CTX_QW0_NATLEN_SHIFT;
-+		eip_typ |= (m->l2_len >> 1) << CI_TXD_CTX_QW0_NATLEN_S;
+ #include "../common/rx_vec_x86.h"
++#include "../common/tx_vec_x86.h"
  
- 		/**
- 		 * Calculate the tunneling UDP checksum.
- 		 * Shall be set only if L4TUNT = 01b and EIPT is not zero
- 		 */
--		if ((eip_typ & (IAVF_TX_CTX_EXT_IP_IPV6 |
--					IAVF_TX_CTX_EXT_IP_IPV4 |
--					IAVF_TX_CTX_EXT_IP_IPV4_NO_CSUM)) &&
--				(eip_typ & IAVF_TXD_CTX_UDP_TUNNELING) &&
-+		if ((eip_typ & (CI_TX_CTX_EIPT_IPV6 |
-+					CI_TX_CTX_EIPT_IPV4 |
-+					CI_TX_CTX_EIPT_IPV4_NO_CSUM)) &&
-+				(eip_typ & CI_TXD_CTX_UDP_TUNNELING) &&
- 				(ol_flags & RTE_MBUF_F_TX_OUTER_UDP_CKSUM))
--			eip_typ |= IAVF_TXD_CTX_QW0_L4T_CS_MASK;
-+			eip_typ |= CI_TXD_CTX_QW0_L4T_CS_M;
- 	}
+ #include <rte_vect.h>
  
--	*qw0 = eip_typ << IAVF_TXD_CTX_QW0_TUN_PARAMS_EIPT_SHIFT |
--		eip_len << IAVF_TXD_CTX_QW0_TUN_PARAMS_EIPLEN_SHIFT |
--		eip_noinc << IAVF_TXD_CTX_QW0_TUN_PARAMS_EIP_NOINC_SHIFT;
-+	*qw0 = eip_typ << CI_TXD_CTX_QW0_EIPT_S |
-+		eip_len << CI_TXD_CTX_QW0_EIPLEN_S |
-+		eip_noinc << CI_TXD_CTX_QW0_EIP_NOINC_S;
+@@ -773,70 +774,6 @@ ice_recv_scattered_pkts_vec_avx2_offload(void *rx_queue,
+ 						       true);
  }
  
- static inline uint16_t
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.h b/drivers/net/intel/iavf/iavf_rxtx.h
-index 3ff49b94b4..19931f5f7c 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.h
-+++ b/drivers/net/intel/iavf/iavf_rxtx.h
-@@ -444,40 +444,6 @@ enum iavf_rx_flex_desc_ipsec_crypto_status {
- #define IAVF_TXD_CTX_QW1_SEG_PARAMS_MSS_MASK		\
- 	(0x3FFFUL << IAVF_TXD_CTX_QW1_SEG_PARAMS_MSS_SHIFT)
+-static __rte_always_inline void
+-ice_vtx1(volatile struct ci_tx_desc *txdp,
+-	 struct rte_mbuf *pkt, uint64_t flags, bool offload)
+-{
+-	uint64_t high_qw = (CI_TX_DESC_DTYPE_DATA |
+-		 ((uint64_t)flags << CI_TXD_QW1_CMD_S) |
+-		 ((uint64_t)pkt->data_len << CI_TXD_QW1_TX_BUF_SZ_S));
+-	if (offload)
+-		ice_txd_enable_offload(pkt, &high_qw);
+-
+-	__m128i descriptor = _mm_set_epi64x(high_qw, rte_pktmbuf_iova(pkt));
+-	_mm_store_si128(RTE_CAST_PTR(__m128i *, txdp), descriptor);
+-}
+-
+-static __rte_always_inline void
+-ice_vtx(volatile struct ci_tx_desc *txdp,
+-	struct rte_mbuf **pkt, uint16_t nb_pkts,  uint64_t flags, bool offload)
+-{
+-	const uint64_t hi_qw_tmpl = (CI_TX_DESC_DTYPE_DATA | (flags << CI_TXD_QW1_CMD_S));
+-
+-	/* if unaligned on 32-bit boundary, do one to align */
+-	if (((uintptr_t)txdp & 0x1F) != 0 && nb_pkts != 0) {
+-		ice_vtx1(txdp, *pkt, flags, offload);
+-		nb_pkts--; txdp++; pkt++;
+-	}
+-
+-	/* do four at a time while possible, in bursts */
+-	for (; nb_pkts > 3; txdp += 4, pkt += 4, nb_pkts -= 4) {
+-		uint64_t hi_qw3 = hi_qw_tmpl |
+-			((uint64_t)pkt[3]->data_len << CI_TXD_QW1_TX_BUF_SZ_S);
+-		if (offload)
+-			ice_txd_enable_offload(pkt[3], &hi_qw3);
+-		uint64_t hi_qw2 = hi_qw_tmpl |
+-			((uint64_t)pkt[2]->data_len << CI_TXD_QW1_TX_BUF_SZ_S);
+-		if (offload)
+-			ice_txd_enable_offload(pkt[2], &hi_qw2);
+-		uint64_t hi_qw1 = hi_qw_tmpl |
+-			((uint64_t)pkt[1]->data_len << CI_TXD_QW1_TX_BUF_SZ_S);
+-		if (offload)
+-			ice_txd_enable_offload(pkt[1], &hi_qw1);
+-		uint64_t hi_qw0 = hi_qw_tmpl |
+-			((uint64_t)pkt[0]->data_len << CI_TXD_QW1_TX_BUF_SZ_S);
+-		if (offload)
+-			ice_txd_enable_offload(pkt[0], &hi_qw0);
+-
+-		__m256i desc2_3 =
+-			_mm256_set_epi64x
+-				(hi_qw3, rte_pktmbuf_iova(pkt[3]),
+-				 hi_qw2, rte_pktmbuf_iova(pkt[2]));
+-		__m256i desc0_1 =
+-			_mm256_set_epi64x
+-				(hi_qw1, rte_pktmbuf_iova(pkt[1]),
+-				 hi_qw0, rte_pktmbuf_iova(pkt[0]));
+-		_mm256_store_si256(RTE_CAST_PTR(__m256i *, txdp + 2), desc2_3);
+-		_mm256_store_si256(RTE_CAST_PTR(__m256i *, txdp), desc0_1);
+-	}
+-
+-	/* do any last ones */
+-	while (nb_pkts) {
+-		ice_vtx1(txdp, *pkt, flags, offload);
+-		txdp++; pkt++; nb_pkts--;
+-	}
+-}
+-
+ static __rte_always_inline uint16_t
+ ice_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 			      uint16_t nb_pkts, bool offload)
+@@ -868,11 +805,12 @@ ice_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	if (nb_commit >= n) {
+ 		ci_tx_backlog_entry_vec(txep, tx_pkts, n);
  
--#define IAVF_TXD_CTX_QW0_TUN_PARAMS_EIPT_SHIFT		(0)
--#define IAVF_TXD_CTX_QW0_TUN_PARAMS_EIPT_MASK		(0x3UL)
--
--enum iavf_tx_ctx_desc_tunnel_external_ip_type {
--	IAVF_TX_CTX_DESC_EIPT_NONE,
--	IAVF_TX_CTX_DESC_EIPT_IPV6,
--	IAVF_TX_CTX_DESC_EIPT_IPV4_NO_CHECKSUM_OFFLOAD,
--	IAVF_TX_CTX_DESC_EIPT_IPV4_CHECKSUM_OFFLOAD
--};
--
--#define IAVF_TXD_CTX_QW0_TUN_PARAMS_EIPLEN_SHIFT	(2)
--#define IAVF_TXD_CTX_QW0_TUN_PARAMS_EIPLEN_MASK		(0x7FUL)
--
--#define IAVF_TXD_CTX_QW0_TUN_PARAMS_L4TUNT_SHIFT	(9)
--#define IAVF_TXD_CTX_QW0_TUN_PARAMS_L4TUNT_MASK		(0x3UL)
--
--enum iavf_tx_ctx_desc_tunnel_l4_tunnel_type {
--	IAVF_TX_CTX_DESC_L4_TUN_TYP_NO_UDP_GRE,
--	IAVF_TX_CTX_DESC_L4_TUN_TYP_UDP,
--	IAVF_TX_CTX_DESC_L4_TUN_TYP_GRE
--};
--
--#define IAVF_TXD_CTX_QW0_TUN_PARAMS_EIP_NOINC_SHIFT	(11)
--#define IAVF_TXD_CTX_QW0_TUN_PARAMS_EIP_NOINC_MASK	(0x1UL)
--
--#define IAVF_TXD_CTX_QW0_TUN_PARAMS_L4TUNLEN_SHIFT	(12)
--#define IAVF_TXD_CTX_QW0_TUN_PARAMS_L4TUNLEN_MASK	(0x7FUL)
--
--#define IAVF_TXD_CTX_QW0_TUN_PARAMS_DECTTL_SHIFT	(19)
--#define IAVF_TXD_CTX_QW0_TUN_PARAMS_DECTTL_MASK		(0xFUL)
--
--#define IAVF_TXD_CTX_QW0_TUN_PARAMS_L4T_CS_SHIFT	(23)
--#define IAVF_TXD_CTX_QW0_TUN_PARAMS_L4T_CS_MASK		(0x1UL)
--
- #define IAVF_TXD_CTX_QW0_L2TAG2_PARAM			(32)
- #define IAVF_TXD_CTX_QW0_L2TAG2_MASK			(0xFFFFUL)
+-		ice_vtx(txdp, tx_pkts, n - 1, flags, offload);
++		ci_vtx_avx2(txdp, tx_pkts, n - 1, flags, offload,
++			CI_TAG_IN_DATA_DESC, CI_TAG_IN_DATA_DESC);
+ 		tx_pkts += (n - 1);
+ 		txdp += (n - 1);
  
-diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
-index 10e96a8510..f95aabe577 100644
---- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
-@@ -1760,7 +1760,7 @@ static inline void
- iavf_fill_ctx_desc_tunneling_avx2(uint64_t *low_ctx_qw, struct rte_mbuf *pkt)
- {
- 	if (pkt->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK) {
--		uint64_t eip_typ = IAVF_TX_CTX_DESC_EIPT_NONE;
-+		uint64_t eip_typ = CI_TX_CTX_EIPT_NONE;
- 		uint64_t eip_len = 0;
- 		uint64_t eip_noinc = 0;
- 		/* Default - IP_ID is increment in each segment of LSO */
-@@ -1769,15 +1769,15 @@ iavf_fill_ctx_desc_tunneling_avx2(uint64_t *low_ctx_qw, struct rte_mbuf *pkt)
- 				RTE_MBUF_F_TX_OUTER_IPV6 |
- 				RTE_MBUF_F_TX_OUTER_IP_CKSUM)) {
- 		case RTE_MBUF_F_TX_OUTER_IPV4:
--			eip_typ = IAVF_TX_CTX_DESC_EIPT_IPV4_NO_CHECKSUM_OFFLOAD;
-+			eip_typ = CI_TX_CTX_EIPT_IPV4_NO_CSUM;
- 			eip_len = pkt->outer_l3_len >> 2;
- 		break;
- 		case RTE_MBUF_F_TX_OUTER_IPV4 | RTE_MBUF_F_TX_OUTER_IP_CKSUM:
--			eip_typ = IAVF_TX_CTX_DESC_EIPT_IPV4_CHECKSUM_OFFLOAD;
-+			eip_typ = CI_TX_CTX_EIPT_IPV4;
- 			eip_len = pkt->outer_l3_len >> 2;
- 		break;
- 		case RTE_MBUF_F_TX_OUTER_IPV6:
--			eip_typ = IAVF_TX_CTX_DESC_EIPT_IPV6;
-+			eip_typ = CI_TX_CTX_EIPT_IPV6;
- 			eip_len = pkt->outer_l3_len >> 2;
- 		break;
- 		}
-@@ -1791,10 +1791,10 @@ iavf_fill_ctx_desc_tunneling_avx2(uint64_t *low_ctx_qw, struct rte_mbuf *pkt)
- 		case RTE_MBUF_F_TX_TUNNEL_VXLAN_GPE:
- 		case RTE_MBUF_F_TX_TUNNEL_GTP:
- 		case RTE_MBUF_F_TX_TUNNEL_GENEVE:
--			eip_typ |= IAVF_TXD_CTX_UDP_TUNNELING;
-+			eip_typ |= CI_TXD_CTX_UDP_TUNNELING;
- 			break;
- 		case RTE_MBUF_F_TX_TUNNEL_GRE:
--			eip_typ |= IAVF_TXD_CTX_GRE_TUNNELING;
-+			eip_typ |= CI_TXD_CTX_GRE_TUNNELING;
- 			break;
- 		default:
- 			PMD_TX_LOG(ERR, "Tunnel type not supported");
-@@ -1811,22 +1811,22 @@ iavf_fill_ctx_desc_tunneling_avx2(uint64_t *low_ctx_qw, struct rte_mbuf *pkt)
- 		 * its last Ethertype.
- 		 * If MPLS labels exists, it should include them as well.
- 		 */
--		eip_typ |= (pkt->l2_len >> 1) << IAVF_TXD_CTX_QW0_NATLEN_SHIFT;
-+		eip_typ |= (pkt->l2_len >> 1) << CI_TXD_CTX_QW0_NATLEN_S;
+-		ice_vtx1(txdp, *tx_pkts++, rs, offload);
++		ci_vtx1(txdp, *tx_pkts++, rs, offload, CI_TAG_IN_DATA_DESC, CI_TAG_IN_DATA_DESC);
  
- 		/**
- 		 * Calculate the tunneling UDP checksum.
- 		 * Shall be set only if L4TUNT = 01b and EIPT is not zero
- 		 */
--		if ((eip_typ & (IAVF_TX_CTX_EXT_IP_IPV4 |
--					IAVF_TX_CTX_EXT_IP_IPV6 |
--					IAVF_TX_CTX_EXT_IP_IPV4_NO_CSUM)) &&
--				(eip_typ & IAVF_TXD_CTX_UDP_TUNNELING) &&
-+		if ((eip_typ & (CI_TX_CTX_EIPT_IPV4 |
-+					CI_TX_CTX_EIPT_IPV6 |
-+					CI_TX_CTX_EIPT_IPV4_NO_CSUM)) &&
-+				(eip_typ & CI_TXD_CTX_UDP_TUNNELING) &&
- 				(pkt->ol_flags & RTE_MBUF_F_TX_OUTER_UDP_CKSUM))
--			eip_typ |= IAVF_TXD_CTX_QW0_L4T_CS_MASK;
-+			eip_typ |= CI_TXD_CTX_QW0_L4T_CS_M;
+ 		nb_commit = (uint16_t)(nb_commit - n);
  
--		*low_ctx_qw = eip_typ << IAVF_TXD_CTX_QW0_TUN_PARAMS_EIPT_SHIFT |
--			eip_len << IAVF_TXD_CTX_QW0_TUN_PARAMS_EIPLEN_SHIFT |
--			eip_noinc << IAVF_TXD_CTX_QW0_TUN_PARAMS_EIP_NOINC_SHIFT;
-+		*low_ctx_qw = eip_typ << CI_TXD_CTX_QW0_EIPT_S |
-+			eip_len << CI_TXD_CTX_QW0_EIPLEN_S |
-+			eip_noinc << CI_TXD_CTX_QW0_EIP_NOINC_S;
+@@ -886,7 +824,8 @@ ice_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
  
- 	} else {
- 		*low_ctx_qw = 0;
-diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
-index 58ed89a72a..74d91fff31 100644
---- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
-@@ -1899,7 +1899,7 @@ static __rte_always_inline void
- iavf_fill_ctx_desc_tunneling_avx512(uint64_t *low_ctx_qw, struct rte_mbuf *pkt)
- {
- 	if (pkt->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK) {
--		uint64_t eip_typ = IAVF_TX_CTX_DESC_EIPT_NONE;
-+		uint64_t eip_typ = CI_TX_CTX_EIPT_NONE;
- 		uint64_t eip_len = 0;
- 		uint64_t eip_noinc = 0;
- 		/* Default - IP_ID is increment in each segment of LSO */
-@@ -1908,15 +1908,15 @@ iavf_fill_ctx_desc_tunneling_avx512(uint64_t *low_ctx_qw, struct rte_mbuf *pkt)
- 				RTE_MBUF_F_TX_OUTER_IPV6 |
- 				RTE_MBUF_F_TX_OUTER_IP_CKSUM)) {
- 		case RTE_MBUF_F_TX_OUTER_IPV4:
--			eip_typ = IAVF_TX_CTX_DESC_EIPT_IPV4_NO_CHECKSUM_OFFLOAD;
-+			eip_typ = CI_TX_CTX_EIPT_IPV4_NO_CSUM;
- 			eip_len = pkt->outer_l3_len >> 2;
- 		break;
- 		case RTE_MBUF_F_TX_OUTER_IPV4 | RTE_MBUF_F_TX_OUTER_IP_CKSUM:
--			eip_typ = IAVF_TX_CTX_DESC_EIPT_IPV4_CHECKSUM_OFFLOAD;
-+			eip_typ = CI_TX_CTX_EIPT_IPV4;
- 			eip_len = pkt->outer_l3_len >> 2;
- 		break;
- 		case RTE_MBUF_F_TX_OUTER_IPV6:
--			eip_typ = IAVF_TX_CTX_DESC_EIPT_IPV6;
-+			eip_typ = CI_TX_CTX_EIPT_IPV6;
- 			eip_len = pkt->outer_l3_len >> 2;
- 		break;
- 		}
-@@ -1930,10 +1930,10 @@ iavf_fill_ctx_desc_tunneling_avx512(uint64_t *low_ctx_qw, struct rte_mbuf *pkt)
- 		case RTE_MBUF_F_TX_TUNNEL_VXLAN_GPE:
- 		case RTE_MBUF_F_TX_TUNNEL_GTP:
- 		case RTE_MBUF_F_TX_TUNNEL_GENEVE:
--			eip_typ |= IAVF_TXD_CTX_UDP_TUNNELING;
-+			eip_typ |= CI_TXD_CTX_UDP_TUNNELING;
- 			break;
- 		case RTE_MBUF_F_TX_TUNNEL_GRE:
--			eip_typ |= IAVF_TXD_CTX_GRE_TUNNELING;
-+			eip_typ |= CI_TXD_CTX_GRE_TUNNELING;
- 			break;
- 		default:
- 			PMD_TX_LOG(ERR, "Tunnel type not supported");
-@@ -1950,22 +1950,22 @@ iavf_fill_ctx_desc_tunneling_avx512(uint64_t *low_ctx_qw, struct rte_mbuf *pkt)
- 		 * its last Ethertype.
- 		 * If MPLS labels exists, it should include them as well.
- 		 */
--		eip_typ |= (pkt->l2_len >> 1) << IAVF_TXD_CTX_QW0_NATLEN_SHIFT;
-+		eip_typ |= (pkt->l2_len >> 1) << CI_TXD_CTX_QW0_NATLEN_S;
+ 	ci_tx_backlog_entry_vec(txep, tx_pkts, nb_commit);
  
- 		/**
- 		 * Calculate the tunneling UDP checksum.
- 		 * Shall be set only if L4TUNT = 01b and EIPT is not zero
- 		 */
--		if ((eip_typ & (IAVF_TX_CTX_EXT_IP_IPV4 |
--					IAVF_TX_CTX_EXT_IP_IPV6 |
--					IAVF_TX_CTX_EXT_IP_IPV4_NO_CSUM)) &&
--				(eip_typ & IAVF_TXD_CTX_UDP_TUNNELING) &&
-+		if ((eip_typ & (CI_TX_CTX_EIPT_IPV4 |
-+					CI_TX_CTX_EIPT_IPV6 |
-+					CI_TX_CTX_EIPT_IPV4_NO_CSUM)) &&
-+				(eip_typ & CI_TXD_CTX_UDP_TUNNELING) &&
- 				(pkt->ol_flags & RTE_MBUF_F_TX_OUTER_UDP_CKSUM))
--			eip_typ |= IAVF_TXD_CTX_QW0_L4T_CS_MASK;
-+			eip_typ |= CI_TXD_CTX_QW0_L4T_CS_M;
+-	ice_vtx(txdp, tx_pkts, nb_commit, flags, offload);
++	ci_vtx_avx2(txdp, tx_pkts, nb_commit, flags, offload,
++		CI_TAG_IN_DATA_DESC, CI_TAG_IN_DATA_DESC);
  
--		*low_ctx_qw = eip_typ << IAVF_TXD_CTX_QW0_TUN_PARAMS_EIPT_SHIFT |
--			eip_len << IAVF_TXD_CTX_QW0_TUN_PARAMS_EIPLEN_SHIFT |
--			eip_noinc << IAVF_TXD_CTX_QW0_TUN_PARAMS_EIP_NOINC_SHIFT;
-+		*low_ctx_qw = eip_typ << CI_TXD_CTX_QW0_EIPT_S |
-+			eip_len << CI_TXD_CTX_QW0_EIPLEN_S |
-+			eip_noinc << CI_TXD_CTX_QW0_EIP_NOINC_S;
+ 	tx_id = (uint16_t)(tx_id + nb_commit);
+ 	if (tx_id > txq->tx_next_rs) {
+diff --git a/drivers/net/intel/ice/ice_rxtx_vec_avx512.c b/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
+index 309ab9fca7..b4695c398e 100644
+--- a/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
++++ b/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
+@@ -5,6 +5,7 @@
+ #include "ice_rxtx_vec_common.h"
  
- 	} else {
- 		*low_ctx_qw = 0;
+ #include "../common/rx_vec_x86.h"
++#include "../common/tx_vec_x86.h"
+ 
+ #include <rte_vect.h>
+ 
+@@ -846,61 +847,6 @@ ice_recv_scattered_pkts_vec_avx512_offload(void *rx_queue,
+ 				rx_pkts + retval, nb_pkts);
+ }
+ 
+-static __rte_always_inline void
+-ice_vtx1(volatile struct ci_tx_desc *txdp,
+-	 struct rte_mbuf *pkt, uint64_t flags, bool do_offload)
+-{
+-	uint64_t high_qw = (CI_TX_DESC_DTYPE_DATA |
+-		 ((uint64_t)flags << CI_TXD_QW1_CMD_S) |
+-		 ((uint64_t)pkt->data_len << CI_TXD_QW1_TX_BUF_SZ_S));
+-
+-	if (do_offload)
+-		ice_txd_enable_offload(pkt, &high_qw);
+-
+-	__m128i descriptor = _mm_set_epi64x(high_qw, rte_pktmbuf_iova(pkt));
+-	_mm_store_si128(RTE_CAST_PTR(__m128i *, txdp), descriptor);
+-}
+-
+-static __rte_always_inline void
+-ice_vtx(volatile struct ci_tx_desc *txdp, struct rte_mbuf **pkt,
+-	uint16_t nb_pkts,  uint64_t flags, bool do_offload)
+-{
+-	const uint64_t hi_qw_tmpl = (CI_TX_DESC_DTYPE_DATA | (flags << CI_TXD_QW1_CMD_S));
+-
+-	for (; nb_pkts > 3; txdp += 4, pkt += 4, nb_pkts -= 4) {
+-		uint64_t hi_qw3 = hi_qw_tmpl |
+-			((uint64_t)pkt[3]->data_len << CI_TXD_QW1_TX_BUF_SZ_S);
+-		if (do_offload)
+-			ice_txd_enable_offload(pkt[3], &hi_qw3);
+-		uint64_t hi_qw2 = hi_qw_tmpl |
+-			((uint64_t)pkt[2]->data_len << CI_TXD_QW1_TX_BUF_SZ_S);
+-		if (do_offload)
+-			ice_txd_enable_offload(pkt[2], &hi_qw2);
+-		uint64_t hi_qw1 = hi_qw_tmpl |
+-			((uint64_t)pkt[1]->data_len << CI_TXD_QW1_TX_BUF_SZ_S);
+-		if (do_offload)
+-			ice_txd_enable_offload(pkt[1], &hi_qw1);
+-		uint64_t hi_qw0 = hi_qw_tmpl |
+-			((uint64_t)pkt[0]->data_len << CI_TXD_QW1_TX_BUF_SZ_S);
+-		if (do_offload)
+-			ice_txd_enable_offload(pkt[0], &hi_qw0);
+-
+-		__m512i desc0_3 =
+-			_mm512_set_epi64
+-				(hi_qw3, rte_pktmbuf_iova(pkt[3]),
+-				 hi_qw2, rte_pktmbuf_iova(pkt[2]),
+-				 hi_qw1, rte_pktmbuf_iova(pkt[1]),
+-				 hi_qw0, rte_pktmbuf_iova(pkt[0]));
+-		_mm512_storeu_si512(RTE_CAST_PTR(void *, txdp), desc0_3);
+-	}
+-
+-	/* do any last ones */
+-	while (nb_pkts) {
+-		ice_vtx1(txdp, *pkt, flags, do_offload);
+-		txdp++; pkt++; nb_pkts--;
+-	}
+-}
+-
+ static __rte_always_inline uint16_t
+ ice_xmit_fixed_burst_vec_avx512(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 				uint16_t nb_pkts, bool do_offload)
+@@ -933,11 +879,12 @@ ice_xmit_fixed_burst_vec_avx512(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	if (nb_commit >= n) {
+ 		ci_tx_backlog_entry_vec(txep, tx_pkts, n);
+ 
+-		ice_vtx(txdp, tx_pkts, n - 1, flags, do_offload);
++		ci_vtx_avx512(txdp, tx_pkts, n - 1, flags, do_offload,
++			CI_TAG_IN_DATA_DESC, CI_TAG_IN_DATA_DESC);
+ 		tx_pkts += (n - 1);
+ 		txdp += (n - 1);
+ 
+-		ice_vtx1(txdp, *tx_pkts++, rs, do_offload);
++		ci_vtx1(txdp, *tx_pkts++, rs, do_offload, CI_TAG_IN_DATA_DESC, CI_TAG_IN_DATA_DESC);
+ 
+ 		nb_commit = (uint16_t)(nb_commit - n);
+ 
+@@ -951,7 +898,8 @@ ice_xmit_fixed_burst_vec_avx512(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 
+ 	ci_tx_backlog_entry_vec(txep, tx_pkts, nb_commit);
+ 
+-	ice_vtx(txdp, tx_pkts, nb_commit, flags, do_offload);
++	ci_vtx_avx512(txdp, tx_pkts, nb_commit, flags, do_offload,
++		CI_TAG_IN_DATA_DESC, CI_TAG_IN_DATA_DESC);
+ 
+ 	tx_id = (uint16_t)(tx_id + nb_commit);
+ 	if (tx_id > txq->tx_next_rs) {
+diff --git a/drivers/net/intel/ice/ice_rxtx_vec_common.h b/drivers/net/intel/ice/ice_rxtx_vec_common.h
+index 1d83a087cc..53d1eb42a3 100644
+--- a/drivers/net/intel/ice/ice_rxtx_vec_common.h
++++ b/drivers/net/intel/ice/ice_rxtx_vec_common.h
+@@ -113,63 +113,4 @@ ice_tx_vec_dev_check_default(struct rte_eth_dev *dev)
+ 	return ret;
+ }
+ 
+-static inline void
+-ice_txd_enable_offload(struct rte_mbuf *tx_pkt,
+-		       uint64_t *txd_hi)
+-{
+-	uint64_t ol_flags = tx_pkt->ol_flags;
+-	uint32_t td_cmd = 0;
+-	uint32_t td_offset = 0;
+-
+-	/* Tx Checksum Offload */
+-	/* SET MACLEN */
+-	td_offset |= (tx_pkt->l2_len >> 1) <<
+-		CI_TX_DESC_LEN_MACLEN_S;
+-
+-	/* Enable L3 checksum offload */
+-	if (ol_flags & RTE_MBUF_F_TX_IP_CKSUM) {
+-		td_cmd |= CI_TX_DESC_CMD_IIPT_IPV4_CSUM;
+-		td_offset |= (tx_pkt->l3_len >> 2) <<
+-			CI_TX_DESC_LEN_IPLEN_S;
+-	} else if (ol_flags & RTE_MBUF_F_TX_IPV4) {
+-		td_cmd |= CI_TX_DESC_CMD_IIPT_IPV4;
+-		td_offset |= (tx_pkt->l3_len >> 2) <<
+-			CI_TX_DESC_LEN_IPLEN_S;
+-	} else if (ol_flags & RTE_MBUF_F_TX_IPV6) {
+-		td_cmd |= CI_TX_DESC_CMD_IIPT_IPV6;
+-		td_offset |= (tx_pkt->l3_len >> 2) <<
+-			CI_TX_DESC_LEN_IPLEN_S;
+-	}
+-
+-	/* Enable L4 checksum offloads */
+-	switch (ol_flags & RTE_MBUF_F_TX_L4_MASK) {
+-	case RTE_MBUF_F_TX_TCP_CKSUM:
+-		td_cmd |= CI_TX_DESC_CMD_L4T_EOFT_TCP;
+-		td_offset |= (sizeof(struct rte_tcp_hdr) >> 2) <<
+-			CI_TX_DESC_LEN_L4_LEN_S;
+-		break;
+-	case RTE_MBUF_F_TX_SCTP_CKSUM:
+-		td_cmd |= CI_TX_DESC_CMD_L4T_EOFT_SCTP;
+-		td_offset |= (sizeof(struct rte_sctp_hdr) >> 2) <<
+-			CI_TX_DESC_LEN_L4_LEN_S;
+-		break;
+-	case RTE_MBUF_F_TX_UDP_CKSUM:
+-		td_cmd |= CI_TX_DESC_CMD_L4T_EOFT_UDP;
+-		td_offset |= (sizeof(struct rte_udp_hdr) >> 2) <<
+-			CI_TX_DESC_LEN_L4_LEN_S;
+-		break;
+-	default:
+-		break;
+-	}
+-
+-	*txd_hi |= ((uint64_t)td_offset) << CI_TXD_QW1_OFFSET_S;
+-
+-	/* Tx VLAN/QINQ insertion Offload */
+-	if (ol_flags & RTE_MBUF_F_TX_VLAN) {
+-		td_cmd |= CI_TX_DESC_CMD_IL2TAG1;
+-		*txd_hi |= ((uint64_t)tx_pkt->vlan_tci << CI_TXD_QW1_L2TAG1_S);
+-	}
+-
+-	*txd_hi |= ((uint64_t)td_cmd) << CI_TXD_QW1_CMD_S;
+-}
+ #endif
 -- 
 2.53.0
 
