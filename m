@@ -2,46 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B0A4C624A4
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Sep 2026 17:04:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4652DC624A4
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Sep 2026 17:04:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A91B74026C;
-	Thu,  3 Sep 2026 19:04:14 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9195F427BC;
+	Thu,  3 Sep 2026 19:04:22 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
- by mails.dpdk.org (Postfix) with ESMTP id A362240144
- for <dev@dpdk.org>; Thu,  3 Sep 2026 19:04:12 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id D25BA40144
+ for <dev@dpdk.org>; Thu,  3 Sep 2026 19:04:19 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1788455053; x=1819991053;
+ t=1788455061; x=1819991061;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=1EhDHBzvU0IOge0B38KP5CU0zdKpN5591uE+uk72SJY=;
- b=lj9v7y3L0jBt+9NFlN98VYohzRCZrUU8G457CUw3iAu8d9dEIapbiFxk
- W8bB6Nn066sv7xGx/Tdz8heUwtofUDHLXTHENjqBH/ZacRmp10k33yfVY
- lzX7Qqo/z7bI3zAQTfpGUK2SPAeMedck6IvBj1S4nj/Wm1GOy+VnnTO+2
- quXtuBOJa3ZPYSmKzDLYRjDR1m3sVIAdQvCZMMw3SsNVGumQ9PX7CPONg
- x1N+gDcOQDzzX1uOh686IJHEaxK5OLjhnyIDCMSlkJx0Aq1lzgAOsU6XM
- WvACsnNl0hYNVEECddN20jm8qT0GKkihiytvJCzykz2+FeSyN08NgT+E9 g==;
-X-CSE-ConnectionGUID: mBfXC58HTW2HfLJhklqBUw==
-X-CSE-MsgGUID: 7jjqmpTeQ7uKPKtEAwtkeA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11895"; a="100463256"
-X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; d="scan'208";a="100463256"
+ bh=yFB4jdXxC/zEn1fDdynfmUGEO98THYZ7Dv4Ym5CTSYI=;
+ b=LDFBzbHNG6i2R8yZKkWJyf2Ew1utXsXv1c0gmsI6GmJy66KLJP+LWb8j
+ OqcwC3CXg037LI3n47sbUvHypl+wGMgtAcCpErCgeSgV7WoHDsbe5lDN1
+ UKSK0aF+nxf1+4q+yQfgAmYjEaD6tpNIMYLSbadDcy/+tXy8xw0rPJfHU
+ qN1KgkNQevXtlY5nAMxSHSvVTv1t/tJw+bkHsAxIgLY3N3PbIifxJwmB/
+ sChi6tR2yztTmZNvyKucfl+iy/UUh7G5gjBKUNeGtvgGr7fQp3AjMwcAD
+ KtBojiZeOsxe7gvTsXUmFMUNVlj+b5Dqk/v+bBLFNy6JvvuLRPK8rd50b A==;
+X-CSE-ConnectionGUID: GpXPs7Z3Tf6CPz4EDWhdeA==
+X-CSE-MsgGUID: 3NRBp52CQGaQeXYm44IrAA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11895"; a="100463268"
+X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; d="scan'208";a="100463268"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 03 Sep 2026 10:04:12 -0700
-X-CSE-ConnectionGUID: Oq0ppj+0Q0KROjEZ1qHxHw==
-X-CSE-MsgGUID: wGyEasE0QlWRC/e5EG9gjA==
+ 03 Sep 2026 10:04:20 -0700
+X-CSE-ConnectionGUID: vZqhlY1xQFSJGCr303/3Dw==
+X-CSE-MsgGUID: wKX8xgpIT7aIO+ipS/vptQ==
 X-ExtLoop1: 1
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa003.fm.intel.com with ESMTP; 03 Sep 2026 10:04:10 -0700
+ by fmviesa003.fm.intel.com with ESMTP; 03 Sep 2026 10:04:17 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH 11/13] net/intel: add common vector Tx fns with context
- handling
-Date: Thu,  3 Sep 2026 18:04:08 +0100
-Message-ID: <20260903170408.361088-1-bruce.richardson@intel.com>
+ Praveen Shetty <praveen.shetty@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Jingjing Wu <jingjing.wu@intel.com>
+Subject: [PATCH 12/13] net/intel: improve Tx path selection logic
+Date: Thu,  3 Sep 2026 18:04:15 +0100
+Message-ID: <20260903170415.361188-1-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260903170140.360477-1-bruce.richardson@intel.com>
 References: <20260903170140.360477-1-bruce.richardson@intel.com>
@@ -60,395 +62,306 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The iavf vector driver has support for more Tx offloads because it has
-Tx functions which handle transmit context descriptors. Move those
-context-handling functions to the common folder for reuse by other
-drivers.
+Rework the relevant priority of context descriptor vs SIMD width when
+selecting a Tx path so that presence of context descriptors is only
+considered when all else is equal.
+
+Normally, path select takes place without having to worry about context
+descriptors, since offloads requiring context descriptors are specified
+using the offloads bitmap for each Tx path. However, in some cases, the
+need to use a context descriptor is not encodable via this offload path,
+e.g. VLAN offload for iavf can sometimes use the data descriptor and
+sometimes the context depending on what PF specifies at runtime. To
+account for those cases, we separate out the use of contexts from the
+path features, but instead note it as part of the path information, and
+add an additional parameter to the Tx path selection for drivers to
+mandate a context descriptor be present. Otherwise, ctx is largely
+ignored in path selection, except as a last-resort tie-breaker between
+two paths.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/common/tx_vec_x86.h         | 136 ++++++++++++++++++
- drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c   |  78 +---------
- drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c |  89 +-----------
- 3 files changed, 147 insertions(+), 156 deletions(-)
+ drivers/net/intel/common/tx.h      | 41 +++++++++++++++++---------
+ drivers/net/intel/cpfl/cpfl_rxtx.c |  3 +-
+ drivers/net/intel/i40e/i40e_rxtx.c |  2 +-
+ drivers/net/intel/iavf/iavf_rxtx.c | 46 ++++++++++++++++--------------
+ drivers/net/intel/ice/ice_rxtx.c   |  3 +-
+ drivers/net/intel/idpf/idpf_rxtx.c |  3 +-
+ 6 files changed, 58 insertions(+), 40 deletions(-)
 
-diff --git a/drivers/net/intel/common/tx_vec_x86.h b/drivers/net/intel/common/tx_vec_x86.h
-index 87386df8cd..f361137d23 100644
---- a/drivers/net/intel/common/tx_vec_x86.h
-+++ b/drivers/net/intel/common/tx_vec_x86.h
-@@ -410,6 +410,74 @@ ci_xmit_fixed_burst_vec_avx2(struct ci_tx_queue *txq, struct rte_mbuf **tx_pkts,
- 	return nb_pkts;
- }
+diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
+index 630df8cb19..0f36989b32 100644
+--- a/drivers/net/intel/common/tx.h
++++ b/drivers/net/intel/common/tx.h
+@@ -249,7 +249,6 @@ struct ci_tx_path_features {
+ 	uint32_t tx_offloads;
+ 	enum rte_vect_max_simd simd_width;
+ 	bool simple_tx;
+-	bool ctx_desc;
+ 	bool disabled;
+ 	bool single_queue;
+ };
+@@ -259,6 +258,7 @@ struct ci_tx_path_info {
+ 	const char *info;
+ 	struct ci_tx_path_features features;
+ 	eth_tx_prep_t pkt_prep;
++	bool supports_ctx;
+ };
  
-+static __rte_always_inline uint16_t
-+ci_xmit_fixed_burst_vec_ctx_avx2(struct ci_tx_queue *txq, struct rte_mbuf **tx_pkts,
-+		uint16_t nb_pkts, bool offload,
-+		enum ci_l2tag_pos single_vlan_pos, enum ci_l2tag_pos qinq_outer_pos,
-+		ci_tx_ctx_lldp_fn lldp_check)
-+{
-+	volatile struct ci_tx_desc *txdp;
-+	struct ci_tx_entry_vec *txep;
-+	uint16_t n, nb_commit, nb_mbuf, tx_id;
-+	uint64_t flags = CI_TX_DESC_CMD_DEFAULT;
-+	uint64_t rs = CI_TX_DESC_CMD_RS | flags;
-+
-+	if (txq->nb_tx_free < txq->tx_free_thresh)
-+		ci_tx_free_bufs_vec(txq, ci_tx_desc_done_simple, true);
-+
-+	nb_commit = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts << 1);
-+	nb_commit &= 0xFFFE;
-+	if (unlikely(nb_commit == 0))
-+		return 0;
-+
-+	nb_pkts = nb_commit >> 1;
-+	tx_id = txq->tx_tail;
-+	txdp = &txq->ci_tx_ring[tx_id];
-+	txep = (void *)txq->sw_ring;
-+	txep += (tx_id >> 1);
-+
-+	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_commit);
-+	n = (uint16_t)(txq->nb_tx_desc - tx_id);
-+
-+	if (n != 0 && nb_commit >= n) {
-+		nb_mbuf = n >> 1;
-+		ci_tx_backlog_entry_vec(txep, tx_pkts, nb_mbuf);
-+
-+		ci_vtx_ctx_avx2(txdp, tx_pkts, nb_mbuf - 1, flags, offload,
-+				single_vlan_pos, qinq_outer_pos, lldp_check);
-+		tx_pkts += (nb_mbuf - 1);
-+		txdp += (n - 2);
-+		ci_vtx1_ctx_avx2(txdp, *tx_pkts++, rs, offload,
-+				single_vlan_pos, qinq_outer_pos, lldp_check);
-+
-+		nb_commit = (uint16_t)(nb_commit - n);
-+
-+		txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
-+		tx_id = 0;
-+		/* avoid reach the end of ring */
-+		txdp = txq->ci_tx_ring;
-+		txep = (void *)txq->sw_ring;
-+	}
-+
-+	nb_mbuf = nb_commit >> 1;
-+	ci_tx_backlog_entry_vec(txep, tx_pkts, nb_mbuf);
-+
-+	ci_vtx_ctx_avx2(txdp, tx_pkts, nb_mbuf, flags, offload,
-+			single_vlan_pos, qinq_outer_pos, lldp_check);
-+	tx_id = (uint16_t)(tx_id + nb_commit);
-+
-+	if (tx_id > txq->tx_next_rs) {
-+		txq->ci_tx_ring[txq->tx_next_rs].cmd_type_offset_bsz |=
-+			rte_cpu_to_le_64(((uint64_t)CI_TX_DESC_CMD_RS) << CI_TXD_QW1_CMD_S);
-+		txq->tx_next_rs = (uint16_t)(txq->tx_next_rs + txq->tx_rs_thresh);
-+	}
-+
-+	txq->tx_tail = tx_id;
-+
-+	ci_tx_qtx_tail_write(txq, tx_id);
-+	return nb_pkts;
-+}
-+
- #endif /* __AVX2__ */
- 
- #ifdef __AVX512VL__
-@@ -642,6 +710,74 @@ ci_xmit_fixed_burst_vec_avx512(struct ci_tx_queue *txq, struct rte_mbuf **tx_pkt
- 	return nb_pkts;
- }
- 
-+static __rte_always_inline uint16_t
-+ci_xmit_fixed_burst_vec_ctx_avx512(struct ci_tx_queue *txq, struct rte_mbuf **tx_pkts,
-+		uint16_t nb_pkts, bool offload,
-+		enum ci_l2tag_pos single_vlan_pos, enum ci_l2tag_pos qinq_outer_pos,
-+		ci_tx_ctx_lldp_fn lldp_check)
-+{
-+	volatile struct ci_tx_desc *txdp;
-+	struct ci_tx_entry_vec *txep;
-+	uint16_t n, nb_commit, nb_mbuf, tx_id;
-+	uint64_t flags = CI_TX_DESC_CMD_DEFAULT;
-+	uint64_t rs = CI_TX_DESC_CMD_RS | flags;
-+
-+	if (txq->nb_tx_free < txq->tx_free_thresh)
-+		ci_tx_free_bufs_vec(txq, ci_tx_desc_done_simple, true);
-+
-+	nb_commit = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts << 1);
-+	nb_commit &= 0xFFFE;
-+	if (unlikely(nb_commit == 0))
-+		return 0;
-+
-+	nb_pkts = nb_commit >> 1;
-+	tx_id = txq->tx_tail;
-+	txdp = &txq->ci_tx_ring[tx_id];
-+	txep = (void *)txq->sw_ring;
-+	txep += (tx_id >> 1);
-+
-+	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_commit);
-+	n = (uint16_t)(txq->nb_tx_desc - tx_id);
-+
-+	if (n != 0 && nb_commit >= n) {
-+		nb_mbuf = n >> 1;
-+		ci_tx_backlog_entry_vec(txep, tx_pkts, nb_mbuf);
-+
-+		ci_vtx_ctx_avx512(txdp, tx_pkts, nb_mbuf - 1, flags, offload,
-+				single_vlan_pos, qinq_outer_pos, lldp_check);
-+		tx_pkts += (nb_mbuf - 1);
-+		txdp += (n - 2);
-+		ci_vtx1_ctx_avx512(txdp, *tx_pkts++, rs, offload,
-+				single_vlan_pos, qinq_outer_pos, lldp_check);
-+
-+		nb_commit = (uint16_t)(nb_commit - n);
-+
-+		txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
-+		tx_id = 0;
-+		/* avoid reach the end of ring */
-+		txdp = txq->ci_tx_ring;
-+		txep = (void *)txq->sw_ring;
-+	}
-+
-+	nb_mbuf = nb_commit >> 1;
-+	ci_tx_backlog_entry_vec(txep, tx_pkts, nb_mbuf);
-+
-+	ci_vtx_ctx_avx512(txdp, tx_pkts, nb_mbuf, flags, offload,
-+			single_vlan_pos, qinq_outer_pos, lldp_check);
-+	tx_id = (uint16_t)(tx_id + nb_commit);
-+
-+	if (tx_id > txq->tx_next_rs) {
-+		txq->ci_tx_ring[txq->tx_next_rs].cmd_type_offset_bsz |=
-+			rte_cpu_to_le_64(((uint64_t)CI_TX_DESC_CMD_RS) << CI_TXD_QW1_CMD_S);
-+		txq->tx_next_rs = (uint16_t)(txq->tx_next_rs + txq->tx_rs_thresh);
-+	}
-+
-+	txq->tx_tail = tx_id;
-+
-+	ci_tx_qtx_tail_write(txq, tx_id);
-+	return nb_pkts;
-+}
-+
- #endif /* __AVX512VL__ */
- 
- #endif /* _COMMON_INTEL_TX_VEC_X86_H_ */
-diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
-index 1289581038..833d553343 100644
---- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
-@@ -1626,92 +1626,24 @@ iavf_tx_ctx_lldp_check(struct rte_mbuf *pkt, uint64_t high_ctx_qw)
- }
- 
- static __rte_always_inline uint16_t
--iavf_xmit_fixed_burst_vec_avx2_ctx(void *tx_queue, struct rte_mbuf **tx_pkts,
--				 uint16_t nb_pkts, bool offload)
-+iavf_xmit_pkts_vec_avx2_ctx_cmn(void *tx_queue, struct rte_mbuf **tx_pkts,
-+				  uint16_t nb_pkts, bool offload)
+ static __rte_always_inline void
+@@ -411,6 +411,11 @@ ci_txq_release_all_mbufs(struct ci_tx_queue *txq, bool use_ctx)
+  *   Number of available paths in the infos array
+  * @param default_path
+  *   Index of the default path to use if no suitable path is found
++ * @param force_ctx
++ *   If true, only paths that support context descriptors may be selected.
++ *   Use this for offloads that require a context descriptor but cannot be
++ *   discovered purely from req_features->tx_offloads (e.g. a driver-specific
++ *   devarg, or a runtime/hardware-negotiated tag placement).
+  *
+  * @return
+  *   The packet burst function index that best matches the requested features,
+@@ -420,10 +425,12 @@ static inline int
+ ci_tx_path_select(const struct ci_tx_path_features *req_features,
+ 			const struct ci_tx_path_info *infos,
+ 			size_t num_paths,
+-			int default_path)
++			int default_path,
++			bool force_ctx)
  {
-+	uint16_t nb_tx = 0;
- 	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
--	volatile struct ci_tx_desc *txdp;
--	struct ci_tx_entry_vec *txep;
--	uint16_t n, nb_commit, nb_mbuf, tx_id;
--	/* bit2 is reserved and must be set to 1 according to Spec */
--	uint64_t flags = IAVF_TX_DESC_CMD_EOP | IAVF_TX_DESC_CMD_ICRC;
--	uint64_t rs = IAVF_TX_DESC_CMD_RS | flags;
- 	ci_tx_ctx_lldp_fn lldp_check = txq->lldp_enabled ? iavf_tx_ctx_lldp_check : NULL;
- 	/* vlan_flag gives both the single-VLAN and the QinQ outer tag position */
- 	enum ci_l2tag_pos vlan_pos = (txq->vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG1) ?
- 			CI_TAG_IN_DATA_DESC : CI_TAG_IN_CTX_DESC;
+ 	int idx = default_path;
+ 	const struct ci_tx_path_features *chosen_path_features = NULL;
++	bool chosen_supports_ctx = false;
  
--	if (txq->nb_tx_free < txq->tx_free_thresh)
--		ci_tx_free_bufs_vec(txq, iavf_tx_desc_done, true);
--
--	nb_commit = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts << 1);
--	nb_commit &= 0xFFFE;
--	if (unlikely(nb_commit == 0))
--		return 0;
--
--	nb_pkts = nb_commit >> 1;
--	tx_id = txq->tx_tail;
--	txdp = &txq->ci_tx_ring[tx_id];
--	txep = (void *)txq->sw_ring;
--	txep += (tx_id >> 1);
--
--	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_commit);
--	n = (uint16_t)(txq->nb_tx_desc - tx_id);
--
--	if (n != 0 && nb_commit >= n) {
--		nb_mbuf = n >> 1;
--		ci_tx_backlog_entry_vec(txep, tx_pkts, nb_mbuf);
--
--		ci_vtx_ctx_avx2(txdp, tx_pkts, nb_mbuf - 1, flags, offload,
--				vlan_pos, vlan_pos, lldp_check);
--		tx_pkts += (nb_mbuf - 1);
--		txdp += (n - 2);
--		ci_vtx1_ctx_avx2(txdp, *tx_pkts++, rs, offload, vlan_pos, vlan_pos, lldp_check);
--
--		nb_commit = (uint16_t)(nb_commit - n);
--
--		txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
--		tx_id = 0;
--		/* avoid reach the end of ring */
--		txdp = txq->ci_tx_ring;
--		txep = (void *)txq->sw_ring;
--	}
--
--	nb_mbuf = nb_commit >> 1;
--	ci_tx_backlog_entry_vec(txep, tx_pkts, nb_mbuf);
--
--	ci_vtx_ctx_avx2(txdp, tx_pkts, nb_mbuf, flags, offload, vlan_pos, vlan_pos, lldp_check);
--	tx_id = (uint16_t)(tx_id + nb_commit);
--
--	if (tx_id > txq->tx_next_rs) {
--		txq->ci_tx_ring[txq->tx_next_rs].cmd_type_offset_bsz |=
--			rte_cpu_to_le_64(((uint64_t)IAVF_TX_DESC_CMD_RS) <<
--					 IAVF_TXD_QW1_CMD_SHIFT);
--		txq->tx_next_rs =
--			(uint16_t)(txq->tx_next_rs + txq->tx_rs_thresh);
--	}
--
--	txq->tx_tail = tx_id;
--
--	IAVF_PCI_REG_WC_WRITE(txq->qtx_tail, txq->tx_tail);
--	return nb_pkts;
--}
--
--static __rte_always_inline uint16_t
--iavf_xmit_pkts_vec_avx2_ctx_cmn(void *tx_queue, struct rte_mbuf **tx_pkts,
--				  uint16_t nb_pkts, bool offload)
--{
--	uint16_t nb_tx = 0;
--	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
--
- 	while (nb_pkts) {
- 		uint16_t ret, num;
+ 	for (unsigned int i = 0; i < num_paths; i++) {
+ 		const struct ci_tx_path_features *path_features = &infos[i].features;
+@@ -440,8 +447,8 @@ ci_tx_path_select(const struct ci_tx_path_features *req_features,
+ 		if (path_features->simple_tx && !req_features->simple_tx)
+ 			continue;
  
- 		/* cross rs_thresh boundary is not allowed */
- 		num = (uint16_t)RTE_MIN(nb_pkts << 1, txq->tx_rs_thresh);
- 		num = num >> 1;
--		ret = iavf_xmit_fixed_burst_vec_avx2_ctx(tx_queue, &tx_pkts[nb_tx],
--						       num, offload);
-+		ret = ci_xmit_fixed_burst_vec_ctx_avx2(txq, &tx_pkts[nb_tx], num,
-+				offload, vlan_pos, vlan_pos, lldp_check);
- 		nb_tx += ret;
- 		nb_pkts -= ret;
- 		if (ret < num)
-diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
-index 9f773f226b..c5aa860f81 100644
---- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
-@@ -1817,16 +1817,6 @@ iavf_recv_scattered_pkts_vec_avx512_flex_rxd_offload(void *rx_queue,
- 								true);
- }
+-		/* If a context descriptor is requested, ensure the path supports it. */
+-		if (!path_features->ctx_desc && req_features->ctx_desc)
++		/* If a context descriptor is required, ensure the path supports it. */
++		if (!infos[i].supports_ctx && force_ctx)
+ 			continue;
  
--static __rte_always_inline void
--tx_backlog_entry_avx512(struct ci_tx_entry_vec *txep,
--			struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
--{
--	int i;
+ 		/* If requested, ensure the path supports single queue TX. */
+@@ -462,22 +469,28 @@ ci_tx_path_select(const struct ci_tx_path_features *req_features,
+ 			/* Do not select paths with lower SIMD width than the chosen path. */
+ 			if (path_features->simd_width < chosen_path_features->simd_width)
+ 				continue;
+-			/* Do not select paths with more offloads enabled than the chosen path if
+-			 * the SIMD widths are the same.
++			/* The following tie-breaks only matter when SIMD widths are tied;
++			 * a strictly wider path is always preferred regardless of offload
++			 * count or ctx-descriptor use.
+ 			 */
+-			if (path_features->simd_width == chosen_path_features->simd_width &&
+-					rte_popcount32(path_features->tx_offloads) >
+-					rte_popcount32(chosen_path_features->tx_offloads))
+-				continue;
 -
--	for (i = 0; i < (int)nb_pkts; ++i)
--		txep[i].mbuf = tx_pkts[i];
--}
--
- #define IAVF_TX_LEN_MASK 0xAA
- #define IAVF_TX_OFF_MASK 0x55
+-			/* Don't use a context descriptor unless necessary */
+-			if (path_features->ctx_desc && !chosen_path_features->ctx_desc)
+-				continue;
++			if (path_features->simd_width == chosen_path_features->simd_width) {
++				/* Do not select paths with more offloads enabled than the
++				 * chosen path.
++				 */
++				if (rte_popcount32(path_features->tx_offloads) >
++						rte_popcount32(chosen_path_features->tx_offloads))
++					continue;
++
++				/* Don't use a context descriptor unless necessary */
++				if (infos[i].supports_ctx && !chosen_supports_ctx)
++					continue;
++			}
+ 		}
  
-@@ -1838,77 +1828,6 @@ iavf_tx_ctx_lldp_check(struct rte_mbuf *pkt, uint64_t high_ctx_qw)
- 	return high_ctx_qw;
- }
+ 		/* Finally, select the path since it has met all the requirements. */
+ 		idx = i;
+ 		chosen_path_features = &infos[idx].features;
++		chosen_supports_ctx = infos[idx].supports_ctx;
+ 	}
  
--static __rte_always_inline uint16_t
--iavf_xmit_fixed_burst_vec_avx512_ctx(void *tx_queue, struct rte_mbuf **tx_pkts,
--				 uint16_t nb_pkts, bool offload)
--{
--	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
--	volatile struct ci_tx_desc *txdp;
--	struct ci_tx_entry_vec *txep;
--	uint16_t n, nb_commit, nb_mbuf, tx_id;
--	/* bit2 is reserved and must be set to 1 according to Spec */
--	uint64_t flags = CI_TX_DESC_CMD_EOP | CI_TX_DESC_CMD_ICRC;
--	uint64_t rs = CI_TX_DESC_CMD_RS | flags;
--	ci_tx_ctx_lldp_fn lldp_check = txq->lldp_enabled ? iavf_tx_ctx_lldp_check : NULL;
--	/* vlan_flag gives both the single-VLAN and the QinQ outer tag position */
--	enum ci_l2tag_pos vlan_pos = (txq->vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG1) ?
--			CI_TAG_IN_DATA_DESC : CI_TAG_IN_CTX_DESC;
--
--	if (txq->nb_tx_free < txq->tx_free_thresh)
--		ci_tx_free_bufs_vec(txq, iavf_tx_desc_done, true);
--
--	nb_commit = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts << 1);
--	nb_commit &= 0xFFFE;
--	if (unlikely(nb_commit == 0))
--		return 0;
--
--	nb_pkts = nb_commit >> 1;
--	tx_id = txq->tx_tail;
--	txdp = &txq->ci_tx_ring[tx_id];
--	txep = (void *)txq->sw_ring;
--	txep += (tx_id >> 1);
--
--	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_commit);
--	n = (uint16_t)(txq->nb_tx_desc - tx_id);
--
--	if (n != 0 && nb_commit >= n) {
--		nb_mbuf = n >> 1;
--		tx_backlog_entry_avx512(txep, tx_pkts, nb_mbuf);
--
--		ci_vtx_ctx_avx512(txdp, tx_pkts, nb_mbuf - 1, flags, offload,
--				vlan_pos, vlan_pos, lldp_check);
--		tx_pkts += (nb_mbuf - 1);
--		txdp += (n - 2);
--		ci_vtx1_ctx_avx512(txdp, *tx_pkts++, rs, offload, vlan_pos, vlan_pos, lldp_check);
--
--		nb_commit = (uint16_t)(nb_commit - n);
--
--		txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
--		tx_id = 0;
--		/* avoid reach the end of ring */
--		txdp = txq->ci_tx_ring;
--		txep = (void *)txq->sw_ring;
--	}
--
--	nb_mbuf = nb_commit >> 1;
--	tx_backlog_entry_avx512(txep, tx_pkts, nb_mbuf);
--
--	ci_vtx_ctx_avx512(txdp, tx_pkts, nb_mbuf, flags, offload, vlan_pos, vlan_pos, lldp_check);
--	tx_id = (uint16_t)(tx_id + nb_commit);
--
--	if (tx_id > txq->tx_next_rs) {
--		txq->ci_tx_ring[txq->tx_next_rs].cmd_type_offset_bsz |=
--			rte_cpu_to_le_64(((uint64_t)CI_TX_DESC_CMD_RS) << CI_TXD_QW1_CMD_S);
--		txq->tx_next_rs =
--			(uint16_t)(txq->tx_next_rs + txq->tx_rs_thresh);
--	}
--
--	txq->tx_tail = tx_id;
--
--	IAVF_PCI_REG_WC_WRITE(txq->qtx_tail, txq->tx_tail);
--	return nb_pkts;
--}
--
- static __rte_always_inline uint16_t
- iavf_xmit_pkts_vec_avx512_cmn(void *tx_queue, struct rte_mbuf **tx_pkts,
- 			      uint16_t nb_pkts, bool offload)
-@@ -1955,6 +1874,10 @@ iavf_xmit_pkts_vec_avx512_ctx_cmn(void *tx_queue, struct rte_mbuf **tx_pkts,
- {
- 	uint16_t nb_tx = 0;
- 	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
-+	ci_tx_ctx_lldp_fn lldp_check = txq->lldp_enabled ? iavf_tx_ctx_lldp_check : NULL;
-+	/* vlan_flag gives both the single-VLAN and the QinQ outer tag position */
-+	enum ci_l2tag_pos vlan_pos = (txq->vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG1) ?
-+			CI_TAG_IN_DATA_DESC : CI_TAG_IN_CTX_DESC;
+ 	return idx;
+diff --git a/drivers/net/intel/cpfl/cpfl_rxtx.c b/drivers/net/intel/cpfl/cpfl_rxtx.c
+index 2f1641ea76..aba3a5e916 100644
+--- a/drivers/net/intel/cpfl/cpfl_rxtx.c
++++ b/drivers/net/intel/cpfl/cpfl_rxtx.c
+@@ -1542,7 +1542,8 @@ cpfl_set_tx_function(struct rte_eth_dev *dev)
+ 	ad->tx_func_type = ci_tx_path_select(&req_features,
+ 					&idpf_tx_path_infos[0],
+ 					IDPF_TX_MAX,
+-					IDPF_TX_DEFAULT);
++					IDPF_TX_DEFAULT,
++					false);
  
- 	while (nb_pkts) {
- 		uint16_t ret, num;
-@@ -1962,8 +1885,8 @@ iavf_xmit_pkts_vec_avx512_ctx_cmn(void *tx_queue, struct rte_mbuf **tx_pkts,
- 		/* cross rs_thresh boundary is not allowed */
- 		num = (uint16_t)RTE_MIN(nb_pkts << 1, txq->tx_rs_thresh);
- 		num = num >> 1;
--		ret = iavf_xmit_fixed_burst_vec_avx512_ctx(tx_queue, &tx_pkts[nb_tx],
--						       num, offload);
-+		ret = ci_xmit_fixed_burst_vec_ctx_avx512(txq, &tx_pkts[nb_tx], num,
-+				offload, vlan_pos, vlan_pos, lldp_check);
- 		nb_tx += ret;
- 		nb_pkts -= ret;
- 		if (ret < num)
+ 	/* Set use_vec_entry for single queue mode - only IDPF_TX_SINGLEQ uses regular entries */
+ 	if (vport->txq_model == VIRTCHNL2_QUEUE_MODEL_SINGLE) {
+diff --git a/drivers/net/intel/i40e/i40e_rxtx.c b/drivers/net/intel/i40e/i40e_rxtx.c
+index e2fffdb70a..f289d26790 100644
+--- a/drivers/net/intel/i40e/i40e_rxtx.c
++++ b/drivers/net/intel/i40e/i40e_rxtx.c
+@@ -3120,7 +3120,7 @@ i40e_set_tx_function(struct rte_eth_dev *dev)
+ 	}
+ 
+ 	ad->tx_func_type = ci_tx_path_select(&req_features, &i40e_tx_path_infos[0],
+-						RTE_DIM(i40e_tx_path_infos), I40E_TX_DEFAULT);
++			RTE_DIM(i40e_tx_path_infos), I40E_TX_DEFAULT, false);
+ 
+ out:
+ 	dev->tx_pkt_burst = mbuf_check ? i40e_xmit_pkts_check :
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
+index 849fc33dac..3be8b00bbd 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.c
++++ b/drivers/net/intel/iavf/iavf_rxtx.c
+@@ -3611,9 +3611,9 @@ static const struct ci_tx_path_info iavf_tx_path_infos[] = {
+ 		.pkt_burst = iavf_xmit_pkts,
+ 		.info = "Scalar",
+ 		.features = {
+-			.tx_offloads = IAVF_TX_SCALAR_OFFLOADS,
+-			.ctx_desc = true
+-		}
++			.tx_offloads = IAVF_TX_SCALAR_OFFLOADS
++		},
++		.supports_ctx = true
+ 	},
+ #ifdef RTE_ARCH_X86
+ 	[IAVF_TX_AVX2] = {
+@@ -3637,18 +3637,18 @@ static const struct ci_tx_path_info iavf_tx_path_infos[] = {
+ 		.info = "Vector AVX2 Ctx",
+ 		.features = {
+ 			.tx_offloads = IAVF_TX_VECTOR_OFFLOADS,
+-			.simd_width = RTE_VECT_SIMD_256,
+-			.ctx_desc = true
+-		}
++			.simd_width = RTE_VECT_SIMD_256
++		},
++		.supports_ctx = true
+ 	},
+ 	[IAVF_TX_AVX2_CTX_OFFLOAD] = {
+ 		.pkt_burst = iavf_xmit_pkts_vec_avx2_ctx_offload,
+ 		.info = "Vector AVX2 Ctx Offload",
+ 		.features = {
+ 			.tx_offloads = IAVF_TX_VECTOR_CTX_OFFLOAD_OFFLOADS,
+-			.simd_width = RTE_VECT_SIMD_256,
+-			.ctx_desc = true
+-		}
++			.simd_width = RTE_VECT_SIMD_256
++		},
++		.supports_ctx = true
+ 	},
+ #ifdef CC_AVX512_SUPPORT
+ 	[IAVF_TX_AVX512] = {
+@@ -3672,18 +3672,18 @@ static const struct ci_tx_path_info iavf_tx_path_infos[] = {
+ 		.info = "Vector AVX512 Ctx",
+ 		.features = {
+ 			.tx_offloads = IAVF_TX_VECTOR_OFFLOADS,
+-			.simd_width = RTE_VECT_SIMD_512,
+-			.ctx_desc = true
+-		}
++			.simd_width = RTE_VECT_SIMD_512
++		},
++		.supports_ctx = true
+ 	},
+ 	[IAVF_TX_AVX512_CTX_OFFLOAD] = {
+ 		.pkt_burst = iavf_xmit_pkts_vec_avx512_ctx_offload,
+ 		.info = "Vector AVX512 Ctx Offload",
+ 		.features = {
+ 			.tx_offloads = IAVF_TX_VECTOR_CTX_OFFLOAD_OFFLOADS,
+-			.simd_width = RTE_VECT_SIMD_512,
+-			.ctx_desc = true
+-		}
++			.simd_width = RTE_VECT_SIMD_512
++		},
++		.supports_ctx = true
+ 	},
+ #endif
+ #elif defined(RTE_ARCH_ARM64)
+@@ -3918,12 +3918,13 @@ iavf_set_tx_function(struct rte_eth_dev *dev)
+ #if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM64)
+ 	struct ci_tx_queue *txq;
+ 	int i;
+-	const struct ci_tx_path_features *selected_features;
++	const struct ci_tx_path_info *selected_info;
+ #endif
+ 	struct ci_tx_path_features req_features = {
+ 		.tx_offloads = dev->data->dev_conf.txmode.offloads,
+ 		.simd_width = RTE_VECT_SIMD_DISABLED,
+ 	};
++	bool force_ctx = false;
+ 
+ 	/* If the device has started the function has already been selected. */
+ 	if (dev->data->dev_started)
+@@ -3934,7 +3935,7 @@ iavf_set_tx_function(struct rte_eth_dev *dev)
+ 		req_features.simd_width = iavf_get_max_simd_bitwidth();
+ 
+ 	if (adapter->devargs.enable_lldp)
+-		req_features.ctx_desc = true;
++		force_ctx = true;
+ 
+ 	for (i = 0; i < dev->data->nb_tx_queues; i++) {
+ 		txq = dev->data->tx_queues[i];
+@@ -3942,24 +3943,25 @@ iavf_set_tx_function(struct rte_eth_dev *dev)
+ 			continue;
+ 		if (txq->offloads & RTE_ETH_TX_OFFLOAD_VLAN_INSERT &&
+ 				txq->vlan_flag == IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2)
+-			req_features.ctx_desc = true;
++			force_ctx = true;
+ 	}
+ #endif
+ 
+ 	adapter->tx_func_type = ci_tx_path_select(&req_features,
+ 						&iavf_tx_path_infos[0],
+ 						RTE_DIM(iavf_tx_path_infos),
+-						IAVF_TX_DEFAULT);
++						IAVF_TX_DEFAULT,
++						force_ctx);
+ 
+ out:
+ #if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM64)
+-	selected_features = &iavf_tx_path_infos[adapter->tx_func_type].features;
++	selected_info = &iavf_tx_path_infos[adapter->tx_func_type];
+ 	for (i = 0; i < dev->data->nb_tx_queues; i++) {
+ 		txq = dev->data->tx_queues[i];
+ 		if (!txq)
+ 			continue;
+-		txq->use_ctx = selected_features->ctx_desc;
+-		txq->use_vec_entry = selected_features->simd_width >= RTE_VECT_SIMD_128;
++		txq->use_ctx = selected_info->supports_ctx;
++		txq->use_vec_entry = selected_info->features.simd_width >= RTE_VECT_SIMD_128;
+ 	}
+ #endif
+ 
+diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
+index 3569ffcf82..313cbd25d5 100644
+--- a/drivers/net/intel/ice/ice_rxtx.c
++++ b/drivers/net/intel/ice/ice_rxtx.c
+@@ -3777,7 +3777,8 @@ ice_set_tx_function(struct rte_eth_dev *dev)
+ 	ad->tx_func_type = ci_tx_path_select(&req_features,
+ 						&ice_tx_path_infos[0],
+ 						RTE_DIM(ice_tx_path_infos),
+-						ICE_TX_DEFAULT);
++						ICE_TX_DEFAULT,
++						false);
+ 
+ out:
+ #if defined(RTE_ARCH_X86)
+diff --git a/drivers/net/intel/idpf/idpf_rxtx.c b/drivers/net/intel/idpf/idpf_rxtx.c
+index bc3f9a0798..077a92a8a9 100644
+--- a/drivers/net/intel/idpf/idpf_rxtx.c
++++ b/drivers/net/intel/idpf/idpf_rxtx.c
+@@ -887,7 +887,8 @@ idpf_set_tx_function(struct rte_eth_dev *dev)
+ 	ad->tx_func_type = ci_tx_path_select(&req_features,
+ 					&idpf_tx_path_infos[0],
+ 					IDPF_TX_MAX,
+-					IDPF_TX_DEFAULT);
++					IDPF_TX_DEFAULT,
++					false);
+ 
+ 	/* Set use_vec_entry for single queue mode - only IDPF_TX_SINGLEQ uses regular entries */
+ 	if (vport->txq_model == VIRTCHNL2_QUEUE_MODEL_SINGLE) {
 -- 
 2.53.0
 
