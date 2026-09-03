@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF11C624D6
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Sep 2026 01:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27006C624D6
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Sep 2026 01:55:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 64FD64161A;
-	Thu,  3 Sep 2026 03:54:55 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 730CB410F6;
+	Thu,  3 Sep 2026 03:55:07 +0200 (CEST)
 Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id B376E40374
- for <dev@dpdk.org>; Thu,  3 Sep 2026 03:54:52 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id D569B42707
+ for <dev@dpdk.org>; Thu,  3 Sep 2026 03:55:04 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-05 (Coremail) with SMTP id zQCowABHsDpq05hqQRJABw--.23955S2;
- Thu, 03 Sep 2026 09:54:51 +0800 (CST)
+ by APP-05 (Coremail) with SMTP id zQCowABHsDp205hqFxNABw--.23957S2;
+ Thu, 03 Sep 2026 09:55:02 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v10 10/48] net/sxe2: clear security context pointer on uninit
-Date: Thu,  3 Sep 2026 09:54:50 +0800
-Message-ID: <20260903015450.161909-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v10 12/48] net/sxe2: clean up duplicate function declarations
+Date: Thu,  3 Sep 2026 09:55:02 +0800
+Message-ID: <20260903015502.161937-1-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260902021650.83354-1-liujie5@linkdatatechnology.com>
 References: <20260902021650.83354-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowABHsDpq05hqQRJABw--.23955S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7JrWDAr4rWF43Ar1fKF1rZwb_yoWfWFc_Gr
- Z7ArW8Ar1UAa45KrW2kFWfZFsYgryrWa1IgasrKFy3Za13ur1xWr9rXrZ7t3W7Gw13GrZr
- KFnFgFy8KasrGjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
- 9fnUUIcSsGvfJTRUUUb2AFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
- 6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
- A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
- Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr
- 1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
- jxv20xvE14v26r1q6rW5McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
- 1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40Ew7xC0wCF
- 04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r
- 18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vI
- r41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr
- 1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvE
- x4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JU4v38UUUUU=
+X-CM-TRANSID: zQCowABHsDp205hqFxNABw--.23957S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAFW7AF1UAr48XrWfAry7ZFb_yoW5tF13pF
+ 48Xry5AFWYqF18ur4UJa1fuFyagrW8tryj9FZ8W34FkayDZFZFvFy5tF1Fy3WrC34DGwna
+ yanrXa1DG3yrXrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUkS14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+ rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+ 1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+ 6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
+ 4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+ I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+ 4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAKzVCY07xG64k0F24l
+ 42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJV
+ WUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAK
+ I48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F
+ 4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY
+ 6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU8KsjUUUUU
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -58,29 +58,77 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-sxe2_security_uinit() frees the security session but leaves
-dev->security_ctx pointing at the freed memory. Set
-dev->security_ctx to NULL after releasing the security context
-so a later access does not dereference a dangling pointer.
+Remove duplicate function declarations from the sxe2 driver headers:
+- sxe2_drv_promisc_config, sxe2_drv_vsi_info_get and
+  sxe2_drv_rxq_mapping_set in sxe2_cmd_chnl.h
+- sxe2_dev_pci_seg_unmap in sxe2_ethdev.h
+- sxe2_rx_pkts_scattered in sxe2_txrx_poll.h
 
 Cc: stephen@networkplumber.org
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/sxe2_security.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/sxe2/sxe2_cmd_chnl.h  | 6 ------
+ drivers/net/sxe2/sxe2_ethdev.h    | 2 --
+ drivers/net/sxe2/sxe2_txrx_poll.h | 2 --
+ 3 files changed, 10 deletions(-)
 
-diff --git a/drivers/net/sxe2/sxe2_security.c b/drivers/net/sxe2/sxe2_security.c
-index bc59d1b880..8f31067942 100644
---- a/drivers/net/sxe2/sxe2_security.c
-+++ b/drivers/net/sxe2/sxe2_security.c
-@@ -326,6 +326,7 @@ void sxe2_security_uinit(struct rte_eth_dev *dev)
- 	if (sctx != NULL) {
- 		rte_free(sctx);
- 		sctx = NULL;
-+		dev->security_ctx = NULL;
- 	}
+diff --git a/drivers/net/sxe2/sxe2_cmd_chnl.h b/drivers/net/sxe2/sxe2_cmd_chnl.h
+index d63caad526..294ac15db4 100644
+--- a/drivers/net/sxe2/sxe2_cmd_chnl.h
++++ b/drivers/net/sxe2/sxe2_cmd_chnl.h
+@@ -65,8 +65,6 @@ int32_t sxe2_drv_ipsec_rxsa_delete(struct sxe2_adapter *adapter,
+ int32_t sxe2_drv_ipsec_txsa_delete(struct sxe2_adapter *adapter,
+ 			       uint16_t sa_id);
  
- 	sxe2_ipsec_uinit(adapter);
+-int32_t sxe2_drv_promisc_config(struct sxe2_adapter *adapter, bool set);
+-
+ int32_t sxe2_drv_udp_tunnel_add(struct sxe2_adapter *adapter,
+ 			    enum sxe2_udp_tunnel_protocol tunnel_proto,
+ 			    uint16_t udp_port);
+@@ -84,8 +82,6 @@ int32_t sxe2_drv_get_udp_tunnel_port(struct sxe2_adapter *adapter,
+ 
+ int32_t sxe2_drv_vsi_info_get(struct sxe2_adapter *adapter, struct sxe2_vsi *vsi);
+ 
+-int32_t sxe2_drv_vsi_info_get(struct sxe2_adapter *adapter, struct sxe2_vsi *vsi);
+-
+ int32_t sxe2_drv_mac_link_status_get(struct sxe2_adapter *adapter);
+ 
+ int32_t sxe2_drv_get_mac_stats(struct sxe2_adapter *adapter);
+@@ -110,8 +106,6 @@ int32_t sxe2_drv_mapping_reset(struct rte_eth_dev *eth_dev);
+ 
+ int32_t sxe2_drv_mapping_stats_info_clear(struct rte_eth_dev *eth_dev);
+ 
+-int32_t sxe2_drv_rxq_mapping_set(struct rte_eth_dev *eth_dev, uint16_t queue_id, uint8_t pool_idx);
+-
+ int32_t sxe2_drv_allmulti_config(struct sxe2_adapter *adapter, bool set);
+ 
+ int32_t sxe2_drv_uc_config(struct sxe2_adapter *adapter, struct rte_ether_addr *addr, bool add);
+diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
+index 158198d74b..1409be74d3 100644
+--- a/drivers/net/sxe2/sxe2_ethdev.h
++++ b/drivers/net/sxe2/sxe2_ethdev.h
+@@ -385,8 +385,6 @@ void sxe2_dev_pci_seg_unmap(struct sxe2_adapter *adapter, uint32_t res_type);
+ 
+ int32_t sxe2_dev_pci_map_init(struct rte_eth_dev *dev);
+ 
+-void sxe2_dev_pci_seg_unmap(struct sxe2_adapter *adapter, uint32_t res_type);
+-
+ int32_t sxe2_udp_tunnel_port_del_common(struct sxe2_adapter *ad,
+ 		enum sxe2_udp_tunnel_protocol tunnel_proto, uint16_t udp_port);
+ 
+diff --git a/drivers/net/sxe2/sxe2_txrx_poll.h b/drivers/net/sxe2/sxe2_txrx_poll.h
+index 708e3839d7..bfa099c097 100644
+--- a/drivers/net/sxe2/sxe2_txrx_poll.h
++++ b/drivers/net/sxe2/sxe2_txrx_poll.h
+@@ -13,8 +13,6 @@ uint16_t sxe2_tx_pkts_simple(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t
+ 
+ uint16_t sxe2_rx_pkts_scattered(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
+ 
+-uint16_t sxe2_rx_pkts_scattered(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
+-
+ uint16_t sxe2_rx_pkts_scattered_split(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts);
+ 
+ #endif /* SXE2_TXRX_POLL_H */
 -- 
 2.52.0
 
