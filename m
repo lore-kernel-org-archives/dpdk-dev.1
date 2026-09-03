@@ -2,33 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD08C624A4
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Sep 2026 13:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E026C624A4
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Sep 2026 13:54:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DC2C8427B9;
-	Thu,  3 Sep 2026 15:54:01 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id F125A427C5;
+	Thu,  3 Sep 2026 15:54:02 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id E7B4D402D8;
- Thu,  3 Sep 2026 15:53:59 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 2FA574279D;
+ Thu,  3 Sep 2026 15:54:01 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C403F1A0054;
- Thu,  3 Sep 2026 15:53:59 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 07FB31A0054;
+ Thu,  3 Sep 2026 15:54:01 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8E82F1A0035;
- Thu,  3 Sep 2026 15:53:59 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C63821A0035;
+ Thu,  3 Sep 2026 15:54:00 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 106FE180006C;
- Thu,  3 Sep 2026 21:53:57 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 454ED18000BA;
+ Thu,  3 Sep 2026 21:53:59 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
 Cc: stable@dpdk.org,
 	Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH 01/45] crypto/dpaa2_sec: fix buffer overflow in GCM decrypt
-Date: Thu,  3 Sep 2026 19:23:09 +0530
-Message-ID: <20260903135353.3358303-2-prashant.gupta_3@nxp.com>
+Subject: [PATCH 02/45] crypto/dpaa2_sec: fix FLE pool leak on sec FD build
+ failure
+Date: Thu,  3 Sep 2026 19:23:10 +0530
+Message-ID: <20260903135353.3358303-3-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260903135353.3358303-1-prashant.gupta_3@nxp.com>
 References: <20260903135353.3358303-1-prashant.gupta_3@nxp.com>
@@ -50,64 +51,49 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Gagandeep Singh <g.singh@nxp.com>
 
-In build_authenc_gcm_fd, when both AAD (auth_only_len > 0) and decrypt
-direction are active, the SGE layout occupies 8 entries plus 16 bytes of
-old_icv storage at index 8. The FLE pool buffer was only 256 bytes
-(8 x 32), causing old_icv to be written one entry past the end of the
-allocated buffer. The resulting virtual address was not mapped by the
-IOMMU, so DPAA2_VADDR_TO_IOVA returned 0 and the SEC engine received
-iova=0x00000000 as the ICV buffer address, triggering an SMMU
-translation fault (FSR=0x402 TF).
+When build_sec_fd fails at index loop inside the enqueue burst loops,
+the previously built FD entries (indices 0..loop-1) were never freed.
+The cleanup loop iterated in the wrong direction, starting at the
+failed index and going up to frames_to_send, which are entries that
+were never built. This caused silent FLE pool exhaustion, after which
+every subsequent build_sec_fd returned -ENOMEM, enqueue_burst
+returned 0 indefinitely, and the crypto-perf test hung.
 
-Additionally, the upfront bpid/IVP initialization only covered sge+3,
-leaving sge+4 (the input data SGE when AAD is present) without a valid
-bpid or IVP assignment.
+Fix both dpaa2_sec_enqueue_burst and dpaa2_sec_enqueue_burst_ordered
+by clamping frames_to_send to loop + 1 and iterating from 0 to
+free all allocated FLE buffers including the failed entry.
 
-Increase FLE_POOL_BUF_SIZE from 256 to 288 (9 x 32 bytes) to
-accommodate the full layout, and extend the bpid/IVP initialization
-to cover sge+4 in both branches of build_authenc_gcm_fd.
-
-Fixes: 13273250eec5 ("crypto/dpaa2_sec: support AES-GCM and CTR")
+Fixes: 623326dded3a ("crypto/dpaa2_sec: introduce poll mode driver")
 Cc: stable@dpdk.org
 Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
- drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c | 2 ++
- drivers/crypto/dpaa2_sec/dpaa2_sec_priv.h   | 2 +-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c b/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
-index 3d980d096f..2a015a3d82 100644
+index 2a015a3d82..15152cc5a1 100644
 --- a/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
 +++ b/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
-@@ -569,6 +569,7 @@ build_authenc_gcm_fd(dpaa2_sec_session *sess,
- 		DPAA2_SET_FLE_BPID(sge + 1, bpid);
- 		DPAA2_SET_FLE_BPID(sge + 2, bpid);
- 		DPAA2_SET_FLE_BPID(sge + 3, bpid);
-+		DPAA2_SET_FLE_BPID(sge + 4, bpid);
- 	} else {
- 		DPAA2_SET_FD_IVP(fd);
- 		DPAA2_SET_FLE_IVP(fle);
-@@ -577,6 +578,7 @@ build_authenc_gcm_fd(dpaa2_sec_session *sess,
- 		DPAA2_SET_FLE_IVP((sge + 1));
- 		DPAA2_SET_FLE_IVP((sge + 2));
- 		DPAA2_SET_FLE_IVP((sge + 3));
-+		DPAA2_SET_FLE_IVP((sge + 4));
- 	}
- 
- 	/* Save the shared descriptor */
-diff --git a/drivers/crypto/dpaa2_sec/dpaa2_sec_priv.h b/drivers/crypto/dpaa2_sec/dpaa2_sec_priv.h
-index 755c8e9cc3..ff32f3d860 100644
---- a/drivers/crypto/dpaa2_sec/dpaa2_sec_priv.h
-+++ b/drivers/crypto/dpaa2_sec/dpaa2_sec_priv.h
-@@ -17,7 +17,7 @@ extern uint8_t cryptodev_driver_id;
- 
- /* FLE_POOL_NUM_BUFS is set as per the ipsec-secgw application */
- #define FLE_POOL_NUM_BUFS	32000
--#define FLE_POOL_BUF_SIZE	256
-+#define FLE_POOL_BUF_SIZE	288
- #define FLE_POOL_CACHE_SIZE	512
- #define FLE_SG_MEM_SIZE(num)	(FLE_POOL_BUF_SIZE + ((num) * 32))
- 
+@@ -1550,6 +1550,9 @@ dpaa2_sec_enqueue_burst(void *qp, struct rte_crypto_op **ops,
+ 			ret = build_sec_fd(*ops, &fd_arr[loop], bpid, dpaa2_qp);
+ 			if (ret) {
+ 				DPAA2_SEC_DP_DEBUG("FD build failed");
++				frames_to_send = loop + 1;
++				for (loop = 0; loop < frames_to_send; loop++)
++					free_fle(&fd_arr[loop], dpaa2_qp);
+ 				goto skip_tx;
+ 			}
+ 			ops++;
+@@ -1909,6 +1912,9 @@ dpaa2_sec_enqueue_burst_ordered(void *qp, struct rte_crypto_op **ops,
+ 			ret = build_sec_fd(*ops, &fd_arr[loop], bpid, dpaa2_qp);
+ 			if (ret) {
+ 				DPAA2_SEC_DP_DEBUG("FD build failed");
++				frames_to_send = loop + 1;
++				for (loop = 0; loop < frames_to_send; loop++)
++					free_fle(&fd_arr[loop], dpaa2_qp);
+ 				goto skip_tx;
+ 			}
+ 			ops++;
 -- 
 2.43.0
 
