@@ -2,47 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E593C61DD3
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Sep 2026 14:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 024F5C61DD3
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Sep 2026 14:38:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6E58F42D7A;
-	Thu,  3 Sep 2026 16:38:40 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8B57442D55;
+	Thu,  3 Sep 2026 16:38:42 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
- by mails.dpdk.org (Postfix) with ESMTP id 113E7402D8;
- Thu,  3 Sep 2026 16:38:37 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 2AF63427E8;
+ Thu,  3 Sep 2026 16:38:40 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1788446318; x=1819982318;
+ t=1788446320; x=1819982320;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=/0H5iR4mMRbe2/3CGO5wQUr1YK7wKIyWjP3teKLolF4=;
- b=nFjQUtmBzn021ti1jEMfighMaoWael5KOgLltq2CwyKGgmg/QVtWViff
- 1jGJNK6wpB9tFUheV0zNl+GpnNU6jfSqU2psoDQny10QsuwgXmCSj81if
- g7uB8roz3MoOe7kjOYOsNBm9DZJ0kaVSJ9iGpLIkI/ScGjvV2021+JuDD
- ep1ChDGn1tsyE3zoiAgJgjGAEShUgyCp6j7VsR1Nq0h8ZMPfn0fs9DeON
- ebk5lDSwPzLpxeFRSgtA/kbjoI3MIvVN25wTpmpx3yFBUSZCBPWbC++/s
- facGullOhyRjkrxP6LOOl5HhnnklQxIkWiTMUZgKXwMUEiodLpRtyRbU2 w==;
-X-CSE-ConnectionGUID: pwV+ORFzQJGBw2g0gWpD5g==
-X-CSE-MsgGUID: uAzwHigLQx+wZIqtmoGZ3g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11895"; a="87869774"
-X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; d="scan'208";a="87869774"
+ bh=rpa7lpEC3UXifb/8V5xvPE9jZA9+O77ZDIXpRCHAId8=;
+ b=Skzpz4hQlkKcVPtyPtdscWXwUEx5VxnF9BL2I8S0uk2a9brIdKlFHfeg
+ /ISS/kXf7esenPBZAga/cls3zQl8FBaLx7INvJERgVgCV+aDrUJkYNFzd
+ C4peBl6afytL811bY9QWSHPTiSwVfp8PgKDxmNG/pp78hxThxSy+Xhp4k
+ vPnUETLpiPTz3kyitwLqF1G1jnCA/Bcj9qCeNs85iN4u4XrhPoF5Q/1Bs
+ n6rcIdTK9+U9ftfyOSsjSOwoFA1ou2zreThK+2xPnLpMtzCNZUW4Ku+r1
+ 7WRb2GaN0xJDltdBrotpHjYS4APv2mYyaWoD1X6JROaogBzziE0op2qpN A==;
+X-CSE-ConnectionGUID: AoTQNVQvQvqPERcZiikafQ==
+X-CSE-MsgGUID: m7AfaEiHQsGt4GeFsh4R+Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11895"; a="87869780"
+X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; d="scan'208";a="87869780"
 Received: from orviesa005.jf.intel.com ([10.64.159.145])
  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 03 Sep 2026 07:38:37 -0700
-X-CSE-ConnectionGUID: Gv1uSZepT1iyUWAyK994QQ==
-X-CSE-MsgGUID: d9+Z3tF4SdGi8DHKw9sIzg==
+ 03 Sep 2026 07:38:39 -0700
+X-CSE-ConnectionGUID: zbjmXdxMQmyQQIbFnoiNhQ==
+X-CSE-MsgGUID: QhcPq5n3RTSIn+jUDleaoA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; d="scan'208";a="273894937"
+X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; d="scan'208";a="273894947"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa005.jf.intel.com with ESMTP; 03 Sep 2026 07:38:37 -0700
+ by orviesa005.jf.intel.com with ESMTP; 03 Sep 2026 07:38:38 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
+ Ciara Loftus <ciara.loftus@intel.com>,
  Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Anurag Mandal <anurag.mandal@intel.com>
-Subject: [PATCH v2 3/7] net/iavf: fix VLAN outer TPID setting on Tx
-Date: Thu,  3 Sep 2026 15:37:25 +0100
-Message-ID: <20260903143827.327131-4-bruce.richardson@intel.com>
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Jingjing Wu <jingjing.wu@intel.com>,
+ Praveen Shetty <praveen.shetty@intel.com>
+Subject: [PATCH v2 4/7] net/intel: fix unclear enum names
+Date: Thu,  3 Sep 2026 15:37:26 +0100
+Message-ID: <20260903143827.327131-5-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260903143827.327131-1-bruce.richardson@intel.com>
 References: <20260831102621.495759-1-bruce.richardson@intel.com>
@@ -62,46 +65,136 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The outer VLAN TPID setting for Tx was cached in the driver but was not
-properly pushed to hardware (via PF) when changed. Add the necessary
-push call to the update function.
+The enum for VLAN tag placement was badly named, and it's purpose as
+described in the comments was unclear. Update the names to be clearer,
+and more general for future uses and remove the incorrect comments.
 
-Fixes: 8599d7604e0a ("net/iavf: support QinQ strip")
-Fixes: 7ce1363b424f ("net/iavf: support QinQ insertion")
+Fixes: 6ea6d67bebfe ("net/intel: support configurable VLAN insertion on Tx")
 Cc: stable@dpdk.org
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+Acked-by: Ciara Loftus <ciara.loftus@intel.com>
 ---
- drivers/net/intel/iavf/iavf_ethdev.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ drivers/net/intel/common/tx.h             | 14 ++++++--------
+ drivers/net/intel/common/tx_scalar.h      |  6 +++---
+ drivers/net/intel/i40e/i40e_rxtx.c        |  2 +-
+ drivers/net/intel/iavf/iavf_rxtx.c        |  2 +-
+ drivers/net/intel/ice/ice_rxtx.c          |  5 +++--
+ drivers/net/intel/idpf/idpf_common_rxtx.c |  2 +-
+ 6 files changed, 15 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index c4a6763f28..2ac4dbdac4 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -1461,13 +1461,20 @@ iavf_vlan_tpid_set(struct rte_eth_dev *dev, enum rte_vlan_type vlan_type, uint16
- 		return -ENOTSUP;
- 	}
+diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
+index 55757d34d7..2d4a8b5d3c 100644
+--- a/drivers/net/intel/common/tx.h
++++ b/drivers/net/intel/common/tx.h
+@@ -46,20 +46,18 @@
+ #define CI_TX_CTX_DESC_IL2TAG2          0x04
  
--	/* This API only fills internal iavf_adapter structure
--	 * and does not send any signal to hardware.
--	 * Inner VLAN always 0x8100, so not set explicitly.
--	 */
-+	/* Inner VLAN always 0x8100, so not set explicitly. */
- 	if (qinq && vlan_type == RTE_ETH_VLAN_TYPE_OUTER)
- 		adapter->tpid = tpid; /* Outer VLAN can be 0x88a8 or 0x8100 */
+ /**
+- * L2TAG1 Field Source Selection
+- * Specifies which mbuf VLAN field to use for the L2TAG1 field in data descriptors.
+- * Context descriptor VLAN handling (L2TAG2) is managed by driver-specific callbacks.
++ * Enum to specify where a VLAN tag is to be placed for packet Tx.
+  */
+-enum ci_tx_l2tag1_field {
+-	/** For VLAN (not QinQ), use L2Tag1 field in data desc */
+-	CI_VLAN_IN_L2TAG1,
++enum ci_l2tag_pos {
++	/** Insert via the data descriptor's L2Tag1 field. */
++	CI_TAG_IN_DATA_DESC,
  
-+	/* Re-push insertion, and stripping if already enabled, so the new
-+	 * outer TPID reaches the PF instead of only being cached here.
-+	 */
-+	iavf_dev_vlan_insert_set(dev);
-+	if (dev_conf->rxmode.offloads & RTE_ETH_RX_OFFLOAD_QINQ_STRIP) {
-+		int ret = iavf_dev_vlan_offload_set(dev, RTE_ETH_QINQ_STRIP_MASK);
-+		if (ret != 0)
-+			return ret;
-+	}
-+
- 	return 0;
+-	/** For VLAN (not QinQ), use L2Tag2 field in ctx desc.
++	/** Insert via the context descriptor's L2Tag2 field.
+ 	 * NOTE: When set, drivers must set the VLAN tag in the context
+ 	 * descriptor callback function, rather than relying on the
+ 	 * common Tx code to insert it.
+ 	 */
+-	CI_VLAN_IN_L2TAG2,
++	CI_TAG_IN_CTX_DESC,
+ };
+ 
+ /* Common TX Descriptor Length Field Shifts */
+diff --git a/drivers/net/intel/common/tx_scalar.h b/drivers/net/intel/common/tx_scalar.h
+index 11ab6c08fc..4df279e729 100644
+--- a/drivers/net/intel/common/tx_scalar.h
++++ b/drivers/net/intel/common/tx_scalar.h
+@@ -372,7 +372,7 @@ static inline uint16_t
+ ci_xmit_pkts(struct ci_tx_queue *txq,
+ 	     struct rte_mbuf **tx_pkts,
+ 	     uint16_t nb_pkts,
+-	     enum ci_tx_l2tag1_field l2tag1_field,
++	     enum ci_l2tag_pos l2tag_pos,
+ 	     ci_get_ctx_desc_fn get_ctx_desc,
+ 	     const struct ci_ipsec_ops *ipsec_ops,
+ 	     const struct ci_timestamp_queue_fns *ts_fns)
+@@ -480,10 +480,10 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+ 		}
+ 
+ 		/* Descriptor based VLAN/QinQ insertion */
+-		/* for single vlan offload, only insert in data desc with VLAN_IN_L2TAG1 is set
++		/* for single vlan offload, only insert in data desc when CI_TAG_IN_DATA_DESC is set
+ 		 * for qinq offload, we always put inner tag in L2Tag1
+ 		 */
+-		if (((ol_flags & RTE_MBUF_F_TX_VLAN) && l2tag1_field == CI_VLAN_IN_L2TAG1) ||
++		if (((ol_flags & RTE_MBUF_F_TX_VLAN) && l2tag_pos == CI_TAG_IN_DATA_DESC) ||
+ 				(ol_flags & RTE_MBUF_F_TX_QINQ)) {
+ 			td_cmd |= CI_TX_DESC_CMD_IL2TAG1;
+ 			td_tag = tx_pkt->vlan_tci;
+diff --git a/drivers/net/intel/i40e/i40e_rxtx.c b/drivers/net/intel/i40e/i40e_rxtx.c
+index e29fcff661..ef7041cebd 100644
+--- a/drivers/net/intel/i40e/i40e_rxtx.c
++++ b/drivers/net/intel/i40e/i40e_rxtx.c
+@@ -1007,7 +1007,7 @@ uint16_t
+ i40e_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ {
+ 	/* i40e does not support IPsec or timestamp queues, so pass NULL for both */
+-	return ci_xmit_pkts(tx_queue, tx_pkts, nb_pkts, CI_VLAN_IN_L2TAG1,
++	return ci_xmit_pkts(tx_queue, tx_pkts, nb_pkts, CI_TAG_IN_DATA_DESC,
+ 			get_context_desc, NULL, NULL);
+ }
+ 
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
+index 39bcbebf56..1354e2d6d6 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.c
++++ b/drivers/net/intel/iavf/iavf_rxtx.c
+@@ -2605,7 +2605,7 @@ iavf_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 	/* IAVF does not support timestamp queues, so pass NULL for ts_fns */
+ 	return ci_xmit_pkts(txq, tx_pkts, nb_pkts,
+ 			    (txq->vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG1) ?
+-				CI_VLAN_IN_L2TAG1 : CI_VLAN_IN_L2TAG2,
++				CI_TAG_IN_DATA_DESC : CI_TAG_IN_CTX_DESC,
+ 			    iavf_get_context_desc, &ipsec_ops, NULL);
+ }
+ 
+diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
+index c4b5454c53..22d1d5d602 100644
+--- a/drivers/net/intel/ice/ice_rxtx.c
++++ b/drivers/net/intel/ice/ice_rxtx.c
+@@ -3125,10 +3125,11 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
+ 
+ 	if (txq->tsq != NULL && txq->tsq->ts_flag > 0)
+-		return ci_xmit_pkts(txq, tx_pkts, nb_pkts, CI_VLAN_IN_L2TAG1,
++		return ci_xmit_pkts(txq, tx_pkts, nb_pkts, CI_TAG_IN_DATA_DESC,
+ 				get_context_desc, NULL, &ts_fns);
+ 
+-	return ci_xmit_pkts(txq, tx_pkts, nb_pkts, CI_VLAN_IN_L2TAG1, get_context_desc, NULL, NULL);
++	return ci_xmit_pkts(txq, tx_pkts, nb_pkts, CI_TAG_IN_DATA_DESC,
++			get_context_desc, NULL, NULL);
+ }
+ 
+ static int
+diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c b/drivers/net/intel/idpf/idpf_common_rxtx.c
+index 2c87e02c98..128ebb6a88 100644
+--- a/drivers/net/intel/idpf/idpf_common_rxtx.c
++++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
+@@ -1415,7 +1415,7 @@ uint16_t
+ idpf_dp_singleq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 			  uint16_t nb_pkts)
+ {
+-	return ci_xmit_pkts(tx_queue, tx_pkts, nb_pkts, CI_VLAN_IN_L2TAG1,
++	return ci_xmit_pkts(tx_queue, tx_pkts, nb_pkts, CI_TAG_IN_DATA_DESC,
+ 			idpf_get_context_desc, NULL, NULL);
  }
  
 -- 
