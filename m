@@ -2,33 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F5FBC624A4
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Sep 2026 13:55:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B352CC624A4
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Sep 2026 13:55:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CA78A42DD4;
-	Thu,  3 Sep 2026 15:54:21 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 6916542DA7
- for <dev@dpdk.org>; Thu,  3 Sep 2026 15:54:17 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4A643200029;
- Thu,  3 Sep 2026 15:54:17 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id EF97042DD6;
+	Thu,  3 Sep 2026 15:54:22 +0200 (CEST)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 76F0C427BE
+ for <dev@dpdk.org>; Thu,  3 Sep 2026 15:54:18 +0200 (CEST)
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 57AD81A0065;
+ Thu,  3 Sep 2026 15:54:18 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1309020004C;
- Thu,  3 Sep 2026 15:54:17 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 21E041A0035;
+ Thu,  3 Sep 2026 15:54:18 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 8A5DD180006C;
- Thu,  3 Sep 2026 21:54:15 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id BD63D18000B7;
+ Thu,  3 Sep 2026 21:54:16 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
-Cc: Jun Yang <jun.yang@nxp.com>,
-	Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH 16/45] drivers: optimize dpaa2 Tx queue and channel mapping
-Date: Thu,  3 Sep 2026 19:23:24 +0530
-Message-ID: <20260903135353.3358303-17-prashant.gupta_3@nxp.com>
+Cc: Gagandeep Singh <g.singh@nxp.com>
+Subject: [PATCH 17/45] net/dpaa2: support larger burst size
+Date: Thu,  3 Sep 2026 19:23:25 +0530
+Message-ID: <20260903135353.3358303-18-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260903135353.3358303-1-prashant.gupta_3@nxp.com>
 References: <20260903135353.3358303-1-prashant.gupta_3@nxp.com>
@@ -50,296 +49,144 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Gagandeep Singh <g.singh@nxp.com>
 
-Allocate TX queues based on dpni attribute and align the
-bounds check with the RX queue logic:
-- compute nb_tx_queues from num_tx_tcs * num_queues (respecting
-  DPNI_OPT_SINGLE_SENDER) and cap at MAX_TX_QUEUES (128)
-- cap nb_rx_queues at MAX_RX_QUEUES (128)
-- cap num_channels at DPAA2_MAX_CHANNELS
-- assign tc_index/flow_id at queue-allocation time instead of
-  at queue-setup time
-- replace the open-coded (channel << 8 | tc) with
-  DPNI_BUILD_PARAM(channel, tc) throughout tx_queue_setup
-- initialize fqid to DPAA2_INVALID_FQ_ID and use it as the
-  already-configured guard (replacing DPAA2_INVALID_FLOW_ID)
-- add a per-device tx_channels[] array for channel mapping
+Make burst size checks and MC command fields SoC-aware,
+enabling bursts larger than 64K on LX2160A with dpni version 8.7+.
 
-Signed-off-by: Jun Yang <jun.yang@nxp.com>
+The max_burst_size field in dpni_tx_shaping_cfg is widened to uint32_t
+and the MC command struct is updated to split the value across two
+16-bit fields using the new DPNI_BURST_LO/HI macros.
+
+Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
 Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
- drivers/bus/fslmc/portal/dpaa2_hw_pvt.h |   1 +
- drivers/net/dpaa2/dpaa2_ethdev.c        | 112 ++++++++++++++----------
- drivers/net/dpaa2/dpaa2_ethdev.h        |   5 +-
- 3 files changed, 70 insertions(+), 48 deletions(-)
+ drivers/net/dpaa2/dpaa2_tm.c        | 16 +++++++++++-----
+ drivers/net/dpaa2/mc/dpni.c         | 11 +++++++++--
+ drivers/net/dpaa2/mc/fsl_dpni.h     |  8 ++++++--
+ drivers/net/dpaa2/mc/fsl_dpni_cmd.h |  3 ++-
+ 4 files changed, 28 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h b/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
-index ef65e7895a..f0bc9a3063 100644
---- a/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
-+++ b/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
-@@ -82,6 +82,7 @@
+diff --git a/drivers/net/dpaa2/dpaa2_tm.c b/drivers/net/dpaa2/dpaa2_tm.c
+index 36e815c356..0e1b2c5b54 100644
+--- a/drivers/net/dpaa2/dpaa2_tm.c
++++ b/drivers/net/dpaa2/dpaa2_tm.c
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2020-2024 NXP
++ * Copyright 2020-2026 NXP
+  */
  
- #define DPAA2_DPCI_MAX_QUEUES 2
- #define DPAA2_INVALID_FLOW_ID 0xffff
-+#define DPAA2_INVALID_FQ_ID ((uint32_t)(-1))
- #define DPAA2_INVALID_CGID 0xff
+ #include <rte_ethdev.h>
+@@ -10,14 +10,20 @@
+ #include "dpaa2_pmd_logs.h"
+ #include <dpaa2_hw_dpio.h>
  
- #define SEC_FLC_DHR_OUTBOUND	(-114)
-diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
-index c95704d4ca..d79dfa7114 100644
---- a/drivers/net/dpaa2/dpaa2_ethdev.c
-+++ b/drivers/net/dpaa2/dpaa2_ethdev.c
-@@ -519,17 +519,13 @@ static int
- dpaa2_alloc_rx_tx_queues(struct rte_eth_dev *dev)
- {
- 	struct dpaa2_dev_priv *priv = dev->data->dev_private;
--	uint16_t dist_idx;
--	uint32_t vq_id;
--	uint8_t num_rxqueue_per_tc;
--	struct dpaa2_queue *mc_q, *mcq;
-+	uint8_t num_queue_per_tc;
-+	struct dpaa2_queue *mc_q, *dpaa2_q;
- 	uint32_t tot_queues;
- 	int i, ret = 0;
--	struct dpaa2_queue *dpaa2_q;
- 
- 	PMD_INIT_FUNC_TRACE();
- 
--	num_rxqueue_per_tc = (priv->nb_rx_queues / priv->num_rx_tc);
- 	if (priv->flags & DPAA2_TX_CONF_ENABLE)
- 		tot_queues = priv->nb_rx_queues + 2 * priv->nb_tx_queues;
- 	else
-@@ -541,8 +537,12 @@ dpaa2_alloc_rx_tx_queues(struct rte_eth_dev *dev)
- 		return -ENOBUFS;
- 	}
- 
-+	num_queue_per_tc = (priv->nb_rx_queues / priv->num_rx_tc);
- 	for (i = 0; i < priv->nb_rx_queues; i++) {
- 		mc_q->eth_data = dev->data;
-+		mc_q->tc_index = i / num_queue_per_tc;
-+		mc_q->flow_id = i % num_queue_per_tc;
-+		mc_q->fqid = DPAA2_INVALID_FQ_ID;
- 		priv->rx_vq[i] = mc_q++;
- 		dpaa2_q = priv->rx_vq[i];
- 		ret = dpaa2_queue_storage_alloc(dpaa2_q,
-@@ -566,9 +566,12 @@ dpaa2_alloc_rx_tx_queues(struct rte_eth_dev *dev)
- 			goto fail;
- 	}
- 
-+	num_queue_per_tc = (priv->nb_tx_queues / priv->num_tx_tc);
- 	for (i = 0; i < priv->nb_tx_queues; i++) {
- 		mc_q->eth_data = dev->data;
--		mc_q->flow_id = DPAA2_INVALID_FLOW_ID;
-+		mc_q->tc_index = i / num_queue_per_tc;
-+		mc_q->flow_id = i % num_queue_per_tc;
-+		mc_q->fqid = DPAA2_INVALID_FQ_ID;
- 		priv->tx_vq[i] = mc_q++;
- 		dpaa2_q = (struct dpaa2_queue *)priv->tx_vq[i];
- 		dpaa2_q->cscn = rte_malloc(NULL,
-@@ -583,8 +586,9 @@ dpaa2_alloc_rx_tx_queues(struct rte_eth_dev *dev)
- 		/*Setup tx confirmation queues*/
- 		for (i = 0; i < priv->nb_tx_queues; i++) {
- 			mc_q->eth_data = dev->data;
--			mc_q->tc_index = i;
--			mc_q->flow_id = 0;
-+			mc_q->tc_index = i / num_queue_per_tc;
-+			mc_q->flow_id = i % num_queue_per_tc;
-+			mc_q->fqid = DPAA2_INVALID_FQ_ID;
- 			priv->tx_conf_vq[i] = mc_q++;
- 			dpaa2_q = priv->tx_conf_vq[i];
- 			ret = dpaa2_queue_storage_alloc(dpaa2_q,
-@@ -594,14 +598,6 @@ dpaa2_alloc_rx_tx_queues(struct rte_eth_dev *dev)
- 		}
- 	}
- 
--	vq_id = 0;
--	for (dist_idx = 0; dist_idx < priv->nb_rx_queues; dist_idx++) {
--		mcq = priv->rx_vq[vq_id];
--		mcq->tc_index = dist_idx / num_rxqueue_per_tc;
--		mcq->flow_id = dist_idx % num_rxqueue_per_tc;
--		vq_id++;
--	}
+-#define DPAA2_BURST_MAX	(64 * 1024)
 -
- 	return 0;
- fail_tx_conf:
- 	i -= 1;
-@@ -977,6 +973,12 @@ dpaa2_dev_rx_queue_setup(struct rte_eth_dev *dev,
- 			return ret;
- 	}
- 	dpaa2_q = priv->rx_vq[rx_queue_id];
-+	if (dpaa2_q->fqid != DPAA2_INVALID_FQ_ID) {
-+		DPAA2_PMD_WARN("%s: RXQ[%d] has been setup",
-+			dev->data->name, rx_queue_id);
-+		dev->data->rx_queues[rx_queue_id] = dpaa2_q;
-+		return 0;
-+	}
- 	dpaa2_q->mb_pool = mb_pool; /**< mbuf pool to populate RX ring. */
- 	dpaa2_q->bp_array = rte_dpaa2_bpid_info;
- 	dpaa2_q->offloads = rx_conf->offloads;
-@@ -1165,7 +1167,9 @@ dpaa2_dev_tx_queue_setup(struct rte_eth_dev *dev,
- 	dpaa2_q->offloads = tx_conf->offloads;
+ #define DPAA2_SHAPER_MIN_RATE 0
+ #define DPAA2_SHAPER_MAX_RATE 107374182400ull
+ #define DPAA2_WEIGHT_MAX 24701
+ #define DPAA2_PKT_ADJUST_LEN_MIN 0
+ #define DPAA2_PKT_ADJUST_LEN_MAX 0x7ff
  
- 	/* Return if queue already configured */
--	if (dpaa2_q->flow_id != DPAA2_INVALID_FLOW_ID) {
-+	if (dpaa2_q->fqid != DPAA2_INVALID_FQ_ID) {
-+		DPAA2_PMD_WARN("%s: TXQ[%d] has been setup",
-+			dev->data->name, tx_queue_id);
- 		dev->data->tx_queues[tx_queue_id] = dpaa2_q;
- 		return 0;
- 	}
-@@ -1173,26 +1177,24 @@ dpaa2_dev_tx_queue_setup(struct rte_eth_dev *dev,
- 	memset(&tx_conf_cfg, 0, sizeof(struct dpni_queue));
- 	memset(&tx_flow_cfg, 0, sizeof(struct dpni_queue));
- 
--	tc_id = tx_queue_id % priv->num_tx_tc;
--	channel_id = (uint8_t)(tx_queue_id / priv->num_tx_tc) % priv->num_channels;
--	flow_id = 0;
-+	tc_id = dpaa2_q->tc_index;
-+	flow_id = dpaa2_q->flow_id;
-+	if (tc_id < priv->num_channels)
-+		channel_id = priv->tx_channels[tc_id];
-+	else
-+		channel_id = priv->tx_channels[priv->num_channels - 1];
- 
- 	ret = dpni_set_queue(dpni, CMD_PRI_LOW, priv->token, DPNI_QUEUE_TX,
--			((channel_id << 8) | tc_id), flow_id, options, &tx_flow_cfg);
-+			DPNI_BUILD_PARAM(channel_id, tc_id), flow_id, options, &tx_flow_cfg);
- 	if (ret) {
--		DPAA2_PMD_ERR("Error in setting the tx flow: "
--			"tc_id=%d, flow=%d err=%d",
--			tc_id, flow_id, ret);
--			return ret;
-+		DPAA2_PMD_ERR("Failed(%d) to set %s's TC[%d].txq[%d]",
-+			ret, dev->data->name, tc_id, flow_id);
-+		return ret;
- 	}
- 
--	dpaa2_q->flow_id = flow_id;
--
--	dpaa2_q->tc_index = tc_id;
--
- 	ret = dpni_get_queue(dpni, CMD_PRI_LOW, priv->token,
--			DPNI_QUEUE_TX, ((channel_id << 8) | dpaa2_q->tc_index),
--			dpaa2_q->flow_id, &tx_flow_cfg, &qid);
-+			DPNI_QUEUE_TX, DPNI_BUILD_PARAM(channel_id, tc_id),
-+			flow_id, &tx_flow_cfg, &qid);
- 	if (ret) {
- 		DPAA2_PMD_ERR("Error in getting LFQID err=%d", ret);
- 		return ret;
-@@ -1231,10 +1233,9 @@ dpaa2_dev_tx_queue_setup(struct rte_eth_dev *dev,
- 
- 		ret = dpni_set_congestion_notification(dpni,
- 				CMD_PRI_LOW, priv->token, DPNI_QUEUE_TX,
--				((channel_id << 8) | tc_id), &cong_notif_cfg);
-+				DPNI_BUILD_PARAM(channel_id, tc_id), &cong_notif_cfg);
- 		if (ret) {
--			DPAA2_PMD_ERR("Set TX congestion notification err=%d",
--			   ret);
-+			DPAA2_PMD_ERR("Set TX congestion notification err=%d", ret);
- 			return ret;
- 		}
- 	}
-@@ -1242,31 +1243,32 @@ dpaa2_dev_tx_queue_setup(struct rte_eth_dev *dev,
- 	dev->data->tx_queues[tx_queue_id] = dpaa2_q;
- 
- 	if (priv->flags & DPAA2_TX_CONF_ENABLE) {
-+		tc_id = dpaa2_tx_conf_q->tc_index;
-+		flow_id = dpaa2_tx_conf_q->flow_id;
- 		dpaa2_q->tx_conf_queue = dpaa2_tx_conf_q;
- 		options = options | DPNI_QUEUE_OPT_USER_CTX;
- 		tx_conf_cfg.user_context = (size_t)(dpaa2_q);
- 		ret = dpni_set_queue(dpni, CMD_PRI_LOW, priv->token,
- 				DPNI_QUEUE_TX_CONFIRM,
--				((channel_id << 8) | dpaa2_tx_conf_q->tc_index),
--				dpaa2_tx_conf_q->flow_id,
--				options, &tx_conf_cfg);
-+				DPNI_BUILD_PARAM(channel_id, tc_id),
-+				flow_id, options, &tx_conf_cfg);
- 		if (ret) {
- 			DPAA2_PMD_ERR("Set TC[%d].TX[%d] conf flow err=%d",
--				dpaa2_tx_conf_q->tc_index,
--				dpaa2_tx_conf_q->flow_id, ret);
-+				tc_id, flow_id, ret);
- 			return ret;
- 		}
- 
- 		ret = dpni_get_queue(dpni, CMD_PRI_LOW, priv->token,
- 				DPNI_QUEUE_TX_CONFIRM,
--				((channel_id << 8) | dpaa2_tx_conf_q->tc_index),
--				dpaa2_tx_conf_q->flow_id, &tx_conf_cfg, &qid);
-+				DPNI_BUILD_PARAM(channel_id, tc_id),
-+				flow_id, &tx_conf_cfg, &qid);
- 		if (ret) {
- 			DPAA2_PMD_ERR("Error in getting LFQID err=%d", ret);
- 			return ret;
- 		}
- 		dpaa2_tx_conf_q->fqid = qid.fqid;
- 	}
++static inline uint32_t dpaa2_get_burst_max(struct dpaa2_dev_priv *priv)
++{
++	if (priv->dpni_ver_major == 8 && priv->dpni_ver_minor >= 7)
++		return (dpaa2_svr_family == SVR_LX2160A) ? 229375 : (64 * 1024);
 +
- 	return 0;
- }
++	return (64 * 1024);
++}
++
+ int
+ dpaa2_tm_init(struct rte_eth_dev *dev)
+ {
+@@ -283,7 +289,7 @@ dpaa2_shaper_profile_add(struct rte_eth_dev *dev, uint32_t shaper_profile_id,
+ 				RTE_TM_ERROR_TYPE_SHAPER_PROFILE_PEAK_RATE,
+ 				NULL, "committed rate is out of range\n");
  
-@@ -3553,10 +3555,28 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
- 	for (i = 0; i < priv->max_cgs; i++)
- 		priv->cgid_in_use[i] = 0;
+-	if (params->committed.size > DPAA2_BURST_MAX)
++	if (params->committed.size > dpaa2_get_burst_max(priv))
+ 		return -rte_tm_error_set(error, EINVAL,
+ 				RTE_TM_ERROR_TYPE_SHAPER_PROFILE_PEAK_SIZE,
+ 				NULL, "committed size is out of range\n");
+@@ -293,7 +299,7 @@ dpaa2_shaper_profile_add(struct rte_eth_dev *dev, uint32_t shaper_profile_id,
+ 				RTE_TM_ERROR_TYPE_SHAPER_PROFILE_PEAK_RATE,
+ 				NULL, "Peak rate is out of range\n");
  
--	for (i = 0; i < attr.num_rx_tcs; i++)
--		priv->nb_rx_queues += attr.num_queues;
--
--	priv->nb_tx_queues = attr.num_tx_tcs * attr.num_channels;
-+	priv->nb_rx_queues = attr.num_rx_tcs * attr.num_queues;
-+	if (priv->nb_rx_queues > MAX_RX_QUEUES) {
-+		DPAA2_PMD_WARN("Too many RXQs(%d) > %d, reduce it to %d",
-+			priv->nb_rx_queues, MAX_RX_QUEUES, MAX_RX_QUEUES);
-+		priv->nb_rx_queues = MAX_RX_QUEUES;
-+	}
-+	if (attr.options & DPNI_OPT_SINGLE_SENDER)
-+		priv->nb_tx_queues = attr.num_tx_tcs * 1;
-+	else
-+		priv->nb_tx_queues = attr.num_tx_tcs * attr.num_queues;
-+	if (priv->nb_tx_queues > MAX_TX_QUEUES) {
-+		DPAA2_PMD_WARN("Too many TXQs(%d) > %d, reduce it to %d",
-+			priv->nb_tx_queues, MAX_TX_QUEUES, MAX_TX_QUEUES);
-+		priv->nb_tx_queues = MAX_TX_QUEUES;
-+	}
-+	if (priv->num_channels > DPAA2_MAX_CHANNELS) {
-+		DPAA2_PMD_WARN("Too many TX channels(%d) > %d, reduce it to %d",
-+			priv->num_channels, DPAA2_MAX_CHANNELS, DPAA2_MAX_CHANNELS);
-+		priv->num_channels = DPAA2_MAX_CHANNELS;
-+	}
-+	for (i = 0; i < priv->num_channels; i++)
-+		priv->tx_channels[i] = i;
+-	if (params->peak.size > DPAA2_BURST_MAX)
++	if (params->peak.size > dpaa2_get_burst_max(priv))
+ 		return -rte_tm_error_set(error, EINVAL,
+ 				RTE_TM_ERROR_TYPE_SHAPER_PROFILE_PEAK_SIZE,
+ 				NULL, "Peak size is out of range\n");
+diff --git a/drivers/net/dpaa2/mc/dpni.c b/drivers/net/dpaa2/mc/dpni.c
+index d0a9fefd31..17275b7195 100644
+--- a/drivers/net/dpaa2/mc/dpni.c
++++ b/drivers/net/dpaa2/mc/dpni.c
+@@ -1106,6 +1106,7 @@ int dpni_set_tx_shaping(struct fsl_mc_io *mc_io,
+ {
+ 	struct dpni_cmd_set_tx_shaping *cmd_params;
+ 	struct mc_command cmd = { 0 };
++	uint32_t tx_cr_burst, tx_er_burst;
+ 	int coupled, lni_shaper;
+ 	uint8_t channel_id;
+ 	uint16_t oal;
+@@ -1115,10 +1116,16 @@ int dpni_set_tx_shaping(struct fsl_mc_io *mc_io,
+ 					  cmd_flags,
+ 					  token);
+ 	cmd_params = (struct dpni_cmd_set_tx_shaping *)cmd.params;
++	tx_cr_burst = tx_cr_shaper->max_burst_size;
++	tx_er_burst = tx_er_shaper->max_burst_size;
+ 	cmd_params->tx_cr_max_burst_size =
+-		cpu_to_le16(tx_cr_shaper->max_burst_size);
++		cpu_to_le16(DPNI_BURST_LO(tx_cr_burst));
+ 	cmd_params->tx_er_max_burst_size =
+-		cpu_to_le16(tx_er_shaper->max_burst_size);
++		cpu_to_le16(DPNI_BURST_LO(tx_er_burst));
++	cmd_params->tx_cr_max_burst_size_hi =
++		cpu_to_le16(DPNI_BURST_HI(tx_cr_burst));
++	cmd_params->tx_er_max_burst_size_hi =
++		cpu_to_le16(DPNI_BURST_HI(tx_er_burst));
+ 	cmd_params->tx_cr_rate_limit =
+ 		cpu_to_le32(tx_cr_shaper->rate_limit);
+ 	cmd_params->tx_er_rate_limit =
+diff --git a/drivers/net/dpaa2/mc/fsl_dpni.h b/drivers/net/dpaa2/mc/fsl_dpni.h
+index 42d633eaf8..8913b408e7 100644
+--- a/drivers/net/dpaa2/mc/fsl_dpni.h
++++ b/drivers/net/dpaa2/mc/fsl_dpni.h
+@@ -830,14 +830,18 @@ int dpni_get_link_state(struct fsl_mc_io *mc_io,
+ 			uint16_t token,
+ 			struct dpni_link_state *state);
  
- 	DPAA2_PMD_DEBUG("RX-TC= %d, rx_queues= %d, tx_queues=%d, max_cgs=%d",
- 			priv->num_rx_tc, priv->nb_rx_queues,
-diff --git a/drivers/net/dpaa2/dpaa2_ethdev.h b/drivers/net/dpaa2/dpaa2_ethdev.h
-index 149954fb6b..0366315ec7 100644
---- a/drivers/net/dpaa2/dpaa2_ethdev.h
-+++ b/drivers/net/dpaa2/dpaa2_ethdev.h
-@@ -28,7 +28,7 @@
++#define DPNI_BURST_LO(burst)	((burst) & GENMASK(15, 0))
++#define DPNI_BURST_HI(burst)	((burst) >> 16)
++
+ /**
+  * struct dpni_tx_shaping - Structure representing DPNI tx shaping configuration
+  * @rate_limit:		Rate in Mbits/s
+- * @max_burst_size:	Burst size in bytes (up to 64KB)
++ * @max_burst_size:	Burst size in bytes. Limits depend on the SoC (0x37FFF
++ *		for LX2160A, 0xF7FF for all others)
+  */
+ struct dpni_tx_shaping_cfg {
+ 	uint32_t rate_limit;
+-	uint16_t max_burst_size;
++	uint32_t max_burst_size;
+ };
  
- #define MAX_TCS			DPNI_MAX_TC
- #define MAX_RX_QUEUES		128
--#define MAX_TX_QUEUES		16
-+#define MAX_TX_QUEUES		128
- #define MAX_DPNI		8
- #define DPAA2_MAX_CHANNELS	16
- 
-@@ -390,13 +390,14 @@ struct dpaa2_dev_priv {
- 	int32_t hw_id;
- 	int32_t qdid;
- 	uint16_t token;
-+	uint16_t tx_channels[DPAA2_MAX_CHANNELS];
- 	uint8_t nb_tx_queues;
- 	uint8_t nb_rx_queues;
- 	uint32_t options;
- 	void *rx_vq[MAX_RX_QUEUES];
- 	void *tx_vq[MAX_TX_QUEUES];
- 	struct dpaa2_bp_list *bp_list; /**<Attached buffer pool list */
--	void *tx_conf_vq[MAX_TX_QUEUES * DPAA2_MAX_CHANNELS];
-+	void *tx_conf_vq[MAX_TX_QUEUES];
- 	void *rx_err_vq;
- 	uint32_t flags; /*dpaa2 config flags */
- 	uint8_t max_mac_filters;
+ /**
+diff --git a/drivers/net/dpaa2/mc/fsl_dpni_cmd.h b/drivers/net/dpaa2/mc/fsl_dpni_cmd.h
+index bb4939031b..6b396ca7cc 100644
+--- a/drivers/net/dpaa2/mc/fsl_dpni_cmd.h
++++ b/drivers/net/dpaa2/mc/fsl_dpni_cmd.h
+@@ -394,7 +394,8 @@ struct dpni_rsp_get_link_state {
+ struct dpni_cmd_set_tx_shaping {
+ 	uint16_t tx_cr_max_burst_size;
+ 	uint16_t tx_er_max_burst_size;
+-	uint32_t pad;
++	uint16_t tx_cr_max_burst_size_hi;
++	uint16_t tx_er_max_burst_size_hi;
+ 	uint32_t tx_cr_rate_limit;
+ 	uint32_t tx_er_rate_limit;
+ 	/* from LSB: coupled:1, lni_shaper: 1*/
 -- 
 2.43.0
 
