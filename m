@@ -2,34 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42472C61DD3
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Sep 2026 13:55:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42EE8C624A4
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Sep 2026 13:55:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4633942DBD;
-	Thu,  3 Sep 2026 15:54:19 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5DFAF42DC3;
+	Thu,  3 Sep 2026 15:54:20 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id EB88242D92
- for <dev@dpdk.org>; Thu,  3 Sep 2026 15:54:14 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id D3B5C42D9F
+ for <dev@dpdk.org>; Thu,  3 Sep 2026 15:54:15 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id CE6B8200490;
- Thu,  3 Sep 2026 15:54:14 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B48F020004C;
+ Thu,  3 Sep 2026 15:54:15 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A058D20048D;
- Thu,  3 Sep 2026 15:54:14 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 80B70200029;
+ Thu,  3 Sep 2026 15:54:15 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 1FD3F180006C;
- Thu,  3 Sep 2026 21:54:12 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 56E4F18000B1;
+ Thu,  3 Sep 2026 21:54:14 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
 Cc: Jun Yang <jun.yang@nxp.com>,
-	Hemant Agrawal <hemant.agrawal@nxp.com>
-Subject: [PATCH 14/45] mempool/dpaa2: support ops index from primary in
- secondary
-Date: Thu,  3 Sep 2026 19:23:22 +0530
-Message-ID: <20260903135353.3358303-15-prashant.gupta_3@nxp.com>
+	Gagandeep Singh <g.singh@nxp.com>
+Subject: [PATCH 15/45] net/dpaa2: set Tx confirmation on device init
+Date: Thu,  3 Sep 2026 19:23:23 +0530
+Message-ID: <20260903135353.3358303-16-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260903135353.3358303-1-prashant.gupta_3@nxp.com>
 References: <20260903135353.3358303-1-prashant.gupta_3@nxp.com>
@@ -49,153 +48,82 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Jun Yang <jun.yang@nxp.com>
+From: Gagandeep Singh <g.singh@nxp.com>
 
-Secondary processes call rte_dpaa2_mpool_get_ops_idx() but the ops
-index is registered only in the primary process. The secondary had no
-way to learn the index, causing it to use the initial sentinel value
-RTE_MEMPOOL_MAX_OPS_IDX and return an error.
-
-Register an IPC action handler in the primary during pool creation.
-Secondary processes send DPAA2_POOL_OPS_IDX_REQ over the
-dpaa2_pool_mp_sync channel and receive the ops index back.
-
-Also handle the case where rte_mp_action_register returns ENOTSUP
-(e.g. no secondary process support enabled at build time) by
-treating it as non-fatal, and improve the error message in
-rte_hw_mbuf_free_pool to include the pool name.
+Move TX confirmation mode setting from TXQ setup to device
+initialization because TXQ0 is not always set up by the user.
 
 Signed-off-by: Jun Yang <jun.yang@nxp.com>
-Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
+Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
- drivers/mempool/dpaa2/dpaa2_hw_mempool.c | 88 +++++++++++++++++++++++-
- 1 file changed, 85 insertions(+), 3 deletions(-)
+ drivers/net/dpaa2/dpaa2_ethdev.c | 40 ++++++++++++--------------------
+ 1 file changed, 15 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/mempool/dpaa2/dpaa2_hw_mempool.c b/drivers/mempool/dpaa2/dpaa2_hw_mempool.c
-index ee001d8ce0..f19b6c039a 100644
---- a/drivers/mempool/dpaa2/dpaa2_hw_mempool.c
-+++ b/drivers/mempool/dpaa2/dpaa2_hw_mempool.c
-@@ -34,16 +34,90 @@
+diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
+index f211357919..c95704d4ca 100644
+--- a/drivers/net/dpaa2/dpaa2_ethdev.c
++++ b/drivers/net/dpaa2/dpaa2_ethdev.c
+@@ -1153,7 +1153,6 @@ dpaa2_dev_tx_queue_setup(struct rte_eth_dev *dev,
+ 	struct dpni_queue tx_conf_cfg;
+ 	struct dpni_queue tx_flow_cfg;
+ 	uint8_t options = 0, flow_id;
+-	uint8_t ceetm_ch_idx;
+ 	uint16_t channel_id;
+ 	struct dpni_queue_id qid;
+ 	uint32_t tc_id;
+@@ -1174,30 +1173,6 @@ dpaa2_dev_tx_queue_setup(struct rte_eth_dev *dev,
+ 	memset(&tx_conf_cfg, 0, sizeof(struct dpni_queue));
+ 	memset(&tx_flow_cfg, 0, sizeof(struct dpni_queue));
  
- #include <dpaax_iova_table.h>
- 
-+#define DPAA2_POOL_MP_SYNC "dpaa2_pool_mp_sync"
-+#define DPAA2_POOL_OPS_IDX_REQ 0x100
-+#define DPAA2_POOL_OPS_IDX_RSP 0x101
-+
-+static int s_dpaa2_pool_mp_msg_setup;
-+
-+struct dpaa2_pool_mp_msg {
-+	uint16_t msg_type;
-+	uint8_t msg_data[];
-+};
-+
- RTE_EXPORT_INTERNAL_SYMBOL(rte_dpaa2_bpid_info)
- struct dpaa2_bp_info *rte_dpaa2_bpid_info;
- static struct dpaa2_bp_list *h_bp_list;
- 
- static int16_t s_dpaa2_pool_ops_idx = RTE_MEMPOOL_MAX_OPS_IDX;
- 
-+static int
-+dpaa2_mbuf_pool_mp_primary(const struct rte_mp_msg *msg,
-+	const void *peer)
-+{
-+	struct rte_mp_msg reply;
-+	const struct dpaa2_pool_mp_msg *req_msg = (const void *)msg->param;
-+	struct dpaa2_pool_mp_msg *rsp_msg = (void *)reply.param;
-+
-+	memset(&reply, 0, sizeof(reply));
-+
-+	switch (req_msg->msg_type) {
-+	case DPAA2_POOL_OPS_IDX_REQ:
-+		rsp_msg->msg_type = DPAA2_POOL_OPS_IDX_RSP;
-+		rte_memcpy(rsp_msg->msg_data, &s_dpaa2_pool_ops_idx,
-+			sizeof(s_dpaa2_pool_ops_idx));
-+		break;
-+	default:
-+		DPAA2_MEMPOOL_ERR("%s received invalid request(%d)",
-+			__func__, req_msg->msg_type);
-+		return -ENOTSUP;
-+	}
-+
-+	strlcpy(reply.name, DPAA2_POOL_MP_SYNC, sizeof(reply.name));
-+	return rte_mp_reply(&reply, peer);
-+}
-+
- RTE_EXPORT_INTERNAL_SYMBOL(rte_dpaa2_mpool_get_ops_idx)
- int rte_dpaa2_mpool_get_ops_idx(void)
- {
--	return s_dpaa2_pool_ops_idx;
-+	struct rte_mp_msg mp_req;
-+	struct rte_mp_reply mp_reply;
-+	struct timespec ts = {.tv_sec = 5, .tv_nsec = 0};
-+	int ret = 0;
-+	struct dpaa2_pool_mp_msg *req_msg = (void *)mp_req.param;
-+	struct dpaa2_pool_mp_msg *rsp_msg;
-+
-+	if (rte_eal_process_type() == RTE_PROC_PRIMARY ||
-+		s_dpaa2_pool_ops_idx != RTE_MEMPOOL_MAX_OPS_IDX)
-+		return s_dpaa2_pool_ops_idx;
-+
-+	strlcpy(mp_req.name, DPAA2_POOL_MP_SYNC, sizeof(mp_req.name));
-+	req_msg->msg_type = DPAA2_POOL_OPS_IDX_REQ;
-+	memset(&mp_reply, 0, sizeof(struct rte_mp_reply));
-+	ret = rte_mp_request_sync(&mp_req, &mp_reply, &ts);
-+	if (ret) {
-+		DPAA2_MEMPOOL_ERR("%s Failed to get response(%d)",
-+			__func__, ret);
-+		return ret;
-+	}
-+	if (!mp_reply.msgs) {
-+		DPAA2_MEMPOOL_ERR("%s Failed to get response message",
-+			__func__);
-+		return -EINVAL;
-+	}
-+	rsp_msg = (void *)mp_reply.msgs;
-+	if (rsp_msg->msg_type == DPAA2_POOL_OPS_IDX_RSP) {
-+		rte_memcpy(&s_dpaa2_pool_ops_idx, rsp_msg->msg_data,
-+			sizeof(s_dpaa2_pool_ops_idx));
-+		ret = 0;
-+	} else {
-+		DPAA2_MEMPOOL_ERR("%s received invalid response(%d)",
-+			__func__, rsp_msg->msg_type);
-+		ret = -EINVAL;
-+	}
-+	free(mp_reply.msgs);
-+
-+	return ret;
- }
- 
- static int
-@@ -128,10 +202,18 @@ rte_hw_mbuf_create_pool(struct rte_mempool *mp)
- 	if (s_dpaa2_pool_ops_idx == RTE_MEMPOOL_MAX_OPS_IDX) {
- 		s_dpaa2_pool_ops_idx = mp->ops_index;
- 	} else if (s_dpaa2_pool_ops_idx != mp->ops_index) {
--		DPAA2_MEMPOOL_ERR("Only single ops index only");
-+		DPAA2_MEMPOOL_ERR("Single ops index only");
- 		ret = -EINVAL;
- 		goto err4;
- 	}
-+	if (rte_eal_process_type() == RTE_PROC_PRIMARY &&
-+		!s_dpaa2_pool_mp_msg_setup) {
-+		ret = rte_mp_action_register(DPAA2_POOL_MP_SYNC,
-+			dpaa2_mbuf_pool_mp_primary);
-+		if (ret && rte_errno != ENOTSUP)
-+			return ret;
-+		s_dpaa2_pool_mp_msg_setup = 1;
-+	}
- 
- 	bp_list->next = h_bp_list;
- 	bp_list->mp = mp;
-@@ -172,7 +254,7 @@ rte_hw_mbuf_free_pool(struct rte_mempool *mp)
- 	struct dpaa2_dpbp_dev *dpbp_node;
- 
- 	if (!mp->pool_data) {
--		DPAA2_MEMPOOL_ERR("Not a valid dpaa2 buffer pool");
-+		DPAA2_MEMPOOL_ERR("Not a valid dpaa2 buffer pool %s", mp->name);
- 		return;
+-	if (!tx_queue_id) {
+-		for (ceetm_ch_idx = 0;
+-			ceetm_ch_idx <= (priv->num_channels - 1);
+-			ceetm_ch_idx++) {
+-			/*Set tx-conf and error configuration*/
+-			if (priv->flags & DPAA2_TX_CONF_ENABLE) {
+-				ret = dpni_set_tx_confirmation_mode(dpni,
+-						CMD_PRI_LOW, priv->token,
+-						ceetm_ch_idx,
+-						DPNI_CONF_AFFINE);
+-			} else {
+-				ret = dpni_set_tx_confirmation_mode(dpni,
+-						CMD_PRI_LOW, priv->token,
+-						ceetm_ch_idx,
+-						DPNI_CONF_DISABLE);
+-			}
+-			if (ret) {
+-				DPAA2_PMD_ERR("Error(%d) in tx conf setting",
+-					ret);
+-				return ret;
+-			}
+-		}
+-	}
+-
+ 	tc_id = tx_queue_id % priv->num_tx_tc;
+ 	channel_id = (uint8_t)(tx_queue_id / priv->num_tx_tc) % priv->num_channels;
+ 	flow_id = 0;
+@@ -3624,6 +3599,21 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
+ 		goto init_err;
  	}
  
++	for (i = 0; i < priv->num_channels; i++) {
++		/*Set tx-conf and error configuration*/
++		if (priv->flags & DPAA2_TX_CONF_ENABLE) {
++			ret = dpni_set_tx_confirmation_mode(dpni_dev,
++				CMD_PRI_LOW, priv->token, i, DPNI_CONF_AFFINE);
++		} else {
++			ret = dpni_set_tx_confirmation_mode(dpni_dev,
++				CMD_PRI_LOW, priv->token, i, DPNI_CONF_DISABLE);
++		}
++		if (ret) {
++			DPAA2_PMD_ERR("Error(%d) in tx conf setting", ret);
++			goto init_err;
++		}
++	}
++
+ 	/* Allocate memory for storing MAC addresses.
+ 	 * Table of mac_filter_entries size is allocated so that RTE ether lib
+ 	 * can add MAC entries when rte_eth_dev_mac_addr_add is called.
 -- 
 2.43.0
 
