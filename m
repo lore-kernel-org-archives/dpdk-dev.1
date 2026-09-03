@@ -2,76 +2,147 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96EF1C624A4
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Sep 2026 12:38:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 105D7C624A4
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Sep 2026 12:58:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ACA10402D8;
-	Thu,  3 Sep 2026 14:38:28 +0200 (CEST)
-Received: from fhigh-a2-smtp.messagingengine.com
- (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
- by mails.dpdk.org (Postfix) with ESMTP id 9CCB94028D;
- Thu,  3 Sep 2026 14:38:27 +0200 (CEST)
-Received: from phl-compute-08.internal (phl-compute-08.internal [10.202.2.48])
- by mailfhigh.phl.internal (Postfix) with ESMTP id C750614000D0;
- Thu,  3 Sep 2026 08:38:26 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-08.internal (MEProxy); Thu, 03 Sep 2026 08:38:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:date:date:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to; s=fm1; t=1788439106; x=1788525506; bh=uW7Xg2dZ6+VVjaZsjICPo
- HBBkps48URcvCVv2bc0Xxg=; b=QBiR/TWFII3tkHXeZWhzYyis/WzQIgK7CIIoR
- 0U9+JFo88Fzo0XtrLa4pPrXHQ581vdDwjJmLGcf4YyjMf0XbIECJaqfwmqoJZ9sl
- oc2yWOMWjqAMvvrqM6Ch0dBnk9xawxL2Xb9LnPVqDNHrcAUB6Js/c62BHaqancWZ
- 34P3vVlWdbPHe8j2CymPV/eM9y45Hc07G3CUkq3r6BK61zBmu6KF6pNttPoZVTQN
- d8XNVP6UnQxb8oidCxeZEIzFKkIvz1mGHCqUt5jrpH2XV9+f+HvuTZ6Rq5eqEQ8M
- 0PW3XPaiVlPgcDpo1hUf53/kXigkzdOVZIGg2twaiKWN0yLtg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:date:date:feedback-id:feedback-id:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
- 1788439106; x=1788525506; bh=uW7Xg2dZ6+VVjaZsjICPoHBBkps48URcvCV
- v2bc0Xxg=; b=KdhXvobmh6Wp375Xj+wN7+DQOdqKmDKXJimxxXxmStpmD+UTPyK
- PEifp4t06s5s4bubY9pUHq9frkxtRdxZfHoVjLrgDYBgo6S+e3Ky3ztKgJKiaZ+S
- DpPXJ4UsGHImfuwStyGOVrhjpnc1d0DEA/IOmExRTvEsmy/cyXueDeumz5sUwPj0
- k9Ni7VCxZgqk7iMQKiRAathA/GCNWduekiZWB0dTS35N21J86g2aCsIvLR2xGWZZ
- aU6ZyPTZEmzcxQW9Ma2BLMuVl+5+3LP20d9LcsFnkTE8izAdzNlBx94pUngz+bQg
- nSBMVgHAnD7D2g/0RajL6ptSXKY4BqDg2fQ==
-X-ME-Sender: <xms:QmqZausvktIZYnftiJVU015ZpfIjn-mJ7SKm-JlHsOdUelrcTDKYxw>
- <xme:QmqZasbi6_l_XyOyOwHv6DcPoJPMOa4XYHA8jGsDoKmO7OZRJ9vDCqF7JpgkJSzQL
- 2eiRPbx1vQ3pV2y_4Ypw_TVyfsv615kkJldpho4t1RwhbvMxHhP0Ts>
-X-ME-Received: <xmr:QmqZalW67m_U5ZkdWmap-AvShS7323z2Th5TR8uGc4sGx8-pCYvg609UA4VOXgEBoIsUshHmzS7gBTIL9zQNMiEJZxQTTvA>
-X-ME-Proxy-Cause: dmFkZTFpDVNWeuzrMGLpIhYGqRTx4y/COdqVMu7BiwfTkRIpllbclDDc0kfFRaBJLbqR8k
- w3+W/YE18EMBsikVeue1XZLTbaqvx61KRR8Leon41NNs/uVUpftCxTH1ahGxmwJ51CNPzr
- cyvHHPfrp3OrMi1UyLBViyaT6vWuckahl8nwtIrg9widyDePo1tNHXsPcI/X4aA3lcrauF
- Y2nei0GH0ZQKZcoJFHxGAoN5VbJvcjvW4royepsPtmLqbtRkuDsM0xwZ6PjdKecjphkVLL
- H0udHNiTKKtpleyY3UUsIzohHeiNUjlULlnQUFS1ctCZts691gCRZgXbeu/NkXtUzxnfj+
- MmfbpkSP5OpzzJY78rOsb7j2ccgla7/1nyR8cgqrJ6V66Y3p4sYxqyhBxWQn+SyegRFeFj
- ty0r5gO/b7LUDDlU6QaY2BG6qF9FdgPK1gJ0IV+iL6px3YCi1huNm7x1S0FQDKDNFHuAp7
- aaOZoq2we/re2qSpNJxmRXOTBtWVAKGykvzYRzpLsr/LyDMPhYegFx3lMQHBod4NV+xuEv
- MliJe69IZSx+LmbRphL1aw//U2/LqZZn1KxeO/eFnFI1bDNEwuS/JRi8xQOs5ZzQWedC/n
- +whdwzSC0uGmV+Gh4J5mTyulsAIgExPuLjZKWRdXlF8oZ328xSM1/nJtP5EQ
-X-ME-Proxy: <xmx:QmqZapT12pe_Cw412z5Qga-Rvm6y1BKC01QsojdnmK-Y1MpEBrY0yw>
- <xmx:QmqZarPiEGZQLzYsdZP7cCbKHFz0_88ZdfEJy9_XqvLjWaMDRKUq1g>
- <xmx:QmqZavTHzrtBAklQv8Ej3UMNEgQU0CKfq146pUaG_2BwolV0hswSsg>
- <xmx:QmqZahgqFhKZ3eURE04vVqTZMDVClBLIxryMrruh3znhqxqO-3vSbA>
- <xmx:QmqZaq3nse3SJy9oMdFX6gHeEM2-g7Nsi24z0kuAJeg3qtjbbwCX17fI>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 3 Sep 2026 08:38:25 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: dev@dpdk.org
-Cc: stable@dpdk.org, Jerin Jacob <jerinj@marvell.com>,
- Kiran Kumar K <kirankumark@marvell.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Zhirun Yan <yanzhirun_163@163.com>
-Subject: [PATCH] doc: fix API comments for Doxygen 1.18.0
-Date: Thu,  3 Sep 2026 14:38:17 +0200
-Message-ID: <20260903123817.1677020-1-thomas@monjalon.net>
-X-Mailer: git-send-email 2.55.0
+	by mails.dpdk.org (Postfix) with ESMTP id EB8C8402D8;
+	Thu,  3 Sep 2026 14:58:34 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+ by mails.dpdk.org (Postfix) with ESMTP id 3920A4028D;
+ Thu,  3 Sep 2026 14:58:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1788440313; x=1819976313;
+ h=from:to:cc:subject:date:message-id:references:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=iuJdMHIbkZYI1liNUQREq51nafKY3eEE7DUxFEhLIVk=;
+ b=YZ6LLtzS71McWRo2BxyJtYRVq2zzvwDmQeLlYPIrndc1c4mJ0yeJeCFn
+ 0wkWFNz031al2B/OmDFjE7u6UF8Wfh4GjJ4GgeHHzKBfTDErxao6zBS4J
+ Jx4iUivGl6IizFlW+djLbHQZq8FmeWhDL2yaMi+W7NmwM9h5KKEpOhLKs
+ +/V4H86qwC6RMyxwOiswOkiiJ1fhF2fasqA11Zw68x1C2X50UsGzjI5ku
+ wwHxDCBWDk82vfhvD75FsYBNeMCS9r+mIs7qXtBt3xSeRQMX+3g5MgW6R
+ V8tQyIToxZ5mSzVNH4/DgzbgwxniLE9/FfLy/FuBFZEGOBi7ZtFh6XFJO A==;
+X-CSE-ConnectionGUID: nYACCIJwSjmQasGlVhHxVQ==
+X-CSE-MsgGUID: EG1toBkER2iAFtfvvZyevA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11894"; a="87860195"
+X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; d="scan'208";a="87860195"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+ by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 03 Sep 2026 05:58:32 -0700
+X-CSE-ConnectionGUID: qmD6Hnr8R5KsNVQ2aMSzzA==
+X-CSE-MsgGUID: B4ayG4THTui7aJ+nYKgKvg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; d="scan'208";a="268398445"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+ by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 03 Sep 2026 05:58:31 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Thu, 3 Sep 2026 05:58:31 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46 via Frontend Transport; Thu, 3 Sep 2026 05:58:31 -0700
+Received: from DM1PR04CU001.outbound.protection.outlook.com (52.101.61.67) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Thu, 3 Sep 2026 05:58:31 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=P/8GvYlz+4ye6F6VipzBemYZx+dZrYmd9ANsC2AW/hbNwxKK+jMGm3tMI2li/KI9FEXq1mZWCM3igVl3ieuc3Z+bY4Q4bqUuO9zQew4KH01FhRUSvkuHKki/Y+1af8mZCif3EOX4bohVtTJoXl5wWgAYhT6kUKx7N3SzEPD0c7eCKsZ034Rpi8isSI8sh07hmXZjhAAk67SLqKmcLN1O1fdazQ3VZkjI5IV4GS+3LxHGuOXGcz4nADgoRBd5A+HRbjAOy4naR7AxMDg+7hxd6CtzR6J+m/P6huWkcsd7iB+56ekRJuSq2FW79sw4lDi2/ZpmGt3abntJbjveybNFTQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=s5dNBRDGqlqfg8y2dH7698auM9jxonB/5zed4xVORfk=;
+ b=uKz63Py2WFK5O1HmqrC9RIc4Q5wZ7KOA0S2J1ZgMYyUnYU9gK0rF5BI4I4ktIVQgHF1w1ELG9DNwBhDdChA8dT+s9tOBEGjzRUt6ioHrwcqm7KJUPBhRSQrS5fVMswL+nmVW9mA5rUwGlpICj6Cs5GITyxhOyXyEioW7iW9lrjc8HyoAj1uY9uHUfP2UHxTvjarBWsb/u4iMtzaY6K78wpMjyw9tSmDuV2cM9rIKA+2uuaFdk2dsaUQ0IsiJgnao4YPaAQmMAE4Qa0V4mQK7sY7mltZAKecXq3n2NsmLZ8jPwDYRbTwCZQVEd94PjvEQH1PmKEbahB+ZLf58PwsIpA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from IA4PR11MB9278.namprd11.prod.outlook.com (2603:10b6:208:563::12)
+ by SA3PR11MB065283.namprd11.prod.outlook.com (2603:10b6:806:52d::5)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.13; Thu, 3 Sep
+ 2026 12:58:30 +0000
+Received: from IA4PR11MB9278.namprd11.prod.outlook.com
+ ([fe80::9bef:c20f:571f:7057]) by IA4PR11MB9278.namprd11.prod.outlook.com
+ ([fe80::9bef:c20f:571f:7057%6]) with mapi id 15.21.0360.008; Thu, 3 Sep 2026
+ 12:58:29 +0000
+From: "Loftus, Ciara" <ciara.loftus@intel.com>
+To: "Richardson, Bruce" <bruce.richardson@intel.com>, "dev@dpdk.org"
+ <dev@dpdk.org>
+CC: "Richardson, Bruce" <bruce.richardson@intel.com>, "stable@dpdk.org"
+ <stable@dpdk.org>, "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>,
+ "Mandal, Anurag" <anurag.mandal@intel.com>
+Subject: RE: [PATCH 3/7] net/iavf: fix VLAN outer TPID setting on Tx
+Thread-Topic: [PATCH 3/7] net/iavf: fix VLAN outer TPID setting on Tx
+Thread-Index: AQHdOTNG6tSjxyewpU2vOm2CURJJU7a81PAA
+Date: Thu, 3 Sep 2026 12:58:29 +0000
+Message-ID: <IA4PR11MB9278A14D684FBDBF1A138F158EB62@IA4PR11MB9278.namprd11.prod.outlook.com>
+References: <20260831102621.495759-1-bruce.richardson@intel.com>
+ <20260831102621.495759-4-bruce.richardson@intel.com>
+In-Reply-To: <20260831102621.495759-4-bruce.richardson@intel.com>
+Accept-Language: en-IE, en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA4PR11MB9278:EE_|SA3PR11MB065283:EE_
+x-ms-office365-filtering-correlation-id: 372353d7-2d90-41c0-5d6a-08df09bb0d73
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|366016|1800799024|23010399003|376014|18002099003|22082099003|56012099006|38070700021|11063799006|4143699003|10067099003;
+x-microsoft-antispam-message-info: hFuVXiL5xeR8DYcwaa1ud1n7sS0msJHx/mEyuQb8ZNjelH4E2CernhvmGti9YhdoUmeEMiJ+YEUNrx84bRcoYeuuNt6UmUqFKxPHcjhyMm4ReKU2ZF4lEji2JLprrMnvc4Ir2aoeuiGPq0oxxqlMVNPP2BrrgDO21m2P4byUbLx/LnSkXGF+9JPMD7KlY1MkNNgfL7Y2BJJzIJc9DPtPm/Jx+5aVDKftu+3Dc34xOwTwz2nSIJVBbhnQ5/I5d4nAyjYkIvNjZ/KSnVLt5gGZM6afFwSSLUtJgudxfmJVPvfWabMhEQGAHyiR8+hc12OZny8Cg+bzyXOfXR2VRkqS5Uy9uYLq9PN/dy1UioTUrNqjzjKON0QjKM6TebB401PTRy+MqzMBdsbvdCQfhb52C3ncO6et8L3ntrKJ/itHuNN7ygmAcX+jLafZhYlR58dC0y5CqlvmYqZah8BRYNxcM2Jagj5qU1zPvVckA9j/KlimCFdn+a3adCkBEkUAL0iLBiff/sjFNJW3sB62BEf3Epo3ipUjmOspWXbGmmSCEDoqXN8NHT1K+r9VheX9Xhh33fkzEsmG0CO3fPU8H/9Qd3zyAulTj8I2TcJId1A5VxMWaDg/7UXL7164MGutITt3a/ll0pMas+okSURddOcPfrf8yqEXfKTEVECP0+0DcbIOuBJwaMQ44T4ow3+r7oO2JxoWH5I4h5LvaaVX99OIPXpWKMc7sVaNedsXx6/+r68=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:IA4PR11MB9278.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(23010399003)(376014)(18002099003)(22082099003)(56012099006)(38070700021)(11063799006)(4143699003)(10067099003);
+ DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?6XXq/lTh84ZiANF2Zv9riXzp66A4Urwm885J4LtfK3NvQAh1MS1mOu+CPb1e?=
+ =?us-ascii?Q?VRXFCHKdVMXeGh8daST+UoP5HgTZAWLi5Z8/9IlQxLMTWe/n+O/sIL7ww+5K?=
+ =?us-ascii?Q?FR4/Mkr+gQ1SYim0nzHwWH8JVMqOHlhIyncyNgy0OdX4ERz1OKx9Ejk3/mQ9?=
+ =?us-ascii?Q?ZchFENiD/z8eD+QH0mMbJ7qfv79VWxWGcIMuwtPAV4aia8W7Hq1chGJg1kt/?=
+ =?us-ascii?Q?yTsNuRg8ltBs4BNPE1wQO7oPdJwg6XlhPTf0ciQ99NCs+Xko/WE4Z8Q4m1VK?=
+ =?us-ascii?Q?/F270H0toCTtK0iS/HxS7RMt+mTPkV0H//gcEATPov6gdaWwLMeGvxuR/js5?=
+ =?us-ascii?Q?rchyCQE6Df+z0YHDYATgadwQoSBucfbkGxLLUo19z1i/zR4BXV5uCsF9rrvM?=
+ =?us-ascii?Q?fzOv5oqLTADgp75RIN0Fh0qIiX4JFoH52/Dtvoa5yGyGaZYGnNUaH8PoReef?=
+ =?us-ascii?Q?4jAFhY8y6KYVJPPnCP8GkCi31HEWiiBaKsEFh5hb3VRtup7HsdyrZcp6QO2B?=
+ =?us-ascii?Q?ThoojjQPNmBnDPyRd12OuQN9mcHFBjO9zg4jKd82oMhqaZ1Leu7k6SnROeRG?=
+ =?us-ascii?Q?M45Gd3Qt5xrd38NuzQY6EaOL7GNbG+f1Ys9eeojgLnU6uc4C/9CWFS69cigm?=
+ =?us-ascii?Q?wC7AdAjHm8cJkCMq4wm1GkImcONyHqSVQmcEhCrungK4rSA+gABZnimhESNW?=
+ =?us-ascii?Q?yCEdu69HWemTe8/2iEGbqhkPM2pKFmSFpAvVwg3OnMKmE5sa9zXY9Xac+/sv?=
+ =?us-ascii?Q?CiAZoHbz0kpYcFmN+ATwr34eBkR5i8hAW4T5t/cT2es1CAvs8G6ybINmkYRz?=
+ =?us-ascii?Q?k3uOqVHzua18vCZrvY0gP8LhZXP9fHGxBtdst/SWHoCXj1MVkl8anpFpKrgr?=
+ =?us-ascii?Q?rhjXmSGVoJOhTMWpUvk1p+U9C+D8JRVkfubFaDRV+o8uZ+o/xwVWKCLtW/H0?=
+ =?us-ascii?Q?DHjCmgR7mHUV7wxGYOEJjLfD6y1LKajXRnTq5jmtoDYaB2VKu8aTnWUm1Tjd?=
+ =?us-ascii?Q?nkBEx2ig78l4vnLvwmUmkCYuFhiePjKo1/oi0N0szeMbGTbhXGGcthHhTB7T?=
+ =?us-ascii?Q?ONnnT1Oa8iNcsfwk9ApBkq3Q8YF+lYcTYO3KNYEUZo1Bb+MQ1zAD+YTAP+L5?=
+ =?us-ascii?Q?52AkNb22Aav7rXRaOb3tinVonr5qr1WmAr8lo+6pv4VgAxmsGEdRZVFoopSo?=
+ =?us-ascii?Q?rlWDAyxD4K1kMtEYTFKc0ins/XPaCdVzQUoCOggunElOKnS3Ey4qdfAwNWqJ?=
+ =?us-ascii?Q?2UJbgvvnuFLBeUULCLjAyQDE+zYkKNtoUhnLljg5fwSOTL6WDc5Xnqd9QXAP?=
+ =?us-ascii?Q?WSvlFjFOnk7pK3xYQkCUflOjtJ6vLEJj3kZDm1UsluALyQRd5Nf0l+DC3E2A?=
+ =?us-ascii?Q?b2dsfoa2qW7Vs3yk/3hzc+lsi/bG29IJPXLfb7voyzOAbpJlNnMFA1Oin5GV?=
+ =?us-ascii?Q?OOx3DonqBbVrUbXxPurLW31uEmAiZ32c6jcKnOgOnRaWjvhpiqVO4/Y+3B+f?=
+ =?us-ascii?Q?mQVNsx9NoxV84kI9FNcJ88mNm4S+tNIfdtdDmPoiHh4in2jygT7+6gtxcNk2?=
+ =?us-ascii?Q?Y5AHV3t5m8tW6D74YLm4g1jaKbu0AxgFe8Qk7Ziqp7gugLPkRRuFRaFdI7xD?=
+ =?us-ascii?Q?VsR5c5YxPnn9WwYMbvCfnQlS5wLPUAAhebSoG406B/xXP+AmPIxbI2toSWch?=
+ =?us-ascii?Q?A782oghgbxRBNAvORk5IECAjMQkRWOC0yUVFH9o0cSSZKRKr?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Exchange-RoutingPolicyChecked: dIV/TYgzJfNU76CxxLKvlIdurD86oAWclgKNH/KFipMphyoLruVLkWUVRHwLEZy0aZH8ih6BhBM+ldFwHiYTTEKmG2ggDoQqL3SzjOXpce9LtuLNWAyXIpB3XeMwpg1hpBXs7C9U4o0Z81NeX//6RyDI3alRor3zNd0Bp2jsa5K81td1VZb5bGjuZlYBwfRfs9wDgpNkBLpTOSKSxuu5xpHXmo4o25Y1QDgi8JI7S+CCk1HUpAoMJgkiKialB3A2Jf8iGdpJELxUGpfJehAEKdZpZtG37g9Kkq4lG2QNRHkbv4pFnnA/mC7JUuDc/WCjiX9tIomA6gMMncISTZB7YQ==
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA4PR11MB9278.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 372353d7-2d90-41c0-5d6a-08df09bb0d73
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Sep 2026 12:58:29.8698 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Tb9AHGiWBkMmaiwSonJ5K0HFKdfVxjDJxwlv7s0ctYCve6+lbJv4dI/RR8HePO7xygYNjQlHrYKfKib83EabNQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB065283
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,144 +156,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-After upgrading to Doxygen 1.18.0, there are 2 kinds of errors:
+> Subject: [PATCH 3/7] net/iavf: fix VLAN outer TPID setting on Tx
+>=20
+> The outer VLAN TPID setting for Tx was cached in the driver but was not
+> properly pushed to hardware (via PF) when changed. Add the necessary
+> push call to the update function.
+>=20
+> Fixes: 8599d7604e0a ("net/iavf: support QinQ strip")
+> Fixes: 7ce1363b424f ("net/iavf: support QinQ insertion")
+> Cc: stable@dpdk.org
+>=20
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+> ---
+>  drivers/net/intel/iavf/iavf_ethdev.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/net/intel/iavf/iavf_ethdev.c
+> b/drivers/net/intel/iavf/iavf_ethdev.c
+> index c4a6763f28..126be4c9a5 100644
+> --- a/drivers/net/intel/iavf/iavf_ethdev.c
+> +++ b/drivers/net/intel/iavf/iavf_ethdev.c
+> @@ -1461,13 +1461,17 @@ iavf_vlan_tpid_set(struct rte_eth_dev *dev,
+> enum rte_vlan_type vlan_type, uint16
+>  		return -ENOTSUP;
+>  	}
+>=20
+> -	/* This API only fills internal iavf_adapter structure
+> -	 * and does not send any signal to hardware.
+> -	 * Inner VLAN always 0x8100, so not set explicitly.
+> -	 */
+> +	/* Inner VLAN always 0x8100, so not set explicitly. */
+>  	if (qinq && vlan_type =3D=3D RTE_ETH_VLAN_TYPE_OUTER)
+>  		adapter->tpid =3D tpid; /* Outer VLAN can be 0x88a8 or 0x8100
+> */
+>=20
+> +	/* Re-push insertion, and stripping if already enabled, so the new
+> +	 * outer TPID reaches the PF instead of only being cached here.
+> +	 */
+> +	iavf_dev_vlan_insert_set(dev);
+> +	if (dev_conf->rxmode.offloads &
+> RTE_ETH_RX_OFFLOAD_QINQ_STRIP)
+> +		iavf_dev_vlan_offload_set(dev,
+> RTE_ETH_QINQ_STRIP_MASK);
 
-- @ref func() for static function is broken because of parens
-- @ref struct.member with anonymous struct/union is broken
+Should we check the return value of this call and fail if an error is repor=
+ted?
 
-Parentheses are removed from inline function references.
-The second issue is more difficult and requires to degrade the doc
-by providing a global link to the struct page for the fields.
-
-The root causes of these issues can be found in these links:
-	https://github.com/doxygen/doxygen/commit/e1bff01
-	https://github.com/doxygen/doxygen/issues/12226
-
-Cc: stable@dpdk.org
-
-Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
----
- lib/eventdev/rte_eventdev.h       | 22 +++++++++++-----------
- lib/graph/rte_graph_feature_arc.h |  8 ++++----
- 2 files changed, 15 insertions(+), 15 deletions(-)
-
-diff --git a/lib/eventdev/rte_eventdev.h b/lib/eventdev/rte_eventdev.h
-index 4e13a38d89..db730131f2 100644
---- a/lib/eventdev/rte_eventdev.h
-+++ b/lib/eventdev/rte_eventdev.h
-@@ -744,12 +744,12 @@ enum rte_event_dev_preschedule_type {
- 	RTE_EVENT_PRESCHEDULE_NONE,
- 	/**< Disable pre-schedule across the event device or on a given event port.
- 	 * @ref rte_event_dev_config.preschedule_type
--	 * @ref rte_event_port_preschedule_modify()
-+	 * @ref rte_event_port_preschedule_modify
- 	 */
- 	RTE_EVENT_PRESCHEDULE,
- 	/**< Enable pre-schedule always across the event device or a given event port.
- 	 * @ref rte_event_dev_config.preschedule_type
--	 * @ref rte_event_port_preschedule_modify()
-+	 * @ref rte_event_port_preschedule_modify
- 	 * @see RTE_EVENT_DEV_CAP_EVENT_PRESCHEDULE
- 	 * @see RTE_EVENT_DEV_CAP_PER_PORT_PRESCHEDULE
- 	 */
-@@ -758,7 +758,7 @@ enum rte_event_dev_preschedule_type {
- 	 * Delay issuing pre-schedule until there are no forward progress constraints with
- 	 * the held flow contexts.
- 	 * @ref rte_event_dev_config.preschedule_type
--	 * @ref rte_event_port_preschedule_modify()
-+	 * @ref rte_event_port_preschedule_modify
- 	 * @see RTE_EVENT_DEV_CAP_EVENT_PRESCHEDULE_ADAPTIVE
- 	 * @see RTE_EVENT_DEV_CAP_PER_PORT_PRESCHEDULE
- 	 */
-@@ -1524,8 +1524,8 @@ struct __rte_aligned(16) rte_event_vector {
-  *
-  * NOTE:
-  *   In restoring event order of forwarded events, the eventdev API guarantees that
-- *   all events from the same flow (i.e. same @ref rte_event.flow_id,
-- *   @ref rte_event.priority and @ref rte_event.queue_id) will be put in the original
-+ *   all events from the same flow (i.e. same @ref rte_event "flow_id",
-+ *   @ref rte_event "priority" and @ref rte_event "queue_id") will be put in the original
-  *   order before being forwarded to the destination queue.
-  *   Some eventdevs may implement stricter ordering to achieve this aim,
-  *   for example, restoring the order across *all* flows dequeued from the same ORDERED
-@@ -1537,8 +1537,8 @@ struct __rte_aligned(16) rte_event_vector {
- #define RTE_SCHED_TYPE_ATOMIC           1
- /**< Atomic scheduling
-  *
-- * Events from an atomic flow, identified by a combination of @ref rte_event.flow_id,
-- * @ref rte_event.queue_id and @ref rte_event.priority, can be scheduled only to a
-+ * Events from an atomic flow, identified by a combination of @ref rte_event "flow_id",
-+ * @ref rte_event "queue_id" and @ref rte_event "priority", can be scheduled only to a
-  * single port at a time. The port is guaranteed to have exclusive (atomic)
-  * access to the associated flow context, which enables the user to avoid SW
-  * synchronization. Atomic flows also maintain event ordering
-@@ -1618,12 +1618,12 @@ struct __rte_aligned(16) rte_event_vector {
- 
- /* Event enqueue operations */
- #define RTE_EVENT_OP_NEW                0
--/**< The @ref rte_event.op field must be set to this operation type to inject a new event,
-+/**< The @ref rte_event "op" field must be set to this operation type to inject a new event,
-  * i.e. one not previously dequeued, into the event device, to be scheduled
-  * for processing.
-  */
- #define RTE_EVENT_OP_FORWARD            1
--/**< The application must set the @ref rte_event.op field to this operation type to return a
-+/**< The application must set the @ref rte_event "op" field to this operation type to return a
-  * previously dequeued event to the event device to be scheduled for further processing.
-  *
-  * This event *must* be enqueued to the same port that the
-@@ -1631,7 +1631,7 @@ struct __rte_aligned(16) rte_event_vector {
-  *
-  * The event's fields, including (but not limited to) flow_id, scheduling type,
-  * destination queue, and event payload e.g. mbuf pointer, may all be updated as
-- * desired by the application, but the @ref rte_event.impl_opaque field must
-+ * desired by the application, but the @ref rte_event "impl_opaque" field must
-  * be kept to the same value as was present when the event was dequeued.
-  */
- #define RTE_EVENT_OP_RELEASE            2
-@@ -1659,7 +1659,7 @@ struct __rte_aligned(16) rte_event_vector {
-  * should be considered filled.
-  *
-  * Events with this operation type must only be enqueued to the same port that the
-- * event to be released was dequeued from. The @ref rte_event.impl_opaque
-+ * event to be released was dequeued from. The @ref rte_event "impl_opaque"
-  * field in the release event must have the same value as that in the original dequeued event.
-  *
-  * If a dequeued event is re-enqueued with operation type of @ref RTE_EVENT_OP_RELEASE,
-diff --git a/lib/graph/rte_graph_feature_arc.h b/lib/graph/rte_graph_feature_arc.h
-index 14f24be831..aa6495c4ad 100644
---- a/lib/graph/rte_graph_feature_arc.h
-+++ b/lib/graph/rte_graph_feature_arc.h
-@@ -128,7 +128,7 @@ extern "C" {
-  * (like VRF table for IP lookup or IPsec SA for inbound policy etc). A
-  * reference of allocated resource can be passed from control plane to
-  * dataplane via *app_cookie* argument in @ref rte_graph_feature_enable(). A
-- * corresponding dataplane API @ref rte_graph_feature_data_app_cookie_get() can
-+ * corresponding dataplane API @ref rte_graph_feature_data_app_cookie_get can
-  * be used to retrieve same cookie in fast path.
-  *
-  * When a feature is disabled, resources allocated during feature enable can be
-@@ -138,9 +138,9 @@ extern "C" {
-  *
-  * If current feature node is not consuming packet, it might want to send it to
-  * next enabled feature. Depending upon current node is a:
-- * - start_node (via @ref rte_graph_feature_data_first_feature_get())
-+ * - start_node (via @ref rte_graph_feature_data_first_feature_get)
-  * - feature nodes added between start_node and end_node (via @ref
-- *   rte_graph_feature_data_next_feature_get())
-+ *   rte_graph_feature_data_next_feature_get)
-  * - end_feature_node (must not call any feature arc steering APIs) as from
-  *   this node packet exits feature arc
-  *
-@@ -151,7 +151,7 @@ extern "C" {
-  *
-  * rte_mbuf carries [feature_data] into feature arc specific mbuf dynamic
-  * field. See @ref rte_graph_feature_arc_mbuf_dynfields and @ref
-- * rte_graph_feature_arc_mbuf_dynfields_get() for more details.
-+ * rte_graph_feature_arc_mbuf_dynfields_get for more details.
-  *
-  * Fast path synchronization
-  * -------------------------
--- 
-2.55.0
+> +
+>  	return 0;
+>  }
+>=20
+> --
+> 2.53.0
 
