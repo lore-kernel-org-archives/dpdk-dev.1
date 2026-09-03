@@ -2,71 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E357C624A4
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Sep 2026 18:01:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4601CC61DD3
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Sep 2026 18:19:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 52B284026C;
-	Thu,  3 Sep 2026 20:01:45 +0200 (CEST)
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com
- [209.85.222.178])
- by mails.dpdk.org (Postfix) with ESMTP id 771AA40144
- for <dev@dpdk.org>; Thu,  3 Sep 2026 20:01:44 +0200 (CEST)
-Received: by mail-qk1-f178.google.com with SMTP id
- af79cd13be357-92e57a753f9so7666885a.2
- for <dev@dpdk.org>; Thu, 03 Sep 2026 11:01:44 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5C8524026C;
+	Thu,  3 Sep 2026 20:19:50 +0200 (CEST)
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com
+ [209.85.215.177])
+ by mails.dpdk.org (Postfix) with ESMTP id 5212C40144
+ for <dev@dpdk.org>; Thu,  3 Sep 2026 20:19:49 +0200 (CEST)
+Received: by mail-pg1-f177.google.com with SMTP id
+ 41be03b00d2f7-c9aea40d799so184130a12.0
+ for <dev@dpdk.org>; Thu, 03 Sep 2026 11:19:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1788458504; x=1789063304; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=FpLxCTeIPD4hRpIULPVKxvpb0qFydrPUsIqu8bwBAyw=;
- b=VBduQuAnFeVfuTg6/8TwhL6PPKllK/wDbTzE2/7z5wIRz1OiHKb0qWiEhW56FZx2sm
- II0RLdeo9wsVy7oDAsUKn1/arRe4C3otkUmcCyUre7vnf107luSbKUEigOp6l/XL+vc1
- DaYRIa8o0lqbtgprEAwCuMm1ORvvXCUN89qIk=
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788459588;
+ x=1789064388; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=Z6qO2FfGgGr9+6xSCGGPqatVlSscs5NFUbaMflULE9g=;
+ b=ZM+NUcbou/awwfY6MoZqmeoJabRdwtb/QlVK1QKotk16+gInsg5+DmEDBFLwJfX7YR
+ 1VxiTt8RKDWuSJMmsVpndXv4JtME2My+etrSR4+31JAL3K7Q39bYO0QTTlHvgr9i0uZj
+ fv7aolFVMkgBydFMpeFgunIZKfrVS/Ym/Bhq/sTAbkPzQW6+MIGjvGgXOfRdXa3fuHAh
+ DRpgoS9j3LIw58LXpyILJbdY2LeefXrwrWhJxK2cJL8jK7WnGj+g8ETEedPX8VQx9oTa
+ BSLYb1zbfSOzCVlA4ulCpXVK4KgSY2PoeAc8+tTLTlawgy29opEDB/BvVyPZ3g+/XjuY
+ Gvng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788458504; x=1789063304;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=FpLxCTeIPD4hRpIULPVKxvpb0qFydrPUsIqu8bwBAyw=;
- b=C83OcVFdTUQXI9RqkuYEc93Es1/NeFVxeQEkA7xg5cL+M9uV7KgQLVc3mqh0TrLx7e
- CMeP0M+g+DNwV5AQ4w0FFSPt+tcq3bSdg6W1eqMQs/mPDYG/iCVp9D0zGlppvDpQjKpY
- F5RkLtp0k/3mQ3ple+tcVARoVr9Sh7s6UXmMkQ+yLzWKbRo+hj26PB5UobbgdoNLsPY2
- 2tQogn7v1B5J17gqfNk9t41vBZ6UL5zMryxUk30NMrGPiJhkNHWmC/Tyfm6uJO8UlMBR
- Y0UheYybbcAVGHrCNs1z6vKXamfdOpkwzB8S0JeXk1G3Qrlq+70A7M18Pyd6MbrGK3Wr
- pXDw==
-X-Gm-Message-State: AFuF++nfqqYaA6T4FkuyvlszkPro52vPoKr0Bq6vsKdbkQjd6JRHFv9L
- jY4kQGnDwT7jF8CZAj0FqZJ3Y2p4S8EsPlX19g9fwpqZUUegUGnoxopl8ITy03H95Eo=
-X-Gm-Gg: AYBFou2/mQGT3cse7707/mmUzRhRdYxPhxgk9589+mDvFtVCNQ6rXNxG2yrdEplAXI2
- aLGFXGoG8fCTIwU2iqjRdxSgbcuTcOyS48F/TIDYnHJvN/yv6yM3lIgfOqwUA9jypG4DxDj4do9
- /XTFhbW6jCgLwJHivSS5wYpW3XC1GO0/P+LdplZU2iRNj3wKvx0Hq++ZP+rt0jMdAqcfhsA7fiJ
- IL85NibFHhF3mxrYq2nnYQE/EoeUwSs6Kh3khV78MNTID/jvp+JpDwAvcB6Rz0iadp8bdvT5WDc
- /j+j3hMwPLnF0aIjipgw9G7lKO6N1Z5iVvkSJvgVzxDiFw+dwh4e8myK5Gq0qx0INfJ83TQddLF
- 1b2UB78iz0/zhjTN+jpt+aTFHe/Bq+oHVCVF1leiWUxS+/WWaSPw0/TVMpEectf3jg8v9ns/Qs1
- t35PC+fyiOKGrIjxZOL4hczjnuaFjs49Xgi2wk1wpQ8TVJUBbrpHNVvB7SS9s0cWPYnx36xYNzn
- J8SZYLUfN6aqR18eDPnrba3FZiKyILsUJdeuMtLi27oWJAhyuYcMXcAhSei0ySX5CClPwf8Yixt
- cQEN39LkFoTAFl+SXigk/cGTdc9pKj6z43Az4yjvyK4+28oWJcuRXuk+B+sM
-X-Received: by 2002:a05:620a:f0c:b0:939:6516:7128 with SMTP id
- af79cd13be357-9398059ace9mr14854785a.3.1788458503328; 
- Thu, 03 Sep 2026 11:01:43 -0700 (PDT)
-Received: from fedora.iol.unh.edu ([2606:4100:3880:1271:af2f:903c:2ca9:975f])
+ d=1e100.net; s=20251104; t=1788459588; x=1789064388;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=Z6qO2FfGgGr9+6xSCGGPqatVlSscs5NFUbaMflULE9g=;
+ b=qikpn6WypXkv5wsJZiv4gu81AFq1TrBNOSF8F1y6jvTBnH70TfgIlVF5aVqgxUa9Xx
+ Rx15xfRPyUsTh/dAmaZ6bp7rRB6+RJJsjLyghufwmbrBxEVGe5OMEsnzyYvW5cl5kv7w
+ 2QYrYhrZDhIsvag+lwN8jYiowiqMDjv0z7Ru9ahjcNCqzP9vtKBW22f7eZM5ZaG0279w
+ w9aV9qqI68p/YogKI+w6pXZD+hFPi8WFKw86X5YPoYKGQOHIvr2lvwF70rek7PhUFRg/
+ wyDW1TfkK6sgohdphwBhE0LHCKiXRutjIZ236Snb/WniK7CNuu6aEtVFpkcWBf3Sst9y
+ JDpQ==
+X-Gm-Message-State: AFuF++nJshzlgy7zksmVXZMeWXAO8aXGs4cy+ZNnVrQ2PBdmBeoTpQR8
+ LNpB20EiYZsTr1FoHq7sh+UrO3U1DewwlRqgRax5VPjCnK7slkjbWG2fDPz9TEs7MLU=
+X-Gm-Gg: AYBFou1ndGn1PvRHPG8YoSjd75TO9SpaAg5VV+2y6tVPDSVFeqf23On+NfldZ4T146H
+ Ov2ZZFVpjr2ukq42XrggaXGEFpV/ebZt/1XJIXUlQ7psaLnS6aDCuf7H6Uxx9kw/WSLW8Kgjk5Z
+ Wrc/ZGiYbI6dxGFKAQP8tdr/2MNwf8aWXU15XFCA5wxgGGbjo7hOEUiHcAn5GZjFcwYl4tWwrUD
+ cP6q8sZxDHdN3z6o0rT6J5GNkuQkt7Fxot39mcwOh1eDuyf2uUSZtsELjl3DytjfWX9eDCW+h0D
+ D52tspnZDVFzbBYJ3F4ct6O04Pb6CNXdJcT12+wBQAf30GGslqOHygeaq34Jo4W7kO8lCHEXZY8
+ YihxBLCTOwjYalvVpVLGKfaXvSnv1NbSQSpfM08pW9AvoDpAh4SCcol/LNTxs2hByvVyOfk/oWl
+ 0/JbPXthaw5Y+Gxdu4UIY9DvKL9iPiUXhC4fP/ZeCTunF3w0y/2fR0cUVaMHLkuSAD5jr955qaz
+ gXHJPRe/MzOu03AxjXe+DXkBMsBuw==
+X-Received: by 2002:a17:90b:1643:b0:380:21b7:e727 with SMTP id
+ 98e67ed59e1d1-39b26272f04mr435728a91.14.1788459588198; 
+ Thu, 03 Sep 2026 11:19:48 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-9397fb36195sm19667585a.21.2026.09.03.11.01.41
+ 98e67ed59e1d1-39b08bcc060sm7635605a91.3.2026.09.03.11.19.45
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 03 Sep 2026 11:01:42 -0700 (PDT)
-From: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
-To: luca.vizzarro@arm.com,
-	patrickrobb1997@gmail.com
-Cc: dev@dpdk.org, dladd@iol.unh.edu, abailey@iol.unh.edu, lylavoie@iol.unh.edu,
- Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
-Subject: [PATCH v1] dts: add pvp multi paths vhost performance testsuite
-Date: Thu,  3 Sep 2026 14:01:39 -0400
-Message-ID: <20260903180139.703289-1-knimoji@iol.unh.edu>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260901185957.453730-1-knimoji@iol.unh.edu>
-References: <20260901185957.453730-1-knimoji@iol.unh.edu>
+ Thu, 03 Sep 2026 11:19:47 -0700 (PDT)
+Date: Thu, 3 Sep 2026 11:19:38 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Gagandeep Singh <g.singh@nxp.com>
+Cc: dev@dpdk.org, hemant.agrawal@nxp.com
+Subject: Re: [PATCH v12 15/15] net/enetc4: add WRR Tx scheduler devarg for
+ VF rings
+Message-ID: <20260903111938.6164ae05@phoenix.local>
+In-Reply-To: <20260821055643.1359277-16-g.singh@nxp.com>
+References: <20260819053415.645865-1-g.singh@nxp.com>
+ <20260821055643.1359277-1-g.singh@nxp.com>
+ <20260821055643.1359277-16-g.singh@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,472 +85,65 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch adds the pvp multi paths vhost single core forward
-performance testsuite, which launches testpmd using the vhost
-and virtio virtual devices with one and two cores respectively,
-and tests the vhost single core throughput performance.
+On Fri, 21 Aug 2026 11:26:43 +0530
+Gagandeep Singh <g.singh@nxp.com> wrote:
 
-Signed-off-by: Koushik Bhargav Nimoji <knimoji@iol.unh.edu>
----
- ...lti_paths_vhost_single_core_performance.py | 449 ++++++++++++++++++
- 1 file changed, 449 insertions(+)
- create mode 100644 dts/tests/TestSuite_pvp_multi_paths_vhost_single_core_performance.py
+> Add enetc4_txq_wrr devarg to configure per-ring WRR weights in the
+> NETC LEAF-level Tx scheduler (TBaMR register, bits [6:4]).
+> 
+> The NETC Tx scheduler has three levels:
+>   - ROOT (port/TC): strict priority + CBS (PF/port space)
+>   - MID  (SI/VSI):  WBFS shaping (PF space)
+>   - LEAF (Tx BDR):  strict priority + frame-based WRR (VF/SI space)
+> 
+> TBaMR is in the VF own SI space, so no Linux PF involvement is
+> needed for PRIO or WRR configuration.
+> 
+> Changes:
+> - enetc_hw.h: add ENETC_TBMR_WRR_MASK, ENETC_TBMR_WRR(n) macros for
+>   TBaMR bits [6:4], and ENETC_TBMR_PRIO_MASK for bits [2:0]
+> - enetc.h: add txq_wrr pointer to enetc_eth_hw struct
+> - enetc4_ethdev.c: add parse_txq_wrr() and wire ENETC4_TXQ_WRR devarg
+>   through enetc4_get_devargs() and enetc4_dev_configure(); apply WRR
+>   bits in enetc4_tx_queue_setup() and enetc4_tx_queue_start()
+> 
+> Usage:
+>   # strict priority: ring 0 highest
+>   -a 0002:00:12.0,enetc4_txq_prior="3|2|1"
+> 
+>   # WRR 2:4:1 on same-priority rings
+>   -a 0002:00:12.0,enetc4_txq_prior="1|1|1",enetc4_txq_wrr="2|4|1"
+> 
+> Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
+> Acked-by: Hemant Agrawal <hemant.agrawal@nxp.com>
+> ---
 
-diff --git a/dts/tests/TestSuite_pvp_multi_paths_vhost_single_core_performance.py b/dts/tests/TestSuite_pvp_multi_paths_vhost_single_core_performance.py
-new file mode 100644
-index 0000000000..a3ce45fb34
---- /dev/null
-+++ b/dts/tests/TestSuite_pvp_multi_paths_vhost_single_core_performance.py
-@@ -0,0 +1,449 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2025 University of New Hampshire
-+
-+"""Vhost-user single-core forwarding performance test suite.
-+
-+This suite measures the packet forwarding performance of DPDK's vhost-user PMD running on a
-+single CPU core in a Physical-Virtual-Physical (PVP) topology. Performance is evaluated across
-+multiple virtio-user backend options, including packed versus split ring formats, in-order packet
-+processing, mergeable buffers, and SIMD vectorization. Test cases are parameterized using
-+combinations of frame sizes, descriptor ring sizes, and target MPPS baselines specified in the
-+test configuration. High-speed traffic is injected from an external generator through SUT physical
-+interfaces, routed through Vhost and Virtio loops, and returned to the generator to measure
-+aggregate MPPS.
-+"""
-+
-+from typing import cast
-+
-+from scapy.layers.inet import IP
-+from scapy.layers.l2 import Ether
-+from scapy.packet import Raw
-+
-+from api.capabilities import (
-+    LinkTopology,
-+    requires_link_topology,
-+)
-+from api.packet import assess_performance_by_packet
-+from api.test import get_current_test_case_name, verify, write_performance_json
-+from api.testpmd import TestPmd
-+from api.testpmd.config import PortTopology, RXRingParams, SimpleForwardingModes, TXRingParams
-+from framework.params.eal import VirtualDevice
-+from framework.params.types import LogicalCoreList, RSSSetting, TestPmdParamsDict
-+from framework.test_suite import BaseConfig, TestSuite, perf_test
-+
-+
-+class Config(BaseConfig):
-+    """Performance test metrics."""
-+
-+    test_parameters: list[dict[str, int | float]] = [
-+        {"frame_size": 64, "num_descriptors": 1024, "expected_mpps": 1.00},
-+        {"frame_size": 128, "num_descriptors": 1024, "expected_mpps": 1.00},
-+        {"frame_size": 256, "num_descriptors": 1024, "expected_mpps": 1.00},
-+        {"frame_size": 512, "num_descriptors": 1024, "expected_mpps": 1.00},
-+        {"frame_size": 1024, "num_descriptors": 1024, "expected_mpps": 1.00},
-+        {"frame_size": 1518, "num_descriptors": 1024, "expected_mpps": 1.00},
-+    ]
-+    delta_tolerance: float = 0.05
-+
-+
-+@requires_link_topology(LinkTopology.TWO_LINKS)
-+class TestPvpMultiPathsVhostSingleCorePerformance(TestSuite):
-+    """pvp multi paths vhost single core performance test suite."""
-+
-+    config: Config
-+
-+    def set_up_suite(self):
-+        """Assign test parameters."""
-+        self.test_parameters = self.config.test_parameters
-+        self.delta_tolerance = self.config.delta_tolerance
-+
-+    def set_up_test_case(self):
-+        """Delete stale vhost-user Unix domain socket files."""
-+        self._ctx.sut_node.main_session.send_command("rm -rf /tmp/vhost-net*", privileged=True)
-+
-+    def _transmit(
-+        self, vhost: TestPmd, virtio: TestPmd, frame_size: int, repetitions: int = 1
-+    ) -> float:
-+        """Transmit packets using testpmd instances and compute average MPPS.
-+
-+        Args:
-+            vhost: the running vhost testpmd shell.
-+            virtio: the running virtio testpmd shell.
-+            frame_size: The size of the frame to transmit.
-+            repetitions: The number of times to rerun the transmission.
-+
-+        Returns:
-+            The MPPS (millions of packets per second) forwarded by the SUT.
-+        """
-+        assert repetitions > 0, "Invalid number of repetitions given."
-+        # Build packet with dummy values, and account for the 14B and 20B Ether and IP headers
-+        packet = (
-+            Ether(src="52:00:00:00:00:00")
-+            / IP(src="1.2.3.4", dst="192.18.1.0")
-+            / Raw(load="x" * (frame_size - 14 - 20))
-+        )
-+
-+        vhost.start()
-+        virtio.start()
-+        rx_avg = 0.0
-+
-+        for _ in range(repetitions):
-+            # Transmit for 5 seconds.
-+            stats = assess_performance_by_packet(packet=packet, duration=5)
-+            rx_avg += stats.rx_pps
-+        return rx_avg / (repetitions * 1_000_000)
-+
-+    def _create_and_transmit(
-+        self,
-+        ring_format: int,
-+        in_order: int,
-+        buffers: int,
-+        vectorized: int,
-+        extra_args: TestPmdParamsDict,
-+    ) -> None:
-+        """Create testpmd instances with specified params and send traffic."""
-+        sut_dpdk_driver = self._ctx.sut_node.config.ports[0].os_driver_for_dpdk
-+        vhost_user_vdev = VirtualDevice("net_vhost0,iface=/tmp/vhost-net,queues=1")
-+        virtio_user_vdev = VirtualDevice(
-+            "net_virtio_user0,"
-+            "mac=00:11:22:33:44:10,"
-+            "path=/tmp/vhost-net,"
-+            "queues=1,"
-+            f"packed_vq={ring_format},"
-+            f"mrg_rxbuf={buffers},"
-+            f"in_order={in_order},"
-+            f"vectorized={vectorized}"
-+        )
-+
-+        for params in self.test_parameters:
-+            frame_size = params["frame_size"]
-+            num_descriptors = params["num_descriptors"]
-+
-+            default_args: TestPmdParamsDict = {
-+                "tx_ring": TXRingParams(descriptors=num_descriptors),
-+                "rx_ring": RXRingParams(descriptors=num_descriptors),
-+            }
-+
-+            if sut_dpdk_driver == "mlx5_core":
-+                default_args["burst"] = 64
-+                default_args["mbcache"] = 512
-+            elif sut_dpdk_driver == "i40e":
-+                default_args["rx_queues"] = 1
-+                default_args["tx_queues"] = 1
-+
-+            vhost_params: TestPmdParamsDict = {
-+                "prefix": "vhost",
-+                "allowed_ports": [],
-+                "memory_channels": 4,
-+                "port_topology": PortTopology.chained,
-+                "vdevs": [vhost_user_vdev],
-+                "lcore_list": LogicalCoreList([1, 2]),
-+                "nb_cores": 1,
-+                **default_args,
-+            }
-+
-+            virtio_params: TestPmdParamsDict = {
-+                "prefix": "virtio",
-+                "no_pci": True,
-+                "memory_channels": 4,
-+                "allowed_ports": [],
-+                "vdevs": [virtio_user_vdev],
-+                "lcore_list": LogicalCoreList([3, 4, 5]),
-+                "nb_cores": 2,
-+                **extra_args,
-+                **default_args,
-+            }
-+
-+            with (
-+                TestPmd(**vhost_params) as vhost,
-+                TestPmd(**virtio_params) as virtio,
-+            ):
-+                vhost.set_forward_mode(SimpleForwardingModes.mac)
-+                virtio.set_forward_mode(SimpleForwardingModes.io)
-+                vhost.set_portlist([0, 2, 1])
-+
-+                params["measured_mpps"] = round(
-+                    self._transmit(vhost, virtio, frame_size, repetitions=5), 3
-+                )
-+                params["performance_delta"] = round(
-+                    (float(params["measured_mpps"]) - float(params["expected_mpps"]))
-+                    / float(params["expected_mpps"]),
-+                    3,
-+                )
-+                params["pass"] = float(params["performance_delta"]) >= -self.delta_tolerance
-+
-+        self._produce_stats_table(self.test_parameters)
-+        for params in self.test_parameters:
-+            verify(
-+                params["pass"] is True,
-+                f"""Packets forwarded is less than {(1 - self.delta_tolerance) * 100}%
-+                of the expected baseline.
-+                Measured MPPS = {params["measured_mpps"]}
-+                Expected MPPS = {params["expected_mpps"]}""",
-+            )
-+
-+    def _produce_stats_table(self, test_parameters: list[dict[str, int | float]]) -> None:
-+        """Display performance results in table format and write to structured JSON file.
-+
-+        Args:
-+            test_parameters: The expected and real stats per set of test parameters.
-+        """
-+        test_case = get_current_test_case_name()
-+        header = f"{'Frame Size':>12} | {'TXD/RXD':>12} | {'Real MPPS':>12} | {'Expected MPPS':>14}"
-+        print(f"{test_case} Results:")
-+        print("-" * len(header))
-+        print(header)
-+        print("-" * len(header))
-+        for params in test_parameters:
-+            print(f"{params['frame_size']:>12} | {params['num_descriptors']:>12} | ", end="")
-+            print(f"{params['measured_mpps']:>12} | {params['expected_mpps']:>14}")
-+            print("-" * len(header))
-+
-+        write_performance_json({"results": test_parameters})
-+
-+    @perf_test
-+    def test_perf_vhost_single_core_virtio11_mergeable(self) -> None:
-+        """Validate expected single core forwarding performance.
-+
-+        Steps:
-+            * Set TestPMD virtio parameters: ring_format=1, buffers=1.
-+            * Create a packet according to the frame size specified in the test config.
-+            * Transmit from the traffic generator's ports 0 and 1 at above the expect.
-+            * Forward on TestPMD's interfaces 0 and 1 with 1 core.
-+
-+        Verify:
-+            * The resulting MPPS forwarded is greater than expected_mpps*(1-delta_tolerance).
-+        """
-+        extra_args: TestPmdParamsDict = {
-+            "tx_offloads": 0,
-+            "enable_hw_vlan_strip": True,
-+            "rss": cast(RSSSetting, RSSSetting.SetIPOnly()),
-+        }
-+        self._create_and_transmit(
-+            ring_format=1,
-+            buffers=1,
-+            in_order=0,
-+            vectorized=0,
-+            extra_args=extra_args,
-+        )
-+
-+    @perf_test
-+    def test_perf_vhost_single_core_virtio11_non_mergeable(self) -> None:
-+        """Validate expected single core forwarding performance.
-+
-+        Steps:
-+            * Set TestPMD virtio parameters: ring_format=1.
-+            * Create a packet according to the frame size specified in the test config.
-+            * Transmit from the traffic generator's ports 0 and 1 at above the expect.
-+            * Forward on TestPMD's interfaces 0 and 1 with 1 core.
-+
-+        Verify:
-+            * The resulting MPPS forwarded is greater than expected_mpps*(1-delta_tolerance).
-+        """
-+        extra_args: TestPmdParamsDict = {
-+            "tx_offloads": 0,
-+            "enable_hw_vlan_strip": True,
-+            "rss": cast(RSSSetting, RSSSetting.SetIPOnly()),
-+        }
-+        self._create_and_transmit(
-+            ring_format=1,
-+            buffers=0,
-+            in_order=0,
-+            vectorized=0,
-+            extra_args=extra_args,
-+        )
-+
-+    @perf_test
-+    def test_perf_vhost_single_core_virtio_inorder_mergeable(self) -> None:
-+        """Validate expected single core forwarding performance.
-+
-+        Steps:
-+            * Set TestPMD virtio parameters: buffers=1, in_order=1.
-+            * Create a packet according to the frame size specified in the test config.
-+            * Transmit from the traffic generator's ports 0 and 1 at above the expect.
-+            * Forward on TestPMD's interfaces 0 and 1 with 1 core.
-+
-+        Verify:
-+            * The resulting MPPS forwarded is greater than expected_mpps*(1-delta_tolerance).
-+        """
-+        extra_args: TestPmdParamsDict = {
-+            "tx_offloads": 0,
-+            "enable_hw_vlan_strip": True,
-+            "rss": cast(RSSSetting, RSSSetting.SetIPOnly()),
-+        }
-+        self._create_and_transmit(
-+            ring_format=0,
-+            buffers=1,
-+            in_order=1,
-+            vectorized=0,
-+            extra_args=extra_args,
-+        )
-+
-+    @perf_test
-+    def test_perf_vhost_single_core_virtio_inorder_nonmergeable(self) -> None:
-+        """Validate expected single core forwarding performance.
-+
-+        Steps:
-+            * Set TestPMD virtio parameters: in_order=1.
-+            * Create a packet according to the frame size specified in the test config.
-+            * Transmit from the traffic generator's ports 0 and 1 at above the expect.
-+            * Forward on TestPMD's interfaces 0 and 1 with 1 core.
-+
-+        Verify:
-+            * The resulting MPPS forwarded is greater than expected_mpps*(1-delta_tolerance).
-+        """
-+        extra_args: TestPmdParamsDict = {
-+            "tx_offloads": 0,
-+            "enable_hw_vlan_strip": True,
-+            "rss": cast(RSSSetting, RSSSetting.SetIPOnly()),
-+        }
-+        self._create_and_transmit(
-+            ring_format=0,
-+            buffers=0,
-+            in_order=1,
-+            vectorized=0,
-+            extra_args=extra_args,
-+        )
-+
-+    @perf_test
-+    def test_perf_vhost_single_core_virtio_mergeable(self) -> None:
-+        """Validate expected single core forwarding performance.
-+
-+        Steps:
-+            * Set TestPMD virtio parameters: buffers=1.
-+            * Create a packet according to the frame size specified in the test config.
-+            * Transmit from the traffic generator's ports 0 and 1 at above the expect.
-+            * Forward on TestPMD's interfaces 0 and 1 with 1 core.
-+
-+        Verify:
-+            * The resulting MPPS forwarded is greater than expected_mpps*(1-delta_tolerance).
-+        """
-+        extra_args: TestPmdParamsDict = {
-+            "tx_offloads": 0,
-+            "enable_hw_vlan_strip": True,
-+            "rss": cast(RSSSetting, RSSSetting.SetIPOnly()),
-+        }
-+        self._create_and_transmit(
-+            ring_format=0,
-+            buffers=1,
-+            in_order=0,
-+            vectorized=0,
-+            extra_args=extra_args,
-+        )
-+
-+    @perf_test
-+    def test_perf_vhost_single_core_virtio_nonmergeable(self) -> None:
-+        """Validate expected single core forwarding performance.
-+
-+        Steps:
-+            * Set TestPMD virtio parameters: vectorized=1.
-+            * Create a packet according to the frame size specified in the test config.
-+            * Transmit from the traffic generator's ports 0 and 1 at above the expect.
-+            * Forward on TestPMD's interfaces 0 and 1 with 1 core.
-+
-+        Verify:
-+            * The resulting MPPS forwarded is greater than expected_mpps*(1-delta_tolerance).
-+        """
-+        extra_args: TestPmdParamsDict = {
-+            "tx_offloads": 0,
-+            "enable_hw_vlan_strip": True,
-+            "rss": cast(RSSSetting, RSSSetting.SetIPOnly()),
-+        }
-+        self._create_and_transmit(
-+            ring_format=0,
-+            buffers=0,
-+            in_order=0,
-+            vectorized=1,
-+            extra_args=extra_args,
-+        )
-+
-+    @perf_test
-+    def test_perf_vhost_single_core_virtio_vectorized(self) -> None:
-+        """Validate expected single core forwarding performance.
-+
-+        Steps:
-+            * Set TestPMD virtio parameters: vectorized=1.
-+            * Create a packet according to the frame size specified in the test config.
-+            * Transmit from the traffic generator's ports 0 and 1 at above the expect.
-+            * Forward on TestPMD's interfaces 0 and 1 with 1 core.
-+
-+        Verify:
-+            * The resulting MPPS forwarded is greater than expected_mpps*(1-delta_tolerance).
-+        """
-+        self._create_and_transmit(
-+            ring_format=0,
-+            buffers=0,
-+            in_order=0,
-+            vectorized=1,
-+            extra_args={},
-+        )
-+
-+    @perf_test
-+    def test_perf_vhost_single_core_virtio11_inorder_mergeable(self) -> None:
-+        """Validate expected single core forwarding performance.
-+
-+        Steps:
-+            * Set TestPMD virtio parameters: ring_format=1, buffers=1, in_order=1.
-+            * Create a packet according to the frame size specified in the test config.
-+            * Transmit from the traffic generator's ports 0 and 1 at above the expect.
-+            * Forward on TestPMD's interfaces 0 and 1 with 1 core.
-+
-+        Verify:
-+            * The resulting MPPS forwarded is greater than expected_mpps*(1-delta_tolerance).
-+        """
-+        extra_args: TestPmdParamsDict = {
-+            "tx_offloads": 0,
-+            "enable_hw_vlan_strip": True,
-+            "rss": cast(RSSSetting, RSSSetting.SetIPOnly()),
-+        }
-+        self._create_and_transmit(
-+            ring_format=1,
-+            buffers=1,
-+            in_order=1,
-+            vectorized=0,
-+            extra_args=extra_args,
-+        )
-+
-+    @perf_test
-+    def test_perf_vhost_single_core_virtio11_inorder_nonmergeable(self) -> None:
-+        """Validate expected single core forwarding performance.
-+
-+        Steps:
-+            * Set TestPMD virtio parameters: ring_format=1, in_order=1.
-+            * Create a packet according to the frame size specified in the test config.
-+            * Transmit from the traffic generator's ports 0 and 1 at above the expect.
-+            * Forward on TestPMD's interfaces 0 and 1 with 1 core.
-+
-+        Verify:
-+            * The resulting MPPS forwarded is greater than expected_mpps*(1-delta_tolerance).
-+        """
-+        extra_args: TestPmdParamsDict = {"rss": cast(RSSSetting, RSSSetting.SetIPOnly())}
-+        self._create_and_transmit(
-+            ring_format=1,
-+            buffers=0,
-+            in_order=1,
-+            vectorized=0,
-+            extra_args=extra_args,
-+        )
-+
-+    @perf_test
-+    def test_perf_vhost_single_core_virtio11_vectorized(self) -> None:
-+        """Validate expected single core forwarding performance.
-+
-+        Steps:
-+            * Set TestPMD virtio parameters: ring_format=1, in_order=1, vectorized=1.
-+            * Create a packet according to the frame size specified in the test config.
-+            * Transmit from the traffic generator's ports 0 and 1 at above the expect.
-+            * Forward on TestPMD's interfaces 0 and 1 with 1 core.
-+
-+        Verify:
-+            * The resulting MPPS forwarded is greater than expected_mpps*(1-delta_tolerance).
-+        """
-+        extra_args: TestPmdParamsDict = {"rss": cast(RSSSetting, RSSSetting.SetIPOnly())}
-+        self._create_and_transmit(
-+            ring_format=1,
-+            buffers=0,
-+            in_order=1,
-+            vectorized=1,
-+            extra_args=extra_args,
-+        )
--- 
-2.55.0
+This is in next-net now as is, but you should fix the arg parsing
+code not to use unsafe string handling functions. 
 
+strtok() is not thread safe, use strtok_r() or other non-destructive parsing.
+atoi() and atof() except garbage and don't do out of range testing and take negative values;
+use strtoul() here instead. Probably should have a DPDK string function for this
+like rte_str_to_u32() etc; might get to doing that.
+
+Newer version of checkpatch (in python) flags this as:
+
+### [PATCH] net/enetc4: add WRR Tx scheduler devarg for VF rings
+
+ERROR: [FORBIDDEN_TOKEN] Using strtok(), prefer strtok_r() (non-reentrant static state)
+#  drivers/net/enetc/enetc4_ethdev.c:76:
++  		str = strtok(NULL, "|");
+
+ERROR: [FORBIDDEN_TOKEN] Using strtok(), prefer strtok_r() (non-reentrant static state)
+#  drivers/net/enetc/enetc4_ethdev.c:107:
++  	str = strtok(input_str, "|");
+
+WARNING: [FORBIDDEN_TOKEN] Using atoi()/atol()/atof(), prefer strtol()/strtoul() with errno and endptr checks
+#  drivers/net/enetc/enetc4_ethdev.c:75:
++  		hw->txq_prior[i++] = atoi(str) & ENETC_TBMR_PRIO_MASK;
+
+WARNING: [FORBIDDEN_TOKEN] Using atoi()/atol()/atof(), prefer strtol()/strtoul() with errno and endptr checks
+#  drivers/net/enetc/enetc4_ethdev.c:109:
++  		w = atoi(str);
+
+total: 2 errors, 2 warnings, 0 checks, 102 lines checked
