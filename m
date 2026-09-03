@@ -2,74 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39CDDC61DD3
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Sep 2026 08:27:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6DD6C624A4
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Sep 2026 08:27:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D98E1402D8;
-	Thu,  3 Sep 2026 10:27:10 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id BAD1E4028D
- for <dev@dpdk.org>; Thu,  3 Sep 2026 10:27:08 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 6835mWAC157564; Thu, 3 Sep 2026 01:27:08 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 99712410F6;
+	Thu,  3 Sep 2026 10:27:14 +0200 (CEST)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 3DE42410F6
+ for <dev@dpdk.org>; Thu,  3 Sep 2026 10:27:13 +0200 (CEST)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 6835lo7K3488671; Thu, 3 Sep 2026 01:27:12 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=O
- dgNhbxGT65EARmvwqfIx9tfmp67xAH1VjfE1sz8YXA=; b=hrXMs2J6xeqKGXWWd
- UpMSCdm2IiM1rXi3vYHJEseTlaGacv9h6q4TqzcWPvJkOHR9ybVx00XsAkaZZJiF
- WcbzKfh8Qvcui/hnAIOfNzRRrc+DaNf6SOWIgHpobgkHAXbBh/ywKi/MCiw1XNY9
- 5zSmn5TR63n8gWLDCV4uiN/8LMIVUL6UMnJdikFnVf45oTUUwfPFE7OsA6qweJnX
- Ee2kaIRaVtP8PK99EzIbBvIsrOltd3xk4V5Z2jo+hpkrpBdKR8/xWAvrfEyHB17t
- MGEGyZMRDUa/9GWiRQOZbX6Q0XKKbjzX8Fn4G1shCT+iJTVBkoxknopVEdoktB//
- d2hKA==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=x
+ dEwmfOzqiVHyh/jsZCkZyOdmWg+gNc5IEsz55deNsc=; b=E3BC6c+HA7pMDFS0a
+ 9TXuPekFnRYerOr6+mQ5zKg/G26H78jioYolj/x7hMfu84by51iDBjCZ1zP84VG6
+ D/usQpZW9lZ0OnArNWZRRMq07OhmY2VgCCMNy4DhbedyNWHYo9e/sMMklzyfh2W4
+ XyoX5wa1ye1MRBwz3PlK+EHJlQVBGormlNGAT5hfYVhoRS3ME7NhFoxBm0Y90eRh
+ g3D2NbEYPK6PW6QiivqFnxSV0h/btUKQHj15ev+BI0/AhG74YvVAJ3DxbtQaWHNa
+ isbeetU+UFgMWDy2S00vONqePfjHbOIYeK7M8MiTlZh6ywFD+jvkeZ47wn/y0ET3
+ NsUlA==
 Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4gegb63rpw-1
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4geq11aqnu-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 03 Sep 2026 01:27:07 -0700 (PDT)
+ Thu, 03 Sep 2026 01:27:12 -0700 (PDT)
 Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
  DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 3 Sep 2026 01:27:06 -0700
+ 15.2.1544.25; Thu, 3 Sep 2026 01:27:11 -0700
 Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
  (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Thu, 3 Sep 2026 01:27:06 -0700
+ Transport; Thu, 3 Sep 2026 01:27:11 -0700
 Received: from ssarananaga.marvell.com (unknown [10.29.57.26])
- by maili.marvell.com (Postfix) with ESMTP id 89D903F7068;
- Thu,  3 Sep 2026 01:27:03 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 5C6283F7068;
+ Thu,  3 Sep 2026 01:27:07 -0700 (PDT)
 From: Sucharitha Sarananaga <ssarananaga@marvell.com>
 To: <dev@dpdk.org>
 CC: <gakhil@marvell.com>, <fanzhang.oss@gmail.com>, <adwivedi@marvell.com>,
  <anoobj@marvell.com>, <ktejasree@marvell.com>, <kai.ji@intel.com>,
  <jianjay.zhou@huawei.com>, <radu.nicolau@intel.com>,
  <gmuthukrishn@marvell.com>, Sucharitha Sarananaga <ssarananaga@marvell.com>
-Subject: [PATCH v2 0/8] cryptodev: add RSA-OAEP and RSA-PSS padding support
-Date: Thu, 3 Sep 2026 08:26:40 +0000
-Message-ID: <20260903082648.3610676-1-ssarananaga@marvell.com>
+Subject: [PATCH v2 1/8] crypto: add RSA-specific capability parameters
+Date: Thu, 3 Sep 2026 08:26:41 +0000
+Message-ID: <20260903082648.3610676-2-ssarananaga@marvell.com>
 X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260831102328.2813604-1-ssarananaga@marvell.com>
+In-Reply-To: <20260903082648.3610676-1-ssarananaga@marvell.com>
 References: <20260831102328.2813604-1-ssarananaga@marvell.com>
+ <20260903082648.3610676-1-ssarananaga@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTAzMDA3MyBTYWx0ZWRfX0zgs0fvsHts5
- iZ0s1RZoDmg+39OuSRc4g81JFCiu9VKA+QzIGwKmk4YvnIjgsvMNiy3kP3xVizbQW4ht5jz6bbb
- 6ylsfP2OLxo7SocHtqx6EEL7JeKzJkeOEchzEqCdOSyvEM2gTsXdHwbv+VqgbtBuj2bHwZEwFTU
- r/D0HoKPzrTdhbX4eQMs5mqiCYPbgC7clmNZ3+6RdnTKjb+Y0NZygY0Ai9USktmbCGeNCzfkV7e
- zH+V63PBqLJrzsoH6HzqA04Eq8N2hs6/JTyqYmS4+LytW3auOxnjFh7TKve/JiU1ttDcC04jcxN
- 5s4FKv13ywG60Cc9sb4jd+S/S1oZ7swVJSxBI9Tntx+5DfktvFIAmYm9aDYHE2T9hgt4PYuq1lc
- 0djgi540CLVHU9vcF3DOz4LkTJ/ziLaYMjCfHX2/8rIYnLRKXTiFMUqWB0/Y0i4APXW12deaGl2
- jAIGs2Z8SoIhyskFxuw==
-X-Proofpoint-GUID: yGQcD8jHdW1cXBlwuUv2Y61aJkE1Riug
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTAzMDA3MyBTYWx0ZWRfX/8AGyteJVtex
- mLeIg7JpXdkQ0z9R2v1FuDLKMJhi1BcobX+MHelNwC5nkOHDdMAGpmFOy2xCu5tusZLLRDXWZFw
- bGlB+gt/4M60IIv4NdZKwynNN0OuhZE=
-X-Authority-Analysis: v=2.4 cv=GpJyPE1C c=1 sm=1 tr=0 ts=6a992f5b cx=c_pps
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTAzMDA3MyBTYWx0ZWRfX+T2bBn84lfsw
+ FZDc07IDY3amyw/MArUKNOWA/QQnQotynEME92EpOFac4BVMItjha8sKAbzBVIIDGbVexYz4VTj
+ CiujZuemCDs1BeBe8XyKwhzWMHhwRS7HcFtf4eYgRP1rmkEZZyntxr00oVL7em6agzmErxZIuc/
+ zEdSXV0nDNbAcWgxPvTipYlps/3X9SzaFqcfsOm1XLxI746hTvfFYTQzdjlOYqe+FybLctLJn+b
+ Yah9BbqRDcY9+IscdTnU4PJkmUqy4TrDlIxpRSzCdOQQYL7vdmsgQM9fCfpyvzQiHlm9oncCxHp
+ tkaTExGiZOB2uNdUlldgslbtGfu5DJprFd5eFkzmJAtR6AZoodANj1KEhg+y7UULVaLoSCQGv7w
+ Go3o5dEfq3j7VGL0fPdiKGXErNyNyxKkZdW8x7DFviTdp4thnA6bPVVKS1L4eQhueqqhPkceOWf
+ Dc/G3fIgkcDnHimK1+Q==
+X-Authority-Analysis: v=2.4 cv=ftXsol4f c=1 sm=1 tr=0 ts=6a992f60 cx=c_pps
  a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
  a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=QXcCYyLzdtTjyudCfB6f:22 a=eX-xP4TuJXF41AV6ppcA:9
-X-Proofpoint-ORIG-GUID: yGQcD8jHdW1cXBlwuUv2Y61aJkE1Riug
+ a=TtqV-g6YmW1Jfm2GSLaY:22 a=M5GUcnROAAAA:8 a=VMsi7YCxyk3BJ-RhiD0A:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: hRdDsGJBznEe2MTwiDYefloQO_Ual4lp
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTAzMDA3MyBTYWx0ZWRfX5eqVzKvRzCfs
+ IgBzF8Pob+SV8STY0COOhUpxqZWeT8Re7EOaKhCB2s+g8AL0CFNOCRAJ5Tl2weFJQnbCrjTHq1s
+ VJdL8PT7TFw3nnXsMNeurGWk9BzIhXQ=
+X-Proofpoint-ORIG-GUID: hRdDsGJBznEe2MTwiDYefloQO_Ual4lp
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-09-03_02,2026-09-02_04,2025-10-01_01
@@ -86,66 +88,178 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The asymmetric crypto capability structure currently reports only a
-generic modulus length and primary hash algorithm for RSA, with no
-way for a PMD to advertise which padding schemes (NONE, PKCS#1 v1.5,
-OAEP, PSS) or MGF1 hash algorithms it supports. Applications have no
-standard way to discover this, and the OpenSSL PMD itself only
-implements NONE and PKCS#1 v1.5 padding.
+The existing asymmetric capability structure reports generic
+modulus length and hash algorithm support, but it cannot
+describe RSA-specific parameters required by OAEP and PSS.
 
-This series first extends the capability API with a dedicated
-rte_crypto_rsa_capa (modulus length, pad_types, mgf1_hash_algos, and
-an explicit-PSS-salt flag), then updates the capability reporting in
-the octeontx, cnxk, and openssl PMDs to use it.
+RSA operations may support different padding schemes and MGF1
+hash algorithms independent of the primary hash algorithm.
+Applications currently have no standard way to discover these
+capabilities from a PMD.
 
-On top of that, it adds actual RSA-OAEP and RSA-PSS support to the
-OpenSSL PMD:
- - RSA-OAEP encrypt/decrypt, with configurable OAEP hash, MGF1 hash,
-   and an optional label, defaulting MGF1 to the OAEP hash when
-   unset.
- - RSA-PSS sign/verify, with configurable hash, MGF1 hash, and salt
-   length (rte_crypto_rsa_padding::pss_saltlen), using a dedicated
-   EVP_PKEY_verify()-based verification path since PSS does not
-   support verify-recover. The PSS salt itself is always generated
-   internally by the PMD; an application-supplied salt
-   (rte_crypto_rsa_op_param::pss_salt, gated by the new
-   pss_explicit_salt capability bit) is introduced by this series
-   for future PMD support but is not yet implemented here, so it is
-   rejected with RTE_CRYPTO_OP_STATUS_INVALID_ARGS.
+Add rsa_capa to report RSA modulus length, supported padding
+schemes, and MGF1 hash algorithms. Keep hash_algos for reporting
+primary digest support.
 
-Test coverage for both OAEP (encrypt/decrypt, default and custom
-MGF1, with and without a label) and PSS (digest-length, maximum, and
-zero-length salt) is added to the cryptodev asymmetric test suite.
+Also clarify that the generic modlen field applies to other
+modulus-based transforms such as MODEXP, MODINV, DH, and DSA.
 
-v2:
- - Dropped the virtio and qat capability-advertisement patches from
-   this series; they will be sent separately.
- - Documented the new rsa_capa/pss_salt fields in release_26_11.rst
-   (this series' target release) instead of the already-released
-   26.07 notes.
+RSA-PSS signing also normally generates its salt internally, so
+the same message never produces the same signature twice, making
+it impossible to validate against fixed test vectors (e.g.
+ACVP/CAVP SigGen).
 
-Sucharitha Sarananaga (8):
-  crypto: add RSA-specific capability parameters
-  crypto/octeontx: advertise RSA PKCS#1 v1.5 padding support
-  crypto/cnxk: advertise RSA PKCS#1 v1.5 padding support
-  crypto/openssl: advertise RSA padding and hash capabilities
-  crypto/openssl: add RSA-OAEP support for OpenSSL PMD
-  app/test: add RSA OAEP asymmetric test cases
-  crypto/openssl: add RSA-PSS support for RSA operations
-  app/test: add RSA-PSS sign and verify test cases
+Add pss_explicit_salt to rsa_capa so a PMD can
+advertise support for an application-supplied PSS salt, and add
+the corresponding pss_salt field to rte_crypto_rsa_op_param to
+carry those bytes per sign operation. Leaving pss_salt unset keeps
+today's internally-generated-salt behavior unchanged.
 
- app/test/test_cryptodev_asym.c                | 663 ++++++++++++++++++
- app/test/test_cryptodev_rsa_test_vectors.h    | 317 +++++++++
- doc/guides/rel_notes/release_26_11.rst        |  16 +
- .../crypto/cnxk/cnxk_cryptodev_capabilities.c |   8 +-
- .../octeontx/otx_cryptodev_capabilities.c     |   8 +-
- drivers/crypto/openssl/openssl_pmd_private.h  |  11 +
- drivers/crypto/openssl/rte_openssl_pmd.c      | 367 ++++++++--
- drivers/crypto/openssl/rte_openssl_pmd_ops.c  | 141 +++-
- lib/cryptodev/rte_crypto_asym.h               |  18 +
- lib/cryptodev/rte_cryptodev.h                 |  50 +-
- 10 files changed, 1537 insertions(+), 62 deletions(-)
+Signed-off-by: Sucharitha Sarananaga <ssarananaga@marvell.com>
+---
+ doc/guides/rel_notes/release_26_11.rst | 16 +++++++++
+ lib/cryptodev/rte_crypto_asym.h        | 18 ++++++++++
+ lib/cryptodev/rte_cryptodev.h          | 50 ++++++++++++++++++++++++--
+ 3 files changed, 82 insertions(+), 2 deletions(-)
 
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index 938617ca75..48f7722686 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -24,6 +24,15 @@ DPDK Release 26.11
+ New Features
+ ------------
+ 
++* **Added RSA-specific capability parameters in cryptodev.**
++
++  Added ``rte_crypto_rsa_capa`` to report RSA modulus length, supported
++  padding schemes, and MGF1 hash algorithms. Also added
++  ``pss_explicit_salt`` so a PMD can advertise support for an
++  application-supplied RSA-PSS salt, along with the corresponding
++  ``pss_salt`` field in ``rte_crypto_rsa_op_param`` to carry it per
++  sign operation.
++
+ .. This section should contain new features added in this release.
+    Sample format:
+ 
+@@ -88,6 +97,13 @@ API Changes
+ ABI Changes
+ -----------
+ 
++* cryptodev: The struct ``rte_cryptodev_asymmetric_xform_capability`` is
++  updated to include ``rsa_capa``, a new ``rte_crypto_rsa_capa`` field for
++  reporting RSA modulus length, padding schemes, and MGF1 hash algorithms.
++
++* cryptodev: The struct ``rte_crypto_rsa_op_param`` is updated to include
++  ``pss_salt``, allowing an application to supply an explicit RSA-PSS salt.
++
+ .. This section should contain ABI changes. Sample format:
+ 
+    * sample: Add a short 1-2 sentence description of the ABI change
+diff --git a/lib/cryptodev/rte_crypto_asym.h b/lib/cryptodev/rte_crypto_asym.h
+index b1546d2b7c..808c5f323e 100644
+--- a/lib/cryptodev/rte_crypto_asym.h
++++ b/lib/cryptodev/rte_crypto_asym.h
+@@ -494,6 +494,24 @@ struct rte_crypto_rsa_op_param {
+ 	 * This could be validated and overwritten by the PMD
+ 	 * with the signature length.
+ 	 */
++
++	rte_crypto_param pss_salt;
++	/**<
++	 * Explicit RSA-PSS salt bytes, used only for
++	 * RTE_CRYPTO_ASYM_OP_SIGN with RTE_CRYPTO_RSA_PADDING_PSS.
++	 * Only valid if the PMD advertises
++	 * rte_crypto_rsa_capa::pss_explicit_salt == true.
++	 *
++	 * - pss_salt.data == NULL (default): PMD generates the salt
++	 *   internally.
++	 * - pss_salt.data != NULL: PMD uses these exact bytes as the
++	 *   salt. pss_salt.length must equal the session's
++	 *   pss_saltlen, otherwise the op completes with status
++	 *   RTE_CRYPTO_OP_STATUS_INVALID_ARGS.
++	 *
++	 * Ignored for RTE_CRYPTO_ASYM_OP_VERIFY (salt is recovered from
++	 * the signature itself) and for non-PSS padding.
++	 */
+ };
+ 
+ /**
+diff --git a/lib/cryptodev/rte_cryptodev.h b/lib/cryptodev/rte_cryptodev.h
+index 37a6a5e49b..bdbd11ace5 100644
+--- a/lib/cryptodev/rte_cryptodev.h
++++ b/lib/cryptodev/rte_cryptodev.h
+@@ -157,6 +157,48 @@ struct rte_cryptodev_symmetric_capability {
+ 	};
+ };
+ 
++/**
++ * RSA transform capability parameters.
++ *
++ * Used when rte_cryptodev_asymmetric_xform_capability::xform_type is
++ * RTE_CRYPTO_ASYM_XFORM_RSA. Advertises supported modulus lengths,
++ * MGF1 hash algorithms, and padding schemes.
++ *
++ * Primary hash algorithms for RSA operations (e.g. OAEP, PSS) are
++ * reported separately via hash_algos in
++ * rte_cryptodev_asymmetric_xform_capability.
++ */
++struct rte_crypto_rsa_capa {
++	struct rte_crypto_param_range modlen;
++	/**< Supported RSA modulus length range, in bytes.
++	 * A min, max, or increment value of 0 means no limit is
++	 * imposed for that field and the PMD default applies.
++	 */
++
++	bool pss_explicit_salt;
++	/**< Support for application-supplied RSA-PSS salt
++	 * (rte_crypto_rsa_op_param::pss_salt).
++	 * false (default): PMD always generates the salt internally.
++	 * true: PMD accepts an application-supplied salt.
++	 */
++
++	uint8_t pad_types;
++	/**< Bitmask of supported RSA padding schemes.
++	 * Each bit corresponds to enum rte_crypto_rsa_padding_type.
++	 * A value of 0 means padding capability is not reported and the PMD
++	 * default may apply.
++	 */
++
++	uint64_t mgf1_hash_algos;
++	/**< Bitmask of hash algorithms supported for MGF1 mask generation.
++	 * Each bit corresponds to enum rte_crypto_auth_algorithm.
++	 * Used for RSA-OAEP and RSA-PSS when MGF1 may use a digest
++	 * different from the primary hash.
++	 * A value of 0 means MGF1 capability is not reported and the PMD
++	 * default may apply.
++	 */
++};
++
+ /**
+  * Asymmetric Xform Crypto Capability
+  */
+@@ -179,8 +221,9 @@ struct rte_cryptodev_asymmetric_xform_capability {
+ 	__extension__
+ 	union {
+ 		struct rte_crypto_param_range modlen;
+-		/**< Range of modulus length supported by modulus based xform.
+-		 * Value 0 mean implementation default
++		/**< Range of modulus length supported by modulus based xform
++		 * such as MODEXP, MODINV, DH, and DSA.
++		 * Value 0 means implementation default.
+ 		 */
+ 
+ 		uint8_t internal_rng;
+@@ -197,6 +240,9 @@ struct rte_cryptodev_asymmetric_xform_capability {
+ 
+ 		uint32_t mldsa_capa[RTE_CRYPTO_ML_DSA_OP_END];
+ 		/**< Bitmask of supported ML-DSA parameter sets. */
++
++		struct rte_crypto_rsa_capa rsa_capa;
++		/**< RSA modulus length, MGF1 hash, and padding capabilities. */
+ 	};
+ 
+ 	uint64_t hash_algos;
 -- 
 2.54.0
 
