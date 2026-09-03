@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ADBFC61DD3
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Sep 2026 14:39:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19B55C61DD3
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Sep 2026 14:39:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4382242DC1;
-	Thu,  3 Sep 2026 16:38:44 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8288142DDF;
+	Thu,  3 Sep 2026 16:38:46 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
- by mails.dpdk.org (Postfix) with ESMTP id 7165B42D0C;
- Thu,  3 Sep 2026 16:38:42 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 764F142DC7;
+ Thu,  3 Sep 2026 16:38:44 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1788446322; x=1819982322;
+ t=1788446324; x=1819982324;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=VMjbDPF8wMmENoU5czEle0vytwbFY2onCwKoMDIpWKM=;
- b=kEhico/rkF5380v/REx2OfT50jj6AowWfK5PONgga3fFan9GcRRKwb9V
- f9OqDNXZdsRfxHPv0a7JXkda9WIOVtnbHB7HqY8b2PsnLW/uSKpD9WaSM
- 3oC0/Vw3HRZPA/ofopzS18RSOje3jyQqKFL4AgPR74HB8f+6Yh2/N2xUB
- kMrQtso36TjZhx61AZsGLYwTNtKWwI3iBUwqnrq0V4nvNgoIDvpNShzCh
- 3Q40pixDBQr/ApKSpMkmy82Jy+DQrYwxPHWvmEzJP/oFbTWsOSA42/XXu
- 5vwVFi7JJBtYwV8ok6JbUWufo/a/2co8SyHnuI+3EeaVaTLsnr9m/FIkO w==;
-X-CSE-ConnectionGUID: BB2trO8qTJyWVaENawu2GA==
-X-CSE-MsgGUID: A9OWOvWsTi+r8u+cQIagJA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11895"; a="87869785"
-X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; d="scan'208";a="87869785"
+ bh=RAZKPwSvAO57FbzYpVPWZJGQ0u99jIkAK6r5wckuwxc=;
+ b=FJCxrTRgqGfKdp8ciHp3MOXjcakx/6yvZp0JmKkmhRXO1LYjlf0p4H4E
+ Qj/BlmxIz8SDTMXudEWs2ZsWfx9cMP+vj/uropV8bt0RQHM+m7cyAbxVw
+ egeZeUx/qTkIyXgRQK1pXaCAhNKBIv4e1mEEQVDCG1FH2d6GzZhsOn+X8
+ 0yhgjH/NDDqeoL8BKpY8AZnskdsJvKCUr5M5jmg7/oY+86JdOB/Hxd9Ku
+ albSupqSj4ohRBJzNvsTkN9ktnBaDfyWLk69YJ72rSWnPDiR4x51rBnz+
+ cvhZ4dH79v+0cZTsvOYzQiFarbvWflgsJyFYRPRgvWPlBzkVU7gtjPgW4 Q==;
+X-CSE-ConnectionGUID: Leizm4/YTLib5OLhtNiYaA==
+X-CSE-MsgGUID: JrW+/7jYSJuF86ix3a3AJQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11895"; a="87869791"
+X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; d="scan'208";a="87869791"
 Received: from orviesa005.jf.intel.com ([10.64.159.145])
  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 03 Sep 2026 07:38:42 -0700
-X-CSE-ConnectionGUID: fbUFxYhnQeiPSCQAMoXXGg==
-X-CSE-MsgGUID: 9eFvZZC/RIKYhEETAlD2pQ==
+ 03 Sep 2026 07:38:44 -0700
+X-CSE-ConnectionGUID: S5+cmSJ1RvCicOQ809MaTw==
+X-CSE-MsgGUID: GBH+BT+8QCyxloK4aq67LA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; d="scan'208";a="273894960"
+X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; d="scan'208";a="273894971"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa005.jf.intel.com with ESMTP; 03 Sep 2026 07:38:40 -0700
+ by orviesa005.jf.intel.com with ESMTP; 03 Sep 2026 07:38:42 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
  Ciara Loftus <ciara.loftus@intel.com>,
  Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Jingjing Wu <jingjing.wu@intel.com>,
- Praveen Shetty <praveen.shetty@intel.com>
-Subject: [PATCH v2 5/7] net/intel: fix VLAN and QinQ tag position logic
-Date: Thu,  3 Sep 2026 15:37:27 +0100
-Message-ID: <20260903143827.327131-6-bruce.richardson@intel.com>
+ Zhichao Zeng <zhichaox.zeng@intel.com>, Qi Zhang <qi.z.zhang@intel.com>,
+ Yiding Zhou <yidingx.zhou@intel.com>
+Subject: [PATCH v2 6/7] net/iavf: fix missing outer QinQ tag for tunnelled
+ packets
+Date: Thu,  3 Sep 2026 15:37:28 +0100
+Message-ID: <20260903143827.327131-7-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260903143827.327131-1-bruce.richardson@intel.com>
 References: <20260831102621.495759-1-bruce.richardson@intel.com>
@@ -65,139 +65,87 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The position of a single vlan tag on a Tx packet (data desc or ctx desc)
-is independent across drivers from that of where the outer QinQ tag gets
-put. Therefore, these should be passed as separate values to the common
-scalar Tx function. For i40e, ice and idpf, the single tag can be put in
-the data descriptor, and for QinQ, the context descriptor contains the
-outer tag. For iavf, the tag positions depend on the capabilities
-reported by the PF to the VF, but the position for the single vlan tag
-and the outer QinQ tags are the same.
+When the QinQ feature was enabled along with tunnelling support, the
+tunnel options were written directly to the context descriptor quad-word
+rather than being merged in. This leads to any QinQ tag in the context
+descriptor getting overwritten.
 
-Fixes: 6ea6d67bebfe ("net/intel: support configurable VLAN insertion on Tx")
+Change order of operations so that the tunnel options go first and the
+QinQ tags are merged into that.
+
+Fixes: 4f8259df563a ("net/iavf: enable Tx outer checksum offload on AVX512")
+Fixes: 70baceadabf2 ("net/iavf: fix AVX512 Tx")
 Cc: stable@dpdk.org
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 Acked-by: Ciara Loftus <ciara.loftus@intel.com>
 ---
- drivers/net/intel/common/tx_scalar.h      | 16 +++++++++++-----
- drivers/net/intel/i40e/i40e_rxtx.c        |  6 ++++--
- drivers/net/intel/iavf/iavf_rxtx.c        |  7 ++++---
- drivers/net/intel/ice/ice_rxtx.c          |  5 +++--
- drivers/net/intel/idpf/idpf_common_rxtx.c |  3 ++-
- 5 files changed, 24 insertions(+), 13 deletions(-)
+ drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c   | 6 ++++--
+ drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c | 6 ++++--
+ 2 files changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/intel/common/tx_scalar.h b/drivers/net/intel/common/tx_scalar.h
-index 4df279e729..7368d3abc9 100644
---- a/drivers/net/intel/common/tx_scalar.h
-+++ b/drivers/net/intel/common/tx_scalar.h
-@@ -372,7 +372,8 @@ static inline uint16_t
- ci_xmit_pkts(struct ci_tx_queue *txq,
- 	     struct rte_mbuf **tx_pkts,
- 	     uint16_t nb_pkts,
--	     enum ci_l2tag_pos l2tag_pos,
-+	     enum ci_l2tag_pos single_vlan_pos,
-+	     enum ci_l2tag_pos qinq_outer_pos,
- 	     ci_get_ctx_desc_fn get_ctx_desc,
- 	     const struct ci_ipsec_ops *ipsec_ops,
- 	     const struct ci_timestamp_queue_fns *ts_fns)
-@@ -480,13 +481,18 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
+index 715805c65a..d05e6101ad 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
++++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
+@@ -1969,6 +1969,8 @@ ctx_vtx(volatile struct ci_tx_desc *txdp,
+ 
+ #ifdef IAVF_TX_VLAN_QINQ_OFFLOAD
+ 		if (offload) {
++			/* tunnel fill assigns low_ctx_qw1; must run before QinQ/VLAN OR below */
++			iavf_fill_ctx_desc_tunneling_field(&low_ctx_qw1, pkt[1]);
+ 			if (pkt[1]->ol_flags & RTE_MBUF_F_TX_QINQ) {
+ 				uint64_t qinq_tag = vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2 ?
+ 					(uint64_t)pkt[1]->vlan_tci_outer :
+@@ -1990,6 +1992,8 @@ ctx_vtx(volatile struct ci_tx_desc *txdp,
+ 
+ #ifdef IAVF_TX_VLAN_QINQ_OFFLOAD
+ 		if (offload) {
++			/* tunnel fill assigns low_ctx_qw0; must run before QinQ/VLAN OR below */
++			iavf_fill_ctx_desc_tunneling_field(&low_ctx_qw0, pkt[0]);
+ 			if (pkt[0]->ol_flags & RTE_MBUF_F_TX_QINQ) {
+ 				uint64_t qinq_tag = vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2 ?
+ 					(uint64_t)pkt[0]->vlan_tci_outer :
+@@ -2012,8 +2016,6 @@ ctx_vtx(volatile struct ci_tx_desc *txdp,
+ 		if (offload) {
+ 			iavf_txd_enable_offload(pkt[1], &hi_data_qw1, vlan_flag);
+ 			iavf_txd_enable_offload(pkt[0], &hi_data_qw0, vlan_flag);
+-			iavf_fill_ctx_desc_tunneling_field(&low_ctx_qw1, pkt[1]);
+-			iavf_fill_ctx_desc_tunneling_field(&low_ctx_qw0, pkt[0]);
  		}
  
- 		/* Descriptor based VLAN/QinQ insertion */
--		/* for single vlan offload, only insert in data desc when CI_TAG_IN_DATA_DESC is set
--		 * for qinq offload, we always put inner tag in L2Tag1
-+		/* for single vlan offload, only insert in data desc when single_vlan_pos is
-+		 * CI_TAG_IN_DATA_DESC; for qinq offload, L2Tag1 always carries a tag, either
-+		 * the outer (qinq_outer_pos == CI_TAG_IN_DATA_DESC) or otherwise the inner
- 		 */
--		if (((ol_flags & RTE_MBUF_F_TX_VLAN) && l2tag_pos == CI_TAG_IN_DATA_DESC) ||
-+		if (((ol_flags & RTE_MBUF_F_TX_VLAN) && single_vlan_pos == CI_TAG_IN_DATA_DESC) ||
- 				(ol_flags & RTE_MBUF_F_TX_QINQ)) {
- 			td_cmd |= CI_TX_DESC_CMD_IL2TAG1;
--			td_tag = tx_pkt->vlan_tci;
-+			if ((ol_flags & RTE_MBUF_F_TX_QINQ) &&
-+					qinq_outer_pos == CI_TAG_IN_DATA_DESC)
-+				td_tag = tx_pkt->vlan_tci_outer;
-+			else
-+				td_tag = tx_pkt->vlan_tci;
+ 		__m256i desc2_3 =
+diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
+index dfbbea80f7..bae9b2af9c 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
++++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
+@@ -2111,6 +2111,8 @@ ctx_vtx(volatile struct ci_tx_desc *txdp,
+ 
+ #ifdef IAVF_TX_VLAN_QINQ_OFFLOAD
+ 		if (offload) {
++			/* tunnel fill assigns low_ctx_qw1; must run before QinQ/VLAN OR below */
++			iavf_fill_ctx_desc_tunnelling_field(&low_ctx_qw1, pkt[1]);
+ 			if (pkt[1]->ol_flags & RTE_MBUF_F_TX_QINQ) {
+ 				uint64_t qinq_tag = vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2 ?
+ 					(uint64_t)pkt[1]->vlan_tci_outer :
+@@ -2131,6 +2133,8 @@ ctx_vtx(volatile struct ci_tx_desc *txdp,
+ 
+ #ifdef IAVF_TX_VLAN_QINQ_OFFLOAD
+ 		if (offload) {
++			/* tunnel fill assigns low_ctx_qw0; must run before QinQ/VLAN OR below */
++			iavf_fill_ctx_desc_tunnelling_field(&low_ctx_qw0, pkt[0]);
+ 			if (pkt[0]->ol_flags & RTE_MBUF_F_TX_QINQ) {
+ 				uint64_t qinq_tag = vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2 ?
+ 					(uint64_t)pkt[0]->vlan_tci_outer :
+@@ -2151,8 +2155,6 @@ ctx_vtx(volatile struct ci_tx_desc *txdp,
+ 		if (offload) {
+ 			iavf_txd_enable_offload(pkt[1], &hi_data_qw1, vlan_flag);
+ 			iavf_txd_enable_offload(pkt[0], &hi_data_qw0, vlan_flag);
+-			iavf_fill_ctx_desc_tunnelling_field(&low_ctx_qw1, pkt[1]);
+-			iavf_fill_ctx_desc_tunnelling_field(&low_ctx_qw0, pkt[0]);
  		}
  
- 		/* Enable checksum offloading */
-diff --git a/drivers/net/intel/i40e/i40e_rxtx.c b/drivers/net/intel/i40e/i40e_rxtx.c
-index ef7041cebd..e2fffdb70a 100644
---- a/drivers/net/intel/i40e/i40e_rxtx.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx.c
-@@ -1006,8 +1006,10 @@ get_context_desc(uint64_t ol_flags, const struct rte_mbuf *tx_pkt,
- uint16_t
- i40e_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- {
--	/* i40e does not support IPsec or timestamp queues, so pass NULL for both */
--	return ci_xmit_pkts(tx_queue, tx_pkts, nb_pkts, CI_TAG_IN_DATA_DESC,
-+	/* i40e does not support IPsec or timestamp queues, so pass NULL for both.
-+	 * QinQ always places the outer tag in the ctx desc, inner in the data desc.
-+	 */
-+	return ci_xmit_pkts(tx_queue, tx_pkts, nb_pkts, CI_TAG_IN_DATA_DESC, CI_TAG_IN_CTX_DESC,
- 			get_context_desc, NULL, NULL);
- }
- 
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
-index 1354e2d6d6..80c9912ccc 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx.c
-@@ -2596,6 +2596,9 @@ uint16_t
- iavf_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- {
- 	struct ci_tx_queue *txq = tx_queue;
-+	/* vlan_flag gives both the single-VLAN and the QinQ outer tag position */
-+	enum ci_l2tag_pos vlan_pos = (txq->vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG1) ?
-+			CI_TAG_IN_DATA_DESC : CI_TAG_IN_CTX_DESC;
- 
- 	const struct ci_ipsec_ops ipsec_ops = {
- 		.get_ipsec_desc = iavf_get_ipsec_desc,
-@@ -2603,9 +2606,7 @@ iavf_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 	};
- 
- 	/* IAVF does not support timestamp queues, so pass NULL for ts_fns */
--	return ci_xmit_pkts(txq, tx_pkts, nb_pkts,
--			    (txq->vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG1) ?
--				CI_TAG_IN_DATA_DESC : CI_TAG_IN_CTX_DESC,
-+	return ci_xmit_pkts(txq, tx_pkts, nb_pkts, vlan_pos, vlan_pos,
- 			    iavf_get_context_desc, &ipsec_ops, NULL);
- }
- 
-diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
-index 22d1d5d602..3569ffcf82 100644
---- a/drivers/net/intel/ice/ice_rxtx.c
-+++ b/drivers/net/intel/ice/ice_rxtx.c
-@@ -3125,10 +3125,11 @@ ice_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
- 
- 	if (txq->tsq != NULL && txq->tsq->ts_flag > 0)
--		return ci_xmit_pkts(txq, tx_pkts, nb_pkts, CI_TAG_IN_DATA_DESC,
-+		return ci_xmit_pkts(txq, tx_pkts, nb_pkts, CI_TAG_IN_DATA_DESC, CI_TAG_IN_CTX_DESC,
- 				get_context_desc, NULL, &ts_fns);
- 
--	return ci_xmit_pkts(txq, tx_pkts, nb_pkts, CI_TAG_IN_DATA_DESC,
-+	/* QinQ always places the outer tag in the ctx desc, inner in the data desc. */
-+	return ci_xmit_pkts(txq, tx_pkts, nb_pkts, CI_TAG_IN_DATA_DESC, CI_TAG_IN_CTX_DESC,
- 			get_context_desc, NULL, NULL);
- }
- 
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c b/drivers/net/intel/idpf/idpf_common_rxtx.c
-index 128ebb6a88..649b5d1f99 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx.c
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
-@@ -1415,7 +1415,8 @@ uint16_t
- idpf_dp_singleq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 			  uint16_t nb_pkts)
- {
--	return ci_xmit_pkts(tx_queue, tx_pkts, nb_pkts, CI_TAG_IN_DATA_DESC,
-+	/* QinQ always places the outer tag in the ctx desc, inner in the data desc. */
-+	return ci_xmit_pkts(tx_queue, tx_pkts, nb_pkts, CI_TAG_IN_DATA_DESC, CI_TAG_IN_CTX_DESC,
- 			idpf_get_context_desc, NULL, NULL);
- }
- 
+ 		__m512i desc0_3 =
 -- 
 2.53.0
 
