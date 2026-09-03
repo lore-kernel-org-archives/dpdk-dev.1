@@ -2,53 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E7E9C624A4
-	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Sep 2026 14:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 650B2C624A4
+	for <dpdk-dev@archiver.kernel.org>; Thu,  3 Sep 2026 16:08:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A3CB9427D4;
-	Thu,  3 Sep 2026 16:38:47 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
- by mails.dpdk.org (Postfix) with ESMTP id EF77E42DCE
- for <dev@dpdk.org>; Thu,  3 Sep 2026 16:38:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1788446326; x=1819982326;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=IEbkgO8jjKBQbgJrWNUo0GtZfwX341afOCMufEsF2yw=;
- b=EElBEFZIOfjSsQaSr18r4onVTNHW786MQAQAuNflz6yHdN1I8GOUArDR
- IgJGlxbcXBwfVfhZ9ziEQ713RwQEhGqbVvrNpnrE9OklmgqJFrNGA20Vc
- jMmgxEoA57E6yt1KYn8uNwVEkW06RuuS1bz9GvCxFPf2oN5HvuT9MMa5e
- 3q8W6rbOb+JJHnf897hEU1KMnoiKhXFMKGQCW1ERDDSZHJDXbd4bsYOfk
- OKFCgZZW1vz/oItDKJamWaRHDnsRKN1GGztXpLBH6t2C/1zsF9eAVL5U/
- OLC283JJYyib92yjD8/9PAoUDA3ztuDMPmSiotfFsOi3kpRw4Oikaas3R g==;
-X-CSE-ConnectionGUID: CJEEzMwbT3uTr8N1Bt4bKw==
-X-CSE-MsgGUID: 2LGhiK8eSDWgxY2qbS+E0w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11895"; a="87869793"
-X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; d="scan'208";a="87869793"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
- by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 03 Sep 2026 07:38:45 -0700
-X-CSE-ConnectionGUID: fJlOS+L2SiuCnV4bpFtNnA==
-X-CSE-MsgGUID: MYsYkPi6Q1yWqjoralgmfg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; d="scan'208";a="273894977"
-Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa005.jf.intel.com with ESMTP; 03 Sep 2026 07:38:45 -0700
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Ciara Loftus <ciara.loftus@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v2 7/7] net/iavf: remove undocumented conditional macros
-Date: Thu,  3 Sep 2026 15:37:29 +0100
-Message-ID: <20260903143827.327131-8-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260903143827.327131-1-bruce.richardson@intel.com>
-References: <20260831102621.495759-1-bruce.richardson@intel.com>
- <20260903143827.327131-1-bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 05F5D40647;
+	Thu,  3 Sep 2026 18:08:16 +0200 (CEST)
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com
+ [209.85.216.54]) by mails.dpdk.org (Postfix) with ESMTP id 37CEB402D8
+ for <dev@dpdk.org>; Thu,  3 Sep 2026 18:08:14 +0200 (CEST)
+Received: by mail-pj1-f54.google.com with SMTP id
+ 98e67ed59e1d1-39927410578so4488167a91.1
+ for <dev@dpdk.org>; Thu, 03 Sep 2026 09:08:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788451693;
+ x=1789056493; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=/hX/zrq45Aof8Ax2uSCCCQE4wyfCbV8qtKWD7BoUyFQ=;
+ b=0zwnQGKpLdGnkfLSDVRaTT6Env8XXF+uqUEbWbcRyFCGOHA5LWWZ6t70GLkTTcbQa1
+ w3S/X4l7Rr6PnOktUqS1l7WWMK7I4miVeaE4HcRnzZdVod4DIIl0rN5nBOQTiu3Ue2Uw
+ gyBN+vwtLrFflmEAnihm8P2vxXEpk06diV0ceaPXIDnvsFyQ/ZgFHYuyQll/wDcOalh5
+ XQneG2rYIZ/idw6sVFxAy6Xu4AC/reFCm5QsMqCNV2BJWRjSgD4WBZCCn7ur6PQ6P8oD
+ ER0USDLmLzOfcbRGu4Df6Th7c9qZq+WrkAZ3auptSyZCYaoxz02o3EqGmDUvjEaq5RGQ
+ TXvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1788451693; x=1789056493;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=/hX/zrq45Aof8Ax2uSCCCQE4wyfCbV8qtKWD7BoUyFQ=;
+ b=q+QmRDPHFMxBgmbs/75xdIWh6XTgZwryVA/M2cyDMnoxgyR6Rtk9qtT1wejEmHLkhc
+ gNz81FKW+LVIQW/OTajR2x0wh6BV4l+Zu4mstSAooQZiv6VxLhLn7zBrZwoEl95KUS57
+ DULGv5qM7B1TYFbTnjeGA3K+FxologPL6TVm3XbJYF6p/lExYyzaILhANfMZqDkT8tMu
+ q02+BwFswBMuRvMLTpootfBkYVq9aXV1rzoyeu0oDCYPWYTcTeZsNQEacaebdZ359kx0
+ mOFcwmffkaXkwm8CFM2xJKr89Ra/QOYsZDNci/k0CPy3N+ifSwE2E04pKC88HDjEN+54
+ jTSA==
+X-Gm-Message-State: AFuF++mXC3Lve0rskZo4UH3Z/ignfCy7gUtA0120wg/38vLug9Xv35B3
+ o1thQs5vfIrqs4t6R58e8AR95oI8c/H2zgpetz8h5TiKpPhluDC254hqQqH2+KPkbhM=
+X-Gm-Gg: AYBFou3ga3988vtzILUejojw1rLtw6nxPmxQFYMr/1+QXzowFkjqQTFucFFugpKFU7b
+ QqyQewIhFFkpP9hGhb4ZAsLrmsZvNFHZP6e5NaAtg9Qa9kzn3AAOeqwihxDgBcrdXdeDeeus6F+
+ RIwLScoVVQSCaCRKeraBUs7IJX/x2k3GgRUi2jTEM2crT2d2Jaa8+JS+QXCO7K5aR0oFx6D2Jqw
+ ho8eapG+yLil++MeRnpk5nNag+Gfq1nIBHgjEU7x8VsbLhXtI4jMokpzoBrDhVKdAzJU8dsZ58B
+ L0RzWyEKCYqvUIOxzkTtlW+GYZAjtv0riaUMR8Vj1oYHCMbLdWgH1eDeu1BIO11qBppEojUJCrB
+ vYshwVKZNuDVl1NlF3db6udxu1b3FSqwXpenYj59Z4bI4Eu+ujDDjFkfnkPcsBtkkU+k/1nnZDh
+ LLTiH269AQFVK1OS4SDNWrbCa2Z3ydipyYg61uxkAL3Uqd4Z6lRf9ZFc01Wz1AQsaCogkCxfhW0
+ eSMSyBn4jZ1/tVuSIVD/RoABgOqRQ==
+X-Received: by 2002:a17:90b:1e04:b0:38f:57f0:1f5d with SMTP id
+ 98e67ed59e1d1-39aee16ffd9mr17517471a91.15.1788451692923; 
+ Thu, 03 Sep 2026 09:08:12 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-39b08627417sm6218609a91.12.2026.09.03.09.08.08
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 03 Sep 2026 09:08:10 -0700 (PDT)
+Date: Thu, 3 Sep 2026 09:08:02 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: <dev@dpdk.org>, Thomas Monjalon <thomas@monjalon.net>, Andrew Rybchenko
+ <andrew.rybchenko@oktetlabs.ru>
+Subject: Re: [PATCH v4 02/23] ethdev: use DPDK byte order conversion
+Message-ID: <20260903090802.30707f54@phoenix.local>
+In-Reply-To: <apk732FF5TwghkqP@bricha3-mobl1.ger.corp.intel.com>
+References: <20260803165304.289869-1-stephen@networkplumber.org>
+ <20260806051004.166778-1-stephen@networkplumber.org>
+ <20260806051004.166778-3-stephen@networkplumber.org>
+ <apk732FF5TwghkqP@bricha3-mobl1.ger.corp.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -62,173 +85,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The iavf driver included two #defines which enabled the QinQ and
-checksum offload in the code. The intent as documented in code comments
-was that any user not taking advantage of these features could remove
-the #defines to cut out some code. However, this was never actually
-publicly documented, and the use of these defines was never tested in
-any builds, making them fragile - if not already broken. Therefore, just
-remove these build time macros.
+On Thu, 3 Sep 2026 10:20:31 +0100
+Bruce Richardson <bruce.richardson@intel.com> wrote:
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-Acked-by: Ciara Loftus <ciara.loftus@intel.com>
----
- drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c   |  6 ------
- drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c |  6 ------
- drivers/net/intel/iavf/iavf_rxtx_vec_common.h | 18 ------------------
- 3 files changed, 30 deletions(-)
+> On Wed, Aug 05, 2026 at 10:08:56PM -0700, Stephen Hemminger wrote:
+> > DPDK has its own byte order macros which are preferred
+> > over the POSIX/libc ones in arpa/inet.h
+> > This resolves issue where this code was inheriting the
+> > inclusion of arpa/inet.h from rte_ethdev.h -> rte_eth_ctrl.h.
+> > 
+> > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> > ---
+> >  lib/ethdev/sff_8472.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
+> >   
+> 
+> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+> 
+> Ok fix, though I would note that this fix is nothing to do with the removal
+> of flow director material.
 
-diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
-index d05e6101ad..7217f32cef 100644
---- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
-@@ -1910,7 +1910,6 @@ ctx_vtx1(volatile struct ci_tx_desc *txdp, struct rte_mbuf *pkt,
- 
- 	if (offload) {
- 		iavf_fill_ctx_desc_tunneling_avx2(&low_ctx_qw, pkt);
--#ifdef IAVF_TX_VLAN_QINQ_OFFLOAD
- 		if (pkt->ol_flags & RTE_MBUF_F_TX_QINQ) {
- 			uint64_t qinq_tag = vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2 ?
- 				(uint64_t)pkt->vlan_tci_outer :
-@@ -1922,7 +1921,6 @@ ctx_vtx1(volatile struct ci_tx_desc *txdp, struct rte_mbuf *pkt,
- 			high_ctx_qw |= IAVF_TX_CTX_DESC_IL2TAG2 << IAVF_TXD_CTX_QW1_CMD_SHIFT;
- 			low_ctx_qw |= (uint64_t)pkt->vlan_tci << IAVF_TXD_CTX_QW0_L2TAG2_PARAM;
- 		}
--#endif
- 	}
- 	if (IAVF_CHECK_TX_LLDP(pkt, ptype_lldp_enabled))
- 		high_ctx_qw |= IAVF_TX_CTX_DESC_SWTCH_UPLINK << IAVF_TXD_CTX_QW1_CMD_SHIFT;
-@@ -1967,7 +1965,6 @@ ctx_vtx(volatile struct ci_tx_desc *txdp,
- 				((uint64_t)pkt[0]->data_len <<
- 					IAVF_TXD_QW1_TX_BUF_SZ_SHIFT);
- 
--#ifdef IAVF_TX_VLAN_QINQ_OFFLOAD
- 		if (offload) {
- 			/* tunnel fill assigns low_ctx_qw1; must run before QinQ/VLAN OR below */
- 			iavf_fill_ctx_desc_tunneling_field(&low_ctx_qw1, pkt[1]);
-@@ -1986,11 +1983,9 @@ ctx_vtx(volatile struct ci_tx_desc *txdp,
- 					(uint64_t)pkt[1]->vlan_tci << IAVF_TXD_CTX_QW0_L2TAG2_PARAM;
- 			}
- 		}
--#endif
- 		if (IAVF_CHECK_TX_LLDP(pkt[1], ptype_lldp_enabled))
- 			hi_ctx_qw1 |= IAVF_TX_CTX_DESC_SWTCH_UPLINK << IAVF_TXD_CTX_QW1_CMD_SHIFT;
- 
--#ifdef IAVF_TX_VLAN_QINQ_OFFLOAD
- 		if (offload) {
- 			/* tunnel fill assigns low_ctx_qw0; must run before QinQ/VLAN OR below */
- 			iavf_fill_ctx_desc_tunneling_field(&low_ctx_qw0, pkt[0]);
-@@ -2009,7 +2004,6 @@ ctx_vtx(volatile struct ci_tx_desc *txdp,
- 					(uint64_t)pkt[0]->vlan_tci << IAVF_TXD_CTX_QW0_L2TAG2_PARAM;
- 			}
- 		}
--#endif
- 		if (IAVF_CHECK_TX_LLDP(pkt[0], ptype_lldp_enabled))
- 			hi_ctx_qw0 |= IAVF_TX_CTX_DESC_SWTCH_UPLINK << IAVF_TXD_CTX_QW1_CMD_SHIFT;
- 
-diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
-index bae9b2af9c..bf0245e8f4 100644
---- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
-@@ -2054,7 +2054,6 @@ ctx_vtx1(volatile struct ci_tx_desc *txdp, struct rte_mbuf *pkt,
- 
- 	if (offload) {
- 		iavf_fill_ctx_desc_tunneling_avx512(&low_ctx_qw, pkt);
--#ifdef IAVF_TX_VLAN_QINQ_OFFLOAD
- 		if (pkt->ol_flags & RTE_MBUF_F_TX_QINQ) {
- 			uint64_t qinq_tag = vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2 ?
- 				(uint64_t)pkt->vlan_tci_outer :
-@@ -2066,7 +2065,6 @@ ctx_vtx1(volatile struct ci_tx_desc *txdp, struct rte_mbuf *pkt,
- 			high_ctx_qw |= IAVF_TX_CTX_DESC_IL2TAG2 << IAVF_TXD_CTX_QW1_CMD_SHIFT;
- 			low_ctx_qw |= (uint64_t)pkt->vlan_tci << IAVF_TXD_CTX_QW0_L2TAG2_PARAM;
- 		}
--#endif
- 	}
- 	if (IAVF_CHECK_TX_LLDP(pkt, lldp_enabled))
- 		high_ctx_qw |= IAVF_TX_CTX_DESC_SWTCH_UPLINK
-@@ -2109,7 +2107,6 @@ ctx_vtx(volatile struct ci_tx_desc *txdp,
- 		hi_data_qw0 = hi_data_qw_tmpl |
- 				((uint64_t)pkt[0]->data_len << CI_TXD_QW1_TX_BUF_SZ_S);
- 
--#ifdef IAVF_TX_VLAN_QINQ_OFFLOAD
- 		if (offload) {
- 			/* tunnel fill assigns low_ctx_qw1; must run before QinQ/VLAN OR below */
- 			iavf_fill_ctx_desc_tunnelling_field(&low_ctx_qw1, pkt[1]);
-@@ -2126,12 +2123,10 @@ ctx_vtx(volatile struct ci_tx_desc *txdp,
- 					(uint64_t)pkt[1]->vlan_tci << IAVF_TXD_CTX_QW0_L2TAG2_PARAM;
- 			}
- 		}
--#endif
- 		if (IAVF_CHECK_TX_LLDP(pkt[1], lldp_enabled))
- 			hi_ctx_qw1 |= IAVF_TX_CTX_DESC_SWTCH_UPLINK
- 				<< CI_TXD_QW1_CMD_S;
- 
--#ifdef IAVF_TX_VLAN_QINQ_OFFLOAD
- 		if (offload) {
- 			/* tunnel fill assigns low_ctx_qw0; must run before QinQ/VLAN OR below */
- 			iavf_fill_ctx_desc_tunnelling_field(&low_ctx_qw0, pkt[0]);
-@@ -2148,7 +2143,6 @@ ctx_vtx(volatile struct ci_tx_desc *txdp,
- 					(uint64_t)pkt[0]->vlan_tci << IAVF_TXD_CTX_QW0_L2TAG2_PARAM;
- 			}
- 		}
--#endif
- 		if (IAVF_CHECK_TX_LLDP(pkt[0], lldp_enabled))
- 			hi_ctx_qw0 |= IAVF_TX_CTX_DESC_SWTCH_UPLINK << CI_TXD_QW1_CMD_S;
- 
-diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_common.h b/drivers/net/intel/iavf/iavf_rxtx_vec_common.h
-index 1538a44892..1e9ce924ee 100644
---- a/drivers/net/intel/iavf/iavf_rxtx_vec_common.h
-+++ b/drivers/net/intel/iavf/iavf_rxtx_vec_common.h
-@@ -119,31 +119,16 @@ iavf_tx_vec_dev_check_default(struct rte_eth_dev *dev)
- 	return ret;
- }
- 
--/******************************************************************************
-- * If user knows a specific offload is not enabled by APP,
-- * the macro can be commented to save the effort of fast path.
-- * Currently below 2 features are supported in TX path,
-- * 1, checksum offload
-- * 2, VLAN/QINQ insertion
-- ******************************************************************************/
--#define IAVF_TX_CSUM_OFFLOAD
--#define IAVF_TX_VLAN_QINQ_OFFLOAD
--
- static __rte_always_inline void
- iavf_txd_enable_offload(__rte_unused struct rte_mbuf *tx_pkt,
- 			uint64_t *txd_hi, uint8_t vlan_flag)
- {
--#if defined(IAVF_TX_CSUM_OFFLOAD) || defined(IAVF_TX_VLAN_QINQ_OFFLOAD)
- 	uint64_t ol_flags = tx_pkt->ol_flags;
--#endif
- 	uint32_t td_cmd = 0;
--#ifdef IAVF_TX_CSUM_OFFLOAD
- 	uint32_t td_offset = 0;
--#endif
- 
- 	RTE_SET_USED(vlan_flag);
- 
--#ifdef IAVF_TX_CSUM_OFFLOAD
- 	/* Set MACLEN */
- 	if (ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK)
- 		td_offset |= (tx_pkt->outer_l2_len >> 1)
-@@ -191,9 +176,7 @@ iavf_txd_enable_offload(__rte_unused struct rte_mbuf *tx_pkt,
- 	}
- 
- 	*txd_hi |= ((uint64_t)td_offset) << CI_TXD_QW1_OFFSET_S;
--#endif
- 
--#ifdef IAVF_TX_VLAN_QINQ_OFFLOAD
- 	if (ol_flags & RTE_MBUF_F_TX_QINQ) {
- 		td_cmd |= IAVF_TX_DESC_CMD_IL2TAG1;
- 		/* vlan_flag specifies outer tag location for QinQ. */
-@@ -205,7 +188,6 @@ iavf_txd_enable_offload(__rte_unused struct rte_mbuf *tx_pkt,
- 		td_cmd |= CI_TX_DESC_CMD_IL2TAG1;
- 		*txd_hi |= ((uint64_t)tx_pkt->vlan_tci << CI_TXD_QW1_L2TAG1_S);
- 	}
--#endif
- 
- 	*txd_hi |= ((uint64_t)td_cmd) << CI_TXD_QW1_CMD_S;
- }
--- 
-2.53.0
+What happened was that when flow director part (in rte_eth_ctrl.h)
+is removed from always being included by rte_ethdev.h, then this
+code would not build.  The code relied on the include cascade:
+   rte_ethdev.h
+     rte_eth_ctrl.h
+       rte_flow.h
+         rte_ip4.h
+           arpa/inet.h
 
+Maybe other things are getting this as well?
+The DPDK IP headers should rely on the Linux definitions, but that
+is  a different issue.
