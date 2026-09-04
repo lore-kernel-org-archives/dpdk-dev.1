@@ -2,77 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA8BC624DE
-	for <dpdk-dev@archiver.kernel.org>; Fri,  4 Sep 2026 07:20:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2A95C79F83
+	for <dpdk-dev@archiver.kernel.org>; Fri,  4 Sep 2026 07:29:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 143FA427E6;
-	Fri,  4 Sep 2026 09:20:53 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id D10444279D
- for <dev@dpdk.org>; Fri,  4 Sep 2026 09:20:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1788506451;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=2NP6PJ9VUTF6CZuhdKT7kTnVe/B+B03OdWefz2uT140=;
- b=HgVcGbekv/ji5OTvv7pMy+ZsMAjLV2PTpM2/wZGqhhvJ/s7qztLAlaEHi/Cd/pMhu51hxU
- a38EAdVZ08TCg8ah9ShhSXNhr7n6q+QXw+iGMUj7fqlTKd8Hahvf03bskYENrqCAvi36A2
- QbZ65OcXBIAL1B7FVnrk0mPcurJqnIA=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-190-kAndQgmaMCaTsHYDPdvPOw-1; Fri, 04 Sep 2026 03:20:49 -0400
-X-MC-Unique: kAndQgmaMCaTsHYDPdvPOw-1
-X-Mimecast-MFC-AGG-ID: kAndQgmaMCaTsHYDPdvPOw_1788506448
-Received: by mail-lf1-f70.google.com with SMTP id
- 2adb3069b0e04-5b619951eaeso315827e87.0
- for <dev@dpdk.org>; Fri, 04 Sep 2026 00:20:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788506448; x=1789111248;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=2NP6PJ9VUTF6CZuhdKT7kTnVe/B+B03OdWefz2uT140=;
- b=XnyKhShMc3R+Copcq57+Pn2TJPfrV+hMskz3q1AaIs8OfZVR8sVmCSqpaiuhfu8lhy
- K1kQpBkzTSwdNr8cv7pUpWrV4Qi//L+Ex3rnM8YU/kMOdvbwOem1NY8Ppyg5II8j3lc1
- XG8pMKdI0hlmjXbiGbmb/kbNGTTwYewNdsPGdTG7ZIvr2BbJaw0GwjhtjRl3XWdcHSpf
- lHzVUr2VFeWt7UYsrk2d1U35k4jlKjwagUIckD0wqlohBCoQ5AH3zYFooGhanVpcEJ0B
- DWWwz56q6s1w9XhIT25qmP8Zq4SraMkkcp+1hA8wMoqtLikLJ7g19bKOhQqEZFRoMudj
- sD1Q==
-X-Gm-Message-State: AFuF++kJm33Of8BvC6G3o3IY+9/l0bgGjfBlWarXRgMiCmCK1oHw2s9A
- K4Kc3rY1gOqlyDn3KiV7UrJsckZhMIzGzm7a+IFe3vA+IqB6MDcwjuZ1FV7NBv+TWKq3TDOW+13
- ++778MG+fbQdq3D2GD6I+d/sEZlPIH8q23+56QXAIMPVKI+VSPnnuAPdD36dOYjm+Ye4OVqkQBw
- w9L0I7CsgodetdoWBJTxY=
-X-Gm-Gg: AYBFou0D8xuMbUoSaPRNlK6Jb0PmNLqk9e+nbn06V0rb7fNO5kQlDy17N+3zkZe+zQW
- znkRF6370liAzGypTTftS2VKan78C4lk2QfaQ4MMo3njuLgVcQWgFx2XqabYotRR7zTgIpZyLp9
- ZxWgNBv2aILaLHWD5NGuyy2eIsTLNB32DW4ScIjdf7jVnhzuKrylKTj6djufrfx/vOw0im1TYJw
- kDhIHKwWK18Ya3C9hzElMVA74e61cfcIE6O9Hi6ngRmiYck
-X-Received: by 2002:ac2:4e10:0:b0:5b6:10bc:dc50 with SMTP id
- 2adb3069b0e04-5b610bcde0dmr1363353e87.39.1788506448134; 
- Fri, 04 Sep 2026 00:20:48 -0700 (PDT)
-X-Received: by 2002:ac2:4e10:0:b0:5b6:10bc:dc50 with SMTP id
- 2adb3069b0e04-5b610bcde0dmr1363338e87.39.1788506447601; Fri, 04 Sep 2026
- 00:20:47 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id AD3924279D;
+	Fri,  4 Sep 2026 09:29:14 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 413CF40297
+ for <dev@dpdk.org>; Fri,  4 Sep 2026 09:29:13 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id CAC5020910;
+ Fri,  4 Sep 2026 09:29:12 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-References: <20260903191602.924372-1-stephen@networkplumber.org>
- <20260903191602.924372-2-stephen@networkplumber.org>
-In-Reply-To: <20260903191602.924372-2-stephen@networkplumber.org>
-From: David Marchand <david.marchand@redhat.com>
-Date: Fri, 4 Sep 2026 09:20:35 +0200
-X-Gm-Features: AcwNN1UJIZmOFRyOl6nUKf2Jom68uX1B8rv7UJmxaiCBZOg8xXtJbYoH9mHf2Xg
-Message-ID: <CAJFAV8ygm3sHS0jdBLR7mqPCYUeDo6eeT4Wr05hK0F+D-bdE2Q@mail.gmail.com>
-Subject: Re: [PATCH 2/2] examples/vhost: remove unused but set globals
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, stable@dpdk.org, 
- Maxime Coquelin <maxime.coquelin@redhat.com>, Chenbo Xia <chenbox@nvidia.com>, 
- Huawei Xie <huawei.xhw@alibaba-inc.com>,
- Changchun Ouyang <changchun.ouyang@intel.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: z0YJ0TwCAYO1Uz9g_w_mp1aywj-brv-yCQHPvVzzlt0_1788506448
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH v25] eal: RTE_PTR_ADD/SUB API improvements
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Fri, 4 Sep 2026 09:29:11 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65A2E@smartserver.smartshare.dk>
+In-Reply-To: <20260903231201.871509-1-stephen@networkplumber.org>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v25] eal: RTE_PTR_ADD/SUB API improvements
+Thread-Index: Ad07+bMAIuGv0Og2RK6CoZnVNKBTTAARIbow
+References: <20260207014517.58671-1-scott.k.mitch1@gmail.com>
+ <20260903231201.871509-1-stephen@networkplumber.org>
+From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>, <dev@dpdk.org>,
+ "Scott Mitchell" <scott.k.mitch1@gmail.com>
+Cc: "Ori Kam" <orika@nvidia.com>, "Aman Singh" <aman.deep.singh@intel.com>,
+ "Nipun Gupta" <nipun.gupta@amd.com>,
+ "Nikhil Agarwal" <nikhil.agarwal@amd.com>,
+ "Chenbo Xia" <chenbox@nvidia.com>, "Long Li" <longli@microsoft.com>,
+ "Wei Hu" <weh@microsoft.com>,
+ "Nithin Dabilpuram" <ndabilpuram@marvell.com>,
+ "Kiran Kumar K" <kirankumark@marvell.com>,
+ "Sunil Kumar Kori" <skori@marvell.com>,
+ "Satha Rao" <skoteshwar@marvell.com>, "Harman Kalra" <hkalra@marvell.com>,
+ "Srikanth Yalavarthi" <syalavarthi@marvell.com>,
+ "Dariusz Sosnowski" <dsosnowski@nvidia.com>,
+ "Viacheslav Ovsiienko" <viacheslavo@nvidia.com>,
+ "Bing Zhao" <bingz@nvidia.com>, "Suanming Mou" <suanmingm@nvidia.com>,
+ "Matan Azrad" <matan@nvidia.com>,
+ "Bruce Richardson" <bruce.richardson@intel.com>,
+ "Kevin Laatz" <kevin.laatz@intel.com>,
+ "Gowrishankar Muthukrishnan" <gmuthukrishn@marvell.com>,
+ "Vidya Sagar Velumuri" <vvelumuri@marvell.com>,
+ "Pavan Nikhilesh" <pbhagavatula@marvell.com>,
+ "Shijith Thotton" <sthotton@marvell.com>,
+ "Artem V. Andreev" <artem.andreev@oktetlabs.ru>,
+ "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>,
+ "Potnuri Bharat Teja" <bharat@chelsio.com>,
+ "Shai Brandes" <shaibran@amazon.com>,
+ "Evgeny Schemeilin" <evgenys@amazon.com>,
+ "Amit Bernstein" <amitbern@amazon.com>,
+ "Wajeeh Atrash" <atrwajee@amazon.com>,
+ "Anatoly Burakov" <anatoly.burakov@intel.com>,
+ "Dmitry Kozlyuk" <dmitry.kozliuk@gmail.com>,
+ "Jerin Jacob" <jerinj@marvell.com>, "Zhirun Yan" <yanzhirun_163@163.com>,
+ "Reshma Pattan" <reshma.pattan@intel.com>,
+ "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
+ "Yipeng Wang" <yipeng1.wang@intel.com>,
+ "Sameh Gobriel" <sameh.gobriel@intel.com>,
+ "Anoob Joseph" <anoobj@marvell.com>,
+ "Volodymyr Fialko" <vfialko@marvell.com>,
+ "Maxime Coquelin" <maxime.coquelin@redhat.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,47 +84,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 3 Sept 2026 at 21:16, Stephen Hemminger
-<stephen@networkplumber.org> wrote:
->
-> The vhost example tracks number of queues but never uses the
-> variables. Remove num_queues and the num_vmdq_queues intermediate
-> that only fed it.
->
-> clang 23 reports:
-> vhost/main.c:86:17: error: variable 'num_queues' set but not used
->          [-Werror,-Wunused-but-set-global]
->
-> Fixes: d19533e86f1d ("examples/vhost: copy old vhost example")
-
-$ git grep num_queues 84b02d16c53981e9163a3f1600651a533770553a^ --
-examples/vhost/main.c
-84b02d16c53981e9163a3f1600651a533770553a^:examples/vhost/main.c:static
-uint32_t num_queues = 0;
-84b02d16c53981e9163a3f1600651a533770553a^:examples/vhost/main.c:
- num_queues = dev_info.max_rx_queues;
-84b02d16c53981e9163a3f1600651a533770553a^:examples/vhost/main.c:
- rx_rings = (uint16_t)num_queues,
-84b02d16c53981e9163a3f1600651a533770553a^:examples/vhost/main.c:
-         = dev->device_fh * (num_queues / num_devices);
-
-$ git grep num_queues 84b02d16c53981e9163a3f1600651a533770553a --
-examples/vhost/main.c
-84b02d16c53981e9163a3f1600651a533770553a:examples/vhost/main.c:static
-uint32_t num_queues = 0;
-84b02d16c53981e9163a3f1600651a533770553a:examples/vhost/main.c:
-num_queues = num_pf_queues + num_vmdq_queues;
-
-The last usage of this variable was removed with:
-Fixes: 84b02d16c539 ("examples/vhost: support new VMDQ API for i40e")
-
-> Cc: stable@dpdk.org
->
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-
-Otherwise, lgtm.
-
-
--- 
-David Marchand
-
+PiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1iZXIu
+b3JnXQ0KPiBTZW50OiBGcmlkYXksIDQgU2VwdGVtYmVyIDIwMjYgMDEuMDUNCj4gDQo+IEZyb206
+IFNjb3R0IE1pdGNoZWxsIDxzY290dC5rLm1pdGNoMUBnbWFpbC5jb20+DQo+IA0KPiBSVEVfUFRS
+X0FERCBhbmQgUlRFX1BUUl9TVUIgQVBJcyBoYXZlIGEgZmV3IGxpbWl0YXRpb25zOg0KPiAxLiBw
+dHIgY2FzdCB0byB1aW50cHRyX3QgZHJvcHMgcG9pbnRlciBwcm92ZW5hbmNlIGFuZA0KPiBwcmV2
+ZW50cyBjb21waWxlciBvcHRpbWl6YXRpb25zDQo+IDIuIHJldHVybiBjYXN0IGRpc2NhcmRzIHF1
+YWxpZmllcnMgKGNvbnN0LCB2b2xhdGlsZSkNCj4gd2hpY2ggbWF5IGhpZGUgY29ycmVjdG5lc3Mv
+Y29uY3VycmVuY3kgaXNzdWVzLg0KPiAzLiBBY2NlcHRzIGJvdGggInBvaW50ZXJzIiBhbmQgImlu
+dGVnZXJzIGFzIHBvaW50ZXJzIiB3aGljaA0KPiBvdmVybG9hZHMgdGhlIHVzZSBjYXNlIGFuZCBj
+b25zdHJhaW5zIHRoZSBpbXBsZW1lbnRhdGlvbg0KPiB0byBhZGRyZXNzIG90aGVyIGNoYWxsZW5n
+ZXMuDQo+IA0KPiBUaGlzIHBhdGNoIGRlcHJlY2F0ZXMgc3VwcG9ydCBmb3IgaW50ZWdlciB0eXBl
+cyB3aGljaCBhbGxvd3MNCj4gYWRkcmVzc2luZyBlYWNoIG9mIHRoZSBjaGFsbGVuZ2VzIGFib3Zl
+Lg0KPiANCj4gRXhhbXBsZXM6DQo+IDEuIENsYW5nIGlzIGFibGUgdG8gb3B0aW1pemUgYW5kIGlt
+cHJvdmUgX19ydGVfcmF3X2Nrc3VtDQo+ICh3aGljaCB1c2VzIFJURV9QVFJfQUREKSBieSB+NDAl
+ICgxMDAgYnl0ZXMpIHRvIH44eCAoMS41ayBieXRlcykNCj4gVFNDIGN5Y2xlcy9ieXRlLg0KPiAy
+LiBSZWZhY3RvcmluZyBkaXNjb3ZlcmVkIGNhc2VzIHRoYXQgZHJvcHBlZCBxdWFsaWZpZXJzICh2
+b2xhdGlsZSkNCj4gdGhhdCB0aGUgbmV3IEFQSSBleHBvc2VzLg0KPiANCj4gU2lnbmVkLW9mZi1i
+eTogU2NvdHQgTWl0Y2hlbGwgPHNjb3R0LmsubWl0Y2gxQGdtYWlsLmNvbT4NCj4gUmV2aWV3ZWQt
+Ynk6IFN0ZXBoZW4gSGVtbWluZ2VyIDxzdGVwaGVuQG5ldHdvcmtwbHVtYmVyLm9yZz4NCj4gLS0t
+DQo+IENoYW5nZXMgZnJvbSB0aGUgb3JpZ2luYWwgdjI0IHN1Ym1pc3Npb24gKHJlYmFzZWQgdG8g
+MjYuMTEpOg0KPiANCj4gKiBSZWJhc2VkIG9uIG1haW46IHJlbGVhc2Ugbm90ZXMgbW92ZWQgdG8g
+cmVsZWFzZV8yNl8xMS5yc3QsDQo+IGFuZCByb2NfY3B0X2RlYnVnLmMgdXBkYXRlZCBmb3IgdGhl
+IGNwdF9jbjEwa19mcmFnX2luZm9fcyByZW5hbWUuDQo+IA0KPiAqIFJlbGVhc2Ugbm90ZXM6IHN0
+YXRlIHRoYXQgUlRFX1BUUl9BREQvU1VCIHJlamVjdCBpbnRlZ2VyIGFyZ3VtZW50cw0KPiB3aGls
+ZSBSVEVfUFRSX0FMSUdOKiBzdGlsbCBjb21waWxlIHdpdGggdGhlbSBhcyBkZXByZWNhdGVkIHVz
+YWdlLg0KPiBUaGVyZSBhcmUgc3RpbGwgc29tZSBpbi10cmVlIHVzZXMgb2YgaW50ZWdlciBhcmd1
+bWVudHMgaW4gbWx4NS4NCj4gDQo+ICogdGVzdF9jb21tb24uYzogYWxpZ25lZCB1aW50MTYvMzIv
+NjQgZGVyZWZlcmVuY2UgdGVzdHMgbm93IGFsc28NCj4gcmVxdWlyZSBpbmNyZW1lbnQgdG8gYmUg
+YSBtdWx0aXBsZSBvZiB0aGUgdHlwZSBzaXplLCBhdm9pZGluZw0KPiBtaXNhbGlnbmVkIHR5cGVk
+IGFjY2Vzcy4NCj4gDQo+ICogZW5hOiBCQVIgTlVMTCBjaGVjayBsb2dzIGF0IERFQlVHIHJhdGhl
+ciB0aGFuIEVSUiBzaW5jZSB0aGUgbWVtb3J5DQo+IEJBUiBpcyBsZWdpdGltYXRlbHkgYWJzZW50
+IG9uIG5vbi1MTFEgZGV2aWNlcy4NCj4gDQo+ICogaWR4ZDogZHJvcCBSVEVfUFRSX1VOUVVBTCBh
+bmQgRklYTUUgb24gcG9ydGFsIGFzc2lnbm1lbnQsIGFuZCB0aGUNCj4gcmVkdW5kYW50ICh2b2xh
+dGlsZSB2b2lkICopIGNhc3RzLCBzaW5jZSB0aGUgZmllbGRzIGFyZSBhbHJlYWR5DQo+IHZvbGF0
+aWxlLXF1YWxpZmllZCB1cHN0cmVhbS4NCj4gDQo+ICogZWFsX2NvbW1vbl9tZW1vcnkuYzogZHJv
+cCB1bnJlbGF0ZWQgdm9sYXRpbGUgcXVhbGlmaWVyIG9uIGxvY2FsIGVsZW0NCj4gcG9pbnRlci4N
+Cj4gKiBlYWxfY29tbW9uX2ZiYXJyYXkuYzogZHJvcCB1bnVzZWQgcnRlX2RlYnVnLmggaW5jbHVk
+ZS4NCj4gKiBlYWxfbWVtYWxsb2MuYyAobGludXgsIHdpbmRvd3MpOiBtb3ZlIGJhc2VfdmEgTlVM
+TCBjaGVjayBiZWZvcmUNCj4gICB0aGUgYWxsb2NhdGlvbiBsb29wIGFuZCByZXR1cm4gLTEgaW5z
+dGVhZCBvZiBnb3RvIG91dC4NCj4gDQo+ICogcnRlX21idWYuaCwgcnRlX21lbXBvb2wuaDogZHJv
+cCBfX3J0ZV9hc3N1bWUoKSBvbiBwb2ludGVycyB0aGF0DQo+IGFyZSBkZXJlZmVyZW5jZWQgaW1t
+ZWRpYXRlbHkgYWZ0ZXI7IGNvbXBpbGVyIGFscmVhZHkgaW5mZXJzIHRoYXQNCj4gZm9ybSB0aGUg
+aW1tZWRpYXRlIGRlcmVmZXJlbmNlLiAga2VlcCBSVEVfQVNTRVJULg0KPiANCg0KVGhhdCdzIGEg
+bG90IG9mIGNvZGUuDQpUaGFuayB5b3UgZm9yIHdvcmtpbmcgb24gdGhpcywgU2NvdHQgYW5kIFN0
+ZXBoZW4uDQpTdHJvbmdlciB0eXBpbmcgaXMgYSB2YWx1YWJsZSBpbXByb3ZlbWVudC4NCg0KSSBo
+YXZlIHJldmlld2VkIHNlbGVjdGl2ZWx5LCBzbyBpdCdzIG5vdCBhIGZ1bGwgcmV2aWV3LCBidXQg
+YSBiaWcgYWNrLg0KDQpBY2tlZC1ieTogTW9ydGVuIEJyw7hydXAgPG1iQHNtYXJ0c2hhcmVzeXN0
+ZW1zLmNvbT4NCg0K
