@@ -2,71 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31DC9C624DE
-	for <dpdk-dev@archiver.kernel.org>; Fri,  4 Sep 2026 09:22:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF3E7C624DE
+	for <dpdk-dev@archiver.kernel.org>; Fri,  4 Sep 2026 09:30:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5775F42E63;
-	Fri,  4 Sep 2026 11:22:45 +0200 (CEST)
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com
- [209.85.210.49]) by mails.dpdk.org (Postfix) with ESMTP id 57DAB42E63
- for <dev@dpdk.org>; Fri,  4 Sep 2026 11:22:43 +0200 (CEST)
-Received: by mail-ot1-f49.google.com with SMTP id
- 46e09a7af769-7f84a55cc06so613546a34.2
- for <dev@dpdk.org>; Fri, 04 Sep 2026 02:22:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1788513762; x=1789118562; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=5D2BvfCsEikrXdv79pcuOJAfXkMXXmqb9pDVq2pVeAE=;
- b=n6+9o5pF/VbtF+QEAEgdhfk/3xAwJ26YxZSzNycZYwFx0jEE3ybFMVsE7patKTbAWc
- /XQp42zEBkfSD3W20YQh8ausDC3MQRWzSfHEg2Ffzlse/LsMkku0SMcNbqexS9RiiDOW
- 0TezpufbfkrveMlsuYR/rgVsqo5yNvwzGLoh1IaQz8h4OwFJS/2Wi+7OBRAm3IRoGhlz
- SqPzGJmXg3kgp6P0/HL6/uMAz8Ir2fIC7NBfnDd57fK5iVsuJk3LLbc7Kg+ypSmaP4UJ
- uNgSi2CEGyQnQBdXbck6ohvA4x7g/sPhQKH/yIrUjY5X8KH3qHYHNAUMUBKrRBumYpFQ
- bVAg==
+	by mails.dpdk.org (Postfix) with ESMTP id 0744242E72;
+	Fri,  4 Sep 2026 11:30:42 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 9805F42E63
+ for <dev@dpdk.org>; Fri,  4 Sep 2026 11:30:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1788514240;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=5TBmAC0AQbtkMT9q+BGsOWS+BstXfrm55ZQv9EQznHM=;
+ b=a8LSfu/rJsoR2Lv09zbuBqi/9atD7YnZgDi08zk3dQtcthebLWN2GWmCFZ5nmg+OkOBbXn
+ zu5X6P7J+vTZbqUuZ8/Bi5AvoHqt2MAGobuM8HuuyVxSa5HG/nJywyWNkqRcIklchCkfWK
+ 1NRsIIfth7yVJQF629tDptzCPyWuUlo=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-377-bmPARnS0OrqjA6KjOx2jcg-1; Fri, 04 Sep 2026 05:30:38 -0400
+X-MC-Unique: bmPARnS0OrqjA6KjOx2jcg-1
+X-Mimecast-MFC-AGG-ID: bmPARnS0OrqjA6KjOx2jcg_1788514237
+Received: by mail-lj1-f200.google.com with SMTP id
+ 38308e7fff4ca-3a23577c7e6so4869001fa.3
+ for <dev@dpdk.org>; Fri, 04 Sep 2026 02:30:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788513762; x=1789118562;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=5D2BvfCsEikrXdv79pcuOJAfXkMXXmqb9pDVq2pVeAE=;
- b=o4q3JJ0cY6+ANWvW0bAmZUl/8dFz4ruEtAfXso941exjD5461i8RYC8CXMshfe+LIl
- UtsMFgKyC7xQ0Baks07MUvtEbpTLPm9uUOvga69YnIDhoUWiXt3WHpbCg2+4VqeNR+xe
- 7IsI4gmvp3XbHku2wq9j313K3Vp75rKx1BN8VQ9vmBDeo7U49lC/yp/EQ69Iunf/NFeI
- nsecpncPrJxtqLBt1/1Hgbjvb+nKrQUJuLcFOnkPmRCGgmMztVQsxbdG2bApBG7g41iz
- RdM5dpaRsAsytxm/BXFt/07XuAtLh3tAWH0QzjY+v/HHXxf/ZYAO7YbWejZpGHM3b1k6
- yTMQ==
-X-Forwarded-Encrypted: i=1;
- AKwUvBx8KmigL2yGe+zrIMFfVt5X9/ZdDuUABT3YsBxfMVM8TjH9A/dBQwA/bdtwCpKN3LbimjA=@dpdk.org
-X-Gm-Message-State: AFuF++mWLDJE/TIUqJEGWjWpQdTZ0JSl3XV/QhXtvSxecRJUcoaWRmzk
- P0sCd2adVebi4uYCWjWCd+7wGH+XLHAmIXxH/97BHR3sm/lQJeQynrnH
-X-Gm-Gg: AYBFou2okngow15CSg0+GXDSApt8oZE0g1ivwBy/Gv2y3HplmWsEkSq5F78nKVO4hk8
- LjF5BNF4zysQPfOwjMzsfIXTx9pa8ErTQP5ZUTEhg7CE7Jd/Vbczen7KkiAUlkq56EmbV/EyuHL
- GB487jTAoAf4WHLmTL4SKS0old0ruhXD1YO+DzD0euQFuMNrcNd6rjzc7QTlbNyfgwl9WIduA2p
- 9hpN9IL0EdW3chTkarnpUik60HLf7OWF4jj49XT9jT3L6d2je5bt+GyWtm2thH7lZ5T2P1CBgUT
- 47a85FOUq6RGfWwSeOxZpLlu6f+ksU/ZyE0qBV9REZOYm8bs/8O5B4JcgzErtRmjbUIIhDdkUA5
- dj2Loo4p7flv11fnNZN6i/YWB/oO/uzabEJd7C+wk6MAfPX7NJJU+W8d2qKkayq33NvvTm696bL
- K7F3ttzu5wGWnHBrQ3PtSGTCv1UjPh34hIEItTry5gqGIGLy0hH+Wcqa4vw56ya4X9qPwE5WfoS
- J0FYRkXwBBBetWS5r86URcOqPntNhPTkgUzAA==
-X-Received: by 2002:a05:6820:60b:b0:6b7:46fc:1d3 with SMTP id
- 006d021491bc7-6b746fc0241mr1542531eaf.50.1788513762342; 
- Fri, 04 Sep 2026 02:22:42 -0700 (PDT)
-Received: from amiya73TMT9m.aristanetworks.com ([49.207.230.155])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-3339885ca07sm5963590eec.1.2026.09.04.02.22.38
- (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Fri, 04 Sep 2026 02:22:41 -0700 (PDT)
-From: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
-To: ndabilpuram@marvell.com, kirankumark@marvell.com, skori@marvell.com,
- skoteshwar@marvell.com, hkalra@marvell.com
-Cc: asekhar@marvell.com, dev@dpdk.org, stable@dpdk.org,
- Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
-Subject: [PATCH] common/cnxk: fix duplicate mbox alloc in NPA aura pool init
-Date: Fri,  4 Sep 2026 14:51:57 +0530
-Message-Id: <20260904092157.51040-1-amiyaranjan.mohakud@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+ d=1e100.net; s=20251104; t=1788514237; x=1789119037;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=5TBmAC0AQbtkMT9q+BGsOWS+BstXfrm55ZQv9EQznHM=;
+ b=ofsBH2y9lAEHqfzZq8GhGhcIs9BJUYTwIKGuT3FgFhHEsj8Le7Okxn47daQl9vFAhZ
+ A0Qim5gIcmIfGKv4JyuTFYYlnOfQNw62Uwi48tU/BGZrVZk4WFhTSt392uN73rO7hZjw
+ p+cS+VTMUHIGlK0IWu8IxVdBWsWSae272m4sym0m9miFEhnUDOcAROsF06l8H75YSl3/
+ zRX3LDTrZK8EahzQ5x5JHPVuEaZtLs9rT92gB0Ty2oDfdPFyAdted5xsUB3REyEuwox3
+ dJTgJNvYVuzBMxVvrecj1vzRPkrZe/QhXK2HF5Z7HETo0YM5kX6Bg4ptX6JcBbBaVpy3
+ OTtw==
+X-Gm-Message-State: AFuF++m1aEds0izlJO1ppr4h0OT2sBJRubYt2E14aXjseIYaia3mCLrz
+ D6qlOpabQWzIbY+v09c6gB2iZlnrgH2KnIT+wlxHW7b5Q85J4GdUwZjuK5bavj6lQMpRLhnZLDq
+ 3HCgN3MFgRZrripRlcAKai0zItWOkRi6pkH0P0Uu7FliQE1UV4ZoPTSPjUkEp13rM7DFyW8E8kp
+ avGt43x57fyN0R/NTs6YQ=
+X-Gm-Gg: AYBFou2i3/pKIdrlCDIEcuC/NPNP+cM5fc5V5QfQVwU5PVPSr27X0o6jJNR0NIFLH2d
+ WLSNQRIBfmxtdpbFGUdiodwaAqOvXGjnKyOBtZMqdWl3WZ1nyHfmTZH78J4Ikqzb7hbasmCOD6I
+ gnCunLkoeYJM26mEWOJYOALR6w3iHRAmgR3ptkEzndOAulUo4UtMiDj5qEgbsFVmHNCZxR9rMrs
+ ypNAlwDGTz0luVDgnC6jBeT/SbS091ymAulcZwKBDHrkFo2
+X-Received: by 2002:a2e:a00d:0:b0:3a3:364:f789 with SMTP id
+ 38308e7fff4ca-3a371f6c2a0mr7915071fa.13.1788514237015; 
+ Fri, 04 Sep 2026 02:30:37 -0700 (PDT)
+X-Received: by 2002:a2e:a00d:0:b0:3a3:364:f789 with SMTP id
+ 38308e7fff4ca-3a371f6c2a0mr7914961fa.13.1788514236473; Fri, 04 Sep 2026
+ 02:30:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260720080035.673782-1-maxime@leroys.fr>
+In-Reply-To: <20260720080035.673782-1-maxime@leroys.fr>
+From: David Marchand <david.marchand@redhat.com>
+Date: Fri, 4 Sep 2026 11:30:24 +0200
+X-Gm-Features: AcwNN1X1PkQN82pORLzgGZneKHb13-MW25ov4N38iGrQc_nZDaZDh60MQxsq3So
+Message-ID: <CAJFAV8xMCEhq4dzNjme_vkN3q0Xp81Psh7t0-uW2xmM8Qpk2tA@mail.gmail.com>
+Subject: Re: [PATCH 0/6] examples/l3fwd-power: fix Rx interrupt mode for
+ shared FD PMDs
+To: Maxime Leroy <maxime@leroys.fr>, anatoly.burakov@intel.com,
+ sivaprasad.tummala@amd.com
+Cc: dev@dpdk.org, "Mcnamara, John" <john.mcnamara@intel.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: GJJ6mzJWlRMAWvhuQ4V9R83No-FYAZzms6ixygHJwY0_1788514237
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,37 +84,59 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-npa_aura_pool_init() allocates the pool init mbox message twice on
-non-CN20K platforms. The if/else block at line 106-111 allocates via
-the model-specific branch, but the original unconditional allocation
-at line 112 was not removed when the CN20K branch was added. This
-overwrites pool_init_req, and the orphaned first message is sent to
-the AF with uninitialized aura_id, ctype, and op fields, which can
-trigger any undesired behavior on CN10K.
+On Mon, 20 Jul 2026 at 10:01, Maxime Leroy <maxime@leroys.fr> wrote:
+>
+> l3fwd-power's Rx interrupt (one-shot) mode was written around NICs whose
+> interrupt fd is assigned per queue at setup, stays fixed and is
+> level-triggered, as on MSI-X hardware. PMDs that do not fit that model
+> never sleep on interrupts: they either fail to arm, watch an unbound fd,
+> or miss the wake, and the 10 ms poll timeout hides all of it.
+>
+> dpaa2 is the motivating example: it delivers Rx interrupts through one
+> QBMan portal per lcore, so the queues of a lcore share a single fd that
+> is bound when the interrupt is enabled, not at queue setup; the
+> notification is edge-triggered on an empty to non-empty transition; and
+> arming a queue that already holds traffic returns -EAGAIN with the queue
+> left unarmed.
+>
+> This series makes the interrupt and legacy loops handle those cases
+> while leaving MSI-X NICs unchanged:
+>
+>   1/6 factor the duplicated arm/sleep/disarm block into a helper.
+>   2/6 check the arm return: on -EAGAIN poll and retry, on any other
+>       error drop interrupt mode for the lcore instead of sleeping on
+>       unarmed queues.
+>   3/6 register the fd in the epoll set after arming, not before, so a
+>       fd bound at enable time is watched only once it exists.
+>   4/6 accept -EEXIST when several queues share one fd.
+>   5/6 recheck the queues before sleeping so a packet that arrived during
+>       the arm window is not missed under edge-triggered interrupts.
+>   6/6 block indefinitely instead of on a 10 ms timeout, and wake the
+>       workers through an eventfd on exit, so a broken interrupt path no
+>       longer hides behind periodic polling.
+>
+> Maxime Leroy (6):
+>   examples/l3fwd-power: factor out Rx interrupt sleep path
+>   examples/l3fwd-power: check Rx interrupt enable errors
+>   examples/l3fwd-power: enable Rx interrupt before epoll add
+>   examples/l3fwd-power: accept shared Rx interrupt FD
+>   examples/l3fwd-power: recheck Rx queues before sleeping
+>   examples/l3fwd-power: block until Rx interrupt or exit
+>
+>  examples/l3fwd-power/main.c | 184 +++++++++++++++++++++++++++++-------
+>  1 file changed, 150 insertions(+), 34 deletions(-)
 
-Remove the duplicate allocation.
+I had a quick look.
+I am not a fan of changing applications because drivers behave
+differently, but I think most of those changes are acceptable.
 
-Fixes: 143a419edf35 ("common/cnxk: use new NPA aq enq mbox for CN20K")
-Cc: asekhar@marvell.com
-Cc: stable@dpdk.org
+I sent one comment on the implementation of patch 3.
+Patch 5 is a concern to me, as I don't think it solves anything, just
+make the issue harder to reproduce maybe?
 
-Signed-off-by: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
----
- drivers/common/cnxk/roc_npa.c | 1 -
- 1 file changed, 1 deletion(-)
+Anatoly, Sivaprasad, please review.
 
-diff --git a/drivers/common/cnxk/roc_npa.c b/drivers/common/cnxk/roc_npa.c
-index 4a3e96a97a..87f7637e9f 100644
---- a/drivers/common/cnxk/roc_npa.c
-+++ b/drivers/common/cnxk/roc_npa.c
-@@ -110,7 +110,6 @@ npa_aura_pool_init(struct mbox *m_box, uint32_t aura_id, struct npa_aura_s *aura
- 	} else {
- 		pool_init_req = mbox_alloc_msg_npa_aq_enq(mbox);
- 	}
--	pool_init_req = mbox_alloc_msg_npa_aq_enq(mbox);
- 	if (pool_init_req == NULL)
- 		goto exit;
- 	pool_init_req->aura_id = aura_id;
+
 -- 
-2.39.5 (Apple Git-154)
+David Marchand
 
