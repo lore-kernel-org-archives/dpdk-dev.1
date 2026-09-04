@@ -2,49 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F15EAC61DD6
-	for <dpdk-dev@archiver.kernel.org>; Fri,  4 Sep 2026 13:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 675DAC624DE
+	for <dpdk-dev@archiver.kernel.org>; Fri,  4 Sep 2026 15:02:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B2E6140A77;
-	Fri,  4 Sep 2026 15:38:52 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id 680944021F;
- Fri,  4 Sep 2026 15:38:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1788529132; x=1820065132;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=OM0ElBsQ3BfodEdwR7goQK73TDKXXQxDtdBlAm9uOPA=;
- b=clQ633wX9mEPpwJrY+ghO6lEtlwqJW4mO/Y7ekthkSm0wDWJTXd2h7oR
- M5zNVpueIEblslyhsRP8oCFi0DqyWvMqa76AbxrL9IjNoDMDhDKnJeYNH
- 8SUb1S/mPBeebN4sNjX31/K9T1NwECOw+VaNxTOvukaBRjqa2YJiaAxAh
- BeQOmbcQrpJW2dEU+TElaHYrd4DUgCCLk4t9EGOtWivhxT79cUrgSU/X2
- k3dHXuqATYyv76h9gfeJvT2D8dm0StoTlhTBDVNJdaSgbnl3tHMBB6pxJ
- g8Fg+xfVMo1ocSrBvFrtr4k9QS7HyZptpAsPISDz5vXKeZ1ZhdDIdnokq A==;
-X-CSE-ConnectionGUID: TEo8zsSLTBOUw9D2irnTDQ==
-X-CSE-MsgGUID: OcfbivIeQT2tJ82greHtfA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11895"; a="89239212"
-X-IronPort-AV: E=Sophos;i="6.25,262,1779174000"; d="scan'208";a="89239212"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
- by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 04 Sep 2026 06:38:50 -0700
-X-CSE-ConnectionGUID: 4Yy8n9d3TJyQyv5IKq3E2g==
-X-CSE-MsgGUID: R7ppzbxTRP+P1D01YgPIiw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,262,1779174000"; d="scan'208";a="293553739"
-Received: from silpixa00401177.ir.intel.com ([10.20.224.214])
- by fmviesa002.fm.intel.com with ESMTP; 04 Sep 2026 06:38:49 -0700
-From: Ciara Loftus <ciara.loftus@intel.com>
-To: dev@dpdk.org
-Cc: Ciara Loftus <ciara.loftus@intel.com>,
-	stable@dpdk.org
-Subject: [PATCH] app/testpmd: fix stale queue-count check order
-Date: Fri,  4 Sep 2026 13:38:42 +0000
-Message-ID: <20260904133842.3155785-1-ciara.loftus@intel.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id 4903040297;
+	Fri,  4 Sep 2026 17:02:27 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 616C64021F
+ for <dev@dpdk.org>; Fri,  4 Sep 2026 17:02:26 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 2EB9920910;
+ Fri,  4 Sep 2026 17:02:26 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: FW: |SUCCESS| [v4] eal/x86: fix memcpy alignment mask definition
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Fri, 4 Sep 2026 17:02:24 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65A33@smartserver.smartshare.dk>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: |SUCCESS| [v4] eal/x86: fix memcpy alignment mask definition
+Thread-Index: Ad08eN4Sp043pKHXQYa78J7tm0XE+AABQFjw
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>
+Cc: <dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,51 +44,105 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, when setting the number of queues via `port config all txq/rxq`,
-testpmd validates the requested queue count against a device's current
-queue-count limits, then rebuilds the forwarding stream configuration
-before refreshing each port's cached device information. The forwarding
-stream setup step re-checks the requested queue count against that cache,
-so it can still reject a value that was just accepted if the cached
-limits are older than the freshly queried ones.
+The simple AI in our CI managed - for the first time ever - to not emit =
+any garbage at all, when reviewing one of my patches!
 
-This is not observable while a port's queue-count limits stay fixed
-for its lifetime. It becomes visible whenever a PMD's reported
-`max_rx_queues`/`max_tx_queues` change after the port was first probed,
-for example when a driver recomputes queue capacity in response to a
-traffic management (`rte_tm`) hierarchy commit. The stale cached values
-then no longer match what the device currently reports, so a queue count
-that is actually valid can be wrongly rejected.
+Maybe I should stick to simple patches that don't really change =
+anything; then it doesn't get confused. ;-)
 
-Fix it by refreshing the cached device information before rebuilding
-the forwarding stream configuration, so both checks operate on the same,
-current queue-count limits.
 
-Fixes: 0c0db76f42ed ("app/testpmd: separate forward config setup from display")
-Cc: stable@dpdk.org
+Venlig hilsen / Kind regards,
+-Morten Br=F8rup
 
-Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+
+-----Original Message-----
+From: dpdklab@iol.unh.edu [mailto:dpdklab@iol.unh.edu]=20
+Sent: Friday, 4 September 2026 16.23
+To: test-report@dpdk.org
+Cc: Morten Br=F8rup
+Subject: |SUCCESS| [v4] eal/x86: fix memcpy alignment mask definition
+
+Test-Label: ai-code-review
+Test-Status: SUCCESS
+https://dpdk.org/patch/169097
+
+_AI Code Review_
+
+=3D=3D=3D Patch Review: series.patch (via Claude) =3D=3D=3D
+Review date: 2026-09-04
+
+# DPDK Patch Review
+
+## Patch Summary
+The patch addresses a potential symbol name collision by prefixing =
+`ALIGNMENT_MASK` with `RTE_MEMCPY_`, moves function documentation, and =
+fixes a coding style issue with implicit comparison.
+
 ---
- app/test-pmd/cmdline.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-index 10ee7c5179..95a4ebfb96 100644
---- a/app/test-pmd/cmdline.c
-+++ b/app/test-pmd/cmdline.c
-@@ -2010,10 +2010,10 @@ cmd_config_rx_tx_parsed(void *parsed_result,
- 		return;
- 	}
- 
--	fwd_config_setup();
--
- 	init_port_config();
- 
-+	fwd_config_setup();
-+
- 	cmd_reconfig_device_queue(RTE_PORT_ALL, 1, 1);
- }
- 
--- 
-2.43.0
+## Errors
 
+None.
+
+---
+
+## Warnings
+
+None.
+
+---
+
+## Info
+
+### 1. Documentation placement improvement
+
+The patch moves the Doxygen comment from the forward declaration =
+(removed at line 32) to the actual function definition (line 661). This =
+improves source code browser results and follows good practice of =
+documenting at the definition rather than the declaration when a =
+function is static inline in a header.
+
+**Observation:** This is a positive change. The forward declaration was =
+unnecessary for a static inline function in a header file.
+
+### 2. Symbol naming fix
+
+The patch renames `ALIGNMENT_MASK` to `RTE_MEMCPY_ALIGNMENT_MASK` at =
+lines 175, 321, 432, 709, and 715. This prevents potential name =
+collisions since the macro is defined in an installed header file.
+
+**Observation:** This correctly follows the guideline that all external =
+symbols must have `RTE_` or `rte_` prefix. While `ALIGNMENT_MASK` is =
+`#undef`'d at the end of the file, it is still exposed during inclusion =
+and could collide with user code that defines the same name before =
+including this header.
+
+### 3. Coding style fix
+
+The patch changes line 709 from:
+```c
+if (!(((uintptr_t)dst | (uintptr_t)src) & ALIGNMENT_MASK))
+```
+to:
+```c
+if ((((uintptr_t)dst | (uintptr_t)src) & RTE_MEMCPY_ALIGNMENT_MASK) =
+=3D=3D 0)
+```
+
+**Observation:** This correctly changes an implicit truthiness test to =
+an explicit comparison against 0, following DPDK coding style which =
+requires explicit comparisons for integer values.
+
+---
+
+## Summary
+
+The patch is correct and improves code quality in three ways:
+1. Prevents potential symbol name collisions by adding proper `RTE_` =
+prefix
+2. Improves documentation discoverability by placing Doxygen comments at =
+the definition
+3. Conforms to DPDK coding style for explicit comparisons
+
+No issues found. The patch follows DPDK guidelines and makes beneficial =
+improvements to the codebase.
