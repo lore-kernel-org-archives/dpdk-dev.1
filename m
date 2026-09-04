@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFAF3C624D3
-	for <dpdk-dev@archiver.kernel.org>; Fri,  4 Sep 2026 10:52:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A06C624D3
+	for <dpdk-dev@archiver.kernel.org>; Fri,  4 Sep 2026 10:52:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3D76242EF6;
-	Fri,  4 Sep 2026 12:52:31 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 41D3142EFB;
+	Fri,  4 Sep 2026 12:52:32 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id EA2C742EDC;
- Fri,  4 Sep 2026 12:52:28 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 0B5C442EEB;
+ Fri,  4 Sep 2026 12:52:29 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1788519149; x=1820055149;
+ t=1788519150; x=1820055150;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=FuayttlVRkzjWpu3wCnhIlUnes6p4hdeViMmjWo8yiI=;
- b=Z4qniEJupTj/SmfzbdTI3zFhiMay3IOKtEZ5eV3+/V3lC5a98gwt2ugV
- yUcOv73FTX7YO7PKYRKTtm8CfCmELOgEq0EXlbV4GUlq8K4Jcuq3DNh54
- t824WEGI1sZHdIGJHTPuuMQSj+Pt0dN/VGv5qnlNUJ1W6rjYSi43qwA3N
- vp10ABbuHrMUgBr3k86/eJ25N0lviIhFgf2mMRP21BjFVgRLh1jSdh3x7
- +FprcmyPAKQy7Q3KGH0NF/5F4ZAksAVSR8V9AsWK4eh4U9xNyDt4j+SWZ
- 2d7LpvL1VIrKn5P/r/CBnGe/XRONku397oI3O1N/uQvjo8qHtiFh3SFzt w==;
-X-CSE-ConnectionGUID: 2eZGM8/mSv2hZy1MrG/lng==
-X-CSE-MsgGUID: xa6N5eHmS6OihEiAvRoEFA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11895"; a="76573770"
-X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; d="scan'208";a="76573770"
+ bh=RoCWAWDW81lXXxdBzuOhVLafRLvSjToAyxUzOWVSEVc=;
+ b=hjzpaxyP4dq6ePhkCLyEbK9JLfRy4TM1/pUXIF3nNFOJLey9VXBDn7f9
+ sZ0TQWTkgP61xT/VUo3EJjtUm04JxDXDtXIJDUuvpsABZeN9a8YpUgwXi
+ DEnMh55y/g97WsvK8Mwg5kn1DuEdzkioDkWmZPA9Q18q+90ivOrRhyrYD
+ kmRYeWJpELCpOz/n6B+vthoYEWj3oj5U+kP7OadJ9amlujpPnfd2erm1o
+ +awu9z2q9DvHA/mpbl/EZY3ntcJ91HD3ao2HfQj5juwU1z0JvnxAGm8aN
+ vl2G3MSCXRp0aXwjdTzV0yJBEQgHQx8HNCTSriZ51MQuYhOGYxBrTAYDo w==;
+X-CSE-ConnectionGUID: XMTEpCsaRfKhoIeNFWhK9w==
+X-CSE-MsgGUID: 2kBAvip0RsyvhRL0CP6pSQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11895"; a="76573773"
+X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; d="scan'208";a="76573773"
 Received: from orviesa001.jf.intel.com ([10.64.159.141])
  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 04 Sep 2026 03:52:29 -0700
-X-CSE-ConnectionGUID: aJgtAAs4TnaAQh8VS47mUg==
-X-CSE-MsgGUID: 9a1PgHqkQJy1cGRqMI9WHA==
+ 04 Sep 2026 03:52:30 -0700
+X-CSE-ConnectionGUID: +xWf8rorQDSSDDM8PlsLYA==
+X-CSE-MsgGUID: pLS6lDNmS3iixf69PpkTDg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; d="scan'208";a="308223640"
+X-IronPort-AV: E=Sophos;i="6.25,260,1779174000"; d="scan'208";a="308223643"
 Received: from silpixa00401177.ir.intel.com ([10.20.224.214])
- by orviesa001.jf.intel.com with ESMTP; 04 Sep 2026 03:52:27 -0700
+ by orviesa001.jf.intel.com with ESMTP; 04 Sep 2026 03:52:28 -0700
 From: Ciara Loftus <ciara.loftus@intel.com>
 To: dev@dpdk.org
 Cc: Ciara Loftus <ciara.loftus@intel.com>,
 	stable@dpdk.org
-Subject: [PATCH 2/3] net/ice: skip TC validation if hierarchy committed
-Date: Fri,  4 Sep 2026 10:51:38 +0000
-Message-ID: <20260904105139.3117640-3-ciara.loftus@intel.com>
+Subject: [PATCH 3/3] net/ice: fix Rx queue count reporting after TM commit
+Date: Fri,  4 Sep 2026 10:51:39 +0000
+Message-ID: <20260904105139.3117640-4-ciara.loftus@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260904105139.3117640-1-ciara.loftus@intel.com>
 References: <20260904105139.3117640-1-ciara.loftus@intel.com>
@@ -60,110 +60,111 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, ice_tx_queue_start() determines a queue's congestion domain by
-scanning vsi->info.tc_mapping[] for a matching traffic class range,
-rejecting the queue if no match is found.
+Currently, ice_dev_info_get() assigns the value of `vsi->nb_qps` to both
+`max_rx_queues` and `max_tx_queues`.
 
-The Tx scheduler hierarchies only ever operate on a single traffic class,
-TC0, so every queue managed by a committed TM hierarchy always belongs
-to domain 0. The tc_mapping[] lookup doesn't account for this, and queues
-added after a TM hierarchy is committed can be incorrectly rejected.
+After a Tx scheduler hierarchy is committed, the value of nb_qps may grow
+to reflect the VSI's larger Tx scheduler capacity. However the Tx scheduler
+hierarchy change has no effect on the VSI's Rx queue allocation,
+which stays fixed at its original size for the life of the port. An
+application can then request more Rx queues than the VSI's actual Rx
+resources support when the inflated nb_qps is assigned to `max_rx_queues`.
 
-Fix this by skipping the lookup if a hierarchy has been committed as the
-domain is already known to be 0 in that case. Since TM does not support
-DCB's multi-TC queue layout, also reject queue start explicitly if DCB
-has configured more than one TC while a TM hierarchy is committed.
+`vsi->nb_qps` also feeds `ice_vsi_disable_queues_intr()`, which clears
+both Rx and Tx queue interrupt registers by absolute queue index on
+every port stop. Once `nb_qps` grows past the VSI's fixed queue window,
+this can clear interrupt registers belonging to a different VSI.
 
-Fixes: 02b71e570294 ("net/ice: support DCB")
+Fix this by introducing `vsi->nb_tm_qps` to track the Tx scheduler
+capacity as it grows, leaving `vsi->nb_qps` as the VSI's fixed
+queue allocation for the life of the port. `ice_vsi_disable_queues_intr()`
+is switched to `nb_used_qps`, which already tracks the actually configured
+queue count.
+
+Fixes: 715d449a965b ("net/ice: enhance Tx scheduler hierarchy support")
 Cc: stable@dpdk.org
 
 Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
 ---
- drivers/net/intel/ice/ice_ethdev.c |  4 ++++
- drivers/net/intel/ice/ice_ethdev.h |  2 ++
- drivers/net/intel/ice/ice_rxtx.c   | 33 ++++++++++++++++++------------
- 3 files changed, 26 insertions(+), 13 deletions(-)
+ drivers/net/intel/ice/ice_ethdev.c | 5 +++--
+ drivers/net/intel/ice/ice_ethdev.h | 1 +
+ drivers/net/intel/ice/ice_tm.c     | 8 ++++----
+ 3 files changed, 8 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
-index 76b8ff0a72e..fd148848d3c 100644
+index fd148848d3c..149872816d8 100644
 --- a/drivers/net/intel/ice/ice_ethdev.c
 +++ b/drivers/net/intel/ice/ice_ethdev.c
-@@ -3963,6 +3963,8 @@ ice_dev_configure(struct rte_eth_dev *dev)
- 	ad->rx_func_type = ICE_RX_DEFAULT;
- 	ad->tx_func_type = ICE_TX_DEFAULT;
+@@ -1816,6 +1816,7 @@ ice_setup_vsi(struct ice_pf *pf, enum ice_vsi_type type)
+ 				     ret);
+ 			goto fail_mem;
+ 		}
++		vsi->nb_tm_qps = vsi->nb_qps;
  
-+	pf->dcb_num_tcs = 1;
-+
- 	if (dev->data->dev_conf.rxmode.mq_mode & RTE_ETH_MQ_RX_RSS_FLAG)
- 		dev->data->dev_conf.rxmode.offloads |= RTE_ETH_RX_OFFLOAD_RSS_HASH;
+ 		break;
+ 	case ICE_VSI_CTRL:
+@@ -2924,7 +2925,7 @@ ice_vsi_disable_queues_intr(struct ice_vsi *vsi)
+ 	uint16_t msix_intr, i;
  
-@@ -3992,6 +3994,8 @@ ice_dev_configure(struct rte_eth_dev *dev)
- 		if (nb_tc_used < 0)
- 			return -EINVAL;
- 
-+		pf->dcb_num_tcs = nb_tc_used;
-+
- 		ctxt.info = vsi->info;
- 		if (rte_le_to_cpu_16(ctxt.info.mapping_flags) == ICE_AQ_VSI_Q_MAP_NONCONTIG) {
- 			PMD_DRV_LOG(ERR, "VSI configured with non contiguous queues, DCB is not supported");
+ 	/* disable interrupt and also clear all the exist config */
+-	for (i = 0; i < vsi->nb_qps; i++) {
++	for (i = 0; i < vsi->nb_used_qps; i++) {
+ 		ICE_WRITE_REG(hw, QINT_TQCTL(vsi->base_queue + i), 0);
+ 		ICE_WRITE_REG(hw, QINT_RQCTL(vsi->base_queue + i), 0);
+ 		rte_wmb();
+@@ -4628,7 +4629,7 @@ ice_dev_info_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
+ 	dev_info->min_rx_bufsize = ICE_BUF_SIZE_MIN;
+ 	dev_info->max_rx_pktlen = ICE_FRAME_SIZE_MAX;
+ 	dev_info->max_rx_queues = vsi->nb_qps;
+-	dev_info->max_tx_queues = vsi->nb_qps;
++	dev_info->max_tx_queues = vsi->nb_tm_qps;
+ 	dev_info->max_mac_addrs = vsi->max_macaddrs;
+ 	dev_info->max_vfs = pci_dev->max_vfs;
+ 	dev_info->max_mtu = dev_info->max_rx_pktlen - ICE_ETH_OVERHEAD;
 diff --git a/drivers/net/intel/ice/ice_ethdev.h b/drivers/net/intel/ice/ice_ethdev.h
-index 7ee3ea8a709..5914454c7c2 100644
+index 5914454c7c2..3160c82c5e3 100644
 --- a/drivers/net/intel/ice/ice_ethdev.h
 +++ b/drivers/net/intel/ice/ice_ethdev.h
-@@ -609,6 +609,8 @@ struct ice_pf {
- 	uint64_t rss_hf;
- 	struct ice_tm_conf tm_conf;
- 	uint16_t outer_ethertype;
-+	/* Number of TCs requested, 1 if DCB not configured */
-+	uint8_t dcb_num_tcs;
- 	/* lock prevent race condition between lsc interrupt handler
- 	 * and link status update during dev_start.
- 	 */
-diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
-index c4b5454c530..71f9155e588 100644
---- a/drivers/net/intel/ice/ice_rxtx.c
-+++ b/drivers/net/intel/ice/ice_rxtx.c
-@@ -839,20 +839,27 @@ ice_tx_queue_start(struct rte_eth_dev *dev, uint16_t tx_queue_id)
- 	tx_ctx.legacy_int = 1; /* Legacy or Advanced Host Interface */
- 	tx_ctx.tsyn_ena = 1;
- 
--	/* Mirror RXQ<->CGD association to TXQ<->CGD */
--	for (int i = 0; i < ICE_MAX_TRAFFIC_CLASS; i++) {
--		q_base = rte_le_to_cpu_16(vsi->info.tc_mapping[i]) & ICE_AQ_VSI_TC_Q_OFFSET_M;
--		q_range = 1 << ((rte_le_to_cpu_16(vsi->info.tc_mapping[i]) &
--			ICE_AQ_VSI_TC_Q_NUM_M) >> ICE_AQ_VSI_TC_Q_NUM_S);
--
--		if (q_base <= tx_queue_id && tx_queue_id < q_base + q_range)
--			break;
--
--		cgd_idx++;
--	}
-+	if (!pf->tm_conf.committed) {
-+		/* Mirror RXQ<->CGD association to TXQ<->CGD */
-+		for (int i = 0; i < ICE_MAX_TRAFFIC_CLASS; i++) {
-+			q_base = rte_le_to_cpu_16(vsi->info.tc_mapping[i]) &
-+							ICE_AQ_VSI_TC_Q_OFFSET_M;
-+			q_range = 1 << ((rte_le_to_cpu_16(vsi->info.tc_mapping[i]) &
-+				ICE_AQ_VSI_TC_Q_NUM_M) >> ICE_AQ_VSI_TC_Q_NUM_S);
-+
-+			if (q_base <= tx_queue_id && tx_queue_id < q_base + q_range)
-+				break;
- 
--	if (cgd_idx >= ICE_MAX_TRAFFIC_CLASS) {
--		PMD_DRV_LOG(ERR, "Bad queue mapping configuration");
-+			cgd_idx++;
-+		}
-+		if (cgd_idx >= ICE_MAX_TRAFFIC_CLASS) {
-+			PMD_DRV_LOG(ERR, "Bad queue mapping configuration");
-+			rte_free(txq_elem);
-+			return -EINVAL;
-+		}
-+	} else if (pf->dcb_num_tcs > 1) {
-+		/* TM only manages the TC0 scheduler subtree. */
-+		PMD_DRV_LOG(ERR, "TM hierarchy is not supported together with multi-TC DCB");
- 		rte_free(txq_elem);
- 		return -EINVAL;
+@@ -330,6 +330,7 @@ struct ice_vsi {
+ 	struct ice_mac_filter_list mac_list; /* macvlan filter list */
+ 	struct ice_vlan_filter_list vlan_list; /* vlan filter list */
+ 	uint16_t nb_qps;         /* Number of queue pairs VSI can occupy */
++	uint16_t nb_tm_qps;      /* Number of Tx queues usable by the committed TM hierarchy */
+ 	uint16_t nb_used_qps;    /* Number of queue pairs VSI uses */
+ 	uint16_t max_macaddrs;   /* Maximum number of MAC addresses */
+ 	uint16_t base_queue;     /* The first queue index of this VSI */
+diff --git a/drivers/net/intel/ice/ice_tm.c b/drivers/net/intel/ice/ice_tm.c
+index 651d6aa932d..7afe31738ba 100644
+--- a/drivers/net/intel/ice/ice_tm.c
++++ b/drivers/net/intel/ice/ice_tm.c
+@@ -859,9 +859,9 @@ commit_new_hierarchy(struct rte_eth_dev *dev)
+ 		}
+ 		/* TM hierarchy deleted. Restore default scheduler state. */
+ 		reset_hw_node_recursive(hw, hw->vsi_ctx[pf->main_vsi->idx]->sched.vsi_node[0]);
+-		pf->main_vsi->nb_qps = pf->lan_nb_qps;
++		pf->main_vsi->nb_tm_qps = pf->lan_nb_qps;
+ 		pf->tm_conf.committed = false;
+-		return ice_alloc_lan_q_ctx(hw, 0, 0, pf->main_vsi->nb_qps);
++		return ice_alloc_lan_q_ctx(hw, 0, 0, pf->main_vsi->nb_tm_qps);
  	}
+ 
+ 	/* handle case where VSI node needs to move DOWN the hierarchy */
+@@ -889,13 +889,13 @@ commit_new_hierarchy(struct rte_eth_dev *dev)
+ 				nodes_created_per_level[i], i);
+ 	hw->vsi_ctx[pf->main_vsi->idx]->sched.vsi_node[0] = new_vsi_root;
+ 
+-	pf->main_vsi->nb_qps =
++	pf->main_vsi->nb_tm_qps =
+ 			RTE_MIN(nodes_created_per_level[qg_lvl] * hw->max_children[qg_lvl],
+ 				hw->layer_info[q_lvl].max_device_nodes);
+ 
+ 	pf->tm_conf.committed = true; /* set flag to be checks on queue start */
+ 
+-	return ice_alloc_lan_q_ctx(hw, 0, 0, pf->main_vsi->nb_qps);
++	return ice_alloc_lan_q_ctx(hw, 0, 0, pf->main_vsi->nb_tm_qps);
+ }
+ 
+ static int
 -- 
 2.43.0
 
