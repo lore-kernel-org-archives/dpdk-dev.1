@@ -2,46 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B404CC79F80
-	for <dpdk-dev@archiver.kernel.org>; Fri,  4 Sep 2026 08:37:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0C61C624DE
+	for <dpdk-dev@archiver.kernel.org>; Fri,  4 Sep 2026 09:15:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9F2A842E4F;
-	Fri,  4 Sep 2026 10:37:00 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id CAD54427E6
- for <dev@dpdk.org>; Fri,  4 Sep 2026 10:36:58 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id A6E544D071; Fri,  4 Sep 2026 10:36:58 +0200 (CEST)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 2030] Duplicate mbox_alloc_msg_npa_aq_enq() causes
- orphaned AQ message to be sent to AF
-Date: Fri, 04 Sep 2026 08:36:58 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: ethdev
-X-Bugzilla-Version: 24.11
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: major
-X-Bugzilla-Who: amiyaranjan.mohakud@gmail.com
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone attachments.created
-Message-ID: <bug-2030-3@https.bugs.dpdk.org/>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id B89EA42E56;
+	Fri,  4 Sep 2026 11:15:43 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 4142A42E4F
+ for <dev@dpdk.org>; Fri,  4 Sep 2026 11:15:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1788513341;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=9QqKZEICn3nM7CoL6I1i4qxOeMYQqZGFzVg+IKX2RCw=;
+ b=ifCPbBworr+qknYyCcV9hcHjPHLxbN91ZMhhGqN9nfyzcIdIm38pTvt/+ni2GRiSfKd2H3
+ rg036fBFF2+kFZOYg2WIqVzY76Zvf+rpf+qUE9I6V9PIN3265eTsvOwDSGGyoXcblGFv3Z
+ JAoUIDvTyPiQpURCWHZSlk5wIvvGXBg=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-19-y7OJbsafPeawX11Ydu5LHw-1; Fri, 04 Sep 2026 05:15:40 -0400
+X-MC-Unique: y7OJbsafPeawX11Ydu5LHw-1
+X-Mimecast-MFC-AGG-ID: y7OJbsafPeawX11Ydu5LHw_1788513339
+Received: by mail-lf1-f70.google.com with SMTP id
+ 2adb3069b0e04-5b667b38b04so105389e87.2
+ for <dev@dpdk.org>; Fri, 04 Sep 2026 02:15:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1788513338; x=1789118138;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=9QqKZEICn3nM7CoL6I1i4qxOeMYQqZGFzVg+IKX2RCw=;
+ b=Oo/q0LfD0zO5srbvon+Hz8qiZK0+DGRHHDSs6SwauI2ex+BMaa/WfE42YGORVnL1Ji
+ aRdFklv6+FnktHMBzkjEYzevBKdm41i0nsryqKrfh1SFZ0RqPYs7kMCFjHW7p0eSLK20
+ aC+GGeDM/xnp3Gc8ed8JZFhri/iYEuf5Kk+vdoWv6xW5D86q/dP/8UqC6Bhqi+LYD1gK
+ St2XEIflxlTouPIGbvP0P4y7uZ2a7hG7txAzq6JJUcirC3LeCTzQVHQ5EPaWJTUUo1hu
+ z4QO66UQ9KmAfoK9sdyHpKgsAvsA82hIBOw/lZ9VeZHIY2y9sSo8kVbHJR98SbIR5FKG
+ DovQ==
+X-Gm-Message-State: AFuF++nVY/o25KCeGUPaPzxiHHpZP+Fwh3x4oVZRhEczjsMQ+WxI7tBk
+ R2XwKgb15ve0QmcJ+F6pXfAtazxQrBon94x070ROCE3jWCoYq9Wp4co4Ka3+1hGsRj4TuiVS0+n
+ 0uC0tT+Xvz/GsESOyekVwk/UFI2eC20iaDnDN+xchbgXZgcOBElCyKpMrcEHI2Yb+6W40WT59Ds
+ YBbvWFCat7QkkLRbD9Zx4=
+X-Gm-Gg: AYBFou17rrqix8NA66ZeDFpklG+Hl4vNk6L0483jBqjpCoyG/56dwQnou7FfJ5Wq2I3
+ bdZetwVlcofGLF5rv/PEHWKw0nBSrzIpbFd5JpXshuVeK52nIdzBOlxF1Kz03+9T+R/TSik2FVS
+ w5cVDfSanWFwKa3QhPfKZfc150V93O80SuHE/yfQ/TjMhtRx7OImQEqjzUFKCivPJUmVPL1aYwx
+ tkFwowi3SGrZx+YAiCltaMtTDbx5RI1s7sxmLE/b9SpBx3x
+X-Received: by 2002:a05:6512:3d90:b0:5ae:aeeb:e902 with SMTP id
+ 2adb3069b0e04-5b616effb2amr882655e87.13.1788513338532; 
+ Fri, 04 Sep 2026 02:15:38 -0700 (PDT)
+X-Received: by 2002:a05:6512:3d90:b0:5ae:aeeb:e902 with SMTP id
+ 2adb3069b0e04-5b616effb2amr882638e87.13.1788513337989; Fri, 04 Sep 2026
+ 02:15:37 -0700 (PDT)
 MIME-Version: 1.0
+References: <20260720080035.673782-1-maxime@leroys.fr>
+ <20260720080035.673782-4-maxime@leroys.fr>
+In-Reply-To: <20260720080035.673782-4-maxime@leroys.fr>
+From: David Marchand <david.marchand@redhat.com>
+Date: Fri, 4 Sep 2026 11:15:26 +0200
+X-Gm-Features: AcwNN1Xjw4Sziqf1GDFoH1c7tNmg3ljkkxX-nEhgtndjwIXSdj1qNVrzqo3WuHY
+Message-ID: <CAJFAV8zERn_vy4yM00kddt6HJ5qoX8T7_9_x3ti-HHTxcFmTGg@mail.gmail.com>
+Subject: Re: [PATCH 3/6] examples/l3fwd-power: enable Rx interrupt before
+ epoll add
+To: Maxime Leroy <maxime@leroys.fr>
+Cc: dev@dpdk.org, anatoly.burakov@intel.com, sivaprasad.tummala@amd.com
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: MgbUKGMXBAf19dRCBcoW9VY0OeOymCSTUg8yItZwIm8_1788513339
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,112 +84,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D2030
+Hello Maxime,
 
-            Bug ID: 2030
-           Summary: Duplicate mbox_alloc_msg_npa_aq_enq() causes orphaned
-                    AQ message to be sent to AF
-           Product: DPDK
-           Version: 24.11
-          Hardware: ARM
-                OS: Linux
-            Status: UNCONFIRMED
-          Severity: major
-          Priority: Normal
-         Component: ethdev
-          Assignee: dev@dpdk.org
-          Reporter: amiyaranjan.mohakud@gmail.com
-  Target Milestone: ---
+On Mon, 20 Jul 2026 at 10:01, Maxime Leroy <maxime@leroys.fr> wrote:
+>
+> event_register() added each Rx queue interrupt fd to the per-thread epoll
+> set before the worker loop, while the queues were still disarmed. This
+> works when the fd is assigned at queue setup and stays fixed, as on MSI-X
+> NICs.
+>
+> The dpaa2 PMD delivers Rx interrupts through a per-lcore QBMan portal and
+> binds the fd when the interrupt is enabled, not at queue setup. Adding a
+> queue to the epoll set before arming it then watches an fd that is not
+> bound yet, so the lcore never wakes from rte_epoll_wait().
+>
+> Register from rx_interrupt_wait(), after the queues are armed, and only
+> once: keep the epoll entry installed for the lifetime of the loop. NICs
+> with a fixed per-queue fd are unaffected.
+>
+> Signed-off-by: Maxime Leroy <maxime@leroys.fr>
+> ---
+>  examples/l3fwd-power/main.c | 34 +++++++++++++++++-----------------
+>  1 file changed, 17 insertions(+), 17 deletions(-)
+>
+> diff --git a/examples/l3fwd-power/main.c b/examples/l3fwd-power/main.c
+> index 70f76d202e..4874a55de1 100644
+> --- a/examples/l3fwd-power/main.c
+> +++ b/examples/l3fwd-power/main.c
+> @@ -945,7 +945,7 @@ static int event_register(struct lcore_conf *qconf)
+>  }
+>
+>  static int
+> -rx_interrupt_wait(struct lcore_conf *qconf)
+> +rx_interrupt_wait(struct lcore_conf *qconf, int *intr_registered)
 
-Created attachment 389
-  --> https://bugs.dpdk.org/attachment.cgi?id=3D389&action=3Dedit
-Issue description
+On the principle, passing intr_registered is ugly.
 
-In npa_aura_pool_init(), the pool init message allocation is performed twic=
-e on
-non-CN20K platforms (e.g. CN10K).=20
-Line 110 allocates a message via the else branch, but line 112 unconditiona=
-lly
-allocates another message, overwriting the pool_init_req pointer. The messa=
-ge
-allocated at line 110 is never initialized by the caller and is sent to the=
- AF
-with only its mbox header (sig, id) set =E2=80=94 all other fields (aura_id=
-, ctype, op,
-context data) contain whatever was in the mbox buffer at the time of
-allocation.
+intr_registered is an internal state that does not need to be exported
+in the caller.
+Maybe move this to struct lcore_conf?
 
-  // roc_npa.c lines 106-118
+This change also drops a log that flagged that Rx interrupts were not
+available, please restore it (maybe add a "once" boolean to only raise
+the log on the first error).
 
- 106         if (roc_model_is_cn20k()) {
- 107                 pool_init_req_cn20k =3D
-mbox_alloc_msg_npa_cn20k_aq_enq(mbox);
- 108                 pool_init_req =3D (struct npa_aq_enq_req
-*)pool_init_req_cn20k;
- 109         } else {
- 110                 pool_init_req =3D mbox_alloc_msg_npa_aq_enq(mbox);=20
- 111         }
- 112         pool_init_req =3D mbox_alloc_msg_npa_aq_enq(mbox);
- 113         if (pool_init_req =3D=3D NULL)
- 114                 goto exit;
- 115         pool_init_req->aura_id =3D aura_id;
- 116         pool_init_req->ctype =3D NPA_AQ_CTYPE_POOL;
- 117         pool_init_req->op =3D NPA_AQ_INSTOP_INIT;
- 118         mbox_memcpy(&pool_init_req->pool, pool, sizeof(*pool));
+>  {
+>         int ret;
+>
 
+-- 
+David Marchand
 
-As a result, mbox_process() at line 120 sends three NPA_AQ_ENQ messages to =
-the
-AF instead of the intended two (AURA_INIT + POOL_INIT). The orphaned messag=
-e is
-processed by the AF with uninitialized fields.
-
-On CN20K, the same issue exists: line 107 allocates via
-mbox_alloc_msg_npa_cn20k_aq_enq(), and line 112 allocates again
-unconditionally.
-
-
-Impact:
-
-  - Every call to roc_npa_pool_create() sends a spurious AQ command to the =
-AF
-with uninitialized payload. This occurs once per pool/aura pair created dur=
-ing
-the lifetime of the application.
-
-  - The uninitialized fields default to ctype=3D0 (NPA_AQ_CTYPE_AURA) and o=
-p=3D0
-(NPA_AQ_INSTOP_NOP) if the mbox buffer was zeroed, which is likely benign.
-However, if the buffer contains residual data from a prior message, the AF =
-may
-execute an unintended operation (e.g., INIT or WRITE with corrupt context d=
-ata)
-on an arbitrary aura/pool.
-
-
-
-Suggested fix:
-
-  Remove line 112. The if/else block at lines 106-111 already handles both
-CN20K and non-CN20K allocation correctly:
-
-       if (roc_model_is_cn20k()) {
-           pool_init_req_cn20k =3D mbox_alloc_msg_npa_cn20k_aq_enq(mbox);
-           pool_init_req =3D (struct npa_aq_enq_req *)pool_init_req_cn20k;
-       } else {
-           pool_init_req =3D mbox_alloc_msg_npa_aq_enq(mbox);
-       }
-  -    pool_init_req =3D mbox_alloc_msg_npa_aq_enq(mbox);
-       if (pool_init_req =3D=3D NULL)
-           goto exit;
-
-How to reproduce:
-
-Any application that creates an NPA pool on CN10K or CN20K will trigger thi=
-s.
-Enable debug logging (--log-level=3D*:debug) and observe three NPA_AQ_ENQ
-messages sent during npa_aura_pool_init() instead of two.
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
