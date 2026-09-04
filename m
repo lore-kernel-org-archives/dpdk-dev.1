@@ -2,69 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D03EBC624D3
-	for <dpdk-dev@archiver.kernel.org>; Fri,  4 Sep 2026 19:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B5F6C624D3
+	for <dpdk-dev@archiver.kernel.org>; Fri,  4 Sep 2026 19:17:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E16E042E44;
-	Fri,  4 Sep 2026 21:17:15 +0200 (CEST)
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com
- [209.85.214.173])
- by mails.dpdk.org (Postfix) with ESMTP id 2DC5142DD5
- for <dev@dpdk.org>; Fri,  4 Sep 2026 21:17:14 +0200 (CEST)
-Received: by mail-pl1-f173.google.com with SMTP id
- d9443c01a7336-2ce98cb8165so15932685ad.1
- for <dev@dpdk.org>; Fri, 04 Sep 2026 12:17:14 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 00CB942E1C;
+	Fri,  4 Sep 2026 21:17:21 +0200 (CEST)
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com
+ [209.85.214.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 1C992427D1
+ for <dev@dpdk.org>; Fri,  4 Sep 2026 21:17:20 +0200 (CEST)
+Received: by mail-pl1-f172.google.com with SMTP id
+ d9443c01a7336-2d6e954afbdso8946675ad.2
+ for <dev@dpdk.org>; Fri, 04 Sep 2026 12:17:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788549433;
- x=1789154233; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788549439;
+ x=1789154239; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=2Jg4y0L1UDzhyZfLwhaXMab41Qi1qIX/QmjE1+gT8hk=;
- b=otbs045bQQHnDe3Cr0gIyqeNB8Kol5y+Kkm+OAL70kl4fJVCtwLkzNZuiRqNhyiFmZ
- S2DchenXGFo0p4LHbtu0OdFhOgKgjrD5xlMHqiHVQRw822OyiiHmlzANSge46MNrVSNw
- 6zqz62+fvWZyKA1Xy52XPPJvpSeTKj7kBiCTcuW7LzCHFVfyWRvoSSvk7+BqNJPImVo2
- BjjPjEdJv7ODjrrxSdOREUlUS3HAlvrexgP/Y8D4HvVjolxcI5bsU3NAFRIWpJZODVRt
- 2m8EEXcGSpVewwO1LH0/SAxNkUuAc8q8qXfLqEIuaOv8G3GcEEooZ+d33pdpNP1R6eG8
- GDQg==
+ bh=EzVWSNjpzS5N/dpdcXjMU41DK1zUYAHPeQ0dtbdwg2w=;
+ b=et6aOdq3El7GMIq2gk7f+mGBM4/x81P0uj24dLdhFCDROe/ToXdpmTT4Dq8oTupQce
+ TFemyuntmuZj6tCZwAufYtlLKfMQhor4VPXhnm+0gEqlgoTAIJG03irj1OOnmxxogt6u
+ V4A9qqVCqjnOdjhamHVHB3+F/lCz1C+M1YDDf+RTb+1DBAbAAj0x0Ij6FgQCKysv549v
+ LzvXFn14rbdUJBREP1A4HryQuuN5X8ORz4YcvBEsuEYNKjBuG915TSaVWWECkd7C3uHG
+ 0RvjCGKfThHgdZUUIE00N3IbrjFVAQy/mIhzXxGzv5BZeOFAzQwj1x8fBdR6e8nw8KPE
+ OKFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788549433; x=1789154233;
+ d=1e100.net; s=20251104; t=1788549439; x=1789154239;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=2Jg4y0L1UDzhyZfLwhaXMab41Qi1qIX/QmjE1+gT8hk=;
- b=FQKg3GQqlPdnVmsn1q2DTW0u8570AflAV1M1sJdwbjnqUPQAlzqhJpqD40s3h+8LQ7
- RSxFzUHLLVJfEerHTtvSwdnP7wIU5k4wYOq1Rkr8RyXjQg2+U2scqb/9exBMYRrGzuxw
- Qx9WGh3v8amzmQk4Oz3OXTppcIqf2oOZXmL290WzJFe73bAnlwchAYuz7Ts8z0tts3jT
- 0bRxvfazYvYGg2L4kY04XrPmvQWLe4U/enNuVCAIZE6oZ3AbEwVJeOpQQt4uqwvjXa7D
- bQ+u07hVx+Kyxj1BwmtNoLlekMiN7Q3jc+jF2c/mEv3MxRwCnzY+Rk4F7oeCFMHnYVJg
- Y2yQ==
-X-Gm-Message-State: AFuF++mnxLW/yNy4EekTuNAC50Inx68yCr9dmfc3GFw4XH6prDThEyiN
- oqTXfWuwvzYERRWa+BUrk03EYN7EDYvGqY2IidLfxaYlBUMWKTctx3lKyXDNqL0dQXSHN5EtG1l
- In06q
-X-Gm-Gg: AYBFou3WqPF9hc5ZZZM8eWs5JSsYEO8XS3g0+q3I+/uiU2UAKjlzKWuOE0n5Jox7wMe
- Fqnia2cmD6/XzH4/i6qsBMWBV3FBqn1WBxlN+83loHiFRfPquTOR/WdqhqnB3e50atwEprxBIZy
- x9M1FFwhcRJ/vRFiV7kop8CdMkl+oCTtXUKvZaufL0UREIPmUmel7a1Y7naSr3/8KkniyQso0e6
- XltTlyhy5byMk53zs6rsjvKpwwquSmd+/7DZtpLsDlO6YOVamvhDF6ldmXCiY/J952lclzluGXy
- UUWk7c3MCyDsyJ9HF6uGdQm8tgfXCMHR01PtsAypPLHFDsOrJ32nHw473sn0ns2eitOWggz1dwr
- 1ZbsYylJNJ3e/aSPsfp0/yw0/5jJc9Gd+2GauhmC4eoWEX2xU1ZMWhNmI6/E++xRei/g+pGnr4D
- RArrBeFC4NLjJ9//R7RYpfiY09V/6teHshV6GHNcSlFyHj6tVRspwhq8W4+joMe0m1cLmO5qs6u
- UuxfgF8o1d2irlT+fX19xOPbXM=
-X-Received: by 2002:a17:903:32d1:b0:2db:18e7:e5db with SMTP id
- d9443c01a7336-2db18e7fa12mr55022525ad.12.1788549433155; 
- Fri, 04 Sep 2026 12:17:13 -0700 (PDT)
+ bh=EzVWSNjpzS5N/dpdcXjMU41DK1zUYAHPeQ0dtbdwg2w=;
+ b=gu9HwmM5odHXkyFI2z9G9xTGQYOVLiHcxb6JqGx8zcPabWY/hL3JoJPJS/wCsgFw9k
+ 9ywfqVJktk8f6MdTe3f4ZAqb6MdSuKFEBAdUtNqbSR8LG7HrWbcTJG4TfKzzQyh8l8hf
+ Zgnb2PE0fWDWe9uCrkwwhmDHcYH12aGD537+6srPL49WYenwBOO7XX7htZhq58lmBNhr
+ uFiv9zZW75AxaxeOA7lE2GZaBbpU8hAKa0j5XPmfHD6zN78m20DpGtGQS4hEiLCDV5l0
+ TeYjnLbzEsRLVbUUqhknrqHNtKmU1zpIazn4P9oB6/GSLVyLyYsqDfYJQpfrEsWC+gM5
+ ovPg==
+X-Gm-Message-State: AFuF++mps5cGPznQ+xVUr35DttPz5R4Bq4Flex29NQODidS56/Omsgd+
+ OYjEmY7PxIkOW01dBq4ekUPZ25A7X0PxHUUiu8AoGX5BL5YsDbZ6WWvUb/Px1XgIXo9HR7BQXiG
+ kRWzI
+X-Gm-Gg: AYBFou398NAMmBmbqPAx/WbnsTw6uJjTd83mp3ddgyR247u0URZwQrHjbcfpPp8OdFy
+ bqBLbMX3t3RyXXy58ixMjr5i55QiymPmTDGmLP/IsMiwtoulVCSjFhkt9dTx/PuR8bLl9GXGRBy
+ Yz2v2Botxb71h7ZHDWAJz0tYRv8dEa231W9WBsn4+r1wGRTfDB1d9Q20PEPiYM9bKLbeZJOs80K
+ 2VPLsr0VmstmFzQVO+iEL7R59PcWU2naEsJqNvSdz6SnJwotdlxAtTAyDQCEM7o1l92sYVg4Gh1
+ MPf4tQam0loee8ELL+rrgk1jr3Bq4Bn7dLIQRarbiSfhdy98Tqq3Oc+XX8wFb/xEwqlyP0vrW0Q
+ NUBkkAXZUs1jW00xQEWO7nunnEs+Fb/DjiecEp8AaXNzxmL4er5LGxeTbEeizQThbh5uOnf9g2K
+ puEHeflFNl2X9rAJ0GggcbRvE8VFBJF6PF0RMKe8pcwGP7wuZWq9HY7T4SdzzVsanN71NIjid0O
+ fPlTzTJDXjclOwjJksK2w7EBjw=
+X-Received: by 2002:a17:902:d586:b0:2cf:b68a:340 with SMTP id
+ d9443c01a7336-2db125f0cf2mr117921125ad.10.1788549439125; 
+ Fri, 04 Sep 2026 12:17:19 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2db1499f07asm13335975ad.57.2026.09.04.12.17.09
+ d9443c01a7336-2db1499f07asm13335975ad.57.2026.09.04.12.17.13
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 04 Sep 2026 12:17:12 -0700 (PDT)
+ Fri, 04 Sep 2026 12:17:18 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Gagandeep Singh <g.singh@nxp.com>, Hemant Agrawal <hemant.agrawal@nxp.com>
-Subject: [PATCH 3/7] crypto/caam_jr: fix descriptor dump build
-Date: Fri,  4 Sep 2026 12:12:38 -0700
-Message-ID: <20260904191652.2399074-4-stephen@networkplumber.org>
+ Kai Ji <kai.ji@intel.com>, Pablo de Lara <pablo.de.lara.guarch@intel.com>,
+ Akhil Goyal <gakhil@marvell.com>, Ciara Power <ciara.power@intel.com>,
+ Piotr Bronowski <piotrx.bronowski@intel.com>, Ray Kinsella <mdr@ashroe.eu>,
+ Fan Zhang <fanzhang.oss@gmail.com>
+Subject: [PATCH 4/7] crypto/ipsec_mb: fix missing header for debug build
+Date: Fri,  4 Sep 2026 12:12:39 -0700
+Message-ID: <20260904191652.2399074-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260904191652.2399074-1-stephen@networkplumber.org>
 References: <20260904191652.2399074-1-stephen@networkplumber.org>
@@ -83,58 +86,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-SEC_DUMP_DESC() grew a FILE * argument when the NXP drivers were
-converted to fprintf(), but the only caller was never updated, so
-building with RTE_LIBRTE_PMD_CAAM_JR_DEBUG failed with a macro
-arity error.
+Building with RTE_LIBRTE_PMD_AESNI_GCM_DEBUG fails with an implicit
+declaration of rte_hexdump()
 
-Compiling the macro body for the first time then exposed two
-further problems in it: the log format string ended in a newline,
-which RTE_LOG_LINE() rejects, and descriptor pointers were cast to uint32_t,
-truncating them on 64-bit builds.
-
-Fixes: a8794e398279 ("drivers: use fprintf for debug dumps in NXP drivers")
+Fixes: 746825e5c0ea ("crypto/ipsec_mb: move aesni_gcm PMD")
 Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/crypto/caam_jr/caam_jr.c      | 2 +-
- drivers/crypto/caam_jr/caam_jr_desc.h | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/crypto/ipsec_mb/pmd_aesni_gcm.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/crypto/caam_jr/caam_jr.c b/drivers/crypto/caam_jr/caam_jr.c
-index a57dc56b80..104ce52d11 100644
---- a/drivers/crypto/caam_jr/caam_jr.c
-+++ b/drivers/crypto/caam_jr/caam_jr.c
-@@ -462,7 +462,7 @@ caam_jr_prep_cdb(struct caam_jr_session *ses)
- 	}
+diff --git a/drivers/crypto/ipsec_mb/pmd_aesni_gcm.c b/drivers/crypto/ipsec_mb/pmd_aesni_gcm.c
+index 8c35820ef7..3c266cc47e 100644
+--- a/drivers/crypto/ipsec_mb/pmd_aesni_gcm.c
++++ b/drivers/crypto/ipsec_mb/pmd_aesni_gcm.c
+@@ -2,6 +2,8 @@
+  * Copyright(c) 2016-2021 Intel Corporation
+  */
  
- #if CAAM_JR_DBG
--	SEC_DUMP_DESC(cdb->sh_desc);
-+	SEC_DUMP_DESC(cdb->sh_desc, stdout);
- #endif
++#include <rte_hexdump.h>
++
+ #include "pmd_aesni_gcm_priv.h"
  
- 	cdb->sh_hdr.hi.field.idlen = shared_desc_len;
-diff --git a/drivers/crypto/caam_jr/caam_jr_desc.h b/drivers/crypto/caam_jr/caam_jr_desc.h
-index eb4e68578a..845facec26 100644
---- a/drivers/crypto/caam_jr/caam_jr_desc.h
-+++ b/drivers/crypto/caam_jr/caam_jr_desc.h
-@@ -112,12 +112,12 @@
- /* Helper macro for dumping the hex representation of a descriptor */
- #define SEC_DUMP_DESC(descriptor, f) {					\
- 	int __i;							\
--	CAAM_JR_INFO("Des@ 0x%08x\n", (uint32_t)((uint32_t *)(descriptor)));\
-+	CAAM_JR_INFO("Des@ %p", (const void *)(descriptor));		\
- 	for (__i = 0;						\
- 		__i < SEC_GET_DESC_LEN(descriptor);			\
- 		__i++) {						\
--		fprintf(f, "0x%08x: 0x%08x\n",			\
--			(uint32_t)(((uint32_t *)(descriptor)) + __i),	\
-+		fprintf(f, "%p: 0x%08x\n",			\
-+			(const void *)(((uint32_t *)(descriptor)) + __i), \
- 			*(((uint32_t *)(descriptor)) + __i));		\
- 	}								\
- }
+ static void
 -- 
 2.53.0
 
