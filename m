@@ -2,141 +2,141 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD490C61DD6
-	for <dpdk-dev@archiver.kernel.org>; Fri,  4 Sep 2026 13:11:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C7B9C624D3
+	for <dpdk-dev@archiver.kernel.org>; Fri,  4 Sep 2026 13:34:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 04B4B427D4;
-	Fri,  4 Sep 2026 15:11:52 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 070EC40A77;
+	Fri,  4 Sep 2026 15:34:53 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
- by mails.dpdk.org (Postfix) with ESMTP id 1DF864021F;
- Fri,  4 Sep 2026 15:11:49 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id BE32A4021F;
+ Fri,  4 Sep 2026 15:34:50 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1788527510; x=1820063510;
+ t=1788528891; x=1820064891;
  h=date:from:to:cc:subject:message-id:references:
  in-reply-to:mime-version;
- bh=hC4Qd/WcPPdmxhqiFQs5ve06YJTtK6EuIziHNtK2SHE=;
- b=deYlxiSpJVHeb7QnQXqx5UsKiiJXioGXVVpjHL182DjZ6qhxY7wfwVs1
- BT914bRAZNyhGgJaWFpg9YH/9kK3BNyCe6cJv3dGgWeyPrkCyLNyZgv7E
- vE2e/OaJzs5uMfe2xIsK99q+/bAMrjt1SbJMn67yMyny0k5uZsNvP/kZA
- W5UIK4f5xiw4jTg9NvznXumnpEuQkxLMItthUa9woiUD4j4CFdMX8VXic
- jok5hFDX+sPQaqxrFjRNVoB8MSaL1Nd3R1q05nRzv78G2zhuSLFtLDIZX
- ZuYtdt9FHOgIAxiNobR6pK0MejkGztenAFH7QVydzXA0wbmsSsqmthPOu g==;
-X-CSE-ConnectionGUID: W72FGjH6Teyk5zclD5/14Q==
-X-CSE-MsgGUID: ah0xKcYYRcq+kIjEfzsNYg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11895"; a="88170127"
-X-IronPort-AV: E=Sophos;i="6.25,262,1779174000"; d="scan'208";a="88170127"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
+ bh=IWbwAvN7gE0Go+5WwG3Qm141QIhqRzHp6pTjYANUbhk=;
+ b=D5vISlBxMO3S0MutJq7Tipb0K9Yl/5YD1YkDZ7DSLcbajpyRhCQ3sk4q
+ 3KO19WQVgPWWdUDFTeQZmAXgo8cqFUyGRglDYb/C8Yxu1NFL/BPd9en8m
+ rr7eXgUhqvTvV3cQkXuH8s85md3j06yTnYv4M6frD3ibdqF/Udog8sOnF
+ 9NUzqH9ELi3HPswcGwlMKzjrBn6j0uNsihzN/0L9bLTkweO9gw9+P/wOg
+ 1FBSTYffeoed1sE2ErIIHKKhRUeixqhL9/jLHG4jeZt4D+6F5uFQ/9241
+ pgg9pTzEGYsDA1x28Hk/9XmiYoJD1b27MsN1N7+5ldXaf5Tsda2PivCXf Q==;
+X-CSE-ConnectionGUID: Gwzzu+oVR8WJCsQEr0si0Q==
+X-CSE-MsgGUID: IMFn2JaXSqOTYHBzlt8g7w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11895"; a="88172517"
+X-IronPort-AV: E=Sophos;i="6.25,262,1779174000"; d="scan'208";a="88172517"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 04 Sep 2026 06:11:49 -0700
-X-CSE-ConnectionGUID: kVqzq+9NRmijJ9hbjohFxw==
-X-CSE-MsgGUID: kWOX0Ml9SmGAe+FSX7hfhw==
+ 04 Sep 2026 06:34:11 -0700
+X-CSE-ConnectionGUID: pahwBWYlSsmezaunb7oJeg==
+X-CSE-MsgGUID: ttYn4f9gS6Gz3eWeLtVsxw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,262,1779174000"; d="scan'208";a="273559447"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
- by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 04 Sep 2026 06:11:49 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+X-IronPort-AV: E=Sophos;i="6.25,262,1779174000"; d="scan'208";a="294922286"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+ by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 04 Sep 2026 06:34:11 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Fri, 4 Sep 2026 06:11:48 -0700
+ 15.2.2562.46; Fri, 4 Sep 2026 06:34:11 -0700
 Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46 via Frontend Transport; Fri, 4 Sep 2026 06:11:48 -0700
-Received: from CY7PR03CU001.outbound.protection.outlook.com (40.93.198.50) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ 15.2.2562.46 via Frontend Transport; Fri, 4 Sep 2026 06:34:11 -0700
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (40.93.195.60)
+ by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Fri, 4 Sep 2026 06:11:48 -0700
+ 15.2.2562.46; Fri, 4 Sep 2026 06:34:09 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=F52Qep+uQZlFGKqrXf6T8trgSIY8ddEGE6SgM8P7+n084dRDBHw+3qovmxyXyd+vCFvVDrFoKrxpWaY1ypZtivOSRhPkHxJ2H9rVnNSGzb735asI9nUiCG8rKC+6BfQduxyrE4TG3K21h6E6x0SQJlaPtKQxeRp2e5/AqmK8yjzp/0wLpcNNQAImAzQ6o6bZb2ao9/lE71jEjfuhgjQlMZLgqpFrTrMFI8GUOHbTmFSPsjZcYYL/sSzOH/t9OQn+ghs7kUGG1UzP2k/YY2oJWDwsfUQcOOhBKDdpP79FXbGNTOsOxLUW6vQy/n+x45cZJIyl0UDTPnSNj/bJybSKgQ==
+ b=gNh/Bv9YgSZIcdLCc/l9WGAc/twMqEIltFEtouGpuqFL4RgfBWDwsABxEDw0hK8yxU6DXRuVKcN3WWhIeWyra0efne7UUy+WjNiIlMFbe8qlHJ0eZY//X80JVgbxG1JfdIlHv862B1nSn2PNj2zEA64NUW/B1/SpxGmDSx7iKeJQdbaMb1FQPFuZKG81Y4m/smIrF0z2kK6jyxIBegs0fyU4UBTz1OjmT5cAcLpvI18SQJd7kzsH+1mBQ/0P2st/fo1ixHQWVPu8lde/AgDsgVeAiwKWvEK2O34a0EerQ6TMfLBcI6EYm55cPn1iE6fJdvgxdSf8PfoXu1NiWM7Xvg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oj2r2BJ2tenW2m5bAOuYJK0MRcxJ2YK0EpghVltleco=;
- b=M1/mWuR2Mnbhw6D8eeqcW4h/NkfoquhAIJqO+cJ0ta5c5V9HtnIBqq/H4LS7uiP/TnQvESbHEMU83gul0Gvd2rx6ogBOWUiv9i8B0jDy0UL8f8xsuOn8iW19CaEG82nfGSZv2RasdtX5QR8RZcvdQp7jLSYLMDweGz3Fu6Bd81ExXbuWDNtGtNJbTMX0cjyElEiR8s2pXfw0JRivM/bf/pAniNbCPJuFtf36IKWbyLn1eKAwsX8MqcwrAqbH51ggUAy/TkqS5bZbbZNJLbxYNZXiTZwFpOrjkAY4rW/lBVT6pvoQumDkW/sSj2GqXwc0+gncXGYj7+pXrkJTZ6sjwA==
+ bh=2UsexvrFdQ5r1QKfi+Mja9poFdwj/3srjnfdkMEhKNw=;
+ b=WCo7I7odObRi0DtN36kORcg4Db4+7L6HVpinNshI7iZaLnthMhQaLuYf/4JZveiLphQo23sAGdL4+oljPJIwGcSfo3wIl511B/SUGiy47JBtidMYkR4dgosgqp9Yfy3BUhIeBMK/15bzIwjewBlQt9f2X14y0o6aJEx83DBRrv4iCxAc4XcH88KkRGvh1mXrkDrhcAthPAOotSt5ED8/4z5TSPqLCzqvoGFgJUPrjQwvXHd30nulsigNGphqanN2OMWudVq76j5bsk7dvEryKKXhvM+f1gUzZPtpDEIA/V9yFIOBojnncRgi47brwzd/31rkr8BxDu0lIIvkbYRwQQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from IA3PR11MB9421.namprd11.prod.outlook.com (2603:10b6:208:578::9)
- by PH8PR11MB6801.namprd11.prod.outlook.com (2603:10b6:510:1c9::8)
- with Microsoft SMTP Server (version=TLS1_2,
+ by DM4PR11MB5295.namprd11.prod.outlook.com (2603:10b6:5:392::14) with
+ Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.360.13; Fri, 4 Sep
- 2026 13:11:45 +0000
+ 2026 13:34:01 +0000
 Received: from IA3PR11MB9421.namprd11.prod.outlook.com
  ([fe80::1b70:3d93:d363:155f]) by IA3PR11MB9421.namprd11.prod.outlook.com
  ([fe80::1b70:3d93:d363:155f%4]) with mapi id 15.21.0360.008; Fri, 4 Sep 2026
- 13:11:45 +0000
-Date: Fri, 4 Sep 2026 14:11:41 +0100
+ 13:34:01 +0000
+Date: Fri, 4 Sep 2026 14:33:57 +0100
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: Ciara Loftus <ciara.loftus@intel.com>
 CC: <dev@dpdk.org>, <stable@dpdk.org>
-Subject: Re: [PATCH 2/3] net/ice: skip TC validation if hierarchy committed
-Message-ID: <aprDjRmCFnUNCHNK@bricha3-mobl1.ger.corp.intel.com>
+Subject: Re: [PATCH 3/3] net/ice: fix Rx queue count reporting after TM commit
+Message-ID: <aprIxQgs8bEhcO7R@bricha3-mobl1.ger.corp.intel.com>
 References: <20260904105139.3117640-1-ciara.loftus@intel.com>
- <20260904105139.3117640-3-ciara.loftus@intel.com>
+ <20260904105139.3117640-4-ciara.loftus@intel.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20260904105139.3117640-3-ciara.loftus@intel.com>
-X-ClientProxiedBy: DU7P190CA0029.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:10:550::23) To IA3PR11MB9421.namprd11.prod.outlook.com
+In-Reply-To: <20260904105139.3117640-4-ciara.loftus@intel.com>
+X-ClientProxiedBy: DU2PR04CA0005.eurprd04.prod.outlook.com
+ (2603:10a6:10:3b::10) To IA3PR11MB9421.namprd11.prod.outlook.com
  (2603:10b6:208:578::9)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA3PR11MB9421:EE_|PH8PR11MB6801:EE_
-X-MS-Office365-Filtering-Correlation-Id: c1d0e576-5e0e-4586-ae5d-08df0a8611d8
+X-MS-TrafficTypeDiagnostic: IA3PR11MB9421:EE_|DM4PR11MB5295:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0318579c-ac08-4b76-4e54-08df0a892e0f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|366016|1800799024|376014|23010399003|18002099003|22082099003|56012099006|4143699003|11063799006|10067099003|6133799003;
-X-Microsoft-Antispam-Message-Info: MNaO86lij+JuENlMWrMH8/rLtMUczdL1COBlGJgHr47k1LxtTIB6LHFM722+TKnWVsr9HzbZc6xmi3x0/AfhCHkMdUn/68kMVnVavJDWq7Q0nHrXfhVO8juU5k6LLzYHuG9Fn/wzw/GBU6oInVgjVzSblsepnfnhVAwYwSgK5vGPP4iSNdmlgKx2zUAoPmxYsusVoPD5M6oAz+GMIg2ycYZHMl9acxg9QwO0W0TDzKcoLkz/+cV6v4Re4dZrYzSm//VbMEGeYu+oUhYQrRnnMr+nzuqtumHTbVl5s/a3RZnu6+Ll/sd7MSoqPAjdurBsb+zAMosYi+zgu+4TEwlk0B0l4NabVlj6+QjK2wm2PDnPMOL1R3fO0kEQW4SzuUoCZ4xqMnfVf9B1dFlo5RFnq4pcvykuDgjLn1sxwbjKu8HltNcFjiXMeTkfE8K2k6riiVenK51+xhR/LNo3bXUMrgSnrqqIip70rQ7D66DhjkeMbxwOeEzBb6xRjRnXWGXNEI+q9uQdcN06zSaLGHw/OeM59GO2pvISFGKpMITzUGZnLUjVt0hG96dSFzsDwEgdJIY2nKVpaYGqQHjMoFT93ixDVYKiIJlvCBfpvpsW1TmWi9SgddcCxXZ8q9eNZvbqsWWz3Q+EQVwgnuo6RAGFyd6nGw3tl/NogNtYNg1wNAU=
+ ARA:13230040|376014|23010399003|1800799024|366016|10067099003|56012099006|11063799006|4143699003|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info: UgDBEunDtVPOyW5iC9pVXy4XIxs1KxLfsFgGIVyn88jJF3DvwymB0k0lc1IZrF3s+OZTkhW9QxXgA1yBy7VapUItb/gebkP56cVXZkz5MUJCIUEoG01+mjbM1MiSzT5bQL71l8uz++1QsejGNYu2lmJtM9m4fSUIaI13nhwL8Q7OZmQCQpG9fzstta3Q0mtH2aeHHGrV7SZHwOJFNQKHrc87t6YHTBk3RD91lzDMr6pXGDIOoATPyKboiS/uvRjajM/zDhCQhCi8sPjvS9BB8hKEH8U+TSMQGdfeWSTq3br/hi6IGC1DcrGSVtQr3FqsffNrToN+V5Sx6BQXaJvdS94DnBnuPbakNGxD9E59ykYemZDgDBdV3xW5CCWP6ss9+k4YNs+IWYAhQTAkfxRODmGQRQrTmhaVHdmVEzrFBHP3UZ+0VNZ0W6jdBN1BxrkS0hIidqx0m/4DQQPnuMx4x59ezORIewAQ6AqNNtMu1vHzBlU4KYkKVeDYcMUlcaphotqICOCVseHI4YWHb37UKVKdHZlJE3vIG4hNgrrpCNvUeGPgIrc9XGPS3QjbV4qNtdxHfvN4lQ5AlZxMRE1cm7Q99ZyQljt4gNVeVXMyuwECBLTorBIpcCZwvGinxL6ywkIlP5tON1d45fXVXoet4X+enbgTrQ4IY5qjNJmTdQM=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:IA3PR11MB9421.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014)(23010399003)(18002099003)(22082099003)(56012099006)(4143699003)(11063799006)(10067099003)(6133799003);
+ SFS:(13230040)(376014)(23010399003)(1800799024)(366016)(10067099003)(56012099006)(11063799006)(4143699003)(18002099003)(22082099003);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?5/QAuyEbGXM9adqE7WTXvmV4qTmiVBirR5RYXZOJgyuVjLOT356N1Rj6E6nx?=
- =?us-ascii?Q?HJTwQXAgk9td6qUCLavBgwpB3Zu6S1EGhw+G8beuTAz3U1wjrME+Pk90Hhqb?=
- =?us-ascii?Q?um+NEExmWD7EXm08yrUyp9wgqCFocUmi/9Awb99rDZzYSMMtE6ALr4eotBI6?=
- =?us-ascii?Q?H5Ow60Ofxp2+M4pCex1S+vhYVrDQpWj39mQTehavThXfKxh5jD/hawUiaglm?=
- =?us-ascii?Q?TvZavdnfBs8jAu6t2pID3+CKpb0bt2P5sBLh3W3kaOoQywEYVFxSngGv6Wyz?=
- =?us-ascii?Q?sgP6TQxPDthgj14utRIqtij8UlLv6TScdg/UNRC/jO5WO/WooZIkYbX2MhDL?=
- =?us-ascii?Q?AeGaVeI1PtHSIdAdT03ugyMHkbOWWA3v1DCnQRN8KWv58VK2og4Pie/UEfdH?=
- =?us-ascii?Q?Du72BHcgc19Ek82yvnte+3P+Jy74HoCgCZlDFFXNUmW/E9v8nIQnBIfwRryL?=
- =?us-ascii?Q?jezfFQ7DgZadKgHKeQVvodc6ls3smXBPecmIyE9MeSRzyNo7X7ODzlxwS3ip?=
- =?us-ascii?Q?OUh8L7HUsgAmbwIOh99UKNtp6+AitW5oqeeBJ+rAT+p3yqTXLrjhiakQxPmD?=
- =?us-ascii?Q?hNTuGteSklH75HUDZ5kOooeGlv9tezv1HfViX64Zi+DfcSB9i5ifWJwmYNlI?=
- =?us-ascii?Q?McghZzIahpMB+pTUy5u2jDtq0rLxIP5j9jTU0gMDJ65ObEfAb63/LKif52Rj?=
- =?us-ascii?Q?P2OdY40EYUg2igzMPYwxjHc8UDMfrjNJ1pNOndx8PnltHwOU6P0/trN9qE+o?=
- =?us-ascii?Q?4ASdABPi4WPMaXDBrsxKYP4XGjdq+rBpkSjOZh7DWKrU0insY5ljclXS8ig3?=
- =?us-ascii?Q?kj8+fzyJkPBg364pjvXUbXqYgAxTUQyUe6+Fc3VkvDSvW5N0mVNtw7SvsRT1?=
- =?us-ascii?Q?bSaA4SwNuup/F6BG0Nagdk9z5lYN1X3VZXI5AEAu0vTedPTZ7zlkIWNo2svD?=
- =?us-ascii?Q?HwrJeza8H/piOe5/Plcxd8y32RnJLBfaLEamGWWQqSHXd12eQKLbK24bCSJ3?=
- =?us-ascii?Q?WiV3V0Ly79o70cMrxrIk4sKYJPoVKri8zg/XrUR32EKaQXKmnxMTdR07gfad?=
- =?us-ascii?Q?wkE9A1vhc3yhYk07TeA4p5Er0fQCYwZa7ny5EYz80lZ2R2hCWJJizulJbcQa?=
- =?us-ascii?Q?HfMDzf9WY9b+bB37ebMlcAc1+JtnmZXEk8Dj3ZvEGQvSAT9p9VRMXePT+3GP?=
- =?us-ascii?Q?86VHHL5vl74bKuP6+e5DjW5jkcoGIJWhOt14QNxIa3O+p75cEeV9aS746Otz?=
- =?us-ascii?Q?Jr7LpKohOOpykdCmkKPfIpogV7ED4CFupaPFeH1k014Vr+BQ0RaZVnExuDUK?=
- =?us-ascii?Q?AW1FlIg5znn5EydV9wEjzRFr/YHKMW9GDy0JaURogdjS6I8yt3PrGbNAZZlQ?=
- =?us-ascii?Q?etGvhR9KHxG2H/WCX/s8a43XI/mscdKnLdFynwDGFJeMlQs5S0QhqTNSADoQ?=
- =?us-ascii?Q?jRdClbeYFt4gWKaxqpK0L/H9mZNUmr9syffjh3q11Xa9cpimvw8k1mCIlEyq?=
- =?us-ascii?Q?dEeiyqQvMhVGeAg+8bt/tpOuZxWvGsGK/8wcfD+rOb3x5UiuYWQcX3IQICg/?=
- =?us-ascii?Q?SJYwD4p8ZVWSnH/ZZrl7tNhs5D9gyJrGk5ylo2OzRggWA6qDLVCf7DbRSKQl?=
- =?us-ascii?Q?7QzzGP758NyqQ2UMFaTW8vCqu3XCOihO4uh9IYkeDwQjfj++f3zSXRhYahcE?=
- =?us-ascii?Q?1MP//6qou6S5PIQv5i3j/itNHZmsKKq5fFwUUlmLOOdhKihehbQw9/kwyKZK?=
- =?us-ascii?Q?l9ncrYpZrayPA4zW9RiemK8v5hrvKnI=3D?=
-X-Exchange-RoutingPolicyChecked: BquHMD1xVrpudh2GmKdZrAGo7UqAQnGqQSMIgB8ggLT/jJtIw21fUmHvBRiO6HTPIddb+Y/XOurCCpfg9UNrgmnbirvu/qB9ccV440HmwdCujtcMVUYsS218uriBXvhobOwuHHcdHHIwrZXRsjSDRu+YeQqc+R2CoQZhZa9yJ6TKPqJj1cFBenRKberHKD4YwSBIq+y78//gBe4NFX0zM5ykjgp5nM8EYUEJkJtwA3qFIvz5nMn+vVMC/NRDiLOW1BEFCjic5gdASrLVpylrPAvic39XNwHXBzHdOw7vKNoIjPrsIwazC12WJC2pRRsbeGVCO5uSA0b461umG4beWw==
-X-MS-Exchange-CrossTenant-Network-Message-Id: c1d0e576-5e0e-4586-ae5d-08df0a8611d8
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?DUi7DGuHIMLSM/mo8LywZNn06EPiqg61Wd7CdGKZ8cZnJJWSba8zApFUm2/G?=
+ =?us-ascii?Q?SxLj8kuHollA0gG6b+jERc0f6mWatzq7AhXUyk4rUGl7UeHP4IA+9+brXJtc?=
+ =?us-ascii?Q?vgsmbrJe9Tf1MyPIfvrMGD5v5eqf5FMjQ94KhA4dqRtb9qvG4gNBi5lSzMUl?=
+ =?us-ascii?Q?iZCN5aVbPuZhznA1gtJ1O7M3gqMLtDUbmFFq4hYsJTh0+4q1H2Z08WSbXgGi?=
+ =?us-ascii?Q?tbp2mlwnd4WbfFRCOKpZ6JD86FUF0WB4gZ1C7QT/e9AR+g1yGELEVUUOAZLo?=
+ =?us-ascii?Q?xjTPUDvLe+lXwdRu2gTBh7BLzCdQh4MXiHs46K++bRe78vrei1LksdIfrBde?=
+ =?us-ascii?Q?hfRh3KZJT7mGqbZVWgOJ3IC/ZkTtU7u3eFfBtlAFlwDNB+OiA+GKZc47GAwy?=
+ =?us-ascii?Q?J1E9RM3KhGvJw5V7i3JklrLYfkqJhTYqrZ2mLXtSqaqxQwfLto/3Bxziqej0?=
+ =?us-ascii?Q?Ir6LwdXDh668WtCB2FFLtIbAAEpXV2ur1zGF4bX9W6apPbEobuLfvkiJU2y3?=
+ =?us-ascii?Q?dPlGt7xzTJpKtF8KK2nemgJF+eWrpUD4w16nolcZSPLjnXvfRgTY5fnBGiVb?=
+ =?us-ascii?Q?TZQNKR/qjQlFpR4Hube7xC0qoUzHgVwUcfoapG724oSJhCBySW/7cAO597lm?=
+ =?us-ascii?Q?Ga4H4wNKmbVehUbs9a19XWhqhp8a4j4GmQGXe94Kc9ezaSLuImmxK8pn1di2?=
+ =?us-ascii?Q?U4q0xOCkZrVCUDtNPFXR3j/fn7O2pfMXPvK5+Sfsz00th8OLL3e/VO9IPQ8z?=
+ =?us-ascii?Q?HfpEt+YiRL5llcDH/+AyeD6D69c+7hTMvh/Yamtuz65DpafxcCImIZ98Iwyb?=
+ =?us-ascii?Q?fQECMMVELQoJbZgJ26pb1nVfQ+r1syvMOZclnskEYCWoR68nDX2YnKC0rtlc?=
+ =?us-ascii?Q?ySJ7nQTZSYEUQ+H5+cYB9MzUumswuEXY0+FQk+WadIXHaQs/VVj+w3lOfFvM?=
+ =?us-ascii?Q?cp52Uxcprn43mgcFC1gBQYKpHHjYOgK4LZlfv7TR1mpBW7RCCHBNRsAQ6HFw?=
+ =?us-ascii?Q?62vaNPfz1B7c0VrVr3OXX5EzP864BRgxUSi3cNUGUaSx/WbIOPeYKmTY5oZx?=
+ =?us-ascii?Q?XfcEcOBS/6qJWBffHCvtaIgFv/fxllWkFogEvwIK9Uj5cwsLeWXUn8HZDcXZ?=
+ =?us-ascii?Q?zDY4lEbBtZoB1B8hoyq4bW8gp7c78oPeYPmWiTnSynwb9aNEZzVBZWgX4JNm?=
+ =?us-ascii?Q?9v6O+JGAeVFL6yKnyKfSmohyMNgzIkXcEZ0FdZoH64MrzoFF6uB4TeQKgxsY?=
+ =?us-ascii?Q?Eq4NxeIu9H7++YsC55HPEu4sztPrCS87K21fJzNeU7ul8dJeh5hpNhCRL+37?=
+ =?us-ascii?Q?uj4KLOYuIjxego0bgHYtbCILGWHfQm73j7wBBfZh3rRYyzPSJKVm1wYd8KcU?=
+ =?us-ascii?Q?huvsFfV6ks8246GOMaZ9kw2mx85kQ7TSGEy0yP5YUdenEEfWDTxo8XARMZeI?=
+ =?us-ascii?Q?4T00p7WnayO4d6rQHkUbhJu2f8gcG35iDwjJwweiYdWtbIE39oPWH+ncPpFI?=
+ =?us-ascii?Q?w86hsBggabMviwsCpqBnpbIDNis5ge0CdntvO3s554DC+J8wvtIpOGXR84He?=
+ =?us-ascii?Q?O0OjB7Fl+amQPBDyGaEoiWiMn96IZWULEWWxjfmTIFM8UMc+5mcHHMRH+VrN?=
+ =?us-ascii?Q?7HnTpDjTqV5Fb7dg+D65POxUkr9YUC+5x20MPSQDi79/wHDw0dNFw2iQYMYM?=
+ =?us-ascii?Q?Uc0pxJXIWA7av+mQZV/pCX0mYJd5bGZ2nTFKaxQbLSOmkeGnz4eT9ShjeURH?=
+ =?us-ascii?Q?oshhmfp7Yxh8pS9N95UUeTaSXYDEdUE=3D?=
+X-Exchange-RoutingPolicyChecked: RmRmV3clkT45yO59Qc/boIrbSIDjwwjfdokKIIpyO5zOF+PMD5frOQMtam5XcO56QwDLgBOgO5UCsj45u7a4JHeug7RpbSlYsHmcqgpdb102nubenZyQfVWkx/fqVInMr7M6w1VAW9MlkVlmKIYVhiPhYKTNnjtuyYMTgp2VsJFbKOMe2IxOH/vlZrZIlvSoWH6UbmjVaWBL1OIcbriPTS4ue6A8qlr3kjkmVJ7eJtdVEQNNVW942wAaCwJV0FYZmQ4UqgO6rV9cwSSbezD0ew9z6wupgwdznfuY8gdW4oW1EGiXeYw1g16HFrJbJ6n7hTeVArhLzJxZ39q0mbB0Xg==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0318579c-ac08-4b76-4e54-08df0a892e0f
 X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB9421.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2026 13:11:45.2799 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Sep 2026 13:34:01.1087 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tE0BzmktqdFea0PH7x+1WiFbx78WbhNCUMzVD4+fX5rOH/cwF5OMsXyhkRbLrxtm2fQnmHzGqfm0iYgtD/xRCiZuTOloCdlWpTlJdIeeaMg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB6801
+X-MS-Exchange-CrossTenant-UserPrincipalName: TWtg8JYiq7QjSZa42VECZu6s+C9Xlz8BY2iZLXrT8LasjLZo4gvBE+rfrLWeNp9H42T+qGHV2ioTS/YU94XMIahXnPzO1Qch5DXChnyjrHc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB5295
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -151,118 +151,119 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Sep 04, 2026 at 10:51:38AM +0000, Ciara Loftus wrote:
-> Currently, ice_tx_queue_start() determines a queue's congestion domain by
-> scanning vsi->info.tc_mapping[] for a matching traffic class range,
-> rejecting the queue if no match is found.
+On Fri, Sep 04, 2026 at 10:51:39AM +0000, Ciara Loftus wrote:
+> Currently, ice_dev_info_get() assigns the value of `vsi->nb_qps` to both
+> `max_rx_queues` and `max_tx_queues`.
 > 
-> The Tx scheduler hierarchies only ever operate on a single traffic class,
-> TC0, so every queue managed by a committed TM hierarchy always belongs
-> to domain 0. The tc_mapping[] lookup doesn't account for this, and queues
-> added after a TM hierarchy is committed can be incorrectly rejected.
+> After a Tx scheduler hierarchy is committed, the value of nb_qps may grow
+> to reflect the VSI's larger Tx scheduler capacity. However the Tx scheduler
+> hierarchy change has no effect on the VSI's Rx queue allocation,
+> which stays fixed at its original size for the life of the port. An
+> application can then request more Rx queues than the VSI's actual Rx
+> resources support when the inflated nb_qps is assigned to `max_rx_queues`.
 > 
-> Fix this by skipping the lookup if a hierarchy has been committed as the
-> domain is already known to be 0 in that case. Since TM does not support
-> DCB's multi-TC queue layout, also reject queue start explicitly if DCB
-> has configured more than one TC while a TM hierarchy is committed.
+> `vsi->nb_qps` also feeds `ice_vsi_disable_queues_intr()`, which clears
+> both Rx and Tx queue interrupt registers by absolute queue index on
+> every port stop. Once `nb_qps` grows past the VSI's fixed queue window,
+> this can clear interrupt registers belonging to a different VSI.
 > 
-> Fixes: 02b71e570294 ("net/ice: support DCB")
+> Fix this by introducing `vsi->nb_tm_qps` to track the Tx scheduler
+
+Just a nit on naming here. For the tm block it doesn't deal with
+queue-pairs so much as Tx queues, so the variable should probably be named
+nb_tm_txqs instead.
+
+However, that opens a wider renaming question - rather than tracking a
+generic nb_qps and nb_tm_qps(nb_tm_txqs), might it be better to have vsi
+variables separately called "nb_rxqs" and "nb_txqs" and ignore the whole
+"tm" part of it?
+
+> capacity as it grows, leaving `vsi->nb_qps` as the VSI's fixed
+> queue allocation for the life of the port. `ice_vsi_disable_queues_intr()`
+> is switched to `nb_used_qps`, which already tracks the actually configured
+> queue count.
+> 
+> Fixes: 715d449a965b ("net/ice: enhance Tx scheduler hierarchy support")
 > Cc: stable@dpdk.org
 > 
 > Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
 > ---
->  drivers/net/intel/ice/ice_ethdev.c |  4 ++++
->  drivers/net/intel/ice/ice_ethdev.h |  2 ++
->  drivers/net/intel/ice/ice_rxtx.c   | 33 ++++++++++++++++++------------
->  3 files changed, 26 insertions(+), 13 deletions(-)
+>  drivers/net/intel/ice/ice_ethdev.c | 5 +++--
+>  drivers/net/intel/ice/ice_ethdev.h | 1 +
+>  drivers/net/intel/ice/ice_tm.c     | 8 ++++----
+>  3 files changed, 8 insertions(+), 6 deletions(-)
 > 
-
-Did you hit this in testing, or was it just via code review or AI review?
-Fix looks good anyway.
-
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
-
-
 > diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
-> index 76b8ff0a72e..fd148848d3c 100644
+> index fd148848d3c..149872816d8 100644
 > --- a/drivers/net/intel/ice/ice_ethdev.c
 > +++ b/drivers/net/intel/ice/ice_ethdev.c
-> @@ -3963,6 +3963,8 @@ ice_dev_configure(struct rte_eth_dev *dev)
->  	ad->rx_func_type = ICE_RX_DEFAULT;
->  	ad->tx_func_type = ICE_TX_DEFAULT;
+> @@ -1816,6 +1816,7 @@ ice_setup_vsi(struct ice_pf *pf, enum ice_vsi_type type)
+>  				     ret);
+>  			goto fail_mem;
+>  		}
+> +		vsi->nb_tm_qps = vsi->nb_qps;
 >  
-> +	pf->dcb_num_tcs = 1;
-> +
->  	if (dev->data->dev_conf.rxmode.mq_mode & RTE_ETH_MQ_RX_RSS_FLAG)
->  		dev->data->dev_conf.rxmode.offloads |= RTE_ETH_RX_OFFLOAD_RSS_HASH;
+>  		break;
+>  	case ICE_VSI_CTRL:
+> @@ -2924,7 +2925,7 @@ ice_vsi_disable_queues_intr(struct ice_vsi *vsi)
+>  	uint16_t msix_intr, i;
 >  
-> @@ -3992,6 +3994,8 @@ ice_dev_configure(struct rte_eth_dev *dev)
->  		if (nb_tc_used < 0)
->  			return -EINVAL;
->  
-> +		pf->dcb_num_tcs = nb_tc_used;
-> +
->  		ctxt.info = vsi->info;
->  		if (rte_le_to_cpu_16(ctxt.info.mapping_flags) == ICE_AQ_VSI_Q_MAP_NONCONTIG) {
->  			PMD_DRV_LOG(ERR, "VSI configured with non contiguous queues, DCB is not supported");
+>  	/* disable interrupt and also clear all the exist config */
+> -	for (i = 0; i < vsi->nb_qps; i++) {
+> +	for (i = 0; i < vsi->nb_used_qps; i++) {
+>  		ICE_WRITE_REG(hw, QINT_TQCTL(vsi->base_queue + i), 0);
+>  		ICE_WRITE_REG(hw, QINT_RQCTL(vsi->base_queue + i), 0);
+>  		rte_wmb();
+> @@ -4628,7 +4629,7 @@ ice_dev_info_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
+>  	dev_info->min_rx_bufsize = ICE_BUF_SIZE_MIN;
+>  	dev_info->max_rx_pktlen = ICE_FRAME_SIZE_MAX;
+>  	dev_info->max_rx_queues = vsi->nb_qps;
+> -	dev_info->max_tx_queues = vsi->nb_qps;
+> +	dev_info->max_tx_queues = vsi->nb_tm_qps;
+>  	dev_info->max_mac_addrs = vsi->max_macaddrs;
+>  	dev_info->max_vfs = pci_dev->max_vfs;
+>  	dev_info->max_mtu = dev_info->max_rx_pktlen - ICE_ETH_OVERHEAD;
 > diff --git a/drivers/net/intel/ice/ice_ethdev.h b/drivers/net/intel/ice/ice_ethdev.h
-> index 7ee3ea8a709..5914454c7c2 100644
+> index 5914454c7c2..3160c82c5e3 100644
 > --- a/drivers/net/intel/ice/ice_ethdev.h
 > +++ b/drivers/net/intel/ice/ice_ethdev.h
-> @@ -609,6 +609,8 @@ struct ice_pf {
->  	uint64_t rss_hf;
->  	struct ice_tm_conf tm_conf;
->  	uint16_t outer_ethertype;
-> +	/* Number of TCs requested, 1 if DCB not configured */
-> +	uint8_t dcb_num_tcs;
->  	/* lock prevent race condition between lsc interrupt handler
->  	 * and link status update during dev_start.
->  	 */
-> diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
-> index c4b5454c530..71f9155e588 100644
-> --- a/drivers/net/intel/ice/ice_rxtx.c
-> +++ b/drivers/net/intel/ice/ice_rxtx.c
-> @@ -839,20 +839,27 @@ ice_tx_queue_start(struct rte_eth_dev *dev, uint16_t tx_queue_id)
->  	tx_ctx.legacy_int = 1; /* Legacy or Advanced Host Interface */
->  	tx_ctx.tsyn_ena = 1;
->  
-> -	/* Mirror RXQ<->CGD association to TXQ<->CGD */
-> -	for (int i = 0; i < ICE_MAX_TRAFFIC_CLASS; i++) {
-> -		q_base = rte_le_to_cpu_16(vsi->info.tc_mapping[i]) & ICE_AQ_VSI_TC_Q_OFFSET_M;
-> -		q_range = 1 << ((rte_le_to_cpu_16(vsi->info.tc_mapping[i]) &
-> -			ICE_AQ_VSI_TC_Q_NUM_M) >> ICE_AQ_VSI_TC_Q_NUM_S);
-> -
-> -		if (q_base <= tx_queue_id && tx_queue_id < q_base + q_range)
-> -			break;
-> -
-> -		cgd_idx++;
-> -	}
-> +	if (!pf->tm_conf.committed) {
-> +		/* Mirror RXQ<->CGD association to TXQ<->CGD */
-> +		for (int i = 0; i < ICE_MAX_TRAFFIC_CLASS; i++) {
-> +			q_base = rte_le_to_cpu_16(vsi->info.tc_mapping[i]) &
-> +							ICE_AQ_VSI_TC_Q_OFFSET_M;
-> +			q_range = 1 << ((rte_le_to_cpu_16(vsi->info.tc_mapping[i]) &
-> +				ICE_AQ_VSI_TC_Q_NUM_M) >> ICE_AQ_VSI_TC_Q_NUM_S);
-> +
-> +			if (q_base <= tx_queue_id && tx_queue_id < q_base + q_range)
-> +				break;
->  
-> -	if (cgd_idx >= ICE_MAX_TRAFFIC_CLASS) {
-> -		PMD_DRV_LOG(ERR, "Bad queue mapping configuration");
-> +			cgd_idx++;
-> +		}
-> +		if (cgd_idx >= ICE_MAX_TRAFFIC_CLASS) {
-> +			PMD_DRV_LOG(ERR, "Bad queue mapping configuration");
-> +			rte_free(txq_elem);
-> +			return -EINVAL;
-> +		}
-> +	} else if (pf->dcb_num_tcs > 1) {
-> +		/* TM only manages the TC0 scheduler subtree. */
-> +		PMD_DRV_LOG(ERR, "TM hierarchy is not supported together with multi-TC DCB");
->  		rte_free(txq_elem);
->  		return -EINVAL;
+> @@ -330,6 +330,7 @@ struct ice_vsi {
+>  	struct ice_mac_filter_list mac_list; /* macvlan filter list */
+>  	struct ice_vlan_filter_list vlan_list; /* vlan filter list */
+>  	uint16_t nb_qps;         /* Number of queue pairs VSI can occupy */
+> +	uint16_t nb_tm_qps;      /* Number of Tx queues usable by the committed TM hierarchy */
+>  	uint16_t nb_used_qps;    /* Number of queue pairs VSI uses */
+>  	uint16_t max_macaddrs;   /* Maximum number of MAC addresses */
+>  	uint16_t base_queue;     /* The first queue index of this VSI */
+> diff --git a/drivers/net/intel/ice/ice_tm.c b/drivers/net/intel/ice/ice_tm.c
+> index 651d6aa932d..7afe31738ba 100644
+> --- a/drivers/net/intel/ice/ice_tm.c
+> +++ b/drivers/net/intel/ice/ice_tm.c
+> @@ -859,9 +859,9 @@ commit_new_hierarchy(struct rte_eth_dev *dev)
+>  		}
+>  		/* TM hierarchy deleted. Restore default scheduler state. */
+>  		reset_hw_node_recursive(hw, hw->vsi_ctx[pf->main_vsi->idx]->sched.vsi_node[0]);
+> -		pf->main_vsi->nb_qps = pf->lan_nb_qps;
+> +		pf->main_vsi->nb_tm_qps = pf->lan_nb_qps;
+>  		pf->tm_conf.committed = false;
+> -		return ice_alloc_lan_q_ctx(hw, 0, 0, pf->main_vsi->nb_qps);
+> +		return ice_alloc_lan_q_ctx(hw, 0, 0, pf->main_vsi->nb_tm_qps);
 >  	}
-> -- 
-> 2.43.0
-> 
+>  
+>  	/* handle case where VSI node needs to move DOWN the hierarchy */
+> @@ -889,13 +889,13 @@ commit_new_hierarchy(struct rte_eth_dev *dev)
+>  				nodes_created_per_level[i], i);
+>  	hw->vsi_ctx[pf->main_vsi->idx]->sched.vsi_node[0] = new_vsi_root;
+>  
+> -	pf->main_vsi->nb_qps =
+> +	pf->main_vsi->nb_tm_qps =
+>  			RTE_MIN(nodes_created_per_level[qg_lvl] * hw->max_children[qg_lvl],
+>  				hw->layer_info[q_lvl].max_device_nodes);
+>  
+>  	pf->tm_conf.committed = true; /* set flag to be checks on queue start */
+>  
+> -	return ice_alloc_lan_q_ctx(hw, 0, 0, pf->main_vsi->nb_qps);
+> +	return ice_alloc_lan_q_ctx(hw, 0, 0, pf->main_vsi->nb_tm_qps);
+>  }
+>  
+>  static int
