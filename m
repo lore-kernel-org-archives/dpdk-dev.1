@@ -2,46 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 484FFC79F82
-	for <dpdk-dev@archiver.kernel.org>; Fri,  4 Sep 2026 19:14:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B6C2C79F82
+	for <dpdk-dev@archiver.kernel.org>; Fri,  4 Sep 2026 19:17:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5CAC9427E6;
-	Fri,  4 Sep 2026 21:14:04 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 4B2B7427D1
- for <dev@dpdk.org>; Fri,  4 Sep 2026 21:14:03 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 2E4C34C7A1; Fri,  4 Sep 2026 21:14:03 +0200 (CEST)
-From: bugzilla@dpdk.org
+	by mails.dpdk.org (Postfix) with ESMTP id 933B7427E6;
+	Fri,  4 Sep 2026 21:17:01 +0200 (CEST)
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com
+ [209.85.214.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 7D04D427D1
+ for <dev@dpdk.org>; Fri,  4 Sep 2026 21:17:00 +0200 (CEST)
+Received: by mail-pl1-f174.google.com with SMTP id
+ d9443c01a7336-2d9db539a54so12654765ad.0
+ for <dev@dpdk.org>; Fri, 04 Sep 2026 12:17:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788549419;
+ x=1789154219; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=sE0HDlVPylzpGfTbYHb6i7dbHxhaRpPWURoVTzCnnLU=;
+ b=YtjvNzKKpTK8scyEAbNWHgqhYbpLxK49gCBP7Gv4CeljtaWRpxs6Q7aNBjVH2pkubQ
+ aheLDe3J8Xiqi4tVuAyTqTvoKk3F9YNjmg1YLcVh4BeZ62JADTsitIVBfFYF549Uz7Xc
+ O4BJOeIVDdFAUjoYXbqyl6ZWOqwEs1tJXL7ZeQhGLPcUFrX9CRL8+SgvGm4275WjUePY
+ /irzIVozVgeDEVpeXNhMFeiK+CERq4LxsX2+7OUSoD+Gu9wtsMDObI6OwHhqwwgsr6J3
+ 1ZIGrKfR9oHIDfc35NbS1mYicbSfuvYJRo9Lp/52kDFdbBY5RDFjrz7/LTbK4drSO6sP
+ ueUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1788549419; x=1789154219;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=sE0HDlVPylzpGfTbYHb6i7dbHxhaRpPWURoVTzCnnLU=;
+ b=Hd8qUmOPIUPTM8CENKC7j0ipjRtsq8jCxw5RwtowNVVfVoH3GItBvoV87XketHxuYj
+ /s84ICY6NMFcpfRErL+4cMnRH9y52qqMCaETy2vnkYUBTMHqcs+Wwe0c9CBQu0lwBVQf
+ hylseue/8YVjoHQu8kDiFmVXYaleBnCbNtju+ouYOElbqZkPIoDgQJu1wOz+rYZXCl3f
+ pyDnHzAKIfowj71NCMmcN+Ql3XxiqXWIOzjaIyZ+a8FPnJUxhqg3C+LnXaFNVAACdke0
+ MLEfDAxobn3src//3+gCJ97dSOxbcwP1xSs1AtakQ/hecQHkOIsnNOKCk5t1wbqgnBqP
+ xDlQ==
+X-Gm-Message-State: AFuF++lOZTNiGc6fk6syPN2Xb6/WGEW/C1KQ02r5hDdh8MgQ1EsUjN9N
+ bcx40vROdLu+IP5e5YZ/+Ob+HVFIyq1o70DS6o74atH+gsCHN7iEZyPE5+sPYMVlSAS3pLTwmOu
+ DwXD9
+X-Gm-Gg: AYBFou3t3qVk7bKZkLvBny6KAnBXsgjaRwsT9p9aqIoIoKuhVsT352EVL9w068cPTPZ
+ P5cs0H/sx2mVWqOudq5Z6++AOja92Fb5GA8nr7lPs14FHG6vZ1o1MwuoTwG+7Xm1TAr6Brx0gpP
+ GUBOMZx8r9WMkPod4V8PnqoitwjqkWLe+/khfAa5VGtplT+q3Ua1i2JpdI5T+ecqVhJ0q1lC9pM
+ dJL5bsQEvX/QA6Odzvzh57lHR/wdw3Q2V2cY96Z7Q+qfpqJ25liMMBpIcO7hWHsTp4n4HGc6Sgb
+ t0fZ+tFOOgH54Xzt1WO0QhtDgValKjVA5fdr86+HcluD61X2ohUBwt90FrLZBKmLZDdSFQ5pbX7
+ 1CnK/ZGi3HbXigKCKRvrSEpkibcLHyBaHOhytQ8afskV9KY25/69zR0LO7e6ZnCavLtbXOQKIAF
+ m6MrWO1c8yIymsQQMi2z60bFzVH4SBU1kdIMWmUhAoQTQYsnjlKak01saEXqpjxkcESXGZeqBVf
+ KSRcEh99U87Z5SMu5WJpemeuzA=
+X-Received: by 2002:a17:902:f546:b0:2d3:7c58:b0e1 with SMTP id
+ d9443c01a7336-2db1212aa5bmr124039035ad.0.1788549419280; 
+ Fri, 04 Sep 2026 12:16:59 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-2db1499f07asm13335975ad.57.2026.09.04.12.16.57
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 04 Sep 2026 12:16:58 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 2031] cn10k: NPA_POOL_ERR_INT_RANGE on Pool 1
- during mbuf pool creation in testpmd
-Date: Fri, 04 Sep 2026 19:14:02 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: ethdev
-X-Bugzilla-Version: 24.11
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: critical
-X-Bugzilla-Who: amiyaranjan.mohakud@gmail.com
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone attachments.created
-Message-ID: <bug-2031-3@https.bugs.dpdk.org/>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-X-Bugzilla-URL: https://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH 0/7] fix XXX_DEBUG warnings
+Date: Fri,  4 Sep 2026 12:12:35 -0700
+Message-ID: <20260904191652.2399074-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,85 +79,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D2031
+I recently modified my build test to automatically enable all
+DEBUG flags. This is because developers often add debug code,
+forget about it, and it bit rots.
 
-            Bug ID: 2031
-           Summary: cn10k: NPA_POOL_ERR_INT_RANGE on Pool 1 during mbuf
-                    pool creation in testpmd
-           Product: DPDK
-           Version: 24.11
-          Hardware: ARM
-                OS: Linux
-            Status: UNCONFIRMED
-          Severity: critical
-          Priority: Normal
-         Component: ethdev
-          Assignee: dev@dpdk.org
-          Reporter: amiyaranjan.mohakud@gmail.com
-  Target Milestone: ---
+This patch series fixes all the places where #ifdef XXX_DEBUG
+code was present but would not build without warnings.
 
-Created attachment 390
-  --> https://bugs.dpdk.org/attachment.cgi?id=3D390&action=3Dedit
-testpmd-cn10k-mempool-issue.txt
+Stephen Hemminger (7):
+  bus/fslmc: fix build of qbman debug code
+  bus/fslmc: fix signed comparison in buffer acquire
+  crypto/caam_jr: fix descriptor dump build
+  crypto/ipsec_mb: fix missing header for debug build
+  power/amd_uncore: fix debug log build
+  net/rnp: fix register debug log format
+  net/vmxnet3: remove unused queue dump functions
 
-Environment:
-------------
+ drivers/bus/fslmc/qbman/qbman_debug.c   |  3 ++
+ drivers/bus/fslmc/qbman/qbman_portal.c  |  4 +-
+ drivers/crypto/caam_jr/caam_jr.c        |  2 +-
+ drivers/crypto/caam_jr/caam_jr_desc.h   |  6 +--
+ drivers/crypto/ipsec_mb/pmd_aesni_gcm.c |  2 +
+ drivers/net/rnp/base/rnp_osdep.h        |  4 +-
+ drivers/net/vmxnet3/vmxnet3_rxtx.c      | 58 -------------------------
+ drivers/power/amd_uncore/amd_uncore.c   |  2 +-
+ 8 files changed, 14 insertions(+), 67 deletions(-)
 
-  - SoC: Marvell Octeon CN10K (cn10kb_a0)
-  - Kernel: 6.12.68
-  - DPDK: 24.11.2
-  - IOVA mode: PA
-  - VFIO: no-iommu mode
-  - Hugepages: 1024 x 2MB (2048 MB total)
-  - Mempool ops: cn10k_mempool_ops
+-- 
+2.53.0
 
-Description:
---------------
-testpmd creates mbuf pool mb_pool_0 (n=3D203456, size=3D2304) using
-cn10k_mempool_ops. During pool populate, Pool 1 triggers NPA_POOL_ERR_INT_R=
-ANGE
-repeatedly, followed by Err_intr=3D0x1000:
-
-  testpmd: create a new mbuf pool <mb_pool_0>: n=3D203456, size=3D2304, soc=
-ket=3D0
-  testpmd: preferred mempool ops selected: cn10k_mempool_ops
-
-  CNXK: npa_q_irq():150 queue_intr=3D0x1 qintx=3D1
-  CNXK: npa_q_irq():165 Pool=3D1 NPA_POOL_ERR_INT_RANGE
-    (repeats 4 times during mbuf pool populate)
-
-  Configuring Port 0 (socket 0)
-  CNXK: npa_err_irq():18 Err_intr=3D0x1000
-  CNXK: npa_err_irq():18 Err_intr=3D0x1000
-
-  Pool 1 context at time of error:
-  ptr_start:    0x24808d200
-  ptr_end:      0x267200000
-  buf_size:     20 (units of 128 bytes =3D 2560 bytes)
-  buf_offset:   1
-  count:        decreasing across dumps (0x31aa6 =E2=86=92 0x31a91 =E2=86=
-=92 0x31a79 =E2=86=92 0)
-  op_pc:        increasing (0x1a =E2=86=92 0x2f =E2=86=92 0x47 =E2=86=92 0x=
-31ac0)
-  stack_pages:  0 (remains zero across all dumps)
-
-Notable observations:
-----------------------
-  - stack_pages remains 0 throughout, even as op_pc increases =E2=80=94 sug=
-gesting
-buffers are being freed but the stack is not being updated
-  - count decreases to 0 by the final dump, indicating the pool is fully
-drained
-  - The address range [0x24808d200, 0x267200000) spans ~512 MB, but the mem=
-pool
-requests ~203K buffers of 2304 bytes (~447 MB)
-
-
-Expected Result
--------------------
-No NPA pool range errors. Pool 1 should initialize and populate without
-triggering NPA_POOL_ERR_INT_RANGE or npa_err_irq interrupts.
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
