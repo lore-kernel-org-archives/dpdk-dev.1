@@ -2,68 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 034C2C79F82
-	for <dpdk-dev@archiver.kernel.org>; Fri,  4 Sep 2026 22:10:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C88EC624DE
+	for <dpdk-dev@archiver.kernel.org>; Fri,  4 Sep 2026 22:10:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CE849427E6;
-	Sat,  5 Sep 2026 00:10:05 +0200 (CEST)
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com
- [209.85.210.172])
- by mails.dpdk.org (Postfix) with ESMTP id 479A6427D1
- for <dev@dpdk.org>; Sat,  5 Sep 2026 00:10:05 +0200 (CEST)
-Received: by mail-pf1-f172.google.com with SMTP id
- d2e1a72fcca58-8556ec44e9aso1447505b3a.3
- for <dev@dpdk.org>; Fri, 04 Sep 2026 15:10:05 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B4793427D1;
+	Sat,  5 Sep 2026 00:10:11 +0200 (CEST)
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com
+ [209.85.210.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 6FFD14028F
+ for <dev@dpdk.org>; Sat,  5 Sep 2026 00:10:10 +0200 (CEST)
+Received: by mail-pf1-f174.google.com with SMTP id
+ d2e1a72fcca58-8558c0b26a8so1024261b3a.3
+ for <dev@dpdk.org>; Fri, 04 Sep 2026 15:10:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788559804;
- x=1789164604; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788559809;
+ x=1789164609; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=045+8hQHNzcolxgZrhYUz6MuZM4IS5N2bXdl71zuZuw=;
- b=Phuiu0jxY8powIOrLQ40ngGsY54sCeH+oGaMJTX3gLQ7S6JuUC3vor67pjYnhdRFyb
- /TCG0LCTjyaBwy9d0B5sRMXF2pHlwF3G0orgr/sZxKy5ZrqsnNF5pz2F5WRQih+Xi8gt
- GLd3pZuyBgDB3gNpY06CB4JDCgaT0pBS3YX5Z1klDTspBLv2dGE0GAKI/lY0nMY2x2+z
- 3xNz9QhH/fKAjYsEvHfTu9W8DuR8Na6jyqn/7hWcLWGHuxtvBd/bne6HQvQuwZDQQ/cW
- lgbESlJrALwUjDvHwYa9NBUfEF/RJL3bqHrUljf0W/8b3VoZgCOVV0QRNc/VnT6CKdPD
- rSPw==
+ bh=IeIUDNLneLA7r7aB1Dv7bZ/B/W4m+WFYQHzG7zb5lqE=;
+ b=P95rVfIFj4YxIbmU+IS8Xnrupk39cpEHOT+guJDJfAZEoL5qkoV7dkLjDmCqXA/bBL
+ g2078dXNtOsUein2fv0NtizNHzyAhtRKVCun1fH2cgmVZGT2w7Zzjk8SAlO0l++Qnmz4
+ Xe59HhypY4WnxNFDXd1MaBi9NDIKWYrWYFGpmeah0NH1lwofkyt2Md6M9gimNHpGN4DF
+ oWT8J+cNqFdjx5jyK/QoIBbth+c40yVHom1my174Y21+cD0K1FZ311nrzbd0rv8rDyPm
+ hkNdCuVZb1Sgq4uCtjwDrVGUKn0aOL5133vpHLodiB5rhAgqjE1hRRtnrhfsXToCv0pF
+ kX0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788559804; x=1789164604;
+ d=1e100.net; s=20251104; t=1788559809; x=1789164609;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=045+8hQHNzcolxgZrhYUz6MuZM4IS5N2bXdl71zuZuw=;
- b=o90ECbGfp2pYGrZAzQaoTB+eTHfU+z9F2/GXRvp3MtU943wAtnAO67gxGvkakoKfV2
- OqfCx0wA7sRJzkgI2vC6bDPWYrdsR9CjH7Or8HmPNsKJQxU6+2bIYzbsnSLuk8gWYd2l
- sjZHWQMRI4NlOoh1ugM1+tI02N4E49Sy7m8rF3oxZEeawDry9kVjuyXYTP3mw0Z1/IoX
- dhB1qCqcKFlqPeZuPPkYlFWcGpWCF9dJvlBXHUDqlzMykM4Vtbm6+DxEoX5aKqszdcN8
- G4VaIG5LPWpJTr3A0qZN5SdlaOc9shbySQSz8QFxCVEJpQm9PDlGtER2b2cGn9D9gzkS
- GfkQ==
-X-Gm-Message-State: AFuF++m9f9kYz3fTeAI3IlG1q3pj8BwMp4G6V7daU8UGkePrfZxOTv7z
- J5b3UQq0DZ8Y5Aw+Cuo24gyNuNIkyxZqIL5BLjv4Xv5EzrSlKD25LVSMZbvbHf6hhIhcxZS6jhk
- TcJYB
-X-Gm-Gg: AYBFou0wPZAVDTh+OX7TY2BmLV2IXEpKiiIvfD0RUPsoPoa4y4T2NfUNXEqi14liYav
- 1RHyQ0tyYr2PcxWrQwuX/V4cTsNHTW1x0rwVpz3vhek3Isasj4BoR3z5SQTjQzIc/6khuahBRlk
- 9fHrp7gFLogWGg+Ag/jaXApFFkqv8pjx4AiZ/u/Y1Q7lGed2nafL1Cs4DPzyzIYVzzEBs+Wfocc
- ZLnzMlJwCycWb8V0JH5h06CEyof18qM9Xd++vFw0ldM40MmJ6vcCH8+YqHERz7noLrgOYlttX/Y
- U55TA+14vuH7w70gw/86QGP6mOINI5iTZYxhMaItP5ZfE7evN4kVC3Z6zfNNN6i3H5Hc1P4doBJ
- N36Ft51XBqTq+GBisDpEsRP3Hei3hHMBjuC4nILRn5rG4jwGNT6FDlJ3I6m7YDHAXDbbXpLRumf
- gYLuuzXTtDNUvMKTaWxv4iC5XVW7Zo33BgKWuFdTxKUkQMBHnlTzYP+0lvvkIwgPcwBO3ZCoWTW
- jZE1nPlXDbeuaYfuIhwJ8YpdahUgM8gNNr/0A==
-X-Received: by 2002:a05:6a00:2885:b0:857:72ba:ff0c with SMTP id
- d2e1a72fcca58-8616af5cfeamr12864005b3a.20.1788559804109; 
- Fri, 04 Sep 2026 15:10:04 -0700 (PDT)
+ bh=IeIUDNLneLA7r7aB1Dv7bZ/B/W4m+WFYQHzG7zb5lqE=;
+ b=tUNb6BHpNt7lQHQPNAmZH7S7dLOEWoZVbUcbfGE505RRpt77L2CepB87MLR0mBueCa
+ gvY4Dqv01ka8Cb+/Kb+L4HtbBdFW1DhJeiTQOPqvpntiHpZls06drj34tgTSlo7T2ZiS
+ Ab1lnqh3fgYycie3LhDvQdQBtMtFOYOBnS4DNYwpL0EC+sRE5zp+MC1xXbsFONDNHm6h
+ 3BxF0ry1Fm68hdXF9OXzbRPnQ3AKduiz+KC0a9jVmx9W9WPO2hT7PE3vIl/QqEILmKfv
+ QmDPd8nRg0dGzghzQX4v2pdEjHBZh30+oQdQqQ5g7D9mgFqIL9/RmXk/HhgkB2MR2E+e
+ 5JXw==
+X-Gm-Message-State: AFuF++nOIeeJPDseyuI5pPLVUZyT38C2fmVbDYHrEhIuPimiyW4ACjiG
+ TRKz6zd1maGKY3M6/9H+5XWTldFJKZCHKJrD2t2+1goDtZFq0rNHRmujcItdrIfLH7114cvFIhd
+ yD1SO
+X-Gm-Gg: AYBFou1TtLxT2UzMXwAmfPll+0oDYrS+DFIqO1pf36QMyPrzWyDZvNWY35r4YoONLig
+ d/esrcwjHzPNkOSwivdoao+Fu9jAScdaX1GJidcCuGX4t+GM25d3g5lTMnqHMCG+HJANcVqH3wx
+ 3ZmkX6kQQ0D+23u+ISUNSa0Xno3vtMLgs2Caibdq6UPIfLt4ENvlXrHVKxzYT3hhTHlIWqRTfhv
+ eBDY9LGk21k+x9NoHCHtP77uKrSOHWWThuw3PrFgMBz6mD2e3kew6COgn7aAwiEqa2E7D2dJCcH
+ Z827ZTu/B8toftB6fy8bwL3XsFj7RFuZWp+BIbZw1qJaKW/OgdImcN0p/3n3xjWju/rWKxSfaIe
+ ph9PfE8lifCcGzZkDem3aqkfj4s6jV+149krtuY6x0ebBN2i9i4pDye7X4UwubXmkmCMiQpMB8J
+ +pSQe5VNE3X+Bqb5rGjxOizwEvSdNHAm7q5QOdQZRRAvNDF6W4nnOm/zDAedfQWgz+C6ufWHmuj
+ U4on896wZ4O/voEI2wPFIrx12g=
+X-Received: by 2002:a05:6a00:2c94:b0:857:727c:a1f2 with SMTP id
+ d2e1a72fcca58-8616907f6e9mr12325104b3a.20.1788559809179; 
+ Fri, 04 Sep 2026 15:10:09 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-86153a1c1basm1614076b3a.52.2026.09.04.15.10.01
+ d2e1a72fcca58-86153a1c1basm1614076b3a.52.2026.09.04.15.10.04
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 04 Sep 2026 15:10:03 -0700 (PDT)
+ Fri, 04 Sep 2026 15:10:08 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [RFC 1/3] eal: make unaligned really unaligned
-Date: Fri,  4 Sep 2026 15:09:06 -0700
-Message-ID: <20260904220953.3105930-2-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
+Subject: [RFC 2/3] net/mlx5: drop unnecessary STRICT_ALIGN
+Date: Fri,  4 Sep 2026 15:09:07 -0700
+Message-ID: <20260904220953.3105930-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260904220953.3105930-1-stephen@networkplumber.org>
 References: <20260904220953.3105930-1-stephen@networkplumber.org>
@@ -82,56 +86,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The common tests that expected unaligned to really have no
-guaranteed alignment would fail with UBSAN. The root cause
-was the definition of unaligned still implied alignment on x86.
+The transmit inline copy splits the 8 byte case into two 32 bit
+moves when RTE_ARCH_STRICT_ALIGN is set. Only armv8 aarch32 ever
+set that flag, and ARMv8 does unaligned access in hardware, so the
+split gains nothing. Use a single 64 bit move.
+
+The destination is inline_data, at offset 4 of a 16 byte aligned
+dseg, so the 8 byte store is always misaligned. Write it through
+the unaligned type; a plain uint64_t store there is undefined
+behaviour and is reported by UBSAN.
+
+The debug assertion on the inline data offset goes away with the
+strict alignment path since the wider move has no such requirement.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/rel_notes/release_26_11.rst | 6 ++++++
- lib/eal/include/rte_common.h           | 9 +++------
- 2 files changed, 9 insertions(+), 6 deletions(-)
+ drivers/net/mlx5/mlx5_tx.h | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 87c7e81bde..47de839458 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -95,6 +95,12 @@ API Changes
-    Also, make sure to start the actual text at the margin.
-    =======================================================
- 
-+* **eal: Unaligned integer types are now really unaligned.**
-+
-+  ``unaligned_uint16_t``, ``unaligned_uint32_t`` and ``unaligned_uint64_t``
-+  are now declared with an alignment of 1 on all architectures.
-+  The compiler may generate narrower loads and stores than before.
-+
- 
- ABI Changes
- -----------
-diff --git a/lib/eal/include/rte_common.h b/lib/eal/include/rte_common.h
-index f872d3eabb..d0faa9a268 100644
---- a/lib/eal/include/rte_common.h
-+++ b/lib/eal/include/rte_common.h
-@@ -121,15 +121,12 @@ extern "C" {
- #define __rte_aligned(a) __attribute__((__aligned__(a)))
- #endif
- 
+diff --git a/drivers/net/mlx5/mlx5_tx.h b/drivers/net/mlx5/mlx5_tx.h
+index 682dc07718..69a18f8a49 100644
+--- a/drivers/net/mlx5/mlx5_tx.h
++++ b/drivers/net/mlx5/mlx5_tx.h
+@@ -1437,19 +1437,9 @@ mlx5_tx_dseg_iptr(struct mlx5_txq_data *__rte_restrict txq,
+ 	dst = (uintptr_t)&dseg->inline_data[0];
+ 	src = (uintptr_t)buf;
+ 	if (len & 0x08) {
 -#ifdef RTE_ARCH_STRICT_ALIGN
-+/**
-+ * Integer types with no alignment requirement.
-+ */
- typedef uint64_t unaligned_uint64_t __rte_aligned(1);
- typedef uint32_t unaligned_uint32_t __rte_aligned(1);
- typedef uint16_t unaligned_uint16_t __rte_aligned(1);
+-		MLX5_ASSERT(dst == RTE_PTR_ALIGN(dst, sizeof(uint32_t)));
+-		*(uint32_t *)dst = *(unaligned_uint32_t *)src;
+-		dst += sizeof(uint32_t);
+-		src += sizeof(uint32_t);
+-		*(uint32_t *)dst = *(unaligned_uint32_t *)src;
+-		dst += sizeof(uint32_t);
+-		src += sizeof(uint32_t);
 -#else
--typedef uint64_t unaligned_uint64_t;
--typedef uint32_t unaligned_uint32_t;
--typedef uint16_t unaligned_uint16_t;
+-		*(uint64_t *)dst = *(unaligned_uint64_t *)src;
++		*(unaligned_uint64_t *)dst = *(unaligned_uint64_t *)src;
+ 		dst += sizeof(uint64_t);
+ 		src += sizeof(uint64_t);
 -#endif
- 
- /**
-  * Force a structure to be packed
+ 	}
+ 	if (len & 0x04) {
+ 		*(uint32_t *)dst = *(unaligned_uint32_t *)src;
 -- 
 2.53.0
 
