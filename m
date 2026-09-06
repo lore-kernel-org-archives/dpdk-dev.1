@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FBB9C79F9E
-	for <dpdk-dev@archiver.kernel.org>; Sun,  6 Sep 2026 23:27:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6614AC79F9E
+	for <dpdk-dev@archiver.kernel.org>; Sun,  6 Sep 2026 23:27:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 25E8840678;
-	Mon,  7 Sep 2026 01:27:39 +0200 (CEST)
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com
- [209.85.214.175])
- by mails.dpdk.org (Postfix) with ESMTP id E11F740664
- for <dev@dpdk.org>; Mon,  7 Sep 2026 01:27:37 +0200 (CEST)
-Received: by mail-pl1-f175.google.com with SMTP id
- d9443c01a7336-2d715f4a587so42356425ad.2
- for <dev@dpdk.org>; Sun, 06 Sep 2026 16:27:37 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3DB5C40685;
+	Mon,  7 Sep 2026 01:27:42 +0200 (CEST)
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com
+ [209.85.215.175])
+ by mails.dpdk.org (Postfix) with ESMTP id F27CD4068E
+ for <dev@dpdk.org>; Mon,  7 Sep 2026 01:27:40 +0200 (CEST)
+Received: by mail-pg1-f175.google.com with SMTP id
+ 41be03b00d2f7-cc147d86bebso2594112a12.0
+ for <dev@dpdk.org>; Sun, 06 Sep 2026 16:27:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788737257;
- x=1789342057; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788737260;
+ x=1789342060; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=BrGiv4V1YWyZpwB7lL/BbrTKnhDaSTmQwVxRcT69rBM=;
- b=k+p2HET7kXlPAccmi9XxsBvntVbi9nhYoHkKkb1+sihIHel6f97bjGmu+21DqH9jjQ
- f06odjSAqiGubrLDJcgTXRmLhutMPo8IQSpwTvqq9+nMZQHwAOJbA2eggaWFK3pX/fUv
- cvKSRiWFf+9SNNFkgYvqaE7AwwdOfetqXhVtDsX52feMKuL1DVlKvLJSzn4VUuM2szk5
- lkzvRTz7s3JPZ4pVMpXSbLcSKN/j+4/0Enbj5Nv/9bsCVecOx3z0HxFjcBokNuGtsaTZ
- lU923o5CIX1TLcMcGRWNiCBKpyjWKIjryi0Nltr3KKHL5FQ2DPU6NSJ0y5zRTtPe1b0I
- qnUQ==
+ bh=nyXfARlmt2ACBGr50cGVyA+lm3kCOE/9d9JNWZOBLdg=;
+ b=nNofuRXyK8lupmMD90C8Oxncl1kWxuvfkD9zMHN0ttxmJ8Jg2jaKksCmJoQELbDJ1E
+ UdZ63EDOkJRxrJWOJKCWH8Dm4v6/8AS7zPXMldGkm9t4YwhuQaG9fj9p5zm77rdEyW1/
+ rNMCmAY7h74wv0ghQtyqVqVUm3Hg4sH+uZTGhaFk3joLv6MxW8eHLyjV+EedCRxN+OqL
+ M0Qdrm6CzoKUIekMKkYKCJYpIp9L6cjo5Wcf4r0AqL4MSsm7Xulm/INm8wYZjupvZ10o
+ +6BukXk6LldWx/vjQRGP5q014xvSm2sR8FhtsUCs3HsoaGVyyhjfsH36Ba9ZoZMrNgQy
+ LrMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788737257; x=1789342057;
+ d=1e100.net; s=20251104; t=1788737260; x=1789342060;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=BrGiv4V1YWyZpwB7lL/BbrTKnhDaSTmQwVxRcT69rBM=;
- b=GzZ7Ovf5F21YAHrRZHem+Z8dyxPrU0WuMJ1rmjBQYIJ9zb5uVD0gx/RY31CFe8zgmN
- dHQi5bEbnbMIJWRWv9F0/P17C1eAUh6EF+qMIJMDlRO/A26h5covWWEDyOeb+wkATfqe
- p/WpHFO3CuEIWe9iKIHkPOq+4b15guknZV0+RjfUv0TF4OTxBkAHeBURlGqxrmZIZ6TT
- JNEF9TCr6/l2HI/egPU2gfZp1GiyAkTx9JWk76MrrQgsk2qWTDYuYbl9Y1rmYPpV6Qhs
- yxapaEJ3UcW3g4EwfeEihT6b8GOzuY6/H38QvNyzJ3v4++2M/k0g95l7HaPP6E/hxZ85
- LrEA==
-X-Gm-Message-State: AFuF++kNVBANdgPfC/yOnZQaAZSYV9eBtJXYp0fIeGrEWuWE05M3m7YR
- BiLfDNeOhOWZBRnxks2u9s7JCRxNTlg8/lm1uq4DfuPhM7lzAlvFIMBnygrvMRETu/4V+amZ0eY
- 2YOLD
-X-Gm-Gg: AYBFou2gC4mR95y3j42gdJkFLCLsHZ8xmE7xYfYtcL//jRRR74dDTdPRUoJFY/clkO/
- 45CE1A9pr56NLDqgLicV8VQzRWgSHsBkgrcKWlobQf9hVxh7aND0sySOCyMgrIirw6cCjDTZiBq
- F6ADL68f7/C3r7/V80aLQy8QLSAqq41SqPJgiYuzcAM/VoaMJcM0mZK9lYxesk2HGZtzbsPr9Ok
- 8JC8o6EcC8A4q09O3w7fpG7tVfBbFKEEHkus7RMkupZXmH2QwqR4yu8wHoBUrYpQYF36y9HQGXM
- oKBFl87WtVtx3ytrEHAyUeBp4303NqmxC//9Bn/2ekGUk1RzEB/TkQV6XfkUeBxDm0PsCsop+Gs
- C48N9PQO1JZKpu1oURMrembrAKfq2KGVPCpoZ8tpImrdn7YlPGmK7LNW250nD1ual7ahKH/ihFH
- MEC3J70OigWd39Xu9xLq8tfax/qMnLxJNpDHyn0u9WryslmY7WzK10yOtG8cDfDCOlErdicoHbs
- 8R3gpfJE6GLYY940LZv/6eyfpY=
-X-Received: by 2002:a17:90b:28cc:b0:36d:b424:4f17 with SMTP id
- 98e67ed59e1d1-39b260e13d5mr29488456a91.1.1788737257099; 
- Sun, 06 Sep 2026 16:27:37 -0700 (PDT)
+ bh=nyXfARlmt2ACBGr50cGVyA+lm3kCOE/9d9JNWZOBLdg=;
+ b=WMYYB81Dbl6SattJ0aXmbG1fRKtyHVlEli60ek5ggL+x/Q44UJZzlyk3CjLyFvZulg
+ NOjqPuqmlY+eXfyKWwftHOfSQAlKoG4SvbEArUrPI0C1dEf6T1QD0kXtKyFk8OowMs8z
+ WHA6QLibGyAyQTHmcBVNf/yx6vzKJVA4ixc+VpYbXJ1/ihpGXu+9BYpsIclCVtwBCspA
+ X91d54I9MrL87Wpef9qWCa9R/F4twELE4Se+Cbs/AFOvIEjYjiFZjVR3XP4YelxM+Vlh
+ Zw9ZFXv4J5TzTL8TrhldUxztVJsIG881jGZuZ+HNpjSq61gYj/0wY8US2/ISN5E0bCNy
+ BcfA==
+X-Gm-Message-State: AFuF++l1WH26IurwHlH5cEBSj57Kuad0nTJRZLBOgqK6nqh5IxDcXeYk
+ 0P7+V/gtSxujo5G4u46vj/epjnII1FbmuhWa1F++O5GGRAxaLOmoMEG7bAEd+y0kQi5xRX/Yl/A
+ vTdPN
+X-Gm-Gg: AYBFou28H/Ts3D04WXrQhnBHQgXXYWoMb3HDsf+S42WK5RogLQsQPILZVdlRzvfJMCa
+ ZWoAvxjvEQine/6jtfSi1sJr4+Br6sp9BYTI22qd0i2Mu0PK8cAE7DkPUu9WEP4aYmcUMJnASN1
+ M4jLInB0DybC7vOjQAKqMk3yvq1mb9h0PO933aSXVDoh7xPYqgQiJ8P/jHw2o1Jjol+jDMLMjgw
+ N1aERGSk5ug4Q/NVVmunnXFUSkPzyRjd1/ZYCR3y2U6vckNg1fq5gMbTJF/gdAzi6mXvwHdMafg
+ D7rNNmCSN/vfKKpohZdfRpn1xPLTowU4yA1+zBBaWq0nIiviSBt34ESVQ5ONAbWL/TQSXWy8dnE
+ eaHElLE/AXC6Bki3Clh321wI3mxTfLVud48+TaPiBiPVaE3tEFOrIjzbPG3nFkUhtIAitzmmFpW
+ jFjnVZxzYiQYAVru7sjb+odidz4U7RaeLwTjWwSyTUiq4+ZR2ulqrnN9Hs0F9TpgXryF8F4jzOB
+ Q9/F/gcV8T7SKhRnB2mNFxGfYzCMuccq0LjkQ==
+X-Received: by 2002:a17:90b:2687:b0:398:ceef:edde with SMTP id
+ 98e67ed59e1d1-39b27ed85eamr16040744a91.15.1788737260142; 
+ Sun, 06 Sep 2026 16:27:40 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39b3312f9a8sm14491741a91.2.2026.09.06.16.27.35
+ 98e67ed59e1d1-39b3312f9a8sm14491741a91.2.2026.09.06.16.27.37
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 06 Sep 2026 16:27:36 -0700 (PDT)
+ Sun, 06 Sep 2026 16:27:39 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH 03/13] examples/vmdq: do not print from signal handler
-Date: Sun,  6 Sep 2026 16:24:38 -0700
-Message-ID: <20260906232716.496546-4-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH 04/13] examples/symmetric_mp: do not print or exit in handler
+Date: Sun,  6 Sep 2026 16:24:39 -0700
+Message-ID: <20260906232716.496546-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260906232716.496546-1-stephen@networkplumber.org>
 References: <20260906232716.496546-1-stephen@networkplumber.org>
@@ -82,63 +83,90 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The SIGHUP handler calls printf() which is not async-signal-safe.
+The SIGINT and SIGTERM handler called printf() and exit() which are
+not async-signal-safe.
 
-Set a flag instead and print the stats from the main lcore in the
-forwarding loop.
+Set a flag, let the forwarding loops return, and print the stats from
+main() after joining the lcores.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- examples/vmdq/main.c | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
+ examples/multi_process/symmetric_mp/main.c | 26 ++++++++++++++++------
+ 1 file changed, 19 insertions(+), 7 deletions(-)
 
-diff --git a/examples/vmdq/main.c b/examples/vmdq/main.c
-index 8c9d885090..63ac44deba 100644
---- a/examples/vmdq/main.c
-+++ b/examples/vmdq/main.c
-@@ -465,18 +465,27 @@ update_mac_address(struct rte_mbuf *m, unsigned dst_port)
- 	rte_ether_addr_copy(&vmdq_ports_eth_addr[dst_port], &eth->src_addr);
+diff --git a/examples/multi_process/symmetric_mp/main.c b/examples/multi_process/symmetric_mp/main.c
+index 7314a9c6ea..e2d185ab1b 100644
+--- a/examples/multi_process/symmetric_mp/main.c
++++ b/examples/multi_process/symmetric_mp/main.c
+@@ -92,18 +92,25 @@ smp_usage(const char *prgname, const char *errmsg)
  }
  
--/* When we receive a HUP signal, print out our stats */
-+/* Set by the SIGHUP handler, consumed by the main lcore. */
-+static volatile sig_atomic_t stats_requested;
+ 
+-/* signal handler configured for SIGTERM and SIGINT to print stats on exit */
++/* Set by SIGTERM and SIGINT handler to stop the forwarding loops. */
++static volatile sig_atomic_t quit;
 +
 +static void
-+sighup_handler(__rte_unused int signum)
++signal_handler(__rte_unused int signum)
 +{
-+	stats_requested = 1;
++	quit = 1;
 +}
 +
  static void
--sighup_handler(int signum)
+-print_stats(int signum)
 +print_stats(void)
  {
- 	unsigned int q = vmdq_queue_base;
+ 	unsigned i;
+-	printf("\nExiting on signal %d\n\n", signum);
 +
- 	for (; q < num_queues; q++) {
- 		if ((q - vmdq_queue_base) % (num_vmdq_queues / num_pools) == 0)
- 			printf("\nPool %u: ", (q - vmdq_queue_base) /
- 			       (num_vmdq_queues / num_pools));
- 		printf("%lu ", rxPackets[q]);
+ 	for (i = 0; i < num_ports; i++){
+ 		const uint8_t p_num = ports[i];
+ 		printf("Port %u: RX - %u, TX - %u, Drop - %u\n", (unsigned)p_num,
+ 				pstats[p_num].rx, pstats[p_num].tx, pstats[p_num].drop);
  	}
--	printf("\nFinished handling signal %d\n", signum);
-+	putchar('\n');
+-	exit(0);
  }
  
- /*
-@@ -534,6 +543,11 @@ lcore_main(__rte_unused void *dummy)
- 		struct rte_mbuf *buf[MAX_PKT_BURST];
- 		const uint16_t buf_size = RTE_DIM(buf);
+ /* Parse the argument given in the command line of the application */
+@@ -344,7 +351,7 @@ lcore_main(void *arg __rte_unused)
+ 	 * queue number corresponding to our process number (not lcore id)
+ 	 */
  
-+		if (stats_requested && lcore_id == rte_get_main_lcore()) {
-+			stats_requested = 0;
-+			print_stats();
-+		}
+-	for (;;) {
++	while (!quit) {
+ 		struct rte_mbuf *buf[PKT_BURST];
+ 
+ 		for (p = start_port; p < end_port; p++) {
+@@ -364,6 +371,8 @@ lcore_main(void *arg __rte_unused)
+ 			}
+ 		}
+ 	}
 +
- 		for (p = 0; p < num_ports; p++) {
- 			const uint8_t sport = ports[p];
- 			/* 0 <-> 1, 2 <-> 3 etc */
++	return 0;
+ }
+ 
+ /* Check the link status of all ports in up to 9s, and print them finally */
+@@ -440,8 +449,8 @@ main(int argc, char **argv)
+ 	struct rte_mempool *mp;
+ 
+ 	/* set up signal handlers to print stats on exit */
+-	signal(SIGINT, print_stats);
+-	signal(SIGTERM, print_stats);
++	signal(SIGINT, signal_handler);
++	signal(SIGTERM, signal_handler);
+ 
+ 	/* initialise the EAL for all */
+ 	ret = rte_eal_init(argc, argv);
+@@ -484,6 +493,9 @@ main(int argc, char **argv)
+ 	RTE_LOG(INFO, APP, "Finished Process Init.\n");
+ 
+ 	rte_eal_mp_remote_launch(lcore_main, NULL, CALL_MAIN);
++	rte_eal_mp_wait_lcore();
++
++	print_stats();
+ 
+ 	/* clean up the EAL */
+ 	rte_eal_cleanup();
 -- 
 2.53.0
 
