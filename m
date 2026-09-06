@@ -2,70 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F001C79F8C
-	for <dpdk-dev@archiver.kernel.org>; Sun,  6 Sep 2026 23:28:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 784C0C79F9E
+	for <dpdk-dev@archiver.kernel.org>; Sun,  6 Sep 2026 23:28:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E218B40A6C;
-	Mon,  7 Sep 2026 01:27:53 +0200 (CEST)
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com
- [209.85.214.172])
- by mails.dpdk.org (Postfix) with ESMTP id 4630740613
- for <dev@dpdk.org>; Mon,  7 Sep 2026 01:27:51 +0200 (CEST)
-Received: by mail-pl1-f172.google.com with SMTP id
- d9443c01a7336-2d6f9e2f681so32186335ad.3
- for <dev@dpdk.org>; Sun, 06 Sep 2026 16:27:51 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0A40C40A6D;
+	Mon,  7 Sep 2026 01:27:56 +0200 (CEST)
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com
+ [209.85.216.52]) by mails.dpdk.org (Postfix) with ESMTP id 5FB54406B4
+ for <dev@dpdk.org>; Mon,  7 Sep 2026 01:27:54 +0200 (CEST)
+Received: by mail-pj1-f52.google.com with SMTP id
+ 98e67ed59e1d1-39647aa9d52so2875543a91.0
+ for <dev@dpdk.org>; Sun, 06 Sep 2026 16:27:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788737270;
- x=1789342070; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788737273;
+ x=1789342073; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=lv88Bw1lygES56KE+uGcWQGwDVshn+WpZYOQdjY78J8=;
- b=DA7efiy24U7mzf5BuT3bETLQZ/FZvqMwQEo8B+USUtB1au+zwfm1k3Or6jKsZsCmmm
- rNXeN4138soncApv8AgLalRWQhiUmP4vAko1V5/sZC3aQkI5fPBLK88rFsOHvZg8sSHx
- sQaag85WQcs5oju19wM3FSnBOwE3BmGh2qsRPMrdTPORAzKL65TBOzVk8rMvxWkEUJI1
- k2l4tHGz/+GT47/JxeXfTkNvPuK1S2olHYznegkarHEd+G7+Yo1aOS+FRlwd9SnoY98J
- o5yTo5fewkQ+w8FCRKPweZYgMlex1FIQL5n3KQ97KE8M47FX1M52G/2dQmS6enQQnQ0q
- k5vA==
+ bh=efjHmfy2VHU94ILH4hHqwxWLDaUEoGNEEU0D3Zhu3AU=;
+ b=sN764h5K9HrxF5q/t1BfDIPtfdwlQgfPZAb7zG//S8HLaV23ZtnTJDaHKzFRFUiUr8
+ PqdIN4zW6tR3K1MI8yBe5GaL5cmMWUvXh079VkbvVqWV1i7+JuLKtUhsRkC0jqGJBMLE
+ 89jEYNXSxL7wroyeSoJA6ISAGpyBMwTfwyJ46rvXp8QXRTock01Y0ZjiqlHoNk2kvKO4
+ Wj1GkQ/AQEz/rCXhPCyFsRzSg5bqeW/9aIjtg9g+pjsnWkqxaC2RST6G6KKQ0n2N4lT+
+ DxI1wEpMbdo7AgICfWAjBhaGSb1iKSopy3Hl3wz50oRIbXIxsHyw2LnYe5UV5i1Pp6AD
+ uvtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788737270; x=1789342070;
+ d=1e100.net; s=20251104; t=1788737273; x=1789342073;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=lv88Bw1lygES56KE+uGcWQGwDVshn+WpZYOQdjY78J8=;
- b=rDqarj3H4fKXjmZXvxfuOHNdqa16/AFLeZ5tJ0oZWqriZ8ZOeuYNVLb/44+0hfAN6Q
- 3tZL1XIjCsxrzCova9L8eMADGaIzNj454q/yZumkJ0airS/mGKjtnCXSVlS60/vsw+pV
- QSez76fb/iEdFIf8oCNVaG0d3BatjOKQmaBojgPLx9TMLOuLCNW7fvX1682+VR/asJBY
- 4J4jRWZ/2pTRPR5FP81eWLgqrPoMvM73hyh/eDF+cqvlQcUH8DQqgI9elxn1haQMtCOY
- Sp73DAynqEin2izLDmdtFWTCLKJrvXZCRvDhL495ihnuHo+eBup+nUxM/jtCQtPrEd4e
- HcGA==
-X-Gm-Message-State: AFuF++lKzHaSIz91ps5PBjRMkkbpv8XHbS3GTCFxDSRlnS966bnT0Tww
- qUuuflYIFZFmISHZ0BrmPIITHJeqbXatPtP5BQlCZymE/tR0AqSgg6esRVUWzbVkEtfaPOhPbsN
- AX10W
-X-Gm-Gg: AYBFou0XKXSmCOl8mxwuO695cFCFO6nxBiMVAbqLCaDo7sl96i2mDqQ2WPqZRSC4FsX
- vPkii4hdBsAqR5VINaiH73OcKxqOdj6hGelKxIz94GVPUAgHssElfmXnj/kKreOAf/++ShImVAG
- U4PIaizEIEMjkIJ6tsU/myNiHXaMm2TxTCDd8ZSIXtPYEwzhmxiBNTG4Zny/wFtDhVoiNZgk3zY
- xtWPVqEL1jONFBm2UD/UJ6IfamR9KEYQfigkm8R8YfSZZJtMXt7F0FO1ynf+rUm1kO3FYIr1Nx2
- lFnIsecZnqpAsEjeEAfsLzwrIpkGjh/YBsjYU8d6Lbp8ZuMARvJbvl4IrbZIf84voBgJ6Z8amxD
- X+8lZGvlpdC9Hg+aLbns0o5PPaeRyECOcif5t1Fdy/QskcYAea80/ldbhtwLo8gNNPh61QpX+JX
- 6eme4n2wxaHFiDm+RiFoWuXKrgL7QDGOV9RdChDYtvevdB4ci7gaDypTHJmQ+kY+eF7NnVFwLt6
- HBneaRo6vaI3LWNfJUGC/PXz8s=
-X-Received: by 2002:a17:90b:50cc:b0:396:65dd:4093 with SMTP id
- 98e67ed59e1d1-39b26202ebamr30684424a91.14.1788737270379; 
- Sun, 06 Sep 2026 16:27:50 -0700 (PDT)
+ bh=efjHmfy2VHU94ILH4hHqwxWLDaUEoGNEEU0D3Zhu3AU=;
+ b=JiJ+3EiPfOY7YtQvltUWaDpTzb027CDxm7WxrtyxbPjABrgiZ+cKVggPlvXkl1Oq7S
+ +cYmm5xQUDfIIriUsVpVyCoxc12H1Li/Ecr1zixCtUFHAKb9WuVqQVm/fwYLK57RvymE
+ FC2iodBMLTZTdUUtDh9DwiJIpZsUNzxRXe/R+ZQafqIDXssJiWB/n6Muq148XOdF0Bq+
+ q+5uf3VvOW4N3UCdjuSAjwz2Lo91RknucFa0UagaABSL93LwPJ+qTmHzOZ9Gg+eJgwON
+ hpe5unMZ/N9rB193LyfN7m5AmcoK4pXbfgEYPmkD5nmlHuINOG+1gQSd4oWm1RBplfNR
+ 3caw==
+X-Gm-Message-State: AFuF++mqXEY4B5RXV+ahPWovUcEEcXxrW6DYWMIoV7tfbt5npE4zuIiW
+ h5xrNf+k1OPySiFPQGPzu7MAVoF0wCd4Kviz7a71LYX0gTCeudwd0IxtpR2hkw3tbJfLfd69Hfv
+ HoKmv
+X-Gm-Gg: AYBFou0rY+Q3OWXjHcUvieJWKvQR+fxft2UxL52quRDtQPz3cGGL++rl3TayZi5suKs
+ zFPVNdv0VWwwRrGeUVbMpHG/nE1tEqavI/eezaklYu2vKQgMPCJr3jG849424d6k1oEBhtLMNXt
+ ffuYGyigar9kDDRCGqewW/3N6h/cYSl8Pn5YJvSxQ+K4iG6MvS/nvBOluMGxDdbdlo9ZzUfBclK
+ oJs98gb78LY8MaRmaXsvuTkqDYqmrfQ+fwEKCLyqjvAq6hE1EGkYG/o3Nn2JCaquaKvrW/0VHTK
+ dWZgQbvsQLoMmYgCXwoJYXqkgNk+n8YIKNhYSl3L2dDbcioNP1lzEtS2fc1RgQQJlJW1yp1DpkI
+ j8FoLyZT4BFAZSZw9hlz9FtYx4xwSSUedyb3nahfhpFkp/myo9ZMlHyRm+U2YSufpe/u7fMWzjD
+ b86uCEIal+hYPx0khjob6skSrNWBN5LsaFoJQI70Z2ZozEeNa+DO9W2+f0w5xFAVLFzxzRBpe0M
+ ECpPG/JVhLQtloxPsjed4hYCRE=
+X-Received: by 2002:a17:90b:2b45:b0:398:ba46:1d9f with SMTP id
+ 98e67ed59e1d1-39b27ea735bmr15262669a91.13.1788737273469; 
+ Sun, 06 Sep 2026 16:27:53 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39b3312f9a8sm14491741a91.2.2026.09.06.16.27.47
+ 98e67ed59e1d1-39b3312f9a8sm14491741a91.2.2026.09.06.16.27.50
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 06 Sep 2026 16:27:50 -0700 (PDT)
+ Sun, 06 Sep 2026 16:27:53 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Maxime Coquelin <maxime.coquelin@redhat.com>,
- Chenbo Xia <chenbox@nvidia.com>
-Subject: [PATCH 07/13] examples/vhost_blk: do not tear down from signal handler
-Date: Sun,  6 Sep 2026 16:24:42 -0700
-Message-ID: <20260906232716.496546-8-stephen@networkplumber.org>
+ Jingjing Wu <jingjing.wu@intel.com>
+Subject: [PATCH 08/13] examples/ntb: do not print and re-raise from signal
+ handler
+Date: Sun,  6 Sep 2026 16:24:43 -0700
+Message-ID: <20260906232716.496546-9-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260906232716.496546-1-stephen@networkplumber.org>
 References: <20260906232716.496546-1-stephen@networkplumber.org>
@@ -84,68 +83,55 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The SIGINT handler destroyed the controller and called exit() from
-signal context.
+The handler called printf(), reset the disposition to SIG_DFL and
+killed itself, so the process died without stopping the forwarding
+lcores or closing the devices.
 
-Set a flag, break the sleep loop, and destroy the controller in main().
+Set the existing per-lcore stopped flag instead, and mark it volatile
+since it is now written from signal context.
+
+SIGINT no longer terminates the application; it stops forwarding and
+returns to the ntb> prompt, where quit does the teardown.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- examples/vhost_blk/vhost_blk.c | 26 ++++++++++++++------------
- 1 file changed, 14 insertions(+), 12 deletions(-)
+ examples/ntb/ntb_fwd.c | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-diff --git a/examples/vhost_blk/vhost_blk.c b/examples/vhost_blk/vhost_blk.c
-index 9c9e326949..0665d9fb51 100644
---- a/examples/vhost_blk/vhost_blk.c
-+++ b/examples/vhost_blk/vhost_blk.c
-@@ -850,24 +850,18 @@ vhost_blk_ctrlr_destroy(struct vhost_blk_ctrlr *ctrlr)
- 	rte_vhost_driver_unregister(dev_pathname);
+diff --git a/examples/ntb/ntb_fwd.c b/examples/ntb/ntb_fwd.c
+index 33f3c1ef17..bbacce97db 100644
+--- a/examples/ntb/ntb_fwd.c
++++ b/examples/ntb/ntb_fwd.c
+@@ -41,7 +41,7 @@ struct ntb_fwd_stream {
+ struct ntb_fwd_lcore_conf {
+ 	uint16_t stream_id;
+ 	uint16_t nb_stream;
+-	uint8_t stopped;
++	volatile uint8_t stopped;
+ };
+ 
+ enum ntb_fwd_mode {
+@@ -947,12 +947,16 @@ prompt(void)
  }
  
-+/* Set by the SIGINT handler to break the main loop. */
-+static volatile sig_atomic_t quit;
-+
  static void
- signal_handler(__rte_unused int signum)
+-signal_handler(int signum)
++signal_handler(__rte_unused int signum)
  {
--	struct vhost_blk_ctrlr *ctrlr;
--
--	ctrlr = vhost_blk_ctrlr_find(dev_pathname);
--	if (ctrlr == NULL)
--		return;
--
--	if (ctrlr->started)
--		destroy_device(ctrlr->vid);
--
--	vhost_blk_ctrlr_destroy(ctrlr);
--	exit(0);
-+	quit = 1;
- }
- 
- int main(int argc, char *argv[])
- {
-+	struct vhost_blk_ctrlr *ctrlr;
- 	int ret;
- 
- 	/* init EAL */
-@@ -895,9 +889,17 @@ int main(int argc, char *argv[])
+-	if (signum == SIGINT || signum == SIGTERM) {
+-		printf("\nSignal %d received, preparing to exit...\n", signum);
+-		signal(signum, SIG_DFL);
+-		kill(getpid(), signum);
++	struct ntb_fwd_lcore_conf *conf;
++	uint32_t lcore_id;
++
++	RTE_LCORE_FOREACH_WORKER(lcore_id) {
++		conf = &fwd_lcore_conf[lcore_id];
++
++		if (conf->nb_stream)
++			conf->stopped = 1;
  	}
- 
- 	/* loop for exit the application */
--	while (1)
-+	while (!quit)
- 		sleep(1);
- 
-+	ctrlr = vhost_blk_ctrlr_find(dev_pathname);
-+	if (ctrlr != NULL) {
-+		if (ctrlr->started)
-+			destroy_device(ctrlr->vid);
-+
-+		vhost_blk_ctrlr_destroy(ctrlr);
-+	}
-+
- 	/* clean up the EAL */
- 	rte_eal_cleanup();
+ }
  
 -- 
 2.53.0
