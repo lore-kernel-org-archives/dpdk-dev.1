@@ -2,69 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 784C0C79F9E
-	for <dpdk-dev@archiver.kernel.org>; Sun,  6 Sep 2026 23:28:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 031E9C79F8C
+	for <dpdk-dev@archiver.kernel.org>; Sun,  6 Sep 2026 23:28:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0A40C40A6D;
-	Mon,  7 Sep 2026 01:27:56 +0200 (CEST)
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com
- [209.85.216.52]) by mails.dpdk.org (Postfix) with ESMTP id 5FB54406B4
- for <dev@dpdk.org>; Mon,  7 Sep 2026 01:27:54 +0200 (CEST)
-Received: by mail-pj1-f52.google.com with SMTP id
- 98e67ed59e1d1-39647aa9d52so2875543a91.0
- for <dev@dpdk.org>; Sun, 06 Sep 2026 16:27:54 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0CCBF4069F;
+	Mon,  7 Sep 2026 01:27:59 +0200 (CEST)
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com
+ [209.85.216.42]) by mails.dpdk.org (Postfix) with ESMTP id B66044069D
+ for <dev@dpdk.org>; Mon,  7 Sep 2026 01:27:57 +0200 (CEST)
+Received: by mail-pj1-f42.google.com with SMTP id
+ 98e67ed59e1d1-3964e480f76so3524538a91.1
+ for <dev@dpdk.org>; Sun, 06 Sep 2026 16:27:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788737273;
- x=1789342073; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788737277;
+ x=1789342077; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=efjHmfy2VHU94ILH4hHqwxWLDaUEoGNEEU0D3Zhu3AU=;
- b=sN764h5K9HrxF5q/t1BfDIPtfdwlQgfPZAb7zG//S8HLaV23ZtnTJDaHKzFRFUiUr8
- PqdIN4zW6tR3K1MI8yBe5GaL5cmMWUvXh079VkbvVqWV1i7+JuLKtUhsRkC0jqGJBMLE
- 89jEYNXSxL7wroyeSoJA6ISAGpyBMwTfwyJ46rvXp8QXRTock01Y0ZjiqlHoNk2kvKO4
- Wj1GkQ/AQEz/rCXhPCyFsRzSg5bqeW/9aIjtg9g+pjsnWkqxaC2RST6G6KKQ0n2N4lT+
- DxI1wEpMbdo7AgICfWAjBhaGSb1iKSopy3Hl3wz50oRIbXIxsHyw2LnYe5UV5i1Pp6AD
- uvtQ==
+ bh=HsAYpvmk8rr61N2cVYwJ9NTUq/YaUkhoNPcmprSw43Y=;
+ b=jGzFKx+VALIe+xXiPwq21EmIDIX9wfcd1u21196cZojJv3AZy9Vhh8jgZfeZTA7/IG
+ VPNGz8hYR4x1AJ1nyqc1lkdn7GKasjTdAE6SiGi2x2aT9mlhMXiFPk/SNe/fBsZK2QA/
+ NPV4Aju93d/kw69HNyjK155pJKNWP6tB5XD+eDHixogUWZztwjg8U4zk77aMn8yeQj11
+ 05G4V3ioDGvvSDVGdCGzESI8nukvCk/pyd00Fs7h+mAQo55kGGE3bb5yueNql+FT6Ar7
+ 8hZBVOHAUSYS9pdeWrzVR9EhNh4TidBxkEhyCTNBfjffY9KEY/4VFNVK6QNLjMuKjpE3
+ LrBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788737273; x=1789342073;
+ d=1e100.net; s=20251104; t=1788737277; x=1789342077;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=efjHmfy2VHU94ILH4hHqwxWLDaUEoGNEEU0D3Zhu3AU=;
- b=JiJ+3EiPfOY7YtQvltUWaDpTzb027CDxm7WxrtyxbPjABrgiZ+cKVggPlvXkl1Oq7S
- +cYmm5xQUDfIIriUsVpVyCoxc12H1Li/Ecr1zixCtUFHAKb9WuVqQVm/fwYLK57RvymE
- FC2iodBMLTZTdUUtDh9DwiJIpZsUNzxRXe/R+ZQafqIDXssJiWB/n6Muq148XOdF0Bq+
- q+5uf3VvOW4N3UCdjuSAjwz2Lo91RknucFa0UagaABSL93LwPJ+qTmHzOZ9Gg+eJgwON
- hpe5unMZ/N9rB193LyfN7m5AmcoK4pXbfgEYPmkD5nmlHuINOG+1gQSd4oWm1RBplfNR
- 3caw==
-X-Gm-Message-State: AFuF++mqXEY4B5RXV+ahPWovUcEEcXxrW6DYWMIoV7tfbt5npE4zuIiW
- h5xrNf+k1OPySiFPQGPzu7MAVoF0wCd4Kviz7a71LYX0gTCeudwd0IxtpR2hkw3tbJfLfd69Hfv
- HoKmv
-X-Gm-Gg: AYBFou0rY+Q3OWXjHcUvieJWKvQR+fxft2UxL52quRDtQPz3cGGL++rl3TayZi5suKs
- zFPVNdv0VWwwRrGeUVbMpHG/nE1tEqavI/eezaklYu2vKQgMPCJr3jG849424d6k1oEBhtLMNXt
- ffuYGyigar9kDDRCGqewW/3N6h/cYSl8Pn5YJvSxQ+K4iG6MvS/nvBOluMGxDdbdlo9ZzUfBclK
- oJs98gb78LY8MaRmaXsvuTkqDYqmrfQ+fwEKCLyqjvAq6hE1EGkYG/o3Nn2JCaquaKvrW/0VHTK
- dWZgQbvsQLoMmYgCXwoJYXqkgNk+n8YIKNhYSl3L2dDbcioNP1lzEtS2fc1RgQQJlJW1yp1DpkI
- j8FoLyZT4BFAZSZw9hlz9FtYx4xwSSUedyb3nahfhpFkp/myo9ZMlHyRm+U2YSufpe/u7fMWzjD
- b86uCEIal+hYPx0khjob6skSrNWBN5LsaFoJQI70Z2ZozEeNa+DO9W2+f0w5xFAVLFzxzRBpe0M
- ECpPG/JVhLQtloxPsjed4hYCRE=
-X-Received: by 2002:a17:90b:2b45:b0:398:ba46:1d9f with SMTP id
- 98e67ed59e1d1-39b27ea735bmr15262669a91.13.1788737273469; 
- Sun, 06 Sep 2026 16:27:53 -0700 (PDT)
+ bh=HsAYpvmk8rr61N2cVYwJ9NTUq/YaUkhoNPcmprSw43Y=;
+ b=G13rONpaUvR1CD1wy+9nDfDk6BEIaapdbFYqNy29X31lfGYRtjLaf6xgSaD7R3KpA6
+ 1O62cNYX4s3flzmNhHOAxkpW4CUjytCZbkvNth+5PBwNpBEDdfGnNPcx/w0bYtEiJ1hF
+ tpkWfFc/W6pzAD4uT8fjKL3v+mRY3jbjCrGvXTdEVuj4+2f8Z0xX3/+xCwpLSs2dhulD
+ FAf1h5624otGrGWSkOF/ENSwsuiwbxqgQPe7IDkrchCtV/Mnq8QVjZXDthhL/JmeDGvl
+ WdGp/fbn8A1Zy80hvh2B7PpREdG7o8ikwOZaMp1ecnpxBYoJc+57uAknsXCj5W3qQpfu
+ 3YDg==
+X-Gm-Message-State: AFuF++nukMYLYXB6N8wTN7bL1plto69MxxRlzscFEHUrIPzAeoF8ah56
+ vaaCwoTIDJX51G/HR2lo7c/L+QUpvfacdhlCl9E1AQWXY8GDofVO5Trlx67mj5EZPh/InTPpYry
+ LLhgT
+X-Gm-Gg: AYBFou0py6Hdp3HVpdZRpisNZZt9UMAwOOclBLXblCVYfadfr4SMSDUf3SgDuz82ows
+ dDxJs8IjSZhd+OSnvHRkkuhKs/DOW+a64e+cwHThNyXmTHXrjoJWS9W6BCcfy1v4jRrT824S6Fr
+ HLpkVDiFnbi/VS/z8XUXZ5CGTFY8xW/vrJmcIyfmBYmjfJ/Yj260I2iF9LlptXgEP45OLzT+dBQ
+ HSkrtMOP4LSEi1bCFjNj7Dmej2FcZzTPyQQVU0jsKkmSL2RmSbZaNFGrX80rxAeiHOQXz8inAGf
+ uRw1uzJZOBjvOQIVBO9DfAg6XOSllJy5QTlh0vtxT8ng7B1P83lLh1AWiIRiMEsOSwkZs1Og02p
+ DjsLp5es6kQEhFpw4jAzNG6m5ys0/ZqjdN7FH6mcML8fao8uqBwLdk27AWmaxwDlE/3Yn2GMIy5
+ 7xg6Su5IYRDo6shyV5nLO8jlo/Pm3u9Xsc0rFbDEVn1QJswmHi7JooamdAQf/xQhEd6o+JFDdKd
+ x1xC7XHaVBSjb6E3UqBMTpZJYg=
+X-Received: by 2002:a17:90b:1e51:b0:399:ecd:d68d with SMTP id
+ 98e67ed59e1d1-39b26260f7dmr27361101a91.22.1788737276911; 
+ Sun, 06 Sep 2026 16:27:56 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39b3312f9a8sm14491741a91.2.2026.09.06.16.27.50
+ 98e67ed59e1d1-39b3312f9a8sm14491741a91.2.2026.09.06.16.27.54
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 06 Sep 2026 16:27:53 -0700 (PDT)
+ Sun, 06 Sep 2026 16:27:56 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Jingjing Wu <jingjing.wu@intel.com>
-Subject: [PATCH 08/13] examples/ntb: do not print and re-raise from signal
- handler
-Date: Sun,  6 Sep 2026 16:24:43 -0700
-Message-ID: <20260906232716.496546-9-stephen@networkplumber.org>
+ Radu Nicolau <radu.nicolau@intel.com>, Akhil Goyal <gakhil@marvell.com>
+Subject: [PATCH 09/13] examples/ipsecgw: do not print from signal handler
+Date: Sun,  6 Sep 2026 16:24:44 -0700
+Message-ID: <20260906232716.496546-10-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260906232716.496546-1-stephen@networkplumber.org>
 References: <20260906232716.496546-1-stephen@networkplumber.org>
@@ -83,56 +82,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The handler called printf(), reset the disposition to SIG_DFL and
-killed itself, so the process died without stopping the forwarding
-lcores or closing the devices.
-
-Set the existing per-lcore stopped flag instead, and mark it volatile
-since it is now written from signal context.
-
-SIGINT no longer terminates the application; it stops forwarding and
-returns to the ntb> prompt, where quit does the teardown.
+The SIGINT handler calls printf which is not async-signal safe.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- examples/ntb/ntb_fwd.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ examples/ipsec-secgw/ipsec-secgw.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/examples/ntb/ntb_fwd.c b/examples/ntb/ntb_fwd.c
-index 33f3c1ef17..bbacce97db 100644
---- a/examples/ntb/ntb_fwd.c
-+++ b/examples/ntb/ntb_fwd.c
-@@ -41,7 +41,7 @@ struct ntb_fwd_stream {
- struct ntb_fwd_lcore_conf {
- 	uint16_t stream_id;
- 	uint16_t nb_stream;
--	uint8_t stopped;
-+	volatile uint8_t stopped;
- };
- 
- enum ntb_fwd_mode {
-@@ -947,12 +947,16 @@ prompt(void)
+diff --git a/examples/ipsec-secgw/ipsec-secgw.c b/examples/ipsec-secgw/ipsec-secgw.c
+index eba7560c9b..4816bcdd82 100644
+--- a/examples/ipsec-secgw/ipsec-secgw.c
++++ b/examples/ipsec-secgw/ipsec-secgw.c
+@@ -2448,11 +2448,8 @@ create_default_ipsec_flow(uint16_t port_id, uint64_t rx_offloads)
+ static void
+ signal_handler(int signum)
+ {
+-	if (signum == SIGINT || signum == SIGTERM) {
+-		printf("\n\nSignal %d received, preparing to exit...\n",
+-				signum);
++	if (signum == SIGINT || signum == SIGTERM)
+ 		force_quit = true;
+-	}
  }
  
  static void
--signal_handler(int signum)
-+signal_handler(__rte_unused int signum)
- {
--	if (signum == SIGINT || signum == SIGTERM) {
--		printf("\nSignal %d received, preparing to exit...\n", signum);
--		signal(signum, SIG_DFL);
--		kill(getpid(), signum);
-+	struct ntb_fwd_lcore_conf *conf;
-+	uint32_t lcore_id;
-+
-+	RTE_LCORE_FOREACH_WORKER(lcore_id) {
-+		conf = &fwd_lcore_conf[lcore_id];
-+
-+		if (conf->nb_stream)
-+			conf->stopped = 1;
- 	}
- }
- 
 -- 
 2.53.0
 
