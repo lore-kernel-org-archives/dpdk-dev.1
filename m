@@ -2,64 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2737DC79F89
-	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Sep 2026 12:14:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01429C79F89
+	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Sep 2026 12:14:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 651BD40678;
-	Mon,  7 Sep 2026 14:14:22 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0DAEF40A4B;
+	Mon,  7 Sep 2026 14:14:28 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id E360640663
- for <dev@dpdk.org>; Mon,  7 Sep 2026 14:14:20 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id A886A40A6C
+ for <dev@dpdk.org>; Mon,  7 Sep 2026 14:14:25 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1788783260;
+ s=mimecast20190719; t=1788783265;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=6LGt2TkqvDAQJtwodzqkMUhsn4QPYCOOeobh2my7wKA=;
- b=BdrIAWjE2fWMnwIlT/0Ds2NlrZhokOGYSQ+K42FOcEfGXIY0ItDpLwW8nhq3PWrEWoVV2R
- VF1h0N7mXtOLFbRgKOC7sxIePg4yu7wjb2acP/OiPJ+eqDuBwVV4VSKlJJZkopJjjbFH6/
- O3egnydaKH39CDzAIdUVniHc6QGt784=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ bh=fOi+e1ogDoS3BlQ5bOYd7zVgKTQw7g/CKcNmjg+WITo=;
+ b=RX4DQXTtTDYk8FG14f884N0ZyyVtxlKdQcCddyl+NH3AXPu5yKp8pWdVcRATaTBGvW0Cdk
+ kdZ1P73c0bP/upU7nikRroG13gTTUuHzLSvqcQp7oIejA+PfsSque28KXlCG0/vuaUlG2h
+ UWU3yDYldiZGtJm/7bCA+nVynVxjnZQ=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-614-lExKyE39Nw6PJ9ISgCzrfQ-1; Mon,
- 07 Sep 2026 08:14:15 -0400
-X-MC-Unique: lExKyE39Nw6PJ9ISgCzrfQ-1
-X-Mimecast-MFC-AGG-ID: lExKyE39Nw6PJ9ISgCzrfQ_1788783253
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-407-Qc3lzXpjOTW67qxZozka6A-1; Mon,
+ 07 Sep 2026 08:14:23 -0400
+X-MC-Unique: Qc3lzXpjOTW67qxZozka6A-1
+X-Mimecast-MFC-AGG-ID: Qc3lzXpjOTW67qxZozka6A_1788783260
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 2BF96183450F; Mon,  7 Sep 2026 12:14:13 +0000 (UTC)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 7533E1829E38; Mon,  7 Sep 2026 12:14:20 +0000 (UTC)
 Received: from dmarchan.redhat.corp
  (headnet04.pony-001.prod.iad2.dc.redhat.com [10.2.32.116])
- by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id F39EF1800257; Mon,  7 Sep 2026 12:14:09 +0000 (UTC)
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 8D5A418005AA; Mon,  7 Sep 2026 12:14:15 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org,
 	hkalra@marvell.com
 Cc: Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>,
- Chenbo Xia <chenbox@nvidia.com>,
  Anatoly Burakov <anatoly.burakov@intel.com>,
+ Chenbo Xia <chenbox@nvidia.com>, Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>,
  Long Li <longli@microsoft.com>, Wei Hu <weh@microsoft.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Kiran Kumar K <kirankumark@marvell.com>,
- Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
- Jakub Grajciar <jgrajcia@cisco.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [RFC v3 4/5] interrupts: close interrupt FDs
-Date: Mon,  7 Sep 2026 14:13:47 +0200
-Message-ID: <20260907121348.3049808-5-david.marchand@redhat.com>
+ Jie Liu <liujie5@linkdatatechnology.com>,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Maxime Coquelin <maxime.coquelin@redhat.com>,
+ Jakub Palider <jpalider@marvell.com>,
+ Tomasz Duszynski <tduszynski@marvell.com>
+Subject: [RFC v3 5/5] interrupts: warn on leaked file descriptors
+Date: Mon,  7 Sep 2026 14:13:48 +0200
+Message-ID: <20260907121348.3049808-6-david.marchand@redhat.com>
 In-Reply-To: <20260907121348.3049808-1-david.marchand@redhat.com>
 References: <20260907121348.3049808-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: cZ3IkDUJbF5yT6CnIum_3o5d7uL3TdGypXQyQiXVqNc_1788783253
+X-Mimecast-MFC-PROC-ID: DgZR6C9AdWuaUo_shA28YfCO9b04jFcRrOH9O4MwTCs_1788783260
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -76,506 +79,248 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add rte_intr_fd_close() and rte_intr_dev_fd_close() helpers to
-encapsulate the common pattern of closing an interrupt handle's
-file descriptor and resetting it to -1.
+Let's warn on interrupt handle that still reference what looks like a
+valid file descriptor.
 
-This simplifies code in multiple drivers that previously had to:
-  if (rte_intr_fd_get(handle) >= 0) {
-      close(rte_intr_fd_get(handle));
-      rte_intr_fd_set(handle, -1);
-  }
+This will likely raise false positives, but it should help limiting FD
+leaks on the long term.
+
+Add missing reset to -1 in drivers, and document code.
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
 Changes since RFC v2:
-- added unit test,
-- converted bus/cdx and FreeBSD EAL interrupt code,
-- added wrappers for common/cnxk,
+- split code comments added by patch 3 in the RFC v2,
+- added a check on leftover FD in a interrupt handle,
 
 ---
- app/test/test_interrupts.c             | 72 ++++++++++++++++++++++++++
- doc/guides/rel_notes/release_26_11.rst |  2 +
- drivers/bus/cdx/cdx_vfio.c             |  6 +--
- drivers/bus/pci/bsd/pci.c              |  7 +--
- drivers/bus/pci/linux/pci_uio.c        | 15 ++----
- drivers/bus/pci/linux/pci_vfio.c       | 16 ++----
- drivers/bus/pci/pci_common_uio.c       | 12 +----
- drivers/bus/vmbus/linux/vmbus_uio.c    | 13 ++---
- drivers/bus/vmbus/vmbus_common_uio.c   | 11 +---
- drivers/common/cnxk/roc_platform.h     |  2 +
- drivers/net/memif/memif_socket.c       | 13 ++---
- lib/eal/common/eal_common_interrupts.c | 23 ++++++++
- lib/eal/freebsd/eal_alarm.c            |  3 +-
- lib/eal/include/rte_interrupts.h       | 27 ++++++++++
- lib/eal/linux/eal_dev.c                |  5 +-
- 15 files changed, 147 insertions(+), 80 deletions(-)
+ app/test/test_interrupts.c                       | 5 ++++-
+ drivers/bus/cdx/cdx_vfio.c                       | 4 ++++
+ drivers/bus/pci/linux/pci_vfio.c                 | 2 ++
+ drivers/common/mlx5/linux/mlx5_common_os.c       | 6 +++++-
+ drivers/net/mana/mana.c                          | 1 +
+ drivers/net/mlx4/mlx4_intr.c                     | 1 +
+ drivers/net/sxe2/sxe2_irq.c                      | 5 ++++-
+ drivers/net/tap/rte_eth_tap.c                    | 1 +
+ drivers/net/virtio/virtio_user/virtio_user_dev.c | 2 ++
+ drivers/raw/cnxk_gpio/cnxk_gpio.c                | 3 +++
+ drivers/vdpa/mlx5/mlx5_vdpa_event.c              | 1 +
+ drivers/vdpa/mlx5/mlx5_vdpa_virtq.c              | 1 +
+ lib/eal/common/eal_common_interrupts.c           | 6 ++++++
+ 13 files changed, 35 insertions(+), 3 deletions(-)
 
 diff --git a/app/test/test_interrupts.c b/app/test/test_interrupts.c
-index 747dfc4f48..67f1e6429a 100644
+index 67f1e6429a..a737a9cd51 100644
 --- a/app/test/test_interrupts.c
 +++ b/app/test/test_interrupts.c
-@@ -169,6 +169,65 @@ test_interrupt_handle_compare(struct rte_intr_handle *intr_handle_l,
- 	return 0;
- }
+@@ -130,8 +130,11 @@ test_interrupt_deinit(void)
+ {
+ 	int i;
  
-+/**
-+ * Tests for rte_intr_fd_close() and rte_intr_dev_fd_close().
-+ */
-+static int
-+test_interrupt_close(void)
-+{
-+	struct rte_intr_handle *intr_handle;
-+	int pipefd[2];
-+
-+	/* check with null intr_handle */
-+	rte_intr_fd_close(NULL);
-+	rte_intr_dev_fd_close(NULL);
-+
-+	intr_handle = rte_intr_instance_alloc(RTE_INTR_INSTANCE_F_PRIVATE);
-+	if (!intr_handle)
-+		return -1;
-+
-+	if (pipe(pipefd) < 0) {
-+		rte_intr_instance_free(intr_handle);
-+		return -1;
+-	for (i = 0; i < TEST_INTERRUPT_HANDLE_MAX; i++)
++	for (i = 0; i < TEST_INTERRUPT_HANDLE_MAX; i++) {
++		rte_intr_fd_set(intr_handles[i], -1);
++		rte_intr_dev_fd_set(intr_handles[i], -1);
+ 		rte_intr_instance_free(intr_handles[i]);
 +	}
-+
-+	if (rte_intr_fd_set(intr_handle, pipefd[0]) < 0 ||
-+			rte_intr_dev_fd_set(intr_handle, pipefd[1]) < 0) {
-+		close(pipefd[0]);
-+		close(pipefd[1]);
-+		rte_intr_instance_free(intr_handle);
-+		return -1;
-+	}
-+
-+	/* check rte_intr_fd_close */
-+	rte_intr_fd_close(intr_handle);
-+
-+	if (rte_intr_fd_get(intr_handle) != -1) {
-+		printf("fd not set to -1 after close\n");
-+		close(pipefd[1]);
-+		rte_intr_instance_free(intr_handle);
-+		return -1;
-+	}
-+
-+	/* calling again should be a noop */
-+	rte_intr_fd_close(intr_handle);
-+
-+	/* check rte_intr_dev_fd_close */
-+	rte_intr_dev_fd_close(intr_handle);
-+
-+	if (rte_intr_dev_fd_get(intr_handle) != -1) {
-+		printf("dev_fd not set to -1 after close\n");
-+		rte_intr_instance_free(intr_handle);
-+		return -1;
-+	}
-+
-+	/* calling again should be a noop */
-+	rte_intr_dev_fd_close(intr_handle);
-+
-+	rte_intr_instance_free(intr_handle);
-+	return 0;
-+}
-+
- #else
- /* to be implemented for bsd later */
- static inline int
-@@ -206,6 +265,12 @@ test_interrupt_handle_compare(struct rte_intr_handle *intr_handle_l,
+ 	close(pfds.pipefd[0]);
+ 	close(pfds.pipefd[1]);
  
- 	return 0;
- }
-+
-+static int
-+test_interrupt_close(void)
-+{
-+	return 0;
-+}
- #endif /* RTE_EXEC_ENV_LINUX */
- 
- /**
-@@ -566,6 +631,13 @@ test_interrupt(void)
- 	}
- 	rte_delay_ms(TEST_INTERRUPT_CHECK_INTERVAL);
- 
-+	printf("start interrupt close test\n");
-+	if (test_interrupt_close() < 0) {
-+		printf("fail to check interrupt close\n");
-+		goto out;
-+	}
-+	rte_delay_ms(TEST_INTERRUPT_CHECK_INTERVAL);
-+
- 	ret = 0;
- 
- out:
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 36d6f3a05f..07b90f1529 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -99,6 +99,8 @@ API Changes
- 
-   * ``rte_intr_instance_alloc()`` now initializes file descriptors
-     to invalid values instead of zero.
-+  * Added ``rte_intr_fd_close()`` and ``rte_intr_dev_fd_close()``
-+    helpers to close file descriptors and reset them to -1.
- 
- 
- ABI Changes
 diff --git a/drivers/bus/cdx/cdx_vfio.c b/drivers/bus/cdx/cdx_vfio.c
-index 0e4af4e940..8d67058bfe 100644
+index 8d67058bfe..0c1b263a85 100644
 --- a/drivers/bus/cdx/cdx_vfio.c
 +++ b/drivers/bus/cdx/cdx_vfio.c
-@@ -110,11 +110,7 @@ cdx_vfio_unmap_resource_primary(struct rte_cdx_device *dev)
- 			CDX_BUS_ERR("Error when disabling bus master for %s",
- 				    dev->device.name);
- 
--		if (close(rte_intr_fd_get(dev->intr_handle)) < 0) {
--			CDX_BUS_ERR("Error when closing eventfd file descriptor for %s",
--				dev->device.name);
--			return -1;
--		}
-+		rte_intr_fd_close(dev->intr_handle);
- 	}
- 
- 	vfio_dev_fd = rte_intr_dev_fd_get(dev->intr_handle);
-diff --git a/drivers/bus/pci/bsd/pci.c b/drivers/bus/pci/bsd/pci.c
-index bbe08605af..f1012bb91b 100644
---- a/drivers/bus/pci/bsd/pci.c
-+++ b/drivers/bus/pci/bsd/pci.c
-@@ -93,11 +93,8 @@ pci_uio_free_resource(struct rte_pci_device *dev,
- {
- 	rte_free(uio_res);
- 
--	if (rte_intr_fd_get(dev->intr_handle) >= 0) {
--		close(rte_intr_fd_get(dev->intr_handle));
--		rte_intr_fd_set(dev->intr_handle, -1);
--		rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UNKNOWN);
--	}
-+	rte_intr_fd_close(dev->intr_handle);
-+	rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UNKNOWN);
- }
- 
- int
-diff --git a/drivers/bus/pci/linux/pci_uio.c b/drivers/bus/pci/linux/pci_uio.c
-index 40e96b1c67..0983474994 100644
---- a/drivers/bus/pci/linux/pci_uio.c
-+++ b/drivers/bus/pci/linux/pci_uio.c
-@@ -197,20 +197,11 @@ void
- pci_uio_free_resource(struct rte_pci_device *dev,
- 		struct mapped_pci_resource *uio_res)
- {
--	int uio_cfg_fd = rte_intr_dev_fd_get(dev->intr_handle);
--
- 	rte_free(uio_res);
- 
--	if (uio_cfg_fd >= 0) {
--		close(uio_cfg_fd);
--		rte_intr_dev_fd_set(dev->intr_handle, -1);
--	}
--
--	if (rte_intr_fd_get(dev->intr_handle) >= 0) {
--		close(rte_intr_fd_get(dev->intr_handle));
--		rte_intr_fd_set(dev->intr_handle, -1);
--		rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UNKNOWN);
--	}
-+	rte_intr_dev_fd_close(dev->intr_handle);
-+	rte_intr_fd_close(dev->intr_handle);
-+	rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UNKNOWN);
- }
- 
- int
-diff --git a/drivers/bus/pci/linux/pci_vfio.c b/drivers/bus/pci/linux/pci_vfio.c
-index a92a0d86ec..84c338c68e 100644
---- a/drivers/bus/pci/linux/pci_vfio.c
-+++ b/drivers/bus/pci/linux/pci_vfio.c
-@@ -354,9 +354,7 @@ pci_vfio_enable_notifier(struct rte_pci_device *dev, int vfio_dev_fd)
- 
- 	return 0;
- error:
--	close(fd);
--
--	rte_intr_fd_set(dev->vfio_req_intr_handle, -1);
-+	rte_intr_fd_close(dev->vfio_req_intr_handle);
- 	rte_intr_type_set(dev->vfio_req_intr_handle, RTE_INTR_HANDLE_UNKNOWN);
- 	rte_intr_dev_fd_set(dev->vfio_req_intr_handle, -1);
- 
-@@ -383,9 +381,7 @@ pci_vfio_disable_notifier(struct rte_pci_device *dev)
- 		return -1;
- 	}
- 
--	close(rte_intr_fd_get(dev->vfio_req_intr_handle));
--
--	rte_intr_fd_set(dev->vfio_req_intr_handle, -1);
-+	rte_intr_fd_close(dev->vfio_req_intr_handle);
- 	rte_intr_type_set(dev->vfio_req_intr_handle, RTE_INTR_HANDLE_UNKNOWN);
- 	rte_intr_dev_fd_set(dev->vfio_req_intr_handle, -1);
- 
-@@ -1073,13 +1069,7 @@ pci_vfio_unmap_resource_primary(struct rte_pci_device *dev)
- 		return -1;
- 	}
- 
--	if (rte_intr_fd_get(dev->intr_handle) < 0)
--		return -1;
--
--	if (close(rte_intr_fd_get(dev->intr_handle)) < 0) {
--		PCI_LOG(INFO, "Error when closing eventfd file descriptor for %s", pci_addr);
--		return -1;
--	}
-+	rte_intr_fd_close(dev->intr_handle);
- 
+@@ -116,6 +116,8 @@ cdx_vfio_unmap_resource_primary(struct rte_cdx_device *dev)
  	vfio_dev_fd = rte_intr_dev_fd_get(dev->intr_handle);
  	if (vfio_dev_fd < 0)
-diff --git a/drivers/bus/pci/pci_common_uio.c b/drivers/bus/pci/pci_common_uio.c
-index 47d50721dc..52a10f806a 100644
---- a/drivers/bus/pci/pci_common_uio.c
-+++ b/drivers/bus/pci/pci_common_uio.c
-@@ -211,7 +211,6 @@ pci_uio_unmap_resource(struct rte_pci_device *dev)
- 	struct mapped_pci_resource *uio_res;
- 	struct mapped_pci_res_list *uio_res_list =
- 			RTE_TAILQ_CAST(rte_uio_tailq.head, mapped_pci_res_list);
--	int uio_cfg_fd;
+ 		return -1;
++	/* vfio_dev_fd is owned by VFIO, only clear reference here. */
++	rte_intr_dev_fd_set(dev->intr_handle, -1);
  
- 	if (dev == NULL)
- 		return;
-@@ -222,15 +221,8 @@ pci_uio_unmap_resource(struct rte_pci_device *dev)
- 		return;
+ 	ret = rte_vfio_release_device(RTE_CDX_BUS_DEVICES_PATH, dev->device.name,
+ 				      vfio_dev_fd);
+@@ -150,6 +152,8 @@ cdx_vfio_unmap_resource_secondary(struct rte_cdx_device *dev)
+ 	vfio_dev_fd = rte_intr_dev_fd_get(dev->intr_handle);
+ 	if (vfio_dev_fd < 0)
+ 		return -1;
++	/* vfio_dev_fd is owned by VFIO, only clear reference here. */
++	rte_intr_dev_fd_set(dev->intr_handle, -1);
  
- 	/* close fd */
--	if (rte_intr_fd_get(dev->intr_handle) >= 0)
--		close(rte_intr_fd_get(dev->intr_handle));
--	uio_cfg_fd = rte_intr_dev_fd_get(dev->intr_handle);
--	if (uio_cfg_fd >= 0) {
--		close(uio_cfg_fd);
--		rte_intr_dev_fd_set(dev->intr_handle, -1);
--	}
--
--	rte_intr_fd_set(dev->intr_handle, -1);
-+	rte_intr_fd_close(dev->intr_handle);
-+	rte_intr_dev_fd_close(dev->intr_handle);
- 	rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UNKNOWN);
+ 	ret = rte_vfio_release_device(RTE_CDX_BUS_DEVICES_PATH, dev->device.name,
+ 				      vfio_dev_fd);
+diff --git a/drivers/bus/pci/linux/pci_vfio.c b/drivers/bus/pci/linux/pci_vfio.c
+index 84c338c68e..b5f05e9f9f 100644
+--- a/drivers/bus/pci/linux/pci_vfio.c
++++ b/drivers/bus/pci/linux/pci_vfio.c
+@@ -356,6 +356,7 @@ pci_vfio_enable_notifier(struct rte_pci_device *dev, int vfio_dev_fd)
+ error:
+ 	rte_intr_fd_close(dev->vfio_req_intr_handle);
+ 	rte_intr_type_set(dev->vfio_req_intr_handle, RTE_INTR_HANDLE_UNKNOWN);
++	/* vfio_dev_fd is managed by VFIO layer, only clear reference here. */
+ 	rte_intr_dev_fd_set(dev->vfio_req_intr_handle, -1);
  
- 	/* secondary processes - just free maps */
-diff --git a/drivers/bus/vmbus/linux/vmbus_uio.c b/drivers/bus/vmbus/linux/vmbus_uio.c
-index fbafc5027d..c52d6738a5 100644
---- a/drivers/bus/vmbus/linux/vmbus_uio.c
-+++ b/drivers/bus/vmbus/linux/vmbus_uio.c
-@@ -67,16 +67,9 @@ vmbus_uio_free_resource(struct rte_vmbus_device *dev,
- {
- 	rte_free(uio_res);
- 
--	if (rte_intr_dev_fd_get(dev->intr_handle) >= 0) {
--		close(rte_intr_dev_fd_get(dev->intr_handle));
--		rte_intr_dev_fd_set(dev->intr_handle, -1);
--	}
--
--	if (rte_intr_fd_get(dev->intr_handle) >= 0) {
--		close(rte_intr_fd_get(dev->intr_handle));
--		rte_intr_fd_set(dev->intr_handle, -1);
--		rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UNKNOWN);
--	}
-+	rte_intr_dev_fd_close(dev->intr_handle);
-+	rte_intr_fd_close(dev->intr_handle);
-+	rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UNKNOWN);
- }
- 
- int
-diff --git a/drivers/bus/vmbus/vmbus_common_uio.c b/drivers/bus/vmbus/vmbus_common_uio.c
-index 7459f4ea7a..9765f5f609 100644
---- a/drivers/bus/vmbus/vmbus_common_uio.c
-+++ b/drivers/bus/vmbus/vmbus_common_uio.c
-@@ -254,14 +254,7 @@ vmbus_uio_unmap_resource(struct rte_vmbus_device *dev)
- 	rte_free(uio_res);
- 
- 	/* close fd */
--	if (rte_intr_fd_get(dev->intr_handle) >= 0)
--		close(rte_intr_fd_get(dev->intr_handle));
--
--	if (rte_intr_dev_fd_get(dev->intr_handle) >= 0) {
--		close(rte_intr_dev_fd_get(dev->intr_handle));
--		rte_intr_dev_fd_set(dev->intr_handle, -1);
--	}
--
--	rte_intr_fd_set(dev->intr_handle, -1);
-+	rte_intr_fd_close(dev->intr_handle);
-+	rte_intr_dev_fd_close(dev->intr_handle);
- 	rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UNKNOWN);
- }
-diff --git a/drivers/common/cnxk/roc_platform.h b/drivers/common/cnxk/roc_platform.h
-index ac4f76473f..aba9782023 100644
---- a/drivers/common/cnxk/roc_platform.h
-+++ b/drivers/common/cnxk/roc_platform.h
-@@ -171,8 +171,10 @@ plt_thread_is_valid(plt_thread_t thr)
- #define plt_intr_vec_list_free		rte_intr_vec_list_free
- #define plt_intr_fd_set			rte_intr_fd_set
- #define plt_intr_fd_get			rte_intr_fd_get
-+#define plt_intr_fd_close		rte_intr_fd_close
- #define plt_intr_dev_fd_get		rte_intr_dev_fd_get
- #define plt_intr_dev_fd_set		rte_intr_dev_fd_set
-+#define plt_intr_dev_fd_close		rte_intr_dev_fd_close
- #define plt_intr_type_get		rte_intr_type_get
- #define plt_intr_type_set		rte_intr_type_set
- #define plt_intr_instance_alloc		rte_intr_instance_alloc
-diff --git a/drivers/net/memif/memif_socket.c b/drivers/net/memif/memif_socket.c
-index 649f8d0e61..94cd70fb89 100644
---- a/drivers/net/memif/memif_socket.c
-+++ b/drivers/net/memif/memif_socket.c
-@@ -510,8 +510,7 @@ memif_intr_unregister_handler(struct rte_intr_handle *intr_handle, void *arg)
- 	struct memif_control_channel *cc = arg;
- 
- 	/* close control channel fd */
--	if (rte_intr_fd_get(intr_handle) >= 0)
--		close(rte_intr_fd_get(intr_handle));
-+	rte_intr_fd_close(intr_handle);
- 	/* clear message queue */
- 	while ((elt = TAILQ_FIRST(&cc->msg_queue)) != NULL) {
- 		TAILQ_REMOVE(&cc->msg_queue, elt, next);
-@@ -596,10 +595,7 @@ memif_disconnect(struct rte_eth_dev *dev)
- 				continue;
- 		}
- 
--		if (rte_intr_fd_get(mq->intr_handle) > 0) {
--			close(rte_intr_fd_get(mq->intr_handle));
--			rte_intr_fd_set(mq->intr_handle, -1);
--		}
-+		rte_intr_fd_close(mq->intr_handle);
- 	}
- 	for (i = 0; i < pmd->cfg.num_s2c_rings; i++) {
- 		if (pmd->role == MEMIF_ROLE_SERVER) {
-@@ -614,10 +610,7 @@ memif_disconnect(struct rte_eth_dev *dev)
- 				continue;
- 		}
- 
--		if (rte_intr_fd_get(mq->intr_handle) > 0) {
--			close(rte_intr_fd_get(mq->intr_handle));
--			rte_intr_fd_set(mq->intr_handle, -1);
--		}
-+		rte_intr_fd_close(mq->intr_handle);
- 	}
- 
- 	memif_free_regions(dev);
-diff --git a/lib/eal/common/eal_common_interrupts.c b/lib/eal/common/eal_common_interrupts.c
-index 4e31a71319..8176eb089a 100644
---- a/lib/eal/common/eal_common_interrupts.c
-+++ b/lib/eal/common/eal_common_interrupts.c
-@@ -4,6 +4,7 @@
- 
- #include <stdlib.h>
- #include <string.h>
-+#include <unistd.h>
- 
- #include <rte_errno.h>
- #include <rte_interrupts.h>
-@@ -219,6 +220,17 @@ int rte_intr_fd_get(const struct rte_intr_handle *intr_handle)
  	return -1;
- }
+@@ -383,6 +384,7 @@ pci_vfio_disable_notifier(struct rte_pci_device *dev)
  
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_intr_fd_close, 26.11)
-+void rte_intr_fd_close(struct rte_intr_handle *intr_handle)
-+{
-+	int fd = rte_intr_fd_get(intr_handle);
-+
-+	if (fd >= 0) {
-+		close(fd);
+ 	rte_intr_fd_close(dev->vfio_req_intr_handle);
+ 	rte_intr_type_set(dev->vfio_req_intr_handle, RTE_INTR_HANDLE_UNKNOWN);
++	/* vfio_dev_fd is managed by VFIO layer, only clear reference here. */
+ 	rte_intr_dev_fd_set(dev->vfio_req_intr_handle, -1);
+ 
+ 	return 0;
+diff --git a/drivers/common/mlx5/linux/mlx5_common_os.c b/drivers/common/mlx5/linux/mlx5_common_os.c
+index 3e9cd86062..09d37f32cb 100644
+--- a/drivers/common/mlx5/linux/mlx5_common_os.c
++++ b/drivers/common/mlx5/linux/mlx5_common_os.c
+@@ -1108,6 +1108,7 @@ mlx5_os_interrupt_handler_create(int mode, bool set_fd_nonblock, int fd,
+ 	}
+ 	return tmp_intr_handle;
+ err:
++	rte_intr_fd_set(tmp_intr_handle, -1);
+ 	rte_intr_instance_free(tmp_intr_handle);
+ 	return NULL;
+ }
+@@ -1181,8 +1182,11 @@ void
+ mlx5_os_interrupt_handler_destroy(struct rte_intr_handle *intr_handle,
+ 				  rte_intr_callback_fn cb, void *cb_arg)
+ {
+-	if (rte_intr_fd_get(intr_handle) >= 0)
++	if (rte_intr_fd_get(intr_handle) >= 0) {
+ 		mlx5_intr_callback_unregister(intr_handle, cb, cb_arg);
++		/* fd is not owned by the driver, only clear reference here. */
 +		rte_intr_fd_set(intr_handle, -1);
 +	}
-+}
-+
- RTE_EXPORT_SYMBOL(rte_intr_type_set)
- int rte_intr_type_set(struct rte_intr_handle *intr_handle,
- 	enum rte_intr_handle_type type)
-@@ -265,6 +277,17 @@ int rte_intr_dev_fd_get(const struct rte_intr_handle *intr_handle)
- 	return -1;
+ 	rte_intr_instance_free(intr_handle);
  }
  
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_intr_dev_fd_close)
-+void rte_intr_dev_fd_close(struct rte_intr_handle *intr_handle)
-+{
-+	int fd = rte_intr_dev_fd_get(intr_handle);
-+
-+	if (fd >= 0) {
-+		close(fd);
-+		rte_intr_dev_fd_set(intr_handle, -1);
-+	}
-+}
-+
- RTE_EXPORT_INTERNAL_SYMBOL(rte_intr_max_intr_set)
- int rte_intr_max_intr_set(struct rte_intr_handle *intr_handle,
- 				 int max_intr)
-diff --git a/lib/eal/freebsd/eal_alarm.c b/lib/eal/freebsd/eal_alarm.c
-index c563ee9cc2..2697921760 100644
---- a/lib/eal/freebsd/eal_alarm.c
-+++ b/lib/eal/freebsd/eal_alarm.c
-@@ -54,8 +54,7 @@ rte_eal_alarm_cleanup(void)
- 	int ret = rte_intr_callback_unregister_sync(intr_handle,
- 			eal_alarm_callback, (void *)-1);
- 	if (ret >= 0) {
--		close(rte_intr_fd_get(intr_handle));
--		rte_intr_fd_set(intr_handle, -1);
-+		rte_intr_fd_close(intr_handle);
- 		rte_intr_instance_free(intr_handle);
- 		intr_handle = NULL;
+diff --git a/drivers/net/mana/mana.c b/drivers/net/mana/mana.c
+index 1864ba2a2b..f51598ea68 100644
+--- a/drivers/net/mana/mana.c
++++ b/drivers/net/mana/mana.c
+@@ -1964,6 +1964,7 @@ mana_intr_install(struct rte_eth_dev *eth_dev, struct mana_priv *priv)
+ 					 mana_intr_handler, priv);
+ 	if (ret) {
+ 		DRV_LOG(ERR, "Failed to register intr callback");
++		/* fd is owned by ibverbs, only clear reference here. */
+ 		rte_intr_fd_set(priv->intr_handle, -1);
+ 		goto free_intr;
  	}
-diff --git a/lib/eal/include/rte_interrupts.h b/lib/eal/include/rte_interrupts.h
-index 1cfb9d3f8e..d04c0c7b15 100644
---- a/lib/eal/include/rte_interrupts.h
-+++ b/lib/eal/include/rte_interrupts.h
-@@ -279,6 +279,19 @@ rte_intr_fd_set(struct rte_intr_handle *intr_handle, int fd);
- int
- rte_intr_fd_get(const struct rte_intr_handle *intr_handle);
+diff --git a/drivers/net/mlx4/mlx4_intr.c b/drivers/net/mlx4/mlx4_intr.c
+index 01057482ec..c278dd5ecc 100644
+--- a/drivers/net/mlx4/mlx4_intr.c
++++ b/drivers/net/mlx4/mlx4_intr.c
+@@ -265,6 +265,7 @@ mlx4_intr_uninstall(struct mlx4_priv *priv)
+ 					     (void (*)(void *))
+ 					     mlx4_interrupt_handler,
+ 					     priv);
++		/* fd is owned by ibverbs, only clear reference here. */
+ 		if (rte_intr_fd_set(priv->intr_handle, -1))
+ 			return -rte_errno;
+ 	}
+diff --git a/drivers/net/sxe2/sxe2_irq.c b/drivers/net/sxe2/sxe2_irq.c
+index 3306504761..c30a26d94e 100644
+--- a/drivers/net/sxe2/sxe2_irq.c
++++ b/drivers/net/sxe2/sxe2_irq.c
+@@ -377,8 +377,11 @@ static void sxe2_intr_handler_destroy(struct rte_intr_handle *intr_handle,
+ 	if (!intr_handle)
+ 		return;
  
-+/**
-+ * Close the FD of the given interrupt handle instance,
-+ * and set FD to -1.
-+ *
-+ * If FD is not valid (< 0), nothing is done.
-+ *
-+ * @param intr_handle
-+ *  pointer to the interrupt handle.
-+ */
-+__rte_experimental
-+void
-+rte_intr_fd_close(struct rte_intr_handle *intr_handle);
-+
- /**
-  * Set the type field of interrupt handle with user provided
-  * interrupt type.
-@@ -467,6 +480,20 @@ __rte_internal
- int
- rte_intr_dev_fd_get(const struct rte_intr_handle *intr_handle);
- 
-+/**
-+ * @internal
-+ * Close the device FD of the given interrupt handle instance,
-+ * and set device FD to -1.
-+ *
-+ * If device FD is not valid (< 0), nothing is done.
-+ *
-+ * @param intr_handle
-+ *  pointer to the interrupt handle.
-+ */
-+__rte_internal
-+void
-+rte_intr_dev_fd_close(struct rte_intr_handle *intr_handle);
-+
- /**
-  * @internal
-  * Set the max intr field of interrupt handle with user
-diff --git a/lib/eal/linux/eal_dev.c b/lib/eal/linux/eal_dev.c
-index c78e565427..4f55dcc4e7 100644
---- a/lib/eal/linux/eal_dev.c
-+++ b/lib/eal/linux/eal_dev.c
-@@ -217,10 +217,7 @@ static void
- dev_delayed_unregister(void *param)
- {
- 	rte_intr_callback_unregister(intr_handle, dev_uev_handler, param);
--	if (rte_intr_fd_get(intr_handle) >= 0) {
--		close(rte_intr_fd_get(intr_handle));
--		rte_intr_fd_set(intr_handle, -1);
--	}
-+	rte_intr_fd_close(intr_handle);
+-	if (rte_intr_fd_get(intr_handle) >= 0)
++	if (rte_intr_fd_get(intr_handle) >= 0) {
+ 		(void)rte_intr_callback_unregister(intr_handle, cb, cb_arg);
++		/* fd is not owned by the driver, only clear reference here. */
++		rte_intr_fd_set(intr_handle, -1);
++	}
+ 	rte_intr_instance_free(intr_handle);
  }
  
- static void
+diff --git a/drivers/net/tap/rte_eth_tap.c b/drivers/net/tap/rte_eth_tap.c
+index 13114edba5..693be653ba 100644
+--- a/drivers/net/tap/rte_eth_tap.c
++++ b/drivers/net/tap/rte_eth_tap.c
+@@ -1947,6 +1947,7 @@ tap_lsc_intr_handle_set(struct rte_eth_dev *dev, int set)
+ 
+ 	if (rte_intr_fd_get(pmd->intr_handle) >= 0) {
+ 		tap_nl_final(rte_intr_fd_get(pmd->intr_handle));
++		/* fd is not owned by the driver, only clear reference here. */
+ 		rte_intr_fd_set(pmd->intr_handle, -1);
+ 	}
+ 
+diff --git a/drivers/net/virtio/virtio_user/virtio_user_dev.c b/drivers/net/virtio/virtio_user/virtio_user_dev.c
+index f3df73c1f0..f89c871beb 100644
+--- a/drivers/net/virtio/virtio_user/virtio_user_dev.c
++++ b/drivers/net/virtio/virtio_user/virtio_user_dev.c
+@@ -858,6 +858,8 @@ virtio_user_dev_uninit(struct virtio_user_dev *dev)
+ {
+ 	struct rte_eth_dev *eth_dev = &rte_eth_devices[dev->hw.port_id];
+ 
++	/* fd is not owned by the driver, only clear reference here. */
++	rte_intr_fd_set(eth_dev->intr_handle, -1);
+ 	rte_intr_instance_free(eth_dev->intr_handle);
+ 	eth_dev->intr_handle = NULL;
+ 
+diff --git a/drivers/raw/cnxk_gpio/cnxk_gpio.c b/drivers/raw/cnxk_gpio/cnxk_gpio.c
+index 0549e326f9..2b5ea0bf9f 100644
+--- a/drivers/raw/cnxk_gpio/cnxk_gpio.c
++++ b/drivers/raw/cnxk_gpio/cnxk_gpio.c
+@@ -442,6 +442,8 @@ cnxk_gpio_unregister_irq(struct cnxk_gpio *gpio)
+ 	if (ret)
+ 		return ret;
+ 
++	/* fd is owned by gpio, only clear reference here. */
++	rte_intr_fd_set(gpio->intr.intr_handle, -1);
+ 	rte_intr_instance_free(gpio->intr.intr_handle);
+ 	gpio->intr.intr_handle = NULL;
+ 
+@@ -635,6 +637,7 @@ cnxk_gpio_register_irq_compat(struct cnxk_gpio *gpio, struct cnxk_gpio_irq *irq,
+ 
+ 	return 0;
+ out:
++	rte_intr_fd_set(intr_handle, -1);
+ 	rte_intr_instance_free(intr_handle);
+ 
+ 	return ret;
+diff --git a/drivers/vdpa/mlx5/mlx5_vdpa_event.c b/drivers/vdpa/mlx5/mlx5_vdpa_event.c
+index dee2ccc23d..d18cf7d7e5 100644
+--- a/drivers/vdpa/mlx5/mlx5_vdpa_event.c
++++ b/drivers/vdpa/mlx5/mlx5_vdpa_event.c
+@@ -487,6 +487,7 @@ mlx5_vdpa_err_event_unset(struct mlx5_vdpa_priv *priv)
+ 			rte_pause();
+ 		}
+ 	}
++	/* fd is owned by err_chnl, only clear reference here. */
+ 	rte_intr_fd_set(priv->err_intr_handle, -1);
+ 	if (priv->err_chnl) {
+ #ifdef HAVE_IBV_DEVX_EVENT
+diff --git a/drivers/vdpa/mlx5/mlx5_vdpa_virtq.c b/drivers/vdpa/mlx5/mlx5_vdpa_virtq.c
+index 093cdd08d2..9cad7e1df4 100644
+--- a/drivers/vdpa/mlx5/mlx5_vdpa_virtq.c
++++ b/drivers/vdpa/mlx5/mlx5_vdpa_virtq.c
+@@ -96,6 +96,7 @@ mlx5_vdpa_virtq_unregister_intr_handle(struct mlx5_vdpa_virtq *virtq)
+ 				pthread_mutex_lock(&virtq->virtq_lock);
+ 			}
+ 		}
++		/* fd is owned by vhost, only clear reference here. */
+ 		(void)rte_intr_fd_set(virtq->intr_handle, -1);
+ 	}
+ 	rte_intr_instance_free(virtq->intr_handle);
+diff --git a/lib/eal/common/eal_common_interrupts.c b/lib/eal/common/eal_common_interrupts.c
+index 8176eb089a..6368ef1771 100644
+--- a/lib/eal/common/eal_common_interrupts.c
++++ b/lib/eal/common/eal_common_interrupts.c
+@@ -187,6 +187,12 @@ void rte_intr_instance_free(struct rte_intr_handle *intr_handle)
+ {
+ 	if (intr_handle == NULL)
+ 		return;
++	if (rte_intr_fd_get(intr_handle) >= 0)
++		EAL_LOG(NOTICE, "Some interrupt handle is leaking a FD: %d",
++			rte_intr_fd_get(intr_handle));
++	if (rte_intr_dev_fd_get(intr_handle) >= 0)
++		EAL_LOG(NOTICE, "Some interrupt handle is leaking a device FD: %d",
++			rte_intr_dev_fd_get(intr_handle));
+ 	if (RTE_INTR_INSTANCE_USES_RTE_MEMORY(intr_handle->alloc_flags)) {
+ 		rte_free(intr_handle->efds);
+ 		rte_free(intr_handle->elist);
 -- 
 2.54.0
 
