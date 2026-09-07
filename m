@@ -2,54 +2,108 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6699C79F89
-	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Sep 2026 14:10:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 655B7C79FA0
+	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Sep 2026 15:31:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A8B3B406BB;
-	Mon,  7 Sep 2026 16:10:34 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 1443C40658
- for <dev@dpdk.org>; Mon,  7 Sep 2026 16:10:32 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=WQXTcG0WxDJL1ceie5pMYcxNE6UFDY94y6zBecSAEVc=;
- b=Rtko8TCi6GYPjnaX8UrHPG34+lWBqpth5kuUJDKe8NReY965SHHFUVvzl9gnREbnjJiyATcnn
- UVc9sJnEj++tBR1R7UbedQArpaHwptRHmsmLdVf7fGcmDl3Tkh+KSKILMdPba9PweZHLn3NcC6j
- ggcXD/Gvwkt02ex1XNNNMVs=
-Received: from mail.maildlp.com (unknown [172.18.224.150])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4hdpqJ2PnmzJ46Y8;
- Mon,  7 Sep 2026 22:09:48 +0800 (CST)
-Received: from dubpeml500002.china.huawei.com (unknown [7.214.145.83])
- by mail.maildlp.com (Postfix) with ESMTPS id 039A740572;
- Mon,  7 Sep 2026 22:10:28 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml500002.china.huawei.com (7.214.145.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Mon, 7 Sep 2026 15:10:27 +0100
-Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
- dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.2562.046; 
- Mon, 7 Sep 2026 15:10:27 +0100
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>,
- "dev@dpdk.org" <dev@dpdk.org>, Bruce Richardson <bruce.richardson@intel.com>, 
- Vipin Varghese <vipin.varghese@amd.com>, Stephen Hemminger
- <stephen@networkplumber.org>
-Subject: RE: [PATCH v4] eal/x86: fix memcpy alignment mask definition
-Thread-Topic: [PATCH v4] eal/x86: fix memcpy alignment mask definition
-Thread-Index: AQHdPGFhoLMN75NCNUy3mdZwL7o557bDLFow
-Date: Mon, 7 Sep 2026 14:10:27 +0000
-Message-ID: <71bcbf4789914a059ccfd11758d72bb7@huawei.com>
-References: <20260904092028.856816-1-mb@smartsharesystems.com>
- <20260904113433.857609-1-mb@smartsharesystems.com>
-In-Reply-To: <20260904113433.857609-1-mb@smartsharesystems.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.138.220]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id 242D94067D;
+	Mon,  7 Sep 2026 17:31:49 +0200 (CEST)
+Received: from PH8PR06CU001.outbound.protection.outlook.com
+ (mail-westus3azon11012013.outbound.protection.outlook.com [40.107.209.13])
+ by mails.dpdk.org (Postfix) with ESMTP id A304140658
+ for <dev@dpdk.org>; Mon,  7 Sep 2026 17:31:47 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wXwvDG367t9x2VVEVOepVViVWwHBB5baRwzi3mh4Kr4P1ts4jP847c3NAIdSDYjuV788sbNOQ4HcGB7YDo+hu/PRtTJNY/TLZKkUXyAgtg4A8223INn6/ec82JJIhzRKZekO6qIvOcvLO1WhfEz6bL02OqemIg3LxEj/3Fj7ejozWPV59Viw2/VHJIzVu9ljWNDCVHeG5UJfZbeEhxVejxQqm7WtSaXrq8HkB2UBO7RS/XyFCcrW3HGRTQ0Rq/wPytBHaprf6XdW40CqiCn1MDyd6I+5Eb/GollBN9ZiBM3kYZx3ZIVYaPmEmocnGxBqWlHfxHrtJ7yVh5x+W18yig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7H/rjEMG9pF031uT/iYrHPfWO5qdKD7bKOzr0gj/zTs=;
+ b=X0AwR0+fDGZgBVHZXvrq30el2zdDMBKG8fnhWyLQFwo+IHunu9GLwSjudcGhs+WLzA/xlYZu+urR53JhfElHxA8FDkfplrOzxw+Z86k0OLriEt9HXxz5BrMPoZjoNlVYKCUaeX5rBGN3NobPSjmI46cyJpwnkf0XvMnGjlNOzS43d6ECWhUPwgADJKVA/JTAJTcnQsbMuJvma/KH8e58+WOPl4b8EYKOqzFQJCCvTgWJDSz1nfUYjbDpJRaH6qMXozykd2OUMAUoyWe+tWl23QO4xacwPY/pbVvT2aI5+sAjvrsCG5jzPXRbAubPqYuvufNlad7lFvB6GePSxeHdtg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=networkplumber.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7H/rjEMG9pF031uT/iYrHPfWO5qdKD7bKOzr0gj/zTs=;
+ b=EqxSWXJ17mXb+HWm3H0Zey0z9ufhw/c9r1dUd9esGVFv/LWhQzo85v4PYisNul10e7QKXOtmeX5Mhxv67dQTOZa84PAoTGcxrOoU5jZ+BleVWkG48IZJh4ME2PN/QDfJDgKPd6RAtJFjHhpyG1ftTZImHW1rFoYKV7K9+zg185LtX+M+xFL2pvx7HUGKVs8VNTU4fbt9YTzJ7wukgSKlv9H5ALeJw1YKJgNgP661arLNMYzNkmdfQ/GztcEgURZJ3bVAt0Ogc/GqFuM4xZUpt5awCjengT78LuHMfvNmSp3Wqo6mf55IWyNHoje5C8jJT68eOjC3gMRUUuy4AuKV4w==
+Received: from BLAPR03CA0010.namprd03.prod.outlook.com (2603:10b6:208:32b::15)
+ by DM4PR12MB6184.namprd12.prod.outlook.com (2603:10b6:8:a6::8) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.382.15; Mon, 7 Sep 2026 15:31:41 +0000
+Received: from BN3PEPF0000B072.namprd04.prod.outlook.com
+ (2603:10b6:208:32b:cafe::42) by BLAPR03CA0010.outlook.office365.com
+ (2603:10b6:208:32b::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.382.15 via Frontend Transport; Mon, 7
+ Sep 2026 15:31:41 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BN3PEPF0000B072.mail.protection.outlook.com (10.167.243.117) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.406.5 via Frontend Transport; Mon, 7 Sep 2026 15:31:40 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Mon, 7 Sep
+ 2026 08:31:24 -0700
+Received: from nvidia.com (10.126.230.37) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.46; Mon, 7 Sep
+ 2026 08:31:23 -0700
+Date: Mon, 7 Sep 2026 17:31:20 +0200
+From: Dariusz Sosnowski <dsosnowski@nvidia.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao
+ <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
+ <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>, Andrew Rybchenko
+ <andrew.rybchenko@oktetlabs.ru>, Nithin Dabilpuram <ndabilpuram@marvell.com>, 
+ Kiran Kumar K <kirankumark@marvell.com>, Sunil Kumar Kori
+ <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>, Harman Kalra
+ <hkalra@marvell.com>, Thomas Monjalon <thomas@monjalon.net>, <dev@dpdk.org>
+Subject: Re: [RFC] ethdev: simplify representor info get API
+Message-ID: <axbyaqm57t7ngjv2mrfnf4yrk4thrumjg5lbhrbqr3gwz6yzbi@ik3cvcxp5x4b>
+References: <20260831162905.383162-1-dsosnowski@nvidia.com>
+ <20260831094654.2cd73523@phoenix.local>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20260831094654.2cd73523@phoenix.local>
+X-Originating-IP: [10.126.230.37]
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B072:EE_|DM4PR12MB6184:EE_
+X-MS-Office365-Filtering-Correlation-Id: 62fad4b1-d766-4009-685e-08df0cf51d70
+X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|82310400026|36860700016|376014|23010399003|13003099007|10067099003|4143699003|56012099006|11063799006|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info: EbHO9DHQzz04GPadGryM87TEeHBQQ+SYc8ZK4ZAPmUx6rwl7h/vQJ+e+V57PpQiOTDTbw4DlnyYQkyk/Jc0+5Xdsnxubi92/MZFh16Yr2pbXeHMDIk3BBjo9oOHYrzSOsL190FxkOn5j9uO8i9IorjwAB1ZxMLDSRw1S3u3xOwjMdL69UqfUzfpy+dmDrw371a9xk3g5NmEJj597KdTJf46bCCZYixsxYqY8uxiL5dXtqATN6Ino4cfLvYuVdB4RI/mUxLJwMiObl1QJT2lnb9STehVAid44zyz9RnSoslSTcvq+ta5uFQvua3tt0Hyt7Bkzj6W992aDSyrNZDlplTfJFEdakdte9EEnIpI5W4TiVOveskC0J8UqYNJr1Rl8fDLJ9fQ13bUDgS752uIlCDpYYSmS6V0s41JpYvr62XmVUBp5RabdlaFDCGp6drIplqMP/8bhWB6S/4QO/fgIE5HFtekOI0px0Qq6JQlahaxRT5+IWalFe3jDO8B5/4zWMxfQ8m/MYvbZI0kbCvo1tb8xcYUN+RGa1Z6vzqh0+L1Wsqaw5kytm0Z2aTCYsrUAz09ZwrrAP0KCX4DIY76I91zmFlEwV2037AUZMoJydvqciYMGT0Fs0IuMsI/WRbzIbOzJHWI0f9ZnvIeOZxJEq7NPAtxIuafo/PPGHyeajeeL3xRArnVKt+3C5jWxzC2SVD3kXOPQ73lchXet7k0m1A==
+X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
+ SFS:(13230040)(1800799024)(82310400026)(36860700016)(376014)(23010399003)(13003099007)(10067099003)(4143699003)(56012099006)(11063799006)(22082099003)(18002099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: azDUs44nmiOACqHqBCOtg8ivp3MfzSyqsiQszeAt3dKaxdk6+uirNe7HEzCFaRjobbpw6rW9wIE9odYRWaMMAlOqtJZuKVf7dz7Ou3BDUqWGtE8MK1dg9tVliVAji/WQKFyMcrAgnW1fVZVkheK1mFZcTtjJPSOgyJwTZAw5iexyJuZtfTssoIpYR52EF/N9Y4m96tiY9Tkx9+CcRNGlBWkT2bqkhX3+QYj67LFmJk3JF2HTq3tg6DRuWArlL6gCCEKSOPtkCTwuiIJ+67o6pGUiGncPdv7AvdDbjSZhlnwktCuH7KcDJWk0gPsWIDX/Ri7aUUpSnT8DiNk3mEXiI3nlEpjJXWlU4nhT77MqmeGza22PNkyd2QL0xX1JW5JtjlIrTfCjbTlziR7tm/eK6YMRuIa2E7P55ohL7N7Ri4Gfwn7DDY8tMWUvlqvt1fPy
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Sep 2026 15:31:40.8995 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 62fad4b1-d766-4009-685e-08df0cf51d70
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN3PEPF0000B072.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6184
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -63,80 +117,59 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQoNCj4gQW4gYWxpZ25tZW50IG1hc2sgKEFMSUdOTUVOVF9NQVNLKSBpcyB0ZW1wb3JhcmlseSBk
-ZWZpbmVkIGZvciBpbnRlcm5hbA0KPiBwdXJwb3NlcywgYnV0IGl0IGlzIHB1YmxpY2x5IGV4cG9z
-ZWQgd2hlbiBpbmNsdWRpbmcgdGhlIGhlYWRlciBmaWxlLA0KPiBwb3RlbnRpYWxseSBjb2xsaWRp
-bmcgd2l0aCBleGlzdGluZyBkZWZpbml0aW9ucyB3aXRoIHRoZSBzYW1lIG5hbWUuDQo+IEZpeGVk
-IHRoaXMgcG90ZW50aWFsIGlzc3VlIGJ5IGFkZGluZyB0aGUgUlRFX01FTUNQWV8gcHJlZml4IHRv
-IHRoZQ0KPiBkZWZpbml0aW9uLg0KPiANCj4gRnVydGhlcm1vcmUsIHRoZSBzdXBlcmZsdW91cyBm
-dW5jdGlvbiBkZWNsYXJhdGlvbiBhdCB0aGUgdG9wIG9mIHRoZSBmaWxlDQo+IHdhcyByZW1vdmVk
-LCBhbmQgaXRzIGRlc2NyaXB0aW9uIHdhcyBtb3ZlZCB0byB0aGUgZnVuY3Rpb24gZGVmaW5pdGlv
-biwNCj4gdG8gaW1wcm92ZSBzZWFyY2ggcmVzdWx0cyB3aXRoIHNvdXJjZSBjb2RlIGJyb3dzZXJz
-Lg0KPiANCj4gQWxzbywgY2hhbmdlZCAiIShhZGRycyAmIE1BU0spIiB0byAiKGFkZHJzICYgTUFT
-SykgPT0gMCIgdG8gZm9sbG93IERQREsNCj4gY29kaW5nIHN0eWxlLg0KPiANCj4gTm9uZSBvZiB0
-aGVzZSBjaGFuZ2VzIHNob3VsZCBoYXZlIGFueSBwcmFjdGljYWwgZWZmZWN0Lg0KPiANCj4gRml4
-ZXM6IGY1NDcyNzAzYzBiZCAoImVhbDogb3B0aW1pemUgYWxpZ25lZCBtZW1jcHkgb24geDg2IikN
-Cj4gDQo+IFNpZ25lZC1vZmYtYnk6IE1vcnRlbiBCcsO4cnVwIDxtYkBzbWFydHNoYXJlc3lzdGVt
-cy5jb20+DQo+IEFja2VkLWJ5OiBCcnVjZSBSaWNoYXJkc29uIDxicnVjZS5yaWNoYXJkc29uQGlu
-dGVsLmNvbT4NCj4gLS0tDQo+IHY0Og0KPiAqIFJlYWxseSwgcmVhbGx5IGNoYW5nZWQgaXQgdGhp
-cyB0aW1lLg0KPiAgIFdoZW4gZWRpdGluZyBwYXRjaCBmaWxlcywgcmVtZW1iZXIgdG8gZWRpdCB0
-aGUgY29kZSB0b28uDQo+IHYzOg0KPiAqIEFjdHVhbGx5IGNoYW5nZWQgIiEoYWRkcnMgJiBNQVNL
-KSIgdG8gIihhZGRycyAmIE1BU0spID09IDAiLg0KPiAgIEluIHYyLCBpdCB3YXMgY2hhbmdlZCBp
-biBteSBlZGl0b3IsIGJ1dCBub3Qgc2F2ZWQgdG8gZGlzay4NCj4gdjI6DQo+ICogQ2hhbmdlZCAi
-IShhZGRycyAmIE1BU0spIiB0byAiKGFkZHJzICYgTUFTSykgPT0gMCIuIChBSSkNCj4gLS0tDQo+
-ICBsaWIvZWFsL3g4Ni9pbmNsdWRlL3J0ZV9tZW1jcHkuaCB8IDM3ICsrKysrKysrKysrKysrKy0t
-LS0tLS0tLS0tLS0tLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMTcgaW5zZXJ0aW9ucygrKSwgMjAg
-ZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvbGliL2VhbC94ODYvaW5jbHVkZS9ydGVf
-bWVtY3B5LmgNCj4gYi9saWIvZWFsL3g4Ni9pbmNsdWRlL3J0ZV9tZW1jcHkuaA0KPiBpbmRleCA4
-ZWQ4YzU1MDEwLi40MWZiMDhhYjk1IDEwMDY0NA0KPiAtLS0gYS9saWIvZWFsL3g4Ni9pbmNsdWRl
-L3J0ZV9tZW1jcHkuaA0KPiArKysgYi9saWIvZWFsL3g4Ni9pbmNsdWRlL3J0ZV9tZW1jcHkuaA0K
-PiBAQCAtMzIsMjEgKzMyLDYgQEAgZXh0ZXJuICJDIiB7DQo+ICAjZGVmaW5lIFJURV9NRU1DUFlf
-QVZYDQo+ICAjZW5kaWYNCj4gDQo+IC0vKioNCj4gLSAqIENvcHkgYnl0ZXMgZnJvbSBvbmUgbG9j
-YXRpb24gdG8gYW5vdGhlci4gVGhlIGxvY2F0aW9ucyBtdXN0IG5vdCBvdmVybGFwLg0KPiAtICoN
-Cj4gLSAqIEBwYXJhbSBkc3QNCj4gLSAqICAgUG9pbnRlciB0byB0aGUgZGVzdGluYXRpb24gb2Yg
-dGhlIGRhdGEuDQo+IC0gKiBAcGFyYW0gc3JjDQo+IC0gKiAgIFBvaW50ZXIgdG8gdGhlIHNvdXJj
-ZSBkYXRhLg0KPiAtICogQHBhcmFtIG4NCj4gLSAqICAgTnVtYmVyIG9mIGJ5dGVzIHRvIGNvcHku
-DQo+IC0gKiBAcmV0dXJuDQo+IC0gKiAgIFBvaW50ZXIgdG8gdGhlIGRlc3RpbmF0aW9uIGRhdGEu
-DQo+IC0gKi8NCj4gLXN0YXRpYyBfX3J0ZV9hbHdheXNfaW5saW5lIHZvaWQgKg0KPiAtcnRlX21l
-bWNweSh2b2lkICpfX3J0ZV9yZXN0cmljdCBkc3QsIGNvbnN0IHZvaWQgKl9fcnRlX3Jlc3RyaWN0
-IHNyYywgc2l6ZV90IG4pOw0KPiAtDQo+ICAvKioNCj4gICAqIENvcHkgYnl0ZXMgZnJvbSBvbmUg
-bG9jYXRpb24gdG8gYW5vdGhlciwNCj4gICAqIGxvY2F0aW9ucyBtdXN0IG5vdCBvdmVybGFwLg0K
-PiBAQCAtMTg3LDcgKzE3Miw3IEBAIHJ0ZV9tb3YyNTYodWludDhfdCAqX19ydGVfcmVzdHJpY3Qg
-ZHN0LCBjb25zdCB1aW50OF90DQo+ICpfX3J0ZV9yZXN0cmljdCBzcmMpDQo+ICAgKiBBVlg1MTIg
-aW1wbGVtZW50YXRpb24gYmVsb3cNCj4gICAqLw0KPiANCj4gLSNkZWZpbmUgQUxJR05NRU5UX01B
-U0sgMHgzRg0KPiArI2RlZmluZSBSVEVfTUVNQ1BZX0FMSUdOTUVOVF9NQVNLIDB4M0YNCj4gDQo+
-ICAvKioNCj4gICAqIENvcHkgMTI4LWJ5dGUgYmxvY2tzIGZyb20gb25lIGxvY2F0aW9uIHRvIGFu
-b3RoZXIsDQo+IEBAIC0zMzMsNyArMzE4LDcgQEAgcnRlX21lbWNweV9nZW5lcmljX21vcmVfdGhh
-bl82NCh2b2lkICpfX3J0ZV9yZXN0cmljdA0KPiBkc3QsIGNvbnN0IHZvaWQgKl9fcnRlX3Jlc3QN
-Cj4gICAqIEFWWCBpbXBsZW1lbnRhdGlvbiBiZWxvdw0KPiAgICovDQo+IA0KPiAtI2RlZmluZSBB
-TElHTk1FTlRfTUFTSyAweDFGDQo+ICsjZGVmaW5lIFJURV9NRU1DUFlfQUxJR05NRU5UX01BU0sg
-MHgxRg0KPiANCj4gIC8qKg0KPiAgICogQ29weSAxMjgtYnl0ZSBibG9ja3MgZnJvbSBvbmUgbG9j
-YXRpb24gdG8gYW5vdGhlciwNCj4gQEAgLTQ0NCw3ICs0MjksNyBAQCBydGVfbWVtY3B5X2dlbmVy
-aWNfbW9yZV90aGFuXzY0KHZvaWQgKl9fcnRlX3Jlc3RyaWN0DQo+IGRzdCwgY29uc3Qgdm9pZCAq
-X19ydGVfcmVzdA0KPiAgICogU1NFIGltcGxlbWVudGF0aW9uIGJlbG93DQo+ICAgKi8NCj4gDQo+
-IC0jZGVmaW5lIEFMSUdOTUVOVF9NQVNLIDB4MEYNCj4gKyNkZWZpbmUgUlRFX01FTUNQWV9BTElH
-Tk1FTlRfTUFTSyAweDBGDQo+IA0KPiAgLyoqDQo+ICAgKiBNYWNybyBmb3IgY29weWluZyB1bmFs
-aWduZWQgYmxvY2sgZnJvbSBvbmUgbG9jYXRpb24gdG8gYW5vdGhlciB3aXRoIGNvbnN0YW50DQo+
-IGxvYWQgb2Zmc2V0LA0KPiBAQCAtNjczLDYgKzY1OCwxOCBAQCBydGVfbWVtY3B5X2FsaWduZWRf
-bW9yZV90aGFuXzY0KHZvaWQNCj4gKl9fcnRlX3Jlc3RyaWN0IGRzdCwgY29uc3Qgdm9pZCAqX19y
-dGVfcmVzdA0KPiAgCXJldHVybiByZXQ7DQo+ICB9DQo+IA0KPiArLyoqDQo+ICsgKiBDb3B5IGJ5
-dGVzIGZyb20gb25lIGxvY2F0aW9uIHRvIGFub3RoZXIuIFRoZSBsb2NhdGlvbnMgbXVzdCBub3Qg
-b3ZlcmxhcC4NCj4gKyAqDQo+ICsgKiBAcGFyYW0gZHN0DQo+ICsgKiAgIFBvaW50ZXIgdG8gdGhl
-IGRlc3RpbmF0aW9uIG9mIHRoZSBkYXRhLg0KPiArICogQHBhcmFtIHNyYw0KPiArICogICBQb2lu
-dGVyIHRvIHRoZSBzb3VyY2UgZGF0YS4NCj4gKyAqIEBwYXJhbSBuDQo+ICsgKiAgIE51bWJlciBv
-ZiBieXRlcyB0byBjb3B5Lg0KPiArICogQHJldHVybg0KPiArICogICBQb2ludGVyIHRvIHRoZSBk
-ZXN0aW5hdGlvbiBkYXRhLg0KPiArICovDQo+ICBzdGF0aWMgX19ydGVfYWx3YXlzX2lubGluZSB2
-b2lkICoNCj4gIHJ0ZV9tZW1jcHkodm9pZCAqX19ydGVfcmVzdHJpY3QgZHN0LCBjb25zdCB2b2lk
-ICpfX3J0ZV9yZXN0cmljdCBzcmMsIHNpemVfdCBuKQ0KPiAgew0KPiBAQCAtNzA5LDEzICs3MDYs
-MTMgQEAgcnRlX21lbWNweSh2b2lkICpfX3J0ZV9yZXN0cmljdCBkc3QsIGNvbnN0IHZvaWQNCj4g
-Kl9fcnRlX3Jlc3RyaWN0IHNyYywgc2l6ZV90IG4pDQo+ICAJfQ0KPiANCj4gIAkvKiBJbXBsZW1l
-bnRhdGlvbiBmb3Igc2l6ZSA+IDY0IGJ5dGVzIGRlcGVuZHMgb24gYWxpZ25tZW50IHdpdGggdmVj
-dG9yDQo+IHJlZ2lzdGVyIHNpemUuICovDQo+IC0JaWYgKCEoKCh1aW50cHRyX3QpZHN0IHwgKHVp
-bnRwdHJfdClzcmMpICYgQUxJR05NRU5UX01BU0spKQ0KPiArCWlmICgoKCh1aW50cHRyX3QpZHN0
-IHwgKHVpbnRwdHJfdClzcmMpICYgUlRFX01FTUNQWV9BTElHTk1FTlRfTUFTSykNCj4gPT0gMCkN
-Cj4gIAkJcmV0dXJuIHJ0ZV9tZW1jcHlfYWxpZ25lZF9tb3JlX3RoYW5fNjQoZHN0LCBzcmMsIG4p
-Ow0KPiAgCWVsc2UNCj4gIAkJcmV0dXJuIHJ0ZV9tZW1jcHlfZ2VuZXJpY19tb3JlX3RoYW5fNjQo
-ZHN0LCBzcmMsIG4pOw0KPiAgfQ0KPiANCj4gLSN1bmRlZiBBTElHTk1FTlRfTUFTSw0KPiArI3Vu
-ZGVmIFJURV9NRU1DUFlfQUxJR05NRU5UX01BU0sNCj4gDQo+ICAjaWZkZWYgX19jcGx1c3BsdXMN
-Cj4gIH0NCj4gLS0NCkFja2VkLWJ5OiBLb25zdGFudGluIEFuYW55ZXYgPGtvbnN0YW50aW4uYW5h
-bnlldkBodWF3ZWkuY29tPg0KPiAyLjQzLjANCg0K
+On Mon, Aug 31, 2026 at 09:46:54AM -0700, Stephen Hemminger wrote:
+> On Mon, 31 Aug 2026 18:29:05 +0200
+> Dariusz Sosnowski <dsosnowski@nvidia.com> wrote:
+> 
+> > * Background on rte_eth_representor_info_get()
+> > 
+> > rte_eth_representor_info_get() experimental function was added
+> > to ethdev public API in 21.05 DPDK release [1].
+> 
+> You know the API shouldn't have stayed experimental so long.
+> There is no good reason for API to stay experimental across multiple LTS releases!
+> 
+> The code would be much simpler if you use sentinel values rather than
+> carrying around all the XX_valid flag values.
+> 
+> With int fields and -1 (or a named RTE_ETH_REPRESENTOR_UNSPEC),
+>  the whole comparator collapses to something like:
+> 
+> ￼
+> static bool field_match(int a, int b)
+> {
+> 	return a == -1 || b == -1 || a == b;
+> }
+> 
+> return field_match(info.controller, other->controller) &&
+>        field_match(info.pf, other->pf) &&
+>        info.type == other->type &&
+>        (info.type != RTE_ETH_REPRESENTOR_VF || field_match(info.vf, other->vf)) &&
+
+Ack, I can apply that in the next version of the patches.
+
+My only worry would be that mlx5 DPDK driver gets these values
+(controller numbers, VF/SF numbers) from phys_port_name
+exported through sysfs.
+phys_port_name is based on devlink port attributes [1] with
+the following types:
+
+- controller number - u32
+- port number - u32
+    - Used for physical port representors in mlx5 DPDK driver.
+      These are of type RTE_ETH_REPRESENTOR_PF.
+- VF number - u16
+- SF number - u32
+
+Using int fields would not cover values
+which can be returned by kernel.
+
+What do you think about going with int64_t for these fields?
+
+[1]: https://github.com/torvalds/linux/blob/v7.2/include/uapi/linux/devlink.h#L412
+Relevant attributes are:
+- DEVLINK_ATTR_PORT_CONTROLLER_NUMBER
+- DEVLINK_ATTR_PORT_NUMBER
+- DEVLINK_ATTR_PORT_PCI_PF_NUMBER
+- DEVLINK_ATTR_PORT_PCI_VF_NUMBER
+- DEVLINK_ATTR_PORT_PCI_SF_NUMBER
