@@ -2,52 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0F39C79F89
-	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Sep 2026 12:13:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7CB2C79F89
+	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Sep 2026 12:14:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 14A524027F;
-	Mon,  7 Sep 2026 14:13:58 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 056B340678;
+	Mon,  7 Sep 2026 14:14:02 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 6881340041
- for <dev@dpdk.org>; Mon,  7 Sep 2026 14:13:56 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id BDFEE40041
+ for <dev@dpdk.org>; Mon,  7 Sep 2026 14:14:00 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1788783236;
+ s=mimecast20190719; t=1788783240;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding;
- bh=VLGav7G4hD3+7LCcq6prleYtkenL8KGDgps01lFS4cg=;
- b=QSi531HvxEIl49kAb2yZ1tpP+b8ZjjRdKXQUn1+WVcdPUH/MBtWqp/i+sEIq2k3vw5wnUO
- TyRD5v160rD/wK3a7XtI+26czRSpIoHBy3DP+vMGmros9kv5PlYeM193MuJRo3k3i8dGf9
- z7ODvJIlFoN/gMdMbYoa4JmIoJ/3pqE=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=RRjgE5vEvNzUGWnrEJP69/ZivYfFeLESMyNtxzQ9XD0=;
+ b=iZpwJYPAYautZpyRCv4TCQOw1IrTVS060XbapDENAtoaeQzCoqAwrAfYdMkROH5ajpdGSI
+ QXte1Fvx6TB4Cek5/JJwfyN0NG1r0+FU8AZQrQiILV3iIM1LH/Tj6ybfOQc2hzjn3w0V6k
+ tSW2I6rwEuN+p4h5jP9jXsHLs/+51n0=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-203-pIVov7YGN8aXkichGw7zYQ-1; Mon,
- 07 Sep 2026 08:13:54 -0400
-X-MC-Unique: pIVov7YGN8aXkichGw7zYQ-1
-X-Mimecast-MFC-AGG-ID: pIVov7YGN8aXkichGw7zYQ_1788783233
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-507-xCFBLjicNOeU4C-x_aAbDg-1; Mon,
+ 07 Sep 2026 08:13:59 -0400
+X-MC-Unique: xCFBLjicNOeU4C-x_aAbDg-1
+X-Mimecast-MFC-AGG-ID: xCFBLjicNOeU4C-x_aAbDg_1788783238
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id B30911954215; Mon,  7 Sep 2026 12:13:53 +0000 (UTC)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id D8A901829E3F; Mon,  7 Sep 2026 12:13:57 +0000 (UTC)
 Received: from dmarchan.redhat.corp
  (headnet04.pony-001.prod.iad2.dc.redhat.com [10.2.32.116])
- by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id E574D1955F05; Mon,  7 Sep 2026 12:13:52 +0000 (UTC)
+ by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 057EF1956049; Mon,  7 Sep 2026 12:13:55 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org,
 	hkalra@marvell.com
-Subject: [RFC v3 0/5] Interrupts API update
-Date: Mon,  7 Sep 2026 14:13:43 +0200
-Message-ID: <20260907121348.3049808-1-david.marchand@redhat.com>
+Cc: Matan Azrad <matan@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
+ Maxime Coquelin <maxime.coquelin@redhat.com>,
+ Xueming Li <xuemingl@nvidia.com>
+Subject: [RFC v3 1/5] vdpa/mlx5: fix check on err interrupt FD
+Date: Mon,  7 Sep 2026 14:13:44 +0200
+Message-ID: <20260907121348.3049808-2-david.marchand@redhat.com>
+In-Reply-To: <20260907121348.3049808-1-david.marchand@redhat.com>
+References: <20260907121348.3049808-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: lXSKYi0srZxuTXvDAGgegy4GklIKDmWSWfXDaq1loxo_1788783233
+X-Mimecast-MFC-PROC-ID: zMbBV1PqVG1Eqi_PJ5T4u7hd4M_idRGlaLT9df2EvBI_1788783238
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -64,63 +71,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This series is a simple cleanup to have a simpler helper that close all
-FD reference in an interrupt handle.
-It helped catch one small FD leak in FreeBSD EAL.
+A 0 file descriptor is valid.
+Prefer setting to -1 to indicate an invalid FD.
 
-This should make life (a bit) easier on driver side and help limit FD
-leaks.
+Fixes: 0474419bae7c ("vdpa/mlx5: handle hardware error")
 
+Signed-off-by: David Marchand <david.marchand@redhat.com>
+---
+ drivers/vdpa/mlx5/mlx5_vdpa_event.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
--- 
-David Marchand
-
-Changes since RFC v2:
-- added unit test for the new API,
-- caught some FD leak by code review,
-- split patch 3 from v2 in two, and added one debug check (see patch 5),
-
-Changes since RFC v1:
-- squashed FreeBSD PCI change,
-- updated interrupt unit test,
-
-
-David Marchand (5):
-  vdpa/mlx5: fix check on err interrupt FD
-  eal/freebsd: fix a FD leak in the alarm subsystem
-  interrupts: mark file descriptors invalid on allocation
-  interrupts: close interrupt FDs
-  interrupts: warn on leaked file descriptors
-
- app/test/test_interrupts.c                    | 89 ++++++++++++++++++-
- doc/guides/rel_notes/release_26_11.rst        |  7 ++
- drivers/bus/cdx/cdx_vfio.c                    | 16 ++--
- drivers/bus/pci/bsd/pci.c                     |  7 +-
- drivers/bus/pci/linux/pci_uio.c               | 15 +---
- drivers/bus/pci/linux/pci_vfio.c              | 29 ++----
- drivers/bus/pci/pci_common_uio.c              | 18 +---
- drivers/bus/vmbus/linux/vmbus_uio.c           | 13 +--
- drivers/bus/vmbus/vmbus_common_uio.c          | 17 +---
- drivers/common/cnxk/roc_platform.h            |  2 +
- drivers/common/mlx5/linux/mlx5_common_os.c    |  6 +-
- drivers/net/failsafe/failsafe.c               |  3 -
- drivers/net/mana/mana.c                       |  5 +-
- drivers/net/memif/memif_socket.c              | 13 +--
- drivers/net/memif/rte_eth_memif.c             |  6 --
- drivers/net/mlx4/mlx4.c                       |  3 -
- drivers/net/mlx4/mlx4_intr.c                  |  1 +
- drivers/net/sxe2/sxe2_irq.c                   |  5 +-
- drivers/net/tap/rte_eth_tap.c                 |  2 +-
- .../net/virtio/virtio_user/virtio_user_dev.c  |  2 +
- drivers/raw/cnxk_gpio/cnxk_gpio.c             |  3 +
- drivers/vdpa/mlx5/mlx5_vdpa_event.c           |  6 +-
- drivers/vdpa/mlx5/mlx5_vdpa_virtq.c           |  1 +
- lib/eal/common/eal_common_interrupts.c        | 35 ++++++++
- lib/eal/freebsd/eal_alarm.c                   |  8 +-
- lib/eal/include/rte_interrupts.h              | 29 ++++++
- lib/eal/linux/eal_dev.c                       |  9 +-
- 27 files changed, 211 insertions(+), 139 deletions(-)
-
+diff --git a/drivers/vdpa/mlx5/mlx5_vdpa_event.c b/drivers/vdpa/mlx5/mlx5_vdpa_event.c
+index 43585a94b2..dee2ccc23d 100644
+--- a/drivers/vdpa/mlx5/mlx5_vdpa_event.c
++++ b/drivers/vdpa/mlx5/mlx5_vdpa_event.c
+@@ -452,7 +452,7 @@ mlx5_vdpa_err_event_setup(struct mlx5_vdpa_priv *priv)
+ 					 mlx5_vdpa_err_interrupt_handler,
+ 					 priv);
+ 	if (ret != 0) {
+-		rte_intr_fd_set(priv->err_intr_handle, 0);
++		rte_intr_fd_set(priv->err_intr_handle, -1);
+ 		DRV_LOG(ERR, "Failed to register error interrupt for device %d.",
+ 			priv->vid);
+ 		rte_errno = -ret;
+@@ -473,7 +473,7 @@ mlx5_vdpa_err_event_unset(struct mlx5_vdpa_priv *priv)
+ 	int retries = MLX5_VDPA_INTR_RETRIES;
+ 	int ret = -EAGAIN;
+ 
+-	if (!rte_intr_fd_get(priv->err_intr_handle))
++	if (rte_intr_fd_get(priv->err_intr_handle) < 0)
+ 		return;
+ 	while (retries-- && ret == -EAGAIN) {
+ 		ret = rte_intr_callback_unregister(priv->err_intr_handle,
+@@ -487,6 +487,7 @@ mlx5_vdpa_err_event_unset(struct mlx5_vdpa_priv *priv)
+ 			rte_pause();
+ 		}
+ 	}
++	rte_intr_fd_set(priv->err_intr_handle, -1);
+ 	if (priv->err_chnl) {
+ #ifdef HAVE_IBV_DEVX_EVENT
+ 		union {
 -- 
 2.54.0
 
