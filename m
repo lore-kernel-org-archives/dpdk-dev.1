@@ -2,75 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65BBBC79F99
-	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Sep 2026 17:05:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 028E1C79FA0
+	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Sep 2026 17:05:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D474E40A7F;
-	Mon,  7 Sep 2026 19:05:15 +0200 (CEST)
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com
- [209.85.216.52]) by mails.dpdk.org (Postfix) with ESMTP id B92F640A81
- for <dev@dpdk.org>; Mon,  7 Sep 2026 19:05:13 +0200 (CEST)
-Received: by mail-pj1-f52.google.com with SMTP id
- 98e67ed59e1d1-39266382df6so2858648a91.3
- for <dev@dpdk.org>; Mon, 07 Sep 2026 10:05:13 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 89B3E40B8F;
+	Mon,  7 Sep 2026 19:05:18 +0200 (CEST)
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com
+ [209.85.214.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 02DF140A82
+ for <dev@dpdk.org>; Mon,  7 Sep 2026 19:05:17 +0200 (CEST)
+Received: by mail-pl1-f178.google.com with SMTP id
+ d9443c01a7336-2d8f265cbe6so27864225ad.0
+ for <dev@dpdk.org>; Mon, 07 Sep 2026 10:05:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788800713;
- x=1789405513; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788800716;
+ x=1789405516; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=DaQ4E8rDn5FailSnVT6i7o+XO9lym8inKIDSiK/Gc+0=;
- b=Kx3anbQDwFXgFp5HwG3H8CLh4tsEF0GclLWqscO2SEYc8EqcDiwxpFGbKiqxWIzv+A
- UXJYXr9AHK5iimzj0aQcN+o8Fp7suAzEJQyqTmt9bKh2WZW459mtjmig2fNt0B3mypSl
- c54DFk9E6JAOo8OPDV7eFEnxz8tauBpPgKglSKPv8fNBF9VuDDcbibcA3OdQItqNPXpF
- goeY9kzsFPgeL8Xt6yNQ+dYVTMTUdXDg90cfq4OrwLeeTAJssz2Dhjkf2fSIQOKzqzvV
- npvHtbCVSNouJ+NhJTLCFW3hpZkpSJN1UMEWHYA6IR7DluNA+P+SqZV1VnZZGtzpusjl
- 6qvA==
+ bh=JboPMtuKzuZTqzxYqCF5w0bQvjS6RUaphy/EJ73qXMo=;
+ b=iPf2k5Io/AOiFkpjlzbiU+R7rZFKmIpvwNHZvyuqmqpfHdlINoLvk5UunkKCCzw0xG
+ 77MO/K79RlJ0TaVsh2KGeHUc/CnElKIBlG+ouiQ8fd2IVyPUY8tNOBluBD8rmD0QPPls
+ EeFI94Qo/S0eDrD31Ga6k0hm/hBY792X8J36TIpNUcCUcpaYzz/5ZtQK7SK5pgonWnom
+ xvjhOtUAqWMMjnB79J6HWpXx49Hv/WsyqGaOpeKMUtdrzbSFO3xcY1gU12EJX/gwIZ3+
+ 101WGGh2QbBMNjzaIx2SN4rdOB8gV3jvt8oQ/7NKBJkaQpeORGzCrXz98Pp5iy0zIznD
+ eloQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788800713; x=1789405513;
+ d=1e100.net; s=20251104; t=1788800716; x=1789405516;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=DaQ4E8rDn5FailSnVT6i7o+XO9lym8inKIDSiK/Gc+0=;
- b=FbfnbSxa+cnPjkVN0d9SmPcbUsUaOJDEsre5wtvgrqDOLI32g/NI+ip2y1HyK7e7H3
- hjxr8aLveSDmzpkbSxs8/3tf5ZlnjIyRTeh4j6RjW6A1nhRBL2rJlX/od3Q0bknSecPZ
- Cpq3JWaXIfA+JE/PXnT3o8Ki3063Ya8dLCaJ+xrgQjKIQP1uSt29ZbdUOBUTGurWKlRg
- 3sn/eIB4EgxfCzPtOA765LjXYfCxvysKST0axZOPzQuOBowAuvethnSW0vgYVwo8jH5S
- g2SwJXASkO2kwshLIPVnIlgAIRcxKOERjzktEGBWbMCSzfQBZt5SBRwr2NOYL6zMGsXG
- WCJA==
-X-Gm-Message-State: AFuF++mRX7YEO+ySwzRpvLCdO8Kt6pXeJaKORBf7Tz06TnkLm8dto/Az
- l939Qtl6JD2CHW3iadnNNahuBEt8pMUxVLWNPUJHjNy70SgqcjDohOGRmLjfcfqvHiF2xtCNpkh
- vKmUx
-X-Gm-Gg: AYBFou1umcrjjvXRz4AbLIO3tzz1hZGARvy5riJ+j4oyt42p/E5GBHhUzZtXGzvijNq
- uPVXbo67PtKedae4Uf9SvwpBGzz8fmZw/GarPx4kfCM4oq4wUZ9Db3XD7BkOIM0X6Nrljioccm2
- 9SUtqFaRoS9H5vL0ztbg77G1cQkgT2ZLiyHtvr0ez81UU2BPQIKMuv2ig9KcIlv41UfKCbdj660
- zI779h7h7RziXu4GbFi5VhqzrGAQwzWxBINu3vLcZmipRcROXBCJcX7n5mSo49Yrq99FdYm54F1
- FYEdsF4l2flHCUex/j4oDeefe4rq/FqgyC4Id2WteHhMPDgmVpOXPdiCyJ0Fmb54E+MKa8JNp+R
- HJ9yXD43CSMKswam5uX7Hc9UpxYdAxCOkGL8e0wmItBET0w8cVmqa+Fnl5EyCByFHte2w7EAIDN
- uSIKZLM38JoQYn1jsCic+Kp0M4Ax17Q4MtD2eJkc5pzIaA+JUcfDn1XmYW4jauOBCAfbZg9yRFD
- /ok4Pi8nNEaXQR7LVQ1S6YCevE=
-X-Received: by 2002:a17:90b:33c9:b0:398:c16e:69d3 with SMTP id
- 98e67ed59e1d1-39b26122fbamr33707277a91.1.1788800712675; 
- Mon, 07 Sep 2026 10:05:12 -0700 (PDT)
+ bh=JboPMtuKzuZTqzxYqCF5w0bQvjS6RUaphy/EJ73qXMo=;
+ b=UqDF5i41JGKI9P8OSbf+lVbefb03q9VxNJlgQEGRROjgyBIElWh5uXaR9X0RDU1L2z
+ Wpuk1z480AQcTjv5EanLHc10bgSK5cWbn8JKBK02mPfxN9lYY5CjkNMuwQV/Qy1g8R01
+ hnzsocTXXuAXmbxj2DJ9q1X657mRwj0dwl3Yo7iDCNF7Hw9nvOcFtEclBvogi4/kzLtC
+ IdG7e5ISUz+WGjd6qzWyvT9GdNjxOnMphAmSimfpqltv9DYXg0JzaB9pRR0O+C5QVfvW
+ O7JxUY6Ku4wVveq2DTq3QlADULNqI53WT7fbA5NjOLZMbqTpH9jKknxKtS2xbKREGoRJ
+ sxAA==
+X-Gm-Message-State: AFuF++nM6CuzAvWZxzquOPZKFro+YFiTZQ/zlwuQbfljRhA8cKuWx8vT
+ K9StNGUdlYp6T7XTXmrFrH7yNOmaMxoj6L1vpAZmQB54PWmdapbTxo3l3zLFHyXBPHR22fX5Mr5
+ kypDr
+X-Gm-Gg: AYBFou0u0YGqwctcSvohsTatywI7ff+9nCjIQSLf+ZH5+FF2xZ0jhy/aXuDQQqnwJvE
+ ZqnSZ4NjH7WRg0ERt3l0FAnEHJCmrcgXIFGsjDY4o2ywvh0wCcX5u10cJmikFW6mr6CkW+/WOVn
+ DcKC/42keH9kzEouJ9PVQ32tBrOVAwORwNZhG3npQpuC1FLtmOfo5IK1R7gSC8jnMBhQIrXUZ3T
+ L1j8qQ6jAl6vqFfxHEEMRKryPyzW6PY85eEKsEVxMW9ucR8EJMOhNuMDsYkweqjHy7sT+q7Zm+G
+ 9eMlj/u9O+SV68GrLahdj/jJVJBkzjP4O7AQ0CgVK3SxF+Olb/kqs7TBHKvW8gOTOGqybxaen7S
+ ovf9hIGfI0/Aaj7AGtaxo1jxWERJFvTWOPzFzKJRq1aKCt6OYJj7qLwsNCvEcAsr4fTBIIzBu6/
+ SPbh6fHnM+ftOvKToYHlhMtkCq3djXYHFbjYv+7maG73HQWQ56EXLdNlSiA2Jc/A8bP1ZePFsLv
+ TrgfjiBL0vmOAxAueZrSkXzX24=
+X-Received: by 2002:a17:90b:4c06:b0:396:b98b:a3c2 with SMTP id
+ 98e67ed59e1d1-39b26116d9fmr31227582a91.8.1788800715951; 
+ Mon, 07 Sep 2026 10:05:15 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39b26123c99sm21509536a91.11.2026.09.07.10.05.06
+ 98e67ed59e1d1-39b26123c99sm21509536a91.11.2026.09.07.10.05.13
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 07 Sep 2026 10:05:12 -0700 (PDT)
+ Mon, 07 Sep 2026 10:05:15 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Chengwen Feng <fengchengwen@huawei.com>,
- Kevin Laatz <kevin.laatz@intel.com>, Ori Kam <orika@nvidia.com>,
- Sunil Kumar Kori <skori@marvell.com>,
- Pavan Nikhilesh <pbhagavatula@marvell.com>,
- Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Zhirun Yan <yanzhirun_163@163.com>
-Subject: [PATCH v2 02/13] examples: remove printf from signal handler
-Date: Mon,  7 Sep 2026 10:03:20 -0700
-Message-ID: <20260907170454.351647-3-stephen@networkplumber.org>
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v2 03/13] examples/vmdq: do not print from signal handler
+Date: Mon,  7 Sep 2026 10:03:21 -0700
+Message-ID: <20260907170454.351647-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260907170454.351647-1-stephen@networkplumber.org>
 References: <20260906232716.496546-1-stephen@networkplumber.org>
@@ -90,130 +84,64 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Printf is not a signal safe function, remove useless printf's
-that cause warnings in GCC analyzer.
+The SIGHUP handler calls printf() which is not async-signal-safe.
+
+Set a flag instead and print the stats from the main lcore in the
+forwarding loop.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- examples/distributor/main.c       | 3 +--
- examples/dma/dmafwd.c             | 2 --
- examples/eventdev_pipeline/main.c | 2 --
- examples/flow_filtering/main.c    | 5 +----
- examples/l2fwd-event/main.c       | 5 +----
- examples/l2fwd/main.c             | 5 +----
- examples/l3fwd-graph/main.c       | 5 +----
- 7 files changed, 5 insertions(+), 22 deletions(-)
+ examples/vmdq/main.c | 20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
 
-diff --git a/examples/distributor/main.c b/examples/distributor/main.c
-index ea44939fba..0905482cf0 100644
---- a/examples/distributor/main.c
-+++ b/examples/distributor/main.c
-@@ -529,9 +529,8 @@ lcore_tx(struct rte_ring *in_r)
+diff --git a/examples/vmdq/main.c b/examples/vmdq/main.c
+index 8c9d885090..63ac44deba 100644
+--- a/examples/vmdq/main.c
++++ b/examples/vmdq/main.c
+@@ -465,18 +465,27 @@ update_mac_address(struct rte_mbuf *m, unsigned dst_port)
+ 	rte_ether_addr_copy(&vmdq_ports_eth_addr[dst_port], &eth->src_addr);
  }
  
+-/* When we receive a HUP signal, print out our stats */
++/* Set by the SIGHUP handler, consumed by the main lcore. */
++static volatile sig_atomic_t stats_requested;
++
++static void
++sighup_handler(__rte_unused int signum)
++{
++	stats_requested = 1;
++}
++
  static void
--int_handler(int sig_num)
-+int_handler(int sig_num __rte_unused)
+-sighup_handler(int signum)
++print_stats(void)
  {
--	printf("Exiting on signal %d\n", sig_num);
- 	/* set quit flag for rx thread to exit */
- 	quit_signal_rx = 1;
- }
-diff --git a/examples/dma/dmafwd.c b/examples/dma/dmafwd.c
-index a8ed09e6ae..8d195faddb 100644
---- a/examples/dma/dmafwd.c
-+++ b/examples/dma/dmafwd.c
-@@ -998,8 +998,6 @@ static void
- signal_handler(int signum)
- {
- 	if (signum == SIGINT || signum == SIGTERM) {
--		printf("\n\nSignal %d received, preparing to exit...\n",
--			signum);
- 		force_quit = true;
- 	} else if (signum == SIGUSR1) {
- 		dmadev_dump();
-diff --git a/examples/eventdev_pipeline/main.c b/examples/eventdev_pipeline/main.c
-index 0c995d1a70..65e0cd437c 100644
---- a/examples/eventdev_pipeline/main.c
-+++ b/examples/eventdev_pipeline/main.c
-@@ -319,8 +319,6 @@ signal_handler(int signum)
- 	if (fdata->done)
- 		rte_exit(1, "Exiting on signal %d\n", signum);
- 	if ((signum == SIGINT || signum == SIGTERM) && !once) {
--		printf("\n\nSignal %d received, preparing to exit...\n",
--				signum);
- 		if (cdata.dump_dev)
- 			rte_event_dev_dump(0, stdout);
- 		once = 1;
-diff --git a/examples/flow_filtering/main.c b/examples/flow_filtering/main.c
-index f2124881a0..b4ccaacea1 100644
---- a/examples/flow_filtering/main.c
-+++ b/examples/flow_filtering/main.c
-@@ -266,11 +266,8 @@ init_port(void)
- static void
- signal_handler(int signum)
- {
--	if (signum == SIGINT || signum == SIGTERM) {
--		printf("\n\nSignal %d received, preparing to exit...\n",
--				signum);
-+	if (signum == SIGINT || signum == SIGTERM)
- 		force_quit = true;
--	}
+ 	unsigned int q = vmdq_queue_base;
++
+ 	for (; q < num_queues; q++) {
+ 		if ((q - vmdq_queue_base) % (num_vmdq_queues / num_pools) == 0)
+ 			printf("\nPool %u: ", (q - vmdq_queue_base) /
+ 			       (num_vmdq_queues / num_pools));
+ 		printf("%lu ", rxPackets[q]);
+ 	}
+-	printf("\nFinished handling signal %d\n", signum);
++	putchar('\n');
  }
  
- /* Parse the argument given in the command line of the application */
-diff --git a/examples/l2fwd-event/main.c b/examples/l2fwd-event/main.c
-index 2d31d4c6ad..c492c6dee0 100644
---- a/examples/l2fwd-event/main.c
-+++ b/examples/l2fwd-event/main.c
-@@ -582,11 +582,8 @@ static void
- signal_handler(int signum)
- {
- 	struct l2fwd_resources *rsrc = l2fwd_get_rsrc();
--	if (signum == SIGINT || signum == SIGTERM) {
--		printf("\n\nSignal %d received, preparing to exit...\n",
--				signum);
-+	if (signum == SIGINT || signum == SIGTERM)
- 		rsrc->force_quit = true;
--	}
- }
+ /*
+@@ -534,6 +543,11 @@ lcore_main(__rte_unused void *dummy)
+ 		struct rte_mbuf *buf[MAX_PKT_BURST];
+ 		const uint16_t buf_size = RTE_DIM(buf);
  
- int
-diff --git a/examples/l2fwd/main.c b/examples/l2fwd/main.c
-index 1c4a89ae90..851816423f 100644
---- a/examples/l2fwd/main.c
-+++ b/examples/l2fwd/main.c
-@@ -638,11 +638,8 @@ check_all_ports_link_status(uint32_t port_mask)
- static void
- signal_handler(int signum)
- {
--	if (signum == SIGINT || signum == SIGTERM) {
--		printf("\n\nSignal %d received, preparing to exit...\n",
--				signum);
-+	if (signum == SIGINT || signum == SIGTERM)
- 		force_quit = true;
--	}
- }
- 
- int
-diff --git a/examples/l3fwd-graph/main.c b/examples/l3fwd-graph/main.c
-index 5f89286dce..4fa302f5b0 100644
---- a/examples/l3fwd-graph/main.c
-+++ b/examples/l3fwd-graph/main.c
-@@ -753,11 +753,8 @@ check_all_ports_link_status(uint32_t port_mask)
- static void
- signal_handler(int signum)
- {
--	if (signum == SIGINT || signum == SIGTERM) {
--		printf("\n\nSignal %d received, preparing to exit...\n",
--		       signum);
-+	if (signum == SIGINT || signum == SIGTERM)
- 		force_quit = true;
--	}
- }
- 
- static void
++		if (stats_requested && lcore_id == rte_get_main_lcore()) {
++			stats_requested = 0;
++			print_stats();
++		}
++
+ 		for (p = 0; p < num_ports; p++) {
+ 			const uint8_t sport = ports[p];
+ 			/* 0 <-> 1, 2 <-> 3 etc */
 -- 
 2.53.0
 
