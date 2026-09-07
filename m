@@ -2,76 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8389C79FA0
-	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Sep 2026 18:26:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EDA6C79F99
+	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Sep 2026 18:32:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3C61640BA6;
-	Mon,  7 Sep 2026 20:26:26 +0200 (CEST)
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com
- [209.85.210.181])
- by mails.dpdk.org (Postfix) with ESMTP id 83FD240A84
- for <dev@dpdk.org>; Mon,  7 Sep 2026 20:26:24 +0200 (CEST)
-Received: by mail-pf1-f181.google.com with SMTP id
- d2e1a72fcca58-852c481415fso4435511b3a.3
- for <dev@dpdk.org>; Mon, 07 Sep 2026 11:26:24 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6661740A84;
+	Mon,  7 Sep 2026 20:32:49 +0200 (CEST)
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
+ [209.85.214.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 29E5B402E8
+ for <dev@dpdk.org>; Mon,  7 Sep 2026 20:32:48 +0200 (CEST)
+Received: by mail-pl1-f171.google.com with SMTP id
+ d9443c01a7336-2cace91f112so30989265ad.0
+ for <dev@dpdk.org>; Mon, 07 Sep 2026 11:32:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788805584;
- x=1789410384; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=KfMjtZEMT7dTp4Y9+GRknD5jSn8IRMFZXgE7YGbOBsk=;
- b=IJhzRFil7Ge8LWQlXfoMQo1E3mCSb0zt6Oflf0oVOPDkxhsioORVGeQ0Rgcx8Htxhe
- R6yEHSkQ6w25za/OJe4FhrG9jqHJoS+L7obfl7y2iFJQNYZ/2XjicBQglZrOSfoMkSnQ
- VhPXES6eFRuKFb5y1J0cCQyT0VwhduouRKe1CbRD68q/wRJ8KAGC8ffHda9NAMQbjuQj
- JsVKXyRohbbyir77zipokLg/Tdisv+P7sl6vLBivA/MChr/XwG5RdbtHBUUz5ACjCzOs
- 4bbREEP6RA7CCXHubOrcS0CaCwUHOU/k7k5krvEVTXtom3VB00qC10zSmNKJePmoDtIj
- FeXw==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788805967;
+ x=1789410767; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=FDmsWUg9OB3xFYxvEBUzU+K01WN8Aa/D6FEJlC2OKRI=;
+ b=FBltYwiFbbla4yflAYGcJAcGtE/671z+eR7SJTBrm1OZMdFPyRD/mfzBOhA82m4T9L
+ RyjwpF76appQB1IpDGQCLbZMSa4ETXgEvImm/awmih5WVcunixKKLkZO+KCbw867bt3X
+ 8znDr/KdEtQa8maMkl0VfsDA0RtoqAuWRWsBYlqD4l0I3VgiuwkdurPzCPTwbECIuaI7
+ Sdf+uQ5X81eludhLbsu1h51W9fq0I1zfxb8lC7xV2/gghe6lhBtsy67qXAZiYW47Xq/j
+ N1dwwbcd74QFXVqjlivc5V5btnNSRBeAvf8iBgkwacn6XIPjUdqXOmEb8lBrbPxXZKJX
+ YBeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788805584; x=1789410384;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=KfMjtZEMT7dTp4Y9+GRknD5jSn8IRMFZXgE7YGbOBsk=;
- b=pDxTFhpOQ9d81Igx+nT4GQMgtcjUZAzF5az40fTbmryzq0NuzDFuRZLn0LN5Txfgx0
- ZVYmjFK+lKuXsrMwM/MKxSg6UBMbK/sKfZukKV5AXjDG4LBd9fl8C9JTzh/xZRnKoj2p
- aNDUN77mh2ut61OZflH1jkNaGdj9KBll2IUObwDvzGagfzHWDKEleXrMOFcLWQmH9C+e
- VTel76f8wekfhwfBKW52S1y5jLWRNzZoWMJS1NYcXmKg/LW01qUzOcpEVlIu/M832zuB
- bzbXMAjh+krspHfgULGohDLXo+b3zE/a3OLPkccexe+lWmAxyLJhKb2JD0sLqt847PSr
- zHnQ==
-X-Gm-Message-State: AFuF++mqa5zgPeWh6A3facATVuA3J1xcUl+Fllw2mJLgIUDn9fM1hJ2a
- z8/P0zx1F43Nff0qXHcccIsTi9d+dy/4+w7t43lF2xlXuFoNfF/SaC+0yIDnYgU3XB+zVbXnNuG
- 2dVvA
-X-Gm-Gg: AYBFou1tU1sbVrK47w2gTFg9PTEiC4Y62Lr9hr1eIsQhlMViaKRy3nHv/7G6l6yZ47z
- +B4sndCK045SFcyycRNlEknK3Zc+E63Ba6oN/k1tvx+7GPoGv/v+Ss1wXbSHpwsgiiVa5kML2HC
- JpC8HbN+l8T9dlme0DiXS6tGRD8BVnbrKK5osVHiRqoqkuNeCHlE1oSg8ictOK+QdD+xQ/KtcuV
- HqOA68Zq78JvGBP9kNkaRquMbjT5NDlJfhAVuqoIi2c/xUKTHDP1KKXxBp2eYfwwS70unfAf4IH
- AttmQc46znG+5pvg3dsq35Ose9d6kIyl7DHFTKDNEIyh1E6ueXGkuj3Sbpla/tEZWIueMfrFkOa
- Zvqr24rvLsqmukPLZQAu+YUTsd78g9DGduOuUsVNCG8O0zTB5QKtheMBI8R/dJ7w2yDuhxjIPBK
- kwT+dcw7ET2sH7UHEt2ihHxxSWXGsCLBRBmmMZI+Ih2B6c+7Kbg2L3duEwT+oDbtCyCCksWOT8Z
- VzNb01ACvAQpLQcu5CWUUIVLxI=
-X-Received: by 2002:a05:6a00:1709:b0:853:6571:9567 with SMTP id
- d2e1a72fcca58-861677b29a7mr30889795b3a.4.1788805583672; 
- Mon, 07 Sep 2026 11:26:23 -0700 (PDT)
+ d=1e100.net; s=20251104; t=1788805967; x=1789410767;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=FDmsWUg9OB3xFYxvEBUzU+K01WN8Aa/D6FEJlC2OKRI=;
+ b=XQW1UGumAoSBeLUBmIWc70QTncFlKM7edyEC8kNpBl5EbN9umBH9E6xsEJwrdiz4LG
+ VYJ9Z4BSOYCWuS+S0wxKdnO+s7XFwlIturSJtHpQAyqELyQK2PVzKYlVvy3+6v2EPK7n
+ rkLBXDZQqMDqxpqhzquOEa56PK7x/0P95cUyBYSi/pWbiv1C7m8Vy7/71eRlaFLYxADk
+ F3iL8aMd024HF2w/Ppf03GM3cEz2V5AKimU4P9LHfU6qaUGk1ZtRLrCqbyHCkPFChSiK
+ i3FqwCngOxQKl93AuyVAt8SlPD05LBGefyeSfrdMQG6aM95IyC3wdS/BCeA6ypSQ26eW
+ H9Ng==
+X-Gm-Message-State: AFuF++mCxdQikJVpiL4JMaM6uHFLjPRAj5P7/0yZnXmR+Z0j+2Ao2Yo9
+ kmj9+yRJCV+PceW3hW4jUHl/bPjxkjK7LcP3I6plpGRNHcpddAjWmHNUo6TR3c59sEiq6ik7Mb1
+ 3t6by
+X-Gm-Gg: AYBFou1VgJ3DYt/S/mTfw7/r5Dmjk4eYzPcecB70PtzdBMW80dkIftxJPCnm1bvHy77
+ /BUaZsMEafmyA6aq18G7zHOV3LAdcDC2zyDkmRBNQFWMvBMmBP9lNAbAQiM2hgToYrNDrIeEFfW
+ WtzLayuKChg10YlPva8K+pY6WZeWl9MOTEmOzO7P9KzCbBGazrBFzsSm5PT0BBzS5RHw3u9goH+
+ 1AORzzQstdlXz+E90WqdKIfzM7xjV9pyhRHC76i7E3PrNVLDbZyJibSpxhqyIyCa0nljGIUOOrU
+ +RMKUr7e6KL5K2BWDcWJA3U8KCwYoxJhM90u/nOl5rXWXO2axY5ZXkz42UssKmFqdPi+N40RaQ8
+ eq2LJkIVDA92cINd6vhJESs5dDwPx2zaOJayZpj2x80bz/UNzXz8IREejS6muVLQNIz0PqA6cvJ
+ L79BYY/YLmnTrMqsvgc8xess11583nGe2T8xHBWcQ99CIb0gplMYRhh3vsX1fjDJ7PJ08SpIn48
+ nKVK7YUYmPhB/+rIsD77fKRWZyB2Zf3Bii3Ag==
+X-Received: by 2002:a17:903:98f:b0:2d8:d4d3:3fc0 with SMTP id
+ d9443c01a7336-2db12678d9emr387014545ad.20.1788805967119; 
+ Mon, 07 Sep 2026 11:32:47 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-86152f32447sm4553302b3a.38.2026.09.07.11.26.19
+ d9443c01a7336-2db1495a0c0sm47590795ad.17.2026.09.07.11.32.44
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 07 Sep 2026 11:26:23 -0700 (PDT)
+ Mon, 07 Sep 2026 11:32:46 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Kiran Kumar K <kirankumark@marvell.com>,
- Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Aman Singh <aman.deep.singh@intel.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
- Gregory Etelson <getelson@nvidia.com>
-Subject: [PATCH 3/3] app/testpmd: fix null dereference parsing flex item link
-Date: Mon,  7 Sep 2026 11:22:04 -0700
-Message-ID: <20260907182317.570481-4-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v3 0/5] eal: RTE_PTR_ADD and fix unaligned types
+Date: Mon,  7 Sep 2026 11:31:19 -0700
+Message-ID: <20260907183239.629053-1-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260907182317.570481-1-stephen@networkplumber.org>
-References: <20260907182317.570481-1-stephen@networkplumber.org>
+In-Reply-To: <20260904220953.3105930-1-stephen@networkplumber.org>
+References: <20260904220953.3105930-1-stephen@networkplumber.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -86,217 +84,89 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-flex_item_init() hands the spec and mask buffers to the input links by
-storing them in item.spec and item.mask, which are const pointers, and
-never allocates anything for item.last.  A link item with a range then
-copies into a null pointer:
+This series started with Scott Mitchell's patch to preserve pointer
+qualifications across RTE_PTR_ADD and RTE_PTR_SUB. Reviewing it
+turned up two further problems.
 
-  {"item": "eth type spec 2048 type last 2304 type mask 65535"}
+The first is that unaligned_uintNN_t only had alignment 1 on armv8
+aarch32, the one target setting RTE_ARCH_STRICT_ALIGN. Everywhere
+else they were ordinary aligned types, so code using them to read
+or write at arbitrary offsets was still undefined behaviour and was
+reported by UBSAN. Giving them alignment 1 on all architectures
+fixes that, and once mlx5 no longer needs its strict alignment
+path, RTE_ARCH_STRICT_ALIGN has no users left and is removed.
 
-The FLEX_LINK_IN check for item.last in flex_link_parse() runs after
-flex_link_item_parse() has already copied, so it cannot prevent this.
+The second is the jhash test, which declared its key as a byte
+array and cast it to unaligned_uint32_t * to pass to a function
+taking const uint32_t *. That is fixed first in the series so the
+alignment change does not introduce a new clang warning.
 
-Keep the buffers in the flex item as writable storage and pass them
-down to the parser, which assigns them to the item only for what it
-actually copied.  A range is rejected, and the copy is bounded by the
-buffer size: the widest flow item mask is currently exactly
-FLEX_MAX_FLOW_PATTERN_LENGTH bytes, so a new wider item would overflow
-silently.
+Only patch 1 should go to stable.
 
-Fixes: 59f3a8acbcdb ("app/testpmd: add flex item commands")
-Cc: stable@dpdk.org
+Note for reviewers: unaligned_uintNN_t is in an installed header,
+so applications embedding one of these types in a structure will
+see its layout change. That is called out in the release notes.
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- app/test-pmd/cmd_flex_item.c | 75 ++++++++++++++++++++----------------
- app/test-pmd/testpmd.h       |  7 ++++
- 2 files changed, 48 insertions(+), 34 deletions(-)
+The types are also used in the hash key compare path
+(rte_cuckoo_hash.c, rte_cmp_generic.h) and for 8 byte ring elements
+(rte_ring_elem_pvt.h). Scalar code generation is unchanged on x86,
+but the compiler can no longer assume alignment when combining
+adjacent accesses, so hash and ring perf results would be welcome,
+particularly on arm.
 
-diff --git a/app/test-pmd/cmd_flex_item.c b/app/test-pmd/cmd_flex_item.c
-index f4560d2cec..3e55189a2d 100644
---- a/app/test-pmd/cmd_flex_item.c
-+++ b/app/test-pmd/cmd_flex_item.c
-@@ -124,12 +124,13 @@ enum flex_link_type {
- };
- 
- static int
--flex_link_item_parse(const char *src, struct rte_flow_item *item)
-+flex_link_item_parse(const char *src, struct rte_flow_item *item,
-+		     struct flex_link_pattern *buf)
- {
- #define  FLEX_PARSE_DATA_SIZE 1024
- 
- 	int ret;
--	uint8_t *ptr, data[FLEX_PARSE_DATA_SIZE] = {0,};
-+	uint8_t data[FLEX_PARSE_DATA_SIZE] = {0,};
- 	char flow_rule[256];
- 	struct rte_flow_attr *attr;
- 	struct rte_flow_item *pattern;
-@@ -146,31 +147,42 @@ flex_link_item_parse(const char *src, struct rte_flow_item *item)
- 	if (ret)
- 		return ret;
- 	item->type = pattern->type;
-+	item->spec = NULL;
-+	item->mask = NULL;
-+	item->last = NULL;
-+	/* Only input links carry a value to match. */
-+	if (buf == NULL)
-+		return 0;
-+	/* rte_flow_conv() reports the item size only if a mask is set. */
-+	item->mask = buf->mask;
- 	ret = rte_flow_conv(RTE_FLOW_CONV_OP_ITEM_MASK, NULL, 0, item, NULL);
--	if ((ret > 0) && pattern->spec) {
--		ptr = (void *)(uintptr_t)item->spec;
--		memcpy(ptr, pattern->spec, ret);
--	} else {
--		item->spec = NULL;
--	}
--	if ((ret > 0) && pattern->mask) {
--		ptr = (void *)(uintptr_t)item->mask;
--		memcpy(ptr, pattern->mask, ret);
--	} else {
-+	if (ret <= 0) {
- 		item->mask = NULL;
-+		return 0;
- 	}
--	if ((ret > 0) && pattern->last) {
--		ptr = (void *)(uintptr_t)item->last;
--		memcpy(ptr, pattern->last, ret);
--	} else {
--		item->last = NULL;
-+	if (ret > FLEX_MAX_FLOW_PATTERN_LENGTH) {
-+		printf("Flex item link \"%s\" needs %d bytes, maximum is %d\n",
-+		       src, ret, FLEX_MAX_FLOW_PATTERN_LENGTH);
-+		return -ENOSPC;
-+	}
-+	if (pattern->last != NULL) {
-+		printf("Flex item link \"%s\" can not be a range\n", src);
-+		return -ENOTSUP;
-+	}
-+	if (pattern->spec != NULL) {
-+		memcpy(buf->spec, pattern->spec, ret);
-+		item->spec = buf->spec;
- 	}
-+	if (pattern->mask != NULL)
-+		memcpy(buf->mask, pattern->mask, ret);
-+	else
-+		item->mask = NULL;
- 	return 0;
- }
- 
- static int
- flex_link_parse(json_t *jobj, struct rte_flow_item_flex_link *link,
--		enum flex_link_type link_type)
-+		struct flex_link_pattern *buf, enum flex_link_type link_type)
- {
- 	const char *key;
- 	json_t *je;
-@@ -180,7 +192,7 @@ flex_link_parse(json_t *jobj, struct rte_flow_item_flex_link *link,
- 			if (!json_is_string(je))
- 				return -EINVAL;
- 			ret = flex_link_item_parse(json_string_value(je),
--						   &link->item);
-+						   &link->item, buf);
- 			if (ret)
- 				return -EINVAL;
- 			if (link_type == FLEX_LINK_IN) {
-@@ -204,9 +216,9 @@ flex_link_parse(json_t *jobj, struct rte_flow_item_flex_link *link,
- 	return 0;
- }
- 
--static int flex_item_config(json_t *jroot,
--			    struct rte_flow_item_flex_conf *flex_conf)
-+static int flex_item_config(json_t *jroot, struct flex_item *fp)
- {
-+	struct rte_flow_item_flex_conf *flex_conf = &fp->flex_conf;
- 	const char *key;
- 	json_t *jobj = NULL;
- 	int ret = 0;
-@@ -263,6 +275,7 @@ static int flex_item_config(json_t *jroot,
- 				ji = json_array_get(jobj, i);
- 				ret = flex_link_parse(ji,
- 						      flex_conf->input_link + i,
-+						      fp->link_pattern + i,
- 						      FLEX_LINK_IN);
- 				if (ret) {
- 					printf("Can't parse input_link(s)\n");
-@@ -283,7 +296,7 @@ static int flex_item_config(json_t *jroot,
- 				ji = json_array_get(jobj, i);
- 				ret = flex_link_parse
- 					(ji, flex_conf->output_link + i,
--					 FLEX_LINK_OUT);
-+					 NULL, FLEX_LINK_OUT);
- 				if (ret) {
- 					printf("Can't parse output_link(s)\n");
- 					goto out;
-@@ -299,11 +312,9 @@ static int flex_item_config(json_t *jroot,
- static struct flex_item *
- flex_item_init(void)
- {
--	size_t base_size, samples_size, links_size, spec_size;
-+	size_t base_size, samples_size, links_size, pattern_size;
- 	struct rte_flow_item_flex_conf *conf;
- 	struct flex_item *fp;
--	uint8_t (*pattern)[FLEX_MAX_FLOW_PATTERN_LENGTH];
--	int i;
- 
- 	base_size = RTE_ALIGN(sizeof(*fp), sizeof(uintptr_t));
- 	samples_size = RTE_ALIGN(FLEX_ITEM_MAX_SAMPLES_NUM *
-@@ -313,8 +324,8 @@ flex_item_init(void)
- 			       sizeof(conf->input_link[0]),
- 			       sizeof(uintptr_t));
- 	/* spec & mask for all input links */
--	spec_size = 2 * FLEX_MAX_FLOW_PATTERN_LENGTH * FLEX_ITEM_MAX_LINKS_NUM;
--	fp = calloc(1, base_size + samples_size + 2 * links_size + spec_size);
-+	pattern_size = FLEX_ITEM_MAX_LINKS_NUM * sizeof(*fp->link_pattern);
-+	fp = calloc(1, base_size + samples_size + 2 * links_size + pattern_size);
- 	if (fp == NULL) {
- 		printf("Can't allocate memory for flex item\n");
- 		return NULL;
-@@ -326,12 +337,8 @@ flex_item_init(void)
- 			   ((uint8_t *)conf->sample_data + samples_size);
- 	conf->output_link = (typeof(conf->output_link))
- 			    ((uint8_t *)conf->input_link + links_size);
--	pattern = (typeof(pattern))((uint8_t *)conf->output_link + links_size);
--	for (i = 0; i < FLEX_ITEM_MAX_LINKS_NUM; i++) {
--		struct rte_flow_item_flex_link *in = conf->input_link + i;
--		in->item.spec = pattern++;
--		in->item.mask = pattern++;
--	}
-+	fp->link_pattern = (typeof(fp->link_pattern))
-+			   ((uint8_t *)conf->output_link + links_size);
- 	return fp;
- }
- 
-@@ -346,7 +353,7 @@ flex_item_build_config(struct flex_item *fp, const char *filename)
- 		printf("Bad JSON file \"%s\": %s\n", filename, json_error.text);
- 		return -1;
- 	}
--	ret = flex_item_config(jroot, &fp->flex_conf);
-+	ret = flex_item_config(jroot, fp);
- 	json_decref(jroot);
- 	return ret;
- }
-diff --git a/app/test-pmd/testpmd.h b/app/test-pmd/testpmd.h
-index d23950ab9d..3a81464bab 100644
---- a/app/test-pmd/testpmd.h
-+++ b/app/test-pmd/testpmd.h
-@@ -445,8 +445,15 @@ void common_fwd_stream_init(struct fwd_stream *fs);
- #define FLEX_MAX_PATTERNS_NUM 64
- #define FLEX_PARSER_ERR ((struct flex_item *)-1)
- 
-+/** Spec and mask storage for one flex item input link. */
-+struct flex_link_pattern {
-+	uint8_t spec[FLEX_MAX_FLOW_PATTERN_LENGTH];
-+	uint8_t mask[FLEX_MAX_FLOW_PATTERN_LENGTH];
-+};
-+
- struct flex_item {
- 	struct rte_flow_item_flex_conf flex_conf;
-+	struct flex_link_pattern *link_pattern;
- 	struct rte_flow_item_flex_handle *flex_handle;
- 	uint32_t flex_id;
- };
+v3 - fix definition of unaligned types on Windows
+
+Scott Mitchell (1):
+  eal: RTE_PTR_ADD/SUB API improvements
+
+Stephen Hemminger (4):
+  test: fix jhash 32 bit key type
+  eal: make unaligned really unaligned
+  net/mlx5: drop unnecessary STRICT_ALIGN
+  arm: remove no longer used RTE_ARCH_STRICT_ALIGN
+
+ app/test-pmd/cmdline_flow.c                 |   4 +-
+ app/test/test_common.c                      | 507 +++++++++++++++++++-
+ app/test/test_hash_functions.c              |  14 +-
+ config/arm/meson.build                      |   1 -
+ doc/guides/rel_notes/release_26_11.rst      |  20 +
+ drivers/bus/cdx/cdx_vfio.c                  |  13 +-
+ drivers/bus/pci/linux/pci.c                 |   6 +-
+ drivers/bus/vmbus/linux/vmbus_uio.c         |   6 +-
+ drivers/common/cnxk/roc_cpt_debug.c         |  12 +-
+ drivers/common/cnxk/roc_ml.c                |   4 +-
+ drivers/common/cnxk/roc_nix_bpf.c           |   2 +-
+ drivers/common/cnxk/roc_nix_inl.h           |   4 +-
+ drivers/common/cnxk/roc_nix_inl_dp.h        |   8 +-
+ drivers/common/mlx5/mlx5_common_mr.c        |   2 +-
+ drivers/dma/idxd/idxd_pci.c                 |   2 +-
+ drivers/dma/odm/odm_dmadev.c                |   4 +-
+ drivers/event/cnxk/cn10k_worker.c           |  32 +-
+ drivers/event/cnxk/cn20k_worker.c           |  32 +-
+ drivers/mempool/bucket/rte_mempool_bucket.c |   7 +-
+ drivers/net/cxgbe/sge.c                     |   4 +-
+ drivers/net/ena/ena_ethdev.c                |  10 +-
+ drivers/net/mlx4/mlx4_txq.c                 |   3 +-
+ drivers/net/mlx5/mlx5_tx.h                  |  12 +-
+ lib/eal/common/eal_common_fbarray.c         |   2 +-
+ lib/eal/common/eal_common_memory.c          |  29 +-
+ lib/eal/common/eal_common_options.c         |   3 +-
+ lib/eal/common/malloc_elem.h                |  34 +-
+ lib/eal/freebsd/eal_memory.c                |   4 +
+ lib/eal/include/rte_common.h                | 192 +++++++-
+ lib/eal/linux/eal_memalloc.c                |   5 +
+ lib/eal/linux/eal_memory.c                  |   7 +
+ lib/eal/windows/eal_memalloc.c              |   5 +
+ lib/graph/rte_graph.h                       |   4 +-
+ lib/latencystats/rte_latencystats.c         |   3 +
+ lib/mbuf/rte_mbuf.c                         |   2 +
+ lib/mbuf/rte_mbuf.h                         |   3 +
+ lib/member/rte_xxh64_avx512.h               |   6 +-
+ lib/mempool/rte_mempool.h                   |   5 +
+ lib/pdcp/pdcp_entity.h                      |   8 +-
+ lib/vhost/vhost_user.c                      |  13 +-
+ 40 files changed, 875 insertions(+), 159 deletions(-)
+
 -- 
 2.53.0
 
