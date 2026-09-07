@@ -2,74 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EDA6C79F99
-	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Sep 2026 18:32:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19ABEC79FA0
+	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Sep 2026 18:32:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6661740A84;
-	Mon,  7 Sep 2026 20:32:49 +0200 (CEST)
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
- [209.85.214.171])
- by mails.dpdk.org (Postfix) with ESMTP id 29E5B402E8
- for <dev@dpdk.org>; Mon,  7 Sep 2026 20:32:48 +0200 (CEST)
-Received: by mail-pl1-f171.google.com with SMTP id
- d9443c01a7336-2cace91f112so30989265ad.0
- for <dev@dpdk.org>; Mon, 07 Sep 2026 11:32:48 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 4FF6E40B9C;
+	Mon,  7 Sep 2026 20:32:55 +0200 (CEST)
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com
+ [209.85.214.181])
+ by mails.dpdk.org (Postfix) with ESMTP id EE04540B9C
+ for <dev@dpdk.org>; Mon,  7 Sep 2026 20:32:53 +0200 (CEST)
+Received: by mail-pl1-f181.google.com with SMTP id
+ d9443c01a7336-2d71d1cc8b2so28460785ad.1
+ for <dev@dpdk.org>; Mon, 07 Sep 2026 11:32:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788805967;
- x=1789410767; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=FDmsWUg9OB3xFYxvEBUzU+K01WN8Aa/D6FEJlC2OKRI=;
- b=FBltYwiFbbla4yflAYGcJAcGtE/671z+eR7SJTBrm1OZMdFPyRD/mfzBOhA82m4T9L
- RyjwpF76appQB1IpDGQCLbZMSa4ETXgEvImm/awmih5WVcunixKKLkZO+KCbw867bt3X
- 8znDr/KdEtQa8maMkl0VfsDA0RtoqAuWRWsBYlqD4l0I3VgiuwkdurPzCPTwbECIuaI7
- Sdf+uQ5X81eludhLbsu1h51W9fq0I1zfxb8lC7xV2/gghe6lhBtsy67qXAZiYW47Xq/j
- N1dwwbcd74QFXVqjlivc5V5btnNSRBeAvf8iBgkwacn6XIPjUdqXOmEb8lBrbPxXZKJX
- YBeA==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788805973;
+ x=1789410773; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=j/eahn6hczDXo9taPoDZCLRrq0vQYm4mh/sGEZCD694=;
+ b=hCt0axCU/RundWrT4TkOk97OFWKqtRP7IehsHpUzRrSiZdlL/QXY09FVEuyXOG+8uX
+ sfrp9KnxojEa6vKhDmtd1At8Xuycc/CJz3mgDyKHcnWgcMW6xT4Uarp9vfc12Umj6nR8
+ Irr+JDEqOFdLBqQ2HIOKpS7uYOF/+M1tlGS7k8UKxSXcvUO4nI5QnANsZFS0PR4Wb1cm
+ Y6ns62tqZMmvoQxF05LoGySKM5CZ77/6+T37rRlTXhoIKwh1yCwT0HmrcvfF985zMx8H
+ PoKP2VXsO2XyDvHor6UGJq59jGobngnLiZ6CkRIMsRUHkzezSduBXKphs8lf94tn8Ugj
+ KyRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788805967; x=1789410767;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=FDmsWUg9OB3xFYxvEBUzU+K01WN8Aa/D6FEJlC2OKRI=;
- b=XQW1UGumAoSBeLUBmIWc70QTncFlKM7edyEC8kNpBl5EbN9umBH9E6xsEJwrdiz4LG
- VYJ9Z4BSOYCWuS+S0wxKdnO+s7XFwlIturSJtHpQAyqELyQK2PVzKYlVvy3+6v2EPK7n
- rkLBXDZQqMDqxpqhzquOEa56PK7x/0P95cUyBYSi/pWbiv1C7m8Vy7/71eRlaFLYxADk
- F3iL8aMd024HF2w/Ppf03GM3cEz2V5AKimU4P9LHfU6qaUGk1ZtRLrCqbyHCkPFChSiK
- i3FqwCngOxQKl93AuyVAt8SlPD05LBGefyeSfrdMQG6aM95IyC3wdS/BCeA6ypSQ26eW
- H9Ng==
-X-Gm-Message-State: AFuF++mCxdQikJVpiL4JMaM6uHFLjPRAj5P7/0yZnXmR+Z0j+2Ao2Yo9
- kmj9+yRJCV+PceW3hW4jUHl/bPjxkjK7LcP3I6plpGRNHcpddAjWmHNUo6TR3c59sEiq6ik7Mb1
- 3t6by
-X-Gm-Gg: AYBFou1VgJ3DYt/S/mTfw7/r5Dmjk4eYzPcecB70PtzdBMW80dkIftxJPCnm1bvHy77
- /BUaZsMEafmyA6aq18G7zHOV3LAdcDC2zyDkmRBNQFWMvBMmBP9lNAbAQiM2hgToYrNDrIeEFfW
- WtzLayuKChg10YlPva8K+pY6WZeWl9MOTEmOzO7P9KzCbBGazrBFzsSm5PT0BBzS5RHw3u9goH+
- 1AORzzQstdlXz+E90WqdKIfzM7xjV9pyhRHC76i7E3PrNVLDbZyJibSpxhqyIyCa0nljGIUOOrU
- +RMKUr7e6KL5K2BWDcWJA3U8KCwYoxJhM90u/nOl5rXWXO2axY5ZXkz42UssKmFqdPi+N40RaQ8
- eq2LJkIVDA92cINd6vhJESs5dDwPx2zaOJayZpj2x80bz/UNzXz8IREejS6muVLQNIz0PqA6cvJ
- L79BYY/YLmnTrMqsvgc8xess11583nGe2T8xHBWcQ99CIb0gplMYRhh3vsX1fjDJ7PJ08SpIn48
- nKVK7YUYmPhB/+rIsD77fKRWZyB2Zf3Bii3Ag==
-X-Received: by 2002:a17:903:98f:b0:2d8:d4d3:3fc0 with SMTP id
- d9443c01a7336-2db12678d9emr387014545ad.20.1788805967119; 
- Mon, 07 Sep 2026 11:32:47 -0700 (PDT)
+ d=1e100.net; s=20251104; t=1788805973; x=1789410773;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=j/eahn6hczDXo9taPoDZCLRrq0vQYm4mh/sGEZCD694=;
+ b=o2XON8M7mESP1LZdvC4BaaQK5PUpZYeurut59gCtv/tcW8eGJviDgCDq5tpO9S1o7i
+ 6qQ8l5v3WFJTURQSSVMXB8wIy/X/AqfRquqRfgO4i+HeCDwx2VBfiUWz6O9kZQbP8Izd
+ pIfeZn12oAOIfmTbrX+03klI+6vE/kNIx5XmaEUSOj6+CiGBZKbCylFl8SKxZm9LZXhm
+ L5RT0NspwLqNm5bdjmbT19uOYVgmfjypv+2SdGqVnwIOv8t1A3OSsux+wGGA3oVdF5jA
+ E/XuSJtyUS69YYIUg93zftLYq0M8dWDfE8T1w994xdFNG+jH5whj8inPClxkTTTpmEo5
+ h+zA==
+X-Gm-Message-State: AFuF++kt16qPXS1FXQRvmuXb8DJhGjWEC5QNHHioInokGaTgYsSSyYEN
+ QJpN8FdpC7Lo74mMZBigYzwbuNtKKVg0sJbXZwIlGm8Q9yMF9pPJqzjdMOYuV3MOfPW/m/M8R/g
+ ZEidc
+X-Gm-Gg: AYBFou3LS+LAYXn3+GkPvvbJP23KHKCov6GI30ba6/CyObVYxvL/IScRaTzNhPV+8Df
+ ByjtSasYc4tKiQNyN4PXot6VgN7mwN/+1iA2Q9a9ou0vveRiNN/30ErceQAeSma38xtsCb/mP/P
+ Ia7crVuF43zu9puZ3QgJoFCYu/rW6hDE5a2wzcEnmwbfYJy6nAWGiPR8BubFzFYaG/kSlT+xHy1
+ nmslyPTgmJM5pjViFlpeUcSSqMYY7YRd1EyJqde0MXr3X1xSZcfA2lX0fp4/Py9qBE5lyPF/FpL
+ b8BCX78iTY1UftqGThqGQyqgpFknwfr2rAe0yP/tO7nIkHyzcmfEVLxIcETR3eRtreAefgZfEgA
+ qBbNxfA5hnK5UPdhQ2BBTnNxPd8mpgtGpW2RoR8M2CNSJfPDkgrKe96WwPwYIsfae1IILymvk+x
+ E5YSfQfI0qAmFDyvnRGiWY+DSWu7Wl5QT34vGqagtLLkRuvdp8jXf09z7p0P2MXNVARxK6mBqBn
+ shaQeg2zSTwy23mWgVDqZPuFtg=
+X-Received: by 2002:a17:903:3c47:b0:2db:eb5:47ea with SMTP id
+ d9443c01a7336-2db12106896mr371956135ad.0.1788805972964; 
+ Mon, 07 Sep 2026 11:32:52 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2db1495a0c0sm47590795ad.17.2026.09.07.11.32.44
+ d9443c01a7336-2db1495a0c0sm47590795ad.17.2026.09.07.11.32.47
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 07 Sep 2026 11:32:46 -0700 (PDT)
+ Mon, 07 Sep 2026 11:32:52 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v3 0/5] eal: RTE_PTR_ADD and fix unaligned types
-Date: Mon,  7 Sep 2026 11:31:19 -0700
-Message-ID: <20260907183239.629053-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Yipeng Wang <yipeng1.wang@intel.com>,
+ Sameh Gobriel <sameh.gobriel@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Cyril Chemparathy <cchemparathy@ezchip.com>,
+ Olivier Matz <olivier.matz@6wind.com>
+Subject: [PATCH v3 1/5] test: fix jhash 32 bit key type
+Date: Mon,  7 Sep 2026 11:31:20 -0700
+Message-ID: <20260907183239.629053-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260904220953.3105930-1-stephen@networkplumber.org>
+In-Reply-To: <20260907183239.629053-1-stephen@networkplumber.org>
 References: <20260904220953.3105930-1-stephen@networkplumber.org>
+ <20260907183239.629053-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -84,89 +89,62 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This series started with Scott Mitchell's patch to preserve pointer
-qualifications across RTE_PTR_ADD and RTE_PTR_SUB. Reviewing it
-turned up two further problems.
+verify_jhash_32bits() declares the key as an array of bytes, then
+casts it to unaligned_uint32_t * to pass to rte_jhash_32b(), which
+takes a const uint32_t *. Clang reports:
 
-The first is that unaligned_uintNN_t only had alignment 1 on armv8
-aarch32, the one target setting RTE_ARCH_STRICT_ALIGN. Everywhere
-else they were ordinary aligned types, so code using them to read
-or write at arbitrary offsets was still undefined behaviour and was
-reported by UBSAN. Giving them alignment 1 on all architectures
-fixes that, and once mlx5 no longer needs its strict alignment
-path, RTE_ARCH_STRICT_ALIGN has no users left and is removed.
+  passing 1-byte aligned argument to 4-byte aligned parameter 1 of
+  'rte_jhash_32b' may result in an unaligned pointer access
+  [-Walign-mismatch]
 
-The second is the jhash test, which declared its key as a byte
-array and cast it to unaligned_uint32_t * to pass to a function
-taking const uint32_t *. That is fixed first in the series so the
-alignment change does not introduce a new clang warning.
+This already happens on armv8 aarch32, where unaligned types have
+alignment 1, and will happen everywhere once that is true on all
+architectures.
 
-Only patch 1 should go to stable.
+Declare the key as an array of uint32_t and drop the cast.
 
-Note for reviewers: unaligned_uintNN_t is in an installed header,
-so applications embedding one of these types in a structure will
-see its layout change. That is called out in the release notes.
+Fixes: 7621d6a8d0bd ("eal: add and use unaligned integer types")
+Cc: stable@dpdk.org
 
-The types are also used in the hash key compare path
-(rte_cuckoo_hash.c, rte_cmp_generic.h) and for 8 byte ring elements
-(rte_ring_elem_pvt.h). Scalar code generation is unchanged on x86,
-but the compiler can no longer assume alignment when combining
-adjacent accesses, so hash and ring perf results would be welcome,
-particularly on arm.
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ app/test/test_hash_functions.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-v3 - fix definition of unaligned types on Windows
-
-Scott Mitchell (1):
-  eal: RTE_PTR_ADD/SUB API improvements
-
-Stephen Hemminger (4):
-  test: fix jhash 32 bit key type
-  eal: make unaligned really unaligned
-  net/mlx5: drop unnecessary STRICT_ALIGN
-  arm: remove no longer used RTE_ARCH_STRICT_ALIGN
-
- app/test-pmd/cmdline_flow.c                 |   4 +-
- app/test/test_common.c                      | 507 +++++++++++++++++++-
- app/test/test_hash_functions.c              |  14 +-
- config/arm/meson.build                      |   1 -
- doc/guides/rel_notes/release_26_11.rst      |  20 +
- drivers/bus/cdx/cdx_vfio.c                  |  13 +-
- drivers/bus/pci/linux/pci.c                 |   6 +-
- drivers/bus/vmbus/linux/vmbus_uio.c         |   6 +-
- drivers/common/cnxk/roc_cpt_debug.c         |  12 +-
- drivers/common/cnxk/roc_ml.c                |   4 +-
- drivers/common/cnxk/roc_nix_bpf.c           |   2 +-
- drivers/common/cnxk/roc_nix_inl.h           |   4 +-
- drivers/common/cnxk/roc_nix_inl_dp.h        |   8 +-
- drivers/common/mlx5/mlx5_common_mr.c        |   2 +-
- drivers/dma/idxd/idxd_pci.c                 |   2 +-
- drivers/dma/odm/odm_dmadev.c                |   4 +-
- drivers/event/cnxk/cn10k_worker.c           |  32 +-
- drivers/event/cnxk/cn20k_worker.c           |  32 +-
- drivers/mempool/bucket/rte_mempool_bucket.c |   7 +-
- drivers/net/cxgbe/sge.c                     |   4 +-
- drivers/net/ena/ena_ethdev.c                |  10 +-
- drivers/net/mlx4/mlx4_txq.c                 |   3 +-
- drivers/net/mlx5/mlx5_tx.h                  |  12 +-
- lib/eal/common/eal_common_fbarray.c         |   2 +-
- lib/eal/common/eal_common_memory.c          |  29 +-
- lib/eal/common/eal_common_options.c         |   3 +-
- lib/eal/common/malloc_elem.h                |  34 +-
- lib/eal/freebsd/eal_memory.c                |   4 +
- lib/eal/include/rte_common.h                | 192 +++++++-
- lib/eal/linux/eal_memalloc.c                |   5 +
- lib/eal/linux/eal_memory.c                  |   7 +
- lib/eal/windows/eal_memalloc.c              |   5 +
- lib/graph/rte_graph.h                       |   4 +-
- lib/latencystats/rte_latencystats.c         |   3 +
- lib/mbuf/rte_mbuf.c                         |   2 +
- lib/mbuf/rte_mbuf.h                         |   3 +
- lib/member/rte_xxh64_avx512.h               |   6 +-
- lib/mempool/rte_mempool.h                   |   5 +
- lib/pdcp/pdcp_entity.h                      |   8 +-
- lib/vhost/vhost_user.c                      |  13 +-
- 40 files changed, 875 insertions(+), 159 deletions(-)
-
+diff --git a/app/test/test_hash_functions.c b/app/test/test_hash_functions.c
+index 70820d1f19..fdff304d2b 100644
+--- a/app/test/test_hash_functions.c
++++ b/app/test/test_hash_functions.c
+@@ -185,12 +185,12 @@ verify_precalculated_hash_func_tests(void)
+ static int
+ verify_jhash_32bits(void)
+ {
+-	unsigned i, j;
+-	uint8_t key[64];
++	unsigned int i, j;
++	uint32_t key[16];
+ 	uint32_t hash, hash32;
+ 
+-	for (i = 0; i < 64; i++)
+-		key[i] = rand() & 0xff;
++	for (i = 0; i < RTE_DIM(key); i++)
++		key[i] = (uint32_t) rte_rand();
+ 
+ 	for (i = 0; i < RTE_DIM(hashtest_key_lens); i++) {
+ 		for (j = 0; j < RTE_DIM(hashtest_initvals); j++) {
+@@ -199,9 +199,9 @@ verify_jhash_32bits(void)
+ 				hash = rte_jhash(key, hashtest_key_lens[i],
+ 						hashtest_initvals[j]);
+ 				/* Divide key length by 4 in rte_jhash for 32 bits */
+-				hash32 = rte_jhash_32b((const unaligned_uint32_t *)key,
+-						hashtest_key_lens[i] >> 2,
+-						hashtest_initvals[j]);
++				hash32 = rte_jhash_32b(key,
++						       hashtest_key_lens[i] / sizeof(uint32_t),
++						       hashtest_initvals[j]);
+ 				if (hash != hash32) {
+ 					printf("rte_jhash returns different value (0x%x)"
+ 					       "than rte_jhash_32b (0x%x)\n",
 -- 
 2.53.0
 
