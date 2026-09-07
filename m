@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE43C79F9E
-	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Sep 2026 13:08:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 947F3C79F89
+	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Sep 2026 13:08:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0BD3940A6E;
+	by mails.dpdk.org (Postfix) with ESMTP id EF34440A7D;
 	Mon,  7 Sep 2026 15:08:02 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id 7F0E24027F;
- Mon,  7 Sep 2026 15:07:59 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 523254027F;
+ Mon,  7 Sep 2026 15:08:00 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1788786480; x=1820322480;
+ t=1788786481; x=1820322481;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=gz3LvnA/J5cCrItU9C3QJByFkAcf9SeaILU8IDdVxK4=;
- b=H8gbtc1sc9H3GHL2MCz0tSq2dzCKwlbcbx3+iZ4xG6F3iSwPgP4aOf3Q
- 2eH3shqkz1TWPJ2GVxS0mHXRYOouP1K9oA8vHVthmS0L5n4mRLMdC5hBP
- +2rdNzclOW/eh8sj6HP7lcmekegpYZLqRVFpJtLXeH0MPgdTYxhXFAmeT
- 5+2H7ZI+TK3uI42UhogOm9/bX60zKcS0AhgWzU9A7cDAi5ijo88w70hv6
- 85ZwVbGjroZCZXuG1BLDyLhZXgD9bsJ4Cvpkvv5j2YPB4l843DuvCpQ6R
- jw3VhHB91DmDeVaMyQd1gYaNskGlmzRKH4UIXsdVPTTql+8LjG2zM0Ngx w==;
-X-CSE-ConnectionGUID: HY+fOeVrQwevY00D770k6w==
-X-CSE-MsgGUID: Aklbli5qSimtSwXzy1az4A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11898"; a="106705968"
-X-IronPort-AV: E=Sophos;i="6.25,267,1779174000"; d="scan'208";a="106705968"
+ bh=Y2wpo0X9xrgyBpy+K5f/wpBBGYO7FpGHCse4krsUzIY=;
+ b=GgdIr3mLYSekBCml1yJcFmN40/FmV2cDt+7bv+ZwM7xwLzMmr6Xw50Gg
+ anQN6wxs34CgKGKl0nRGP7+FQCWFrGhGJvHH0JA9Fzh+yy1nNQk52PR5B
+ kZAskR4K7zhPpxLAuhhAPF3dFX8gLT++oF7hiQFTZZPCj8fq+xCYLSjPF
+ XnnSCX2rTmKzWZ0EZF2Cfgg/ZGX5DgFvhJFDL1w6tdioiGB/L6JKWnxn/
+ PMnoLB1usMph8QQqOnnuYVD4EX2IxJQ+lhYTeGDyLIiZy+MlKFyHIzU6z
+ FXaGnD/pjxUic27F8aKnREXxu4lGrapmc4F7RjJDTmI8uNmhsBc3Zu/Qz Q==;
+X-CSE-ConnectionGUID: LpodhI3kTHOzT+hZ8MsdyQ==
+X-CSE-MsgGUID: 1WAbHH+NTQa2QBcynduCJw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11898"; a="106705969"
+X-IronPort-AV: E=Sophos;i="6.25,267,1779174000"; d="scan'208";a="106705969"
 Received: from orviesa007.jf.intel.com ([10.64.159.147])
  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Sep 2026 06:07:59 -0700
-X-CSE-ConnectionGUID: d+ut8UO5T1O+51xsaZ3u7Q==
-X-CSE-MsgGUID: wUpJmiHcSkCPR1eBkQewHw==
+ 07 Sep 2026 06:08:00 -0700
+X-CSE-ConnectionGUID: N/soHUOvQPO6kIB+iFlirg==
+X-CSE-MsgGUID: IeTfj2m3SfuzsHTB79hECQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,267,1779174000"; d="scan'208";a="270682388"
+X-IronPort-AV: E=Sophos;i="6.25,267,1779174000"; d="scan'208";a="270682393"
 Received: from silpixa00401177.ir.intel.com ([10.20.224.214])
- by orviesa007.jf.intel.com with ESMTP; 07 Sep 2026 06:07:58 -0700
+ by orviesa007.jf.intel.com with ESMTP; 07 Sep 2026 06:07:59 -0700
 From: Ciara Loftus <ciara.loftus@intel.com>
 To: dev@dpdk.org
 Cc: Ciara Loftus <ciara.loftus@intel.com>, stable@dpdk.org,
  Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v2 1/4] net/ice: fix Tx queue capacity sizing after TM commit
-Date: Mon,  7 Sep 2026 13:07:47 +0000
-Message-ID: <20260907130750.3406004-2-ciara.loftus@intel.com>
+Subject: [PATCH v2 2/4] net/ice: skip TC validation if hierarchy committed
+Date: Mon,  7 Sep 2026 13:07:48 +0000
+Message-ID: <20260907130750.3406004-3-ciara.loftus@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260907130750.3406004-1-ciara.loftus@intel.com>
 References: <20260904105139.3117640-1-ciara.loftus@intel.com>
@@ -61,42 +61,111 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-commit_new_hierarchy() computes the number of usable Tx queues (nb_qps)
-by indexing the arrays nodes_created_per_level[] and hw->layer_info[] with
-a value derived from ice_get_leaf_level(). nodes_created_per_level[] is
-indexed by absolute hw scheduler layer, but ice_get_leaf_level() returns a
-value relative to the TM hierarchy's root position, so the index used was
-off by the number of hidden layers.
+Currently, ice_tx_queue_start() determines a queue's congestion domain by
+scanning vsi->info.tc_mapping[] for a matching traffic class range,
+rejecting the queue if no match is found.
 
-This under-counted the qgroup layer, causing nb_qps to be computed from a
-shallower layer than the one actually holding the committed qgroup nodes.
-In turn this caused rte_eth_dev_configure to reject any nb_tx_queues above
-the miscalculated capacity.
+The Tx scheduler hierarchies only ever operate on a single traffic class,
+TC0, so every queue managed by a committed TM hierarchy always belongs
+to domain 0. The tc_mapping[] lookup doesn't account for this, and queues
+added after a TM hierarchy is committed can be incorrectly rejected.
 
-Fix by converting the index to an absolute layer index.
+Fix this by skipping the lookup if a hierarchy has been committed as the
+domain is already known to be 0 in that case. Since TM does not support
+DCB's multi-TC queue layout, also reject queue start explicitly if DCB
+has configured more than one TC while a TM hierarchy is committed.
 
-Fixes: 715d449a965b ("net/ice: enhance Tx scheduler hierarchy support")
+Fixes: 02b71e570294 ("net/ice: support DCB")
 Cc: stable@dpdk.org
 
 Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/ice/ice_tm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/intel/ice/ice_ethdev.c |  4 ++++
+ drivers/net/intel/ice/ice_ethdev.h |  2 ++
+ drivers/net/intel/ice/ice_rxtx.c   | 33 ++++++++++++++++++------------
+ 3 files changed, 26 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/net/intel/ice/ice_tm.c b/drivers/net/intel/ice/ice_tm.c
-index 2e6ef9c264f..651d6aa932d 100644
---- a/drivers/net/intel/ice/ice_tm.c
-+++ b/drivers/net/intel/ice/ice_tm.c
-@@ -848,7 +848,7 @@ commit_new_hierarchy(struct rte_eth_dev *dev)
- 	const uint16_t new_root_level = pf->tm_conf.hidden_layers;
- 	/* count nodes per hw level, not per logical */
- 	uint16_t nodes_created_per_level[ICE_TM_MAX_LAYERS] = {0};
--	uint8_t q_lvl = ice_get_leaf_level(pf);
-+	uint8_t q_lvl = ice_get_leaf_level(pf) + pf->tm_conf.hidden_layers;
- 	uint8_t qg_lvl = q_lvl - 1;
- 	struct ice_sched_node *new_vsi_root = hw->vsi_ctx[pf->main_vsi->idx]->sched.vsi_node[0];
+diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
+index 76b8ff0a72e..fd148848d3c 100644
+--- a/drivers/net/intel/ice/ice_ethdev.c
++++ b/drivers/net/intel/ice/ice_ethdev.c
+@@ -3963,6 +3963,8 @@ ice_dev_configure(struct rte_eth_dev *dev)
+ 	ad->rx_func_type = ICE_RX_DEFAULT;
+ 	ad->tx_func_type = ICE_TX_DEFAULT;
  
++	pf->dcb_num_tcs = 1;
++
+ 	if (dev->data->dev_conf.rxmode.mq_mode & RTE_ETH_MQ_RX_RSS_FLAG)
+ 		dev->data->dev_conf.rxmode.offloads |= RTE_ETH_RX_OFFLOAD_RSS_HASH;
+ 
+@@ -3992,6 +3994,8 @@ ice_dev_configure(struct rte_eth_dev *dev)
+ 		if (nb_tc_used < 0)
+ 			return -EINVAL;
+ 
++		pf->dcb_num_tcs = nb_tc_used;
++
+ 		ctxt.info = vsi->info;
+ 		if (rte_le_to_cpu_16(ctxt.info.mapping_flags) == ICE_AQ_VSI_Q_MAP_NONCONTIG) {
+ 			PMD_DRV_LOG(ERR, "VSI configured with non contiguous queues, DCB is not supported");
+diff --git a/drivers/net/intel/ice/ice_ethdev.h b/drivers/net/intel/ice/ice_ethdev.h
+index 7ee3ea8a709..5914454c7c2 100644
+--- a/drivers/net/intel/ice/ice_ethdev.h
++++ b/drivers/net/intel/ice/ice_ethdev.h
+@@ -609,6 +609,8 @@ struct ice_pf {
+ 	uint64_t rss_hf;
+ 	struct ice_tm_conf tm_conf;
+ 	uint16_t outer_ethertype;
++	/* Number of TCs requested, 1 if DCB not configured */
++	uint8_t dcb_num_tcs;
+ 	/* lock prevent race condition between lsc interrupt handler
+ 	 * and link status update during dev_start.
+ 	 */
+diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
+index c4b5454c530..71f9155e588 100644
+--- a/drivers/net/intel/ice/ice_rxtx.c
++++ b/drivers/net/intel/ice/ice_rxtx.c
+@@ -839,20 +839,27 @@ ice_tx_queue_start(struct rte_eth_dev *dev, uint16_t tx_queue_id)
+ 	tx_ctx.legacy_int = 1; /* Legacy or Advanced Host Interface */
+ 	tx_ctx.tsyn_ena = 1;
+ 
+-	/* Mirror RXQ<->CGD association to TXQ<->CGD */
+-	for (int i = 0; i < ICE_MAX_TRAFFIC_CLASS; i++) {
+-		q_base = rte_le_to_cpu_16(vsi->info.tc_mapping[i]) & ICE_AQ_VSI_TC_Q_OFFSET_M;
+-		q_range = 1 << ((rte_le_to_cpu_16(vsi->info.tc_mapping[i]) &
+-			ICE_AQ_VSI_TC_Q_NUM_M) >> ICE_AQ_VSI_TC_Q_NUM_S);
+-
+-		if (q_base <= tx_queue_id && tx_queue_id < q_base + q_range)
+-			break;
+-
+-		cgd_idx++;
+-	}
++	if (!pf->tm_conf.committed) {
++		/* Mirror RXQ<->CGD association to TXQ<->CGD */
++		for (int i = 0; i < ICE_MAX_TRAFFIC_CLASS; i++) {
++			q_base = rte_le_to_cpu_16(vsi->info.tc_mapping[i]) &
++							ICE_AQ_VSI_TC_Q_OFFSET_M;
++			q_range = 1 << ((rte_le_to_cpu_16(vsi->info.tc_mapping[i]) &
++				ICE_AQ_VSI_TC_Q_NUM_M) >> ICE_AQ_VSI_TC_Q_NUM_S);
++
++			if (q_base <= tx_queue_id && tx_queue_id < q_base + q_range)
++				break;
+ 
+-	if (cgd_idx >= ICE_MAX_TRAFFIC_CLASS) {
+-		PMD_DRV_LOG(ERR, "Bad queue mapping configuration");
++			cgd_idx++;
++		}
++		if (cgd_idx >= ICE_MAX_TRAFFIC_CLASS) {
++			PMD_DRV_LOG(ERR, "Bad queue mapping configuration");
++			rte_free(txq_elem);
++			return -EINVAL;
++		}
++	} else if (pf->dcb_num_tcs > 1) {
++		/* TM only manages the TC0 scheduler subtree. */
++		PMD_DRV_LOG(ERR, "TM hierarchy is not supported together with multi-TC DCB");
+ 		rte_free(txq_elem);
+ 		return -EINVAL;
+ 	}
 -- 
 2.43.0
 
