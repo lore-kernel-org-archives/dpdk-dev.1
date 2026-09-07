@@ -2,73 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6C8EC79F99
-	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Sep 2026 17:06:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEDB0C79FA0
+	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Sep 2026 17:07:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9412740BA6;
-	Mon,  7 Sep 2026 19:05:53 +0200 (CEST)
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com
- [209.85.216.50]) by mails.dpdk.org (Postfix) with ESMTP id 2D6F940BA6
- for <dev@dpdk.org>; Mon,  7 Sep 2026 19:05:53 +0200 (CEST)
-Received: by mail-pj1-f50.google.com with SMTP id
- 98e67ed59e1d1-398e9698a70so3216773a91.0
- for <dev@dpdk.org>; Mon, 07 Sep 2026 10:05:53 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E54FB40A6C;
+	Mon,  7 Sep 2026 19:07:15 +0200 (CEST)
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
+ [209.85.214.171])
+ by mails.dpdk.org (Postfix) with ESMTP id E2C64402DE
+ for <dev@dpdk.org>; Mon,  7 Sep 2026 19:07:14 +0200 (CEST)
+Received: by mail-pl1-f171.google.com with SMTP id
+ d9443c01a7336-2ceab75934dso35150165ad.2
+ for <dev@dpdk.org>; Mon, 07 Sep 2026 10:07:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788800752;
- x=1789405552; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=J9wfKSkp6i1vFIN7r+07XJjOeNC2CEs12LlKErlSrco=;
- b=rnvxFcKQjD2clKsGZQqkIz3WhtFEuXtRaOwdo/S51iSmxmIoxJUAgiY6LxqUx6y6Hh
- ToFdPWWEZX+MvH2wQNmb8gIMxNt6tUIS27D1QzK3jXatiGTtGsfPvvBZ48gRT5Ft8Q/U
- hPj6/OyrVLjLRte5D052bd0MbtRhNoC0XXHnOxiFa76pJyc94ZJtTWQwMO/xVh8cx1X3
- USMpMN+K2criwQPwiz2gPJfYjETin8qSL+ASRxObGF2HSv7JpgA7kQRVkLgF1F/xD4ad
- 3CVnG/O5PuUY9fw/S5X9UFQ+3nT4lPSd+QjbhbSeaL4xTjTjuoGSIXb38j81C0nFOlNv
- 0B1g==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788800834;
+ x=1789405634; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=eutIbrvLnG5faTCUfCDkUQRji4RJOxBQqahDIheqeno=;
+ b=YikWG9oH9S7GX7e+qfkg5RPsoJQzpQ1HnPK/DmlZwXytsU67K7k+Tap4woTlg55WXP
+ mhssDAkVggU7oDBu/xW8/yjjyO9ANJaVMO2VewJXdHOEJ7Oo3lsHjl7xxNNlnQFMWEkf
+ +dD4Rr+yAvWiZXCu3iZZnLXE+oKuSkZLk+Tpn+65IGEud37ycBRu4chnJkWEchjfiS3I
+ G34ChFpkyr/PFNc1usqYHr0CGqXNQJSwPv4HBdU5PI0/+2iNTBvCM8D6zLigYbIR0XOI
+ Dw3KzV4u5lR1YP8em8CUZA++NEq0diWY92xvgYmbSJQp42Is8NSLPuLJy+ITNa3Qzvt+
+ qfjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788800752; x=1789405552;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=J9wfKSkp6i1vFIN7r+07XJjOeNC2CEs12LlKErlSrco=;
- b=dPnUvbFGkHVQWrIrM1Znd7dZ2HMKROwUVVzJ5VYvo0KUp/Ccfdel0xdg2ooPW+Y/Kw
- AUQQjWzARPb2nIN+WZCPbKuefyZww7cPcG/HHOleFxdQLfOT+QgrSZieYFRqM9vw/lsm
- dEhdLI3tQfRXVQMTKzrezwDyPMeWjiwCsozwZzaFuDi8PkktD2CAomSf6O2in7g0Nxx3
- YWJrZ+mOOStIsv+7ZETX4mYcrd065XT1ZjabpQPSQLrnZwI7dlHukqAkZNAGaNfSlGeG
- ljO4MCADjE1snkkFfglXu0yS5Dg8F6/v80sKfcxuI/UpSIpgzgAPxhXTEkanG8yTeP2m
- zQzA==
-X-Gm-Message-State: AFuF++lFFBR2AF5AZYCL6KyJLGdOgSr7bq9PYCL0oyYZ/u3PX7Rn1xsU
- 1bpTrTdz6wBAK+6eyn+Nx9NBeLsaQUCYehit/AHYjD3c4S9RkPx5+GUDmAZqSoND+g0Euaa3Eie
- nbZE0
-X-Gm-Gg: AYBFou3zgbJ6eoryX4MlaIiyeAMozEtkb/24LtIie4hTjeb7zOM/EFbBokbSEjpXTET
- NvePjngc+PtUbmwHVUCZi9Q5ENlOmWXtaJosxP0vqfRGIfOA6TH2CkBSqmxAZ4R0945AumtxH2A
- kMW678Hvzi/2bnjhYtDhp2mjqgpvt6EkCxRSDTUgWm7kiI7wZ8AS+9jnqfvPL1aT4TwwnqD0gdH
- WP59czSkEaLtKsWaXQfLwmKNNa56phk+SvX+ssOBKihuEH/9JFERNG66ZNxbvmzTbUsMtfEJ6vd
- L8PioWDKfh3KMZ4sd/+cm9Ums3Sks7IGLqqQiDKYPCNZMcpK+Qs+T4KDAkHLeGAfqhssmL5R/cQ
- 90/s6sFkqWBir2vq9hwOz3IrsLftdbLP4YwgkX/a7xktf+UsfIjgjR7jtTrnlrL+sP2J+rJ01jq
- 3pt3LYsA6k+GS1NDkF7bj8y311Xvsc2CHajyevRfpZy/yRtX+meZSDYL6DhAsxzbdCyWA/1a2cR
- cRgssYuhIehp8tcCvyYdziv5+NCzBH7d1FR4A==
-X-Received: by 2002:a17:90b:2884:b0:398:e86b:ce14 with SMTP id
- 98e67ed59e1d1-39b262ab44emr34736604a91.20.1788800752147; 
- Mon, 07 Sep 2026 10:05:52 -0700 (PDT)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ d=1e100.net; s=20251104; t=1788800834; x=1789405634;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=eutIbrvLnG5faTCUfCDkUQRji4RJOxBQqahDIheqeno=;
+ b=JpLb0cjxwDYbTo0KcIXfIX+EmS5k9UResNt58rqo+8zu59RvCjoTxhTdmwvBq0+Qdk
+ y9vYD0sJzKXUaLwxMBndpoTuKlyhlwVLLZy6ppB9RrlVRGNdclHsXsV1aDyJQRP5Ug1F
+ 9jIZxISysvxWiMqBkUPEPS2pvsEIXF4ERoAqbW444dFyREQjl1ZRJBu7pj4SvGSb72uA
+ a0iwUO+UJDSwjrrVGSHJMS+tPmOnhORGx1b5QT+8bDB0u8RxEl2SLIB5bNCQA3sarN3F
+ aFG+p3YuRmbInls9bN6TQM2Y9BVAvJD3trT8u+qe0jU9tBjwWDTNkP2hvUd9ti/Qvq66
+ 2Y6A==
+X-Gm-Message-State: AFuF++kiohz0vKft7ctwJdMJYUVYaGXtO0R+5xWNI0ZXwX+udk2H+EBu
+ 75rLIHY5cyuDOeYIUVe7FOXgR2ct6D8uy2+E3xyFrjImR0x2YYGn7NuoYX+DOz1Hfsw=
+X-Gm-Gg: AYBFou1Hff7lFlSHwyZp3ihEzRYxFt36AJRcq9AjciWflBq0aPafm0MwmANQq/Thgjh
+ Tb344Up+MQY4CvCVMbvNxsDqHuA8vTKY6sCwEROcTBgoPvBI9rkG3i+Q1CnrGwoBpwXKcmlS31h
+ nSR5OM/0fDVXov/rXjiSdLZRbB8uY6GcwIlJoGx9ysRCrvvwkocIr2AqLVvDI8Z2eb9qEuAp2WR
+ kZtumB6vkwUrNl02WTJ+3uY/RvjkrFF6MkqeLiKJqFDRigmb1cFKnwhPxIH6RV7WSQesk2SouFU
+ Hj9iSvB33FWpwPGgEohOdd5xlErOcFF7yo9whI4K1EOEJw464admozWYag1z/MrrfbMYNp8vxXw
+ pxVpoqejSbHTuVlb4K6RGBcv/D5fLM5D79OLs8VbhZeX0o+Otcw0DnAr2br3ZLIN8BosIOZrlNU
+ 3oB3LIK1GnWb0o6j2WIDaKq+hGdVSHhov7d+iOn1P0FHLUt23nOZL2Z33fBbG4JRTaRMNc0l+B5
+ tABBTF9cA1T9vD03Pfv0w1izwRgLIldCFRozrtt
+X-Received: by 2002:a17:90b:3912:b0:398:c724:1bb1 with SMTP id
+ 98e67ed59e1d1-39b26101524mr32701452a91.8.1788800833675; 
+ Mon, 07 Sep 2026 10:07:13 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39b26123c99sm21509536a91.11.2026.09.07.10.05.49
+ 98e67ed59e1d1-39b08d0d7e8sm29227590a91.16.2026.09.07.10.07.11
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 07 Sep 2026 10:05:51 -0700 (PDT)
+ Mon, 07 Sep 2026 10:07:13 -0700 (PDT)
+Date: Mon, 7 Sep 2026 10:07:05 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v2 13/13] examples/eventdev_pipeline: make signal handler safe
-Date: Mon,  7 Sep 2026 10:03:31 -0700
-Message-ID: <20260907170454.351647-14-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260907170454.351647-1-stephen@networkplumber.org>
-References: <20260906232716.496546-1-stephen@networkplumber.org>
- <20260907170454.351647-1-stephen@networkplumber.org>
+To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
+Cc: dev@dpdk.org, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>, Bruce
+ Richardson <bruce.richardson@intel.com>
+Subject: Re: [RFC PATCH] mempool: no cache size limit
+Message-ID: <20260907100705.105ef931@phoenix.local>
+In-Reply-To: <20260907120605.969197-1-mb@smartsharesystems.com>
+References: <20260907120605.969197-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,141 +83,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This example was calling functions like rte_exit and printing from a
-signal handler which is not async signal safe.
+On Mon,  7 Sep 2026 12:06:05 +0000
+Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
 
-Revise to spit the two signal actions here:
-- The handler for SIGINT and SIGTERM set a flag which causes main
-  loop to exit and proceed with normal clean shutdown. If a second
-  SIGINT is received the process will get default signal handler
-  (i.e process exit).
+> Replaced the object array of fixed size in the per-lcore local cache
+> with a dynamically sized array, thereby making the
+> RTE_MEMPOOL_CACHE_MAX_SIZE superfluous.
+> For faster indexing into the per-lcore array of caches, pre-calculate
+> the size (in bytes) of the per-lcore local cache.
+>=20
+> Also swapped the position of the private data and the local caches;
+> the private data now are positioned before the local caches, instead
+> of after.
+> Positioning the private data directly after the mempool header reduces
+> getting the private data pointer to simply adding a constant.
+> The local caches are accessed by dereferencing a pointer anyway, so the
+> performance for accessing these is unaffected by moving their position.
+>=20
+> Comments, please?
+>=20
+> We should probably keep RTE_MEMPOOL_CACHE_MAX_SIZE in rte_config.h for
+> DPDK 26.11, and deprecate it as obsolete.
+>=20
+> Signed-off-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
 
-- The dump flag handler is changed form SIGTSTP (^Z) to use SIGUSR1
-  since that is more standard practice in Linux.
-
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- examples/eventdev_pipeline/main.c            | 39 ++++++++++++--------
- examples/eventdev_pipeline/pipeline_common.h | 13 ++++---
- 2 files changed, 31 insertions(+), 21 deletions(-)
-
-diff --git a/examples/eventdev_pipeline/main.c b/examples/eventdev_pipeline/main.c
-index 65e0cd437c..00f409a07b 100644
---- a/examples/eventdev_pipeline/main.c
-+++ b/examples/eventdev_pipeline/main.c
-@@ -312,20 +312,16 @@ do_capability_setup(uint8_t eventdev_id)
- }
- 
- static void
--signal_handler(int signum)
-+signal_quit(int signum __rte_unused)
- {
--	static uint8_t once;
--
--	if (fdata->done)
--		rte_exit(1, "Exiting on signal %d\n", signum);
--	if ((signum == SIGINT || signum == SIGTERM) && !once) {
--		if (cdata.dump_dev)
--			rte_event_dev_dump(0, stdout);
--		once = 1;
-+	if (fdata != NULL)
- 		fdata->done = 1;
--	}
--	if (signum == SIGTSTP)
--		rte_event_dev_dump(0, stdout);
-+}
-+
-+static void
-+signal_dump(int signum __rte_unused)
-+{
-+	cdata.dump_dev_signal = 1;
- }
- 
- static inline uint64_t
-@@ -345,9 +341,19 @@ main(int argc, char **argv)
- 	int lcore_id;
- 	int err;
- 
--	signal(SIGINT, signal_handler);
--	signal(SIGTERM, signal_handler);
--	signal(SIGTSTP, signal_handler);
-+	/* second SIGINT/SIGTERM takes the default action */
-+	struct sigaction sa = {
-+		.sa_handler = signal_quit,
-+		.sa_flags = SA_RESETHAND,
-+	};
-+	sigemptyset(&sa.sa_mask);
-+	sigaction(SIGINT, &sa, NULL);
-+	sigaction(SIGTERM, &sa, NULL);
-+
-+	/* allow repeated dump signals */
-+	sa.sa_handler = signal_dump;
-+	sa.sa_flags = 0;
-+	sigaction(SIGUSR1, &sa, NULL);
- 
- 	err = rte_eal_init(argc, argv);
- 	if (err < 0)
-@@ -452,6 +458,9 @@ main(int argc, char **argv)
- 
- 	rte_eal_mp_wait_lcore();
- 
-+	if (cdata.dump_dev)
-+		rte_event_dev_dump(0, stdout);
-+
- 	if (!cdata.quiet && (port_stat(dev_id, worker_data[0].port_id) !=
- 			(uint64_t)-ENOTSUP)) {
- 		printf("\nPort Workload distribution:\n");
-diff --git a/examples/eventdev_pipeline/pipeline_common.h b/examples/eventdev_pipeline/pipeline_common.h
-index 7b8eb50240..274c6942ca 100644
---- a/examples/eventdev_pipeline/pipeline_common.h
-+++ b/examples/eventdev_pipeline/pipeline_common.h
-@@ -3,6 +3,7 @@
-  * Copyright 2017 Cavium, Inc.
-  */
- 
-+#include <signal.h>
- #include <stdbool.h>
- 
- #include <rte_eal.h>
-@@ -43,7 +44,7 @@ struct setup_data {
- };
- 
- struct __rte_cache_aligned fastpath_data {
--	volatile int done;
-+	volatile sig_atomic_t done;
- 	uint32_t evdev_service_id;
- 	uint32_t rxadptr_service_id;
- 	uint32_t txadptr_service_id;
-@@ -68,7 +69,7 @@ struct config_data {
- 	int enable_queue_priorities;
- 	int quiet;
- 	int dump_dev;
--	int dump_dev_signal;
-+	volatile sig_atomic_t dump_dev_signal;
- 	int all_type_queues;
- 	unsigned int num_stages;
- 	unsigned int worker_cq_depth;
-@@ -127,16 +128,16 @@ schedule_devices(unsigned int lcore_id)
- 	if (fdata->sched_core[lcore_id]) {
- 		rte_service_run_iter_on_app_lcore(fdata->evdev_service_id,
- 				!fdata->sched_single);
--		if (cdata.dump_dev_signal) {
--			rte_event_dev_dump(0, stdout);
--			cdata.dump_dev_signal = 0;
--		}
- 	}
- 
- 	if (fdata->tx_core[lcore_id]) {
- 		rte_service_run_iter_on_app_lcore(fdata->txadptr_service_id,
- 				!fdata->tx_single);
- 	}
-+	if (cdata.dump_dev_signal) {
-+		rte_event_dev_dump(0, stdout);
-+		cdata.dump_dev_signal = 0;
-+	}
- }
- 
- static void
--- 
-2.53.0
-
+Maybe have a very large upper bound to prevent bugs from broken programs?
