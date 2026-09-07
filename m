@@ -2,43 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F4DEC79F9E
-	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Sep 2026 12:14:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2737DC79F89
+	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Sep 2026 12:14:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4522540693;
-	Mon,  7 Sep 2026 14:14:13 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 651BD40678;
+	Mon,  7 Sep 2026 14:14:22 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 8FB57409FA
- for <dev@dpdk.org>; Mon,  7 Sep 2026 14:14:11 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id E360640663
+ for <dev@dpdk.org>; Mon,  7 Sep 2026 14:14:20 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1788783251;
+ s=mimecast20190719; t=1788783260;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=1NIVREA+T3NUD5VD3FABEDuxbbp8pJEMBc5ozrMKApE=;
- b=CeH24T73GIDN0qXYsAAJzxgUcMIP3joTG7E9C8lbNtm29rYMES2qbbt8IZf48dTdJ1Ry+F
- BnyIzWYvNMKz9VTr+hQ9ApvNpVY3fShWkv8cZYXCte78Egl1rt/13/s1BkmLtnnOYT1OW+
- pmCsECMzmvNpwYb+A0epPEUYBsL8wF0=
+ bh=6LGt2TkqvDAQJtwodzqkMUhsn4QPYCOOeobh2my7wKA=;
+ b=BdrIAWjE2fWMnwIlT/0Ds2NlrZhokOGYSQ+K42FOcEfGXIY0ItDpLwW8nhq3PWrEWoVV2R
+ VF1h0N7mXtOLFbRgKOC7sxIePg4yu7wjb2acP/OiPJ+eqDuBwVV4VSKlJJZkopJjjbFH6/
+ O3egnydaKH39CDzAIdUVniHc6QGt784=
 Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-534-QuXDsxe0NJK7wrAt7_-m_g-1; Mon,
- 07 Sep 2026 08:14:09 -0400
-X-MC-Unique: QuXDsxe0NJK7wrAt7_-m_g-1
-X-Mimecast-MFC-AGG-ID: QuXDsxe0NJK7wrAt7_-m_g_1788783247
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-614-lExKyE39Nw6PJ9ISgCzrfQ-1; Mon,
+ 07 Sep 2026 08:14:15 -0400
+X-MC-Unique: lExKyE39Nw6PJ9ISgCzrfQ-1
+X-Mimecast-MFC-AGG-ID: lExKyE39Nw6PJ9ISgCzrfQ_1788783253
 Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
  by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id A1EE6183450D; Mon,  7 Sep 2026 12:14:07 +0000 (UTC)
+ id 2BF96183450F; Mon,  7 Sep 2026 12:14:13 +0000 (UTC)
 Received: from dmarchan.redhat.corp
  (headnet04.pony-001.prod.iad2.dc.redhat.com [10.2.32.116])
  by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 3A93B1800640; Mon,  7 Sep 2026 12:14:03 +0000 (UTC)
+ id F39EF1800257; Mon,  7 Sep 2026 12:14:09 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org,
 	hkalra@marvell.com
@@ -46,20 +46,20 @@ Cc: Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>,
  Chenbo Xia <chenbox@nvidia.com>,
  Anatoly Burakov <anatoly.burakov@intel.com>,
  Long Li <longli@microsoft.com>, Wei Hu <weh@microsoft.com>,
- Gaetan Rivet <grive@u256.net>, Jakub Grajciar <jgrajcia@cisco.com>,
- Matan Azrad <matan@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
- Stephen Hemminger <stephen@networkplumber.org>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>,
+ Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
+ Jakub Grajciar <jgrajcia@cisco.com>,
  Bruce Richardson <bruce.richardson@intel.com>
-Subject: [RFC v3 3/5] interrupts: mark file descriptors invalid on allocation
-Date: Mon,  7 Sep 2026 14:13:46 +0200
-Message-ID: <20260907121348.3049808-4-david.marchand@redhat.com>
+Subject: [RFC v3 4/5] interrupts: close interrupt FDs
+Date: Mon,  7 Sep 2026 14:13:47 +0200
+Message-ID: <20260907121348.3049808-5-david.marchand@redhat.com>
 In-Reply-To: <20260907121348.3049808-1-david.marchand@redhat.com>
 References: <20260907121348.3049808-1-david.marchand@redhat.com>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: f8XAtFoFoCSpjNT450akcjVIIwHs8sVdP1bpvUhKlHU_1788783247
+X-Mimecast-MFC-PROC-ID: cZ3IkDUJbF5yT6CnIum_3o5d7uL3TdGypXQyQiXVqNc_1788783253
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -76,354 +76,506 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Initialize fd, dev_fd, and all efds array elements as invalid in
-rte_intr_instance_alloc().
-This follows Unix convention, avoiding confusion with fd 0
-which could result from zero-initialization.
+Add rte_intr_fd_close() and rte_intr_dev_fd_close() helpers to
+encapsulate the common pattern of closing an interrupt handle's
+file descriptor and resetting it to -1.
 
-Update the API documentation to reflect this behavior and add a
-unit test check to verify the fd is invalid after allocation.
-
-Update the FreeBSD PCI implementation that checked against a 0 FD.
-
-Add a hack in the unit test to let the UIO simulated tests pass.
-
-Remove now-redundant initialization calls that were setting the fd
-invalid right after allocation.
+This simplifies code in multiple drivers that previously had to:
+  if (rte_intr_fd_get(handle) >= 0) {
+      close(rte_intr_fd_get(handle));
+      rte_intr_fd_set(handle, -1);
+  }
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
-Changes since RFC v1:
-- squashed FreeBSD PCI update,
-- updated unit test,
+Changes since RFC v2:
+- added unit test,
+- converted bus/cdx and FreeBSD EAL interrupt code,
+- added wrappers for common/cnxk,
 
 ---
- app/test/test_interrupts.c             | 12 ++++++++++--
- doc/guides/rel_notes/release_26_11.rst |  5 +++++
- drivers/bus/cdx/cdx_vfio.c             |  6 ------
- drivers/bus/pci/bsd/pci.c              |  2 +-
- drivers/bus/pci/linux/pci_vfio.c       | 11 -----------
- drivers/bus/pci/pci_common_uio.c       |  6 ------
- drivers/bus/vmbus/vmbus_common_uio.c   |  6 ------
- drivers/net/failsafe/failsafe.c        |  3 ---
- drivers/net/mana/mana.c                |  4 ----
- drivers/net/memif/rte_eth_memif.c      |  6 ------
- drivers/net/mlx4/mlx4.c                |  3 ---
- drivers/net/tap/rte_eth_tap.c          |  1 -
- lib/eal/common/eal_common_interrupts.c |  6 ++++++
- lib/eal/freebsd/eal_alarm.c            |  3 ---
- lib/eal/include/rte_interrupts.h       |  2 ++
- lib/eal/linux/eal_dev.c                |  4 ----
- 16 files changed, 24 insertions(+), 56 deletions(-)
+ app/test/test_interrupts.c             | 72 ++++++++++++++++++++++++++
+ doc/guides/rel_notes/release_26_11.rst |  2 +
+ drivers/bus/cdx/cdx_vfio.c             |  6 +--
+ drivers/bus/pci/bsd/pci.c              |  7 +--
+ drivers/bus/pci/linux/pci_uio.c        | 15 ++----
+ drivers/bus/pci/linux/pci_vfio.c       | 16 ++----
+ drivers/bus/pci/pci_common_uio.c       | 12 +----
+ drivers/bus/vmbus/linux/vmbus_uio.c    | 13 ++---
+ drivers/bus/vmbus/vmbus_common_uio.c   | 11 +---
+ drivers/common/cnxk/roc_platform.h     |  2 +
+ drivers/net/memif/memif_socket.c       | 13 ++---
+ lib/eal/common/eal_common_interrupts.c | 23 ++++++++
+ lib/eal/freebsd/eal_alarm.c            |  3 +-
+ lib/eal/include/rte_interrupts.h       | 27 ++++++++++
+ lib/eal/linux/eal_dev.c                |  5 +-
+ 15 files changed, 147 insertions(+), 80 deletions(-)
 
 diff --git a/app/test/test_interrupts.c b/app/test/test_interrupts.c
-index 3a5be92cd7..747dfc4f48 100644
+index 747dfc4f48..67f1e6429a 100644
 --- a/app/test/test_interrupts.c
 +++ b/app/test/test_interrupts.c
-@@ -73,11 +73,13 @@ test_interrupt_init(void)
- 			rte_intr_instance_alloc(RTE_INTR_INSTANCE_F_PRIVATE);
- 		if (!intr_handles[i])
- 			return -1;
-+		if (rte_intr_fd_get(intr_handles[i]) != -1)
-+			return -1;
-+		if (rte_intr_dev_fd_get(intr_handles[i]) != -1)
-+			return -1;
+@@ -169,6 +169,65 @@ test_interrupt_handle_compare(struct rte_intr_handle *intr_handle_l,
+ 	return 0;
+ }
+ 
++/**
++ * Tests for rte_intr_fd_close() and rte_intr_dev_fd_close().
++ */
++static int
++test_interrupt_close(void)
++{
++	struct rte_intr_handle *intr_handle;
++	int pipefd[2];
++
++	/* check with null intr_handle */
++	rte_intr_fd_close(NULL);
++	rte_intr_dev_fd_close(NULL);
++
++	intr_handle = rte_intr_instance_alloc(RTE_INTR_INSTANCE_F_PRIVATE);
++	if (!intr_handle)
++		return -1;
++
++	if (pipe(pipefd) < 0) {
++		rte_intr_instance_free(intr_handle);
++		return -1;
++	}
++
++	if (rte_intr_fd_set(intr_handle, pipefd[0]) < 0 ||
++			rte_intr_dev_fd_set(intr_handle, pipefd[1]) < 0) {
++		close(pipefd[0]);
++		close(pipefd[1]);
++		rte_intr_instance_free(intr_handle);
++		return -1;
++	}
++
++	/* check rte_intr_fd_close */
++	rte_intr_fd_close(intr_handle);
++
++	if (rte_intr_fd_get(intr_handle) != -1) {
++		printf("fd not set to -1 after close\n");
++		close(pipefd[1]);
++		rte_intr_instance_free(intr_handle);
++		return -1;
++	}
++
++	/* calling again should be a noop */
++	rte_intr_fd_close(intr_handle);
++
++	/* check rte_intr_dev_fd_close */
++	rte_intr_dev_fd_close(intr_handle);
++
++	if (rte_intr_dev_fd_get(intr_handle) != -1) {
++		printf("dev_fd not set to -1 after close\n");
++		rte_intr_instance_free(intr_handle);
++		return -1;
++	}
++
++	/* calling again should be a noop */
++	rte_intr_dev_fd_close(intr_handle);
++
++	rte_intr_instance_free(intr_handle);
++	return 0;
++}
++
+ #else
+ /* to be implemented for bsd later */
+ static inline int
+@@ -206,6 +265,12 @@ test_interrupt_handle_compare(struct rte_intr_handle *intr_handle_l,
+ 
+ 	return 0;
+ }
++
++static int
++test_interrupt_close(void)
++{
++	return 0;
++}
+ #endif /* RTE_EXEC_ENV_LINUX */
+ 
+ /**
+@@ -566,6 +631,13 @@ test_interrupt(void)
  	}
+ 	rte_delay_ms(TEST_INTERRUPT_CHECK_INTERVAL);
  
- 	test_intr_handle = intr_handles[TEST_INTERRUPT_HANDLE_INVALID];
--	if (rte_intr_fd_set(test_intr_handle, -1))
--		return -1;
- 	if (rte_intr_type_set(test_intr_handle, RTE_INTR_HANDLE_UNKNOWN))
- 		return -1;
++	printf("start interrupt close test\n");
++	if (test_interrupt_close() < 0) {
++		printf("fail to check interrupt close\n");
++		goto out;
++	}
++	rte_delay_ms(TEST_INTERRUPT_CHECK_INTERVAL);
++
+ 	ret = 0;
  
-@@ -90,6 +92,9 @@ test_interrupt_init(void)
- 	test_intr_handle = intr_handles[TEST_INTERRUPT_HANDLE_VALID_UIO];
- 	if (rte_intr_fd_set(test_intr_handle, pfds.readfd))
- 		return -1;
-+	/* HACK: UIO type does not require a device FD, but a valid handle should contain one */
-+	if (rte_intr_dev_fd_set(test_intr_handle, INT_MAX))
-+		return -1;
- 	if (rte_intr_type_set(test_intr_handle, RTE_INTR_HANDLE_UIO))
- 		return -1;
- 
-@@ -108,6 +113,9 @@ test_interrupt_init(void)
- 	test_intr_handle = intr_handles[TEST_INTERRUPT_HANDLE_CASE1];
- 	if (rte_intr_fd_set(test_intr_handle, pfds.writefd))
- 		return -1;
-+	/* HACK: UIO type does not require a device FD, but a valid handle should contain one */
-+	if (rte_intr_dev_fd_set(test_intr_handle, INT_MAX))
-+		return -1;
- 	if (rte_intr_type_set(test_intr_handle, RTE_INTR_HANDLE_UIO))
- 		return -1;
- 
+ out:
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 87c7e81bde..36d6f3a05f 100644
+index 36d6f3a05f..07b90f1529 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -95,6 +95,11 @@ API Changes
-    Also, make sure to start the actual text at the margin.
-    =======================================================
+@@ -99,6 +99,8 @@ API Changes
  
-+* interrupts: Updated interrupt handle file descriptor management.
-+
-+  * ``rte_intr_instance_alloc()`` now initializes file descriptors
-+    to invalid values instead of zero.
-+
+   * ``rte_intr_instance_alloc()`` now initializes file descriptors
+     to invalid values instead of zero.
++  * Added ``rte_intr_fd_close()`` and ``rte_intr_dev_fd_close()``
++    helpers to close file descriptors and reset them to -1.
+ 
  
  ABI Changes
- -----------
 diff --git a/drivers/bus/cdx/cdx_vfio.c b/drivers/bus/cdx/cdx_vfio.c
-index 11fe3265d2..0e4af4e940 100644
+index 0e4af4e940..8d67058bfe 100644
 --- a/drivers/bus/cdx/cdx_vfio.c
 +++ b/drivers/bus/cdx/cdx_vfio.c
-@@ -397,9 +397,6 @@ cdx_vfio_map_resource_primary(struct rte_cdx_device *dev)
- 	struct cdx_map *maps;
- 	int vfio_dev_fd, i, ret;
+@@ -110,11 +110,7 @@ cdx_vfio_unmap_resource_primary(struct rte_cdx_device *dev)
+ 			CDX_BUS_ERR("Error when disabling bus master for %s",
+ 				    dev->device.name);
  
--	if (rte_intr_fd_set(dev->intr_handle, -1))
--		return -1;
--
- 	ret = rte_vfio_setup_device(RTE_CDX_BUS_DEVICES_PATH, dev_name,
- 				    &vfio_dev_fd, &device_info);
- 	if (ret)
-@@ -493,9 +490,6 @@ cdx_vfio_map_resource_secondary(struct rte_cdx_device *dev)
- 	const char *dev_name = dev->device.name;
- 	struct cdx_map *maps;
+-		if (close(rte_intr_fd_get(dev->intr_handle)) < 0) {
+-			CDX_BUS_ERR("Error when closing eventfd file descriptor for %s",
+-				dev->device.name);
+-			return -1;
+-		}
++		rte_intr_fd_close(dev->intr_handle);
+ 	}
  
--	if (rte_intr_fd_set(dev->intr_handle, -1))
--		return -1;
--
- 	/* if we're in a secondary process, just find our tailq entry */
- 	TAILQ_FOREACH(vfio_res, vfio_res_list, next) {
- 		if (strcmp(vfio_res->name, dev_name))
+ 	vfio_dev_fd = rte_intr_dev_fd_get(dev->intr_handle);
 diff --git a/drivers/bus/pci/bsd/pci.c b/drivers/bus/pci/bsd/pci.c
-index c6df31d486..bbe08605af 100644
+index bbe08605af..f1012bb91b 100644
 --- a/drivers/bus/pci/bsd/pci.c
 +++ b/drivers/bus/pci/bsd/pci.c
-@@ -93,7 +93,7 @@ pci_uio_free_resource(struct rte_pci_device *dev,
+@@ -93,11 +93,8 @@ pci_uio_free_resource(struct rte_pci_device *dev,
  {
  	rte_free(uio_res);
  
--	if (rte_intr_fd_get(dev->intr_handle)) {
-+	if (rte_intr_fd_get(dev->intr_handle) >= 0) {
- 		close(rte_intr_fd_get(dev->intr_handle));
- 		rte_intr_fd_set(dev->intr_handle, -1);
- 		rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UNKNOWN);
+-	if (rte_intr_fd_get(dev->intr_handle) >= 0) {
+-		close(rte_intr_fd_get(dev->intr_handle));
+-		rte_intr_fd_set(dev->intr_handle, -1);
+-		rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UNKNOWN);
+-	}
++	rte_intr_fd_close(dev->intr_handle);
++	rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UNKNOWN);
+ }
+ 
+ int
+diff --git a/drivers/bus/pci/linux/pci_uio.c b/drivers/bus/pci/linux/pci_uio.c
+index 40e96b1c67..0983474994 100644
+--- a/drivers/bus/pci/linux/pci_uio.c
++++ b/drivers/bus/pci/linux/pci_uio.c
+@@ -197,20 +197,11 @@ void
+ pci_uio_free_resource(struct rte_pci_device *dev,
+ 		struct mapped_pci_resource *uio_res)
+ {
+-	int uio_cfg_fd = rte_intr_dev_fd_get(dev->intr_handle);
+-
+ 	rte_free(uio_res);
+ 
+-	if (uio_cfg_fd >= 0) {
+-		close(uio_cfg_fd);
+-		rte_intr_dev_fd_set(dev->intr_handle, -1);
+-	}
+-
+-	if (rte_intr_fd_get(dev->intr_handle) >= 0) {
+-		close(rte_intr_fd_get(dev->intr_handle));
+-		rte_intr_fd_set(dev->intr_handle, -1);
+-		rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UNKNOWN);
+-	}
++	rte_intr_dev_fd_close(dev->intr_handle);
++	rte_intr_fd_close(dev->intr_handle);
++	rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UNKNOWN);
+ }
+ 
+ int
 diff --git a/drivers/bus/pci/linux/pci_vfio.c b/drivers/bus/pci/linux/pci_vfio.c
-index bc5c5c2499..a92a0d86ec 100644
+index a92a0d86ec..84c338c68e 100644
 --- a/drivers/bus/pci/linux/pci_vfio.c
 +++ b/drivers/bus/pci/linux/pci_vfio.c
-@@ -742,12 +742,6 @@ pci_vfio_map_resource_primary(struct rte_pci_device *dev)
+@@ -354,9 +354,7 @@ pci_vfio_enable_notifier(struct rte_pci_device *dev, int vfio_dev_fd)
  
- 	struct pci_map *maps;
+ 	return 0;
+ error:
+-	close(fd);
+-
+-	rte_intr_fd_set(dev->vfio_req_intr_handle, -1);
++	rte_intr_fd_close(dev->vfio_req_intr_handle);
+ 	rte_intr_type_set(dev->vfio_req_intr_handle, RTE_INTR_HANDLE_UNKNOWN);
+ 	rte_intr_dev_fd_set(dev->vfio_req_intr_handle, -1);
  
--	if (rte_intr_fd_set(dev->intr_handle, -1))
+@@ -383,9 +381,7 @@ pci_vfio_disable_notifier(struct rte_pci_device *dev)
+ 		return -1;
+ 	}
+ 
+-	close(rte_intr_fd_get(dev->vfio_req_intr_handle));
+-
+-	rte_intr_fd_set(dev->vfio_req_intr_handle, -1);
++	rte_intr_fd_close(dev->vfio_req_intr_handle);
+ 	rte_intr_type_set(dev->vfio_req_intr_handle, RTE_INTR_HANDLE_UNKNOWN);
+ 	rte_intr_dev_fd_set(dev->vfio_req_intr_handle, -1);
+ 
+@@ -1073,13 +1069,7 @@ pci_vfio_unmap_resource_primary(struct rte_pci_device *dev)
+ 		return -1;
+ 	}
+ 
+-	if (rte_intr_fd_get(dev->intr_handle) < 0)
 -		return -1;
 -
--	if (rte_intr_fd_set(dev->vfio_req_intr_handle, -1))
+-	if (close(rte_intr_fd_get(dev->intr_handle)) < 0) {
+-		PCI_LOG(INFO, "Error when closing eventfd file descriptor for %s", pci_addr);
 -		return -1;
--
- 	/* store PCI address string */
- 	snprintf(pci_addr, sizeof(pci_addr), PCI_PRI_FMT,
- 			loc->domain, loc->bus, loc->devid, loc->function);
-@@ -939,11 +933,6 @@ pci_vfio_map_resource_secondary(struct rte_pci_device *dev)
+-	}
++	rte_intr_fd_close(dev->intr_handle);
  
- 	struct pci_map *maps;
- 
--	if (rte_intr_fd_set(dev->intr_handle, -1))
--		return -1;
--	if (rte_intr_fd_set(dev->vfio_req_intr_handle, -1))
--		return -1;
--
- 	/* store PCI address string */
- 	snprintf(pci_addr, sizeof(pci_addr), PCI_PRI_FMT,
- 			loc->domain, loc->bus, loc->devid, loc->function);
+ 	vfio_dev_fd = rte_intr_dev_fd_get(dev->intr_handle);
+ 	if (vfio_dev_fd < 0)
 diff --git a/drivers/bus/pci/pci_common_uio.c b/drivers/bus/pci/pci_common_uio.c
-index 71974e9f56..47d50721dc 100644
+index 47d50721dc..52a10f806a 100644
 --- a/drivers/bus/pci/pci_common_uio.c
 +++ b/drivers/bus/pci/pci_common_uio.c
-@@ -101,12 +101,6 @@ pci_uio_map_resource(struct rte_pci_device *dev)
+@@ -211,7 +211,6 @@ pci_uio_unmap_resource(struct rte_pci_device *dev)
+ 	struct mapped_pci_resource *uio_res;
  	struct mapped_pci_res_list *uio_res_list =
- 		RTE_TAILQ_CAST(rte_uio_tailq.head, mapped_pci_res_list);
+ 			RTE_TAILQ_CAST(rte_uio_tailq.head, mapped_pci_res_list);
+-	int uio_cfg_fd;
  
--	if (rte_intr_fd_set(dev->intr_handle, -1))
--		return -1;
+ 	if (dev == NULL)
+ 		return;
+@@ -222,15 +221,8 @@ pci_uio_unmap_resource(struct rte_pci_device *dev)
+ 		return;
+ 
+ 	/* close fd */
+-	if (rte_intr_fd_get(dev->intr_handle) >= 0)
+-		close(rte_intr_fd_get(dev->intr_handle));
+-	uio_cfg_fd = rte_intr_dev_fd_get(dev->intr_handle);
+-	if (uio_cfg_fd >= 0) {
+-		close(uio_cfg_fd);
+-		rte_intr_dev_fd_set(dev->intr_handle, -1);
+-	}
 -
--	if (rte_intr_dev_fd_set(dev->intr_handle, -1))
--		return -1;
+-	rte_intr_fd_set(dev->intr_handle, -1);
++	rte_intr_fd_close(dev->intr_handle);
++	rte_intr_dev_fd_close(dev->intr_handle);
+ 	rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UNKNOWN);
+ 
+ 	/* secondary processes - just free maps */
+diff --git a/drivers/bus/vmbus/linux/vmbus_uio.c b/drivers/bus/vmbus/linux/vmbus_uio.c
+index fbafc5027d..c52d6738a5 100644
+--- a/drivers/bus/vmbus/linux/vmbus_uio.c
++++ b/drivers/bus/vmbus/linux/vmbus_uio.c
+@@ -67,16 +67,9 @@ vmbus_uio_free_resource(struct rte_vmbus_device *dev,
+ {
+ 	rte_free(uio_res);
+ 
+-	if (rte_intr_dev_fd_get(dev->intr_handle) >= 0) {
+-		close(rte_intr_dev_fd_get(dev->intr_handle));
+-		rte_intr_dev_fd_set(dev->intr_handle, -1);
+-	}
 -
- 	/* allocate uio resource */
- 	ret = pci_uio_alloc_resource(dev, &uio_res);
- 	if (ret)
+-	if (rte_intr_fd_get(dev->intr_handle) >= 0) {
+-		close(rte_intr_fd_get(dev->intr_handle));
+-		rte_intr_fd_set(dev->intr_handle, -1);
+-		rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UNKNOWN);
+-	}
++	rte_intr_dev_fd_close(dev->intr_handle);
++	rte_intr_fd_close(dev->intr_handle);
++	rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UNKNOWN);
+ }
+ 
+ int
 diff --git a/drivers/bus/vmbus/vmbus_common_uio.c b/drivers/bus/vmbus/vmbus_common_uio.c
-index c6e7e07302..7459f4ea7a 100644
+index 7459f4ea7a..9765f5f609 100644
 --- a/drivers/bus/vmbus/vmbus_common_uio.c
 +++ b/drivers/bus/vmbus/vmbus_common_uio.c
-@@ -173,12 +173,6 @@ vmbus_uio_map_resource(struct rte_vmbus_device *dev)
- 	int ret;
+@@ -254,14 +254,7 @@ vmbus_uio_unmap_resource(struct rte_vmbus_device *dev)
+ 	rte_free(uio_res);
  
- 	/* TODO: handle rescind */
--	if (rte_intr_fd_set(dev->intr_handle, -1))
--		return -1;
+ 	/* close fd */
+-	if (rte_intr_fd_get(dev->intr_handle) >= 0)
+-		close(rte_intr_fd_get(dev->intr_handle));
 -
--	if (rte_intr_dev_fd_set(dev->intr_handle, -1))
--		return -1;
+-	if (rte_intr_dev_fd_get(dev->intr_handle) >= 0) {
+-		close(rte_intr_dev_fd_get(dev->intr_handle));
+-		rte_intr_dev_fd_set(dev->intr_handle, -1);
+-	}
 -
- 	if (rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UNKNOWN))
- 		return -1;
+-	rte_intr_fd_set(dev->intr_handle, -1);
++	rte_intr_fd_close(dev->intr_handle);
++	rte_intr_dev_fd_close(dev->intr_handle);
+ 	rte_intr_type_set(dev->intr_handle, RTE_INTR_HANDLE_UNKNOWN);
+ }
+diff --git a/drivers/common/cnxk/roc_platform.h b/drivers/common/cnxk/roc_platform.h
+index ac4f76473f..aba9782023 100644
+--- a/drivers/common/cnxk/roc_platform.h
++++ b/drivers/common/cnxk/roc_platform.h
+@@ -171,8 +171,10 @@ plt_thread_is_valid(plt_thread_t thr)
+ #define plt_intr_vec_list_free		rte_intr_vec_list_free
+ #define plt_intr_fd_set			rte_intr_fd_set
+ #define plt_intr_fd_get			rte_intr_fd_get
++#define plt_intr_fd_close		rte_intr_fd_close
+ #define plt_intr_dev_fd_get		rte_intr_dev_fd_get
+ #define plt_intr_dev_fd_set		rte_intr_dev_fd_set
++#define plt_intr_dev_fd_close		rte_intr_dev_fd_close
+ #define plt_intr_type_get		rte_intr_type_get
+ #define plt_intr_type_set		rte_intr_type_set
+ #define plt_intr_instance_alloc		rte_intr_instance_alloc
+diff --git a/drivers/net/memif/memif_socket.c b/drivers/net/memif/memif_socket.c
+index 649f8d0e61..94cd70fb89 100644
+--- a/drivers/net/memif/memif_socket.c
++++ b/drivers/net/memif/memif_socket.c
+@@ -510,8 +510,7 @@ memif_intr_unregister_handler(struct rte_intr_handle *intr_handle, void *arg)
+ 	struct memif_control_channel *cc = arg;
  
-diff --git a/drivers/net/failsafe/failsafe.c b/drivers/net/failsafe/failsafe.c
-index aa3fe53b22..3ba143924d 100644
---- a/drivers/net/failsafe/failsafe.c
-+++ b/drivers/net/failsafe/failsafe.c
-@@ -279,9 +279,6 @@ fs_eth_dev_create(struct rte_vdev_device *vdev)
- 		goto cancel_alarm;
- 	}
- 
--	if (rte_intr_fd_set(PRIV(dev)->intr_handle, -1))
--		goto cancel_alarm;
--
- 	if (rte_intr_type_set(PRIV(dev)->intr_handle, RTE_INTR_HANDLE_EXT))
- 		goto cancel_alarm;
- 
-diff --git a/drivers/net/mana/mana.c b/drivers/net/mana/mana.c
-index 0b72f711a1..1864ba2a2b 100644
---- a/drivers/net/mana/mana.c
-+++ b/drivers/net/mana/mana.c
-@@ -1946,10 +1946,6 @@ mana_intr_install(struct rte_eth_dev *eth_dev, struct mana_priv *priv)
- 		return -ENOMEM;
- 	}
- 
--	ret = rte_intr_fd_set(priv->intr_handle, -1);
--	if (ret)
--		goto free_intr;
--
- 	ret = mana_fd_set_non_blocking(ctx->async_fd);
- 	if (ret) {
- 		DRV_LOG(ERR, "Failed to change async_fd to NONBLOCK");
-diff --git a/drivers/net/memif/rte_eth_memif.c b/drivers/net/memif/rte_eth_memif.c
-index 5d153c3a5a..04e12b8ffa 100644
---- a/drivers/net/memif/rte_eth_memif.c
-+++ b/drivers/net/memif/rte_eth_memif.c
-@@ -1496,9 +1496,6 @@ memif_tx_queue_setup(struct rte_eth_dev *dev,
- 	mq->n_pkts = 0;
- 	mq->n_bytes = 0;
- 
--	if (rte_intr_fd_set(mq->intr_handle, -1))
--		return -rte_errno;
--
- 	if (rte_intr_type_set(mq->intr_handle, RTE_INTR_HANDLE_EXT))
- 		return -rte_errno;
- 
-@@ -1536,9 +1533,6 @@ memif_rx_queue_setup(struct rte_eth_dev *dev,
- 	mq->n_pkts = 0;
- 	mq->n_bytes = 0;
- 
--	if (rte_intr_fd_set(mq->intr_handle, -1))
--		return -rte_errno;
--
- 	if (rte_intr_type_set(mq->intr_handle, RTE_INTR_HANDLE_EXT))
- 		return -rte_errno;
- 
-diff --git a/drivers/net/mlx4/mlx4.c b/drivers/net/mlx4/mlx4.c
-index 28f1116891..dbcd98d49f 100644
---- a/drivers/net/mlx4/mlx4.c
-+++ b/drivers/net/mlx4/mlx4.c
-@@ -1062,9 +1062,6 @@ mlx4_pci_probe(struct rte_pci_driver *pci_drv, struct rte_pci_device *pci_dev)
- 			goto port_error;
+ 	/* close control channel fd */
+-	if (rte_intr_fd_get(intr_handle) >= 0)
+-		close(rte_intr_fd_get(intr_handle));
++	rte_intr_fd_close(intr_handle);
+ 	/* clear message queue */
+ 	while ((elt = TAILQ_FIRST(&cc->msg_queue)) != NULL) {
+ 		TAILQ_REMOVE(&cc->msg_queue, elt, next);
+@@ -596,10 +595,7 @@ memif_disconnect(struct rte_eth_dev *dev)
+ 				continue;
  		}
  
--		if (rte_intr_fd_set(priv->intr_handle, -1))
--			goto port_error;
--
- 		if (rte_intr_type_set(priv->intr_handle, RTE_INTR_HANDLE_EXT))
- 			goto port_error;
+-		if (rte_intr_fd_get(mq->intr_handle) > 0) {
+-			close(rte_intr_fd_get(mq->intr_handle));
+-			rte_intr_fd_set(mq->intr_handle, -1);
+-		}
++		rte_intr_fd_close(mq->intr_handle);
+ 	}
+ 	for (i = 0; i < pmd->cfg.num_s2c_rings; i++) {
+ 		if (pmd->role == MEMIF_ROLE_SERVER) {
+@@ -614,10 +610,7 @@ memif_disconnect(struct rte_eth_dev *dev)
+ 				continue;
+ 		}
  
-diff --git a/drivers/net/tap/rte_eth_tap.c b/drivers/net/tap/rte_eth_tap.c
-index b93452f168..13114edba5 100644
---- a/drivers/net/tap/rte_eth_tap.c
-+++ b/drivers/net/tap/rte_eth_tap.c
-@@ -2191,7 +2191,6 @@ eth_dev_tap_create(struct rte_vdev_device *vdev, const char *tap_name,
- 	dev->tx_pkt_burst = pmd_tx_burst;
+-		if (rte_intr_fd_get(mq->intr_handle) > 0) {
+-			close(rte_intr_fd_get(mq->intr_handle));
+-			rte_intr_fd_set(mq->intr_handle, -1);
+-		}
++		rte_intr_fd_close(mq->intr_handle);
+ 	}
  
- 	rte_intr_type_set(pmd->intr_handle, RTE_INTR_HANDLE_EXT);
--	rte_intr_fd_set(pmd->intr_handle, -1);
- 	dev->intr_handle = pmd->intr_handle;
- 
- 	/* Presetup the fds to -1 as being not valid */
+ 	memif_free_regions(dev);
 diff --git a/lib/eal/common/eal_common_interrupts.c b/lib/eal/common/eal_common_interrupts.c
-index a2a310750a..4e31a71319 100644
+index 4e31a71319..8176eb089a 100644
 --- a/lib/eal/common/eal_common_interrupts.c
 +++ b/lib/eal/common/eal_common_interrupts.c
-@@ -68,6 +68,8 @@ struct rte_intr_handle *rte_intr_instance_alloc(uint32_t flags)
- 		rte_errno = ENOMEM;
- 		goto fail;
- 	}
-+	for (int i = 0; i < RTE_MAX_RXTX_INTR_VEC_ID; i++)
-+		intr_handle->efds[i] = -1;
+@@ -4,6 +4,7 @@
  
- 	if (uses_rte_memory) {
- 		intr_handle->elist = rte_zmalloc(NULL,
-@@ -83,6 +85,8 @@ struct rte_intr_handle *rte_intr_instance_alloc(uint32_t flags)
- 		goto fail;
- 	}
+ #include <stdlib.h>
+ #include <string.h>
++#include <unistd.h>
  
-+	intr_handle->fd = -1;
-+	intr_handle->dev_fd = -1;
- 	intr_handle->alloc_flags = flags;
- 	intr_handle->nb_intr = RTE_MAX_RXTX_INTR_VEC_ID;
+ #include <rte_errno.h>
+ #include <rte_interrupts.h>
+@@ -219,6 +220,17 @@ int rte_intr_fd_get(const struct rte_intr_handle *intr_handle)
+ 	return -1;
+ }
  
-@@ -153,6 +157,8 @@ int rte_intr_event_list_update(struct rte_intr_handle *intr_handle, int size)
- 		goto fail;
- 	}
- 	intr_handle->efds = tmp_efds;
-+	for (int i = intr_handle->nb_intr; i < size; i++)
-+		intr_handle->efds[i] = -1;
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_intr_fd_close, 26.11)
++void rte_intr_fd_close(struct rte_intr_handle *intr_handle)
++{
++	int fd = rte_intr_fd_get(intr_handle);
++
++	if (fd >= 0) {
++		close(fd);
++		rte_intr_fd_set(intr_handle, -1);
++	}
++}
++
+ RTE_EXPORT_SYMBOL(rte_intr_type_set)
+ int rte_intr_type_set(struct rte_intr_handle *intr_handle,
+ 	enum rte_intr_handle_type type)
+@@ -265,6 +277,17 @@ int rte_intr_dev_fd_get(const struct rte_intr_handle *intr_handle)
+ 	return -1;
+ }
  
- 	if (uses_rte_memory) {
- 		tmp_elist = rte_realloc(intr_handle->elist,
++RTE_EXPORT_INTERNAL_SYMBOL(rte_intr_dev_fd_close)
++void rte_intr_dev_fd_close(struct rte_intr_handle *intr_handle)
++{
++	int fd = rte_intr_dev_fd_get(intr_handle);
++
++	if (fd >= 0) {
++		close(fd);
++		rte_intr_dev_fd_set(intr_handle, -1);
++	}
++}
++
+ RTE_EXPORT_INTERNAL_SYMBOL(rte_intr_max_intr_set)
+ int rte_intr_max_intr_set(struct rte_intr_handle *intr_handle,
+ 				 int max_intr)
 diff --git a/lib/eal/freebsd/eal_alarm.c b/lib/eal/freebsd/eal_alarm.c
-index 2905841b5e..c563ee9cc2 100644
+index c563ee9cc2..2697921760 100644
 --- a/lib/eal/freebsd/eal_alarm.c
 +++ b/lib/eal/freebsd/eal_alarm.c
-@@ -75,9 +75,6 @@ rte_eal_alarm_init(void)
- 	if (rte_intr_type_set(intr_handle, RTE_INTR_HANDLE_ALARM))
- 		goto error;
- 
--	if (rte_intr_fd_set(intr_handle, -1))
--		goto error;
--
- 	/* on FreeBSD, timers don't use fd's, and their identifiers are stored
- 	 * in separate namespace from fd's, so using any value is OK. however,
- 	 * EAL interrupts handler expects fd's to be unique, so use an actual fd
+@@ -54,8 +54,7 @@ rte_eal_alarm_cleanup(void)
+ 	int ret = rte_intr_callback_unregister_sync(intr_handle,
+ 			eal_alarm_callback, (void *)-1);
+ 	if (ret >= 0) {
+-		close(rte_intr_fd_get(intr_handle));
+-		rte_intr_fd_set(intr_handle, -1);
++		rte_intr_fd_close(intr_handle);
+ 		rte_intr_instance_free(intr_handle);
+ 		intr_handle = NULL;
+ 	}
 diff --git a/lib/eal/include/rte_interrupts.h b/lib/eal/include/rte_interrupts.h
-index 0ae16bbe19..1cfb9d3f8e 100644
+index 1cfb9d3f8e..d04c0c7b15 100644
 --- a/lib/eal/include/rte_interrupts.h
 +++ b/lib/eal/include/rte_interrupts.h
-@@ -225,6 +225,8 @@ uint32_t rte_intr_active_events_flags(void);
-  * can be realloced later based on size of MSIX interrupts supported by a PCI
-  * device.
-  *
-+ * All file descriptors (fd, dev_fd, efds) are initialized to -1.
+@@ -279,6 +279,19 @@ rte_intr_fd_set(struct rte_intr_handle *intr_handle, int fd);
+ int
+ rte_intr_fd_get(const struct rte_intr_handle *intr_handle);
+ 
++/**
++ * Close the FD of the given interrupt handle instance,
++ * and set FD to -1.
 + *
-  * This function should be called from application or driver, before calling
-  * any of the interrupt APIs.
-  *
++ * If FD is not valid (< 0), nothing is done.
++ *
++ * @param intr_handle
++ *  pointer to the interrupt handle.
++ */
++__rte_experimental
++void
++rte_intr_fd_close(struct rte_intr_handle *intr_handle);
++
+ /**
+  * Set the type field of interrupt handle with user provided
+  * interrupt type.
+@@ -467,6 +480,20 @@ __rte_internal
+ int
+ rte_intr_dev_fd_get(const struct rte_intr_handle *intr_handle);
+ 
++/**
++ * @internal
++ * Close the device FD of the given interrupt handle instance,
++ * and set device FD to -1.
++ *
++ * If device FD is not valid (< 0), nothing is done.
++ *
++ * @param intr_handle
++ *  pointer to the interrupt handle.
++ */
++__rte_internal
++void
++rte_intr_dev_fd_close(struct rte_intr_handle *intr_handle);
++
+ /**
+  * @internal
+  * Set the max intr field of interrupt handle with user
 diff --git a/lib/eal/linux/eal_dev.c b/lib/eal/linux/eal_dev.c
-index ec408649d0..c78e565427 100644
+index c78e565427..4f55dcc4e7 100644
 --- a/lib/eal/linux/eal_dev.c
 +++ b/lib/eal/linux/eal_dev.c
-@@ -326,10 +326,6 @@ rte_dev_event_monitor_start(void)
- 	if (ret)
- 		goto exit;
+@@ -217,10 +217,7 @@ static void
+ dev_delayed_unregister(void *param)
+ {
+ 	rte_intr_callback_unregister(intr_handle, dev_uev_handler, param);
+-	if (rte_intr_fd_get(intr_handle) >= 0) {
+-		close(rte_intr_fd_get(intr_handle));
+-		rte_intr_fd_set(intr_handle, -1);
+-	}
++	rte_intr_fd_close(intr_handle);
+ }
  
--	ret = rte_intr_fd_set(intr_handle, -1);
--	if (ret)
--		goto exit;
--
- 	ret = dev_uev_socket_fd_create();
- 	if (ret) {
- 		EAL_LOG(ERR, "error create device event fd.");
+ static void
 -- 
 2.54.0
 
