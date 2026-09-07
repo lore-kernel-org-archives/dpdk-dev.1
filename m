@@ -2,59 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7CB2C79F89
-	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Sep 2026 12:14:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A76BC79F89
+	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Sep 2026 12:14:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 056B340678;
-	Mon,  7 Sep 2026 14:14:02 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3355D406B6;
+	Mon,  7 Sep 2026 14:14:11 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id BDFEE40041
- for <dev@dpdk.org>; Mon,  7 Sep 2026 14:14:00 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 0E83C40041
+ for <dev@dpdk.org>; Mon,  7 Sep 2026 14:14:09 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1788783240;
+ s=mimecast20190719; t=1788783249;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=RRjgE5vEvNzUGWnrEJP69/ZivYfFeLESMyNtxzQ9XD0=;
- b=iZpwJYPAYautZpyRCv4TCQOw1IrTVS060XbapDENAtoaeQzCoqAwrAfYdMkROH5ajpdGSI
- QXte1Fvx6TB4Cek5/JJwfyN0NG1r0+FU8AZQrQiILV3iIM1LH/Tj6ybfOQc2hzjn3w0V6k
- tSW2I6rwEuN+p4h5jP9jXsHLs/+51n0=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ bh=KL/pH2VNUNg+Ob9HW3nRQwiaYMH87X9RdasdRV7OqCQ=;
+ b=c0hlnQUBsOUpP66yWp95lDXGlT9HxTn4qzvByhpV/YPlNgZpa5M0U2Zyq7h44TQmYu09/q
+ ecnVYYnZ5I3EB8wmvUi3WsMzPuSFd0bja28dfAtsoFVYTLqIesCUeJcmo6vMP+It4+DnFs
+ wLS3RG2GONzw7976/2W7NTczJo82C40=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-507-xCFBLjicNOeU4C-x_aAbDg-1; Mon,
- 07 Sep 2026 08:13:59 -0400
-X-MC-Unique: xCFBLjicNOeU4C-x_aAbDg-1
-X-Mimecast-MFC-AGG-ID: xCFBLjicNOeU4C-x_aAbDg_1788783238
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-690-1syXvk_FNo2VEoW8xq7Bew-1; Mon,
+ 07 Sep 2026 08:14:03 -0400
+X-MC-Unique: 1syXvk_FNo2VEoW8xq7Bew-1
+X-Mimecast-MFC-AGG-ID: 1syXvk_FNo2VEoW8xq7Bew_1788783242
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id D8A901829E3F; Mon,  7 Sep 2026 12:13:57 +0000 (UTC)
+ by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id C8DEE19540C2; Mon,  7 Sep 2026 12:14:01 +0000 (UTC)
 Received: from dmarchan.redhat.corp
  (headnet04.pony-001.prod.iad2.dc.redhat.com [10.2.32.116])
- by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 057EF1956049; Mon,  7 Sep 2026 12:13:55 +0000 (UTC)
+ by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 5A47D3000223; Mon,  7 Sep 2026 12:14:00 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org,
 	hkalra@marvell.com
-Cc: Matan Azrad <matan@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
- Maxime Coquelin <maxime.coquelin@redhat.com>,
- Xueming Li <xuemingl@nvidia.com>
-Subject: [RFC v3 1/5] vdpa/mlx5: fix check on err interrupt FD
-Date: Mon,  7 Sep 2026 14:13:44 +0200
-Message-ID: <20260907121348.3049808-2-david.marchand@redhat.com>
+Cc: stable@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [RFC v3 2/5] eal/freebsd: fix a FD leak in the alarm subsystem
+Date: Mon,  7 Sep 2026 14:13:45 +0200
+Message-ID: <20260907121348.3049808-3-david.marchand@redhat.com>
 In-Reply-To: <20260907121348.3049808-1-david.marchand@redhat.com>
 References: <20260907121348.3049808-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: zMbBV1PqVG1Eqi_PJ5T4u7hd4M_idRGlaLT9df2EvBI_1788783238
+X-Mimecast-MFC-PROC-ID: JZfC93_wVFnPrLb6xZ4RZKC9E_8-ARPcKTiODh95FvQ_1788783242
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -71,46 +69,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-A 0 file descriptor is valid.
-Prefer setting to -1 to indicate an invalid FD.
+Caught by code review, while looking at rte_intr_instance_free() users.
 
-Fixes: 0474419bae7c ("vdpa/mlx5: handle hardware error")
+Even if the FD is not used, it must still be closed when uninitialising
+the alarm subsystem.
+
+Fixes: 26021a715067 ("eal/bsd: support alarm API")
+Cc: stable@dpdk.org
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- drivers/vdpa/mlx5/mlx5_vdpa_event.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ lib/eal/freebsd/eal_alarm.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/vdpa/mlx5/mlx5_vdpa_event.c b/drivers/vdpa/mlx5/mlx5_vdpa_event.c
-index 43585a94b2..dee2ccc23d 100644
---- a/drivers/vdpa/mlx5/mlx5_vdpa_event.c
-+++ b/drivers/vdpa/mlx5/mlx5_vdpa_event.c
-@@ -452,7 +452,7 @@ mlx5_vdpa_err_event_setup(struct mlx5_vdpa_priv *priv)
- 					 mlx5_vdpa_err_interrupt_handler,
- 					 priv);
- 	if (ret != 0) {
--		rte_intr_fd_set(priv->err_intr_handle, 0);
-+		rte_intr_fd_set(priv->err_intr_handle, -1);
- 		DRV_LOG(ERR, "Failed to register error interrupt for device %d.",
- 			priv->vid);
- 		rte_errno = -ret;
-@@ -473,7 +473,7 @@ mlx5_vdpa_err_event_unset(struct mlx5_vdpa_priv *priv)
- 	int retries = MLX5_VDPA_INTR_RETRIES;
- 	int ret = -EAGAIN;
- 
--	if (!rte_intr_fd_get(priv->err_intr_handle))
-+	if (rte_intr_fd_get(priv->err_intr_handle) < 0)
- 		return;
- 	while (retries-- && ret == -EAGAIN) {
- 		ret = rte_intr_callback_unregister(priv->err_intr_handle,
-@@ -487,6 +487,7 @@ mlx5_vdpa_err_event_unset(struct mlx5_vdpa_priv *priv)
- 			rte_pause();
- 		}
+diff --git a/lib/eal/freebsd/eal_alarm.c b/lib/eal/freebsd/eal_alarm.c
+index c03e281e67..2905841b5e 100644
+--- a/lib/eal/freebsd/eal_alarm.c
++++ b/lib/eal/freebsd/eal_alarm.c
+@@ -54,6 +54,8 @@ rte_eal_alarm_cleanup(void)
+ 	int ret = rte_intr_callback_unregister_sync(intr_handle,
+ 			eal_alarm_callback, (void *)-1);
+ 	if (ret >= 0) {
++		close(rte_intr_fd_get(intr_handle));
++		rte_intr_fd_set(intr_handle, -1);
+ 		rte_intr_instance_free(intr_handle);
+ 		intr_handle = NULL;
  	}
-+	rte_intr_fd_set(priv->err_intr_handle, -1);
- 	if (priv->err_chnl) {
- #ifdef HAVE_IBV_DEVX_EVENT
- 		union {
+@@ -62,7 +64,7 @@ rte_eal_alarm_cleanup(void)
+ int
+ rte_eal_alarm_init(void)
+ {
+-	int fd;
++	int fd = -1;
+ 
+ 	intr_handle = rte_intr_instance_alloc(RTE_INTR_INSTANCE_F_PRIVATE);
+ 	if (intr_handle == NULL) {
+@@ -88,6 +90,8 @@ rte_eal_alarm_init(void)
+ 
+ 	return 0;
+ error:
++	if (fd >= 0)
++		close(fd);
+ 	rte_intr_instance_free(intr_handle);
+ 	return -1;
+ }
 -- 
 2.54.0
 
