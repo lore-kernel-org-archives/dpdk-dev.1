@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2619AC79F82
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 13:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1996C79F99
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 13:28:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F04C340E68;
-	Tue,  8 Sep 2026 15:27:58 +0200 (CEST)
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
- by mails.dpdk.org (Postfix) with ESMTP id 9547C40E40;
- Tue,  8 Sep 2026 15:27:54 +0200 (CEST)
-X-QQ-mid: zesmtpsz3t1788874070tae93f7ff
-X-QQ-Originating-IP: joIJAHkNAY1E32uYq1r2QG4w5uKXz1W5OME0FKOgqtU=
+	by mails.dpdk.org (Postfix) with ESMTP id D497740E40;
+	Tue,  8 Sep 2026 15:28:02 +0200 (CEST)
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+ by mails.dpdk.org (Postfix) with ESMTP id 14D6340E8A;
+ Tue,  8 Sep 2026 15:27:58 +0200 (CEST)
+X-QQ-mid: zesmtpsz3t1788874075t0f47f269
+X-QQ-Originating-IP: L+OahTIspMfBrSJpiB7ZscBMAoPXw2gn/Sg36FWRNyc=
 Received: from DSK-zaiyuwang.trustnetic.com ( [36.24.66.61])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Tue, 08 Sep 2026 21:27:48 +0800 (CST)
+ id ; Tue, 08 Sep 2026 21:27:53 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 9263145364693650951
+X-BIZMAIL-ID: 2841321965969147171
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v3 02/15] net/txgbe: fix e56 PHY configuration error
-Date: Tue,  8 Sep 2026 21:25:47 +0800
-Message-ID: <543A6CDBA3EDC1AD+20260908132742.2661-3-zaiyuwang@trustnetic.com>
+Subject: [PATCH v3 04/15] net/txgbe: do not force reconfig on link retry
+Date: Tue,  8 Sep 2026 21:25:49 +0800
+Message-ID: <F430CCD287899606+20260908132742.2661-5-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.55.0.windows.2
 In-Reply-To: <20260908132742.2661-1-zaiyuwang@trustnetic.com>
 References: <20260827114309.10530-1-zaiyuwang@trustnetic.com>
@@ -34,24 +34,25 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: MYUpfHtk16q4lz2o6VJtxpohfT3d7QF4DKigx3O6FsMnxZ0FeK2cHfF5
- htUqnSSGozzETKYc298tAze8EQUn0I7Otd9qBe2dnsTXImPeD/vBqTn6+n/toqcQ3Qd4HuC
- wNPZUz9TL3wIXONZF9k2VJFED3HuMzlc7Y6wFXMMdHOC9iQzfcKj7qIkybLsChaniXicvV3
- 7owhnMMT2bD9zFuaw2EQGnZIQMnerLQjNC/lDtcCUBRJPRYcSYDmn5dk3ZQBwTwqDPEV3lF
- ItY06edC0oy28wvA8237LB3vk/IIpSfcmvFB1RaAyPaAfomWDdNTgcbxvoMjTLxIYyKo32b
- ZhOQfpTDnYReqKuzwbGH4UmoSovGi+HH2F3xTEiX6dvWfYaI0UgrTTESaHbTmcNgy+vum22
- pfPjcxWAte80vCWZ4t2/FIJMJoe+rhnfPlZWL+q4Gh4ia/1ZbOwiRwQknoKYGUXGG9Zdrq6
- Wx1SOmEUnKFC7O1ItV9GwA+cEfRk8YnRFJWb/QcafVxu197J3RrTMkOcRubmdzzVR0DFNP+
- bIoccGvBk3Ad8lMZ1iUZp4o1K9zKd1m09kroO6aFIsDgNwf12fVAKyjpaJZ5fD6cy4eCv/L
- xxPowFHuK8x3ql+aiDD8wKcR4pBEsd2cYnleX9DdjCw7wnlu50gm1XEZ2lcQ3fTKm67JFfJ
- X1ufWhZv01OLWA2UN1bjaSvRX+BnR/+On8Gq+qLFEfCO+wQDrCTbY95mk/jsJ8X16y9bJPd
- 8BDJg8wbTosYJ5gzjbDssdZTmGoUk2ReJ1G6kOFSL0tT+u2swo69+iB1tqMRiuWpP/haxtn
- /aWwxrhHpFzuv39lEEVQTeKWe2g71qQzPDZNyvW4f/PnWHEhi/1EoFPiZ6lWsad6+gm1wEQ
- oMGTpM9FOk1geyo9yow38wJK95X0eCoRQkGG9GwDLnDBQve5XhfMkHp2vVqAuE4dw5V/wxm
- DFiG3nOy/2jrGeq+lWHu17a2brAhSwbCIgtuwui4ulOJpgfFl/I6ZRWbeSFCBw1ylhpcdX9
- 3qJE2493ns6IWTk8LCSeWcqkts1pj7Snt+G84gQkJq/2FNkBJhn+SsVghOs2/LIkX4CKPpY
- 3FsWzZYunnMwjUd9lCtl3xnVbG32mGC65p4IpcqW+R9fpTAXkBKvbdqhF1sjaZVjw==
-X-QQ-XMRINFO: NyFYKkN4Ny6FuXrnB5Ye7Aabb3ujjtK+gg==
+X-QQ-XMAILINFO: NwMblr6Dy8b0HFmyCYOWMykV/7VJSiqpmKS5vPGRMxei6hQFkOLSdC5W
+ /y36PmoctGM+MM/F18OVYNFfqAQnpPTXwaTdoAUdUHwI5KlCrsiOAsxNxttIthlXULQ9/r9
+ ojK2YKjFyzakYJqZAA1oDcAYII6Lsf69wSVHS9iG8se2PGfLgWiBxQuiUdeSDZDbUpyte44
+ 4+jV79YWn0p6EkVg5OstGtNpxAMl09Bta57PYuRlZXOCjPZa0tSd5/vFcvs315G6sMgUE3R
+ Pl9yIfe+EjnbTu8UNM8Zhlv9k2WfsLDXb46MjP+BZG8QxSWB9lv5EQYlsvDeUN1EFHSRC57
+ w3qXdsUUenWqYKlNmspuvlCj4KH4O3EtWW8gqoI/AVy0L4Ipn2z2MxOPZ1ybRCtivK6Oj6r
+ vKgjnN/D4Bm8Qfg+YUitIxNDRBS9tqUNOQcO6jG0buICc7ew/aCiIxUBiHhMPZD3NxgdAUz
+ FUXJ3EH41WjTkc+1vDjyMvD8TJjDdXdXHEGY5RHkWmq6RcP4Ibg1JwZScVnfnB3tj6gXvMC
+ KDI6Ns33pQz2NjeId+AqBCBP1Ap6/VRkgXL4UNJRq0rGdTjfrEOHTm1ZwQdzb1h2O6dhLVk
+ ekSvlOvGD/JLIBNy+Gi3sNtQcCbU6bOzD0gYjcNBfgd58Uha+3DzAbf2kz30no3JHacQjHl
+ 9R2npJv0QMxiCSSusIH8z8WgnBDQqkDADgZXh305t0462SCDHMoBm9pFWAEcraDSANBy9gs
+ jXgdt43wEqZDE4Ht7vz3VI3oP1Ilim6Ax4ZCYDtspvXqmfNBdhxTEV05S6ilFksCSgsRNqx
+ lwsouGBsIJ1br0jXa+tG/FOwKMWjQk+e5u36vb0jKbnihxMM1D5GOTlSPeq/HbSPBGtK8rV
+ QHVEg6WfBMYhjdtZlKvMTsrwaFvzfmNjardGPXNJalxLyWgQdZxfS5rWbZMThIpm+zS0ZE7
+ 5g0lL7ZQEYa4J53rW7tDaFhVQnDqBe4d+9E/DggByUG9Aku58tlQg7Dk5uGhcxVBzQ2iLg7
+ GGwN8lWvlZJ7uE7jOSJDTHwOaH9jx5QSStJV3OpFEN6fLj4CrdahjWMP0jdxWct/9K0FDKM
+ sV+KkRRQDU7jvrjgx6hbOhnC6wC68kw0kiX9+CXO7b7DrodCCgpIwtIcqwXrHaJHJmas0Ra
+ T1cE3wofBDxwQs4=
+X-QQ-XMRINFO: MSVp+SPm3vtSI1QTLgDHQqIV1w2oNKDqfg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -66,36 +67,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The e56 PHY RXS ring equalizer/tap configuration is written to the
-wrong bit field: set_fields_e56(&rdata, 9, 4, 0x366) targets the
-unrelated lower bits, so the configured tap values are never applied
-and the equalizer stays at its default setting, which can degrade
-the received signal on both the 40G and 10G paths.
+The link alarm retry calls mac.setup_link() with
+autoneg_wait_to_complete = true. On the AN73/xpcs path, setup_link
+skips reconfiguration when the link is already up and AN is done
+only if the flag is false. With true, a retry that arrives after the
+link is up still runs set_phy_link_mode() and resets the established
+AN73 link, which then drops and never recovers (e.g. after DAC
+hot-plug).
 
-Fix the field range to (21, 12), so the equalizer/tap configuration
-takes effect.
+Pass false from the retry path instead.
 
-Fixes: f7cfc21e9f75 ("net/txgbe: fix link stability for 40G NIC")
+Fixes: 6104fd11086e ("net/txgbe: fix link stability for 25G NIC")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_e56.c | 2 +-
+ drivers/net/txgbe/txgbe_ethdev.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/txgbe/base/txgbe_e56.c b/drivers/net/txgbe/base/txgbe_e56.c
-index cbcc05333e..2711863f2c 100644
---- a/drivers/net/txgbe/base/txgbe_e56.c
-+++ b/drivers/net/txgbe/base/txgbe_e56.c
-@@ -423,7 +423,7 @@ u32 txgbe_e56_cfg_40g(struct txgbe_hw *hw)
- 
- 		addr  = E56PHY_RXS_RINGO_0_ADDR + (E56PHY_RXS_OFFSET * i);
- 		rdata = rd32_ephy(hw, addr);
--		set_fields_e56(&rdata, 9, 4, 0x366);
-+		set_fields_e56(&rdata, 21, 12, 0x366);
- 		wr32_ephy(hw, addr, rdata);
+diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
+index bc2e11e801..9e4eca40cf 100644
+--- a/drivers/net/txgbe/txgbe_ethdev.c
++++ b/drivers/net/txgbe/txgbe_ethdev.c
+@@ -3286,7 +3286,7 @@ txgbe_dev_setup_link_alarm_handler_aml(void *param)
+ 		return;
  	}
  
+-	hw->mac.setup_link(hw, speed, true);
++	hw->mac.setup_link(hw, speed, false);
+ 
+ 	u32 link_speed = TXGBE_LINK_SPEED_UNKNOWN;
+ 	bool link_up = false;
 -- 
 2.55.0.windows.2
 
