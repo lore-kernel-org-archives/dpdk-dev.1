@@ -2,156 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E21C79F99
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 14:05:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CA9BC79F82
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 14:06:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6AEA840691;
-	Tue,  8 Sep 2026 16:05:21 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id EE670402DF
- for <dev@dpdk.org>; Tue,  8 Sep 2026 16:05:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1788876320; x=1820412320;
- h=message-id:date:subject:to:cc:references:from:
- in-reply-to:content-transfer-encoding:mime-version;
- bh=1M0LyngQ/dA8rDkH1gq2dGVwPjn6mW1IjYZeWFyvFAQ=;
- b=HnT04zBIUlXWa3f0RPFfinKUAaV2g3i3yHjLb8THtVHPF919JtiGxm4w
- iCxQZWfYh+Q/y3r6odSNEmj1PGilkNSf/xrvidAi1xFM83CdGaXbXb8js
- 2unoADd73dAUbmRe1iQrz/0SXLouZ0YNWJhYF2CVMOY/hnfPOcRj9+3YF
- xOj93gvmXvPLPj0qp7E4AD/oRb9tDrU3fMxfYViDfDBzNMUrHnT7vnLu1
- 5m06VzBkMihQMTrOJFRlDz5FpoZepvmgPbv3aS1hGPCyoc3DVdlPaROCv
- MFeWxhBkl+FywZ211d6bdFNQgxFQCuIjyq+/V+OHXKS/z+sLTcKcM5eNN Q==;
-X-CSE-ConnectionGUID: C/L1LPxKTuiCrGUPp59ZxA==
-X-CSE-MsgGUID: OzYXzdfvS1mRzlRnCca+nQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11899"; a="89483477"
-X-IronPort-AV: E=Sophos;i="6.25,269,1779174000"; d="scan'208";a="89483477"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
- by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Sep 2026 07:05:19 -0700
-X-CSE-ConnectionGUID: bVDE1QazQQaEPDDPkrswEw==
-X-CSE-MsgGUID: HoW7owuMT260I3NVoTz7Sg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,269,1779174000"; d="scan'208";a="294514975"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
- by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Sep 2026 07:05:18 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Tue, 8 Sep 2026 07:05:17 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46 via Frontend Transport; Tue, 8 Sep 2026 07:05:17 -0700
-Received: from PH7PR06CU001.outbound.protection.outlook.com (52.101.201.41) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Tue, 8 Sep 2026 07:05:17 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KreC5vWIkqTEq8UkfBO8lczx52/cdy9/d9OECLluPtMzBhrjbGTkVFjVE5K7D8ilLDcS7YyOsZPIBRiZrb5MkzHeRKE9u4Gmpbo0NsTdxU4APqXHRhvcZqZ6uADihn7BSSfGGinirF0qe97/DndR1uxLKGg+hPYeHmNLl48ejj9RzcfGcoP21AhGdAN1JPSCe/pDUWOYFaxOO5CZrgOrO0Gg7yQ9yK4VlBvJ0kaH4PrRvwHqEAlMDV2aoX5znMhQ4oODNNn/oyCSSJRJntuENw7wuBXEmej3QPWH0gxzWBp4n12Q/vjeYJ8xKD3L2Njzx6QrwnJiR9FYCXG38xKwZQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1M0LyngQ/dA8rDkH1gq2dGVwPjn6mW1IjYZeWFyvFAQ=;
- b=v3HNjz5RNvV8PFTDaSqRChig8S3l+DWjaZzw+3BODt3dyFJnzzjrMNL8lEUY2JR+IpF3/Z0d3X8Wb7wVlfcOl14ZWzFcnw3Sreh3e2lmUqDiGczBaVWPn+l5DBgajigu0/asHFZZS2EmIJC0F+IMQhefcmzvspssdtS3DUow0UYN5HzPPv1UeeQ9QGxYGthXdI7qSPPBsnKUEyRc7Kyx/ndGyuVtTzYmHa0rUN/j1Dg/VWWtiCsBTK/vCP/7pblfXsXRqwMxal/dXDUbaBNBo3dvtYYytXXVz0uNTl36BUTGuzw5VzAw+3HHaMKUQoS4DzffxWcVzmhIzgtKOYVp4g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM8PR11MB5653.namprd11.prod.outlook.com (2603:10b6:8:25::8) by
- PHXPR11MB9686.namprd11.prod.outlook.com (2603:10b6:510:3ca::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.7; Tue, 8 Sep 2026
- 14:05:15 +0000
-Received: from DM8PR11MB5653.namprd11.prod.outlook.com
- ([fe80::74e3:c0eb:29ee:fffa]) by DM8PR11MB5653.namprd11.prod.outlook.com
- ([fe80::74e3:c0eb:29ee:fffa%3]) with mapi id 15.21.0406.005; Tue, 8 Sep 2026
- 14:05:14 +0000
-Message-ID: <aefb2909-0c8c-47b1-ac03-9563c7662aee@intel.com>
-Date: Tue, 8 Sep 2026 15:05:10 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/8] crypto: add RSA-specific capability parameters
-To: Sucharitha Sarananaga <ssarananaga@marvell.com>, <dev@dpdk.org>
-CC: <gakhil@marvell.com>, <fanzhang.oss@gmail.com>, <adwivedi@marvell.com>,
- <anoobj@marvell.com>, <ktejasree@marvell.com>, <kai.ji@intel.com>,
- <jianjay.zhou@huawei.com>, <gmuthukrishn@marvell.com>
-References: <20260831102328.2813604-1-ssarananaga@marvell.com>
- <20260903082648.3610676-1-ssarananaga@marvell.com>
- <20260903082648.3610676-2-ssarananaga@marvell.com>
-Content-Language: en-US
-From: Radu Nicolau <radu.nicolau@intel.com>
-In-Reply-To: <20260903082648.3610676-2-ssarananaga@marvell.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DU6P191CA0036.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:10:53f::23) To DM8PR11MB5653.namprd11.prod.outlook.com
- (2603:10b6:8:25::8)
+	by mails.dpdk.org (Postfix) with ESMTP id 7762D40691;
+	Tue,  8 Sep 2026 16:06:54 +0200 (CEST)
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
+ [209.85.214.170])
+ by mails.dpdk.org (Postfix) with ESMTP id CB239402DF
+ for <dev@dpdk.org>; Tue,  8 Sep 2026 16:06:52 +0200 (CEST)
+Received: by mail-pl1-f170.google.com with SMTP id
+ d9443c01a7336-2d8fd3b729dso38524505ad.1
+ for <dev@dpdk.org>; Tue, 08 Sep 2026 07:06:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788876412;
+ x=1789481212; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=tM4vIrsdM9ecVBN+t0RWMhArdi7jdQte/zIkcwwVHhs=;
+ b=SY8i8KxFqQDQFFP5MAPKqG1EWM14MOhlWsgcPA9VnDSsQVN+7Tq9UVRAQxXK67BpMR
+ JlDazMOdMLJ1xhT09gG64tHOvgAseRozjM1cPosoAiDmReZrZBpWr2zgNyveHkap8SsE
+ UtbB2lyKsFVPLr2vdItorKdxKQm5fYBaUBompHHcKdqDOKmTdBrHWN89B9XDun+oebbH
+ oShqc/rLpKiLLvKdHGzVE8Ec0qIsBWqr7aZHfncAV1a2ZUiN0cgt5xBD8Jj7HTXf1Zta
+ YbLaqjxTrAG2FcMou756L8I2pQCmx6z7CwVprZ7bfEwN7b2Hv0v+4GDTKh/K8ioG+V6v
+ gi4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1788876412; x=1789481212;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=tM4vIrsdM9ecVBN+t0RWMhArdi7jdQte/zIkcwwVHhs=;
+ b=YXqEEds6MXQa3jw+ssn4N/54rDH+C5FDGc1fJ1EP4Tu89PdCPUGyXAAs8neKYSQbpL
+ 19QsSZt/7hy+1Cay2WH61DXt8Ii6LH92dY03uT+FVjTVlr4q3Hfkk0G+z6n61mdaIN3C
+ +E2i3NFv4g1yE1kfroZKJG7mdGrb4j2Y8zcMUQ5l/fwu5Q50xvfqmxdOPuwdvgVGZ1rf
+ hUvT/VV982sV9FbsdNToWW4gIqSD0YfmsKEermBGEQR/K4bxFVMvZc0u5QCCicnUBk3C
+ 3Wvvv+a0yo2CzgXMzMnCpirBnXIUNK77Vb8VqmS1JZgLTMFPuGJw1xq54xSr3GS3wl0v
+ 6anQ==
+X-Gm-Message-State: AFuF++lAapIa8gLyhiwyblOaFRa4NxeZo9aan7AztBQN9ybwM49c12S3
+ Tn4V86I0Ep0Novd7nbQdEO0dwOGh5MwD1Hv+BypY9Y27jscIwKQcZEXdUop8h4Lh9wk=
+X-Gm-Gg: AYBFou2y92U/cEJ6AHYzzCQuSVuHT7Z7NJOiI+kqO4eJv8ysy9XPhTetdAU90mk7KIj
+ dMoxz8JeLH4QgcJyrvBNeAc9MliqPo28QEBuipoYJdIYXOruDc6FGW29TNlypKrKTD+4ZS280bt
+ IWZ9bBUSYmmkz19F4cd2RGxdwygkMJYC8YcyEdUl0qo6xqmNDkEbX50+ar/B9Q0m/Rfvn7m5Mxz
+ ZWAbvHlIxw2NTXShh7d5zdpNp2/WL5TTbtWu0Y4TdklHkNMR1sQvijAD/CsDR2UsrxQ6/fLcrvh
+ SWfAvdpaclx41iL5yf0MZ3l7/efBNLlvAk9J0ZpwjJ0AyabbxxVoMkBwZRZyqbOp91y+UuV4MBB
+ Bvy6CwTJMHTE9zUTCl+68+r8m1ttyo7oMQCXOdwpuS47PAeQVWgGmnrKWectGUIPwz+bUbbpLWu
+ bCZg3443pxpd6mVLl+uu6p9iD2EBBz64XGDFTANHF0sBXaYokKppR09LPPacevScdlztXk6qRhl
+ bK7vltAtSiT3dHKaFTtwH7dsOeo1IQ+jV3BhvfA
+X-Received: by 2002:a17:903:2c6:b0:2d8:d4d3:da50 with SMTP id
+ d9443c01a7336-2db126aae2dmr510090135ad.20.1788876411407; 
+ Tue, 08 Sep 2026 07:06:51 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-2db1495b2f8sm59014645ad.21.2026.09.08.07.06.48
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 08 Sep 2026 07:06:50 -0700 (PDT)
+Date: Tue, 8 Sep 2026 07:06:42 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Gagandeep Singh <g.singh@nxp.com>
+Cc: dev@dpdk.org, hemant.agrawal@nxp.com
+Subject: Re: [PATCH v13 00/15] net/enetc: add new features for ENETC4 on i.MX95
+Message-ID: <20260908070642.72269043@phoenix.local>
+In-Reply-To: <20260908054736.842738-1-g.singh@nxp.com>
+References: <20260819053415.645865-1-g.singh@nxp.com>
+ <20260908054736.842738-1-g.singh@nxp.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM8PR11MB5653:EE_|PHXPR11MB9686:EE_
-X-MS-Office365-Filtering-Correlation-Id: d7e1ec7a-b62e-4557-38c2-08df0db23470
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|366016|376014|23010399003|1800799024|6133799003|18002099003|22082099003|3023799007|4143699003|11063799006|56012099006|10067099003;
-X-Microsoft-Antispam-Message-Info: w5qPhlauSt1LwgqaFvPcst7upe72tfcp6mBsqphe/0d0LzIBPXscOqJNgciRzeNPG0riV4rhjsSy0ZLtrt/Ymos6hU5VxNsd9it3RznzqMazBaB+erUyZDOsBQdW8io1hHGI8BUWb3OkcVSBq+JNJp2gpL+qX4WQTZbZynmUBWV8y1ygVUe2FHn9fPTcvY2PTIaubsHP1lrX36ZzdIjFDKVpfC7aI+ZzQXDpSBe9T4qGWn1LAKViXVFz7OGd0Ey+Zd3zUmVYFf58UVzJhBO7OctHX3ZASC0s1ZlO89hecqVOqXfufvnPSR3qiUJto/bnDmThNYvpwaylP1i6ScdzrFcpuvdOnK07B0lSUf4crUSUaf42JszlKgApiX/TQvF/pmuVrzitHtlqFkQmRJEKyQ4yX69IxQ8CRVnmleJ6n/5N3FsEAt5wXdrTUdxE7PTegNyb7VQvy0cnA/ia02TMzca/TgJWF7gy2SSAiCDDWb175f/z4SWhq3oWpxBICfle+p61/0pwFJKwdfIZkHZeQ8ojTS5E+j0BlShkD1rzyIcNoPvjNzE+k5BmuNt88c+1P0Lf4nicQ5DHxvnK+gNPHqD/ba/mQxQc6igtzuLE2hlKQNuaBxWTx0XJZ8fNK33bdJlFXwM1bgOEXgmFV2xotkk6LAuMl7MnU7gVEN6RzYI=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DM8PR11MB5653.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(23010399003)(1800799024)(6133799003)(18002099003)(22082099003)(3023799007)(4143699003)(11063799006)(56012099006)(10067099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Ni9IdkI3WWJrakc4NEFaY2kzaWRjUFU4WXZUWkdGNnJLYXNZVXAyRVo5U01N?=
- =?utf-8?B?TG9pUWZSWFVYd3dGVzlOMkJvQkhPdFZYUGtIWGtHQW1KRjBZT245cFUzY2FR?=
- =?utf-8?B?ajdWdVhOdzlCcGVYNmxWN2FOWG91UVo1dWQ1QzRjTWtNcG9EczFxNnowcFpm?=
- =?utf-8?B?NVZQcXpVS0t6OGg2ZkgwL09EcG5xdkhNTW5NZkptUkQzN1JJVHM2Y3hjTXNT?=
- =?utf-8?B?bm8zVXk3bmxGNUlCOEtsZC8zbE5ra1VvSWxvZG41R0JzRTVvZzRoK0k2Vncv?=
- =?utf-8?B?WGkxOExHSCtERmRPMVJCdmViSW9ibkpRK1BGVzhCbFNuaUIydWZiNnhLQzRw?=
- =?utf-8?B?ZEpkTFBPbFk0WXh5ak9uRzgyQXhGZ2oraTUrNDc5Ti8vckRtZFRwVUp2MEVh?=
- =?utf-8?B?TVJOWnNvR1hNOEhTSWxyMUJucEhkZmk3Rmx6S1dBVFVWK2NhNGduOTRlWThK?=
- =?utf-8?B?d2lWWkt0bUdxWU1rOGQydU4rNmRhU2lkUGd0Yjh1Q25lZkcwMmhLWmlLWUVi?=
- =?utf-8?B?U0pwQWtNZnFLck5qK21qY1JqK2pMK0NrRzBoZE00OXowSTFkQmhwQW5NUWc2?=
- =?utf-8?B?REtDV0pVcjdocUlQNkhzRng4M2Z3MHRZaGhSTnQ0Qm5BenptblpmRHVJbDhU?=
- =?utf-8?B?cis4WWFXK0dCc3JHdlgyak93My91SUhOd2xjUmZ2ZGRDRzRVQnFicVk4Wlhr?=
- =?utf-8?B?VFlDQWZ3aFJFekJFSVJZQkh0dlZFNzF1bUhSaFprZUw3NmV0Y2VRZ0JZRDlS?=
- =?utf-8?B?SUc4eXVib3dZVTRiU3ovRC9YZ1ZpWkFud2dueS9McGlzRmJVMGFia1Yzblpw?=
- =?utf-8?B?Vld3S1dETTJFZnk3c0xWd2ZqM3NtUXJuUExMdnFzbis1ZXNGVXdXUzhxL0U4?=
- =?utf-8?B?TUlUZVUrQXRjZVZCVjl6dWUxa05BSURNSTduTnQrODZSQ0thZzV5TG0wZ1hH?=
- =?utf-8?B?Q2dHL3djL21GRktjUUtxSUJ5L0x1LzY4MG94M0dOZllsRzNzWHFBVS9zZko0?=
- =?utf-8?B?K2c5Q3BXWFRFU21URmNJaUFvMWkrUDVBOFFUd01VU1NPNVJ4ZzdMTFFjaTNs?=
- =?utf-8?B?dVNDVCswSzlvOHVvTUJtRy9NOGo4bC9MVG8zRzE2Nk1HQWtSZ2JhSTB2aHkz?=
- =?utf-8?B?OXFWZFBkWW8wejB0MUkyWXNzUmRRNGtzZXY2ekNpVjIrTVdPNjBjZzIwSkk4?=
- =?utf-8?B?OG9QaFQ3dllEUzQ5d2xENHdON0VlbnpEUnQ1L0FNSDVZQlNqMEFuSUQ2SC9K?=
- =?utf-8?B?WkYyVG1KWWlybUJqQSsrZnVyOG80MFZsclluazk0elRTNE0wK2UyNFhHZm11?=
- =?utf-8?B?VkZranhtSVgybXlzeTV5dFlOQTJieGpKQ0drNnJDRnNpVUl5dUY4WVVCVWFX?=
- =?utf-8?B?QTUrc1NwOVYrNXVYdDBXTzdJS09ZT0dIRXVtVUZaZFNRNXNDYVJxTmpsTkl3?=
- =?utf-8?B?Vk9OTGNjRXdNOGx1YUM0TGhaeFpHeU9FU3BVaFhlRm5uZWx4bTRMWDRPTGVR?=
- =?utf-8?B?ZWg5TGFBQ3FPR2R5Z2t5a0h6T1BYOGxCTkR5dFdIWFZIV0JpaHhQVFZxeXRW?=
- =?utf-8?B?RTZLVEpqOE1GS1oybklKMjNaeVljcTF3SWxqUzZRSytuYUVzWW9lSFJjcXRq?=
- =?utf-8?B?cVJYN3U1UFpvYWZ3eVBBeWk3QzdlelpnaW9xS2RtSE11bTZKR3dDUTlkRXZG?=
- =?utf-8?B?ZjFJakJXMDliK3NuQXJiVnhleGxBeTV1elZEekhOZkdiaUViMUhTNDVzd1Rj?=
- =?utf-8?B?QjdWRVJiZ3FQanRJVFR1dHpoTVpVblpvVHFucGtSTkRNa01oWjJyVFU5YmhW?=
- =?utf-8?B?bnNsbFFLL2FKYXE2UXUrUUR4RlpOZ3FaOWhsQ1lWRHFKTEtzQzlNcVBhM1Fv?=
- =?utf-8?B?bjdUNTA5dEFWR0pIWXk0ai9SaExTTDZCak1xUVZQanYzSDN6RjdqSUFRRHY1?=
- =?utf-8?B?SU5MSG5xR1NrdVlzQjJHMS9uSmxiOFplT3Fyb2VVYVBsS3FlbWhLMXRvU2x0?=
- =?utf-8?B?Rzd3R1dIK0w1eUxRNTRCcUduU3R2SkU2cjlCVXd1YmV1REJUendLQ2lXUUt5?=
- =?utf-8?B?QXU1MWNRNHEyLytLK1pMNThsOHExMVdoMkY4eVF5VnhKanU2Zm81TnF3eDB2?=
- =?utf-8?B?Sm4rbW9nWEphTU1odVFEcnpVSysxU0wwTmowaUtqM2Z2WFlRMmZRRnRtRXll?=
- =?utf-8?B?cWZhbVk4WjFZdS9BdTFIVUh0R0hkelpCaW4vRTI2ZjJxVjBPWGhrMXZYU2ZM?=
- =?utf-8?B?Q2FBR1YwZCt3S2ZpaGxaM2pwTWJ5QW1uWGRNbWtmS1d0YzBoOGJualA3c0Fq?=
- =?utf-8?B?LzlaOWx0QXgrN3pYc0FpQTNBNWxjcDdSTlhMeEMwU3JSOTYyemE2UT09?=
-X-Exchange-RoutingPolicyChecked: BJJO/BcFoKwMkg909O8Ti+yjaJzE3VLO6M6yK9V3bwv094jx/ImLmsrF1KpLQdZ9ORAGshEW6Z8wZbGGWlmMjqydUu7oQc+vU5BXAP/s4Hu+fHWClrRDeRP+kvZI/9Bg72ACqqBWTv4uYtuw9mg5T0/kB43RKzkjFcgNiywdx9f+8DcgCsGY0i8UN4hvacAevAOD428bcqFDuA3qt54jM/c3G8VKWnT5NEfD/L6kVsEJfO2jOYEeuV2oFAhDaynrFHBzdzRGjTvS1RZcO1edJBgcKY5UxR5t3kJXqUM0+mM7icgVnS22Eng+1AZvtPEc5hQ+0jMuatoPOMVGhpe8SA==
-X-MS-Exchange-CrossTenant-Network-Message-Id: d7e1ec7a-b62e-4557-38c2-08df0db23470
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR11MB5653.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2026 14:05:14.8760 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oH8VQ5eKcrLKFn55UjyRgCsqY3MnGH14W5N4x1IfRBHUL9O6f0ErjcTEQjuaanIFpabC/pp2NI7M7nFi83+dXw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PHXPR11MB9686
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -165,37 +83,183 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+On Tue,  8 Sep 2026 11:17:21 +0530
+Gagandeep Singh <g.singh@nxp.com> wrote:
 
-On 03-Sep-26 9:26 AM, Sucharitha Sarananaga wrote:
-> The existing asymmetric capability structure reports generic
-> modulus length and hash algorithm support, but it cannot
-> describe RSA-specific parameters required by OAEP and PSS.
->
-> RSA operations may support different padding schemes and MGF1
-> hash algorithms independent of the primary hash algorithm.
-> Applications currently have no standard way to discover these
-> capabilities from a PMD.
->
-> Add rsa_capa to report RSA modulus length, supported padding
-> schemes, and MGF1 hash algorithms. Keep hash_algos for reporting
-> primary digest support.
->
-> Also clarify that the generic modlen field applies to other
-> modulus-based transforms such as MODEXP, MODINV, DH, and DSA.
->
-> RSA-PSS signing also normally generates its salt internally, so
-> the same message never produces the same signature twice, making
-> it impossible to validate against fixed test vectors (e.g.
-> ACVP/CAVP SigGen).
->
-> Add pss_explicit_salt to rsa_capa so a PMD can
-> advertise support for an application-supplied PSS salt, and add
-> the corresponding pss_salt field to rte_crypto_rsa_op_param to
-> carry those bytes per sign operation. Leaving pss_salt unset keeps
-> today's internally-generated-salt behavior unchanged.
->
-> Signed-off-by: Sucharitha Sarananaga <ssarananaga@marvell.com>
-> ---
+> V11-Changes:
+>  - Added enetc4_vf.ini for VF only features.
+>  - Fixed the secondary-process guards leave the burst function
+>    pointers NULL
+>  - Fixed rxq_info_get and txq_info_get report the doubled ring size
+>  - Move the VFs only features to enetc4_vf.ini
+>  - Setting the dev->data->lro
+>  - Added a comment to use devargs to change delay and timeout to process
+>    PSI message to avoid any interrupts stall.
+>  - Fixed link_update() now rewrites RBMR on every Rx ring.
+>  - Regestering - enetc4_txq_wr in VF
+>  - Updated enetc4_rd64 with re-read to confirm the correctness.
+>  - Removed the dead code and un-used macros.
+>  - Added Vlan check for maximum allowed value.
+>  - fixed pre-existing ring write function for TX path.
+>=20
+> V10-Changes:
+>  - Fixed enetc4_txq_prior and enetc4_txq_wrr have no effect at queue
+>    setup issue.
+>  - Updated ENETC_CLASS_ID_SI_VLAN_ISO reply check.
+>  - Updated enetc4.ini for VLAN offload.
+>  - Added else part for burst functions selection for RSC and TSO.
+>  - Updated enetc4_rd64()
+>  - Fixed RBICR0 issue.
+>  - Removed GENMASK.
+>=20
+> V9-Changes:
+>  - Mid-body variable declaration moved to top of the function.
+>  - ret=3D0 dead code is removed.
+>  - Added check on return value of rte_intr_callback_unregister()
+>  - The pre-existing reply_msg leak fixed.
+>  - Added primary-process guard in enetc4_vf_dev_init
+>  - Removed Flow control from enetc4.ini
+>  - Fixed VF stats_reset baseline underflows on counter wrap
+>  - Fixed VF vlan_pvid_set fails on every successful command
+>=20
+> V8-changes:
+>  - Fixed Warning RBMR RMW races between threads by adding lock
+>  - Fixed `static const` arrays in `enetc.h`
+>  - Proper pthread_mutexattr_t initialization added as suggested by AI
+>  - VSIMSGSR stale re-read race is eliminated
+>=20
+> V7-changes:
+>  - added missing 14th patch.
+>=20
+> V6-changes:
+>  - fixed free() on memory allocated with rte_zmalloc().
+>  - fixed eventfd and vector-list leak on interrupt teardown
+>  - fixed Rx ring doubling still bypasses
+>  - fixed VSI-PSI transaction issued from the interrupt handler
+>  - fixed the free-and-reallocate of msg is unnecessary churn
+>  - fixed unsynchronized access to tx_pause_active and RBMR
+>  - fixed signed shift overflow in the register-dump version field
+>  - fixed the fw_size =3D=3D 0 early return reports the length of "0.0"
+>  - unwanted blank lines removed.
+>  - parse_txq_prior() returns updated.
+>=20
+> V5-changes:
+>  - Patch 1 Build fixes which includes:
+>     'prev_seg' undeclared fixed.
+>     redefinition of 'dev_rx_offloads_sup' fixed.
+>     Error: duplicate rx_enable declaration fixed.
+>    PF loses Scattered Rx and Multi-segment Tx
+>  - mbuf leak in enetc_xmit_pkts_lso() fixed.
+>  - fixed conversion on ENETC4_TXBD_FLAGS_F issue.
+>  - fixed link speed decode has no upper bound.
+>  - fixed mailbox ops added to the no-VSI ops table.
+>  - new devargs documented.
+>=20
+> V4-changes:
+>  - fix doc build issue: WARNING: undefined label: pmd_build_and_test
+>=20
+> v3-changes:
+>  - fix doc build issue.
+>  - fix compilation issue on fedore:43-gcc-minsize
+>=20
+> V2-changes:
+>  - compilation fixes.
+>=20
+> V1-changes:
+> This series adds new PMD features to the ENETC4 driver targeting the
+> NXP i.MX95 NETC IP.
+>=20
+> The series covers:
+>=20
+>  - KEEP_CRC Rx offload: preserve the Ethernet FCS in the receive buffer.
+>  - TSO: TCP Segmentation Offload for the VF Tx path.
+>  - RSC/LRO: hardware Receive Segment Coalesce for PF and VF Rx paths.
+>  - Link speed code: extend the PF-to-VF mailbox field from 4-bit to
+>    8-bit to support speeds beyond 10G.
+>  - Firmware version: report the NETC IP version via fw_version_get.
+>  - Register dump: dump SI, port (PF) and BD ring registers.
+>  - Ring parameters: implement rxq_info_get / txq_info_get for the VF.
+>  - Link-up interrupt: refresh the cached link speed on each VF link-up
+>    interrupt so that link_update returns the current speed immediately.
+>  - Stats reset: software snapshot/delta approach for VF counter reset.
+>  - Per-queue Rx interrupt: MSI-X per-queue Rx interrupts for the VF,
+>    enabling interrupt-driven receive with l3fwd-power.
+>  - SI VLAN: hardware port VLAN insertion/removal for PF and VF.
+>  - VF link status bitmask: switch VF link status to bitmask encoding
+>    to align with the PF and newer kernel driver conventions.
+>  - TX PAUSE: VF sets Rx congestion mode when the PF signals TX PAUSE
+>    negotiated on the wire; adds Flow control =3D Y to enetc4.ini.
+>  - WRR Tx scheduler: per-ring WRR weights via enetc4_txq_wrr devarg.
+>=20
+> Gagandeep Singh (15):
+>   net/enetc: add keep-CRC Rx offload for ENETC4
+>   net/enetc: add TSO support for ENETC4 VF
+>   net/enetc: add RSC (hardware LRO) support for ENETC4
+>   net/enetc: extend PF-VF link speed field to 8 bits
+>   net/enetc: add VF supported features file
+>   net/enetc: support firmware version get for VF
+>   net/enetc: support registers dump
+>   net/enetc: support ethtool ring parameters
+>   net/enetc: refresh link speed on VF link-up interrupt
+>   net/enetc: support stats reset for VF
+>   net/enetc4: add per-queue Rx interrupt support for VF
+>   net/enetc4: add SI-based port VLAN insertion and removal
+>   net/enetc4: update VF link status to bitmask encoding
+>   net/enetc4: enable Tx PAUSE via VF Rx congestion mode
+>   net/enetc4: add WRR Tx scheduler devarg for VF rings
+>=20
+>  MAINTAINERS                            |   1 +
+>  doc/guides/nics/enetc4.rst             | 114 ++-
+>  doc/guides/nics/features/enetc4.ini    |   4 +
+>  doc/guides/nics/features/enetc4_vf.ini |  28 +
+>  doc/guides/rel_notes/release_26_11.rst |  21 +
+>  drivers/net/enetc/base/enetc4_hw.h     | 148 +++-
+>  drivers/net/enetc/base/enetc_hw.h      |   6 +
+>  drivers/net/enetc/enetc.h              | 133 +++-
+>  drivers/net/enetc/enetc4_ethdev.c      | 559 +++++++++++++--
+>  drivers/net/enetc/enetc4_vf.c          | 928 ++++++++++++++++++++++---
+>  drivers/net/enetc/enetc_rxtx.c         | 530 +++++++++++++-
+>  11 files changed, 2284 insertions(+), 188 deletions(-)
+>  create mode 100644 doc/guides/nics/features/enetc4_vf.ini
 
-Acked-by: Radu Nicolau <radu.nicolau@intel.com>
 
+Before merging did a recheck AI review. It was mostly good (will save you
+the long winded version). But it did mention:
+
+Two findings
+
+Warning =E2=80=94 calloc() reverted to rte_zmalloc().
+Patch 15 changes the allocation that upstream
+commit 662e61c3 ("net/enetc: set configurable priority to Tx rings")
+deliberately made calloc():
+
+-	hw->txq_prior =3D calloc(hw->max_tx_queues, sizeof(uint32_t));
++	hw->txq_prior =3D rte_zmalloc(NULL, hw->max_tx_queues * sizeof(uint32_t),=
+ 0);
+
+and the new txq_wrr array follows suit.
+
+These are small control-path arrays read only in tx_queue_setup() and
+tx_queue_start() =E2=80=94 no hugepage memory, NUMA locality, or
+secondary-process access is needed. This was changed to calloc() at
+review request in the original series; please keep it. (The
+free()=E2=86=92rte_free() pairing is consistent within the patch, so there's
+no mismatch =E2=80=94 just the wrong allocator.)
+
+Warning =E2=80=94 the new validation errors are swallowed.
+The parsers now return -EINVAL, but nothing acts on it:
+
++	if (!strcmp(key, ENETC4_TXQ_WRR)) {
++		if (rte_kvargs_process(kvlist, key,
++				       parse_txq_wrr, (void *)dev) < 0) {
++			rte_kvargs_free(kvlist);
++			return 0;
+
+and enetc4_dev_configure() discards the return of enetc4_get_devargs() enti=
+rely.
+
+So enetc4_txq_wrr=3D"2|99|1" logs an error, applies weight 2 to ring 0,
+leaves the rest at the zero default, and configures
+successfully. Entries parsed before the bad token stay live. Either
+free and NULL the array on the error path so nothing is applied, or
+propagate the failure out of dev_configure().
