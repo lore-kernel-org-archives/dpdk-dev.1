@@ -2,31 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40BA9C79F9E
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 12:41:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29327C79F9E
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 12:41:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 52B1740E2A;
-	Tue,  8 Sep 2026 14:41:03 +0200 (CEST)
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
- by mails.dpdk.org (Postfix) with ESMTP id 4930140374;
- Tue,  8 Sep 2026 14:41:01 +0200 (CEST)
-X-QQ-mid: esmtpgz10t1788871258t0234207a
-X-QQ-Originating-IP: GPnz9bXqlV8m7ymIS9FxJV3D0S03p429te8Kce5R8wQ=
+	by mails.dpdk.org (Postfix) with ESMTP id 6E81D40E38;
+	Tue,  8 Sep 2026 14:41:07 +0200 (CEST)
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
+ by mails.dpdk.org (Postfix) with ESMTP id 06AAF40E38;
+ Tue,  8 Sep 2026 14:41:04 +0200 (CEST)
+X-QQ-mid: esmtpgz10t1788871260t7de389a7
+X-QQ-Originating-IP: aGA/L9w2t51SHs7FLQ/rjsRL6MdibuD5UVJYTaqgtIM=
 Received: from DSK-zaiyuwang.trustnetic.com ( [36.24.66.61])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Tue, 08 Sep 2026 20:40:56 +0800 (CST)
+ id ; Tue, 08 Sep 2026 20:40:59 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 1997862568339445502
+X-BIZMAIL-ID: 1291816259480024976
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v2 01/15] net/txgbe: fix failure to configure 10G on
- dual-speed DAC
-Date: Tue,  8 Sep 2026 20:38:46 +0800
-Message-ID: <15CE4E7715749988+20260908124047.2284-2-zaiyuwang@trustnetic.com>
+Subject: [PATCH v2 02/15] net/txgbe: fix e56 PHY configuration error
+Date: Tue,  8 Sep 2026 20:38:47 +0800
+Message-ID: <D58B3B6DBC863129+20260908124047.2284-3-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.55.0.windows.2
 In-Reply-To: <20260908124047.2284-1-zaiyuwang@trustnetic.com>
 References: <20260827114309.10530-1-zaiyuwang@trustnetic.com>
@@ -35,23 +34,23 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpgz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: N3IC8um5pMyY9HWfcgQx8pfb4bw+mZfZn2vDAs1nHUL1fQOTjo4Gt+IJ
- pjgP18zfKEZTnl6Z8QUDw/B9EEcS1DmkV+AAs+Gw6ee1ZzVCO/M0ymodrLQ3sN22/s6S14W
- tDGses+fqKWvlw7DkJgSNsSJmwQ+2pCqqPEfkjzu1N1Lkf+5H7hV0rMGtkZDKVx1YlbTmJw
- jEpU3hFzhoJ9fzAmJ+4s5Kxhch48VGtocWUltiJiYnB+8wx9eOK8zlgfKbT0wy332d9OFW8
- 8HTTyeYD7AAcINIWI+mtQ2QSdxjfzePYTj4e1Ait9LZ/IX+sVYOxH84S+FEgpsOlpaDO9wU
- k+4/41zIFAWRKgKClzX1OfEuBiK35p5zPlbOY/XkuU8Gv2qY8UYOluGmef0+p2QQLGraCeq
- iWiMVMUVUTq11y79XxY3VQ14htPv8j/AhvtwXyqX4MxS1VlYoPSvNpWo869cN2dh00YPnrG
- 6yQ1bosmRwPxqXm4fDTA7WPPO87xpSuElPPUfEDbrkOz7njVcEx00qpimszXpkzWpqsdmNL
- pwxXjKXJuE0o8blIBuf6gm86iGaEGSbndQ2zDEbQlV9k7dcfUE0i75unOwhSXY7eXnOgt7b
- 7QY+OBC0BBwNLmU44+Jpc01aJ6v9/tfTV2oVLrLIRMSCrWRpybVnDO8CVjsug9ydDRJOYkh
- bylvi1V6LTLPDq17zNez9VUjHb5f3klWTPDuEs5D/7IK4P17NXSMf/i7BGHi9UoGud0eJ0A
- b6Q7BDMgnA4J22EPOQjcxwPbwz3jkotRaQO5WMi6vy1YZepX5IJ+sbehk6Go50StnpPr2K/
- qySKMTnAQVnksyPxofTXyIpVJHkIQIL31MhD0TzVN2heJ1OTjxmM6ESi6s/J7eUhVUw1e1g
- zS5GQMLWBWrFDjN7wz60M2HB0nZehxks3eu4m0CzkNtGl3KATHHvJVIbQyESAZi0vpeGPdA
- G2fKcfBQRuYNkuThIh/XAhRju7MMjdbe8Oy5APrkIjb0AYw68yULxXNtthPNyEjjizsu5lp
- oM3bfEZwGi4L4GlrFCDtEDGVyzNetpM/h2onaGqw==
-X-QQ-XMRINFO: OD9hHCdaPRBwH5bRRRw8tsiH4UAatJqXfg==
+X-QQ-XMAILINFO: MwQdfXoP8nuzn/halX5c70ZQtdguuHcbLwmE/nQCuGxA0bg0mMPe5qfK
+ jNStkjKiz/Dc6YC2hpzo+RJ7AgYO2bha54qLR5t/IIuWuTKj2nebO74JkCtlBX88Rlh5tfO
+ 1kq+2J+wlWcs3zKaBkwPFB5iLdS02LI6TUGeDRYvHy9w1uFtZtgoDNME4e6q4J+cKPogqPb
+ dORvnwQUTYR/xK6OvCUA0uanCpSQm22Th32l/r/P5tfZAH2hnhpN7U3aSZYnGADG+cglQYG
+ kHGXuBVRgqis/MeVPJbY1mfwmgoLzY64zzrM+XK97V+WyilSoJuL4LEzuwQaohR0ntMK3hN
+ uFHrZi3ftDIpjopvR/oR70arTZXaHjnvx4hAfTgYV/CSTz+N49HdaNBQehRUJiMC58AB2mA
+ 52SKm1ksLg/szG13ib0s+MEOV1Y/otzZUvPpew5h2qsmIhrZ54nrLD+On09tWsrClUioU1r
+ 5JaVxxaNWBsAd9JHrquZm0Id4Z3dXaU4WyJ0MOmTmFgECLkKDjtD6N2QcnguLsJVUYX/PRQ
+ je2C1w6h0GoWBEDBhBNoyX08aQKraWG0atfiOB4A6CZ6SUcDQC/VKSZDbK9ht7h7rSqNawT
+ yPe8wnkS50Gd5wsAh1jmgEQ4+BZTKjBUu2rWPLJ0mG3p7m5uszzfdMhPp821z78rrvoDcZW
+ 91NX/QpRGV/jUC6dcTkCEvxz/V2Ktb3tyy0cM6V4i6kwbCeHEw9luln4clqipPx0gfK8MdA
+ UHGNpY39NjnbLoBU7kta4oALqOP64EYdM1rNNMMtcjdesSsw+M79psLG0BB3s3HAXhKWzSS
+ 1XHh+5W5R51uOs5m/gV/XkRiJ09dFq33+VEwN5yTzbsBKO/LzP6I7OEjem1zpDnHlqxkT6R
+ phC+5sgQaxHu1kKTr6O1Hj90HV3POahLpXukRVMG2VjbGOo+Gaxi1ho5IXLvE/q5d6aZPsb
+ 2UrfccQyNMjDqvPfx9YXT5fc8YqPrYRIx1W8M6NdWBKmIj2g9T7JlmrZp6OqXDXiU2gtYlJ
+ hjB8E3Fh0zG2/DXwzC4V8nRpAvX3r6IFFceXE2jegi2J2972xAfpe6Ry0HRCc=
+X-QQ-XMRINFO: OWPUhxQsoeAVwkVaQIEGSKwwgKCxK/fD5g==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -66,87 +65,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Setting "port config speed 10000" on a 10G/40G dual-speed DAC cable
-fails with LINK_SETUP_ERR, and the AN base page always advertises
-only 40G.
+The e56 PHY RXS ring equalizer/tap configuration is written to the
+wrong bit field: set_fields_e56(&rdata, 9, 4, 0x366) targets the
+unrelated lower bits, so the configured tap values are never applied
+and the equalizer stays at its default setting, which can degrade
+the received signal on both the 40G and 10G paths.
 
-Three checks independently blocked 10G:
+Fix the field range to (21, 12), so the equalizer/tap configuration
+takes effect.
 
-1. allowed_speeds in dev_start was restricted to 40G, so the user
-   request was rejected before reaching setup_link.
-2. get_link_capabilities_aml40() returned only 40G for all DAC
-   cables, so the link_capabilities mask in setup_phy_link_aml40()
-   stripped any 10G bit from the caller speed.
-3. setup_phy_link_aml40() on the AN path passed a hardcoded 40 to
-   txgbe_e56_set_phy_link_mode(), ignoring the caller speed.
-
-Remove each of these restrictions so 10G flows through from user
-configuration to the AN base page advertisement. On DAC cables the
-capability is read from hw->phy.fiber_suppport_speed, which reflects
-the actual SFP module.
-
-Fixes: fb6eb170dfa2 ("net/txgbe: add basic link configuration for Amber-Lite")
+Fixes: f7cfc21e9f75 ("net/txgbe: fix link stability for 40G NIC")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_aml40.c | 17 ++++++++++++-----
- drivers/net/txgbe/txgbe_ethdev.c     |  2 +-
- 2 files changed, 13 insertions(+), 6 deletions(-)
+ drivers/net/txgbe/base/txgbe_e56.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
-index 1098efe5e6..7476759d4d 100644
---- a/drivers/net/txgbe/base/txgbe_aml40.c
-+++ b/drivers/net/txgbe/base/txgbe_aml40.c
-@@ -98,11 +98,12 @@ s32 txgbe_get_link_capabilities_aml40(struct txgbe_hw *hw,
- {
- 	if (hw->phy.sfp_type == txgbe_qsfp_type_40g_cu_core0 ||
- 	    hw->phy.sfp_type == txgbe_qsfp_type_40g_cu_core1) {
--		*speed = TXGBE_LINK_SPEED_40GB_FULL;
--		*autoneg = true;
-+		*speed = hw->phy.fiber_suppport_speed;
-+		*autoneg = hw->devarg.auto_neg;
- 	} else if (txgbe_is_backplane(hw)) {
--		*speed = TXGBE_LINK_SPEED_40GB_FULL;
--		*autoneg = true;
-+		*speed = TXGBE_LINK_SPEED_40GB_FULL |
-+			 TXGBE_LINK_SPEED_10GB_FULL;
-+		*autoneg = hw->devarg.auto_neg;
- 	} else {
- 		/*
- 		 * Temporary workaround: set speed to 40G even if sfp not present
-@@ -171,11 +172,17 @@ s32 txgbe_setup_phy_link_aml40(struct txgbe_hw *hw,
- 		if (link_up && hw->an_done && !autoneg_wait_to_complete)
- 			return status;
- 		rte_spinlock_lock(&hw->phy_lock);
--		txgbe_e56_set_phy_link_mode(hw, 40, autoneg_wait_to_complete);
-+		txgbe_e56_set_phy_link_mode(hw, speed, autoneg_wait_to_complete);
- 		rte_spinlock_unlock(&hw->phy_lock);
- 		return status;
+diff --git a/drivers/net/txgbe/base/txgbe_e56.c b/drivers/net/txgbe/base/txgbe_e56.c
+index cbcc05333e..2711863f2c 100644
+--- a/drivers/net/txgbe/base/txgbe_e56.c
++++ b/drivers/net/txgbe/base/txgbe_e56.c
+@@ -423,7 +423,7 @@ u32 txgbe_e56_cfg_40g(struct txgbe_hw *hw)
+ 
+ 		addr  = E56PHY_RXS_RINGO_0_ADDR + (E56PHY_RXS_OFFSET * i);
+ 		rdata = rd32_ephy(hw, addr);
+-		set_fields_e56(&rdata, 9, 4, 0x366);
++		set_fields_e56(&rdata, 21, 12, 0x366);
+ 		wr32_ephy(hw, addr, rdata);
  	}
  
-+	/* setup the highest link when no autoneg */
-+	if (speed & TXGBE_LINK_SPEED_40GB_FULL)
-+		speed = TXGBE_LINK_SPEED_40GB_FULL;
-+	else if (speed & TXGBE_LINK_SPEED_10GB_FULL)
-+		speed = TXGBE_LINK_SPEED_10GB_FULL;
-+
- 	if (txgbe_is_backplane(hw) || txgbe_is_dac_cable(hw) ||
- 	    hw->phy.ffe_set) {
- 		rte_spinlock_lock(&hw->phy_lock);
-diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
-index 4d2746371b..bc2e11e801 100644
---- a/drivers/net/txgbe/txgbe_ethdev.c
-+++ b/drivers/net/txgbe/txgbe_ethdev.c
-@@ -1896,7 +1896,7 @@ txgbe_dev_start(struct rte_eth_dev *dev)
- 		goto error;
- 
- 	if (hw->mac.type == txgbe_mac_aml40)
--		allowed_speeds = RTE_ETH_LINK_SPEED_40G;
-+		allowed_speeds = RTE_ETH_LINK_SPEED_10G | RTE_ETH_LINK_SPEED_40G;
- 	else if (hw->mac.type == txgbe_mac_aml)
- 		allowed_speeds = RTE_ETH_LINK_SPEED_10G | RTE_ETH_LINK_SPEED_25G;
- 	else
 -- 
 2.55.0.windows.2
 
