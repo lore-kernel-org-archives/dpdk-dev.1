@@ -2,72 +2,143 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87E99C79F99
-	for <dpdk-dev@archiver.kernel.org>; Mon,  7 Sep 2026 21:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 972DBC79F99
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 03:55:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ACDBD40655;
-	Mon,  7 Sep 2026 23:22:16 +0200 (CEST)
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com
- [209.85.216.54]) by mails.dpdk.org (Postfix) with ESMTP id 6282C402E8
- for <dev@dpdk.org>; Mon,  7 Sep 2026 23:22:15 +0200 (CEST)
-Received: by mail-pj1-f54.google.com with SMTP id
- 98e67ed59e1d1-3966791a6eeso4699160a91.3
- for <dev@dpdk.org>; Mon, 07 Sep 2026 14:22:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788816134;
- x=1789420934; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=mDGqKXkDPFiF3o3cpH0Ur5nyLAXx3dhaOm9+7qdV4yk=;
- b=QbychKXtZhdgSgsKYIwCBFJhqwItP1JB4Ik/a4C5wAwAHN/0wB2YEQ2u8wSCyj9lp0
- 8bvnoEXTl/Phmuh5BCAdXNt7Nw2H2vs9weGCJWzes80HtVhadBVOGywm1fIiKtNnAoA0
- oqHe4/QROV+M44xBln2Ic9YVMGN+D2hw1RGvsgxOfeJcea7xxGccbE00vsUL0bmYkL1T
- RJi5kA0zowsZTGrqcDZXCPvKe4haehRSCy3Y1vz+OuAOLCToo05BDeGgzms8VJVq6+Yt
- 8yONy8fdGVG8JusIhqz7CC4+1I7wyAmBxBT5cHwJMp2ZVWuUavqRIJm66jWgE7G65ALx
- OG1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788816134; x=1789420934;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=mDGqKXkDPFiF3o3cpH0Ur5nyLAXx3dhaOm9+7qdV4yk=;
- b=PNKSdVLBFptNcWDRXWoHvXHrQXY5fJlZdk9Gq3W0MnMLhgwDAhGUdGdg0jZVvdMcU3
- I/4rhnN0GFA/09qj/HxT+vcMNOpjAor2FICkHtebXN/m5ZnG8CAqnXXU/DoqwmflMGaD
- GC1V8S3nlps24032gZNcznUS/TJwYZXgJv+w6qMsoeqs1rCkNfar3o2MwQioezYLy0V/
- MvOydR6MvO7r/HFpNSMlLLoM+Fm8khXhsoWZxi9r1yMZcKNBDIeSKDLomGHS/QCQdOvQ
- tanDNmt/xjk935HyfIvNoibizQVbMFoD6z536YkJbIt+V1OhUAdp9jB1Qo8lfrDhImGr
- K5cg==
-X-Gm-Message-State: AFuF++kr/L3RRcwO81U+ALLcqbAeYhYhhSoTlzXetaKTeqf968G3AcaY
- kj0p4sbU/JVSo3qpWl6wsMzkIziBp/15LZVtVfDrM1t4jsrq06MIACNkXsCh6GgBN5E=
-X-Gm-Gg: AYBFou2xAgy566sE7nCU2pcxlKxfHxVHpTUas2iTau34LmxhSftM1l0B2SqjgLWfRkM
- T5U8qavyAHC7QiOIsUNw3LUaI8rHy9jQQ/jam17mN4r5aqz5kSV0Dm6vd7vo/OOZtmuTzFWp7Zr
- h7oQBCkD/HBIrL654Jmri2WbUU/wMU85j521pKzHknD1jzj+XUU2gvm6+nmXFqLbMW4xV+QFNge
- LOtbJHfn6J3UTgDIQ4mueD741aotlshHRR0h57x7ODfu7qoxi2+1LG5H5zZflKsKN9l1htt54Fd
- zkwk1tnPZAJyk+uICQYuAHCkqODOCzkWht2Xe59YC/SXqaWDTt9geFlGG+hBop2ZjyFc1PsE+/J
- lSk6auHbR4mERWJZZXnfrVwI9az9Gt2ZD6aN8PBMoTmMWz6DpBCOqzqqSi6qIXbYde4Ib7tjbI+
- sJ9BDw5ZGiNeoLmInd2q2oJEtnLbdorhFgozTxyCq1PBtuJmLHgNsflkNne0YZ+7qMLbw3hIxOO
- wbT7r6AEn5XGBxrl5PNvKIJr1DdkRGlnW1ZTncFQw==
-X-Received: by 2002:a17:90b:4c4a:b0:398:bc52:825b with SMTP id
- 98e67ed59e1d1-39b2624c32bmr2848591a91.21.1788816134039; 
- Mon, 07 Sep 2026 14:22:14 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39b08bcc090sm28478770a91.4.2026.09.07.14.22.11
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 07 Sep 2026 14:22:13 -0700 (PDT)
-Date: Mon, 7 Sep 2026 14:22:05 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Prashant Gupta <prashant.gupta_3@nxp.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH 00/45] net/dpaa2: features and fixes for NXP DPAA2 drivers
-Message-ID: <20260907142205.6aac2f99@phoenix.local>
-In-Reply-To: <20260903135353.3358303-1-prashant.gupta_3@nxp.com>
-References: <20260903135353.3358303-1-prashant.gupta_3@nxp.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 97534402C3;
+	Tue,  8 Sep 2026 05:55:25 +0200 (CEST)
+Received: from BL0PR03CU003.outbound.protection.outlook.com
+ (mail-eastusazon11022092.outbound.protection.outlook.com [52.101.53.92])
+ by mails.dpdk.org (Postfix) with ESMTP id 5BB394026E
+ for <dev@dpdk.org>; Tue,  8 Sep 2026 05:55:24 +0200 (CEST)
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=GuXbNwZ4HQGT5X9O8IYtJf0anSqQ6wMy9K2/dHgCxVi9/+hWz/8Y0PPuMNZdzGZiNDFifybNZgkXxSsYCIQgT5tDQJhIwtX4yaoJZAXiImvGkk0oea5gTIhEwZ3nQrXMg2AJkPYS6ASBwkBdHWaPwVWK69VnAhLjFovVeZ5vzsMYPThA9aOpw09x9d0JslOCqeGC/qeeB5horuI1dJ1BxuvlZqrLYPIfkOkvZzprUiPpg56NRleaemTH9IdQ3OvfIYd0xj6cGUugnxnlKu0GmRT1P53+PgwSpTCzYY7HQRj2GksM4Os8ojTxZRaIRpux7soh2+CxYUxPDVIKp6ElLg==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WpQNfOHGUw4tPCJcDjsN4WOZY6AjXMnvTqrr7rFs4+k=;
+ b=cpo3loUZptdSrL/drAg7IgavaJRjNdy80Ldcy3PfZB8nLgXi/3gTmAfAd6hJayhXgtdUPf3WSv3lzgOMHrUG1mSK3CpSElJ30YCg5HWDvF+n12dRBoDH17ea6DR42PayqjhstakjAyou9r2QRA8ik4rlQQ56lfVXcRI/619UZ9EskPoYexEF05Y7Jcmr6754HvnUVfFohszIpVzrXLbNJiGRIfJ2rOcGTdGonXSqyTyasEOYBeX6pRRz3a82p1iiQJ7U4BMXiN87akVSTg5PhFPRP/EKAYzLKssMZTc0JOc/RG4V+fsrFU3Mnwv9f+a8JLnoNFzIlqaJvKSbmr7cFA==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 64.65.23.201) smtp.rcpttodomain=dpdk.org smtp.mailfrom=versa-networks.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=versa-networks.com; dkim=pass (signature was verified)
+ header.d=versa-networks.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=versa-networks.com]
+ dkim=[1,1,header.d=versa-networks.com]
+ dmarc=[1,1,header.from=versa-networks.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=versa-networks.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WpQNfOHGUw4tPCJcDjsN4WOZY6AjXMnvTqrr7rFs4+k=;
+ b=ZIrRmdbnXwg3QFsJ5o9JmedSHrAdHOPG5gn3OQAricAu1J6AeimBOsaD9mVYelMR6aYakjrTy05FEw64YnYFOtf7ROOfJhYDug09NVYwBOLfv/1AnXMHhmnhKAw39VhiGRfXmR4ZJb7XtbIbR4S+8EHzM++O0uut1Yd5nvTcxFSap3chUZpTtYcUP940gFgMu6HPQRpQJoe/LGsgSEWX443BlbXgLYJPPwKkWPsfEXBkkqxTMEEgzOdN+5mr1Z4mYeOCVcCSpodfBUd0XC7mbXh18+vdMYO/U0xsOsT5K6zfLOva2ntXI9SwMQsQ7wuxhatOYaWUXQYhXFryevs/tA==
+Received: from SA0PR12CA0013.namprd12.prod.outlook.com (2603:10b6:806:6f::18)
+ by PH8PR11MB6832.namprd11.prod.outlook.com (2603:10b6:510:22c::8)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.382.15; Tue, 8 Sep
+ 2026 03:55:21 +0000
+Received: from SN1PEPF0002BA4B.namprd03.prod.outlook.com
+ (2603:10b6:806:6f:cafe::2b) by SA0PR12CA0013.outlook.office365.com
+ (2603:10b6:806:6f::18) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.382.15 via Frontend Transport; Tue, 8
+ Sep 2026 03:55:21 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 64.65.23.201)
+ smtp.mailfrom=versa-networks.com; dkim=pass (signature was verified)
+ header.d=versa-networks.com;dmarc=pass action=none
+ header.from=versa-networks.com;
+Received-SPF: Pass (protection.outlook.com: domain of versa-networks.com
+ designates 64.65.23.201 as permitted sender) receiver=protection.outlook.com; 
+ client-ip=64.65.23.201; helo=versa-networks.com; pr=C
+Received: from versa-networks.com (64.65.23.201) by
+ SN1PEPF0002BA4B.mail.protection.outlook.com (10.167.242.68) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.21.406.5
+ via Frontend Transport; Tue, 8 Sep 2026 03:55:20 +0000
+X-nn-versa-inspected: true
+Received: from BL2PR02CU003.outbound.protection.outlook.com
+ (10-0-98-203.ingress-data-ingress-nginx-controller-admission.ingress-data.svc.cluster.local.
+ [10.0.98.203]) by smtp-proxy-787ddd9967-7q4sn () with SMTP
+ for <dev@dpdk.org>; Tue, 08 Sep 2026 03:55:19 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jxE0u8iLa25v02lm1pJvM31rVr+Ls7jykf7RhLzA8UCCrKom1neEof3v9VngDCDFvmTeHN4Q6bGxYZFIF7LQrQRPE12DhdEjggcEe+rgQUyJUgHkwBno4dVvlY1Lv9yfEkPp7i4UsJ8E4vHOd4j/jfX3bxmZeNvk2PzL6qijBQipqODTW29b2c5/35hPLBo+GuAiOX9mN77UX3kQ6lBxdn9L/Qaznzh5Wg9zJMn/IHLEugFzc81nBU6tDSWtkDBIlDNRAZci2jiv9spVa9c/uAsqtUznRP/NbKNKs1XD4tm2w7wAApwAdxosQlV6v7ASNasbefVoyILxfsFavGcgtA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WpQNfOHGUw4tPCJcDjsN4WOZY6AjXMnvTqrr7rFs4+k=;
+ b=Lyxu9O7C9aKgZ0wuJrf5Y3ByBDCJ128G/QXxqM2w10JimYLNTKErNwaaFd6TImsw0UCw12EWu6c6qyAofp7KJmEArowWsYlzB3UgBhCDbVfnsaJ9njfnYxu1FjNAF6uu5AD8cksMdZz78hxOhYfT9XodcROD79DQN3XRuKfnbQGRZH7u/U42e033x9pliHOWpsDJAht/sXQNDTyNLxja59txqY3e4IgCmuCeKezJfhaYEYG0hNYafOZuu2V4ABQcwZhvAbPsKy+yZO6EAQR3FKUIOH8zql73J7AktiV46htkmGfwaUWMcXrdlJabroxhJ+G/NVD6a6/8JC11xR5Lrg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=versa-networks.com; dmarc=pass action=none
+ header.from=versa-networks.com; dkim=pass header.d=versa-networks.com;
+ arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=versa-networks.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WpQNfOHGUw4tPCJcDjsN4WOZY6AjXMnvTqrr7rFs4+k=;
+ b=ZIrRmdbnXwg3QFsJ5o9JmedSHrAdHOPG5gn3OQAricAu1J6AeimBOsaD9mVYelMR6aYakjrTy05FEw64YnYFOtf7ROOfJhYDug09NVYwBOLfv/1AnXMHhmnhKAw39VhiGRfXmR4ZJb7XtbIbR4S+8EHzM++O0uut1Yd5nvTcxFSap3chUZpTtYcUP940gFgMu6HPQRpQJoe/LGsgSEWX443BlbXgLYJPPwKkWPsfEXBkkqxTMEEgzOdN+5mr1Z4mYeOCVcCSpodfBUd0XC7mbXh18+vdMYO/U0xsOsT5K6zfLOva2ntXI9SwMQsQ7wuxhatOYaWUXQYhXFryevs/tA==
+Received: from DS7PR11MB8855.namprd11.prod.outlook.com (2603:10b6:8:257::21)
+ by MN0PR11MB5961.namprd11.prod.outlook.com (2603:10b6:208:381::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.382.14; Tue, 8 Sep
+ 2026 03:55:12 +0000
+Received: from DS7PR11MB8855.namprd11.prod.outlook.com
+ ([fe80::5a7b:4b18:336a:f6b8]) by DS7PR11MB8855.namprd11.prod.outlook.com
+ ([fe80::5a7b:4b18:336a:f6b8%6]) with mapi id 15.21.0382.014; Tue, 8 Sep 2026
+ 03:55:12 +0000
+From: Mukul Katiyar <mukul@versa-networks.com>
+To: "dev@dpdk.org" <dev@dpdk.org>
+Subject: [RFC] Highly efficient reader-writer lock (EPRW) for mostly-read
+ applications 
+Thread-Topic: [RFC] Highly efficient reader-writer lock (EPRW) for mostly-read
+ applications 
+Thread-Index: AQHdPxNCkfkFOcf4dk+KXkrBYu7Fpg==
+Date: Tue, 8 Sep 2026 03:55:12 +0000
+Message-ID: <DS7PR11MB885556AF77C5110C85609B7B8CB22@DS7PR11MB8855.namprd11.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-reactions: allow
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=versa-networks.com;
+x-ms-traffictypediagnostic: DS7PR11MB8855:EE_|MN0PR11MB5961:EE_|SN1PEPF0002BA4B:EE_|PH8PR11MB6832:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0452134d-a341-4f23-65d9-08df0d5d00d9
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted: BCL:0;
+ ARA:13230040|10070799003|23010399003|366016|1800799024|376014|10067099003|18002099003|55112099003|11063799006|56012099006|8096899003|13003099007|38070700021;
+X-Microsoft-Antispam-Message-Info-Original: vVJllgzBfq0tYuk1S10HisqvSZ1wSxZghUN3jVSMNoqvSue/KmLTMhxNXHuyG8WlSXYmvon90G8ouaNs11eMWbkJzYNFjpQ7+10Ni/+XvEjVn179LftOjbRPmmRsWEz0JeZVONgRTzbwyPpdTzJxAFSAdyqVAN2gE4SDJZDJeW2/ExoRMxwDm0Ap46JSjM7S/ZT5U4d4eY8L37I9PkBFIGuURljba2EaRqolxdvWc7T5GF6s7tj3D2fcSslSTWym1Gn5DbKdoiEwYzUr/eLacEdzdJ+xfBi/sLMWUqdt/h4NOTTWETsrUdHHvyabjWoDZYo+WgVDvym7KbwFsknMi1u+7GFEE7ZjR/XpwsJkfPkHAbzEiPGJyNgnzmFKs20vo0n9uLYLkKN7Rc81X5vT0ILMrbbvGpnmXpiSio8p9iRZNCn4hqfCDnXDlzpeslj9t4/eIXwdf/Xfvl8nDsJIFRK3J+hdhYFRbhXATDIoOov5HMOpyZ4CbG7WdnlDOiNbJ4CvOdwNMPuEojWGZS+OSCgKPCoyiz/P18ZJPceRPDjbaAGyJyQnbOpNz6Yu2wSmvYSVcK1My6vod1ACHmqHXIwp0TVjQKFY8dh5MJMthliuSfAZ490kO/YtweI63OBnAnjzijWcgWEjMw6Gi42Xt5ZhWGC8J4o8veokPm1AJrw=
+X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255; CTRY:; LANG:en;
+ SCL:1; SRV:; IPV:NLI; SFV:NSPM; H:DS7PR11MB8855.namprd11.prod.outlook.com;
+ PTR:; CAT:NONE;
+ SFS:(13230040)(10070799003)(23010399003)(366016)(1800799024)(376014)(10067099003)(18002099003)(55112099003)(11063799006)(56012099006)(8096899003)(13003099007)(38070700021);
+ DIR:OUT; SFP:1102; 
+Content-Type: multipart/alternative;
+ boundary="_000_DS7PR11MB885556AF77C5110C85609B7B8CB22DS7PR11MB8855namp_"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Exchange-RoutingPolicyChecked: vpXGUVdXPboCtuXpRlIAC0olLO2lYvA2GoOk1+/WninmW1eekoK/l363Jfm3GyghYtrSeLWJ516HMH64+NBr8QhwqGbup6/RbniX2CcZtjz0kqZRWIW7U/6Hoi8TYQCsR0uLXm0LB10SY1JiY4URiHFZqbFdL/+Vo2edhsKm9lyeIltTC93Tg+f6G4KUfmdC1p5Jyge1d6Hj1CWd7HM6a4ps741zGMjR73l18tFGIFu4XsFPjz53ov8Ww9uCS5+DtA+FCz8OeMEFS6e6t6/hBdbRRSQTmn+eyuNcvY9YSweT+LLb/TQ5JT1DxToQ76rm37IJ35ash/hwQ1KYXtPqWQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR11MB5961
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: SN1PEPF0002BA4B.namprd03.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs: beb0ce00-03fc-4afc-b06f-08df0d5cfbaf
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|35042699022|376014|36860700016|23010399003|1800799024|82310400026|14060799003|10067099003|55112099003|8096899003|56012099006|11063799006|18002099003|13003099007;
+X-Microsoft-Antispam-Message-Info: ghlrAUU3Xhr9DsA2r7xisGaIiNN1NzkctifJ9Ejhk+DVmqp4YkudoylxgYtvphcTjl7uUxMeq0cBjPqbw5ytoQRlypM1/SmeT3unvplDIzf359InmyPtK79ZcIBOHB1SiSYdMS11IDk6Z/mSRU5G6OYh0GLPxJpsVkvXbISr86I4tM+C/clB3CpCobBgDMXqK3qT8C58TuOiMaOIHRGU1pLEH0+6CYjS0xG4Z511W97AK9q3Fv4GHUNsioGQfIQZhZ6mo4EO1zOQr5XJkp/HtmjDEdg1JG9Dc24QMR1ATFmasVBqWaPJxUPdRqjOXQqj1HVYL6DJEPaoy6R+SyKU4csJM+ztfpZ+t+P5N+pNhFKDtreoxW2thHQyJd242maeRFfx5wE6fqLFt+MHKvmJS9MbjbH8VEPZnM56YpYRtGVykNZpFkRqtqSv131eKpBCZm+q8HZbHAkeY3Z9Ax0dx1+jN5qgpSpxwhsPe/W81A+Rg7avfRLjl6PRXpnUSx5CkuoZ5qRbbamYm7JAu6cPPNOKGTi+nEsGdM5Z49OqtmRm+O7FFjs5GiPs/5wi82Gu+zqLNDQ9dd1uFSAn/DjEaX3WoZwAgjn1/ItGpI/LnYMJYmeZzUZBT6oZqSYZlrl/GDBpyGoZ5bM0SRYll/+jhQ==
+X-Forefront-Antispam-Report: CIP:64.65.23.201; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:versa-networks.com; PTR:InfoDomainNonexistent; CAT:NONE;
+ SFS:(13230040)(35042699022)(376014)(36860700016)(23010399003)(1800799024)(82310400026)(14060799003)(10067099003)(55112099003)(8096899003)(56012099006)(11063799006)(18002099003)(13003099007);
+ DIR:OUT; SFP:1102; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: ChhLxUjELAXX2UUDvJKlPr/pdPiA+rlzUDKtYdYs3tQ2R/IKjEZHjHaaU1jApC52HCSmSRYgsQ1fnlWdASKP9j0zZJfCydz99MhQcYku49dToYLS/bP8UInyHk1DseCpZH3AFhFgJxw1259CHa7rjJ91+B0Pm7PB1qpfIW9scdUZsVXwqyyg+b9Cp3+wRyKmcZDuIzEVPGdl9YQ5vrKyiOC/hxz84i4HyG1TAxrs8idHelf+yTIMu7wybSs+6KVvWPDODzVS+dYekiksvG9NEPEYUNO+hdz2OlLN6NNKolRGReeuhwc854ZCixwB3eob2UGx9ULasjNUItcgJ5+7lI38ZerDg7/gPp/eCEsONVMeLswfP8vhZJTvfyjoV4thQHH2ogBsX0mBi7IKlVJAo1NXcsbcy4xQ7GclDgBUbfxUOnHKR89wO5aAYDnLClsg
+X-OriginatorOrg: versa-networks.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2026 03:55:20.5937 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0452134d-a341-4f23-65d9-08df0d5d00d9
+X-MS-Exchange-CrossTenant-Id: d39a23bd-897c-45f1-a3f5-c5213b673627
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d39a23bd-897c-45f1-a3f5-c5213b673627; Ip=[64.65.23.201];
+ Helo=[versa-networks.com]
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-SN1PEPF0002BA4B.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB6832
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,233 +152,104 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu,  3 Sep 2026 19:23:08 +0530
-Prashant Gupta <prashant.gupta_3@nxp.com> wrote:
+--_000_DS7PR11MB885556AF77C5110C85609B7B8CB22DS7PR11MB8855namp_
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
 
-> This series brings the NXP DPAA2 driver stack up to date with the
-> functionality carried in the NXP internal tree, together with a number of
-> bug fixes. It covers the crypto (dpaa2_sec), net, dma, mempool, event and
-> bus/fslmc drivers.
-> 
-> Fixes first, then features, so the bug fixes can be picked independently of
-> the larger reworks.
+Hi all,
 
-AI found errors in last set:
+Sharing a userspace reader-writer lock that has been running in production =
+in a DPDK-based network function for several years and wanted to check if t=
+here would be interest in contributing it to DPDK as rte_eprwlock.
 
-DPAA2 series review (bundle 2096), patches 32-45 of 45
-Base: upstream main d55ccd4; series applied with git am --3way.
-Findings for 32 supersede the partial entry in the 21-32 review.
+The Enhanced Passive Reader-Writer (EPRW) lock eliminates atomic operations=
+ on the reader fast path, giving near-flat per-reader performance as core c=
+ount grows. It is compatible with poll-mode lcore discipline =97 no heartbe=
+at or periodic refresh required from registered threads.
 
-Patch 32: drivers: rework dpaa2 Tx confirmation
+Details, correctness proof, memory ordering analysis (x86-TSO and ARM), and=
+ performance evaluation against rte_rwlock and pthread_rwlock_t are in a pr=
+eprint at:
+https://zenodo.org/records/22636501
 
-Error: priv->tx_sg_pool is never assigned. The patch adds the field
-to struct dpaa2_dev_priv and reads it in dpaa2_dev_tx_mbuf_to_sg_fd():
+Would this be a useful addition to DPDK?
 
-	sg_mbuf = NULL;
-	if (priv->tx_sg_pool)
-		sg_mbuf = rte_pktmbuf_alloc(priv->tx_sg_pool);
-	if (!sg_mbuf) {
-		DPAA2_PMD_DP_DEBUG("No memory to allocate S/G table");
-		return -ENOMEM;
-	}
+Regards,
+Mukul Katiyar
+Versa Networks
 
-but dpaa2_tx_sg_pool_init() only sets the file-scope global
-dpaa2_tx_sg_pool, and a grep of the final tree finds no store to the
-priv member. priv is zero-allocated, so every multi-segment Tx whose
-head mbuf cannot host the SG table in its own headroom (any non-hw-pool
-head, any indirect head, or too little headroom) fails with -ENOMEM.
-The old code used dpaa2_tx_sg_pool directly.
 
-Error: Per-packet failures free the application's mbuf and then
-report it as not sent. In dpaa2_dev_tx_mbuf_to_simple_fd():
+--_000_DS7PR11MB885556AF77C5110C85609B7B8CB22DS7PR11MB8855namp_
+Content-Type: text/html; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
 
-	} else {
-		copy_mbuf = dpaa2_dev_mbuf_copy_one_seg(mbuf, hw_mp);
-		if (!copy_mbuf) {
-			ret = -ENOMEM;
-			goto quit;
-		}
-		DPAA2_MBUF_TO_CONTIG_FD(copy_mbuf, fd, mempool_to_bpid(hw_mp));
-quit:
-		rte_pktmbuf_free(mbuf);
-	}
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3DWindows-1=
+252">
+</head>
+<body>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+Hi all,</div>
+<div style=3D"direction: ltr; font-family: Aptos, Arial, Helvetica, sans-se=
+rif; font-size: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+Sharing a userspace reader-writer lock that has been running in production =
+in a DPDK-based network function for several years and wanted to check if t=
+here would be interest in contributing it to DPDK as rte_eprwlock.</div>
+<div style=3D"direction: ltr; font-family: Aptos, Arial, Helvetica, sans-se=
+rif; font-size: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"direction: ltr; font-family: Aptos, Arial, Helvetica, sans-se=
+rif; font-size: 12pt; color: rgb(0, 0, 0);">
+The Enhanced Passive Reader-Writer (EPRW) lock eliminates atomic operations=
+ on the reader fast path, giving near-flat per-reader performance as core c=
+ount grows. It is compatible with poll-mode lcore discipline =97 no heartbe=
+at or periodic refresh required from
+ registered threads.</div>
+<div style=3D"direction: ltr; font-family: Aptos, Arial, Helvetica, sans-se=
+rif; font-size: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"direction: ltr; font-family: Aptos, Arial, Helvetica, sans-se=
+rif; font-size: 12pt; color: rgb(0, 0, 0);">
+Details, correctness proof, memory ordering analysis (x86-TSO and ARM), and=
+ performance evaluation against rte_rwlock and pthread_rwlock_t are in a pr=
+eprint at:</div>
+<div style=3D"direction: ltr; font-family: Aptos, Arial, Helvetica, sans-se=
+rif; font-size: 12pt; color: rgb(0, 0, 0);">
+<a href=3D"https://zenodo.org/records/22636501" data-outlook-id=3D"443fd9b2=
+-04c6-49d0-9eb7-7e8eb0354251">https://zenodo.org/records/22636501</a></div>
+<div style=3D"direction: ltr; font-family: Aptos, Arial, Helvetica, sans-se=
+rif; font-size: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"direction: ltr; font-family: Aptos, Arial, Helvetica, sans-se=
+rif; font-size: 12pt; color: rgb(0, 0, 0);">
+Would this be a useful addition to DPDK?</div>
+<div style=3D"direction: ltr; font-family: Aptos, Arial, Helvetica, sans-se=
+rif; font-size: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"direction: ltr; font-family: Aptos, Arial, Helvetica, sans-se=
+rif; font-size: 12pt; color: rgb(0, 0, 0);">
+Regards,</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+Mukul Katiyar</div>
+<div style=3D"font-family: Aptos, Arial, Helvetica, sans-serif; font-size: =
+12pt; color: rgb(0, 0, 0);">
+Versa Networks</div>
+<div style=3D"direction: ltr; font-family: Aptos, Arial, Helvetica, sans-se=
+rif; font-size: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+</body>
+</html>
 
-and in dpaa2_dev_tx():
-
-	ret = dpaa2_dev_tx_mbuf_to_simple_fd(hw_mp, *bufs, &fd_arr[loop],
-		dpaa2_q, priv->tx_conf_type, &dy_conf[loop], tstamp[loop]);
-	...
-	if (ret)
-		goto send_n_return;
-
-send_n_return enqueues fd_arr[0..loop-1] and returns that count, so the
-packet at index loop is excluded from the return value after the driver
-has already freed it; the application retries it and double-frees. The
-same happens in dpaa2_dev_tx_multi_txq_ordered() via send_frames. The
-cloned-mbuf branch just above it has the same shape: the indirect mbuf
-is re-initialised and freed before the copy is attempted. And
-dpaa2_dev_tx_no_conf_mbuf_to_sge() can return -ENOMEM part way through
-a chain after it has already replaced earlier segments, relinked
-prev->next, and decremented refcounts on segments with refcnt > 1;
-that mutated chain is then handed back to the application as unsent,
-and the sg_mbuf taken from tx_sg_pool in the caller is leaked. A
-per-packet failure must either drop the packet (free it, count it in
-err_pkts, continue) or leave it untouched and return short; doing both
-is a double free.
-
-Error: The DQRR held-buffer bitmap update regresses a 64-bit shift:
-
-	DPAA2_PER_LCORE_DQRR_HELD &= ~(1 << dqrr_index);
-
-The line this replaces was ~(UINT64_C(1) << dqrr_index), and the other
-three sites in the file still use UINT64_C(1). dqrr_held is uint64_t
-and dqrr_index reaches 31 on LX2160A (DPAA2_LX2_DQRR_RING_SIZE is 32,
-and patch 41 raises the event port dequeue depth to that), so
-1 << 31 is int, sign-extends, and the ~ clears bits 0..30 of the upper
-word as well.
-
-Warning: New devargs drv_tx_dyn_conf and drv_tx_dyn_conf_pre are
-added and drv_tx_conf now means "absolute confirmation", but
-doc/guides/nics/dpaa2.rst, which documents drv_tx_conf, is untouched.
-
-Warning: dpaa2_eth_fd_to_mbuf() and dpaa2_eth_sg_fd_to_mbuf() are
-annotated __rte_internal in dpaa2_ethdev.h. That attribute is for
-symbols exported with RTE_EXPORT_INTERNAL_SYMBOL; these are used only
-inside the net driver.
-
-Info: dpaa2_dev_tx_conf() releases a head mbuf with refcnt > 1 by
-rte_mbuf_refcnt_update(m, -1) instead of rte_pktmbuf_free(m), so the
-tail segments of such a chain are never walked. rte_pktmbuf_free()
-handles each segment's refcount itself; the special case is not
-needed.
-
-Patch 33: net/dpaa2: ptp enhancements
-
-Error: Two exported experimental APIs are deleted without deprecation
-and without removing their declarations. The definitions of
-rte_pmd_dpaa2_set_one_step_ts() and rte_pmd_dpaa2_get_one_step_ts()
-(both RTE_EXPORT_EXPERIMENTAL_SYMBOL, 24.11) are removed from
-dpaa2_ethdev.c and not re-added anywhere; the prototypes remain in the
-installed header rte_pmd_dpaa2.h, so any consumer now fails at link
-time. Either keep the symbols (wrapping the new
-dpaa2_timesync_set_one_step()) or remove the prototypes and add a
-"Removed Items" release note.
-
-Warning: getenv("DPAA2_IEEE1588_DEBUG_ENABLE") in
-dpaa2_timesync_enable(); use a devargs or log level.
-
-Patch 35: net/dpaa2: update MC dpni QoS and flow steering API
-
-Warning: The existing callers are switched to newer MC command
-versions with no version gate. DPNI_CMDID_ADD_FS_ENT becomes
-DPNI_CMD_V3, DPNI_CMDID_SET_QOS_TBL becomes DPNI_CMD_V3 and
-DPNI_CMDID_SET_RX_TC_POLICING becomes DPNI_CMD_V2, and the flow code at
-this point still calls dpni_add_fs_entry() and dpni_set_qos_table()
-unconditionally, so on an MC that predates those command versions
-every existing flow rule fails. The commit message says behaviour is
-unchanged. Patch 37 adds the priv->mc_rev gating
-(DPAA2_FLOW_FRM_REPLICATION_ACTION_MC_REV etc.); it belongs in this
-patch, next to the version bump.
-
-Patch 36: net/dpaa2: enhance xstat implementation
-
-Error: dpaa2_dev_xstats_get_by_id() does not bound the number of MAC
-counters it collects:
-
-	uint64_t *mac_val[DPAA2_MAC_XSTAT_MAX_NUM];
-	...
-	for (i = 0; i < n; i++) {
-		...
-		if (id >= DPAA2_MAC_XSTATS_START_ID) {
-			values[i] = 0;
-			if (dpaa2_dev_mac_xstats_avail(dev)) {
-				mac_idx[mac_num] = rte_cpu_to_le_32(id - DPAA2_MAC_XSTATS_START_ID);
-				mac_val[mac_num] = &values[i];
-				mac_num++;
-			}
-
-ids[] is application-supplied and may repeat an id, so n MAC ids
-overflow mac_val[] on the stack and the fixed-size
-cnt_idx_dma_mem / cnt_values_dma_mem buffers. Check
-mac_num < DPAA2_MAC_XSTAT_MAX_NUM before the stores.
-
-Warning: dpaa2_dev_xstats_get_names() returns limit when limit is
-smaller than the count:
-
-	if (limit < stat_cnt)
-		stat_cnt = limit;
-
-The eth_xstats_get_names_t contract is to return the number of
-available xstats when xstats_names is NULL or size is too small, so
-the caller can resize. Same in dpaa2_dev_xstats_get() when n is
-smaller than the count.
-
-Warning: rte_memcpy() of the string-pointer table
-(dpaa2_xstats_strings) on the control path in both get_names
-functions; memcpy, or index the struct directly.
-
-Patch 37: net/dpaa2: rework flow engine
-
-Warning: The QoS/FS group-type machinery is unreachable upstream:
-
-	#ifndef RTE_DPAA2_FLOW_GROUP_TYPE_GET
-	#define RTE_DPAA2_FLOW_GROUP_TYPE_GET(group) \
-		((void)(group), RTE_DPAA2_ONE_LEVEL_GROUP_FLOW)
-	#endif
-
-Nothing in the tree defines the real macros, so
-RTE_DPAA2_QOS_GROUP_FLOW / RTE_DPAA2_FS_GROUP_FLOW and every branch
-keyed on them in dpaa2_flow_create() are dead code kept alive for an
-out-of-tree header. Either define the encoding in rte_pmd_dpaa2.h and
-document it, or drop the group-type paths.
-
-Warning: getenv("DPAA2_FLOW_CONTROL_LOG") is kept (now read on every
-rte_flow_create()); use the log level.
-
-Warning: dpaa2_flow.c goes from 1 to 13 rte_memcpy() calls, all on
-the flow-create control path (e.g. rte_memcpy(&local_attr, attr,
-sizeof(struct rte_flow_attr))); use memcpy.
-
-Warning: No doc/guides/nics/features/dpaa2.ini update for the new
-meter_mark action, and no dpaa2.rst description of the group
-encoding, meter flows, or the MC-version-dependent behaviour.
-
-Patch 38: net/dpaa2: support Rx mempool per traffic class
-
-Error: The pool-to-TC association is programmed with the TC index
-where the MC expects a bitmask:
-
-	bpool_cfg->pools[bp_idx].priority_mask = tc_id;
-
-fsl_dpni.h documents pools.priority as "Priority mask that indicates
-TC's used with this buffer. If set to 0x00 MC will assume value 0xff".
-With tc_id: TC0 gets mask 0 (= all TCs), TC1 gets 0x01 (= TC0), TC2
-gets 0x02 (= TC1), and so on, so the isolation the commit describes
-does not happen and TC0's pool is shared by everyone. Use
-RTE_BIT32(tc_id).
-
-Patch 39: drivers: consume dpaa2 DQRR entries in batches
-
-Error: The consume vector cannot represent an LX2160A DQRR. The
-patch's own comment says the vector occupies DCAP bits 16..31, i.e.
-16 index bits, and the code does:
-
-	s->dqrr.ci_vector |= RTE_BIT32(idx + DQRR_DCAP_CI_VEC_OFFSET);
-
-with ci_vector a uint32_t. DPAA2_LX2_DQRR_RING_SIZE is 32, so idx is
-0..31 and idx + 16 is 16..47; for idx >= 16 that is a shift of 32 or
-more, undefined behaviour, and the entry is never consumed. Either the
-register is wider than the comment says, or vector mode must only be
-enabled when dqrr_size <= 16 (with the threshold derived accordingly).
-
-Patch 42: net/dpaa2: read MC version from device private data
-
-Info: This only replaces the DPAA2_DEV_PRIV_TO_DPAA2_DEV() accessor
-that patch 37 introduced five patches earlier; fold it into 37.
-
-Patch 44: bus/fslmc: reduce probe-time logging and MC traffic
-
-Info: The duplicated mc_get_soc_version() call this removes was
-added by patch 27 in the same series; fold it into 27.
-
-Review-Result: ERROR
+--_000_DS7PR11MB885556AF77C5110C85609B7B8CB22DS7PR11MB8855namp_--
