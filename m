@@ -2,76 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 888B3C79F99
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 16:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A24DEC79F82
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 17:18:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6CF7D40F35;
-	Tue,  8 Sep 2026 18:55:12 +0200 (CEST)
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com
- [209.85.210.177])
- by mails.dpdk.org (Postfix) with ESMTP id B41E240E31
- for <dev@dpdk.org>; Tue,  8 Sep 2026 18:55:10 +0200 (CEST)
-Received: by mail-pf1-f177.google.com with SMTP id
- d2e1a72fcca58-862815e2683so3261095b3a.2
- for <dev@dpdk.org>; Tue, 08 Sep 2026 09:55:10 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D437D402D8;
+	Tue,  8 Sep 2026 19:18:24 +0200 (CEST)
+Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com
+ [74.125.228.12]) by mails.dpdk.org (Postfix) with ESMTP id 9985C4028D
+ for <dev@dpdk.org>; Tue,  8 Sep 2026 19:18:22 +0200 (CEST)
+Received: by mail-pz2-f12.google.com with SMTP id
+ 41be03b00d2f7-cc1cebad4acso139255a12.3
+ for <dev@dpdk.org>; Tue, 08 Sep 2026 10:18:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788886510;
- x=1789491310; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=ph/v7DKWYUI91pyTEIRSeilHJknbK0jpE/heJnEsryo=;
- b=LuO8AftAc0xpOIzo9G13MVXZvWr50UD2XTwjw1VDa8tA1x/HbXk7hfF6BUZxylQk2v
- /N9fJDe887X4ZxDqQw+y9MVuZs1PldMV6HB8Ezac0UyG+lHrYb+UMSHENBt2Sz5XFmv3
- U0X2+NT670juCftB6Tbf7LQxNVEcgllIfk1eWm+c8FXHb5iDZIw/eZiL5/p6aZoIcfZ5
- 0aOPKFcM0+SufzAtepn35CFnFfSKkogrFJRMoUikIJJ0vY1CtzFvKdsOJ7vwh/MAcTnd
- izwdTw1NTsMruZUv69AaNf2gKtKCth2nD5Tj9JbuxBZ9mpd8o+1yxY+o/IEUsBOC9WlC
- dagA==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788887901;
+ x=1789492701; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=6qHCewcBSOKzxh/LYsS0lRy6p8wUeJly1uLhtuHRkIc=;
+ b=pLOXAUzINbR4u7VSYZojnULNnwB023o2HzGrxJyqYHV41prMz/qIn0ynOnq1s5+z+P
+ 1GkkE0A3WUOFUX2H0oSwXSdpYItVLIO4kNsdcrE5AfOKEf99vsWqMrqHKv3VTfnSTQ1H
+ +jFQZeNC0M7FFFPpZvL0MRXIzfo0TDmNuR+Owj5k/2GpljroSCErIVAUpGtBgbKVRZT5
+ BHVO6rlFGG4nHQCdlcOQMRENRYQfcL5CwgARZ7fpuymnKwRlkAeu7FkDUobR9aHBuimT
+ OXflGlXwfgRIPDSZYkNBLgCXbyIezQeOW24F9Rmja8eDTsp8fsw9nfDYcXeV4i6HwYc3
+ ouuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788886510; x=1789491310;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=ph/v7DKWYUI91pyTEIRSeilHJknbK0jpE/heJnEsryo=;
- b=gg4qssdzk6yDjSRDOZTt0P8XH6S+QL0bIzUXJ9zOSz3GYvmWZwVNwW4/4vMQPzUGhe
- KXnmiosb0AfF7q4Y3nv2Vb8vcwqx+SzAAumu6VVeAqciJrJet0+Yf8zwylBO5y4AW1/b
- RQvybV1/+9Cc7bugGMenu2q93O+A3W3p9pw/dYkdEisbJfYpKs7gZPw6tlAG9AUiFJew
- FDcyikckn95aL07Yt46r+VzeGDmkt/+ifDdCL6yQu+2CMi2XDEq8y75yHxhrBq6F4utQ
- s6xsFnrThvnsWmEeyuSU9SJHDcdENJEn5nf7MZC+Ljwqc15sZGsGLkVxzxOsdfYMJncP
- NT1g==
-X-Gm-Message-State: AFuF++lLPXInHXmy2eWI+98ojm36fTY3UG4IVz2CMJU2ojLAweNZsBB/
- XbeCnLmW9+GXsVy/G+g1o6cVfgxivkEHnmt2Hb2NG5R078qrpeEhdRaPuS9IwzbljDxHSMvsD3E
- EyoY1
-X-Gm-Gg: AYBFou2Kln/RBbnitqZUi676lYIfz2kT6R/96NEdPdHTLniXBFXfg3IhBVgzR3cxRIg
- fv0G3PPq53sDD0k99CrsCpIOXhdypKov4OWF2xAJFdqmTomKdayC+6mIVQaINtZbbIPyuhogpth
- +ZCnXNilIoYkg7GFcSKPiOEwz9kKAwa6Nf+9x0L9BjcrHu3UPtOf7RDQuTnfsFYyl3blORT2zUx
- 3n6PjFicBKtEV2bnEL43brawtt07TKer+NF+zP/rfVKOMNqd1zIZKciBGVw6yyJ+GkZp1HkGWA9
- EMUUDV3y0QDjUmKShIJ2zAmxguEwHyLMa3OL/l71ORCGDy19uHQxO0Y/6HlTS+I2K8KwEq7oAWS
- 1l3vV+nRavGfEQoEpCuqIBIGgCctovBKynuPqtlUpLjppQFiFHV1nfJr15rXJzvVBgw83TL4dGi
- dcztPwUjCav/3prR2yTu0uEsygEoSaVnEfPJRSk1guTI71IkoOLKoRv8pnG+GYlHnV94pBnWNdd
- oMse1B0QyJ+PbgCAAGfGs34sDQ=
-X-Received: by 2002:a05:6a00:13aa:b0:84c:5b65:ef86 with SMTP id
- d2e1a72fcca58-86168e88261mr37847347b3a.17.1788886509844; 
- Tue, 08 Sep 2026 09:55:09 -0700 (PDT)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ d=1e100.net; s=20251104; t=1788887901; x=1789492701;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=6qHCewcBSOKzxh/LYsS0lRy6p8wUeJly1uLhtuHRkIc=;
+ b=jt9/UUg5jOox9RAz/ptD3cMJkDyi4Uv5BnWjqcODRnjdZ3Vaohf8tlwEc9Z8hUR6YU
+ uBJu1atk13+aU6wJSC+AVD+nm23gecrW/2FWuOuEi/VVZ/1TXqx/yOd7Zhznsa6Wokk0
+ sThzcNe72S+vfaWtqbXAf4lR+utEzVJV3p17zxn3RFH21fGraS+E2dNzUipcRm+241wK
+ 1mFJRQNLnQVjTItaJBTtXjacOku8OyVyu/v/UlFIV5JGlBqapdtAQJZowfuZZc/eD/G7
+ ulMCnfycdmfIgVdWm3xPVOrHpzntAZksHUFGL+CYfUrAoumaLq/vtZb4VJ40NmbWF+H0
+ jFBQ==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBzcso4vcnGBRBLRlKYaM3OMKKNIZaUIlSmn6Mmi5RdBgibNIzEjhVKZbiXjIYSTR+ipkoc=@dpdk.org
+X-Gm-Message-State: AFuF++lTVaOXbN/mfUSuE17Veycm46QzjSBWU+0Vc9VSP4XMSMan1DEy
+ 4a568r1uL/St1wHW4UYE86ZT+LYSuyV4M7teDlmj304u8CFlB8ymMrefpCt7tjCvfd9uRWdbaAA
+ LmiHn
+X-Gm-Gg: AYBFou28ZmfwSLAXti9qtudg2NS92teeX7p5eXJpi5w5G+kNJT/ZIYEgLabXRUbl780
+ U6d9W+fIqFkfA7AidubBBaGLJ3zTXbjh7d+hdIU+saG263eQRXrj8IUrCM9uR1/mtvxH8xY8i6k
+ /ROALrtLsBqRpR95mwfDBCPvU0L0vfNhU9t0SZo8X4wJbGNVv4yodY28jCjTnIAjjOwLHjtzUzb
+ B39Q2K6RuWwXFctIVfXhb9ECqa7V6bbdQRginhq1xeQrYFkUQIrWcVTlBmhTV+/E3ZAI5tyhPMu
+ zQQQl5e0YKlabIb1rWClwgafbv/Pgy97PEitc7T3n9SdfUXAt78A+WPaa09Fo6OWBvyyA2qyjBU
+ IA1sbF6L6RcPyGFT25U844qnnCB/hJoxeVUHo/yuyZ6J5GGq9KI/ac7icrmKOH0arSHvriOgGQs
+ oNzW9GAI/yrpIP9Zn84a6jjDWBFafCfN+zNGLVg3IziGyHetDC2h4af15KhDvmQoqypHEPRu+et
+ OmkIRtZvOAz0/U7IY/aotBAk2klYQ==
+X-Received: by 2002:a17:90b:5485:b0:396:b918:c2a with SMTP id
+ 98e67ed59e1d1-39bac34a3cemr1260640a91.12.1788887901433; 
+ Tue, 08 Sep 2026 10:18:21 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-86207a4d602sm5096741b3a.22.2026.09.08.09.55.05
+ 98e67ed59e1d1-39b2612ba2bsm26722544a91.14.2026.09.08.10.18.18
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 08 Sep 2026 09:55:08 -0700 (PDT)
+ Tue, 08 Sep 2026 10:18:21 -0700 (PDT)
+Date: Tue, 8 Sep 2026 10:18:12 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Sivaprasad Tummala <sivaprasad.tummala@amd.com>
-Subject: [PATCH v2 3/3] test/power: fix nominal frequency check with amd-pstate
-Date: Tue,  8 Sep 2026 09:52:34 -0700
-Message-ID: <20260908165447.450006-4-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260908165447.450006-1-stephen@networkplumber.org>
-References: <20260328193419.106100-1-stephen@networkplumber.org>
- <20260908165447.450006-1-stephen@networkplumber.org>
+To: Serhii Iliushyk <sil-plv@napatech.com>
+Cc: mko-plv@napatech.com, ckm@napatech.com, dev@dpdk.org
+Subject: Re: [PATCH v1 0/3]  net/ntnic: fix virt queue data in BSS
+Message-ID: <20260908101812.4d6b9d71@phoenix.local>
+In-Reply-To: <20260908162724.463767-1-sil-plv@napatech.com>
+References: <20260908162724.463767-1-sil-plv@napatech.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,36 +84,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The turbo test checks that the core runs at frequency index 1 after
-scaling up with turbo disabled. That index is only nominal for
-acpi-cpufreq; amd-pstate spreads its buckets between scaling_min_freq
-and scaling_max_freq, putting nominal at index 47 on a Ryzen 9 7945HX.
-Use the index reported by rte_power_get_freq() instead.
+On Tue,  8 Sep 2026 18:27:21 +0200
+Serhii Iliushyk <sil-plv@napatech.com> wrote:
 
-Fixes: 1ed04d33cf19 ("power: support amd-pstate cpufreq driver")
-Cc: stable@dpdk.org
+> This series addresses the bug report "ntnic: virt queue data in BSS"
+> (Bugzilla ID: 1975). The report lists five problems with keeping the
+> virt queue state in static arrays; each is addressed as follows.
+> 
+> - BSS memory is slower than hugepages because of TLB overhead, which
+>   can cause performance loss in the hot path.
+>   The per-queue state, and the copy of the packet buffer descriptors
+>   indexed on every burst, are now allocated from the EAL heap.
+> 
+> - Hard coding the size wastes space.
+>   The 128-entry Rx and Tx arrays are gone; one object is allocated
+>   per configured queue and freed when the queue is released.
+> 
+> - Data in BSS is not visible to a secondary process.
+>   The state now lives in EAL memory. The PMD still does not support
+>   primary/secondary operation, but this no longer stands in the way.
+> 
+> - NUMA aware allocation was not possible.
+>   Both allocations are made with rte_zmalloc_socket() on the NUMA
+>   node of the adapter, next to the rings and buffers they describe.
+> 
+> - Cache alignment.
+>   The queue object is cache line aligned and no longer shares a line
+>   with a neighboring queue.
+> 
+> Patch 1 drops two never-called setup ops so that only the managed
+> setup and release paths own the queue state. Patch 2 makes a failed
+> hardware setup visible to the caller, which patch 3 relies on to free
+> the queue object on failure. Patch 3 is the fix itself; it also fixes
+> a leak of the descriptor copy on queue re-setup and an ignored
+> allocation failure that led to a NULL dereference in the burst
+> functions.
+> 
+> Serhii Iliushyk (3):
+>   net/ntnic: remove unused unmanaged virt queue setup ops
+>   net/ntnic: check virt queue hardware setup result
+>   net/ntnic: fix virt queue data in BSS
+> 
+>  drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c | 334 +++++++++++-------
+>  drivers/net/ntnic/ntnic_ethdev.c              |  52 ++-
+>  drivers/net/ntnic/ntnic_mod_reg.h             |  30 --
+>  3 files changed, 245 insertions(+), 171 deletions(-)
+> 
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- app/test/test_power_cpufreq.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/app/test/test_power_cpufreq.c b/app/test/test_power_cpufreq.c
-index 08bce4c0d1..1f79b80e6f 100644
---- a/app/test/test_power_cpufreq.c
-+++ b/app/test/test_power_cpufreq.c
-@@ -486,8 +486,9 @@ check_power_turbo(void)
- 		return -1;
- 	}
- 
--	/* Check the current frequency */
--	ret = check_cur_freq(TEST_POWER_LCORE_ID, 1, false);
-+	/* Nominal frequency is not at a fixed index in the table. */
-+	ret = check_cur_freq(TEST_POWER_LCORE_ID,
-+			rte_power_get_freq(TEST_POWER_LCORE_ID), false);
- 	if (ret < 0)
- 		return -1;
- 
--- 
-2.53.0
-
+Looks good, applied to next-net.
