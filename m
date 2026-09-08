@@ -2,57 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D71D2C79F82
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 12:42:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C7A9C79F82
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 12:43:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E9AE1410FC;
-	Tue,  8 Sep 2026 14:41:39 +0200 (CEST)
-Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
- by mails.dpdk.org (Postfix) with ESMTP id 25BE6410D5;
- Tue,  8 Sep 2026 14:41:36 +0200 (CEST)
-X-QQ-mid: esmtpgz10t1788871293td6ce50a6
-X-QQ-Originating-IP: en1Zj2rfAb8P3qe0/HNnqOHH+ETFX/Q8zhGNzwo0yr4=
-Received: from DSK-zaiyuwang.trustnetic.com ( [36.24.66.61])
- by bizesmtp.qq.com (ESMTP) with 
- id ; Tue, 08 Sep 2026 20:41:31 +0800 (CST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8C86540E27;
+	Tue,  8 Sep 2026 14:43:51 +0200 (CEST)
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+ by mails.dpdk.org (Postfix) with ESMTP id F320A402F0
+ for <dev@dpdk.org>; Tue,  8 Sep 2026 14:43:49 +0200 (CEST)
+X-QQ-mid: tivesync4t1788871424tf8970c4f
+Received: from 0F57A7141CBF4D1588B97A6ED8A17143 (zaiyuwang@trustnetic.com
+ [36.24.66.61])
 X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 11382078026403212471
-EX-QQ-RecipientCnt: 4
-From: Zaiyu Wang <zaiyuwang@trustnetic.com>
-To: dev@dpdk.org
-Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
- Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v2 15/15] net/txgbe: align link capabilities and DAC
- classification
-Date: Tue,  8 Sep 2026 20:39:00 +0800
-Message-ID: <D37D3F02E0723A0A+20260908124047.2284-16-zaiyuwang@trustnetic.com>
-X-Mailer: git-send-email 2.55.0.windows.2
-In-Reply-To: <20260908124047.2284-1-zaiyuwang@trustnetic.com>
-References: <20260827114309.10530-1-zaiyuwang@trustnetic.com>
- <20260908124047.2284-1-zaiyuwang@trustnetic.com>
+From: =?utf-8?b?WmFpeXUgV2FuZw==?= <zaiyuwang@trustnetic.com>
+X-BIZMAIL-ID: 1464792515905311625
+To: "'Stephen Hemminger'" <stephen@networkplumber.org>
+Cc: <dev@dpdk.org>
+References: <31C12A7AAC7E19F2+20260827114309.10530-1-zaiyuwang@trustnetic.com>
+ <20260827131137.1daf141c@phoenix.local>
+In-Reply-To: <20260827131137.1daf141c@phoenix.local>
+Subject: RE: [PATCH 00/13] Wangxun fixes and new features
+Date: Tue, 8 Sep 2026 20:43:43 +0800
+Message-ID: <000a01dd3f8f$aeeb6ac0$0cc24040$@trustnetic.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJ8QNehdnXO5ExpIOsSsHb9Qgxp5wIt8ZkwtXUtajA=
+Content-Language: zh-cn
 X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: OGvgEoGelOUdxDT+G4v7Mbo78uTCe/OkH+ctPUnUZ4r44zKzJV08FfLc
- meufae2TdKWHKIVB4uV8afara02zd3g7mIN9wXjRo91EkXrU73TScY3tSXTB4ZVeI/enaO8
- l8lKhRhERsgk4NTHlW62J51pI3lwVgYNc8a+P4AGyTRcLYOPRPHrClmBwlhmHtgABuUKMVt
- 97GxEhgoy1M5WbCQsg92RxqV9CdsMJnVIsMZiGij6YLBgqXlcWBcjjg4i2yq0yv/S/77P4i
- 39UTUFypWW2zkodrjMQIWDdx18gtBFZjXruXQkXIdD6Galc5cSDVMXC33OppkV9rMZdCvbL
- TsN1BnjfpqnnQFTF2VTZbyuLb8obC2ZUVTCQwdfzyfQbbyF3AagzFWL2oGb/6xr8swPbVFt
- P8dLlh12fQfpfrf8ksPESKrOV6KPRv3EpFU11ZKZcOaoTOR5R4c2/N+hHu6RLZXQZ17zfre
- DO0LBHdCfsHgKUP72nF/pRNsL0REO3aqsfr//DrZEucur9XTsPoZjCKU/HYgbePPClfYRqe
- 1y4PwkVhrFLuHmqmntQrUHXuzMqowX6jRUNHBL+urk44wZbnr0L3Q6F1bVszR2Rtpt2ciky
- fa2qwM9l76lBNwkVj5DcPl0kPsntoyK0hlWqDHeDEq2V1R+m8VycqTSsQ7GaemL7y8Z7A8Z
- qBxLWhjK4Xe1qoKENFe5j8p7zfEp1QzLGCUUH0cL0udipVl4ARQFO3XHm+mqBcQYmHQI/s5
- M2OPJ1fsv7EoQRX5PT4VpyJnNN8OxnkqnnpJfyLhcgEf/L08Ypu31E5EgiP70DMDsaW4Hbm
- e4z36qEHYEEqhg3jGvh2xrqbsSJBScAjzUOgCZ49t4ktrN0o2+o7GGJ0mn1E6/P7JjFrOPF
- uLiJ7uzwnhUcA4wykncGQY0pGtV6IgpJ/YvN4Aqx2eu/trm0VDuE11k4Vf25yHuRJiPS47I
- Hj8Mh3hlAUbq5w1XRKBcacwDbGLjGTEnVGEV8x7X6fhY/VrbIh8Ve/xVJf0W6LhJZ3afNXb
- PuYmETO/SXXKO9QXYvGxTAS9zHl70dUZG/3YKKDI9WB4+cwH7ihOzpbb71r+uBRowNWDE6a
- 5M0NB9BpauQowOvXjKj+q1yWnO1y2qDBg==
-X-QQ-XMRINFO: Mp0Kj//9VHAxzExpfF+O8yhSrljjwrznVg==
+Feedback-ID: tivesync:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
+X-QQ-XMAILINFO: OOkIcXXGmR+088uukEKQge489H4aPOle8CTOl51TUaICVotoVuMkGehd
+ M0L67KDd0nfEvW+Xetmq4DSiU2XDJ8G7D71Z4ub/sm7XElUE7qePd1ZCyt7tIVtffneFkxs
+ KM6DF3eqYnj8a232Y4YqEpIFOYpeVBlXF0QR4ICNsQid/0Gk2K1G4+1o7eOi8dUFcHvamiO
+ WweVRmOaX8UX/c893COPCeLp4jNQ2RhbvFIxURgg3hx7yj9wOBdUowWf5v1QsUSiGqV1C5R
+ hDRA40Gs5+MdKJAxC4n6I/rkqVfZ64zya3lIVSoBPeIvX0kfmaX9LzCrm3IoDm05YttJvDY
+ JF8CVBsORUuWwqo35miOqKnoA6CPBI2cq5pdn3QiKfaMdslCUSX75rNOIQSXnzZzkk+58SG
+ AwZjn1RnTh3RXAfkgf7T7ac+1b7nmXn1y++cR8SZFJbTIP0FJPRcDFAXQ+woquJnVM8mgYS
+ tPGaU+QrLfIh77TtRY5qsoCqgI4F/hMRUIsfi0S3wrusq4KFnkm6SyA+fKE+RTyECJQjauT
+ k5kmZe/YJqwGyY+kLi6RIHTPxhRZWbBKnW8SbWqJmqb0siTwoEHfPfXmHmALh0d+Waioee0
+ awbI9tHJjuph0mnK1xx0gZBPN6uvwxnXqtHYziSJ05xhWoKvkfaB3cVc0o4fKBZsMJNwNZX
+ JBWxyrNkz+Y5Uqxohr0QYqsy6XkYuYGE3VxyY7zUin3pClL4qvfkyGjWkM72dnYFtjOxoJ1
+ Kjf6Gbee70GBKyRckFUekI7KtdLCwoNa6zryfZeva7COBcYrHUANi+yWL9c0AeTPoV6HsOD
+ rYBqcwryUqkuN7/etlPuCUzKd8P1P7GP2WIbkb2NyqKD2AOxtJGXPP2GQGccGmAZ16RjMmM
+ UqhSIDL2Y4zYiq3q1kXn0tWL/0BtPYoiVPQu2P4grNb+1xbeewsOm7gxGKmGwyKmA7zjnCO
+ aWDj8UXK6NpUMI6WCKuNqDKYpsQsLAu124Bgb1oOG7numeaHSIBqxyMfH7qyFUD7VGiMsa6
+ fE4KpHszLleSNgrBao8nMkyjPwwT2hNIk94YrBwutfyuaiIc6de3S5lJX7q2t3NxABPhwK6
+ 2Px7vvZFxrT3pTeEQq5mcc6nb7oEiS36xy0dOiqCb+T3CD+r+87fzY=
+X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -67,226 +65,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-An active DAC can be misidentified as a 40G optical module, in which
-case the driver reports 40G and enables autoneg for a module that
-does not support it; DACs and optical modules are also treated
-differently in the FFE, CTLE and capability-report paths.
+Hi Stephen,
 
-Rework the AML40/AML link capabilities and DAC classification:
+Thank you very much for the detailed review and for taking the time to =
+go through each patch carefully.
+I have evaluated every comment and addressed them in v2. The points that =
+are not changed in this revision are explained in the cover letter.
 
-- Port the five-branch capability layout to AML40:
-  backplane, DAC (txgbe_is_dac_cable() plus the 10G-only AN-off
-  case), multispeed fiber, 40G QSFP and 10G SFP. Modules previously
-  misreported as 40G through the fallback now report the correct
-  speed and autoneg.
-- Add the 40G-active transceiver identification (sfp_type enum and
-  identify branch). Like the kernel driver, 40G active cables are
-  handled through the optical path, as SFF-8636 byte 131 bit 0
-  ("40G Active Cable") also covers active optical cables.
-- Unify DAC classification on txgbe_is_dac_cable(), including the
-  40G FFE selection in txgbe_e56_tx_ffe_cfg() which still
-  open-coded the qsfp_type_40g_cu check; the 10G active cable type
-  (da_act_lmt) is no longer treated as an optical module.
-
-Fixes: fb6eb170dfa2 ("net/txgbe: add basic link configuration for Amber-Lite")
-Cc: stable@dpdk.org
-
-Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
----
- drivers/net/txgbe/base/txgbe_aml.c   |  3 +-
- drivers/net/txgbe/base/txgbe_aml40.c | 74 +++++++++++++++++++++++-----
- drivers/net/txgbe/base/txgbe_e56.c   |  9 ++--
- drivers/net/txgbe/base/txgbe_phy.c   |  7 +++
- drivers/net/txgbe/base/txgbe_phy.h   |  1 +
- drivers/net/txgbe/base/txgbe_type.h  |  2 +
- 6 files changed, 76 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/net/txgbe/base/txgbe_aml.c b/drivers/net/txgbe/base/txgbe_aml.c
-index ac80d85f08..fe4becf198 100644
---- a/drivers/net/txgbe/base/txgbe_aml.c
-+++ b/drivers/net/txgbe/base/txgbe_aml.c
-@@ -103,8 +103,7 @@ s32 txgbe_get_link_capabilities_aml(struct txgbe_hw *hw,
- 		*speed = TXGBE_LINK_SPEED_10GB_FULL |
- 			 TXGBE_LINK_SPEED_25GB_FULL;
- 		*autoneg = true;
--	} else if (hw->phy.sfp_type == txgbe_sfp_type_da_cu_core0 ||
--		   hw->phy.sfp_type == txgbe_sfp_type_da_cu_core1) {
-+	} else if (txgbe_is_dac_cable(hw)) {
- 		if (hw->phy.fiber_suppport_speed ==
- 		    TXGBE_LINK_SPEED_10GB_FULL) {
- 			hw->devarg.auto_neg = false;
-diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
-index 2d3b32839c..512b8ba331 100644
---- a/drivers/net/txgbe/base/txgbe_aml40.c
-+++ b/drivers/net/txgbe/base/txgbe_aml40.c
-@@ -95,27 +95,77 @@ s32 txgbe_check_mac_link_aml40(struct txgbe_hw *hw, u32 *speed,
- 	return 0;
- }
- 
-+static int txgbe_is_40g_fiber_qsfp(struct txgbe_hw *hw)
-+{
-+	if (hw->phy.sfp_type == txgbe_qsfp_type_40g_sr_core0 ||
-+	    hw->phy.sfp_type == txgbe_qsfp_type_40g_sr_core1 ||
-+	    hw->phy.sfp_type == txgbe_qsfp_type_40g_lr_core0 ||
-+	    hw->phy.sfp_type == txgbe_qsfp_type_40g_lr_core1 ||
-+	    hw->phy.sfp_type == txgbe_qsfp_type_40g_active_core0 ||
-+	    hw->phy.sfp_type == txgbe_qsfp_type_40g_active_core1)
-+		return true;
-+
-+	return false;
-+}
-+
-+static int txgbe_is_10g_fiber_sfp(struct txgbe_hw *hw)
-+{
-+	if (hw->phy.sfp_type == txgbe_sfp_type_srlr_core0 ||
-+	    hw->phy.sfp_type == txgbe_sfp_type_srlr_core1)
-+		return true;
-+
-+	return false;
-+}
-+
- s32 txgbe_get_link_capabilities_aml40(struct txgbe_hw *hw,
- 				      u32 *speed,
- 				      bool *autoneg)
- {
--	if (hw->phy.sfp_type == txgbe_qsfp_type_40g_cu_core0 ||
--	    hw->phy.sfp_type == txgbe_qsfp_type_40g_cu_core1) {
--		*speed = hw->phy.fiber_suppport_speed;
--		*autoneg = hw->devarg.auto_neg;
--	} else if (txgbe_is_backplane(hw)) {
--		*speed = TXGBE_LINK_SPEED_40GB_FULL |
--			 TXGBE_LINK_SPEED_10GB_FULL;
-+	PMD_DRV_LOG(DEBUG, "port[%d]hw->phy.sfp_type = %d",
-+		    hw->bus.lan_id, hw->phy.sfp_type);
-+
-+	/* Backplane */
-+	if (txgbe_is_backplane(hw)) {
-+		*speed = TXGBE_LINK_SPEED_10GB_FULL |
-+			 TXGBE_LINK_SPEED_40GB_FULL;
-+		/* Backplane supports autonegotiation */
- 		*autoneg = hw->devarg.auto_neg;
-+		return 0;
-+	}
-+
-+	/* Fiber or DAC cable */
-+	if (txgbe_is_dac_cable(hw)) {
-+		/*
-+		 * 10G-only DAC cable: legacy build-time AUTO=0/1 default
-+		 * mode forces AN off. DPDK equivalent: devarg.auto_neg == 0.
-+		 */
-+		if (hw->phy.fiber_suppport_speed ==
-+		    TXGBE_LINK_SPEED_10GB_FULL &&
-+		    hw->devarg.auto_neg == 0) {
-+			*autoneg = false;
-+		} else {
-+			*autoneg = hw->devarg.auto_neg;
-+		}
-+		*speed = hw->phy.fiber_suppport_speed;
-+	} else if (hw->phy.multispeed_fiber) {
-+		/* multispeed fiber must come before single-sfp/qsfp fiber */
-+		*speed = TXGBE_LINK_SPEED_10GB_FULL |
-+			 TXGBE_LINK_SPEED_40GB_FULL;
-+		*autoneg = true;
-+	} else if (txgbe_is_40g_fiber_qsfp(hw)) {
-+		*speed = TXGBE_LINK_SPEED_40GB_FULL;
-+		*autoneg = false;
-+	} else if (txgbe_is_10g_fiber_sfp(hw)) {
-+		*speed = TXGBE_LINK_SPEED_10GB_FULL;
-+		*autoneg = false;
- 	} else {
- 		/*
--		 * Temporary workaround: set speed to 40G even if sfp not present
--		 * to avoid TXGBE_ERR_LINK_SETUP returned by setup_mac_link, but
--		 * a more reasonable solution is don't execute setup_mac_link when
--		 * sfp module not present.
-+		 * Unknown / unsupported module: keep 40G default to avoid
-+		 * TXGBE_ERR_LINK_SETUP returned by setup_mac_link, mirroring
-+		 * the temporary workaround in the previous version.
- 		 */
- 		*speed = TXGBE_LINK_SPEED_40GB_FULL;
--		*autoneg = true;
-+		*autoneg = false;
- 	}
- 
- 	return 0;
-diff --git a/drivers/net/txgbe/base/txgbe_e56.c b/drivers/net/txgbe/base/txgbe_e56.c
-index 8e986daf96..f996113ab8 100644
---- a/drivers/net/txgbe/base/txgbe_e56.c
-+++ b/drivers/net/txgbe/base/txgbe_e56.c
-@@ -73,8 +73,7 @@ u32 txgbe_e56_tx_ffe_cfg(struct txgbe_hw *hw, u32 speed)
- 		pre2 = S10G_TX_FFE_CFG_PRE2;
- 		post = S10G_TX_FFE_CFG_POST;
- 	} else if (speed == TXGBE_LINK_SPEED_25GB_FULL) {
--		if (hw->phy.sfp_type == txgbe_sfp_type_da_cu_core0 ||
--		    hw->phy.sfp_type == txgbe_sfp_type_da_cu_core1 ||
-+		if (txgbe_is_dac_cable(hw) ||
- 		    txgbe_is_backplane(hw)) {
- 			ffe_main = S25G_TX_FFE_CFG_DAC_MAIN;
- 			pre1 = S25G_TX_FFE_CFG_DAC_PRE1;
-@@ -92,8 +91,7 @@ u32 txgbe_e56_tx_ffe_cfg(struct txgbe_hw *hw, u32 speed)
- 		pre2 = S10G_TX_FFE_CFG_PRE2;
- 		post = S10G_TX_FFE_CFG_POST;
- 
--		if (hw->phy.sfp_type == txgbe_qsfp_type_40g_cu_core0 ||
--		    hw->phy.sfp_type == txgbe_qsfp_type_40g_cu_core1 ||
-+		if (txgbe_is_dac_cable(hw) ||
- 		    txgbe_is_backplane(hw)) {
- 			ffe_main = S40G_TX_FFE_CFG_MAIN;
- 			pre1 = S40G_TX_FFE_CFG_PRE1;
-@@ -2622,8 +2620,7 @@ txgbe_e56_rxs_calib_adapt_seq(struct txgbe_hw *hw, u32 speed)
- 	u32 rdata = 0x0;
- 	bool bypass_ctle = true;
- 
--	if (hw->phy.sfp_type == txgbe_sfp_type_da_cu_core0 ||
--	    hw->phy.sfp_type == txgbe_sfp_type_da_cu_core1)
-+	if (txgbe_is_dac_cable(hw))
- 		bypass_ctle = 0;
- 
- 	if (hw->mac.type == txgbe_mac_aml) {
-diff --git a/drivers/net/txgbe/base/txgbe_phy.c b/drivers/net/txgbe/base/txgbe_phy.c
-index 10df23afae..e52f1da87d 100644
---- a/drivers/net/txgbe/base/txgbe_phy.c
-+++ b/drivers/net/txgbe/base/txgbe_phy.c
-@@ -1156,6 +1156,13 @@ s32 txgbe_identify_qsfp_module(struct txgbe_hw *hw)
- 			else
- 				hw->phy.sfp_type = txgbe_qsfp_type_40g_lr_core1;
- 		}
-+
-+		if (transceiver_type & TXGBE_SFF_ETHERNET_40G_ACTIVE) {
-+			if (hw->bus.lan_id == 0)
-+				hw->phy.sfp_type = txgbe_qsfp_type_40g_active_core0;
-+			else
-+				hw->phy.sfp_type = txgbe_qsfp_type_40g_active_core1;
-+		}
- 	}
- 
- 	hw->mac.release_swfw_sync(hw, TXGBE_MNGSEM_SWPHY);
-diff --git a/drivers/net/txgbe/base/txgbe_phy.h b/drivers/net/txgbe/base/txgbe_phy.h
-index a06c0eb04e..552fedadab 100644
---- a/drivers/net/txgbe/base/txgbe_phy.h
-+++ b/drivers/net/txgbe/base/txgbe_phy.h
-@@ -316,6 +316,7 @@
- #define TXGBE_SFF_ETHERNET_40G_CR4		MS(3, 0x1)
- #define TXGBE_SFF_ETHERNET_40G_SR4		MS(2, 0x1)
- #define TXGBE_SFF_ETHERNET_40G_LR4		MS(1, 0x1)
-+#define TXGBE_SFF_ETHERNET_40G_ACTIVE		MS(0, 0x1)
- 
- #define TXGBE_SFF_SOFT_RS_SELECT_MASK		0x8
- #define TXGBE_SFF_SOFT_RS_SELECT_10G		0x8
-diff --git a/drivers/net/txgbe/base/txgbe_type.h b/drivers/net/txgbe/base/txgbe_type.h
-index 39a70746a7..91771b9cbd 100644
---- a/drivers/net/txgbe/base/txgbe_type.h
-+++ b/drivers/net/txgbe/base/txgbe_type.h
-@@ -249,6 +249,8 @@ enum txgbe_sfp_type {
- 	txgbe_qsfp_type_40g_sr_core1,
- 	txgbe_qsfp_type_40g_lr_core0,
- 	txgbe_qsfp_type_40g_lr_core1,
-+	txgbe_qsfp_type_40g_active_core0,
-+	txgbe_qsfp_type_40g_active_core1,
- 	txgbe_sfp_type_not_present = 0xFFFE,
- 	txgbe_sfp_type_not_known = 0xFFFF
- };
--- 
-2.55.0.windows.2
-
+> -----Original Message-----
+> From: Stephen Hemminger <stephen@networkplumber.org>
+> Sent: Friday, August 28, 2026 4:12 AM
+> To: Zaiyu Wang <zaiyuwang@trustnetic.com>; Zaiyu Wang =
+<zaiyuwang@trustnetic.com>
+> Cc: dev@dpdk.org; dev@dpdk.org
+> Subject: Re: [PATCH 00/13] Wangxun fixes and new features
+>=20
+> On Thu, 27 Aug 2026 19:41:52 +0800
+> Zaiyu Wang <zaiyuwang@trustnetic.com> wrote:
+>=20
+> > This series addresses link-related issues on Wangxun Amber-lite =
+25G/40G NICs (CR/KR training, hot-plug, 10G link state), and =
+additionally
+> refines UDP offload handling.
+>=20
+>=20
+> Using Claude AI review (versus the simpler CI AI review) shows several =
+issues that need addressing before this can be merged.
+>=20
+> Here is my edit of the wordy AI feedbac.
+>=20
 
