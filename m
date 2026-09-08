@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6AA3C79F82
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 16:27:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A58CC79F99
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 16:27:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B979B40ED6;
-	Tue,  8 Sep 2026 18:27:45 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9442040F1A;
+	Tue,  8 Sep 2026 18:27:46 +0200 (CEST)
 Received: from egress-ip11b.ess.de.barracuda.com
  (egress-ip11b.ess.de.barracuda.com [18.185.115.215])
- by mails.dpdk.org (Postfix) with ESMTP id 5F09240E19
- for <dev@dpdk.org>; Tue,  8 Sep 2026 18:27:43 +0200 (CEST)
-Received: from OSPPR02CU001.outbound.protection.outlook.com
- (mail-norwayeastazon11023123.outbound.protection.outlook.com
- [40.107.159.123]) by mx-outbound44-93.eu-central-1c.ess.aws.cudaops.com
+ by mails.dpdk.org (Postfix) with ESMTP id A1AB84028D;
+ Tue,  8 Sep 2026 18:27:43 +0200 (CEST)
+Received: from GVXPR05CU001.outbound.protection.outlook.com
+ (mail-swedencentralazon11023074.outbound.protection.outlook.com
+ [52.101.83.74]) by mx-outbound44-93.eu-central-1c.ess.aws.cudaops.com
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
  Tue, 08 Sep 2026 16:27:41 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=M3KPR0whY7kxB7LkfC2VxURVIVJYCnGc/rdeF6nLZKSBSNK0SvXhawJGQ9nkjjQGVPuZAA4ZVNqh8VRNvNBgOPE9zkDooixd7Y3L5DxEC4UKdAat6IIG+FUWR77YZhP/5da+NweCkg5ybPf+GR4fCkR+GsLhHiRoUj3Mtvn1xi9IaU+HuwaDmWL22qyLwLdbNxXv/OWcqls30YNdrQwEGiWl4Rnbpy+cW8uj6MehF9UV4pdW6z2u+Is7wGHJEScdnhqTj67hYGVxr11Khe/shbrt0dDXjoPFbQHgfNfAgrhztFVYGPxrORhpTtPA0II1lVVgZrGxBpa1cpGFIAH7Cw==
+ b=MfyZN70LBQKNxWhJ2HLGa3SBqdSEwfG0yW/H275Og8/+0lvCwR5dl3qIhRkS6D2tLspbRixDrc4Y/wpzG+MIdidjweoQV61LYr85ry1VBvPGxpcUyAh3B5Kiq8PyXwzws7mEQsY2Ki7XZfeeCfgDPziOuyB2KTooxzkxfNBoGcRb0klZ4AAUDj9Sik6ylliGVq+qTWlY2+gWrJa9DYos7gxEOJxIbyPgN+N59YqwVSeagtt9B/dE1zsWHW4MV+LcX9cxrnyEQAy+WMoIEtotFIwtvrsYp24w8uW0crIimULfzg2OKI/UkdNqatVuTcsj3QOhJ6IN8pJ6bfoE7YdpAw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QkJbYnFMPVsCxv0FBn1z5oXh0TpC7nN9OBg1zi3U+XA=;
- b=Rn9pOeHbEF7+b0YzJMjWqQ1C3WWaDsvESb+7TTlMjlPyGkMAYnyVSgewAnB8DFkYGcQYFYyLmP6nWP4qUKtyK+abj8nKl6R19nG/zyYkVTsz1aondbUieClBetBAkpPtNcUx9kXnFkXoF5wEZj9zNEiJ/Ifr7NE1QNAXKlTo8muynUbBFEatl55bnKa8ai32Wt7CA8mmgy5lI8qpJcSUOrXtDwGs2cCUgVhZFOFmTd1k8V+Yg+Uo+xYmCmF2HXLrnkEz2w9rlstLVDamdnRH54GatT5MGskKvRAMFXBsUiKm3O9BlGfWIUDrDH7TdKNyrqOgggv7nVHWyuGYdkWPfA==
+ bh=xzML5lgqkrEWaTFc0etQUd3/JpIjCwnH7IX6hBKyi90=;
+ b=qzvuTG0HMjszYnIZFZXVZN+w8oncFddwn/s1G9r70g1Ozx6KqQBzn+6VL74nqoGchDDrjBouOHIKqNtkvITN6OVJ8DjmW9NdwfIuGdj8h6In/kmyZ4RiODrOXCoLiFq9WZdAp3AHX4Cv3DA0yKVzl8PV4eddDlcYK8qN2r01L+HofVZW58VlI3h+pC48TzxwgumWajg0Dq48jKrAz0gK7LMAWNs2Z7Yrscsf+77lV9Ncy950B3a31QH0qRBEt11fBfZbdLa9JvY90h94AHRbFwxpJ2PMKsIx2WUQnPyw91gAGwnSt2D0djTlWHDUvfX63cWSx2iZfBY6rgHPJQr/Xg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=networkplumber.org smtp.mailfrom=napatech.com; 
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,18 +30,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QkJbYnFMPVsCxv0FBn1z5oXh0TpC7nN9OBg1zi3U+XA=;
- b=L6N/DwdLl6N6ri6MgFszg5cTnPbVYncdYUF5dXonB2xpCx54dNIihpC2jCTNv/d32bQbVFuf8/Vs574MsnHAeEvfzVM5Hoe6z8QgYSsbhFduY2UF5GVHfsIcpKgrENJUo0dYXggZ1TEgvTOtdkLqgpjvqIIFiD+LJkGCjhgeTE8=
-Received: from DU6P191CA0052.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:53e::12)
- by PA4P190MB1151.EURP190.PROD.OUTLOOK.COM (2603:10a6:102:102::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.382.15; Tue, 8 Sep
- 2026 16:27:37 +0000
+ bh=xzML5lgqkrEWaTFc0etQUd3/JpIjCwnH7IX6hBKyi90=;
+ b=iqH6ZwnegBT2jRsTdxDZxxbaVcuPKpeDOWu9sPm6PJHOHBZZ0l7XSTuk8Jp8at0fPoyKloHzJqsAydGAaxz2CyJ0jfeVq7LtdP+viqHiTVBQB4Qmb9H3j/OlOcH4ce7IkILBBq2Cq76E3g9NIHwG1m/sjz1i7mKV6DzHlXgHngQ=
+Received: from DU6P191CA0051.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:53e::7) by
+ PA4P190MB1344.EURP190.PROD.OUTLOOK.COM (2603:10a6:102:10d::23) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.406.6; Tue, 8 Sep 2026 16:27:38 +0000
 Received: from DU2PEPF00028D13.eurprd03.prod.outlook.com
- (2603:10a6:10:53e:cafe::4e) by DU6P191CA0052.outlook.office365.com
- (2603:10a6:10:53e::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.406.6 via Frontend Transport; Tue, 8
- Sep 2026 16:27:37 +0000
+ (2603:10a6:10:53e:cafe::ae) by DU6P191CA0051.outlook.office365.com
+ (2603:10a6:10:53e::7) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.21.382.15 via Frontend Transport; Tue, 8
+ Sep 2026 16:27:38 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
  smtp.mailfrom=napatech.com; dkim=none (message not signed)
  header.d=none;dmarc=fail action=oreject header.from=napatech.com;
@@ -50,16 +50,17 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
  client-ip=178.72.21.4; helo=localhost.localdomain;
 Received: from localhost.localdomain (178.72.21.4) by
  DU2PEPF00028D13.mail.protection.outlook.com (10.167.242.27) with Microsoft
- SMTP Server id 15.21.382.8 via Frontend Transport; Tue, 8 Sep 2026 16:27:37
+ SMTP Server id 15.21.382.8 via Frontend Transport; Tue, 8 Sep 2026 16:27:38
  +0000
 From: Serhii Iliushyk <sil-plv@napatech.com>
 To: stephen@networkplumber.org,
 	mko-plv@napatech.com,
 	ckm@napatech.com
-Cc: dev@dpdk.org
-Subject: [PATCH v1 1/3] net/ntnic: remove unused unmanaged virt queue setup ops
-Date: Tue,  8 Sep 2026 18:27:22 +0200
-Message-ID: <20260908162724.463767-2-sil-plv@napatech.com>
+Cc: dev@dpdk.org,
+	stable@dpdk.org
+Subject: [PATCH v1 2/3] net/ntnic: check virt queue hardware setup result
+Date: Tue,  8 Sep 2026 18:27:23 +0200
+Message-ID: <20260908162724.463767-3-sil-plv@napatech.com>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20260908162724.463767-1-sil-plv@napatech.com>
 References: <20260908162724.463767-1-sil-plv@napatech.com>
@@ -67,43 +68,43 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PEPF00028D13:EE_|PA4P190MB1151:EE_
+X-MS-TrafficTypeDiagnostic: DU2PEPF00028D13:EE_|PA4P190MB1344:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: d0e88a3a-e26d-44e9-5145-08df0dc618a4
+X-MS-Office365-Filtering-Correlation-Id: 8d7e6b43-5fb5-4293-121f-08df0dc618fd
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|23010399003|82310400026|1800799024|36860700016|10067099003|56012099006|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info: eJ/LW890iRPQfiixbhrydwA5PIyOYYw96ZXW+ovFN63pYUVh7NmGO9rAVoZsjoZ7GEzz5DbSt7gRxllysAuABxtzvTV4MI1FCCuD5vbeNAStE4aaP4ocoJ46xVM5+JQ6rHmFrhTog5PWyea1qslqA+/+jAMwKtnyiHiRCNShbvgF7dwgW+mbNIKgV+ruXgw1k24MauCAMD7e9U8KlR4y7q9a2ZagFi4B7tOvlZIVZaj3eKRX2jhueJgd64UbFJ977oPXTziYZsVm/mkbuuPjsxjFpbO9vePbTT+IKO/FymefoCevXqiiI483aF+5KBTguJZ8rTV2k+dYB7EDOae6I/TzJ+XmLeD5hbA2OZ0nEAltwCsL7RwAulqYr/1QMQsu4H4BwTuFy1KZ14zUT1VHzZo3o/QWtXyxe0B3kxaQVCHkYrS3+ruwPAgHBO7uyHe/eI3o9gw+r7ceU26UeV2dEurvgbjCgmwR/EHL9BJ2iMAwLtSy6CWLYqFQmYDASHs2TKYl/AJ91NH33jIsq13W+KkHe6qXfH+vyqm1jVqE5u63bSOiHUGBiza8awlc3HnVW8BzeAu9y7ZLv3Wmp/EXOmbu88w9mvvs0eWnBpgSGiY4fLpHUFDUcEvYZC1MiSQAb0QmFyQgsCA9YKIbtH9macM37t8dw+2L3kXvmcUo0UWDHfV1GwmpjbcxzimNqtQDddcLWusAL/j3ZIt3TwUYQQ==
+ ARA:13230040|82310400026|36860700016|376014|23010399003|1800799024|18002099003|22082099003|56012099006|10067099003;
+X-Microsoft-Antispam-Message-Info: aJcBV2Z4xO3svc9v7DlqdLZp+q0HYtVbCJLYOn+FOKx58h5IdQYsjuO5zrF5LZoRBIf/LBORuBu5Srb1oaTvdRjlQI/bZWYtzzasAZMRLT2TAKPe3neT4YrCf8AcMRba0uPVAQl1OYsnSJXh1XQBw/vU58nZGuXGSI6WIgJ6zaL1u6L1LOAx3ZqbVieZfgE8uggJvS53YXETjmcqwSxY6hvRYcUY/A8zG7iEfpGlNGR8ih0mIpvP32Vwai5F7IrXVVTLuNpW2piWBUgm6+lRxaKuGWk4tWmvCFXALw1g9VzWMIB4wipUQWoTEk9NjMDjARB35vszfueAODjzuY1i+8LuuJdTRab8KhCmiyPVHiDNFjHUK+vJ93+B90i8n54NEc4V5UwtT+F/4Ha1bSg1pnn+VmVMneTUufV4uMrNPDU6YRFanwz4urKawEQSaab14/mTLEeU571UnFSanEPCZmsKHE4euCT/xAW676SD/Mprwk78qyytj/rm6NwjrdxRtCvpZUDxOfVFWRYOd53nGRiUn74QeVskpfLqZn/uuY7DYBKxZQlciAKaAPDRnYCPshVhlek9KvRO/P8ChfIMOVk4buUtpmU7cqwPVFfGI14bJ4OI4zvnX5JxNI5uEOIYxjFgB3QsnLVHI/lgwO9nrQ40pwguyjuvmpwFfq466fbkpxuYrGRaSKaA5v3jNe61qUd/3G8xsh7YssszjGmATQ==
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
  CAT:NONE;
- SFS:(13230040)(376014)(23010399003)(82310400026)(1800799024)(36860700016)(10067099003)(56012099006)(18002099003)(22082099003);
+ SFS:(13230040)(82310400026)(36860700016)(376014)(23010399003)(1800799024)(18002099003)(22082099003)(56012099006)(10067099003);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: FeBqu84Ed6mN0dd/XQF843tn42NOVxZbJBMrIgWNpH4qK7oWlNCbMpr4h5iNlK7RZ4q2KNk2UaBBhA1zb9fCdh+S4dspyNvme1WyOeJyeDhqY2vRDBCZ6DB5sAZ0Np/5VYruD3tfhnphNPEnD3dYORRjbqjL0BzEWaPODfUwxGAZcqZ2VWqmz643xTJlEvsVLnYAAQdanbL3w4RS/yBzf58Jt+PveBbELml6JrzmrXgYVbTXfft42iSzKv2JZwNE2Ip5eXD+QbksIuoy1t9AHFL8r+MWMJRZ/sfeAloa/cPxR9zgWrzACQ5kyu7MCvsnNuIpmYb45BKbYmutTCUM/Ikh1HgQmOd0axgc2lWDjemM6jJk/iAr0+Ri/1OkKC9VNsJems+hMCI8z7LJrjqFFy7bCoVgL+3Bm4QZ1BOKN0mnLFTDEUGBldJfODG/K1Be
-X-Exchange-RoutingPolicyChecked: lU7OS1KDscvdwDf0JyB1GZxOjRnDKbGPbVY5Lv6PE7JCv6s3zalt5KDq34lxgOwgDdd316XRJDl1KlwMeXjXNx7vSUh9eBlEjNVg1wsGfhXR1VIyr49UQPii8HJpJOapUMhZlUBomTjii2nsHCgifx5IxNsgzFvCU738ThHkYxiYU76qbPmYFs5TSuCi7OXkcG7ZF2EZvlPmgAnCRiJGpo2EIH5zi7s9ErjOOmfj78MEaddMarBOX4mfbn8UkN5KLphZeqZSuR86fea6A4ez2phhZyeaHDaE6dJ8qheI1FvBCQhQqff5x0BiI3/R8LsTp2AHgFUWi02ReTVdcMcieQ==
+X-MS-Exchange-AntiSpam-MessageData-0: ecDembiQNJo+Tvk/dGOfCgxvyUgOr8DNo4dxI2vXVPUWtNehB/aU9Yiw4sRj3KU6ZH1ViesEyu1jDWCh4ufUaEL4J6eaUTT45wktsg7cc0y4f+EUVZvDTY5FiNTQkgdZ/65ahSseR3MJjPVGH1wvncdXOw2GoVI6vTcB7JIZ02vDmtb1awbCo2QjHejCeZp6BNtXyDE71xw3/RVGQVA+IPDrR6OQxSicEVQHTTQlgYokPg4MyEYUvl4D1irHcX8rNh9MORpo4iGz/KK+z6J+ohluUltzjo+qlQZ4JrNdNuCydsivQVcXmwj+Lv76oIc4uu/Q+vDbjG89kBh6vqm4yTcW8wIOClblj0sHDt5avMaRAb7aPKzlMxlRc4Zf2hyjGMIu6tVOrjEyxdUjcg2P5JdUw7sofk5HuhvpsvxPxwP7x7u0lF2RiXTK3OhPMWOM
+X-Exchange-RoutingPolicyChecked: XBPjOP+t6C+Y6CHBU41vjN9VCNzv+ALGMp4V46EnX87c4jiGUBAsyP8TpCUegxZfiiR2QOPIqDvKqbwR7mmLdlxI3xb6zZmoaUtOBJP1nvNKX49acb60tb95btztBZcumDKNTt2SEV3JYO88iIHZM7WQncazfK23WlHdgXIvL3fOnZjs/41uWphFBLqMSnsrJt/u6YGoJyKmJJjG4TzvXg5pf/0EYDuryeWZc1i4C7HIVsTprjnNR8SljGmZAfGAlhIyf2Pp67OtBA9xGL9/JNJvBOd8XgJPiC8iDIgCXOsdmA/QEvG7YkDRQD+aXrDmZj89sRvQIQaRtLEZfUkz2Q==
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: yAB5TjQL44Yhbua3Rz3u9BWQWf2/FS1tjEhcJseB3b4T3ohf/UFhw0NsUVmoZa584d6A5E3TgNNax4AdsbO/4E91HTvJ8OAWwA/POwqD/Jlw3Hok8Pa3LgFJDUA95ZypoVCKTzlkMaTz9B9pnpnhiil767sUDertIVzRY878XxirmDbFSiDrQ2eqd0nutk7gCQuS1AltZrZ0Ws+6ifiTdX6j+4U8+HxUZM0AISQ204mAX9JmEv48gGR/2fxMlanJQU4W8Zi6z/2wGwAiPbvibGJ2FS/2Jiiu2JjJJhs0HZ0K4HK+yXsft08sTH4dG+stFGM/F21+fg4iG/f32ShdXGMaZeM9Jl5gBWTu3r90FibmOq3tckgd1QxexNtjyNVZVWV/Q9dGav6+NLSgeY5zIqvlfCOrej+k4aFoqWl+ctQxP6YQuPZsayWUiBzdSSa9vSlXNWt9HA0XsYKrKuLR6vA5PtgNgQ+iwH3DQMOIfIezh468vGnd4KkwqfU+A+/5IpwIyOsnNjAQQFJMglx4HFkbaL0cCHBl2CAl0kCF0bMnToyGL3+1wWr9Rx2U1P35vOrhE8HhSecvlyCU+bf1Dghpexw5mGZkz4axPLxz0916ua+U+3YuXpfZnyHIc+z47FrOJMGAJeEAyRRJURnzVw==
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: vsyiz/xGSPWQ6XUwQPP9272PZf8iAHUx/QIVKZ8rTEJjB6I+CV//RWzFuQ16hB2r8R/P8ncpziiZCTHLo5M/uz7pR3nI3ctUsJdU5LbnPWa61vZfJDNKzEQuAnJLhEnKsksLwJ8YWrsK8zhwIQEllhzTf0CIfrDTOl/zMiZiSencok+umVtFxToN1qcXowsWTbQWi33LJ+S3e0E/cXjhAayKlHU4dxkKJy8XJgMSRPL2mZdR8rPZo0O9pzqDR1Eftn23ZeWriEEzttc4x8XKnAWpJDonEkNIOvqCRO5vG5zEazkbU38bg+vy+HpTsfwB4/XTeaOUj+8sxgZSZcVEhoi+vrPD/LnuF56FidDX0Xks5kl+ZuPN3V+b/1zoR0GxF6IbcGA8Y+BFVBuDGVFtLSrGSZVYgqiey2QceEax8n7uOTw1UFXK/3IRH2CNlKqU1jrTCkQLEvjGbtTqKxOIwdLffbPls9BBT48siMlA6cQqPVP/mRhlU60EVHHsEup63nad4TbbffO6lVgfHmK5vrqiKR0AWqLqnKzjKKc3PXKjkxQpv9Thtxv9lzAExowYPluFKYhN2IrWjxq9E7sofxl8Rp40Yit7QlDj88YlWtJVoikj5cUz7WzXVtYl0iVbJOr8LGPk7uU6ulUn8lp8Mg==
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2026 16:27:37.6861 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d0e88a3a-e26d-44e9-5145-08df0dc618a4
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2026 16:27:38.2046 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8d7e6b43-5fb5-4293-121f-08df0dc618fd
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: DU2PEPF00028D13.eurprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4P190MB1151
-X-BESS-ID: 1788884861-311357-15606-2163-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4P190MB1344
+X-BESS-ID: 1788884861-311357-15607-2163-1
 X-BESS-VER: 2019.1_20260902.2230
-X-BESS-Apparent-Source-IP: 40.107.159.123
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVkbGJmZAVgZQ0NDC1NzC0MTAIM
- nEyCDVwMDMwNzCzNTQzNggLSnV2NBCqTYWAJggsZNBAAAA
+X-BESS-Apparent-Source-IP: 52.101.83.74
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVoYGluYWQGYGUNQkzdDMMMXY0s
+ Qi1dQoycDczCDFKCnFMjXVIsk4OTnNQKk2FgCg1UyOQgAAAA==
 X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.275977 [from 
- cloudscan20-20.eu-central-1b.ess.aws.cudaops.com]
+ cloudscan18-201.eu-central-1b.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
@@ -124,70 +125,295 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The unmanaged Rx/Tx virt queue setup ops have never had a caller;
-only the managed variants are used. Drop them in preparation for
-allocating the queue state per queue.
+The managed virt queue setup ignored the result of programming the
+DBS registers and returned the queue as usable.
+
+Return an error from the hardware setup and, when it fails, fail the
+managed split and packed setup paths and free the descriptor copy.
+
+Fixes: e13da07fd9fd ("net/ntnic: add split-queue support")
+Fixes: af30088786c2 ("net/ntnic: add virtqueue setup managed packed-ring")
+Cc: stable@dpdk.org
 
 Signed-off-by: Serhii Iliushyk <sil-plv@napatech.com>
 ---
- drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c |  2 --
- drivers/net/ntnic/ntnic_mod_reg.h             | 30 -------------------
- 2 files changed, 32 deletions(-)
+ drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c | 158 ++++++++++--------
+ 1 file changed, 88 insertions(+), 70 deletions(-)
 
 diff --git a/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c b/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c
-index 56eb710d25..7c10acb4e2 100644
+index 7c10acb4e2..af200432a2 100644
 --- a/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c
 +++ b/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c
-@@ -1432,8 +1432,6 @@ static void nthw_release_tx_packets(struct nthw_virt_queue *txvq, uint16_t n, ui
+@@ -357,7 +357,8 @@ static uint8_t dbs_qsize_log2(uint16_t qsize)
+ 	return qs;
  }
  
- static struct sg_ops_s sg_ops = {
--	.nthw_setup_rx_virt_queue = nthw_setup_rx_virt_queue,
--	.nthw_setup_tx_virt_queue = nthw_setup_tx_virt_queue,
- 	.nthw_setup_mngd_rx_virt_queue = nthw_setup_mngd_rx_virt_queue,
- 	.nthw_release_mngd_rx_virt_queue = nthw_release_mngd_rx_virt_queue,
- 	.nthw_setup_mngd_tx_virt_queue = nthw_setup_mngd_tx_virt_queue,
-diff --git a/drivers/net/ntnic/ntnic_mod_reg.h b/drivers/net/ntnic/ntnic_mod_reg.h
-index 81ba1e44f9..1b5047b3dd 100644
---- a/drivers/net/ntnic/ntnic_mod_reg.h
-+++ b/drivers/net/ntnic/ntnic_mod_reg.h
-@@ -24,36 +24,6 @@
+-static struct nthw_virt_queue *nthw_setup_rx_virt_queue(nthw_dbs_t *p_nthw_dbs,
++static int nthw_setup_rx_virt_queue(struct nthw_virt_queue *vq,
++	nthw_dbs_t *p_nthw_dbs,
+ 	uint32_t index,
+ 	uint16_t start_idx,
+ 	uint16_t start_ptr,
+@@ -383,7 +384,7 @@ static struct nthw_virt_queue *nthw_setup_rx_virt_queue(nthw_dbs_t *p_nthw_dbs,
+ 	 */
+ 	if (nthw_set_rx_dr_data(p_nthw_dbs, index, (uint64_t)desc_struct_phys_addr,
+ 		host_id, qs, header, 0) != 0) {
+-		return NULL;
++		return -1;
+ 	}
  
- /* sg ops section */
- struct sg_ops_s {
--	/* Setup a virtQueue for a VM */
--	struct nthw_virt_queue *(*nthw_setup_rx_virt_queue)(nthw_dbs_t *p_nthw_dbs,
--		uint32_t index,
--		uint16_t start_idx,
--		uint16_t start_ptr,
--		void *avail_struct_phys_addr,
--		void *used_struct_phys_addr,
--		void *desc_struct_phys_addr,
--		uint16_t queue_size,
--		uint32_t host_id,
--		uint32_t header,
--		uint32_t vq_type,
--		int irq_vector,
--		uint8_t rx_deferred_start);
--	struct nthw_virt_queue *(*nthw_setup_tx_virt_queue)(nthw_dbs_t *p_nthw_dbs,
--		uint32_t index,
--		uint16_t start_idx,
--		uint16_t start_ptr,
--		void *avail_struct_phys_addr,
--		void *used_struct_phys_addr,
--		void *desc_struct_phys_addr,
--		uint16_t queue_size,
--		uint32_t host_id,
--		uint32_t port,
--		uint32_t virtual_port,
--		uint32_t header,
--		uint32_t vq_type,
--		int irq_vector,
--		uint32_t in_order,
--		uint8_t tx_deferred_start);
- 	struct nthw_virt_queue *(*nthw_setup_mngd_rx_virt_queue)(nthw_dbs_t *p_nthw_dbs,
- 		uint32_t index,
- 		uint32_t queue_size,
+ 	/*
+@@ -402,7 +403,7 @@ static struct nthw_virt_queue *nthw_setup_rx_virt_queue(nthw_dbs_t *p_nthw_dbs,
+ 	if (nthw_set_rx_uw_data(p_nthw_dbs, index,
+ 			(uint64_t)used_struct_phys_addr,
+ 			host_id, qs, 0, int_enable, vec, istk) != 0) {
+-		return NULL;
++		return -1;
+ 	}
+ 
+ 	/*
+@@ -416,7 +417,7 @@ static struct nthw_virt_queue *nthw_setup_rx_virt_queue(nthw_dbs_t *p_nthw_dbs,
+ 		if (nthw_set_rx_am_data(p_nthw_dbs, index, (uint64_t)avail_struct_phys_addr,
+ 				RX_AM_DISABLE, host_id, 0,
+ 				0) != 0) {
+-			return NULL;
++			return -1;
+ 		}
+ 	}
+ 
+@@ -433,25 +434,24 @@ static struct nthw_virt_queue *nthw_setup_rx_virt_queue(nthw_dbs_t *p_nthw_dbs,
+ 	uint32_t enable = rx_deferred_start ? RX_AM_DISABLE : RX_AM_ENABLE;
+ 	if (nthw_set_rx_am_data(p_nthw_dbs, index, (uint64_t)avail_struct_phys_addr, enable,
+ 			host_id, 0, irq_vector >= 0 ? 1 : 0) != 0) {
+-		return NULL;
++		return -1;
+ 	}
+ 
+ 	/* Save queue state */
+-	rxvq[index].usage = NTHW_VIRTQ_UNMANAGED;
+-	rxvq[index].mp_nthw_dbs = p_nthw_dbs;
+-	rxvq[index].index = index;
+-	rxvq[index].queue_size = queue_size;
+-	rxvq[index].am_enable = (irq_vector < 0) ? RX_AM_ENABLE : RX_AM_DISABLE;
+-	rxvq[index].host_id = host_id;
+-	rxvq[index].avail_struct_phys_addr = avail_struct_phys_addr;
+-	rxvq[index].used_struct_phys_addr = used_struct_phys_addr;
+-	rxvq[index].desc_struct_phys_addr = desc_struct_phys_addr;
+-	rxvq[index].vq_type = vq_type;
+-	rxvq[index].in_order = 0;	/* not used */
+-	rxvq[index].irq_vector = irq_vector;
+-
+-	/* Return queue handle */
+-	return &rxvq[index];
++	vq->usage = NTHW_VIRTQ_UNMANAGED;
++	vq->mp_nthw_dbs = p_nthw_dbs;
++	vq->index = index;
++	vq->queue_size = queue_size;
++	vq->am_enable = (irq_vector < 0) ? RX_AM_ENABLE : RX_AM_DISABLE;
++	vq->host_id = host_id;
++	vq->avail_struct_phys_addr = avail_struct_phys_addr;
++	vq->used_struct_phys_addr = used_struct_phys_addr;
++	vq->desc_struct_phys_addr = desc_struct_phys_addr;
++	vq->vq_type = vq_type;
++	vq->in_order = 0;	/* not used */
++	vq->irq_vector = irq_vector;
++
++	return 0;
+ }
+ 
+ static int dbs_wait_hw_queue_shutdown(struct nthw_virt_queue *vq, int rx);
+@@ -685,7 +685,8 @@ static int nthw_release_mngd_tx_virt_queue(struct nthw_virt_queue *txvq)
+ 	return dbs_internal_release_tx_virt_queue(txvq);
+ }
+ 
+-static struct nthw_virt_queue *nthw_setup_tx_virt_queue(nthw_dbs_t *p_nthw_dbs,
++static int nthw_setup_tx_virt_queue(struct nthw_virt_queue *vq,
++	nthw_dbs_t *p_nthw_dbs,
+ 	uint32_t index,
+ 	uint16_t start_idx,
+ 	uint16_t start_ptr,
+@@ -714,7 +715,7 @@ static struct nthw_virt_queue *nthw_setup_tx_virt_queue(nthw_dbs_t *p_nthw_dbs,
+ 	 */
+ 	if (nthw_set_tx_dr_data(p_nthw_dbs, index, (uint64_t)desc_struct_phys_addr,
+ 			host_id, qs, port, header, 0) != 0) {
+-		return NULL;
++		return -1;
+ 	}
+ 
+ 	/*
+@@ -732,7 +733,7 @@ static struct nthw_virt_queue *nthw_setup_tx_virt_queue(nthw_dbs_t *p_nthw_dbs,
+ 	if (nthw_set_tx_uw_data(p_nthw_dbs, index,
+ 			(uint64_t)used_struct_phys_addr,
+ 			host_id, qs, 0, int_enable, vec, istk, in_order) != 0) {
+-		return NULL;
++		return -1;
+ 	}
+ 
+ 	/*
+@@ -741,7 +742,7 @@ static struct nthw_virt_queue *nthw_setup_tx_virt_queue(nthw_dbs_t *p_nthw_dbs,
+ 	 */
+ 	if (nthw_set_tx_am_data(p_nthw_dbs, index, (uint64_t)avail_struct_phys_addr, TX_AM_DISABLE,
+ 			host_id, 0, irq_vector >= 0 ? 1 : 0) != 0) {
+-		return NULL;
++		return -1;
+ 	}
+ 
+ 	/*
+@@ -751,7 +752,7 @@ static struct nthw_virt_queue *nthw_setup_tx_virt_queue(nthw_dbs_t *p_nthw_dbs,
+ 	dbs_init_tx_queue(p_nthw_dbs, index, start_idx, start_ptr);
+ 
+ 	if (nthw_dbs_set_tx_qp_data(p_nthw_dbs, index, virtual_port) != 0)
+-		return NULL;
++		return -1;
+ 
+ 	/*
+ 	 * 2. Configure the DBS.TX_AM_DATA memory and enable the queues you plan to use;
+@@ -765,28 +766,27 @@ static struct nthw_virt_queue *nthw_setup_tx_virt_queue(nthw_dbs_t *p_nthw_dbs,
+ 		uint32_t enable = tx_deferred_start ? TX_AM_DISABLE : TX_AM_ENABLE;
+ 		if (nthw_set_tx_am_data(p_nthw_dbs, index, (uint64_t)avail_struct_phys_addr,
+ 				enable, host_id, 0, 0) != 0) {
+-			return NULL;
++			return -1;
+ 		}
+ 	}
+ 
+ 	/* Save queue state */
+-	txvq[index].usage = NTHW_VIRTQ_UNMANAGED;
+-	txvq[index].mp_nthw_dbs = p_nthw_dbs;
+-	txvq[index].index = index;
+-	txvq[index].queue_size = queue_size;
+-	txvq[index].am_enable = (irq_vector < 0) ? TX_AM_ENABLE : TX_AM_DISABLE;
+-	txvq[index].host_id = host_id;
+-	txvq[index].port = port;
+-	txvq[index].virtual_port = virtual_port;
+-	txvq[index].avail_struct_phys_addr = avail_struct_phys_addr;
+-	txvq[index].used_struct_phys_addr = used_struct_phys_addr;
+-	txvq[index].desc_struct_phys_addr = desc_struct_phys_addr;
+-	txvq[index].vq_type = vq_type;
+-	txvq[index].in_order = in_order;
+-	txvq[index].irq_vector = irq_vector;
+-
+-	/* Return queue handle */
+-	return &txvq[index];
++	vq->usage = NTHW_VIRTQ_UNMANAGED;
++	vq->mp_nthw_dbs = p_nthw_dbs;
++	vq->index = index;
++	vq->queue_size = queue_size;
++	vq->am_enable = (irq_vector < 0) ? TX_AM_ENABLE : TX_AM_DISABLE;
++	vq->host_id = host_id;
++	vq->port = port;
++	vq->virtual_port = virtual_port;
++	vq->avail_struct_phys_addr = avail_struct_phys_addr;
++	vq->used_struct_phys_addr = used_struct_phys_addr;
++	vq->desc_struct_phys_addr = desc_struct_phys_addr;
++	vq->vq_type = vq_type;
++	vq->in_order = in_order;
++	vq->irq_vector = irq_vector;
++
++	return 0;
+ }
+ 
+ static struct nthw_virt_queue *
+@@ -830,12 +830,16 @@ nthw_setup_mngd_rx_virt_queue_split(nthw_dbs_t *p_nthw_dbs,
+ 				queue_size * sizeof(*p_packet_buffers));
+ 	}
+ 
+-	nthw_setup_rx_virt_queue(p_nthw_dbs, index, 0, 0, (void *)p_virt_struct_area->phys_addr,
+-		(char *)p_virt_struct_area->phys_addr +
+-		virtq_struct_layout.used_offset,
+-		(char *)p_virt_struct_area->phys_addr +
+-		virtq_struct_layout.desc_offset,
+-		(uint16_t)queue_size, host_id, header, SPLIT_RING, irq_vector, rx_deferred_start);
++	if (nthw_setup_rx_virt_queue(&rxvq[index], p_nthw_dbs, index, 0, 0,
++			(void *)p_virt_struct_area->phys_addr,
++			(char *)p_virt_struct_area->phys_addr + virtq_struct_layout.used_offset,
++			(char *)p_virt_struct_area->phys_addr + virtq_struct_layout.desc_offset,
++			(uint16_t)queue_size, host_id, header, SPLIT_RING, irq_vector,
++			rx_deferred_start) != 0) {
++		free(rxvq[index].p_virtual_addr);
++		rxvq[index].p_virtual_addr = NULL;
++		return NULL;
++	}
+ 
+ 	rxvq[index].usage = NTHW_VIRTQ_MANAGED;
+ 
+@@ -888,13 +892,16 @@ nthw_setup_mngd_tx_virt_queue_split(nthw_dbs_t *p_nthw_dbs,
+ 				queue_size * sizeof(*p_packet_buffers));
+ 	}
+ 
+-	nthw_setup_tx_virt_queue(p_nthw_dbs, index, 0, 0, (void *)p_virt_struct_area->phys_addr,
+-		(char *)p_virt_struct_area->phys_addr +
+-		virtq_struct_layout.used_offset,
+-		(char *)p_virt_struct_area->phys_addr +
+-		virtq_struct_layout.desc_offset,
+-		(uint16_t)queue_size, host_id, port, virtual_port, header,
+-		SPLIT_RING, irq_vector, in_order, tx_deferred_start);
++	if (nthw_setup_tx_virt_queue(&txvq[index], p_nthw_dbs, index, 0, 0,
++			(void *)p_virt_struct_area->phys_addr,
++			(char *)p_virt_struct_area->phys_addr + virtq_struct_layout.used_offset,
++			(char *)p_virt_struct_area->phys_addr + virtq_struct_layout.desc_offset,
++			(uint16_t)queue_size, host_id, port, virtual_port, header,
++			SPLIT_RING, irq_vector, in_order, tx_deferred_start) != 0) {
++		free(txvq[index].p_virtual_addr);
++		txvq[index].p_virtual_addr = NULL;
++		return NULL;
++	}
+ 
+ 	txvq[index].usage = NTHW_VIRTQ_MANAGED;
+ 
+@@ -996,13 +1003,18 @@ nthw_setup_managed_rx_virt_queue_packed(nthw_dbs_t *p_nthw_dbs,
+ 			VIRTQ_DESC_F_WRITE | VIRTQ_DESC_F_AVAIL, 1) != 0)
+ 		return NULL;
+ 
+-	nthw_setup_rx_virt_queue(p_nthw_dbs, index, 0x8000, 0,	/* start wrap ring counter as 1 */
+-		(void *)((uintptr_t)p_virt_struct_area->phys_addr +
+-			pvirtq_layout.driver_event_offset),
+-		(void *)((uintptr_t)p_virt_struct_area->phys_addr +
+-			pvirtq_layout.device_event_offset),
+-		p_virt_struct_area->phys_addr, (uint16_t)queue_size, host_id,
+-		header, PACKED_RING, irq_vector, rx_deferred_start);
++	if (nthw_setup_rx_virt_queue(vq, p_nthw_dbs, index,
++			0x8000, 0,	/* start wrap ring counter as 1 */
++			(void *)((uintptr_t)p_virt_struct_area->phys_addr +
++				pvirtq_layout.driver_event_offset),
++			(void *)((uintptr_t)p_virt_struct_area->phys_addr +
++				pvirtq_layout.device_event_offset),
++			p_virt_struct_area->phys_addr, (uint16_t)queue_size, host_id,
++			header, PACKED_RING, irq_vector, rx_deferred_start) != 0) {
++		free(vq->p_virtual_addr);
++		vq->p_virtual_addr = NULL;
++		return NULL;
++	}
+ 
+ 	vq->usage = NTHW_VIRTQ_MANAGED;
+ 	return vq;
+@@ -1031,13 +1043,19 @@ nthw_setup_managed_tx_virt_queue_packed(nthw_dbs_t *p_nthw_dbs,
+ 			p_packet_buffers, 0, 0) != 0)
+ 		return NULL;
+ 
+-	nthw_setup_tx_virt_queue(p_nthw_dbs, index, 0x8000, 0,	/* start wrap ring counter as 1 */
+-		(void *)((uintptr_t)p_virt_struct_area->phys_addr +
+-			pvirtq_layout.driver_event_offset),
+-		(void *)((uintptr_t)p_virt_struct_area->phys_addr +
+-			pvirtq_layout.device_event_offset),
+-		p_virt_struct_area->phys_addr, (uint16_t)queue_size, host_id,
+-		port, virtual_port, header, PACKED_RING, irq_vector, in_order, tx_deferred_start);
++	if (nthw_setup_tx_virt_queue(vq, p_nthw_dbs, index,
++			0x8000, 0,	/* start wrap ring counter as 1 */
++			(void *)((uintptr_t)p_virt_struct_area->phys_addr +
++				pvirtq_layout.driver_event_offset),
++			(void *)((uintptr_t)p_virt_struct_area->phys_addr +
++				pvirtq_layout.device_event_offset),
++			p_virt_struct_area->phys_addr, (uint16_t)queue_size, host_id,
++			port, virtual_port, header, PACKED_RING, irq_vector, in_order,
++			tx_deferred_start) != 0) {
++		free(vq->p_virtual_addr);
++		vq->p_virtual_addr = NULL;
++		return NULL;
++	}
+ 
+ 	vq->usage = NTHW_VIRTQ_MANAGED;
+ 	return vq;
 -- 
 2.45.0
 
