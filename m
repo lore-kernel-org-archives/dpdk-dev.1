@@ -2,54 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C7A9C79F82
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 12:43:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48E61C79F99
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 13:27:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8C86540E27;
-	Tue,  8 Sep 2026 14:43:51 +0200 (CEST)
-Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
- by mails.dpdk.org (Postfix) with ESMTP id F320A402F0
- for <dev@dpdk.org>; Tue,  8 Sep 2026 14:43:49 +0200 (CEST)
-X-QQ-mid: tivesync4t1788871424tf8970c4f
-Received: from 0F57A7141CBF4D1588B97A6ED8A17143 (zaiyuwang@trustnetic.com
- [36.24.66.61])
+	by mails.dpdk.org (Postfix) with ESMTP id 56CDF40691;
+	Tue,  8 Sep 2026 15:27:51 +0200 (CEST)
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+ by mails.dpdk.org (Postfix) with ESMTP id EC9A1402DF
+ for <dev@dpdk.org>; Tue,  8 Sep 2026 15:27:49 +0200 (CEST)
+X-QQ-mid: zesmtpsz3t1788874065t216f46b8
+X-QQ-Originating-IP: o8PPu4Q+HYCt7Pv1WjqCi/R5CccQluH/de5jIWQEBe8=
+Received: from DSK-zaiyuwang.trustnetic.com ( [36.24.66.61])
+ by bizesmtp.qq.com (ESMTP) with 
+ id ; Tue, 08 Sep 2026 21:27:43 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
-From: =?utf-8?b?WmFpeXUgV2FuZw==?= <zaiyuwang@trustnetic.com>
-X-BIZMAIL-ID: 1464792515905311625
-To: "'Stephen Hemminger'" <stephen@networkplumber.org>
-Cc: <dev@dpdk.org>
-References: <31C12A7AAC7E19F2+20260827114309.10530-1-zaiyuwang@trustnetic.com>
- <20260827131137.1daf141c@phoenix.local>
-In-Reply-To: <20260827131137.1daf141c@phoenix.local>
-Subject: RE: [PATCH 00/13] Wangxun fixes and new features
-Date: Tue, 8 Sep 2026 20:43:43 +0800
-Message-ID: <000a01dd3f8f$aeeb6ac0$0cc24040$@trustnetic.com>
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 2906970519092398505
+EX-QQ-RecipientCnt: 2
+From: Zaiyu Wang <zaiyuwang@trustnetic.com>
+To: dev@dpdk.org
+Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>
+Subject: [PATCH v3 00/15] Wangxun fixes and new features
+Date: Tue,  8 Sep 2026 21:25:45 +0800
+Message-ID: <7A2945F19DE3AC03+20260908132742.2661-1-zaiyuwang@trustnetic.com>
+X-Mailer: git-send-email 2.55.0.windows.2
+In-Reply-To: <20260827114309.10530-1-zaiyuwang@trustnetic.com>
+References: <20260827114309.10530-1-zaiyuwang@trustnetic.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJ8QNehdnXO5ExpIOsSsHb9Qgxp5wIt8ZkwtXUtajA=
-Content-Language: zh-cn
+Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
-Feedback-ID: tivesync:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: OOkIcXXGmR+088uukEKQge489H4aPOle8CTOl51TUaICVotoVuMkGehd
- M0L67KDd0nfEvW+Xetmq4DSiU2XDJ8G7D71Z4ub/sm7XElUE7qePd1ZCyt7tIVtffneFkxs
- KM6DF3eqYnj8a232Y4YqEpIFOYpeVBlXF0QR4ICNsQid/0Gk2K1G4+1o7eOi8dUFcHvamiO
- WweVRmOaX8UX/c893COPCeLp4jNQ2RhbvFIxURgg3hx7yj9wOBdUowWf5v1QsUSiGqV1C5R
- hDRA40Gs5+MdKJAxC4n6I/rkqVfZ64zya3lIVSoBPeIvX0kfmaX9LzCrm3IoDm05YttJvDY
- JF8CVBsORUuWwqo35miOqKnoA6CPBI2cq5pdn3QiKfaMdslCUSX75rNOIQSXnzZzkk+58SG
- AwZjn1RnTh3RXAfkgf7T7ac+1b7nmXn1y++cR8SZFJbTIP0FJPRcDFAXQ+woquJnVM8mgYS
- tPGaU+QrLfIh77TtRY5qsoCqgI4F/hMRUIsfi0S3wrusq4KFnkm6SyA+fKE+RTyECJQjauT
- k5kmZe/YJqwGyY+kLi6RIHTPxhRZWbBKnW8SbWqJmqb0siTwoEHfPfXmHmALh0d+Waioee0
- awbI9tHJjuph0mnK1xx0gZBPN6uvwxnXqtHYziSJ05xhWoKvkfaB3cVc0o4fKBZsMJNwNZX
- JBWxyrNkz+Y5Uqxohr0QYqsy6XkYuYGE3VxyY7zUin3pClL4qvfkyGjWkM72dnYFtjOxoJ1
- Kjf6Gbee70GBKyRckFUekI7KtdLCwoNa6zryfZeva7COBcYrHUANi+yWL9c0AeTPoV6HsOD
- rYBqcwryUqkuN7/etlPuCUzKd8P1P7GP2WIbkb2NyqKD2AOxtJGXPP2GQGccGmAZ16RjMmM
- UqhSIDL2Y4zYiq3q1kXn0tWL/0BtPYoiVPQu2P4grNb+1xbeewsOm7gxGKmGwyKmA7zjnCO
- aWDj8UXK6NpUMI6WCKuNqDKYpsQsLAu124Bgb1oOG7numeaHSIBqxyMfH7qyFUD7VGiMsa6
- fE4KpHszLleSNgrBao8nMkyjPwwT2hNIk94YrBwutfyuaiIc6de3S5lJX7q2t3NxABPhwK6
- 2Px7vvZFxrT3pTeEQq5mcc6nb7oEiS36xy0dOiqCb+T3CD+r+87fzY=
+Feedback-ID: zesmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
+X-QQ-XMAILINFO: OZ2oArlhewUp+JH4UlM/ih9P+bdbFV7tChQX1CCAs8HB7ZTT8vmFtLSv
+ NXSBdLzULc92VmZ7CNzz5L3yzsXzmupjLFQANO0eb5c3NwocVWkt5jL6UCREsEopSyBEgOU
+ ncTD5gADJMDiqFHQpTKhoDY1Tlci12U+GeYGatUop8QATpp4oYRypXi1KXoC1Yz7jr0ki19
+ XM2I9cMAEkThVLiFZvUG1FzNKmHubIt7Ht7uKAlwXBQ4pEzqAyVfxOF91Pfm8niWK8YpZXZ
+ dfEkH8YtwsjQ5Y/ZSNT6/zGC4zezD6hGJHyo+T1rVOKYwzUwd+NWCJAse0V6dEHhYp5Epzk
+ swjMehqB1Za6QLWw7RkO7FEQG7MyIXbufNp8Pnbg0TDG7VRemV4Lx1u/6iG7G/OIOe27AT+
+ B27Wn43VQbtKTly+yHDp0teT9zv4eCxSSyqVyL7tGnb10f31OBPW9ozGXfB5a6S6m9VoXGO
+ x/jIT16sisX/ZzXnBwHh/zUpxi5nQIr/5RH8ZHsJaIt+qeY4iRykMJO3lXsmKNj4+jflvpR
+ ZyueQcBU6qey+MRostNOjj36YXrk4QVFwOk1cpgYp1ienq+vQPLIf4kQX7ooaDKbpVy4OUR
+ ghhL9hPJEYuZYFNUmgwGvJHrzO9zTgOeEGEG/7GV03Cr2Juz0XBldjVU1y7DGejsHx2ESts
+ 3NvL4iL8lU4IIhMHHWouOp1/K+FuY0GMhTp4+wnhD/nk1X3eobnXAc+yWLMj/MfOhWcchak
+ 3hOq+hOXB0K6qmrEhnsBNN/YwqdL72FBxjCW03KK1DLr4Vc0n8O0yJUpzSiymrAf+OSv6w/
+ LlJvmSlotNVlVWLfv2lK6tgSi4gXcwof5CULd29UWV8XVO/mjezzoCQ1ZeOCyogzhMpZP7g
+ BH8uWfcdZVxXi4VqRbqyvM52dZHwwQ466eHvEMH++eT+5rFEqrogA7MLfuUmsj3CoKBswT/
+ UnCtwmMXbz1tzx7XahCC1TBpOeG+wxA49qMivHWrgvGMt8TP+cblXFTyWlKUB+zhzL/KvJC
+ TVfjXLF/2fJyKpHxDEpxxzLaWdv+O/zgrdNTaF6zkmnx6FnR4e1DseuX9HLpe4VKs1KaYfo
+ iJlUxqINSzuG6p/F7aK+5m0uVWO7UxyTW3UcpZX6+jvneeD/VxKCy5OkWGltjWIoQ==
 X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
@@ -65,33 +64,84 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Stephen,
+This series addresses link-related issues on Wangxun Amber-lite 25G/40G NICs
+(CR/KR training, hot-plug, 10G link state), and additionally refines UDP
+offload handling.
 
-Thank you very much for the detailed review and for taking the time to =
-go through each patch carefully.
-I have evaluated every comment and addressed them in v2. The points that =
-are not changed in this revision are explained in the cover letter.
+---
+v2:
+ - add a new commit to handle 10G config on dual-speed DAC
+ - P02: handle TXGBE_ERR_PHY_INIT_NOT_DONE before the timeout split and leave link_valid untouched.
+ - P07: resolve the inner tunnel type in a local variable instead of rewriting mbuf->ol_flags.
+        check the rte_pktmbuf_read() result for short or mis-annotated packets.
+        use RTE_GENEVE_DEFAULT_PORT instead of the literal 6081.
+        add a Fixes: tag pointing to the commit that introduced the tunnel offload handling.
+ - P10: split into a bug-fix commit and a feature commit.
+        document both devargs in the NIC guide and the release notes.
+ - P11: check the acquire_swfw_sync() result and only touch I2C while the semaphore is held.
+        replace the magic numbers with named constants.
+        add the release notes entry.
+ - P12: drop the stray C99 comment on the AN-config flag assignment that checkpatch rejects.
+ - P13: reword the message to state that 40G active cables are handled through the optical path.
+        use txgbe_is_dac_cable() in the 40G FFE selection to match the 25G path.
+---
 
-> -----Original Message-----
-> From: Stephen Hemminger <stephen@networkplumber.org>
-> Sent: Friday, August 28, 2026 4:12 AM
-> To: Zaiyu Wang <zaiyuwang@trustnetic.com>; Zaiyu Wang =
-<zaiyuwang@trustnetic.com>
-> Cc: dev@dpdk.org; dev@dpdk.org
-> Subject: Re: [PATCH 00/13] Wangxun fixes and new features
->=20
-> On Thu, 27 Aug 2026 19:41:52 +0800
-> Zaiyu Wang <zaiyuwang@trustnetic.com> wrote:
->=20
-> > This series addresses link-related issues on Wangxun Amber-lite =
-25G/40G NICs (CR/KR training, hot-plug, 10G link state), and =
-additionally
-> refines UDP offload handling.
->=20
->=20
-> Using Claude AI review (versus the simpler CI AI review) shows several =
-issues that need addressing before this can be merged.
->=20
-> Here is my edit of the wordy AI feedbac.
->=20
+---
+Not changed in this revision:
+
+ - P11: enable_tx_laser() is not gated by laser_off. laser_off only
+   controls whether the Tx laser is brought down on port stop, while
+   enable_tx_laser() is unconditionally called from dev_start() and
+   dev_set_link_up() and must always bring the laser up, otherwise the
+   default (laser_off=0) configuration would never bring the link up.
+
+ - P11: no extra restore of PMD_CFG0 bit 1 on the DAC path. Bits 19:12
+   are restored by txgbe_e56_set_phy_link_mode() and
+   txgbe_set_link_to_amlite(); bit 1 (PMD enable) is also restored by
+   txgbe_e56_set_phy_link_mode(), which the xpcs AN path calls on link
+   up, so no additional write is required.
+
+ - P12: no total iteration bound was added to txgbe_e56_exchange_page().
+   The loop is bounded per page and exits when the AN FSM reaches 0x8,
+   so it does not hang in a normal Clause 73 flow. As this is hardware
+   related configuration, we leave the current behaviour unchanged for
+   now.
+---
+
+Zaiyu Wang (15):
+  net/txgbe: fix failure to configure 10G on dual-speed DAC
+  net/txgbe: fix e56 PHY configuration error
+  net/txgbe: fix incorrect link state in 10G forced mode
+  net/txgbe: do not force reconfig on link retry
+  net/txgbe: set i2c sda hold time
+  net/txgbe: fix link speed display info for 10G mode
+  net/txgbe: remove stale outer UDP checksum offload flag
+  net/txgbe: add offload support for tunnel type UDP
+  net/txgbe: fix SFP hot-plug when auto-negotiation is on
+  net/txgbe: fix DAC hot-plug on 40G NIC with auto-negotiation
+  net/txgbe: fix 40G FFE tuning applied to first lane only
+  net/txgbe: add pre2 and backplane capability devargs
+  net/txgbe: add devarg to turn off Tx laser for 40G NIC
+  net/txgbe: fix CR/KR link training and recovery
+  net/txgbe: align link capabilities and DAC classification
+
+ doc/guides/nics/txgbe.rst              |  18 +++
+ doc/guides/rel_notes/release_26_11.rst |  11 ++
+ drivers/net/txgbe/base/txgbe_aml.c     |   3 +-
+ drivers/net/txgbe/base/txgbe_aml40.c   | 100 +++++++++++++--
+ drivers/net/txgbe/base/txgbe_e56.c     |  14 +--
+ drivers/net/txgbe/base/txgbe_e56.h     |   6 +
+ drivers/net/txgbe/base/txgbe_e56_bp.c  | 161 +++++++++++++++----------
+ drivers/net/txgbe/base/txgbe_e56_bp.h  |   2 +
+ drivers/net/txgbe/base/txgbe_hw.c      |  29 +++++
+ drivers/net/txgbe/base/txgbe_phy.c     |  13 ++
+ drivers/net/txgbe/base/txgbe_phy.h     |   7 ++
+ drivers/net/txgbe/base/txgbe_regs.h    |   3 +
+ drivers/net/txgbe/base/txgbe_type.h    |  17 ++-
+ drivers/net/txgbe/txgbe_ethdev.c       | 120 ++++++++++++++++--
+ drivers/net/txgbe/txgbe_rxtx.c         |  29 ++++-
+ 15 files changed, 432 insertions(+), 101 deletions(-)
+
+-- 
+2.55.0.windows.2
 
