@@ -2,31 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0947C79F99
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 13:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2619AC79F82
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 13:28:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 98E7640E4B;
-	Tue,  8 Sep 2026 15:27:57 +0200 (CEST)
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
- by mails.dpdk.org (Postfix) with ESMTP id 2B25F40E1D;
+	by mails.dpdk.org (Postfix) with ESMTP id F04C340E68;
+	Tue,  8 Sep 2026 15:27:58 +0200 (CEST)
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+ by mails.dpdk.org (Postfix) with ESMTP id 9547C40E40;
  Tue,  8 Sep 2026 15:27:54 +0200 (CEST)
-X-QQ-mid: zesmtpsz3t1788874072t65d7d0d9
-X-QQ-Originating-IP: YWVmeHJmHVJ5WJ44KSGfJRX/b1PYII+BkoELKQ2yMjI=
+X-QQ-mid: zesmtpsz3t1788874070tae93f7ff
+X-QQ-Originating-IP: joIJAHkNAY1E32uYq1r2QG4w5uKXz1W5OME0FKOgqtU=
 Received: from DSK-zaiyuwang.trustnetic.com ( [36.24.66.61])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Tue, 08 Sep 2026 21:27:51 +0800 (CST)
+ id ; Tue, 08 Sep 2026 21:27:48 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 492225124313758233
+X-BIZMAIL-ID: 9263145364693650951
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v3 03/15] net/txgbe: fix incorrect link state in 10G forced
- mode
-Date: Tue,  8 Sep 2026 21:25:48 +0800
-Message-ID: <C03D4655161CDE2B+20260908132742.2661-4-zaiyuwang@trustnetic.com>
+Subject: [PATCH v3 02/15] net/txgbe: fix e56 PHY configuration error
+Date: Tue,  8 Sep 2026 21:25:47 +0800
+Message-ID: <543A6CDBA3EDC1AD+20260908132742.2661-3-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.55.0.windows.2
 In-Reply-To: <20260908132742.2661-1-zaiyuwang@trustnetic.com>
 References: <20260827114309.10530-1-zaiyuwang@trustnetic.com>
@@ -35,23 +34,23 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: OcYdpyN8sJlupV9BXW51u4awiQ9xZEt2QGfQ4YM3ytPTmHvoQHrqFbSC
- n1IxpLvwQvv59suBERCLKfhbaB0zUc1bgfqXjKg4pLkmvbfjy/cp/aSEXLSvS65ERzwkKFq
- Y5fNtU5zWlEUKKY28z0PQNhFz/ZBr4x0pbxai10s0doQONLk/D1OYe+vxxbpv/bOHZIebZv
- FSAou1nAW51zHSPTHLyfumFqIXR4FoXQwwP3d2J2TJ9DQ1DsURt66Qr+LzTDkheHC2TvSmK
- i++jEJwGBuuox1D3Z6Nh1iUc4Ueyt4wI/IIY75txImMCd0F6+pRI2TOKqo0W4d2TQJxJECW
- QZ+d1+qeLq4PGwODi01KWuHCV2HsRiwlmqa/ncshxwJrnM+CJcHuz+DZnhe/W5du4+12O2o
- tJ/bVyxomkopnIX90JQ0/+nqhCq0rIEoxgOdbKAWwXOhp28n1P9aYNOy4kJdO4Tx/GQIkES
- WNeSPZpL18yKiyU6Mi+rlmksuIy5cuEjPsPKPQjsOTApseZeNY1SyGifz07YM7WhjP4Qqi5
- zEFNx2kYerOhZrHIGfgvLMQD2+5QIH9J45WglOBLz+bHCWsYiAQueSFshPJDV/8fHIoqJyd
- 0VlN+9MyIuz5GOu7kP/jU1cmxTiBdsTDVrFYZ+rMSHILF5LLiycOmDgdU/AAaZ7Dqw78XVq
- xFwHw/U/dwQGSjz3aYdpEEZ6P2B9NakRaAZmfRQBUIE3+GM+Fjw4d1MJCfImyymEjQXYvue
- k7yRFmrMEflW0T+rzYLFfj3wkd24JkG+X5cuEI1XnExWMa0ePamRXHE0087VNn6Q5KmgdO5
- vHNFiL4WSUJNkJs62b1qtV3GjFeGjUpxrH939+k2x+irRw6CW7sjq245fu2REO0d1lInpL9
- L9oq9lCtxwqW84HkyZxjO1Rq/LgJ8uGJd/vQoTmgdHNtdv/HUO4sK48qj1bF2Dxr5NJqCsl
- 5U3cf/rSPKjAGpaxiJObLkfVBZO/QH/Yf6IQldUCKwj+TdnrUq/cDUqGLCeoqZzcUQYf+3K
- omDT9zR8armpGIvS3wbHQvPvxuu2p1/N6skmtCSRqvmwgPBAuSbj/Uq+BlZ/LKvJDhI/ABn
- axKR7Zjdz0QOZIyMy988cw/fXeuH71DLL0+Em4ZrAjp3TiJUDL4dlBuQup6+Zc19g==
+X-QQ-XMAILINFO: MYUpfHtk16q4lz2o6VJtxpohfT3d7QF4DKigx3O6FsMnxZ0FeK2cHfF5
+ htUqnSSGozzETKYc298tAze8EQUn0I7Otd9qBe2dnsTXImPeD/vBqTn6+n/toqcQ3Qd4HuC
+ wNPZUz9TL3wIXONZF9k2VJFED3HuMzlc7Y6wFXMMdHOC9iQzfcKj7qIkybLsChaniXicvV3
+ 7owhnMMT2bD9zFuaw2EQGnZIQMnerLQjNC/lDtcCUBRJPRYcSYDmn5dk3ZQBwTwqDPEV3lF
+ ItY06edC0oy28wvA8237LB3vk/IIpSfcmvFB1RaAyPaAfomWDdNTgcbxvoMjTLxIYyKo32b
+ ZhOQfpTDnYReqKuzwbGH4UmoSovGi+HH2F3xTEiX6dvWfYaI0UgrTTESaHbTmcNgy+vum22
+ pfPjcxWAte80vCWZ4t2/FIJMJoe+rhnfPlZWL+q4Gh4ia/1ZbOwiRwQknoKYGUXGG9Zdrq6
+ Wx1SOmEUnKFC7O1ItV9GwA+cEfRk8YnRFJWb/QcafVxu197J3RrTMkOcRubmdzzVR0DFNP+
+ bIoccGvBk3Ad8lMZ1iUZp4o1K9zKd1m09kroO6aFIsDgNwf12fVAKyjpaJZ5fD6cy4eCv/L
+ xxPowFHuK8x3ql+aiDD8wKcR4pBEsd2cYnleX9DdjCw7wnlu50gm1XEZ2lcQ3fTKm67JFfJ
+ X1ufWhZv01OLWA2UN1bjaSvRX+BnR/+On8Gq+qLFEfCO+wQDrCTbY95mk/jsJ8X16y9bJPd
+ 8BDJg8wbTosYJ5gzjbDssdZTmGoUk2ReJ1G6kOFSL0tT+u2swo69+iB1tqMRiuWpP/haxtn
+ /aWwxrhHpFzuv39lEEVQTeKWe2g71qQzPDZNyvW4f/PnWHEhi/1EoFPiZ6lWsad6+gm1wEQ
+ oMGTpM9FOk1geyo9yow38wJK95X0eCoRQkGG9GwDLnDBQve5XhfMkHp2vVqAuE4dw5V/wxm
+ DFiG3nOy/2jrGeq+lWHu17a2brAhSwbCIgtuwui4ulOJpgfFl/I6ZRWbeSFCBw1ylhpcdX9
+ 3qJE2493ns6IWTk8LCSeWcqkts1pj7Snt+G84gQkJq/2FNkBJhn+SsVghOs2/LIkX4CKPpY
+ 3FsWzZYunnMwjUd9lCtl3xnVbG32mGC65p4IpcqW+R9fpTAXkBKvbdqhF1sjaZVjw==
 X-QQ-XMRINFO: NyFYKkN4Ny6FuXrnB5Ye7Aabb3ujjtK+gg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
@@ -67,51 +66,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When an AML40 port is configured in 10G forced mode (auto_neg=0),
-the hardware can link up but the driver keeps reporting link down
-after a peer link failure: link_valid is cleared on timeout but
-never restored when the peer recovers, so the link stays down until
-the port is restarted.
+The e56 PHY RXS ring equalizer/tap configuration is written to the
+wrong bit field: set_fields_e56(&rdata, 9, 4, 0x366) targets the
+unrelated lower bits, so the configured tap values are never applied
+and the equalizer stays at its default setting, which can degrade
+the received signal on both the 40G and 10G paths.
 
-Restore hw->link_valid = true in the success path of
-txgbe_setup_phy_link_aml40(), symmetric to the 40G path. Handle
-TXGBE_ERR_PHY_INIT_NOT_DONE before the timeout split and leave
-link_valid untouched, matching the 25G path in
-txgbe_setup_phy_link_aml(); the alarm retry then attempts the
-setup again.
+Fix the field range to (21, 12), so the equalizer/tap configuration
+takes effect.
 
 Fixes: f7cfc21e9f75 ("net/txgbe: fix link stability for 40G NIC")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_aml40.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/net/txgbe/base/txgbe_e56.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
-index 7476759d4d..5fa7c6a243 100644
---- a/drivers/net/txgbe/base/txgbe_aml40.c
-+++ b/drivers/net/txgbe/base/txgbe_aml40.c
-@@ -202,9 +202,18 @@ s32 txgbe_setup_phy_link_aml40(struct txgbe_hw *hw,
+diff --git a/drivers/net/txgbe/base/txgbe_e56.c b/drivers/net/txgbe/base/txgbe_e56.c
+index cbcc05333e..2711863f2c 100644
+--- a/drivers/net/txgbe/base/txgbe_e56.c
++++ b/drivers/net/txgbe/base/txgbe_e56.c
+@@ -423,7 +423,7 @@ u32 txgbe_e56_cfg_40g(struct txgbe_hw *hw)
  
- 	rte_spinlock_lock(&hw->phy_lock);
- 	ret_status = txgbe_set_link_to_amlite(hw, speed);
-+	rte_spinlock_unlock(&hw->phy_lock);
-+
-+	/* The PHY did not come out of reset; leave link_valid alone and
-+	 * let the retry in the alarm handler attempt the setup again.
-+	 */
-+	if (ret_status == TXGBE_ERR_PHY_INIT_NOT_DONE)
-+		goto out;
-+
- 	if (ret_status == TXGBE_ERR_TIMEOUT)
- 		hw->link_valid = false;
--	rte_spinlock_unlock(&hw->phy_lock);
-+	else
-+		hw->link_valid = true;
+ 		addr  = E56PHY_RXS_RINGO_0_ADDR + (E56PHY_RXS_OFFSET * i);
+ 		rdata = rd32_ephy(hw, addr);
+-		set_fields_e56(&rdata, 9, 4, 0x366);
++		set_fields_e56(&rdata, 21, 12, 0x366);
+ 		wr32_ephy(hw, addr, rdata);
+ 	}
  
- 	for (i = 0; i < 4; i++) {
- 		txgbe_e56_check_phy_link(hw, &link_speed, &link_up);
 -- 
 2.55.0.windows.2
 
