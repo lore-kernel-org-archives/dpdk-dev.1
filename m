@@ -2,83 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD02C79F82
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 12:31:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A07C8C79F82
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 12:41:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CE68740374;
-	Tue,  8 Sep 2026 14:31:23 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 5DEF9402F0
- for <dev@dpdk.org>; Tue,  8 Sep 2026 14:31:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1788870681;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=RAsa+ozahYfHIMP44ySNxOdFUZq7bWHqBVhL5IClI/c=;
- b=ET5hE58b79TC8cetpXVCdBPkstUrcIEXEp0nH7hCiSuaR+Bm5zK9oH+BxL/GWu08iqL0Fi
- 5LXIQjRAcq6xg37quX7NQ1Ljs2VAcY+98Scl4fEXdMbjbdcEEBp1+q6q/o1J1EaCpW9NyS
- g7k5TZJoZO2JjNhOEdt+FeI85Jp249A=
-Received: from mail-ua1-f71.google.com (mail-ua1-f71.google.com
- [209.85.222.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-20--PCdu09uM-2aHy3VsiKsXQ-1; Tue, 08 Sep 2026 08:31:20 -0400
-X-MC-Unique: -PCdu09uM-2aHy3VsiKsXQ-1
-X-Mimecast-MFC-AGG-ID: -PCdu09uM-2aHy3VsiKsXQ_1788870680
-Received: by mail-ua1-f71.google.com with SMTP id
- a1e0cc1a2514c-980c5766c74so85477241.3
- for <dev@dpdk.org>; Tue, 08 Sep 2026 05:31:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788870680; x=1789475480;
- h=content-type:mime-version:user-agent:message-id:date:references
- :in-reply-to:subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to
- :cc:subject:date:message-id:reply-to:content-type;
- bh=RAsa+ozahYfHIMP44ySNxOdFUZq7bWHqBVhL5IClI/c=;
- b=RwFy/Q+v93vpHSO1m+If23FHp3coPghFIoV488Mv1UDw0Df9Zl0LndjFn+mh0PnZAY
- KXFXxeMSqcNIU43uOV5VZUZJNdjSyqVCJISTle1W38Q0lmldWNUgZGNqBcZYKXui9BF3
- pB0m8erp85hr0rx4SWcM3kcriwK0kEEW07qgKgCDwaU74zTNgemtts46p7tfsmuFIAy4
- rug7MVr4yQzVFVMS3zHjRfAtgsoEsuGnGzQczlMEO8gQlLBCccOjAqLGmSjEb7XquIag
- cJ2O/U/XAqtRsLWyixSmV2XkiKYHyTaoJcHRXQr3ieHBJGl+VO/Strlsf7d/p5j7gB02
- YveQ==
-X-Gm-Message-State: AFuF++l6SwC7ix6iOkGG9orq3LhQ0sMx61neHN5euBRn7aHPRIT9FNEk
- 2WyngFIm4OwrxVDchIpW7hpFuqkyae92y44Ggad3n0gML3FZkCUFIrJD3uzoRYBpnect9Jk5Dnr
- Z3NiWwiJdv9LikYaAQoFQaKmOEtrVqZewAjVIbzR4t4WRdQuH4B7ie2XfAhDJeRupWiQAXzS9NG
- 6HiUypzvxifVcJTIdFxHbRMUQ0z/Y=
-X-Gm-Gg: AYBFou3/WvIjeJwoOk3kk5JnTYPyhDa+FHYhu125xWR6+BpG9VyEbU3O99ywlg74opc
- ToWmCoXRFVxMKBFyJf6fYpwG5mul7v/qNKjwWrI/+ISsuBiIyCbMuT84ZZPq/UfDRmJFb8fnHiO
- L/y4ZhebNEPIC+A7SjHPtCEZfIwti+lDhEN19DfCmSxaavl6Yb9uCyvoNgoAcc/69tUUEvpFqH4
- in5gDn1XxNEUwmv5mROChY7A9yH1W59VRBVtk9a1Eex60ETVcVlubMOPtjHzMjzIP9bvARYKkW2
- UGth2p4hcPJtXSMiuEtfEYv8KdW92BfJMETYXIZdE9Js+uR8kDR2E7sNBntUrWuIS2NgTy8I99w
- nIPuUmxGsS96LUTVPl8yNOv368v4P
-X-Received: by 2002:a05:6102:2907:b0:778:9033:e337 with SMTP id
- ada2fe7eead31-78a4a7186d7mr9955798137.7.1788870679412; 
- Tue, 08 Sep 2026 05:31:19 -0700 (PDT)
-X-Received: by 2002:a05:6102:2907:b0:778:9033:e337 with SMTP id
- ada2fe7eead31-78a4a7186d7mr9955763137.7.1788870678734; 
- Tue, 08 Sep 2026 05:31:18 -0700 (PDT)
-Received: from aconole-thinkpadt14gen4.rmtusnh.csb ([216.212.25.12])
- by smtp.gmail.com with ESMTPSA id
- af79cd13be357-939ad19dc90sm459038385a.41.2026.09.08.05.31.18
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 08 Sep 2026 05:31:18 -0700 (PDT)
-From: Aaron Conole <aconole@redhat.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v2 2/2] devtools/ai/review-patch: reduce spurious warnings
-In-Reply-To: <20260904162454.218213-3-stephen@networkplumber.org> (Stephen
- Hemminger's message of "Fri, 4 Sep 2026 09:23:08 -0700")
-References: <20260829171822.305500-1-stephen@networkplumber.org>
- <20260904162454.218213-1-stephen@networkplumber.org>
- <20260904162454.218213-3-stephen@networkplumber.org>
-Date: Tue, 08 Sep 2026 08:31:17 -0400
-Message-ID: <f7to6e7j562.fsf@aconole-thinkpadt14gen4.rmtusnh.csb>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	by mails.dpdk.org (Postfix) with ESMTP id 6BC9540B94;
+	Tue,  8 Sep 2026 14:41:02 +0200 (CEST)
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+ by mails.dpdk.org (Postfix) with ESMTP id CC69A402F0
+ for <dev@dpdk.org>; Tue,  8 Sep 2026 14:41:00 +0200 (CEST)
+X-QQ-mid: esmtpgz10t1788871255t6cdb1610
+X-QQ-Originating-IP: VTRZfWrgi5cpZBaOoarVz5v88sbjFJG0m1Mp2kzlpYc=
+Received: from DSK-zaiyuwang.trustnetic.com ( [36.24.66.61])
+ by bizesmtp.qq.com (ESMTP) with 
+ id ; Tue, 08 Sep 2026 20:40:50 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 6949232663274033613
+EX-QQ-RecipientCnt: 2
+From: Zaiyu Wang <zaiyuwang@trustnetic.com>
+To: dev@dpdk.org
+Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>
+Subject: [PATCH v2 00/15] Wangxun fixes and new features
+Date: Tue,  8 Sep 2026 20:38:45 +0800
+Message-ID: <1D56D388191C405C+20260908124047.2284-1-zaiyuwang@trustnetic.com>
+X-Mailer: git-send-email 2.55.0.windows.2
+In-Reply-To: <20260827114309.10530-1-zaiyuwang@trustnetic.com>
+References: <20260827114309.10530-1-zaiyuwang@trustnetic.com>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: QncijwFC6ujSAJGjgsuyaopm37afc10slaqH5uQlnwo_1788870680
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
+X-QQ-XMAILINFO: NC8a1JKFOHmWTGu6bEiPvSEXU9pBQHGqqqyU+rmsF2PuVPTGBGOG6Fs6
+ Nio42Yk2kSt1nTvZtZq0UnGUmNh62++prDeyMPJEWq49Y6PhJIEIRQouCUZ2dGWxPc10GGY
+ RXAIJ+Mxf7FEC+9dfjpbjBynS66yb2OAlPrvgiJvywOYHdChmHglnv+BqayzSkZQ0diOv/k
+ uwrFxbadgvaelVburuKKmi5Yvll0VpjQuKDWM/mnDd1U9JV4f2rl8+VCirYAeJdAwxkljcO
+ 4McPs469MRYiyF4U3FrMykqr5gYUrOglFtPFtr9DV0T7T4q6hhh4pIiwb9RBKtpUQICFES0
+ ZRcs1elkUR30oyDB79QEA2WFQRNdqxTWlVhUHKFj8zmwKOt8/VIzJWnDopu576Q12o7/YNy
+ q7xOE/QSlzrw2Umj8GZjVXeMa0gh+192VbvylnhGrJf/nLhS2S2lbvU53aVYEJyyn6/IPSI
+ HDO3zrtkAlNrgVi3XmCjQx6zFPHeIhIRo4OiiLsYYKT+yJwefD1gbRBlEVrDm0doKnnY7N2
+ D88/wg7laTz8hfWFxq3h0frvjNbzFEIk9KCvb0XI5+gE+kiAx4/EQLj73HnvuhlgCXqJZsh
+ uAn+1Wa7UpD9tOTckGRQL5rpReTgxHsMd2sBBk4u+jnjenutDVo+bglAmcHNY0THhdACNT9
+ Mv+9QHIQwDpvTbxWv632M1gCQRMZ77wKTLH3FzhDtmD1Njdu1QdWDcafFRn9M3OugS5VAin
+ JUVevIZHy+rCN7oMHvrS7Q5fHL2hXNdM66ghd7+muqkHEL9MSw3ZYD5vgDzOfzwkrsfbOgb
+ 6HkTSVyPTtUBDw/GLwE8W4CeklLuIQeoXqtWp11V6xRrV4aPPbOeGYHpys2nU9judRrVFdn
+ l33zBDP5HxcFe/dl36stHKYaHkpzAtCPmQCZp4khsj8cDIQh2/pmfuS3R3q3zjlJYhbT+Zt
+ FCY8FzOEdveh7/JLmV3h494CaC7JX8MyqTE6WQXDa1gic9oz7JPvBy/IirrIe3y9HAs7fHb
+ aY5h4ykgvFWr2a1to+SsempbuJkOAXM7Ow5TQ9OA==
+X-QQ-XMRINFO: NyFYKkN4Ny6FuXrnB5Ye7Aabb3ujjtK+gg==
+X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -92,13 +63,83 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Stephen Hemminger <stephen@networkplumber.org> writes:
+This series addresses link-related issues on Wangxun Amber-lite 25G/40G NICs (CR/KR training, hot-plug, 10G link state), and additionally refines U
+DP offload handling.
 
-> Improve the logic for reporting warnings and errors to
-> avoid flagging good patches as suspicious.
->
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
+---
+v2:
+ - add a new commit to handle 10G config on dual-speed DAC
+ - P02: handle TXGBE_ERR_PHY_INIT_NOT_DONE before the timeout split and leave link_valid untouched.
+ - P07: resolve the inner tunnel type in a local variable instead of rewriting mbuf->ol_flags.
+        check the rte_pktmbuf_read() result for short or mis-annotated packets.
+        use RTE_GENEVE_DEFAULT_PORT instead of the literal 6081.
+        add a Fixes: tag pointing to the commit that introduced the tunnel offload handling.
+ - P10: split into a bug-fix commit and a feature commit.
+        document both devargs in the NIC guide and the release notes.
+ - P11: check the acquire_swfw_sync() result and only touch I2C while the semaphore is held.
+        replace the magic numbers with named constants.
+        add the release notes entry.
+ - P12: drop the stray C99 comment on the AN-config flag assignment that checkpatch rejects.
+ - P13: reword the message to state that 40G active cables are handled through the optical path.
+        use txgbe_is_dac_cable() in the 40G FFE selection to match the 25G path.
+---
 
-Reviewed-by: Aaron Conole <aconole@redhat.com>
+---
+Not changed in this revision:
+
+ - P11: enable_tx_laser() is not gated by laser_off. laser_off only
+   controls whether the Tx laser is brought down on port stop, while
+   enable_tx_laser() is unconditionally called from dev_start() and
+   dev_set_link_up() and must always bring the laser up, otherwise the
+   default (laser_off=0) configuration would never bring the link up.
+
+ - P11: no extra restore of PMD_CFG0 bit 1 on the DAC path. Bits 19:12
+   are restored by txgbe_e56_set_phy_link_mode() and
+   txgbe_set_link_to_amlite(); bit 1 (PMD enable) is also restored by
+   txgbe_e56_set_phy_link_mode(), which the xpcs AN path calls on link
+   up, so no additional write is required.
+
+ - P12: no total iteration bound was added to txgbe_e56_exchange_page().
+   The loop is bounded per page and exits when the AN FSM reaches 0x8,
+   so it does not hang in a normal Clause 73 flow. As this is hardware
+   related configuration, we leave the current behaviour unchanged for
+   now.
+---
+
+Zaiyu Wang (15):
+  net/txgbe: fix failure to configure 10G on dual-speed DAC
+  net/txgbe: fix e56 PHY configuration error
+  net/txgbe: fix incorrect link state in 10G forced mode
+  net/txgbe: do not force reconfig on link retry
+  net/txgbe: set i2c sda hold time
+  net/txgbe: fix link speed display info for 10G mode
+  net/txgbe: remove stale outer UDP checksum offload flag
+  net/txgbe: add offload support for tunnel type UDP
+  net/txgbe: fix SFP hot-plug when auto-negotiation is on
+  net/txgbe: fix DAC hot-plug on 40G NIC with auto-negotiation
+  net/txgbe: fix 40G FFE tuning applied to first lane only
+  net/txgbe: add pre2 and backplane capability devargs
+  net/txgbe: add devarg to turn off Tx laser for 40G NIC
+  net/txgbe: fix CR/KR link training and recovery
+  net/txgbe: align link capabilities and DAC classification
+
+ doc/guides/nics/txgbe.rst              |  18 +++
+ doc/guides/rel_notes/release_26_07.rst |   8 ++
+ drivers/net/txgbe/base/txgbe_aml.c     |   3 +-
+ drivers/net/txgbe/base/txgbe_aml40.c   | 100 +++++++++++++--
+ drivers/net/txgbe/base/txgbe_e56.c     |  14 +--
+ drivers/net/txgbe/base/txgbe_e56.h     |   6 +
+ drivers/net/txgbe/base/txgbe_e56_bp.c  | 161 +++++++++++++++----------
+ drivers/net/txgbe/base/txgbe_e56_bp.h  |   2 +
+ drivers/net/txgbe/base/txgbe_hw.c      |  37 ++++++
+ drivers/net/txgbe/base/txgbe_phy.c     |  13 ++
+ drivers/net/txgbe/base/txgbe_phy.h     |   7 ++
+ drivers/net/txgbe/base/txgbe_regs.h    |   3 +
+ drivers/net/txgbe/base/txgbe_type.h    |  17 ++-
+ drivers/net/txgbe/txgbe_ethdev.c       | 120 ++++++++++++++++--
+ drivers/net/txgbe/txgbe_rxtx.c         |  29 ++++-
+ 15 files changed, 437 insertions(+), 101 deletions(-)
+
+-- 
+2.55.0.windows.2
 
