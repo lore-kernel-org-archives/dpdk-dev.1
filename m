@@ -2,144 +2,155 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF409C79F82
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 13:48:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E21C79F99
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 14:05:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D3E0E40691;
-	Tue,  8 Sep 2026 15:48:05 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6AEA840691;
+	Tue,  8 Sep 2026 16:05:21 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id 81B15402DF
- for <dev@dpdk.org>; Tue,  8 Sep 2026 15:48:03 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id EE670402DF
+ for <dev@dpdk.org>; Tue,  8 Sep 2026 16:05:18 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1788875284; x=1820411284;
- h=from:to:cc:subject:date:message-id:mime-version;
- bh=JvSQCKrsqcP4MiFrTQUdEYeEcn+RAevgSYAqqj0XERg=;
- b=GkhzNYybEc5amhMKkykE+RmOXhfeSo+1yB3OlPCI2khEVjqbVbCNXUsG
- 03xYN31dR6UyT93JVPgtKQEtUZvw6PVMQ0NBwjUe4IDqD6vofBfOiEoWj
- AhTQy3MLqudAr+uGcH6u1LyPXjvtYhxQMTooshxRGiCKTWiaSer/LYEuL
- p96O7WfgUo6FsEYlPUBxeO+sDI6Be449c5WS7XLvMCnxRm4DgHaphvsvP
- gRhCHj9QheQfcZ1UPbKGI1Iy+WwCtNM00NSpK9CtwL//VxUkW0e8reKMh
- n/SZhh70w3vP60dU04ypTuoW325c2uqjah15hYkpgIOuoRNoEtfpApHF8 Q==;
-X-CSE-ConnectionGUID: l2xzaHtcQd63xwuK+5EBzw==
-X-CSE-MsgGUID: LGSUbCscRNyZLkjjmqIIsA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11899"; a="89480967"
-X-IronPort-AV: E=Sophos;i="6.25,269,1779174000"; d="scan'208,217";a="89480967"
+ t=1788876320; x=1820412320;
+ h=message-id:date:subject:to:cc:references:from:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=1M0LyngQ/dA8rDkH1gq2dGVwPjn6mW1IjYZeWFyvFAQ=;
+ b=HnT04zBIUlXWa3f0RPFfinKUAaV2g3i3yHjLb8THtVHPF919JtiGxm4w
+ iCxQZWfYh+Q/y3r6odSNEmj1PGilkNSf/xrvidAi1xFM83CdGaXbXb8js
+ 2unoADd73dAUbmRe1iQrz/0SXLouZ0YNWJhYF2CVMOY/hnfPOcRj9+3YF
+ xOj93gvmXvPLPj0qp7E4AD/oRb9tDrU3fMxfYViDfDBzNMUrHnT7vnLu1
+ 5m06VzBkMihQMTrOJFRlDz5FpoZepvmgPbv3aS1hGPCyoc3DVdlPaROCv
+ MFeWxhBkl+FywZ211d6bdFNQgxFQCuIjyq+/V+OHXKS/z+sLTcKcM5eNN Q==;
+X-CSE-ConnectionGUID: C/L1LPxKTuiCrGUPp59ZxA==
+X-CSE-MsgGUID: OzYXzdfvS1mRzlRnCca+nQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11899"; a="89483477"
+X-IronPort-AV: E=Sophos;i="6.25,269,1779174000"; d="scan'208";a="89483477"
 Received: from fmviesa002.fm.intel.com ([10.60.135.142])
  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Sep 2026 06:48:03 -0700
-X-CSE-ConnectionGUID: CLexY/oUQDqMrfa9Qc19Ug==
-X-CSE-MsgGUID: riYI/UwXR0GzOZr+Dvt5vw==
+ 08 Sep 2026 07:05:19 -0700
+X-CSE-ConnectionGUID: bVDE1QazQQaEPDDPkrswEw==
+X-CSE-MsgGUID: HoW7owuMT260I3NVoTz7Sg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.25,269,1779174000"; 
- d="scan'208,217";a="294509507"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+X-IronPort-AV: E=Sophos;i="6.25,269,1779174000"; d="scan'208";a="294514975"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Sep 2026 06:48:02 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ 08 Sep 2026 07:05:18 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Tue, 8 Sep 2026 06:48:01 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ 15.2.2562.46; Tue, 8 Sep 2026 07:05:17 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46 via Frontend Transport; Tue, 8 Sep 2026 06:48:01 -0700
-Received: from DM1PR04CU001.outbound.protection.outlook.com (52.101.61.2) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ 15.2.2562.46 via Frontend Transport; Tue, 8 Sep 2026 07:05:17 -0700
+Received: from PH7PR06CU001.outbound.protection.outlook.com (52.101.201.41) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Tue, 8 Sep 2026 06:48:01 -0700
+ 15.2.2562.46; Tue, 8 Sep 2026 07:05:17 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QEQKtrB2Dd+9Hnh3r0z/ZJsY9Z2ASOdXr12D26vPr4Do3HT0hCnHmQ/gk12WSvIEWohRfDU4aSl36qTnEtC0brm3g7xLoppOoD6pOQIZe2P7oSWWBR40N0C8FFdWdGDW4rM1lYbN91FSYqU37nq3mwGYyIy1vSY1xhl3ckZ6Yh5C3GA6BD3yIFLFS35rC6J1ympt0Fyo87kryWZ1A/OPujLi2b+iS90XabQDu+r3VDDJuWAMi9CI+65PUu+BPyOKlJUFDtkGj2a1F/fuFTwWM3HbN+X+M6869n4efRwmXyzPktmTD1oM6/Q8nRoQL6faoQkQx8VomWnJ3vGQ9GJQFQ==
+ b=KreC5vWIkqTEq8UkfBO8lczx52/cdy9/d9OECLluPtMzBhrjbGTkVFjVE5K7D8ilLDcS7YyOsZPIBRiZrb5MkzHeRKE9u4Gmpbo0NsTdxU4APqXHRhvcZqZ6uADihn7BSSfGGinirF0qe97/DndR1uxLKGg+hPYeHmNLl48ejj9RzcfGcoP21AhGdAN1JPSCe/pDUWOYFaxOO5CZrgOrO0Gg7yQ9yK4VlBvJ0kaH4PrRvwHqEAlMDV2aoX5znMhQ4oODNNn/oyCSSJRJntuENw7wuBXEmej3QPWH0gxzWBp4n12Q/vjeYJ8xKD3L2Njzx6QrwnJiR9FYCXG38xKwZQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YJ4+yqijXrI7wsW0SEjQNoR7RsfVx/KWx+LgucIHarI=;
- b=RM5X8VPXrBwj1WpkISawQnB/zyseJKR+s8+MfrsqLD4lwV8CcUUm0V5zyIlFIvtJdAMeKBV+MP8mN/e1i1BQ2USYfP4wodcoCNUqukJPughZUN+LFhvloKCd163vI1UF5rmxnyoiIEJttn3WlfNYmMXQrtSlnQKMnM8s9KyV8HH7CL9+3j5Uu8SzZiKMm9MmEBzrTt+iK1vuCiIQfMxZ1IpPgnPdyPXfBtGNS8zjuogiTAw3QYukDraqsGuAQnTpRUrJhyTW9xk1tJjN8tmeFHgxX2QtQ5a9Ln0J9V3JGm57Nd417KaE0wikiJqxGWw70/ipYpkFhgLo3+zTf68JXQ==
+ bh=1M0LyngQ/dA8rDkH1gq2dGVwPjn6mW1IjYZeWFyvFAQ=;
+ b=v3HNjz5RNvV8PFTDaSqRChig8S3l+DWjaZzw+3BODt3dyFJnzzjrMNL8lEUY2JR+IpF3/Z0d3X8Wb7wVlfcOl14ZWzFcnw3Sreh3e2lmUqDiGczBaVWPn+l5DBgajigu0/asHFZZS2EmIJC0F+IMQhefcmzvspssdtS3DUow0UYN5HzPPv1UeeQ9QGxYGthXdI7qSPPBsnKUEyRc7Kyx/ndGyuVtTzYmHa0rUN/j1Dg/VWWtiCsBTK/vCP/7pblfXsXRqwMxal/dXDUbaBNBo3dvtYYytXXVz0uNTl36BUTGuzw5VzAw+3HHaMKUQoS4DzffxWcVzmhIzgtKOYVp4g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
-Received: from DS3PR11MB9646.namprd11.prod.outlook.com (2603:10b6:8:38f::18)
- by SA1PR11MB8319.namprd11.prod.outlook.com (2603:10b6:806:38c::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.382.14; Tue, 8 Sep
- 2026 13:47:22 +0000
-Received: from DS3PR11MB9646.namprd11.prod.outlook.com
- ([fe80::d32a:8f92:25b:9bcd]) by DS3PR11MB9646.namprd11.prod.outlook.com
- ([fe80::d32a:8f92:25b:9bcd%5]) with mapi id 15.21.0382.007; Tue, 8 Sep 2026
- 13:47:22 +0000
-From: "Mcnamara, John" <john.mcnamara@intel.com>
-To: "dev@dpdk.org" <dev@dpdk.org>
-CC: Thomas Monjalon <thomas@monjalon.net>, David Marchand
- <david.marchand@redhat.com>
-Subject: DPDK Release Status Meeting 2026-09-08
-Thread-Topic: DPDK Release Status Meeting 2026-09-08
-Thread-Index: AQHdP5hwvhAeaPMkc0yyRMU90kopYA==
-Date: Tue, 8 Sep 2026 13:47:22 +0000
-Message-ID: <DS3PR11MB964626C92907BB8C0BFEE172FCB12@DS3PR11MB9646.namprd11.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
-authentication-results: dkim=none (message not signed)
+Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DS3PR11MB9646:EE_|SA1PR11MB8319:EE_
-x-ms-office365-filtering-correlation-id: 3ceb523e-05b1-45c0-643b-08df0dafb544
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|366016|23010399003|376014|1800799024|18002099003|38070700021|56012099006|11063799006|8096899003|10067099003;
-x-microsoft-antispam-message-info: 1couJqrui/NFdu7FjsbSIhmhLbDp/YauJ8iIopdjXSfEsVu+DyvmW4gWZBPX1d1eweUFKkDYPPYe0THCMjp6QGBnfb0JUnU6QhHZcgBaaTDAQ3a7ppzK7d3jkg3Sg+QISFBNhzwbDhWxcB9kwYquP58p4bP+SRg90oFn6qro9UiAyQulC7fjQ/x0/kSW7HhpB+bphfMlOFrqKXPNDCEhPNRimzdtkSjhEH7wYSgsFyY3Ez2BP+pLB40msQu1wkIZzIKw6e/Ujwr2l/emB4/AwRyHc0KIub2k6kqxf4TdhX0rdZQ1nD7n/UpbesW8OzU/ApqeR4kENxbAXCmt4sFKI6G4s2dXZg2h6wUO9JynfBPxaDCVMQp+v3Jv48f7Vk3HMGRa49cXGcvNIePjdaVhOAOJxPePqMspwNTs8NCtc9Z7Ahe6GAIcXCijP+Iguw2ebrJLAWuUjwFqhV/tjkNaHMvJlqW2NA1afx/jdbX5IEeqlG2FiplvJ62txDMHtYVZ4dH4lNFOn1VTM9v9egbA/yB6HLo2PSOtxMk5tIt18y2vo+w4tnqjCU6p4NlHOZPlnSywSjRzhJ4CZx0rgBHkRD/GeqlSQ+YZw7fuLEPCGfL6Kv6jVyeqnD0AyUxJW70/Cp+uaLTV2iEJjB6Mx3S56Ow+Siq6hKeb6mGSVU2m3R8=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS3PR11MB9646.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(23010399003)(376014)(1800799024)(18002099003)(38070700021)(56012099006)(11063799006)(8096899003)(10067099003);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?tUMDD2nMltiI6RKzKY0t6Y/SnD23V0C3u1RwfWkCYvyg93kCNYIwi0ovB7?=
- =?iso-8859-1?Q?rJ0DKX5nsnlf26uhdlJgpyEAGpfz6msaSQKef/CcwWE3AaWwD/sYXLQIaC?=
- =?iso-8859-1?Q?clHP8OyXQet+qetXGvci+LrUMIMwUoK9rILm7yHv7qhkzkcztpSAVLCzG0?=
- =?iso-8859-1?Q?8pHoVVEuRI33kPDffMf0Jz8mcLNZ3+aaomk9fhwiLn9OPbWQbzuIiZx15J?=
- =?iso-8859-1?Q?y6xltI4fxt0rYrDvQK3lJ1Uei+7EwSVAlKXaPSRyKOKWAi59yIzRUJgnqr?=
- =?iso-8859-1?Q?Xc/eEv2Yzv7jNR3L0T7q31L8r8jpP7/XAuB7IRJBC7DngpBEoroXRJpTIO?=
- =?iso-8859-1?Q?uxJaSjN6Pn4btUkl+lvMF5ADPHaewolqUUPNbFcGdoP9wPz7rGQX0pPRAN?=
- =?iso-8859-1?Q?EdZIsCV+pXJ/IMw0NdC9HkwVo8VJHdifeeZbtcsYAEJubBwHvzewOyUKXD?=
- =?iso-8859-1?Q?tKvSAudQEDJGash9nFmquoK3tfaRszyKj3qFLuQUp+dy2Qj7PNoaH6ffpW?=
- =?iso-8859-1?Q?ZMt4sN66i53Rig4mi/MnBICSgRsNozPWq9FlpcdDX7arLboJzhCuDD8uVK?=
- =?iso-8859-1?Q?dtqg7Lfor2awJttx+TOExAxztz/PaSAAo0HaDC7pgDH+pEhQv1EDa6X7+P?=
- =?iso-8859-1?Q?RgKDCZ8GGpIyNsiCU+/IJ/NCpK305lppLgJpa0bJ7RqopIorFFrTSTeKob?=
- =?iso-8859-1?Q?j2wKaJvshnK29dGSc0Y2lhsMxmM2KNFuQgCvkkElnGsYE5XRaXI3MFiFlS?=
- =?iso-8859-1?Q?JrQu2vh63JskgVezBYwoWN4KuYWiuawg8n155gl9SSLCQMIXFZflEJcDv1?=
- =?iso-8859-1?Q?WNjuPC80w4TfXIEtp4H9JJpxEySlt7R1fJQb04JuLSfvgyougBT5E7uL5M?=
- =?iso-8859-1?Q?SaRktFebaXpjmIuZg0+2GYj7hJ7BfP54p3utH/gghoazdVs7/pLaZOgGhS?=
- =?iso-8859-1?Q?RkN3BhyTKpmUpjN35+wXthvZY5W2zbBc4t6RlQ5ogkWHBiS/pAWfyvTMxT?=
- =?iso-8859-1?Q?nYKNAuZ5USR3fCqwdzP6tqC6XeF3yN7rjXE+emeCYX1Qawzul6R2IAygsL?=
- =?iso-8859-1?Q?c6K9kIvDuwZLGSWcoZpE8LBW59/p2H1+ovGiX4x/tfn8fuLrm4z0RqRycy?=
- =?iso-8859-1?Q?uHT1Q/KEpCCbARs2nHiyXqGSiPzDV2/e15e5RZa9hxrMRG8TI7w/f3k4hH?=
- =?iso-8859-1?Q?euXt5Y60WwdYAPUB3ONTZysn6fNyaRrXwLcJ3EOKH0gq0BxtH4i4sF8KLj?=
- =?iso-8859-1?Q?FauKTGQ0LWfIaRAsoEaXUDyVA4gn+0s4oFyQu7qLncux0FIj8DdBLWM2xy?=
- =?iso-8859-1?Q?A6VFRTPtQVeKb/EC67jf+QEqgY1YbRplzFu3SF2G+pV+VuCg4tA48vDCCH?=
- =?iso-8859-1?Q?FB+E3eTStyW7wFUt6PBL//eTXQpAFn/slWr+vfoBaqAND5zW+i6ZViZv2n?=
- =?iso-8859-1?Q?yccrBvkdaCMP6zMR8lz/Jll/nyQeUYbKxpQy7XTjPDNP52UiruTa4tgVco?=
- =?iso-8859-1?Q?hR/F8t6my13+E31Cl1kLTMTupBdhVbBj1tl0zLOI1zr2g6JmezPKU9MnsD?=
- =?iso-8859-1?Q?Dd11BJyyYjwNbndaPeD6avXjgCAC6WG/Go7k+6UnI7yGdPGigsYLMHcuxP?=
- =?iso-8859-1?Q?G4FSCM31dvdPzXEoxKxFi7Dk/r5DbmtpAm0lpxPgwCf+kSaPxzZe5jk1Be?=
- =?iso-8859-1?Q?pucAG1wY06qm6DM6T0gdkBIPWHC2s+VRJKxVF41ne40T+XMAb9qqm2X2lp?=
- =?iso-8859-1?Q?gDeVZAETz7tteZWRNQlfj3BCFTMEqFsPdYuULjl5pgFiLXT0EyCpFs1FkS?=
- =?iso-8859-1?Q?nKXhTdLMxg=3D=3D?=
-Content-Type: multipart/alternative;
- boundary="_000_DS3PR11MB964626C92907BB8C0BFEE172FCB12DS3PR11MB9646namp_"
+Received: from DM8PR11MB5653.namprd11.prod.outlook.com (2603:10b6:8:25::8) by
+ PHXPR11MB9686.namprd11.prod.outlook.com (2603:10b6:510:3ca::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.7; Tue, 8 Sep 2026
+ 14:05:15 +0000
+Received: from DM8PR11MB5653.namprd11.prod.outlook.com
+ ([fe80::74e3:c0eb:29ee:fffa]) by DM8PR11MB5653.namprd11.prod.outlook.com
+ ([fe80::74e3:c0eb:29ee:fffa%3]) with mapi id 15.21.0406.005; Tue, 8 Sep 2026
+ 14:05:14 +0000
+Message-ID: <aefb2909-0c8c-47b1-ac03-9563c7662aee@intel.com>
+Date: Tue, 8 Sep 2026 15:05:10 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/8] crypto: add RSA-specific capability parameters
+To: Sucharitha Sarananaga <ssarananaga@marvell.com>, <dev@dpdk.org>
+CC: <gakhil@marvell.com>, <fanzhang.oss@gmail.com>, <adwivedi@marvell.com>,
+ <anoobj@marvell.com>, <ktejasree@marvell.com>, <kai.ji@intel.com>,
+ <jianjay.zhou@huawei.com>, <gmuthukrishn@marvell.com>
+References: <20260831102328.2813604-1-ssarananaga@marvell.com>
+ <20260903082648.3610676-1-ssarananaga@marvell.com>
+ <20260903082648.3610676-2-ssarananaga@marvell.com>
+Content-Language: en-US
+From: Radu Nicolau <radu.nicolau@intel.com>
+In-Reply-To: <20260903082648.3610676-2-ssarananaga@marvell.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DU6P191CA0036.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:10:53f::23) To DM8PR11MB5653.namprd11.prod.outlook.com
+ (2603:10b6:8:25::8)
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: DZxOhu6EFrI7FT1JGjI3OS56UYtucWRxC6K14sSgtW46gi3oH1fvKy1dJPs2vz1vn87i5xeU8BQJcIcHFrLblTAc3NQLqYNqI4GL0v4mSzcXxj8R/OdEdhO+YVglvkJFl6I46xoTykPXF7wMwdX4eHNEvjflkTyzx0IUSWI9PsUvOwgvN3+8XbERMLirrFSAeiybxcIuhgwvPK9jejLft9xRX3TSMMpPqS+t0JWfBw9N8DADLTgDLu+C78mmBWuhyP+jLnPEzGHzjbnsw+R3Kupsutna8p64BXSIOSl/DkOxE80eFnBZ1xLKPukET/WmW+7AFHMlMWwQyEGDNcsZCQ==
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM8PR11MB5653:EE_|PHXPR11MB9686:EE_
+X-MS-Office365-Filtering-Correlation-Id: d7e1ec7a-b62e-4557-38c2-08df0db23470
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|366016|376014|23010399003|1800799024|6133799003|18002099003|22082099003|3023799007|4143699003|11063799006|56012099006|10067099003;
+X-Microsoft-Antispam-Message-Info: w5qPhlauSt1LwgqaFvPcst7upe72tfcp6mBsqphe/0d0LzIBPXscOqJNgciRzeNPG0riV4rhjsSy0ZLtrt/Ymos6hU5VxNsd9it3RznzqMazBaB+erUyZDOsBQdW8io1hHGI8BUWb3OkcVSBq+JNJp2gpL+qX4WQTZbZynmUBWV8y1ygVUe2FHn9fPTcvY2PTIaubsHP1lrX36ZzdIjFDKVpfC7aI+ZzQXDpSBe9T4qGWn1LAKViXVFz7OGd0Ey+Zd3zUmVYFf58UVzJhBO7OctHX3ZASC0s1ZlO89hecqVOqXfufvnPSR3qiUJto/bnDmThNYvpwaylP1i6ScdzrFcpuvdOnK07B0lSUf4crUSUaf42JszlKgApiX/TQvF/pmuVrzitHtlqFkQmRJEKyQ4yX69IxQ8CRVnmleJ6n/5N3FsEAt5wXdrTUdxE7PTegNyb7VQvy0cnA/ia02TMzca/TgJWF7gy2SSAiCDDWb175f/z4SWhq3oWpxBICfle+p61/0pwFJKwdfIZkHZeQ8ojTS5E+j0BlShkD1rzyIcNoPvjNzE+k5BmuNt88c+1P0Lf4nicQ5DHxvnK+gNPHqD/ba/mQxQc6igtzuLE2hlKQNuaBxWTx0XJZ8fNK33bdJlFXwM1bgOEXgmFV2xotkk6LAuMl7MnU7gVEN6RzYI=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DM8PR11MB5653.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(376014)(23010399003)(1800799024)(6133799003)(18002099003)(22082099003)(3023799007)(4143699003)(11063799006)(56012099006)(10067099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Ni9IdkI3WWJrakc4NEFaY2kzaWRjUFU4WXZUWkdGNnJLYXNZVXAyRVo5U01N?=
+ =?utf-8?B?TG9pUWZSWFVYd3dGVzlOMkJvQkhPdFZYUGtIWGtHQW1KRjBZT245cFUzY2FR?=
+ =?utf-8?B?ajdWdVhOdzlCcGVYNmxWN2FOWG91UVo1dWQ1QzRjTWtNcG9EczFxNnowcFpm?=
+ =?utf-8?B?NVZQcXpVS0t6OGg2ZkgwL09EcG5xdkhNTW5NZkptUkQzN1JJVHM2Y3hjTXNT?=
+ =?utf-8?B?bm8zVXk3bmxGNUlCOEtsZC8zbE5ra1VvSWxvZG41R0JzRTVvZzRoK0k2Vncv?=
+ =?utf-8?B?WGkxOExHSCtERmRPMVJCdmViSW9ibkpRK1BGVzhCbFNuaUIydWZiNnhLQzRw?=
+ =?utf-8?B?ZEpkTFBPbFk0WXh5ak9uRzgyQXhGZ2oraTUrNDc5Ti8vckRtZFRwVUp2MEVh?=
+ =?utf-8?B?TVJOWnNvR1hNOEhTSWxyMUJucEhkZmk3Rmx6S1dBVFVWK2NhNGduOTRlWThK?=
+ =?utf-8?B?d2lWWkt0bUdxWU1rOGQydU4rNmRhU2lkUGd0Yjh1Q25lZkcwMmhLWmlLWUVi?=
+ =?utf-8?B?U0pwQWtNZnFLck5qK21qY1JqK2pMK0NrRzBoZE00OXowSTFkQmhwQW5NUWc2?=
+ =?utf-8?B?REtDV0pVcjdocUlQNkhzRng4M2Z3MHRZaGhSTnQ0Qm5BenptblpmRHVJbDhU?=
+ =?utf-8?B?cis4WWFXK0dCc3JHdlgyak93My91SUhOd2xjUmZ2ZGRDRzRVQnFicVk4Wlhr?=
+ =?utf-8?B?VFlDQWZ3aFJFekJFSVJZQkh0dlZFNzF1bUhSaFprZUw3NmV0Y2VRZ0JZRDlS?=
+ =?utf-8?B?SUc4eXVib3dZVTRiU3ovRC9YZ1ZpWkFud2dueS9McGlzRmJVMGFia1Yzblpw?=
+ =?utf-8?B?Vld3S1dETTJFZnk3c0xWd2ZqM3NtUXJuUExMdnFzbis1ZXNGVXdXUzhxL0U4?=
+ =?utf-8?B?TUlUZVUrQXRjZVZCVjl6dWUxa05BSURNSTduTnQrODZSQ0thZzV5TG0wZ1hH?=
+ =?utf-8?B?Q2dHL3djL21GRktjUUtxSUJ5L0x1LzY4MG94M0dOZllsRzNzWHFBVS9zZko0?=
+ =?utf-8?B?K2c5Q3BXWFRFU21URmNJaUFvMWkrUDVBOFFUd01VU1NPNVJ4ZzdMTFFjaTNs?=
+ =?utf-8?B?dVNDVCswSzlvOHVvTUJtRy9NOGo4bC9MVG8zRzE2Nk1HQWtSZ2JhSTB2aHkz?=
+ =?utf-8?B?OXFWZFBkWW8wejB0MUkyWXNzUmRRNGtzZXY2ekNpVjIrTVdPNjBjZzIwSkk4?=
+ =?utf-8?B?OG9QaFQ3dllEUzQ5d2xENHdON0VlbnpEUnQ1L0FNSDVZQlNqMEFuSUQ2SC9K?=
+ =?utf-8?B?WkYyVG1KWWlybUJqQSsrZnVyOG80MFZsclluazk0elRTNE0wK2UyNFhHZm11?=
+ =?utf-8?B?VkZranhtSVgybXlzeTV5dFlOQTJieGpKQ0drNnJDRnNpVUl5dUY4WVVCVWFX?=
+ =?utf-8?B?QTUrc1NwOVYrNXVYdDBXTzdJS09ZT0dIRXVtVUZaZFNRNXNDYVJxTmpsTkl3?=
+ =?utf-8?B?Vk9OTGNjRXdNOGx1YUM0TGhaeFpHeU9FU3BVaFhlRm5uZWx4bTRMWDRPTGVR?=
+ =?utf-8?B?ZWg5TGFBQ3FPR2R5Z2t5a0h6T1BYOGxCTkR5dFdIWFZIV0JpaHhQVFZxeXRW?=
+ =?utf-8?B?RTZLVEpqOE1GS1oybklKMjNaeVljcTF3SWxqUzZRSytuYUVzWW9lSFJjcXRq?=
+ =?utf-8?B?cVJYN3U1UFpvYWZ3eVBBeWk3QzdlelpnaW9xS2RtSE11bTZKR3dDUTlkRXZG?=
+ =?utf-8?B?ZjFJakJXMDliK3NuQXJiVnhleGxBeTV1elZEekhOZkdiaUViMUhTNDVzd1Rj?=
+ =?utf-8?B?QjdWRVJiZ3FQanRJVFR1dHpoTVpVblpvVHFucGtSTkRNa01oWjJyVFU5YmhW?=
+ =?utf-8?B?bnNsbFFLL2FKYXE2UXUrUUR4RlpOZ3FaOWhsQ1lWRHFKTEtzQzlNcVBhM1Fv?=
+ =?utf-8?B?bjdUNTA5dEFWR0pIWXk0ai9SaExTTDZCak1xUVZQanYzSDN6RjdqSUFRRHY1?=
+ =?utf-8?B?SU5MSG5xR1NrdVlzQjJHMS9uSmxiOFplT3Fyb2VVYVBsS3FlbWhLMXRvU2x0?=
+ =?utf-8?B?Rzd3R1dIK0w1eUxRNTRCcUduU3R2SkU2cjlCVXd1YmV1REJUendLQ2lXUUt5?=
+ =?utf-8?B?QXU1MWNRNHEyLytLK1pMNThsOHExMVdoMkY4eVF5VnhKanU2Zm81TnF3eDB2?=
+ =?utf-8?B?Sm4rbW9nWEphTU1odVFEcnpVSysxU0wwTmowaUtqM2Z2WFlRMmZRRnRtRXll?=
+ =?utf-8?B?cWZhbVk4WjFZdS9BdTFIVUh0R0hkelpCaW4vRTI2ZjJxVjBPWGhrMXZYU2ZM?=
+ =?utf-8?B?Q2FBR1YwZCt3S2ZpaGxaM2pwTWJ5QW1uWGRNbWtmS1d0YzBoOGJualA3c0Fq?=
+ =?utf-8?B?LzlaOWx0QXgrN3pYc0FpQTNBNWxjcDdSTlhMeEMwU3JSOTYyemE2UT09?=
+X-Exchange-RoutingPolicyChecked: BJJO/BcFoKwMkg909O8Ti+yjaJzE3VLO6M6yK9V3bwv094jx/ImLmsrF1KpLQdZ9ORAGshEW6Z8wZbGGWlmMjqydUu7oQc+vU5BXAP/s4Hu+fHWClrRDeRP+kvZI/9Bg72ACqqBWTv4uYtuw9mg5T0/kB43RKzkjFcgNiywdx9f+8DcgCsGY0i8UN4hvacAevAOD428bcqFDuA3qt54jM/c3G8VKWnT5NEfD/L6kVsEJfO2jOYEeuV2oFAhDaynrFHBzdzRGjTvS1RZcO1edJBgcKY5UxR5t3kJXqUM0+mM7icgVnS22Eng+1AZvtPEc5hQ+0jMuatoPOMVGhpe8SA==
+X-MS-Exchange-CrossTenant-Network-Message-Id: d7e1ec7a-b62e-4557-38c2-08df0db23470
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR11MB5653.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DS3PR11MB9646.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3ceb523e-05b1-45c0-643b-08df0dafb544
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Sep 2026 13:47:22.1069 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: s+pgLywnNGgu0mFhWqZ/eigcvy3pzw6NIFeue+G3sEpLJjvostJxIhRmkpglT5Vcoh49D80XJ2t1h19pYrxIvw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8319
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2026 14:05:14.8760 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oH8VQ5eKcrLKFn55UjyRgCsqY3MnGH14W5N4x1IfRBHUL9O6f0ErjcTEQjuaanIFpabC/pp2NI7M7nFi83+dXw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PHXPR11MB9686
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -154,560 +165,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---_000_DS3PR11MB964626C92907BB8C0BFEE172FCB12DS3PR11MB9646namp_
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
 
-Release status meeting minutes 2026-09-08
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+On 03-Sep-26 9:26 AM, Sucharitha Sarananaga wrote:
+> The existing asymmetric capability structure reports generic
+> modulus length and hash algorithm support, but it cannot
+> describe RSA-specific parameters required by OAEP and PSS.
+>
+> RSA operations may support different padding schemes and MGF1
+> hash algorithms independent of the primary hash algorithm.
+> Applications currently have no standard way to discover these
+> capabilities from a PMD.
+>
+> Add rsa_capa to report RSA modulus length, supported padding
+> schemes, and MGF1 hash algorithms. Keep hash_algos for reporting
+> primary digest support.
+>
+> Also clarify that the generic modlen field applies to other
+> modulus-based transforms such as MODEXP, MODINV, DH, and DSA.
+>
+> RSA-PSS signing also normally generates its salt internally, so
+> the same message never produces the same signature twice, making
+> it impossible to validate against fixed test vectors (e.g.
+> ACVP/CAVP SigGen).
+>
+> Add pss_explicit_salt to rsa_capa so a PMD can
+> advertise support for an application-supplied PSS salt, and add
+> the corresponding pss_salt field to rte_crypto_rsa_op_param to
+> carry those bytes per sign operation. Leaving pss_salt unset keeps
+> today's internally-generated-salt behavior unchanged.
+>
+> Signed-off-by: Sucharitha Sarananaga <ssarananaga@marvell.com>
+> ---
 
-Agenda:
-- Release Dates
-- Subtrees
-- Roadmaps
-- LTS
-- Defects
-- Opens
+Acked-by: Radu Nicolau <radu.nicolau@intel.com>
 
-Participants:
-- Broadcom
-- Intel
-- Marvell
-- Red Hat
-- Stephen Hemminger
-
-Release Dates
--------------
-
-The following are the proposed working dates for 26.11:
-
-| Date             | Milestone        | Description                     |
-|------------------|------------------|---------------------------------|
-| 31 August 2026   | RFC/v1 patches   | Proposal deadline               |
-| 02 October 2026  | 26.11-rc1        | API freeze                      |
-| 23 October 2026  | 26.11-rc2        | PMD features freeze             |
-| 30 October 2026  | 26.11-rc3        | Builtin apps features freeze    |
-| 06 November 2026 | 26.11-rc4        | Documentation ready             |
-| 18 November 2026 | 26.11.0          | Release                         |
-
-
-
-See https://core.dpdk.org/roadmap/
-
-
-Subtrees
---------
-
-- next-net
-  - 165 patches pending.
-  - 57 due for review.
-
-- next-net-intel
-  - 50 applied, ready for main.
-  - 32 patches in review/waiting.
-
-- next-net-mlx
-  - No update.
-
-- next-broadcom
-  - 2 merged for main.
-  - 50 in backlog.
-
-- next-net-mvl
-  - 24 patches to merge.
-
-- next-eventdev
-  - 2 patches pending.
-
-- next-baseband
-  - No patches pending.
-
-- next-virtio
-  - Working on issues.
-
-- next-crypto
-  - 26 patches in the backlog.
-
-- next-dts
-  - No update.
-
-- main
-  - Merging patches for deprecated symbols/API.
-
-
-Other
------
-  - None.
-
-LTS
----
-
-See also: https://core.dpdk.org/roadmap/#stable
-
-LTS versions ongoing/released:
-
-- 25.11.3 - Available.
-- 24.11.7 - Available.
-- 23.11.8 - In progress.
-
-Older releases:
-- 20.11.10 - Will only be updated with CVE and critical fixes.
-- 19.11.14 - Will only be updated with CVE and critical fixes.
-
-- Distros
-  - Debian 13 contains DPDK v24.11
-  - Ubuntu 25.04 contains DPDK v24.11
-  - Ubuntu 24.04 LTS contains DPDK v23.11
-  - RHEL 9 contains DPDK 24.11
-
-Defects
--------
-
-- Bugzilla links, 'Bugs',  added for hosted projects
-  - https://www.dpdk.org/hosted-projects/
-
-
-
-DPDK Release Status Meetings
-----------------------------
-
-The DPDK Release Status Meeting is intended for DPDK Committers to discuss =
-the
-status of the main tree and sub-trees, and for project managers to track
-progress or milestone dates.
-
-The meeting occurs on every Tuesday at 14:30 DST over Jitsi on https://meet=
-.jit.si/DPDK
-
-You don't need an invite to join the meeting but if you want a calendar rem=
-inder just
-send an email to "John McNamara <john.mcnamara@intel.com>" for the invite.
-
-
-
-
---_000_DS3PR11MB964626C92907BB8C0BFEE172FCB12DS3PR11MB9646namp_
-Content-Type: text/html; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-
-<html>
-<head>
-<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
-1">
-<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
-ttom:0;} </style>
-</head>
-<body dir=3D"ltr">
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-Release status meeting minutes 2026-09-08</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<b>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D</b></div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-Agenda:</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- Release Dates</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- Subtrees</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- Roadmaps</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- LTS</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- Defects</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- Opens</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-Participants:</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- Broadcom</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- Intel</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- Marvell</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- Red Hat</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- Stephen Hemminger</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-Release Dates</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<b>-------------</b></div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-The following are the proposed working dates for 26.11:</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-| Date &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | Milestone &nbsp; &nbsp; =
-&nbsp; &nbsp;| Description &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;=
- &nbsp; &nbsp; &nbsp; |</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-|------------------|------------------|---------------------------------|</=
-div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-| 31 August 2026 &nbsp; | RFC/v1 patches &nbsp; | Proposal deadline &nbsp; =
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-| 02 October 2026 &nbsp;| 26.11-rc1 &nbsp; &nbsp; &nbsp; &nbsp;| API freeze=
- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbs=
-p;|</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-| 23 October 2026 &nbsp;| 26.11-rc2 &nbsp; &nbsp; &nbsp; &nbsp;| PMD featur=
-es freeze &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-| 30 October 2026 &nbsp;| 26.11-rc3 &nbsp; &nbsp; &nbsp; &nbsp;| Builtin ap=
-ps features freeze &nbsp; &nbsp;|</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-| 06 November 2026 | 26.11-rc4 &nbsp; &nbsp; &nbsp; &nbsp;| Documentation r=
-eady &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-| 18 November 2026 | 26.11.0 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| Release &n=
-bsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; =
-&nbsp; |</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-<br>
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-See https://core.dpdk.org/roadmap/</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-Subtrees</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<b>--------</b></div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-net</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - 165 patches pending.</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - 57 due for review.</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-net-intel</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - 50 applied, ready for main.</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - 32 patches in review/waiting.</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-net-mlx</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - No update.</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-broadcom</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - 2 merged for main.</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - 50 in backlog.</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-net-mvl</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - 24 patches to merge.</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-eventdev</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - 2 patches pending.</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-baseband</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - No patches pending.</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-virtio</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - Working on issues.</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-crypto</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - 26 patches in the backlog.</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- next-dts</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - No update.</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- main</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - Merging patches for deprecated symbols/API.</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-Other</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<b>-----</b></div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - None.</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-LTS</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<b>---</b></div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-See also: https://core.dpdk.org/roadmap/#stable</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-LTS versions ongoing/released:</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- 25.11.3 - Available.</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- 24.11.7 - Available.</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- 23.11.8 - In progress.</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-Older releases:</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- 20.11.10 - Will only be updated with CVE and critical fixes.</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- 19.11.14 - Will only be updated with CVE and critical fixes.</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- Distros</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - Debian 13 contains DPDK v24.11</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - Ubuntu 25.04 contains DPDK v24.11</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - Ubuntu 24.04 LTS contains DPDK v23.11</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - RHEL 9 contains DPDK 24.11</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-Defects</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<b>-------</b></div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-- Bugzilla links, 'Bugs', &nbsp;added for hosted projects</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-&nbsp; - https://www.dpdk.org/hosted-projects/</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-<br>
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-DPDK Release Status Meetings</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<b>----------------------------</b></div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-The DPDK Release Status Meeting is intended for DPDK Committers to discuss =
-the</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-status of the main tree and sub-trees, and for project managers to track</d=
-iv>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-progress or milestone dates.</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-The meeting occurs on every Tuesday at 14:30 DST over Jitsi on https://meet=
-.jit.si/DPDK</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-You don't need an invite to join the meeting but if you want a calendar rem=
-inder just</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-send an email to &quot;John McNamara &lt;<u>john.mcnamara@intel.com</u>&gt;=
-&quot; for the invite.</div>
-<div class=3D"elementToProof" style=3D"line-height: 19px; font-family: &quo=
-t;Courier New&quot;, monospace; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-<br>
-</div>
-<div style=3D"font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, =
-Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);">
-<br>
-</div>
-</body>
-</html>
-
---_000_DS3PR11MB964626C92907BB8C0BFEE172FCB12DS3PR11MB9646namp_--
