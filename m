@@ -2,31 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DF9EC79F9E
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 12:42:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A386C79F9E
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 12:42:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D8AF240E96;
-	Tue,  8 Sep 2026 14:41:29 +0200 (CEST)
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
- by mails.dpdk.org (Postfix) with ESMTP id C366C40F35;
- Tue,  8 Sep 2026 14:41:26 +0200 (CEST)
-X-QQ-mid: esmtpgz10t1788871283t963e1654
-X-QQ-Originating-IP: WhBDUp/zuu5gDrhWzJXSisZ5lSEp/2ewMD9JLOQb4ww=
+	by mails.dpdk.org (Postfix) with ESMTP id CC32E40E38;
+	Tue,  8 Sep 2026 14:41:31 +0200 (CEST)
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+ by mails.dpdk.org (Postfix) with ESMTP id C2F5D40EE7;
+ Tue,  8 Sep 2026 14:41:27 +0200 (CEST)
+X-QQ-mid: esmtpgz10t1788871276t2c044a6d
+X-QQ-Originating-IP: cecfrhdBPTgypd4YgpNNWyICMztq9CyMRZxAF25Edug=
 Received: from DSK-zaiyuwang.trustnetic.com ( [36.24.66.61])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Tue, 08 Sep 2026 20:41:22 +0800 (CST)
+ id ; Tue, 08 Sep 2026 20:41:14 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 5567891451419266363
-EX-QQ-RecipientCnt: 4
+X-BIZMAIL-ID: 1319923394918874426
+EX-QQ-RecipientCnt: 5
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
- Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v2 11/15] net/txgbe: fix 40G FFE tuning applied to first lane
- only
-Date: Tue,  8 Sep 2026 20:38:56 +0800
-Message-ID: <8B8079B445F967E6+20260908124047.2284-12-zaiyuwang@trustnetic.com>
+ Jiawen Wu <jiawenwu@trustnetic.com>, Ferruh Yigit <ferruh.yigit@amd.com>
+Subject: [PATCH v2 08/15] net/txgbe: add offload support for tunnel type UDP
+Date: Tue,  8 Sep 2026 20:38:53 +0800
+Message-ID: <523B66E1D2611B4E+20260908124047.2284-9-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.55.0.windows.2
 In-Reply-To: <20260908124047.2284-1-zaiyuwang@trustnetic.com>
 References: <20260827114309.10530-1-zaiyuwang@trustnetic.com>
@@ -35,24 +34,24 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpgz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: NolRe0nYnMLUk4QyHMAP7d6wTgIQhbamWWDoMyp7xv1nleJQ72ocBN+C
- y85qX3PPyytv5MnSh4BquM4C7RHAOcym5TkrLkC0INYMs2SrP4AXC3WAsGeBJFRVJPUvRBz
- /nrHddS/2m8QdqXwQ7HCCq0wg1iqnPG5VT5dP35o+4frMWP9ODAagHe4C/BiLpfJd2UHGiP
- 5ndSNpscU/ISDBj9az5tqbcRFAfM5qYYqRnOBNA6xjwFv5tCJaKMHemA1TUlYa7rmfP+jH3
- x14ZjmfTeZ/3Kc2/1HME6OP9CMKglluPglDy75vz2qnxAb9eqmviGQUOF8KmWyWMMWp6a8S
- NJy92QRnBX3X6tZ1LTlWTZV4G+trXpwrQXxyiRW+bZC1wGYc4MwqmIJMvzS7bHJqPSzqXuQ
- TU8TdFHBxQZH8jIlt2RI0mk/QTR6FQm+pulYSDEepiMgQMLKHMoNt3Tj01P+W1GvnlIwzyt
- TCAcam+7/4ygr/lvZNg4kw3YIy1bofPAqutPg+7jB/iISus8IL19vXZNwfGIMISiAziFWDk
- Ory6ZMX9LBcq85799tZ/isBLprSF+ExVb7j05IHaLTKQkk3zZ6w11gP3ut1lfRiY0Y6Zl7A
- fYG6o2+THroZ0yXSxI5VaGNNdS8RFR1YE7sw8O2DktJEnTtZTdFZL3ptQ+P03H2XFpU+ya8
- gOg20N1CmRCNXPW7d/U9a4SUwznphcFHJj8eofyWuWQZIjgTVxuRFHJQkwXoa8jJAY6sT3Y
- nsnayPU8UaAJcZEvJBgnglbA8oNcu0cYlzc7dxFE6nVEBx0hGmZ6tu+Q2ArLjOc1xSUob0B
- VUBVWK+jYIqb420TdTY4TkFWl0oITGgQWCf9Vfs+6xiL8EAV+OEQ4WLkoxtqPB2XKjUFaH0
- wte4Js26lxOmGehBCoqX5Iht9AoU0CxPzMtvllt33VzLDLLDyMt5y22bLS6g/iFTSJWF21w
- 7TdFwkUkk+vgW9WsSzKw14LlmJ2Zo7KyOGyAO7OfmGxEyxcjv8mb6GUVLic0h2RJKJcI4X4
- NXLZwOnFIYYBcx0W1v+Ahrx8HyJQg46H9/gL2LWjvyoK578tRYVLYa1VR4jgb0eum4ywAfD
- P1qHk8MU0IbMSLdjcQv4osGZVDJy/sEkQ==
-X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
+X-QQ-XMAILINFO: NDKX6hzkjVZaI2KWgLnWnm5VpR/3YTf4AtIxiz4xeE2jOhvYfqbVHIek
+ CbNfYo8dK/pw/JGZVtUcGD/zz4VvsaRH4PgScusqMwxIOX/5GuPqG9KbCJHSkbJx+0+pvZt
+ Xn0+DaMESMxv4LPjlg3Sv6jjpuyV+Km3/5jYYawjwo3x52NgN5ewel1sUpzjnjwZ7VMZaDp
+ tUzkF9xwFQQwfN7YfRfUIQob58/tS5Vs7BX60E8udVz7T7fiKHAUycbdsf7DDYACUHnkyii
+ NDq+zYXtcuI/7pEW2zVvPjor+A9qzUxXVxvAXdd6XdaC0jTILWgaV4NmuHIjLGPZYRhmY96
+ RA1khDvHRBzJpzyczQFxQlow8AGHvuPZ2wEw4STznKHC6SBdxhziacKUB4KjjQqB7WO+jnc
+ wlj9cDuUhdZGQTzCmaP3oXMXmRAoFgXHQey3YQkY93CBGhwHiRsI8XkkZ0S+jiSZGPZwvAd
+ z+HLVWEAWuPOX7e0DdUdawhv0J9fpLTur+hzrjM5xm8C51FOs5wm3gQ91Rb/59HpaaA23Mj
+ mQxcG1Oz/9Cx/AofDESJS/tbVUHONIn0UJVbuK03QMSXzz7LJQLU/yH4A2FHyayNFUdrpZP
+ B4P95B9/P0o15FJln1wzwImP4ni6GAD9p6p5cKmnqtO36rneLKo6uSRloNioz0iVcSOkbm2
+ qYC/NRA5CfJX6x2e7lkc4HF6L/aexyftPRhdR77tb/x9m/Zc2KC6e7ACxOrGIf9KKIj0fMs
+ waZLZichUJl2UJccrmMA19JLIdav60GVzBUdyFhIrWTiaqRH0AVC57qUhpKevsIdamVJ16Z
+ kKq6ZWjKLyE3ZKUPyw0Es9FfbI5tJOd0825s/laRllRcnDLGH3HLSvJzd7qFMDoCOd0PgH7
+ n37E18D3VPr+Zi/KonqPYFUUSAJ5zGVq9uDzRsrpfNW+HAs129CmCzx9c+sPKvjBbVD41JM
+ 6TyfiZqMgkeGwzACsOeD3NMFghTU6lewEYPbVJLRY+0fdprVXBRTL6TzPNcpOw902BSUOAQ
+ 1xl07YFIlxXjBlbxpYBDxSv13CwJ+c3POj933/Fj7b0xcl/BnjccJpBbu870OjrVxMDgWYI
+ ffdj6Nyr3K3wPcvkztqJ9M=
+X-QQ-XMRINFO: OD9hHCdaPRBwH5bRRRw8tsiH4UAatJqXfg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -67,123 +66,92 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On the 40G NIC, an FFE value only reaches the first of the four
-lanes: the E56 PHY holds one FFE byte per lane, but the tuned taps
-were written as a single byte value, so the other three lanes keep
-their default equalizer setting and the received signal on them can
-be degraded.
+The non-standard RTE_MBUF_F_TX_TUNNEL_UDP tunnel type (UDP
+encapsulation carrying either VXLAN or GENEVE) is not handled:
+txgbe_set_xmit_ctx() falls into the "unknown tunnel type" case and
+txgbe_get_tun_len() cannot compute the tunnel length, so tunneled
+packets are sent with a wrong descriptor or dropped.
 
-Use the E56 PHY FFE defaults on the 40G NIC and replicate each tap
-value over the four lanes. The FFE fields grow to 32 bits to hold
-the replicated value, and the devargs are parsed after the shared
-code init so the MAC type is known when the 40G defaults are picked.
+Resolve RTE_MBUF_F_TX_TUNNEL_UDP by parsing the UDP destination
+port in a local variable instead of rewriting the mbuf: the
+application still owns the mbuf and may re-transmit it (cloned or
+multicast paths), so a second pass would otherwise see the resolved
+VXLAN/GENEVE type instead of UDP. The outer_l2_len/outer_l3_len
+used for the offset are application supplied and not validated by
+the driver, so check the rte_pktmbuf_read() result and fall back to
+a zero tunnel length on a short or mis-annotated packet. Use
+RTE_GENEVE_DEFAULT_PORT for the GENEVE destination port.
 
-Fixes: 6104fd11086e ("net/txgbe: fix link stability for 25G NIC")
+Fixes: ca46fcd753b1 ("net/txgbe: support Tx with hardware offload")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_e56.h  |  5 +++++
- drivers/net/txgbe/base/txgbe_type.h |  8 ++++----
- drivers/net/txgbe/txgbe_ethdev.c    | 22 +++++++++++++++++++++-
- 3 files changed, 30 insertions(+), 5 deletions(-)
+ drivers/net/txgbe/txgbe_rxtx.c | 28 +++++++++++++++++++++++++++-
+ 1 file changed, 27 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/txgbe/base/txgbe_e56.h b/drivers/net/txgbe/base/txgbe_e56.h
-index 1922a2eb92..fe9a83ae01 100644
---- a/drivers/net/txgbe/base/txgbe_e56.h
-+++ b/drivers/net/txgbe/base/txgbe_e56.h
-@@ -1714,6 +1714,11 @@ typedef union {
- #define S40G_TX_FFE_CFG_PRE2        0x0
- #define S40G_TX_FFE_CFG_POST        0x11111111
+diff --git a/drivers/net/txgbe/txgbe_rxtx.c b/drivers/net/txgbe/txgbe_rxtx.c
+index a295666f9d..ad90df5f69 100644
+--- a/drivers/net/txgbe/txgbe_rxtx.c
++++ b/drivers/net/txgbe/txgbe_rxtx.c
+@@ -21,6 +21,7 @@
+ #include <rte_debug.h>
+ #include <rte_ethdev.h>
+ #include <ethdev_driver.h>
++#include <rte_geneve.h>
+ #include <rte_security_driver.h>
+ #include <rte_memzone.h>
+ #include <rte_atomic.h>
+@@ -419,6 +420,7 @@ txgbe_set_xmit_ctx(struct txgbe_tx_queue *txq,
+ 			break;
+ 		case RTE_MBUF_F_TX_TUNNEL_VXLAN:
+ 		case RTE_MBUF_F_TX_TUNNEL_VXLAN_GPE:
++		case RTE_MBUF_F_TX_TUNNEL_UDP:
+ 		case RTE_MBUF_F_TX_TUNNEL_GENEVE:
+ 			tunnel_seed |= TXGBE_TXD_ETYPE_UDP;
+ 			break;
+@@ -593,6 +595,7 @@ tx_desc_ol_flags_to_ptype(uint64_t oflags)
+ 	switch (oflags & RTE_MBUF_F_TX_TUNNEL_MASK) {
+ 	case RTE_MBUF_F_TX_TUNNEL_VXLAN:
+ 	case RTE_MBUF_F_TX_TUNNEL_VXLAN_GPE:
++	case RTE_MBUF_F_TX_TUNNEL_UDP:
+ 		ptype |= RTE_PTYPE_TUNNEL_GRENAT;
+ 		break;
+ 	case RTE_MBUF_F_TX_TUNNEL_GRE:
+@@ -713,9 +716,32 @@ txgbe_get_tun_len(struct rte_mbuf *mbuf)
+ 	const struct txgbe_genevehdr *gh;
+ 	const struct txgbe_grehdr *grh;
+ 	struct txgbe_grehdr grehdr;
++	struct txgbe_udphdr udphdr;
++	const struct txgbe_udphdr *uh;
++	uint64_t tun_type;
+ 	uint8_t tun_len;
  
-+/* The 40G PHY holds one FFE byte per lane, so a user supplied value has to
-+ * be replicated over the four lanes.
-+ */
-+#define S40G_TX_FFE_4LANE(v)        ((u32)((v) & 0xFF) * 0x01010101u)
-+
- #define BYPASS_CTLE_TAG             0x0
- 
- #define S10G_PHY_RX_CTLE_TAPWT_WEIGHT1      0x1
-diff --git a/drivers/net/txgbe/base/txgbe_type.h b/drivers/net/txgbe/base/txgbe_type.h
-index f9b5cbe61a..4ed4737043 100644
---- a/drivers/net/txgbe/base/txgbe_type.h
-+++ b/drivers/net/txgbe/base/txgbe_type.h
-@@ -739,10 +739,10 @@ struct txgbe_phy_info {
- 
- 	/* Some features need tri-state capability */
- 	u16 ffe_set;
--	u16 ffe_main;
--	u16 ffe_pre;
--	u16 ffe_pre2;
--	u16 ffe_post;
-+	u32 ffe_main;
-+	u32 ffe_pre;
-+	u32 ffe_pre2;
-+	u32 ffe_post;
- 	u16 fec_mode;
- 	u16 bp_capa;
- };
-diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
-index 0aa2d5719b..afed59d4cf 100644
---- a/drivers/net/txgbe/txgbe_ethdev.c
-+++ b/drivers/net/txgbe/txgbe_ethdev.c
-@@ -531,6 +531,7 @@ txgbe_parse_devargs(struct rte_eth_dev *dev)
- 	u16 ffe_set = 0;
- 	u16 ffe_main = 27;
- 	u16 ffe_pre = 8;
-+	u16 ffe_pre2 = 0;
- 	u16 ffe_post = 44;
- 	/* FDIR args */
- 	u8 pballoc = 0;
-@@ -540,6 +541,15 @@ txgbe_parse_devargs(struct rte_eth_dev *dev)
- 	u16 tx_headwb_size = 16;
- 	u16 rx_desc_merge = 1;
- 
-+	/* The 40G NIC holds one FFE byte per lane, so the E56 PHY defaults
-+	 * below are later replicated over the four lanes.
+-	switch (mbuf->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK) {
++	/* Resolve the UDP tunnel to its inner type without rewriting the
++	 * mbuf: the application still owns it and may re-transmit it.
 +	 */
-+	if (hw->mac.type == txgbe_mac_aml40) {
-+		ffe_main = S40G_TX_FFE_CFG_MAIN & 0xFF;
-+		ffe_pre = S40G_TX_FFE_CFG_PRE1 & 0xFF;
-+		ffe_post = S40G_TX_FFE_CFG_POST & 0xFF;
++	tun_type = mbuf->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK;
++	if (tun_type == RTE_MBUF_F_TX_TUNNEL_UDP) {
++		uh = rte_pktmbuf_read(mbuf,
++				      mbuf->outer_l2_len + mbuf->outer_l3_len,
++				      sizeof(udphdr), &udphdr);
++		if (uh == NULL) {
++			/* The outer offsets are application supplied and may
++			 * point past the end of the packet.
++			 */
++			return 0;
++		}
++		tun_type = (uh->dest ==
++			    rte_cpu_to_be_16(RTE_GENEVE_DEFAULT_PORT)) ?
++			   RTE_MBUF_F_TX_TUNNEL_GENEVE :
++			   RTE_MBUF_F_TX_TUNNEL_VXLAN;
 +	}
 +
- 	if (devargs == NULL)
- 		goto null;
- 
-@@ -588,6 +598,14 @@ txgbe_parse_devargs(struct rte_eth_dev *dev)
- 	hw->phy.ffe_pre = ffe_pre;
- 	hw->phy.ffe_post = ffe_post;
- 
-+	/* The 40G PHY expects one FFE byte per lane. */
-+	if (hw->mac.type == txgbe_mac_aml40) {
-+		hw->phy.ffe_main = S40G_TX_FFE_4LANE(ffe_main);
-+		hw->phy.ffe_pre = S40G_TX_FFE_4LANE(ffe_pre);
-+		hw->phy.ffe_pre2 = S40G_TX_FFE_4LANE(ffe_pre2);
-+		hw->phy.ffe_post = S40G_TX_FFE_4LANE(ffe_post);
-+	}
-+
- 	fdir_conf->pballoc = pballoc;
- 	fdir_conf->drop_queue = drop_queue;
- }
-@@ -690,7 +708,6 @@ eth_txgbe_dev_init(struct rte_eth_dev *eth_dev, void *init_params __rte_unused)
- 	hw->isb_dma = TMZ_PADDR(mz);
- 	hw->isb_mem = TMZ_VADDR(mz);
- 
--	txgbe_parse_devargs(eth_dev);
- 	/* Initialize the shared code (base driver) */
- 	err = txgbe_init_shared_code(hw);
- 	if (err != 0) {
-@@ -698,6 +715,9 @@ eth_txgbe_dev_init(struct rte_eth_dev *eth_dev, void *init_params __rte_unused)
- 		return -EIO;
- 	}
- 
-+	/* Parsing the devargs requires a known MAC type. */
-+	txgbe_parse_devargs(eth_dev);
-+
- 	if (hw->mac.type == txgbe_mac_aml)
- 		txgbe_override_mac_ops(hw);
- 
++	switch (tun_type) {
+ 	case RTE_MBUF_F_TX_TUNNEL_IPIP:
+ 		tun_len = 0;
+ 		break;
 -- 
 2.55.0.windows.2
 
