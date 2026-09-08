@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 144E1C79F82
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 16:27:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6AA3C79F82
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 16:27:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E767F40E19;
-	Tue,  8 Sep 2026 18:27:44 +0200 (CEST)
-Received: from egress-ip42b.ess.de.barracuda.com
- (egress-ip42b.ess.de.barracuda.com [18.185.115.246])
- by mails.dpdk.org (Postfix) with ESMTP id C0DDF4028D
- for <dev@dpdk.org>; Tue,  8 Sep 2026 18:27:42 +0200 (CEST)
-Received: from DB3PR0202CU003.outbound.protection.outlook.com
- (mail-northeuropeazon11020093.outbound.protection.outlook.com [52.101.84.93])
- by mx-outbound19-157.eu-central-1b.ess.aws.cudaops.com (version=TLSv1.2
- cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
- Tue, 08 Sep 2026 16:27:40 +0000
+	by mails.dpdk.org (Postfix) with ESMTP id B979B40ED6;
+	Tue,  8 Sep 2026 18:27:45 +0200 (CEST)
+Received: from egress-ip11b.ess.de.barracuda.com
+ (egress-ip11b.ess.de.barracuda.com [18.185.115.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 5F09240E19
+ for <dev@dpdk.org>; Tue,  8 Sep 2026 18:27:43 +0200 (CEST)
+Received: from OSPPR02CU001.outbound.protection.outlook.com
+ (mail-norwayeastazon11023123.outbound.protection.outlook.com
+ [40.107.159.123]) by mx-outbound44-93.eu-central-1c.ess.aws.cudaops.com
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+ Tue, 08 Sep 2026 16:27:41 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CmMC0oXeeQ6G3QYAOPgylCG0n+M0faXj4HbHV7mX9mm/SHpO9KTYbG488bJVwOIndgjY5ghtgATDUGekW5oAA088lvp9jI9cagRP7WwnfOuzjE9wTb/UhlcKtNAOtOpUa5DrCDyu+7qHoOT7McnRa2GGt6ulJ5pKCuMlvFrqho7eR55Scg/G4aIUdcUMK0Egi7vROgJHsO6u+BU/eIGqHYmJgF5+HK4J4YZq6K+i+hlKx+9DHUN/UlSj6oiJi/TEEuo+Bn3ZwGVkkQHwMGMKmJB/OJqqLq0GnUNW+5LNySLYka213mkrFbcwRHrR2zxbQYNG4kA6C35DI+CwoPv91w==
+ b=M3KPR0whY7kxB7LkfC2VxURVIVJYCnGc/rdeF6nLZKSBSNK0SvXhawJGQ9nkjjQGVPuZAA4ZVNqh8VRNvNBgOPE9zkDooixd7Y3L5DxEC4UKdAat6IIG+FUWR77YZhP/5da+NweCkg5ybPf+GR4fCkR+GsLhHiRoUj3Mtvn1xi9IaU+HuwaDmWL22qyLwLdbNxXv/OWcqls30YNdrQwEGiWl4Rnbpy+cW8uj6MehF9UV4pdW6z2u+Is7wGHJEScdnhqTj67hYGVxr11Khe/shbrt0dDXjoPFbQHgfNfAgrhztFVYGPxrORhpTtPA0II1lVVgZrGxBpa1cpGFIAH7Cw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xK927X1M+seEw6sXehutb6lG8o42fpfwNDIQrKR/qPA=;
- b=Q4PGJVRM5I5lxgNEMXydQn7h3Haxh5e0zVdQKpbJIaU9Wm3di9eSFVSuYA9yMuC5775RqH8VYB2rw7WJRqlURy7eLTTlR8xTU9etoITNpus16uVxluI2v9PgnzKUeY7IxaTzsVkJvhU2/pG31kTIhmDXS7G9PdfwTv5L0gUHLXUB8CuVECWyorE+gjcR3kWRHpXx6VenZYO8koxfd0mzLvcyBwdiNPCjrTX/aIXXoHl5x6FO1lfqkbEluagdK0UKOXpy+cHz2F1Wd2tzDSLd7oxWmvhDcMcvY6FeE6nFwSt78E+lcdHbdZbocKDpMNbSDhVFWbsz4h4nyEQVrD+jog==
+ bh=QkJbYnFMPVsCxv0FBn1z5oXh0TpC7nN9OBg1zi3U+XA=;
+ b=Rn9pOeHbEF7+b0YzJMjWqQ1C3WWaDsvESb+7TTlMjlPyGkMAYnyVSgewAnB8DFkYGcQYFYyLmP6nWP4qUKtyK+abj8nKl6R19nG/zyYkVTsz1aondbUieClBetBAkpPtNcUx9kXnFkXoF5wEZj9zNEiJ/Ifr7NE1QNAXKlTo8muynUbBFEatl55bnKa8ai32Wt7CA8mmgy5lI8qpJcSUOrXtDwGs2cCUgVhZFOFmTd1k8V+Yg+Uo+xYmCmF2HXLrnkEz2w9rlstLVDamdnRH54GatT5MGskKvRAMFXBsUiKm3O9BlGfWIUDrDH7TdKNyrqOgggv7nVHWyuGYdkWPfA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
  178.72.21.4) smtp.rcpttodomain=networkplumber.org smtp.mailfrom=napatech.com; 
  dmarc=fail (p=reject sp=reject pct=100) action=oreject
@@ -30,16 +30,16 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=napatech.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xK927X1M+seEw6sXehutb6lG8o42fpfwNDIQrKR/qPA=;
- b=c+VBCuzABBPox9CfxjfqO6XfbsdQrkvHdcsq10BX6lN18vN6PBeCFfduyaFj0RteoeqnCLB6SrD8WnGkrEiiWeogl/441JsdYZ9pERtvZIOs/T2hhB0RAy/PNNxd2XxGRCXri62Zrp8lS3Pf4YWB0UFvfa/QwjM9XxfQayVkh1c=
-Received: from DU6P191CA0068.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:53e::20)
- by BESP190MB2328.EURP190.PROD.OUTLOOK.COM (2603:10a6:b10:e9::24) with
+ bh=QkJbYnFMPVsCxv0FBn1z5oXh0TpC7nN9OBg1zi3U+XA=;
+ b=L6N/DwdLl6N6ri6MgFszg5cTnPbVYncdYUF5dXonB2xpCx54dNIihpC2jCTNv/d32bQbVFuf8/Vs574MsnHAeEvfzVM5Hoe6z8QgYSsbhFduY2UF5GVHfsIcpKgrENJUo0dYXggZ1TEgvTOtdkLqgpjvqIIFiD+LJkGCjhgeTE8=
+Received: from DU6P191CA0052.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:53e::12)
+ by PA4P190MB1151.EURP190.PROD.OUTLOOK.COM (2603:10a6:102:102::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.382.10; Tue, 8 Sep
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.382.15; Tue, 8 Sep
  2026 16:27:37 +0000
 Received: from DU2PEPF00028D13.eurprd03.prod.outlook.com
- (2603:10a6:10:53e:cafe::c) by DU6P191CA0068.outlook.office365.com
- (2603:10a6:10:53e::20) with Microsoft SMTP Server (version=TLS1_3,
+ (2603:10a6:10:53e:cafe::4e) by DU6P191CA0052.outlook.office365.com
+ (2603:10a6:10:53e::12) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.21.406.6 via Frontend Transport; Tue, 8
  Sep 2026 16:27:37 +0000
 X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 178.72.21.4)
@@ -50,58 +50,60 @@ Received-SPF: Fail (protection.outlook.com: domain of napatech.com does not
  client-ip=178.72.21.4; helo=localhost.localdomain;
 Received: from localhost.localdomain (178.72.21.4) by
  DU2PEPF00028D13.mail.protection.outlook.com (10.167.242.27) with Microsoft
- SMTP Server id 15.21.382.8 via Frontend Transport; Tue, 8 Sep 2026 16:27:36
+ SMTP Server id 15.21.382.8 via Frontend Transport; Tue, 8 Sep 2026 16:27:37
  +0000
 From: Serhii Iliushyk <sil-plv@napatech.com>
 To: stephen@networkplumber.org,
 	mko-plv@napatech.com,
 	ckm@napatech.com
 Cc: dev@dpdk.org
-Subject: [PATCH v1 0/3]  net/ntnic: fix virt queue data in BSS
-Date: Tue,  8 Sep 2026 18:27:21 +0200
-Message-ID: <20260908162724.463767-1-sil-plv@napatech.com>
+Subject: [PATCH v1 1/3] net/ntnic: remove unused unmanaged virt queue setup ops
+Date: Tue,  8 Sep 2026 18:27:22 +0200
+Message-ID: <20260908162724.463767-2-sil-plv@napatech.com>
 X-Mailer: git-send-email 2.45.0
+In-Reply-To: <20260908162724.463767-1-sil-plv@napatech.com>
+References: <20260908162724.463767-1-sil-plv@napatech.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU2PEPF00028D13:EE_|BESP190MB2328:EE_
+X-MS-TrafficTypeDiagnostic: DU2PEPF00028D13:EE_|PA4P190MB1151:EE_
 Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: fc5a9251-de6c-45e5-9f85-08df0dc6180b
+X-MS-Office365-Filtering-Correlation-Id: d0e88a3a-e26d-44e9-5145-08df0dc618a4
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|23010399003|82310400026|1800799024|36860700016|6133799003|56012099006|10067099003|18002099003;
-X-Microsoft-Antispam-Message-Info: ZU36eFDI8Lm0V/dSP4pJBFhxeWXVRVM8BSCW6/6CXY0K0sBpD4bWBthT5DW4Yh5GQejYyaz+CChipV5inIAk6EgBjJ8q3s/gt5rQY/3+AyVv+vp9nZGXCP2rHRR6I1Cg2fOnZRnc+B5NHvegWyZGxRa9vwMGdhBUvzc4IrqjbHtYJZXHW2eaBt4pWLnc5UVGlKP3NVr6n590EltZlmgspalAHvL8AQ3iED3lyu2VzKMi4BI9fOS07N2gjt4R9QxQ+Tp+69PgaZpDWzuJys4YS/5GjSpHDYDR9ioTrykyVR+FwFOyMGrWHSCkgp0WCIPlVKJcw52vq1ZOtEF0TjlFkJBw1pUSNi/VfiA9YncSNzIRr8gQ47zEkYPsWCZNL1CTAm457S41xl+V97mVXONsHDE9OE3pim6DFkBPQtEPRKV7vP0ogimTfyiaRWjl20/zzGcoQFKZAsLbMjg6dz/C29SWXnVvUEE4hJktrfsu2yRmQ/eNIuNPx7EYwzLTATxfJI/rTmdQ8JyW32Y5Kfqq6TLTzD6u8y+dFVWghbTxXnxb/ZHxBKvEKp9Ug9xNagYPjT0lX2mXaTW84jTdv86vbnZ2OAMmtsrzNuSKTXYeb97zUQbp+H/flFpN9LKUbJXzAqoSMYUH6zBOrGhAO/1UCVoGNXHoXa5pBVYPrj66CYZbPcn8vTQroK7sHlTbXF5WUfbE3UDZjqc1d796Y36ymg==
+ ARA:13230040|376014|23010399003|82310400026|1800799024|36860700016|10067099003|56012099006|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info: eJ/LW890iRPQfiixbhrydwA5PIyOYYw96ZXW+ovFN63pYUVh7NmGO9rAVoZsjoZ7GEzz5DbSt7gRxllysAuABxtzvTV4MI1FCCuD5vbeNAStE4aaP4ocoJ46xVM5+JQ6rHmFrhTog5PWyea1qslqA+/+jAMwKtnyiHiRCNShbvgF7dwgW+mbNIKgV+ruXgw1k24MauCAMD7e9U8KlR4y7q9a2ZagFi4B7tOvlZIVZaj3eKRX2jhueJgd64UbFJ977oPXTziYZsVm/mkbuuPjsxjFpbO9vePbTT+IKO/FymefoCevXqiiI483aF+5KBTguJZ8rTV2k+dYB7EDOae6I/TzJ+XmLeD5hbA2OZ0nEAltwCsL7RwAulqYr/1QMQsu4H4BwTuFy1KZ14zUT1VHzZo3o/QWtXyxe0B3kxaQVCHkYrS3+ruwPAgHBO7uyHe/eI3o9gw+r7ceU26UeV2dEurvgbjCgmwR/EHL9BJ2iMAwLtSy6CWLYqFQmYDASHs2TKYl/AJ91NH33jIsq13W+KkHe6qXfH+vyqm1jVqE5u63bSOiHUGBiza8awlc3HnVW8BzeAu9y7ZLv3Wmp/EXOmbu88w9mvvs0eWnBpgSGiY4fLpHUFDUcEvYZC1MiSQAb0QmFyQgsCA9YKIbtH9macM37t8dw+2L3kXvmcUo0UWDHfV1GwmpjbcxzimNqtQDddcLWusAL/j3ZIt3TwUYQQ==
 X-Forefront-Antispam-Report: CIP:178.72.21.4; CTRY:DK; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:localhost.localdomain; PTR:InfoDomainNonexistent;
  CAT:NONE;
- SFS:(13230040)(376014)(23010399003)(82310400026)(1800799024)(36860700016)(6133799003)(56012099006)(10067099003)(18002099003);
+ SFS:(13230040)(376014)(23010399003)(82310400026)(1800799024)(36860700016)(10067099003)(56012099006)(18002099003)(22082099003);
  DIR:OUT; SFP:1102; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 8VBXRl4j67nd/eIHDow3RFv0wX9PDdVbp7yFYQgDadE8BOoBXIstVlW4p9HOvmEdPDejCKRMpmvR3BYLr8unmB4UDC9ADXFdew52g63LSwnZafWgjKFvpsh+tCWBeaGSQlfo87uBKY+Hm1SfA6eWjmQdeN+WFyBoADalbU0Lxr9pG+K97pTveWMpvIHRek7B6/AstIgEg084bGD+mFl3qzoBWtO39tWcQKe8mAB4+rCK40Xp0ktOXBuu1lmrq8efNxQXVAft3QIDOCC64JC6vfGjpCwBXwnnY0mqEuM/qkgrSbx75az4FlO1+LMR9sS7tw5kgjoU0daFU66aB1wJ051zgKmEy3uGK+LOPo/lGTg7kEf7E86qqX8B8nGCQhSprZMOKeyigXuL2/SZfjvg1QgvAQ8atQErmcLF/WeOZjPrttwD+vHiw1MR3BerRr45
-X-Exchange-RoutingPolicyChecked: wjiSqtRc/G0CXDJUdXAH+97WHLzkiZs0wfVIpwoDSId1JpnusWP+luObtfT0QE/fKUDMIjaKPcxpMy9PK+Vr8P3ypg8zqRRsWs+DADx08gUiiY4dJu3qsm2JCchC4ZMyO+LgWCdxKCnNcIE4OPj/l14Et6bNHAxn9mPQaJGmjCmbgzD1LW486dVn4Uinl8Nh1r8jv5DvLcp5Ur1Q7glyfIcJmynuu+zch1DvlKn+Uxy8spNnSOOCkgJtOidrz+Jro5ob1W2aEeAotwKo57KjTg7NQuzvP5DQ3PTFcyM6/y5/wWy2y9wrHBis5LNfZza45Xz5J/txGzkPh69sXyLxDw==
+X-MS-Exchange-AntiSpam-MessageData-0: FeBqu84Ed6mN0dd/XQF843tn42NOVxZbJBMrIgWNpH4qK7oWlNCbMpr4h5iNlK7RZ4q2KNk2UaBBhA1zb9fCdh+S4dspyNvme1WyOeJyeDhqY2vRDBCZ6DB5sAZ0Np/5VYruD3tfhnphNPEnD3dYORRjbqjL0BzEWaPODfUwxGAZcqZ2VWqmz643xTJlEvsVLnYAAQdanbL3w4RS/yBzf58Jt+PveBbELml6JrzmrXgYVbTXfft42iSzKv2JZwNE2Ip5eXD+QbksIuoy1t9AHFL8r+MWMJRZ/sfeAloa/cPxR9zgWrzACQ5kyu7MCvsnNuIpmYb45BKbYmutTCUM/Ikh1HgQmOd0axgc2lWDjemM6jJk/iAr0+Ri/1OkKC9VNsJems+hMCI8z7LJrjqFFy7bCoVgL+3Bm4QZ1BOKN0mnLFTDEUGBldJfODG/K1Be
+X-Exchange-RoutingPolicyChecked: lU7OS1KDscvdwDf0JyB1GZxOjRnDKbGPbVY5Lv6PE7JCv6s3zalt5KDq34lxgOwgDdd316XRJDl1KlwMeXjXNx7vSUh9eBlEjNVg1wsGfhXR1VIyr49UQPii8HJpJOapUMhZlUBomTjii2nsHCgifx5IxNsgzFvCU738ThHkYxiYU76qbPmYFs5TSuCi7OXkcG7ZF2EZvlPmgAnCRiJGpo2EIH5zi7s9ErjOOmfj78MEaddMarBOX4mfbn8UkN5KLphZeqZSuR86fea6A4ez2phhZyeaHDaE6dJ8qheI1FvBCQhQqff5x0BiI3/R8LsTp2AHgFUWi02ReTVdcMcieQ==
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: TYKRSbrL9K78D5swX1GzP4IMYJ8E3N4Mrr8c2EYeK/PHRlb74uSQZTpOe3gzbpVboOXUFwOni+KAW5m8TFxJ/476gpeBdM0Zo8vAxJrpkDLwtbMQO+lfCCFO3GwUpVfbdESmHDM3+w3eIgrrL79y4pD+/tDqarzWkTDjTXlZbjapppHEFq7+u76n0gabp3/KF/jbl0/HxIA2Fs+mnXmPdYDDM2El6hrP7ecSy6TDEKb8m5vDNXipiFWvznUemti7grwKjCZQi3AspPuswMjEGEICx+ueZu0KQSJt8S6BR0t9Is0wTa+O0d21x4VeVZLGX1VA+7PeREsW88agOLKFSSawiw4Fpebb3IIVHefkLYBZOw2v48oi5z7PiBotkOCFpBwinehcQSsLJAaqCEgCtOpeKfFeZHF1Y35XNH4J1GanOXgpY2ZE/Aov6X/LeNJTyBquDpb5rHiIcTa3BbVPqk0suGkCaoThsX/H6HEzp7hl/Xo3EUja2J0kD0tMhji0HHdSwg9HIqyzHaG0HXa9lfR9eLmorMSeO8w3iEgnUBdd+Dos4V2d1z/TGvpaZbdUbE2iyaLvvu+/eCsCWM/pDj8BvkYBbjWHfKrUUs0p034HRKK6ppn9em3Rb5/Fko03rvs7YQTHsXkC4Gh/Q4vEZw==
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: yAB5TjQL44Yhbua3Rz3u9BWQWf2/FS1tjEhcJseB3b4T3ohf/UFhw0NsUVmoZa584d6A5E3TgNNax4AdsbO/4E91HTvJ8OAWwA/POwqD/Jlw3Hok8Pa3LgFJDUA95ZypoVCKTzlkMaTz9B9pnpnhiil767sUDertIVzRY878XxirmDbFSiDrQ2eqd0nutk7gCQuS1AltZrZ0Ws+6ifiTdX6j+4U8+HxUZM0AISQ204mAX9JmEv48gGR/2fxMlanJQU4W8Zi6z/2wGwAiPbvibGJ2FS/2Jiiu2JjJJhs0HZ0K4HK+yXsft08sTH4dG+stFGM/F21+fg4iG/f32ShdXGMaZeM9Jl5gBWTu3r90FibmOq3tckgd1QxexNtjyNVZVWV/Q9dGav6+NLSgeY5zIqvlfCOrej+k4aFoqWl+ctQxP6YQuPZsayWUiBzdSSa9vSlXNWt9HA0XsYKrKuLR6vA5PtgNgQ+iwH3DQMOIfIezh468vGnd4KkwqfU+A+/5IpwIyOsnNjAQQFJMglx4HFkbaL0cCHBl2CAl0kCF0bMnToyGL3+1wWr9Rx2U1P35vOrhE8HhSecvlyCU+bf1Dghpexw5mGZkz4axPLxz0916ua+U+3YuXpfZnyHIc+z47FrOJMGAJeEAyRRJURnzVw==
 X-OriginatorOrg: napatech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2026 16:27:36.6764 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc5a9251-de6c-45e5-9f85-08df0dc6180b
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Sep 2026 16:27:37.6861 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d0e88a3a-e26d-44e9-5145-08df0dc618a4
 X-MS-Exchange-CrossTenant-Id: c4540d0b-728a-4233-9da5-9ea30c7ec3ed
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c4540d0b-728a-4233-9da5-9ea30c7ec3ed; Ip=[178.72.21.4];
  Helo=[localhost.localdomain]
 X-MS-Exchange-CrossTenant-AuthSource: DU2PEPF00028D13.eurprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BESP190MB2328
-X-BESS-ID: 1788884860-305021-8203-3240-1
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4P190MB1151
+X-BESS-ID: 1788884861-311357-15606-2163-1
 X-BESS-VER: 2019.1_20260902.2230
-X-BESS-Apparent-Source-IP: 52.101.84.93
-X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVoaWxpZAVgZQMNnYMDXF3DTR0N
- DQMjnZ3MDc2MI4ycTMzMzc0MDIINVYqTYWAB6UNzpBAAAA
+X-BESS-Apparent-Source-IP: 40.107.159.123
+X-BESS-Parts: H4sIAAAAAAACA4uuVkqtKFGyUioBkjpK+cVKVkbGJmZAVgZQ0NDC1NzC0MTAIM
+ nEyCDVwMDMwNzCzNTQzNggLSnV2NBCqTYWAJggsZNBAAAA
 X-BESS-Outbound-Spam-Score: 0.00
 X-BESS-Outbound-Spam-Report: Code version 3.2,
  rules version 3.2.2.275977 [from 
- cloudscan14-121.eu-central-1a.ess.aws.cudaops.com]
+ cloudscan20-20.eu-central-1b.ess.aws.cudaops.com]
  Rule breakdown below
  pts rule name              description
  ---- ---------------------- --------------------------------
@@ -122,49 +124,70 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This series addresses the bug report "ntnic: virt queue data in BSS"
-(Bugzilla ID: 1975). The report lists five problems with keeping the
-virt queue state in static arrays; each is addressed as follows.
+The unmanaged Rx/Tx virt queue setup ops have never had a caller;
+only the managed variants are used. Drop them in preparation for
+allocating the queue state per queue.
 
-- BSS memory is slower than hugepages because of TLB overhead, which
-  can cause performance loss in the hot path.
-  The per-queue state, and the copy of the packet buffer descriptors
-  indexed on every burst, are now allocated from the EAL heap.
+Signed-off-by: Serhii Iliushyk <sil-plv@napatech.com>
+---
+ drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c |  2 --
+ drivers/net/ntnic/ntnic_mod_reg.h             | 30 -------------------
+ 2 files changed, 32 deletions(-)
 
-- Hard coding the size wastes space.
-  The 128-entry Rx and Tx arrays are gone; one object is allocated
-  per configured queue and freed when the queue is released.
-
-- Data in BSS is not visible to a secondary process.
-  The state now lives in EAL memory. The PMD still does not support
-  primary/secondary operation, but this no longer stands in the way.
-
-- NUMA aware allocation was not possible.
-  Both allocations are made with rte_zmalloc_socket() on the NUMA
-  node of the adapter, next to the rings and buffers they describe.
-
-- Cache alignment.
-  The queue object is cache line aligned and no longer shares a line
-  with a neighboring queue.
-
-Patch 1 drops two never-called setup ops so that only the managed
-setup and release paths own the queue state. Patch 2 makes a failed
-hardware setup visible to the caller, which patch 3 relies on to free
-the queue object on failure. Patch 3 is the fix itself; it also fixes
-a leak of the descriptor copy on queue re-setup and an ignored
-allocation failure that led to a NULL dereference in the burst
-functions.
-
-Serhii Iliushyk (3):
-  net/ntnic: remove unused unmanaged virt queue setup ops
-  net/ntnic: check virt queue hardware setup result
-  net/ntnic: fix virt queue data in BSS
-
- drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c | 334 +++++++++++-------
- drivers/net/ntnic/ntnic_ethdev.c              |  52 ++-
- drivers/net/ntnic/ntnic_mod_reg.h             |  30 --
- 3 files changed, 245 insertions(+), 171 deletions(-)
-
+diff --git a/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c b/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c
+index 56eb710d25..7c10acb4e2 100644
+--- a/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c
++++ b/drivers/net/ntnic/dbsconfig/ntnic_dbsconfig.c
+@@ -1432,8 +1432,6 @@ static void nthw_release_tx_packets(struct nthw_virt_queue *txvq, uint16_t n, ui
+ }
+ 
+ static struct sg_ops_s sg_ops = {
+-	.nthw_setup_rx_virt_queue = nthw_setup_rx_virt_queue,
+-	.nthw_setup_tx_virt_queue = nthw_setup_tx_virt_queue,
+ 	.nthw_setup_mngd_rx_virt_queue = nthw_setup_mngd_rx_virt_queue,
+ 	.nthw_release_mngd_rx_virt_queue = nthw_release_mngd_rx_virt_queue,
+ 	.nthw_setup_mngd_tx_virt_queue = nthw_setup_mngd_tx_virt_queue,
+diff --git a/drivers/net/ntnic/ntnic_mod_reg.h b/drivers/net/ntnic/ntnic_mod_reg.h
+index 81ba1e44f9..1b5047b3dd 100644
+--- a/drivers/net/ntnic/ntnic_mod_reg.h
++++ b/drivers/net/ntnic/ntnic_mod_reg.h
+@@ -24,36 +24,6 @@
+ 
+ /* sg ops section */
+ struct sg_ops_s {
+-	/* Setup a virtQueue for a VM */
+-	struct nthw_virt_queue *(*nthw_setup_rx_virt_queue)(nthw_dbs_t *p_nthw_dbs,
+-		uint32_t index,
+-		uint16_t start_idx,
+-		uint16_t start_ptr,
+-		void *avail_struct_phys_addr,
+-		void *used_struct_phys_addr,
+-		void *desc_struct_phys_addr,
+-		uint16_t queue_size,
+-		uint32_t host_id,
+-		uint32_t header,
+-		uint32_t vq_type,
+-		int irq_vector,
+-		uint8_t rx_deferred_start);
+-	struct nthw_virt_queue *(*nthw_setup_tx_virt_queue)(nthw_dbs_t *p_nthw_dbs,
+-		uint32_t index,
+-		uint16_t start_idx,
+-		uint16_t start_ptr,
+-		void *avail_struct_phys_addr,
+-		void *used_struct_phys_addr,
+-		void *desc_struct_phys_addr,
+-		uint16_t queue_size,
+-		uint32_t host_id,
+-		uint32_t port,
+-		uint32_t virtual_port,
+-		uint32_t header,
+-		uint32_t vq_type,
+-		int irq_vector,
+-		uint32_t in_order,
+-		uint8_t tx_deferred_start);
+ 	struct nthw_virt_queue *(*nthw_setup_mngd_rx_virt_queue)(nthw_dbs_t *p_nthw_dbs,
+ 		uint32_t index,
+ 		uint32_t queue_size,
 -- 
 2.45.0
 
