@@ -2,73 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B92CAC79F82
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 17:55:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D5FDC79F82
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 18:10:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ABBEC402D8;
-	Tue,  8 Sep 2026 19:55:42 +0200 (CEST)
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com
- [209.85.216.53]) by mails.dpdk.org (Postfix) with ESMTP id 9505E4028D
- for <dev@dpdk.org>; Tue,  8 Sep 2026 19:55:40 +0200 (CEST)
-Received: by mail-pj1-f53.google.com with SMTP id
- 98e67ed59e1d1-38511175ad3so4167321a91.2
- for <dev@dpdk.org>; Tue, 08 Sep 2026 10:55:40 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 62821402D8;
+	Tue,  8 Sep 2026 20:10:38 +0200 (CEST)
+Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com
+ [74.125.227.140])
+ by mails.dpdk.org (Postfix) with ESMTP id 1BB474028D
+ for <dev@dpdk.org>; Tue,  8 Sep 2026 20:10:37 +0200 (CEST)
+Received: by mail-pj2-f12.google.com with SMTP id
+ d9443c01a7336-2d747eefae4so4156975ad.0
+ for <dev@dpdk.org>; Tue, 08 Sep 2026 11:10:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788890140;
- x=1789494940; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788891036;
+ x=1789495836; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=QbEr4xP8z6IeFgDkNVAtXO/eJsY0x2aWxTyy3SVt7GM=;
- b=Ed+8W1GgQwn+JA54F5Ls9oK8A0Gytnt6FYC6Ezxjsv1HJQyeumIKmW36iLehigJiwt
- vEiq0LirR8sL1ccnintXoNf1KVRYvGi79eq3sFAgTUxMq4WPXOdOZXWZ6Crc3p1eF5Cg
- RKewIUjrP4ephYZ0PbSCkYh2jmQ8AtCyh382CxVChTVlG8CuEC2+TH4o2oqQfQgalCi5
- xl9kQhZbFB7cLBtYf1vPuUmYWn7cDcLwEjJ/6vE9RPiwN7pukYg31HB6MOpf0/sEiRZa
- JrS9Vxe9Aai89QmB8Zr+vkSjlTEl+6fIbq+wyzx8uSKqe2HN0lja0shEVSnKrneCk9Jk
- pMeA==
+ bh=Ug2VerF+Mos9cyDrEKLnj29kG89MlXjcoo8fLWVr7Cw=;
+ b=zVVlrl+/M1Enf6TvZ/6vBNvEXdqkLBHE+KtlC6EUxfduKmWkMqVccZ8Y9IKSmCS5UA
+ IdlOOGUNaBHmqf+7a8EzCjyRTvPd9E5WO3k4NXr31G0jKq92t6RLXtpCZ4vp3NZzTYbI
+ ZCIBLtEcXqdMHJ5YBUeQroXzCLAIliiZq9JlFUREpBgpsv32hJjXDDwDUv1rsO2esKyT
+ 0RZ2sDN8u6/R4vjyJtfK4r6INIo5gLINwFC2vxvIHL+QjfCgvtxusEyLf2soJrYqgiTK
+ 1OZZ5qWj2I33stkYX2JilmtauPhq8drlEJoEdJa9TeuYceJjZhi+YTly1VZYVg1p8Sx9
+ 7cNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788890140; x=1789494940;
+ d=1e100.net; s=20251104; t=1788891036; x=1789495836;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=QbEr4xP8z6IeFgDkNVAtXO/eJsY0x2aWxTyy3SVt7GM=;
- b=R+wFdTXWTUBrW46jpWiVIdkN3M9ydFjH0t3aAevV+Y+vmkf9iIelGS567wkSQ6ImqN
- vmHF5kEZYEu3j7k4VkQZ6aHyUc+Jf0lCso1aLG7bk+6okbkITQ7Ws4M41Qi5GCvlWmG7
- hNpxxPiR9c6PcfJ4/+agKo8ux1QZqpAn60ZzgqCF6PjD8PUnQhhBXiZkTve69Y8aNc3k
- OkN1KTFUa0A2rc/CM5pVgvVg+/rTLxkGmQD5I7SjEumSeEFzVHTms0fmuMSWlu26W6P3
- k8Xlj5cgIxXx75uyfLgBPDlsXhbw2UaMCgyhrH7SKkEHpc9+AbHqsBZTVqdaFGMPF6iJ
- RRaQ==
-X-Gm-Message-State: AFuF++mxqtVJjeaWXcPnFNwxplhiHiPIdiAF7ytplb+141O8mZbgmH+L
- ZIFGyf/EeZRlR342WyBowdXpsdXIrlYYJ494TUeI48aufLus+K3pBYJ892WtvXGQ+PM=
-X-Gm-Gg: AYBFou21VIaHjiszc4YoNvu0dAy7Um4BI7RjjK9zy2/AZYCXCPa/dDF6QJMYgeeqWFf
- kyLzj7T9TjgaumyxLXxsqpyVLu0r+cIWWlT1NWoZ+t4fJHz31bxrB4t9rDmoGvqWKZ43c54u9Ge
- DizRz9JLyUvWQcupNefOABsVTwQOw0e4COhAt8lggm3ilgo9V7CC85X02yFoEmY5DZE2gRVOssx
- tUalEPcmNmyvO+UnWkxe+eUw6DPs6vjgafucvhkAT9A3srM1MMPCUB9Soy5l80ySmVRQDqEtYgO
- ALiTBLaw/LKTuHHb/i3fciWikBnjnDvJJN3iCNgKEzrQSxzdTb/bGQwBU8JR1RqVNEQfb2J2yH1
- +2jGwczScQwGKE8lgtXoLwkdz4tNurK4DreUS/0Km0MDrUvZAS/uYecTiP8zxoUhdSkXBUawfHT
- b1cBObxgUK+h1Jxzmx9pEmf5P6Eev0++DOc7tThhTqzc9h5NyOainoHGHqTEdiQCawJIfWWc3Bt
- rNd/EQe/2GkrEYZAz1NQI7sf7io7g==
-X-Received: by 2002:a17:90a:e703:b0:398:e969:87ef with SMTP id
- 98e67ed59e1d1-39b2629926dmr47235706a91.24.1788890139485; 
- Tue, 08 Sep 2026 10:55:39 -0700 (PDT)
+ bh=Ug2VerF+Mos9cyDrEKLnj29kG89MlXjcoo8fLWVr7Cw=;
+ b=QK2XPH/q0HLmCWfLF9yWBu36KCQ7/NuDP+ph7EFKOQu0/soU9pGwPaeNHerohRe5ee
+ Py6BOlYhAstCu7E1nM9Uxq/5UyBW3ptP42TW045DLF/P6JNofcHTmsGpNZdrmgYjirdM
+ nX3eqrdG1bXs7PlZ5Y0HS8/ykMw9z1rTmVJeTM2LDj1ickZ1Iskw8epoXX8fe+aUtVZ6
+ ZKNRyXIdDfSAduMOSbRWdgwCaK+L4RyHKGLmY/FrTuLog1nYLdI/W0W1CCLotgC3tOYf
+ QJ80c6uwudKLFOENT138rWXpTvhaMoOmjwl6O4uY6mf/8Zz1GHO28g0/dCl3IbNO4I8w
+ hnSw==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBy3yAOTlbbLvbWeX+DIbPsbQjXqBfRlRyNXXah0PDqzxEohs8oFPc4VeGDudst0m2YxnGc=@dpdk.org
+X-Gm-Message-State: AFuF++nn4vFu1n7ZTE00DRJE0t8v1i5hzsNBfxY/hhIQnJ8Z88/epdpZ
+ kkZKtct08FySXBGeWbK6/Wm1Otlswu5q+oHHlIKiXS11kSMUHs+WwQ7WIQ750wAZBf4=
+X-Gm-Gg: AYBFou1qbnm1gTIkizjV4kR6o9lUxB/S7TnS71586FjTe4IOtVWGQFpnp+sD/kaIhoQ
+ fRGWaXoPRosyhog65eRFPfAtmNRn7kK1Ns3I5tSeCPZmjP2cLIMua/xoxn0uXoxOllMSID3HITe
+ b6nBFDCeBqPHWrggUkYraPElRXZo0Lr2g3qOGRQOHk/hj9pyOWJl0ogG+fVtiORUFzghSgMPC+S
+ OnzIECBJOGr19NMbbF8ODUAHjG0qL+vhAroDXuggsHAYanFkW3pI8T2VC6umH6osOEL+ofoBl2y
+ BcuW0rUqMq6RZqUL+Pi8PeGTX0wuXGy5jwio+4pHMUf/5si/xhk8NbUyWJ5103WZPBR2h/SbxpI
+ Qp6hhbG0VFJ0/G4YSU4AzQK1u0DMS5uA5bn22ROBX9PUNbkYZy376g5Xd+2A9LLk9xei8OCup4w
+ cvTMLV+nC+tbxxNm+euTlcKeiSALgDg2lYQKUDs9HCJuKwoGNzHOmqSgDTNxswOFWXi8haR8XcZ
+ srvdsC+c6vtFPOMS1868XJ9sJbq/A==
+X-Received: by 2002:a17:90b:57ce:b0:38e:6d55:b1a6 with SMTP id
+ 98e67ed59e1d1-39b8bc951e5mr6692142a91.3.1788891036084; 
+ Tue, 08 Sep 2026 11:10:36 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39b2ad8028dsm8239398a91.4.2026.09.08.10.55.37
+ 98e67ed59e1d1-39b08cacba5sm35263229a91.12.2026.09.08.11.10.33
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 08 Sep 2026 10:55:39 -0700 (PDT)
-Date: Tue, 8 Sep 2026 10:55:29 -0700
+ Tue, 08 Sep 2026 11:10:35 -0700 (PDT)
+Date: Tue, 8 Sep 2026 11:10:22 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Mukul Katiyar <mukul@versa-networks.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>
-Subject: Re: [RFC] Highly efficient reader-writer lock (EPRW) for
- mostly-read applications
-Message-ID: <20260908105529.4ac68572@phoenix.local>
-In-Reply-To: <DS7PR11MB885556AF77C5110C85609B7B8CB22@DS7PR11MB8855.namprd11.prod.outlook.com>
-References: <DS7PR11MB885556AF77C5110C85609B7B8CB22@DS7PR11MB8855.namprd11.prod.outlook.com>
+To: Andrei-Niculae Petre <p31andrei@gmail.com>
+Cc: konstantin.ananyev@huawei.com, dev@dpdk.org, stable@dpdk.org,
+ sean.morrissey@intel.com
+Subject: Re: [PATCH v2] examples/l3fwd: fix compilation when DP debug on
+Message-ID: <20260908111022.25fd9aac@phoenix.local>
+In-Reply-To: <20260731133739.223235-1-p31andrei@gmail.com>
+References: <20260414025137.91776-1-p31andrei@gmail.com>
+ <20260731133739.223235-1-p31andrei@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,104 +86,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 8 Sep 2026 03:55:12 +0000
-Mukul Katiyar <mukul@versa-networks.com> wrote:
+On Fri, 31 Jul 2026 16:37:39 +0300
+Andrei-Niculae Petre <p31andrei@gmail.com> wrote:
 
-> Hi all,
->=20
-> Sharing a userspace reader-writer lock that has been running in productio=
-n in a DPDK-based network function for several years and wanted to check if=
- there would be interest in contributing it to DPDK as rte_eprwlock.
->=20
-> The Enhanced Passive Reader-Writer (EPRW) lock eliminates atomic operatio=
-ns on the reader fast path, giving near-flat per-reader performance as core=
- count grows. It is compatible with poll-mode lcore discipline =E2=80=94 no=
- heartbeat or periodic refresh required from registered threads.
->=20
-> Details, correctness proof, memory ordering analysis (x86-TSO and ARM), a=
-nd performance evaluation against rte_rwlock and pthread_rwlock_t are in a =
-preprint at:
-> https://zenodo.org/records/22636501
->=20
-> Would this be a useful addition to DPDK?
->=20
-> Regards,
-> Mukul Katiyar
-> Versa Networks
->=20
+> Update l3fwd example app to fix compilation when building dpdk with
+> RTE_LOG_DP_LEVEL=RTE_LOG_DEBUG in config/rte_config.h .
+> Move l3fwd_acl.h include above all #ifdef L3FWDACL_DEBUG checks,
+> as previously one ifdef would evaluate to false all the time (as
+> header include was added too late).
+> 
+> Adapt maintainers line from previous examples/l3fwd-acl (removed in
+> 6de0ea50e9b9) to examples/l3fwd/l3fwd_acl* after l3fwd-acl app
+> unification into l3fwd. In 6de0ea50e9b9, a line with maintainer
+> expertise was removed.
+> 
+> Own testing of the l3fwd example:
+> 1. It now compiles with "#define RTE_LOG_DP_LEVEL RTE_LOG_DEBUG" in
+>    config/rte_config.h. See Bugzilla ID 1318 comments for full error
+>    seen before this patch.
+> 2. I ran the l3fwd app with IPv4/IPv6 ACL rules to see the prints (when
+>    RTE_LOG_DP_LEVEL RTE_LOG_DEBUG is set) in the application around ACL
+>    work as expected. See extract below (I added \ to format to 72chars):
+> 
+> // dump_acl4_rule extract:
+> Packet Src:192.168.1.100 Dst:192.168.1.101 Src port:2048,Dst port:1846 \
+> hit ACL 1 - 192.168.1.100/24 0.0.0.0/0 0 : 65535 0 : 65535 0x0/0x0 \
+> 0xffffffff-0x1ffffffe-0xf0000001
+> 
+> // dump_acl6_rule extract:
+> Packet Src2001:db8:1::100
+> Dst2001:db8:1::101
+> Src port:32768,Dst port:21005 hit ACL 0 - \
+> 2001:0db8:0001:0000:0000:0000:0000:0000/64 \
+> 0000:0000:0000:0000:0000:0000:0000:0000/0 0 : 65535 0 : 65535 \
+> 0x0/0x0 0xffffffff-0x1fffffff-0xf0000000
+> 
+> Bugzilla ID: 1318
+> Fixes: 6de0ea50e9b9 ("examples/l3fwd: merge l3fwd-acl example")
+> Cc: stable@dpdk.org
+> Cc: sean.morrissey@intel.com
+> 
+> Signed-off-by: Andrei-Niculae Petre <p31andrei@gmail.com>
+> ---
 
-As an exercise, also point Fable AI to do analysis of the paper versus curr=
-ent DPDK code.
-Surprisingly AI is relatively good at understanding locking; probably becau=
-se it has been
-trained on a huge data set of academic papers.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e99a65d197..6b6446a998 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1756,6 +1756,8 @@ F: lib/acl/
+>  F: doc/guides/prog_guide/packet_classif_access_ctrl.rst
+>  F: app/test-acl/
+>  F: app/test/test_acl.*
+> +F: examples/l3fwd/l3fwd_acl*
+> +F: doc/guides/sample_app_ug/l3_forward.rst
 
-Short version: this is a write-up of Versa fixing a bug in their own
-userspace port of Liu's PRW lock. It is not a critique of rte_rwlock
-and does not cite any DPDK primitive (DPDK is cited as "Intel
-Corporation 2024", which tells you how closely they looked). "Outdated
-DPDK" is too generous; there is no DPDK survey at all. The DPDK
-relevance is only the deployment context.
-
-Analysis:
-
-1. What the algorithm actually is. Once the writer scan checks `RP[i]
-=3D=3D Present && TV[i] !=3D GV`, the version counter only distinguishes
-"spinning at boundary" from "inside CS". A three-state per-thread flag
-(ABSENT/WAITING/ACTIVE) does the same job with no GV, no unlock
-broadcast, no rollover. The only thing TV buys is a WAITING to ACTIVE
-transition without a store+fence, because the writer's GV++ invalidates
-the match for it. That is the contended path, so it does not affect
-throughput. Strip that and you have a per-thread-flag rwlock: Hsieh and
-Weihl 1992, Linux 2.4 brlock, Dice/Shavit read indicators,
-percpu_rw_semaphore slow path. The "heartbeat" was self-inflicted: they
-dropped the kernel IPI and did not add an offline state. `RP =3D Absent`
-is `rte_rcu_qsbr_thread_offline()`.
-
-2. The premise contradicts DPDK practice. Section 3 says per-lcore
-periodic reporting is incompatible with poll-mode discipline.
-`rte_rcu_qsbr_quiescent()` per loop iteration is exactly how lib/rcu is
-used, with online/offline for idle threads. Section 10 admits the QSBR
-analogy but not that DPDK ships it. liburcu (Desnoyers et al., TPDS
-2012) is the canonical treatment of replacing kernel IPI/quiescence in
-userspace and is not cited either. RCU also gives readers zero wait and
-real reclamation; EPRW writers still spin on every in-CS reader.
-
-3. No comparison, no numbers. Missing: rte_rwlock (4 bytes, WAIT bit so
-writers cannot starve), rte_pflock (bounded wait both sides),
-rte_seqlock/seqcount, rte_rcu_qsbr, rte_mcslock, rte_ticketlock.
-Microbenchmarks "left for future work". EPRW has no fairness: a reader
-spinning on W must catch a window between one writer's `W =3D Absent` and
-the next writer's CAS, and back-to-back writers skip it forever since
-its TV matches. That is the case pflock was added for.
-
-4. Concrete defects:
-   - Lemma 8.1 is wrong. `Try_Write_Lock` increments GV and on failure rele=
-ases W without the broadcast. A caller retrying try_wlock against a reader =
-stuck in its CS (preempted control thread, slow path) gets 65536 failures, =
-GV wraps, `TV[i] =3D=3D GV`, false boundary match, exclusion violated. The =
-16-bit variant is unsafe as published. Trivial fix, but the proof did not c=
-over its own try path.
-   - ARMv8 `Read_Lock`: the exit load of W has no acquire. The DMB after th=
-e RP store does not order that load against later CS loads, so a reader can=
- see pre-write data. Same in `Try_Read_Lock`. Section 6 walks every barrier=
- site and misses this one. Fine on TSO.
-   - Plain-C data races: readers load GV while the writer does a non-atomic=
- increment; TV[i] is stored by thread i and by the broadcasting writer. Wor=
-ks on hardware with aligned words, UB in C11. Any DPDK version would need r=
-te_stdatomic relaxed ops anyway.
-   - Compact mode packs 3-byte slots: 32 threads in 3 cache lines, so every=
- read lock/unlock is a store to a shared line. That reintroduces the cohere=
-nce traffic PRW exists to avoid. The 64-byte alignment in the original is t=
-he whole point. No measurement.
-   - Write_Unlock broadcast invalidates N reader-owned lines per write on t=
-op of the scan. Fine for read-mostly, but it is why per-lcore-slot locks do=
- not fit "hundreds of locks", which is their own compact-mode motivation.
-   - `TV[tid] =3D GV` in the Write_Lock contention loop is dead: a plain co=
-ntender has RP Absent, so the winner's scan skips it regardless. Only Upgra=
-de needs it.
-   - "Non-atomic upgrade" (return 1) is a read unlock followed by a write l=
-ock; data can change in between. The name invites misuse.
-   - Reader fast path uses MFENCE. rte_smp_mb() uses `lock addl` on x86 for=
- a reason; xchg for the RP store folds store and barrier.
-
+I don't think all of l3_forward should fall under the ACL maintainer bucket.
