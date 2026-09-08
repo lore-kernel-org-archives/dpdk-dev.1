@@ -2,31 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E0BCC79F99
-	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 13:28:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3231C79F99
+	for <dpdk-dev@archiver.kernel.org>; Tue,  8 Sep 2026 13:28:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 06DFD40ED8;
-	Tue,  8 Sep 2026 15:28:13 +0200 (CEST)
-Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
- by mails.dpdk.org (Postfix) with ESMTP id 01463402DF;
- Tue,  8 Sep 2026 15:28:10 +0200 (CEST)
-X-QQ-mid: zesmtpsz3t1788874088t3ca5703c
-X-QQ-Originating-IP: zZ326iEX7W8rSuHhv1+ovToSo1nc5dMJ2d1Rm/M9K0M=
+	by mails.dpdk.org (Postfix) with ESMTP id 2F284410D4;
+	Tue,  8 Sep 2026 15:28:14 +0200 (CEST)
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
+ by mails.dpdk.org (Postfix) with ESMTP id 07C59410D0;
+ Tue,  8 Sep 2026 15:28:11 +0200 (CEST)
+X-QQ-mid: zesmtpsz3t1788874085t890ee287
+X-QQ-Originating-IP: JHWFn84tZ9Qw1erv8BTfkZUpXoFe/LRdxDH6Wt/ABFg=
 Received: from DSK-zaiyuwang.trustnetic.com ( [36.24.66.61])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Tue, 08 Sep 2026 21:28:06 +0800 (CST)
+ id ; Tue, 08 Sep 2026 21:28:03 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 9501699580784973963
-EX-QQ-RecipientCnt: 4
+X-BIZMAIL-ID: 5240350349390422308
+EX-QQ-RecipientCnt: 5
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
- Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v3 09/15] net/txgbe: fix SFP hot-plug when auto-negotiation is
- on
-Date: Tue,  8 Sep 2026 21:25:54 +0800
-Message-ID: <F7992AACC9C140BC+20260908132742.2661-10-zaiyuwang@trustnetic.com>
+ Jiawen Wu <jiawenwu@trustnetic.com>, Ferruh Yigit <ferruh.yigit@amd.com>
+Subject: [PATCH v3 08/15] net/txgbe: add offload support for tunnel type UDP
+Date: Tue,  8 Sep 2026 21:25:53 +0800
+Message-ID: <C031DA3742ED3D93+20260908132742.2661-9-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.55.0.windows.2
 In-Reply-To: <20260908132742.2661-1-zaiyuwang@trustnetic.com>
 References: <20260827114309.10530-1-zaiyuwang@trustnetic.com>
@@ -35,24 +34,23 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: NFN0Qhrj1+QEsgOAcPXn1gMWwGmEu8LbX3ySTYHcnvZDZoPz+W48Bpi6
- +o9gFxXpQGx1DDds+TYPUuL2QIRJ2XZLkh9ky5aweU0ohrUmb7lppVISqgxwd1M9HqAkgIr
- xs5qHwqpQZFlvUXrwyIazCejXu7uKPDs8nwpcWzl4qegrhT0Ipzd9r/bNyAr/yptQvb3am/
- xCTd3aVyaguyZzL8hjsmHZ5DrY/ROvCqDeoBmELX/R0rB1CQR4Rv96cT1G9ip7R8tDBPguJ
- GREkKLSD+8OENyqP83iizDGOlfcABMaDGEOGPL8jyN6mFsXJFNcwrpjDKsrzZf4Opg+BlN+
- YR3Yo7Lg7BDAcAqHjdJ0PUGhuDVBX5SHHM7gDcozGUjjxaFmUwYS6O4q5xoUg9m1BJTvbSC
- NyBX5msTOhcZjGi3aJWlLrNVoIHV7SG/ORIZ34JG1cxnafImLOZZL5d5/W/IunoqgEs6Vje
- wvSGJIYoo07EN145Nl5N+elrm2NeWI5MrqDpQGOeYVZK5kTS1zz07Exr/8MC8PAh0f33mt+
- 4ZrViFLzm4g0uyApT0YbmqHNW3QA5JQYY8iWG/Pp1bk6Gu2Ho8C1DKfEAAfHFunzBs1rrfv
- jJwaZQc3m2pz85G2hcskbrCe+4xzwT8/zeElBWQ/Kb9rrz/KMfCzo+kXOq6OeR87K33AVZJ
- sTFqTpyRKwFNI9oykSYlUuKeDq39lyRrj55XWANujw9O8LzEkiWK4HxlXhO3MxB7taPfySF
- 41HBhxDL7ADvrBGI00Sff9zJpVGcYjhg0iHT+YKdgQ2bb2xEjOo35ZivVpaoFsBWZBu2sU6
- ZcL2to+tGYVIgZQV3Z/NPOBKehbQUz250QE+//kj1c9nk1thtrqgcd6VKXEGEo+eYGzo3hO
- 7uFpqNWsOttvcSJYuTpo0uudw0tLEZ+yod2TMiZvxMi85l2HnpOMQcNL+KjBlGYPq5qacy5
- qeCxy6KbjSsiwFyA1LmsCnllwPsMPeyEh2ZOqYaGjty2Wk9LwEpPQkMX4w7n+dACdZjOKeR
- pAAMLOrHIJBaQsY+9274Kt61rURPQMcHP1BlUBs2+3PLn7A1sj47/yraZ5rJarixgLPx4Ga
- oyOdDW9tZ0JiDP2nCb+HKuw1uax5pGOhXQyaeDEH+8IU9fYn6A8Bb/nXiaCnZ9fM9FtL5st
- bX6sKNlsErfaCfg=
+X-QQ-XMAILINFO: NIY9SeApT9R1wdTOij18eq0lIZoocSRQZFF6oF5hkynm23W91X5zoFnK
+ uIp1Vp7eQZGIr2l8d7S1Jj2tDVjoj34Yb75wuE5AuS3d26A/5dLFAimWL1eqeP0GrwkcOq8
+ 2K59fEG7DmT5VKCbITCpDzQVIjkDNvEQ0FYWYXlDuYy7a6oNuvmvXYi/GQ1+1SyFtaeOCiT
+ eqK8MjY0B7WBfAvqXGVM1d1+Mwjd/+tPYul5lZaqZRqDRjpxUvTbhALnOPhZKOyvF9Lankw
+ 40fpXBd/kez/N3TJ+31OUsQOAO19VUQK7EFm/QDzh6JYPLdShbV/No/mXAnFteAn2oGGeRQ
+ fZ6sGMPvKl/qVCc+/W7kyVkJv9Z9o8b/uYsH9ihSkKbRrz/58q3ZQ3nmo3+yY5n5f0X/Akn
+ bWeHtBV8FHPkyB/fGY0LfYzXMkGdy4wsxEftFg/+umIKzY5spB2kvFBw15bIGtt9zKxhqCr
+ 8Xp6Dyycyki3jr/g+qZX4ccgxNRyvrir5xrqsdJHjeLILhqV4DHebjrh6fc3Xa/c7Fpzhuo
+ V/Fa1QSF+ilpuQoLuz4NKmIAlCGf9iya2HDYqS2nMEbYGTP/X1PqMDky6mrZ0ozbH0+y8aB
+ +h84f4JQgk8oevBat3qI61T2ek/UD0ntwNM+afkSnBM8BGUgXMVvjROZHOQ+Ca9/SuB+7Ry
+ Li2YffvsK6wNJ3ANRIbiGkrsf/5i4YiN2megwDTVym+9/SxLGNR5EeECnV6674wgLDR7f42
+ 745BtVWdTlIi8CVera9M/N3EJsfwvdf4pT0fBtBAwb8llEckMNs/A2xWdFKrLOksIN+mD0g
+ HgwbsYc08H9xp4J7BofSlwDeChbELAcEipQMFXhXgHC/2aH/57bqU4VppMttoGHxeYHMdOh
+ WxfYxfWVLp4K6FJFP9Uauo3mUWvULvosokXNjEYFjtvJk99a4nzguklrM84WnqMmMQRLHux
+ yY+VmU4bmHpSVyTter8KpFQSD10EDd9o688BaJSr04K4+rLH1V+zNVK1fB+CEirUhzGcUPJ
+ AYF/rswCepPHNajfeWvv1vPJxT9MkXyxWiqzYimEhC8HPuIon3JrU0fKtECofly0Uc/9cu/
+ uUg6/dYBheDjo24kfHkDBRFR8nEYcnbKxJOzuSyUVTXP/fRBge5TrprbR0JnCmpzw==
 X-QQ-XMRINFO: MSVp+SPm3vtSI1QTLgDHQqIV1w2oNKDqfg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
@@ -68,80 +66,92 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When a port is started before the DAC cable is plugged in,
-hot-plugging the cable never brings the link up and the port has to
-be stopped and started again.
+The non-standard RTE_MBUF_F_TX_TUNNEL_UDP tunnel type (UDP
+encapsulation carrying either VXLAN or GENEVE) is not handled:
+txgbe_set_xmit_ctx() falls into the "unknown tunnel type" case and
+txgbe_get_tun_len() cannot compute the tunnel length, so tunneled
+packets are sent with a wrong descriptor or dropped.
 
-The AN73 watchdog txgbe_dev_e56_check_bp_event() is armed once in
-txgbe_dev_start(). Its first tick finds no module, so
-txgbe_xpcs_an_enabled() returns false and the handler returns without
-re-arming itself. Once the cable is inserted, nobody polls the AN73
-completion any more and the link stays down.
+Resolve RTE_MBUF_F_TX_TUNNEL_UDP by parsing the UDP destination
+port in a local variable instead of rewriting the mbuf: the
+application still owns the mbuf and may re-transmit it (cloned or
+multicast paths), so a second pass would otherwise see the resolved
+VXLAN/GENEVE type instead of UDP. The outer_l2_len/outer_l3_len
+used for the offset are application supplied and not validated by
+the driver, so check the rte_pktmbuf_read() result and fall back to
+a zero tunnel length on a short or mis-annotated packet. Use
+RTE_GENEVE_DEFAULT_PORT for the GENEVE destination port.
 
-Re-arm the watchdog from txgbe_dev_detect_sfp() once a module has
-been identified, cancelling any pending instance first so that only
-one of them is running at a time. On the removal path, drop the
-cached SFP type and cancel the watchdog. Also sample the
-module-present pin (GPIO_EXT bit 2 on 25G, bit 4 on 40G) on every
-watchdog tick, so that pulling the cable is noticed even if no GPIO
-interrupt is delivered.
-
-Fixes: 234ce0d1fa9d ("net/txgbe: fix link stability for Amber-Lite backplane mode")
+Fixes: ca46fcd753b1 ("net/txgbe: support Tx with hardware offload")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/txgbe_ethdev.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ drivers/net/txgbe/txgbe_rxtx.c | 28 +++++++++++++++++++++++++++-
+ 1 file changed, 27 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
-index bb4ff3c492..0711a28a5c 100644
---- a/drivers/net/txgbe/txgbe_ethdev.c
-+++ b/drivers/net/txgbe/txgbe_ethdev.c
-@@ -2987,6 +2987,20 @@ void txgbe_dev_e56_check_bp_event(void *param)
- 	if (!hw)
- 		return;
+diff --git a/drivers/net/txgbe/txgbe_rxtx.c b/drivers/net/txgbe/txgbe_rxtx.c
+index a295666f9d..ad90df5f69 100644
+--- a/drivers/net/txgbe/txgbe_rxtx.c
++++ b/drivers/net/txgbe/txgbe_rxtx.c
+@@ -21,6 +21,7 @@
+ #include <rte_debug.h>
+ #include <rte_ethdev.h>
+ #include <ethdev_driver.h>
++#include <rte_geneve.h>
+ #include <rte_security_driver.h>
+ #include <rte_memzone.h>
+ #include <rte_atomic.h>
+@@ -419,6 +420,7 @@ txgbe_set_xmit_ctx(struct txgbe_tx_queue *txq,
+ 			break;
+ 		case RTE_MBUF_F_TX_TUNNEL_VXLAN:
+ 		case RTE_MBUF_F_TX_TUNNEL_VXLAN_GPE:
++		case RTE_MBUF_F_TX_TUNNEL_UDP:
+ 		case RTE_MBUF_F_TX_TUNNEL_GENEVE:
+ 			tunnel_seed |= TXGBE_TXD_ETYPE_UDP;
+ 			break;
+@@ -593,6 +595,7 @@ tx_desc_ol_flags_to_ptype(uint64_t oflags)
+ 	switch (oflags & RTE_MBUF_F_TX_TUNNEL_MASK) {
+ 	case RTE_MBUF_F_TX_TUNNEL_VXLAN:
+ 	case RTE_MBUF_F_TX_TUNNEL_VXLAN_GPE:
++	case RTE_MBUF_F_TX_TUNNEL_UDP:
+ 		ptype |= RTE_PTYPE_TUNNEL_GRENAT;
+ 		break;
+ 	case RTE_MBUF_F_TX_TUNNEL_GRE:
+@@ -713,9 +716,32 @@ txgbe_get_tun_len(struct rte_mbuf *mbuf)
+ 	const struct txgbe_genevehdr *gh;
+ 	const struct txgbe_grehdr *grh;
+ 	struct txgbe_grehdr grehdr;
++	struct txgbe_udphdr udphdr;
++	const struct txgbe_udphdr *uh;
++	uint64_t tun_type;
+ 	uint8_t tun_len;
  
-+	/* Sample the module-present pin on every tick. When the cable is
-+	 * pulled, drop the cached SFP type so that txgbe_xpcs_an_enabled()
-+	 * turns false and this alarm stops re-arming itself.
+-	switch (mbuf->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK) {
++	/* Resolve the UDP tunnel to its inner type without rewriting the
++	 * mbuf: the application still owns it and may re-transmit it.
 +	 */
-+	if (hw->mac.type == txgbe_mac_aml)
-+		value = rd32(hw, TXGBE_GPIOEXT) & TXGBE_SFP1_MOD_ABS_LS;
-+	else if (hw->mac.type == txgbe_mac_aml40)
-+		value = rd32(hw, TXGBE_GPIOEXT) & TXGBE_SFP1_MOD_PRST_LS;
-+
-+	if (value != 0 && hw->phy.sfp_type != txgbe_sfp_type_not_present) {
-+		PMD_DRV_LOG(INFO, "SFP module removed, stop AN73 watchdog.");
-+		hw->phy.sfp_type = txgbe_sfp_type_not_present;
++	tun_type = mbuf->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK;
++	if (tun_type == RTE_MBUF_F_TX_TUNNEL_UDP) {
++		uh = rte_pktmbuf_read(mbuf,
++				      mbuf->outer_l2_len + mbuf->outer_l3_len,
++				      sizeof(udphdr), &udphdr);
++		if (uh == NULL) {
++			/* The outer offsets are application supplied and may
++			 * point past the end of the packet.
++			 */
++			return 0;
++		}
++		tun_type = (uh->dest ==
++			    rte_cpu_to_be_16(RTE_GENEVE_DEFAULT_PORT)) ?
++			   RTE_MBUF_F_TX_TUNNEL_GENEVE :
++			   RTE_MBUF_F_TX_TUNNEL_VXLAN;
 +	}
 +
- 	if (!(txgbe_xpcs_an_enabled(hw)))
- 		return;
- 
-@@ -3110,10 +3124,22 @@ txgbe_dev_detect_sfp(void *param)
- 		PMD_DRV_LOG(ERR, "Unsupported SFP+ module type was detected.");
- 	} else if (err == TXGBE_ERR_SFP_NOT_PRESENT) {
- 		PMD_DRV_LOG(INFO, "SFP not present.");
-+		/* Module removed: drop the cached type and stop the watchdog. */
-+		hw->phy.sfp_type = txgbe_sfp_type_not_present;
-+		rte_eal_alarm_cancel(txgbe_dev_e56_check_bp_event, dev);
- 	} else if (err == 0) {
- 		hw->mac.setup_sfp(hw);
- 		PMD_DRV_LOG(INFO, "detected SFP+: %d", hw->phy.sfp_type);
- 		txgbe_dev_setup_link_alarm_handler(dev);
-+		/* Re-arm the AN73 watchdog for the newly inserted module, so
-+		 * that only one instance of it is running at a time.
-+		 */
-+		if (hw->mac.type == txgbe_mac_aml ||
-+		    hw->mac.type == txgbe_mac_aml40) {
-+			rte_eal_alarm_cancel(txgbe_dev_e56_check_bp_event, dev);
-+			rte_eal_alarm_set(hw->bp_event_interval,
-+					  txgbe_dev_e56_check_bp_event, dev);
-+		}
- 		txgbe_dev_link_update(dev, 0);
- 	}
- }
++	switch (tun_type) {
+ 	case RTE_MBUF_F_TX_TUNNEL_IPIP:
+ 		tun_len = 0;
+ 		break;
 -- 
 2.55.0.windows.2
 
