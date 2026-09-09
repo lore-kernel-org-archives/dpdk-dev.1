@@ -2,44 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED4C8C79FAD
-	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Sep 2026 10:03:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8113BC79FAD
+	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Sep 2026 10:03:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4068741611;
-	Wed,  9 Sep 2026 12:02:40 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 25AE142708;
+	Wed,  9 Sep 2026 12:02:41 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
- by mails.dpdk.org (Postfix) with ESMTP id E9C5140E96
- for <dev@dpdk.org>; Wed,  9 Sep 2026 12:02:36 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 6B4384111C
+ for <dev@dpdk.org>; Wed,  9 Sep 2026 12:02:38 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1788948157; x=1820484157;
+ t=1788948159; x=1820484159;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=JOz7z2REc4QvLd2YYbXetpC3aISOxuFRh7PNrfc8VDY=;
- b=haUv46roVrvg3Czzkltn3hGZCK2TGLnG8Cs9I/ABTF4GNdG8LKFR+Ww/
- ml6qqWA6AM5qcWZZSblpTiSMSmTYtwhRr53mB+TleGoUVM84lgkuUgAHo
- n7madH1NXB8Aj2FykeGRiJF45EIe7McV2DQLreeQMaXsxquXf6jjlsbyH
- TNEup/ukMA0UZ6YDI1a0dHQur7D/ikAySjfAYItxSjTdfP8C4a4X9Yq6c
- evJYcCqAQ2Ot7wtpAalkd4UM2MjyVGEakehmDdksjIJlnYXGHWd0iNhVh
- +IFfehcVuxwf1AL64lITaHhKAY0x80vye3qv1fR06Ejwk0lAMioM1U9qj Q==;
-X-CSE-ConnectionGUID: vy+ujQPlQqm7pLkg2N5cxg==
-X-CSE-MsgGUID: wpS8xsMvTkqdgxklRMZrUQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11900"; a="89492193"
-X-IronPort-AV: E=Sophos;i="6.25,270,1779174000"; d="scan'208";a="89492193"
+ bh=sAAHKBG6XJY0v0knn+vJ8fgdei3W5nOark7gJYIJDCc=;
+ b=kn46dCzJLoeS7kZx8Gw/NJmOL9Xvm+BRenMURGfWv0x7Im9HIbwsD7Nn
+ N9egmW/RHBYONYp7cY/HD/VtbF3tI7L1XgvPMd+eOycWTrGiIThwi+xZV
+ nHmBupEx05IgY0ZyIoDotxaVvLtLwwN9MJ9zeTevtP1U8HUbdAassOAKI
+ GdiMHJX3mUd3ynuyJKywhomwx1Uwmsu4bukkO8yeh+w2K7OC5ROAvE4vC
+ 9a0Gq9uz06zBiNz+WkNQOgGGOJ0O/z6q8Jtg6VvSbydAU/XMbKPZtHMea
+ f+OWqqUBlZ2AvZZsZs5pB5ItFx12hEeTVkOR5RBLsFlqPZU/+aCoNgBil A==;
+X-CSE-ConnectionGUID: madeKn7rSV2VYw1BKHSo8g==
+X-CSE-MsgGUID: hMkJ31MmTz+d/Wwn4KQQ8Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11900"; a="89492197"
+X-IronPort-AV: E=Sophos;i="6.25,270,1779174000"; d="scan'208";a="89492197"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Sep 2026 03:02:37 -0700
-X-CSE-ConnectionGUID: PCvkgTahSTmyoQO8As/ShQ==
-X-CSE-MsgGUID: j+piHxcLSzW2d2+ODov7EA==
+ 09 Sep 2026 03:02:38 -0700
+X-CSE-ConnectionGUID: MyXpxYmlT5KI+5bs1ndlgA==
+X-CSE-MsgGUID: h6CjyGyzQ3WjaUfycYJhiw==
 X-ExtLoop1: 1
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa003.fm.intel.com with ESMTP; 09 Sep 2026 03:02:35 -0700
+ by fmviesa003.fm.intel.com with ESMTP; 09 Sep 2026 03:02:37 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org,
-	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v16 06/26] vfio: do proper teardown on VFIO cleanup
-Date: Wed,  9 Sep 2026 11:01:59 +0100
-Message-ID: <818e1b48e7656636b76f223d1769b1b25897dcc6.1788947937.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org, Chenbo Xia <chenbox@nvidia.com>,
+ Nipun Gupta <nipun.gupta@amd.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v16 07/26] vfio: remove modname parameter from init
+Date: Wed,  9 Sep 2026 11:02:00 +0100
+Message-ID: <b6701180c52598dbc327055c2c9491e6f5c790c5.1788947937.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1788947937.git.anatoly.burakov@intel.com>
  <cover.1788947937.git.anatoly.burakov@intel.com>
@@ -59,355 +60,117 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, VFIO cleanup only unregisters multiprocess callback, but does
-not destroy containers, groups, and user mem maps. Do all of that on VFIO
-cleanup. In order to distinguish between config that is not initialized vs.
-config that has been initialized but happens to have fd == 0, move the
-global VFIO enabled flag out of the config, and add a separate per-config
-"enabled" flag that can be checked to avoid attempting to clean up configs
-that were never initialized in the first place.
-
-While we're at it, also harden the API against repeated initialization and
-attempts at using the API without having VFIO initialized.
+All VFIO initialization always happens with "vfio" module, and now that the
+API is not public, having a way to override the module name seems redundant
+as there is not going to be a use case that calls into `rte_vfio_enable`
+that isn't coming from EAL init. So, remove the parameter, and hardcode
+the modname to "vfio" instead.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- lib/eal/freebsd/eal.c    |   3 +-
- lib/eal/linux/eal_vfio.c | 151 +++++++++++++++++++++++++++++++++++++--
- 2 files changed, 147 insertions(+), 7 deletions(-)
+ drivers/bus/pci/linux/pci_vfio.c | 2 +-
+ lib/eal/freebsd/eal.c            | 2 +-
+ lib/eal/include/rte_vfio.h       | 7 ++-----
+ lib/eal/linux/eal.c              | 2 +-
+ lib/eal/linux/eal_vfio.c         | 5 +++--
+ 5 files changed, 8 insertions(+), 10 deletions(-)
 
+diff --git a/drivers/bus/pci/linux/pci_vfio.c b/drivers/bus/pci/linux/pci_vfio.c
+index bc5c5c2499..f3791cce98 100644
+--- a/drivers/bus/pci/linux/pci_vfio.c
++++ b/drivers/bus/pci/linux/pci_vfio.c
+@@ -1303,7 +1303,7 @@ pci_vfio_is_enabled(void)
+ 	int status = rte_vfio_is_enabled("vfio_pci");
+ 
+ 	if (!status) {
+-		rte_vfio_enable("vfio");
++		rte_vfio_enable();
+ 		status = rte_vfio_is_enabled("vfio_pci");
+ 	}
+ 	return status;
 diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
-index 991ca45064..aa6d4c2e16 100644
+index aa6d4c2e16..52d265769e 100644
 --- a/lib/eal/freebsd/eal.c
 +++ b/lib/eal/freebsd/eal.c
-@@ -846,8 +846,7 @@ int rte_vfio_enable(__rte_unused const char *modname)
+@@ -839,7 +839,7 @@ int rte_vfio_release_device(__rte_unused const char *sysfs_base,
  }
  
- RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_cleanup)
--void
--rte_vfio_cleanup(void)
-+void rte_vfio_cleanup(void)
+ RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_enable)
+-int rte_vfio_enable(__rte_unused const char *modname)
++int rte_vfio_enable(void)
  {
- }
+ 	rte_errno = ENOTSUP;
+ 	return -1;
+diff --git a/lib/eal/include/rte_vfio.h b/lib/eal/include/rte_vfio.h
+index e76181c83c..b53ce56a8d 100644
+--- a/lib/eal/include/rte_vfio.h
++++ b/lib/eal/include/rte_vfio.h
+@@ -94,20 +94,17 @@ int rte_vfio_release_device(const char *sysfs_base, const char *dev_addr, int fd
  
+ /**
+  * @internal
+- * Enable a VFIO-related kmod.
++ * Initialize VFIO.
+  *
+  * This function is only relevant to linux and will return
+  * an error on BSD.
+  *
+- * @param modname
+- *   kernel module name.
+- *
+  * @return
+  *   0 on success.
+  *   <0 on failure.
+  */
+ __rte_internal
+-int rte_vfio_enable(const char *modname);
++int rte_vfio_enable(void);
+ 
+ /**
+  * @internal
+diff --git a/lib/eal/linux/eal.c b/lib/eal/linux/eal.c
+index 5577bab24a..17977baedc 100644
+--- a/lib/eal/linux/eal.c
++++ b/lib/eal/linux/eal.c
+@@ -771,7 +771,7 @@ rte_eal_init(int argc, char **argv)
+ #endif
+ 	}
+ 
+-	if (rte_vfio_enable("vfio")) {
++	if (rte_vfio_enable()) {
+ 		rte_eal_init_alert("Cannot init VFIO");
+ 		rte_errno = EAGAIN;
+ 		goto err_out;
 diff --git a/lib/eal/linux/eal_vfio.c b/lib/eal/linux/eal_vfio.c
-index 6c77076bc3..d4173f7a01 100644
+index d4173f7a01..da46ef2f17 100644
 --- a/lib/eal/linux/eal_vfio.c
 +++ b/lib/eal/linux/eal_vfio.c
-@@ -46,7 +46,7 @@ struct user_mem_maps {
- };
+@@ -25,6 +25,7 @@
+ #include "eal_internal_cfg.h"
  
- struct vfio_config {
--	int vfio_enabled;
-+	bool enabled;
- 	int vfio_container_fd;
- 	int vfio_active_groups;
- 	const struct vfio_iommu_type *vfio_iommu_type;
-@@ -58,6 +58,9 @@ struct vfio_config {
- static struct vfio_config vfio_cfgs[RTE_MAX_VFIO_CONTAINERS];
- static struct vfio_config *default_vfio_cfg = &vfio_cfgs[0];
+ #define VFIO_MEM_EVENT_CLB_NAME "vfio_mem_event_clb"
++#define VFIO_MODNAME "vfio"
  
-+/* whether VFIO is enabled (usable) in this process */
-+static bool vfio_enabled;
-+
- static int vfio_type1_dma_map(int);
- static int vfio_type1_dma_mem_map(int, uint64_t, uint64_t, uint64_t, int);
- static int vfio_spapr_dma_map(int);
-@@ -538,6 +541,11 @@ rte_vfio_get_group_fd(int iommu_group_num)
- {
- 	struct vfio_config *vfio_cfg;
+ /* hot plug/unplug of VFIO groups may cause all DMA maps to be dropped. we can
+  * recreate the mappings for DPDK segments, but we cannot do so for memory that
+@@ -1123,7 +1124,7 @@ rte_vfio_release_device(const char *sysfs_base, const char *dev_addr,
  
-+	if (!vfio_enabled) {
-+		rte_errno = ENODEV;
-+		return -1;
-+	}
-+
- 	/* get the vfio_config it belongs to */
- 	vfio_cfg = get_vfio_cfg_by_group_num(iommu_group_num);
- 	vfio_cfg = vfio_cfg ? vfio_cfg : default_vfio_cfg;
-@@ -686,7 +694,7 @@ vfio_sync_default_container(void)
- 		return -1;
- 
- 	/* default container fd should have been opened in rte_vfio_enable() */
--	if (!default_vfio_cfg->vfio_enabled ||
-+	if (!vfio_enabled ||
- 			default_vfio_cfg->vfio_container_fd < 0) {
- 		EAL_LOG(ERR, "VFIO support is not initialized");
- 		return -1;
-@@ -738,6 +746,11 @@ rte_vfio_clear_group(int vfio_group_fd)
- 	int i;
- 	struct vfio_config *vfio_cfg;
- 
-+	if (!vfio_enabled) {
-+		rte_errno = ENODEV;
-+		return -1;
-+	}
-+
- 	vfio_cfg = get_vfio_cfg_by_group_fd(vfio_group_fd);
- 	if (vfio_cfg == NULL) {
- 		EAL_LOG(ERR, "Invalid VFIO group fd!");
-@@ -773,6 +786,11 @@ rte_vfio_setup_device(const char *sysfs_base, const char *dev_addr,
- 	const struct internal_config *internal_conf =
- 		eal_get_internal_configuration();
- 
-+	if (!vfio_enabled) {
-+		rte_errno = ENODEV;
-+		return -1;
-+	}
-+
- 	/* get group number */
- 	ret = rte_vfio_get_group_num(sysfs_base, dev_addr, &iommu_group_num);
- 	if (ret == 0) {
-@@ -1019,6 +1037,11 @@ rte_vfio_release_device(const char *sysfs_base, const char *dev_addr,
- 	int iommu_group_num;
- 	int ret;
- 
-+	if (!vfio_enabled) {
-+		rte_errno = ENODEV;
-+		return -1;
-+	}
-+
- 	/* we don't want any DMA mapping messages to come while we're detaching
- 	 * VFIO device, because this might be the last device and we might need
- 	 * to unregister the callback.
-@@ -1111,7 +1134,11 @@ rte_vfio_enable(const char *modname)
- 
- 	rte_spinlock_recursive_t lock = RTE_SPINLOCK_RECURSIVE_INITIALIZER;
- 
-+	if (vfio_enabled)
-+		return 0;
-+
- 	for (i = 0; i < RTE_DIM(vfio_cfgs); i++) {
-+		vfio_cfgs[i].enabled = false;
- 		vfio_cfgs[i].vfio_container_fd = -1;
- 		vfio_cfgs[i].vfio_active_groups = 0;
- 		vfio_cfgs[i].vfio_iommu_type = NULL;
-@@ -1167,7 +1194,8 @@ rte_vfio_enable(const char *modname)
- 	/* check if we have VFIO driver enabled */
- 	if (default_vfio_cfg->vfio_container_fd != -1) {
- 		EAL_LOG(INFO, "VFIO support initialized");
--		default_vfio_cfg->vfio_enabled = 1;
-+		default_vfio_cfg->enabled = true;
-+		vfio_enabled = true;
- 	} else {
- 		EAL_LOG(NOTICE, "VFIO support could not be initialized");
- 	}
-@@ -1180,12 +1208,15 @@ int
- rte_vfio_is_enabled(const char *modname)
- {
- 	const int mod_available = rte_eal_check_module(modname) > 0;
--	return default_vfio_cfg->vfio_enabled && mod_available;
-+	return vfio_enabled && mod_available;
- }
- 
+ RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_enable)
  int
- vfio_get_iommu_type(void)
+-rte_vfio_enable(const char *modname)
++rte_vfio_enable(void)
  {
-+	if (!vfio_enabled)
-+		return -1;
-+
- 	if (default_vfio_cfg->vfio_iommu_type == NULL)
- 		return -1;
+ 	/* initialize group list */
+ 	unsigned int i, j;
+@@ -1154,7 +1155,7 @@ rte_vfio_enable(const char *modname)
+ 	EAL_LOG(DEBUG, "Probing VFIO support...");
  
-@@ -1222,6 +1253,11 @@ rte_vfio_get_device_info(const char *sysfs_base, const char *dev_addr,
- {
- 	int ret;
+ 	/* check if vfio module is loaded */
+-	vfio_available = rte_eal_check_module(modname);
++	vfio_available = rte_eal_check_module(VFIO_MODNAME);
  
-+	if (!vfio_enabled) {
-+		rte_errno = ENODEV;
-+		return -1;
-+	}
-+
- 	if (device_info == NULL || *vfio_dev_fd < 0)
- 		return -1;
- 
-@@ -1357,7 +1393,7 @@ rte_vfio_get_container_fd(void)
- 	 * The default container is set up during rte_vfio_enable().
- 	 * This function does not create a new container.
- 	 */
--	if (!default_vfio_cfg->vfio_enabled)
-+	if (!vfio_enabled)
- 		return -1;
- 
- 	return default_vfio_cfg->vfio_container_fd;
-@@ -1373,6 +1409,11 @@ rte_vfio_get_group_num(const char *sysfs_base,
- 	char *tok[16], *group_tok, *end;
- 	int ret;
- 
-+	if (!vfio_enabled) {
-+		rte_errno = ENODEV;
-+		return -1;
-+	}
-+
- 	memset(linkname, 0, sizeof(linkname));
- 	memset(filename, 0, sizeof(filename));
- 
-@@ -2073,6 +2114,11 @@ rte_vfio_container_create(void)
- {
- 	unsigned int i;
- 
-+	if (!vfio_enabled) {
-+		rte_errno = ENODEV;
-+		return -1;
-+	}
-+
- 	/* Find an empty slot to store new vfio config */
- 	for (i = 1; i < RTE_DIM(vfio_cfgs); i++) {
- 		if (vfio_cfgs[i].vfio_container_fd == -1)
-@@ -2090,6 +2136,7 @@ rte_vfio_container_create(void)
- 		EAL_LOG(NOTICE, "Fail to create a new VFIO container");
- 		return -1;
- 	}
-+	vfio_cfgs[i].enabled = true;
- 
- 	return vfio_cfgs[i].vfio_container_fd;
- }
-@@ -2101,6 +2148,16 @@ rte_vfio_container_destroy(int container_fd)
- 	struct vfio_config *vfio_cfg;
- 	unsigned int i;
- 
-+	if (!vfio_enabled) {
-+		rte_errno = ENODEV;
-+		return -1;
-+	}
-+
-+	if (container_fd == RTE_VFIO_DEFAULT_CONTAINER_FD) {
-+		EAL_LOG(ERR, "Cannot destroy default VFIO container");
-+		return -1;
-+	}
-+
- 	vfio_cfg = get_vfio_cfg_by_container_fd(container_fd);
- 	if (vfio_cfg == NULL) {
- 		EAL_LOG(ERR, "Invalid VFIO container fd");
-@@ -2113,6 +2170,7 @@ rte_vfio_container_destroy(int container_fd)
- 				vfio_cfg->vfio_groups[i].group_num);
- 
- 	close(container_fd);
-+	vfio_cfg->enabled = false;
- 	vfio_cfg->vfio_container_fd = -1;
- 	vfio_cfg->vfio_active_groups = 0;
- 	vfio_cfg->vfio_iommu_type = NULL;
-@@ -2126,6 +2184,11 @@ rte_vfio_container_group_bind(int container_fd, int iommu_group_num)
- {
- 	struct vfio_config *vfio_cfg;
- 
-+	if (!vfio_enabled) {
-+		rte_errno = ENODEV;
-+		return -1;
-+	}
-+
- 	vfio_cfg = get_vfio_cfg_by_container_fd(container_fd);
- 	if (vfio_cfg == NULL) {
- 		EAL_LOG(ERR, "Invalid VFIO container fd");
-@@ -2143,6 +2206,11 @@ rte_vfio_container_group_unbind(int container_fd, int iommu_group_num)
- 	struct vfio_config *vfio_cfg;
- 	unsigned int i;
- 
-+	if (!vfio_enabled) {
-+		rte_errno = ENODEV;
-+		return -1;
-+	}
-+
- 	vfio_cfg = get_vfio_cfg_by_container_fd(container_fd);
- 	if (vfio_cfg == NULL) {
- 		EAL_LOG(ERR, "Invalid VFIO container fd");
-@@ -2183,6 +2251,11 @@ rte_vfio_container_dma_map(int container_fd, uint64_t vaddr, uint64_t iova,
- {
- 	struct vfio_config *vfio_cfg;
- 
-+	if (!vfio_enabled) {
-+		rte_errno = ENODEV;
-+		return -1;
-+	}
-+
- 	if (len == 0) {
- 		rte_errno = EINVAL;
- 		return -1;
-@@ -2204,6 +2277,11 @@ rte_vfio_container_dma_unmap(int container_fd, uint64_t vaddr, uint64_t iova,
- {
- 	struct vfio_config *vfio_cfg;
- 
-+	if (!vfio_enabled) {
-+		rte_errno = ENODEV;
-+		return -1;
-+	}
-+
- 	if (len == 0) {
- 		rte_errno = EINVAL;
- 		return -1;
-@@ -2218,9 +2296,72 @@ rte_vfio_container_dma_unmap(int container_fd, uint64_t vaddr, uint64_t iova,
- 	return container_dma_unmap(vfio_cfg, vaddr, iova, len);
- }
- 
-+static void
-+vfio_cleanup_config(struct vfio_config *vfio_cfg)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < RTE_DIM(vfio_cfg->vfio_groups); i++) {
-+		struct vfio_group *group = &vfio_cfg->vfio_groups[i];
-+
-+		if (group->group_num == -1)
-+			continue;
-+		if (group->devices != 0) {
-+			EAL_LOG(ERR, "Cannot cleanup VFIO group %d with %d devices",
-+				group->group_num, group->devices);
-+			return;
-+		}
-+		if (group->fd >= 0 && close(group->fd) < 0) {
-+			EAL_LOG(ERR, "Cannot close VFIO group %d: %s",
-+				group->group_num, strerror(errno));
-+			return;
-+		}
-+
-+		group->group_num = -1;
-+		group->fd = -1;
-+		group->devices = 0;
-+		vfio_cfg->vfio_active_groups--;
-+	}
-+
-+	/* if there are still active groups, we cannot cleanup the container */
-+	if (vfio_cfg->vfio_active_groups != 0) {
-+		EAL_LOG(ERR, "Cannot cleanup VFIO container with %d active groups",
-+			vfio_cfg->vfio_active_groups);
-+		return;
-+	}
-+
-+	if (vfio_cfg->vfio_container_fd >= 0 &&
-+			close(vfio_cfg->vfio_container_fd) < 0) {
-+		EAL_LOG(ERR, "Cannot close VFIO container: %s", strerror(errno));
-+		return;
-+	}
-+
-+	vfio_cfg->vfio_container_fd = -1;
-+	vfio_cfg->enabled = false;
-+	vfio_cfg->vfio_iommu_type = NULL;
-+
-+	vfio_cfg->mem_maps.n_maps = 0;
-+	memset(vfio_cfg->mem_maps.maps, 0, sizeof(vfio_cfg->mem_maps.maps));
-+}
-+
- RTE_EXPORT_INTERNAL_SYMBOL(rte_vfio_cleanup)
- void
- rte_vfio_cleanup(void)
- {
-+	unsigned int i;
-+
-+	if (!vfio_enabled)
-+		return;
-+
- 	vfio_mp_sync_cleanup();
-+
-+	/* mem events can only be unregistered from the primary process */
-+	if (rte_eal_process_type() == RTE_PROC_PRIMARY)
-+		rte_mem_event_callback_unregister(VFIO_MEM_EVENT_CLB_NAME, NULL);
-+
-+	/* cleanup all enabled configs, ignore failures */
-+	for (i = 0; i < RTE_DIM(vfio_cfgs); i++) {
-+		if (vfio_cfgs[i].enabled)
-+			vfio_cleanup_config(&vfio_cfgs[i]);
-+	}
- }
+ 	/* return error directly */
+ 	if (vfio_available == -1) {
 -- 
 2.52.0
 
