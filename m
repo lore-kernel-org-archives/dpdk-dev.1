@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B431AC79FB7
-	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Sep 2026 15:05:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B35C79FB7
+	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Sep 2026 15:05:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6F166415D7;
-	Wed,  9 Sep 2026 17:05:00 +0200 (CEST)
-Received: from mail-wr2-f12.google.com (mail-wr2-f12.google.com
- [74.125.225.76]) by mails.dpdk.org (Postfix) with ESMTP id 9C242411F3
- for <dev@dpdk.org>; Wed,  9 Sep 2026 17:04:59 +0200 (CEST)
-Received: by mail-wr2-f12.google.com with SMTP id
- ffacd0b85a97d-48583cc7ab1so189487f8f.2
- for <dev@dpdk.org>; Wed, 09 Sep 2026 08:04:59 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id C239642709;
+	Wed,  9 Sep 2026 17:05:06 +0200 (CEST)
+Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com
+ [74.125.225.140])
+ by mails.dpdk.org (Postfix) with ESMTP id A8EAA41148
+ for <dev@dpdk.org>; Wed,  9 Sep 2026 17:05:05 +0200 (CEST)
+Received: by mail-wm2-f12.google.com with SMTP id
+ 5b1f17b1804b1-49d097b4939so2021035e9.0
+ for <dev@dpdk.org>; Wed, 09 Sep 2026 08:05:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1788966299; x=1789571099; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1788966305; x=1789571105; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=s8RvsLv5Fg8k5Zjlgl9iKzQ6bAVRFvn0HqiDMRxSYog=;
- b=YoVR12WSCZSqAj7EldJ88lKzhJOc7Uk+AHPoWJVgU+LRY0u3D/exeA4p6/4+7sXepS
- mMHxDGA0R9YRYPWvZ1wY6kYgtRZTjh85i+AAsENCpBiAgRiW/wVLCaYVM3w1uuskc75k
- gBIybJlRaLx4zdpRgt1fVgB0JoFvnq4y93sLmP4sL3ztYHtKhEvGuR8VRIjOKy2CNB8X
- 9vNAwUljo6MM4R597BbReq06RSwK0wpzm7CIZoCFnZuFbb+7SGsuMdJASEosAGi1nK+R
- LtCFx021cJsmZewx0McIZ25W/G2sZzrbPWqwlRGRoPGnU2KsHhP6X9S2Zlzdy1/QRh+w
- hU8g==
+ bh=13qdHbs0W3zxICHJSsixlbQmuurtR1eFBycOYd+FAa0=;
+ b=An3a2r8Vbgw8YDLYzOKxopOhE3cbyJECyffHMgziEof4PAUuhlPChIeF6vo4DfMr8h
+ cwAW7zONNXMhCmtcdJdDcJFPP5mrTU1D3Ji7dkC5rb0NzouSllnyXlxU4/jzFYwJLGki
+ AkFVpceW04zowFDK8Fp7fdyajPzyHIEYSOSjkkKolzZJOHDdqbDzpGV452GoyMhmrpYr
+ rU8K5OMS4TzzwMESx/Vq6l3iE72WvDSRrNfbZWqoLLz01qJFzlQVHl/Kk9DFLBNrQhNq
+ cp56oBqcgzrgmOjd2Z32KnBWDkY7cvYefOThtMOyGUelbgpUy/6x6UFENeuZbumg0aOF
+ 2J7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788966299; x=1789571099;
+ d=1e100.net; s=20251104; t=1788966305; x=1789571105;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=s8RvsLv5Fg8k5Zjlgl9iKzQ6bAVRFvn0HqiDMRxSYog=;
- b=pHlbgJZZ/HyomMgcml5GezY5+yt33Rr9rP36w6Lz3TMJW2Hz7c9O7XP9DTAOrtOzZO
- ZA7PR9v9hV/vcFLeH4xezEMUs3W2soFMV3Fg5DfEKGg/zXjOY/C/SjwFk2dDSBSADC05
- ey6tH+xoFUqpLLDRdt6p9A2+7NxM/9Q9ajpedm3BGza85dzLHnU1tn6gOsEsOACcRiQo
- uuuQuR335rxuLTlU1cRd/eX3KyxliXaRwN/RYDdgj4xXTNBqSUUnhhlXCiGOrmLatz9o
- XvLwewv4VUTMzW1Rzad7E4HtWOoK1S5YtWYfWy07IxFzqlAcR5q1O9+bx+AHAQghrcVn
- iL3A==
-X-Gm-Message-State: AFuF++mmaILTWZt528gyUwigyd69O/0qUQrjiIsAYMS8pBIbQZHjqTNK
- +shFehb9aWs96FjeY/6YvqBjiGGqfbZ3Q6oPshJqSvDptgQDl03S8dWFNV+icg==
-X-Gm-Gg: AYBFou1CFeSgpSSrkToO39PEBaDnTYvJUH8gvR+W0WwRKGzhe0y6m7wpPDKrf3HoQci
- 9b2vPT45PFd+mgKde7v5Obdd4VNt+qbcqTrJn7AiknuadEw0iAB/MMwPEAWxVbE8lrtl2y4TVf0
- j+i7XHpoHPNeibz/uQhjzPXUH2ldN7KqutNm6mgecNbCpcfsRpYjOi08dsNEWqfIIYO1pkhrLD7
- 3OHiBtTBsdhpn6znHwLwyubllC2H+xcvvLKOJfyKRGecBFR3lgkYp7eTJKXdwQaRkVasGrI6D/i
- 7Hafga6IBZjSfO66jcMcla8xiToX020L7xjMgJFjAp4qiU/fRe4Yxu67pFBDrEpVWcf4l3sAvsK
- Ib2yDayqCcpv/r474O68gE/R4vuW9ww8fchJhvdSRWafJ32G0Sku2TcJ+Aj48KhTp8ZtY7trAyl
- y0Bmd+QuhGAP31/qDXUKorUqi0yWhmOgCI8dzthg/ttwU10Io4Uj+AOgmIsY8qtYQ10am//R7aR
- k5Zi+vz8Z49tzgzhKkT4znwbk7O9NxGdnmSehgQzQ56v8OM4R0yRK/v7hSR
-X-Received: by 2002:a05:6000:2303:b0:485:8a47:5b92 with SMTP id
- ffacd0b85a97d-485c2408352mr2399972f8f.47.1788966299108; 
- Wed, 09 Sep 2026 08:04:59 -0700 (PDT)
+ bh=13qdHbs0W3zxICHJSsixlbQmuurtR1eFBycOYd+FAa0=;
+ b=qi4e8T1S66I/624H6LKyMhgARN8M6t9r9f7XwzdAF1yMmCpAYaiIRlsfEGGVcloyXJ
+ 097V02cstpwyoYICz4SaS+1Ukl8BtTpRjyPfS2gQp36eSy3ch/nwL+6nJ4mAeCRoVusJ
+ 4Xtg+cVf+Jdb0P4vHpmmw8/H8S6QvwB2bh1cGvcGEwG/LUf3b7k0Cj4m/4YB4sHHIhuQ
+ vsUwTLLGNcGTEcqVGgIe4Rp9/1n99ytowvQN2PpvQJqBsLU32Bb07TgSh66gzt/KFFOn
+ Jg70zUGS1nNJkhKNjfOp2vDn9Z41Xp6wPlNDSzgPbbWTHYHW0qbwBLf9/K+OHOuDvDPn
+ PQxw==
+X-Gm-Message-State: AFuF++lFf+Kfj0LesVB+Q4rYFYEAtqvCdYoPdHHwQUpLRM4gehHGQ4zN
+ dSiJ6EiUCxi5llIXfJV8rh8/3+ThYBLX/ADqvpE7pE4rP5GgQ4pcpo+xVTnX4A==
+X-Gm-Gg: AYBFou39j3Jk1EmCwQT3I1iTdiFSr6hBrS4Ug8rSPrVfMmQGyKc9eSkibxjCzPpy8ia
+ 2t/BDxvHjU97GiWG6Xi6JDNC/Id1kqS74HeWK0VjctglQ2UqK1SjmfO/XxxDinI7JIVScQqTWlU
+ M8ss/ibzn7S27bjyHnUhS3jBAQZwW773kJXYlc8wVG42g3oaK9wTkxcYMbeq1NdlbXxuxkxYSHE
+ gIjSSczjUP/hsvSyTSa76PDsUIZo8qZPzzP38YCnR0ENB+1UpOXI2s/m9hGqrneU3D5L5hv/Dsh
+ 2/np1yf6DujvZLc4AIXZ+fA8qEYJ9vn4c4OVrWDeDr9WvC8dRCx45y8HSMSoI49G1Nru4TvEab9
+ j1YmH0SwQwp8YJHFw5fPAI55hb9igmoQIQNh2bV+lMZ4EvPZKjKkGNl4VKdWy0B4q6J6RIp4B5L
+ ZUexUmoIJ6fqXxikSfO8cypGT1AnDzPrb9nEa+crAG7gEdSYytppI8QnZtfPICLdqSFfBUCNqMu
+ O5965JodRZD1FFwQqEh22oxlh+e/CLFeHu5OFeIhG8OzlvM/Ue0jfxYz5w/
+X-Received: by 2002:a05:600c:310f:b0:499:b65d:124f with SMTP id
+ 5b1f17b1804b1-49d258d85b5mr16573565e9.11.1788966304873; 
+ Wed, 09 Sep 2026 08:05:04 -0700 (PDT)
 Received: from freepad.iliad.local (free-mobile.vlq16.iliad.fr. [213.36.7.11])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-48588390e30sm42914438f8f.7.2026.09.09.08.04.58
+ 5b1f17b1804b1-49cee7fec25sm662325845e9.13.2026.09.09.08.05.04
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 09 Sep 2026 08:04:58 -0700 (PDT)
+ Wed, 09 Sep 2026 08:05:04 -0700 (PDT)
 Sender: Maxime Leroy <maxime.leroys@gmail.com>
 From: Maxime Leroy <maxime@leroys.fr>
 To: dev@dpdk.org
 Cc: david.marchand@redhat.com, anatoly.burakov@intel.com,
  sivaprasad.tummala@amd.com, Maxime Leroy <maxime@leroys.fr>
-Subject: [PATCH v2 3/6] examples/l3fwd-power: enable Rx interrupt before epoll
- add
-Date: Wed,  9 Sep 2026 17:04:46 +0200
-Message-ID: <20260909150449.856295-4-maxime@leroys.fr>
+Subject: [PATCH v2 6/6] examples/l3fwd-power: block until Rx interrupt or exit
+Date: Wed,  9 Sep 2026 17:04:49 +0200
+Message-ID: <20260909150449.856295-7-maxime@leroys.fr>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260909150449.856295-1-maxime@leroys.fr>
 References: <20260720080035.673782-1-maxime@leroys.fr>
@@ -84,120 +84,129 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-event_register() added each Rx queue interrupt fd to the per-thread epoll
-set before the worker loop, while the queues were still disarmed. This
-works when the fd is assigned at queue setup and stays fixed, as on MSI-X
-NICs.
+In interrupt and legacy modes an idle worker arms its Rx queues and
+sleeps in rte_epoll_wait() with a 10 ms timeout. The timeout lets the
+worker wake periodically to re-check the quit flag, but it also hides a
+broken interrupt path: with no interrupt delivered the worker still wakes
+every 10 ms and polls, so traffic keeps flowing and interrupt mode looks
+like it works when it does not.
 
-The dpaa2 PMD delivers Rx interrupts through a per-lcore QBMan portal and
-binds the fd when the interrupt is enabled, not at queue setup. Adding a
-queue to the epoll set before arming it then watches an fd that is not
-bound yet, so the lcore never wakes from rte_epoll_wait().
-
-Register from rx_interrupt_wait(), after the queues are armed, and only
-once: keep the epoll entry installed for the lifetime of the loop, with
-the state in struct lcore_conf. NICs with a fixed per-queue fd are
-unaffected.
-
-The "RX interrupt won't enable" notice moves to the loop error path, where
-it is still logged once per lcore since intr_en latches off.
+Block indefinitely instead, so only a real Rx interrupt can wake the
+worker. To still stop the workers on SIGINT, add an eventfd to each
+worker epoll set; the signal handler writes it to wake every worker,
+which then observes the quit flag and leaves its loop. Both loops share
+this sleep path, so the eventfd is created for the interrupt and legacy
+modes; it is skipped in the wakeup log so it is not reported as an Rx
+interrupt.
 
 Signed-off-by: Maxime Leroy <maxime@leroys.fr>
 ---
- examples/l3fwd-power/main.c | 31 +++++++++++++++++--------------
- 1 file changed, 17 insertions(+), 14 deletions(-)
+ examples/l3fwd-power/main.c | 40 +++++++++++++++++++++++++++++++++----
+ 1 file changed, 36 insertions(+), 4 deletions(-)
 
 diff --git a/examples/l3fwd-power/main.c b/examples/l3fwd-power/main.c
-index 70f76d202e..43a0509bd5 100644
+index c1ecf118f5..5ee8e5217e 100644
 --- a/examples/l3fwd-power/main.c
 +++ b/examples/l3fwd-power/main.c
-@@ -368,6 +368,7 @@ struct __rte_cache_aligned lcore_conf {
- 	struct rte_eth_dev_tx_buffer *tx_buffer[RTE_MAX_ETHPORTS];
- 	lookup_struct_t * ipv4_lookup_struct;
- 	lookup_struct_t * ipv6_lookup_struct;
-+	bool intr_registered;
- };
+@@ -9,6 +9,8 @@
+ #include <sys/types.h>
+ #include <string.h>
+ #include <sys/queue.h>
++#include <sys/epoll.h>
++#include <sys/eventfd.h>
+ #include <stdarg.h>
+ #include <errno.h>
+ #include <getopt.h>
+@@ -143,6 +145,9 @@ static int promiscuous_on = 0;
+ /* NUMA is enabled by default. */
+ static int numa_on = 1;
+ volatile bool quit_signal;
++/* eventfd to wake idle workers out of a blocking rte_epoll_wait() at exit */
++static int wakeup_fd = -1;
++static struct rte_epoll_event wakeup_event[RTE_MAX_LCORE];
+ /* timer to update telemetry every 500ms */
+ static struct rte_timer telemetry_timer;
  
- struct __rte_cache_aligned lcore_stats {
-@@ -953,6 +954,16 @@ rx_interrupt_wait(struct lcore_conf *qconf)
- 	if (ret != 0)
- 		return ret;
+@@ -421,10 +426,17 @@ static int is_done(void)
+ static void
+ signal_exit_now(int sigtype)
+ {
++	uint64_t one = 1;
++	ssize_t nbytes;
  
-+	/* some PMDs expose the interrupt fd only once the queue is armed */
-+	if (!qconf->intr_registered) {
-+		ret = event_register(qconf);
-+		if (ret != 0) {
-+			rx_intr_disable_all(qconf);
-+			return ret;
+-	if (sigtype == SIGINT)
++	if (sigtype == SIGINT) {
+ 		quit_signal = true;
+-
++		/* interrupt mode only: wake a worker blocked in rte_epoll_wait() */
++		if (wakeup_fd >= 0) {
++			nbytes = write(wakeup_fd, &one, sizeof(one));
++			RTE_SET_USED(nbytes);
 +		}
-+		qconf->intr_registered = true;
++	}
+ }
+ 
+ /*  Frequency scale down timer callback */
+@@ -836,7 +848,7 @@ sleep_until_rx_interrupt(int num, int lcore)
+ 	static alignas(RTE_CACHE_LINE_SIZE) struct {
+ 		bool wakeup;
+ 	} status[RTE_MAX_LCORE];
+-	struct rte_epoll_event event[num];
++	struct rte_epoll_event event[num + 1];
+ 	int n, i;
+ 	uint16_t port_id;
+ 	uint16_t queue_id;
+@@ -848,8 +860,10 @@ sleep_until_rx_interrupt(int num, int lcore)
+ 				rte_lcore_id());
+ 	}
+ 
+-	n = rte_epoll_wait(RTE_EPOLL_PER_THREAD, event, num, 10);
++	n = rte_epoll_wait(RTE_EPOLL_PER_THREAD, event, num + 1, -1);
+ 	for (i = 0; i < n; i++) {
++		if (event[i].fd == wakeup_fd)
++			continue;
+ 		data = event[i].epdata.data;
+ 		port_id = ((uintptr_t)data) >> (sizeof(uint16_t) * CHAR_BIT);
+ 		queue_id = ((uintptr_t)data) &
+@@ -922,6 +936,7 @@ rx_intr_enable_all(struct lcore_conf *qconf)
+ static int event_register(struct lcore_conf *qconf)
+ {
+ 	struct lcore_rx_queue *rx_queue;
++	struct rte_epoll_event *wev;
+ 	uint16_t queueid;
+ 	uint16_t portid;
+ 	uint32_t data;
+@@ -947,6 +962,16 @@ static int event_register(struct lcore_conf *qconf)
+ 			return ret;
+ 	}
+ 
++	/* also watch the shutdown eventfd so a blocking wait wakes at exit */
++	if (wakeup_fd >= 0) {
++		wev = &wakeup_event[rte_lcore_id()];
++		wev->epdata.event = EPOLLIN | EPOLLPRI;
++		ret = rte_epoll_ctl(RTE_EPOLL_PER_THREAD, EPOLL_CTL_ADD,
++				    wakeup_fd, wev);
++		if (ret && ret != -EEXIST)
++			return ret;
 +	}
 +
- 	sleep_until_rx_interrupt(qconf->n_rx_queue, rte_lcore_id());
- 	rx_intr_disable_all(qconf);
  	return 0;
-@@ -970,7 +981,7 @@ static int main_intr_loop(__rte_unused void *dummy)
- 	struct lcore_rx_queue *rx_queue;
- 	uint32_t lcore_rx_idle_count = 0;
- 	uint32_t lcore_idle_hint = 0;
--	int intr_en = 0;
-+	int intr_en = 1;
- 	int ret;
+ }
  
- 	const uint64_t drain_tsc = (rte_get_tsc_hz() + US_PER_S - 1) /
-@@ -998,12 +1009,6 @@ static int main_intr_loop(__rte_unused void *dummy)
- 				lcore_id, portid, queueid);
- 	}
+@@ -2992,6 +3017,13 @@ main(int argc, char **argv)
  
--	/* add into event wait list */
--	if (event_register(qconf) == 0)
--		intr_en = 1;
--	else
--		RTE_LOG(INFO, L3FWD_POWER, "RX interrupt won't enable.\n");
--
- 	while (!is_done()) {
- 		stats[lcore_id].nb_iteration_looped++;
+ 	check_all_ports_link_status(enabled_port_mask);
  
-@@ -1107,6 +1112,8 @@ static int main_intr_loop(__rte_unused void *dummy)
- 					if (ret == -EAGAIN)
- 						goto start_rx;
- 					if (ret != 0) {
-+						RTE_LOG(INFO, L3FWD_POWER,
-+							"RX interrupt won't enable.\n");
- 						intr_en = 0;
- 						continue;
- 					}
-@@ -1260,7 +1267,7 @@ main_legacy_loop(__rte_unused void *dummy)
- 	enum freq_scale_hint_t lcore_scaleup_hint;
- 	uint32_t lcore_rx_idle_count = 0;
- 	uint32_t lcore_idle_hint = 0;
--	int intr_en = 0;
-+	int intr_en = 1;
- 	int ret;
- 
- 	const uint64_t drain_tsc = (rte_get_tsc_hz() + US_PER_S - 1) / US_PER_S * BURST_TX_DRAIN_US;
-@@ -1286,12 +1293,6 @@ main_legacy_loop(__rte_unused void *dummy)
- 			"rxqueueid=%" PRIu16 "\n", lcore_id, portid, queueid);
- 	}
- 
--	/* add into event wait list */
--	if (event_register(qconf) == 0)
--		intr_en = 1;
--	else
--		RTE_LOG(INFO, L3FWD_POWER, "RX interrupt won't enable.\n");
--
- 	while (!is_done()) {
- 		stats[lcore_id].nb_iteration_looped++;
- 
-@@ -1428,6 +1429,8 @@ main_legacy_loop(__rte_unused void *dummy)
- 					if (ret == -EAGAIN)
- 						goto start_rx;
- 					if (ret != 0) {
-+						RTE_LOG(INFO, L3FWD_POWER,
-+							"RX interrupt won't enable.\n");
- 						intr_en = 0;
- 						continue;
- 					}
++	if (app_mode == APP_MODE_LEGACY || app_mode == APP_MODE_INTERRUPT) {
++		wakeup_fd = eventfd(0, EFD_NONBLOCK);
++		if (wakeup_fd < 0)
++			rte_exit(EXIT_FAILURE, "eventfd() failed: %s\n",
++				 strerror(errno));
++	}
++
+ 	/* launch per-lcore init on every lcore */
+ 	if (app_mode == APP_MODE_LEGACY) {
+ 		rte_eal_mp_remote_launch(main_legacy_loop, NULL, CALL_MAIN);
 -- 
 2.43.0
 
