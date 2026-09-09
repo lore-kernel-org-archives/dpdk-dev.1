@@ -2,75 +2,82 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD98CC79FB7
-	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Sep 2026 15:05:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E060C79FB7
+	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Sep 2026 16:06:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 59D3C40C35;
-	Wed,  9 Sep 2026 17:05:12 +0200 (CEST)
-Received: from mail-wm2-f12.google.com (mail-wm2-f12.google.com
- [74.125.225.140])
- by mails.dpdk.org (Postfix) with ESMTP id 2FEE14067A
- for <dev@dpdk.org>; Wed,  9 Sep 2026 17:05:11 +0200 (CEST)
-Received: by mail-wm2-f12.google.com with SMTP id
- 5b1f17b1804b1-49ce364488dso8033695e9.0
- for <dev@dpdk.org>; Wed, 09 Sep 2026 08:05:11 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0AE804067D;
+	Wed,  9 Sep 2026 18:06:43 +0200 (CEST)
+Received: from alln-iport-3.cisco.com (alln-iport-3.cisco.com [173.37.142.90])
+ by mails.dpdk.org (Postfix) with ESMTP id A6A5F4067A;
+ Wed,  9 Sep 2026 18:06:40 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1788966311; x=1789571111; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=Sinh8HhXR6AGECtnTUNnc0XB3pw43ejYji0KNNVR0kk=;
- b=K1U/EqIEAVZHwe5jQ3ikSWP7HgO+JThqQMY8FRbH3FixXjhv/uvYRYNj1RvVK0dkSe
- EDK3OaR/kSX/4JG9YncitZQ12HVF1ho95Ni6iyt+NzbM3N3tqw280tG+nnwOyztXYEnE
- MPfBA6BkqtXmXyzeVjiOtOOVBuLVh47pLmbQDnfGlcUe8BftW/rP/otYeM7VPZc9EjuY
- e3Z374Fv1PhM7PoHpepVrJ0pZZNLGau4evyO6lRgTrW0jYnjYCoyBtfCPo3stEv7YTvS
- ieCmXT2slxV3TskMt9jTBPXUOFrUCB3R5OIzRJH8rQceWMhb7In4DPybmM4R3MmIx4fy
- YuFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788966311; x=1789571111;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:sender:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=Sinh8HhXR6AGECtnTUNnc0XB3pw43ejYji0KNNVR0kk=;
- b=ZXQc6cQSfs3cILHf9oOnnc5lfToVrI3RIxwLb/skdu5mcHBj21v9VbCUP02sK0xlgd
- VokNKtawDO8dulqU9I9HNsV3dGPzzQFy4O6wrMDM8zd4LWZJrDi5xlrpyACCpThpBqqp
- KCbOz48u+owDJUi4k3Ox7Ayb+xx2zvI3f2/3GCW0eDywVld5ZjUqmLk/4Mezc6AFQ+zV
- Lkp7oxgbAbRPxuhFxCj+4XWL9+2dvOV+U1LTVjVmsSgcmib6PLNxX98HBV8lJISgbyhb
- IOYGKBNtRJgd7p2zupHp/YhfgOSgW4WmOBUz+JAi1oqbUN2de+ANNoQ5mgnIn2iLv/zi
- b0dw==
-X-Gm-Message-State: AFuF++nCP5SVsUnhohkqLGas1Adf3r6Lf2mKOOtywWZiw8gmZR2ksB/C
- Czn2NdSQtTKxnt7Yxrc7YWCCp6aKaHxNSa2Ti5SLTPKo6nuGBvuNgj80b30XGw==
-X-Gm-Gg: AYBFou1rKy1y8j7Zo5nLAo5yqi6n807KsgQnBqKLtbhCeRiJuzjaffC5yPW9jZuocQF
- SVtn1z09oaElTbyA0jeEVwnR0kfDMuUBWSTRJlaWx24ED/FdHYJy5i2X5hv+HlAfHttSro8EzXC
- x2RzIwqDFVu5x9AuVuqdB9Jw3jDFqC8zEO9MiNsazzBh+zdOfc5j4q/p7WG+owfvWW8fShbw8Pi
- cc2o5HWnL+g0MHIJcYbo35HRl0T26bP+GOdkSHg2SAyoBmSMb73gQUJEdA4tk/aDqAx2uCcktli
- RsBD0iuKe+I9Zxx84VJha6b+iFfcYeM+9IVq6YWjHsufvnP70yFkCm2oEv+L8jYQ/BDqDgN826F
- sZXerevvMCUxGiQ6hEtpgxLJOKHa0UdpK5FG8DuE9inLpkQLhLP5OXsfTjqPyd8+K1O2G7DOLNg
- yIR4aiqcRfjV4jqsFMg0az3jpR9LaQ/0uxsT6soWNfUVc4GpM7yB2fOhq5inun8QPVjopGXgKmw
- zrtS/CKeLTXlzz+x7QZOZk+9LDksABbADjt8twIKYOlQTuL4yXDLPrnmrtF
-X-Received: by 2002:a05:600c:a01:b0:49d:1916:2133 with SMTP id
- 5b1f17b1804b1-49d1916215amr117540705e9.8.1788966301035; 
- Wed, 09 Sep 2026 08:05:01 -0700 (PDT)
-Received: from freepad.iliad.local (free-mobile.vlq16.iliad.fr. [213.36.7.11])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-49d04fe7f9dsm379358735e9.0.2026.09.09.08.05.00
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 09 Sep 2026 08:05:00 -0700 (PDT)
-Sender: Maxime Leroy <maxime.leroys@gmail.com>
-From: Maxime Leroy <maxime@leroys.fr>
+ d=cisco.com; i=@cisco.com; l=744; q=dns/txt;
+ s=iport01; t=1788970001; x=1790179601;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=Dt8d3U7b3ppBDmB9KybX6H2vuVVXSjcs4mPteUq4Meg=;
+ b=Olw8ThpnaQuOo+PPeHTy4+mUURQux3ElRK4eLM5QuLiOR8zLEflkSwOD
+ uAMCDXXbDUHipr4knOkg7IdE3S1AAk3JDRV+qxQn91hDeo37pC64wBnqw
+ RHdsYoOmAItHLjZX20KrPpcqqDPDT5hBl3+naaGDHK/AJqgzV4vCHu35y
+ tuogqB98w9prRFSn8dy/WJCBCy+y2qf6uXMnmjLAIt9EL7MFzXSLA4vJP
+ tX/Xpnvwl5yg4qzce8S5CGN5dOI9v5XcXGIu5rddseXpMFTN5pbjXmCV0
+ ppGAokKrK2XUHkAQwZ5qlviHufi1vbaceCe+kwyDDCdJsx7x3rw5W8DtJ w==;
+X-CSE-ConnectionGUID: jzzGp4h7QuGMWqmhqQ0BVQ==
+X-CSE-MsgGUID: t4qxfQgDQrmSLmiHq7vaTw==
+X-IPAS-Result: =?us-ascii?q?A0A5AACBg6Fq/5EQJK1aHQEBAQEJARIBBQUBgXwIAQsBg?=
+ =?us-ascii?q?heCFEKNO6d2gX4PAQEBD1EEAQGFBY4GAiY0CQ4BAgQDAgMBAQEBAQEBAQEBA?=
+ =?us-ascii?q?QEKAQEFAQEBAgEHBYEOE4ZckBU2AUaDeliCdQPBf4IsgQHeRoFzFYE4AY1gd?=
+ =?us-ascii?q?oR8JxUGgUlEig6FeASDHBKUKkiBHgNZLAFVEw0KCwcFgWYDNRIqFW4yHYEjP?=
+ =?us-ascii?q?heBBxsGBYEdgSeDPyMZNnqBCV6BKylgARIXgQeCCAKCVIIBAgFJQw4HRVMJJ?=
+ =?us-ascii?q?0EKElMmCxgNSBEsNxUZBD5uB5IXgQ9LgUhExwWEKKFcGjOqbZkIpFqEaYFoP?=
+ =?us-ascii?q?IFZTSMVgyNSGQ+OKxnQFShyAQEHAgcOAwuBaJF+AQE?=
+IronPort-Data: A9a23:org6O6+3IBWIBpFICNJxDrUDF3+TJUtcMsCJ2f8bNWPcYEJGY0x3z
+ WRNCzyOOPmPMWrycoh0Ydzg8xgFvsXRz95kGwBk/CxEQiMRo6IpJzg2wmQcns+2BpeeJK6yx
+ 5xGMrEsFOhtEDmB4E/rbei5xZVF/fngbqLmD+LZMTxGSwZhSSMw4TpugOdRbrRA2bBVOCvT/
+ 4mvyyHjEAX9gWAsYzpFs/nrRC5H5ZwehhtJ5jTSWtgT1LPuvyF9JI4SI6i3M0z5TuF8dsamR
+ /zOxa2O5WjQ+REgELuNyt4XpWVTH9Y+lSDX4pZnc/DKbipq/0Te4Y5nXBYoUnq7vh3S9zxHJ
+ HqhgrTrIeshFvWkdO3wyHC0GQkmVUFN0OevzXRSLaV/wmWeG0YAzcmCA2k0L5834rp3XlhT2
+ tknMTUNdynbrdyPlefTpulE3qzPLeHiOIcZ/3UlxjbDALN+EdbIQr7B4plT2zJYasJmRKmFI
+ ZFHL2MxKk2cPnWjOX9PYH46tP20h3LyWzZZs1mS46Ew5gA/ySQhjeO0YIGOKoTiqcN9ghqBt
+ mz/8EjAGBQhENme6SPa7HuQmbqa9c/8cMdIfFGizdZmjUO7ynQfC1sRT1TTieKlg0S6VvpTM
+ 0AXvC00osAa9E+iSsP0dxixumCJuhpaUN1Ve8U56RuEzKnJ5g+DBUABRyRfZdgi8sQxQFQC0
+ FOAldLtHSF1ubi9THuH6LqQqXW5Pi19BXcIZSYLRBUM/8Tnqak2hwjRQ9JnVqWyi7XdAzvwy
+ jaRpSw/r7Aal9AG06H99lfC6xq3pZ/TTyYw7x/JU2ahqAh+YeaNfI+v9VXA7elJNq6cR0Ofs
+ XwA3cOZ6YgmFo2NkzCRR+MlGbiz+fuBNHvXhlsHN4Uh8DGk4FameoZS6TV5IgFvP9psRNPyS
+ EbXvQUU4NpYO2GnKPcnJYmwEM8ti6PnELwJS8zpUzaHWbApHCfvwc2kTRX4M7zF+KT0rZwCB
+ A==
+IronPort-HdrOrdr: A9a23:3zHIKKn15bFECttCqkXpEEDlRLXpDfIY3DAbv31ZSRFFG/FwWf
+ rDoB19726XtN9/Yh8dcLy7UpVoIkmslqKdn7NxAV7KZmCP01dAR7sM0WKN+VDd8lXFltJ15O
+ NHb7V0DsH2ABxRiMb35xT9LvMbqeP3lZxBQYzlvhBQpcYAUdAF0ztE
+X-Talos-CUID: 9a23:MtU4hmxhzJCz8NPIVCB3BgUWCNIKaiHdk07NDGqHEGNpUYTNY2GprfY=
+X-Talos-MUID: 9a23:/jNFtQjzcY4+EqqZPR0cP8MpKJtx86qXB2w0i5A9n8yFFTUvJT6hk2Hi
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-AV: E=Sophos;i="6.25,270,1779148800"; d="scan'208";a="853183380"
+Received: from alln-l-core-08.cisco.com ([173.36.16.145])
+ by alln-iport-3.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384;
+ 09 Sep 2026 16:06:39 +0000
+Received: from rtp-orb-10405.cisco.com (rtp-orb-10405.cisco.com [64.100.22.53])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by alln-l-core-08.cisco.com (Postfix) with ESMTPS id B88C318000443;
+ Wed,  9 Sep 2026 16:06:38 +0000 (GMT)
+From: Randy L Tice <rtice@cisco.com>
 To: dev@dpdk.org
-Cc: david.marchand@redhat.com, anatoly.burakov@intel.com,
- sivaprasad.tummala@amd.com, Maxime Leroy <maxime@leroys.fr>
-Subject: [PATCH v2 4/6] examples/l3fwd-power: accept shared Rx interrupt FD
-Date: Wed,  9 Sep 2026 17:04:47 +0200
-Message-ID: <20260909150449.856295-5-maxime@leroys.fr>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260909150449.856295-1-maxime@leroys.fr>
-References: <20260720080035.673782-1-maxime@leroys.fr>
- <20260909150449.856295-1-maxime@leroys.fr>
+Cc: stable@dpdk.org, thomas@monjalon.net, pbhagavatula@marvell.com,
+ sthotton@marvell.com, ndabilpuram@marvell.com, kirankumark@marvell.com,
+ skori@marvell.com, skoteshwar@marvell.com, hkalra@marvell.com,
+ rbhansali@marvell.com, Randy L Tice <rtice@cisco.com>
+Subject: [PATCH 0/1] Fix CN20K mbuf size truncation
+Date: Wed,  9 Sep 2026 12:06:36 -0400
+Message-Id: <20260909160637.3607104-1-rtice@cisco.com>
+X-Mailer: git-send-email 2.35.6
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Outbound-Client-TLS: ANONYMOUS; rtp-orb-10405.cisco.com [64.100.22.53];
+ TLSv1.3; TLS_AES_256_GCM_SHA384; 256
+X-Outbound-SMTP-Client: 64.100.22.53, rtp-orb-10405.cisco.com
+X-Outbound-Node: alln-l-core-08.cisco.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,38 +91,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Some PMDs deliver the Rx interrupts of several queues through a single
-shared fd; dpaa2, for instance, uses one QBMan portal per lcore.
-Registering the fd a second time then returns -EEXIST, which
-event_register() treated as fatal and disabled interrupt mode for the
-whole lcore.
+This small fix prepares the CN20K inline security receive paths for mbuf
+layouts larger than 255 bytes.
 
-Accept -EEXIST as success. NICs with a dedicated fd per queue never
-return it, so their behaviour is unchanged.
+The affected code recovers a packet mbuf by subtracting the size of
+struct rte_mbuf from a pointer stored in completion metadata. Keeping
+that size in an 8-bit local variable makes the recovery sensitive to
+future mbuf layout growth. The patch widens the local size variable
+without changing the surrounding fast-path logic.
 
-Signed-off-by: Maxime Leroy <maxime@leroys.fr>
----
- examples/l3fwd-power/main.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+The issue was found while preparing an unrelated mbuf layout extension.
 
-diff --git a/examples/l3fwd-power/main.c b/examples/l3fwd-power/main.c
-index 43a0509bd5..5638d43826 100644
---- a/examples/l3fwd-power/main.c
-+++ b/examples/l3fwd-power/main.c
-@@ -938,7 +938,12 @@ static int event_register(struct lcore_conf *qconf)
- 						RTE_EPOLL_PER_THREAD,
- 						RTE_INTR_EVENT_ADD,
- 						(void *)((uintptr_t)data));
--		if (ret)
-+		/*
-+		 * Queues polled on the same lcore may share one interrupt fd,
-+		 * so registering the second onward returns -EEXIST; treat it
-+		 * as success.
-+		 */
-+		if (ret && ret != -EEXIST)
- 			return ret;
- 	}
- 
+Randy L Tice (1):
+  drivers: fix CN20K mbuf size truncation
+
+ .mailmap                          | 1 +
+ drivers/event/cnxk/cn20k_worker.h | 4 ++--
+ drivers/net/cnxk/cn20k_rx.h       | 4 ++--
+ 3 files changed, 5 insertions(+), 4 deletions(-)
+
 -- 
-2.43.0
-
+2.35.6
