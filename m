@@ -2,71 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87F79C79FB6
-	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Sep 2026 20:41:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85EFEC79FB7
+	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Sep 2026 20:42:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 51AFD4067D;
-	Wed,  9 Sep 2026 22:41:04 +0200 (CEST)
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
- [209.85.214.170])
- by mails.dpdk.org (Postfix) with ESMTP id B48054067A
- for <dev@dpdk.org>; Wed,  9 Sep 2026 22:41:02 +0200 (CEST)
-Received: by mail-pl1-f170.google.com with SMTP id
- d9443c01a7336-2d9520b9155so53251645ad.3
- for <dev@dpdk.org>; Wed, 09 Sep 2026 13:41:02 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id A48FC4067D;
+	Wed,  9 Sep 2026 22:42:17 +0200 (CEST)
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com
+ [209.85.216.50]) by mails.dpdk.org (Postfix) with ESMTP id A1B254067A
+ for <dev@dpdk.org>; Wed,  9 Sep 2026 22:42:16 +0200 (CEST)
+Received: by mail-pj1-f50.google.com with SMTP id
+ 98e67ed59e1d1-398c1101c1bso6078096a91.1
+ for <dev@dpdk.org>; Wed, 09 Sep 2026 13:42:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788986461;
- x=1789591261; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=hEFEprXOBnEsD8oWCcoRF+Lcg9VGcphJyflo+kBS1RY=;
- b=s8VrIgS8ZK2eZ6SFl+gj15rPKdLHev9ggZKuXCgt1osOmJNH/XwqYC67UnDSNGL312
- FJ4zbet5Cr1afG/Y32l+2UOv77xFRaoZ3HYlxx/wCNRfwzk4i+x4xaC6HJWIxV/Ow9In
- sW4SZp3YHfz+pi48ierlMZSFUhTlDu2/QeRr53kUAoq6hbnLS7bSoonk6O6CrtSpL8wh
- DMkezpEOXImxvy7NSJ2S37M6ATLBAVvDMSChYcuvymUsVXvIzObsNrKAPLt5WYob/gyc
- D/jZFXuq3XJSKCnTZ7j/Z/6Gk9ABBoarfF+VOu7qYsvy/3ilOxlnBAHK+6FWvpCH80Ay
- Pk3g==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1788986536;
+ x=1789591336; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=QrZLPnURtQZwMQgXU7iydU3/UldrSTMslAlbO2tSXVQ=;
+ b=HU78zrPuETNzq5dmbYyQYs4KkC4EZbzUnlotEqd7cmmG6F7Sb5L29JS8UPYjpysBM3
+ BUlCQdDXrhOxso92lG7oOELZgleVzLdz7PPcVN4z5zIGRb89xZ3tgnBqk/91zt5iLMsJ
+ oxEID4DGeLXGPy80lK1gBTIvjyaLaxnOtnXMwigfl5LG3hlfraT+uVvEO5hitzNwys39
+ 8zoLK6tS1fymCasrjCmtRs2wTyolLz9czP4PaiM0YOyR6vIAPH0gvGfN1s9JroLRo/2N
+ EiLL9+YmAuoZd40b9qeL2NBLwR1TX0S/2TbMDqIfbvk11W0QkAQFA02yyGMWDrgS7xTA
+ iUKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788986461; x=1789591261;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=hEFEprXOBnEsD8oWCcoRF+Lcg9VGcphJyflo+kBS1RY=;
- b=nLHidHAUHCcYvMY/sKOP5YPUp1g3a19ucilm5UE6r26AqVx6wBPQPwkHP/kljazkLm
- 7C1fWrM5pkHX6Y7Yqyc9ZCD5yRhfrrrZlYF8GCz8fL6SZPpMo9Z7fPu8UepUHfNrA5LG
- nqv8hjpZLKBdmmtSRwDsEZ/zaIUweeXuuMRxnkVaNg4v6Y9xd9J0XnrMbKuG2mI4LZXv
- hDJMZirC9URVJYY5sdJNgyl1U5BQC4bylOu07Rb7ZWmZKtzK9MNc6pDzWGcQBZjicOzX
- QfuqOfjzU94zqf49/vKkULKIvyQCbYh+xmiTgBvw8NcHsd1FZSywUgLnNRYDfRP/bcWs
- 2eLg==
-X-Gm-Message-State: AFuF++mjfoUbd0eb77Qyj66lc8XctrBgJW8eVcANKb+0si4Kvka7gu+w
- /u1P/+rTHHteDl+ESwt4if3u6a5lR33RdrSHVZ1TsVJCbHmx5eFO8vp6lWSA22f50/+acYh/GMG
- LCOag
-X-Gm-Gg: AYBFou03SmGBXT9toNOSDlfr3amxJLBIavshDYLxcaUEjDi8UPF9rNSlfytvmnpHVn+
- N3JLGQUTupc/LO9dV5VcUuDA9373tt4Y45uRk46lrKnqtxyJ0PQAfqGTW2gNCVJQCksPWMlSKH8
- 1JMgN42mtEtXvfCM/wR9e2A+R7ID+Na4oeLR+lHoezPQ99Nsz+1h1PV3DWf6xQGnuBHfBJ1sOcJ
- ZDJDE425W1fMfUorpM/3m+qVFBDfqFSnB5AjTD+6QaZpRIwcvqWGNrrzVaRU/2sPv+wAUqP3pfb
- kHEvMk7ywRZ23Re+ImoNhiNPjO6OBy7pqr6BkZDWu4Nwwrgw5zLQ4uXhuGYCtkPzczJKTgCst48
- GwhGA+K4Go61GxpEVHxaEqM+fAUvAunTyJ4YB/wNvsXzJ5YU7TJM5eSJxsfx6aKQ798SKmoHbcT
- tnQCxT93gMiS+i0SL8JwTuo/2/JlXQPEoSZqoFNk/gGH7CZ7c+WbGwE61Z4Zm8FJvBRc5Ssxgz3
- j5D+pR4+mh3fd4Z4vmkhECThLtg+Lni12vpNio=
-X-Received: by 2002:a17:90b:4b90:b0:38e:49c0:75a7 with SMTP id
- 98e67ed59e1d1-39b2610f2fbmr52195941a91.8.1788986461401; 
- Wed, 09 Sep 2026 13:41:01 -0700 (PDT)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ d=1e100.net; s=20251104; t=1788986536; x=1789591336;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=QrZLPnURtQZwMQgXU7iydU3/UldrSTMslAlbO2tSXVQ=;
+ b=IV3BvrIaJHXk7DVwe6F2mJX4239VCiUqnBZxBp4m7Q927RqaL9k/pNubAfxHKblwwH
+ WM2XnRSFudozU0uTJH8pGF4wKlgd/EM9ydHPnqofpNg93HmsfnnUuQyXyu2WZWxTwsY3
+ gAu1cqp87jzkisR6nZZBw7gzPsPzAaSb8o6w5LPLyF75f3u3ZkIiXmm1109eooWGwbmb
+ 4KNgXkIPr5cgyq37UFB4PoPBrnYIZ5o0YMVTXd9Bb08kM3eFWwRAVCbx8r3z59+BKItq
+ HHs5GCzGut1MK5KrZACUmrYyHMpblyZTlxQLsX2nJzTGGJVR9lWwFAbGSNtBOZ2LSFna
+ APUA==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBwmQu+kLWI2LkDECuRCA4LoUKe0Z4h4iGdyGxBeS3DmkDU4F2pm8mEHNHGJx616HyK3CKI=@dpdk.org
+X-Gm-Message-State: AFuF++l/vnLXiUg52GPYZvoUFsl0/Qt1UnxiCcyKW0nsqq4gP0zPz1EA
+ gpweuLtQ/+aCB0YmCUI3bRHCAJchZnNAcWg5tjPXz8zWucaZJDVhaQ10SEtkiuf/PSc=
+X-Gm-Gg: AYBFou1UFq2qt6jHSkZb/LLS3ckDiTuAF3TB1L2uHxqxasoKlK2vrpydBOe4l+HrWFU
+ JDqwuniKJ22M1Cgnl8ljtbXsU3UacC+AwDg0LUHD1bZgNksrt7i1snrxcqxx+E2SdcY9JEm3mpR
+ gwI8d1zYbi91i043F2rvF0e41zh4IkSAHmD46CxKjMRLN8o4AQoRtdvjNOUc/YLH4hFlzluktPK
+ 5mcqBUQ78oFEhVI6V52iljRH65BBvFIbWYFFbinjURH4bdhRtt22TlDgqEytPd66JwCWdze5mVP
+ HwnNKOc0TAA5Sz9cHiLApoQt45lZNvd1J6aYd0nxYBjS3rBh7/7/GHnfScHdZDMXgF2YXFuzOyN
+ bm6E6+9ieNYUbgTZN2taRVo5d6K8oNYMtSBMlBtgVJrCwQdFJ34D4524ppwmme91UAkheK0qqWg
+ mCEP5DsvOgCqzjolPa7ZgsUFg02rzCuUcSWoj23YMlvdxDu8nqKc8gqIIoLYxi6Em4uNNfCWvhg
+ xEQOUdq5VLxiRD1IYfXse1CZvE3smS/7C3uPY+RHse5uXnctbU=
+X-Received: by 2002:a17:90b:534e:b0:398:ba0e:96f6 with SMTP id
+ 98e67ed59e1d1-39b2624f0f4mr53594579a91.23.1788986535572; 
+ Wed, 09 Sep 2026 13:42:15 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39d770e4b96sm1350565a91.5.2026.09.09.13.40.57
+ 98e67ed59e1d1-39d770e3bf4sm1235696a91.7.2026.09.09.13.42.12
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 09 Sep 2026 13:41:00 -0700 (PDT)
+ Wed, 09 Sep 2026 13:42:15 -0700 (PDT)
+Date: Wed, 9 Sep 2026 13:42:05 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Jiawen Wu <jiawenwu@trustnetic.com>, Zaiyu Wang <zaiyuwang@trustnetic.com>
-Subject: [PATCH] net/txgbe: validate numeric devargs
-Date: Wed,  9 Sep 2026 13:40:52 -0700
-Message-ID: <20260909204052.867168-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
+To: Zhang Tengfei <zhtfdev@gmail.com>
+Cc: Jiawen Wu <jiawenwu@trustnetic.com>, Zaiyu Wang
+ <zaiyuwang@trustnetic.com>, dev@dpdk.org, stable@dpdk.org
+Subject: Re: [PATCH] net/txgbe: fix FDIR devarg integer width
+Message-ID: <20260909134205.7470b8df@phoenix.local>
+In-Reply-To: <20260909173946.16645-1-zhtfdev@gmail.com>
+References: <20260909173946.16645-1-zhtfdev@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,48 +84,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Be more careful about validating devargs numeric values.
-Don't silently truncate to 16 bits, and check for empty
-string or trailing garbage.
+On Thu, 10 Sep 2026 01:39:46 +0800
+Zhang Tengfei <zhtfdev@gmail.com> wrote:
 
-Fixes: f611dada1af8 ("net/txgbe: update link setup process of backplane NICs")
-Cc: stable@dpdk.org
+> txgbe_handle_devarg() stores a uint16_t through extra_args, but
+> pballoc and drop_queue were u8. Setting pkt-filter-size overwrote
+> the adjacent drop_queue default.
+> 
+> Fixes: 7e18be9beef2 ("net/txgbe: add device arguments for FDIR")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Zhang Tengfei <zhtfdev@gmail.com>
+> ---
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- drivers/net/txgbe/txgbe_ethdev.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
-index 111843023d..0734a1c63c 100644
---- a/drivers/net/txgbe/txgbe_ethdev.c
-+++ b/drivers/net/txgbe/txgbe_ethdev.c
-@@ -450,15 +450,21 @@ static int
- txgbe_handle_devarg(__rte_unused const char *key, const char *value,
- 		  void *extra_args)
- {
--	uint16_t *n = extra_args;
-+	uint16_t *arg = extra_args;
-+	char *endp;
-+	unsigned long num;
- 
- 	if (value == NULL || extra_args == NULL)
- 		return -EINVAL;
- 
--	*n = (uint16_t)strtoul(value, NULL, 10);
--	if (*n == USHRT_MAX && errno == ERANGE)
--		return -1;
-+	errno = 0;
-+	num = strtoul(value, &endp, 10);
-+	if (*value == '\0' || *endp != '\0')
-+		return -EINVAL;
- 
-+	if (num > UINT16_MAX || errno == ERANGE)
-+		return -ERANGE;
-+	*arg = (uint16_t)num;
- 	return 0;
- }
- 
--- 
-2.53.0
-
+Applied to next-net.
+Review saw another issue in devarg handling, sent followup patch for that.
