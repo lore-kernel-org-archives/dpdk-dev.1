@@ -2,87 +2,153 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 420BBC79FAD
-	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Sep 2026 11:39:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD438C79FAD
+	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Sep 2026 11:51:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 92E8340ED2;
-	Wed,  9 Sep 2026 13:39:53 +0200 (CEST)
-Received: from mail-yx1-f41.google.com (mail-yx1-f41.google.com
- [74.125.224.41]) by mails.dpdk.org (Postfix) with ESMTP id 6CC0140A76
- for <dev@dpdk.org>; Wed,  9 Sep 2026 13:39:51 +0200 (CEST)
-Received: by mail-yx1-f41.google.com with SMTP id
- 956f58d0204a3-66f78cba2e1so5788765d50.3
- for <dev@dpdk.org>; Wed, 09 Sep 2026 04:39:51 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1788953990; cv=none;
- d=google.com; s=arc-20260327;
- b=d9ZiYLUcfEYreEuSAnCQDkR2EmqflG2qeMoBs54vF2fOf5qvU7F52fybRTGRiRk18g
- mY2Mfjks69wGZESTx+8ztXXqdF2zSWGaThSMqPQzFqaCLdTxUjL0040d8SF5omhJzUTX
- L3TWd24QnrL8B9yOvp6WVPdpOOuWtqajTqY03bGDbYyqFLrzPeD1sa2xON7CiPvcTbzG
- vs0FXggH501ovJswhnX8pp3XEnppt0fG+IxWv9/2bYzTWOjbQU921MWB/2aYmnOF2EQw
- DDCQXuCfiN27GzNIyVFPLuipVGObnaFTzzG/4yzGbOn9qWG22YFeZtFhTL80wHmKGhgA
- 0uFw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=+uX3lvPlUBVfD+J0LKgEG4zwfaZoLmnLAm2l+qBj10k=;
- fh=zNphAuCom6MxCckqDX4te/Ve18PlZzkCipEnMIbKzh4=;
- b=ERK/r7Lygqa6u3t6EHu0ehUI/56omOTBO3M1XRKlHTsttJ0OwG8Xf/3hQTmmLcNVEl
- BOQRr16zAqtRSPkhKR2VDqg/rlpEPUZ4290lYGpcBZOcl+qs68WiYpJZt+ByTZAVJaiZ
- EpHKwS0O6FaPvgXHa/6tWZkiSpaGvvh2/LeoRmOwUAi7olH8j7OmBf+dBJaQBSCmFOpl
- nqTyqvYROod6d/OtVb1q23FqbrGi7gXwFbGL+JCOrxytokAzamd0QEcTC2hP4XVUaKKM
- K7jp7Brx1ku1Q1xh5L97uAqqDtEXMiZ1QMKM3GT4UKBG40ntXHdiX0haJ4TbKCwj+n6B
- oZiA==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1788953990; x=1789558790; darn=dpdk.org;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=+uX3lvPlUBVfD+J0LKgEG4zwfaZoLmnLAm2l+qBj10k=;
- b=LJxFVadsm3GWJbYI0qL4pUv/bvlHGZ1/erOGMtmCVTmEbGpeox230kZOaCB39sUJll
- 32/6q6pjIzMTjENcjsCqgEdRfcWexs/c/u3PIuYX5y51/rGLtpZKEjVyKkenSD/vPXfz
- 5E8QyF7fPE8TU7jN0mYsa5dN8rHCqIPtZUZlstmw3ug0m/DEdil+irvZhnwNwVLN/I8o
- +n7Ij/LXdcyRRjlI5/qBzb8hl27XHvpNM/clxcnAx1mEFb2qZE8wbM7WBHaIRL+KXGj+
- rpljiS5OPM9CzLPgbB5JW71OlqjBwrn/DSdtlek5jpf9VxC/OinVY0jaxz+MYHG07PNn
- UQBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1788953990; x=1789558790;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=+uX3lvPlUBVfD+J0LKgEG4zwfaZoLmnLAm2l+qBj10k=;
- b=l10gus6+ZzKBMiqKX22orv9jDMOqeFzz9s5AlndpwMVZ7xXKeTQitnrk3SkSqsnm73
- ReBTR7BNLn2sNVOtE7bRoWFToz8nMUvCR5m4HrLwmcjSLPA2P3WvjUM27FdGi1Y6z/5L
- ip368fFRnpEN6ZS0+NI/2kvWeUAB9T6Ci4nNb1T3hlbZk4nXA6zY2vzzQulL93AEYc0X
- pwXHYyg+7JZAK6gBWn0fXOfnrAKzHs+c9trCSRERa4o2EaMm2HL32pJGas4R5sE1EaWw
- CVzVy7M1ZQW3vgQz7mdBSGz9S4W82cfwYpFT7SZwIVi/vBcboE8utdCyOgP7ybX4BYWL
- Nj6A==
-X-Gm-Message-State: AFuF++mGU6G9t3jTKbFf6Wau7RdXEDkppLijyGR3iMhrBbEkWQwGLNfC
- wLDvTMPa+O82H0kwYhU70oAfnIfFaLA77u640I5RzwFY88syhSswxhYF+vi5kzIxLd2EVTTqCyr
- a2/D0bD7L77ccL3U8r1LWgWYD+T5ubFfbIWlR
-X-Gm-Gg: AYBFou3qi/9PKhKz9C1aFz6DFwSQjoxO1QNj2kc5SaXi8LpM9k4mkFzKowYtTU6fNs4
- yNTUXpnWQBI4hAqfrK2DulgHo9YcIvfbJMd1dHQA+N9tuTpEbiZxHFuDAW2TMM8WgE3oHdT4ZOF
- f0Cmow+WkmSlfWjTOX31thcfqsWKzBgeG+jxosWjk6pOLWlUa6imdbnStaOvHVBDIXBKw6rXLhJ
- r0Eu5wf8b9ILuZb095EMBnBu6qsOSuW9yu7kBky8xUGmqAY98ei0gA2AcWtj/xgRPZvZsaCPdz1
- SvfVXg6SMTD3EIYeu7WCSnsTY/uJujCg9t+tV+VEgO4XbRC/xEryFUZS
-X-Received: by 2002:a05:690e:1c1c:b0:669:586a:8673 with SMTP id
- 956f58d0204a3-66fb59c3a99mr9750476d50.21.1788953990538; Wed, 09 Sep 2026
- 04:39:50 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id BB54740A76;
+	Wed,  9 Sep 2026 13:51:25 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+ by mails.dpdk.org (Postfix) with ESMTP id 5801540684
+ for <dev@dpdk.org>; Wed,  9 Sep 2026 13:51:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1788954685; x=1820490685;
+ h=message-id:date:subject:from:to:references:in-reply-to:
+ content-transfer-encoding:mime-version;
+ bh=TR0DAqykkW+XqwBvbL1H8toJt8SIuflFlglT0mtFZYU=;
+ b=TFE+OPKt1h6Dezf0BgkaNgPWUEnl0hGuIGLiipDpWfoaCqT2DeK5++Au
+ 2nqRPxltpIGxMdHyiVPv7D7f/LBcyOBhBUH92JF0ZKpK+YJylpJ05H88B
+ fFIfe8+jQn3TcAqoo23aK+7T3jXsMP6Z/EQgRgxwfIHE/AEr75Y0tu8Qz
+ RpFs0uC+TS9FOi9FBcKb/OLL/Q4V5bv/T+oDCpAebrOwhjziiVSQmCrv3
+ ZCESsi2jbg2L9Xt8oTm60hSZcCCzqlIglBmqaJim3WdelbAxd1KHKl5EJ
+ tpd86hoFGKCF+xPzph798cKt8TpjLY7cxkOoTwChgsP9oVR88be5q/dSP w==;
+X-CSE-ConnectionGUID: f9TbR+dkRmSrXYWn22OoYg==
+X-CSE-MsgGUID: ML6uksXzT4OW1FrGioXXhQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11900"; a="114922342"
+X-IronPort-AV: E=Sophos;i="6.25,270,1779174000"; d="scan'208";a="114922342"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+ by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Sep 2026 04:51:22 -0700
+X-CSE-ConnectionGUID: G4c5xFRiTGmc4FDnI+dFsQ==
+X-CSE-MsgGUID: yOokPaXTRciyeA1uOGBxlQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,270,1779174000"; d="scan'208";a="274822802"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+ by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Sep 2026 04:51:22 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Wed, 9 Sep 2026 04:51:21 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46 via Frontend Transport; Wed, 9 Sep 2026 04:51:21 -0700
+Received: from CY3PR05CU001.outbound.protection.outlook.com (40.93.201.71) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Wed, 9 Sep 2026 04:51:20 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gzKuu2TfDV/rHB+Yp2L0c3h3QBf9j9zTNli4l+58G5fVCwAUUHjMb6gmMH+jO76aAxFeVL1TI43r0Jqv8CTjKSEXa5dm8HxzfqcPBsOdxQyuihznG2Q/b+wmcap0sMTlvPY48DYd3FYIizHGiJUoSwDcL6OihQPwVCa7o90l0oP6rwPhAyH7e4f6xujqEf0FgD4isNHeTn1RVWEWWeTHzpwBGSkHPSgTSXYRflUbXt6vU9Z4q4np/VlYIy5q3+KxbRBI8jq6TZFUn8DJdFEQUPxiDG64DqqXOKhZAyFlAxL7mPS7drtPtzbV3loZLyEo0VR2tFA1BLONCMSIi/0FbQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Zo4qJ0fYJEz/1YiUWJq81p3w0iYN6/ywGGTm5ZsWMQs=;
+ b=x4ONCludTBb4T8gbqlseXi6kl4k0Ufd6QXD8vF9MZTaaTUZZWe4nrsypdKCUOfOUwSMvu9U12QfzZHhn1nWHI/ti/BzfWVrhgNgpzLINB5nyjK8PJlWQSXcHhmMO/ynf6Dz6oRkzY80mIxlvOCsWfVkeGpU4QFNe0xqKPkwldxjsWLNkep/D50gVFYSRAX5Z+wh2CGn2CRY06tN5gkIOt3ndhNg5SASS7VL9BviL2j11CaxvXSNj59KW+QJjhmkwhOpFUJz96XIHyPoMkd/HS9Zjz0h1c/W8MZJymCJ+ZLmaU8kTCIcs4Ymj6dgKX0FHsK/jJPm3IT8E+QmcgF6Y0w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
+ SA3PR11MB7627.namprd11.prod.outlook.com (2603:10b6:806:320::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.7; Wed, 9 Sep 2026
+ 11:51:16 +0000
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::d2df:4650:72ad:47d4]) by DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::d2df:4650:72ad:47d4%3]) with mapi id 15.21.0406.005; Wed, 9 Sep 2026
+ 11:51:15 +0000
+Message-ID: <bebe0731-ef9c-476a-8106-aea411abd29b@intel.com>
+Date: Wed, 9 Sep 2026 13:51:10 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 01/26] net/nbl: fix use-after-free
+From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
+To: <dev@dpdk.org>, Dimon Zhao <dimon.zhao@nebula-matrix.com>, Leon Yu
+ <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
+References: <75e8e3b8ff4d0647e2a5216dcde0d93f3856e821.1788947937.git.anatoly.burakov@intel.com>
+Content-Language: en-US
+In-Reply-To: <75e8e3b8ff4d0647e2a5216dcde0d93f3856e821.1788947937.git.anatoly.burakov@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PA7P264CA0317.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:395::21) To DM4PR11MB6502.namprd11.prod.outlook.com
+ (2603:10b6:8:89::7)
 MIME-Version: 1.0
-References: <20260904092157.51040-1-amiyaranjan.mohakud@gmail.com>
- <CAL+mCpNCdJDJN77BFwFP4bK887xsRDtid7HxSZ=3yapW5mvNsQ@mail.gmail.com>
-In-Reply-To: <CAL+mCpNCdJDJN77BFwFP4bK887xsRDtid7HxSZ=3yapW5mvNsQ@mail.gmail.com>
-From: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
-Date: Wed, 9 Sep 2026 17:09:39 +0530
-X-Gm-Features: AcwNN1WWE395zWPZrDiMdbel847NxyPv9YGM4qe98_gl-NHM_qx43SafcavsefA
-Message-ID: <CAL+mCpOxM+AeN6ehfr5vVwQQ=1KSv8uivEC-Ng7j3tQ58cjbLg@mail.gmail.com>
-Subject: Re: [PATCH] common/cnxk: fix duplicate mbox alloc in NPA aura pool
- init
-To: dev@dpdk.org
-Cc: asekhar@marvell.com, stable@dpdk.org, hkalra@marvell.com, 
- skoteshwar@marvell.com, skori@marvell.com, ndabilpuram@marvell.com, 
- kirankumark@marvell.com
-Content-Type: multipart/alternative; boundary="0000000000002029af065b0b4f4f"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|SA3PR11MB7627:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7e2be5c1-287b-4a2e-9064-08df0e68a76c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|366016|376014|1800799024|23010399003|18002099003|22082099003|11063799006|56012099006|10067099003;
+X-Microsoft-Antispam-Message-Info: dtkt3TmCNY860VwkYzD/7kiyd2cdeeGwoL4FZ6YN+2ecQT+HvY7iyCzZc3xTenn/J9aPm6R6Rvns9ked/UKqdh90GbdZS5OwW9CKUXNjUaPBY7mA3gi2+v1JtoTE9VEZ2eAcmUzSS462WffdHnf+EyFaqMUryXqETLx140n6NdcbSIfOt0O8HAcJOkvmnHSrRfWgxewUZspSnDacQzwrXYlgoBLDYjtKGyE7ZkfDb1Akp62ZcTav3adR+DK7zEH0iWrLxbrOvtm6EB3jeVtpumjz6DxLkyreom7VZ1jcgTQzrqECsMzn9ZRz81wkz1qhLfizDsYEUpTfRnSWaO9XJHTrZzXBRVMdZG3t0LHf0q833nqQU4ezraPpSa3t8xJ+7hXA+e3wvJQ7TyVOr+SidTwJapqXrIvvCARUyXisUg+SSiiLcTNjaQ5eblMRt/P9GVse4dy4vU1wJ146YLKDgdmpzLA7iuMuZMCrztrAeWU0SpE0N/JlKAP2YjpGo75FgPx3C39moZWCUmSVqe1LmuFSALQw869Th20aX/o1bRexjzmLpJzWtKikysjKK2uw2S1C/zG2e24KedvJzMS0aDMGPf9payEMCUTkqdxJCS3cq52msjS9ZRvn22sPTNQ8030gOwTayKm/L0JH5TZC5eW6WEfXZE4Gwnu9dtnRk1s=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(376014)(1800799024)(23010399003)(18002099003)(22082099003)(11063799006)(56012099006)(10067099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?U0lQbDlWSExiRENoUWgxM1lZT0RmUnduRFJiZTVzczE5aDhVek5yN3VzWFJT?=
+ =?utf-8?B?NUtxZVN0eG92ZzFKaU53c2cxa1lFY0YxaGszRzNDaCtBUzFNSFFPUzJWTVkr?=
+ =?utf-8?B?NGdTUVYzaThpbEh1Nkw3VGtvTDU5SExzdmRKL2UxazE5UXhFbzJZK2ZncGp5?=
+ =?utf-8?B?eGdKM0pCRlU5eG9Xc0QybDhhcXluVC9kMHpyOSs2MU9KN0J1bXovUGhhNFpL?=
+ =?utf-8?B?VFBxVjd5UE55cW5DWm5XTmZrQ01KRDZMNVNsR1ZqdGsxZUF5eEVxcVhpaHlm?=
+ =?utf-8?B?M00rYW9Eck1EaXJ1ZVlSVnltWVVTdFRnTGEzQ3orL2h0S1dMWlVnaHJrV2pX?=
+ =?utf-8?B?OWhMOVNSVis1OEVxOEpZVkJOMHZybVp6bkkvODhoUWpuaEJJMFN5cmVHZ2FC?=
+ =?utf-8?B?M1EwWi9VNWx4MXNmbVlwZlMzZndMNUpSVnB3NkhYNFNodlVXemtHcytWY2Zy?=
+ =?utf-8?B?OFJFcHl4b25WcnZFSXJiRThPdHVxeUYvcE53ZXgwSEN0UWt6MWlJRHd0OVlV?=
+ =?utf-8?B?M2k3QklsSUs0RUUxdDI1YnBWSzdDSUc5emNENGJHajBxTWF4eHBmN1hKcnJH?=
+ =?utf-8?B?NWpQelh3Z0IzWTBLZHE4SEI2TnRpTzZQQkFXb1ZXblN0K213Z0hnSjQwQU05?=
+ =?utf-8?B?a3o3bElVZ2c3YjVKNW1uckgrY1pveTVPMVNLWEtGc3JzdTZ6aFZuOHBDRjZy?=
+ =?utf-8?B?d29kek0wTkY1RFB4dTIvbHcwc1hmaHZ0a3l1OGU5cjJ5ZHpEZko1Wll6U0ly?=
+ =?utf-8?B?azE3RjZ3RzAza2tsc0VWUDNSeVRoZVZWNjB3a1lrMkVwS1VsdTVKOWZ5cVpy?=
+ =?utf-8?B?L0Z5QnFhVkxYQWNNZmNGYUFDTXp3M0VCZC8rQ1hOclRjQllqWXJhdCsyMkFz?=
+ =?utf-8?B?M0t0UUlBcDZPNTVXcEI2amxhSVFwYTlXRlRqYzVmOE1WeityQ005RExvN3pO?=
+ =?utf-8?B?Rm1LTThPYjdHZWlQYUhrUllRd08vdTlBbXViUTdPT09xYzB1WWRZUEx5NGJG?=
+ =?utf-8?B?bWRUdUJLUXBOSlg5SGNyN3NsM0dhL3Q2V3lLaFA0YllLZ1lRWWFKWnpURkph?=
+ =?utf-8?B?YjBwN1BsVEdFeUdXT2dQdFVDMjFMa0hyMnBsUWlQY0pqM2o0bCtqTlFJYmhC?=
+ =?utf-8?B?MnRTQzJnQVFHaE1rcFY3U1JuOG05MVBhVUhxemFFbFd5RnMyWHFjK3BJVWF4?=
+ =?utf-8?B?TXloYmw1N3EvUGR6RUZqN1JacWhvK2FuRTVBR2dhMUgrcytyNk90aC94QllR?=
+ =?utf-8?B?VmJwTTI0VTh0UEhEL2tHU0pvdDVoTGExM1hxWmxCVzdxVTVMWnV0aW9GTFRL?=
+ =?utf-8?B?cmJQOHphM0U4cVIyZmlyY0k4Ui9Kb1J5cmhmUnM0dTZWYmtXMkUzVHY0VmJm?=
+ =?utf-8?B?b2ZObjh2eFdGRkZCZlBBSG1tUmxDK0x3Z05qbUxvV1plR2VYMlNoZTk2TGx1?=
+ =?utf-8?B?RFh5YlpRZEEvTGk4SmVKVHg3aGlwZm0xMkdEeWd1V2pidG1TcTJyNmJ0NFlY?=
+ =?utf-8?B?M3UzeGY4MFVpd1p1ZGRzdEVBc2lGelVYSFhkQjFwOC9abVlEcXVOTDQ1Vi9x?=
+ =?utf-8?B?MS83a2R6M2lwTTM5N0diem40ZXhLbjRuOVdEWlI5K2Iwd0UwQnhTaDl2SW9Y?=
+ =?utf-8?B?cnF4QkUvTXJxZmRsWVY1bU1vN2I1N2xBOHl5ektuYXhLb0MyZzNzSTVLTUQ3?=
+ =?utf-8?B?WHJpNk5tdlBhWUxRRUh2UDlIVWVRcU9PK1FaUHJQTXp5WUt2d1psaFJZUTYw?=
+ =?utf-8?B?NWppRjlmMU9XNndSS1JOUnovbWM4ekVKKzgwWk8rY1VKYVE0azJsSk1uWklj?=
+ =?utf-8?B?RnYwMzhIYkNGWE83RXVDRlVET21PYnJIYTN2aVAvYm9yRFdvVjdQZnc1RTNs?=
+ =?utf-8?B?elh2NjQ3aEx3aGVVL011YmxvS3ducUtOVGdOaTFkUlRHakpibitsakZCM2hS?=
+ =?utf-8?B?VTZjdk9nREV2SUdNcmJQOWJHT0pGYWlIeGRXTHUvMTR3Y0xEcjdFd0EvWWhq?=
+ =?utf-8?B?WkU0My94Lzhha0wrM2VVeXI0RGhKNFpDYkQweGhFVmNUSlhnSjVtTUhVMFhh?=
+ =?utf-8?B?V1BuSlJ1SGorcC9UL0M3TWdCQkNLMjRqQ2VwVFcvYkQyT0Nhbm12L2xZOWp0?=
+ =?utf-8?B?Wi9WTS9BWHk5QnNKQlFkd2ttL0RPaVRUQjhlNFRwTVQydU1EYzdWQ25mK2Nu?=
+ =?utf-8?B?WFlScUllOUtOdG0rdFdSeVMvMHUyVlZnaWlHQVF2RVRwWEd6WWtBV3IwdjF4?=
+ =?utf-8?B?ZldsYUxMZlREWDcyZDNVeFc1bWM2UWI1a0xRZTIxcVkvd0Y0bGRyaXJxcjR0?=
+ =?utf-8?B?RG1YWDVBMVdjV0RqU2RRWW1XWmwvVzdJcmRaanN2VTFEeEVDZnVZa2QrYjRh?=
+ =?utf-8?Q?xNymRCqfQqhDDWQE=3D?=
+X-Exchange-RoutingPolicyChecked: Um0D/8HOzpIf+lPGcTyACDjJ+3Ssy9purhELdnKh8+PCvB7p8dI3DOW2jhwuvcMCcBnVRZqWlvmaTP3747qC9g9CaCnjhqN5Jbo8ZsZb41lIyQrM1g+VCtEYwkvtYe7YNkLIP9mjQp7eevyf2eOIaJOdIfMY90Zyrd526YiclnExXlW70OTR3mSahrnq+XPg6/B6nyMyC3ODC2fPNq/op2sEYK9giWhpdJup5MxWXKeZxN/Xuo1WIF4leREVxbmuyxuFucSigGBVHRW0lxceHggJaP3kaBL+aOyU1Us25de4yR6CQwQTYsWnAVc/hnZhbCmUDj7FBRxwOX/S023lSA==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7e2be5c1-287b-4a2e-9064-08df0e68a76c
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2026 11:51:15.9210 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CL2HBMipUq0nH8fekAHpathAQVUCKDhBqbP97pDcez2TwkfMNhP5LaLXzdgah7Y0YBypsJjd/GI1xmRAkg2+qroVj+E/9A1kESbik2shU7o=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB7627
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -96,140 +162,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000002029af065b0b4f4f
-Content-Type: text/plain; charset="UTF-8"
+On 9/9/2026 12:01 PM, Anatoly Burakov wrote:
+> When unmapping a device, the device is not removed from TAILQ, which may
+> result in attempting to access this devices' data during subsequent mem
+> event callbacks (as they are only disabled once all devices are removed).
+> 
+> Remove the device from TAILQ on unmap to fix it, and move the device fd
+> close under the memcfg lock to avoid race between a mem event and fd close.
+> 
+> Fixes: dc955cd24c8f ("net/nbl: add coexistence mode")
+> Cc: dimon.zhao@nebula-matrix.com
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+> ---
+> 
 
-Hi Team
+This patch was also sent separately and is currently "awaiting 
+upstream". Sending it as part of this patchset is a workaround for CI 
+not being able to use Depends-on tags correctly, it is not meant to be 
+merged as part of this patchset.
 
-The change-set has no relation to the intel performance test which is
-failing. Could someone pls guide on how to get rid of this, get it reviewed
-and merged?
-
-Thanks
-Amiya
-
-
-On Wed, 9 Sept 2026 at 16:26, Amiya Ranjan Mohakud <
-amiyaranjan.mohakud@gmail.com> wrote:
-
-> Recheck-request: iol-intel-Performance
->
-> Thanks
-> Amiya
->
->
-> On Fri, 4 Sept 2026 at 14:52, Amiya Ranjan Mohakud <
-> amiyaranjan.mohakud@gmail.com> wrote:
->
->> npa_aura_pool_init() allocates the pool init mbox message twice on
->> non-CN20K platforms. The if/else block at line 106-111 allocates via
->> the model-specific branch, but the original unconditional allocation
->> at line 112 was not removed when the CN20K branch was added. This
->> overwrites pool_init_req, and the orphaned first message is sent to
->> the AF with uninitialized aura_id, ctype, and op fields, which can
->> trigger any undesired behavior on CN10K.
->>
->> Remove the duplicate allocation.
->>
->> Fixes: 143a419edf35 ("common/cnxk: use new NPA aq enq mbox for CN20K")
->> Cc: asekhar@marvell.com
->> Cc: stable@dpdk.org
->>
->> Signed-off-by: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
->> ---
->>  drivers/common/cnxk/roc_npa.c | 1 -
->>  1 file changed, 1 deletion(-)
->>
->> diff --git a/drivers/common/cnxk/roc_npa.c b/drivers/common/cnxk/roc_npa.c
->> index 4a3e96a97a..87f7637e9f 100644
->> --- a/drivers/common/cnxk/roc_npa.c
->> +++ b/drivers/common/cnxk/roc_npa.c
->> @@ -110,7 +110,6 @@ npa_aura_pool_init(struct mbox *m_box, uint32_t
->> aura_id, struct npa_aura_s *aura
->>         } else {
->>                 pool_init_req = mbox_alloc_msg_npa_aq_enq(mbox);
->>         }
->> -       pool_init_req = mbox_alloc_msg_npa_aq_enq(mbox);
->>         if (pool_init_req == NULL)
->>                 goto exit;
->>         pool_init_req->aura_id = aura_id;
->> --
->> 2.39.5 (Apple Git-154)
->>
->>
-
---0000000000002029af065b0b4f4f
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div><div style=3D"font-family:trebuchet ms,sans-serif;col=
-or:rgb(103,78,167)" class=3D"gmail_default">Hi Team</div><div style=3D"font=
--family:trebuchet ms,sans-serif;color:rgb(103,78,167)" class=3D"gmail_defau=
-lt"><br></div><div style=3D"font-family:trebuchet ms,sans-serif;color:rgb(1=
-03,78,167)" class=3D"gmail_default">The change-set has no relation to the i=
-ntel performance test which is failing. Could someone pls guide on how to g=
-et rid of this, get it reviewed and merged?</div><br clear=3D"all"></div><d=
-iv><div dir=3D"ltr" class=3D"gmail_signature" data-smartmail=3D"gmail_signa=
-ture"><div dir=3D"ltr"><div><span style=3D"font-family:verdana,sans-serif">=
-Thanks</span></div><div><span style=3D"font-family:verdana,sans-serif">Amiy=
-a</span><br></div></div></div></div><br></div><br><div class=3D"gmail_quote=
- gmail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Wed, 9 Sep=
-t 2026 at 16:26, Amiya Ranjan Mohakud &lt;<a href=3D"mailto:amiyaranjan.moh=
-akud@gmail.com">amiyaranjan.mohakud@gmail.com</a>&gt; wrote:<br></div><bloc=
-kquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:=
-1px solid rgb(204,204,204);padding-left:1ex"><div dir=3D"ltr"><div>Recheck-=
-request: iol-intel-Performance</div><div><br></div><div><div dir=3D"ltr" cl=
-ass=3D"gmail_signature"><div dir=3D"ltr"><div><span style=3D"font-family:ve=
-rdana,sans-serif">Thanks</span></div><div><span style=3D"font-family:verdan=
-a,sans-serif">Amiya</span><br></div></div></div></div><br></div><br><div cl=
-ass=3D"gmail_quote"><div dir=3D"ltr" class=3D"gmail_attr">On Fri, 4 Sept 20=
-26 at 14:52, Amiya Ranjan Mohakud &lt;<a href=3D"mailto:amiyaranjan.mohakud=
-@gmail.com" target=3D"_blank">amiyaranjan.mohakud@gmail.com</a>&gt; wrote:<=
-br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8e=
-x;border-left:1px solid rgb(204,204,204);padding-left:1ex">npa_aura_pool_in=
-it() allocates the pool init mbox message twice on<br>
-non-CN20K platforms. The if/else block at line 106-111 allocates via<br>
-the model-specific branch, but the original unconditional allocation<br>
-at line 112 was not removed when the CN20K branch was added. This<br>
-overwrites pool_init_req, and the orphaned first message is sent to<br>
-the AF with uninitialized aura_id, ctype, and op fields, which can<br>
-trigger any undesired behavior on CN10K.<br>
-<br>
-Remove the duplicate allocation.<br>
-<br>
-Fixes: 143a419edf35 (&quot;common/cnxk: use new NPA aq enq mbox for CN20K&q=
-uot;)<br>
-Cc: <a href=3D"mailto:asekhar@marvell.com" target=3D"_blank">asekhar@marvel=
-l.com</a><br>
-Cc: <a href=3D"mailto:stable@dpdk.org" target=3D"_blank">stable@dpdk.org</a=
-><br>
-<br>
-Signed-off-by: Amiya Ranjan Mohakud &lt;<a href=3D"mailto:amiyaranjan.mohak=
-ud@gmail.com" target=3D"_blank">amiyaranjan.mohakud@gmail.com</a>&gt;<br>
----<br>
-=C2=A0drivers/common/cnxk/roc_npa.c | 1 -<br>
-=C2=A01 file changed, 1 deletion(-)<br>
-<br>
-diff --git a/drivers/common/cnxk/roc_npa.c b/drivers/common/cnxk/roc_npa.c<=
-br>
-index 4a3e96a97a..87f7637e9f 100644<br>
---- a/drivers/common/cnxk/roc_npa.c<br>
-+++ b/drivers/common/cnxk/roc_npa.c<br>
-@@ -110,7 +110,6 @@ npa_aura_pool_init(struct mbox *m_box, uint32_t aura_id=
-, struct npa_aura_s *aura<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 } else {<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 pool_init_req =3D m=
-box_alloc_msg_npa_aq_enq(mbox);<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 }<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0pool_init_req =3D mbox_alloc_msg_npa_aq_enq(mbo=
-x);<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (pool_init_req =3D=3D NULL)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 goto exit;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 pool_init_req-&gt;aura_id =3D aura_id;<br>
--- <br>
-2.39.5 (Apple Git-154)<br>
-<br>
-</blockquote></div>
-</blockquote></div>
-
---0000000000002029af065b0b4f4f--
+-- 
+Thanks,
+Anatoly
