@@ -2,32 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAA69C79FAD
-	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Sep 2026 05:44:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3BD4C79F8C
+	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Sep 2026 05:44:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3F8D640E0B;
-	Wed,  9 Sep 2026 07:44:19 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 524E240F1A;
+	Wed,  9 Sep 2026 07:44:20 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 7A87540272
+ by mails.dpdk.org (Postfix) with ESMTP id AE8DC40144
  for <dev@dpdk.org>; Wed,  9 Sep 2026 07:44:15 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5B1BE200120;
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 92B7C20012E;
  Wed,  9 Sep 2026 07:44:15 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id F037B20013D;
- Wed,  9 Sep 2026 07:44:14 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3404C200118;
+ Wed,  9 Sep 2026 07:44:15 +0200 (CEST)
 Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
  [92.120.147.250])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 2207818000B6;
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id B6E1918000B1;
  Wed,  9 Sep 2026 13:44:14 +0800 (+08)
 From: Gagandeep Singh <g.singh@nxp.com>
 To: dev@dpdk.org
 Cc: hemant.agrawal@nxp.com,
 	Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v14 02/15] net/enetc: add TSO support for ENETC4 VF
-Date: Wed,  9 Sep 2026 11:13:57 +0530
-Message-Id: <20260909054410.1490944-3-g.singh@nxp.com>
+Subject: [PATCH v14 04/15] net/enetc: extend PF-VF link speed field to 8 bits
+Date: Wed,  9 Sep 2026 11:13:59 +0530
+Message-Id: <20260909054410.1490944-5-g.singh@nxp.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260909054410.1490944-1-g.singh@nxp.com>
 References: <20260908054736.842738-1-g.singh@nxp.com>
@@ -48,525 +48,413 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add TCP and UDP segmentation offload (TSO) for the ENETC4 virtual
-function. The offload is advertised through the VF Tx capabilities and
-is enabled on a per-queue basis when an application requests the TSO
-offload flags during Tx queue setup.
+The PF-to-VF message is only 16-bit wide, where the upper 8-bit is the
+class_id and the lower 8-bit carries the message content. For the
+link speed message, the lower 4-bit was previously occupied by the cookie
+field, leaving only 4-bit for the speed code, which allows at most
+15 distinct speed values.
 
-A dedicated Tx burst, enetc_xmit_pkts_lso(), builds the large-send
-descriptor chain: a standard header BD, a 16B extension BD carrying the
-segment size and frame length extension, and one BD per payload buffer
-with the final-frame flag on the last BD. To make room for the extra
-extension BD, an LSO-enabled Tx ring is allocated with twice the number
-of descriptors. The existing non-TSO Tx paths are left unchanged.
+As the NETC IP evolves and supports more and more link speeds, 15 speed
+values are clearly insufficient. Since the cookie field is designed
+for non-blocking messages and has no meaningful use in link speed
+messages, remove it and expand the speed code field from 4-bit to 8-bit.
+
+Instead of enumerating every speed value greater than 5Gbps
+explicitly, introduce a formula-based approach:
+
+	speed_code = (link_speed - 5000) / 1000 + ENETC_SPEED_5000
+
+This removes the explicit enum entries for 10G, 25G, 50G and 100G,
+and replaces the individual switch-case branches with a generic
+implementation to get the speed, making it easy to support any
+future high speed without modifying the enum or the switch statement.
+
+For backward compatibility with a PF running an older kernel (before
+6.18.37) that still uses the legacy 4-bit speed code / 4-bit cookie
+message layout, add a "vf_link_legacy" devarg. When set to 1, the VF
+extracts the message result from the upper 4 bits of the lower byte
+and decodes speeds greater than 5Gbps using the legacy fixed class
+codes (10G/25G/50G/100G). The default (0) uses the new 8-bit layout.
+
+	Usage: -a <pci_addr>,vf_link_legacy=1
 
 Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 Acked-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- doc/guides/nics/enetc4.rst             |   2 +
- doc/guides/nics/features/enetc4.ini    |   1 +
- doc/guides/rel_notes/release_26_11.rst |   1 +
- drivers/net/enetc/base/enetc4_hw.h     |  32 ++-
- drivers/net/enetc/enetc.h              |   3 +
- drivers/net/enetc/enetc4_ethdev.c      |  54 +++++-
- drivers/net/enetc/enetc4_vf.c          |   2 +
- drivers/net/enetc/enetc_rxtx.c         | 257 +++++++++++++++++++++++++
- 8 files changed, 347 insertions(+), 5 deletions(-)
+ doc/guides/nics/enetc4.rst             |  11 ++
+ doc/guides/rel_notes/release_26_11.rst |   3 +
+ drivers/net/enetc/enetc.h              |  30 +++-
+ drivers/net/enetc/enetc4_vf.c          | 202 +++++++++++++++++++++----
+ 4 files changed, 213 insertions(+), 33 deletions(-)
 
 diff --git a/doc/guides/nics/enetc4.rst b/doc/guides/nics/enetc4.rst
-index f0dd039f6e..4d27e4048e 100644
+index 141fe0486d..d2839d517f 100644
 --- a/doc/guides/nics/enetc4.rst
 +++ b/doc/guides/nics/enetc4.rst
-@@ -53,6 +53,8 @@ Key functionality includes:
- - Receive processing: Upon packet reception, the BD Ring status bit is set,
-   facilitating packet processing.
- - Transmission: Packet transmission precedes reception, ensuring efficient data transfer.
-+- TCP and UDP segmentation offload (TSO) on VFs, enabled per Tx queue
-+  when the TSO offload flag is requested.
+@@ -135,6 +135,17 @@ VF-specific devargs
  
+     dpdk-testpmd -a 0000:00:01.0,enetc4_vsi_delay=10 -- -i
  
- Prerequisites
-diff --git a/doc/guides/nics/features/enetc4.ini b/doc/guides/nics/features/enetc4.ini
-index 91b18d979e..8ec1e8d00f 100644
---- a/doc/guides/nics/features/enetc4.ini
-+++ b/doc/guides/nics/features/enetc4.ini
-@@ -7,6 +7,7 @@
- Link status event    = Y
- Speed capabilities   = Y
- Link status          = Y
-+TSO                  = Y
- Promiscuous mode     = Y
- Allmulticast mode    = Y
- Unicast MAC filter   = Y
++``vf_link_legacy``
++  Select the legacy 4-bit PF-to-VF link speed code layout.
++  Set to ``1`` when the host PF is running a kernel older than v6.18.37.
++  Kernels before that release encode link speed in only 4 bits; without this
++  flag the driver interprets those codes as 8-bit values and reports incorrect
++  link speeds.
++
++  Usage example::
++
++    dpdk-testpmd -a 0000:00:01.0,vf_link_legacy=1 -- -i
++
+ PF/Common devargs
+ ~~~~~~~~~~~~~~~~~
+ 
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 3678dd6894..6a348ab4e0 100644
+index 0dd08e0259..ee4f455c67 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -61,6 +61,7 @@ New Features
-   Updated the NXP ENETC4 poll mode driver for i.MX95:
- 
+@@ -63,6 +63,9 @@ New Features
    * Added KEEP_CRC Rx offload support for the ENETC4 PMD to preserve the Ethernet FCS.
-+  * Added TCP Segmentation Offload (TSO) support for the ENETC4 VF.
+   * Added TCP Segmentation Offload (TSO) support for the ENETC4 VF.
+   * Added Receive Segment Coalesce (RSC / hardware LRO) support for ENETC4 PF and VF.
++  * Extended the PF-to-VF link speed code field from 4-bit to 8-bit in ENETC4.
++    Users running a PF kernel older than 6.18.37 must pass ``vf_link_legacy=1``
++    as a device argument, otherwise link speed reporting will be incorrect.
  
  Removed Items
  -------------
-diff --git a/drivers/net/enetc/base/enetc4_hw.h b/drivers/net/enetc/base/enetc4_hw.h
-index c81ac00ec6..d7e36163f6 100644
---- a/drivers/net/enetc/base/enetc4_hw.h
-+++ b/drivers/net/enetc/base/enetc4_hw.h
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright 2024 NXP
-+ * Copyright 2024-2026 NXP
-  *
-  * This header file defines the register offsets and bit fields
-  * of ENETC4 PF and VFs.
-@@ -24,7 +24,12 @@ struct enetc_msg_swbd {
- 
- /* enetc4 txbd flags */
- #define ENETC4_TXBD_FLAGS_L4CS		BIT(0)
-+/* Request LSO (Large Send Offload) segmentation for this frame */
-+#define ENETC4_TXBD_FLAGS_LSO		BIT(1)
-+/* L4 checksum insertion (also used for checksum update on LSO) */
- #define ENETC4_TXBD_FLAGS_L_TX_CKSUM	BIT(3)
-+/* Extended descriptor: the next 16B ring entry is an extension BD */
-+#define ENETC4_TXBD_FLAGS_EXT		BIT(6)
- #define ENETC4_TXBD_FLAGS_F		BIT(7)
- /* L4 type */
- #define ENETC4_TXBD_L4T_UDP		BIT(0)
-@@ -34,6 +39,31 @@ struct enetc_msg_swbd {
- /* IPv4 checksum */
- #define ENETC4_TXBD_IPCS		1
- 
-+/*
-+ * Extension Transmit Buffer Descriptor (16B). When the standard BD has the
-+ * extended flag set, this occupies the next ring entry and carries the extra
-+ * fields required by LSO.
-+ */
-+struct enetc_tx_bd_ext {
-+	uint32_t timestamp;	/* PTP timestamp, unused for LSO */
-+	uint32_t vlan;		/* VLAN insert, unused for LSO */
-+	uint32_t lso;		/* LSO_MAX_SEG_SIZE and FRM_LEN_EXT */
-+	uint32_t flags;		/* extension flags */
-+};
-+
-+/* LSO_MAX_SEG_SIZE occupies bits 13-0 of the LSO word */
-+#define ENETC4_TXBD_EXT_LSO_SEG_MASK	0x3fff
-+#define ENETC4_TXBD_EXT_LSO_SEG(mss) \
-+		((uint32_t)((mss) & ENETC4_TXBD_EXT_LSO_SEG_MASK))
-+/* FRM_LEN_EXT occupies bits 19-16 of the LSO word (top 4 bits of data len) */
-+#define ENETC4_TXBD_EXT_FRM_LEN_EXT(x) \
-+		(((uint32_t)((x) & 0xf)) << 16)
-+
-+/* NETC does not create LSO frames larger than this many bytes */
-+#define ENETC4_LSO_MAX_FRAME		9600
-+/* Maximum LSO data unit (payload to be segmented) supported by HW: 256KB */
-+#define ENETC4_LSO_MAX_DATA_UNIT	(256 * 1024)
-+
- /***************************ENETC port registers**************************/
- #define ENETC4_PMR		0x10
- #define ENETC4_PMR_EN		(BIT(16) | BIT(17) | BIT(18))
 diff --git a/drivers/net/enetc/enetc.h b/drivers/net/enetc/enetc.h
-index d3a8b8e34a..6cd031f269 100644
+index 145ebbbb00..39a07df59d 100644
 --- a/drivers/net/enetc/enetc.h
 +++ b/drivers/net/enetc/enetc.h
-@@ -99,6 +99,7 @@ struct enetc_bdr {
- 	uint64_t ierrors;
- 	uint8_t rx_deferred_start;
- 	uint8_t tx_deferred_start;
-+	uint8_t lso_enable;
+@@ -119,6 +119,10 @@ struct enetc_eth_hw {
+ 	uint32_t vsi_delay;   /* VSI-PSI message wait delay (us) */
+ 	uint32_t *txq_prior;  /* per-queue TX priority (TBMR priority bits) */
+ 	uint8_t nc_mode;      /* 1 = non-cacheable BD memory, use _nc ops */
++	/* 1 = legacy PF-to-VF link message layout (4-bit speed / 4-bit cookie),
++	 * for PF kernel versions before 6.18.37. Set via vf_link_legacy devarg.
++	 */
++	uint8_t vf_link_legacy;
  };
  
- struct enetc_eth_hw {
-@@ -312,6 +313,8 @@ uint16_t enetc_xmit_pkts(void *txq, struct rte_mbuf **tx_pkts,
- 		uint16_t nb_pkts);
- uint16_t enetc_xmit_pkts_nc(void *txq, struct rte_mbuf **tx_pkts,
- 		uint16_t nb_pkts);
-+uint16_t enetc_xmit_pkts_lso(void *txq, struct rte_mbuf **tx_pkts,
-+		uint16_t nb_pkts);
- uint16_t enetc_recv_pkts(void *rxq, struct rte_mbuf **rx_pkts,
- 		uint16_t nb_pkts);
- uint16_t enetc_recv_pkts_nc(void *rxq, struct rte_mbuf **rx_pkts,
-diff --git a/drivers/net/enetc/enetc4_ethdev.c b/drivers/net/enetc/enetc4_ethdev.c
-index 91e2cdb129..0ee5e36609 100644
---- a/drivers/net/enetc/enetc4_ethdev.c
-+++ b/drivers/net/enetc/enetc4_ethdev.c
-@@ -24,7 +24,9 @@ static uint64_t dev_tx_offloads_sup =
- 	RTE_ETH_TX_OFFLOAD_IPV4_CKSUM |
- 	RTE_ETH_TX_OFFLOAD_UDP_CKSUM |
- 	RTE_ETH_TX_OFFLOAD_TCP_CKSUM |
--	RTE_ETH_TX_OFFLOAD_MULTI_SEGS;
-+	RTE_ETH_TX_OFFLOAD_MULTI_SEGS |
-+	RTE_ETH_TX_OFFLOAD_TCP_TSO |
-+	RTE_ETH_TX_OFFLOAD_UDP_TSO;
- 
- #define ENETC4_TXQ_PRIORITIES	"enetc4_txq_prior"
- #define ENETC4_NC_MEMORY	"nc"
-@@ -309,22 +311,37 @@ static int
- enetc4_alloc_txbdr(struct enetc_bdr *txr, uint16_t nb_desc)
- {
- 	int size;
-+	uint32_t ring_desc;
- 
--	size = nb_desc * sizeof(struct enetc_swbd);
-+	/*
-+	 * On LSO-enabled rings each frame uses an extra 16B extension BD
-+	 * (logical 32B descriptor) plus the payload BDs.  Size the ring with
-+	 * twice the requested entries so the effective frame capacity is
-+	 * preserved.  Non-LSO rings are sized exactly as requested.
+ /*
+@@ -210,11 +214,27 @@ enum speed {
+ 	ENETC_SPEED_1000 = 0x5,
+ 	ENETC_SPEED_2500 = 0x6,
+ 	ENETC_SPEED_5000 = 0x7,
+-	ENETC_SPEED_10G = 0x8,
+-	ENETC_SPEED_25G = 0x9,
+-	ENETC_SPEED_50G = 0xA,
+-	ENETC_SPEED_100G = 0xB,
+-	ENETC_SPEED_NOT_SUPPORTED = 0xF
++	/* Do not add enumeration values for any speed greater than
++	 * 5Gbps. For any speed greater than 5Gbps, its speed class
++	 * code should follow the formula below.
++	 *
++	 * SPEED = (link_speed - 5000) / 1000 + ENETC_SPEED_5000
++	 *
++	 * The unit of link_speed should be Mbps. The resulting SPEED
++	 * must fit in the 8-bit speed code field (0x0 to 0xff).
 +	 */
-+	ring_desc = txr->lso_enable ? (uint32_t)nb_desc * 2 : (uint32_t)nb_desc;
-+	if (ring_desc > MAX_BD_COUNT) {
-+		ENETC_PMD_ERR("LSO ring_desc %u > MAX_BD_COUNT %u; "
-+			      "reduce nb_desc to <= %u with LSO enabled",
-+			      ring_desc, MAX_BD_COUNT, MAX_BD_COUNT / 2);
++};
++
++/* Legacy speed class codes for backward compatibility with an older kernel PF
++ * (before 6.18.37) that encoded a 4-bit speed code and 4-bit cookie in the
++ * message's lower byte. Used only when the vf_link_legacy devarg is set.
++ */
++enum speed_legacy {
++	ENETC_SPEED_LEGACY_10G = 0x8,
++	ENETC_SPEED_LEGACY_25G = 0x9,
++	ENETC_SPEED_LEGACY_50G = 0xA,
++	ENETC_SPEED_LEGACY_100G = 0xB,
++	ENETC_SPEED_LEGACY_NOT_SUPPORTED = 0xF
+ };
+ 
+ /* PSI-VSI command header format */
+diff --git a/drivers/net/enetc/enetc4_vf.c b/drivers/net/enetc/enetc4_vf.c
+index be79a18a39..9c6070b6d4 100644
+--- a/drivers/net/enetc/enetc4_vf.c
++++ b/drivers/net/enetc/enetc4_vf.c
+@@ -43,6 +43,12 @@ enetc4_vf_get_devarg_nc(struct rte_eth_dev *dev)
+ #define ENETC_BYTE_SIZE			8
+ #define ENETC_MSB_BIT			0x8000
+ 
++/* Backward-compat devarg for a PF running a kernel before 6.18.37, which uses
++ * the legacy PF-to-VF link message layout (4-bit speed code + 4-bit cookie).
++ * Usage: -a <pci_addr>,vf_link_legacy=1
++ */
++#define ENETC_VF_LINK_LEGACY		"vf_link_legacy"
++
+ uint16_t enetc_crc_table[ENETC_CRC_TABLE_SIZE];
+ bool enetc_crc_gen;
+ 
+@@ -101,6 +107,59 @@ enetc_crc_calc(uint16_t crc, const uint8_t *buffer, size_t len)
+ 	return crc;
+ }
+ 
++static int
++parse_vf_link_legacy(const char *key __rte_unused, const char *value,
++		     void *opaque)
++{
++	struct rte_eth_dev *dev = (struct rte_eth_dev *)opaque;
++	struct enetc_eth_hw *hw =
++			ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
++	char *endptr;
++	unsigned long val;
++
++	if (!value || *value == '\0') {
++		ENETC_PMD_WARN("Empty value for devarg %s, ignoring",
++			       ENETC_VF_LINK_LEGACY);
 +		return -EINVAL;
 +	}
 +
-+	size = ring_desc * sizeof(struct enetc_swbd);
- 	/* Zero q_swbd so buffer_addr is NULL for all uninitialized slots. */
- 	txr->q_swbd = rte_zmalloc(NULL, size, ENETC_BD_RING_ALIGN);
- 	if (txr->q_swbd == NULL)
- 		return -ENOMEM;
- 
- 	/* Allocate the TX BD ring: each BD is struct enetc_tx_bd (16 bytes). */
--	size = nb_desc * sizeof(struct enetc_tx_bd);
-+	size = ring_desc * sizeof(struct enetc_tx_bd);
- 	txr->bd_base = rte_zmalloc(NULL, size, ENETC_BD_RING_ALIGN);
- 	if (txr->bd_base == NULL) {
- 		rte_free(txr->q_swbd);
- 		txr->q_swbd = NULL;
- 		return -ENOMEM;
- 	}
--	txr->bd_count = nb_desc;
-+	txr->bd_count = ring_desc;
- 	txr->next_to_clean = 0;
- 	txr->next_to_use = 0;
- 
-@@ -376,6 +393,7 @@ enetc4_tx_queue_setup(struct rte_eth_dev *dev,
- 	struct rte_eth_dev_data *data = dev->data;
- 	struct enetc_eth_adapter *priv =
- 			ENETC_DEV_PRIVATE(data->dev_private);
-+	uint64_t tx_offloads;
- 
- 	PMD_INIT_FUNC_TRACE();
- 	if (nb_desc > MAX_BD_COUNT)
-@@ -389,6 +407,34 @@ enetc4_tx_queue_setup(struct rte_eth_dev *dev,
- 	}
- 
- 	tx_ring->index = queue_idx;
-+	/*
-+	 * LSO (TCP/UDP segmentation) is a port-level offload. The Tx burst is
-+	 * a single device-level function pointer, so it must be consistent for
-+	 * all queues; likewise every ring must be sized the same way. Decide
-+	 * from the port offloads only (not the per-queue tx_conf) so that all
-+	 * queues either use the LSO burst with a doubled ring, or none do.
-+	 * The LSO burst also handles non-TSO packets, so it is safe on queues
-+	 * that never carry TSO traffic. LSO needs HW FCS insertion, so it is
-+	 * incompatible with KEEP_CRC on Rx.
-+	 */
-+	tx_offloads = data->dev_conf.txmode.offloads;
-+	if (tx_offloads & (RTE_ETH_TX_OFFLOAD_TCP_TSO |
-+			   RTE_ETH_TX_OFFLOAD_UDP_TSO)) {
-+		if (data->dev_conf.rxmode.offloads &
-+		    RTE_ETH_RX_OFFLOAD_KEEP_CRC) {
-+			ENETC_PMD_ERR("LSO (TSO) is incompatible with KEEP_CRC");
-+			rte_free(tx_ring);
-+			return -EINVAL;
-+		}
-+		tx_ring->lso_enable = 1;
-+		dev->tx_pkt_burst = &enetc_xmit_pkts_lso;
-+	} else {
-+		struct enetc_eth_hw *hw =
-+			ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+		dev->tx_pkt_burst = hw->nc_mode ? &enetc_xmit_pkts_nc :
-+						  &enetc_xmit_pkts_cacheable;
++	errno = 0;
++	val = strtoul(value, &endptr, 0);
++	if (errno != 0 || *endptr != '\0' || val > 1) {
++		ENETC_PMD_WARN("Invalid value '%s' for devarg %s, expected 0 or 1",
++			       value, ENETC_VF_LINK_LEGACY);
++		return -EINVAL;
 +	}
 +
- 	err = enetc4_alloc_txbdr(tx_ring, nb_desc);
- 	if (err)
- 		goto fail;
-diff --git a/drivers/net/enetc/enetc4_vf.c b/drivers/net/enetc/enetc4_vf.c
-index 83a1e4931f..3083a56335 100644
---- a/drivers/net/enetc/enetc4_vf.c
-+++ b/drivers/net/enetc/enetc4_vf.c
-@@ -60,6 +60,8 @@ static uint64_t dev_tx_offloads_sup =
- 	RTE_ETH_TX_OFFLOAD_IPV4_CKSUM |
- 	RTE_ETH_TX_OFFLOAD_UDP_CKSUM |
- 	RTE_ETH_TX_OFFLOAD_TCP_CKSUM |
-+	RTE_ETH_TX_OFFLOAD_TCP_TSO |
-+	RTE_ETH_TX_OFFLOAD_UDP_TSO |
- 	RTE_ETH_TX_OFFLOAD_MULTI_SEGS;
- 
- static void
-diff --git a/drivers/net/enetc/enetc_rxtx.c b/drivers/net/enetc/enetc_rxtx.c
-index d5855e69a3..0bb5a86dd8 100644
---- a/drivers/net/enetc/enetc_rxtx.c
-+++ b/drivers/net/enetc/enetc_rxtx.c
-@@ -221,6 +221,263 @@ enetc_xmit_pkts_nc(void *tx_queue,
- 	return start;
- }
- 
-+/*
-+ * LSO (Large Send Offload) Tx burst.
-+ *
-+ * Dedicated burst used on Tx rings with LSO enabled (txr->lso_enable). It
-+ * follows the same non-cache-coherent discipline as enetc_xmit_pkts_cacheable:
-+ * payload lines are flushed with dcbf before handing the frame to HW and the
-+ * written BD cache lines are flushed at the end of the batch.
-+ *
-+ * A TSO/USO frame uses an extended Tx descriptor: the standard BD points at
-+ * the L2/L3/L4 header template (BUF_LEN = header length, FRM_LEN = payload
-+ * length), followed by an extension BD in the next ring slot holding the
-+ * segment size, then one BD per payload buffer with the F flag on the last.
-+ * Non-TSO packets fall through to the normal encoding so mixed traffic works.
-+ */
-+uint16_t
-+enetc_xmit_pkts_lso(void *tx_queue,
-+		struct rte_mbuf **tx_pkts,
-+		uint16_t nb_pkts)
-+{
-+	int i, start, bds_to_use;
-+	struct enetc_tx_bd *txbd = NULL;
-+	struct enetc_tx_bd_ext *txbd_ext;
-+	struct enetc_bdr *tx_ring = (struct enetc_bdr *)tx_queue;
-+	unsigned int j;
-+	uint8_t *data;
-+	struct rte_mbuf *seg;
-+	uint16_t seg_len, segs_per_pkt;
-+	bool is_first_seg;
-+	int first_bd_idx, bd_count;
++	hw->vf_link_legacy = (uint8_t)val;
 +
-+	i = tx_ring->next_to_use;
-+	bds_to_use = enetc_bd_unused(tx_ring);
-+	bd_count = tx_ring->bd_count;
-+	start = 0;
-+
-+	first_bd_idx = i;
-+
-+	while (start < nb_pkts) {
-+		seg = tx_pkts[start];
-+		segs_per_pkt = seg->nb_segs;
-+
-+		if (seg->ol_flags &
-+		    (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG)) {
-+			bool is_udp_seg =
-+				!!(seg->ol_flags & RTE_MBUF_F_TX_UDP_SEG);
-+			uint32_t hdr_len = seg->l2_len + seg->l3_len +
-+					   seg->l4_len;
-+			uint32_t data_unit;
-+			uint16_t first_payload;
-+			struct rte_mbuf *dseg;
-+			int bds_needed;
-+
-+			/* Header BD + extension BD + one BD per segment. */
-+			bds_needed = 2 + segs_per_pkt;
-+			if (bds_to_use < bds_needed)
-+				break;
-+
-+			/*
-+			 * Skip frames with nothing to segment, or whose
-+			 * headers are not fully contained in the first
-+			 * segment. The first BD carries the header template
-+			 * and first_payload is computed as (first segment
-+			 * data_len - hdr_len), so the L2/L3/L4 headers must
-+			 * reside contiguously in the first mbuf; otherwise the
-+			 * unsigned subtraction would underflow.
-+			 */
-+			if (unlikely(hdr_len >= rte_pktmbuf_pkt_len(seg) ||
-+				     hdr_len > rte_pktmbuf_data_len(seg))) {
-+				rte_pktmbuf_free(seg);
-+				start++;
-+				continue;
-+			}
-+			data_unit = rte_pktmbuf_pkt_len(seg) - hdr_len;
-+
-+			/*
-+			 * Skip frames that violate HW LSO limits: a zero
-+			 * segment size, a payload larger than the HW data
-+			 * unit, or a per-segment frame (headers + segment)
-+			 * bigger than the maximum LSO frame size.
-+			 */
-+			if (unlikely(seg->tso_segsz == 0 ||
-+				     data_unit > ENETC4_LSO_MAX_DATA_UNIT ||
-+				     hdr_len + seg->tso_segsz >
-+					     ENETC4_LSO_MAX_FRAME)) {
-+				rte_pktmbuf_free(seg);
-+				start++;
-+				continue;
-+			}
-+
-+			/* Standard (first) BD: header template only. */
-+			data = rte_pktmbuf_mtod(seg, void *);
-+
-+			seg_len = rte_pktmbuf_data_len(seg);
-+			for (j = 0; j < seg_len; j += RTE_CACHE_LINE_SIZE)
-+				dcbf(data + j);
-+			dcbf(data + (seg_len - 1));
-+
-+			txbd = ENETC_TXBD(*tx_ring, i);
-+			memset(txbd, 0, sizeof(*txbd));
-+			tx_ring->q_swbd[i].buffer_addr = seg;
-+
-+			/* FRM_LEN low 16 bits = payload length, BUF_LEN = hdr. */
-+			txbd->frm_len = rte_cpu_to_le_16(data_unit & 0xffff);
-+			txbd->buf_len = rte_cpu_to_le_16((uint16_t)hdr_len);
-+			txbd->addr = rte_cpu_to_le_64(rte_mbuf_data_iova(seg));
-+
-+			/* Checksum control for the per-segment L3/L4 rewrite. */
-+			txbd->l3_start = seg->l2_len;
-+			txbd->l3_hdr_size = seg->l3_len / 4;
-+			if (seg->ol_flags & RTE_MBUF_F_TX_IPV6) {
-+				txbd->l3t = 1;
-+			} else {
-+				txbd->l3t = ENETC4_TXBD_L3T;
-+				txbd->ipcs = ENETC4_TXBD_IPCS;
-+			}
-+			txbd->l4t = is_udp_seg ? ENETC4_TXBD_L4T_UDP :
-+						 ENETC4_TXBD_L4T_TCP;
-+			txbd->flags = ENETC4_TXBD_FLAGS_L_TX_CKSUM |
-+				      ENETC4_TXBD_FLAGS_L4CS |
-+				      ENETC4_TXBD_FLAGS_LSO |
-+				      ENETC4_TXBD_FLAGS_EXT;
-+
-+			i++;
-+			bds_to_use--;
-+			if (unlikely(i == bd_count))
-+				i = 0;
-+
-+			/* Extension BD occupies the next ring slot. */
-+			tx_ring->q_swbd[i].buffer_addr = NULL;
-+			txbd_ext = (struct enetc_tx_bd_ext *)
-+				   ENETC_TXBD(*tx_ring, i);
-+			memset(txbd_ext, 0, sizeof(*txbd_ext));
-+			txbd_ext->lso = rte_cpu_to_le_32(ENETC4_TXBD_EXT_LSO_SEG(seg->tso_segsz) |
-+					ENETC4_TXBD_EXT_FRM_LEN_EXT(data_unit >> 16));
-+
-+			i++;
-+			bds_to_use--;
-+			if (unlikely(i == bd_count))
-+				i = 0;
-+
-+			/*
-+			 * Payload BDs. The first segment's payload starts after
-+			 * the header template; remaining segments are pure
-+			 * payload.
-+			 */
-+			first_payload = (uint16_t)(seg_len - hdr_len);
-+			dseg = seg;
-+			is_first_seg = true;
-+			while (dseg) {
-+				uint16_t dlen;
-+				uint64_t daddr;
-+
-+				if (is_first_seg) {
-+					dlen = first_payload;
-+					daddr = rte_mbuf_data_iova(dseg) +
-+						hdr_len;
-+					is_first_seg = false;
-+				} else {
-+					dlen = rte_pktmbuf_data_len(dseg);
-+					data = rte_pktmbuf_mtod(dseg, void *);
-+					for (j = 0; j < dlen;
-+					     j += RTE_CACHE_LINE_SIZE)
-+						dcbf(data + j);
-+					dcbf(data + (dlen - 1));
-+					daddr = rte_mbuf_data_iova(dseg);
-+				}
-+
-+				if (dlen == 0) {
-+					dseg = dseg->next;
-+					continue;
-+				}
-+
-+				tx_ring->q_swbd[i].buffer_addr = NULL;
-+				txbd = ENETC_TXBD(*tx_ring, i);
-+				memset(txbd, 0, sizeof(*txbd));
-+				txbd->buf_len = rte_cpu_to_le_16(dlen);
-+				txbd->addr = rte_cpu_to_le_64(daddr);
-+				i++;
-+				bds_to_use--;
-+				if (unlikely(i == bd_count))
-+					i = 0;
-+				dseg = dseg->next;
-+			}
-+
-+			/* Mark the last written BD as frame-last. */
-+			txbd->flags |= ENETC4_TXBD_FLAGS_F;
-+			start++;
-+			continue;
-+		}
-+
-+		/* Non-TSO packet: standard single/multi-seg encoding. */
-+		if (bds_to_use < segs_per_pkt)
-+			break;
-+
-+		is_first_seg = true;
-+		while (seg) {
-+			tx_ring->q_swbd[i].buffer_addr = NULL;
-+			seg_len = rte_pktmbuf_data_len(seg);
-+			data = rte_pktmbuf_mtod(seg, void *);
-+
-+			for (j = 0; j < seg_len; j += RTE_CACHE_LINE_SIZE)
-+				dcbf(data + j);
-+			dcbf(data + (seg_len - 1));
-+
-+			txbd = ENETC_TXBD(*tx_ring, i);
-+			txbd->flags = 0;
-+			if (is_first_seg) {
-+				tx_ring->q_swbd[i].buffer_addr = seg;
-+				txbd->frm_len = rte_pktmbuf_pkt_len(seg);
-+				if (seg->ol_flags & ENETC4_TX_CKSUM_OFFLOAD_MASK)
-+					enetc4_tx_offload_checksum(seg, txbd);
-+				is_first_seg = false;
-+			}
-+
-+			txbd->buf_len = rte_cpu_to_le_16(seg_len);
-+			txbd->addr = rte_cpu_to_le_64(rte_mbuf_data_iova(seg));
-+			seg = seg->next;
-+			i++;
-+			bds_to_use--;
-+
-+			if (unlikely(i == bd_count))
-+				i = 0;
-+		}
-+
-+		txbd->flags |= ENETC4_TXBD_FLAGS_F;
-+		start++;
-+	}
-+
-+	/*
-+	 * Flush TX BDs to PoC so HW (non-cache-coherent i.MX95) can read the
-+	 * descriptors from memory.  Same discipline as enetc_xmit_pkts_cacheable:
-+	 * walk from the cache-line-aligned start of first_bd_idx to just past
-+	 * the last written BD, one dcbf per 64-byte (4-BD) line.
-+	 */
-+	if (likely(start > 0)) {
-+		int n = first_bd_idx & ~ENETC_BD_PER_CL_MASK;
-+		int written = (i - n + bd_count) % bd_count;
-+
-+		if (written == 0)
-+			written = bd_count;
-+		written = (written + ENETC_BD_PER_CL_MASK) &
-+			  ~ENETC_BD_PER_CL_MASK;
-+
-+		while (written > 0) {
-+			dcbf((void *)ENETC_TXBD(*tx_ring, n));
-+			n = (n + ENETC_BD_PER_CL) % bd_count;
-+			written -= ENETC_BD_PER_CL;
-+		}
-+	}
-+
-+	enetc_clean_tx_ring(tx_ring);
-+	tx_ring->next_to_use = i;
-+	enetc_wr_reg(tx_ring->tcir, i);
-+
-+	return start;
++	return 0;
 +}
 +
- int
- enetc_refill_rx_ring(struct enetc_bdr *rx_ring, const int buff_cnt)
++static void
++enetc4_vf_get_devargs(struct rte_eth_dev *dev)
++{
++	struct rte_devargs *devargs;
++	struct rte_kvargs *kvlist;
++
++	devargs = dev->device->devargs;
++	if (!devargs)
++		return;
++
++	kvlist = rte_kvargs_parse(devargs->args, NULL);
++	if (!kvlist)
++		return;
++
++	if (rte_kvargs_count(kvlist, ENETC_VF_LINK_LEGACY)) {
++		if (rte_kvargs_process(kvlist, ENETC_VF_LINK_LEGACY,
++				       parse_vf_link_legacy, (void *)dev) < 0)
++			ENETC_PMD_WARN("Failed to parse devarg %s",
++				       ENETC_VF_LINK_LEGACY);
++	}
++
++	rte_kvargs_free(kvlist);
++}
++
+ static int
+ enetc4_vf_dev_infos_get(struct rte_eth_dev *dev,
+ 			struct rte_eth_dev_info *dev_info)
+@@ -212,6 +271,7 @@ enetc4_msg_vsi_write_msg(struct enetc_hw *hw,
+ static void
+ enetc4_msg_vsi_reply_msg(struct enetc_hw *enetc_hw, struct enetc_psi_reply_msg *reply_msg)
  {
++	struct enetc_eth_hw *hw = container_of(enetc_hw, struct enetc_eth_hw, hw);
+ 	int vsimsgsr;
+ 	int8_t class_id = 0;
+ 	uint8_t status = 0;
+@@ -221,8 +281,15 @@ enetc4_msg_vsi_reply_msg(struct enetc_hw *enetc_hw, struct enetc_psi_reply_msg *
+ 	/* Extracting 8 bits of message result in class_id */
+ 	class_id |= ((ENETC_SIMSGSR_GET_MC(vsimsgsr) >> 8) & 0xff);
+ 
+-	/* Extracting 4 bits of message result in status */
+-	status |= ((ENETC_SIMSGSR_GET_MC(vsimsgsr) >> 4) & 0xf);
++	/* Extracting message result in status. With an older kernel PF
++	 * (vf_link_legacy set) the lower byte holds a 4-bit cookie in the
++	 * low nibble and a 4-bit result in the high nibble, so extract the
++	 * upper 4 bits. Otherwise the full lower byte carries the result.
++	 */
++	if (hw->vf_link_legacy)
++		status |= ((ENETC_SIMSGSR_GET_MC(vsimsgsr) >> 4) & 0xf);
++	else
++		status |= (ENETC_SIMSGSR_GET_MC(vsimsgsr) & 0xff);
+ 
+ 	reply_msg->class_id = class_id;
+ 	reply_msg->status = status;
+@@ -231,6 +298,7 @@ enetc4_msg_vsi_reply_msg(struct enetc_hw *enetc_hw, struct enetc_psi_reply_msg *
+ static void
+ enetc4_msg_get_psi_msg(struct enetc_hw *enetc_hw, struct enetc_psi_reply_msg *reply_msg)
+ {
++	struct enetc_eth_hw *hw = container_of(enetc_hw, struct enetc_eth_hw, hw);
+ 	int vsimsgrr;
+ 	int8_t class_id = 0;
+ 	uint8_t status = 0;
+@@ -240,8 +308,15 @@ enetc4_msg_get_psi_msg(struct enetc_hw *enetc_hw, struct enetc_psi_reply_msg *re
+ 	/* Extracting 8 bits of message result in class_id */
+ 	class_id |= ((ENETC_SIMSGSR_GET_MC(vsimsgrr) >> 8) & 0xff);
+ 
+-	/* Extracting 4 bits of message result in status */
+-	status |= ((ENETC_SIMSGSR_GET_MC(vsimsgrr) >> 4) & 0xf);
++	/* Extracting message result in status. With an older kernel PF
++	 * (vf_link_legacy set) the lower byte holds a 4-bit cookie in the
++	 * low nibble and a 4-bit result in the high nibble, so extract the
++	 * upper 4 bits. Otherwise the full lower byte carries the result.
++	 */
++	if (hw->vf_link_legacy)
++		status |= ((ENETC_SIMSGSR_GET_MC(vsimsgrr) >> 4) & 0xf);
++	else
++		status |= (ENETC_SIMSGSR_GET_MC(vsimsgrr) & 0xff);
+ 
+ 	reply_msg->class_id = class_id;
+ 	reply_msg->status = status;
+@@ -731,6 +806,8 @@ enetc4_vf_link_update_dummy(struct rte_eth_dev *dev __rte_unused,
+ static int
+ enetc4_vf_link_update(struct rte_eth_dev *dev, int wait_to_complete __rte_unused)
+ {
++	struct enetc_eth_hw *hw =
++			ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
+ 	struct enetc_psi_reply_msg *reply_msg;
+ 	struct rte_eth_link link;
+ 	int err;
+@@ -809,28 +886,91 @@ enetc4_vf_link_update(struct rte_eth_dev *dev, int wait_to_complete __rte_unused
+ 			link.link_speed = RTE_ETH_SPEED_NUM_5G;
+ 			link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
+ 			break;
+-		case ENETC_SPEED_10G:
+-			link.link_speed = RTE_ETH_SPEED_NUM_10G;
+-			link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
+-			break;
+-		case ENETC_SPEED_25G:
+-			link.link_speed = RTE_ETH_SPEED_NUM_25G;
+-			link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
+-			break;
+-		case ENETC_SPEED_50G:
+-			link.link_speed = RTE_ETH_SPEED_NUM_50G;
+-			link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
+-			break;
+-		case ENETC_SPEED_100G:
+-			link.link_speed = RTE_ETH_SPEED_NUM_100G;
+-			link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
+-			break;
+-		case ENETC_SPEED_NOT_SUPPORTED:
+-			ENETC_PMD_DEBUG("Speed not supported");
+-			link.link_speed = RTE_ETH_SPEED_NUM_UNKNOWN;
+-			break;
+ 		default:
+-			ENETC_PMD_ERR("Unknown speed status");
++			if (hw->vf_link_legacy) {
++				/* Legacy PF-to-VF message layout (older kernel
++				 * PF): speeds greater than 5Gbps are encoded
++				 * with fixed 4-bit class codes rather than the
++				 * formula below.
++				 */
++				switch (reply_msg->status) {
++				case ENETC_SPEED_LEGACY_10G:
++					link.link_speed = RTE_ETH_SPEED_NUM_10G;
++					link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
++					break;
++				case ENETC_SPEED_LEGACY_25G:
++					link.link_speed = RTE_ETH_SPEED_NUM_25G;
++					link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
++					break;
++				case ENETC_SPEED_LEGACY_50G:
++					link.link_speed = RTE_ETH_SPEED_NUM_50G;
++					link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
++					break;
++				case ENETC_SPEED_LEGACY_100G:
++					link.link_speed = RTE_ETH_SPEED_NUM_100G;
++					link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
++					break;
++				case ENETC_SPEED_LEGACY_NOT_SUPPORTED:
++					ENETC_PMD_DEBUG("Speed not supported");
++					link.link_speed = RTE_ETH_SPEED_NUM_UNKNOWN;
++					break;
++				default:
++					ENETC_PMD_ERR("Unknown speed status");
++					link.link_speed = RTE_ETH_SPEED_NUM_UNKNOWN;
++					break;
++				}
++				break;
++			}
++
++			/* Any status reaching here is greater than
++			 * ENETC_SPEED_5000, as all values from 0x0 to
++			 * ENETC_SPEED_5000 are handled by the cases above. Speeds
++			 * greater than 5Gbps are not enumerated and follow the
++			 * formula:
++			 *
++			 *   SPEED = (link_speed - 5000) / 1000 + ENETC_SPEED_5000
++			 *
++			 * where link_speed is in Mbps. Reverse it here to get the
++			 * actual link speed (RTE_ETH_SPEED_NUM_* values are in Mbps).
++			 *
++			 * Validate the computed value against the set of speeds
++			 * that the NETC IP is known to support (> 5Gbps).
++			 * An unrecognised code yields UNKNOWN rather than a
++			 * fabricated speed.
++			 */
++			switch ((reply_msg->status - ENETC_SPEED_5000)
++				* 1000 + 5000) {
++			case RTE_ETH_SPEED_NUM_10G:
++				link.link_speed = RTE_ETH_SPEED_NUM_10G;
++				link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
++				break;
++			case RTE_ETH_SPEED_NUM_25G:
++				link.link_speed = RTE_ETH_SPEED_NUM_25G;
++				link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
++				break;
++			case RTE_ETH_SPEED_NUM_40G:
++				link.link_speed = RTE_ETH_SPEED_NUM_40G;
++				link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
++				break;
++			case RTE_ETH_SPEED_NUM_50G:
++				link.link_speed = RTE_ETH_SPEED_NUM_50G;
++				link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
++				break;
++			case RTE_ETH_SPEED_NUM_100G:
++				link.link_speed = RTE_ETH_SPEED_NUM_100G;
++				link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
++				break;
++			case RTE_ETH_SPEED_NUM_200G:
++				link.link_speed = RTE_ETH_SPEED_NUM_200G;
++				link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
++				break;
++			default:
++				ENETC_PMD_WARN("Unrecognized speed code 0x%x, "
++					       "reporting unknown",
++					       reply_msg->status);
++				link.link_speed = RTE_ETH_SPEED_NUM_UNKNOWN;
++				break;
++			}
+ 			break;
+ 		}
+ 	} else {
+@@ -839,10 +979,9 @@ enetc4_vf_link_update(struct rte_eth_dev *dev, int wait_to_complete __rte_unused
+ 	}
+ 
+ 	link.link_autoneg = 1;
+-
+ 	rte_eth_linkstatus_set(dev, &link);
+-
+ 	rte_free(reply_msg);
++
+ 	return 0;
+ }
+ 
+@@ -1421,6 +1560,12 @@ enetc4_vf_dev_init(struct rte_eth_dev *eth_dev)
+ 	if (rte_eal_iova_mode() == RTE_IOVA_PA)
+ 		dpaax_iova_table_populate();
+ 
++	/* Parse VF specific devargs (e.g. vf_link_legacy) before the first
++	 * link update so that PF-to-VF link messages are interpreted using
++	 * the correct (legacy or current) layout.
++	 */
++	enetc4_vf_get_devargs(eth_dev);
++
+ 	ENETC_PMD_DEBUG("port_id %d vendorID=0x%x deviceID=0x%x",
+ 			eth_dev->data->port_id, pci_dev->id.vendor_id,
+ 			pci_dev->id.device_id);
+@@ -1514,5 +1659,6 @@ RTE_PMD_REGISTER_PARAM_STRING(net_enetc4_vf,
+ 			      ENETC4_VSI_DISABLE "=<any> "
+ 			      ENETC4_VSI_TIMEOUT "=<uint> "
+ 			      ENETC4_VSI_DELAY "=<uint> "
+-			      ENETC4_NC_MEMORY "=<int>");
++			      ENETC4_NC_MEMORY "=<int> "
++			      ENETC_VF_LINK_LEGACY "=<0|1>");
+ RTE_LOG_REGISTER_DEFAULT(enetc4_vf_logtype_pmd, NOTICE);
 -- 
 2.25.1
 
