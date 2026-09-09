@@ -2,39 +2,153 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9347C79F8C
-	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Sep 2026 05:45:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 956F3C79F8C
+	for <dpdk-dev@archiver.kernel.org>; Wed,  9 Sep 2026 09:09:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2E9F741611;
-	Wed,  9 Sep 2026 07:44:33 +0200 (CEST)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id B01A540E0B
- for <dev@dpdk.org>; Wed,  9 Sep 2026 07:44:18 +0200 (CEST)
-Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 949C2200118;
- Wed,  9 Sep 2026 07:44:18 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com
- (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5F0C820012B;
- Wed,  9 Sep 2026 07:44:18 +0200 (CEST)
-Received: from lsv03457.swis.in-blr01.nxp.com (lsv03457.swis.in-blr01.nxp.com
- [92.120.147.250])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id DEC5418000B5;
- Wed,  9 Sep 2026 13:44:17 +0800 (+08)
-From: Gagandeep Singh <g.singh@nxp.com>
-To: dev@dpdk.org
-Cc: hemant.agrawal@nxp.com,
-	Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v14 15/15] net/enetc4: add WRR Tx scheduler devarg for VF rings
-Date: Wed,  9 Sep 2026 11:14:10 +0530
-Message-Id: <20260909054410.1490944-16-g.singh@nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20260909054410.1490944-1-g.singh@nxp.com>
-References: <20260908054736.842738-1-g.singh@nxp.com>
- <20260909054410.1490944-1-g.singh@nxp.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 69A4C40272;
+	Wed,  9 Sep 2026 11:09:15 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 2855440144
+ for <dev@dpdk.org>; Wed,  9 Sep 2026 11:09:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1788944953; x=1820480953;
+ h=message-id:date:subject:from:to:references:in-reply-to:
+ content-transfer-encoding:mime-version;
+ bh=dB+8IMnsR9or/Xvn2cfca255HNHrR5KnAdQy9y5TJ9k=;
+ b=KhZJxQNS6VnJvLnMl4NZFzNv5cZk7y65Li2flIRmgOySg4Mumo75w/Bn
+ A+dhL2hqn+0BB9IAG86p+Ug+pOLKkpOHT2PVkwEKJbloSMpqz82YKxwG+
+ 3GhbbWNFxtffa1FgAMUbZ02FkdLxJ8T5gUBQzXQOFcnAS2I++4XUvmNKJ
+ Onmgtnu3Q6GjeATVvR8ktBZpj7clb0fG0D+3985CGgo1CtZlHom+4CDaK
+ 54GGjzfxSfbwNvGLrJgEHu1qoIfrwv43H7eWG3bEYQ4nRL7GFBO/gUJ1Y
+ EkjkSDydz2iRw2McN+LuZjAMCB6KaecGgZKNr2NT0196Eei652Pr3WDGA w==;
+X-CSE-ConnectionGUID: TkET/8NkRKqX/PEByFHJLg==
+X-CSE-MsgGUID: WyBqc01yQ7uZHRVuNSPJ9A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11900"; a="91876468"
+X-IronPort-AV: E=Sophos;i="6.25,270,1779174000"; d="scan'208";a="91876468"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+ by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Sep 2026 02:09:11 -0700
+X-CSE-ConnectionGUID: H/AGOArzT0+g9oZK7M6l6Q==
+X-CSE-MsgGUID: tSaYj0XAST2eO9Jv1qdr0w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.25,270,1779174000"; d="scan'208";a="271244381"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 09 Sep 2026 02:09:12 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Wed, 9 Sep 2026 02:09:10 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46 via Frontend Transport; Wed, 9 Sep 2026 02:09:10 -0700
+Received: from CY3PR05CU001.outbound.protection.outlook.com (40.93.201.61) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Wed, 9 Sep 2026 02:09:10 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=A88S87Jjgbttb6Bc+stwr6f6bqEI4e3HygbSSa8kEKdzF9Wg3yvXXnlVP/26Z/hULW/mq/gJ8IqtehdirybAr6T4c4uMf9/9n7UmmybUy6zTALTRzq1PD2UMz1SMWaJRPv84u3mIqEk9iKVVyhuZpuVPF/dF83l4NDZK/cBoQOxgn5DfwD4okVITQ35QWLlW5IjQ8qGu2OuHl+E24+0MN3VHyaNodxAzBxKG7nQ0Wj/cxOMrzKZPyfYXMrhWGrJb6MKG/DUqGwVIR0kvUxbJ9Siv4QLArjCfDW3yLBtH5wrNi6X70KHoUv6rbM03LR3+SeqfrPDL3pjHcCUTc1zILg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vSPwpqdOsAgvzW4LWGLreTCqOCGOkZkOtc0+LdAekFQ=;
+ b=ZjH7MdsWXuCLWc9F8hXOoDZnhK9Sh9y/6BcjYy6SmVqYVrCqrUm9KdEhZBH+cPH7yAVd5Ft4IWrIUkYtH+g3IxOPzxNjDO5kGYHjNpd7iaRCM9UCDNyNPlWLNtSB9ww4ShNTN65d9F8j/Mc4t5jTWrraC3q+2G5ii8I83G9u0MK/hzKpJl/CbHpN/sBDbkwNS3fEui/T7fwodZP4pJHgENYn/tbGSWwVbSnaTOCD9vtPnZFoVG5oy83KSEXa4rGKHrLP441oUC+AXr/HgPnt4vSHC7kpRt90x+jdHvfc0JTJ3wEaO0jfruqcfNASXFcset2PZdiZOpNyEBpE7o150Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
+ PH7PR11MB8526.namprd11.prod.outlook.com (2603:10b6:510:30a::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.7; Wed, 9 Sep 2026
+ 09:09:03 +0000
+Received: from DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::d2df:4650:72ad:47d4]) by DM4PR11MB6502.namprd11.prod.outlook.com
+ ([fe80::d2df:4650:72ad:47d4%3]) with mapi id 15.21.0406.005; Wed, 9 Sep 2026
+ 09:09:02 +0000
+Message-ID: <593aec82-a900-4357-85be-63c53767d542@intel.com>
+Date: Wed, 9 Sep 2026 11:08:56 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/19] Building a better rte_flow parser
+From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
+To: <dev@dpdk.org>
+References: <cover.1787233986.git.anatoly.burakov@intel.com>
+ <cover.1788880122.git.anatoly.burakov@intel.com>
+Content-Language: en-US
+In-Reply-To: <cover.1788880122.git.anatoly.burakov@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DB8P191CA0030.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:10:130::40) To DM4PR11MB6502.namprd11.prod.outlook.com
+ (2603:10b6:8:89::7)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|PH7PR11MB8526:EE_
+X-MS-Office365-Filtering-Correlation-Id: f4f90893-8d6f-49a2-db6b-08df0e51fd81
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|23010399003|376014|1800799024|366016|4143699003|11063799006|5023799004|56012099006|3023799007|10067099003|6133799003|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info: KY81cFsnh92eN+xrHaflK5tOaiN0AEdt+ItoEbZDZbq7KNDX1nLM6TFnlsxJhbfKPa5pQr++n+bsqtsHzBs3I9QSxVzgZEif8zQfVw2AVwdM88xQZ5k333YbtZ/d7JowdoR4vK3kLywZCrx8rbn/5f/W3OHTP49fEbghJcZ+DcRU5QwIjHVWW+0l1zeMDtGkn5WKKGdqK1PPZhwUJU0eiGBHsje+dy7ZBiOajdDRd8s6k7eq8tf5s4eBjvMe9mMwgbMcvJPZrfvU9UFQiulMXj+3ywYV31bcCV3ilbtEUw064JmGk4sy6npzK6vdtdZo+jPrlcDbf5K1OKKkHRIJM3ywR8V6ZyTkdjMugsiUGhNJy3qcyAR0T2y7WanHiPYrhXkFUt86PWsLo05frEkwv0eXyiYLkQ15Bb29U6CNRL5GszJShnOLZFeLfZy6eaT9iNA8pRLOpUBAfzKLOfVO1ZvgHG9z3l9DmCnezn9sQimQC/skiuzYmFIFkwSwYTREQRXIadZcE3mtinJV/dwnjz+NZHjPNkdvvs901x+l7ueKX1/Fab5zLNzYZd+cJGLNyNtfCnD2aA576izMR8D7v3xUSpV74oLgyAJiNZRZUE497erKHNVTRSCrizddGm/1ZM2O1pHVcR5vE3xTHOMvjAYMyremZHI56KeJ47/T1eY=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(23010399003)(376014)(1800799024)(366016)(4143699003)(11063799006)(5023799004)(56012099006)(3023799007)(10067099003)(6133799003)(22082099003)(18002099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VjhCam40dk5IV1pqZGVQb3puazFjU3VON2VZNzl5dVBkbzRaZ2xaTGpUa1I4?=
+ =?utf-8?B?ZVhQQjVKcjgvelI0S3ljVFA3cE94Zmh6MnlxVjVibzBLZzY2SG9FeXltb2lR?=
+ =?utf-8?B?L0VJc28wTkpxd016S3NFNUl4UHZoQXFLYXhyWnRtUWs2OWgxcEJONEIweGxW?=
+ =?utf-8?B?a245VExHL01KTS80MUw4eTNjYUpYRzlPUy9CTXRoZnE2YnFNLy9tT2g3bzJh?=
+ =?utf-8?B?UWxmek50SFpGRVBCS0dXOU1SR0s4cjlIak5UQVdwVHNYV3l6M25TM2VNdllm?=
+ =?utf-8?B?WCtxUldzeUtvbFhMSVJEd01lRnVmS0JwSDRuZjlsbi85QjRWc1F6RVdHc1BO?=
+ =?utf-8?B?ODhoSVBaUnZSR0JtTElKMS9SQjFFUlE1UmVpK2RHREhBdlhtNWRMZGRJU2w2?=
+ =?utf-8?B?Rkw3QVpKd080SFdFM3FKLzkwV085QjdhdXlHd0VYcTRQeXN3ZU9jL3BiV3A5?=
+ =?utf-8?B?VWMvVlZqZU9Cc2IxUG1yRHI1NTFTbkFJRlE4YjA2ay9MWXlpSFFub3hwN0po?=
+ =?utf-8?B?LzlPSE5LNDA1VVhxVWJoVG45c0tMcnJ2eThEMEk1TURRUUNZaVBvRjRMc3lj?=
+ =?utf-8?B?eTg3ZWJGYTRJMm8vUVdkcWdPRXZEKy8vdkFueThra2p1UmQ2bmsvaTVVQ0gr?=
+ =?utf-8?B?QzllZm9LVXJKajNFMElMeTM1ZUpIUExWZEVYOFNIUTVvQm4rQVMySkVQNFU2?=
+ =?utf-8?B?dk91LzNSWU1kR0NLV0FlRCt3eWRlb2hpNDZsTU5xbnhMM3FUZTVyM1V3dG9i?=
+ =?utf-8?B?QnU3VWhXazZ5aHlvNkl1UktWY0FJUHFyUk04QWRSbVFXNVh5MFdiaktFd1ZN?=
+ =?utf-8?B?OWQ1ZkFLWitFZW5oUEtOSmlNMWVFYzFaZTc1Smw5dC9WRy95WTZRcUdQOUgr?=
+ =?utf-8?B?T2VsTWlvdmxQQ2lheXlCRmFYWjNiTTFpY3l1UTFWTWtSSDgxWm5BQlVXRDdJ?=
+ =?utf-8?B?VmNwam50NWlYenp5S0g5YTZjRnZZeDRZdGR1UDlVREJwWGgrcU84RVdVR0tQ?=
+ =?utf-8?B?Q0pxcFhDcXRxc1JoNkI0S3QvWVgvekVDdDJzZkFla2JVVkd0YjQ0Q3lPeVlm?=
+ =?utf-8?B?azRGWXJtdnVQMVcrTG9wcEcxbUlGZGRyQWh4Y1Y4WjY2d09wMUxGdS8zRGNZ?=
+ =?utf-8?B?YmtpVWJCalowRWpXOXZMaUljSDROTFJmUHdiQnJEL0tuNnJjUGVoekovSXBl?=
+ =?utf-8?B?SUtDRlNMbDUwQ2ZRU1BTWGc2Z2w0ZjJnKzhWQnpTZWduK1hDMjVWQ1hjSlJR?=
+ =?utf-8?B?MS9RRnVrWXZPWkRXVm5QQTVNMFlGUU1JOU9iSVZIVm1JWVg4RlQ5VjVCck5H?=
+ =?utf-8?B?NzRKQ3NRZkFzZnI0Y1pYK1FpUCtiRkx1MU9zdnhZS0tSMktKL0RaekZHM2tO?=
+ =?utf-8?B?V1lETkpDT09DNkMydDF3bTYxV00wSVV2ZTZYc1pkelNKQnQwdTlPVGdsRTVU?=
+ =?utf-8?B?WDRxc2owUjZyb0dQMjk0T0Fjdm03L3o2MTUzZGVBRCtYaFdKRDJXc3FBd3lJ?=
+ =?utf-8?B?STJIcjFlbm1yR0h4a1ZyTG9OZHEydW5RVzJUN1JRZ21ocUtlWVdIRHJXeVRC?=
+ =?utf-8?B?TTI5RkpSd2M3eStyandBMTVwTmtnM1VUbnFwVjRvaHVZTElRNjZua2NzYlps?=
+ =?utf-8?B?VEdUUkZlajBoSTBzNkJxN2lzdHpGN1hIY1hMaXdXQm9zY3JVKzB4TmVBMHJ6?=
+ =?utf-8?B?UDRYRkllalJVL3BmK2VwNVg2WlFMMFZVOUx1Z1p6T0VUNTJyUGNnSmlodHJB?=
+ =?utf-8?B?MXR4Nlh0T1paVnMvbjh5SjN1b2h5UFhqK1pqak8zd3dRalgrUWhsR2NaZys0?=
+ =?utf-8?B?YktFN0ZtemNkb0c2ZU1uQlFZR2hnUkw3Tkk0U2JUdEJKWm9xLzBRRERjR1d6?=
+ =?utf-8?B?UTNTQ1JvNVc1UXdlRExacHRSdXoraDJjUzROSnArR0VxUnFjUm5vMGFXVzF3?=
+ =?utf-8?B?YllJbUVrQm1xL3U0SExCQlJsRUhXL0JlUnc3VlJHeG03RWhSTTVwUEpnZ0Ez?=
+ =?utf-8?B?TkxDKzRzQXBnc1NrVHBDOENKbnRmb1A1ZlN3a2ZSaHRMU3cvZlRkMGhsOXNa?=
+ =?utf-8?B?dHpveDBuVHdudEZITmRZUzVhQWdDWmZVbGNGYjZuSVk5cWNCZVlvTEVsY3ZU?=
+ =?utf-8?B?a1N6Ny8wUzVjV1ZwT3lCa25ZQUF4SitvTm5aTnNONmxHOXdlN1lvRXNRNlZ2?=
+ =?utf-8?B?WFpSWUVWQ2dXZkRIOWdzdmF3d2lpNlp6a3VrOFloZVBaVzJwbmY3anQyc0hG?=
+ =?utf-8?B?U3NoL1R2VE1wNXhkSmpobXkyR2kzVVlpc3FtRnZuZ3o1cnJzeEZqQUYxZis2?=
+ =?utf-8?B?ZTIrZ3RKczBITCtnRGw3RVJYaUFpQTN0TzlWN3FFREI4WnpQZlhDdlB4NmI0?=
+ =?utf-8?Q?JSYwDnXXnoHIs9qM=3D?=
+X-Exchange-RoutingPolicyChecked: ckaxuC5dlCSMLfsrYyA70SdIctuIUxwbh019aBpqyUSCUf9z13F+fDZY+v4DuIeudXR5SlhIPFHywucq9+7Yw1U8Vd47D8c9+ZW7ODjGqkEKudBt0/k2YaEATcxshHBsJBfpuLYe0OhZfZkSlxQaTdU9MGlqnWfo1MpmutXEIqS3w10WgMamfc4CMMrSW19xj5T7kxE0weDqc06tUZo0UpyZ7yr+LCxfuRja8O4zxAi9EhNqXPwtlOW6BW36D67UYsNQw5CcUjZLigaXcYvo6RsIuieb/GRsRO7ttQWoRNAhytbjQP/jz64+bOiOf0L9Ho9+mGJFLe/KAEMkCRrn7Q==
+X-MS-Exchange-CrossTenant-Network-Message-Id: f4f90893-8d6f-49a2-db6b-08df0e51fd81
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Sep 2026 09:09:02.1939 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZDnQs8OjK3FEo1lxPM2vkVWz81Sc0/UOjYP9kaBLSPpRh//3sl/01+dFMDEv5rapDvpTB4j6k+YepAsBuPQy7WxVR7XT/9ojkYx3z5gHoLs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB8526
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,345 +162,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add enetc4_txq_wrr devarg to configure per-ring WRR weights in the
-NETC LEAF-level Tx scheduler (TBaMR register, bits [6:4]).
+On 9/8/2026 5:20 PM, Anatoly Burakov wrote:
+> Most rte_flow parsers in DPDK suffer from huge implementation complexity because
+> even though 99% of what people use rte_flow parsers for is parsing protocol
+> graphs, no parser is written explicitly as a graph. This patchset attempts to
+> suggest a viable model to build rte_flow parsers as graphs, by offering a
+> lightweight header only library to build rte_flow parsering graphs without too
+> much boilerplate and complexity.
+> 
+> Most of the patchset is about Intel drivers, but they are meant as
+> reimplementations as well as examples for the rest of the community to assess
+> how to build parsers using this new infrastructure. I expect the first two
+> patches will be of most interest to non-Intel reviewers, as they deal with
+> building two reusable parser architecture pieces.
+> 
+> The first piece is a new flow graph helper in ethdev. Its purpose is
+> deliberately narrow: it targets the protocol-graph part of rte_flow pattern
+> parsing, where drivers walk packet headers and validate legal item sequences and
+> parameters. That does not cover all possible rte_flow features, especially more
+> exotic flow items, but it does cover a large and widely shared part of what
+> existing drivers need to do. Or, to put it in other words, the only flow items
+> this infrastructure *doesn't* cover is things that do not lend themselves well
+> to be parsed as a graph of protocol headers (e.g. conntrack items). Everything
+> else should be covered or cover-able. In practice, just about all drivers will
+> benefit from graph parsing as all but one of them implement only the protocol
+> stack parts, which are the ones targeted by the graph helper.
+> 
+> The second piece is a reusable flow engine framework for Intel Ethernet drivers.
+> This is kept Intel-local because I do not feel it is even appropriate to define
+> such a framework for all drivers to use in the first place. Even so, the intent
+> is to establish a cleaner parser architecture with a defined interaction model,
+> explicit memory ownership rules, locking, initialization sequence,
+> implementations of rte_flow API entry points, flow replay and memory cleanup,
+> and engine definitions that do not block secondary-process-safe usage. It is my
+> hope that this would serve as a model for other drivers to follow, expand on,
+> rework, and improve, so that maybe down the line we *might* have a common
+> rte_flow infrastructure for drivers to use.
+> 
+> Most of the rest of the series is parser reimplementation, but that is mainly
+> the vehicle for demonstrating and validating those two pieces. ixgbe and i40e
+> are wired into the new common parsing path, and their existing parsers are
+> migrated incrementally to the graph-based model. Besides reducing ad hoc parser
+> code, this also makes validation more explicit and more consistent. In a few
+> places that means invalid inputs that were previously ignored, deferred, or
+> interpreted loosely are now rejected earlier and more strictly, without any
+> increase in code complexity (in fact, with marked *decrease* of it!).
+> 
 
-The NETC Tx scheduler has three levels:
-  - ROOT (port/TC): strict priority + CBS (PF/port space)
-  - MID  (SI/VSI):  WBFS shaping (PF space)
-  - LEAF (Tx BDR):  strict priority + frame-based WRR (VF/SI space)
+Recheck-request: rebase=next-net-intel, iol-compile-amd64-testing, 
+iol-intel-Functional, iol-intel-Performance
 
-TBaMR is in the VF own SI space, so no Linux PF involvement is
-needed for PRIO or WRR configuration.
-
-Changes:
-- enetc_hw.h: add ENETC_TBMR_WRR_MASK, ENETC_TBMR_WRR(n) macros for
-  TBaMR bits [6:4], and ENETC_TBMR_PRIO_MASK for bits [2:0]
-- enetc.h: add txq_wrr pointer to enetc_eth_hw struct
-- enetc4_ethdev.c: add parse_txq_wrr() and wire ENETC4_TXQ_WRR devarg
-  through enetc4_get_devargs() and enetc4_dev_configure(); apply WRR
-  bits in enetc4_tx_queue_setup() and enetc4_tx_queue_start()
-
-Usage:
-  # strict priority: ring 0 highest
-  -a 0002:00:12.0,enetc4_txq_prior="3|2|1"
-
-  # WRR 2:4:1 on same-priority rings
-  -a 0002:00:12.0,enetc4_txq_prior="1|1|1",enetc4_txq_wrr="2|4|1"
-
-Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
-Acked-by: Hemant Agrawal <hemant.agrawal@nxp.com>
----
- doc/guides/nics/enetc4.rst             |  14 ++-
- doc/guides/rel_notes/release_26_11.rst |   1 +
- drivers/net/enetc/base/enetc_hw.h      |   5 +
- drivers/net/enetc/enetc.h              |   4 +
- drivers/net/enetc/enetc4_ethdev.c      | 130 +++++++++++++++++++++----
- drivers/net/enetc/enetc4_vf.c          |   2 +
- 6 files changed, 134 insertions(+), 22 deletions(-)
-
-diff --git a/doc/guides/nics/enetc4.rst b/doc/guides/nics/enetc4.rst
-index 6c71108de6..64094c00a6 100644
---- a/doc/guides/nics/enetc4.rst
-+++ b/doc/guides/nics/enetc4.rst
-@@ -176,7 +176,19 @@ PF/Common devargs
- 
-   Usage example::
- 
--    dpdk-testpmd -a 0000:00:00.0,enetc4_txq_prior=1|2|3 -- -i
-+    dpdk-testpmd -a 0000:00:00.0,enetc4_txq_prior="1|2|3" -- -i
-+
-+``enetc4_txq_wrr``
-+  Set per-queue WRR weight for the LEAF-level Tx scheduler (TBaMR bits [6:4]).
-+  The value is a ``|``-separated list of WRR weights, one per Tx queue.
-+  Meaningful only when the corresponding queues share the same strict-priority
-+  level via ``enetc4_txq_prior``; queues with different priorities are
-+  scheduled strictly regardless of their WRR weight.
-+  Values beyond the maximum supported Tx queue count are discarded.
-+
-+  Usage example (WRR 2:4:1 on three equal-priority rings)::
-+
-+    dpdk-testpmd -a 0000:00:00.0,enetc4_txq_prior="1|1|1",enetc4_txq_wrr="2|4|1" -- -i
- 
- ``nc``
-   Select non-cacheable Rx/Tx ops (BD rings mapped as non-cacheable memory).
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index f287390db7..2be5357af3 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -75,6 +75,7 @@ New Features
-   * Added SI-based port VLAN insertion (Tx) and removal (Rx) for ENETC4 PF and VF.
-   * Updated ENETC4 VF link status reporting to use bitmask encoding.
-   * Added Tx PAUSE support for the ENETC4 VF via Rx congestion mode.
-+  * Added WRR Tx scheduler devarg (``enetc4_txq_wrr``) for ENETC4 VF ring weights.
- 
- Removed Items
- -------------
-diff --git a/drivers/net/enetc/base/enetc_hw.h b/drivers/net/enetc/base/enetc_hw.h
-index 33d075fe59..3065c16e5c 100644
---- a/drivers/net/enetc/base/enetc_hw.h
-+++ b/drivers/net/enetc/base/enetc_hw.h
-@@ -86,6 +86,11 @@ enum enetc_bdr_type {TX, RX};
- 
- #define ENETC_RTBLENR_LEN(n)		((n) & ~0x7)
- #define ENETC_TBMR_EN			BIT(31)
-+/* TBaMR[WRR] bits [6:4]: weight for same-priority ring arbitration (0=1x .. 7=8x). */
-+#define ENETC_TBMR_WRR_MASK		0x70
-+#define ENETC_TBMR_WRR(n)		((((n) - 1) & 0x7) << 4)
-+/* TBaMR[PRIO] bits [2:0]: strict priority (0=lowest, 7=highest). */
-+#define ENETC_TBMR_PRIO_MASK		0x7
- 
- /* Port regs, offset: 1_0000h */
- #define ENETC_PORT_BASE			0x10000
-diff --git a/drivers/net/enetc/enetc.h b/drivers/net/enetc/enetc.h
-index c528d21b73..925ba22af6 100644
---- a/drivers/net/enetc/enetc.h
-+++ b/drivers/net/enetc/enetc.h
-@@ -53,6 +53,9 @@
- /* size for marking hugepage non-cacheable */
- #define SIZE_2MB	0x200000
- 
-+#define ENETC4_TXQ_PRIORITIES	"enetc4_txq_prior"
-+#define ENETC4_TXQ_WRR		"enetc4_txq_wrr"
-+
- #define ENETC_TXBD(BDR, i) (&(((struct enetc_tx_bd *)((BDR).bd_base))[i]))
- #define ENETC_RXBD(BDR, i) (&(((union enetc_rx_bd *)((BDR).bd_base))[i]))
- 
-@@ -135,6 +138,7 @@ struct enetc_eth_hw {
- 	uint32_t vsi_timeout; /* VSI-PSI message wait timeout (iterations) */
- 	uint32_t vsi_delay;   /* VSI-PSI message wait delay (us) */
- 	uint32_t *txq_prior;  /* per-queue TX priority (TBMR priority bits) */
-+	uint32_t *txq_wrr;    /* per-queue TX WRR weight pre-shifted for TBMR[WRR] */
- 	uint8_t nc_mode;      /* 1 = non-cacheable BD memory, use _nc ops */
- 	uint8_t rxq_intr_en;  /* 1 = per-queue Rx MSI-X interrupts enabled */
- 	/* 1 = legacy PF-to-VF link message layout (4-bit speed / 4-bit cookie),
-diff --git a/drivers/net/enetc/enetc4_ethdev.c b/drivers/net/enetc/enetc4_ethdev.c
-index ad6f5f4337..199cd45ee5 100644
---- a/drivers/net/enetc/enetc4_ethdev.c
-+++ b/drivers/net/enetc/enetc4_ethdev.c
-@@ -47,7 +47,6 @@ static uint64_t dev_tx_offloads_sup =
- 	RTE_ETH_TX_OFFLOAD_TCP_TSO |
- 	RTE_ETH_TX_OFFLOAD_UDP_TSO;
- 
--#define ENETC4_TXQ_PRIORITIES	"enetc4_txq_prior"
- #define ENETC4_NC_MEMORY	"nc"
- 
- static int
-@@ -55,24 +54,96 @@ parse_txq_prior(const char *key __rte_unused, const char *value, void *opaque)
- {
- 	struct rte_eth_dev *dev = (struct rte_eth_dev *)opaque;
- 	struct enetc_eth_hw *hw =
--		ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
--	char *input_str = strdup(value);
-+				ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	char *input_str;
-+	char *saveptr = NULL;
- 	char *str;
- 	uint32_t i = 0;
- 
-+	input_str = strdup(value);
- 	if (!input_str)
- 		return -ENOMEM;
- 
-+	free(hw->txq_prior);
- 	hw->txq_prior = calloc(hw->max_tx_queues, sizeof(uint32_t));
- 	if (!hw->txq_prior) {
- 		free(input_str);
- 		return -ENOMEM;
- 	}
- 
--	str = strtok(input_str, "|");
-+	str = strtok_r(input_str, "|", &saveptr);
- 	while (str != NULL && i < hw->max_tx_queues) {
--		hw->txq_prior[i++] = (uint32_t)atoi(str);
--		str = strtok(NULL, "|");
-+		char *endptr = NULL;
-+		unsigned long prio;
-+
-+		errno = 0;
-+		prio = strtoul(str, &endptr, 10);
-+		/*
-+		 * strtoul() accepts a leading '-' and wraps it, so reject it
-+		 * explicitly. Priority must fit in ENETC_TBMR[PRIO] (0..7).
-+		 */
-+		if (errno != 0 || endptr == str || *endptr != '\0' ||
-+		    str[0] == '-' || prio > ENETC_TBMR_PRIO_MASK) {
-+			ENETC_PMD_ERR("Invalid Tx priority value '%s' (expected 0..%u)",
-+				      str, ENETC_TBMR_PRIO_MASK);
-+			free(hw->txq_prior);
-+			hw->txq_prior = NULL;
-+			free(input_str);
-+			return -EINVAL;
-+		}
-+		hw->txq_prior[i++] = (uint32_t)prio;
-+		str = strtok_r(NULL, "|", &saveptr);
-+	}
-+
-+	free(input_str);
-+	return 0;
-+}
-+
-+/* Parse enetc4_txq_wrr="w0|w1|..." devarg; weight 1..8 per ring. */
-+static int parse_txq_wrr(const char *key __rte_unused, const char *value,
-+			  void *opaque)
-+{
-+	struct rte_eth_dev *dev = (struct rte_eth_dev *)opaque;
-+	struct enetc_eth_hw *hw =
-+			ENETC_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	char *input_str;
-+	char *saveptr = NULL;
-+	char *str;
-+	uint32_t i = 0;
-+
-+	input_str = strdup(value);
-+	if (!input_str)
-+		return -ENOMEM;
-+
-+	free(hw->txq_wrr);
-+	hw->txq_wrr = calloc(hw->max_tx_queues, sizeof(uint32_t));
-+	if (!hw->txq_wrr) {
-+		free(input_str);
-+		return -ENOMEM;
-+	}
-+
-+	str = strtok_r(input_str, "|", &saveptr);
-+	while (str != NULL && i < hw->max_tx_queues) {
-+		char *endptr = NULL;
-+		unsigned long w;
-+
-+		errno = 0;
-+		w = strtoul(str, &endptr, 10);
-+		/*
-+		 * strtoul() accepts a leading '-' and wraps it, so reject it
-+		 * explicitly. WRR weight is limited to 1..8 (ENETC_TBMR_WRR).
-+		 */
-+		if (errno != 0 || endptr == str || *endptr != '\0' ||
-+		    str[0] == '-' || w < 1 || w > 8) {
-+			ENETC_PMD_ERR("Invalid Tx WRR weight value '%s' (expected 1..8)",
-+				      str);
-+			free(hw->txq_wrr);
-+			hw->txq_wrr = NULL;
-+			free(input_str);
-+			return -EINVAL;
-+		}
-+		hw->txq_wrr[i++] = ENETC_TBMR_WRR(w);
-+		str = strtok_r(NULL, "|", &saveptr);
- 	}
- 
- 	free(input_str);
-@@ -117,6 +188,13 @@ enetc4_get_devargs(struct rte_eth_dev *dev, const char *key)
- 			return 0;
- 		}
- 	}
-+	if (!strcmp(key, ENETC4_TXQ_WRR)) {
-+		if (rte_kvargs_process(kvlist, key,
-+				       parse_txq_wrr, (void *)dev) < 0) {
-+			rte_kvargs_free(kvlist);
-+			return 0;
-+		}
-+	}
- 	if (!strcmp(key, ENETC4_NC_MEMORY)) {
- 		if (rte_kvargs_process(kvlist, key,
- 				       parse_nc, (void *)dev) < 0) {
-@@ -469,14 +547,17 @@ enetc4_tx_queue_setup(struct rte_eth_dev *dev,
- 	data->tx_queues[queue_idx] = tx_ring;
- 	tx_ring->tx_deferred_start = tx_conf->tx_deferred_start;
- 	if (!tx_conf->tx_deferred_start) {
--		uint32_t tx_en = ENETC_TBMR_EN;
--
-+		/* Clear scheduler bits before applying fresh devarg values. */
-+		tx_data &= ~(ENETC_TBMR_PRIO_MASK | ENETC_TBMR_WRR_MASK);
-+		tx_data |= ENETC_TBMR_EN;
- 		/* apply TX queue priority if configured */
- 		if (priv->hw.txq_prior)
--			tx_en |= priv->hw.txq_prior[tx_ring->index];
-+			tx_data |= priv->hw.txq_prior[tx_ring->index];
-+		if (priv->hw.txq_wrr)
-+			tx_data |= priv->hw.txq_wrr[tx_ring->index];
- 		/* enable ring */
- 		enetc4_txbdr_wr(&priv->hw.hw, tx_ring->index,
--			       ENETC_TBMR, tx_en);
-+			       ENETC_TBMR, tx_data);
- 		dev->data->tx_queue_state[tx_ring->index] =
- 			       RTE_ETH_QUEUE_STATE_STARTED;
- 	} else {
-@@ -918,7 +999,10 @@ enetc4_dev_close(struct rte_eth_dev *dev)
- 		dev->data->tx_queues[i] = NULL;
- 	}
- 	dev->data->nb_tx_queues = 0;
--
-+	free(hw->txq_prior);
-+	hw->txq_prior = NULL;
-+	free(hw->txq_wrr);
-+	hw->txq_wrr = NULL;
- 	if (rte_eal_iova_mode() == RTE_IOVA_PA)
- 		dpaax_iova_table_depopulate();
- 
-@@ -1073,7 +1157,12 @@ enetc4_dev_configure(struct rte_eth_dev *dev)
- 		enetc4_rxbdr_wr(enetc_hw, i, ENETC_RBMR, ENETC_BMR_RESET);
- 
- 	for (i = 0; i < dev->data->nb_tx_queues; i++)
--		enetc4_rxbdr_wr(enetc_hw, i, ENETC_TBMR, ENETC_BMR_RESET);
-+		enetc4_txbdr_wr(enetc_hw, i, ENETC_TBMR, ENETC_BMR_RESET);
-+
-+	hw->nc_mode = 0;
-+	enetc4_get_devargs(dev, ENETC4_TXQ_PRIORITIES);
-+	enetc4_get_devargs(dev, ENETC4_TXQ_WRR);
-+	enetc4_get_devargs(dev, ENETC4_NC_MEMORY);
- 
- 	if (dev->data->nb_rx_queues <= 1)
- 		return 0;
-@@ -1206,7 +1295,13 @@ enetc4_tx_queue_start(struct rte_eth_dev *dev, uint16_t qidx)
- 	if (dev->data->tx_queue_state[qidx] == RTE_ETH_QUEUE_STATE_STOPPED) {
- 		tx_data = enetc4_txbdr_rd(&priv->hw.hw, tx_ring->index,
- 					 ENETC_TBMR);
--		tx_data = tx_data | ENETC_TBMR_EN;
-+		/* Clear scheduler bits before applying fresh devarg values. */
-+		tx_data &= ~(ENETC_TBMR_PRIO_MASK | ENETC_TBMR_WRR_MASK);
-+		tx_data |= ENETC_TBMR_EN;
-+		if (priv->hw.txq_prior)
-+			tx_data |= priv->hw.txq_prior[tx_ring->index];
-+		if (priv->hw.txq_wrr)
-+			tx_data |= priv->hw.txq_wrr[tx_ring->index];
- 		enetc4_txbdr_wr(&priv->hw.hw, tx_ring->index, ENETC_TBMR,
- 			       tx_data);
- 		dev->data->tx_queue_state[qidx] = RTE_ETH_QUEUE_STATE_STARTED;
-@@ -1508,16 +1603,8 @@ enetc4_dev_init(struct rte_eth_dev *eth_dev)
- static int
- enetc4_dev_uninit(struct rte_eth_dev *eth_dev)
- {
--	struct enetc_eth_hw *hw =
--		ENETC_DEV_PRIVATE_TO_HW(eth_dev->data->dev_private);
--
- 	PMD_INIT_FUNC_TRACE();
- 
--	if (hw->txq_prior) {
--		free(hw->txq_prior);
--		hw->txq_prior = NULL;
--	}
--
- 	return enetc4_dev_close(eth_dev);
- }
- 
-@@ -1548,5 +1635,6 @@ RTE_PMD_REGISTER_PCI_TABLE(net_enetc4, pci_id_enetc4_map);
- RTE_PMD_REGISTER_KMOD_DEP(net_enetc4, "* vfio-pci");
- RTE_PMD_REGISTER_PARAM_STRING(net_enetc4,
- 			      ENETC4_TXQ_PRIORITIES "=<string> "
-+			      ENETC4_TXQ_WRR "=<string> "
- 			      ENETC4_NC_MEMORY "=<int>");
- RTE_LOG_REGISTER_DEFAULT(enetc4_logtype_pmd, NOTICE);
-diff --git a/drivers/net/enetc/enetc4_vf.c b/drivers/net/enetc/enetc4_vf.c
-index a93aa20b49..6eb1e5d760 100644
---- a/drivers/net/enetc/enetc4_vf.c
-+++ b/drivers/net/enetc/enetc4_vf.c
-@@ -2208,5 +2208,7 @@ RTE_PMD_REGISTER_PARAM_STRING(net_enetc4_vf,
- 			      ENETC4_VSI_TIMEOUT "=<uint> "
- 			      ENETC4_VSI_DELAY "=<uint> "
- 			      ENETC4_NC_MEMORY "=<int> "
-+			      ENETC4_TXQ_PRIORITIES "=<string> "
-+			      ENETC4_TXQ_WRR "=<string> "
- 			      ENETC_VF_LINK_LEGACY "=<0|1>");
- RTE_LOG_REGISTER_DEFAULT(enetc4_vf_logtype_pmd, NOTICE);
 -- 
-2.25.1
-
+Thanks,
+Anatoly
