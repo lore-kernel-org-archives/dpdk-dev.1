@@ -2,32 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B309C79FB9
-	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Sep 2026 13:53:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04178C79FB9
+	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Sep 2026 13:53:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 94FE342D66;
-	Thu, 10 Sep 2026 15:52:19 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id AE32B42DC1;
+	Thu, 10 Sep 2026 15:52:20 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 1763E42D80
- for <dev@dpdk.org>; Thu, 10 Sep 2026 15:52:15 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 278BF427D4
+ for <dev@dpdk.org>; Thu, 10 Sep 2026 15:52:16 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id EF9251A044C;
- Thu, 10 Sep 2026 15:52:14 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0BCAA1A0446;
+ Thu, 10 Sep 2026 15:52:16 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B89591A0455;
- Thu, 10 Sep 2026 15:52:14 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id CACFA1A0054;
+ Thu, 10 Sep 2026 15:52:15 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id B0E4D18000B1;
- Thu, 10 Sep 2026 21:52:13 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id C2F9418000B6;
+ Thu, 10 Sep 2026 21:52:14 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
 Cc: Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v2 10/47] dma/dpaa2: validate IOVA in pre-populate helpers
-Date: Thu, 10 Sep 2026 19:21:21 +0530
-Message-ID: <20260910135158.2181141-11-prashant.gupta_3@nxp.com>
+Subject: [PATCH v2 11/47] dma/dpaa2: optimize context index ring enqueue
+Date: Thu, 10 Sep 2026 19:21:22 +0530
+Message-ID: <20260910135158.2181141-12-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260910135158.2181141-1-prashant.gupta_3@nxp.com>
 References: <20260903135353.3358303-1-prashant.gupta_3@nxp.com>
@@ -50,101 +50,52 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Gagandeep Singh <g.singh@nxp.com>
 
-fle_sdd_pre_populate() and fle_sdd_sg_pre_populate() converted the SDD
-and SG entry virtual addresses to IOVA with DPAA2_VADDR_TO_IOVA(), which
-does not verify that the range is actually mapped in the IOMMU/SMMU. An
-unmapped buffer was silently programmed into the hardware descriptor,
-leading to an SMMU translation fault at transfer time that is hard to
-trace back to the missing mapping.
+qdma_cntx_idx_ring_eq() copied the context indices into the ring one
+element at a time in a loop, updating the tail on every iteration.
 
-Use DPAA2_VADDR_TO_IOVA_AND_CHECK() for the SDD, source SG and
-destination SG buffers and rte_panic() with the offending address and
-size when the translation is missing, so the misconfiguration is caught
-early and clearly.
+Replace the per-element loop with rte_memcpy(), handling the ring
+wrap-around as at most two contiguous copies, and update the tail once.
+This reduces the per-burst overhead on the dequeue completion path.
 
 Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
 ---
- drivers/dma/dpaa2/dpaa2_qdma.c | 42 ++++++++++++++++++++++++++++------
- 1 file changed, 35 insertions(+), 7 deletions(-)
+ drivers/dma/dpaa2/dpaa2_qdma.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/dma/dpaa2/dpaa2_qdma.c b/drivers/dma/dpaa2/dpaa2_qdma.c
-index 6fd3530f0d..8a180ab400 100644
+index 8a180ab400..277be37b41 100644
 --- a/drivers/dma/dpaa2/dpaa2_qdma.c
 +++ b/drivers/dma/dpaa2/dpaa2_qdma.c
-@@ -187,7 +187,15 @@ fle_sdd_pre_populate(struct qdma_cntx_fle_sdd *fle_sdd,
+@@ -66,15 +66,23 @@ qdma_cntx_idx_ring_eq(struct qdma_cntx_idx_ring *ring,
+ 	const uint16_t *elem, uint16_t nb,
+ 	uint16_t *free_space)
  {
- 	struct qbman_fle *fle = fle_sdd->fle;
- 	struct qdma_sdd *sdd = fle_sdd->sdd;
--	uint64_t sdd_iova = DPAA2_VADDR_TO_IOVA(sdd);
-+	uint64_t sdd_iova, iova_size;
-+
-+	iova_size = sizeof(struct qdma_sdd) * DPAA2_QDMA_MAX_SDD;
-+	sdd_iova = DPAA2_VADDR_TO_IOVA_AND_CHECK(sdd, iova_size);
-+	if (sdd_iova == RTE_BAD_IOVA) {
-+		DPAA2_QDMA_ERR("No IOMMU map for sdd(%p)(size=%" PRIu64 ")",
-+			sdd, iova_size);
-+		return -ENOMEM;
-+	}
+-	uint16_t i;
+-
+ 	if (unlikely(nb > ring->free_space))
+ 		return 0;
  
- 	/* first frame list to source descriptor */
- 	DPAA2_SET_FLE_ADDR(&fle[DPAA2_QDMA_SDD_FLE], sdd_iova);
-@@ -285,22 +293,36 @@ sg_entry_pre_populate(struct qdma_cntx_sg *sg_cntx)
+-	for (i = 0; i < nb; i++) {
+-		ring->cntx_idx_ring[ring->tail] = elem[i];
+-		ring->tail = (ring->tail + 1) &
+-			(DPAA2_QDMA_MAX_DESC - 1);
++	if ((ring->tail + nb) < DPAA2_QDMA_MAX_DESC) {
++		rte_memcpy(&ring->cntx_idx_ring[ring->tail],
++			elem, nb * sizeof(uint16_t));
++		ring->tail += nb;
++	} else {
++		rte_memcpy(&ring->cntx_idx_ring[ring->tail],
++			elem,
++			(DPAA2_QDMA_MAX_DESC - ring->tail) *
++			sizeof(uint16_t));
++		rte_memcpy(&ring->cntx_idx_ring[0],
++			&elem[DPAA2_QDMA_MAX_DESC - ring->tail],
++			(nb - DPAA2_QDMA_MAX_DESC + ring->tail) *
++			sizeof(uint16_t));
++		ring->tail = (ring->tail + nb) & (DPAA2_QDMA_MAX_DESC - 1);
  	}
- }
- 
--static void
-+static int
- fle_sdd_sg_pre_populate(struct qdma_cntx_sg *sg_cntx,
- 	struct qdma_virt_queue *qdma_vq)
- {
- 	struct qdma_sg_entry *src_sge = sg_cntx->sg_src_entry;
- 	struct qdma_sg_entry *dst_sge = sg_cntx->sg_dst_entry;
--	rte_iova_t src_sge_iova, dst_sge_iova;
-+	rte_iova_t src_sge_iova, dst_sge_iova, iova_size;
- 	struct dpaa2_qdma_rbp *rbp = &qdma_vq->rbp;
- 
- 	memset(sg_cntx, 0, sizeof(struct qdma_cntx_sg));
- 
--	src_sge_iova = DPAA2_VADDR_TO_IOVA(src_sge);
--	dst_sge_iova = DPAA2_VADDR_TO_IOVA(dst_sge);
-+	iova_size = RTE_DPAAX_QDMA_JOB_SUBMIT_MAX *
-+		sizeof(struct qdma_sg_entry);
-+
-+	src_sge_iova = DPAA2_VADDR_TO_IOVA_AND_CHECK(src_sge, iova_size);
-+	if (src_sge_iova == RTE_BAD_IOVA) {
-+		DPAA2_QDMA_ERR("No IOMMU map for src_sge(%p)(size=%" PRIu64 ")",
-+			src_sge, (uint64_t)iova_size);
-+		return -ENOMEM;
-+	}
-+
-+	dst_sge_iova = DPAA2_VADDR_TO_IOVA_AND_CHECK(dst_sge, iova_size);
-+	if (dst_sge_iova == RTE_BAD_IOVA) {
-+		DPAA2_QDMA_ERR("No IOMMU map for dst_sge(%p)(size=%" PRIu64 ")",
-+			dst_sge, (uint64_t)iova_size);
-+		return -ENOMEM;
-+	}
- 
- 	sg_entry_pre_populate(sg_cntx);
--	fle_sdd_pre_populate(&sg_cntx->fle_sdd,
-+	return fle_sdd_pre_populate(&sg_cntx->fle_sdd,
- 		rbp, src_sge_iova, dst_sge_iova,
- 		QBMAN_FLE_WORD4_FMT_SGE);
- }
-@@ -671,7 +693,13 @@ dpaa2_qdma_copy_sg(void *dev_private,
- 
- 	if (qdma_vq->fle_pre_populate) {
- 		if (unlikely(!fle[DPAA2_QDMA_SRC_FLE].length)) {
--			fle_sdd_sg_pre_populate(cntx_sg, qdma_vq);
-+			ret = fle_sdd_sg_pre_populate(cntx_sg, qdma_vq);
-+			if (unlikely(ret)) {
-+				if (!qdma_dev->is_silent)
-+					rte_mempool_put(qdma_vq->fle_pool,
-+						cntx_sg);
-+				return ret;
-+			}
- 			if (!qdma_dev->is_silent && cntx_sg && idx_addr) {
- 				for (i = 0; i < nb_src; i++)
- 					cntx_sg->cntx_idx[i] = idx_addr[i];
+ 	ring->free_space -= nb;
+ 	ring->nb_in_ring += nb;
 -- 
 2.43.0
 
