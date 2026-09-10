@@ -2,38 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 502A9C79FB9
-	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Sep 2026 10:36:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04CADC79FB9
+	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Sep 2026 11:25:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8C9C5427C0;
-	Thu, 10 Sep 2026 12:36:29 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id E7C694028F
- for <dev@dpdk.org>; Thu, 10 Sep 2026 12:36:22 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id C77BC20631;
- Thu, 10 Sep 2026 12:36:22 +0200 (CEST)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Thu, 10 Sep 2026 12:36:21 +0200
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-To: dev@dpdk.org, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Stephen Hemminger <stephen@networkplumber.org>
-Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH 6/6] mempool: no cache size limit
-Date: Thu, 10 Sep 2026 10:36:13 +0000
-Message-ID: <20260910103613.808038-7-mb@smartsharesystems.com>
+	by mails.dpdk.org (Postfix) with ESMTP id CD294410DC;
+	Thu, 10 Sep 2026 13:25:30 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+ by mails.dpdk.org (Postfix) with ESMTP id F3FE14028F
+ for <dev@dpdk.org>; Thu, 10 Sep 2026 13:25:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1789039530; x=1820575530;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=+H47/h4uT8jxhLmXbyMTT7jO/QUOyQz6AZqdppcspzE=;
+ b=Dw1TQ53RCMmE2a5WXLD4mXipSB8skS2lfgccr//4/dtZFLHfyG6H+KeB
+ TIp0RAaEHshYv71VDpCoAP4Nxaj5/DnA933EJYX4N6S+i1jNZqx4Gejkk
+ JkaZvhugcslMeQi//nppz59wevFX8snL2zwlW/3hCgaDP7pAbnWxhMwr1
+ nhvfXjqQSOSC2Qs2kM0NxrE27Lsg0PxyENP9UwNDLUGscCkgYsThw89wz
+ SvdhNxRgRIIYJsX39TQokQYzOxZpHEALejtfzaBI2uMTmdMzrY/fP2G4X
+ HL1J1HlCMZxUZOLAKKe1Qt2RZ5ys75IxCR7Vq1iJv/e94UPP4U+59p9Uw A==;
+X-CSE-ConnectionGUID: jiY7qMsGTSubRqE+mA5AOw==
+X-CSE-MsgGUID: Xtzxt1gnSISXMknltuKjlA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11900"; a="89526327"
+X-IronPort-AV: E=Sophos;i="6.27,95,1787036400"; 
+   d="scan'208";a="89526327"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+ by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 10 Sep 2026 04:25:29 -0700
+X-CSE-ConnectionGUID: g+UhoGAkRp+UY57/VmgJQA==
+X-CSE-MsgGUID: gKFo1EMbSv2uIlHlvZWnUQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,95,1787036400"; d="scan'208";a="267322237"
+Received: from silpixa00401176.ir.intel.com ([10.20.224.212])
+ by fmviesa006.fm.intel.com with ESMTP; 10 Sep 2026 04:25:27 -0700
+From: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+To: dev@dpdk.org
+Cc: bruce.richardson@intel.com,
+	anatoly.burakov@intel.com
+Subject: [PATCH v2] net/ice: support link flow control
+Date: Thu, 10 Sep 2026 11:25:24 +0000
+Message-ID: <20260910112524.1547156-1-vladimir.medvedkin@intel.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260910103613.808038-1-mb@smartsharesystems.com>
-References: <20260910103613.808038-1-mb@smartsharesystems.com>
+In-Reply-To: <20260901151233.1110607-1-vladimir.medvedkin@intel.com>
+References: <20260901151233.1110607-1-vladimir.medvedkin@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 10 Sep 2026 10:36:21.0958 (UTC)
- FILETIME=[38D26E60:01DD4110]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -47,361 +61,382 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Replaced the fixed size object array in the per-lcore local cache
-with a variable size array, allocated at mempool creation.
-For faster indexing into the per-lcore array of caches, pre-calculate
-the size (in bytes) of the per-lcore local cache.
+Add get and set functions for link flow control (802.3x).
 
-Using a variable size array makes the RTE_MEMPOOL_CACHE_MAX_SIZE build
-time configuration parameter superfluous,
-but it was kept for compatibility purposes, as it is often used for
-the cache_size parameter when creating mempools.
-
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
+Signed-off-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 ---
-Supersedes: patch-169235
-("[v2] mempool: no cache size limit")
----
- app/test/test_mempool.c                |   2 +-
- doc/guides/rel_notes/release_26_11.rst |  12 ++-
- lib/mempool/rte_mempool.c              | 118 ++++++++++++++-----------
- lib/mempool/rte_mempool.h              |  17 ++--
- 4 files changed, 86 insertions(+), 63 deletions(-)
+ doc/guides/nics/features/ice.ini       |   1 +
+ doc/guides/rel_notes/release_26_11.rst |   4 +
+ drivers/net/intel/ice/ice_ethdev.c     | 271 +++++++++++++++++++------
+ drivers/net/intel/ice/ice_ethdev.h     |   1 +
+ 4 files changed, 217 insertions(+), 60 deletions(-)
 
-diff --git a/app/test/test_mempool.c b/app/test/test_mempool.c
-index 6ff8746474..8a21b385d9 100644
---- a/app/test/test_mempool.c
-+++ b/app/test/test_mempool.c
-@@ -193,7 +193,7 @@ static int test_mempool_creation_with_exceeded_cache_size(void)
- 	mp_cov = rte_mempool_create("test_cache_too_big",
- 		MEMPOOL_SIZE,
- 		MEMPOOL_ELT_SIZE,
--		RTE_MEMPOOL_CACHE_MAX_SIZE + 32, 0,
-+		MEMPOOL_SIZE + 32, 0,
- 		NULL, NULL,
- 		my_obj_init, NULL,
- 		SOCKET_ID_ANY, 0);
+diff --git a/doc/guides/nics/features/ice.ini b/doc/guides/nics/features/ice.ini
+index 893d09e9ec..309f691f32 100644
+--- a/doc/guides/nics/features/ice.ini
++++ b/doc/guides/nics/features/ice.ini
+@@ -30,6 +30,7 @@ RSS hash             = Y
+ RSS key update       = Y
+ RSS reta update      = Y
+ VLAN filter          = Y
++Flow control         = Y
+ Traffic manager      = Y
+ CRC offload          = Y
+ VLAN offload         = Y
 diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 59b8514360..64f6802e58 100644
+index c8cc86295d..5c4cd8a6df 100644
 --- a/doc/guides/rel_notes/release_26_11.rst
 +++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -97,10 +97,20 @@ API Changes
-    Also, make sure to start the actual text at the margin.
-    =======================================================
+@@ -55,6 +55,10 @@ New Features
+      Also, make sure to start the actual text at the margin.
+      =======================================================
  
-+* mempool: When creating a mempool, the cache size can be freely specified
-+  (although still not exceed the number of elements),
-+  and is no longer limited by the ``RTE_MEMPOOL_CACHE_MAX_SIZE`` build time configuration parameter.
-+  Although ``RTE_MEMPOOL_CACHE_MAX_SIZE`` has lost its original meaning,
-+  it was kept for compatibility purposes,
-+  as it is often used for the ``cache_size`` parameter when creating mempools.
++* **Updated Intel ice driver.**
 +
-+* mempool: Updated the ``rte_mempool`` structure as follows:
-+  - Added the ``sizeof_cache_per_lcore`` field, for indexing into the per-lcore local cache.
++  * Added support for getting and setting link (802.3x) flow control.
 +
- * mempool: Updated the ``rte_mempool_cache`` structure as follows:
-   - Removed the deprecated and obsolete ``flushthresh`` field.
-   - Removed the ``unused`` field.
--  - Reduced the size of the ``objs`` array from ``RTE_MEMPOOL_CACHE_MAX_SIZE`` * 2 to ``RTE_MEMPOOL_CACHE_MAX_SIZE``.
-+  - Changed the ``objs`` array from fixed size to variable size.
  
- ABI Changes
- -----------
-diff --git a/lib/mempool/rte_mempool.c b/lib/mempool/rte_mempool.c
-index 211763aced..069aabaa70 100644
---- a/lib/mempool/rte_mempool.c
-+++ b/lib/mempool/rte_mempool.c
-@@ -759,20 +759,21 @@ mempool_cache_init(struct rte_mempool_cache *cache, uint32_t size)
- /*
-  * Create and initialize a cache for objects that are retrieved from and
-  * returned to an underlying mempool. This structure is identical to the
-- * local_cache[lcore_id] pointed to by the mempool structure.
-+ * local_cache entry pointed to by the mempool structure.
-  */
- RTE_EXPORT_SYMBOL(rte_mempool_cache_create)
- struct rte_mempool_cache *
- rte_mempool_cache_create(uint32_t size, int socket_id)
- {
- 	struct rte_mempool_cache *cache;
-+	size_t sizeof_cache = sizeof(struct rte_mempool_cache) + size * sizeof(void *);
+ Removed Items
+ -------------
+diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
+index 76b8ff0a72..909b3ef963 100644
+--- a/drivers/net/intel/ice/ice_ethdev.c
++++ b/drivers/net/intel/ice/ice_ethdev.c
+@@ -211,7 +211,12 @@ static int ice_fec_set(struct rte_eth_dev *dev, uint32_t fec_capa);
+ static const uint32_t *ice_buffer_split_supported_hdr_ptypes_get(struct rte_eth_dev *dev,
+ 						size_t *no_of_elements);
+ static int ice_get_dcb_info(struct rte_eth_dev *dev, struct rte_eth_dcb_info *dcb_info);
++static void ice_set_dflt_mib(struct rte_eth_dev *dev);
++static int ice_flow_ctrl_get(struct rte_eth_dev *dev, struct rte_eth_fc_conf *fc_conf);
++static int ice_flow_ctrl_set(struct rte_eth_dev *dev, struct rte_eth_fc_conf *fc_conf);
+ static int ice_priority_flow_ctrl_set(struct rte_eth_dev *dev, struct rte_eth_pfc_conf *pfc_conf);
++static int ice_cfg_fc_params(struct rte_eth_dev *dev, uint8_t tc, uint8_t tc_bitmap,
++			     const struct rte_eth_fc_conf *fc_conf);
  
--	if (size == 0 || size > RTE_MEMPOOL_CACHE_MAX_SIZE) {
-+	if (size == 0 || sizeof_cache > UINT32_MAX) {
- 		rte_errno = EINVAL;
- 		return NULL;
- 	}
- 
--	cache = rte_zmalloc_socket("MEMPOOL_CACHE", sizeof(*cache),
-+	cache = rte_zmalloc_socket("MEMPOOL_CACHE", sizeof_cache,
- 				  RTE_CACHE_LINE_SIZE, socket_id);
- 	if (cache == NULL) {
- 		RTE_MEMPOOL_LOG(ERR, "Cannot allocate mempool cache.");
-@@ -811,10 +812,9 @@ rte_mempool_create_empty(const char *name, unsigned n, unsigned elt_size,
- 	struct rte_mempool *mp = NULL;
- 	struct rte_tailq_entry *te = NULL;
- 	const struct rte_memzone *mz = NULL;
--	size_t mempool_size;
-+	size_t mempool_size, sizeof_cache_per_lcore;
- 	unsigned int mz_flags = RTE_MEMZONE_1GB|RTE_MEMZONE_SIZE_HINT_ONLY;
- 	struct rte_mempool_objsz objsz;
--	unsigned lcore_id;
- 	int ret;
- 
- 	/* compilation-time checks */
-@@ -822,6 +822,8 @@ rte_mempool_create_empty(const char *name, unsigned n, unsigned elt_size,
- 			  RTE_CACHE_LINE_MASK) != 0);
- 	RTE_BUILD_BUG_ON((sizeof(struct rte_mempool_cache) &
- 			  RTE_CACHE_LINE_MASK) != 0);
-+	RTE_BUILD_BUG_ON(offsetof(struct rte_mempool_cache, objs) !=
-+			  sizeof(struct rte_mempool_cache));
- #ifdef RTE_LIBRTE_MEMPOOL_STATS
- 	RTE_BUILD_BUG_ON((sizeof(struct rte_mempool_debug_stats) &
- 			  RTE_CACHE_LINE_MASK) != 0);
-@@ -838,7 +840,18 @@ rte_mempool_create_empty(const char *name, unsigned n, unsigned elt_size,
- 	}
- 
- 	/* asked cache too big */
--	if (cache_size > RTE_MEMPOOL_CACHE_MAX_SIZE ||
-+	sizeof_cache_per_lcore = 0;
-+	if (cache_size != 0) {
-+		sizeof_cache_per_lcore = sizeof(struct rte_mempool_cache);
-+		sizeof_cache_per_lcore += RTE_CACHE_LINE_ROUNDUP(cache_size * sizeof(void *));
-+		/*
-+		 * Add padding, to guard against false sharing-like effects
-+		 * on systems with a next-N-lines hardware prefetcher, when
-+		 * accessing objects at the end of the cache.
-+		 */
-+		sizeof_cache_per_lcore += RTE_CACHE_GUARD_LINES * RTE_CACHE_LINE_SIZE;
-+	}
-+	if (sizeof_cache_per_lcore > UINT32_MAX ||
- 	    cache_size > n) {
- 		rte_errno = EINVAL;
- 		return NULL;
-@@ -890,8 +903,7 @@ rte_mempool_create_empty(const char *name, unsigned n, unsigned elt_size,
- 
- 	mempool_size = sizeof(struct rte_mempool);
- 	mempool_size += private_data_size;
--	if (cache_size != 0)
--		mempool_size += RTE_MAX_LCORE * sizeof(struct rte_mempool_cache);
-+	mempool_size += RTE_MAX_LCORE * sizeof_cache_per_lcore;
- 
- 	ret = snprintf(mz_name, sizeof(mz_name), RTE_MEMPOOL_MZ_FORMAT, name);
- 	if (ret < 0 || ret >= (int)sizeof(mz_name)) {
-@@ -918,7 +930,6 @@ rte_mempool_create_empty(const char *name, unsigned n, unsigned elt_size,
- 	mp->elt_size = objsz.elt_size;
- 	mp->header_size = objsz.header_size;
- 	mp->trailer_size = objsz.trailer_size;
--	/* Size of default caches, zero means disabled. */
- 	mp->cache_size = cache_size;
- 	mp->private_data_size = private_data_size;
- 	STAILQ_INIT(&mp->elt_list);
-@@ -942,18 +953,17 @@ rte_mempool_create_empty(const char *name, unsigned n, unsigned elt_size,
- 		goto exit_unlock;
- 	}
- 
--	/*
--	 * local_cache pointer is set even if cache_size is zero.
--	 * The local_cache points to just past the private data.
--	 */
--	mp->local_cache = (struct rte_mempool_cache *)
--		RTE_PTR_ADD(mp, sizeof(struct rte_mempool) + private_data_size);
--
--	/* Init all default caches. */
-+	/* local_cache pointer is only set if per-lcore local cache is present */
- 	if (cache_size != 0) {
--		for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++)
--			mempool_cache_init(&mp->local_cache[lcore_id],
--					   cache_size);
-+		mp->local_cache = (struct rte_mempool_cache *)
-+			RTE_PTR_ADD(mp, sizeof(struct rte_mempool) + private_data_size);
-+		mp->sizeof_cache_per_lcore = sizeof_cache_per_lcore;
-+
-+		/* Init all default caches. */
-+		struct rte_mempool_cache *cache = mp->local_cache;
-+		for (unsigned int lcore_id = 0; lcore_id < RTE_MAX_LCORE;
-+				lcore_id++, cache = RTE_PTR_ADD(cache, sizeof_cache_per_lcore))
-+			mempool_cache_init(cache, cache_size);
- 	}
- 
- 	te->data = mp;
-@@ -1016,16 +1026,17 @@ RTE_EXPORT_SYMBOL(rte_mempool_avail_count)
- unsigned int
- rte_mempool_avail_count(const struct rte_mempool *mp)
- {
--	unsigned count;
--	unsigned lcore_id;
-+	unsigned int count;
- 
- 	count = rte_mempool_ops_get_count(mp);
- 
--	if (mp->cache_size == 0)
-+	if (mp->local_cache == NULL)
- 		return count;
- 
--	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++)
--		count += mp->local_cache[lcore_id].len;
-+	const struct rte_mempool_cache *cache = mp->local_cache;
-+	for (unsigned int lcore_id = 0; lcore_id < RTE_MAX_LCORE;
-+			lcore_id++, cache = RTE_PTR_ADD(cache, mp->sizeof_cache_per_lcore))
-+		count += cache->len;
- 
- 	/*
- 	 * due to race condition (access to len is not locked), the
-@@ -1053,11 +1064,11 @@ rte_mempool_stats_reset(struct rte_mempool *mp)
- 
- #ifdef RTE_LIBRTE_MEMPOOL_STATS
- 	memset(&mp->stats, 0, sizeof(mp->stats));
--	if (mp->cache_size != 0) {
--		for (unsigned int lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
--			memset(&mp->local_cache[lcore_id].stats, 0,
--					sizeof(mp->local_cache[lcore_id].stats));
--		}
-+	if (mp->local_cache != NULL) {
-+		struct rte_mempool_cache *cache = mp->local_cache;
-+		for (unsigned int lcore_id = 0; lcore_id < RTE_MAX_LCORE;
-+				lcore_id++, cache = RTE_PTR_ADD(cache, mp->sizeof_cache_per_lcore))
-+			memset(&cache->stats, 0, sizeof(cache->stats));
- 	}
- 
- 	RTE_MEMPOOL_LOG(DEBUG, "<%s>@%p: statistics reset", mp->name, mp);
-@@ -1071,18 +1082,18 @@ rte_mempool_stats_reset(struct rte_mempool *mp)
- static unsigned
- rte_mempool_dump_cache(FILE *f, const struct rte_mempool *mp)
- {
--	unsigned lcore_id;
--	unsigned count = 0;
--	unsigned cache_count;
-+	unsigned int count = 0;
- 
- 	fprintf(f, "  internal cache infos (hide zero value items):\n");
- 	fprintf(f, "    cache_size=%"PRIu32"\n", mp->cache_size);
- 
--	if (mp->cache_size == 0)
-+	if (mp->local_cache == NULL)
- 		return count;
- 
--	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
--		cache_count = mp->local_cache[lcore_id].len;
-+	const struct rte_mempool_cache *cache = mp->local_cache;
-+	for (unsigned int lcore_id = 0; lcore_id < RTE_MAX_LCORE;
-+			lcore_id++, cache = RTE_PTR_ADD(cache, mp->sizeof_cache_per_lcore)) {
-+		unsigned int cache_count = cache->len;
- 		if (cache_count == 0)
- 			continue;
- 		fprintf(f, "    cache_count[%u]=%"PRIu32"\n",
-@@ -1223,15 +1234,13 @@ mempool_audit_cookies(struct rte_mempool *mp)
- static void
- mempool_audit_cache(const struct rte_mempool *mp)
- {
--	unsigned lcore_id;
--
--	if (mp->cache_size == 0)
-+	if (mp->local_cache == NULL)
- 		return;
- 
--	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
--		const struct rte_mempool_cache *cache;
--		cache = &mp->local_cache[lcore_id];
--		if (cache->size > RTE_DIM(cache->objs)) {
-+	const struct rte_mempool_cache *cache = mp->local_cache;
-+	for (unsigned int lcore_id = 0; lcore_id < RTE_MAX_LCORE;
-+			lcore_id++, cache = RTE_PTR_ADD(cache, mp->sizeof_cache_per_lcore)) {
-+		if (cache->size > mp->size) {
- 			RTE_MEMPOOL_LOG(CRIT, "badness on cache[%u] size", lcore_id);
- 			rte_panic("MEMPOOL: invalid cache[%u] size\n", lcore_id);
- 		}
-@@ -1324,13 +1333,15 @@ rte_mempool_dump(FILE *f, struct rte_mempool *mp)
- 		sum.get_success_blks += mp->stats[lcore_id].get_success_blks;
- 		sum.get_fail_blks += mp->stats[lcore_id].get_fail_blks;
- 	}
--	if (mp->cache_size != 0) {
-+	if (mp->local_cache != NULL) {
- 		/* Add the statistics stored in the mempool caches. */
--		for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
--			sum.put_bulk += mp->local_cache[lcore_id].stats.put_bulk;
--			sum.put_objs += mp->local_cache[lcore_id].stats.put_objs;
--			sum.get_success_bulk += mp->local_cache[lcore_id].stats.get_success_bulk;
--			sum.get_success_objs += mp->local_cache[lcore_id].stats.get_success_objs;
-+		const struct rte_mempool_cache *cache = mp->local_cache;
-+		for (lcore_id = 0; lcore_id < RTE_MAX_LCORE;
-+			lcore_id++, cache = RTE_PTR_ADD(cache, mp->sizeof_cache_per_lcore)) {
-+			sum.put_bulk += cache->stats.put_bulk;
-+			sum.put_objs += cache->stats.put_objs;
-+			sum.get_success_bulk += cache->stats.get_success_bulk;
-+			sum.get_success_objs += cache->stats.get_success_objs;
- 		}
- 	}
- 	fprintf(f, "  stats:\n");
-@@ -1627,10 +1638,11 @@ mempool_info_cb(struct rte_mempool *mp, void *arg)
- 				  mp->populated_size);
- 
- 	cache_count = 0;
--	if (mp->cache_size > 0) {
--		int lcore_id;
--		for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++)
--			cache_count += mp->local_cache[lcore_id].len;
-+	if (mp->local_cache != NULL) {
-+		const struct rte_mempool_cache *cache = mp->local_cache;
-+		for (unsigned int lcore_id = 0; lcore_id < RTE_MAX_LCORE;
-+				lcore_id++, cache = RTE_PTR_ADD(cache, mp->sizeof_cache_per_lcore))
-+			cache_count += cache->len;
- 	}
- 	rte_tel_data_add_dict_uint(info->d, "total_cache_count", cache_count);
- 	common_count = rte_mempool_ops_get_count(mp);
-diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
-index 5a81e53a9f..5fc7cdb79c 100644
---- a/lib/mempool/rte_mempool.h
-+++ b/lib/mempool/rte_mempool.h
-@@ -105,8 +105,7 @@ struct __rte_cache_aligned rte_mempool_cache {
- 	} stats;                        /**< Statistics */
- #endif
- 	/** Cache objects */
--	alignas(RTE_CACHE_LINE_SIZE) void *objs[RTE_MEMPOOL_CACHE_MAX_SIZE];
--	RTE_CACHE_GUARD;
-+	alignas(RTE_CACHE_LINE_SIZE) void *objs[];
+ static const struct rte_pci_id pci_id_ice_map[] = {
+ 	{ RTE_PCI_DEVICE(ICE_INTEL_VENDOR_ID, ICE_DEV_ID_E823L_BACKPLANE) },
+@@ -352,6 +357,8 @@ static const struct eth_dev_ops ice_eth_dev_ops = {
+ 	.fec_set                      = ice_fec_set,
+ 	.buffer_split_supported_hdr_ptypes_get = ice_buffer_split_supported_hdr_ptypes_get,
+ 	.get_dcb_info                 =	ice_get_dcb_info,
++	.flow_ctrl_get                = ice_flow_ctrl_get,
++	.flow_ctrl_set                = ice_flow_ctrl_set,
+ 	.priority_flow_ctrl_set       = ice_priority_flow_ctrl_set,
  };
  
- /**
-@@ -265,6 +264,7 @@ struct __rte_cache_aligned rte_mempool {
- 	int32_t ops_index;
- 
- 	struct rte_mempool_cache *local_cache; /**< Per-lcore local cache */
-+	uint32_t sizeof_cache_per_lcore; /**< Multiplier for indexing into the local cache. */
- 
- 	uint32_t populated_size;         /**< Number of populated objects. */
- 	struct rte_mempool_objhdr_list elt_list; /**< List of objects in pool */
-@@ -1050,8 +1050,7 @@ rte_mempool_free(struct rte_mempool *mp);
-  * @param cache_size
-  *   If cache_size is non-zero, the rte_mempool library will try to
-  *   limit the accesses to the common lockless pool, by maintaining a
-- *   per-lcore object cache. This argument must be lower or equal to
-- *   RTE_MEMPOOL_CACHE_MAX_SIZE and n.
-+ *   per-lcore object cache. This argument must be lower or equal to n.
-  *   The access to the per-lcore table is of course
-  *   faster than the multi-producer/consumer pool. The cache can be
-  *   disabled if the cache_size argument is set to 0; it can be useful to
-@@ -1371,15 +1370,17 @@ rte_mempool_cache_create(uint32_t size, int socket_id)
- static __rte_always_inline struct rte_mempool_cache *
- rte_mempool_default_cache(struct rte_mempool *mp, unsigned lcore_id)
- {
--	if (unlikely(mp->cache_size == 0))
-+	if (unlikely(mp->local_cache == NULL))
- 		return NULL;
- 
- 	if (unlikely(lcore_id == LCORE_ID_ANY))
- 		return NULL;
- 
--	rte_mempool_trace_default_cache(mp, lcore_id,
--		&mp->local_cache[lcore_id]);
--	return &mp->local_cache[lcore_id];
-+	struct rte_mempool_cache *cache = (struct rte_mempool_cache *)RTE_PTR_ADD(mp->local_cache,
-+			lcore_id * (size_t)mp->sizeof_cache_per_lcore);
-+	rte_mempool_trace_default_cache(mp, lcore_id, cache);
-+	__rte_assume(cache != NULL);
-+	return cache;
+@@ -1468,9 +1475,16 @@ ice_handle_aq_msg(struct rte_eth_dev *dev)
+ 		switch (opcode) {
+ 		case ice_aqc_opc_get_link_status:
+ 			ret = ice_link_update(dev, 0);
+-			if (!ret)
++			if (!ret) {
++				/* On link-up, reapply the default single-TC configuration. */
++				if ((hw->port_info->phy.link_info.link_info & ICE_AQ_LINK_UP) &&
++						!(dev->data->dev_conf.rxmode.mq_mode &
++							RTE_ETH_MQ_RX_DCB_FLAG))
++					ice_set_dflt_mib(dev);
++
+ 				rte_eth_dev_callback_process
+ 					(dev, RTE_ETH_EVENT_INTR_LSC, NULL);
++			}
+ 			break;
+ 		default:
+ 			PMD_DRV_LOG(DEBUG, "Request %u is not supported yet",
+@@ -4073,6 +4087,22 @@ ice_dev_configure(struct rte_eth_dev *dev)
+ 	return 0;
  }
  
- /**
++static int
++ice_get_link_info_safe(struct ice_pf *pf, bool ena_lse,
++		       struct ice_link_status *link)
++{
++	struct ice_hw *hw = ICE_PF_TO_HW(pf);
++	int ret;
++
++	rte_spinlock_lock(&pf->link_lock);
++
++	ret = ice_aq_get_link_info(hw->port_info, ena_lse, link, NULL);
++
++	rte_spinlock_unlock(&pf->link_lock);
++
++	return ret;
++}
++
+ static int
+ ice_get_dcb_info(struct rte_eth_dev *dev, struct rte_eth_dcb_info *dcb_info)
+ {
+@@ -4105,6 +4135,182 @@ ice_get_dcb_info(struct rte_eth_dev *dev, struct rte_eth_dcb_info *dcb_info)
+ 	return 0;
+ }
+ 
++/*
++ * Program a default single-TC local LLDP MIB configuration. All user priorities
++ * map to TC0 at 100% bandwidth.
++ */
++static void
++ice_set_dflt_mib(struct rte_eth_dev *dev)
++{
++	struct ice_hw *hw = ICE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
++	struct ice_dcbx_cfg dcbcfg = { 0 };
++	uint8_t lldpmib[ICE_LLDPDU_SIZE] = { 0 };
++	uint16_t miblen;
++
++	dcbcfg.etscfg.willing = 1;
++	dcbcfg.etscfg.maxtcs = hw->func_caps.common_cap.maxtc;
++	dcbcfg.etscfg.tcbwtable[0] = 100;
++	dcbcfg.etscfg.tsatable[0] = ICE_IEEE_TSA_ETS;
++	dcbcfg.etsrec = dcbcfg.etscfg;
++	dcbcfg.etsrec.willing = 0;
++	dcbcfg.pfc.willing = 1;
++	dcbcfg.pfc.pfccap = hw->func_caps.common_cap.maxtc;
++
++	ice_dcb_cfg_to_lldp(lldpmib, &miblen, &dcbcfg, ICE_SET_PFC_SYM);
++
++	if (ice_aq_set_lldp_mib(hw, SET_LOCAL_MIB_TYPE_LOCAL_MIB, lldpmib, miblen, NULL))
++		PMD_DRV_LOG(ERR, "Failed to set default LLDP MIB");
++}
++
++static int
++ice_flow_ctrl_get(struct rte_eth_dev *dev, struct rte_eth_fc_conf *fc_conf)
++{
++	struct ice_pf *pf = ICE_DEV_PRIVATE_TO_PF(dev->data->dev_private);
++	struct ice_hw *hw = ICE_PF_TO_HW(pf);
++	struct ice_port_info *pi = hw->port_info;
++	bool enable_lse = dev->data->dev_conf.intr_conf.lsc ? true : false;
++	struct ice_link_status link_status;
++	int ret;
++
++	/* Refresh the negotiated flow control mode from the link status */
++	ret = ice_get_link_info_safe(pf, enable_lse, &link_status);
++	if (ret != ICE_SUCCESS) {
++		PMD_DRV_LOG(ERR, "Failed to get link info");
++		return -EIO;
++	}
++
++	*fc_conf = pf->fc_conf;
++
++	/* report the link flow control mode currently in effect */
++	switch (pi->fc.current_mode) {
++	case ICE_FC_FULL:
++		fc_conf->mode = RTE_ETH_FC_FULL;
++		break;
++	case ICE_FC_TX_PAUSE:
++		fc_conf->mode = RTE_ETH_FC_TX_PAUSE;
++		break;
++	case ICE_FC_RX_PAUSE:
++		fc_conf->mode = RTE_ETH_FC_RX_PAUSE;
++		break;
++	default:
++		fc_conf->mode = RTE_ETH_FC_NONE;
++	}
++
++	return 0;
++}
++
++/*
++ * Program the Rx buffer watermarks, pause quanta and MAC control frame
++ * forwarding shared by link flow control and priority flow control.
++ * A tc_bitmap of 0 selects link flow control; a single bit selects a PFC
++ * traffic class. Watermark or quanta values of 0 leave the current setting.
++ */
++static int
++ice_cfg_fc_params(struct rte_eth_dev *dev, uint8_t tc, uint8_t tc_bitmap,
++		  const struct rte_eth_fc_conf *fc_conf)
++{
++	struct ice_pf *pf = ICE_DEV_PRIVATE_TO_PF(dev->data->dev_private);
++	struct ice_hw *hw = ICE_PF_TO_HW(pf);
++	struct ice_port_info *port_info = hw->port_info;
++	uint32_t high_water = fc_conf->high_water;
++	uint32_t low_water = fc_conf->low_water;
++	uint16_t max_frame_size;
++	int cgd_idx;
++	int ret;
++
++	if (high_water > ICE_MAC_TC_MAX_WATERMARK)
++		high_water = ICE_MAC_TC_MAX_WATERMARK;
++	if (low_water > ICE_MAC_TC_MAX_WATERMARK)
++		low_water = ICE_MAC_TC_MAX_WATERMARK;
++
++	cgd_idx = ice_get_cgd_idx(hw, tc);
++	if (high_water)
++		wr32(hw, GLRPB_TCHW(cgd_idx), high_water);
++	if (low_water)
++		wr32(hw, GLRPB_TCLW(cgd_idx), low_water);
++
++	/* Update pause quanta and refresh threshold */
++	max_frame_size = pf->dev_data->mtu ?
++		pf->dev_data->mtu + ICE_ETH_OVERHEAD :
++		ICE_FRAME_SIZE_MAX;
++	ret = ice_aq_set_mac_pfc_cfg(hw, max_frame_size, tc_bitmap,
++			fc_conf->pause_time, ((u32)fc_conf->pause_time + 1) / 2,
++			false, NULL);
++	if (ret) {
++		PMD_DRV_LOG(ERR, "Can not update MAC configuration");
++		return ret;
++	}
++
++	/* Update forwarding of the non FC MAC control frames settings */
++	if (hw->mac_type == ICE_MAC_E830) {
++#define E830_MAC_COMMAND_CONFIG(pi) (((pi)->phy.link_info.link_speed == ICE_AQ_LINK_SPEED_200GB) ? \
++		E830_PRTMAC_200G_COMMAND_CONFIG : E830_PRTMAC_COMMAND_CONFIG)
++
++		u32 mac_config = rd32(hw, E830_MAC_COMMAND_CONFIG(port_info));
++
++		if (fc_conf->mac_ctrl_frame_fwd)
++			mac_config |= E830_PRTMAC_COMMAND_CONFIG_CNTL_FRM_ENA_M;
++		else
++			mac_config &= ~E830_PRTMAC_COMMAND_CONFIG_CNTL_FRM_ENA_M;
++
++		wr32(hw, E830_MAC_COMMAND_CONFIG(port_info), mac_config);
++	}
++
++	return 0;
++}
++
++static int
++ice_flow_ctrl_set(struct rte_eth_dev *dev, struct rte_eth_fc_conf *fc_conf)
++{
++	struct ice_pf *pf = ICE_DEV_PRIVATE_TO_PF(dev->data->dev_private);
++	struct ice_hw *hw = ICE_PF_TO_HW(pf);
++	struct ice_port_info *pi = hw->port_info;
++	bool link_up;
++	u8 aq_failures;
++	int ret;
++
++	/* Link flow control and priority flow control are mutually exclusive */
++	if (dev->data->dev_conf.rxmode.mq_mode & RTE_ETH_MQ_RX_DCB_FLAG) {
++		PMD_DRV_LOG(ERR, "Priority flow control is enabled, cannot set link flow control");
++		return -ENOTSUP;
++	}
++
++	switch (fc_conf->mode) {
++	case RTE_ETH_FC_FULL:
++		pi->fc.req_mode = ICE_FC_FULL;
++		break;
++	case RTE_ETH_FC_TX_PAUSE:
++		pi->fc.req_mode = ICE_FC_TX_PAUSE;
++		break;
++	case RTE_ETH_FC_RX_PAUSE:
++		pi->fc.req_mode = ICE_FC_RX_PAUSE;
++		break;
++	default:
++		pi->fc.req_mode = ICE_FC_NONE;
++	}
++
++	/* ice_set_fc() reprograms the PHY pause config and, if auto link update
++	 * is enabled, restarts the link so the new mode is renegotiated. The
++	 * default MIB that arms the MAC for LFC is reapplied from the link-up
++	 * event handler.
++	 */
++	link_up = pi->phy.link_info.link_info & ICE_AQ_LINK_UP;
++
++	ret = ice_set_fc(pi, &aq_failures, link_up);
++	if (ret != 0 && aq_failures != ICE_SET_FC_AQ_FAIL_UPDATE) {
++		PMD_DRV_LOG(ERR, "Failed to set flow control mode, ret %d aq_failures 0x%x",
++			    ret, aq_failures);
++		return -EIO;
++	}
++
++	pf->fc_conf = *fc_conf;
++
++	/* Apply the Rx buffer watermarks and pause quanta for the link flow
++	 * control traffic class (LFC rides user priority 0).
++	 */
++	return ice_cfg_fc_params(dev, 0, 0, fc_conf);
++}
++
+ static int
+ ice_priority_flow_ctrl_set(struct rte_eth_dev *dev, struct rte_eth_pfc_conf *pfc_conf)
+ {
+@@ -4160,49 +4366,10 @@ ice_priority_flow_ctrl_set(struct rte_eth_dev *dev, struct rte_eth_pfc_conf *pfc
+ 		return ret;
+ 	}
+ 
+-	/* Update high and low watermarks */
+-	u32 high_watermark = pfc_conf->fc.high_water;
+-	if (high_watermark > ICE_MAC_TC_MAX_WATERMARK)
+-		high_watermark = ICE_MAC_TC_MAX_WATERMARK;
+-
+-	u32 low_watermark = pfc_conf->fc.low_water;
+-	if (low_watermark > ICE_MAC_TC_MAX_WATERMARK)
+-		low_watermark = ICE_MAC_TC_MAX_WATERMARK;
+-
+-	int cgd_idx = ice_get_cgd_idx(hw, tc);
+-
+-	if (high_watermark)
+-		wr32(hw, GLRPB_TCHW(cgd_idx), high_watermark);
+-	if (low_watermark)
+-		wr32(hw, GLRPB_TCLW(cgd_idx), low_watermark);
+-
+-	/* Update pause quanta */
+-	uint16_t max_frame_size = pf->dev_data->mtu ?
+-		pf->dev_data->mtu + ICE_ETH_OVERHEAD :
+-		ICE_FRAME_SIZE_MAX;
+-	ret = ice_aq_set_mac_pfc_cfg(hw, max_frame_size, 1 << tc, pfc_conf->fc.pause_time,
+-			((u32)pfc_conf->fc.pause_time + 1) / 2, false, NULL);
+-	if (ret) {
+-		PMD_DRV_LOG(ERR, "Can not update MAC configuration");
+-		return ret;
+-	}
+-
+-	/* Update forwarding of the non FC MAC control frames settings */
+-	if ((hw)->mac_type == ICE_MAC_E830) {
+-#define E830_MAC_COMMAND_CONFIG(pi) (((pi)->phy.link_info.link_speed == ICE_AQ_LINK_SPEED_200GB) ? \
+-		E830_PRTMAC_200G_COMMAND_CONFIG : E830_PRTMAC_COMMAND_CONFIG)
+-
+-		u32 mac_config = rd32(hw, E830_MAC_COMMAND_CONFIG(port_info));
+-
+-		if (pfc_conf->fc.mac_ctrl_frame_fwd)
+-			mac_config |= E830_PRTMAC_COMMAND_CONFIG_CNTL_FRM_ENA_M;
+-		else
+-			mac_config &= ~E830_PRTMAC_COMMAND_CONFIG_CNTL_FRM_ENA_M;
+-
+-		wr32(hw, E830_MAC_COMMAND_CONFIG(port_info), mac_config);
+-	}
+-
+-	return 0;
++	/* Apply the Rx buffer watermarks and pause quanta for the PFC
++	 * traffic class selected by the user priority.
++	 */
++	return ice_cfg_fc_params(dev, tc, 1 << tc, &pfc_conf->fc);
+ }
+ 
+ static void
+@@ -4373,22 +4540,6 @@ ice_rxq_intr_setup(struct rte_eth_dev *dev)
+ 	return 0;
+ }
+ 
+-static int
+-ice_get_link_info_safe(struct ice_pf *pf, bool ena_lse,
+-		       struct ice_link_status *link)
+-{
+-	struct ice_hw *hw = ICE_PF_TO_HW(pf);
+-	int ret;
+-
+-	rte_spinlock_lock(&pf->link_lock);
+-
+-	ret = ice_aq_get_link_info(hw->port_info, ena_lse, link, NULL);
+-
+-	rte_spinlock_unlock(&pf->link_lock);
+-
+-	return ret;
+-}
+-
+ static void
+ ice_get_init_link_status(struct rte_eth_dev *dev)
+ {
+diff --git a/drivers/net/intel/ice/ice_ethdev.h b/drivers/net/intel/ice/ice_ethdev.h
+index 7ee3ea8a70..3143aca74a 100644
+--- a/drivers/net/intel/ice/ice_ethdev.h
++++ b/drivers/net/intel/ice/ice_ethdev.h
+@@ -613,6 +613,7 @@ struct ice_pf {
+ 	 * and link status update during dev_start.
+ 	 */
+ 	rte_spinlock_t link_lock;
++	struct rte_eth_fc_conf fc_conf; /* cached link flow control config */
+ };
+ 
+ #define ICE_MAX_QUEUE_NUM  2048
 -- 
 2.43.0
 
