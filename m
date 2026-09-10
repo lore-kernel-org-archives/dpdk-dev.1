@@ -2,80 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9CCCC79FB9
-	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Sep 2026 13:51:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E53CC79FB9
+	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Sep 2026 13:52:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8AB1E4067A;
-	Thu, 10 Sep 2026 15:51:15 +0200 (CEST)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com
- [209.85.128.178])
- by mails.dpdk.org (Postfix) with ESMTP id 5A25840274
- for <dev@dpdk.org>; Thu, 10 Sep 2026 15:51:14 +0200 (CEST)
-Received: by mail-yw1-f178.google.com with SMTP id
- 00721157ae682-8623b1e7cb2so53330307b3.1
- for <dev@dpdk.org>; Thu, 10 Sep 2026 06:51:14 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789048273; cv=none;
- d=google.com; s=arc-20260327;
- b=I0tqNfRCeWJR732LTFeOQ51hNvUnaHuAhYrw3zPM5ovljvwogHK901XQSETojIZKwA
- 0p3+YeEH3GIp3NczFLweM8BWSYjtf1veuRgqd42vWsf2cvhU3pjobolux1CVhr40Qdj/
- AHjSG6QLsF+5A2x0BLhYxTsIooKlAiflWTBV3sYUaxGQtD1G9IckyryUWDUYxtgmIrEn
- HeRZihJCw6jsBVG0Ft6YrAeQNd3XBHrCcibrfDGgYN6u3ZBPpjhciNEjNfNBHvYMwAOR
- GIhYvIhgBDRKWbW1iL0wzLWNzeScgI5RnHdsTrqOzw3jm9JKo8t1zPMxTh4QA9qNtmG9
- c0Mw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=content-transfer-encoding:to:subject:message-id:date:from
- :mime-version:dkim-signature;
- bh=ZsBfhYyZlDDTDZBjCqep+9FsMazELPc6BCaixZ6Hq6c=;
- fh=eUqWHLlhrxpykrabbQYbmT5B5FclN6p18glcXqrZikU=;
- b=ShDy2wiNRKmeJKWAN3zcdq7uZ2gSe3jZ3inQsNuOJqelDYoWX1Gjx16Wc4kF+KKYev
- 91UBB7k2JiJd9ncyqPhiliJ19NZwAtVViwf5r4weUu3DHwjU1ythTR0tPvINiFPyRGG9
- MfxxmVhm0DXfQL2hAE//FPlaH6/OnZDHvq40YcMuVUCJmRyyfxHRzsjIvaBpVuGm1aXm
- XsyJRZ9ciVzH0RNNPpNdFyB0/344xQKHh4LsIxqsbKgd9Xl/okF+qFsk0VOLqeGoJBhj
- aO08kVm2hXgz8GrEZWVpbbdnwMvpGSxuduTrwSYKYxTtCUE5VccklroxtGO3PqONIDlS
- jjIw==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1789048273; x=1789653073; darn=dpdk.org;
- h=content-transfer-encoding:content-type:to:subject:message-id:date
- :from:mime-version:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=ZsBfhYyZlDDTDZBjCqep+9FsMazELPc6BCaixZ6Hq6c=;
- b=FSeWlB3kudbNuYsml8gbLVU3bf7n4RfQi2bK86enzEQGeHec7aiCj3FqgGU2Mz2aZb
- SEMJVSSDoXbD8lwDDJE2iu1LnyupnAY7p/3wQLPS7dEaiFGpORLllJ8hIbYyLNkdN7Ft
- cV0cOOcKFt/VCHdyXDpuRGSgAbUDhxA8OF9yU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1789048273; x=1789653073;
- h=content-transfer-encoding:content-type:to:subject:message-id:date
- :from:mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=ZsBfhYyZlDDTDZBjCqep+9FsMazELPc6BCaixZ6Hq6c=;
- b=K6ZYUAnerLNHI63qEbHL4yEjnNzaDo4G+VR9Ub1HdYtHepCaubTHmm8tSZVFDd+hqm
- 8vmrqq85zOFHu5OnbZ/lkpH6+1g0xIcx622+cFhvTmIEcLFOWr5vumHosGF+CMMawNmV
- bw4gvCL8FIcB5Z0pd+mO6UigoQF2GXpRDMcpawJ+ehRJkLC/2+n/KmI12Ogog3UlZ4oC
- zNCwp/DibQ2j9fbsrfeShY5VL2B6OgaI5sPE1KcLXpWXXd9ctaR2O8d8q2XPD/z1IuJY
- F9C2vncP5hbTOg8Tcbz68QcCv0IX18F4bWL/D71MzQOcViSc9+NDR/qutNcoQDzbWvrV
- 1HSA==
-X-Gm-Message-State: AFuF++mUYXLUK9i0Mhk14crgfUz7byXBnVE7hnxK2FmDIC3M4G6aJarY
- kHz77MsoYLILT2Fq37+iA8JcdIPjjf+OqjaNmHC5NMROzwuo0Vz/xrQFTsrqx5SC46hNlGoFt+L
- tmiLZcj+qH4xmUR5Sas0oiDcnY661bvfFaRR+2vrMPJCmgNEnudc4gwk=
-X-Gm-Gg: AYBFou0FPhnInhhScgD6Av5iWg1OgfKaCNB0zTZf1/sVFpXYycb+b/YBSGOFr6CYHbP
- 2J4W21e2KbeptM5u+pvHUu52R4MLg/ckp9tk/2xnKklA5+3u56w9+lOygzXZK6uaHjnTtV1YJyj
- bteKH68CRdBosHBmOBEoXzcaCC1+GKF0Hjs+1lesXXw9RFUvJZCpSQ/tobXAIwoVleXNt1CYGaj
- BsT4VUkMrk9N/nuJSVQa8djV6POqaAXA0tELn4vXODZznE+ay4FziwQ4D3dbKRYt5vyoa2T5qyB
- q1RQQzYZuA2OvWU6WQ/0ILPD+tw6udx4G7XpLwbU4BssCXPjr6kYeN+H5IozOJyTpDlhbzKY/ad
- vhABz/QksXVDyrQ==
-X-Received: by 2002:a05:690c:f04:b0:84a:ffa1:8118 with SMTP id
- 00721157ae682-871288defc1mr162792237b3.31.1789048273297; Thu, 10 Sep 2026
- 06:51:13 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id A2F95427BF;
+	Thu, 10 Sep 2026 15:52:04 +0200 (CEST)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 7C22140274
+ for <dev@dpdk.org>; Thu, 10 Sep 2026 15:52:03 +0200 (CEST)
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3E9451A0072;
+ Thu, 10 Sep 2026 15:52:03 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com
+ (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 098001A0453;
+ Thu, 10 Sep 2026 15:52:03 +0200 (CEST)
+Received: from lsv031405.swis.in-blr01.nxp.com
+ (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 27D7318000B1;
+ Thu, 10 Sep 2026 21:52:02 +0800 (+08)
+From: Prashant Gupta <prashant.gupta_3@nxp.com>
+To: stephen@networkplumber.org,
+	dev@dpdk.org
+Subject: [PATCH v2 00/47] NXP DPAA2 driver updates and fixes
+Date: Thu, 10 Sep 2026 19:21:11 +0530
+Message-ID: <20260910135158.2181141-1-prashant.gupta_3@nxp.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260903135353.3358303-1-prashant.gupta_3@nxp.com>
+References: <20260903135353.3358303-1-prashant.gupta_3@nxp.com>
 MIME-Version: 1.0
-From: Dillon Ladd <dladd@iol.unh.edu>
-Date: Thu, 10 Sep 2026 09:50:37 -0400
-X-Gm-Features: AcwNN1Xzha4tFmIOMFSlFCjWBBO34rlqvSlzt6xUZ5YAtTjWM5tqyh-bHKdJLcU
-Message-ID: <CAJA6v3xSCDiPKgWq5dmDnbQ+YJQbjsS7kcnJa-U1qt_VV667HA@mail.gmail.com>
-Subject: September 10, 2026 DTS Working Group Meeting Notes
-To: dev@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -89,97 +46,143 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Attendees
-################################################
-Dillon Ladd, UNH-IOL
-Koushik Bhargav Nimoji, UNH-IOL
+This series brings the NXP DPAA2 drivers (net, crypto, dma, event,
+mempool and the fslmc bus) up to date with the current internal tree.
+It carries bug fixes, a reworked flow engine, an extended parser, meter
+and policer support, PTP enhancements, and a number of performance
+improvements in the Rx/Tx and DQRR handling paths.
 
-General Discussions
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Patrick reached out to Thomas asking to merge code coverage into main
-early, waiting on a response.
+The series is based on commit c1a46b9d9243 and is intended for 26.11.
 
-Patch Discussions
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Andrew put together a list of patches ranked by priority for review:
+Changes in v2:
 
-DTS Framework:
----------------------------------------------------------------------------=
------
-1. DTS: Rebase from Dean (API updates)
-https://patches.dpdk.org/project/dpdk/list/?series=3D39153
-Andrew has made adjustments from Luca=E2=80=99s feedback, pending review.
-2. [RFC] dts: resolve trex driver binding issue
-https://patches.dpdk.org/project/dpdk/patch/20260811185509.1650102-1-knimoj=
-i@iol.unh.edu/
-Prioritize review, sizable change of DTS and it would be helpful for
-Koushik to have feedback sooner opposed to later.
+- Dropped the header-only patches; every remaining patch now contains
+  the implementation together with its declarations.
+- Addressed all findings reported by checkpatch; the series is clean
+  against the current checkpatch.
+- Removed the per-device Tx scatter/gather pool member that was never
+  assigned, and used the existing global pool instead.
+- Widened the DQRR held-mask shift to 64-bit to avoid undefined
+  behaviour when the DQRR index exceeds 31.
+- Bounded the MAC xstats collection loop by the size of the statistics
+  array.
+- Treated the traffic class priority mask as a bitmask rather than an
+  index.
+- Added a per-entry DQRR consume fallback for portals whose DQRR ring
+  does not fit the vectored consume encoding.
 
-New Suites:
----------------------------------------------------------------------------=
------
-3. [v3,3/3] dts: add verify coverage for cryptodev testing
-https://patches.dpdk.org/project/dpdk/list/?series=3D38682
-Pending Review
-4. [v2] dts: add pvp multi paths vhost performance testsuite
-https://patches.dpdk.org/project/dpdk/patch/20260908144707.862960-1-knimoji=
-@iol.unh.edu/
-Pending Review
-5. [v1] dts: add pvp multi paths virtio performance testsuite
-https://patches.dpdk.org/project/dpdk/patch/20260903201155.817724-1-knimoji=
-@iol.unh.edu/
-Pending Review
+Each of the review fixes above has been folded into the patch that
+introduced the code in question, so the series remains bisectable.
 
-Test Suite Extensions:
----------------------------------------------------------------------------=
------
-6. [v1] dts: refactor cryptodev throughput test suite
-https://patchwork.dpdk.org/project/dpdk/patch/20260827172208.139769-1-abail=
-ey@iol.unh.edu/
-Pending Review
-7. [v1] dts: update configuration for performance test
-https://patchwork.dpdk.org/project/dpdk/patch/20260805153658.345207-1-abail=
-ey@iol.unh.edu/
-Pending review
-8. [v1] dts: add PVVP case to virtio suite
-https://patches.dpdk.org/project/dpdk/patch/20260811171235.519323-1-abailey=
-@iol.unh.edu/
-Pending Review
-9. [v7] dts: refactor flow suite with generator pattern
-https://patches.dpdk.org/project/dpdk/patch/20260811170433.517663-1-abailey=
-@iol.unh.edu/
-Pending Review
+Build tested with gcc, clang and the aarch64 DPAA cross toolchain
+(werror enabled, no compiler warnings).
 
-Bug fixes:
----------------------------------------------------------------------------=
------
-10. [RFC] dts: restore unbinded ports to initial state
-https://patches.dpdk.org/project/dpdk/patch/20260812194428.296334-1-knimoji=
-@iol.unh.edu/
-Pending Review
-11. [v1] dts: remove crypto test type
-https://patches.dpdk.org/project/dpdk/patch/20260806164505.642928-1-abailey=
-@iol.unh.edu/
-Pending Review
-12. dts: update verbose output regex for VXLAN packets
-https://patches.dpdk.org/project/dpdk/list/?series=3D38925
-Pending Review
+Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
 
-26.11 DTS Roadmap
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Finalized roadmap is out:
-https://mails.dpdk.org/archives/dev/2026-September/345096.html
+Gagandeep Singh (18):
+  crypto/dpaa2_sec: fix buffer overflow in GCM decrypt
+  crypto/dpaa2_sec: fix FLE pool leak on sec FD build failure
+  crypto/dpaa2_sec: support AES-GMAC
+  crypto/dpaa2_sec: increase ivsize range for AES-CTR
+  crypto/dpaa2_sec: add missing ECN capability
+  crypto/dpaa2_sec: add support for env variables
+  dma/dpaa2: validate IOVA in pre-populate helpers
+  dma/dpaa2: optimize context index ring enqueue
+  drivers: add dpaa2 DMA bypass memory translation option
+  net/dpaa2: set Tx confirmation on device init
+  drivers: optimize dpaa2 Tx queue and channel mapping
+  net/dpaa2: support larger burst size
+  net/dpaa2: support MPLS and PPPoE flow distribution
+  net/dpaa2: support meter and policing
+  net/dpaa2: support flow drop action
+  net/dpaa2: set default flow miss action per device
+  net/dpaa2: identify Rx mbuf hash information by FLC
+  net/dpaa2: enhance xstat implementation
 
-Any other business
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Next Meeting: September 24, 2026
---=20
-Dillon Ladd
-Technical Manager, Open Source
-21 Madbury Rd., Ste. 100, Durham, NH 03824
-dladd@iol.unh.edu
-https://www.iol.unh.edu
+Hemant Agrawal (17):
+  net/dpaa2: fix integer overflow in CCSR region mapping
+  net/dpaa2: add minimum key size support
+  net/dpaa2: restructure dpaa2 parser processing
+  net/dpaa2: parse tunnel and fragmented packet types
+  net/dpaa2: remove unused soft parser Tx code
+  net/dpaa2: update MC dpni QoS and flow steering API
+  net/dpaa2: rework flow engine
+  net/dpaa2: support GENEVE flow item
+  net/dpaa2: support flow meter and policer actions
+  net/dpaa2: support flow table miss actions
+  drivers: consume dpaa2 DQRR entries in batches
+  drivers: resolve dpaa2 endpoint in the net driver
+  drivers: align dpaa2 event port depths with hardware rings
+  net/dpaa2: read MC version from device private data
+  net/dpaa2: do not overwrite mbuf hash with drop priority
+  bus/fslmc: reduce probe-time logging and MC traffic
+  net/dpaa2: reject Rx queue deferred start
+
+Jun Yang (11):
+  dma/dpaa2: fix array-bounds warning in dequeue path
+  mempool/dpaa2: support ops index from primary in secondary
+  net/dpaa2: remove unused soft parser driver
+  drivers: refresh dpaa2 MC and SoC version info
+  drivers: identify dpaa2 soft parser protocol
+  drivers: assign dpaa2 Rx CGID per traffic class
+  drivers: inherit dpaa2 rxq config for event queue
+  net/dpaa2: rename Rx queue flags
+  drivers: rework dpaa2 Tx confirmation
+  net/dpaa2: ptp enhancements
+  net/dpaa2: support Rx mempool per traffic class
+
+Prashant Gupta (1):
+  bus/fslmc: defer bus initialization to probe
+
+ doc/guides/rel_notes/release_26_11.rst        |    6 +
+ drivers/bus/fslmc/bus_fslmc_driver.h          |   14 +-
+ drivers/bus/fslmc/fslmc_bus.c                 |  177 +-
+ drivers/bus/fslmc/fslmc_vfio.c                |  196 +-
+ drivers/bus/fslmc/fslmc_vfio.h                |   30 +-
+ drivers/bus/fslmc/portal/dpaa2_hw_dpio.c      |   83 +-
+ drivers/bus/fslmc/portal/dpaa2_hw_dpio.h      |    7 -
+ drivers/bus/fslmc/portal/dpaa2_hw_dprc.c      |   45 +-
+ drivers/bus/fslmc/portal/dpaa2_hw_pvt.h       |    7 +-
+ drivers/bus/fslmc/private.h                   |    3 +
+ .../fslmc/qbman/include/fsl_qbman_portal.h    |   12 +-
+ drivers/bus/fslmc/qbman/qbman_portal.c        |   83 +-
+ drivers/bus/fslmc/qbman/qbman_portal.h        |   11 +-
+ drivers/common/dpaax/rte_pmd_dpaax_qdma.h     |    4 +-
+ drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c   |   98 +-
+ drivers/crypto/dpaa2_sec/dpaa2_sec_priv.h     |   45 +-
+ drivers/dma/dpaa2/dpaa2_qdma.c                |  155 +-
+ drivers/dma/dpaa2/dpaa2_qdma.h                |    1 +
+ drivers/event/dpaa2/dpaa2_eventdev.c          |   76 +-
+ drivers/event/dpaa2/dpaa2_eventdev.h          |    4 +-
+ drivers/mempool/dpaa2/dpaa2_hw_mempool.c      |   88 +-
+ drivers/net/dpaa2/base/dpaa2_hw_dpni.c        |  546 --
+ drivers/net/dpaa2/base/dpaa2_hw_dpni_annot.h  |    6 +-
+ drivers/net/dpaa2/dpaa2_ethdev.c              | 2135 +++--
+ drivers/net/dpaa2/dpaa2_ethdev.h              |  759 +-
+ drivers/net/dpaa2/dpaa2_flow.c                | 6966 ++++++++++-------
+ drivers/net/dpaa2/dpaa2_meter.c               |  588 ++
+ drivers/net/dpaa2/dpaa2_parse_dump.h          |  374 -
+ drivers/net/dpaa2/dpaa2_parser_decode.h       | 1545 ++++
+ drivers/net/dpaa2/dpaa2_ptp.c                 |  161 +-
+ drivers/net/dpaa2/dpaa2_recycle.c             |   37 +-
+ drivers/net/dpaa2/dpaa2_rxtx.c                | 1902 ++---
+ drivers/net/dpaa2/dpaa2_sparser.c             |  137 -
+ drivers/net/dpaa2/dpaa2_sparser.h             |  202 -
+ drivers/net/dpaa2/dpaa2_tm.c                  |   16 +-
+ drivers/net/dpaa2/mc/dpni.c                   |  138 +-
+ drivers/net/dpaa2/mc/fsl_dpni.h               |  390 +-
+ drivers/net/dpaa2/mc/fsl_dpni_cmd.h           |   33 +-
+ drivers/net/dpaa2/meson.build                 |    5 +-
+ lib/cryptodev/rte_crypto_sym.h                |    2 +
+ lib/cryptodev/rte_cryptodev.c                 |    1 +
+ 41 files changed, 10532 insertions(+), 6556 deletions(-)
+ delete mode 100644 drivers/net/dpaa2/base/dpaa2_hw_dpni.c
+ create mode 100644 drivers/net/dpaa2/dpaa2_meter.c
+ delete mode 100644 drivers/net/dpaa2/dpaa2_parse_dump.h
+ create mode 100644 drivers/net/dpaa2/dpaa2_parser_decode.h
+ delete mode 100644 drivers/net/dpaa2/dpaa2_sparser.c
+ delete mode 100644 drivers/net/dpaa2/dpaa2_sparser.h
+
+-- 
+2.43.0
+
