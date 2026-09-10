@@ -2,69 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E82C79FB9
-	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Sep 2026 13:57:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB36BC79F9F
+	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Sep 2026 13:57:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 598EE427D7;
-	Thu, 10 Sep 2026 15:56:58 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 4E9D3427C4;
- Thu, 10 Sep 2026 15:56:57 +0200 (CEST)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 68ACBu2U2333484; Thu, 10 Sep 2026 06:56:56 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 5A408427E6;
+	Thu, 10 Sep 2026 15:57:01 +0200 (CEST)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 963B342D45;
+ Thu, 10 Sep 2026 15:56:59 +0200 (CEST)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 68ACAgfd1008300; Thu, 10 Sep 2026 06:56:58 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=k2MBDH4o7vzKLPQzTIsF63k
- 8kkz7228xu4kgCk8mwk0=; b=bGoUDO2/U4WEgYL3gpwjWPtisRHR5gn5QD4ORQL
- v4VdZditfmi3Qi5BgZ8vZKBgjsux9HsqEtd7O1vq6DEkByMzQMoL4Ozf82n7VIjV
- jgrMRAALTahPkrG44vb4up5YhgDSv4Z0/l/9dlNOy6M4ffGtBfpJdw7PcDUj9/mZ
- 22xOIlWax/IqEjyb74JMHCAPHhbm+k0Ve8mG6AwUEFWcQWLP7G10pC+ef93vDyRF
- bR2Q+w5DqnQ4DLIeW+ZpDq7tkC4zqz+TnOI7ACmV7aYcBt5cf1hJiLVizfPIkHQj
- FkI01ZYPD+rbF4yW8D+dHIEiyQW31TF0YdcU+HFEnMJIS2w==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4gksnx8pkp-1
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=2
+ ez5Ni26K/E+xorPD7CSIAUk2RAJelSY/e75lKGv68o=; b=Ua4dW6iWQkIrwnRgg
+ pAvNh7K7uAqFBDdRKp72ybkwUIVHZYimvTEMETpN88PG2/dr9f+PlwanCXphVfBJ
+ PtlzI8W1L3Bh+HwmjK7Bol+3RfWrxEFjR9IrH13ZCgOceFx2eIoY0mTmpbIHB9Ri
+ PGGUcSf9UoZdaBP5XYhFr9B9jdeDDSIVg6YpwiDxB5VuxVdo8YTDDL8nrWvgrJED
+ olD2DSmeyBGjXvc4T99X4zARNF2h5Fs/rr83gVLysIk9FXFe1x3JJckd1QN6MnKJ
+ +1uJnC7R3RZ+h2asLGuLq6UvuE7rKsbWUqr/xAfUsEfpPPC2jrAfRWL0ht9FIw8H
+ 0Kl1g==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4gkcxnuhv7-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 10 Sep 2026 06:56:56 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ Thu, 10 Sep 2026 06:56:58 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 10 Sep 2026 06:56:54 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Thu, 10 Sep 2026 06:56:54 -0700
+ 15.2.1544.25; Thu, 10 Sep 2026 06:56:57 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Thu, 10 Sep 2026 06:56:57 -0700
 Received: from LYYJYPGKF4.marvell.com (unknown [10.28.165.174])
- by maili.marvell.com (Postfix) with ESMTP id 1A2013F7086;
- Thu, 10 Sep 2026 06:56:52 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 72F8F3F7086;
+ Thu, 10 Sep 2026 06:56:55 -0700 (PDT)
 From: <pbhagavatula@marvell.com>
-To: <jerinj@marvell.com>, Pavan Nikhilesh <pbhagavatula@marvell.com>
+To: <jerinj@marvell.com>, Pavan Nikhilesh <pbhagavatula@marvell.com>, "Shijith
+ Thotton" <sthotton@marvell.com>
 CC: <dev@dpdk.org>, <stable@dpdk.org>
-Subject: [PATCH 1/2] eventdev: fix vector adapter power-of-2 size check
-Date: Thu, 10 Sep 2026 19:26:48 +0530
-Message-ID: <20260910135649.24956-1-pbhagavatula@marvell.com>
+Subject: [PATCH 2/2] event/cnxk: advertise CN20K preschedule capabilities
+Date: Thu, 10 Sep 2026 19:26:49 +0530
+Message-ID: <20260910135649.24956-2-pbhagavatula@marvell.com>
 X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20260910135649.24956-1-pbhagavatula@marvell.com>
+References: <20260910135649.24956-1-pbhagavatula@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTEwMDE2OCBTYWx0ZWRfX+TNY99tCiL8N
- C82/EMh8OzlyEH6RXZXGxfbkUjqovuQa9/ZtonWEaBAGpXWzQV/A0yHN6YEjObET/Z5VZtuitiq
- pQtRKqQj3tp/Ox5n2i/2JnXWOaGlO5o=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTEwMDE2OCBTYWx0ZWRfX2aFjnzlmtVG2
- Wd18svyvPtWl1G/c9F/axMksOMr2IhE9jZHNverTWhl08t6R+so7a77j9ZREiltqLpFHlgviuFC
- wQbKf2VPks/dAFsFGt6XIZ9aMKRCxCTWba3icWpqMMoAhDIpsn1x7v56H1L0qlHD9dYCRcwJYrg
- DfzBexiV3BwZvvP1POjOt2gM76TZ/1GamlKvr8wmpOpFn4/BqeE3ATslPgzN9ChYyx+u8VrcLYU
- J019jfAKxs6rJP+ExErgSGyRmXfwIQQ28X4Lk+2fgvRAw5iZnoGSroOLbtCJA9VDEk6z+mqPTuY
- dpux4A0rMOqCdVDzhdbnmNpeiJsZtdp6qVFa/MNkeP2XyRTlqfGkjLGCD9RNz7Om1/XMZxAYZb2
- swy6wEpQxQP+jliJGVrmkJ52sokBTqUDWX1bNYF52LpbFskObJHI7Rd8/W0lL8984VOJuut4vEx
- 0pC4v2+zzOoWfKGiJ/g==
-X-Proofpoint-ORIG-GUID: an638_yZlelSCYzv-OP7U3GZWjwvOHu8
-X-Authority-Analysis: v=2.4 cv=EZpd0/mC c=1 sm=1 tr=0 ts=6aa2b728 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+X-Authority-Analysis: v=2.4 cv=K923jCWI c=1 sm=1 tr=0 ts=6aa2b72a cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
  a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=QXcCYyLzdtTjyudCfB6f:22 a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8
- a=yuCB_6YaYFFvDLUh0pkA:9 a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
-X-Proofpoint-GUID: an638_yZlelSCYzv-OP7U3GZWjwvOHu8
+ a=TtqV-g6YmW1Jfm2GSLaY:22 a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8
+ a=6aWugfRyY-JjSbMZB7kA:9 a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
+X-Proofpoint-ORIG-GUID: 6zVfYWC2rFDJ5j__n5w9xJQV0Bi_GCI1
+X-Proofpoint-GUID: 6zVfYWC2rFDJ5j__n5w9xJQV0Bi_GCI1
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTEwMDE2OCBTYWx0ZWRfXxA0HdCEJhygF
+ 2e7tLErwX17ulSecol0jS3ZMhOBc9LigkFEv6OCCT5m4kvPNqOig5Kbm0tNYE+N0zo2CuLppKbW
+ LmwFVewDulhpiC4gG1paNpzQWn9qego=
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTEwMDE2OCBTYWx0ZWRfXxEMuZd0rqKhj
+ eMPHb+3O/QD4r1zaYvUMP18Sks8POWa4sd/bKxIG90dHrEkwRWSglKxZDw/C1t8R0xxACbcTVj7
+ RQKNd5VVAH1GuYw2zCRAp16FezCcvsi8cyQoEG5KiBWQPaPyvI3hq5hSc4IJcG5ZGA2bCqOY6BW
+ xKHn39u5aYtzBOFAfxoA73vSBp0Dj2UcY6aNhhDvOXXuAB3YTCacFddNgkrQwEj2KpfklA9Sd15
+ O7a8+JVFcbZw//hN8/OOa8/cY7LH41QfVWA1PKY0sZbJLW8M2gBHkQSliH38DWnJuncKxC0PV2R
+ P/eLrZSeVXcLniSGuQ2EJMuFOzICkL5yZb0T35CocdTdEGypoDoCmvAuPfYmKZHFXcx6fd111Qo
+ 3KJPxIe0It/wE4oz8VMRCyHX/YLsuBgG2+IdbPFjDdXa3nJ/vWjwY7qM69sA2m9D9+doIJ8aTt/
+ CkRCtUZ+zmJ7K/EVyQA==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
  definitions=2026-09-10_04,2026-09-09_02,2025-10-01_01
@@ -83,32 +87,32 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Pavan Nikhilesh <pbhagavatula@marvell.com>
 
-validate_conf() rejected valid configurations and accepted invalid
-ones: when the adapter requires a log2 vector size it errored out if
-the size *was* a power of 2 (rte_is_power_of_2() != 0) instead of when
-it was not. Invert the condition to reject non-power-of-2 sizes.
+The CN20K preschedule callbacks were wired up but the capability
+flags were never reported, so applications could not use the feature.
+Advertise the preschedule caps in cn20k_sso_info_get().
 
-Fixes: e12c3754da7a ("eventdev/vector: introduce event vector adapter")
+Fixes: 1e2d9b3dfc9a ("event/cnxk: add CN20K event port preschedule")
 Cc: stable@dpdk.org
 
 Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
 ---
- lib/eventdev/rte_event_vector_adapter.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/event/cnxk/cn20k_eventdev.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/lib/eventdev/rte_event_vector_adapter.c b/lib/eventdev/rte_event_vector_adapter.c
-index ad764e2882f0..9a839517c865 100644
---- a/lib/eventdev/rte_event_vector_adapter.c
-+++ b/lib/eventdev/rte_event_vector_adapter.c
-@@ -86,7 +86,7 @@ validate_conf(const struct rte_event_vector_adapter_conf *conf,
- 		return rc;
- 	}
+diff --git a/drivers/event/cnxk/cn20k_eventdev.c b/drivers/event/cnxk/cn20k_eventdev.c
+index 9d34168c3292..29495eb4f9f4 100644
+--- a/drivers/event/cnxk/cn20k_eventdev.c
++++ b/drivers/event/cnxk/cn20k_eventdev.c
+@@ -431,6 +431,9 @@ cn20k_sso_info_get(struct rte_eventdev *event_dev, struct rte_event_dev_info *de
+ 	dev_info->driver_name = RTE_STR(EVENTDEV_NAME_CN20K_PMD);
+ 	cnxk_sso_info_get(dev, dev_info);
+ 	dev_info->max_event_port_enqueue_depth = UINT32_MAX;
++	dev_info->event_dev_cap |= RTE_EVENT_DEV_CAP_EVENT_PRESCHEDULE |
++				   RTE_EVENT_DEV_CAP_EVENT_PRESCHEDULE_ADAPTIVE |
++				   RTE_EVENT_DEV_CAP_PER_PORT_PRESCHEDULE;
+ }
  
--	if (info->log2_sz && rte_is_power_of_2(conf->vector_sz) != 0) {
-+	if (info->log2_sz && rte_is_power_of_2(conf->vector_sz) == 0) {
- 		EVVEC_LOG_DBG("invalid vector size %u, should be a power of 2", conf->vector_sz);
- 		return rc;
- 	}
+ static int
 -- 
 2.50.1 (Apple Git-155)
 
