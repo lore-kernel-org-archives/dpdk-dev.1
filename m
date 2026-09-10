@@ -2,32 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D870C79FB9
-	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Sep 2026 13:57:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ED58C79F9F
+	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Sep 2026 13:57:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 05D6A42EDD;
+	by mails.dpdk.org (Postfix) with ESMTP id DF57142EE0;
 	Thu, 10 Sep 2026 15:53:08 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id 1732042E8E
- for <dev@dpdk.org>; Thu, 10 Sep 2026 15:52:55 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 3349542E90
+ for <dev@dpdk.org>; Thu, 10 Sep 2026 15:52:56 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id F1A1C200438;
- Thu, 10 Sep 2026 15:52:54 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 194F32003F6;
+ Thu, 10 Sep 2026 15:52:56 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id BBDD0200436;
- Thu, 10 Sep 2026 15:52:54 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D82AA20043E;
+ Thu, 10 Sep 2026 15:52:55 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id B489718000B5;
- Thu, 10 Sep 2026 21:52:53 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id C62D418000B7;
+ Thu, 10 Sep 2026 21:52:54 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
 Cc: Hemant Agrawal <hemant.agrawal@nxp.com>
-Subject: [PATCH v2 46/47] bus/fslmc: reduce probe-time logging and MC traffic
-Date: Thu, 10 Sep 2026 19:21:57 +0530
-Message-ID: <20260910135158.2181141-47-prashant.gupta_3@nxp.com>
+Subject: [PATCH v2 47/47] net/dpaa2: reject Rx queue deferred start
+Date: Thu, 10 Sep 2026 19:21:58 +0530
+Message-ID: <20260910135158.2181141-48-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260910135158.2181141-1-prashant.gupta_3@nxp.com>
 References: <20260903135353.3358303-1-prashant.gupta_3@nxp.com>
@@ -50,48 +50,34 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 
-Every DMA map logged its virtual, IOVA and physical addresses at NOTICE.
-An application that maps many memory segments prints one such line per
-segment during initialisation, which drowns out messages the operator
-actually needs; the neighbouring mapping paths already use debug level.
-
-fslmc_vfio_get_bus_info() also issued mc_get_soc_version() twice in a row
-into the same structure, so the second command only overwrote the first
-result with an identical one. Keep a single query.
+The driver has no way to hold an Rx queue down while the port is started,
+and dpaa2_rxq_info_get() already reports rx_deferred_start as 0. The Tx
+side rejects the request; do the same for Rx instead of silently
+accepting a configuration that will not be honoured.
 
 Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/bus/fslmc/fslmc_vfio.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+ drivers/net/dpaa2/dpaa2_ethdev.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/bus/fslmc/fslmc_vfio.c b/drivers/bus/fslmc/fslmc_vfio.c
-index 4eb8552696..5ccb457a75 100644
---- a/drivers/bus/fslmc/fslmc_vfio.c
-+++ b/drivers/bus/fslmc/fslmc_vfio.c
-@@ -281,13 +281,6 @@ fslmc_vfio_get_bus_info(void *regs, struct rte_fslmc_bus_info *bus_info)
- 		return ret;
- 	}
+diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
+index 5dcc12b19a..6e16e7a84b 100644
+--- a/drivers/net/dpaa2/dpaa2_ethdev.c
++++ b/drivers/net/dpaa2/dpaa2_ethdev.c
+@@ -1424,6 +1424,13 @@ dpaa2_dev_rx_queue_setup(struct rte_eth_dev *dev,
+ 	DPAA2_PMD_DEBUG("dev =%p, queue =%d, pool = %p, conf =%p",
+ 			dev, rx_queue_id, mb_pool, rx_conf);
  
--	memset(&mc_plat_info, 0, sizeof(struct mc_soc_version));
--	ret = mc_get_soc_version(&mc_io, CMD_PRI_LOW, &mc_plat_info);
--	if (ret) {
--		DPAA2_BUS_ERR("Unable to get SoC version err:%d", ret);
--		return ret;
--	}
--
- 	for (i = 0; i < RTE_DIM(s_soc_type); i++) {
- 		if ((mc_plat_info.svr & DPAA2_SVR_MASK) == s_soc_type[i].svr) {
- 			dpaa2_svr_family = s_soc_type[i].svr;
-@@ -1041,8 +1034,7 @@ fslmc_map_dma(uint64_t vaddr, rte_iova_t iovaddr, size_t len)
- 			fslmc_mem_va2iova = RTE_BAD_IOVA;
- 		TAILQ_INSERT_TAIL(&fslmc_memsegs, dmaseg, next);
- 	}
--	DPAA2_BUS_LOG(NOTICE,
--		"%s(%zx): VA(%" PRIx64 "):IOVA(%" PRIx64 "):PHY(%" PRIx64 ")",
-+	DPAA2_BUS_DEBUG("%s(%zx): VA(%" PRIx64 "):IOVA(%" PRIx64 "):PHY(%" PRIx64 ")",
- 		is_io ? "DMA I/O map size" : "DMA MEM map size",
- 		len, vaddr, iovaddr, phy);
- 
++	/* Rx deferred start is not supported */
++	if (rx_conf->rx_deferred_start) {
++		DPAA2_PMD_ERR("%s: Rx deferred start not supported",
++			dev->data->name);
++		return -EINVAL;
++	}
++
+ 	total_nb_rx_desc += nb_rx_desc;
+ 	if (total_nb_rx_desc > MAX_NB_RX_DESC_IN_PEB &&
+ 	    (priv->options & DPNI_OPT_V1_PFDR_IN_PEB)) {
 -- 
 2.43.0
 
