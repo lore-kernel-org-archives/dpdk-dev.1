@@ -2,33 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1122CC79FB9
-	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Sep 2026 13:57:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F67FC79FB9
+	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Sep 2026 13:57:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 579A642EA6;
-	Thu, 10 Sep 2026 15:53:05 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4B39542ECA;
+	Thu, 10 Sep 2026 15:53:06 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id E9DF242E7F
- for <dev@dpdk.org>; Thu, 10 Sep 2026 15:52:51 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id DB6E342E8B
+ for <dev@dpdk.org>; Thu, 10 Sep 2026 15:52:52 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id CF518200408;
- Thu, 10 Sep 2026 15:52:51 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id BE22F200035;
+ Thu, 10 Sep 2026 15:52:52 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 98CD420003A;
- Thu, 10 Sep 2026 15:52:51 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 86AAA200023;
+ Thu, 10 Sep 2026 15:52:52 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 9241218000BA;
- Thu, 10 Sep 2026 21:52:50 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id A41311800068;
+ Thu, 10 Sep 2026 21:52:51 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
-Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v2 43/47] drivers: align dpaa2 event port depths with hardware
- rings
-Date: Thu, 10 Sep 2026 19:21:54 +0530
-Message-ID: <20260910135158.2181141-44-prashant.gupta_3@nxp.com>
+Subject: [PATCH v2 44/47] net/dpaa2: read MC version from device private data
+Date: Thu, 10 Sep 2026 19:21:55 +0530
+Message-ID: <20260910135158.2181141-45-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260910135158.2181141-1-prashant.gupta_3@nxp.com>
 References: <20260903135353.3358303-1-prashant.gupta_3@nxp.com>
@@ -51,223 +49,272 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Hemant Agrawal <hemant.agrawal@nxp.com>
 
-The event port dequeue and enqueue depths were fixed at 8. A dequeue
-drains the portal DQRR and an enqueue fills the EQCR, so the real limits
-are the sizes of those two rings, which differ per SoC and are known at
-run time. Report them instead, adding qbman_swp_portal_dqrr_size() to
-query the DQRR size (the EQCR size is already available as
-dpaa2_eqcr_size).
+The flow engine reached back to the bus device to read the MC firmware
+version. The bus_info pointer behind it is only attached by the primary
+process, so a secondary process that creates a flow dereferences a
+pointer it never set up.
 
-The Tx adapter enqueue helpers sized their on-stack mbuf arrays from the
-advertised enqueue depth, which no longer bounds the burst the adapter
-may hand them, so bound the copy by the array itself and transmit in
-chunks.
+The version is already cached in priv->mc_rev at probe time and the rest
+of the driver reads it from there, so use that here too. This removes the
+last user of DPAA2_DEV_PRIV_TO_DPAA2_DEV(), so drop the macro.
 
-Signed-off-by: Jun Yang <jun.yang@nxp.com>
+Signed-off-by: Prashant Gupta <prashant.gupta_3@nxp.com>
 ---
- .../fslmc/qbman/include/fsl_qbman_portal.h    |  7 ++
- drivers/bus/fslmc/qbman/qbman_portal.c        | 15 ++++
- drivers/event/dpaa2/dpaa2_eventdev.c          | 72 ++++++++++++-------
- drivers/event/dpaa2/dpaa2_eventdev.h          |  4 +-
- 4 files changed, 69 insertions(+), 29 deletions(-)
+ drivers/net/dpaa2/dpaa2_ethdev.h |  4 ---
+ drivers/net/dpaa2/dpaa2_flow.c   | 61 ++++++++++----------------------
+ 2 files changed, 19 insertions(+), 46 deletions(-)
 
-diff --git a/drivers/bus/fslmc/qbman/include/fsl_qbman_portal.h b/drivers/bus/fslmc/qbman/include/fsl_qbman_portal.h
-index 73e57bcdc1..fb1c6046ae 100644
---- a/drivers/bus/fslmc/qbman/include/fsl_qbman_portal.h
-+++ b/drivers/bus/fslmc/qbman/include/fsl_qbman_portal.h
-@@ -1222,6 +1222,13 @@ __rte_internal
- int qbman_swp_acquire(struct qbman_swp *s, uint16_t bpid, uint64_t *buffers,
- 		      unsigned int num_buffers);
+diff --git a/drivers/net/dpaa2/dpaa2_ethdev.h b/drivers/net/dpaa2/dpaa2_ethdev.h
+index 0934e04198..82021ec87e 100644
+--- a/drivers/net/dpaa2/dpaa2_ethdev.h
++++ b/drivers/net/dpaa2/dpaa2_ethdev.h
+@@ -44,10 +44,6 @@
+ #define MAX_DPNI		8
+ #define DPAA2_MAX_CHANNELS	16
  
-+/**
-+ * qbman_swp_portal_dqrr_size() - Number of entries in a portal's DQRR.
-+ * @p: the software portal object, NULL to query the SoC's DQRR size.
-+ */
-+__rte_internal
-+uint32_t qbman_swp_portal_dqrr_size(struct qbman_swp *p);
-+
- 	/*****************/
- 	/* FQ management */
- 	/*****************/
-diff --git a/drivers/bus/fslmc/qbman/qbman_portal.c b/drivers/bus/fslmc/qbman/qbman_portal.c
-index 64b61a5551..85d34b25ca 100644
---- a/drivers/bus/fslmc/qbman/qbman_portal.c
-+++ b/drivers/bus/fslmc/qbman/qbman_portal.c
-@@ -73,6 +73,11 @@ enum qbman_sdqcr_fc {
- static struct qbman_swp *portal_idx_map[MAX_QBMAN_PORTALS];
- 
- uint32_t qman_version;
-+/* DQRR size of the portals initialised so far. All portals of a SoC have the
-+ * same size, so this doubles as the SoC's DQRR size for callers that have no
-+ * portal at hand.
-+ */
-+static uint32_t dpaa2_portal_dqrr_size = 8;
- 
- /* Internal Function declaration */
- static int
-@@ -239,6 +244,15 @@ static int (*qbman_swp_release_ptr)(struct qbman_swp *s,
- 			const uint64_t *buffers, unsigned int num_buffers)
- 			= qbman_swp_release_direct;
- 
-+RTE_EXPORT_INTERNAL_SYMBOL(qbman_swp_portal_dqrr_size)
-+uint32_t qbman_swp_portal_dqrr_size(struct qbman_swp *p)
-+{
-+	if (p != NULL)
-+		return p->dqrr.dqrr_size;
-+
-+	return dpaa2_portal_dqrr_size;
-+}
-+
- /*********************************/
- /* Portal constructor/destructor */
- /*********************************/
-@@ -303,6 +317,7 @@ struct qbman_swp *qbman_swp_init(const struct qbman_swp_desc *d)
- 	p->dqrr.ci_vec_en =
- 		p->dqrr.dqrr_size <= (32 - DQRR_DCAP_CI_VEC_OFFSET);
- 	p->dqrr.ci_flush_th = p->dqrr.dqrr_size / 2;
-+	dpaa2_portal_dqrr_size = p->dqrr.dqrr_size;
- 
- 	ret = qbman_swp_sys_init(&p->sys, d, p->dqrr.dqrr_size);
- 	if (ret) {
-diff --git a/drivers/event/dpaa2/dpaa2_eventdev.c b/drivers/event/dpaa2/dpaa2_eventdev.c
-index 5d32bd9fd6..ddcf7b3678 100644
---- a/drivers/event/dpaa2/dpaa2_eventdev.c
-+++ b/drivers/event/dpaa2/dpaa2_eventdev.c
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright 2017,2019-2022 NXP
-+ * Copyright 2017,2019-2022,2026 NXP
-  */
- 
- #include <assert.h>
-@@ -389,10 +389,11 @@ dpaa2_eventdev_info_get(struct rte_eventdev *dev,
- 	/* we only support dpio up to number of cores */
- 	if (dev_info->max_event_ports > rte_lcore_count())
- 		dev_info->max_event_ports = rte_lcore_count();
--	dev_info->max_event_port_dequeue_depth =
--		DPAA2_EVENT_MAX_PORT_DEQUEUE_DEPTH;
--	dev_info->max_event_port_enqueue_depth =
--		DPAA2_EVENT_MAX_PORT_ENQUEUE_DEPTH;
-+	/* A dequeue drains the portal DQRR and an enqueue fills the EQCR, so
-+	 * the hardware ring sizes are the real limits.
-+	 */
-+	dev_info->max_event_port_dequeue_depth = qbman_swp_portal_dqrr_size(NULL);
-+	dev_info->max_event_port_enqueue_depth = dpaa2_eqcr_size;
- 	dev_info->max_num_events = DPAA2_EVENT_MAX_NUM_EVENTS;
- 	dev_info->event_dev_cap = RTE_EVENT_DEV_CAP_DISTRIBUTED_SCHED |
- 		RTE_EVENT_DEV_CAP_ATOMIC |
-@@ -527,12 +528,9 @@ dpaa2_eventdev_port_def_conf(struct rte_eventdev *dev, uint8_t port_id,
- 	RTE_SET_USED(dev);
- 	RTE_SET_USED(port_id);
- 
--	port_conf->new_event_threshold =
--		DPAA2_EVENT_MAX_NUM_EVENTS;
--	port_conf->dequeue_depth =
--		DPAA2_EVENT_MAX_PORT_DEQUEUE_DEPTH;
--	port_conf->enqueue_depth =
--		DPAA2_EVENT_MAX_PORT_ENQUEUE_DEPTH;
-+	port_conf->new_event_threshold = DPAA2_EVENT_MAX_NUM_EVENTS;
-+	port_conf->dequeue_depth = qbman_swp_portal_dqrr_size(NULL);
-+	port_conf->enqueue_depth = dpaa2_eqcr_size;
- 	port_conf->event_port_cfg = 0;
- }
- 
-@@ -977,18 +975,31 @@ dpaa2_eventdev_txa_enqueue_same_dest(void *port,
- 				     struct rte_event ev[],
- 				     uint16_t nb_events)
- {
--	struct rte_mbuf *m[DPAA2_EVENT_MAX_PORT_ENQUEUE_DEPTH], *m0;
--	uint8_t qid, i;
-+	struct rte_mbuf *m[MAX_TX_RING_SLOTS], *m0;
-+	uint16_t sent = 0, burst, i, port_id;
-+	uint8_t qid;
- 
- 	RTE_SET_USED(port);
- 
--	m0 = (struct rte_mbuf *)ev[0].mbuf;
-+	m0 = ev[0].mbuf;
- 	qid = rte_event_eth_tx_adapter_txq_get(m0);
-+	port_id = m0->port;
-+
-+	/* The advertised enqueue depth is the EQCR size, which may exceed the
-+	 * on-stack burst array, so transmit in ring-sized chunks.
-+	 */
-+	while (sent < nb_events) {
-+		burst = RTE_MIN(nb_events - sent, (uint16_t)RTE_DIM(m));
-+		for (i = 0; i < burst; i++)
-+			m[i] = ev[sent + i].mbuf;
-+
-+		i = rte_eth_tx_burst(port_id, qid, m, burst);
-+		sent += i;
-+		if (i < burst)
-+			break;
-+	}
- 
--	for (i = 0; i < nb_events; i++)
--		m[i] = (struct rte_mbuf *)ev[i].mbuf;
+-#define DPAA2_DEV_PRIV_TO_DPAA2_DEV(priv) \
+-	container_of((((struct dpaa2_dev_priv *)priv)->eth_dev->device), \
+-	struct rte_dpaa2_device, device)
 -
--	return rte_eth_tx_burst(m0->port, qid, m, nb_events);
-+	return sent;
- }
+ #define DPAA2_EXTRACT_PARAM_MAX_SIZE \
+ 	RTE_ALIGN(sizeof(struct dpni_ext_set_rx_tc_dist), 256)
  
- static uint16_t
-@@ -996,19 +1007,28 @@ dpaa2_eventdev_txa_enqueue(void *port,
- 			   struct rte_event ev[],
- 			   uint16_t nb_events)
+diff --git a/drivers/net/dpaa2/dpaa2_flow.c b/drivers/net/dpaa2/dpaa2_flow.c
+index a51225d38d..c1ee7f4bc4 100644
+--- a/drivers/net/dpaa2/dpaa2_flow.c
++++ b/drivers/net/dpaa2/dpaa2_flow.c
+@@ -795,13 +795,10 @@ static int
+ dpaa2_flow_add_fs_rule(struct dpaa2_dev_priv *priv,
+ 	struct dpaa2_generic_flow *flow)
  {
--	void *txq[DPAA2_EVENT_MAX_PORT_ENQUEUE_DEPTH];
--	struct rte_mbuf *m[DPAA2_EVENT_MAX_PORT_ENQUEUE_DEPTH];
--	uint8_t qid, i;
-+	void *txq[MAX_TX_RING_SLOTS];
-+	struct rte_mbuf *m[MAX_TX_RING_SLOTS];
-+	uint16_t sent = 0, burst, i;
-+	uint8_t qid;
+-	struct rte_dpaa2_device *dpaa2_dev;
+ 	struct dpaa2_flow_tbl_profile *tbl_profile;
+ 	int ret;
+ 	struct fsl_mc_io *dpni = priv->hw;
  
- 	RTE_SET_USED(port);
+-	dpaa2_dev = DPAA2_DEV_PRIV_TO_DPAA2_DEV(priv);
+-
+ 	tbl_profile = &priv->flow_profile.tc_profile[flow->tc_id];
+ 	if (dpaa2_flow_entry_map_get(tbl_profile->entry_map,
+ 		flow->entry_index)) {
+@@ -812,7 +809,7 @@ dpaa2_flow_add_fs_rule(struct dpaa2_dev_priv *priv,
  
--	for (i = 0; i < nb_events; i++) {
--		m[i] = (struct rte_mbuf *)ev[i].mbuf;
--		qid = rte_event_eth_tx_adapter_txq_get(m[i]);
--		txq[i] = rte_eth_devices[m[i]->port].data->tx_queues[qid];
-+	while (sent < nb_events) {
-+		burst = RTE_MIN(nb_events - sent, (uint16_t)RTE_DIM(m));
-+		for (i = 0; i < burst; i++) {
-+			m[i] = ev[sent + i].mbuf;
-+			qid = rte_event_eth_tx_adapter_txq_get(m[i]);
-+			txq[i] = rte_eth_devices[m[i]->port].data->tx_queues[qid];
-+		}
-+
-+		i = dpaa2_dev_tx_multi_txq_ordered(txq, m, burst);
-+		sent += i;
-+		if (i < burst)
-+			break;
+ 	dpaa2_flow_fs_entry_log("Add", flow);
+ 
+-	if (dpaa2_dev->bus_info->mc_rev >= DPAA2_FLOW_FRM_REPLICATION_ACTION_MC_REV) {
++	if (priv->mc_rev >= DPAA2_FLOW_FRM_REPLICATION_ACTION_MC_REV) {
+ 		ret = dpni_add_fs_entry(dpni, CMD_PRI_LOW,
+ 			priv->token, flow->tc_id, flow->entry_index,
+ 			&flow->rule_cfg, &flow->flow_action.fs_action.fs_action_cfg);
+@@ -3671,7 +3668,6 @@ dpaa2_flow_fs_action_config(struct dpaa2_dev_priv *priv,
+ 	struct dpaa2_generic_flow *flow,
+ 	const struct rte_flow_action *rte_action)
+ {
+-	struct rte_dpaa2_device *dpaa2_dev;
+ 	struct rte_eth_dev *dest_dev;
+ 	struct dpaa2_dev_priv *dest_priv;
+ 	const struct rte_flow_action_queue *dest_queue;
+@@ -3680,11 +3676,9 @@ dpaa2_flow_fs_action_config(struct dpaa2_dev_priv *priv,
+ 	uint16_t num_tokens;
+ 	struct dpaa2_dev_flow_fs_action *fs_action;
+ 
+-	dpaa2_dev = DPAA2_DEV_PRIV_TO_DPAA2_DEV(priv);
+-
+ 	fs_action = &flow->flow_action.fs_action;
+ 	if (fs_action->action_type != RTE_FLOW_ACTION_TYPE_END) {
+-		if (dpaa2_dev->bus_info->mc_rev >= DPAA2_FLOW_FRM_REPLICATION_ACTION_MC_REV &&
++		if (priv->mc_rev >= DPAA2_FLOW_FRM_REPLICATION_ACTION_MC_REV &&
+ 			(fs_action->action_type == RTE_FLOW_ACTION_TYPE_PORT_ID ||
+ 			fs_action->action_type == RTE_FLOW_ACTION_TYPE_PORT_REPRESENTOR)) {
+ 			if (rte_action->type != RTE_FLOW_ACTION_TYPE_PORT_ID &&
+@@ -3836,21 +3830,19 @@ dpaa2_flow_fs_table_set_default(struct dpaa2_dev_priv *priv,
+ 	uint8_t tc_id, int discard, uint16_t default_queue)
+ {
+ 	int ret;
+-	struct rte_dpaa2_device *dpaa2_dev;
+ 	struct dpni_rx_dist_cfg *tc_cfg;
+ 	struct fsl_mc_io *dpni = priv->hw;
+ 	struct dpaa2_flow_tbl_profile *tbl_profile;
+ 	struct dpaa2_queue *queue;
+ 	char mc_rev[1024];
+ 
+-	dpaa2_dev = DPAA2_DEV_PRIV_TO_DPAA2_DEV(priv);
+ 	tbl_profile = &priv->flow_profile.tc_profile[tc_id];
+ 	snprintf(mc_rev, 1024, "MC rev(%d.%d.%d)",
+-		RTE_FSL_MC_REV_MAJOR(dpaa2_dev->bus_info->mc_rev),
+-		RTE_FSL_MC_REV_MINOR(dpaa2_dev->bus_info->mc_rev),
+-		RTE_FSL_MC_REV_REVISION(dpaa2_dev->bus_info->mc_rev));
++		RTE_FSL_MC_REV_MAJOR(priv->mc_rev),
++		RTE_FSL_MC_REV_MINOR(priv->mc_rev),
++		RTE_FSL_MC_REV_REVISION(priv->mc_rev));
+ 	if (!tbl_profile->dpkg.num_extracts &&
+-		dpaa2_dev->bus_info->mc_rev < DPAA2_QOS_FLOW_TABLE_SET_V3_MC_REV) {
++		priv->mc_rev < DPAA2_QOS_FLOW_TABLE_SET_V3_MC_REV) {
+ 		DPAA2_PMD_DEBUG("%s can't set miss action of FS table indepentently.",
+ 			mc_rev);
+ 		return 0;
+@@ -3975,26 +3967,24 @@ dpaa2_flow_qos_table_set_default(struct dpaa2_dev_priv *priv,
+ 	int discard, uint8_t default_tc, uint16_t default_flow)
+ {
+ 	int ret;
+-	struct rte_dpaa2_device *dpaa2_dev;
+ 	struct dpni_qos_tbl_cfg qos_cfg;
+ 	struct fsl_mc_io *dpni = priv->hw;
+ 	struct dpaa2_flow_tbl_profile *tbl_profile;
+ 	char mc_rev[1024];
+ 
+-	dpaa2_dev = DPAA2_DEV_PRIV_TO_DPAA2_DEV(priv);
+ 	tbl_profile = &priv->flow_profile.qos_profile;
+ 	snprintf(mc_rev, 1024, "MC rev(%d.%d.%d)",
+-		RTE_FSL_MC_REV_MAJOR(dpaa2_dev->bus_info->mc_rev),
+-		RTE_FSL_MC_REV_MINOR(dpaa2_dev->bus_info->mc_rev),
+-		RTE_FSL_MC_REV_REVISION(dpaa2_dev->bus_info->mc_rev));
++		RTE_FSL_MC_REV_MAJOR(priv->mc_rev),
++		RTE_FSL_MC_REV_MINOR(priv->mc_rev),
++		RTE_FSL_MC_REV_REVISION(priv->mc_rev));
+ 	if (!tbl_profile->dpkg.num_extracts &&
+-		dpaa2_dev->bus_info->mc_rev < DPAA2_QOS_FLOW_TABLE_SET_V3_MC_REV) {
++		priv->mc_rev < DPAA2_QOS_FLOW_TABLE_SET_V3_MC_REV) {
+ 		DPAA2_PMD_DEBUG("%s can't set miss action of QoS table indepentently.",
+ 			mc_rev);
+ 		return 0;
+ 	}
+ 	if (default_flow < priv->dist_queues &&
+-		dpaa2_dev->bus_info->mc_rev < DPAA2_QOS_FLOW_TABLE_MISS_FLOW_ACTION_MC_REV) {
++		priv->mc_rev < DPAA2_QOS_FLOW_TABLE_MISS_FLOW_ACTION_MC_REV) {
+ 		DPAA2_PMD_WARN("%s can't direct miss traffic to TC%d-flow%d by QoS table only.",
+ 			mc_rev, default_tc, default_flow);
+ 		return 0;
+@@ -4031,7 +4021,6 @@ static int
+ dpaa2_flow_qos_table_config(struct dpaa2_dev_priv *priv,
+ 	int rss_dist)
+ {
+-	struct rte_dpaa2_device *dpaa2_dev;
+ 	struct dpaa2_flow_tbl_profile *tbl_profile;
+ 	uint8_t *key_cfg_buf;
+ 	int ret;
+@@ -4093,8 +4082,7 @@ dpaa2_flow_qos_table_config(struct dpaa2_dev_priv *priv,
+ 			qos_cfg->discard_on_miss = false;
  	}
  
--	return dpaa2_dev_tx_multi_txq_ordered(txq, m, nb_events);
-+	return sent;
- }
+-	dpaa2_dev = DPAA2_DEV_PRIV_TO_DPAA2_DEV(priv);
+-	if (dpaa2_dev->bus_info->mc_rev < DPAA2_QOS_FLOW_TABLE_SET_V3_MC_REV)
++	if (priv->mc_rev < DPAA2_QOS_FLOW_TABLE_SET_V3_MC_REV)
+ 		ret = dpni_set_qos_table_v2(dpni, CMD_PRI_LOW, priv->token, qos_cfg);
+ 	else
+ 		ret = dpni_set_qos_table(dpni, CMD_PRI_LOW, priv->token, qos_cfg);
+@@ -4238,7 +4226,6 @@ static int
+ dpaa2_flow_set_police_action(struct dpaa2_dev_priv *priv,
+ 	uint8_t tc_id, const struct rte_flow_action_meter_mark *meter_mark)
+ {
+-	struct rte_dpaa2_device *dpaa2_dev;
+ 	struct dpni_rx_tc_policing_cfg policing_cfg = {0};
+ 	const struct dpaa2_dev_meter_profile *dpaa2_profile;
+ 	const struct dpaa2_dev_meter_policy *dpaa2_policy = NULL;
+@@ -4250,8 +4237,6 @@ dpaa2_flow_set_police_action(struct dpaa2_dev_priv *priv,
+ 		return -ENOTSUP;
+ 	}
  
- static struct eventdev_ops dpaa2_eventdev_ops = {
-diff --git a/drivers/event/dpaa2/dpaa2_eventdev.h b/drivers/event/dpaa2/dpaa2_eventdev.h
-index 3883a26c91..a054dfdbd7 100644
---- a/drivers/event/dpaa2/dpaa2_eventdev.h
-+++ b/drivers/event/dpaa2/dpaa2_eventdev.h
-@@ -1,5 +1,5 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-- * Copyright 2017 NXP
-+ * Copyright 2017,2026 NXP
-  */
+-	dpaa2_dev = DPAA2_DEV_PRIV_TO_DPAA2_DEV(priv);
+-
+ 	dpaa2_profile = (void *)meter_mark->profile;
+ 	if (!dpaa2_profile) {
+ 		DPAA2_PMD_ERR("Meter profile not specified!");
+@@ -4273,9 +4258,8 @@ dpaa2_flow_set_police_action(struct dpaa2_dev_priv *priv,
  
- #ifndef __DPAA2_EVENTDEV_H__
-@@ -22,8 +22,6 @@
- #define DPAA2_EVENT_MAX_QUEUE_FLOWS		2048
- #define DPAA2_EVENT_MAX_QUEUE_PRIORITY_LEVELS	8
- #define DPAA2_EVENT_MAX_EVENT_PRIORITY_LEVELS	0
--#define DPAA2_EVENT_MAX_PORT_DEQUEUE_DEPTH	8
--#define DPAA2_EVENT_MAX_PORT_ENQUEUE_DEPTH	8
- #define DPAA2_EVENT_MAX_NUM_EVENTS		(INT32_MAX - 1)
+ 	if (priv->flow_profile.mtr_flow[tc_id]) {
+ 		/** Update existing policer.*/
+-		dpaa2_dev = DPAA2_DEV_PRIV_TO_DPAA2_DEV(priv);
+-		policing_cfg.options |= DPNI_POLICER_OPT_DO_NOT_RESET_COUNTERS;
+-		if (dpaa2_dev->bus_info->mc_rev < DPAA2_POLICER_NOT_RESET_COUNTER_MC_REV)
++			policing_cfg.options |= DPNI_POLICER_OPT_DO_NOT_RESET_COUNTERS;
++		if (priv->mc_rev < DPAA2_POLICER_NOT_RESET_COUNTER_MC_REV)
+ 			DPAA2_PMD_WARN("The existing policer's counters will be cleaned.");
+ 	}
  
- #define DPAA2_EVENT_QUEUE_ATOMIC_FLOWS		2048
+@@ -4298,7 +4282,7 @@ dpaa2_flow_set_police_action(struct dpaa2_dev_priv *priv,
+ 	policing_cfg.eir = dpaa2_profile->pir;
+ 	policing_cfg.ebs = dpaa2_profile->pbs;
+ 
+-	if (dpaa2_dev->bus_info->mc_rev < DPAA2_POLICER_SET_V2_MC_REV) {
++	if (priv->mc_rev < DPAA2_POLICER_SET_V2_MC_REV) {
+ 		ret = dpni_set_rx_tc_policing_v1(priv->hw, CMD_PRI_LOW,
+ 			priv->token, tc_id, &policing_cfg);
+ 	} else {
+@@ -5429,7 +5413,6 @@ dpaa2_flow_generic_flow_create(struct rte_eth_dev *dev,
+ 	int mix_extract, int is_rss)
+ {
+ 	struct dpaa2_generic_flow *flow = NULL;
+-	struct rte_dpaa2_device *dpaa2_dev;
+ 	struct dpaa2_dev_priv *priv = dev->data->dev_private;
+ 	int ret, idx = -1;
+ 	uint64_t iova, mc_rev;
+@@ -5445,8 +5428,7 @@ dpaa2_flow_generic_flow_create(struct rte_eth_dev *dev,
+ 	if (type != DPAA2_FLOW_QOS_TYPE && type != DPAA2_FLOW_FS_TYPE)
+ 		return NULL;
+ 
+-	dpaa2_dev = DPAA2_DEV_PRIV_TO_DPAA2_DEV(priv);
+-	mc_rev = dpaa2_dev->bus_info->mc_rev;
++	mc_rev = priv->mc_rev;
+ 
+ 	if (actions) {
+ 		ret = dpaa2_flow_qos_fs_action_set(actions, qos_actions,
+@@ -5941,19 +5923,17 @@ static int
+ dpaa2_flow_destroy_meter_flow(struct rte_eth_dev *dev,
+ 	struct dpaa2_dev_flow *flow)
+ {
+-	struct rte_dpaa2_device *dpaa2_dev;
+ 	struct dpaa2_dev_priv *priv = dev->data->dev_private;
+ 	struct dpni_rx_tc_policing_cfg cfg;
+ 	int ret;
+ 	uint8_t tc_id;
+ 
+ 	RTE_ASSERT(!flow->qos_flow && flow->fs_flow);
+-	dpaa2_dev = DPAA2_DEV_PRIV_TO_DPAA2_DEV(priv);
+ 	tc_id = flow->fs_flow->tc_id;
+ 	RTE_ASSERT(priv->flow_profile.mtr_flow[tc_id] == flow);
+ 	memset(&cfg, 0, sizeof(cfg));
+ 	cfg.mode = DPNI_POLICER_MODE_NONE;
+-	if (dpaa2_dev->bus_info->mc_rev < DPAA2_POLICER_SET_V2_MC_REV) {
++	if (priv->mc_rev < DPAA2_POLICER_SET_V2_MC_REV) {
+ 		ret = dpni_set_rx_tc_policing_v1(priv->hw, CMD_PRI_LOW,
+ 			priv->token, tc_id, &cfg);
+ 	} else {
+@@ -6170,7 +6150,6 @@ dpaa2_flow_actions_update(struct rte_eth_dev *dev,
+ 	const struct rte_flow_action actions[],
+ 	struct rte_flow_error *error)
+ {
+-	struct rte_dpaa2_device *dpaa2_dev;
+ 	struct dpaa2_dev_priv *priv = dev->data->dev_private;
+ 	struct dpaa2_dev_flow *flow;
+ 	struct dpaa2_flow_tbl_profile *tbl_profile = NULL;
+@@ -6191,8 +6170,6 @@ dpaa2_flow_actions_update(struct rte_eth_dev *dev,
+ 	const struct rte_flow_action_queue *action_q;
+ 	struct dpaa2_queue *rxq = NULL;
+ 
+-	dpaa2_dev = DPAA2_DEV_PRIV_TO_DPAA2_DEV(priv);
+-
+ 	/* check for the valid flow */
+ 	flow = (void *)_flow;
+ 	if (flow->is_meter_flow) {
+@@ -6304,7 +6281,7 @@ dpaa2_flow_actions_update(struct rte_eth_dev *dev,
+ 	if (fs_action_num > 0 &&
+ 		fs_actions[0].type != RTE_FLOW_ACTION_TYPE_PORT_ID &&
+ 		fs_actions[0].type != RTE_FLOW_ACTION_TYPE_REPRESENTED_PORT &&
+-		dpaa2_dev->bus_info->mc_rev >= DPAA2_FS_FLOW_HW_ACTION_UPDATE_MC_REV) {
++		priv->mc_rev >= DPAA2_FS_FLOW_HW_ACTION_UPDATE_MC_REV) {
+ 		/** Action HW update doesn't support redirecting frames to other DPNIs.*/
+ 		hw_update = true;
+ 		goto skip_remove_fs_entry;
+@@ -6394,7 +6371,7 @@ dpaa2_flow_actions_update(struct rte_eth_dev *dev,
+ 	}
+ 
+ 	hw_update = false;
+-	if (dpaa2_dev->bus_info->mc_rev >= DPAA2_QOS_FLOW_HW_ACTION_UPDATE_MC_REV) {
++	if (priv->mc_rev >= DPAA2_QOS_FLOW_HW_ACTION_UPDATE_MC_REV) {
+ 		/** Action HW update doesn't support redirecting frames to other DPNIs.*/
+ 		hw_update = true;
+ 		goto skip_remove_qos_entry;
 -- 
 2.43.0
 
