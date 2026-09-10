@@ -2,32 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7DC4C79FB9
-	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Sep 2026 13:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B11B4C79FB9
+	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Sep 2026 13:52:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C80C842D7A;
-	Thu, 10 Sep 2026 15:52:14 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 8A94F427C3
- for <dev@dpdk.org>; Thu, 10 Sep 2026 15:52:10 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6C0571A0054;
- Thu, 10 Sep 2026 15:52:10 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E8CBB42D89;
+	Thu, 10 Sep 2026 15:52:15 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id D6D2D42830;
+ Thu, 10 Sep 2026 15:52:11 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B79D6200023;
+ Thu, 10 Sep 2026 15:52:11 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 351E31A0043;
- Thu, 10 Sep 2026 15:52:10 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 81D4F200044;
+ Thu, 10 Sep 2026 15:52:11 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 2B59D180006C;
- Thu, 10 Sep 2026 21:52:09 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 3F90218000B7;
+ Thu, 10 Sep 2026 21:52:10 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
-Cc: Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v2 06/47] crypto/dpaa2_sec: add support for env variables
-Date: Thu, 10 Sep 2026 19:21:17 +0530
-Message-ID: <20260910135158.2181141-7-prashant.gupta_3@nxp.com>
+Cc: stable@dpdk.org,
+	Hemant Agrawal <hemant.agrawal@nxp.com>
+Subject: [PATCH v2 07/47] net/dpaa2: fix integer overflow in CCSR region
+ mapping
+Date: Thu, 10 Sep 2026 19:21:18 +0530
+Message-ID: <20260910135158.2181141-8-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260910135158.2181141-1-prashant.gupta_3@nxp.com>
 References: <20260903135353.3358303-1-prashant.gupta_3@nxp.com>
@@ -48,87 +50,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Gagandeep Singh <g.singh@nxp.com>
+From: Hemant Agrawal <hemant.agrawal@nxp.com>
 
-Allow driver configuration via environment variables as a fallback
-when devargs are not provided. After processing devargs (or when
-devargs are absent), check DRIVER_STRICT_ORDER and DRIVER_DUMP_MODE
-environment variables to set en_loose_ordered and dpaa2_sec_dp_dump.
+In lsx_ccsr_map_region, PAGE_SIZE is defined as sysconf(_SC_PAGESIZE)
+which may be negative on error. The value was used directly in size_t
+comparisons and passed to mmap, causing an integer overflow (Coverity
+CID 49765682).
 
-This lets users configure the driver without modifying EAL arguments,
-useful in environments where command-line access is restricted.
+Use sysconf() explicitly with a signed long, check for errors, and
+compute map_len separately with unsigned arithmetic before passing to
+mmap.
 
-Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
+Coverity issue: 49765682
+Fixes: f023d059769f ("net/dpaa2: support recycle loopback port")
+Cc: stable@dpdk.org
+Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c | 40 ++++++++++++++++++---
- 1 file changed, 36 insertions(+), 4 deletions(-)
+ drivers/net/dpaa2/dpaa2_recycle.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c b/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
-index 16af02e758..1416c8dc67 100644
---- a/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
-+++ b/drivers/crypto/dpaa2_sec/dpaa2_sec_dpseci.c
-@@ -4412,25 +4412,57 @@ check_devargs_handler(const char *key, const char *value,
- static void
- dpaa2_sec_get_devargs(struct rte_cryptodev *cryptodev, const char *key)
- {
-+	struct dpaa2_sec_dev_private *internals;
- 	struct rte_kvargs *kvlist;
- 	struct rte_devargs *devargs;
-+	int ret;
-+	char *env;
-+	long val;
-+
-+	internals = cryptodev->data->dev_private;
+diff --git a/drivers/net/dpaa2/dpaa2_recycle.c b/drivers/net/dpaa2/dpaa2_recycle.c
+index f78d12362e..80c20272ce 100644
+--- a/drivers/net/dpaa2/dpaa2_recycle.c
++++ b/drivers/net/dpaa2/dpaa2_recycle.c
+@@ -176,6 +176,8 @@ static void *lsx_ccsr_map_region(uint64_t addr, size_t len)
+ 	void *tmp;
+ 	uint64_t start;
+ 	uint64_t offset;
++	long page_size;
++	size_t map_len;
  
- 	devargs = cryptodev->device->devargs;
- 	if (!devargs)
--		return;
-+		goto env_set;
- 
- 	kvlist = rte_kvargs_parse(devargs->args, NULL);
- 	if (!kvlist)
--		return;
-+		goto env_set;
- 
- 	if (!rte_kvargs_count(kvlist, key)) {
- 		rte_kvargs_free(kvlist);
--		return;
-+		goto env_set;
+ 	fd = open("/dev/mem", O_RDWR);
+ 	if (fd < 0) {
+@@ -183,20 +185,27 @@ static void *lsx_ccsr_map_region(uint64_t addr, size_t len)
+ 		return NULL;
  	}
  
--	rte_kvargs_process(kvlist, key,
-+	ret = rte_kvargs_process(kvlist, key,
- 			check_devargs_handler, (void *)cryptodev);
- 	rte_kvargs_free(kvlist);
-+	if (!ret)
-+		return;
-+
-+env_set:
-+	env = getenv(DRIVER_STRICT_ORDER);
-+	if (env) {
-+		if (dpaa2_sec_parse_int(env, &val))
-+			DPAA2_SEC_WARN("Invalid %s value '%s', ignored",
-+				DRIVER_STRICT_ORDER, env);
-+		else
-+			internals->en_loose_ordered = !val;
++	page_size = sysconf(_SC_PAGESIZE);
++	if (page_size <= 0) {
++		close(fd);
++		return NULL;
 +	}
+ 	start = addr & PAGE_MASK;
+ 	offset = addr - start;
+ 	len = len & PAGE_MASK;
+-	if (len < (size_t)PAGE_SIZE)
+-		len = PAGE_SIZE;
+ 
+-	tmp = mmap(NULL, len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, start);
++	map_len = len & ~(page_size - 1);
++	if (map_len < (size_t)page_size)
++		map_len = (size_t)page_size;
 +
-+	env = getenv(DRIVER_DUMP_MODE);
-+	if (env) {
-+		if (dpaa2_sec_parse_int(env, &val)) {
-+			DPAA2_SEC_WARN("Invalid %s value '%s', ignored",
-+				DRIVER_DUMP_MODE, env);
-+		} else {
-+			if (val > DPAA2_SEC_DP_FULL_DUMP)
-+				val = DPAA2_SEC_DP_FULL_DUMP;
-+			else if (val < DPAA2_SEC_DP_NO_DUMP)
-+				val = DPAA2_SEC_DP_NO_DUMP;
-+			dpaa2_sec_dp_dump = val;
-+		}
-+	}
++	tmp = mmap(NULL, map_len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, start);
+ 
+ 	close(fd);
+ 
+-	if (tmp != MAP_FAILED)
+-		return (uint8_t *)tmp + offset;
+-	else
++	if (tmp == MAP_FAILED)
+ 		return NULL;
++
++	return (uint8_t *)tmp + offset;
  }
  
- static int
+ static const uint8_t ls_sd1_prot_idx_map[] = {
 -- 
 2.43.0
 
