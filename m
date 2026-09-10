@@ -2,47 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5932AC79FB9
-	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Sep 2026 12:53:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5B0AC79F9F
+	for <dpdk-dev@archiver.kernel.org>; Thu, 10 Sep 2026 12:53:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 67FAC427A4;
-	Thu, 10 Sep 2026 14:53:24 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5A6F0427B3;
+	Thu, 10 Sep 2026 14:53:25 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
- by mails.dpdk.org (Postfix) with ESMTP id B63E44028F
- for <dev@dpdk.org>; Thu, 10 Sep 2026 14:53:21 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id A2D1040F1A
+ for <dev@dpdk.org>; Thu, 10 Sep 2026 14:53:23 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1789044803; x=1820580803;
+ t=1789044804; x=1820580804;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=en0FTlzMx6L92genferVLLKiNDX8PjHB+xWtSyndZhM=;
- b=gWcYTyrQ93LXU6gzwrw++ncNzG7IKS/GeeNh7JBNDeS7bYj6h271Xlsw
- l3ON3Iucsj5WTXxKqGrb6dn5TStkEjM9Gvp53zkkK83zY1+eWpAaIAQRH
- biE4y/9f2hQt1jip7pQ4dWX+EibTS0as3rZDplJBvjNiORwdfo5IY+UwX
- 4euYTnxrK0t7ifhI4F+/FAyj42i4d+Dgq78LzUbJjAjVgug55anzEElej
- 5IFK0HJRMKE3pMeCKRl+J2HXR1Ahlcj+AQGLK9oWrt8RV402YdqpkBUKi
- ILz/d5COi2VHe7jaMlqTSbGxT7A2lWke5Gpg++YpCFPLNsyd2ibXlqBDo g==;
-X-CSE-ConnectionGUID: yuGhZjobRQGSeZLy+PIU2g==
-X-CSE-MsgGUID: vlU3p7+WRTORXbUKZzV9Aw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11900"; a="89334004"
+ bh=Q2fx5bcScgUsTDMvxvUvrG2vrkx8O0vPv8ZtJp+rKaU=;
+ b=LmMVLvOgRveLOxLVeiHEgTQ4tRnWXKuey84VlDZoHSQxn0ox1DoUTMM/
+ w8obx3dwbAoVsQmRlC6s94ZI6Q2dPc2JUXK4vbEYXALGf0xt8CI6H7P8d
+ /yNeRw7fI9RPqYtsKEsm1Kh3KEQO+FoXOXSjQikV6NI/jlz4w0IezbttW
+ bihkiqb2O9G9kAcgl0MPZjBWWRz8rNSCHavWyHinQLa0RuwQMRIxD98un
+ 8B1E7JpkHBGgDfz9AO2+1r8dmNJIe0/D4eYiaEjiLhp4HA3OpJ4dDAxxD
+ s3/kYyFeQ9cQ9sROTV94r3vNSlDYiPntB/w8DkaAvBB4lhPZL7ae6wPk2 w==;
+X-CSE-ConnectionGUID: 28LSBQbLS62Ccycn3Kt7WQ==
+X-CSE-MsgGUID: UwLgLT70Qjeh2GzwfcDzsw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11900"; a="89334007"
 X-IronPort-AV: E=Sophos;i="6.27,95,1787036400"; 
-   d="scan'208";a="89334004"
+   d="scan'208";a="89334007"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 10 Sep 2026 05:53:20 -0700
-X-CSE-ConnectionGUID: UWRCoGUOSpeKnWXyxmnNow==
-X-CSE-MsgGUID: sF74hVdPR/atOq0V3BOJqA==
+ 10 Sep 2026 05:53:21 -0700
+X-CSE-ConnectionGUID: NHHEgGaQRtCHP7fg48vyJw==
+X-CSE-MsgGUID: LoSG1dRNR6OZJmHiwBW+Iw==
 X-ExtLoop1: 1
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa003.fm.intel.com with ESMTP; 10 Sep 2026 05:53:19 -0700
+ by fmviesa003.fm.intel.com with ESMTP; 10 Sep 2026 05:53:20 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org
-Subject: [PATCH v17 00/26] Support VFIO cdev API in DPDK
-Date: Thu, 10 Sep 2026 13:52:44 +0100
-Message-ID: <cover.1789044746.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org, Dimon Zhao <dimon.zhao@nebula-matrix.com>,
+ Leon Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
+Subject: [PATCH v17 01/26] net/nbl: fix use-after-free
+Date: Thu, 10 Sep 2026 13:52:45 +0100
+Message-ID: <75e8e3b8ff4d0647e2a5216dcde0d93f3856e821.1789044747.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <cover.1763141462.git.anatoly.burakov@intel.com>
-References: <cover.1763141462.git.anatoly.burakov@intel.com>
+In-Reply-To: <cover.1789044746.git.anatoly.burakov@intel.com>
+ <cover.1789044746.git.anatoly.burakov@intel.com>
+References: 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -58,263 +60,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patchset introduces a major refactor of the VFIO subsystem in DPDK to
-support character device (cdev) interface introduced in Linux kernel, as well as
-make the API more streamlined and useful. The goal is to simplify device
-management, improve compatibility, make the code readable, and clarify API.
+When unmapping a device, the device is not removed from TAILQ, which may
+result in attempting to access this devices' data during subsequent mem
+event callbacks (as they are only disabled once all devices are removed).
 
-The following sections outline the key issues addressed by this patchset and the
-corresponding changes introduced.
+Remove the device from TAILQ on unmap to fix it, and move the device fd
+close under the memcfg lock to avoid race between a mem event and fd close.
 
-1. Only group mode is supported
-===============================
+Fixes: dc955cd24c8f ("net/nbl: add coexistence mode")
+Cc: dimon.zhao@nebula-matrix.com
+Cc: stable@dpdk.org
 
-Since kernel version 4.14.327 (LTS), VFIO supports the new character device
-(cdev)-based way of working with VFIO devices (otherwise known as IOMMUFD). This
-is a device-centric mode and does away with all the complexity regarding groups
-and IOMMU types, delegating it all to the kernel, and exposes a much simpler
-interface to userspace. The old group-based implementation will still be around,
-and will need to be kept in DPDK for compatibility reasons.
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+---
+ drivers/net/nbl/nbl_common/nbl_userdev.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-To enable this, VFIO is heavily refactored, so that the code can support both
-modes while relying on (mostly) common infrastructure.
-
-Additionally, new `vfio_get_mode` API is added for those cases that need
-some introspection into VFIO's internals, with two modes: group (old-style),
-and cdev (the new mode).
-
-Historically, no-IOMMU mode was technically a variant of group mode, the
-distinction is largely irrelevant to the user, as all usages of noiommu checks
-in our codebase are for deciding whether to use IOVA or PA, not anything to do
-with managing groups. However, now that upcoming kernel versions will support
-no-IOMMU for both group, cdev compatibility, and full cdev paths, a new
-`vfio_get_iommu_mode` is also added, with two modes: safe (full IOMMU backing),
-and unsafe (no-IOMMU mode). The naming is chosen explicitly to emphasize that
-using no-IOMMU mode is not ideal.
-
-2. Custom container assignment API does not map to cdev mode
-============================================================
-
-The existing `rte_vfio_device_setup/release` model is fundamentally incompatible
-with cdev mode, because for custom container cases, the expected flow is that
-the user binds the IOMMU group (and thus, implicitly, the device itself) to a
-specific container using `rte_vfio_container_group_bind`, whereas this step is
-not needed for cdev as the device fd is assigned to the container straight away.
-
-Therefore, what we do instead is introduce a new API for container device
-assignment which, semantically, will assign a device to specified container, so
-that when it is mapped using `rte_pci_map_device`, the appropriate container is
-selected. Under the hood though, we essentially transition to getting device fd
-straight away at assign stage, so that by the time the PCI bus attempts to map
-the device, it is already mapped and we just return an fd. There is no
-"unassign" API because `release_device` already performs that function.
-
-Because the API is now unified around device assignment, the old group-specific
-API's can be removed and, where appropriate, reimplemented using new API. There
-were other users of VFIO which relied on group API but only for convenience
-purposes; no actual VFIO functionality depended on those API's.
-
-List of removed API's:
-
-* `rte_vfio_get_group_fd`
-* `rte_vfio_clear_group`
-* `rte_vfio_container_group_bind` (replaced by container assign API)
-* `rte_vfio_container_group_unbind`
-* `rte_vfio_noiommu_is_enabled` (replaced by new mode API)
-
-3. The API responsibilities aren't clear and bleed into each other
-==================================================================
-
-Some API's do multiple things at once. In particular:
-
-* `rte_vfio_get_device_info` will setup the device
-* `rte_vfio_setup_device` will get device info
-
-These API's have been adjusted to do one thing only.
-
-4. The API does not need to be public
-=====================================
-
-The initial idea for exposing VFIO API was to enable userspace applications to
-directly map memory for DMA, but it turns out that in practice only drivers use
-this API. Therefore, the entire VFIO API is made internal, driver-only, and is
-renamed from `rte_vfio` to `dev_vfio`.
-
-v17:
-- Support multiple devices per group in NBL
-
-v16:
-- Fixed an unused variable compile error due to typo
-- Fixed code for patch 19 being accidentally added into patch 21
-- Included the NBL fix[1] in the patchset to enable CI testing
-
-[1] https://patches.dpdk.org/project/dpdk/patch/75e8e3b8ff4d0647e2a5216dcde0d93f3856e821.1787820465.git.anatoly.burakov@intel.com/
-
-v15:
-- Fixed resource leak in group mode deduplication path
-- On account of kernel 7.3 supporting no-IOMMU mode in kernel version 7.3,
-  split the "VFIO mode" model into two distinct axis: group/cdev, and IOMMU mode
-
-v14:
-- Hardened the transitional patches against attempting to use VFIO without
-  having done initialization
-- Fixed a bunch of typos, moved a few hunks around to where they belong, and
-  added a more release note entries
-
-v13:
-- Addressed feedback from Stephen's AI review:
-  - Added strdup-based deduplication for group mode to avoid leaking fd's when
-    container assignment API is used
-  - Added more documentation about cdev mode to Linux GSG
-  - Fixed comments and log levels in a couple of places
-- Renamed the API from `rte_vfio_*` to `dev_vfio_*` on account of it no longer
-  being a publicly visible API
-- Moved `dev_vfio.h` into driver SDK headers
-- Decoupled VFIO internals from FSLMC and EAL
-- Added proper teardown for VFIO subsystem on cleanup
-
-v12:
-- Addressed feedback from Stephen's AI review:
-  - Add release notes updates to patch 2 and 20
-  - Fix ENXIO typos
-  - Added a new init step after memory init to enable DMA mapping for cdev
-
-v11:
-- Addressed feedback from Stephen's AI review:
-  - Use CONTAINER_INITIALIZER for reset
-  - Set container fd to -1 in CONTAINER_INITIALIZER
-  - Fixed double close()
-  - Moved VFIO init to earlier in init sequence to account for
-    bus drivers needing no-IOMMU mode status
-  - Fixed missing ops set for cdev mode, and missing ops reset
-  - Fixed fd leak on failed attach in cdev
-
-v10:
-- Added a patch that renames confusing error labels
-- Fixed compiler warning about unused variable
-
-v9:
-- Moved erroneous rte_errno-related comments to later in the patchset
-- Moved removal of vDPA group fd API's to their respective patches
-- Fixed typo in errno comments (ENXIO vs ENOXIO)
-- Fixed corruption of group config in secondary process (v8 AI review)
-
-v8:
-- Rebase
-- Fixed build errors due to variable shadowing
-- Removed duplicate fd check as kernel does not provide a way to distinguish
-  between device fd's
-
-v7:
-- Rebase
-- Added removal of deprecation notices
-- Fixed implicit numeric comparison in patch 12
-
-v6:
-- Fixed missing header include in vfio cdev file
-
-v5:
-- Added back missing uapi patch
-
-v4:
-- Fixed issues with documenting rte_vfio_mode enum
-- Separated deprecation notices into a separate patchset
-
-v3:
-- Make API removal cleaner
-- Fix `get_group_num` usages to align with new API
-- Fix issues with function exports
-- Fix issues with `setup_device` returning old-style values in some cases
-
-v2:
-- Make the entire API internal
-- More aggressive API pruning, complete removal of group API
-- Fixed a bug in group mode where device could not be used
-- Better documentation and deprecation notice patches
-- Moved doc patches to beginning of patchset
-
-Anatoly Burakov (26):
-  net/nbl: fix use-after-free
-  uapi: update to v6.17 and add iommufd.h
-  vfio: make all functions internal
-  bus/fslmc: decouple from EAL VFIO
-  vfio: decouple EAL from VFIO internals
-  vfio: do proper teardown on VFIO cleanup
-  vfio: remove modname parameter from init
-  vfio: rename API to reflect internal status
-  bus/pci: rename mismatching error labels
-  vfio: split get device info from setup
-  vfio: add container device assignment API
-  net/nbl: do not use VFIO group bind API
-  net/ntnic: use container device assignment API
-  vdpa/ifc: use container device assignment API
-  vdpa/nfp: use container device assignment API
-  vdpa/sfc: use container device assignment API
-  vdpa/mlx5: remove group-related API
-  vhost: remove group-related API from driver
-  vfio: remove group-based API
-  vfio: cleanup and refactor
-  bus/pci: use the new VFIO IOMMU mode API
-  bus/fslmc: use the new VFIO IOMMU mode API
-  net/hinic3: use the new VFIO IOMMU mode API
-  net/ntnic: use the new VFIO IOMMU mode API
-  vfio: remove no-IOMMU check API
-  vfio: introduce cdev mode
-
- config/arm/meson.build                    |    1 +
- config/meson.build                        |    1 +
- doc/api/doxy-api-index.md                 |    3 +-
- doc/guides/linux_gsg/linux_drivers.rst    |   30 +
- doc/guides/prog_guide/vhost_lib.rst       |    4 -
- doc/guides/rel_notes/deprecation.rst      |   10 -
- doc/guides/rel_notes/release_26_11.rst    |   16 +
- drivers/bus/cdx/cdx.c                     |    6 +-
- drivers/bus/cdx/cdx_vfio.c                |   37 +-
- drivers/bus/fslmc/fslmc_bus.c             |   12 +-
- drivers/bus/fslmc/fslmc_vfio.c            |   66 +-
- drivers/bus/fslmc/meson.build             |    1 -
- drivers/bus/pci/linux/pci.c               |    4 +-
- drivers/bus/pci/linux/pci_vfio.c          |   79 +-
- drivers/bus/pci/pci_common.c              |   10 +-
- drivers/bus/platform/platform.c           |   17 +-
- drivers/crypto/bcmfs/bcmfs_vfio.c         |   20 +-
- drivers/net/hinic3/base/hinic3_hwdev.c    |    5 +-
- drivers/net/nbl/nbl_common/nbl_userdev.c  |   76 +-
- drivers/net/nbl/nbl_common/nbl_userdev.h  |    1 +
- drivers/net/nbl/nbl_include/nbl_include.h |    1 +
- drivers/net/ntnic/ntnic_ethdev.c          |   10 +-
- drivers/net/ntnic/ntnic_vfio.c            |   48 +-
- drivers/vdpa/ifc/ifcvf_vdpa.c             |   54 +-
- drivers/vdpa/mlx5/mlx5_vdpa.c             |    1 -
- drivers/vdpa/nfp/nfp_vdpa.c               |   53 +-
- drivers/vdpa/sfc/sfc_vdpa.c               |   47 +-
- drivers/vdpa/sfc/sfc_vdpa.h               |    2 -
- drivers/vdpa/sfc/sfc_vdpa_hw.c            |   12 +-
- kernel/linux/uapi/linux/iommufd.h         | 1292 ++++++++++
- kernel/linux/uapi/linux/vduse.h           |    2 +-
- kernel/linux/uapi/linux/vfio.h            |   12 +-
- kernel/linux/uapi/version                 |    2 +-
- lib/eal/freebsd/eal.c                     |  107 +-
- lib/eal/include/dev_vfio.h                |  476 ++++
- lib/eal/include/meson.build               |    2 +-
- lib/eal/include/rte_vfio.h                |  338 ---
- lib/eal/linux/eal.c                       |   27 +-
- lib/eal/linux/eal_vfio.c                  | 2712 +++++++++------------
- lib/eal/linux/eal_vfio.h                  |  188 +-
- lib/eal/linux/eal_vfio_cdev.c             |  420 ++++
- lib/eal/linux/eal_vfio_group.c            |  951 ++++++++
- lib/eal/linux/eal_vfio_mp_sync.c          |  118 +-
- lib/eal/linux/meson.build                 |    2 +
- lib/eal/windows/eal.c                     |   16 +-
- lib/vhost/vdpa_driver.h                   |    3 -
- lib/vhost/vhost_user.c                    |   16 +-
- 47 files changed, 5036 insertions(+), 2275 deletions(-)
- create mode 100644 kernel/linux/uapi/linux/iommufd.h
- create mode 100644 lib/eal/include/dev_vfio.h
- delete mode 100644 lib/eal/include/rte_vfio.h
- create mode 100644 lib/eal/linux/eal_vfio_cdev.c
- create mode 100644 lib/eal/linux/eal_vfio_group.c
-
+diff --git a/drivers/net/nbl/nbl_common/nbl_userdev.c b/drivers/net/nbl/nbl_common/nbl_userdev.c
+index 96f0d2e264..ec6840d60e 100644
+--- a/drivers/net/nbl/nbl_common/nbl_userdev.c
++++ b/drivers/net/nbl/nbl_common/nbl_userdev.c
+@@ -547,8 +547,9 @@ static int nbl_mdev_unmap_device(struct nbl_adapter *adapter)
+ 	struct nbl_common_info *common = &adapter->common;
+ 	int vfio_group_fd, ret;
+ 
+-	close(common->devfd);
+ 	rte_mcfg_mem_read_lock();
++	TAILQ_REMOVE(&nbl_adapter_list, adapter, next);
++	close(common->devfd);
+ 	vfio_group_fd = rte_vfio_container_group_bind(nbl_default_container,
+ 						      common->iommu_group_num);
+ 	NBL_LOG(DEBUG, "close vfio_group_fd %d", vfio_group_fd);
 -- 
 2.52.0
 
