@@ -2,99 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3A3AC88E53
-	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Sep 2026 18:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA26C88E4D
+	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Sep 2026 22:58:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 76357402B2;
-	Fri, 11 Sep 2026 20:30:45 +0200 (CEST)
-Received: from PH8PR06CU001.outbound.protection.outlook.com
- (mail-westus3azon11012042.outbound.protection.outlook.com [40.107.209.42])
- by mails.dpdk.org (Postfix) with ESMTP id B68294026D
- for <dev@dpdk.org>; Fri, 11 Sep 2026 20:30:40 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ULY4cFtnnLoNd7FNvfVtfE4rBKJqcmOR18iUhVTmC0nOHCrYRx76aB2y/i5un0nYHnCsnQsKYIBjHSiw0gC1x9xRgiy2MCvSu5VJLmIc+DCyA0k92mRVKxExYjhwx3fQOsOdByu/yK7WGXNcuBPDTAK9hLgxoSyEu+7oz3iFl+orwC2deK1bypLM7+kHOnpQVovdkywpV12pqXGd7QBlJ1ezP8mErS5O/O6p8RwRltG744zDHiiUdE7RYonR5aTmprm1l7IYmTYk0HpUy2ph/f6adbizoV8j1L2+aT3RqFBB53Mfb8C2+caYlCWcY1SNzUXQdaM0/WcPdmwKRclzRQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3KirB0YntyjiMYe+sld1s5U+JaMemEanTYyGXRW/QPk=;
- b=WM+kbKnVrcrMFcF+aN4O+E3IeTlRWFb+iF9OwKgL8D0UaQbVoNWwJwyG34xMuS7ZbFjRUglUY8qf6pvVF0l/buRBlJrD7+ncBqwdXHJlAwhdLBGM2OAomOcWWOycldnMg8U7XopT1aHS40bcv+XnTxL8fEiug20xNFCiizzbbOUaO1Twy3AgC84FAgBKWrsJjTzFRR8qQAAFMYuwleLDsln71puQx6wyiqFlxV86ASBxf7h4vNSDem6906xVrv/w7VoMbp14i/wSYz0QhsjAuTaOrOO06zyR4++kuSaDb42sqIYjs1KmKVvFy6WhaVqBwMBECkz5U8zomOJVSqdwzg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=dpdk.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3KirB0YntyjiMYe+sld1s5U+JaMemEanTYyGXRW/QPk=;
- b=DxY0Lnz8h7xr+ifHdId4ifi48wR16MrlRbXYyKIKvbHHHwf7RkXS0CAbiwyPnsgiHDJwvDfB0QQmw5KJint5oY5dnuV+FRyRXE4QfYNkFJlGXzlbmJkXJq/AYBK3ClHgrLmhaB+EEeQqHwk0Kh4/MywFZ39c9XHiQsHUUClzQHA=
-Received: from SA1P222CA0179.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:3c4::9)
- by PH8PR12MB6793.namprd12.prod.outlook.com (2603:10b6:510:1c4::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.8; Fri, 11 Sep
- 2026 18:30:30 +0000
-Received: from SN1PEPF00036F3D.namprd05.prod.outlook.com
- (2603:10b6:806:3c4:cafe::c) by SA1P222CA0179.outlook.office365.com
- (2603:10b6:806:3c4::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.406.10 via Frontend Transport; Fri,
- 11 Sep 2026 18:30:29 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- SN1PEPF00036F3D.mail.protection.outlook.com (10.167.248.21) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.406.5 via Frontend Transport; Fri, 11 Sep 2026 18:30:29 +0000
-Received: from cae-QUARTZ.amd.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.49; Fri, 11 Sep
- 2026 13:30:26 -0500
-From: Raghavendra Ningoji <raghavendra.ningoji@amd.com>
-To: <dev@dpdk.org>
-CC: David Marchand <david.marchand@redhat.com>, Sachin Saxena
- <sachin.saxena@oss.nxp.com>, Bruce Richardson <bruce.richardson@intel.com>,
- Hemant Agrawal <hemant.agrawal@nxp.com>, Jingjing Wu <jingjing.wu@intel.com>, 
- Selwin Sebastian <Selwin.Sebastian@amd.com>, Bhagyada Modali
- <bhagyada.modali@amd.com>, Robin Jarry <rjarry@redhat.com>, Thomas Monjalon
- <thomas@monjalon.net>
-Subject: Re: [PATCH v1 0/3] raw/ntb: add AMD NTB support
-Date: Sat, 12 Sep 2026 00:00:08 +0530
-Message-ID: <20260911183008.1646215-1-raghavendra.ningoji@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260823140639.153997-1-raghavendra.ningoji@amd.com>
-References: <20260823140639.153997-1-raghavendra.ningoji@amd.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 329664027A;
+	Sat, 12 Sep 2026 00:58:55 +0200 (CEST)
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com
+ [209.85.215.175])
+ by mails.dpdk.org (Postfix) with ESMTP id C965B40275
+ for <dev@dpdk.org>; Sat, 12 Sep 2026 00:58:53 +0200 (CEST)
+Received: by mail-pg1-f175.google.com with SMTP id
+ 41be03b00d2f7-cc4d03f95dfso763219a12.2
+ for <dev@dpdk.org>; Fri, 11 Sep 2026 15:58:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789167533;
+ x=1789772333; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=enqAzNYEFf/5V5MaRW332cKsnSp02HNDlCKyoq8iw10=;
+ b=dZ/devtsAoUMK+lKOv/paWFNn1FL6rFs4XQJmoTKPo6h/YQQfqG04pDH/RW4MXpDLH
+ GSxMuUQjPUTX3It6KfFcEQsE+CiGiC3LASDb6aDJUxkNsZITIN9JTAOoLIx1V13YGpgy
+ 3sG7up7tQMP5MuAI6369eRYGRjh+Nk5p7weis1JZ88VlryWOYuF4RZWij2/b5sQ1jOUK
+ 0dbKT67AWzdU9RURwJJR5n1NNTO01BqZL4jq+tM3v/lW5OzzVcOANLV/1C8CxhWSJcnT
+ aAIsLyKlnxkFQooNzMW/DS7vx1Vk8iSbe8tUME+3wQcMSD0rGpHtTmLz9S03raC0Emtc
+ FsbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1789167533; x=1789772333;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=enqAzNYEFf/5V5MaRW332cKsnSp02HNDlCKyoq8iw10=;
+ b=qBL0dzsIV1SL+Ovrtp1SmfWuWWZQaUhwsieGeNlqQcMej9oLONJ7nwgTjdXh8DX6Yy
+ FVg1vfx6R7m3KHPuAChCj91K1CRZrqf6miD6kOq4+AZpVDgqWrWhjvsFlwkm0TFBDxkh
+ JPZkIE2OZmGpwn/y7YVL2sHegc7/gtrSntfg1w61A4RLcXv5qUyWgo0qub5a2uoE2kFM
+ Kp2yKpr6jEYEh1R9R6OAq9CmZXhmJ3RFWn1XS0WRgqBJ5+RaHnCfjqkqp4LCw3LiivMU
+ JcTUMJQ+Iz/zt8fm0nImVSaoZRP75g2/o0q0J8PNyJgiJN4sfrsCfCQr7JVb3vvLQrAW
+ 9x8g==
+X-Gm-Message-State: AFuF++m+OV6dwjh6XZLcaW6H3kClHvPB6DkzXWS1nKSz2l8AaLr1XL7q
+ TY/dCfOFHbAyA5hYxp2Tek9+kdt3caGFpU6zdT5kGN1/dgLat0zxA6F2oVeKAMSN8dOvFmEfwlY
+ 9Dbn3
+X-Gm-Gg: AYBFou2aTZNO9F9dYEkLROyS6ZXdGXridH6f1L956wqhECcZMtX8DuIRFKGRyRVnqCX
+ xlPq+2YaIUFyBRITUEyThf8+Azs1dV7Dp8rGEb6eUr0KYyZVZnJwLQeMdBQuRGjTALecVd5Gwtl
+ 8IhOXH0suekPRcRpK/G74S/EUU0twZP6bIaY19RQFCeZkSGMBsjNTxcFTkJCaYGOGDsSmZZPYpN
+ 998vrftZ3PriTEIFJbOgNsBgQRFenMmfQEEsvmDMnABTJXhEhbJBHuwi8KixxKsfvSO1d28e54s
+ mW/nMyclk/+ytjdS1ek8DQWPqULbDoPrkCgUM3LHMl2meUXMS89HV/O+JtP7i1WcNy8AdnpZgWz
+ EtDaIh676Cxxg1fNEoVdYv3plvpxPOq163kGwNqEeTFQ2XHGl9UieoPsgkqjIkbg2vUdhWt7/nF
+ HrUsWR1rzKfLisKwdgGmeu+82C5kFftSv2X1zHovwOkvqEgC6jq9oc6QOv7W1bNvqfBMoZuY2Kc
+ 0HP0zcpkxMhzsJgVQDL0XCaESQ9mUCkq/+Kyw==
+X-Received: by 2002:a17:90b:3e50:b0:38e:9ef9:eb97 with SMTP id
+ 98e67ed59e1d1-39d9c1d8f30mr11863473a91.16.1789167532568; 
+ Fri, 11 Sep 2026 15:58:52 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-39d95713602sm7032434a91.11.2026.09.11.15.58.50
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 11 Sep 2026 15:58:52 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ =?UTF-8?q?Mattias=20R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>
+Subject: [RFC] eal: allow setting random number generator seed
+Date: Fri, 11 Sep 2026 15:58:45 -0700
+Message-ID: <20260911225845.3168061-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.180.168.240]
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF00036F3D:EE_|PH8PR12MB6793:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2aa22ccf-f53e-4751-2989-08df1032c1cc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|36860700016|376014|82310400026|23010399003|1800799024|10067099003|56012099006|11063799006|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info: miUUt4VNf5VoiYRaCjvn+tCT4F25skQ2ATJV6sJ0kANsv2LInTVZhv0BaFojSdggHAM/GeSr22nG8oVRNduTzvLLcHUsey6cRUMueB2/qOMQR/3E2gPEWw8L7qD/m+YWHdyvIJN/hxz/UWxkVWdUrU0kTP8ZbunKbfIhWvNaBwurauH89qJFR50hyKrVZObAICRpZ6HYnvh1RGZxRHnhiug/VSARB/5oc8GyXWDMB/u8cTGhcn723HxX0NqUwuwz2yISO9TmUC07ftMIL5e0EFWNJhN50cJzzHLtHTmhdCWiJcJQdDkSpwcKfTsa/fzhMekIdrpp3EKVqkcMdvWwnv3n4yYcVxBi8QAYfLBzi9Al/gOdyjVepFv7BuTEuZ8h+QYHIHkhT5SRmsUHiIeZd+JBXUivQuX3wlNFsYQmMm53CVI/4srzg0/Dqg6zdM7/IEQUsbiHj5MSvzlB/lWARQubI0pzfATQI3PI4CNKdo1ok2nups7xbduchrGPK5shKC6U0fj6XW03j5hrTwGR9JBjhZ7juPpgXA7uX67IEKa+ahpSPPtENaG2pGP0jbOlR+uBDBM99e6gffE9bqMlYugmtWJpOE48M6kS7LGBF9p+en6v+of9ZRokx/AJByIDT9gjwAx4YX9WH0VqAwiWqA==
-X-Forefront-Antispam-Report: CIP:165.204.84.17; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:satlexmb07.amd.com; PTR:InfoDomainNonexistent; CAT:NONE;
- SFS:(13230040)(36860700016)(376014)(82310400026)(23010399003)(1800799024)(10067099003)(56012099006)(11063799006)(22082099003)(18002099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: aNOS9wDaovWoXwc+2a0MiG5joor8dBUWZMNFnjCe1YiAzUf/0ozuXUaarcqs/d/yOSYy6cysp+JIkwgNpcoSU7wrIqZHP4l2N20fjWCM6//XKaFi0a99UCjok11qtUY5aBHR3v3uHlAiIIkbqzOkVVVeJO1xoUzDNXIiapVgLNJpIt6klZ6+zLB5xG5f0f5RU/n50MVUDeZVbnRd8S3AHAWghAXgRP1INias2tv5SjomxEnFFOf++ROTmrMsKSpwe9V955BaqCaCZW95p1b1VyOW/MW5v4Z2Tx8gjy5dUlr5ZFce3vbXa0BjoDl6q/V+XEB+3F5SSsYWZx2IZEhgmnbip/mdaOOgPUjZCAlQK7miWFyVpg1szsbDALuNWk5pN7vir6y/5FnFPiouZayI7KkkeuaN7MVDV3t9Gs9TSeG4Nyv7HClod1EguCGLFA1+
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2026 18:30:29.5027 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2aa22ccf-f53e-4751-2989-08df1032c1cc
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d; Ip=[165.204.84.17];
- Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: SN1PEPF00036F3D.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6793
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -108,12 +80,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi all,
+Many performance tests use rte_rand() and the random number
+can perturb the results. Add an ability to overide the automatic
+random seed on DPDK startup.
 
-Adding David, Bruce, Sachin, Hemant  to Cc for visibility on this series.
+This is not a security problem since rte_rand() is documented
+as not being cryptographically secure.
 
-The full series is on the list here:
-https://inbox.dpdk.org/dev/?q=raw%2Fntb%3A+add+AMD+NTB+support
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ lib/eal/common/rte_random.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-Thanks,
-Raghavendra
+diff --git a/lib/eal/common/rte_random.c b/lib/eal/common/rte_random.c
+index 576a32a46c..cdad60049b 100644
+--- a/lib/eal/common/rte_random.c
++++ b/lib/eal/common/rte_random.c
+@@ -247,7 +247,18 @@ eal_rand_init(void)
+ 
+ 	RTE_LCORE_VAR_ALLOC(rand_state);
+ 
+-	seed = __rte_random_initial_seed();
++	const char *env = getenv("DPDK_RANDOM_SEED");
++	if (env != NULL && *env != '\0') {
++		char *end;
++
++		errno = 0;
++		seed = strtoull(env, &end, 0);
++		if (errno != 0 || *end != '\0')
++			rte_exit(EXIT_FAILURE,
++				 "invalid DPDK_RANDOM_SEED: %s\n", env);
++	} else {
++		seed = __rte_random_initial_seed();
++	}
+ 
+ 	rte_srand(seed);
+ }
+-- 
+2.53.0
+
