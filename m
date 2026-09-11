@@ -2,81 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21AA5C88E53
-	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Sep 2026 16:26:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FEB9C88E53
+	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Sep 2026 16:40:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1F69942DD1;
-	Fri, 11 Sep 2026 18:26:21 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 6FF0C42D35
- for <dev@dpdk.org>; Fri, 11 Sep 2026 18:26:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1789143978;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=vGI+e1/7WhF/FQxRj69k4+M6SH3OSvyenGlyD76mtFY=;
- b=RsW/w4yFvlzI+IryRUK+GnsUItevz1XxkE0ROoHlCGSfm6htTs0APiSXJ4NM9+WNX69tvk
- 3IaITLvrjvmQ/ADxdaWeiQ5bWcfKiHgEpE/3d9+MDea48C/oyXij1/nYXVqPqNKuUt/wFV
- BvQ9pNqFBM4PXJRL3VevAS8CT/gWa0I=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-294-KZKkeloPPvywk0UaYMsQ_Q-1; Fri, 11 Sep 2026 12:26:14 -0400
-X-MC-Unique: KZKkeloPPvywk0UaYMsQ_Q-1
-X-Mimecast-MFC-AGG-ID: KZKkeloPPvywk0UaYMsQ_Q_1789143973
-Received: by mail-lj1-f198.google.com with SMTP id
- 38308e7fff4ca-3a33567d27dso5211871fa.2
- for <dev@dpdk.org>; Fri, 11 Sep 2026 09:26:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1789143973; x=1789748773;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=vGI+e1/7WhF/FQxRj69k4+M6SH3OSvyenGlyD76mtFY=;
- b=rAo9jKY3k28YNqhz/TEqS55Vu0XaVzSumT4rltQo+6PU5kJ79ez8q+Q5Z/vpmxhDjw
- LB9dM9rbPljBc3+MbxoMFm+AlagSNaQJ6STsCan+zKot0w7NZuVAc47xI3W/jwn4D49P
- DS7j8072FLJ02JhLO6GZWgwEddZMMLq5vrhRqd0gyEkhkcoWTtvUJsenw4aWaYIhtyZB
- QZ6Bev9tCkAZYILRlh9PT6cc1rmqEtttvIi+NcCO75L0XYpb3j7eZ/Iqloy9RAI0OPTu
- RYqVSWImqJILFWY586VdvWWgJWAM4X5iNOEd2yTAL/N2MuGfOghIeiao1TSp3LrAm5pP
- r34g==
-X-Gm-Message-State: AFuF++nVdAe8BCX9p1aV+eN+WKyGWIrrkG3HmcV6DNICnJOQkyOTXQbv
- AJcY90ZZzkMks2gdluQtPj0HJm5ZJh1ftTQ0Bh3eoow20777IJqup/Zpo4DKtyzaMEz9vZtOhFb
- +g3r45KzxSKj+IIwNaSdpEgXzAkTkShPpEcM5/LCuaW6aNprgY2sZfml1rsU5ggaM9xH0SXtzJ2
- EST+MkGpMDyrMU8X/xXsY=
-X-Gm-Gg: AYBFou1nYVSLUyppBQvl4dRg7pqMROPeBCHsryssl3zITj0doMdzSTp6ngfUY91G3fw
- +oSRcjBImZaOdQFGYzarokaCg/iu/z3qydj+P8fueVzVnREByTQH3iQfYR129KEW98hSFTogE7n
- 1ZxnkYe4Df+rn5wDpcG4JaS9kiwhXWM7+reAr7fzn2xZjlGecldZbC9XiUTwR0B/qTAc4hlSP9a
- cpwuWnnBjxsIGpEuMxdrIS1eiE/2TpzIUzXKdRwKj6fIGV+
-X-Received: by 2002:a05:6512:3e24:b0:5ae:bbd3:27e3 with SMTP id
- 2adb3069b0e04-5b8a0280f13mr1146080e87.5.1789143973417; 
- Fri, 11 Sep 2026 09:26:13 -0700 (PDT)
-X-Received: by 2002:a05:6512:3e24:b0:5ae:bbd3:27e3 with SMTP id
- 2adb3069b0e04-5b8a0280f13mr1146069e87.5.1789143973008; Fri, 11 Sep 2026
- 09:26:13 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6ABA642DD1;
+	Fri, 11 Sep 2026 18:40:36 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+ by mails.dpdk.org (Postfix) with ESMTP id 6E48042D35;
+ Fri, 11 Sep 2026 18:40:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1789144835; x=1820680835;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=dgGjLUaGpw35x33Z86+m/suBbfBhKEQ/g2Kc5pegRzg=;
+ b=JEedpdpaYQUbLZDGvq+VNLUrGbaUVRg2ecnZHZTudUCaLnPfwPo7QSJF
+ ZXAyPdPKz0Ldq6nkl81aghMHyA39NgoYaWcfRakmgvcVzPd6yrtq4Bct5
+ 1hL/+6fNmQ/fGEqI/d2oglcRftkZ8julZD4ETZMBZ+HGBPgw1tyARQ5a2
+ /on6UAE4bl4FlJmFHyI21q2trHpvavyku9rTpN5Y59nkAMBl0LlKlLPUV
+ kPHJpiqRVS2wqVnpjdonyWFgNGr7tijA8LI1GbB79ERwEfcSdDdVQ+Bm8
+ nQBzX33Txza/WPe8OIYe46A9HWH2/ybCM802UwXlWVCuxQD1aGhDurUMS w==;
+X-CSE-ConnectionGUID: ksKOGN+oT4+PfzJGqsQIGg==
+X-CSE-MsgGUID: m7hqs3FWRtWkSptnnLGEjg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11902"; a="89484915"
+X-IronPort-AV: E=Sophos;i="6.27,97,1787036400"; 
+   d="scan'208";a="89484915"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+ by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Sep 2026 09:40:34 -0700
+X-CSE-ConnectionGUID: aTDW7JWvRz66gi+r08v+dA==
+X-CSE-MsgGUID: VGljaxtiRs+bZ3oEViAT+A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,97,1787036400"; d="scan'208";a="296949911"
+Received: from silpixa00401385.ir.intel.com (HELO
+ localhost.ger.corp.intel.com) ([10.20.227.210])
+ by fmviesa001.fm.intel.com with ESMTP; 11 Sep 2026 09:40:32 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>,
+	stable@dpdk.org
+Subject: [PATCH] eal: fix pointer add/sub macros for large offsets values
+Date: Fri, 11 Sep 2026 17:40:29 +0100
+Message-ID: <20260911164030.2465043-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
-References: <20260403091836.1073484-1-david.marchand@redhat.com>
- <20260904122804.2256481-1-david.marchand@redhat.com>
- <20260904122804.2256481-2-david.marchand@redhat.com>
- <IA4PR11MB927840F83DA2372511FE1CFF8EB02@IA4PR11MB9278.namprd11.prod.outlook.com>
- <CAJFAV8wutDRxg8jf01VPC1Bgr=2vUYXjQ_Yzo5GnLbUWD-XGjA@mail.gmail.com>
- <CAJFAV8y7GrUQqk8aq=oS6GD50F85U19fBrbh4nCFOstCtbGBjA@mail.gmail.com>
-In-Reply-To: <CAJFAV8y7GrUQqk8aq=oS6GD50F85U19fBrbh4nCFOstCtbGBjA@mail.gmail.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Fri, 11 Sep 2026 18:26:01 +0200
-X-Gm-Features: AcwNN1Uzj5OkJ4zhV_RR3jKLpsneKWQxw30xo2B99Hf_3TwpzlbbMnxY_BC-7_0
-Message-ID: <CAJFAV8yXjCi8qU_e9dopme_B0hvRJePSsGS-B3Ugp2kP2N_5rg@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] net/iavf: fix duplicate MAC addresses install
-To: "Loftus, Ciara" <ciara.loftus@intel.com>, 
- "Richardson, Bruce" <bruce.richardson@intel.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>, "stable@dpdk.org" <stable@dpdk.org>, 
- "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>, 
- "Burakov, Anatoly" <anatoly.burakov@intel.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: TvG6GqKwJXMAuTSaP2Ny0b47SvI11YuXnBiWRvMMb8c_1789143973
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -90,35 +60,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 11 Sept 2026 at 17:37, David Marchand <david.marchand@redhat.com> wrote:
-> Interesting..
->
-> It's been so long I started touching this code, I am not sure at what
-> I tested now...
->
-> It seems I found a leak of the mac address array on VF reset.
-> iavf_dev_uninit + iavf_dev_init results in overwriting
-> dev->data->mac_addrs right?
->
-> This should break the mac restoration during a VF reset, regardless of
-> who does it, the driver or ethdev.
->
-> The multicast addresses look unaffected, as those are stored in the
-> iavf_info struct.
->
-> I could copy the mac address and reinsert the mac addresses during
-> iavf_post_reset_reconfig...
-> But I think it is simpler to just check eth->data->mac_addrs state in
-> iavf_dev_init.
+The macros for adding or subtracting from pointers cast the pointer type
+to uintptr_t before doing the arithmetic. However, for 32-bit builds, if
+the value being added or subtracted is larger than uintptr_t, then we
+get errors when casting back to "void *" type. We fix this by casting
+the result to uintptr_t before casting to pointer.
 
-I think I'll just embed this array in iavf_info, which already has the
-multicast mac addresses.
-That will just work.
+Fixes: af75078fece3 ("first public release")
+Cc: stable@dpdk.org
 
-I just need to carefully sanitize dev->data->mac_addrs before
-releasing the port.
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ lib/eal/include/rte_common.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
+diff --git a/lib/eal/include/rte_common.h b/lib/eal/include/rte_common.h
+index f872d3eabb..c17f50e2fd 100644
+--- a/lib/eal/include/rte_common.h
++++ b/lib/eal/include/rte_common.h
+@@ -572,12 +572,12 @@ static void __attribute__((destructor(RTE_PRIO(prio)), used)) func(void)
+ /**
+  * add a byte-value offset to a pointer
+  */
+-#define RTE_PTR_ADD(ptr, x) ((void*)((uintptr_t)(ptr) + (x)))
++#define RTE_PTR_ADD(ptr, x) ((void *)(uintptr_t)((uintptr_t)(ptr) + (x)))
+ 
+ /**
+  * subtract a byte-value offset from a pointer
+  */
+-#define RTE_PTR_SUB(ptr, x) ((void *)((uintptr_t)(ptr) - (x)))
++#define RTE_PTR_SUB(ptr, x) ((void *)(uintptr_t)((uintptr_t)(ptr) - (x)))
+ 
+ /**
+  * get the difference between two pointer values, i.e. how far apart
 -- 
-David Marchand
+2.53.0
 
