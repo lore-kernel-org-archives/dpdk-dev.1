@@ -2,79 +2,142 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C652EC88E50
-	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Sep 2026 14:14:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB8EEC88E45
+	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Sep 2026 14:32:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2C16142D91;
-	Fri, 11 Sep 2026 16:14:34 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id EF8A942D2E
- for <dev@dpdk.org>; Fri, 11 Sep 2026 16:14:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1789136072;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=wQpKbO8Tj4Be9oWfrpDzEbfib3XXCCwgG3Ob7Fm4a5E=;
- b=gHh1w1xsqWaohmdGmRxOPRfLPZ5TknuB7t4JwZujp0Ld1rW6+R/xiOvwLBJemCSh78/CBw
- kcLl1WtiMNzVYdtbEK7n+6bFQByHqGUQU//BwNAmVuILnCKOtiaTQgkwDBvQj6XPe9s2Q7
- l5nKqc/HxcK501ZmXA1BKcaT/e5860E=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-77-PIoH0ODDNlWxVmdLl8axeQ-1; Fri, 11 Sep 2026 10:14:30 -0400
-X-MC-Unique: PIoH0ODDNlWxVmdLl8axeQ-1
-X-Mimecast-MFC-AGG-ID: PIoH0ODDNlWxVmdLl8axeQ_1789136069
-Received: by mail-lj1-f199.google.com with SMTP id
- 38308e7fff4ca-3a33567d27dso4542511fa.2
- for <dev@dpdk.org>; Fri, 11 Sep 2026 07:14:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1789136069; x=1789740869;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=wQpKbO8Tj4Be9oWfrpDzEbfib3XXCCwgG3Ob7Fm4a5E=;
- b=VWMQWL6C7HcY8JpIZpZXjKnH56XaA+SndB94bT0rWzg/8ywTbnPGxEOZprciJljWdg
- Iqn4XCIMO2MzDpcbANmfjYDhM8Mu0SziKUeOdzJJobrvlIGTs6/jyluysbhq/GmUNTym
- 8Ix3JlDbHMKfxsD7cIqbhidCKTTIx2Cx8pEYax26IMH/qGqQzbs3rn5GJBJxBep4IRD9
- aDp/BWfW5JHZ2JE1lhGk+l3UJeuf4gigstqo0bF+5pdh05h0nOU9kfyetOEutSP6DjUi
- zhVnc7xgMPaByBUyFBUnhz5JLOmtYrp0bis9ykLfVzFXRyPfj5dR/dtzFTWhCeq3Gv0Q
- Cuug==
-X-Gm-Message-State: AFuF++mxn2lR8H76Vk/kHaAaE22+vO+xxDED3Fawdmn0s3w05SHlkrTv
- lMy5rSiWGAaKy9jm2XKbmtO0OcDRPKKY6qO5w8Y8ptIMLNwvXp3SiD1zbBemcLiLQPzKmv+saop
- 3HSwaWlEdxgAK9qD3AMfxcoGSAEcbezZwwoFYkDHL1LuAjKpdfxQ2Wsu+74Rwm3W5vgEPKVga3S
- R7NKCEJ3t9bOY+BnAzLWA=
-X-Gm-Gg: AYBFou1UYKv7ao4C8EGYQgrVgUgXH9Xm/1xEwwFKvlEJRoqxfsBPhuNz50ynnGbgPyu
- b4bBoOWix8XDFy/eGOASEFRciPs2iccGzARqLSKON6B7wIJ3LP9+0JFKSy9ktP3dErDahl8uFNT
- SfZqYnYQnF+PLy9aoy/IGuu9sur5Z1NajL0dVkjCdQmX3CauM0Zk0daX9jIg0Nve53gNq0C38FT
- fIC/OLzXjWQWOoFzOcrSDt2oZ8LBMw3e4tiiOXxga6Nmbxi
-X-Received: by 2002:a05:651c:50d:b0:3a2:74a:6fcf with SMTP id
- 38308e7fff4ca-3a5a4fe6753mr5422711fa.4.1789136069301; 
- Fri, 11 Sep 2026 07:14:29 -0700 (PDT)
-X-Received: by 2002:a05:651c:50d:b0:3a2:74a:6fcf with SMTP id
- 38308e7fff4ca-3a5a4fe6753mr5422611fa.4.1789136068754; Fri, 11 Sep 2026
- 07:14:28 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7555842D7D;
+	Fri, 11 Sep 2026 16:32:16 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+ by mails.dpdk.org (Postfix) with ESMTP id BCCC642D35;
+ Fri, 11 Sep 2026 16:32:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1789137135; x=1820673135;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=qx8PjnRGYxp2nKZchidIT0X1JeCSHb6Vp3c4YLKKBTU=;
+ b=ZIClaNAQBxHOZEuH/RXrRpD45WNBV7elsX1beChEUdP5NmJ7KVbbxGRF
+ b5Xla1MFUD5WsOzy0NiwafEvjYCbCR8/53XRldxydzG9lDUfEnbmdgw+H
+ yVYxIm50g97IazccUThPbuS0+hxfSTgdxGYdDMumuZbrwxr2VAk3Oo9wt
+ bLzjOHHJkA7m7t44/fNSeO1l9eq5pTe60SBwH6bKlsctFkVoJ4XsW1syo
+ 9+94h80zfAAh5OlB7NbqM6gWse7+1J8Ozxhd0kyB9Ti7EKpeoEH1l8uPc
+ RLqBS8BjKaEJeXVBsjSJgbOa4PxyBrDJ30FUKbX2Zf/vilB8iI4T9LsS9 A==;
+X-CSE-ConnectionGUID: qRw0SIJiTHauekjI4wiaUA==
+X-CSE-MsgGUID: obTu1LjfQ+uEHKOUP8+pPg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11902"; a="106969012"
+X-IronPort-AV: E=Sophos;i="6.27,97,1787036400"; d="scan'208";a="106969012"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+ by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Sep 2026 07:32:13 -0700
+X-CSE-ConnectionGUID: +Sd9hBBCSOiRWgxNdfHLyg==
+X-CSE-MsgGUID: PeWhZxogQ0GsKkRD0MMytA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,97,1787036400"; d="scan'208";a="269336579"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Sep 2026 07:32:13 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Fri, 11 Sep 2026 07:32:12 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46 via Frontend Transport; Fri, 11 Sep 2026 07:32:12 -0700
+Received: from CY3PR05CU001.outbound.protection.outlook.com (40.93.201.49) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Fri, 11 Sep 2026 07:32:12 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MdRuaxLGlPUcnlnQIXokxR9OrL6r1J2SVFqph8kYLEOTHet4TUPvo84lRyAclaF5uKqvoHySchuFNWy7X4nTJp3sRZO1bB5XNunQkFJDFm1Pa/Bn5xjriddz4HEtHtnzJS9ps0qlY4BEgbL+89X3VUUfJxxDhTvKDvL3E9n7+FFhfjZHF7lovrFkNlWqdhX1PQuz+3rFC0vQYvd8HO+5BW4qMbfSEDieOY3m7i4vthKxoWKZQKvq9xwfqoPMV08ROync3AjROB+bipRlqaICVDLc1d10LewfR/rOJt58z/EZmJia+zIOrD8HXHogCRYGlZO8JiKMrkqNB04XgOXKig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eqBPQLQi/P5Eiz7w6qV+tDt7zyM3WECXx3BG1NHy2gg=;
+ b=RsDGCCVD/DfWTsQgPjuz7+HImhoKFWdlsfDcj1g98+ICRouXkA7kRPHljAWkiYj5xUZ1EQoXFaPwjeHHAceoU95i295vmDnB+k4yLzZ6W7ZfyXfd52OA3FNE6JJYoDtMRMblWly/9JZrOnJSnltbaCbWxW+r1WnzGF2rxpz4jTeoIzqBRACLNInyo4WjFAdhSG6IbGiR4FuPmqrm7frwOoHo8QgwEUEuvgUOZU2beb28xnDbj5ELt7TIfmftaFHJWSqP9+C+0Mv0q8a2TEoHPb8GA2mMATfDv/1Tii+JMgtb4YErsQ470xNnXrhPmVMo2a1kShY67j6rWOR3Xti84w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
+ by LV4PPFDC496280F.namprd11.prod.outlook.com
+ (2603:10b6:40f:fc02::22e) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.9; Fri, 11 Sep
+ 2026 14:32:09 +0000
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0406.007; Fri, 11 Sep 2026
+ 14:32:08 +0000
+Date: Fri, 11 Sep 2026 15:32:03 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: "Burakov, Anatoly" <anatoly.burakov@intel.com>
+CC: <dev@dpdk.org>, <stable@dpdk.org>
+Subject: Re: [PATCH] net/i40e: fix missing error handling for QinQ filter
+Message-ID: <aqQQ4_WVq5_7do3Z@bricha3-mobl1.ger.corp.intel.com>
+References: <20260911094043.1683329-1-bruce.richardson@intel.com>
+ <d2b9b9da-f238-4207-8f4f-4476afe98014@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <d2b9b9da-f238-4207-8f4f-4476afe98014@intel.com>
+X-ClientProxiedBy: DU7PR01CA0045.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:50e::18) To SN7PR11MB8066.namprd11.prod.outlook.com
+ (2603:10b6:806:2df::18)
 MIME-Version: 1.0
-References: <20260403091836.1073484-1-david.marchand@redhat.com>
- <20260904122804.2256481-1-david.marchand@redhat.com>
- <20260904122804.2256481-2-david.marchand@redhat.com>
- <IA4PR11MB927840F83DA2372511FE1CFF8EB02@IA4PR11MB9278.namprd11.prod.outlook.com>
-In-Reply-To: <IA4PR11MB927840F83DA2372511FE1CFF8EB02@IA4PR11MB9278.namprd11.prod.outlook.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Fri, 11 Sep 2026 16:14:16 +0200
-X-Gm-Features: AcwNN1WTmG8zDQLVk14ughV2V8805MzTjllOqn849uzcJJTiKzQvBU6aEOAlw3E
-Message-ID: <CAJFAV8wutDRxg8jf01VPC1Bgr=2vUYXjQ_Yzo5GnLbUWD-XGjA@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] net/iavf: fix duplicate MAC addresses install
-To: "Loftus, Ciara" <ciara.loftus@intel.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>, "Richardson,
- Bruce" <bruce.richardson@intel.com>, 
- "stable@dpdk.org" <stable@dpdk.org>, "Medvedkin,
- Vladimir" <vladimir.medvedkin@intel.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: PW8ps-IBIqyXOQZqqPSbJ1uBejSAZY73TwM9qBW3D_c_1789136069
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|LV4PPFDC496280F:EE_
+X-MS-Office365-Filtering-Correlation-Id: 09692972-ccc0-4ebd-eb86-08df10117530
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|23010399003|1800799024|376014|366016|10067099003|18002099003|56012099006|11063799006|4143699003|22082099003;
+X-Microsoft-Antispam-Message-Info: z4UbL4jsidseiZhCFIjw0K1HnWto1P55wdJWolKQ0K16hlEZ6lmZVux8EAR8hUGRiJmR9Kc4Ljp0QVDwZRc8qgWfxzNLc8OpZ8a1bRPbs1TQdT6yoMVHZmj5mvxChARepFBbdVJAFib4V0eE3ZFP8yW4OwUBBTjmTzcMRGELug9LIag2V5SRm+mhRedjrH7+WWPSzwNRhegR503oqigRxR3MBGwObAVvm3g3c5ggdt/Ni86DQ5IqRueG57TM/DjTiCY6XW5RBZMqiZpMa1t7hCaN3SCe2nJBVpeHIeWvmwRFaDigkUNakkYx6hpwqceLRqfAZ188jdGVeA4oeKRugJZDV1L/Rr7yUu9GjAr95YiYHCWKRoSvE8kqSKSkw8IVYGZB87QDCXYciB9m1VISTU5OwUkWBVa44f8OZpwXKoZqNrmJeg+/qQLA4ra7qBx/GHEK7BkxPoc/ApjQBibw9dr5v30ceH7mcQM5s2Utjo6DsXFXv/TDOQxdpm+/ZuOYMHJOeQGmktL8yklz+UX4m07GDCIImOW1okZjRdzE47vDpf7CCqCxjg99kUdxBIhWrdB0/HiNupBV+8AstuJ3U/vE4MIVw1ISPN64VBfjyS7ysTwIf21EzqwARyVGQiIToU9BI8sPrvnROfgpiU0kvwTF88+5yzmn1JSiyHe3M/s=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(23010399003)(1800799024)(376014)(366016)(10067099003)(18002099003)(56012099006)(11063799006)(4143699003)(22082099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?RGFydMgAKBjB0dHU/QCuiF0bCkmGfTXb+8e0OGqulr8igCEOUducgWetf/rh?=
+ =?us-ascii?Q?wlkTdpDwFy5cRqlbuluOQeMaPxe0MngHU43/QDkvv7IwfRjbuTo9IHykz2qt?=
+ =?us-ascii?Q?39/AyOEcdnKQfxD6U2xP2qIdQ3XTf6WPTP4aq+OVFtSc6TwfT3/ueOLc5Pbo?=
+ =?us-ascii?Q?pXK57Wh5oUK8FM2dYuBj5zJvrrOLIv/5b0Onbqw7cK0J7raKq0h5SlJ9XUqu?=
+ =?us-ascii?Q?3J3BVWx5uxm09krkG92P2/azL89Um1zfb4UXDUE+brH4eYLivT+K1ClFicIK?=
+ =?us-ascii?Q?KOF0LTZkwwpCfoZR/S25hndHg0UIGrOQbU5DJIpQP6MKpaGWAQ8d1AhWmHap?=
+ =?us-ascii?Q?U0K4cO36zqjW6FC/IstCIMAJB46Mv2OkWMzJkHRc5USPqSFyKSkIaxR/1WED?=
+ =?us-ascii?Q?4irFWRR6iyrZ1wuZsP80mreGjQVmbVTMeYDhpALPZIUky4QI9NgoBEX4XnFM?=
+ =?us-ascii?Q?PUvy1U3rKh5nKbmMOqyT4A/e0m97wGpEPWFaSLkdT7M2+L7W9l/K2n0mru6c?=
+ =?us-ascii?Q?9MQaO7Y5+5ZbjkI/WBP1OIXtp5sseyqY9YxAsQgRCA4b3BTDzTrDlL0cDJxK?=
+ =?us-ascii?Q?n98RvWixnm1RxhoZI8oU8QZHRZk1Ro1akmL0bRA0fKwX64PiaEczbgegY2vu?=
+ =?us-ascii?Q?1sYpEuex22gqfXJ1qIudQ13xyowEfnlpW4xC3kollL09l4wZAzZ3By1Wgpdm?=
+ =?us-ascii?Q?WfBlFO0ZmYLiyvftV+oc6Ipjcb6yj2fGyz2sxkLP6AfT9egcLMvLUTFfYdHt?=
+ =?us-ascii?Q?CLasPjZiXtpVk/r0zUO5WrLbBI4guHp5Od9TpmzWmxHeSZ8M4ajQpLhDjgQB?=
+ =?us-ascii?Q?t5Id5w+fp7YRyycYsNVpAPQOxmP689Ohn4HiublYeUyAAtU/CLK6uWpHopQq?=
+ =?us-ascii?Q?Yo4bv/FatWrsqI/mSGDQ8f0WY6eBZYuXE5r0awJYkyXZ+rvjQ4eXtesESFJA?=
+ =?us-ascii?Q?yIKp4+xaw9wyuumMaY+kUlPlOBOt5ahaRwTLrjWlYEXs0X6NeGieidOzwajm?=
+ =?us-ascii?Q?jQTCPmVA1YKdYR9unhVfqBqcY6nkMTGbktTJvQKNIVKTsuxiUHEOjyk5SzA0?=
+ =?us-ascii?Q?BUspCup+uxWi/MZ6CTtypHD0aaqIWikW/mY3EwtQbjfM/36W7wIriSvsPjV+?=
+ =?us-ascii?Q?U4WltOw7+lPFFYTJhPMpNIfIxXEIZhPJ4+PlftC4N5UdIqXW3beC4iMMbB1x?=
+ =?us-ascii?Q?J6K+SoBsP68hThmBRLjj3S5vtDyyhxArWl4dRnXAl1+cdgBtcpwBI39tBZlM?=
+ =?us-ascii?Q?LqTv9KvzqAa+379w2s0+pTrMRcx2TJwlVK8uJW6OBYtA/z8BCEYhZTMI9ucB?=
+ =?us-ascii?Q?WV6xPGf3bhvFKonD3ns8+SD97NqupjtfN4ujqewgv8VqE9bQNvxD0tLaH2pB?=
+ =?us-ascii?Q?JFSCDAUTzgx0nLXUA9FVpa5ayvlo5UYIMSing6eRXaSqzdG43zAXQqknnNj1?=
+ =?us-ascii?Q?T3KgU6xkAKlg9S5RNBUYw6Mbfm/lFp5VBiZ87YYGQNPRqznsxZExjkaIvDDC?=
+ =?us-ascii?Q?122B6O3zUOiWHiudNOBEXDJxS8k3qyArAjy2ZvAo4yQoqTPgp9X9SG8y+cl2?=
+ =?us-ascii?Q?yjxUqHLZ+Vee1eTKPWmF93YLgA8KA+Vw1FVeBeQL0cGIM0mr4WqdzPMWkodh?=
+ =?us-ascii?Q?29m38KYHPycI1/Sfw1MrR2gDQnsz3LeW4KFZw7t3PVdeWJ6L9VAJqVfG0H70?=
+ =?us-ascii?Q?NY9JOnOtkghI2hP3GPTP44H7kTalgx8p8QMMbfVt7i9YKSjAu8RBkhbjuaHF?=
+ =?us-ascii?Q?anWoMzT3W+XzRnts8p+wDA81fInaF6U=3D?=
+X-Exchange-RoutingPolicyChecked: R7LKdISCicOymAQwpbRczkhvoyXOXBjyxWwELvwnTT15qUipEU9Zjto3BB62joXeW/uWdoaWGkp7u/bR3AuQ1HCDGgVx1fUt0hUT7j0ycis+LBsX+ni53X20gdhrt+fDyl2NRwjcDx1tUxJs/V+rRwClkbYrE9VguIBVOp0f8Vf63B9Gf1IT2TUNgWv03Zs8GoZja4Gu7PzebzpU6eORNGoAfzgj7tvSGBd8MHpVXtyckG+86bo0TmWE6V5H7vnHmJ5O/pnkggo4Hq5KcprGrS0Zbwy3WlxXSrYStI82wR94M1Fzz7QLYovl1uuduTBog6ZUoe5H4Z9zMfrW8hRlWQ==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 09692972-ccc0-4ebd-eb86-08df10117530
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2026 14:32:08.1188 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: k60zYcqBNssQ6riuoLxExMj0lOmb1wQxfdgfw+wnJNRShKl3u5TwQErz+qC9NZ41monYePuB+8o/R6ak1Jw2GQz6N7S1KpEQfwyfNKO0a2o=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV4PPFDC496280F
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,112 +151,53 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello,
-
-On Wed, 9 Sept 2026 at 11:41, Loftus, Ciara <ciara.loftus@intel.com> wrote:
->
-> > Subject: [PATCH v6 2/2] net/iavf: fix duplicate MAC addresses install
-> >
-> > On port restart, all MAC addresses get pushed *twice* to the hardware,
-> > once by the driver and once by the eth_dev_mac_restore() in ethdev.
-> >
-> > On the other hand, MAC address filters are reset in the hardware
-> > by the PF only when a VF reset is triggered.
-> >
-> > Strictly speaking, the mac restore on port (re)start is unneeded,
-> > if no VF reset happened, so we can announce to ethdev that no mac
-> > restoration is needed via a get_restore_flags callback.
-> >
-> > Then, move the mac restoration to the VF reset handler.
-> >
-> > Fixes: 3d42086def30 ("net/iavf: preserve MAC address with i40e PF Linux
-> > driver")
+On Fri, Sep 11, 2026 at 01:16:57PM +0200, Burakov, Anatoly wrote:
+> On 9/11/2026 11:40 AM, Bruce Richardson wrote:
+> > When installing a QinQ tunnel filter, errors were not properly caught
+> > leading to the situation where the app got a successful return code even
+> > though the filter was not properly installed. Add an appropriate log
+> > message and error return code on error to fix.
+> > 
+> > Fixes: 116b7910d641 ("net/i40e: add QinQ filter create function")
 > > Cc: stable@dpdk.org
-> >
-> > Signed-off-by: David Marchand <david.marchand@redhat.com>
+> > 
+> > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 > > ---
-> > Changes since v4:
-> > - rebased on next-net-intel,
-> >
-> > Changes since v4:
-> > - moved mac restoration in iavf_post_reset_reconfig,
-> >
-> > ---
-> >  drivers/net/intel/iavf/iavf_ethdev.c | 27 ++++++++++++++++-----------
-> >  1 file changed, 16 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/drivers/net/intel/iavf/iavf_ethdev.c
-> > b/drivers/net/intel/iavf/iavf_ethdev.c
-> > index bbd1f08ff0..bec7b3b6d7 100644
-> > --- a/drivers/net/intel/iavf/iavf_ethdev.c
-> > +++ b/drivers/net/intel/iavf/iavf_ethdev.c
-> > @@ -292,11 +292,12 @@ iavf_get_restore_flags(__rte_unused struct
-> > rte_eth_dev *dev,
-> >                      __rte_unused enum rte_eth_dev_operation op)
-> >  {
-> >       /*
-> > -      * The unicast and multicast promiscuous settings persist across a
-> > +      * The mac addresses, unicast and multicast promiscuous settings
-> > persist across a
-> >        * stop/start; they are only cleared by a VF reset, which the driver
-> >        * restores itself. So ethdev does not need to restore them on start.
-> >        */
-> > -     return RTE_ETH_RESTORE_ALL & ~(RTE_ETH_RESTORE_PROMISC |
-> > +     return RTE_ETH_RESTORE_ALL & ~(RTE_ETH_RESTORE_MAC_ADDR |
-> > +                                    RTE_ETH_RESTORE_PROMISC |
-> >                                      RTE_ETH_RESTORE_ALLMULTI);
-> >  }
-> >
-> > @@ -1095,15 +1096,14 @@ iavf_dev_start(struct rte_eth_dev *dev)
-> >               rte_intr_enable(intr_handle);
-> >       }
-> >
-> > -     /* Set all mac addrs */
-> > -     iavf_add_del_all_mac_addr(adapter, true);
-> > -
-> > -     if (!adapter->mac_primary_set)
-> > -             adapter->mac_primary_set = true;
-> > -
-> > -     /* Set all multicast addresses */
-> > -     iavf_add_del_mc_addr_list(adapter, vf->mc_addrs, vf-
-> > >mc_addrs_num,
-> > -                               true);
-> > +     if (!adapter->mac_primary_set) {
-> > +             if (iavf_add_del_eth_addr(adapter, &dev->data-
-> > >mac_addrs[0], true,
-> > +                             VIRTCHNL_ETHER_ADDR_PRIMARY) != 0)
-> > +                     PMD_DRV_LOG(ERR, "failed to add primary MAC:"
-> > RTE_ETHER_ADDR_PRT_FMT,
-> > +                             RTE_ETHER_ADDR_BYTES(&dev->data-
-> > >mac_addrs[0]));
-> > +             else
-> > +                     adapter->mac_primary_set = true;
-> > +     }
-> >
-> >       rte_spinlock_init(&vf->phc_time_aq_lock);
-> >
-> > @@ -3434,6 +3434,11 @@ iavf_post_reset_reconfig(struct rte_eth_dev
-> > *dev)
-> >       int ret = 0;
-> >       bool allmulti = false, allunicast = false;
-> >       struct iavf_adapter *adapter = IAVF_DEV_PRIVATE_TO_ADAPTER(dev-
-> > >data->dev_private);
-> > +     struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(dev->data-
-> > >dev_private);
-> > +
-> > +     /* After a VF reset, all MAC addresses got flushed, restore them. */
-> > +     iavf_add_del_all_mac_addr(adapter, true);
->
-> Could this lead to a double install of the primary on the reset path? In
-> iavf_handle_hw_reset, dev_start can run before
-> iavf_post_reset_reconfig and can install the primary MAC and set
-> mac_primary_set. iavf_post_reset_reconfig then calls
-> iavf_add_del_all_mac_addr which can install the primary again as it
-> doesn't check mac_primary_set.
+> >   drivers/net/intel/i40e/i40e_ethdev.c | 8 +++++---
+> >   1 file changed, 5 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/net/intel/i40e/i40e_ethdev.c b/drivers/net/intel/i40e/i40e_ethdev.c
+> > index b6b2d291ee..c91abe7626 100644
+> > --- a/drivers/net/intel/i40e/i40e_ethdev.c
+> > +++ b/drivers/net/intel/i40e/i40e_ethdev.c
+> > @@ -8597,9 +8597,11 @@ i40e_dev_consistent_tunnel_filter_set(struct i40e_pf *pf,
+> >   	case I40E_TUNNEL_TYPE_QINQ:
+> >   		if (!pf->qinq_replace_flag) {
+> >   			ret = i40e_cloud_filter_qinq_create(pf);
+> > -			if (ret < 0)
+> > -				PMD_DRV_LOG(DEBUG,
+> > -					    "QinQ tunnel filter already created.");
+> > +			if (ret < 0) {
+> > +				PMD_DRV_LOG(ERR, "Failed to create QinQ tunnel filter.");
+> > +				/* ret is a raw i40e_status_code, not an errno */
+> > +				return -ENOTSUP;
+> > +			}
+> >   			pf->qinq_replace_flag = 1;
+> >   		}
+> >   		/*	Add in the General fields the values of
+> 
+> Returning ENOTSUP unconditionally seemed unwarranted to me, so I dug into
+> the code to see what sort of errors we might see. The function in question
+> actually mixes return values (default value is `-ENOTSUP` which is -95, but
+> most errors from that codepath return `I40E_NOT_SUPPORTED` which is -64),
+> but most of them indeed boil down to ENOTSUP (except for status returned
+> from call into AQ command).
+> 
+> So, although not ideal, this is probably consistent with current
+> implementation
+> 
+> Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
+> 
+Applied to dpdk-next-net-intel.
 
-Indeed good catch, I'll fix it in next revision.
-
-
--- 
-David Marchand
-
+/Bruce
