@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48CA6C88E45
-	for <dpdk-dev@archiver.kernel.org>; Sat, 12 Sep 2026 06:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D1B5C88E45
+	for <dpdk-dev@archiver.kernel.org>; Sat, 12 Sep 2026 06:34:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6C6C0406FF;
-	Sat, 12 Sep 2026 08:33:46 +0200 (CEST)
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com
- [209.85.216.50]) by mails.dpdk.org (Postfix) with ESMTP id 19A5040609
- for <dev@dpdk.org>; Sat, 12 Sep 2026 08:33:45 +0200 (CEST)
-Received: by mail-pj1-f50.google.com with SMTP id
- 98e67ed59e1d1-38ea87caafeso1724069a91.3
- for <dev@dpdk.org>; Fri, 11 Sep 2026 23:33:45 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7418642D2E;
+	Sat, 12 Sep 2026 08:33:49 +0200 (CEST)
+Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com
+ [74.125.227.140])
+ by mails.dpdk.org (Postfix) with ESMTP id 7643942D2E
+ for <dev@dpdk.org>; Sat, 12 Sep 2026 08:33:48 +0200 (CEST)
+Received: by mail-pj2-f12.google.com with SMTP id
+ 98e67ed59e1d1-39b350c69b4so246632a91.2
+ for <dev@dpdk.org>; Fri, 11 Sep 2026 23:33:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789194824;
- x=1789799624; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789194827;
+ x=1789799627; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=/VGXHac9PFuoJH9HkXClGPlDuwB6jtLoDisQ12YkLyQ=;
- b=LGB8xZX4Hr2ozEo3jH5Rs37DBDAAf0j6FgleYK8GRur+iR3BZWNKidM4jsNda3LFT6
- /5uvT/h3xD5VPig2jowRpA26BQdwdl3sNDU7yCZSeCvSRDh0pADn1mVyB8GBw0eQmFdA
- TPp6grdoMvuSAHMeMg9Vs+7KNld4I6DKGyooZsH+QOKXVSgDExPhPtdvRyLxw5G5K28E
- jRBdpmgfoKs529pXgGNdH5IYXK/tdvOAJ+72Tm+o9eaWSZEv9z1BNq6yNTj6XJ4wxOmx
- 04zZimlKWrGdfy8XafyXpbgR92wqY+BIOFSj5AnyuVOhnQjgzDr5+dmuRShJYyj4CaXB
- wtUQ==
+ bh=JcDCqa41SUZYQc3ssPw0VoH00GkPI+KadSVaYbX95/M=;
+ b=fW5JHCo0+r7keyTwmiC8qQC6EnmgXlTQEvdVdBsxwn1eZDFrDEiFjR+PBCN6HcwY0Y
+ 8R0uznGFIcxyAFQtR8hzJcOrM323lu+pvdOTlFecypvRFtLNKNzP184rPp8JjvVdhN68
+ dQ6Wa429sx+v0ziF+fMCYyuHhizV/o0mLa0RvGedPXWso3q4sT5Tx+oBJKD1HVu0ONHb
+ jFBVYP4+9eASLFA+JkE7eFu4ox6YLO8rRZSHsHJM3/i2/6J15z2mjdfep4BsCHLKwsri
+ 2AP8wd1F/rFl7jk0sXxfh05H4dWfz90E6PdCj+vUPuzrm8zC3cjC74AJ3bYHnCC4zY7g
+ Z0Dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1789194824; x=1789799624;
+ d=1e100.net; s=20251104; t=1789194827; x=1789799627;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=/VGXHac9PFuoJH9HkXClGPlDuwB6jtLoDisQ12YkLyQ=;
- b=tB+JeF9FDoVpwNv+ny+qMEea6DNzWQ4GHyttMqjwHUo0ONf2zEyvmQaRwyV/nYFpB9
- 7suyxU90jlLmoeGv66wy2SMs/mqwGp2mTDqyvzj/rTQ6tnAm8gqr1DKcGoPKXOQXYJD+
- nONzexHi5hqBYi01BI+FycIamqXHyj5544l37iqLbwkR0m8DfHPz/pg7ZchqPqRp9PH+
- yA/LAGj8UNX3gl0idStgccudxVZO+HL+P4NvwSXcHcFKWiTSoZNlrG+q11wSpDeXzxBD
- oihZ7Y1KfvLkOoLshi96P+nu4Tn1T1/oxepyTSfY9fAFwj3jtGwt1skcGYhKqgb8bBGC
- i5TA==
-X-Gm-Message-State: AFuF++nYfzVviDFy9coVEVKRKJlBeEqN+VBJ/vFuKSTfz9GEq+Kwid4s
- JUqWv/tFivzU2yvo3TuNhqkBF1feZlXHLKg1sknzXTzi62lPy32RLyR0WpaaVJfId/AHh3K4VMU
- x0TGFsZE=
-X-Gm-Gg: AYBFou19LEaZ9fQmFQdTTc0wfsoGHCG4Ph24JkA+gLx0wojtvK9MRDE3uH/dKux8hQJ
- aczyAww42iQY0rinYK7cXG9YkCNvO2WCC4YetOBtrlAmyL5O8KOLIBQr9cmslZPwy9I8iqFLB9/
- TMOW7UvMvVbyfAdqfSF+2BPMquCrvcGvlUB4xi3YOSDfWi/kOdJZIkj8RZIl8DZRkt1rFU9BEHC
- /k6OgpUYqBsfqPnYL3KdruTEAtci0BD6W/vPjhLx30HrdlKXm4D1vGUI9MoFYG7ecQin1iEFrrZ
- MSHdKv5ex1PsG0spVOX+Mi9JK9BSPy0Wh2/OuD9jF4Oz5i8wVGuSJFMpbO50Yx4aV5JfkgTJREV
- rReV4gNTtmgPmGJd+nyY3HsYAkc6u1MtqYhd6oxHbw75ggeLCIvT4F7dkO3oI3vFN2qJK1+8hy2
- cGXy0oxZJXPD8NV9K/+AaQ0gXHQ0YlbEJANUBPAz7iVDD3wy61ZPdAS4WhNKweIp4pBM5DmhF5o
- U0j4+tj6RR6/oUHM3kflh8txLA5fR/Mg/qaGw==
-X-Received: by 2002:a17:90a:da8f:b0:381:25ce:bcc2 with SMTP id
- 98e67ed59e1d1-39d9bc10072mr11404143a91.6.1789194824201; 
- Fri, 11 Sep 2026 23:33:44 -0700 (PDT)
+ bh=JcDCqa41SUZYQc3ssPw0VoH00GkPI+KadSVaYbX95/M=;
+ b=ofvVDaZqidXepK/TVaRofYdR7swBjiNJmCUAsrvzVJWqODHd2NtZluJrS3o/aZiWeE
+ i1n/tgJMNRZ6Qs5o2DyBj0FlruCTkfsilCVBBzrsLoXGKpmNArGEIqw8MLut3oeRj4mh
+ AC4ty90kxZqEcDD7EqtIKF3buGCTisOGkLObHp5e848wUX2+trNGAJHaj/gu7iPlX6id
+ eS0gtLWP74NHh2YKk0S3Tr7DQCzCg+czARPj4sC3Fhte4LoBAz1LtOjz5MGB0XazRJTq
+ BQsXThsWzgKCns5+Qucwqygfw1R1yfxjdIBOJ3BFQ3Knp1gD31Wdn54Ovfe0c8BixFMW
+ wW/g==
+X-Gm-Message-State: AFuF++lYTMTLue+gEnfoIzxtRorHHi/q3B2bEkobqgeL7yLR71R9FTVI
+ cfKhBWPCRcrmUSZwN6u59BeNPryGEiXkp4p0oOmK6m+Ex5al0uvyv0yIFvnj4pw1/wMIrxN/xoo
+ GjEGH7gk=
+X-Gm-Gg: AYBFou38aCdPh5ZwsL/a0E6urO5oUFkKH7fainNcOIxyKW30F9cL2fjCjhBWfBrdPle
+ OkxgJsuD9ss4dHeK1nC0RVh+DMStaEfPsrDa3V61qvUKUa7l3upkOp7af3F176VmdWBe1wXM31n
+ K0HLsaWriSm9Xyfig2DC1K3X7Ik2yFYsaiqX3F4i7pV7aqZgvrmR7sRZAzH5POyMiencMZ7PhlI
+ LqzJaXmawr5FmoBx7Sq3pPQXYI2WWEMMEXqImm/HDMABGb4p3uVCA1Uq8K94PkmoRTOZ2Rv2W7n
+ X2DvqZsESSPf3dAJWH/Mn3i0ePHUYUeYxfbUXLvS/vpWGhv1/kl7OYj3Pd21v0KuDLoSDYQLaLE
+ 0zu6kneylsnXnK8pW/bdwqo3GtKKa+qAJe/sAnBmDlD5XA99zBLMWipYELLArs7b2qPGi9YO1GO
+ lQjySQWdFkSAuNVMPKBOFyInT4WlBPyjjAK2rsoUjBcaE1aetKj0t782xN2Y7peShNxEftIsA7y
+ 4BvBcOvjeUV4gO6oZSFeTVlevcIou4mkaZxrQ==
+X-Received: by 2002:a17:90b:1d51:b0:38d:b36e:9813 with SMTP id
+ 98e67ed59e1d1-39dbc1d770emr2877895a91.11.1789194827615; 
+ Fri, 11 Sep 2026 23:33:47 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39d95424fccsm8661497a91.10.2026.09.11.23.33.41
+ 98e67ed59e1d1-39d95424fccsm8661497a91.10.2026.09.11.23.33.44
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 11 Sep 2026 23:33:43 -0700 (PDT)
+ Fri, 11 Sep 2026 23:33:47 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Andrew Boyer <andrew.boyer@amd.com>
-Subject: [PATCH 3/9] common/ionic: use common sysfs routines
-Date: Fri, 11 Sep 2026 23:30:22 -0700
-Message-ID: <20260912063319.4117869-4-stephen@networkplumber.org>
+ Long Li <longli@microsoft.com>, Wei Hu <weh@microsoft.com>
+Subject: [PATCH 4/9] bus/vmbus: use common sysfs routines
+Date: Fri, 11 Sep 2026 23:30:23 -0700
+Message-ID: <20260912063319.4117869-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260912063319.4117869-1-stephen@networkplumber.org>
 References: <20260912063319.4117869-1-stephen@networkplumber.org>
@@ -82,136 +83,65 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The three resource helpers and the UIO name lookup each built a path
-with an unchecked sprintf() into a 64 byte buffer and then read the
-value with fscanf(). Use the EAL routines instead; base 0 conversion
-handles the "0x" prefix these files use.
+Replace the open coded read in vmbus_uio_sysfs_read() with the EAL
+routine. The range check and the -ERANGE return are unchanged.
+
+Two things do change. On an open failure the helper now returns -EIO
+rather than -errno; both callers only pass it to strerror(-err) in a
+log message, so this is message text only. And subchannel_id and
+monitor_id were read with fscanf("%u") and are now converted with
+base 0, so a value with a leading zero would parse as octal. Neither
+attribute is printed with leading zeros by the kernel.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/common/ionic/ionic_common_uio.c | 63 +++++--------------------
- 1 file changed, 12 insertions(+), 51 deletions(-)
+ drivers/bus/vmbus/linux/vmbus_uio.c | 24 +++++-------------------
+ 1 file changed, 5 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/common/ionic/ionic_common_uio.c b/drivers/common/ionic/ionic_common_uio.c
-index aaefab918c..a796281bdd 100644
---- a/drivers/common/ionic/ionic_common_uio.c
-+++ b/drivers/common/ionic/ionic_common_uio.c
-@@ -19,6 +19,7 @@
- #include <rte_common.h>
- #include <rte_eal.h>
+diff --git a/drivers/bus/vmbus/linux/vmbus_uio.c b/drivers/bus/vmbus/linux/vmbus_uio.c
+index fbafc5027d..50e58f9b65 100644
+--- a/drivers/bus/vmbus/linux/vmbus_uio.c
++++ b/drivers/bus/vmbus/linux/vmbus_uio.c
+@@ -18,6 +18,7 @@
+ #include <rte_malloc.h>
+ #include <rte_bus_vmbus.h>
  #include <rte_string_fns.h>
 +#include <rte_sysfs.h>
  
- #include "ionic_common.h"
+ #include "private.h"
  
-@@ -63,30 +64,17 @@ struct uio_name {
- static void
- uio_fill_name_cache(struct uio_name *name_cache, const char *pfx)
+@@ -334,27 +335,12 @@ int vmbus_uio_map_rings(struct vmbus_channel *chan)
+ static int vmbus_uio_sysfs_read(const char *dir, const char *name,
+ 				unsigned long *val, unsigned long max_range)
  {
--	char file[64];
--	FILE *fp;
--	char *ret;
- 	int name_idx = 0;
- 	int i;
- 
- 	for (i = 0; i < IONIC_UIO_MAX_TRIES &&
- 			name_idx < IONIC_MAX_DEVICES; i++) {
--		sprintf(file, "/sys/class/uio/uio%d/name", i);
+-	char path[PATH_MAX];
+-	FILE *f;
+-	int ret;
 -
--		fp = fopen(file, "r");
--		if (fp == NULL)
--			continue;
--
--		ret = fgets(name_cache[name_idx].name, IONIC_MAX_NAME_LEN, fp);
--		if (ret == NULL) {
--			fclose(fp);
-+		if (rte_sysfs_parse_string(name_cache[name_idx].name, IONIC_MAX_NAME_LEN,
-+				"/sys/class/uio/uio%d/name", i) < 0)
- 			continue;
--		}
- 
- 		name_cache[name_idx].idx = i;
- 
--		fclose(fp);
--
- 		if (strncmp(name_cache[name_idx].name, pfx, strlen(pfx)) == 0)
- 			name_idx++;
+-	snprintf(path, sizeof(path), "%s/%s", dir, name);
+-	f = fopen(path, "r");
+-	if (!f) {
+-		VMBUS_LOG(ERR, "can't open %s:%s",
+-			  path, strerror(errno));
+-		return -errno;
++	if (rte_sysfs_parse_uint(val, "%s/%s", dir, name) < 0) {
++		VMBUS_LOG(ERR, "can't read %s/%s", dir, name);
++		return -EIO;
  	}
-@@ -215,21 +203,12 @@ static unsigned long
- uio_get_res_size(int uio_idx, int res_idx)
- {
- 	unsigned long size;
--	char file[64];
--	FILE *fp;
--
--	sprintf(file, "/sys/class/uio/uio%d/maps/map%d/size",
--		uio_idx, res_idx);
  
--	fp = fopen(file, "r");
--	if (fp == NULL)
-+	/* zero is the error value for all of these */
-+	if (rte_sysfs_parse_uint(&size, "/sys/class/uio/uio%d/maps/map%d/size",
-+			uio_idx, res_idx) < 0)
- 		return 0;
- 
--	if (fscanf(fp, "0x%lx", &size) != 1)
--		size = 0;
+-	if (fscanf(f, "%lu", val) != 1)
+-		ret = -EIO;
+-	else if (*val > max_range)
+-		ret = -ERANGE;
+-	else
+-		ret = 0;
+-	fclose(f);
 -
--	fclose(fp);
--
- 	return size;
+-	return ret;
++	return *val > max_range ? -ERANGE : 0;
  }
  
-@@ -237,21 +216,12 @@ static unsigned long
- uio_get_res_phy_addr_offs(int uio_idx, int res_idx)
- {
- 	unsigned long offset;
--	char file[64];
--	FILE *fp;
--
--	sprintf(file, "/sys/class/uio/uio%d/maps/map%d/offset",
--		uio_idx, res_idx);
- 
--	fp = fopen(file, "r");
--	if (fp == NULL)
-+	/* zero is the error value for all of these */
-+	if (rte_sysfs_parse_uint(&offset, "/sys/class/uio/uio%d/maps/map%d/offset",
-+			uio_idx, res_idx) < 0)
- 		return 0;
- 
--	if (fscanf(fp, "0x%lx", &offset) != 1)
--		offset = 0;
--
--	fclose(fp);
--
- 	return offset;
- }
- 
-@@ -259,21 +229,12 @@ static unsigned long
- uio_get_res_phy_addr(int uio_idx, int res_idx)
- {
- 	unsigned long addr;
--	char file[64];
--	FILE *fp;
- 
--	sprintf(file, "/sys/class/uio/uio%d/maps/map%d/addr",
--		uio_idx, res_idx);
--
--	fp = fopen(file, "r");
--	if (fp == NULL)
-+	/* zero is the error value for all of these */
-+	if (rte_sysfs_parse_uint(&addr, "/sys/class/uio/uio%d/maps/map%d/addr",
-+			uio_idx, res_idx) < 0)
- 		return 0;
- 
--	if (fscanf(fp, "0x%lx", &addr) != 1)
--		addr = 0;
--
--	fclose(fp);
--
- 	return addr;
- }
- 
+ static bool vmbus_uio_ring_present(const struct rte_vmbus_device *dev,
 -- 
 2.53.0
 
