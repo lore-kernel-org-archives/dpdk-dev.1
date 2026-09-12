@@ -2,71 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA26C88E4D
-	for <dpdk-dev@archiver.kernel.org>; Fri, 11 Sep 2026 22:58:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDB44C88E45
+	for <dpdk-dev@archiver.kernel.org>; Sat, 12 Sep 2026 06:27:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 329664027A;
-	Sat, 12 Sep 2026 00:58:55 +0200 (CEST)
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com
- [209.85.215.175])
- by mails.dpdk.org (Postfix) with ESMTP id C965B40275
- for <dev@dpdk.org>; Sat, 12 Sep 2026 00:58:53 +0200 (CEST)
-Received: by mail-pg1-f175.google.com with SMTP id
- 41be03b00d2f7-cc4d03f95dfso763219a12.2
- for <dev@dpdk.org>; Fri, 11 Sep 2026 15:58:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789167533;
- x=1789772333; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=enqAzNYEFf/5V5MaRW332cKsnSp02HNDlCKyoq8iw10=;
- b=dZ/devtsAoUMK+lKOv/paWFNn1FL6rFs4XQJmoTKPo6h/YQQfqG04pDH/RW4MXpDLH
- GSxMuUQjPUTX3It6KfFcEQsE+CiGiC3LASDb6aDJUxkNsZITIN9JTAOoLIx1V13YGpgy
- 3sG7up7tQMP5MuAI6369eRYGRjh+Nk5p7weis1JZ88VlryWOYuF4RZWij2/b5sQ1jOUK
- 0dbKT67AWzdU9RURwJJR5n1NNTO01BqZL4jq+tM3v/lW5OzzVcOANLV/1C8CxhWSJcnT
- aAIsLyKlnxkFQooNzMW/DS7vx1Vk8iSbe8tUME+3wQcMSD0rGpHtTmLz9S03raC0Emtc
- FsbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1789167533; x=1789772333;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=enqAzNYEFf/5V5MaRW332cKsnSp02HNDlCKyoq8iw10=;
- b=qBL0dzsIV1SL+Ovrtp1SmfWuWWZQaUhwsieGeNlqQcMej9oLONJ7nwgTjdXh8DX6Yy
- FVg1vfx6R7m3KHPuAChCj91K1CRZrqf6miD6kOq4+AZpVDgqWrWhjvsFlwkm0TFBDxkh
- JPZkIE2OZmGpwn/y7YVL2sHegc7/gtrSntfg1w61A4RLcXv5qUyWgo0qub5a2uoE2kFM
- Kp2yKpr6jEYEh1R9R6OAq9CmZXhmJ3RFWn1XS0WRgqBJ5+RaHnCfjqkqp4LCw3LiivMU
- JcTUMJQ+Iz/zt8fm0nImVSaoZRP75g2/o0q0J8PNyJgiJN4sfrsCfCQr7JVb3vvLQrAW
- 9x8g==
-X-Gm-Message-State: AFuF++m+OV6dwjh6XZLcaW6H3kClHvPB6DkzXWS1nKSz2l8AaLr1XL7q
- TY/dCfOFHbAyA5hYxp2Tek9+kdt3caGFpU6zdT5kGN1/dgLat0zxA6F2oVeKAMSN8dOvFmEfwlY
- 9Dbn3
-X-Gm-Gg: AYBFou2aTZNO9F9dYEkLROyS6ZXdGXridH6f1L956wqhECcZMtX8DuIRFKGRyRVnqCX
- xlPq+2YaIUFyBRITUEyThf8+Azs1dV7Dp8rGEb6eUr0KYyZVZnJwLQeMdBQuRGjTALecVd5Gwtl
- 8IhOXH0suekPRcRpK/G74S/EUU0twZP6bIaY19RQFCeZkSGMBsjNTxcFTkJCaYGOGDsSmZZPYpN
- 998vrftZ3PriTEIFJbOgNsBgQRFenMmfQEEsvmDMnABTJXhEhbJBHuwi8KixxKsfvSO1d28e54s
- mW/nMyclk/+ytjdS1ek8DQWPqULbDoPrkCgUM3LHMl2meUXMS89HV/O+JtP7i1WcNy8AdnpZgWz
- EtDaIh676Cxxg1fNEoVdYv3plvpxPOq163kGwNqEeTFQ2XHGl9UieoPsgkqjIkbg2vUdhWt7/nF
- HrUsWR1rzKfLisKwdgGmeu+82C5kFftSv2X1zHovwOkvqEgC6jq9oc6QOv7W1bNvqfBMoZuY2Kc
- 0HP0zcpkxMhzsJgVQDL0XCaESQ9mUCkq/+Kyw==
-X-Received: by 2002:a17:90b:3e50:b0:38e:9ef9:eb97 with SMTP id
- 98e67ed59e1d1-39d9c1d8f30mr11863473a91.16.1789167532568; 
- Fri, 11 Sep 2026 15:58:52 -0700 (PDT)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39d95713602sm7032434a91.11.2026.09.11.15.58.50
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 11 Sep 2026 15:58:52 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- =?UTF-8?q?Mattias=20R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>
-Subject: [RFC] eal: allow setting random number generator seed
-Date: Fri, 11 Sep 2026 15:58:45 -0700
-Message-ID: <20260911225845.3168061-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
+	by mails.dpdk.org (Postfix) with ESMTP id 852CA4029D;
+	Sat, 12 Sep 2026 08:27:01 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 76D2A40281
+ for <dev@dpdk.org>; Sat, 12 Sep 2026 08:27:00 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 3CFDA20BA1;
+ Sat, 12 Sep 2026 08:26:59 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [RFC] eal: allow setting random number generator seed
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Sat, 12 Sep 2026 08:26:54 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65A3F@smartserver.smartshare.dk>
+In-Reply-To: <20260911225845.3168061-1-stephen@networkplumber.org>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [RFC] eal: allow setting random number generator seed
+Thread-Index: Ad1CQSPDdCg2igaQSha82BupZtb01gAPnqoQ
+References: <20260911225845.3168061-1-stephen@networkplumber.org>
+From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>,
+	<dev@dpdk.org>
+Cc: =?utf-8?B?TWF0dGlhcyBSw7ZubmJsb20=?= <mattias.ronnblom@ericsson.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,42 +47,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Many performance tests use rte_rand() and the random number
-can perturb the results. Add an ability to overide the automatic
-random seed on DPDK startup.
-
-This is not a security problem since rte_rand() is documented
-as not being cryptographically secure.
-
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- lib/eal/common/rte_random.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/lib/eal/common/rte_random.c b/lib/eal/common/rte_random.c
-index 576a32a46c..cdad60049b 100644
---- a/lib/eal/common/rte_random.c
-+++ b/lib/eal/common/rte_random.c
-@@ -247,7 +247,18 @@ eal_rand_init(void)
- 
- 	RTE_LCORE_VAR_ALLOC(rand_state);
- 
--	seed = __rte_random_initial_seed();
-+	const char *env = getenv("DPDK_RANDOM_SEED");
-+	if (env != NULL && *env != '\0') {
-+		char *end;
-+
-+		errno = 0;
-+		seed = strtoull(env, &end, 0);
-+		if (errno != 0 || *end != '\0')
-+			rte_exit(EXIT_FAILURE,
-+				 "invalid DPDK_RANDOM_SEED: %s\n", env);
-+	} else {
-+		seed = __rte_random_initial_seed();
-+	}
- 
- 	rte_srand(seed);
- }
--- 
-2.53.0
-
+PiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1iZXIu
+b3JnXQ0KPiBTZW50OiBTYXR1cmRheSwgMTIgU2VwdGVtYmVyIDIwMjYgMDAuNTkNCj4gDQo+IE1h
+bnkgcGVyZm9ybWFuY2UgdGVzdHMgdXNlIHJ0ZV9yYW5kKCkgYW5kIHRoZSByYW5kb20gbnVtYmVy
+DQo+IGNhbiBwZXJ0dXJiIHRoZSByZXN1bHRzLiBBZGQgYW4gYWJpbGl0eSB0byBvdmVyaWRlIHRo
+ZSBhdXRvbWF0aWMNCj4gcmFuZG9tIHNlZWQgb24gRFBESyBzdGFydHVwLg0KPiANCj4gVGhpcyBp
+cyBub3QgYSBzZWN1cml0eSBwcm9ibGVtIHNpbmNlIHJ0ZV9yYW5kKCkgaXMgZG9jdW1lbnRlZA0K
+PiBhcyBub3QgYmVpbmcgY3J5cHRvZ3JhcGhpY2FsbHkgc2VjdXJlLg0KPiANCj4gU2lnbmVkLW9m
+Zi1ieTogU3RlcGhlbiBIZW1taW5nZXIgPHN0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnPg0KPiAt
+LS0NCj4gIGxpYi9lYWwvY29tbW9uL3J0ZV9yYW5kb20uYyB8IDEzICsrKysrKysrKysrKy0NCj4g
+IDEgZmlsZSBjaGFuZ2VkLCAxMiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBk
+aWZmIC0tZ2l0IGEvbGliL2VhbC9jb21tb24vcnRlX3JhbmRvbS5jIGIvbGliL2VhbC9jb21tb24v
+cnRlX3JhbmRvbS5jDQo+IGluZGV4IDU3NmEzMmE0NmMuLmNkYWQ2MDA0OWIgMTAwNjQ0DQo+IC0t
+LSBhL2xpYi9lYWwvY29tbW9uL3J0ZV9yYW5kb20uYw0KPiArKysgYi9saWIvZWFsL2NvbW1vbi9y
+dGVfcmFuZG9tLmMNCj4gQEAgLTI0Nyw3ICsyNDcsMTggQEAgZWFsX3JhbmRfaW5pdCh2b2lkKQ0K
+PiANCj4gIAlSVEVfTENPUkVfVkFSX0FMTE9DKHJhbmRfc3RhdGUpOw0KPiANCj4gLQlzZWVkID0g
+X19ydGVfcmFuZG9tX2luaXRpYWxfc2VlZCgpOw0KPiArCWNvbnN0IGNoYXIgKmVudiA9IGdldGVu
+digiRFBES19SQU5ET01fU0VFRCIpOw0KPiArCWlmIChlbnYgIT0gTlVMTCAmJiAqZW52ICE9ICdc
+MCcpIHsNCj4gKwkJY2hhciAqZW5kOw0KPiArDQo+ICsJCWVycm5vID0gMDsNCj4gKwkJc2VlZCA9
+IHN0cnRvdWxsKGVudiwgJmVuZCwgMCk7DQo+ICsJCWlmIChlcnJubyAhPSAwIHx8ICplbmQgIT0g
+J1wwJykNCj4gKwkJCXJ0ZV9leGl0KEVYSVRfRkFJTFVSRSwNCj4gKwkJCQkgImludmFsaWQgRFBE
+S19SQU5ET01fU0VFRDogJXNcbiIsIGVudik7DQo+ICsJfSBlbHNlIHsNCj4gKwkJc2VlZCA9IF9f
+cnRlX3JhbmRvbV9pbml0aWFsX3NlZWQoKTsNCj4gKwl9DQo+IA0KPiAgCXJ0ZV9zcmFuZChzZWVk
+KTsNCj4gIH0NCj4gLS0NCj4gMi41My4wDQoNCk1pZ2h0IGJlIHVzZWZ1bC4NClJldmlld2VkLWJ5
+OiBNb3J0ZW4gQnLDuHJ1cCA8bWJAc21hcnRzaGFyZXN5c3RlbXMuY29tPg0KDQo=
