@@ -2,72 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53D19C79FB6
-	for <dpdk-dev@archiver.kernel.org>; Sat, 12 Sep 2026 06:34:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F97EC88E56
+	for <dpdk-dev@archiver.kernel.org>; Sat, 12 Sep 2026 16:17:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8C85742E24;
-	Sat, 12 Sep 2026 08:34:10 +0200 (CEST)
-Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com
- [74.125.228.12]) by mails.dpdk.org (Postfix) with ESMTP id 9ED8542E12
- for <dev@dpdk.org>; Sat, 12 Sep 2026 08:34:09 +0200 (CEST)
-Received: by mail-pz2-f12.google.com with SMTP id
- 41be03b00d2f7-cc1cea50db3so130692a12.1
- for <dev@dpdk.org>; Fri, 11 Sep 2026 23:34:09 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2E4BE4027F;
+	Sat, 12 Sep 2026 18:17:57 +0200 (CEST)
+Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com
+ [74.125.227.140])
+ by mails.dpdk.org (Postfix) with ESMTP id D4D8940041
+ for <dev@dpdk.org>; Sat, 12 Sep 2026 18:17:54 +0200 (CEST)
+Received: by mail-pj2-f12.google.com with SMTP id
+ d9443c01a7336-2d8fe517774so11288625ad.0
+ for <dev@dpdk.org>; Sat, 12 Sep 2026 09:17:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789194849;
- x=1789799649; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=03Wy+9HHmkmjwKYESMRu/1zej2nduhvdjG3WxA4efwo=;
- b=sQTkoYZlyBtmmW4oxKurWMn34v1n5n1N9llh5THv0voAMRyt0CIcmNWeoRkynnhzvp
- 9yot3CoS7D41XKG1ssbPlcJlLbMjLiILnaVlVN88+whwHnrLOsJDpJGty7ECkNRVGJXS
- 47qmSUKRGY6XdAspDUjnL7knuSHktifpCd2W15RB1KnBk+U/2TpKz7P2Ff0Wi++Qf/93
- gX1T66EcxSz/HRG+3iXdcwnEc4W037z7ykVZJPBrlaiPFPX6ng59khyS896MSnnj//z0
- LToXkv3ID4K9COlr/ETZdtrKo/DPbvTRvNBzOch704IhSm79aTmeH2dCkBKZ9JMlKXMx
- 2Rww==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789229874;
+ x=1789834674; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=asnxcwcbdVNQP2vCaqFWwN943wcTau0SKeD8qtOCr4Q=;
+ b=zgSDIe1D+YD9q3LfoYHhaWTtnZbStF/JFFFcvW7iyGj5omNCZ/7lImtVVwArOf9VfJ
+ zNlbmb7aJj+5RkjbP6s0WAyH1lcy6XhmAasySqP3DB7in+F0SeuYJ1xwTfvNHA7c8rue
+ 4gS+6i3eG7IRLcOHzmsDhX3f7Z9HaR9F/S94vkhQdB4HF7O5+eJDgfDm1sscNyvrthih
+ 6rpdiNiKhfSj0RaXreN5qQtgvGXewCSmNwi+eTedEQWbXCQhWBIhvOLnv6rEyULdTcal
+ dEuO1fNJ+K/tV9NmtnbbFmV881kl2tOiMY5uqSk1Kx6yN1lCmMEBLHHPXxoFUSyETCLE
+ jKcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1789194849; x=1789799649;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=03Wy+9HHmkmjwKYESMRu/1zej2nduhvdjG3WxA4efwo=;
- b=DHzYmpZShR4QiN3m1bPqkdgFWhcJHXmcbqKx7iYb0wf+alZa/rl4j406BagMDV1Uuz
- fkAGiKpGNbPW0m8fsw+vblAfdmTJqzGATbPKs53OV6Y4CC2Auf9xZejTWgAcM7abifCD
- 3CsASqflcevRhQQTMVrOEIqh3KCWJW1dEGlgioQ3YuVu3OR2zAJf3eF0O/UFb6vpeEO0
- 7sbgYdKhgTY9BDczwwgQzKbCud4PY3v/mnnaY2pxLCnsh0nB6lJnTS1SeX4M5SnMIkzp
- ad2XFvzBFNFlOmMBheBJKtO+IVR77yhAXv/EBM2gatvZqSyLb2XmO/Jx6dbkdHfMn6tk
- +0ZA==
-X-Gm-Message-State: AFuF++m8F07mVc6i82e/bSBQJnheQPmXuyp7sO312AyqYVCSLsymV2DQ
- rlpNww00G560GIbJADbUrS9OdVf7qrTpSZiC1fx4JydhaJyApmbCT52T808bnWJ4Oid5Yzl7e2G
- 9hBZw
-X-Gm-Gg: AYBFou2mkxaOStKJpGd3wqwfCr3xRgUXkGM5s4mTE2J2nVtzGFioN0gCM3sRFfxXmNI
- ShUCEijL06Y2dk/5v52fj/sv0sNkms6LbND6OG4vNnvHcGqUP/3orQtZq9m/GZXIs2CR6AfQZcQ
- rzlJSvtCsv1HTsTSw/+TCtESM2LwmFdokSzv5kbnSvOpaLBsBwzyNaRE6aoUSM6+yycKydzF3hR
- KxPDL9Sb5tZ88KQeqyBH2f1a3VGgIU2McTZimF6ONUBbc6UfFox+QdVx/VwRXusA7JhxtXpaWte
- DarLGtpneYiFQntJf6DZ+uatl5D0VaRqMVuYRTxTV8DAGLQsE+LjC7P7D/xkVsGnXOEmSSxkJkb
- qQvrxqhN53aQy+CRXy8ECMvRC405Y88GeVt0AXCQfBm2MKZC7bH7sqoDnMDZMq4W7eGG1fS2cM0
- O448NhQuqPZ6XzW7HT26ck4/pdgc1XPR92UCs7Q9njpbR9LnP7tNjA6/ILj4ckBN01XvVXYyQuk
- 4fjmG7CTNJpNfn8RSm+remgrcjRidZw0cQCLg==
-X-Received: by 2002:a17:90b:2c86:b0:396:4dfb:5890 with SMTP id
- 98e67ed59e1d1-39dbbe84fb6mr3038792a91.2.1789194848750; 
- Fri, 11 Sep 2026 23:34:08 -0700 (PDT)
+ d=1e100.net; s=20251104; t=1789229874; x=1789834674;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=asnxcwcbdVNQP2vCaqFWwN943wcTau0SKeD8qtOCr4Q=;
+ b=HQonaN/wMPl+lWOpvH2xg+P5DeUyFOe+8MoyNmlEj5C6CTnINygRxLzqpz38Wr6ngI
+ Sf/EoyouiBfrnBur5BChXMaEv5L3jYoVvAno0w9EPOfTxXskOE/lWiT5obScRtg5Mv3V
+ c5VZODk0ezkKqhMUczPu3R/rs1p9pN+mYYlZChwGyEB+/XEhGhPweT9Zcqmo1utDVham
+ pv9Dz9GlSCMmqjtYizcrBVyQLwk0Yu0Gc0jh/ZcrJHRj5BFucuzMM54TdlVtNU+woDx/
+ LkHpts28Sbtc+KnJ0qkfGayGt6DClEJlPpQLED6Cs/AUpAniE6nHA2WGXSUslhoV0vLb
+ 6voQ==
+X-Gm-Message-State: AFuF++lSIq9+k6GCgzh0GHpRGQ6C/ZngKsnuBhGtKRwtT+UxZexLIHTt
+ jzzd+PBFM0GUlLwnogQj6vgoQYrH1M/d0QVBjJQsSMbt2fWnZPgQbTV58G3taOwauotNY9Zj41q
+ 7+XGZ+wc=
+X-Gm-Gg: AYBFou3Ni3TY6zgEfvVDEPc3F6NKC6xhifq9TQxgH3ncfx/8SZEcL4C3rCyfZivJcHs
+ YWKTekDHiBvZiRjc4NmI5NmALgfOP3I6jPobTwhSqVNYEQ8mAZF75yDQ4WacuQUKpzUGLbFXazZ
+ Xt9k45Ak6jOlDnY1RV5n/lg0MWcjL+lIwMzPzS2CmvSy6AtNWVID33vKnMzvQujKKfE2EPJE/qD
+ kAkA9zU8fDfRv9FRgvlKGZBalaAxt+6xlV6eLVgvoKoGZU81yRhBqydgpfjyEKIt8FUI2jbnOPW
+ OARMkCDTjrng6X/mwLD5uuqxNeklAW2uXZKE9jjGTtcOF8U7ryz6H4oNGOP2FSCZ1Tmb1Jl2KTk
+ jueSL1OmiyQT/iSmUiZt+kgU67Pm8ouapFcf/r6gN6+EBOrp8XE1O2gH8SGuttTBClhqH9vigE/
+ CzTrz0BambxpdL01h+dz17DVcbgrXzEXPzCG7n2gFTRtHvmYithQguu3XZUR0YU2rN2xXkI9k6c
+ J+zXhQW7i9D7L9mowO6eMQJq69FkZw1n1bV+g==
+X-Received: by 2002:a17:902:ccc9:b0:2d7:3f6e:5cb9 with SMTP id
+ d9443c01a7336-2dd2a1efc6amr176955195ad.8.1789229873762; 
+ Sat, 12 Sep 2026 09:17:53 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39d95424fccsm8661497a91.10.2026.09.11.23.34.05
+ d9443c01a7336-2dd2cfe80fdsm24951725ad.67.2026.09.12.09.17.50
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 11 Sep 2026 23:34:08 -0700 (PDT)
+ Sat, 12 Sep 2026 09:17:53 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Long Li <longli@microsoft.com>, Wei Hu <weh@microsoft.com>
-Subject: [PATCH 9/9] net/mana: use common sysfs routines
-Date: Fri, 11 Sep 2026 23:30:28 -0700
-Message-ID: <20260912063319.4117869-10-stephen@networkplumber.org>
+ =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
+ =?UTF-8?q?Mattias=20R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>
+Subject: [PATCH v2] eal: allow setting random number generator seed
+Date: Sat, 12 Sep 2026 09:16:57 -0700
+Message-ID: <20260912161744.201627-1-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260912063319.4117869-1-stephen@networkplumber.org>
-References: <20260912063319.4117869-1-stephen@networkplumber.org>
+In-Reply-To: <20260911225845.3168061-1-stephen@networkplumber.org>
+References: <20260911225845.3168061-1-stephen@networkplumber.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -82,64 +86,74 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Read dev_port with the EAL routine rather than opening the file and
-parsing it with fscanf().
+Many performance tests use rte_rand() and the random number
+can perturb the results. Add an ability to override the automatic
+random seed on DPDK startup.
 
-The value was read with fscanf("%d") and is now converted with base
-0, so a value with a leading zero would parse as octal. The kernel
-does not print dev_port with leading zeros.
+This is not a security problem since rte_rand() is documented
+as not being cryptographically secure.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Reviewed-by: Morten Brørup <mb@smartsharesystems.com>
 ---
- drivers/net/mana/mana.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+v2 - fix header inclusion
+   - add docbook comment
 
-diff --git a/drivers/net/mana/mana.c b/drivers/net/mana/mana.c
-index 0b72f711a1..39bfb5b4b7 100644
---- a/drivers/net/mana/mana.c
-+++ b/drivers/net/mana/mana.c
-@@ -14,6 +14,7 @@
- #include <rte_kvargs.h>
- #include <rte_eal_paging.h>
- #include <rte_pci.h>
-+#include <rte_sysfs.h>
+ lib/eal/common/rte_random.c  | 14 +++++++++++++-
+ lib/eal/include/rte_random.h |  8 +++++---
+ 2 files changed, 18 insertions(+), 4 deletions(-)
+
+diff --git a/lib/eal/common/rte_random.c b/lib/eal/common/rte_random.c
+index 576a32a46c..3cc0e3ec5f 100644
+--- a/lib/eal/common/rte_random.c
++++ b/lib/eal/common/rte_random.c
+@@ -8,6 +8,7 @@
+ #endif
+ #endif
+ #include <unistd.h>
++#include <stdlib.h>
  
- #include <infiniband/verbs.h>
- #include <infiniband/manadv.h>
-@@ -1282,6 +1283,7 @@ get_port_mac(struct ibv_device *device, unsigned int port,
- 	DIR *dir;
- 	struct dirent *dent;
- 	unsigned int dev_port;
-+	unsigned long val;
+ #include <rte_bitops.h>
+ #include <rte_branch_prediction.h>
+@@ -247,7 +248,18 @@ eal_rand_init(void)
  
- 	MANA_MKSTR(path, "%s/device/net", device->ibdev_path);
+ 	RTE_LCORE_VAR_ALLOC(rand_state);
  
-@@ -1293,23 +1295,15 @@ get_port_mac(struct ibv_device *device, unsigned int port,
- 		char *name = dent->d_name;
- 		char *mac = NULL;
+-	seed = __rte_random_initial_seed();
++	const char *env = getenv("DPDK_RANDOM_SEED");
++	if (env != NULL && *env != '\0') {
++		char *end;
++
++		errno = 0;
++		seed = strtoull(env, &end, 0);
++		if (errno != 0 || *end != '\0')
++			rte_exit(EXIT_FAILURE,
++				 "invalid DPDK_RANDOM_SEED: %s\n", env);
++	} else {
++		seed = __rte_random_initial_seed();
++	}
  
--		MANA_MKSTR(port_path, "%s/%s/dev_port", path, name);
--
- 		/* Ignore . and .. */
- 		if ((name[0] == '.') &&
- 		    ((name[1] == '\0') ||
- 		     ((name[1] == '.') && (name[2] == '\0'))))
- 			continue;
- 
--		file = fopen(port_path, "r");
--		if (!file)
--			continue;
--
--		ret = fscanf(file, "%u", &dev_port);
--		fclose(file);
--
--		if (ret != 1)
-+		if (rte_sysfs_parse_uint(&val, "%s/%s/dev_port", path, name) != 0)
- 			continue;
-+		dev_port = val;
- 
- 		/* Ethernet ports start at 0, IB port start at 1 */
- 		if (dev_port == port - 1) {
+ 	rte_srand(seed);
+ }
+diff --git a/lib/eal/include/rte_random.h b/lib/eal/include/rte_random.h
+index 15cbe6215a..bdd4001e78 100644
+--- a/lib/eal/include/rte_random.h
++++ b/lib/eal/include/rte_random.h
+@@ -20,9 +20,11 @@ extern "C" {
+ /**
+  * Seed the pseudo-random generator.
+  *
+- * The generator is automatically seeded by the EAL init with a timer
+- * value. It may need to be re-seeded by the user with a real random
+- * value.
++ * The generator is automatically seeded by the EAL init with
++ * a system provided random entropy source. But for testing
++ * it can be useful to force a repeatable starting point by
++ * setting the initial seed. This can be done by setting
++ * the `DPDK_RANDOM_SEED` environment variable.
+  *
+  * This function is not multi-thread safe in regards to other
+  * rte_srand() calls, nor is it in relation to concurrent rte_rand(),
 -- 
 2.53.0
 
