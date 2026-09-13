@@ -2,66 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2396C88E40
-	for <dpdk-dev@archiver.kernel.org>; Sun, 13 Sep 2026 04:08:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31468C88E56
+	for <dpdk-dev@archiver.kernel.org>; Sun, 13 Sep 2026 07:04:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 656C04027A;
-	Sun, 13 Sep 2026 06:08:13 +0200 (CEST)
-Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com
- [74.125.228.12]) by mails.dpdk.org (Postfix) with ESMTP id 08CCC4021E
- for <dev@dpdk.org>; Sun, 13 Sep 2026 06:08:12 +0200 (CEST)
-Received: by mail-pz2-f12.google.com with SMTP id
- 41be03b00d2f7-cc1cea50dc1so420751a12.0
- for <dev@dpdk.org>; Sat, 12 Sep 2026 21:08:11 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0B9464029D;
+	Sun, 13 Sep 2026 09:04:45 +0200 (CEST)
+Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com
+ [74.125.227.140])
+ by mails.dpdk.org (Postfix) with ESMTP id 3B93B4027A
+ for <dev@dpdk.org>; Sun, 13 Sep 2026 09:04:44 +0200 (CEST)
+Received: by mail-pj2-f12.google.com with SMTP id
+ 98e67ed59e1d1-396ccd66bb4so809349a91.1
+ for <dev@dpdk.org>; Sun, 13 Sep 2026 00:04:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1789272491; x=1789877291; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=elgqUVq7Ak28LIYTYKuSeC6YJx48tWwGU9jj2jNyEx0=;
- b=DpsSw/hbgTrAHm/kPpNjNEYodcnEPOd6QcaeH9LKxdxvOZDuF/qu5wkBQexE3wUpfK
- 0aYiswHFQPdZ9/NdN6Igc1vrFCO+0F2ZMwVpKjySD+dWYoV+I4V6qvExdpquu24LZ5/q
- FmgmhpKgDs+1hn3+t+NWGrugeDDoJy6Al5PZhCBMRgjKd9j21SORcEIX4FjwXuikxc1A
- z1cHpLoQUm0NQM/+CLfuo4FU3gWy/6y7dr5X8mX6EnxoX+VwYQ6n7c4Ed5qKdr2XIIub
- LJx5pDvTE9zDx4NtQEeCEaOyoiQ1DF6p6YGl4BIklvuaX2Q00SRdc2JXdfYQ1URKYZwS
- a5lA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1789272491; x=1789877291;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=gmail.com; s=20251104; t=1789283083; x=1789887883; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=elgqUVq7Ak28LIYTYKuSeC6YJx48tWwGU9jj2jNyEx0=;
- b=rVLTnEUfM5PjTCcVnNhq9vzgYsf/mdN3XLlk8xJZW7tTrsiIz6Fjh/s+imFIoUiVK5
- cc3mv1KNNng9WLlGNfXhGL3G9rWOnKXj+ZD62k2Uuhywq+XvxW1pFSWa4MMnia3pCFE7
- c4ZImOjyzj8TKKS1fuU79RQKd/t0uQN2v9DRtgiQkFvAzBKotABR2FqgeUSNfL10R3rY
- STf4X+ng+MzZclhtBoWqc6FG1A7MR0MdbNSNxHLD3t7SVbY5oWeoCMgJAJ0CJOrYZ49H
- w8uUpvoZERcPZEATzZLxVn8A05YJl0ApcDwKopFdbRedFlMpq4cxDd0BY9qSSZQw27Wg
- c5xA==
-X-Gm-Message-State: AFuF++lPwPQ11KfO3CtrX5aUyD6+Yb13lwVy/L6//BqqL99za3rkC4F2
- sYROb6MtY5wYss7COGn9OtyoG2mTO090q/BJzc8WNhyY5Gq7kbk6yz+B/Ii5Gx42
-X-Gm-Gg: AYBFou1AqPlO9g3Up7CfUl9GJhD6YOzo7YMTPd7D4u8/X6WWnzz8Rq0O+1BqVkPTVVK
- CkuK325B+ph9rpUOVbWSVJ/Z24T2EqTXX9Jk4T9fPDg30yC48DZgAmU6niPfmSp7PiuEovqPbqr
- lY02bGukbdBI8vOKhM9aRSEb+Md3wycB3La8NZhY6GWE3b0jgadXAEsGm7iudVnpLgoJpKwbw3W
- JmAk6EXV1AUICfjee2YtbfCa+ogBtXso0IgDH9kQrchhHmPdWUOT4s1cWqA0rLsu3U+pFp+AP1s
- w82BHi+iKP0xwDlcF+kCfCDTRXHoHzBs1sAUOfOlvlJZ9PxqYBh9LXv2wOe9aSN3I9prRGEgopc
- IdI3dNRjkiaaXyoV7mFfmq5WivoEuTmKh12sZ2/pDJrcutqQb9xpxzXZ21eTT6aAhoM15w8zOAB
- 7mAHissrgf6nCEmfwvbuo6ydC2lmriB0dv+Z77VH3lg9qVyhcIaFv/km6QiLKVZJEgqWjRrwp7C
- xRM97sMud+/O0KxC/RB/fmTGMS5tCRDrq7Ml3AbQGAkp6tE
-X-Received: by 2002:a05:6a20:a124:b0:3cc:917f:f302 with SMTP id
- adf61e73a8af0-3db0e0ea4ecmr10599457637.9.1789272490720; 
- Sat, 12 Sep 2026 21:08:10 -0700 (PDT)
+ bh=b+hcjxrlX4SWGZiqznNwbDw3QIVpXdwITzadbXFa5/4=;
+ b=UR8ZdVb6wx86KVasvF6y+YvungIcW7PZGQIE1p5LXfYoukjOnqyjxVrxm1M1WP+YkO
+ nZcRDsPC47CFT7ePpEJ2xduA/vUbTVEb1bA4c88lEq+xmONiNm1vDSM0r6Sgto7dPDoQ
+ 4lMVH8nLPw3MihewOh1SA2kuPESZUUhTHFbNGOHR8I/Rvi07fOayZ/VE5N6jtHi3d4nb
+ kPujMnfc+A1BNpV+iUGitf2EpXgBYAN4k2hls3K3iHs92r+crxbI7cYI6xyG+feZtUxc
+ 2dHuuEdDgUOQ8ulmePHrwub+YxRZVGex2M7Eaxkio7dVqz0WcDnnrEzLGVCheE7vZ2G0
+ GsIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1789283083; x=1789887883;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=b+hcjxrlX4SWGZiqznNwbDw3QIVpXdwITzadbXFa5/4=;
+ b=H00578CsebSpVl0yhEVccKzZd40PciD02KPmLkf/yiiCK6Ew8Uh0eaHpLAyeViigFo
+ bxUvKtCnasKiBsdFzXLTaY7K640vesLkrKTR2q0fhaAiOdCeo8/IvU19R6wsuXedpq4p
+ Qtih7+ShRqAE36EnYlCugjXkY/26iihMS9dv6AENihOuBOgR7OqUWaP0bASigs6sP/9e
+ RdhUfkRKr8pm0fM9B7Ogw9Uc4sUfBwOJQ0xWP8oaT38nn527NJ3BSRitLuWUBIHr6Utn
+ H6IDf2ebA0OEP+88oXY1B7ZOcJ1X8RVT3bguTf6QP65dLSCPxABXEZwoMhQElEDbeR7N
+ C9Xw==
+X-Gm-Message-State: AFuF++mAG5ogT8/wE1md4byI7oZ9OFvf/tsj2Y0dFfi1LnA5OL9KI1xD
+ zNW3/zdO9q92s23S0U9YjT7q8CQ25VAiw6Uz9C+5Ty7fmpDx7fnQKQQCMUS895RA
+X-Gm-Gg: AYBFou3re8CEVSCMqXUMdv1n/MNBBTeY/CTGu4j1kTxTwsHWHyk946wj/8lcHt1vGQX
+ klQM2KXF6X0LrnBgk+qkRDCWN8ILQxlo0cQ9IVkLb0KBSlkTSupWg5XSRblRm05HTp96lYza6pb
+ rvn2a0GO771ZnkgOCeKbyhVUlXgsZQCThD714L4oha1ro+sfrdUWO+GL2grUGWg9kv0PgAy1ReO
+ uJmG+c61qdeedp5ziPsrvkcgiUfHjWfQf3ftLUvc59sygV5ntZX5yEdLDjGzsb/RXIqe0dpMBNH
+ rJBCxG74qjKSpa+Ehx5DuMNEtouRyxi1db7mNM3MG2QlPVZeUfTG3kn9mzHLuqtEGV06t69R+8a
+ 4YYUAUQ3j/Yp4mHT6TlI4s1HFJ/iI2JHvORKrZKa3QoJvcCtDdn/+j2kh6NEMoE/9hsCMsIuBwo
+ o3E4GDu7sGcAMfmDvlQ/kibG+qLA1v02H8YJ8aTlBOYXSiCWzfj6k3bJsOVznbVV01HGPFL914d
+ xvoxny477Yf6mdqhWZKZcqCxtGPFuvYI0ZY8NXiSTw6rWjs2Q==
+X-Received: by 2002:a17:90b:5243:b0:398:c724:1bb1 with SMTP id
+ 98e67ed59e1d1-39dbc0c3777mr11868661a91.8.1789283082961; 
+ Sun, 13 Sep 2026 00:04:42 -0700 (PDT)
 Received: from amiya73TMT9m.aristanetworks.com ([49.207.230.155])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-33ba4cf72dbsm18792687eec.3.2026.09.12.21.08.07
+ 5a478bee46e88-33ba4e51449sm15630535eec.5.2026.09.13.00.04.40
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Sat, 12 Sep 2026 21:08:10 -0700 (PDT)
+ Sun, 13 Sep 2026 00:04:42 -0700 (PDT)
 From: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
 To: dev@dpdk.org
 Cc: ndabilpuram@marvell.com, jerinj@marvell.com, skori@marvell.com,
  asekhar@marvell.com, Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
-Subject: [PATCH] common/cnxk: fix NPA pool RANGE interrupt handling
-Date: Sun, 13 Sep 2026 09:38:00 +0530
-Message-Id: <20260913040800.60274-1-amiyaranjan.mohakud@gmail.com>
+Subject: [PATCH v2] common/cnxk: fix NPA pool RANGE interrupt handling
+Date: Sun, 13 Sep 2026 12:34:28 +0530
+Message-Id: <20260913070428.66628-1-amiyaranjan.mohakud@gmail.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20260913040800.60274-1-amiyaranjan.mohakud@gmail.com>
+References: <20260913040800.60274-1-amiyaranjan.mohakud@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -91,11 +95,12 @@ sqb_pool_populate() (NIX SQ buffer pools).
 Fixes: f765f5611240 ("common/cnxk: add NPA pool HW operations")
 Signed-off-by: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
 ---
- drivers/common/cnxk/roc_nix_queue.c     |  5 +++
- drivers/common/cnxk/roc_npa.c           | 46 ++++++++++++++++++++++++-
- drivers/common/cnxk/roc_npa.h           |  1 +
- drivers/mempool/cnxk/cnxk_mempool_ops.c |  5 +++
- 4 files changed, 56 insertions(+), 1 deletion(-)
+ drivers/common/cnxk/roc_nix_queue.c           |  5 ++
+ drivers/common/cnxk/roc_npa.c                 | 46 ++++++++++++++++++-
+ drivers/common/cnxk/roc_npa.h                 |  1 +
+ .../common/cnxk/roc_platform_base_symbols.c   |  1 +
+ drivers/mempool/cnxk/cnxk_mempool_ops.c       |  5 ++
+ 5 files changed, 57 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/common/cnxk/roc_nix_queue.c b/drivers/common/cnxk/roc_nix_queue.c
 index 075c9c1591..879cb217c0 100644
@@ -189,6 +194,18 @@ index db610cbd2c..8555765db8 100644
  void __roc_api roc_npa_aura_op_range_set(uint64_t aura_handle,
  					 uint64_t start_iova,
  					 uint64_t end_iova);
+diff --git a/drivers/common/cnxk/roc_platform_base_symbols.c b/drivers/common/cnxk/roc_platform_base_symbols.c
+index 063cb21aae..1a4fb11286 100644
+--- a/drivers/common/cnxk/roc_platform_base_symbols.c
++++ b/drivers/common/cnxk/roc_platform_base_symbols.c
+@@ -447,6 +447,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(roc_npa_aura_create)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_npa_aura_limit_modify)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_npa_pool_destroy)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_npa_aura_destroy)
++RTE_EXPORT_INTERNAL_SYMBOL(roc_npa_pool_range_int_enable)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_npa_pool_range_update_check)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_npa_zero_aura_handle)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_npa_aura_bp_configure)
 diff --git a/drivers/mempool/cnxk/cnxk_mempool_ops.c b/drivers/mempool/cnxk/cnxk_mempool_ops.c
 index 01b6247fbb..7e81f4347d 100644
 --- a/drivers/mempool/cnxk/cnxk_mempool_ops.c
