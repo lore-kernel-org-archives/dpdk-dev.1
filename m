@@ -2,21 +2,21 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD1D3C88E63
-	for <dpdk-dev@archiver.kernel.org>; Sun, 13 Sep 2026 17:35:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DDD2C88E5C
+	for <dpdk-dev@archiver.kernel.org>; Sun, 13 Sep 2026 17:36:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C8D9B4027A;
-	Sun, 13 Sep 2026 19:35:53 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 036B74027A;
+	Sun, 13 Sep 2026 19:36:27 +0200 (CEST)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id E9AB54026E
- for <dev@dpdk.org>; Sun, 13 Sep 2026 19:35:51 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id CCAC44026E
+ for <dev@dpdk.org>; Sun, 13 Sep 2026 19:36:25 +0200 (CEST)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id E37224D0EB; Sun, 13 Sep 2026 19:35:51 +0200 (CEST)
+ id C7D874D0FD; Sun, 13 Sep 2026 19:36:25 +0200 (CEST)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 2037] net/intel/ice: parse_bool clobbers adjacent
- devargs fields
-Date: Sun, 13 Sep 2026 17:35:52 +0000
+Subject: [DPDK/ethdev Bug 2038] net/intel/ice: xtr_field_offs parsed one byte
+ wide
+Date: Sun, 13 Sep 2026 17:36:26 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -35,7 +35,7 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-2037-3@https.bugs.dpdk.org/>
+Message-ID: <bug-2038-3@https.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: https://bugs.dpdk.org/
@@ -55,11 +55,10 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-https://bugs.dpdk.org/show_bug.cgi?id=3D2037
+https://bugs.dpdk.org/show_bug.cgi?id=3D2038
 
-            Bug ID: 2037
-           Summary: net/intel/ice: parse_bool clobbers adjacent devargs
-                    fields
+            Bug ID: 2038
+           Summary: net/intel/ice: xtr_field_offs parsed one byte wide
            Product: DPDK
            Version: 26.11
           Hardware: All
@@ -72,41 +71,20 @@ https://bugs.dpdk.org/show_bug.cgi?id=3D2037
           Reporter: stephen@networkplumber.org
   Target Milestone: ---
 
-drivers/net/intel/ice/ice_ethdev.c:2144, ice_ethdev.h:624
+drivers/net/intel/ice/ice_ethdev.c:735, ice_ethdev.h:637
 
-parse_bool() stores an int:
+handle_field_offs_arg() stores a uint8_t:
 
-        static int
-        parse_bool(const char *key, const char *value, void *args)
-        {
-                int *i =3D args;
-                ...
-                *i =3D (value[0] =3D=3D '1');
+        uint8_t *offset =3D offs_args;
+        ...
+        *offset =3D atoi(value);
 
-Three of its five callers pass the address of a uint8_t in struct
-ice_devargs:
+but the caller passes &ad->devargs.xtr_field_offs, which is an int. Only
+one of the four bytes is written, so the rest keeps whatever was there.
+Distinct from item 2 (different handler, opposite direction).
 
-        struct ice_devargs {
-                int rx_low_latency;
-                int safe_mode_support;
-                uint8_t proto_xtr_dflt;
-                uint8_t default_mac_disable;    <- 4 byte store
-                uint8_t proto_xtr[ICE_MAX_QUEUE_NUM];
-                uint8_t pin_idx;
-                uint8_t pps_out_ena;
-                uint8_t ddp_load_sched;         <- 4 byte store
-                uint8_t tm_exposed_levels;
-                uint8_t source_prune;           <- 4 byte store
-                uint32_t rl_burst_size;
-                ...
-
-"default-mac-disable" is the notable one: the three bytes past it land in
-proto_xtr[], which ice_parse_devargs() has just memset to PROTO_XTR_NONE a
-few lines earlier, so the protocol extraction configuration is silently
-altered. ddp_load_sched overruns into tm_exposed_levels/source_prune, and
-source_prune into rl_burst_size.
-
-Fixes: 66214b547c65 ("net/ice: add option to disable default MAC")
+Fixes: df539aaf35cb ("net/ice: refactor flex descriptor protocol field
+extraction")
 
 --=20
 You are receiving this mail because:
