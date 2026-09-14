@@ -2,62 +2,61 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C68BAC88E72
-	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 17:37:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07F4CC88E72
+	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 17:38:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1D20E410D3;
-	Mon, 14 Sep 2026 19:37:44 +0200 (CEST)
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com
- [209.85.210.181])
- by mails.dpdk.org (Postfix) with ESMTP id D8FA641109
- for <dev@dpdk.org>; Mon, 14 Sep 2026 19:37:41 +0200 (CEST)
-Received: by mail-pf1-f181.google.com with SMTP id
- d2e1a72fcca58-86908cbc011so5256846b3a.1
- for <dev@dpdk.org>; Mon, 14 Sep 2026 10:37:41 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0C3584111C;
+	Mon, 14 Sep 2026 19:37:49 +0200 (CEST)
+Received: from mail-pz2-f43.google.com (mail-pz2-f43.google.com
+ [74.125.228.43]) by mails.dpdk.org (Postfix) with ESMTP id BD78A4113D
+ for <dev@dpdk.org>; Mon, 14 Sep 2026 19:37:47 +0200 (CEST)
+Received: by mail-pz2-f43.google.com with SMTP id
+ d2e1a72fcca58-85469d249c5so2011539b3a.3
+ for <dev@dpdk.org>; Mon, 14 Sep 2026 10:37:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789407461;
- x=1790012261; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789407466;
+ x=1790012266; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=C7JK7M9VK27xxXe6PsJLwe4/YWV0H/4G1Eis3zsGIks=;
- b=TTnwQs7gtBVr9em7k1KI5DqjNKbvyJCzx+cm9Cmqr9Lg4BEhdOc9W28SQgEKK2EECc
- viaQEvbNz2/Wfod5jRnV0l/xA9mhSlb8958mj/26SwcZuIGY1V/d6Wh7UIdWPNo+K1Cj
- 3IZI3brk1xl5NNkXwIbahe1yu/deA5CEr/qqAx28PZ6o9kdVja6BxMtAnrch5oLWkG32
- 8S7Z/Nnt0oHgitg1PvGIHQY0doL2jA4sxf8V7u7jUaey4/MdDtSnCE6vGDhLdfyUY9Ge
- rjFt4i5J8L4MkcQwf0mwtAtrxA+Jrca2qHpzwFt7XKXBzGpt10mRAjFVTyGTOihUO8ef
- +3qA==
+ bh=COvGcDsH3cIpIRuKLkcMMWFJkYX7KhPqiNsZmjIkGn4=;
+ b=NelNEPNhGkB809pQjpBAbFU0zQDdIHMmjShme8TtVEP9bGJaptD5YBii9dIF7nMuxF
+ ifxRth1UMVPqEc1cKKxXZZre/hZUOT0QDC7Rjj8DJO31vCKQD4OIcF1Go8Tplf4us/NR
+ P90dTUqZEKo2O0zQi4327wLgJ/VmYhcSpFlatisTdQ22v8QjL1D4HVS/drmN8KNEfx2P
+ TQOJHOyjEnvaMLNgnwvq/hSnzyknvTHyyFL+TevjSVwIZlnndqENp9v6XR3rPJQfWigH
+ rah1tsCWICbXH7U84+zzVhM3IYFdcQzsz9x1kkkZvSBN22mf7Jt71fLbefduHgIc7coR
+ 59hA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1789407461; x=1790012261;
+ d=1e100.net; s=20251104; t=1789407466; x=1790012266;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=C7JK7M9VK27xxXe6PsJLwe4/YWV0H/4G1Eis3zsGIks=;
- b=e0J1Ft+OdjYVObBpu57Mez8HFdyMOvMjmP6U7zQ/b4mJL7rioj0Y4+ePz875zVBcBz
- hd/I6GcILeXtOhbJlwITisVIFPDWPPnoPWh/oPNhxhBXDxzulRNtkhQCorCnSDTC4Oav
- flGFx9ojpKz8iDy5kB2zOnqmISs8moZ1E0Z1PJNt7v3AayT5BMSBqLTS6gs5ZVqcL7QJ
- TuIoSvPwUNqTeDW4K98QycmN3mkEKQXgDVWrn1iyJ27+H78PveUg2rwEnBbl/eYdf7pE
- 098j28asposgoYqfR8GYgcHshwfxjDEI0nKglnevzp1WMaX/RLf/L/ao9ivCyAVB+zBm
- q83Q==
-X-Gm-Message-State: AFuF++nDbDT5UhYd0WdOI+zekZaqEMwplqQ2d7+KY2WtzX4p8cde9fi8
- oekHRR8P9GbZ92+ioAqaEFQj6Kt00GY67V19z/f+yiA67a5AWdg8ZOh3faHmHM6pIkdjXxrL/gx
- 7Ns1APXAGLA==
-X-Gm-Gg: AYBFou2HxejH8TMjPVQOjsSMQtrkMy3wG8WgZnbw2Da7bTGv2EG/HBHWK1aUXA4jheR
- 1wcH6Tyh4uQDp5+AD7Ykm5A97kDTcPUAKH2eOYKLG9c3dDZat4I+agZk5GIEsHRKelUqt7jfewO
- XemmgRR9dLs2Eks26yEfY8Un8Sp3TxU9dIYLu8AAyzCHZlJ6XhSqZJn/0KQOgah3FeLKMQXYZPi
- F3vkS6NiAV8jkvSRgLXOqNsgTrh058F348m+ItArT7VaOCthbnw6ncvPoY2fkaI2o++HAHwrR2A
- 8pYfZjRppnws6ZnPym89RTqQ+ed3Fe/sKDEdPJ7ZsPEX/sQBMkb5eeU4Vy6hZ/zTbcJsdRiWq+J
- p0g6TDWgz2mtD+3WAyXK9ORqLoPV6naBJLFdCR5dgti8d5c5jkP2aZkUf4CWWsK5hOxw8IQjgWZ
- 8Dr5xSarBINMlIEOvFDw5uAcxiOLazabl+aq5zhmog4koQRVAEyzp9uB9oDzq+V/7CXjbPm61jH
- AACB9+NQ1wCYR3Iq7AA+QEBYmIzv++ZISBC8Q==
-X-Received: by 2002:a05:6a00:438d:b0:85f:2f32:7a53 with SMTP id
- d2e1a72fcca58-86f85ae9d18mr7281434b3a.17.1789407461029; 
- Mon, 14 Sep 2026 10:37:41 -0700 (PDT)
+ bh=COvGcDsH3cIpIRuKLkcMMWFJkYX7KhPqiNsZmjIkGn4=;
+ b=bMKBgbcE4LSTmKTBklVR5ykb0E/G+2JB4X3RLuFH30v6BVreSsQlb8WQGeapotBDQ5
+ GV8/dQ7swyy03ufPZFeQaaDjaNIHCnu+2MSOguYqgumxfik4dW0RUUrYqat9bYkmZHvQ
+ Fh4kShXqyPK/prHYG67eoiSuvPah1YVys6cR50DmW+507EbJkhtnfLiGL5yMJc+0R2Ne
+ ounziQ133sv0Rh49xdMg0eVQX7uBfjYOXJ9USUW08JYaRFLr2nwuH/rTFRLnJpxPTbzz
+ pJ9AxTaxvTWt/bVHYC6/PO7Tpt0wilREd63SQp/0O+PMcfTYsjcVcRhfeSgy9wbt6CKx
+ r9iw==
+X-Gm-Message-State: AFuF++nj06uBOqJ2te/sf7EOZCzGhic4e0EAMVnZkIB872/WuVfsi4kG
+ kSjabuezQaMJBu6Haesql2+AHJ+UzF1Qj2Hk5hIAfvYOOFFwysjkjtv0g4g99/ZDFVHAef2vsaC
+ GCCmvWMlkyQ==
+X-Gm-Gg: AYBFou1EUGMWLAYfLUy9+Ld/YtkVAl8DItUtvka6HGT9szDaEG3FMp9e/R/JzDLh1yt
+ 8+V3C2c/BI7q+p62lLNGYbzLVAinyhJqvxkmuIwxrzk9rUqpxwafbh2CXM94mAvibdQ0h12QoOX
+ e0g5qaAdnQ7KaVKy3l5+hxCWP039Ig8L5YW+EWdO2uSZzz4WW/H39QZhipcCPx4o7K5fat0tilN
+ l3YfeNDnQD/PYYVbMDLBMLkiuFvxBUR1e0BF3gR7jSaVxelZUKU2O5Ix1BNeBpwXuLnAAzTQCNI
+ MA8x4BF1/gArwuo5vhaYvhIoSM68id/Kj8NGwkJvUkY5F1KtHUd4h9+pB2QTFMhaRjKJNvuWyPC
+ RzAgWkd2bPPzWNFpCX6O2GcwOPy3DWgCn9Pe1UZhOiT7ixvnfdipsuZS7oqxFDIKvOXvDGTjgGb
+ 00DbTEdUKzQ8c9e3GtzLHwlmDLerzBBD0P/bXpS3vGvMl0/SAUIWUvszBuagVlChF8HRFoNMVy8
+ UFJtvsPadI4e9Zoth9boZf0QTdk0TeqKZWgDPPTWDldjHEB
+X-Received: by 2002:a05:6a00:3022:b0:852:38ff:b4b6 with SMTP id
+ d2e1a72fcca58-86f85207cf0mr6749022b3a.17.1789407465697; 
+ Mon, 14 Sep 2026 10:37:45 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-86b286c49d2sm5159867b3a.10.2026.09.14.10.37.36
+ d2e1a72fcca58-86b286c49d2sm5159867b3a.10.2026.09.14.10.37.41
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 14 Sep 2026 10:37:40 -0700 (PDT)
+ Mon, 14 Sep 2026 10:37:45 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
@@ -65,9 +64,9 @@ Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
  Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
  Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
-Subject: [PATCH v3 7/9] common/mlx5: use common sysfs routines
-Date: Mon, 14 Sep 2026 10:36:20 -0700
-Message-ID: <20260914173700.2795983-8-stephen@networkplumber.org>
+Subject: [PATCH v3 8/9] net/mlx5: use common sysfs routines
+Date: Mon, 14 Sep 2026 10:36:21 -0700
+Message-ID: <20260914173700.2795983-9-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260914173700.2795983-1-stephen@networkplumber.org>
 References: <20260912063319.4117869-1-stephen@networkplumber.org>
@@ -87,90 +86,102 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-mlx5_sys_roce_disable() read the roce_enable attribute and then
-reopened the same file to write it. Use the EAL read and write
-routines instead.
+Read the bonding interface indexes with the EAL routine rather than
+opening each file and parsing it with fscanf().
 
-The dev_port lookup is left alone: it selects the scanf format at
-runtime and distinguishes ENOENT from other errors to fall back to
-dev_id on older kernels.
+The index was read with fscanf("%u") and is now converted with base
+0, so a value with a leading zero would parse as octal. The kernel
+does not print ifindex with leading zeros.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/common/mlx5/linux/mlx5_common_os.c | 39 ++++++++--------------
- 1 file changed, 14 insertions(+), 25 deletions(-)
+ drivers/net/mlx5/linux/mlx5_ethdev_os.c | 17 +++++------------
+ drivers/net/mlx5/linux/mlx5_os.c        | 13 +++++--------
+ 2 files changed, 10 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/common/mlx5/linux/mlx5_common_os.c b/drivers/common/mlx5/linux/mlx5_common_os.c
-index 3e9cd86062..cf496b0b58 100644
---- a/drivers/common/mlx5/linux/mlx5_common_os.c
-+++ b/drivers/common/mlx5/linux/mlx5_common_os.c
-@@ -16,6 +16,7 @@
- #include <eal_export.h>
- #include <rte_errno.h>
+diff --git a/drivers/net/mlx5/linux/mlx5_ethdev_os.c b/drivers/net/mlx5/linux/mlx5_ethdev_os.c
+index 4bbc590e91..d1c03d66af 100644
+--- a/drivers/net/mlx5/linux/mlx5_ethdev_os.c
++++ b/drivers/net/mlx5/linux/mlx5_ethdev_os.c
+@@ -36,6 +36,7 @@
  #include <rte_string_fns.h>
+ #include <rte_rwlock.h>
+ #include <rte_cycles.h>
 +#include <rte_sysfs.h>
- #include <bus_pci_driver.h>
- #include <bus_auxiliary_driver.h>
  
-@@ -658,45 +659,33 @@ mlx5_nl_roce_disable(const char *addr)
- 	return ret;
- }
- 
-+#define MLX5_ROCE_ENABLE_PATH "/sys/bus/pci/devices/%s/roce_enable"
-+
- /* Try to disable ROCE by sysfs. */
- static int
- mlx5_sys_roce_disable(const char *addr)
+ #include <mlx5_glue.h>
+ #include <mlx5_devx_cmds.h>
+@@ -1192,27 +1193,19 @@ mlx5_sysfs_bond_info(unsigned int pf_ifindex, unsigned int *ifindex,
+ 		     char *ifname)
  {
--	FILE *file_o;
--	int enable;
-+	unsigned long enable;
- 	int ret;
+ 	char name[IF_NAMESIZE];
+-	FILE *file;
+ 	unsigned int index;
+-	int ret;
++	unsigned long val;
  
--	MKSTR(file_p, "/sys/bus/pci/devices/%s/roce_enable", addr);
--	file_o = fopen(file_p, "rb");
--	if (!file_o) {
-+	if (rte_sysfs_parse_uint(&enable, MLX5_ROCE_ENABLE_PATH, addr) != 0) {
- 		rte_errno = ENOTSUP;
- 		return -ENOTSUP;
+ 	if (!if_indextoname(pf_ifindex, name) || !strlen(name)) {
+ 		rte_errno = errno;
+ 		return -rte_errno;
  	}
--	ret = fscanf(file_o, "%d", &enable);
--	if (ret != 1) {
--		rte_errno = EINVAL;
--		ret = EINVAL;
--		goto close;
--	} else if (!enable) {
--		ret = 0;
-+	if (enable == 0) {
- 		DRV_LOG(INFO, "ROCE has already disabled(sysfs).");
--		goto close;
-+		return 0;
+-	MKSTR(bond_if, "/sys/class/net/%s/master/ifindex", name);
+ 	/* read bond ifindex */
+-	file = fopen(bond_if, "rb");
+-	if (file == NULL) {
+-		rte_errno = errno;
+-		return -rte_errno;
+-	}
+-	ret = fscanf(file, "%u", &index);
+-	fclose(file);
+-	if (ret <= 0) {
+-		rte_errno = errno;
++	if (rte_sysfs_parse_uint(&val, "/sys/class/net/%s/master/ifindex", name) != 0) {
++		rte_errno = ENODEV;
+ 		return -rte_errno;
  	}
--	fclose(file_o);
--	file_o = fopen(file_p, "wb");
--	if (!file_o) {
-+
-+	ret = rte_sysfs_write_string("0\n", MLX5_ROCE_ENABLE_PATH, addr);
-+	if (ret != 0) {
- 		rte_errno = ENOTSUP;
-+		DRV_LOG(DEBUG, "Failed to disable ROCE by sysfs.");
- 		return -ENOTSUP;
- 	}
--	fprintf(file_o, "0\n");
--	ret = 0;
--close:
--	if (ret)
--		DRV_LOG(DEBUG, "Failed to disable ROCE by sysfs: %d.", ret);
--	else
--		DRV_LOG(INFO, "ROCE is disabled by sysfs successfully.");
--	fclose(file_o);
--	return ret;
-+
-+	DRV_LOG(INFO, "ROCE is disabled by sysfs successfully.");
-+	return 0;
- }
++	index = val;
+ 	if (ifindex)
+ 		*ifindex = index;
  
- static int
+diff --git a/drivers/net/mlx5/linux/mlx5_os.c b/drivers/net/mlx5/linux/mlx5_os.c
+index adc5878296..203e9339bb 100644
+--- a/drivers/net/mlx5/linux/mlx5_os.c
++++ b/drivers/net/mlx5/linux/mlx5_os.c
+@@ -29,6 +29,7 @@
+ #include <rte_string_fns.h>
+ #include <rte_alarm.h>
+ #include <rte_eal_paging.h>
++#include <rte_sysfs.h>
+ 
+ #include <mlx5_glue.h>
+ #include <mlx5_devx_cmds.h>
+@@ -2103,6 +2104,7 @@ mlx5_device_bond_pci_match(const struct ibv_device *ibdev,
+ 		char tmp_str[IF_NAMESIZE + 32];
+ 		struct rte_pci_addr pci_addr;
+ 		struct mlx5_switch_info	info;
++		unsigned long val;
+ 		int ret;
+ 
+ 		/* Process slave interface names in the loop. */
+@@ -2140,15 +2142,10 @@ mlx5_device_bond_pci_match(const struct ibv_device *ibdev,
+ 			break;
+ 		}
+ 		/* Get ifindex. */
+-		snprintf(tmp_str, sizeof(tmp_str),
+-			 "/sys/class/net/%s/ifindex", ifname);
+-		file = fopen(tmp_str, "rb");
+-		if (!file)
+-			break;
+-		ret = fscanf(file, "%u", &ifindex);
+-		fclose(file);
+-		if (ret != 1)
++		if (rte_sysfs_parse_uint(&val, "/sys/class/net/%s/ifindex",
++				ifname) != 0)
+ 			break;
++		ifindex = val;
+ 		/* Save bonding info. */
+ 		snprintf(bond_info->ports[info.port_name].ifname,
+ 			 sizeof(bond_info->ports[0].ifname), "%s", ifname);
 -- 
 2.53.0
 
