@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33D97C88E72
-	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 17:37:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE20AC88E72
+	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 17:37:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8BA52410E8;
-	Mon, 14 Sep 2026 19:37:31 +0200 (CEST)
-Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com
- [74.125.228.12]) by mails.dpdk.org (Postfix) with ESMTP id D2223410E3
- for <dev@dpdk.org>; Mon, 14 Sep 2026 19:37:29 +0200 (CEST)
-Received: by mail-pz2-f12.google.com with SMTP id
- d2e1a72fcca58-85469e25400so1823871b3a.0
- for <dev@dpdk.org>; Mon, 14 Sep 2026 10:37:29 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 803F7410CF;
+	Mon, 14 Sep 2026 19:37:34 +0200 (CEST)
+Received: from mail-pz2-f42.google.com (mail-pz2-f42.google.com
+ [74.125.228.42]) by mails.dpdk.org (Postfix) with ESMTP id 93584410CF
+ for <dev@dpdk.org>; Mon, 14 Sep 2026 19:37:33 +0200 (CEST)
+Received: by mail-pz2-f42.google.com with SMTP id
+ d2e1a72fcca58-86e6d007703so1273555b3a.0
+ for <dev@dpdk.org>; Mon, 14 Sep 2026 10:37:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789407449;
- x=1790012249; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789407453;
+ x=1790012253; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=JcDCqa41SUZYQc3ssPw0VoH00GkPI+KadSVaYbX95/M=;
- b=g90tgA7GQL3AopIbv1gAc/BgOuRPCOp8Otv1iYgF7PAY2L8NpdMmM5McVe1eB9BjIe
- FWhkiA+kPAoqpH4/Z8LANwLT8KADNLZVuXpr6Gfv5RaEHTJdwARL2NLOvjPK8OZ8OlWA
- H8nq7vbeIpqIXVdyrs2OzxVv9fq1hK3m8U9L+pbUIh8cSsr3co50VLHnWoQOAiUCNZC0
- ixoLTbyUxc63AERrzRAHCtFZ70Yk+XdlYUcayyJgGWh+3DuAf/jRHWePMBdUQUqG5NNP
- f0WFrQEavg5SBXkWx2rYJ9dGGRME8mKj2v01VMtkYu+H1lkg03SCKbtvLcM3kPsY+XJX
- 5eWA==
+ bh=oJzuvyFIDuqkiRhRlkh1QAssAqOcSqpT5LMsZ0dsZd8=;
+ b=grSe1mfFErrjm5OHuHyyF1gshWSNYLuu7afPCxvj6LpHxLrkNSGnE29+dkiB8e/if/
+ bINo94WPGEpxHDLyM/+8SdRzSxGo8nZeNWt5CjWLoRoboE4EgePXi1xM2ZLrYSJ2nPSn
+ NJ+h/Iltd3Hcnk0fH1TlnckF2k6URQKy1VvlKJ1grEHK1Nfn/VlRDNyqcc6OO1gzPAp8
+ TZB7dtoaYdGFUaALVyE1VlMUDKjolf2RNSohRoSMsqLxRdVLPROpeBxYmB4XjGhajxiO
+ w5AxNnGItJFWkNueynWsM6TIpYuKE0YsRcZW8Lsf9y/4N43IGdpA8yadeck33Quryz8/
+ wuuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1789407449; x=1790012249;
+ d=1e100.net; s=20251104; t=1789407453; x=1790012253;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=JcDCqa41SUZYQc3ssPw0VoH00GkPI+KadSVaYbX95/M=;
- b=oCuEm6G32AW+EL1Zl9LS/rpkRvEXDQ2YMUQ1bdNTgABR5oxqVAzRXWJWFUjeB6wsiu
- /+/m0LPjHL0YklJKsr1sEmCT6qNWt32cMmjMn3LEIUW4vyQt3POwMTgDbbnTksD9uqAG
- VhH5H8r0CQg8YzsbR9ZkPIN9b/Rr0KGOv36PnyICYwCyt3XdpW3IVY1WTTTJa/ki2U95
- qGZADjSvUgk2DWEvyauqKlj66i+McqsEWZoAAxPmg/y7O0LjNOuBCBwQvnRvpbsJQisa
- LMqMOa2yB4xOiVQpF1sIAZO4rU0GqUeySuZ0AXUwkoxliTC+YDhowBykOG6can4OI6fG
- zrsA==
-X-Gm-Message-State: AFuF++kl0eV/iyGJ4CA59UjaZJOc1HrGd3qvMaqqLl+qYAo4Dl6Rc4kp
- Ze1buSBUMHNz08oxvGqd+NhwB1CRpQBteEuOZUkm2uL+sWBj9Bic7FCryhBcFIBspRdUbp169/A
- LBlIK9SI=
-X-Gm-Gg: AYBFou3AZpTlFAoVuqnfVoulziG+Qc7kIiG3xyyyoVyy7ouaLprqh7GThbvMiw8t1OU
- OoPh/qtXT4vVXn09DmI9VpoCkAWwvS0xkW8k6En0xSWrIaTf3XZmja7OkxTGGy3SV0zF6ydkztF
- y3N0M0+RGH3c6FUJP5A8zoX7ilx0E1tzE1va/VsvVOQH532NPHz4pldvea2xQGfdtSijx6ZE2da
- ZTSKB64HZ48TefHvKcMVfE/Ybaj3JXE7SKYqs+buZsS0yNhRq5xP1lADU9Jrurv6U/FEjtURjzr
- CTMANw1PqVh+PgH1uBh+VVnm1H+u7mICh4sZU+gbis3tfAxy70VjGz0fUGMPoyMX1roEW2g5soS
- ZCMP9HBRP4dws5rwDoGzZMaT2hnXk6TwT0y60k51Y9VmHs2G9ZaJdrXveY9vfVkYh6IKvck/55m
- vHXmn7DNKgFyLOlXj6Mc+KNc1A9eWPM44qNN+o72snKOI+0mFnJwkEY+NQl+mtSWRBYCw/BNMkO
- oKDiI4ROEy1bjsnFIOjx1FaifG+4OkEkq/Wsg==
-X-Received: by 2002:a05:6a00:148e:b0:848:67ca:bfd with SMTP id
- d2e1a72fcca58-86f858ed353mr7712368b3a.16.1789407449021; 
- Mon, 14 Sep 2026 10:37:29 -0700 (PDT)
+ bh=oJzuvyFIDuqkiRhRlkh1QAssAqOcSqpT5LMsZ0dsZd8=;
+ b=okaKBuvK2ZpyNb6SQwNLler+sM30W2A6JL87x6jJA1TEkCBMTyWIaPlSt4gExNVRII
+ 9L1A0dA96Bkt6yJQTDSfhl35nOMvqUPUo7JF5lw4vvupxEPxhAPwzmTxRx0cql+4I6S4
+ zszQZuJqR9hvI1NFvuV+PtNTp1CC50fitc3FShf3j8sTmOWVm9U+eFyUtBu145c7qzNm
+ 13qK+I+w+FkKp5yjLDYZNCE3QIIcZcy/Jo3SIn+tm2s4FBLdsY9y3oTWPia1SVWh3w3f
+ 2qNsaBJB9FaX7iciU+wgzzmYEVyVB1eP56OsWIONSwXs1uXst9yMQt6mCXhgiBLIsSuT
+ pW7w==
+X-Gm-Message-State: AFuF++l8EzoPHwqujVkURPHldlBwl3MFK8THpB0SQJxe3U7SkSrqkUA3
+ Zu/mRXKqrzgWN/MwRtocCZ0nBEbWXLWEzImT6vmR1UVgfUli33PeNQZ7P2fxq5hpv/+e/BOCxdI
+ l1XUeEXo=
+X-Gm-Gg: AYBFou1Dpq94aZJSnsnG2wdpM+sBCOTlJSpH/TtNPpiZE/YQlg7J2duU3EzyDrmO4ST
+ ErQqRrGBIrlFpcmwJLfZPU2viVn/MJrOOdG7FI+5xQTcpgTbs4UAgukCHuOSPQoDlvk2MuGy6au
+ UQJfzHYWUOWHTytmupX474kotbXGnSv00+e9a+Om8XLQePGO3Nra7U/365Gj0amC7wA0+oooJ4r
+ Y6WIwePhYvwJSNGlJdJ6kpVKDx2Agzum/d1FBm7bNm6+sHLrt1kV+At1YN5CA9KMkGenPwgEe6G
+ IsmvtD1oy01qsbIXgHkAWYS84CfcWOjTHruaCIACj5yKbXDEvP0db/h5eOkf3U526Hw6AhzECZ3
+ hnFnc/4RDcif5t3MNUKiH2St47VTOe+FEzHHdQCfTfFFl6LM0jmKcjBYNswHIqZPH/AVJXv5dKH
+ MXipB9lt299+lN4uph9GXBueqOv2bh1P2xrNS6q/GIbbNuvRKGcwE94QeIuxHDdQDaqPW4jnFRk
+ Qsf3CJrtYirbkpLiPkARMOs/njSqOrkK7qWrA==
+X-Received: by 2002:a05:6a00:340b:b0:851:8012:c38b with SMTP id
+ d2e1a72fcca58-86f8422f2admr7136472b3a.10.1789407452558; 
+ Mon, 14 Sep 2026 10:37:32 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-86b286c49d2sm5159867b3a.10.2026.09.14.10.37.26
+ d2e1a72fcca58-86b286c49d2sm5159867b3a.10.2026.09.14.10.37.29
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 14 Sep 2026 10:37:28 -0700 (PDT)
+ Mon, 14 Sep 2026 10:37:32 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Long Li <longli@microsoft.com>, Wei Hu <weh@microsoft.com>
-Subject: [PATCH v3 4/9] bus/vmbus: use common sysfs routines
-Date: Mon, 14 Sep 2026 10:36:17 -0700
-Message-ID: <20260914173700.2795983-5-stephen@networkplumber.org>
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Sivaprasad Tummala <sivaprasad.tummala@amd.com>
+Subject: [PATCH v3 5/9] power: use common sysfs routines
+Date: Mon, 14 Sep 2026 10:36:18 -0700
+Message-ID: <20260914173700.2795983-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260914173700.2795983-1-stephen@networkplumber.org>
 References: <20260912063319.4117869-1-stephen@networkplumber.org>
@@ -83,65 +84,797 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Replace the open coded read in vmbus_uio_sysfs_read() with the EAL
-routine. The range check and the -ERANGE return are unchanged.
+The power library and its backends open a sysfs file, read one value
+from it, and close it again in many places. Where the file is only
+read once, use the EAL routines instead.
 
-Two things do change. On an open failure the helper now returns -EIO
-rather than -errno; both callers only pass it to strerror(-err) in a
-log message, so this is message text only. And subchannel_id and
-monitor_id were read with fscanf("%u") and are now converted with
-base 0, so a value with a leading zero would parse as octal. Neither
-attribute is printed with leading zeros by the kernel.
+Add power_sysfs_read_u32() as a thin wrapper so the backends keep
+reading into a uint32_t. It rejects a value that does not fit rather
+than truncating it, which the open coded fscanf("%u") could not.
+
+The files that are held open for the lifetime of the device, the
+"rw+" handles used to repeatedly read and write the scaling
+frequency, are left alone: they are not a single read, and closing
+and reopening them on every frequency change would be a behaviour
+change on a hot path.
+
+This also removes a few cases where the FILE pointer was left
+uninitialised and then tested against NULL in the cleanup path.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/bus/vmbus/linux/vmbus_uio.c | 24 +++++-------------------
- 1 file changed, 5 insertions(+), 19 deletions(-)
+ drivers/power/acpi/acpi_cpufreq.c             | 21 ++--
+ drivers/power/amd_pstate/amd_pstate_cpufreq.c | 63 ++----------
+ drivers/power/cppc/cppc_cpufreq.c             | 69 ++-----------
+ .../power/intel_pstate/intel_pstate_cpufreq.c | 99 +++----------------
+ drivers/power/intel_uncore/intel_uncore.c     | 32 ++----
+ lib/power/power_common.c                      | 52 +++++-----
+ lib/power/power_common.h                      |  6 ++
+ lib/power/rte_power_qos.c                     | 29 +-----
+ 8 files changed, 87 insertions(+), 284 deletions(-)
 
-diff --git a/drivers/bus/vmbus/linux/vmbus_uio.c b/drivers/bus/vmbus/linux/vmbus_uio.c
-index fbafc5027d..50e58f9b65 100644
---- a/drivers/bus/vmbus/linux/vmbus_uio.c
-+++ b/drivers/bus/vmbus/linux/vmbus_uio.c
-@@ -18,6 +18,7 @@
- #include <rte_malloc.h>
- #include <rte_bus_vmbus.h>
+diff --git a/drivers/power/acpi/acpi_cpufreq.c b/drivers/power/acpi/acpi_cpufreq.c
+index af85a8cdec..84e33375d0 100644
+--- a/drivers/power/acpi/acpi_cpufreq.c
++++ b/drivers/power/acpi/acpi_cpufreq.c
+@@ -9,6 +9,7 @@
+ #include <rte_memcpy.h>
+ #include <rte_stdatomic.h>
  #include <rte_string_fns.h>
 +#include <rte_sysfs.h>
  
- #include "private.h"
- 
-@@ -334,27 +335,12 @@ int vmbus_uio_map_rings(struct vmbus_channel *chan)
- static int vmbus_uio_sysfs_read(const char *dir, const char *name,
- 				unsigned long *val, unsigned long max_range)
+ #include "acpi_cpufreq.h"
+ #include "power_common.h"
+@@ -111,21 +112,14 @@ power_set_governor_original(struct acpi_power_info *pi)
+ static int
+ power_get_available_freqs(struct acpi_power_info *pi)
  {
--	char path[PATH_MAX];
 -	FILE *f;
--	int ret;
++	char *freqs[RTE_MAX_LCORE_FREQS];
+ 	int ret = -1, i, count;
+-	char *p;
+ 	char buf[BUFSIZ];
+-	char *freqs[RTE_MAX_LCORE_FREQS];
 -
--	snprintf(path, sizeof(path), "%s/%s", dir, name);
--	f = fopen(path, "r");
--	if (!f) {
--		VMBUS_LOG(ERR, "can't open %s:%s",
--			  path, strerror(errno));
--		return -errno;
-+	if (rte_sysfs_parse_uint(val, "%s/%s", dir, name) < 0) {
-+		VMBUS_LOG(ERR, "can't read %s/%s", dir, name);
-+		return -EIO;
- 	}
+-	open_core_sysfs_file(&f, "r", POWER_SYSFILE_AVAIL_FREQ, pi->lcore_id);
+-	if (f == NULL) {
+-		POWER_LOG(ERR, "failed to open %s",
+-				POWER_SYSFILE_AVAIL_FREQ);
+-		goto out;
+-	}
++	char *p;
  
--	if (fscanf(f, "%lu", val) != 1)
--		ret = -EIO;
--	else if (*val > max_range)
--		ret = -ERANGE;
--	else
--		ret = 0;
--	fclose(f);
+-	ret = read_core_sysfs_s(f, buf, sizeof(buf));
+-	if ((ret) < 0) {
++	ret = rte_sysfs_parse_string(buf, sizeof(buf), POWER_SYSFILE_AVAIL_FREQ,
++			pi->lcore_id);
++	if (ret < 0) {
+ 		POWER_LOG(ERR, "Failed to read %s",
+ 				POWER_SYSFILE_AVAIL_FREQ);
+ 		goto out;
+@@ -169,9 +163,6 @@ power_get_available_freqs(struct acpi_power_info *pi)
+ 	POWER_DEBUG_LOG("%d frequency(s) of lcore %u are available",
+ 			count, pi->lcore_id);
+ out:
+-	if (f != NULL)
+-		fclose(f);
 -
--	return ret;
-+	return *val > max_range ? -ERANGE : 0;
+ 	return ret;
  }
  
- static bool vmbus_uio_ring_present(const struct rte_vmbus_device *dev,
+diff --git a/drivers/power/amd_pstate/amd_pstate_cpufreq.c b/drivers/power/amd_pstate/amd_pstate_cpufreq.c
+index af9c1309f3..1d9d4cb495 100644
+--- a/drivers/power/amd_pstate/amd_pstate_cpufreq.c
++++ b/drivers/power/amd_pstate/amd_pstate_cpufreq.c
+@@ -103,34 +103,19 @@ power_set_governor_userspace(struct amd_pstate_power_info *pi)
+ static int
+ power_check_turbo(struct amd_pstate_power_info *pi)
+ {
+-	FILE *f_nom = NULL, *f_max = NULL;
+ 	int ret = -1;
+ 	uint32_t nominal_perf = 0, highest_perf = 0;
+ 
+-	open_core_sysfs_file(&f_max, "r", POWER_SYSFILE_HIGHEST_PERF,
++	ret = power_sysfs_read_u32(&highest_perf, POWER_SYSFILE_HIGHEST_PERF,
+ 			pi->lcore_id);
+-	if (f_max == NULL) {
+-		POWER_LOG(ERR, "failed to open %s",
+-				POWER_SYSFILE_HIGHEST_PERF);
+-		goto err;
+-	}
+-
+-	open_core_sysfs_file(&f_nom, "r", POWER_SYSFILE_NOMINAL_PERF,
+-			pi->lcore_id);
+-	if (f_nom == NULL) {
+-		POWER_LOG(ERR, "failed to open %s",
+-				POWER_SYSFILE_NOMINAL_PERF);
+-		goto err;
+-	}
+-
+-	ret = read_core_sysfs_u32(f_max, &highest_perf);
+ 	if (ret < 0) {
+ 		POWER_LOG(ERR, "Failed to read %s",
+ 				POWER_SYSFILE_HIGHEST_PERF);
+ 		goto err;
+ 	}
+ 
+-	ret = read_core_sysfs_u32(f_nom, &nominal_perf);
++	ret = power_sysfs_read_u32(&nominal_perf, POWER_SYSFILE_NOMINAL_PERF,
++			pi->lcore_id);
+ 	if (ret < 0) {
+ 		POWER_LOG(ERR, "Failed to read %s",
+ 				POWER_SYSFILE_NOMINAL_PERF);
+@@ -156,10 +141,6 @@ power_check_turbo(struct amd_pstate_power_info *pi)
+ 	}
+ 
+ err:
+-	if (f_max != NULL)
+-		fclose(f_max);
+-	if (f_nom != NULL)
+-		fclose(f_nom);
+ 
+ 	return ret;
+ }
+@@ -171,52 +152,30 @@ power_check_turbo(struct amd_pstate_power_info *pi)
+ static int
+ power_get_available_freqs(struct amd_pstate_power_info *pi)
+ {
+-	FILE *f_min = NULL, *f_max = NULL, *f_nom = NULL;
+ 	int ret = -1, nominal_idx = -1;
+ 	uint32_t scaling_min_freq = 0, scaling_max_freq = 0;
+ 	uint32_t i, num_freqs = RTE_MAX_LCORE_FREQS;
+ 	uint32_t nominal_freq = 0, scaling_freq = 0;
+ 	uint32_t freq_calc = 0;
+ 
+-	open_core_sysfs_file(&f_max, "r", POWER_SYSFILE_SCALING_MAX_FREQ,
++	ret = power_sysfs_read_u32(&scaling_max_freq, POWER_SYSFILE_SCALING_MAX_FREQ,
+ 			pi->lcore_id);
+-	if (f_max == NULL) {
+-		POWER_LOG(ERR, "failed to open %s",
+-				POWER_SYSFILE_SCALING_MAX_FREQ);
+-		goto out;
+-	}
+-
+-	open_core_sysfs_file(&f_min, "r", POWER_SYSFILE_SCALING_MIN_FREQ,
+-			pi->lcore_id);
+-	if (f_min == NULL) {
+-		POWER_LOG(ERR, "failed to open %s",
+-				POWER_SYSFILE_SCALING_MIN_FREQ);
+-		goto out;
+-	}
+-
+-	open_core_sysfs_file(&f_nom, "r", POWER_SYSFILE_NOMINAL_FREQ,
+-			pi->lcore_id);
+-	if (f_nom == NULL) {
+-		POWER_LOG(ERR, "failed to open %s",
+-				POWER_SYSFILE_NOMINAL_FREQ);
+-		goto out;
+-	}
+-
+-	ret = read_core_sysfs_u32(f_max, &scaling_max_freq);
+ 	if (ret < 0) {
+ 		POWER_LOG(ERR, "Failed to read %s",
+ 				POWER_SYSFILE_SCALING_MAX_FREQ);
+ 		goto out;
+ 	}
+ 
+-	ret = read_core_sysfs_u32(f_min, &scaling_min_freq);
++	ret = power_sysfs_read_u32(&scaling_min_freq, POWER_SYSFILE_SCALING_MIN_FREQ,
++			pi->lcore_id);
+ 	if (ret < 0) {
+ 		POWER_LOG(ERR, "Failed to read %s",
+ 				POWER_SYSFILE_SCALING_MIN_FREQ);
+ 		goto out;
+ 	}
+ 
+-	ret = read_core_sysfs_u32(f_nom, &nominal_freq);
++	ret = power_sysfs_read_u32(&nominal_freq, POWER_SYSFILE_NOMINAL_FREQ,
++			pi->lcore_id);
+ 	if (ret < 0) {
+ 		POWER_LOG(ERR, "Failed to read %s",
+ 				POWER_SYSFILE_NOMINAL_FREQ);
+@@ -272,12 +231,6 @@ power_get_available_freqs(struct amd_pstate_power_info *pi)
+ 			num_freqs, pi->lcore_id);
+ 
+ out:
+-	if (f_min != NULL)
+-		fclose(f_min);
+-	if (f_max != NULL)
+-		fclose(f_max);
+-	if (f_nom != NULL)
+-		fclose(f_nom);
+ 
+ 	return ret;
+ }
+diff --git a/drivers/power/cppc/cppc_cpufreq.c b/drivers/power/cppc/cppc_cpufreq.c
+index aed44c1212..a25dc7eaf1 100644
+--- a/drivers/power/cppc/cppc_cpufreq.c
++++ b/drivers/power/cppc/cppc_cpufreq.c
+@@ -106,49 +106,27 @@ power_set_governor_userspace(struct cppc_power_info *pi)
+ static int
+ power_check_turbo(struct cppc_power_info *pi)
+ {
+-	FILE *f_nom = NULL, *f_max = NULL, *f_cmax = NULL;
+-	int ret = -1;
+ 	uint32_t nominal_perf = 0, highest_perf = 0, cpuinfo_max_freq = 0;
++	int ret = -1;
+ 
+-	open_core_sysfs_file(&f_max, "r", POWER_SYSFILE_HIGHEST_PERF,
+-			pi->lcore_id);
+-	if (f_max == NULL) {
+-		POWER_LOG(ERR, "failed to open %s",
+-				POWER_SYSFILE_HIGHEST_PERF);
+-		goto err;
+-	}
+-
+-	open_core_sysfs_file(&f_nom, "r", POWER_SYSFILE_NOMINAL_PERF,
+-			pi->lcore_id);
+-	if (f_nom == NULL) {
+-		POWER_LOG(ERR, "failed to open %s",
+-				POWER_SYSFILE_NOMINAL_PERF);
+-		goto err;
+-	}
+-
+-	open_core_sysfs_file(&f_cmax, "r", POWER_SYSFILE_SYS_MAX,
++	ret = power_sysfs_read_u32(&highest_perf, POWER_SYSFILE_HIGHEST_PERF,
+ 			pi->lcore_id);
+-	if (f_cmax == NULL) {
+-		POWER_LOG(ERR, "failed to open %s",
+-				POWER_SYSFILE_SYS_MAX);
+-		goto err;
+-	}
+-
+-	ret = read_core_sysfs_u32(f_max, &highest_perf);
+ 	if (ret < 0) {
+ 		POWER_LOG(ERR, "Failed to read %s",
+ 				POWER_SYSFILE_HIGHEST_PERF);
+ 		goto err;
+ 	}
+ 
+-	ret = read_core_sysfs_u32(f_nom, &nominal_perf);
++	ret = power_sysfs_read_u32(&nominal_perf, POWER_SYSFILE_NOMINAL_PERF,
++			pi->lcore_id);
+ 	if (ret < 0) {
+ 		POWER_LOG(ERR, "Failed to read %s",
+ 				POWER_SYSFILE_NOMINAL_PERF);
+ 		goto err;
+ 	}
+ 
+-	ret = read_core_sysfs_u32(f_cmax, &cpuinfo_max_freq);
++	ret = power_sysfs_read_u32(&cpuinfo_max_freq, POWER_SYSFILE_SYS_MAX,
++			pi->lcore_id);
+ 	if (ret < 0) {
+ 		POWER_LOG(ERR, "Failed to read %s",
+ 				POWER_SYSFILE_SYS_MAX);
+@@ -175,13 +153,6 @@ power_check_turbo(struct cppc_power_info *pi)
+ 	}
+ 
+ err:
+-	if (f_max != NULL)
+-		fclose(f_max);
+-	if (f_nom != NULL)
+-		fclose(f_nom);
+-	if (f_cmax != NULL)
+-		fclose(f_cmax);
+-
+ 	return ret;
+ }
+ 
+@@ -192,35 +163,20 @@ power_check_turbo(struct cppc_power_info *pi)
+ static int
+ power_get_available_freqs(struct cppc_power_info *pi)
+ {
+-	FILE *f_min = NULL, *f_max = NULL;
+-	int ret = -1;
+ 	uint32_t scaling_min_freq = 0, scaling_max_freq = 0, nominal_perf = 0;
+ 	uint32_t i, num_freqs = 0;
++	int ret = -1;
+ 
+-	open_core_sysfs_file(&f_max, "r", POWER_SYSFILE_SCALING_MAX_FREQ,
+-			pi->lcore_id);
+-	if (f_max == NULL) {
+-		POWER_LOG(ERR, "failed to open %s",
+-				POWER_SYSFILE_SCALING_MAX_FREQ);
+-		goto out;
+-	}
+-
+-	open_core_sysfs_file(&f_min, "r", POWER_SYSFILE_SCALING_MIN_FREQ,
++	ret = power_sysfs_read_u32(&scaling_max_freq, POWER_SYSFILE_SCALING_MAX_FREQ,
+ 			pi->lcore_id);
+-	if (f_min == NULL) {
+-		POWER_LOG(ERR, "failed to open %s",
+-				POWER_SYSFILE_SCALING_MIN_FREQ);
+-		goto out;
+-	}
+-
+-	ret = read_core_sysfs_u32(f_max, &scaling_max_freq);
+ 	if (ret < 0) {
+ 		POWER_LOG(ERR, "Failed to read %s",
+ 				POWER_SYSFILE_SCALING_MAX_FREQ);
+ 		goto out;
+ 	}
+ 
+-	ret = read_core_sysfs_u32(f_min, &scaling_min_freq);
++	ret = power_sysfs_read_u32(&scaling_min_freq, POWER_SYSFILE_SCALING_MIN_FREQ,
++			pi->lcore_id);
+ 	if (ret < 0) {
+ 		POWER_LOG(ERR, "Failed to read %s",
+ 				POWER_SYSFILE_SCALING_MIN_FREQ);
+@@ -260,11 +216,6 @@ power_get_available_freqs(struct cppc_power_info *pi)
+ 			num_freqs, pi->lcore_id);
+ 
+ out:
+-	if (f_min != NULL)
+-		fclose(f_min);
+-	if (f_max != NULL)
+-		fclose(f_max);
+-
+ 	return ret;
+ }
+ 
+diff --git a/drivers/power/intel_pstate/intel_pstate_cpufreq.c b/drivers/power/intel_pstate/intel_pstate_cpufreq.c
+index dfbb5635a1..c8d0ed2c21 100644
+--- a/drivers/power/intel_pstate/intel_pstate_cpufreq.c
++++ b/drivers/power/intel_pstate/intel_pstate_cpufreq.c
+@@ -108,29 +108,12 @@ out:	close(fd);
+ static int
+ power_init_for_setting_freq(struct pstate_power_info *pi)
+ {
+-	FILE *f_base = NULL, *f_base_min = NULL, *f_base_max = NULL,
+-	     *f_min = NULL, *f_max = NULL;
++	FILE *f_min = NULL, *f_max = NULL;
+ 	uint32_t base_ratio, base_min_ratio, base_max_ratio;
+ 	uint64_t max_non_turbo = 0;
+ 	int ret;
+ 
+-	/* open all files we expect to have open */
+-	open_core_sysfs_file(&f_base_max, "r", POWER_SYSFILE_BASE_MAX_FREQ,
+-			pi->lcore_id);
+-	if (f_base_max == NULL) {
+-		POWER_LOG(ERR, "failed to open %s",
+-				POWER_SYSFILE_BASE_MAX_FREQ);
+-		goto err;
+-	}
+-
+-	open_core_sysfs_file(&f_base_min, "r", POWER_SYSFILE_BASE_MIN_FREQ,
+-			pi->lcore_id);
+-	if (f_base_min == NULL) {
+-		POWER_LOG(ERR, "failed to open %s",
+-				POWER_SYSFILE_BASE_MIN_FREQ);
+-		goto err;
+-	}
+-
++	/* open the files that are kept open for setting the frequency */
+ 	open_core_sysfs_file(&f_min, "rw+", POWER_SYSFILE_MIN_FREQ,
+ 			pi->lcore_id);
+ 	if (f_min == NULL) {
+@@ -147,12 +130,9 @@ power_init_for_setting_freq(struct pstate_power_info *pi)
+ 		goto err;
+ 	}
+ 
+-	open_core_sysfs_file(&f_base, "r", POWER_SYSFILE_BASE_FREQ,
+-			pi->lcore_id);
+-	/* base ratio file may not exist in some kernels, so no error check */
+-
+ 	/* read base max ratio */
+-	ret = read_core_sysfs_u32(f_base_max, &base_max_ratio);
++	ret = power_sysfs_read_u32(&base_max_ratio, POWER_SYSFILE_BASE_MAX_FREQ,
++			pi->lcore_id);
+ 	if (ret < 0) {
+ 		POWER_LOG(ERR, "Failed to read %s",
+ 				POWER_SYSFILE_BASE_MAX_FREQ);
+@@ -160,24 +140,18 @@ power_init_for_setting_freq(struct pstate_power_info *pi)
+ 	}
+ 
+ 	/* read base min ratio */
+-	ret = read_core_sysfs_u32(f_base_min, &base_min_ratio);
++	ret = power_sysfs_read_u32(&base_min_ratio, POWER_SYSFILE_BASE_MIN_FREQ,
++			pi->lcore_id);
+ 	if (ret < 0) {
+ 		POWER_LOG(ERR, "Failed to read %s",
+ 				POWER_SYSFILE_BASE_MIN_FREQ);
+ 		goto err;
+ 	}
+ 
+-	/* base ratio may not exist */
+-	if (f_base != NULL) {
+-		ret = read_core_sysfs_u32(f_base, &base_ratio);
+-		if (ret < 0) {
+-			POWER_LOG(ERR, "Failed to read %s",
+-					POWER_SYSFILE_BASE_FREQ);
+-			goto err;
+-		}
+-	} else {
++	/* base ratio file may not exist in some kernels, so no error check */
++	if (power_sysfs_read_u32(&base_ratio, POWER_SYSFILE_BASE_FREQ,
++			pi->lcore_id) < 0)
+ 		base_ratio = 0;
+-	}
+ 
+ 	/* convert ratios to bins */
+ 	base_max_ratio /= BUS_FREQ;
+@@ -222,20 +196,10 @@ power_init_for_setting_freq(struct pstate_power_info *pi)
+ 	pi->core_base_freq = base_ratio * BUS_FREQ;
+ 
+ out:
+-	if (f_base != NULL)
+-		fclose(f_base);
+-	fclose(f_base_max);
+-	fclose(f_base_min);
+ 	/* f_min and f_max are stored, no need to close */
+ 	return 0;
+ 
+ err:
+-	if (f_base != NULL)
+-		fclose(f_base);
+-	if (f_base_min != NULL)
+-		fclose(f_base_min);
+-	if (f_base_max != NULL)
+-		fclose(f_base_max);
+ 	if (f_min != NULL)
+ 		fclose(f_min);
+ 	if (f_max != NULL)
+@@ -366,38 +330,22 @@ power_set_governor_original(struct pstate_power_info *pi)
+ static int
+ power_get_available_freqs(struct pstate_power_info *pi)
+ {
+-	FILE *f_min = NULL, *f_max = NULL;
+-	int ret = -1;
+ 	uint32_t sys_min_freq = 0, sys_max_freq = 0, base_max_freq = 0;
+ 	int config_min_freq, config_max_freq;
+ 	uint32_t i, num_freqs = 0;
+-
+-	/* open all files */
+-	open_core_sysfs_file(&f_max, "r", POWER_SYSFILE_BASE_MAX_FREQ,
+-			pi->lcore_id);
+-	if (f_max == NULL) {
+-		POWER_LOG(ERR, "failed to open %s",
+-				POWER_SYSFILE_BASE_MAX_FREQ);
+-		goto out;
+-	}
+-
+-	open_core_sysfs_file(&f_min, "r", POWER_SYSFILE_BASE_MIN_FREQ,
+-			pi->lcore_id);
+-	if (f_min == NULL) {
+-		POWER_LOG(ERR, "failed to open %s",
+-				POWER_SYSFILE_BASE_MIN_FREQ);
+-		goto out;
+-	}
++	int ret = -1;
+ 
+ 	/* read base ratios */
+-	ret = read_core_sysfs_u32(f_max, &sys_max_freq);
++	ret = power_sysfs_read_u32(&sys_max_freq, POWER_SYSFILE_BASE_MAX_FREQ,
++			pi->lcore_id);
+ 	if (ret < 0) {
+ 		POWER_LOG(ERR, "Failed to read %s",
+ 				POWER_SYSFILE_BASE_MAX_FREQ);
+ 		goto out;
+ 	}
+ 
+-	ret = read_core_sysfs_u32(f_min, &sys_min_freq);
++	ret = power_sysfs_read_u32(&sys_min_freq, POWER_SYSFILE_BASE_MIN_FREQ,
++			pi->lcore_id);
+ 	if (ret < 0) {
+ 		POWER_LOG(ERR, "Failed to read %s",
+ 				POWER_SYSFILE_BASE_MIN_FREQ);
+@@ -467,31 +415,18 @@ power_get_available_freqs(struct pstate_power_info *pi)
+ 			num_freqs, pi->lcore_id);
+ 
+ out:
+-	if (f_min != NULL)
+-		fclose(f_min);
+-	if (f_max != NULL)
+-		fclose(f_max);
+-
+ 	return ret;
+ }
+ 
+ static int
+ power_get_cur_idx(struct pstate_power_info *pi)
+ {
+-	FILE *f_cur;
+-	int ret = -1;
+ 	uint32_t sys_cur_freq = 0;
+ 	unsigned int i;
++	int ret = -1;
+ 
+-	open_core_sysfs_file(&f_cur, "r", POWER_SYSFILE_CUR_FREQ,
++	ret = power_sysfs_read_u32(&sys_cur_freq, POWER_SYSFILE_CUR_FREQ,
+ 			pi->lcore_id);
+-	if (f_cur == NULL) {
+-		POWER_LOG(ERR, "failed to open %s",
+-				POWER_SYSFILE_CUR_FREQ);
+-		goto fail;
+-	}
+-
+-	ret = read_core_sysfs_u32(f_cur, &sys_cur_freq);
+ 	if (ret < 0) {
+ 		POWER_LOG(ERR, "Failed to read %s",
+ 				POWER_SYSFILE_CUR_FREQ);
+@@ -517,8 +452,6 @@ power_get_cur_idx(struct pstate_power_info *pi)
+ 
+ 	ret = 0;
+ fail:
+-	if (f_cur != NULL)
+-		fclose(f_cur);
+ 	return ret;
+ }
+ 
+diff --git a/drivers/power/intel_uncore/intel_uncore.c b/drivers/power/intel_uncore/intel_uncore.c
+index 6759ea1445..0e758312cf 100644
+--- a/drivers/power/intel_uncore/intel_uncore.c
++++ b/drivers/power/intel_uncore/intel_uncore.c
+@@ -111,20 +111,14 @@ set_uncore_freq_internal(struct uncore_power_info *ui, uint32_t idx)
+ static int
+ power_init_for_setting_uncore_freq(struct uncore_power_info *ui)
+ {
+-	FILE *f_base_min = NULL, *f_base_max = NULL, *f_min = NULL, *f_max = NULL;
++	FILE *f_min = NULL, *f_max = NULL;
+ 	uint32_t base_min_freq = 0, base_max_freq = 0, min_freq = 0, max_freq = 0;
+ 	int ret;
+ 
+ 	/* open and read all uncore sys files */
+ 	/* Base max */
+-	open_core_sysfs_file(&f_base_max, "r", POWER_INTEL_UNCORE_SYSFILE_BASE_MAX_FREQ,
++	ret = power_sysfs_read_u32(&base_max_freq, POWER_INTEL_UNCORE_SYSFILE_BASE_MAX_FREQ,
+ 			ui->pkg, ui->die);
+-	if (f_base_max == NULL) {
+-		POWER_LOG(DEBUG, "failed to open %s",
+-				POWER_INTEL_UNCORE_SYSFILE_BASE_MAX_FREQ);
+-		goto err;
+-	}
+-	ret = read_core_sysfs_u32(f_base_max, &base_max_freq);
+ 	if (ret < 0) {
+ 		POWER_LOG(DEBUG, "Failed to read %s",
+ 				POWER_INTEL_UNCORE_SYSFILE_BASE_MAX_FREQ);
+@@ -132,21 +126,13 @@ power_init_for_setting_uncore_freq(struct uncore_power_info *ui)
+ 	}
+ 
+ 	/* Base min */
+-	open_core_sysfs_file(&f_base_min, "r", POWER_INTEL_UNCORE_SYSFILE_BASE_MIN_FREQ,
+-		ui->pkg, ui->die);
+-	if (f_base_min == NULL) {
+-		POWER_LOG(DEBUG, "failed to open %s",
++	ret = power_sysfs_read_u32(&base_min_freq, POWER_INTEL_UNCORE_SYSFILE_BASE_MIN_FREQ,
++			ui->pkg, ui->die);
++	if (ret < 0) {
++		POWER_LOG(DEBUG, "Failed to read %s",
+ 				POWER_INTEL_UNCORE_SYSFILE_BASE_MIN_FREQ);
+ 		goto err;
+ 	}
+-	if (f_base_min != NULL) {
+-		ret = read_core_sysfs_u32(f_base_min, &base_min_freq);
+-		if (ret < 0) {
+-			POWER_LOG(DEBUG, "Failed to read %s",
+-					POWER_INTEL_UNCORE_SYSFILE_BASE_MIN_FREQ);
+-			goto err;
+-		}
+-	}
+ 
+ 	/* Curr min */
+ 	open_core_sysfs_file(&f_min, "rw+", POWER_INTEL_UNCORE_SYSFILE_MIN_FREQ,
+@@ -191,17 +177,11 @@ power_init_for_setting_uncore_freq(struct uncore_power_info *ui)
+ 	ui->init_max_freq = base_max_freq;
+ 	ui->init_min_freq = base_min_freq;
+ 
+-	fclose(f_base_min);
+-	fclose(f_base_max);
+ 	/* f_min and f_max are stored, no need to close */
+ 
+ 	return 0;
+ 
+ err:
+-	if (f_base_min != NULL)
+-		fclose(f_base_min);
+-	if (f_base_max != NULL)
+-		fclose(f_base_max);
+ 	if (f_min != NULL)
+ 		fclose(f_min);
+ 	if (f_max != NULL)
+diff --git a/lib/power/power_common.c b/lib/power/power_common.c
+index da22a4d160..f583975152 100644
+--- a/lib/power/power_common.c
++++ b/lib/power/power_common.c
+@@ -3,14 +3,17 @@
+  */
+ 
+ #include <limits.h>
++#include <stdint.h>
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <string.h>
++#include <stdarg.h>
+ 
+ #include <eal_export.h>
+ #include <rte_log.h>
+ #include <rte_string_fns.h>
+ #include <rte_lcore.h>
++#include <rte_sysfs.h>
+ 
+ #include "power_common.h"
+ 
+@@ -28,34 +31,16 @@ cpufreq_check_scaling_driver(const char *driver_name)
+ {
+ 	unsigned int lcore_id = 0; /* always check core 0 */
+ 	char readbuf[PATH_MAX];
+-	size_t end_idx;
+-	char *s;
+-	FILE *f;
+ 
+ 	/*
+ 	 * Check if scaling driver matches what we expect.
++	 * If there is no driver at all, or it can't be read,
++	 * consider the system unsupported.
+ 	 */
+-	open_core_sysfs_file(&f, "r", POWER_SYSFILE_SCALING_DRIVER,
+-			lcore_id);
+-	/* if there's no driver at all, bail out */
+-	if (f == NULL)
+-		return 0;
+-
+-	s = fgets(readbuf, sizeof(readbuf), f);
+-	/* don't need it any more */
+-	fclose(f);
+-
+-	/* if we can't read it, consider unsupported */
+-	if (s == NULL)
++	if (rte_sysfs_parse_string(readbuf, sizeof(readbuf),
++			POWER_SYSFILE_SCALING_DRIVER, lcore_id) < 0)
+ 		return 0;
+ 
+-	/* when read from sysfs, driver name has an extra newline at the end */
+-	end_idx = strnlen(readbuf, sizeof(readbuf));
+-	if (end_idx > 0 && readbuf[end_idx - 1] == '\n') {
+-		end_idx--;
+-		readbuf[end_idx] = '\0';
+-	}
+-
+ 	/* does the driver name match? */
+ 	if (strncmp(readbuf, driver_name, sizeof(readbuf)) != 0)
+ 		return 0;
+@@ -87,6 +72,29 @@ open_core_sysfs_file(FILE **f, const char *mode, const char *format, ...)
+ 	return 0;
+ }
+ 
++RTE_EXPORT_INTERNAL_SYMBOL(power_sysfs_read_u32)
++int
++power_sysfs_read_u32(uint32_t *val, const char *format, ...)
++{
++	unsigned long tmp;
++	va_list ap;
++	int ret;
++
++	va_start(ap, format);
++	ret = rte_sysfs_vparse_uint(&tmp, format, ap);
++	va_end(ap);
++	if (ret < 0)
++		return -1;
++
++	if (tmp > UINT32_MAX) {
++		POWER_LOG(ERR, "sysfs value does not fit in 32 bits");
++		return -1;
++	}
++
++	*val = tmp;
++	return 0;
++}
++
+ RTE_EXPORT_INTERNAL_SYMBOL(read_core_sysfs_u32)
+ int
+ read_core_sysfs_u32(FILE *f, uint32_t *val)
+diff --git a/lib/power/power_common.h b/lib/power/power_common.h
+index 370c5246c6..6ca91658cd 100644
+--- a/lib/power/power_common.h
++++ b/lib/power/power_common.h
+@@ -8,6 +8,7 @@
+ #include <rte_common.h>
+ #include <rte_compat.h>
+ #include <rte_log.h>
++#include <stdint.h>
+ 
+ #define RTE_POWER_INVALID_FREQ_INDEX (~0)
+ 
+@@ -48,6 +49,11 @@ int open_core_sysfs_file(FILE **f, const char *mode, const char *format, ...)
+ __rte_internal
+ int read_core_sysfs_u32(FILE *f, uint32_t *val);
+ 
++/* read a 32 bit value from a sysfs file given by a printf style path */
++__rte_internal
++int power_sysfs_read_u32(uint32_t *val, const char *format, ...)
++		__rte_format_printf(2, 3);
++
+ __rte_internal
+ int read_core_sysfs_s(FILE *f, char *buf, unsigned int len);
+ 
+diff --git a/lib/power/rte_power_qos.c b/lib/power/rte_power_qos.c
+index d8d8d36a76..dd1b8f7384 100644
+--- a/lib/power/rte_power_qos.c
++++ b/lib/power/rte_power_qos.c
+@@ -9,6 +9,7 @@
+ #include <eal_export.h>
+ #include <rte_lcore.h>
+ #include <rte_log.h>
++#include <rte_sysfs.h>
+ 
+ #include "power_common.h"
+ #include "rte_power_qos.h"
+@@ -24,7 +25,6 @@ rte_power_qos_set_cpu_resume_latency(uint16_t lcore_id, int latency)
+ {
+ 	char buf[PM_QOS_CPU_RESUME_LATENCY_BUF_LEN];
+ 	uint32_t cpu_id;
+-	FILE *f;
+ 	int ret;
+ 
+ 	RTE_POWER_VALID_LCOREID_OR_ERR_RET(lcore_id, -EINVAL);
+@@ -37,13 +37,6 @@ rte_power_qos_set_cpu_resume_latency(uint16_t lcore_id, int latency)
+ 		return -EINVAL;
+ 	}
+ 
+-	ret = open_core_sysfs_file(&f, "w", PM_QOS_SYSFILE_RESUME_LATENCY_US, cpu_id);
+-	if (ret != 0) {
+-		POWER_LOG(ERR, "Failed to open "PM_QOS_SYSFILE_RESUME_LATENCY_US" : %s",
+-			  cpu_id, strerror(errno));
+-		return ret;
+-	}
+-
+ 	/*
+ 	 * Based on the sysfs interface pm_qos_resume_latency_us under
+ 	 * @PM_QOS_SYSFILE_RESUME_LATENCY_US directory in kernel, their meaning
+@@ -59,13 +52,11 @@ rte_power_qos_set_cpu_resume_latency(uint16_t lcore_id, int latency)
+ 	else
+ 		snprintf(buf, sizeof(buf), "%u", latency);
+ 
+-	ret = write_core_sysfs_s(f, buf);
++	ret = rte_sysfs_write_string(buf, PM_QOS_SYSFILE_RESUME_LATENCY_US, cpu_id);
+ 	if (ret != 0)
+ 		POWER_LOG(ERR, "Failed to write "PM_QOS_SYSFILE_RESUME_LATENCY_US" : %s",
+ 			  cpu_id, strerror(errno));
+ 
+-	fclose(f);
+-
+ 	return ret;
+ }
+ 
+@@ -76,7 +67,6 @@ rte_power_qos_get_cpu_resume_latency(uint16_t lcore_id)
+ 	char buf[PM_QOS_CPU_RESUME_LATENCY_BUF_LEN];
+ 	int latency = -1;
+ 	uint32_t cpu_id;
+-	FILE *f;
+ 	int ret;
+ 
+ 	RTE_POWER_VALID_LCOREID_OR_ERR_RET(lcore_id, -EINVAL);
+@@ -84,18 +74,12 @@ rte_power_qos_get_cpu_resume_latency(uint16_t lcore_id)
+ 	if (ret != 0)
+ 		return ret;
+ 
+-	ret = open_core_sysfs_file(&f, "r", PM_QOS_SYSFILE_RESUME_LATENCY_US, cpu_id);
+-	if (ret != 0) {
+-		POWER_LOG(ERR, "Failed to open "PM_QOS_SYSFILE_RESUME_LATENCY_US" : %s",
+-			  cpu_id, strerror(errno));
+-		return ret;
+-	}
+-
+-	ret = read_core_sysfs_s(f, buf, sizeof(buf));
++	ret = rte_sysfs_parse_string(buf, sizeof(buf), PM_QOS_SYSFILE_RESUME_LATENCY_US,
++			cpu_id);
+ 	if (ret != 0) {
+ 		POWER_LOG(ERR, "Failed to read "PM_QOS_SYSFILE_RESUME_LATENCY_US" : %s",
+ 			  cpu_id, strerror(errno));
+-		goto out;
++		return ret;
+ 	}
+ 
+ 	/*
+@@ -113,8 +97,5 @@ rte_power_qos_get_cpu_resume_latency(uint16_t lcore_id)
+ 		latency = latency == 0 ? RTE_POWER_QOS_RESUME_LATENCY_NO_CONSTRAINT : latency;
+ 	}
+ 
+-out:
+-	fclose(f);
+-
+ 	return latency != -1 ? latency : ret;
+ }
 -- 
 2.53.0
 
