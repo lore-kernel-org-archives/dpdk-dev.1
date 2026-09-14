@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96802C88E50
-	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 05:52:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7098C88E67
+	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 05:53:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 90F1140E48;
-	Mon, 14 Sep 2026 07:51:21 +0200 (CEST)
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com
- [209.85.216.50]) by mails.dpdk.org (Postfix) with ESMTP id D3E8040BA6
- for <dev@dpdk.org>; Mon, 14 Sep 2026 07:51:20 +0200 (CEST)
-Received: by mail-pj1-f50.google.com with SMTP id
- 98e67ed59e1d1-3856d6fbcb3so2713639a91.2
- for <dev@dpdk.org>; Sun, 13 Sep 2026 22:51:20 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B14C040E25;
+	Mon, 14 Sep 2026 07:51:24 +0200 (CEST)
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com
+ [209.85.215.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 01ED440E3B
+ for <dev@dpdk.org>; Mon, 14 Sep 2026 07:51:24 +0200 (CEST)
+Received: by mail-pg1-f173.google.com with SMTP id
+ 41be03b00d2f7-cc1bc88a20eso4056898a12.3
+ for <dev@dpdk.org>; Sun, 13 Sep 2026 22:51:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789365080;
- x=1789969880; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789365083;
+ x=1789969883; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=yqB2WtN5WDpIqO4yfC0SCIP6pXs4RfveXoGZ1yeKgU4=;
- b=SbdUkoQ99jUnx9wQNNa4AkWHhhld/jtnq0Nl8jURw0Ko4GoLWJQeEvW2DRyh5MDwuM
- SEJTqgEG5Dtg9p3W9xUrc+8yQ3v0gG8ofHHTNuNZQ8nwdHYKQTMpAZbyArm6f2qVtj6C
- loeJA9SnJ+vdU29aeHDM/O1+LrMJPlZn+3QzXFh/g8dEwFEZDhleYkhje2lYzmuvL0PI
- TCvCiSnrKxWfhMLi/soZl17IyBbw2nxsEL9Hwd64fee+6AsPKxSRVIGs5XzyIptjY9By
- xu24gO2HJOs1FOue0fOgEDq3ykwkRcY7EdMyja0yqBlTx8S7DLeWD8UfV3D4yEzA0UsT
- mKow==
+ bh=bmT9kKYIpXqADRIXi1MNEXuZvMGijg2pnmmmzBi9wts=;
+ b=S1Abx8jF1J9avUnMnoHhKJmLKfCWngDA9VF1qj5MJH1aW7dWD6HzbiOPsJ6jrRtEBh
+ W5cgxHu9EfFyBkJei1s8+QgXkjzNxiSy66TOUvAfkcCLTXnLlK3ttBDijWWpYULKKgex
+ hVkRDQT75fQepG4YKWfBbL38YReQKjjY4P4edP9FA6D5gdeRFlmSiyoYfcHal96V6PRO
+ 5aeSd+K6MjkfE9ClNaKJVuY1G8zUxdgL2PCwrOqPJ0KoPUSORjmAeJ2ZpGiQ1lbEfYsL
+ nDkGf4kQdB8F5XIhz24zLAZkmddhIaE6rHfpB4x5Dj8LXzJRvxzps7g/vez6qvHtmPea
+ /vzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1789365080; x=1789969880;
+ d=1e100.net; s=20251104; t=1789365083; x=1789969883;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=yqB2WtN5WDpIqO4yfC0SCIP6pXs4RfveXoGZ1yeKgU4=;
- b=VjexQkC/38LE5uVdbos0beHmSFbS98MVq9yjnTKyepQsZwh13ThZ4iSWEmwG6fiaor
- eq8gw9HR2cWy38PxRtHYcX8pCDDzSbrCawvBkc1WqVw6Can3l4YxYdTpQT0jeLkTAJ0J
- jJ3hpHVEmyJO9CegDbX8o2RZaCC7ZYD8nk7XydKtM5aK0uT3H6+sOlxduQmQtsc8q+6f
- bG9pz2SVMQ/3QkccqisiNbEymUeaHBHd+BjoSf16cxgmd3cOQMTA6gZobDwsvVQUInBe
- fIuwMIwdhjuJsFq/xZiINzpcNZvxpxsjX59ooXX+7/61Cg2VSPeRSlO45nqBbdWtQq1n
- 8xQg==
-X-Gm-Message-State: AFuF++mVavV5KXSv3w40dXOZA6I6hWgR+VNRwv72xdzJHM+HIjE6V4DT
- 59Ri+UWMOtolc7zlP52BLm7xFfGvXb8jNx49vW5I6IDqywKaj99YU6zhCGNGhDxaJVSwPcQjvuD
- RW0YzdEU=
-X-Gm-Gg: AYBFou31MsAvrF8/TjtuQTN/Srq3kyDAD+TASWzGse3VLyZiV4TlcaDZa8TsDQvpZvT
- WFuPGRy1PFEArDFOpNi8PRRZoRdW7Y8qlwJAqFYhHXEO3phXsqOH4DnA4ev4KGfm8kj13+s8Yg0
- ScXH1YnKx3rgdMUvO2h/2XnI/TmP7aeKCvigpQEtttQ3KjdxpGoDue1q2SGE8DwP9LotIlULhPr
- Tv1iwRnv3Z6hzh6MpOvLFdl9fRDxmgvmOMxUjEGcKDZ626pznqzuinNVyber2K5TnQRRIrCoI0e
- JOjwi8b6+9+DCtV1Om33Zl142Hgeycr5aUTthUi/4feYj23/1Z8IncrfyO7TULMHRH5kaceGOcC
- blu4lvtTQ3vOMtRlYVDKYqGD4IWknRHEZSr36Pw3aEQ4yah7zqwyTSNbdeQU0BtstJtBTBMKnp9
- 3tJlw5VUovrTD01lES3yY6z+WbbRV69E2XbJOo7OXt2V/v1JeYcljo6UtI0/vLtCfHb+3Jo01cr
- 2f9it6uBMjRv2LHhpQ9RaWqPqhsMYVHR68HFSyBmjEnnAm+
-X-Received: by 2002:a17:90b:5387:b0:398:c794:ca26 with SMTP id
- 98e67ed59e1d1-39dec13af7fmr2733667a91.25.1789365079984; 
- Sun, 13 Sep 2026 22:51:19 -0700 (PDT)
+ bh=bmT9kKYIpXqADRIXi1MNEXuZvMGijg2pnmmmzBi9wts=;
+ b=P9oEtpeKKX88G1HU5MkocDrCYED6tAjLrkp00SKrLkQqvE4ucHjDgy1kQvfRumhpAF
+ NsvjSvl8W9Ik1yFyKPJFVCHbUASUveGblpqvyvrLuzy0xNK1Rb7gK12SEt+cVfmu2ISI
+ U/JbfSlSuO28dv0MeJG3eWH1uR3rcIcSFUsDneAOhi9cb99zxh7gzYVcMctG31v3NpGO
+ nzdTbPahpaPMof4r2lWPuEuHVJtJq2Fr+RgcnnFh/FpiuJ4xCQL6c4fkCniS08tx0l7P
+ ik4sFiw0vFjXfY4+8wU/y85Nha6s+Zu5lzcbm9G3K1Dh/E65Pxwriw2AkrnUJ85tRDWu
+ C2Jg==
+X-Gm-Message-State: AFuF++k8l3NmLeVBc9ANKuAn7JQ1KfpR7sh2Q3JQUIS62QUjgvXwoVaT
+ vRqtsPXXfufnu6ggTc/ukHjE+hSnOg0VwHALNINVQVOOk3QA0jPX8gyN2bo2Px5jeYS/Qpzeehp
+ TuepZKa0=
+X-Gm-Gg: AYBFou0+FBSPfI7BAYPfcmVy03vBVJm8MMYDvRXv6CU60RwwddQ3PPRDkx7VnB4cu/r
+ ZxUY350jBj2+YLNt7Q+gYmWrxpcUDuCNAvw8gspmyvmT7GLaUzshdMSc3efVz3rZ4/PKvyn72AV
+ YfjsUZJx/EEWQ2GV5ga5hb7xhuaA3nr5xtMf1umvvjYjt/Pm6KptuelNzbP/UMCfjVLb7bbmfbA
+ Ix4kaEHrlYM68TwshxWqWYHGjNumPdaxalQVNFzEEwIUpWMiFvU49lSaxn3GW3OCzr4nK76UaOM
+ XiA41yKAjVjTgvNZwyw9nZiWLJiBHHJ8rUg4DrV28Zgfit8I0eLc6okEbt8834dCcf0qEspH1/T
+ iFmqXqaDUMuaQUjGXvGFbLMpftOGG+JeHg4XP2g4M/ERbQXELS2vwKUbCIFknKg0fvGBhMgmxHN
+ BawrglKBG7mRKm2cg1L3gGfNd8+gyeebxj6fomBneLDNsjmdPwlyohI8NYx9uWPn7t+B9KiqYuy
+ Hog0qARUl6kGVTBhEbBNR8rF9SsX6ZJSJrxgg==
+X-Received: by 2002:a17:90b:1b01:b0:39d:e213:9dd3 with SMTP id
+ 98e67ed59e1d1-39debf6cf03mr2493047a91.1.1789365083093; 
+ Sun, 13 Sep 2026 22:51:23 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39d95864b4fsm19794492a91.15.2026.09.13.22.51.17
+ 98e67ed59e1d1-39d95864b4fsm19794492a91.15.2026.09.13.22.51.20
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 13 Sep 2026 22:51:19 -0700 (PDT)
+ Sun, 13 Sep 2026 22:51:22 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Jerin Jacob <jerinj@marvell.com>, Maciej Czekaj <mczekaj@marvell.com>
-Subject: [PATCH 35/62] net/thunderx: use kvargs numeric helpers
-Date: Sun, 13 Sep 2026 22:47:06 -0700
-Message-ID: <20260914054912.755403-36-stephen@networkplumber.org>
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH 36/62] net/i40e: propagate VF queue number parse errors
+Date: Sun, 13 Sep 2026 22:47:07 -0700
+Message-ID: <20260914054912.755403-37-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260914054912.755403-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -82,47 +83,71 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-nicvf_parse_devargs() uses atoi() on the skip_data_bytes value, which
-cannot report an error, so a malformed value is silently taken as zero
-and the argument is quietly ignored rather than rejected.
+i40e_pf_config_vf_rxq_number() discarded the rte_kvargs_process() return
+value and unconditionally returned success, and its own return value was
+then discarded by i40e_pf_parameter_init(). A malformed or out of range
+queue-num-per-vf value was therefore silently ignored, leaving the
+default in place with no indication to the user.
+
+Every other rte_kvargs_process() call site in this driver already checks
+its return value. Do the same here, so that a bad value fails probe
+rather than being masked.
+
+rte_kvargs_process() stops at the first failing pair, which preserves
+the "first invalid or last valid one is used" behaviour already
+documented in the warning above the call.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/thunderx/nicvf_ethdev.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/net/intel/i40e/i40e_ethdev.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/thunderx/nicvf_ethdev.c b/drivers/net/thunderx/nicvf_ethdev.c
-index 6e34da7c3c..7061def01a 100644
---- a/drivers/net/thunderx/nicvf_ethdev.c
-+++ b/drivers/net/thunderx/nicvf_ethdev.c
-@@ -3,6 +3,7 @@
-  */
+diff --git a/drivers/net/intel/i40e/i40e_ethdev.c b/drivers/net/intel/i40e/i40e_ethdev.c
+index 3b17281952..a218e9f05e 100644
+--- a/drivers/net/intel/i40e/i40e_ethdev.c
++++ b/drivers/net/intel/i40e/i40e_ethdev.c
+@@ -4834,6 +4834,7 @@ static int i40e_pf_config_vf_rxq_number(struct rte_eth_dev *dev)
+ 	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(dev->data->dev_private);
+ 	struct rte_kvargs *kvlist;
+ 	int kvargs_count;
++	int ret;
  
- #include <assert.h>
-+#include <limits.h>
- #include <stdio.h>
- #include <stdbool.h>
- #include <errno.h>
-@@ -2161,9 +2162,17 @@ nicvf_set_first_skip(struct rte_eth_dev *dev)
+ 	/* set default queue number per VF as 4 */
+ 	pf->vf_nb_qp_max = RTE_LIBRTE_I40E_QUEUE_NUM_PER_VF;
+@@ -4856,12 +4857,12 @@ static int i40e_pf_config_vf_rxq_number(struct rte_eth_dev *dev)
+ 			    "the first invalid or last valid one is used !",
+ 			    ETH_I40E_QUEUE_NUM_PER_VF_ARG);
  
- 	for (i = 0; i != kvlist->count; ++i) {
- 		const struct rte_kvargs_pair *pair = &kvlist->pairs[i];
-+		uint64_t val;
+-	rte_kvargs_process(kvlist, ETH_I40E_QUEUE_NUM_PER_VF_ARG,
+-			   i40e_pf_parse_vf_queue_number_handler, pf);
++	ret = rte_kvargs_process(kvlist, ETH_I40E_QUEUE_NUM_PER_VF_ARG,
++				 i40e_pf_parse_vf_queue_number_handler, pf);
  
--		if (!strcmp(pair->key, SKIP_DATA_BYTES))
--			bytes_to_skip = atoi(pair->value);
-+		if (strcmp(pair->key, SKIP_DATA_BYTES))
-+			continue;
-+
-+		if (rte_kvargs_to_uint(pair->value, 0, INT_MAX, &val) < 0) {
-+			PMD_INIT_LOG(ERR, "skip_data_bytes is not a valid number");
-+			ret = -EINVAL;
-+			goto exit;
-+		}
-+		bytes_to_skip = val;
+ 	rte_kvargs_free(kvlist);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int
+@@ -4871,13 +4872,16 @@ i40e_pf_parameter_init(struct rte_eth_dev *dev)
+ 	struct i40e_hw *hw = I40E_PF_TO_HW(pf);
+ 	struct rte_pci_device *pci_dev = RTE_CLASS_TO_BUS_DEVICE(dev, *pci_dev);
+ 	uint16_t qp_count = 0, vsi_count = 0;
++	int ret;
+ 
+ 	if (pci_dev->max_vfs && !hw->func_caps.sr_iov_1_1) {
+ 		PMD_INIT_LOG(ERR, "HW configuration doesn't support SRIOV");
+ 		return -EINVAL;
  	}
  
- 	/*128 bytes amounts to one cache line*/
+-	i40e_pf_config_vf_rxq_number(dev);
++	ret = i40e_pf_config_vf_rxq_number(dev);
++	if (ret != 0)
++		return ret;
+ 
+ 	/* Add the parameter init for LFC */
+ 	pf->fc_conf.pause_time = I40E_DEFAULT_PAUSE_TIME;
 -- 
 2.53.0
 
