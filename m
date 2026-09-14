@@ -2,123 +2,144 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 882CBC88E72
-	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 16:24:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 360B6C88E6E
+	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 16:35:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C215940A7F;
-	Mon, 14 Sep 2026 18:24:53 +0200 (CEST)
-Received: from OS8PR02CU002.outbound.protection.outlook.com
- (mail-japanwestazon11022114.outbound.protection.outlook.com [40.107.75.114])
- by mails.dpdk.org (Postfix) with ESMTP id 9C98C40A75;
- Mon, 14 Sep 2026 18:24:51 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 70D5140A7F;
+	Mon, 14 Sep 2026 18:35:37 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+ by mails.dpdk.org (Postfix) with ESMTP id EA89540A75
+ for <dev@dpdk.org>; Mon, 14 Sep 2026 18:35:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1789403735; x=1820939735;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=astXaFQg7NqO2VvN3rjjqeS0IG744dm2fwwQdOwwyKo=;
+ b=fYZNy83iJ0DZm3VnHTeLNfut9qzg8yo+yjwOHnt9nw5VQpTaxwIDDs0g
+ CHdI5DYmWlxbC9EBp7lR/klByphi4rpChs+POo5OEEW7z5NG9Q8ORlBy0
+ aCePEbVnOHGY3NAau0bm+iU9O8IMu/fztZahizKD2exCDUTYeW3jzXMb3
+ vliutFRG/QHrlAxy9xQM5AITSYS0PTNuBm4cBljCwxk3XB3SP+iYmmF8U
+ kkLZJ34xUdw61GRZtCRL2WmBtQ6qXo0eJHJEqfiOaMRi6dTwkoUN1pDVp
+ ecYmCljCuwMbsdR+zCSn1MqgtQlqICHK8M+Cv9YxWNBRugIpNvLN1T1hI w==;
+X-CSE-ConnectionGUID: avswIhDqQkyTPwUMLh6cSw==
+X-CSE-MsgGUID: pHOP8zk5QXi7SA4ytPsldQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="100423266"
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="100423266"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+ by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 14 Sep 2026 09:35:33 -0700
+X-CSE-ConnectionGUID: +s5nANH9SG2diqlV3CBJKg==
+X-CSE-MsgGUID: Y9gWAsOjRn+KR61oYBq2dg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="310958768"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+ by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 14 Sep 2026 09:35:33 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Mon, 14 Sep 2026 09:35:32 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46 via Frontend Transport; Mon, 14 Sep 2026 09:35:32 -0700
+Received: from DM5PR21CU001.outbound.protection.outlook.com (52.101.62.42) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Mon, 14 Sep 2026 09:35:32 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OrKIY8bJMp5FM4NlGoXQLJ2/Lhm+6UkamBmJkL65uR6IoQJiXUqNCoSjQsTPnIwnHVAjMRt9KzwDxUbT9w1Jw4pdHk6MNxaCTb/CiO6xxQqePYPC5XZa/iun1GHg/BkCsr1LX0spDYEVTPuKsb+/B3rdaJtzVl7qAXo3nBGYZb8Ol14eRndeeg3VRHnunJopdheXmZvRUV+VWeLmx8j0EtKECrYvDOUulRdrVq6/UjRNZwymbs8essb6otqOGQWmJgVtA4IJXyk7Q5ioMpAVyBedvdpHbrbG/uLqbXzxeMk5LXJkf15LBs55ZxPBGHntG1Vyaeeo3Ap6ZZW621aKZw==
+ b=upK/CdI8fPv6ZbDCB5qTNfFzYBpbCQCLzBB9oH587Noz59W/5TRRMuZbk2Na/2d3T8zR+WJ83UTa0XwB1esm2NYVS7hnPSitIIWjCtIQOwNkKKnGjl9C99MZ1XuXyT1fBErBCOA/VaoSaJHacCdb11wKfV/j4F/VtO1/sfjmtdPjnRhVdpBQOHhQVtT2WOFBlAOz48nAkYQUjTb9usii2O5DhO+qVP6Yn4RBtO1HJQMQ3Ywdj46iRwf3pbavAeEf6fF44a0J+Z/6KF/7V5crvl0Xuc5B0E3CDIP2qDgtSDBbV3zumpT6J/34uFhg1IDNOBoF1c0E5p2j+ZoTqi4rmg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
- h=From:Date:Subject:Message-ID:MIME-Version; 
- bh=2LU7xNGx5jiyzcGXTt8iKF9tG1xuYXaxqfNIpTA0JGk=;
- b=g3wNwU+DSWRWVY6gBxg1Flh8IgtV5lyQN4wU2pvBNwgjs1/fK/5VA/efwaf25jmo6UNUhdWgNPlkbXjxilApmsKr8V3SO9nboEPZP2nkNkFUt84gnm6CxCxGXcn5d8BBYRnsKYXgxSafUOCqzBqSbXPA76KHnAg9iNS5JsHm1TOw9qjG/lHF+s66WcWzlaBqzLne6yxmgySKej58AypP9imNZzaBrvQzqU3+iieCiBbt2uCEbAiTJmEAof6Xe5DlJLDS/5d19BjFkZtyFdzJL9X1i1guLSRs8Vxeax2ueontqRW/zT68+GOxrhav2IL1qVsTjW2gpqQf/BMwXTEOCA==
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Q/jXXRphlpMVt9+WW+ZasXNgWaPn3+F/6hVwm9n2f5s=;
+ b=y4rEg6tmnhCvBSRAfuRb4du+musiPlIZedgSdN6uzacdVaOu/ZVB3h4szY94ScCC5eiFjfIE9TJ7yV5gQBS0AgwkyEanvVmypSmHt+u3VMjyGA6A98sjZLsuCrSdhNCsxTixm1ubgNRgSp0DXmQ8u/W5Ixnv/xLE1KGnzqXJ6DXUgcGoz+tzVitAaCO0zajohlhWyBGKUx9AZPN2vCLZqAvLmAih8hzePlaZSNoVYbnu74ajxvjIvq967PxZzP/dHVeLMqpcSRf9QHWD5oeUBlBs+iuPLSjlcrMczhN0g/rtGDWkMkpjWD6FlWrjIp3GbuAmbktmzBmhQP7IrZMZWg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2LU7xNGx5jiyzcGXTt8iKF9tG1xuYXaxqfNIpTA0JGk=;
- b=Ta0iv2MOEaLo6DLFmRGfZbmTK7+qke5m/rr3vjeWazy8LLbdaa2QoaYZcNjScjop3O5AHy3G/1NvPo+2Bt8wNP3xT05d5sI2qDQsX1Yi0/iv6SiEt3DaiaJTht71XaevC2xRD87vwbwV9YiGeP0RTUvEHjOtaiKiTWzEk2h8k1M=
-Received: from SI3P153MB1838.APCP153.PROD.OUTLOOK.COM (2603:1096:4:2a1::5) by
- SI3P153MB1887.APCP153.PROD.OUTLOOK.COM (2603:1096:4:29d::6) with
- Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.451.4; Mon, 14 Sep 2026 16:24:34 +0000
-Received: from SI3P153MB1838.APCP153.PROD.OUTLOOK.COM
- ([fe80::64f5:60e6:e32f:e91e]) by SI3P153MB1838.APCP153.PROD.OUTLOOK.COM
- ([fe80::64f5:60e6:e32f:e91e%5]) with mapi id 15.21.0451.003; Mon, 14 Sep 2026
- 16:24:33 +0000
-From: Wei Hu <weh@microsoft.com>
-To: Stephen Hemminger <stephen@networkplumber.org>, Rita Ruvinsky
- <rita.ruvinsky@weka.io>
-CC: "dev@dpdk.org" <dev@dpdk.org>, "longli@microsoft.com"
- <longli@microsoft.com>, "stable@dpdk.org" <stable@dpdk.org>
-Subject: RE: [EXTERNAL] Re: [PATCH] net/mana: fix Tx stall from send queue
- free-space unit mismatch
-Thread-Topic: [EXTERNAL] Re: [PATCH] net/mana: fix Tx stall from send queue
- free-space unit mismatch
-Thread-Index: AQHdRGQjyi/0gH3GZkWNAKlhNFNT1rbOQZsg
-Date: Mon, 14 Sep 2026 16:24:32 +0000
-Message-ID: <SI3P153MB18385AC2FAA3AFA6DE465B5DBBBB2@SI3P153MB1838.APCP153.PROD.OUTLOOK.COM>
-References: <20260914105809.919580-1-rita.ruvinsky@weka.io>
- <20260914091419.22e3ef6e@phoenix.local>
-In-Reply-To: <20260914091419.22e3ef6e@phoenix.local>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=c5c7e2fc-6954-4a35-a74c-a8a7d5776073;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2026-09-14T16:22:10Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10, 3, 0, 1;
-authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SI3P153MB1838:EE_|SI3P153MB1887:EE_
-x-ms-office365-filtering-correlation-id: fe369958-c114-4f1f-5895-08df127ca8eb
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|376014|23010399003|42112799006|366016|1800799024|38070700021|4143699003|11063799006|56012099006|10067099003|7146999003|18002099003|22082099003;
-x-microsoft-antispam-message-info: zZsUEh7mAct3JIMnZUcnwdw+BlRHhU8EIv2oDt+TLXogVj/ZZFLHvLBSJhHKHnItjleMtLeZ5+MjBjc9DQ2pFFmwNH57aTY7Cr4qaKCvbY2vrT5X7MguTaQRXvQYtS5G5ygpMmDUNKOKH3Ieh97IyenrDLAkaNXoyPyK3b424g6IhRlXN239DXD82cR7bA4wqY9Xi2Oiq2Blu3n7nmD6SQRPf43R7u/Si6bolt0c00FJQUEU0CUjaqm+L2rQIrX+pGsvCc3yMTSqSR/jeZffwOWntE7YX1ZWACOkAKx+kyAi6U9gUu5MPvtGcIYuOWLCYU1IdAqGrwTSLAnvCNhxtgqcMHJqV225O4UJNyhT3jP7p1EuOhN0M8gxOXy8rpODkVpZ1RX2maeObgI97ydClpemI8xJ5fgZ0l7+cmKDNWmkGFVCWEsHX3xKVbAuQ6iE1BOQ6oIwa7ZeCz8JxXG4uQuH4IVzzbfXLnzHJOzwQPJFnDj3QQDAUTo696noJ9qg7f5a/DN8+221hLNZykk3dPsmHtMJJZ3rs1uZXrnx6dRYaL/ZldzNIrFbrYOZ3jX2oBL5DNw1wNb2b+E7oVi4PfLoZmM9jeC++x9zToez2KxdkdIbSfg97Y1CxpdfI/ehD1Z9qXJczPfmhoHjxFQ+jt/aBNFZPFCV58dTIpXBjeOaey7b97dqC50Bdd9l+ariJ+uRgKSkZlUgOn39ata4CKH6nr4Yw87Jw9OtCamE5Cc=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SI3P153MB1838.APCP153.PROD.OUTLOOK.COM; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(23010399003)(42112799006)(366016)(1800799024)(38070700021)(4143699003)(11063799006)(56012099006)(10067099003)(7146999003)(18002099003)(22082099003);
- DIR:OUT; SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?TiONHwlNH0dq8BlR5mpiARDdUodCgZHi1jIexZRATz6eJ/iYq0AQ0eRLo6B6?=
- =?us-ascii?Q?l3z7HVrnCJLNNOtWS5GQQfqBq9U3gSkJwTAeHixahHQdZwNf8DdcXEGIpg0/?=
- =?us-ascii?Q?uFgcO6kQuOOzXD8wa2AGf7Sv0QT2SC4+pJ8bM2qrD6sj+Oy1tjFY8xeAAYAu?=
- =?us-ascii?Q?ORsN/YkxCwFGlgmS4vsKCeI3wbLpnxmRU22TSUSfCjRLlspZrUDk6SCqOh+u?=
- =?us-ascii?Q?NJHbnBpDMc0LgADfLwgBdyJC+e/6xkEdRg81D/SuqFrWgPKqSVlHcZi44qi0?=
- =?us-ascii?Q?JlYDVN/3k8dOnQmWjvponkP49sayMugq7yQWb0f7HoqCECxElIhrIO/BIZv1?=
- =?us-ascii?Q?RoU0eN6GPNRJW9ZxM9XqMWZzTf8zvm1gCZv05O8zry48F7fnyJB563F0fM7P?=
- =?us-ascii?Q?RTV3ghWQGGgtiYuTYo/6OnbFr6aOWlmSLkGbzkTUPAepPc2Y10xEDvTVblfK?=
- =?us-ascii?Q?T6Lz/2aLGup9Y+qx2l1ipNV5BYB00oflaKn75Rd0kcQ8PmzHINKfuasUpasC?=
- =?us-ascii?Q?SnaeYujt8r1NzGlQdjx0EP5mBCImMrRwcMnmzBZpxmiZAxsscuBo7WH5St8k?=
- =?us-ascii?Q?o6MEQ1FhPoWgnbNISOuIf2qe9sJM41mwBQaigOGQi3prSRaXxfh0LBm0lOD1?=
- =?us-ascii?Q?B2gf7gF8g7cYoxrLoylgHMct8/RaujNK8bT2H76OH5Kth9rptZlh4bI9exen?=
- =?us-ascii?Q?8gaAu34d8TzgCr48I4uFfLg77lHYpPDl/a6+XmfPwaYfZN47CWiNFxXwk4wW?=
- =?us-ascii?Q?FtPZGqeeNudTkcnhR1l/7PAt5H5pgpDMgN4aRAkvMA3ZgZGxc4FdLD9bg8QL?=
- =?us-ascii?Q?Tp+w5MzJbJ5NLAVPFDzWvljlvLsGVr/+uMCOXT4WhIsHq6OJzdYqEup2L4R3?=
- =?us-ascii?Q?Ohd7pKxcozhjDb1OmogtEYn0QqrdYC+ClkvFgtpnnjblj2Dm4MuDBYUQtvRk?=
- =?us-ascii?Q?6AbsMAwNap2m2Hr/WFO5sb0hJkVI71+JYVqIj4suKCX9A7aQ6dvZMhLrUK+C?=
- =?us-ascii?Q?cc4RgU1DwSLMymjsjMNn9+/v98dWGDK0fjAKTYqmmxy05kJbND24BZ5ucP+a?=
- =?us-ascii?Q?y9AZA8VwhlfPZnLHFEMycZTDqPoNcUnt6HIxrRzUUXBxyrgHY14sie5CxO4E?=
- =?us-ascii?Q?0hoD7yVTxkIgSit6Gy3mGtBaHJZC6DDI4qi91+zOEDnV1ni0oXpzVDZBdlB6?=
- =?us-ascii?Q?qZzpU/XByfbDS5sQCOakduhDSOx/9IlD6a+LVip2ebZP6Q0JzwiXIN9gwk+Z?=
- =?us-ascii?Q?cnYkUTQupN3aHqX9xF+3caqlKY8Na+YO7X0tW2pqHKq1QWtihIMWZwFjUcSp?=
- =?us-ascii?Q?hzAJOo9ppO549wmLGK5ozQMx0teb+vysdyLP9b5B15hcXesWbFn0+n64Hp6o?=
- =?us-ascii?Q?Lq8kWygJomtehkp2Tg8w63Rx7+GHKQ0816gdCz1fZfeZtOPUhSeRpYf4PG3I?=
- =?us-ascii?Q?wCWE4M/zfHyx58ZR8UxR9RvGrzFGBNLoBofvPCaiBFlDJlxjSqA9ZTMwGR2d?=
- =?us-ascii?Q?0Fsk5Oc701kY2FRFaQhh50tO+gYGIdhxjhlcD4Eqbc6ZbZUsJWlfrEkqgxHe?=
- =?us-ascii?Q?yy6t4i5iekVtzevxhyHEFM5o+6cTNPgFiOX89apwuQbGEdANle1Eh7cDDxfc?=
- =?us-ascii?Q?S9qZUBG2dPp+Igwx7VibcEJ6tWuaLaQiH0ljrgQk8+6P+PMCeCZ13nYUFMDF?=
- =?us-ascii?Q?BYUzRrAeRG+xPSZHRqndiKe8ArN6BDG/LG+fuyLgoNGnKV6R?=
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
+ by BL4PR11MB8845.namprd11.prod.outlook.com (2603:10b6:208:5aa::12)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.11; Mon, 14 Sep
+ 2026 16:35:29 +0000
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0406.007; Mon, 14 Sep 2026
+ 16:35:28 +0000
+Date: Mon, 14 Sep 2026 17:35:24 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: "Loftus, Ciara" <ciara.loftus@intel.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, "Burakov, Anatoly"
+ <anatoly.burakov@intel.com>
+Subject: Re: [PATCH 13/13] net/ice: enable context desc offloads for vector Tx
+Message-ID: <aqgiTOZF_hilXCj1@bricha3-mobl1.ger.corp.intel.com>
+References: <20260903170140.360477-1-bruce.richardson@intel.com>
+ <20260903170421.361293-1-bruce.richardson@intel.com>
+ <IA4PR11MB9278B0B20DE99B28512414EF8EBB2@IA4PR11MB9278.namprd11.prod.outlook.com>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <IA4PR11MB9278B0B20DE99B28512414EF8EBB2@IA4PR11MB9278.namprd11.prod.outlook.com>
+X-ClientProxiedBy: DUZPR01CA0038.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:468::12) To SN7PR11MB8066.namprd11.prod.outlook.com
+ (2603:10b6:806:2df::18)
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|BL4PR11MB8845:EE_
+X-MS-Office365-Filtering-Correlation-Id: cd15920c-1dda-43ec-835f-08df127e2fbb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|23010399003|366016|1800799024|376014|56012099006|11063799006|4143699003|10067099003|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info: uQ4wnOV6dIE+0vDBZyROjQpwV5G7MHWcPXtwJ566WAnzZtm5ozCTbHIeVRv4kb7Tn/XripnL/14pFRKQJW6sP3fDG3LSshAaIEx351oJWNZuiYOl1N5g34wl5r1kUtaRo8NotMKls2uVDgx0PWrOBsBWSQGWWQKqm5N83xAtLW6do6LvRocAQOjoncFeZmbRWKiJyk28d+mIyTZa1z1ojQxH/YaLnuG0DHSMoGkTw2KqJkGzETiTDmYvs6+qExTqVCAW2pB9WcHpNSOW+eanXC4nEJbbr4ANJZBDRu4tOPq7vootgjLiIcPE445B9eujg4+KyOF7OjBGKoLa9NUhRc1ISBodKBXvrzNBegRtALilRX6MWPW1w3fTImogArKxzzjUGrFHZ+tBm6x+Q6mtv0wSDVHOHzAM3CEbGEILzPazEhroJoUQKVLG2OGodIiXq4Lxjmzy77q81cdYC7HwO7MI1m77+Y9ixHorBi4aGBmE1E+mIgurATg0CDuxgE7vxqu0KV7s343KKO0xAjtuv16IQtgyugxcLVSM6fyrS6qzaRP5wjQelW1wc0hFMDEOqJCCYttE9K5eeckoE9arTFioh2YSvog277bd9xBL7Nz/aMUq3dbpTGVlIJaApF0/4/FH6tbD6nAf8kq3TKAlOA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(23010399003)(366016)(1800799024)(376014)(56012099006)(11063799006)(4143699003)(10067099003)(22082099003)(18002099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?K5F4UMDQpvCUIyp86E3lgEqtFU48F9h2nJgU7iIg9JVnLKEfXcjLWNyq2EFS?=
+ =?us-ascii?Q?e+EV1DSIcMqRga+tM+qgSviks403dNxco5wL5nNN7yPsCD48AHFoMglAt7++?=
+ =?us-ascii?Q?6WoaH2cgwr4kwFNHrKhweBdc1iypd3mUYuxFR+6vLW7D8eLUJdRCB2YUszQI?=
+ =?us-ascii?Q?BEmLsStvgj7l9l3SsRKmLQVy/58xWlIuDfjEE9yWjs4v/g5RVOe5n3tGXBJR?=
+ =?us-ascii?Q?4iunoG2GZ7a2egN3rsvvqZzFpDZP4ia3Ywa9K4RnuDLUkAgw7QEqMru/mPgI?=
+ =?us-ascii?Q?rxswQ0yE+XYmHvf0H6HV/0QpAaeiuekaj6zhrNsZ1pMV2jtBz2vacMu/8DL0?=
+ =?us-ascii?Q?QZJcv1GimIOFHmRWtnEgwO9lw6Gh/6aPFpqJN7bZ9TO2o1u3oK6uTR/o4en3?=
+ =?us-ascii?Q?OW57rNy7tzkSbT9uK9lxCaLmVJDrDpDqgcTDIX7cEVmRoeynnighFvc6DgKL?=
+ =?us-ascii?Q?Ot3TkKSoXxobgM4wLM43fz1X5rjn9rPOlwIODT0C9LoQ3HtnFTc+0VVfU7ot?=
+ =?us-ascii?Q?cAy4g8pZY0R9IBsx5ZuoXDKyVE3FtNz2rZkJURCxwFQ1yTyXkeu8DM2UKRCJ?=
+ =?us-ascii?Q?YSBJgK/Bsp3ann323aude8NrGk36hE6Kveb4P+x9yyqXGaV8k+zE+FfWvu2b?=
+ =?us-ascii?Q?npJtwP9BM2odEY0pYq3PQDjkX1LSrZ82OiCbAvimZuQlajbwDB4/lmq+yzbQ?=
+ =?us-ascii?Q?kPf8OrYIZ9D89/28Nvbmlqke+1lrep/HyZW4Wl4Wvh9YHP/7KE5cKfoxQdHk?=
+ =?us-ascii?Q?86EA0L/8ZeyG28tcCCWdlqtMZvRCuAuFGs1WNX5p2QIfthgWrqqy2jU2M9E0?=
+ =?us-ascii?Q?4AkFse479Sn0L3MKbYE9VxwVdz5lqQzgo+AsaoM+Drlq7F+fX9IF/3PWrKho?=
+ =?us-ascii?Q?QAhs5+xmC7BLYsL5iT0ImJcX1FamdWBMNvM/t9fsZ4WF2a2wqWp1+kl3oGRC?=
+ =?us-ascii?Q?oGatnFM6sHB9/fjTYvCSf6lTUs7SofzD6iynAXXB6Q2mhgM5fXTR+B5DQ+9/?=
+ =?us-ascii?Q?zv/0Ai4uebhBzwekDwuA/fKkQzpYp6VUj5dO3dW9d8rZab0UCTtSCqFtUBBM?=
+ =?us-ascii?Q?d0WhnBoQpeMlhZDe/jui30e6zsgvK0XK5WeLYWVEdpSfUumSlauQRVsxQDPr?=
+ =?us-ascii?Q?OeNms0E0ELhTlQbaAOFTG6Q0QwDy7Scst2IEgHYfAoLWNHwbMaq4mh41Eyzj?=
+ =?us-ascii?Q?q64za5tJIBUwIO7cGSF0A3wvBxqvGJcwL7oxdzjX0Jh8TwbVm2C5/XnF+22x?=
+ =?us-ascii?Q?BygbcA9uBF1ocZ0rWbBAV1x4mSCite1WRI6JrrfaGgrZHk4lgOiUZ5zdUOiE?=
+ =?us-ascii?Q?9K/Rqle3x/Vn9l9vrZ73gICy+4DKXsfWhPQ3ArzuWs79TKYTs3TdRWNISue0?=
+ =?us-ascii?Q?MaouqMFtrmHFkktaMUIG6R8BIrt3YJFD9DFG6Kmre+VqQnTOfvIhozWDT2J4?=
+ =?us-ascii?Q?iXYRDzEmgAX6L4HpduUVpBbD3DJebc9QrkipmZLlmpGekAn4/kuzOqRFzsWi?=
+ =?us-ascii?Q?8cbcLOKLTqSOnw4wMz8BkKEYFiIpwoV9oZwLbAGYCSiZ2nvIf2CqIMgg8FQ6?=
+ =?us-ascii?Q?rU3zEk3hZKbgtxfSvkpuACSYMSYnWq47EDHijOXcU250fRK7fPa7cecJhBg5?=
+ =?us-ascii?Q?3T6lIAjH90YRWgbKj8qg9Pu5JVZacCZZh5QnaeFOewWxss4LgGMNdBOxA8fg?=
+ =?us-ascii?Q?v05GBWuEHXVLws3zMZeVOTJV1y7qW6HiClp4mSuvkT52dndw5eP4efgW/Wuk?=
+ =?us-ascii?Q?NPHNwvktEsaxFW0cs8DTwPrcBu2CvHU=3D?=
+X-Exchange-RoutingPolicyChecked: DXPNRKAEHjINHb2qu6PdYapijxKL1ha06et4uPLuwt4bouRKXjAC43UoXhGyBaxop60vpDiW+356XLfrijrs43uqo4yeTNlXguZko62ZZprB8IRk2HbfE4P2Vs6HQUketYlSBNAU7l7wo+4hLj5wBDCRXe814iOsd0oyAmmocYald2hM4/x/ogjaTWQuqSu+B6kpRQYnaV/yzWadBQ0ZiOPCfUDU3PdBEs4OgeRkxtH7SHGRxcvUK2k5IQ9zQ6DbJTmb0h2QGJ+tOf9CcwyvMWjWFx6JAeTlNCmYUpYognL84OcHbcSAlU2VIGn5eex2JTPPaZebN0pL4Ns+T3DfHA==
+X-MS-Exchange-CrossTenant-Network-Message-Id: cd15920c-1dda-43ec-835f-08df127e2fbb
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SI3P153MB1838.APCP153.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: fe369958-c114-4f1f-5895-08df127ca8eb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Sep 2026 16:24:32.9118 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: RMW2s2HVzy7+hzgHwxpefl3VTez8KOX48IF78zdWwFMFMHNXhdsOQo09VdcRyezyljf1voS5mgad2PiflfF9Tg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI3P153MB1887
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Sep 2026 16:35:28.8785 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: I9mN56HQd/EDJ88hsLr5s4q1/WoF32j9qIqCtTjT4I+pDqUeRWmUVPLff/55gwP7KuxqONSsHLA6fmA08dnj+2+GbvHYfGqW9SBJh8BuzFE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL4PR11MB8845
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -132,106 +153,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-
-
-> -----Original Message-----
-> From: Stephen Hemminger <stephen@networkplumber.org>
-> Sent: Tuesday, September 15, 2026 12:14 AM
-> To: Rita Ruvinsky <rita.ruvinsky@weka.io>
-> Cc: dev@dpdk.org; longli@microsoft.com; Wei Hu <weh@microsoft.com>;
-> stable@dpdk.org
-> Subject: [EXTERNAL] Re: [PATCH] net/mana: fix Tx stall from send queue fr=
-ee-
-> space unit mismatch
->=20
-> On Mon, 14 Sep 2026 13:58:08 +0300
-> Rita Ruvinsky <rita.ruvinsky@weka.io> wrote:
->=20
-> > gdma_post_work_request() subtracted a unit count from an entry count:
-> >
-> >   queue_free_units =3D queue->count - (queue->head - queue->tail);
-> >
-> > queue->count is in entries, while head and tail are in WQE alignment
-> > units. On a 512-entry, 128KB send queue the check saw 512 units of
-> > capacity instead of queue->size / GDMA_WQE_ALIGNMENT_UNIT_SIZE =3D
-> 4096,
-> > and returned -EBUSY with the queue one eighth full. A workload that
-> > fills that window faster than it drains makes rte_eth_tx_burst()
-> > return
-> > 0 for long enough to look like a dead port.
-> >
-> > Derive the capacity from queue->size, which is also what the ring wrap
-> > in gdma_get_wqe_pointer() uses. Rx is unaffected: its WQEs occupy
-> > exactly one unit, so entries and units coincide.
-> >
-> > Fixes: 56dd45c0ce7b ("net/mana: implement hardware layer operations")
-> > Cc: stable@dpdk.org
-> >
-> > Signed-off-by: Rita Ruvinsky <rita.ruvinsky@weka.io>
+On Mon, Sep 14, 2026 at 03:18:57PM +0100, Loftus, Ciara wrote:
+> > Subject: [PATCH 13/13] net/ice: enable context desc offloads for vector Tx
+> > 
+> > Use the context descriptor Tx vector paths from intel/common in ice
+> > driver to enable more offloads on the vector path for ice driver.
+> > 
+> > Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 > > ---
->=20
-> Applied to next-net
->=20
-> The long form AI review had some observations worth including:
->=20
-> On Mon, 14 Sep 2026 13:58:08 +0300
-> Rita Ruvinsky <rita.ruvinsky@weka.io> wrote:
->=20
-> > gdma_post_work_request() subtracted a unit count from an entry count:
->=20
-> The unit analysis is right.  head/tail are advanced in alignment units (q=
-ueue-
-> >head +=3D wqe_size / GDMA_WQE_ALIGNMENT_UNIT_SIZE, and
-> gdma_get_wqe_pointer() multiplies head by the same constant), while
-> sq_count comes from rdma-core as attr->cap.max_send_wr and sq_size as
-> align_hw_size(max_send_wr * get_wqe_size(max_send_sge)).  Deriving the
-> capacity from size is the only self-consistent choice, and it is what
-> mana_gd_wq_avail_space() in the kernel driver does.
->=20
-> Info:
->=20
-> 1. The debug line in the -EBUSY path still reports queue->count:
->=20
-> 	DP_LOG(DEBUG, "WQE size %u queue count %u head %u tail %u",
-> 	       wqe_size, queue->count, queue->head, queue->tail);
->=20
-> After this patch count no longer takes part in the decision for the send =
-or
-> receive queue; only gdma_poll_completion_queue() still uses it, for the C=
-Q.
-> The one line printed when a post is rejected no longer shows what it was
-> rejected against.  Suggest:
->=20
-> 	DP_LOG(DEBUG, "WQE size %u queue size %u free %u head %u
-> tail %u",
-> 	       wqe_size, queue->size, queue_free_units,
-> 	       queue->head, queue->tail);
->=20
-> 2. The comment describes the old bug rather than the invariant:
->=20
-> 	/* head/tail count WQE alignment units, so the capacity they are
-> 	 * compared against must too: queue->count is in entries and
-> 	 * undercounts the queue, stalling Tx well below capacity.
-> 	 */
->=20
-> The stall belongs in the commit message, where it already is.  In the sou=
-rce the
-> invariant is enough:
->=20
-> 	/* head and tail are in WQE alignment units, so the capacity must
-> 	 * come from the queue size in bytes, not the entry count.
-> 	 */
->=20
-> 3. Worth a sentence in the commit message that the kernel mana driver
-> computes the same limit in mana_gd_wq_avail_space(), in bytes:
->=20
-> 	u32 used_space =3D (wq->head - wq->tail) * GDMA_WQE_BU_SIZE;
-> 	return wq->queue_size - used_space;
->=20
-> It is independent confirmation of the unit convention and tells anyone
-> backporting this that the two drivers now agree.
+> >  doc/guides/rel_notes/release_26_11.rst      |  6 ++++
+> >  drivers/net/intel/ice/ice_ethdev.h          |  3 ++
+> >  drivers/net/intel/ice/ice_rxtx.c            | 31 ++++++++++++++++++---
+> >  drivers/net/intel/ice/ice_rxtx.h            | 11 ++++++++
+> >  drivers/net/intel/ice/ice_rxtx_vec_avx2.c   | 24 ++++++++++++++++
+> >  drivers/net/intel/ice/ice_rxtx_vec_avx512.c | 24 ++++++++++++++++
+> >  6 files changed, 95 insertions(+), 4 deletions(-)
+> > 
+> 
+> <snip>
+> 
+> > diff --git a/drivers/net/intel/ice/ice_rxtx.h b/drivers/net/intel/ice/ice_rxtx.h
+> > index 999b6b30d6..bee8a464f5 100644
+> > --- a/drivers/net/intel/ice/ice_rxtx.h
+> > +++ b/drivers/net/intel/ice/ice_rxtx.h
+> > @@ -135,6 +135,12 @@
+> >  	RTE_ETH_TX_OFFLOAD_UDP_CKSUM |		\
+> >  	RTE_ETH_TX_OFFLOAD_TCP_CKSUM |		\
+> >  	RTE_ETH_TX_OFFLOAD_SCTP_CKSUM)
+> > +/* vector ctx offload path: QinQ outer tag + outer/tunnel checksum via ctx
+> > desc */
+> > +#define ICE_TX_VECTOR_CTX_OFFLOAD_OFFLOADS (	\
+> > +	ICE_TX_VECTOR_OFFLOAD_OFFLOADS |	\
+> > +	RTE_ETH_TX_OFFLOAD_OUTER_IPV4_CKSUM |	\
+> > +	RTE_ETH_TX_OFFLOAD_OUTER_UDP_CKSUM |	\
+> > +	RTE_ETH_TX_OFFLOAD_QINQ_INSERT)
+> 
+> Now that the paths and thus offloads are shared, is it worth creating
+> common OFFLOADS masks? I assume
+> IAVF_TX_VECTOR_CTX_OFFLOAD_OFFLOADS is an exact match for
+> ICE_TX_VECTOR_CTX_OFFLOAD_OFFLOADS
+> 
+Yes, it is probably worth doing. Not sure if it's best in this patchset or
+not. Let me investigate.
 
-I was about to say the same. The change in DP_LOG and code comments
-all make a lot of sense. Thanks for fixing this.=20
-
-Wei
+/Bruce
