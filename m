@@ -2,69 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29901C88E50
-	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 05:51:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C5CBC88E50
+	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 05:51:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1483E40B95;
-	Mon, 14 Sep 2026 07:50:36 +0200 (CEST)
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com
- [209.85.216.53]) by mails.dpdk.org (Postfix) with ESMTP id 6B33D406B4
- for <dev@dpdk.org>; Mon, 14 Sep 2026 07:50:34 +0200 (CEST)
-Received: by mail-pj1-f53.google.com with SMTP id
- 98e67ed59e1d1-3856d6fbcb3so2713086a91.2
- for <dev@dpdk.org>; Sun, 13 Sep 2026 22:50:34 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 4505B40E2B;
+	Mon, 14 Sep 2026 07:50:39 +0200 (CEST)
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com
+ [209.85.216.46]) by mails.dpdk.org (Postfix) with ESMTP id E5BBE406B4
+ for <dev@dpdk.org>; Mon, 14 Sep 2026 07:50:37 +0200 (CEST)
+Received: by mail-pj1-f46.google.com with SMTP id
+ 98e67ed59e1d1-395cf2535acso2787275a91.1
+ for <dev@dpdk.org>; Sun, 13 Sep 2026 22:50:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789365033;
- x=1789969833; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789365037;
+ x=1789969837; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=EwKwFHW3vkfCRVGNDKjIdmB+Xu6uTQ0amFZuhLJOvYc=;
- b=RZbSTDFMZqW9lnP1orVfU4eDkhIgTRvMp/PxK3y++MSLRurdXLltichM3K5iireVSG
- QwXFjIThTGVOEn9L/JbPxbcLEHrl1p53s7lEaP4zfeGmtisuZ0T9gps6JLIllFb22JO0
- wOmneyqz1Fu/BieUn3pFqzXJXSaW80PnsGfIkGyaQcG1luYOzsZb3v3zS9mtxoM+uD6r
- SLE6G+KNIW7ScdNoIRFan4M2SJz0oaSQWMuGCanbjvxjCCSTvv2cam6UyO89vAyjfbJa
- Z06k4VNGXCRKkZCLf2T4p1hICHkQCMz86knfRsqoGojhXmJXzyoNJ8KKMzGrj1IkylT1
- yRvw==
+ bh=ATOKNKUSUdPuqj/ddz9dvp+dnGzSTbWmkfKu7MmHt5M=;
+ b=PCaw7zeEs9+nWH+35sBiHHM5BuKmJuf5vda97vNL1Hu+R9cK0f3TWlEbXcOVD74PU8
+ VWsMVRcKdwnDoo8cVnpXSuaR/9NVs2did0Ch8NhlSzb8LvS8UTn3QxZfD72WD/9Sn+rl
+ Ghejz0i5zuzrhywbOdi8NZoPNaeBePaERet6lCULZm+aS8sWY8J5+JseyCT4IqJ6zkdI
+ xRJgbFrtxpD6Kc7isNbonz6Rkc3gmB+aGVlSh/OFA/Up4ZSEE+8saLJFlTrV/EeHVCxD
+ Aipf6REa6hoULfQL1rZjwxY5ILbC94F3k37CvQ1xDQ1wDiwbw32wFQhi7SHUlG8LB/22
+ 8Ysw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1789365033; x=1789969833;
+ d=1e100.net; s=20251104; t=1789365037; x=1789969837;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=EwKwFHW3vkfCRVGNDKjIdmB+Xu6uTQ0amFZuhLJOvYc=;
- b=Co5qb6f4YQvll40ZYBkPmawZIZKlo9p7yrhoHAyCRbUzYgfPm6B5A9uKzz5iPCmRSG
- 7dSjE58E0mYGo4OstnwV2x8CvmykCIwdVNYmnkZTIjHpLQM/Q2H6D1xEYzyD0UPo41db
- JrpeapcO9SP5+rjR65cEfsOOXsCp6sbxyTrOzRiLk//+OZf+VZ906aMqVQo3Wzkh02G8
- pE1Y38FTJvHDsleBJrois0HuclseA/D297yjZ+knxY1faaFD9fyYIH2mJ+y0o4I28FKM
- hDZxZ5UslBT4ab1/TKKRq7twwYAN3aCUUI32QwQCVY7KK1Zv5gaE95ePQgfzOWVhb9AY
- cCiQ==
-X-Gm-Message-State: AFuF++mH/LpdYxt3MYfIIeg9/mIJTvXAVnZJwk4Ics6CBXGW7X2qemt/
- h18+mfmJ323tuiZOoszyvOREOQL3kDW6wi4k73FsFbPC2XVO3zxdkC7xjeUAtp9ysG/nBBnO2/H
- DaGjK
-X-Gm-Gg: AYBFou3zN/2BDG5o3xS0ZBQf7Qftb9FYUwqfGPKQevPnX/BDpubJU6uQBUwBKwU+tR1
- kMAFlXifTc1d+KGh7AMejLxsNu30VnNUDLKvKsqyFSWd/2SLuqO6Kj4AoOXMhqCYjyMWq6BAxUJ
- qxhyk3U46cbZH/u1hRn8Z2khwNw8W4jZq0mjH2V6D5jrNHTBdJpXgO8lhsxWjLVRhkWKTPejRir
- g8FMCnxt3e0fb3iV9zbcDFz84l20nxr4BuxFq7Fnm/soW4GORbDWoCw0rpD4smUHe6UiUnTMznP
- 9jg9I++D8TUQsFFyoayUisV7WBWycWgBwCnZlznk5CAe0fFLMEN3A7a39mCAufzXVnK/fAXWKHu
- H6LeLpUscwqDCJnQcyOKg1shKwE4gWTwGmSRPrH/TYtDQkHAhtHlYere0MDUhbAzCTubRaeGMgf
- hyGLo42u5mw7Mik1ZsMLXjGeIKT7RGYXAllJZVh0fh4w+DNQVb5HC7stEyMVbhnibLuxbN5rCcD
- b3wlJQhrugpsoMzHqvb1KZhS07/TzUYFKD+sjLXavcDYMbg
-X-Received: by 2002:a17:90b:1d82:b0:398:a2a3:b631 with SMTP id
- 98e67ed59e1d1-39dec0be84amr2388685a91.19.1789365033535; 
- Sun, 13 Sep 2026 22:50:33 -0700 (PDT)
+ bh=ATOKNKUSUdPuqj/ddz9dvp+dnGzSTbWmkfKu7MmHt5M=;
+ b=EOpgPO/ZQyRjNmKiG0suTan58jZGSKOT1k+rvLWKnKw66mVn+saYtq+VN+OuzDZQOO
+ jXJPaZ6g3qtJaAf8l3HFOdukPlms6i3BSMAmz/qTS2+VCpOF1kU+lniSnhSp8OOU6fbN
+ QhUSj4pIPbJbBsxECRPHdKnO/PTwdT8K05LVQ4tvt3FYYLddLn9j22CoUCLZhzvmAV9E
+ ANVXIXr0DxscXn00DMzMXtVB1SDQquEf52hUlBF5QeYQAg0B4hMe0Ni/LoYYHI3Zm1cQ
+ ftuFx6Hl+izaIOXhIIylrX4bOXj8qbyBYV9/+1YoAoWxpDozhVx1ypz3MW3mGfmHXebJ
+ qvAQ==
+X-Gm-Message-State: AFuF++ktKxJ+adgK9f/HRphRN4Ru225zvTv8pwsbHeYywpG5tg1RqC+F
+ 1ahkizJBetG9LUlFZb4aquFNROyN+CaZG6yRNXe/vN73Y74UaUthpGEfTOQsv1hOqG6QSBwwN3L
+ 5nfjI+T8=
+X-Gm-Gg: AYBFou1+NZjVq5Pyx6rEVBfR5NSvhUJtezZfX6AFXzaA1jHF2O6MbNMb67k0MgvtTAB
+ TFd0m7ZVS0UBPWE3OXzCV2vSLZKC+ewtW9FTvgyXeDo3VOJlViI4gbHYEiCnkm1mFVLtVeyV7ND
+ R8anNNR5DdIWpXL94AYtWHP2g/83nSBu/PWRflgAgAfGB5p44+HvPQSgMOhbNZEXT8rBAAZrmuE
+ B734kaQ76k/pIyBMgksYDyqW0oMBI3yGojNxzaJ238bJFJABmkv0cCc8yf9SWzh8bwI5EZBbLaO
+ rpgDo2PcKBG8xoLQ3Nx1+cDfC/Rmu+/dFQ7Ssq9aBjUs4afWhtSj2G3gASPrziBjBmE0DMSRC56
+ QrQnhCAsUlqrJMsYEJpLfhO87W819v3poXoc++aId9z0aa9TmrGxpWEZC29sgupNC+SKP5KUHCt
+ 1wsD/6njJeHml0y1zo7dZLqisMaIkMPrvm4RuUSXzJesES/NU+vADZT4z+JN+31V+rBPUGX2GuU
+ S/yp6ZyJ1EbQNQS67hyeh5tv3BSQx/+etgTOA==
+X-Received: by 2002:a17:90b:3eca:b0:398:cb8f:c308 with SMTP id
+ 98e67ed59e1d1-39dd5288e2fmr6496546a91.0.1789365037016; 
+ Sun, 13 Sep 2026 22:50:37 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39d95864b4fsm19794492a91.15.2026.09.13.22.50.29
+ 98e67ed59e1d1-39d95864b4fsm19794492a91.15.2026.09.13.22.50.34
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 13 Sep 2026 22:50:33 -0700 (PDT)
+ Sun, 13 Sep 2026 22:50:36 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Shai Brandes <shaibran@amazon.com>, Evgeny Schemeilin <evgenys@amazon.com>,
- Amit Bernstein <amitbern@amazon.com>, Wajeeh Atrash <atrwajee@amazon.com>
-Subject: [PATCH 22/62] net/ena: use kvargs numeric helpers
-Date: Sun, 13 Sep 2026 22:46:53 -0700
-Message-ID: <20260914054912.755403-23-stephen@networkplumber.org>
+ Long Li <longli@microsoft.com>, Wei Hu <weh@microsoft.com>
+Subject: [PATCH 23/62] net/netvsc: use kvargs numeric helpers
+Date: Sun, 13 Sep 2026 22:46:54 -0700
+Message-ID: <20260914054912.755403-24-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260914054912.755403-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -83,123 +82,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-ena_process_uint_devarg() only checks that strtoull() consumed at least
-one character, so trailing garbage such as "8junk" is accepted, and a
-negative value is silently wrapped to a huge unsigned value.
+hn_set_parameter() does not check errno, so an out of range value is
+accepted as ULONG_MAX, and the result is stored into 32-bit fields
+without any range check.
 
-ena_process_llq_policy_devarg() ignores the end pointer entirely, so any
-unparsable value becomes zero and disables the LLQ policy rather than
-being rejected.
-
-ena_process_bool_devarg() only served enable_frag_bypass, and did
-nothing beyond accepting "0" or "1" and storing into a bool, so drop it
-and point rte_kvargs_handle_bool() at the field. A bare
-"enable_frag_bypass" now enables it, along with the usual spellings.
+This also drops support for octal, which base 0 accepted; hexadecimal
+still works.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/ena/ena_ethdev.c | 45 +++++-------------------------------
- 1 file changed, 6 insertions(+), 39 deletions(-)
+ drivers/net/netvsc/hn_ethdev.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ena/ena_ethdev.c b/drivers/net/ena/ena_ethdev.c
-index ad2ac6dbbf..c91f4f4b73 100644
---- a/drivers/net/ena/ena_ethdev.c
-+++ b/drivers/net/ena/ena_ethdev.c
-@@ -48,8 +48,6 @@
- 
- #define BITS_PER_TYPE(type) (sizeof(type) * BITS_PER_BYTE)
- 
--#define DECIMAL_BASE 10
--
- #define MAX_WIDE_LLQ_DEPTH_UNSUPPORTED 0
- 
- #define ENA_TS_OFFSET_UNSET -1
-@@ -321,9 +319,6 @@ static int ena_xstats_get_by_id(struct rte_eth_dev *dev,
- static int ena_process_llq_policy_devarg(const char *key,
- 			const char *value,
- 			void *opaque);
--static int ena_process_bool_devarg(const char *key,
--				   const char *value,
--				   void *opaque);
- static int ena_parse_devargs(struct ena_adapter *adapter,
- 			     struct rte_devargs *devargs);
- static void ena_copy_customer_metrics(struct ena_adapter *adapter,
-@@ -3841,11 +3836,9 @@ static int ena_process_uint_devarg(const char *key,
- 				  void *opaque)
+diff --git a/drivers/net/netvsc/hn_ethdev.c b/drivers/net/netvsc/hn_ethdev.c
+index 9a193e4a7a..d9f60ec279 100644
+--- a/drivers/net/netvsc/hn_ethdev.c
++++ b/drivers/net/netvsc/hn_ethdev.c
+@@ -202,11 +202,9 @@ eth_dev_vmbus_release(struct rte_eth_dev *eth_dev)
+ static int hn_set_parameter(const char *key, const char *value, void *opaque)
  {
- 	struct ena_adapter *adapter = opaque;
--	char *str_end;
- 	uint64_t uint64_value;
+ 	struct hn_data *hv = opaque;
+-	char *endp = NULL;
+-	unsigned long v;
++	uint64_t v;
  
--	uint64_value = strtoull(value, &str_end, DECIMAL_BASE);
--	if (value == str_end) {
-+	if (rte_kvargs_to_uint(value, 0, UINT64_MAX, &uint64_value) < 0) {
- 		PMD_INIT_LOG_LINE(ERR,
- 			"Invalid value for key '%s'. Only uint values are accepted.",
- 			key);
-@@ -3890,17 +3883,15 @@ static int ena_process_uint_devarg(const char *key,
- static int ena_process_llq_policy_devarg(const char *key, const char *value, void *opaque)
- {
- 	struct ena_adapter *adapter = opaque;
--	uint32_t policy;
-+	uint64_t policy;
- 
--	policy = strtoul(value, NULL, DECIMAL_BASE);
--	if (policy < ENA_LLQ_POLICY_LAST) {
--		adapter->llq_header_policy = policy;
--	} else {
-+	if (rte_kvargs_to_uint(value, 0, ENA_LLQ_POLICY_LAST - 1, &policy) < 0) {
- 		PMD_INIT_LOG_LINE(ERR,
- 			"Invalid value: '%s' for key '%s'. valid [0-3]",
- 			value, key);
+-	v = strtoul(value, &endp, 0);
+-	if (*value == '\0' || *endp != '\0') {
++	if (rte_kvargs_to_uint(value, 0, UINT32_MAX, &v) < 0) {
+ 		PMD_DRV_LOG(ERR, "invalid parameter %s=%s", key, value);
  		return -EINVAL;
  	}
-+	adapter->llq_header_policy = policy;
- 	PMD_INIT_LOG_LINE(INFO,
- 		"LLQ policy is %u [0 - disabled, 1 - device recommended, 2 - normal, 3 - large]",
- 		adapter->llq_header_policy);
-@@ -3908,30 +3899,6 @@ static int ena_process_llq_policy_devarg(const char *key, const char *value, voi
- 	return 0;
- }
- 
--static int ena_process_bool_devarg(const char *key, const char *value, void *opaque)
--{
--	struct ena_adapter *adapter = opaque;
--	bool bool_value;
--
--	/* Parse the value. */
--	if (strcmp(value, "1") == 0) {
--		bool_value = true;
--	} else if (strcmp(value, "0") == 0) {
--		bool_value = false;
--	} else {
--		PMD_INIT_LOG_LINE(ERR,
--			"Invalid value: '%s' for key '%s'. Accepted: '0' or '1'",
--			value, key);
--		return -EINVAL;
--	}
--
--	/* Now, assign it to the proper adapter field. */
--	if (strcmp(key, ENA_DEVARG_ENABLE_FRAG_BYPASS) == 0)
--		adapter->enable_frag_bypass = bool_value;
--
--	return 0;
--}
--
- static int ena_parse_devargs(struct ena_adapter *adapter, struct rte_devargs *devargs)
- {
- 	static const char * const allowed_args[] = {
-@@ -3965,8 +3932,8 @@ static int ena_parse_devargs(struct ena_adapter *adapter, struct rte_devargs *de
- 		ena_process_uint_devarg, adapter);
- 	if (rc != 0)
- 		goto exit;
--	rc = rte_kvargs_process(kvlist, ENA_DEVARG_ENABLE_FRAG_BYPASS,
--		ena_process_bool_devarg, adapter);
-+	rc = rte_kvargs_process_opt(kvlist, ENA_DEVARG_ENABLE_FRAG_BYPASS,
-+		rte_kvargs_handle_bool, &adapter->enable_frag_bypass);
- 	if (rc != 0)
- 		goto exit;
- 
 -- 
 2.53.0
 
