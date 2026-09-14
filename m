@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 352C9C88E67
-	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 05:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46652C88E67
+	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 05:54:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F408C42831;
-	Mon, 14 Sep 2026 07:52:16 +0200 (CEST)
-Received: from mail-pz2-f17.google.com (mail-pz2-f17.google.com
- [74.125.228.17]) by mails.dpdk.org (Postfix) with ESMTP id 36AE342831
- for <dev@dpdk.org>; Mon, 14 Sep 2026 07:52:16 +0200 (CEST)
-Received: by mail-pz2-f17.google.com with SMTP id
- 41be03b00d2f7-cc4c3304784so1493349a12.3
- for <dev@dpdk.org>; Sun, 13 Sep 2026 22:52:16 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5978842D7A;
+	Mon, 14 Sep 2026 07:52:21 +0200 (CEST)
+Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com
+ [74.125.228.12]) by mails.dpdk.org (Postfix) with ESMTP id BA51042D7A
+ for <dev@dpdk.org>; Mon, 14 Sep 2026 07:52:19 +0200 (CEST)
+Received: by mail-pz2-f12.google.com with SMTP id
+ 41be03b00d2f7-cc1ceb47d53so147082a12.0
+ for <dev@dpdk.org>; Sun, 13 Sep 2026 22:52:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789365135;
- x=1789969935; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789365139;
+ x=1789969939; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=R9eLFuSirUTcrzKlNnryWcQANxQNfKX4rwdVS3XTQPM=;
- b=YxBI+zVXKPHGXgHUNbwHAkwptEKeoX8xq+IZvAgKeXX0vcV+y1pRD8mxTcTB5zcyej
- 08nt3egxrSgGDREefg//z/x7ABuvqR3ZhfggzQvRs2RVRHC7y8BzRII0TDRK13LshMkj
- HfxJlQAYlMG7C4rul8mSgQ1pXskHZSSBHW+EJVUhDyg2QQ4nJ9eUO24NH9nKAmibdRRx
- XZ0K7N2wQkc0yzw71wxkKc1FqxkTvvzZCyVdLN8P3saFhLMIiCfmdcvcfQqUcOLN68ou
- 9nkWvtNlXVGPzsnt6SVrUdxpWrJWHgkrAvZ5uzdaEFopPSNNZF0OhvjCd9s/09jJtnBK
- ngXw==
+ bh=GmLj1TBmKjo6H4+D/THjReCXdEKXZEv6GGqdUp47dfo=;
+ b=d3WizhwxoSebg8LTEH3qMj3Nc2oLiX7NGZ4lj+L0UoLJ2MdUDlmUoL7Z4HP9zkp2E3
+ VfYM3nT0Zrx50+pCYvGidabS4CaeqOZUkZBsULcuiMCeISgWFTyCvbkMwKlpZcQBv710
+ +QX5ERsQRwcVjw8E57lM5UHxRdCkrmhImOa77T5WnrqeuXQGoB7zO+T06qqfHG3rGEPx
+ RGKzjzk5gLaf7qzpQZtgvdOrmUEUusJY1f4WzfT3VChmMMd9MHMdUpSLhKEyNfWdTkEB
+ 0W9/XbWSCyeCQVHX6qSr8R2fMfAxCplg6tIRbTqFhzqyUx/0ihbcb0Opta1LTElMTfeC
+ LXiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1789365135; x=1789969935;
+ d=1e100.net; s=20251104; t=1789365139; x=1789969939;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=R9eLFuSirUTcrzKlNnryWcQANxQNfKX4rwdVS3XTQPM=;
- b=iohIcHhsjACcWNoDIUC2anMliITM79zklljHILvlf4MtluCLdiwEryjO1uO5aD7A1N
- Mo2cM4g8uMNACjXWzI3Em73hB8P7uskuL7BZm5qCDN4cjg4wbwF3P8ybaroylIhOk9H6
- la179SUsjMZbrNENlJHzQr4gPbng1xULmikttyuWr2Ysm3/H1POunYK4AJz+XRWGKFg6
- FilDc9iyzzB2XTsVjn6Io1VNaVCrZl9ppdmJquvpjx3Odwnzn1cbIjUUT1hoa05bTBwZ
- Z9APclhGP95hF7p17ukjCNjlw21ResUiKpndV/TPwRiwASVIV9U1Rt2XFbaa/LzrgeJl
- NspA==
-X-Gm-Message-State: AFuF++kP/IplLqLjYYtffvllvSF1GSFmeB74jcCknl/YDEHyXCl64+9+
- Z/0srKDdUDLJ0IS9D+4tXfxOpjhvikZSO0a3qrTbxiRP+Bk1e9lhzB/s5qDHxkL+lxJFBjTP9XL
- RSbblfa0=
-X-Gm-Gg: AYBFou3F0GcScseFEBqBKsvVvym6bOucBLChwt7hIHCw7C0OpYR+J56ced/7xCYDEKq
- 1S07xf4mBnWfnST2iUNvvD0v9eGq/30rLT5DNLsq4sw+1cDFdssR229/EkaE9JLh4xMPMytZB9P
- mg8YKBs2i7r257aTW+vduqHCSdlfacu16QsjbgYUDvPXFBoyLgqed2WeAhU5A/yl+rb+p6pmrA3
- bXPedTJRmNwyX7Ir38exuSZICEZH7PATrMjwmOXhfOi7I6xpcN6e4gaGI9ox2fHAd7Z8z9ifweH
- OmRQSfhWIV349fRhkt/Atg4SamdOv9LSzhnRo8RKGr+4v/QpEYJi21tZ5X8fbfd4cKx18bPnUWx
- hb5ah2DapG6bAyBkmSuppsYJ7Yp/kIHhd//MXQLBNr8Fc2tQLyfhiKKFr9gBBiXW1NkoWjBbGmR
- MaIahTlpCaymacf/UPcCFc4z7KwUO5c3L2sZuJbj6CtFO3P+DPg7u7UsmZXpZG+Sog8Ay+83oGt
- UV7LUtxTeaEQH7xsz18Kp88/FfeQLTDbDku4g==
-X-Received: by 2002:a17:90b:2885:b0:399:221d:63c0 with SMTP id
- 98e67ed59e1d1-39dec16eff8mr2980394a91.25.1789365135377; 
- Sun, 13 Sep 2026 22:52:15 -0700 (PDT)
+ bh=GmLj1TBmKjo6H4+D/THjReCXdEKXZEv6GGqdUp47dfo=;
+ b=EFFay0Hv9CLFprOOcKY7btD6qqJR+YAz3qzdi1dtImcJIpInAe/zIOSRlqJlXC8XtV
+ wylIV6j2Oaxq7r0tCyQ9dY961+lrvkJYq7cyE0MlSAwpjTJHIXoefEI+oYunSALrWWK2
+ uctA8kG4obby4FBOxcH1YheuPJzzu8CyRsoD/5RNd0ghrXz48MBX95euN+93iBo3khCL
+ FZmJlRLU2eiqaXYM9W5wRXFLFV54sDUhS6rERmjxxxub9MFQfuhktMc4ps9dHw597qU9
+ Fp7i7J5jS7TZeHnAnc6GvJoO08g1xwx3SSf+kIhWI2ojJdL4r1zWLtcGtT5vtbcC4t4C
+ Cc8Q==
+X-Gm-Message-State: AFuF++ko3aqd06f7Qmjo4siU/+gH8x2fV6oMiGB0gVII7u25CTbre7jP
+ laQljpuGLRsql8X7q3zH5D89RsZ1Bzze4Qs8LDxRt5qRmZgzuCT3OTWOxRCzjWbTUSyR/sacIIA
+ LrdHZyMQ=
+X-Gm-Gg: AYBFou1sPl/MBNgwYfViHC4LA03SnLAL9KFbLL6jOt2ab96sSBDQuiDEhW7tJ1DVSW1
+ akaBoXcOQXUJwzNCqDL4cWSRw485Z5uoaUM7btvRcUfqR+5oX7asiG2JVOwtvh5hjkFnsx3shzN
+ ebJtSUmne5Neyw+1uDvDMC6p3tuKDMej8E37oL3dskZI8Ymeacy51SASoBuHRF8uqlLYuVBeu5a
+ 5ajsc0b2tA5QJRopwOCpJw+MRxKiMj/NYs+maWwE/xlO1aagI2VITAn4fAAHcPjKWZWAQyKKkub
+ FXDGMMtrK35Nn+PP37lja58uvRDAV9xgqpEP8U7Axzw3ilruz860u5PlF4UmxgY907WBnKkxhdj
+ 23OLJLNB6LuiwXbqln/p6BomiRKNLaLY/ybWHwni9G8jqKzWbx8rT59/NG41XIUhM4y/h1XpRJu
+ xzBpn2ZRy4MZgzyuwJewcNyC8aagBU4UrZhSG2WnnLNswWqNaqB4WBxrwa0/DgmZJh8TAgPk42p
+ 4ss/nmcWkLQj/xb7/fQET1EV7UY7ngbVPV+SQ==
+X-Received: by 2002:a17:90b:4b0e:b0:398:baa7:4c2f with SMTP id
+ 98e67ed59e1d1-39dec3b40c7mr1151410a91.5.1789365138814; 
+ Sun, 13 Sep 2026 22:52:18 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39d95864b4fsm19794492a91.15.2026.09.13.22.52.12
+ 98e67ed59e1d1-39d95864b4fsm19794492a91.15.2026.09.13.22.52.15
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 13 Sep 2026 22:52:15 -0700 (PDT)
+ Sun, 13 Sep 2026 22:52:18 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Srikanth Yalavarthi <syalavarthi@marvell.com>
-Subject: [PATCH 51/62] ml/cnxk: use kvargs numeric helpers in mvtvm
-Date: Sun, 13 Sep 2026 22:47:22 -0700
-Message-ID: <20260914054912.755403-52-stephen@networkplumber.org>
+ Liang Ma <liangma@bytedance.com>, Peter Mccarthy <peter.mccarthy@intel.com>
+Subject: [PATCH 52/62] event/opdl: use kvargs numeric helpers
+Date: Sun, 13 Sep 2026 22:47:23 -0700
+Message-ID: <20260914054912.755403-53-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260914054912.755403-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -82,125 +82,121 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-parse_integer_arg() used atoi(), which cannot report an error, so a
-malformed value became zero and the negative check never fired.
-parse_uint_arg() open coded the errno and end pointer checks.
+All three handlers use atoi(), which cannot report an error, so a
+malformed value is silently taken as zero. Zero is within the accepted
+range for each of these arguments, so a typo was accepted and quietly
+applied rather than rejected.
 
-parse_uint_arg() also stored through a uint32_t pointer, but max_nb_qpairs
-is a uint16_t followed by an int in the same struct, so parsing that
-argument wrote past the field.
-
-Neither handler did anything beyond a range checked store, so drop them
-and pass rte_kvargs_handle_u16() directly for max_qps.
-
-cache_model_data is a boolean, so make the field bool and use
-rte_kvargs_handle_bool(), which makes the "< 0 || > 1" check that
-followed it dead code. cache_model_data_set stays, since it still
-tells an unset argument from one set to false. A bare key now enables
-the option, and the usual spellings are accepted.
-
-Bugzilla ID: 2043
-Fixes: 48c6081ab4b3 ("ml/cnxk: enable creation of MVTVM virtual device")
+The booleans use rte_kvargs_process_opt(), so that a bare key with no
+value enables the option.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/ml/cnxk/mvtvm_ml_dev.c | 47 ++++------------------------------
- drivers/ml/cnxk/mvtvm_ml_dev.h |  2 +-
- 2 files changed, 6 insertions(+), 43 deletions(-)
+ drivers/event/opdl/opdl_evdev.c | 49 ++++++---------------------------
+ 1 file changed, 9 insertions(+), 40 deletions(-)
 
-diff --git a/drivers/ml/cnxk/mvtvm_ml_dev.c b/drivers/ml/cnxk/mvtvm_ml_dev.c
-index 74959a12fc..cbaf17698e 100644
---- a/drivers/ml/cnxk/mvtvm_ml_dev.c
-+++ b/drivers/ml/cnxk/mvtvm_ml_dev.c
-@@ -20,36 +20,6 @@
+diff --git a/drivers/event/opdl/opdl_evdev.c b/drivers/event/opdl/opdl_evdev.c
+index ffa65ef930..4650d3eca8 100644
+--- a/drivers/event/opdl/opdl_evdev.c
++++ b/drivers/event/opdl/opdl_evdev.c
+@@ -3,6 +3,7 @@
+  */
  
- static const char *const valid_args[] = {MVTVM_ML_DEV_MAX_QPS, MVTVM_ML_DEV_CACHE_MODEL_DATA, NULL};
+ #include <inttypes.h>
++#include <stdbool.h>
+ #include <stdlib.h>
+ #include <string.h>
+ 
+@@ -580,38 +581,6 @@ opdl_close(struct rte_eventdev *dev)
+ 	return 0;
+ }
  
 -static int
--parse_integer_arg(const char *key __rte_unused, const char *value, void *extra_args)
+-assign_numa_node(const char *key __rte_unused, const char *value, void *opaque)
 -{
--	int *i = (int *)extra_args;
--
--	*i = atoi(value);
--	if (*i < 0) {
--		plt_err("Argument has to be positive.");
--		return -EINVAL;
--	}
--
+-	int *socket_id = opaque;
+-	*socket_id = atoi(value);
+-	if (*socket_id >= RTE_MAX_NUMA_NODES)
+-		return -1;
 -	return 0;
 -}
 -
 -static int
--parse_uint_arg(const char *key __rte_unused, const char *value, void *extra_args)
+-set_do_validation(const char *key __rte_unused, const char *value, void *opaque)
 -{
--	int i;
--	char *end;
--	errno = 0;
+-	int *do_val = opaque;
+-	*do_val = atoi(value);
+-	if (*do_val != 0)
+-		*do_val = 1;
 -
--	i = strtol(value, &end, 10);
--	if (*end != 0 || errno != 0 || i < 0)
--		return -EINVAL;
+-	return 0;
+-}
+-static int
+-set_do_test(const char *key __rte_unused, const char *value, void *opaque)
+-{
+-	int *do_test = opaque;
 -
--	*((uint32_t *)extra_args) = i;
+-	*do_test = atoi(value);
 -
+-	if (*do_test != 0)
+-		*do_test = 1;
 -	return 0;
 -}
 -
  static int
- mvtvm_mldev_parse_devargs(const char *args, struct mvtvm_ml_dev *mvtvm_mldev)
+ opdl_probe(struct rte_vdev_device *vdev)
  {
-@@ -68,7 +38,7 @@ mvtvm_mldev_parse_devargs(const char *args, struct mvtvm_ml_dev *mvtvm_mldev)
- 	}
+@@ -650,8 +619,8 @@ opdl_probe(struct rte_vdev_device *vdev)
+ 	struct rte_eventdev *dev;
+ 	struct opdl_evdev *opdl;
+ 	int socket_id = rte_socket_id();
+-	int do_validation = 0;
+-	int do_test = 0;
++	bool do_validation = false;
++	bool do_test = false;
+ 	int str_len;
+ 	int test_result = 0;
  
- 	if (rte_kvargs_count(kvlist, MVTVM_ML_DEV_MAX_QPS) == 1) {
--		ret = rte_kvargs_process(kvlist, MVTVM_ML_DEV_MAX_QPS, &parse_uint_arg,
-+		ret = rte_kvargs_process(kvlist, MVTVM_ML_DEV_MAX_QPS, rte_kvargs_handle_u16,
- 					 &mvtvm_mldev->max_nb_qpairs);
- 		if (ret < 0) {
- 			plt_err("Error processing arguments, key = %s", MVTVM_ML_DEV_MAX_QPS);
-@@ -79,8 +49,9 @@ mvtvm_mldev_parse_devargs(const char *args, struct mvtvm_ml_dev *mvtvm_mldev)
- 	}
+@@ -666,7 +635,7 @@ opdl_probe(struct rte_vdev_device *vdev)
+ 					name);
+ 		} else {
+ 			int ret = rte_kvargs_process(kvlist, NUMA_NODE_ARG,
+-					assign_numa_node, &socket_id);
++					rte_kvargs_handle_socket_id, &socket_id);
+ 			if (ret != 0) {
+ 				PMD_DRV_LOG(ERR,
+ 						"%s: Error parsing numa node parameter",
+@@ -676,8 +645,8 @@ opdl_probe(struct rte_vdev_device *vdev)
+ 				return ret;
+ 			}
  
- 	if (rte_kvargs_count(kvlist, MVTVM_ML_DEV_CACHE_MODEL_DATA) == 1) {
--		ret = rte_kvargs_process(kvlist, MVTVM_ML_DEV_CACHE_MODEL_DATA, &parse_integer_arg,
--					 &mvtvm_mldev->cache_model_data);
-+		ret = rte_kvargs_process_opt(kvlist, MVTVM_ML_DEV_CACHE_MODEL_DATA,
-+					     rte_kvargs_handle_bool,
-+					     &mvtvm_mldev->cache_model_data);
- 		if (ret < 0) {
- 			plt_err("Error processing arguments, key = %s",
- 				MVTVM_ML_DEV_CACHE_MODEL_DATA);
-@@ -95,16 +66,8 @@ mvtvm_mldev_parse_devargs(const char *args, struct mvtvm_ml_dev *mvtvm_mldev)
- 		mvtvm_mldev->max_nb_qpairs = MVTVM_ML_DEV_MAX_QPS_DEFAULT;
- 	plt_ml_dbg("ML: %s = %u", MVTVM_ML_DEV_MAX_QPS, mvtvm_mldev->max_nb_qpairs);
+-			ret = rte_kvargs_process(kvlist, DO_VALIDATION_ARG,
+-					set_do_validation, &do_validation);
++			ret = rte_kvargs_process_opt(kvlist, DO_VALIDATION_ARG,
++					rte_kvargs_handle_bool, &do_validation);
+ 			if (ret != 0) {
+ 				PMD_DRV_LOG(ERR,
+ 					"%s: Error parsing do validation parameter",
+@@ -686,8 +655,8 @@ opdl_probe(struct rte_vdev_device *vdev)
+ 				return ret;
+ 			}
  
--	if (!cache_model_data_set) {
-+	if (!cache_model_data_set)
- 		mvtvm_mldev->cache_model_data = CN10K_ML_DEV_CACHE_MODEL_DATA_DEFAULT;
--	} else {
--		if ((mvtvm_mldev->cache_model_data < 0) || (mvtvm_mldev->cache_model_data > 1)) {
--			plt_err("Invalid argument, %s = %d", MVTVM_ML_DEV_CACHE_MODEL_DATA,
--				mvtvm_mldev->cache_model_data);
--			ret = -EINVAL;
--			goto exit;
--		}
--	}
- 	plt_ml_dbg("ML: %s = %d", MVTVM_ML_DEV_CACHE_MODEL_DATA, mvtvm_mldev->cache_model_data);
+-			ret = rte_kvargs_process(kvlist, DO_TEST_ARG,
+-					set_do_test, &do_test);
++			ret = rte_kvargs_process_opt(kvlist, DO_TEST_ARG,
++					rte_kvargs_handle_bool, &do_test);
+ 			if (ret != 0) {
+ 				PMD_DRV_LOG(ERR,
+ 					"%s: Error parsing do test parameter",
+@@ -734,7 +703,7 @@ opdl_probe(struct rte_vdev_device *vdev)
+ 	str_len = strlen(name);
+ 	memcpy(opdl->service_name, name, str_len);
  
- exit:
-diff --git a/drivers/ml/cnxk/mvtvm_ml_dev.h b/drivers/ml/cnxk/mvtvm_ml_dev.h
-index 05e30f094c..f8b34ecd3a 100644
---- a/drivers/ml/cnxk/mvtvm_ml_dev.h
-+++ b/drivers/ml/cnxk/mvtvm_ml_dev.h
-@@ -31,7 +31,7 @@ struct mvtvm_ml_dev {
- 	uint16_t max_nb_qpairs;
+-	if (do_test == 1)
++	if (do_test)
+ 		test_result =  opdl_selftest();
  
- 	/* Enable / disable model data caching */
--	int cache_model_data;
-+	bool cache_model_data;
- };
- 
- #endif /* _MVTVM_ML_DEV_H_ */
+ done:
 -- 
 2.53.0
 
