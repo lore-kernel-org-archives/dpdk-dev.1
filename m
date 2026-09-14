@@ -2,71 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66AF7C88E67
-	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 05:53:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F719C88E67
+	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 05:53:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 07A9D40ED1;
-	Mon, 14 Sep 2026 07:51:36 +0200 (CEST)
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com
- [209.85.214.181])
- by mails.dpdk.org (Postfix) with ESMTP id 1BDAA4069F
- for <dev@dpdk.org>; Mon, 14 Sep 2026 07:51:33 +0200 (CEST)
-Received: by mail-pl1-f181.google.com with SMTP id
- d9443c01a7336-2d715f4a587so41364835ad.2
- for <dev@dpdk.org>; Sun, 13 Sep 2026 22:51:33 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3B96D40ED6;
+	Mon, 14 Sep 2026 07:51:38 +0200 (CEST)
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com
+ [209.85.215.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 5CE7240BA5
+ for <dev@dpdk.org>; Mon, 14 Sep 2026 07:51:36 +0200 (CEST)
+Received: by mail-pg1-f181.google.com with SMTP id
+ 41be03b00d2f7-cc4be0e5351so1968791a12.0
+ for <dev@dpdk.org>; Sun, 13 Sep 2026 22:51:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789365092;
- x=1789969892; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789365095;
+ x=1789969895; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=xLPm7t7KMuBTVWw5952p6vaxvJ8B3+9NwoHqF8bnKJ4=;
- b=TJcEf/v+2P8fxlT6EI4VecCkm9cKZmz++icwjm+EGwvv/MT1f5w6E/fBDBnOfqH4Sg
- JfVhnKCL099doVU6eiGEFAIlgOqkXDKYDoOsm3v3JlbPPnVgRJV2RTvkUchMy6Q7jtic
- r7BBy8PLiuNWa2RQXXxKVfzHUAQ6eXWdEAet9x5sOe/oZT+AfT+LMajMhHJnGzgIp5JI
- Bx+DFxdOtspltDeuEHW3OL9mYHUH0b38AVkchWzSRvRJlH/ALFgt3VgN+gIctyueHFU8
- BzvpCdRMe34rqUvSM+HdgMcDrgKR11Ow2L/NBcbdQhQjcD3fuH/LOJUjMxWDd2DcX0jj
- VC7A==
+ bh=yU8LJ/ORSU+mIbPHWDoHNJh0jjlgqlfFZUk30xK1pcE=;
+ b=0wfFnU6yi8yQICMDaXJmbEtOii+glDdBuqKZPKlsqHO3oc6cR9zFneme1Xxt1oLIbv
+ CKcwvfcrAwV7HoUs0opwrrgtkuB/zMS0tWuMzeBWuIR/TpA6Tlgx5eU1+C9jBcjIv/v0
+ 6q42OiY3N93lc+9VYbstKhV/1B8mlMY4+4kdPFB2rMJpWs9/qLsU+doy6sJ9wuj92kek
+ tL9Bbblu1rtU/6UE9Wc4St/YoV2m37NLFKJVJsk6SaFVapt6luXei1xsylcuB1vvU93G
+ tuFiFjmzxDHHJF8iJS6hIcClCyE18MS0LVYAIRgCAw9RcOSCsH3oQpouw+e6vfiK5BwW
+ 8Fww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1789365092; x=1789969892;
+ d=1e100.net; s=20251104; t=1789365095; x=1789969895;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=xLPm7t7KMuBTVWw5952p6vaxvJ8B3+9NwoHqF8bnKJ4=;
- b=l2kjs+LFwQECVh2u1/T0HKSKKm701JQMpAFMrXbZoL/POAPdc9jFg5nSBCnj4sYtfZ
- 4rJjnIFHNLb9BDh8hUqhvopVXsRLg6znxpev9rxD6B5Y0BWkOlnB6xa0LM2eBKDKh8Qc
- euaae4CAu+qt1w7eTOv/yDQU7hHZ+ZRnIAooejCTPstlhHbsALs4LqvAtZlNCxJ3IucJ
- Mb6IFDDnZgf647k6v9EfTL3cPA7tbjYwk+vh2Alz02DVT6yyHdsHwSAjs2q00CWJvKXb
- CYpfvFh13VNHrKIb4MGWIypWm9O5APFOSwRjXviAuCawUjBBigCvnltwiVeaiDfIVU8E
- LlLQ==
-X-Gm-Message-State: AFuF++lD+FO0/6o0ZC9dppJR65nWtzeJi28jRUKVATKBMgMwhqgHpER+
- Cj8jp2D+ohDuEYgr0JXw2+8YeXLcnufAJ0m979Iyyog8ooTIfqWDwjlEoM754VyY2EXUTUf4De+
- CsT8gEBI=
-X-Gm-Gg: AYBFou0RC87I83D+mjTZCoZG3NXQQ56ITl0OaLmGTuDHcfw3uQiz1K7gJWPMK1nzHFv
- fwgr+bKLCnHZ3RCUg8Emyph7Vtl8Id++J9jfZJV5+qGJ2uhuzhA03ch8tuZsFvUGK6js0MMAvxu
- fgcSariKZRdfi51p7EQTj09WVpUgpJwEIZ+7wBXMGqVDKjJ+GHk0ErszBdAJZBRFjwfdrP/qDB6
- abXHQ4s4j7zAmcnKSot6dSEF8wBvQvNLhRw5jq8LRGbwiuh1hxrcPCnAqpF4X2ncdcgUFk/iXC5
- UMPhwX2vQD0L/MW+5uFWs1Qn08SpiyHiEKurV2Yob92pkYPjNzfgd5OV4oywCoezxen55M5KuPK
- 1prj06hTioz8WDi4qAXyJX6JyKH/P/2IKbp8Gjiz8zNm1SP9S1e0MaaeRI1iBINNo70eaAWRH2s
- s5cTZWiy6S5r/yLRzZyNOR3XU0v3oD3fLYhIKDMziC83/5pJ9yiFbq6nDfZRAbnueigCFuY6nF/
- x0sPu9oecpWpm1kz1+DeoDhOMih4G2xJoJZkA==
-X-Received: by 2002:a17:90b:5810:b0:39b:370e:c807 with SMTP id
- 98e67ed59e1d1-39dec09871fmr2572020a91.17.1789365092114; 
- Sun, 13 Sep 2026 22:51:32 -0700 (PDT)
+ bh=yU8LJ/ORSU+mIbPHWDoHNJh0jjlgqlfFZUk30xK1pcE=;
+ b=HtNfJf533pKX0BCCx9hOiN2Cz+ibbnLNLOZ3TecCQQ0SJLDvmRG6+ALa9FfYwxPwNX
+ K8KpqXLIJsFD/r2A8+PVxwPAktsvuYx42dN2LmTvWpsJEjnEAi5n+RISx84/hWyn4S39
+ 1snCO98ZRVueqNBtn+zAoUw3Yw03fxK7Z1g5Rc/p7IFjazspQC2WNv1a9Puy6Xe+nYk2
+ 004tdmdmTIOVz5D++G27apDky351EyqWVn9l9ymS+v4wqZoaxySjwys7VOwbuy9J4U8G
+ JD082MHDx6MOMwWFpxuS0yRdJYGojLxb41lT0SkpsbilSUIXfNGrgEdnYjEawgcmT8Xe
+ W8LA==
+X-Gm-Message-State: AFuF++kfpohGBIkBGDmmEkSoP1U/kJzqYr5XXnKUPVwLLaF42gefdWQb
+ sa18a8315nKrFFoX49Vyqi7wC2C6a3KD1T0wgNBe8b7Ud0w/6fgpBarLhGTNusU1ASca49jRug9
+ s0fAyG+w=
+X-Gm-Gg: AYBFou3evCnaHJ8KLhDgacvCYOrkA2xK20GzLDqI9mZplIW2olusUhUVGXh1OqwVw5V
+ 0AXlftK/yJvfA90e8thuWP4+H2Rp2fVDrgHRd7lbR63Xtg7cs0myjXKQf0HDkKOc/pWVRTLg5Lk
+ Ge83iovzNNmqdXWIxjQuJuvkyF18toEsHNXrzqp4cm1atl0CI38KHvnGA+tb5Wx4UWZ3sXpSpXA
+ NevdMgdO/SqMXD2V5sjnB/Gruz7WdqAg+OucwDFEm0l8Vr5CfvY6AlNyY+Rgx2jgTGPSXEc/Cq/
+ Mu06rOQphXAjWUkw+wjmd9j2OqAspIfjiArSgzJm9OKH8sZkTyLDIPbPCcCYPU4PHcDPG/y1vHA
+ kwA8sxSaBH0+VeYOZbmMr0Neu0BJS8qararSOMnM01qoCklV1XqufMKywXPhe5GxNDraNy/Ym6p
+ NroL3dZoe/6XR648DVReyy0Ak+m2Oi0iABZvBy6qz0Zaaj1INHas0wbEMBni+ZREZq14xuVsNqc
+ fcrPmE5B1J7zJVXZQI4MNxjEbMJMcHEageRrw==
+X-Received: by 2002:a17:90b:2885:b0:398:9bd1:3211 with SMTP id
+ 98e67ed59e1d1-39dec0be8cemr2765879a91.18.1789365095471; 
+ Sun, 13 Sep 2026 22:51:35 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39d95864b4fsm19794492a91.15.2026.09.13.22.51.28
+ 98e67ed59e1d1-39d95864b4fsm19794492a91.15.2026.09.13.22.51.32
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 13 Sep 2026 22:51:31 -0700 (PDT)
+ Sun, 13 Sep 2026 22:51:35 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Renyong Wan <wanry@yunsilicon.com>, Na Na <nana@yunsilicon.com>,
- Rong Qian <qianr@yunsilicon.com>, Xiaoxiong Zhang <zhangxx@yunsilicon.com>,
- Dongwei Xu <xudw@yunsilicon.com>
-Subject: [PATCH 38/62] net/xsc: use kvargs numeric helpers
-Date: Sun, 13 Sep 2026 22:47:09 -0700
-Message-ID: <20260914054912.755403-39-stephen@networkplumber.org>
+ Xingui Yang <yangxingui@huawei.com>,
+ Chengwen Feng <fengchengwen@huawei.com>
+Subject: [PATCH 39/62] net/hns3: use kvargs numeric helpers
+Date: Sun, 13 Sep 2026 22:47:10 -0700
+Message-ID: <20260914054912.755403-40-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260914054912.755403-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -85,91 +84,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-xsc_dev_args_parse() uses atoi() on each value, which cannot report an
-error, so a malformed argument is silently taken as zero. For pph_mode
-and nic_mode zero is a meaningful setting, so a typo quietly selects a
-mode rather than being rejected.
+hns3_parse_mbx_time_limit() checks neither errno nor the end pointer, so
+a malformed value such as "abc" is taken as zero and then silently
+ignored by the range test that follows.
 
-Fold the three copies of the lookup into a helper that range checks the
-value and leaves the default in place when it is rejected. The defaults
-are now assigned up front so they also apply on error.
+The range test is now part of the conversion, which keeps the existing
+behaviour of leaving the default in place when the value is out of
+range.
+
+The device capability mask parser is converted separately, later in this
+series, since it needs the hexadecimal handler rather than a decimal one.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/xsc/xsc_dev.c | 50 +++++++++++++++++++++++++--------------
- 1 file changed, 32 insertions(+), 18 deletions(-)
+ drivers/net/hns3/hns3_common.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/xsc/xsc_dev.c b/drivers/net/xsc/xsc_dev.c
-index 478f489516..78a0984295 100644
---- a/drivers/net/xsc/xsc_dev.c
-+++ b/drivers/net/xsc/xsc_dev.c
-@@ -199,34 +199,48 @@ xsc_dev_alloc_vfos_info(struct xsc_dev *xdev)
+diff --git a/drivers/net/hns3/hns3_common.c b/drivers/net/hns3/hns3_common.c
+index 29b51856d9..c21740ba5e 100644
+--- a/drivers/net/hns3/hns3_common.c
++++ b/drivers/net/hns3/hns3_common.c
+@@ -231,14 +231,13 @@ hns3_parse_mbx_time_limit(const char *key, const char *value, void *extra_args)
+ 	if (value == NULL || extra_args == NULL)
+ 		return 0;
+ 
+-	val = strtoul(value, NULL, HNS3_CONVERT_TO_DECIMAL);
+-
+ 	/*
+ 	 * 500ms is empirical value in process of mailbox communication. If
+ 	 * the delay value is set to one lower than the empirical value, mailbox
+ 	 * communication may fail.
+ 	 */
+-	if (val > HNS3_MBX_DEF_TIME_LIMIT_MS && val <= UINT16_MAX)
++	if (rte_kvargs_to_uint(value, HNS3_MBX_DEF_TIME_LIMIT_MS + 1,
++			       UINT16_MAX, &val) == 0)
+ 		*(uint16_t *)extra_args = val;
+ 
  	return 0;
- }
- 
-+/* Parse one optional numeric devarg, leaving the default in place if unset. */
-+static void
-+xsc_dev_arg_get(struct rte_kvargs *kvlist, const char *key, uint64_t max,
-+		int *result)
-+{
-+	const char *value;
-+	uint64_t val;
-+
-+	value = rte_kvargs_get(kvlist, key);
-+	if (value == NULL)
-+		return;
-+
-+	if (rte_kvargs_to_uint(value, 0, max, &val) < 0) {
-+		PMD_DRV_LOG(ERR, "Invalid %s \"%s\", using default %d",
-+			    key, value, *result);
-+		return;
-+	}
-+
-+	*result = val;
-+}
-+
- static void
- xsc_dev_args_parse(struct xsc_dev *xdev, struct rte_devargs *devargs)
- {
- 	struct rte_kvargs *kvlist;
- 	struct xsc_devargs *xdevargs = &xdev->devargs;
--	const char *tmp;
-+
-+	xdevargs->pph_mode = XSC_PPH_NONE;
-+	xdevargs->nic_mode = XSC_NIC_MODE_LEGACY;
-+	xdevargs->flow_mode = XSC_DEV_DEF_FLOW_MODE;
- 
- 	kvlist = rte_kvargs_parse(devargs->args, NULL);
- 	if (kvlist == NULL)
- 		return;
- 
--	tmp = rte_kvargs_get(kvlist, XSC_PPH_MODE_ARG);
--	if (tmp != NULL)
--		xdevargs->pph_mode = atoi(tmp);
--	else
--		xdevargs->pph_mode = XSC_PPH_NONE;
--
--	tmp = rte_kvargs_get(kvlist, XSC_NIC_MODE_ARG);
--	if (tmp != NULL)
--		xdevargs->nic_mode = atoi(tmp);
--	else
--		xdevargs->nic_mode = XSC_NIC_MODE_LEGACY;
--
--	tmp = rte_kvargs_get(kvlist, XSC_FLOW_MODE_ARG);
--	if (tmp != NULL)
--		xdevargs->flow_mode = atoi(tmp);
--	else
--		xdevargs->flow_mode = XSC_DEV_DEF_FLOW_MODE;
-+	xsc_dev_arg_get(kvlist, XSC_PPH_MODE_ARG,
-+			XSC_RX_PPH | XSC_TX_PPH | XSC_VFREP_PPH | XSC_UPLINK_PPH,
-+			&xdevargs->pph_mode);
-+	xsc_dev_arg_get(kvlist, XSC_NIC_MODE_ARG, XSC_NIC_MODE_SOC,
-+			&xdevargs->nic_mode);
-+	xsc_dev_arg_get(kvlist, XSC_FLOW_MODE_ARG, INT_MAX,
-+			&xdevargs->flow_mode);
- 
- 	rte_kvargs_free(kvlist);
- }
 -- 
 2.53.0
 
