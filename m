@@ -2,70 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7704DC88E72
-	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 17:37:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C68BAC88E72
+	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 17:37:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0B8AB40C35;
-	Mon, 14 Sep 2026 19:37:39 +0200 (CEST)
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com
- [209.85.210.175])
- by mails.dpdk.org (Postfix) with ESMTP id 4B6BA41132
- for <dev@dpdk.org>; Mon, 14 Sep 2026 19:37:37 +0200 (CEST)
-Received: by mail-pf1-f175.google.com with SMTP id
- d2e1a72fcca58-8701fcf40d4so593662b3a.3
- for <dev@dpdk.org>; Mon, 14 Sep 2026 10:37:37 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1D20E410D3;
+	Mon, 14 Sep 2026 19:37:44 +0200 (CEST)
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com
+ [209.85.210.181])
+ by mails.dpdk.org (Postfix) with ESMTP id D8FA641109
+ for <dev@dpdk.org>; Mon, 14 Sep 2026 19:37:41 +0200 (CEST)
+Received: by mail-pf1-f181.google.com with SMTP id
+ d2e1a72fcca58-86908cbc011so5256846b3a.1
+ for <dev@dpdk.org>; Mon, 14 Sep 2026 10:37:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789407456;
- x=1790012256; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789407461;
+ x=1790012261; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=2WG4FRBheH4wBt3Y1UhjqANNxZMWVI2bVy3rt36ZIRg=;
- b=HJvIO2WIlTErKNFyM6esvrvjXQO71O+W0PYQvOnXAHMbHVN7Fxs5C0yZelpmnwiu/Q
- uQ1o1eqTTtoT7zOTrGHkLozk+4pEVFsE3Ud6iauzymwGj3ll9ulVQGtqjUuFQbp4Cg6o
- kqjwZ7D7VOjfdbnkCDWyX8H70MnHr+dEqjIQmL1+T/tGpznQJbPQzSczxmrVJ8Qpt8td
- C3+lgjfsL5uQLV+PZCFP4ijgX9ihA+ez5bs5y/JpsRzDtompsZjqBkMu5Kcv9dAcEv6B
- jTa7J4yzNt9WcEuQQOOAPlx4+ZSgVicCRQ+kVb7HX5YL2iMWXNnkWdB2ZWw0NrY2gECC
- DOdA==
+ bh=C7JK7M9VK27xxXe6PsJLwe4/YWV0H/4G1Eis3zsGIks=;
+ b=TTnwQs7gtBVr9em7k1KI5DqjNKbvyJCzx+cm9Cmqr9Lg4BEhdOc9W28SQgEKK2EECc
+ viaQEvbNz2/Wfod5jRnV0l/xA9mhSlb8958mj/26SwcZuIGY1V/d6Wh7UIdWPNo+K1Cj
+ 3IZI3brk1xl5NNkXwIbahe1yu/deA5CEr/qqAx28PZ6o9kdVja6BxMtAnrch5oLWkG32
+ 8S7Z/Nnt0oHgitg1PvGIHQY0doL2jA4sxf8V7u7jUaey4/MdDtSnCE6vGDhLdfyUY9Ge
+ rjFt4i5J8L4MkcQwf0mwtAtrxA+Jrca2qHpzwFt7XKXBzGpt10mRAjFVTyGTOihUO8ef
+ +3qA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1789407456; x=1790012256;
+ d=1e100.net; s=20251104; t=1789407461; x=1790012261;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=2WG4FRBheH4wBt3Y1UhjqANNxZMWVI2bVy3rt36ZIRg=;
- b=eKNYockGzJ1puWADnJ8NHd9DGBR6wrf0jNFQrPRrXMwGUllanICU9nJ8KYHTpMxlWy
- kjLCERtYIwK0RKcjOfTTcOjeb9X0lTXjX6A7yJO8maavrEetqMvA/IN8ZWqfbER05LbH
- WwLqjrqPW3Oth6QqJNG6rkQtjH7yhuDH1HlVmyqxsdJ0QMcS1xc6jNPTUnwbULzFTTPq
- HoT1TNOFkTE/h+vVdrnQcl1t0enLW+lDuToHxGO5xPn3ZKwe9H1GMeQ3Ij1P7R2iXZmW
- GClge46xoXYHQclDQR2E40XGylspk61vnmsGmM+VcsxvyvRPdKbI/A6ngGRlEbjiaF+O
- nSRw==
-X-Gm-Message-State: AFuF++nKHl1kmig7OZvmNuzKXpUsThL8Dbs6JsuThYrASnbuezlUiRMf
- p7nfv+1wZsvXkujtqMzQj7Ov5q08ZSpBUtY/tfXpOTPcKaBd2QK4SnbqgaUYfTCxLKbW0zdNsG+
- ZCJnlTKo=
-X-Gm-Gg: AYBFou0Bo89QI28BvFr8m4kB+ra0jdKaEV5L15/i9VemwzW7dUC6F7hyiN+y73A6Z7D
- +lq1LKZTqD7vVGuXUPWYA09EhQe1eU7n4BOrPfFdSuD//ugp+2D4VNTbUHyFFcd/MOTXG7T3Vsk
- plU8VUiShdmTGECDPsaUWikUe4tfsyjSOw5j9qT0jeWtNfnkuybSE0dRBC4TsssFb54vWgdEYXS
- y89s3rcecsxfXz9uXgP7q2kPM7ksWWNNFhhZbwwyvVlGsj3hoWpygTx+FzxxQXC8u6UuaW3qqmA
- pvuOSA5PyNu5mUYs6EpLGGKrmuvQK6ClsSMSEM7IQC3OOUb0hCpsAykXl+fN2VodEgSCpHsA6sV
- 3hydthF6eKppWPf6S7/VVCHhSHXJB2Ev49ltH8pWWhC+y66cDEC+aJgOFnFcsxw+Z1ly3L/iOPd
- NDAqlD1CvFb2LgWjn0NzxQ0H1hulNeCuZ+T8hzNB7UaQ0xBFDJQMSmKBdv96nEKfdDwqaiyYOCS
- +9iGoVF4/GgP6q5Zcm4ihtTKaz91v/MQnr5sg==
-X-Received: by 2002:a05:6a00:148c:b0:857:727c:a1f6 with SMTP id
- d2e1a72fcca58-86f866af011mr6513961b3a.24.1789407456257; 
- Mon, 14 Sep 2026 10:37:36 -0700 (PDT)
+ bh=C7JK7M9VK27xxXe6PsJLwe4/YWV0H/4G1Eis3zsGIks=;
+ b=e0J1Ft+OdjYVObBpu57Mez8HFdyMOvMjmP6U7zQ/b4mJL7rioj0Y4+ePz875zVBcBz
+ hd/I6GcILeXtOhbJlwITisVIFPDWPPnoPWh/oPNhxhBXDxzulRNtkhQCorCnSDTC4Oav
+ flGFx9ojpKz8iDy5kB2zOnqmISs8moZ1E0Z1PJNt7v3AayT5BMSBqLTS6gs5ZVqcL7QJ
+ TuIoSvPwUNqTeDW4K98QycmN3mkEKQXgDVWrn1iyJ27+H78PveUg2rwEnBbl/eYdf7pE
+ 098j28asposgoYqfR8GYgcHshwfxjDEI0nKglnevzp1WMaX/RLf/L/ao9ivCyAVB+zBm
+ q83Q==
+X-Gm-Message-State: AFuF++nDbDT5UhYd0WdOI+zekZaqEMwplqQ2d7+KY2WtzX4p8cde9fi8
+ oekHRR8P9GbZ92+ioAqaEFQj6Kt00GY67V19z/f+yiA67a5AWdg8ZOh3faHmHM6pIkdjXxrL/gx
+ 7Ns1APXAGLA==
+X-Gm-Gg: AYBFou2HxejH8TMjPVQOjsSMQtrkMy3wG8WgZnbw2Da7bTGv2EG/HBHWK1aUXA4jheR
+ 1wcH6Tyh4uQDp5+AD7Ykm5A97kDTcPUAKH2eOYKLG9c3dDZat4I+agZk5GIEsHRKelUqt7jfewO
+ XemmgRR9dLs2Eks26yEfY8Un8Sp3TxU9dIYLu8AAyzCHZlJ6XhSqZJn/0KQOgah3FeLKMQXYZPi
+ F3vkS6NiAV8jkvSRgLXOqNsgTrh058F348m+ItArT7VaOCthbnw6ncvPoY2fkaI2o++HAHwrR2A
+ 8pYfZjRppnws6ZnPym89RTqQ+ed3Fe/sKDEdPJ7ZsPEX/sQBMkb5eeU4Vy6hZ/zTbcJsdRiWq+J
+ p0g6TDWgz2mtD+3WAyXK9ORqLoPV6naBJLFdCR5dgti8d5c5jkP2aZkUf4CWWsK5hOxw8IQjgWZ
+ 8Dr5xSarBINMlIEOvFDw5uAcxiOLazabl+aq5zhmog4koQRVAEyzp9uB9oDzq+V/7CXjbPm61jH
+ AACB9+NQ1wCYR3Iq7AA+QEBYmIzv++ZISBC8Q==
+X-Received: by 2002:a05:6a00:438d:b0:85f:2f32:7a53 with SMTP id
+ d2e1a72fcca58-86f85ae9d18mr7281434b3a.17.1789407461029; 
+ Mon, 14 Sep 2026 10:37:41 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-86b286c49d2sm5159867b3a.10.2026.09.14.10.37.33
+ d2e1a72fcca58-86b286c49d2sm5159867b3a.10.2026.09.14.10.37.36
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 14 Sep 2026 10:37:35 -0700 (PDT)
+ Mon, 14 Sep 2026 10:37:40 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Tomasz Duszynski <tduszynski@marvell.com>, Long Li <longli@microsoft.com>,
- Wei Hu <weh@microsoft.com>
-Subject: [PATCH v3 6/9] drivers/bus: remove duplicate sysfs string helpers
-Date: Mon, 14 Sep 2026 10:36:19 -0700
-Message-ID: <20260914173700.2795983-7-stephen@networkplumber.org>
+ Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
+Subject: [PATCH v3 7/9] common/mlx5: use common sysfs routines
+Date: Mon, 14 Sep 2026 10:36:20 -0700
+Message-ID: <20260914173700.2795983-8-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260914173700.2795983-1-stephen@networkplumber.org>
 References: <20260912063319.4117869-1-stephen@networkplumber.org>
@@ -85,129 +87,90 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-get_sysfs_string() in the vmbus bus and read_sysfs_string() in the
-platform bus are both open coded copies of what the EAL routine now
-provides. Each had a single caller.
+mlx5_sys_roce_disable() read the roce_enable attribute and then
+reopened the same file to write it. Use the EAL read and write
+routines instead.
+
+The dev_port lookup is left alone: it selects the scanf format at
+runtime and distinguishes ENOENT from other errors to fall back to
+dev_id on older kernels.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/bus/platform/platform.c     | 33 +++---------------------
- drivers/bus/vmbus/linux/vmbus_bus.c | 39 +++--------------------------
- 2 files changed, 8 insertions(+), 64 deletions(-)
+ drivers/common/mlx5/linux/mlx5_common_os.c | 39 ++++++++--------------
+ 1 file changed, 14 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/bus/platform/platform.c b/drivers/bus/platform/platform.c
-index 9585fb79e9..c511893aab 100644
---- a/drivers/bus/platform/platform.c
-+++ b/drivers/bus/platform/platform.c
-@@ -187,40 +187,15 @@ device_unmap_resources(struct rte_platform_device *pdev)
- 	pdev->num_resource = 0;
+diff --git a/drivers/common/mlx5/linux/mlx5_common_os.c b/drivers/common/mlx5/linux/mlx5_common_os.c
+index 3e9cd86062..cf496b0b58 100644
+--- a/drivers/common/mlx5/linux/mlx5_common_os.c
++++ b/drivers/common/mlx5/linux/mlx5_common_os.c
+@@ -16,6 +16,7 @@
+ #include <eal_export.h>
+ #include <rte_errno.h>
+ #include <rte_string_fns.h>
++#include <rte_sysfs.h>
+ #include <bus_pci_driver.h>
+ #include <bus_auxiliary_driver.h>
+ 
+@@ -658,45 +659,33 @@ mlx5_nl_roce_disable(const char *addr)
+ 	return ret;
  }
  
--static int
--read_sysfs_string(const char *path, char *buf, size_t size)
--{
--	FILE *f;
--	char *p;
--
--	f = fopen(path, "r");
--	if (f == NULL)
--		return -errno;
--
--	if (fgets(buf, size, f) == NULL) {
--		fclose(f);
--		return -ENODATA;
--	}
--
--	fclose(f);
--
--	p = strrchr(buf, '\n');
--	if (p != NULL)
--		*p = '\0';
--
--	return 0;
--}
--
- static char *
- of_resource_name(const char *dev_name, int index)
- {
--	char path[PATH_MAX], buf[BUFSIZ] = { };
--	int num = 0, ret;
-+	char buf[BUFSIZ] = { };
-+	int num = 0;
- 	char *name;
- 
--	snprintf(path, sizeof(path), PLATFORM_BUS_DEVICES_PATH "/%s/of_node/reg-names", dev_name);
--	ret = read_sysfs_string(path, buf, sizeof(buf) - 1);
--	if (ret)
-+	if (rte_sysfs_parse_string(buf, sizeof(buf) - 1,
-+			PLATFORM_BUS_DEVICES_PATH "/%s/of_node/reg-names", dev_name) < 0)
- 		return NULL;
- 
- 	for (name = buf; *name != 0; name += strlen(name) + 1) {
-diff --git a/drivers/bus/vmbus/linux/vmbus_bus.c b/drivers/bus/vmbus/linux/vmbus_bus.c
-index 9ee7983eb6..00f369120f 100644
---- a/drivers/bus/vmbus/linux/vmbus_bus.c
-+++ b/drivers/bus/vmbus/linux/vmbus_bus.c
-@@ -84,35 +84,6 @@ parse_sysfs_uuid(const char *filename, rte_uuid_t uu)
- 	return 0;
- }
- 
--static int
--get_sysfs_string(const char *filename, char *buf, size_t buflen)
--{
--	char *cp;
--	FILE *f;
--
--	f = fopen(filename, "r");
--	if (f == NULL) {
--		VMBUS_LOG(ERR, "cannot open sysfs value %s:%s",
--			  filename, strerror(errno));
--		return -1;
--	}
--
--	if (fgets(buf, buflen, f) == NULL) {
--		VMBUS_LOG(ERR, "cannot read sysfs value %s",
--				filename);
--		fclose(f);
--		return -1;
--	}
--	fclose(f);
--
--	/* remove trailing newline */
--	cp = memchr(buf, '\n', buflen);
--	if (cp)
--		*cp = '\0';
--
--	return 0;
--}
--
++#define MLX5_ROCE_ENABLE_PATH "/sys/bus/pci/devices/%s/roce_enable"
++
+ /* Try to disable ROCE by sysfs. */
  static int
- vmbus_get_uio_dev(const struct rte_vmbus_device *dev,
- 		  char *dstbuf, size_t buflen)
-@@ -169,7 +140,7 @@ RTE_EXPORT_SYMBOL(rte_vmbus_map_device)
- int
- rte_vmbus_map_device(struct rte_vmbus_device *dev)
+ mlx5_sys_roce_disable(const char *addr)
  {
--	char uioname[PATH_MAX], filename[PATH_MAX];
-+	char uioname[PATH_MAX];
- 	char dirname[PATH_MAX], mapname[64];
- 	int i;
+-	FILE *file_o;
+-	int enable;
++	unsigned long enable;
+ 	int ret;
  
-@@ -188,11 +159,9 @@ rte_vmbus_map_device(struct rte_vmbus_device *dev)
- 		snprintf(dirname, sizeof(dirname),
- 			 "%s/maps/map%d", uioname, i);
+-	MKSTR(file_p, "/sys/bus/pci/devices/%s/roce_enable", addr);
+-	file_o = fopen(file_p, "rb");
+-	if (!file_o) {
++	if (rte_sysfs_parse_uint(&enable, MLX5_ROCE_ENABLE_PATH, addr) != 0) {
+ 		rte_errno = ENOTSUP;
+ 		return -ENOTSUP;
+ 	}
+-	ret = fscanf(file_o, "%d", &enable);
+-	if (ret != 1) {
+-		rte_errno = EINVAL;
+-		ret = EINVAL;
+-		goto close;
+-	} else if (!enable) {
+-		ret = 0;
++	if (enable == 0) {
+ 		DRV_LOG(INFO, "ROCE has already disabled(sysfs).");
+-		goto close;
++		return 0;
+ 	}
+-	fclose(file_o);
+-	file_o = fopen(file_p, "wb");
+-	if (!file_o) {
++
++	ret = rte_sysfs_write_string("0\n", MLX5_ROCE_ENABLE_PATH, addr);
++	if (ret != 0) {
+ 		rte_errno = ENOTSUP;
++		DRV_LOG(DEBUG, "Failed to disable ROCE by sysfs.");
+ 		return -ENOTSUP;
+ 	}
+-	fprintf(file_o, "0\n");
+-	ret = 0;
+-close:
+-	if (ret)
+-		DRV_LOG(DEBUG, "Failed to disable ROCE by sysfs: %d.", ret);
+-	else
+-		DRV_LOG(INFO, "ROCE is disabled by sysfs successfully.");
+-	fclose(file_o);
+-	return ret;
++
++	DRV_LOG(INFO, "ROCE is disabled by sysfs successfully.");
++	return 0;
+ }
  
--		snprintf(filename, sizeof(filename),
--			 "%s/name", dirname);
--
--		if (get_sysfs_string(filename, mapname, sizeof(mapname)) < 0) {
--			VMBUS_LOG(ERR, "could not read %s", filename);
-+		if (rte_sysfs_parse_string(mapname, sizeof(mapname),
-+				"%s/name", dirname) < 0) {
-+			VMBUS_LOG(ERR, "could not read name of %s", dirname);
- 			return -1;
- 		}
- 
+ static int
 -- 
 2.53.0
 
