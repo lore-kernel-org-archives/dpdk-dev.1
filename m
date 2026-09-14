@@ -2,35 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BE9EC88E64
-	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 11:49:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9172C88E64
+	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 11:49:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E9CBC40BA0;
-	Mon, 14 Sep 2026 13:49:31 +0200 (CEST)
-Received: from mail.amicon.ru (unknown [77.108.111.100])
- by mails.dpdk.org (Postfix) with ESMTP id 9D0F040144;
- Mon, 14 Sep 2026 12:08:35 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id EA73E40DC9;
+	Mon, 14 Sep 2026 13:49:32 +0200 (CEST)
+Received: from mail.amicon.ru (mail.amicon.ru [77.108.111.100])
+ by mails.dpdk.org (Postfix) with ESMTP id 0418340144;
+ Mon, 14 Sep 2026 12:09:19 +0200 (CEST)
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; d=amicon.ru; s=mail; c=simple/simple;
- t=1789380515; h=from:subject:to:date:message-id;
- bh=z8sJehbBtLgj7px4e7c3zQkOZ0EZiEcjesvo9hHVY2M=;
- b=lMJ6cYdcnT2GtXyA+YqPl5v+3ONfnlacEF9J52620hwGm1ZR7T+PiZ4z4YrvP1tg+RU85kmFPHq
- HOJWxfx4phIJoxc79UmJOwy5+1vKumcZ/Q+AuL6gd/vhtX03Lx6FDvVKFCywi57e8L3jBRDPUpFL0
- jEKu6xAbyPkmxG8QrCjUzkqZpPwydcjz8OURIKvjcJ2BtYtH/uil4h2czwPqCXfhn8/VfEbWb4avO
- YIYeZhLav02Jh0XLszT/NqW8Z3tD4q7vNn3m772GHPymYSFsTej3vUHQj3sFQ1ONScAH5hAihF0gj
- bMr2+BztvgOT3HWv3kVAMEYNZeEP4cBQwuJA==
+ t=1789380558; h=from:subject:to:date:message-id;
+ bh=Y+B2OByauhsypaazCe83ifo09fO5lkspqk+Qz6bhMZ8=;
+ b=WE/94lPUva+vfaL5pr1Senj69FyFBy4Mwub79t5cneayclD+EIF54t4Zg+0qJHHct7rULcal6Ug
+ YGAwRteHqSBK3NQ/9UnWMHWugA01Z7NEdej4j72P0I/T9K2GX4PtYhFio3ZJ0Udw2/NvVoW8hmrQa
+ jCRwlWVQIPNyt85np0MhX+pz817pxmmov2457ZpsngAe8LA3fJ9So01dUdGwyu4hX/WBhqmSlSW7k
+ wSPLJl0Npn7jY86OfUdxUzpfGr9g2cYvPk4+1Hlgvj/CF0I8fwCCJdo9+bQnHq6n6X2r8OFCkScPB
+ wGQY3W6RXTdG4UqjOb+B6wwL6VG/yPDfqvAw==
 Received: from amicon.ru (172.16.36.76) by mail.amicon.lan (192.168.0.59) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.27; Mon, 14 Sep
- 2026 13:08:34 +0300
+ 2026 13:09:17 +0300
 From: Artem Novikov <naa@amicon.ru>
-To: <bruce.richardson@intel.com>
-CC: <dev@dpdk.org>, <lvc-project@linuxtesting.org>, <naa@amicon.ru>,
- <rrv@amicon.ru>, <beilei.xing@intel.com>, <stable@dpdk.org>
-Subject: [PATCH] net/i40e: fix ethertype filter restore diagnostics
-Date: Mon, 14 Sep 2026 13:08:22 +0300
-Message-ID: <20260914100823.55165-1-naa@amicon.ru>
+To: <dev@dpdk.org>
+CC: <naa@amicon.ru>, <rrv@amicon.ru>, <lvc-project@linuxtesting.org>,
+ <bruce.richardson@intel.com>, <guinanx.sun@intel.com>, <stable@dpdk.org>
+Subject: [PATCH] net/e1000/base: check i210 PHY access errors
+Date: Mon, 14 Sep 2026 13:08:57 +0300
+Message-ID: <20260914100858.55336-1-naa@amicon.ru>
 X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 X-Originating-IP: [172.16.36.76]
@@ -48,70 +48,81 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The control packet filter command only fills its statistics output on
-success. The restore path logs the last output even when the command
-fails, and reads uninitialized statistics when the filter list is empty.
-It also ignores the command status.
+The i210 PLL workaround switches the internal PHY page before
+reading the PLL frequency register and then switches the page back
+to zero. These direct MDIC operations can fail, but the results
+were ignored.
 
-Check each restore result and log failures with the affected filter.
-Only report statistics after a successful command, when all fields are
-valid. Continue restoring the remaining filters after an error, preserving
-the existing best-effort restore policy.
+Propagate failures from the semaphore acquisition and the
+page-select/read/restore sequence. Preserve the original MDIC read
+error when page restoration succeeds, while still reporting a
+restore failure when it is the first error seen.
 
-Fixes: ddcd4d4dbbe0 ("net/i40e: restore ethertype filter")
+Fixes: 3f0188c8f298 ("net/e1000/base: update for i210 slow system clock")
 Cc: stable@dpdk.org
-Cc: beilei.xing@intel.com
 
 Signed-off-by: Artem Novikov <naa@amicon.ru>
 ---
- drivers/net/intel/i40e/i40e_ethdev.c | 23 ++++++++++++++++-------
- 1 file changed, 16 insertions(+), 7 deletions(-)
+ drivers/net/intel/e1000/base/e1000_i210.c | 25 ++++++++++++++++++-----
+ 1 file changed, 20 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/intel/i40e/i40e_ethdev.c b/drivers/net/intel/i40e/i40e_ethdev.c
-index b6b2d291eee4f13ae59c80c5a281cee6d4be2f48..f135bd13dcfc885e030d17798159ae9b4bfb5f07 100644
---- a/drivers/net/intel/i40e/i40e_ethdev.c
-+++ b/drivers/net/intel/i40e/i40e_ethdev.c
-@@ -11617,6 +11617,7 @@ i40e_ethertype_filter_restore(struct i40e_pf *pf)
- 		*ethertype_list = &pf->ethertype.ethertype_list;
- 	struct i40e_ethertype_filter *f;
- 	struct i40e_control_filter_stats stats;
-+	enum i40e_status_code ret;
- 	uint16_t flags;
+diff --git a/drivers/net/intel/e1000/base/e1000_i210.c b/drivers/net/intel/e1000/base/e1000_i210.c
+index 479d2dc2c2..27b33cae37 100644
+--- a/drivers/net/intel/e1000/base/e1000_i210.c
++++ b/drivers/net/intel/e1000/base/e1000_i210.c
+@@ -824,13 +824,16 @@ STATIC s32 e1000_valid_led_default_i210(struct e1000_hw *hw, u16 *data)
+  **/
+ STATIC s32 e1000_pll_workaround_i210(struct e1000_hw *hw)
+ {
+-	s32 ret_val;
++	s32 ret_val, page_ret_val;
+ 	u32 wuc, mdicnfg, ctrl, ctrl_ext, reg_val;
+ 	u16 nvm_word, phy_word, pci_word, tmp_nvm;
+ 	int i;
  
- 	TAILQ_FOREACH(f, ethertype_list, rules) {
-@@ -11627,18 +11628,26 @@ i40e_ethertype_filter_restore(struct i40e_pf *pf)
- 			flags |= I40E_AQC_ADD_CONTROL_PACKET_FLAGS_DROP;
- 		flags |= I40E_AQC_ADD_CONTROL_PACKET_FLAGS_TO_QUEUE;
- 
--		memset(&stats, 0, sizeof(stats));
--		i40e_aq_add_rem_control_packet_filter(hw,
-+		ret = i40e_aq_add_rem_control_packet_filter(hw,
- 					    f->input.mac_addr.addr_bytes,
- 					    f->input.ether_type,
- 					    flags, pf->main_vsi->seid,
- 					    f->queue, 1, &stats, NULL);
-+		if (ret != I40E_SUCCESS) {
-+			PMD_DRV_LOG(ERR,
-+				    "Failed to restore ethertype filter, "
-+				    "ether_type=0x%04x, queue=%u, vsi_seid=%u, err %d",
-+				    f->input.ether_type, f->queue,
-+				    pf->main_vsi->seid, ret);
-+			continue;
-+		}
+ 	/* Get PHY semaphore */
+-	hw->phy.ops.acquire(hw);
++	ret_val = hw->phy.ops.acquire(hw);
++	if (ret_val)
++		return ret_val;
 +
-+		PMD_DRV_LOG(INFO, "Ethertype filter:"
-+			    " mac_etype_used = %u, etype_used = %u,"
-+			    " mac_etype_free = %u, etype_free = %u",
-+			    stats.mac_etype_used, stats.etype_used,
-+			    stats.mac_etype_free, stats.etype_free);
+ 	/* Get and set needed register values */
+ 	wuc = E1000_READ_REG(hw, E1000_WUC);
+ 	mdicnfg = E1000_READ_REG(hw, E1000_MDICNFG);
+@@ -846,11 +849,22 @@ STATIC s32 e1000_pll_workaround_i210(struct e1000_hw *hw)
+ 	phy_word = E1000_PHY_PLL_UNCONF;
+ 	for (i = 0; i < E1000_MAX_PLL_TRIES; i++) {
+ 		/* check current state directly from internal PHY */
+-		e1000_write_phy_reg_mdic(hw, GS40G_PAGE_SELECT, 0xFC);
++		ret_val = e1000_write_phy_reg_mdic(hw, GS40G_PAGE_SELECT, 0xFC);
++		if (ret_val)
++			goto restore_page;
++
+ 		usec_delay(20);
+-		e1000_read_phy_reg_mdic(hw, E1000_PHY_PLL_FREQ_REG, &phy_word);
++		ret_val = e1000_read_phy_reg_mdic(hw, E1000_PHY_PLL_FREQ_REG,
++						  &phy_word);
+ 		usec_delay(20);
+-		e1000_write_phy_reg_mdic(hw, GS40G_PAGE_SELECT, 0);
++
++restore_page:
++		page_ret_val = e1000_write_phy_reg_mdic(hw, GS40G_PAGE_SELECT, 0);
++		if (page_ret_val && ret_val == E1000_SUCCESS)
++			ret_val = page_ret_val;
++		if (ret_val)
++			goto out;
++
+ 		if ((phy_word & E1000_PHY_PLL_UNCONF)
+ 		    != E1000_PHY_PLL_UNCONF) {
+ 			ret_val = E1000_SUCCESS;
+@@ -882,6 +896,7 @@ STATIC s32 e1000_pll_workaround_i210(struct e1000_hw *hw)
+ 		/* restore WUC register */
+ 		E1000_WRITE_REG(hw, E1000_WUC, wuc);
  	}
--	PMD_DRV_LOG(INFO, "Ethertype filter:"
--		    " mac_etype_used = %u, etype_used = %u,"
--		    " mac_etype_free = %u, etype_free = %u",
--		    stats.mac_etype_used, stats.etype_used,
--		    stats.mac_etype_free, stats.etype_free);
- }
- 
- /* Restore tunnel filter */
++out:
+ 	/* restore MDICNFG setting */
+ 	E1000_WRITE_REG(hw, E1000_MDICNFG, mdicnfg);
+ 	/* Release PHY semaphore */
 -- 
 2.43.0
+
