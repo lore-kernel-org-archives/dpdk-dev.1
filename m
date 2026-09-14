@@ -2,69 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28456C88E67
-	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 05:52:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D1F8C88E50
+	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 05:52:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8EBBF40E64;
-	Mon, 14 Sep 2026 07:51:12 +0200 (CEST)
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com
- [209.85.215.174])
- by mails.dpdk.org (Postfix) with ESMTP id 1341B40E54
- for <dev@dpdk.org>; Mon, 14 Sep 2026 07:51:11 +0200 (CEST)
-Received: by mail-pg1-f174.google.com with SMTP id
- 41be03b00d2f7-cc4d03f95dfso1563141a12.2
- for <dev@dpdk.org>; Sun, 13 Sep 2026 22:51:10 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6CBC440E50;
+	Mon, 14 Sep 2026 07:51:15 +0200 (CEST)
+Received: from mail-pj2-f13.google.com (mail-pj2-f13.google.com
+ [74.125.227.141])
+ by mails.dpdk.org (Postfix) with ESMTP id 681C240E18
+ for <dev@dpdk.org>; Mon, 14 Sep 2026 07:51:14 +0200 (CEST)
+Received: by mail-pj2-f13.google.com with SMTP id
+ 98e67ed59e1d1-396ccd78e6eso455253a91.0
+ for <dev@dpdk.org>; Sun, 13 Sep 2026 22:51:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789365070;
- x=1789969870; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789365073;
+ x=1789969873; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=zegRyiPz/uw+hLZHx1OIBka97fu+iEvl0/H8ESNK2Nw=;
- b=ZZEmdAq3zwkPcAoI4GXU6mgE1ZsYbGP2jJzJH2t5ghbUkoPgekc5Bf5vWXnFymNuf5
- TRY+qYDcSKbrGJeeDv8jqTg81WEKE1521D4t0g05iORq73pT/DBJN/7jYntGn5f6yBU4
- WAu7oYIYiDjNoRk4xy0iYLCxagOCUYt5+h1aYgjNncbNhgidH8DogSEX5rSo1WDWgRtL
- HS64HiFUZZCgezVRsJ4W+gb3SY3/GyP7+jzFAEE5S7imp5H8yDG7NVoriPzxoiROHZgq
- gOm1X87gpzIEABcEKaAwizlye4P6U6xoknxlyhtFAAHd6D91jHrgp8CevpakQn82eu1W
- mQPg==
+ bh=4LmuUlKsachKfWP3GZ+NzxJcSm+v5a96I1MM7l6tHWs=;
+ b=aFG41zv3zRAAGARXepDgvcbINI2KTN2ZGxOjpaaOeqeemdeynXWateoztE/P/cyVXI
+ yyozRihOWO8q3/0782x3ZmA/ynez9DTXoXDfl5Q03GRXkSgOUZIkFD/oeYNsshS1k0N9
+ zjHyEtokYPfJHLO7YWGxok4Qa6lTiJAEbmeeujGOz8pyv4UH6NBf3DSxVNFck0hv4JgO
+ cvCgDgu9yR97fTncb9/i1JBsIjiNRhZJWxlmcJ4Lms8akQAlgZS8smFi0Xm4PMp0cgv9
+ rzZnvx8l1vE/9ljArVsy9REEWpqaqIQuGYYZ+/f5+ilolSrIk/B4LEvAgnVK//kfKR6p
+ v72g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1789365070; x=1789969870;
+ d=1e100.net; s=20251104; t=1789365073; x=1789969873;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=zegRyiPz/uw+hLZHx1OIBka97fu+iEvl0/H8ESNK2Nw=;
- b=JwcKjMkfwsY9Gl33G5fWuFUWElSy6HVgmgs680mWB52qdwGGnTjf/j/zFQGpKGtrjC
- i8uJXYwemEbH1CRBvJe3/KYI9osgYqcNgOlK7wV6ReZTaWGmLTxZIn0ZWma5ZkwPdsEY
- e4mPay+tvGZG4ruPdSfobH6+Uvb0HNdBxU7bGDg0/63Pk+FckTPF2AjYJqQyT0XnfRP4
- cQsg/A9gRYMrYE8PdqooguyuIs8D+GAuxAideaPnKWyysSgpXbooDwR8vKlTbXkR3R5o
- gs1UKPJCTE56KmnIOw1jA8rTdmv7yPvrKwpbV9j8xr+T0vSjjVCTMpbc0WvuVnokzpDP
- FBHg==
-X-Gm-Message-State: AFuF++mcq7bCt3J11NSU85jKDlelmdoKW1bQY8s+EQ0Rhv5K8FOLqrT8
- dAgtzAFLe9Cc8SeTjkuL7sWjaHPuplpuO8w7VgCdwqe7Wg1X7nURjyWx3saZsUDOD9cV1jggaS3
- o7FN6Jb8=
-X-Gm-Gg: AYBFou3xe3Yi48sczuHlu/+JAiT8ebfjKdOuchftVGSEcR+GCA4BgxhcpX5XvQ+kPKS
- O9u+UGxMK818Bysxz3rfdS+bxAkDkcxxsIXksavobUBaoGEinCMTnXtPUiNPz/LoFA7zR7JTAod
- zv6DOQqHFSWRi7oIWrfpbyaB6dA94tJmI3gsUwFBKkBJAvIyXBpz284J03pH0SlQFjqNtcAbvVr
- Td+R7qHzTtncZbEFiA+ijXW8dt188j5ccg+dLevB6GDevLjqNMcetw0qsWc5DLfEPYO1fECk279
- KkYwH8YLheMSXnWF8x5mnNue+WNv30/Ilpac0SWugIqDJGggMLuCjwRO+j1Uvs91V2KrClNyh7P
- 8l1Jd6RF/h3B7XCU32z2SGYK9RJ1v5MSxjiK/Bj2flWQaERVVEhngMUD+X3LfQVokmI2dGMi1UR
- ahIctYcyl4irfS9KlfSXo0okKsC/Hmz4u3Xzd1I6YSjBSZ3dyD8EQ+EzelT4urRYj33QIW/Y+0w
- S91/WjMWRTpQxiSTa4f8Nxl7cxBwhtRzVtDZA==
-X-Received: by 2002:a17:90b:2786:b0:39d:f2b0:5049 with SMTP id
- 98e67ed59e1d1-39df2b0506dmr22797a91.17.1789365070152; 
- Sun, 13 Sep 2026 22:51:10 -0700 (PDT)
+ bh=4LmuUlKsachKfWP3GZ+NzxJcSm+v5a96I1MM7l6tHWs=;
+ b=WrgIE+LRAEykSZJVroezDO44WkpKqiiT9hZh4NLwmwo1l6QKTSIyS3myMNCerOSK8S
+ BphCAMhio6XeBM1D8SE4i9y3nINWsrivYiB/nQAiwpyBCJ9/e0hasvc0g9aK5Vm537kn
+ YxH6iqik6k5rAbhHloJ7NKGM8XRdTQo2uTgUc2uZy6rNs/ecDfklHW8j+VxFMi2QVws9
+ SL5DnApw84p30TGCnDiWT8N4TrNQ5R4rOnOYRG6Il6iCYt3az7jW0xKO9IfzPG0PWW+4
+ bL6GQSAoAT0VS5GYSc1z+TZbAY7tdSF+hGkyzsQRBblFVr9ifIlRialPezpzG08Qf0Wo
+ U+2g==
+X-Gm-Message-State: AFuF++nwur6xqh+RPMmVDBN5zZtBLGhcFhbsox0coe4st8nhUHuuRJjG
+ OdDVSx5GGIzHbQvqxLt3C+Ws/quiFEmijLL0sdeY/UH0vKIQ0tNfHSUZxTAX4i87WwO+1TPmU4x
+ MXnkg
+X-Gm-Gg: AYBFou2vQu6FLwMVNZY+TIFqw+MniCnYB7bxGWV8BNYx/2GQhYb156TeZF53MVNamgM
+ RhYxMxvZPPidJpI6NjFiLTORaJTVnHgo0PzoTpU/WJXorZQVxRwPGGqZqDPb6KomZyhbiKtqcb7
+ uQ40beah51QG0tE+GNzjDfQhwBxzRH9/o+cUS3HaTU0lMq4SoQdYwXv2Y/2t7rWsAgNKXXM/l7w
+ iWewp3Z2Ph/ZGDXVRd/JIO8W+G70hb38fcvwwGJ9xQM9QNn1NsGmLnxKfEtYtTaruYTI1OV9Cr0
+ atbZu+l9HH2y/Hj2M2PVNIPoSWwzSYlhC2TYQNnxKQ+voZAXYA56Wf8RH0wTI81x8M8XM1ir4Dd
+ HdkVJHW4lY9MxRDIy1b0DQlwj1LiaQApwEzJUWWLtefAjtQqCDyCb4q8Ri/SaHoI8Wg4vlruBmi
+ mg6UO0xdW72o23NB68e6vmoXZnLnQXWegwNd+4/aGHVuzLWL2dfMjwlAfjFYeKKStIskol8aJDF
+ eVxLSRD/YiwybhEJ42c/dqdW1LBQt2A+IoTESeqNnicIonB
+X-Received: by 2002:a17:90b:57c4:b0:38e:c232:9d2c with SMTP id
+ 98e67ed59e1d1-39dec375390mr1171675a91.2.1789365073532; 
+ Sun, 13 Sep 2026 22:51:13 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39d95864b4fsm19794492a91.15.2026.09.13.22.51.07
+ 98e67ed59e1d1-39d95864b4fsm19794492a91.15.2026.09.13.22.51.10
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 13 Sep 2026 22:51:09 -0700 (PDT)
+ Sun, 13 Sep 2026 22:51:13 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Vamsi Attunuru <vattunuru@marvell.com>
-Subject: [PATCH 32/62] net/octeon_ep: use kvargs numeric helpers
-Date: Sun, 13 Sep 2026 22:47:03 -0700
-Message-ID: <20260914054912.755403-33-stephen@networkplumber.org>
+ Devendra Singh Rawat <dsinghrawat@marvell.com>,
+ Alok Prasad <palok@marvell.com>
+Subject: [PATCH 33/62] net/qede: use kvargs numeric helpers
+Date: Sun, 13 Sep 2026 22:47:04 -0700
+Message-ID: <20260914054912.755403-34-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260914054912.755403-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -83,62 +84,108 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-parse_flag() uses atoi(), which cannot report an error, so a malformed
-value is silently taken as zero. The result was only ever used as a
-boolean, so use rte_kvargs_handle_bool() and drop the local handler.
+qede_args_check() ignores the end pointer, so "1junk" is accepted, and
+uses base 0, so a leading zero silently selects octal.
 
-This also accepts the usual spellings such as "on" and "true" in
-addition to 0 and 1.
+On failure it returned errno, a positive value, where the kvargs
+handler contract expects a negative error code; return -EINVAL.
 
-The boolean uses rte_kvargs_process_opt(), so that a bare key with no
-value enables the option.
+Both arguments are booleans, so drop qede_args_check() and use
+rte_kvargs_handle_bool() on qdev->enable_tx_switching directly. The
+handler needed the device only to reach that field and to apply the
+VF argument on a VF alone, so the IS_VF() test moves to the caller and
+the loop over valid_args[] becomes two explicit calls.
+
+The old handler accepted any integer and reduced it with "!!", so
+"vf_txswitch=2" meant true. It is now rejected, along with the other
+values that are not booleans. A bare key enables tx-switching.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/octeon_ep/otx_ep_ethdev.c | 16 +++-------------
- 1 file changed, 3 insertions(+), 13 deletions(-)
+ drivers/net/qede/qede_ethdev.c | 55 ++++++++++------------------------
+ 1 file changed, 16 insertions(+), 39 deletions(-)
 
-diff --git a/drivers/net/octeon_ep/otx_ep_ethdev.c b/drivers/net/octeon_ep/otx_ep_ethdev.c
-index 876d2f9d7d..cec51dc706 100644
---- a/drivers/net/octeon_ep/otx_ep_ethdev.c
-+++ b/drivers/net/octeon_ep/otx_ep_ethdev.c
-@@ -29,21 +29,11 @@ static const struct rte_eth_desc_lim otx_ep_tx_desc_lim = {
- 	.nb_align	= OTX_EP_TXD_ALIGN,
+diff --git a/drivers/net/qede/qede_ethdev.c b/drivers/net/qede/qede_ethdev.c
+index 4efc2dd349..5bf70ca2b5 100644
+--- a/drivers/net/qede/qede_ethdev.c
++++ b/drivers/net/qede/qede_ethdev.c
+@@ -1203,39 +1203,14 @@ static const char * const valid_args[] = {
+ 	NULL,
  };
  
--static int
--parse_flag(const char *key, const char *value, void *extra_args)
+-static int qede_args_check(const char *key, const char *val, void *opaque)
 -{
--	RTE_SET_USED(key);
+-	unsigned long tmp;
+-	int ret = 0;
+-	struct rte_eth_dev *eth_dev = opaque;
+-	struct qede_dev *qdev = QEDE_INIT_QDEV(eth_dev);
+-	struct ecore_dev *edev = QEDE_INIT_EDEV(qdev);
 -
--	*(uint8_t *)extra_args = atoi(value);
+-	errno = 0;
+-	tmp = strtoul(val, NULL, 0);
+-	if (errno) {
+-		DP_INFO(edev, "%s: \"%s\" is not a valid integer", key, val);
+-		return errno;
+-	}
 -
--	return 0;
+-	if ((strcmp(QEDE_NPAR_TX_SWITCHING, key) == 0) ||
+-	    ((strcmp(QEDE_VF_TX_SWITCHING, key) == 0) && IS_VF(edev))) {
+-		qdev->enable_tx_switching = !!tmp;
+-		DP_INFO(edev, "Disabling %s tx-switching\n",
+-			strcmp(QEDE_NPAR_TX_SWITCHING, key) ?
+-			"VF" : "NPAR");
+-	}
+-
+-	return ret;
 -}
 -
- static int
- otx_ethdev_parse_devargs(struct rte_devargs *devargs, struct otx_ep_device *otx_epvf)
+ static int qede_args(struct rte_eth_dev *eth_dev)
  {
+ 	struct rte_pci_device *pci_dev = RTE_CLASS_TO_BUS_DEVICE(eth_dev, *pci_dev);
++	struct qede_dev *qdev = QEDE_INIT_QDEV(eth_dev);
++	struct ecore_dev *edev = QEDE_INIT_EDEV(qdev);
  	struct rte_kvargs *kvlist;
--	uint8_t ism_enable = 0;
-+	bool ism_enable = false;
+ 	struct rte_devargs *devargs;
+ 	int ret;
+-	int i;
  
- 	if (devargs == NULL)
- 		goto null_devargs;
-@@ -52,11 +42,11 @@ otx_ethdev_parse_devargs(struct rte_devargs *devargs, struct otx_ep_device *otx_
+ 	devargs = pci_dev->device.devargs;
+ 	if (!devargs)
+@@ -1245,20 +1220,22 @@ static int qede_args(struct rte_eth_dev *eth_dev)
  	if (kvlist == NULL)
- 		goto exit;
+ 		return -EINVAL;
  
--	rte_kvargs_process(kvlist, OTX_ISM_ENABLE, &parse_flag, &ism_enable);
-+	rte_kvargs_process_opt(kvlist, OTX_ISM_ENABLE, rte_kvargs_handle_bool, &ism_enable);
+-	 /* Process parameters. */
+-	for (i = 0; (valid_args[i] != NULL); ++i) {
+-		if (rte_kvargs_count(kvlist, valid_args[i])) {
+-			ret = rte_kvargs_process(kvlist, valid_args[i],
+-						 qede_args_check, eth_dev);
+-			if (ret != ECORE_SUCCESS) {
+-				rte_kvargs_free(kvlist);
+-				return ret;
+-			}
+-		}
+-	}
++	/*
++	 * Both arguments select the same thing. The VF one is only honoured
++	 * on a VF, which is why the two are handled separately rather than
++	 * in a loop over valid_args[].
++	 */
++	ret = rte_kvargs_process_opt(kvlist, QEDE_NPAR_TX_SWITCHING,
++				     rte_kvargs_handle_bool,
++				     &qdev->enable_tx_switching);
++	if (ret == 0 && IS_VF(edev))
++		ret = rte_kvargs_process_opt(kvlist, QEDE_VF_TX_SWITCHING,
++					     rte_kvargs_handle_bool,
++					     &qdev->enable_tx_switching);
++
  	rte_kvargs_free(kvlist);
  
- null_devargs:
--	otx_epvf->ism_ena = !!ism_enable;
-+	otx_epvf->ism_ena = ism_enable;
+-	return 0;
++	return ret;
+ }
  
- 	return 0;
- 
+ static int qede_dev_configure(struct rte_eth_dev *eth_dev)
 -- 
 2.53.0
 
