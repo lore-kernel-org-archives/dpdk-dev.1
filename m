@@ -2,35 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3EE6C88E64
-	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 11:49:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA27C88E64
+	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 11:49:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0B00640DD8;
-	Mon, 14 Sep 2026 13:49:34 +0200 (CEST)
-Received: from mail.amicon.ru (mail.amicon.ru [77.108.111.100])
- by mails.dpdk.org (Postfix) with ESMTP id C60BC40144;
- Mon, 14 Sep 2026 12:09:44 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0886940E09;
+	Mon, 14 Sep 2026 13:49:35 +0200 (CEST)
+Received: from mail.amicon.ru (unknown [77.108.111.100])
+ by mails.dpdk.org (Postfix) with ESMTP id A0A8B40144;
+ Mon, 14 Sep 2026 12:10:14 +0200 (CEST)
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; d=amicon.ru; s=mail; c=simple/simple;
- t=1789380584; h=from:subject:to:date:message-id;
- bh=JjurHh1MvaJ+f9mvpmvnvtWgTXA9VHXh+a0EWBh7Ai0=;
- b=nH7AV9VMXGz12XdimLLg2s5mkta3T/S0FhPZlElxf0JAzAroC9Cx/vICldO25UsqbBA6Vivecr6
- IVkedFVwaZ4PVzeQVFopHedCALtBZSpMypQDZhuHvERyMK4VNUv+Qg/DYOu/Zmn1sgDYKXRxNH9Zs
- 5ZiPoLNXyEKlQf0Xq5hT68hJdtFRDJ2LnlQ0Fo1koo11ob/cYGn2O7NV9bfT++2w+U4k6+R/et5yH
- Fz/USdAsSZ/wXGtwLKcxHEO4edtMvZBLeqiNHFilEllnVxPEyde8IvJVQp2Jgc0AGGQTY72vRQfoI
- 3uRCRTtuHZE3WUTZV0phP1fBMwfjdigDqAdA==
+ t=1789380614; h=from:subject:to:date:message-id;
+ bh=s88zLo1RdNMjd8k/j+b5Fc38lPFqsFPF9VT5wKshpAc=;
+ b=JVPKTd/vVs8OYYL9Z3jJF9D+dPyJfy/sV3PY66g4HnGLVuhkA1Cj4WRYj4QKuQIW0HdCgwxlXdC
+ HRp4Ml25vaQexf2qxvKU0nPC/UCGO6gOvcrEHA43J8C89xqNik5yLmAnfmDodsRQLHBedF0/p+30j
+ Sw3ocrBO4vgFyv8wbRWHOfhPnZVZ4dSZHAJuTxsI71u7henX2ESwC2wSlymu9cJzWO3l4Am39um3b
+ KwgXwxWvytMqYdSGYEuzopnr508mzIkjYie24jVkDlGA2rVAU/V0C6QkQlNWbNd/P9mDvXhL6dht+
+ bXoIh3yJh/olF++4aTmAFPI/j6PGHR+S0p3A==
 Received: from amicon.ru (172.16.36.76) by mail.amicon.lan (192.168.0.59) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.27; Mon, 14 Sep
- 2026 13:09:44 +0300
+ 2026 13:10:14 +0300
 From: Artem Novikov <naa@amicon.ru>
-To: <dev@dpdk.org>
-CC: <naa@amicon.ru>, <rrv@amicon.ru>, <lvc-project@linuxtesting.org>,
- <bruce.richardson@intel.com>, <stable@dpdk.org>
-Subject: [PATCH] net/e1000/base: check VF reset mailbox write
-Date: Mon, 14 Sep 2026 13:09:34 +0300
-Message-ID: <20260914100934.55518-1-naa@amicon.ru>
+To: <bruce.richardson@intel.com>, <anatoly.burakov@intel.com>
+CC: <dev@dpdk.org>, <lvc-project@linuxtesting.org>, <naa@amicon.ru>,
+ <rrv@amicon.ru>, <ting.xu@intel.com>, <stable@dpdk.org>
+Subject: [PATCH] net/ice: ignore WRED parameters for tail drop in DCF
+Date: Mon, 14 Sep 2026 13:10:03 +0300
+Message-ID: <20260914101003.55635-1-naa@amicon.ru>
 X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 X-Originating-IP: [172.16.36.76]
@@ -48,38 +48,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-e1000_reset_hw_vf() sends E1000_VF_RESET through the VF
-mailbox and then waits for the PF response. The posted write can
-fail before the reset message is written to VMBMEM or before REQ is
-set, for example when the VF cannot obtain the mailbox lock.
+The traffic management API defines leaf WRED parameters as valid only
+when the congestion management mode is WRED. DCF only accepts tail drop,
+but still validates the WRED profile and shared contexts. A tail-drop
+node with a zero-initialized, unused WRED profile is therefore rejected
+unless the application supplies RTE_TM_WRED_PROFILE_ID_NONE.
 
-Return the write error directly so the reset path does not treat a
-failed current request as a later read failure or as unrelated
-mailbox state.
+Compare the mode explicitly against RTE_TM_CMAN_TAIL_DROP and reject
+unsupported modes with a precise error message. Do not validate WRED
+parameters for the supported tail-drop mode.
 
-Fixes: af75078fece3 ("first public release")
+Fixes: 3a6bfc37eaf4 ("net/ice: support QoS config VF bandwidth in DCF")
 Cc: stable@dpdk.org
 
 Signed-off-by: Artem Novikov <naa@amicon.ru>
 ---
- drivers/net/intel/e1000/base/e1000_vf.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/intel/ice/ice_dcf_sched.c | 23 ++---------------------
+ 1 file changed, 2 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/net/intel/e1000/base/e1000_vf.c b/drivers/net/intel/e1000/base/e1000_vf.c
-index 488ac3a94b..86ec1ea058 100644
---- a/drivers/net/intel/e1000/base/e1000_vf.c
-+++ b/drivers/net/intel/e1000/base/e1000_vf.c
-@@ -253,7 +253,9 @@ STATIC s32 e1000_reset_hw_vf(struct e1000_hw *hw)
- 		mbx->timeout = E1000_VF_MBX_INIT_TIMEOUT;
+diff --git a/drivers/net/intel/ice/ice_dcf_sched.c b/drivers/net/intel/ice/ice_dcf_sched.c
+index 795b6e683df55d447163e3f447b4e5b6f17552cd..5b5a90b37afec90619633539749c93993bc42616 100644
+--- a/drivers/net/intel/ice/ice_dcf_sched.c
++++ b/drivers/net/intel/ice/ice_dcf_sched.c
+@@ -200,28 +200,9 @@ ice_dcf_node_param_check(struct ice_dcf_hw *hw, uint32_t node_id,
+ 	}
  
- 		msgbuf[0] = E1000_VF_RESET;
--		mbx->ops.write_posted(hw, msgbuf, 1, 0);
-+		ret_val = mbx->ops.write_posted(hw, msgbuf, 1, 0);
-+		if (ret_val)
-+			return ret_val;
- 
- 		msec_delay(10);
+ 	/* for leaf node */
+-	if (params->leaf.cman) {
++	if (params->leaf.cman != RTE_TM_CMAN_TAIL_DROP) {
+ 		error->type = RTE_TM_ERROR_TYPE_NODE_PARAMS_CMAN;
+-		error->message = "Congestion management not supported";
+-		return -EINVAL;
+-	}
+-	if (params->leaf.wred.wred_profile_id !=
+-	    RTE_TM_WRED_PROFILE_ID_NONE) {
+-		error->type =
+-			RTE_TM_ERROR_TYPE_NODE_PARAMS_WRED_PROFILE_ID;
+-		error->message = "WRED not supported";
+-		return -EINVAL;
+-	}
+-	if (params->leaf.wred.shared_wred_context_id) {
+-		error->type =
+-			RTE_TM_ERROR_TYPE_NODE_PARAMS_SHARED_WRED_CONTEXT_ID;
+-		error->message = "WRED not supported";
+-		return -EINVAL;
+-	}
+-	if (params->leaf.wred.n_shared_wred_contexts) {
+-		error->type =
+-			RTE_TM_ERROR_TYPE_NODE_PARAMS_N_SHARED_WRED_CONTEXTS;
+-		error->message = "WRED not supported";
++		error->message = "Only tail drop is supported";
+ 		return -EINVAL;
+ 	}
  
 -- 
 2.43.0
-
