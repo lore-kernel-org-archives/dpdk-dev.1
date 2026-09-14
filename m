@@ -2,39 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B53C88E64
-	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 10:45:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32508C88E64
+	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 10:49:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 04E9040A89;
-	Mon, 14 Sep 2026 12:45:47 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 2745C40A6F
- for <dev@dpdk.org>; Mon, 14 Sep 2026 12:45:46 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 05540206CA;
- Mon, 14 Sep 2026 12:45:46 +0200 (CEST)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Mon, 14 Sep 2026 12:45:44 +0200
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-To: dev@dpdk.org, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Stephen Hemminger <stephen@networkplumber.org>
-Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH v5 2/2] mempool: introduce pile driver
-Date: Mon, 14 Sep 2026 10:45:13 +0000
-Message-ID: <20260914104513.906736-3-mb@smartsharesystems.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260914104513.906736-1-mb@smartsharesystems.com>
-References: <20260901064331.594276-1-mb@smartsharesystems.com>
- <20260914104513.906736-1-mb@smartsharesystems.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 4E49E40A6F;
+	Mon, 14 Sep 2026 12:49:06 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+ by mails.dpdk.org (Postfix) with ESMTP id 4804940144
+ for <dev@dpdk.org>; Mon, 14 Sep 2026 12:49:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1789382946; x=1820918946;
+ h=from:to:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=2n6Zpq0NtrJ/3jQ4AC7cWKXRsPFuo+cNcDLVrSdIa7s=;
+ b=HrE4r31qeo/rx+HtbWtAk0qbLcrmJXjcpEJuGFyIQkRqoZZzs0oHd+pH
+ 5gFSDAMTSoeYBy91q5GXe/MN0AQOZAqDOKgwSqD7K9qBmLovrOmkwjnna
+ iyeVdFJTmvUrZf0XA/bvG5Bii6aeyq7+4j48xtUBd3xsaeFpIQcQXC6Gv
+ aAwuC27zxjwfJRK1LM51CI7HUbmnCZiIPg9juBRVUKjs3/znlrlMTxe25
+ eeza0z1G5gbJI4G5Ftnlok7XJonviqUaEuyvtHBuzT1ATXNB2YADUC8bD
+ 6eIB8tMw+dARv0GENI3f0E/b1e9BRa3IxHS3kcOBi47k2VtFzvGVw8FOb g==;
+X-CSE-ConnectionGUID: Vyorpu1USwOLX4aXwoM8Cg==
+X-CSE-MsgGUID: 5kwyz4mlSiW/mOYVxXGKQw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11904"; a="101250124"
+X-IronPort-AV: E=Sophos;i="6.27,102,1787036400"; d="scan'208";a="101250124"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+ by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 14 Sep 2026 03:49:04 -0700
+X-CSE-ConnectionGUID: CPurxz8eQhCmlMtXZEHIfQ==
+X-CSE-MsgGUID: alX0omioRL+D5KeuKmYa4w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,102,1787036400"; d="scan'208";a="269975652"
+Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
+ by fmviesa008.fm.intel.com with ESMTP; 14 Sep 2026 03:49:02 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Radu Nicolau <radu.nicolau@intel.com>, Jingjing Wu <jingjing.wu@intel.com>,
+ Declan Doherty <declan.doherty@intel.com>,
+ Abhijit Sinha <abhijit.sinha@intel.com>
+Subject: [PATCH v1 1/1] net/iavf: fix memory leak on IPsec SP delete
+Date: Mon, 14 Sep 2026 11:49:01 +0100
+Message-ID: <d722699838f742d88098fd31cabac1101b5dc429.1789382934.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.52.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 14 Sep 2026 10:45:44.0838 (UTC)
- FILETIME=[31FA1A60:01DD4436]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,239 +59,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Added a new "pile" mempool driver, based on the high-performance lock-free
-"pile" stack variant.
-With this driver added, the max number of mempool drivers
-(RTE_MEMPOOL_MAX_OPS_IDX) would be exceeded, so it was increased from 16
-to 32.
+When deleting IPsec SP, we return status response without freeing the
+request/response buffers. Do not return and proceed to freeing instead.
 
-Changed the other stack drivers to call their specific push/pop functions,
-instead of calling the generic stack push/pop API.
+Fixes: 6bc987ecb860 ("net/iavf: support IPsec inline crypto")
+Cc: radu.nicolau@intel.com
+Cc: stable@dpdk.org
 
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
-v5:
-* Added release note. (AI advanced model)
-* Moved increase of max number of mempool drivers from stack patch to
-  mempool driver patch, where it belongs.
-* Mentioned increase of max number of mempool drivers in patch
-  description.
-* Removed the rte_mempool_register_ops() and rte_mempool_set_ops_byname()
-  changes.
-  They are included in the "mempool: various cleanups" patch in the
-  "mempool: cleanup, fixes, improvements and optimizations" series.
-v4:
-* No changes.
-v3:
-* Call other stack types' specific push/pop functions.
-v2:
-* There is no v2.
----
- doc/guides/mempool/stack.rst              | 12 ++-
- doc/guides/rel_notes/release_26_11.rst    |  1 +
- drivers/mempool/stack/rte_mempool_stack.c | 90 ++++++++++++++++++++---
- lib/mempool/rte_mempool.h                 |  2 +-
- 4 files changed, 93 insertions(+), 12 deletions(-)
+ drivers/net/intel/iavf/iavf_ipsec_crypto.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/doc/guides/mempool/stack.rst b/doc/guides/mempool/stack.rst
-index 80ea07e65d..c06ab2dc56 100644
---- a/doc/guides/mempool/stack.rst
-+++ b/doc/guides/mempool/stack.rst
-@@ -1,5 +1,6 @@
- ..  SPDX-License-Identifier: BSD-3-Clause
-     Copyright(c) 2020 Intel Corporation.
-+    Copyright(c) 2026 SmartShare Systems.
+diff --git a/drivers/net/intel/iavf/iavf_ipsec_crypto.c b/drivers/net/intel/iavf/iavf_ipsec_crypto.c
+index 9c8f694de52..06b51b5e622 100644
+--- a/drivers/net/intel/iavf/iavf_ipsec_crypto.c
++++ b/drivers/net/intel/iavf/iavf_ipsec_crypto.c
+@@ -941,7 +941,7 @@ iavf_ipsec_crypto_security_policy_delete(struct iavf_adapter *adapter,
+ 		response->req_id != request->req_id)
+ 		rc = -EFAULT;
+ 	else
+-		return response->ipsec_data.ipsec_status->status;
++		rc = response->ipsec_data.ipsec_status->status;
  
- Stack Mempool Driver
- ====================
-@@ -28,6 +29,12 @@ can be selected as described in :ref:`Mempool_Handlers`:
-   The underlying **rte_stack** operates in lock-free mode. For more
-   information please refer to :ref:`Stack_Library_LF_Stack`.
- 
-+- ``pile``
-+
-+  The underlying **rte_stack** operates in lock-free mode,
-+  and is optimized for bulks of objects.
-+  For more information please refer to :ref:`Stack_Library_Pile`.
-+
- The standard stack outperforms the lock-free stack on average, however the
- standard stack is non-preemptive: if a mempool user is preempted while holding
- the stack lock, that thread will block all other mempool accesses until it
-@@ -35,9 +42,12 @@ returns and releases the lock. As a result, an application using the standard
- stack whose threads can be preempted can suffer from brief, infrequent
- performance hiccups.
- 
--The lock-free stack, by design, is not susceptible to this problem; one thread can
-+The lock-free stack and the pile, by design, are not susceptible to this problem; one thread can
- be preempted at any point during a push or pop operation and will not impede
- the progress of any other thread.
- 
-+The pile is not LIFO per object, but per bulk of objects.
-+Although the pile is optimized for bulks of objects, it can handle any request size.
-+
- For a more detailed description of the stack implementations, please refer to
- :doc:`/prog_guide/stack_lib`.
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 572e579ed5..17a1219222 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -61,6 +61,7 @@ New Features
-   pushed and popped in LIFO manner, but objects within each bulk are not ordered
-   as expected by a stack.
-   Furthermore, it is not strictly bounded by its size, but might hold more objects.
-+* mempool: Added "pile" driver, using the lock-free "pile" stack-like implementation.
- 
- Removed Items
- -------------
-diff --git a/drivers/mempool/stack/rte_mempool_stack.c b/drivers/mempool/stack/rte_mempool_stack.c
-index 1476905227..11c1243bec 100644
---- a/drivers/mempool/stack/rte_mempool_stack.c
-+++ b/drivers/mempool/stack/rte_mempool_stack.c
-@@ -30,7 +30,7 @@ __stack_alloc(struct rte_mempool *mp, uint32_t flags)
- }
- 
- static int
--stack_alloc(struct rte_mempool *mp)
-+std_stack_alloc(struct rte_mempool *mp)
- {
- 	return __stack_alloc(mp, 0);
- }
-@@ -42,21 +42,81 @@ lf_stack_alloc(struct rte_mempool *mp)
- }
- 
- static int
--stack_enqueue(struct rte_mempool *mp, void * const *obj_table,
-+pile_alloc(struct rte_mempool *mp)
-+{
-+	return __stack_alloc(mp, RTE_STACK_F_PILE);
-+}
-+
-+static int
-+std_stack_enqueue(struct rte_mempool *mp, void * const *obj_table,
-+	      unsigned int n)
-+{
-+	struct rte_stack *s = mp->pool_data;
-+
-+	RTE_ASSERT(s != NULL);
-+	RTE_ASSERT(obj_table != NULL);
-+
-+	return __rte_stack_std_push(s, obj_table, n) == 0 ? -ENOBUFS : 0;
-+}
-+
-+static int
-+std_stack_dequeue(struct rte_mempool *mp, void **obj_table,
-+	      unsigned int n)
-+{
-+	struct rte_stack *s = mp->pool_data;
-+
-+	RTE_ASSERT(s != NULL);
-+	RTE_ASSERT(obj_table != NULL);
-+
-+	return __rte_stack_std_pop(s, obj_table, n) == 0 ? -ENOBUFS : 0;
-+}
-+
-+static int
-+lf_stack_enqueue(struct rte_mempool *mp, void * const *obj_table,
-+	      unsigned int n)
-+{
-+	struct rte_stack *s = mp->pool_data;
-+
-+	RTE_ASSERT(s != NULL);
-+	RTE_ASSERT(obj_table != NULL);
-+
-+	return __rte_stack_lf_push(s, obj_table, n) == 0 ? -ENOBUFS : 0;
-+}
-+
-+static int
-+lf_stack_dequeue(struct rte_mempool *mp, void **obj_table,
- 	      unsigned int n)
- {
- 	struct rte_stack *s = mp->pool_data;
- 
--	return rte_stack_push(s, obj_table, n) == 0 ? -ENOBUFS : 0;
-+	RTE_ASSERT(s != NULL);
-+	RTE_ASSERT(obj_table != NULL);
-+
-+	return __rte_stack_lf_pop(s, obj_table, n) == 0 ? -ENOBUFS : 0;
- }
- 
- static int
--stack_dequeue(struct rte_mempool *mp, void **obj_table,
-+pile_enqueue(struct rte_mempool *mp, void * const *obj_table,
- 	      unsigned int n)
- {
- 	struct rte_stack *s = mp->pool_data;
- 
--	return rte_stack_pop(s, obj_table, n) == 0 ? -ENOBUFS : 0;
-+	RTE_ASSERT(s != NULL);
-+	RTE_ASSERT(obj_table != NULL);
-+
-+	return __rte_stack_pile_push(s, obj_table, n) == 0 ? -ENOBUFS : 0;
-+}
-+
-+static int
-+pile_dequeue(struct rte_mempool *mp, void **obj_table,
-+	      unsigned int n)
-+{
-+	struct rte_stack *s = mp->pool_data;
-+
-+	RTE_ASSERT(s != NULL);
-+	RTE_ASSERT(obj_table != NULL);
-+
-+	return __rte_stack_pile_pop(s, obj_table, n) == 0 ? -ENOBUFS : 0;
- }
- 
- static unsigned
-@@ -77,10 +137,10 @@ stack_free(struct rte_mempool *mp)
- 
- static struct rte_mempool_ops ops_stack = {
- 	.name = "stack",
--	.alloc = stack_alloc,
-+	.alloc = std_stack_alloc,
- 	.free = stack_free,
--	.enqueue = stack_enqueue,
--	.dequeue = stack_dequeue,
-+	.enqueue = std_stack_enqueue,
-+	.dequeue = std_stack_dequeue,
- 	.get_count = stack_get_count
- };
- 
-@@ -88,10 +148,20 @@ static struct rte_mempool_ops ops_lf_stack = {
- 	.name = "lf_stack",
- 	.alloc = lf_stack_alloc,
- 	.free = stack_free,
--	.enqueue = stack_enqueue,
--	.dequeue = stack_dequeue,
-+	.enqueue = lf_stack_enqueue,
-+	.dequeue = lf_stack_dequeue,
-+	.get_count = stack_get_count
-+};
-+
-+static struct rte_mempool_ops ops_pile = {
-+	.name = "pile",
-+	.alloc = pile_alloc,
-+	.free = stack_free,
-+	.enqueue = pile_enqueue,
-+	.dequeue = pile_dequeue,
- 	.get_count = stack_get_count
- };
- 
- RTE_MEMPOOL_REGISTER_OPS(ops_stack);
- RTE_MEMPOOL_REGISTER_OPS(ops_lf_stack);
-+RTE_MEMPOOL_REGISTER_OPS(ops_pile);
-diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
-index 50d958c7c6..3e161bfdb9 100644
---- a/lib/mempool/rte_mempool.h
-+++ b/lib/mempool/rte_mempool.h
-@@ -718,7 +718,7 @@ struct __rte_cache_aligned rte_mempool_ops {
- 	rte_mempool_dequeue_contig_blocks_t dequeue_contig_blocks;
- };
- 
--#define RTE_MEMPOOL_MAX_OPS_IDX 16  /**< Max registered ops structs */
-+#define RTE_MEMPOOL_MAX_OPS_IDX 32  /**< Max registered ops structs */
- 
- /**
-  * Structure storing the table of registered ops structs, each of which contain
+ update_cleanup:
+ 	free(request);
 -- 
-2.43.0
+2.52.0
 
