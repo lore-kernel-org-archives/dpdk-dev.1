@@ -2,68 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36937C88E50
-	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 05:53:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC931C88E67
+	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 05:53:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 59ED940EE2;
-	Mon, 14 Sep 2026 07:51:55 +0200 (CEST)
-Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com
- [74.125.227.140])
- by mails.dpdk.org (Postfix) with ESMTP id 948AA410D5
- for <dev@dpdk.org>; Mon, 14 Sep 2026 07:51:52 +0200 (CEST)
-Received: by mail-pj2-f12.google.com with SMTP id
- 98e67ed59e1d1-396ccd66bb5so1320998a91.0
- for <dev@dpdk.org>; Sun, 13 Sep 2026 22:51:52 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 92B1742686;
+	Mon, 14 Sep 2026 07:51:57 +0200 (CEST)
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com
+ [209.85.214.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 0B2FA410D5
+ for <dev@dpdk.org>; Mon, 14 Sep 2026 07:51:56 +0200 (CEST)
+Received: by mail-pl1-f182.google.com with SMTP id
+ d9443c01a7336-2dd4b3c752fso27437335ad.3
+ for <dev@dpdk.org>; Sun, 13 Sep 2026 22:51:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789365112;
- x=1789969912; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789365115;
+ x=1789969915; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=OttYL0eGBE7W1xRZGhSU3OmXBVsH4U97tW1E93FYGVo=;
- b=HrUh/pf5jV0BQm5XBjGHytksiy4oIwRV8/plrzy24mEG4wSw+8IfGq+ckiXtpXusoF
- Q7/uJ2Tm3EQMl/O2RF2/plqakR3yJx1YChwiHizoCUuW331IL0QpeaugxGqJ5zpaWq2G
- m4RqZsgFJhVU0q+qP6FzhL+x7OYfB3TscNZBN4ILFhdCYeAS2QtqZoVS9fi3h4kE14tY
- 6/3rXQaq+z4/r8uyPeo8TQ4FupsSi6RE2NU33AKdXC76jWKcytM62bFavE3u71+qPVs/
- AxI1s1YqRDgBNmoM8xWOf0pMgBxvItPqFw98ewSzX1EpXbEf1VXyNkQzLXpLg4LSSi6K
- q+LQ==
+ bh=S6DewSEz7Oeka/8OcHxjLW3H1OmLr9I7MjTFgeKWlLA=;
+ b=ab/ziPvqiQ1UffbMa5On99RV3lHGaIUUivlecvBSlcA50Wo+Xnm5ODUQp7BMVHpCdA
+ hYXV2Yw4azvb3CC+Nh3c3GqAC1Q+3aw917uoZ1rW464/YXalok5cZNMUT6wQi5bPt9yo
+ P8jkDvfliNPnvtm2oGAskYs63FwJ5Izl0yCP/+a/ypK5ZN6KsXWziP+sSnVHZcWYycJz
+ HAK6oVYcK7X6X6Z0dsDY4FOgg7j/vzOxpqdanUvHQobTG6FmZ+6VF8i0oeeLQvoFuEQm
+ h1VAhIrzNkG7JBk/UMU+AqduO6PY4om3xlABl8q2/c6CmxIhI4DXSD84+wMyfrv8WMA/
+ mqmw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1789365112; x=1789969912;
+ d=1e100.net; s=20251104; t=1789365115; x=1789969915;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=OttYL0eGBE7W1xRZGhSU3OmXBVsH4U97tW1E93FYGVo=;
- b=XEI9fuRQp543a8Pk3j9NdVEqVhMuBuNhgUrBIQmht1A+oN+E+2d0PQtcuYO4X+jmhT
- wgsUBe1WmKe2qzrxTQb7/6G+h9lyBdISeKhm2EqWOT49GaZtKxTptOHS3JDRpFZeM08F
- CjG2Qb/DVVI3B/LWlCRkVyu1OSxWdFOEPO3qEv1BVkb7xBgYyOVS3P6WsQ2V6Mo8Ft4H
- UxksI8f5vbByy5wy2VVZtBFxRmBSZbk9t63n5jTpdtC07L3vKI8+Kzkdv2/EYf4Toq+m
- gE3UxuQwSlL5twYttYyQeWL9xk+KfcVqLcFqjw2yOzqyhCQKCMvLd2cjAIjbdjZzDMRp
- hIrw==
-X-Gm-Message-State: AFuF++mIjNbAWU9/jyCmKeuisraPbU21l9fGS3VFCsYg4pkQzexzwx6E
- v+8xKzPcvt/fRSxpviBTbe8v+AGI/z2VKEFTa4U0gYeS6+yX2SZz1Njh0jhUvfvN6wwJwbalA/6
- N2WBSvQc=
-X-Gm-Gg: AYBFou0fcKA8uspNbPX+y/WLhid9Dd8/bdr74gH4gNdpKohbeiAZvtY1NkLvTsYDu57
- bFKgfrUoippSb9VNr1Ae+5GcE7wWla+mxxITjiKQWJLWB6DUxk4PA6NHSABnwbLa/oGEFXV2y1f
- K+ZsY1DSMc+H+iygROeOWPv31b11Jdcb+o93+/Kq8PzCUSdnH7HvYGrQps7BMKzCGKDy2CyIyN+
- R440yiGXvmwui71tf7gq5Diqodj5e5nqWHpnr4Gv+LA6FmBeaM9Otx9MjonPfTJC3R/zEd/J1hC
- /GiesLZsGXaq1pZuLuNVK/2U8boy6iP76tRFwO3RiSRYQDkMOohL/Nghq7g/sZGfGR4ynFYYYRs
- TlruwzbzpwtfObsBWAF5NjXFft+t/UosXtgxxz6SGrOrevNyFobywtfwP2fGEZolsiJJ9sVTfJB
- il8yp64Jel38ctwWcZM6dV/tk1NrJG9Y4mQEH0VBYrhqFCzFww6cM8t1DByRASxXBTVqpSuByBS
- jetUOrbwibrgEpbGOLq+6HwnbW+9RrDIYdRQxiQV7/3Gxyc
-X-Received: by 2002:a17:90b:5102:b0:398:9bd5:490b with SMTP id
- 98e67ed59e1d1-39dec0bf7b0mr2629777a91.18.1789365111734; 
- Sun, 13 Sep 2026 22:51:51 -0700 (PDT)
+ bh=S6DewSEz7Oeka/8OcHxjLW3H1OmLr9I7MjTFgeKWlLA=;
+ b=hx3ELrreb9sCxY3ud3CJSia06BhxDdI5MlJxhWQqq4bmVTcvn+tbzwg9CzVK/NU6RK
+ cUphHDwEz5cbYuG6v5WAGtGSNp458xkNmauP7CxWBUuXcy0vfB2nRp1wxaHNEfR7jZ2Z
+ jup5qGW7g73a+D2R6nHo82VZZNuC6o5rLpLJRitzx9hr0XjKLQ4SJ9/HDqJpo2f0RrjJ
+ msIBAblrjJoCh8FRxmJBitZKnZzqlTdzo6Dxp43o7Qjk0K9mUdIO/3HOGktfS+ULvOG8
+ gi8E7jiBR5TXKfNBC+XJk9wtaHWNzdCvuzw8xx2i/cykPqNJNE3XkAcfFjNEnIs5Y+gQ
+ 7b2Q==
+X-Gm-Message-State: AFuF++leLNi/hYuf3T6TQopUMYj3F3ri4u24yXh07k0UYYBC0e6nYiDx
+ VEmd08R37PUOVz2xY+hqJPdj4G3XrE2i5jIR2DItGUAQhUkR034k4NKnWOnCctuNtM44sQK1Kvh
+ 9XMZSe3s=
+X-Gm-Gg: AYBFou3sQ2Iterg85OR1v4YNgv9mP8OK8UPAUDujLCnZ4Oug7H30thRpXhD7iVyFWQf
+ jtsHi/dmburJd7IjsjAts9aGAB99VlVDu6WgvqV0F9YvZbZBXtBB3yZ8XZQWue1SE7MZM/fBMGW
+ PSAvsyASyoibZ8P6MVmmsxkeokFH8ljioXwZtq4pTVSBRjMEnju8zcbcdyPjjQ/LBr3W3b5nm81
+ wwXsBZFRwvC71Us2txAPW8BLCOP1OAk3DuhjHy4Cphnt2SomhywvUAduzOlD4mJg0Guz+JsDaxa
+ na1ZXOPcjexne/eoV/WVQa/nDXurFy70ZNsq3lxxt6C8p4p0S3owU5vJR659y18GOiKX693l6Dw
+ ixk6KFWg95YQP3i7fJoLX4/2ECTCsaFXIXwSUKPtqsg2Vc9PuwF5tG7BqWItprcT2C2GxUzNN9T
+ p7zvfl5/77ofNy5i7gHKCNfk5s3euLxXB8Uvn/myKGAtURFZKDD2kYaAMiR2bWSkV2OrMuoHFUi
+ m7tKAcXKKxZHyEAW6NVHWMsUBIoYIIskkNV2w==
+X-Received: by 2002:a17:90b:2541:b0:396:61f1:da5c with SMTP id
+ 98e67ed59e1d1-39debf6bb19mr2476097a91.4.1789365115110; 
+ Sun, 13 Sep 2026 22:51:55 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39d95864b4fsm19794492a91.15.2026.09.13.22.51.49
+ 98e67ed59e1d1-39d95864b4fsm19794492a91.15.2026.09.13.22.51.52
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 13 Sep 2026 22:51:51 -0700 (PDT)
+ Sun, 13 Sep 2026 22:51:54 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH 44/62] event/sw: use kvargs numeric helpers
-Date: Sun, 13 Sep 2026 22:47:15 -0700
-Message-ID: <20260914054912.755403-45-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
+ Ajit Khaparde <ajit.khaparde@broadcom.com>
+Subject: [PATCH 45/62] net/bnxt: use kvargs numeric helpers
+Date: Sun, 13 Sep 2026 22:47:16 -0700
+Message-ID: <20260914054912.755403-46-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260914054912.755403-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -82,147 +84,346 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-All six handlers use atoi(), which cannot report an error, so a
-malformed value is silently taken as zero. Since zero is within the
-accepted range for every one of these arguments, a typo such as
-"sched_quanta=abc" was accepted and quietly applied as zero.
+All fourteen handlers repeat the same open coded conversion, testing
+errno for ERANGE without ever clearing it first. A stale ERANGE left by
+earlier code therefore rejects a valid value, and the test only fires at
+all when the result happens to be ULONG_MAX.
 
-The lower bound is now part of the conversion, so the separate negative
-checks are no longer needed.
-
-refill_once is a boolean, so drop set_refill_once() and use
-rte_kvargs_handle_bool(). The registered parameter string said
-"=<int>", which was never true, and now says "=<0|1>". A bare
-"refill_once" enables it, and the usual spellings are accepted.
+The per-argument range checks are left as they are, since they carry the
+documented limits for each devarg.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/event/sw/sw_evdev.c | 56 ++++++++++++++++---------------------
- 1 file changed, 24 insertions(+), 32 deletions(-)
+ drivers/net/bnxt/bnxt_ethdev.c | 106 ++++++++++-----------------------
+ 1 file changed, 32 insertions(+), 74 deletions(-)
 
-diff --git a/drivers/event/sw/sw_evdev.c b/drivers/event/sw/sw_evdev.c
-index 3ad82e94ac..fa9fe3e4c2 100644
---- a/drivers/event/sw/sw_evdev.c
-+++ b/drivers/event/sw/sw_evdev.c
-@@ -872,23 +872,16 @@ sw_close(struct rte_eventdev *dev)
- 	return 0;
- }
- 
--static int
--assign_numa_node(const char *key __rte_unused, const char *value, void *opaque)
--{
--	int *socket_id = opaque;
--	*socket_id = atoi(value);
--	if (*socket_id >= RTE_MAX_NUMA_NODES)
--		return -1;
--	return 0;
--}
--
- static int
- set_sched_quanta(const char *key __rte_unused, const char *value, void *opaque)
+diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
+index 8e8ead8f61..4903f6fb10 100644
+--- a/drivers/net/bnxt/bnxt_ethdev.c
++++ b/drivers/net/bnxt/bnxt_ethdev.c
+@@ -5866,8 +5866,7 @@ bnxt_parse_devarg_flow_xstat(__rte_unused const char *key,
+ 			     const char *value, void *opaque_arg)
  {
- 	int *quanta = opaque;
--	*quanta = atoi(value);
--	if (*quanta < 0 || *quanta >= 4096)
-+	uint64_t val;
-+
-+	if (rte_kvargs_to_uint(value, 0, 4095, &val) < 0)
- 		return -1;
-+
-+	*quanta = val;
- 	return 0;
- }
+ 	struct bnxt *bp = opaque_arg;
+-	unsigned long flow_xstat;
+-	char *end = NULL;
++	uint64_t flow_xstat;
  
-@@ -896,9 +889,12 @@ static int
- set_credit_quanta(const char *key __rte_unused, const char *value, void *opaque)
+ 	if (!value || !opaque_arg) {
+ 		PMD_DRV_LOG_LINE(ERR,
+@@ -5875,9 +5874,7 @@ bnxt_parse_devarg_flow_xstat(__rte_unused const char *key,
+ 		return -EINVAL;
+ 	}
+ 
+-	flow_xstat = strtoul(value, &end, 10);
+-	if (end == NULL || *end != '\0' ||
+-	    (flow_xstat == ULONG_MAX && errno == ERANGE)) {
++	if (rte_kvargs_to_uint(value, 0, UINT32_MAX, &flow_xstat) < 0) {
+ 		PMD_DRV_LOG_LINE(ERR,
+ 			    "Invalid parameter passed to flow_xstat devarg.");
+ 		return -EINVAL;
+@@ -5901,8 +5898,7 @@ bnxt_parse_devarg_max_num_kflows(__rte_unused const char *key,
+ 					const char *value, void *opaque_arg)
  {
- 	int *credit = opaque;
--	*credit = atoi(value);
--	if (*credit < 0 || *credit >= 128)
-+	uint64_t val;
-+
-+	if (rte_kvargs_to_uint(value, 0, 127, &val) < 0)
- 		return -1;
-+
-+	*credit = val;
+ 	struct bnxt *bp = opaque_arg;
+-	unsigned long max_num_kflows;
+-	char *end = NULL;
++	uint64_t max_num_kflows;
+ 
+ 	if (!value || !opaque_arg) {
+ 		PMD_DRV_LOG_LINE(ERR,
+@@ -5910,9 +5906,7 @@ bnxt_parse_devarg_max_num_kflows(__rte_unused const char *key,
+ 		return -EINVAL;
+ 	}
+ 
+-	max_num_kflows = strtoul(value, &end, 10);
+-	if (end == NULL || *end != '\0' ||
+-		(max_num_kflows == ULONG_MAX && errno == ERANGE)) {
++	if (rte_kvargs_to_uint(value, 0, UINT32_MAX, &max_num_kflows) < 0) {
+ 		PMD_DRV_LOG_LINE(ERR,
+ 			"Invalid parameter passed to max_num_kflows devarg.");
+ 		return -EINVAL;
+@@ -5926,8 +5920,8 @@ bnxt_parse_devarg_max_num_kflows(__rte_unused const char *key,
+ 
+ 	bp->max_num_kflows = max_num_kflows;
+ 	if (bp->max_num_kflows)
+-		PMD_DRV_LOG_LINE(INFO, "max_num_kflows set as %ldK.",
+-				max_num_kflows);
++		PMD_DRV_LOG_LINE(INFO, "max_num_kflows set as %uK.",
++				(unsigned int)max_num_kflows);
+ 
  	return 0;
  }
- 
-@@ -906,9 +902,12 @@ static int
- set_deq_burst_sz(const char *key __rte_unused, const char *value, void *opaque)
+@@ -5937,8 +5931,7 @@ bnxt_parse_devarg_cqe_mode(__rte_unused const char *key,
+ 			   const char *value, void *opaque_arg)
  {
- 	int *deq_burst_sz = opaque;
--	*deq_burst_sz = atoi(value);
--	if (*deq_burst_sz < 0 || *deq_burst_sz > SCHED_DEQUEUE_MAX_BURST_SIZE)
-+	uint64_t val;
-+
-+	if (rte_kvargs_to_uint(value, 0, SCHED_DEQUEUE_MAX_BURST_SIZE, &val) < 0)
- 		return -1;
-+
-+	*deq_burst_sz = val;
- 	return 0;
- }
+ 	struct bnxt *bp = opaque_arg;
+-	unsigned long cqe_mode;
+-	char *end = NULL;
++	uint64_t cqe_mode;
  
-@@ -916,19 +915,12 @@ static int
- set_min_burst_sz(const char *key __rte_unused, const char *value, void *opaque)
+ 	if (!value || !opaque_arg) {
+ 		PMD_DRV_LOG_LINE(ERR,
+@@ -5947,9 +5940,7 @@ bnxt_parse_devarg_cqe_mode(__rte_unused const char *key,
+ 		return -EINVAL;
+ 	}
+ 
+-	cqe_mode = strtoul(value, &end, 10);
+-	if (end == NULL || *end != '\0' ||
+-	    (cqe_mode == ULONG_MAX && errno == ERANGE)) {
++	if (rte_kvargs_to_uint(value, 0, UINT32_MAX, &cqe_mode) < 0) {
+ 		PMD_DRV_LOG_LINE(ERR,
+ 			    "Invalid parameter passed to cqe-mode "
+ 			    "devargs.");
+@@ -5974,8 +5965,7 @@ bnxt_parse_devarg_app_instance_id(__rte_unused const char *key,
+ 				  const char *value, void *opaque_arg)
  {
- 	int *min_burst_sz = opaque;
--	*min_burst_sz = atoi(value);
--	if (*min_burst_sz < 0 || *min_burst_sz > SCHED_DEQUEUE_MAX_BURST_SIZE)
--		return -1;
--	return 0;
--}
-+	uint64_t val;
+ 	struct bnxt *bp = opaque_arg;
+-	unsigned long app_instance_id;
+-	char *end = NULL;
++	uint64_t app_instance_id;
  
--static int
--set_refill_once(const char *key __rte_unused, const char *value, void *opaque)
--{
--	int *refill_once_per_call = opaque;
--	*refill_once_per_call = atoi(value);
--	if (*refill_once_per_call < 0 || *refill_once_per_call > 1)
-+	if (rte_kvargs_to_uint(value, 0, SCHED_DEQUEUE_MAX_BURST_SIZE, &val) < 0)
- 		return -1;
-+
-+	*min_burst_sz = val;
+ 	if (!opaque_arg) {
+ 		PMD_DRV_LOG_LINE(ERR,
+@@ -5983,9 +5973,7 @@ bnxt_parse_devarg_app_instance_id(__rte_unused const char *key,
+ 		return -EINVAL;
+ 	}
+ 
+-	app_instance_id = strtoul(value, &end, 10);
+-	if (end == NULL || *end != '\0' ||
+-	    (app_instance_id == ULONG_MAX && errno == ERANGE)) {
++	if (rte_kvargs_to_uint(value, 0, UINT32_MAX, &app_instance_id) < 0) {
+ 		PMD_DRV_LOG_LINE(ERR,
+ 				 "Invalid parameter passed to instance devargs");
+ 		return -EINVAL;
+@@ -6008,8 +5996,7 @@ bnxt_parse_devarg_app_id(__rte_unused const char *key,
+ 				 const char *value, void *opaque_arg)
+ {
+ 	struct bnxt *bp = opaque_arg;
+-	unsigned long app_id;
+-	char *end = NULL;
++	uint64_t app_id;
+ 
+ 	if (!value || !opaque_arg) {
+ 		PMD_DRV_LOG_LINE(ERR,
+@@ -6018,9 +6005,7 @@ bnxt_parse_devarg_app_id(__rte_unused const char *key,
+ 		return -EINVAL;
+ 	}
+ 
+-	app_id = strtoul(value, &end, 10);
+-	if (end == NULL || *end != '\0' ||
+-	    (app_id == ULONG_MAX && errno == ERANGE)) {
++	if (rte_kvargs_to_uint(value, 0, UINT32_MAX, &app_id) < 0) {
+ 		PMD_DRV_LOG_LINE(ERR,
+ 			    "Invalid parameter passed to app_id "
+ 			    "devargs.");
+@@ -6044,8 +6029,7 @@ bnxt_parse_devarg_ieee_1588(__rte_unused const char *key,
+ 			    const char *value, void *opaque_arg)
+ {
+ 	struct bnxt *bp = opaque_arg;
+-	unsigned long ieee_1588;
+-	char *end = NULL;
++	uint64_t ieee_1588;
+ 
+ 	if (!value || !opaque_arg) {
+ 		PMD_DRV_LOG_LINE(ERR,
+@@ -6054,9 +6038,7 @@ bnxt_parse_devarg_ieee_1588(__rte_unused const char *key,
+ 		return -EINVAL;
+ 	}
+ 
+-	ieee_1588 = strtoul(value, &end, 10);
+-	if (end == NULL || *end != '\0' ||
+-	    (ieee_1588 == ULONG_MAX && errno == ERANGE)) {
++	if (rte_kvargs_to_uint(value, 0, UINT32_MAX, &ieee_1588) < 0) {
+ 		PMD_DRV_LOG_LINE(ERR,
+ 			    "Invalid parameter passed to ieee_1588 "
+ 			    "devargs.");
+@@ -6088,8 +6070,7 @@ bnxt_parse_devarg_rep_is_pf(__rte_unused const char *key,
+ 			    const char *value, void *opaque_arg)
+ {
+ 	struct bnxt_representor *vfr_bp = opaque_arg;
+-	unsigned long rep_is_pf;
+-	char *end = NULL;
++	uint64_t rep_is_pf;
+ 
+ 	if (!value || !opaque_arg) {
+ 		PMD_DRV_LOG_LINE(ERR,
+@@ -6097,9 +6078,7 @@ bnxt_parse_devarg_rep_is_pf(__rte_unused const char *key,
+ 		return -EINVAL;
+ 	}
+ 
+-	rep_is_pf = strtoul(value, &end, 10);
+-	if (end == NULL || *end != '\0' ||
+-	    (rep_is_pf == ULONG_MAX && errno == ERANGE)) {
++	if (rte_kvargs_to_uint(value, 0, UINT32_MAX, &rep_is_pf) < 0) {
+ 		PMD_DRV_LOG_LINE(ERR,
+ 			    "Invalid parameter passed to rep_is_pf devargs.");
+ 		return -EINVAL;
+@@ -6125,8 +6104,7 @@ bnxt_parse_devarg_rep_based_pf(__rte_unused const char *key,
+ 			       const char *value, void *opaque_arg)
+ {
+ 	struct bnxt_representor *vfr_bp = opaque_arg;
+-	unsigned long rep_based_pf;
+-	char *end = NULL;
++	uint64_t rep_based_pf;
+ 
+ 	if (!value || !opaque_arg) {
+ 		PMD_DRV_LOG_LINE(ERR,
+@@ -6135,9 +6113,7 @@ bnxt_parse_devarg_rep_based_pf(__rte_unused const char *key,
+ 		return -EINVAL;
+ 	}
+ 
+-	rep_based_pf = strtoul(value, &end, 10);
+-	if (end == NULL || *end != '\0' ||
+-	    (rep_based_pf == ULONG_MAX && errno == ERANGE)) {
++	if (rte_kvargs_to_uint(value, 0, UINT32_MAX, &rep_based_pf) < 0) {
+ 		PMD_DRV_LOG_LINE(ERR,
+ 			    "Invalid parameter passed to rep_based_pf "
+ 			    "devargs.");
+@@ -6163,8 +6139,7 @@ bnxt_parse_devarg_rep_q_r2f(__rte_unused const char *key,
+ 			    const char *value, void *opaque_arg)
+ {
+ 	struct bnxt_representor *vfr_bp = opaque_arg;
+-	unsigned long rep_q_r2f;
+-	char *end = NULL;
++	uint64_t rep_q_r2f;
+ 
+ 	if (!value || !opaque_arg) {
+ 		PMD_DRV_LOG_LINE(ERR,
+@@ -6173,9 +6148,7 @@ bnxt_parse_devarg_rep_q_r2f(__rte_unused const char *key,
+ 		return -EINVAL;
+ 	}
+ 
+-	rep_q_r2f = strtoul(value, &end, 10);
+-	if (end == NULL || *end != '\0' ||
+-	    (rep_q_r2f == ULONG_MAX && errno == ERANGE)) {
++	if (rte_kvargs_to_uint(value, 0, UINT32_MAX, &rep_q_r2f) < 0) {
+ 		PMD_DRV_LOG_LINE(ERR,
+ 			    "Invalid parameter passed to rep_q_r2f "
+ 			    "devargs.");
+@@ -6200,8 +6173,7 @@ bnxt_parse_devarg_rep_q_f2r(__rte_unused const char *key,
+ 			    const char *value, void *opaque_arg)
+ {
+ 	struct bnxt_representor *vfr_bp = opaque_arg;
+-	unsigned long rep_q_f2r;
+-	char *end = NULL;
++	uint64_t rep_q_f2r;
+ 
+ 	if (!value || !opaque_arg) {
+ 		PMD_DRV_LOG_LINE(ERR,
+@@ -6210,9 +6182,7 @@ bnxt_parse_devarg_rep_q_f2r(__rte_unused const char *key,
+ 		return -EINVAL;
+ 	}
+ 
+-	rep_q_f2r = strtoul(value, &end, 10);
+-	if (end == NULL || *end != '\0' ||
+-	    (rep_q_f2r == ULONG_MAX && errno == ERANGE)) {
++	if (rte_kvargs_to_uint(value, 0, UINT32_MAX, &rep_q_f2r) < 0) {
+ 		PMD_DRV_LOG_LINE(ERR,
+ 			    "Invalid parameter passed to rep_q_f2r "
+ 			    "devargs.");
+@@ -6237,8 +6207,7 @@ bnxt_parse_devarg_rep_fc_r2f(__rte_unused const char *key,
+ 			     const char *value, void *opaque_arg)
+ {
+ 	struct bnxt_representor *vfr_bp = opaque_arg;
+-	unsigned long rep_fc_r2f;
+-	char *end = NULL;
++	uint64_t rep_fc_r2f;
+ 
+ 	if (!value || !opaque_arg) {
+ 		PMD_DRV_LOG_LINE(ERR,
+@@ -6247,9 +6216,7 @@ bnxt_parse_devarg_rep_fc_r2f(__rte_unused const char *key,
+ 		return -EINVAL;
+ 	}
+ 
+-	rep_fc_r2f = strtoul(value, &end, 10);
+-	if (end == NULL || *end != '\0' ||
+-	    (rep_fc_r2f == ULONG_MAX && errno == ERANGE)) {
++	if (rte_kvargs_to_uint(value, 0, UINT32_MAX, &rep_fc_r2f) < 0) {
+ 		PMD_DRV_LOG_LINE(ERR,
+ 			    "Invalid parameter passed to rep_fc_r2f "
+ 			    "devargs.");
+@@ -6264,7 +6231,7 @@ bnxt_parse_devarg_rep_fc_r2f(__rte_unused const char *key,
+ 
+ 	vfr_bp->flags |= BNXT_REP_FC_R2F_VALID;
+ 	vfr_bp->rep_fc_r2f = rep_fc_r2f;
+-	PMD_DRV_LOG_LINE(INFO, "rep-fc-r2f = %lu", rep_fc_r2f);
++	PMD_DRV_LOG_LINE(INFO, "rep-fc-r2f = %u", (unsigned int)rep_fc_r2f);
+ 
  	return 0;
  }
+@@ -6274,8 +6241,7 @@ bnxt_parse_devarg_rep_fc_f2r(__rte_unused const char *key,
+ 			     const char *value, void *opaque_arg)
+ {
+ 	struct bnxt_representor *vfr_bp = opaque_arg;
+-	unsigned long rep_fc_f2r;
+-	char *end = NULL;
++	uint64_t rep_fc_f2r;
  
-@@ -991,7 +983,7 @@ sw_probe(struct rte_vdev_device *vdev)
- 	int credit_quanta = SW_DEFAULT_CREDIT_QUANTA;
- 	int min_burst_size = 1;
- 	int deq_burst_size = SCHED_DEQUEUE_DEFAULT_BURST_SIZE;
--	int refill_once = 0;
-+	bool refill_once = false;
+ 	if (!value || !opaque_arg) {
+ 		PMD_DRV_LOG_LINE(ERR,
+@@ -6284,9 +6250,7 @@ bnxt_parse_devarg_rep_fc_f2r(__rte_unused const char *key,
+ 		return -EINVAL;
+ 	}
  
- 	name = rte_vdev_device_name(vdev);
- 	params = rte_vdev_device_args(vdev);
-@@ -1004,7 +996,7 @@ sw_probe(struct rte_vdev_device *vdev)
- 				name);
- 		} else {
- 			int ret = rte_kvargs_process(kvlist, NUMA_NODE_ARG,
--					assign_numa_node, &socket_id);
-+					rte_kvargs_handle_socket_id, &socket_id);
- 			if (ret != 0) {
- 				SW_LOG_ERR(
- 					"%s: Error parsing numa node parameter",
-@@ -1053,8 +1045,8 @@ sw_probe(struct rte_vdev_device *vdev)
- 				return ret;
- 			}
+-	rep_fc_f2r = strtoul(value, &end, 10);
+-	if (end == NULL || *end != '\0' ||
+-	    (rep_fc_f2r == ULONG_MAX && errno == ERANGE)) {
++	if (rte_kvargs_to_uint(value, 0, UINT32_MAX, &rep_fc_f2r) < 0) {
+ 		PMD_DRV_LOG_LINE(ERR,
+ 			    "Invalid parameter passed to rep_fc_f2r "
+ 			    "devargs.");
+@@ -6301,7 +6265,7 @@ bnxt_parse_devarg_rep_fc_f2r(__rte_unused const char *key,
  
--			ret = rte_kvargs_process(kvlist, REFIL_ONCE_ARG,
--					set_refill_once, &refill_once);
-+			ret = rte_kvargs_process_opt(kvlist, REFIL_ONCE_ARG,
-+					rte_kvargs_handle_bool, &refill_once);
- 			if (ret != 0) {
- 				SW_LOG_ERR(
- 					"%s: Error parsing refill once per call switch",
-@@ -1146,5 +1138,5 @@ RTE_PMD_REGISTER_VDEV(EVENTDEV_NAME_SW_PMD, evdev_sw_pmd_drv);
- RTE_PMD_REGISTER_PARAM_STRING(event_sw, NUMA_NODE_ARG "=<int> "
- 		SCHED_QUANTA_ARG "=<int>" CREDIT_QUANTA_ARG "=<int>"
- 		MIN_BURST_SIZE_ARG "=<int>" DEQ_BURST_SIZE_ARG "=<int>"
--		REFIL_ONCE_ARG "=<int>");
-+		REFIL_ONCE_ARG "=<0|1>");
- RTE_LOG_REGISTER_DEFAULT(eventdev_sw_log_level, NOTICE);
+ 	vfr_bp->flags |= BNXT_REP_FC_F2R_VALID;
+ 	vfr_bp->rep_fc_f2r = rep_fc_f2r;
+-	PMD_DRV_LOG_LINE(INFO, "rep-fc-f2r = %lu", rep_fc_f2r);
++	PMD_DRV_LOG_LINE(INFO, "rep-fc-f2r = %u", (unsigned int)rep_fc_f2r);
+ 
+ 	return 0;
+ }
+@@ -6311,8 +6275,7 @@ bnxt_parse_devarg_representor_mode(__rte_unused const char *key,
+ 				   const char *value, void *opaque_arg)
+ {
+ 	struct bnxt *bp = opaque_arg;
+-	unsigned long rep;
+-	char *end = NULL;
++	uint64_t rep;
+ 
+ 	if (!value || !opaque_arg) {
+ 		PMD_DRV_LOG_LINE(ERR,
+@@ -6320,9 +6283,7 @@ bnxt_parse_devarg_representor_mode(__rte_unused const char *key,
+ 		return -EINVAL;
+ 	}
+ 
+-	rep = strtoul(value, &end, 10);
+-	if (end == NULL || *end != '\0' ||
+-	    (rep == ULONG_MAX && errno == ERANGE)) {
++	if (rte_kvargs_to_uint(value, 0, UINT32_MAX, &rep) < 0) {
+ 		PMD_DRV_LOG_LINE(ERR,
+ 				 "Invalid param passed to rep mode in devargs");
+ 		return -EINVAL;
+@@ -6340,8 +6301,7 @@ bnxt_parse_devarg_scalar_mode(__rte_unused const char *key,
+ 			      const char *value, void *opaque_arg)
+ {
+ 	struct bnxt *bp = opaque_arg;
+-	unsigned long rep;
+-	char *end = NULL;
++	uint64_t rep;
+ 
+ 	if (!value || !opaque_arg) {
+ 		PMD_DRV_LOG_LINE(ERR,
+@@ -6349,9 +6309,7 @@ bnxt_parse_devarg_scalar_mode(__rte_unused const char *key,
+ 		return -EINVAL;
+ 	}
+ 
+-	rep = strtoul(value, &end, 10);
+-	if (end == NULL || *end != '\0' ||
+-	    (rep == ULONG_MAX && errno == ERANGE)) {
++	if (rte_kvargs_to_uint(value, 0, UINT32_MAX, &rep) < 0) {
+ 		PMD_DRV_LOG_LINE(ERR,
+ 				 "Invalid param passed to scalar mode in devargs");
+ 		return -EINVAL;
 -- 
 2.53.0
 
