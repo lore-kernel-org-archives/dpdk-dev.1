@@ -2,74 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BB83C88E6F
-	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 17:38:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79122C88E72
+	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 18:41:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0AF7D40ED9;
-	Mon, 14 Sep 2026 19:37:52 +0200 (CEST)
-Received: from mail-pz2-f43.google.com (mail-pz2-f43.google.com
- [74.125.228.43]) by mails.dpdk.org (Postfix) with ESMTP id 03FCB41144
- for <dev@dpdk.org>; Mon, 14 Sep 2026 19:37:50 +0200 (CEST)
-Received: by mail-pz2-f43.google.com with SMTP id
- d2e1a72fcca58-85469a34907so2174603b3a.1
- for <dev@dpdk.org>; Mon, 14 Sep 2026 10:37:49 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5F74C40A7A;
+	Mon, 14 Sep 2026 20:41:54 +0200 (CEST)
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com
+ [209.85.210.180])
+ by mails.dpdk.org (Postfix) with ESMTP id 7CAA940A77
+ for <dev@dpdk.org>; Mon, 14 Sep 2026 20:41:53 +0200 (CEST)
+Received: by mail-pf1-f180.google.com with SMTP id
+ d2e1a72fcca58-86309e1a213so1574916b3a.0
+ for <dev@dpdk.org>; Mon, 14 Sep 2026 11:41:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789407469;
- x=1790012269; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=03Wy+9HHmkmjwKYESMRu/1zej2nduhvdjG3WxA4efwo=;
- b=B0QRc9DWPUqqmiXodF44/E5ZO28TBHpqqejP737gOEDFgOOk023tRmyyGKZ+KxC2oO
- kDanE/EjRfKu4K5q42tV9Gcdlm4pgK1PWDBXtwOU3BMwupyg5Tf4AsiurO5cwhgNspGl
- nwgf7IIMUuYX2GEU1T2RtJt6DNEovgmX0Bgp2x5nbLUFLBYAJ0pjZMVbJUk/si2FPGLU
- 10+0arq2jlvnW8VTbKdbOQxf1o/Y/fmqf2n3e6qniTLjBPXI4Uoidcg2wB4IuPFC5jEK
- IQq1CNIVlTQyoO1pp+04pWPyCiuAeSD3CtolLEEzTu2HQSlmlmpsoVC20c1BiIux7u5C
- onbQ==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789411312;
+ x=1790016112; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=c1Qd1btciL78qTSwhC3L5DNFapHAyLYzlgLsgdWU9b8=;
+ b=NYaitXMTk5aEBT0H8qHoayuE3KyIycwXaStSOCnjwG+oeGne2qTHYRRUeS818on3W7
+ xzK18OaVOyXUaQhd65LegOQTsUfmzQ9eZCIb4Z5HJXSnoYV8KDW6uBrudRbS5HJ3rOq9
+ PwTmGkoxp9wPdqpBmqGHiaVAPjpr+lyTAwWnhMdKB1oYDzOpTErcAkhI1uN3FcGJI1ls
+ 5XsQ7bWkdgTASkFn4cGrKJDyKRKb4H+FK64x03qox7chCyXJtoAvoiL2BVponwkuP0ra
+ 1KWzVEpaMC11kRaGvZOCEmabfLfgJSpSZo7LdqgvHtHwcr2DHYqu6Bg8MSV/q3SROD+8
+ 4Xjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1789407469; x=1790012269;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=03Wy+9HHmkmjwKYESMRu/1zej2nduhvdjG3WxA4efwo=;
- b=ZQwGz6EA8S5REpu+KEcK5nZsI0ilzmg5fNjOeDQPBfPYd1gkNr9uv1mznVyWPhfDdk
- XLioa5gPLuqWG6QpOgKO3jjWi0qRWw76q2tyuutHonhnSvZ4U4z/ISpeUDPUa2z3Nnkt
- bCJUs/VJ2s9PRrPbXmrC4MFPcFNW0Tsok9g8yGdcdYKXbE7nxC3Hsq701K52QJO2pPdS
- Wv5fOvElHHW4tFpKwx704V6c5V/If2Uipfs5ZR7XeVoB9X2YqmW8LkMrTH/HDWSeb2ue
- NYxLQg3KZ7xkJ/IkDXYQIb2jMYPsYgt2qvGaEEEJo2cUDCeZc/gBqUSXF0SrWJJ5WVMV
- gvnQ==
-X-Gm-Message-State: AFuF++n6HIAaoLYOdhH8WaYpFauFGraaYrFFQFRLm2t59+iO34QP/Vgd
- F9Jozy1Rd855zPPVNf4yxhyk29UZNPPjFpWGGxR/XYbwggd/cxJzEUjHrUOn3GJfUHKIMx8FHII
- LR+/3lPg=
-X-Gm-Gg: AYBFou2DaMeTQYtB88aKXuLDLmN3QHcIlJnyqtbWFewMIjS7TK26iWNe4i6jBUL4Jm+
- 5Fe5itvUg81Kjjp5LsCeiRvBJOwrkPmv6G9s8PLpo5AbmE+pDCMJqMHRb2C7Kesykhymt9qVECw
- oYi/q1sSU1JHCrsnwENCG+D3I97Pz9IBX8fXbRul3T3qlD86bbOp2eqWnJB6vNNmOU5yNT1/ut+
- MwnDS0IcJ/IBslqw0dxMoKoemf2xR1qtA4oq83S755wKTH+6o5/I2dvuFjy9uCngagYEnhx1g3X
- NF5oY4Ox2zQRdTRRjhgEkNw7ibybdR43+t90IXRTk/oXe8azC5DwywAg5QhyAiYw6rEHtgKzyH6
- JseBbgoCa3yJEo6K1nyYIDuBkoT0vgH+H/UE9UbpVb5xu6e985Udn9EEikVeHNIdaZhiiR82WS7
- v2+cCCpozrzd8WUmyo39WEAoI/rFEyhUIReMW+rZwoiDxRIYzadSSk3RD4yxariL0HzcUI5b+9a
- jrtptJNzh1sZNVmRRQtKOOQAe94B/EGaV3g9KTn/fasSaV7
-X-Received: by 2002:a05:6a00:9082:b0:86b:73b4:30fa with SMTP id
- d2e1a72fcca58-86f83a3c70cmr7219935b3a.11.1789407469038; 
- Mon, 14 Sep 2026 10:37:49 -0700 (PDT)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ d=1e100.net; s=20251104; t=1789411312; x=1790016112;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=c1Qd1btciL78qTSwhC3L5DNFapHAyLYzlgLsgdWU9b8=;
+ b=DrjbRg5t4Otv8Gi5UCTiE5Bpd6sISHEeMY6Rz5xJOkJJ5MWGXGJ+v5m8qFusdJ2J5a
+ ntbcB3ztBFnYroBeXMt+xQ4KQWrm+yWDaAFMiHVql1G4dQO+/nn+9cNj7UI81YOr0wtr
+ HqscrUaU4YuSQTdW0ZZWHSO25AmQCMNqi6FCaL60m2x3Cx/gz0QZC8WvmrtnwhakZXqz
+ kDeGPIr5mVFIBEWP8pTntrl601xY61M4ksB626L1aFbOprVrhnhs/rRzInHFPqN8tW45
+ tHxVRdpYySDL2Zu2f2EeuaghAuoaOZ7q6M12R+Sd+vmKadL79/eS7LgVjCoReFRw55ZE
+ UNJg==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBxiXRgFwf4ji7QBe2m8k3/CkC8/ROxN5LO5UxPnmDJhV/9h/agxXbyrI4TiVFgm9grmMuY=@dpdk.org
+X-Gm-Message-State: AFuF++lKoi7wB3tbTfeX5RQxoz0Jr/e2EJGhYRbnYbKWiwLVxsvtgdTM
+ yYvYR+2i1ZnLOhs1buIEDRQaLwoJ0Qjod/5aH1rIWmdgeCuJPa68q6IL34AYNuIkfko=
+X-Gm-Gg: AYBFou3zGZ6IHLJKWjojBybhjurUi5o80kbiTy+0NqniG05FYuWPhfb1ww9hDmiTiEE
+ aVRvLLuYDa3e5HgXZXtekpmxo48J6GXPoplgcfZLh2Z/2C9QnP9KCaI0cv4k4Qg534+HLiLa82Z
+ KFF+w2MR5P0Nan4gK4KIC0YN9f9VUIPIECHUAVkBrzzorMPIYe2rPTj5gATo/ABQOdrGo94kStB
+ 9gHXF2qBfb4UUP+X6QRVV2AuX/sWslSs2k2bRuSB1QR+rcmsT0Z5Rr9sTo5FMUQsvK26xQSKH5P
+ n02ucQitnxsG7z04kWYWLYzGyRbm8ykPObtISXI1QqaHiZ8ytgAyRH+KFoCRmUsdSZXHnu7XL4F
+ wGct9cra+Qd86l1h+i0BQk/GOTZB4Teqj5Deiojzpx96gWZpFwYwfGVv33tdXn75LpJgvq0lAe7
+ 0wCIWDfJB7Ci5bGpXDX8CpXXXOg7o2EdUdgIBUPJrroUIxIdzgesX61Q/CI1jgnacpYpS8hv85Y
+ Njh8zbRmpFbtuHyqj0x141pdj0qCYJ5R9txe9KS
+X-Received: by 2002:a05:6a00:6088:b0:869:b8f6:7478 with SMTP id
+ d2e1a72fcca58-86f862c4f0bmr8056085b3a.24.1789411312245; 
+ Mon, 14 Sep 2026 11:41:52 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-86b286c49d2sm5159867b3a.10.2026.09.14.10.37.46
+ d2e1a72fcca58-86b28cd668esm5197161b3a.21.2026.09.14.11.41.49
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 14 Sep 2026 10:37:48 -0700 (PDT)
+ Mon, 14 Sep 2026 11:41:52 -0700 (PDT)
+Date: Mon, 14 Sep 2026 11:41:38 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Long Li <longli@microsoft.com>, Wei Hu <weh@microsoft.com>
-Subject: [PATCH v3 9/9] net/mana: use common sysfs routines
-Date: Mon, 14 Sep 2026 10:36:22 -0700
-Message-ID: <20260914173700.2795983-10-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260914173700.2795983-1-stephen@networkplumber.org>
-References: <20260912063319.4117869-1-stephen@networkplumber.org>
- <20260914173700.2795983-1-stephen@networkplumber.org>
+To: Marat Khalili <marat.khalili@huawei.com>
+Cc: Thomas Monjalon <thomas@monjalon.net>, Konstantin Ananyev
+ <konstantin.ananyev@huawei.com>, <dev@dpdk.org>
+Subject: Re: [PATCH v2 7/7] app/validate-bpf: add BPF validation application
+Message-ID: <20260914114138.0b0b582d@phoenix.local>
+In-Reply-To: <20260914145418.37353-8-marat.khalili@huawei.com>
+References: <20260911104006.34364-1-marat.khalili@huawei.com>
+ <20260914145418.37353-1-marat.khalili@huawei.com>
+ <20260914145418.37353-8-marat.khalili@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,64 +87,40 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Read dev_port with the EAL routine rather than opening the file and
-parsing it with fscanf().
+On Mon, 14 Sep 2026 15:54:17 +0100
+Marat Khalili <marat.khalili@huawei.com> wrote:
 
-The value was read with fscanf("%d") and is now converted with base
-0, so a value with a leading zero would parse as octal. The kernel
-does not print dev_port with leading zeros.
+> Add a new DPDK application, dpdk-validate-bpf, for pre-validating eBPF
+> programs for compatibility with the lib/bpf execution context.
+> 
+> The application allows evaluating eBPF programs against the DPDK verifier
+> before loading them into a real application. It includes an interactive
+> debugging mode to trace state changes per instruction and understand the
+> validator's decisions.
+> 
+> Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
+> ---
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- drivers/net/mana/mana.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+I ran review of all outstanding BPF patches together.
+This one had this feedback.
 
-diff --git a/drivers/net/mana/mana.c b/drivers/net/mana/mana.c
-index 0b72f711a1..39bfb5b4b7 100644
---- a/drivers/net/mana/mana.c
-+++ b/drivers/net/mana/mana.c
-@@ -14,6 +14,7 @@
- #include <rte_kvargs.h>
- #include <rte_eal_paging.h>
- #include <rte_pci.h>
-+#include <rte_sysfs.h>
- 
- #include <infiniband/verbs.h>
- #include <infiniband/manadv.h>
-@@ -1282,6 +1283,7 @@ get_port_mac(struct ibv_device *device, unsigned int port,
- 	DIR *dir;
- 	struct dirent *dent;
- 	unsigned int dev_port;
-+	unsigned long val;
- 
- 	MANA_MKSTR(path, "%s/device/net", device->ibdev_path);
- 
-@@ -1293,23 +1295,15 @@ get_port_mac(struct ibv_device *device, unsigned int port,
- 		char *name = dent->d_name;
- 		char *mac = NULL;
- 
--		MANA_MKSTR(port_path, "%s/%s/dev_port", path, name);
--
- 		/* Ignore . and .. */
- 		if ((name[0] == '.') &&
- 		    ((name[1] == '\0') ||
- 		     ((name[1] == '.') && (name[2] == '\0'))))
- 			continue;
- 
--		file = fopen(port_path, "r");
--		if (!file)
--			continue;
--
--		ret = fscanf(file, "%u", &dev_port);
--		fclose(file);
--
--		if (ret != 1)
-+		if (rte_sysfs_parse_uint(&val, "%s/%s/dev_port", path, name) != 0)
- 			continue;
-+		dev_port = val;
- 
- 		/* Ethernet ports start at 0, IB port start at 1 */
- 		if (dev_port == port - 1) {
--- 
-2.53.0
 
+Patch 7/7 (app/validate-bpf: add BPF validation application)
+ 
+  app/validate-bpf/parse_decl.c:
+ 
+    +		arg->value.size *= array_length;
+ 
+  array_length comes from take_number() on the --xsym text with no
+  upper bound, and the multiply is not checked for overflow, so a
+  large length silently wraps to a small size that is then reported
+  to the validator as the object size.  Reproduced:
+ 
+    dpdk-validate-bpf --xsym='uint64_t[2305843009213693953] v' \
+        --section=.text prog.o
+    Validation succeeded.
+ 
+  8 * 2305843009213693953 wraps to 8, so the tool accepts the
+  declaration and describes an 8-byte object.  Clamp array_length,
+  or check the product, and reject with the usual text error.
+ 
