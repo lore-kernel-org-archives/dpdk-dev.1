@@ -2,94 +2,62 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9EC6C88E50
-	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 06:54:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A80A7C88E50
+	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 08:17:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 971E8402D2;
-	Mon, 14 Sep 2026 08:54:14 +0200 (CEST)
-Received: from mail-yx2-f12.google.com (mail-yx2-f12.google.com
- [74.125.224.140])
- by mails.dpdk.org (Postfix) with ESMTP id 46B004028E
- for <dev@dpdk.org>; Mon, 14 Sep 2026 08:54:13 +0200 (CEST)
-Received: by mail-yx2-f12.google.com with SMTP id
- 00721157ae682-85d43da99easo15173637b3.1
- for <dev@dpdk.org>; Sun, 13 Sep 2026 23:54:13 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789368852; cv=none;
- d=google.com; s=arc-20260327;
- b=ek8dGEhJEJfV2xhok6tB6H6+rqvGDA2nYZ3AHmaC/JIUZ6H5zu+uzir4MOtCT6FnFc
- 2EBowNZuLTc6iBDagMqKagPm1O50yim/+I+C/GUOcsZTe7UnGCjxeCvYvUsJKVkMJlXe
- M31o06+pvo1I9uidP4FwctPDubiIZFeaMzV0BwNT6TXAFfpZQC8kYoa9uBL5kWm6pezs
- MmPUVgeX8KZCIkJ75zUU3tbvNF4tfl9vYCUvx2olXf4w4B0VZW5WEMt1ZNmfezfskiDM
- UUk553nlGp7r5SWd3JNh8YHBhoCd4fre6WxjTv1yx8qmVTHmPf8rQ5R0vUTCx9jCVnf7
- Ubwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=G487clJFy4Rt6iHdRRckN5KyCsPtKjRUopKTNRiNwnU=;
- fh=u9LL6G1r40ffeF6ssWrz3ZzTm5mS3P1VOtawKhMD66U=;
- b=RCb/brSH8bXc/P6mRvtmS1CNnxZjbICQLE4zmON9cgkFsQZSgmHmpGL0NxRFkp/PcF
- wPDMUeswRTAKeiQ83YBE3rRF5ZrcovOfWdnrDO2nryR0uVPfUH7cENt0p9DsEenQwiMa
- +DYACC3uR7vQTJ8VJXi7xAVbF7eLEp2sY4psLVxJDd8lZwNbhajChb9Pt8H0K4MIHvJA
- iqw1ohZuLbzBQYnMZdKj90bO6s3lJLw2q4JqjRnRnZroFg6cbjQ4GluZOnikIz4Cf+aJ
- sMxkD/NgHWW9KvdXG3oKwu08FxJVN2BQqD2q7yZqODFFGJ+df++UrJeVpbtHiNOw3pd3
- ytjg==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1789368852; x=1789973652; darn=dpdk.org;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=G487clJFy4Rt6iHdRRckN5KyCsPtKjRUopKTNRiNwnU=;
- b=bA+uSSoJ8gw9CkmrhcD20EIHsVLsY1s1mBnMIaLn6yl7rIOirAqpX2hIwZY0zKFT32
- ZNKhSGXBDZJi90ejcvMOJEWULJndqE4+5jPjdKQMvHwd+GbDJVhlUc2h91/T8y/icsRm
- eTcowhN8V4KhjaN2vo6Uuaf9nzcF5PGLN4K6sZSdGNhcwJjdpUY2EtfMZ531v3DQPVAF
- x6rMbcEm6UyDYC7h2MKpYPStE9Lc3X4no8Cdk7IJQxVFP0A0jCClg8AYLhENeq/j0K0a
- ysSjQyOXcDODdLTk4mupEmntYQyHau1+urH4epfFvnHHUaYldbm75qn7RSJ7c12FkLup
- 3ikA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1789368852; x=1789973652;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=G487clJFy4Rt6iHdRRckN5KyCsPtKjRUopKTNRiNwnU=;
- b=mob66ZIFUSF1C2TVmifpJwGwip1VJkmzt/jth1hldxVyWEOIP4sd08xFVpOls37zZ8
- RW3wP4xNMV3dUcH+fFpWpZlckiBmesheVOZjT+azwkatb3vI/nDNmqLaRtVQNbIGWRTV
- ctdEldV8ef5hgCsCSEpUduBWBHr/2KUd4d8zuC7qLpKwtszx+D9or6LZh8VDCBiI0Btj
- mZUUkCF0kGPv4DEdcoFrNFBVPd30i7ic+6SSU/WYumhTc91cBPQmutxDjCwxyaHP+UP9
- GUe1geFPuMCy573TLBCYUJp8RCwhLEOAjpTg/kjn5YIlqMFDJ0TbmU3THc+WkueS1eEY
- 28Mw==
-X-Forwarded-Encrypted: i=1;
- AKwUvByLIDhwc8+7qLc7kxV5/FjYjYkXCq6JCr1pDZgYE92Du+f+cajDhFER9bJAOStJaRQfUcc=@dpdk.org
-X-Gm-Message-State: AFuF++mDy1VqpYe5gaC+H0NqXYGNQHFBpXW2qbOi46rz93Y+x8+rO/5n
- L8azPlvHBQI7qOscoLPmooWUsULYCHgjEqHq8kD8o2pEQZvlF8dIEPDIYXGgKiDqlQ+UaAIPblj
- E7Xlfxp+wSqUNFvJf8N6UYYSEARFsabs=
-X-Gm-Gg: AYBFou2G/1rn31muoDOcM72fkMJmPdj/BUBPvMMjB8H4JMVexRdJKcOo/jd4ySSYnrr
- bJeoI4AmCDej0LxpHS4FxL5pu7gq7D7K25FL2k0TsnI04JH0jnpOclrt6A0LQwJbbRloJiCP2Bu
- mEZ89ODmIuD6EDcmaYHggwyWyuhHFy7Q/V9OBpVTiEEVGi6p2e4Ej7bTQvcwFdya4nR8jFOkLEQ
- x5/GFRnTOB1sRLF4AiBslOhMeTkTtFcB8UBg9ErY0GxJA8Cl5ZmyGgJPNfJKaJIEYFTzKsVBW8Z
- bnTtz8EGjwJFCQLZlHVTomXvECKCTTa+jnaFwb8Zb26H1d6wKz895Ugqa+FKmqFg02U7JrhXYLl
- Z6ZM491bV5C/z4AOoGZ62vWXNMRdpZwUwbLsm4guD57O3Qn1Uofs6WCYoRJ/MZjuKxmOyF4I6FP
- gdnQkGyTPKnzjUJdlO
-X-Received: by 2002:a05:690c:e14f:b0:873:5bd1:98c7 with SMTP id
- 00721157ae682-88d23d98babmr1843307b3.57.1789368852527; Sun, 13 Sep 2026
- 23:54:12 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 609644068A;
+	Mon, 14 Sep 2026 10:17:44 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 66D2A402C4
+ for <dev@dpdk.org>; Mon, 14 Sep 2026 10:17:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1789373861;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=1JqE8X44z2IWMPmvHPjS0ifENv+x7ueoZ5LrOr4Byl4=;
+ b=WGC1O+6QLVVVukEJcYUbwYqcql7jP3hx76IQXwl1DvEcyENpc1L1zBSmazOfhMCsxWmLnm
+ JfEALL70dE2ptKUju3giNz4uY1vvKBIkR7SU9bPT9Ye2+m56q7lm6w105YzKzYtDbi5OWx
+ 8e94Ae4pOCZWspKiTnQ5a4q1/GBcQVk=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-290-PEg1uOKtPUq5o2j2r89Ttw-1; Mon,
+ 14 Sep 2026 04:17:37 -0400
+X-MC-Unique: PEg1uOKtPUq5o2j2r89Ttw-1
+X-Mimecast-MFC-AGG-ID: PEg1uOKtPUq5o2j2r89Ttw_1789373856
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id D273718052F2; Mon, 14 Sep 2026 08:17:35 +0000 (UTC)
+Received: from dmarchan.redhat.corp
+ (headnet05.pony-001.prod.iad2.dc.redhat.com [10.2.32.117])
+ by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 78E1B1956086; Mon, 14 Sep 2026 08:17:32 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
+To: dev@dpdk.org
+Cc: ciara.loftus@intel.com, anatoly.burakov@intel.com, rjarry@redhat.com,
+ cfontain@redhat.com, stable@dpdk.org,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Lunyuan Cui <lunyuanx.cui@intel.com>, Jingjing Wu <jingjing.wu@intel.com>,
+ Xiaolong Ye <xiaolong.ye@intel.com>
+Subject: [PATCH v7 1/4] net/iavf: fix MAC addresses leak on reset
+Date: Mon, 14 Sep 2026 10:17:22 +0200
+Message-ID: <20260914081725.1097704-1-david.marchand@redhat.com>
+In-Reply-To: <20260403091836.1073484-1-david.marchand@redhat.com>
+References: <20260403091836.1073484-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-References: <20260715084545.301064-1-ykanaujia@marvell.com>
-In-Reply-To: <20260715084545.301064-1-ykanaujia@marvell.com>
-From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Mon, 14 Sep 2026 12:23:46 +0530
-X-Gm-Features: AcwNN1UD7tu4NtUZTmW_HxE2RQe4rr0-X18fI1BOc85fnWehwGtq4Qiw7Sdv8dA
-Message-ID: <CALBAE1MCnMyAj7Gn3ntcMFkTSq0uum7=jipnEoesNT3_4K1YhA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] drivers: add support for async RTE FLOW APIs
-To: ykanaujia@marvell.com
-Cc: Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Kiran Kumar K <kirankumark@marvell.com>, 
- Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>, 
- Harman Kalra <hkalra@marvell.com>, dev@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: ffOClHHpYH0jwWCcaifnprNseyC_ZZugeyD-TIYyv3w_1789373856
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -103,18 +71,129 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat, Jul 18, 2026 at 2:48=E2=80=AFPM <ykanaujia@marvell.com> wrote:
->
-> From: Yashaswini Kanaujia <ykanaujia@marvell.com>
->
-> added support for asynchronous rte_flow APIs
-> for cn10k device
->
-> Signed-off-by: Yashaswini Kanaujia <ykanaujia@marvell.com>
+When resetting, calling iavf_dev_uninit + iavf_dev_init results in
+leaking the previous dev->data->mac_addrs array.
+As a consequence, secondary MAC addresses are lost during a VF reset.
 
-# replaced _attribute__((__packed__)) with __plt_packed_end
-# Updated .mailmap
+Move the MAC addresses array in the private iavf_info structure, along
+the multicast MAC addresses.
+Set/clear dev->data->mac_addrs in iavf_dev_init/iavf_dev_uninit.
 
-and
+Consistently use RTE_DIM() to avoid mixing with the multicast addresses
+array.
 
-Series applied to dpdk-next-net-mrvl/for-main. Thanks
+Fixes: e74e1bb6280d ("net/iavf: enable port reset")
+Cc: stable@dpdk.org
+
+Signed-off-by: David Marchand <david.marchand@redhat.com>
+---
+ drivers/net/intel/iavf/iavf.h        |  3 +++
+ drivers/net/intel/iavf/iavf_ethdev.c | 20 +++++++-------------
+ drivers/net/intel/iavf/iavf_vchnl.c  | 10 +++++-----
+ 3 files changed, 15 insertions(+), 18 deletions(-)
+
+diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
+index 044de3cfd4..1d52b3d113 100644
+--- a/drivers/net/intel/iavf/iavf.h
++++ b/drivers/net/intel/iavf/iavf.h
+@@ -255,6 +255,9 @@ struct iavf_info {
+ 	bool link_up;
+ 	uint32_t link_speed;
+ 
++	/* Unicast addrs */
++	struct rte_ether_addr mac_addrs[IAVF_NUM_MACADDR_MAX];
++
+ 	/* Multicast addrs */
+ 	struct rte_ether_addr mc_addrs[IAVF_NUM_MACADDR_MAX];
+ 	uint16_t mc_addrs_num;   /* Multicast mac addresses number */
+diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+index 2ac4dbdac4..b498258d58 100644
+--- a/drivers/net/intel/iavf/iavf_ethdev.c
++++ b/drivers/net/intel/iavf/iavf_ethdev.c
+@@ -1186,7 +1186,7 @@ iavf_dev_info_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
+ 	dev_info->hash_key_size = vf->vf_res->rss_key_size;
+ 	dev_info->reta_size = vf->vf_res->rss_lut_size;
+ 	dev_info->flow_type_rss_offloads = IAVF_RSS_OFFLOAD_ALL;
+-	dev_info->max_mac_addrs = IAVF_NUM_MACADDR_MAX;
++	dev_info->max_mac_addrs = RTE_DIM(vf->mac_addrs);
+ 	/*
+ 	 * Runtime queue setup can race with the hardware Tx rate limiter on
+ 	 * E810 VFs and corrupt queue state. Once a per-queue bandwidth rte_tm
+@@ -3104,16 +3104,9 @@ iavf_dev_init(struct rte_eth_dev *eth_dev)
+ 	/* set default ptype table */
+ 	iavf_set_default_ptype_table(eth_dev);
+ 
+-	/* copy mac addr */
+-	eth_dev->data->mac_addrs = rte_zmalloc(
+-		"iavf_mac", RTE_ETHER_ADDR_LEN * IAVF_NUM_MACADDR_MAX, 0);
+-	if (!eth_dev->data->mac_addrs) {
+-		PMD_INIT_LOG(ERR, "Failed to allocate %d bytes needed to"
+-			     " store MAC addresses",
+-			     RTE_ETHER_ADDR_LEN * IAVF_NUM_MACADDR_MAX);
+-		ret = -ENOMEM;
+-		goto init_vf_err;
+-	}
++	/* Point at the MAC addresses array from priv */
++	eth_dev->data->mac_addrs = vf->mac_addrs;
++
+ 	/* If the MAC address is not configured by host,
+ 	 * generate a random one.
+ 	 */
+@@ -3123,7 +3116,6 @@ iavf_dev_init(struct rte_eth_dev *eth_dev)
+ 	rte_ether_addr_copy((struct rte_ether_addr *)hw->mac.addr,
+ 			&eth_dev->data->mac_addrs[0]);
+ 
+-
+ 	if (vf->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_WB_ON_ITR &&
+ 			/* register callback func to eal lib */
+ 			rte_intr_callback_register(pci_dev->intr_handle,
+@@ -3199,7 +3191,6 @@ iavf_dev_init(struct rte_eth_dev *eth_dev)
+ 	iavf_phc_sync_alarm_stop(eth_dev);
+ 	rte_eal_alarm_cancel(iavf_dev_alarm_handler, eth_dev);
+ 
+-	rte_free(eth_dev->data->mac_addrs);
+ 	eth_dev->data->mac_addrs = NULL;
+ 
+ init_vf_err:
+@@ -3256,6 +3247,9 @@ iavf_dev_close(struct rte_eth_dev *dev)
+ 
+ 	adapter->closed = true;
+ 
++	/* Clear reference to the MAC addresses in priv */
++	dev->data->mac_addrs = NULL;
++
+ 	/* free iAVF security device context all related resources */
+ 	iavf_security_ctx_destroy(adapter);
+ 
+diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
+index e3120c655d..df97ff2052 100644
+--- a/drivers/net/intel/iavf/iavf_vchnl.c
++++ b/drivers/net/intel/iavf/iavf_vchnl.c
+@@ -1674,19 +1674,19 @@ iavf_config_irq_map_lv(struct iavf_adapter *adapter, uint16_t num)
+ void
+ iavf_add_del_all_mac_addr(struct iavf_adapter *adapter, bool add)
+ {
++	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
+ 	struct {
+ 		struct virtchnl_ether_addr_list list;
+-		struct virtchnl_ether_addr addr[IAVF_NUM_MACADDR_MAX];
++		struct virtchnl_ether_addr addr[RTE_DIM(vf->mac_addrs)];
+ 	} list_req = {0};
+ 	struct virtchnl_ether_addr_list *list = &list_req.list;
+-	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
+ 	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
+ 	struct iavf_cmd_info args = {0};
+-	int err, i;
++	int err;
+ 	size_t buf_len;
+ 
+-	for (i = 0; i < IAVF_NUM_MACADDR_MAX; i++) {
+-		struct rte_ether_addr *addr = &adapter->dev_data->mac_addrs[i];
++	for (unsigned int i = 0; i < RTE_DIM(vf->mac_addrs); i++) {
++		struct rte_ether_addr *addr = &vf->mac_addrs[i];
+ 		struct virtchnl_ether_addr *vc_addr = &list->list[list->num_elements];
+ 
+ 		/* ignore empty addresses */
+-- 
+2.54.0
+
