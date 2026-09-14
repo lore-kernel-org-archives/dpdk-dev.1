@@ -2,74 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0A1AC88E6F
-	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 17:08:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 300E4C88E6F
+	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 17:37:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0CC4140A7F;
-	Mon, 14 Sep 2026 19:08:45 +0200 (CEST)
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
- [209.85.214.171])
- by mails.dpdk.org (Postfix) with ESMTP id 6453E40A75
- for <dev@dpdk.org>; Mon, 14 Sep 2026 19:08:44 +0200 (CEST)
-Received: by mail-pl1-f171.google.com with SMTP id
- d9443c01a7336-2dd76b1361dso145845ad.1
- for <dev@dpdk.org>; Mon, 14 Sep 2026 10:08:44 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2E2F040C35;
+	Mon, 14 Sep 2026 19:37:10 +0200 (CEST)
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com
+ [209.85.210.169])
+ by mails.dpdk.org (Postfix) with ESMTP id 3573A40C35
+ for <dev@dpdk.org>; Mon, 14 Sep 2026 19:37:09 +0200 (CEST)
+Received: by mail-pf1-f169.google.com with SMTP id
+ d2e1a72fcca58-869d181419bso3348482b3a.2
+ for <dev@dpdk.org>; Mon, 14 Sep 2026 10:37:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789405723;
- x=1790010523; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=o4uLywBkp/yLe8EVv5qmAYka5XkLLd5Vxuy6Y6qC2Hs=;
- b=zMvks8poDdCrqomH98nQL2kZmGg1MDIx+ew3cG07Pg2hAGkylWikQmwJ6Diqo64pAy
- wdTWmS4EqkX0KYKBnIdXg2g4SYL7K/U0jhkzn4Hqqt1bSziYM9YBZJCChnfZfDtrgV1q
- jKtfbkGdl/j0VvOhKq9WIcFk/tPBph8bcC3bbmBRFOtCX3cTnM5xnO4dy3Uu1L8ydABp
- xuLTtHTeDQHU6URgo3YUOxBUOioKgPCHSTpYgye9G++8vkYWljX6DiNQz6qrD6Ph6sAH
- Nu+OU6PeRaq68KzDi3ivpuWbIrWtAGF3Q8viiIRW7GEUli/+YaQwAOhCb/sM3TmDOUqG
- aWHA==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789407428;
+ x=1790012228; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=ur07clqzt47qx8pmFfLkWRnCVIen/OnbQGnYt+jYCD8=;
+ b=hLRJja3evmN9j/HipyZiBtxE+Qn19nAqYGIa54/Jujbb2z0dFavS+MLb4TJ2OTY11P
+ PlO+XHkAGb+uw/qr9H1CaZ83OdijH7r9V6p+Qf9bM6dyAzEX54EDUKoG5fAdHbGguUHX
+ WaPP+1HGGZZBku7PnryZfW3Y0D4RTehYRW6gJQM96RLMUyWOuZpkMQ3fTi5QKGNHlLSa
+ Xz9PIJL1+1u4gKoqNfu/2kox1el2e9JQefnrKY3KOrK9F1RiCge0c1a6aQr+TPDWz3yY
+ S79JQgY8mlJ3QZaCqwXHhiwfkZNdGUQuiKvbDPVexHP8OBQdwnuLR/YdOX++X+JXqx/C
+ k5fA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1789405723; x=1790010523;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=o4uLywBkp/yLe8EVv5qmAYka5XkLLd5Vxuy6Y6qC2Hs=;
- b=bxdl95cCWtKgawpoU0mybgb0TUrJ9nINzCmPOro1zkANf4ZcHFx23Tj6EnEWChxwhO
- eiDbFP7EPIP/WwTJQ6uXXkLDOs5vO0xK1qFHNCq/oDsaOg1UwTYceA5Oc7Ux2LNglGeL
- Eva4zJUARemCb+fTp9Bsk2wVihqJCrPu5iMjd1ZUPU7r1r8/OokK6vri8F5wNTZMHDOV
- McY7szpSf7TOQyvAba+6ZRKihqe+wS9ZDWUA4AbIYHXfzRLL+NMqq7S+fwsGO1IFN3qs
- ynQR6LDUgnxqtnK3VZAbxvQ4DM67F/v/Bo41H906dqUa9/eOi9xtj063Hvv1ewLn69Ho
- 5mSg==
-X-Gm-Message-State: AFuF++kiofBR5LBGZr/pOQCoNeo4NY1F9x1L7B3VbowuNoZUCEu/jHRb
- FGMwbetq8BayFMqyvgDqt0yI3hcwIPcjIWr3BEiPh7JP4Pshzzr3nsOY9H8UyiBFZdQ=
-X-Gm-Gg: AYBFou2XBaPnE988Nq3idF31NH7oKWxrSLRnk3YInZr+RJvvlMEcY69yX0PQWCWOQVS
- hF9hxcYDUMqK8fYqfdZZpeoBz16G8t4IrCo0kCeq0pr5DDgQGIL6oiDU6VXj6ndQdINi7twx6S5
- Lc2fvx94/sSniBiIUjxxY7i3ttUskZkA8CdVuY1GhIXRxjMrTNptm2KA1D82gOjjgWJzfHgJGmq
- 0y/ZRldAocPR3A/UoK8vzQQ2tKou4QJi0s45K4m2TY5lyLGtV5Ba3HCl9rJgfUTJv+TfLfBbS63
- W1V5PDJeKhY3dApZ1en5caVNU2U4uI1gegRwc2gK4OQpwvfv/2LQaj1psHoUqHPXGEeaoG8GHco
- vt4rpTxUSrW0VPD92P8a6dXBdJvHHDujwyxnVv+WpltjbyV1/pM+LBNzfIo5rwBloHyacorK3+x
- K/KH8IR6B3iiOCS8DciaypYvkwjCZnvTY9lwr9n3JexFi5LIDb/ylbAdA1nIvts8IgLmy3GDfWx
- eGtcVE0qoYRYiz2KOe/aHIRg2/7qFKaxoZvC1Bg
-X-Received: by 2002:a17:90b:1d82:b0:398:a2a3:b631 with SMTP id
- 98e67ed59e1d1-39dec0be84amr6669407a91.19.1789405723238; 
- Mon, 14 Sep 2026 10:08:43 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ d=1e100.net; s=20251104; t=1789407428; x=1790012228;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=ur07clqzt47qx8pmFfLkWRnCVIen/OnbQGnYt+jYCD8=;
+ b=qQrlA7rGE0pCliu/JqfLx6wjIotLCUio1SPJFXPgEMathBW7GvkajANNDwUJRzJOZv
+ 4j/krn4XirDoYnGvdNN0LKjhk+4j2PLHsOa3PwNYMlnSYg4Qn/CD9092OLg/5ixKnNFQ
+ VsuMa7DRBl/0feKTnw5WgDTWcLxx926ixizQ+kzWuTfXrtgW535Zd9pyJFQ4iE//4/4y
+ kGHDDqjTv9byxUYUFyG0gHGu2QFc5Xz/lT69bTe0p57swi3T0ZPSy9OoUWGPrdBBsrmj
+ vGZn68V02RexvIrmqtJt65dK9CumCS0MvoDQUJvus1mamcOuAmt8DSByTYfS0ZX8lLoE
+ wYFg==
+X-Gm-Message-State: AFuF++n4mrf3X7nEq1TeAoDZtfZ4J6ZW4VviCI1GdlmFRGqln2l4nw/s
+ DRbieBX9NpgnKKuTcCugBMcHdJ/e0vp8ac50fT2Ej9k6PqzE2Ik8PVShFIc0K3GyL2qkwqE48yd
+ zFkmsFMI=
+X-Gm-Gg: AYBFou18ncgJRvC5+rbhoclERBLi1XmmeDIK3nQ7vbuQvLCRq3T2JZ2IHJh1aio9PoY
+ rqXjM7zz2SQkapGPDhe4EFxMVUHFBdlQROsYMIONqIZ0DQHTM4WtfdQFBnHXLC4qj2qmtqhfRq0
+ uJlgMBM1BbuD9zc6j0rVLQwMw5oiPBKcqUJ5Uwup83n4WMyrtNyWLuW2ibCPzL/04Anw4zajjf2
+ JW1XiWzJPXJQAApV3aM8AlNR1FZ4ctX/4PxXyEsXRJd1bMQmDX1KCLgnnoz0TnmOeEFJBeBmXOA
+ bYZ7AkyBSI6yDMI9r/SsKH3v6ShduJOMiQWk8SA+I+tM9b338ita1K708mDELgRjkzAacVjKGZT
+ gry/AbM+bUMXu4txgvH8vOVluerLyMC1CF59z8cgxXQoXkDa9N9/uZmXu/i/gPUO7RvpIwbuuqH
+ PKbm2zz6/5g0i2UxlJPGA+mqLRmCeXwDJXwB+A/io+MlluDFFR2wX6M66u4wZV1/CGpdCBgC3m3
+ x21ih7BGAuxl3WZ1DVEMsShfrH7zxKFdypHVQ==
+X-Received: by 2002:a05:6a00:148c:b0:848:2eac:bfb2 with SMTP id
+ d2e1a72fcca58-86f85108aadmr6687390b3a.13.1789407428228; 
+ Mon, 14 Sep 2026 10:37:08 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39dfda249efsm427964a91.6.2026.09.14.10.08.41
+ d2e1a72fcca58-86b286c49d2sm5159867b3a.10.2026.09.14.10.37.05
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 14 Sep 2026 10:08:42 -0700 (PDT)
-Date: Mon, 14 Sep 2026 10:08:34 -0700
+ Mon, 14 Sep 2026 10:37:07 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Viacheslav Ovsiienko <viacheslavo@nvidia.com>
-Cc: <dev@dpdk.org>
-Subject: Re: [PATCH] devtools: allow patch to multiple groups for the same
- driver
-Message-ID: <20260914100834.25389d03@phoenix.local>
-In-Reply-To: <20230420121240.28035-1-viacheslavo@nvidia.com>
-References: <20230420121240.28035-1-viacheslavo@nvidia.com>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v3 0/9] consolidate sysfs access
+Date: Mon, 14 Sep 2026 10:36:13 -0700
+Message-ID: <20260914173700.2795983-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260912063319.4117869-1-stephen@networkplumber.org>
+References: <20260912063319.4117869-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,28 +82,78 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 20 Apr 2023 15:12:40 +0300
-Viacheslav Ovsiienko <viacheslavo@nvidia.com> wrote:
+After reviewing lots of drivers and seeing sloppy string handling
+resorted to AI assistance to unify and consolidate the parsing
+of sysfs values. Many drivers open code this with similar pattern
+but lacked any coherent error handling. The kernel API is
+consistent and won't give bad data, but it make sense to
+check for garbage.
 
-> The PMD's source code resides in the ./drivers folder of the
-> DPDK project and split into the several groups depending on the
-> PMD class (common, net, regex, etc.).
-> 
-> For some vendors the drivers of different classes operate over
-> the same hardware, for example Nvidia PMDs operate over ConnectX
-> NIC series. It often happens the same minor fixes should be applied
-> to the multiple drivers of the same vendor in the different classes.
-> 
-> The check-git-log.sh script checks the consistence of patch
-> affected files and patch commit message headline and prevents
-> updating multiple drivers in single commit.
-> 
-> This patch mitigates this strict check and allows to update
-> multiple drivers in different classes for the single vendor.
-> 
-> Signed-off-by: Viacheslav Ovsiienko <viacheslavo@nvidia.com>
-> ---
-This patch has sat for years now with no response.
-As a maintainer, using check-git-log is just advice and it doesn't need to be exact.
+Add one set of routines in EAL that build the path from a printf
+style format and convert with strtoul()/strtol(), then convert the
+existing callers.
 
-So marking this as Rejected due to lack of ack's
+Since the new routines are Linux only, a driver that uses sysfs while
+advertising support on FreeBSD or Windows now fails to link. Two such
+cases turned up and are fixed here: the eal_fs test and common/ionic.
+
+Note: existing eal_parse_sysfs_value() goes away with this.
+It was exported as a stable symbol, which was a mistake:
+the eal_ prefix and the private eal_filesystem.h both say it is internal,
+and nothing outside the tree should have been calling it.
+The new rte_sysfs_parse_XXX routines are exported, but marked
+as internal use only.
+
+v3 - fix doxygen comments
+
+Stephen Hemminger (9):
+  eal: add common sysfs value routines
+  dma/idxd: use common sysfs routines
+  common/ionic: use common sysfs routines
+  bus/vmbus: use common sysfs routines
+  power: use common sysfs routines
+  drivers/bus: remove duplicate sysfs string helpers
+  common/mlx5: use common sysfs routines
+  net/mlx5: use common sysfs routines
+  net/mana: use common sysfs routines
+
+ app/test/test_eal_fs.c                        | 148 ++++++++++----
+ drivers/bus/auxiliary/linux/auxiliary.c       |  13 +-
+ drivers/bus/cdx/cdx.c                         |   7 +-
+ drivers/bus/pci/linux/pci.c                   |  44 ++--
+ drivers/bus/platform/platform.c               |  43 +---
+ drivers/bus/vmbus/linux/vmbus_bus.c           |  64 ++----
+ drivers/bus/vmbus/linux/vmbus_uio.c           |  24 +--
+ drivers/common/cnxk/roc_model.c               |  40 +---
+ drivers/common/cnxk/roc_platform.h            |   3 +-
+ drivers/common/ionic/ionic_common_uio.c       | 102 +++++-----
+ .../common/mlx5/linux/mlx5_common_auxiliary.c |  13 +-
+ drivers/common/mlx5/linux/mlx5_common_os.c    |  39 ++--
+ drivers/dma/idxd/idxd_bus.c                   |  80 ++------
+ drivers/net/af_xdp/rte_eth_af_xdp.c           |  13 +-
+ drivers/net/mana/mana.c                       |  14 +-
+ drivers/net/mlx5/linux/mlx5_ethdev_os.c       |  17 +-
+ drivers/net/mlx5/linux/mlx5_os.c              |  13 +-
+ drivers/power/acpi/acpi_cpufreq.c             |  21 +-
+ drivers/power/amd_pstate/amd_pstate_cpufreq.c |  63 +-----
+ drivers/power/cppc/cppc_cpufreq.c             |  69 +------
+ .../power/intel_pstate/intel_pstate_cpufreq.c |  99 ++-------
+ drivers/power/intel_uncore/intel_uncore.c     |  32 +--
+ lib/eal/common/eal_filesystem.h               |   4 +-
+ lib/eal/include/meson.build                   |   1 +
+ lib/eal/include/rte_sysfs.h                   | 125 ++++++++++++
+ lib/eal/linux/eal_hugepage_info.c             |  33 +--
+ lib/eal/linux/eal_lcore.c                     |  18 +-
+ lib/eal/linux/eal_sysfs.c                     | 188 ++++++++++++++++++
+ lib/eal/linux/meson.build                     |   1 +
+ lib/eal/unix/eal_filesystem.c                 |  31 ---
+ lib/power/power_common.c                      |  52 +++--
+ lib/power/power_common.h                      |   6 +
+ lib/power/rte_power_qos.c                     |  29 +--
+ 33 files changed, 694 insertions(+), 755 deletions(-)
+ create mode 100644 lib/eal/include/rte_sysfs.h
+ create mode 100644 lib/eal/linux/eal_sysfs.c
+
+-- 
+2.53.0
+
