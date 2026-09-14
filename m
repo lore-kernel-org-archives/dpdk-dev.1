@@ -2,72 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD89EC88E50
-	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 05:54:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB121C88E50
+	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 05:54:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CE73942E47;
-	Mon, 14 Sep 2026 07:52:35 +0200 (CEST)
-Received: from mail-pj2-f13.google.com (mail-pj2-f13.google.com
- [74.125.227.141])
- by mails.dpdk.org (Postfix) with ESMTP id 5C9F042D2E
- for <dev@dpdk.org>; Mon, 14 Sep 2026 07:52:34 +0200 (CEST)
-Received: by mail-pj2-f13.google.com with SMTP id
- 98e67ed59e1d1-396ccc09d65so1582364a91.3
- for <dev@dpdk.org>; Sun, 13 Sep 2026 22:52:34 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1C78642E53;
+	Mon, 14 Sep 2026 07:52:39 +0200 (CEST)
+Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com
+ [74.125.228.12]) by mails.dpdk.org (Postfix) with ESMTP id 4B72742E53
+ for <dev@dpdk.org>; Mon, 14 Sep 2026 07:52:37 +0200 (CEST)
+Received: by mail-pz2-f12.google.com with SMTP id
+ 41be03b00d2f7-cc1cea4bfd1so1188584a12.0
+ for <dev@dpdk.org>; Sun, 13 Sep 2026 22:52:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789365153;
- x=1789969953; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789365156;
+ x=1789969956; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=jnZo+hvqBlg2VdlmHakxJKIQ9hf0r/SuePtUe8eV9o8=;
- b=Mo3WsGqCgOAkcx3f8IMbOCCmQFFuTDRnOmTqNVINDyUawqediaCHloSnE5jn3MlnQN
- uXpuVU73Emmzu0ik/73TYm/2Sb6oIClZ8Ni5f2/iHjXGfPQI2JrmJYE1/WA8BLe+yZpF
- MQz1pq6O1wlmraZs7nwIfBN7NlH7XGfM3G0F2FXgMBd5BbaDcxk0uffwoVWhO6gqB64K
- 96UXjGhZES2+N4j5DqWgwjSK+NVouJ02eSXdh9ayj7rakuR10LuPU3Q6gpUcFXgUbeWp
- qzmDkuK050N9KnFI9i7P7hhLAeLdBUGRdG+SxwezmC2Gso2rs6em8etk+oTMeCOyDAna
- pfGQ==
+ bh=RrebAgMqDOr/jVMFCuTxgMbH6qmTQldzzkvHNgCrhKA=;
+ b=e4MwWGNYvEY8P+UFXQG1N6AU8H8qH3q0YdvvhvfN9g/7T8MLGLt6QisgUN5asj7Ay2
+ I30k+Up0UejAQCMNT1VXwY3mmjjDxAKP6GvMrAblIwBjXGnrCZCD4GAwcXfhOeSjlSlL
+ rxaSRNQwRnBe+0N8aYNw1zjgkoOAnutt02xM4zwKYxv/e/0gC94KIuJ9GZ6DWWzJMr8n
+ CmyQ5L/DUqzjW2tA5adFH5hLOtTKHqPKB8aFKa2FRTw4eV2m/9D8D/GNwGGB/m4NVN/i
+ IcIqspsO8GM58EeqJE8NWgGbXVtFa3UjCEidx0GXOxXqOxYkn12DiIpW2weExivUmcgW
+ uliw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1789365153; x=1789969953;
+ d=1e100.net; s=20251104; t=1789365156; x=1789969956;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=jnZo+hvqBlg2VdlmHakxJKIQ9hf0r/SuePtUe8eV9o8=;
- b=WrRaPs2uGyd50xjpVw4UJuBTIdebtaJR0QeZ9ZHtiCmxh7ar9lDZMHJ8Ml/o0QzRZI
- yw2RHA+pgddJoIXXe3hQvetOl0fW15dEbToAdwRKTRo4mvwIX0BjY8k5EJeHYburOxIj
- 2iLKYwDhPRwgA/QV8Q0g/rMaf8VeuEGIjdPjrveO0fagJdtfQI5+4ya0EHK0Dgg1uUKV
- Dma6x+UPaQmQUdhTLDLoyYiAO6zGUttZA/xwP5sAYv6mAxiTeYledw7IaNXnsgxJenlo
- Q+WF4KTR/n36L3pDfGOIKoxpKmudaY+s1C3KqzFfLf8nWN2kmfOVz1XAj/6ssg1WJxoH
- ZpjA==
-X-Gm-Message-State: AFuF++l4n9QhgI9ECdhbHuvLI7JUeL7PX1C48d0g7kUc0V47rRDlIKah
- Rkgw8Cxv59zu00Nyc5ng7x+jd6obI3PPieji3aQ8jaqu+bkxJwIaeeRH5ohI/lClyp1J1sV/j8D
- BJ3Z1flo=
-X-Gm-Gg: AYBFou1dBwMK3+Ao2nlUJKg4vLn3AB1GCxHWnXzNXOmZpsuVQjm2zRACV+yweapk32C
- bFXv4c3KYjqeYZ/CU+lUixBLXl5bkrcOfsawutZzIlpRNjaD8n6uV57Rq/PHn/6Kn7sAhYYrZRb
- 6QIpi7VHPHYLXr1Qsokk0FLg6asgDfOK/ivW3ieKZ3pTzntojnS+91uvKY7bzeSAM0YFyrgGH7g
- WNUd2/UYBObzRqAnbCzRFtkE4XuM3fJ8rZTpCFoHZlqypCyal36c3wekKJJpg2EFdlYkWtKmvYA
- 8N+u+z6RhxylcKGkFcaj5ZXGHAOq//FcLGoG+1aflwgLQHIwKKzQRAb3XMLZgX4x651eEFenm5o
- 3hELjWvOtkxjs6UxChYkHs9HHydkoJ/a7YM+bMw1DW7+MmK5Io8j/EpxNbe8ceFocvP0Q2TeAlF
- 3BS2AyTikz0Fzmi86zp00UGOgzF3YtrRZcrtKpGZl4a/hSIsk7XvKG3eK1kr0DoFXA1nr9l23rL
- 6gVuW0+T1AZyScUX4wE8e+un3+wm+Nq4GCeSg==
-X-Received: by 2002:a17:90b:4a88:b0:398:bacb:1137 with SMTP id
- 98e67ed59e1d1-39dec0b7e19mr2618653a91.19.1789365153449; 
- Sun, 13 Sep 2026 22:52:33 -0700 (PDT)
+ bh=RrebAgMqDOr/jVMFCuTxgMbH6qmTQldzzkvHNgCrhKA=;
+ b=EVPGjX0xnx9WwOvgjoanPE5NW0q1ypSt1UEhcdQmsYVy7jwOajKrEYeVghOi0xC3Qh
+ 2SqZ6jW888Sh5ub/aR4hQvzFj8MWKs4byDAUXTGNWE7YfzoKmXx/IUN+Df2cv8RcubhH
+ qRBvUNN4BDcrWyqekBKX+sR1hOo1VHLSjqBGxHSt/myR6KIaM1tFSPlQVbZ1135wpdz/
+ VN+2348WL+NkT8ur+XOjiSFBqcmubKScZBk8TN4X7BLFX8iuGBdKxyb6VyLCrlbx3ZpZ
+ vAAVCx2cp9Fu4yIMNpvMmucC97W2b9BMCdUb/RFGRF7RIhLZT8u1TzRJPbz++xBTXwdL
+ Dn0Q==
+X-Gm-Message-State: AFuF++mM57RV0eQQTgsYOF/tFNbQDQjz+B8AcNCV6zbKHqHGVX/k0zYG
+ YLekETzQs/2dFchNco4p2csSkOEhmRoCxzpVz6yU19J8wheM6rU+uGVQi2Sg1iUQrz5WhhU8RZD
+ GoOlUAwA=
+X-Gm-Gg: AYBFou12v6YGDwNcVkcvkigY0p8S1SWxHDOJVs0e9oJtDgF0xNKd8iC/RSE+4YKeQCY
+ r7AonHz40qFnpk54xuoo+gaF9yBkAGWgTTp/yWjswDP/GylqO3M5F0yRlXvCUSqWKywdqM1oO9s
+ UI4nLvapf4zg4uhnJm/PZlgb7C0mkKnFZ1c5APQLE1ngJuq6zA7Fu4+8N/21gNRHmGlp+vxNy4x
+ QyRCksesp+GQmqzQzJsFEYeOEV9gviUp0EZqWdEyYiahDh9hu9Xhuhxie/7uqfxDfdnyNBtJmdK
+ P+W8ACWNGXNp/RwhfzTXgVpEvn4h+fDiJB3l1PM97Zl38w4Fsajn4GTKTBlNBkiDhKR8fvDqIBn
+ 5k2MtrCiHbdqr9eb8hSpqY5fEPgOnHkOsyTLhzPFmsy7oNqDJuJjdaEj826tKdPqv4fwN35iyu8
+ odf+GVdkban6DudJ7PuQ9k7i0JgcOx83nC4Oe9CK0QKZF+4PnfJLegcom/sHCdjrcZjt7dIfX0B
+ mt98At1/62Fm/ETW1Uqig1fYj4qmyH9HJHM5Q==
+X-Received: by 2002:a17:90b:2885:b0:398:b46d:48c0 with SMTP id
+ 98e67ed59e1d1-39dec0849e5mr2858255a91.18.1789365156469; 
+ Sun, 13 Sep 2026 22:52:36 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39d95864b4fsm19794492a91.15.2026.09.13.22.52.29
+ 98e67ed59e1d1-39d95864b4fsm19794492a91.15.2026.09.13.22.52.33
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 13 Sep 2026 22:52:33 -0700 (PDT)
+ Sun, 13 Sep 2026 22:52:36 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Gagandeep Singh <g.singh@nxp.com>, Hemant Agrawal <hemant.agrawal@nxp.com>,
- Nipun Gupta <nipun.gupta@amd.com>,
- Nicolas Chautru <nicolas.chautru@intel.com>,
- Akhil Goyal <gakhil@marvell.com>
-Subject: [PATCH 56/62] baseband/la12xx: use kvargs numeric helpers
-Date: Sun, 13 Sep 2026 22:47:27 -0700
-Message-ID: <20260914054912.755403-57-stephen@networkplumber.org>
+ Chengwen Feng <fengchengwen@huawei.com>
+Subject: [PATCH 57/62] dma/hisi_acc: use kvargs numeric helpers
+Date: Sun, 13 Sep 2026 22:47:28 -0700
+Message-ID: <20260914054912.755403-58-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260914054912.755403-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -86,141 +82,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-parse_u16_arg() stored through a uint16_t pointer and parse_integer_arg()
-through a uint32_t pointer, but both device arguments are 8 bit fields:
-queues_num is a uint8_t and modem_id an int8_t, and they are adjacent in
-struct bbdev_la12xx_params. Parsing either argument therefore wrote past
-the field and corrupted its neighbour.
-
-parse_u16_arg() did nothing beyond a range checked store, so drop it and
-pass rte_kvargs_handle_u8() directly, which also gives queues_num the
-width it actually has.
-
-The modem id keeps a handler of its own. parse_integer_arg() rejected
-both ends of the range, and a plain rte_kvargs_handle_i8() would accept
-anything down to -128 while the caller only checks the upper bound, so
-"modem=-5" would be stored and only fail later in open_ipc_dev(). The
-new handler bounds it to -1..LA12XX_MAX_MODEM-1, keeping -1 which
-la12xx_bbdev_create() uses to mean "derive the modem id from the device
-id", and replaces the caller's upper bound check.
-
-The handler now rejects an out of range modem id, where the old check
-did a "goto exit" with ret still zero. The probe also checks the result
-of parse_bbdev_la12xx_params(), which it used to discard, so a bad modem
-id or queue count now fails the probe instead of only being logged.
-
-Fixes: ee36ba0f3042 ("baseband/la12xx: add devargs option for max queues")
+hacc_dma_parse_queues() open codes the errno and end pointer checks the
+helper performs. A queue count of zero is rejected by making one the
+minimum of the accepted range, as before.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/baseband/la12xx/bbdev_la12xx.c | 60 +++++++++-----------------
- 1 file changed, 20 insertions(+), 40 deletions(-)
+ drivers/dma/hisi_acc/hisi_acc_dmadev.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/baseband/la12xx/bbdev_la12xx.c b/drivers/baseband/la12xx/bbdev_la12xx.c
-index 1116dacc4b..b9199189e7 100644
---- a/drivers/baseband/la12xx/bbdev_la12xx.c
-+++ b/drivers/baseband/la12xx/bbdev_la12xx.c
-@@ -912,44 +912,25 @@ setup_la12xx_dev(struct rte_bbdev *dev)
- 	return ret;
- }
- 
--static inline int
--parse_u16_arg(const char *key, const char *value, void *extra_args)
--{
--	uint16_t *u16 = extra_args;
--
--	uint64_t result;
--	if ((value == NULL) || (extra_args == NULL))
--		return -EINVAL;
--	errno = 0;
--	result = strtoul(value, NULL, 0);
--	if ((result >= (1 << 16)) || (errno != 0)) {
--		rte_bbdev_log(ERR, "Invalid value %" PRIu64 " for %s",
--			      result, key);
--		return -ERANGE;
--	}
--	*u16 = (uint16_t)result;
--	return 0;
--}
--
--/* Parse integer from integer argument */
-+/*
-+ * Parse the modem id.
-+ *
-+ * A dedicated handler is needed because -1 is meaningful here: it leaves the
-+ * modem id unset, and la12xx_bbdev_create() then derives it from the device
-+ * id. rte_kvargs_handle_i8() alone would also accept anything down to -128.
-+ */
- static int
--parse_integer_arg(const char *key __rte_unused,
--		const char *value, void *extra_args)
-+parse_modem_id(const char *key, const char *value, void *extra_args)
+diff --git a/drivers/dma/hisi_acc/hisi_acc_dmadev.c b/drivers/dma/hisi_acc/hisi_acc_dmadev.c
+index 196aaadc05..7db93852a3 100644
+--- a/drivers/dma/hisi_acc/hisi_acc_dmadev.c
++++ b/drivers/dma/hisi_acc/hisi_acc_dmadev.c
+@@ -660,13 +660,10 @@ hacc_dma_parse_queues(const char *key, const char *value, void *extra_args)
  {
--	int i;
+ 	struct hacc_dma_config *config = extra_args;
+ 	uint64_t val;
 -	char *end;
--
+ 
+ 	RTE_SET_USED(key);
+ 
 -	errno = 0;
-+	int64_t modem_id;
- 
--	i = strtol(value, &end, 10);
--	if (*end != 0 || errno != 0 || i < 0 || i > LA12XX_MAX_MODEM) {
--		rte_bbdev_log(ERR, "Supported Port IDS are 0 to %d",
--			LA12XX_MAX_MODEM - 1);
-+	if (rte_kvargs_to_int(value, -1, LA12XX_MAX_MODEM - 1, &modem_id) < 0) {
-+		rte_bbdev_log(ERR, "Invalid %s, must be -1..%u", key,
-+				LA12XX_MAX_MODEM - 1);
- 		return -EINVAL;
- 	}
- 
--	*((uint32_t *)extra_args) = i;
--
-+	*(int8_t *)extra_args = modem_id;
- 	return 0;
- }
- 
-@@ -970,20 +951,16 @@ parse_bbdev_la12xx_params(struct bbdev_la12xx_params *params,
- 			return -EFAULT;
- 
- 		ret = rte_kvargs_process(kvlist, bbdev_la12xx_valid_params[0],
--					&parse_u16_arg, &params->queues_num);
-+					rte_kvargs_handle_u8, &params->queues_num);
- 		if (ret < 0)
- 			goto exit;
- 
- 		ret = rte_kvargs_process(kvlist,
- 					bbdev_la12xx_valid_params[1],
--					&parse_integer_arg,
-+					parse_modem_id,
- 					&params->modem_id);
--
--		if (params->modem_id >= LA12XX_MAX_MODEM) {
--			rte_bbdev_log(ERR, "Invalid modem id, must be < %u",
--					LA12XX_MAX_MODEM);
-+		if (ret < 0)
- 			goto exit;
--		}
- 	}
- 
- exit:
-@@ -1062,6 +1039,7 @@ la12xx_bbdev_probe(struct rte_vdev_device *vdev)
- 	};
- 	const char *name;
- 	const char *input_args;
-+	int ret;
- 
- 	PMD_INIT_FUNC_TRACE();
- 
-@@ -1073,7 +1051,9 @@ la12xx_bbdev_probe(struct rte_vdev_device *vdev)
- 		return -EINVAL;
- 
- 	input_args = rte_vdev_device_args(vdev);
--	parse_bbdev_la12xx_params(&init_params, input_args);
-+	ret = parse_bbdev_la12xx_params(&init_params, input_args);
-+	if (ret < 0)
-+		return ret;
- 
- 	return la12xx_bbdev_create(vdev, &init_params);
- }
+-	val = strtoull(value, &end, 0);
+-	if (errno == ERANGE || value == end || *end != '\0' || val == 0) {
++	if (rte_kvargs_to_uint(value, 1, UINT64_MAX, &val) < 0) {
+ 		HACC_DMA_LOG(ERR, "%s invalid queues! set to default one queue!",
+ 			    config->dev->name);
+ 		config->queues = HACC_DMA_DEFAULT_QUEUES;
 -- 
 2.53.0
 
