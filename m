@@ -2,80 +2,80 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 188C0C88E70
-	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 11:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99430C88E50
+	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 11:56:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4F333402F1;
-	Mon, 14 Sep 2026 13:54:56 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0706340B9A;
+	Mon, 14 Sep 2026 13:56:54 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 4EFE840272
- for <dev@dpdk.org>; Mon, 14 Sep 2026 13:54:55 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 3B29740A75
+ for <dev@dpdk.org>; Mon, 14 Sep 2026 13:56:51 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1789386894;
+ s=mimecast20190719; t=1789387011;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=FJZp/6wfuhG6n/coEpGDYSaE+KzUK0qW+Zmy4l5jIKA=;
- b=TgInsrktxzpvYXZCpUQKB6vEmz6sh1pPGJ6aAYOalD/JqjmuudYSXuqkcAhE390sBaHRNJ
- +ydMV2RitLOnHQsEHF4n5j8V8r1nwODDnfUdncbfSAJF2xy91BWRw2WYVi/xom5+twnVb0
- 68LDS1X3rEK6LsaqZCw/EBzZqniX9Do=
+ bh=KcTkfpSnyGNkPNxw25aTyVFDqxhmYUuw/+2ywp9A6A0=;
+ b=MkZKdggcuNTSGxpNJDU2CeqSaSrZSHldCk5AiZbndjCGXK/R+rNC/mflrNEqgeHDugBHK3
+ va5BzGE2fU+Hv0RiWvHVhCi94FiITu44eJFXD1S1FJAZiLOOBwQo/1YhI6MsjEwRQ8EB4y
+ CGR2GOx3viRVKGjfWXTZ3kMzEhxOf8g=
 Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
  [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-483-mGBhU3ldMoOcewEtjqoqYg-1; Mon, 14 Sep 2026 07:54:53 -0400
-X-MC-Unique: mGBhU3ldMoOcewEtjqoqYg-1
-X-Mimecast-MFC-AGG-ID: mGBhU3ldMoOcewEtjqoqYg_1789386892
+ us-mta-615-pNQ0wKTfMCe2StS9cTGCuQ-1; Mon, 14 Sep 2026 07:56:50 -0400
+X-MC-Unique: pNQ0wKTfMCe2StS9cTGCuQ-1
+X-Mimecast-MFC-AGG-ID: pNQ0wKTfMCe2StS9cTGCuQ_1789387009
 Received: by mail-lj1-f197.google.com with SMTP id
- 38308e7fff4ca-3a27721662eso13311301fa.1
- for <dev@dpdk.org>; Mon, 14 Sep 2026 04:54:53 -0700 (PDT)
+ 38308e7fff4ca-3a59aa88086so16492131fa.2
+ for <dev@dpdk.org>; Mon, 14 Sep 2026 04:56:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1789386892; x=1789991692;
+ d=1e100.net; s=20251104; t=1789387009; x=1789991809;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to:content-type;
- bh=FJZp/6wfuhG6n/coEpGDYSaE+KzUK0qW+Zmy4l5jIKA=;
- b=SBVyFdPwVavNLR2JPKpk/myNlEU58IxY843Ol4lzhW9CVFbAdXX4gaJUDk1aygPd96
- XCA312qFxEDwCvmub+Mo+9nKKC381pe9WFW8jiv1V3NNCJCWdXtOEz0axR9ZQNrDBTSN
- VSIAFPTl8bi7CjBsg2/uF+kc814wV8Vbwq2I2ylhs37csABWq9JJAVSoHxoaueiYNMs4
- d27vlBQvSYhNL/VU4Yi0nHjvW7tUKtTjX0Cc0VIV7xVVh0NtkVg5tCno3JMZ/nFWGuJD
- S+d2EbOhJsDRfNEUo89wc1q0rWAbSxgtxZREBBN6xR2RwCl/UeDzdu+oBsj5Vwz7ddpm
- 7v8Q==
-X-Gm-Message-State: AFuF++kU3eHXwz4g1ybj5bqz5jNk2NBY5pywOGIFaBVIlxsK1FZcwc1F
- iWWq5Dh5IvbXidPib0WkmvBpMX9degIZkqzXJjt/vn5ugczT8lwKEhHd5LdEBGSwAnfhU/p6a2q
- 2HOp3MNVPzVrf0yn3jpcRsER3rIWGrypZxJePpF6nEmKySNjlpVLpRhF2kV4vHUWJQ6bPqZQjLW
- EcB03qorfzEaQWRXzqaEM=
-X-Gm-Gg: AYBFou0WLKH5LDWzZ6NZ5ijArQUCPezi8JVQmJQ8Vwf4+4WZhoo4uwSPwK33E6VKRYr
- ZXmYl8NO2D5pmILn2Zl+p0/eKJJbFwDwaTLQ3EcXWDO0H2jUZcp/gsHVLk7qGo/rjQEoKLWYW5U
- 6T3jzWv8EwdQz/RVshzEmgsHZuXF4kapp2Ogezr8B7PDCJ68cQwUtUdJ/OKzUiupWdvloZHOBsV
- Lb5izI9LSMD8kTmqP9vz8Ymb6DNbk6YnH17VbDd6amxpH5i
-X-Received: by 2002:a2e:be04:0:b0:3a5:b4d4:89ea with SMTP id
- 38308e7fff4ca-3a5c898e73fmr3274051fa.22.1789386891961; 
- Mon, 14 Sep 2026 04:54:51 -0700 (PDT)
-X-Received: by 2002:a2e:be04:0:b0:3a5:b4d4:89ea with SMTP id
- 38308e7fff4ca-3a5c898e73fmr3273981fa.22.1789386891506; Mon, 14 Sep 2026
- 04:54:51 -0700 (PDT)
+ bh=KcTkfpSnyGNkPNxw25aTyVFDqxhmYUuw/+2ywp9A6A0=;
+ b=r41UPi2SWssP9+hkGCxAztrXt3vhv8bfpa9BV3jHxW3T3GbqIgn1Z1UzCkvTBYZWfy
+ 6Y+Kw8w6G/DAcpU8LlYZ/1r/CF0vnARFBysJ7mW4KTPNvXKFOS/iyEJdJdD20tU/7wOF
+ jf8fpb93tIjC8KW99c0/U7bAPThS/wSe9itlM/wH3U0AxmFnDwg/HFG/brpSBm9suGlf
+ Y5i3BaApDVexldzvuuRKmfuJtPVoY3HJTETgScjKYUYNki16JXkJzhiytTjYiqwwApXQ
+ CMKz2YS+L3j3KosUwwKhreG4Ub+lPHCBxx+fddrnEECGWq6qX2XJepSaQrDhhh67KrIp
+ 44EA==
+X-Gm-Message-State: AFuF++nsb7rvRsmjuirSOGMAISjlY0QAYXVAHqd4n3DvoOP1kqR88S14
+ GWjUncZ+TxbH++fgE8LVsCpw+DPyXCQL0XdI3WjRMkD1gq28t7blic4TjaVZjQj5Krvg/EFzz1Q
+ UCnUrNX70wJTNHaKHE93xoQRBNL7rx2gyMahVuVvaZnq1Lo07xlrTZ3Gqsp/a9z3dY1x9Xza8nR
+ i/PxOrEI57e94krXVjJ3M=
+X-Gm-Gg: AYBFou2C0Fkz7psQm1A3U5lDLbH0/J3MzoFVVQz779cfjA2uX1uC0DvVbIgO63VoERs
+ yC1X/GLW8NzQsyYZ+kOHYl1DhjzdwO3L1FwdGfmazQz0kVP5yRrn5JRmogAqNSrNpBnQVjkm4xf
+ 9XTwkHcZAherMX8aMy/KbhqqaBapGr15HsBNoVtREAk1eyfiaGui+FrH3qltyngSbPaBnZDOKQS
+ SlPMYHuVwC52hMIg2lvV81+3PKF13x66Nll5SG8KO1iDcTd
+X-Received: by 2002:a2e:a993:0:b0:3a3:7681:6d69 with SMTP id
+ 38308e7fff4ca-3a5c89797d1mr4490711fa.18.1789387008640; 
+ Mon, 14 Sep 2026 04:56:48 -0700 (PDT)
+X-Received: by 2002:a2e:a993:0:b0:3a3:7681:6d69 with SMTP id
+ 38308e7fff4ca-3a5c89797d1mr4490611fa.18.1789387008130; Mon, 14 Sep 2026
+ 04:56:48 -0700 (PDT)
 MIME-Version: 1.0
 References: <20260403091836.1073484-1-david.marchand@redhat.com>
  <20260914081725.1097704-1-david.marchand@redhat.com>
- <IA4PR11MB9278D5E85C6AD7C17FCF659D8EBB2@IA4PR11MB9278.namprd11.prod.outlook.com>
-In-Reply-To: <IA4PR11MB9278D5E85C6AD7C17FCF659D8EBB2@IA4PR11MB9278.namprd11.prod.outlook.com>
+ <20260914081725.1097704-2-david.marchand@redhat.com>
+ <IA4PR11MB9278E70DC4CD62AEF396DC388EBB2@IA4PR11MB9278.namprd11.prod.outlook.com>
+In-Reply-To: <IA4PR11MB9278E70DC4CD62AEF396DC388EBB2@IA4PR11MB9278.namprd11.prod.outlook.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Mon, 14 Sep 2026 13:54:39 +0200
-X-Gm-Features: AcwNN1V76FJyNbgsgZRBYDcWK7nrgMsPMYOP_nHZTlhZdtxTC4QHUWQfs3CDx8c
-Message-ID: <CAJFAV8z-yyLsScuWJhoZp-1Jz+3r1+zV2Qr5z_qFWp_sLfTFPA@mail.gmail.com>
-Subject: Re: [PATCH v7 1/4] net/iavf: fix MAC addresses leak on reset
-To: "Loftus, Ciara" <ciara.loftus@intel.com>
+Date: Mon, 14 Sep 2026 13:56:36 +0200
+X-Gm-Features: AcwNN1XnjPEqodJZs-PKy7B2RJtjM92YyUPCXjJnzlnfdnlBicC-oJm9lbOp9r8
+Message-ID: <CAJFAV8xZMxZfwSDo=1TpeeV93BQA43RW+ctzkjnC5QnPZ9FQ9Q@mail.gmail.com>
+Subject: Re: [PATCH v7 2/4] net/iavf: fix duplicate MAC addresses install
+To: "Loftus, Ciara" <ciara.loftus@intel.com>, 
+ "Richardson, Bruce" <bruce.richardson@intel.com>
 Cc: "dev@dpdk.org" <dev@dpdk.org>, "Burakov,
  Anatoly" <anatoly.burakov@intel.com>, 
  "rjarry@redhat.com" <rjarry@redhat.com>,
  "cfontain@redhat.com" <cfontain@redhat.com>, 
  "stable@dpdk.org" <stable@dpdk.org>, "Medvedkin,
- Vladimir" <vladimir.medvedkin@intel.com>, 
- Lunyuan Cui <lunyuanx.cui@intel.com>, "Wu, Jingjing" <jingjing.wu@intel.com>, 
- Xiaolong Ye <xiaolong.ye@intel.com>
+ Vladimir" <vladimir.medvedkin@intel.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: sC_iEmrKvht-_lR8OLvE4I67nJTPJYhhm1MEMqe0jZU_1789386892
+X-Mimecast-MFC-PROC-ID: shQ5nu1UTgCkCFtpCS6jHzvbnoeWvAuxHc-tP7kEPvQ_1789387009
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
@@ -91,24 +91,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 14 Sept 2026 at 12:16, Loftus, Ciara <ciara.loftus@intel.com> wrote:
-> > @@ -3123,7 +3116,6 @@ iavf_dev_init(struct rte_eth_dev *eth_dev)
-> >       rte_ether_addr_copy((struct rte_ether_addr *)hw->mac.addr,
-> >                       &eth_dev->data->mac_addrs[0]);
-> >
-> > -
+On Mon, 14 Sept 2026 at 12:19, Loftus, Ciara <ciara.loftus@intel.com> wrote:
+> > @@ -3428,6 +3428,14 @@ iavf_post_reset_reconfig(struct rte_eth_dev
+> > *dev)
+> >       int ret = 0;
+> >       bool allmulti = false, allunicast = false;
+> >       struct iavf_adapter *adapter = IAVF_DEV_PRIVATE_TO_ADAPTER(dev-
+> > >data->dev_private);
+> > +     struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(dev->data-
+> > >dev_private);
+> > +
+> > +     /*
+> > +      * After a VF reset, all MAC addresses got flushed.
+> > +      * The primary MAC should have been set in iavf_dev_start, restore
 >
-> Nit: stray line removal. The rest LGTM.
-
-I did this on purpose.
-
-I was reviewing accesses to eth_dev->data->mac_addrs and noticed this
-stray double line.
-No strong opinion, but I would prefer it is removed.
-
+> iavf_dev_start is not guaranteed to have been executed before this handler.
+> So I would change this comment to something like:
+> "The primary MAC has been or will be restored by iavf_dev_start".
+>
+> Other than that:
+>
 > Acked-by: Ciara Loftus <ciara.loftus@intel.com>
 
-Thanks.
+Yes, true.
+I'll update in a new revision if needed, otherwise, could it be
+updated when applying?
 
 
 -- 
