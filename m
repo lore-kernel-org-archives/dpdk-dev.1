@@ -2,73 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0374C88E6F
-	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 20:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 413B9C88E73
+	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 21:20:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7B2D640A7A;
-	Mon, 14 Sep 2026 22:00:34 +0200 (CEST)
-Received: from mail-qk2-f13.google.com (mail-qk2-f13.google.com
- [74.125.230.205])
- by mails.dpdk.org (Postfix) with ESMTP id 2C4C640A77
- for <dev@dpdk.org>; Mon, 14 Sep 2026 22:00:33 +0200 (CEST)
-Received: by mail-qk2-f13.google.com with SMTP id
- af79cd13be357-93910ad2273so263416985a.0
- for <dev@dpdk.org>; Mon, 14 Sep 2026 13:00:33 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id CCF5640E35;
+	Mon, 14 Sep 2026 23:20:09 +0200 (CEST)
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com
+ [209.85.210.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 2CD0140A6B
+ for <dev@dpdk.org>; Mon, 14 Sep 2026 23:20:08 +0200 (CEST)
+Received: by mail-pf1-f173.google.com with SMTP id
+ d2e1a72fcca58-869d181419bso3551817b3a.2
+ for <dev@dpdk.org>; Mon, 14 Sep 2026 14:20:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1789416032; x=1790020832; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=+Oo1CJKCr438xZx2DDQYtZuZDdBmydZ7RDHuxjGgJ8A=;
- b=XNuqpNKzkZ8gACB3zoDpXc2YQnzQ8HEaYStHnSUMiX49bOZBNRlsufkF+XAuAn6zH2
- YDbf/STILBD0u6WXCJ59gDroEH9WCInVCv6IXCg2CCFRYHnh89gTLvL/Mai6D/3swd9q
- KSU+2fKKA0dGUjjyESaCxOHNipnDLVCDFGtX4=
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789420807;
+ x=1790025607; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=OHszgAoutrbPkBZGXAtxbAyvZAQfo77JPA7jcy8E8Ug=;
+ b=01Q3YTUJvS7WoGe4fJbdcCVAbrEVe8vDsdedXAJ+JV9aaU0xeTt/ts/VWKooxCdDtp
+ g991jhdxrrU1jHLZpjzDaUnHd7DZ9qbzpW9QaLD8LQm8AcXicJxkOaKPKmR2VR/GDQQr
+ d8ks23RozYvA20zut1HBN+e2m905vF5m5j3eNFNCmhvJJTbzseHEWvhS/6P2yWusOwcy
+ ahMCNnjfEZBWfuUO8SUkCxgfFxG78jiMphDFkPkieBr0L0fu2ao+dZKVJE09quRjpaq7
+ 7lyhXOmOulWn7B6v1dQG2XPDWVw1EuDfIsVDNPudBLRrmqj+f6JdtJkBE5rHsKffnMAZ
+ bDYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789416032; x=1790020832;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=+Oo1CJKCr438xZx2DDQYtZuZDdBmydZ7RDHuxjGgJ8A=;
- b=vYHtfOOZjcEfLaRrxRn0i9eldV2jP/AUm0oDqRCpbLP/8IsBLAyGrIwxYA/G9VKpHV
- 9g9M/OuvKBd8tDg3P/o2WdnkmudK77WZIJwSfzj/+5KUfu0HM7o8TKhvag0MYdJfVCGe
- sDECGjo5HlqgmtCMyQnWixr1TrK89kbdfAzYv9T3K405pHTiK6gWAT2dwPQUeVNAxrTI
- fKYXFCrchoUmjmrN4UlvVUqCXBDVVzYXMgYidEMV03nD2PSqD13uhFBobkiJvf0BxON1
- 777pCO1FIfwz+do4+fL2xPmsxBAH+sfnS1ws52Z921ulP1ITSCniZnZP7tlsXWlNCUHr
- rf8w==
-X-Gm-Message-State: AFuF++nUuw9VcdM+m8I1Wxe8iRHk8sB72aw6Lb3a2uGbS1EgS+GuxHJC
- ZTSgTH4VDLDT06yLPyVemWYHvNisF+Dnn6/6xIt36ulAT/L5BDw59ERjy4EfaKlIzXKlRsVFlog
- T8oRtUt9IxtQS2KQPYB5spI1CGuxNPkpah0kFrtsn130AfUc3VkNb+Zxz14HA1l3h5m6yUJeyk0
- K+T6lKvlv7PU6xgYK166C1bN7kPZU=
-X-Gm-Gg: AYBFou3jJ+pSSXZqR1Hc1uku4ku1gkKYH7Zj7AuzUSwO8XawTKZcpN5wp3ZkNpAKF0X
- en5cE5l5Pix/evCNGTt7d3FwOorpo/Z7c/Lxp7Uo0WwQtoxLGD/XfFd90WB9agyKn5B6oK8D9yl
- gosiDEcWV7LnNn6PAjKaAoTbrDWIBLYFFAQG4H/eaCe3FdLl3NX0L+yDd/LQzzdS7My+hGj5q70
- m3PN1ncKyySXdGQzFwllR1jAHlz4YaU7Vzv9B18ZbyPEfLsvofjEGBsTQ3vTTmz00WVfzaOOC0N
- zGkWxWnGFv8Ko1u48MIcH82bzkluP3j/aoN3wpJsmu1KW/QmTVf+3tG0M11E3dIylkSTr8n2CdM
- JP9dHvLQO52iX8+bLI5575rGXwxu8gNp4rzCCHToj9WMXlrGsoTYM+EYWW116B8q0EMOG7VnWLz
- JUw64kK3Z6s6uKgLAurKszTE0XqBnPpRHEoscks22mU8sTtCA2Hi0YP3pFe9HTTleNVl92T81VJ
- ekDrPpCMVwX+iI6zMLEKVM=
-X-Received: by 2002:a05:620a:43a1:b0:939:a834:98f2 with SMTP id
- af79cd13be357-93a2985b776mr565521885a.15.1789416031538; 
- Mon, 14 Sep 2026 13:00:31 -0700 (PDT)
-Received: from d121029.iol.unh.edu ([2606:4100:3880:1210::219])
+ d=1e100.net; s=20260707; t=1789420807; x=1790025607;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=OHszgAoutrbPkBZGXAtxbAyvZAQfo77JPA7jcy8E8Ug=;
+ b=TgJ9XibPzUt19v87gryvTAg2qiCN+4K2VFglJcYA6HDMUiCKjGMmXS5FfyfQEaK4R2
+ AcMydvv3YjFdtOAEUAna7DiLEis1Fv1j2Ph3tyPPhEYu+TbWvhECVJRRpHMtvP+y4HjB
+ YRw+F8SEA54Hd4aP7apSnICwSDnT4bWUSVitEd25ngY/F3ZYfDF5nhurBlARtQIfkv3K
+ DTP/z0pU+nO/QwI+HJzKYmG6CBww6hoJZbXjXbl4a3reTq/sGu7uJX3XRNUSPk277OD6
+ r6rcDauDN0NXewwaELVyaB58X5TvoZTTLHqDOcWeO86+KxiScC3b76EtqwwuVyjJzonf
+ SJrA==
+X-Gm-Message-State: AFuF++lYPxb7wRrfkHA6YLJNp6NFdF0EJ6QDeSSp7M7t753xp13v0BuP
+ BSAa2I6i3jWq+eYpHDSIT0OuVPIdM3MvcDIgxWlTpfq9Xkb+cHMQpo+msMOEfXRdQjk=
+X-Gm-Gg: AYBFou3bapcod9OfuTU4aZR85HrEd2QGAe8ozWPCNFgIrgQ7hXVmrz7jKA5RbcOTfvr
+ FUrBRei4gZSrmGI7nrfpeyZcBvvp6FvwZtclZvGN93rdbW/pUv8MT4oNLxa1vPuBFP+HjvvwqBm
+ JaFCyFG4tQTfe/SyznrDZZbRcd3UhcZY9nxmtt9noo3SDzE7PHaenFXgbV5gUjWZunbUSF6hnJ+
+ h0PYhkert4JM+wF7gNgnun0OnH+h54LVQgSDgibCpm9NnsaKvzQhNRWS2WXI6qmDnvO+D2TnVv4
+ lCVfPOA2PXd1Ub5ZKGu8IxfZqlhBOQw+VKDsHp4cHq6VsjCnmdCWVQVIU8i9Ue4CSIbL+3QXw6V
+ RXQLMRFoin2XCj89MKk7A1HgPiuh+yfj58DodleLXjr67LoxefOzRd9ppbLxWvCg3PrUbDvcIR7
+ GxXa6XKroyCbCjWoDGOGg8gHHPyrir7U9CzpHUp32AWuJnuuzN1lAiJSvaP5zm6SA+iE7HYSO5y
+ uZanjMV0rjQ4WAktLU9WkVoZvc2I4wmRlxkj+RR76yZSgaqOI4=
+X-Received: by 2002:a05:6a00:148c:b0:848:2eac:bfb2 with SMTP id
+ d2e1a72fcca58-86f85108aadmr8149580b3a.13.1789420807122; 
+ Mon, 14 Sep 2026 14:20:07 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-939e811b572sm1090172685a.47.2026.09.14.13.00.30
+ d2e1a72fcca58-86b2a3bc011sm5147086b3a.57.2026.09.14.14.20.04
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 14 Sep 2026 13:00:30 -0700 (PDT)
-From: Andrew Bailey <abailey@iol.unh.edu>
-To: dev@dpdk.org,
-	luca.vizzarro@arm.com,
-	patrickrobb1997@gmail.com
-Cc: knimoji@iol.unh.edu, lylavoie@iol.unh.edu, dladd@iol.unh.edu,
- Andrew Bailey <abailey@iol.unh.edu>
-Subject: [PATCH v3] dts: add ipgre test suite
-Date: Mon, 14 Sep 2026 16:00:19 -0400
-Message-ID: <20260914200019.958925-1-abailey@iol.unh.edu>
-X-Mailer: git-send-email 2.55.0
-In-Reply-To: <20260327180232.443820-1-abailey@iol.unh.edu>
-References: <20260327180232.443820-1-abailey@iol.unh.edu>
+ Mon, 14 Sep 2026 14:20:06 -0700 (PDT)
+Date: Mon, 14 Sep 2026 14:19:56 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Randy L Tice <rtice@cisco.com>
+Cc: dev@dpdk.org, thomas@monjalon.net
+Subject: Re: [PATCH 1/1] eal: add API to get CPU socket ID
+Message-ID: <20260914141956.4d0f59dc@phoenix.local>
+In-Reply-To: <178941409436.3.12421464753538796039@cisco.com>
+References: <178941409436.3.13205580340776837645@cisco.com>
+ <178941409436.3.12421464753538796039@cisco.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,387 +83,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Port over the IP GRE test suite from old DTS to next DTS. This test
-suite covers GRE tunneling and checksum offload verification using this
-protocol.
+On Mon, 14 Sep 2026 15:28:14 -0400
+Randy L Tice <rtice@cisco.com> wrote:
 
-Bugzilla ID: 1480
-
-Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
----
- doc/api/dts/tests.TestSuite_ip_gre.rst |   8 +
- dts/api/testpmd/__init__.py            |  23 ++
- dts/tests/TestSuite_ip_gre.py          | 312 +++++++++++++++++++++++++
- 3 files changed, 343 insertions(+)
- create mode 100644 doc/api/dts/tests.TestSuite_ip_gre.rst
- create mode 100644 dts/tests/TestSuite_ip_gre.py
-
-diff --git a/doc/api/dts/tests.TestSuite_ip_gre.rst b/doc/api/dts/tests.TestSuite_ip_gre.rst
-new file mode 100644
-index 0000000000..e8ce01dc0b
---- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_ip_gre.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+ip_gre Test Suite
-+=================
-+
-+.. automodule:: tests.TestSuite_ip_gre
-+   :members:
-+   :show-inheritance:
-diff --git a/dts/api/testpmd/__init__.py b/dts/api/testpmd/__init__.py
-index 7118f9470f..0466777b5f 100644
---- a/dts/api/testpmd/__init__.py
-+++ b/dts/api/testpmd/__init__.py
-@@ -957,6 +957,29 @@ def set_flow_control(
-                     f"Testpmd failed to set the {flow_ctrl} in port {port}."
-                 )
+> Add rte_cpu_socket_id() so applications can map an OS logical CPU
+> ID to its NUMA socket without requiring an EAL lcore ID.
+> 
+> Existing public socket APIs depend on EAL lcore configuration or the
+> calling thread's EAL state. They do not cover code that needs to look
+> up topology by OS CPU ID, such as building socket memory policy.
+> 
+> Reuse the existing per-OS EAL CPU socket lookup internally, while
+> keeping the eal_cpu_socket_id() helper private to EAL.
+> 
+> Signed-off-by: Randy L Tice <rtice@cisco.com>
+> ---
  
-+    def set_csum_parse_tunnel(self, port: int, on: bool, verify: bool = True) -> None:
-+        """Set parse tunnel on or off in testpmd for a given port.
-+
-+        Args:
-+            port: The ID of the requested port
-+            on: set parse tunnel on if `on` is :data:`True`, otherwise off
-+            verify: if :data:`True`, the output of the command is scanned to verify that
-+                parse tunnel was set successfully
-+
-+        Raises:
-+            InteractiveCommandExecutionError: If `verify` is :data:`True` and the command
-+                fails to execute.
-+
-+        """
-+        output = self.send_command(f"csum parse-tunnel {'on' if on else 'off'} {port}")
-+        if verify and f"Parse tunnel is {'on' if on else 'off'}" not in output:
-+            self._logger.debug(
-+                f"Testpmd failed to set csum parse-tunnel {'on' if on else 'off'} in port {port}"
-+            )
-+            raise InteractiveCommandExecutionError(
-+                f"Testpmd failed to set csum parse-tunnel {'on' if on else 'off'} in port {port}"
-+            )
-+
-     def show_port_flow_info(self, port: int) -> TestPmdPortFlowCtrl | None:
-         """Show port info flow.
- 
-diff --git a/dts/tests/TestSuite_ip_gre.py b/dts/tests/TestSuite_ip_gre.py
-new file mode 100644
-index 0000000000..be2d594931
---- /dev/null
-+++ b/dts/tests/TestSuite_ip_gre.py
-@@ -0,0 +1,312 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2026 University of New Hampshire
-+
-+"""DPDK IP GRE test suite."""
-+
-+from scapy.layers.inet import GRE, IP, TCP, UDP
-+from scapy.layers.inet6 import IPv6
-+from scapy.layers.l2 import Dot1Q, Ether
-+from scapy.layers.sctp import SCTP
-+from scapy.packet import Packet
-+
-+from api.capabilities import (
-+    NicCapability,
-+    requires_nic_capability,
-+)
-+from api.packet import send_packet_and_capture
-+from api.test import verify
-+from api.testpmd import TestPmd
-+from api.testpmd.config import SimpleForwardingModes
-+from api.testpmd.types import (
-+    ChecksumOffloadOptions,
-+    PacketOffloadFlag,
-+    RtePTypes,
-+    TestPmdVerbosePacket,
-+)
-+from framework.test_suite import TestSuite, func_test
-+
-+SRC_ID = "00:00:10:00:00:00"
-+
-+
-+class TestIpGre(TestSuite):
-+    """IP GRE test suite."""
-+
-+    def _check_for_matching_packet(
-+        self, output: list[TestPmdVerbosePacket], flags: RtePTypes
-+    ) -> bool:
-+        """Returns :data:`True` if the packet in verbose output contains all specified flags."""
-+        if output == []:
-+            return False
-+        for packet in output:
-+            if packet.src_mac == SRC_ID and flags & (packet.hw_ptype | packet.sw_ptype) != flags:
-+                return False
-+        return True
-+
-+    def _send_packet_and_verify_flags(
-+        self, expected_flag: RtePTypes, packet: Packet, testpmd: TestPmd
-+    ) -> None:
-+        """Sends a packet to the DUT and verifies the verbose ptype flags."""
-+        send_packet_and_capture(packet=packet)
-+        verbose_output = testpmd.extract_verbose_output(testpmd.stop(verify=True))
-+        valid = self._check_for_matching_packet(output=verbose_output, flags=expected_flag)
-+        verify(valid, f"Packet type flag did not match the expected flag: {expected_flag}.")
-+
-+    def _setup_session(
-+        self, testpmd: TestPmd, expected_and_packets: tuple[list[RtePTypes], list[Packet]]
-+    ) -> None:
-+        """Sets the forwarding and verbose mode of each test case interactive shell session."""
-+        testpmd.set_forward_mode(SimpleForwardingModes.rxonly)
-+        testpmd.set_verbose(level=1)
-+        expected_flags, packet_list = expected_and_packets
-+
-+        for expected_flag, packet in zip(expected_flags, packet_list):
-+            testpmd.start(verify=True)
-+            self._send_packet_and_verify_flags(
-+                expected_flag=expected_flag, packet=packet, testpmd=testpmd
-+            )
-+
-+    def _send_packet_and_verify_checksum(
-+        self, packet: Packet, good_L4: bool, good_L3: bool, testpmd: TestPmd
-+    ) -> None:
-+        """Send packet and verify verbose output matches expected output."""
-+        testpmd.start()
-+        send_packet_and_capture(packet=packet)
-+        verbose_output = testpmd.extract_verbose_output(testpmd.stop())
-+        correct_L3_cksum = correct_L4 = None
-+        for testpmd_packet in verbose_output:
-+            if testpmd_packet.src_mac == SRC_ID:
-+                correct_L3_cksum = (
-+                    PacketOffloadFlag.RTE_MBUF_F_RX_IP_CKSUM_GOOD in testpmd_packet.ol_flags
-+                )
-+                correct_L4 = (
-+                    PacketOffloadFlag.RTE_MBUF_F_RX_L4_CKSUM_GOOD in testpmd_packet.ol_flags
-+                )
-+        verify(
-+            correct_L3_cksum is not None and correct_L4 is not None,
-+            "Test packet was dropped when it should have been received.",
-+        )
-+        verify(correct_L4 == good_L4, "Layer 4 checksum flag did not match expected checksum flag.")
-+        verify(
-+            correct_L3_cksum == good_L3,
-+            "Layer 3 checksum flag did not match expected checksum flag.",
-+        )
-+
-+    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_GRE_TNL_TSO)
-+    @func_test
-+    def gre_ip4_pkt_detect(self) -> None:
-+        """GRE IP4 packet send and detect.
-+
-+        Steps:
-+            * Craft packets using GRE tunneling.
-+            * Send them to the testpmd application.
-+
-+        Verify:
-+            * All packets were received.
-+        """
-+        packets = [
-+            Ether(src=SRC_ID) / IP() / GRE() / IP() / UDP(),
-+            Ether(src=SRC_ID) / IP() / GRE() / IP() / TCP(),
-+            Ether(src=SRC_ID) / IP() / GRE() / IP() / SCTP(),
-+            Ether(src=SRC_ID) / Dot1Q() / IP() / GRE() / IP() / UDP(),
-+            Ether(src=SRC_ID) / Dot1Q() / IP() / GRE() / IP() / TCP(),
-+            Ether(src=SRC_ID) / Dot1Q() / IP() / GRE() / IP() / SCTP(),
-+        ]
-+        flags = [
-+            RtePTypes.L2_ETHER
-+            | RtePTypes.L3_IPV4
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV4
-+            | RtePTypes.INNER_L4_UDP,
-+            RtePTypes.L2_ETHER
-+            | RtePTypes.L3_IPV4
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV4
-+            | RtePTypes.INNER_L4_TCP,
-+            RtePTypes.L2_ETHER
-+            | RtePTypes.L3_IPV4
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV4
-+            | RtePTypes.INNER_L4_SCTP,
-+            RtePTypes.L2_ETHER_QINQ
-+            | RtePTypes.L3_IPV4
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV4
-+            | RtePTypes.INNER_L4_UDP,
-+            RtePTypes.L2_ETHER_QINQ
-+            | RtePTypes.L3_IPV4
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV4
-+            | RtePTypes.INNER_L4_TCP,
-+            RtePTypes.L2_ETHER_QINQ
-+            | RtePTypes.L3_IPV4
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV4
-+            | RtePTypes.INNER_L4_SCTP,
-+        ]
-+        with TestPmd() as testpmd:
-+            testpmd.set_forward_mode(SimpleForwardingModes.rxonly)
-+            self._setup_session(testpmd=testpmd, expected_and_packets=(flags, packets))
-+
-+    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_GRE_TNL_TSO)
-+    @func_test
-+    def gre_ip6_outer_ip4_inner_pkt_detect(self) -> None:
-+        """GRE IPv6 outer and IPv4 inner send and detect.
-+
-+        Steps:
-+            * Craft packets using GRE tunneling.
-+            * Send them to the testpmd application.
-+
-+        Verify:
-+            * All packets were received.
-+        """
-+        packets = [
-+            Ether(src=SRC_ID) / IPv6() / GRE() / IP() / UDP(),
-+            Ether(src=SRC_ID) / IPv6() / GRE() / IP() / TCP(),
-+            Ether(src=SRC_ID) / IPv6() / GRE() / IP() / SCTP(),
-+            Ether(src=SRC_ID) / Dot1Q() / IPv6() / GRE() / IP() / UDP(),
-+            Ether(src=SRC_ID) / Dot1Q() / IPv6() / GRE() / IP() / TCP(),
-+            Ether(src=SRC_ID) / Dot1Q() / IPv6() / GRE() / IP() / SCTP(),
-+        ]
-+        flags = [
-+            RtePTypes.L2_ETHER
-+            | RtePTypes.L3_IPV6
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV4
-+            | RtePTypes.INNER_L4_UDP,
-+            RtePTypes.L2_ETHER
-+            | RtePTypes.L3_IPV6
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV4
-+            | RtePTypes.INNER_L4_TCP,
-+            RtePTypes.L2_ETHER
-+            | RtePTypes.L3_IPV6
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV4
-+            | RtePTypes.INNER_L4_SCTP,
-+            RtePTypes.L2_ETHER_QINQ
-+            | RtePTypes.L3_IPV6
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV4
-+            | RtePTypes.INNER_L4_UDP,
-+            RtePTypes.L2_ETHER_QINQ
-+            | RtePTypes.L3_IPV6
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV4
-+            | RtePTypes.INNER_L4_TCP,
-+            RtePTypes.L2_ETHER_QINQ
-+            | RtePTypes.L3_IPV6
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV4
-+            | RtePTypes.INNER_L4_SCTP,
-+        ]
-+        with TestPmd() as testpmd:
-+            testpmd.set_forward_mode(SimpleForwardingModes.rxonly)
-+            self._setup_session(testpmd=testpmd, expected_and_packets=(flags, packets))
-+
-+    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_GRE_TNL_TSO)
-+    @func_test
-+    def gre_ip6_outer_ip6_inner_pkt_detect(self) -> None:
-+        """GRE IPv6 outer and inner send and detect.
-+
-+        Steps:
-+            * Craft packets using GRE tunneling.
-+            * Send them to the testpmd application.
-+
-+        Verify:
-+            * All packets were received.
-+        """
-+        packets = [
-+            Ether(src=SRC_ID) / IPv6() / GRE() / IPv6() / UDP(),
-+            Ether(src=SRC_ID) / IPv6() / GRE() / IPv6() / TCP(),
-+            Ether(src=SRC_ID) / IPv6() / GRE() / IPv6() / SCTP(),
-+            Ether(src=SRC_ID) / Dot1Q() / IPv6() / GRE() / IPv6() / UDP(),
-+            Ether(src=SRC_ID) / Dot1Q() / IPv6() / GRE() / IPv6() / TCP(),
-+            Ether(src=SRC_ID) / Dot1Q() / IPv6() / GRE() / IPv6() / SCTP(),
-+        ]
-+        flags = [
-+            RtePTypes.L2_ETHER
-+            | RtePTypes.L3_IPV6
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV6
-+            | RtePTypes.INNER_L4_UDP,
-+            RtePTypes.L2_ETHER
-+            | RtePTypes.L3_IPV6
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV6
-+            | RtePTypes.INNER_L4_TCP,
-+            RtePTypes.L2_ETHER
-+            | RtePTypes.L3_IPV6
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV6
-+            | RtePTypes.INNER_L4_SCTP,
-+            RtePTypes.L2_ETHER_QINQ
-+            | RtePTypes.L3_IPV6
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV6
-+            | RtePTypes.INNER_L4_UDP,
-+            RtePTypes.L2_ETHER_QINQ
-+            | RtePTypes.L3_IPV6
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV6
-+            | RtePTypes.INNER_L4_TCP,
-+            RtePTypes.L2_ETHER_QINQ
-+            | RtePTypes.L3_IPV6
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV6
-+            | RtePTypes.INNER_L4_SCTP,
-+        ]
-+        with TestPmd() as testpmd:
-+            testpmd.set_forward_mode(SimpleForwardingModes.rxonly)
-+            self._setup_session(testpmd=testpmd, expected_and_packets=(flags, packets))
-+
-+    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_OUTER_IPV4_CKSUM)
-+    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_IPV4_CKSUM)
-+    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_TCP_CKSUM)
-+    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_UDP_CKSUM)
-+    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_SCTP_CKSUM)
-+    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_GRE_TNL_TSO)
-+    @func_test
-+    def gre_checksum_offload(self) -> None:
-+        """GRE checksum offload test.
-+
-+        Steps:
-+            * Craft packets using GRE tunneling.
-+            * Alter checksum of each packet.
-+            * Send packets to the testpmd application.
-+
-+        Verify:
-+            * All packets were received with the expected checksum flags.
-+        """
-+        packets = [
-+            Ether(src=SRC_ID) / IP(chksum=0x0) / GRE() / IP() / TCP(),
-+            Ether(src=SRC_ID) / IP() / GRE() / IP() / TCP(chksum=0x0),
-+            Ether(src=SRC_ID) / IP() / GRE() / IP() / UDP(chksum=0xFFFF),
-+            Ether(src=SRC_ID) / IP() / GRE() / IP() / SCTP(chksum=0x0),
-+        ]
-+        good_l4_l3 = [
-+            (False, True),
-+            (False, True),
-+            (False, True),
-+            (False, True),
-+        ]
-+        with TestPmd() as testpmd:
-+            testpmd.set_forward_mode(SimpleForwardingModes.csum)
-+            testpmd.set_verbose(1)
-+            testpmd.csum_set_hw(
-+                layers=ChecksumOffloadOptions.ip
-+                | ChecksumOffloadOptions.udp
-+                | ChecksumOffloadOptions.sctp
-+                | ChecksumOffloadOptions.outer_ip
-+                | ChecksumOffloadOptions.tcp,
-+                port_id=0,
-+            )
-+            testpmd.set_csum_parse_tunnel(port=0, on=True)
-+            testpmd.start_all_ports()
-+            testpmd.start()
-+            for i in range(len(packets)):
-+                self._send_packet_and_verify_checksum(
-+                    packets[i],
-+                    good_l4_l3[i][0],
-+                    good_l4_l3[i][1],
-+                    testpmd,
-+                )
--- 
-2.55.0
+
+New API's should be marked as experimental, so there is no ABI contract.
+The return value of eal_cpu_socket_id() has no way with that signature
+to return error. If given a bogus cpu, that code returns 0.
+
+New functions in DPDK need to have a matching test. Somewhere in
+the existing dpdk-test would be good.
+
+There was a bigger patch series to give a full topology API to
+deal with more complex chip arch; but it seems to have stalled.
 
