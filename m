@@ -2,60 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65343C88E64
-	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 08:18:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1ED0C88E50
+	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 08:29:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E4CF340A70;
-	Mon, 14 Sep 2026 10:17:55 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 71D14402DF
- for <dev@dpdk.org>; Mon, 14 Sep 2026 10:17:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1789373874;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=Hrp15elGg4t0W9bh9+PI9y5f58iX5vi+R9/NaTgVJUg=;
- b=VolhXTwh4g1MZ6p91dZm1a9FBOzt3P4eoA3/mRn2YRr31DQ6VdMU+SwUtQEGjhJKlDJ7B3
- 9DRI0A9mybDqGiptvWjw/UDsjWE4vbSzXpTab3r7sPrc/nNhCuI6T0DxL8eRbTw10NTGs6
- o41Xho/8oQ+fRXAERsud6i7heuMvt5c=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-373-Y_2UCPhkMzuc0tT3PHWiiw-1; Mon,
- 14 Sep 2026 04:17:50 -0400
-X-MC-Unique: Y_2UCPhkMzuc0tT3PHWiiw-1
-X-Mimecast-MFC-AGG-ID: Y_2UCPhkMzuc0tT3PHWiiw_1789373869
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 8E94F180135A; Mon, 14 Sep 2026 08:17:49 +0000 (UTC)
-Received: from dmarchan.redhat.corp
- (headnet05.pony-001.prod.iad2.dc.redhat.com [10.2.32.117])
- by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id C83BE1956086; Mon, 14 Sep 2026 08:17:47 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
-To: dev@dpdk.org
-Cc: ciara.loftus@intel.com, anatoly.burakov@intel.com, rjarry@redhat.com,
- cfontain@redhat.com, Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v7 4/4] net/iavf: accept up to 32k unicast MAC addresses
-Date: Mon, 14 Sep 2026 10:17:25 +0200
-Message-ID: <20260914081725.1097704-4-david.marchand@redhat.com>
-In-Reply-To: <20260914081725.1097704-1-david.marchand@redhat.com>
-References: <20260403091836.1073484-1-david.marchand@redhat.com>
- <20260914081725.1097704-1-david.marchand@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 19360402D2;
+	Mon, 14 Sep 2026 10:29:51 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56])
+ by mails.dpdk.org (Postfix) with ESMTP id 54545402C4;
+ Mon, 14 Sep 2026 10:29:49 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=EzfeEb3I9dREDXAYxg/PIaQY3YWGhDbHP5yv9ZeXPdc=;
+ b=WFOF84IL3W5cZQS+7RiUsNHtSdyXrDlokNZEvYa/8d8izNI2CbpxxwWkekKmBzKbYSQj7dGS3
+ Wjtl/qDLFxM6Sm67YyMTX08je/esWaInQWvzFRyPb1vDzvt6Dfk8Z41Zwe09D8s7oFmOckcdsF/
+ T9A7gU5Ovav3JPdp3d1+SC0=
+Received: from mail.maildlp.com (unknown [172.18.224.107])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4hjywg6C0qzJ46DX;
+ Mon, 14 Sep 2026 16:28:51 +0800 (CST)
+Received: from dubpeml500002.china.huawei.com (unknown [7.214.145.83])
+ by mail.maildlp.com (Postfix) with ESMTPS id C11D940584;
+ Mon, 14 Sep 2026 16:29:42 +0800 (CST)
+Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
+ dubpeml500002.china.huawei.com (7.214.145.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Mon, 14 Sep 2026 09:29:42 +0100
+Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
+ dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.2562.046; 
+ Mon, 14 Sep 2026 09:29:42 +0100
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: Bruce Richardson <bruce.richardson@intel.com>, "dev@dpdk.org"
+ <dev@dpdk.org>
+CC: "stable@dpdk.org" <stable@dpdk.org>
+Subject: RE: [PATCH] eal: fix pointer add/sub macros for large offsets values
+Thread-Topic: [PATCH] eal: fix pointer add/sub macros for large offsets values
+Thread-Index: AQHdQg0LVX5yQmHzGEKGObXHlronG7bNvt2Q
+Date: Mon, 14 Sep 2026 08:29:42 +0000
+Message-ID: <2ef8efd39dd54b22ae0c007dfa397a99@huawei.com>
+References: <20260911164030.2465043-1-bruce.richardson@intel.com>
+In-Reply-To: <20260911164030.2465043-1-bruce.richardson@intel.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.48.159.26]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: cThN35sYePPWP05CGDuHewrY5Im36lM_0WM2pzZK-FY_1789373869
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -69,145 +62,52 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-E810 hardware provides 32k switch lookups.
-Thanks to this, it is possible to allow a lot more secondary mac
-addresses than what is possible today.
 
-In practice, the maximum number of macs available per port may be lower
-and depends on usage by other (trusted?) VFs on the same PF.
-There is no way to figure out this limit but to try adding a mac address
-and get an error from the PF driver.
 
-Mailbox exchanges are limited to IAVF_AQ_BUF_SZ, segment messages
-accordingly.
+> The macros for adding or subtracting from pointers cast the pointer type
+> to uintptr_t before doing the arithmetic. However, for 32-bit builds, if
+> the value being added or subtracted is larger than uintptr_t, then we
+> get errors when casting back to "void *" type.
 
-Since unicast and multicast addresses arrays are sized with two
-different constants, prefer RTE_DIM() whenever possible.
+But probably error here in such case is a good thing, as it flags an overfl=
+ow?
+Can't user explicitly convert x then to 32-bit type, if that was an intenti=
+on?
 
-Signed-off-by: David Marchand <david.marchand@redhat.com>
----
-Changes since v6:
-- reused helper added in previous commit,
-- used RTE_DIM() instead of macro constants,
-
-Changes since v5:
-- separated from series that went in next-net,
-- rebased,
-
-Changes since v4:
-- rebased,
-
-Changes since v2:
-- added an entry in release notes,
-- removed unneeded temp variable,
-
-Changes since v1:
-- fixed buffer overflow on mailbox messages during port restart/VF reset,
-
----
- doc/guides/rel_notes/release_26_11.rst |  4 ++++
- drivers/net/intel/iavf/iavf.h          |  7 ++++---
- drivers/net/intel/iavf/iavf_ethdev.c   |  7 +++----
- drivers/net/intel/iavf/iavf_vchnl.c    | 10 ++++++++--
- 4 files changed, 19 insertions(+), 9 deletions(-)
-
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 6c29513041..5a4c7d815d 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -64,6 +64,10 @@ New Features
-   * Renamed the ``enable_ptype_lldp`` devarg to ``enable_lldp``.
-     The old name is no longer accepted.
- 
-+  * Increased the maximum number of secondary unicast MAC addresses
-+    from 64 to 32k.
-+    This increases a VF port memory footprint by ~192kB.
-+
- * **Updated Intel ixgbe driver.**
- 
-   Added ``fdir_buffer_size`` devarg to select the Flow Director table size
-diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
-index 34b9b4ad94..f3f2b4ae51 100644
---- a/drivers/net/intel/iavf/iavf.h
-+++ b/drivers/net/intel/iavf/iavf.h
-@@ -32,7 +32,8 @@
- #define IAVF_IRQ_MAP_NUM_PER_BUF	 128
- #define IAVF_RXTX_QUEUE_CHUNKS_NUM	 2
- 
--#define IAVF_NUM_MACADDR_MAX      64
-+#define IAVF_UC_MACADDR_MAX      32768
-+#define IAVF_MC_MACADDR_MAX      64
- 
- #define IAVF_DEV_WATCHDOG_PERIOD     2000 /* microseconds, set 0 to disable*/
- 
-@@ -256,10 +257,10 @@ struct iavf_info {
- 	uint32_t link_speed;
- 
- 	/* Unicast addrs */
--	struct rte_ether_addr mac_addrs[IAVF_NUM_MACADDR_MAX];
-+	struct rte_ether_addr mac_addrs[IAVF_UC_MACADDR_MAX];
- 
- 	/* Multicast addrs */
--	struct rte_ether_addr mc_addrs[IAVF_NUM_MACADDR_MAX];
-+	struct rte_ether_addr mc_addrs[IAVF_MC_MACADDR_MAX];
- 	uint16_t mc_addrs_num;   /* Multicast mac addresses number */
- 
- 	struct iavf_vsi vsi;
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index f7aeac8c83..2d055e6f5b 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -411,10 +411,9 @@ iavf_set_mc_addr_list(struct rte_eth_dev *dev,
- 		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
- 	int err, ret;
- 
--	if (mc_addrs_num > IAVF_NUM_MACADDR_MAX) {
--		PMD_DRV_LOG(ERR,
--			    "can't add more than a limited number (%u) of addresses.",
--			    (uint32_t)IAVF_NUM_MACADDR_MAX);
-+	if (mc_addrs_num > RTE_DIM(vf->mc_addrs)) {
-+		PMD_DRV_LOG(ERR, "can't add more than a limited number (%u) of addresses.",
-+			(unsigned int)RTE_DIM(vf->mc_addrs));
- 		return -EINVAL;
- 	}
- 
-diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
-index decfae3182..418a7e897e 100644
---- a/drivers/net/intel/iavf/iavf_vchnl.c
-+++ b/drivers/net/intel/iavf/iavf_vchnl.c
-@@ -1712,8 +1712,8 @@ iavf_send_eth_addr_list(struct iavf_adapter *adapter, const char *caller,
- void
- iavf_add_del_secondary_mac_addr(struct iavf_adapter *adapter, bool add)
- {
-+	uint8_t cmd_buffer[IAVF_ETH_ADDR_CMD_SIZE(IAVF_ETH_ADDR_PER_REQ)] = {0};
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
--	uint8_t cmd_buffer[IAVF_ETH_ADDR_CMD_SIZE(RTE_DIM(vf->mac_addrs))] = {0};
- 	struct virtchnl_ether_addr_list *list;
- 
- 	list = (struct virtchnl_ether_addr_list *)cmd_buffer;
-@@ -1730,6 +1730,12 @@ iavf_add_del_secondary_mac_addr(struct iavf_adapter *adapter, bool add)
- 			memcpy(vc_addr->addr, addr->addr_bytes, sizeof(addr->addr_bytes));
- 			vc_addr->type = VIRTCHNL_ETHER_ADDR_EXTRA;
- 		}
-+
-+		if (list->num_elements == IAVF_ETH_ADDR_PER_REQ) {
-+			if (iavf_send_eth_addr_list(adapter, __func__, list, add))
-+				return;
-+			list->num_elements = 0;
-+		}
- 	}
- 
- 	if (list->num_elements != 0)
-@@ -2308,8 +2314,8 @@ iavf_add_del_mc_addr_list(struct iavf_adapter *adapter,
- 			struct rte_ether_addr *mc_addrs,
- 			uint32_t mc_addrs_num, bool add)
- {
--	uint8_t cmd_buffer[IAVF_ETH_ADDR_CMD_SIZE(IAVF_NUM_MACADDR_MAX)] = {0};
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
-+	uint8_t cmd_buffer[IAVF_ETH_ADDR_CMD_SIZE(RTE_DIM(vf->mc_addrs))] = {0};
- 	struct virtchnl_ether_addr_list *list;
- 	uint32_t i;
- 
--- 
-2.54.0
+> We fix this by casting
+> the result to uintptr_t before casting to pointer.
+>=20
+> Fixes: af75078fece3 ("first public release")
+> Cc: stable@dpdk.org
+>=20
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+> ---
+>  lib/eal/include/rte_common.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/lib/eal/include/rte_common.h b/lib/eal/include/rte_common.h
+> index f872d3eabb..c17f50e2fd 100644
+> --- a/lib/eal/include/rte_common.h
+> +++ b/lib/eal/include/rte_common.h
+> @@ -572,12 +572,12 @@ static void __attribute__((destructor(RTE_PRIO(prio=
+)),
+> used)) func(void)
+>  /**
+>   * add a byte-value offset to a pointer
+>   */
+> -#define RTE_PTR_ADD(ptr, x) ((void*)((uintptr_t)(ptr) + (x)))
+> +#define RTE_PTR_ADD(ptr, x) ((void *)(uintptr_t)((uintptr_t)(ptr) + (x))=
+)
+>=20
+>  /**
+>   * subtract a byte-value offset from a pointer
+>   */
+> -#define RTE_PTR_SUB(ptr, x) ((void *)((uintptr_t)(ptr) - (x)))
+> +#define RTE_PTR_SUB(ptr, x) ((void *)(uintptr_t)((uintptr_t)(ptr) - (x))=
+)
+>=20
+>  /**
+>   * get the difference between two pointer values, i.e. how far apart
+> --
+> 2.53.0
 
