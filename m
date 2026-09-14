@@ -2,70 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BFA8C88E50
-	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 05:50:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB0B3C88E67
+	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 05:50:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D04D340A75;
-	Mon, 14 Sep 2026 07:49:48 +0200 (CEST)
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com
- [209.85.215.181])
- by mails.dpdk.org (Postfix) with ESMTP id E928940691
- for <dev@dpdk.org>; Mon, 14 Sep 2026 07:49:47 +0200 (CEST)
-Received: by mail-pg1-f181.google.com with SMTP id
- 41be03b00d2f7-cbedd5aece4so2609474a12.0
- for <dev@dpdk.org>; Sun, 13 Sep 2026 22:49:47 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D1B1B40693;
+	Mon, 14 Sep 2026 07:49:51 +0200 (CEST)
+Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com
+ [74.125.227.140])
+ by mails.dpdk.org (Postfix) with ESMTP id E1E3940A4B
+ for <dev@dpdk.org>; Mon, 14 Sep 2026 07:49:50 +0200 (CEST)
+Received: by mail-pj2-f12.google.com with SMTP id
+ 98e67ed59e1d1-39b9184fa80so1569036a91.2
+ for <dev@dpdk.org>; Sun, 13 Sep 2026 22:49:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789364987;
- x=1789969787; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789364990;
+ x=1789969790; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=PWCxBJsidyWJCKf4Q+oX1YIwY3/qHy732Lb2HNNQASc=;
- b=D6x6aqftlzDGHWE07+cXV2QJ4C6NBu0Mto0nnHRyQYTqpkubApNwUviDF7RIOanxcJ
- 1pBV+VNzfMf3uMFz2/3zilYhNA+KVL4Bby0hAEQFqHJdscYGPmVwMDyPB3eKcgQ1ht6m
- duZD7Z9OhsKgs9zeBXcSDaC9ac3DIgYdxZzk5IDbfyC1rx+sJEmI62pllnri3zdxD4hN
- 8TjZVfeX0Snyb4TpMxIcav3ezKP5kyxPwHZpPqc3aPtwd0SHqaaVFedGlz7iNMAb8E6Z
- 7so1SjFrgjQfOIMB6GrEMJnKt5mTI9exsuSNIv4GGBknOscb7JHCRSWYgLX3YXX8pKbb
- rELA==
+ bh=3yXRH9gAqEJW3IPR0K2qKQbXFFTby7VEkIyx95jLSbE=;
+ b=MFTi+F1yWuEGGbFczdNVpmqxMCiAzyVATX+kgj+v0Puhscv7rUckpGvVR16AggWNb0
+ JKaH0lU92yHZMm8v5dlD1XdELunMOHCeWLNW8OeWdyTY2p6mzvvDf2xyNC8GLaTp/zqG
+ KiWaDZf4jIRWGeHsIoCSdTGNM1QTo79A7EObxSAyYakRqJJa+MLpzWINzta3+ZhCy4Ty
+ tmibnfZdR5UfUjlZnu4vVqVS7P2s2ez/UsNGGqntibWTlN0iMQOJhPB4hDVw19WFZTN4
+ XvfGtFwIUpCEC3vWz8XirloM2x7O6hLtI+T9KtbGgzviswWiOmBccmGEH/7E+7w2kOVu
+ Y0jA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1789364987; x=1789969787;
+ d=1e100.net; s=20251104; t=1789364990; x=1789969790;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=PWCxBJsidyWJCKf4Q+oX1YIwY3/qHy732Lb2HNNQASc=;
- b=NCc13uL6cwSecQl4zSqLacb9b9s3y6FQCD7BTiElWl2b3frTvhOt/v3Q+WDzyANr7U
- fBoHq+U98lp2/cgrtvS1vaYjofYqrijkP5wbsaZY0DbZVzKw1hZC/ORI0lzCEJJnRETk
- P1HSYdAbBzD7Xzil0+8JY/zl4NJ4tqseGeSk6B7H9LSXjmSs0K2GT+nsk90UgVksETvi
- F++jlJxKLryu1s4X5aW657+iLSJq/JTVmyvquVZzYEQPipZitMWG9f59rBG9nExbmB6W
- /t+eQdqjyUqYIsKZ7RG4oGTr6NwqoZ3nlN9RS4a8q6Hja2UxRrvF2HzD+VLocK0M06Pr
- xyGg==
-X-Gm-Message-State: AFuF++n1Bna4sY7C65isZD60md0i2nV5q2iV2w3lLKupOMfT1m68mPzF
- YISVZ0rudBqWxdqmsKtyb3SfuAslatlYTE+W4ZaxDZpxxo7lHDH4VBjbswBLeeku/rWMTu/MpEJ
- wP1gY1zI=
-X-Gm-Gg: AYBFou2e20C6Mn63d68/Ti3smN2Yl/+ZG1ZafXgFEtPEohdvRzq51R/EzZkvLhhcjcz
- qERHEQ79k5ILlz7EuEnnqBBpl05398/9zeCfP1Eyca+F7Pv0kcH2NygKxcz+jMIceSwJ0P/Ztui
- U9WOBEV5G04dP/b/vFkV5HTsEPP/+bBua9UHispgmOCEoYZ721p2TNRJXoxCnOnhxqsd61BqRtX
- OJQG78qovcJ21sZSm2j5QIQ5YcO2MzFV3GxHiwzielC3YA1mj7OkdYQFLnlDddRE+igmi+aN0R9
- ZEltwfrOy/ZbnofoJ7a+Cxj8JFAUNldr/cEffVga9bqvcW+d5QbKpe9/65onUST1n3ZJnyWQdcF
- KYnnwyHXeqLwqhb2AGzeQtSVR/INsFUQK95xfrI21C2RAfOVvmj7pDQ4CwRNbdBCpgF5KvcFIdq
- tuqbV4x6E9GD6wl9WrVeTa+BNAGLPzasTrWS5rhhdXB6GSKiSPIVUTbQ3SZqr0FJlIVEehQgQ6M
- VP8pA2/dD5MjfuzZ36QxHX0+I1+kwnuVQ4wKw==
-X-Received: by 2002:a17:90b:380f:b0:39d:ba21:cc5a with SMTP id
- 98e67ed59e1d1-39dd54ab676mr6774242a91.10.1789364986972; 
- Sun, 13 Sep 2026 22:49:46 -0700 (PDT)
+ bh=3yXRH9gAqEJW3IPR0K2qKQbXFFTby7VEkIyx95jLSbE=;
+ b=NDh7WH41L2WGcoRXSGZ4cOjJcW/ut7SLx7cxESBjxvIgsBu9hyLCSaCk/sq+MI/8gs
+ qTti5/e8PK5atOjg1uiBJmrWJcStRjwEo6py/eynHN5nSlbY7d3yrSf+Zcp09PzhnMUP
+ IfRZKPjCsBwHcKSmR/gK4XQi1CjD0bnJU/4ZQekopgCwb2521kLkVcupVAyMJucLI7Lt
+ 8zTFXARsXiyS/JjSiFSUaTU9Dg9/2Y+R+RJ9GET7yWjJcEVtyVFEQbXXPIXdKJjbUdNh
+ MV0QyNaBZ5Yevsxp9lin8WHXhVCcUyZeD264wpzEUrEt7FDhsFx0ARDW4ejiHEsGm6d1
+ zEWg==
+X-Gm-Message-State: AFuF++lFkTH4ICZa+5S4/mIAaKK0vYefBhyCN14Vl+0MChev75Ortwv9
+ b+rA3cGmfiKRJcVOEcF/hCgwEzTARje3imQWzcWIkQGRm95Mt9BE6urZSYl+JWmoXdrN+DuPLTT
+ v5oEYMQk=
+X-Gm-Gg: AYBFou0Eq/aCQmXbZUeFoJ4x4zLUCRgBG2xOR4Ch8/aFrQonw9nPVxotxuX1YDVL59A
+ FJW1OsbmW/EMzJjL5WkohcFldqmAIwRWxSmjZVbBRr1eAOgBHd0/K53UJQDL4yxcs5o9ey+ZqXS
+ ByMjP8/xR6R+87E9pEx7bXHMtPu1YMmvR1yN/D8qSxUxqJ/CSH/dcncbN/w7N8YwOA8h9E/xcZC
+ U0hyJm6pYuFVpUc8Zwvz0y69LlqD11XkScubwXqVmxGr80ujlNXTyX2En5IEoRwFssoD+modY4f
+ AkYr4bUfMcuTJM8A0KN2GMRvSdzmVHPTTPQRdX6KzN2h3UnK0+8Cb4oXckJjfbQrQMNG3/jfOyr
+ ov5wkjiiYPeW83qPK+ZASjzY2uYp53nrtwvpxoKpB7KyRxsfMO7LQ/dfPT6y48pnZIUskoHrq6Z
+ kYNjMzvA+m0NhaKjv9fYHDlvLdnU6IEHErmwcjoWFZH8Tx347qH0V5GmmQu1Nly6QYKe1W56Nve
+ YPOB/JQSmP7yjiVOF98Hgj0c9YnoqvSb7j8hQ==
+X-Received: by 2002:a17:90b:3ecd:b0:39d:ba21:fd90 with SMTP id
+ 98e67ed59e1d1-39dec04f01emr2205786a91.16.1789364989937; 
+ Sun, 13 Sep 2026 22:49:49 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39d95864b4fsm19794492a91.15.2026.09.13.22.49.44
+ 98e67ed59e1d1-39d95864b4fsm19794492a91.15.2026.09.13.22.49.47
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 13 Sep 2026 22:49:46 -0700 (PDT)
+ Sun, 13 Sep 2026 22:49:49 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Maxime Coquelin <maxime.coquelin@redhat.com>,
- Xiao Wang <xiao.w.wang@intel.com>
-Subject: [PATCH 08/62] vdpa/ifc: use kvargs numeric helpers
-Date: Sun, 13 Sep 2026 22:46:39 -0700
-Message-ID: <20260914054912.755403-9-stephen@networkplumber.org>
+ Cristian Dumitrescu <cristian.dumitrescu@intel.com>
+Subject: [PATCH 09/62] net/softnic: use kvargs numeric helpers
+Date: Sun, 13 Sep 2026 22:46:40 -0700
+Message-ID: <20260914054912.755403-10-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260914054912.755403-1-stephen@networkplumber.org>
 References: <20260914054912.755403-1-stephen@networkplumber.org>
@@ -84,86 +83,104 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-open_int() stores through a uint16_t pointer but both callers pass the
-address of an int, so only two bytes of a four byte object are written.
-It also checks errno without resetting it first, and never checks the
-end pointer, so "vdpa=foo" is silently taken as zero.
+get_uint32() and get_uint16() check neither errno nor the end pointer,
+so a malformed value is silently taken as zero and an out of range one
+is truncated into the target.
 
-Both arguments are used as booleans, so store them as bool and use
-rte_kvargs_handle_bool.
+The service cores argument is only ever tested for truth, so make it a
+bool. It was declared int but written through a uint32_t pointer.
 
-The booleans use rte_kvargs_process_opt(), so that a bare key with no
+The boolean uses rte_kvargs_process_opt(), so that a bare key with no
 value enables the option.
-
-Bugzilla ID: 2040
-Fixes: 40ef35f4a504 ("net/ifc: detect if VDPA mode is specified")
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/vdpa/ifc/ifcvf_vdpa.c | 29 +++++++----------------------
- 1 file changed, 7 insertions(+), 22 deletions(-)
+ drivers/net/softnic/rte_eth_softnic.c         | 30 +++----------------
+ .../net/softnic/rte_eth_softnic_internals.h   |  3 +-
+ 2 files changed, 6 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/vdpa/ifc/ifcvf_vdpa.c b/drivers/vdpa/ifc/ifcvf_vdpa.c
-index f319d455ba..1381f7cc9a 100644
---- a/drivers/vdpa/ifc/ifcvf_vdpa.c
-+++ b/drivers/vdpa/ifc/ifcvf_vdpa.c
-@@ -1480,21 +1480,6 @@ static struct rte_vdpa_dev_ops ifcvf_net_ops = {
- 	.get_dev_type = ifcvf_get_device_type,
- };
+diff --git a/drivers/net/softnic/rte_eth_softnic.c b/drivers/net/softnic/rte_eth_softnic.c
+index 868e194509..81688d1dcf 100644
+--- a/drivers/net/softnic/rte_eth_softnic.c
++++ b/drivers/net/softnic/rte_eth_softnic.c
+@@ -344,28 +344,6 @@ get_string(const char *key __rte_unused, const char *value, void *extra_args)
+ 	return 0;
+ }
  
--static inline int
--open_int(const char *key __rte_unused, const char *value, void *extra_args)
+-static int
+-get_uint32(const char *key __rte_unused, const char *value, void *extra_args)
 -{
--	uint16_t *n = extra_args;
--
--	if (value == NULL || extra_args == NULL)
+-	if (!value || !extra_args)
 -		return -EINVAL;
 -
--	*n = (uint16_t)strtoul(value, NULL, 0);
--	if (*n == USHRT_MAX && errno == ERANGE)
--		return -1;
+-	*(uint32_t *)extra_args = strtoull(value, NULL, 0);
 -
 -	return 0;
 -}
 -
- static int16_t
- ifcvf_pci_get_device_type(struct rte_pci_device *pci_dev)
+-static int
+-get_uint16(const char *key __rte_unused, const char *value, void *extra_args)
+-{
+-	if (!value || !extra_args)
+-		return -EINVAL;
+-
+-	*(uint16_t *)extra_args = strtoull(value, NULL, 0);
+-
+-	return 0;
+-}
+-
+ static int
+ pmd_parse_args(struct pmd_params *p, const char *params)
  {
-@@ -1635,8 +1620,8 @@ ifcvf_pci_probe(struct rte_pci_driver *pci_drv __rte_unused,
- 	uint64_t features;
- 	struct ifcvf_internal *internal = NULL;
- 	struct internal_list *list = NULL;
--	int vdpa_mode = 0;
--	int sw_fallback_lm = 0;
-+	bool vdpa_mode = false;
-+	bool sw_fallback_lm = false;
- 	struct rte_kvargs *kvlist = NULL;
- 	int ret = 0;
- 	int16_t device_id;
-@@ -1662,9 +1647,9 @@ ifcvf_pci_probe(struct rte_pci_driver *pci_drv __rte_unused,
- 		return 1;
- 	}
- 
--	ret = rte_kvargs_process(kvlist, IFCVF_VDPA_MODE, &open_int,
--			&vdpa_mode);
--	if (ret < 0 || vdpa_mode == 0) {
-+	ret = rte_kvargs_process_opt(kvlist, IFCVF_VDPA_MODE,
-+			rte_kvargs_handle_bool, &vdpa_mode);
-+	if (ret < 0 || !vdpa_mode) {
- 		rte_kvargs_free(kvlist);
- 		return 1;
- 	}
-@@ -1756,8 +1741,8 @@ ifcvf_pci_probe(struct rte_pci_driver *pci_drv __rte_unused,
- 	list->internal = internal;
- 
- 	if (rte_kvargs_count(kvlist, IFCVF_SW_FALLBACK_LM)) {
--		ret = rte_kvargs_process(kvlist, IFCVF_SW_FALLBACK_LM,
--				&open_int, &sw_fallback_lm);
-+		ret = rte_kvargs_process_opt(kvlist, IFCVF_SW_FALLBACK_LM,
-+				rte_kvargs_handle_bool, &sw_fallback_lm);
+@@ -412,7 +390,7 @@ pmd_parse_args(struct pmd_params *p, const char *params)
+ 	/* Connection listening port (optional) */
+ 	if (rte_kvargs_count(kvlist, PMD_PARAM_CONN_PORT) == 1) {
+ 		ret = rte_kvargs_process(kvlist, PMD_PARAM_CONN_PORT,
+-			&get_uint16, &p->conn_port);
++			rte_kvargs_handle_u16, &p->conn_port);
  		if (ret < 0)
- 			goto error;
+ 			goto out_free;
  	}
+@@ -420,15 +398,15 @@ pmd_parse_args(struct pmd_params *p, const char *params)
+ 	/* CPU ID (optional) */
+ 	if (rte_kvargs_count(kvlist, PMD_PARAM_CPU_ID) == 1) {
+ 		ret = rte_kvargs_process(kvlist, PMD_PARAM_CPU_ID,
+-			&get_uint32, &p->cpu_id);
++			rte_kvargs_handle_u32, &p->cpu_id);
+ 		if (ret < 0)
+ 			goto out_free;
+ 	}
+ 
+ 	/* Service cores (optional) */
+ 	if (rte_kvargs_count(kvlist, PMD_PARAM_SC) == 1) {
+-		ret = rte_kvargs_process(kvlist, PMD_PARAM_SC,
+-			&get_uint32, &p->sc);
++		ret = rte_kvargs_process_opt(kvlist, PMD_PARAM_SC,
++			rte_kvargs_handle_bool, &p->sc);
+ 		if (ret < 0)
+ 			goto out_free;
+ 	}
+diff --git a/drivers/net/softnic/rte_eth_softnic_internals.h b/drivers/net/softnic/rte_eth_softnic_internals.h
+index d3975dad10..a1f309afb1 100644
+--- a/drivers/net/softnic/rte_eth_softnic_internals.h
++++ b/drivers/net/softnic/rte_eth_softnic_internals.h
+@@ -5,6 +5,7 @@
+ #ifndef __INCLUDE_RTE_ETH_SOFTNIC_INTERNALS_H__
+ #define __INCLUDE_RTE_ETH_SOFTNIC_INTERNALS_H__
+ 
++#include <stdbool.h>
+ #include <stddef.h>
+ #include <stdint.h>
+ #include <sys/queue.h>
+@@ -34,7 +35,7 @@ struct pmd_params {
+ 	char firmware[SOFTNIC_PATH_MAX];
+ 	uint16_t conn_port;
+ 	uint32_t cpu_id;
+-	int sc; /**< Service cores. */
++	bool sc; /**< Service cores. */
+ };
+ 
+ /**
 -- 
 2.53.0
 
