@@ -2,90 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C869EC88E53
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 10:30:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BF8FC88E53
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 10:40:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C7B3240A89;
-	Tue, 15 Sep 2026 12:30:48 +0200 (CEST)
-Received: from mail-yx2-f13.google.com (mail-yx2-f13.google.com
- [74.125.224.141])
- by mails.dpdk.org (Postfix) with ESMTP id 2534D40A7A
- for <dev@dpdk.org>; Tue, 15 Sep 2026 12:30:48 +0200 (CEST)
-Received: by mail-yx2-f13.google.com with SMTP id
- 00721157ae682-85d43f9b11aso975217b3.1
- for <dev@dpdk.org>; Tue, 15 Sep 2026 03:30:48 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789468247; cv=none;
- d=google.com; s=arc-20260327;
- b=e3FChpHasrbEq2boBtKjlu3vuz7ECAKp8z56T2xFUs+2xHGW2R2Ju/XtOHt+k2Mtti
- 9ikLduJI4+tlOs6Ep+ko0K+Xxgvz/a+wISWg5/h5WlTZyJoKCDkRhwkbiPPUKTk0zjRI
- +Vob23OtrZFPEkk3g2p5E2di2JuinaKO5OlYEStoaT985BvIWqksd/XSoaIz37HSmG49
- JXH/vNXhImqhgnLOf4QMSyUocFPUeFfGsp3ICZIbKgH203bvtyd1qnXYLziqCd2zYKzy
- t+VAEnaXPtXOde0UMGXYrP0hraZvonQD7ZdqASScCTE1nj0NC7vgz7k1JCdOVPWrOYk0
- AxOg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=y1G3RURaIBX1PvfnGmkAQZVdRrquoqNSEetFGc+LHAA=;
- fh=8RjFmtlfWuSy06bfjnPnoyIhOCMMtPp9gudY6c5pWpY=;
- b=H/oZBw7F19Ls8IiyQmSwb+1Z7BsEINbMCZFn83w3Y4dbKm0YAIeu6h4DAlcrZiMlLT
- wqCTM44+jwk3YAsdcftadToW6vnEQDDq0D9yZwzOmyflNszqPRVgNn/0Ivd+WtFAo1P/
- L+5SY9tI2MJtgyAXzs/0+jbRT3WQ8j4xSTHuXIhROmHQzzPEe1IIoMMWjEniKa3vABZr
- DG8CSsngNPCAhNyw26M5OTqz83KQDYu0d6pMnvDTUb+2PJLNEVr4w9F8PSNn8AgMlUpq
- GpJdDxLGghB6cHo4D0vSvRXg3oKNKeJHi3q4zWY2AWP/z1NmBhDFX8vuqSAMoUUoR6Vt
- ZXEw==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1789468247; x=1790073047; darn=dpdk.org;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=y1G3RURaIBX1PvfnGmkAQZVdRrquoqNSEetFGc+LHAA=;
- b=HCR6jlqrALl2sWUf02nvugoxxGox8mTHmM7iEGAnRuNz9j6taq9B+poiJgASsEvKIG
- O11RPYtW4CTAykxQWDclnI69wUvYZ1/c+ljxWD932GljhpK7bOm19qp/82u9FfU3gBlO
- t08KJQZSdetpw8x1+pvBHAbGbBYpGROLmNgbGrisEls/bffSz3mrchX3z04WG1RUBK8f
- 30mwybnC0lx7v3GY45sGDOopBNdrnwbIjTcy3G0lIuVgufPI0lLFlEXEdboJ4jFZQkm5
- kYdcCm3tKk9oVXZIWqg2dbX9hIdv2hoWlp8YU6pkXXikDcPQp6fcMQgFtPx0L3U3NVHp
- qC2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789468247; x=1790073047;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=y1G3RURaIBX1PvfnGmkAQZVdRrquoqNSEetFGc+LHAA=;
- b=rdpLrXdH+87Qfe5e60FOxniS7dQgR/SZ9Dt3LeBA3AQlBzvMPffiTjjFuB5Amj1+o0
- dPC1fssMQGuEH+jhcLmPbSzL5IEfdIFvaeGLCEWtfRiAREERzTyL2YGAhkwFs+xhgRpL
- BrQ1GEw+W6b7+xoos/FxQOn+Z1FUQS//S/1obAsjoWErHFWzzOjTuZ5nTQw8DvYvMKz4
- +R2tU3i0faLUcfifP+/6J37cNpRCAgs4R+45C44B75QrLahJfXumCTugldP/yjOo3CH2
- w2N1IdlA8VkOWgrVlflPshIUkK4nzGG3SHqFDmn5mH+YGEuA3f1UNK43OscC+ApXUbyS
- bckg==
-X-Gm-Message-State: AFuF++lu4mLUWvndebAx+utGqoteBIuc/nNXqwlhlT9VdMxjwlAPFYEb
- JzTO6XswmkafClq18+jUp7JQn8qXSS1MvxgoMF/Tp9YOh39y4gNemiRwuVFayKvd0quRecQf93A
- dsSH9GEXfr201MuGu0ZnexGLI0y+kW0s=
-X-Gm-Gg: AYBFou3TMrFcu6VHg/3Gq2Tsy1gqKovq8xq3WkwN/U+CUo75MB7uMz/S7U4GGyv42cO
- m/plKCRibkEonpp9jXNvo+CeQp3xlEQK0FtFJJQCVDd6ZuVz6sH3Y4/Meldy7np5/GzUf/SWVu+
- H7LSs3eBbf5Edu8QHpJXnlS7rBh6EfbYjrj1iR1okcqiga0Db3BaDcG+ShpfYvG93z5ouUr4lhP
- +9hz6t1YkXL4yxD0jZVx49+eEvCwesYc1CZfO1d8bs4GrOq/AunAHnBtVg+fH3JWlFQykAGWfkt
- aE20ye9WfG4OaWj4rjkSdCHqi308uEyip2TncT7iuX5jLJQUWH5pKSMxz2rTKPC0vWqI6wPCC7L
- Rwb0LtrhpuHPpAFIhtAbAB3ertD8uhx9krOn/m/J8AI/FcaERuJbze5TMX2nqPT8n21pknKMGwu
- /IKCwRt17Qbb1ZgVn+zA==
-X-Received: by 2002:a05:690e:14c5:b0:66f:be14:1a2b with SMTP id
- 956f58d0204a3-6715caba050mr138512d50.11.1789468247379; Tue, 15 Sep 2026
- 03:30:47 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D14BF40A89;
+	Tue, 15 Sep 2026 12:40:10 +0200 (CEST)
+Received: from mx0.infotecs.ru (mx0.infotecs.ru [91.244.183.115])
+ by mails.dpdk.org (Postfix) with ESMTP id E7FEB40A7A;
+ Tue, 15 Sep 2026 12:40:08 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru C9DA22C0BA5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infotecs.ru; s=mx;
+ t=1789468808; bh=jb9YWMCdGVM4QZcNho83oKPJM8N/NZG6aEg7MSeb8EQ=;
+ h=From:To:CC:Subject:Date:From;
+ b=Sgpu8o8BPLb+QK7K0p1WfOnD0+1Th4yV2Ld4dHiiBjdUuP0UxdDuHRnLSiI2dpOIU
+ 6nMXb5E2n1JiphUiMEPfjB78ey0uoFwHxb+6OzEHJpGoIYutR7syvTghQwvA037CyL
+ JBXJBQQsYD+Y6YoahTFWO8sxKLzP9rCyDZOQxfCE=
+Received: from mx0.infotecs-nt (localhost [127.0.0.1])
+ by mx0.infotecs.ru (Postfix) with ESMTP id C9DA22C0BA5;
+ Tue, 15 Sep 2026 13:40:07 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs-nt 759CF2C0B19
+Received: from msk-exch-02.infotecs-nt (msk-exch-02.infotecs-nt [10.0.7.192])
+ by mx0.infotecs-nt (Postfix) with ESMTP id 759CF2C0B19;
+ Tue, 15 Sep 2026 13:40:07 +0300 (MSK)
+From: Evgeny Sokolov <Evgeny.Sokolov@infotecs.ru>
+To: Kishore Padmanabha <kishore.padmanabha@broadcom.com>, Ajit Khaparde
+ <ajit.khaparde@broadcom.com>
+CC: <dev@dpdk.org>, <stable@dpdk.org>, Evgeny Sokolov
+ <Evgeny.Sokolov@infotecs.ru>
+Subject: [PATCH] Adding the return values checking
+Date: Tue, 15 Sep 2026 10:40:05 +0000
+Message-ID: <20260915104005.467027-1-Evgeny.Sokolov@infotecs.ru>
+X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
-References: <20260721115635.2209399-1-bruce.richardson@intel.com>
- <20260721132349.2579128-1-bruce.richardson@intel.com>
-In-Reply-To: <20260721132349.2579128-1-bruce.richardson@intel.com>
-From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Tue, 15 Sep 2026 16:00:20 +0530
-X-Gm-Features: AcwNN1VWSah5TRA1Qte0RNrkepkcyWSX6ULYGFq6CnxszMTM6juVNVBQtd8sSQM
-Message-ID: <CALBAE1P=pOL6k+Y=+oVUGDzk_BAi-2SZiVPzofMYQgvinpyunQ@mail.gmail.com>
-Subject: Re: [PATCH v2] test/event_eth_tx_adapter: skip tests if no eventdev
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, Naga Harish K S V <s.v.naga.harish.k@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [11.0.20.76]
+X-ClientProxiedBy: msk-exch-01.infotecs-nt (10.17.0.3) To
+ msk-exch-02.infotecs-nt (10.17.0.2)
+X-EXCLAIMER-MD-CONFIG: 208ac3cd-1ed4-4982-a353-bdefac89ac0a
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 3.0.0.9059,
+ bases: 2026/09/15 09:01:00 #28584736
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 8
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -99,58 +62,120 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Jul 21, 2026 at 6:54=E2=80=AFPM Bruce Richardson
-<bruce.richardson@intel.com> wrote:
->
-> If there is no eventdev present, and the SW eventdev driver is not
-> available, skip the eth tx adapter tests, rather than failing on event
-> creation.
->
-> Note: We keep the failure case where we do have the event/sw driver
-> built, but fail to create an instance of it.
->
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ drivers/net/bnxt/bnxt_ethdev.c          | 29 +++++++++++++++++--------
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c  |  2 ++
+ drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c |  2 +-
+ 3 files changed, 23 insertions(+), 10 deletions(-)
 
-Applied to dpdk-next-eventdev/for-main. Thanks
+diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
+index 8e8ead8f61..c99c375412 100644
+--- a/drivers/net/bnxt/bnxt_ethdev.c
++++ b/drivers/net/bnxt/bnxt_ethdev.c
+@@ -6395,57 +6395,68 @@ bnxt_parse_dev_args(struct bnxt *bp, struct rte_devargs *devargs)
+ 	if (ret)
+ 		goto err;
+ 
+-err:
+ 	/*
+ 	 * Handler for "mpc" devarg.
+ 	 * Invoked as for ex: "-a 000:00:0d.0,mpc=1"
+ 	 */
+-	rte_kvargs_process(kvlist, BNXT_DEVARG_MPC,
++	ret = rte_kvargs_process(kvlist, BNXT_DEVARG_MPC,
+ 			   bnxt_parse_devarg_mpc, bp);
++	if (ret)
++		goto err;
+ 
+ 	/*
+ 	 * Handler for "app-id" devarg.
+ 	 * Invoked as for ex: "-a 000:00:0d.0,app-id=1"
+ 	 */
+-	rte_kvargs_process(kvlist, BNXT_DEVARG_APP_ID,
++	ret = rte_kvargs_process(kvlist, BNXT_DEVARG_APP_ID,
+ 			   bnxt_parse_devarg_app_id, bp);
++	if (ret)
++		goto err;
+ 
+ 	/*
+ 	 * Handler for "ieee-1588" devarg.
+ 	 * Invoked as for ex: "-a 000:00:0d.0,ieee-1588=1"
+ 	 */
+-	rte_kvargs_process(kvlist, BNXT_DEVARG_IEEE_1588,
++	ret = rte_kvargs_process(kvlist, BNXT_DEVARG_IEEE_1588,
+ 			   bnxt_parse_devarg_ieee_1588, bp);
++	if (ret)
++		goto err;
+ 
+ 	/*
+ 	 * Handler for "cqe-mode" devarg.
+ 	 * Invoked as for ex: "-a 000:00:0d.0,cqe-mode=1"
+ 	 */
+-	rte_kvargs_process(kvlist, BNXT_DEVARG_CQE_MODE,
++	ret = rte_kvargs_process(kvlist, BNXT_DEVARG_CQE_MODE,
+ 			   bnxt_parse_devarg_cqe_mode, bp);
++	if (ret)
++		goto err;
+ 
+ 	/*
+ 	 * Handler for "representor" devarg.
+ 	 * Invoked as for ex: "-a 000:00:0d.0,representor=1"
+ 	 */
+-	rte_kvargs_process(kvlist, BNXT_DEVARG_REPRESENTOR,
++	ret = rte_kvargs_process(kvlist, BNXT_DEVARG_REPRESENTOR,
+ 			   bnxt_parse_devarg_representor_mode, bp);
++	if (ret)
++		goto err;
+ 
+ 	/*
+ 	 * Handler for "scalar-mode" devarg.
+ 	 * Invoked as for ex: "-a 000:00:0d.0,scalar-mode=1"
+ 	 */
+-	rte_kvargs_process(kvlist, BNXT_DEVARG_SCALAR_MODE,
++	ret = rte_kvargs_process(kvlist, BNXT_DEVARG_SCALAR_MODE,
+ 			   bnxt_parse_devarg_scalar_mode, bp);
++	if (ret)
++		goto err;
+ 
+ 	/*
+ 	 * Handler for "app-instance-id" devarg.
+ 	 * Invoked as for ex: "-a 000:00:0d.0,app-instance-id=1"
+ 	 * This argument is required for enabling truflow hot upgrade feature.
+ 	 */
+-	rte_kvargs_process(kvlist, BNXT_DEVARD_APP_INST_ID,
++	ret = rte_kvargs_process(kvlist, BNXT_DEVARD_APP_INST_ID,
+ 			   bnxt_parse_devarg_app_instance_id, bp);
+-
++err:
+ 	rte_kvargs_free(kvlist);
+ 	return ret;
+ }
+diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
+index fa98b2bca9..facce8f125 100644
+--- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
++++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
+@@ -309,6 +309,8 @@ ulp_tfc_tbl_scope_deinit(struct bnxt *bp)
+ 		return;
+ 
+ 	rc = bnxt_ulp_cntxt_tsid_get(bp->ulp_ctx, &tsid);
++	if (rc)
++		return;
+ 
+ 	rc = bnxt_ulp_cntxt_fid_get(bp->ulp_ctx, &fid);
+ 	if (rc)
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c b/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c
+index f17fb6e3b2..075071620f 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_mapper_tf.c
+@@ -404,7 +404,7 @@ ulp_mapper_tf_em_tbl_process(struct bnxt_ulp_mapper_parms *parms,
+ 				BNXT_DRV_DBG(DEBUG,
+ 					     "Fail to insert EM, shall add to wc\n");
+ 			}
+-			ulp_regfile_write(parms->regfile, tbl->tbl_operand,
++			rc = ulp_regfile_write(parms->regfile, tbl->tbl_operand,
+ 					  tfp_cpu_to_be_64(val));
+ 		}
+ 		if (rc)
+-- 
+2.47.3
 
-> ---
->  app/test/test_event_eth_tx_adapter.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
->
-> diff --git a/app/test/test_event_eth_tx_adapter.c b/app/test/test_event_e=
-th_tx_adapter.c
-> index bec298a8b8..0c161897ce 100644
-> --- a/app/test/test_event_eth_tx_adapter.c
-> +++ b/app/test/test_event_eth_tx_adapter.c
-> @@ -202,18 +202,23 @@ deinit_ports(void)
->  static int
->  testsuite_setup(void)
->  {
-> -       const char *vdev_name =3D "event_sw0";
-> -
->         int err =3D init_ports();
->         TEST_ASSERT(err =3D=3D 0, "Port initialization failed err %d\n", =
-err);
->
->         if (rte_event_dev_count() =3D=3D 0) {
-> +#ifdef RTE_EVENT_SW
-> +               const char *vdev_name =3D "event_sw0";
-> +
->                 printf("Failed to find a valid event device,"
->                         " testing with event_sw0 device\n");
->                 err =3D rte_vdev_init(vdev_name, NULL);
->                 TEST_ASSERT(err =3D=3D 0, "vdev %s creation failed  %d\n"=
-,
->                         vdev_name, err);
->                 event_dev_delete =3D 1;
-> +#else
-> +               printf("Failed to find a valid event device, skipping tes=
-t\n");
-> +               return TEST_SKIPPED;
-> +#endif
->         }
->         return err;
->  }
-> --
-> 2.53.0
->
