@@ -2,69 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B18BAC88E77
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 19:23:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 437CDC88E77
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 19:23:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E0C1742E4C;
-	Tue, 15 Sep 2026 21:22:58 +0200 (CEST)
-Received: from mail-pz2-f42.google.com (mail-pz2-f42.google.com
- [74.125.228.42]) by mails.dpdk.org (Postfix) with ESMTP id D2CCC42E48
- for <dev@dpdk.org>; Tue, 15 Sep 2026 21:22:57 +0200 (CEST)
-Received: by mail-pz2-f42.google.com with SMTP id
- 41be03b00d2f7-cc4cacd3409so139070a12.2
- for <dev@dpdk.org>; Tue, 15 Sep 2026 12:22:57 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2076142E95;
+	Tue, 15 Sep 2026 21:23:02 +0200 (CEST)
+Received: from mail-pj2-f13.google.com (mail-pj2-f13.google.com
+ [74.125.227.141])
+ by mails.dpdk.org (Postfix) with ESMTP id 958CB42EA0
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 21:23:00 +0200 (CEST)
+Received: by mail-pj2-f13.google.com with SMTP id
+ 98e67ed59e1d1-39b5b07ec78so87558a91.3
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 12:23:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789500176;
- x=1790104976; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789500180;
+ x=1790104980; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=BoDHqpUS85k00aExRALpqDs7bDZqLPE4O3C/FKXPiQE=;
- b=iEOduZzhdrSELSjCGgGpSPuI/Ty+HzCYEXvxSQMdoWsDxgP0qispsPOGtzMafPsJp2
- EIYaB6Jx8C8/w80LrAhpfWPbINulNzp6O5cP+RJO/fpupQnJYGwcrlQ0gao67A+XePtZ
- h7A7fLJ0rn7lylJsiy3ub6mJXqxqifxBnyj5dJujN8LHGvO+WVzPj2j4FXwRYCWFzNuu
- tMk7NJHdVJVIEdZxtd+MJWUZhI4NCQ1/m5pAN5QOFp4ndtQZYzZk+FAtyG2HoPxNUd8F
- 5fljbvrbBWSYPSdcDD4D98W3YEUW0Kvs9LUn8ajxui1Kk6nOcHm0SPxQOExPnr3H8lSE
- KecA==
+ bh=AS+UvN4C9E6f+3BcbpOhjjb8sBlClM+wm4oO2ZUSW+E=;
+ b=IsJ18iPiRIIkuS+HBNDirpf94fSeDlYvbj5+L6/fYOFaCDz/019leodsh/0SumsQBW
+ uKLd0pUhJ8Y0F0dzdt0+ukNYGyCkdEfCyI09v52bVkvMQ09YbWgfNNYCnITJZ68rJasZ
+ rmyUFjQxumsY32rHlgZKm1U69WGZYtKC7nt7/Lf7dVSSh6vazRRcKXCIX5EAhZp6QGPl
+ jHhXOVuEq6r6bTiKVSBkOvs3iSrlRmqtLROyKybuGvkbjwY00u173nSFqYdREg+KgrOs
+ PV+/qUXeyseLvszOwIrIYUgr5E+MWmk2eODp9QKgELg9DmgxBjRIcL4esxEUWnVaURk4
+ zjew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789500176; x=1790104976;
+ d=1e100.net; s=20260707; t=1789500180; x=1790104980;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=BoDHqpUS85k00aExRALpqDs7bDZqLPE4O3C/FKXPiQE=;
- b=ogz9CUYExt1q9PXlNB1WUajsSs0Td9IFtTy5LWOW+iDanXt30po0ClQ47sLfBOzrhE
- EifdnRetkx2y8BsF9mPPJVz3bRTUOMr3mIHeVUxTF2emdfxzjqjam1faH4ZL0ZgtJoFO
- 6JLiI8R/Z8tTpmkVzoF0On+u8l2wu5FFn9ZU2HSDCT6+EwZfgOgLIcZsh/lrlPfegXQ+
- Vyb3BDo/8p9Prq/q0AxBNFKH+gnT/HzIe6HP6EJ+X4i383ja1inPJgLQIr54CMbcKx4F
- YLLXku/qFYPBp5bQRkg+N53I1SpexfqaDsHGSn5qKuvpEj48hAeMlD0POpgUWYAOJclz
- AHzg==
-X-Gm-Message-State: AFuF++n3+uRhwfB/VshLGAwMdmnqO15CGnIoWJb9bou1GyylcaXzYrhE
- yk89O0P9p2HuZ2mmFIqT27SpjWGuVxinjr/rd2QrJabWC3YKN4ojQiIOKFvp0kGsU1H3G4cZLt+
- XUZJW
-X-Gm-Gg: AYBFou1VgtjjFZxZ5d1w6ZmQ11Zl0tkMrMy9Nyhb2MxpLeNMSuezLoJVeB1IDBne6BU
- A9tZ+/w1Wypff6sZXSSh3Lo7suUqPX93DrnK1DZfrwKctxXz9nYBX8AGRjvMzAt87G8qjvBJ3t2
- Ofxmsy4j/apUiE4W7a4CKlhJl0gl6ldf1qb0x/km/H+D4BPGOgK62TB+hipi0tUCxNrdojz8vE5
- pveylfdNdVj5U95PzMQgh/Xr35iv0ckw4sNLtTW9QZMiRyAOj2GkeXXTZkYcUqDmq8urEr4a/ua
- BYHACM8TvpdLduaPHhYIPs9dlU6WPsXLu39p2YkQKAzvx6Ir0ZKy/tUBom+wbKnio1/bGRIWXC+
- rBbUxWozgMMso1euOxqwOLnWkSt1zKjWfqOgUVBkIgeePXGiLQRWPZz9N5zdj5gVUSBNOYxD9K+
- LxWkfJhgf5MJTU10ck8zTibUUfANsRMK7tgh6glnG3qpaA8gwiQCDiU7uJofe2g4v2szY0Jg3oS
- WtBbQCit7biQvzRsXrxw2W+Yyo/I8YLbnqLYg==
-X-Received: by 2002:a17:90b:4a88:b0:39d:f024:c7ec with SMTP id
- 98e67ed59e1d1-39e11041013mr4190227a91.16.1789500175935; 
- Tue, 15 Sep 2026 12:22:55 -0700 (PDT)
+ bh=AS+UvN4C9E6f+3BcbpOhjjb8sBlClM+wm4oO2ZUSW+E=;
+ b=rP+D5l5hvPbcohyU5rKTb8+OgpK0LCrtuYwTSlrLBLq3/PsYAQOWDMqXLN+6FmpPDE
+ DZa8RPhPtJvJBspSdn41McNz94HOnoApYKbOtAaqpa07Ic36wvG8YaXS4Io3NCfeStM4
+ 0zkYTJ89y3cvBv3J0grS4W3DiZvPHt/7FQgp/8pfObq26FRMQv6OoSRy20Ssrefc2sN5
+ bLmG5CMGp7GMCtIbXcY1SGNZNtbcrnFbNdvsStdwCGbwKY/Bce/EZOrhpHeXyV/IMKT/
+ zk4HaD7vTHxyo7GFflm0ctOxKZvp2Ao15ZOSZf+yRAt/KZKsFukTiY0N4ZLA3CkF3rrV
+ ndDQ==
+X-Gm-Message-State: AFuF++lNuinw5D2IR0NrMXJhfxbzYmbWTQPl+l4ZjpkkJk0YO3hDBMee
+ WQRI5BSEARyACk344q5O/Dd8x1vnbGqZ5J30aZeKxWh+2UgkZnte5xIqruJ8G7XHS+0BvX/xzVm
+ 2dGfOoZx3MA==
+X-Gm-Gg: AYBFou02Yuo4S4PNvYG/OvPThnqHvcnzp0lUyxkbMzhLorUHQZvsNjJWf8hH17awIz/
+ tuG/SCK/NTT0qiDbkqW2a4RXtPKnR8mPlGWQYh31LELZ4TLEvJI0nERxOB58P2sMz57qdQrYRoy
+ 6reeGa5DHyJ6FDlt4QGjlkrD0ZQEbdRpjzcLr15hzTLDfbxX8Y48lefeWvKiClE1SZO0EwWmh1e
+ QU1VLhm+T/dOs39MHZilG5n/c8uwgUjfuvWtRQjfh1DpXH5dtVl3Sh9W7mg81QftOvkwuGuE5ld
+ bIPcCtgyRKkdEKc/mlkm5LMjBUX+ORD6pq10HeENOWnWcoOrP8sSw7JfvR/2Po/x70GAbygB3bv
+ yXQBYKxmKA+HN1C1jDdk+XIKpavo0M3hPobLUMvIcgWzXcO2dzD6Un0Ta8gi8i+DTWjH2hCNwIn
+ JOl0JcILvYkqe6E1Pq29rfrBPs2/T3QXZwK6z1dib/v/VN0Z61uIam/cf6WeB+8HCgtLV0tuRbd
+ Y4gct5HKP8hxEk5H5TnPxnz3LMbtHX4O6ctpg==
+X-Received: by 2002:a17:90b:4fcf:b0:39d:ecb6:8d40 with SMTP id
+ 98e67ed59e1d1-39e10c83490mr4429664a91.4.1789500179638; 
+ Tue, 15 Sep 2026 12:22:59 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39e1bbfdd49sm217535a91.11.2026.09.15.12.22.52
+ 98e67ed59e1d1-39e1bbfdd49sm217535a91.11.2026.09.15.12.22.56
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 15 Sep 2026 12:22:54 -0700 (PDT)
+ Tue, 15 Sep 2026 12:22:58 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- =?UTF-8?q?Mattias=20R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH 12/18] random: use all 64 bits of the seed
-Date: Tue, 15 Sep 2026 12:21:10 -0700
-Message-ID: <20260915192207.3926217-13-stephen@networkplumber.org>
+ Selwin Sebastian <selwin.sebastian@amd.com>,
+ Julien Aube <julien_dpdk@jaube.fr>
+Subject: [PATCH 13/18] drivers/net: use secure random for RSS key
+Date: Tue, 15 Sep 2026 12:21:11 -0700
+Message-ID: <20260915192207.3926217-14-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260915192207.3926217-1-stephen@networkplumber.org>
 References: <20260915192207.3926217-1-stephen@networkplumber.org>
@@ -83,158 +84,99 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The generator state is five 64 bit words, expanded from the seed by a
-32 bit linear congruential generator. The two halves of the seed were
-folded together first, so only 32 bits of it had any effect, and the
-low order bits of such a generator are weak, leaving the five words
-with correlated low bits.
+Both drivers built the default RSS key a word at a time from rte_rand().
+That generator is a fast non-cryptographic PRNG whose state is
+recoverable from its output, so the resulting key is predictable.
 
-Expand the seed with SplitMix64 instead, so every bit of the seed
-affects every word of the state. It is described in "Fast Splittable
-Pseudorandom Number Generators" by Steele, Lea and Flood,
-https://doi.org/10.1145/2714064.2660195 and is what the authors of
-the xoshiro and xoroshiro generators recommend for seeding.
-
-The per-lcore seeds were formed by adding the lcore id to the seed,
-leaving neighbouring lcores with nearly identical state. Pass that
-sum through SplitMix64 as well.
-
-Fixes: 3f002f069612 ("eal: replace libc-based random generation with LFSR")
+Use rte_random_bytes() which takes randomness from the operating
+system, and report the error to the caller.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/rel_notes/release_26_11.rst |  4 ++
- lib/eal/common/rte_random.c            | 74 +++++++++++++-------------
- 2 files changed, 40 insertions(+), 38 deletions(-)
+ drivers/net/axgbe/axgbe_dev.c | 16 +++++++++++-----
+ drivers/net/bnx2x/bnx2x.c     | 11 +++++++----
+ 2 files changed, 18 insertions(+), 9 deletions(-)
 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index f25e497729..9d1238d6f3 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -65,6 +65,10 @@ New Features
-     values which must not be predictable, such as keys, hash seeds and
-     MAC addresses, where the pseudo-random ``rte_rand()`` is not
-     suitable.
-+  * Improved the expansion of the seed into the generator state. All
-+    64 bits of the value passed to ``rte_srand()`` now affect the state,
-+    so a given seed produces a different sequence than in previous
-+    releases.
+diff --git a/drivers/net/axgbe/axgbe_dev.c b/drivers/net/axgbe/axgbe_dev.c
+index 482d3d8062..37856fddd9 100644
+--- a/drivers/net/axgbe/axgbe_dev.c
++++ b/drivers/net/axgbe/axgbe_dev.c
+@@ -3,6 +3,8 @@
+  *   Copyright(c) 2018 Synopsys, Inc. All rights reserved.
+  */
  
- 
- Removed Items
-diff --git a/lib/eal/common/rte_random.c b/lib/eal/common/rte_random.c
-index 4b777f69f4..db4e19b414 100644
---- a/lib/eal/common/rte_random.c
-+++ b/lib/eal/common/rte_random.c
-@@ -39,55 +39,45 @@ static RTE_LCORE_VAR_HANDLE(struct rte_rand_state, rand_state);
- /* instance to be shared by all unregistered non-EAL threads */
- static struct rte_rand_state unregistered_rand_state;
- 
--static uint32_t
--__rte_rand_lcg32(uint32_t *seed)
--{
--	*seed = 1103515245U * *seed + 12345U;
--
--	return *seed;
--}
--
-+/* SplitMix64, used to expand the seed into the generator state.
-+ * It has a full 64 bit period and good avalanche, so all the bits
-+ * of the seed affect every word of the resulting state.
-+ *
-+ * See "Fast Splittable Pseudorandom Number Generators" by Steele,
-+ * Lea and Flood, https://doi.org/10.1145/2714064.2660195
-+ */
- static uint64_t
--__rte_rand_lcg64(uint32_t *seed)
-+__rte_rand_splitmix64(uint64_t *state)
++#include <rte_random.h>
++
+ #include "axgbe_ethdev.h"
+ #include "axgbe_common.h"
+ #include "axgbe_phy.h"
+@@ -931,13 +933,15 @@ static void axgbe_rss_options(struct axgbe_port *pdata)
+ static int axgbe_config_rss(struct axgbe_port *pdata)
  {
--	uint64_t low;
--	uint64_t high;
+ 	uint32_t i;
++	int ret;
+ 
+ 	if (pdata->rss_enable) {
+ 		/* Initialize RSS hash key and lookup table */
+-		uint32_t *key = (uint32_t *)pdata->rss_key;
 -
--	/* A 64-bit LCG would have been much cleaner, but good
--	 * multiplier/increments for such seem hard to come by.
--	 */
-+	uint64_t z;
+-		for (i = 0; i < sizeof(pdata->rss_key) / 4; i++)
+-			*key++ = (uint32_t)rte_rand();
++		ret = rte_random_bytes(pdata->rss_key, sizeof(pdata->rss_key));
++		if (ret != 0) {
++			PMD_DRV_LOG_LINE(ERR, "Error generating RSS hash key");
++			return ret;
++		}
+ 		for (i = 0; i < AXGBE_RSS_MAX_TABLE_SIZE; i++)
+ 			AXGMAC_SET_BITS(pdata->rss_table[i], MAC_RSSDR, DMCH,
+ 					i % pdata->eth_dev->data->nb_rx_queues);
+@@ -1393,7 +1397,9 @@ static int axgbe_init(struct axgbe_port *pdata)
+ 	axgbe_config_tx_pbl_val(pdata);
+ 	axgbe_config_rx_pbl_val(pdata);
+ 	axgbe_config_rx_buffer_size(pdata);
+-	axgbe_config_rss(pdata);
++	ret = axgbe_config_rss(pdata);
++	if (ret)
++		return ret;
+ 	axgbe_config_tso_mode(pdata);
+ 	wrapper_tx_desc_init(pdata);
+ 	ret = wrapper_rx_desc_init(pdata);
+diff --git a/drivers/net/bnx2x/bnx2x.c b/drivers/net/bnx2x/bnx2x.c
+index 8790c858d5..97ee95a1be 100644
+--- a/drivers/net/bnx2x/bnx2x.c
++++ b/drivers/net/bnx2x/bnx2x.c
+@@ -28,6 +28,7 @@
+ #include <zlib.h>
  
--	low = __rte_rand_lcg32(seed);
--	high = __rte_rand_lcg32(seed);
-+	z = (*state += 0x9E3779B97F4A7C15ULL);
-+	z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9ULL;
-+	z = (z ^ (z >> 27)) * 0x94D049BB133111EBULL;
+ #include <rte_bitops.h>
++#include <rte_random.h>
+ #include <rte_string_fns.h>
  
--	return low | (high << 32);
-+	return z ^ (z >> 31);
- }
- 
- static uint64_t
--__rte_rand_lfsr258_gen_seed(uint32_t *seed, uint64_t min_value)
-+__rte_rand_lfsr258_gen_seed(uint64_t *state, uint64_t min_value)
+ #include "eal_firmware.h"
+@@ -6643,7 +6644,7 @@ bnx2x_config_rss_pf(struct bnx2x_softc *sc, struct ecore_rss_config_obj *rss_obj
+ 		  uint8_t config_hash)
  {
--	uint64_t res;
--
--	res = __rte_rand_lcg64(seed);
--
--	if (res < min_value)
--		res += min_value;
--
--	return res;
-+	/* LFSR258 degenerates unless each word exceeds its threshold.
-+	 * All thresholds are powers of two, so a bitwise or is enough
-+	 * and keeps the remaining bits untouched.
-+	 */
-+	return __rte_rand_splitmix64(state) | min_value;
- }
+ 	struct ecore_config_rss_params params = { NULL };
+-	uint32_t i;
++	int rc;
  
- static void
- __rte_srand_lfsr258(uint64_t seed, struct rte_rand_state *state)
- {
--	uint32_t lcg_seed;
--
--	lcg_seed = (uint32_t)(seed ^ (seed >> 32));
-+	uint64_t mix_state = seed;
+ 	/*
+ 	 * Although RSS is meaningless when there is a single HW queue we
+@@ -6675,9 +6676,11 @@ bnx2x_config_rss_pf(struct bnx2x_softc *sc, struct ecore_rss_config_obj *rss_obj
+ 			 sizeof(params.ind_table));
  
--	state->z1 = __rte_rand_lfsr258_gen_seed(&lcg_seed, 2UL);
--	state->z2 = __rte_rand_lfsr258_gen_seed(&lcg_seed, 512UL);
--	state->z3 = __rte_rand_lfsr258_gen_seed(&lcg_seed, 4096UL);
--	state->z4 = __rte_rand_lfsr258_gen_seed(&lcg_seed, 131072UL);
--	state->z5 = __rte_rand_lfsr258_gen_seed(&lcg_seed, 8388608UL);
-+	state->z1 = __rte_rand_lfsr258_gen_seed(&mix_state, 2UL);
-+	state->z2 = __rte_rand_lfsr258_gen_seed(&mix_state, 512UL);
-+	state->z3 = __rte_rand_lfsr258_gen_seed(&mix_state, 4096UL);
-+	state->z4 = __rte_rand_lfsr258_gen_seed(&mix_state, 131072UL);
-+	state->z5 = __rte_rand_lfsr258_gen_seed(&mix_state, 8388608UL);
- }
+ 	if (config_hash) {
+-/* RSS keys */
+-		for (i = 0; i < sizeof(params.rss_key) / 4; i++) {
+-			params.rss_key[i] = (uint32_t) rte_rand();
++		/* RSS keys */
++		rc = rte_random_bytes(params.rss_key, sizeof(params.rss_key));
++		if (rc != 0) {
++			PMD_DRV_LOG(ERR, sc, "Error generating RSS hash key");
++			return rc;
+ 		}
  
- RTE_EXPORT_SYMBOL(rte_srand)
-@@ -95,16 +85,24 @@ void
- rte_srand(uint64_t seed)
- {
- 	unsigned int lcore_id;
-+	uint64_t mix_state;
- 
--	/* add lcore_id to seed to avoid having the same sequence */
-+	/* Mix in the lcore id so that each lcore gets an unrelated
-+	 * sequence. Adding it to the seed would leave neighbouring
-+	 * lcores with nearly identical generator state.
-+	 */
- 	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
- 		struct rte_rand_state *lcore_state =
- 			RTE_LCORE_VAR_LCORE(lcore_id, rand_state);
- 
--		__rte_srand_lfsr258(seed + lcore_id, lcore_state);
-+		mix_state = seed + lcore_id;
-+		__rte_srand_lfsr258(__rte_rand_splitmix64(&mix_state),
-+				    lcore_state);
- 	}
- 
--	__rte_srand_lfsr258(seed + lcore_id, &unregistered_rand_state);
-+	mix_state = seed + lcore_id;
-+	__rte_srand_lfsr258(__rte_rand_splitmix64(&mix_state),
-+			    &unregistered_rand_state);
- }
- 
- static __rte_always_inline uint64_t
+ 		rte_bit_relaxed_set32(ECORE_RSS_SET_SRCH, &params.rss_flags);
 -- 
 2.53.0
 
