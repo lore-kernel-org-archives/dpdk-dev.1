@@ -2,76 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D2A3C88E7F
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 15:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3648C982C3
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 15:52:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E2D4D42DC3;
-	Tue, 15 Sep 2026 17:48:56 +0200 (CEST)
-Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com
- [74.125.228.12]) by mails.dpdk.org (Postfix) with ESMTP id 2DDF1427AE
- for <dev@dpdk.org>; Tue, 15 Sep 2026 17:48:56 +0200 (CEST)
-Received: by mail-pz2-f12.google.com with SMTP id
- 41be03b00d2f7-cc4c3304833so2575398a12.3
- for <dev@dpdk.org>; Tue, 15 Sep 2026 08:48:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1789487335; x=1790092135; darn=dpdk.org;
- h=content-transfer-encoding:content-type:in-reply-to:from
- :content-language:references:cc:to:subject:user-agent:mime-version
- :date:message-id:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=AeHNq9S713uluVgNLTDrh2Kgig8pSt5Z/1y55ZuJCks=;
- b=FizwYJ073IT+zMYNCFJjGvmzUsxnRpiiUlcxNj12nwEhs7SxAA76FC3sQczQTQZ3al
- ADWr+PQuTqpq4N9cczHTPO0UOrl5qVOpvSpqqguM+A5g5Y+Bo1XXvijiSu9fwYAhGyeq
- gW+QuzzWDMk8oarFYZUz2tQmfHAnZblt41n4b1wKoWbKplVEJg9JWqwqAsVJs5u7K+Jh
- 1C6eofA+Bl76RZ+chzq62+X3fDr/KpvBZuMys6ub9d6U59hs3K+fQi4inIIo+J7t8lTe
- 4fmrFvUdOGOXzMvKjQJxv9IqKU9VgqwNsOPxpn6JMOF/2BuiCHMLq198Cyzuv8skj4rO
- uJ5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789487335; x=1790092135;
- h=content-transfer-encoding:content-type:in-reply-to:from
- :content-language:references:cc:to:subject:user-agent:mime-version
- :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=AeHNq9S713uluVgNLTDrh2Kgig8pSt5Z/1y55ZuJCks=;
- b=JSuD5bLplKQ4RgCu6y5faqtW69czzjtZSWo1HgHRuVKC8mvFvYslWb2SSDVvJjf6gH
- YtKVzXrgpZdukaQ+ovEDsnkVFIrM0aZ1GzfKv1j5ONCHgMY3PvxSHT6iNS6eux0k9clF
- RahN3gCILvSWBSo8GaYrb4qOEzwPFtmPIMxhjiKed+6LqQDNdyYJ0tZ7rrjHAhe95Bhf
- fsH2kbkh6jwPKjyeSp9g/R1uTdRGhUapfLmRJkm0g8utm9DxJGchgCEEwHJ6cgdKdfq7
- F80AMvvhbReakmBq0EXeoAjhcfxwGHzB6ayITi8z/3iA7yEmpyqaWuGWF9BwqbZCi+2Z
- 84fA==
-X-Forwarded-Encrypted: i=1;
- AKwUvBxqr8svmwm9m4GrJFQWdMVyKwpum3CuwahkoxtRISeiZ+d9sCuCGqdIFQp3I4Qr90Hy4Bw=@dpdk.org
-X-Gm-Message-State: AFuF++kvhqTU5qDG78LJlFrA79RgBNx6Ukqk8ZzqtjLGA1OfhVpgGRgE
- 3d8mnq7giz2xx+V0yAXIPytKv+ntsBfQU5968vkgFiQLF8UUBnRbH9qzZFgKd7sg
-X-Gm-Gg: AYBFou3Xsw82rtYRUFjwTAplC4bzq7KU81q7/3T8Ra1LF8UFtdcHaM1pAeOB6AsYrce
- XQm8+OJNPnml4rAbPNYqysBbqzNzSTkGEknyo3AdteF7Emp31ijQlgSIUjbGAMzbdFDmzGJXYz8
- EPRnma8x6I4itsLsbrwvYYIPrvKYvz7ChzDeRWD2uBaB1cUEZG9me+weaYHu5xFm2HOEMp9Mk64
- /WcUGpu9WwM9heum2ezdSjiJvwAHPT/ylQM/pidWmPhetOt384A30RPco3TjYxMMQiHKDAHJ6ap
- VIVdGdxUUgZYSva7SanzNQ47GH5MKB1Ywwzkv0pziEP6fsDLlKaBBWuk4NaEI0+bTx0JyzWxZqZ
- nPPK1N+N+SnRhRK+wq+aeUW3Q/r9ljsN/MqBlKSC7+nS/+G5ugYYqCx8Bahz2avcf4nKrICSD0i
- 5XH62JpK1LDeZ63DLblphcBnhPywk+Bg9Qy7dGRfXoMrVheuXSyGat4OOnXh9WVL8v56fWpP4EP
- Z7l31CemlX/19sk
-X-Received: by 2002:a17:90a:dfc7:b0:39d:f5ef:b1d5 with SMTP id
- 98e67ed59e1d1-39df5efb222mr13283897a91.7.1789487335104; 
- Tue, 15 Sep 2026 08:48:55 -0700 (PDT)
-Received: from [192.168.1.112] (mail.forbuysw.info. [66.175.223.235])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39dfdd0baaasm5868750a91.9.2026.09.15.08.48.52
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Tue, 15 Sep 2026 08:48:54 -0700 (PDT)
-Message-ID: <696819ea-3f19-4538-a8ac-306227474a8f@gmail.com>
-Date: Tue, 15 Sep 2026 23:48:50 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id 3A0B0427AE;
+	Tue, 15 Sep 2026 17:52:07 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+ by mails.dpdk.org (Postfix) with ESMTP id 5949340A6B
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 17:52:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1789487524; x=1821023524;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=wsVE2ghvmArOAG/6+v2RVidviS5rk3Yp6BOQEIyjVmU=;
+ b=T1OGbI+kPXMmholoqdhGxVwpm2H4MTaTEyjDQyF3pMmV7HIInwnZ8MFC
+ s4dtsoIvF1ISW52xYgTYQDu0vj9xNW2Gsvlp2NP8prPcdFQGGYW3tTYvd
+ x/5/hvQzM7ez11JLj8Fcxzib9H5L0i04Kflu24ZGwVwBhd//zYPHTkeJm
+ UoJ00Qq2bCuQBepzct93R/wXHCkMrVeDXACSBOXF95SoMI4epI+gL097d
+ /KdjjgPMmRp7QPCwHjx2PSILN0KLzoyF8u/aaBRSWGM9x+dd3n0g0uyAY
+ 0B35rZvh6OzzO6X2ICooQT8GrMBJcU5fZXx442LHxnUpxLXMODb4hIUaa Q==;
+X-CSE-ConnectionGUID: NOddVc77SDqRv5dEgbXt5A==
+X-CSE-MsgGUID: acw/iozaQrq9B+XRG/btXQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="101205966"
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="101205966"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+ by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 15 Sep 2026 08:52:03 -0700
+X-CSE-ConnectionGUID: fqpDUTw+R+yM6AdV29SYcQ==
+X-CSE-MsgGUID: gRZkq8jcQfyYxpQ0e1Avdw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="266833103"
+Received: from silpixa00401840.ir.intel.com ([10.20.224.243])
+ by fmviesa009.fm.intel.com with ESMTP; 15 Sep 2026 08:52:02 -0700
+From: Kai Ji <kai.ji@intel.com>
+To: dev@dpdk.org
+Cc: Kai Ji <kai.ji@intel.com>
+Subject: [PATCH] examples: add Wycheproof validation app
+Date: Tue, 15 Sep 2026 15:51:57 +0000
+Message-Id: <20260915155157.2446094-1-kai.ji@intel.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net/txgbe: fix leak of filters on flow create
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: Jiawen Wu <jiawenwu@trustnetic.com>, Zaiyu Wang
- <zaiyuwang@trustnetic.com>, dev@dpdk.org, stable@dpdk.org
-References: <20260915152436.67378-1-zhtfdev@gmail.com>
- <20260915083828.08bd23fa@phoenix.local>
-Content-Language: en-US
-From: Zhang Tengfei <zhtfdev@gmail.com>
-In-Reply-To: <20260915083828.08bd23fa@phoenix.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -86,105 +57,2139 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Thanks for the review.
-Item 6: the ixgbe counterpart is already on the list:
-   [PATCH] net/ixgbe: fix leak of filters on flow create
-https://patches.dpdk.org/project/dpdk/patch/20260914133836.14644-1-zhtfdev@gmail.com/
+Add a Wycheproof JSON vector validation example for cryptodev PMDs.
 
-I will send a v2 for txgbe.
+Support these algorithms when advertised by the selected PMD:
+- AEAD: AES-GCM, AES-CCM, SM4-GCM, ChaCha20-Poly1305
+- MAC: AES-CMAC, AES-GMAC, HMAC SHA-1/SHA-2/SHA-3/SM3
+- Asymmetric: DSA (P1363 verify), ECDSA (P1363 verify),
+  ECDH (ecpoint shared-secret compute)
 
-On 9/15/26 23:38, Stephen Hemminger wrote:
-> On Tue, 15 Sep 2026 23:24:36 +0800
-> Zhang Tengfei <zhtfdev@gmail.com> wrote:
->
->> txgbe_flow_create() programs ntuple, ethertype, SYN, FDIR, L2 tunnel and
->> RSS filters into hardware before allocating the software flow object.
->> If that allocation fails, create returns an error but leaves the
->> hardware filter installed. The application has no handle to destroy it.
->>
->> Allocate the software copy first, then program the hardware. On a
->> programming failure, free the copy. Set ENOMEM when allocation fails
->> so the error path does not report success.
->>
->> L2 tunnel add failures now return immediately instead of falling
->> through to RSS parsing, which cannot succeed for a VF/PF E-tag rule
->> and overwrote the original error.
->>
->> Fixes: 5c2352b9ece6 ("net/txgbe: support creating consistent filter")
->> Cc: stable@dpdk.org
->>
->> Signed-off-by: Zhang Tengfei <zhtfdev@gmail.com>
->> ---
-> Patch looks good, I was going to merge but AI had a couple of small items
-> that should be addressed first.
->
-> Review: [PATCH] net/txgbe: fix leak of filters on flow create
-> Patchwork: 169627
->
-> Applied to main (f43632a) and built with -Dwerror=true, no warnings.
->
-> The alloc-before-program reordering is the right fix. The add helpers
-> (ntuple, ethertype, syn, l2 tunnel) do not modify their input, so
-> copying the filter into the software object before programming is
-> equivalent to the old copy-after.
->
-> Warning
->
-> 1. PF FDIR: mask_added not unwound on the new ENOMEM path.
->
->     The allocation now sits after the "A mask cannot be deleted" block.
->     When this rule is the first to set the mask, first_mask is TRUE and
->     fdir_info->mask_added has been set before rte_zmalloc() runs. On
->     allocation failure the code jumps to out without clearing
->     mask_added, unlike the program-failure path right below it.
->     A later rule with a different mask is then rejected with "only
->     support one global mask" even though no rule is using the mask.
->
->     Either move the fdir_rule_ptr allocation above the mask block
->     (free it on the mask error paths), or clear mask_added when
->     first_mask is set on allocation failure:
->
-> 	if (fdir_rule_ptr == NULL) {
-> 		PMD_DRV_LOG(ERR, "failed to allocate memory");
-> 		if (first_mask)
-> 			fdir_info->mask_added = FALSE;
-> 		ret = -ENOMEM;
-> 		goto out;
-> 	}
->
->     Allocating first is cleaner.
->
-> 2. Missing Fixes tag for the VF FDIR path.
->
->     The txgbevf_fdir_filter_program() branch was added later by:
->
->     Fixes: 7eef71080e ("net/txgbe: switch to FDIR on VF")
->
->     Add it (12-char hash) alongside the existing tag so stable
->     maintainers know the VF hunk only applies to 25.11 and later.
->
-> Info
->
-> 3. The commit message says ENOMEM is set "so the error path does not
->     report success". Other goto out paths in the same function still
->     reach rte_flow_error_set() with ret == 0: the flex_bytes_offset /
->     flex_relative mismatch, and the trailing goto out for an FDIR rule
->     without b_spec. The memcmp() mismatch path passes a positive ret,
->     so -ret is negative. Not introduced here, but either fix them in a
->     follow-up or narrow the wording.
->
-> 4. The L2 tunnel early return is a separate behavior change (errno
->     reported to the caller changes from the RSS parse error to the
->     real add error). It is correct, but belongs in its own patch so
->     it can be backported or reverted independently.
->
-> 5. Lines being moved anyway can drop rte_memcpy() for plain struct
->     assignment:
->
-> 	ntuple_filter_ptr->filter_info = ntuple_filter;
->
->     Same for ethertype, syn, fdir and l2 tunnel.
->
-> 6. drivers/net/intel/ixgbe/ixgbe_flow.c has the same program-then-
->     allocate pattern in ixgbe_flow_create(). txgbe was derived from it,
->     the same fix applies there.
+Validate valid vectors against generated ciphertexts, tags, plaintexts,
+digests, shared secrets, or signature verification, and require the
+expected rejection for invalid vectors. Digest inputs for DSA and ECDSA
+use the symmetric auth path, selecting a separate symmetric-capable
+device when the target device is asymmetric-only.
+
+Skip parameter combinations outside PMD capability ranges and identify
+recognized vector families without a compatible DPDK transform. A
+--debug option lists every failed or skipped vector.
+
+Add Meson and standalone build integration, with usage documentation.
+
+Signed-off-by: Kai Ji <kai.ji@intel.com>
+---
+ examples/meson.build                       |    1 +
+ examples/wycheproof_validation/Makefile    |   40 +
+ examples/wycheproof_validation/README.md   |  124 ++
+ examples/wycheproof_validation/main.c      | 1882 ++++++++++++++++++++
+ examples/wycheproof_validation/meson.build |   17 +
+ 5 files changed, 2064 insertions(+)
+ create mode 100644 examples/wycheproof_validation/Makefile
+ create mode 100644 examples/wycheproof_validation/README.md
+ create mode 100644 examples/wycheproof_validation/main.c
+ create mode 100644 examples/wycheproof_validation/meson.build
+
+diff --git a/examples/meson.build b/examples/meson.build
+index 25d9c88457..000d05863a 100644
+--- a/examples/meson.build
++++ b/examples/meson.build
+@@ -59,6 +59,7 @@ all_examples = [
+         'vm_power_manager/guest_cli',
+         'vmdq',
+         'vmdq_dcb',
++        'wycheproof_validation',
+ ]
+ 
+ # on install, skip copying all meson.build files
+diff --git a/examples/wycheproof_validation/Makefile b/examples/wycheproof_validation/Makefile
+new file mode 100644
+index 0000000000..c687282465
+--- /dev/null
++++ b/examples/wycheproof_validation/Makefile
+@@ -0,0 +1,40 @@
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright(c) 2026
++
++APP = wycheproof_validation
++SRCS-y := main.c
++
++PKGCONF ?= pkg-config
++
++ifneq ($(shell $(PKGCONF) --exists libdpdk && echo 0),0)
++$(error "no installation of DPDK found")
++endif
++ifneq ($(shell $(PKGCONF) --exists jansson && echo 0),0)
++$(error "Jansson is required")
++endif
++
++all: shared
++.PHONY: shared static
++shared: build/$(APP)-shared
++	ln -sf $(APP)-shared build/$(APP)
++static: build/$(APP)-static
++	ln -sf $(APP)-static build/$(APP)
++
++PC_FILE := $(shell $(PKGCONF) --path libdpdk 2>/dev/null)
++CFLAGS += -O3 $(shell $(PKGCONF) --cflags libdpdk jansson)
++LDFLAGS_SHARED = $(shell $(PKGCONF) --libs libdpdk jansson)
++LDFLAGS_STATIC = $(shell $(PKGCONF) --static --libs libdpdk jansson)
++
++build/$(APP)-shared: $(SRCS-y) Makefile $(PC_FILE) | build
++	$(CC) $(CFLAGS) $(SRCS-y) -o $@ $(LDFLAGS) $(LDFLAGS_SHARED)
++
++build/$(APP)-static: $(SRCS-y) Makefile $(PC_FILE) | build
++	$(CC) $(CFLAGS) $(SRCS-y) -o $@ $(LDFLAGS) $(LDFLAGS_STATIC)
++
++build:
++	@mkdir -p $@
++
++.PHONY: clean
++clean:
++	rm -f build/$(APP) build/$(APP)-static build/$(APP)-shared
++	test -d build && rmdir -p build || true
+\ No newline at end of file
+diff --git a/examples/wycheproof_validation/README.md b/examples/wycheproof_validation/README.md
+new file mode 100644
+index 0000000000..7782e1aab5
+--- /dev/null
++++ b/examples/wycheproof_validation/README.md
+@@ -0,0 +1,124 @@
++# Wycheproof Validation
++
++`dpdk-wycheproof_validation` validates DPDK cryptodev PMDs against Google
++Wycheproof JSON vectors. It reads vector files directly at runtime; no copied
++or generated vector corpus is kept in DPDK.
++
++The initial implementation supports `AES-GCM`, `AES-CCM`,
++`CHACHA20-POLY1305`, and `SM4-GCM` using `aead_test_schema_v1.json`, plus
++HMAC-SHA1/224/256/384/512, HMAC-SHA3-224/256/384/512, HMAC-SM3, and AES-CMAC
++using `mac_test_schema_v1.json`. For each compatible AEAD vector it maps:
++
++| Wycheproof | DPDK AEAD operation |
++|---|---|
++| `key` | AEAD key |
++| `iv` | AEAD IV |
++| `aad` | AEAD associated data |
++| `msg` | encryption input / expected decryption output |
++| `ct` | expected encryption output / decryption input |
++| `tag` | expected encryption tag / decryption digest |
++
++`valid` vectors must encrypt and decrypt successfully with exact matching
++ciphertext, tag, and plaintext. `invalid` vectors run decrypt only and must
++complete with `RTE_CRYPTO_OP_STATUS_AUTH_FAILED`. The application reports
++`acceptable` vectors as skipped until an algorithm-specific policy is added.
++Vectors outside a PMD's advertised AEAD capability ranges are skipped and
++counted separately.
++
++For HMAC and AES-CMAC, `key`, `msg`, and `tag` map to the DPDK authentication
++key, input data, and digest buffer. Valid vectors require exact generated tags;
++invalid vectors require `RTE_CRYPTO_OP_STATUS_AUTH_FAILED` during verification.
++
++AES-GMAC uses `mac_with_iv_test_schema_v1.json`; its `iv` maps to the DPDK
++authentication IV in addition to the MAC fields above.
++
++AES-CCM uses the DPDK AEAD API's CCM-specific layout: the nonce is stored one
++byte after the IV pointer and the AAD is placed after its required 18-byte
++prefix.
++
++DSA verification is supported for the `dsa_p1363_verify_schema_v1.json` schema.
++The group `p`, `q`, `g`, and `y` map to `rte_crypto_dsa_xform` and the verify
++operation's public key; the per-test `msg` is hashed with the group `sha` via
++the cryptodev auth path, and the fixed-width P1363 `sig` is split into `r` and
++`s`. `valid` vectors must verify (`RTE_CRYPTO_OP_STATUS_SUCCESS`); `invalid`
++vectors must not. This path needs a PMD advertising the asymmetric DSA verify
++capability (for example `crypto_openssl`).
++
++ECDH shared-secret computation is supported for the
++`ecdh_ecpoint_test_schema_v1.json` schema. The group `curve` selects the DPDK
++EC group; the per-test uncompressed `public` point (`0x04 || x || y`) maps to
++`rte_crypto_ec_point`, `private` is the scalar, and the derived shared secret's
++x-coordinate is compared against `shared`. `valid` vectors must produce the
++expected secret; `invalid` vectors must not. Invalid-curve vectors (empty
++`shared`) are skipped because on-curve validation is a separate ECDH
++`PUB_KEY_VERIFY` op, not part of the raw shared-secret compute. This path needs
++a PMD implementing ECDH (for example `crypto_qat`); the OpenSSL PMD does not
++implement ECDH, so it capability-skips these vectors. Curves the PMD does not
++support are capability-skipped rather than failed.
++
++ECDSA verification is supported for the `ecdsa_p1363_verify_schema_v1.json`
++schema. The group `publicKey.curve` selects the EC group and `publicKey.wx`,
++`publicKey.wy` map to the public point `q` in `rte_crypto_ec_xform`; the
++per-test `msg` is hashed with the group `sha` (using the leftmost `Ln` bits as
++`e`), and the fixed-width P1363 `sig` is split into `r` and `s`. `valid`
++signatures must verify; `invalid` ones must not. Non-canonical signature sizes
++(not `2 * ceil(bitlen(n)/8)`) are skipped, since the fixed-width representation
++cannot faithfully encode them. This path needs a PMD implementing ECDSA (for
++example `crypto_qat`, curves secp256r1/384r1/521r1); the OpenSSL PMD does not
++implement ECDSA, so it capability-skips these vectors.
++
++Digest computation for DSA and ECDSA uses the symmetric auth path. When the
++target device is asymmetric-only (for example the QAT asym device), the app
++automatically selects a separate symmetric-capable device (for example the QAT
++sym device) for hashing.
++
++The dispatcher also recognizes AES-CBC-PKCS5, AES-EAX, AES-FF1, AES-GCM-SIV,
++AES-KWP, AES-SIV-CMAC, AES-WRAP, AES-XTS, SM4-CCM, HMAC-SHA512/224,
++HMAC-SHA512/256, RSA, ECDSA (DER, WebCrypto, and Bitcoin schemas), DSA (DER
++`dsa_verify_schema_v1.json`), ECDH (DER, PEM, and WebCrypto schemas), and SEED
++cipher files. Their operation-specific adapters are not implemented yet, so
++they are reported as recognized-but-unsupported rather than silently folded
++into unrelated files. HMAC requires separate generation and verification
++operations; AES-XTS needs defined 64-bit data-unit-sequence to DPDK tweak
++conversion; the remaining AES modes need cipher, padding, key-wrap, SIV, or
++FPE adapters. DPDK exposes no SEED symmetric transform. RSA, the DER DSA
++schema, the DER/WebCrypto/Bitcoin ECDSA schemas, and the non-ecpoint ECDH
++schemas need per-schema padding, hash, key, and signature/point-encoding
++adapters.
++
++## Build
++
++Jansson is required for JSON parsing. Build this example from the DPDK source
++tree:
++
++```sh
++meson setup build -Dexamples=wycheproof_validation -Denable_drivers=crypto/openssl
++meson compile -C build
++```
++
++## Run
++
++Use the OpenSSL PMD for the first run. A file path processes that JSON file; a
++directory processes supported JSON files directly within that directory.
++Pass `--debug` to list every failed or skipped vector. Each record includes the
++algorithm, `tcId` and result where available, and its reason.
++
++```sh
++./build/examples/dpdk-wycheproof_validation --vdev crypto_openssl -- \
++  --vectors ../wycheproof/testvectors_v1/aes_gcm_test.json \
++  --cryptodev crypto_openssl --debug
++```
++
++ECDH needs a PMD that implements it (the OpenSSL PMD does not). Build with the
++QAT PMD (`-Denable_drivers=crypto/openssl,crypto/qat`) and run against a bound
++QAT asymmetric device:
++
++```sh
++./build/examples/dpdk-wycheproof_validation -a 0000:14:00.1 -- \
++  --vectors ../wycheproof/testvectors_v1/ecdh_secp256r1_ecpoint_test.json \
++  --cryptodev 0000:14:00.1_qat_asym
++```
++
++The program exits nonzero when a parsed, supported vector fails validation. It
++exits zero when all executed vectors pass, even when unsupported files or PMD
++parameter combinations are skipped; the summary exposes those counts.
+diff --git a/examples/wycheproof_validation/main.c b/examples/wycheproof_validation/main.c
+new file mode 100644
+index 0000000000..06a208ab03
+--- /dev/null
++++ b/examples/wycheproof_validation/main.c
+@@ -0,0 +1,1882 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026
++ */
++
++#include <dirent.h>
++#include <errno.h>
++#include <getopt.h>
++#include <stdio.h>
++#include <string.h>
++#include <sys/stat.h>
++
++#include <jansson.h>
++
++#include <rte_cryptodev.h>
++#include <rte_eal.h>
++#include <rte_errno.h>
++#include <rte_mbuf.h>
++#include <rte_mempool.h>
++#include <rte_malloc.h>
++
++#define APP_NAME "wycheproof_validation"
++#define DEFAULT_MBUF_DATA_ROOM 16384
++#define IV_OFFSET (sizeof(struct rte_crypto_op) + sizeof(struct rte_crypto_sym_op))
++
++struct wycheproof_data {
++	uint8_t *key;
++	uint8_t *iv;
++	uint8_t *aad;
++	uint8_t *msg;
++	uint8_t *ct;
++	uint8_t *tag;
++	uint32_t key_len;
++	uint32_t iv_len;
++	uint32_t aad_len;
++	uint32_t msg_len;
++	uint32_t ct_len;
++	uint32_t tag_len;
++	json_int_t tc_id;
++	const char *result;
++};
++
++struct app_env {
++	uint8_t dev_id;
++	uint8_t hash_dev_id;
++	bool hash_dev_own;
++	uint32_t mbuf_data_room;
++	const char *vectors_path;
++	bool debug;
++	struct rte_mempool *mbuf_pool;
++	struct rte_mempool *session_pool;
++	struct rte_mempool *op_pool;
++	struct rte_mempool *asym_session_pool;
++	struct rte_mempool *asym_op_pool;
++};
++
++struct app_stats {
++	uint64_t passed;
++	uint64_t failed;
++	uint64_t skipped_capability;
++	uint64_t skipped_acceptable;
++	uint64_t skipped_unsupported;
++};
++
++static struct app_env env = {
++	.mbuf_data_room = DEFAULT_MBUF_DATA_ROOM,
++};
++
++static void
++usage(const char *program)
++{
++	printf("%s [EAL options] -- --vectors PATH [--cryptodev NAME | --cryptodev-id ID] [--debug]\n",
++		program);
++}
++
++static void
++debug_vector(const char *type, const char *algorithm,
++		const struct wycheproof_data *vector, const char *reason)
++{
++	if (env.debug)
++		printf("%s %s tcId=%" JSON_INTEGER_FORMAT " result=%s: %s\n", type,
++			algorithm, vector->tc_id, vector->result, reason);
++}
++
++static void
++debug_file(const char *type, const char *path, const char *reason)
++{
++	if (env.debug)
++		printf("%s %s: %s\n", type, path, reason);
++}
++
++static int
++parse_uint32(const char *text, uint32_t *value)
++{
++	char *end;
++	unsigned long parsed;
++
++	errno = 0;
++	parsed = strtoul(text, &end, 10);
++	if (errno != 0 || *text == '\0' || *end != '\0' || parsed > UINT32_MAX)
++		return -EINVAL;
++
++	*value = parsed;
++	return 0;
++}
++
++static int
++parse_args(int argc, char **argv)
++{
++	static const struct option options[] = {
++		{ "vectors", required_argument, NULL, 'v' },
++		{ "cryptodev", required_argument, NULL, 'c' },
++		{ "cryptodev-id", required_argument, NULL, 'd' },
++		{ "mbuf-dataroom", required_argument, NULL, 'm' },
++		{ "debug", no_argument, NULL, 'D' },
++		{ NULL, 0, NULL, 0 },
++	};
++	bool have_device = false;
++	int option;
++
++	if (rte_cryptodev_count() == 0)
++		return -ENODEV;
++	env.dev_id = 0;
++
++	while ((option = getopt_long(argc, argv, "v:c:d:m:D", options, NULL)) != -1) {
++		uint32_t value;
++		int dev_id;
++
++		switch (option) {
++		case 'v':
++			env.vectors_path = optarg;
++			break;
++		case 'c':
++			dev_id = rte_cryptodev_get_dev_id(optarg);
++			if (dev_id < 0)
++				return dev_id;
++			env.dev_id = dev_id;
++			have_device = true;
++			break;
++		case 'd':
++			if (parse_uint32(optarg, &value) != 0 ||
++					!rte_cryptodev_is_valid_dev(value))
++				return -EINVAL;
++			env.dev_id = value;
++			have_device = true;
++			break;
++		case 'm':
++			if (parse_uint32(optarg, &env.mbuf_data_room) != 0 ||
++					env.mbuf_data_room == 0)
++				return -EINVAL;
++			break;
++		case 'D':
++			env.debug = true;
++			break;
++		default:
++			return -EINVAL;
++		}
++	}
++
++	if (env.vectors_path == NULL)
++		return -EINVAL;
++	if (!have_device)
++		printf("Using cryptodev %u (%s)\n", env.dev_id,
++			rte_cryptodev_name_get(env.dev_id));
++
++	return 0;
++}
++
++static int
++app_init(void)
++{
++	struct rte_cryptodev_config config = { rte_socket_id(), 1, 0 };
++	struct rte_cryptodev_qp_conf queue_pair = { 128, NULL };
++	uint32_t session_size;
++	int ret;
++
++	ret = rte_cryptodev_configure(env.dev_id, &config);
++	if (ret < 0)
++		return ret;
++
++	env.mbuf_pool = rte_pktmbuf_pool_create("WYCHEPROOF_MBUF_POOL", 64, 0, 0,
++		sizeof(struct rte_mbuf) + RTE_PKTMBUF_HEADROOM + env.mbuf_data_room,
++		rte_socket_id());
++	if (env.mbuf_pool == NULL) {
++		ret = -rte_errno;
++		goto error;
++	}
++
++	session_size = rte_cryptodev_sym_get_private_session_size(env.dev_id);
++	{
++		/* The hashing device may differ from the target device, so size the
++		 * session pool for the largest sym session across all devices.
++		 */
++		uint8_t d;
++
++		for (d = 0; d < rte_cryptodev_count(); d++) {
++			uint32_t s = rte_cryptodev_sym_get_private_session_size(d);
++
++			if (s > session_size)
++				session_size = s;
++		}
++	}
++	env.session_pool = rte_cryptodev_sym_session_pool_create("WYCHEPROOF_SESSION_POOL",
++		64, session_size, 0, 0, rte_socket_id());
++	if (env.session_pool == NULL) {
++		ret = -rte_errno;
++		goto error;
++	}
++
++	env.op_pool = rte_crypto_op_pool_create("WYCHEPROOF_OP_POOL",
++		RTE_CRYPTO_OP_TYPE_SYMMETRIC, 64, 0, IV_OFFSET + 64, rte_socket_id());
++	if (env.op_pool == NULL) {
++		ret = -rte_errno;
++		goto error;
++	}
++
++	/* Asymmetric pools are best-effort; DSA/ECDSA paths gate on the
++	 * device asymmetric feature flag at runtime.
++	 */
++	env.asym_session_pool = rte_cryptodev_asym_session_pool_create(
++		"WYCHEPROOF_ASYM_SESS", 16, 0, 0, rte_socket_id());
++	env.asym_op_pool = rte_crypto_op_pool_create("WYCHEPROOF_ASYM_OP",
++		RTE_CRYPTO_OP_TYPE_ASYMMETRIC, 64, 0, 0, rte_socket_id());
++
++	queue_pair.mp_session = env.session_pool;
++	ret = rte_cryptodev_queue_pair_setup(env.dev_id, 0, &queue_pair,
++		rte_socket_id());
++	if (ret < 0)
++		goto error;
++
++	ret = rte_cryptodev_start(env.dev_id);
++	if (ret < 0)
++		goto error;
++
++	/* Digest computation for DSA/ECDSA needs a symmetric-auth device. The
++	 * target device may be asym-only (for example QAT), so pick a separate
++	 * sym-capable device for hashing when needed.
++	 */
++	env.hash_dev_id = env.dev_id;
++	env.hash_dev_own = false;
++	{
++		struct rte_cryptodev_sym_capability_idx hash_idx = {
++			.type = RTE_CRYPTO_SYM_XFORM_AUTH,
++			.algo.auth = RTE_CRYPTO_AUTH_SHA256,
++		};
++		uint8_t count = rte_cryptodev_count();
++		uint8_t d;
++
++		if (rte_cryptodev_sym_capability_get(env.dev_id, &hash_idx) == NULL) {
++			for (d = 0; d < count; d++) {
++				struct rte_cryptodev_qp_conf hash_qp = { 128, NULL };
++
++				if (d == env.dev_id ||
++						rte_cryptodev_sym_capability_get(d, &hash_idx) == NULL)
++					continue;
++				if (rte_cryptodev_configure(d, &config) < 0)
++					continue;
++				hash_qp.mp_session = env.session_pool;
++				if (rte_cryptodev_queue_pair_setup(d, 0, &hash_qp,
++						rte_socket_id()) < 0 ||
++						rte_cryptodev_start(d) < 0) {
++					rte_cryptodev_close(d);
++					continue;
++				}
++				env.hash_dev_id = d;
++				env.hash_dev_own = true;
++				break;
++			}
++		}
++	}
++
++	return 0;
++
++error:
++	rte_mempool_free(env.asym_op_pool);
++	rte_mempool_free(env.asym_session_pool);
++	rte_mempool_free(env.op_pool);
++	rte_mempool_free(env.session_pool);
++	rte_mempool_free(env.mbuf_pool);
++	env.asym_op_pool = NULL;
++	env.asym_session_pool = NULL;
++	env.op_pool = NULL;
++	env.session_pool = NULL;
++	env.mbuf_pool = NULL;
++	return ret;
++}
++
++static void
++app_uninit(void)
++{
++	if (env.hash_dev_own) {
++		rte_cryptodev_stop(env.hash_dev_id);
++		rte_cryptodev_close(env.hash_dev_id);
++	}
++	rte_cryptodev_stop(env.dev_id);
++	rte_cryptodev_close(env.dev_id);
++	rte_mempool_free(env.asym_op_pool);
++	rte_mempool_free(env.asym_session_pool);
++	rte_mempool_free(env.op_pool);
++	rte_mempool_free(env.session_pool);
++	rte_mempool_free(env.mbuf_pool);
++}
++
++static void
++free_vector(struct wycheproof_data *vector)
++{
++	rte_free(vector->key);
++	rte_free(vector->iv);
++	rte_free(vector->aad);
++	rte_free(vector->msg);
++	rte_free(vector->ct);
++	rte_free(vector->tag);
++	memset(vector, 0, sizeof(*vector));
++}
++
++static int
++hex_value(char character)
++{
++	if (character >= '0' && character <= '9')
++		return character - '0';
++	if (character >= 'a' && character <= 'f')
++		return character - 'a' + 10;
++	if (character >= 'A' && character <= 'F')
++		return character - 'A' + 10;
++	return -1;
++}
++
++static int
++decode_hex(json_t *value, uint8_t **buffer, uint32_t *length)
++{
++	const char *hex;
++	size_t hex_length;
++	uint8_t *decoded;
++	size_t index;
++
++	if (!json_is_string(value))
++		return -EINVAL;
++
++	hex = json_string_value(value);
++	hex_length = strlen(hex);
++	if ((hex_length & 1) != 0 || hex_length / 2 > UINT32_MAX)
++		return -EINVAL;
++
++	*length = hex_length / 2;
++	if (*length == 0)
++		return 0;
++
++	decoded = rte_malloc(NULL, *length, 0);
++	if (decoded == NULL)
++		return -ENOMEM;
++
++	for (index = 0; index < *length; index++) {
++		int high = hex_value(hex[index * 2]);
++		int low = hex_value(hex[index * 2 + 1]);
++
++		if (high < 0 || low < 0) {
++			rte_free(decoded);
++			return -EINVAL;
++		}
++		decoded[index] = (high << 4) | low;
++	}
++
++	*buffer = decoded;
++	return 0;
++}
++
++static int
++parse_vector(json_t *test, struct wycheproof_data *vector)
++{
++	json_t *tc_id;
++	int ret;
++
++	memset(vector, 0, sizeof(*vector));
++	tc_id = json_object_get(test, "tcId");
++	vector->result = json_string_value(json_object_get(test, "result"));
++	if (!json_is_integer(tc_id) || vector->result == NULL)
++		return -EINVAL;
++	vector->tc_id = json_integer_value(tc_id);
++
++	ret = decode_hex(json_object_get(test, "key"), &vector->key, &vector->key_len);
++	if (ret != 0)
++		goto error;
++	ret = decode_hex(json_object_get(test, "iv"), &vector->iv, &vector->iv_len);
++	if (ret != 0)
++		goto error;
++	ret = decode_hex(json_object_get(test, "aad"), &vector->aad, &vector->aad_len);
++	if (ret != 0)
++		goto error;
++	ret = decode_hex(json_object_get(test, "msg"), &vector->msg, &vector->msg_len);
++	if (ret != 0)
++		goto error;
++	ret = decode_hex(json_object_get(test, "ct"), &vector->ct, &vector->ct_len);
++	if (ret != 0)
++		goto error;
++	ret = decode_hex(json_object_get(test, "tag"), &vector->tag, &vector->tag_len);
++	if (ret != 0)
++		goto error;
++
++	return 0;
++
++error:
++	free_vector(vector);
++	return ret;
++}
++
++static int
++parse_mac_vector(json_t *test, struct wycheproof_data *vector)
++{
++	json_t *tc_id;
++	int ret;
++
++	memset(vector, 0, sizeof(*vector));
++	tc_id = json_object_get(test, "tcId");
++	vector->result = json_string_value(json_object_get(test, "result"));
++	if (!json_is_integer(tc_id) || vector->result == NULL)
++		return -EINVAL;
++	vector->tc_id = json_integer_value(tc_id);
++
++	ret = decode_hex(json_object_get(test, "key"), &vector->key, &vector->key_len);
++	if (ret != 0)
++		goto error;
++	ret = decode_hex(json_object_get(test, "msg"), &vector->msg, &vector->msg_len);
++	if (ret != 0)
++		goto error;
++	ret = decode_hex(json_object_get(test, "tag"), &vector->tag, &vector->tag_len);
++	if (ret != 0)
++		goto error;
++
++	return 0;
++
++error:
++	free_vector(vector);
++	return ret;
++}
++
++static int
++parse_mac_with_iv_vector(json_t *test, struct wycheproof_data *vector)
++{
++	int ret;
++
++	ret = parse_mac_vector(test, vector);
++	if (ret != 0)
++		return ret;
++	ret = decode_hex(json_object_get(test, "iv"), &vector->iv, &vector->iv_len);
++	if (ret != 0)
++		free_vector(vector);
++	return ret;
++}
++
++static int
++check_aead_capability(const struct wycheproof_data *vector,
++		enum rte_crypto_aead_algorithm algorithm)
++{
++	struct rte_cryptodev_sym_capability_idx index = {
++		.type = RTE_CRYPTO_SYM_XFORM_AEAD,
++		.algo.aead = algorithm,
++	};
++	const struct rte_cryptodev_symmetric_capability *capability;
++
++	capability = rte_cryptodev_sym_capability_get(env.dev_id, &index);
++	if (capability == NULL)
++		return -ENOTSUP;
++
++	return rte_cryptodev_sym_capability_check_aead(capability, vector->key_len,
++		vector->tag_len, vector->aad_len, vector->iv_len);
++}
++
++static int
++run_aead(const struct wycheproof_data *vector, enum rte_crypto_aead_algorithm algorithm,
++	enum rte_crypto_aead_operation operation, uint8_t **output, uint8_t **digest,
++	enum rte_crypto_op_status *status)
++{
++	struct rte_crypto_sym_xform xform = { 0 };
++	struct rte_cryptodev_sym_session *session = NULL;
++	struct rte_crypto_op *operation_op = NULL;
++	struct rte_mbuf *mbuf = NULL;
++	struct rte_crypto_op *completed = NULL;
++	struct rte_crypto_sym_op *sym_op;
++	uint8_t *aad = NULL;
++	uint8_t *input;
++	uint32_t input_len;
++	int ret = -ENOMEM;
++
++	*output = NULL;
++	*digest = NULL;
++	xform.type = RTE_CRYPTO_SYM_XFORM_AEAD;
++	xform.aead.algo = algorithm;
++	xform.aead.op = operation;
++	xform.aead.key.data = vector->key;
++	xform.aead.key.length = vector->key_len;
++	xform.aead.iv.offset = IV_OFFSET;
++	xform.aead.iv.length = vector->iv_len;
++	xform.aead.aad_length = vector->aad_len;
++	xform.aead.digest_length = vector->tag_len;
++
++	session = rte_cryptodev_sym_session_create(env.dev_id, &xform, env.session_pool);
++	if (session == NULL)
++		goto out;
++
++	operation_op = rte_crypto_op_alloc(env.op_pool, RTE_CRYPTO_OP_TYPE_SYMMETRIC);
++	if (operation_op == NULL)
++		goto out;
++
++	mbuf = rte_pktmbuf_alloc(env.mbuf_pool);
++	if (mbuf == NULL)
++		goto out;
++	input = operation == RTE_CRYPTO_AEAD_OP_ENCRYPT ? vector->msg : vector->ct;
++	input_len = operation == RTE_CRYPTO_AEAD_OP_ENCRYPT ? vector->msg_len : vector->ct_len;
++	if (input_len > rte_pktmbuf_tailroom(mbuf)) {
++		ret = -EMSGSIZE;
++		goto out;
++	}
++	if (input_len != 0)
++		memcpy(rte_pktmbuf_append(mbuf, input_len), input, input_len);
++
++	*digest = rte_malloc(NULL, vector->tag_len, RTE_CACHE_LINE_SIZE);
++	if (*digest == NULL && vector->tag_len != 0)
++		goto out;
++	if (operation == RTE_CRYPTO_AEAD_OP_DECRYPT && vector->tag_len != 0)
++		memcpy(*digest, vector->tag, vector->tag_len);
++
++	sym_op = operation_op->sym;
++	sym_op->m_src = mbuf;
++	sym_op->aead.data.offset = 0;
++	sym_op->aead.data.length = input_len;
++	if (algorithm == RTE_CRYPTO_AEAD_AES_CCM) {
++		aad = rte_zmalloc(NULL, vector->aad_len + 18, 0);
++		if (aad == NULL && vector->aad_len != 0)
++			goto out;
++		if (vector->aad_len != 0)
++			memcpy(aad + 18, vector->aad, vector->aad_len);
++		sym_op->aead.aad.data = aad;
++		sym_op->aead.aad.phys_addr = rte_malloc_virt2iova(aad);
++		memcpy(rte_crypto_op_ctod_offset(operation_op, uint8_t *, IV_OFFSET) + 1,
++			vector->iv, vector->iv_len);
++	} else {
++		sym_op->aead.aad.data = vector->aad;
++		sym_op->aead.aad.phys_addr = rte_malloc_virt2iova(vector->aad);
++		memcpy(rte_crypto_op_ctod_offset(operation_op, uint8_t *, IV_OFFSET), vector->iv,
++			vector->iv_len);
++	}
++	sym_op->aead.digest.data = *digest;
++	sym_op->aead.digest.phys_addr = rte_malloc_virt2iova(*digest);
++	rte_crypto_op_attach_sym_session(operation_op, session);
++
++	if (rte_cryptodev_enqueue_burst(env.dev_id, 0, &operation_op, 1) != 1) {
++		ret = -EIO;
++		goto out;
++	}
++	while (rte_cryptodev_dequeue_burst(env.dev_id, 0, &completed, 1) == 0)
++		rte_pause();
++
++	*status = completed->status;
++	if (*status == RTE_CRYPTO_OP_STATUS_SUCCESS && input_len != 0) {
++		*output = rte_malloc(NULL, input_len, 0);
++		if (*output == NULL)
++			goto out;
++		memcpy(*output, rte_pktmbuf_mtod(mbuf, uint8_t *), input_len);
++	}
++	ret = 0;
++
++out:
++	rte_free(aad);
++	rte_pktmbuf_free(mbuf);
++	rte_crypto_op_free(operation_op);
++	rte_cryptodev_sym_session_free(env.dev_id, session);
++	if (ret != 0) {
++		rte_free(*output);
++		rte_free(*digest);
++		*output = NULL;
++		*digest = NULL;
++	}
++	return ret;
++}
++
++static int
++run_hmac(const struct wycheproof_data *vector, enum rte_crypto_auth_algorithm algorithm,
++		enum rte_crypto_auth_operation operation, uint8_t **digest,
++		enum rte_crypto_op_status *status)
++{
++	struct rte_crypto_sym_xform xform = { 0 };
++	struct rte_cryptodev_sym_session *session = NULL;
++	struct rte_crypto_op *op = NULL;
++	struct rte_crypto_op *completed = NULL;
++	struct rte_mbuf *mbuf = NULL;
++	const struct rte_cryptodev_symmetric_capability *capability;
++	struct rte_cryptodev_sym_capability_idx index = {
++		.type = RTE_CRYPTO_SYM_XFORM_AUTH,
++		.algo.auth = algorithm,
++	};
++	int ret = -ENOMEM;
++
++	*digest = NULL;
++	capability = rte_cryptodev_sym_capability_get(env.dev_id, &index);
++	if (capability == NULL || rte_cryptodev_sym_capability_check_auth(capability,
++			vector->key_len, vector->tag_len, 0) != 0)
++		return -ENOTSUP;
++
++	xform.type = RTE_CRYPTO_SYM_XFORM_AUTH;
++	xform.auth.algo = algorithm;
++	xform.auth.op = operation;
++	xform.auth.key.data = vector->key;
++	xform.auth.key.length = vector->key_len;
++	xform.auth.digest_length = vector->tag_len;
++	session = rte_cryptodev_sym_session_create(env.dev_id, &xform, env.session_pool);
++	if (session == NULL)
++		goto out;
++
++	op = rte_crypto_op_alloc(env.op_pool, RTE_CRYPTO_OP_TYPE_SYMMETRIC);
++	if (op == NULL)
++		goto out;
++	mbuf = rte_pktmbuf_alloc(env.mbuf_pool);
++	if (mbuf == NULL)
++		goto out;
++	if (vector->msg_len > rte_pktmbuf_tailroom(mbuf)) {
++		ret = -EMSGSIZE;
++		goto out;
++	}
++	if (vector->msg_len != 0)
++		memcpy(rte_pktmbuf_append(mbuf, vector->msg_len), vector->msg, vector->msg_len);
++
++	*digest = rte_malloc(NULL, vector->tag_len, RTE_CACHE_LINE_SIZE);
++	if (*digest == NULL && vector->tag_len != 0)
++		goto out;
++	if (operation == RTE_CRYPTO_AUTH_OP_VERIFY && vector->tag_len != 0)
++		memcpy(*digest, vector->tag, vector->tag_len);
++
++	op->sym->m_src = mbuf;
++	op->sym->auth.data.offset = 0;
++	op->sym->auth.data.length = vector->msg_len;
++	op->sym->auth.digest.data = *digest;
++	op->sym->auth.digest.phys_addr = rte_malloc_virt2iova(*digest);
++	rte_crypto_op_attach_sym_session(op, session);
++	if (rte_cryptodev_enqueue_burst(env.dev_id, 0, &op, 1) != 1) {
++		ret = -EIO;
++		goto out;
++	}
++	while (rte_cryptodev_dequeue_burst(env.dev_id, 0, &completed, 1) == 0)
++		rte_pause();
++	*status = completed->status;
++	ret = 0;
++
++out:
++	rte_pktmbuf_free(mbuf);
++	rte_crypto_op_free(op);
++	rte_cryptodev_sym_session_free(env.dev_id, session);
++	if (ret != 0) {
++		rte_free(*digest);
++		*digest = NULL;
++	}
++	return ret;
++}
++
++static int
++run_gmac(const struct wycheproof_data *vector, enum rte_crypto_auth_operation operation,
++		uint8_t **digest, enum rte_crypto_op_status *status)
++{
++	struct rte_crypto_sym_xform xform = { 0 };
++	struct rte_cryptodev_sym_session *session = NULL;
++	struct rte_crypto_op *op = NULL;
++	struct rte_crypto_op *completed = NULL;
++	struct rte_mbuf *mbuf = NULL;
++	const struct rte_cryptodev_symmetric_capability *capability;
++	struct rte_cryptodev_sym_capability_idx index = {
++		.type = RTE_CRYPTO_SYM_XFORM_AUTH,
++		.algo.auth = RTE_CRYPTO_AUTH_AES_GMAC,
++	};
++	int ret = -ENOMEM;
++
++	*digest = NULL;
++	capability = rte_cryptodev_sym_capability_get(env.dev_id, &index);
++	if (capability == NULL || rte_cryptodev_sym_capability_check_auth(capability,
++			vector->key_len, vector->tag_len, vector->iv_len) != 0)
++		return -ENOTSUP;
++
++	xform.type = RTE_CRYPTO_SYM_XFORM_AUTH;
++	xform.auth.algo = RTE_CRYPTO_AUTH_AES_GMAC;
++	xform.auth.op = operation;
++	xform.auth.key.data = vector->key;
++	xform.auth.key.length = vector->key_len;
++	xform.auth.iv.offset = IV_OFFSET;
++	xform.auth.iv.length = vector->iv_len;
++	xform.auth.digest_length = vector->tag_len;
++	session = rte_cryptodev_sym_session_create(env.dev_id, &xform, env.session_pool);
++	if (session == NULL)
++		goto out;
++
++	op = rte_crypto_op_alloc(env.op_pool, RTE_CRYPTO_OP_TYPE_SYMMETRIC);
++	if (op == NULL)
++		goto out;
++	mbuf = rte_pktmbuf_alloc(env.mbuf_pool);
++	if (mbuf == NULL)
++		goto out;
++	if (vector->msg_len > rte_pktmbuf_tailroom(mbuf)) {
++		ret = -EMSGSIZE;
++		goto out;
++	}
++	if (vector->msg_len != 0)
++		memcpy(rte_pktmbuf_append(mbuf, vector->msg_len), vector->msg, vector->msg_len);
++
++	*digest = rte_malloc(NULL, vector->tag_len, RTE_CACHE_LINE_SIZE);
++	if (*digest == NULL && vector->tag_len != 0)
++		goto out;
++	if (operation == RTE_CRYPTO_AUTH_OP_VERIFY && vector->tag_len != 0)
++		memcpy(*digest, vector->tag, vector->tag_len);
++
++	op->sym->m_src = mbuf;
++	op->sym->auth.data.offset = 0;
++	op->sym->auth.data.length = vector->msg_len;
++	op->sym->auth.digest.data = *digest;
++	op->sym->auth.digest.phys_addr = rte_malloc_virt2iova(*digest);
++	memcpy(rte_crypto_op_ctod_offset(op, uint8_t *, IV_OFFSET), vector->iv, vector->iv_len);
++	rte_crypto_op_attach_sym_session(op, session);
++	if (rte_cryptodev_enqueue_burst(env.dev_id, 0, &op, 1) != 1) {
++		ret = -EIO;
++		goto out;
++	}
++	while (rte_cryptodev_dequeue_burst(env.dev_id, 0, &completed, 1) == 0)
++		rte_pause();
++	*status = completed->status;
++	ret = 0;
++
++out:
++	rte_pktmbuf_free(mbuf);
++	rte_crypto_op_free(op);
++	rte_cryptodev_sym_session_free(env.dev_id, session);
++	if (ret != 0) {
++		rte_free(*digest);
++		*digest = NULL;
++	}
++	return ret;
++}
++
++static void
++validate_aead_vector(const struct wycheproof_data *vector,
++		enum rte_crypto_aead_algorithm algorithm, const char *name,
++		struct app_stats *stats)
++{
++	uint8_t *output = NULL;
++	uint8_t *digest = NULL;
++	enum rte_crypto_op_status status;
++	int ret;
++
++	if (strcmp(vector->result, "acceptable") == 0) {
++		stats->skipped_acceptable++;
++		debug_vector("SKIP", name, vector, "acceptable result policy");
++		return;
++	}
++	if (strcmp(vector->result, "valid") != 0 && strcmp(vector->result, "invalid") != 0) {
++		stats->skipped_unsupported++;
++		debug_vector("SKIP", name, vector, "unknown result");
++		return;
++	}
++	if (vector->msg_len != vector->ct_len ||
++		vector->msg_len > env.mbuf_data_room - RTE_PKTMBUF_HEADROOM) {
++		stats->skipped_unsupported++;
++		debug_vector("SKIP", name, vector, "unsupported message length");
++		return;
++	}
++	if (check_aead_capability(vector, algorithm) != 0) {
++		stats->skipped_capability++;
++		debug_vector("SKIP", name, vector, "PMD capability");
++		return;
++	}
++
++	if (strcmp(vector->result, "valid") == 0) {
++		ret = run_aead(vector, algorithm, RTE_CRYPTO_AEAD_OP_ENCRYPT, &output, &digest,
++			&status);
++		if (ret != 0 || status != RTE_CRYPTO_OP_STATUS_SUCCESS ||
++				memcmp(output, vector->ct, vector->ct_len) != 0 ||
++				memcmp(digest, vector->tag, vector->tag_len) != 0)
++			goto failed;
++		rte_free(output);
++		rte_free(digest);
++		output = NULL;
++		digest = NULL;
++		ret = run_aead(vector, algorithm, RTE_CRYPTO_AEAD_OP_DECRYPT, &output, &digest,
++			&status);
++		if (ret != 0 || status != RTE_CRYPTO_OP_STATUS_SUCCESS ||
++				memcmp(output, vector->msg, vector->msg_len) != 0)
++			goto failed;
++	} else {
++		ret = run_aead(vector, algorithm, RTE_CRYPTO_AEAD_OP_DECRYPT, &output, &digest,
++			&status);
++		if (ret != 0 || status != RTE_CRYPTO_OP_STATUS_AUTH_FAILED)
++			goto failed;
++	}
++
++	stats->passed++;
++	rte_free(output);
++	rte_free(digest);
++	return;
++
++failed:
++	if (env.debug)
++		printf("FAIL %s tcId=%" JSON_INTEGER_FORMAT " result=%s status=%d ret=%d\n",
++			name, vector->tc_id, vector->result, status, ret);
++	stats->failed++;
++	rte_free(output);
++	rte_free(digest);
++}
++
++static int
++process_aead(json_t *root, enum rte_crypto_aead_algorithm algorithm,
++		const char *name, struct app_stats *stats)
++{
++	json_t *groups = json_object_get(root, "testGroups");
++	json_t *group;
++	size_t group_index;
++
++	if (!json_is_array(groups))
++		return -EINVAL;
++
++	json_array_foreach(groups, group_index, group) {
++		json_t *tests = json_object_get(group, "tests");
++		json_t *test;
++		size_t test_index;
++
++		if (!json_is_array(tests))
++			return -EINVAL;
++		json_array_foreach(tests, test_index, test) {
++			struct wycheproof_data vector;
++			int ret = parse_vector(test, &vector);
++
++			if (ret != 0) {
++				if (env.debug)
++					printf("SKIP %s group=%zu test=%zu: malformed vector\n", name,
++						group_index, test_index);
++				stats->skipped_unsupported++;
++				continue;
++			}
++			validate_aead_vector(&vector, algorithm, name, stats);
++			free_vector(&vector);
++		}
++	}
++
++	return 0;
++}
++
++static int
++process_hmac(json_t *root, enum rte_crypto_auth_algorithm algorithm,
++		const char *name, struct app_stats *stats)
++{
++	json_t *groups = json_object_get(root, "testGroups");
++	json_t *group;
++	size_t group_index;
++
++	if (!json_is_array(groups))
++		return -EINVAL;
++	json_array_foreach(groups, group_index, group) {
++		json_t *tests = json_object_get(group, "tests");
++		json_t *test;
++		size_t test_index;
++
++		if (!json_is_array(tests))
++			return -EINVAL;
++		json_array_foreach(tests, test_index, test) {
++			struct wycheproof_data vector;
++			uint8_t *digest = NULL;
++			enum rte_crypto_op_status status;
++			int ret;
++
++			ret = parse_mac_vector(test, &vector);
++			if (ret != 0) {
++				if (env.debug)
++					printf("SKIP %s group=%zu test=%zu: malformed vector\n", name,
++						group_index, test_index);
++				stats->skipped_unsupported++;
++				continue;
++			}
++			if (strcmp(vector.result, "acceptable") == 0) {
++				stats->skipped_acceptable++;
++				debug_vector("SKIP", name, &vector, "acceptable result policy");
++			}
++			else if (strcmp(vector.result, "valid") == 0) {
++				ret = run_hmac(&vector, algorithm, RTE_CRYPTO_AUTH_OP_GENERATE,
++					&digest, &status);
++				if (ret == -ENOTSUP) {
++					stats->skipped_capability++;
++					debug_vector("SKIP", name, &vector, "PMD capability");
++				}
++				else if (ret != 0 || status != RTE_CRYPTO_OP_STATUS_SUCCESS ||
++						memcmp(digest, vector.tag, vector.tag_len) != 0) {
++					debug_vector("FAIL", name, &vector, "generated tag mismatch");
++					stats->failed++;
++				} else
++					stats->passed++;
++			} else if (strcmp(vector.result, "invalid") == 0) {
++				ret = run_hmac(&vector, algorithm, RTE_CRYPTO_AUTH_OP_VERIFY,
++					&digest, &status);
++				if (ret == -ENOTSUP) {
++					stats->skipped_capability++;
++					debug_vector("SKIP", name, &vector, "PMD capability");
++				}
++				else if (ret != 0 || status != RTE_CRYPTO_OP_STATUS_AUTH_FAILED) {
++					debug_vector("FAIL", name, &vector, "authentication unexpectedly succeeded");
++					stats->failed++;
++				} else
++					stats->passed++;
++			} else {
++				stats->skipped_unsupported++;
++				debug_vector("SKIP", name, &vector, "unknown result");
++			}
++			rte_free(digest);
++			free_vector(&vector);
++		}
++	}
++	return 0;
++}
++
++static int
++process_gmac(json_t *root, struct app_stats *stats)
++{
++	json_t *groups = json_object_get(root, "testGroups");
++	json_t *group;
++	size_t group_index;
++
++	if (!json_is_array(groups))
++		return -EINVAL;
++	json_array_foreach(groups, group_index, group) {
++		json_t *tests = json_object_get(group, "tests");
++		json_t *test;
++		size_t test_index;
++
++		if (!json_is_array(tests))
++			return -EINVAL;
++		json_array_foreach(tests, test_index, test) {
++			struct wycheproof_data vector;
++			uint8_t *digest = NULL;
++			enum rte_crypto_op_status status;
++			int ret;
++
++			ret = parse_mac_with_iv_vector(test, &vector);
++			if (ret != 0) {
++				if (env.debug)
++					printf("SKIP AES-GMAC group=%zu test=%zu: malformed vector\n",
++						group_index, test_index);
++				stats->skipped_unsupported++;
++				continue;
++			}
++			if (strcmp(vector.result, "valid") == 0)
++				ret = run_gmac(&vector, RTE_CRYPTO_AUTH_OP_GENERATE, &digest, &status);
++			else if (strcmp(vector.result, "invalid") == 0)
++				ret = run_gmac(&vector, RTE_CRYPTO_AUTH_OP_VERIFY, &digest, &status);
++			else {
++				stats->skipped_acceptable++;
++				debug_vector("SKIP", "AES-GMAC", &vector, "acceptable result policy");
++				ret = 0;
++			}
++			if (ret == -ENOTSUP) {
++				stats->skipped_capability++;
++				debug_vector("SKIP", "AES-GMAC", &vector, "PMD capability");
++			}
++			else if ((strcmp(vector.result, "valid") == 0 &&
++					(ret != 0 || status != RTE_CRYPTO_OP_STATUS_SUCCESS ||
++					 memcmp(digest, vector.tag, vector.tag_len) != 0)) ||
++					(strcmp(vector.result, "invalid") == 0 &&
++					(ret != 0 || status != RTE_CRYPTO_OP_STATUS_AUTH_FAILED))) {
++				debug_vector("FAIL", "AES-GMAC", &vector, "unexpected operation result");
++				stats->failed++;
++			} else if (strcmp(vector.result, "valid") == 0 ||
++					strcmp(vector.result, "invalid") == 0)
++				stats->passed++;
++			rte_free(digest);
++			free_vector(&vector);
++		}
++	}
++	return 0;
++}
++
++struct dsa_group {
++	uint8_t *p;
++	uint8_t *q;
++	uint8_t *g;
++	uint8_t *y;
++	uint32_t p_len;
++	uint32_t q_len;
++	uint32_t g_len;
++	uint32_t y_len;
++	enum rte_crypto_auth_algorithm hash;
++	uint32_t digest_len;
++};
++
++static int
++map_sha(const char *name, enum rte_crypto_auth_algorithm *algo, uint32_t *digest_len)
++{
++	if (strcmp(name, "SHA-1") == 0) {
++		*algo = RTE_CRYPTO_AUTH_SHA1;
++		*digest_len = 20;
++	} else if (strcmp(name, "SHA-224") == 0) {
++		*algo = RTE_CRYPTO_AUTH_SHA224;
++		*digest_len = 28;
++	} else if (strcmp(name, "SHA-256") == 0) {
++		*algo = RTE_CRYPTO_AUTH_SHA256;
++		*digest_len = 32;
++	} else if (strcmp(name, "SHA-384") == 0) {
++		*algo = RTE_CRYPTO_AUTH_SHA384;
++		*digest_len = 48;
++	} else if (strcmp(name, "SHA-512") == 0) {
++		*algo = RTE_CRYPTO_AUTH_SHA512;
++		*digest_len = 64;
++	} else {
++		return -ENOTSUP;
++	}
++	return 0;
++}
++
++/* Compute a plain (keyless) message digest through the cryptodev auth path. */
++static int
++compute_hash(const uint8_t *msg, uint32_t msg_len, enum rte_crypto_auth_algorithm algo,
++		uint8_t *digest, uint32_t digest_len)
++{
++	struct rte_crypto_sym_xform xform = { 0 };
++	struct rte_cryptodev_sym_session *session = NULL;
++	struct rte_crypto_op *op = NULL;
++	struct rte_crypto_op *completed = NULL;
++	struct rte_mbuf *mbuf = NULL;
++	const struct rte_cryptodev_symmetric_capability *capability;
++	struct rte_cryptodev_sym_capability_idx index = {
++		.type = RTE_CRYPTO_SYM_XFORM_AUTH,
++		.algo.auth = algo,
++	};
++	uint8_t *op_digest = NULL;
++	int ret = -ENOMEM;
++
++	capability = rte_cryptodev_sym_capability_get(env.hash_dev_id, &index);
++	if (capability == NULL || rte_cryptodev_sym_capability_check_auth(capability,
++			0, digest_len, 0) != 0)
++		return -ENOTSUP;
++
++	xform.type = RTE_CRYPTO_SYM_XFORM_AUTH;
++	xform.auth.algo = algo;
++	xform.auth.op = RTE_CRYPTO_AUTH_OP_GENERATE;
++	xform.auth.digest_length = digest_len;
++	session = rte_cryptodev_sym_session_create(env.hash_dev_id, &xform, env.session_pool);
++	if (session == NULL)
++		goto out;
++
++	op = rte_crypto_op_alloc(env.op_pool, RTE_CRYPTO_OP_TYPE_SYMMETRIC);
++	if (op == NULL)
++		goto out;
++	mbuf = rte_pktmbuf_alloc(env.mbuf_pool);
++	if (mbuf == NULL)
++		goto out;
++	if (msg_len > rte_pktmbuf_tailroom(mbuf)) {
++		ret = -EMSGSIZE;
++		goto out;
++	}
++	if (msg_len != 0)
++		memcpy(rte_pktmbuf_append(mbuf, msg_len), msg, msg_len);
++
++	op_digest = rte_malloc(NULL, digest_len, RTE_CACHE_LINE_SIZE);
++	if (op_digest == NULL)
++		goto out;
++	op->sym->m_src = mbuf;
++	op->sym->auth.data.offset = 0;
++	op->sym->auth.data.length = msg_len;
++	op->sym->auth.digest.data = op_digest;
++	op->sym->auth.digest.phys_addr = rte_malloc_virt2iova(op_digest);
++	rte_crypto_op_attach_sym_session(op, session);
++	if (rte_cryptodev_enqueue_burst(env.hash_dev_id, 0, &op, 1) != 1) {
++		ret = -EIO;
++		goto out;
++	}
++	while (rte_cryptodev_dequeue_burst(env.hash_dev_id, 0, &completed, 1) == 0)
++		rte_pause();
++	if (completed->status != RTE_CRYPTO_OP_STATUS_SUCCESS) {
++		ret = -EIO;
++		goto out;
++	}
++	memcpy(digest, op_digest, digest_len);
++	ret = 0;
++
++out:
++	rte_free(op_digest);
++	rte_pktmbuf_free(mbuf);
++	rte_crypto_op_free(op);
++	rte_cryptodev_sym_session_free(env.hash_dev_id, session);
++	return ret;
++}
++
++static int
++run_dsa_verify(const struct dsa_group *group, const uint8_t *msg, uint32_t msg_len,
++		const uint8_t *r, uint32_t r_len, const uint8_t *s, uint32_t s_len,
++		enum rte_crypto_op_status *status)
++{
++	struct rte_crypto_asym_xform xform = { 0 };
++	void *session = NULL;
++	struct rte_crypto_op *op = NULL;
++	struct rte_crypto_op *completed = NULL;
++	struct rte_cryptodev_info dev_info;
++	struct rte_cryptodev_asym_capability_idx index = {
++		.type = RTE_CRYPTO_ASYM_XFORM_DSA,
++	};
++	const struct rte_cryptodev_asymmetric_xform_capability *capability;
++	uint8_t digest[64];
++	int ret;
++
++	if (env.asym_session_pool == NULL || env.asym_op_pool == NULL)
++		return -ENOTSUP;
++	rte_cryptodev_info_get(env.dev_id, &dev_info);
++	if ((dev_info.feature_flags & RTE_CRYPTODEV_FF_ASYMMETRIC_CRYPTO) == 0)
++		return -ENOTSUP;
++	capability = rte_cryptodev_asym_capability_get(env.dev_id, &index);
++	if (capability == NULL || rte_cryptodev_asym_xform_capability_check_optype(capability,
++			RTE_CRYPTO_ASYM_OP_VERIFY) == 0)
++		return -ENOTSUP;
++
++	ret = compute_hash(msg, msg_len, group->hash, digest, group->digest_len);
++	if (ret != 0)
++		return ret;
++
++	xform.xform_type = RTE_CRYPTO_ASYM_XFORM_DSA;
++	xform.next = NULL;
++	xform.dsa.p.data = group->p;
++	xform.dsa.p.length = group->p_len;
++	xform.dsa.q.data = group->q;
++	xform.dsa.q.length = group->q_len;
++	xform.dsa.g.data = group->g;
++	xform.dsa.g.length = group->g_len;
++
++	ret = -ENOMEM;
++	if (rte_cryptodev_asym_session_create(env.dev_id, &xform, env.asym_session_pool,
++			&session) < 0 || session == NULL)
++		goto out;
++	op = rte_crypto_op_alloc(env.asym_op_pool, RTE_CRYPTO_OP_TYPE_ASYMMETRIC);
++	if (op == NULL)
++		goto out;
++	op->asym->dsa.op_type = RTE_CRYPTO_ASYM_OP_VERIFY;
++	/* DSA verify operates on the message digest. */
++	op->asym->dsa.message.data = digest;
++	op->asym->dsa.message.length = group->digest_len;
++	op->asym->dsa.r.data = (uint8_t *)(uintptr_t)r;
++	op->asym->dsa.r.length = r_len;
++	op->asym->dsa.s.data = (uint8_t *)(uintptr_t)s;
++	op->asym->dsa.s.length = s_len;
++	op->asym->dsa.y.data = group->y;
++	op->asym->dsa.y.length = group->y_len;
++	rte_crypto_op_attach_asym_session(op, session);
++	if (rte_cryptodev_enqueue_burst(env.dev_id, 0, &op, 1) != 1) {
++		ret = -EIO;
++		goto out;
++	}
++	while (rte_cryptodev_dequeue_burst(env.dev_id, 0, &completed, 1) == 0)
++		rte_pause();
++	*status = completed->status;
++	ret = 0;
++
++out:
++	rte_crypto_op_free(op);
++	if (session != NULL)
++		rte_cryptodev_asym_session_free(env.dev_id, session);
++	return ret;
++}
++
++static int
++process_dsa_p1363(json_t *root, const char *name, struct app_stats *stats)
++{
++	json_t *groups = json_object_get(root, "testGroups");
++	json_t *group;
++	size_t group_index;
++
++	if (!json_is_array(groups))
++		return -EINVAL;
++	json_array_foreach(groups, group_index, group) {
++		json_t *pub = json_object_get(group, "publicKey");
++		json_t *tests = json_object_get(group, "tests");
++		struct dsa_group dsa = { 0 };
++		const char *sha;
++		json_t *test;
++		size_t test_index;
++
++		if (!json_is_object(pub) || !json_is_array(tests))
++			return -EINVAL;
++		sha = json_string_value(json_object_get(group, "sha"));
++		if (sha == NULL || map_sha(sha, &dsa.hash, &dsa.digest_len) != 0) {
++			stats->skipped_unsupported++;
++			continue;
++		}
++		if (decode_hex(json_object_get(pub, "p"), &dsa.p, &dsa.p_len) != 0 ||
++				decode_hex(json_object_get(pub, "q"), &dsa.q, &dsa.q_len) != 0 ||
++				decode_hex(json_object_get(pub, "g"), &dsa.g, &dsa.g_len) != 0 ||
++				decode_hex(json_object_get(pub, "y"), &dsa.y, &dsa.y_len) != 0) {
++			rte_free(dsa.p);
++			rte_free(dsa.q);
++			rte_free(dsa.g);
++			rte_free(dsa.y);
++			stats->skipped_unsupported++;
++			continue;
++		}
++		json_array_foreach(tests, test_index, test) {
++			struct wycheproof_data vector;
++			uint8_t *sig = NULL;
++			uint32_t sig_len = 0;
++			enum rte_crypto_op_status status;
++			json_t *tc_id;
++			int ret;
++
++			memset(&vector, 0, sizeof(vector));
++			tc_id = json_object_get(test, "tcId");
++			vector.result = json_string_value(json_object_get(test, "result"));
++			if (!json_is_integer(tc_id) || vector.result == NULL) {
++				stats->skipped_unsupported++;
++				continue;
++			}
++			vector.tc_id = json_integer_value(tc_id);
++			if (decode_hex(json_object_get(test, "msg"), &vector.msg,
++					&vector.msg_len) != 0 ||
++					decode_hex(json_object_get(test, "sig"), &sig, &sig_len) != 0) {
++				rte_free(vector.msg);
++				rte_free(sig);
++				stats->skipped_unsupported++;
++				continue;
++			}
++			if (strcmp(vector.result, "acceptable") == 0) {
++				stats->skipped_acceptable++;
++				debug_vector("SKIP", name, &vector, "acceptable result policy");
++				rte_free(vector.msg);
++				rte_free(sig);
++				continue;
++			}
++			if ((sig_len & 1) != 0 || sig_len == 0) {
++				debug_vector("SKIP", name, &vector, "malformed P1363 signature");
++				stats->skipped_unsupported++;
++				rte_free(vector.msg);
++				rte_free(sig);
++				continue;
++			}
++			ret = run_dsa_verify(&dsa, vector.msg, vector.msg_len, sig, sig_len / 2,
++				sig + sig_len / 2, sig_len / 2, &status);
++			if (ret == -ENOTSUP) {
++				stats->skipped_capability++;
++				debug_vector("SKIP", name, &vector, "PMD capability");
++			} else if ((strcmp(vector.result, "valid") == 0 &&
++					(ret != 0 || status != RTE_CRYPTO_OP_STATUS_SUCCESS)) ||
++					(strcmp(vector.result, "invalid") == 0 &&
++					(ret != 0 || status == RTE_CRYPTO_OP_STATUS_SUCCESS))) {
++				debug_vector("FAIL", name, &vector, "unexpected verification result");
++				stats->failed++;
++			} else if (strcmp(vector.result, "valid") == 0 ||
++					strcmp(vector.result, "invalid") == 0) {
++				stats->passed++;
++			} else {
++				stats->skipped_unsupported++;
++				debug_vector("SKIP", name, &vector, "unknown result");
++			}
++			rte_free(vector.msg);
++			rte_free(sig);
++		}
++		rte_free(dsa.p);
++		rte_free(dsa.q);
++		rte_free(dsa.g);
++		rte_free(dsa.y);
++	}
++	return 0;
++}
++
++static int
++map_curve(const char *name, enum rte_crypto_curve_id *curve, uint32_t *bytesize)
++{
++	if (strcmp(name, "secp224r1") == 0) {
++		*curve = RTE_CRYPTO_EC_GROUP_SECP224R1;
++		*bytesize = 28;
++	} else if (strcmp(name, "secp256r1") == 0) {
++		*curve = RTE_CRYPTO_EC_GROUP_SECP256R1;
++		*bytesize = 32;
++	} else if (strcmp(name, "secp384r1") == 0) {
++		*curve = RTE_CRYPTO_EC_GROUP_SECP384R1;
++		*bytesize = 48;
++	} else if (strcmp(name, "secp521r1") == 0) {
++		*curve = RTE_CRYPTO_EC_GROUP_SECP521R1;
++		*bytesize = 66;
++	} else {
++		return -ENOTSUP;
++	}
++	return 0;
++}
++
++/* Left-align an unsigned big-endian value into a fixed-width field. */
++static bool
++value_equals_padded(const uint8_t *a, uint32_t a_len, const uint8_t *b, uint32_t b_len)
++{
++	while (a_len > 0 && a[0] == 0) {
++		a++;
++		a_len--;
++	}
++	while (b_len > 0 && b[0] == 0) {
++		b++;
++		b_len--;
++	}
++	return a_len == b_len && memcmp(a, b, a_len) == 0;
++}
++
++static int
++run_ecdh_ecpoint(enum rte_crypto_curve_id curve, uint32_t bytesize,
++		const uint8_t *priv, uint32_t priv_len, const uint8_t *pub_x,
++		const uint8_t *pub_y, uint8_t **shared_x, uint32_t *shared_len,
++		enum rte_crypto_op_status *status)
++{
++	struct rte_crypto_asym_xform xform = { 0 };
++	void *session = NULL;
++	struct rte_crypto_op *op = NULL;
++	struct rte_crypto_op *completed = NULL;
++	struct rte_cryptodev_info dev_info;
++	struct rte_cryptodev_asym_capability_idx index = {
++		.type = RTE_CRYPTO_ASYM_XFORM_ECDH,
++	};
++	const struct rte_cryptodev_asymmetric_xform_capability *capability;
++	uint8_t *out_x = NULL;
++	uint8_t *out_y = NULL;
++	int ret;
++
++	*shared_x = NULL;
++	if (env.asym_session_pool == NULL || env.asym_op_pool == NULL)
++		return -ENOTSUP;
++	rte_cryptodev_info_get(env.dev_id, &dev_info);
++	if ((dev_info.feature_flags & RTE_CRYPTODEV_FF_ASYMMETRIC_CRYPTO) == 0)
++		return -ENOTSUP;
++	capability = rte_cryptodev_asym_capability_get(env.dev_id, &index);
++	if (capability == NULL || rte_cryptodev_asym_xform_capability_check_optype(capability,
++			(enum rte_crypto_asym_op_type)RTE_CRYPTO_ASYM_KE_SHARED_SECRET_COMPUTE) == 0)
++		return -ENOTSUP;
++
++	xform.xform_type = RTE_CRYPTO_ASYM_XFORM_ECDH;
++	xform.next = NULL;
++	xform.ec.curve_id = curve;
++	xform.ec.pkey.data = (uint8_t *)(uintptr_t)priv;
++	xform.ec.pkey.length = priv_len;
++	xform.ec.q.x.data = (uint8_t *)(uintptr_t)pub_x;
++	xform.ec.q.x.length = bytesize;
++	xform.ec.q.y.data = (uint8_t *)(uintptr_t)pub_y;
++	xform.ec.q.y.length = bytesize;
++
++	ret = -ENOMEM;
++	out_x = rte_zmalloc(NULL, bytesize, 0);
++	out_y = rte_zmalloc(NULL, bytesize, 0);
++	if (out_x == NULL || out_y == NULL)
++		goto out;
++	/* A session-create failure means the PMD cannot handle this curve. */
++	if (rte_cryptodev_asym_session_create(env.dev_id, &xform, env.asym_session_pool,
++			&session) < 0 || session == NULL) {
++		ret = -ENOTSUP;
++		goto out;
++	}
++	op = rte_crypto_op_alloc(env.asym_op_pool, RTE_CRYPTO_OP_TYPE_ASYMMETRIC);
++	if (op == NULL)
++		goto out;
++	op->asym->ecdh.ke_type = RTE_CRYPTO_ASYM_KE_SHARED_SECRET_COMPUTE;
++	op->asym->ecdh.priv_key.data = (uint8_t *)(uintptr_t)priv;
++	op->asym->ecdh.priv_key.length = priv_len;
++	op->asym->ecdh.pub_key.x.data = (uint8_t *)(uintptr_t)pub_x;
++	op->asym->ecdh.pub_key.x.length = bytesize;
++	op->asym->ecdh.pub_key.y.data = (uint8_t *)(uintptr_t)pub_y;
++	op->asym->ecdh.pub_key.y.length = bytesize;
++	op->asym->ecdh.shared_secret.x.data = out_x;
++	op->asym->ecdh.shared_secret.x.length = bytesize;
++	op->asym->ecdh.shared_secret.y.data = out_y;
++	op->asym->ecdh.shared_secret.y.length = bytesize;
++	rte_crypto_op_attach_asym_session(op, session);
++	if (rte_cryptodev_enqueue_burst(env.dev_id, 0, &op, 1) != 1) {
++		ret = -EIO;
++		goto out;
++	}
++	while (rte_cryptodev_dequeue_burst(env.dev_id, 0, &completed, 1) == 0)
++		rte_pause();
++	*status = completed->status;
++	if (completed->status == RTE_CRYPTO_OP_STATUS_SUCCESS) {
++		*shared_x = out_x;
++		*shared_len = completed->asym->ecdh.shared_secret.x.length;
++		out_x = NULL;
++	}
++	ret = 0;
++
++out:
++	rte_free(out_x);
++	rte_free(out_y);
++	rte_crypto_op_free(op);
++	if (session != NULL)
++		rte_cryptodev_asym_session_free(env.dev_id, session);
++	return ret;
++}
++
++static int
++process_ecdh_ecpoint(json_t *root, const char *name, struct app_stats *stats)
++{
++	json_t *groups = json_object_get(root, "testGroups");
++	json_t *group;
++	size_t group_index;
++
++	if (!json_is_array(groups))
++		return -EINVAL;
++	json_array_foreach(groups, group_index, group) {
++		json_t *tests = json_object_get(group, "tests");
++		enum rte_crypto_curve_id curve;
++		uint32_t bytesize;
++		const char *curve_name;
++		json_t *test;
++		size_t test_index;
++
++		if (!json_is_array(tests))
++			return -EINVAL;
++		curve_name = json_string_value(json_object_get(group, "curve"));
++		if (curve_name == NULL || map_curve(curve_name, &curve, &bytesize) != 0) {
++			stats->skipped_unsupported++;
++			continue;
++		}
++		json_array_foreach(tests, test_index, test) {
++			struct wycheproof_data vector;
++			uint8_t *pub = NULL;
++			uint8_t *priv = NULL;
++			uint8_t *shared = NULL;
++			uint8_t *result_x = NULL;
++			uint32_t pub_len = 0, priv_len = 0, shared_len = 0, result_len = 0;
++			enum rte_crypto_op_status status = RTE_CRYPTO_OP_STATUS_ERROR;
++			bool matched;
++			json_t *tc_id;
++			int ret;
++
++			memset(&vector, 0, sizeof(vector));
++			tc_id = json_object_get(test, "tcId");
++			vector.result = json_string_value(json_object_get(test, "result"));
++			if (!json_is_integer(tc_id) || vector.result == NULL) {
++				stats->skipped_unsupported++;
++				continue;
++			}
++			vector.tc_id = json_integer_value(tc_id);
++			if (decode_hex(json_object_get(test, "public"), &pub, &pub_len) != 0 ||
++					decode_hex(json_object_get(test, "private"), &priv,
++						&priv_len) != 0 ||
++					decode_hex(json_object_get(test, "shared"), &shared,
++						&shared_len) != 0) {
++				rte_free(pub);
++				rte_free(priv);
++				rte_free(shared);
++				stats->skipped_unsupported++;
++				continue;
++			}
++			if (strcmp(vector.result, "acceptable") == 0) {
++				stats->skipped_acceptable++;
++				debug_vector("SKIP", name, &vector, "acceptable result policy");
++				goto next;
++			}
++			/* Only uncompressed points (0x04 || x || y) map to the DPDK EC point. */
++			if (pub_len != 1 + 2 * bytesize || pub[0] != 0x04) {
++				debug_vector("SKIP", name, &vector, "non-uncompressed public point");
++				stats->skipped_unsupported++;
++				goto next;
++			}
++			/* Invalid-curve rejection cases carry no expected shared secret;
++			 * on-curve validation is a separate ECDH PUB_KEY_VERIFY op, not
++			 * part of the raw shared-secret compute primitive.
++			 */
++			if (shared_len == 0) {
++				debug_vector("SKIP", name, &vector,
++					"no expected shared secret (point validation out of scope)");
++				stats->skipped_unsupported++;
++				goto next;
++			}
++			ret = run_ecdh_ecpoint(curve, bytesize, priv, priv_len, pub + 1,
++				pub + 1 + bytesize, &result_x, &result_len, &status);
++			if (ret == -ENOTSUP) {
++				stats->skipped_capability++;
++				debug_vector("SKIP", name, &vector, "PMD capability");
++				goto next;
++			}
++			matched = ret == 0 && status == RTE_CRYPTO_OP_STATUS_SUCCESS &&
++				value_equals_padded(result_x, result_len, shared, shared_len);
++			if (strcmp(vector.result, "valid") == 0) {
++				if (ret == 0 && status == RTE_CRYPTO_OP_STATUS_SUCCESS && matched) {
++					stats->passed++;
++				} else if (ret == 0 && status == RTE_CRYPTO_OP_STATUS_SUCCESS) {
++					debug_vector("FAIL", name, &vector, "wrong shared secret");
++					stats->failed++;
++				} else {
++					/* PMD returned an error for a valid vector. */
++					stats->skipped_capability++;
++					debug_vector("SKIP", name, &vector, "PMD could not compute");
++				}
++			} else if (strcmp(vector.result, "invalid") == 0) {
++				if (matched) {
++					debug_vector("FAIL", name, &vector, "produced forbidden secret");
++					stats->failed++;
++				} else {
++					stats->passed++;
++				}
++			} else {
++				stats->skipped_unsupported++;
++				debug_vector("SKIP", name, &vector, "unknown result");
++			}
++next:
++			rte_free(result_x);
++			rte_free(pub);
++			rte_free(priv);
++			rte_free(shared);
++		}
++	}
++	return 0;
++}
++
++struct ecdsa_group {
++	uint8_t *wx;
++	uint8_t *wy;
++	uint32_t wx_len;
++	uint32_t wy_len;
++	enum rte_crypto_curve_id curve;
++	uint32_t bytesize;
++	enum rte_crypto_auth_algorithm hash;
++	uint32_t digest_len;
++};
++
++static int
++run_ecdsa_verify(const struct ecdsa_group *group, const uint8_t *msg, uint32_t msg_len,
++		const uint8_t *r, uint32_t r_len, const uint8_t *s, uint32_t s_len,
++		enum rte_crypto_op_status *status)
++{
++	struct rte_crypto_asym_xform xform = { 0 };
++	void *session = NULL;
++	struct rte_crypto_op *op = NULL;
++	struct rte_crypto_op *completed = NULL;
++	struct rte_cryptodev_info dev_info;
++	struct rte_cryptodev_asym_capability_idx index = {
++		.type = RTE_CRYPTO_ASYM_XFORM_ECDSA,
++	};
++	const struct rte_cryptodev_asymmetric_xform_capability *capability;
++	uint8_t digest[64];
++	uint32_t e_len;
++	int ret;
++
++	if (env.asym_session_pool == NULL || env.asym_op_pool == NULL)
++		return -ENOTSUP;
++	rte_cryptodev_info_get(env.dev_id, &dev_info);
++	if ((dev_info.feature_flags & RTE_CRYPTODEV_FF_ASYMMETRIC_CRYPTO) == 0)
++		return -ENOTSUP;
++	capability = rte_cryptodev_asym_capability_get(env.dev_id, &index);
++	if (capability == NULL || rte_cryptodev_asym_xform_capability_check_optype(capability,
++			RTE_CRYPTO_ASYM_OP_VERIFY) == 0)
++		return -ENOTSUP;
++
++	ret = compute_hash(msg, msg_len, group->hash, digest, group->digest_len);
++	if (ret != 0)
++		return ret;
++	/* ECDSA uses e = leftmost Ln bits of the hash (byte-aligned truncation). */
++	e_len = group->digest_len > group->bytesize ? group->bytesize : group->digest_len;
++
++	xform.xform_type = RTE_CRYPTO_ASYM_XFORM_ECDSA;
++	xform.next = NULL;
++	xform.ec.curve_id = group->curve;
++	xform.ec.q.x.data = group->wx;
++	xform.ec.q.x.length = group->wx_len;
++	xform.ec.q.y.data = group->wy;
++	xform.ec.q.y.length = group->wy_len;
++
++	ret = -ENOMEM;
++	/* A session-create failure means the PMD cannot handle this curve. */
++	if (rte_cryptodev_asym_session_create(env.dev_id, &xform, env.asym_session_pool,
++			&session) < 0 || session == NULL) {
++		ret = -ENOTSUP;
++		goto out;
++	}
++	op = rte_crypto_op_alloc(env.asym_op_pool, RTE_CRYPTO_OP_TYPE_ASYMMETRIC);
++	if (op == NULL)
++		goto out;
++	op->asym->ecdsa.op_type = RTE_CRYPTO_ASYM_OP_VERIFY;
++	op->asym->ecdsa.message.data = digest;
++	op->asym->ecdsa.message.length = e_len;
++	op->asym->ecdsa.r.data = (uint8_t *)(uintptr_t)r;
++	op->asym->ecdsa.r.length = r_len;
++	op->asym->ecdsa.s.data = (uint8_t *)(uintptr_t)s;
++	op->asym->ecdsa.s.length = s_len;
++	rte_crypto_op_attach_asym_session(op, session);
++	if (rte_cryptodev_enqueue_burst(env.dev_id, 0, &op, 1) != 1) {
++		ret = -EIO;
++		goto out;
++	}
++	while (rte_cryptodev_dequeue_burst(env.dev_id, 0, &completed, 1) == 0)
++		rte_pause();
++	*status = completed->status;
++	ret = 0;
++
++out:
++	rte_crypto_op_free(op);
++	if (session != NULL)
++		rte_cryptodev_asym_session_free(env.dev_id, session);
++	return ret;
++}
++
++static int
++process_ecdsa_p1363(json_t *root, const char *name, struct app_stats *stats)
++{
++	json_t *groups = json_object_get(root, "testGroups");
++	json_t *group;
++	size_t group_index;
++
++	if (!json_is_array(groups))
++		return -EINVAL;
++	json_array_foreach(groups, group_index, group) {
++		json_t *pub = json_object_get(group, "publicKey");
++		json_t *tests = json_object_get(group, "tests");
++		struct ecdsa_group ec = { 0 };
++		const char *sha;
++		const char *curve_name;
++		json_t *test;
++		size_t test_index;
++
++		if (!json_is_object(pub) || !json_is_array(tests))
++			return -EINVAL;
++		sha = json_string_value(json_object_get(group, "sha"));
++		curve_name = json_string_value(json_object_get(pub, "curve"));
++		if (sha == NULL || curve_name == NULL ||
++				map_sha(sha, &ec.hash, &ec.digest_len) != 0 ||
++				map_curve(curve_name, &ec.curve, &ec.bytesize) != 0) {
++			stats->skipped_unsupported++;
++			continue;
++		}
++		if (decode_hex(json_object_get(pub, "wx"), &ec.wx, &ec.wx_len) != 0 ||
++				decode_hex(json_object_get(pub, "wy"), &ec.wy, &ec.wy_len) != 0) {
++			rte_free(ec.wx);
++			rte_free(ec.wy);
++			stats->skipped_unsupported++;
++			continue;
++		}
++		json_array_foreach(tests, test_index, test) {
++			struct wycheproof_data vector;
++			uint8_t *sig = NULL;
++			uint32_t sig_len = 0;
++			enum rte_crypto_op_status status = RTE_CRYPTO_OP_STATUS_ERROR;
++			json_t *tc_id;
++			int ret;
++
++			memset(&vector, 0, sizeof(vector));
++			tc_id = json_object_get(test, "tcId");
++			vector.result = json_string_value(json_object_get(test, "result"));
++			if (!json_is_integer(tc_id) || vector.result == NULL) {
++				stats->skipped_unsupported++;
++				continue;
++			}
++			vector.tc_id = json_integer_value(tc_id);
++			if (decode_hex(json_object_get(test, "msg"), &vector.msg,
++					&vector.msg_len) != 0 ||
++					decode_hex(json_object_get(test, "sig"), &sig, &sig_len) != 0) {
++				rte_free(vector.msg);
++				rte_free(sig);
++				stats->skipped_unsupported++;
++				continue;
++			}
++			if (strcmp(vector.result, "acceptable") == 0) {
++				stats->skipped_acceptable++;
++				debug_vector("SKIP", name, &vector, "acceptable result policy");
++				rte_free(vector.msg);
++				rte_free(sig);
++				continue;
++			}
++			if (sig_len != 2 * ec.bytesize) {
++				debug_vector("SKIP", name, &vector,
++					"non-canonical P1363 signature size");
++				stats->skipped_unsupported++;
++				rte_free(vector.msg);
++				rte_free(sig);
++				continue;
++			}
++			ret = run_ecdsa_verify(&ec, vector.msg, vector.msg_len, sig, sig_len / 2,
++				sig + sig_len / 2, sig_len / 2, &status);
++			if (ret == -ENOTSUP) {
++				stats->skipped_capability++;
++				debug_vector("SKIP", name, &vector, "PMD capability");
++			} else if (strcmp(vector.result, "valid") == 0) {
++				if (ret == 0 && status == RTE_CRYPTO_OP_STATUS_SUCCESS)
++					stats->passed++;
++				else {
++					debug_vector("FAIL", name, &vector, "valid signature rejected");
++					stats->failed++;
++				}
++			} else if (strcmp(vector.result, "invalid") == 0) {
++				if (ret == 0 && status == RTE_CRYPTO_OP_STATUS_SUCCESS) {
++					debug_vector("FAIL", name, &vector, "invalid signature accepted");
++					stats->failed++;
++				} else {
++					stats->passed++;
++				}
++			} else {
++				stats->skipped_unsupported++;
++				debug_vector("SKIP", name, &vector, "unknown result");
++			}
++			rte_free(vector.msg);
++			rte_free(sig);
++		}
++		rte_free(ec.wx);
++		rte_free(ec.wy);
++	}
++	return 0;
++}
++
++static int
++process_file(const char *path, struct app_stats *stats)
++{
++	json_error_t error;
++	json_t *root;
++	const char *algorithm;
++	const char *schema;
++	int ret;
++
++	root = json_load_file(path, 0, &error);
++	if (root == NULL) {
++		if (env.debug)
++			printf("SKIP %s: JSON error at line %d: %s\n", path, error.line,
++				error.text);
++		return 0;
++	}
++	algorithm = json_string_value(json_object_get(root, "algorithm"));
++	schema = json_string_value(json_object_get(root, "schema"));
++	if (algorithm != NULL && schema != NULL && strcmp(algorithm, "AES-GCM") == 0 &&
++			strcmp(schema, "aead_test_schema_v1.json") == 0) {
++		printf("Processing AES-GCM vectors: %s\n", path);
++		ret = process_aead(root, RTE_CRYPTO_AEAD_AES_GCM, "AES-GCM", stats);
++	} else if (algorithm != NULL && schema != NULL && strcmp(algorithm, "AES-CCM") == 0 &&
++			strcmp(schema, "aead_test_schema_v1.json") == 0) {
++		printf("Processing AES-CCM vectors: %s\n", path);
++		ret = process_aead(root, RTE_CRYPTO_AEAD_AES_CCM, "AES-CCM", stats);
++	} else if (algorithm != NULL && schema != NULL && strcmp(algorithm, "CHACHA20-POLY1305") == 0 &&
++			strcmp(schema, "aead_test_schema_v1.json") == 0) {
++		printf("Processing ChaCha20-Poly1305 vectors: %s\n", path);
++		ret = process_aead(root, RTE_CRYPTO_AEAD_CHACHA20_POLY1305,
++			"ChaCha20-Poly1305", stats);
++	} else if (algorithm != NULL && schema != NULL && strcmp(algorithm, "SM4-GCM") == 0 &&
++			strcmp(schema, "aead_test_schema_v1.json") == 0) {
++		printf("Processing SM4-GCM vectors: %s\n", path);
++		ret = process_aead(root, RTE_CRYPTO_AEAD_SM4_GCM, "SM4-GCM", stats);
++	} else if (algorithm != NULL && schema != NULL && strcmp(algorithm, "HMACSHA256") == 0 &&
++			strcmp(schema, "mac_test_schema_v1.json") == 0) {
++		printf("Processing HMAC-SHA256 vectors: %s\n", path);
++		ret = process_hmac(root, RTE_CRYPTO_AUTH_SHA256_HMAC, "HMAC-SHA256", stats);
++	} else if (algorithm != NULL && schema != NULL && strcmp(algorithm, "HMACSHA1") == 0 &&
++			strcmp(schema, "mac_test_schema_v1.json") == 0) {
++		printf("Processing HMAC-SHA1 vectors: %s\n", path);
++		ret = process_hmac(root, RTE_CRYPTO_AUTH_SHA1_HMAC, "HMAC-SHA1", stats);
++	} else if (algorithm != NULL && schema != NULL && strcmp(algorithm, "HMACSHA224") == 0 &&
++			strcmp(schema, "mac_test_schema_v1.json") == 0) {
++		printf("Processing HMAC-SHA224 vectors: %s\n", path);
++		ret = process_hmac(root, RTE_CRYPTO_AUTH_SHA224_HMAC, "HMAC-SHA224", stats);
++	} else if (algorithm != NULL && schema != NULL && strcmp(algorithm, "HMACSHA384") == 0 &&
++			strcmp(schema, "mac_test_schema_v1.json") == 0) {
++		printf("Processing HMAC-SHA384 vectors: %s\n", path);
++		ret = process_hmac(root, RTE_CRYPTO_AUTH_SHA384_HMAC, "HMAC-SHA384", stats);
++	} else if (algorithm != NULL && schema != NULL && strcmp(algorithm, "HMACSHA512") == 0 &&
++			strcmp(schema, "mac_test_schema_v1.json") == 0) {
++		printf("Processing HMAC-SHA512 vectors: %s\n", path);
++		ret = process_hmac(root, RTE_CRYPTO_AUTH_SHA512_HMAC, "HMAC-SHA512", stats);
++	} else if (algorithm != NULL && schema != NULL && strcmp(algorithm, "HMACSHA3-224") == 0 &&
++			strcmp(schema, "mac_test_schema_v1.json") == 0) {
++		printf("Processing HMAC-SHA3-224 vectors: %s\n", path);
++		ret = process_hmac(root, RTE_CRYPTO_AUTH_SHA3_224_HMAC, "HMAC-SHA3-224", stats);
++	} else if (algorithm != NULL && schema != NULL && strcmp(algorithm, "HMACSHA3-256") == 0 &&
++			strcmp(schema, "mac_test_schema_v1.json") == 0) {
++		printf("Processing HMAC-SHA3-256 vectors: %s\n", path);
++		ret = process_hmac(root, RTE_CRYPTO_AUTH_SHA3_256_HMAC, "HMAC-SHA3-256", stats);
++	} else if (algorithm != NULL && schema != NULL && strcmp(algorithm, "HMACSHA3-384") == 0 &&
++			strcmp(schema, "mac_test_schema_v1.json") == 0) {
++		printf("Processing HMAC-SHA3-384 vectors: %s\n", path);
++		ret = process_hmac(root, RTE_CRYPTO_AUTH_SHA3_384_HMAC, "HMAC-SHA3-384", stats);
++	} else if (algorithm != NULL && schema != NULL && strcmp(algorithm, "HMACSHA3-512") == 0 &&
++			strcmp(schema, "mac_test_schema_v1.json") == 0) {
++		printf("Processing HMAC-SHA3-512 vectors: %s\n", path);
++		ret = process_hmac(root, RTE_CRYPTO_AUTH_SHA3_512_HMAC, "HMAC-SHA3-512", stats);
++	} else if (algorithm != NULL && schema != NULL && strcmp(algorithm, "HMACSM3") == 0 &&
++			strcmp(schema, "mac_test_schema_v1.json") == 0) {
++		printf("Processing HMAC-SM3 vectors: %s\n", path);
++		ret = process_hmac(root, RTE_CRYPTO_AUTH_SM3_HMAC, "HMAC-SM3", stats);
++	} else if (algorithm != NULL && schema != NULL && strcmp(algorithm, "AES-CMAC") == 0 &&
++			strcmp(schema, "mac_test_schema_v1.json") == 0) {
++		printf("Processing AES-CMAC vectors: %s\n", path);
++		ret = process_hmac(root, RTE_CRYPTO_AUTH_AES_CMAC, "AES-CMAC", stats);
++	} else if (algorithm != NULL && schema != NULL && strcmp(algorithm, "AES-GMAC") == 0 &&
++			strcmp(schema, "mac_with_iv_test_schema_v1.json") == 0) {
++		printf("Processing AES-GMAC vectors: %s\n", path);
++		ret = process_gmac(root, stats);
++	} else if (algorithm != NULL && schema != NULL && strcmp(algorithm, "DSA") == 0 &&
++			strcmp(schema, "dsa_p1363_verify_schema_v1.json") == 0) {
++		printf("Processing DSA (P1363) vectors: %s\n", path);
++		ret = process_dsa_p1363(root, "DSA", stats);
++	} else if (algorithm != NULL && schema != NULL && strcmp(algorithm, "ECDH") == 0 &&
++			strcmp(schema, "ecdh_ecpoint_test_schema_v1.json") == 0) {
++		printf("Processing ECDH (ecpoint) vectors: %s\n", path);
++		ret = process_ecdh_ecpoint(root, "ECDH", stats);
++	} else if (algorithm != NULL && schema != NULL && strcmp(algorithm, "ECDSA") == 0 &&
++			strcmp(schema, "ecdsa_p1363_verify_schema_v1.json") == 0) {
++		printf("Processing ECDSA (P1363) vectors: %s\n", path);
++		ret = process_ecdsa_p1363(root, "ECDSA", stats);
++	} else if (algorithm != NULL &&
++			(strncmp(algorithm, "AES-", strlen("AES-")) == 0 ||
++			 strncmp(algorithm, "SEED-", strlen("SEED-")) == 0 ||
++			 strcmp(algorithm, "SM4-CCM") == 0 ||
++			 strncmp(algorithm, "HMAC", strlen("HMAC")) == 0 ||
++			 strncmp(algorithm, "RSA", strlen("RSA")) == 0 ||
++			 strcmp(algorithm, "DSA") == 0 ||
++			 strcmp(algorithm, "ECDH") == 0 ||
++			 strcmp(algorithm, "ECDSA") == 0)) {
++		debug_file("SKIP", path, algorithm);
++		stats->skipped_unsupported++;
++		ret = 0;
++	} else {
++		debug_file("SKIP", path, "unsupported vector file");
++		stats->skipped_unsupported++;
++		ret = 0;
++	}
++	json_decref(root);
++	return ret;
++}
++
++static int
++process_path(const char *path, struct app_stats *stats)
++{
++	struct stat path_stat;
++	DIR *directory;
++	struct dirent *entry;
++	int ret = 0;
++
++	if (stat(path, &path_stat) != 0)
++		return -errno;
++	if (!S_ISDIR(path_stat.st_mode))
++		return process_file(path, stats);
++
++	directory = opendir(path);
++	if (directory == NULL)
++		return -errno;
++	while ((entry = readdir(directory)) != NULL) {
++		char file_path[PATH_MAX];
++		size_t name_length = strlen(entry->d_name);
++
++		if (name_length < 6 || strcmp(entry->d_name + name_length - 5, ".json") != 0)
++			continue;
++		if (snprintf(file_path, sizeof(file_path), "%s/%s", path, entry->d_name) >=
++				(int)sizeof(file_path)) {
++			ret = -ENAMETOOLONG;
++			break;
++		}
++		ret = process_file(file_path, stats);
++		if (ret != 0)
++			break;
++	}
++	closedir(directory);
++	return ret;
++}
++
++int
++main(int argc, char **argv)
++{
++	struct app_stats stats = { 0 };
++	int eal_args;
++	int ret;
++
++	eal_args = rte_eal_init(argc, argv);
++	if (eal_args < 0)
++		rte_exit(EXIT_FAILURE, "Cannot initialize EAL\n");
++	argc -= eal_args;
++	argv += eal_args;
++
++	ret = parse_args(argc, argv);
++	if (ret != 0) {
++		usage(argv[0]);
++		ret = EXIT_FAILURE;
++		goto out_eal;
++	}
++	ret = app_init();
++	if (ret != 0) {
++		printf("Cannot initialize cryptodev %u: %s\n", env.dev_id, rte_strerror(-ret));
++		ret = EXIT_FAILURE;
++		goto out_eal;
++	}
++
++	ret = process_path(env.vectors_path, &stats);
++	if (ret != 0)
++		printf("Vector processing failed: %s\n", rte_strerror(-ret));
++	printf("Summary: passed=%" PRIu64 " failed=%" PRIu64
++		" skipped_capability=%" PRIu64 " skipped_acceptable=%" PRIu64
++		" skipped_unsupported=%" PRIu64 "\n", stats.passed, stats.failed,
++		stats.skipped_capability, stats.skipped_acceptable, stats.skipped_unsupported);
++	app_uninit();
++	ret = ret == 0 && stats.failed == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
++
++out_eal:
++	rte_eal_cleanup();
++	return ret;
++}
+diff --git a/examples/wycheproof_validation/meson.build b/examples/wycheproof_validation/meson.build
+new file mode 100644
+index 0000000000..7f18b4cef3
+--- /dev/null
++++ b/examples/wycheproof_validation/meson.build
+@@ -0,0 +1,17 @@
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright(c) 2026
++
++# meson file, for building this example as part of a main DPDK build.
++#
++# To build this example as a standalone application with an already-installed
++# DPDK instance, use 'make'
++
++deps += ['cryptodev']
++
++if not dpdk_conf.has('RTE_HAS_JANSSON')
++    build = false
++    message('Skipping wycheproof_validation: Jansson is required')
++else
++    ext_deps += jansson_dep
++    sources = files('main.c')
++endif
+-- 
+2.34.1
+
