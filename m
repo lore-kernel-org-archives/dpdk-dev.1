@@ -2,36 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D708BC88E53
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 09:09:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BEF6C88E53
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 09:11:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CB323410F6;
-	Tue, 15 Sep 2026 11:09:23 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 35ACE40A77;
+	Tue, 15 Sep 2026 11:11:55 +0200 (CEST)
 Received: from mx0.infotecs.ru (mx0.infotecs.ru [91.244.183.115])
- by mails.dpdk.org (Postfix) with ESMTP id 8903140A77;
- Tue, 15 Sep 2026 11:09:22 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru B48772C0BCB
+ by mails.dpdk.org (Postfix) with ESMTP id 5C2334003C;
+ Tue, 15 Sep 2026 11:11:54 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru D07FC2C0BAF
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infotecs.ru; s=mx;
- t=1789463362; bh=Ps9exPGQSrcz8pjvr69VQLOG5a0vDtMhRBtDP82BRhQ=;
+ t=1789463514; bh=r1iSf9q9jSzExXLrTwPArdPKJWPNnq2RYCAqw/MxflY=;
  h=From:To:CC:Subject:Date:From;
- b=MC9YUYU5oI2W+5VY2/f99eaQVhEPhU/j/lJp/WWfAbqTdhXF87OyWUac5RktHQCSv
- zQ9h/PzuttWh+SCB4DlMONEFRdniVLdqbeLGjx8S8sGNaYqwLk6MOSDqol0NCHRMOP
- o9jQk4ezI/boI9MFgZDyW6AujQi2BMzWsp4c1ocI=
+ b=RPSSW1RToSE9nWHjh01+lPT52js9uzKG/aYT/dCRFmNpAoF1nQkamKjWc84oG7c1E
+ m0qJ2DEm+d0utPstK7xd80N+qrqYEzucjyZIFS9dE8bsHxpVQpVctvuI2/RvFTqLCZ
+ zJqg+8SWx57noLW2oXowubtyKWF7x6GoX5hKP4V4=
 Received: from mx0.infotecs-nt (localhost [127.0.0.1])
- by mx0.infotecs.ru (Postfix) with ESMTP id B48772C0BCB;
- Tue, 15 Sep 2026 12:09:21 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs-nt 7E7622C0B6E
+ by mx0.infotecs.ru (Postfix) with ESMTP id D07FC2C0BAF;
+ Tue, 15 Sep 2026 12:11:53 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs-nt 879D12C0B19
 Received: from msk-exch-02.infotecs-nt (msk-exch-02.infotecs-nt [10.0.7.192])
- by mx0.infotecs-nt (Postfix) with ESMTP id 7E7622C0B6E;
- Tue, 15 Sep 2026 12:09:21 +0300 (MSK)
+ by mx0.infotecs-nt (Postfix) with ESMTP id 879D12C0B19;
+ Tue, 15 Sep 2026 12:11:53 +0300 (MSK)
 From: Evgeny Sokolov <Evgeny.Sokolov@infotecs.ru>
 To: Kishore Padmanabha <kishore.padmanabha@broadcom.com>, Ajit Khaparde
  <ajit.khaparde@broadcom.com>
-CC: <dev@dpdk.org>, <stable@dpdk.org>, Sokolov Evgeny
- <Evgeny.Sokolov@infotecs.ru>
-Subject: [PATCH] net/bnxt: simplify NVGRE pointer validation
-Date: Tue, 15 Sep 2026 09:09:19 +0000
-Message-ID: <20260915090919.431388-1-Evgeny.Sokolov@infotecs.ru>
+CC: <dev@dpdk.org>, <stable@dpdk.org>, <stuart.schacher@broadcom.com>, Sokolov
+ Evgeny <Evgeny.Sokolov@infotecs.ru>
+Subject: [PATCH] net/bnxt/tf_ulp: use 64-bit shift in burst size calculation
+Date: Tue, 15 Sep 2026 09:11:50 +0000
+Message-ID: <20260915091150.431471-1-Evgeny.Sokolov@infotecs.ru>
 X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -64,66 +64,31 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru>
 
-Previous validation guarantees that nvgre_spec and nvgre_mask are
-both non-NULL when this code is reached.
+Use 1ULL instead of 1 in the left shift operation when
+calculating the burst size mantissa.
 
-Remove the redundant condition and execute the enclosed code
-directly.
+This avoids undefined behavior when the shift count exceeds
+the width of a 32-bit integer.
 
 Signed-off-by: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru>
 Cc: stable@dpdk.org
 ---
- drivers/net/bnxt/bnxt_flow.c | 36 +++++++++++++++++-------------------
- 1 file changed, 17 insertions(+), 19 deletions(-)
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/bnxt/bnxt_flow.c b/drivers/net/bnxt/bnxt_flow.c
-index a2e590540b..4a38c036de 100644
---- a/drivers/net/bnxt/bnxt_flow.c
-+++ b/drivers/net/bnxt/bnxt_flow.c
-@@ -632,26 +632,24 @@ bnxt_validate_and_parse_flow_type(const struct rte_flow_attr *attr,
- 				return -rte_errno;
- 			}
- 
--			if (nvgre_spec && nvgre_mask) {
--				tni_masked =
--					!!memcmp(nvgre_mask->tni, tni_mask,
--						 RTE_DIM(tni_mask));
--				if (tni_masked) {
--					rte_flow_error_set
--						(error,
--						 EINVAL,
--						 RTE_FLOW_ERROR_TYPE_ITEM,
--						 item,
--						 "Invalid TNI mask");
--					return -rte_errno;
--				}
--				rte_memcpy(((uint8_t *)&tenant_id_be + 1),
--					   nvgre_spec->tni, 3);
--				filter->vni =
--					rte_be_to_cpu_32(tenant_id_be);
--				filter->tunnel_type =
--				 CFA_NTUPLE_FILTER_ALLOC_REQ_TUNNEL_TYPE_NVGRE;
-+			tni_masked =
-+				!!memcmp(nvgre_mask->tni, tni_mask,
-+					 RTE_DIM(tni_mask));
-+			if (tni_masked) {
-+				rte_flow_error_set
-+					(error,
-+					 EINVAL,
-+					 RTE_FLOW_ERROR_TYPE_ITEM,
-+					 item,
-+					 "Invalid TNI mask");
-+				return -rte_errno;
- 			}
-+			rte_memcpy(((uint8_t *)&tenant_id_be + 1),
-+				   nvgre_spec->tni, 3);
-+			filter->vni =
-+				rte_be_to_cpu_32(tenant_id_be);
-+			filter->tunnel_type =
-+			 CFA_NTUPLE_FILTER_ALLOC_REQ_TUNNEL_TYPE_NVGRE;
- 			break;
- 
- 		case RTE_FLOW_ITEM_TYPE_GRE:
+diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c b/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c
+index 7f6a84e699..88a2f30521 100644
+--- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c
++++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c
+@@ -155,7 +155,7 @@ bnxt_ulp_flow_mtr_xbs_calc(int64_t xbs, uint16_t *reg)
+ 	 *   = round(xbs*2^(8-e) - 2^7)
+ 	 *
+ 	 */
+-	m = xbs / (1 << (e - 8)) - (1 << 7);
++	m = xbs / (1ULL << (e - 8)) - (1ULL << 7);
+ 	*reg = ((m & 0x7F) << 5) | (e & 0x1F);
+ 	*reg = rte_cpu_to_be_16(*reg);
+ }
 -- 
 2.30.2
 
