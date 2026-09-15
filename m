@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01316C88E72
-	for <dpdk-dev@archiver.kernel.org>; Mon, 14 Sep 2026 21:21:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B4C2C88E72
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 00:12:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CCC8640DD7;
-	Mon, 14 Sep 2026 23:21:25 +0200 (CEST)
-Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com
- [74.125.227.140])
- by mails.dpdk.org (Postfix) with ESMTP id 897B040A6B
- for <dev@dpdk.org>; Mon, 14 Sep 2026 23:21:24 +0200 (CEST)
-Received: by mail-pj2-f12.google.com with SMTP id
- d9443c01a7336-2dd77300816so522035ad.1
- for <dev@dpdk.org>; Mon, 14 Sep 2026 14:21:24 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1AF1B40290;
+	Tue, 15 Sep 2026 02:12:30 +0200 (CEST)
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com
+ [209.85.214.179])
+ by mails.dpdk.org (Postfix) with ESMTP id E03D340278
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 02:12:27 +0200 (CEST)
+Received: by mail-pl1-f179.google.com with SMTP id
+ d9443c01a7336-2d6e954afbdso30635885ad.2
+ for <dev@dpdk.org>; Mon, 14 Sep 2026 17:12:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789420883;
- x=1790025683; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789431146;
+ x=1790035946; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:to:from:date:from:to:cc:subject:date
  :message-id:reply-to:content-type;
  bh=/T4aXB+H74vJpZBnfJPTHs7Me3us7l7W1FqD6vltGis=;
- b=pe0L6E+F25W6qFXEqNyypmEp3ObP1FxRj1m5AOLNq0JNIKcx/8k1PBzmGVeip87Mr7
- dQtnJ3XrDF6pnGKsjhLeSN/i2gNms3ihOr22emL9Wpm9nNhn1ZEzSra9ezDCtCtwzC7e
- zU7iOobMW398+DB/ZmS7rUVZUoprj9ql6iF8Dl5gzVd1mZrsgvpsGmwe4Qiwx4PuglD1
- RASUqfQqiqbWQ/AjJzQbDMJuThwh3QQL72Ow/n56jwG02V1j6lApwmqjXhLBdiijmkbH
- h6JRzJu+EaxRM1EwRL27165ZXsDjbnUlWvqq1yBxt+QGzsE+Pv9awrXgBSx5rhmu7xEx
- cmQg==
+ b=Pjp8Sr5hi0t6/Fq6ECg+6CCSQ7hAtmO0pCgKwMhnDCetoJX0dRgWC6KFB6ZqqV1Zoc
+ la/nSTSxVPllV83RfnskzxnZnlqvOYAuvJtrPx+9Lzehfg+CdWOXTdOlUgMf4K461Alq
+ 9yPIynrcN4LHKw4W9XyVr+DRiTz0Qdhx3O3zMFlLPmDo4ZwF4QhiVwbGvmgmfBzMvEYa
+ 2jmsF0+FbaJCX//fEUOz36g7voKdR9XNN/w+F3CsdAX6lCbPJJsaqboRo5+26snnbTBt
+ BN876RhTOxRSjWSu4G33okaPUASzLJP1JBASPRyd6o5D7VUgCRnThYubEF/Dspp3SECP
+ X41A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789420883; x=1790025683;
+ d=1e100.net; s=20260707; t=1789431146; x=1790035946;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
  bh=/T4aXB+H74vJpZBnfJPTHs7Me3us7l7W1FqD6vltGis=;
- b=KMejPpK0ZUNhMd9Qw4JwAnk7IkQtHoQdGm7+UUKgKgMQGf4/QU0cPkDXec3EXw8cQV
- fK+kWdr/Z19ONWhJdaZxIig8/iZy3O1+ESTEDKFTSJCVTNmvJD8Nu+XODs80yh/BMaIf
- 5C7ju9aFXKlBs9u7d7wX3Y+4B8wQBDHWPaXsuaExOwgSY2RQLKmbZMHOMoSyL/2eSDAX
- 4aHV0Fw6kN+0De8hCSkfhU8bJ6tL1azHI2W25TI3mckGU5OjEttcCEIWGXgLhOqhqxPO
- Bt8Ty3+vBzj9LOs7CZ+XQphp+zhr2lTCkNkBFHZycUTf3w+KS6pYLZ1qONPu9N0oxU2Z
- 1VmA==
-X-Gm-Message-State: AFuF++kDcs1/b777o71lH2BzsMmW0afqtndglj4Atua0uVghNNcC8n9n
- 6RzjCOX7/F1UIM0gJPQlkA0C4WjHCuX5y26t/4a/b5boujFd/6B8PsgLSO9FMdYLBICyFc6kw5h
- QCya3uDo=
-X-Gm-Gg: AYBFou2otVnydb9+eVCAKVeD2Of3AX4vnZOvhymhpr6Xgy84XHHksJIuU+nhKreyOMY
- od2W13nhG+F9QW2OgwKIWG8ttVTujDll7317Qual8UEm1wFZEqGnfaD7N+cFEtQTX8aIhlaQ1An
- HvF21tJNxR43DqcmZu+gcuJPwPuZZkOYBthiFklutKOgIRA8N/gjQcnPu421jMaR9l9y0hzqkF+
- 4+zbQK4G8d6icT8jJiUpYM97fp22zcEwG/umoTLSW1JFFEeDlQ7R393eHm03qjgvwf9pND6IHq9
- KYEXWnPE5FzrBPpWR7nQn3IagDRG9dHTm9YFNKj9dWQztYY/68h6t9xlNjtBN6Wk2LFvDpNrQxx
- okbr+IAv/j8kNGm3nv7EucRub5RrafgzQzZD6HfFXLmM4QI/0cIEi/xSrgWDOT1z+NBFCU0GX0Y
- uXB8cOVLIv/esvLBOYXvl3VqRkR20XKeSpwTuH6b2o+kSdbtCUloXzmO32guCTc71deQzA2D5Vn
- iB2YcWuXmmGaQO+TCWY/zBORmY7ILxk9RNGHpNKiQ==
-X-Received: by 2002:a17:903:1ace:b0:2d8:d4cf:fe48 with SMTP id
- d9443c01a7336-2dd76528260mr13384065ad.14.1789420883593; 
- Mon, 14 Sep 2026 14:21:23 -0700 (PDT)
+ b=ead+86zAU+pPGH7RM5pwpDS42iTLfE/Fvzuf7Fvxcc4EuwLTM0siERuRRHDlWSKFbG
+ YEbpJIhNx/AlcCoVzvXndvoNjQ0SrACZB3e9x53+g/KTTfVXE4M54Ff+SL/9ZcHw2CTf
+ u8JFFWRGurbT5LV+pEXJ7LLsZKqd7+WQLT6ZUWPqmpudlH4ygZ5hgqVVz0RBrFbT9wBC
+ HLjTicbQPSGqFIemsJoFO4YrSZz2HFgC/z7120W2VKnIeala/X65HwaPF6rjS9Warp3U
+ ZGeRk8cF/FU+33LCBQpo0aAE93iPCLlIIJYnEQXL9c3+AdPxZc8dQvBSFif5m+lXxZGo
+ Rphw==
+X-Gm-Message-State: AFuF++mR+gymps1I+uyLtgaeTAUokofvuSGWLAfy+M7kdQiihOhA2teP
+ X7+KPUFhDs84ssK9cSERVl/aCwM3eDO9s8x+gPNIxBkflNUmgaAit4lYUY7maF4oBVd4lOhVVcw
+ +k069S1s=
+X-Gm-Gg: AYBFou0gu8E8by4JgTWj7IvJIz+MNVrwpX1nHdOivlBmHZEcEd0J/gbduT6mXBzO2NE
+ xpKqdCitt3yC0Q/RGzHA0FlTe+XMLEYLk6p4FAhzn5agmXUWumwXJSkXMq/eR7Z48H7DMg2GAZL
+ l84hoKH+4iHcr5NdcBq6nIyOR02etsbVzLNozG5Fcxl3GgNqcll6CB5aEL9StMD5U/MqF3hGYbn
+ fzAIvtK/hFnq4prjK2boPBmEFDP//GiJoqBbPSFWPhQc/Gkmymi0D63mc2UhSGXySTgtnJlopDp
+ K5fgmRiNPpEzzcL3LVoVKKSbaoro10ll8K8nKNPnVQA299ZxfexaZsYfKaxcJV+9BarCJz7PkRG
+ u27lyFn5uU374yF0IZNxyYyHiX2J3t3b0Zdu5GXf11fzMADyAFJVHKr+6XNNhpibX9eu5IF80pD
+ f76laoF0VAFQSA/q2kiwmlyxZusXfey4ZQHqDf1UiiH49PI2PxnkyGgHwOtEZPcf0+H6+bTmKds
+ lJb4ru8XplvfjEXPWAfpndpY1nhiYU3kNNPDUNO
+X-Received: by 2002:a17:902:db04:b0:2dd:3ddf:b87a with SMTP id
+ d9443c01a7336-2dd6c486954mr93291725ad.0.1789431146504; 
+ Mon, 14 Sep 2026 17:12:26 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2dd2cfc2d3bsm56827875ad.48.2026.09.14.14.21.21
+ d9443c01a7336-2dd2cca264fsm57799395ad.11.2026.09.14.17.12.24
  for <dev@dpdk.org>
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 14 Sep 2026 14:21:23 -0700 (PDT)
-Date: Mon, 14 Sep 2026 14:21:11 -0700
+ Mon, 14 Sep 2026 17:12:25 -0700 (PDT)
+Date: Mon, 14 Sep 2026 17:12:09 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Subject: Re: [PATCH 0/7] fix XXX_DEBUG warnings
-Message-ID: <20260914142111.52408ad7@phoenix.local>
+Message-ID: <20260914141308.4b774381@phoenix.local>
 In-Reply-To: <20260904191652.2399074-1-stephen@networkplumber.org>
 References: <20260904191652.2399074-1-stephen@networkplumber.org>
 MIME-Version: 1.0
