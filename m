@@ -2,69 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03B8EC88E77
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 19:23:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AF5FC88E77
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 19:23:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2401242E3A;
-	Tue, 15 Sep 2026 21:22:43 +0200 (CEST)
-Received: from mail-pj2-f42.google.com (mail-pj2-f42.google.com
- [74.125.227.170])
- by mails.dpdk.org (Postfix) with ESMTP id ED00B42E78
- for <dev@dpdk.org>; Tue, 15 Sep 2026 21:22:41 +0200 (CEST)
-Received: by mail-pj2-f42.google.com with SMTP id
- 98e67ed59e1d1-39b350c69b4so92732a91.2
- for <dev@dpdk.org>; Tue, 15 Sep 2026 12:22:41 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1315342E73;
+	Tue, 15 Sep 2026 21:22:46 +0200 (CEST)
+Received: from mail-pj2-f43.google.com (mail-pj2-f43.google.com
+ [74.125.227.171])
+ by mails.dpdk.org (Postfix) with ESMTP id D4E2142E37
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 21:22:44 +0200 (CEST)
+Received: by mail-pj2-f43.google.com with SMTP id
+ 98e67ed59e1d1-396ccb1a98fso94870a91.1
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 12:22:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789500161;
- x=1790104961; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789500164;
+ x=1790104964; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=c4e0kQje+fXBYsSC2/knueG5ePgskpaTE91N4Qqui6I=;
- b=Cz5qhOOSza+SJ+GrarFsfdnDz3wfk4wb9ogURtKCXAVZGrjiZnHjj0KkerjjBRpJvT
- b0dHlzzcPOom+W4OmRpljW99VI48SvIkinyMqYaFEqaaQuymoHU3595bKSv/s2/YEu2A
- kNEtLNFAebUPBRiVg8bTTCMruwZKseVwMT5rMRWGL4QPpK/UzPV/PQUz7ROqc6o7269T
- HxTCiLZho6l6uEKgro7NAYcH+kIRQkXw8P1v62UZLJtAvwIJOLIZDOyLvM+q+bC3h/4Z
- +F2ctUOWpvNDGKchbIQgXXj+2R4I7QV0Snwzom3SBKeFKqXZ2lI3XMp4QsTPudJYPK/J
- AnLA==
+ bh=/phnFzq0W803yyw67LmFurn+gIz5RJG7XSdSIiHWFVY=;
+ b=LYXnxffR6axa6GcD0Ghp9R+IcmkROt97lB18UBcsVBDmxWqf8DCknkE1VDQdNg+jlK
+ oLQ27j6aFuMWkrkN4rLPwAUhrabCP7Jsnz8joJLNo6vo3lagRX7qHwQ7PK2DtM8F/Fi6
+ oerqpq5jKsroTfraf/7u5V0t07bUxPbS2svqFU709FL9EHvObfohAKuDIVkyHvN6A4rt
+ hDg4ooaZ6H1GQmYXaHzLP35kkj8JDS6CfJk7ANePfeP1zZuobUKQzmv0SlvRyJjMdWUp
+ TlLSfHpBO+IystoMRPCKfngSkWc81bY8ZTy9IwLNvSIXWZ7uO5tKw6m1fyVjng/VZVmo
+ fG+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789500161; x=1790104961;
+ d=1e100.net; s=20260707; t=1789500164; x=1790104964;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=c4e0kQje+fXBYsSC2/knueG5ePgskpaTE91N4Qqui6I=;
- b=DPIVu87hrLNfZz9G5TTgHdtp/TyNTCdErvDeoJSSY470CkC+5W/GuWmyGeUARnkrc7
- pDqBRK3HwcvpIHK8QkUdx9HkxQBQiVzTDdhXmML+4sTrPvoKLMtnM/YggQGM6F3c9M/N
- m84xiZv3RuoyKdnkUU2jUynxzOPP467g1W01zYr1dwlji18ybd7OhQF7bLgCo2F5DXqX
- vVgXQ1nvPJVBDE9aQx/1S3Q0RLY8DfezLL1QXoAz4RjvL5hNqJo/202VgXKbjzsKq/nn
- BA343xpjNd1qodUoOFJl50uw6qTFpZDWCoRojWY46v24WWnab6x+FvykIvYtP2+NOkpd
- HiZw==
-X-Gm-Message-State: AFuF++kmWyfxO0G56BbkfmhM/TKcp3ywnsBhA60PzEOuOS6GWn3QL+xY
- 76h1Tt2V75BmA2cH3N7SxV+UrzEuh2IwlhCTJG583WEhJSTQADs44l8Chpv+F0002HR3vhlJDks
- 9ZTms
-X-Gm-Gg: AYBFou0SZZaBUyZ1hsQa0DhMDfEOAfP6RFbODvE1L34VxREkb+ApBpqfqUdSpnNHLTn
- L21kWKneM0gF+ziMQV+Uuv9LjlObkxO/BbQP4h2exN2ad2oBC0hV4wQb1LB/a5rag3Wj/7L1yqn
- DphJAI2lyouTHyLSXXTlAbWPKTq1TQohCBDwpHGZczJ1xkf8eyT+cmPBGbtjW/Dk0p7/elXn/dd
- yj2rdE+GZ+OxLWvi1HkEaTBjTnsie1YG9wVDCMukLgfMBbiPCO6ChU5U0LXLxJ0xTDgOa+cYjma
- HRpnZ5+NpLNhjX1tWZuEuW1xW5WzKdFeiCy8UTtvm2PLv1bHYXQXkJBfcIkeTZq3X4eEibO0Jvm
- Dzw/8OA2FiZ5fYy4u1dH00nl2N7myEdaAuWjCkDQ870eHC37yg31jWZwYPu18aLgoP6Ni3epYfR
- 641qRq1E/x+jhuadVRkY6gvI5Coao5tR8UZlNtA4Qtq/9SirDWpuVOTzhkEPfWtpGtV1HaUkQvE
- YoE2qhThDcOvd6pAxE2PP6HCU1NdPFu9a3OO3UfhY1bP8Fx
-X-Received: by 2002:a17:90a:6d97:b0:39d:ec43:df74 with SMTP id
- 98e67ed59e1d1-39dec43dfbbmr11480500a91.12.1789500160980; 
- Tue, 15 Sep 2026 12:22:40 -0700 (PDT)
+ bh=/phnFzq0W803yyw67LmFurn+gIz5RJG7XSdSIiHWFVY=;
+ b=UX56otQXD/vya+pP64bt7upkH1IIuFKttEEfTbO3drqvJsKxPZCVycSZmDH3Rp0ynl
+ 8uE2w7Hb/JOgnKIMYvECFutxiJheT0dXqReeggZVVxaf6pzXeVSUtMrbysb7p/Bfz28Y
+ MaJoWcsLbPcLJ1Hv9CMtroOVRgNkAEE2DWps++ee+6Xaye//DjUXAV8a08NIUxRshCBm
+ 6s5PrYdheRn7tQLvBncei+3ZPYUXvA0YVudtuimbBIx0lMxu/zOroZk7BEjOFK4++/Hy
+ hAFcbmq4r69Xb9iYnixRGm7dOhU2h/Tmil/Zyn2wM2Q5GsYaPU0VuCmI0KGfAFu7KSW8
+ m+AA==
+X-Gm-Message-State: AFuF++kkeE1R04cAj2RZRUpC9zm5WEQoJgxkmiSqxt2vJ1Kv0CZKbHGI
+ 6TOBRBysOzPMl21oXePbng8KqRxdnKZkXptXftrf1MErnlxCiWJYyIRCm41GMycIZr2M55tR7Ls
+ dbQf4DUyTjg==
+X-Gm-Gg: AYBFou3xkLmzlsv2dku7auJbhlIHmW569uqDTnzs4MTBAnvCi36YBECN8INWCLv3U7K
+ qIxwXyrzY+o8I2PE4LzoTruxDlN5KMHHeluKXZjrsaldl1LB/pioVuslQy9TbngpXyZ5N/C4SZC
+ If/EOS9FcmFAJFtihjrnosMsSqHhMskBQ/t8WQNhZCuqdXZqEIl720pjtTrnscU4dHIKlRDCIqz
+ esnVlao7/UpPpA80zZf+pCQ6tTLPydZDoWZhp9LTgR+uHulIWpEOvoKpGiMpJB9pVxllSAaF8i3
+ 5V6YfaqcseMIvmar7vXu8CyX519P2v7fl8gjxTud15NOwxrOrRugdFJiZLyFm7wy6juCWgUbGy0
+ yM5/7KHGAxhv+Kj+PkARcO63r/Gf0+4+TNPnkHTfeEV6OyybtJMgMIGeNsCqYr4IKLWCMLCiXVR
+ iX7AEEpYt8wXxig3mb72795travw4aW+Wu8HTumezA/HoG8BAo7++sUzUf9aUN1gCLPtkReDg+2
+ +N0If7AXbzJNKQW4t+aZKz7V/KXEVxZk5kVow==
+X-Received: by 2002:a17:90b:4988:b0:38e:bfe:81e9 with SMTP id
+ 98e67ed59e1d1-39debf5f291mr17435218a91.1.1789500163804; 
+ Tue, 15 Sep 2026 12:22:43 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39e1bbfdd49sm217535a91.11.2026.09.15.12.22.38
+ 98e67ed59e1d1-39e1bbfdd49sm217535a91.11.2026.09.15.12.22.41
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 15 Sep 2026 12:22:40 -0700 (PDT)
+ Tue, 15 Sep 2026 12:22:42 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Cristian Dumitrescu <cristian.dumitrescu@intel.com>
-Subject: [PATCH 08/18] pipeline: use secure random for IPsec salt
-Date: Tue, 15 Sep 2026 12:21:06 -0700
-Message-ID: <20260915192207.3926217-9-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH 09/18] net: use secure random for random MAC address
+Date: Tue, 15 Sep 2026 12:21:07 -0700
+Message-ID: <20260915192207.3926217-10-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260915192207.3926217-1-stephen@networkplumber.org>
 References: <20260915192207.3926217-1-stephen@networkplumber.org>
@@ -83,33 +82,69 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The salt for AES-CBC and 3DES-CBC was generated with rte_rand().
-Unlike the other cipher cases, where the salt comes from the key
-material supplied by the application, this value is generated
-internally and ends up in the IPsec transform.
+rte_eth_random_addr() returned 48 bits of raw rte_rand() output on
+every call. That both makes the generated address predictable and
+leaks enough generator output to help recover the internal state.
 
-rte_rand() is a fast pseudo-random generator whose state can be
-recovered from a few outputs, so use rte_random_bytes() instead.
+Use rte_random_bytes() instead. The function cannot report an error
+to its callers, so fall back to rte_rand() if the system random
+generator is unavailable, which is no worse than the previous
+behaviour.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/pipeline/rte_swx_ipsec.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ lib/net/rte_ether.c | 13 ++++++++++---
+ lib/net/rte_ether.h |  5 +++++
+ 2 files changed, 15 insertions(+), 3 deletions(-)
 
-diff --git a/lib/pipeline/rte_swx_ipsec.c b/lib/pipeline/rte_swx_ipsec.c
-index 553056fad2..9959009aab 100644
---- a/lib/pipeline/rte_swx_ipsec.c
-+++ b/lib/pipeline/rte_swx_ipsec.c
-@@ -1460,7 +1460,8 @@ crypto_xform_get(struct rte_swx_ipsec_sa_params *p,
- 		switch (p->crypto.cipher_auth.cipher.alg) {
- 		case RTE_CRYPTO_CIPHER_AES_CBC:
- 		case RTE_CRYPTO_CIPHER_3DES_CBC:
--			salt = rte_rand();
-+			if (rte_random_bytes(&salt, sizeof(salt)) != 0)
-+				return NULL;
- 			break;
+diff --git a/lib/net/rte_ether.c b/lib/net/rte_ether.c
+index 6703145fc5..4b2932c00b 100644
+--- a/lib/net/rte_ether.c
++++ b/lib/net/rte_ether.c
+@@ -3,6 +3,7 @@
+  */
  
- 		case RTE_CRYPTO_CIPHER_AES_CTR:
+ #include <stdbool.h>
++#include <string.h>
+ 
+ #include <eal_export.h>
+ #include <rte_ether.h>
+@@ -12,10 +13,16 @@ RTE_EXPORT_SYMBOL(rte_eth_random_addr)
+ void
+ rte_eth_random_addr(uint8_t *addr)
+ {
+-	uint64_t rand = rte_rand();
+-	uint8_t *p = (uint8_t *)&rand;
++	/* Prefer the system random generator so that the address can not
++	 * be predicted from other random values. Fall back to rte_rand()
++	 * if it is unavailable, which is what was always used before.
++	 */
++	if (rte_random_bytes(addr, RTE_ETHER_ADDR_LEN) != 0) {
++		uint64_t rand = rte_rand();
++
++		memcpy(addr, &rand, RTE_ETHER_ADDR_LEN);
++	}
+ 
+-	rte_memcpy(addr, p, RTE_ETHER_ADDR_LEN);
+ 	addr[0] &= (uint8_t)~RTE_ETHER_GROUP_ADDR;	/* clear multicast bit */
+ 	addr[0] |= RTE_ETHER_LOCAL_ADMIN_ADDR;	/* set local assignment bit */
+ }
+diff --git a/lib/net/rte_ether.h b/lib/net/rte_ether.h
+index c9a0b536c3..b0dc227362 100644
+--- a/lib/net/rte_ether.h
++++ b/lib/net/rte_ether.h
+@@ -221,6 +221,11 @@ static inline int rte_is_valid_assigned_ether_addr(const struct rte_ether_addr *
+ /**
+  * Generate a random Ethernet address that is locally administered
+  * and not multicast.
++ *
++ * The address is taken from the random source of the operating system
++ * so that it cannot be predicted from other random values. If that
++ * source is unavailable it falls back to the pseudo-random rte_rand().
++ *
+  * @param addr
+  *   A pointer to Ethernet address.
+  */
 -- 
 2.53.0
 
