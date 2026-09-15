@@ -2,76 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 307BBC88E53
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 13:13:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 328B6C88E53
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 13:20:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5FC0D40DDC;
-	Tue, 15 Sep 2026 15:13:11 +0200 (CEST)
-Received: from mail-pz2-f42.google.com (mail-pz2-f42.google.com
- [74.125.228.42]) by mails.dpdk.org (Postfix) with ESMTP id B5A64406A2
- for <dev@dpdk.org>; Tue, 15 Sep 2026 15:13:10 +0200 (CEST)
-Received: by mail-pz2-f42.google.com with SMTP id
- d2e1a72fcca58-86efece610cso249772b3a.0
- for <dev@dpdk.org>; Tue, 15 Sep 2026 06:13:10 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 73C4340DDC;
+	Tue, 15 Sep 2026 15:20:33 +0200 (CEST)
+Received: from mail-pz2-f25.google.com (mail-pz2-f25.google.com
+ [74.125.228.25]) by mails.dpdk.org (Postfix) with ESMTP id 5417B406A2
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 15:20:32 +0200 (CEST)
+Received: by mail-pz2-f25.google.com with SMTP id
+ 41be03b00d2f7-cc1cebad4aeso2853834a12.2
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 06:20:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789477990;
- x=1790082790; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789478431;
+ x=1790083231; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=J8MqMLgeTmlHh8djedwWy2iJiE240eJ/031WiTOvwEM=;
- b=Vg/V8r5jqfu82hJs36wKM5EBmZxNVJMbMP5SKYJ6gQkeSniJp3qi9O0nklvoBxhk7N
- jFCmVcUaZc3OOA8xfvnctvViPU854OfkVEx4fft3sOnMmWloY7PVlbqeaxY0HG7u/JKX
- YA2gAgOg5w1U1wAchQT9Hjx/Yp6CNajKmLg8/xEn7LlCov7j4NNEzg5BHWEwltLtc4Pp
- 4jfdK4eMv9qZMI2JQeKGXjS2hBv5YqbtxzeWf32wEn6Vy8ZJMkJHmJVzKun1Px+u9L24
- PJ3RPDf+wA9mJEiTc9ju9tfi4s4UPE9e0CLfDLS+Fg/FFKqmWyW0TP25XxzMjSaCQGLl
- Iptw==
+ bh=T+lmEmTRysZIsnz6krrmoC4z/ghIb0pp5bfkBb5YTdo=;
+ b=wH1dTBv79r5MnRcFMm1VmEQnQVf5vtN1xYcmP2m2KlKJ7wCxjKb2aKFLXhkMsWCuLJ
+ FXR1RlwHlI9S2GUIYtqjff2ZACZilYwe9IfwHXfgdNq5hplC1kB5lMyDLd3JAVOIsoiM
+ 6FAA2B4tHrgXuSRvROnTA4SQTVqDaZB//E9zKNJgtIayq4ygqO9DBXRyzFqEunok8kEi
+ TYt13DHDeelBWcOSz8tvVrbGkiEWM0giS6oJeMfzuREkihFZd52m7MFMspKOAceA1CNc
+ zwR9ixSme5Y5Lv5Mgogc9rVwzinbhJ60sm0N0GatuU6BMANDpU99t+Lc5GhLPNQW1Dsj
+ gO0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789477990; x=1790082790;
+ d=1e100.net; s=20260707; t=1789478431; x=1790083231;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=J8MqMLgeTmlHh8djedwWy2iJiE240eJ/031WiTOvwEM=;
- b=oE6s4eupW7nRh3eq7KpXTFqNVEPLU3cSvBoyYkFRCZn0Ar/NNmo8+HTjE1z8ufXS7j
- fruw5h2irDcM1LRS+Do0HLO7HVnSeNCY6EVEyBKupU3/GlKPibRdS7z6015V4v3c56Ne
- IsBw7pxG70IMi77kCco0OsZkX2AO2x0idTABo9QR2sDosO2gJ0PsW6zdhMTdGcrIopl3
- oMUX3IoOCNaSpO+q/Wv+XvZpvPcKpz0sNO9yrxCbduPQMRBYOvegAufXNr3JFbjjC9Wp
- E1EQXJ9/P2cvC/VGrBhom43+mt6leeS0Or6Am1FubC1WvE9w1nL6Wtx9rU1X4QQbrsEZ
- GiZw==
-X-Forwarded-Encrypted: i=1;
- AKwUvBwQmyoMdyue93S86WL7Pnlb0aBjzTsrcpN41fKB8Ixsiu8j0v1Nw2tLIcVuy1phAw3XQVc=@dpdk.org
-X-Gm-Message-State: AFuF++nM1eEmv+HPedDrY5fQoUesq+srnZy6AGm9yVv8eGc0WyEOLUus
- Nw8GHfjiFng9wAQgggaoEr/7GEBcGUWBRVIlNz+uKM7HB/JM0hPK0MoWs8GJUOxsGEE=
-X-Gm-Gg: AYBFou0LqqaQzi+BcoNvjug11fOQqvsBXe2mNtL79fG/8hDTLzeCzPYmnB9d+IAkdj6
- Q8zl2vQCOSGOLF9SrUYiZTRhJPuz1KLO9pXziyAosTEcREGomWGuNbROJ3z4QJT3Ms+6MKeDoe/
- uqcLyw4744Yt1Ty0UCvI/4arhD7f+HRT3MpoQ4mnM6P7vV4U4532ZLdAyBPlHTLREIiKUNu4/Ts
- Il5XkWsx8N2LdSUAUhI78ZBBjKSco9Iod00Qm94v6IHLV/9MojCDZPCDHqVaekT74xxepGhwDef
- riHgJ8WZK6V3J0a0uRDS7rfv6SnsSCsbBo1mCPcxrwKzFT8QfVGD6Tub9d06BGqIW1ufORERItZ
- ZiAa7hwaWP51lD+WBmedSHx7L3uE7QEOc5K6JldD/Ti79PruoxamHqziyjNOTC7jY3OU5uYWP1l
- XO2VwiVSaR54QsNog2rM622Zw4Bvs1zJTr0NiDRW3d5+sI0Dc6/qLyMec4zzrm3eM73i4crUR71
- 9pgI7oHQKEAEICfKXRyOSJ4CksbrUFl3t3WDq+h
-X-Received: by 2002:a05:6a00:a24a:b0:857:727c:a1f3 with SMTP id
- d2e1a72fcca58-87180ef3b18mr1515386b3a.21.1789477989756; 
- Tue, 15 Sep 2026 06:13:09 -0700 (PDT)
+ bh=T+lmEmTRysZIsnz6krrmoC4z/ghIb0pp5bfkBb5YTdo=;
+ b=yYqj0PS2na3XeDPK4c9tOh5qabr7WI6NrjLjAnSwEzrnksxZUK5p83xnZz6R4NM23Z
+ zGdMMJAAcKpNCiwreB9Z9T8HQPK0W2oISVROri1Hq+PrVOBeSnFQao848I7HUNvLny18
+ FTK63oScuafRB5/YqcAFKx+80MLDQHqXX+oDurrdmKL0bzrUuRQ2dr/1Kztm4GwLAP7j
+ Fk+dMUKKgiSWYlP5Kd6u+5V+Q+HNI+fU+vRGDjjQ2lKK4RPNmPSnqlOEC32sUw1b1tWV
+ K3Qjsj+7ouqe43OXaQ3UpIrRksxCsS+uto+U5jeiAmUnlX0augtqsh6Zcb4TZTf4m+vY
+ APSg==
+X-Gm-Message-State: AFuF++nSnzehRZHfR9PRSqnYbvV5GVR4B/6n+ONvy2pTP4xITySy2Hsd
+ aLFXTOACD6a45nrXPt6fdr0HclcdYArU7bp6Qy5p4YaS3fvalhz1FZRZ679f/AIc5pQ=
+X-Gm-Gg: AYBFou3gFYhvmcJYuDCiIhqJ0JOq/xJ8irSwsR+tGEAMMsM6b/6mlBoQ7Iv+W+9V6Zq
+ mInDQd2MhQxd1WUSIeyO5Ic6oAFyL/IBis99OIb2sTL3QHtzcqfAS8X7QD0ULXmmfj9BsqEUeLj
+ NLfDHFder47H2RbBDP/z5o3hORvlw2xQ6rmhFTe250ZMcYldrl/SwmLx+FrGbgX4kZPx2y5yF+o
+ qSCoiyTcFxNN7qHw7MsnZ+uwCZX2TdPqBOOYu3ijU7FGTEQpH4oHeeoMpznhKV+KrPjNhhSYdGM
+ al4ePFsi6zCBpFl+5/I6kmbkRvwn+JkRGiU+sdtn57hIq/UMtcIeOkB3W5f3evHGv0SjuS6JWJ2
+ xOiknIzYClxL0lnNqwvRzog233IJ1YqYcAZ6J7Oc7HPc5Udt36TtJggdVCNAx9kTCEckHrNndnF
+ lCM6cI2W7nOZzVpCk07QgSak0wtRJJIZsIdEBOd9onx3JkYtUIR1WqBydDgzmwEt/Ainqe+Bi6m
+ XYuiNpmcLtEsW47dKlyOnnPL/phmfFwVNiZXR+d
+X-Received: by 2002:a05:6a21:b94:b0:3d1:be60:2816 with SMTP id
+ adf61e73a8af0-3db404f0f54mr18494670637.10.1789478431081; 
+ Tue, 15 Sep 2026 06:20:31 -0700 (PDT)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-86b29dc0b1esm6273842b3a.48.2026.09.15.06.13.07
+ 41be03b00d2f7-cc4f6aa2767sm2654901a12.1.2026.09.15.06.20.29
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 15 Sep 2026 06:13:09 -0700 (PDT)
-Date: Tue, 15 Sep 2026 06:13:03 -0700
+ Tue, 15 Sep 2026 06:20:30 -0700 (PDT)
+Date: Tue, 15 Sep 2026 06:20:23 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Marat Khalili <marat.khalili@huawei.com>
-Cc: Thomas Monjalon <thomas@monjalon.net>, Konstantin Ananyev
- <konstantin.ananyev@huawei.com>, <dev@dpdk.org>
-Subject: Re: [PATCH v2 7/7] app/validate-bpf: add BPF validation application
-Message-ID: <20260915061303.415ba389@phoenix.local>
-In-Reply-To: <20260914145418.37353-8-marat.khalili@huawei.com>
-References: <20260911104006.34364-1-marat.khalili@huawei.com>
- <20260914145418.37353-1-marat.khalili@huawei.com>
- <20260914145418.37353-8-marat.khalili@huawei.com>
+To: Mattias =?UTF-8?B?UsO2bm5ibG9t?= <mattias.ronnblom@ericsson.com>
+Cc: <dev@dpdk.org>, Mattias =?UTF-8?B?UsO2bm5ibG9t?= <hofors@lysator.liu.se>
+Subject: Re: [RFC 1/1] eal/x86: replace inline assembly prefetch with cc
+ builtins
+Message-ID: <20260915062023.76099932@phoenix.local>
+In-Reply-To: <20250223125215.358925-2-mattias.ronnblom@ericsson.com>
+References: <20250223125215.358925-1-mattias.ronnblom@ericsson.com>
+ <20250223125215.358925-2-mattias.ronnblom@ericsson.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -86,52 +83,63 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 14 Sep 2026 15:54:17 +0100
-Marat Khalili <marat.khalili@huawei.com> wrote:
+On Sun, 23 Feb 2025 13:52:15 +0100
+Mattias R=C3=B6nnblom <mattias.ronnblom@ericsson.com> wrote:
 
-> Add a new DPDK application, dpdk-validate-bpf, for pre-validating eBPF
-> programs for compatibility with the lib/bpf execution context.
+> Implement the 32- and 64-bit x86 rte_prefetch<n>() functions and
+> rte_prefetch_non_temporal() using compiler builtins, rather than
+> inline assembly.
 >=20
-> The application allows evaluating eBPF programs against the DPDK verifier
-> before loading them into a real application. It includes an interactive
-> debugging mode to trace state changes per instruction and understand the
-> validator's decisions.
+> This change frees the compiler to do certain optimizations that
+> otherwise wouldn't be possible.
 >=20
-> Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
+> Signed-off-by: Mattias R=C3=B6nnblom <mattias.ronnblom@ericsson.com>
 > ---
 
-Build fails on FreeBSD
+I like this getting rid of asm is good.
+AI review did spot some things worth addressing, I don't think benchmarking
+is needed. But moving to arch neutral file is good idea.
 
-*Build Failed #1:
-OS: FreeBSD15-64
-Target: x86_64-native-bsdapp-gcc
-FAILED: app/dpdk-validate-bpf.p/validate-bpf_parse_decl.c.o=20
-gcc -Iapp/dpdk-validate-bpf.p -Iapp -I../app -Ilib/bpf -I../lib/bpf -Ilib/e=
-al/common -I../lib/eal/common -I. -I.. -Iconfig -I../config -Ilib/eal/inclu=
-de -I../lib/eal/include -Ilib/eal/freebsd/include -I../lib/eal/freebsd/incl=
-ude -Ilib/eal/x86/include -I../lib/eal/x86/include -Ilib/eal -I../lib/eal -=
-Ilib/kvargs -I../lib/kvargs -Ilib/log -I../lib/log -Ilib/metrics -I../lib/m=
-etrics -Ilib/telemetry -I../lib/telemetry -Ilib/argparse -I../lib/argparse =
--Ilib/mbuf -I../lib/mbuf -Ilib/mempool -I../lib/mempool -Ilib/ring -I../lib=
-/ring -Ilib/net -I../lib/net -Ilib/ethdev -I../lib/ethdev -Ilib/meter -I../=
-lib/meter -Ilib/cmdline -I../lib/cmdline -fdiagnostics-color=3Dalways -D_FI=
-LE_OFFSET_BITS=3D64 -Wall -Winvalid-pch -Wextra -Werror -std=3Dc11 -O3 -inc=
-lude rte_config.h -Wvla -Wcast-qual -Wdeprecated -Wformat -Wformat-nonliter=
-al -Wformat-security -Wmissing-declarations -Wmissing-prototypes -Wnested-e=
-xterns -Wold-style-definition -Wpointer-arith -Wshadow -Wsign-compare -Wstr=
-ict-prototypes -Wundef -Wwrite-strings -Wno-packed-not-aligned -Wno-missing=
--field-initializers -D_GNU_SOURCE -D__BSD_VISIBLE -march=3Dnative -mno-avx5=
-12f -mrtm -DALLOW_EXPERIMENTAL_API -MD -MQ app/dpdk-validate-bpf.p/validate=
--bpf_parse_decl.c.o -MF app/dpdk-validate-bpf.p/validate-bpf_parse_decl.c.o=
-.d -o app/dpdk-validate-bpf.p/validate-bpf_parse_decl.c.o -c ../app/validat=
-e-bpf/parse_decl.c
-../app/validate-bpf/parse_decl.c: In function 'take_arg':
-../app/validate-bpf/parse_decl.c:392:33: error: 'array_length' may be used =
-uninitialized [-Werror=3Dmaybe-uninitialized]
-  392 |                 arg->value.size *=3D array_length;
-      |                                 ^~
-../app/validate-bpf/parse_decl.c:381:24: note: 'array_length' was declared =
-here
-  381 |                 size_t array_length;
-      |                        ^~~~~~~~~~~~
-cc1: all warnings being treated as errors
+Subject: Re: [RFC 1/1] eal/x86: replace inline assembly prefetch with cc bu=
+iltins
+
+The patch still applies cleanly to main. Codegen checked with gcc 13
+at -O0 and -O2, x86_64 and -m32: locality 3/2/1/0 emits
+prefetcht0/t1/t2/nta, identical to the current inline asm. Worth
+resending as a non-RFC after the items below.
+
+Warning
+
+The comment in rte_prefetch_non_temporal() is a copy/paste leftover.
+It says "1 sets target cache level to L3" but the call passes 0,
+which GCC maps to prefetchnta.
+
+The same four-line comment is repeated in every function. The
+locality argument is also not a cache level; the mapping to
+prefetcht0/t1/t2/nta is the x86 backend's choice. Replace with a
+single comment above rte_prefetch0(), e.g.:
+
+  /*
+   * On x86, __builtin_prefetch() read hints with locality 3, 2, 1, 0
+   * generate prefetcht0, prefetcht1, prefetcht2 and prefetchnta.
+   */
+
+The commit message says the change "frees the compiler to do certain
+optimizations" without naming them. Say what inline asm blocks
+(it is opaque to the optimizer; the pointer must be materialized and
+loops containing it do not vectorize) and include either a codegen
+example or benchmark numbers. Also state that the generated
+instruction is unchanged.
+
+Info
+
+With this change the non-MSVC x86 code is the same as
+lib/eal/loongarch/include/rte_prefetch.h. Consider providing the
+__builtin_prefetch() versions in generic/rte_prefetch.h and letting
+arch headers override only where needed (MSVC, arm, ppc). That drops
+duplicate code in two arch headers.
+
+Unlike the asm, __builtin_prefetch() emits nothing on 32-bit x86
+when SSE is not enabled (e.g. -march=3Di686). Not a problem for DPDK
+builds given the SSE4.2 baseline, but applications compiling the
+headers with their own flags would silently lose the prefetch.
