@@ -2,147 +2,90 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B8D1C88E7F
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 10:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C869EC88E53
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 10:30:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 06174410F1;
-	Tue, 15 Sep 2026 12:19:16 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.6])
- by mails.dpdk.org (Postfix) with ESMTP id 2ACC8402BA
- for <dev@dpdk.org>; Tue, 15 Sep 2026 12:19:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1789467555; x=1821003555;
- h=from:to:cc:subject:date:message-id:references:
- in-reply-to:content-transfer-encoding:mime-version;
- bh=MJi9nYGYpDYcsdWr3QeKaXQAN1wOTs8LSiYDqfjEP7E=;
- b=D2PAbkPAA5ZTZEbLewcCn+WUYKqOMpLpADP/rO1bKzf3Ib0KhOqYAi/P
- 4PhTwiq4hGOjlJ0BAki3IjKgB5sMFqOtOOWbMaHBrNhTVCUtd4Y+0bBLp
- lev8QPzpsvSel48AdNY9vH6oEJD5v05Xltx1GXir6Odr7WOjraRHZKkq3
- PeJgaS4mYt9rdb4uzgRVgXCZBGmUoiOpEVh/2wLzMS8kGRjaLH/kJares
- UO1APjE6XhWB5TAuAX3e/fUo4aCX+t30SZdGHlsYFBJ0h2wlF+JF8Hghf
- W0ZaFWybcq7CZBSUdJ6/zbmaYc99IfoyZulA/dTh+KPwhVHxDsvDYeRbe Q==;
-X-CSE-ConnectionGUID: wQjkfEHmTmqyPDuEDCduaA==
-X-CSE-MsgGUID: n+UiQawuSM6DMSYCTcQDYg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="335477"
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
-   d="scan'208";a="335477"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
- by fmvoesa116.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 15 Sep 2026 03:19:13 -0700
-X-CSE-ConnectionGUID: M8e0mU5ORo+mdofkadDAUg==
-X-CSE-MsgGUID: YMFDxsnDTnOqU85R8nsPMQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="302839193"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 15 Sep 2026 03:19:13 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Tue, 15 Sep 2026 03:19:12 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46 via Frontend Transport; Tue, 15 Sep 2026 03:19:12 -0700
-Received: from BL2PR02CU003.outbound.protection.outlook.com (52.101.52.31) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Tue, 15 Sep 2026 03:19:11 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Y/iP/U0mq5ngpS/rBbqkh1wsG+UPqywhUZNSX8y75dUtkJak8nBhnIMdb7ORYUVzNsT3TboXxwDBEnuldpXFwJp4zfq7zA26hZJ3K7w3rlw5iuXpSVtl/2+mOYSbiLA1gc9ipCoxpVZvwMwNFFj7efuXOieNpPA556bVoTu7rEjwp3VbkrKJefYq8eCPZkMVVxGe3U5eWrJ7ZZkmYWPD/t+eq1WUQppwKT6txkxV+QbNYP2IfhVnB/jprWq+NfzHcN5q095AP7fbXV50BoVADFtdaDEH3mn7YpomFJ/qrJwADZxLBUW7e9LE0+jfZnWYLEA0GwGO69YECE2HM1HIKQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1/827Mdsdws+dy4VLfRTKk+uOqEFuO2kpLvCo3yCwpk=;
- b=W9wxZ6vvd4zKEXJArFUJzs+O2eAffSS++QDKjVIXgIphDqnWBVSzhgG40kRz4OJ6gEg+A52+CCCqtGKl8PJPp5CjHLOCEo3LPDs9x9jw+dfw9fGOAx6L9Hfgfd0P/QMCJD4yP+pDA4qplSjXcgS2ZMAg3Ewibt3xnsTVp40ruAbr7CVopuFbveqw5edMDnP/JUK/e7z2tpSPAX300S8END6k9SRKanezctKUw7pluulxmF0YOZZrsymQKBtn92SbvUHH8K5olWZpk52MepI0sM3m75JK3t0E9u1FiFc7uAXGdCMFYu0PqcFNcesR6BefPF6JVqPYM/WiVtlwktrJYg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from AT6PR11MB044526.namprd11.prod.outlook.com
- (2603:10b6:170:110::22) by MW4PR11MB7079.namprd11.prod.outlook.com
- (2603:10b6:303:22b::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.406.12; Tue, 15 Sep
- 2026 10:19:08 +0000
-Received: from AT6PR11MB044526.namprd11.prod.outlook.com
- ([fe80::4301:f255:af66:888c]) by AT6PR11MB044526.namprd11.prod.outlook.com
- ([fe80::4301:f255:af66:888c%6]) with mapi id 15.21.0428.008; Tue, 15 Sep 2026
- 10:19:08 +0000
-From: "Mandal, Anurag" <anurag.mandal@intel.com>
-To: "Richardson, Bruce" <bruce.richardson@intel.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>, "Burakov, Anatoly"
- <anatoly.burakov@intel.com>
-Subject: RE: [PATCH] net/ice: add per-queue Tx rate limit support
-Thread-Topic: [PATCH] net/ice: add per-queue Tx rate limit support
-Thread-Index: AQHdQQt/mEEgr3dwOE+/3zpwKRLUSLbHnIqAgAfQZPA=
-Date: Tue, 15 Sep 2026 10:19:08 +0000
-Message-ID: <AT6PR11MB044526A42C6B7BE8BBFDFA1C35E4BA2@AT6PR11MB044526.namprd11.prod.outlook.com>
-References: <20260910100432.207328-1-anurag.mandal@intel.com>
- <aqKGofPyWqWVWEwK@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <aqKGofPyWqWVWEwK@bricha3-mobl1.ger.corp.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AT6PR11MB044526:EE_|MW4PR11MB7079:EE_
-x-ms-office365-filtering-correlation-id: 12968012-8fc0-4a55-e099-08df1312c760
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|1800799024|23010399003|366016|376014|38070700021|4143699003|11063799006|56012099006|6133799003|22082099003|18002099003|10067099003;
-x-microsoft-antispam-message-info: sZABdl9Ei9n38++XKblWNC/r9OOc7DFwhMDobw+87u22Y7w21ckOpcd4dvAQ5uRPJ0mQWiwIarfz61VYrjbYjyX0WURF1nWHiv8lg5ysAQxMK534bq02fOqiNSaxSgJMh9/l4IQVrVWo0scHKydXk3XoJb7YIFDDFM2umu3zIXUJWnpkEAazT4cmz7m5qNxV3F7WQ3a/QGag1hnZaAroRgZIh3f+l5j76QwR3chN6RiwcVoWHugGwL9uF48GTSC7D1ZM7NPdeGfXNyulqM0DQis6GlKuWq+bbQMMd0yHpOA23ggnncmHhzFpd/Qi91FTcux4WZCThfzaKYNSSaucGRmbrTu2dkmYjRa2bSD8KK1336lqwqFgVLsWmnS2APmP3YtEP+/cG2vX4NtPku0DWHYIMQtQUF9sAL8414KpSAvQTxqT/EhqB8ZguSSaWehUcN62I6e2tj8ruA1LOcbWHiuHmD42oO2rneSxx5xxYuVtnJaf08+3kSFTCYXZSUPLtPk0C4beEBuzG0Sev/F3I+R8bDqor33KKE2GG8jz0NZlNNWLx4JqWYS4SEWIWb+lDQpAAlZiPKdxG0LsMmKZ+AsqXyhogEnzvSjXzJBxU6KJvzUDsUXwIDCHtVwFuQhUgeQDVODFVN0eCkDZzJFGH5lMc1JnfH+KI9l+1a5hRFDO/p0KzH9N9JaVO+YP02IfiHRelaV9zWqMD4c+xmcD4JfY3xlNaPd5XwdzDyTsR/k=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:AT6PR11MB044526.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(23010399003)(366016)(376014)(38070700021)(4143699003)(11063799006)(56012099006)(6133799003)(22082099003)(18002099003)(10067099003);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?St2sob8R8PlEQurBWThyohfq8xpaLcoGkzF1hGzxyNek6HKJn3qSsY9Yp01r?=
- =?us-ascii?Q?CVxa065vX7/Lch3Et6GSeD0vPSxO4XR0/GysQzB4g1o6ZzkE1DNCWat7Z1jQ?=
- =?us-ascii?Q?wXPNe/2zTZHaBzTXkE2YKbrrPUTr89DSP4YsdAScLlOmKZ+ye/GaHPbLSvEh?=
- =?us-ascii?Q?wYJnLU3+UHRDsSmlQXNO6Ol2MyZkFrF6ucdkRZr9/v/IzBHOxdjDmxqp9ach?=
- =?us-ascii?Q?OETNsGgL0XIUm8DQrLfSHqCR98lzSxUyK/IlWtrfEPznRQKDeJFQQls9C/KS?=
- =?us-ascii?Q?MzVpZnoXXLwf63Uz2L6k48U9tkC1Ym5jI7QaDHlLkdCS8mrC55vc4fZqqrYL?=
- =?us-ascii?Q?883BT+9rWCdY8VLqxSXlEFIu3SDxndohQtclTe+JymufkPHBGlNRVbtB71kd?=
- =?us-ascii?Q?Z1S7YPyN97kAI3exWWq2dPgG3Y5/4VR4msx59PGdw6dkpR+9GNz3/M6ZZZLP?=
- =?us-ascii?Q?0bprWNGCAXImK/GOHrkNWT3DBLxm4asm6MC4+kUXA+DeB69lnHZ4Gz4h3OAZ?=
- =?us-ascii?Q?l0uv00CYz4VJTZgHgsw0OZWIcZNjeLG3fCoioDxB/iCEZR//AuvrwnPmQwHJ?=
- =?us-ascii?Q?9dBPfuaicxc9dC0gpewmoQJqSqlxY2jycYq1BthDTp9WV3Vs2qUUevBTmBfY?=
- =?us-ascii?Q?pLZ82p7KxacYmBYdd0h0wgrl9XnqXpm/eDttDGLojcG/A7QOPUS2IycLVhNX?=
- =?us-ascii?Q?GSJtbmWZTY/8H+E9jQglv+vD24EkNxz/61h7QkJ2QQYJ665l7lPEB0yrPU5g?=
- =?us-ascii?Q?Au2MOl9AHhGRLir/F8gVExa9OtTVa7PEbu0tiVzwOw5/lIF98+qVw/EUTcrD?=
- =?us-ascii?Q?swesXgms3wNE4dxR7x1UlmdGtFsdAiPGrYdTvSfK+/FQLrbtpUDc7gW//pDG?=
- =?us-ascii?Q?aalx/2f/6c6HaiFRYzFxbMgaxx7lSCKiqL+kGTnd2EAlFyjR9aAe09V75ZQh?=
- =?us-ascii?Q?f69oxzISDTPdS49zVALUUQYwCHvVqO8RNFsymjIyzrcJUQlP3NOAaryUsT9r?=
- =?us-ascii?Q?gkfR/9/JEnZ0xP1oP9A/oCJkznDYV3dYIh2F2Uv9FqaeJboPvDsXdQxygbUq?=
- =?us-ascii?Q?gQ2UpjrAgt5MiMVeHqdJ+7AKJgQqUGms7ubDvHg+FtRu/jOka31hBRD5MliP?=
- =?us-ascii?Q?z5ctMpathTkcLBWC4N0k9uhW8g2NLcc70ebNd8U9UxBNMsVYtDu4nY6My3L/?=
- =?us-ascii?Q?4qV7wZQxUs/kXoY2Ntj1zheJDynp0kKtOy9m5t7Jbp3c/3FiezTOVOXAuLtl?=
- =?us-ascii?Q?Kmmqal/Y8dFlPU7dB6m9a653xZPMwLtIkkyvhh+0vEkZx8nIN4ooKS4FUwLW?=
- =?us-ascii?Q?Z/X3VXhLvAMxwTplUWOW6dutEnEa+x8psZyLXpHP0BbBhi60bgTGEzeLLHBb?=
- =?us-ascii?Q?sfzxwzFIcJi4YoIemP3ARf3pAG5VbOy2eHg+d1+pB9MPq5foEfgbgMDkYZSL?=
- =?us-ascii?Q?ovrNRhehYH42m6W4XoYuYr/M5tGd4vkigyt3uy1MAywEJAFXseLjlgrVldSK?=
- =?us-ascii?Q?e7i7MxWflxyt8/vqe+vO2MKaaFp/Z/3Siiz3lOl9kjFBexmFL+rTw7XXB4rr?=
- =?us-ascii?Q?xq0Pf4lnyNG7CS3hFmiinnQ2WBOHIb358eWorigKAaYv+3h7cAujXXcLOily?=
- =?us-ascii?Q?+E3ZbMTdowS6MguHpTsvXIn9GjdkY2Z8osYyq2EN4aFjNj5CNhykU/QUhGcV?=
- =?us-ascii?Q?CRUsLeLfBc5q4ArESjOMwVncUfxjmcYnaqSee3l/UK+txYM/kMPjDNMsuUDN?=
- =?us-ascii?Q?CkeMukCWJw=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id C7B3240A89;
+	Tue, 15 Sep 2026 12:30:48 +0200 (CEST)
+Received: from mail-yx2-f13.google.com (mail-yx2-f13.google.com
+ [74.125.224.141])
+ by mails.dpdk.org (Postfix) with ESMTP id 2534D40A7A
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 12:30:48 +0200 (CEST)
+Received: by mail-yx2-f13.google.com with SMTP id
+ 00721157ae682-85d43f9b11aso975217b3.1
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 03:30:48 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1789468247; cv=none;
+ d=google.com; s=arc-20260327;
+ b=e3FChpHasrbEq2boBtKjlu3vuz7ECAKp8z56T2xFUs+2xHGW2R2Ju/XtOHt+k2Mtti
+ 9ikLduJI4+tlOs6Ep+ko0K+Xxgvz/a+wISWg5/h5WlTZyJoKCDkRhwkbiPPUKTk0zjRI
+ +Vob23OtrZFPEkk3g2p5E2di2JuinaKO5OlYEStoaT985BvIWqksd/XSoaIz37HSmG49
+ JXH/vNXhImqhgnLOf4QMSyUocFPUeFfGsp3ICZIbKgH203bvtyd1qnXYLziqCd2zYKzy
+ t+VAEnaXPtXOde0UMGXYrP0hraZvonQD7ZdqASScCTE1nj0NC7vgz7k1JCdOVPWrOYk0
+ AxOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=y1G3RURaIBX1PvfnGmkAQZVdRrquoqNSEetFGc+LHAA=;
+ fh=8RjFmtlfWuSy06bfjnPnoyIhOCMMtPp9gudY6c5pWpY=;
+ b=H/oZBw7F19Ls8IiyQmSwb+1Z7BsEINbMCZFn83w3Y4dbKm0YAIeu6h4DAlcrZiMlLT
+ wqCTM44+jwk3YAsdcftadToW6vnEQDDq0D9yZwzOmyflNszqPRVgNn/0Ivd+WtFAo1P/
+ L+5SY9tI2MJtgyAXzs/0+jbRT3WQ8j4xSTHuXIhROmHQzzPEe1IIoMMWjEniKa3vABZr
+ DG8CSsngNPCAhNyw26M5OTqz83KQDYu0d6pMnvDTUb+2PJLNEVr4w9F8PSNn8AgMlUpq
+ GpJdDxLGghB6cHo4D0vSvRXg3oKNKeJHi3q4zWY2AWP/z1NmBhDFX8vuqSAMoUUoR6Vt
+ ZXEw==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1789468247; x=1790073047; darn=dpdk.org;
+ h=content-transfer-encoding:content-type:cc:to:subject:message-id
+ :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=y1G3RURaIBX1PvfnGmkAQZVdRrquoqNSEetFGc+LHAA=;
+ b=HCR6jlqrALl2sWUf02nvugoxxGox8mTHmM7iEGAnRuNz9j6taq9B+poiJgASsEvKIG
+ O11RPYtW4CTAykxQWDclnI69wUvYZ1/c+ljxWD932GljhpK7bOm19qp/82u9FfU3gBlO
+ t08KJQZSdetpw8x1+pvBHAbGbBYpGROLmNgbGrisEls/bffSz3mrchX3z04WG1RUBK8f
+ 30mwybnC0lx7v3GY45sGDOopBNdrnwbIjTcy3G0lIuVgufPI0lLFlEXEdboJ4jFZQkm5
+ kYdcCm3tKk9oVXZIWqg2dbX9hIdv2hoWlp8YU6pkXXikDcPQp6fcMQgFtPx0L3U3NVHp
+ qC2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1789468247; x=1790073047;
+ h=content-transfer-encoding:content-type:cc:to:subject:message-id
+ :date:from:in-reply-to:references:mime-version:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=y1G3RURaIBX1PvfnGmkAQZVdRrquoqNSEetFGc+LHAA=;
+ b=rdpLrXdH+87Qfe5e60FOxniS7dQgR/SZ9Dt3LeBA3AQlBzvMPffiTjjFuB5Amj1+o0
+ dPC1fssMQGuEH+jhcLmPbSzL5IEfdIFvaeGLCEWtfRiAREERzTyL2YGAhkwFs+xhgRpL
+ BrQ1GEw+W6b7+xoos/FxQOn+Z1FUQS//S/1obAsjoWErHFWzzOjTuZ5nTQw8DvYvMKz4
+ +R2tU3i0faLUcfifP+/6J37cNpRCAgs4R+45C44B75QrLahJfXumCTugldP/yjOo3CH2
+ w2N1IdlA8VkOWgrVlflPshIUkK4nzGG3SHqFDmn5mH+YGEuA3f1UNK43OscC+ApXUbyS
+ bckg==
+X-Gm-Message-State: AFuF++lu4mLUWvndebAx+utGqoteBIuc/nNXqwlhlT9VdMxjwlAPFYEb
+ JzTO6XswmkafClq18+jUp7JQn8qXSS1MvxgoMF/Tp9YOh39y4gNemiRwuVFayKvd0quRecQf93A
+ dsSH9GEXfr201MuGu0ZnexGLI0y+kW0s=
+X-Gm-Gg: AYBFou3TMrFcu6VHg/3Gq2Tsy1gqKovq8xq3WkwN/U+CUo75MB7uMz/S7U4GGyv42cO
+ m/plKCRibkEonpp9jXNvo+CeQp3xlEQK0FtFJJQCVDd6ZuVz6sH3Y4/Meldy7np5/GzUf/SWVu+
+ H7LSs3eBbf5Edu8QHpJXnlS7rBh6EfbYjrj1iR1okcqiga0Db3BaDcG+ShpfYvG93z5ouUr4lhP
+ +9hz6t1YkXL4yxD0jZVx49+eEvCwesYc1CZfO1d8bs4GrOq/AunAHnBtVg+fH3JWlFQykAGWfkt
+ aE20ye9WfG4OaWj4rjkSdCHqi308uEyip2TncT7iuX5jLJQUWH5pKSMxz2rTKPC0vWqI6wPCC7L
+ Rwb0LtrhpuHPpAFIhtAbAB3ertD8uhx9krOn/m/J8AI/FcaERuJbze5TMX2nqPT8n21pknKMGwu
+ /IKCwRt17Qbb1ZgVn+zA==
+X-Received: by 2002:a05:690e:14c5:b0:66f:be14:1a2b with SMTP id
+ 956f58d0204a3-6715caba050mr138512d50.11.1789468247379; Tue, 15 Sep 2026
+ 03:30:47 -0700 (PDT)
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: KKikwb6Fr/jxTIrilLXtG6v7e5IvbED5/ebaRaIgQxSbBK+dUSiQ4+6rdxj9p0JF2TmFvm3u5+rk8PSnmD+mHI9mhI/CUNYB+SAGKt+NIHpYQ9rx4rBNPlVkspmL9eF8XZ7iwcmU9inU7Devsqo4eJ4Lu828wl6tO/S1/dVpP/hX6yZfjDlb9gA7FXpPVKk814+9OdtfbjJqXI50hmZqmHckVIkoX2tSWdHy/BC2nR3525+bxURBByGR0h6Cld1wRMZnmrWN4WATh28dvhRqGvuIHwmvzRz57d1T0HOXWVuEoWOeiXvnm6Ld1nWCM+8gzIJwDhZlNSBiU0hi9FitiA==
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AT6PR11MB044526.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 12968012-8fc0-4a55-e099-08df1312c760
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Sep 2026 10:19:08.4653 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zprOjRoXLl3C3sGKbH+NBbnbWUNHZ54CIlGYbhrSJI6E0HxqVXF+mv+63o0fyvoEEs4DWD7sfSnW1+o096PRlQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB7079
-X-OriginatorOrg: intel.com
+References: <20260721115635.2209399-1-bruce.richardson@intel.com>
+ <20260721132349.2579128-1-bruce.richardson@intel.com>
+In-Reply-To: <20260721132349.2579128-1-bruce.richardson@intel.com>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Tue, 15 Sep 2026 16:00:20 +0530
+X-Gm-Features: AcwNN1VWSah5TRA1Qte0RNrkepkcyWSX6ULYGFq6CnxszMTM6juVNVBQtd8sSQM
+Message-ID: <CALBAE1P=pOL6k+Y=+oVUGDzk_BAi-2SZiVPzofMYQgvinpyunQ@mail.gmail.com>
+Subject: Re: [PATCH v2] test/event_eth_tx_adapter: skip tests if no eventdev
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, Naga Harish K S V <s.v.naga.harish.k@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -156,67 +99,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> -----Original Message-----
-> From: Richardson, Bruce <bruce.richardson@intel.com>
-> Sent: 10 September 2026 16:00
-> To: Mandal, Anurag <anurag.mandal@intel.com>
-> Cc: dev@dpdk.org; Burakov, Anatoly <anatoly.burakov@intel.com>
-> Subject: Re: [PATCH] net/ice: add per-queue Tx rate limit support
->=20
-> On Thu, Sep 10, 2026 at 10:04:32AM +0000, Anurag Mandal wrote:
-> > The Tx rate can be limited per queue with ethdev operation
-> > ``rte_eth_set_queue_rate_limit()``
-> > and can be read through ``rte_eth_get_queue_rate_limit()``.
-> >
-> > This feature uses the hardware packet pacing mechanism to enforce a
-> > data rate on individual Tx queues without tearing down the queue.
-> >
-> > The rate is specified in Mbps.
-> >
-> > ice_set_queue_rate_limit() applies the requested rate as the EIR
-> > (maximum bandwidth) limit of the queue scheduler node using
-> > ice_cfg_q_bw_lmt(), converting the Mbps value taken by the API to the
-> > Kbps expected by the scheduler.
-> > A rate of 0 removes the limit and restores the default bandwidth via
-> > ice_cfg_q_bw_dflt_lmt().
-> >
-> > ice_get_queue_rate_limit() reads back the value cached in the queue
-> > context by the scheduler on a successful set, and reports 0 when the
-> > queue runs unlimited.
-> >
-> > Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
-> > ---
-> >  doc/guides/nics/features/ice.ini       |  1 +
-> >  doc/guides/rel_notes/release_26_11.rst |  3 +
-> >  drivers/net/intel/ice/ice_ethdev.c     | 77 ++++++++++++++++++++++++++
-> >  3 files changed, 81 insertions(+)
-> >
-> Is this functionality not overlapping with what the rte_rm APIs provide f=
-or
-> ice? Using the rte_rm hierarchies, it's possible to rate limit a queue, n=
-o?
->=20
-> /Bruce
+On Tue, Jul 21, 2026 at 6:54=E2=80=AFPM Bruce Richardson
+<bruce.richardson@intel.com> wrote:
+>
+> If there is no eventdev present, and the SW eventdev driver is not
+> available, skip the eth tx adapter tests, rather than failing on event
+> creation.
+>
+> Note: We keep the failure case where we do have the event/sw driver
+> built, but fail to create an instance of it.
+>
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 
-Hi Bruce,
+Applied to dpdk-next-eventdev/for-main. Thanks
 
-I am guessing you meant rte_tm APIs instead of rte_rm.
-Yes, the two paths ultimately program the same hardware field.
-But, there are few reasons I still think the ethdev op is worth having:
-1. rte_tm commit bounces the port. This does not.=20
-    So adjusting one queue's rate through rte_tm drops traffic on every que=
-ue and bounces the link.
-2. VSI subtree is rebuilt for rte_tm :
- 	a. Stop the port if running
-	b. Walk the VSI root up or down to the new layer, freeing sibling subtrees
-	c. free_sched_node_recursive() - tear down the existing scheduler subtree
-	d. create_sched_node_recursive() - rebuild it, ice_sched_add_elems() per n=
-ode
-	e. Recompute pf->main_vsi->nb_qps, then ice_alloc_lan_q_ctx() to resize qu=
-eue contexts
-	f. Restart the port
-3. ixgbe & txgbe pmds also implement both.
-
-Thanks,
-Anurag M
-   =20
+> ---
+>  app/test/test_event_eth_tx_adapter.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/app/test/test_event_eth_tx_adapter.c b/app/test/test_event_e=
+th_tx_adapter.c
+> index bec298a8b8..0c161897ce 100644
+> --- a/app/test/test_event_eth_tx_adapter.c
+> +++ b/app/test/test_event_eth_tx_adapter.c
+> @@ -202,18 +202,23 @@ deinit_ports(void)
+>  static int
+>  testsuite_setup(void)
+>  {
+> -       const char *vdev_name =3D "event_sw0";
+> -
+>         int err =3D init_ports();
+>         TEST_ASSERT(err =3D=3D 0, "Port initialization failed err %d\n", =
+err);
+>
+>         if (rte_event_dev_count() =3D=3D 0) {
+> +#ifdef RTE_EVENT_SW
+> +               const char *vdev_name =3D "event_sw0";
+> +
+>                 printf("Failed to find a valid event device,"
+>                         " testing with event_sw0 device\n");
+>                 err =3D rte_vdev_init(vdev_name, NULL);
+>                 TEST_ASSERT(err =3D=3D 0, "vdev %s creation failed  %d\n"=
+,
+>                         vdev_name, err);
+>                 event_dev_delete =3D 1;
+> +#else
+> +               printf("Failed to find a valid event device, skipping tes=
+t\n");
+> +               return TEST_SKIPPED;
+> +#endif
+>         }
+>         return err;
+>  }
+> --
+> 2.53.0
+>
