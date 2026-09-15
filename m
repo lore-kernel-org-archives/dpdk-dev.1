@@ -2,73 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDEB3C88E77
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 19:23:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B18BAC88E77
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 19:23:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EC23742E8D;
-	Tue, 15 Sep 2026 21:22:54 +0200 (CEST)
-Received: from mail-pj2-f42.google.com (mail-pj2-f42.google.com
- [74.125.227.170])
- by mails.dpdk.org (Postfix) with ESMTP id 6E93C42E89
- for <dev@dpdk.org>; Tue, 15 Sep 2026 21:22:53 +0200 (CEST)
-Received: by mail-pj2-f42.google.com with SMTP id
- 98e67ed59e1d1-39d654f02baso94757a91.3
- for <dev@dpdk.org>; Tue, 15 Sep 2026 12:22:53 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E0C1742E4C;
+	Tue, 15 Sep 2026 21:22:58 +0200 (CEST)
+Received: from mail-pz2-f42.google.com (mail-pz2-f42.google.com
+ [74.125.228.42]) by mails.dpdk.org (Postfix) with ESMTP id D2CCC42E48
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 21:22:57 +0200 (CEST)
+Received: by mail-pz2-f42.google.com with SMTP id
+ 41be03b00d2f7-cc4cacd3409so139070a12.2
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 12:22:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789500172;
- x=1790104972; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789500176;
+ x=1790104976; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=OHbSVBvRTXfogKnUzQMuvETKpUpknjhbxMe7G8Hl0mo=;
- b=kEQlE294OzQ/jg2Z8VDM2XIC12xrDaohfQKEAKOLEGtHs5OLo3gci87HmbQ4CXed/Y
- iBDGgk6Nxbyv1F8U5TAC/fDW4zNbm/WnaYaU1SJ6JoFeqmyWOPAT7bz7OYQZDlVfZnJC
- 453rYEr+AutDZiWxJW0k/wEznaIs2of5TTIGi0EfjS5BzDxI06o0sR7bo/GZPDLY7HPq
- brMo3Nmlrhafys9g0T3DlDAckg8VM7KO0Esl5EAQVrumbqBebjQh/Hqfp8HlyIE6rjZg
- sIhW/0oRTEmtauG8m/qv53GBLwni68zNQl0ISah48VJw7kZz1dEmn1hNbHtVSJp+CE/L
- aznQ==
+ bh=BoDHqpUS85k00aExRALpqDs7bDZqLPE4O3C/FKXPiQE=;
+ b=iEOduZzhdrSELSjCGgGpSPuI/Ty+HzCYEXvxSQMdoWsDxgP0qispsPOGtzMafPsJp2
+ EIYaB6Jx8C8/w80LrAhpfWPbINulNzp6O5cP+RJO/fpupQnJYGwcrlQ0gao67A+XePtZ
+ h7A7fLJ0rn7lylJsiy3ub6mJXqxqifxBnyj5dJujN8LHGvO+WVzPj2j4FXwRYCWFzNuu
+ tMk7NJHdVJVIEdZxtd+MJWUZhI4NCQ1/m5pAN5QOFp4ndtQZYzZk+FAtyG2HoPxNUd8F
+ 5fljbvrbBWSYPSdcDD4D98W3YEUW0Kvs9LUn8ajxui1Kk6nOcHm0SPxQOExPnr3H8lSE
+ KecA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789500172; x=1790104972;
+ d=1e100.net; s=20260707; t=1789500176; x=1790104976;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=OHbSVBvRTXfogKnUzQMuvETKpUpknjhbxMe7G8Hl0mo=;
- b=Kfd7Kcsn57+DsCi7JcaAQ+VeZC7jybO7UazEbxX8i9F0Jgn6HI/d7fvZCnB9p6+Czm
- kZDtoacig9hIS3ODj1bOgNuA7x+jtCjbtzAl/x8zzhqqL4ISGEXqUAo9f4j+vmL4p/8k
- ALrVWI6udbq+oMTsyJtGKbtSKk1GOf+nFDXzOzOdsyn1Fok56fZK9gst30Hl14JpFtA1
- ORD5E7HkG1tVBNBZLgnMeEyK7pnwqWyr71TpJ1BUTmh6cQ6LJrRJ88gDKlXYwE/9k2Xm
- wOpHuij247WscnG6oor64Q7QnsW+nJByBFN2sIAseUd5iJbfTxzkRbCX3DCsgEYTt0iW
- PixA==
-X-Gm-Message-State: AFuF++mYpaBXgAQp0GL6T1X7AuVghQdrX8lbNxZKPbl5WCBmvN+OM1P7
- J4/58ASiUC2YaUKaHevNnXoA1U8M/730vSLjjN24Y3TEmAeERbOWJ6Iq2H8GOrfJwwVWowanVJ7
- 0XX9VPp6z/w==
-X-Gm-Gg: AYBFou1fesHIu4ZZLavdhDlp7OvoVyOONo5QltHD2yaFbD1jA7+MbE22t3LbVitmu94
- QFrG+FD5dT8aXuwpwDVWoq6RIFkNRd+Kfcek7/9ylsGLtKL3RwfubymznIZSMYMidxmfloB9MUU
- ihc4yqeN7FlbS87QdODEyEt3ZQjBsyeipKgB1T8IAgRjXcAlhRbvYp7PFV2SjZHM5XT99+HWbZF
- oNNBQfaFOXmbf5zWAEhmh0H9NMPoaundV6uH2SdQinIf5TCMVHASxn3ECR71rE1TaszAifwvxrJ
- fpdQGsIcTIC4Cm5ZIpZu/XLCUcd/m+cErQMwjCK0RM3arD+DU9MIFOcs/8lgsmiEckD6crP5bAt
- uqQDh6Hk4OC5ftXztIk6dVcBdC54HNq9jl2YZ/07aglVzWjSXjY5FtGMH3YoYA0Ig2hsVv/b7y7
- hojNjYk6UthiuOuJSBjI/GicGn842Zvx5r0IdXGczOZyWSmSY7L/qDPd5qVqiF9meTOK7/81yiO
- DQtrz+ZpxDLtBl5UEWE6IpxrK8KGEe4F4WwUQ==
-X-Received: by 2002:a17:90b:4b81:b0:398:cb56:e92 with SMTP id
- 98e67ed59e1d1-39debfb92b4mr16160874a91.11.1789500172501; 
- Tue, 15 Sep 2026 12:22:52 -0700 (PDT)
+ bh=BoDHqpUS85k00aExRALpqDs7bDZqLPE4O3C/FKXPiQE=;
+ b=ogz9CUYExt1q9PXlNB1WUajsSs0Td9IFtTy5LWOW+iDanXt30po0ClQ47sLfBOzrhE
+ EifdnRetkx2y8BsF9mPPJVz3bRTUOMr3mIHeVUxTF2emdfxzjqjam1faH4ZL0ZgtJoFO
+ 6JLiI8R/Z8tTpmkVzoF0On+u8l2wu5FFn9ZU2HSDCT6+EwZfgOgLIcZsh/lrlPfegXQ+
+ Vyb3BDo/8p9Prq/q0AxBNFKH+gnT/HzIe6HP6EJ+X4i383ja1inPJgLQIr54CMbcKx4F
+ YLLXku/qFYPBp5bQRkg+N53I1SpexfqaDsHGSn5qKuvpEj48hAeMlD0POpgUWYAOJclz
+ AHzg==
+X-Gm-Message-State: AFuF++n3+uRhwfB/VshLGAwMdmnqO15CGnIoWJb9bou1GyylcaXzYrhE
+ yk89O0P9p2HuZ2mmFIqT27SpjWGuVxinjr/rd2QrJabWC3YKN4ojQiIOKFvp0kGsU1H3G4cZLt+
+ XUZJW
+X-Gm-Gg: AYBFou1VgtjjFZxZ5d1w6ZmQ11Zl0tkMrMy9Nyhb2MxpLeNMSuezLoJVeB1IDBne6BU
+ A9tZ+/w1Wypff6sZXSSh3Lo7suUqPX93DrnK1DZfrwKctxXz9nYBX8AGRjvMzAt87G8qjvBJ3t2
+ Ofxmsy4j/apUiE4W7a4CKlhJl0gl6ldf1qb0x/km/H+D4BPGOgK62TB+hipi0tUCxNrdojz8vE5
+ pveylfdNdVj5U95PzMQgh/Xr35iv0ckw4sNLtTW9QZMiRyAOj2GkeXXTZkYcUqDmq8urEr4a/ua
+ BYHACM8TvpdLduaPHhYIPs9dlU6WPsXLu39p2YkQKAzvx6Ir0ZKy/tUBom+wbKnio1/bGRIWXC+
+ rBbUxWozgMMso1euOxqwOLnWkSt1zKjWfqOgUVBkIgeePXGiLQRWPZz9N5zdj5gVUSBNOYxD9K+
+ LxWkfJhgf5MJTU10ck8zTibUUfANsRMK7tgh6glnG3qpaA8gwiQCDiU7uJofe2g4v2szY0Jg3oS
+ WtBbQCit7biQvzRsXrxw2W+Yyo/I8YLbnqLYg==
+X-Received: by 2002:a17:90b:4a88:b0:39d:f024:c7ec with SMTP id
+ 98e67ed59e1d1-39e11041013mr4190227a91.16.1789500175935; 
+ Tue, 15 Sep 2026 12:22:55 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39e1bbfdd49sm217535a91.11.2026.09.15.12.22.48
+ 98e67ed59e1d1-39e1bbfdd49sm217535a91.11.2026.09.15.12.22.52
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 15 Sep 2026 12:22:50 -0700 (PDT)
+ Tue, 15 Sep 2026 12:22:54 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Praveen Shetty <praveen.shetty@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Jingjing Wu <jingjing.wu@intel.com>
-Subject: [PATCH 11/18] net/intel: use secure random for default RSS key
-Date: Tue, 15 Sep 2026 12:21:09 -0700
-Message-ID: <20260915192207.3926217-12-stephen@networkplumber.org>
+ =?UTF-8?q?Mattias=20R=C3=B6nnblom?= <mattias.ronnblom@ericsson.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH 12/18] random: use all 64 bits of the seed
+Date: Tue, 15 Sep 2026 12:21:10 -0700
+Message-ID: <20260915192207.3926217-13-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260915192207.3926217-1-stephen@networkplumber.org>
 References: <20260915192207.3926217-1-stephen@networkplumber.org>
@@ -87,129 +83,158 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When the application does not supply an RSS key, these drivers built
-the default key a byte at a time from rte_rand(). That generator is a
-fast non-cryptographic PRNG whose state is recoverable from its output,
-so the resulting key is predictable. Linux fills its default RSS key
-from get_random_bytes() for the same reason.
+The generator state is five 64 bit words, expanded from the seed by a
+32 bit linear congruential generator. The two halves of the seed were
+folded together first, so only 32 bits of it had any effect, and the
+low order bits of such a generator are weak, leaving the five words
+with correlated low bits.
 
-Use rte_random_bytes() which takes randomness from the operating
-system, and propagate the error where the caller can report it.
+Expand the seed with SplitMix64 instead, so every bit of the seed
+affects every word of the state. It is described in "Fast Splittable
+Pseudorandom Number Generators" by Steele, Lea and Flood,
+https://doi.org/10.1145/2714064.2660195 and is what the authors of
+the xoshiro and xoroshiro generators recommend for seeding.
 
-ice_get_default_rss_key() has no way to return an error to its caller,
-so it keeps rte_rand() as a fallback if the system random generator
-is unavailable.
+The per-lcore seeds were formed by adding the lcore id to the seed,
+leaving neighbouring lcores with nearly identical state. Pass that
+sum through SplitMix64 as well.
+
+Fixes: 3f002f069612 ("eal: replace libc-based random generation with LFSR")
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/intel/cpfl/cpfl_ethdev.c |  5 +++--
- drivers/net/intel/iavf/iavf_ethdev.c |  8 +++++---
- drivers/net/intel/ice/ice_dcf.c      | 10 ++++++----
- drivers/net/intel/ice/ice_ethdev.c   | 11 ++++++++---
- drivers/net/intel/idpf/idpf_ethdev.c |  5 +++--
- 5 files changed, 25 insertions(+), 14 deletions(-)
+ doc/guides/rel_notes/release_26_11.rst |  4 ++
+ lib/eal/common/rte_random.c            | 74 +++++++++++++-------------
+ 2 files changed, 40 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/net/intel/cpfl/cpfl_ethdev.c b/drivers/net/intel/cpfl/cpfl_ethdev.c
-index 4315adb68c..c3f18686bb 100644
---- a/drivers/net/intel/cpfl/cpfl_ethdev.c
-+++ b/drivers/net/intel/cpfl/cpfl_ethdev.c
-@@ -478,8 +478,9 @@ cpfl_init_rss(struct idpf_vport *vport)
- 	nb_q = dev_data->nb_rx_queues;
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index f25e497729..9d1238d6f3 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -65,6 +65,10 @@ New Features
+     values which must not be predictable, such as keys, hash seeds and
+     MAC addresses, where the pseudo-random ``rte_rand()`` is not
+     suitable.
++  * Improved the expansion of the seed into the generator state. All
++    64 bits of the value passed to ``rte_srand()`` now affect the state,
++    so a given seed produces a different sequence than in previous
++    releases.
  
- 	if (rss_conf->rss_key == NULL) {
--		for (i = 0; i < vport->rss_key_size; i++)
--			vport->rss_key[i] = (uint8_t)rte_rand();
-+		ret = rte_random_bytes(vport->rss_key, vport->rss_key_size);
-+		if (ret != 0)
-+			return ret;
- 	} else if (rss_conf->rss_key_len != vport->rss_key_size) {
- 		PMD_INIT_LOG(ERR, "Invalid RSS key length in RSS configuration, should be %d",
- 			     vport->rss_key_size);
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index d601ec3b6a..fcef1eb26a 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -565,12 +565,14 @@ iavf_init_rss(struct iavf_adapter *adapter)
- 	/* configure RSS key */
- 	if (!rss_conf->rss_key) {
- 		/* Calculate the default hash key */
--		for (i = 0; i < vf->vf_res->rss_key_size; i++)
--			vf->rss_key[i] = (uint8_t)rte_rand();
--	} else
-+		ret = rte_random_bytes(vf->rss_key, vf->vf_res->rss_key_size);
-+		if (ret != 0)
-+			return ret;
-+	} else {
- 		memcpy(vf->rss_key, rss_conf->rss_key,
- 			   RTE_MIN(rss_conf->rss_key_len,
- 				   vf->vf_res->rss_key_size));
-+	}
  
- 	/* init RSS LUT table */
- 	for (i = 0, j = 0; i < vf->vf_res->rss_lut_size; i++, j++) {
-diff --git a/drivers/net/intel/ice/ice_dcf.c b/drivers/net/intel/ice/ice_dcf.c
-index 3b635c0822..b73af13d5b 100644
---- a/drivers/net/intel/ice/ice_dcf.c
-+++ b/drivers/net/intel/ice/ice_dcf.c
-@@ -1125,14 +1125,16 @@ ice_dcf_init_rss(struct ice_dcf_hw *hw)
- 	 */
+ Removed Items
+diff --git a/lib/eal/common/rte_random.c b/lib/eal/common/rte_random.c
+index 4b777f69f4..db4e19b414 100644
+--- a/lib/eal/common/rte_random.c
++++ b/lib/eal/common/rte_random.c
+@@ -39,55 +39,45 @@ static RTE_LCORE_VAR_HANDLE(struct rte_rand_state, rand_state);
+ /* instance to be shared by all unregistered non-EAL threads */
+ static struct rte_rand_state unregistered_rand_state;
  
- 	/* configure RSS key */
--	if (!rss_conf->rss_key)
-+	if (!rss_conf->rss_key) {
- 		/* Calculate the default hash key */
--		for (i = 0; i < hw->vf_res->rss_key_size; i++)
--			hw->rss_key[i] = (uint8_t)rte_rand();
--	else
-+		ret = rte_random_bytes(hw->rss_key, hw->vf_res->rss_key_size);
-+		if (ret != 0)
-+			return ret;
-+	} else {
- 		memcpy(hw->rss_key, rss_conf->rss_key,
- 			   RTE_MIN(rss_conf->rss_key_len,
- 				   hw->vf_res->rss_key_size));
-+	}
+-static uint32_t
+-__rte_rand_lcg32(uint32_t *seed)
+-{
+-	*seed = 1103515245U * *seed + 12345U;
+-
+-	return *seed;
+-}
+-
++/* SplitMix64, used to expand the seed into the generator state.
++ * It has a full 64 bit period and good avalanche, so all the bits
++ * of the seed affect every word of the resulting state.
++ *
++ * See "Fast Splittable Pseudorandom Number Generators" by Steele,
++ * Lea and Flood, https://doi.org/10.1145/2714064.2660195
++ */
+ static uint64_t
+-__rte_rand_lcg64(uint32_t *seed)
++__rte_rand_splitmix64(uint64_t *state)
+ {
+-	uint64_t low;
+-	uint64_t high;
+-
+-	/* A 64-bit LCG would have been much cleaner, but good
+-	 * multiplier/increments for such seem hard to come by.
+-	 */
++	uint64_t z;
  
- 	/* init RSS LUT table */
- 	for (i = 0, j = 0; i < hw->vf_res->rss_lut_size; i++, j++) {
-diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
-index 76b8ff0a72..105a6636c0 100644
---- a/drivers/net/intel/ice/ice_ethdev.c
-+++ b/drivers/net/intel/ice/ice_ethdev.c
-@@ -3778,9 +3778,14 @@ ice_get_default_rss_key(uint8_t *rss_key, uint32_t rss_key_size)
+-	low = __rte_rand_lcg32(seed);
+-	high = __rte_rand_lcg32(seed);
++	z = (*state += 0x9E3779B97F4A7C15ULL);
++	z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9ULL;
++	z = (z ^ (z >> 27)) * 0x94D049BB133111EBULL;
+ 
+-	return low | (high << 32);
++	return z ^ (z >> 31);
+ }
+ 
+ static uint64_t
+-__rte_rand_lfsr258_gen_seed(uint32_t *seed, uint64_t min_value)
++__rte_rand_lfsr258_gen_seed(uint64_t *state, uint64_t min_value)
+ {
+-	uint64_t res;
+-
+-	res = __rte_rand_lcg64(seed);
+-
+-	if (res < min_value)
+-		res += min_value;
+-
+-	return res;
++	/* LFSR258 degenerates unless each word exceeds its threshold.
++	 * All thresholds are powers of two, so a bitwise or is enough
++	 * and keeps the remaining bits untouched.
++	 */
++	return __rte_rand_splitmix64(state) | min_value;
+ }
+ 
+ static void
+ __rte_srand_lfsr258(uint64_t seed, struct rte_rand_state *state)
+ {
+-	uint32_t lcg_seed;
+-
+-	lcg_seed = (uint32_t)(seed ^ (seed >> 32));
++	uint64_t mix_state = seed;
+ 
+-	state->z1 = __rte_rand_lfsr258_gen_seed(&lcg_seed, 2UL);
+-	state->z2 = __rte_rand_lfsr258_gen_seed(&lcg_seed, 512UL);
+-	state->z3 = __rte_rand_lfsr258_gen_seed(&lcg_seed, 4096UL);
+-	state->z4 = __rte_rand_lfsr258_gen_seed(&lcg_seed, 131072UL);
+-	state->z5 = __rte_rand_lfsr258_gen_seed(&lcg_seed, 8388608UL);
++	state->z1 = __rte_rand_lfsr258_gen_seed(&mix_state, 2UL);
++	state->z2 = __rte_rand_lfsr258_gen_seed(&mix_state, 512UL);
++	state->z3 = __rte_rand_lfsr258_gen_seed(&mix_state, 4096UL);
++	state->z4 = __rte_rand_lfsr258_gen_seed(&mix_state, 131072UL);
++	state->z5 = __rte_rand_lfsr258_gen_seed(&mix_state, 8388608UL);
+ }
+ 
+ RTE_EXPORT_SYMBOL(rte_srand)
+@@ -95,16 +85,24 @@ void
+ rte_srand(uint64_t seed)
+ {
+ 	unsigned int lcore_id;
++	uint64_t mix_state;
+ 
+-	/* add lcore_id to seed to avoid having the same sequence */
++	/* Mix in the lcore id so that each lcore gets an unrelated
++	 * sequence. Adding it to the seed would leave neighbouring
++	 * lcores with nearly identical generator state.
++	 */
+ 	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
+ 		struct rte_rand_state *lcore_state =
+ 			RTE_LCORE_VAR_LCORE(lcore_id, rand_state);
+ 
+-		__rte_srand_lfsr258(seed + lcore_id, lcore_state);
++		mix_state = seed + lcore_id;
++		__rte_srand_lfsr258(__rte_rand_splitmix64(&mix_state),
++				    lcore_state);
  	}
  
- 	if (!default_key_done) {
--		/* Calculate the default hash key */
--		for (i = 0; i < sizeof(default_key); i++)
--			key[i] = (uint8_t)rte_rand();
-+		/* Calculate the default hash key. Fall back to rte_rand()
-+		 * if the system random generator is not available, this
-+		 * function cannot report an error.
-+		 */
-+		if (rte_random_bytes(key, sizeof(default_key)) != 0) {
-+			for (i = 0; i < sizeof(default_key); i++)
-+				key[i] = (uint8_t)rte_rand();
-+		}
- 		default_key_done = true;
- 	}
- 	memcpy(rss_key, key, RTE_MIN(rss_key_size, sizeof(default_key)));
-diff --git a/drivers/net/intel/idpf/idpf_ethdev.c b/drivers/net/intel/idpf/idpf_ethdev.c
-index c13505416a..ab4d007a22 100644
---- a/drivers/net/intel/idpf/idpf_ethdev.c
-+++ b/drivers/net/intel/idpf/idpf_ethdev.c
-@@ -432,8 +432,9 @@ idpf_init_rss(struct idpf_vport *vport)
- 	nb_q = dev_data->nb_rx_queues;
+-	__rte_srand_lfsr258(seed + lcore_id, &unregistered_rand_state);
++	mix_state = seed + lcore_id;
++	__rte_srand_lfsr258(__rte_rand_splitmix64(&mix_state),
++			    &unregistered_rand_state);
+ }
  
- 	if (rss_conf->rss_key == NULL) {
--		for (i = 0; i < vport->rss_key_size; i++)
--			vport->rss_key[i] = (uint8_t)rte_rand();
-+		ret = rte_random_bytes(vport->rss_key, vport->rss_key_size);
-+		if (ret != 0)
-+			return ret;
- 	} else if (rss_conf->rss_key_len != vport->rss_key_size) {
- 		PMD_INIT_LOG(ERR, "Invalid RSS key length in RSS configuration, should be %d",
- 			     vport->rss_key_size);
+ static __rte_always_inline uint64_t
 -- 
 2.53.0
 
