@@ -2,89 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2575BC88E75
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 19:10:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE8D6C88E77
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 19:22:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E7EC24025F;
-	Tue, 15 Sep 2026 21:10:42 +0200 (CEST)
-Received: from mail-yx2-f13.google.com (mail-yx2-f13.google.com
- [74.125.224.141])
- by mails.dpdk.org (Postfix) with ESMTP id C08284003C
- for <dev@dpdk.org>; Tue, 15 Sep 2026 21:10:41 +0200 (CEST)
-Received: by mail-yx2-f13.google.com with SMTP id
- 956f58d0204a3-66fded6b087so122119d50.1
- for <dev@dpdk.org>; Tue, 15 Sep 2026 12:10:41 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789499441; cv=none;
- d=google.com; s=arc-20260327;
- b=pWcGad4f46LNyvn7xA1uBYC5L852T9g+W9l9hS7UQKejqDUh3QvTda7o8P+bY65s4M
- NWvpdO7a1IoTWBTzRhdJrUN4QGeGYUpe+kbD5Yxmo6thQC3ldRa87QYUKt4bl2lM68oo
- 6/4M3z1ctvP2Wq/oyN67ZS/eoZQY6ZY6acX+IteuLaLGvBzkwwh4v68OQNf3v61pHZ9I
- GpvXnoWkGG8FkoSA6zkC7R/mdMiclKIV1UTssfMTZadxNMxWyChjj1qJDJH97fDzvGou
- ERtsYRPllOd4b6IeumIquCGtF8izFbplGi7Kq/h5IJIBqmPI0Y4M1SQlJxEEdONNHBTy
- hfCg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=nyEj8lgIpwM6luaASJ3i/JYcLn9/Wag8eGdC8MpAfaw=;
- fh=M4ntZrbfNOI2ObdlEHflOdWkDYk4AAaaM2dw1Zibg8s=;
- b=VSxAvrtwgfuW0flvIgRuP52szFZ1tK2fu842mnMZXIrMXBMxvocwUFJAIhcVGsXeEt
- YXrA7IdOGYhIJuB2x9TfpsAjPtNJ+7sDuPiF1snH12PMPrpJEC8nhTyF7Z6lsw/s+q+W
- /S7+EGN6KbP6/X2uQ61cLspaMUixcAFBWhG8xFw1Qz2wP08DVToY2cmUEc0KPaUwKfVn
- NvCGm70UtFS5TfN3SK0B6HFhynmQd/pkamTdYJ5MCCdO5UUAI8b7lHD/ZZjFlWs+5QMI
- WrNLG7qK9hQClkCHSXnEUiAg1ShiOc8jT/Rzf9XDkJE8My4eIDeX58nJEXhDIJ9J+4o4
- DIMA==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id 9E6384025F;
+	Tue, 15 Sep 2026 21:22:15 +0200 (CEST)
+Received: from mail-pj2-f43.google.com (mail-pj2-f43.google.com
+ [74.125.227.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 7DABE4003C
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 21:22:14 +0200 (CEST)
+Received: by mail-pj2-f43.google.com with SMTP id
+ 98e67ed59e1d1-39dbdfaef3cso131583a91.1
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 12:22:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1789499441; x=1790104241; darn=dpdk.org;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=nyEj8lgIpwM6luaASJ3i/JYcLn9/Wag8eGdC8MpAfaw=;
- b=cY5hSy02Du9KcQuELrkzdUFxPeYkqfc5j2VO73IJJWdJf72ms12G6lgweTZ8ucZgMV
- I3RZg8/n29CwaC4IK5bZrxUqnkh87bxNei7YlNYH+06ZWroQ+h17y4K9qokrqd4gAUZo
- Cp5vqX78V6n72O3jI8l7tpLI8zJPEklViW8EuRDImKc24sq/i67b/nUDpNgVqhWYqv7R
- ftpkZ6xwx+aIdx7IqULzgHTVBqvRweOBGb9J1VTxDM5aM0D/CV3upWaAXx93Qrh7OKO1
- JUz38ZXT07EBz6c1dkT9WY/G1pdYMm6p5L/Nk0iVZqhkwj/F9NOuzQp+7MQwOUQyF0rT
- jmHw==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789500133;
+ x=1790104933; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=3NTE49/+hPIEy9ojOKV3bTaqlgdqlGt48BmwlWB0Oys=;
+ b=WMAyLUMntb08b6QkHHTRMd4be5kLGYlzxk5dQauNvCsTDGMSdlZVGFSC4lXiD+AvGx
+ 7vC85WFZZ8xvlsiU8Q3au6QBk3oAr7hdoft0GKagY5fLqwgy4A6MvetUlTeFkSsI1x1d
+ c22oBkd2bVT8JKsXb5Od6rDf44KdRjcf79h8wPHobzMRrjoRHMR02snhT1WY1mguuDy2
+ b5onA/Bz51spo2ipAzOnolmUxxbtsBelcC8wDnKsn9+ulsrZOuBY6zfrbhIibqKDTOFH
+ WHrBVXxq9vsvjvv5ORY71qmCEBiTUXCRwmo+Iy44vkbGYwjGq1G5zCnbDi8B8PASLAY5
+ 7NJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789499441; x=1790104241;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=nyEj8lgIpwM6luaASJ3i/JYcLn9/Wag8eGdC8MpAfaw=;
- b=XTnYhvlgV+0ORDYvAOMrCTmZJAR2V7z/z8fMNl1IFcjOnd7T4Y0yYPh9rBh3B9RNeK
- psWoi9QjDMxalmYyyXGnXsxukirGL628TMhlvyPy7zg0Bd3uCVZxC4noPQSt8dhHPKL6
- +vI7Fp4S+u/bHoo7H00wFz3NbvGREXE6yUFdFGapw3G1/NAfwmgeiENCk1oVIapEWWX0
- WMisPO0/0pOlj/M0IniAhLF/W4yc5x4j4PldqZyqU0U40LOI8SiqkyAgPdFavhUGWnag
- pITtB/5hzd2BN+LJkDZsj8OmQe0JRj/N3RQjRBUSb7LRkQYWoClu6jcYPQ9eucWDSFu6
- Sh6A==
-X-Gm-Message-State: AFuF++nF9hTXw75clLWkY6KoU/NH1HzE1NczzpErvNL8Lynsi7s+al/z
- eFiKJtErV66+o9/RLAydVR94D7PQU03W2UqciJYilL4EMrEFFTH9KsK/JdOSM4aAOed9vvtq6k+
- mGydwoBBc8UAbuL8WwbdgiOkRPeyoXOB2OfRc
-X-Gm-Gg: AYBFou0aHb3YcTE/5vpsP/TeFsC8MdknQyEfQ0M8ozCp+i4Qlf1YUyyhaNmx4gFG8/K
- MLzw1mGRQ7RXDpNFOdN9jw8Ja/xkYHWHO5CYTEaDDtTLOd6wEHpkXtPoUr/OJDLFz8Nro1OpsPW
- F4EMp4fAaPkkR07C4Pq4hyt1d/TADg4ivfNVNSxx7ujrlMRvTkw9JIPTjnb0bXwyUggh03N8xM5
- EQmVCq6GaoIVV1KN699OmOjRLJOuLFl4ZfTsY65JCrT+LyPBe4B5iOK/8CNHHrWPalvhjMlIlsc
- MbE+wjqC5hVfAbkGyfa7cBgX/nN0DNkkCAgxyZM6XYctI5m1qlMOCWxD
-X-Received: by 2002:a05:690e:d03:b0:670:f743:6ec2 with SMTP id
- 956f58d0204a3-6715cba54f3mr954604d50.60.1789499440939; Tue, 15 Sep 2026
- 12:10:40 -0700 (PDT)
+ d=1e100.net; s=20260707; t=1789500133; x=1790104933;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=3NTE49/+hPIEy9ojOKV3bTaqlgdqlGt48BmwlWB0Oys=;
+ b=uVVA47kcyMibiFY7uYrhu0t7mquT44dfyBu4zrmLbQOjshcliVir9tLN+907p3myXx
+ 1g1WpTsfhgs7lp7JB1rgCR345iqI6hgrD21OcTYCpe1ax/0+muFMIlFzRf8eJaIlcDFQ
+ IhEX+Sb4T2v+s8LxNYLttXhDWxkNfKra1VYPDFl5RvKp125sLYDJiEnFQuCdGHO0+qnF
+ URW1D7UDN1yGFEenvOFtamGl07K/1cFx982vFV4dLl3+l5HS2FeLTSWTwwP44UzJu0aL
+ hRRSdzRuzuEEulQKxHg9qZtpUtSqMdq/+DYeNmfoognKBV4GyUTtWjQg6T9hWstHNhYH
+ mryw==
+X-Gm-Message-State: AFuF++ldw17VXQ1/5q2iBo6u8cexJIcCoW6nM0ycMBL5vxhCGQ6VTm+O
+ Nfe3oEhHuojr064J1FnDDSpPa22mgETWW3FqcnWHEonQQae3pl5zcKkxuhgegccSl9Prj6ywswZ
+ nXlqc7MiDyg==
+X-Gm-Gg: AYBFou2NmSQILgFkmoL9TtF4aMvI4tvD/4LmOaI2OTnwbMET3fWLKGF6PfRitz7LY4G
+ 3TmmU8GhUSX5wDqZApwlS8OVZt4AyZWdIQEk1q0hez843wEf5BM74J//XIEM4atdwm33PgiSmT1
+ sxbm+yPnL4iw64drU9VbAA2fVOgEKfomZ9t2AwVbH4OkHWtiMD31zTU7CF9rS9tZOnvF25JflKy
+ AuSkvdPRVSyG0fc2I8mMJ5Vs00m04Z/ryxN0FaRo/ZPZSI2zhLeYPY0mHZVAEnvwR7Cz/7NAc2N
+ xQX3KPgceLu1aI7/pYGRE6x/SD+elYoln3o0ttUUvtpgamWOvGXz0ENOy3H+z/qqneLjbfIJKOR
+ CFuah8I83EV/Bi26HZlBDdODzaXto6HzlkXGe8QMzhYwq06eszgc+0okFe1gp1/XZ3mPckhLWYT
+ fjTNUpxyGfqm8WdwET3besGgDEM0/0BhOmyuFE3Xp/YqVeoE3lyI4eS0EigpD8FLjNh/se8h2rb
+ OkLg4q3gim9tQhdqzzkdTGnZS8tGLAx5xgfog==
+X-Received: by 2002:a17:90b:1642:b0:39e:b7:cbef with SMTP id
+ 98e67ed59e1d1-39e00b7d25bmr10361104a91.25.1789500133258; 
+ Tue, 15 Sep 2026 12:22:13 -0700 (PDT)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-39e1bbfdd49sm217535a91.11.2026.09.15.12.22.11
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 15 Sep 2026 12:22:12 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH 00/18] random number generator improvements
+Date: Tue, 15 Sep 2026 12:20:58 -0700
+Message-ID: <20260915192207.3926217-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
-References: <20260913040800.60274-1-amiyaranjan.mohakud@gmail.com>
- <20260913070428.66628-1-amiyaranjan.mohakud@gmail.com>
- <CO1PR18MB4796E0F85799C486CA837DEFBFBA2@CO1PR18MB4796.namprd18.prod.outlook.com>
-In-Reply-To: <CO1PR18MB4796E0F85799C486CA837DEFBFBA2@CO1PR18MB4796.namprd18.prod.outlook.com>
-From: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
-Date: Wed, 16 Sep 2026 00:40:29 +0530
-X-Gm-Features: AcwNN1WbAH7Y1cxcin_31CvqTZdDamAj1OCZ6l9TVBXA56mMyyEmQ9IfVArRKaI
-Message-ID: <CAL+mCpO43LNUa-xzH7_AkSjcyo1Ws2-SdVUhvn6ySQY2_2OhgQ@mail.gmail.com>
-Subject: Re: [EXTERNAL] [PATCH v2] common/cnxk: fix NPA pool RANGE interrupt
- handling
-To: Ashwin Sekhar T K <asekhar@marvell.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>,
- Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>, 
- Jerin Jacob <jerinj@marvell.com>, Sunil Kumar Kori <skori@marvell.com>
-Content-Type: multipart/alternative; boundary="00000000000080c50d065b8a4e0c"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -98,187 +79,85 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---00000000000080c50d065b8a4e0c
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+DPDK random number generator has some issues that are worth addressing
+in this release. There are seeding related issues, and the current
+random number generator is weak and seed could be derived.
 
-Hi Ashwin
+The seeding issue is caused by build detection of getentropy()
+not working; which results in use of TSC on many systems.
+The fix is to always use getentropy().
 
+The security sensitive values (RSS and Toeplitz hash keys,
+the IPsec SAD hash seed, an IPsec salt and random MAC addresses)
+were generated with rte_rand(), whose internal state can be recovered
+from a handful of outputs. The fix is to introduce a DPDK
+wrapper around the more secure kernel getrandom() API.
 
+Also found that the sched RED was rolling its own very
+simplistic PRNG. The fix is to just use existing rte_rand().
+This does drop an inline function in header (rte_fast_rand)
+which should never have been exposed.
 
+For Windows build, shims for both getentropy() and getrandom()
+are provided.
 
-*> NPA_POOL_ERR_INT_RANGE fires spuriously between pool creation >
-(ptr_start/ptr_end default to 0/~0) and the actual range install > via
-roc_npa_pool_op_range_set().  >>ERR_INT_RANGE is not supposed to fire
-spuriously. Did you root cause why this is happening ?*
+A couple of other improvements to rte_rand:
+  - seeding uses the whole 64 bits passed to rte_srand().
+  - helper function for when only 32 bits are needed rte_rand32().
+  - test infrastructure now supports seeding for repeatability.
+  - unit tests for rte_random_bytes() and rte_rand32().
 
-Yes =E2=80=94 the root cause is NDC staleness. The AQ INIT writes pool cont=
-ext
-(including ptr_start=3D0, ptr_end=3D~0) directly to RAM, bypassing NDC. Whe=
-n
-the MMIO data path (aura_op_free) reads pool context, it goes through NDC
-which can still have stale zeros from a previous init/teardown cycle =E2=80=
-=94
-including ptr_end=3D0. Against that stale range [0, 0], any buffer IOVA
-triggers RANGE.
+Stephen Hemminger (18):
+  eal/windows: add getentropy shim
+  random: always use getentropy
+  eal: add 32 bit random number function
+  sched: fix data race in RED random number generation
+  eal/windows: add getrandom shim
+  eal: add function to get random bytes
+  hash: use secure random for Toeplitz hash key
+  pipeline: use secure random for IPsec salt
+  net: use secure random for random MAC address
+  ipsec: use secure random for SAD hash seed
+  net/intel: use secure random for default RSS key
+  random: use all 64 bits of the seed
+  drivers/net: use secure random for RSS key
+  drivers/net: use common random MAC address helper
+  random: remove RDSEED fallback for initial seed
+  test: allow setting random seed for tests
+  test: add random number generator tests
+  doc: recommend secure random for unpredictable values
 
-The NDC sync patch [
-https://patches.dpdk.org/project/dpdk/patch/20260909192323.26886-1-amiyaran=
-jan.mohakud@gmail.com/]
-addresses this root cause by invalidating NDC after AQ INIT. This RANGE
-patch adds defense-in-depth: mask RANGE during the init=E2=86=92range_set w=
-indow
-and re-enable only after the real range is installed.
-I also acknowledge that this fix is no longer required if we force-sync the
-NDC as in
-https://patches.dpdk.org/project/dpdk/patch/20260909192323.26886-1-amiyaran=
-jan.mohakud@gmail.com/.
-We can drop this patch completely.
+ AGENTS.md                              |   6 +-
+ app/test/meson.build                   |   1 +
+ app/test/test.c                        |  48 ++++
+ app/test/test_random.c                 | 297 +++++++++++++++++++++++++
+ doc/guides/contributing/unit_test.rst  |  15 ++
+ doc/guides/rel_notes/release_26_11.rst |  29 ++-
+ drivers/net/axgbe/axgbe_dev.c          |  16 +-
+ drivers/net/bnx2x/bnx2x.c              |  11 +-
+ drivers/net/enetc/enetc4_vf.c          |  22 +-
+ drivers/net/enetfec/enet_ethdev.c      |  16 +-
+ drivers/net/intel/cpfl/cpfl_ethdev.c   |   5 +-
+ drivers/net/intel/iavf/iavf_ethdev.c   |   8 +-
+ drivers/net/intel/ice/ice_dcf.c        |  10 +-
+ drivers/net/intel/ice/ice_ethdev.c     |  11 +-
+ drivers/net/intel/idpf/idpf_ethdev.c   |   5 +-
+ lib/eal/common/rte_random.c            | 148 +++++++-----
+ lib/eal/include/rte_random.h           |  89 ++++++--
+ lib/eal/meson.build                    |   3 -
+ lib/eal/windows/include/rte_os_shim.h  |  64 ++++++
+ lib/eal/windows/meson.build            |   6 +-
+ lib/hash/rte_thash.c                   |  46 +++-
+ lib/hash/rte_thash.h                   |   4 +-
+ lib/ipsec/ipsec_sad.c                  |   7 +-
+ lib/net/rte_ether.c                    |  13 +-
+ lib/net/rte_ether.h                    |   5 +
+ lib/pipeline/rte_swx_ipsec.c           |   3 +-
+ lib/sched/rte_red.c                    |   9 +-
+ lib/sched/rte_red.h                    |  26 +--
+ 28 files changed, 753 insertions(+), 170 deletions(-)
+ create mode 100644 app/test/test_random.c
 
+-- 
+2.53.0
 
-
-*> On CN10K this drains the pool > stack and makes the pool
-unusable.>>Didn't quite understand this part. Could you please elaborate.*
-
-Sorry for my poor wordings. on my part. The pool stack does not get drained
-=E2=80=94 it never gets populated.During cnxk_mempool_populate(), each
-roc_npa_aura_op_free()
-call silently drops the buffer (NPA sees stale context with ena=3D0 or
-ptr_end=3D0 via NDC). After populate completes, the pool has 0 available
-buffers despite no error being returned. Subsequent roc_npa_aura_op_alloc()
-returns NULL, causing port start failures.
-
-All this will be taken care of via NDC sync. So it's safe to drop this
-patch.
-
-I initially made this fix and later fixed the NDC sync issue, so somehow, I
-forgot to  mark this patch as dropped.
-
-Thanks
-Amiya
-
-
-On Tue, 15 Sept 2026 at 12:09, Ashwin Sekhar T K <asekhar@marvell.com>
-wrote:
-
-> Hi Amiya,
->
-> > NPA_POOL_ERR_INT_RANGE fires spuriously between pool creation
-> > (ptr_start/ptr_end default to 0/~0) and the actual range install
-> > via roc_npa_pool_op_range_set().
-> ERR_INT_RANGE is not supposed to fire spuriously. Did you root cause why
-> this is happening ?
->
->
-> > On CN10K this drains the pool
-> > stack and makes the pool unusable.
-> Didn't quite understand this part. Could you please elaborate.
->
-> Thanks
-> Ashwin
->
->
->
-
---00000000000080c50d065b8a4e0c
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><div><div style=3D"font-family:trebuchet ms,sans-serif;col=
-or:rgb(103,78,167)" class=3D"gmail_default">Hi Ashwin</div><div style=3D"fo=
-nt-family:trebuchet ms,sans-serif;color:rgb(103,78,167)" class=3D"gmail_def=
-ault"><br></div><div style=3D"font-family:trebuchet ms,sans-serif;color:rgb=
-(103,78,167)" class=3D"gmail_default"><i><span class=3D"gmail-im" style=3D"=
-color:rgb(0,0,0);background-color:rgb(238,238,238)">&gt; NPA_POOL_ERR_INT_R=
-ANGE fires spuriously between <span class=3D"gmail-il">pool</span> creation=
-<br>
-&gt; (ptr_start/ptr_end default to 0/~0) and the actual <span class=3D"gmai=
-l-il">range</span> install<br>
-&gt; via roc_npa_pool_op_range_set().=C2=A0 <br></span><span style=3D"color=
-:rgb(0,0,0);background-color:rgb(238,238,238)">&gt;&gt;ERR_INT_RANGE is not=
- supposed to fire spuriously. Did you root cause why this is happening ?</s=
-pan></i></div><div style=3D"font-family:trebuchet ms,sans-serif;color:rgb(1=
-03,78,167)" class=3D"gmail_default"><br></div><div style=3D"font-family:tre=
-buchet ms,sans-serif;color:rgb(103,78,167)" class=3D"gmail_default">Yes =E2=
-=80=94 the root cause is NDC staleness. The AQ INIT writes pool context (in=
-cluding ptr_start=3D0, ptr_end=3D~0) directly to RAM, bypassing NDC. When t=
-he MMIO data path (aura_op_free) reads pool context, it goes through NDC wh=
-ich can still have stale zeros from a previous init/teardown cycle =E2=80=
-=94 including ptr_end=3D0. Against that stale range [0, 0], any buffer IOVA=
- triggers RANGE.<br><br></div><div style=3D"font-family:trebuchet ms,sans-s=
-erif;color:rgb(103,78,167)" class=3D"gmail_default">The NDC sync patch [<a =
-href=3D"https://patches.dpdk.org/project/dpdk/patch/20260909192323.26886-1-=
-amiyaranjan.mohakud@gmail.com/">https://patches.dpdk.org/project/dpdk/patch=
-/20260909192323.26886-1-amiyaranjan.mohakud@gmail.com/</a>] addresses this =
-root cause by invalidating NDC after AQ INIT. This RANGE patch adds defense=
--in-depth: mask RANGE during the init=E2=86=92range_set window and re-enabl=
-e only after the real range is installed.=C2=A0</div><div style=3D"font-fam=
-ily:trebuchet ms,sans-serif;color:rgb(103,78,167)" class=3D"gmail_default">=
-I also acknowledge that this fix is no longer required if we force-sync the=
- NDC as in=C2=A0<a href=3D"https://patches.dpdk.org/project/dpdk/patch/2026=
-0909192323.26886-1-amiyaranjan.mohakud@gmail.com/">https://patches.dpdk.org=
-/project/dpdk/patch/20260909192323.26886-1-amiyaranjan.mohakud@gmail.com/</=
-a>. We can drop this patch completely.</div><div style=3D"font-family:trebu=
-chet ms,sans-serif;color:rgb(103,78,167)" class=3D"gmail_default"><br></div=
-><span style=3D"background-color:rgb(238,238,238)"><i><span class=3D"gmail-=
-im" style=3D"color:rgb(0,0,0);font-family:trebuchet ms,sans-serif">&gt; On =
-CN10K this drains the <span class=3D"gmail-il">pool</span><br>
-&gt; stack and makes the <span class=3D"gmail-il">pool</span> unusable.<br>=
-</span><span style=3D"color:rgb(0,0,0);font-family:trebuchet ms,sans-serif"=
-><span class=3D"gmail_default">&gt;&gt;</span></span><span style=3D"color:r=
-gb(0,0,0);font-family:trebuchet ms,sans-serif">Didn&#39;t quite understand =
-this part. Could you please elaborate.</span></i></span></div><div><br></di=
-v><div><span style=3D"color:rgb(103,78,167);font-family:trebuchet ms,sans-s=
-erif"><span class=3D"gmail_default">Sorry for my p</span>oor wording<span c=
-lass=3D"gmail_default">s.</span> on my part. The pool stack does not get dr=
-ained =E2=80=94 it<span class=3D"gmail_default" style=3D"font-family:trebuc=
-het ms,sans-serif;color:rgb(103,78,167)">=C2=A0</span>never gets populated.=
-<span class=3D"gmail_default" style=3D"font-family:trebuchet ms,sans-serif;=
-color:rgb(103,78,167)"></span>During cnxk_mempool_populate(), each<span cla=
-ss=3D"gmail_default" style=3D"font-family:trebuchet ms,sans-serif;color:rgb=
-(103,78,167)">=C2=A0</span>roc_npa_aura_op_free() call silently drops the b=
-uffer (NPA sees<span class=3D"gmail_default" style=3D"font-family:trebuchet=
- ms,sans-serif;color:rgb(103,78,167)">=C2=A0</span>stale context with ena=
-=3D0 or ptr_end=3D0 via NDC). After populate<span class=3D"gmail_default" s=
-tyle=3D"font-family:trebuchet ms,sans-serif;color:rgb(103,78,167)">=C2=A0</=
-span>completes, the pool has 0 available buffers despite no error being<spa=
-n class=3D"gmail_default" style=3D"font-family:trebuchet ms,sans-serif;colo=
-r:rgb(103,78,167)">=C2=A0</span><span class=3D"gmail_default" style=3D"font=
--family:trebuchet ms,sans-serif;color:rgb(103,78,167)">r</span>eturned. Sub=
-sequent roc_npa_aura_op_alloc() returns NULL, causing<span class=3D"gmail_d=
-efault" style=3D"font-family:trebuchet ms,sans-serif;color:rgb(103,78,167)"=
->=C2=A0</span>port start failures.</span></div><div><br></div><div><div sty=
-le=3D"font-family:trebuchet ms,sans-serif;color:rgb(103,78,167)" class=3D"g=
-mail_default">All this will be taken care of via NDC sync. So it&#39;s safe=
- to drop this patch.</div><br></div><div><div style=3D"font-family:trebuche=
-t ms,sans-serif;color:rgb(103,78,167)" class=3D"gmail_default">I initially =
-made this fix and later fixed the NDC sync issue, so somehow, I forgot to=
-=C2=A0 mark=C2=A0this patch as dropped.</div><br></div><div><div dir=3D"ltr=
-" class=3D"gmail_signature" data-smartmail=3D"gmail_signature"><div dir=3D"=
-ltr"><div><span style=3D"font-family:verdana,sans-serif">Thanks</span></div=
-><div><span style=3D"font-family:verdana,sans-serif">Amiya</span><br></div>=
-</div></div></div><br></div><br><div class=3D"gmail_quote gmail_quote_conta=
-iner"><div dir=3D"ltr" class=3D"gmail_attr">On Tue, 15 Sept 2026 at 12:09, =
-Ashwin Sekhar T K &lt;<a href=3D"mailto:asekhar@marvell.com">asekhar@marvel=
-l.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"ma=
-rgin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:=
-1ex">Hi Amiya,<br>
-<br>
-&gt; NPA_POOL_ERR_INT_RANGE fires spuriously between pool creation<br>
-&gt; (ptr_start/ptr_end default to 0/~0) and the actual range install<br>
-&gt; via roc_npa_pool_op_range_set().=C2=A0 <br>
-ERR_INT_RANGE is not supposed to fire spuriously. Did you root cause why th=
-is is happening ?<br>
-<br>
-<br>
-&gt; On CN10K this drains the pool<br>
-&gt; stack and makes the pool unusable.<br>
-Didn&#39;t quite understand this part. Could you please elaborate.<br>
-<br>
-Thanks<br>
-Ashwin<br>
-<br>
-<br>
-</blockquote></div>
-
---00000000000080c50d065b8a4e0c--
