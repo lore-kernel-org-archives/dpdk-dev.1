@@ -2,39 +2,94 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 320C1C88E7B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 12:39:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E5A2C88E75
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 12:51:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 08E0140DDC;
-	Tue, 15 Sep 2026 14:39:46 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 80938406A2;
- Tue, 15 Sep 2026 14:39:44 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 155AF206CA;
- Tue, 15 Sep 2026 14:39:44 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id B415D40DDC;
+	Tue, 15 Sep 2026 14:51:28 +0200 (CEST)
+Received: from mail-yx2-f13.google.com (mail-yx2-f13.google.com
+ [74.125.224.141])
+ by mails.dpdk.org (Postfix) with ESMTP id EDA93406A2
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 14:51:26 +0200 (CEST)
+Received: by mail-yx2-f13.google.com with SMTP id
+ 00721157ae682-85e68bdbcc1so21436397b3.2
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 05:51:26 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1789476686; cv=none;
+ d=google.com; s=arc-20260327;
+ b=KBKGiU0AxKZoTBT9IE3MD3zqF1TpYZ4/TWZ5KrBEn59sRWbnuTZR38KEM1kHeqrco1
+ 0JXoHASPomiBOchfzesSwP+vper8ntqXLyiG7sx3JAenXCbg4ELLNdjhROD0CGamBpyw
+ V1hyFpqsb7DkY4IejNGnyi9p+gohN3JI0NPTePFvLSzmG8HSG+TFy/hfTbxCX3ruku5+
+ S43XZJa2eoG803B3GLfUBI0PHrfmyOjEScpkulRN1r03OoX9p+YvAgJgFNCq7Mir5pag
+ m3HPd+kgM8xQ/0INKlcvh9MO0qkiSclfr6U9h5UG8WQU2BAML1HXbuAHBxBh24nSfDIT
+ 3OqA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=3Iq95bwB3lgrXUwTM5n8OJkkafkrX9jFDYP76+Fry6I=;
+ fh=OrrdYICN23pis4fCH0gTnaAbuEU7O4MH923WPEqF1ZI=;
+ b=AG5IfA/lIa7kjAKXdYsd5zgfDWHounZ2kRAk2OpLBfsA+38c9a9fRz9p3+gsFePdjX
+ l+IMzrxk3hNT/h8mtUWHLHdX54SvgvXVoudaNoXtbJnDugLr8HIgyHb6fgzuWaN690qh
+ RQSJRPqxRNtvWHYK9H9DmlOcRWJbB+PPeo1hEesazD9xuDXiECSG9mkj3/4NBe5p4cjY
+ 8L+27j1ZQht1e+Jw/3YipAeDsCKXBOjoJt76QHjlS8o95vAKa1/pkRjOmDeTdLCrUaU9
+ 68dkg0nSSz0xL1EmFMNu4trylfCb13fzlNSLEnEpfAAUcRuYGHzX4KKp47/qhq5jANvA
+ PZtw==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1789476686; x=1790081486; darn=dpdk.org;
+ h=content-transfer-encoding:content-type:cc:to:subject:message-id
+ :date:from:in-reply-to:references:mime-version:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=3Iq95bwB3lgrXUwTM5n8OJkkafkrX9jFDYP76+Fry6I=;
+ b=fAQ152CTVacis0YiaivMPGNhOs19KJ1fGsKKi7Vjm42PX3Fhtg1+99W1yGloYNfSz7
+ 85CD4tXy5QsV01S14gu+PsgMT8sC1T42bluVf4hTPFBvlRO/+JJF1J6H3umloyh8tzN4
+ r32nnUUj0wV3P9EZAPeuOw74RMICBJCOUEZkU2MA+SkA063syt5nUT+eN5Dx5Elz6S3F
+ c5NkUjedXyMMHNB6celwEkpInmUbv5xAfSZh/cWj6rXYO1luRpR+xespBD4Um7+G83gM
+ EdoQoDcRKpIoEErke42T486j/725aYhpX84pPzDyAyMeaCrNbuKa2fBHExp3oHcezN8w
+ hjOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1789476686; x=1790081486;
+ h=content-transfer-encoding:content-type:cc:to:subject:message-id
+ :date:from:in-reply-to:references:mime-version:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=3Iq95bwB3lgrXUwTM5n8OJkkafkrX9jFDYP76+Fry6I=;
+ b=og4MK5wZDN2H3E/WAE8DoKlQLX8HSVJRuzhYdnHnEkRgRMce5IYpDygs7zXUFfkHe+
+ Jc39uvy95xdml3SL9F8a0VyWZCBFy+kQpLK32A69I42r26tzLoal61DHDKaMLCMcn3LV
+ FYzSQJzRKRllo/Gw8B80VPguz00nD1SqGSk1l1e6PutevKurzIB9SyTwceSwF/SYv50x
+ nZXXqNFJ1rkc7stn60+Qe43pDiostnOyD9FjY4KPXcFIVdRp22FihpqR888pTpRzV+si
+ RJDran4Q+4TdNeMBwodZvuiMIspNe9XkMzDHSM8HSXcbFr3Y2mtcMvTXL0bKltJ2K9n9
+ HGZw==
+X-Forwarded-Encrypted: i=1;
+ AKwUvBziAjjp9iEt0WWqbiiA8atcndE+JNh/8lNVFsA1j33PnfzMEDBsQrUfp+8YqUDmLbWl8XE=@dpdk.org
+X-Gm-Message-State: AFuF++koTbbvk3Pq74S/x1ukicGd6EiDXDSShwmEr8TDQaVxNM6E0YiG
+ +xeaisxWxnHZ3Rt4ianHijFjzoiVnGJOqK/d04My1pv0c6QPSdPQs6PupXZZJpcS+Bk8RsCenCr
+ tSwEKsYeLuKP29xBxou0vyvZH7MT0cy4=
+X-Gm-Gg: AYBFou2hsiRdKcSjXYss7ZBfq0i0oWGT6FzslNILu/L6bE8EX0r3NV0Y4U7PAwtxRUu
+ 7/3B8TSsPODCRbGRe4rYNhDgt1j9gf/XwpPqSjCvj9wmj+zMCHMBWK8xYIKPs6HO9XM4Nzjibr0
+ 1lodqnFlwBn7Y+z10U5+3HIbgPD2KPqe/MZ4RFzf4+2WPrKgN2j3CN1ULJy94ZwoMyEJ6Wj52+u
+ HHK2NiRfUQR1+y6bCC4nNjNAbSPh63gXFFPuLG1eU2ly0c80ctSqHXNMeQQjHLTtVJfcb9IhIiX
+ w1cQJ8j/w9g5npyxhkVpaSwb+v/8NEsJlskiIS++O+n/vdaB+R7WQrHlzP9oAhqp7mi58JTgvU7
+ aCowqiYMo/a6AQlek2EAdXypcngTP4DJiplVDsl05wJ9AG8GJ/zRbH1Yw2kNgM2FKhixqxZs9Yv
+ 9efzr8Qtn+PSFvfQnm
+X-Received: by 2002:a05:690c:60c4:b0:882:1d1f:ccb with SMTP id
+ 00721157ae682-88d1f9e215fmr29256727b3.8.1789476686290; Tue, 15 Sep 2026
+ 05:51:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH] examples/l3fwd: fix check of unchecked IP checksum
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Date: Tue, 15 Sep 2026 14:39:41 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65A47@smartserver.smartshare.dk>
-In-Reply-To: <20260915105822.988106-1-mb@smartsharesystems.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH] examples/l3fwd: fix check of unchecked IP checksum
-Thread-Index: Ad1FASXnP7fd/+8DTma+nu4tHLUKrgACwBQQ
-References: <20260915105822.988106-1-mb@smartsharesystems.com>
-From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: <dev@dpdk.org>, "Maxime Coquelin" <maxime.coquelin@redhat.com>,
- "Harrison Caldicott" <harrison@itsfubar.com.au>
-Cc: <stable@dpdk.org>,
-	"Stephen Hemminger" <stephen@networkplumber.org>
+References: <20260903123817.1677020-1-thomas@monjalon.net>
+ <20260903135521.637818de@phoenix.local>
+In-Reply-To: <20260903135521.637818de@phoenix.local>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Tue, 15 Sep 2026 18:20:59 +0530
+X-Gm-Features: AcwNN1UQdmqQXP7gj0LDttuDFzTr2YNDv5zrZ86IqXo5MdK_Wq8rhwkzn3-CJto
+Message-ID: <CALBAE1NyD0g-RVjoF+FDSjTkY1hbvhj4XxAyXBhdMPfYyb1SsQ@mail.gmail.com>
+Subject: Re: [PATCH] doc: fix API comments for Doxygen 1.18.0
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: Thomas Monjalon <thomas@monjalon.net>, dev@dpdk.org, stable@dpdk.org, 
+ Jerin Jacob <jerinj@marvell.com>, Kiran Kumar K <kirankumark@marvell.com>, 
+ Nithin Dabilpuram <ndabilpuram@marvell.com>, Zhirun Yan <yanzhirun_163@163.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,66 +103,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-K1RPOiBNYXhpbWUsIEhhcnJpc29uIChpbmZvIG1pZ2h0IGJlIHJlbGF0ZWQgdG8gbXkgcXVlc3Rp
-b24gYWJvdXQgdmlydGlvIG9mZmxvYWQpDQoNCj4gRnJvbTogTW9ydGVuIEJyw7hydXAgW21haWx0
-bzptYkBzbWFydHNoYXJlc3lzdGVtcy5jb21dDQo+IFNlbnQ6IFR1ZXNkYXksIDE1IFNlcHRlbWJl
-ciAyMDI2IDEyLjU4DQo+IA0KPiBJZiB0aGUgUE1EIGRpZG4ndCBjaGVjayB0aGUgSVAgaGVhZGVy
-IGNoZWNrc3VtLCB0aGUNCj4gb2ZmbG9hZCB2YWx1ZSBpcyBSVEVfTUJVRl9GX1JYX0lQX0NLU1VN
-X1VOS05PV04sDQo+IG5vdCBSVEVfTUJVRl9GX1JYX0lQX0NLU1VNX05PTkUuDQo+IA0KPiBGaXhl
-czogNGIwMWNhYmZiMDliICgiZXhhbXBsZXMvbDNmd2Q6IGFkZCBvcHRpb24gdG8gcmVsYXggUngg
-b2ZmbG9hZCIpDQo+IENjOiBzdGFibGVAZHBkay5vcmcNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IE1v
-cnRlbiBCcsO4cnVwIDxtYkBzbWFydHNoYXJlc3lzdGVtcy5jb20+DQo+IC0tLQ0KPiAgZXhhbXBs
-ZXMvbDNmd2QvbDNmd2QuaCB8IDIgKy0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigr
-KSwgMSBkZWxldGlvbigtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2V4YW1wbGVzL2wzZndkL2wzZndk
-LmggYi9leGFtcGxlcy9sM2Z3ZC9sM2Z3ZC5oDQo+IGluZGV4IDM0OWZjMzdjNzkuLjMzMWQxNzYw
-MmQgMTAwNjQ0DQo+IC0tLSBhL2V4YW1wbGVzL2wzZndkL2wzZndkLmgNCj4gKysrIGIvZXhhbXBs
-ZXMvbDNmd2QvbDNmd2QuaA0KPiBAQCAtMTcxLDcgKzE3MSw3IEBAIGlzX3ZhbGlkX2lwdjRfcGt0
-KHN0cnVjdCBydGVfaXB2NF9oZHIgKnBrdCwNCj4gdWludDMyX3QgbGlua19sZW4sIHVpbnQ2NF90
-IG9sX2ZsYWdzDQo+IA0KPiAgCS8qIDIuIFRoZSBJUCBjaGVja3N1bSBtdXN0IGJlIGNvcnJlY3Qu
-ICovDQo+ICAJLyogaWYgdGhpcyBpcyBub3QgY2hlY2tlZCBpbiBIL1csIGNoZWNrIGl0LiAqLw0K
-PiAtCWlmICgob2xfZmxhZ3MgJiBSVEVfTUJVRl9GX1JYX0lQX0NLU1VNX01BU0spID09DQo+IFJU
-RV9NQlVGX0ZfUlhfSVBfQ0tTVU1fTk9ORSkgew0KPiArCWlmICgob2xfZmxhZ3MgJiBSVEVfTUJV
-Rl9GX1JYX0lQX0NLU1VNX01BU0spID09DQo+IFJURV9NQlVGX0ZfUlhfSVBfQ0tTVU1fVU5LTk9X
-Tikgew0KPiAgCQl1aW50MTZfdCBhY3R1YWxfY2tzdW0sIGV4cGVjdGVkX2Nrc3VtOw0KPiAgCQlh
-Y3R1YWxfY2tzdW0gPSBwa3QtPmhkcl9jaGVja3N1bTsNCj4gIAkJcGt0LT5oZHJfY2hlY2tzdW0g
-PSAwOw0KPiAtLQ0KPiAyLjQzLjANCg0KU2ltcGxlIEFJIGZyb20gQ0kgc2F5czoNCj4gKipJbmNv
-cnJlY3QgZml4IGZvciB0aGUgc3RhdGVkIHByb2JsZW0qKg0KPiANCj4gVGhlIHBhdGNoIGRlc2Ny
-aXB0aW9uIHN0YXRlcyAiSWYgdGhlIFBNRCBkaWRuJ3QgY2hlY2sgdGhlIElQIGhlYWRlcg0KPiBj
-aGVja3N1bSwgdGhlIG9mZmxvYWQgdmFsdWUgaXMgUlRFX01CVUZfRl9SWF9JUF9DS1NVTV9VTktO
-T1dOLCBub3QNCj4gUlRFX01CVUZfRl9SWF9JUF9DS1NVTV9OT05FLiINCj4gDQo+IEhvd2V2ZXIs
-IGFjY29yZGluZyB0byB0aGUgbWJ1ZiBkb2N1bWVudGF0aW9uOg0KPiAtIGBSVEVfTUJVRl9GX1JY
-X0lQX0NLU1VNX1VOS05PV05gICh2YWx1ZSAwKSBtZWFucyB0aGUgUE1EIHJlcG9ydHMgbm8NCj4g
-Y2hlY2tzdW0gaW5mb3JtYXRpb24gYXQgYWxsDQo+IC0gYFJURV9NQlVGX0ZfUlhfSVBfQ0tTVU1f
-Tk9ORWAgbWVhbnMgY2hlY2tzdW0gaXMgbm90IG9mZmxvYWRlZCBidXQgY2FuDQo+IGJlIHNvZnR3
-YXJlIGNhbGN1bGF0ZWQNCj4gLSBgUlRFX01CVUZfRl9SWF9JUF9DS1NVTV9CQURgIG1lYW5zIGhh
-cmR3YXJlIHJlcG9ydGVkIGNoZWNrc3VtIGlzIGJhZA0KPiAtIGBSVEVfTUJVRl9GX1JYX0lQX0NL
-U1VNX0dPT0RgIG1lYW5zIGhhcmR3YXJlIHZlcmlmaWVkIGNoZWNrc3VtIGlzDQo+IGdvb2QNCj4g
-DQo+IFRoZSBvcmlnaW5hbCBjb2RlIGNoZWNraW5nIGZvciBgUlRFX01CVUZfRl9SWF9JUF9DS1NV
-TV9OT05FYCBpcw0KPiBzZW1hbnRpY2FsbHkgbW9yZSBjb3JyZWN0IGZvciAic29mdHdhcmUgbXVz
-dCB2ZXJpZnkgdGhlIGNoZWNrc3VtIiB0aGFuDQo+IGBSVEVfTUJVRl9GX1JYX0lQX0NLU1VNX1VO
-S05PV05gLiBXaGVuIHRoZSB2YWx1ZSBpcyBgVU5LTk9XTmAsIHRoZSBQTUQNCj4gcHJvdmlkZXMg
-bm8gaW5mb3JtYXRpb24gYWJvdXQgd2hldGhlciBpdCBjaGVja2VkIG9yIG5vdCwgc28gc29mdHdh
-cmUNCj4gdmVyaWZpY2F0aW9uIGlzIHBydWRlbnQuIEJ1dCB3aGVuIGl0J3MgZXhwbGljaXRseSBg
-Tk9ORWAsIHNvZnR3YXJlDQo+IGNoZWNrc3VtIGlzIGRlZmluaXRlbHkgcmVxdWlyZWQuDQoNClRo
-YXQgaXMgKm5vdCogaG93IEkgaW50ZXJwcmV0IHRoZSBlbnVtIHZhbHVlcy4NClRoZSBkb2N1bWVu
-dGF0aW9uIHNheXMgWzFdOg0KLSBSVEVfTUJVRl9GX1JYX0lQX0NLU1VNX1VOS05PV046IG5vIGlu
-Zm9ybWF0aW9uIGFib3V0IHRoZSBSWCBJUCBjaGVja3N1bQ0KLSBSVEVfTUJVRl9GX1JYX0lQX0NL
-U1VNX0JBRDogdGhlIElQIGNoZWNrc3VtIGluIHRoZSBwYWNrZXQgaXMgd3JvbmcNCi0gUlRFX01C
-VUZfRl9SWF9JUF9DS1NVTV9HT09EOiB0aGUgSVAgY2hlY2tzdW0gaW4gdGhlIHBhY2tldCBpcyB2
-YWxpZA0KLSBSVEVfTUJVRl9GX1JYX0lQX0NLU1VNX05PTkU6IHRoZSBJUCBjaGVja3N1bSBpcyBu
-b3QgY29ycmVjdCBpbiB0aGUgcGFja2V0IGRhdGEsIGJ1dCB0aGUgaW50ZWdyaXR5IG9mIHRoZSBJ
-UCBoZWFkZXIgaXMgdmVyaWZpZWQNCg0KSS5lLiBVTktOT1dOIG1lYW5zIHRoYXQgdGhlIFBNRCBw
-cm92aWRlZCBubyBpbmZvcm1hdGlvbiBhYm91dCB0aGUgY2hlY2tzdW0uIChNYXliZSBpdCBkaWQg
-bm90IGV2ZW4gbG9vayBhdCB0aGUgY2hlY2tzdW0uKQ0KVGhlIG9sX2ZsYWdzIGZpZWxkIGNvbnRh
-aW5zIFVOS05PV04gKHZhbHVlIDApIHdoZW4gUlRFX0VUSF9SWF9PRkZMT0FEX0NIRUNLU1VNIHdh
-cyBub3QgcmVxdWVzdGVkLg0KQW5kIHRoaXMgaXMgZXhhY3RseSB3aGF0IHRoZSBwYXRjaCB0aGlz
-IHBhdGNoIGZpeGVzIGRpZDoNCkl0IGNsZWFyZWQgUlRFX0VUSF9SWF9PRkZMT0FEX0NIRUNLU1VN
-IHdoZW4gdGhlIFBNRCBkaWRuJ3Qgb2ZmZXIgdGhpcyBjYXBhYmlsaXR5Lg0KDQpXaGVyZWFzIE5P
-TkUgbWVhbnMgdGhhdCB0aGUgcGFja2V0IGlzIGdvb2QsIGJ1dCB0aGUgY2hlY2tzdW0gZmllbGQg
-aW4gdGhlIHBhY2tldCBoYXMgbm90IGJlZW4gc2V0IGJ5IHRoZSBzZW5kZXIgKGFuZCBtYXkgY29u
-dGFpbiBnYXJiYWdlKS4NClNvIGl0IGlzIGFic29sdXRlbHkgd3JvbmcgdG8gdmVyaWZ5IHRoZSBj
-aGVja3N1bSBmaWVsZCdzIHZhbHVlLCB3aGVuIHRoZSBvbF9mbGFncyBlbnVtIHNheXMgdGhhdCBp
-dCBpcyB1bnNldCAoYW5kIG1heSBjb250YWluIGdhcmJhZ2UpLiBNeSBwYXRjaCBmaXhlcyB0aGF0
-Lg0KDQpbMV06IGh0dHBzOi8vZ2l0aHViLmNvbS9EUERLL2RwZGsvYmxvYi9mNDM2MzJhYzczMjEz
-ODUyMzNhYjZhMTFmMDk4OWFhNjIyM2RjNjFiL2xpYi9tYnVmL3J0ZV9tYnVmX2NvcmUuaCNMNzQt
-TDc5DQoNCg==
+On Fri, Sep 4, 2026 at 2:25=E2=80=AFAM Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+>
+> On Thu,  3 Sep 2026 14:38:17 +0200
+> Thomas Monjalon <thomas@monjalon.net> wrote:
+>
+> > After upgrading to Doxygen 1.18.0, there are 2 kinds of errors:
+> >
+> > - @ref func() for static function is broken because of parens
+> > - @ref struct.member with anonymous struct/union is broken
+> >
+> > Parentheses are removed from inline function references.
+> > The second issue is more difficult and requires to degrade the doc
+> > by providing a global link to the struct page for the fields.
+> >
+> > The root causes of these issues can be found in these links:
+> >       https://github.com/doxygen/doxygen/commit/e1bff01
+> >       https://github.com/doxygen/doxygen/issues/12226
+> >
+> > Cc: stable@dpdk.org
+> >
+> > Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+> > ---
+>
+> Reviewed-by: Stephen Hemminger <stephen@networkplumber.org>
+
+
+=CA=BCApplied to dpdk-next-eventdev/for-main. Thanks
