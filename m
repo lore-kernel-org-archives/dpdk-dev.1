@@ -2,36 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75AEDC88E75
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 09:48:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A50EDC88E75
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 09:51:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9886140A77;
-	Tue, 15 Sep 2026 11:48:25 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D74BA40A77;
+	Tue, 15 Sep 2026 11:51:00 +0200 (CEST)
 Received: from mx0.infotecs.ru (mx0.infotecs.ru [91.244.183.115])
- by mails.dpdk.org (Postfix) with ESMTP id 4D5564003C;
- Tue, 15 Sep 2026 11:48:24 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru A80AE2C0BBE
+ by mails.dpdk.org (Postfix) with ESMTP id 6A2674003C;
+ Tue, 15 Sep 2026 11:50:59 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru AE4C02C0BC6
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infotecs.ru; s=mx;
- t=1789465703; bh=khlV49b2ybN5pQqEHLU15NN2Dji3GzsLkPOpbokm+hw=;
+ t=1789465859; bh=6NzXSNrARlN2H+K3EBVy1Zt+Fs+m5+S3hI6D8SYfo58=;
  h=From:To:CC:Subject:Date:From;
- b=BOlLh8T5ypd88sKNahdUjU4gfu5JYiT+fnJ73xqNNEF9n4Qk9F+oXAc2pyBl+IRve
- 1dyJ2L5O34+um/Yozt9hDvh9q1uepiBbaEapFvilOltZEfciMNxQOteYtkeZ9PQ03h
- OckYs/VJy396uZPrgXLbnSdPlbLOOGy6gMQMjwY8=
+ b=mrUVvbLWQ3tgMjaIwuaUPl3LJywrqOQlGFpbp0NF1sQ9PHe2iIPzPa/43EUvW6TD7
+ jIhkoGENekKNBX6Stfa3B7n6yeCjTAp4bOlG7ncaXpJHdcDGpsWrFkJvZOl5YWgI2h
+ W6Ss0j0uuPeBKLM7kWLulyPJ0y/U8ip0f6wlcrsE=
 Received: from mx0.infotecs-nt (localhost [127.0.0.1])
- by mx0.infotecs.ru (Postfix) with ESMTP id A80AE2C0BBE;
- Tue, 15 Sep 2026 12:48:23 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs-nt 53F4E2C0B19
+ by mx0.infotecs.ru (Postfix) with ESMTP id AE4C02C0BC6;
+ Tue, 15 Sep 2026 12:50:57 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs-nt 4F3752C0B1D
 Received: from msk-exch-02.infotecs-nt (msk-exch-02.infotecs-nt [10.0.7.192])
- by mx0.infotecs-nt (Postfix) with ESMTP id 53F4E2C0B19;
- Tue, 15 Sep 2026 12:48:23 +0300 (MSK)
+ by mx0.infotecs-nt (Postfix) with ESMTP id 4F3752C0B1D;
+ Tue, 15 Sep 2026 12:50:57 +0300 (MSK)
 From: Evgeny Sokolov <Evgeny.Sokolov@infotecs.ru>
-To: Kishore Padmanabha <kishore.padmanabha@broadcom.com>, Ajit Khaparde
- <ajit.khaparde@broadcom.com>
-CC: <dev@dpdk.org>, <stable@dpdk.org>, Sokolov Evgeny
+To: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+CC: <dev@dpdk.org>, <stable@dpdk.org>, <jia.guo@intel.com>, Sokolov Evgeny
  <Evgeny.Sokolov@infotecs.ru>
-Subject: [PATCH] net/bnxt: use enum value for interface type check
-Date: Tue, 15 Sep 2026 09:48:20 +0000
-Message-ID: <20260915094820.431638-1-Evgeny.Sokolov@infotecs.ru>
+Subject: [PATCH] net/iavf: remove redundant assignment in FDIR parser
+Date: Tue, 15 Sep 2026 09:50:54 +0000
+Message-ID: <20260915095055.431718-1-Evgeny.Sokolov@infotecs.ru>
 X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -64,32 +63,31 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru>
 
-Use BNXT_ULP_INTF_TYPE_INVALID when checking the interface type
-returned by ulp_port_db_port_type_get().
+The assignment to next_type in the <case> branch is redundant since
+the value is never used afterwards.
 
-Comparing the enum value explicitly makes the code clearer and
-avoids relying on the numeric value of the invalid interface type.
+Remove the leftover assignment, which appears to have been copied from
+another parser branch, to avoid confusing readers.
 
 Found by InfoTeCS on behalf of Linux Verification Center (linuxtesting.org) with SVACE.
 
 Signed-off-by: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru>
 ---
- drivers/net/bnxt/tf_ulp/ulp_rte_parser.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/intel/iavf/iavf_fdir.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c b/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
-index 26823858b5..442a795430 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_rte_parser.c
-@@ -3108,7 +3108,7 @@ ulp_rte_port_act_handler(const struct rte_flow_action *act_item,
+diff --git a/drivers/net/intel/iavf/iavf_fdir.c b/drivers/net/intel/iavf/iavf_fdir.c
+index ea620863ca..a5fe90283f 100644
+--- a/drivers/net/intel/iavf/iavf_fdir.c
++++ b/drivers/net/intel/iavf/iavf_fdir.c
+@@ -711,7 +711,6 @@ iavf_fdir_parse_pattern(__rte_unused struct iavf_adapter *ad,
+ 			ipv4_spec = item->spec;
+ 			ipv4_last = item->last;
+ 			ipv4_mask = item->mask;
+-			next_type = (item + 1)->type;
  
- 	/* Get the intf type */
- 	intf_type = ulp_port_db_port_type_get(param->ulp_ctx, ifindex);
--	if (!intf_type) {
-+	if (intf_type == BNXT_ULP_INTF_TYPE_INVALID) {
- 		BNXT_DRV_DBG(ERR, "Invalid port type\n");
- 		return BNXT_TF_RC_ERROR;
- 	}
+ 			hdr = &hdrs->proto_hdr[layer];
+ 
 -- 
 2.30.2
 
