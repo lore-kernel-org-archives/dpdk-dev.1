@@ -2,74 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1940C88E75
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 15:24:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B05C3C88E7F
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 15:25:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D3C1440B91;
-	Tue, 15 Sep 2026 17:24:37 +0200 (CEST)
-Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com
- [74.125.227.140])
- by mails.dpdk.org (Postfix) with ESMTP id 1BE6440A6B
- for <dev@dpdk.org>; Tue, 15 Sep 2026 17:24:36 +0200 (CEST)
-Received: by mail-pj2-f12.google.com with SMTP id
- d9443c01a7336-2db22383fe8so24258025ad.2
- for <dev@dpdk.org>; Tue, 15 Sep 2026 08:24:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789485875;
- x=1790090675; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=CTUCnaPPqC04NbXuLY1KN0ehxONjVp+tzHU2EwGmaQA=;
- b=iP1ROknOlP4sJ3Og1KLW07AoILS1HIsFVkZrUI618ysdtJ5Pj44FzpIyiQZmnWR0H+
- JALEaoFOgCRqTz8MEBgfpzKTd1S7ziiXihhj0QZi0ksJjgG1RnPWyLm8a+BAcrscK9Rh
- mc45G8E2ZswlkQtkpbUwIUGLWSAG4HDdrdkOM6tkuXA28F7OpZBSrg3R49OjRsselUmn
- X71Y+tWGzDkO4SjDpGTYTBuCf6gGfwm5zjceDllBvOu575KEsbofVo9hwa1TTjmBZVYD
- HDQ8QvhDL9AnANo7+neZ0+DsF4uHQ3KHMj7QpS1NZacXuEETP0r3quN2tK5ebWB6ApOA
- pYWw==
+	by mails.dpdk.org (Postfix) with ESMTP id D8E8142B71;
+	Tue, 15 Sep 2026 17:25:10 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 0453C40A6B
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 17:25:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1789485909;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=GrBOhhe/thhFUGC3fMfVy/7pmxZvPlYoWjVXUJ7fhwU=;
+ b=KxacTFBsPYL9s6dqQnuB0I+h984AYhqOSUGM+QMw3cxpAtj6qLHj+Sv7CRf6wde6ZR/iz4
+ 74oFvHhZCzwSFKGPzpfH+CxysAVurYoUJM1eY8zcNk+3lodtB0ph7Ca/F5MlFdr7Rcc7Cg
+ Q55Xa52HMVGrepSZoDmG8l5SVXprJx0=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-125-YFyLwlN2PqOftiIbnAnKZQ-1; Tue, 15 Sep 2026 11:25:08 -0400
+X-MC-Unique: YFyLwlN2PqOftiIbnAnKZQ-1
+X-Mimecast-MFC-AGG-ID: YFyLwlN2PqOftiIbnAnKZQ_1789485907
+Received: by mail-lj1-f200.google.com with SMTP id
+ 38308e7fff4ca-3a59ac42cd8so21054231fa.0
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 08:25:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789485875; x=1790090675;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=CTUCnaPPqC04NbXuLY1KN0ehxONjVp+tzHU2EwGmaQA=;
- b=C3P4sstX68AXDuvCuN3oo+N4/W+MjZKlyyEmlC/8LiR1XsA13UofPyxtrQv01CzO30
- IbB0TM0oHHq1cirrp7sqU9mDVThBhI6+MXzDcgDvMpCHL0wCaooFaX7ZAWqP8bguhGye
- +zg/s5slbgVJMJfpjJzINUqrwXpZIA0IsD+TixfhdaL5fV9gGc00gkS7+RO2Jq0lp9Y1
- fMnUBOB+GeA7575s9YnA/9HJS3M9YkrpLcz8MyEAP/8fIIq4uAco/XPZYtzRUzUSReJB
- GrHFNh8EYMXhxR+GQ9SPS2FiA11I+ExETinn+LgZ+r2BU81DgYs5v6hV4NxgjXzqTMYW
- wW5g==
-X-Gm-Message-State: AFuF++lXb0cTuIKT3XS1Jkp46iH6vRN1JqIhv6AhGUfh22fl6NODki1H
- ChjbltVAgrLuLs2bYVpH1dwdgrFl98sLhem4nFUM949sZahLfTh5Cf2roKgqPmjq791a/OaQTgT
- YwNJWkNz4AA==
-X-Gm-Gg: AYBFou1LWJoVEonj2YRHFHMHgJIjsfUMhOPmj0Q9xo2LLVhE4CRCfLLA4g0V65bDIfU
- SC0/tw4dJWDFGF/DF69hZSviOjxKqEyigFXKSw+oJe3mMl+V8tExr0JWDgSaiddvWIs6+4P+mjl
- 9wa50ku0eVI9AQOozQrjFx+3VlfOSLIidVOP8VYsAIHEnUgx9bAkXdXfcljhLGsVrkaW1kBpHF8
- tFM+sFQB/5O0YSxoMnhIgAij9Kf5tN9CsjbIsa3Futz7IeSQWUN9fOg8L8dKJKQjm90Oionj3u8
- 2NAal+WAMHfHDYmq8tDpkT57Kq/yu/EIgc5AUaP7rUB1oracsU21Sb2cmWm8deXCgt007iWQYaE
- aIh1yZP/Fr9RXKdBmYZx+UlWD9011r/vcP+uItdGfaDj6vRDWL1YItYjbvbpWoV7m6H71vwNwxv
- PkMY4VIvJGWnTJIMD5wVBms50pO4oupU3MgqHZtuFslIPbVYLZAobyt7fEmqG3IfzezLb0OzLib
- w8pGP2Yu+71NZsp8/fgy0GkaZ2c7md8/kJHZnGZxA==
-X-Received: by 2002:a17:903:320e:b0:2cc:864b:539 with SMTP id
- d9443c01a7336-2dd6c5eebcfmr184555635ad.6.1789485875190; 
- Tue, 15 Sep 2026 08:24:35 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2dd2ceb6861sm68791605ad.36.2026.09.15.08.24.33
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 15 Sep 2026 08:24:34 -0700 (PDT)
-Date: Tue, 15 Sep 2026 08:24:29 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Prashant Gupta <prashant.gupta_3@nxp.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v3-S1 0/5] dpaa2: bus, DMA and mempool base fixes
-Message-ID: <20260915082429.3f23410f@phoenix.local>
-In-Reply-To: <20260915113422.4166287-1-prashant.gupta_3@nxp.com>
-References: <20260915113422.4166287-1-prashant.gupta_3@nxp.com>
+ d=1e100.net; s=20260707; t=1789485907; x=1790090707;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=GrBOhhe/thhFUGC3fMfVy/7pmxZvPlYoWjVXUJ7fhwU=;
+ b=D0pYJQXi1W+nDM2S37QTrpgjYpX6VfcD2b9m+D3ws92qToDJW8XZD1o/LU2oLLUJ6g
+ CwBsq+PgKwzyvVN9GgY47lGsyssMpDMVfK2dROLMUf6s5ZIlP90+Saobq/WM5vvuXGHG
+ LNgcbueZdJ6bRDnyhKyPQql6VhA6iKi4qeHprCbQPwV4WEN/xERicEJuczfjXYCHkGiA
+ 21Aq3mCjwsyN0/lYPQojq9Xwvs/23ATIj2CybwGaa7bbx6W7BAkGWI4VE1iyqSH8TGFT
+ pUtLD+kQw940BJlIDqIL/HudL7RjhK+U/DW88G8zdTWhw5UazOOr/pnUMP0zefyFYkRt
+ aiTg==
+X-Gm-Message-State: AFuF++kh7XPuvCoAMs2b6kgVkpbIr+8yHRWmNVtOiSPqYQ33zYC3k2lN
+ vgyW4geQe6Aa26kdTKb08COqmDQJCj79Ta8GZKXeOy23O2N2cIevErPAsl9Xc/mfb9Ced2Vt9KS
+ 1d+Lyna7UGaopDQFCEE/vYiuwC4tNrtA1xEteOe2cczyHeV7Y5maUfkZVz1yM74yRmyeCmtDy50
+ FrhvAH48mHgYmFDjc5biE=
+X-Gm-Gg: AYBFou1s35oEWc8Dn96W3m3tvokq2S3SA/v8LajkjHv641SWL9NaFw26X+mwmDQ1d9+
+ 8Zo0GlDJx/SYGN9fomhvBoiBEGh+70BFHWiz88ve/ZBcnhEARZdqSGheWWeoZdyd14KYJb9zbud
+ zXYzGVRZSNCQ+tyQHqpUW6nTm0+4WepHWF5FZfQyucrXIYj8s/dsxth8PpIYYkJHknEwyZmgXoA
+ 2eouSOeEyKkfPB+J4LY2hLOvshDDzYdYjjOTgM0Hz0OTw/i
+X-Received: by 2002:a05:651c:2117:b0:3a5:903c:1f46 with SMTP id
+ 38308e7fff4ca-3a5c8984143mr25957521fa.11.1789485906610; 
+ Tue, 15 Sep 2026 08:25:06 -0700 (PDT)
+X-Received: by 2002:a05:651c:2117:b0:3a5:903c:1f46 with SMTP id
+ 38308e7fff4ca-3a5c8984143mr25957341fa.11.1789485906032; Tue, 15 Sep 2026
+ 08:25:06 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <cover.1789044746.git.anatoly.burakov@intel.com>
+ <b4a07e530751c91f6c3d8a7619c4f926de6d1583.1789044747.git.anatoly.burakov@intel.com>
+In-Reply-To: <b4a07e530751c91f6c3d8a7619c4f926de6d1583.1789044747.git.anatoly.burakov@intel.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Tue, 15 Sep 2026 17:24:53 +0200
+X-Gm-Features: AcwNN1XT80_qmJM-iLeYGMCZFRHQmRHF82063oscnj0kvwdMfHhImzegmD0wO74
+Message-ID: <CAJFAV8znFXjkAzntYP9WMfDzh_NkuxuTTPpoZyenL7qAr4uNOA@mail.gmail.com>
+Subject: Re: [PATCH v17 10/26] vfio: split get device info from setup
+To: Anatoly Burakov <anatoly.burakov@intel.com>
+Cc: dev@dpdk.org, Nipun Gupta <nipun.gupta@amd.com>, 
+ Nikhil Agarwal <nikhil.agarwal@amd.com>, Chenbo Xia <chenbox@nvidia.com>, 
+ Tomasz Duszynski <tduszynski@marvell.com>,
+ Ajit Khaparde <ajit.khaparde@broadcom.com>, 
+ Vikas Gupta <vikas.gupta@broadcom.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: Ujp3EKKh9KsI2Bty8oDtQ2xT_kRVqsuc5Aln0K_a-NE_1789485907
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,183 +88,124 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 15 Sep 2026 17:04:17 +0530
-Prashant Gupta <prashant.gupta_3@nxp.com> wrote:
+On Thu, 10 Sept 2026 at 14:54, Anatoly Burakov
+<anatoly.burakov@intel.com> wrote:
+>
+> Currently, setup gets device info as part of setup, while the separate get
+> device info API also calls setup if the fd is zero. Untangle these two APIs
+> and make each do one thing, and adjust all existing callers.
+>
+> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+> ---
+>  drivers/bus/cdx/cdx_vfio.c        | 12 ++++++++--
+>  drivers/bus/pci/linux/pci_vfio.c  | 18 ++++++++++----
+>  drivers/bus/platform/platform.c   |  9 ++++++-
+>  drivers/crypto/bcmfs/bcmfs_vfio.c |  8 ++++++-
+>  lib/eal/freebsd/eal.c             | 12 ++++++++--
+>  lib/eal/include/dev_vfio.h        | 23 +++++++-----------
+>  lib/eal/linux/eal_vfio.c          | 40 +++++++++----------------------
+>  7 files changed, 68 insertions(+), 54 deletions(-)
+>
+> diff --git a/drivers/bus/cdx/cdx_vfio.c b/drivers/bus/cdx/cdx_vfio.c
+> index 02a34d6f18..531e4ccc8d 100644
+> --- a/drivers/bus/cdx/cdx_vfio.c
+> +++ b/drivers/bus/cdx/cdx_vfio.c
+> @@ -401,10 +401,14 @@ cdx_vfio_map_resource_primary(struct rte_cdx_device *dev)
+>                 return -1;
+>
+>         ret = dev_vfio_setup_device(RTE_CDX_BUS_DEVICES_PATH, dev_name,
+> -                                   &vfio_dev_fd, &device_info);
+> +                                   &vfio_dev_fd);
+>         if (ret)
+>                 return ret;
+>
+> +       ret = dev_vfio_get_device_info(vfio_dev_fd, &device_info);
+> +       if (ret)
+> +               goto err_vfio_dev_fd;
+> +
+>         /* allocate vfio_res and get region info */
+>         vfio_res = rte_zmalloc("VFIO_RES", sizeof(*vfio_res), 0);
+>         if (vfio_res == NULL) {
+> @@ -510,10 +514,14 @@ cdx_vfio_map_resource_secondary(struct rte_cdx_device *dev)
+>         }
+>
+>         ret = dev_vfio_setup_device(RTE_CDX_BUS_DEVICES_PATH, dev_name,
+> -                                       &vfio_dev_fd, &device_info);
+> +                                       &vfio_dev_fd);
+>         if (ret)
+>                 return ret;
+>
+> +       ret = dev_vfio_get_device_info(vfio_dev_fd, &device_info);
+> +       if (ret)
+> +               goto err_vfio_dev_fd;
+> +
+>         /* map MMIO regions */
+>         maps = vfio_res->maps;
+>
+> diff --git a/drivers/bus/pci/linux/pci_vfio.c b/drivers/bus/pci/linux/pci_vfio.c
+> index 3e87e759f5..0363a4a6c5 100644
+> --- a/drivers/bus/pci/linux/pci_vfio.c
+> +++ b/drivers/bus/pci/linux/pci_vfio.c
+> @@ -753,10 +753,14 @@ pci_vfio_map_resource_primary(struct rte_pci_device *dev)
+>                         loc->domain, loc->bus, loc->devid, loc->function);
+>
+>         ret = dev_vfio_setup_device(rte_pci_get_sysfs_path(), pci_addr,
+> -                                       &vfio_dev_fd, &device_info);
+> +                                       &vfio_dev_fd);
+>         if (ret)
+>                 return ret;
+>
+> +       ret = dev_vfio_get_device_info(vfio_dev_fd, &device_info);
+> +       if (ret)
+> +               goto err_vfio_dev_fd;
+> +
+>         if (rte_intr_dev_fd_set(dev->intr_handle, vfio_dev_fd))
+>                 goto err_vfio_dev_fd;
+>
+> @@ -962,10 +966,14 @@ pci_vfio_map_resource_secondary(struct rte_pci_device *dev)
+>         }
+>
+>         ret = dev_vfio_setup_device(rte_pci_get_sysfs_path(), pci_addr,
+> -                                       &vfio_dev_fd, &device_info);
+> +                                       &vfio_dev_fd);
+>         if (ret)
+>                 return ret;
+>
+> +       ret = dev_vfio_get_device_info(vfio_dev_fd, &device_info);
+> +       if (ret)
+> +               goto err_vfio_dev_fd;
+> +
+>         ret = pci_vfio_fill_regions(dev, vfio_dev_fd, &device_info);
+>         if (ret)
+>                 goto err_vfio_dev_fd;
+> @@ -1195,12 +1203,14 @@ pci_vfio_ioport_map(struct rte_pci_device *dev, int bar,
+>                 if (vfio_dev_fd < 0) {
+>                         return -1;
+>                 } else if (vfio_dev_fd == 0) {
 
-> This series is the first of four that upstream the missing NXP dpaa2
-> driver changes. It collects the foundational bus/fslmc, dma/dpaa2 and
-> mempool/dpaa2 fixes that the later series build on:
-> 
-> - defer fslmc bus initialization to probe and reduce probe-time logging
->   and MC traffic,
-> - fix an array-bounds warning and validate IOVA in the dpaa2 QDMA
->   pre-populate helpers,
-> - support fetching the mempool ops index from the primary process in a
->   secondary process.
-> 
-> Every commit builds cleanly (including the aarch64 DPAA cross build with
-> -Werror) and the series is bisectable.
-> 
-> Gagandeep Singh (1):
->   dma/dpaa2: validate IOVA in pre-populate helpers
-> 
-> Hemant Agrawal (1):
->   bus/fslmc: reduce probe-time logging and MC traffic
-> 
-> Jun Yang (2):
->   dma/dpaa2: fix array-bounds warning in dequeue path
->   mempool/dpaa2: support ops index from primary in secondary
-> 
-> Prashant Gupta (1):
->   bus/fslmc: defer bus initialization to probe
-> 
->  drivers/bus/fslmc/fslmc_bus.c            | 92 +++++++++++++----------
->  drivers/bus/fslmc/fslmc_vfio.c           |  3 +-
->  drivers/dma/dpaa2/dpaa2_qdma.c           | 96 ++++++++++++++++--------
->  drivers/mempool/dpaa2/dpaa2_hw_mempool.c | 95 ++++++++++++++++++++++-
->  4 files changed, 209 insertions(+), 77 deletions(-)
-> 
-
-Detailed AI review finds errors
-
-Review: [PATCH v3-S1 0/5] NXP fslmc/dpaa2 fixes
-Base: main f43632a (26.11.0-rc0)
-
-Series applies cleanly. Per-commit build of bus/fslmc, mempool/dpaa2,
-dma/dpaa2 with -Dwerror=true passes at every commit.
-
-Series summary
---------------
-Patch 5 does not work: the IPC reply is parsed from the wrong offset,
-so every secondary lookup fails, and the lookup sits in the dpaa2_sec
-per-op enqueue path. Patch 3's commit message describes a change that
-is not in the diff. Patch 1 reverts only half of cdefd2e980bd; the
-DPAA bus has the same problem.
-
-
-Patch 1/5: bus/fslmc: defer bus initialization to probe
--------------------------------------------------------
-Warning:
-
-cdefd2e980bd moved init into scan for both NXP buses. Only fslmc is
-restored here. rte_dpaa_bus_scan() still calls
-rte_mbuf_set_platform_mempool_ops(), which does
-rte_memzone_reserve(), and dpaax_iova_table_populate(), which does
-rte_zmalloc(). EAL runs rte_bus_scan() (eal.c:680) before
-rte_eal_memzone_init() (784) and rte_eal_malloc_heap_init() (802), so
-bus/dpaa is broken the same way. Fix both in this series, or say in
-the commit message why dpaa is unaffected.
-
-Info:
-
-rte_fslmc_probe() returns 0 on every init failure and skips
-rte_bus_generic_probe(), so a VFIO or DMA map failure results in no
-devices and a zero return from rte_bus_probe(). This is the
-pre-cdefd2e980bd behaviour, but now that the function is being
-rewritten, returning ret would let EAL init fail visibly.
-
-
-Patch 2/5: bus/fslmc: reduce probe-time logging and MC traffic
---------------------------------------------------------------
-Warning:
-
-The subject says "and MC traffic" but the patch only changes one log
-level. Either drop that part of the subject or include the MC change.
-Also fslmc_map_dma() is called from the memory hotplug callback, not
-just at probe time.
-
-
-Patch 3/5: dma/dpaa2: fix array-bounds warning in dequeue path
---------------------------------------------------------------
-Error:
-
-Commit message does not match the patch. It says an
-idxs[DPAA2_QDMA_MAX_DESC] scratch buffer is added to struct
-qdma_virt_queue and idxs[0] is used instead of &idx. Neither happens:
-dpaa2_qdma_dq_fd() still passes &idx, and dpaa2_qdma.h is untouched.
-The real change is rewriting qdma_cntx_idx_ring_eq() from a per-element
-loop to a two-segment copy. Describe that, and state which compiler,
-version and target emit the warning, since a Cc: stable fix for a
-warning needs to be reproducible.
-
-Warning:
-
-New code uses rte_memcpy() for small variable-length copies of
-uint16_t. Use memcpy(); rte_memcpy is being removed from non-datapath
-and small-copy users tree-wide.
-
-Info:
-
-Merging the LONG/SG fle_sdd handling is an unrelated cleanup inside a
-stable backport. Split it out, or drop it from the fix.
+Not the fault of this patch, but comparing a FD against 0 is a bad sign...
 
 
-Patch 4/5: dma/dpaa2: validate IOVA in pre-populate helpers
------------------------------------------------------------
-Warning:
+> -                       if (dev_vfio_get_device_info(rte_pci_get_sysfs_path(), pci_addr,
+> -                               &vfio_dev_fd, &device_info) != 0)
+> +                       if (dev_vfio_setup_device(rte_pci_get_sysfs_path(), pci_addr,
+> +                               &vfio_dev_fd) != 0)
+>                                 return -1;
+>                         /* save vfio_dev_fd so it can be used during release */
+>                         if (rte_intr_dev_fd_set(dev->intr_handle, vfio_dev_fd) != 0)
+>                                 return -1;
+> +                       if (dev_vfio_get_device_info(vfio_dev_fd, &device_info) != 0)
+> +                               return -1;
+>
+>                         if (pci_vfio_fill_regions(dev, vfio_dev_fd, &device_info) != 0)
+>                                 return -1;
 
-The check runs in the enqueue path. On failure fle[SRC].length stays
-zero, so every subsequent copy on that object re-runs
-rte_fslmc_cold_mem_vaddr_to_iova() plus rte_mem_virt2iova() and emits
-DPAA2_QDMA_ERR, flooding the log at packet rate. fle_pool is created
-by the driver in dpaa2_qdma_vchan_setup(); validate the pool mapping
-once there (e.g. rte_mempool_mem_iter over mp chunks) and fail
-vchan_setup, instead of checking per object on first use.
+And we have various leaks in case VFIO fails...
+
+I'll make a note to fix this later as this is already present, unless
+you can have a look.
 
 
-Patch 5/5: mempool/dpaa2: support ops index from primary in secondary
----------------------------------------------------------------------
-Error:
+-- 
+David Marchand
 
-Reply parsed at the wrong offset:
-
-	rsp_msg = (void *)mp_reply.msgs;
-
-mp_reply.msgs is struct rte_mp_msg *, whose first member is name[].
-msg_type is read from the bytes "dp" of "dpaa2_pool_mp_sync", never
-matches DPAA2_POOL_OPS_IDX_RSP, and every request fails with "received
-invalid response". Must be:
-
-	rsp_msg = (void *)mp_reply.msgs[0].param;
-
-Also check mp_reply.nb_received == 1 rather than msgs != NULL, and
-check len_param before copying msg_data. This path has clearly not
-been exercised.
-
-Error:
-
-rte_dpaa2_mpool_get_ops_idx() is called per op in
-dpaa2_sec_enqueue_burst() and the ordered variant
-(dpaa2_sec_dpseci.c:1544, 1903). In a secondary, whenever the lookup
-fails, s_dpaa2_pool_ops_idx stays RTE_MEMPOOL_MAX_OPS_IDX and the next
-op issues another rte_mp_request_sync() with a 5 s timeout. That
-happens always with the bug above, and also whenever the primary has
-not created a dpaa2 pool (no action registered, primary replies
-MP_IGN, nb_received is 0). A blocking IPC must not be reachable from
-a datapath function; resolve once at init and cache the result,
-including failure.
-
-Warning:
-
-The IPC is unnecessary. The mempool ops_index stored in the shared
-struct rte_mempool is only valid because primary and secondary
-register ops in the same order; the secondary already dispatches
-through its own rte_mempool_ops_table with that index. The secondary
-can find its own index by scanning rte_mempool_ops_table for
-DPAA2_MEMPOOL_OPS_NAME, which removes the handler, the message
-protocol and the timeout entirely.
-
-Warning:
-
-Missing Fixes: tag. The commit message describes secondaries failing
-due to the unset index.
-
-Info:
-
-dpaa2_mbuf_pool_mp_primary() returns -ENOTSUP on an unknown type
-without replying, so the requester waits the full timeout. The action
-is never unregistered.
-
-Commit message: rte_mp_action_register() returns ENOTSUP when IPC is
-disabled at runtime (--no-shconf / --in-memory), not due to a build
-time option.
