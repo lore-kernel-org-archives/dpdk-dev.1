@@ -2,35 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64164C88E53
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 10:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0146C982C3
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 11:34:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9B2D340A7A;
-	Tue, 15 Sep 2026 12:58:33 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 68CA64067C;
- Tue, 15 Sep 2026 12:58:32 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 1C763206CA;
- Tue, 15 Sep 2026 12:58:32 +0200 (CEST)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Tue, 15 Sep 2026 12:58:29 +0200
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-To: dev@dpdk.org
-Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
- stable@dpdk.org
-Subject: [PATCH] examples/l3fwd: fix check of unchecked IP checksum
-Date: Tue, 15 Sep 2026 10:58:21 +0000
-Message-ID: <20260915105822.988106-1-mb@smartsharesystems.com>
+	by mails.dpdk.org (Postfix) with ESMTP id D07B640A7A;
+	Tue, 15 Sep 2026 13:34:28 +0200 (CEST)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 6B83D4067C
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 13:34:27 +0200 (CEST)
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 266D21A0052;
+ Tue, 15 Sep 2026 13:34:27 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com
+ (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E2BF21A002A;
+ Tue, 15 Sep 2026 13:34:26 +0200 (CEST)
+Received: from lsv031405.swis.in-blr01.nxp.com
+ (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 9F0211800068;
+ Tue, 15 Sep 2026 19:34:25 +0800 (+08)
+From: Prashant Gupta <prashant.gupta_3@nxp.com>
+To: stephen@networkplumber.org,
+	dev@dpdk.org
+Subject: [PATCH v3-S1 0/5] dpaa2: bus, DMA and mempool base fixes
+Date: Tue, 15 Sep 2026 17:04:17 +0530
+Message-ID: <20260915113422.4166287-1-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 15 Sep 2026 10:58:29.0621 (UTC)
- FILETIME=[243C7A50:01DD4501]
+X-Virus-Scanned: ClamAV using ClamSMTP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -44,31 +44,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-If the PMD didn't check the IP header checksum, the
-offload value is RTE_MBUF_F_RX_IP_CKSUM_UNKNOWN,
-not RTE_MBUF_F_RX_IP_CKSUM_NONE.
+This series is the first of four that upstream the missing NXP dpaa2
+driver changes. It collects the foundational bus/fslmc, dma/dpaa2 and
+mempool/dpaa2 fixes that the later series build on:
 
-Fixes: 4b01cabfb09b ("examples/l3fwd: add option to relax Rx offload")
-Cc: stable@dpdk.org
+- defer fslmc bus initialization to probe and reduce probe-time logging
+  and MC traffic,
+- fix an array-bounds warning and validate IOVA in the dpaa2 QDMA
+  pre-populate helpers,
+- support fetching the mempool ops index from the primary process in a
+  secondary process.
 
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
----
- examples/l3fwd/l3fwd.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Every commit builds cleanly (including the aarch64 DPAA cross build with
+-Werror) and the series is bisectable.
 
-diff --git a/examples/l3fwd/l3fwd.h b/examples/l3fwd/l3fwd.h
-index 349fc37c79..331d17602d 100644
---- a/examples/l3fwd/l3fwd.h
-+++ b/examples/l3fwd/l3fwd.h
-@@ -171,7 +171,7 @@ is_valid_ipv4_pkt(struct rte_ipv4_hdr *pkt, uint32_t link_len, uint64_t ol_flags
- 
- 	/* 2. The IP checksum must be correct. */
- 	/* if this is not checked in H/W, check it. */
--	if ((ol_flags & RTE_MBUF_F_RX_IP_CKSUM_MASK) == RTE_MBUF_F_RX_IP_CKSUM_NONE) {
-+	if ((ol_flags & RTE_MBUF_F_RX_IP_CKSUM_MASK) == RTE_MBUF_F_RX_IP_CKSUM_UNKNOWN) {
- 		uint16_t actual_cksum, expected_cksum;
- 		actual_cksum = pkt->hdr_checksum;
- 		pkt->hdr_checksum = 0;
+Gagandeep Singh (1):
+  dma/dpaa2: validate IOVA in pre-populate helpers
+
+Hemant Agrawal (1):
+  bus/fslmc: reduce probe-time logging and MC traffic
+
+Jun Yang (2):
+  dma/dpaa2: fix array-bounds warning in dequeue path
+  mempool/dpaa2: support ops index from primary in secondary
+
+Prashant Gupta (1):
+  bus/fslmc: defer bus initialization to probe
+
+ drivers/bus/fslmc/fslmc_bus.c            | 92 +++++++++++++----------
+ drivers/bus/fslmc/fslmc_vfio.c           |  3 +-
+ drivers/dma/dpaa2/dpaa2_qdma.c           | 96 ++++++++++++++++--------
+ drivers/mempool/dpaa2/dpaa2_hw_mempool.c | 95 ++++++++++++++++++++++-
+ 4 files changed, 209 insertions(+), 77 deletions(-)
+
 -- 
 2.43.0
 
