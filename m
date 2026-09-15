@@ -2,101 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DB84C88E73
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 08:57:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B129BC88E75
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 09:05:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B37A3406A2;
-	Tue, 15 Sep 2026 10:57:15 +0200 (CEST)
-Received: from mail-yx2-f12.google.com (mail-yx2-f12.google.com
- [74.125.224.140])
- by mails.dpdk.org (Postfix) with ESMTP id 50169406A2
- for <dev@dpdk.org>; Tue, 15 Sep 2026 10:57:14 +0200 (CEST)
-Received: by mail-yx2-f12.google.com with SMTP id
- 00721157ae682-85d4ddd17a0so24146517b3.0
- for <dev@dpdk.org>; Tue, 15 Sep 2026 01:57:14 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1789462633; cv=none;
- d=google.com; s=arc-20260327;
- b=E5JP8jS5DHF8BCmSIcGXZVbAO8xBC7NjM4zUJ+N7O8rgUBGbqaqrgOF6ZQwGrWqjs8
- C3Hmm3dcJySRF/a6MdWs3+cBrL0G1uKJxPLve9PWLnfSOe1AP3a4eOJ67H2wjoEjEYPw
- tCmQo4c66jushbNA3cwzVYIVOMovgZ8zx3PBceta50d2fjBD7OVn4GIy8Pvi0btIGzWF
- Lzx55N2qv1gkyLuRsa4k7JM/EHYoh8lgRr4S2Phzz8VeHBBJc4ujos28KAznKGH6WKDj
- KanQKKrU8HJPHHcUxLMTQc2yy5WBwhDUsoe0dpkPbOIw7zu3IJsygeCV1/6LTqRYl2oz
- RV5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20260327; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=4a/ugrL+pwcLvseV04r5HlZkxmmTYeotwmpw+cBZiFw=;
- fh=3jhLaMuF0cK9B93rD7/XDxDEn7MzkwNN7QeYn0h20k0=;
- b=FqT12WoThS1/44V529F8XyzLpejzqBtqnkbLTCRyyMOQjI6u/5zHcAgq6l+bf6VKb5
- MgorDSdQid3IRabL9USupRxzuvDHSIQo+6S8c3HsQFPvdwyvAGZ2CHv2DpyAnYlzFAk+
- 8eOCgCS/mWd9Be4MqUPLyaeX9sxNUhfNabbFUP+DQydX3pd7Vtz0LsfSXKvL0SDh2pvX
- dPVdo2F3tG5oeyQxZ0AzmL+B5QDyp8Bf7uKt/xIJbRbN0htpSSXhhHW2EBMkWCNYrGLu
- X9/TBR4MEAgvJTaP8Q/sOaeWY7UhH5YU6m+SatYq+aHkYGOB1JFxXPJ/P6o48cGt1On0
- vEZg==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1789462633; x=1790067433; darn=dpdk.org;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=4a/ugrL+pwcLvseV04r5HlZkxmmTYeotwmpw+cBZiFw=;
- b=CaVpHUveiFLaV+ehOuTokse5yha5qSwISnuGItw5tNN+fhrRfM2ReFSQj7ULDbNX1X
- iSDlVLuab6pJLHrJTncoHDfqor1HdV3b3fe3kt8ID4ndm8deT7TYKlRUByuUnJ7/yrRr
- aRGU9IKMLnK+1K/66v9CpD2IPw5MQiX39FI3qgQbXDH/kf9w7ejgKixN0jr0z6n1g8mU
- /7nwgvx1iuBOQMjwGq+OKh2/AACsf+ynNXaB+x6nhOR1UEm/rdYWyEavfdWFUS7pddc7
- NrpJV4CMnas/aZ4LShaDXOs+Hs9STAT3hySSw5r/aXe7Gd/Z4nap6pN2n0/jkbpn7A9j
- zgEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789462633; x=1790067433;
- h=content-transfer-encoding:content-type:cc:to:subject:message-id
- :date:from:in-reply-to:references:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=4a/ugrL+pwcLvseV04r5HlZkxmmTYeotwmpw+cBZiFw=;
- b=apiz/ng2d8ASa6LrxxnM8o/kyc+GSm4WCQ9dcuzLqPfsrDodol5LaG2EGKOyItvYVs
- CTflciVsAVcIMrKNp5f/3lVjYPW7fFMWFpVMZZIXI27AaAweNpVjcm4C4xOvEZdF5O05
- doDBU735coGHEd/ZQRmIb2ZNQtzHMqN4W24pZSmqUeVCs0LmWItFNas93UHir8CgP+bp
- aTKzkcXKX0cjWMDcaLnRVLN1Gtt31oig36IpSGqhsojQDTD3byDkX1DHmTnw1ZuCLFrz
- bdYMRawu1qahr84Dwu9o/MVIMf49pOs0R5YxNXuJMEq/PNmeyZbEkMtH0m5G46NpIHj+
- V7zw==
-X-Forwarded-Encrypted: i=1;
- AKwUvBwjnHxUlJww8Q4CcIZ1dDjXvNUcIb+OtvogV3VJA1/Ms7/Jfj3mr81X3YpQYyM73g9AtQo=@dpdk.org
-X-Gm-Message-State: AFuF++lWG2yfeAx3yYmsoRpcnKX5OCODelRBdXG6wX5wCBNLeEo9ApKA
- 9Ebb2CdSN88u7QtyBPcaDlWIK981qMsqajxYb2MkTZilENmHe4rkotp2T3f3ZkkKKyUtOM1E5Oo
- e/e0/r97smPFBlio5f20KasqtheGA0wc=
-X-Gm-Gg: AYBFou03Wz19WeW2bBLRXkKYbnvAEpa5AMZ+iYxWQ6ONaPHFjBatDJW8hhmOH0a8WsY
- U3+uks7W1oEqFXXGke1UfczxD5lLCZYCrkhZiIUlUQ7fFM1MMoZ7tkgnEbQcfXhnT+8edhSUGtT
- ALAZYD9V9dvFgTpzj4ZJ7zwO8XpAFKQRlWqgMWUrrhNniJSFEFDTBgZK4wYzpx4PGD4+R99Z1s1
- yemkG/OKb6XRFiECnW8ygisFHe389XtE66vLIu35r3/AncuK6HUymlcpvmFahqQZ5rf7wkfkHxm
- iDmka+RSGrmDnYLMh2XwwRBU1qxFazhR2+VUOOp2bGSk/v2PyJxguEfh0zUQCdUiNYugPhWfpB3
- HdE65qRO1Eq2GlmEvng9f91K7nNK2TjGs53o53A6NT+K7lH2HpI4TwenytWYU2LIlTte+0IneC9
- 5G+np2pYmroK/dU9rJ
-X-Received: by 2002:a05:690c:e284:10b0:87e:2404:5c46 with SMTP id
- 00721157ae682-88d1fade932mr21706757b3.12.1789462633644; Tue, 15 Sep 2026
- 01:57:13 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E185E40A77;
+	Tue, 15 Sep 2026 11:05:29 +0200 (CEST)
+Received: from mx0.infotecs.ru (mx0.infotecs.ru [91.244.183.115])
+ by mails.dpdk.org (Postfix) with ESMTP id DE7A04003C;
+ Tue, 15 Sep 2026 11:05:27 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru 311E62C0BAF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infotecs.ru; s=mx;
+ t=1789463127; bh=fGNEUBzJqemoS+ShOhpK856LEB7F2EspDli7UWE3Hkg=;
+ h=From:To:CC:Subject:Date:From;
+ b=uWU8/VFc2DRDc+1F2C4jf8pSPizcyCW3zUAubUIiTyKMZWMIwBdOFAurYnxKsi5XS
+ c2cU9W/6zCw4rcDi5ciVvZRmUNpoATcpq66SaHPirPGp/I/CEZjUiIHPGHkMs8/zUJ
+ NyRSVcUEOlDA2y+JjYvL4hGt0Cd9YQMqmt0Duk9s=
+Received: from mx0.infotecs-nt (localhost [127.0.0.1])
+ by mx0.infotecs.ru (Postfix) with ESMTP id 311E62C0BAF;
+ Tue, 15 Sep 2026 12:05:27 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs-nt C35B72C0B6E
+Received: from msk-exch-02.infotecs-nt (msk-exch-02.infotecs-nt [10.0.7.192])
+ by mx0.infotecs-nt (Postfix) with ESMTP id C35B72C0B6E;
+ Tue, 15 Sep 2026 12:05:26 +0300 (MSK)
+From: Evgeny Sokolov <Evgeny.Sokolov@infotecs.ru>
+To: Kishore Padmanabha <kishore.padmanabha@broadcom.com>, Ajit Khaparde
+ <ajit.khaparde@broadcom.com>
+CC: <dev@dpdk.org>, <stable@dpdk.org>, Sokolov Evgeny
+ <Evgeny.Sokolov@infotecs.ru>
+Subject: [PATCH] net/bnxt: remove redundant Rx queue array check
+Date: Tue, 15 Sep 2026 09:05:24 +0000
+Message-ID: <20260915090524.431183-1-Evgeny.Sokolov@infotecs.ru>
+X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
-References: <20260904092157.51040-1-amiyaranjan.mohakud@gmail.com>
- <CAL+mCpNCdJDJN77BFwFP4bK887xsRDtid7HxSZ=3yapW5mvNsQ@mail.gmail.com>
- <CAL+mCpOxM+AeN6ehfr5vVwQQ=1KSv8uivEC-Ng7j3tQ58cjbLg@mail.gmail.com>
- <CO1PR18MB47962DFB9B96FD9E2B86F8F6BFBA2@CO1PR18MB4796.namprd18.prod.outlook.com>
-In-Reply-To: <CO1PR18MB47962DFB9B96FD9E2B86F8F6BFBA2@CO1PR18MB4796.namprd18.prod.outlook.com>
-From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Tue, 15 Sep 2026 14:26:47 +0530
-X-Gm-Features: AcwNN1WcDqVkRyefJsVyGLSD2G8bmHXlzpdFa1dJuk4kxEg01x1Qx0kNP8lXwQA
-Message-ID: <CALBAE1PFgynxMV7hk5wjbf8Zdb9YMeX9qMuAqtss_dipHSNjhw@mail.gmail.com>
-Subject: Re: [EXTERNAL] Re: [PATCH] common/cnxk: fix duplicate mbox alloc in
- NPA aura pool init
-To: Ashwin Sekhar T K <asekhar@marvell.com>
-Cc: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>,
- "dev@dpdk.org" <dev@dpdk.org>, 
- "stable@dpdk.org" <stable@dpdk.org>, Harman Kalra <hkalra@marvell.com>, 
- Satha Koteswara Rao Kottidi <skoteshwar@marvell.com>,
- Sunil Kumar Kori <skori@marvell.com>, 
- Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>, 
- Kiran Kumar Kokkilagadda <kirankumark@marvell.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [11.0.20.76]
+X-ClientProxiedBy: msk-exch-01.infotecs-nt (10.17.0.3) To
+ msk-exch-02.infotecs-nt (10.17.0.2)
+X-EXCLAIMER-MD-CONFIG: 208ac3cd-1ed4-4982-a353-bdefac89ac0a
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Interceptor-Info: not scanned
+X-KSMG-AntiSpam-Status: not scanned, disabled by settings
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 3.0.0.9059,
+ bases: 2026/09/15 05:24:00 #28584173
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 8
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -110,10 +62,40 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Sep 15, 2026 at 1:18=E2=80=AFPM Ashwin Sekhar T K <asekhar@marvell.=
-com> wrote:
->
-> Acked-by: Ashwin Sekhar T K <asekhar@marvell.com>
+From: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru>
 
+The rx_queues array is allocated during device configuration
+before nb_rx_queues is set. Since bnxt_rx_queue_setup_op() is
+called from rte_eth_rx_queue_setup(), which validates the queue
+index against nb_rx_queues, the rx_queues NULL check is redundant.
 
-Applied to dpdk-next-net-mrvl/for-main. Thanks
+Remove the unnecessary condition.
+
+Signed-off-by: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru>
+Cc: stable@dpdk.org
+---
+ drivers/net/bnxt/bnxt_rxq.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/bnxt/bnxt_rxq.c b/drivers/net/bnxt/bnxt_rxq.c
+index 023cb0e174..a89d5ab611 100644
+--- a/drivers/net/bnxt/bnxt_rxq.c
++++ b/drivers/net/bnxt/bnxt_rxq.c
+@@ -370,11 +370,9 @@ int bnxt_rx_queue_setup_op(struct rte_eth_dev *eth_dev,
+ 		return -EINVAL;
+ 	}
+ 
+-	if (eth_dev->data->rx_queues) {
+-		rxq = eth_dev->data->rx_queues[queue_idx];
+-		if (rxq)
+-			bnxt_rx_queue_release_op(eth_dev, queue_idx);
+-	}
++	rxq = eth_dev->data->rx_queues[queue_idx];
++	if (rxq)
++		bnxt_rx_queue_release_op(eth_dev, queue_idx);
+ 	rxq = rte_zmalloc_socket("bnxt_rx_queue", sizeof(struct bnxt_rx_queue),
+ 				 RTE_CACHE_LINE_SIZE, socket_id);
+ 	if (!rxq) {
+-- 
+2.30.2
+
