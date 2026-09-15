@@ -2,143 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58498C88E7F
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 15:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1940C88E75
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 15:24:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 40D5840B91;
-	Tue, 15 Sep 2026 17:09:48 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
- by mails.dpdk.org (Postfix) with ESMTP id 7227440A6B
- for <dev@dpdk.org>; Tue, 15 Sep 2026 17:09:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1789484987; x=1821020987;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=00D5mDtZzKLGeHYBI/WsFhYzmCf8mxix5LRrQhyvpbA=;
- b=RglT0Kkf5cGoSOeydWknc0dCWBv4Pk97xOGLebjjTMciFIKQsChxA40V
- xuvWRsswo7fXu6I7VLZ0dKW7rABO5SpTYAd0YLBvqBft4S4tj19F2Pwik
- 7yU+tmmpdWXEkvUy7EsTxNfTteSWQPhffm/K95Cmj7uH9fu8uVwf+oZQM
- xLwmDTDlEWk0vr3tcI+JcnPqI4xGVVPCS67nuNq2+49GHW8wJAOtIEMH8
- A/qvnjjbYV5RSk3tpMmRc3smRiaAwbxR/fH7FIJbWTfXNdrTCU/c+qgLu
- 8IaeOxb8jRrqyPGqQ507wze/H9O8KQ/pZmZIdv4AyVfQUVT5roNrUu1yh g==;
-X-CSE-ConnectionGUID: 7cewfwu+RE+4E9FiZEjMqw==
-X-CSE-MsgGUID: QzTJ1ba1SbWoIozHRk9eNA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="101368849"
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="101368849"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
- by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 15 Sep 2026 08:09:41 -0700
-X-CSE-ConnectionGUID: 1UjCYXCOSWCQ8x+dH6SYIg==
-X-CSE-MsgGUID: 0lQ5GJJGS9S8zNIM/PBd9g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="276568390"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
- by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 15 Sep 2026 08:09:40 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Tue, 15 Sep 2026 08:09:39 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46 via Frontend Transport; Tue, 15 Sep 2026 08:09:39 -0700
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (40.93.194.18)
- by edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Tue, 15 Sep 2026 08:09:39 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fJ8VkXVT150bJJ3L5KhIYkFHlvlSKbbvGpPHGrMT+nfcrS50T+MpF5nwjBL8olbuXB7owQtcoGMuVuehP/O0Gk3arCa8x9QEKBTkmWok08pyNswNsH4374DGqZi40wfR5OEjc2maOR4HTKH7VHUeDOw7wdP0UEa++TKq4/FUriUBs8d8ZJE9H/DG9xnVGUjQ/5h+XFv7oiRRzYi6Vn7GfbO/itlGHWMfGn/b4gNJN8MhyAuWUlsoQxeZn0bl9jmfDPjW7zIDTO0u8KEr3SBc14i3UpDhf2s5G0OklyWccbTmL9ekz8rhXDkGZFJp3LMEDX8fviW9NN4UbrBN+dQrDw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mLb9lXjorGAWUBjj4UsnQmp+t5UkuJo+lBxPoVoi1J8=;
- b=Vyg4sUTacpy2mhM2VGooc4WgsKSbeeLedWJhhOZ6dGGHPPAHZ9FPbpdkKcl4GStMia4JSYZ/kYilH6hFSoQrns/vR+UZysSx86vmp57obp2EmlGzx7EF8gpRqN4y3O6IgLeN1Z7d4AorwrHFXZw26F5G3WVeYhlVK24n6z+ynQomFpEVffhWIllEI5eGyFcQy3YzyrT+0/euQK/NJx01uqoh/fRUWY7iLYRhkSs+40ISyC4I4XaXV75nhUAKaBYdrZSEMhORvvddCjmlTDav6cuP8Rcc+i/BEuozB3s30XnNoFW7QAw/Yn3rCBChHciYzdILA2BtE/sRqg4QccP1jQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
- by CO1PR11MB4786.namprd11.prod.outlook.com (2603:10b6:303:94::17)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.9; Tue, 15 Sep
- 2026 15:09:35 +0000
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0406.007; Tue, 15 Sep 2026
- 15:09:35 +0000
-Date: Tue, 15 Sep 2026 16:09:30 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Randy L Tice <rtice@cisco.com>
-CC: <dev@dpdk.org>, Thomas Monjalon <thomas@monjalon.net>,
- <david.marchand@redhat.com>, <stephen@networkplumber.org>
-Subject: Re: [PATCH v2 0/1] eal: add CPU socket lookup API
-Message-ID: <aqlfqtifyZlqfq9e@bricha3-mobl1.ger.corp.intel.com>
-References: <178941409436.3.12421464753538796039@cisco.com>
- <20260915150507.3-1-rtice@cisco.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20260915150507.3-1-rtice@cisco.com>
-X-ClientProxiedBy: DUZPR01CA0155.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4bd::11) To SN7PR11MB8066.namprd11.prod.outlook.com
- (2603:10b6:806:2df::18)
+	by mails.dpdk.org (Postfix) with ESMTP id D3C1440B91;
+	Tue, 15 Sep 2026 17:24:37 +0200 (CEST)
+Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com
+ [74.125.227.140])
+ by mails.dpdk.org (Postfix) with ESMTP id 1BE6440A6B
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 17:24:36 +0200 (CEST)
+Received: by mail-pj2-f12.google.com with SMTP id
+ d9443c01a7336-2db22383fe8so24258025ad.2
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 08:24:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789485875;
+ x=1790090675; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=CTUCnaPPqC04NbXuLY1KN0ehxONjVp+tzHU2EwGmaQA=;
+ b=iP1ROknOlP4sJ3Og1KLW07AoILS1HIsFVkZrUI618ysdtJ5Pj44FzpIyiQZmnWR0H+
+ JALEaoFOgCRqTz8MEBgfpzKTd1S7ziiXihhj0QZi0ksJjgG1RnPWyLm8a+BAcrscK9Rh
+ mc45G8E2ZswlkQtkpbUwIUGLWSAG4HDdrdkOM6tkuXA28F7OpZBSrg3R49OjRsselUmn
+ X71Y+tWGzDkO4SjDpGTYTBuCf6gGfwm5zjceDllBvOu575KEsbofVo9hwa1TTjmBZVYD
+ HDQ8QvhDL9AnANo7+neZ0+DsF4uHQ3KHMj7QpS1NZacXuEETP0r3quN2tK5ebWB6ApOA
+ pYWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1789485875; x=1790090675;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=CTUCnaPPqC04NbXuLY1KN0ehxONjVp+tzHU2EwGmaQA=;
+ b=C3P4sstX68AXDuvCuN3oo+N4/W+MjZKlyyEmlC/8LiR1XsA13UofPyxtrQv01CzO30
+ IbB0TM0oHHq1cirrp7sqU9mDVThBhI6+MXzDcgDvMpCHL0wCaooFaX7ZAWqP8bguhGye
+ +zg/s5slbgVJMJfpjJzINUqrwXpZIA0IsD+TixfhdaL5fV9gGc00gkS7+RO2Jq0lp9Y1
+ fMnUBOB+GeA7575s9YnA/9HJS3M9YkrpLcz8MyEAP/8fIIq4uAco/XPZYtzRUzUSReJB
+ GrHFNh8EYMXhxR+GQ9SPS2FiA11I+ExETinn+LgZ+r2BU81DgYs5v6hV4NxgjXzqTMYW
+ wW5g==
+X-Gm-Message-State: AFuF++lXb0cTuIKT3XS1Jkp46iH6vRN1JqIhv6AhGUfh22fl6NODki1H
+ ChjbltVAgrLuLs2bYVpH1dwdgrFl98sLhem4nFUM949sZahLfTh5Cf2roKgqPmjq791a/OaQTgT
+ YwNJWkNz4AA==
+X-Gm-Gg: AYBFou1LWJoVEonj2YRHFHMHgJIjsfUMhOPmj0Q9xo2LLVhE4CRCfLLA4g0V65bDIfU
+ SC0/tw4dJWDFGF/DF69hZSviOjxKqEyigFXKSw+oJe3mMl+V8tExr0JWDgSaiddvWIs6+4P+mjl
+ 9wa50ku0eVI9AQOozQrjFx+3VlfOSLIidVOP8VYsAIHEnUgx9bAkXdXfcljhLGsVrkaW1kBpHF8
+ tFM+sFQB/5O0YSxoMnhIgAij9Kf5tN9CsjbIsa3Futz7IeSQWUN9fOg8L8dKJKQjm90Oionj3u8
+ 2NAal+WAMHfHDYmq8tDpkT57Kq/yu/EIgc5AUaP7rUB1oracsU21Sb2cmWm8deXCgt007iWQYaE
+ aIh1yZP/Fr9RXKdBmYZx+UlWD9011r/vcP+uItdGfaDj6vRDWL1YItYjbvbpWoV7m6H71vwNwxv
+ PkMY4VIvJGWnTJIMD5wVBms50pO4oupU3MgqHZtuFslIPbVYLZAobyt7fEmqG3IfzezLb0OzLib
+ w8pGP2Yu+71NZsp8/fgy0GkaZ2c7md8/kJHZnGZxA==
+X-Received: by 2002:a17:903:320e:b0:2cc:864b:539 with SMTP id
+ d9443c01a7336-2dd6c5eebcfmr184555635ad.6.1789485875190; 
+ Tue, 15 Sep 2026 08:24:35 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-2dd2ceb6861sm68791605ad.36.2026.09.15.08.24.33
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 15 Sep 2026 08:24:34 -0700 (PDT)
+Date: Tue, 15 Sep 2026 08:24:29 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Prashant Gupta <prashant.gupta_3@nxp.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v3-S1 0/5] dpaa2: bus, DMA and mempool base fixes
+Message-ID: <20260915082429.3f23410f@phoenix.local>
+In-Reply-To: <20260915113422.4166287-1-prashant.gupta_3@nxp.com>
+References: <20260915113422.4166287-1-prashant.gupta_3@nxp.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|CO1PR11MB4786:EE_
-X-MS-Office365-Filtering-Correlation-Id: a8acbcdf-a5cd-438f-5245-08df133b5abb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|366016|23010399003|1800799024|376014|10067099003|6133799003|18002099003|22082099003|4143699003|56012099006|11063799006;
-X-Microsoft-Antispam-Message-Info: jEU/UDgHqIIQR/porqRaaFHf1klKs2nAklU1JrLudkQ/W+P95VBWkhJ+8ofGp5B9KmTLGxEGHxXxSvSpm1qiKCtptGQsBa7Vs83CAuSqPAUcEz2IjyTgEVbaO1owZ6qdU+wY+BxRgHOxMsiMrq3dcEhaurO9ga4gsCWJpg+Enn0tez9gjK3nDxD3rPPwuj9GHx3h98pOrDh48RwaTiAnK8j6XUlXIflRQa9eVjtI/BtArEmnxxG6YQt/clb4i1ogrX1PJwvEPe2yx0JxiOrHxMZgRK2BVwVwfR5WMZjyHw8tVvtpdO32QFMsjIV9YO84LjLXsGTcnpVfYSFrCgDW+skQFcoBM9tZLKXgAcOXvRNdKIOG7g/ejHHAJEgLqv1VAPLp4pi6spz4SOxB9vjTTtYOJN1yFnmSMQYLRSuRCOnozFtH0zbosOO73M4vp50qFKBQ/sIHkrkC+5QcJiZaIgDrgN6qat7NCyChET1NsE/tbmTaRY3Q2WAWPGHVjaNxEd3MpjjcCPYfTkN4IV5qEiyXU+emnhPKnlVmxz484pYjuM9qCFUarylN/gtZkdP30P+ethpF/dAOgiuGJaUtdQvXqZXvKvFOSqft6l4UliQ4iSDF8vA96ePPEF5a+dl3Y2SENCS8t/KX074VcUYyP8q/dssm4IrHqkq0ymuDKog=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(23010399003)(1800799024)(376014)(10067099003)(6133799003)(18002099003)(22082099003)(4143699003)(56012099006)(11063799006);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Kd14F1Boy49v5Dl9qWttqDZiBjNDlubJmfYY0sCBEc32s5GgcbtHt4d62/d0?=
- =?us-ascii?Q?H7OiSDsw9gSN5M0VFMrQzXG+/9LMn7x/X4OjSNqtbi0Flwp0PhAPW2ZtqJKJ?=
- =?us-ascii?Q?c7g6HJ9aiPxItdsSb8T02fNCbYwcfRw0g6NLq4dpLb3Lm6ywuWhpyB6mA/ak?=
- =?us-ascii?Q?5cCuK9IyOpF7oEuvCGqJwb/ISjihRfqNgBli/nKTpIzr1biQQHvtxOO6j7JF?=
- =?us-ascii?Q?wAUkXfILp4xyxd1zEn6NV0UX3NtF9xDLC//HAiqKIOAK2qiBGNQpuRQS/B2C?=
- =?us-ascii?Q?5O4vHu0ZPhdtQJ5yncv5iYTSSy+XhVHZy1aFJkzsQNiPnkhbpRpJNQ3bdast?=
- =?us-ascii?Q?SlyN88NcQjG2IfZXigxt0KCpUPj40gtWzDj1YK/7h2tSN4Kjdz3fVFLs+7+p?=
- =?us-ascii?Q?w3bJu3d7fspl4EMUc2EMkwdvIBFBqOgTtyE8qBWSIr+SOXZ2iB0W4bMWw8N9?=
- =?us-ascii?Q?Q1v5Bnfnt0T9Qz7lPYimjgbyYVi4mBAQiiN1fALJRCJya+GJJCNODLalajON?=
- =?us-ascii?Q?IGtTZ66Xey2sSWG4MZnQMjg1F0eNSrx7HSH6XWsWn4xLQdUbMkj4e55nqHnO?=
- =?us-ascii?Q?tqDia7PjMaXqYBetQUfoUsaJj0obCbf+K5MDczuwb4exGFnGWVIndWPwXh65?=
- =?us-ascii?Q?8vCRzZhO9IylD4+q1yuBw7f3Z4ZUBLgaWTYzLMipP1mlTUqPidfQBrlAB4eh?=
- =?us-ascii?Q?D1gNm0dCseJH7af6GA02mPAdpMRxyuw827WPLH1EtBe7lnSLa9g7ZfGKhpzw?=
- =?us-ascii?Q?dmeoQ+6iaLJXZq9lwUc2Zg2goHAF6ndy7auZw06krgPc1KEfe1J91wG75h9o?=
- =?us-ascii?Q?55oC0P7my6UCh5cGHDAt76gPM7flrHbV5jo8bAyMUUP0+VnWYM24CBjUMkfh?=
- =?us-ascii?Q?EguIrNuRVf9lSiJONxi+S4lqR/BtPKXjG/RHs3Kf6cnqFgdXVQvbVErkpSJn?=
- =?us-ascii?Q?5jDftNl4AfE6/0c2hK7tHdN/3zABKvzTDiMzWjfUSVYgfxyNzHoksbu4R9Bm?=
- =?us-ascii?Q?DFdy+sjc9pPv5wLmUDC222CN/QxkuExbzPAoEC+13Wr4FTWdnScuDO+pkefh?=
- =?us-ascii?Q?3n7rBLfRK4AgQvktV53ZrYtwY52+y0yGVwwQcFmwf9rFtZ7Ti3aGtzxxEPqv?=
- =?us-ascii?Q?NJXPpTp6vSyYlCm377gR/CZgI6MHT0eY/NxExt+zpy613kZb4XhniL1s8AxP?=
- =?us-ascii?Q?Glj2s0YZvVX9tDv4AexNJxK7RKiD9dy5buDxW/wq6o5OabuQymyHGOb7wlS3?=
- =?us-ascii?Q?FqK0dtRd9zgIMbFN3UM5ygfPoI0aIMXSeht3m+CeFtvB4ba+5E/f8peNOT2p?=
- =?us-ascii?Q?ibYZruidWMXMn4C68vfz+VuT9zth33vcbmPcVC4Z+QSbtFHT3QOc92033x2u?=
- =?us-ascii?Q?nRjiSoJjJyp3URM60wHklxy5G0hlxXCjjcR2uCxerbUbEqO3koG9f3U/xruU?=
- =?us-ascii?Q?VME+XZ4aExzmOjv43moEbaxI23Nw2rFBtwEsL07XSHgtzfqNDh7A+TFgLu55?=
- =?us-ascii?Q?FlpNFhkzztkAKp2Y4DI3O5d/Sk7F0AmqI+QML4UeoHoXNRtPp3gJ9c2gdYvI?=
- =?us-ascii?Q?x19AkMVZjk+wgvEwHI/Nu1MJDtz8M23NkjNglb8g72+UZNGWU58CQRtZJtdi?=
- =?us-ascii?Q?Dklas+eoy9UWqpT7Y6DQWEPGhmjocIRtzGiJ6JktmkNCM+nSuBgcz+9woHjR?=
- =?us-ascii?Q?Xy/imzy9YVVMg+PnXA4e2kt0fDtFtFiSLa8pDkFqoJnqKHoMuRJ39+l1gssb?=
- =?us-ascii?Q?mpQ+ALWNR+HM1CX/+sH537UHQ7ZNeCY=3D?=
-X-Exchange-RoutingPolicyChecked: 3fg2XkKVSEXrPtMHPpcjGqsd0pAe08SHkdKVtHEdRFI9/Dw7DWJwWJwGVVNdqibQZMsQu3d28nxHNFSo4wL/Od0r9slcdcbqfWHk9+9nvcGKk52aFJWObLFqhXZ8ythiu/wXEyKsTKMS9ftC4AaPrAD/GFh1lhxS1Mf1zvJclJ2ckQYhXaavJaEdUXOanmvXgjfGPcPKlNIGDtqAIwjMxeNOdIquNtvLs5HKTK2KWUEwKu008DrZ4n5M8YWCmGKYECBXL7xbQuTxwwpJ6zmsjuDhbursjz6Oy/mEgXHik+NeD/Uc5C+/ywh+vtlI8/rjyrlSTQ6wvZSVIdNNTD24BA==
-X-MS-Exchange-CrossTenant-Network-Message-Id: a8acbcdf-a5cd-438f-5245-08df133b5abb
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Sep 2026 15:09:35.8110 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QoB5lgx0jUu6RuQsq9D3DYkmraZoHmBAMOJvUI3rQrm53G6mRJPkSBCbdix+5Zvdj1M/x5w38+hp2jgBc/ey3RgMzBvUUqgoHpghdP3TCng=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB4786
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -152,42 +83,183 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Sep 15, 2026 at 11:05:06AM -0400, Randy L Tice wrote:
-> Some applications need to derive socket-specific EAL configuration
-> from OS CPU IDs before EAL lcore IDs are useful. One example is
-> building socket memory policy from the CPUs available to the process.
-> 
-> Existing public socket APIs do not cover this directly. rte_socket_id()
-> reports the calling thread socket, while rte_lcore_to_socket_id()
-> requires an EAL lcore ID and uses EAL lcore configuration.
-> 
-> Add experimental rte_cpu_socket_id() as a public API for mapping an OS
-> logical CPU ID to the NUMA socket containing that CPU. The
-> implementation reuses the existing per-OS EAL lookup internally, while
-> keeping the eal_cpu_socket_id() helper private to EAL.
-> 
-> v2:
-> - Mark rte_cpu_socket_id() experimental in the declaration, export
->   macro, release note and commit message.
-> 
-> Randy L Tice (1):
->   eal: add API to get CPU socket ID
-> 
->  .mailmap                               |  1 +
->  doc/guides/rel_notes/release_26_11.rst |  3 +++
->  lib/eal/common/eal_common_lcore.c      |  7 +++++++
->  lib/eal/include/rte_lcore.h            | 18 ++++++++++++++++++
->  4 files changed, 29 insertions(+)
-> 
-I think this support is a good idea.
+On Tue, 15 Sep 2026 17:04:17 +0530
+Prashant Gupta <prashant.gupta_3@nxp.com> wrote:
 
-JFYI, something similar should be possible (or else easily added, I hope)
-if patchset [1] ever makes it into DPDK. One of the goals of that patchset
-is to have hardware information querying possible before initialization of
-EAL. This ties in with the overall goal of alternative init paths for DPDK,
-as having hardware querying available allows sanity checking of args as
-they are added, rather than just as EAL init time.
+> This series is the first of four that upstream the missing NXP dpaa2
+> driver changes. It collects the foundational bus/fslmc, dma/dpaa2 and
+> mempool/dpaa2 fixes that the later series build on:
+> 
+> - defer fslmc bus initialization to probe and reduce probe-time logging
+>   and MC traffic,
+> - fix an array-bounds warning and validate IOVA in the dpaa2 QDMA
+>   pre-populate helpers,
+> - support fetching the mempool ops index from the primary process in a
+>   secondary process.
+> 
+> Every commit builds cleanly (including the aarch64 DPAA cross build with
+> -Werror) and the series is bisectable.
+> 
+> Gagandeep Singh (1):
+>   dma/dpaa2: validate IOVA in pre-populate helpers
+> 
+> Hemant Agrawal (1):
+>   bus/fslmc: reduce probe-time logging and MC traffic
+> 
+> Jun Yang (2):
+>   dma/dpaa2: fix array-bounds warning in dequeue path
+>   mempool/dpaa2: support ops index from primary in secondary
+> 
+> Prashant Gupta (1):
+>   bus/fslmc: defer bus initialization to probe
+> 
+>  drivers/bus/fslmc/fslmc_bus.c            | 92 +++++++++++++----------
+>  drivers/bus/fslmc/fslmc_vfio.c           |  3 +-
+>  drivers/dma/dpaa2/dpaa2_qdma.c           | 96 ++++++++++++++++--------
+>  drivers/mempool/dpaa2/dpaa2_hw_mempool.c | 95 ++++++++++++++++++++++-
+>  4 files changed, 209 insertions(+), 77 deletions(-)
+> 
 
-/Bruce
+Detailed AI review finds errors
 
-[1] https://patches.dpdk.org/project/dpdk/list/?series=39005
+Review: [PATCH v3-S1 0/5] NXP fslmc/dpaa2 fixes
+Base: main f43632a (26.11.0-rc0)
+
+Series applies cleanly. Per-commit build of bus/fslmc, mempool/dpaa2,
+dma/dpaa2 with -Dwerror=true passes at every commit.
+
+Series summary
+--------------
+Patch 5 does not work: the IPC reply is parsed from the wrong offset,
+so every secondary lookup fails, and the lookup sits in the dpaa2_sec
+per-op enqueue path. Patch 3's commit message describes a change that
+is not in the diff. Patch 1 reverts only half of cdefd2e980bd; the
+DPAA bus has the same problem.
+
+
+Patch 1/5: bus/fslmc: defer bus initialization to probe
+-------------------------------------------------------
+Warning:
+
+cdefd2e980bd moved init into scan for both NXP buses. Only fslmc is
+restored here. rte_dpaa_bus_scan() still calls
+rte_mbuf_set_platform_mempool_ops(), which does
+rte_memzone_reserve(), and dpaax_iova_table_populate(), which does
+rte_zmalloc(). EAL runs rte_bus_scan() (eal.c:680) before
+rte_eal_memzone_init() (784) and rte_eal_malloc_heap_init() (802), so
+bus/dpaa is broken the same way. Fix both in this series, or say in
+the commit message why dpaa is unaffected.
+
+Info:
+
+rte_fslmc_probe() returns 0 on every init failure and skips
+rte_bus_generic_probe(), so a VFIO or DMA map failure results in no
+devices and a zero return from rte_bus_probe(). This is the
+pre-cdefd2e980bd behaviour, but now that the function is being
+rewritten, returning ret would let EAL init fail visibly.
+
+
+Patch 2/5: bus/fslmc: reduce probe-time logging and MC traffic
+--------------------------------------------------------------
+Warning:
+
+The subject says "and MC traffic" but the patch only changes one log
+level. Either drop that part of the subject or include the MC change.
+Also fslmc_map_dma() is called from the memory hotplug callback, not
+just at probe time.
+
+
+Patch 3/5: dma/dpaa2: fix array-bounds warning in dequeue path
+--------------------------------------------------------------
+Error:
+
+Commit message does not match the patch. It says an
+idxs[DPAA2_QDMA_MAX_DESC] scratch buffer is added to struct
+qdma_virt_queue and idxs[0] is used instead of &idx. Neither happens:
+dpaa2_qdma_dq_fd() still passes &idx, and dpaa2_qdma.h is untouched.
+The real change is rewriting qdma_cntx_idx_ring_eq() from a per-element
+loop to a two-segment copy. Describe that, and state which compiler,
+version and target emit the warning, since a Cc: stable fix for a
+warning needs to be reproducible.
+
+Warning:
+
+New code uses rte_memcpy() for small variable-length copies of
+uint16_t. Use memcpy(); rte_memcpy is being removed from non-datapath
+and small-copy users tree-wide.
+
+Info:
+
+Merging the LONG/SG fle_sdd handling is an unrelated cleanup inside a
+stable backport. Split it out, or drop it from the fix.
+
+
+Patch 4/5: dma/dpaa2: validate IOVA in pre-populate helpers
+-----------------------------------------------------------
+Warning:
+
+The check runs in the enqueue path. On failure fle[SRC].length stays
+zero, so every subsequent copy on that object re-runs
+rte_fslmc_cold_mem_vaddr_to_iova() plus rte_mem_virt2iova() and emits
+DPAA2_QDMA_ERR, flooding the log at packet rate. fle_pool is created
+by the driver in dpaa2_qdma_vchan_setup(); validate the pool mapping
+once there (e.g. rte_mempool_mem_iter over mp chunks) and fail
+vchan_setup, instead of checking per object on first use.
+
+
+Patch 5/5: mempool/dpaa2: support ops index from primary in secondary
+---------------------------------------------------------------------
+Error:
+
+Reply parsed at the wrong offset:
+
+	rsp_msg = (void *)mp_reply.msgs;
+
+mp_reply.msgs is struct rte_mp_msg *, whose first member is name[].
+msg_type is read from the bytes "dp" of "dpaa2_pool_mp_sync", never
+matches DPAA2_POOL_OPS_IDX_RSP, and every request fails with "received
+invalid response". Must be:
+
+	rsp_msg = (void *)mp_reply.msgs[0].param;
+
+Also check mp_reply.nb_received == 1 rather than msgs != NULL, and
+check len_param before copying msg_data. This path has clearly not
+been exercised.
+
+Error:
+
+rte_dpaa2_mpool_get_ops_idx() is called per op in
+dpaa2_sec_enqueue_burst() and the ordered variant
+(dpaa2_sec_dpseci.c:1544, 1903). In a secondary, whenever the lookup
+fails, s_dpaa2_pool_ops_idx stays RTE_MEMPOOL_MAX_OPS_IDX and the next
+op issues another rte_mp_request_sync() with a 5 s timeout. That
+happens always with the bug above, and also whenever the primary has
+not created a dpaa2 pool (no action registered, primary replies
+MP_IGN, nb_received is 0). A blocking IPC must not be reachable from
+a datapath function; resolve once at init and cache the result,
+including failure.
+
+Warning:
+
+The IPC is unnecessary. The mempool ops_index stored in the shared
+struct rte_mempool is only valid because primary and secondary
+register ops in the same order; the secondary already dispatches
+through its own rte_mempool_ops_table with that index. The secondary
+can find its own index by scanning rte_mempool_ops_table for
+DPAA2_MEMPOOL_OPS_NAME, which removes the handler, the message
+protocol and the timeout entirely.
+
+Warning:
+
+Missing Fixes: tag. The commit message describes secondaries failing
+due to the unset index.
+
+Info:
+
+dpaa2_mbuf_pool_mp_primary() returns -ENOTSUP on an unknown type
+without replying, so the requester waits the full timeout. The action
+is never unregistered.
+
+Commit message: rte_mp_action_register() returns ENOTSUP when IPC is
+disabled at runtime (--no-shconf / --in-memory), not due to a build
+time option.
