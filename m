@@ -2,72 +2,89 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93E63C88E7D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 18:29:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2575BC88E75
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 19:10:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6E8C74025F;
-	Tue, 15 Sep 2026 20:29:47 +0200 (CEST)
-Received: from mail-pz2-f43.google.com (mail-pz2-f43.google.com
- [74.125.228.43]) by mails.dpdk.org (Postfix) with ESMTP id CDE494003C
- for <dev@dpdk.org>; Tue, 15 Sep 2026 20:29:46 +0200 (CEST)
-Received: by mail-pz2-f43.google.com with SMTP id
- d2e1a72fcca58-868a9c48f9eso25100b3a.3
- for <dev@dpdk.org>; Tue, 15 Sep 2026 11:29:46 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E7EC24025F;
+	Tue, 15 Sep 2026 21:10:42 +0200 (CEST)
+Received: from mail-yx2-f13.google.com (mail-yx2-f13.google.com
+ [74.125.224.141])
+ by mails.dpdk.org (Postfix) with ESMTP id C08284003C
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 21:10:41 +0200 (CEST)
+Received: by mail-yx2-f13.google.com with SMTP id
+ 956f58d0204a3-66fded6b087so122119d50.1
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 12:10:41 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1789499441; cv=none;
+ d=google.com; s=arc-20260327;
+ b=pWcGad4f46LNyvn7xA1uBYC5L852T9g+W9l9hS7UQKejqDUh3QvTda7o8P+bY65s4M
+ NWvpdO7a1IoTWBTzRhdJrUN4QGeGYUpe+kbD5Yxmo6thQC3ldRa87QYUKt4bl2lM68oo
+ 6/4M3z1ctvP2Wq/oyN67ZS/eoZQY6ZY6acX+IteuLaLGvBzkwwh4v68OQNf3v61pHZ9I
+ GpvXnoWkGG8FkoSA6zkC7R/mdMiclKIV1UTssfMTZadxNMxWyChjj1qJDJH97fDzvGou
+ ERtsYRPllOd4b6IeumIquCGtF8izFbplGi7Kq/h5IJIBqmPI0Y4M1SQlJxEEdONNHBTy
+ hfCg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=nyEj8lgIpwM6luaASJ3i/JYcLn9/Wag8eGdC8MpAfaw=;
+ fh=M4ntZrbfNOI2ObdlEHflOdWkDYk4AAaaM2dw1Zibg8s=;
+ b=VSxAvrtwgfuW0flvIgRuP52szFZ1tK2fu842mnMZXIrMXBMxvocwUFJAIhcVGsXeEt
+ YXrA7IdOGYhIJuB2x9TfpsAjPtNJ+7sDuPiF1snH12PMPrpJEC8nhTyF7Z6lsw/s+q+W
+ /S7+EGN6KbP6/X2uQ61cLspaMUixcAFBWhG8xFw1Qz2wP08DVToY2cmUEc0KPaUwKfVn
+ NvCGm70UtFS5TfN3SK0B6HFhynmQd/pkamTdYJ5MCCdO5UUAI8b7lHD/ZZjFlWs+5QMI
+ WrNLG7qK9hQClkCHSXnEUiAg1ShiOc8jT/Rzf9XDkJE8My4eIDeX58nJEXhDIJ9J+4o4
+ DIMA==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789496986;
- x=1790101786; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=MS7R2Q188RYu8YNP4RtlhNLtq2xm2dLh1VhpZyA0LCc=;
- b=Zx013Bo6n70XOCUk3+J2pI7aGSfSiaIQmZQwCGfBaUxFcxSUmh9E5XBwkZ/2t5T0vA
- 9RW+Wo3zKJxLMVyOMNLBkw7vT6SXTEAwbtjl11O3AfX+YuZihuJgLRHyXPl4Se7MgjLk
- 1wLE/FM0GyzvPHhPcPeUoAVmvrgpi3f3i9Z9U4sZ+5IF7VUNPO6TKM+0Gc6Z28I7Q2eD
- aYvsYkwYooG8ykECfZgRe/fjAwzTW6FrJ12a5R0r0g+yhVNlSmx+aT8WDLKi/CBksu+g
- tx8ZqBPb9jAF1rmHkcxUyThrEIxoo1Ek5mRD7do50aaWHDttfra2BFfXguTjdA9riYKI
- O1BQ==
+ d=gmail.com; s=20251104; t=1789499441; x=1790104241; darn=dpdk.org;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=nyEj8lgIpwM6luaASJ3i/JYcLn9/Wag8eGdC8MpAfaw=;
+ b=cY5hSy02Du9KcQuELrkzdUFxPeYkqfc5j2VO73IJJWdJf72ms12G6lgweTZ8ucZgMV
+ I3RZg8/n29CwaC4IK5bZrxUqnkh87bxNei7YlNYH+06ZWroQ+h17y4K9qokrqd4gAUZo
+ Cp5vqX78V6n72O3jI8l7tpLI8zJPEklViW8EuRDImKc24sq/i67b/nUDpNgVqhWYqv7R
+ ftpkZ6xwx+aIdx7IqULzgHTVBqvRweOBGb9J1VTxDM5aM0D/CV3upWaAXx93Qrh7OKO1
+ JUz38ZXT07EBz6c1dkT9WY/G1pdYMm6p5L/Nk0iVZqhkwj/F9NOuzQp+7MQwOUQyF0rT
+ jmHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789496986; x=1790101786;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=MS7R2Q188RYu8YNP4RtlhNLtq2xm2dLh1VhpZyA0LCc=;
- b=BCX+yXlLRGfuJZcYjgkYDj1cXe0ZS/9UUo98iysZB7TH3JPmur/CgpOyp3BHD/E+JI
- a386j5wiIimFnU1/Aq4QrJcquaqIo1eMKlnyBQ+ApoF2LVOtbVvjA+IqWPphodITXSpr
- mvadrBgzp214Jt/Vs2KrT6UCKhL8sfhkefyyFdHXi11kTub3Opi2BDLtQ2pWZVH9mt0D
- nlT3UWTD59cCLlaA1MI5JoFMPBxZejGb5a3k/Cc/8VeES/8QbIcjxnnfSCEAV90gfUbE
- VV/ApHYv9XCuXMNd6B8si+K/HhuoMknwikKyRrCFvH14AuCYc85mqS7inVL/e1rsp2MB
- Zptw==
-X-Gm-Message-State: AFuF++lCv8/EVyTSRxUkrcbuVxgBwrqazZI7DE22ZcJU+wz7rpZZP1f7
- YzeyNPpa+2ADim9vnGEXG/9aaqF5D1po5vXwajPOKHgMyfKiW6bTlbpzHXDUuVHkRcY=
-X-Gm-Gg: AYBFou2OpcA22uwhJFfM1jQoisNFp3+PIWm6MDLsDk/ALg4CVian1g0z5jOfg6iAFqW
- BxvnnDoa1/+oLa2yqzrJBMO94GRlJjKS4ePMoPpFOC/e8uk6fDwoGQcIM66xc+urmGwdE6qsXVL
- cG9m4XedrJ8luzJREo107Cawc6VyddCdYVC4d9S/ZLmy1y//0rE2xuQe74jPNTchlkBnMXVCaf0
- 7oKDzmhNGXpxn71TAXop+U8GDzQhYEmSYT7jYFplIVkByiZeX+7vHxb0/NPP5Jc5eRYUQFgT+sn
- C9FTqzWO4L6mE1vRJUxNRNHOjouFSHHdfJR70mSl6kxCcuFG1hTckUDQNdJY+4RlGBZNS1Amblu
- vwywY1+VVi0pIJgt/MOEw5rDa/zbsb/MnThyKWdp0BdFUB8mX/xZPN0Lcnrb6kObLSyBoCD2HHs
- gPcOIAazlWoPbzYRP4aX+ZZvo7bdvxJcxqyKXg8psPri+NhLUstL9HZ0JmkDMTPmo0hlt7ktvQ3
- mX+Lz18JIYXMAFFkt77mA3dgs8SYofzWOWHT1a+wI44sB0HCzUw
-X-Received: by 2002:a05:6a00:181c:b0:868:c090:e5f0 with SMTP id
- d2e1a72fcca58-8717eed005bmr4105755b3a.8.1789496985684; 
- Tue, 15 Sep 2026 11:29:45 -0700 (PDT)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-871febdd0e5sm61331b3a.4.2026.09.15.11.29.43
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 15 Sep 2026 11:29:44 -0700 (PDT)
-Date: Tue, 15 Sep 2026 11:28:46 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Kai Ji <kai.ji@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH] examples: add Wycheproof validation app
-Message-ID: <20260915112846.1aa6cd41@phoenix.local>
-In-Reply-To: <20260915155157.2446094-1-kai.ji@intel.com>
-References: <20260915155157.2446094-1-kai.ji@intel.com>
+ d=1e100.net; s=20260707; t=1789499441; x=1790104241;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=nyEj8lgIpwM6luaASJ3i/JYcLn9/Wag8eGdC8MpAfaw=;
+ b=XTnYhvlgV+0ORDYvAOMrCTmZJAR2V7z/z8fMNl1IFcjOnd7T4Y0yYPh9rBh3B9RNeK
+ psWoi9QjDMxalmYyyXGnXsxukirGL628TMhlvyPy7zg0Bd3uCVZxC4noPQSt8dhHPKL6
+ +vI7Fp4S+u/bHoo7H00wFz3NbvGREXE6yUFdFGapw3G1/NAfwmgeiENCk1oVIapEWWX0
+ WMisPO0/0pOlj/M0IniAhLF/W4yc5x4j4PldqZyqU0U40LOI8SiqkyAgPdFavhUGWnag
+ pITtB/5hzd2BN+LJkDZsj8OmQe0JRj/N3RQjRBUSb7LRkQYWoClu6jcYPQ9eucWDSFu6
+ Sh6A==
+X-Gm-Message-State: AFuF++nF9hTXw75clLWkY6KoU/NH1HzE1NczzpErvNL8Lynsi7s+al/z
+ eFiKJtErV66+o9/RLAydVR94D7PQU03W2UqciJYilL4EMrEFFTH9KsK/JdOSM4aAOed9vvtq6k+
+ mGydwoBBc8UAbuL8WwbdgiOkRPeyoXOB2OfRc
+X-Gm-Gg: AYBFou0aHb3YcTE/5vpsP/TeFsC8MdknQyEfQ0M8ozCp+i4Qlf1YUyyhaNmx4gFG8/K
+ MLzw1mGRQ7RXDpNFOdN9jw8Ja/xkYHWHO5CYTEaDDtTLOd6wEHpkXtPoUr/OJDLFz8Nro1OpsPW
+ F4EMp4fAaPkkR07C4Pq4hyt1d/TADg4ivfNVNSxx7ujrlMRvTkw9JIPTjnb0bXwyUggh03N8xM5
+ EQmVCq6GaoIVV1KN699OmOjRLJOuLFl4ZfTsY65JCrT+LyPBe4B5iOK/8CNHHrWPalvhjMlIlsc
+ MbE+wjqC5hVfAbkGyfa7cBgX/nN0DNkkCAgxyZM6XYctI5m1qlMOCWxD
+X-Received: by 2002:a05:690e:d03:b0:670:f743:6ec2 with SMTP id
+ 956f58d0204a3-6715cba54f3mr954604d50.60.1789499440939; Tue, 15 Sep 2026
+ 12:10:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20260913040800.60274-1-amiyaranjan.mohakud@gmail.com>
+ <20260913070428.66628-1-amiyaranjan.mohakud@gmail.com>
+ <CO1PR18MB4796E0F85799C486CA837DEFBFBA2@CO1PR18MB4796.namprd18.prod.outlook.com>
+In-Reply-To: <CO1PR18MB4796E0F85799C486CA837DEFBFBA2@CO1PR18MB4796.namprd18.prod.outlook.com>
+From: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
+Date: Wed, 16 Sep 2026 00:40:29 +0530
+X-Gm-Features: AcwNN1WbAH7Y1cxcin_31CvqTZdDamAj1OCZ6l9TVBXA56mMyyEmQ9IfVArRKaI
+Message-ID: <CAL+mCpO43LNUa-xzH7_AkSjcyo1Ws2-SdVUhvn6ySQY2_2OhgQ@mail.gmail.com>
+Subject: Re: [EXTERNAL] [PATCH v2] common/cnxk: fix NPA pool RANGE interrupt
+ handling
+To: Ashwin Sekhar T K <asekhar@marvell.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>,
+ Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>, 
+ Jerin Jacob <jerinj@marvell.com>, Sunil Kumar Kori <skori@marvell.com>
+Content-Type: multipart/alternative; boundary="00000000000080c50d065b8a4e0c"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,175 +98,187 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 15 Sep 2026 15:51:57 +0000
-Kai Ji <kai.ji@intel.com> wrote:
+--00000000000080c50d065b8a4e0c
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> Add a Wycheproof JSON vector validation example for cryptodev PMDs.
-> 
-> Support these algorithms when advertised by the selected PMD:
-> - AEAD: AES-GCM, AES-CCM, SM4-GCM, ChaCha20-Poly1305
-> - MAC: AES-CMAC, AES-GMAC, HMAC SHA-1/SHA-2/SHA-3/SM3
-> - Asymmetric: DSA (P1363 verify), ECDSA (P1363 verify),
->   ECDH (ecpoint shared-secret compute)
-> 
-> Validate valid vectors against generated ciphertexts, tags, plaintexts,
-> digests, shared secrets, or signature verification, and require the
-> expected rejection for invalid vectors. Digest inputs for DSA and ECDSA
-> use the symmetric auth path, selecting a separate symmetric-capable
-> device when the target device is asymmetric-only.
-> 
-> Skip parameter combinations outside PMD capability ranges and identify
-> recognized vector families without a compatible DPDK transform. A
-> --debug option lists every failed or skipped vector.
-> 
-> Add Meson and standalone build integration, with usage documentation.
-> 
-> Signed-off-by: Kai Ji <kai.ji@intel.com>
-> ---
+Hi Ashwin
 
-Fable found lots of issues that need addressing.
 
-Review: [PATCH] examples: add Wycheproof validation app
 
-Built with meson -Dwerror=true, gcc 13.3, crypto/openssl. Ran the app
-against Wycheproof v1 vectors (GCM, CCM, GMAC, HMAC, CMAC, DSA) with
-crypto_openssl after fixing the build error below; those pass.
 
-Errors
-------
+*> NPA_POOL_ERR_INT_RANGE fires spuriously between pool creation >
+(ptr_start/ptr_end default to 0/~0) and the actual range install > via
+roc_npa_pool_op_range_set().  >>ERR_INT_RANGE is not supposed to fire
+spuriously. Did you root cause why this is happening ?*
 
-1. Build fails with -Dwerror (test-meson-builds.sh default):
+Yes =E2=80=94 the root cause is NDC staleness. The AQ INIT writes pool cont=
+ext
+(including ptr_start=3D0, ptr_end=3D~0) directly to RAM, bypassing NDC. Whe=
+n
+the MMIO data path (aura_op_free) reads pool context, it goes through NDC
+which can still have stale zeros from a previous init/teardown cycle =E2=80=
+=94
+including ptr_end=3D0. Against that stale range [0, 0], any buffer IOVA
+triggers RANGE.
 
-   main.c:954,957: 'status' may be used uninitialized
-   main.c:1194:    'status' may be used uninitialized
+The NDC sync patch [
+https://patches.dpdk.org/project/dpdk/patch/20260909192323.26886-1-amiyaran=
+jan.mohakud@gmail.com/]
+addresses this root cause by invalidating NDC after AQ INIT. This RANGE
+patch adds defense-in-depth: mask RANGE during the init=E2=86=92range_set w=
+indow
+and re-enable only after the real range is installed.
+I also acknowledge that this fix is no longer required if we force-sync the
+NDC as in
+https://patches.dpdk.org/project/dpdk/patch/20260909192323.26886-1-amiyaran=
+jan.mohakud@gmail.com/.
+We can drop this patch completely.
 
-   process_gmac (decl line 929) and process_dsa_p1363 (line 1194)
-   leave status uninitialized on the -ENOTSUP and non-valid/invalid
-   paths. validate_aead_vector (decl line 740) has a real read: a
-   non-zero ret from run_aead jumps to failed: and line 795 prints
-   status. Initialize to RTE_CRYPTO_OP_STATUS_ERROR in all four
-   places, as process_ecdh_ecpoint and process_ecdsa_p1363 already do.
 
-2. CCM AAD buffer is too small, heap overflow on QAT (line 526):
 
-       aad = rte_zmalloc(NULL, vector->aad_len + 18, 0);
+*> On CN10K this drains the pool > stack and makes the pool
+unusable.>>Didn't quite understand this part. Could you please elaborate.*
 
-   rte_crypto_sym.h (aad_length) requires the 18-byte prefix plus
-   padding so the allocation is a multiple of 16, and says PMDs may
-   write the padding. QAT does: qat_crypto_pmd_gens.h ~1194-1206
-   memsets &aad_data[18 + aad_len] for 16 - (aad_len + 2) % 16 bytes.
-   Every CCM vector with (aad_len + 2) % 16 != 0 (Wycheproof aad
-   lengths 0, 1, 2, 7, 8, 15, 16, 17, ...) writes past the buffer.
-   app/test uses RTE_ALIGN_CEIL(aad_len + 18, 16); do the same.
+Sorry for my poor wordings. on my part. The pool stack does not get drained
+=E2=80=94 it never gets populated.During cnxk_mempool_populate(), each
+roc_npa_aura_op_free()
+call silently drops the buffer (NPA sees stale context with ena=3D0 or
+ptr_end=3D0 via NDC). After populate completes, the pool has 0 available
+buffers despite no error being returned. Subsequent roc_npa_aura_op_alloc()
+returns NULL, causing port start failures.
 
-   The guard on the next line is also wrong:
+All this will be taken care of via NDC sync. So it's safe to drop this
+patch.
 
-       if (aad == NULL && vector->aad_len != 0)
+I initially made this fix and later fixed the NDC sync issue, so somehow, I
+forgot to  mark this patch as dropped.
 
-   The allocation is never zero-size, so a NULL here means the PMD
-   writes B0 and the flags byte through a NULL aad.data. Use
-   if (aad == NULL).
+Thanks
+Amiya
 
-Warnings
---------
 
-3. EC operands passed at JSON width (lines 1548-1551, 1327, 1354):
+On Tue, 15 Sept 2026 at 12:09, Ashwin Sekhar T K <asekhar@marvell.com>
+wrote:
 
-       xform.ec.q.x.length = group->wx_len;
-       xform.ec.pkey.length = priv_len;
+> Hi Amiya,
+>
+> > NPA_POOL_ERR_INT_RANGE fires spuriously between pool creation
+> > (ptr_start/ptr_end default to 0/~0) and the actual range install
+> > via roc_npa_pool_op_range_set().
+> ERR_INT_RANGE is not supposed to fire spuriously. Did you root cause why
+> this is happening ?
+>
+>
+> > On CN10K this drains the pool
+> > stack and makes the pool unusable.
+> Didn't quite understand this part. Could you please elaborate.
+>
+> Thanks
+> Ashwin
+>
+>
+>
 
-   Wycheproof encodes wx, wy and private as signed-style big integers:
-   in ecdsa_secp256r1_sha256_p1363_test.json most groups have a
-   33-byte wx or wy (leading 0x00), some 29 bytes; secp521r1 groups
-   range 62-66; ecdh private lengths are 1, 29, 32, 33. QAT, which the
-   README names for ECDSA/ECDH, packs with SET_PKE_LN/SET_PKE_9A_IN as
-   buf + alignsize - length with no length check
-   (drivers/crypto/qat/asym/qat_asym.c:81-96); a 33-byte value writes
-   its 0x00 one byte before the slot, into the neighbouring operand.
-   Result is wrong verifications, not skips. Normalize to bytesize:
-   strip leading zeros (value_equals_padded already does this), reject
-   anything still longer than bytesize, left-pad into a fixed buffer.
-   DSA p/q/g/y have the same encoding (a 2048-bit p is 257 bytes);
-   only crypto_openssl implements DSA today so it is tolerated there.
+--00000000000080c50d065b8a4e0c
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-4. IV copied into the op with no bound (lines 533, 538, 711):
+<div dir=3D"ltr"><div><div style=3D"font-family:trebuchet ms,sans-serif;col=
+or:rgb(103,78,167)" class=3D"gmail_default">Hi Ashwin</div><div style=3D"fo=
+nt-family:trebuchet ms,sans-serif;color:rgb(103,78,167)" class=3D"gmail_def=
+ault"><br></div><div style=3D"font-family:trebuchet ms,sans-serif;color:rgb=
+(103,78,167)" class=3D"gmail_default"><i><span class=3D"gmail-im" style=3D"=
+color:rgb(0,0,0);background-color:rgb(238,238,238)">&gt; NPA_POOL_ERR_INT_R=
+ANGE fires spuriously between <span class=3D"gmail-il">pool</span> creation=
+<br>
+&gt; (ptr_start/ptr_end default to 0/~0) and the actual <span class=3D"gmai=
+l-il">range</span> install<br>
+&gt; via roc_npa_pool_op_range_set().=C2=A0 <br></span><span style=3D"color=
+:rgb(0,0,0);background-color:rgb(238,238,238)">&gt;&gt;ERR_INT_RANGE is not=
+ supposed to fire spuriously. Did you root cause why this is happening ?</s=
+pan></i></div><div style=3D"font-family:trebuchet ms,sans-serif;color:rgb(1=
+03,78,167)" class=3D"gmail_default"><br></div><div style=3D"font-family:tre=
+buchet ms,sans-serif;color:rgb(103,78,167)" class=3D"gmail_default">Yes =E2=
+=80=94 the root cause is NDC staleness. The AQ INIT writes pool context (in=
+cluding ptr_start=3D0, ptr_end=3D~0) directly to RAM, bypassing NDC. When t=
+he MMIO data path (aura_op_free) reads pool context, it goes through NDC wh=
+ich can still have stale zeros from a previous init/teardown cycle =E2=80=
+=94 including ptr_end=3D0. Against that stale range [0, 0], any buffer IOVA=
+ triggers RANGE.<br><br></div><div style=3D"font-family:trebuchet ms,sans-s=
+erif;color:rgb(103,78,167)" class=3D"gmail_default">The NDC sync patch [<a =
+href=3D"https://patches.dpdk.org/project/dpdk/patch/20260909192323.26886-1-=
+amiyaranjan.mohakud@gmail.com/">https://patches.dpdk.org/project/dpdk/patch=
+/20260909192323.26886-1-amiyaranjan.mohakud@gmail.com/</a>] addresses this =
+root cause by invalidating NDC after AQ INIT. This RANGE patch adds defense=
+-in-depth: mask RANGE during the init=E2=86=92range_set window and re-enabl=
+e only after the real range is installed.=C2=A0</div><div style=3D"font-fam=
+ily:trebuchet ms,sans-serif;color:rgb(103,78,167)" class=3D"gmail_default">=
+I also acknowledge that this fix is no longer required if we force-sync the=
+ NDC as in=C2=A0<a href=3D"https://patches.dpdk.org/project/dpdk/patch/2026=
+0909192323.26886-1-amiyaranjan.mohakud@gmail.com/">https://patches.dpdk.org=
+/project/dpdk/patch/20260909192323.26886-1-amiyaranjan.mohakud@gmail.com/</=
+a>. We can drop this patch completely.</div><div style=3D"font-family:trebu=
+chet ms,sans-serif;color:rgb(103,78,167)" class=3D"gmail_default"><br></div=
+><span style=3D"background-color:rgb(238,238,238)"><i><span class=3D"gmail-=
+im" style=3D"color:rgb(0,0,0);font-family:trebuchet ms,sans-serif">&gt; On =
+CN10K this drains the <span class=3D"gmail-il">pool</span><br>
+&gt; stack and makes the <span class=3D"gmail-il">pool</span> unusable.<br>=
+</span><span style=3D"color:rgb(0,0,0);font-family:trebuchet ms,sans-serif"=
+><span class=3D"gmail_default">&gt;&gt;</span></span><span style=3D"color:r=
+gb(0,0,0);font-family:trebuchet ms,sans-serif">Didn&#39;t quite understand =
+this part. Could you please elaborate.</span></i></span></div><div><br></di=
+v><div><span style=3D"color:rgb(103,78,167);font-family:trebuchet ms,sans-s=
+erif"><span class=3D"gmail_default">Sorry for my p</span>oor wording<span c=
+lass=3D"gmail_default">s.</span> on my part. The pool stack does not get dr=
+ained =E2=80=94 it<span class=3D"gmail_default" style=3D"font-family:trebuc=
+het ms,sans-serif;color:rgb(103,78,167)">=C2=A0</span>never gets populated.=
+<span class=3D"gmail_default" style=3D"font-family:trebuchet ms,sans-serif;=
+color:rgb(103,78,167)"></span>During cnxk_mempool_populate(), each<span cla=
+ss=3D"gmail_default" style=3D"font-family:trebuchet ms,sans-serif;color:rgb=
+(103,78,167)">=C2=A0</span>roc_npa_aura_op_free() call silently drops the b=
+uffer (NPA sees<span class=3D"gmail_default" style=3D"font-family:trebuchet=
+ ms,sans-serif;color:rgb(103,78,167)">=C2=A0</span>stale context with ena=
+=3D0 or ptr_end=3D0 via NDC). After populate<span class=3D"gmail_default" s=
+tyle=3D"font-family:trebuchet ms,sans-serif;color:rgb(103,78,167)">=C2=A0</=
+span>completes, the pool has 0 available buffers despite no error being<spa=
+n class=3D"gmail_default" style=3D"font-family:trebuchet ms,sans-serif;colo=
+r:rgb(103,78,167)">=C2=A0</span><span class=3D"gmail_default" style=3D"font=
+-family:trebuchet ms,sans-serif;color:rgb(103,78,167)">r</span>eturned. Sub=
+sequent roc_npa_aura_op_alloc() returns NULL, causing<span class=3D"gmail_d=
+efault" style=3D"font-family:trebuchet ms,sans-serif;color:rgb(103,78,167)"=
+>=C2=A0</span>port start failures.</span></div><div><br></div><div><div sty=
+le=3D"font-family:trebuchet ms,sans-serif;color:rgb(103,78,167)" class=3D"g=
+mail_default">All this will be taken care of via NDC sync. So it&#39;s safe=
+ to drop this patch.</div><br></div><div><div style=3D"font-family:trebuche=
+t ms,sans-serif;color:rgb(103,78,167)" class=3D"gmail_default">I initially =
+made this fix and later fixed the NDC sync issue, so somehow, I forgot to=
+=C2=A0 mark=C2=A0this patch as dropped.</div><br></div><div><div dir=3D"ltr=
+" class=3D"gmail_signature" data-smartmail=3D"gmail_signature"><div dir=3D"=
+ltr"><div><span style=3D"font-family:verdana,sans-serif">Thanks</span></div=
+><div><span style=3D"font-family:verdana,sans-serif">Amiya</span><br></div>=
+</div></div></div><br></div><br><div class=3D"gmail_quote gmail_quote_conta=
+iner"><div dir=3D"ltr" class=3D"gmail_attr">On Tue, 15 Sept 2026 at 12:09, =
+Ashwin Sekhar T K &lt;<a href=3D"mailto:asekhar@marvell.com">asekhar@marvel=
+l.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"ma=
+rgin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:=
+1ex">Hi Amiya,<br>
+<br>
+&gt; NPA_POOL_ERR_INT_RANGE fires spuriously between pool creation<br>
+&gt; (ptr_start/ptr_end default to 0/~0) and the actual range install<br>
+&gt; via roc_npa_pool_op_range_set().=C2=A0 <br>
+ERR_INT_RANGE is not supposed to fire spuriously. Did you root cause why th=
+is is happening ?<br>
+<br>
+<br>
+&gt; On CN10K this drains the pool<br>
+&gt; stack and makes the pool unusable.<br>
+Didn&#39;t quite understand this part. Could you please elaborate.<br>
+<br>
+Thanks<br>
+Ashwin<br>
+<br>
+<br>
+</blockquote></div>
 
-       memcpy(rte_crypto_op_ctod_offset(op, uint8_t *, IV_OFFSET),
-              vector->iv, vector->iv_len);
-
-   The only guard is the PMD's advertised iv_size range. mvsam
-   advertises AES-GMAC iv_size max 65532 (rte_mrvl_pmd_ops.c:371);
-   aes_gcm_test.json and aes_ccm_test.json carry 257 and 268-byte
-   IVs. The room after IV_OFFSET is 152 bytes, and only because
-   priv_size at line 210 is IV_OFFSET + 64: priv_size is already
-   relative to the end of the sym op (rte_crypto_op_pool_create adds
-   sizeof(op) + sizeof(sym_op)), so IV_OFFSET is counted twice.
-   Define an IV maximum, use it as priv_size, and skip vectors whose
-   iv_len (+1 for CCM) exceeds it.
-
-5. mbuf pool sizing (line 181):
-
-       sizeof(struct rte_mbuf) + RTE_PKTMBUF_HEADROOM +
-       env.mbuf_data_room
-
-   data_room_size already excludes the mbuf struct; this wastes 128
-   bytes per mbuf. The parameter is uint16_t and --mbuf-dataroom is
-   only checked for != 0, so large values truncate silently and
-   values below RTE_PKTMBUF_HEADROOM wrap the check at line 754
-   (env.mbuf_data_room - RTE_PKTMBUF_HEADROOM). Drop the sizeof and
-   range-check the option.
-
-6. PMD failures on valid vectors counted as skips (lines 1473-1476):
-
-       } else {
-           stats->skipped_capability++;
-           debug_vector("SKIP", name, &vector, "PMD could not compute");
-
-   A valid ECDH vector where the op returns an error exits 0.
-   run_ecdh_ecpoint and run_ecdsa_verify also turn asym session
-   create failure into -ENOTSUP (lines 1341, 1556) while
-   run_dsa_verify returns -ENOMEM and fails the vector. Capability
-   skips should come only from the capability query; anything the
-   PMD rejects after that is a failure for a validation tool.
-
-7. Documentation and MAINTAINERS. Examples are documented in
-   doc/guides/sample_app_ug/<name>.rst and listed in index.rst (see
-   fips_validation); README.md is not the convention (only
-   examples/bpf/README exists). Add the rst and a MAINTAINERS entry
-   with F: examples/wycheproof_validation/ and the rst, as
-   fips_validation has.
-
-8. Makefile has no trailing newline (checkpatch warns).
-
-Info
-----
-
-9. process_file is a 20-arm strcmp chain re-testing algorithm and
-   schema in every arm. A static table {algorithm, schema, kind,
-   algo id} and a loop replaces it.
-
-10. decode_hex uses rte_malloc for every field. Only the AAD (the
-    GCM/ChaCha path hands vector->aad to the PMD directly) and the
-    digest buffers need IOVA memory; keys, messages, signatures and
-    DSA/EC parameters are copied by the library or PMD. If the AAD is
-    always copied into a 16-byte-padded rte_malloc buffer (fix 2
-    does this for CCM), decode_hex can use plain malloc.
-
-11. Every dequeue loop (549, 637, 717, 1064, 1143, 1363, 1574) spins
-    forever if the PMD never returns the op. A bounded wait that
-    fails the vector is better for a tool meant to run on hardware.
-
-12. Symbols used without a direct include: bool (<stdbool.h>),
-    PRIu64 (<inttypes.h>), strtoul/EXIT_* (<stdlib.h>), PATH_MAX
-    (<limits.h>). All come in transitively today.
-
-13. Placement: this is a conformance tool with an exit-code contract,
-    not a sample showing API use. app/ next to dpdk-test-crypto-perf
-    is the more natural home.
-
-14. Pre-existing, not introduced by this patch: QAT SET_PKE_LN and
-    SET_PKE_9A_IN (qat_asym.c:81-96) never check length <= alignsize,
-    so an oversize rte_crypto_uint writes before its slot. Worth a
-    separate fix in the PMD.
-
-Review-Result: ERROR
+--00000000000080c50d065b8a4e0c--
