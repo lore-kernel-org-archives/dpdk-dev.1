@@ -2,32 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5792AC88E7B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 11:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 927DFC88E7F
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 11:34:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 433D642799;
-	Tue, 15 Sep 2026 13:34:34 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3EEF64279E;
+	Tue, 15 Sep 2026 13:34:35 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 905884278C
- for <dev@dpdk.org>; Tue, 15 Sep 2026 13:34:31 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id C79EF42791
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 13:34:32 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7450B1A0038;
- Tue, 15 Sep 2026 13:34:31 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A94D71A0044;
+ Tue, 15 Sep 2026 13:34:32 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3A7851A002A;
- Tue, 15 Sep 2026 13:34:31 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6F9531A0038;
+ Tue, 15 Sep 2026 13:34:32 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id D1BA51800068;
- Tue, 15 Sep 2026 19:34:29 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id E283E18000BE;
+ Tue, 15 Sep 2026 19:34:30 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
-Cc: Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v3-S1 4/5] dma/dpaa2: validate IOVA in pre-populate helpers
-Date: Tue, 15 Sep 2026 17:04:21 +0530
-Message-ID: <20260915113422.4166287-5-prashant.gupta_3@nxp.com>
+Cc: Jun Yang <jun.yang@nxp.com>,
+	Hemant Agrawal <hemant.agrawal@nxp.com>
+Subject: [PATCH v3-S1 5/5] mempool/dpaa2: support ops index from primary in
+ secondary
+Date: Tue, 15 Sep 2026 17:04:22 +0530
+Message-ID: <20260915113422.4166287-6-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260915113422.4166287-1-prashant.gupta_3@nxp.com>
 References: <20260915113422.4166287-1-prashant.gupta_3@nxp.com>
@@ -47,142 +49,160 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Gagandeep Singh <g.singh@nxp.com>
+From: Jun Yang <jun.yang@nxp.com>
 
-fle_sdd_pre_populate() and fle_sdd_sg_pre_populate() converted the SDD
-and SG entry virtual addresses to IOVA with DPAA2_VADDR_TO_IOVA(), which
-does not verify that the range is actually mapped in the IOMMU/SMMU. An
-unmapped buffer was silently programmed into the hardware descriptor,
-leading to an SMMU translation fault at transfer time that is hard to
-trace back to the missing mapping.
+Secondary processes call rte_dpaa2_mpool_get_ops_idx() but the ops
+index is registered only in the primary process. The secondary had no
+way to learn the index, causing it to use the initial sentinel value
+RTE_MEMPOOL_MAX_OPS_IDX and return an error.
 
-Use DPAA2_VADDR_TO_IOVA_AND_CHECK() for the SDD, source SG and
-destination SG buffers and report the offending address and size when
-the translation is missing, so the misconfiguration is caught early and
-clearly. Both helpers now return an error code which is propagated to
-the caller instead of continuing with an invalid descriptor.
+Register an IPC action handler in the primary during pool creation.
+Secondary processes send DPAA2_POOL_OPS_IDX_REQ over the
+dpaa2_pool_mp_sync channel and receive the ops index back.
 
-Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
+Also handle the case where rte_mp_action_register returns ENOTSUP
+(e.g. no secondary process support enabled at build time) by
+treating it as non-fatal, and improve the error message in
+rte_hw_mbuf_free_pool to include the pool name.
+
+Signed-off-by: Jun Yang <jun.yang@nxp.com>
+Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/dma/dpaa2/dpaa2_qdma.c | 58 ++++++++++++++++++++++++++++------
- 1 file changed, 49 insertions(+), 9 deletions(-)
+ drivers/mempool/dpaa2/dpaa2_hw_mempool.c | 95 +++++++++++++++++++++++-
+ 1 file changed, 92 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/dma/dpaa2/dpaa2_qdma.c b/drivers/dma/dpaa2/dpaa2_qdma.c
-index 6881ab1420..401ab56f39 100644
---- a/drivers/dma/dpaa2/dpaa2_qdma.c
-+++ b/drivers/dma/dpaa2/dpaa2_qdma.c
-@@ -183,14 +183,23 @@ dpaa2_qdma_multi_eq(struct qdma_virt_queue *qdma_vq)
- 	return num_tx;
- }
+diff --git a/drivers/mempool/dpaa2/dpaa2_hw_mempool.c b/drivers/mempool/dpaa2/dpaa2_hw_mempool.c
+index ee001d8ce0..64af3abef6 100644
+--- a/drivers/mempool/dpaa2/dpaa2_hw_mempool.c
++++ b/drivers/mempool/dpaa2/dpaa2_hw_mempool.c
+@@ -34,16 +34,95 @@
  
--static void
+ #include <dpaax_iova_table.h>
+ 
++#define DPAA2_POOL_MP_SYNC "dpaa2_pool_mp_sync"
++#define DPAA2_POOL_OPS_IDX_REQ 0x100
++#define DPAA2_POOL_OPS_IDX_RSP 0x101
++
++static int s_dpaa2_pool_mp_msg_setup;
++
++struct dpaa2_pool_mp_msg {
++	uint16_t msg_type;
++	uint8_t msg_data[];
++};
++
+ RTE_EXPORT_INTERNAL_SYMBOL(rte_dpaa2_bpid_info)
+ struct dpaa2_bp_info *rte_dpaa2_bpid_info;
+ static struct dpaa2_bp_list *h_bp_list;
+ 
+ static int16_t s_dpaa2_pool_ops_idx = RTE_MEMPOOL_MAX_OPS_IDX;
+ 
 +static int
- fle_sdd_pre_populate(struct qdma_cntx_fle_sdd *fle_sdd,
- 	struct dpaa2_qdma_rbp *rbp, uint64_t src, uint64_t dest,
- 	uint32_t fmt)
- {
- 	struct qbman_fle *fle = fle_sdd->fle;
- 	struct qdma_sdd *sdd = fle_sdd->sdd;
--	uint64_t sdd_iova = DPAA2_VADDR_TO_IOVA(sdd);
-+	uint64_t sdd_iova, iova_size;
++dpaa2_mbuf_pool_mp_primary(const struct rte_mp_msg *msg,
++	const void *peer)
++{
++	struct rte_mp_msg reply;
++	const struct dpaa2_pool_mp_msg *req_msg = (const void *)msg->param;
++	struct dpaa2_pool_mp_msg *rsp_msg = (void *)reply.param;
 +
-+	iova_size = sizeof(struct qdma_sdd) * DPAA2_QDMA_MAX_SDD;
-+	sdd_iova = DPAA2_VADDR_TO_IOVA_AND_CHECK(sdd, iova_size);
-+	if (sdd_iova == RTE_BAD_IOVA) {
-+		DPAA2_QDMA_ERR("No IOMMU map for sdd(%p)(size=%" PRIx64 ")",
-+			sdd, iova_size);
++	memset(&reply, 0, sizeof(reply));
 +
-+		return -ENOMEM;
++	switch (req_msg->msg_type) {
++	case DPAA2_POOL_OPS_IDX_REQ:
++		rsp_msg->msg_type = DPAA2_POOL_OPS_IDX_RSP;
++		memcpy(rsp_msg->msg_data, &s_dpaa2_pool_ops_idx,
++			sizeof(s_dpaa2_pool_ops_idx));
++		reply.len_param = sizeof(struct dpaa2_pool_mp_msg) +
++			sizeof(s_dpaa2_pool_ops_idx);
++		break;
++	default:
++		DPAA2_MEMPOOL_ERR("%s received invalid request(%d)",
++			__func__, req_msg->msg_type);
++		return -ENOTSUP;
 +	}
- 
- 	/* first frame list to source descriptor */
- 	DPAA2_SET_FLE_ADDR(&fle[DPAA2_QDMA_SDD_FLE], sdd_iova);
-@@ -259,6 +268,8 @@ fle_sdd_pre_populate(struct qdma_cntx_fle_sdd *fle_sdd,
- 
- 	/* Final bit: 1, for last frame list */
- 	DPAA2_SET_FLE_FIN(&fle[DPAA2_QDMA_DST_FLE]);
 +
-+	return 0;
++	strlcpy(reply.name, DPAA2_POOL_MP_SYNC, sizeof(reply.name));
++	return rte_mp_reply(&reply, peer);
++}
++
+ RTE_EXPORT_INTERNAL_SYMBOL(rte_dpaa2_mpool_get_ops_idx)
+ int rte_dpaa2_mpool_get_ops_idx(void)
+ {
+-	return s_dpaa2_pool_ops_idx;
++	struct rte_mp_msg mp_req;
++	struct rte_mp_reply mp_reply;
++	struct timespec ts = {.tv_sec = 5, .tv_nsec = 0};
++	int ret = 0;
++	struct dpaa2_pool_mp_msg *req_msg = (void *)mp_req.param;
++	struct dpaa2_pool_mp_msg *rsp_msg;
++
++	if (rte_eal_process_type() == RTE_PROC_PRIMARY ||
++		s_dpaa2_pool_ops_idx != RTE_MEMPOOL_MAX_OPS_IDX)
++		return s_dpaa2_pool_ops_idx;
++
++	memset(&mp_req, 0, sizeof(mp_req));
++	strlcpy(mp_req.name, DPAA2_POOL_MP_SYNC, sizeof(mp_req.name));
++	mp_req.len_param = sizeof(struct dpaa2_pool_mp_msg) +
++		sizeof(s_dpaa2_pool_ops_idx);
++	req_msg->msg_type = DPAA2_POOL_OPS_IDX_REQ;
++	memset(&mp_reply, 0, sizeof(struct rte_mp_reply));
++	ret = rte_mp_request_sync(&mp_req, &mp_reply, &ts);
++	if (ret) {
++		DPAA2_MEMPOOL_ERR("%s Failed to get response(%d)",
++			__func__, ret);
++		return ret;
++	}
++	if (!mp_reply.msgs) {
++		DPAA2_MEMPOOL_ERR("%s Failed to get response message",
++			__func__);
++		return -EINVAL;
++	}
++	rsp_msg = (void *)mp_reply.msgs;
++	if (rsp_msg->msg_type == DPAA2_POOL_OPS_IDX_RSP) {
++		memcpy(&s_dpaa2_pool_ops_idx, rsp_msg->msg_data,
++			sizeof(s_dpaa2_pool_ops_idx));
++		ret = 0;
++	} else {
++		DPAA2_MEMPOOL_ERR("%s received invalid response(%d)",
++			__func__, rsp_msg->msg_type);
++		ret = -EINVAL;
++	}
++	free(mp_reply.msgs);
++
++	return ret ? ret : s_dpaa2_pool_ops_idx;
  }
  
- static void
-@@ -286,22 +297,39 @@ sg_entry_pre_populate(struct qdma_cntx_sg *sg_cntx)
+ static int
+@@ -128,10 +207,20 @@ rte_hw_mbuf_create_pool(struct rte_mempool *mp)
+ 	if (s_dpaa2_pool_ops_idx == RTE_MEMPOOL_MAX_OPS_IDX) {
+ 		s_dpaa2_pool_ops_idx = mp->ops_index;
+ 	} else if (s_dpaa2_pool_ops_idx != mp->ops_index) {
+-		DPAA2_MEMPOOL_ERR("Only single ops index only");
++		DPAA2_MEMPOOL_ERR("Single ops index only");
+ 		ret = -EINVAL;
+ 		goto err4;
  	}
- }
- 
--static void
-+static int
- fle_sdd_sg_pre_populate(struct qdma_cntx_sg *sg_cntx,
- 	struct qdma_virt_queue *qdma_vq)
- {
- 	struct qdma_sg_entry *src_sge = sg_cntx->sg_src_entry;
- 	struct qdma_sg_entry *dst_sge = sg_cntx->sg_dst_entry;
--	rte_iova_t src_sge_iova, dst_sge_iova;
-+	rte_iova_t src_sge_iova, dst_sge_iova, iova_size;
- 	struct dpaa2_qdma_rbp *rbp = &qdma_vq->rbp;
- 
- 	memset(sg_cntx, 0, sizeof(struct qdma_cntx_sg));
- 
--	src_sge_iova = DPAA2_VADDR_TO_IOVA(src_sge);
--	dst_sge_iova = DPAA2_VADDR_TO_IOVA(dst_sge);
-+	iova_size = RTE_DPAAX_QDMA_JOB_SUBMIT_MAX *
-+		sizeof(struct qdma_sg_entry);
-+
-+	src_sge_iova = DPAA2_VADDR_TO_IOVA_AND_CHECK(src_sge, iova_size);
-+	if (src_sge_iova == RTE_BAD_IOVA) {
-+		DPAA2_QDMA_ERR("No IOMMU map for src_sge(%p)(size=%" PRIx64 ")",
-+			src_sge, iova_size);
-+
-+		return -ENOMEM;
-+	}
-+
-+	dst_sge_iova = DPAA2_VADDR_TO_IOVA_AND_CHECK(dst_sge, iova_size);
-+	if (dst_sge_iova == RTE_BAD_IOVA) {
-+		DPAA2_QDMA_ERR("No IOMMU map for dst_sge(%p)(size=%" PRIx64 ")",
-+			dst_sge, iova_size);
-+
-+		return -ENOMEM;
++	if (rte_eal_process_type() == RTE_PROC_PRIMARY &&
++		!s_dpaa2_pool_mp_msg_setup) {
++		ret = rte_mp_action_register(DPAA2_POOL_MP_SYNC,
++			dpaa2_mbuf_pool_mp_primary);
++		if (ret && rte_errno != ENOTSUP) {
++			ret = -rte_errno;
++			goto err4;
++		}
++		s_dpaa2_pool_mp_msg_setup = 1;
 +	}
  
- 	sg_entry_pre_populate(sg_cntx);
--	fle_sdd_pre_populate(&sg_cntx->fle_sdd,
-+
-+	return fle_sdd_pre_populate(&sg_cntx->fle_sdd,
- 		rbp, src_sge_iova, dst_sge_iova,
- 		QBMAN_FLE_WORD4_FMT_SGE);
- }
-@@ -672,7 +700,13 @@ dpaa2_qdma_copy_sg(void *dev_private,
+ 	bp_list->next = h_bp_list;
+ 	bp_list->mp = mp;
+@@ -172,7 +261,7 @@ rte_hw_mbuf_free_pool(struct rte_mempool *mp)
+ 	struct dpaa2_dpbp_dev *dpbp_node;
  
- 	if (qdma_vq->fle_pre_populate) {
- 		if (unlikely(!fle[DPAA2_QDMA_SRC_FLE].length)) {
--			fle_sdd_sg_pre_populate(cntx_sg, qdma_vq);
-+			ret = fle_sdd_sg_pre_populate(cntx_sg, qdma_vq);
-+			if (ret) {
-+				if (!qdma_dev->is_silent)
-+					rte_mempool_put(qdma_vq->fle_pool,
-+						cntx_sg);
-+				return ret;
-+			}
- 			if (!qdma_dev->is_silent && cntx_sg && idx_addr) {
- 				for (i = 0; i < nb_src; i++)
- 					cntx_sg->cntx_idx[i] = idx_addr[i];
-@@ -874,9 +908,15 @@ dpaa2_qdma_long_copy(struct qdma_virt_queue *qdma_vq,
+ 	if (!mp->pool_data) {
+-		DPAA2_MEMPOOL_ERR("Not a valid dpaa2 buffer pool");
++		DPAA2_MEMPOOL_ERR("Not a valid dpaa2 buffer pool %s", mp->name);
+ 		return;
+ 	}
  
- 	if (qdma_vq->fle_pre_populate) {
- 		if (unlikely(!fle[DPAA2_QDMA_SRC_FLE].length)) {
--			fle_sdd_pre_populate(fle_sdd,
-+			ret = fle_sdd_pre_populate(fle_sdd,
- 				&qdma_vq->rbp,
- 				0, 0, QBMAN_FLE_WORD4_FMT_SBF);
-+			if (ret) {
-+				if (!is_silent)
-+					rte_mempool_put(qdma_vq->fle_pool,
-+						fle_sdd);
-+				return ret;
-+			}
- 		}
- 
- 		fle_post_populate(fle, src, dst, length);
 -- 
 2.43.0
 
