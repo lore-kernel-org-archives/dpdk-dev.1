@@ -2,33 +2,32 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83FE6C88E53
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 11:35:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBBBFC88E7F
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 11:35:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E0AFE42DBB;
-	Tue, 15 Sep 2026 13:35:15 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C095742DC1;
+	Tue, 15 Sep 2026 13:35:20 +0200 (CEST)
 Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
- by mails.dpdk.org (Postfix) with ESMTP id C167F427B1
- for <dev@dpdk.org>; Tue, 15 Sep 2026 13:35:10 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id DA0B34278B
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 13:35:11 +0200 (CEST)
 Received: from inva021.nxp.com (localhost [127.0.0.1])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A55CA20005A;
- Tue, 15 Sep 2026 13:35:10 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B8C40200004;
+ Tue, 15 Sep 2026 13:35:11 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6E1D5200047;
- Tue, 15 Sep 2026 13:35:10 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7FC3F200032;
+ Tue, 15 Sep 2026 13:35:11 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 0FC9E1800068;
- Tue, 15 Sep 2026 19:35:08 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 2148218000BE;
+ Tue, 15 Sep 2026 19:35:09 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
-Cc: Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH v3-S2 08/13] net/dpaa2: identify Rx mbuf hash information by
- FLC
-Date: Tue, 15 Sep 2026 17:04:54 +0530
-Message-ID: <20260915113459.4166621-9-prashant.gupta_3@nxp.com>
+Cc: Hemant Agrawal <hemant.agrawal@nxp.com>
+Subject: [PATCH v3-S2 09/13] net/dpaa2: add minimum key size support
+Date: Tue, 15 Sep 2026 17:04:55 +0530
+Message-ID: <20260915113459.4166621-10-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260915113459.4166621-1-prashant.gupta_3@nxp.com>
 References: <20260910135158.2181141-48-prashant.gupta_3@nxp.com>
@@ -49,151 +48,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Gagandeep Singh <g.singh@nxp.com>
+From: Hemant Agrawal <hemant.agrawal@nxp.com>
 
-For default RSS distribution, mbuf is marked with RTE_MBUF_F_RX_RSS_HASH
-and the hash value from the high word of FLC.
+The default size for a QoS key is 24 bytes. If the key size is
+smaller than the maximum, use the default (minimum) key size
+instead of always returning the maximum size (56 bytes). This
+allows smaller flow tables to be used when the extracted key
+fits within the default size.
 
-Configure the flow steering action with FLC enabled to align the stashing
-setting with the RSS configuration. The TC ID and flow ID are packed into
-the FLC for mbuf Rx scheduling. An Rx mbuf received from the FS table is
-marked with RTE_MBUF_F_RX_FDIR along with the TC and flow ID decoded from
-the FLC low word.
-
-Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
+Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/net/dpaa2/dpaa2_ethdev.h | 12 +++++++++
- drivers/net/dpaa2/dpaa2_flow.c   | 42 ++++++++++++++++++++++++++++++++
- drivers/net/dpaa2/dpaa2_rxtx.c   | 18 ++++++++++++--
- 3 files changed, 70 insertions(+), 2 deletions(-)
+ drivers/net/dpaa2/dpaa2_flow.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/dpaa2/dpaa2_ethdev.h b/drivers/net/dpaa2/dpaa2_ethdev.h
-index 58a47cd1a2..76a04c5858 100644
---- a/drivers/net/dpaa2/dpaa2_ethdev.h
-+++ b/drivers/net/dpaa2/dpaa2_ethdev.h
-@@ -282,6 +282,18 @@ enum dpaa2_ecpri_fafe_type {
- /* ECPRI shares SP context with VXLAN*/
- #define DPAA2_ECPRI_MSG_OFFSET DPAA2_VXLAN_VNI_OFFSET
- 
-+#define DPAA2_FS_FLC_FS_MARK_OFFSET \
-+	(DPAA2_FLC_DATA_STASHING + DPAA2_FLC_STASHING_MAX_BIT_SIZE)
-+
-+#define DPAA2_FS_FLC_TC_OFFSET \
-+	(DPAA2_FS_FLC_FS_MARK_OFFSET + DPAA2_FLC_STASHING_MAX_BIT_SIZE)
-+
-+#define DPAA2_FS_FLC_TC_BIT_SIZE (sizeof(uint8_t) * 8)
-+#define DPAA2_FS_FLC_TC_MASK ((1 << DPAA2_FS_FLC_TC_BIT_SIZE) - 1)
-+
-+#define DPAA2_FS_FLC_FLOW_OFFSET \
-+	(DPAA2_FS_FLC_TC_OFFSET + DPAA2_FS_FLC_TC_BIT_SIZE)
-+
- #define DPAA2_ECPRI_MAX_EXTRACT_NB 8
- 
- struct ipv4_sd_addr_extract_rule {
 diff --git a/drivers/net/dpaa2/dpaa2_flow.c b/drivers/net/dpaa2/dpaa2_flow.c
-index 2e844121a8..45660df31a 100644
+index 45660df31a..2662c358e4 100644
 --- a/drivers/net/dpaa2/dpaa2_flow.c
 +++ b/drivers/net/dpaa2/dpaa2_flow.c
-@@ -4383,6 +4383,13 @@ dpaa2_flow_verify_action(struct dpaa2_dev_priv *priv,
- 		switch (actions[j].type) {
- 		case RTE_FLOW_ACTION_TYPE_QUEUE:
- 			dest_queue = actions[j].conf;
-+			if (dest_queue->index >= MAX_RX_QUEUES ||
-+				!priv->rx_vq[dest_queue->index]) {
-+				DPAA2_PMD_ERR("Invalid FSQ index(%d)",
-+					dest_queue->index);
-+
-+				return -EINVAL;
-+			}
- 			rxq = priv->rx_vq[dest_queue->index];
- 			if (attr->group != rxq->tc_index) {
- 				DPAA2_PMD_ERR("FSQ(%d.%d) not in TC[%d]",
-@@ -4445,6 +4452,7 @@ dpaa2_configure_flow_fs_action(struct dpaa2_dev_priv *priv,
- 	struct dpaa2_dev_priv *dest_priv;
- 	const struct rte_flow_action_queue *dest_queue;
- 	struct dpaa2_queue *dest_q;
-+	uint64_t flc = 0;
+@@ -26,8 +26,11 @@
+ static char *dpaa2_flow_control_log;
+ static int dpaa2_sp_loaded = -1;
  
- 	memset(&flow->fs_action_cfg, 0,
- 		sizeof(struct dpni_fs_action_cfg));
-@@ -4452,7 +4460,41 @@ dpaa2_configure_flow_fs_action(struct dpaa2_dev_priv *priv,
++/* Default size of a key */
++#define DPNI_DEFAULT_KEY_SIZE 24
++
+ enum dpaa2_flow_entry_size {
+-	DPAA2_FLOW_ENTRY_MIN_SIZE = (DPNI_MAX_KEY_SIZE / 2),
++	DPAA2_FLOW_ENTRY_MIN_SIZE = DPNI_DEFAULT_KEY_SIZE,
+ 	DPAA2_FLOW_ENTRY_MAX_SIZE = DPNI_MAX_KEY_SIZE
+ };
  
- 	if (flow->action_type == RTE_FLOW_ACTION_TYPE_QUEUE) {
- 		dest_queue = rte_action->conf;
-+		if (dest_queue->index >= MAX_RX_QUEUES ||
-+			!priv->rx_vq[dest_queue->index]) {
-+			DPAA2_PMD_ERR("Invalid FSQ index(%d)",
-+				dest_queue->index);
-+
-+			return -EINVAL;
-+		}
- 		dest_q = priv->rx_vq[dest_queue->index];
-+		if (flow->tc_id != dest_q->tc_index) {
-+			DPAA2_PMD_ERR("RXQ[%d](%d.%d) not in TC[%d]",
-+				dest_queue->index,
-+				dest_q->tc_index, dest_q->flow_id,
-+				flow->tc_id);
-+
-+			return -EINVAL;
-+		}
-+		flow->fs_action_cfg.options =
-+			DPNI_FS_OPT_SET_FLC | DPNI_FS_OPT_SET_STASH_CONTROL;
-+
-+		if (dest_q->data_stashing_off) {
-+			dpaa2_flc_stashing_set(DPAA2_FLC_DATA_STASHING,
-+				0, &flc);
-+		} else {
-+			dpaa2_flc_stashing_set(DPAA2_FLC_DATA_STASHING,
-+				1, &flc);
-+		}
-+		if ((dpaa2_svr_family & 0xffff0000) != SVR_LX2160A) {
-+			dpaa2_flc_stashing_set(DPAA2_FLC_ANNO_STASHING,
-+				1, &flc);
-+		}
-+
-+		flc |= ((uint64_t)1) << DPAA2_FS_FLC_FS_MARK_OFFSET;
-+		flc |= ((uint64_t)dest_q->tc_index) << DPAA2_FS_FLC_TC_OFFSET;
-+		flc |= ((uint64_t)dest_q->flow_id) << DPAA2_FS_FLC_FLOW_OFFSET;
-+		flow->fs_action_cfg.flc = flc;
- 		flow->fs_action_cfg.flow_id = dest_q->flow_id;
- 	} else if (flow->action_type == RTE_FLOW_ACTION_TYPE_PORT_ID ||
- 		   flow->action_type == RTE_FLOW_ACTION_TYPE_REPRESENTED_PORT) {
-diff --git a/drivers/net/dpaa2/dpaa2_rxtx.c b/drivers/net/dpaa2/dpaa2_rxtx.c
-index c31d6556ad..7ba6a4563f 100644
---- a/drivers/net/dpaa2/dpaa2_rxtx.c
-+++ b/drivers/net/dpaa2/dpaa2_rxtx.c
-@@ -58,6 +58,7 @@ dpaa2_dev_rx_parse_new(struct rte_mbuf *m, const struct qbman_fd *fd,
- 	uint16_t frc = DPAA2_GET_FD_FRC_PARSE_SUM(fd);
- 	struct dpaa2_annot_hdr *annotation =
- 			(struct dpaa2_annot_hdr *)hw_annot_addr;
-+	uint32_t flc_lo, tc, flow;
+@@ -4532,8 +4535,7 @@ dpaa2_flow_entry_size(uint16_t key_max_size)
+ 	if (key_max_size > DPAA2_FLOW_ENTRY_MIN_SIZE)
+ 		return DPAA2_FLOW_ENTRY_MAX_SIZE;
  
- 	if (unlikely(dpaa2_print_parser_result))
- 		dpaa2_print_parse_result(annotation);
-@@ -118,8 +119,21 @@ dpaa2_dev_rx_parse_new(struct rte_mbuf *m, const struct qbman_fd *fd,
- 	default:
- 		m->packet_type = dpaa2_dev_rx_parse_slow(m, annotation);
- 	}
--	m->hash.rss = fd->simple.flc_hi;
--	m->ol_flags |= RTE_MBUF_F_RX_RSS_HASH;
-+	flc_lo = fd->simple.flc_lo;
-+	if (flc_lo & (1 << DPAA2_FS_FLC_FS_MARK_OFFSET)) {
-+		m->ol_flags |= RTE_MBUF_F_RX_FDIR;
-+		tc = (flc_lo >> DPAA2_FS_FLC_TC_OFFSET) &
-+			DPAA2_FS_FLC_TC_MASK;
-+		flow = flc_lo >> DPAA2_FS_FLC_FLOW_OFFSET;
-+		rte_mbuf_sched_set(m, flow, tc, 0);
-+		DPAA2_PMD_DP_DEBUG("FS frame received from TC[%d]->flow%d",
-+			tc, flow);
-+	} else {
-+		m->hash.rss = fd->simple.flc_hi;
-+		m->ol_flags |= RTE_MBUF_F_RX_RSS_HASH;
-+		DPAA2_PMD_DP_DEBUG("Hash frame received with RSS(%08x)",
-+			m->hash.rss);
-+	}
+-	/* Current MC only support fixed entry size(56)*/
+-	return DPAA2_FLOW_ENTRY_MAX_SIZE;
++	return DPAA2_FLOW_ENTRY_MIN_SIZE;
+ }
  
- 	if (dpaa2_enable_ts[m->port]) {
- 		*dpaa2_timestamp_dynfield(m) = annotation->word2;
+ static inline int
 -- 
 2.43.0
 
