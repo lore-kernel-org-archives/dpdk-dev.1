@@ -2,32 +2,33 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA498C88E53
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 12:03:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9218C88E75
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 12:03:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 61C7642E00;
-	Tue, 15 Sep 2026 14:02:27 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 661DD42E81;
+	Tue, 15 Sep 2026 14:02:28 +0200 (CEST)
 Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 727CC42DDF
- for <dev@dpdk.org>; Tue, 15 Sep 2026 14:02:21 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 9728242D28
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 14:02:22 +0200 (CEST)
 Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 57C281A0053;
- Tue, 15 Sep 2026 14:02:21 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7260F1A0033;
+ Tue, 15 Sep 2026 14:02:22 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 2089E1A0009;
- Tue, 15 Sep 2026 14:02:21 +0200 (CEST)
+ by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3B7451A0049;
+ Tue, 15 Sep 2026 14:02:22 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id B88F618000BA;
- Tue, 15 Sep 2026 20:02:19 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id C923F18000BF;
+ Tue, 15 Sep 2026 20:02:20 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
 Cc: Jun Yang <jun.yang@nxp.com>
-Subject: [PATCH v3-S3 09/10] drivers: resolve dpaa2 endpoint in the net driver
-Date: Tue, 15 Sep 2026 17:32:07 +0530
-Message-ID: <20260915120208.4185877-10-prashant.gupta_3@nxp.com>
+Subject: [PATCH v3-S3 10/10] drivers: align dpaa2 event port depths with
+ hardware rings
+Date: Tue, 15 Sep 2026 17:32:08 +0530
+Message-ID: <20260915120208.4185877-11-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260915120208.4185877-1-prashant.gupta_3@nxp.com>
 References: <20260915113459.4166621-1-prashant.gupta_3@nxp.com>
@@ -50,264 +51,223 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jun Yang <jun.yang@nxp.com>
 
-The DPRC object driver walked every device on the bus and, for each DPNI,
-issued dprc_get_connection() to find the object it is wired to. Two
-things are wrong with that. The bus keeps the result in
-struct rte_dpaa2_device even though only the net driver consumes it, and
-a failure to resolve one DPNI's endpoint aborted the creation of the
-whole container. The endpoint name was also formatted from endpoint2
-outside the DPNI branch, so non-DPNI devices got a name built from
-uninitialised or stale data.
+The event port dequeue and enqueue depths were fixed at 8. A dequeue
+drains the portal DQRR and an enqueue fills the EQCR, so the real limits
+are the sizes of those two rings, which differ per SoC and are known at
+run time. Report them instead, adding qbman_swp_portal_dqrr_size() to
+query the DQRR size (the EQCR size is already available as
+dpaa2_eqcr_size).
 
-Move the lookup to dpaa2_dev_init(), which already knows it is dealing
-with a DPNI and can fail the probe of that one port. This also fills in
-priv->ep_dev_type, priv->ep_object_id and priv->ep_name, which the net
-driver reads for MAC-level operations, recycle/loopback configuration and
-rte_pmd_dpaa2_ep_name(), but which nothing assigned. dpsw endpoints are
-now recognised, and dpdmux/dpsw names carry the interface index because
-those endpoints are per-interface.
+The Tx adapter enqueue helpers sized their on-stack mbuf arrays from the
+advertised enqueue depth, which no longer bounds the burst the adapter
+may hand them, so bound the copy by the array itself and transmit in
+chunks.
 
 Signed-off-by: Jun Yang <jun.yang@nxp.com>
 ---
- drivers/bus/fslmc/bus_fslmc_driver.h     |  3 --
- drivers/bus/fslmc/portal/dpaa2_hw_dprc.c | 45 +++---------------
- drivers/net/dpaa2/dpaa2_ethdev.c         | 59 +++++++++++++++++++++++-
- drivers/net/dpaa2/dpaa2_recycle.c        | 15 +++---
- 4 files changed, 71 insertions(+), 51 deletions(-)
+ .../fslmc/qbman/include/fsl_qbman_portal.h    |  7 ++
+ drivers/bus/fslmc/qbman/qbman_portal.c        | 15 ++++
+ drivers/event/dpaa2/dpaa2_eventdev.c          | 72 ++++++++++++-------
+ drivers/event/dpaa2/dpaa2_eventdev.h          |  4 +-
+ 4 files changed, 69 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/bus/fslmc/bus_fslmc_driver.h b/drivers/bus/fslmc/bus_fslmc_driver.h
-index b4a5a86318..0d431fdd19 100644
---- a/drivers/bus/fslmc/bus_fslmc_driver.h
-+++ b/drivers/bus/fslmc/bus_fslmc_driver.h
-@@ -104,10 +104,7 @@ struct rte_dpaa2_device {
- 	struct rte_device device;           /**< Inherit core device */
- 	enum rte_dpaa2_dev_type dev_type;   /**< Device Type */
- 	uint16_t object_id;                 /**< DPAA2 Object ID */
--	enum rte_dpaa2_dev_type ep_dev_type;   /**< Endpoint Device Type */
- 	struct dpaa2_dprc_dev *container;
--	uint16_t ep_object_id;                 /**< Endpoint DPAA2 Object ID */
--	char ep_name[RTE_DEV_NAME_MAX_LEN];
- 	struct rte_intr_handle *intr_handle; /**< Interrupt handle */
- 	char name[FSLMC_OBJECT_MAX_LEN];    /**< DPAA2 Object name*/
- 	struct rte_dma_dev *dmadev;          /**< DMA device */
-diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_dprc.c b/drivers/bus/fslmc/portal/dpaa2_hw_dprc.c
-index 868ed646af..6441297ecf 100644
---- a/drivers/bus/fslmc/portal/dpaa2_hw_dprc.c
-+++ b/drivers/bus/fslmc/portal/dpaa2_hw_dprc.c
-@@ -27,7 +27,6 @@ rte_dpaa2_create_dprc_device(int vdev_fd __rte_unused,
- 	struct rte_dpaa2_device *obj)
- {
- 	struct dpaa2_dprc_dev *dprc_node;
--	struct dprc_endpoint endpoint1, endpoint2;
- 	struct rte_dpaa2_device *dev;
- 	int ret, dprc_id = obj->object_id;
+diff --git a/drivers/bus/fslmc/qbman/include/fsl_qbman_portal.h b/drivers/bus/fslmc/qbman/include/fsl_qbman_portal.h
+index 73e57bcdc1..fb1c6046ae 100644
+--- a/drivers/bus/fslmc/qbman/include/fsl_qbman_portal.h
++++ b/drivers/bus/fslmc/qbman/include/fsl_qbman_portal.h
+@@ -1222,6 +1222,13 @@ __rte_internal
+ int qbman_swp_acquire(struct qbman_swp *s, uint16_t bpid, uint64_t *buffers,
+ 		      unsigned int num_buffers);
  
-@@ -49,45 +48,13 @@ rte_dpaa2_create_dprc_device(int vdev_fd __rte_unused,
- 		return ret;
- 	}
- 
--	RTE_BUS_FOREACH_DEV(dev, &rte_fslmc_bus) {
--		/** DPRC is always created before it's children are created.*/
-+	/* DPRC is always created before its children are created, so every
-+	 * device scanned so far belongs to this container. Endpoint lookup is
-+	 * left to the object drivers, which know how many interfaces their
-+	 * object has and can report a failure to their own caller.
-+	 */
-+	RTE_BUS_FOREACH_DEV(dev, &rte_fslmc_bus)
- 		dev->container = dprc_node;
--		if (dev->dev_type == DPAA2_ETH) {
--			int link_state;
--
--			memset(&endpoint1, 0, sizeof(struct dprc_endpoint));
--			memset(&endpoint2, 0, sizeof(struct dprc_endpoint));
--			strcpy(endpoint1.type, "dpni");
--			endpoint1.id = dev->object_id;
--			ret = dprc_get_connection(&dprc_node->dprc,
--						CMD_PRI_LOW,
--						dprc_node->token,
--						&endpoint1, &endpoint2,
--						&link_state);
--			if (ret) {
--				DPAA2_BUS_ERR("dpni.%d connection failed!",
--					dev->object_id);
--				dprc_close(&dprc_node->dprc, CMD_PRI_LOW,
--					   dprc_node->token);
--				rte_free(dprc_node);
--				return ret;
--			}
--
--			if (!strcmp(endpoint2.type, "dpmac"))
--				dev->ep_dev_type = DPAA2_MAC;
--			else if (!strcmp(endpoint2.type, "dpni"))
--				dev->ep_dev_type = DPAA2_ETH;
--			else if (!strcmp(endpoint2.type, "dpdmux"))
--				dev->ep_dev_type = DPAA2_MUX;
--			else
--				dev->ep_dev_type = DPAA2_UNKNOWN;
--
--			dev->ep_object_id = endpoint2.id;
--		} else {
--			dev->ep_dev_type = DPAA2_UNKNOWN;
--		}
--		sprintf(dev->ep_name, "%s.%d", endpoint2.type, endpoint2.id);
--	}
- 
- 	TAILQ_INSERT_TAIL(&dprc_dev_list, dprc_node, next);
- 
-diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
-index f7cdbbf7d7..1552d2a25f 100644
---- a/drivers/net/dpaa2/dpaa2_ethdev.c
-+++ b/drivers/net/dpaa2/dpaa2_ethdev.c
-@@ -26,6 +26,7 @@
- #include <dpaa2_hw_pvt.h>
- #include <dpaa2_hw_mempool.h>
- #include <dpaa2_hw_dpio.h>
-+#include <fsl_dprc.h>
- #include <mc/fsl_dpmng.h>
- #include <mc/fsl_dpcon.h>
- #include "dpaa2_ethdev.h"
-@@ -3436,6 +3437,55 @@ dpaa2_get_devargs(struct rte_devargs *devargs, const char *key)
- 	return 1;
- }
- 
-+/* Resolve the object this DPNI is wired to inside its DPRC container. The
-+ * endpoint decides whether MAC-level operations (link, promisc, flow control)
-+ * are available, and it is reported to the application by
-+ * rte_pmd_dpaa2_ep_name().
++/**
++ * qbman_swp_portal_dqrr_size() - Number of entries in a portal's DQRR.
++ * @p: the software portal object, NULL to query the SoC's DQRR size.
 + */
-+static int
-+dpaa2_dev_ep_init(struct rte_dpaa2_device *dpaa2_dev,
-+		  struct dpaa2_dev_priv *priv)
++__rte_internal
++uint32_t qbman_swp_portal_dqrr_size(struct qbman_swp *p);
++
+ 	/*****************/
+ 	/* FQ management */
+ 	/*****************/
+diff --git a/drivers/bus/fslmc/qbman/qbman_portal.c b/drivers/bus/fslmc/qbman/qbman_portal.c
+index 4902ca4ccb..462e2ed75f 100644
+--- a/drivers/bus/fslmc/qbman/qbman_portal.c
++++ b/drivers/bus/fslmc/qbman/qbman_portal.c
+@@ -73,6 +73,11 @@ enum qbman_sdqcr_fc {
+ static struct qbman_swp *portal_idx_map[MAX_QBMAN_PORTALS];
+ 
+ uint32_t qman_version;
++/* DQRR size of the portals initialised so far. All portals of a SoC have the
++ * same size, so this doubles as the SoC's DQRR size for callers that have no
++ * portal at hand.
++ */
++static uint32_t dpaa2_portal_dqrr_size = 8;
+ 
+ /* Internal Function declaration */
+ static int
+@@ -239,6 +244,15 @@ static int (*qbman_swp_release_ptr)(struct qbman_swp *s,
+ 			const uint64_t *buffers, unsigned int num_buffers)
+ 			= qbman_swp_release_direct;
+ 
++RTE_EXPORT_INTERNAL_SYMBOL(qbman_swp_portal_dqrr_size)
++uint32_t qbman_swp_portal_dqrr_size(struct qbman_swp *p)
 +{
-+	struct dpaa2_dprc_dev *dprc_node = dpaa2_dev->container;
-+	struct dprc_endpoint endpoint1, endpoint2;
-+	int link_state, ret;
++	if (p != NULL)
++		return p->dqrr.dqrr_size;
 +
-+	memset(&endpoint1, 0, sizeof(endpoint1));
-+	memset(&endpoint2, 0, sizeof(endpoint2));
-+	strlcpy(endpoint1.type, "dpni", sizeof(endpoint1.type));
-+	endpoint1.id = dpaa2_dev->object_id;
-+	ret = dprc_get_connection(&dprc_node->dprc, CMD_PRI_LOW,
-+				  dprc_node->token, &endpoint1, &endpoint2,
-+				  &link_state);
-+	if (ret != 0)
-+		return ret;
-+
-+	if (strcmp(endpoint2.type, "dpmac") == 0)
-+		priv->ep_dev_type = DPAA2_MAC;
-+	else if (strcmp(endpoint2.type, "dpni") == 0)
-+		priv->ep_dev_type = DPAA2_ETH;
-+	else if (strcmp(endpoint2.type, "dpdmux") == 0)
-+		priv->ep_dev_type = DPAA2_MUX;
-+	else if (strcmp(endpoint2.type, "dpsw") == 0)
-+		priv->ep_dev_type = DPAA2_SW;
-+	else
-+		priv->ep_dev_type = DPAA2_UNKNOWN;
-+
-+	priv->ep_object_id = endpoint2.id;
-+
-+	/* dpdmux and dpsw endpoints are per-interface, so the interface index
-+	 * is part of the name.
-+	 */
-+	if (priv->ep_dev_type == DPAA2_MUX || priv->ep_dev_type == DPAA2_SW)
-+		snprintf(priv->ep_name, sizeof(priv->ep_name), "%s.%d.%d",
-+			 endpoint2.type, endpoint2.id, endpoint2.if_id);
-+	else
-+		snprintf(priv->ep_name, sizeof(priv->ep_name), "%s.%d",
-+			 endpoint2.type, endpoint2.id);
-+
-+	return 0;
++	return dpaa2_portal_dqrr_size;
 +}
 +
- static int
- dpaa2_dev_init(struct rte_eth_dev *eth_dev)
- {
-@@ -3527,6 +3577,13 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
- 		goto init_err;
- 	}
+ /*********************************/
+ /* Portal constructor/destructor */
+ /*********************************/
+@@ -298,6 +312,7 @@ struct qbman_swp *qbman_swp_init(const struct qbman_swp_desc *d)
+ 	 */
+ 	p->dqrr.ci_vec_en = p->dqrr.dqrr_size <= (32 - DQRR_DCAP_CI_VEC_OFFSET);
+ 	p->dqrr.ci_flush_th = p->dqrr.dqrr_size / 2;
++	dpaa2_portal_dqrr_size = p->dqrr.dqrr_size;
  
-+	ret = dpaa2_dev_ep_init(dpaa2_dev, priv);
-+	if (ret) {
-+		DPAA2_PMD_ERR("Failure in get dpni@%d endpoint, err code %d",
-+			      hw_id, ret);
-+		goto init_err;
-+	}
-+
- 	ret = dpni_get_api_version(dpni_dev, CMD_PRI_LOW, &priv->dpni_ver_major,
- 				   &priv->dpni_ver_minor);
+ 	ret = qbman_swp_sys_init(&p->sys, d, p->dqrr.dqrr_size);
  	if (ret) {
-@@ -3758,7 +3815,7 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
- 	priv->sp_protocol = dpaa2_dev->bus_info->sp_protocol;
+diff --git a/drivers/event/dpaa2/dpaa2_eventdev.c b/drivers/event/dpaa2/dpaa2_eventdev.c
+index 5d32bd9fd6..ddcf7b3678 100644
+--- a/drivers/event/dpaa2/dpaa2_eventdev.c
++++ b/drivers/event/dpaa2/dpaa2_eventdev.c
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2017,2019-2022 NXP
++ * Copyright 2017,2019-2022,2026 NXP
+  */
  
- 	DPAA2_PMD_INFO("%s: netdev created, connected to %s",
--		eth_dev->data->name, dpaa2_dev->ep_name);
-+		eth_dev->data->name, priv->ep_name);
+ #include <assert.h>
+@@ -389,10 +389,11 @@ dpaa2_eventdev_info_get(struct rte_eventdev *dev,
+ 	/* we only support dpio up to number of cores */
+ 	if (dev_info->max_event_ports > rte_lcore_count())
+ 		dev_info->max_event_ports = rte_lcore_count();
+-	dev_info->max_event_port_dequeue_depth =
+-		DPAA2_EVENT_MAX_PORT_DEQUEUE_DEPTH;
+-	dev_info->max_event_port_enqueue_depth =
+-		DPAA2_EVENT_MAX_PORT_ENQUEUE_DEPTH;
++	/* A dequeue drains the portal DQRR and an enqueue fills the EQCR, so
++	 * the hardware ring sizes are the real limits.
++	 */
++	dev_info->max_event_port_dequeue_depth = qbman_swp_portal_dqrr_size(NULL);
++	dev_info->max_event_port_enqueue_depth = dpaa2_eqcr_size;
+ 	dev_info->max_num_events = DPAA2_EVENT_MAX_NUM_EVENTS;
+ 	dev_info->event_dev_cap = RTE_EVENT_DEV_CAP_DISTRIBUTED_SCHED |
+ 		RTE_EVENT_DEV_CAP_ATOMIC |
+@@ -527,12 +528,9 @@ dpaa2_eventdev_port_def_conf(struct rte_eventdev *dev, uint8_t port_id,
+ 	RTE_SET_USED(dev);
+ 	RTE_SET_USED(port_id);
  
- 	priv->speed_capa = dpaa2_dev_get_speed_capability(eth_dev);
+-	port_conf->new_event_threshold =
+-		DPAA2_EVENT_MAX_NUM_EVENTS;
+-	port_conf->dequeue_depth =
+-		DPAA2_EVENT_MAX_PORT_DEQUEUE_DEPTH;
+-	port_conf->enqueue_depth =
+-		DPAA2_EVENT_MAX_PORT_ENQUEUE_DEPTH;
++	port_conf->new_event_threshold = DPAA2_EVENT_MAX_NUM_EVENTS;
++	port_conf->dequeue_depth = qbman_swp_portal_dqrr_size(NULL);
++	port_conf->enqueue_depth = dpaa2_eqcr_size;
+ 	port_conf->event_port_cfg = 0;
+ }
  
-diff --git a/drivers/net/dpaa2/dpaa2_recycle.c b/drivers/net/dpaa2/dpaa2_recycle.c
-index 7569ea9c0d..94ec47a0ad 100644
---- a/drivers/net/dpaa2/dpaa2_recycle.c
-+++ b/drivers/net/dpaa2/dpaa2_recycle.c
-@@ -630,18 +630,18 @@ dpaa2_dev_recycle_config(struct rte_eth_dev *eth_dev)
- 		return 0;
- 	}
- 
--	if (dpaa2_dev->ep_dev_type == DPAA2_MAC) {
-+	if (priv->ep_dev_type == DPAA2_MAC) {
- 		/** For dpmac-dpni connection,
- 		 * try setting serdes loopback as recycle device at first.
- 		 */
- 		if (dpaa2_svr_family == SVR_LS2088A) {
--			ret = ls_serdes_eth_lpbk(dpaa2_dev->ep_object_id, 1);
-+			ret = ls_serdes_eth_lpbk(priv->ep_object_id, 1);
- 			if (!ret) {
- 				priv->flags |= DPAA2_TX_SERDES_LOOPBACK_MODE;
- 				return 0;
- 			}
- 		} else if (dpaa2_svr_family == SVR_LX2160A) {
--			ret = lx_serdes_eth_lpbk(dpaa2_dev->ep_object_id, 1);
-+			ret = lx_serdes_eth_lpbk(priv->ep_object_id, 1);
- 			if (!ret) {
- 				priv->flags |= DPAA2_TX_SERDES_LOOPBACK_MODE;
- 				return 0;
-@@ -670,8 +670,8 @@ dpaa2_dev_recycle_config(struct rte_eth_dev *eth_dev)
- 		return 0;
- 	}
- 
--	if (dpaa2_dev->ep_dev_type == DPAA2_ETH &&
--		dpaa2_dev->object_id == dpaa2_dev->ep_object_id) {
-+	if (priv->ep_dev_type == DPAA2_ETH &&
-+		dpaa2_dev->object_id == priv->ep_object_id) {
- 		priv->flags |= DPAA2_TX_DPNI_LOOPBACK_MODE;
- 
- 		return 0;
-@@ -684,7 +684,6 @@ int
- dpaa2_dev_recycle_deconfig(struct rte_eth_dev *eth_dev)
+@@ -977,18 +975,31 @@ dpaa2_eventdev_txa_enqueue_same_dest(void *port,
+ 				     struct rte_event ev[],
+ 				     uint16_t nb_events)
  {
- 	struct dpaa2_dev_priv *priv = eth_dev->data->dev_private;
--	struct rte_dpaa2_device *dpaa2_dev = RTE_CLASS_TO_BUS_DEVICE(eth_dev, *dpaa2_dev);
- 	struct fsl_mc_io *dpni_dev = eth_dev->process_private;
- 	struct dpni_port_cfg port_cfg;
- 	int ret = 0;
-@@ -694,7 +693,7 @@ dpaa2_dev_recycle_deconfig(struct rte_eth_dev *eth_dev)
+-	struct rte_mbuf *m[DPAA2_EVENT_MAX_PORT_ENQUEUE_DEPTH], *m0;
+-	uint8_t qid, i;
++	struct rte_mbuf *m[MAX_TX_RING_SLOTS], *m0;
++	uint16_t sent = 0, burst, i, port_id;
++	uint8_t qid;
  
- 	if (priv->flags & DPAA2_TX_SERDES_LOOPBACK_MODE) {
- 		if (dpaa2_svr_family == SVR_LS2088A) {
--			ret = ls_serdes_eth_lpbk(dpaa2_dev->ep_object_id, 0);
-+			ret = ls_serdes_eth_lpbk(priv->ep_object_id, 0);
- 			if (ret) {
- 				DPAA2_PMD_WARN("Error(%d) to disable Serdes loopback",
- 					ret);
-@@ -702,7 +701,7 @@ dpaa2_dev_recycle_deconfig(struct rte_eth_dev *eth_dev)
- 				priv->flags &= ~DPAA2_TX_SERDES_LOOPBACK_MODE;
- 			}
- 		} else if (dpaa2_svr_family == SVR_LX2160A) {
--			ret = lx_serdes_eth_lpbk(dpaa2_dev->ep_object_id, 0);
-+			ret = lx_serdes_eth_lpbk(priv->ep_object_id, 0);
- 			if (ret) {
- 				DPAA2_PMD_WARN("Error(%d) to disable Serdes loopback",
- 					ret);
+ 	RTE_SET_USED(port);
+ 
+-	m0 = (struct rte_mbuf *)ev[0].mbuf;
++	m0 = ev[0].mbuf;
+ 	qid = rte_event_eth_tx_adapter_txq_get(m0);
++	port_id = m0->port;
++
++	/* The advertised enqueue depth is the EQCR size, which may exceed the
++	 * on-stack burst array, so transmit in ring-sized chunks.
++	 */
++	while (sent < nb_events) {
++		burst = RTE_MIN(nb_events - sent, (uint16_t)RTE_DIM(m));
++		for (i = 0; i < burst; i++)
++			m[i] = ev[sent + i].mbuf;
++
++		i = rte_eth_tx_burst(port_id, qid, m, burst);
++		sent += i;
++		if (i < burst)
++			break;
++	}
+ 
+-	for (i = 0; i < nb_events; i++)
+-		m[i] = (struct rte_mbuf *)ev[i].mbuf;
+-
+-	return rte_eth_tx_burst(m0->port, qid, m, nb_events);
++	return sent;
+ }
+ 
+ static uint16_t
+@@ -996,19 +1007,28 @@ dpaa2_eventdev_txa_enqueue(void *port,
+ 			   struct rte_event ev[],
+ 			   uint16_t nb_events)
+ {
+-	void *txq[DPAA2_EVENT_MAX_PORT_ENQUEUE_DEPTH];
+-	struct rte_mbuf *m[DPAA2_EVENT_MAX_PORT_ENQUEUE_DEPTH];
+-	uint8_t qid, i;
++	void *txq[MAX_TX_RING_SLOTS];
++	struct rte_mbuf *m[MAX_TX_RING_SLOTS];
++	uint16_t sent = 0, burst, i;
++	uint8_t qid;
+ 
+ 	RTE_SET_USED(port);
+ 
+-	for (i = 0; i < nb_events; i++) {
+-		m[i] = (struct rte_mbuf *)ev[i].mbuf;
+-		qid = rte_event_eth_tx_adapter_txq_get(m[i]);
+-		txq[i] = rte_eth_devices[m[i]->port].data->tx_queues[qid];
++	while (sent < nb_events) {
++		burst = RTE_MIN(nb_events - sent, (uint16_t)RTE_DIM(m));
++		for (i = 0; i < burst; i++) {
++			m[i] = ev[sent + i].mbuf;
++			qid = rte_event_eth_tx_adapter_txq_get(m[i]);
++			txq[i] = rte_eth_devices[m[i]->port].data->tx_queues[qid];
++		}
++
++		i = dpaa2_dev_tx_multi_txq_ordered(txq, m, burst);
++		sent += i;
++		if (i < burst)
++			break;
+ 	}
+ 
+-	return dpaa2_dev_tx_multi_txq_ordered(txq, m, nb_events);
++	return sent;
+ }
+ 
+ static struct eventdev_ops dpaa2_eventdev_ops = {
+diff --git a/drivers/event/dpaa2/dpaa2_eventdev.h b/drivers/event/dpaa2/dpaa2_eventdev.h
+index 3883a26c91..a054dfdbd7 100644
+--- a/drivers/event/dpaa2/dpaa2_eventdev.h
++++ b/drivers/event/dpaa2/dpaa2_eventdev.h
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2017 NXP
++ * Copyright 2017,2026 NXP
+  */
+ 
+ #ifndef __DPAA2_EVENTDEV_H__
+@@ -22,8 +22,6 @@
+ #define DPAA2_EVENT_MAX_QUEUE_FLOWS		2048
+ #define DPAA2_EVENT_MAX_QUEUE_PRIORITY_LEVELS	8
+ #define DPAA2_EVENT_MAX_EVENT_PRIORITY_LEVELS	0
+-#define DPAA2_EVENT_MAX_PORT_DEQUEUE_DEPTH	8
+-#define DPAA2_EVENT_MAX_PORT_ENQUEUE_DEPTH	8
+ #define DPAA2_EVENT_MAX_NUM_EVENTS		(INT32_MAX - 1)
+ 
+ #define DPAA2_EVENT_QUEUE_ATOMIC_FLOWS		2048
 -- 
 2.43.0
 
