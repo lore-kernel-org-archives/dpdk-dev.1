@@ -2,73 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38819C88E77
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 19:24:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDC7EC88E75
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 19:26:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5A03942EB4;
-	Tue, 15 Sep 2026 21:23:21 +0200 (CEST)
-Received: from mail-pz2-f42.google.com (mail-pz2-f42.google.com
- [74.125.228.42]) by mails.dpdk.org (Postfix) with ESMTP id 60F1042EAE
- for <dev@dpdk.org>; Tue, 15 Sep 2026 21:23:17 +0200 (CEST)
-Received: by mail-pz2-f42.google.com with SMTP id
- 41be03b00d2f7-cc1cea50dc1so107529a12.0
- for <dev@dpdk.org>; Tue, 15 Sep 2026 12:23:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789500196;
- x=1790104996; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=ytiXM3KqtcRrC3++Sm78Ya/zlciQyZbi/38eUFcTOW4=;
- b=OtqqSnRyAEqxFfXA/03m0aL5z461U7QqgMtFAZszBefsRH32yQXESAjU38qCKRPyx1
- Tkk8SnbjbTYufmy9QPsw3UxDw1ZiKhd9AIah9pT42Sm+X3xcaVPvElQ6xvW0YAoMEAm6
- 4zKu6Dul2AigkuZyZatpwGt/gWTnf17TSHdF8WqAoOfg6PXRt/hrhu+QlIELeSq8iuc5
- vlYYbQEy7Uymg5dkTwZnfQMuG0b0VumhtRaOY5UbkQJONhcnZuQEA3v4Irbi+i0j4rwF
- bScysIi4GSjkskCCvkZdvF1AuX0iKYlDxDfWEF4V+agH4NeIzo6yHqzzh02j4vYP4tKO
- KYzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789500196; x=1790104996;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=ytiXM3KqtcRrC3++Sm78Ya/zlciQyZbi/38eUFcTOW4=;
- b=km3gmPxXkQBHCl45bwG0gWprBI16icEStwe2yyCZ5MmqeX0Pb+CENjrq60rWzwqs6o
- lKTTF3m1qnvJYsaC3Og8IRKkprgApkDQUqtCy8Re++SB2HxgkConQyMnvoC2ZFp65D0t
- N0Rf7gYF6S0Ix4YASnSnI0JvbT0XNj1IqP7ufBt6heUurr9EaW7jdQZ8UiCOentQvJG4
- h9PQ+g0+lxoHtt5/YiOKmYqSCmEt5vpSN25tVzNDdnLeftcJiMDazGntQMAUHgQCkOuQ
- xAJI6/B0KPGzlIDHeEB60Myejp9/9OrY970zdi1O3OCZXxkv12n9HyMlufKESplWcqOB
- ovoA==
-X-Gm-Message-State: AFuF++knXjVa7mLdpqzezXWFCuzkwl+r7SUTO2LVFybhF6nCnQrH6WTj
- Helbn8F+VQH5I7sqMU59MwhVjw9E5hhvYnWrBxFHSqHerCxfeGSBo7WbNhhpua0EFwnD1UzBIVB
- PEwcy
-X-Gm-Gg: AYBFou2M7A7QjLtw61SoRMjh21KDV5go0pdAqdyb1xFLiJM/9YlV2We9tNGeIwzxNeb
- pEnYza47FhTeGNdGmTBAjso0mAX8GwmilZk6/Ru6M/CHoeGGrhscsajjSZpti6mRHroITrR5GL5
- dbAAo2Mbc9MosgPCNWnegyUD/FIUIh3UhjZvXhhsdas6jdalGjr1aDUVnfot538a/hbnD2m83KE
- ewkz9mcRdCpEQkhXeDDueRivTYqvMMX+t6y3JM1iDer7YlKs+3KAf3hjudsQUf6Eyj/okuHCClq
- mECTWbgRL/bVUoNeOozvGQEXnKfJVLS1fVLdQcDPX159uMUhnQ21MzliDU+RCDWwa4eUSR8TcVS
- EYJ4LoFiiEjaJXECFqZ6xiEgVSvxNmqwbv0udEQmq1yiud53M/0DNXDWes4q/x/e2STOnp5DdaU
- YYR0oHHPuslo+blCGbUzEGo+oPK3jgCRKFD7lTA08vX1cioyL5EsIFCrLmVdg7Eyo8hSebQC/BL
- DtHkYm7vxGUskD36A535y4On4unCpkTZ2JnJ8g=
-X-Received: by 2002:a17:90a:1056:b0:39d:ec9a:8f8e with SMTP id
- 98e67ed59e1d1-39dec9a90b5mr11421406a91.8.1789500196470; 
- Tue, 15 Sep 2026 12:23:16 -0700 (PDT)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39e1bbfdd49sm217535a91.11.2026.09.15.12.23.13
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 15 Sep 2026 12:23:15 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Aaron Conole <aconole@redhat.com>
-Subject: [PATCH 18/18] doc: recommend secure random for unpredictable values
-Date: Tue, 15 Sep 2026 12:21:16 -0700
-Message-ID: <20260915192207.3926217-19-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260915192207.3926217-1-stephen@networkplumber.org>
-References: <20260915192207.3926217-1-stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id 0BE3F42E12;
+	Tue, 15 Sep 2026 21:26:49 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 10EB042DDC
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 21:26:48 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=PdSkQtl0k7tGlrWbUye3go5yNGMLjswBqtRwjZKgl7Q=;
+ b=fYox44lciPlv2qaASxgYEGooOa5HiDfHGVMvH8gLbqW7AJ/YsApcUfpkFcyMy81+QrLyonAbG
+ Zay48U8EQcSHZFdz3B9SFEpc1UMaDPQ4H34T2URaFmhHv8dXDnVzx7f7scyqh5nxMbZLEN5gpvB
+ qZoB7s+9bNIglXqKc+WNWV0=
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4hksT53TzzzHnGcs
+ for <dev@dpdk.org>; Wed, 16 Sep 2026 03:26:33 +0800 (CST)
+Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
+ by mail.maildlp.com (Postfix) with ESMTPS id 8F32840575
+ for <dev@dpdk.org>; Wed, 16 Sep 2026 03:26:46 +0800 (CST)
+Received: from localhost.localdomain (10.220.239.45) by
+ frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Tue, 15 Sep 2026 21:26:46 +0200
+From: Marat Khalili <marat.khalili@huawei.com>
+To: 
+CC: <dev@dpdk.org>
+Subject: [PATCH v3 0/7] validate-bpf: add standalone validation debug tool
+Date: Tue, 15 Sep 2026 20:26:18 +0100
+Message-ID: <20260915192626.48125-1-marat.khalili@huawei.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260914145418.37353-1-marat.khalili@huawei.com>
+References: <20260914145418.37353-1-marat.khalili@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.220.239.45]
+X-ClientProxiedBy: frapema100004.china.huawei.com (7.182.19.128) To
+ frapema500003.china.huawei.com (7.182.19.114)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,47 +54,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The AI review checks say not to generate keys, IVs and nonces with
-rte_rand(), but do not say what to use instead. Name
-rte_random_bytes() as the replacement, and extend the rule to the
-other values which must not be predictable.
+This patchset introduces a new standalone tool for pre-validating eBPF
+programs and debugging validation problems. Its should allow developers
+to trace validator state changes per instruction and understand verifier
+decisions, simplifying the debugging of rejected programs before loading
+them into a real application context.
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- AGENTS.md | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+v3:
+* addressed another FreeBSD issue (spurious uninitialized warning);
+* addressed more AI comments:
+  * fail if library fails to set step catchpoint on start command;
+  * fail nicer if external variables are too big;
+  * fail nicer if EAL initialization or cleanup fails;
+  * explain why 9 steps are expeced in the test;
+  * explain that non-zero buf_size marks mbuf;
+  * avoid symbols starting with `RTE_` in the app;
 
-diff --git a/AGENTS.md b/AGENTS.md
-index 813584352b..df4c37f62e 100644
---- a/AGENTS.md
-+++ b/AGENTS.md
-@@ -544,6 +544,9 @@ or authentication digests. Stays silent on all other patches.
- - **Insecure RNG for keys/IVs** (Error):
-   rte_rand()/rand()/random() are not cryptographically secure;
-   do not use them to generate keys, IVs, or nonces in crypto/security code.
-+  Use rte_random_bytes(), which draws from the random source of the
-+  operating system. The same applies to other values that must not be
-+  predictable, such as RSS and hash keys, salts and random MAC addresses.
- 
- Do NOT flag:
- - IV/nonce reuse -- a runtime property, not determinable from a patch.
-@@ -1680,7 +1683,7 @@ Checked by `devtools/checkpatches.sh` -- not duplicated here.
- - [ ] Memory ordering is the weakest correct choice (`relaxed` for counters, `acquire`/`release` for publish/consume)
- - [ ] Auth tag/digest comparisons use rte_memeq_timingsafe(), not memcmp
- - [ ] Key material zeroed before free (rte_free_sensitive / rte_memzero_explicit)
--- [ ] Keys/IVs/nonces not generated with rte_rand()/rand()/random()
-+- [ ] Keys/IVs/nonces not generated with rte_rand()/rand()/random(), use rte_random_bytes()
- 
- ### API Tags
- 
-@@ -1795,6 +1798,7 @@ devtools/get-maintainer.sh <patch-file>
- - Non-constant-time comparison of auth tag/digest/MAC/ICV (timing side channel)
- - Key material or session secrets freed without zeroing (rte_free_sensitive/rte_memzero_explicit)
- - Non-cryptographic RNG (rte_rand/rand/random) used to generate keys, IVs, or nonces
-+  instead of rte_random_bytes()
- 
- *Process and format errors:*
- - Forbidden tokens in code
+v2:
+* for FreeBSD compatibility switched from Linux to DPDK network structs;
+* addressed small AI comments:
+  * clarified patch 1 commit message;
+  * renamed `rte_validate_bpf_logtype` to `validate_bpf_logtype`;
+  * corrected comment to an internal-use-only function to reflect that
+    next-after-last value of the program counter is no longer allowed;
+
+Marat Khalili (7):
+  bpf/validate: fix finished status on restart
+  bpf/validate: refactor internal step function
+  bpf/validate: formalize call back requirements
+  bpf/validate: add jump notification events
+  bpf/validate: add get current event API
+  app/test: add test for bpf validate debug events
+  app/validate-bpf: add BPF validation application
+
+ MAINTAINERS                            |    2 +
+ app/meson.build                        |    1 +
+ app/test/test_bpf_validate.c           |  344 +++++++-
+ app/validate-bpf/alloc_list.c          |   53 ++
+ app/validate-bpf/args.c                |  263 ++++++
+ app/validate-bpf/debug.c               | 1103 ++++++++++++++++++++++++
+ app/validate-bpf/debug_command.c       |  383 ++++++++
+ app/validate-bpf/debug_command.h       |   65 ++
+ app/validate-bpf/eal_init_args.c       |   57 ++
+ app/validate-bpf/internal.h            |  151 ++++
+ app/validate-bpf/main.c                |   90 ++
+ app/validate-bpf/meson.build           |   13 +
+ app/validate-bpf/parse_decl.c          |  623 +++++++++++++
+ doc/guides/rel_notes/release_26_11.rst |    5 +
+ doc/guides/tools/index.rst             |    1 +
+ doc/guides/tools/validate_bpf.rst      |   97 +++
+ lib/bpf/bpf_validate.c                 |   49 +-
+ lib/bpf/bpf_validate_debug.c           |   92 +-
+ lib/bpf/bpf_validate_debug.h           |   12 +-
+ lib/bpf/rte_bpf_validate_debug.h       |   42 +-
+ 20 files changed, 3380 insertions(+), 66 deletions(-)
+ create mode 100644 app/validate-bpf/alloc_list.c
+ create mode 100644 app/validate-bpf/args.c
+ create mode 100644 app/validate-bpf/debug.c
+ create mode 100644 app/validate-bpf/debug_command.c
+ create mode 100644 app/validate-bpf/debug_command.h
+ create mode 100644 app/validate-bpf/eal_init_args.c
+ create mode 100644 app/validate-bpf/internal.h
+ create mode 100644 app/validate-bpf/main.c
+ create mode 100644 app/validate-bpf/meson.build
+ create mode 100644 app/validate-bpf/parse_decl.c
+ create mode 100644 doc/guides/tools/validate_bpf.rst
+
 -- 
-2.53.0
+2.43.0
 
