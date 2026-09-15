@@ -2,68 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AF5FC88E77
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 19:23:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F08F5C88E77
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 19:23:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1315342E73;
-	Tue, 15 Sep 2026 21:22:46 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0A20642E8B;
+	Tue, 15 Sep 2026 21:22:50 +0200 (CEST)
 Received: from mail-pj2-f43.google.com (mail-pj2-f43.google.com
  [74.125.227.171])
- by mails.dpdk.org (Postfix) with ESMTP id D4E2142E37
- for <dev@dpdk.org>; Tue, 15 Sep 2026 21:22:44 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 9CDFF42E6E
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 21:22:48 +0200 (CEST)
 Received: by mail-pj2-f43.google.com with SMTP id
- 98e67ed59e1d1-396ccb1a98fso94870a91.1
- for <dev@dpdk.org>; Tue, 15 Sep 2026 12:22:44 -0700 (PDT)
+ 98e67ed59e1d1-396ccdaea76so48211a91.0
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 12:22:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789500164;
- x=1790104964; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789500168;
+ x=1790104968; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=/phnFzq0W803yyw67LmFurn+gIz5RJG7XSdSIiHWFVY=;
- b=LYXnxffR6axa6GcD0Ghp9R+IcmkROt97lB18UBcsVBDmxWqf8DCknkE1VDQdNg+jlK
- oLQ27j6aFuMWkrkN4rLPwAUhrabCP7Jsnz8joJLNo6vo3lagRX7qHwQ7PK2DtM8F/Fi6
- oerqpq5jKsroTfraf/7u5V0t07bUxPbS2svqFU709FL9EHvObfohAKuDIVkyHvN6A4rt
- hDg4ooaZ6H1GQmYXaHzLP35kkj8JDS6CfJk7ANePfeP1zZuobUKQzmv0SlvRyJjMdWUp
- TlLSfHpBO+IystoMRPCKfngSkWc81bY8ZTy9IwLNvSIXWZ7uO5tKw6m1fyVjng/VZVmo
- fG+A==
+ bh=H8S9mNpoubhZbTfn5u3gU7+1EIKiTmvtrj0A1uuyClY=;
+ b=g43XUih0CAYhcXiDzI7pSJGZAwfi0SO55NUCy6JDAFu105GGGzHvKYCl5l9tXGzfWy
+ 8Fo6QXsOZnt9fEMfj0XcUhV9rP3F9SlNRcN3XLzsMxfrfq5Ly0TD/XOf/sGT1h/yG8yo
+ TmI87LyQzc03MO/N0bx/pzO2q7gIxtScCtifbNEHlzCYhVYiMaWy/CrSE4cpCzyBqiaJ
+ p4WHHlZTlTGEIrexkfQwpDdjUJKuhjpTVksGrl4ZQ1wH5R8zcLLAWi5Vpnjn2Pw4M0JT
+ zyHzSCWMmAW0Is2bg6MZqHTULpKUgbmZ5G8Bl6hSdC+w7vQ0DhBv/ivOlI2qtmjM63y2
+ 6fsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789500164; x=1790104964;
+ d=1e100.net; s=20260707; t=1789500168; x=1790104968;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=/phnFzq0W803yyw67LmFurn+gIz5RJG7XSdSIiHWFVY=;
- b=UX56otQXD/vya+pP64bt7upkH1IIuFKttEEfTbO3drqvJsKxPZCVycSZmDH3Rp0ynl
- 8uE2w7Hb/JOgnKIMYvECFutxiJheT0dXqReeggZVVxaf6pzXeVSUtMrbysb7p/Bfz28Y
- MaJoWcsLbPcLJ1Hv9CMtroOVRgNkAEE2DWps++ee+6Xaye//DjUXAV8a08NIUxRshCBm
- 6s5PrYdheRn7tQLvBncei+3ZPYUXvA0YVudtuimbBIx0lMxu/zOroZk7BEjOFK4++/Hy
- hAFcbmq4r69Xb9iYnixRGm7dOhU2h/Tmil/Zyn2wM2Q5GsYaPU0VuCmI0KGfAFu7KSW8
- m+AA==
-X-Gm-Message-State: AFuF++kkeE1R04cAj2RZRUpC9zm5WEQoJgxkmiSqxt2vJ1Kv0CZKbHGI
- 6TOBRBysOzPMl21oXePbng8KqRxdnKZkXptXftrf1MErnlxCiWJYyIRCm41GMycIZr2M55tR7Ls
- dbQf4DUyTjg==
-X-Gm-Gg: AYBFou3xkLmzlsv2dku7auJbhlIHmW569uqDTnzs4MTBAnvCi36YBECN8INWCLv3U7K
- qIxwXyrzY+o8I2PE4LzoTruxDlN5KMHHeluKXZjrsaldl1LB/pioVuslQy9TbngpXyZ5N/C4SZC
- If/EOS9FcmFAJFtihjrnosMsSqHhMskBQ/t8WQNhZCuqdXZqEIl720pjtTrnscU4dHIKlRDCIqz
- esnVlao7/UpPpA80zZf+pCQ6tTLPydZDoWZhp9LTgR+uHulIWpEOvoKpGiMpJB9pVxllSAaF8i3
- 5V6YfaqcseMIvmar7vXu8CyX519P2v7fl8gjxTud15NOwxrOrRugdFJiZLyFm7wy6juCWgUbGy0
- yM5/7KHGAxhv+Kj+PkARcO63r/Gf0+4+TNPnkHTfeEV6OyybtJMgMIGeNsCqYr4IKLWCMLCiXVR
- iX7AEEpYt8wXxig3mb72795travw4aW+Wu8HTumezA/HoG8BAo7++sUzUf9aUN1gCLPtkReDg+2
- +N0If7AXbzJNKQW4t+aZKz7V/KXEVxZk5kVow==
-X-Received: by 2002:a17:90b:4988:b0:38e:bfe:81e9 with SMTP id
- 98e67ed59e1d1-39debf5f291mr17435218a91.1.1789500163804; 
- Tue, 15 Sep 2026 12:22:43 -0700 (PDT)
+ bh=H8S9mNpoubhZbTfn5u3gU7+1EIKiTmvtrj0A1uuyClY=;
+ b=YY1mD7HICXzoTCJ5W8dFis3xGXJ5ZcScjnZ+uy9TFrRo7OTOdw+ct6gV1pwsg/fvCy
+ Fl9MezzgfzxzCqA8STJF2TmKsYcKnFwRQRQEjrQuZ9/p/ZbiTfRryND5T7DXuJH2uqMr
+ 4LVKmvpfApycssxjsw5e+wB4C5JTAsVaMRnKeEONu97tYJr7UV94L5pbSIUF1PuSQo90
+ rLbCBvp5VsDXjKKcaO3D9uvSitj24ZYtDDYrDbpUu4NhUO4dfMOJsuJGOgr5Bbax718N
+ kL7LhnnTO8nuD/m7Guo7vJr2P/pP5cBAAEcT7JObSQsFHcUw8naM503bsifMgFURHoM5
+ rrLQ==
+X-Gm-Message-State: AFuF++nEbdtyF3fzne/G9wW3CGJG497//vcMBj9R7Gt5wKu8zey8UY6s
+ IBVZ1m+kSByNraAKbzKDAxGjEveQrqKA+5/OW2Uzb1EYT13sUPiUWfRIGqb4+WBvK/1Vx5JNnbF
+ z8VMRk6Q2hQ==
+X-Gm-Gg: AYBFou3qIfRR95PqFIKIOf0xWL+Hk3RLgVLRPGcVBRSQIjgl/ugorkvdVY7DZXsf0Mq
+ /FarQP/JT8LcSvUhIX1yTBm8DflRXyFKQZ83DN774SjOtktQ+MwsjBmYWsx193hnufbAxlblniL
+ 3soy0izTBsWQlxnQXrDIAxZKZK2fTw3buOUUkw08t34zYnA/PsQa0Lv2IHxmm/mUg+lgp+S0O07
+ qOC/7teN2htXQjq8VCSnWelI7FIcBCZ/v0QNNhhEDx0602vcNRRmn//QDzBoGyHoH2JLkIHPzm1
+ bG2B/+8Cmaf2yMgSDFOtWjgb05QFUV4NXmUqgjNTDB7dXBoUDaDaSW2j4I2sy36nPZgp+SgwiMz
+ 1fZ0LPf4On9ExYMSKwNN8jiVsri4dgSzSirNl5GW4EQgNGTL8wIImMoaNjpBoI+PFzw24Vw0yMW
+ Zf/AaYXgMBX6lVPM8TKJHibl0eaKYFJutDyJ1z7HvwBjMm/DTpbhGLUtKB1YjhJ+k9jkC7WPcOD
+ DWXDVYD0d/KblCXYIIZCtf3HtVwhniZ5TsC/g==
+X-Received: by 2002:a17:90b:3d8e:b0:39d:e1da:81e5 with SMTP id
+ 98e67ed59e1d1-39dfe11c04dmr5889132a91.11.1789500167674; 
+ Tue, 15 Sep 2026 12:22:47 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39e1bbfdd49sm217535a91.11.2026.09.15.12.22.41
+ 98e67ed59e1d1-39e1bbfdd49sm217535a91.11.2026.09.15.12.22.44
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 15 Sep 2026 12:22:42 -0700 (PDT)
+ Tue, 15 Sep 2026 12:22:46 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH 09/18] net: use secure random for random MAC address
-Date: Tue, 15 Sep 2026 12:21:07 -0700
-Message-ID: <20260915192207.3926217-10-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: [PATCH 10/18] ipsec: use secure random for SAD hash seed
+Date: Tue, 15 Sep 2026 12:21:08 -0700
+Message-ID: <20260915192207.3926217-11-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260915192207.3926217-1-stephen@networkplumber.org>
 References: <20260915192207.3926217-1-stephen@networkplumber.org>
@@ -82,69 +84,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-rte_eth_random_addr() returned 48 bits of raw rte_rand() output on
-every call. That both makes the generated address predictable and
-leaks enough generator output to help recover the internal state.
+The hash initial value for the security association database was
+taken from rte_rand(). A predictable hash seed lets an attacker pick
+SPI values that collide in the same bucket and degrade lookups.
 
-Use rte_random_bytes() instead. The function cannot report an error
-to its callers, so fall back to rte_rand() if the system random
-generator is unavailable, which is no worse than the previous
-behaviour.
+Use rte_random_bytes(), which is done once when the database is
+created.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/net/rte_ether.c | 13 ++++++++++---
- lib/net/rte_ether.h |  5 +++++
- 2 files changed, 15 insertions(+), 3 deletions(-)
+ lib/ipsec/ipsec_sad.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/lib/net/rte_ether.c b/lib/net/rte_ether.c
-index 6703145fc5..4b2932c00b 100644
---- a/lib/net/rte_ether.c
-+++ b/lib/net/rte_ether.c
-@@ -3,6 +3,7 @@
-  */
+diff --git a/lib/ipsec/ipsec_sad.c b/lib/ipsec/ipsec_sad.c
+index 15ea868f77..0ea797604e 100644
+--- a/lib/ipsec/ipsec_sad.c
++++ b/lib/ipsec/ipsec_sad.c
+@@ -300,7 +300,12 @@ rte_ipsec_sad_create(const char *name, const struct rte_ipsec_sad_conf *conf)
+ 	memcpy(sad->name, sad_name, sizeof(sad_name));
  
- #include <stdbool.h>
-+#include <string.h>
- 
- #include <eal_export.h>
- #include <rte_ether.h>
-@@ -12,10 +13,16 @@ RTE_EXPORT_SYMBOL(rte_eth_random_addr)
- void
- rte_eth_random_addr(uint8_t *addr)
- {
--	uint64_t rand = rte_rand();
--	uint8_t *p = (uint8_t *)&rand;
-+	/* Prefer the system random generator so that the address can not
-+	 * be predicted from other random values. Fall back to rte_rand()
-+	 * if it is unavailable, which is what was always used before.
-+	 */
-+	if (rte_random_bytes(addr, RTE_ETHER_ADDR_LEN) != 0) {
-+		uint64_t rand = rte_rand();
-+
-+		memcpy(addr, &rand, RTE_ETHER_ADDR_LEN);
+ 	hash_params.hash_func = DEFAULT_HASH_FUNC;
+-	hash_params.hash_func_init_val = rte_rand();
++	if (rte_random_bytes(&hash_params.hash_func_init_val,
++			     sizeof(hash_params.hash_func_init_val)) != 0) {
++		rte_free(sad);
++		rte_errno = EIO;
++		return NULL;
 +	}
- 
--	rte_memcpy(addr, p, RTE_ETHER_ADDR_LEN);
- 	addr[0] &= (uint8_t)~RTE_ETHER_GROUP_ADDR;	/* clear multicast bit */
- 	addr[0] |= RTE_ETHER_LOCAL_ADMIN_ADDR;	/* set local assignment bit */
- }
-diff --git a/lib/net/rte_ether.h b/lib/net/rte_ether.h
-index c9a0b536c3..b0dc227362 100644
---- a/lib/net/rte_ether.h
-+++ b/lib/net/rte_ether.h
-@@ -221,6 +221,11 @@ static inline int rte_is_valid_assigned_ether_addr(const struct rte_ether_addr *
- /**
-  * Generate a random Ethernet address that is locally administered
-  * and not multicast.
-+ *
-+ * The address is taken from the random source of the operating system
-+ * so that it cannot be predicted from other random values. If that
-+ * source is unavailable it falls back to the pseudo-random rte_rand().
-+ *
-  * @param addr
-  *   A pointer to Ethernet address.
-  */
+ 	sad->init_val = hash_params.hash_func_init_val;
+ 	hash_params.socket_id = conf->socket_id;
+ 	hash_params.name = hash_name;
 -- 
 2.53.0
 
