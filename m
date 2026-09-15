@@ -2,78 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E390C982C1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 15:05:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD7E9C88E75
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 15:08:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 86BF9427C3;
-	Tue, 15 Sep 2026 17:05:11 +0200 (CEST)
-Received: from rcdn-iport-1.cisco.com (rcdn-iport-1.cisco.com [173.37.86.72])
- by mails.dpdk.org (Postfix) with ESMTP id 3042340A6B
- for <dev@dpdk.org>; Tue, 15 Sep 2026 17:05:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cisco.com; i=@cisco.com; l=1062; q=dns/txt;
- s=iport01; t=1789484710; x=1790694310;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=3+g0rhrz067s6KgO0TLDsgp7r5QZ/Zs4PJG5cMfyqpY=;
- b=Crd76xomUgCm2du82ZRRh/fV0sNaifP6m7qvyp6DkXBqfyaFNj+kNPHA
- 9VhzI8yXSJPTSArdzM4UnUMjZcROuFJtpS6Id8nPqlwjYm7d+sg4jnHlX
- gWEMR6wdzEIHgdy1rZBOYXM3+ZzRrq5ylBUnc0jbu8JBs1D7bq/s4/ya/
- VA23/PzdQSjLSGf8jTSkpBIzsk0CBmqVpI/4Yp+yuHOjWxD2FRfYY2hLO
- zPWNhRvcUWRca7iLmIfPd5kcQjpM1+o1GWRnacHY5gohORzCs9G6CTwmP
- 5X9zxM73uYrfNj5NHo0n4gkMmCskqwbv34nZvYo5scVD+7RP9UeA2hfGX g==;
-X-CSE-ConnectionGUID: vYntsRcnR1epPbi4AGTZ1g==
-X-CSE-MsgGUID: TpqdkDFoQfeVqRPgJj2qCw==
-X-IPAS-Result: =?us-ascii?q?A0BYAwB/Xalq/5H/Ja1aglmELUK1MYF+DwEBAQ9RBAEBh?=
- =?us-ascii?q?QUCjgcCJjQJDgECBAMCAwEBAQEBAQEBAQEBAQoBAQUBAQECAQcFgQ4ThlyQE?=
- =?us-ascii?q?wIBAzIBRhBRVoMbgnUDwX6CLIEBhH7ZSoF0FYE4jWF2hHwnFQaBSUSBFYNph?=
- =?us-ascii?q?RCFeASDHBKDV5BVSIEeA1ksAVUTDQoLBwWBZgM1EioVbjIdgSM+F4EHGwYFg?=
- =?us-ascii?q?R2BJ4JiIxk2eoEJXoErKWABEheBCYIIAoJUggECAUlDDgdFUwknQQoSTCkiC?=
- =?us-ascii?q?BIJARMaFxgNSBEsNxUZBD5uB5IpgQ+BeDjHLIQooVwaM6ptmQikWoRpgWg8g?=
- =?us-ascii?q?VlNIxWDI1IZD95ZKHQHAgcPApNxAQE?=
-IronPort-Data: A9a23:9enTDakCCBMPjMP6/tsbdNTo5gzOJ0RdPkR7XQ2eYbSJt1+Wr1Gzt
- xIaDW6Gb/uPNzOmKdpwao6ypEwEuMKHy4NjSws6pCBmEVtH+JHPbTi7wugcHM8zwunrFh8PA
- xA2M4GYRCwMZiaC4Errav6+/SEUOZigHtLUEPTDNj16WThqQSIgjQMLs+Mii+aEu/Dha++2k
- Y20+ZK31GONgWYubDpFsv7b8nuDgdyr0N8mlg1mDRx0lAe2e0k9VPo3Oay3Jn3kdYhYdsbSb
- /rD1ryw4lTC9B4rDN6/+p6jGqHdauePVeQmoiM+t5mK2nCulARrukoIHKZ0hXNsttm8t4sZJ
- OOhGnCHYVxB0qXkwIzxWvTDes10FfUuFLTveRBTvSEPpqHLWyOE/hlgMK05FZMp/PpsO2pIz
- 6UVMAgHb0yqqN6Emb3uH4GAhux7RCXqFJkUtnclyXTSCuwrBMiTBa7L/tRfmjw3g6iiH96HO
- JFfMmUpNkmdJUQTZz/7C7pm9AusrmPjcjZVgFmUvqEwpWPUyWSd1ZCwaoGEIYTUGp09ckCwm
- nrf82fVLBYjOtGh0AC9/VCu3PbkgnauMG4VPPjinhJwu3Wfy3I7BAUaVh28u/bRolK+XNdWM
- GQR/SwspKw18gqtQ8WVYvGjiGSPshhZX59bFPc3rVndjKHV+A2eQGMDS1atdeAbiSP/fhRyv
- nfhoj8jLWUHXGG9IZ5FyoqpkA==
-IronPort-HdrOrdr: A9a23:qC2YqqPn2HknKsBcTuGjsMiBIKoaSvp037Dk7SxMoHtuA6ilfq
- +V8sjzuSWftN9VYgBCpTniAtjkfZqjz/9ICOAqVN/IYOClghrLEGgI1+TfKlPbdhEWjtQ86Y
- 5QN45jFdb3EV92yez+4AW+DpIc5ePvytHOuQ8bpE0dND2DrMpbnmFENjo=
-X-Talos-CUID: 9a23:889ajmzuWnf932gS9lGoBgUKK8Y5aUfWyk2JLleAA2c1YZKpewafrfY=
-X-Talos-MUID: 9a23:WYthoQrMcGRbYIecbZAezw16Lctrz4qpMU4Ar4w8g8amN3ZpECjI2Q==
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-AV: E=Sophos;i="6.27,103,1787011200"; d="scan'208";a="523930670"
-Received: from rcdn-l-core-08.cisco.com ([173.37.255.145])
- by rcdn-iport-1.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384;
- 15 Sep 2026 15:05:08 +0000
-Received: from rtp-orb-10405.cisco.com (rtp-orb-10405.cisco.com [64.100.22.53])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by rcdn-l-core-08.cisco.com (Postfix) with ESMTPS id D9E51180005A7;
- Tue, 15 Sep 2026 15:05:07 +0000 (GMT)
-From: Randy L Tice <rtice@cisco.com>
-To: dev@dpdk.org
-Cc: Thomas Monjalon <thomas@monjalon.net>,
-	Randy L Tice <rtice@cisco.com>
-Subject: [PATCH v2 0/1] eal: add CPU socket lookup API
-Date: Tue, 15 Sep 2026 11:05:06 -0400
-Message-Id: <20260915150507.3-1-rtice@cisco.com>
-X-Mailer: git-send-email 2.35.6
-In-Reply-To: <178941409436.3.12421464753538796039@cisco.com>
-References: <178941409436.3.12421464753538796039@cisco.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 203CB40B91;
+	Tue, 15 Sep 2026 17:08:44 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 6F6C240A6B
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 17:08:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1789484921;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=OherCW1Z4qT6+eBP0GHIEbMzDLAeKm7llNcrtPIfiaA=;
+ b=IOjyXHg+0EqErjhqet4kiqX8faN3buqgSNqxsa4T+JD600vUvw13T58N7epwSZwh1RlZJO
+ QviCKlEY3deSdHrjjFngPPzZ7ESLx5/gRaKyw2EqVE9X/59861EoS9NtWkUd9af3tiHABP
+ Q3dW4FkwuA9GtH8Urti42HYmJDbXaAM=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-657-E5HjNl5fMNqcVzeBSvN3RQ-1; Tue, 15 Sep 2026 11:08:40 -0400
+X-MC-Unique: E5HjNl5fMNqcVzeBSvN3RQ-1
+X-Mimecast-MFC-AGG-ID: E5HjNl5fMNqcVzeBSvN3RQ_1789484919
+Received: by mail-lj1-f197.google.com with SMTP id
+ 38308e7fff4ca-3a27721662eso19478161fa.1
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 08:08:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1789484919; x=1790089719;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=OherCW1Z4qT6+eBP0GHIEbMzDLAeKm7llNcrtPIfiaA=;
+ b=eNpRDmTa+TT+GjDb4faULUSI/DUfA4IRi6mLpNPT7KITFVsdCCGPJqgOBb5D5JTBEx
+ Ov1W7oQaY4AXGGFHd/44fBUDoTY4BsqQk+69T503tCVn+jtrQ7dwAQFkUCDOmQT1ktDn
+ Ph+g7M2RKUEUfGmkjZquelPTcaAjEZimH4g723uAHvm4rgRKYbLzx31LUYb7f0ye67B6
+ ngT9smgm7DJ+qp+sdXz8P/PRawqS2tnrE1mnz8Ls938T9Cy/RW3xGccdLll1dvhnHn7l
+ G2FMUyfhL0fdVF8ki5BMgnYfFzt/2Pksrr22aUbXkkY4EuYREnXH1VF+4VfMM15J932S
+ 8wZw==
+X-Gm-Message-State: AFuF++n6qbd+FWwBzNbmB9XuWx4Tg7DPZCj70OZAFYPQ3xwxWNnlKqnz
+ XnL6gzEs8PizXKtYZjskdwUHQTOh5MyqMltSdLOiK3727gi8b5tdxC7qX1amhpK56DRd/e6x+5A
+ NwQGjF1246W8si3KsPn0NIrMcAihdZo7rhFCJrcMq+1j5Ytv8r6j6cWVchu2EUnZ85nYVM6VyY4
+ hSUWMEsGHPGCKXhF+eCp8izLympYw=
+X-Gm-Gg: AYBFou1moSiTEy77Lh8ZqrPmptyGIJIgin1M8+yAIaehz43ev4DGDbE/6Wvuz+esvK6
+ lIVRG9KYY+Lty87YwekwMApiJtXXM6UMS1LSlQ+VmMi6xkH2FkxnGt14VvUJXuL60B45xQM3YZg
+ gREFu5BqWsl4jYSFTnXbdzzctKpFzVJq6lAYGaVVbZPrsqf3OdxWm7S0WpOD1xq7WBB9tYq8Hgz
+ rBkxC9OWCVKh2fRouKWuqkMQF3EwXFI0OP8v0fmK4jRx6qo
+X-Received: by 2002:a05:651c:a213:10b0:3a3:749e:31a1 with SMTP id
+ 38308e7fff4ca-3a5c898bedfmr9215311fa.21.1789484918733; 
+ Tue, 15 Sep 2026 08:08:38 -0700 (PDT)
+X-Received: by 2002:a05:651c:a213:10b0:3a3:749e:31a1 with SMTP id
+ 38308e7fff4ca-3a5c898bedfmr9215291fa.21.1789484918261; Tue, 15 Sep 2026
+ 08:08:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Outbound-Client-TLS: ANONYMOUS; rtp-orb-10405.cisco.com [64.100.22.53];
- TLSv1.3; TLS_AES_256_GCM_SHA384; 256
-X-Outbound-SMTP-Client: 64.100.22.53, rtp-orb-10405.cisco.com
-X-Outbound-Node: rcdn-l-core-08.cisco.com
+References: <20260912063319.4117869-1-stephen@networkplumber.org>
+ <20260914173700.2795983-1-stephen@networkplumber.org>
+In-Reply-To: <20260914173700.2795983-1-stephen@networkplumber.org>
+From: David Marchand <david.marchand@redhat.com>
+Date: Tue, 15 Sep 2026 17:08:25 +0200
+X-Gm-Features: AcwNN1V0PfereiCKT70_sj1TchlGClCpw3qiFl4Frpox9jMOOE1_Mz3hVfMbvqQ
+Message-ID: <CAJFAV8znaZ73Vw=frtz-Cz5S7_DQOHhVem-jmRbAy5CunoTFHQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/9] consolidate sysfs access
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: oDDNHBxBy0ZIxGZ3Vv-uryJ7PjJwi7NkWpDouWGTq5U_1789484919
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,31 +83,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Some applications need to derive socket-specific EAL configuration
-from OS CPU IDs before EAL lcore IDs are useful. One example is
-building socket memory policy from the CPUs available to the process.
+On Mon, 14 Sept 2026 at 19:37, Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+>
+> After reviewing lots of drivers and seeing sloppy string handling
+> resorted to AI assistance to unify and consolidate the parsing
+> of sysfs values. Many drivers open code this with similar pattern
+> but lacked any coherent error handling. The kernel API is
+> consistent and won't give bad data, but it make sense to
+> check for garbage.
+>
+> Add one set of routines in EAL that build the path from a printf
+> style format and convert with strtoul()/strtol(), then convert the
+> existing callers.
+>
+> Since the new routines are Linux only, a driver that uses sysfs while
+> advertising support on FreeBSD or Windows now fails to link. Two such
+> cases turned up and are fixed here: the eal_fs test and common/ionic.
 
-Existing public socket APIs do not cover this directly. rte_socket_id()
-reports the calling thread socket, while rte_lcore_to_socket_id()
-requires an EAL lcore ID and uses EAL lcore configuration.
+You can move the new header in lib/eal/linux/include/ and remove the
+#ifdef LINUX guards.
 
-Add experimental rte_cpu_socket_id() as a public API for mapping an OS
-logical CPU ID to the NUMA socket containing that CPU. The
-implementation reuses the existing per-OS EAL lookup internally, while
-keeping the eal_cpu_socket_id() helper private to EAL.
+>
+> Note: existing eal_parse_sysfs_value() goes away with this.
+> It was exported as a stable symbol, which was a mistake:
+> the eal_ prefix and the private eal_filesystem.h both say it is internal,
+> and nothing outside the tree should have been calling it.
 
-v2:
-- Mark rte_cpu_socket_id() experimental in the declaration, export
-  macro, release note and commit message.
+I agree.
 
-Randy L Tice (1):
-  eal: add API to get CPU socket ID
+> The new rte_sysfs_parse_XXX routines are exported, but marked
+> as internal use only.
+>
+> v3 - fix doxygen comments
 
- .mailmap                               |  1 +
- doc/guides/rel_notes/release_26_11.rst |  3 +++
- lib/eal/common/eal_common_lcore.c      |  7 +++++++
- lib/eal/include/rte_lcore.h            | 18 ++++++++++++++++++
- 4 files changed, 29 insertions(+)
+I'll try to review soon, after the VFIO series.
+
 
 -- 
-2.35.6
+David Marchand
+
