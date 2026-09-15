@@ -2,34 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED294C88E75
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 11:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B4FC88E7F
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 11:35:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4355842794;
-	Tue, 15 Sep 2026 13:35:03 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id AD046427A3
- for <dev@dpdk.org>; Tue, 15 Sep 2026 13:35:01 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 908551A0049;
- Tue, 15 Sep 2026 13:35:01 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 39851427A8;
+	Tue, 15 Sep 2026 13:35:06 +0200 (CEST)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+ by mails.dpdk.org (Postfix) with ESMTP id F073C41157;
+ Tue, 15 Sep 2026 13:35:02 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id CA165200061;
+ Tue, 15 Sep 2026 13:35:02 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com
  (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 581E81A0033;
- Tue, 15 Sep 2026 13:35:01 +0200 (CEST)
+ by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 91593200053;
+ Tue, 15 Sep 2026 13:35:02 +0200 (CEST)
 Received: from lsv031405.swis.in-blr01.nxp.com
  (lsv031405.swis.in-blr01.nxp.com [92.120.147.93])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 1FC22180006C;
- Tue, 15 Sep 2026 19:34:59 +0800 (+08)
+ by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 0D1DB18000BA;
+ Tue, 15 Sep 2026 19:35:00 +0800 (+08)
 From: Prashant Gupta <prashant.gupta_3@nxp.com>
 To: stephen@networkplumber.org,
 	dev@dpdk.org
-Subject: [PATCH v3-S2 00/13] net/dpaa2: flow, meter and parser features
-Date: Tue, 15 Sep 2026 17:04:46 +0530
-Message-ID: <20260915113459.4166621-1-prashant.gupta_3@nxp.com>
+Cc: stable@dpdk.org,
+	Hemant Agrawal <hemant.agrawal@nxp.com>
+Subject: [PATCH v3-S2 01/13] net/dpaa2: fix integer overflow in CCSR region
+ mapping
+Date: Tue, 15 Sep 2026 17:04:47 +0530
+Message-ID: <20260915113459.4166621-2-prashant.gupta_3@nxp.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260910135158.2181141-48-prashant.gupta_3@nxp.com>
+In-Reply-To: <20260915113459.4166621-1-prashant.gupta_3@nxp.com>
 References: <20260910135158.2181141-48-prashant.gupta_3@nxp.com>
+ <20260915113459.4166621-1-prashant.gupta_3@nxp.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Virus-Scanned: ClamAV using ClamSMTP
@@ -46,68 +50,76 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This is the second of four series upstreaming the missing NXP dpaa2
-driver changes. It does not depend on series 1 and can be applied
-independently. It adds the net/dpaa2 flow, metering and parser features:
+From: Hemant Agrawal <hemant.agrawal@nxp.com>
 
-- fix an integer overflow in the CCSR region mapping,
-- set Tx confirmation on device init and support a larger burst size,
-- support MPLS and PPPoE flow distribution, meter and policing, and the
-  flow drop action, with a per-device default flow miss action,
-- identify Rx mbuf hash information by FLC and add minimum key size
-  support,
-- restructure the parser processing, parse tunnel and fragmented packet
-  types, remove the unused soft parser driver and rename the Rx queue
-  flags.
+In lsx_ccsr_map_region, PAGE_SIZE is defined as sysconf(_SC_PAGESIZE)
+which may be negative on error. The value was used directly in size_t
+comparisons and passed to mmap, causing an integer overflow (Coverity
+CID 49765682).
 
-Every commit builds cleanly (including the aarch64 DPAA cross build with
--Werror) and the series is bisectable.
+Use sysconf() explicitly with a signed long, check for errors, and
+compute map_len separately with unsigned arithmetic before passing to
+mmap.
 
-Gagandeep Singh (7):
-  net/dpaa2: set Tx confirmation on device init
-  net/dpaa2: support larger burst size
-  net/dpaa2: support MPLS and PPPoE flow distribution
-  net/dpaa2: support meter and policing
-  net/dpaa2: support flow drop action
-  net/dpaa2: set default flow miss action per device
-  net/dpaa2: identify Rx mbuf hash information by FLC
+Coverity issue: 49765682
+Fixes: f023d059769f ("net/dpaa2: support recycle loopback port")
+Cc: stable@dpdk.org
+Signed-off-by: Hemant Agrawal <hemant.agrawal@nxp.com>
+---
+ drivers/net/dpaa2/dpaa2_recycle.c | 27 +++++++++++++++++++--------
+ 1 file changed, 19 insertions(+), 8 deletions(-)
 
-Hemant Agrawal (4):
-  net/dpaa2: fix integer overflow in CCSR region mapping
-  net/dpaa2: add minimum key size support
-  net/dpaa2: restructure dpaa2 parser processing
-  net/dpaa2: parse tunnel and fragmented packet types
-
-Jun Yang (2):
-  net/dpaa2: remove unused soft parser driver
-  net/dpaa2: rename Rx queue flags
-
- doc/guides/nics/dpaa2.rst               |    1 +
- doc/guides/nics/features/dpaa2.ini      |    3 +
- doc/guides/rel_notes/release_26_11.rst  |    6 +
- drivers/net/dpaa2/dpaa2_ethdev.c        |   82 +-
- drivers/net/dpaa2/dpaa2_ethdev.h        |  212 +++-
- drivers/net/dpaa2/dpaa2_flow.c          |  268 +++-
- drivers/net/dpaa2/dpaa2_meter.c         |  579 +++++++++
- drivers/net/dpaa2/dpaa2_parse_dump.h    |  374 ------
- drivers/net/dpaa2/dpaa2_parser_decode.h | 1539 +++++++++++++++++++++++
- drivers/net/dpaa2/dpaa2_pmd_logs.h      |   67 +
- drivers/net/dpaa2/dpaa2_recycle.c       |   28 +-
- drivers/net/dpaa2/dpaa2_rxtx.c          |  334 +++--
- drivers/net/dpaa2/dpaa2_sparser.c       |  137 --
- drivers/net/dpaa2/dpaa2_sparser.h       |  202 ---
- drivers/net/dpaa2/dpaa2_tm.c            |   16 +-
- drivers/net/dpaa2/mc/dpni.c             |   11 +-
- drivers/net/dpaa2/mc/fsl_dpni.h         |   31 +-
- drivers/net/dpaa2/mc/fsl_dpni_cmd.h     |    3 +-
- drivers/net/dpaa2/meson.build           |    2 +-
- 19 files changed, 2911 insertions(+), 984 deletions(-)
- create mode 100644 drivers/net/dpaa2/dpaa2_meter.c
- delete mode 100644 drivers/net/dpaa2/dpaa2_parse_dump.h
- create mode 100644 drivers/net/dpaa2/dpaa2_parser_decode.h
- delete mode 100644 drivers/net/dpaa2/dpaa2_sparser.c
- delete mode 100644 drivers/net/dpaa2/dpaa2_sparser.h
-
+diff --git a/drivers/net/dpaa2/dpaa2_recycle.c b/drivers/net/dpaa2/dpaa2_recycle.c
+index f78d12362e..f1a234deae 100644
+--- a/drivers/net/dpaa2/dpaa2_recycle.c
++++ b/drivers/net/dpaa2/dpaa2_recycle.c
+@@ -176,6 +176,9 @@ static void *lsx_ccsr_map_region(uint64_t addr, size_t len)
+ 	void *tmp;
+ 	uint64_t start;
+ 	uint64_t offset;
++	uint64_t page_mask;
++	long page_size;
++	size_t map_len;
+ 
+ 	fd = open("/dev/mem", O_RDWR);
+ 	if (fd < 0) {
+@@ -183,20 +186,28 @@ static void *lsx_ccsr_map_region(uint64_t addr, size_t len)
+ 		return NULL;
+ 	}
+ 
+-	start = addr & PAGE_MASK;
++	page_size = sysconf(_SC_PAGESIZE);
++	if (page_size <= 0) {
++		close(fd);
++		return NULL;
++	}
++	page_mask = ~((uint64_t)page_size - 1);
++	start = addr & page_mask;
+ 	offset = addr - start;
+-	len = len & PAGE_MASK;
+-	if (len < (size_t)PAGE_SIZE)
+-		len = PAGE_SIZE;
++	len = len & page_mask;
++
++	map_len = len;
++	if (map_len < (size_t)page_size)
++		map_len = (size_t)page_size;
+ 
+-	tmp = mmap(NULL, len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, start);
++	tmp = mmap(NULL, map_len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, start);
+ 
+ 	close(fd);
+ 
+-	if (tmp != MAP_FAILED)
+-		return (uint8_t *)tmp + offset;
+-	else
++	if (tmp == MAP_FAILED)
+ 		return NULL;
++
++	return (uint8_t *)tmp + offset;
+ }
+ 
+ static const uint8_t ls_sd1_prot_idx_map[] = {
 -- 
 2.43.0
 
