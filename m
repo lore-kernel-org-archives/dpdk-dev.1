@@ -2,52 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 164F4C88E75
-	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 16:40:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1F07C88E75
+	for <dpdk-dev@archiver.kernel.org>; Tue, 15 Sep 2026 16:59:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 263E040265;
-	Tue, 15 Sep 2026 18:40:20 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id 62C994003C
- for <dev@dpdk.org>; Tue, 15 Sep 2026 18:40:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1789490419; x=1821026419;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=Iviu3uZElrrJRKScXw8Zs02ubQ07GRuT+0xSpUqBhRE=;
- b=h5Jgvl3GCIXFHOlwEm3bL6oqjXrkERfNjDiKCXpDFOpZoaw1I0kNC+km
- aDwivM/NXLkHxtqw0ieErqwWwZwQFxWkzCxpG1pdtK5/+XeO/V4NMTny+
- jLgdI8J5XloainYO3qfIyxgzYFzjUnN1c1vSbA/PM7gOqsSd3LNEoV5ox
- M/bM/mCVZprrO//V4C5dO5cXFRRfQ6WuXSa8udU8R8n9rakB7c94B6CLc
- dtNfFPFk2wshjwAP82ALElWk+D+WBwwr5+xgqwZQeedYJRtQ+hIGsQqw0
- wZ5qvYZfKKzW1snPzq6JCZTmOudzd5uf7yAVrCKp3tyyFbO1uWXb5KnX/ Q==;
-X-CSE-ConnectionGUID: Yz7caNBuTJCTW0nBaUFUqQ==
-X-CSE-MsgGUID: WE1+/51xTEmGfYBRpTCTEA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="89800042"
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="89800042"
-Received: from fmviesa013.fm.intel.com ([10.60.135.153])
- by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 15 Sep 2026 09:40:17 -0700
-X-CSE-ConnectionGUID: Ila3d+15REuJIwr+Ddq2Gw==
-X-CSE-MsgGUID: +YlUbsyIQ0Ci9tG9veZ3Sw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
-   d="scan'208";a="1472731"
-Received: from pae-14.iind.intel.com ([10.190.203.153])
- by fmviesa013.fm.intel.com with ESMTP; 15 Sep 2026 09:40:15 -0700
-From: Anurag Mandal <anurag.mandal@intel.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, vladimir.medvedkin@intel.com,
- rajesh3.kumar@intel.com, Anurag Mandal <anurag.mandal@intel.com>
-Subject: [PATCH v4] net/iavf: add reading PHC time support
-Date: Tue, 15 Sep 2026 16:42:31 +0000
-Message-Id: <20260915164231.247037-1-anurag.mandal@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260727102444.789833-1-anurag.mandal@intel.com>
-References: <20260727102444.789833-1-anurag.mandal@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 810DC40265;
+	Tue, 15 Sep 2026 18:59:16 +0200 (CEST)
+Received: from mail-pj2-f13.google.com (mail-pj2-f13.google.com
+ [74.125.227.141])
+ by mails.dpdk.org (Postfix) with ESMTP id CC3CD4003C
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 18:59:14 +0200 (CEST)
+Received: by mail-pj2-f13.google.com with SMTP id
+ 98e67ed59e1d1-396ccdaea76so1406011a91.0
+ for <dev@dpdk.org>; Tue, 15 Sep 2026 09:59:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789491554;
+ x=1790096354; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=OIXe54dLzek0Xdz09jQwsaavmnQIF/olk7qLlmhcJg8=;
+ b=vdvbspz4IAulwjgCutV4w5UVnqcmque1lQc+q6xbZ/iPg7w3hIYuOZIQpmKVdRikSA
+ e4g2j3pggBiYIgsvauxuGCSehmIWPm/l0It8vPRv5CjwhvPlQ9mQhjacPUsmxOIxybEU
+ MgtMNMY6HjRV8iUdRblQc3GhhRKGERpamzkTRmL9jt9I/OyV2z6A3uIHq+eNUk/nHHcw
+ voQBBTAkyHN+NNRG8s8XQTkKTxKmXCkRlM612U7GGK9qKqcwH9EeVSNbOuN8LrpQhH6O
+ nvNBnIZyOMlGt0rJjDY0/mhFhnCRgE9zT4onAyduqEod8PY9u+uGyxrAhZkmSeue5BFj
+ mg9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1789491554; x=1790096354;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=OIXe54dLzek0Xdz09jQwsaavmnQIF/olk7qLlmhcJg8=;
+ b=KIlR2Ga0yULcUGoMP2Q0Q/l6pr2Ssndq8QDif9ICCQ4qFRaZplM4rvq8xRDMOQdiop
+ KSxrWUylSXwHerBbJgfnJF686oPiYkEQIkGhZnjIsHCEJjXbvnvRSKjU97lsHAachsXj
+ czCfl2RMf0+C+XeAbePmEV6O7ndtPkYw+5a0/W/ZIfMrjFl+NjIMEh0rGzEEKFl17PLt
+ qs1432PbCEdo4wZkdOMYr1/A+Td9i8gwek0BCxHYZITvyyJ8whZXuX0TWQyYl1w2vTY9
+ bTFt9bDx/nWyGWf9TNAKZtaJTxuqSvY5h8McmGpiDhi9ge+iw5mpj4gLptLYmjsLiUpr
+ KGdA==
+X-Gm-Message-State: AFuF++kKoFCP2D+FS7a5LibvsLHjoVU/xY6Z8UFVhAdMMC8VFI/6AKpy
+ svAtXPnpxF7dxIA3gNzAp05OXPXPNEzPLCIxGgBaZxhPYxk8JabeV5tajjn+oZI1Y/RFfdNiAD7
+ 9Igza
+X-Gm-Gg: AYBFou28QMLZWadIdIxc4MlC/CUZQMwrpuLpNbR5AsiNygrSD82CWzKrheFWlaNMKCF
+ oYdeq4VymPyeRJZVMdpOE3REEuPttk//E6AxkYxLTX6ezPyIZL2ZXWC9JVtpZ4cW+EsH0gWQ/CG
+ /kLAkkb9dUPHh4w8A6Z/+IDJal9frrWHDcuiUGJHvsaFmzwAgv3fd4z1GZLL4/SHqemRVgCGmo6
+ w4tCxhycM+GaEU5tvOW7A+EKWWdBCXa44D4QJMN/gpwt5lw20+u81+e+x1PUM0mOdLqebYHhSBR
+ akm+cvtSYE+NiK/zvQ+9fS8Y6g82g7ViNHlxUUPUh4mHhNtvl7eIiccVfs1mrFh+tz6L567Fbph
+ 1HjDZsWF0hiytleFZ0shuXTRP93OBS4o2cCAOf5OxijUT1AisDLLaORMABjCN8aNcJ58m6LCcpH
+ bsYt3xy2cN9g01KbggsB8Ui2I31XZVtpSUj12cDFLcBKD293vUn6wioA9n1k0oPvLVD1alC4TF2
+ MhXhV4Vd2Mi70XshEC7XvceYzSxx4XJtSld49XWyg==
+X-Received: by 2002:a17:90b:4c4a:b0:398:ba46:1d9f with SMTP id
+ 98e67ed59e1d1-39dfe14719cmr4989451a91.13.1789491543344; 
+ Tue, 15 Sep 2026 09:59:03 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-39e19cfb136sm155564a91.0.2026.09.15.09.59.01
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 15 Sep 2026 09:59:03 -0700 (PDT)
+Date: Tue, 15 Sep 2026 09:58:56 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Kai Ji <kai.ji@intel.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH] examples: add Wycheproof validation app
+Message-ID: <20260915095856.2e597fc4@phoenix.local>
+In-Reply-To: <20260915155157.2446094-1-kai.ji@intel.com>
+References: <20260915155157.2446094-1-kai.ji@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,131 +83,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Added iavf support for the
-timesync_read_time ethdev API to read
-the device PTP Hardware Clock (PHC).
-A VF has no direct access to the PHC,
-so the time is fetched from the PF
-over virtchnl, and the API is only
-advertised when the PF grants the
-PTP read capability.
+On Tue, 15 Sep 2026 15:51:57 +0000
+Kai Ji <kai.ji@intel.com> wrote:
 
-Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
----
-V4: Addressed Rajesh Kumar's feedback
- - return the error unchanged
-V3: Changed read_clock to timesync_read_time
-V2: Addressed minor typo
+> +.PHONY: clean
+> +clean:
+> +	rm -f build/$(APP) build/$(APP)-static build/$(APP)-shared
+> +	test -d build && rmdir -p build || true
+> \ No newline at end of file
 
- drivers/net/intel/iavf/iavf.h        |  1 +
- drivers/net/intel/iavf/iavf_ethdev.c | 28 ++++++++++++++++++++++++++++
- drivers/net/intel/iavf/iavf_vchnl.c  | 13 ++++++++++---
- 3 files changed, 39 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
-index 293adaf6c9..416625d9fb 100644
---- a/drivers/net/intel/iavf/iavf.h
-+++ b/drivers/net/intel/iavf/iavf.h
-@@ -533,4 +533,5 @@ void iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset);
- void iavf_set_no_poll(struct iavf_adapter *adapter, bool link_change);
- bool is_iavf_supported(struct rte_eth_dev *dev);
- void iavf_hash_uninit(struct iavf_adapter *ad);
-+int iavf_phc_get_time(struct iavf_adapter *adapter, uint64_t *time);
- #endif /* _IAVF_ETHDEV_H_ */
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index e475b64971..cb0e8989e1 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -24,6 +24,7 @@
- #include <rte_cycles.h>
- #include <rte_eal.h>
- #include <rte_ether.h>
-+#include <rte_time.h>
- #include <ethdev_driver.h>
- #include <ethdev_pci.h>
- #include <rte_malloc.h>
-@@ -165,6 +166,7 @@ static int iavf_set_mc_addr_list(struct rte_eth_dev *dev,
- 			struct rte_ether_addr *mc_addrs,
- 			uint32_t mc_addrs_num);
- static int iavf_tm_ops_get(struct rte_eth_dev *dev __rte_unused, void *arg);
-+static int iavf_timesync_read_time(struct rte_eth_dev *dev, struct timespec *timestamp);
- 
- static const struct rte_pci_id pci_id_iavf_map[] = {
- 	{ RTE_PCI_DEVICE(IAVF_INTEL_VENDOR_ID, IAVF_DEV_ID_ADAPTIVE_VF) },
-@@ -264,6 +266,7 @@ static const struct eth_dev_ops iavf_eth_dev_ops = {
- 	.tx_done_cleanup	    = iavf_dev_tx_done_cleanup,
- 	.get_monitor_addr           = iavf_get_monitor_addr,
- 	.tm_ops_get                 = iavf_tm_ops_get,
-+	.timesync_read_time         = iavf_timesync_read_time,
- };
- 
- static int
-@@ -3662,6 +3665,31 @@ bool is_iavf_supported(struct rte_eth_dev *dev)
- 	return !strcmp(dev->device->driver->name, rte_iavf_pmd.driver.name);
- }
- 
-+static int
-+iavf_timesync_read_time(struct rte_eth_dev *dev, struct timespec *timestamp)
-+{
-+	struct iavf_adapter *adapter =
-+		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
-+	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
-+	uint64_t time;
-+	int ret;
-+
-+	if (adapter->closed)
-+		return -EIO;
-+
-+	if (!(vf->vf_res->vf_cap_flags & VIRTCHNL_VF_CAP_PTP) ||
-+	    !(vf->ptp_caps & VIRTCHNL_1588_PTP_CAP_READ_PHC))
-+		return -ENOTSUP;
-+
-+	ret = iavf_phc_get_time(adapter, &time);
-+	if (ret != 0)
-+		return ret;
-+
-+	*timestamp = rte_ns_to_timespec(time);
-+
-+	return 0;
-+}
-+
- RTE_PMD_REGISTER_PCI(net_iavf, rte_iavf_pmd);
- RTE_PMD_REGISTER_PCI_TABLE(net_iavf, pci_id_iavf_map);
- RTE_PMD_REGISTER_KMOD_DEP(net_iavf, "* igb_uio | vfio-pci");
-diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
-index f346837bf1..a63639549c 100644
---- a/drivers/net/intel/iavf/iavf_vchnl.c
-+++ b/drivers/net/intel/iavf/iavf_vchnl.c
-@@ -2521,9 +2521,8 @@ iavf_get_ptp_cap(struct iavf_adapter *adapter)
- }
- 
- int
--iavf_get_phc_time(struct ci_rx_queue *rxq)
-+iavf_phc_get_time(struct iavf_adapter *adapter, uint64_t *time)
- {
--	struct iavf_adapter *adapter = rxq->iavf_vsi->adapter;
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	struct virtchnl_phc_time phc_time;
-@@ -2543,9 +2542,17 @@ iavf_get_phc_time(struct ci_rx_queue *rxq)
- 			    "Failed to execute command of VIRTCHNL_OP_1588_PTP_GET_TIME");
- 		goto out;
- 	}
--	rxq->phc_time = ((struct virtchnl_phc_time *)args.out_buffer)->time;
-+	*time = ((struct virtchnl_phc_time *)args.out_buffer)->time;
- 
- out:
- 	rte_spinlock_unlock(&vf->phc_time_aq_lock);
- 	return err;
- }
-+
-+int
-+iavf_get_phc_time(struct ci_rx_queue *rxq)
-+{
-+	struct iavf_adapter *adapter = rxq->iavf_vsi->adapter;
-+
-+	return iavf_phc_get_time(adapter, &rxq->phc_time);
-+}
--- 
-2.34.1
+Fix you editor config all DPDK files have newline at EOF
 
