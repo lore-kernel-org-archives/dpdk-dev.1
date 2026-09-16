@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4107C88E77
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 12:19:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE805C88E77
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 12:19:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0855C42EDC;
-	Wed, 16 Sep 2026 14:18:44 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 788DB42ED9;
+	Wed, 16 Sep 2026 14:18:46 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
- by mails.dpdk.org (Postfix) with ESMTP id AB39D42ED6
- for <dev@dpdk.org>; Wed, 16 Sep 2026 14:18:40 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 1461D42ED6
+ for <dev@dpdk.org>; Wed, 16 Sep 2026 14:18:41 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1789561121; x=1821097121;
+ t=1789561122; x=1821097122;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=kBoN/vGO4sLuPd+vA6RacTGm/izOwOu5Tv61yWp/HWA=;
- b=WItpShW6eKQljGiPzkrK50VcD21vFbrdDZC3bUq8qYML9ouduHXrxM2d
- FGaP0ajk0yIM2t2JXepnPVCXrvf9Fj1sgFYDMqDNjB6pqKOGvM/ZGzWae
- UrAGy1VlqQgv7ul9hfRsgro7xWNHU6aDAsMOfnH+dybxWEB3HfmSD/CYS
- 6iQwGRbGgFTcOM3L0UcTeptHhZALfOQRKSc2aZtDJjrTrM68jNd/B3DoM
- eGI9c+YRNRK95+rDJeYdJQgKwH1tFFIzNxJr+vT6MAQbocwwq9uyLAz0h
- joJf5x0jKR2B8hC/xZfGtKuvDpCFx7gdA0+wUwuEnDaIeF/1YuVKBgsDD A==;
-X-CSE-ConnectionGUID: Alu5CTkbSqe9OAEyknDF0A==
-X-CSE-MsgGUID: On2tZRmtQwqMfo4fLBtvrg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="112702944"
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="112702944"
+ bh=izwyPZMCgB5A0HF2ThyYnYTwPAXU6Br/af/2F/riA8I=;
+ b=miAbcKTipMLglksETQmDCH+UaGD+JKY1tGFQeeL1ecRImqqEZWRaXL8p
+ a/mK5A8c7GOSoEAdJWXk9KeGyAo5mi25GQnmkjJlrsDxh/CfvYoGzH1UP
+ OATjx8eQDZxOWihQXl4V+i9MJPE7X1klqWnKG7XrKSu+0/i8fDcR01rm4
+ k8AaF9s883Gv6wzkQ7jDesMnIYo0ep6rHfrq9t9Kz5jhnP12aUixJdkWZ
+ KDSnwyP1cutDSCYhQEd+NjKVuwYIyqeOHNxGOKmgsMi5y80xaV36SReLk
+ QCIu73hABRIVNADxAK8jCQy580fzqueBzOdKMZ2tPID7rgAQ50MwcVawb w==;
+X-CSE-ConnectionGUID: FY6ivEm2SXyUfa4JzlBnFA==
+X-CSE-MsgGUID: +nBz3XxFQHWTOInTQTj5OQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="112702948"
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="112702948"
 Received: from orviesa008.jf.intel.com ([10.64.159.148])
  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Sep 2026 05:18:40 -0700
-X-CSE-ConnectionGUID: x3p+SvX0SHOQ1sl5/CMKLQ==
-X-CSE-MsgGUID: cVk12KhRQV2H4ip13djc1g==
+ 16 Sep 2026 05:18:42 -0700
+X-CSE-ConnectionGUID: ZDiGOcH2Q3esZiumWz8pFw==
+X-CSE-MsgGUID: /IwokfbyR3yDFpciDsWG3w==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="272850243"
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="272850249"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa008.jf.intel.com with ESMTP; 16 Sep 2026 05:18:40 -0700
+ by orviesa008.jf.intel.com with ESMTP; 16 Sep 2026 05:18:41 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v3 05/19] net/ixgbe: reimplement ethertype parser
-Date: Wed, 16 Sep 2026 13:18:11 +0100
-Message-ID: <e389782f585880877bd626cc0a05bac81e418393.1789560945.git.anatoly.burakov@intel.com>
+Subject: [PATCH v3 06/19] net/ixgbe: reimplement syn parser
+Date: Wed, 16 Sep 2026 13:18:12 +0100
+Message-ID: <4daf67ef6722dac1f9a42d736e2b3cc05fd6c537.1789560945.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1789560943.git.anatoly.burakov@intel.com>
  <cover.1789560943.git.anatoly.burakov@intel.com>
@@ -61,500 +61,301 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 Use the new flow graph API and the common parsing framework to implement
-flow parser for ethertype.
+flow parser for SYN.
 
-The old ethertype parser was accepting certain things that were later
-rejected by the actual ethertype installation code, in particular DROP
-action as well as dst MAC address filtering. This was removed from the
-graph parser.
+As a result of this migration, queue index validation has changed:
 
-The ethertype filter tracking table is used by the rte_flow ethertype
-engine, but it is also in use by other features, so the filter tracking
-is refactored to be properly shared between the engine and other features
-that write into the same table.
+- queue is now validated at parse time against the configured number of Rx
+  queues (nb_rx_queues), rather than at install time against the hardware
+  maximum (IXGBE_MAX_RX_QUEUE_NUM)
+- the per-function queue bound check in ixgbe_syn_filter_set() has been
+  removed as it is no longer needed
+
+The syn filter tracking infrastructure is moved completely inside the new
+engine and is removed from the rest of the driver.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/ixgbe/ixgbe_ethdev.c        | 186 +++++------
- drivers/net/intel/ixgbe/ixgbe_ethdev.h        |  89 ++----
- drivers/net/intel/ixgbe/ixgbe_flow.c          | 219 +------------
- drivers/net/intel/ixgbe/ixgbe_flow.h          |   8 +
- .../net/intel/ixgbe/ixgbe_flow_ethertype.c    | 295 ++++++++++++++++++
- drivers/net/intel/ixgbe/ixgbe_pf.c            |  49 +--
- drivers/net/intel/ixgbe/meson.build           |   1 +
- 7 files changed, 429 insertions(+), 418 deletions(-)
- create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_ethertype.c
+ drivers/net/intel/ixgbe/ixgbe_ethdev.c   |  70 +----
+ drivers/net/intel/ixgbe/ixgbe_ethdev.h   |   7 +-
+ drivers/net/intel/ixgbe/ixgbe_flow.c     | 247 +-----------------
+ drivers/net/intel/ixgbe/ixgbe_flow.h     |   1 +
+ drivers/net/intel/ixgbe/ixgbe_flow_syn.c | 312 +++++++++++++++++++++++
+ drivers/net/intel/ixgbe/meson.build      |   1 +
+ 6 files changed, 319 insertions(+), 319 deletions(-)
+ create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_syn.c
 
 diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-index 48cf608aebb..771d2c584ba 100644
+index 771d2c584ba..00ba6f32fa9 100644
 --- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
 +++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-@@ -3000,6 +3000,10 @@ ixgbe_dev_stop(struct rte_eth_dev *dev)
- 	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
- 		return -E_RTE_SECONDARY;
- 
-+	/* disable timestamping; the application must re-enable it after restart */
-+	if (adapter->filter.timesync_installed)
-+		ixgbe_timesync_disable(dev);
-+
- 	ixgbe_dev_wait_setup_link_complete(dev, 0);
- 
- 	/* disable interrupts */
-@@ -6891,76 +6895,51 @@ ixgbe_add_del_ntuple_filter(struct ixgbe_adapter *adapter,
+@@ -6517,43 +6517,11 @@ ixgbevf_set_default_mac_addr(struct rte_eth_dev *dev,
  	return 0;
  }
  
 -int
--ixgbe_add_del_ethertype_filter(struct ixgbe_adapter *adapter,
--			struct rte_eth_ethertype_filter *filter,
+-ixgbe_syn_filter_set(struct ixgbe_adapter *adapter,
+-			struct rte_eth_syn_filter *filter,
 -			bool add)
 +void
-+ixgbe_ethertype_filter_program(struct ixgbe_hw *hw, uint8_t idx,
-+			uint32_t etqf, uint32_t etqs)
++ixgbe_syn_filter_program(struct ixgbe_hw *hw, uint32_t synqf)
  {
 -	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(adapter);
 -	struct ixgbe_filter_info *filter_info =
 -		IXGBE_DEV_PRIVATE_TO_FILTER_INFO(adapter);
--	uint32_t etqf = 0;
--	uint32_t etqs = 0;
--	int ret;
--	struct ixgbe_ethertype_filter ethertype_filter;
+-	uint32_t syn_info;
+-	uint32_t synqf;
 -
 -	if (filter->queue >= IXGBE_MAX_RX_QUEUE_NUM)
 -		return -EINVAL;
 -
--	if (filter->ether_type == RTE_ETHER_TYPE_IPV4 ||
--		filter->ether_type == RTE_ETHER_TYPE_IPV6) {
--		PMD_DRV_LOG(ERR, "unsupported ether_type(0x%04x) in"
--			" ethertype filter.", filter->ether_type);
--		return -EINVAL;
--	}
--
--	if (filter->flags & RTE_ETHTYPE_FLAGS_MAC) {
--		PMD_DRV_LOG(ERR, "mac compare is unsupported.");
--		return -EINVAL;
--	}
--	if (filter->flags & RTE_ETHTYPE_FLAGS_DROP) {
--		PMD_DRV_LOG(ERR, "drop option is unsupported.");
--		return -EINVAL;
--	}
--
--	ret = ixgbe_ethertype_filter_lookup(filter_info, filter->ether_type);
--	if (ret >= 0 && add) {
--		PMD_DRV_LOG(ERR, "ethertype (0x%04x) filter exists.",
--			    filter->ether_type);
--		return -EEXIST;
--	}
--	if (ret < 0 && !add) {
--		PMD_DRV_LOG(ERR, "ethertype (0x%04x) filter doesn't exist.",
--			    filter->ether_type);
--		return -ENOENT;
--	}
+-	syn_info = filter_info->syn_info;
 -
 -	if (add) {
--		etqf = IXGBE_ETQF_FILTER_EN;
--		etqf |= (uint32_t)filter->ether_type;
--		etqs |= (uint32_t)((filter->queue <<
--				    IXGBE_ETQS_RX_QUEUE_SHIFT) &
--				    IXGBE_ETQS_RX_QUEUE);
--		etqs |= IXGBE_ETQS_QUEUE_EN;
+-		if (syn_info & IXGBE_SYN_FILTER_ENABLE)
+-			return -EINVAL;
+-		synqf = (uint32_t)(((filter->queue << IXGBE_SYN_FILTER_QUEUE_SHIFT) &
+-			IXGBE_SYN_FILTER_QUEUE) | IXGBE_SYN_FILTER_ENABLE);
 -
--		ethertype_filter.ethertype = filter->ether_type;
--		ethertype_filter.etqf = etqf;
--		ethertype_filter.etqs = etqs;
--		ethertype_filter.conf = FALSE;
--		ret = ixgbe_ethertype_filter_insert(filter_info,
--						    &ethertype_filter);
--		if (ret < 0) {
--			PMD_DRV_LOG(ERR, "ethertype filters are full.");
--			return -ENOSPC;
--		}
+-		if (filter->hig_pri)
+-			synqf |= IXGBE_SYN_FILTER_SYNQFP;
+-		else
+-			synqf &= ~IXGBE_SYN_FILTER_SYNQFP;
 -	} else {
--		ret = ixgbe_ethertype_filter_remove(filter_info, (uint8_t)ret);
--		if (ret < 0)
--			return -ENOSYS;
+-		synqf = IXGBE_READ_REG(hw, IXGBE_SYNQF);
+-		if (!(syn_info & IXGBE_SYN_FILTER_ENABLE))
+-			return -ENOENT;
+-		synqf &= ~(IXGBE_SYN_FILTER_QUEUE | IXGBE_SYN_FILTER_ENABLE);
 -	}
--	IXGBE_WRITE_REG(hw, IXGBE_ETQF(ret), etqf);
--	IXGBE_WRITE_REG(hw, IXGBE_ETQS(ret), etqs);
-+	IXGBE_WRITE_REG(hw, IXGBE_ETQF(idx), etqf);
-+	IXGBE_WRITE_REG(hw, IXGBE_ETQS(idx), etqs);
+-
+-	filter_info->syn_info = synqf;
+ 	IXGBE_WRITE_REG(hw, IXGBE_SYNQF, synqf);
  	IXGBE_WRITE_FLUSH(hw);
-+}
-+
-+int
-+ixgbe_ethertype_table_add(struct ixgbe_ethertype_table *table,
-+			uint16_t ethertype, uint32_t etqf, uint32_t etqs)
-+{
-+	int free_idx = -1;
-+	int i;
-+
-+	for (i = 0; i < IXGBE_MAX_ETQF_FILTERS; i++) {
-+		if (table->mask & (1u << i)) {
-+			if (table->entries[i].ethertype == ethertype)
-+				return -EEXIST;
-+		} else if (free_idx < 0) {
-+			free_idx = i;
-+		}
-+	}
-+	if (free_idx < 0)
-+		return -ENOSPC;
-+
-+	table->mask |= 1u << free_idx;
-+	table->entries[free_idx].ethertype = ethertype;
-+	table->entries[free_idx].etqf = etqf;
-+	table->entries[free_idx].etqs = etqs;
-+
-+	return free_idx;
-+}
-+
-+int
-+ixgbe_ethertype_table_del(struct ixgbe_ethertype_table *table, uint8_t idx)
-+{
-+	if (idx >= IXGBE_MAX_ETQF_FILTERS || !(table->mask & (1u << idx)))
-+		return -ENOENT;
-+
-+	table->mask &= ~(1u << idx);
-+	table->entries[idx].ethertype = 0;
-+	table->entries[idx].etqf = 0;
-+	table->entries[idx].etqs = 0;
- 
- 	return 0;
+-	return 0;
  }
-@@ -7198,8 +7177,11 @@ static int
- ixgbe_timesync_enable(struct rte_eth_dev *dev)
- {
- 	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	struct ixgbe_filter_info *filter_info =
-+		IXGBE_DEV_PRIVATE_TO_FILTER_INFO(dev->data->dev_private);
- 	uint32_t tsync_ctl;
- 	uint32_t tsauxc;
-+	uint32_t etqf;
- 	struct timespec ts;
  
- 	memset(&ts, 0, sizeof(struct timespec));
-@@ -7221,10 +7203,19 @@ ixgbe_timesync_enable(struct rte_eth_dev *dev)
- 	ixgbe_start_timecounters(dev);
  
- 	/* Enable L2 filtering of IEEE1588/802.1AS Ethernet frame types. */
--	IXGBE_WRITE_REG(hw, IXGBE_ETQF(IXGBE_ETQF_FILTER_1588),
--			(RTE_ETHER_TYPE_1588 |
--			 IXGBE_ETQF_FILTER_EN |
--			 IXGBE_ETQF_1588));
-+	etqf = RTE_ETHER_TYPE_1588 | IXGBE_ETQF_FILTER_EN | IXGBE_ETQF_1588;
-+	if (!filter_info->timesync_installed) {
-+		int idx = ixgbe_ethertype_table_add(&filter_info->ethertype_table,
-+				RTE_ETHER_TYPE_1588, etqf, 0);
-+
-+		if (idx < 0) {
-+			PMD_DRV_LOG(ERR, "no free ETQF slot for 1588 timestamping");
-+			return idx;
-+		}
-+		filter_info->timesync_idx = idx;
-+		filter_info->timesync_installed = true;
-+	}
-+	ixgbe_ethertype_filter_program(hw, filter_info->timesync_idx, etqf, 0);
- 
- 	/* Enable timestamping of received PTP packets. */
- 	tsync_ctl = IXGBE_READ_REG(hw, IXGBE_TSYNCRXCTL);
-@@ -7248,6 +7239,8 @@ static int
- ixgbe_timesync_disable(struct rte_eth_dev *dev)
- {
- 	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	struct ixgbe_filter_info *filter_info =
-+		IXGBE_DEV_PRIVATE_TO_FILTER_INFO(dev->data->dev_private);
- 	uint32_t tsync_ctl;
- 
- 	/* Disable timestamping of transmitted PTP packets. */
-@@ -7261,7 +7254,12 @@ ixgbe_timesync_disable(struct rte_eth_dev *dev)
- 	IXGBE_WRITE_REG(hw, IXGBE_TSYNCRXCTL, tsync_ctl);
- 
- 	/* Disable L2 filtering of IEEE1588/802.1AS Ethernet frame types. */
--	IXGBE_WRITE_REG(hw, IXGBE_ETQF(IXGBE_ETQF_FILTER_1588), 0);
-+	if (filter_info->timesync_installed) {
-+		ixgbe_ethertype_filter_program(hw, filter_info->timesync_idx, 0, 0);
-+		ixgbe_ethertype_table_del(&filter_info->ethertype_table,
-+				filter_info->timesync_idx);
-+		filter_info->timesync_installed = false;
-+	}
- 
- 	/* Stop incrementing the System Time registers. */
- 	IXGBE_WRITE_REG(hw, IXGBE_TIMINCA, 0);
-@@ -8403,26 +8401,6 @@ ixgbe_ntuple_filter_restore(struct rte_eth_dev *dev)
+@@ -8401,23 +8369,6 @@ ixgbe_ntuple_filter_restore(struct rte_eth_dev *dev)
  	}
  }
  
--/* restore ethernet type filter */
+-/* restore SYN filter */
 -static inline void
--ixgbe_ethertype_filter_restore(struct rte_eth_dev *dev)
+-ixgbe_syn_filter_restore(struct rte_eth_dev *dev)
 -{
 -	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
 -	struct ixgbe_filter_info *filter_info =
 -		IXGBE_DEV_PRIVATE_TO_FILTER_INFO(dev->data->dev_private);
--	int i;
+-	uint32_t synqf;
 -
--	for (i = 0; i < IXGBE_MAX_ETQF_FILTERS; i++) {
--		if (filter_info->ethertype_mask & (1 << i)) {
--			IXGBE_WRITE_REG(hw, IXGBE_ETQF(i),
--					filter_info->ethertype_filters[i].etqf);
--			IXGBE_WRITE_REG(hw, IXGBE_ETQS(i),
--					filter_info->ethertype_filters[i].etqs);
--			IXGBE_WRITE_FLUSH(hw);
--		}
+-	synqf = filter_info->syn_info;
+-
+-	if (synqf & IXGBE_SYN_FILTER_ENABLE) {
+-		IXGBE_WRITE_REG(hw, IXGBE_SYNQF, synqf);
+-		IXGBE_WRITE_FLUSH(hw);
 -	}
 -}
 -
- /* restore SYN filter */
+ /* restore L2 tunnel filter */
  static inline void
- ixgbe_syn_filter_restore(struct rte_eth_dev *dev)
-@@ -8478,7 +8456,6 @@ static int
+ ixgbe_l2_tn_filter_restore(struct rte_eth_dev *dev)
+@@ -8456,7 +8407,6 @@ static int
  ixgbe_filter_restore(struct rte_eth_dev *dev)
  {
  	ixgbe_ntuple_filter_restore(dev);
--	ixgbe_ethertype_filter_restore(dev);
- 	ixgbe_syn_filter_restore(dev);
+-	ixgbe_syn_filter_restore(dev);
  	ixgbe_fdir_filter_restore(dev);
  	ixgbe_l2_tn_filter_restore(dev);
-@@ -8517,27 +8494,6 @@ ixgbe_clear_all_ntuple_filter(struct rte_eth_dev *dev)
+ 	ixgbe_rss_filter_restore(dev);
+@@ -8494,22 +8444,6 @@ ixgbe_clear_all_ntuple_filter(struct rte_eth_dev *dev)
  		ixgbe_remove_5tuple_filter(adapter, p_5tuple);
  }
  
--/* remove all the ether type filters */
+-/* remove the SYN filter */
 -void
--ixgbe_clear_all_ethertype_filter(struct rte_eth_dev *dev)
+-ixgbe_clear_syn_filter(struct rte_eth_dev *dev)
 -{
 -	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
 -	struct ixgbe_filter_info *filter_info =
 -		IXGBE_DEV_PRIVATE_TO_FILTER_INFO(dev->data->dev_private);
--	int i;
 -
--	for (i = 0; i < IXGBE_MAX_ETQF_FILTERS; i++) {
--		if (filter_info->ethertype_mask & (1 << i) &&
--		    !filter_info->ethertype_filters[i].conf) {
--			(void)ixgbe_ethertype_filter_remove(filter_info,
--							    (uint8_t)i);
--			IXGBE_WRITE_REG(hw, IXGBE_ETQF(i), 0);
--			IXGBE_WRITE_REG(hw, IXGBE_ETQS(i), 0);
--			IXGBE_WRITE_FLUSH(hw);
--		}
+-	if (filter_info->syn_info & IXGBE_SYN_FILTER_ENABLE) {
+-		filter_info->syn_info = 0;
+-
+-		IXGBE_WRITE_REG(hw, IXGBE_SYNQF, 0);
+-		IXGBE_WRITE_FLUSH(hw);
 -	}
 -}
 -
- /* remove the SYN filter */
- void
- ixgbe_clear_syn_filter(struct rte_eth_dev *dev)
+ /* remove all the L2 tunnel filters */
+ int
+ ixgbe_clear_all_l2_tn_filter(struct rte_eth_dev *dev)
 diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.h b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-index fe3790b9f49..61bbe610f33 100644
+index 61bbe610f33..ec216ec8c1f 100644
 --- a/drivers/net/intel/ixgbe/ixgbe_ethdev.h
 +++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-@@ -298,24 +298,20 @@ struct ixgbe_5tuple_filter {
- 	(RTE_ALIGN(IXGBE_MAX_FTQF_FILTERS, (sizeof(uint32_t) * NBBY)) / \
- 	 (sizeof(uint32_t) * NBBY))
- 
--struct ixgbe_ethertype_filter {
--	uint16_t ethertype;
--	uint32_t etqf;
--	uint32_t etqs;
--	/**
--	 * If this filter is added by configuration,
--	 * it should not be removed.
--	 */
--	bool     conf;
-+/* Shared EtherType (ETQF) filter table. */
-+struct ixgbe_ethertype_table {
-+	uint32_t mask; /* bitmask of used ETQF slots */
-+	struct ixgbe_ethertype_entry {
-+		uint16_t ethertype; /* ethertype, for dedup */
-+		uint32_t etqf; /* ETQF register value */
-+		uint32_t etqs; /* ETQS register value */
-+	} entries[IXGBE_MAX_ETQF_FILTERS];
- };
- 
- /*
-  * Structure to store filters' info.
-  */
- struct ixgbe_filter_info {
--	uint8_t ethertype_mask;  /* Bit mask for every used ethertype filter */
--	/* store used ethertype filters*/
--	struct ixgbe_ethertype_filter ethertype_filters[IXGBE_MAX_ETQF_FILTERS];
+@@ -315,8 +315,6 @@ struct ixgbe_filter_info {
  	/* Bit mask for every used 5tuple filter */
  	uint32_t fivetuple_mask[IXGBE_5TUPLE_ARRAY_SIZE];
  	struct ixgbe_5tuple_filter_list fivetuple_list;
-@@ -323,6 +319,14 @@ struct ixgbe_filter_info {
- 	uint32_t syn_info;
+-	/* store the SYN filter info */
+-	uint32_t syn_info;
  	/* store the rss filter info */
  	struct ixgbe_rte_flow_rss_conf rss_info;
-+	/* shared EtherType (ETQF) slot table */
-+	struct ixgbe_ethertype_table ethertype_table;
-+	/* 1588 timestamping ETQF slot (valid when timesync_installed) */
-+	bool timesync_installed;
-+	uint8_t timesync_idx;
-+	/* Tx anti-spoof ETQF slot (valid when antispoof_installed) */
-+	bool antispoof_installed;
-+	uint8_t antispoof_idx;
- };
- 
- struct ixgbe_l2_tn_key {
-@@ -680,13 +684,16 @@ bool ixgbe_rss_update_sp(enum ixgbe_mac_type mac_type);
+ 	/* shared EtherType (ETQF) slot table */
+@@ -684,15 +682,13 @@ bool ixgbe_rss_update_sp(enum ixgbe_mac_type mac_type);
  int ixgbe_add_del_ntuple_filter(struct ixgbe_adapter *adapter,
  			struct rte_eth_ntuple_filter *filter,
  			bool add);
--int ixgbe_add_del_ethertype_filter(struct ixgbe_adapter *adapter,
--			struct rte_eth_ethertype_filter *filter,
+-int ixgbe_syn_filter_set(struct ixgbe_adapter *adapter,
+-			struct rte_eth_syn_filter *filter,
 -			bool add);
- int ixgbe_syn_filter_set(struct ixgbe_adapter *adapter,
- 			struct rte_eth_syn_filter *filter,
- 			bool add);
  
-+void ixgbe_ethertype_filter_program(struct ixgbe_hw *hw, uint8_t idx,
-+			uint32_t etqf, uint32_t etqs);
-+int ixgbe_ethertype_table_add(struct ixgbe_ethertype_table *table,
-+			uint16_t ethertype, uint32_t etqf, uint32_t etqs);
-+int ixgbe_ethertype_table_del(struct ixgbe_ethertype_table *table, uint8_t idx);
-+
+ void ixgbe_ethertype_filter_program(struct ixgbe_hw *hw, uint8_t idx,
+ 			uint32_t etqf, uint32_t etqs);
+ int ixgbe_ethertype_table_add(struct ixgbe_ethertype_table *table,
+ 			uint16_t ethertype, uint32_t etqf, uint32_t etqs);
+ int ixgbe_ethertype_table_del(struct ixgbe_ethertype_table *table, uint8_t idx);
++void ixgbe_syn_filter_program(struct ixgbe_hw *hw, uint32_t synqf);
+ 
  /**
   * l2 tunnel configuration.
-  */
-@@ -757,7 +764,6 @@ int ixgbe_clear_all_fdir_filter(struct rte_eth_dev *dev);
- 
+@@ -765,7 +761,6 @@ int ixgbe_clear_all_fdir_filter(struct rte_eth_dev *dev);
  extern const struct rte_flow_ops ixgbe_flow_ops;
  
--void ixgbe_clear_all_ethertype_filter(struct rte_eth_dev *dev);
  void ixgbe_clear_all_ntuple_filter(struct rte_eth_dev *dev);
- void ixgbe_clear_syn_filter(struct rte_eth_dev *dev);
+-void ixgbe_clear_syn_filter(struct rte_eth_dev *dev);
  int ixgbe_clear_all_l2_tn_filter(struct rte_eth_dev *dev);
-@@ -792,55 +798,4 @@ void ixgbe_dev_macsec_setting_save(struct rte_eth_dev *dev,
  
- void ixgbe_dev_macsec_setting_reset(struct rte_eth_dev *dev);
- 
--static inline int
--ixgbe_ethertype_filter_lookup(struct ixgbe_filter_info *filter_info,
--			      uint16_t ethertype)
--{
--	int i;
--
--	for (i = 0; i < IXGBE_MAX_ETQF_FILTERS; i++) {
--		if (filter_info->ethertype_filters[i].ethertype == ethertype &&
--		    (filter_info->ethertype_mask & (1 << i)))
--			return i;
--	}
--	return -1;
--}
--
--static inline int
--ixgbe_ethertype_filter_insert(struct ixgbe_filter_info *filter_info,
--			      struct ixgbe_ethertype_filter *ethertype_filter)
--{
--	int i;
--
--	for (i = 0; i < IXGBE_MAX_ETQF_FILTERS; i++) {
--		if (!(filter_info->ethertype_mask & (1 << i))) {
--			filter_info->ethertype_mask |= 1 << i;
--			filter_info->ethertype_filters[i].ethertype =
--				ethertype_filter->ethertype;
--			filter_info->ethertype_filters[i].etqf =
--				ethertype_filter->etqf;
--			filter_info->ethertype_filters[i].etqs =
--				ethertype_filter->etqs;
--			filter_info->ethertype_filters[i].conf =
--				ethertype_filter->conf;
--			return i;
--		}
--	}
--	return -1;
--}
--
--static inline int
--ixgbe_ethertype_filter_remove(struct ixgbe_filter_info *filter_info,
--			      uint8_t idx)
--{
--	if (idx >= IXGBE_MAX_ETQF_FILTERS)
--		return -1;
--	filter_info->ethertype_mask &= ~(1 << idx);
--	filter_info->ethertype_filters[idx].ethertype = 0;
--	filter_info->ethertype_filters[idx].etqf = 0;
--	filter_info->ethertype_filters[idx].etqs = 0;
--	filter_info->ethertype_filters[idx].etqs = FALSE;
--	return idx;
--}
--
- #endif /* _IXGBE_ETHDEV_H_ */
+ int ixgbe_disable_sec_tx_path_generic(struct ixgbe_hw *hw);
 diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.c b/drivers/net/intel/ixgbe/ixgbe_flow.c
-index 6c2f7d591e4..75fa3b146e6 100644
+index 75fa3b146e6..dc55fbd724e 100644
 --- a/drivers/net/intel/ixgbe/ixgbe_flow.c
 +++ b/drivers/net/intel/ixgbe/ixgbe_flow.c
 @@ -63,11 +63,6 @@ struct ixgbe_ntuple_filter_ele {
  	struct ixgbe_filter_ele_base base;
  	struct rte_eth_ntuple_filter filter_info;
  };
--/* ethertype filter list structure */
--struct ixgbe_ethertype_filter_ele {
+-/* syn filter list structure */
+-struct ixgbe_eth_syn_filter_ele {
 -	struct ixgbe_filter_ele_base base;
--	struct rte_eth_ethertype_filter filter_info;
+-	struct rte_eth_syn_filter filter_info;
 -};
- /* syn filter list structure */
- struct ixgbe_eth_syn_filter_ele {
+ /* fdir filter list structure */
+ struct ixgbe_fdir_rule_ele {
  	struct ixgbe_filter_ele_base base;
-@@ -94,7 +89,11 @@ struct ixgbe_flow_mem {
- 	struct rte_flow *flow;
+@@ -92,7 +87,8 @@ struct ixgbe_flow_mem {
+ const struct ci_flow_engine_list ixgbe_flow_engine_list = {
+ 	{
+ 		&ixgbe_ethertype_flow_engine,
+-	}
++		&ixgbe_syn_flow_engine,
++	},
  };
  
--const struct ci_flow_engine_list ixgbe_flow_engine_list = {0};
-+const struct ci_flow_engine_list ixgbe_flow_engine_list = {
-+	{
-+		&ixgbe_ethertype_flow_engine,
-+	}
-+};
- 
  /**
-  * Endless loop will never happen with below assumption
-@@ -118,7 +117,7 @@ const struct rte_flow_item *next_no_void_pattern(
- /*
-  * All ixgbe engines mostly check the same stuff, so use a common check.
-  */
--static int
-+int
- ixgbe_flow_actions_check(const struct ci_flow_actions *actions,
- 		const struct ci_flow_actions_check_param *param,
- 		struct rte_flow_error *error)
-@@ -667,169 +666,6 @@ ixgbe_parse_ntuple_filter(struct rte_eth_dev *dev,
+@@ -666,205 +662,6 @@ ixgbe_parse_ntuple_filter(struct rte_eth_dev *dev,
  	return 0;
  }
  
 -/**
-- * Parse the rule to see if it is a ethertype rule.
-- * And get the ethertype filter info BTW.
+- * Parse the rule to see if it is a TCP SYN rule.
+- * And get the TCP SYN filter info BTW.
 - * pattern:
-- * The first not void item can be ETH.
+- * The first not void item must be ETH.
+- * The second not void item must be IPV4 or IPV6.
+- * The third not void item must be TCP.
 - * The next not void item must be END.
 - * action:
 - * The first not void action should be QUEUE.
 - * The next not void action should be END.
 - * pattern example:
 - * ITEM		Spec			Mask
-- * ETH		type	0x0807		0xFFFF
+- * ETH		NULL			NULL
+- * IPV4/IPV6	NULL			NULL
+- * TCP		tcp_flags	0x02	0xFF
 - * END
 - * other members in mask and spec should set to 0x00.
 - * item->last should be NULL.
 - */
 -static int
--cons_parse_ethertype_filter(const struct rte_flow_item *pattern,
--		const struct rte_flow_action *action,
--		struct rte_eth_ethertype_filter *filter,
+-cons_parse_syn_filter(const struct rte_flow_attr *attr, const struct rte_flow_item pattern[],
+-		const struct rte_flow_action_queue *q_act, struct rte_eth_syn_filter *filter,
 -		struct rte_flow_error *error)
 -{
 -	const struct rte_flow_item *item;
--	const struct rte_flow_item_eth *eth_spec;
--	const struct rte_flow_item_eth *eth_mask;
+-	const struct rte_flow_item_tcp *tcp_spec;
+-	const struct rte_flow_item_tcp *tcp_mask;
 -
+-
+-	/* the first not void item should be MAC or IPv4 or IPv6 or TCP */
 -	item = next_no_void_pattern(pattern, NULL);
--	/* The first non-void item should be MAC. */
--	if (item->type != RTE_FLOW_ITEM_TYPE_ETH) {
+-	if (item->type != RTE_FLOW_ITEM_TYPE_ETH &&
+-	    item->type != RTE_FLOW_ITEM_TYPE_IPV4 &&
+-	    item->type != RTE_FLOW_ITEM_TYPE_IPV6 &&
+-	    item->type != RTE_FLOW_ITEM_TYPE_TCP) {
 -		rte_flow_error_set(error, EINVAL,
--			RTE_FLOW_ERROR_TYPE_ITEM,
--			item, "Not supported by ethertype filter");
+-				RTE_FLOW_ERROR_TYPE_ITEM,
+-				item, "Not supported by syn filter");
+-		return -rte_errno;
+-	}
+-		/*Not supported last point for range*/
+-	if (item->last) {
+-		rte_flow_error_set(error, EINVAL,
+-			RTE_FLOW_ERROR_TYPE_UNSPECIFIED,
+-			item, "Not supported last point for range");
 -		return -rte_errno;
 -	}
 -
+-	/* Skip Ethernet */
+-	if (item->type == RTE_FLOW_ITEM_TYPE_ETH) {
+-		/* if the item is MAC, the content should be NULL */
+-		if (item->spec || item->mask) {
+-			rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ITEM,
+-				item, "Invalid SYN address mask");
+-			return -rte_errno;
+-		}
+-
+-		/* check if the next not void item is IPv4 or IPv6 */
+-		item = next_no_void_pattern(pattern, item);
+-		if (item->type != RTE_FLOW_ITEM_TYPE_IPV4 &&
+-		    item->type != RTE_FLOW_ITEM_TYPE_IPV6) {
+-			rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ITEM,
+-				item, "Not supported by syn filter");
+-			return -rte_errno;
+-		}
+-	}
+-
+-	/* Skip IP */
+-	if (item->type == RTE_FLOW_ITEM_TYPE_IPV4 ||
+-	    item->type == RTE_FLOW_ITEM_TYPE_IPV6) {
+-		/* if the item is IP, the content should be NULL */
+-		if (item->spec || item->mask) {
+-			rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ITEM,
+-				item, "Invalid SYN mask");
+-			return -rte_errno;
+-		}
+-
+-		/* check if the next not void item is TCP */
+-		item = next_no_void_pattern(pattern, item);
+-		if (item->type != RTE_FLOW_ITEM_TYPE_TCP) {
+-			rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ITEM,
+-				item, "Not supported by syn filter");
+-			return -rte_errno;
+-		}
+-	}
+-
+-	/* Get the TCP info. Only support SYN. */
+-	if (!item->spec || !item->mask) {
+-		rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ITEM,
+-				item, "Invalid SYN mask");
+-		return -rte_errno;
+-	}
 -	/*Not supported last point for range*/
 -	if (item->last) {
 -		rte_flow_error_set(error, EINVAL,
@@ -563,66 +364,57 @@ index 6c2f7d591e4..75fa3b146e6 100644
 -		return -rte_errno;
 -	}
 -
--	/* Get the MAC info. */
--	if (!item->spec || !item->mask) {
+-	tcp_spec = item->spec;
+-	tcp_mask = item->mask;
+-	if (!(tcp_spec->hdr.tcp_flags & RTE_TCP_SYN_FLAG) ||
+-	    tcp_mask->hdr.src_port ||
+-	    tcp_mask->hdr.dst_port ||
+-	    tcp_mask->hdr.sent_seq ||
+-	    tcp_mask->hdr.recv_ack ||
+-	    tcp_mask->hdr.data_off ||
+-	    tcp_mask->hdr.tcp_flags != RTE_TCP_SYN_FLAG ||
+-	    tcp_mask->hdr.rx_win ||
+-	    tcp_mask->hdr.cksum ||
+-	    tcp_mask->hdr.tcp_urp) {
+-		memset(filter, 0, sizeof(struct rte_eth_syn_filter));
 -		rte_flow_error_set(error, EINVAL,
 -				RTE_FLOW_ERROR_TYPE_ITEM,
--				item, "Not supported by ethertype filter");
+-				item, "Not supported by syn filter");
 -		return -rte_errno;
 -	}
 -
--	eth_spec = item->spec;
--	eth_mask = item->mask;
--
--	/* Mask bits of source MAC address must be full of 0.
--	 * Mask bits of destination MAC address must be full
--	 * of 1 or full of 0.
--	 */
--	if (!rte_is_zero_ether_addr(&eth_mask->hdr.src_addr) ||
--	    (!rte_is_zero_ether_addr(&eth_mask->hdr.dst_addr) &&
--	     !rte_is_broadcast_ether_addr(&eth_mask->hdr.dst_addr))) {
--		rte_flow_error_set(error, EINVAL,
--				RTE_FLOW_ERROR_TYPE_ITEM,
--				item, "Invalid ether address mask");
--		return -rte_errno;
--	}
--
--	if ((eth_mask->hdr.ether_type & UINT16_MAX) != UINT16_MAX) {
--		rte_flow_error_set(error, EINVAL,
--				RTE_FLOW_ERROR_TYPE_ITEM,
--				item, "Invalid ethertype mask");
--		return -rte_errno;
--	}
--
--	/* If mask bits of destination MAC address
--	 * are full of 1, set RTE_ETHTYPE_FLAGS_MAC.
--	 */
--	if (rte_is_broadcast_ether_addr(&eth_mask->hdr.dst_addr)) {
--		filter->mac_addr = eth_spec->hdr.dst_addr;
--		filter->flags |= RTE_ETHTYPE_FLAGS_MAC;
--	} else {
--		filter->flags &= ~RTE_ETHTYPE_FLAGS_MAC;
--	}
--	filter->ether_type = rte_be_to_cpu_16(eth_spec->hdr.ether_type);
--
--	/* Check if the next non-void item is END. */
+-	/* check if the next not void item is END */
 -	item = next_no_void_pattern(pattern, item);
 -	if (item->type != RTE_FLOW_ITEM_TYPE_END) {
+-		memset(filter, 0, sizeof(struct rte_eth_syn_filter));
 -		rte_flow_error_set(error, EINVAL,
 -				RTE_FLOW_ERROR_TYPE_ITEM,
--				item, "Not supported by ethertype filter.");
+-				item, "Not supported by syn filter");
 -		return -rte_errno;
 -	}
 -
--	filter->queue = ((const struct rte_flow_action_queue *)action->conf)->index;
+-	filter->queue = q_act->index;
+-
+-	/* Support 2 priorities, the lowest or highest. */
+-	if (!attr->priority) {
+-		filter->hig_pri = 0;
+-	} else if (attr->priority == (uint32_t)~0U) {
+-		filter->hig_pri = 1;
+-	} else {
+-		memset(filter, 0, sizeof(struct rte_eth_syn_filter));
+-		rte_flow_error_set(error, EINVAL,
+-			RTE_FLOW_ERROR_TYPE_ATTR_PRIORITY,
+-			attr, "Priority can be 0 or 0xFFFFFFFF");
+-		return -rte_errno;
+-	}
 -
 -	return 0;
 -}
 -
 -static int
--ixgbe_parse_ethertype_filter(struct rte_eth_dev *dev, const struct rte_flow_attr *attr,
+-ixgbe_parse_syn_filter(struct rte_eth_dev *dev, const struct rte_flow_attr *attr,
 -		const struct rte_flow_item pattern[], const struct rte_flow_action actions[],
--		struct rte_eth_ethertype_filter *filter, struct rte_flow_error *error)
+-		struct rte_eth_syn_filter *filter, struct rte_flow_error *error)
 -{
 -	int ret;
 -	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
@@ -633,9 +425,12 @@ index 6c2f7d591e4..75fa3b146e6 100644
 -			RTE_FLOW_ACTION_TYPE_QUEUE,
 -			RTE_FLOW_ACTION_TYPE_END
 -		},
--		.max_actions = 1,
 -		.driver_ctx = dev->data,
--		.check = ixgbe_flow_actions_check
+-		.check = ixgbe_flow_actions_check,
+-		.max_actions = 1,
+-	};
+-	struct ci_flow_attr_check_param attr_param = {
+-		.allow_priority = true,
 -	};
 -	const struct rte_flow_action *action;
 -
@@ -648,7 +443,7 @@ index 6c2f7d591e4..75fa3b146e6 100644
 -		return -ENOTSUP;
 -
 -	/* validate attributes */
--	ret = ci_flow_check_attr(attr, NULL, error);
+-	ret = ci_flow_check_attr(attr, &attr_param, error);
 -	if (ret)
 -		return ret;
 -
@@ -659,163 +454,128 @@ index 6c2f7d591e4..75fa3b146e6 100644
 -
 -	action = parsed_actions.actions[0];
 -
--	ret = cons_parse_ethertype_filter(pattern, action, filter, error);
--	if (ret)
--		return ret;
--
--	if (filter->ether_type == RTE_ETHER_TYPE_IPV4 ||
--		filter->ether_type == RTE_ETHER_TYPE_IPV6) {
--		memset(filter, 0, sizeof(struct rte_eth_ethertype_filter));
--		rte_flow_error_set(error, EINVAL,
--			RTE_FLOW_ERROR_TYPE_ITEM,
--			NULL, "IPv4/IPv6 not supported by ethertype filter");
--		return -rte_errno;
--	}
--
--	if (filter->flags & RTE_ETHTYPE_FLAGS_MAC) {
--		memset(filter, 0, sizeof(struct rte_eth_ethertype_filter));
--		rte_flow_error_set(error, EINVAL,
--			RTE_FLOW_ERROR_TYPE_ITEM,
--			NULL, "mac compare is unsupported");
--		return -rte_errno;
--	}
--
--	return 0;
+-	return cons_parse_syn_filter(attr, pattern, action->conf, filter, error);
 -}
 -
  /**
-  * Parse the rule to see if it is a TCP SYN rule.
-  * And get the TCP SYN filter info BTW.
-@@ -2819,7 +2655,6 @@ ixgbe_flow_create(struct rte_eth_dev *dev,
+  * Parse the rule to see if it is a L2 tunnel rule.
+  * And get the L2 tunnel filter info BTW.
+@@ -2655,7 +2452,6 @@ ixgbe_flow_create(struct rte_eth_dev *dev,
  	struct ixgbe_adapter *adapter =
  		IXGBE_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
  	struct rte_eth_ntuple_filter ntuple_filter;
--	struct rte_eth_ethertype_filter ethertype_filter;
- 	struct rte_eth_syn_filter syn_filter;
+-	struct rte_eth_syn_filter syn_filter;
  	struct ixgbe_fdir_rule fdir_rule;
  	struct ixgbe_l2_tunnel_conf l2_tn_filter;
-@@ -2828,7 +2663,6 @@ ixgbe_flow_create(struct rte_eth_dev *dev,
+ 	struct ixgbe_hw_fdir_info *fdir_info =
+@@ -2663,7 +2459,6 @@ ixgbe_flow_create(struct rte_eth_dev *dev,
  	struct ixgbe_rte_flow_rss_conf rss_conf;
  	struct rte_flow *flow = NULL;
  	struct ixgbe_ntuple_filter_ele *ntuple_filter_ptr;
--	struct ixgbe_ethertype_filter_ele *ethertype_filter_ptr;
- 	struct ixgbe_eth_syn_filter_ele *syn_filter_ptr;
+-	struct ixgbe_eth_syn_filter_ele *syn_filter_ptr;
  	struct ixgbe_eth_l2_tunnel_conf_ele *l2_tn_filter_ptr;
  	struct ixgbe_fdir_rule_ele *fdir_rule_ptr;
-@@ -2888,28 +2722,6 @@ ixgbe_flow_create(struct rte_eth_dev *dev,
+ 	struct ixgbe_rss_conf_ele *rss_filter_ptr;
+@@ -2722,26 +2517,6 @@ ixgbe_flow_create(struct rte_eth_dev *dev,
  		goto out;
  	}
  
--	memset(&ethertype_filter, 0, sizeof(struct rte_eth_ethertype_filter));
--	ret = ixgbe_parse_ethertype_filter(dev, attr, pattern,
--				actions, &ethertype_filter, error);
+-	memset(&syn_filter, 0, sizeof(struct rte_eth_syn_filter));
+-	ret = ixgbe_parse_syn_filter(dev, attr, pattern,
+-				actions, &syn_filter, error);
 -	if (!ret) {
--		ret = ixgbe_add_del_ethertype_filter(adapter,
--				&ethertype_filter, TRUE);
+-		ret = ixgbe_syn_filter_set(adapter, &syn_filter, TRUE);
 -		if (!ret) {
--			ethertype_filter_ptr = rte_zmalloc(
--				"ixgbe_ethertype_filter",
--				sizeof(struct ixgbe_ethertype_filter_ele), 0);
--			if (!ethertype_filter_ptr) {
+-			syn_filter_ptr = rte_zmalloc("ixgbe_syn_filter",
+-				sizeof(struct ixgbe_eth_syn_filter_ele), 0);
+-			if (!syn_filter_ptr) {
 -				PMD_DRV_LOG(ERR, "failed to allocate memory");
 -				goto out;
 -			}
--			ethertype_filter_ptr->filter_info = ethertype_filter;
--			flow->rule = ethertype_filter_ptr;
--			flow->filter_type = RTE_ETH_FILTER_ETHERTYPE;
+-			syn_filter_ptr->filter_info = syn_filter;
+-			flow->rule = syn_filter_ptr;
+-			flow->filter_type = RTE_ETH_FILTER_SYN;
 -			return flow;
 -		}
 -		goto out;
 -	}
 -
- 	memset(&syn_filter, 0, sizeof(struct rte_eth_syn_filter));
- 	ret = ixgbe_parse_syn_filter(dev, attr, pattern,
- 				actions, &syn_filter, error);
-@@ -3027,7 +2839,6 @@ ixgbe_flow_validate(struct rte_eth_dev *dev,
+ 	memset(&fdir_rule, 0, sizeof(struct ixgbe_fdir_rule));
+ 	ret = ixgbe_parse_fdir_filter(dev, attr, pattern,
+ 				actions, &fdir_rule, error);
+@@ -2839,7 +2614,6 @@ ixgbe_flow_validate(struct rte_eth_dev *dev,
  {
  	struct ixgbe_adapter *ad = IXGBE_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
  	struct rte_eth_ntuple_filter ntuple_filter;
--	struct rte_eth_ethertype_filter ethertype_filter;
- 	struct rte_eth_syn_filter syn_filter;
+-	struct rte_eth_syn_filter syn_filter;
  	struct ixgbe_l2_tunnel_conf l2_tn_filter;
  	struct ixgbe_fdir_rule fdir_rule;
-@@ -3054,12 +2865,6 @@ ixgbe_flow_validate(struct rte_eth_dev *dev,
+ 	struct ixgbe_rte_flow_rss_conf rss_conf;
+@@ -2865,12 +2639,6 @@ ixgbe_flow_validate(struct rte_eth_dev *dev,
  	if (!ret)
  		return 0;
  
--	memset(&ethertype_filter, 0, sizeof(struct rte_eth_ethertype_filter));
--	ret = ixgbe_parse_ethertype_filter(dev, attr, pattern,
--				actions, &ethertype_filter, error);
+-	memset(&syn_filter, 0, sizeof(struct rte_eth_syn_filter));
+-	ret = ixgbe_parse_syn_filter(dev, attr, pattern,
+-				actions, &syn_filter, error);
 -	if (!ret)
 -		return 0;
 -
- 	memset(&syn_filter, 0, sizeof(struct rte_eth_syn_filter));
- 	ret = ixgbe_parse_syn_filter(dev, attr, pattern,
- 				actions, &syn_filter, error);
-@@ -3097,12 +2902,10 @@ ixgbe_flow_destroy(struct rte_eth_dev *dev,
+ 	memset(&fdir_rule, 0, sizeof(struct ixgbe_fdir_rule));
+ 	ret = ixgbe_parse_fdir_filter(dev, attr, pattern,
+ 				actions, &fdir_rule, error);
+@@ -2902,11 +2670,9 @@ ixgbe_flow_destroy(struct rte_eth_dev *dev,
  	struct rte_flow *pmd_flow = flow;
  	enum rte_filter_type filter_type = pmd_flow->filter_type;
  	struct rte_eth_ntuple_filter ntuple_filter;
--	struct rte_eth_ethertype_filter ethertype_filter;
- 	struct rte_eth_syn_filter syn_filter;
+-	struct rte_eth_syn_filter syn_filter;
  	struct ixgbe_fdir_rule fdir_rule;
  	struct ixgbe_l2_tunnel_conf l2_tn_filter;
  	struct ixgbe_ntuple_filter_ele *ntuple_filter_ptr;
--	struct ixgbe_ethertype_filter_ele *ethertype_filter_ptr;
- 	struct ixgbe_eth_syn_filter_ele *syn_filter_ptr;
+-	struct ixgbe_eth_syn_filter_ele *syn_filter_ptr;
  	struct ixgbe_eth_l2_tunnel_conf_ele *l2_tn_filter_ptr;
  	struct ixgbe_fdir_rule_ele *fdir_rule_ptr;
-@@ -3148,15 +2951,6 @@ ixgbe_flow_destroy(struct rte_eth_dev *dev,
+ 	struct ixgbe_filter_ele_base *flow_mem_base;
+@@ -2951,14 +2717,6 @@ ixgbe_flow_destroy(struct rte_eth_dev *dev,
  		if (!ret)
  			rte_free(ntuple_filter_ptr);
  		break;
--	case RTE_ETH_FILTER_ETHERTYPE:
--		ethertype_filter_ptr = (struct ixgbe_ethertype_filter_ele *)
--					pmd_flow->rule;
--		ethertype_filter = ethertype_filter_ptr->filter_info;
--		ret = ixgbe_add_del_ethertype_filter(adapter,
--				&ethertype_filter, FALSE);
+-	case RTE_ETH_FILTER_SYN:
+-		syn_filter_ptr = (struct ixgbe_eth_syn_filter_ele *)
+-				pmd_flow->rule;
+-		syn_filter = syn_filter_ptr->filter_info;
+-		ret = ixgbe_syn_filter_set(adapter, &syn_filter, FALSE);
 -		if (!ret)
--			rte_free(ethertype_filter_ptr);
+-			rte_free(syn_filter_ptr);
 -		break;
- 	case RTE_ETH_FILTER_SYN:
- 		syn_filter_ptr = (struct ixgbe_eth_syn_filter_ele *)
- 				pmd_flow->rule;
-@@ -3233,7 +3027,6 @@ ixgbe_flow_flush(struct rte_eth_dev *dev,
+ 	case RTE_ETH_FILTER_FDIR:
+ 		fdir_rule_ptr = (struct ixgbe_fdir_rule_ele *)pmd_flow->rule;
+ 		fdir_rule = fdir_rule_ptr->filter_info;
+@@ -3027,7 +2785,6 @@ ixgbe_flow_flush(struct rte_eth_dev *dev,
  	}
  
  	ixgbe_clear_all_ntuple_filter(dev);
--	ixgbe_clear_all_ethertype_filter(dev);
- 	ixgbe_clear_syn_filter(dev);
+-	ixgbe_clear_syn_filter(dev);
  
  	ret = ixgbe_clear_all_fdir_filter(dev);
+ 	if (ret < 0) {
 diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.h b/drivers/net/intel/ixgbe/ixgbe_flow.h
-index 5e68c9886c1..d7694283a54 100644
+index d7694283a54..453a23d3b63 100644
 --- a/drivers/net/intel/ixgbe/ixgbe_flow.h
 +++ b/drivers/net/intel/ixgbe/ixgbe_flow.h
-@@ -5,8 +5,16 @@
- #ifndef _IXGBE_FLOW_H_
- #define _IXGBE_FLOW_H_
- 
-+#include "../common/flow_check.h"
- #include "../common/flow_engine.h"
- 
-+int
-+ixgbe_flow_actions_check(const struct ci_flow_actions *actions,
-+		const struct ci_flow_actions_check_param *param,
-+		struct rte_flow_error *error);
-+
+@@ -16,5 +16,6 @@ ixgbe_flow_actions_check(const struct ci_flow_actions *actions,
  extern const struct ci_flow_engine_list ixgbe_flow_engine_list;
  
-+extern const struct ci_flow_engine ixgbe_ethertype_flow_engine;
-+
+ extern const struct ci_flow_engine ixgbe_ethertype_flow_engine;
++extern const struct ci_flow_engine ixgbe_syn_flow_engine;
+ 
  #endif /*  _IXGBE_FLOW_H_ */
-diff --git a/drivers/net/intel/ixgbe/ixgbe_flow_ethertype.c b/drivers/net/intel/ixgbe/ixgbe_flow_ethertype.c
+diff --git a/drivers/net/intel/ixgbe/ixgbe_flow_syn.c b/drivers/net/intel/ixgbe/ixgbe_flow_syn.c
 new file mode 100644
-index 00000000000..bcc29a1b5a9
+index 00000000000..15881f1d334
 --- /dev/null
-+++ b/drivers/net/intel/ixgbe/ixgbe_flow_ethertype.c
-@@ -0,0 +1,295 @@
++++ b/drivers/net/intel/ixgbe/ixgbe_flow_syn.c
+@@ -0,0 +1,312 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright(c) 2026 Intel Corporation
 + */
@@ -830,115 +590,140 @@ index 00000000000..bcc29a1b5a9
 +#include "../common/flow_util.h"
 +#include "../common/flow_engine.h"
 +
-+struct ixgbe_ethertype_flow {
++struct ixgbe_syn_flow {
 +	struct rte_flow flow;
-+	uint16_t ether_type;
-+	uint16_t queue;
-+	uint32_t etqf;
-+	uint32_t etqs;
-+	uint8_t index; /* assigned HW slot */
++	struct rte_eth_syn_filter syn;
 +};
 +
-+struct ixgbe_ethertype_ctx {
++struct ixgbe_syn_ctx {
 +	struct ci_flow_engine_ctx base;
-+	struct rte_eth_ethertype_filter filter;
++	struct rte_eth_syn_filter syn;
++};
++
++struct ixgbe_syn_priv {
++	bool installed; /* hardware supports a single SYN filter */
 +};
 +
 +/**
-+ * Ethertype filter graph implementation
-+ * Pattern: START -> ETH -> END
++ * SYN filter graph implementation
++ * Pattern: START -> [ETH -> (IPV4|IPV6)] -> TCP -> END
 + */
 +
-+enum ixgbe_ethertype_node_id {
-+	IXGBE_ETHERTYPE_NODE_START = FLOW_GRAPH_NODE_FIRST,
-+	IXGBE_ETHERTYPE_NODE_ETH,
-+	IXGBE_ETHERTYPE_NODE_END,
-+	IXGBE_ETHERTYPE_NODE_MAX,
++enum ixgbe_syn_node_id {
++	IXGBE_SYN_NODE_START = FLOW_GRAPH_NODE_FIRST,
++	IXGBE_SYN_NODE_ETH,
++	IXGBE_SYN_NODE_IPV4,
++	IXGBE_SYN_NODE_IPV6,
++	IXGBE_SYN_NODE_TCP,
++	IXGBE_SYN_NODE_END,
++	IXGBE_SYN_NODE_MAX,
 +};
 +
 +static int
-+ixgbe_ethertype_node_eth_validate(const void *ctx __rte_unused,
-+				  const struct rte_flow_item *item,
-+				  struct rte_flow_error *error)
++ixgbe_validate_syn_tcp(const void *ctx __rte_unused,
++		       const struct rte_flow_item *item,
++		       struct rte_flow_error *error)
 +{
-+	const struct rte_flow_item_eth *eth_spec;
-+	const struct rte_flow_item_eth *eth_mask;
++	const struct rte_flow_item_tcp *tcp_spec;
++	const struct rte_flow_item_tcp *tcp_mask;
 +
-+	eth_spec = item->spec;
-+	eth_mask = item->mask;
++	tcp_spec = item->spec;
++	tcp_mask = item->mask;
 +
-+	/* Source MAC mask must be all zeros */
-+	if (!CI_FIELD_IS_ZERO(&eth_mask->hdr.src_addr)) {
++	/* SYN flag must be set in spec */
++	if (!(tcp_spec->hdr.tcp_flags & RTE_TCP_SYN_FLAG)) {
 +		return rte_flow_error_set(error, EINVAL,
 +				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Source MAC filtering not supported");
++				"TCP SYN flag must be set");
 +	}
 +
-+	/* Dest MAC mask must be all zeros */
-+	if (!CI_FIELD_IS_ZERO(&eth_mask->hdr.dst_addr)) {
++	/* Mask must match only SYN flag */
++	if (tcp_mask->hdr.tcp_flags != RTE_TCP_SYN_FLAG) {
 +		return rte_flow_error_set(error, EINVAL,
 +				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Destination MAC filtering not supported");
++				"TCP flags mask must match SYN only");
 +	}
 +
-+	/* Ethertype mask must be exact match */
-+	if (!CI_FIELD_IS_MASKED(&eth_mask->hdr.ether_type)) {
++	/* All other TCP fields must have zero mask */
++	if (tcp_mask->hdr.src_port ||
++	    tcp_mask->hdr.dst_port ||
++	    tcp_mask->hdr.sent_seq ||
++	    tcp_mask->hdr.recv_ack ||
++	    tcp_mask->hdr.data_off ||
++	    tcp_mask->hdr.rx_win ||
++	    tcp_mask->hdr.cksum ||
++	    tcp_mask->hdr.tcp_urp) {
 +		return rte_flow_error_set(error, EINVAL,
 +				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Ethertype must be exactly matched");
-+	}
-+
-+	/* IPv4/IPv6 ethertypes not supported by hardware */
-+	uint16_t ether_type = rte_be_to_cpu_16(eth_spec->hdr.ether_type);
-+	if (ether_type == RTE_ETHER_TYPE_IPV4 || ether_type == RTE_ETHER_TYPE_IPV6) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"IPv4/IPv6 not supported by ethertype filter");
++				"Only TCP flags filtering supported");
 +	}
 +
 +	return 0;
 +}
 +
-+static int
-+ixgbe_ethertype_node_eth_process(void *ctx,
-+				 const struct rte_flow_item *item,
-+				 struct rte_flow_error *error __rte_unused)
-+{
-+	struct ixgbe_ethertype_ctx *graph_ctx = ctx;
-+	const struct rte_flow_item_eth *eth_spec = item->spec;
-+
-+	graph_ctx->filter.ether_type = rte_be_to_cpu_16(eth_spec->hdr.ether_type);
-+
-+	return 0;
-+}
-+
-+static const struct flow_graph ixgbe_ethertype_graph = {
++static const struct flow_graph ixgbe_syn_graph = {
 +	.nodes = (struct flow_graph_node[]) {
-+		[IXGBE_ETHERTYPE_NODE_START] = {
++		[IXGBE_SYN_NODE_START] = {
 +			.name = "START",
 +		},
-+		[IXGBE_ETHERTYPE_NODE_ETH] = {
++		[IXGBE_SYN_NODE_ETH] = {
 +			.name = "ETH",
 +			.type = RTE_FLOW_ITEM_TYPE_ETH,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_SPEC_MASK,
-+			.validate = ixgbe_ethertype_node_eth_validate,
-+			.process = ixgbe_ethertype_node_eth_process,
++			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
 +		},
-+		[IXGBE_ETHERTYPE_NODE_END] = {
++		[IXGBE_SYN_NODE_IPV4] = {
++			.name = "IPV4",
++			.type = RTE_FLOW_ITEM_TYPE_IPV4,
++			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
++		},
++		[IXGBE_SYN_NODE_IPV6] = {
++			.name = "IPV6",
++			.type = RTE_FLOW_ITEM_TYPE_IPV6,
++			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
++		},
++		[IXGBE_SYN_NODE_TCP] = {
++			.name = "TCP",
++			.type = RTE_FLOW_ITEM_TYPE_TCP,
++			.constraints = FLOW_GRAPH_NODE_EXPECT_SPEC_MASK,
++			.validate = ixgbe_validate_syn_tcp,
++		},
++		[IXGBE_SYN_NODE_END] = {
 +			.name = "END",
 +			.type = RTE_FLOW_ITEM_TYPE_END,
 +		},
 +	},
 +	.edges = (struct flow_graph_edge[]) {
-+		[IXGBE_ETHERTYPE_NODE_START] = {
++		[IXGBE_SYN_NODE_START] = {
 +			.next = (size_t[]) {
-+				IXGBE_ETHERTYPE_NODE_ETH,
++				IXGBE_SYN_NODE_ETH,
++				IXGBE_SYN_NODE_IPV4,
++				IXGBE_SYN_NODE_IPV6,
++				IXGBE_SYN_NODE_TCP,
 +				FLOW_GRAPH_NODE_EDGE_END
 +			}
 +		},
-+		[IXGBE_ETHERTYPE_NODE_ETH] = {
++		[IXGBE_SYN_NODE_ETH] = {
 +			.next = (size_t[]) {
-+				IXGBE_ETHERTYPE_NODE_END,
++				IXGBE_SYN_NODE_IPV4,
++				IXGBE_SYN_NODE_IPV6,
++				FLOW_GRAPH_NODE_EDGE_END
++			}
++		},
++		[IXGBE_SYN_NODE_IPV4] = {
++			.next = (size_t[]) {
++				IXGBE_SYN_NODE_TCP,
++				FLOW_GRAPH_NODE_EDGE_END
++			}
++		},
++		[IXGBE_SYN_NODE_IPV6] = {
++			.next = (size_t[]) {
++				IXGBE_SYN_NODE_TCP,
++				FLOW_GRAPH_NODE_EDGE_END
++			}
++		},
++		[IXGBE_SYN_NODE_TCP] = {
++			.next = (size_t[]) {
++				IXGBE_SYN_NODE_END,
 +				FLOW_GRAPH_NODE_EDGE_END
 +			}
 +		},
@@ -946,11 +731,12 @@ index 00000000000..bcc29a1b5a9
 +};
 +
 +static int
-+ixgbe_flow_ethertype_ctx_init(const struct rte_flow_action *actions,
++ixgbe_flow_syn_ctx_init(const struct rte_flow_action actions[],
 +		const struct rte_flow_attr *attr,
 +		struct ci_flow_engine_ctx *ctx,
 +		struct rte_flow_error *error)
 +{
++	struct ixgbe_syn_ctx *syn_ctx = (struct ixgbe_syn_ctx *)ctx;
 +	struct ci_flow_actions parsed_actions;
 +	struct ci_flow_actions_check_param ap_param = {
 +		.allowed_types = (const enum rte_flow_action_type[]){
@@ -958,131 +744,121 @@ index 00000000000..bcc29a1b5a9
 +			RTE_FLOW_ACTION_TYPE_QUEUE,
 +			RTE_FLOW_ACTION_TYPE_END
 +		},
-+		.max_actions = 1,
 +		.driver_ctx = ctx->dev_data,
-+		.check = ixgbe_flow_actions_check
++		.check = ixgbe_flow_actions_check,
++		.max_actions = 1,
 +	};
-+	struct ixgbe_ethertype_ctx *ethertype_ctx = (struct ixgbe_ethertype_ctx *)ctx;
++	struct ci_flow_attr_check_param attr_param = {
++		.allow_priority = true,
++	};
 +	const struct rte_flow_action_queue *q_act;
 +	int ret;
 +
 +	/* validate attributes */
-+	ret = ci_flow_check_attr(attr, NULL, error);
++	ret = ci_flow_check_attr(attr, &attr_param, error);
 +	if (ret)
 +		return ret;
++
++	/* check priority */
++	if (attr->priority != 0 && attr->priority != (uint32_t)~0U) {
++		return rte_flow_error_set(error, EINVAL,
++			RTE_FLOW_ERROR_TYPE_ATTR_PRIORITY,
++			attr, "Priority can be 0 or 0xFFFFFFFF");
++	}
 +
 +	/* parse requested actions */
 +	ret = ci_flow_check_actions(actions, &ap_param, &parsed_actions, error);
 +	if (ret)
 +		return ret;
 +
-+	q_act = (const struct rte_flow_action_queue *)parsed_actions.actions[0]->conf;
++	q_act = parsed_actions.actions[0]->conf;
 +
-+	/* set up filter action */
-+	ethertype_ctx->filter.queue = q_act->index;
++	syn_ctx->syn.queue = q_act->index;
++
++	/* Support 2 priorities. rte_flow priority 0 is highest */
++	syn_ctx->syn.hig_pri = attr->priority == 0;
 +
 +	return 0;
 +}
 +
 +static int
-+ixgbe_flow_ethertype_ctx_to_flow(const struct ci_flow_engine_ctx *ctx,
++ixgbe_flow_syn_ctx_to_flow(const struct ci_flow_engine_ctx *ctx,
 +		struct ci_flow *flow,
 +		struct rte_flow_error *error __rte_unused)
 +{
-+	const struct ixgbe_ethertype_ctx *ethertype_ctx = (const struct ixgbe_ethertype_ctx *)ctx;
-+	struct ixgbe_ethertype_flow *ethertype_flow = (struct ixgbe_ethertype_flow *)flow;
++	const struct ixgbe_syn_ctx *syn_ctx = (const struct ixgbe_syn_ctx *)ctx;
++	struct ixgbe_syn_flow *syn_flow = (struct ixgbe_syn_flow *)flow;
 +
-+	/* copy filter configuration */
-+	ethertype_flow->ether_type = ethertype_ctx->filter.ether_type;
-+	ethertype_flow->queue = ethertype_ctx->filter.queue;
-+
-+	/* build the ETQF/ETQS register values from the parsed filter */
-+	ethertype_flow->etqf = IXGBE_ETQF_FILTER_EN | (uint32_t)ethertype_flow->ether_type;
-+	ethertype_flow->etqs = ((uint32_t)ethertype_flow->queue <<
-+			IXGBE_ETQS_RX_QUEUE_SHIFT) & IXGBE_ETQS_RX_QUEUE;
-+	ethertype_flow->etqs |= IXGBE_ETQS_QUEUE_EN;
++	syn_flow->syn = syn_ctx->syn;
 +
 +	return 0;
 +}
 +
 +static int
-+ixgbe_flow_ethertype_register(struct ci_flow *flow, struct rte_flow_error *error)
++ixgbe_flow_syn_flow_register(struct ci_flow *flow,
++		struct rte_flow_error *error)
 +{
-+	struct ixgbe_ethertype_flow *ethertype_flow = (struct ixgbe_ethertype_flow *)flow;
-+	struct ixgbe_filter_info *filter_info =
-+		IXGBE_DEV_PRIVATE_TO_FILTER_INFO(flow->dev_data->dev_private);
-+	int idx;
++	struct ixgbe_syn_priv *priv = flow->engine_priv;
 +
-+	idx = ixgbe_ethertype_table_add(&filter_info->ethertype_table,
-+			ethertype_flow->ether_type, ethertype_flow->etqf,
-+			ethertype_flow->etqs);
-+	if (idx == -EEXIST) {
++	/* hardware supports a single SYN filter */
++	if (priv->installed) {
 +		return rte_flow_error_set(error, EEXIST,
 +				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+				"Ethertype filter already exists");
++				"SYN filter already exists");
 +	}
-+	if (idx == -ENOSPC) {
-+		return rte_flow_error_set(error, ENOSPC,
-+				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+				"Ethertype filters are full");
-+	}
-+	ethertype_flow->index = idx;
++
++	priv->installed = true;
 +
 +	return 0;
 +}
 +
 +static int
-+ixgbe_flow_ethertype_unregister(struct ci_flow *flow, struct rte_flow_error *error)
-+{
-+	struct ixgbe_ethertype_flow *ethertype_flow = (struct ixgbe_ethertype_flow *)flow;
-+	struct ixgbe_filter_info *filter_info =
-+		IXGBE_DEV_PRIVATE_TO_FILTER_INFO(flow->dev_data->dev_private);
-+	int ret;
-+
-+	ret = ixgbe_ethertype_table_del(&filter_info->ethertype_table,
-+			ethertype_flow->index);
-+	if (ret != 0) {
-+		return rte_flow_error_set(error, -ret,
-+				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+				"Ethertype filter slot not found on unregister");
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+ixgbe_flow_ethertype_install(struct ci_flow *flow,
++ixgbe_flow_syn_flow_unregister(struct ci_flow *flow,
 +		struct rte_flow_error *error __rte_unused)
 +{
-+	struct ixgbe_ethertype_flow *ethertype_flow = (struct ixgbe_ethertype_flow *)flow;
-+	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(flow->dev_data->dev_private);
++	struct ixgbe_syn_priv *priv = flow->engine_priv;
 +
-+	ixgbe_ethertype_filter_program(hw, ethertype_flow->index,
-+			ethertype_flow->etqf, ethertype_flow->etqs);
++	priv->installed = false;
 +
 +	return 0;
 +}
 +
 +static int
-+ixgbe_flow_ethertype_uninstall(struct ci_flow *flow,
++ixgbe_flow_syn_flow_install(struct ci_flow *flow,
 +		struct rte_flow_error *error __rte_unused)
 +{
-+	struct ixgbe_ethertype_flow *ethertype_flow = (struct ixgbe_ethertype_flow *)flow;
++	struct ixgbe_syn_flow *syn_flow = (struct ixgbe_syn_flow *)flow;
 +	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(flow->dev_data->dev_private);
++	uint32_t synqf;
 +
-+	ixgbe_ethertype_filter_program(hw, ethertype_flow->index, 0, 0);
++	synqf = ((syn_flow->syn.queue << IXGBE_SYN_FILTER_QUEUE_SHIFT) &
++			IXGBE_SYN_FILTER_QUEUE) | IXGBE_SYN_FILTER_ENABLE;
++	if (syn_flow->syn.hig_pri)
++		synqf |= IXGBE_SYN_FILTER_SYNQFP;
++
++	ixgbe_syn_filter_program(hw, synqf);
 +
 +	return 0;
 +}
 +
 +static int
-+ixgbe_flow_ethertype_engine_init(const struct ci_flow_engine *engine __rte_unused,
++ixgbe_flow_syn_flow_uninstall(struct ci_flow *flow,
++		struct rte_flow_error *error __rte_unused)
++{
++	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(flow->dev_data->dev_private);
++
++	ixgbe_syn_filter_program(hw, 0);
++
++	return 0;
++}
++
++static int
++ixgbe_flow_syn_engine_init(const struct ci_flow_engine *engine __rte_unused,
 +		struct rte_eth_dev_data *dev_data,
 +		void *priv __rte_unused)
 +{
 +	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev_data->dev_private);
 +
-+	/* Ethertype filtering (ETQF) is only available on these MACs. */
 +	if (hw->mac.type == ixgbe_mac_82599EB ||
 +			hw->mac.type == ixgbe_mac_X540 ||
 +			hw->mac.type == ixgbe_mac_X550 ||
@@ -1094,114 +870,33 @@ index 00000000000..bcc29a1b5a9
 +	return -ENOTSUP;
 +}
 +
-+static const struct ci_flow_engine_ops ixgbe_ethertype_ops = {
-+	.engine_init = ixgbe_flow_ethertype_engine_init,
-+	.ctx_init = ixgbe_flow_ethertype_ctx_init,
-+	.ctx_to_flow = ixgbe_flow_ethertype_ctx_to_flow,
-+	.flow_register = ixgbe_flow_ethertype_register,
-+	.flow_unregister = ixgbe_flow_ethertype_unregister,
-+	.flow_install = ixgbe_flow_ethertype_install,
-+	.flow_uninstall = ixgbe_flow_ethertype_uninstall,
++static const struct ci_flow_engine_ops ixgbe_syn_ops = {
++	.engine_init = ixgbe_flow_syn_engine_init,
++	.ctx_init = ixgbe_flow_syn_ctx_init,
++	.ctx_to_flow = ixgbe_flow_syn_ctx_to_flow,
++	.flow_register = ixgbe_flow_syn_flow_register,
++	.flow_unregister = ixgbe_flow_syn_flow_unregister,
++	.flow_install = ixgbe_flow_syn_flow_install,
++	.flow_uninstall = ixgbe_flow_syn_flow_uninstall,
 +};
 +
-+const struct ci_flow_engine ixgbe_ethertype_flow_engine = {
-+	.name = "ixgbe_ethertype",
-+	.ctx_size = sizeof(struct ixgbe_ethertype_ctx),
-+	.flow_size = sizeof(struct ixgbe_ethertype_flow),
-+	.graph = &ixgbe_ethertype_graph,
-+	.ops = &ixgbe_ethertype_ops,
++const struct ci_flow_engine ixgbe_syn_flow_engine = {
++	.name = "ixgbe_syn",
++	.ctx_size = sizeof(struct ixgbe_syn_ctx),
++	.flow_size = sizeof(struct ixgbe_syn_flow),
++	.priv_size = sizeof(struct ixgbe_syn_priv),
++	.ops = &ixgbe_syn_ops,
++	.graph = &ixgbe_syn_graph,
 +};
-diff --git a/drivers/net/intel/ixgbe/ixgbe_pf.c b/drivers/net/intel/ixgbe/ixgbe_pf.c
-index 939e7d1417d..7616169e086 100644
---- a/drivers/net/intel/ixgbe/ixgbe_pf.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_pf.c
-@@ -133,12 +133,24 @@ int ixgbe_pf_host_init(struct rte_eth_dev *eth_dev)
- 
- void ixgbe_pf_host_uninit(struct rte_eth_dev *eth_dev)
- {
-+	struct ixgbe_filter_info *filter_info =
-+		IXGBE_DEV_PRIVATE_TO_FILTER_INFO(eth_dev->data->dev_private);
-+	struct ixgbe_hw *hw =
-+		IXGBE_DEV_PRIVATE_TO_HW(eth_dev->data->dev_private);
- 	struct ixgbe_vf_info **vfinfo;
- 	uint16_t vf_num;
- 	int ret;
- 
- 	PMD_INIT_FUNC_TRACE();
- 
-+	/* release the Tx anti-spoof ETQF slot */
-+	if (filter_info->antispoof_installed) {
-+		ixgbe_ethertype_filter_program(hw, filter_info->antispoof_idx, 0, 0);
-+		ixgbe_ethertype_table_del(&filter_info->ethertype_table,
-+				filter_info->antispoof_idx);
-+		filter_info->antispoof_installed = false;
-+	}
-+
- 	RTE_ETH_DEV_SRIOV(eth_dev).active = 0;
- 	RTE_ETH_DEV_SRIOV(eth_dev).nb_q_per_pool = 0;
- 	RTE_ETH_DEV_SRIOV(eth_dev).def_vmdq_idx = 0;
-@@ -168,38 +180,29 @@ ixgbe_add_tx_flow_control_drop_filter(struct rte_eth_dev *eth_dev)
- 	struct ixgbe_filter_info *filter_info =
- 		IXGBE_DEV_PRIVATE_TO_FILTER_INFO(eth_dev->data->dev_private);
- 	uint16_t vf_num;
-+	uint32_t etqf, etqs;
- 	int i;
--	struct ixgbe_ethertype_filter ethertype_filter;
- 
- 	if (!hw->mac.ops.set_ethertype_anti_spoofing) {
- 		PMD_DRV_LOG(INFO, "ether type anti-spoofing is not supported.");
- 		return;
- 	}
- 
--	i = ixgbe_ethertype_filter_lookup(filter_info,
--					  IXGBE_ETHERTYPE_FLOW_CTRL);
--	if (i >= 0) {
--		PMD_DRV_LOG(ERR, "A ether type filter entity for flow control already exists!");
--		return;
--	}
-+	etqf = IXGBE_ETQF_FILTER_EN | IXGBE_ETQF_TX_ANTISPOOF |
-+			IXGBE_ETHERTYPE_FLOW_CTRL;
-+	etqs = 0;
-+	if (!filter_info->antispoof_installed) {
-+		int idx = ixgbe_ethertype_table_add(&filter_info->ethertype_table,
-+				IXGBE_ETHERTYPE_FLOW_CTRL, etqf, etqs);
- 
--	ethertype_filter.ethertype = IXGBE_ETHERTYPE_FLOW_CTRL;
--	ethertype_filter.etqf = IXGBE_ETQF_FILTER_EN |
--				IXGBE_ETQF_TX_ANTISPOOF |
--				IXGBE_ETHERTYPE_FLOW_CTRL;
--	ethertype_filter.etqs = 0;
--	ethertype_filter.conf = TRUE;
--	i = ixgbe_ethertype_filter_insert(filter_info,
--					  &ethertype_filter);
--	if (i < 0) {
--		PMD_DRV_LOG(ERR, "Cannot find an unused ether type filter entity for flow control.");
--		return;
-+		if (idx < 0) {
-+			PMD_DRV_LOG(ERR, "no free ETQF slot for Tx anti-spoof filter");
-+			return;
-+		}
-+		filter_info->antispoof_idx = idx;
-+		filter_info->antispoof_installed = true;
- 	}
--
--	IXGBE_WRITE_REG(hw, IXGBE_ETQF(i),
--			(IXGBE_ETQF_FILTER_EN |
--			IXGBE_ETQF_TX_ANTISPOOF |
--			IXGBE_ETHERTYPE_FLOW_CTRL));
-+	ixgbe_ethertype_filter_program(hw, filter_info->antispoof_idx, etqf, etqs);
- 
- 	vf_num = dev_num_vf(eth_dev);
- 	for (i = 0; i < vf_num; i++)
 diff --git a/drivers/net/intel/ixgbe/meson.build b/drivers/net/intel/ixgbe/meson.build
-index 0531d37acd3..f2857feab76 100644
+index f2857feab76..1ef818fa67a 100644
 --- a/drivers/net/intel/ixgbe/meson.build
 +++ b/drivers/net/intel/ixgbe/meson.build
-@@ -26,6 +26,7 @@ sources += files(
-         'ixgbe_ethdev.c',
+@@ -27,6 +27,7 @@ sources += files(
          'ixgbe_fdir.c',
          'ixgbe_flow.c',
-+        'ixgbe_flow_ethertype.c',
+         'ixgbe_flow_ethertype.c',
++        'ixgbe_flow_syn.c',
          'ixgbe_ipsec.c',
          'ixgbe_pf.c',
          'ixgbe_rxtx.c',
