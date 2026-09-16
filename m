@@ -2,72 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3417DC88E5C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 11:39:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50AFAC88E77
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 11:45:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 361654067D;
-	Wed, 16 Sep 2026 13:39:02 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 92E684067D;
+	Wed, 16 Sep 2026 13:45:21 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 2A669402B0
- for <dev@dpdk.org>; Wed, 16 Sep 2026 13:39:01 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id F3212402B0
+ for <dev@dpdk.org>; Wed, 16 Sep 2026 13:45:19 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1789558740;
+ s=mimecast20190719; t=1789559119;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=stj69fB9KoUZ32nklyynNFZeZmurmCDmpnOy8Yi5dbo=;
- b=akZ6ZNmuMhGtwOWEQjHpGEJ4ZtfZxEVhTcUg2xQygWqQj63N/fUotJ1sUxOD7dvdWKK8ge
- tHns0139Y2qt94KH5rgy8+1w3PnJH4DR8ST3iduUv3hp39Ha2eIPe9E9g55ubF+dOKKezK
- Cx5iQ7BxBID/1No5MKFwUXDqsLSVjHs=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=fu5Gas4yu+fLPbHl29aj8wyNalEZLM51sONtfeWG7BU=;
+ b=JbzxEL3qgM5N7go7OXnVd7BRDLBY/ibfZ54jhBTb3C10tx8JekUjNFG55z2NiPpPVzPFIW
+ lGSoZsRj1lwF1Zad6mY05Dy0lKL+0nsqTTSQEjSRyzYimSF/iqyld/6+mp+rrU50xDFqHn
+ 9sKCarmFcEmR28q8iZ43tvClB4o89J0=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-589-9hzdQQBeN1mXMAvPsk0IpA-1; Wed, 16 Sep 2026 07:38:58 -0400
-X-MC-Unique: 9hzdQQBeN1mXMAvPsk0IpA-1
-X-Mimecast-MFC-AGG-ID: 9hzdQQBeN1mXMAvPsk0IpA_1789558737
-Received: by mail-lj1-f199.google.com with SMTP id
- 38308e7fff4ca-3a49cdd876dso23934701fa.2
- for <dev@dpdk.org>; Wed, 16 Sep 2026 04:38:58 -0700 (PDT)
+ us-mta-649-XD-vhrHDP2OAu1S1cBzwhA-1; Wed, 16 Sep 2026 07:45:18 -0400
+X-MC-Unique: XD-vhrHDP2OAu1S1cBzwhA-1
+X-Mimecast-MFC-AGG-ID: XD-vhrHDP2OAu1S1cBzwhA_1789559117
+Received: by mail-lj1-f197.google.com with SMTP id
+ 38308e7fff4ca-3a3546bd99fso28834101fa.2
+ for <dev@dpdk.org>; Wed, 16 Sep 2026 04:45:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789558737; x=1790163537;
+ d=1e100.net; s=20260707; t=1789559116; x=1790163916;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to:content-type;
- bh=stj69fB9KoUZ32nklyynNFZeZmurmCDmpnOy8Yi5dbo=;
- b=dYN1PIgPU/ZgZ8j9wKzvnZDQBjRomsqsOWrQNxlcfQt5gNjM4om2wVD90JQGjk4x6Y
- g2UKZrlspWcDXXOu6dfTMwS8fmNRZWoOkPQ7ijje9fIwmvzafiRilsvrMaYZT/nSBhUR
- PW25PHMxc8uWJr6sCDwQJ8gGKWni+n73Y/KPrIQh7dBp2exqggMdVuUYtq7QdjnFMaQW
- F4UjiHqjq0kEFIf7hbgj6diwIFdN3V8TRyPRCHStWX0nC3Qz7PGrMGN/LYIIBIGFsP5B
- SI4EWA0exVbgBcZJ7BpnM4ltQryj8iHEip7redhRtfnM8jB2cX4UEDFxfTEc4erIOOyL
- rZ4w==
-X-Gm-Message-State: AFuF++klPwlCfGAQl7/kF/7lhnRdj/YfgUXOjhI1yILw4+E0BpLeo5p2
- ooxNbBU8hp38w0wkCCa42TvMV/rDOsAmW6RdST6XqDvXthzaOUax83bW9Ej1fXw4L7rsFWuW7zy
- RepIIcrmzdqP2BgAoz5RnCiNJV5EkSLtNxNKANwsU1l7HO1KhfYTfGqTtvdkPc6tFDIaJdf7k5/
- SQhpEZZxCsGR5YuhLtXKh9s86476I=
-X-Gm-Gg: AYBFou1iIQjMCyrMEoIcksz+t9Cch1nA8lu7xGX+WopqQ5cCrO3dOzjyb7V4D5cBKUb
- JyjUXDqhmlINMlJwAlcubBj7rK2AxW3Xs/3Q/DOouAbYiF63W1h2qRyUo2zupCWalUPIsBU9iCB
- Paw50Kje2RN7Fk3u52GLb1Dj2WRAEKt5tihcFlT74wChxKLYYmshV4z+21eenSZwooyZelWbqfa
- oD7Eip5zMx/k15nvggsilHNKRk0ZZnN17EbeSBoMlOsbJAO
-X-Received: by 2002:a2e:a98e:0:b0:3a3:7681:6d5f with SMTP id
- 38308e7fff4ca-3a5dca16b57mr3907951fa.23.1789558736801; 
- Wed, 16 Sep 2026 04:38:56 -0700 (PDT)
-X-Received: by 2002:a2e:a98e:0:b0:3a3:7681:6d5f with SMTP id
- 38308e7fff4ca-3a5dca16b57mr3907761fa.23.1789558734860; Wed, 16 Sep 2026
- 04:38:54 -0700 (PDT)
+ bh=fu5Gas4yu+fLPbHl29aj8wyNalEZLM51sONtfeWG7BU=;
+ b=tn6GjY1EFD7g4dWRpNRKgDMrOcSs4kqlbPqduPnapqxZ3Soq3sDZvGHVZ9qAXTGcmN
+ dpxikU9iJrrIoWEBKbg0He9a5azTfxBZSwuf+xWt8PNQAXt161c+kElpW4OcVJ1Zxwjn
+ OUzxOqO5EVyWhiiy+ZjKQiRcyrXrSMNB9oQ3fwIF9W55/tdNDYhnrDxxvY8Iy1Iwuueu
+ 5TCmYhsf4cSdYdkVevnuoHtZcfb5OUQvHLVIn3g3NDLnZij3iJfb6jOcUIA0KqEiAXzV
+ J9L4UHvpIWoMCioRRBnVRR6/LYbOIRd5yV7bMFqO5F1zy6s1Ip8008HttN0JlwDh0qyK
+ GoyA==
+X-Gm-Message-State: AFuF++nc0msoXcSMuhKnnc8ml5x9Fyyd8UkZPX7Wey2UQHbHswyf5YMD
+ UhBSiHJEaR+paa8RNAn4LNZpIyXmYkOpLmxsSbZwoaMPvDNUc/1yc6hn/f1pHmqcaK94S8DWE8q
+ ouRg4uJOa4Gk3vjaxQxRuOZk1qioIu0Hm9bPNp5zYtkX2PSG5xbLjAEmpz8PH5nQOk7BpJtBwdd
+ OEIRlZfPeEPj5mrGGHu0c=
+X-Gm-Gg: AYBFou0k6i+/J3/9MQ/6CSf7TsYQHM+OjUAUB+7isMIKrlTb2tCnR7qYZXUT+c5r/TR
+ a/RY/B0tRLCTkpgfWrXy4FbUbIU9tHVRzwQF5QeRZnX+2yWv512P8Gl2JP5/2R0rYbwuTT41wSg
+ y/i8qE2BxOqXKajcYG/+agQLlwo9oQ6tIKIMc8E/a4E8FJSBhBYJVjXAuauGn6QmItz6i4NiYmY
+ e0XCS52hhK5CR0DFi0fRZFpB1asFvdDxSOMsi5VIMyr+I6G
+X-Received: by 2002:a05:651c:2213:b0:3a1:8510:cbab with SMTP id
+ 38308e7fff4ca-3a5dca2d444mr8205311fa.12.1789559116517; 
+ Wed, 16 Sep 2026 04:45:16 -0700 (PDT)
+X-Received: by 2002:a05:651c:2213:b0:3a1:8510:cbab with SMTP id
+ 38308e7fff4ca-3a5dca2d444mr8205191fa.12.1789559116072; Wed, 16 Sep 2026
+ 04:45:16 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260624113550.821516-1-bruce.richardson@intel.com>
- <20260629142931.2666673-1-bruce.richardson@intel.com>
-In-Reply-To: <20260629142931.2666673-1-bruce.richardson@intel.com>
+References: <20260609043220.930405-1-syalavarthi@marvell.com>
+ <aifFFS9gvRn9JYKg@bricha3-mobl1.ger.corp.intel.com>
+ <aifKOnqQRhJ4z3nh@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <aifKOnqQRhJ4z3nh@bricha3-mobl1.ger.corp.intel.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 16 Sep 2026 13:38:42 +0200
-X-Gm-Features: AcwNN1WmnMg-i2nFv1SiD0WPNAMD6yoP1qWt3Cf2ODKbaRa2kA2mD2QCpsd9AOY
-Message-ID: <CAJFAV8xMLE7JsXc7dVmT0st=rZZEifZFVPVuyHSwdjHRv5B_TA@mail.gmail.com>
-Subject: Re: [PATCH v3] build: drop dependency on libbsd
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org
+Date: Wed, 16 Sep 2026 13:45:04 +0200
+X-Gm-Features: AcwNN1XSl5Uabw7B-sAC4-i8zvYp-6bC3GGmtoIhp7hxIaw3p43NlUxSifCh2nA
+Message-ID: <CAJFAV8zjQi-9MHaiZdmZoK8wS10GtYA9taN3GN4sGgoMFrxquQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] buildtools: remove absolute paths from pc file
+To: Srikanth Yalavarthi <syalavarthi@marvell.com>
+Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 9rWFkxk3Zrm4YB4UeHY8IlCsgP3aJ7KKTuOgu5Zz0NA_1789558737
+X-Mimecast-MFC-PROC-ID: GYd4Jan1kTl41FxmXcFiRivGl5ZSVdEkvB54G4rPGXA_1789559117
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
@@ -83,27 +84,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 29 Jun 2026 at 16:30, Bruce Richardson
+Hello Srikanth,
+
+On Tue, 9 Jun 2026 at 10:09, Bruce Richardson
 <bruce.richardson@intel.com> wrote:
 >
-> Glibc added the strlcpy and strlcat functions to version 2.38, released
-> in 2023, meaning they are natively available in modern linux distros. At
-> this point, the value of having the libbsd provided versions of these
-> functions is reduced, so let's simplify the code options here by
-> providing just two options for strlcpy rather than three:
->
-> 1. native implementation for BSD and recent Linux
-> 2. DPDK-specific fallbacks using snprintf
->
-> Since the strlcpy and strlcat functions are the only two items used from
-> libbsd, we can then drop completely any DPDK dependency on libbsd.
->
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+> On Tue, Jun 09, 2026 at 08:47:33AM +0100, Bruce Richardson wrote:
+> > On Tue, Jun 09, 2026 at 10:02:20AM +0530, Srikanth Yalavarthi wrote:
+> > > When linking with non-versioned libraries, absolute paths
+> > > of the libraries are added to libdpdk.pc. This patch replaces
+> > > the absolute path with correct linker flags, -l<libname>.
+> > >
+> >
+> > Do we need to check if we need a "-L" flag for some of these paths that are
+> > stripped?
+> >
+> > > https://github.com/mesonbuild/meson/issues/7766
+> > >
+> The bug report indicates that this issue only occurs for some libs which
+> are missing an SONAME. Checking the .pc files generated on my own system, I
+> don't see any libs listed with full paths. Out of interest, what libraries
+> are causing problems? (Alternative question - how can we reproduce this
+> issue to check the fix :-) )
 
-I removed one last reference in doc.
-Acked-by: David Marchand <david.marchand@redhat.com>
+I see no progress on this thread, can you reply to Bruce please?
 
-Applied, thanks Bruce.
+Thanks.
+
 
 -- 
 David Marchand
