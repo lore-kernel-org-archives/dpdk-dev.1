@@ -2,47 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 405CAC88E5C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 10:37:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D81E1C88E5C
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 10:37:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2F5CF42ED3;
-	Wed, 16 Sep 2026 12:36:46 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2209F42ED7;
+	Wed, 16 Sep 2026 12:36:47 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id DBBC342EAB
- for <dev@dpdk.org>; Wed, 16 Sep 2026 12:36:38 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id A136E42D83
+ for <dev@dpdk.org>; Wed, 16 Sep 2026 12:36:39 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1789555000; x=1821091000;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=ViqnV76EJ2uF16MPpnd6SQBm+IOxNHn6XIYSnKUMOJM=;
- b=AZbUTFJkr7RdMMsY4qznKMyEQecTLyhii+R9qyysCEtAWQ8rbJCUdYMU
- jJ1X1nxnw/snQCWSYGwSGM14K4OwEW5/1TfnWIngyJkBJy9iVzSL8MNUI
- xGTtJtBASdVAuTHIYzhd7BR9VyB/JGJBRFrzYCZyZZfQjx6Wx6Kas85Ty
- 5dWHdQTN75ViCgAgeK39wIClwxbL/qNrg32wqhD5b+xWTTiA0zzFy/k6+
- BB6Q1+yxZb2MauKgjDtpO9OnEeyleG8M8xcijlrrTUVWODO8H94DoAYou
- wVWCot10xbCtXS2zzNn3GwQjjIyW3DGpbaVa4q9D+Scoa8Hu/VF8aqbPu Q==;
-X-CSE-ConnectionGUID: tXCwK6COTTKc4U+65fZQtQ==
-X-CSE-MsgGUID: nHjAuct7QA+ZG/OxDgRmRQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="89867632"
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="89867632"
+ bh=COc7Nxz60UgdRIbfmIf/BBpi8W3BEkdtMqwKsG0Sn+s=;
+ b=ASRt6JXb+WLfi+aeqLMZoyFmUcz9I3irmlss5IjwriDNkLluQG8q+T3M
+ 0lATJd5WRGmRNhvljZRF4kmNZxrhDZZvzq8OER288H5tYtnbSMrcN5oMw
+ cCJZkFd2ou+xaIvHC13YyjJMbIOZKZGwVrwn/na+tm7EUTUwZLBIbUdTQ
+ Fyd7oAIj8qXBO/TLgUJgMO2nngf8G/MKfXEeuNmm3lMQUAX8hKYkQcGsy
+ SeoW328I166CGMvvJ1MzwfljohrfTwUDkAHFR1hZ9PlbwITeZKYjLyIOe
+ jITMBR4j6JmZgJqmjh4pvY/nnq9SrJJTSOZcaUkm0sTasWeGXea9ydr1d w==;
+X-CSE-ConnectionGUID: a7AE7yhnSvuNBMIMxUxixw==
+X-CSE-MsgGUID: vJy1goKnSKON56MN7x4RmQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="89867633"
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="89867633"
 Received: from fmviesa012.fm.intel.com ([10.60.135.152])
  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Sep 2026 03:36:39 -0700
-X-CSE-ConnectionGUID: L+QMrpEyQHSEsG4auv8a2A==
-X-CSE-MsgGUID: D17huCnDQCyd8y5iNPp90A==
+ 16 Sep 2026 03:36:40 -0700
+X-CSE-ConnectionGUID: NqsBZ8neRZOku3pT/Nauqw==
+X-CSE-MsgGUID: BiNH1Xk5QZup9ogSrpiEtw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
-   d="scan'208";a="1528239"
+   d="scan'208";a="1528265"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa012.fm.intel.com with ESMTP; 16 Sep 2026 03:36:37 -0700
+ by fmviesa012.fm.intel.com with ESMTP; 16 Sep 2026 03:36:38 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: ciara.loftus@intel.com,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v3 09/15] net/ice: use common descriptor creation functions
-Date: Wed, 16 Sep 2026 11:36:16 +0100
-Message-ID: <20260916103622.319874-10-bruce.richardson@intel.com>
+Subject: [PATCH v3 10/15] net/intel: move vector Tx paths to common
+Date: Wed, 16 Sep 2026 11:36:17 +0100
+Message-ID: <20260916103622.319874-11-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260916103622.319874-1-bruce.richardson@intel.com>
 References: <20260903170140.360477-1-bruce.richardson@intel.com>
@@ -62,292 +62,393 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Update ice driver to use the descriptor creation functions from common
-rather than having it maintain its own copies of them.
+The main loops for vector Tx, both avx2 and avx512 are almost identical
+across a couple of drivers, so move the iavf copies to common for later
+reuse by other drivers.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 Acked-by: Ciara Loftus <ciara.loftus@intel.com>
 ---
- drivers/net/intel/ice/ice_rxtx_vec_avx2.c   | 73 ++-------------------
- drivers/net/intel/ice/ice_rxtx_vec_avx512.c | 64 ++----------------
- drivers/net/intel/ice/ice_rxtx_vec_common.h | 59 -----------------
- 3 files changed, 12 insertions(+), 184 deletions(-)
+ drivers/net/intel/common/tx.h                 |  10 ++
+ drivers/net/intel/common/tx_vec_x86.h         | 128 ++++++++++++++++++
+ drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c   |  75 +---------
+ drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c |  77 +----------
+ 4 files changed, 148 insertions(+), 142 deletions(-)
 
-diff --git a/drivers/net/intel/ice/ice_rxtx_vec_avx2.c b/drivers/net/intel/ice/ice_rxtx_vec_avx2.c
-index b72f69a47b..68401560ce 100644
---- a/drivers/net/intel/ice/ice_rxtx_vec_avx2.c
-+++ b/drivers/net/intel/ice/ice_rxtx_vec_avx2.c
-@@ -5,6 +5,7 @@
- #include "ice_rxtx_vec_common.h"
- 
- #include "../common/rx_vec_x86.h"
-+#include "../common/tx_vec_x86.h"
- 
+diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
+index c8fadee712..630df8cb19 100644
+--- a/drivers/net/intel/common/tx.h
++++ b/drivers/net/intel/common/tx.h
+@@ -9,6 +9,8 @@
+ #include <rte_mbuf.h>
+ #include <rte_ethdev.h>
  #include <rte_vect.h>
++#include <rte_io.h>
++#include <rte_byteorder.h>
  
-@@ -773,70 +774,6 @@ ice_recv_scattered_pkts_vec_avx2_offload(void *rx_queue,
- 						       true);
+ /* Common TX Descriptor QW1 Field Definitions */
+ #define CI_TXD_QW1_DTYPE_S      0
+@@ -273,6 +275,14 @@ ci_tx_backlog_entry_vec(struct ci_tx_entry_vec *txep, struct rte_mbuf **tx_pkts,
+ 		txep[i].mbuf = tx_pkts[i];
  }
  
--static __rte_always_inline void
--ice_vtx1(volatile struct ci_tx_desc *txdp,
--	 struct rte_mbuf *pkt, uint64_t flags, bool offload)
--{
--	uint64_t high_qw = (CI_TX_DESC_DTYPE_DATA |
--		 ((uint64_t)flags << CI_TXD_QW1_CMD_S) |
--		 ((uint64_t)pkt->data_len << CI_TXD_QW1_TX_BUF_SZ_S));
--	if (offload)
--		ice_txd_enable_offload(pkt, &high_qw);
--
--	__m128i descriptor = _mm_set_epi64x(high_qw, rte_pktmbuf_iova(pkt));
--	_mm_store_si128(RTE_CAST_PTR(__m128i *, txdp), descriptor);
--}
--
--static __rte_always_inline void
--ice_vtx(volatile struct ci_tx_desc *txdp,
--	struct rte_mbuf **pkt, uint16_t nb_pkts,  uint64_t flags, bool offload)
--{
--	const uint64_t hi_qw_tmpl = (CI_TX_DESC_DTYPE_DATA | (flags << CI_TXD_QW1_CMD_S));
--
--	/* if unaligned on 32-bit boundary, do one to align */
--	if (((uintptr_t)txdp & 0x1F) != 0 && nb_pkts != 0) {
--		ice_vtx1(txdp, *pkt, flags, offload);
--		nb_pkts--; txdp++; pkt++;
--	}
--
--	/* do four at a time while possible, in bursts */
--	for (; nb_pkts > 3; txdp += 4, pkt += 4, nb_pkts -= 4) {
--		uint64_t hi_qw3 = hi_qw_tmpl |
--			((uint64_t)pkt[3]->data_len << CI_TXD_QW1_TX_BUF_SZ_S);
--		if (offload)
--			ice_txd_enable_offload(pkt[3], &hi_qw3);
--		uint64_t hi_qw2 = hi_qw_tmpl |
--			((uint64_t)pkt[2]->data_len << CI_TXD_QW1_TX_BUF_SZ_S);
--		if (offload)
--			ice_txd_enable_offload(pkt[2], &hi_qw2);
--		uint64_t hi_qw1 = hi_qw_tmpl |
--			((uint64_t)pkt[1]->data_len << CI_TXD_QW1_TX_BUF_SZ_S);
--		if (offload)
--			ice_txd_enable_offload(pkt[1], &hi_qw1);
--		uint64_t hi_qw0 = hi_qw_tmpl |
--			((uint64_t)pkt[0]->data_len << CI_TXD_QW1_TX_BUF_SZ_S);
--		if (offload)
--			ice_txd_enable_offload(pkt[0], &hi_qw0);
--
--		__m256i desc2_3 =
--			_mm256_set_epi64x
--				(hi_qw3, rte_pktmbuf_iova(pkt[3]),
--				 hi_qw2, rte_pktmbuf_iova(pkt[2]));
--		__m256i desc0_1 =
--			_mm256_set_epi64x
--				(hi_qw1, rte_pktmbuf_iova(pkt[1]),
--				 hi_qw0, rte_pktmbuf_iova(pkt[0]));
--		_mm256_store_si256(RTE_CAST_PTR(__m256i *, txdp + 2), desc2_3);
--		_mm256_store_si256(RTE_CAST_PTR(__m256i *, txdp), desc0_1);
--	}
--
--	/* do any last ones */
--	while (nb_pkts) {
--		ice_vtx1(txdp, *pkt, flags, offload);
--		txdp++; pkt++; nb_pkts--;
--	}
--}
--
- static __rte_always_inline uint16_t
- ice_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
- 			      uint16_t nb_pkts, bool offload)
-@@ -868,11 +805,12 @@ ice_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
- 	if (nb_commit >= n) {
- 		ci_tx_backlog_entry_vec(txep, tx_pkts, n);
++
++/* Write the Tx tail register, byte-swapped for hardware regardless of host endianness. */
++static __rte_always_inline void
++ci_tx_qtx_tail_write(struct ci_tx_queue *txq, uint16_t tx_id)
++{
++	rte_write32_wc(rte_cpu_to_le_32((uint32_t)tx_id), txq->qtx_tail);
++}
++
+ #define IETH_VPMD_TX_MAX_FREE_BUF 64
  
--		ice_vtx(txdp, tx_pkts, n - 1, flags, offload);
-+		ci_vtx_avx2(txdp, tx_pkts, n - 1, flags, offload,
-+			CI_TAG_IN_DATA_DESC, CI_TAG_IN_DATA_DESC);
- 		tx_pkts += (n - 1);
- 		txdp += (n - 1);
- 
--		ice_vtx1(txdp, *tx_pkts++, rs, offload);
-+		ci_vtx1(txdp, *tx_pkts++, rs, offload, CI_TAG_IN_DATA_DESC, CI_TAG_IN_DATA_DESC);
- 
- 		nb_commit = (uint16_t)(nb_commit - n);
- 
-@@ -886,7 +824,8 @@ ice_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
- 
- 	ci_tx_backlog_entry_vec(txep, tx_pkts, nb_commit);
- 
--	ice_vtx(txdp, tx_pkts, nb_commit, flags, offload);
-+	ci_vtx_avx2(txdp, tx_pkts, nb_commit, flags, offload,
-+		CI_TAG_IN_DATA_DESC, CI_TAG_IN_DATA_DESC);
- 
- 	tx_id = (uint16_t)(tx_id + nb_commit);
- 	if (tx_id > txq->tx_next_rs) {
-diff --git a/drivers/net/intel/ice/ice_rxtx_vec_avx512.c b/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
-index 309ab9fca7..b4695c398e 100644
---- a/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
-+++ b/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
-@@ -5,6 +5,7 @@
- #include "ice_rxtx_vec_common.h"
- 
- #include "../common/rx_vec_x86.h"
-+#include "../common/tx_vec_x86.h"
- 
- #include <rte_vect.h>
- 
-@@ -846,61 +847,6 @@ ice_recv_scattered_pkts_vec_avx512_offload(void *rx_queue,
- 				rx_pkts + retval, nb_pkts);
+ typedef int (*ci_desc_done_fn)(struct ci_tx_queue *txq, uint16_t idx);
+diff --git a/drivers/net/intel/common/tx_vec_x86.h b/drivers/net/intel/common/tx_vec_x86.h
+index 56efe1d1ec..946dcc1f2e 100644
+--- a/drivers/net/intel/common/tx_vec_x86.h
++++ b/drivers/net/intel/common/tx_vec_x86.h
+@@ -345,6 +345,69 @@ ci_vtx_ctx_avx2(volatile struct ci_tx_desc *txdp,
+ 				single_vlan_pos, qinq_outer_pos, lldp_check);
  }
  
--static __rte_always_inline void
--ice_vtx1(volatile struct ci_tx_desc *txdp,
--	 struct rte_mbuf *pkt, uint64_t flags, bool do_offload)
--{
--	uint64_t high_qw = (CI_TX_DESC_DTYPE_DATA |
--		 ((uint64_t)flags << CI_TXD_QW1_CMD_S) |
--		 ((uint64_t)pkt->data_len << CI_TXD_QW1_TX_BUF_SZ_S));
--
--	if (do_offload)
--		ice_txd_enable_offload(pkt, &high_qw);
--
--	__m128i descriptor = _mm_set_epi64x(high_qw, rte_pktmbuf_iova(pkt));
--	_mm_store_si128(RTE_CAST_PTR(__m128i *, txdp), descriptor);
--}
--
--static __rte_always_inline void
--ice_vtx(volatile struct ci_tx_desc *txdp, struct rte_mbuf **pkt,
--	uint16_t nb_pkts,  uint64_t flags, bool do_offload)
--{
--	const uint64_t hi_qw_tmpl = (CI_TX_DESC_DTYPE_DATA | (flags << CI_TXD_QW1_CMD_S));
--
--	for (; nb_pkts > 3; txdp += 4, pkt += 4, nb_pkts -= 4) {
--		uint64_t hi_qw3 = hi_qw_tmpl |
--			((uint64_t)pkt[3]->data_len << CI_TXD_QW1_TX_BUF_SZ_S);
--		if (do_offload)
--			ice_txd_enable_offload(pkt[3], &hi_qw3);
--		uint64_t hi_qw2 = hi_qw_tmpl |
--			((uint64_t)pkt[2]->data_len << CI_TXD_QW1_TX_BUF_SZ_S);
--		if (do_offload)
--			ice_txd_enable_offload(pkt[2], &hi_qw2);
--		uint64_t hi_qw1 = hi_qw_tmpl |
--			((uint64_t)pkt[1]->data_len << CI_TXD_QW1_TX_BUF_SZ_S);
--		if (do_offload)
--			ice_txd_enable_offload(pkt[1], &hi_qw1);
--		uint64_t hi_qw0 = hi_qw_tmpl |
--			((uint64_t)pkt[0]->data_len << CI_TXD_QW1_TX_BUF_SZ_S);
--		if (do_offload)
--			ice_txd_enable_offload(pkt[0], &hi_qw0);
--
--		__m512i desc0_3 =
--			_mm512_set_epi64
--				(hi_qw3, rte_pktmbuf_iova(pkt[3]),
--				 hi_qw2, rte_pktmbuf_iova(pkt[2]),
--				 hi_qw1, rte_pktmbuf_iova(pkt[1]),
--				 hi_qw0, rte_pktmbuf_iova(pkt[0]));
--		_mm512_storeu_si512(RTE_CAST_PTR(void *, txdp), desc0_3);
--	}
--
--	/* do any last ones */
--	while (nb_pkts) {
--		ice_vtx1(txdp, *pkt, flags, do_offload);
--		txdp++; pkt++; nb_pkts--;
--	}
--}
--
- static __rte_always_inline uint16_t
- ice_xmit_fixed_burst_vec_avx512(void *tx_queue, struct rte_mbuf **tx_pkts,
- 				uint16_t nb_pkts, bool do_offload)
-@@ -933,11 +879,12 @@ ice_xmit_fixed_burst_vec_avx512(void *tx_queue, struct rte_mbuf **tx_pkts,
- 	if (nb_commit >= n) {
- 		ci_tx_backlog_entry_vec(txep, tx_pkts, n);
++static __rte_always_inline uint16_t
++ci_xmit_fixed_burst_vec_avx2(struct ci_tx_queue *txq, struct rte_mbuf **tx_pkts,
++		uint16_t nb_pkts, bool offload,
++		enum ci_l2tag_pos single_vlan_pos, enum ci_l2tag_pos qinq_outer_pos)
++{
++	volatile struct ci_tx_desc *txdp;
++	struct ci_tx_entry_vec *txep;
++	uint16_t n, nb_commit, tx_id;
++	uint64_t flags = CI_TX_DESC_CMD_DEFAULT;
++	uint64_t rs = CI_TX_DESC_CMD_RS | flags;
++
++	if (txq->nb_tx_free < txq->tx_free_thresh)
++		ci_tx_free_bufs_vec(txq, ci_tx_desc_done_simple, false);
++
++	nb_pkts = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts);
++	if (unlikely(nb_pkts == 0))
++		return 0;
++	nb_commit = nb_pkts;
++
++	tx_id = txq->tx_tail;
++	txdp = &txq->ci_tx_ring[tx_id];
++	txep = &txq->sw_ring_vec[tx_id];
++
++	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_pkts);
++
++	n = (uint16_t)(txq->nb_tx_desc - tx_id);
++	if (nb_commit >= n) {
++		ci_tx_backlog_entry_vec(txep, tx_pkts, n);
++
++		ci_vtx_avx2(txdp, tx_pkts, n - 1, flags, offload, single_vlan_pos, qinq_outer_pos);
++		tx_pkts += (n - 1);
++		txdp += (n - 1);
++
++		ci_vtx1(txdp, *tx_pkts++, rs, offload, single_vlan_pos, qinq_outer_pos);
++
++		nb_commit = (uint16_t)(nb_commit - n);
++
++		tx_id = 0;
++		txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
++
++		/* avoid reach the end of ring */
++		txdp = &txq->ci_tx_ring[tx_id];
++		txep = &txq->sw_ring_vec[tx_id];
++	}
++
++	ci_tx_backlog_entry_vec(txep, tx_pkts, nb_commit);
++
++	ci_vtx_avx2(txdp, tx_pkts, nb_commit, flags, offload, single_vlan_pos, qinq_outer_pos);
++
++	tx_id = (uint16_t)(tx_id + nb_commit);
++	if (tx_id > txq->tx_next_rs) {
++		txq->ci_tx_ring[txq->tx_next_rs].cmd_type_offset_bsz |=
++			rte_cpu_to_le_64(((uint64_t)CI_TX_DESC_CMD_RS) << CI_TXD_QW1_CMD_S);
++		txq->tx_next_rs = (uint16_t)(txq->tx_next_rs + txq->tx_rs_thresh);
++	}
++
++	txq->tx_tail = tx_id;
++
++	ci_tx_qtx_tail_write(txq, tx_id);
++
++	return nb_pkts;
++}
++
+ #endif /* __AVX2__ */
  
--		ice_vtx(txdp, tx_pkts, n - 1, flags, do_offload);
-+		ci_vtx_avx512(txdp, tx_pkts, n - 1, flags, do_offload,
-+			CI_TAG_IN_DATA_DESC, CI_TAG_IN_DATA_DESC);
- 		tx_pkts += (n - 1);
- 		txdp += (n - 1);
- 
--		ice_vtx1(txdp, *tx_pkts++, rs, do_offload);
-+		ci_vtx1(txdp, *tx_pkts++, rs, do_offload, CI_TAG_IN_DATA_DESC, CI_TAG_IN_DATA_DESC);
- 
- 		nb_commit = (uint16_t)(nb_commit - n);
- 
-@@ -951,7 +898,8 @@ ice_xmit_fixed_burst_vec_avx512(void *tx_queue, struct rte_mbuf **tx_pkts,
- 
- 	ci_tx_backlog_entry_vec(txep, tx_pkts, nb_commit);
- 
--	ice_vtx(txdp, tx_pkts, nb_commit, flags, do_offload);
-+	ci_vtx_avx512(txdp, tx_pkts, nb_commit, flags, do_offload,
-+		CI_TAG_IN_DATA_DESC, CI_TAG_IN_DATA_DESC);
- 
- 	tx_id = (uint16_t)(tx_id + nb_commit);
- 	if (tx_id > txq->tx_next_rs) {
-diff --git a/drivers/net/intel/ice/ice_rxtx_vec_common.h b/drivers/net/intel/ice/ice_rxtx_vec_common.h
-index 1d83a087cc..53d1eb42a3 100644
---- a/drivers/net/intel/ice/ice_rxtx_vec_common.h
-+++ b/drivers/net/intel/ice/ice_rxtx_vec_common.h
-@@ -113,63 +113,4 @@ ice_tx_vec_dev_check_default(struct rte_eth_dev *dev)
- 	return ret;
+ #ifdef __AVX512VL__
+@@ -512,6 +575,71 @@ ci_vtx_ctx_avx512(volatile struct ci_tx_desc *txdp,
+ 					single_vlan_pos, qinq_outer_pos, lldp_check);
  }
  
--static inline void
--ice_txd_enable_offload(struct rte_mbuf *tx_pkt,
--		       uint64_t *txd_hi)
++static __rte_always_inline uint16_t
++ci_xmit_fixed_burst_vec_avx512(struct ci_tx_queue *txq, struct rte_mbuf **tx_pkts,
++		uint16_t nb_pkts, bool offload,
++		enum ci_l2tag_pos single_vlan_pos, enum ci_l2tag_pos qinq_outer_pos)
++{
++	volatile struct ci_tx_desc *txdp;
++	struct ci_tx_entry_vec *txep;
++	uint16_t n, nb_commit, tx_id;
++	/* bit2 is reserved and must be set to 1 according to Spec */
++	uint64_t flags = CI_TX_DESC_CMD_DEFAULT;
++	uint64_t rs = CI_TX_DESC_CMD_RS | flags;
++
++	if (txq->nb_tx_free < txq->tx_free_thresh)
++		ci_tx_free_bufs_vec(txq, ci_tx_desc_done_simple, false);
++
++	nb_pkts = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts);
++	if (unlikely(nb_pkts == 0))
++		return 0;
++	nb_commit = nb_pkts;
++
++	tx_id = txq->tx_tail;
++	txdp = &txq->ci_tx_ring[tx_id];
++	txep = &txq->sw_ring_vec[tx_id];
++
++	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_pkts);
++
++	n = (uint16_t)(txq->nb_tx_desc - tx_id);
++	if (nb_commit >= n) {
++		ci_tx_backlog_entry_vec(txep, tx_pkts, n);
++
++		ci_vtx_avx512(txdp, tx_pkts, n - 1, flags, offload,
++				single_vlan_pos, qinq_outer_pos);
++		tx_pkts += (n - 1);
++		txdp += (n - 1);
++
++		ci_vtx1(txdp, *tx_pkts++, rs, offload, single_vlan_pos, qinq_outer_pos);
++
++		nb_commit = (uint16_t)(nb_commit - n);
++
++		tx_id = 0;
++		txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
++
++		/* avoid reach the end of ring */
++		txdp = &txq->ci_tx_ring[tx_id];
++		txep = &txq->sw_ring_vec[tx_id];
++	}
++
++	ci_tx_backlog_entry_vec(txep, tx_pkts, nb_commit);
++
++	ci_vtx_avx512(txdp, tx_pkts, nb_commit, flags, offload, single_vlan_pos, qinq_outer_pos);
++
++	tx_id = (uint16_t)(tx_id + nb_commit);
++	if (tx_id > txq->tx_next_rs) {
++		txq->ci_tx_ring[txq->tx_next_rs].cmd_type_offset_bsz |=
++			rte_cpu_to_le_64(((uint64_t)CI_TX_DESC_CMD_RS) << CI_TXD_QW1_CMD_S);
++		txq->tx_next_rs = (uint16_t)(txq->tx_next_rs + txq->tx_rs_thresh);
++	}
++
++	txq->tx_tail = tx_id;
++
++	ci_tx_qtx_tail_write(txq, tx_id);
++
++	return nb_pkts;
++}
++
+ #endif /* __AVX512VL__ */
+ 
+ #endif /* _COMMON_INTEL_TX_VEC_X86_H_ */
+diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
+index 813611015d..1289581038 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
++++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
+@@ -1617,74 +1617,6 @@ iavf_recv_scattered_pkts_vec_avx2_flex_rxd_offload(void *rx_queue,
+ }
+ 
+ 
+-static __rte_always_inline uint16_t
+-iavf_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
+-			       uint16_t nb_pkts, bool offload)
 -{
--	uint64_t ol_flags = tx_pkt->ol_flags;
--	uint32_t td_cmd = 0;
--	uint32_t td_offset = 0;
+-	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
+-	volatile struct ci_tx_desc *txdp;
+-	struct ci_tx_entry_vec *txep;
+-	uint16_t n, nb_commit, tx_id;
+-	/* bit2 is reserved and must be set to 1 according to Spec */
+-	uint64_t flags = CI_TX_DESC_CMD_EOP | CI_TX_DESC_CMD_ICRC;
+-	uint64_t rs = CI_TX_DESC_CMD_RS | flags;
+-	/* vlan_flag gives both the single-VLAN and the QinQ outer tag position */
+-	enum ci_l2tag_pos vlan_pos = (txq->vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG1) ?
+-			CI_TAG_IN_DATA_DESC : CI_TAG_IN_CTX_DESC;
 -
--	/* Tx Checksum Offload */
--	/* SET MACLEN */
--	td_offset |= (tx_pkt->l2_len >> 1) <<
--		CI_TX_DESC_LEN_MACLEN_S;
+-	if (txq->nb_tx_free < txq->tx_free_thresh)
+-		ci_tx_free_bufs_vec(txq, iavf_tx_desc_done, false);
 -
--	/* Enable L3 checksum offload */
--	if (ol_flags & RTE_MBUF_F_TX_IP_CKSUM) {
--		td_cmd |= CI_TX_DESC_CMD_IIPT_IPV4_CSUM;
--		td_offset |= (tx_pkt->l3_len >> 2) <<
--			CI_TX_DESC_LEN_IPLEN_S;
--	} else if (ol_flags & RTE_MBUF_F_TX_IPV4) {
--		td_cmd |= CI_TX_DESC_CMD_IIPT_IPV4;
--		td_offset |= (tx_pkt->l3_len >> 2) <<
--			CI_TX_DESC_LEN_IPLEN_S;
--	} else if (ol_flags & RTE_MBUF_F_TX_IPV6) {
--		td_cmd |= CI_TX_DESC_CMD_IIPT_IPV6;
--		td_offset |= (tx_pkt->l3_len >> 2) <<
--			CI_TX_DESC_LEN_IPLEN_S;
+-	nb_pkts = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts);
+-	if (unlikely(nb_pkts == 0))
+-		return 0;
+-	nb_commit = nb_pkts;
+-
+-	tx_id = txq->tx_tail;
+-	txdp = &txq->ci_tx_ring[tx_id];
+-	txep = &txq->sw_ring_vec[tx_id];
+-
+-	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_pkts);
+-
+-	n = (uint16_t)(txq->nb_tx_desc - tx_id);
+-	if (nb_commit >= n) {
+-		ci_tx_backlog_entry_vec(txep, tx_pkts, n);
+-
+-		ci_vtx_avx2(txdp, tx_pkts, n - 1, flags, offload, vlan_pos, vlan_pos);
+-		tx_pkts += (n - 1);
+-		txdp += (n - 1);
+-
+-		ci_vtx1(txdp, *tx_pkts++, rs, offload, vlan_pos, vlan_pos);
+-
+-		nb_commit = (uint16_t)(nb_commit - n);
+-
+-		tx_id = 0;
+-		txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
+-
+-		/* avoid reach the end of ring */
+-		txdp = &txq->ci_tx_ring[tx_id];
+-		txep = &txq->sw_ring_vec[tx_id];
 -	}
 -
--	/* Enable L4 checksum offloads */
--	switch (ol_flags & RTE_MBUF_F_TX_L4_MASK) {
--	case RTE_MBUF_F_TX_TCP_CKSUM:
--		td_cmd |= CI_TX_DESC_CMD_L4T_EOFT_TCP;
--		td_offset |= (sizeof(struct rte_tcp_hdr) >> 2) <<
--			CI_TX_DESC_LEN_L4_LEN_S;
--		break;
--	case RTE_MBUF_F_TX_SCTP_CKSUM:
--		td_cmd |= CI_TX_DESC_CMD_L4T_EOFT_SCTP;
--		td_offset |= (sizeof(struct rte_sctp_hdr) >> 2) <<
--			CI_TX_DESC_LEN_L4_LEN_S;
--		break;
--	case RTE_MBUF_F_TX_UDP_CKSUM:
--		td_cmd |= CI_TX_DESC_CMD_L4T_EOFT_UDP;
--		td_offset |= (sizeof(struct rte_udp_hdr) >> 2) <<
--			CI_TX_DESC_LEN_L4_LEN_S;
--		break;
--	default:
--		break;
+-	ci_tx_backlog_entry_vec(txep, tx_pkts, nb_commit);
+-
+-	ci_vtx_avx2(txdp, tx_pkts, nb_commit, flags, offload, vlan_pos, vlan_pos);
+-
+-	tx_id = (uint16_t)(tx_id + nb_commit);
+-	if (tx_id > txq->tx_next_rs) {
+-		txq->ci_tx_ring[txq->tx_next_rs].cmd_type_offset_bsz |=
+-			rte_cpu_to_le_64(((uint64_t)CI_TX_DESC_CMD_RS) << CI_TXD_QW1_CMD_S);
+-		txq->tx_next_rs =
+-			(uint16_t)(txq->tx_next_rs + txq->tx_rs_thresh);
 -	}
 -
--	*txd_hi |= ((uint64_t)td_offset) << CI_TXD_QW1_OFFSET_S;
+-	txq->tx_tail = tx_id;
 -
--	/* Tx VLAN/QINQ insertion Offload */
--	if (ol_flags & RTE_MBUF_F_TX_VLAN) {
--		td_cmd |= CI_TX_DESC_CMD_IL2TAG1;
--		*txd_hi |= ((uint64_t)tx_pkt->vlan_tci << CI_TXD_QW1_L2TAG1_S);
--	}
+-	IAVF_PCI_REG_WC_WRITE(txq->qtx_tail, txq->tx_tail);
 -
--	*txd_hi |= ((uint64_t)td_cmd) << CI_TXD_QW1_CMD_S;
+-	return nb_pkts;
 -}
- #endif
+-
+ static __rte_always_inline uint64_t
+ iavf_tx_ctx_lldp_check(struct rte_mbuf *pkt, uint64_t high_ctx_qw)
+ {
+@@ -1809,14 +1741,17 @@ iavf_xmit_pkts_vec_avx2_common(void *tx_queue, struct rte_mbuf **tx_pkts,
+ {
+ 	uint16_t nb_tx = 0;
+ 	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
++	/* vlan_flag gives both the single-VLAN and the QinQ outer tag position */
++	enum ci_l2tag_pos vlan_pos = (txq->vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG1) ?
++			CI_TAG_IN_DATA_DESC : CI_TAG_IN_CTX_DESC;
+ 
+ 	while (nb_pkts) {
+ 		uint16_t ret, num;
+ 
+ 		/* cross rs_thresh boundary is not allowed */
+ 		num = (uint16_t)RTE_MIN(nb_pkts, txq->tx_rs_thresh);
+-		ret = iavf_xmit_fixed_burst_vec_avx2(tx_queue, &tx_pkts[nb_tx],
+-						     num, offload);
++		ret = ci_xmit_fixed_burst_vec_avx2(txq, &tx_pkts[nb_tx], num,
++				offload, vlan_pos, vlan_pos);
+ 		nb_tx += ret;
+ 		nb_pkts -= ret;
+ 		if (ret < num)
+diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
+index fe00416660..9f773f226b 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
++++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
+@@ -1830,76 +1830,6 @@ tx_backlog_entry_avx512(struct ci_tx_entry_vec *txep,
+ #define IAVF_TX_LEN_MASK 0xAA
+ #define IAVF_TX_OFF_MASK 0x55
+ 
+-static __rte_always_inline uint16_t
+-iavf_xmit_fixed_burst_vec_avx512(void *tx_queue, struct rte_mbuf **tx_pkts,
+-				 uint16_t nb_pkts, bool offload)
+-{
+-	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
+-	volatile struct ci_tx_desc *txdp;
+-	struct ci_tx_entry_vec *txep;
+-	uint16_t n, nb_commit, tx_id;
+-	/* bit2 is reserved and must be set to 1 according to Spec */
+-	uint64_t flags = CI_TX_DESC_CMD_EOP | CI_TX_DESC_CMD_ICRC;
+-	uint64_t rs = CI_TX_DESC_CMD_RS | flags;
+-	/* vlan_flag gives both the single-VLAN and the QinQ outer tag position */
+-	enum ci_l2tag_pos vlan_pos = (txq->vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG1) ?
+-			CI_TAG_IN_DATA_DESC : CI_TAG_IN_CTX_DESC;
+-
+-	if (txq->nb_tx_free < txq->tx_free_thresh)
+-		ci_tx_free_bufs_vec(txq, iavf_tx_desc_done, false);
+-
+-	nb_pkts = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts);
+-	if (unlikely(nb_pkts == 0))
+-		return 0;
+-	nb_commit = nb_pkts;
+-
+-	tx_id = txq->tx_tail;
+-	txdp = &txq->ci_tx_ring[tx_id];
+-	txep = (void *)txq->sw_ring;
+-	txep += tx_id;
+-
+-	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_pkts);
+-
+-	n = (uint16_t)(txq->nb_tx_desc - tx_id);
+-	if (nb_commit >= n) {
+-		tx_backlog_entry_avx512(txep, tx_pkts, n);
+-
+-		ci_vtx_avx512(txdp, tx_pkts, n - 1, flags, offload, vlan_pos, vlan_pos);
+-		tx_pkts += (n - 1);
+-		txdp += (n - 1);
+-
+-		ci_vtx1(txdp, *tx_pkts++, rs, offload, vlan_pos, vlan_pos);
+-
+-		nb_commit = (uint16_t)(nb_commit - n);
+-
+-		tx_id = 0;
+-		txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
+-
+-		/* avoid reach the end of ring */
+-		txdp = &txq->ci_tx_ring[tx_id];
+-		txep = (void *)txq->sw_ring;
+-		txep += tx_id;
+-	}
+-
+-	tx_backlog_entry_avx512(txep, tx_pkts, nb_commit);
+-
+-	ci_vtx_avx512(txdp, tx_pkts, nb_commit, flags, offload, vlan_pos, vlan_pos);
+-
+-	tx_id = (uint16_t)(tx_id + nb_commit);
+-	if (tx_id > txq->tx_next_rs) {
+-		txq->ci_tx_ring[txq->tx_next_rs].cmd_type_offset_bsz |=
+-			rte_cpu_to_le_64(((uint64_t)CI_TX_DESC_CMD_RS) << CI_TXD_QW1_CMD_S);
+-		txq->tx_next_rs =
+-			(uint16_t)(txq->tx_next_rs + txq->tx_rs_thresh);
+-	}
+-
+-	txq->tx_tail = tx_id;
+-
+-	IAVF_PCI_REG_WC_WRITE(txq->qtx_tail, txq->tx_tail);
+-
+-	return nb_pkts;
+-}
+-
+ static __rte_always_inline uint64_t
+ iavf_tx_ctx_lldp_check(struct rte_mbuf *pkt, uint64_t high_ctx_qw)
+ {
+@@ -1985,14 +1915,17 @@ iavf_xmit_pkts_vec_avx512_cmn(void *tx_queue, struct rte_mbuf **tx_pkts,
+ {
+ 	uint16_t nb_tx = 0;
+ 	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
++	/* vlan_flag gives both the single-VLAN and the QinQ outer tag position */
++	enum ci_l2tag_pos vlan_pos = (txq->vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG1) ?
++			CI_TAG_IN_DATA_DESC : CI_TAG_IN_CTX_DESC;
+ 
+ 	while (nb_pkts) {
+ 		uint16_t ret, num;
+ 
+ 		/* cross rs_thresh boundary is not allowed */
+ 		num = (uint16_t)RTE_MIN(nb_pkts, txq->tx_rs_thresh);
+-		ret = iavf_xmit_fixed_burst_vec_avx512(tx_queue, &tx_pkts[nb_tx],
+-						       num, offload);
++		ret = ci_xmit_fixed_burst_vec_avx512(txq, &tx_pkts[nb_tx], num,
++				offload, vlan_pos, vlan_pos);
+ 		nb_tx += ret;
+ 		nb_pkts -= ret;
+ 		if (ret < num)
 -- 
 2.53.0
 
