@@ -2,80 +2,92 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB524C982C3
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 14:55:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3749C982C5
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 15:15:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 84C3242ECD;
-	Wed, 16 Sep 2026 16:55:20 +0200 (CEST)
-Received: from rcdn-iport-4.cisco.com (rcdn-iport-4.cisco.com [173.37.86.75])
- by mails.dpdk.org (Postfix) with ESMTP id D9AAC4028B
- for <dev@dpdk.org>; Wed, 16 Sep 2026 16:55:18 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B0ABD4028B;
+	Wed, 16 Sep 2026 17:15:54 +0200 (CEST)
+Received: from mail-yx2-f43.google.com (mail-yx2-f43.google.com
+ [74.125.224.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 6FFF740264
+ for <dev@dpdk.org>; Wed, 16 Sep 2026 17:15:53 +0200 (CEST)
+Received: by mail-yx2-f43.google.com with SMTP id
+ 00721157ae682-85d43ac6090so11833647b3.2
+ for <dev@dpdk.org>; Wed, 16 Sep 2026 08:15:53 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1789571752; cv=none;
+ d=google.com; s=arc-20260327;
+ b=ddqTcxqbqtu6KPs/T4JJbBFJqrNQ4lEWJXtQ2yAEbJ2NQFE1lRspsk4njGb/xctTIu
+ DgmUjvSkkcYP++MJXDLDjyF3FBMhG1McSR1by2E5+5xVv1sL+0zg1WJh8hO3DCqZzDP5
+ GqfqyJq7AsMtuy9KwvPCQxHaki8suA3Yos4knyngu2g3gfXbrrh9u84rb1sp8ip7DYLD
+ MBHLd4rY/scTQit/PRd4VyHsFvFZ08p9Eavzg+rbrQ2XzcBxBih8Ilm8e+isaKFzrH8K
+ 0wfUGW6QwpuNW5Uj02mtYI4PjUTT5DEgeq8S+u/Sy0jb8gkzk6oF8KKHdjXaXyoryBtU
+ zXmQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20260327; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=HcwDd/oSmcw7gY5ZuEhdaTswAmOfcDo02uCTlnR/mfQ=;
+ fh=M4ntZrbfNOI2ObdlEHflOdWkDYk4AAaaM2dw1Zibg8s=;
+ b=CjFNidE8mhDET/rlN0DJL12PU12Q9na0nBxA8952I03NUvVMvW3OlXio9sS08/T7Md
+ A9wpkNt1wlI+7DQ7uJdoQP0f3GFt1dfpE3NDBdRutWzkrM2z61FbdiBkuC5Fnze/MfBl
+ Axj7b9Kfatk+XGnnzK/eKVBbECjmOOPlFH70pk7a9HhnTvOOBlfPzO2p4wfwxFX/i2c7
+ 3hfDkJuvDnTFWsgZzP/NU0CoivvyJICmolR1NfzOKG3TXykhU/wWP/yru44C5+0TwtOu
+ z2ev8mFM10pCp7yFoYMmrW9asmyLPZj6Yri4UNSk75Kq9YuYi8VK86iFXDDy9Ql5x0B7
+ I+Ng==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cisco.com; i=@cisco.com; l=3536; q=dns/txt;
- s=iport01; t=1789570519; x=1790780119;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=hXh8dvY6O4+ZzaZ1+kKLr2D8pBQaERoBMY2St71ueRo=;
- b=Sz0C7CiZYvs0qAQwW+qecoz97hZ3aLA7ctMQ3UYikwdfaKWP3+vO1iMo
- HAAdNrHhtGD3bWLT0bqF2GiRFtVQqXRjwSewDOS6tfYxPK5zk977Om8eH
- rIfrZNtni2YAkoWvktWEzYSSGXmFN/eHz1erCEuadvZ21YG0osDyvIufu
- v2DU9KaCDgVaHfPwDw1RFcyfj/p7jqu/3fRopDMfWjOL0+qJ3pLohAa7/
- URTLMisxB+TngJepFSruNAW7OzjEFA8T6XiasPbzke+tbF4f2F2KOMaeF
- DAot/k4R+d5y21nDMRLGCPiyh1xZ+EBwuyftq78zguvyaiE2ei4PR8ys/ w==;
-X-CSE-ConnectionGUID: jXYMu/l7T/+OBRFz1oOAVw==
-X-CSE-MsgGUID: UVnWLFsnTP26E/LL5NThSg==
-X-IPAS-Result: =?us-ascii?q?A0BEAgAYrapq/5P/Ja1QCoJZgleBVkJJlkqBFopRkjeBf?=
- =?us-ascii?q?g8BAQEPUQQBAYQEAYEAAo4HAiY0CQ4BAgQDAgMBAQEBAQEBAQEBAQEKAQEFA?=
- =?us-ascii?q?QEBAgEHBYEOE4ZckBMCAQMyAUYQUSA2GYMCgjsDNwPCNIIsgQGEfthLDXKBa?=
- =?us-ascii?q?AELFAGBOIg+hSN2RIQ4JxUGgUlEgRWCc3aCH4F3hnIEgy6DV5BuSIEeA1ksA?=
- =?us-ascii?q?VUTDQoLBwWBZgM1EioVbjIdgSM+F4EHGwYFgR2BJ4JiIxk2eoEJXoErKWABE?=
- =?us-ascii?q?heBCYIIAoJUggECAUlDDgdFUwknQQoSTCkiCBIJARMaMgsJGA1IESw3FRkEP?=
- =?us-ascii?q?m4Hj0Qfgl8BUzyCMUiTHbJVcYQomlaBCoV8GjOEUaYcmQiSE5FtIzeEaYFoP?=
- =?us-ascii?q?IFZTSMVgyJTGQ+OLhbQFSg1PwcCBw8Ck3EBAQ?=
-IronPort-Data: A9a23:Q+rF769yapBqGsH5t32EDrUDz3+TJUtcMsCJ2f8bNWPcYEJGY0x3y
- jQWXWiHMq3cYmWjctolbY2xpEsOvJOAmtNhTQc5/C9EQiMRo6IpJzg2wmQcns+2BpeeJK6yx
- 5xGMrEsFOhtEDmB4E/rbei5xZVF/fngbqLmD+LZMTxGSwZhSSMw4TpugOdRbrRA2bBVOCvT/
- 4mtyyHjEAX9gWAsYztIs/jrRC5H5ZwehhtJ5jTSWtgT1LPuvyF9JI4SI6i3M0z5TuF8dsamR
- /zOxa2O5WjQ+REgELuNyt4XpWVTH9Y+lSDX4pZnc/DKbipq/0Te4Y5nXBYoUnq7vh3S9zxHJ
- HqhgrTrIeshFvWkdO3wyHC0GQkmVUFN0OevzXRSLaV/wmWeG0YAzcmCA2k0Dbw956FzXl0Jt
- tsyEh4fNxekrtyplefTpulE3qzPLeHxN48Z/3UlxjbDALN/GdbIQr7B4plT2zJYasJmRKmFI
- ZFGL2AyMVKZP0In1lQ/UPrSmM+ymnj0fhVTqUmeouw85G27IAlZjeKxbYOMIozQLSlTtnumo
- F3i0X//PilAavHY7R7Y1E6sveCayEsXX6pXTtVU7MVCjFCN7mALBB5QUkG0ydGlikm7Usl3L
- ksS+CMqqq508kG3JuQRRDWiq3KC+xpZUN1KHqhjsEeGy7Hf5ECSAW1soiN9VeHKffQeHVQCv
- mJlVfuwbdCzmNV5kU6gy4o=
-IronPort-HdrOrdr: A9a23:Igzod6OC0LH8c8BcTuGjsMiBIKoaSvp037Dk7SxMoHtuA6ilfq
- +V8sjzuSWftN9VYgBCpTniAtjkfZqjz/9ICOAqVN/IYOClghrLEGgI1+TfKlPbdhEWjtQ86Y
- 5QN45jFdb3EV92yez+4AW+DpIc5ePvytHOuQ8bpE0dND2DrMpbnmFENjo=
-X-Talos-CUID: 9a23:MLJl0236+ICMx2XddWHx27xfGPAUV2CayCjsZAyfI1xHWuSSbnau5/Yx
-X-Talos-MUID: 9a23:X7EmEgZqflNxFeBTigHquxVML8FU2/7wJQcptcggh8m/Onkl
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-AV: E=Sophos;i="6.27,103,1787011200"; d="scan'208";a="524511082"
-Received: from rcdn-l-core-10.cisco.com ([173.37.255.147])
- by rcdn-iport-4.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384;
- 16 Sep 2026 14:55:17 +0000
-Received: from rtp-orb-10405.cisco.com (rtp-orb-10405.cisco.com [64.100.22.53])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by rcdn-l-core-10.cisco.com (Postfix) with ESMTPS id 741C91800027C;
- Wed, 16 Sep 2026 14:55:17 +0000 (GMT)
-From: Randy L Tice <rtice@cisco.com>
-To: dev@dpdk.org
-Cc: Thomas Monjalon <thomas@monjalon.net>,
-	Randy L Tice <rtice@cisco.com>
-Subject: [PATCH v3 1/1] eal: add API to get CPU socket ID
-Date: Wed, 16 Sep 2026 10:55:16 -0400
-Message-Id: <20260916145516.3-2-rtice@cisco.com>
-X-Mailer: git-send-email 2.35.6
-In-Reply-To: <20260916145516.3-1-rtice@cisco.com>
-References: <20260915150507.3-1-rtice@cisco.com>
- <20260916145516.3-1-rtice@cisco.com>
+ d=gmail.com; s=20251104; t=1789571752; x=1790176552; darn=dpdk.org;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:from:to:cc:subject:date:message-id:reply-to
+ :content-type; bh=HcwDd/oSmcw7gY5ZuEhdaTswAmOfcDo02uCTlnR/mfQ=;
+ b=RrpfQNibjkI1vvciJCUNsbRJaEIYjpH+hYTh1sTr30f3OZYTo059j4fvpcSdtS4mJ0
+ kkcxA1INETDJae5d5iD9rvFFgKpBB11JA5u35Y2g+5n+HzpJflUWZr+HH/PnDwJNkA3/
+ TW7zGXaqwuPzCLl/EToW9QvMpJu7szWxvqHt9r2vlrePTs3dtvtDdmFOudoPhUlPPd6z
+ 3ceo+oVCkNNmW2bwDvD9M2DzJfFdFFDItFCJV3LkCaNaLbPUak0cxvwYVVg6wj1OwFuI
+ /lRWRDIjjmpOGOHHxjMsmE4Hq/4sOPibS5dZHFj4gPEtt2sAK27doeF/BVszJWHoEVvX
+ C94Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1789571752; x=1790176552;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=HcwDd/oSmcw7gY5ZuEhdaTswAmOfcDo02uCTlnR/mfQ=;
+ b=rcMDSSQDWTOwntI8n+ioCAfE69LDx5QgNTwGRGh/J1t5AKks1Vrq34tSqagBLy9fmj
+ eqKvUKYWigW8J9mSmQ5xt6rNI5r5+5PN6vEyaG5oeUNPhOX3OjZ/7NcUEiQ6xVgm+xYi
+ cfknqNpaLMKRbnjc5sftnqHa35H0bf25eRjwkEnCQMb4cS02EPfLyFK09kA6b3GmkC1F
+ DIGolGYGGyAodyBmgC3ymdZ+9i//xEsI8Z6Nk3ml7V7DTiX6YqFPtJYLa157jD+5IXBI
+ koEPr+mfwInx35iW8deFrttIUoy1gJhBZypyzIHlYeTzu/DtMI0LVQ+nTOSQaNk/X0ms
+ Of3A==
+X-Gm-Message-State: AFuF++kN42ktR5kXBaq4HA4jytJiaRMwZWf8Yrql11fYp/PpL8EZCbAJ
+ /8Eei9aaAPWFPO4TFGRd16NfdMGTQXQ6QElPts7+2HHez7jo6q/c4n2RLz4RNTDdc1y4djsE+7d
+ u2UWbhQMuE5xxi/uQDBN6bcHh5ITxmbw=
+X-Gm-Gg: AYBFou2i9Cr4FhVWGt5hbv1Hd5tBjQVG87klwtlVPZtul3jtRNDcOMOCIHuRM73yQO+
+ 4ggcZUdEdaDFKpgmlTSX8eG1EYVwRKXJuzId1ca4TuyPpSUX3tpOipSl9HMGI+CcZGmO7kdUshd
+ e/jO6v/f5e5oJikgxK9HtbJieCWqi7CBAhnzUbP52h4zWU8EseSz54qx1CziJIHQdl724/DE4+N
+ YnuQO6QN5JxYKIFvl9MqPtqSm7bpUsNXgLJxDIC56wgOD0EgaP8PYFigDzm/L6RbwA274RI0k4L
+ 51cEcuDlw4g1ucSAgwLLdnFGaj6jZ+8hGtkJ/N7uK4l/hdvNeugY69Orng==
+X-Received: by 2002:a05:690c:f04:b0:820:b89:52c6 with SMTP id
+ 00721157ae682-892247a7e3bmr10630487b3.33.1789571752414; Wed, 16 Sep 2026
+ 08:15:52 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Outbound-Client-TLS: ANONYMOUS; rtp-orb-10405.cisco.com [64.100.22.53];
- TLSv1.3; TLS_AES_256_GCM_SHA384; 256
-X-Outbound-SMTP-Client: 64.100.22.53, rtp-orb-10405.cisco.com
-X-Outbound-Node: rcdn-l-core-10.cisco.com
+References: <20260913040800.60274-1-amiyaranjan.mohakud@gmail.com>
+ <20260913070428.66628-1-amiyaranjan.mohakud@gmail.com>
+ <CO1PR18MB4796E0F85799C486CA837DEFBFBA2@CO1PR18MB4796.namprd18.prod.outlook.com>
+ <CAL+mCpO43LNUa-xzH7_AkSjcyo1Ws2-SdVUhvn6ySQY2_2OhgQ@mail.gmail.com>
+ <CO1PR18MB4796A90FEE9E4C8246846F11BFB92@CO1PR18MB4796.namprd18.prod.outlook.com>
+ <CAL+mCpP35KM98KyydV4VBrCroR41-v1dt61E_dxMfx-3W2AQbA@mail.gmail.com>
+In-Reply-To: <CAL+mCpP35KM98KyydV4VBrCroR41-v1dt61E_dxMfx-3W2AQbA@mail.gmail.com>
+From: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
+Date: Wed, 16 Sep 2026 20:45:40 +0530
+X-Gm-Features: AcwNN1UcB0Pw7O2IECxJ14vcUxxLeRtkdLU90Kt9deTuRErYBWtMySgDjWSvOrk
+Message-ID: <CAL+mCpPOPtvn+Si6PvnvpK5e3rQHp81SV-+WDaiiJADt99V--A@mail.gmail.com>
+Subject: Re: [EXTERNAL] [PATCH v2] common/cnxk: fix NPA pool RANGE interrupt
+ handling
+To: Ashwin Sekhar T K <asekhar@marvell.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>,
+ Nithin Kumar Dabilpuram <ndabilpuram@marvell.com>, 
+ Jerin Jacob <jerinj@marvell.com>, Sunil Kumar Kori <skori@marvell.com>
+Content-Type: multipart/alternative; boundary="0000000000009a5196065b9b2497"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -89,109 +101,150 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add experimental rte_cpu_socket_id() so applications can map an OS
-logical CPU ID to its NUMA socket without requiring an EAL lcore ID.
+--0000000000009a5196065b9b2497
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Existing public socket APIs depend on EAL lcore configuration or the
-calling thread's EAL state. They do not cover code that needs to look
-up topology by OS CPU ID, such as building socket memory policy.
+Hi Ashwin
 
-Reuse the existing per-OS EAL CPU socket lookup internally, while
-keeping the eal_cpu_socket_id() helper private to EAL.
+*The AQ INIT does not bypass NDC. May I know how you arrived at this
+conclusion?*
+* Even your other NDC sync patch is not required. The only time NDC sync is
+required is at teardown time because at this point, we free the stack
+memory. So, after this, NPA should not evict any stale stack pages back to
+memory (which is already freed).*
 
-Signed-off-by: Randy L Tice <rtice@cisco.com>
----
- .mailmap                               |  1 +
- doc/guides/rel_notes/release_26_11.rst |  3 +++
- lib/eal/common/eal_common_lcore.c      | 11 +++++++++++
- lib/eal/include/rte_lcore.h            | 19 +++++++++++++++++++
- 4 files changed, 34 insertions(+)
+*>> *I don't see any ndc_sync calls during pool_init, So the NDC is not
+updated at pool_init time, whereas it's getting called for all termination
+paths. Could you explain how this is taken care of then without an ndc
+sync? I need to test without NDC sync changes multiple times and confirm.
+BUt if you could explain how it'll work without NDC sync or how it's a side
+effect of IOVA as PA, it would be great.
 
-diff --git a/.mailmap b/.mailmap
-index fcb3d1bb3f..2a8b54ea23 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -1379,6 +1379,7 @@ Rakesh Kudurumalla <rkudurumalla@marvell.com> <rkudurumalla@caviumnetworks.com>
- Ralf Hoffmann <ralf.hoffmann@allegro-packets.com>
- Rami Rosen <ramirose@gmail.com> <rami.rosen@intel.com>
- Rami Rosen <ramirose@gmail.com> <roszenrami@gmail.com>
-+Randy L Tice <rtice@cisco.com>
- Randy Schacher <stuart.schacher@broadcom.com>
- Rani Sharoni <ranish@nvidia.com>
- Ranjit Menon <ranjit.menon@intel.com>
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 87c7e81bde..b26e9fae88 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -95,6 +95,9 @@ API Changes
-    Also, make sure to start the actual text at the margin.
-    =======================================================
- 
-+* eal: Added experimental ``rte_cpu_socket_id()`` to map an OS logical
-+  CPU ID to the NUMA socket containing that CPU.
-+
- 
- ABI Changes
- -----------
-diff --git a/lib/eal/common/eal_common_lcore.c b/lib/eal/common/eal_common_lcore.c
-index b5f59a6380..1b6d77d8bc 100644
---- a/lib/eal/common/eal_common_lcore.c
-+++ b/lib/eal/common/eal_common_lcore.c
-@@ -12,6 +12,7 @@
- #include <rte_errno.h>
- #include <rte_lcore.h>
- #include <rte_log.h>
-+#include <rte_memory.h>
- #ifndef RTE_EXEC_ENV_WINDOWS
- #include <rte_telemetry.h>
- #endif
-@@ -130,6 +131,16 @@ rte_lcore_to_socket_id(unsigned int lcore_id)
- 	return lcore_config[lcore_id].numa_id;
- }
- 
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_cpu_socket_id, 26.11)
-+unsigned int
-+rte_cpu_socket_id(unsigned int cpu_id)
-+{
-+	if (eal_cpu_detected(cpu_id) == 0)
-+		return (unsigned int)SOCKET_ID_ANY;
-+
-+	return eal_cpu_socket_id(cpu_id);
-+}
-+
- static int
- socket_id_cmp(const void *a, const void *b)
- {
-diff --git a/lib/eal/include/rte_lcore.h b/lib/eal/include/rte_lcore.h
-index 10f965b4f0..696ae9ec95 100644
---- a/lib/eal/include/rte_lcore.h
-+++ b/lib/eal/include/rte_lcore.h
-@@ -160,6 +160,25 @@ rte_socket_id_by_idx(unsigned int idx);
- unsigned int
- rte_lcore_to_socket_id(unsigned int lcore_id);
- 
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * Get the ID of the NUMA node for a CPU.
-+ *
-+ * This function maps an OS logical CPU ID to the NUMA node containing
-+ * that CPU.
-+ *
-+ * @param cpu_id
-+ *   The OS logical CPU ID. If cpu_id does not identify a detected CPU, the
-+ *   function returns SOCKET_ID_ANY.
-+ * @return
-+ *   The ID of cpu_id's NUMA node, or SOCKET_ID_ANY if cpu_id is not valid.
-+ */
-+__rte_experimental
-+unsigned int
-+rte_cpu_socket_id(unsigned int cpu_id);
-+
- /**
-  * Return the id of the lcore on a socket starting from zero.
-  *
--- 
-2.35.6
+Thanks
+Amiya
 
+
+On Wed, 16 Sept 2026 at 11:13, Amiya Ranjan Mohakud <
+amiyaranjan.mohakud@gmail.com> wrote:
+
+> Hi Ashwin - I have raised a ticket
+> https://bugs.dpdk.org/show_bug.cgi?id=3D2031 with details. Pls check if i=
+t
+> helps.
+>
+> Thanks
+> Amiya
+>
+>
+> On Wed, 16 Sept 2026 at 10:10, Ashwin Sekhar T K <asekhar@marvell.com>
+> wrote:
+>
+>> Hi Amiya,
+>> > Yes =E2=80=94 the root cause is NDC staleness. The AQ INIT writes pool=
+ context
+>> (including ptr_start=3D0, ptr_end=3D~0) directly to RAM, bypassing NDC.
+>> The AQ INIT does not bypass NDC. May I know how you arrived at this
+>> conclusion?
+>> Even your other NDC sync patch is not required. The only time NDC sync i=
+s
+>> required is at teardown time because at this point, we free the stack
+>> memory. So, after this, NPA should not evict any stale stack pages back =
+to
+>> memory (which is already freed).
+>>
+>> > Sorry for my poor wordings. on my part. The pool stack does not get
+>> drained =E2=80=94 it never gets populated.During cnxk_mempool_populate()=
+, each
+>> roc_npa_aura_op_free() call silently drops the buffer (NPA sees stale
+>> context with ena=3D0 or ptr_end=3D0 via NDC). After populate completes, =
+the
+>> pool has 0
+>> > available buffers despite no error being returned. Subsequent
+>> roc_npa_aura_op_alloc() returns NULL, causing port start failures.
+>> It will not silently drop. You should be getting AURA DISABLED interrupt=
+s.
+>>
+>> Could you please explain the exact use case and issue that you are facin=
+g?
+>>
+>> Thanks
+>> Ashwin
+>>
+>>
+
+--0000000000009a5196065b9b2497
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div><div style=3D"font-family:trebuchet ms,sans-serif;col=
+or:rgb(103,78,167)" class=3D"gmail_default">Hi Ashwin</div><div style=3D"fo=
+nt-family:trebuchet ms,sans-serif;color:rgb(103,78,167)" class=3D"gmail_def=
+ault"><br></div><div style=3D"font-family:trebuchet ms,sans-serif;color:rgb=
+(103,78,167)" class=3D"gmail_default"><i style=3D"color:rgb(0,0,0)">The AQ =
+INIT does not bypass NDC. May I know how you arrived at this conclusion?</i=
+></div><div style=3D"font-family:trebuchet ms,sans-serif;color:rgb(103,78,1=
+67)" class=3D"gmail_default"><span style=3D"color:rgb(0,0,0)"><i>
+Even your other NDC sync patch is not required. The only time NDC sync=20
+is required is at teardown time because at this point, we free the stack
+ memory. So, after this, NPA should not evict any stale stack pages back
+ to memory (which is already freed).</i></span></div><div style=3D"font-fam=
+ily:trebuchet ms,sans-serif;color:rgb(103,78,167)" class=3D"gmail_default">=
+<span class=3D"gmail-im"><br></span><i>&gt;&gt;=C2=A0</i>I don&#39;t see an=
+y ndc_sync calls during pool_init, So the NDC is not updated at pool_init t=
+ime, whereas it&#39;s getting called for all termination paths. Could you e=
+xplain how this is taken care of then without an ndc sync? I need to test w=
+ithout NDC sync changes multiple times and confirm. BUt if you could explai=
+n how it&#39;ll work without NDC sync or how it&#39;s a side effect of IOVA=
+ as PA, it would be great.</div><br clear=3D"all"></div><div><div dir=3D"lt=
+r" class=3D"gmail_signature" data-smartmail=3D"gmail_signature"><div dir=3D=
+"ltr"><div><span style=3D"font-family:verdana,sans-serif">Thanks</span></di=
+v><div><span style=3D"font-family:verdana,sans-serif">Amiya</span><br></div=
+></div></div></div><br></div><br><div class=3D"gmail_quote gmail_quote_cont=
+ainer"><div dir=3D"ltr" class=3D"gmail_attr">On Wed, 16 Sept 2026 at 11:13,=
+ Amiya Ranjan Mohakud &lt;<a href=3D"mailto:amiyaranjan.mohakud@gmail.com">=
+amiyaranjan.mohakud@gmail.com</a>&gt; wrote:<br></div><blockquote class=3D"=
+gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(20=
+4,204,204);padding-left:1ex"><div dir=3D"ltr"><div><div style=3D"font-famil=
+y:trebuchet ms,sans-serif;color:rgb(103,78,167)" class=3D"gmail_default">Hi=
+ Ashwin - I have raised a ticket <a href=3D"https://bugs.dpdk.org/show_bug.=
+cgi?id=3D2031" target=3D"_blank">https://bugs.dpdk.org/show_bug.cgi?id=3D20=
+31</a> with details. Pls check if it helps.</div><br clear=3D"all"></div><d=
+iv><div dir=3D"ltr" class=3D"gmail_signature"><div dir=3D"ltr"><div><span s=
+tyle=3D"font-family:verdana,sans-serif">Thanks</span></div><div><span style=
+=3D"font-family:verdana,sans-serif">Amiya</span><br></div></div></div></div=
+><br></div><br><div class=3D"gmail_quote"><div dir=3D"ltr" class=3D"gmail_a=
+ttr">On Wed, 16 Sept 2026 at 10:10, Ashwin Sekhar T K &lt;<a href=3D"mailto=
+:asekhar@marvell.com" target=3D"_blank">asekhar@marvell.com</a>&gt; wrote:<=
+br></div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8e=
+x;border-left:1px solid rgb(204,204,204);padding-left:1ex">Hi Amiya,<br>
+&gt; Yes =E2=80=94 the root cause is NDC staleness. The AQ INIT writes pool=
+ context (including ptr_start=3D0, ptr_end=3D~0) directly to RAM, bypassing=
+ NDC.<br>
+The AQ INIT does not bypass NDC. May I know how you arrived at this conclus=
+ion?<br>
+Even your other NDC sync patch is not required. The only time NDC sync is r=
+equired is at teardown time because at this point, we free the stack memory=
+. So, after this, NPA should not evict any stale stack pages back to memory=
+ (which is already freed).<br>
+<br>
+&gt; Sorry for my poor wordings. on my part. The pool stack does not get dr=
+ained =E2=80=94 it never gets populated.During cnxk_mempool_populate(), eac=
+h roc_npa_aura_op_free() call silently drops the buffer (NPA sees stale con=
+text with ena=3D0 or ptr_end=3D0 via NDC). After populate completes, the po=
+ol has 0 <br>
+&gt; available buffers despite no error being returned. Subsequent roc_npa_=
+aura_op_alloc() returns NULL, causing port start failures.<br>
+It will not silently drop. You should be getting AURA DISABLED interrupts.<=
+br>
+<br>
+Could you please explain the exact use case and issue that you are facing?<=
+br>
+<br>
+Thanks<br>
+Ashwin<br>
+<br>
+</blockquote></div>
+</blockquote></div>
+
+--0000000000009a5196065b9b2497--
