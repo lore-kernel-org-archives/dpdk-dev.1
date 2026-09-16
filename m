@@ -2,47 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5510EC88E77
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 10:36:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAB49C88E5C
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 10:36:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2EFEE42D3F;
-	Wed, 16 Sep 2026 12:36:34 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4C6CC42D99;
+	Wed, 16 Sep 2026 12:36:35 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id 6880E40DD0
+ by mails.dpdk.org (Postfix) with ESMTP id AD136410FD
  for <dev@dpdk.org>; Wed, 16 Sep 2026 12:36:30 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1789554991; x=1821090991;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=HzcP7jr+JH5Y789qtFA0nIujqdogEivVtsc1YgyT5ZU=;
- b=dn9RNd7oVRs9zL1ey9678AqN/4LCF9h6/Cd8A/TFIQLCKMj6yz4zBhfj
- 03a2JKfpZQ72n5NaMmD0FlY4gTkEgF9fWOcFFyNUKrco6nCmAkvtcWbUF
- 96+5Wo88VVQhCuZBVXMeLRFL0UxEusgsMF71aHXWuVSaEZiHMkeozUCnZ
- NSrwk+vPAZsDo67od5UXfOMfoIYGcPal4MYT+FSgh5FDy5jxP/OEshscR
- mJLBj4MNwpdeXzIOyhAOiEyeRp1jfFULhJf//whWj4feaFq5aRfU+GBdi
- p6LiVPj53tpChtNc2kYcTR4Tv6EXSvWSjOt7csdCf2AQWylwD1eh2z8WP w==;
-X-CSE-ConnectionGUID: vJIOBHOtTiC0dDTioyLlVA==
-X-CSE-MsgGUID: Trtas49XTEiNbLrAPR7MxA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="89867621"
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="89867621"
+ bh=M+NXnRBVYrPlwzjx2pRhfvtRy6qquCtpqs7vuTmlwgo=;
+ b=ityzUBTAR3TxeDU7ccs/D1Wd4xrGU4RQaHrWKDRm4CzciZREBUm8DUAI
+ kwzMaDV//cFD1KYLXtPDLLXqkoqrMErG2wuaU2Aw6U0l/wGDxesQrY1ae
+ Ug4UCLYNnK5YAJKpYRxyRdp/szaeu5kYH2BKyjnujnBhA0e18j8S25YU5
+ yidO1Y+3dZ0s3K/65Pn+d8g6IoDJbiKtlJsnNZ85F37iSrWJtcrxQ1D9y
+ nJo4vPkBl5+Jy+AtdU5g2XV4rD1Neyo6lRew/looLX6FXCoTwoVkF/Ok8
+ gLjQqejUmisp9vNX7HoVKhJ85xnxUDNfEXKEbsMtloD32ikaEP1ConBoM Q==;
+X-CSE-ConnectionGUID: GgwWEBLHQWK0N3kmhIXtWg==
+X-CSE-MsgGUID: pZDhPjMUQiqiQ6Q8v5piuA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="89867622"
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="89867622"
 Received: from fmviesa012.fm.intel.com ([10.60.135.152])
  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Sep 2026 03:36:29 -0700
-X-CSE-ConnectionGUID: kfkIRVKtSbiCuH6ZIXNVXw==
-X-CSE-MsgGUID: uLj0Zu6PRmWUEc6nFI/Pxg==
+ 16 Sep 2026 03:36:30 -0700
+X-CSE-ConnectionGUID: ORv6dWTlTQSUQtufXOQIFQ==
+X-CSE-MsgGUID: Ul8W9bEjSxWMMG0Gp6HNzA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
-   d="scan'208";a="1528124"
+   d="scan'208";a="1528132"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa012.fm.intel.com with ESMTP; 16 Sep 2026 03:36:28 -0700
+ by fmviesa012.fm.intel.com with ESMTP; 16 Sep 2026 03:36:29 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: ciara.loftus@intel.com,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v3 01/15] net/iavf: remove unnecessary alignment calls
-Date: Wed, 16 Sep 2026 11:36:08 +0100
-Message-ID: <20260916103622.319874-2-bruce.richardson@intel.com>
+Subject: [PATCH v3 02/15] net/intel: make Tx context flag common
+Date: Wed, 16 Sep 2026 11:36:09 +0100
+Message-ID: <20260916103622.319874-3-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260916103622.319874-1-bruce.richardson@intel.com>
 References: <20260903170140.360477-1-bruce.richardson@intel.com>
@@ -62,74 +62,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When we have a context descriptor on Tx of a packet from the vector
-paths, that means that we always have 32-bytes being written per
-descriptor/per packet, so the stores are always 32-bit aligned. This
-means we can use aligned stores for each single descriptor store, and
-that we never need to do an initial descriptor write for alignment when
-doing a burst of descriptors.
+The flag for enabling context descriptors in the vector paths should not
+be limited to just the iavf driver, as other drivers may use context
+paths in future also. Therefore move the flag out of the iavf-specific
+part of the Tx queue structure, to put with other standard queue flags.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 Acked-by: Ciara Loftus <ciara.loftus@intel.com>
 ---
- drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c   | 9 ++-------
- drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c | 9 ++-------
- 2 files changed, 4 insertions(+), 14 deletions(-)
+ drivers/net/intel/common/tx.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
-index 7217f32cef..9b62ef53d3 100644
---- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
-@@ -1933,7 +1933,8 @@ ctx_vtx1(volatile struct ci_tx_desc *txdp, struct rte_mbuf *pkt,
- 	__m256i ctx_data_desc = _mm256_set_epi64x(high_data_qw, pkt->buf_iova + pkt->data_off,
- 							high_ctx_qw, low_ctx_qw);
- 
--	_mm256_storeu_si256(RTE_CAST_PTR(__m256i *, txdp), ctx_data_desc);
-+	/* tx_id is always even in ctx mode, so txdp is always 32-byte aligned */
-+	_mm256_store_si256(RTE_CAST_PTR(__m256i *, txdp), ctx_data_desc);
- }
- 
- static __rte_always_inline void
-@@ -1944,12 +1945,6 @@ ctx_vtx(volatile struct ci_tx_desc *txdp,
- 	uint64_t hi_data_qw_tmpl = (IAVF_TX_DESC_DTYPE_DATA |
- 					((uint64_t)flags  << IAVF_TXD_QW1_CMD_SHIFT));
- 
--	/* if unaligned on 32-bit boundary, do one to align */
--	if (((uintptr_t)txdp & 0x1F) != 0 && nb_pkts != 0) {
--		ctx_vtx1(txdp, *pkt, flags, offload, vlan_flag, ptype_lldp_enabled);
--		nb_pkts--; txdp++; pkt++;
--	}
--
- 	for (; nb_pkts > 1; txdp += 4, pkt += 2, nb_pkts -= 2) {
- 		uint64_t hi_ctx_qw1 = IAVF_TX_DESC_DTYPE_CONTEXT;
- 		uint64_t hi_ctx_qw0 = IAVF_TX_DESC_DTYPE_CONTEXT;
-diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
-index bf0245e8f4..4609c2245a 100644
---- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
-@@ -2078,7 +2078,8 @@ ctx_vtx1(volatile struct ci_tx_desc *txdp, struct rte_mbuf *pkt,
- 	__m256i ctx_data_desc = _mm256_set_epi64x(high_data_qw, pkt->buf_iova + pkt->data_off,
- 							high_ctx_qw, low_ctx_qw);
- 
--	_mm256_storeu_si256(RTE_CAST_PTR(__m256i *, txdp), ctx_data_desc);
-+	/* tx_id is always even in ctx mode, so txdp is always 32-byte aligned */
-+	_mm256_store_si256(RTE_CAST_PTR(__m256i *, txdp), ctx_data_desc);
- }
- 
- static __rte_always_inline void
-@@ -2088,12 +2089,6 @@ ctx_vtx(volatile struct ci_tx_desc *txdp,
- {
- 	uint64_t hi_data_qw_tmpl = (CI_TX_DESC_DTYPE_DATA | (flags << CI_TXD_QW1_CMD_S));
- 
--	/* if unaligned on 32-bit boundary, do one to align */
--	if (((uintptr_t)txdp & 0x1F) != 0 && nb_pkts != 0) {
--		ctx_vtx1(txdp, *pkt, flags, offload, vlan_flag, lldp_enabled);
--		nb_pkts--; txdp++; pkt++;
--	}
--
- 	for (; nb_pkts > 1; txdp += 4, pkt += 2, nb_pkts -= 2) {
- 		uint64_t hi_ctx_qw1 = IAVF_TX_DESC_DTYPE_CONTEXT;
- 		uint64_t hi_ctx_qw0 = IAVF_TX_DESC_DTYPE_CONTEXT;
+diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
+index 2d4a8b5d3c..fb5268c972 100644
+--- a/drivers/net/intel/common/tx.h
++++ b/drivers/net/intel/common/tx.h
+@@ -173,6 +173,7 @@ struct ci_tx_queue {
+ 	bool tx_deferred_start; /* don't start this queue in dev start */
+ 	bool q_set;             /* indicate if tx queue has been configured */
+ 	bool use_vec_entry;     /* use sw_ring_vec (true for vector and simple paths) */
++	bool use_ctx;           /* with ctx info, each pkt needs two desc in vec paths */
+ 	union {                  /* the VSI this queue belongs to */
+ 		struct i40e_vsi *i40e_vsi;
+ 		struct iavf_vsi *iavf_vsi;
+@@ -194,7 +195,6 @@ struct ci_tx_queue {
+ #define IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2 BIT(1)
+ 			uint8_t vlan_flag;
+ 			uint8_t tc;
+-			bool use_ctx;  /* with ctx info, each pkt needs two descriptors */
+ 			bool lldp_enabled;
+ 		};
+ 		struct { /* ixgbe specific values */
 -- 
 2.53.0
 
