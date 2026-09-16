@@ -2,59 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C39BC88E77
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 11:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B7C2C88E77
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 11:20:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 88817427BA;
-	Wed, 16 Sep 2026 13:20:15 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B296442DF0;
+	Wed, 16 Sep 2026 13:20:37 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
- by mails.dpdk.org (Postfix) with ESMTP id 0BF2E4067D
- for <dev@dpdk.org>; Wed, 16 Sep 2026 13:20:13 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 66051427BA
+ for <dev@dpdk.org>; Wed, 16 Sep 2026 13:20:36 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1789557614; x=1821093614;
+ t=1789557636; x=1821093636;
  h=message-id:date:subject:to:cc:references:from:
  in-reply-to:content-transfer-encoding:mime-version;
- bh=MH+wiAvC+Zu3Exg18iblVxJ3qTAYEWtsmT8YjglMSw8=;
- b=VwyNa7OhC7/JaHUdzaS6cHxRxPv+GSGJyw8C0Q70Tr0Q9Me2kwrHPXI0
- 6jvphLOaQ4OMjZnsCNoDTV87me6uYlWRgXQSEGgXhld8U3jfiGullojQd
- Z3rlrkNNAvipv4OLLL0Tmh8BNV5I91W6AtXvkNK6uCZtJINK/KdDTGnlQ
- F8FDvVoPOf5QBe7PB+8Xoe9MWjt7iDrgxAtSvwrupYGzyx74bIwDLu36P
- /98Kca17WPYsUiWFlIysGn+17JE5wOdwlYuAc1M2p7G5GpNj7W6QVR4iJ
- CL1ucL4wVnbcFmGog8vJlOPyFSTkOqg2qqLldBNExEqtQIYKwlscBCZAr w==;
-X-CSE-ConnectionGUID: CKCiUDQZSq2v49QYLzEikg==
-X-CSE-MsgGUID: 1YBvU4ZATamsO6u5eap5sw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="100528752"
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="100528752"
+ bh=YnAHRu3lzpQP2w+Z/r/5DFz3V1uVmd4K8RVWiyU+PTs=;
+ b=kvCLtMfCz3MeQm7UNByBY0kJqTXc+dMAWEQgaZ6dEtP73aoTedm4IZXx
+ 1nmsai0h+FDJz6SQbqyb5XALkTRXbtxDQPFeoD+c4l1ADR5PcgN7wzHRM
+ fLMpNmfdQnAFFBcpZQSwkUMw0ThpsZk2JK7+qswr/jZzEndwApXm0IpGe
+ Zmq8Fk9IhE16Bu0R8reHt0wfQAN+X6chz2ePIa/+7ZP45jG6wYfvoh+nv
+ op/TzfG6MzNELC/LjF1uAMLwl3zNEy21y3D5/JyvLnJS2Yu6PSgd4rrik
+ 11aW9dxzr6PNYdfAioJfSA1fyS/bdR63jQn3JghlGscpwH0dSkJ/6ubPA g==;
+X-CSE-ConnectionGUID: L+qTBStNRcK5Js6WnnPPaw==
+X-CSE-MsgGUID: pK8WFQPUSBiO2FiPJo+EJg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="100528801"
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="100528801"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Sep 2026 04:20:11 -0700
-X-CSE-ConnectionGUID: Td4oXFi2SHawaMj0IiBTww==
-X-CSE-MsgGUID: hIBmlKJYReaBi/I/yLjMPQ==
+ 16 Sep 2026 04:20:35 -0700
+X-CSE-ConnectionGUID: QeVc4VRXQFytVeeBvjNcaw==
+X-CSE-MsgGUID: lYQrAsyCR2K9wSf0Gk32bQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="277062178"
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="277062261"
 Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Sep 2026 04:20:10 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ 16 Sep 2026 04:20:35 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
  ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Wed, 16 Sep 2026 04:20:10 -0700
+ 15.2.2562.46; Wed, 16 Sep 2026 04:20:34 -0700
 Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46 via Frontend Transport; Wed, 16 Sep 2026 04:20:10 -0700
-Received: from CO1PR03CU002.outbound.protection.outlook.com (52.101.46.9) by
+ 15.2.2562.46 via Frontend Transport; Wed, 16 Sep 2026 04:20:34 -0700
+Received: from DM5PR21CU001.outbound.protection.outlook.com (52.101.62.10) by
  edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Wed, 16 Sep 2026 04:20:10 -0700
+ 15.2.2562.46; Wed, 16 Sep 2026 04:20:34 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dAslKhvsyKY4ICZXGVc6loK6fxtagZAmTOYOOq0AXvmfTciOvheif1J0chg4Ks6jUMO4O/jw6NX/DGyhnBriwaIDxqUNdUwAVEh3KNODNraltcKix9rwkQfDmZdEwaY7+SQnWGbxvRTEm3OTgkcMtqlgOqw8FtAx2kw/2PGxXJhthzSWfBU0LEydkSg6qC6JraK5C50fsGxi8lInqDXImeqKbtasavQsvj71nbf15m9p7PtGhTya1bhWVIiK6uQ8JbS26Yl3JJoxXWkzyF5GnvbvWn6U2gp4ajVkdq2WH3YVPmHqTdCOOaZqlkWhSuiWqvDCi0gvSC8vF74KSpl+cA==
+ b=IijAuuuRWGLukUWrc+AkAJFnCpC1xt62oPFsvXSenB28u3Uuj97bNEVlE/ckG97pEiebfLNIDhVOGZ/WDaH1dBbuvUnAbmkNyNL/Hd1c70bZmD5TmBQl27ma7udolR1/+TCk0AjThfn2PJe1kfZrsibdBaT9hs4MJAA4KtE/Qrlrxj9yP10ZBuzK7EGC2dCGQbfMGWIyaEu//LMipKyPx8IToxYVEk0Jk0jVY2LJV21ZbJCbERhBjMhwHjO8Ga06HyHxhKLGlFsiv8al071TPklGLcvnlkgT/JCxA7EN9pvF/6L46m90wg7BWNLlUtvk5W3L0wXO6YKBBQNCjWn5CQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mK9zs3O50TnGYZlWdjBvF5IUjZNpP5kEUc+QByVd7uU=;
- b=pkLNrhyZbNl9VBj2BCUvHAL+DBBF5KdrAoWK1BQcTX9iq6N97uXzlyoW3a0/hmyT7yUZ/6Ox6CFCT8WhGMrq9r6kbP63VULOtnUtZcISd0M2ybM64SLVW+5uJbmQgMCu27qcXebjebsWFMrRaH0JhQiS+6E27gzBSKR5nZWIeANzQgDBMpoCqIjPxcW0GaTdBFRFuU4qDOuAIIrRtnSrZJBVlLGeWbhaIP5qOwl/lT2PrwsrWmBOtHsaaSs1S45I/Rg3LMpg2w2wCz6QeMEGmCbzRVUR3wycq9G9xz/KduBdyk7Z1HVDl4BYeTs3luq7b9otKB6wQhZg0yKDcKIlAQ==
+ bh=gYpwiXIHPwv0bKWcQ2KPE+vYy1TCVmRWVSCBtan+2G8=;
+ b=YdBapLDJSeZBbEhu0lUJHEn4qmNNDv2KN/5jaBltdWcqsv+GOyyVFWuG0fQzHvZiYtwZ39vlc0ZaPxVm1QYBguYv3vvgNUm5Td+4w+CtygW4OWPobPQqWvXDQscyZr/L28epwt2NuA0meI5qchMKDPSYC3El8+zhgkEJGOj788tPh46H93ON2b3aEllpG4jYqnwxknM5Zb0M/Qoh7vS3UsKsj3NKcfcNffZOljzMPyJD+zEk/WiYJsrFMzbulQOZ2x2j5/erGsGuAUATa1Ccq2abCyose/Br+3X0nplYjsNy7+xv6e0ExjT7vYgFhUWQZWheWIjKyeBPotYx+Fq8ew==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
@@ -64,98 +64,93 @@ Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
  PHXPR11MB9687.namprd11.prod.outlook.com (2603:10b6:510:3ca::10) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.11; Wed, 16 Sep
- 2026 11:20:08 +0000
+ 2026 11:20:25 +0000
 Received: from DM4PR11MB6502.namprd11.prod.outlook.com
  ([fe80::d2df:4650:72ad:47d4]) by DM4PR11MB6502.namprd11.prod.outlook.com
  ([fe80::d2df:4650:72ad:47d4%5]) with mapi id 15.21.0428.008; Wed, 16 Sep 2026
- 11:20:07 +0000
-Message-ID: <03fd0cad-30d8-4754-8065-0216ec8328b4@intel.com>
-Date: Wed, 16 Sep 2026 13:19:58 +0200
+ 11:20:25 +0000
+Message-ID: <65876118-d48f-409d-ada5-911784d671eb@intel.com>
+Date: Wed, 16 Sep 2026 13:20:19 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v17 20/26] vfio: cleanup and refactor
+Subject: Re: [PATCH v17 22/26] bus/fslmc: use the new VFIO IOMMU mode API
 To: David Marchand <david.marchand@redhat.com>
-CC: <dev@dpdk.org>, Wathsala Vithanage <wathsala.vithanage@arm.com>, "Bruce
- Richardson" <bruce.richardson@intel.com>, Nipun Gupta <nipun.gupta@amd.com>,
- Nikhil Agarwal <nikhil.agarwal@amd.com>, Hemant Agrawal
- <hemant.agrawal@nxp.com>, Sachin Saxena <sachin.saxena@nxp.com>, Chenbo Xia
- <chenbox@nvidia.com>, Ajit Khaparde <ajit.khaparde@broadcom.com>, Vikas Gupta
- <vikas.gupta@broadcom.com>, Dimon Zhao <dimon.zhao@nebula-matrix.com>, "Leon
- Yu" <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
+CC: <dev@dpdk.org>, Hemant Agrawal <hemant.agrawal@nxp.com>, Sachin Saxena
+ <sachin.saxena@nxp.com>
 References: <cover.1789044746.git.anatoly.burakov@intel.com>
- <cdedc9f8885ef46eb5a903c907c3b2bfeef0704b.1789044747.git.anatoly.burakov@intel.com>
- <CAJFAV8w8GbvBRQ+O5LkL=jJ0f57Y4XaKJbqXJjxpgk94Ane6Wg@mail.gmail.com>
+ <f9eb863a0ce981615476a97f9ac14d1e3db4aea0.1789044748.git.anatoly.burakov@intel.com>
+ <CAJFAV8xB1Wg8jZM+znxaeW6dWr64LQfVqW0gkARTJNnB9djgcg@mail.gmail.com>
 From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
 Content-Language: en-US
-In-Reply-To: <CAJFAV8w8GbvBRQ+O5LkL=jJ0f57Y4XaKJbqXJjxpgk94Ane6Wg@mail.gmail.com>
+In-Reply-To: <CAJFAV8xB1Wg8jZM+znxaeW6dWr64LQfVqW0gkARTJNnB9djgcg@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PR1P264CA0169.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:102:347::6) To DM4PR11MB6502.namprd11.prod.outlook.com
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PR1P264CA0084.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:345::6) To DM4PR11MB6502.namprd11.prod.outlook.com
  (2603:10b6:8:89::7)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|PHXPR11MB9687:EE_
-X-MS-Office365-Filtering-Correlation-Id: 09c1681c-7b00-40d5-9a94-08df13e476c6
+X-MS-Office365-Filtering-Correlation-Id: 23558721-0053-4c5f-9f2b-08df13e4818a
 X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|376014|23010399003|366016|7416014|4143699003|56012099006|3023799007|11063799006|22082099003|18002099003|6133799003|10067099003;
-X-Microsoft-Antispam-Message-Info: 6Eq/oEnqJ9/NP8cHrljC5h3VYl0PGB0pBJLxw8vkuXt6zxMxv5RSiRBBEr4k5zCjjTo+oUyBK4O+X5kBpL7UtlvSO56kVZLbjKY5p6CLVBmgI+8hxOURfvld8zng1spNPZDYyVUJqS5WYcEZbjHHSHrVqAhcTL6jzG0ayv/ejBav0zoWr9TB5CRKezLy3h17qBVH4Et5RMwS4UFFGCET0dh0TGjfVpjFZjZ6fHwE+PyoVcrie8crhBi+54ZLu3SOQaetiC0lBGVIRNc1MX3wM9DGWxPoRFEq8DiGNlNviqW7Lebx6TD1yW0hXx3khIbP82kMFwomPeHIyD0PK2YfA6iQUUtU7lqcKy/txLFenrViXY0fhlpWP3AzaW8SfQ/2JEYwH0TMJL4NfqnCQYbSw7a4pto+7CoU4IpPJhJQcNkTgcaUqHr45j2N4bXMhcOSRECtuy/4ZjcgYQhuo3dp7SVBLGNMOHYh9QgXXkqavxDGI6rV2tIOGY+OUN3FZbkisI4dwGO9kgSkYejWPr/GZF0BKTUxjIQ4b767V+PB6yUwJvNiKTrK7QKL2WCLVM+uE6p2Uc1+IknmphNZJYmTnRe8cr+TiySC5UfSHmBSIlqBpIrJBTz00hClOD+GKpyBGoEGmex9aN48/P0/mL5obh3WWpnFsg6eMh1tlCjhars=
+ ARA:13230040|1800799024|376014|23010399003|366016|4143699003|56012099006|11063799006|22082099003|18002099003|10067099003;
+X-Microsoft-Antispam-Message-Info: 8yfhi+iXwyuQbcEywLZXbGJgNpYL3Z0Ih4asJ5bxFb+I3NBxpXUEtWrNRDEPxOsZprAjoYCJiquOwr/gWkkvAF3mT0ob2UydX9TRP/xn+voaIPn514gJ/+X4WYXNysyRJ3IeAuBnw4BcXHXN1ZRUKcsT30IFnonMO4f8SLHXiusm7E53f09XK+0BW9AyKFZ9mO4RPNBDFv3hfkKJ5HqexdrsIRGc6d1yH+wY7G31ZSoDomzfvTGJuJNQ3ag8aKqEeiyzbSLpO0wWsS9ACCOuhbbP9zqQxmcCEfKFDN03qO+/Nny1QvILkZDqQTgnqFc+sxIzU2wASS2IwS8yl9SGL9N3UbK33AsDYi+36lShetVkYPEEVBCJuORlvqu3yI2STRrYIu1cqKCAXbQPkaQ3suSfUciRUe1qhybg07TRylrL6U7WjZR2h0WC3T4jKHCp23KhLMDcX+iIKTq8alLK5G2yF4UMyko5rc0Ur/ckBBoYt+/y+g6y1S3QaHj5A4korr61kYb9yAcDe+EBEkYQizxtuMpz1K1EW5x28pjq+A/qklvd1oqyOZVYtYXzBy5VLErzuxCHAf/RE33mk1qCxnV8nYtB6MbLREv8GylRz1hYLtnQf9KM2kI8N3FwskQhR7cE07pS9sd5kujytlyh59XLDyb485C2BuDU829nlDY=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(376014)(23010399003)(366016)(7416014)(4143699003)(56012099006)(3023799007)(11063799006)(22082099003)(18002099003)(6133799003)(10067099003);
+ SFS:(13230040)(1800799024)(376014)(23010399003)(366016)(4143699003)(56012099006)(11063799006)(22082099003)(18002099003)(10067099003);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NzYxNm1zN0R1bXh1ZFY0cmZGei9FUEtrTGlKYUtSZU5XYWJPOGQ4NXlhaFd1?=
- =?utf-8?B?QVMxNWJWemI5c0RaMEdnRmFSWkMyV0JlQmJrK1hQTUdVK0JDZ28rNEhuVWt1?=
- =?utf-8?B?TFA2enY1UkprYStyYmp0OVI3d0dVZXZ0MTdQR0tkeldOSDdwY3c4K2FKdmpH?=
- =?utf-8?B?MDFDMHRQTEkzWVlJNWdRVlltS2l2bHo4a2lkS1NMeFQvSWZkZmJWK1d6RERV?=
- =?utf-8?B?Vmd4VFY3eGtva21XR2VJQ1BvVHFmZ3NGZ2N5TXVBeFJIRFBETjhUNnhuQm8r?=
- =?utf-8?B?VWxiN1NnZElmdytwSVVReUFOczY1OW5ub2NPNG0xZXFPWVNoaHRmVStBa2Nh?=
- =?utf-8?B?dHU5SHpBTGlxNkZWSFhBb1N2V1p2WUxpK0FkTlo1V09obVNDVnR4Q2ZhYTkz?=
- =?utf-8?B?N0Nwb2JDRWJHTVhYcnVUOWx1SVRqdmdxREJDRlhnZXJZWHVaWU02QUxGemYv?=
- =?utf-8?B?RXFuN3o4RlpSZmxXcW5IUTNQdFRmSEdxTU1lNXVCK25YdGl2dndZYjI1dk44?=
- =?utf-8?B?UGh5c0ptMElBYjVwMkZpL2Q4ZFlja0ZlUUN1aUxXODFGRHZOU1FDMHQzams0?=
- =?utf-8?B?dGt0SnhoMGVIYndMMkhESDdMZlY3YmRNL0d6VG5CM3d3d3kzQzMxYWFuYmVY?=
- =?utf-8?B?dFROVjE4a21vb1hFZC9NYlNPbjlVMDM4QjBiRHZQcUVOYlplbVFPaW0zWVNQ?=
- =?utf-8?B?WnlWSE44dmE4SVZQamFLR2laYnExQXoyd2huYkdjL05xZTJObGFXdnQ2eDFi?=
- =?utf-8?B?NDc3dnZ1WGcyeGVvdG1tdUFubEorckdjU2h2b3RXQmFiWGVwWmRZdEFnWWox?=
- =?utf-8?B?ekVoQzAyZXN2N25IVFdKd0FLQWtzT3h6WTljZHgzQ1drb3U3WXIySmNacy94?=
- =?utf-8?B?emtHUXRibW05ak4xMS8xOFB4bjN3N1Fpb1NORHVic0l1S0hnaUx4MHM3WElC?=
- =?utf-8?B?ZjVIOWFub2REdzZUVC9KR0U5RjZSL0lMcHh5OEkvN0pBZVpLT1hwNUpaZExR?=
- =?utf-8?B?ZzYrbGYrMTRNMFNhaXhYYWRlOGphSnFRbDJITjdVOUFjZkNMMVlrRVI5cHZl?=
- =?utf-8?B?bmtFQTBTQlJOY3YyR3RwQWNXWk8zVjQ0U3BDbFByTFlIeGRwRVZ5c2REQ0NE?=
- =?utf-8?B?VGJQTkgwREYyMTNwODh4OTZUUGR2NWZWaGE5dGVvZ0ZDTzMwalJDOVkvY29D?=
- =?utf-8?B?OXA5bDcwU0tBVG8wZFdzYWlEN0xuamc3K1JuRWJLL2g1dktJZzdFZE5PZWNm?=
- =?utf-8?B?V0MxdjkxU3Z6TFJCR0NjcGQrejRwMTNEeUtZdzBub0pQdFBFNnZXZGhUUXpw?=
- =?utf-8?B?eEhJc2lpTHpkVnhEYkh3T0R4VFVFMThzOUo1QW1qanJINERWWklCNE5DbXZ6?=
- =?utf-8?B?RFNGdnVNUm5vOEpKRVN1K0FSRXlKK1pmZ1pXTW5WKzRQWVNvN1lJV3p4SUJs?=
- =?utf-8?B?M3E4TER4SnpHSXl4RjJxNURlSDlIdWtmcldVT2tYQi9pcG1CcGxpNmQxY3BW?=
- =?utf-8?B?SnViSTBLZnNsZVA0Ky90STYzTFpZTU94enF2ZUg5NGV6Sm9IU3FCZ1pyek1i?=
- =?utf-8?B?dUZnQkl4dUJ6bTZwb05obThGbUphcWIwckVRRjhna2M2dEM0RzI1ODhnMVpY?=
- =?utf-8?B?UkpsQzRMdnA1NVI2Y0wzS2RuZitVT3pJU2NUWDBRbm1wR080VWFMSm5QVHg2?=
- =?utf-8?B?SG13TkczZzdpUHRKbUFIempMcG5nbUJIVzROaWlHQi9ZS3FYSC9nR0xCYjRS?=
- =?utf-8?B?NlRkUTNhRU1nS3VXU3lIeHBaTnZwTXIzcDI0SDlvLzd0Ykg1bkNvOFpuSGdu?=
- =?utf-8?B?UVg2TlJaL0I2ZDRYQTNVbjVqVkxJMm5WQk1ySEk0UmVTMnNpcENpZTh5dEw4?=
- =?utf-8?B?QVErSm9uK2ZLd0E3Sk1Uajc2bW9pNVNGdFBKL25uS3pXNXJadWh0UUt0ckRJ?=
- =?utf-8?B?c1g0a2RsWDBZekdXUzA1VUxFRmpkSlZvZnhDRDNyTTc2YlBGUGFMQ2ZHcWpB?=
- =?utf-8?B?NHRRQ1dZOEt0N2hmR0FlNi92M2FralB0UDV2WnYwcTZLM1V1a2lNYS9zTnNH?=
- =?utf-8?B?eE9IQXM3YlBiSWlwRGFpbWI3aHc3WHg5YXZGVC9xM3JRckRDWk1ONjdQWEQ4?=
- =?utf-8?B?cVM3UjhHMHJxMWVpRjMyOVBhc2FjL29WWGNncWczdE5zK2tPcDQ4S2szcDBR?=
- =?utf-8?B?bGJXbUpmZlI3MmhiMWFwMmRPM3prTGd6ZEt3Vy91OUJyZ21yN2ppZFQ5ZThv?=
- =?utf-8?B?MGNLSmtYajhSTEhESVYzbUFuNGFwbThKUUpNNWJLdTFORFFUck9nOEZFYUdi?=
- =?utf-8?B?MWVCRVUyUG9TRWMyWXdHTG5YRGZrOVBQNEhoYnI4TDNjVDN3eGVka2F3NzFC?=
- =?utf-8?Q?iHciI5uPmwDDaEas=3D?=
-X-Exchange-RoutingPolicyChecked: 469SEY7hGFvjOvtBR36vBwykO1N8JJQ+sbz2EpwlLITkSlk+PXCBpPcgPj6ewrQZf0BI8iUvcOEPlhRdjVfoCKwQlIdfVjRU0TpLC6cCicMt+QiGYzRsSfqw6bPmFUNWQS+kBKbTHA1Cnjz8yqioZNPZC14oeIKeetseYlGX/GJtNVShDkX8J6ICNRP/RFxpo2lW/mmfScdLv2nz+50RihLi3MojE4WS9BmOfVSXFENfCtz5rDWEQosx0B9P1mmiTjYmwL4h5pelvBHSCwpgCs/X3iD0ApUfnDTo+fHeR0Vpfy5ETbZaCNxFoNrLzOt8fRWJN8bewf7XFHQcY0C5bQ==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 09c1681c-7b00-40d5-9a94-08df13e476c6
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?K0tWdUVuVUFDenRBcFhQV1pTdjA5QWtxelpaSHJzMHIwcFJ6Q0o0VHNFNHVt?=
+ =?utf-8?B?d3FMZ1JEMGJnalhWYmZRZmxFWjhjWkNhYktFTko2R25rQisvUDgxdHcrK25r?=
+ =?utf-8?B?WWNrUVhCdk8zeU1yVmRKMmoybTQ1M0dDa3BoQXdpUDRpOUQwTCtCTjZMTzFO?=
+ =?utf-8?B?eGFzSXdBUmUxS1B1eTNKWFdycnJ2cEJIbGl5aTFWWjkxc3BMTTE4WWlDd0M2?=
+ =?utf-8?B?dGsxb1pIa0xLU3lsMWoyOExYc3l3RU8vTEFaMzNkMzlTSS9BM3NObENlaXJN?=
+ =?utf-8?B?ZlJweUZNV3ZIY2d0NUN4YittbC9ndFE4UHR0SW5jdFhjQmU0K3B1NmdMUGRp?=
+ =?utf-8?B?UlA0UXZya3lBVEpMczhaVFJGaGduWFl1bWp6WitBWWc0ZENJWWdOTmhuQm4w?=
+ =?utf-8?B?OFFqTG1zMGhZNTFTNngzSHMrbG9aMWhEeUlYeFBsN0RIY1V6N3BZYi9CK0VG?=
+ =?utf-8?B?eGFYYXQzUStpV0VXMThCVTVQY0VOc09RRmdmWlpzWThwSTNaaUFHY2lONUcr?=
+ =?utf-8?B?dWRwemlXNW5Zc3hrZTBlOXBhdzFKUjV6QS9FckVOZWFLTFZKczVSZTJ6YjBl?=
+ =?utf-8?B?eE9yS0lWZW1STkFCNnljYlk4SmZraE9LVWR3ZTVQclU0MnczUFIzRTJYWWVW?=
+ =?utf-8?B?d2dZaHdxZDZUcXdPNHQwZVoxQzB5OCsyTjFlVk9vdUVBNGQ2SFZxWWFaZ2I1?=
+ =?utf-8?B?TTJ3U1FkSmtlMXlvNXA0L3NUTFh2Y1RTdDYxbWI5Y2o3Z3U5VFFVVm5WUjZx?=
+ =?utf-8?B?NERybVFRbklDS2wrUjdUVFZadVNBTWtjWitRdElZbjYzQ25ReVJ3UzVoQ0Yr?=
+ =?utf-8?B?NE9rMHpZb0NBbmRCM1EwQ2hmK2NDNXZwUUtLUStuemhqcS9OUTBoUElUNGxm?=
+ =?utf-8?B?OGxJQ2FjVWpheWZWeGIvMW9JUGxPQjVTdmI4Q3I5TmFuSFFVUVVtOFptSWx0?=
+ =?utf-8?B?bFp1TmRqbjZVY2dTSFdlYXRZQjJybzBzNWlDWFpubEdySlh6VTdnZHZCLy9Y?=
+ =?utf-8?B?emtia1FlMmdtejNBZHhNR0NYa3U2eURCUm1kSWhEUHFTZXlIVWtxSXpzUHVI?=
+ =?utf-8?B?L1dLT01uOENsQWpXVU9OdVRaZ1lHMUNQV2dxczRyWmptTndHaW9oaml4ekVu?=
+ =?utf-8?B?eEUrTENUWFZPV09VbGN3dzRJNkJVYkprK25iNThleEZoNmNaSXIyVGYzRlNo?=
+ =?utf-8?B?MDVwdEFTYVk0bDF0bGhLUW9teUtTZ0UxNzlnUnB4Ny9MVlZmbE9waE95SXZF?=
+ =?utf-8?B?MlJxRjdIUDFZNnZ0S2Iwd0NLNzVVd0tHblhqMEdrR0pWTms2b2djaW10cFRT?=
+ =?utf-8?B?a0tvSTFWOFl0c0p2RVduMXpHSVM0NDEyb2RQSllqSENWOHJCNTlvcnFHcWVp?=
+ =?utf-8?B?QjlCUDJtMzhWUENhbk9Belk0WFJ3L3h5Um5zNUZBUk5pTjUvY01aV0Y5RmZk?=
+ =?utf-8?B?WWFXV1FNY0wvWmVjZUlqenp5OE4zcUxxRzVvNklzdE5vanVRYmVUbjBnUWV2?=
+ =?utf-8?B?eUFJa0plZVd0akFJWjNwTUJKRFJ0UVBRSUdpMFBheFppOWhLNEt0RFNnNGVq?=
+ =?utf-8?B?UDRLdEFZUjgyUW96Tlh5VG5tL2tkT3dOSTVqQzNWQitqbWlRdkVUU1MzaDJj?=
+ =?utf-8?B?SDJMd3JsdGN1NjlZSXJ5eUVNNEdpR3dtSmNCcisvbzhJVEZrbFBXSGFENEYz?=
+ =?utf-8?B?UVRML3JRWTRaS3JIVnhoM0piZEZhMllMdURLT3VQQm5VT3o4dm9RZmhXYzI5?=
+ =?utf-8?B?M05Jb2tGbUFEenc0Y0F5Nmgzc2ZxSjIwV2dhZWk3QWRQbXVlbG5yWm1PMmNN?=
+ =?utf-8?B?b0hBdHYvbzhCb3EwZzZTSE0zeDN6QWFOcTZtVWFEVXo3YUpiVmVPbDVWSElC?=
+ =?utf-8?B?amFtTjRQc0NFS2dXendld3FVNXpGWm0xejlXNTE4SE1pQmM1VXZQd2pBTkRM?=
+ =?utf-8?B?bkJJa21KbytnT2NtQmxkVE9XU2xaTHZkNzl4STNybzMrTzFaZFNDOUZyb3pI?=
+ =?utf-8?B?ZzI5TktYd1dkNUhYM0gxTXVxUmpLVjhwZ1BIQzlmSjJlZzhnM29YWVY0Wklp?=
+ =?utf-8?B?NUFmVEVYczZGeWovZWsxUlVQOHc2OWk2a2laOVI2NVlhditMaDczd3VmQk82?=
+ =?utf-8?B?S2pOL0EyWmlnam00NDZWbGNJSW56aWREYS8wMFhWOWhHRHFlNmtXNWNhczhw?=
+ =?utf-8?B?RUZXWnp2Y3Yyb3ZOaWJYVWdSVFdocGV1T0tldFoyQU9USUZRWHFFMmE3VFNz?=
+ =?utf-8?B?SldRSlk2c2hQVDJxbUxZWVFKL1hSbmJXNGdQTitKaGk2MUw4MTJlcVB2eDQw?=
+ =?utf-8?B?Q3NSbW4xOUpIZDN5Tk42blhjaXliODE4bHhpbXpGUE9CRHFVQ2hsT0xkcTRz?=
+ =?utf-8?Q?kUSTrMEPWu2ps5Fs=3D?=
+X-Exchange-RoutingPolicyChecked: vrXRiHG/Seqlnx49PU9pe8HxX9igXekOoo4UUrukbxgQyIbyk3L7ljj3PAfbwdaVhkfpAiUsKwEYqg2lyjNuZvByAI1fFCrVCvkAu/aHV4Vm0ndDU86AOY9bmbEIejRLnnUM8lOMJ9Cs+qmFzox1u/UV3lf3fOoK8IV8VtTW0fdK79e3/oJJDYP7ggaS/H4O/UUIGr4smvFRuFkOJGz4cMJVreC2iEKeUSfAVxYwDDOnrGkbTeKYInjCm7RQETT68RNLydVMyxrOQsN4hG3fZvBThC8oLKsNipKP7/qIqk2WhEHzZe7NtorxfMaly7YCJm7Nk8KQ4W73iaIrBFpmtA==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 23558721-0053-4c5f-9f2b-08df13e4818a
 X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2026 11:20:07.7441 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2026 11:20:25.7684 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tVhtesmgDaC8AhDEWjn7BwB/nJsY7zSnZmq6uRpLYZ2v8bvcS7dPuT/Yihb4gKHHxZbY58lod6heSZAB6BB1h/q3PufszZWTUfWTqy/71BI=
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0RwlleHcly3CNNb1BdVjB4JAmB+eweCqMNkm/AUWns1Wmvye8PLsfR62sQXhzZVqYedpkUbmPFWgkO2jWMdn5miFJZ7W7Y+C/Lo8v2KPEp0=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PHXPR11MB9687
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
@@ -171,101 +166,75 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 9/16/2026 11:42 AM, David Marchand wrote:
-> On Thu, 10 Sept 2026 at 14:55, Anatoly Burakov
+On 9/16/2026 9:44 AM, David Marchand wrote:
+> On Thu, 10 Sept 2026 at 14:56, Anatoly Burakov
 > <anatoly.burakov@intel.com> wrote:
->> diff --git a/lib/eal/include/dev_vfio.h b/lib/eal/include/dev_vfio.h
->> index f2dbf46481..c62d38e524 100644
->> --- a/lib/eal/include/dev_vfio.h
->> +++ b/lib/eal/include/dev_vfio.h
->> @@ -18,6 +18,7 @@
->>   #include <stdint.h>
+>> @@ -500,7 +507,8 @@ rte_dpaa2_get_iommu_class(void)
+>>                  return RTE_IOVA_DC;
 >>
->>   #include <rte_compat.h>
->> +#include <rte_common.h>
+>>          /* check if all devices on the bus support Virtual addressing or not */
+>> -       if (fslmc_all_device_support_iova() != 0 && dev_vfio_noiommu_is_enabled() == 0)
+>> +       if (fslmc_all_device_support_iova() != 0 &&
+>> +                       dev_vfio_get_iommu_mode() == DEV_VFIO_IOMMU_MODE_UNSAFE)
+>>                  return RTE_IOVA_VA;
 >>
->>   #ifdef __cplusplus
->>   extern "C" {
->> @@ -29,8 +30,6 @@ extern "C" {
->>   #define DEV_VFIO_CONTAINER_PATH "/dev/vfio/vfio"
->>   #define DEV_VFIO_GROUP_FMT "/dev/vfio/%u"
->>   #define DEV_VFIO_NOIOMMU_GROUP_FMT "/dev/vfio/noiommu-%u"
->> -#define DEV_VFIO_NOIOMMU_MODE      \
->> -       "/sys/module/vfio/parameters/enable_unsafe_noiommu_mode"
->>
->>   #endif /* RTE_EXEC_ENV_LINUX */
->>
->> @@ -39,28 +38,64 @@ struct vfio_device_info;
->>
->>   #define DEV_VFIO_DEFAULT_CONTAINER_FD (-1)
->>
->> +/**
->> + * @enum dev_vfio_mode
->> + * Enumeration of VFIO operational modes.
->> + *
->> + * These modes define how VFIO devices are accessed.
->> + *
->> + * - DEV_VFIO_MODE_NONE: VFIO is not enabled.
->> + * - DEV_VFIO_MODE_GROUP: Legacy group mode.
->> + */
->> +enum dev_vfio_mode {
->> +       DEV_VFIO_MODE_NONE = 0, /**< VFIO not enabled */
->> +       DEV_VFIO_MODE_GROUP,    /**< Group mode */
->> +};
->> +
->> +/**
->> + * @enum dev_vfio_iommu_mode
->> + * Enumeration of VFIO IOMMU protection modes.
->> + *
->> + * These modes define whether devices are protected by an IOMMU.
->> + *
->> + * - DEV_VFIO_IOMMU_MODE_UNKNOWN: IOMMU mode has not been determined.
->> + * - DEV_VFIO_IOMMU_MODE_SAFE: Devices are protected by an IOMMU.
->> + * - DEV_VFIO_IOMMU_MODE_UNSAFE: Devices are not protected by an IOMMU.
->> + */
->> +enum dev_vfio_iommu_mode {
->> +       DEV_VFIO_IOMMU_MODE_UNKNOWN = 0, /**< IOMMU mode not determined */
->> +       DEV_VFIO_IOMMU_MODE_SAFE,        /**< IOMMU protection enabled */
->> +       DEV_VFIO_IOMMU_MODE_UNSAFE,      /**< IOMMU protection disabled */
->> +};
+>>          return RTE_IOVA_PA;
 > 
-> My two cents.
+> IA flagged this part:
 > 
-> This "safety" mode is ambiguous (for example, the bus/fslmc change
-> looks wrong, as I reported earlier).
-
-Yes, that's a typo. It should've been not wrong!
-
+> In `fslmc_bus.c`, the condition changed from:
+> ```c
+> /* Old */
+> if (fslmc_all_device_support_iova() != 0 && dev_vfio_noiommu_is_enabled() == 0)
+>      return RTE_IOVA_VA;
 > 
-> The main concern for drivers is the "class" (physical, virtual) of addresses.
-> The noiommu notion was simple in that drivers understood they had to
-> handle physical addresses.
-
-That is arguably still the case. It is the same semantic meaning, just 
-wrapped under a different name because I wanted to signal that using 
-no-iommu mode is bad practice. It's still effectively IOMMU vs no-IOMMU.
-
+> /* New */
+> if (fslmc_all_device_support_iova() != 0 &&
+>          dev_vfio_get_iommu_mode() == DEV_VFIO_IOMMU_MODE_UNSAFE)
+>      return RTE_IOVA_VA;
+> ```
 > 
-> There is some other concern about iommu capability that is not
-> captured in the new API.
-> Take a look at the PCI bus for example, where some decision is taken
-> on a DMA mask.
-
-Arguably this is not *VFIO* related (it's rather the property of IOMMU) 
-so there is little place for that notion in this API except to group all 
-IOMMU stuff under the same roof, which may or may not be semantically 
-coherent depending on your view of what this API should be.
-
+> The old code returned `RTE_IOVA_VA` when NOIOMMU was **disabled** (==
+> 0), but the new code returns `RTE_IOVA_VA` when IOMMU mode is
+> **UNSAFE** (i.e., NOIOMMU is enabled).
 > 
-> In the end, it may mean that the whole iommu class discovery (that
-> impacts IOVA mode) should get revisited too... ?
+> Looking at `dev_vfio_noiommu_is_enabled()`:
+> ```c
+> int
+> dev_vfio_noiommu_is_enabled(void)
+> {
+>      return vfio_global_cfg.iommu_mode == DEV_VFIO_IOMMU_MODE_UNSAFE;
+> }
+> ```
 > 
-> At least, with an *internal* VFIO API, we can revisit more easily in
-> the future, so those comments are not blocking the series.
+> So:
+> - Old: `dev_vfio_noiommu_is_enabled() == 0` → NOIOMMU is NOT enabled →
+> IOMMU is SAFE
+> - New: `dev_vfio_get_iommu_mode() == DEV_VFIO_IOMMU_MODE_UNSAFE` →
+> NOIOMMU IS enabled
 > 
+> **This is an inverted condition.** The old code returned `RTE_IOVA_VA`
+> when IOMMU was safe (NOIOMMU disabled), but the new code returns
+> `RTE_IOVA_VA` when IOMMU is unsafe (NOIOMMU enabled). This appears to
+> be a correctness bug that will change the IOVA mode selection
+> behavior.
+> 
+> **Suggested fix:** The new condition should likely be:
+> ```c
+> if (fslmc_all_device_support_iova() != 0 &&
+>          dev_vfio_get_iommu_mode() != DEV_VFIO_IOMMU_MODE_UNSAFE)
+>      return RTE_IOVA_VA;
+> ```
+> 
+> Or if the intent was to check for safe mode:
+> ```c
+> if (fslmc_all_device_support_iova() != 0 &&
+>          dev_vfio_get_iommu_mode() == DEV_VFIO_IOMMU_MODE_SAFE)
+>      return RTE_IOVA_VA;
+> ```
 > 
 
-We can do all sorts of things now that we are allowed to, yes!
+Yep, a typo.
 
 -- 
 Thanks,
