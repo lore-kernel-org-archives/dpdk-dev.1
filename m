@@ -2,70 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFDA1C88E5C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 13:12:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 514C0C88E77
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 13:24:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2429242F3F;
-	Wed, 16 Sep 2026 15:12:31 +0200 (CEST)
-Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com
- [74.125.228.12]) by mails.dpdk.org (Postfix) with ESMTP id 8812842F4D
- for <dev@dpdk.org>; Wed, 16 Sep 2026 15:12:29 +0200 (CEST)
-Received: by mail-pz2-f12.google.com with SMTP id
- d2e1a72fcca58-85469a34907so929446b3a.1
- for <dev@dpdk.org>; Wed, 16 Sep 2026 06:12:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1789564349; x=1790169149; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=2OSNo7TWTu/sdV6g0yB0xG/VzScKU06Lf99D9Ju4qh0=;
- b=jNuk8ty7wQnhvmKngw/dTmfvq4UGG9WiGD3iBQblQ8nCTnXWZuErs+LwBiuxI8xtqg
- /Hq8sxfYn6PNAOKZsiNBcb4jibxcNKxBxp7eDoUC+GssClJ8P1Sal8ZzsL41CncLx49X
- jjVdMeXLdgsnoLCmNuEr8TsytBvfglNgr0RZ9gfvFYWK28H2vjXrz2gYITfecHuTPhnr
- 5a3RqpakBi9wBJD42/NRilWUjEIvAYqh3S7j1DUvcFFWnBKjkW9oCDk2KbDbXHsjcsLK
- LORxmb0Ec39pSyaObiGNABb5Yy7Dt8xfC6GAREsByPJzFJtBZVlhjtP6HyevnKIirfln
- XbXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789564349; x=1790169149;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=2OSNo7TWTu/sdV6g0yB0xG/VzScKU06Lf99D9Ju4qh0=;
- b=mRyzobOXQRjMbS4m8EC+7Pzb/41w1SW+sr5gGOjaRTWfJq73FQ3BoQwYtbXZghR/Gr
- UOfIMKgw6CqMeWqDHB/eGnCPay5WSI31kUSRj+gICoDHStMVpxp/b3ceiA52ZxKew/1m
- 9tt/y/mh2LA85VDjOgiOM0QBg4yPvIfHIeQgtk126qMkTXwXAUJKGsrOH/C8DCw3wDtv
- AbHhOkIDDCpAOLmp/XbmPoeTeFMDtkcpf4QLAOYGv8+ehYyo8XoO7DVEkfIT7chCFU3c
- rMevsfgUXOa6sDWNZ6Hnk0VaPT7AEpU+O9vMJCc0kam4QZuq0q+yFBUCIQaS4C3kjCHh
- ipRw==
-X-Gm-Message-State: AFuF++mb7FnzqbTXv2dS7iqLB6hgXb2pnWszopNwAjTbvwux2AwSHr6N
- J6CjX3vII/TiuPK1bedHLUzkmX5ed3KNlwyFlSbG9KVbu7haeNcnDdg3
-X-Gm-Gg: AYBFou2mhFEwFSwTnd/JcDVizMecmvOeRUfKn2s3G9luJLOW51vlfstHOTcnNnEuVhY
- bytnvQrXcGbRV8cYbtMHk0Fx7czDjvVF/YnsyxX3y2ntPDRprsi2TI8q5wRY+5GA+QvBym81etc
- VccGlHmTHxCTE0NLNqXJCX3b6u8LtNozcjloWTOKvoOi3gw1EqofC0sl1aLhqqUDSwwd7Q6sBo/
- yH1oKTLlrLteod0Gj1OUEb1h3SmoSBVMfgCgjCWRug+DSkD81yUuNek+/hVf/hZXtTqYIWRI9fa
- KFOJLWRmUHjoiEvdjruK6cHIT4fiIcsQgM+AOpz0Oz5ib+hPf7KwTPREJ+GxAc8uIGZ1wdMAYUb
- vViI6JDxJIvImBlHJu/wl97YmDFnGxQGi+d8Zsg0yXu5Mml/G0DZQJrkL/zd5UyNO9PhjnPq7jO
- efWKMDpnQIZy7gFym5GUNd50Zb+6np2PNN41MfiOM4gcj4hn/qk2nfkjoDYBdDgbBMLf7xsqr27
- IxLiog=
-X-Received: by 2002:a05:6a00:a229:b0:857:7337:5db4 with SMTP id
- d2e1a72fcca58-8723cc3aa61mr4692384b3a.18.1789564348520; 
- Wed, 16 Sep 2026 06:12:28 -0700 (PDT)
-Received: from OptiPlex (mail.forbuysw.info. [66.175.223.235])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-872025dd04csm1224882b3a.60.2026.09.16.06.12.22
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 16 Sep 2026 06:12:28 -0700 (PDT)
-From: Zhang Tengfei <zhtfdev@gmail.com>
-To: Jiawen Wu <jiawenwu@trustnetic.com>, Zaiyu Wang <zaiyuwang@trustnetic.com>
-Cc: dev@dpdk.org, stephen@networkplumber.org,
- Zhang Tengfei <zhtfdev@gmail.com>, stable@dpdk.org
-Subject: [PATCH v2 3/3] net/txgbe: fix flow create error codes
-Date: Wed, 16 Sep 2026 21:11:05 +0800
-Message-ID: <20260916131106.105667-4-zhtfdev@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 50CD440E5A;
+	Wed, 16 Sep 2026 15:24:12 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+ by mails.dpdk.org (Postfix) with ESMTP id 1351440E12
+ for <dev@dpdk.org>; Wed, 16 Sep 2026 15:24:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1789565051; x=1821101051;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=4mfz8YlaUFPXMGyYjqfq5Ib3KrNYQRizivsPZdeUEQs=;
+ b=WT/el4I8TfMXLW9FwShX5+Jnd6OeIjAQVzeioH56v8lvqs9M4y/dABsZ
+ 8hDd3IbKe0lMlThAn7XXHWa0kKyycc48xR12Dnq8ZB5FyJdHJkVkFZQQz
+ QpoEM+9du/d9XsD9A0XA/Gbx4qEmJqr7GgdnD7hrbHl5i9AZnuEpTVXp+
+ wYxgXszZlda7lRCjVcjYylTPb3XAK7vomz9a5Kg9W1PYZdAX0ndinzhH9
+ k1JdceqE+UAsqGxmcpZ61ouQzfMhhMgKLEIPT3s5y46AviiJhJWVY5/Gm
+ KQ3XKemBQOkZOE5h4fofWp2cNn5KrZAKa65JknZEd9cvNVQW+BhfPlmAg g==;
+X-CSE-ConnectionGUID: pJT0rPzWSn2pKOgFvyq2lQ==
+X-CSE-MsgGUID: vd/cpVy/T3GrLKgiPm5Tgw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="77503102"
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="77503102"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+ by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Sep 2026 06:24:10 -0700
+X-CSE-ConnectionGUID: gvWD4SHGQJKIlHxAeaC1Vw==
+X-CSE-MsgGUID: EgOfjPRXQHKfxaHSLmVvqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="277469709"
+Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
+ by orviesa005.jf.intel.com with ESMTP; 16 Sep 2026 06:24:09 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: david.marchand@redhat.com,
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v2] build: bump meson version to remove warnings
+Date: Wed, 16 Sep 2026 14:24:03 +0100
+Message-ID: <20260916132403.1040252-1-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260916131106.105667-1-zhtfdev@gmail.com>
-References: <20260915152436.67378-1-zhtfdev@gmail.com>
- <20260916131106.105667-1-zhtfdev@gmail.com>
+In-Reply-To: <20251205121301.3443561-1-bruce.richardson@intel.com>
+References: <20251205121301.3443561-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -81,57 +60,60 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-txgbe_flow_create() reports failures with rte_flow_error_set(error, -ret).
-The FDIR flex offset mismatch and mask-only paths jump to that handler
-with ret == 0, so the application sees a failed create and errno 0. The
-global mask memcmp path stores memcmp's positive result in ret, so -ret
-is negative.
+The build of DPDK now uses features from version 0.6 of meson, which is
+greater than the current minimum of 0.57.2. Although these features are
+non-critical, they do cause warnings to be emitted on build. Increase
+minimum meson version to 0.61 (== version in Ubuntu 22.04 LTS) to remove
+these warnings.
 
-Set -EINVAL on these paths.
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 
-Fixes: 5c2352b9ece6 ("net/txgbe: support creating consistent filter")
-Cc: stable@dpdk.org
-
-Signed-off-by: Zhang Tengfei <zhtfdev@gmail.com>
 ---
- drivers/net/txgbe/txgbe_flow.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+v2: update some references to meson version in the docs
+---
+ doc/guides/linux_gsg/sys_reqs.rst         | 2 +-
+ doc/guides/prog_guide/build-sdk-meson.rst | 2 +-
+ meson.build                               | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/txgbe/txgbe_flow.c b/drivers/net/txgbe/txgbe_flow.c
-index a1a497fa22..084b1eec1d 100644
---- a/drivers/net/txgbe/txgbe_flow.c
-+++ b/drivers/net/txgbe/txgbe_flow.c
-@@ -3388,12 +3388,12 @@ txgbe_flow_create(struct rte_eth_dev *dev,
- 				 * Only support one global mask,
- 				 * all the masks should be the same.
- 				 */
--				ret = memcmp(&fdir_info->mask,
-+				if (memcmp(&fdir_info->mask,
- 					&fdir_rule.mask,
--					sizeof(struct txgbe_hw_fdir_mask));
--				if (ret) {
-+					sizeof(struct txgbe_hw_fdir_mask)) != 0) {
- 					PMD_DRV_LOG(ERR, "only support one global mask");
- 					rte_free(fdir_rule_ptr);
-+					ret = -EINVAL;
- 					goto out;
- 				}
+diff --git a/doc/guides/linux_gsg/sys_reqs.rst b/doc/guides/linux_gsg/sys_reqs.rst
+index 0e6a2e2e78..2a55301893 100644
+--- a/doc/guides/linux_gsg/sys_reqs.rst
++++ b/doc/guides/linux_gsg/sys_reqs.rst
+@@ -38,7 +38,7 @@ Compilation of the DPDK
  
-@@ -3402,6 +3402,7 @@ txgbe_flow_create(struct rte_eth_dev *dev,
- 				    fdir_info->flex_relative !=
- 				    fdir_rule.flex_relative) {
- 					rte_free(fdir_rule_ptr);
-+					ret = -EINVAL;
- 					goto out;
- 				}
- 			}
-@@ -3431,6 +3432,7 @@ txgbe_flow_create(struct rte_eth_dev *dev,
- 		}
+ *   Python 3.6 or later.
  
- 		rte_free(fdir_rule_ptr);
-+		ret = -EINVAL;
- 		goto out;
- 	}
+-*   Meson (version 0.57+) and ninja
++*   Meson (version 0.61+) and ninja
+ 
+     * ``meson`` & ``ninja-build`` packages in most Linux distributions
+     * If the packaged version is below the minimum version, the latest versions
+diff --git a/doc/guides/prog_guide/build-sdk-meson.rst b/doc/guides/prog_guide/build-sdk-meson.rst
+index 93a3271482..b236a933a5 100644
+--- a/doc/guides/prog_guide/build-sdk-meson.rst
++++ b/doc/guides/prog_guide/build-sdk-meson.rst
+@@ -35,7 +35,7 @@ The ``meson`` tool is used to configure a DPDK build. On most Linux
+ distributions this can be installed using the local package management system,
+ e.g. ``dnf install meson`` or ``apt-get install meson``. If meson is not
+ available as a suitable package, it can also be installed using the Python
+-3 ``pip`` tool, e.g. ``pip3 install meson``. Version 0.57 or later of meson is
++3 ``pip`` tool, e.g. ``pip3 install meson``. Version 0.61 or later of meson is
+ required - if the version packaged is too old, the latest version is
+ generally available from "pip".
+ 
+diff --git a/meson.build b/meson.build
+index b01010ffa0..6b8cfa8b2e 100644
+--- a/meson.build
++++ b/meson.build
+@@ -10,7 +10,7 @@ project('DPDK', 'c',
+             'default_library=static',
+             'warning_level=2',
+         ],
+-        meson_version: '>= 0.57.2'
++        meson_version: '>= 0.61'
+         # meson_version_windows: '>= 1.5.2'
+ )
  
 -- 
 2.53.0
