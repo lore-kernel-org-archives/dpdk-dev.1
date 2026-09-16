@@ -2,54 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 120E7C88E5C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 12:28:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E49A6C982C3
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 12:48:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 970A942F05;
-	Wed, 16 Sep 2026 14:28:16 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id 9748042F3D
- for <dev@dpdk.org>; Wed, 16 Sep 2026 14:28:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1789561695; x=1821097695;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=jikD+A5faKfrzCltGxzYePhvwy1KDyzdh2nnAkwAlik=;
- b=TmxTNppThPNHmXeO8owx0PB1f/kpahjIEaxVtAZFYmvKBFyFmpA2Dtwp
- f8u7YZ/lCpP2keMFo6uO5sLgZrOxW2uVEhDHPme+J3W6/4GdR2Gbw1HEz
- GWw9gsbF+m1dlG0i3Y9WA4JSQJYnnhVtG9+PRpGHg7H+qUgO9CXOzmWk/
- x3dj4CaoiVdnWPwj1xyyGr+aS38TB5Uqx31suIUfUuuY27MXpPYQrUdQe
- Ct5oo0c4GQ1O6iYcB9a26LF/3pykcnyeja9hny+NPaQ5Nm+BJYahHi034
- ixEqr3KsdelofYl0SjeinlQzSMh7S9m05h6To/Gc4r4OkDbgNAdXcSfSh Q==;
-X-CSE-ConnectionGUID: kwIuBoW7STGGj/s/LOlNAQ==
-X-CSE-MsgGUID: lS9k8eVFScOg9YLWn6sw0g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="107305513"
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="107305513"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
- by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Sep 2026 05:28:14 -0700
-X-CSE-ConnectionGUID: vgRq2bKcQSWCU4IT8ezqng==
-X-CSE-MsgGUID: b9sxHyYURiCtT0zZF45AxQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="270693961"
-Received: from unknown (HELO gnrd02..) ([10.190.212.69])
- by fmviesa008.fm.intel.com with ESMTP; 16 Sep 2026 05:28:12 -0700
-From: Prudvi Deti <prudvi.deti@intel.com>
-To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Stephen Hemminger <stephen@networkplumber.org>, Ori Kam <orika@nvidia.com>,
- Aman Singh <aman.deep.singh@intel.com>, Nirint Shah <nirint.shah@intel.com>
-Subject: [RFC v3 7/7] regex/hs: add Hyperscan compile flag support
-Date: Wed, 16 Sep 2026 17:57:04 +0530
-Message-ID: <20260916122738.2176589-8-prudvi.deti@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260916122738.2176589-1-prudvi.deti@intel.com>
-References: <20260910080136.1790851-1-prudvi.deti@intel.com>
- <20260916122738.2176589-1-prudvi.deti@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 2EB2D427D0;
+	Wed, 16 Sep 2026 14:48:51 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id DF9A8427C2
+ for <dev@dpdk.org>; Wed, 16 Sep 2026 14:48:49 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=dr6TOlhngCb7P3scxFQTwJe7mQSDGJfElmi4KgQ3XX8=;
+ b=lcEI6PwP/rIWfSxH3WdfGWM/+qxYkCk7KRLCpKN0WSs9SQArL0MIzEFPUW6vmbSRzrD4m0Tba
+ 4XKFZTfiyxcdImmKv+zvNEIFqEMaDdS0SVUEwEfq0rZUpA5cGmxsuGwFth7fyuyz2h+lmRgwDW6
+ JxPYZG/TQ8kNjl7z9gkJWuI=
+Received: from mail.maildlp.com (unknown [172.18.224.150])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4hlJbK2bhvzHnGdS;
+ Wed, 16 Sep 2026 20:48:29 +0800 (CST)
+Received: from dubpeml100004.china.huawei.com (unknown [7.214.146.78])
+ by mail.maildlp.com (Postfix) with ESMTPS id D9BD240570;
+ Wed, 16 Sep 2026 20:48:43 +0800 (CST)
+Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
+ dubpeml100004.china.huawei.com (7.214.146.78) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Wed, 16 Sep 2026 13:48:43 +0100
+Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
+ dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.2562.046; 
+ Wed, 16 Sep 2026 13:48:43 +0100
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: Marat Khalili <marat.khalili@huawei.com>, Thomas Monjalon
+ <thomas@monjalon.net>
+CC: "dev@dpdk.org" <dev@dpdk.org>, "konstantin.v.ananyev@yandex.ru"
+ <konstantin.v.ananyev@yandex.ru>
+Subject: RE: [PATCH] maintainers: update for BPF library
+Thread-Topic: [PATCH] maintainers: update for BPF library
+Thread-Index: AQHdRcM8jpRT01bKIU2VmnWj2KgbM7bRJ7Ew
+Date: Wed, 16 Sep 2026 12:48:43 +0000
+Message-ID: <0b03434848f148c4ab471a57acf75bc5@huawei.com>
+References: <20260916100203.65373-1-marat.khalili@huawei.com>
+In-Reply-To: <20260916100203.65373-1-marat.khalili@huawei.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.195.247.58]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -63,198 +62,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Map standard DPDK rule flags (ALLOW_EMPTY, CASELESS, DOTALL,
-MULTILINE, UCP, UTF) and PMD-private Hyperscan flags (SINGLEMATCH,
-PREFILTER, SOM_LEFTMOST, COMBINATION, QUIET) to HS_FLAG_*
-constants during compilation.
 
-Add flag validation in rule_db_update to reject unknown flag bits.
-Update info_get to advertise all supported standard flags.
 
-Signed-off-by: Prudvi Deti <prudvi.deti@intel.com>
----
- doc/guides/regexdevs/hs.rst | 26 ++++++++++++++++++++-----
- drivers/regex/hs/hs_regex.c | 38 +++++++++++++++++++++++++++++++++----
- drivers/regex/hs/hs_regex.h | 23 ++++++++++++++++++----
- 3 files changed, 74 insertions(+), 13 deletions(-)
-
-diff --git a/doc/guides/regexdevs/hs.rst b/doc/guides/regexdevs/hs.rst
-index b638ecc..b76296a 100644
---- a/doc/guides/regexdevs/hs.rst
-+++ b/doc/guides/regexdevs/hs.rst
-@@ -182,6 +182,16 @@ committed. Applications must not resubmit the original full array on
- partial failure — only correct the failed rule and resubmit it along
- with any remaining rules from the returned index onward.
- 
-+Calling ``rte_regexdev_start()`` is optional with this PMD:
-+``enqueue_burst()`` auto-starts the device if a database has already
-+been compiled or imported, so applications (such as
-+``dpdk-test-regex``) that go straight from ``configure()``/
-+``queue_pair_setup()`` to ``enqueue_burst()`` without an explicit
-+``start()`` call still work correctly. Applications that intend to
-+call ``start()`` explicitly should still do so before the first
-+``enqueue_burst()`` call, since once the device auto-starts, a
-+subsequent explicit ``start()`` call will fail with ``-EBUSY``.
-+
- Statistics
- ~~~~~~~~~~
- 
-@@ -197,12 +207,18 @@ Limitations
-   Hyperscan PMD and is not supported. DPDK requires ordering matches by rule
-   ID, start offset, and match length, while Hyperscan without SOM reports only
-   the match end offset.
--- Scanning is synchronous: ``enqueue_burst`` blocks until
--  ``hs_scan()`` completes for each operation.
- - Multi-segment mbufs are linearized (``rte_pktmbuf_linearize()``)
--  before scanning; linearization failure marks the op with
--  ``RTE_REGEX_OPS_RSP_RESOURCE_LIMIT_REACHED_F``.
--- Multi-process mode is not supported.
-+  before scanning. If linearization fails (first mbuf buffer too
-+  small for the full packet), the op is returned to the application
-+  with ``RTE_REGEX_OPS_RSP_RESOURCE_LIMIT_REACHED_F`` and zero
-+  matches. Applications scanning large payloads should allocate
-+  mbufs with sufficient ``data_room_size``.
-+- Multi-process mode is not supported. The PMD rejects secondary
-+  processes at probe time. Hyperscan's compiled database and scratch
-+  space are allocated in process-private memory and cannot be shared
-+  across separate OS processes. Multi-lcore (multiple threads within
-+  a single process) is fully supported — each lcore uses its own
-+  queue pair with dedicated scratch space.
- - Each queue pair must be used by exactly one lcore
-   (single-producer/single-consumer model).
- - Control-plane calls (``configure``, ``queue_pair_setup``,
-diff --git a/drivers/regex/hs/hs_regex.c b/drivers/regex/hs/hs_regex.c
-index d1cea38..801f857 100644
---- a/drivers/regex/hs/hs_regex.c
-+++ b/drivers/regex/hs/hs_regex.c
-@@ -103,9 +103,11 @@ hs_regex_info_get(struct rte_regexdev *dev, struct rte_regexdev_info *info)
- 	info->max_rules_per_group = HS_REGEX_MAX_RULES;
- 	info->max_groups = HS_REGEX_MAX_GROUPS;
- 	info->regexdev_capa = RTE_REGEXDEV_CAPA_RUNTIME_COMPILATION_F;
--	info->rule_flags = RTE_REGEX_PCRE_RULE_CASELESS_F |
-+	info->rule_flags = RTE_REGEX_PCRE_RULE_ALLOW_EMPTY_F |
-+			   RTE_REGEX_PCRE_RULE_CASELESS_F |
- 			   RTE_REGEX_PCRE_RULE_DOTALL_F |
- 			   RTE_REGEX_PCRE_RULE_MULTILINE_F |
-+			   RTE_REGEX_PCRE_RULE_UCP_F |
- 			   RTE_REGEX_PCRE_RULE_UTF_F;
- 
- 	return 0;
-@@ -336,7 +338,12 @@ hs_regex_rule_db_update(struct rte_regexdev *dev,
- 		RTE_REGEX_PCRE_RULE_DOTALL_F |
- 		RTE_REGEX_PCRE_RULE_MULTILINE_F |
- 		RTE_REGEX_PCRE_RULE_UCP_F |
--		RTE_REGEX_PCRE_RULE_UTF_F;
-+		RTE_REGEX_PCRE_RULE_UTF_F |
-+		HS_REGEX_RULE_SINGLEMATCH_F |
-+		HS_REGEX_RULE_PREFILTER_F |
-+		HS_REGEX_RULE_SOM_LEFTMOST_F |
-+		HS_REGEX_RULE_COMBINATION_F |
-+		HS_REGEX_RULE_QUIET_F;
- 	uint64_t flag_bits;
- 	uint64_t rf;
- 	uint16_t i;
-@@ -586,8 +593,22 @@ hs_regex_rule_db_compile_activate(struct rte_regexdev *dev)
- 			flags[i] |= HS_FLAG_DOTALL;
- 		if (priv->rules[i].rule_flags & RTE_REGEX_PCRE_RULE_MULTILINE_F)
- 			flags[i] |= HS_FLAG_MULTILINE;
-+		if (priv->rules[i].rule_flags & HS_REGEX_RULE_SINGLEMATCH_F)
-+			flags[i] |= HS_FLAG_SINGLEMATCH;
- 		if (priv->rules[i].rule_flags & RTE_REGEX_PCRE_RULE_UTF_F)
- 			flags[i] |= HS_FLAG_UTF8;
-+		if (priv->rules[i].rule_flags & RTE_REGEX_PCRE_RULE_UCP_F)
-+			flags[i] |= HS_FLAG_UCP;
-+		if (priv->rules[i].rule_flags & HS_REGEX_RULE_PREFILTER_F)
-+			flags[i] |= HS_FLAG_PREFILTER;
-+		if (priv->rules[i].rule_flags & HS_REGEX_RULE_SOM_LEFTMOST_F)
-+			flags[i] |= HS_FLAG_SOM_LEFTMOST;
-+		if (priv->rules[i].rule_flags & HS_REGEX_RULE_COMBINATION_F)
-+			flags[i] |= HS_FLAG_COMBINATION;
-+		if (priv->rules[i].rule_flags & HS_REGEX_RULE_QUIET_F)
-+			flags[i] |= HS_FLAG_QUIET;
-+		if (priv->rules[i].rule_flags & RTE_REGEX_PCRE_RULE_ALLOW_EMPTY_F)
-+			flags[i] |= HS_FLAG_ALLOWEMPTY;
- 
- 		/* Extended parameters */
- 		ext[i].flags = 0;
-@@ -1003,8 +1024,17 @@ hs_regex_enqueue_burst(struct rte_regexdev *dev, uint16_t qp_id,
- 	}
- 
- 	if (unlikely(priv->dev_state != HS_REGEX_DEV_STARTED)) {
--		HS_LOG(ERR, "enqueue: device not started");
--		return 0;
-+		/*
-+		 * Auto-start if DB is ready (supports apps that skip
-+		 * start, e.g. dpdk-test-regex; see hs.rst).
-+		 */
-+		if (priv->db_compiled) {
-+			priv->dev_state = HS_REGEX_DEV_STARTED;
-+			HS_LOG(NOTICE, "enqueue: auto-started device");
-+		} else {
-+			HS_LOG(ERR, "enqueue: device not started and no DB");
-+			return 0;
-+		}
- 	}
- 
- 	if (unlikely(priv->db == NULL)) {
-diff --git a/drivers/regex/hs/hs_regex.h b/drivers/regex/hs/hs_regex.h
-index 07e737b..211d876 100644
---- a/drivers/regex/hs/hs_regex.h
-+++ b/drivers/regex/hs/hs_regex.h
-@@ -22,6 +22,18 @@
-  * Hyperscan allocates memory proportional to this size).
-  */
- #define HS_REGEX_MAX_RULE_DB_LEN (512U * 1024 * 1024)
-+/* PMD-specific rule flags using bits 32+ to avoid overlap with DPDK flags. */
-+
-+/** Report at most one match per pattern per scan (maps to HS_FLAG_SINGLEMATCH). */
-+#define HS_REGEX_RULE_SINGLEMATCH_F  (1ULL << 32)
-+/** Treat pattern as a prefilter approximation (maps to HS_FLAG_PREFILTER). */
-+#define HS_REGEX_RULE_PREFILTER_F    (1ULL << 33)
-+/** Report leftmost start of match offset (maps to HS_FLAG_SOM_LEFTMOST). */
-+#define HS_REGEX_RULE_SOM_LEFTMOST_F (1ULL << 34)
-+/** Enable logical combination expressions (maps to HS_FLAG_COMBINATION). */
-+#define HS_REGEX_RULE_COMBINATION_F  (1ULL << 35)
-+/** Ignore match reporting for this pattern (maps to HS_FLAG_QUIET). */
-+#define HS_REGEX_RULE_QUIET_F        (1ULL << 36)
- 
- /* Ext params encoded in rule_flags bits 37-63 */
- #define HS_REGEX_EXT_MAX_OFFSET_SHIFT 37
-@@ -31,10 +43,10 @@
- 
- /* Device lifecycle state machine. */
- enum hs_regex_dev_state {
--	HS_REGEX_DEV_CREATED = 0,
--	HS_REGEX_DEV_CONFIGURED,
--	HS_REGEX_DEV_STARTED,
--	HS_REGEX_DEV_STOPPED,
-+	HS_REGEX_DEV_CREATED = 0,   /* after dev_create, before configure */
-+	HS_REGEX_DEV_CONFIGURED,    /* after configure */
-+	HS_REGEX_DEV_STARTED,       /* after start */
-+	HS_REGEX_DEV_STOPPED,       /* after stop (can restart) */
- };
- 
- /* Per-rule entry stored before compilation */
-@@ -56,6 +68,7 @@ struct hs_regex_qp {
- 	uint16_t tail;
- 	uint16_t count;
- 	hs_scratch_t *scratch;
-+	/* Per-QP counters exported via xstats. */
- 	uint64_t qp_enqueued;
- 	uint64_t qp_dequeued;
- 	uint64_t qp_matches;
-@@ -77,9 +90,11 @@ struct hs_regex_priv {
- 	uint16_t max_matches;
- 	uint16_t nb_groups;
- 
-+	/* Lifecycle state used to validate configure/start/stop. */
- 	enum hs_regex_dev_state dev_state;
- };
- 
-+/* Device lifecycle */
- int hs_regex_dev_create(const char *name, struct rte_device *device);
- void hs_regex_dev_destroy(const char *name);
- 
--- 
-2.43.0
+> Marat Khalili will now make contributions to the BPF library
+> as an individual in his personal capacity.
+> So, updating his email in the MAINTAINERS file
+> to be his personal email.
+>=20
+> Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
+> ---
+>  .mailmap    | 2 +-
+>  MAINTAINERS | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/.mailmap b/.mailmap
+> index 52d19bde6bf4..9f9692f9c538 100644
+> --- a/.mailmap
+> +++ b/.mailmap
+> @@ -1007,7 +1007,7 @@ Manish Chopra <manishc@marvell.com>
+>  Manish Kurup <manish.kurup@broadcom.com>
+>  Manish Tomar <manish.tomar@nxp.com>
+>  Mao Jiang <maox.jiang@intel.com>
+> -Marat Khalili <marat.khalili@huawei.com>
+> +Marat Khalili <qm2k21@gmail.com> <marat.khalili@huawei.com>
+>  Marc Sune <marcdevel@gmail.com> <marc.sune@bisdn.de>
+>  Marcel Apfelbaum <marcel@redhat.com>
+>  Marcel Cornu <marcel.d.cornu@intel.com>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e99a65d1974d..adab8663c248 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1918,7 +1918,7 @@ F: doc/guides/howto/telemetry.rst
+>=20
+>  BPF
+>  M: Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>
+> -M: Marat Khalili <marat.khalili@huawei.com>
+> +M: Marat Khalili <qm2k21@gmail.com>
+>  F: lib/bpf/
+>  F: examples/bpf/
+>  F: app/test/test_bpf*
+> --
+Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+> 2.43.0
 
