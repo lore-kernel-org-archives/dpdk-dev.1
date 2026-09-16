@@ -2,154 +2,154 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5412EC88E5C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 11:06:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 356ACC88E77
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 11:10:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6FB23427BA;
-	Wed, 16 Sep 2026 13:06:30 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id 9B6924067D
- for <dev@dpdk.org>; Wed, 16 Sep 2026 13:06:28 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0B2C8427BA;
+	Wed, 16 Sep 2026 13:10:26 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+ by mails.dpdk.org (Postfix) with ESMTP id D92D04067D
+ for <dev@dpdk.org>; Wed, 16 Sep 2026 13:10:23 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1789556789; x=1821092789;
+ t=1789557024; x=1821093024;
  h=message-id:date:subject:to:cc:references:from:
  in-reply-to:content-transfer-encoding:mime-version;
- bh=jCB2qvLFDh4VsiKkEYOOH29qzFR8uhCyFdQ53iVZrMk=;
- b=RH2faWii/yBx6JT0AOI/pNBgybIjBFM0/ljokzPzRZCM/4AVXGYaHDeA
- wspkiBBj6pm4HMtxhNl6VkAryXKYiL8+qDMQk/ibkniGuINARhcB/vaMV
- jlLGXCm22WgI+sIgrOvfXExJco0DdH3K4wNgtUqisPuLsFsNmRBw4rWbE
- R9/GBNnMh9xpBBlx8afZtRC6Wm0iC0H/b8UsU3DiMUSl/b3qwufSBGtNa
- ENCUGeaMQE15Ptnw5e6IEgJb/whabVBPigkf56miizt/nAS5XRUjLFnPz
- K3mrLMlVVLBsWwDCRZyRDkFxEiHGEXuxJFvaC6I/t5AmgFLTV8jwmEsdW g==;
-X-CSE-ConnectionGUID: SV8Vv33JT2+bpAK9e3nQCA==
-X-CSE-MsgGUID: FNGZg2+dSkOMBgwsP1PdWw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="89869998"
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="89869998"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
- by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Sep 2026 04:06:28 -0700
-X-CSE-ConnectionGUID: Zw9MPsPbTyqo0I9Ynk2zeA==
-X-CSE-MsgGUID: sN3EYKDlSpuMl4Sqh5qwJg==
+ bh=kEcXr/1cCSiefsn9SDnGLfhTsubkM+S6KF3Y+ICEMHo=;
+ b=h6+7yC6CcJ8toT+egCkSWH/xGFPiJJ2vrhmjhyvVr+w8JvPqdGpHYCOo
+ FJ6j84pU2MfxMCVghzRBC07kPEhB8/+8qccKasqr5AV8X96F7jJ6/TcMp
+ QECGJQUr99XEI8QSu5J+dqHkiSJsCReNNtOeRK+NK1I9KBY8XEW/L4GPU
+ Mqno6uVKkhNLDBFIAyRs6NkpO2QNDjlp948RgMWodFnK5X5T661rWX3xC
+ VDkyhx41ECU/keHNomUas/2uoW2pOySh3GS1r9/ot1ErfA9t3HeIGB8id
+ fq70P0P6xuBjQZqhMBjzGeAEMfY7hcMagjBnG4JMM1TtOS+HXU5Qej9Ug A==;
+X-CSE-ConnectionGUID: EWzheyNJTtqkPkzQGQBQ7g==
+X-CSE-MsgGUID: LQbMkzVHRheH/W/15MJ7kQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="93634198"
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="93634198"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+ by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Sep 2026 04:10:23 -0700
+X-CSE-ConnectionGUID: DKDmm7hiSyqveu17BASlFw==
+X-CSE-MsgGUID: 2Vy1DsOqTImX8ZYgwYOuaA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="311595068"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Sep 2026 04:06:28 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="267098188"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+ by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Sep 2026 04:10:22 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Wed, 16 Sep 2026 04:10:21 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
  ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Wed, 16 Sep 2026 04:06:27 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46 via Frontend Transport; Wed, 16 Sep 2026 04:06:27 -0700
-Received: from BN1PR04CU002.outbound.protection.outlook.com (52.101.56.42) by
+ 15.2.2562.46 via Frontend Transport; Wed, 16 Sep 2026 04:10:21 -0700
+Received: from PH7PR06CU001.outbound.protection.outlook.com (52.101.201.31) by
  edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Wed, 16 Sep 2026 04:06:25 -0700
+ 15.2.2562.46; Wed, 16 Sep 2026 04:10:21 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RbFuAeT+pzD6HpiX/9Q+XW/AmvBa+7spEC589CtuVITgTCVR97vnr8bF5ZJH6Jlgr4TizqZFGz+MURWWW4YqxbXovIlrYjSRyY6y4FowF7Y7nFBLHBXD8zVfrOdDbeDALtTfgJ9szeDzo+bNtqkLSk+BU5vgM+zm+tCbS6xwud85TES1c5WetmXjBo4sTb2NvjEwyj0lAScYX1+X2+I/Uss2c5qGQq0f92aHfMJxP1r7rn43TjOeN81f+PAcnzHL5XqxY+IH/OM27F86AILyb0Tf7jGWgCIKNV887TW+BOUZllS+jHLhbpiUkebSekWJtjNAmrSdLMZc/90mlaMp9A==
+ b=JVyK3Y3QKCmOgBdY2LC51sHJ2jcOTH2yAmM9qBjkeHfDf/4ME5OP2lUNf9+92KTyxSbPItWyLbChwqWGJxMOAcEvK58mFPpP+CjMYZW0X0SGeOsD6Qbne06DlvJIekCKWnulNhnfq4gAQMvmwUAhB1vRq7Fia5MoMq4kNlcsFCK9FUL4jmPSfg04Xxb4MEZZcPL8lLabcGKrCvkgsqVx/UwRuWS33jaqzLnkiSu+gJ1+2vltJ8jJkB4vRhZ75ThErmbqpPsaK9Tf1zcf8RViIop8cfTW+Xnlhx7ROwb/jM30pKipqti8cFoledKobsPF27DcOK1j86Tg2GIXvUbBYw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MWKIkK3jsYsWCSof3xaEgLYMA/DolZfUv+76gRpdKOw=;
- b=XBuUQbCqyjFe9Ry8oVmHlcCrMaDS96RsxJZQ0ptKld13eYlASr9gjRKrZ06XE2QZm2CZ7hD/ebnFBebNrj99KqN64gzNgEPSrxNfqNTFsnGCg0RkbSO3kjZs+4XsKqShSuxyRNvwupgKrTvII4UeaTxE8fH/xeAISLesGsfNgXFI0dTcqM8edVA1vK1Wmgt82IxTRBdjsV5EvYkfWoil9hg7ABdJXSuk8kEfRD1nE+e2hS9rGe/DqNJ5QyZ4BCCBKGFHcmu9Lc3l+l7tk7O1yAN0uUHI0tZ4J2ppsPj0QLFwgZN99unX9mfBOaD1ozpXbR+PegenLBYE363uvjoi6Q==
+ bh=0piRo8gYUFMDB3TtPDxldss2t33AtFsm4/w4h0y1IBE=;
+ b=x6+c8XfNiTkkyARTA5QvVuA21rBItApCzrICdHvGGe53gBVZjmQ5+Tv0zsP//cau3eN3CapRSzLp8utWWxYbtuOdfTMINxs015SXaDaA3Hmp7vkv0gYwzNpDV5qv14Waw/MkKRX/LiL6q9wsAk/ctxJ3/6vEb5v+MI6+D90f8xE+B0Z189y3BDhgXQGJuNT2pOmAd9os2Vdpv+FbhK++upvHqHIK+QTnq+ahTWJtk/0CEmlTiW4nN95xCG1dPFWEbm8u4BlvoI0PYE4U5H2k6lcEpdezcTi5RUfKSYII5Sa+w2mbpKu2Xbt17yWmczk4Trae6w7qlnJQ5RmCa8KGYg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
- SA3PR11MB420097.namprd11.prod.outlook.com (2603:10b6:806:531::12)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.11; Wed, 16 Sep
- 2026 11:06:23 +0000
+ IA1PR11MB6465.namprd11.prod.outlook.com (2603:10b6:208:3a7::5) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.21.428.9; Wed, 16 Sep 2026 11:10:16 +0000
 Received: from DM4PR11MB6502.namprd11.prod.outlook.com
  ([fe80::d2df:4650:72ad:47d4]) by DM4PR11MB6502.namprd11.prod.outlook.com
  ([fe80::d2df:4650:72ad:47d4%5]) with mapi id 15.21.0428.008; Wed, 16 Sep 2026
- 11:06:23 +0000
-Message-ID: <5836fd0b-e6a6-4d69-88d7-3e2cefa10ba5@intel.com>
-Date: Wed, 16 Sep 2026 13:06:18 +0200
+ 11:10:16 +0000
+Message-ID: <088621af-c8f1-4ee5-8018-0aeed891551f@intel.com>
+Date: Wed, 16 Sep 2026 13:10:10 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v17 00/26] Support VFIO cdev API in DPDK
+Subject: Re: [PATCH v17 06/26] vfio: do proper teardown on VFIO cleanup
 To: David Marchand <david.marchand@redhat.com>
-CC: <dev@dpdk.org>
-References: <cover.1763141462.git.anatoly.burakov@intel.com>
- <cover.1789044746.git.anatoly.burakov@intel.com>
- <CAJFAV8yEwjyh0KT3WhAFS1G29C2M_GbHxh1S6cRoVVsWGiM_NA@mail.gmail.com>
+CC: <dev@dpdk.org>, Bruce Richardson <bruce.richardson@intel.com>
+References: <cover.1789044746.git.anatoly.burakov@intel.com>
+ <818e1b48e7656636b76f223d1769b1b25897dcc6.1789044747.git.anatoly.burakov@intel.com>
+ <CAJFAV8w31Awymm2y=h9ja75erkV4yX+KvRd50scitH9rwQ2-KA@mail.gmail.com>
 From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
 Content-Language: en-US
-In-Reply-To: <CAJFAV8yEwjyh0KT3WhAFS1G29C2M_GbHxh1S6cRoVVsWGiM_NA@mail.gmail.com>
+In-Reply-To: <CAJFAV8w31Awymm2y=h9ja75erkV4yX+KvRd50scitH9rwQ2-KA@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P265CA0085.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2bd::14) To DM4PR11MB6502.namprd11.prod.outlook.com
+X-ClientProxiedBy: PR1P264CA0154.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:346::18) To DM4PR11MB6502.namprd11.prod.outlook.com
  (2603:10b6:8:89::7)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|SA3PR11MB420097:EE_
-X-MS-Office365-Filtering-Correlation-Id: d7574a3e-e806-4bdb-031f-08df13e28b68
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|IA1PR11MB6465:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6c4dad9c-dc5a-4b01-f594-08df13e31649
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|366016|376014|23010399003|1800799024|6133799003|10067099003|4143699003|56012099006|5023799004|11063799006|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info: wMDZBGyYz2VrouMlAx6E/GbDx9qqfzuC8IGx/51gUBPzs7EVKiNJ84044wl59/kkZWKwIM8g8tR+BnfTRVbqvMT5sitep4yjwH2Zm/Qydu61fVyB4eCdcaEtAfD3ksRGbC9vxpalRhWwDDf2wf3n4vvxjy/yNovc4lz5DxXuAIiZwBtVrZXx3iFskV9CFS2t1LFt7g8YfEtSmCKoiyFs5x1HG/9cm+4/tdDGC5go/Jm8CtLVzlCJlWHwvaPWkJP+BREzO1wTw4riYjkjpRxq1Wcvw7ElEg3Xm/9vGO3o2saQUcyvbN86GGZxjKgKMt12dz+jrgA8sACpcGfUsGjK0lRFYYnrIVHK1oioK2MTFo55h/h+6DswImos7K5GcILLBgV79lXi4Pimx7/1rfMGjU+5zcZ0I7rFi5DKgIVT3C2AVKjT2gPgVm0W5JB4g13Nns5mkL/CdG3wOZgF8j2KdLwJmthxibWhxexCIlnSpETRccFihZON0aDRmofNIwmdT1L18kMc64JDH4vOc0OzkUu4kRzwE2KWH9UAwebXtUMCDNMDQ95GDS//SRzvZMKqjfgBSTTTGDyFunrSMltBvCTkB5v36lBE1cLb0Xr6xfn0WLqUw8a66QFnwGlKMvkEDhzOKA6cIck0qFF/xoye+xhPfdDQd8bGDTy1MJZCva4=
+ ARA:13230040|376014|1800799024|366016|23010399003|10067099003|4143699003|6133799003|18002099003|22082099003|5023799004|11063799006|56012099006;
+X-Microsoft-Antispam-Message-Info: tlxtIWRVV3xNTc0fQr4vTVBDI8UeI50ZoLavKsr/GVfSOWYqRvUThU9XV8BfmGsObiSz3CdJzVqdjQmEIoyubB16WicOz2UDDX1bPk17lVTkQthPFECCy5eUKlS4KgKqlib5nUUBTwS7C6yvOxXKWscb0BawEwbGa2qTsIqJZMqgS+9Nqcd3VfOcj+dCls8zOvUAY28DEFEPnchaNkT0s8sA+KAF4zglm4ndIxgMr4P804oIv2iD3e9G2VPBA0/Sl0tMpRuvPYzBlAW4P0uGBzsrb50amkovawIjCE2a/orjTJb/meg9N0FtIlyEySGwl8k2E0xRLZrvuJUgBWCnvzRyvBmA5nCPUtA3UQaODA9Qc2hqUCxkFlcpNPtfg+Zs+yFeUprPmywLqNbZ3TZ0VMsxXN3/G8cGHRCugzRiWBoNoTJrkUq6Y5nZJvqOVDi9Wd0rSOnzSnbj6c0lFfFnuJtqn40OjIMlGC5FjjgOVA+4tMNoBFNfKlR0JILXoxZQNLpBg/T62/R2YYGxj1RltzoYSt0OAzJgG/PIA79V2tW1w1qBANBfMATUl7tciMRjP04lhBQeEAkNYxk6r6SnDEly0HRteSo53TO6b54PBs7/pdcd08nAPCB9ZmTBuToUL5x2LgRfN0wnDineg36XfFJ/1qvzXzchBbGXAmBJclA=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(23010399003)(1800799024)(6133799003)(10067099003)(4143699003)(56012099006)(5023799004)(11063799006)(18002099003)(22082099003);
+ SFS:(13230040)(376014)(1800799024)(366016)(23010399003)(10067099003)(4143699003)(6133799003)(18002099003)(22082099003)(5023799004)(11063799006)(56012099006);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dE5tbDFwaDJXT3hibEtTTmZ2T1RWWTdwT2ZHUnBPOWx1RktLTzFrSmtsbWFn?=
- =?utf-8?B?YkYzdzJOS2FIQkJDM3RieUpVelhpbStGWEtuZ08yMlBUZkJqcFlmWTJJcEE4?=
- =?utf-8?B?QTBTUjQvNmFMTmdERUx1dWdQMTdpcCtJN09kNlZEdVVqOWlnSjhhZjFadEQx?=
- =?utf-8?B?Z1JkazVINEFCUU9uenllOW1RMHVGekdkWGltUHF5V0p1cG04SjB6RWhrY0JU?=
- =?utf-8?B?QS9ScG9EZ1lLWG12NFRtajdIN3FOZTVPTHVCajF1Y3FEbnJjUU51ZE05VXdM?=
- =?utf-8?B?c0tGZDJPUElIbHlFUm5OZlRqeU9XZ0thVCthbk82RFFGVnpGUGx4WEdHNEFz?=
- =?utf-8?B?SUJNOWNNN3ltUVdweXNTOEs5SnNscERBTm1qQUFvZG1sS2lxV2wveVpvSng0?=
- =?utf-8?B?YVpZb1d2dXlCY0lXUlBMZjhBcXNUSkR5a2paUkFKTzhqYzV1bEFMeS9wQkVV?=
- =?utf-8?B?cVBwVDlHdElHaUFGVkZvcGJUY1BDa3pCTDBCaDE2eE9KZFZSQkRXWWpNbU1Q?=
- =?utf-8?B?bXFoRnVWcnlRbHFlL2xNUFY0a3V3YzQzQjNYSmVyUkZuYUFxQTYwN2tlekxn?=
- =?utf-8?B?cGI4Zk8rcGdxZE1jRkRFT2VHYXJtWldMMjlUZnJrRFdmaFdyNklmRTRFa0dB?=
- =?utf-8?B?RnhuVDVjbUJRVktNZXhGNnh3dDAxMTdzeG9nbFBlU1ZVU2w4eGQ0ZWpqQUsx?=
- =?utf-8?B?cWRHM0lXck5FV0hqcngvQnN2UU81eFJ1ZDNFekpWbjR4N1FmMTRELzNhOCsz?=
- =?utf-8?B?NCtLZ2FXQUpvWitmSm85T1M1ck5sSFg2dXYySzYwTSttTHdLSTJsdkNsVmdH?=
- =?utf-8?B?NTF2emM2em9jdHFsTkpwSkJxeklYcUIxc1krTDM0TFF2aXBaVWszRU9zdjZW?=
- =?utf-8?B?ekhOUmhPelowVklTUXZlaG9iR0hkS1JOY3J1QTRZZE9ZUll5ZHhCUG1tdFBL?=
- =?utf-8?B?UnFoWVk5T3BBTTcza3p0QlhTT2ZqQU9NL1dDTUlHTXJrMWpRZStVZXlXcE02?=
- =?utf-8?B?dFducjVuMjdoYjlBUlhnMVBxQjJ5TXVzbUVUMFdxMHYyaDh6VVpESWRseUl0?=
- =?utf-8?B?cDdwUmRFaS9VUWZPV0pLVlFqcDd6dnNmQXdPL2g3N05kN3VaTGpacHhDWldm?=
- =?utf-8?B?WmNKVTc1c2IwdTFTT21ma1BMTUdLbHZFd3hpUHlkdXovSVJudmNEUjhxS2ph?=
- =?utf-8?B?K3oxVXpDbDhpTitzQ2plaDNpNFk2dG9tWUI5MDJIY1FCVWg0Uzg3WUpTQ2RY?=
- =?utf-8?B?ZFZkdUdMYlRRdFFnWjZDbE9PTnFJdjVVMWNYcWJsSWhLUHpiTTlrNnRpKytm?=
- =?utf-8?B?WUt4eUpXNEdlSzNZSTFMY0RJUWRxY1FOaTdKNWZnQnd6TFV1QU5wcXZjZlVv?=
- =?utf-8?B?WjluajI3TjVnbWIzcFhkb3ZvQ1VHU0VYRDViaWVjVTYvNC9ZREcvN0JCbTRH?=
- =?utf-8?B?NDBQR3F5RGFHT2dzWmpGb1NwU2VreWh5bkp1MVpvdGxDVlB0dlA3L3BBNm1q?=
- =?utf-8?B?WGZBc3djRE0vQWNuMXZaMUltZmxkTUlmRFMwM1BIOEd4d0tiSHVLVkZPTVRq?=
- =?utf-8?B?OE02Z2t5VXlPbmw5RzVtVjkrR2tZc3NEVUdpY1lQSlFsd1d5UFBxdVdFc3B2?=
- =?utf-8?B?U2xHTFNPNzBQYzdwbW9xTlQyZEkxUXN5TjNKYzcwWW1Ja004bFk5NmcyTTFU?=
- =?utf-8?B?NExpS1FUN3Vad0xKNGN2SGZmRHZZVjdhUC90VEdFdWZldm1sa3piTTZ2cXBp?=
- =?utf-8?B?M2VLN0s5TytGd3EvUUlVWWVOM2tEbVJLLzNzVjJQYWphZWhQYVlZYnZVM2Fx?=
- =?utf-8?B?NjMxRkZvUFJpTE5DbFFnSzhTcE80VnBMK2NnUjJISzlnNG1kWDgvbEdXVG12?=
- =?utf-8?B?NG53Z3d0MWFjMEZ0NTM3RVNjMWNPeW1TRk5vaWZvM3JySzRsUTdtcHhaY0Ru?=
- =?utf-8?B?NDNMNzB5NCsxYnREL281UFRsbG8yTWRESmRSenNBOTRvUjNIdlRUL3lFU1RL?=
- =?utf-8?B?Nk5YcGMxRWZUL2lTUEJtRlVTaU9hUlFZS1BCd2dPR05yVnk5dmY1THRNcWN3?=
- =?utf-8?B?Z3JYRHFac1VONEwyVm1iaG12dCs4MnRNMlFVVlhtQTNnVkF6VGw0WFN0bkRt?=
- =?utf-8?B?ZEdNNEJBeElBYk1GSTBFU3dGR3ZuTnpPcUdnekt4Um1NQSs2cFVLdVAzQWxH?=
- =?utf-8?B?SkZia3pYMXltWm1SSm56MVIrZC9lV2hHN25xYWV0RFZVTndHQ1o1dDU0bmVV?=
- =?utf-8?B?YlNpc3NMc1QrWDJSTnI5aUdxWHB2c3FjSVVKK2NFY21peXBLWERsSTRVNXdM?=
- =?utf-8?B?MGw3S0VoUzJOT096M1NtTk1MMmR3MkszMExHckhjQmVUcmc3TXAyMnpvcHVB?=
- =?utf-8?Q?JH4I0U6RVZOFCU8w=3D?=
-X-Exchange-RoutingPolicyChecked: nDIvFiTASjQDyZFv7duH7kClVagPBux3XXGtvLt6FKrdoOSlRhec5hZz4LGPgZvYi9AC2L4fezhOLPgcSsu8DzAUKHkwtCCQ88k6RmLnMouq2kHVDAjli7V3qFPttJQLeWJXLwS5dY1TIIOyajM6Yw/oykuy2HWXCODDgeWoJSvm2JokGrfX3kQafPmQSI/nZUUmUljoGf09H74Zmh9nEthrNSWeVCVb4Nyg0/ChcOHUbIC9Gr/jeC0RflOW2kIMt70msGsCz5vwnVQltFp69QbMkDZkbWTVwvrNJ1AE4dRf0sJyw8yir4Z0QccAsH7GVbOIqEPVvl8Hdl9qewVJ7w==
-X-MS-Exchange-CrossTenant-Network-Message-Id: d7574a3e-e806-4bdb-031f-08df13e28b68
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UURaWkhDTTZYQ3B1QVVXOFJ6MWpkYVZZcUhEclJMVkM5Rzc1akxkeENwUUpK?=
+ =?utf-8?B?MVNXbzgzVExsQW5xcENwS1pLSnNtUnpJWEQxYm9SRWVMV0FnL1NiaDV0Vjhu?=
+ =?utf-8?B?ZTd1MHNFMXYzcUtiV0FsNHBpSkJoOHoxa2FlVjV0aGszb1hQeGZlUjE3UVhv?=
+ =?utf-8?B?cGZ0SGsxWHZBWHNsS0xVczNlNzlvV1ZqMVppUzR5TkVOS0NoZ21PRVFWTDZE?=
+ =?utf-8?B?SDVVeFZOT1ZJOFRuTDE2ckhscW9SSm5kWmhibU55eWFWd3VZSmRUbmZOQ2hD?=
+ =?utf-8?B?c2JGVnJ1b2dGTnQzdEJRbUJLVXZRTHVMUWJtblY1ZWdxM3VHRHNpdW9ZMEdH?=
+ =?utf-8?B?RDh2TEtoYmI3MjBybk5SYXg4RHluZDNETWJ6L2tHekxQUXcxenFhYXJmOXdT?=
+ =?utf-8?B?YTRtVTNJM1pWRFBqSzVIcTBRaXl0VlRtb1ErZHRzemI0cmU3U1kvdDUrVys2?=
+ =?utf-8?B?R255ZVh2dkxIODg0NHNDdS91ZWhKajZoUGxxZVNoNnRERDkvVjBxcUxpWHJo?=
+ =?utf-8?B?MSs1RCtzUW9qbzFOQnMxWm9UUmdLZmlFMVQ0S2JIR29leGthcHo2UkJqcVNy?=
+ =?utf-8?B?VmVaeEtJTk5qcGRPQjlHRmJFdWNNZlZ0MVhBT1NXVUVlVm5pcEZoM0t6SFlG?=
+ =?utf-8?B?bWxsdGdWZFBVZmx4ZXRmYzhSbitqZlVIelBuMUNHUlJrU093bFJ5MFZnaDlm?=
+ =?utf-8?B?RmVYcmhoZHNJREV2WmFVUis4UnhQbSttTWpySUFpSGVEcGpoSXNRVnoxY0pK?=
+ =?utf-8?B?elZ2VUZNd0t1U1VNVzhxc0hPMzZXVytkeE5vdEN0KzN6cFk0d3Q5N2hDRExw?=
+ =?utf-8?B?ckVZTlgwaGMxTHhNS1B1M1F5cWx1ODM3UVpyT2lFQzljQ05oRGpYM01XWGJk?=
+ =?utf-8?B?OXlpQXJmK2ZmcVdqY1djUE9ZTVV2SVRrYUNKeGxZNDhQbVR6YStpZThRRWNF?=
+ =?utf-8?B?elM3RVBUUENBRXVCY1NUQmltd3ZUQ24zUE5aTk9kdGdkdk1tdUZBem10L1NV?=
+ =?utf-8?B?aDhvMmh2MytkQTlvOVJ1d2F5Mm4vKytXNVl6Z0ZYM2l5Ymh0ZExPTmpTOXJi?=
+ =?utf-8?B?ZUkxRTdLd0doand6eUEzYTlQS08xMWU1RUVpcEMzek1CWDU0ellreTl0dzRo?=
+ =?utf-8?B?VENsaHFueU4xblAxVlFPUHlFTHFUQTBTM0hnVTlTTXR0SXpieHRiZlRaeVJl?=
+ =?utf-8?B?ZGNEUWhNdG5Dd0hLb2FTeTJYTWowRCtBTGdYK0lVMkc3amhyUzVPSlF2WnA5?=
+ =?utf-8?B?MmtuVGRJQ0M3RURFV3MxTFZ6WnlySkFkbHhxSHZ5SlZ3NEtzWDNCWVdwdWx0?=
+ =?utf-8?B?WFFYZ0gwNnBSa0daVDZ2d05ERXNTMVBiWFR6dkJHbHk2VnI2bnZsbE00dm45?=
+ =?utf-8?B?Z2dJRkYraVBhV0VwYlAxSjdpc1pIOUZ5UHNURW1OM3Q3ZW1aSGc2QUZRVzB3?=
+ =?utf-8?B?bkZ5OXo4YW9ub1NSY0E4MFp4MUdxWElHVm16UUM4aVY5Vm5BcCtqS0E3SkdZ?=
+ =?utf-8?B?MHRGejRPQkQ3QnJUTUQ5VEEzUXpTU1V4d3N5MHR2Zlo5UlI0eVFkdVRlWXlL?=
+ =?utf-8?B?WmJxKzNsTmN1OFlsaEdTZmJ5cDdJVWg1ZHJ6TmlJbk9RWUhYVDBES2Zibk5l?=
+ =?utf-8?B?R2VDK2NWZS9OUHhNYzVyRTQvY044UFpWRVNvN2wwQ0dRQjJ2alBFZmRTZHdz?=
+ =?utf-8?B?VjBWNzlWamhEZDRWQjBJTTk1OU5aVWZneWtpd3NSWVZ0T1QrRm0rL0ZjQ2tT?=
+ =?utf-8?B?dmNlbnp3UVR1OHRLZmxRR2dhWW1GTk0xK0RzYmlQK1dvemNncDdXUllZRjVX?=
+ =?utf-8?B?cDg0TTBCc1Z3RjB0WXNiNG9TRDNObFlyMUJnOHNSQmpxLy9GZWZTakd2WjBz?=
+ =?utf-8?B?bnQxZExYdVZ3WDdaWGR4RkROZmFya2ViR0d4Ujd4TUV2UlFhTjU5S0hqZ3lx?=
+ =?utf-8?B?T2Fvd0ptdFVEbVloSElnellyNGZMRzN1aWZBTkREV1UwMjdqa1lsTnlsVGli?=
+ =?utf-8?B?UXhFRUNTUzRXbWN6aE5KTG5uNCtpS0d5eGQyL1YrTncyMWZvekJ0U1VRRjl3?=
+ =?utf-8?B?ZWxEejJIWjlDZ0RGZCtraDlCdFl3Z05kT0FBcnp1aE5RVWZIbThnWGpWYS9J?=
+ =?utf-8?B?bjlaZnVVR2YwemVBUk9URkMrLzA3MC9pTlBjZWRDczZpZkJDekxndjh3UjNh?=
+ =?utf-8?B?NGNZQnNWaTEwSXdUOHUyU3drTU1VRU9zdU5ybWFveXYxMEZTSkZKeDVMT0NR?=
+ =?utf-8?B?YW5QaUhSaE1XSENUYkE0ZlNqZ3VkOU1mRUw2a1ZQd1QyT2kvOTM4aWduRnRT?=
+ =?utf-8?B?ZTRmQ1E1Nmo2aEpXZkpudGdsb0JqejhPOVhMZWIyekdZQzJrellxSmJrYWpw?=
+ =?utf-8?Q?K8Wd5FMvuy+lSdxY=3D?=
+X-Exchange-RoutingPolicyChecked: V4JLDvzPtTWdaJf2iOGemIrB2lvVszRaUm6ujIzpGxKGbaBcgkeY/n8LO3JmwZH1Z+UZgAEzyeA6F/Gz3hzF//L0kQJPQhvNqWrrZ288eYgTeEf82e0Vahy7HfWruASOvw48sdOLImRzuFjz3w7gTeMkv+m+kdWl7oIPhLTvdPfsbJM4EIYiecuG6QUM2/EvmcemF7fg/Gz3PG/g68P80LS8TfuqZTa25medQUTT8u6+yt73HC21Nvvf/YPUYez+/3QWNMVPLuXo0oUfd96YWnHjgE1VajYYtCyALNMJRyv72ZvN8r84kCMbzZg8Mhqv6Jw4ir1Z6JLVnmEZj7kcmw==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c4dad9c-dc5a-4b01-f594-08df13e31649
 X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2026 11:06:23.4496 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2026 11:10:16.3848 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UPy9Wl3Muvk5lhuYceFy2XIjkLJ0WZ9JGT9FVJFbwCdK2x7JXQ+zWw/St/8rkBxOhHHFJQivk7REeoppkAtWFYaXyXsh2RdABN4YnWrSjpI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB420097
+X-MS-Exchange-CrossTenant-UserPrincipalName: S9u7ZPTNjyKLaUkmLA7oFwUthu0tO/GlQftu1oIFu//ZgqRnqqK8T+n0KjqPv8S9tTd68MkKymAbUxacVVRfc1937xvVPwwhx8Dn8lebLPE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6465
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -164,175 +164,63 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 9/15/2026 4:32 PM, David Marchand wrote:
-> On Thu, 10 Sept 2026 at 14:53, Anatoly Burakov
+On 9/15/2026 5:25 PM, David Marchand wrote:
+> On Thu, 10 Sept 2026 at 14:54, Anatoly Burakov
 > <anatoly.burakov@intel.com> wrote:
 >>
->> This patchset introduces a major refactor of the VFIO subsystem in DPDK to
->> support character device (cdev) interface introduced in Linux kernel, as well as
->> make the API more streamlined and useful. The goal is to simplify device
->> management, improve compatibility, make the code readable, and clarify API.
+>> Currently, VFIO cleanup only unregisters multiprocess callback, but does
+>> not destroy containers, groups, and user mem maps. Do all of that on VFIO
+>> cleanup. In order to distinguish between config that is not initialized vs.
+>> config that has been initialized but happens to have fd == 0, move the
+>> global VFIO enabled flag out of the config, and add a separate per-config
+>> "enabled" flag that can be checked to avoid attempting to clean up configs
+>> that were never initialized in the first place.
 >>
->> The following sections outline the key issues addressed by this patchset and the
->> corresponding changes introduced.
->>
->> 1. Only group mode is supported
->> ===============================
->>
->> Since kernel version 4.14.327 (LTS), VFIO supports the new character device
->> (cdev)-based way of working with VFIO devices (otherwise known as IOMMUFD). This
->> is a device-centric mode and does away with all the complexity regarding groups
->> and IOMMU types, delegating it all to the kernel, and exposes a much simpler
->> interface to userspace. The old group-based implementation will still be around,
->> and will need to be kept in DPDK for compatibility reasons.
->>
->> To enable this, VFIO is heavily refactored, so that the code can support both
->> modes while relying on (mostly) common infrastructure.
->>
->> Additionally, new `vfio_get_mode` API is added for those cases that need
->> some introspection into VFIO's internals, with two modes: group (old-style),
->> and cdev (the new mode).
->>
->> Historically, no-IOMMU mode was technically a variant of group mode, the
->> distinction is largely irrelevant to the user, as all usages of noiommu checks
->> in our codebase are for deciding whether to use IOVA or PA, not anything to do
->> with managing groups. However, now that upcoming kernel versions will support
->> no-IOMMU for both group, cdev compatibility, and full cdev paths, a new
->> `vfio_get_iommu_mode` is also added, with two modes: safe (full IOMMU backing),
->> and unsafe (no-IOMMU mode). The naming is chosen explicitly to emphasize that
->> using no-IOMMU mode is not ideal.
->>
->> 2. Custom container assignment API does not map to cdev mode
->> ============================================================
->>
->> The existing `rte_vfio_device_setup/release` model is fundamentally incompatible
->> with cdev mode, because for custom container cases, the expected flow is that
->> the user binds the IOMMU group (and thus, implicitly, the device itself) to a
->> specific container using `rte_vfio_container_group_bind`, whereas this step is
->> not needed for cdev as the device fd is assigned to the container straight away.
->>
->> Therefore, what we do instead is introduce a new API for container device
->> assignment which, semantically, will assign a device to specified container, so
->> that when it is mapped using `rte_pci_map_device`, the appropriate container is
->> selected. Under the hood though, we essentially transition to getting device fd
->> straight away at assign stage, so that by the time the PCI bus attempts to map
->> the device, it is already mapped and we just return an fd. There is no
->> "unassign" API because `release_device` already performs that function.
->>
->> Because the API is now unified around device assignment, the old group-specific
->> API's can be removed and, where appropriate, reimplemented using new API. There
->> were other users of VFIO which relied on group API but only for convenience
->> purposes; no actual VFIO functionality depended on those API's.
->>
->> List of removed API's:
->>
->> * `rte_vfio_get_group_fd`
->> * `rte_vfio_clear_group`
->> * `rte_vfio_container_group_bind` (replaced by container assign API)
->> * `rte_vfio_container_group_unbind`
->> * `rte_vfio_noiommu_is_enabled` (replaced by new mode API)
->>
->> 3. The API responsibilities aren't clear and bleed into each other
->> ==================================================================
->>
->> Some API's do multiple things at once. In particular:
->>
->> * `rte_vfio_get_device_info` will setup the device
->> * `rte_vfio_setup_device` will get device info
->>
->> These API's have been adjusted to do one thing only.
->>
->> 4. The API does not need to be public
->> =====================================
->>
->> The initial idea for exposing VFIO API was to enable userspace applications to
->> directly map memory for DMA, but it turns out that in practice only drivers use
->> this API. Therefore, the entire VFIO API is made internal, driver-only, and is
->> renamed from `rte_vfio` to `dev_vfio`.
+>> While we're at it, also harden the API against repeated initialization and
+>> attempts at using the API without having VFIO initialized.
 > 
+> - At this point of the series, I don't see the need for this change.
+> The default config vfio_enabled should be set to 0 and could serve the
+> same purpose?
 
-Hi David!
-
-> Thanks for the cleanup!
-> 
-> I am still in the process of reviewing.
-> Some first comments.
-> 
-> 
-> - About patch 1, I am not sure I understand your intention.
-> Without applying it, a conflict appears later in the series.
-> 
-
-It's because the first patch is queued for next-net but our CI doesn't 
-seem to be capable of rebasing on top of that tree yet, so as a 
-workaround (to get compile checks etc.) I added it to the first patch 
-series. The cover letter states that.
+It is not necessary to do it in this specific patch, I just thought to 
+add it because having a proper rte_vfio_cleanup() implies some more 
+rigor than just releasing the multiprocess state. We can move it till 
+later, although it would require rebase work.
 
 > 
-> - Do you know if some Linux capability is needed for using the cdev mode?
-> Did you test this change in (unpriviledged) containers for example?
+> - Should we reset vfio_enabled in rte_vfio_cleanup()?
 
-I did not test such a scenario as I do not have a setup for this. I know 
-we've done internal testing but not for unprivileged/non-root scenarios.
-
-> - It was a ugly/gray area so far, but should we stop exposing an API
-> that do nothing on Windows and FreeBSD?
-> Especially now that we make it internal.
-
-I am not 100% sure why this is necessary to do - my best guess is that 
-some of the drivers call into VFIO API which means it needs to at least 
-link correctly. I would gladly remove all such references, but I would 
-suggest this to be future work and out of scope for this patchset. Now 
-that we're removed the ABI surface we can do whatever!
+Yes, we should.
 
 > 
-> Drivers calling the VFIO API may be broken/falsely announcing support
-> on other OSes.
-> I prefer a clear broken build rather than some runtime failure on
-> those OSes the day someone starts testing.
+>> @@ -2218,9 +2296,72 @@ rte_vfio_container_dma_unmap(int container_fd, uint64_t vaddr, uint64_t iova,
+>>          return container_dma_unmap(vfio_cfg, vaddr, iova, len);
+>>   }
+>>
+>> +static void
+>> +vfio_cleanup_config(struct vfio_config *vfio_cfg)
+>> +{
+>> +       unsigned int i;
+>> +
+>> +       for (i = 0; i < RTE_DIM(vfio_cfg->vfio_groups); i++) {
+>> +               struct vfio_group *group = &vfio_cfg->vfio_groups[i];
+>> +
+>> +               if (group->group_num == -1)
+>> +                       continue;
+>> +               if (group->devices != 0) {
+>> +                       EAL_LOG(ERR, "Cannot cleanup VFIO group %d with %d devices",
+>> +                               group->group_num, group->devices);
+>> +                       return;
+> 
+> Why stop?
+> Should we continue for other groups?
 
-I agree.
+It wouldn't really matter as cleanup would fail anyway and there's 
+nothing we can do about it if we couldn't close all groups. So, tomato, 
+tomato. We can, of course, continue here, and cleanup all groups that we 
+can.
 
-> 
-> --vfio-intr / --vfio-vf-token EAL options are already Linux only.
-> So EAL common code looks already ready.
-> 
-> There may be one complication on the PCI bus side, with its calls to
-> vfio_dma_map/unmap but it seems doable (implement per OS
-> dma_map/dma_unmap internal symbols ?).
-> 
-> Something like:
-> https://github.com/david-marchand/dpdk/commit/cc77440883b0d38b842d6c520292b540eabb78c4
-> https://github.com/david-marchand/dpdk/commit/8f426089f949e0694e5201193be88de673c4283d
-
-That can be done, yes.
-
-> 
-> 
-> - Probably for later, but I see one more constant added in config/meson.build.
-> All VFIO objects seems to be local (or exchanged over MP messages).
-> 
-> How much effort would it take to remove those constants in config/meson.build?
-> I am thinking about RTE_MAX_VFIO_CONTAINERS, RTE_MAX_VFIO_GROUPS,
-> RTE_MAX_VFIO_DEVICES, EAL_VFIO_MAX_USER_MEM_MAPS.
-
-Compile time constants is a balancing act between flexibility and and 
-ease of implementation. *Technically*, because all of the configuration 
-etc. is process local, I believe we can just do per process 
-malloc/realloc and expand these lists as they grow, thereby doing away 
-with any limitations. However, obviosly, it would require some plumbing 
-work.
-
-That said, now that VFIO code is much cleaner and more structured, I do 
-not think it is difficult to do that.
-
-> 
-> 
-> - rte_eal_check_module() only user is VFIO.
-> No opensource project use it.
-> It could be removed in the future.
-> 
-Agree.
 
 -- 
 Thanks,
