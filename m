@@ -2,75 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D02A2C88E77
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 11:48:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7822EC88E77
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 12:18:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E6A854067D;
-	Wed, 16 Sep 2026 13:48:09 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id D6BAB402B0
- for <dev@dpdk.org>; Wed, 16 Sep 2026 13:48:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1789559288;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=dJZc4d4vw5wiM3eCcW2JIhkF5KdCTWNDL5OfuZOdMuo=;
- b=RsPz1fs5GWd++uu86G89M6l+tNLk3v/kjN7gsgsV82LrOruPb0J1w+sMXUtLGhkEitXE1k
- 0+oZ7SMB0B8gBJ+zsd1chj8aAM5EupP0+M1seo3yw0fh3p67Ce8oZTj1QkTSVtEeTaRpkz
- QZsdgYPe6Lc24hKyGVXazxnV5StU09w=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-475-_O7RXpbaPk-p3yTvnRn-og-1; Wed, 16 Sep 2026 07:48:06 -0400
-X-MC-Unique: _O7RXpbaPk-p3yTvnRn-og-1
-X-Mimecast-MFC-AGG-ID: _O7RXpbaPk-p3yTvnRn-og_1789559285
-Received: by mail-lj1-f200.google.com with SMTP id
- 38308e7fff4ca-3a592f20c7cso29182901fa.0
- for <dev@dpdk.org>; Wed, 16 Sep 2026 04:48:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789559285; x=1790164085;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to:content-type;
- bh=dJZc4d4vw5wiM3eCcW2JIhkF5KdCTWNDL5OfuZOdMuo=;
- b=a26CVgEaCb1SvUEAJZHVktDR52O0PVV0fM3mNn1b3C4Uvqn475htSOyxd13HtcDpFN
- rsRKMI91NOzbRHI3L5er1nTWo/zVe4cNQJjm9KiEU92HjCHBnEsfDG31Cs1GPaEK0weP
- Ph1duNDvWhIdHB+7NS/iodTgiJic6S0xGb3TfgG35Fi2m7h4zIhDGf2ectGgVYDI5ir1
- MCIxCqhiVy8Eof20h9uWaSbC9ZItlHQOfssQ+bgZ9VF34CUuh5hPKf6CBKDYzkieoC3E
- dKDpIG1BdnxTLlNtO/JL92iSGvQtt30P+02E1trBZrlerf6MpjGFh+4fyswYDX1a45+u
- WMoA==
-X-Gm-Message-State: AFuF++mnTiEVflV33D/2qi4kC2i4ptLG7Qix273d8rZtui+z1sLDpg1i
- eFF9GyO19kLJAINjzvL4jZxh16F0x+l93hDbIUWWGYsAqARQFIYoK4IC2nk/3DqXsemd0orm3WP
- 6cSsM/VXc4rHdQG5GV+Rnk7HbceiRZvesiF80mhw3Y/e5tXISookGYuvUTJgTCenfpHAQ1Ro20m
- zlEgyC2Za1aqqDXG+4qyn/PhFJE0w=
-X-Gm-Gg: AYBFou28Cqf3W/AYHm0T05JgZcTPOVUpXT9Qq8PXzhR4nPkO+v+iCapY1JSceS70HFx
- vktuI5ZApb1hxJwf/TpfBokUwL/h5QuswO71zf8TUMKTGq+/H/UCSe3uXcKSrna/1cqtDZed6FR
- bse65UaJ8OliZrIbCxS55hQGe+JpaDJP3YBDhCz7+ZwCXl2NDFUpcT2wXxq4E+2BUnzVujNxlHY
- q+1rcWjfXAVPkBdW4EMHlYmFABACvU0iih5DRWQM+i6hUx5
-X-Received: by 2002:a05:6512:3e07:b0:5b6:95e:87ce with SMTP id
- 2adb3069b0e04-5b8b660a94fmr1267481e87.2.1789559284735; 
- Wed, 16 Sep 2026 04:48:04 -0700 (PDT)
-X-Received: by 2002:a05:6512:3e07:b0:5b6:95e:87ce with SMTP id
- 2adb3069b0e04-5b8b660a94fmr1267463e87.2.1789559284282; Wed, 16 Sep 2026
- 04:48:04 -0700 (PDT)
-MIME-Version: 1.0
-References: <20250925130438.3072610-1-david.marchand@redhat.com>
- <20260113080624.2230169-1-david.marchand@redhat.com>
-In-Reply-To: <20260113080624.2230169-1-david.marchand@redhat.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 16 Sep 2026 13:47:52 +0200
-X-Gm-Features: AcwNN1WZe_e3ELkeH50OFvPmD0Sq8tPyHHlrexO32WGRpbKj4F5q_EvMVEep2ME
-Message-ID: <CAJFAV8wyzO8WX+U+fw-ok4JSYtbSobn3bAjv6+a8SBCwGUuYqQ@mail.gmail.com>
-Subject: Re: [PATCH v2] buildtools: add symbol check to Windows
+	by mails.dpdk.org (Postfix) with ESMTP id 5CD05427BA;
+	Wed, 16 Sep 2026 14:18:36 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+ by mails.dpdk.org (Postfix) with ESMTP id 83EA9402B0
+ for <dev@dpdk.org>; Wed, 16 Sep 2026 14:18:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1789561115; x=1821097115;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=ja44p2ShV2/TM0FpijgCphHAOxURCvLanpqKSq5QfL8=;
+ b=gtiTYQRK2D+4z5f7BOIfBEu4PSZ3jcnC7SLEMaR9CJeGAhVpo9qz2eug
+ xVLCsFzCcb58TM/hNmWQJDDXFN+9vPadZ0t8oohKJJKeFGsvhv/PpxMki
+ p9V/R94VR2g5BEiWInX1Cbht6tGBboBtZ+il1rYubeD41FTLdCC/FgAHO
+ dtHJMOo6X/gX6fxMxaxOyAWvvIhBXQB2GAhwof+tY0xh5Lmcp9sbx582W
+ hXX572kaclttDTksqL5XIdny8s8zK/ytLhyPEUKZ+zVR8JL6/lqVDQChE
+ 7gQrlJ53P4XuiAh2UF++rx1JrLllKtRb+EQo7iwYYBJdewzhyh5YiGVFm g==;
+X-CSE-ConnectionGUID: 5wJ0K4cZRaqY3F9tte3HwQ==
+X-CSE-MsgGUID: 3ECSNwyzS5uk4BcfN3mqzA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="112702926"
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="112702926"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+ by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Sep 2026 05:18:34 -0700
+X-CSE-ConnectionGUID: GK2ZSB3hQu+PhHiYgxznIQ==
+X-CSE-MsgGUID: +4Nt9lGvTh207p3zuY0S2w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="272850217"
+Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
+ by orviesa008.jf.intel.com with ESMTP; 16 Sep 2026 05:18:33 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org
-Cc: andremue@linux.microsoft.com, thomas@monjalon.net, 
- bruce.richardson@intel.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: qoWeebDKClW7bygmoiOE_6HTCNKtMt6oS_-14E9geek_1789559285
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH v3 00/19] Building a better rte_flow parser
+Date: Wed, 16 Sep 2026 13:18:06 +0100
+Message-ID: <cover.1789560943.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <cover.1787233986.git.anatoly.burakov@intel.com>
+References: <cover.1787233986.git.anatoly.burakov@intel.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,44 +58,156 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 13 Jan 2026 at 09:06, David Marchand <david.marchand@redhat.com> wrote:
->
-> The symbol check was implemented so far with shell scripts, relying
-> on objdump and other unix tools preventing it from being run on Windows.
->
-> There was also an ask from some maintainers to convert this type of
-> developer checks to python scripts, to make it easier to extend and
-> maintain.
->
-> The new implementation still performs the four consistency checks:
-> - symbols exported as experimental but missing __rte_experimental flag,
-> - symbols flagged as experimental but missing export declaration,
-> - symbols exported as internal but missing __rte_internal flag,
-> - symbols flagged as internal but missing export declaration,
->
-> The initial implementation was done relying on Claude Code
-> (asking it to reimplement the existing check after it analysed
-> the current build flow).
->
-> I then cleaned up the python script, removed dumb comments, fixed coding
-> style, fixed MAINTAINERS, fixed some dumb issues (like definition order in
-> buildtools/meson.build).
->
-> Actual implementation on Windows seems doable now but is left to
-> an interested party.
->
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
-> ---
-> Changes since v1:
-> - asked Claude to fix compatiblity with Python 3.6,
-> - removed unused field ArchiveMember.size,
+Most rte_flow parsers in DPDK suffer from huge implementation complexity because
+even though 99% of what people use rte_flow parsers for is parsing protocol
+graphs, no parser is written explicitly as a graph. This patchset attempts to
+suggest a viable model to build rte_flow parsers as graphs, by offering a
+lightweight header only library to build rte_flow parsering graphs without too
+much boilerplate and complexity.
 
-Not much interest, it seems.
+Most of the patchset is about Intel drivers, but they are meant as
+reimplementations as well as examples for the rest of the community to assess
+how to build parsers using this new infrastructure. I expect the first two
+patches will be of most interest to non-Intel reviewers, as they deal with
+building two reusable parser architecture pieces.
 
-I marked it as RFC in patchwork, and I'll leave it there if someone
-wants to pick it up in the future.
+The first piece is a new flow graph helper in ethdev. Its purpose is
+deliberately narrow: it targets the protocol-graph part of rte_flow pattern
+parsing, where drivers walk packet headers and validate legal item sequences and
+parameters. That does not cover all possible rte_flow features, especially more
+exotic flow items, but it does cover a large and widely shared part of what
+existing drivers need to do. Or, to put it in other words, the only flow items
+this infrastructure *doesn't* cover is things that do not lend themselves well
+to be parsed as a graph of protocol headers (e.g. conntrack items). Everything
+else should be covered or cover-able. In practice, just about all drivers will
+benefit from graph parsing as all but one of them implement only the protocol
+stack parts, which are the ones targeted by the graph helper.
 
+The second piece is a reusable flow engine framework for Intel Ethernet drivers.
+This is kept Intel-local because I do not feel it is even appropriate to define
+such a framework for all drivers to use in the first place. Even so, the intent
+is to establish a cleaner parser architecture with a defined interaction model,
+explicit memory ownership rules, locking, initialization sequence,
+implementations of rte_flow API entry points, flow replay and memory cleanup,
+and engine definitions that do not block secondary-process-safe usage. It is my
+hope that this would serve as a model for other drivers to follow, expand on,
+rework, and improve, so that maybe down the line we *might* have a common
+rte_flow infrastructure for drivers to use.
+
+Most of the rest of the series is parser reimplementation, but that is mainly
+the vehicle for demonstrating and validating those two pieces. ixgbe and i40e
+are wired into the new common parsing path, and their existing parsers are
+migrated incrementally to the graph-based model. Besides reducing ad hoc parser
+code, this also makes validation more explicit and more consistent. In a few
+places that means invalid inputs that were previously ignored, deferred, or
+interpreted loosely are now rejected earlier and more strictly, without any
+increase in code complexity (in fact, with marked *decrease* of it!).
+
+v2 -> v3:
+- Rebase on top of latest next-net-intel
+- Cleanup pass on naming of engines and hash tables
+- Added more logging to flow engine initializations
+- Introduced a lightweight refcount to initialize shared resources
+- Some small refactors in how ixgbe flow director engine keeps its state
+- Fixed typos in documentation
+
+v1 -> v2:
+- Renamed `rte_flow_graph` to `flow_graph`
+- Addressed some comments from Stephen's AI review
+- Removed the rte_flow_conv hack on account of Stephen's upcoming patches making
+  the API stable
+- Split up "flow_install" into register and install steps, which enabled two new
+  use cases: cleanup of memory without HW deregistration, and flow configuration
+  replay after `dev_start`
+- More aggressive refactoring of all engines on account of new pieces of
+  infrastructure, which allows for reduced complexity of implementation
+- Combined i40e tunnel engine patches into one patch
+- Added i40e flow director refactoring to cleanly support the new API as well as
+  the legacy PMD-specific API
+
+RFC -> v1:
+- Fixed a lot of bugs, concurrency issues, and init/uninit sequence problems in
+  Intel common flow engine implementation
+- Fixed a few copypaste errors in various engines
+- Improved comment documentation and flow engine docs
+
+Anatoly Burakov (19):
+  ethdev: add flow graph API
+  net/intel/common: add flow engines infrastructure
+  net/intel/common: add utility functions
+  net/ixgbe: add support for common flow parsing
+  net/ixgbe: reimplement ethertype parser
+  net/ixgbe: reimplement syn parser
+  net/ixgbe: reimplement L2 tunnel parser
+  net/ixgbe: reimplement ntuple parser
+  net/ixgbe: reimplement security parser
+  net/ixgbe: reimplement FDIR parser
+  net/ixgbe: reimplement hash parser
+  net/ixgbe: advertise flow keep capability
+  net/i40e: add support for common flow parsing
+  net/i40e: reimplement ethertype parser
+  net/i40e: refactor FDIR engine infrastructure
+  net/i40e: reimplement FDIR parser
+  net/i40e: reimplement tunnel parsers
+  net/i40e: reimplement hash parser
+  net/i40e: advertise flow keep capability
+
+ doc/guides/prog_guide/ethdev/flow_graph.rst   |  749 +++
+ doc/guides/prog_guide/ethdev/index.rst        |    1 +
+ doc/guides/rel_notes/release_26_11.rst        |    5 +
+ drivers/net/intel/common/flow_engine.h        | 1620 +++++++
+ drivers/net/intel/common/flow_util.h          |  228 +
+ drivers/net/intel/i40e/i40e_ethdev.c          | 1000 +---
+ drivers/net/intel/i40e/i40e_ethdev.h          |  262 +-
+ drivers/net/intel/i40e/i40e_fdir.c            |  983 ++--
+ drivers/net/intel/i40e/i40e_flow.c            | 4185 +----------------
+ drivers/net/intel/i40e/i40e_flow.h            |   30 +
+ drivers/net/intel/i40e/i40e_flow_ethertype.c  |  351 ++
+ drivers/net/intel/i40e/i40e_flow_fdir.c       | 2056 ++++++++
+ drivers/net/intel/i40e/i40e_flow_hash.c       | 1441 ++++++
+ drivers/net/intel/i40e/i40e_flow_tunnel.c     | 1590 +++++++
+ drivers/net/intel/i40e/i40e_hash.c            | 1208 +----
+ drivers/net/intel/i40e/i40e_hash.h            |   19 +-
+ drivers/net/intel/i40e/meson.build            |    4 +
+ drivers/net/intel/i40e/rte_pmd_i40e.c         |    4 +-
+ drivers/net/intel/ixgbe/ixgbe_ethdev.c        |  993 +---
+ drivers/net/intel/ixgbe/ixgbe_ethdev.h        |  235 +-
+ drivers/net/intel/ixgbe/ixgbe_fdir.c          |  304 +-
+ drivers/net/intel/ixgbe/ixgbe_flow.c          | 3217 +------------
+ drivers/net/intel/ixgbe/ixgbe_flow.h          |   27 +
+ .../net/intel/ixgbe/ixgbe_flow_ethertype.c    |  295 ++
+ drivers/net/intel/ixgbe/ixgbe_flow_fdir.c     | 1704 +++++++
+ drivers/net/intel/ixgbe/ixgbe_flow_hash.c     |  212 +
+ drivers/net/intel/ixgbe/ixgbe_flow_l2tun.c    |  317 ++
+ drivers/net/intel/ixgbe/ixgbe_flow_ntuple.c   |  597 +++
+ drivers/net/intel/ixgbe/ixgbe_flow_security.c |  536 +++
+ drivers/net/intel/ixgbe/ixgbe_flow_syn.c      |  312 ++
+ drivers/net/intel/ixgbe/ixgbe_ipsec.c         |  359 +-
+ drivers/net/intel/ixgbe/ixgbe_ipsec.h         |   50 +-
+ drivers/net/intel/ixgbe/ixgbe_pf.c            |   49 +-
+ drivers/net/intel/ixgbe/ixgbe_rxtx.c          |   48 +-
+ drivers/net/intel/ixgbe/meson.build           |    7 +
+ lib/ethdev/flow_graph.h                       |  507 ++
+ lib/ethdev/meson.build                        |    1 +
+ 37 files changed, 14143 insertions(+), 11363 deletions(-)
+ create mode 100644 doc/guides/prog_guide/ethdev/flow_graph.rst
+ create mode 100644 drivers/net/intel/common/flow_engine.h
+ create mode 100644 drivers/net/intel/common/flow_util.h
+ create mode 100644 drivers/net/intel/i40e/i40e_flow.h
+ create mode 100644 drivers/net/intel/i40e/i40e_flow_ethertype.c
+ create mode 100644 drivers/net/intel/i40e/i40e_flow_fdir.c
+ create mode 100644 drivers/net/intel/i40e/i40e_flow_hash.c
+ create mode 100644 drivers/net/intel/i40e/i40e_flow_tunnel.c
+ create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow.h
+ create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_ethertype.c
+ create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_fdir.c
+ create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_hash.c
+ create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_l2tun.c
+ create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_ntuple.c
+ create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_security.c
+ create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_syn.c
+ create mode 100644 lib/ethdev/flow_graph.h
 
 -- 
-David Marchand
+2.52.0
 
