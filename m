@@ -2,54 +2,142 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65C7AC982C9
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 16:36:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41327C982C1
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 16:38:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4CE724028B;
-	Wed, 16 Sep 2026 18:36:36 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 5B83940264
- for <dev@dpdk.org>; Wed, 16 Sep 2026 18:36:34 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=4YxQso2dXs17snsMDzwNCwIUUOKVrkIXIvfxLmL3mdo=;
- b=KLHZqOM/TJ1OTbFTv0Gp/+ZNiAMuskUA6DAJ808znr9HSTB/Xlv9/z0eHVBxYezBMfJSDxqxv
- /Q2jPnggX9VnQWn06hpu8LX9wknEBJVx8C1G/UNU+Zt+4E2p3F/P7tgGwfRp0FGl6bsGZ+U89l+
- Gc6cfF4pVg7/gekNUEnT2Tg=
-Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4hlPf94jDYzHnGfK;
- Thu, 17 Sep 2026 00:36:17 +0800 (CST)
-Received: from dubpeml500003.china.huawei.com (unknown [7.214.146.145])
- by mail.maildlp.com (Postfix) with ESMTPS id 634F340569;
- Thu, 17 Sep 2026 00:36:32 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml500003.china.huawei.com (7.214.146.145) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id E44F642F7D;
+	Wed, 16 Sep 2026 18:38:47 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 8C1B94028B
+ for <dev@dpdk.org>; Wed, 16 Sep 2026 18:38:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1789576725; x=1821112725;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=Bqd0nOeBNK2rZWzeGi7DteAmSw+HQNRZ5A34P2njV7s=;
+ b=FfaPVecD2QrbgjzPeSmZSDCVqZty+bh+Om8IiM8HTzGQJWWGwIesImPf
+ uEK4bEVsRU6ftfM0aJvZhdMSIy0lbcKrWxf11b8UnciYcwpMjb6FnIGlQ
+ d1JG3FsJm/AHXTiOAT1F+dQlif21IqAX8pp9DOhae1T46iuYvzBo1/nSz
+ sQfA1SAzo9u3PNA8l+oU94V2r6U+5uHRrrOlFhbej4wObvsJDqdnjWMCd
+ YahdyEUBETO+Bcfm7NDVDB3GbNAp/cLcdsdyoUM8Z74v7xL4O2vr2Z+fc
+ FwqPgNgwzQHzqCnafnahFT79bamy6V/5K+OFYzQVTpjdRpR+xKPGTtgWW A==;
+X-CSE-ConnectionGUID: kMIiVhl2SM6eM6BdPqo7hA==
+X-CSE-MsgGUID: yV3UxGRVTOGlakSjTvreNw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="93833538"
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="93833538"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+ by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Sep 2026 09:38:44 -0700
+X-CSE-ConnectionGUID: Vow5fQfuTeCa8QYUAdJB1w==
+X-CSE-MsgGUID: Am8XkR+2QwerGHuwTuY4Tg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="272916327"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+ by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Sep 2026 09:38:44 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Wed, 16 Sep 2026 17:36:31 +0100
-Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
- dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.2562.046; 
- Wed, 16 Sep 2026 17:36:31 +0100
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: Marat Khalili <marat.khalili@huawei.com>, Thomas Monjalon
- <thomas@monjalon.net>
-CC: "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH v3 7/7] app/validate-bpf: add BPF validation application
-Thread-Topic: [PATCH v3 7/7] app/validate-bpf: add BPF validation application
-Thread-Index: AQHdRUgnXpUPt5Qj80OPHbHXV9rVzrbRT+BA
-Date: Wed, 16 Sep 2026 16:36:31 +0000
-Message-ID: <43f6ed3428844950949b12a7551332a9@huawei.com>
-References: <20260914145418.37353-1-marat.khalili@huawei.com>
- <20260915192626.48125-1-marat.khalili@huawei.com>
- <20260915192626.48125-8-marat.khalili@huawei.com>
-In-Reply-To: <20260915192626.48125-8-marat.khalili@huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.195.247.58]
+ 15.2.2562.46; Wed, 16 Sep 2026 09:38:44 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46 via Frontend Transport; Wed, 16 Sep 2026 09:38:44 -0700
+Received: from CO1PR03CU002.outbound.protection.outlook.com (52.101.46.48) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.46; Wed, 16 Sep 2026 09:38:41 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QnUlJYLvxE3+U69e6kOGNaHYi2IR7PoabvfeaVB0boc5S0LRygfxN/rd1jFnHkyJiYn7dgPOVMJjIN9u2p/DjJf8mZSSG59GKQobpEimrHFQWW83t/A/n8JCr4G+zaJ/FS1PTCJ1Hg/J5QwqcISh0/xkBKv02K7KBKlXlDYKbSCHbP6BZ3PufM6ZCP7hOfN50vxhfyUcU03vrr555lsnZHiWE7hcFT6SM7GbANmygm/AQwy5qKJaGwYFezLibWzK+i48RM6Mv2jVhP/Yl4SXw+jaXf4gwA/I/Q5z5E4qge7qHCM2kxf+bjAx43Uq0i0M/GeTQ8UaBewlc/48fcz+mQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VNUQUqyIA5c+m3/WwzL3gutb+CNLm0Ronjpkm81ABBQ=;
+ b=LTXw5q13sX6wmYRAc5gHZVWlW8OM/+PKIqw22UgjPyQH2N0RZYheS7W3Ne7v2d0Bp3kEQ0Fa5LJoAC/Lpb/dceV5Vws1AKxtFIAnHOrT0sT/nWrehzH8AMd7EKwn97+pMLVjEDMWxBzdUACLkXfrFYI9BpKMi0k946NFmjAzWeeRjifCqnG2w17M8SgmCj+009/oGvHmM26jdTPqZGoPkS5cU0RNCR+R4AIPfrggk/oMzUkUjh9+20Hy6GfnmxhpBIJS5d2k2xTBOmZbOD/VcGIm7YOu1+F9/qBQEps3tbVSbO7stx8cHxSgqXw3KAPEkfQOD6A/F9D2AEwCoXEtOw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
+ by CY8PR11MB7746.namprd11.prod.outlook.com (2603:10b6:930:86::22)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.9; Wed, 16 Sep
+ 2026 16:38:23 +0000
+Received: from SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
+ ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0406.007; Wed, 16 Sep 2026
+ 16:38:23 +0000
+Date: Wed, 16 Sep 2026 17:38:17 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+CC: <dev@dpdk.org>, <anatoly.burakov@intel.com>
+Subject: Re: [PATCH v2] net/ice: support link flow control
+Message-ID: <aqrF-QLwNCA_91NU@bricha3-mobl1.ger.corp.intel.com>
+References: <20260901151233.1110607-1-vladimir.medvedkin@intel.com>
+ <20260910112524.1547156-1-vladimir.medvedkin@intel.com>
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <20260910112524.1547156-1-vladimir.medvedkin@intel.com>
+X-ClientProxiedBy: DU2P251CA0001.EURP251.PROD.OUTLOOK.COM
+ (2603:10a6:10:230::12) To SN7PR11MB8066.namprd11.prod.outlook.com
+ (2603:10b6:806:2df::18)
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|CY8PR11MB7746:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8f745a52-6d1a-43a7-ff8e-08df1410ec33
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|366016|23010399003|376014|1800799024|56012099006|4143699003|11063799006|10067099003|18002099003|18092099006|22082099003|6133799003;
+X-Microsoft-Antispam-Message-Info: nXWNkNFDF7c5g7qNj/zTws6Odjx5dFsb90XEPGc2oMzm+pA9UTHUMTsivOXE8kBXyAJRkdY8SDFECsbt3YSp9L89v41ru+rcOfDRN0W9JEMUYe+eWSFB5NsNqH7T35T30nUVCa24EGMwh00NLjm6+oQp/AqdiHxQ8DxFmqp636ZoBBIYbOGW1AVGzw/1JwYg4rFsGjlKIjaywgQWtTVCUYURmzwJ8Rb0jFzHKg5rAm+Mm+FIzpjOaM8mn2aILTovBsO8MA7bKdOnlyOxDgTuZoFQsEbwbJ7Yhu7rmAaQEaCEtSK2tmOsbBeqYgKX42nmar+8ElMu7Rt1JKN0TNnfIDzTSomtZP5V93V/Og+bpP0yIYww650QwYwTMixbW6jGXtijT7+iV7o1jJQI6GK1gOAvOn3qDVzDXA+gBiHbjPnBjwilv/PsIdfXCmbAulkT5wlMdczPN0RIH0NV9qOEworaTZxUCcIDFk0HmT1xrgC0+duLXicGoHU8aPh8kb1/w1TzSj4L443DwZO52TgtGs6/zfeyRFJ7fO2TsaRMDKRlInE44FT/Ki8+21qK+KsR+no/N2YbQQqBkZcLOWQlwXigZcMqBuOX08Im9HIha3qas0kXcZmQvh/GKW7rIOCspIVtz6LtAVaQjuRScAu982ORNLaclAM+Laad/pkUqeE=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(23010399003)(376014)(1800799024)(56012099006)(4143699003)(11063799006)(10067099003)(18002099003)(18092099006)(22082099003)(6133799003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?2Vu7uTd6q75wmV4Rm0Av6fU8P7OVhH7g7SNrYzOfICG696QnnutpgKCMBjQb?=
+ =?us-ascii?Q?Y15tm9hXQGRxoe3O8A2ycJZUOMzcPRh7GJxedobLErXx924J0NnN/aIk/vXa?=
+ =?us-ascii?Q?uvbx7gyWNLmUPX2S63Ni2s32rhqIa2FV5ysjeYwrJ/FFHn7nAIwjNy8pcAMR?=
+ =?us-ascii?Q?yD0w2GPrEN1nFxPMFmI0O7EjxcXvWcCXynBnQuXPKOWITG4cU3Mhwc5cDcTE?=
+ =?us-ascii?Q?nuvRtUopKSf84cgyIw8oWHQw7Lj1iB7HfarQQU4yLSOa1Oi605Z8GlPlVrey?=
+ =?us-ascii?Q?N6plDFGeTqT125x1pIkhNxj8ZSzgqN62fWy7dnEVcCseSTsOnvjf6gyug3xW?=
+ =?us-ascii?Q?1YkXdHvQEVi6ZyLniWHVkV0eYQDq952LOx8PmaSMqJZIM/emv/yEGyegrT66?=
+ =?us-ascii?Q?p0T210uIdk7sbzs2+ehYo/C5oOqyp514Y/4KGa9jTdHxuAdXm02CCOeHBSWl?=
+ =?us-ascii?Q?sGyaKkgDe2QxEi13wZdMgX4+3Tr3Fa5ywgkHg3MLg1xPpYgJnmgNggKW7kCe?=
+ =?us-ascii?Q?KWk9/EeDGWHDZDlWC+a1pKtZ5/U5cWpPIGvexk0pP/LbJ5sicIv3ld2Kos2E?=
+ =?us-ascii?Q?PozVWfsjnGvQuyWuQ5EsXgCT4GDvjUEVL/KrExmr7X6IxaIizuQCUj4lLAfg?=
+ =?us-ascii?Q?WRJ5n8MXav+FrBxKX6Rpr97Yz0oZy2yO6Nem9P3OhtIIe9iKLXLPJXB5bPk/?=
+ =?us-ascii?Q?feRq3Cs5sQCI0dIZ4o+/OjzDKiGaA2aMdrwoXbgoozUogA/uq6MWr2wdXxxG?=
+ =?us-ascii?Q?EfbOWOB/RdWypLQKsLKt77kjKKxRcMhh+bwojeIAqxz31SNd1Rnor8MtKI2m?=
+ =?us-ascii?Q?7r1lvpBfzBCKLCHkLdzgjcv5955iLATgFjEHOdkTEiDREqv5b/32Ng94ggkm?=
+ =?us-ascii?Q?LUVRMCsdHRgyRi6xIakWYDPugVxthXHjlZZxZUgVPqE8gEsgvNZXQ2V/KeV6?=
+ =?us-ascii?Q?n9wg2jbj5ezWQ6+iJK6BNkUYEG4fy4GaKnEDegtCjUhGK0yKJ8ltJSVHYCBR?=
+ =?us-ascii?Q?kIhbOvaE9qazEtvjTDkv8Zjnzml8eSrQPlKW5+OIfWyvLZLpI4JuQEb9pnPD?=
+ =?us-ascii?Q?CQKLkW+VIgEFMpLGIGh0pd0m2RoLbDvlS1g+7REjTIcFEWbv7gE86mD7ADg1?=
+ =?us-ascii?Q?sXV7u031eZUUYbPIIFjM35y4cIOzwLhe4nG8qySq+a/bOYaHQh/ItdB+FWZQ?=
+ =?us-ascii?Q?YnWSRnRyRwJNY0IbKYeBNHTNyYQHip4lHNoikcn6VjSk6KnF8DKh82tmKR+y?=
+ =?us-ascii?Q?uduBratvhHGgIMY7UVFo54+43qxPBdzh1aRE2TMDaQ0ZvnrHCSn0Rt7u2NfJ?=
+ =?us-ascii?Q?nX/hjtzCd5ouE5xcf+SJoWmw/8JPu6AI0hpkRZH8G/IFMlHw/nB6/zMsX6ok?=
+ =?us-ascii?Q?bUua8j/OFLydqNjcAgwxTZr14ci1N1iam8eeyw3ibA69BARVW6UaREes9seH?=
+ =?us-ascii?Q?lCoZDBaAdk5HceeR75LEhhgbuy4YnXNS0d2KIlHgX8Gl52VofxoRXEhOr+mp?=
+ =?us-ascii?Q?rq3J6U997/xIWjnjHLPvcc7kXiHRL/2NOD92KX2LXQbDUJ2adUa7xZ35gjTe?=
+ =?us-ascii?Q?M/I29geZotVj/6axTAOFCr7dVzjr/2QbvgxY3hEgDCUEdGSe++Je3B0rGplD?=
+ =?us-ascii?Q?9KicaRf9DZsTUP1v5jhH1InikgFJcZEyrJHWlRdwy+QT/5WYIjE1Njd8J0Iy?=
+ =?us-ascii?Q?4lzy98VjsL1RtiSh1oiHaKv/X7/iawADB/J0P2Tu7MyLoqP74BE4VVHuMRTU?=
+ =?us-ascii?Q?HdQDmFfwSt6hbq1AnY10jzTOEMUKokY=3D?=
+X-Exchange-RoutingPolicyChecked: ntb+pgBzVKCkEL6L+W4RdKD+RLkK895HDktSGSVD6B7ODmB3hSLMMqBZzqsT12OSY/BDxwDJd/Y9RzLXFeVLVgl5z7YV05RyB953pyqUA0xxnFPTWFpDN5sRYEex+J6ldLrr2l1e3Ceyfsby5+zDZbRmpZEmmO0yI7daMd4VZmf06eCo4220UOCiJtjwKeq0k716h8uNMmoLGYBePX1q3HrnnWqA4otoi2ZStwjZCNkoytiIHqM+Su2QgMNTrOHD4qJ63JSzIbYLI+iovusOp963/1ZQbXM4Hd98uhzxuK/ubR8mnpAbOTC8HR8ezVLBGhMmMpJPWjJ4+jCbDXgx3w==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f745a52-6d1a-43a7-ff8e-08df1410ec33
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2026 16:38:22.8373 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +jNVf2fEQVIZLR8oo3//WCsWgY2yD1SbeqJ4pSTXi5KVo7HmV7oiFf13yJ9ghhAOghNYfCGOFU6iiir5tfMGq1/ykjbZ8xNGtJ3Io/0+s4w=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7746
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -63,3119 +151,410 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-
-> Add a new DPDK application, dpdk-validate-bpf, for pre-validating eBPF
-> programs for compatibility with the lib/bpf execution context.
->=20
-> The application allows evaluating eBPF programs against the DPDK verifier
-> before loading them into a real application. It includes an interactive
-> debugging mode to trace state changes per instruction and understand the
-> validator's decisions.
->=20
-> Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
+On Thu, Sep 10, 2026 at 11:25:24AM +0000, Vladimir Medvedkin wrote:
+> Add get and set functions for link flow control (802.3x).
+> 
+> Signed-off-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 > ---
->  MAINTAINERS                            |    2 +
->  app/meson.build                        |    1 +
->  app/validate-bpf/alloc_list.c          |   53 ++
->  app/validate-bpf/args.c                |  263 ++++++
->  app/validate-bpf/debug.c               | 1103 ++++++++++++++++++++++++
->  app/validate-bpf/debug_command.c       |  383 ++++++++
->  app/validate-bpf/debug_command.h       |   65 ++
->  app/validate-bpf/eal_init_args.c       |   57 ++
->  app/validate-bpf/internal.h            |  151 ++++
->  app/validate-bpf/main.c                |   90 ++
->  app/validate-bpf/meson.build           |   13 +
->  app/validate-bpf/parse_decl.c          |  623 +++++++++++++
->  doc/guides/rel_notes/release_26_11.rst |    5 +
->  doc/guides/tools/index.rst             |    1 +
->  doc/guides/tools/validate_bpf.rst      |   97 +++
->  15 files changed, 2907 insertions(+)
->  create mode 100644 app/validate-bpf/alloc_list.c
->  create mode 100644 app/validate-bpf/args.c
->  create mode 100644 app/validate-bpf/debug.c
->  create mode 100644 app/validate-bpf/debug_command.c
->  create mode 100644 app/validate-bpf/debug_command.h
->  create mode 100644 app/validate-bpf/eal_init_args.c
->  create mode 100644 app/validate-bpf/internal.h
->  create mode 100644 app/validate-bpf/main.c
->  create mode 100644 app/validate-bpf/meson.build
->  create mode 100644 app/validate-bpf/parse_decl.c
->  create mode 100644 doc/guides/tools/validate_bpf.rst
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index e99a65d1974d..39cd0a3de6fa 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1923,8 +1923,10 @@ F: lib/bpf/
->  F: examples/bpf/
->  F: app/test/test_bpf*
->  F: app/test/bpf/
-> +F: app/validate-bpf/
->  F: app/test-pmd/bpf_cmd.*
->  F: doc/guides/prog_guide/bpf_lib.rst
-> +F: doc/guides/tools/validate_bpf.rst
->=20
->  Graph
->  M: Jerin Jacob <jerinj@marvell.com>
-> diff --git a/app/meson.build b/app/meson.build
-> index 1798db3ae43f..9b59ae483056 100644
-> --- a/app/meson.build
-> +++ b/app/meson.build
-> @@ -33,6 +33,7 @@ apps =3D [
->          'test-regex',
->          'test-sad',
->          'test-security-perf',
-> +        'validate-bpf',
->  ]
->=20
->  if get_option('tests')
-> diff --git a/app/validate-bpf/alloc_list.c b/app/validate-bpf/alloc_list.=
-c
-> new file mode 100644
-> index 000000000000..2f4d18ad3df6
-> --- /dev/null
-> +++ b/app/validate-bpf/alloc_list.c
-> @@ -0,0 +1,53 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> + * Copyright(c) 2025 Huawei Technologies Co., Ltd
-> + */
-> +
-> +#include "internal.h"
-> +#include <stdlib.h>
-> +
-> +
-> +/* Needs to be a power of two. */
-> +#define START_CAPACITY (1u << 3)
-> +
-> +size_t
-> +alloc_list_append(struct alloc_list *alloc_list, void *ptr)
-> +{
-> +	if (alloc_list->count =3D=3D 0) {
-> +		RTE_ASSERT(alloc_list->ptrs =3D=3D NULL);
-> +		alloc_list->ptrs =3D malloc(
-> +			sizeof(alloc_list->ptrs[0]) * START_CAPACITY);
-> +		RTE_VERIFY(alloc_list->ptrs !=3D NULL);
-> +	} else if (alloc_list->count >=3D START_CAPACITY &&
-> +			/* Power of two detection */
-> +			(alloc_list->count & (alloc_list->count - 1)) =3D=3D 0) {
-> +		/*
-> +		 * We allocate in powers of two, and current count is one of
-> +		 * these powers, so need to reallocate to larger capacity.
-> +		 */
-> +		RTE_ASSERT(alloc_list->ptrs !=3D NULL);
-> +		const size_t new_capacity =3D alloc_list->count * 2;
-> +		alloc_list->ptrs =3D realloc(alloc_list->ptrs,
-> +			sizeof(alloc_list->ptrs[0]) * new_capacity);
-> +		RTE_VERIFY(alloc_list->ptrs !=3D NULL);
-> +	}
-> +	alloc_list->ptrs[alloc_list->count] =3D ptr;
-> +	return alloc_list->count++;
-> +}
-> +
-> +void alloc_list_replace(struct alloc_list *alloc_list, size_t index, voi=
-d *ptr)
-> +{
-> +	RTE_ASSERT(index < alloc_list->count);
-> +	alloc_list->ptrs[index] =3D ptr;
-> +}
-> +
-> +void alloc_list_free_all(struct alloc_list *alloc_list)
-> +{
-> +	/* Copy and clear fields first in case alloc_list itself gets freed. */
-> +	size_t count =3D alloc_list->count;
-> +	void ** const ptrs =3D alloc_list->ptrs;
-> +	*alloc_list =3D (struct alloc_list){};
-> +
-> +	while (count !=3D 0)
-> +		free(ptrs[--count]);
-> +	free(ptrs);
-> +}
-> diff --git a/app/validate-bpf/args.c b/app/validate-bpf/args.c
-> new file mode 100644
-> index 000000000000..cd7cbd694a3c
-> --- /dev/null
-> +++ b/app/validate-bpf/args.c
-> @@ -0,0 +1,263 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> + * Copyright(c) 2025 Huawei Technologies Co., Ltd
-> + */
-> +
-> +#include "internal.h"
-> +
-> +#include <ctype.h>
-> +#include <getopt.h>
-> +#include <stdlib.h>
-> +
-> +#include <rte_errno.h>
-> +
-> +
-> +/* Values to be used in getopt_long option.val. */
-> +enum app_args {
-> +	ARG_UNRECOGNIZED =3D '?',
-> +	ARG_AUTO =3D 0,	/* Value set by getopt_long when flag is non-NULL. */
-> +	ARG_HELP,	/* Keep this one in the beginning for UX reasons. */
-> +	ARG_DEBUG,
-> +	ARG_MBUF_BUF_SIZE,
-> +	ARG_NO_PROG_ARGS,
-> +	ARG_PROG_ARG,
-> +	ARG_SECTION,
-> +	ARG_XSYM,
-> +};
-> +
-> +/* Program options. */
-> +static struct option OPTIONS[] =3D {
 
-Here and everywhere:
-By DPDK coding convention variable names are in lowercase:
-https://doc.dpdk.org/guides-25.07/contributing/coding_style.html
+A few minor comments inline below.
 
-> +	{
-> +		.name =3D "help",
-> +		.val =3D ARG_HELP,
-> +	},
-> +	{
-> +		.name =3D "debug",
-> +		.val =3D ARG_DEBUG,
-> +	},
-> +	{
-> +		.name =3D "mbuf-buf-size",
-> +		.has_arg =3D required_argument,
-> +		.val =3D ARG_MBUF_BUF_SIZE,
-> +	},
-> +	{
-> +		.name =3D "no-prog-arg",
-> +		.val =3D ARG_NO_PROG_ARGS,
-> +	},
-> +	{
-> +		.name =3D "no-prog-args",
-> +		.val =3D ARG_NO_PROG_ARGS,
-> +	},
-> +	{
-> +		.name =3D "prog-arg",
-> +		.has_arg =3D required_argument,
-> +		.val =3D ARG_PROG_ARG,
-> +	},
-> +	{
-> +		.name =3D "section",
-> +		.has_arg =3D required_argument,
-> +		.val =3D ARG_SECTION,
-> +	},
-> +	{
-> +		.name =3D "xsym",
-> +		.has_arg =3D required_argument,
-> +		.val =3D ARG_XSYM,
-> +	},
-> +	{ /* terminating zero record */ }
-> +};
+/Bruce
+
+>  doc/guides/nics/features/ice.ini       |   1 +
+>  doc/guides/rel_notes/release_26_11.rst |   4 +
+>  drivers/net/intel/ice/ice_ethdev.c     | 271 +++++++++++++++++++------
+>  drivers/net/intel/ice/ice_ethdev.h     |   1 +
+>  4 files changed, 217 insertions(+), 60 deletions(-)
+> 
+> diff --git a/doc/guides/nics/features/ice.ini b/doc/guides/nics/features/ice.ini
+> index 893d09e9ec..309f691f32 100644
+> --- a/doc/guides/nics/features/ice.ini
+> +++ b/doc/guides/nics/features/ice.ini
+> @@ -30,6 +30,7 @@ RSS hash             = Y
+>  RSS key update       = Y
+>  RSS reta update      = Y
+>  VLAN filter          = Y
+> +Flow control         = Y
+>  Traffic manager      = Y
+>  CRC offload          = Y
+>  VLAN offload         = Y
+> diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+> index c8cc86295d..5c4cd8a6df 100644
+> --- a/doc/guides/rel_notes/release_26_11.rst
+> +++ b/doc/guides/rel_notes/release_26_11.rst
+> @@ -55,6 +55,10 @@ New Features
+>       Also, make sure to start the actual text at the margin.
+>       =======================================================
+>  
+> +* **Updated Intel ice driver.**
 > +
-> +/* Default args value. */
-> +static const struct args ARGS_DEFAULT =3D {
-> +	.bpf_prm =3D {
-> +		.sz =3D sizeof(struct rte_bpf_prm_ex),
-> +		.origin =3D RTE_BPF_ORIGIN_ELF_FILE,
-> +		.elf_file.section =3D ".text",
-> +	},
-> +	.mbuf_buf_size =3D RTE_MBUF_DEFAULT_BUF_SIZE,
-> +};
+> +  * Added support for getting and setting link (802.3x) flow control.
 > +
-> +/* Default --prog-arg argument value. */
-> +static const char * const PROG_ARG_DEFAULT =3D "struct rte_mbuf *";
+>  
+>  Removed Items
+>  -------------
+> diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
+> index 76b8ff0a72..909b3ef963 100644
+> --- a/drivers/net/intel/ice/ice_ethdev.c
+> +++ b/drivers/net/intel/ice/ice_ethdev.c
+> @@ -211,7 +211,12 @@ static int ice_fec_set(struct rte_eth_dev *dev, uint32_t fec_capa);
+>  static const uint32_t *ice_buffer_split_supported_hdr_ptypes_get(struct rte_eth_dev *dev,
+>  						size_t *no_of_elements);
+>  static int ice_get_dcb_info(struct rte_eth_dev *dev, struct rte_eth_dcb_info *dcb_info);
+> +static void ice_set_dflt_mib(struct rte_eth_dev *dev);
+> +static int ice_flow_ctrl_get(struct rte_eth_dev *dev, struct rte_eth_fc_conf *fc_conf);
+> +static int ice_flow_ctrl_set(struct rte_eth_dev *dev, struct rte_eth_fc_conf *fc_conf);
+>  static int ice_priority_flow_ctrl_set(struct rte_eth_dev *dev, struct rte_eth_pfc_conf *pfc_conf);
+> +static int ice_cfg_fc_params(struct rte_eth_dev *dev, uint8_t tc, uint8_t tc_bitmap,
+> +			     const struct rte_eth_fc_conf *fc_conf);
+>  
+>  static const struct rte_pci_id pci_id_ice_map[] = {
+>  	{ RTE_PCI_DEVICE(ICE_INTEL_VENDOR_ID, ICE_DEV_ID_E823L_BACKPLANE) },
+> @@ -352,6 +357,8 @@ static const struct eth_dev_ops ice_eth_dev_ops = {
+>  	.fec_set                      = ice_fec_set,
+>  	.buffer_split_supported_hdr_ptypes_get = ice_buffer_split_supported_hdr_ptypes_get,
+>  	.get_dcb_info                 =	ice_get_dcb_info,
+> +	.flow_ctrl_get                = ice_flow_ctrl_get,
+> +	.flow_ctrl_set                = ice_flow_ctrl_set,
+>  	.priority_flow_ctrl_set       = ice_priority_flow_ctrl_set,
+>  };
+>  
+> @@ -1468,9 +1475,16 @@ ice_handle_aq_msg(struct rte_eth_dev *dev)
+>  		switch (opcode) {
+>  		case ice_aqc_opc_get_link_status:
+>  			ret = ice_link_update(dev, 0);
+> -			if (!ret)
+> +			if (!ret) {
+> +				/* On link-up, reapply the default single-TC configuration. */
+> +				if ((hw->port_info->phy.link_info.link_info & ICE_AQ_LINK_UP) &&
+> +						!(dev->data->dev_conf.rxmode.mq_mode &
+> +							RTE_ETH_MQ_RX_DCB_FLAG))
+> +					ice_set_dflt_mib(dev);
 > +
-> +
-> +void
-> +print_usage(const char *program_name)
+>  				rte_eth_dev_callback_process
+>  					(dev, RTE_ETH_EVENT_INTR_LSC, NULL);
+> +			}
+>  			break;
+>  		default:
+>  			PMD_DRV_LOG(DEBUG, "Request %u is not supported yet",
+> @@ -4073,6 +4087,22 @@ ice_dev_configure(struct rte_eth_dev *dev)
+>  	return 0;
+>  }
+>  
+> +static int
+> +ice_get_link_info_safe(struct ice_pf *pf, bool ena_lse,
+> +		       struct ice_link_status *link)
 > +{
-> +	static const char *const options[][2] =3D {
-> +		{ "--help", "Display help and exit." },
-> +		{ "--debug", "Enable interactive debug mode." },
-> +		{ "--mbuf-buf-size=3DMBUF_BUF_SIZE", "Size of the mbuf data buffer
-> (in bytes)." },
-> +		{ "--prog-arg=3DTYPE", "Expected type of the next BPF program
-> argument (up to 5)." },
-> +		{ "--no-prog-args", "BPF program does not take any arguments." },
-> +		{ "--section=3DSECTION", "ELF section name in the BPF object file to
-> load." },
-> +		{ "--xsym=3D'TYPE NAME[(TYPE, ...)]'", "External symbol BPF program
-> can access." },
-> +	};
+> +	struct ice_hw *hw = ICE_PF_TO_HW(pf);
+> +	int ret;
 > +
-> +	printf("USAGE: %s [OPTIONS]... BPF_PATH\n", program_name);
-> +	printf("OPTIONS:\n");
-> +	for (int oi =3D 0; oi !=3D RTE_DIM(options); ++oi)
-> +		printf("\t%-31s %s\n", options[oi][0], options[oi][1]);
+> +	rte_spinlock_lock(&pf->link_lock);
+> +
+> +	ret = ice_aq_get_link_info(hw->port_info, ena_lse, link, NULL);
+> +
+> +	rte_spinlock_unlock(&pf->link_lock);
+> +
+> +	return ret;
 > +}
 > +
-> +void
-> +print_defaults(void)
+
+Rather than moving this function up, why not just put a prototype
+declaration for it at the top of the file with all the other static
+functions? It would make the diff smaller.
+
+>  static int
+>  ice_get_dcb_info(struct rte_eth_dev *dev, struct rte_eth_dcb_info *dcb_info)
+>  {
+> @@ -4105,6 +4135,182 @@ ice_get_dcb_info(struct rte_eth_dev *dev, struct rte_eth_dcb_info *dcb_info)
+>  	return 0;
+>  }
+>  
+> +/*
+> + * Program a default single-TC local LLDP MIB configuration. All user priorities
+> + * map to TC0 at 100% bandwidth.
+> + */
+> +static void
+> +ice_set_dflt_mib(struct rte_eth_dev *dev)
 > +{
-> +	printf("DEFAULTS:"
-> +			" --mbuf-buf-size=3D%#zx"
-> +			" --prog-arg=3D'%s'"
-> +			" --section=3D'%s'\n",
-> +		(size_t)RTE_MBUF_DEFAULT_BUF_SIZE,
-> +		PROG_ARG_DEFAULT,
-> +		ARGS_DEFAULT.bpf_prm.elf_file.section);
+> +	struct ice_hw *hw = ICE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
+> +	struct ice_dcbx_cfg dcbcfg = { 0 };
+> +	uint8_t lldpmib[ICE_LLDPDU_SIZE] = { 0 };
+> +	uint16_t miblen;
+> +
+> +	dcbcfg.etscfg.willing = 1;
+> +	dcbcfg.etscfg.maxtcs = hw->func_caps.common_cap.maxtc;
+> +	dcbcfg.etscfg.tcbwtable[0] = 100;
+> +	dcbcfg.etscfg.tsatable[0] = ICE_IEEE_TSA_ETS;
+> +	dcbcfg.etsrec = dcbcfg.etscfg;
+> +	dcbcfg.etsrec.willing = 0;
+> +	dcbcfg.pfc.willing = 1;
+> +	dcbcfg.pfc.pfccap = hw->func_caps.common_cap.maxtc;
+> +
+> +	ice_dcb_cfg_to_lldp(lldpmib, &miblen, &dcbcfg, ICE_SET_PFC_SYM);
+> +
+> +	if (ice_aq_set_lldp_mib(hw, SET_LOCAL_MIB_TYPE_LOCAL_MIB, lldpmib, miblen, NULL))
+> +		PMD_DRV_LOG(ERR, "Failed to set default LLDP MIB");
 > +}
 > +
 > +static int
-> +parse_size(size_t *result, const char *text)
+> +ice_flow_ctrl_get(struct rte_eth_dev *dev, struct rte_eth_fc_conf *fc_conf)
 > +{
-> +	char *parse_end =3D NULL;
+> +	struct ice_pf *pf = ICE_DEV_PRIVATE_TO_PF(dev->data->dev_private);
+> +	struct ice_hw *hw = ICE_PF_TO_HW(pf);
+> +	struct ice_port_info *pi = hw->port_info;
+> +	bool enable_lse = dev->data->dev_conf.intr_conf.lsc ? true : false;
+> +	struct ice_link_status link_status;
+> +	int ret;
 > +
-> +	errno =3D 0;
-> +	const uintmax_t strtoumax_result =3D strtoumax(text, &parse_end, 0);
-
-Curious, why not just stroul()?
-
-> +	if (errno !=3D 0 || *parse_end !=3D '\0' || strtoumax_result =3D=3D 0 |=
-|
-> +			strtoumax_result > SIZE_MAX)
-> +		return -1;
-> +
-> +	*result =3D strtoumax_result;
-> +	return 0;
-> +}
-> +
-> +struct args *
-> +args_parse(int argc, char *argv[])
-> +{
-> +	int val;
-> +	size_t xsym_alloc_index;
-> +	struct rte_bpf_xsym *xsym =3D NULL;
-> +	const char * const program_name =3D argv[0];
-> +
-> +	/* Allocate args and set aliases for some of its members. */
-> +	struct args * const args =3D malloc(sizeof(*args));
-> +	RTE_VERIFY(args !=3D NULL);
-> +	struct alloc_list * const alloc_list =3D &args->_alloc_list;
-> +	struct rte_bpf_prm_ex * const bpf_prm =3D &args->bpf_prm;
-> +
-> +	/* Set default values. */
-> +	*args =3D ARGS_DEFAULT;
-> +	RTE_VERIFY(parse_arg(&bpf_prm->prog_arg[bpf_prm->nb_prog_arg++],
-> +		PROG_ARG_DEFAULT) >=3D 0);
-> +	bool default_prog_args =3D true;
-> +
-> +	/* Reserve space for xsym in alloc_list. */
-> +	xsym_alloc_index =3D alloc_list_append(alloc_list, xsym);
-> +
-> +	while ((val =3D getopt_long(argc, argv, "", OPTIONS, NULL)) !=3D EOF) {
-> +		int rc =3D 0;
-> +		switch (val) {
-> +		case ARG_AUTO:
-> +			/* getopt_long made the assignment, nothing to do */
-> +			break;
-> +		case ARG_HELP:
-> +			args->show_help =3D true;
-> +			break;
-> +		case ARG_DEBUG:
-> +			if (bpf_prm->debug =3D=3D NULL)
-> +				bpf_prm->debug =3D debug_create();
-> +			if (bpf_prm->debug =3D=3D NULL) {
-> +				rc =3D -rte_errno;
-> +				fprintf(stderr,
-> +					"%s: error %d creating debug session\n",
-> +					program_name, -rc);
-> +			}
-> +			break;
-> +		case ARG_MBUF_BUF_SIZE:
-> +			rc =3D parse_size(&args->mbuf_buf_size, optarg);
-> +			if (rc < 0)
-> +				fprintf(stderr,
-> +					"%s: invalid mbuf buf size '%s'\n",
-> +					program_name, optarg);
-> +			break;
-> +		case ARG_NO_PROG_ARGS:
-> +			bpf_prm->nb_prog_arg =3D 0;
-> +			default_prog_args =3D false;
-> +			break;
-> +		case ARG_PROG_ARG:
-> +			if (default_prog_args) {
-> +				bpf_prm->nb_prog_arg =3D 0;
-> +				default_prog_args =3D false;
-> +			}
-> +
-> +			if (bpf_prm->nb_prog_arg =3D=3D RTE_DIM(bpf_prm-
-> >prog_arg)) {
-> +				fprintf(stderr,
-> +					"%s: at most %d program arguments
-> allowed\n",
-> +					program_name,
-> +					(int)RTE_DIM(bpf_prm->prog_arg));
-> +				rc =3D -EINVAL;
-> +				break;
-> +			}
-> +
-> +			rc =3D parse_arg(&bpf_prm->prog_arg[bpf_prm-
-> >nb_prog_arg++],
-> +				optarg);
-> +			if (rc < 0)
-> +				fprintf(stderr,
-> +					"%s: unrecognized prog arg '%s'\n",
-> +					program_name, optarg);
-> +
-> +			break;
-> +		case ARG_SECTION:
-> +			bpf_prm->elf_file.section =3D optarg;
-> +			break;
-> +		case ARG_XSYM:
-> +			bpf_prm->xsym =3D xsym =3D realloc(xsym,
-> +				sizeof(xsym[0]) * (bpf_prm->nb_xsym + 1));
-> +			RTE_VERIFY(xsym !=3D NULL);
-> +			alloc_list_replace(alloc_list, xsym_alloc_index, xsym);
-> +			rc =3D parse_xsym(&xsym[bpf_prm->nb_xsym++], optarg,
-> +					alloc_list);
-> +			if (rc < 0)
-> +				fprintf(stderr, "%s: invalid xsym '%s'\n",
-> +					program_name, optarg);
-> +			break;
-> +		case ARG_UNRECOGNIZED:
-> +			args_destroy(args);
-> +			return NULL;
-> +		default:
-> +			rte_panic("Unexpected getopt_long return value %d\n",
-> +				val);
-> +		}
-> +		if (rc < 0) {
-> +			args_destroy(args);
-> +			return NULL;
-> +		}
+> +	/* Refresh the negotiated flow control mode from the link status */
+> +	ret = ice_get_link_info_safe(pf, enable_lse, &link_status);
+> +	if (ret != ICE_SUCCESS) {
+> +		PMD_DRV_LOG(ERR, "Failed to get link info");
+> +		return -EIO;
 > +	}
 > +
-> +	/* Set buf_size to the value specified in command line arguments. */
-> +	adjust_arg_buf_size(bpf_prm->prog_arg, args->mbuf_buf_size);
-> +	for (size_t xsymi =3D 0; xsymi !=3D bpf_prm->nb_xsym; ++xsymi)
-> +		adjust_xsym_buf_size(&xsym[xsymi], args->mbuf_buf_size);
+> +	*fc_conf = pf->fc_conf;
 > +
-> +	/* getopt_long moves all non-options to the end, starting at optind. */
-> +	const int nb_bpf_path =3D argc - optind;
-> +	switch (nb_bpf_path) {
-> +	case 0:
+> +	/* report the link flow control mode currently in effect */
+> +	switch (pi->fc.current_mode) {
+> +	case ICE_FC_FULL:
+> +		fc_conf->mode = RTE_ETH_FC_FULL;
 > +		break;
-> +	case 1:
-> +		bpf_prm->elf_file.path =3D argv[optind];
+> +	case ICE_FC_TX_PAUSE:
+> +		fc_conf->mode = RTE_ETH_FC_TX_PAUSE;
+> +		break;
+> +	case ICE_FC_RX_PAUSE:
+> +		fc_conf->mode = RTE_ETH_FC_RX_PAUSE;
 > +		break;
 > +	default:
-> +		fprintf(stderr, "%s: too many positional arguments\n",
-> +			program_name);
-> +		args_destroy(args);
-> +		return NULL;
+> +		fc_conf->mode = RTE_ETH_FC_NONE;
 > +	}
 > +
-> +	return args;
-> +}
-> +
-> +void
-> +args_destroy(struct args *args)
-> +{
-> +	if (args =3D=3D NULL)
-> +		return;
-> +	if (args->bpf_prm.debug !=3D NULL)
-> +		debug_destroy(args->bpf_prm.debug);
-> +	alloc_list_free_all(&args->_alloc_list);
-> +	free(args);
-> +}
-> diff --git a/app/validate-bpf/debug.c b/app/validate-bpf/debug.c
-> new file mode 100644
-> index 000000000000..ac085b53e3bd
-> --- /dev/null
-> +++ b/app/validate-bpf/debug.c
-> @@ -0,0 +1,1103 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> + * Copyright(c) 2025 Huawei Technologies Co., Ltd
-> + */
-> +
-> +#include "debug_command.h"
-> +#include "internal.h"
-> +
-> +#include <rte_bpf_validate_debug.h>
-> +#include <rte_errno.h>
-> +
-> +#include <stdlib.h>
-> +
-> +
-> +/* Write single line to the user, currently just to stdout. */
-> +#define PRINTLN(fmt, ...) do { \
-> +	RTE_LOG_CHECK_NO_NEWLINE(fmt); \
-> +	printf(fmt "\n", ##__VA_ARGS__); \
-> +} while (0)
-> +
-> +#define PROMPT "(validate) "
-> +
-> +#define INITIAL_CAPACITY 8u
-> +
-> +static const char *const event_names[] =3D {
-> +	[RTE_BPF_VALIDATE_DEBUG_EVENT_INVALID_STATE] =3D "invalid-state",
-> +	[RTE_BPF_VALIDATE_DEBUG_EVENT_BRANCH_ENTER] =3D "branch-enter",
-> +	[RTE_BPF_VALIDATE_DEBUG_EVENT_BRANCH_PRUNE] =3D "branch-prune",
-> +	[RTE_BPF_VALIDATE_DEBUG_EVENT_BRANCH_RETURN] =3D "branch-
-> return",
-> +	[RTE_BPF_VALIDATE_DEBUG_EVENT_BRANCH_UNREACHABLE] =3D "branch-
-> unreachable",
-> +	[RTE_BPF_VALIDATE_DEBUG_EVENT_JUMP_ALWAYS] =3D "jump-always",
-> +	[RTE_BPF_VALIDATE_DEBUG_EVENT_JUMP_CONDITIONAL] =3D "jump-
-> conditional",
-> +};
-> +
-> +static const char *const register_names[] =3D {
-> +	[EBPF_REG_0] =3D "r0",
-> +	[EBPF_REG_1] =3D "r1",
-> +	[EBPF_REG_2] =3D "r2",
-> +	[EBPF_REG_3] =3D "r3",
-> +	[EBPF_REG_4] =3D "r4",
-> +	[EBPF_REG_5] =3D "r5",
-> +	[EBPF_REG_6] =3D "r6",
-> +	[EBPF_REG_7] =3D "r7",
-> +	[EBPF_REG_8] =3D "r8",
-> +	[EBPF_REG_9] =3D "r9",
-> +	[EBPF_REG_10] =3D "r10",
-> +};
-> +
-> +static const char *const comparison_operator_names[] =3D {
-> +	[BPF_JEQ] =3D "=3D=3D",
-> +	[BPF_JGT] =3D ">",
-> +	[BPF_JGE] =3D ">=3D",
-> +	[EBPF_JNE] =3D "!=3D",
-> +	[EBPF_JSGT] =3D "s>",
-> +	[EBPF_JSGE] =3D "s>=3D",
-> +	[EBPF_JLT] =3D "<",
-> +	[EBPF_JLE] =3D "<=3D",
-> +	[EBPF_JSLT] =3D "s<",
-> +	[EBPF_JSLE] =3D "s<=3D",
-> +};
-> +
-> +enum point_type {
-> +	POINT_TYPE_BREAK,
-> +	POINT_TYPE_CATCH,
-> +};
-> +
-> +/* Local representation of points with additional info for UI. */
-> +struct point_info {
-> +	struct rte_bpf_validate_debug_point *point;
-> +	enum point_type type;
-> +	union {
-> +		uint32_t pc;
-> +		enum rte_bpf_validate_debug_event event;
-> +	};
-> +};
-> +
-> +/* Dynamically growing list of point infos. */
-> +struct point_infos {
-> +	struct point_info *elements;
-> +	uint32_t length;
-> +	uint32_t capacity;
-> +};
-> +
-> +/* Information about a single conditional or unconditional jump in code =
-path. */
-> +struct branch_info {
-> +	uint32_t jump_pc;
-> +	uint32_t target_pc;
-> +	bool is_conditional;
-> +};
-> +
-> +/* Dynamically growing stack to track code path. */
-> +struct branch_stack {
-> +	struct branch_info *branches;
-> +	uint32_t length;
-> +	uint32_t capacity;
-> +};
-> +
-> +/* Flags telling if we should validate again, stopping or not at start. =
-*/
-> +static bool validate_again;
-> +
-> +/* List of point infos; element index is its ID for UI. */
-> +static struct point_infos point_infos;
-> +
-> +/* Catchpoint invisible to the user used for step-by-step validation. */
-> +static struct rte_bpf_validate_debug_point *step_point;
-> +
-> +/* Tracking entered branches. */
-> +static struct branch_stack branch_stack;
-> +static uint32_t pending_jump_pc =3D UINT32_MAX;
-> +static struct rte_bpf_validate_debug_point *jump_always_step_point;
-> +
-> +static int
-> +step_cb(struct rte_bpf_validate_debug *debug, void *ctx);
-> +static int
-> +point_cb(struct rte_bpf_validate_debug *debug, void *ctx);
-> +
-> +/* Find index of the string in the list. */
-> +static int
-> +find_name(const char *name, const char *const *names, int nb_names)
-> +{
-> +	if (nb_names < 0)
-> +		return -EINVAL;
-> +
-> +	for (int index =3D 0; index !=3D nb_names; ++index)
-> +		if (names[index] !=3D NULL && strcmp(names[index], name) =3D=3D 0)
-> +			return index;
-> +
-> +	return -ENOENT;
-> +}
-> +
-> +/* Convert event name to its enum value. */
-> +static enum rte_bpf_validate_debug_event
-> +parse_event_name(const char *name)
-> +{
-> +	const int rc =3D find_name(name, event_names, RTE_DIM(event_names));
-> +	if (rc < 0)
-> +		PRINTLN("Error: invalid event name.");
-> +
-> +	return rc;
-> +}
-> +
-> +/* Convert comparison operator name to opcode. */
-> +static int
-> +parse_comparison_operator(const char *name)
-> +{
-> +	const int rc =3D find_name(name, comparison_operator_names,
-> +		RTE_DIM(comparison_operator_names));
-> +	if (rc < 0)
-> +		PRINTLN("Error: invalid comparison operator name.");
-> +
-> +	return rc;
-> +}
-> +
-> +/* Convert register name to its number. */
-> +static int
-> +parse_register(const char *name)
-> +{
-> +	const int rc =3D find_name(name, register_names, RTE_DIM(register_names=
-));
-> +	if (rc < 0)
-> +		PRINTLN("Error: invalid register name.");
-> +
-> +	return rc;
-> +}
-> +
-> +/* Free local list of point infos (do not destroy points). */
-> +static void
-> +point_infos_free(void)
-> +{
-> +	free(point_infos.elements);
-> +	point_infos =3D (struct point_infos){};
-> +}
-> +
-> +/* Free local branch stack. */
-> +static void
-> +branch_stack_free(void)
-> +{
-> +	free(branch_stack.branches);
-> +	branch_stack =3D (struct branch_stack){};
-> +}
-> +
-> +/* Return existing element from the list of point infos. */
-> +static struct point_info *
-> +point_infos_at(uint32_t point_number)
-> +{
-> +	RTE_ASSERT(point_number < point_infos.length);
-> +	RTE_ASSERT(point_infos.elements[point_number].point !=3D NULL);
-> +	return &point_infos.elements[point_number];
-> +}
-> +
-> +/* Print existing element from the list of point infos. */
-> +static void
-> +point_infos_print_at(uint32_t point_number)
-> +{
-> +	const struct point_info *const point_info =3D point_infos_at(point_numb=
-er);
-> +
-> +	switch (point_info->type) {
-> +	case POINT_TYPE_BREAK:
-> +		PRINTLN("Breakpoint %d at %d.", point_number,
-> +			point_info->pc);
-> +		break;
-> +	case POINT_TYPE_CATCH:
-> +		PRINTLN("Catchpoint %d on %s.", point_number,
-> +			event_names[point_info->event]);
-> +		break;
-> +	default:
-> +		PRINTLN("Point %d of unknown type", point_number);
-> +		break;
-> +	}
-> +}
-> +
-> +/* Print all point infos. */
-> +static int
-> +point_infos_print_all(void)
-> +{
-> +	uint32_t nb_printed =3D 0;
-> +	for (uint32_t pn =3D 0; pn !=3D point_infos.length; ++pn) {
-> +		const struct point_info *const point_info =3D
-> +			&point_infos.elements[pn];
-> +		if (point_info->point !=3D NULL) {
-> +			point_infos_print_at(pn);
-> +			++nb_printed;
-> +		}
-> +	}
-> +
-> +	if (nb_printed =3D=3D 0) {
-> +		PRINTLN("No breakpoints or catchpoints set.");
-> +		return -ENOENT;
-> +	}
-> +
-> +	return nb_printed;
-> +}
-> +
-> +/* Allocate space for a new element in the list of point infos. */
-> +static uint32_t
-> +point_infos_append(void)
-> +{
-> +	if (point_infos.length =3D=3D point_infos.capacity) {
-> +		/* Set to initial capacity or double previous one. */
-> +		point_infos.capacity =3D RTE_MAX(INITIAL_CAPACITY,
-> +			point_infos.capacity * 2);
-> +		point_infos.elements =3D realloc(point_infos.elements,
-> +			point_infos.capacity * sizeof(point_infos.elements[0]));
-> +		RTE_VERIFY(point_infos.elements !=3D NULL);
-> +	}
-> +	return point_infos.length++;
-> +}
-> +
-> +/* Allocate space for a new element in the branch stack. */
-> +static void
-> +branch_stack_append(const struct branch_info *branch)
-> +{
-> +	if (branch_stack.length =3D=3D branch_stack.capacity) {
-> +		/* Set to initial capacity or double previous one. */
-> +		branch_stack.capacity =3D RTE_MAX(INITIAL_CAPACITY,
-> +			branch_stack.capacity * 2);
-> +		branch_stack.branches =3D realloc(branch_stack.branches,
-> +			branch_stack.capacity * sizeof(branch_stack.branches[0]));
-> +		RTE_VERIFY(branch_stack.branches !=3D NULL);
-> +	}
-> +	branch_stack.branches[branch_stack.length++] =3D *branch;
-> +}
-> +
-> +/* Destroy existing element from the list of point infos, printing it fi=
-rst. */
-> +static void
-> +point_infos_destroy_existing(uint32_t point_number)
-> +{
-> +	point_infos_print_at(point_number);
-> +
-> +	struct point_info *const point_info =3D point_infos_at(point_number);
-> +	rte_bpf_validate_debug_point_destroy(point_info->point);
-> +	*point_info =3D (struct point_info){};
-> +}
-> +
-> +/* Destroy point with specified number if it exists. */
-> +static int
-> +point_infos_destroy_at(uint32_t point_number)
-> +{
-> +	if (point_number >=3D point_infos.length ||
-> +			point_infos.elements[point_number].point =3D=3D NULL) {
-> +		PRINTLN("No breakpoint number %d.", point_number);
-> +		return -ENOENT;
-> +	}
-> +
-> +	point_infos_destroy_existing(point_number);
-> +	return 1;
-> +}
-> +
-> +/* Destroy all point infos. */
-> +static int64_t
-> +point_infos_destroy_all(void)
-> +{
-> +	uint32_t nb_destroyed =3D 0;
-> +	for (uint32_t pn =3D 0; pn < point_infos.length; ++pn) {
-> +		const struct point_info *const point_info =3D
-> +			&point_infos.elements[pn];
-> +		if (point_info->point !=3D NULL) {
-> +			point_infos_destroy_existing(pn);
-> +			++nb_destroyed;
-> +		}
-> +	}
-> +
-> +	if (nb_destroyed =3D=3D 0) {
-> +		PRINTLN("No breakpoints or catchpoints set.");
-> +		return -ENOENT;
-> +	}
-> +
-> +	return nb_destroyed;
-Curious if function always returns uint32_t, why make it to return 'int64_t=
-'?
-For errors? But the only error is -ENOENT when nb_destroyed =3D=3D 0.
-Same question for similar functions below.=20
-> +}
-> +
-> +/* Destroy all breakpoints at specified location. */
-> +static int64_t
-> +point_infos_destroy_breakpoints(uint32_t pc)
-> +{
-> +	uint32_t nb_destroyed =3D 0;
-> +	for (uint32_t pn =3D 0; pn < point_infos.length; ++pn) {
-> +		const struct point_info *const point_info =3D
-> +			&point_infos.elements[pn];
-> +		if (point_info->point !=3D NULL &&
-> +				point_info->type =3D=3D POINT_TYPE_BREAK &&
-> +				point_info->pc =3D=3D pc) {
-> +			point_infos_destroy_existing(pn);
-> +			++nb_destroyed;
-> +		}
-> +	}
-> +
-> +	if (nb_destroyed =3D=3D 0) {
-> +		PRINTLN("No breakpoint at %u.", pc);
-> +		return -ENOENT;
-> +	}
-> +
-> +	return nb_destroyed;
-> +}
-> +
-> +/* Destroy all catchpoints for specified event. */
-> +static int64_t
-> +point_infos_destroy_catchpoints(int event)
-> +{
-> +	if (event < 0)
-> +		/* Error was already printed by parse_event_name. */
-> +		return event;
-> +
-> +	uint32_t nb_destroyed =3D 0;
-> +	for (uint32_t pn =3D 0; pn < point_infos.length; ++pn) {
-> +		const struct point_info *const point_info =3D
-> +			&point_infos.elements[pn];
-> +		if (point_info->point !=3D NULL &&
-> +				point_info->type =3D=3D POINT_TYPE_CATCH &&
-> +				(int)point_info->event =3D=3D event) {
-> +			point_infos_destroy_existing(pn);
-> +			++nb_destroyed;
-> +		}
-> +	}
-> +
-> +	if (nb_destroyed =3D=3D 0) {
-> +		PRINTLN("No catchpoint on %s.", event_names[event]);
-> +		return -ENOENT;
-> +	}
-> +
-> +	return nb_destroyed;
-> +}
-> +
-> +/* Create new breakpoint at specified location. */
-> +static int
-> +add_breakpoint(struct rte_bpf_validate_debug *debug, uint32_t nb_ins, ui=
-nt32_t
-> pc)
-> +{
-> +	const uint32_t point_number =3D point_infos_append();
-> +
-> +	if (pc >=3D nb_ins) {
-> +		PRINTLN("Error: program only has %u instructions.", nb_ins);
-> +		return -ENOENT;
-> +	}
-> +
-> +	struct rte_bpf_validate_debug_point *const point =3D
-> +		rte_bpf_validate_debug_break(debug, pc,
-> +			&(struct rte_bpf_validate_debug_callback){
-> +				.fn =3D point_cb,
-> +				.ctx =3D (void *)(uintptr_t)point_number,
-> +			});
-> +	if (point =3D=3D NULL) {
-> +		PRINTLN("Library error %d.", rte_errno);
-> +		return -rte_errno;
-> +	}
-> +
-> +	point_infos.elements[point_number] =3D (struct point_info){
-> +			.point =3D point,
-> +			.type =3D POINT_TYPE_BREAK,
-> +			.pc =3D pc,
-> +		};
-> +	point_infos_print_at(point_number);
-> +	return 0;
-> +}
-> +
-> +/* Create new catchpoint at specified location. */
-> +static int
-> +add_catchpoint(struct rte_bpf_validate_debug *debug, int event)
-> +{
-> +	if (event < 0)
-> +		/* Error was already printed by parse_event_name. */
-> +		return event;
-> +
-> +	const uint32_t point_number =3D point_infos_append();
-> +	struct rte_bpf_validate_debug_point *const point =3D
-> +		rte_bpf_validate_debug_catch(debug, event,
-> +			&(struct rte_bpf_validate_debug_callback){
-> +				.fn =3D point_cb,
-> +				.ctx =3D (void *)(uintptr_t)point_number,
-> +			});
-> +	if (point =3D=3D NULL) {
-> +		PRINTLN("Library error %d.", rte_errno);
-> +		return -rte_errno;
-> +	}
-> +
-> +	point_infos.elements[point_number] =3D (struct point_info){
-> +			.point =3D point,
-> +			.type =3D POINT_TYPE_CATCH,
-> +			.event =3D event,
-> +		};
-> +	point_infos_print_at(point_number);
-> +	return 0;
-> +}
-> +
-> +static bool
-> +is_step_enabled(void)
-> +{
-> +	return step_point !=3D NULL;
-> +}
-> +
-> +/* Enable step-by-step validation: make sure catchpoint is set on step e=
-vent. */
-> +static int
-> +enable_step(struct rte_bpf_validate_debug *debug)
-> +{
-> +	if (is_step_enabled())
-> +		return 0;
-> +
-> +	step_point =3D rte_bpf_validate_debug_catch(debug,
-> +		RTE_BPF_VALIDATE_DEBUG_EVENT_STEP,
-> +		&(struct rte_bpf_validate_debug_callback){ step_cb });
-> +	if (step_point =3D=3D NULL) {
-> +		PRINTLN("Library error %d.", rte_errno);
-> +		return -rte_errno;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/* Disable step-by-step validation: destroy catchpoint on step event if =
-any. */
-> +static void
-> +disable_step(void)
-> +{
-> +	rte_bpf_validate_debug_point_destroy(step_point);
-> +	step_point =3D NULL;
-> +}
-> +
-> +/* Format and print information about specified frame offset. */
-> +static int
-> +print_frame_offset(struct rte_bpf_validate_debug *debug, int32_t offset)
-> +{
-> +	char *info;
-> +	int info_size, rc;
-> +
-> +	if (offset >=3D 0 || offset % sizeof(uint64_t) !=3D 0) {
-> +		PRINTLN("Invalid frame offset, must be a negative multiple of
-> %zu.",
-> +			sizeof(uint64_t));
-> +		return -EINVAL;
-> +	}
-> +
-> +	rc =3D rte_bpf_validate_debug_format_frame_info(debug, NULL, 0, offset)=
-;
-> +	if (rc =3D=3D -ERANGE) {
-> +		PRINTLN("Offset is out of frame range.");
-> +		return rc;
-> +	}
-> +	if (rc < 0) {
-> +		PRINTLN("Error %d printing information.", -rc);
-> +		return rc;
-> +	}
-> +
-> +	info_size =3D rc + 1;
-> +	info =3D malloc(info_size);
-> +	if (info =3D=3D NULL)
-> +		return -ENOMEM;
-> +
-> +	rc =3D rte_bpf_validate_debug_format_frame_info(debug, info, info_size,
-> +		offset);
-> +	if (rc + 1 !=3D info_size) {
-> +		if (rc >=3D 0) {
-> +			PRINTLN("Expect format return value %d, got %d.",
-> +				info_size, rc);
-> +			rc =3D -EINVAL;
-> +		} else
-> +			PRINTLN("Error %d printing information.", -rc);
-> +		free(info);
-> +		return rc;
-> +	}
-> +
-> +	printf("%5jd: \t%s\n", (intmax_t)offset, info);
-
-Again, what for intmax_t here, if offset is just 32bit int?
-
-> +	free(info);
-> +	return 0;
-> +}
-> +
-> +/* Format and print informatiion about the frame. */
-> +static int
-> +print_frame(struct rte_bpf_validate_debug *debug)
-> +{
-> +	int32_t frame_size;
-> +	int rc;
-> +
-> +	frame_size =3D rte_bpf_validate_debug_get_frame_size(debug);
-> +	if (frame_size < 0) {
-> +		PRINTLN("Error %d getting frame size.", -frame_size);
-> +		return frame_size;
-> +	}
-> +
-> +	for (int32_t frame_offset =3D 0;;) {
-
-That's an unusal loop construction...
-Why not something more common, obvious and easy to read?
-i.e:
-for(ofs =3D sizeof(uint64_t); ofs < frame_size;  ofs +=3D sizeof(uint64_t))=
- {
-   rc =3D print_frame_offset(debug, -ofs);
-   if (rc < 0) return rc;
-}
-
-> +		frame_offset -=3D sizeof(uint64_t);
-> +		if (frame_offset < -frame_size)
-> +			break;
-> +
-> +		rc =3D print_frame_offset(debug, frame_offset);
-> +		if (rc < 0)
-> +			return rc;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/* Format and print informatiion about specified register. */
-> +static int
-> +print_register(struct rte_bpf_validate_debug *debug, int reg)
-> +{
-> +	char *info;
-> +	int info_size, rc;
-> +
-> +	if (reg < 0)
-> +		/* Error was already printed by parse_register. */
-> +		return reg;
-> +
-> +	rc =3D rte_bpf_validate_debug_format_register_info(debug, NULL, 0, reg)=
-;
-> +	if (rc < 0) {
-> +		PRINTLN("Error %d printing information.", -rc);
-> +		return rc;
-> +	}
-> +
-> +	info_size =3D rc + 1;
-> +	info =3D malloc(info_size);
-> +	if (info =3D=3D NULL)
-> +		return -ENOMEM;
-
-In some places you panic (RTE_VERIFY) when malloc() fails, in others return=
- an error?
-Why? Any strategy behind?
-=20
-> +
-> +	rc =3D rte_bpf_validate_debug_format_register_info(debug, info, info_si=
-ze,
-> +		reg);
-> +	if (rc + 1 !=3D info_size) {
-> +		if (rc >=3D 0) {
-> +			PRINTLN("Expect format return value %d, got %d.",
-> +				info_size, rc);
-> +			rc =3D -EINVAL;
-> +		} else
-> +			PRINTLN("Error %d printing information.", -rc);
-> +		free(info);
-> +		return rc;
-> +	}
-> +
-> +	printf("%5s: \t%s\n", register_names[reg], info);
-> +	free(info);
-> +	return 0;
-> +}
-> +
-> +/* Format and print informatiion about all registers. */
-> +static int
-> +print_registers(struct rte_bpf_validate_debug *debug)
-> +{
-> +	int rc =3D 0;
-> +
-> +	for (int reg =3D 0; reg !=3D EBPF_REG_NUM; ++reg)
-> +		rc =3D rc < 0 ? rc : print_register(debug, reg);
-> +
-> +	return rc;
-> +}
-> +
-> +/* List one eBPF program instruction. */
-> +static int
-> +list_one(const struct ebpf_insn *ins, uint32_t nb_ins, uint32_t offset,
-> +	uint32_t pc, const char *comment)
-> +{
-> +	char hexadecimal[256], disassembly[256];
-> +
-> +	if (offset >=3D nb_ins) {
-> +		PRINTLN("Error: program only has %u instructions.", nb_ins);
-> +		return -EINVAL;
-> +	}
-> +
-> +	ins +=3D offset;
-> +
-> +	if (offset =3D=3D nb_ins - 1 && rte_bpf_insn_is_wide(ins)) {
-> +		PRINTLN("Error: truncated last instruction.");
-> +		return -EINVAL;
-> +	}
-> +
-> +	rte_bpf_format(hexadecimal, sizeof(hexadecimal), ins, 0,
-> +		RTE_BPF_FORMAT_FLAG_HEXADECIMAL |
-> +		RTE_BPF_FORMAT_FLAG_NEVER_WIDE);
-> +	rte_bpf_format(disassembly, sizeof(disassembly), ins, offset,
-> +		RTE_BPF_FORMAT_FLAG_DISASSEMBLY |
-> +		RTE_BPF_FORMAT_FLAG_ABSOLUTE_JUMPS);
-> +
-> +	if (comment =3D=3D NULL)
-> +		comment =3D "";
-> +	PRINTLN("%2s %10u: \t%s \t%s%s%s",
-> +		offset =3D=3D pc ? "=3D>" : "", offset, hexadecimal, disassembly,
-> +		comment[0] !=3D '\0' ? " \t; " : "", comment);
-> +
-> +	if (rte_bpf_insn_is_wide(ins)) {
-> +		rte_bpf_format(hexadecimal, sizeof(hexadecimal), ins + 1, 0,
-> +			RTE_BPF_FORMAT_FLAG_HEXADECIMAL |
-> +			RTE_BPF_FORMAT_FLAG_NEVER_WIDE);
-> +		PRINTLN("%15s\t%s", "", hexadecimal);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/* List specified range of eBPF program instructions, updating start off=
-set. */
-> +static int
-> +list(const struct ebpf_insn *ins, uint32_t nb_ins, uint32_t *offset,
-> +	uint32_t count, uint32_t pc)
-> +{
-> +	uint32_t local_offset =3D 0;
-> +	if (offset =3D=3D NULL)
-> +		offset =3D &local_offset;
-> +
-> +	if (*offset > nb_ins) {
-> +		PRINTLN("Error: program only has %u instructions.", nb_ins);
-> +		return -EINVAL;
-> +	}
-> +
-> +	const uint32_t end =3D
-> +		/* Calculate end in a way preventing overflow: */
-> +		*offset + RTE_MIN(nb_ins - *offset, count);
-> +	while (*offset < end) {
-> +		const int rc =3D list_one(ins, nb_ins, *offset, pc, NULL);
-> +		if (rc < 0)
-> +			return rc;
-> +
-> +		*offset +=3D 1 + rte_bpf_insn_is_wide(&ins[*offset]);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/* Print if specified conditional jump _may_ be executed. */
-> +static int
-> +print_if_may(struct rte_bpf_validate_debug *debug, const struct ebpf_ins=
-n
-> *jump,
-> +	uint64_t imm64)
-> +{
-> +	const int result =3D rte_bpf_validate_debug_may_jump(debug, jump,
-> imm64);
-> +
-> +	switch (result) {
-> +	case 0:
-> +	case RTE_BPF_VALIDATE_DEBUG_MAY_BE_FALSE:
-> +		PRINTLN("NO");
-> +		break;
-> +	case RTE_BPF_VALIDATE_DEBUG_MAY_BE_TRUE:
-> +	case RTE_BPF_VALIDATE_DEBUG_MAY_BE_FALSE |
-> RTE_BPF_VALIDATE_DEBUG_MAY_BE_TRUE:
-> +		PRINTLN("YES");
-> +		break;
-> +	default:
-> +		PRINTLN("Error %d getting result.", -result);
-> +		break;
-> +	}
-> +
-> +	return result;
-> +}
-> +
-> +/* Print if specified condition with literal right hand side _may_ be tr=
-ue. */
-> +static int
-> +print_if_may_literal_rhs(struct rte_bpf_validate_debug *debug,
-> +	const struct debug_command_comparison *comparison)
-> +{
-> +	const int lhs =3D parse_register(comparison->lhs);
-> +	const int op =3D parse_comparison_operator(comparison->op);
-> +	const int64_t rhs =3D comparison->literal_rhs;
-> +
-> +	if (lhs < 0 || op < 0)
-> +		/* Error was already printed by parse function. */
-> +		return lhs < 0 ? lhs : op;
-> +
-> +	return print_if_may(debug, &(struct ebpf_insn){
-> +		.code =3D BPF_JMP | op | BPF_K,
-> +		.dst_reg =3D lhs,
-> +	}, /* imm64 =3D */ rhs);
-> +}
-> +
-> +/* Print if specified condition with register right hand side _may_ be t=
-rue. */
-> +static int
-> +print_if_may_register_rhs(struct rte_bpf_validate_debug *debug,
-> +	const struct debug_command_comparison *comparison)
-> +{
-> +	const int lhs =3D parse_register(comparison->lhs);
-> +	const int op =3D parse_comparison_operator(comparison->op);
-> +	const int rhs =3D parse_register(comparison->register_rhs);
-> +
-> +	if (lhs < 0 || op < 0 || rhs < 0)
-> +		/* Error was already printed by parse function. */
-> +		return lhs < 0 ? lhs : op < 0 ? op : rhs;
-> +
-> +	return print_if_may(debug, &(struct ebpf_insn){
-> +		.code =3D BPF_JMP | op | BPF_X,
-> +		.dst_reg =3D lhs,
-> +		.src_reg =3D rhs,
-> +	}, /* imm64 =3D */ 0);
-> +}
-> +
-> +/* Return 1 on validation success, 0 on failure, -EAGAIN if still runnin=
-g. */
-> +static int
-> +get_validation_success(struct rte_bpf_validate_debug *debug)
-> +{
-> +	int validation_result, rc;
-> +
-> +	rc =3D rte_bpf_validate_debug_get_validation_result(debug,
-> +		&validation_result);
-> +	return rc < 0 ? rc : (validation_result >=3D 0);
-> +}
-> +
-> +static void
-> +print_status(const struct ebpf_insn *ins, uint32_t nb_ins,
-> +	int validation_success, uint32_t pc)
-> +{
-> +	if (validation_success =3D=3D 1) {
-> +		PRINTLN("Validation succeeded.");
-> +		return;
-> +	}
-> +
-> +	list_one(ins, nb_ins, pc, pc, NULL);
-> +
-> +	if (validation_success =3D=3D 0)
-> +		PRINTLN("Validation failed.");
-> +}
-> +
-> +static void
-> +debug_command_where(const struct ebpf_insn *ins, uint32_t nb_ins,
-> +	int validation_success, uint32_t pc)
-> +{
-> +	for (uint32_t bi =3D 0; bi !=3D branch_stack.length; ++bi) {
-> +		const uint32_t jump_pc =3D branch_stack.branches[bi].jump_pc;
-> +		const uint32_t target_pc =3D branch_stack.branches[bi].target_pc;
-> +		const char *const comment =3D
-> +			!branch_stack.branches[bi].is_conditional ? NULL :
-> +			target_pc =3D=3D jump_pc + 1 ? "fallen-through" : "taken";
-> +		list_one(ins, nb_ins, jump_pc, UINT32_MAX, comment);
-> +	}
-> +	print_status(ins, nb_ins, validation_success, pc);
-> +}
-> +
-> +/* Return true if pc is defined, otherwise print an error message. */
-> +static bool
-> +ensure_pc_defined(uint32_t pc)
-> +{
-> +	if (pc !=3D UINT32_MAX)
-> +		return true;
-> +
-> +	PRINTLN("No current instruction.");
-> +	return false;
-> +}
-> +
-> +/* Return true if still validating, otherwise print an error message. */
-> +static bool
-> +ensure_still_validating(int validation_success)
-> +{
-> +	if (validation_success =3D=3D -EAGAIN)
-> +		return true;
-> +
-> +	PRINTLN("Finished, use `start` or `run` to restart, `quit` to quit.");
-> +	return false;
-> +}
-> +
-> +/* Step-by-step validation callback: read and process user commands. */
-> +static int
-> +step_cb(struct rte_bpf_validate_debug *debug, __rte_unused void *ctx)
-> +{
-> +	int rc;
-> +	int validation_success;
-> +	const struct ebpf_insn *ins;
-> +	uint32_t nb_ins, pc, list_offset;
-> +
-> +	validate_again =3D false;
-> +
-> +	rc =3D rte_bpf_validate_debug_get_ins(debug, &ins, &nb_ins);
-> +	if (rc < 0) {
-> +		PRINTLN("Error %d getting program instructions.", -rc);
-> +		return rc;
-> +	}
-> +
-> +	validation_success =3D get_validation_success(debug);
-> +	if (validation_success < 0 && validation_success !=3D -EAGAIN) {
-> +		PRINTLN("Error %d getting validation result.",
-> +			-validation_success);
-> +		return validation_success;
-> +	}
-> +
-> +	pc =3D validation_success =3D=3D 1 ? UINT32_MAX :
-> +		rte_bpf_validate_debug_get_pc(debug);
-> +
-> +	print_status(ins, nb_ins, validation_success, pc);
-> +
-> +	list_offset =3D pc;
-> +
-> +	while (true) {
-> +		switch (debug_command_get(PROMPT)) {
-> +		case DEBUG_COMMAND_BREAK:
-> +			if (ensure_pc_defined(pc))
-> +				add_breakpoint(debug, nb_ins, pc);
-> +			continue;
-> +		case DEBUG_COMMAND_BREAK_PC:
-> +			add_breakpoint(debug, nb_ins,
-> debug_command_parsed.pc);
-> +			continue;
-> +		case DEBUG_COMMAND_CATCH:
-> +			add_catchpoint(debug,
-> +
-> 	parse_event_name(debug_command_parsed.event));
-> +			continue;
-> +		case DEBUG_COMMAND_CLEAR:
-> +			if (ensure_pc_defined(pc))
-> +				point_infos_destroy_breakpoints(pc);
-> +			continue;
-> +		case DEBUG_COMMAND_CLEAR_EVENT:
-> +			point_infos_destroy_catchpoints(
-> +
-> 	parse_event_name(debug_command_parsed.event));
-> +			continue;
-> +		case DEBUG_COMMAND_CLEAR_PC:
-> +			point_infos_destroy_breakpoints(
-> +				debug_command_parsed.pc);
-> +			continue;
-> +		case DEBUG_COMMAND_CONTINUE:
-> +			if (ensure_still_validating(validation_success)) {
-> +				disable_step();
-> +				return 0;
-> +			}
-> +			continue;
-> +		case DEBUG_COMMAND_DELETE:
-> +			point_infos_destroy_all();
-> +			continue;
-> +		case DEBUG_COMMAND_DELETE_NUMBER:
-> +			point_infos_destroy_at(
-> +				debug_command_parsed.point_number);
-> +			continue;
-> +		case DEBUG_COMMAND_INFO_FRAME:
-> +			print_frame(debug);
-> +			continue;
-> +		case DEBUG_COMMAND_INFO_FRAME_OFFSET:
-> +			print_frame_offset(debug,
-> +				debug_command_parsed.frame_offset);
-> +			continue;
-> +		case DEBUG_COMMAND_INFO_POINTS:
-> +			point_infos_print_all();
-> +			continue;
-> +		case DEBUG_COMMAND_INFO_REGISTER:
-> +			print_register(debug,
-> +
-> 	parse_register(debug_command_parsed.register_));
-> +			continue;
-> +		case DEBUG_COMMAND_INFO_REGISTERS:
-> +			print_registers(debug);
-> +			continue;
-> +		case DEBUG_COMMAND_LIST:
-> +			if (ensure_pc_defined(pc))
-> +				list(ins, nb_ins, &list_offset, 10, pc);
-> +			continue;
-> +		case DEBUG_COMMAND_LIST_COUNT:
-> +			if (ensure_pc_defined(pc))
-> +				list(ins, nb_ins, &list_offset,
-> +
-> 	debug_command_parsed.instruction_count, pc);
-> +			continue;
-> +		case DEBUG_COMMAND_LIST_PROGRAM:
-> +			if (ensure_pc_defined(pc))
-> +				list(ins, nb_ins, NULL, UINT32_MAX, pc);
-> +			continue;
-> +		case DEBUG_COMMAND_MAY_LITERAL_RHS:
-> +			print_if_may_literal_rhs(debug,
-> +				&debug_command_parsed.comparison);
-> +			continue;
-> +		case DEBUG_COMMAND_MAY_REGISTER_RHS:
-> +			print_if_may_register_rhs(debug,
-> +				&debug_command_parsed.comparison);
-> +			continue;
-> +		case DEBUG_COMMAND_EOF:
-> +		case DEBUG_COMMAND_QUIT:
-> +			PRINTLN("Quitting...");
-> +			return validation_success =3D=3D -EAGAIN ? -ECANCELED : 0;
-> +		case DEBUG_COMMAND_RUN:
-> +			PRINTLN("Re-running...");
-> +			disable_step();
-> +			validate_again =3D true;
-> +			return -ECANCELED;
-> +		case DEBUG_COMMAND_START:
-> +			PRINTLN("Re-starting...");
-> +			rc =3D enable_step(debug);
-> +			if (rc < 0)
-> +				return rc;
-> +			validate_again =3D true;
-> +			return -ECANCELED;
-> +		case DEBUG_COMMAND_STEP:
-> +			if (ensure_still_validating(validation_success))
-> +				return 0;
-> +			continue;
-> +		case DEBUG_COMMAND_WHERE:
-> +			debug_command_where(ins, nb_ins, validation_success,
-> pc);
-> +			continue;
-> +		default:
-> +			PRINTLN("INTERNAL ERROR");
-> +			return -ENOTSUP;
-> +		}
-> +	}
-> +}
-> +
-> +/* Any point callback: print it and enable step-by-step validation. */
-> +static int
-> +point_cb(struct rte_bpf_validate_debug *debug, void *ctx)
-> +{
-> +	const uint32_t point_number =3D (uintptr_t)ctx;
-> +	point_infos_print_at(point_number);
-> +	return enable_step(debug);
-> +}
-> +
-> +/* Branch stack machinery. */
-> +
-> +static void
-> +clear_jump_always_step_point(void)
-> +{
-> +	rte_bpf_validate_debug_point_destroy(jump_always_step_point);
-> +	jump_always_step_point =3D NULL;
-> +}
-> +
-> +static int
-> +reset_branch_tracking(struct rte_bpf_validate_debug *debug __rte_unused,
-> +	void *ctx __rte_unused)
-> +{
-> +	branch_stack.length =3D 0;
-> +	pending_jump_pc =3D UINT32_MAX;
-> +	clear_jump_always_step_point();
 > +	return 0;
 > +}
 > +
 > +/*
-> + * Handling the jump-always instructions:
-> + * - upon a jump-always event save the pc and set a custom step callback=
-;
-> + * - ignore the first custom step callback call (still on the same jump)=
-;
-> + * - on the second call push the jump pc into stack and delete the callb=
-ack;
+> + * Program the Rx buffer watermarks, pause quanta and MAC control frame
+> + * forwarding shared by link flow control and priority flow control.
+> + * A tc_bitmap of 0 selects link flow control; a single bit selects a PFC
+> + * traffic class. Watermark or quanta values of 0 leave the current setting.
 > + */
-> +
 > +static int
-> +jump_always_step_cb(struct rte_bpf_validate_debug *debug, void *ctx
-> __rte_unused)
+> +ice_cfg_fc_params(struct rte_eth_dev *dev, uint8_t tc, uint8_t tc_bitmap,
+> +		  const struct rte_eth_fc_conf *fc_conf)
+
+Minor nit:
+Looking at how this is used, I don't think you need both a tc_bitmap and a
+tc parameter, since tc_bitmap is passed either as 0, or 1 << tc, so
+therefore the tc is computable from the bitmap.
+
+	tc = tc_bitmap == 0 ? 0 : rte_ctz32(tc_bitmap);
+
 > +{
-> +	/* Step event is also emitted at the end of the jump instruction itself=
-. */
-> +	if (rte_bpf_validate_debug_get_pc(debug) =3D=3D pending_jump_pc)
-> +		return 0;
+> +	struct ice_pf *pf = ICE_DEV_PRIVATE_TO_PF(dev->data->dev_private);
+> +	struct ice_hw *hw = ICE_PF_TO_HW(pf);
+> +	struct ice_port_info *port_info = hw->port_info;
+> +	uint32_t high_water = fc_conf->high_water;
+> +	uint32_t low_water = fc_conf->low_water;
+> +	uint16_t max_frame_size;
+> +	int cgd_idx;
+> +	int ret;
 > +
-> +	branch_stack_append(&(struct branch_info){
-> +		.jump_pc =3D pending_jump_pc,
-> +		.target_pc =3D rte_bpf_validate_debug_get_pc(debug),
-> +		.is_conditional =3D false,
-> +	});
-> +	clear_jump_always_step_point();
-> +	return 0;
-> +}
+> +	if (high_water > ICE_MAC_TC_MAX_WATERMARK)
+> +		high_water = ICE_MAC_TC_MAX_WATERMARK;
+> +	if (low_water > ICE_MAC_TC_MAX_WATERMARK)
+> +		low_water = ICE_MAC_TC_MAX_WATERMARK;
 > +
-> +static int
-> +jump_always_cb(struct rte_bpf_validate_debug *debug, void *ctx __rte_unu=
-sed)
-> +{
-> +	pending_jump_pc =3D rte_bpf_validate_debug_get_pc(debug);
-> +	clear_jump_always_step_point();
-> +	jump_always_step_point =3D rte_bpf_validate_debug_catch(debug,
-> +		RTE_BPF_VALIDATE_DEBUG_EVENT_STEP,
-> +		&(struct rte_bpf_validate_debug_callback){ jump_always_step_cb
-> });
-> +	return 0;
-> +}
+> +	cgd_idx = ice_get_cgd_idx(hw, tc);
+> +	if (high_water)
+> +		wr32(hw, GLRPB_TCHW(cgd_idx), high_water);
+> +	if (low_water)
+> +		wr32(hw, GLRPB_TCLW(cgd_idx), low_water);
 > +
-> +/*
-> + * Handling the jump-conditional instructions:
-> + * - upon a jump-conditional event save the pc;
-> + * - upon a branch-enter event push the conditional jump pc into stack;
-> + * - upon a branch-return event pop conditional jump and all uncondition=
-al jumps
-> + *   preceding it from the stack;
-> + * - during step execution notify the user about the step events;
-> + */
-> +
-> +static int
-> +jump_conditional_cb(struct rte_bpf_validate_debug *debug, void *ctx
-> __rte_unused)
-> +{
-> +	pending_jump_pc =3D rte_bpf_validate_debug_get_pc(debug);
-> +	return 0;
-> +}
-> +
-> +static int
-> +branch_enter_cb(struct rte_bpf_validate_debug *debug, void *ctx __rte_un=
-used)
-> +{
-> +	branch_stack_append(&(struct branch_info){
-> +		.jump_pc =3D pending_jump_pc,
-> +		.target_pc =3D rte_bpf_validate_debug_get_pc(debug),
-> +		.is_conditional =3D true,
-> +	});
-> +	if (is_step_enabled())
-> +		PRINTLN("Entered new branch at pc %u.", pending_jump_pc);
-> +	return 0;
-> +}
-> +
-> +static int
-> +branch_return_cb(struct rte_bpf_validate_debug *debug __rte_unused,
-> +	void *ctx __rte_unused)
-> +{
-> +	clear_jump_always_step_point();
-> +
-> +	while (branch_stack.length > 0) {
-> +		const struct branch_info branch_info =3D
-> +			branch_stack.branches[--branch_stack.length];
-> +		pending_jump_pc =3D branch_info.jump_pc;
-> +		if (branch_info.is_conditional)
-> +			break;
-> +	}
-> +	if (is_step_enabled())
-> +		PRINTLN("Returned from branch at pc %u.", pending_jump_pc);
-> +	return 0;
-> +}
-> +
-> +/* Notify user when skipping branches in step mode. */
-> +
-> +static int
-> +branch_prune_cb(struct rte_bpf_validate_debug *debug __rte_unused,
-> +	void *ctx __rte_unused)
-> +{
-> +	if (is_step_enabled())
-> +		PRINTLN("Prunned branch at pc %u.", pending_jump_pc);
-> +	return 0;
-> +}
-> +
-> +static int
-> +branch_unreachable_cb(struct rte_bpf_validate_debug *debug __rte_unused,
-> +	void *ctx __rte_unused)
-> +{
-> +	if (is_step_enabled())
-> +		PRINTLN("Unreachable branch at pc %u.", pending_jump_pc);
-> +	return 0;
-> +}
-> +
-> +/* Global initialization and cleanup functions. */
-> +
-> +static int
-> +set_callbacks(struct rte_bpf_validate_debug *debug)
-> +{
-> +	static const struct rte_bpf_validate_debug_callback events_callback[
-> +			RTE_BPF_VALIDATE_DEBUG_EVENT_END] =3D {
-> +		[RTE_BPF_VALIDATE_DEBUG_EVENT_VALIDATION_START] =3D {
-> reset_branch_tracking },
-> +		[RTE_BPF_VALIDATE_DEBUG_EVENT_VALIDATION_SUCCESS] =3D {
-> step_cb },
-> +		[RTE_BPF_VALIDATE_DEBUG_EVENT_VALIDATION_FAILURE] =3D {
-> step_cb },
-> +		[RTE_BPF_VALIDATE_DEBUG_EVENT_JUMP_CONDITIONAL] =3D {
-> jump_conditional_cb },
-> +		[RTE_BPF_VALIDATE_DEBUG_EVENT_JUMP_ALWAYS] =3D {
-> jump_always_cb },
-> +		[RTE_BPF_VALIDATE_DEBUG_EVENT_BRANCH_ENTER] =3D {
-> branch_enter_cb },
-> +		[RTE_BPF_VALIDATE_DEBUG_EVENT_BRANCH_RETURN] =3D {
-> branch_return_cb },
-> +		[RTE_BPF_VALIDATE_DEBUG_EVENT_BRANCH_PRUNE] =3D {
-> branch_prune_cb },
-> +		[RTE_BPF_VALIDATE_DEBUG_EVENT_BRANCH_UNREACHABLE] =3D {
-> branch_unreachable_cb },
-> +	};
-> +
-> +	for (enum rte_bpf_validate_debug_event event =3D 0;
-> +			event < RTE_BPF_VALIDATE_DEBUG_EVENT_END;
-> ++event)
-> +		if (events_callback[event].fn !=3D NULL &&
-> +				rte_bpf_validate_debug_catch(debug, event,
-> +					&events_callback[event]) =3D=3D NULL)
-> +			return -rte_errno;
-> +
-> +	return 0;
-> +}
-> +
-> +struct rte_bpf_validate_debug *
-> +debug_create(void)
-> +{
-> +
-> +	int rc =3D 0;
-> +
-> +	struct rte_bpf_validate_debug *const debug =3D
-> rte_bpf_validate_debug_create();
-> +	if (debug =3D=3D NULL)
-> +		rc =3D -rte_errno;
-> +
-> +	rc =3D rc < 0 ? rc : set_callbacks(debug);
-> +
-> +	rc =3D rc < 0 ? rc : enable_step(debug);
-> +
-> +	if (rc < 0) {
-> +		debug_destroy(debug);
-> +		rte_errno =3D -rc;
-> +		return NULL;
+> +	/* Update pause quanta and refresh threshold */
+> +	max_frame_size = pf->dev_data->mtu ?
+> +		pf->dev_data->mtu + ICE_ETH_OVERHEAD :
+> +		ICE_FRAME_SIZE_MAX;
+> +	ret = ice_aq_set_mac_pfc_cfg(hw, max_frame_size, tc_bitmap,
+> +			fc_conf->pause_time, ((u32)fc_conf->pause_time + 1) / 2,
+> +			false, NULL);
+> +	if (ret) {
+> +		PMD_DRV_LOG(ERR, "Can not update MAC configuration");
+> +		return ret;
 > +	}
 > +
-> +	return debug;
-> +}
-> +
-> +void
-> +debug_destroy(struct rte_bpf_validate_debug *debug)
-> +{
-> +	/* No need to destroy created points, destroying debug will do it. */
-> +	point_infos_free();
-> +	branch_stack_free();
-> +	rte_bpf_validate_debug_destroy(debug);
-> +}
-> +
-> +bool
-> +debug_validate_again(void)
-> +{
-> +	return validate_again;
-> +}
-> diff --git a/app/validate-bpf/debug_command.c b/app/validate-
-> bpf/debug_command.c
-> new file mode 100644
-> index 000000000000..505ae389c94f
-> --- /dev/null
-> +++ b/app/validate-bpf/debug_command.c
-> @@ -0,0 +1,383 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> + * Copyright(c) 2025 Huawei Technologies Co., Ltd
-> + */
-> +
-> +#include "debug_command.h"
-> +
-> +#include <rte_debug.h>
-> +#include <cmdline.h>
-> +#include <cmdline_socket.h>
-> +#include <cmdline_parse_num.h>
-> +
-> +#include <string.h>
-> +
-> +
-> +#define EVENT_PATTERN \
-> +	"invalid-state#" \
-> +	"branch-enter#branch-prune#branch-return#branch-unreachable#" \
-> +	"jump-always#jump-conditional"
-> +
-> +#define REGISTER_PATTERN "r0#r1#r2#r3#r4#r5#r6#r7#r8#r9#r10"
-> +
-> +#define COMPARISON_OP_PATTERN "=3D=3D#!=3D#<#<=3D#>#>=3D#s<#s<=3D#s>#s>=
-=3D"
-> +
-> +static void
-> +handle_command(void *parsed_result, struct cmdline *cl, void *data);
-> +
-> +/* Keywords */
-> +static cmdline_parse_token_string_t break_tok =3D
-> +	TOKEN_STRING_INITIALIZER(struct debug_command_parsed, keyword,
-> "b#break");
-> +static cmdline_parse_token_string_t may_tok =3D
-> +	TOKEN_STRING_INITIALIZER(struct debug_command_parsed, keyword,
-> "may");
-> +static cmdline_parse_token_string_t catch_tok =3D
-> +	TOKEN_STRING_INITIALIZER(struct debug_command_parsed, keyword,
-> "catch");
-> +static cmdline_parse_token_string_t clear_tok =3D
-> +	TOKEN_STRING_INITIALIZER(struct debug_command_parsed, keyword,
-> "clear");
-> +static cmdline_parse_token_string_t continue_tok =3D
-> +	TOKEN_STRING_INITIALIZER(struct debug_command_parsed, keyword,
-> "c#continue");
-> +static cmdline_parse_token_string_t delete_tok =3D
-> +	TOKEN_STRING_INITIALIZER(struct debug_command_parsed, keyword,
-> "delete");
-> +static cmdline_parse_token_string_t info_tok =3D
-> +	TOKEN_STRING_INITIALIZER(struct debug_command_parsed, keyword,
-> "i#info");
-> +static cmdline_parse_token_string_t info_points_tok =3D
-> +	TOKEN_STRING_INITIALIZER(struct debug_command_parsed, keyword,
-> +		"b#break#breakpoints#points");
-> +static cmdline_parse_token_string_t info_frame_tok =3D
-> +	TOKEN_STRING_INITIALIZER(struct debug_command_parsed, keyword,
-> "f#frame");
-> +static cmdline_parse_token_string_t info_registers_tok =3D
-> +	TOKEN_STRING_INITIALIZER(struct debug_command_parsed, keyword,
-> "r#registers");
-> +static cmdline_parse_token_string_t list_tok =3D
-> +	TOKEN_STRING_INITIALIZER(struct debug_command_parsed, keyword,
-> "l#list");
-> +static cmdline_parse_token_string_t program_tok =3D
-> +	TOKEN_STRING_INITIALIZER(struct debug_command_parsed, keyword,
-> "program");
-> +static cmdline_parse_token_string_t quit_tok =3D
-> +	TOKEN_STRING_INITIALIZER(struct debug_command_parsed, keyword,
-> "q#quit");
-> +static cmdline_parse_token_string_t run_tok =3D
-> +	TOKEN_STRING_INITIALIZER(struct debug_command_parsed, keyword,
-> "run");
-> +static cmdline_parse_token_string_t start_tok =3D
-> +	TOKEN_STRING_INITIALIZER(struct debug_command_parsed, keyword,
-> "start");
-> +static cmdline_parse_token_string_t step_tok =3D
-> +	TOKEN_STRING_INITIALIZER(struct debug_command_parsed, keyword,
-> "s#step");
-> +static cmdline_parse_token_string_t where_tok =3D
-> +	TOKEN_STRING_INITIALIZER(struct debug_command_parsed, keyword,
-> "where");
-> +
-> +/* Variable tokens */
-> +static cmdline_parse_token_string_t comparison_lhs_tok =3D
-> +	TOKEN_STRING_INITIALIZER(struct debug_command_parsed,
-> comparison.lhs, REGISTER_PATTERN);
-> +static cmdline_parse_token_string_t comparison_op_tok =3D
-> +	TOKEN_STRING_INITIALIZER(struct debug_command_parsed,
-> comparison.op, COMPARISON_OP_PATTERN);
-> +static cmdline_parse_token_num_t comparison_rhs_literal_tok =3D
-> +	TOKEN_NUM_INITIALIZER(struct debug_command_parsed,
-> comparison.literal_rhs, RTE_INT64);
-> +static cmdline_parse_token_string_t comparison_rhs_register_tok =3D
-> +	TOKEN_STRING_INITIALIZER(struct debug_command_parsed,
-> comparison.register_rhs,
-> +		REGISTER_PATTERN);
-> +static cmdline_parse_token_string_t event_tok =3D
-> +	TOKEN_STRING_INITIALIZER(struct debug_command_parsed, event,
-> EVENT_PATTERN);
-> +static cmdline_parse_token_num_t frame_offset_tok =3D
-> +	TOKEN_NUM_INITIALIZER(struct debug_command_parsed, frame_offset,
-> RTE_INT64);
-> +static cmdline_parse_token_num_t instruction_count_tok =3D
-> +	TOKEN_NUM_INITIALIZER(struct debug_command_parsed,
-> instruction_count, RTE_UINT32);
-> +static cmdline_parse_token_num_t pc_tok =3D
-> +	TOKEN_NUM_INITIALIZER(struct debug_command_parsed,
-> instruction_offset, RTE_UINT32);
-> +static cmdline_parse_token_num_t point_number_tok =3D
-> +	TOKEN_NUM_INITIALIZER(struct debug_command_parsed, point_number,
-> RTE_UINT32);
-> +static cmdline_parse_token_string_t register_tok =3D
-> +	TOKEN_STRING_INITIALIZER(struct debug_command_parsed, register_,
-> REGISTER_PATTERN);
-> +
-> +
-> +/* Commands */
-> +static cmdline_parse_inst_t cmd_break =3D {
-> +	.f =3D handle_command,
-> +	.data =3D (void *)DEBUG_COMMAND_BREAK,
-> +	.help_str =3D "b|break: break at current instruction",
-> +	.tokens =3D {
-> +		(void *)&break_tok,
-> +		NULL,
-> +	}
-> +};
-> +static cmdline_parse_inst_t cmd_break_pc =3D {
-> +	.f =3D handle_command,
-> +	.data =3D (void *)DEBUG_COMMAND_BREAK_PC,
-> +	.help_str =3D "b|break <pc>: break at specified instruction",
-> +	.tokens =3D {
-> +		(void *)&break_tok,
-> +		(void *)&pc_tok,
-> +		NULL,
-> +	}
-> +};
-> +static cmdline_parse_inst_t cmd_catch =3D {
-> +	.f =3D handle_command,
-> +	.data =3D (void *)DEBUG_COMMAND_CATCH,
-> +	.help_str =3D "catch <event>: catch specified event",
-> +	.tokens =3D {
-> +		(void *)&catch_tok,
-> +		(void *)&event_tok,
-> +		NULL,
-> +	}
-> +};
-> +static cmdline_parse_inst_t cmd_clear =3D {
-> +	.f =3D handle_command,
-> +	.data =3D (void *)DEBUG_COMMAND_CLEAR,
-> +	.help_str =3D "clear: delete all breakpoints at current instruction",
-> +	.tokens =3D {
-> +		(void *)&clear_tok,
-> +		NULL,
-> +	}
-> +};
-> +static cmdline_parse_inst_t cmd_clear_event =3D {
-> +	.f =3D handle_command,
-> +	.data =3D (void *)DEBUG_COMMAND_CLEAR_EVENT,
-> +	.help_str =3D "clear <event>: delete all catchpoints for specified even=
-t",
-> +	.tokens =3D {
-> +		(void *)&clear_tok,
-> +		(void *)&event_tok,
-> +		NULL,
-> +	}
-> +};
-> +static cmdline_parse_inst_t cmd_clear_pc =3D {
-> +	.f =3D handle_command,
-> +	.data =3D (void *)DEBUG_COMMAND_CLEAR_PC,
-> +	.help_str =3D "clear <pc>: delete all breakpoints at specified instruct=
-ion",
-> +	.tokens =3D {
-> +		(void *)&clear_tok,
-> +		(void *)&pc_tok,
-> +		NULL,
-> +	}
-> +};
-> +static cmdline_parse_inst_t cmd_continue =3D {
-> +	.f =3D handle_command,
-> +	.data =3D (void *)DEBUG_COMMAND_CONTINUE,
-> +	.help_str =3D "c|continue: continue validation",
-> +	.tokens =3D {
-> +		(void *)&continue_tok,
-> +		NULL,
-> +	}
-> +};
-> +static cmdline_parse_inst_t cmd_delete =3D {
-> +	.f =3D handle_command,
-> +	.data =3D (void *)DEBUG_COMMAND_DELETE,
-> +	.help_str =3D "delete: delete all breakpoints and catchpoints",
-> +	.tokens =3D {
-> +		(void *)&delete_tok,
-> +		NULL,
-> +	}
-> +};
-> +static cmdline_parse_inst_t cmd_delete_number =3D {
-> +	.f =3D handle_command,
-> +	.data =3D (void *)DEBUG_COMMAND_DELETE_NUMBER,
-> +	.help_str =3D "delete <point>: delete specified breakpoint or catchpoin=
-t",
-> +	.tokens =3D {
-> +		(void *)&delete_tok,
-> +		(void *)&point_number_tok,
-> +		NULL,
-> +	}
-> +};
-> +static cmdline_parse_inst_t cmd_info_frame =3D {
-> +	.f =3D handle_command,
-> +	.data =3D (void *)DEBUG_COMMAND_INFO_FRAME,
-> +	.help_str =3D "i|info f|frame: show information about all frame locatio=
-ns",
-> +	.tokens =3D {
-> +		(void *)&info_tok,
-> +		(void *)&info_frame_tok,
-> +		NULL,
-> +	}
-> +};
-> +static cmdline_parse_inst_t cmd_info_frame_offset =3D {
-> +	.f =3D handle_command,
-> +	.data =3D (void *)DEBUG_COMMAND_INFO_FRAME_OFFSET,
-> +	.help_str =3D "i|info f|frame -<offset>: show information about specifi=
-ed
-> frame location",
-> +	.tokens =3D {
-> +		(void *)&info_tok,
-> +		(void *)&info_frame_tok,
-> +		(void *)&frame_offset_tok,
-> +		NULL,
-> +	}
-> +};
-> +static cmdline_parse_inst_t cmd_info_points =3D {
-> +	.f =3D handle_command,
-> +	.data =3D (void *)DEBUG_COMMAND_INFO_POINTS,
-> +	.help_str =3D "i|info b|break|breakpoints|points: "
-> +		"show information about all breakpoints and catchpoints",
-> +	.tokens =3D {
-> +		(void *)&info_tok,
-> +		(void *)&info_points_tok,
-> +		NULL,
-> +	}
-> +};
-> +static cmdline_parse_inst_t cmd_info_register =3D {
-> +	.f =3D handle_command,
-> +	.data =3D (void *)DEBUG_COMMAND_INFO_REGISTER,
-> +	.help_str =3D "i|info <register>: show information about specified regi=
-ster",
-> +	.tokens =3D {
-> +		(void *)&info_tok,
-> +		(void *)&register_tok,
-> +		NULL,
-> +	}
-> +};
-> +static cmdline_parse_inst_t cmd_info_registers =3D {
-> +	.f =3D handle_command,
-> +	.data =3D (void *)DEBUG_COMMAND_INFO_REGISTERS,
-> +	.help_str =3D "i|info r|registers: show information about all registers=
-",
-> +	.tokens =3D {
-> +		(void *)&info_tok,
-> +		(void *)&info_registers_tok,
-> +		NULL,
-> +	}
-> +};
-> +static cmdline_parse_inst_t cmd_list =3D {
-> +	.f =3D handle_command,
-> +	.data =3D (void *)DEBUG_COMMAND_LIST,
-> +	.help_str =3D "l|list: list ten instructions",
-> +	.tokens =3D {
-> +		(void *)&list_tok,
-> +		NULL,
-> +	}
-> +};
-> +static cmdline_parse_inst_t cmd_list_count =3D {
-> +	.f =3D handle_command,
-> +	.data =3D (void *)DEBUG_COMMAND_LIST_COUNT,
-> +	.help_str =3D "l|list <number>: list specified number of instructions",
-> +	.tokens =3D {
-> +		(void *)&list_tok,
-> +		(void *)&instruction_count_tok,
-> +		NULL,
-> +	}
-> +};
-> +static cmdline_parse_inst_t cmd_list_program =3D {
-> +	.f =3D handle_command,
-> +	.data =3D (void *)DEBUG_COMMAND_LIST_PROGRAM,
-> +	.help_str =3D "l|list program: list whole program",
-> +	.tokens =3D {
-> +		(void *)&list_tok,
-> +		(void *)&program_tok,
-> +		NULL,
-> +	}
-> +};
-> +static cmdline_parse_inst_t cmd_may_literal_rhs =3D {
-> +	.f =3D handle_command,
-> +	.data =3D (void *)DEBUG_COMMAND_MAY_LITERAL_RHS,
-> +	.help_str =3D "may <register> <comparison> <number>: "
-> +		"check if specified condition _may_ be true",
-> +	.tokens =3D {
-> +		(void *)&may_tok,
-> +		(void *)&comparison_lhs_tok,
-> +		(void *)&comparison_op_tok,
-> +		(void *)&comparison_rhs_literal_tok,
-> +		NULL,
-> +	}
-> +};
-> +static cmdline_parse_inst_t cmd_may_register_rhs =3D {
-> +	.f =3D handle_command,
-> +	.data =3D (void *)DEBUG_COMMAND_MAY_REGISTER_RHS,
-> +	.help_str =3D "may <register> <comparison> <register>: "
-> +		"check if specified condition _may_ be true",
-> +	.tokens =3D {
-> +		(void *)&may_tok,
-> +		(void *)&comparison_lhs_tok,
-> +		(void *)&comparison_op_tok,
-> +		(void *)&comparison_rhs_register_tok,
-> +		NULL,
-> +	}
-> +};
-> +static cmdline_parse_inst_t cmd_quit =3D {
-> +	.f =3D handle_command,
-> +	.data =3D (void *)DEBUG_COMMAND_QUIT,
-> +	.help_str =3D "quit: q|quit debugger",
-> +	.tokens =3D {
-> +		(void *)&quit_tok,
-> +		NULL,
-> +	}
-> +};
-> +static cmdline_parse_inst_t cmd_run =3D {
-> +	.f =3D handle_command,
-> +	.data =3D (void *)DEBUG_COMMAND_RUN,
-> +	.help_str =3D "run: re-run validation from the start",
-> +	.tokens =3D {
-> +		(void *)&run_tok,
-> +		NULL,
-> +	}
-> +};
-> +static cmdline_parse_inst_t cmd_start =3D {
-> +	.f =3D handle_command,
-> +	.data =3D (void *)DEBUG_COMMAND_START,
-> +	.help_str =3D "start: re-start validation and stop at start",
-> +	.tokens =3D {
-> +		(void *)&start_tok,
-> +		NULL,
-> +	}
-> +};
-> +static cmdline_parse_inst_t cmd_step =3D {
-> +	.f =3D handle_command,
-> +	.data =3D (void *)DEBUG_COMMAND_STEP,
-> +	.help_str =3D "s|step: validate one instruction",
-> +	.tokens =3D {
-> +		(void *)&step_tok,
-> +		NULL,
-> +	}
-> +};
-> +static cmdline_parse_inst_t cmd_where =3D {
-> +	.f =3D handle_command,
-> +	.data =3D (void *)DEBUG_COMMAND_WHERE,
-> +	.help_str =3D "where: show current branch stack",
-> +	.tokens =3D {
-> +		(void *)&where_tok,
-> +		NULL,
-> +	}
-> +};
-> +
-> +static cmdline_parse_ctx_t debug_ctx[] =3D {
-> +	&cmd_break,
-> +	&cmd_break_pc,
-> +	&cmd_catch,
-> +	&cmd_clear,
-> +	&cmd_clear_event,
-> +	&cmd_clear_pc,
-> +	&cmd_continue,
-> +	&cmd_delete,
-> +	&cmd_delete_number,
-> +	&cmd_info_frame,
-> +	&cmd_info_frame_offset,
-> +	&cmd_info_points,
-> +	&cmd_info_register,
-> +	&cmd_info_registers,
-> +	&cmd_list,
-> +	&cmd_list_count,
-> +	&cmd_list_program,
-> +	&cmd_may_literal_rhs,
-> +	&cmd_may_register_rhs,
-> +	&cmd_quit,
-> +	&cmd_run,
-> +	&cmd_start,
-> +	&cmd_step,
-> +	&cmd_where,
-> +	NULL
-> +};
-> +
-> +/* Receive, fill and return one command. */
-> +
-> +static enum debug_command debug_command;
-> +
-> +struct debug_command_parsed debug_command_parsed;
-> +
-> +static void
-> +handle_command(void *parsed_result, struct cmdline *cl, void *data)
-> +{
-> +	RTE_BUILD_BUG_ON(sizeof(debug_command_parsed) >
-> CMDLINE_PARSE_RESULT_BUFSIZE);
-> +	memcpy(&debug_command_parsed, parsed_result,
-> sizeof(debug_command_parsed));
-> +	debug_command =3D (uintptr_t)data;
-> +	cmdline_quit(cl);
-> +}
-> +
-> +enum debug_command
-> +debug_command_get(const char *prompt)
-> +{
-> +	debug_command =3D DEBUG_COMMAND_EOF;
-> +	struct cmdline *const cmdline =3D cmdline_stdin_new(debug_ctx, prompt);
-> +	RTE_VERIFY(cmdline !=3D NULL);
-> +	cmdline_interact(cmdline);
-> +	cmdline_stdin_exit(cmdline);
-> +	/* Clear prompt, or it would prepend first message that follows. */
-> +	printf("\r%*s\r", (int)strlen(prompt), "");
-> +	fflush(stdout);
-> +	return debug_command;
-> +}
-> diff --git a/app/validate-bpf/debug_command.h b/app/validate-
-> bpf/debug_command.h
-> new file mode 100644
-> index 000000000000..1a59ab251ebb
-> --- /dev/null
-> +++ b/app/validate-bpf/debug_command.h
-> @@ -0,0 +1,65 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> + * Copyright(c) 2025 Huawei Technologies Co., Ltd
-> + */
-> +
-> +#include <cmdline_parse_string.h>
-> +
-> +#include <stdint.h>
-> +
-> +
-> +struct debug_command_comparison {
-> +	cmdline_fixed_string_t lhs;
-> +	cmdline_fixed_string_t op;
-> +	union {
-> +		cmdline_fixed_string_t register_rhs;
-> +		int64_t literal_rhs;
-> +	};
-> +};
-> +
-> +struct debug_command_parsed {
-> +	cmdline_fixed_string_t keyword;  /* Any keyword we don't need */
-> +	union {
-> +		struct debug_command_comparison comparison;
-> +		cmdline_fixed_string_t event;
-> +		int32_t frame_offset;
-> +		uint32_t instruction_count;
-> +		uint32_t instruction_offset;
-> +		uint32_t pc;
-> +		uint32_t point_number;
-> +		cmdline_fixed_string_t register_;
-> +	};
-> +};
-> +
-> +enum debug_command {
-> +	DEBUG_COMMAND_EOF,
-> +	DEBUG_COMMAND_BREAK,
-> +	DEBUG_COMMAND_BREAK_PC,
-> +	DEBUG_COMMAND_CATCH,
-> +	DEBUG_COMMAND_CLEAR,
-> +	DEBUG_COMMAND_CLEAR_EVENT,
-> +	DEBUG_COMMAND_CLEAR_PC,
-> +	DEBUG_COMMAND_CONTINUE,
-> +	DEBUG_COMMAND_DELETE,
-> +	DEBUG_COMMAND_DELETE_NUMBER,
-> +	DEBUG_COMMAND_INFO_FRAME,
-> +	DEBUG_COMMAND_INFO_FRAME_OFFSET,
-> +	DEBUG_COMMAND_INFO_POINTS,
-> +	DEBUG_COMMAND_INFO_REGISTER,
-> +	DEBUG_COMMAND_INFO_REGISTERS,
-> +	DEBUG_COMMAND_LIST,
-> +	DEBUG_COMMAND_LIST_COUNT,
-> +	DEBUG_COMMAND_LIST_PROGRAM,
-> +	DEBUG_COMMAND_MAY_LITERAL_RHS,
-> +	DEBUG_COMMAND_MAY_REGISTER_RHS,
-> +	DEBUG_COMMAND_QUIT,
-> +	DEBUG_COMMAND_RUN,
-> +	DEBUG_COMMAND_START,
-> +	DEBUG_COMMAND_STEP,
-> +	DEBUG_COMMAND_WHERE,
-> +};
-> +
-> +extern struct debug_command_parsed debug_command_parsed;
-> +
-> +/** Get and return one command line command, storing its data in the str=
-uct
-> above. */
-> +enum debug_command
-> +debug_command_get(const char *prompt);
-> diff --git a/app/validate-bpf/eal_init_args.c b/app/validate-bpf/eal_init=
-_args.c
-> new file mode 100644
-> index 000000000000..6ce9d561e0ce
-> --- /dev/null
-> +++ b/app/validate-bpf/eal_init_args.c
-> @@ -0,0 +1,57 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> + * Copyright(c) 2025 Huawei Technologies Co., Ltd
-> + */
-> +
-> +#include "internal.h"
-> +
-> +
-> +#define APP_EAL_INIT_ARG_SIZE_MAX sizeof("--log-level=3Dlib.eal:warning"=
-)
-> +
-> +static const char APP_EAL_INIT_ARGS[][APP_EAL_INIT_ARG_SIZE_MAX] =3D {
-> +	"--log-level=3Dlib.eal:warning",
-> +	"--no-huge",
-> +	"--no-pci",
-> +	"--no-hpet",
-> +	"--no-shconf",
-> +};
-> +
-> +#define APP_EAL_INIT_ARGC (/* program name */ 1 +
-> RTE_DIM(APP_EAL_INIT_ARGS))
-> +
-> +int
-> +get_eal_init_argc(void)
-> +{
-> +	return APP_EAL_INIT_ARGC;
-> +}
-> +
-> +/*
-> + * We cannot just return literal strings here, because rte_eal_init acce=
-pts
-> + * an array of mutable pointers to mutable strings, so literals won't wo=
-rk.
-> + * Instead we build a copy of APP_EAL_INIT_ARGS in a static mutable area=
-.
-> + */
-> +char**
-> +get_eal_init_argv(char *prog_name)
-> +{
-> +	/* Static arrays for mutable copies of actual args */
-> +	static char mutable_args[RTE_DIM(APP_EAL_INIT_ARGS)]
-> +		[APP_EAL_INIT_ARG_SIZE_MAX];
-> +	/*
-> +	 * Static array for pointers to args. First element will hold pointer
-> +	 * to the prog_name, last will be set to NULL, the rest will point to
-> +	 * elements of mutable_args with index one smaller.
-> +	 */
-> +	static char *mutable_ptrs[APP_EAL_INIT_ARGC + /* terminating NULL */ 1]=
-;
-> +
-> +	mutable_ptrs[0] =3D prog_name;
-> +	for (int argi =3D 0; argi !=3D RTE_DIM(APP_EAL_INIT_ARGS); ++argi) {
-> +		const char * const const_arg =3D APP_EAL_INIT_ARGS[argi];
-> +		char * const mutable_arg =3D mutable_args[argi];
-> +		const int snprintf_rc =3D snprintf(mutable_arg,
-> +			APP_EAL_INIT_ARG_SIZE_MAX, "%s", const_arg);
-> +		RTE_VERIFY(snprintf_rc >=3D 0 &&
-> +			(size_t)snprintf_rc < APP_EAL_INIT_ARG_SIZE_MAX);
-> +		mutable_ptrs[1 + argi] =3D mutable_arg;
-> +	}
-> +	mutable_ptrs[RTE_DIM(mutable_ptrs) - 1] =3D NULL;
-> +
-> +	return mutable_ptrs;
-> +}
-> diff --git a/app/validate-bpf/internal.h b/app/validate-bpf/internal.h
-> new file mode 100644
-> index 000000000000..e134e683142a
-> --- /dev/null
-> +++ b/app/validate-bpf/internal.h
-> @@ -0,0 +1,151 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> + * Copyright(c) 2025 Huawei Technologies Co., Ltd
-> + */
-> +
-> +#include <rte_bpf.h>
-> +#include <rte_log.h>
-> +
-> +
-> +extern int validate_bpf_logtype;
-> +#define RTE_LOGTYPE_VALIDATE_BPF validate_bpf_logtype
-> +#define VALIDATE_BPF_LOG(level, ...) \
-> +	RTE_LOG_LINE(level, VALIDATE_BPF, "" __VA_ARGS__)
-> +
-> +struct rte_bpf_validate_debug;
-> +
-> +/**
-> + * List of pointers to allocations, to keep track of things to free.
-> + *
-> + * May contain NULLs. May contain itself directly or via an outer struct=
-.
-> + */
-> +struct alloc_list {
-> +	size_t count;
-> +	void **ptrs;
-> +};
-> +
-> +/** Add new pointer to the alloc list, return its index. */
-> +size_t alloc_list_append(struct alloc_list *alloc_list, void *ptr);
-> +
-> +/** Replace pointer at the specified index in the alloc list. */
-> +void alloc_list_replace(struct alloc_list *alloc_list, size_t index, voi=
-d *ptr);
-> +
-> +/** Free all allocations in the alloc list */
-> +void alloc_list_free_all(struct alloc_list *alloc_list);
-> +
-> +
-> +/** Parsed program arguments */
-> +struct args {
-> +	/* Allocations list, args.c internal use only. */
-> +	struct alloc_list _alloc_list;
-> +
-> +	/* Set if command line contains --help */
-> +	bool show_help;
-> +
-> +	/* BPF load parameters. */
-> +	struct rte_bpf_prm_ex bpf_prm;
-> +
-> +	/* Size of the mbuf data buffer. */
-> +	size_t mbuf_buf_size;
-> +};
-> +
-> +/** Print program usage information */
-> +void
-> +print_usage(const char *program_name);
-> +
-> +/** Print program defaults. */
-> +void
-> +print_defaults(void);
-> +
-> +/**
-> + * Parse command-line arguments
-> + *
-> + * @param argc
-> + *   Command-line arguments count, as received by main.
-> + * @param argv
-> + *   Command-line arguments array, as received by main.
-> + *   Modified during the call due to the use of getopt_long.
-> + *   Modifying it after the call invalidates the return value.
-> + * @return
-> + *   - parse results in case of success;
-> + *   - NULL in case of an error (diagnostic will be printed to stderr)
-> + */
-> +struct args *
-> +args_parse(int argc, char *argv[]);
-> +
-> +/** Destroy args struct returned by args_parse */
-> +void
-> +args_destroy(struct args *args);
-> +
-> +
-> +/** Value for the rte_eal_init argc argument */
-> +int
-> +get_eal_init_argc(void);
-> +
-> +/**
-> + * Value for the rte_eal_init argv argument
-> + *
-> + * @param prog_name
-> + *   Program name, can be obtained from argv[0]
-> + */
-> +char **
-> +get_eal_init_argv(char *prog_name);
-> +
-> +
-> +/** Print types supported in command-line. */
-> +void
-> +print_supported_types(void);
-> +
-> +/**
-> + * Parse text into arg.
-> + * @param arg
-> + *   Pointer to a variable to put parse result to.
-> + *   Member `buf_size` of types related to `struct rte_mbuf` is set to
-> + *   `RTE_MBUF_DEFAULT_BUF_SIZE`, adjust using `adjust_arg_buf_size` if
-> needed.
-> + * @param text
-> + *   Text representation of the type, e.g. "struct rte_mbuf *".
-> + * @param alloc_list
-> + *   Alloc list to use for new allocations.
-> + * @return
-> + *   0 on success
-> + *   -1 on failure
-> + */
-> +int
-> +parse_arg(struct rte_bpf_arg *arg, const char *text);
-> +
-> +/**
-> + * Parse text into xsym.
-> + * @param arg
-> + *   Pointer to a variable to put parse result to.
-> + *   Member `buf_size` of types related to `struct rte_mbuf` is set to
-> + *   `RTE_MBUF_DEFAULT_BUF_SIZE`, adjust using `adjust_xsym_buf_size` if
-> needed.
-> + * @param text
-> + *   Text representation of the external symbol, e.g. "void exit(uint32_=
-t)".
-> + * @param alloc_list
-> + *   Alloc list to use for new allocations.
-> + * @return
-> + *   0 on success
-> + *   -1 on failure
-> + */
-> +int
-> +parse_xsym(struct rte_bpf_xsym *xsym, const char *text,
-> +	struct alloc_list *alloc_list);
-> +
-> +/** If arg->buf_size is non-zero, set it to mbuf_buf_size */
-> +void
-> +adjust_arg_buf_size(struct rte_bpf_arg *arg, size_t mbuf_buf_size);
-> +
-> +/** If buf_size members are non-zero, set them to mbuf_buf_size */
-> +void
-> +adjust_xsym_buf_size(struct rte_bpf_xsym *xsym, size_t mbuf_buf_size);
-> +
-> +/** Create and set up global debugging session. */
-> +struct rte_bpf_validate_debug *
-> +debug_create(void);
-> +
-> +/** Clear and destroy global debugging session. */
-> +void
-> +debug_destroy(struct rte_bpf_validate_debug *debug);
-> +
-> +/** Tells caller if validation should be re-tried. */
-> +bool
-> +debug_validate_again(void);
-> diff --git a/app/validate-bpf/main.c b/app/validate-bpf/main.c
-> new file mode 100644
-> index 000000000000..c2f73993767b
-> --- /dev/null
-> +++ b/app/validate-bpf/main.c
-> @@ -0,0 +1,90 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> + * Copyright(c) 2025 Huawei Technologies Co., Ltd
-> + */
-> +
-> +#include "internal.h"
-> +
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +
-> +#include <rte_bpf.h>
-> +#include <rte_debug.h>
-> +#include <rte_eal.h>
-> +#include <rte_errno.h>
-> +
-> +RTE_LOG_REGISTER(validate_bpf_logtype, validate-bpf, NOTICE);
-> +
-> +static int
-> +test_bpf_load(struct rte_bpf_prm_ex *prm)
-> +{
-> +	struct rte_bpf * const bpf =3D rte_bpf_load_ex(prm);
-> +
-> +	const int rc =3D -rte_errno;
-> +
-> +	rte_bpf_destroy(bpf);
-> +
-> +	return bpf =3D=3D NULL ? rc : 0;
-> +}
-> +
-> +/* Re-starts validation of asked from interactive debugger. */
-> +static int
-> +test_bpf_load_with_restarts(struct rte_bpf_prm_ex *prm)
-> +{
-> +	for (;;) {
-> +		const int rc =3D test_bpf_load(prm);
-> +
-> +		if (rc =3D=3D -ECANCELED && debug_validate_again())
-> +			continue;
-> +
-> +		if (rc !=3D 0)
-> +			fprintf(stderr, "Error %d loading BPF: %s\n",
-> +				-rc, strerror(-rc));
+> +	/* Update forwarding of the non FC MAC control frames settings */
+> +	if (hw->mac_type == ICE_MAC_E830) {
+> +#define E830_MAC_COMMAND_CONFIG(pi) (((pi)->phy.link_info.link_speed == ICE_AQ_LINK_SPEED_200GB) ? \
+> +		E830_PRTMAC_200G_COMMAND_CONFIG : E830_PRTMAC_COMMAND_CONFIG)
+> +
+> +		u32 mac_config = rd32(hw, E830_MAC_COMMAND_CONFIG(port_info));
+> +
+> +		if (fc_conf->mac_ctrl_frame_fwd)
+> +			mac_config |= E830_PRTMAC_COMMAND_CONFIG_CNTL_FRM_ENA_M;
 > +		else
-> +			fprintf(stderr, "Validation succeeded.\n");
+> +			mac_config &= ~E830_PRTMAC_COMMAND_CONFIG_CNTL_FRM_ENA_M;
 > +
-> +		return rc;
-> +	}
-> +}
-> +
-> +int
-> +main(int argc, char *argv[])
-> +{
-> +	int rc;
-> +
-> +	struct args * const args =3D args_parse(argc, argv);
-> +	if (args =3D=3D NULL || args->show_help
-> +			|| args->bpf_prm.elf_file.path =3D=3D NULL) {
-> +		args_destroy(args);
-> +		print_usage(argv[0]);
-> +		if (args =3D=3D NULL)
-> +			/* Could not parse arguments. */
-> +			return 2;
-> +		print_supported_types();
-> +		print_defaults();
-> +		return 0;
-> +	}
-> +
-> +	const int eal_init_argc =3D get_eal_init_argc();
-> +	char ** const eal_init_argv =3D get_eal_init_argv(argv[0]);
-> +	rc =3D rte_eal_init(eal_init_argc, eal_init_argv);
-> +	if (rc < 0) {
-> +		fprintf(stderr, "Error %d initializing EAL: %s\n",
-> +			rte_errno, strerror(rte_errno));
-> +		args_destroy(args);
-> +		return EXIT_FAILURE;
-> +	}
-> +	RTE_VERIFY(rc =3D=3D eal_init_argc - 1);
-> +
-> +	const int ret =3D test_bpf_load_with_restarts(&args->bpf_prm);
-> +
-> +	args_destroy(args);
-> +
-> +	rc =3D rte_eal_cleanup();
-> +	if (rc < 0) {
-> +		fprintf(stderr, "Error %d cleaning up EAL: %s\n",
-> +			rte_errno, strerror(rte_errno));
-> +		return EXIT_FAILURE;
-> +	}
-> +
-> +	return ret < 0 ? EXIT_FAILURE : EXIT_SUCCESS;
-> +}
-> diff --git a/app/validate-bpf/meson.build b/app/validate-bpf/meson.build
-> new file mode 100644
-> index 000000000000..03cfc329efb5
-> --- /dev/null
-> +++ b/app/validate-bpf/meson.build
-> @@ -0,0 +1,13 @@
-> +# SPDX-License-Identifier: BSD-3-Clause
-> +# Copyright(c) 2025 Huawei Technologies Co., Ltd
-> +
-> +sources =3D files(
-> +        'alloc_list.c',
-> +        'args.c',
-> +        'debug.c',
-> +        'debug_command.c',
-> +        'eal_init_args.c',
-> +        'main.c',
-> +        'parse_decl.c',
-> +)
-> +deps =3D ['bpf', 'cmdline']
-> diff --git a/app/validate-bpf/parse_decl.c b/app/validate-bpf/parse_decl.=
-c
-> new file mode 100644
-> index 000000000000..be733d58cd41
-> --- /dev/null
-> +++ b/app/validate-bpf/parse_decl.c
-> @@ -0,0 +1,623 @@
-> +/* SPDX-License-Identifier: BSD-3-Clause
-> + * Copyright(c) 2025 Huawei Technologies Co., Ltd
-> + */
-> +
-> +#include "internal.h"
-> +
-> +#include <ctype.h>
-> +#include <stdlib.h>
-> +
-> +#include <rte_ether.h>
-> +#include <rte_ip.h>
-> +#include <rte_mbuf_core.h>
-> +#include <rte_tcp.h>
-> +#include <rte_udp.h>
-> +
-> +#define RETURN_TEXT_ERROR(text, text_start, message, ...) do {          =
-      \
-> +	const int _offset =3D (text) - (text_start);                           =
- \
-> +	VALIDATE_BPF_LOG(ERR, "at offset %d: " message,                       \
-> +		_offset, ## __VA_ARGS__);                                     \
-> +	VALIDATE_BPF_LOG(NOTICE, "%s", text_start);                           \
-> +	VALIDATE_BPF_LOG(NOTICE, "%*c", _offset + 1, '^');                    \
-> +	return -1;                                                            \
-> +} while (0)
-> +
-> +/* Used in place of any signature, this is not really being checked. */
-> +static uint64_t
-> +dummy_function(uint64_t arg1, uint64_t arg2, uint64_t arg3, uint64_t arg=
-4,
-> +	uint64_t arg5)
-> +{
-> +	RTE_SET_USED(arg1);
-> +	RTE_SET_USED(arg2);
-> +	RTE_SET_USED(arg3);
-> +	RTE_SET_USED(arg4);
-> +	RTE_SET_USED(arg5);
-> +	return 0;
-> +}
-> +
-> +
-> +/* TOKENS AND TYPES */
-> +
-> +enum token {
-> +	TOKEN_UNRECOGNIZED =3D -1,
-> +	TOKEN_END =3D 0,
-> +
-> +	TOKEN_ASTERISK,
-> +	TOKEN_BRACKET_CLOSE,
-> +	TOKEN_BRACKET_OPEN,
-> +	TOKEN_COMMA,
-> +	TOKEN_PARENTHESIS_CLOSE,
-> +	TOKEN_PARENTHESIS_OPEN,
-> +	TOKEN_STRUCT,
-> +
-> +	TOKEN_TYPES_BEGIN,
-> +
-> +	TOKEN_TYPE_CHAR,
-> +	TOKEN_TYPE_ETHER_HEADER,
-> +	TOKEN_TYPE_INT32_T,
-> +	TOKEN_TYPE_IP_HEADER,
-> +	TOKEN_TYPE_IP_HEADERS,
-> +	TOKEN_TYPE_RTE_MBUF,
-> +	TOKEN_TYPE_TCP_HEADER,
-> +	TOKEN_TYPE_TCP_HEADERS,
-> +	TOKEN_TYPE_UDP_HEADER,
-> +	TOKEN_TYPE_UDP_HEADERS,
-> +	TOKEN_TYPE_UINT32_T,
-> +	TOKEN_TYPE_UINT64_T,
-> +	TOKEN_TYPE_UINTPTR_T,
-> +	TOKEN_TYPE_VOID,
-> +
-> +	TOKEN_TYPES_END,
-> +};
-> +
-> +/* Return true if the token is a type token */
-> +static bool
-> +is_type_token(enum token token)
-> +{
-> +	return token > TOKEN_TYPES_BEGIN && token < TOKEN_TYPES_END;
-> +}
-> +
-> +struct text_token {
-> +	const char *text;
-> +	unsigned int length;  /* Not size_t to fit this struct in 2 regs. */
-> +	enum token token;
-> +};
-> +
-> +#define TEXT_TOKEN_DEF(text_, token_) {                                 =
-      \
-> +	.text =3D text_,                                                       =
- \
-> +	.length =3D sizeof(text_) - 1,                                         =
- \
-> +	.token =3D token_,                                                     =
- \
-> +}
-> +
-> +/* Token search table, MUST BE SORTED! */
-> +const struct text_token TEXT_TOKENS[] =3D {
-> +	TEXT_TOKEN_DEF("(",			TOKEN_PARENTHESIS_OPEN),
-> +	TEXT_TOKEN_DEF(")",			TOKEN_PARENTHESIS_CLOSE),
-> +	TEXT_TOKEN_DEF("*",			TOKEN_ASTERISK),
-> +	TEXT_TOKEN_DEF(",",			TOKEN_COMMA),
-> +	TEXT_TOKEN_DEF("[",			TOKEN_BRACKET_OPEN),
-> +	TEXT_TOKEN_DEF("]",			TOKEN_BRACKET_CLOSE),
-> +	TEXT_TOKEN_DEF("char",			TOKEN_TYPE_CHAR),
-> +	TEXT_TOKEN_DEF("ether_header",
-> 	TOKEN_TYPE_ETHER_HEADER),
-> +	TEXT_TOKEN_DEF("int32_t",		TOKEN_TYPE_INT32_T),
-> +	TEXT_TOKEN_DEF("ip_header",		TOKEN_TYPE_IP_HEADER),
-> +	TEXT_TOKEN_DEF("ip_headers",
-> 	TOKEN_TYPE_IP_HEADERS),
-> +	TEXT_TOKEN_DEF("rte_ether_hdr",
-> 	TOKEN_TYPE_ETHER_HEADER),
-> +	TEXT_TOKEN_DEF("rte_ipv4_hdr",
-> 	TOKEN_TYPE_IP_HEADER),
-> +	TEXT_TOKEN_DEF("rte_mbuf",		TOKEN_TYPE_RTE_MBUF),
-> +	TEXT_TOKEN_DEF("rte_tcp_hdr",
-> 	TOKEN_TYPE_TCP_HEADER),
-> +	TEXT_TOKEN_DEF("rte_udp_hdr",
-> 	TOKEN_TYPE_UDP_HEADER),
-> +	TEXT_TOKEN_DEF("struct",		TOKEN_STRUCT),
-> +	TEXT_TOKEN_DEF("tcp_header",
-> 	TOKEN_TYPE_TCP_HEADER),
-> +	TEXT_TOKEN_DEF("tcp_headers",
-> 	TOKEN_TYPE_TCP_HEADERS),
-> +	TEXT_TOKEN_DEF("udp_header",
-> 	TOKEN_TYPE_UDP_HEADER),
-> +	TEXT_TOKEN_DEF("udp_headers",
-> 	TOKEN_TYPE_UDP_HEADERS),
-> +	TEXT_TOKEN_DEF("uint32_t",		TOKEN_TYPE_UINT32_T),
-> +	TEXT_TOKEN_DEF("uint64_t",		TOKEN_TYPE_UINT64_T),
-> +	TEXT_TOKEN_DEF("uintptr_t",		TOKEN_TYPE_UINTPTR_T),
-> +	TEXT_TOKEN_DEF("void",			TOKEN_TYPE_VOID),
-> +};
-> +
-> +const struct text_token TEXT_TOKEN_UNRECOGNIZED =3D { "", 0,
-> TOKEN_UNRECOGNIZED };
-> +const struct text_token TEXT_TOKEN_END =3D { "", 0, TOKEN_END };
-> +
-> +/* IP header maximum possible size with options. */
-> +#define IP_HEADER_MAX_SIZE 60
-> +#define IP_HEADERS_MAX_SIZE (sizeof(struct rte_ether_hdr) +
-> IP_HEADER_MAX_SIZE)
-> +#define TCP_HEADERS_MAX_SIZE (IP_HEADERS_MAX_SIZE + sizeof(struct
-> rte_tcp_hdr))
-> +#define UDP_HEADERS_MAX_SIZE (IP_HEADERS_MAX_SIZE + sizeof(struct
-> rte_udp_hdr))
-> +
-> +#define POINTER_SIZE (sizeof(char *))
-> +
-> +const size_t TYPE_TOKEN_SIZE[] =3D {
-> +	[TOKEN_TYPE_CHAR]		=3D sizeof(char),
-> +	[TOKEN_TYPE_ETHER_HEADER]	=3D sizeof(struct rte_ether_hdr),
-> +	[TOKEN_TYPE_INT32_T]		=3D sizeof(int32_t),
-> +	[TOKEN_TYPE_IP_HEADERS]		=3D IP_HEADERS_MAX_SIZE,
-> +	[TOKEN_TYPE_IP_HEADER]		=3D sizeof(struct rte_ipv4_hdr),
-> +	[TOKEN_TYPE_TCP_HEADERS]	=3D TCP_HEADERS_MAX_SIZE,
-> +	[TOKEN_TYPE_TCP_HEADER]		=3D sizeof(struct rte_tcp_hdr),
-> +	[TOKEN_TYPE_UDP_HEADERS]	=3D UDP_HEADERS_MAX_SIZE,
-> +	[TOKEN_TYPE_UDP_HEADER]		=3D sizeof(struct rte_udp_hdr),
-> +	[TOKEN_TYPE_UINT32_T]		=3D sizeof(uint32_t),
-> +	[TOKEN_TYPE_UINT64_T]		=3D sizeof(uint64_t),
-> +	[TOKEN_TYPE_UINTPTR_T]		=3D sizeof(uintptr_t),
-> +};
-> +
-> +/*
-> + * Struct rte_bpf_arg augmented with a type of pointer to it, since rte_=
-bpf_arg
-> + * by itself may not contain enough information to determine its pointer=
- type.
-> + */
-> +struct arg_info {
-> +	struct rte_bpf_arg value;
-> +	enum rte_bpf_arg_type ptr_type;
-> +	bool is_array;
-> +};
-> +
-> +/* Return arg_info struct described by the specified type token. */
-> +static struct arg_info
-> +get_type_token_arg(enum token type)
-> +{
-> +	RTE_ASSERT(is_type_token(type));
-> +	switch (type) {
-> +	case TOKEN_TYPE_VOID:
-> +		return (struct arg_info){
-> +			.value =3D { .type =3D RTE_BPF_ARG_UNDEF },
-> +			.ptr_type =3D RTE_BPF_ARG_PTR,
-> +		};
-> +	case TOKEN_TYPE_RTE_MBUF:
-> +		return (struct arg_info){
-> +			.value =3D {
-> +				.type =3D RTE_BPF_ARG_RAW,
-> +				.size =3D sizeof(struct rte_mbuf),
-> +				.buf_size =3D RTE_MBUF_DEFAULT_BUF_SIZE,
-> +			},
-> +			.ptr_type =3D RTE_BPF_ARG_PTR_MBUF,
-> +		};
-> +	default:
-> +		/* Should only reach here for normal sized types. */
-> +		RTE_ASSERT((size_t)type < RTE_DIM(TYPE_TOKEN_SIZE) &&
-> +			TYPE_TOKEN_SIZE[type] !=3D 0);
-> +		return (struct arg_info){
-> +			.value =3D {
-> +				.type =3D RTE_BPF_ARG_RAW,
-> +				.size =3D TYPE_TOKEN_SIZE[type],
-> +			},
-> +			.ptr_type =3D RTE_BPF_ARG_PTR,
-> +		};
-> +	}
-> +}
-> +
-> +
-> +/* PARSING TEXT INTO TOKENS */
-> +
-> +/* Return true if character matches [a-zA-Z0-9_] in regex */
-> +static bool
-> +iswordchar(char character)
-> +{
-> +	return isalnum(character) || character =3D=3D '_';
-> +}
-> +
-> +/*
-> + * Compare pointer to text with pointer to struct text_token to determin=
-e
-> + * if text starts with the specified token.
-> + */
-> +static int
-> +text_and_text_token_cmp(const void *text_void_ptr, const void
-> *text_token_void_ptr)
-> +{
-> +	int result;
-> +	const char * const text =3D text_void_ptr;
-> +	const struct text_token * const text_token =3D text_token_void_ptr;
-> +
-> +	if (memchr(text, 0, text_token->length) !=3D NULL)
-> +		/* Text is shorter than the token. */
-> +		return strcmp(text, text_token->text);
-> +
-> +	/* Cannot use strcmp because we are looking for a prefix. */
-> +	result =3D memcmp(text, text_token->text, text_token->length);
-
-I am puzzled here..
-Why not simply strncmp(text, text_token->text, text_token->length);
-?
-
-> +
-> +	/* Checking the case of a partial word match. */
-> +	if (result =3D=3D 0 && iswordchar(text[text_token->length - 1]) &&
-> +			iswordchar(text[text_token->length]))
-> +		/* Text word is longer than the token. */
-> +		result =3D 1;
-> +
-> +	return result;
-> +}
-> +
-> +/* Advance pointed character pointer to the first non-space character. *=
-/
-> +static void
-> +skip_space(const char **text_ptr)
-> +{
-> +	while (isspace(**text_ptr))
-> +		++*text_ptr;
-> +}
-> +
-> +/*
-> + * Recognize and return a token starting text.
-> + * Return TEXT_TOKEN_END if text is empty.
-> + * Return TEXT_TOKEN_UNRECOGNIZED if text starts with unknown token.
-> + */
-> +static struct text_token
-> +peek_text_token(const char *text)
-> +{
-> +	if (*text =3D=3D '\0')
-> +		return TEXT_TOKEN_END;
-> +	const struct text_token * const text_token =3D bsearch(text, TEXT_TOKEN=
-S,
-> +		RTE_DIM(TEXT_TOKENS), sizeof(TEXT_TOKENS[0]),
-> +		text_and_text_token_cmp);
-> +	if (text_token =3D=3D NULL)
-> +		return TEXT_TOKEN_UNRECOGNIZED;
-> +	return *text_token;
-> +}
-> +
-> +/*
-> + * Advance pointed text starting with the specified token to the first
-> + * non-space character after it.
-> + * Do nothing if called for TEXT_TOKEN_END or TEXT_TOKEN_UNRECOGNIZED.
-> + */
-> +static void
-> +consume_text_token(const char **text_ptr, struct text_token text_token)
-> +{
-> +	RTE_ASSERT(memcmp(*text_ptr, text_token.text, text_token.length) =3D=3D=
- 0);
-> +	*text_ptr +=3D text_token.length;
-> +	skip_space(text_ptr);
-> +}
-> +
-> +/* Return length of the word starting at `text`. */
-> +static size_t
-> +find_word_length(const char *text)
-> +{
-> +	size_t word_length =3D 0;
-> +	while (iswordchar(text[word_length]))
-> +		++word_length;
-> +	return word_length;
-> +}
-> +
-> +/* Create a copy of the word starting text, advance to next token. */
-> +static const char *
-> +take_name(const char **text_ptr, struct alloc_list *alloc_list)
-> +{
-> +	const size_t word_length =3D find_word_length(*text_ptr);
-> +	if (word_length =3D=3D 0)
-> +		/* Text does not start with a word. */
-> +		return NULL;
-> +
-> +	/* Allocate memory for the word and add it to the alloc_list */
-> +	char *word =3D malloc(word_length + 1);
-> +	RTE_VERIFY(word !=3D NULL);
-> +	alloc_list_append(alloc_list, word);
-> +
-> +	/* Copy and terminate word contents. */
-> +	memcpy(word, *text_ptr, word_length);
-> +	word[word_length] =3D '\0';
-> +
-> +	/* Advance text pointer. */
-> +	*text_ptr +=3D word_length;
-> +	skip_space(text_ptr);
-> +
-> +	return word;
-> +}
-> +
-> +/* Read a number starting text, advance to next token. */
-> +static int
-> +take_number(size_t *number, const char **text_ptr)
-> +{
-> +	/* Read a word and let strtoull to decide if it's a number. */
-> +	const size_t word_length =3D find_word_length(*text_ptr);
-> +	if (word_length =3D=3D 0)
-> +		/* Text does not start with a word. */
-> +		return -ENOENT;
-> +
-> +	errno =3D 0;
-> +	char *number_end;
-> +	unsigned long long long_number =3D strtoull(*text_ptr, &number_end, 0);
-> +	if (errno > 0)
-> +		return -errno;
-> +	if (number_end !=3D *text_ptr + word_length)
-> +		/* Could not parse whole word. */
-> +		return -EINVAL;
-> +	if (long_number > SIZE_MAX)
-
-I think stroul() will return ERANGE itself if the resulting value iss out o=
-f range.
-So not sure that precaution (strtoull()l then check range is necessary).=20
-
-> +		return -ERANGE;
-> +
-> +	*number =3D long_number;
-> +
-> +	/* Advance text pointer. */
-> +	*text_ptr +=3D word_length;
-> +	skip_space(text_ptr);
-> +
-> +	return 0;
-> +}
-> +
-> +
-> +/* PARSING DECLARATION PARTS */
-> +
-> +/* Change arg into a reference. */
-> +static void
-> +change_into_reference(struct arg_info *arg)
-> +{
-> +	if (RTE_BPF_ARG_PTR_TYPE(arg->value.type) !=3D 0) {
-> +		VALIDATE_BPF_LOG(WARNING,
-> +			"After taking reference to a pointer the latter "
-> +			"will be described as an opaque pointer-size blob.");
-> +		RTE_ASSERT(arg->ptr_type =3D=3D RTE_BPF_ARG_PTR);
-> +		arg->value.size =3D POINTER_SIZE;
-> +	}
-> +	arg->value.type =3D arg->ptr_type;
-> +	arg->ptr_type =3D RTE_BPF_ARG_PTR;
-> +	arg->is_array =3D false;
-> +}
-> +
-> +/*
-> + * Recognize and consume arg starting text, advance to next token.
-> + */
-> +static int
-> +take_arg(struct arg_info *arg, const char **text_ptr, const char *text_s=
-tart)
-> +{
-> +	struct text_token next =3D peek_text_token(*text_ptr);
-> +
-> +	if (next.token =3D=3D TOKEN_STRUCT) {
-> +		consume_text_token(text_ptr, next);
-> +		next =3D peek_text_token(*text_ptr);
-> +	}
-> +
-> +	if (!is_type_token(next.token))
-> +		RETURN_TEXT_ERROR(*text_ptr, text_start, "expect type");
-> +	const enum token type =3D next.token;
-> +	consume_text_token(text_ptr, next);
-> +	next =3D peek_text_token(*text_ptr);
-> +
-> +	*arg =3D get_type_token_arg(type);
-> +
-> +	while (next.token =3D=3D TOKEN_ASTERISK) {
-> +		consume_text_token(text_ptr, next);
-> +		next =3D peek_text_token(*text_ptr);
-> +		change_into_reference(arg);
-> +	}
-> +
-> +	while (next.token =3D=3D TOKEN_BRACKET_OPEN) {
-> +		consume_text_token(text_ptr, next);
-> +
-> +		/* Initialize to zero to avoid spurious compiler warnings. */
-> +		size_t array_length =3D 0;
-> +		if (take_number(&array_length, text_ptr) < 0)
-> +			RETURN_TEXT_ERROR(*text_ptr, text_start, "expect
-> length");
-> +		next =3D peek_text_token(*text_ptr);
-> +
-> +		if (arg->value.size !=3D 0 &&
-> +				array_length > SIZE_MAX / arg->value.size)
-> +			RETURN_TEXT_ERROR(*text_ptr, text_start, "type too
-> big");
-> +
-> +		if (next.token !=3D TOKEN_BRACKET_CLOSE)
-> +			RETURN_TEXT_ERROR(*text_ptr, text_start, "expect ']'");
-> +		consume_text_token(text_ptr, next);
-> +		next =3D peek_text_token(*text_ptr);
-> +
-> +		change_into_reference(arg);
-> +		arg->value.size *=3D array_length;
-> +		arg->is_array =3D true;
+> +		wr32(hw, E830_MAC_COMMAND_CONFIG(port_info), mac_config);
 > +	}
 > +
 > +	return 0;
 > +}
 > +
-> +/* Fill struct rte_bpf_arg within xsym trying not to unzero the padding.=
- */
-> +static void
-> +fill_xsym_arg(struct rte_bpf_arg *target, struct rte_bpf_arg source)
-> +{
-> +	/* Copy fields individually to try and prevent copying the padding. */
-> +	target->type =3D source.type;
-> +	target->size =3D source.size;
-> +	target->buf_size =3D source.buf_size;
-> +}
-> +
-> +/* Build and return struct rte_bpf_arg of type RTE_BPF_XTYPE_VAR */
 > +static int
-> +fill_var_xsym(struct rte_bpf_xsym *xsym, struct arg_info arg, const char=
- *name,
-> +	struct alloc_list *alloc_list)
+> +ice_flow_ctrl_set(struct rte_eth_dev *dev, struct rte_eth_fc_conf *fc_conf)
 > +{
-> +	/* Variables are passed by reference, except for arrays. */
-> +	if (!arg.is_array) {
-> +		if (RTE_BPF_ARG_PTR_TYPE(arg.value.type) !=3D 0)
-> +			VALIDATE_BPF_LOG(WARNING,
-> +				"External pointers may not work as expected "
-> +				"because all external variables are passed by "
-> +				"reference but there is currently no way to "
-> +				"describe double pointer to the validator.");
-> +		change_into_reference(&arg);
+> +	struct ice_pf *pf = ICE_DEV_PRIVATE_TO_PF(dev->data->dev_private);
+> +	struct ice_hw *hw = ICE_PF_TO_HW(pf);
+> +	struct ice_port_info *pi = hw->port_info;
+> +	bool link_up;
+> +	u8 aq_failures;
+> +	int ret;
+> +
+> +	/* Link flow control and priority flow control are mutually exclusive */
+> +	if (dev->data->dev_conf.rxmode.mq_mode & RTE_ETH_MQ_RX_DCB_FLAG) {
+> +		PMD_DRV_LOG(ERR, "Priority flow control is enabled, cannot set link flow control");
+> +		return -ENOTSUP;
 > +	}
 > +
-> +	/* Allocate something to assign to a val pointer. */
-> +	void * const val =3D calloc(1, RTE_MAX(1u, arg.value.size));
-> +	if (val =3D=3D NULL) {
-> +		VALIDATE_BPF_LOG(ERR, "could not allocate enough memory");
-> +		return -1;
-> +	}
-> +	alloc_list_append(alloc_list, val);
-> +
-> +	/* Need all padding and unused fields to be zero-filled. */
-> +	memset(xsym, 0, sizeof(*xsym));
-> +	xsym->name =3D name;
-> +	xsym->type =3D RTE_BPF_XTYPE_VAR;
-> +	xsym->var.val =3D val;
-> +	fill_xsym_arg(&xsym->var.desc, arg.value);
-> +
-> +	return 0;
-> +}
-> +
-> +/* Build and return struct rte_bpf_arg of type RTE_BPF_XTYPE_FUNC */
-> +static void
-> +fill_func_xsym(struct rte_bpf_xsym *xsym, struct arg_info arg, const cha=
-r *name)
-> +{
-> +	/* Need all padding and unused fields to be zero-filled. */
-> +	memset(xsym, 0, sizeof(*xsym));
-> +	xsym->name =3D name;
-> +	xsym->type =3D RTE_BPF_XTYPE_FUNC;
-> +	xsym->func.val =3D &dummy_function;
-> +	fill_xsym_arg(&xsym->func.ret, arg.value);
-> +}
-> +
-> +/*
-> + * Parse and store function arguments, advance to next token after ')'.
-> + * Value of *text_ptr should point to the next token after '('.
-> + */
-> +static int
-> +take_func_xsym_args(struct rte_bpf_xsym *xsym, const char **text_ptr,
-> +	const char *text_start)
-> +{
-> +	struct arg_info arg;
-> +	struct text_token delimiter =3D peek_text_token(*text_ptr);
-> +
-> +	while (delimiter.token !=3D TOKEN_PARENTHESIS_CLOSE) {
-> +		if (xsym->func.nb_args =3D=3D EBPF_FUNC_MAX_ARGS)
-> +			RETURN_TEXT_ERROR(*text_ptr, text_start,
-> +				"too many arguments, maximum %d allowed",
-> +				EBPF_FUNC_MAX_ARGS);
-> +
-> +		if (take_arg(&arg, text_ptr, text_start) < 0)
-> +			return -1;
-> +		if (arg.value.type =3D=3D RTE_BPF_ARG_UNDEF &&
-> +				xsym->func.nb_args !=3D 0)
-> +			RETURN_TEXT_ERROR(*text_ptr, text_start,
-> +				"arguments of type void are not allowed");
-> +		fill_xsym_arg(&xsym->func.args[xsym->func.nb_args++],
-> +			arg.value);
-> +
-> +		delimiter =3D peek_text_token(*text_ptr);
-> +		switch (delimiter.token) {
-> +		case TOKEN_COMMA:
-> +			consume_text_token(text_ptr, delimiter);
-> +			continue;
-> +		case TOKEN_PARENTHESIS_CLOSE:
-> +			break;
-> +		default:
-> +			RETURN_TEXT_ERROR(*text_ptr, text_start,
-> +				"expect ')' or ','");
-> +		}
-> +	}
-> +	consume_text_token(text_ptr, delimiter);
-> +
-> +	/* Special case of single void argument. */
-> +	if (xsym->func.nb_args =3D=3D 1 &&
-> +			xsym->func.args[0].type =3D=3D RTE_BPF_ARG_UNDEF) {
-> +		xsym->func.nb_args =3D 0;
-> +		/* Need all padding and unused fields to be zero-filled. */
-> +		fill_xsym_arg(&xsym->func.args[0], (struct rte_bpf_arg){});
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/* Make sure text has ended. */
-> +static int
-> +ensure_end(const char *text, const char *text_start)
-> +{
-> +	if (peek_text_token(text).token !=3D TOKEN_END)
-> +		RETURN_TEXT_ERROR(text, text_start, "trailing garbage");
-> +	return 0;
-> +}
-> +
-> +/* Parse and store xsym, advance to next token. */
-> +static int
-> +take_xsym(struct rte_bpf_xsym *xsym, const char **text_ptr,
-> +	const char *text_start, struct alloc_list *alloc_list)
-> +{
-> +	struct arg_info arg;
-> +
-> +	if (take_arg(&arg, text_ptr, text_start) < 0)
-> +		return -1;
-> +
-> +	const char * const name =3D take_name(text_ptr, alloc_list);
-> +	if (name =3D=3D NULL)
-> +		RETURN_TEXT_ERROR(*text_ptr, text_start, "expect name");
-> +
-> +	const struct text_token next =3D peek_text_token(*text_ptr);
-> +	switch (next.token) {
-> +	case TOKEN_END:
-> +		if (fill_var_xsym(xsym, arg, name, alloc_list) < 0)
-> +			return -1;
+> +	switch (fc_conf->mode) {
+> +	case RTE_ETH_FC_FULL:
+> +		pi->fc.req_mode = ICE_FC_FULL;
 > +		break;
-> +	case TOKEN_PARENTHESIS_OPEN:
-> +		consume_text_token(text_ptr, next);
-> +		fill_func_xsym(xsym, arg, name);
-> +		if (take_func_xsym_args(xsym, text_ptr, text_start) < 0)
-> +			return -1;
+> +	case RTE_ETH_FC_TX_PAUSE:
+> +		pi->fc.req_mode = ICE_FC_TX_PAUSE;
+> +		break;
+> +	case RTE_ETH_FC_RX_PAUSE:
+> +		pi->fc.req_mode = ICE_FC_RX_PAUSE;
 > +		break;
 > +	default:
-> +		RETURN_TEXT_ERROR(*text_ptr, text_start,
-> +			"expect '(' or text end");
+> +		pi->fc.req_mode = ICE_FC_NONE;
 > +	}
-> +	return 0;
-> +}
 > +
+> +	/* ice_set_fc() reprograms the PHY pause config and, if auto link update
+> +	 * is enabled, restarts the link so the new mode is renegotiated. The
+> +	 * default MIB that arms the MAC for LFC is reapplied from the link-up
+> +	 * event handler.
+> +	 */
+> +	link_up = pi->phy.link_info.link_info & ICE_AQ_LINK_UP;
+
+Is it safe to read this outside the lock? For safety should this be a call
+to ice_get_link_info_safe? AI flags that all other instances in this file
+use the function.
+
 > +
-> +/* PUBLIC FUNCTIONS */
-> +
-> +void
-> +print_supported_types(void)
-> +{
-> +	printf("TYPE: [struct] BASIC_TYPE [*]... [[N]]...\n");
-> +	printf("BASIC_TYPE: one of\n");
-> +	for (int tti =3D 0; tti !=3D RTE_DIM(TEXT_TOKENS); ++tti) {
-> +		if (is_type_token(TEXT_TOKENS[tti].token))
-> +			printf("\t%s\n", TEXT_TOKENS[tti].text);
+> +	ret = ice_set_fc(pi, &aq_failures, link_up);
+> +	if (ret != 0 && aq_failures != ICE_SET_FC_AQ_FAIL_UPDATE) {
+> +		PMD_DRV_LOG(ERR, "Failed to set flow control mode, ret %d aq_failures 0x%x",
+> +			    ret, aq_failures);
+> +		return -EIO;
 > +	}
-> +}
 > +
-> +int
-> +parse_arg(struct rte_bpf_arg *arg, const char *text)
-> +{
-> +	struct arg_info arg_info;
-> +	const char * const text_start =3D text;
-> +	skip_space(&text);
-> +	if (take_arg(&arg_info, &text, text_start) < 0)
-> +		return -1;
-> +	if (ensure_end(text, text_start) < 0)
-> +		return -1;
-> +	if (arg_info.ptr_type !=3D RTE_BPF_ARG_PTR)
-> +		VALIDATE_BPF_LOG(WARNING,
-> +			"`%s` has a special pointer type which was left unused; "
-> +			"argument was set to an opaque blob.",
-> +			text_start);
-> +	*arg =3D arg_info.value;
-> +	return 0;
-> +}
+> +	pf->fc_conf = *fc_conf;
 > +
-> +int
-> +parse_xsym(struct rte_bpf_xsym *xsym, const char *text,
-> +	struct alloc_list *alloc_list)
-> +{
-> +	const char * const text_start =3D text;
-> +	skip_space(&text);
-> +	if (take_xsym(xsym, &text, text_start, alloc_list) < 0)
-> +		return -1;
-> +	if (ensure_end(text, text_start) < 0)
-> +		return -1;
-> +	return 0;
+> +	/* Apply the Rx buffer watermarks and pause quanta for the link flow
+> +	 * control traffic class (LFC rides user priority 0).
+> +	 */
+> +	return ice_cfg_fc_params(dev, 0, 0, fc_conf);
 > +}
+
+AI review flags a potential issue here. What happens to pf->fc_conf if the
+application fails? The applied values will not match the stored ones.
+
 > +
-> +void
-> +adjust_arg_buf_size(struct rte_bpf_arg *arg, size_t mbuf_buf_size)
-> +{
-> +	if (arg->buf_size !=3D 0)
-> +		/* Non-zero buf_size indicates mbuf or a pointer to it. */
-> +		arg->buf_size =3D mbuf_buf_size;
-> +}
-> +
-> +void
-> +adjust_xsym_buf_size(struct rte_bpf_xsym *xsym, size_t mbuf_buf_size)
-> +{
-> +	switch (xsym->type) {
-> +	case RTE_BPF_XTYPE_FUNC:
-> +		for (uint32_t argi =3D 0; argi !=3D xsym->func.nb_args; ++argi)
-> +			adjust_arg_buf_size(&xsym->func.args[argi],
-> +				mbuf_buf_size);
-> +		adjust_arg_buf_size(&xsym->func.ret, mbuf_buf_size);
-> +		break;
-> +	case RTE_BPF_XTYPE_VAR:
-> +		adjust_arg_buf_size(&xsym->var.desc, mbuf_buf_size);
-> +		break;
-> +	default:
-> +		rte_panic("Unexpected xsym type %d\n", xsym->type);
-> +	}
-> +}
+>  static int
+>  ice_priority_flow_ctrl_set(struct rte_eth_dev *dev, struct rte_eth_pfc_conf *pfc_conf)
+>  {
+> @@ -4160,49 +4366,10 @@ ice_priority_flow_ctrl_set(struct rte_eth_dev *dev, struct rte_eth_pfc_conf *pfc
+>  		return ret;
+>  	}
+>  
+> -	/* Update high and low watermarks */
+> -	u32 high_watermark = pfc_conf->fc.high_water;
+> -	if (high_watermark > ICE_MAC_TC_MAX_WATERMARK)
+> -		high_watermark = ICE_MAC_TC_MAX_WATERMARK;
+> -
+> -	u32 low_watermark = pfc_conf->fc.low_water;
+> -	if (low_watermark > ICE_MAC_TC_MAX_WATERMARK)
+> -		low_watermark = ICE_MAC_TC_MAX_WATERMARK;
+> -
+> -	int cgd_idx = ice_get_cgd_idx(hw, tc);
+> -
+> -	if (high_watermark)
+> -		wr32(hw, GLRPB_TCHW(cgd_idx), high_watermark);
+> -	if (low_watermark)
+> -		wr32(hw, GLRPB_TCLW(cgd_idx), low_watermark);
+> -
+> -	/* Update pause quanta */
+> -	uint16_t max_frame_size = pf->dev_data->mtu ?
+> -		pf->dev_data->mtu + ICE_ETH_OVERHEAD :
+> -		ICE_FRAME_SIZE_MAX;
+> -	ret = ice_aq_set_mac_pfc_cfg(hw, max_frame_size, 1 << tc, pfc_conf->fc.pause_time,
+> -			((u32)pfc_conf->fc.pause_time + 1) / 2, false, NULL);
+> -	if (ret) {
+> -		PMD_DRV_LOG(ERR, "Can not update MAC configuration");
+> -		return ret;
+> -	}
+> -
+> -	/* Update forwarding of the non FC MAC control frames settings */
+> -	if ((hw)->mac_type == ICE_MAC_E830) {
+> -#define E830_MAC_COMMAND_CONFIG(pi) (((pi)->phy.link_info.link_speed == ICE_AQ_LINK_SPEED_200GB) ? \
+> -		E830_PRTMAC_200G_COMMAND_CONFIG : E830_PRTMAC_COMMAND_CONFIG)
+> -
+> -		u32 mac_config = rd32(hw, E830_MAC_COMMAND_CONFIG(port_info));
+> -
+> -		if (pfc_conf->fc.mac_ctrl_frame_fwd)
+> -			mac_config |= E830_PRTMAC_COMMAND_CONFIG_CNTL_FRM_ENA_M;
+> -		else
+> -			mac_config &= ~E830_PRTMAC_COMMAND_CONFIG_CNTL_FRM_ENA_M;
+> -
+> -		wr32(hw, E830_MAC_COMMAND_CONFIG(port_info), mac_config);
+> -	}
+> -
+> -	return 0;
+> +	/* Apply the Rx buffer watermarks and pause quanta for the PFC
+> +	 * traffic class selected by the user priority.
+> +	 */
+> +	return ice_cfg_fc_params(dev, tc, 1 << tc, &pfc_conf->fc);
+>  }
+>  
+>  static void
+> @@ -4373,22 +4540,6 @@ ice_rxq_intr_setup(struct rte_eth_dev *dev)
+>  	return 0;
+>  }
+>  
+> -static int
+> -ice_get_link_info_safe(struct ice_pf *pf, bool ena_lse,
+> -		       struct ice_link_status *link)
+> -{
+> -	struct ice_hw *hw = ICE_PF_TO_HW(pf);
+> -	int ret;
+> -
+> -	rte_spinlock_lock(&pf->link_lock);
+> -
+> -	ret = ice_aq_get_link_info(hw->port_info, ena_lse, link, NULL);
+> -
+> -	rte_spinlock_unlock(&pf->link_lock);
+> -
+> -	return ret;
+> -}
+> -
+>  static void
+>  ice_get_init_link_status(struct rte_eth_dev *dev)
+>  {
+> diff --git a/drivers/net/intel/ice/ice_ethdev.h b/drivers/net/intel/ice/ice_ethdev.h
+> index 7ee3ea8a70..3143aca74a 100644
+> --- a/drivers/net/intel/ice/ice_ethdev.h
+> +++ b/drivers/net/intel/ice/ice_ethdev.h
+> @@ -613,6 +613,7 @@ struct ice_pf {
+>  	 * and link status update during dev_start.
+>  	 */
+>  	rte_spinlock_t link_lock;
+> +	struct rte_eth_fc_conf fc_conf; /* cached link flow control config */
+>  };
+>  
+>  #define ICE_MAX_QUEUE_NUM  2048
+> -- 
+> 2.43.0
+> 
