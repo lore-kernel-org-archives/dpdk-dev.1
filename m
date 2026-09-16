@@ -2,47 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E2EDC88E77
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 12:28:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD5B6C88E5C
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 12:28:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ABDA342F13;
-	Wed, 16 Sep 2026 14:28:04 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9187942F35;
+	Wed, 16 Sep 2026 14:28:08 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id 4052C42EED
- for <dev@dpdk.org>; Wed, 16 Sep 2026 14:28:03 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 0C1C042F35
+ for <dev@dpdk.org>; Wed, 16 Sep 2026 14:28:05 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1789561683; x=1821097683;
+ t=1789561686; x=1821097686;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=dqUzEacx3BDvbV/e8AJJnjBZbbQF2j0cOwF2DU6oiak=;
- b=A0baM97ANZ/dFTzefpZiuP1g47DEG1KCxEcIW5fJf5332wgbOv8QzoJ2
- y/cTtGTFtmJM6UTkuygzr4J+FlbeMNcw/nsA43eTIu9xmy3NyC7nydobu
- IQQHemqbaXNjx2LayId9lZNWnkdQnGD3d5c+zGPlgN/r9i1Z/q62Av1eh
- IXZA6Wu3Kzav53reHkksh6RLZvRdihhMtHZUar5il8AnHI2QjxDgu+eSw
- Wkz7XVbWhfnbxvo9x2vSv64sG85SzjfXfzNZc/7jpgyfSyzJNwRLVr4a7
- 6eOlzR33kXXlIzVHLEQd+euKYdKlNpLtuBjkPipDRwv5sfWg39ZG4qcox w==;
-X-CSE-ConnectionGUID: bDoC3RALSx6vKTdhmZJ9Bw==
-X-CSE-MsgGUID: DJvpRgwnQSGy4axRwEon0Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="107305502"
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="107305502"
+ bh=1EM31KxDlU7XwL+8W1R9eeX8VrnLsaHlBu8/qD19b9A=;
+ b=Ffq7NODALrkML+Tllqb8wF8bMEvMmMSEyHJbaLacswHOoYvXayCM7Y+H
+ Jqc2m2iZWgT1t4UxlgePyJhfC+Dbabu96h56xhFm06BSyL1MeIknS0pNg
+ 80LGlR1z229tHca4zUN+sKN4MPeV5qXa6YetfuOiEkZ0Xc3Rw4JZGP94S
+ ACOOy/fSfZMVkHFe2Ke1z09kN15HwEni/x8H9woFUkOih/j2FrDdSKzNo
+ xgnKpBQ3iD7Qc/CaNGceAsVWQPWE+z9rztAHQvPuDxcjvBAa7KY7F6VoK
+ IjmMTLDlykFXS+B6LTLI1aQ1dl391V+XT6Apy3BmqCy5FJcjybn+GMhbr A==;
+X-CSE-ConnectionGUID: aiz7zvS/RraN0aisrRVzSw==
+X-CSE-MsgGUID: I9FNL5XzS4O5lR0HqGDRHg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="107305506"
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="107305506"
 Received: from fmviesa008.fm.intel.com ([10.60.135.148])
  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Sep 2026 05:28:03 -0700
-X-CSE-ConnectionGUID: fdpayCYnTVWYpkGdVFQNpA==
-X-CSE-MsgGUID: /4EAIGD6TpK+L/yw5tA8sg==
+ 16 Sep 2026 05:28:05 -0700
+X-CSE-ConnectionGUID: qS+wwGENTNSmnnaE0MeGUA==
+X-CSE-MsgGUID: R7eYWWTgQEqlBDJfwYdXCg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="270693949"
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="270693955"
 Received: from unknown (HELO gnrd02..) ([10.190.212.69])
- by fmviesa008.fm.intel.com with ESMTP; 16 Sep 2026 05:28:01 -0700
+ by fmviesa008.fm.intel.com with ESMTP; 16 Sep 2026 05:28:04 -0700
 From: Prudvi Deti <prudvi.deti@intel.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>,
  Stephen Hemminger <stephen@networkplumber.org>, Ori Kam <orika@nvidia.com>,
  Aman Singh <aman.deep.singh@intel.com>, Nirint Shah <nirint.shah@intel.com>
-Subject: [RFC v3 5/7] regex/hs: add per-queue-pair extended statistics
-Date: Wed, 16 Sep 2026 17:57:02 +0530
-Message-ID: <20260916122738.2176589-6-prudvi.deti@intel.com>
+Subject: [RFC v3 6/7] regex/hs: add start stop close and device dump
+Date: Wed, 16 Sep 2026 17:57:03 +0530
+Message-ID: <20260916122738.2176589-7-prudvi.deti@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260916122738.2176589-1-prudvi.deti@intel.com>
 References: <20260910080136.1790851-1-prudvi.deti@intel.com>
@@ -62,64 +62,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add xstats support with three per-QP counters: enqueued, dequeued,
-and matches. Implement xstats_names_get, xstats_get, and
-xstats_reset with support for bulk and selective reset by stat id.
+Add device lifecycle state machine with validation: start requires
+a compiled database, stop resets QP ring pointers, close releases
+all resources and may be called without explicit stop.
+
+Add dev_dump printing driver state, Hyperscan version, rule list,
+and aggregated per-QP statistics.
 
 Signed-off-by: Prudvi Deti <prudvi.deti@intel.com>
 ---
- doc/guides/regexdevs/hs.rst |   9 ++
- drivers/regex/hs/hs_regex.c | 159 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 168 insertions(+)
+ doc/guides/regexdevs/hs.rst |   5 +
+ drivers/regex/hs/hs_regex.c | 193 ++++++++++++++++++++++++++++++++++++
+ drivers/regex/hs/hs_regex.h |   2 +
+ 3 files changed, 200 insertions(+)
 
 diff --git a/doc/guides/regexdevs/hs.rst b/doc/guides/regexdevs/hs.rst
-index 99a0e82..c99cf11 100644
+index c99cf11..b638ecc 100644
 --- a/doc/guides/regexdevs/hs.rst
 +++ b/doc/guides/regexdevs/hs.rst
-@@ -23,7 +23,16 @@ Features
- - Although Hyperscan supports 1,000,000 patterns, the current DPDK public API
-   limits match-result rule IDs to 20 bits. Rule IDs above ``0xFFFFF`` cannot
-   be represented without truncation.
-+- Up to 65,535 matches per scan operation (API field width limit);
-+  cumulative totals are tracked via per-queue-pair xstats
- - Per-rule extended match parameters (minimum/maximum start offset)
-+- Hyperscan block-mode engine supports scan buffers up to 4 GB
-+  (library capability)
-+- Through the current ``rte_regexdev`` API, this PMD advertises
-+  ``max_payload_size = 65,535`` bytes (``uint16_t`` field width), so
-+  ``dpdk-test-regex`` validation is limited to about 64 KB per op
-+- Hyperscan uses x86 vectorized instructions (SSSE3/AVX2/AVX-512)
-+  for high throughput
- - Per-queue-pair statistics via xstats
+@@ -205,6 +205,11 @@ Limitations
+ - Multi-process mode is not supported.
+ - Each queue pair must be used by exactly one lcore
+   (single-producer/single-consumer model).
++- Control-plane calls (``configure``, ``queue_pair_setup``,
++  ``start``, ``stop``, ``close``) must not be called concurrently
++  with ``enqueue_burst``/``dequeue_burst`` on any queue pair, or with
++  each other. The application must quiesce the datapath before
++  invoking any control-plane function.
  
- In the RegEx driver feature matrix, this PMD reports:
+ Debugging Options
+ -----------------
 diff --git a/drivers/regex/hs/hs_regex.c b/drivers/regex/hs/hs_regex.c
-index 657b605..2a86d8b 100644
+index 2a86d8b..d1cea38 100644
 --- a/drivers/regex/hs/hs_regex.c
 +++ b/drivers/regex/hs/hs_regex.c
-@@ -951,6 +951,161 @@ hs_regex_dequeue_burst(struct rte_regexdev *dev, uint16_t qp_id,
- 	return i;
+@@ -785,6 +785,191 @@ hs_regex_rule_db_export(struct rte_regexdev *dev, char *rule_db)
+ 	return 0;
  }
  
-+/* xstats: per-QP statistics */
-+
-+/* 3 stats per QP: enqueued, dequeued, matches */
-+#define HS_XSTATS_PER_QP 3
-+
-+static const char * const hs_xstat_suffixes[HS_XSTATS_PER_QP] = {
-+	"enqueued", "dequeued", "matches"
-+};
-+
++/* Start */
 +static int
-+hs_regex_xstats_names_get(struct rte_regexdev *dev,
-+			  struct rte_regexdev_xstats_map *xstats_map)
++hs_regex_start(struct rte_regexdev *dev)
 +{
 +	struct hs_regex_priv *priv;
-+	uint16_t nqp;
-+	int total;
-+	int idx = 0;
-+	uint16_t q;
-+	int s;
 +
 +	if (dev == NULL)
 +		return -EINVAL;
@@ -128,33 +113,32 @@ index 657b605..2a86d8b 100644
 +	if (priv == NULL)
 +		return -EINVAL;
 +
-+	nqp = priv->nb_queue_pairs;
-+	total = nqp * HS_XSTATS_PER_QP;
-+
-+	if (!xstats_map)
-+		return total;
-+
-+	for (q = 0; q < nqp; q++) {
-+		for (s = 0; s < HS_XSTATS_PER_QP; s++) {
-+			snprintf(xstats_map[idx].name,
-+				 sizeof(xstats_map[idx].name),
-+				 "qp%u_%s", q, hs_xstat_suffixes[s]);
-+			xstats_map[idx].id = idx;
-+			idx++;
-+		}
++	/* Start requires configure and a compiled/imported database. */
++	if (priv->dev_state == HS_REGEX_DEV_CREATED) {
++		HS_LOG(ERR, "Cannot start: device not configured");
++		return -EINVAL;
 +	}
-+	return total;
++	if (priv->dev_state == HS_REGEX_DEV_STARTED) {
++		HS_LOG(ERR, "Device already started");
++		return -EBUSY;
++	}
++
++	if (!priv->db_compiled) {
++		HS_LOG(ERR, "Cannot start: database not compiled/imported");
++		return -EINVAL;
++	}
++
++	priv->dev_state = HS_REGEX_DEV_STARTED;
++	HS_LOG(INFO, "Device started (%u rules, %u queue pairs)",
++	       priv->nb_rules, priv->nb_queue_pairs);
++	return 0;
 +}
 +
++/* Stop */
 +static int
-+hs_regex_xstats_get(struct rte_regexdev *dev,
-+		    const uint16_t *ids, uint64_t *values,
-+		    uint16_t nb_values)
++hs_regex_stop(struct rte_regexdev *dev)
 +{
 +	struct hs_regex_priv *priv;
-+	uint16_t nqp;
-+	int total;
-+	uint16_t id, qp_idx, stat_idx;
 +	uint16_t i;
 +
 +	if (dev == NULL)
@@ -164,50 +148,40 @@ index 657b605..2a86d8b 100644
 +	if (priv == NULL)
 +		return -EINVAL;
 +
-+	nqp = priv->nb_queue_pairs;
-+	total = nqp * HS_XSTATS_PER_QP;
-+
-+	if (!ids || !values)
-+		return total;
++	/* Stop is valid only from STARTED state. */
++	if (priv->dev_state != HS_REGEX_DEV_STARTED) {
++		HS_LOG(ERR, "Device not started, cannot stop");
++		return -EINVAL;
++	}
 +
 +	if (priv->qps == NULL)
-+		total = 0;
++		goto stopped;
 +
-+	for (i = 0; i < nb_values; i++) {
-+		id = ids[i];
++	for (i = 0; i < priv->nb_queue_pairs; i++) {
++		struct hs_regex_qp *qp = &priv->qps[i];
 +
-+		if (id >= (uint16_t)total) {
-+			values[i] = 0;
-+			continue;
-+		}
-+
-+		qp_idx = id / HS_XSTATS_PER_QP;
-+		stat_idx = id % HS_XSTATS_PER_QP;
-+
-+		switch (stat_idx) {
-+		case 0:
-+			values[i] = priv->qps[qp_idx].qp_enqueued;
-+			break;
-+		case 1:
-+			values[i] = priv->qps[qp_idx].qp_dequeued;
-+			break;
-+		case 2:
-+			values[i] = priv->qps[qp_idx].qp_matches;
-+			break;
-+		}
++		if (qp->count > 0)
++			HS_LOG(WARNING,
++			       "qp %u: stopping with %u ops still pending "
++			       "(not returned to application)",
++			       i, qp->count);
++		qp->head = 0;
++		qp->tail = 0;
++		qp->count = 0;
 +	}
-+	return nb_values;
++
++stopped:
++	priv->dev_state = HS_REGEX_DEV_STOPPED;
++	HS_LOG(INFO, "Device stopped");
++	return 0;
 +}
 +
++/* Close */
 +static int
-+hs_regex_xstats_reset(struct rte_regexdev *dev,
-+		      const uint16_t *ids, uint16_t nb_ids)
++hs_regex_close(struct rte_regexdev *dev)
 +{
 +	struct hs_regex_priv *priv;
-+	uint16_t nqp;
-+	int total;
-+	uint16_t q, i;
-+	uint16_t id, qp_idx, stat_idx;
++	uint32_t i;
 +
 +	if (dev == NULL)
 +		return -EINVAL;
@@ -216,60 +190,146 @@ index 657b605..2a86d8b 100644
 +	if (priv == NULL)
 +		return -EINVAL;
 +
-+	nqp = priv->nb_queue_pairs;
-+	total = nqp * HS_XSTATS_PER_QP;
-+
-+	if (priv->qps == NULL)
-+		return 0;
-+
-+	if (!ids || nb_ids == 0) {
-+		/* Reset all stats */
-+		for (q = 0; q < nqp; q++) {
-+			priv->qps[q].qp_enqueued = 0;
-+			priv->qps[q].qp_dequeued = 0;
-+			priv->qps[q].qp_matches = 0;
-+		}
-+	} else {
-+		/* Reset specific stats by id */
-+		for (i = 0; i < nb_ids; i++) {
-+			id = ids[i];
-+
-+			if (id >= (uint16_t)total)
-+				continue;
-+
-+			qp_idx = id / HS_XSTATS_PER_QP;
-+			stat_idx = id % HS_XSTATS_PER_QP;
-+
-+			switch (stat_idx) {
-+			case 0:
-+				priv->qps[qp_idx].qp_enqueued = 0;
-+				break;
-+			case 1:
-+				priv->qps[qp_idx].qp_dequeued = 0;
-+				break;
-+			case 2:
-+				priv->qps[qp_idx].qp_matches = 0;
-+				break;
-+			}
-+		}
++	/* Close may be called without an explicit stop. */
++	if (priv->dev_state == HS_REGEX_DEV_STARTED) {
++		HS_LOG(WARNING, "Device still started, stopping before close");
++		hs_regex_stop(dev);
 +	}
++
++	if (priv->qps) {
++		for (i = 0; i < priv->nb_queue_pairs; i++) {
++			if (priv->qps[i].scratch)
++				hs_free_scratch(priv->qps[i].scratch);
++			rte_free(priv->qps[i].ops);
++		}
++		rte_free(priv->qps);
++		priv->qps = NULL;
++	}
++
++	if (priv->db) {
++		hs_free_database(priv->db);
++		priv->db = NULL;
++	}
++
++	for (i = 0; i < priv->nb_rules; i++)
++		rte_free(priv->rules[i].pattern);
++	rte_free(priv->rules);
++	priv->rules = NULL;
++	priv->nb_rules = 0;
++	priv->rules_cap = 0;
++	priv->db_compiled = 0;
++
++	if (priv->rule_id_hash) {
++		rte_hash_free(priv->rule_id_hash);
++		priv->rule_id_hash = NULL;
++	}
++
++	/* Return to initial state. */
++	priv->dev_state = HS_REGEX_DEV_CREATED;
++
++	HS_LOG(INFO, "Device closed");
 +	return 0;
 +}
 +
- /* Operations table */
- static const struct rte_regexdev_ops hs_regexdev_ops = {
++/* Dump */
++static int
++hs_regex_dump(struct rte_regexdev *dev, FILE *f)
++{
++	struct hs_regex_priv *priv;
++	uint64_t total_enq = 0, total_deq = 0, total_match = 0;
++	uint32_t i;
++
++	if (dev == NULL || f == NULL)
++		return -EINVAL;
++
++	priv = dev->data->dev_private;
++	if (priv == NULL)
++		return -EINVAL;
++
++	if (priv->qps != NULL) {
++		for (i = 0; i < priv->nb_queue_pairs; i++) {
++			total_enq += priv->qps[i].qp_enqueued;
++			total_deq += priv->qps[i].qp_dequeued;
++			total_match += priv->qps[i].qp_matches;
++		}
++	}
++
++	fprintf(f, "=== Hyperscan RegEx PMD ===\n");
++	fprintf(f, "  Driver:      %s\n", HS_REGEX_DRIVER_NAME);
++	fprintf(f, "  HS Version:  %s\n", hs_version());
++	fprintf(f, "  Rules:       %u\n", priv->nb_rules);
++	fprintf(f, "  Compiled:    %s\n", priv->db_compiled ? "yes" : "no");
++	fprintf(f, "  Queue Pairs: %u\n", priv->nb_queue_pairs);
++	fprintf(f, "  Max Matches: %u\n", priv->max_matches);
++	fprintf(f, "  Enqueued:    %" PRIu64 "\n", total_enq);
++	fprintf(f, "  Dequeued:    %" PRIu64 "\n", total_deq);
++	fprintf(f, "  Matches:     %" PRIu64 "\n", total_match);
++
++	if (priv->qps != NULL) {
++		for (i = 0; i < priv->nb_queue_pairs; i++)
++			fprintf(f, "  QP[%u]: enqueued=%" PRIu64
++				" dequeued=%" PRIu64 " matches=%" PRIu64 "\n",
++				i, priv->qps[i].qp_enqueued,
++				priv->qps[i].qp_dequeued,
++				priv->qps[i].qp_matches);
++	}
++
++	for (i = 0; i < priv->nb_rules && i < HS_REGEX_DUMP_MAX_RULES; i++)
++		fprintf(f, "  Rule[%u]: id=%u group=%u pattern=%s\n", i,
++			priv->rules[i].rule_id, priv->rules[i].group_id,
++			priv->rules[i].pattern);
++	if (priv->nb_rules > HS_REGEX_DUMP_MAX_RULES)
++		fprintf(f, "  ... and %u more rules omitted\n",
++			priv->nb_rules - HS_REGEX_DUMP_MAX_RULES);
++
++	return 0;
++}
++
+ /*
+  * Fast Path
+  *
+@@ -1111,6 +1296,11 @@ static const struct rte_regexdev_ops hs_regexdev_ops = {
  	.dev_info_get = hs_regex_info_get,
-@@ -960,6 +1115,10 @@ static const struct rte_regexdev_ops hs_regexdev_ops = {
+ 	.dev_configure = hs_regex_configure,
+ 	.dev_qp_setup = hs_regex_qp_setup,
++	.dev_start = hs_regex_start,
++	.dev_stop = hs_regex_stop,
++	.dev_close = hs_regex_close,
++	.dev_attr_get = NULL,
++	.dev_attr_set = NULL,
+ 	.dev_rule_db_update = hs_regex_rule_db_update,
  	.dev_rule_db_compile_activate = hs_regex_rule_db_compile_activate,
  	.dev_db_import = hs_regex_rule_db_import,
- 	.dev_db_export = hs_regex_rule_db_export,
-+	.dev_xstats_names_get = hs_regex_xstats_names_get,
-+	.dev_xstats_get = hs_regex_xstats_get,
-+	.dev_xstats_by_name_get = NULL,
-+	.dev_xstats_reset = hs_regex_xstats_reset,
+@@ -1119,6 +1309,8 @@ static const struct rte_regexdev_ops hs_regexdev_ops = {
+ 	.dev_xstats_get = hs_regex_xstats_get,
+ 	.dev_xstats_by_name_get = NULL,
+ 	.dev_xstats_reset = hs_regex_xstats_reset,
++	.dev_selftest = NULL,
++	.dev_dump = hs_regex_dump,
  };
  
  /* Device Lifecycle */
+@@ -1175,6 +1367,7 @@ hs_regex_dev_destroy(const char *name)
+ 
+ 	priv = dev->data->dev_private;
+ 	if (priv) {
++		hs_regex_close(dev);
+ 		rte_free(priv);
+ 		dev->data->dev_private = NULL;
+ 	}
+diff --git a/drivers/regex/hs/hs_regex.h b/drivers/regex/hs/hs_regex.h
+index e48ac86..07e737b 100644
+--- a/drivers/regex/hs/hs_regex.h
++++ b/drivers/regex/hs/hs_regex.h
+@@ -16,6 +16,8 @@
+ #define HS_REGEX_MAX_RULES 1000000
+ #define HS_REGEX_DEFAULT_NB_DESC 1024
+ #define HS_REGEX_MAX_NB_DESC 32768
++/* Cap on per-rule lines printed by dev_dump(); large rule counts are summarized. */
++#define HS_REGEX_DUMP_MAX_RULES 32
+ /* Sanity cap on imported serialized database size (defense in depth;
+  * Hyperscan allocates memory proportional to this size).
+  */
 -- 
 2.43.0
 
