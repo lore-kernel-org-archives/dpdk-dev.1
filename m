@@ -2,76 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A63E8C982C3
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 14:36:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EDD8C982C3
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 14:55:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CA6F242ECD;
-	Wed, 16 Sep 2026 16:36:46 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 2783B40264;
- Wed, 16 Sep 2026 16:36:45 +0200 (CEST)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 68GEZPi8489696; Wed, 16 Sep 2026 07:36:44 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=S
- P39AkjzfRO7NzLjCbaKPnBmgsex6iwicTb+YA1cTcI=; b=QNgfNLbd+eFeT8LDc
- X+vJqhymhiykO2FN9Up6Tofwr3ZJhNYeBu66eNm19St75EdlOQO/A4psQjHWW1Bq
- rHKlh/+rM8Xg58GJ7cMt+d+A97TJ+fYKkwZDGjvb0bufVM0QjwQS3QuyAGwIEPvJ
- 15Vue6ERIboXnbYhCBX4na91/RsS6t/34dqHh5nwfOY1RA8xvxubQl4yfguKNGM8
- +zRK4V7weXIW8xwRQNR1F1QRg06+LZRRQSXTpSIgvx3KKUpPCY+t+qDCIj3AIDcG
- YjOT8OiUnjt1NE8G3XUmPFa0KpSf7KsLHyp739Ei7YR8D6/dZFwvcVSmc22bsZ6H
- 7IOuw==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4gqp2m275x-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Wed, 16 Sep 2026 07:36:44 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 16 Sep 2026 07:36:43 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Wed, 16 Sep 2026 07:36:43 -0700
-Received: from localhost.localdomain (unknown [10.28.36.142])
- by maili.marvell.com (Postfix) with ESMTP id 5771F5B6937;
- Wed, 16 Sep 2026 07:36:41 -0700 (PDT)
-From: Ashwin Sekhar T K <asekhar@marvell.com>
-To: <amiyaranjan.mohakud@gmail.com>
-CC: <dev@dpdk.org>, <jerinj@marvell.com>, <ndabilpuram@marvell.com>,
- <stable@dpdk.org>, Ashwin Sekhar T K <asekhar@marvell.com>
-Subject: [PATCH] common/cnxk: add NDC sync after NPA aura pool init
-Date: Wed, 16 Sep 2026 14:35:55 +0000
-Message-ID: <20260916143555.2971656-1-asekhar@marvell.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260909192323.26886-1-amiyaranjan.mohakud@gmail.com>
-References: <20260909192323.26886-1-amiyaranjan.mohakud@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 9608D4028B;
+	Wed, 16 Sep 2026 16:55:19 +0200 (CEST)
+Received: from rcdn-iport-9.cisco.com (rcdn-iport-9.cisco.com [173.37.86.80])
+ by mails.dpdk.org (Postfix) with ESMTP id 71F8340264
+ for <dev@dpdk.org>; Wed, 16 Sep 2026 16:55:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=cisco.com; i=@cisco.com; l=906; q=dns/txt;
+ s=iport01; t=1789570518; x=1790780118;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=hzg8Z5AHYV3+CbxpEa25eg7xXs24OyIdbS/dkYdupWI=;
+ b=HXC18jk7sSYGA3Ux6bkppGYBQ+Uw5VcsvctlnKjaKhXHcJ+gPlAnXET9
+ R9hinXUFSZ06qzchB7Jov0vrsWJ/JlgoBC1kAwB6QIomfLKRHSXPuuZmB
+ wKCGEBsJaZ0vHsAeuwFXqKzskd7f4nxOSs8FL4mgAVQYKSwKMqcujBJYs
+ crMDxPYCbyCIFQlLy2rY8D7P80SIQQ+sG15UseF8PinfborNXUf5CufTq
+ Kdh+lZchOd+09IyErO8Chgwrmk5xAbFelLYPBBQc2IVMyYY0fmGKgn+FB
+ PsVu8D7QutIuX+pq53FKZ8gB6pjy8GsqLV3inN+uqVWASeYg4CVxItylz Q==;
+X-CSE-ConnectionGUID: h+ije7JhQGOssWZuSHdnJw==
+X-CSE-MsgGUID: mKuPqXTyRz6Zrz7eXbmGtw==
+X-IPAS-Result: =?us-ascii?q?A0BjBABkrKpq/5P/Ja1aglmELUK1MYF+DwEBAQ9RBAEBh?=
+ =?us-ascii?q?QUCjgcCJjYHDgECBAMCAwEBAQEBAQEBAQEBAQoBAQUBAQECAQcFgQ4ThlyQE?=
+ =?us-ascii?q?wIBAzIBRhBRVoMbgnUDwimCLIEBhH7ZSoF0FYE4jWF2hHwnFQaBSUSBFYNph?=
+ =?us-ascii?q?RCFeASCDYEPEoNXkG5IgR4DWSwBVRMNCgsHBYFmAzUSKhVuMh2BIz4XgQcbB?=
+ =?us-ascii?q?gWBHYEngmIjGTZ6gQlegSspYAESF4EJgggCglSCAQIBSUMOB0VTCSdBChJMK?=
+ =?us-ascii?q?SIIEgkBExoyCwkYDUgRLDcVGQQ+bgeSQz0mLELJGoQooVwaM6ptmQikWoRpg?=
+ =?us-ascii?q?W8MKYFZTSMVgyNSGQ/eWSh0BwIHDwKTcQEB?=
+IronPort-Data: A9a23:vUepN6MLV3ZTvyzvrR3qlsFynXyQoLVcMsEvi/4bfWQNrUp20WAPz
+ WodXW+OaK7bMTSketl1bojno0tX6pPSztUwS3M5pCpnJ55oRWUpJjg4wmPYZX76whjrFRo/h
+ ykmQoCeap1yFjmD9k/F3oHJ9RFUzbuPSqf3FNnKMyVwQR4MYCo6gHqPocZh6mJTqYb/WVzlV
+ e/a+ZWFZgf0gmIsaAr41orawP9RlKWq0N8nlgRWicBj5Df2i3QTBZQDEqC9R1OQapVUBOOzW
+ 9HYx7i/+G7Dlz91Yj9yuu+mGqGiaue60Tmm0hK6aYD76vRxjnBaPpIACRYpQRw/ZwNlMDxG4
+ I4lWZSYEW/FN0BX8QgXe0Ew/ypWZcWq9FJbSJSymZT78qHIT5fj6/UtDUM7Yq8Yw8lQGnpxx
+ +EjCDwLTA/W0opawJrjIgVtrt4oIM+uOMYUvWttiGiBS/0nWpvEBa7N4Le03h9p2ZsIRqmYP
+ ZdEL2MzM3wsYDUXUrsTIIgineylrnL+aDZf7lmSoMLb5kCOllcsgee3bIS9ltqiQOZIpl+om
+ nP87TrLGANFOeyVzBWZ7Sf57gPItWahMG4IL5W0++BCjEWfxSoUEhJ+fUe7pvywkWa7XNRdI
+ kgT/GwooLRayaCwZsP2Uxv9pDuPuQQRHoMIVeY78wqKjKHT5m51G1Q5c9KIU/R+3OdeeNDg/
+ gbhcw/BbdC3jICodA==
+IronPort-HdrOrdr: A9a23:3H4Uk603WieV/5kpQ5V9mwqjBJIkLtp133Aq2lEZdPWaSKClfq
+ eV7ZAmPHDP5gr5NEtLpTnEAtjifZq+z+8R3WBuB9aftWDd0QPCEGgh1/qB/9SKIULDH4BmuJ
+ uIC5IfNPTASX5nkM39/A60V/wkwNWB7eSUoN229QYLcemvAJsQljuQzW2gYytLeDU=
+X-Talos-CUID: 9a23:ceHF8mH1IzIN4K9JqmJnt08WF58HckTy62zLHH2lMkZlTp+KHAo=
+X-Talos-MUID: =?us-ascii?q?9a23=3AAFB2OQ6T31kXSwL40IEpScb/xoxtwLmWEXAxgK8?=
+ =?us-ascii?q?U5fueJ3N9Cz2YoyioF9o=3D?=
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-AV: E=Sophos;i="6.27,103,1787011200"; d="scan'208";a="523597246"
+Received: from rcdn-l-core-10.cisco.com ([173.37.255.147])
+ by rcdn-iport-9.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384;
+ 16 Sep 2026 14:55:17 +0000
+Received: from rtp-orb-10405.cisco.com (rtp-orb-10405.cisco.com [64.100.22.53])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by rcdn-l-core-10.cisco.com (Postfix) with ESMTPS id 1AE9C18000267;
+ Wed, 16 Sep 2026 14:55:17 +0000 (GMT)
+From: Randy L Tice <rtice@cisco.com>
+To: dev@dpdk.org
+Cc: Thomas Monjalon <thomas@monjalon.net>,
+	Randy L Tice <rtice@cisco.com>
+Subject: [PATCH v3 0/1] eal: add CPU socket lookup API
+Date: Wed, 16 Sep 2026 10:55:15 -0400
+Message-Id: <20260916145516.3-1-rtice@cisco.com>
+X-Mailer: git-send-email 2.35.6
+In-Reply-To: <20260915150507.3-1-rtice@cisco.com>
+References: <20260915150507.3-1-rtice@cisco.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Info: AW1haW4tMjYwOTE2MDE5NyBTYWx0ZWRfXxv6nxEVYraN/
- gVMfBq2UHK60EHSyFJGjdkO7ZUKjLQEbErZs2X9G0Etm/bZAwWR3B6oSNSPDXh4L8x90LNkfD6Q
- MgF+oJgzqo4Cyn4WAVSitOUiKuMAb94=
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTE2MDE5NyBTYWx0ZWRfXwTmHSBMCHtHG
- JH+Qa5jfBOc1sMSIFUNrPn44HBCIz40dE+tqcfsnklqy7CPL4h4hxxb1emGxLv84uj+5eUjkJyZ
- /PlloSrA1YysQ3nZ2TWR2HZsrX8GAB21a875KE9gGvT0Ukid5PU6QN8XFFJSLgFcH5anhvu+5Th
- FVvsyR6o09rpE4fiQAGtq9mH4mCtaxt8935uYyclwZkRLMfon4mK9camNaBuaL1WlfKiOzYX6r8
- Ysc7JvigAIMd6GaD/3ekLU+ribMgw39I81R4MtX0m1n2CieCRW6INM7W2k7GWYRho/03vguVxGX
- Tl3WiAx+aAS4LDS8wO9KSvsLt76cAeNvpUN4+y2EZEWSSzWMMDiao+pl//KHtGhf8CBZomHL+a1
- YnvgtW4L8136976cYTlQLffXKt9i73OJqUb9MZD1GTdSrlX3VCCZxyD/jA/lDHHVetcBwN9RHE4
- kU20gCgZ5vh2nwVSryA==
-X-Proofpoint-ORIG-GUID: Dh_b8Tk7ixPdtweXncWjIUGaxHWTozIP
-X-Proofpoint-GUID: Dh_b8Tk7ixPdtweXncWjIUGaxHWTozIP
-X-Authority-Analysis: v=2.4 cv=GuTXaU1C c=1 sm=1 tr=0 ts=6aaaa97c cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
- a=VdqzKS8jKosA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=qit2iCtTFQkLgVSMPQTB:22 a=8rWy6zfcAAAA:8 a=DZJTHQoGRCpus15w9t0A:9
- a=YjdVzJdQTyZRADMV7wFX:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
- definitions=2026-09-16_02,2026-09-16_01,2025-10-01_01
+X-Outbound-Client-TLS: ANONYMOUS; rtp-orb-10405.cisco.com [64.100.22.53];
+ TLSv1.3; TLS_AES_256_GCM_SHA384; 256
+X-Outbound-SMTP-Client: 64.100.22.53, rtp-orb-10405.cisco.com
+X-Outbound-Node: rcdn-l-core-10.cisco.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,10 +88,29 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch is not required as the issues seen were a side effect
-of using IOVA as PA mode which is not supported in CNXK platforms.
+Applications may need to build socket-specific EAL policy before they have
+an EAL lcore ID for each relevant CPU. Existing public APIs expose the
+current thread socket, socket IDs by EAL socket index, or sockets for EAL
+lcore IDs, but do not directly map an OS logical CPU ID to its NUMA socket.
 
-Refer ticket: https://bugs.dpdk.org/show_bug.cgi?id=2031
+Add experimental rte_cpu_socket_id() for that lookup while keeping the
+existing eal_cpu_socket_id() helper private to EAL.
 
-Thanks
-Ashwin
+v3:
+- Return SOCKET_ID_ANY for invalid CPU IDs and document that behavior.
+
+v2:
+- Mark rte_cpu_socket_id() experimental in the declaration, export macro,
+  release note and commit message.
+
+Randy L Tice (1):
+  eal: add API to get CPU socket ID
+
+ .mailmap                               |  1 +
+ doc/guides/rel_notes/release_26_11.rst |  3 +++
+ lib/eal/common/eal_common_lcore.c      | 11 +++++++++++
+ lib/eal/include/rte_lcore.h            | 19 +++++++++++++++++++
+ 4 files changed, 34 insertions(+)
+
+-- 
+2.35.6
