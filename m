@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08961C88E77
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 12:20:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8B66C88E5C
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 12:21:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1ABF042F55;
-	Wed, 16 Sep 2026 14:19:01 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0E83C42F89;
+	Wed, 16 Sep 2026 14:19:02 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
- by mails.dpdk.org (Postfix) with ESMTP id 6187942EB2
- for <dev@dpdk.org>; Wed, 16 Sep 2026 14:18:58 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 1C3B842F51
+ for <dev@dpdk.org>; Wed, 16 Sep 2026 14:18:59 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1789561139; x=1821097139;
+ t=1789561140; x=1821097140;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=7VaJf8eETmq37kbLsPygJrIjtnBSNKYxFrtWWbhqhdw=;
- b=AXBRJKN18yoZTgYO5nhWuXBWwE82DLW1G0qfJ53f2wThLKPvdC+5VNTZ
- 0m9trnlGOgis1QZi90uoOUXiF3WNekUMyYik1cOh0V7KafzbuwE68QWbo
- 5TjeWmmzjKu52WrKjdX/sIMq3/bqv6+kOz+whuRXAppoYjgGzPB8AwFXK
- spk7Vw5Ip3Tio1Yvb9Bi+DckpxEmR6cFCILzFSqukvZbxS9jmr6LqKcdB
- KpIHRHVwqf1S1xIt4d5AQzH+JcYhq+q4bmx4WbXX7/xa1hCKyOHa/BpWt
- yyaYrzrfuMO/r9/YThKWoVdpaDeOtrp0I8PSzBrIbmfU/MDkV8B0XDz67 A==;
-X-CSE-ConnectionGUID: mCrx+N3GQG6CyY9FSa/+kA==
-X-CSE-MsgGUID: 3WDG070ISciwzDFzyOq2Mg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="112702971"
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="112702971"
+ bh=yOhLwoDuJa1lx1DNRE28DmuzxQfl5bc1i9ZS7Q13MsA=;
+ b=OqHQjcgdLGZEMHhpyp67jTmhlLdRcHK30ZcniBAsPqMci4cxcJNs9V6m
+ N6lHFRLFj4RwVIc/gvX/ujT+QsZupZyz4okSz3Cu2OaDFEol/Pmn1S+nX
+ Ls0cSevCsW/N/eVn09YVNFjtDM9ztocviPtGVDAYq/raG3gJFfcBJ/K60
+ mzSIc+x4Byr77jkMOxlzGnoVkQ5enIgfqj01oNSHqAam4TKje/bmlELaz
+ B0qB6e9R36sb9ac7jVBlTYmGimkrKR7m43nKiID2FYKnlGtNrjz6MjJC3
+ qYwDmwFBu3sMNSD5GnXLhMxwO5hUJgfQcobiHJ+jkKnVQuS+xH1eIRD/5 A==;
+X-CSE-ConnectionGUID: Vnm7+UjrRmCFTYc3TyyWOw==
+X-CSE-MsgGUID: LQfeiVxrS46M1m+fu4QPdQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="112702973"
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="112702973"
 Received: from orviesa008.jf.intel.com ([10.64.159.148])
  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Sep 2026 05:18:58 -0700
-X-CSE-ConnectionGUID: Q6fSgy5PT0G2FVtDmRAhhg==
-X-CSE-MsgGUID: OojNisYRR1eq/tvVXbP7Sw==
+ 16 Sep 2026 05:19:00 -0700
+X-CSE-ConnectionGUID: nunJwlDqT0Ct5yHrXopbeQ==
+X-CSE-MsgGUID: ZNAvJ5HlRX6A+6YlP4J1Qg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="272850304"
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="272850310"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa008.jf.intel.com with ESMTP; 16 Sep 2026 05:18:57 -0700
+ by orviesa008.jf.intel.com with ESMTP; 16 Sep 2026 05:18:59 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v3 17/19] net/i40e: reimplement tunnel parsers
-Date: Wed, 16 Sep 2026 13:18:23 +0100
-Message-ID: <9049334630046d6bfc240a79bdfa68ab1085de6d.1789560946.git.anatoly.burakov@intel.com>
+Subject: [PATCH v3 18/19] net/i40e: reimplement hash parser
+Date: Wed, 16 Sep 2026 13:18:24 +0100
+Message-ID: <0c67513fed61ebf88092810c94388e7ff04a35b7.1789560946.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <cover.1789560943.git.anatoly.burakov@intel.com>
  <cover.1789560943.git.anatoly.burakov@intel.com>
@@ -61,4359 +61,3357 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 Use the new flow graph API and the common parsing framework to implement
-flow parser for tunnel filters: QinQ, VXLAN, NVGRE, MPLS, GTP, and L4.
+flow parser for RSS.
 
-As a result of transitioning to more formalized validation, some
-checks have become more stringent:
+The RSS parser was bypassing the other generic infrastructure, probably
+because it was very convoluted and did not map onto that model very well.
+It has now been made a first-class citizen.
 
-- VLAN TCI mask is now required to be fully masked (all-ones); previously
-  the mask was only checked for eth_proto and any non-zero vlan_tci mask
-  value was silently accepted
+The hash parser is multiple engines that share state, so each engine will
+attach to the shared refcounted RSS configuration state.
 
-In addition to using the new graph infrastructure, some of the checks were
-made more stringent and/or more correct. In particular:
-
-- old code did not check for whether fields other than ports are masked
-  (they are now rejected)
-- old code did not check for whether src/ports are fully masked (masks
-  other than full are now rejected)
-- old code used spec to decide which port to copy (as a result, it was not
-  possible to match port 0 - this is now allowed)
-
-Tunnel engine now also share a refcounted global state, and track all
-flows and do deduplication inside the engine.
+Additionally, this is the final engine in i40e, so remaining legacy flow
+infrastructure has been removed.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/i40e/i40e_ethdev.c      |  554 +++----
- drivers/net/intel/i40e/i40e_ethdev.h      |   53 +-
- drivers/net/intel/i40e/i40e_flow.c        | 1702 +--------------------
- drivers/net/intel/i40e/i40e_flow.h        |    6 +
- drivers/net/intel/i40e/i40e_flow_tunnel.c | 1590 +++++++++++++++++++
- drivers/net/intel/i40e/meson.build        |    1 +
- 6 files changed, 1834 insertions(+), 2072 deletions(-)
- create mode 100644 drivers/net/intel/i40e/i40e_flow_tunnel.c
+ drivers/net/intel/i40e/i40e_ethdev.c    |   34 +-
+ drivers/net/intel/i40e/i40e_ethdev.h    |   34 +-
+ drivers/net/intel/i40e/i40e_flow.c      |  289 +----
+ drivers/net/intel/i40e/i40e_flow.h      |    3 +
+ drivers/net/intel/i40e/i40e_flow_hash.c | 1441 +++++++++++++++++++++++
+ drivers/net/intel/i40e/i40e_hash.c      | 1208 +------------------
+ drivers/net/intel/i40e/i40e_hash.h      |   19 +-
+ drivers/net/intel/i40e/meson.build      |    1 +
+ 8 files changed, 1549 insertions(+), 1480 deletions(-)
+ create mode 100644 drivers/net/intel/i40e/i40e_flow_hash.c
 
 diff --git a/drivers/net/intel/i40e/i40e_ethdev.c b/drivers/net/intel/i40e/i40e_ethdev.c
-index 39182aabc39..fb03eaba7dc 100644
+index fb03eaba7dc..cca60e2889f 100644
 --- a/drivers/net/intel/i40e/i40e_ethdev.c
 +++ b/drivers/net/intel/i40e/i40e_ethdev.c
-@@ -392,14 +392,8 @@ static int i40e_set_default_mac_addr(struct rte_eth_dev *dev,
+@@ -1029,6 +1029,27 @@ i40e_tunnel_state_detach(struct i40e_tunnel_state *state)
+ 	*state = (struct i40e_tunnel_state){0};
+ }
  
- static int i40e_dev_mtu_set(struct rte_eth_dev *dev, uint16_t mtu);
- 
--static int i40e_tunnel_filter_convert(
--	struct i40e_aqc_cloud_filters_element_bb *cld_filter,
--	struct i40e_tunnel_filter *tunnel_filter);
--static int i40e_sw_tunnel_filter_insert(struct i40e_pf *pf,
--				struct i40e_tunnel_filter *tunnel_filter);
- static int i40e_cloud_filter_qinq_create(struct i40e_pf *pf);
- 
--static void i40e_tunnel_filter_restore(struct i40e_pf *pf);
- static void i40e_filter_restore(struct i40e_pf *pf);
- static void i40e_notify_all_vfs_link_status(struct rte_eth_dev *dev);
- static int i40e_fec_get_capability(struct rte_eth_dev *dev,
-@@ -996,49 +990,43 @@ config_floating_veb(struct rte_eth_dev *dev)
- #define I40E_L2_TAGS_S_TAG_SHIFT 1
- #define I40E_L2_TAGS_S_TAG_MASK I40E_MASK(0x1, I40E_L2_TAGS_S_TAG_SHIFT)
- 
--static int
--i40e_init_tunnel_filter_list(struct rte_eth_dev *dev)
-+struct i40e_tunnel_state *
-+i40e_tunnel_state_attach(struct rte_eth_dev_data *dev_data)
- {
--	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(dev->data->dev_private);
--	struct i40e_tunnel_rule *tunnel_rule = &pf->tunnel;
--	char tunnel_hash_name[RTE_HASH_NAMESIZE];
--	int ret;
--
--	struct rte_hash_parameters tunnel_hash_params = {
++struct i40e_rss_state *
++i40e_rss_state_attach(struct rte_eth_dev_data *dev_data)
++{
 +	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(dev_data->dev_private);
-+	struct i40e_tunnel_state *state = &pf->tunnel_state;
-+	char tunnel_hash_name[RTE_HASH_NAMESIZE] = {0};
-+	struct rte_hash_parameters hash_params = {
- 		.name = tunnel_hash_name,
- 		.entries = I40E_MAX_TUNNEL_FILTER_NUM,
--		.key_len = sizeof(struct i40e_tunnel_filter_input),
-+		.key_len = sizeof(struct i40e_tunnel_filter_match_key),
- 		.hash_func = rte_hash_crc,
- 		.hash_func_init_val = 0,
- 		.socket_id = rte_socket_id(),
- 	};
- 
--	/* Initialize tunnel filter rule list and hash */
--	TAILQ_INIT(&tunnel_rule->tunnel_list);
--	snprintf(tunnel_hash_name, RTE_HASH_NAMESIZE,
--		 "tunnel_%s", dev->device->name);
--	tunnel_rule->hash_table = rte_hash_create(&tunnel_hash_params);
--	if (!tunnel_rule->hash_table) {
--		PMD_INIT_LOG(ERR, "Failed to create tunnel hash table!");
--		return -EINVAL;
--	}
--	tunnel_rule->hash_map = rte_zmalloc("i40e_tunnel_hash_map",
--				    sizeof(struct i40e_tunnel_filter *) *
--				    I40E_MAX_TUNNEL_FILTER_NUM,
--				    0);
--	if (!tunnel_rule->hash_map) {
--		PMD_INIT_LOG(ERR,
--			     "Failed to allocate memory for tunnel hash map!");
--		ret = -ENOMEM;
--		goto err_tunnel_hash_map_alloc;
-+	snprintf(tunnel_hash_name, RTE_HASH_NAMESIZE, "i40e_tunnel_hash_%s", dev_data->name);
++	struct i40e_rss_state *state = &pf->rss_state;
 +
-+	if (ci_refcount_acquire(&state->ref)) {
-+		state->hash_table = rte_hash_create(&hash_params);
-+		if (state->hash_table == NULL) {
-+			PMD_DRV_LOG(ERR, "Failed to create tunnel hash table");
-+			ci_refcount_release(&state->ref);
-+			return NULL;
-+		}
- 	}
- 
--	return 0;
++	if (ci_refcount_acquire(&state->ref))
++		TAILQ_INIT(&state->list);
++
 +	return state;
 +}
- 
--err_tunnel_hash_map_alloc:
--	rte_hash_free(tunnel_rule->hash_table);
++
 +void
-+i40e_tunnel_state_detach(struct i40e_tunnel_state *state)
++i40e_rss_state_detach(struct i40e_rss_state *state)
 +{
 +	if (!ci_refcount_release(&state->ref))
 +		return;
- 
--	return ret;
-+	rte_hash_free(state->hash_table);
-+	*state = (struct i40e_tunnel_state){0};
- }
- 
++
++	*state = (struct i40e_rss_state){0};
++}
++
  static void
-@@ -1656,9 +1644,6 @@ eth_i40e_dev_init(struct rte_eth_dev *dev, void *init_params __rte_unused)
- 	/* Initialize the filter invalidation configuration */
- 	i40e_init_filter_invalidation(pf);
+ i40e_init_customized_info(struct i40e_pf *pf)
+ {
+@@ -1632,9 +1653,6 @@ eth_i40e_dev_init(struct rte_eth_dev *dev, void *init_params __rte_unused)
+ 	 */
+ 	i40e_add_tx_flow_control_drop_filter(pf);
  
--	ret = i40e_init_tunnel_filter_list(dev);
--	if (ret < 0)
--		goto err_init_tunnel_filter_list;
- 	i40e_fdir_flow_store_init(dev);
+-	/* initialize RSS rule list */
+-	TAILQ_INIT(&pf->rss_config_list);
+-
+ 	/* initialize Traffic Manager configuration */
+ 	i40e_tm_conf_init(dev);
  
- 	/* initialize flow engine configuration */
-@@ -1676,9 +1661,6 @@ eth_i40e_dev_init(struct rte_eth_dev *dev, void *init_params __rte_unused)
+@@ -1783,8 +1801,6 @@ i40e_dev_configure(struct rte_eth_dev *dev)
+ 		}
+ 	}
+ 
+-	TAILQ_INIT(&pf->flow_list);
+-
  	return 0;
  
- err_flow_engine_conf_init:
--	rte_hash_free(pf->tunnel.hash_table);
--	rte_free(pf->tunnel.hash_map);
--err_init_tunnel_filter_list:
- 	rte_intr_callback_unregister(intr_handle,
- 		i40e_dev_interrupt_handler, dev);
- 	rte_free(dev->data->mac_addrs);
-@@ -1701,23 +1683,6 @@ eth_i40e_dev_init(struct rte_eth_dev *dev, void *init_params __rte_unused)
- 	return ret;
- }
- 
--static void
--i40e_rm_tunnel_filter_list(struct i40e_pf *pf)
--{
--	struct i40e_tunnel_filter *p_tunnel;
--	struct i40e_tunnel_rule *tunnel_rule;
--
--	tunnel_rule = &pf->tunnel;
--	/* Remove all tunnel director rules and hash */
--	rte_free(tunnel_rule->hash_map);
--	rte_hash_free(tunnel_rule->hash_table);
--
--	while ((p_tunnel = TAILQ_FIRST(&tunnel_rule->tunnel_list))) {
--		TAILQ_REMOVE(&tunnel_rule->tunnel_list, p_tunnel, rules);
--		rte_free(p_tunnel);
--	}
--}
--
- static void
- i40e_fdir_memory_cleanup(struct i40e_pf *pf)
- {
-@@ -2578,8 +2543,6 @@ i40e_dev_close(struct rte_eth_dev *dev)
+ err_dcb:
+@@ -2452,7 +2468,6 @@ i40e_dev_close(struct rte_eth_dev *dev)
+ 	struct rte_pci_device *pci_dev = RTE_CLASS_TO_BUS_DEVICE(dev, *pci_dev);
+ 	struct rte_intr_handle *intr_handle = pci_dev->intr_handle;
+ 	struct i40e_filter_control_settings settings;
+-	struct rte_flow *p_flow;
+ 	uint32_t reg;
+ 	int i;
+ 	int ret;
+@@ -2543,12 +2558,6 @@ i40e_dev_close(struct rte_eth_dev *dev)
  		i40e_msec_delay(500);
  	} while (retries++ < 5);
  
--	i40e_rm_tunnel_filter_list(pf);
--
- 	/* Remove all flows */
- 	while ((p_flow = TAILQ_FIRST(&pf->flow_list))) {
- 		TAILQ_REMOVE(&pf->flow_list, p_flow, node);
-@@ -7747,96 +7710,6 @@ i40e_dev_get_filter_type(uint16_t filter_type, uint16_t *flag)
- 	return 0;
- }
- 
--/* Convert tunnel filter structure */
--static int
--i40e_tunnel_filter_convert(
--	struct i40e_aqc_cloud_filters_element_bb *cld_filter,
--	struct i40e_tunnel_filter *tunnel_filter)
--{
--	rte_ether_addr_copy((struct rte_ether_addr *)
--			&cld_filter->element.outer_mac,
--		(struct rte_ether_addr *)&tunnel_filter->input.outer_mac);
--	rte_ether_addr_copy((struct rte_ether_addr *)
--			&cld_filter->element.inner_mac,
--		(struct rte_ether_addr *)&tunnel_filter->input.inner_mac);
--	tunnel_filter->input.inner_vlan = cld_filter->element.inner_vlan;
--	if ((rte_le_to_cpu_16(cld_filter->element.flags) &
--	     I40E_AQC_ADD_CLOUD_FLAGS_IPV6) ==
--	    I40E_AQC_ADD_CLOUD_FLAGS_IPV6)
--		tunnel_filter->input.ip_type = I40E_TUNNEL_IPTYPE_IPV6;
--	else
--		tunnel_filter->input.ip_type = I40E_TUNNEL_IPTYPE_IPV4;
--	tunnel_filter->input.flags = cld_filter->element.flags;
--	tunnel_filter->input.tenant_id = cld_filter->element.tenant_id;
--	tunnel_filter->queue = cld_filter->element.queue_number;
--	memcpy(tunnel_filter->input.general_fields,
--		   cld_filter->general_fields,
--		   sizeof(cld_filter->general_fields));
--
--	return 0;
--}
--
--/* Check if there exists the tunnel filter */
--struct i40e_tunnel_filter *
--i40e_sw_tunnel_filter_lookup(struct i40e_tunnel_rule *tunnel_rule,
--			     const struct i40e_tunnel_filter_input *input)
--{
--	int ret;
--
--	ret = rte_hash_lookup(tunnel_rule->hash_table, (const void *)input);
--	if (ret < 0)
--		return NULL;
--
--	return tunnel_rule->hash_map[ret];
--}
--
--/* Add a tunnel filter into the SW list */
--static int
--i40e_sw_tunnel_filter_insert(struct i40e_pf *pf,
--			     struct i40e_tunnel_filter *tunnel_filter)
--{
--	struct i40e_tunnel_rule *rule = &pf->tunnel;
--	int ret;
--
--	ret = rte_hash_add_key(rule->hash_table, &tunnel_filter->input);
--	if (ret < 0) {
--		PMD_DRV_LOG(ERR,
--			    "Failed to insert tunnel filter to hash table %d!",
--			    ret);
--		return ret;
+-	/* Remove all flows */
+-	while ((p_flow = TAILQ_FIRST(&pf->flow_list))) {
+-		TAILQ_REMOVE(&pf->flow_list, p_flow, node);
+-		rte_free(p_flow);
 -	}
--	rule->hash_map[ret] = tunnel_filter;
 -
--	TAILQ_INSERT_TAIL(&rule->tunnel_list, tunnel_filter, rules);
--
--	return 0;
--}
--
--/* Delete a tunnel filter from the SW list */
--int
--i40e_sw_tunnel_filter_del(struct i40e_pf *pf,
--			  struct i40e_tunnel_filter_input *input)
--{
--	struct i40e_tunnel_rule *rule = &pf->tunnel;
--	struct i40e_tunnel_filter *tunnel_filter;
--	int ret;
--
--	ret = rte_hash_del_key(rule->hash_table, input);
--	if (ret < 0) {
--		PMD_DRV_LOG(ERR,
--			    "Failed to delete tunnel filter to hash table %d!",
--			    ret);
--		return ret;
--	}
--	tunnel_filter = rule->hash_map[ret];
--	rule->hash_map[ret] = NULL;
--
--	TAILQ_REMOVE(&rule->tunnel_list, tunnel_filter, rules);
--	rte_free(tunnel_filter);
--
--	return 0;
--}
--
- #define I40E_AQC_REPLACE_CLOUD_CMD_INPUT_TR_WORD0 0x48
- #define I40E_TR_VXLAN_GRE_KEY_MASK		0x4
- #define I40E_TR_GENEVE_KEY_MASK			0x8
-@@ -8275,41 +8148,35 @@ i40e_replace_port_cloud_filter(struct i40e_pf *pf,
- 	return status;
- }
+ 	/* release the fdir static allocated memory */
+ 	i40e_fdir_memory_cleanup(pf);
  
--int
--i40e_dev_consistent_tunnel_filter_set(struct i40e_pf *pf,
--		      struct i40e_tunnel_filter_conf *tunnel_filter,
--		      uint8_t add)
-+static int
-+i40e_tunnel_filter_convert_conf(struct i40e_pf *pf,
-+		struct i40e_tunnel_filter_conf *tunnel_filter,
-+		struct i40e_aqc_cloud_filters_element_bb *cld_filter,
-+		struct i40e_vsi **vsi, bool *big_buffer)
- {
- 	uint16_t ip_type;
- 	uint32_t ipv4_addr, ipv4_addr_le;
- 	uint8_t i, tun_type = 0;
- 	/* internal variable to convert ipv6 byte order */
- 	uint32_t convert_ipv6[4];
--	int val, ret = 0;
-+	int val;
- 	struct i40e_pf_vf *vf = NULL;
--	struct i40e_hw *hw = I40E_PF_TO_HW(pf);
--	struct i40e_vsi *vsi;
--	struct i40e_aqc_cloud_filters_element_bb cld_filter = {0};
--	struct i40e_tunnel_rule *tunnel_rule = &pf->tunnel;
--	struct i40e_tunnel_filter *node;
--	struct i40e_tunnel_filter check_filter; /* Check if filter exists */
- 	uint32_t teid_le;
--	bool big_buffer = 0;
- 
- 	rte_ether_addr_copy(&tunnel_filter->outer_mac,
--			(struct rte_ether_addr *)&cld_filter.element.outer_mac);
-+			(struct rte_ether_addr *)&cld_filter->element.outer_mac);
- 	rte_ether_addr_copy(&tunnel_filter->inner_mac,
--			(struct rte_ether_addr *)&cld_filter.element.inner_mac);
-+			(struct rte_ether_addr *)&cld_filter->element.inner_mac);
- 
--	cld_filter.element.inner_vlan =
-+	cld_filter->element.inner_vlan =
- 		rte_cpu_to_le_16(tunnel_filter->inner_vlan);
- 	if (tunnel_filter->ip_type == I40E_TUNNEL_IPTYPE_IPV4) {
- 		ip_type = I40E_AQC_ADD_CLOUD_FLAGS_IPV4;
- 		ipv4_addr = rte_be_to_cpu_32(tunnel_filter->ip_addr.ipv4_addr);
- 		ipv4_addr_le = rte_cpu_to_le_32(ipv4_addr);
--		memcpy(&cld_filter.element.ipaddr.v4.data,
-+		memcpy(&cld_filter->element.ipaddr.v4.data,
- 				&ipv4_addr_le,
--				sizeof(cld_filter.element.ipaddr.v4.data));
-+				sizeof(cld_filter->element.ipaddr.v4.data));
- 	} else {
- 		ip_type = I40E_AQC_ADD_CLOUD_FLAGS_IPV6;
- 		for (i = 0; i < 4; i++) {
-@@ -8317,9 +8184,9 @@ i40e_dev_consistent_tunnel_filter_set(struct i40e_pf *pf,
- 			rte_cpu_to_le_32(rte_be_to_cpu_32(
- 					 tunnel_filter->ip_addr.ipv6_addr[i]));
- 		}
--		memcpy(&cld_filter.element.ipaddr.v6.data,
-+		memcpy(&cld_filter->element.ipaddr.v6.data,
- 			   &convert_ipv6,
--			   sizeof(cld_filter.element.ipaddr.v6.data));
-+			   sizeof(cld_filter->element.ipaddr.v6.data));
- 	}
- 
- 	/* check tunneled type */
-@@ -8334,139 +8201,96 @@ i40e_dev_consistent_tunnel_filter_set(struct i40e_pf *pf,
- 		tun_type = I40E_AQC_ADD_CLOUD_TNL_TYPE_IP;
- 		break;
- 	case I40E_TUNNEL_TYPE_MPLSoUDP:
--		if (!pf->mpls_replace_flag) {
--			i40e_replace_mpls_l1_filter(pf);
--			i40e_replace_mpls_cloud_filter(pf);
--			pf->mpls_replace_flag = 1;
--		}
- 		teid_le = rte_cpu_to_le_32(tunnel_filter->tenant_id);
--		cld_filter.general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X11_WORD0] =
-+		cld_filter->general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X11_WORD0] =
- 			teid_le >> 4;
--		cld_filter.general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X11_WORD1] =
-+		cld_filter->general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X11_WORD1] =
- 			(teid_le & 0xF) << 12;
--		cld_filter.general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X11_WORD2] =
-+		cld_filter->general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X11_WORD2] =
- 			0x40;
--		big_buffer = 1;
-+		*big_buffer = 1;
- 		tun_type = I40E_AQC_ADD_CLOUD_TNL_TYPE_MPLSOUDP;
- 		break;
- 	case I40E_TUNNEL_TYPE_MPLSoGRE:
--		if (!pf->mpls_replace_flag) {
--			i40e_replace_mpls_l1_filter(pf);
--			i40e_replace_mpls_cloud_filter(pf);
--			pf->mpls_replace_flag = 1;
--		}
- 		teid_le = rte_cpu_to_le_32(tunnel_filter->tenant_id);
--		cld_filter.general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X11_WORD0] =
-+		cld_filter->general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X11_WORD0] =
- 			teid_le >> 4;
--		cld_filter.general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X11_WORD1] =
-+		cld_filter->general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X11_WORD1] =
- 			(teid_le & 0xF) << 12;
--		cld_filter.general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X11_WORD2] =
-+		cld_filter->general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X11_WORD2] =
- 			0x0;
--		big_buffer = 1;
-+		*big_buffer = 1;
- 		tun_type = I40E_AQC_ADD_CLOUD_TNL_TYPE_MPLSOGRE;
- 		break;
- 	case I40E_TUNNEL_TYPE_GTPC:
--		if (!pf->gtp_replace_flag) {
--			i40e_replace_gtp_l1_filter(pf);
--			i40e_replace_gtp_cloud_filter(pf);
--			pf->gtp_replace_flag = 1;
--		}
- 		teid_le = rte_cpu_to_le_32(tunnel_filter->tenant_id);
--		cld_filter.general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X12_WORD0] =
-+		cld_filter->general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X12_WORD0] =
- 			(teid_le >> 16) & 0xFFFF;
--		cld_filter.general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X12_WORD1] =
-+		cld_filter->general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X12_WORD1] =
- 			teid_le & 0xFFFF;
--		cld_filter.general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X12_WORD2] =
-+		cld_filter->general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X12_WORD2] =
- 			0x0;
--		big_buffer = 1;
-+		*big_buffer = 1;
- 		break;
- 	case I40E_TUNNEL_TYPE_GTPU:
--		if (!pf->gtp_replace_flag) {
--			i40e_replace_gtp_l1_filter(pf);
--			i40e_replace_gtp_cloud_filter(pf);
--			pf->gtp_replace_flag = 1;
--		}
- 		teid_le = rte_cpu_to_le_32(tunnel_filter->tenant_id);
--		cld_filter.general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X13_WORD0] =
-+		cld_filter->general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X13_WORD0] =
- 			(teid_le >> 16) & 0xFFFF;
--		cld_filter.general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X13_WORD1] =
-+		cld_filter->general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X13_WORD1] =
- 			teid_le & 0xFFFF;
--		cld_filter.general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X13_WORD2] =
-+		cld_filter->general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X13_WORD2] =
- 			0x0;
--		big_buffer = 1;
-+		*big_buffer = 1;
- 		break;
- 	case I40E_TUNNEL_TYPE_QINQ:
--		if (!pf->qinq_replace_flag) {
--			ret = i40e_cloud_filter_qinq_create(pf);
--			if (ret < 0) {
--				PMD_DRV_LOG(ERR, "Failed to create QinQ tunnel filter.");
--				/* ret is a raw i40e_status_code, not an errno */
--				return -ENOTSUP;
--			}
--			pf->qinq_replace_flag = 1;
--		}
- 		/*	Add in the General fields the values of
- 		 *	the Outer and Inner VLAN
- 		 *	Big Buffer should be set, see changes in
- 		 *	i40e_aq_add_cloud_filters
- 		 */
--		cld_filter.general_fields[0] = tunnel_filter->inner_vlan;
--		cld_filter.general_fields[1] = tunnel_filter->outer_vlan;
--		big_buffer = 1;
-+		cld_filter->general_fields[0] = tunnel_filter->inner_vlan;
-+		cld_filter->general_fields[1] = tunnel_filter->outer_vlan;
-+		*big_buffer = 1;
- 		break;
- 	case I40E_CLOUD_TYPE_UDP:
- 	case I40E_CLOUD_TYPE_TCP:
- 	case I40E_CLOUD_TYPE_SCTP:
- 		if (tunnel_filter->l4_port_type == I40E_L4_PORT_TYPE_SRC) {
--			if (!pf->sport_replace_flag) {
--				i40e_replace_port_l1_filter(pf,
--						tunnel_filter->l4_port_type);
--				i40e_replace_port_cloud_filter(pf,
--						tunnel_filter->l4_port_type);
--				pf->sport_replace_flag = 1;
--			}
- 			teid_le = rte_cpu_to_le_32(tunnel_filter->tenant_id);
--			cld_filter.general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X11_WORD0] =
-+			cld_filter->general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X11_WORD0] =
- 				I40E_DIRECTION_INGRESS_KEY;
- 
- 			if (tunnel_filter->tunnel_type == I40E_CLOUD_TYPE_UDP)
--				cld_filter.general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X11_WORD1] =
-+				cld_filter->general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X11_WORD1] =
- 					I40E_TR_L4_TYPE_UDP;
- 			else if (tunnel_filter->tunnel_type == I40E_CLOUD_TYPE_TCP)
--				cld_filter.general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X11_WORD1] =
-+				cld_filter->general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X11_WORD1] =
- 					I40E_TR_L4_TYPE_TCP;
- 			else
--				cld_filter.general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X11_WORD1] =
-+				cld_filter->general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X11_WORD1] =
- 					I40E_TR_L4_TYPE_SCTP;
- 
--			cld_filter.general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X11_WORD2] =
-+			cld_filter->general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X11_WORD2] =
- 				(teid_le >> 16) & 0xFFFF;
--			big_buffer = 1;
-+			*big_buffer = 1;
- 		} else {
--			if (!pf->dport_replace_flag) {
--				i40e_replace_port_l1_filter(pf,
--						tunnel_filter->l4_port_type);
--				i40e_replace_port_cloud_filter(pf,
--						tunnel_filter->l4_port_type);
--				pf->dport_replace_flag = 1;
--			}
- 			teid_le = rte_cpu_to_le_32(tunnel_filter->tenant_id);
--			cld_filter.general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X10_WORD0] =
-+			cld_filter->general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X10_WORD0] =
- 				I40E_DIRECTION_INGRESS_KEY;
- 
- 			if (tunnel_filter->tunnel_type == I40E_CLOUD_TYPE_UDP)
--				cld_filter.general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X10_WORD1] =
-+				cld_filter->general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X10_WORD1] =
- 					I40E_TR_L4_TYPE_UDP;
- 			else if (tunnel_filter->tunnel_type == I40E_CLOUD_TYPE_TCP)
--				cld_filter.general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X10_WORD1] =
-+				cld_filter->general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X10_WORD1] =
- 					I40E_TR_L4_TYPE_TCP;
- 			else
--				cld_filter.general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X10_WORD1] =
-+				cld_filter->general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X10_WORD1] =
- 					I40E_TR_L4_TYPE_SCTP;
- 
--			cld_filter.general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X10_WORD2] =
-+			cld_filter->general_fields[I40E_AQC_ADD_CLOUD_FV_FLU_0X10_WORD2] =
- 				(teid_le >> 16) & 0xFFFF;
--			big_buffer = 1;
-+			*big_buffer = 1;
- 		}
- 
- 		break;
-@@ -8477,74 +8301,193 @@ i40e_dev_consistent_tunnel_filter_set(struct i40e_pf *pf,
- 	}
- 
- 	if (tunnel_filter->tunnel_type == I40E_TUNNEL_TYPE_MPLSoUDP)
--		cld_filter.element.flags =
-+		cld_filter->element.flags =
- 			I40E_AQC_ADD_CLOUD_FILTER_0X11;
- 	else if (tunnel_filter->tunnel_type == I40E_TUNNEL_TYPE_MPLSoGRE)
--		cld_filter.element.flags =
-+		cld_filter->element.flags =
- 			I40E_AQC_ADD_CLOUD_FILTER_0X12;
- 	else if (tunnel_filter->tunnel_type == I40E_TUNNEL_TYPE_GTPC)
--		cld_filter.element.flags =
-+		cld_filter->element.flags =
- 			I40E_AQC_ADD_CLOUD_FILTER_0X11;
- 	else if (tunnel_filter->tunnel_type == I40E_TUNNEL_TYPE_GTPU)
--		cld_filter.element.flags =
-+		cld_filter->element.flags =
- 			I40E_AQC_ADD_CLOUD_FILTER_0X12;
- 	else if (tunnel_filter->tunnel_type == I40E_TUNNEL_TYPE_QINQ)
--		cld_filter.element.flags |=
-+		cld_filter->element.flags |=
- 			I40E_AQC_ADD_CLOUD_FILTER_0X10;
- 	else if (tunnel_filter->tunnel_type == I40E_CLOUD_TYPE_UDP ||
- 		 tunnel_filter->tunnel_type == I40E_CLOUD_TYPE_TCP ||
- 		 tunnel_filter->tunnel_type == I40E_CLOUD_TYPE_SCTP) {
- 		if (tunnel_filter->l4_port_type == I40E_L4_PORT_TYPE_SRC)
--			cld_filter.element.flags |=
-+			cld_filter->element.flags |=
- 				I40E_AQC_ADD_CLOUD_FILTER_0X11;
- 		else
--			cld_filter.element.flags |=
-+			cld_filter->element.flags |=
- 				I40E_AQC_ADD_CLOUD_FILTER_0X10;
- 	} else {
- 		val = i40e_dev_get_filter_type(tunnel_filter->filter_type,
--						&cld_filter.element.flags);
-+						&cld_filter->element.flags);
- 		if (val < 0) {
- 			return -EINVAL;
- 		}
- 	}
- 
--	cld_filter.element.flags |=
-+	cld_filter->element.flags |=
- 			rte_cpu_to_le_16(I40E_AQC_ADD_CLOUD_FLAGS_TO_QUEUE | ip_type |
- 				(tun_type << I40E_AQC_ADD_CLOUD_TNL_TYPE_SHIFT));
--	cld_filter.element.tenant_id = rte_cpu_to_le_32(tunnel_filter->tenant_id);
--	cld_filter.element.queue_number =
-+	cld_filter->element.tenant_id = rte_cpu_to_le_32(tunnel_filter->tenant_id);
-+	cld_filter->element.queue_number =
- 		rte_cpu_to_le_16(tunnel_filter->queue_id);
- 
- 	if (!tunnel_filter->is_to_vf)
--		vsi = pf->main_vsi;
-+		*vsi = pf->main_vsi;
- 	else {
- 		if (tunnel_filter->vf_id >= pf->vf_num) {
- 			PMD_DRV_LOG(ERR, "Invalid argument.");
- 			return -EINVAL;
- 		}
- 		vf = &pf->vfs[tunnel_filter->vf_id];
--		vsi = vf->vsi;
-+		*vsi = vf->vsi;
- 	}
- 
--	/* Check if there is the filter in SW list */
--	memset(&check_filter, 0, sizeof(check_filter));
--	i40e_tunnel_filter_convert(&cld_filter, &check_filter);
--	check_filter.is_to_vf = tunnel_filter->is_to_vf;
--	check_filter.vf_id = tunnel_filter->vf_id;
--	node = i40e_sw_tunnel_filter_lookup(tunnel_rule, &check_filter.input);
--	if (add && node) {
--		PMD_DRV_LOG(ERR, "Conflict with existing tunnel rules!");
--		return -EINVAL;
--	}
-+	return 0;
-+}
-+
-+static int
-+i40e_tunnel_filter_prepare_hw(struct i40e_pf *pf,
-+		struct i40e_tunnel_filter_conf *tunnel_filter)
-+{
-+	int ret;
- 
--	if (!add && !node) {
--		PMD_DRV_LOG(ERR, "There's no corresponding tunnel filter!");
--		return -EINVAL;
-+	switch (tunnel_filter->tunnel_type) {
-+	case I40E_TUNNEL_TYPE_MPLSoUDP:
-+	case I40E_TUNNEL_TYPE_MPLSoGRE:
-+		if (!pf->mpls_replace_flag) {
-+			ret = i40e_replace_mpls_l1_filter(pf);
-+			if (ret < 0)
-+				return ret;
-+			ret = i40e_replace_mpls_cloud_filter(pf);
-+			if (ret < 0)
-+				return ret;
-+			pf->mpls_replace_flag = 1;
-+		}
-+		break;
-+	case I40E_TUNNEL_TYPE_GTPC:
-+	case I40E_TUNNEL_TYPE_GTPU:
-+		if (!pf->gtp_replace_flag) {
-+			ret = i40e_replace_gtp_l1_filter(pf);
-+			if (ret < 0)
-+				return ret;
-+			ret = i40e_replace_gtp_cloud_filter(pf);
-+			if (ret < 0)
-+				return ret;
-+			pf->gtp_replace_flag = 1;
-+		}
-+		break;
-+	case I40E_TUNNEL_TYPE_QINQ:
-+		if (!pf->qinq_replace_flag) {
-+			ret = i40e_cloud_filter_qinq_create(pf);
-+			if (ret < 0) {
-+				PMD_DRV_LOG(ERR, "Failed to create QinQ tunnel filter.");
-+				/* ret is a raw i40e_status_code, not an errno */
-+				return -ENOTSUP;
-+			}
-+			pf->qinq_replace_flag = 1;
-+		}
-+		break;
-+	case I40E_CLOUD_TYPE_UDP:
-+	case I40E_CLOUD_TYPE_TCP:
-+	case I40E_CLOUD_TYPE_SCTP:
-+		if (tunnel_filter->l4_port_type == I40E_L4_PORT_TYPE_SRC) {
-+			if (!pf->sport_replace_flag) {
-+				ret = i40e_replace_port_l1_filter(pf,
-+						tunnel_filter->l4_port_type);
-+				if (ret < 0)
-+					return ret;
-+				ret = i40e_replace_port_cloud_filter(pf,
-+						tunnel_filter->l4_port_type);
-+				if (ret < 0)
-+					return ret;
-+				pf->sport_replace_flag = 1;
-+			}
-+		} else if (!pf->dport_replace_flag) {
-+			ret = i40e_replace_port_l1_filter(pf,
-+					tunnel_filter->l4_port_type);
-+			if (ret < 0)
-+				return ret;
-+			ret = i40e_replace_port_cloud_filter(pf,
-+					tunnel_filter->l4_port_type);
-+			if (ret < 0)
-+				return ret;
-+			pf->dport_replace_flag = 1;
-+		}
-+		break;
-+	default:
-+		break;
- 	}
- 
-+	return 0;
-+}
-+
-+int
-+i40e_tunnel_filter_match_key_get(struct i40e_pf *pf,
-+		struct i40e_tunnel_filter_conf *tunnel_filter,
-+		struct i40e_tunnel_filter_match_key *input)
-+{
-+	struct i40e_aqc_cloud_filters_element_bb cld_filter = {0};
-+	struct i40e_vsi *vsi;
-+	bool big_buffer = 0;
-+	int ret;
-+
-+	ret = i40e_tunnel_filter_convert_conf(pf, tunnel_filter, &cld_filter,
-+			&vsi, &big_buffer);
-+	if (ret != 0)
-+		return ret;
-+
-+	rte_ether_addr_copy((struct rte_ether_addr *)
-+			&cld_filter.element.outer_mac,
-+		(struct rte_ether_addr *)&input->outer_mac);
-+	rte_ether_addr_copy((struct rte_ether_addr *)
-+			&cld_filter.element.inner_mac,
-+		(struct rte_ether_addr *)&input->inner_mac);
-+	input->inner_vlan = cld_filter.element.inner_vlan;
-+	if ((rte_le_to_cpu_16(cld_filter.element.flags) &
-+	     I40E_AQC_ADD_CLOUD_FLAGS_IPV6) ==
-+	    I40E_AQC_ADD_CLOUD_FLAGS_IPV6)
-+		input->ip_type = I40E_TUNNEL_IPTYPE_IPV6;
-+	else
-+		input->ip_type = I40E_TUNNEL_IPTYPE_IPV4;
-+	input->flags = cld_filter.element.flags;
-+	input->tenant_id = cld_filter.element.tenant_id;
-+	memcpy(input->general_fields, cld_filter.general_fields,
-+			sizeof(cld_filter.general_fields));
-+
-+	return 0;
-+}
-+
-+int
-+i40e_tunnel_filter_program(struct i40e_pf *pf,
-+		struct i40e_tunnel_filter_conf *tunnel_filter,
-+		uint8_t add)
-+{
-+	struct i40e_hw *hw = I40E_PF_TO_HW(pf);
-+	struct i40e_aqc_cloud_filters_element_bb cld_filter = {0};
-+	struct i40e_vsi *vsi;
-+	bool big_buffer = 0;
-+	int ret;
-+
-+	ret = i40e_tunnel_filter_convert_conf(pf, tunnel_filter, &cld_filter,
-+			&vsi, &big_buffer);
-+	if (ret != 0)
-+		return ret;
-+
- 	if (add) {
--		struct i40e_tunnel_filter *tunnel;
-+		ret = i40e_tunnel_filter_prepare_hw(pf, tunnel_filter);
-+		if (ret < 0)
-+			return ret;
-+	}
- 
-+	if (add) {
- 		if (big_buffer)
- 			ret = i40e_aq_add_cloud_filters_bb(hw,
- 						   vsi->seid, &cld_filter, 1);
-@@ -8555,16 +8498,6 @@ i40e_dev_consistent_tunnel_filter_set(struct i40e_pf *pf,
- 			PMD_DRV_LOG(ERR, "Failed to add a tunnel filter.");
- 			return -ENOTSUP;
- 		}
--		tunnel = rte_zmalloc("tunnel_filter", sizeof(*tunnel), 0);
--		if (tunnel == NULL) {
--			PMD_DRV_LOG(ERR, "Failed to alloc memory.");
--			return -ENOMEM;
--		}
--
--		memcpy(tunnel, &check_filter, sizeof(check_filter));
--		ret = i40e_sw_tunnel_filter_insert(pf, tunnel);
--		if (ret < 0)
--			rte_free(tunnel);
- 	} else {
- 		if (big_buffer)
- 			ret = i40e_aq_rem_cloud_filters_bb(
-@@ -8576,7 +8509,6 @@ i40e_dev_consistent_tunnel_filter_set(struct i40e_pf *pf,
- 			PMD_DRV_LOG(ERR, "Failed to delete a tunnel filter.");
- 			return -ENOTSUP;
- 		}
--		ret = i40e_sw_tunnel_filter_del(pf, &node->input);
- 	}
- 
- 	return ret;
-@@ -11284,65 +11216,9 @@ i40e_dev_mtu_set(struct rte_eth_dev *dev, uint16_t mtu __rte_unused)
- 	return 0;
- }
- 
--/* Restore tunnel filter */
--static void
--i40e_tunnel_filter_restore(struct i40e_pf *pf)
--{
--	struct i40e_hw *hw = I40E_PF_TO_HW(pf);
--	struct i40e_vsi *vsi;
--	struct i40e_pf_vf *vf;
--	struct i40e_tunnel_filter_list
--		*tunnel_list = &pf->tunnel.tunnel_list;
--	struct i40e_tunnel_filter *f;
--	struct i40e_aqc_cloud_filters_element_bb cld_filter;
--	bool big_buffer = 0;
--
--	TAILQ_FOREACH(f, tunnel_list, rules) {
--		if (!f->is_to_vf)
--			vsi = pf->main_vsi;
--		else {
--			vf = &pf->vfs[f->vf_id];
--			vsi = vf->vsi;
--		}
--		memset(&cld_filter, 0, sizeof(cld_filter));
--		rte_ether_addr_copy((struct rte_ether_addr *)
--				&f->input.outer_mac,
--			(struct rte_ether_addr *)&cld_filter.element.outer_mac);
--		rte_ether_addr_copy((struct rte_ether_addr *)
--				&f->input.inner_mac,
--			(struct rte_ether_addr *)&cld_filter.element.inner_mac);
--		cld_filter.element.inner_vlan = f->input.inner_vlan;
--		cld_filter.element.flags = f->input.flags;
--		cld_filter.element.tenant_id = f->input.tenant_id;
--		cld_filter.element.queue_number = f->queue;
--		memcpy(cld_filter.general_fields,
--			   f->input.general_fields,
--			   sizeof(f->input.general_fields));
--
--		if (((f->input.flags &
--		     I40E_AQC_ADD_CLOUD_FILTER_0X11) ==
--		     I40E_AQC_ADD_CLOUD_FILTER_0X11) ||
--		    ((f->input.flags &
--		     I40E_AQC_ADD_CLOUD_FILTER_0X12) ==
--		     I40E_AQC_ADD_CLOUD_FILTER_0X12) ||
--		    ((f->input.flags &
--		     I40E_AQC_ADD_CLOUD_FILTER_0X10) ==
--		     I40E_AQC_ADD_CLOUD_FILTER_0X10))
--			big_buffer = 1;
--
--		if (big_buffer)
--			i40e_aq_add_cloud_filters_bb(hw,
--					vsi->seid, &cld_filter, 1);
--		else
--			i40e_aq_add_cloud_filters(hw, vsi->seid,
--						  &cld_filter.element, 1);
--	}
--}
--
- static void
+@@ -11220,7 +11229,6 @@ static void
  i40e_filter_restore(struct i40e_pf *pf)
  {
--	i40e_tunnel_filter_restore(pf);
  	i40e_fdir_filter_restore(pf);
- 	(void)i40e_hash_filter_restore(pf);
+-	(void)i40e_hash_filter_restore(pf);
  }
+ 
+ bool
 diff --git a/drivers/net/intel/i40e/i40e_ethdev.h b/drivers/net/intel/i40e/i40e_ethdev.h
-index 7a326fa75bd..1a15916e925 100644
+index 1a15916e925..cd1e27ff8ae 100644
 --- a/drivers/net/intel/i40e/i40e_ethdev.h
 +++ b/drivers/net/intel/i40e/i40e_ethdev.h
-@@ -22,6 +22,7 @@
- #include "base/virtchnl.h"
- 
- #include "../common/flow_engine.h"
-+#include "../common/flow_util.h"
- 
- #define I40E_AQ_LEN               32
- #define I40E_AQ_BUF_SZ            4096
-@@ -877,8 +878,8 @@ enum i40e_tunnel_iptype {
- 	I40E_TUNNEL_IPTYPE_IPV6,
+@@ -282,9 +282,6 @@ enum i40e_flxpld_layer_idx {
+  */
+ struct rte_flow {
+ 	struct ci_flow base;
+-	TAILQ_ENTRY(rte_flow) node;
+-	enum rte_filter_type filter_type;
+-	void *rule;
  };
  
--/* Tunnel filter struct */
--struct i40e_tunnel_filter_input {
-+/* Tunnel filter hash table match key */
-+struct i40e_tunnel_filter_match_key {
- 	uint8_t outer_mac[6];    /* Outer mac address to match */
- 	uint8_t inner_mac[6];    /* Inner mac address to match */
- 	uint16_t inner_vlan;     /* Inner vlan address to match */
-@@ -888,19 +889,8 @@ struct i40e_tunnel_filter_input {
- 	uint16_t general_fields[32];  /* Big buffer */
+ /**
+@@ -954,8 +951,6 @@ struct i40e_tunnel_filter_conf {
+ 	uint16_t vf_id;         /**< VF id, available when is_to_vf is 1. */
  };
  
--struct i40e_tunnel_filter {
--	TAILQ_ENTRY(i40e_tunnel_filter) rules;
--	struct i40e_tunnel_filter_input input;
--	uint8_t is_to_vf; /* 0 - to PF, 1 - to VF */
--	uint16_t vf_id;   /* VF id, available when is_to_vf is 1. */
--	uint16_t queue; /* Queue assigned to when match */
--};
+-TAILQ_HEAD(i40e_flow_list, rte_flow);
 -
--TAILQ_HEAD(i40e_tunnel_filter_list, i40e_tunnel_filter);
--
--struct i40e_tunnel_rule {
--	struct i40e_tunnel_filter_list tunnel_list;
--	struct i40e_tunnel_filter  **hash_map;
-+struct i40e_tunnel_state {
+ /* Struct to store Traffic Manager shaper profile. */
+ struct i40e_tm_shaper_profile {
+ 	TAILQ_ENTRY(i40e_tm_shaper_profile) node;
+@@ -1077,14 +1072,23 @@ struct i40e_rss_filter_data {
+ 	uint64_t reset_symmetric_pctypes;
+ };
+ 
+-/* RSS filter list structure */
+-struct i40e_rss_filter {
+-	TAILQ_ENTRY(i40e_rss_filter) next;
+-	struct i40e_rte_flow_rss_conf rss_filter_info;
++/*
++ * Tracking entry for a registered RSS flow: points back to the flow that
++ * owns the rss_conf, plus the metadata recording which HW state it owns.
++ */
++struct i40e_rss_flow_node {
++	TAILQ_ENTRY(i40e_rss_flow_node) next;
++	struct ci_flow *flow;
+ 	struct i40e_rss_filter_data filter_data;
+ };
+ 
+-TAILQ_HEAD(i40e_rss_conf_list, i40e_rss_filter);
++TAILQ_HEAD(i40e_rss_node_list, i40e_rss_flow_node);
++
++/* RSS flow engine shared state, attached/detached by the RSS engines */
++struct i40e_rss_state {
 +	struct ci_refcount ref;
- 	struct rte_hash *hash_table;
- };
++	struct i40e_rss_node_list list;
++};
  
-@@ -1170,7 +1160,7 @@ struct i40e_pf {
- 	struct i40e_vmdq_info *vmdq;
+ struct i40e_vf_msg_cfg {
+ 	/* maximal VF message during a statistic period */
+@@ -1161,13 +1165,12 @@ struct i40e_pf {
  
  	struct i40e_fdir_info fdir; /* flow director info */
--	struct i40e_tunnel_rule tunnel; /* Tunnel filter rule */
-+	struct i40e_tunnel_state tunnel_state; /* tunnel flow engine state */
- 	struct i40e_rss_conf_list rss_config_list; /* RSS rule list */
+ 	struct i40e_tunnel_state tunnel_state; /* tunnel flow engine state */
+-	struct i40e_rss_conf_list rss_config_list; /* RSS rule list */
++	struct i40e_rss_state rss_state; /* RSS flow engine state */
  	struct i40e_queue_regions queue_region; /* queue region info */
  	struct i40e_fc_conf fc_conf; /* Flow control conf */
-@@ -1317,23 +1307,10 @@ struct i40e_vf_representor {
+ 	bool floating_veb; /* The flag to use the floating VEB */
+ 	/* The floating enable flag for the specific VF */
+ 	bool floating_veb_list[I40E_MAX_VF];
+-	struct i40e_flow_list flow_list;
+ 	/* flow engine configuration */
+ 	struct ci_flow_engine_conf flow_engine_conf;
+ 	bool mpls_replace_flag;  /* 1 - MPLS filter replace is done */
+@@ -1306,11 +1309,6 @@ struct i40e_vf_representor {
+ 
  extern const struct rte_flow_ops i40e_flow_ops;
  
- struct i40e_filter_ctx {
--	union {
--		struct i40e_tunnel_filter_conf consistent_tunnel_filter;
--		struct i40e_rte_flow_rss_conf rss_conf;
--	};
-+	struct i40e_rte_flow_rss_conf rss_conf;
- 	enum rte_filter_type type;
- };
- 
--typedef int (*parse_filter_t)(struct rte_eth_dev *dev,
--			      const struct rte_flow_item pattern[],
--			      const struct rte_flow_action actions[],
--			      struct rte_flow_error *error,
--			      struct i40e_filter_ctx *filter);
--struct i40e_valid_pattern {
--	enum rte_flow_item_type *items;
--	parse_filter_t parse_filter;
+-struct i40e_filter_ctx {
+-	struct i40e_rte_flow_rss_conf rss_conf;
+-	enum rte_filter_type type;
 -};
 -
  int i40e_dev_switch_queues(struct i40e_pf *pf, bool on);
  int i40e_vsi_release(struct i40e_vsi *vsi);
  struct i40e_vsi *i40e_vsi_setup(struct i40e_pf *pf,
-@@ -1399,11 +1376,6 @@ int i40e_rx_burst_mode_get(struct rte_eth_dev *dev, uint16_t queue_id,
- 			   struct rte_eth_burst_mode *mode);
- int i40e_tx_burst_mode_get(struct rte_eth_dev *dev, uint16_t queue_id,
- 			   struct rte_eth_burst_mode *mode);
--struct i40e_tunnel_filter *
--i40e_sw_tunnel_filter_lookup(struct i40e_tunnel_rule *tunnel_rule,
--			     const struct i40e_tunnel_filter_input *input);
--int i40e_sw_tunnel_filter_del(struct i40e_pf *pf,
--			      struct i40e_tunnel_filter_input *input);
- uint64_t i40e_get_default_input_set(uint16_t pctype);
- int i40e_ethertype_filter_program(struct i40e_pf *pf,
- 			      struct rte_eth_ethertype_filter *filter,
-@@ -1433,9 +1405,14 @@ void i40e_fdir_flex_store(struct i40e_pf *pf,
- int i40e_dev_tunnel_filter_set(struct i40e_pf *pf,
- 			       struct rte_eth_tunnel_filter_conf *tunnel_filter,
+@@ -1410,6 +1408,8 @@ int i40e_tunnel_filter_match_key_get(struct i40e_pf *pf,
+ 				 struct i40e_tunnel_filter_match_key *out);
+ struct i40e_tunnel_state *i40e_tunnel_state_attach(struct rte_eth_dev_data *dev_data);
+ void i40e_tunnel_state_detach(struct i40e_tunnel_state *state);
++struct i40e_rss_state *i40e_rss_state_attach(struct rte_eth_dev_data *dev_data);
++void i40e_rss_state_detach(struct i40e_rss_state *state);
+ int i40e_tunnel_filter_program(struct i40e_pf *pf,
+ 			       struct i40e_tunnel_filter_conf *tunnel_filter,
  			       uint8_t add);
--int i40e_dev_consistent_tunnel_filter_set(struct i40e_pf *pf,
--				  struct i40e_tunnel_filter_conf *tunnel_filter,
--				  uint8_t add);
-+int i40e_tunnel_filter_match_key_get(struct i40e_pf *pf,
-+				 struct i40e_tunnel_filter_conf *tunnel_filter,
-+				 struct i40e_tunnel_filter_match_key *out);
-+struct i40e_tunnel_state *i40e_tunnel_state_attach(struct rte_eth_dev_data *dev_data);
-+void i40e_tunnel_state_detach(struct i40e_tunnel_state *state);
-+int i40e_tunnel_filter_program(struct i40e_pf *pf,
-+			       struct i40e_tunnel_filter_conf *tunnel_filter,
-+			       uint8_t add);
- int i40e_fdir_flush(struct i40e_pf *pf);
- int i40e_find_all_vlan_for_mac(struct i40e_vsi *vsi,
- 			       struct i40e_macvlan_filter *mv_f,
 diff --git a/drivers/net/intel/i40e/i40e_flow.c b/drivers/net/intel/i40e/i40e_flow.c
-index 104749eb8cc..0de0c825214 100644
+index 0de0c825214..e7dc21d8cbe 100644
 --- a/drivers/net/intel/i40e/i40e_flow.c
 +++ b/drivers/net/intel/i40e/i40e_flow.c
-@@ -34,6 +34,12 @@ const struct ci_flow_engine_list i40e_flow_engine_list = {
- 	{
- 		&i40e_flow_engine_ethertype,
- 		&i40e_flow_engine_fdir,
-+		&i40e_flow_engine_tunnel_qinq,
-+		&i40e_flow_engine_tunnel_vxlan,
-+		&i40e_flow_engine_tunnel_nvgre,
-+		&i40e_flow_engine_tunnel_mpls,
-+		&i40e_flow_engine_tunnel_gtp,
-+		&i40e_flow_engine_tunnel_l4,
+@@ -40,6 +40,9 @@ const struct ci_flow_engine_list i40e_flow_engine_list = {
+ 		&i40e_flow_engine_tunnel_mpls,
+ 		&i40e_flow_engine_tunnel_gtp,
+ 		&i40e_flow_engine_tunnel_l4,
++		&i40e_flow_engine_hash_pattern,
++		&i40e_flow_engine_hash_vlan,
++		&i40e_flow_engine_hash_empty,
  	}
  };
  
-@@ -60,50 +66,7 @@ static int i40e_flow_dev_dump(struct rte_eth_dev *dev,
- 			      struct rte_flow *flow,
- 			      FILE *file,
- 			      struct rte_flow_error *error);
--static int i40e_flow_parse_tunnel_action(struct rte_eth_dev *dev,
--				 const struct rte_flow_action *actions,
--				 struct rte_flow_error *error,
--				 struct i40e_tunnel_filter_conf *filter);
--static int i40e_flow_parse_vxlan_filter(struct rte_eth_dev *dev,
--					const struct rte_flow_item pattern[],
--					const struct rte_flow_action actions[],
--					struct rte_flow_error *error,
--					struct i40e_filter_ctx *filter);
--static int i40e_flow_parse_nvgre_filter(struct rte_eth_dev *dev,
--					const struct rte_flow_item pattern[],
--					const struct rte_flow_action actions[],
--					struct rte_flow_error *error,
--					struct i40e_filter_ctx *filter);
--static int i40e_flow_parse_mpls_filter(struct rte_eth_dev *dev,
--				       const struct rte_flow_item pattern[],
--				       const struct rte_flow_action actions[],
--				       struct rte_flow_error *error,
--				       struct i40e_filter_ctx *filter);
--static int i40e_flow_parse_gtp_filter(struct rte_eth_dev *dev,
--				      const struct rte_flow_item pattern[],
--				      const struct rte_flow_action actions[],
--				      struct rte_flow_error *error,
--				      struct i40e_filter_ctx *filter);
--static int i40e_flow_destroy_tunnel_filter(struct i40e_pf *pf,
--					   struct i40e_tunnel_filter *filter);
--static int i40e_flow_flush_tunnel_filter(struct i40e_pf *pf);
--static int
--i40e_flow_parse_qinq_filter(struct rte_eth_dev *dev,
--			      const struct rte_flow_item pattern[],
--			      const struct rte_flow_action actions[],
--			      struct rte_flow_error *error,
--			      struct i40e_filter_ctx *filter);
--static int
--i40e_flow_parse_qinq_pattern(struct rte_eth_dev *dev,
--			      const struct rte_flow_item *pattern,
--			      struct rte_flow_error *error,
--			      struct i40e_tunnel_filter_conf *filter);
- 
--static int i40e_flow_parse_l4_cloud_filter(struct rte_eth_dev *dev,
--					   const struct rte_flow_item pattern[],
--					   const struct rte_flow_action actions[],
--					   struct rte_flow_error *error,
--					   struct i40e_filter_ctx *filter);
- const struct rte_flow_ops i40e_flow_ops = {
- 	.validate = i40e_flow_validate,
- 	.create = i40e_flow_create,
-@@ -113,322 +76,12 @@ const struct rte_flow_ops i40e_flow_ops = {
+@@ -76,56 +79,6 @@ const struct rte_flow_ops i40e_flow_ops = {
  	.dev_dump = i40e_flow_dev_dump,
  };
  
--static enum rte_flow_item_type pattern_fdir_ipv4_udp[] = {
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_IPV4,
--	RTE_FLOW_ITEM_TYPE_UDP,
--	RTE_FLOW_ITEM_TYPE_END,
--};
+-#define I40E_FLOW_DUMP_CHUNK_BYTES 32
 -
--static enum rte_flow_item_type pattern_fdir_ipv4_tcp[] = {
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_IPV4,
--	RTE_FLOW_ITEM_TYPE_TCP,
--	RTE_FLOW_ITEM_TYPE_END,
--};
--
--static enum rte_flow_item_type pattern_fdir_ipv4_sctp[] = {
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_IPV4,
--	RTE_FLOW_ITEM_TYPE_SCTP,
--	RTE_FLOW_ITEM_TYPE_END,
--};
--
--static enum rte_flow_item_type pattern_fdir_ipv4_gtpc[] = {
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_IPV4,
--	RTE_FLOW_ITEM_TYPE_UDP,
--	RTE_FLOW_ITEM_TYPE_GTPC,
--	RTE_FLOW_ITEM_TYPE_END,
--};
--
--static enum rte_flow_item_type pattern_fdir_ipv4_gtpu[] = {
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_IPV4,
--	RTE_FLOW_ITEM_TYPE_UDP,
--	RTE_FLOW_ITEM_TYPE_GTPU,
--	RTE_FLOW_ITEM_TYPE_END,
--};
--
--static enum rte_flow_item_type pattern_fdir_ipv6_udp[] = {
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_IPV6,
--	RTE_FLOW_ITEM_TYPE_UDP,
--	RTE_FLOW_ITEM_TYPE_END,
--};
--
--static enum rte_flow_item_type pattern_fdir_ipv6_tcp[] = {
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_IPV6,
--	RTE_FLOW_ITEM_TYPE_TCP,
--	RTE_FLOW_ITEM_TYPE_END,
--};
--
--static enum rte_flow_item_type pattern_fdir_ipv6_sctp[] = {
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_IPV6,
--	RTE_FLOW_ITEM_TYPE_SCTP,
--	RTE_FLOW_ITEM_TYPE_END,
--};
--
--static enum rte_flow_item_type pattern_fdir_ipv6_gtpc[] = {
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_IPV6,
--	RTE_FLOW_ITEM_TYPE_UDP,
--	RTE_FLOW_ITEM_TYPE_GTPC,
--	RTE_FLOW_ITEM_TYPE_END,
--};
--
--static enum rte_flow_item_type pattern_fdir_ipv6_gtpu[] = {
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_IPV6,
--	RTE_FLOW_ITEM_TYPE_UDP,
--	RTE_FLOW_ITEM_TYPE_GTPU,
--	RTE_FLOW_ITEM_TYPE_END,
--};
--
--/* Pattern matched tunnel filter */
--static enum rte_flow_item_type pattern_vxlan_1[] = {
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_IPV4,
--	RTE_FLOW_ITEM_TYPE_UDP,
--	RTE_FLOW_ITEM_TYPE_VXLAN,
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_END,
--};
--
--static enum rte_flow_item_type pattern_vxlan_2[] = {
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_IPV6,
--	RTE_FLOW_ITEM_TYPE_UDP,
--	RTE_FLOW_ITEM_TYPE_VXLAN,
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_END,
--};
--
--static enum rte_flow_item_type pattern_vxlan_3[] = {
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_IPV4,
--	RTE_FLOW_ITEM_TYPE_UDP,
--	RTE_FLOW_ITEM_TYPE_VXLAN,
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_VLAN,
--	RTE_FLOW_ITEM_TYPE_END,
--};
--
--static enum rte_flow_item_type pattern_vxlan_4[] = {
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_IPV6,
--	RTE_FLOW_ITEM_TYPE_UDP,
--	RTE_FLOW_ITEM_TYPE_VXLAN,
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_VLAN,
--	RTE_FLOW_ITEM_TYPE_END,
--};
--
--static enum rte_flow_item_type pattern_nvgre_1[] = {
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_IPV4,
--	RTE_FLOW_ITEM_TYPE_NVGRE,
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_END,
--};
--
--static enum rte_flow_item_type pattern_nvgre_2[] = {
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_IPV6,
--	RTE_FLOW_ITEM_TYPE_NVGRE,
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_END,
--};
--
--static enum rte_flow_item_type pattern_nvgre_3[] = {
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_IPV4,
--	RTE_FLOW_ITEM_TYPE_NVGRE,
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_VLAN,
--	RTE_FLOW_ITEM_TYPE_END,
--};
--
--static enum rte_flow_item_type pattern_nvgre_4[] = {
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_IPV6,
--	RTE_FLOW_ITEM_TYPE_NVGRE,
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_VLAN,
--	RTE_FLOW_ITEM_TYPE_END,
--};
--
--static enum rte_flow_item_type pattern_mpls_1[] = {
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_IPV4,
--	RTE_FLOW_ITEM_TYPE_UDP,
--	RTE_FLOW_ITEM_TYPE_MPLS,
--	RTE_FLOW_ITEM_TYPE_END,
--};
--
--static enum rte_flow_item_type pattern_mpls_2[] = {
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_IPV6,
--	RTE_FLOW_ITEM_TYPE_UDP,
--	RTE_FLOW_ITEM_TYPE_MPLS,
--	RTE_FLOW_ITEM_TYPE_END,
--};
--
--static enum rte_flow_item_type pattern_mpls_3[] = {
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_IPV4,
--	RTE_FLOW_ITEM_TYPE_GRE,
--	RTE_FLOW_ITEM_TYPE_MPLS,
--	RTE_FLOW_ITEM_TYPE_END,
--};
--
--static enum rte_flow_item_type pattern_mpls_4[] = {
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_IPV6,
--	RTE_FLOW_ITEM_TYPE_GRE,
--	RTE_FLOW_ITEM_TYPE_MPLS,
--	RTE_FLOW_ITEM_TYPE_END,
--};
--
--static enum rte_flow_item_type pattern_qinq_1[] = {
--	RTE_FLOW_ITEM_TYPE_ETH,
--	RTE_FLOW_ITEM_TYPE_VLAN,
--	RTE_FLOW_ITEM_TYPE_VLAN,
--	RTE_FLOW_ITEM_TYPE_END,
--};
--
--static struct i40e_valid_pattern i40e_supported_patterns[] = {
--	/* VXLAN */
--	{ pattern_vxlan_1, i40e_flow_parse_vxlan_filter },
--	{ pattern_vxlan_2, i40e_flow_parse_vxlan_filter },
--	{ pattern_vxlan_3, i40e_flow_parse_vxlan_filter },
--	{ pattern_vxlan_4, i40e_flow_parse_vxlan_filter },
--	/* NVGRE */
--	{ pattern_nvgre_1, i40e_flow_parse_nvgre_filter },
--	{ pattern_nvgre_2, i40e_flow_parse_nvgre_filter },
--	{ pattern_nvgre_3, i40e_flow_parse_nvgre_filter },
--	{ pattern_nvgre_4, i40e_flow_parse_nvgre_filter },
--	/* MPLSoUDP & MPLSoGRE */
--	{ pattern_mpls_1, i40e_flow_parse_mpls_filter },
--	{ pattern_mpls_2, i40e_flow_parse_mpls_filter },
--	{ pattern_mpls_3, i40e_flow_parse_mpls_filter },
--	{ pattern_mpls_4, i40e_flow_parse_mpls_filter },
--	/* GTP-C & GTP-U */
--	{ pattern_fdir_ipv4_gtpc, i40e_flow_parse_gtp_filter },
--	{ pattern_fdir_ipv4_gtpu, i40e_flow_parse_gtp_filter },
--	{ pattern_fdir_ipv6_gtpc, i40e_flow_parse_gtp_filter },
--	{ pattern_fdir_ipv6_gtpu, i40e_flow_parse_gtp_filter },
--	/* QINQ */
--	{ pattern_qinq_1, i40e_flow_parse_qinq_filter },
--	/* L4 over port */
--	{ pattern_fdir_ipv4_udp, i40e_flow_parse_l4_cloud_filter },
--	{ pattern_fdir_ipv4_tcp, i40e_flow_parse_l4_cloud_filter },
--	{ pattern_fdir_ipv4_sctp, i40e_flow_parse_l4_cloud_filter },
--	{ pattern_fdir_ipv6_udp, i40e_flow_parse_l4_cloud_filter },
--	{ pattern_fdir_ipv6_tcp, i40e_flow_parse_l4_cloud_filter },
--	{ pattern_fdir_ipv6_sctp, i40e_flow_parse_l4_cloud_filter },
--};
--
--/* Find the first VOID or non-VOID item pointer */
--static const struct rte_flow_item *
--i40e_find_first_item(const struct rte_flow_item *item, bool is_void)
+-static const char *
+-i40e_flow_rule_name(enum rte_filter_type filter_type)
 -{
--	bool is_find;
--
--	while (item->type != RTE_FLOW_ITEM_TYPE_END) {
--		if (is_void)
--			is_find = item->type == RTE_FLOW_ITEM_TYPE_VOID;
--		else
--			is_find = item->type != RTE_FLOW_ITEM_TYPE_VOID;
--		if (is_find)
--			break;
--		item++;
+-	switch (filter_type) {
+-	case RTE_ETH_FILTER_HASH:
+-		return "hash";
+-	default:
+-		return "unknown";
 -	}
--	return item;
 -}
 -
--/* Skip all VOID items of the pattern */
+-static size_t
+-i40e_flow_rule_size(enum rte_filter_type filter_type)
+-{
+-	switch (filter_type) {
+-	case RTE_ETH_FILTER_HASH:
+-		return sizeof(struct i40e_rss_filter);
+-	default:
+-		return 0;
+-	}
+-}
+-
 -static void
--i40e_pattern_skip_void_item(struct rte_flow_item *items,
--			    const struct rte_flow_item *pattern)
+-i40e_flow_dump_blob(FILE *file, const char *engine,
+-		    const void *data, size_t data_len)
 -{
--	uint32_t cpy_count = 0;
--	const struct rte_flow_item *pb = pattern, *pe = pattern;
+-	const uint8_t *raw = (const uint8_t *)data;
+-	const size_t nchunks =
+-		(data_len + I40E_FLOW_DUMP_CHUNK_BYTES - 1) /
+-		I40E_FLOW_DUMP_CHUNK_BYTES;
+-	char title[64];
+-	size_t ci;
 -
--	for (;;) {
--		/* Find a non-void item first */
--		pb = i40e_find_first_item(pb, false);
--		if (pb->type == RTE_FLOW_ITEM_TYPE_END) {
--			pe = pb;
--			break;
--		}
+-	fprintf(file, "FLOW DUMP: driver=i40e engine=%s\n", engine);
+-	fprintf(file, "FLOW DUMP: DATA size=%zu chunks=%zu chunk_bytes=%d\n",
+-		data_len, nchunks, I40E_FLOW_DUMP_CHUNK_BYTES);
 -
--		/* Find a void item */
--		pe = i40e_find_first_item(pb + 1, true);
+-	for (ci = 0; ci < nchunks; ci++) {
+-		const size_t off = ci * I40E_FLOW_DUMP_CHUNK_BYTES;
+-		const size_t clen =
+-			RTE_MIN((size_t)I40E_FLOW_DUMP_CHUNK_BYTES, data_len - off);
 -
--		cpy_count = pe - pb;
--		memcpy(items, pb, sizeof(struct rte_flow_item) * cpy_count);
--
--		items += cpy_count;
--
--		if (pe->type == RTE_FLOW_ITEM_TYPE_END) {
--			pb = pe;
--			break;
--		}
--
--		pb = pe + 1;
+-		snprintf(title, sizeof(title), "FLOW DUMP: chunk %03zu/%03zu",
+-			 ci + 1, nchunks);
+-		rte_memdump(file, title, raw + off, clen);
 -	}
--	/* Copy the END item. */
--	memcpy(items, pe, sizeof(struct rte_flow_item));
 -}
 -
--/* Check if the pattern matches a supported item type array */
--static bool
--i40e_match_pattern(enum rte_flow_item_type *item_array,
--		   struct rte_flow_item *pattern)
--{
--	struct rte_flow_item *item = pattern;
--
--	while ((*item_array == item->type) &&
--	       (*item_array != RTE_FLOW_ITEM_TYPE_END)) {
--		item_array++;
--		item++;
--	}
--
--	return (*item_array == RTE_FLOW_ITEM_TYPE_END &&
--		item->type == RTE_FLOW_ITEM_TYPE_END);
--}
--
--/* Find if there's parse filter function matched */
--static parse_filter_t
--i40e_find_parse_filter_func(struct rte_flow_item *pattern, uint32_t *idx)
--{
--	parse_filter_t parse_filter = NULL;
--	uint8_t i = *idx;
--
--	for (; i < RTE_DIM(i40e_supported_patterns); i++) {
--		if (i40e_match_pattern(i40e_supported_patterns[i].items,
--					pattern)) {
--			parse_filter = i40e_supported_patterns[i].parse_filter;
--			break;
--		}
--	}
--
--	*idx = ++i;
--
--	return parse_filter;
--}
--
- #define I40E_FLOW_DUMP_CHUNK_BYTES 32
+ static int
+ i40e_flow_dev_dump(struct rte_eth_dev *dev,
+ 		   struct rte_flow *flow,
+@@ -133,59 +86,8 @@ i40e_flow_dev_dump(struct rte_eth_dev *dev,
+ 		   struct rte_flow_error *error)
+ {
+ 	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(dev->data->dev_private);
+-	struct rte_flow *p_flow;
+-	bool found = false;
+-	int ret;
  
- static const char *
- i40e_flow_rule_name(enum rte_filter_type filter_type)
- {
- 	switch (filter_type) {
--	case RTE_ETH_FILTER_TUNNEL:
--		return "tunnel";
- 	case RTE_ETH_FILTER_HASH:
- 		return "hash";
- 	default:
-@@ -440,8 +93,6 @@ static size_t
- i40e_flow_rule_size(enum rte_filter_type filter_type)
- {
- 	switch (filter_type) {
--	case RTE_ETH_FILTER_TUNNEL:
--		return sizeof(struct i40e_tunnel_filter);
- 	case RTE_ETH_FILTER_HASH:
- 		return sizeof(struct i40e_rss_filter);
- 	default:
-@@ -631,1190 +282,6 @@ i40e_flow_fdir_get_pctype_value(struct i40e_pf *pf,
+-	/* try the new flow engine first */
+-	ret = ci_flow_dump(&pf->flow_engine_conf, flow, file, error);
+-
+-	/*
+-	 * There are multiple possible situations here:
+-	 *
+-	 * - User requested to dump all flows
+-	 * - User requested to dump a specific flow
+-	 *
+-	 * For the first case, we keep going because legacy engines might still
+-	 * have flows we want to dump.
+-	 *
+-	 * For the second case, we only keep going if the flow we were asked to
+-	 * dump was not found in the new engines.
+-	 */
+-	if (flow != NULL && ret == 0)
+-		return 0;
+-
+-	TAILQ_FOREACH(p_flow, &pf->flow_list, node) {
+-		size_t rule_size = 0;
+-		const void *rule_data = NULL;
+-
+-		if (flow != NULL && p_flow != flow)
+-			continue;
+-
+-		/* should not happen */
+-		if (p_flow->rule == NULL) {
+-			PMD_DRV_LOG(DEBUG, "Invalid flow rule");
+-			continue;
+-		}
+-
+-		rule_size = i40e_flow_rule_size(p_flow->filter_type);
+-		/* should not happen either */
+-		if (rule_size == 0)
+-			continue;
+-
+-		found = true;
+-		rule_data = p_flow->rule;
+-		i40e_flow_dump_blob(file,
+-			i40e_flow_rule_name(p_flow->filter_type),
+-			rule_data, rule_size);
+-	}
+-
+-	if (flow != NULL && !found)
+-		return rte_flow_error_set(error, ENOENT,
+-			RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
+-			"Flow not found");
+-
+-	return 0;
++	return ci_flow_dump(&pf->flow_engine_conf, flow, file, error);
+ }
+ 
+ int
+@@ -282,41 +184,6 @@ i40e_flow_fdir_get_pctype_value(struct i40e_pf *pf,
  	return I40E_FILTER_PCTYPE_INVALID;
  }
  
--/* Parse to get the action info of a tunnel filter
-- * Tunnel action only supports PF, VF and QUEUE.
-- */
 -static int
--i40e_flow_parse_tunnel_action(struct rte_eth_dev *dev,
--			      const struct rte_flow_action *actions,
--			      struct rte_flow_error *error,
--			      struct i40e_tunnel_filter_conf *filter)
+-i40e_flow_check(struct rte_eth_dev *dev,
+-		   const struct rte_flow_attr *attr,
+-		   const struct rte_flow_item pattern[],
+-		   const struct rte_flow_action actions[],
+-		   struct i40e_filter_ctx *filter_ctx,
+-		   struct rte_flow_error *error)
 -{
--	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(dev->data->dev_private);
--	const struct rte_flow_action_queue *act_q;
--	struct ci_flow_actions parsed_actions = {0};
--	struct ci_flow_actions_check_param ac_param = {
--		.allowed_types = (enum rte_flow_action_type[]) {
--			RTE_FLOW_ACTION_TYPE_QUEUE,
--			RTE_FLOW_ACTION_TYPE_PF,
--			RTE_FLOW_ACTION_TYPE_VF,
--			RTE_FLOW_ACTION_TYPE_END
--		},
--		.max_actions = 2,
--	};
--	const struct rte_flow_action *first, *second;
 -	int ret;
 -
--	ret = ci_flow_check_actions(actions, &ac_param, &parsed_actions, error);
--	if (ret)
+-	ret = ci_flow_check_attr(attr, NULL, error);
+-	if (ret) {
 -		return ret;
--	first = parsed_actions.actions[0];
--	/* can be NULL */
--	second = parsed_actions.actions[1];
--
--	/* first action must be PF or VF */
--	if (first->type == RTE_FLOW_ACTION_TYPE_VF) {
--		const struct rte_flow_action_vf *vf = first->conf;
--		if (vf->id >= pf->vf_num) {
--			rte_flow_error_set(error, EINVAL,
--					RTE_FLOW_ERROR_TYPE_ACTION, first,
--					"Invalid VF ID for tunnel filter");
--			return -rte_errno;
--		}
--		filter->vf_id = vf->id;
--		filter->is_to_vf = 1;
--	} else if (first->type != RTE_FLOW_ACTION_TYPE_PF) {
--		return rte_flow_error_set(error, EINVAL,
--					  RTE_FLOW_ERROR_TYPE_ACTION, first,
--					  "Unsupported action");
 -	}
--
--	/* check if second action is QUEUE */
--	if (second == NULL)
--		return 0;
--
--	act_q = second->conf;
--	/* check queue ID for PF flow */
--	if (!filter->is_to_vf && act_q->index >= pf->dev_data->nb_rx_queues) {
--		return rte_flow_error_set(error, EINVAL,
--				RTE_FLOW_ERROR_TYPE_ACTION_CONF, act_q,
--				"Invalid queue ID for tunnel filter");
--	}
--	/* check queue ID for VF flow */
--	if (filter->is_to_vf && act_q->index >= pf->vf_nb_qps) {
--		return rte_flow_error_set(error, EINVAL,
--				RTE_FLOW_ERROR_TYPE_ACTION_CONF, act_q,
--				"Invalid queue ID for tunnel filter");
--	}
--	filter->queue_id = act_q->index;
--
--	return 0;
--}
--
--/* 1. Last in item should be NULL as range is not supported.
-- * 2. Supported filter types: Source port only and Destination port only.
-- * 3. Mask of fields which need to be matched should be
-- *    filled with 1.
-- * 4. Mask of fields which needn't to be matched should be
-- *    filled with 0.
-- */
--static int
--i40e_flow_parse_l4_pattern(const struct rte_flow_item *pattern,
--			   struct rte_flow_error *error,
--			   struct i40e_tunnel_filter_conf *filter)
--{
--	const struct rte_flow_item_sctp *sctp_spec, *sctp_mask;
--	const struct rte_flow_item_tcp *tcp_spec, *tcp_mask;
--	const struct rte_flow_item_udp *udp_spec, *udp_mask;
--	const struct rte_flow_item *item = pattern;
--	enum rte_flow_item_type item_type;
--
--	for (; item->type != RTE_FLOW_ITEM_TYPE_END; item++) {
--		if (item->last) {
--			rte_flow_error_set(error, EINVAL,
--					   RTE_FLOW_ERROR_TYPE_ITEM,
--					   item,
--					   "Not support range");
--			return -rte_errno;
--		}
--		item_type = item->type;
--		switch (item_type) {
--		case RTE_FLOW_ITEM_TYPE_ETH:
--			if (item->spec || item->mask) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid ETH item");
--				return -rte_errno;
--			}
--
--			break;
--		case RTE_FLOW_ITEM_TYPE_IPV4:
--			filter->ip_type = I40E_TUNNEL_IPTYPE_IPV4;
--			/* IPv4 is used to describe protocol,
--			 * spec and mask should be NULL.
--			 */
--			if (item->spec || item->mask) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid IPv4 item");
--				return -rte_errno;
--			}
--
--			break;
--		case RTE_FLOW_ITEM_TYPE_IPV6:
--			filter->ip_type = I40E_TUNNEL_IPTYPE_IPV6;
--			/* IPv6 is used to describe protocol,
--			 * spec and mask should be NULL.
--			 */
--			if (item->spec || item->mask) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid IPv6 item");
--				return -rte_errno;
--			}
--
--			break;
--		case RTE_FLOW_ITEM_TYPE_UDP:
--			udp_spec = item->spec;
--			udp_mask = item->mask;
--
--			if (!udp_spec || !udp_mask) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid udp item");
--				return -rte_errno;
--			}
--
--			if (udp_spec->hdr.src_port != 0 &&
--			    udp_spec->hdr.dst_port != 0) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid udp spec");
--				return -rte_errno;
--			}
--
--			if (udp_spec->hdr.src_port != 0) {
--				filter->l4_port_type =
--					I40E_L4_PORT_TYPE_SRC;
--				filter->tenant_id =
--				rte_be_to_cpu_32(udp_spec->hdr.src_port);
--			}
--
--			if (udp_spec->hdr.dst_port != 0) {
--				filter->l4_port_type =
--					I40E_L4_PORT_TYPE_DST;
--				filter->tenant_id =
--				rte_be_to_cpu_32(udp_spec->hdr.dst_port);
--			}
--
--			filter->tunnel_type = I40E_CLOUD_TYPE_UDP;
--
--			break;
--		case RTE_FLOW_ITEM_TYPE_TCP:
--			tcp_spec = item->spec;
--			tcp_mask = item->mask;
--
--			if (!tcp_spec || !tcp_mask) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid tcp item");
--				return -rte_errno;
--			}
--
--			if (tcp_spec->hdr.src_port != 0 &&
--			    tcp_spec->hdr.dst_port != 0) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid tcp spec");
--				return -rte_errno;
--			}
--
--			if (tcp_spec->hdr.src_port != 0) {
--				filter->l4_port_type =
--					I40E_L4_PORT_TYPE_SRC;
--				filter->tenant_id =
--				rte_be_to_cpu_32(tcp_spec->hdr.src_port);
--			}
--
--			if (tcp_spec->hdr.dst_port != 0) {
--				filter->l4_port_type =
--					I40E_L4_PORT_TYPE_DST;
--				filter->tenant_id =
--				rte_be_to_cpu_32(tcp_spec->hdr.dst_port);
--			}
--
--			filter->tunnel_type = I40E_CLOUD_TYPE_TCP;
--
--			break;
--		case RTE_FLOW_ITEM_TYPE_SCTP:
--			sctp_spec = item->spec;
--			sctp_mask = item->mask;
--
--			if (!sctp_spec || !sctp_mask) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid sctp item");
--				return -rte_errno;
--			}
--
--			if (sctp_spec->hdr.src_port != 0 &&
--			    sctp_spec->hdr.dst_port != 0) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid sctp spec");
--				return -rte_errno;
--			}
--
--			if (sctp_spec->hdr.src_port != 0) {
--				filter->l4_port_type =
--					I40E_L4_PORT_TYPE_SRC;
--				filter->tenant_id =
--					rte_be_to_cpu_32(sctp_spec->hdr.src_port);
--			}
--
--			if (sctp_spec->hdr.dst_port != 0) {
--				filter->l4_port_type =
--					I40E_L4_PORT_TYPE_DST;
--				filter->tenant_id =
--					rte_be_to_cpu_32(sctp_spec->hdr.dst_port);
--			}
--
--			filter->tunnel_type = I40E_CLOUD_TYPE_SCTP;
--
--			break;
--		default:
--			break;
--		}
--	}
--
--	return 0;
--}
--
--static int
--i40e_flow_parse_l4_cloud_filter(struct rte_eth_dev *dev,
--				const struct rte_flow_item pattern[],
--				const struct rte_flow_action actions[],
--				struct rte_flow_error *error,
--				struct i40e_filter_ctx *filter)
--{
--	struct i40e_tunnel_filter_conf *tunnel_filter = &filter->consistent_tunnel_filter;
--	int ret;
--
--	ret = i40e_flow_parse_l4_pattern(pattern, error, tunnel_filter);
--	if (ret)
--		return ret;
--
--	ret = i40e_flow_parse_tunnel_action(dev, actions, error, tunnel_filter);
--	if (ret)
--		return ret;
--
--	filter->type = RTE_ETH_FILTER_TUNNEL;
--
--	return ret;
--}
--
--static uint16_t i40e_supported_tunnel_filter_types[] = {
--	RTE_ETH_TUNNEL_FILTER_IMAC | RTE_ETH_TUNNEL_FILTER_TENID |
--	RTE_ETH_TUNNEL_FILTER_IVLAN,
--	RTE_ETH_TUNNEL_FILTER_IMAC | RTE_ETH_TUNNEL_FILTER_IVLAN,
--	RTE_ETH_TUNNEL_FILTER_IMAC | RTE_ETH_TUNNEL_FILTER_TENID,
--	RTE_ETH_TUNNEL_FILTER_OMAC | RTE_ETH_TUNNEL_FILTER_TENID |
--	RTE_ETH_TUNNEL_FILTER_IMAC,
--	RTE_ETH_TUNNEL_FILTER_IMAC,
--};
--
--static int
--i40e_check_tunnel_filter_type(uint8_t filter_type)
--{
--	uint8_t i;
--
--	for (i = 0; i < RTE_DIM(i40e_supported_tunnel_filter_types); i++) {
--		if (filter_type == i40e_supported_tunnel_filter_types[i])
--			return 0;
--	}
--
--	return -1;
--}
--
--/* 1. Last in item should be NULL as range is not supported.
-- * 2. Supported filter types: IMAC_IVLAN_TENID, IMAC_IVLAN,
-- *    IMAC_TENID, OMAC_TENID_IMAC and IMAC.
-- * 3. Mask of fields which need to be matched should be
-- *    filled with 1.
-- * 4. Mask of fields which needn't to be matched should be
-- *    filled with 0.
-- */
--static int
--i40e_flow_parse_vxlan_pattern(__rte_unused struct rte_eth_dev *dev,
--			      const struct rte_flow_item *pattern,
--			      struct rte_flow_error *error,
--			      struct i40e_tunnel_filter_conf *filter)
--{
--	const struct rte_flow_item *item = pattern;
--	const struct rte_flow_item_eth *eth_spec;
--	const struct rte_flow_item_eth *eth_mask;
--	const struct rte_flow_item_vxlan *vxlan_spec;
--	const struct rte_flow_item_vxlan *vxlan_mask;
--	const struct rte_flow_item_vlan *vlan_spec;
--	const struct rte_flow_item_vlan *vlan_mask;
--	uint8_t filter_type = 0;
--	bool is_vni_masked = 0;
--	uint8_t vni_mask[] = {0xFF, 0xFF, 0xFF};
--	enum rte_flow_item_type item_type;
--	bool vxlan_flag = 0;
--	uint32_t tenant_id_be = 0;
--	int ret;
--
--	for (; item->type != RTE_FLOW_ITEM_TYPE_END; item++) {
--		if (item->last) {
--			rte_flow_error_set(error, EINVAL,
--					   RTE_FLOW_ERROR_TYPE_ITEM,
--					   item,
--					   "Not support range");
--			return -rte_errno;
--		}
--		item_type = item->type;
--		switch (item_type) {
--		case RTE_FLOW_ITEM_TYPE_ETH:
--			eth_spec = item->spec;
--			eth_mask = item->mask;
--
--			/* Check if ETH item is used for place holder.
--			 * If yes, both spec and mask should be NULL.
--			 * If no, both spec and mask shouldn't be NULL.
--			 */
--			if ((!eth_spec && eth_mask) ||
--			    (eth_spec && !eth_mask)) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid ether spec/mask");
--				return -rte_errno;
--			}
--
--			if (eth_spec && eth_mask) {
--				/* DST address of inner MAC shouldn't be masked.
--				 * SRC address of Inner MAC should be masked.
--				 */
--				if (!rte_is_broadcast_ether_addr(&eth_mask->hdr.dst_addr) ||
--				    !rte_is_zero_ether_addr(&eth_mask->hdr.src_addr) ||
--				    eth_mask->hdr.ether_type) {
--					rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid ether spec/mask");
--					return -rte_errno;
--				}
--
--				if (!vxlan_flag) {
--					memcpy(&filter->outer_mac,
--						   &eth_spec->hdr.dst_addr,
--						   RTE_ETHER_ADDR_LEN);
--					filter_type |= RTE_ETH_TUNNEL_FILTER_OMAC;
--				} else {
--					memcpy(&filter->inner_mac,
--						   &eth_spec->hdr.dst_addr,
--						   RTE_ETHER_ADDR_LEN);
--					filter_type |= RTE_ETH_TUNNEL_FILTER_IMAC;
--				}
--			}
--			break;
--		case RTE_FLOW_ITEM_TYPE_VLAN:
--			vlan_spec = item->spec;
--			vlan_mask = item->mask;
--			if (!(vlan_spec && vlan_mask) ||
--			    vlan_mask->hdr.eth_proto) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid vlan item");
--				return -rte_errno;
--			}
--
--			if (vlan_spec && vlan_mask) {
--				if (vlan_mask->hdr.vlan_tci ==
--				    rte_cpu_to_be_16(I40E_VLAN_TCI_MASK))
--					filter->inner_vlan =
--					      rte_be_to_cpu_16(vlan_spec->hdr.vlan_tci) &
--					      I40E_VLAN_TCI_MASK;
--				filter_type |= RTE_ETH_TUNNEL_FILTER_IVLAN;
--			}
--			break;
--		case RTE_FLOW_ITEM_TYPE_IPV4:
--			filter->ip_type = I40E_TUNNEL_IPTYPE_IPV4;
--			/* IPv4 is used to describe protocol,
--			 * spec and mask should be NULL.
--			 */
--			if (item->spec || item->mask) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid IPv4 item");
--				return -rte_errno;
--			}
--			break;
--		case RTE_FLOW_ITEM_TYPE_IPV6:
--			filter->ip_type = I40E_TUNNEL_IPTYPE_IPV6;
--			/* IPv6 is used to describe protocol,
--			 * spec and mask should be NULL.
--			 */
--			if (item->spec || item->mask) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid IPv6 item");
--				return -rte_errno;
--			}
--			break;
--		case RTE_FLOW_ITEM_TYPE_UDP:
--			/* UDP is used to describe protocol,
--			 * spec and mask should be NULL.
--			 */
--			if (item->spec || item->mask) {
--				rte_flow_error_set(error, EINVAL,
--					   RTE_FLOW_ERROR_TYPE_ITEM,
--					   item,
--					   "Invalid UDP item");
--				return -rte_errno;
--			}
--			break;
--		case RTE_FLOW_ITEM_TYPE_VXLAN:
--			vxlan_spec = item->spec;
--			vxlan_mask = item->mask;
--			/* Check if VXLAN item is used to describe protocol.
--			 * If yes, both spec and mask should be NULL.
--			 * If no, both spec and mask shouldn't be NULL.
--			 */
--			if ((!vxlan_spec && vxlan_mask) ||
--			    (vxlan_spec && !vxlan_mask)) {
--				rte_flow_error_set(error, EINVAL,
--					   RTE_FLOW_ERROR_TYPE_ITEM,
--					   item,
--					   "Invalid VXLAN item");
--				return -rte_errno;
--			}
--
--			/* Check if VNI is masked. */
--			if (vxlan_spec && vxlan_mask) {
--				is_vni_masked =
--					!!memcmp(vxlan_mask->hdr.vni, vni_mask,
--						 RTE_DIM(vni_mask));
--				if (is_vni_masked) {
--					rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid VNI mask");
--					return -rte_errno;
--				}
--
--				memcpy(((uint8_t *)&tenant_id_be + 1),
--					   vxlan_spec->hdr.vni, 3);
--				filter->tenant_id =
--					rte_be_to_cpu_32(tenant_id_be);
--				filter_type |= RTE_ETH_TUNNEL_FILTER_TENID;
--			}
--
--			vxlan_flag = 1;
--			break;
--		default:
--			break;
--		}
--	}
--
--	ret = i40e_check_tunnel_filter_type(filter_type);
--	if (ret < 0) {
--		rte_flow_error_set(error, EINVAL,
--				   RTE_FLOW_ERROR_TYPE_ITEM,
--				   NULL,
--				   "Invalid filter type");
--		return -rte_errno;
--	}
--	filter->filter_type = filter_type;
--
--	filter->tunnel_type = I40E_TUNNEL_TYPE_VXLAN;
--
--	return 0;
--}
--
--static int
--i40e_flow_parse_vxlan_filter(struct rte_eth_dev *dev,
--			     const struct rte_flow_item pattern[],
--			     const struct rte_flow_action actions[],
--			     struct rte_flow_error *error,
--			     struct i40e_filter_ctx *filter)
--{
--	struct i40e_tunnel_filter_conf *tunnel_filter = &filter->consistent_tunnel_filter;
--	int ret;
--
--	ret = i40e_flow_parse_vxlan_pattern(dev, pattern,
--					    error, tunnel_filter);
--	if (ret)
--		return ret;
--
--	ret = i40e_flow_parse_tunnel_action(dev, actions, error, tunnel_filter);
--	if (ret)
--		return ret;
--
--	filter->type = RTE_ETH_FILTER_TUNNEL;
--
--	return ret;
--}
--
--/* 1. Last in item should be NULL as range is not supported.
-- * 2. Supported filter types: IMAC_IVLAN_TENID, IMAC_IVLAN,
-- *    IMAC_TENID, OMAC_TENID_IMAC and IMAC.
-- * 3. Mask of fields which need to be matched should be
-- *    filled with 1.
-- * 4. Mask of fields which needn't to be matched should be
-- *    filled with 0.
-- */
--static int
--i40e_flow_parse_nvgre_pattern(__rte_unused struct rte_eth_dev *dev,
--			      const struct rte_flow_item *pattern,
--			      struct rte_flow_error *error,
--			      struct i40e_tunnel_filter_conf *filter)
--{
--	const struct rte_flow_item *item = pattern;
--	const struct rte_flow_item_eth *eth_spec;
--	const struct rte_flow_item_eth *eth_mask;
--	const struct rte_flow_item_nvgre *nvgre_spec;
--	const struct rte_flow_item_nvgre *nvgre_mask;
--	const struct rte_flow_item_vlan *vlan_spec;
--	const struct rte_flow_item_vlan *vlan_mask;
--	enum rte_flow_item_type item_type;
--	uint8_t filter_type = 0;
--	bool is_tni_masked = 0;
--	uint8_t tni_mask[] = {0xFF, 0xFF, 0xFF};
--	bool nvgre_flag = 0;
--	uint32_t tenant_id_be = 0;
--	int ret;
--
--	for (; item->type != RTE_FLOW_ITEM_TYPE_END; item++) {
--		if (item->last) {
--			rte_flow_error_set(error, EINVAL,
--					   RTE_FLOW_ERROR_TYPE_ITEM,
--					   item,
--					   "Not support range");
--			return -rte_errno;
--		}
--		item_type = item->type;
--		switch (item_type) {
--		case RTE_FLOW_ITEM_TYPE_ETH:
--			eth_spec = item->spec;
--			eth_mask = item->mask;
--
--			/* Check if ETH item is used for place holder.
--			 * If yes, both spec and mask should be NULL.
--			 * If no, both spec and mask shouldn't be NULL.
--			 */
--			if ((!eth_spec && eth_mask) ||
--			    (eth_spec && !eth_mask)) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid ether spec/mask");
--				return -rte_errno;
--			}
--
--			if (eth_spec && eth_mask) {
--				/* DST address of inner MAC shouldn't be masked.
--				 * SRC address of Inner MAC should be masked.
--				 */
--				if (!rte_is_broadcast_ether_addr(&eth_mask->hdr.dst_addr) ||
--				    !rte_is_zero_ether_addr(&eth_mask->hdr.src_addr) ||
--				    eth_mask->hdr.ether_type) {
--					rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid ether spec/mask");
--					return -rte_errno;
--				}
--
--				if (!nvgre_flag) {
--					memcpy(&filter->outer_mac,
--						   &eth_spec->hdr.dst_addr,
--						   RTE_ETHER_ADDR_LEN);
--					filter_type |= RTE_ETH_TUNNEL_FILTER_OMAC;
--				} else {
--					memcpy(&filter->inner_mac,
--						   &eth_spec->hdr.dst_addr,
--						   RTE_ETHER_ADDR_LEN);
--					filter_type |= RTE_ETH_TUNNEL_FILTER_IMAC;
--				}
--			}
--
--			break;
--		case RTE_FLOW_ITEM_TYPE_VLAN:
--			vlan_spec = item->spec;
--			vlan_mask = item->mask;
--			if (!(vlan_spec && vlan_mask) ||
--			    vlan_mask->hdr.eth_proto) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid vlan item");
--				return -rte_errno;
--			}
--
--			if (vlan_spec && vlan_mask) {
--				if (vlan_mask->hdr.vlan_tci ==
--				    rte_cpu_to_be_16(I40E_VLAN_TCI_MASK))
--					filter->inner_vlan =
--					      rte_be_to_cpu_16(vlan_spec->hdr.vlan_tci) &
--					      I40E_VLAN_TCI_MASK;
--				filter_type |= RTE_ETH_TUNNEL_FILTER_IVLAN;
--			}
--			break;
--		case RTE_FLOW_ITEM_TYPE_IPV4:
--			filter->ip_type = I40E_TUNNEL_IPTYPE_IPV4;
--			/* IPv4 is used to describe protocol,
--			 * spec and mask should be NULL.
--			 */
--			if (item->spec || item->mask) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid IPv4 item");
--				return -rte_errno;
--			}
--			break;
--		case RTE_FLOW_ITEM_TYPE_IPV6:
--			filter->ip_type = I40E_TUNNEL_IPTYPE_IPV6;
--			/* IPv6 is used to describe protocol,
--			 * spec and mask should be NULL.
--			 */
--			if (item->spec || item->mask) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid IPv6 item");
--				return -rte_errno;
--			}
--			break;
--		case RTE_FLOW_ITEM_TYPE_NVGRE:
--			nvgre_spec = item->spec;
--			nvgre_mask = item->mask;
--			/* Check if NVGRE item is used to describe protocol.
--			 * If yes, both spec and mask should be NULL.
--			 * If no, both spec and mask shouldn't be NULL.
--			 */
--			if ((!nvgre_spec && nvgre_mask) ||
--			    (nvgre_spec && !nvgre_mask)) {
--				rte_flow_error_set(error, EINVAL,
--					   RTE_FLOW_ERROR_TYPE_ITEM,
--					   item,
--					   "Invalid NVGRE item");
--				return -rte_errno;
--			}
--
--			if (nvgre_spec && nvgre_mask) {
--				is_tni_masked =
--					!!memcmp(nvgre_mask->tni, tni_mask,
--						 RTE_DIM(tni_mask));
--				if (is_tni_masked) {
--					rte_flow_error_set(error, EINVAL,
--						       RTE_FLOW_ERROR_TYPE_ITEM,
--						       item,
--						       "Invalid TNI mask");
--					return -rte_errno;
--				}
--				if (nvgre_mask->protocol &&
--					nvgre_mask->protocol != 0xFFFF) {
--					rte_flow_error_set(error, EINVAL,
--						RTE_FLOW_ERROR_TYPE_ITEM,
--						item,
--						"Invalid NVGRE item");
--					return -rte_errno;
--				}
--				if (nvgre_mask->c_k_s_rsvd0_ver &&
--					nvgre_mask->c_k_s_rsvd0_ver !=
--					rte_cpu_to_be_16(0xFFFF)) {
--					rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid NVGRE item");
--					return -rte_errno;
--				}
--				if (nvgre_spec->c_k_s_rsvd0_ver !=
--					rte_cpu_to_be_16(0x2000) &&
--					nvgre_mask->c_k_s_rsvd0_ver) {
--					rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid NVGRE item");
--					return -rte_errno;
--				}
--				if (nvgre_mask->protocol &&
--					nvgre_spec->protocol !=
--					rte_cpu_to_be_16(0x6558)) {
--					rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid NVGRE item");
--					return -rte_errno;
--				}
--				memcpy(((uint8_t *)&tenant_id_be + 1),
--					   nvgre_spec->tni, 3);
--				filter->tenant_id =
--					rte_be_to_cpu_32(tenant_id_be);
--				filter_type |= RTE_ETH_TUNNEL_FILTER_TENID;
--			}
--
--			nvgre_flag = 1;
--			break;
--		default:
--			break;
--		}
--	}
--
--	ret = i40e_check_tunnel_filter_type(filter_type);
--	if (ret < 0) {
--		rte_flow_error_set(error, EINVAL,
--				   RTE_FLOW_ERROR_TYPE_ITEM,
--				   NULL,
--				   "Invalid filter type");
--		return -rte_errno;
--	}
--	filter->filter_type = filter_type;
--
--	filter->tunnel_type = I40E_TUNNEL_TYPE_NVGRE;
--
--	return 0;
--}
--
--static int
--i40e_flow_parse_nvgre_filter(struct rte_eth_dev *dev,
--			     const struct rte_flow_item pattern[],
--			     const struct rte_flow_action actions[],
--			     struct rte_flow_error *error,
--			     struct i40e_filter_ctx *filter)
--{
--	struct i40e_tunnel_filter_conf *tunnel_filter = &filter->consistent_tunnel_filter;
--	int ret;
--
--	ret = i40e_flow_parse_nvgre_pattern(dev, pattern,
--					    error, tunnel_filter);
--	if (ret)
--		return ret;
--
--	ret = i40e_flow_parse_tunnel_action(dev, actions, error, tunnel_filter);
--	if (ret)
--		return ret;
--
--	filter->type = RTE_ETH_FILTER_TUNNEL;
--
--	return ret;
--}
--
--/* 1. Last in item should be NULL as range is not supported.
-- * 2. Supported filter types: MPLS label.
-- * 3. Mask of fields which need to be matched should be
-- *    filled with 1.
-- * 4. Mask of fields which needn't to be matched should be
-- *    filled with 0.
-- */
--static int
--i40e_flow_parse_mpls_pattern(__rte_unused struct rte_eth_dev *dev,
--			     const struct rte_flow_item *pattern,
--			     struct rte_flow_error *error,
--			     struct i40e_tunnel_filter_conf *filter)
--{
--	const struct rte_flow_item *item = pattern;
--	const struct rte_flow_item_mpls *mpls_spec;
--	const struct rte_flow_item_mpls *mpls_mask;
--	enum rte_flow_item_type item_type;
--	bool is_mplsoudp = 0; /* 1 - MPLSoUDP, 0 - MPLSoGRE */
--	const uint8_t label_mask[3] = {0xFF, 0xFF, 0xF0};
--	uint32_t label_be = 0;
--
--	for (; item->type != RTE_FLOW_ITEM_TYPE_END; item++) {
--		if (item->last) {
--			rte_flow_error_set(error, EINVAL,
--					   RTE_FLOW_ERROR_TYPE_ITEM,
--					   item,
--					   "Not support range");
--			return -rte_errno;
--		}
--		item_type = item->type;
--		switch (item_type) {
--		case RTE_FLOW_ITEM_TYPE_ETH:
--			if (item->spec || item->mask) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid ETH item");
--				return -rte_errno;
--			}
--			break;
--		case RTE_FLOW_ITEM_TYPE_IPV4:
--			filter->ip_type = I40E_TUNNEL_IPTYPE_IPV4;
--			/* IPv4 is used to describe protocol,
--			 * spec and mask should be NULL.
--			 */
--			if (item->spec || item->mask) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid IPv4 item");
--				return -rte_errno;
--			}
--			break;
--		case RTE_FLOW_ITEM_TYPE_IPV6:
--			filter->ip_type = I40E_TUNNEL_IPTYPE_IPV6;
--			/* IPv6 is used to describe protocol,
--			 * spec and mask should be NULL.
--			 */
--			if (item->spec || item->mask) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid IPv6 item");
--				return -rte_errno;
--			}
--			break;
--		case RTE_FLOW_ITEM_TYPE_UDP:
--			/* UDP is used to describe protocol,
--			 * spec and mask should be NULL.
--			 */
--			if (item->spec || item->mask) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid UDP item");
--				return -rte_errno;
--			}
--			is_mplsoudp = 1;
--			break;
--		case RTE_FLOW_ITEM_TYPE_GRE:
--			/* GRE is used to describe protocol,
--			 * spec and mask should be NULL.
--			 */
--			if (item->spec || item->mask) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid GRE item");
--				return -rte_errno;
--			}
--			break;
--		case RTE_FLOW_ITEM_TYPE_MPLS:
--			mpls_spec = item->spec;
--			mpls_mask = item->mask;
--
--			if (!mpls_spec || !mpls_mask) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid MPLS item");
--				return -rte_errno;
--			}
--
--			if (memcmp(mpls_mask->label_tc_s, label_mask, 3)) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid MPLS label mask");
--				return -rte_errno;
--			}
--			memcpy(((uint8_t *)&label_be + 1),
--				   mpls_spec->label_tc_s, 3);
--			filter->tenant_id = rte_be_to_cpu_32(label_be) >> 4;
--			break;
--		default:
--			break;
--		}
--	}
--
--	if (is_mplsoudp)
--		filter->tunnel_type = I40E_TUNNEL_TYPE_MPLSoUDP;
--	else
--		filter->tunnel_type = I40E_TUNNEL_TYPE_MPLSoGRE;
--
--	return 0;
--}
--
--static int
--i40e_flow_parse_mpls_filter(struct rte_eth_dev *dev,
--			    const struct rte_flow_item pattern[],
--			    const struct rte_flow_action actions[],
--			    struct rte_flow_error *error,
--			    struct i40e_filter_ctx *filter)
--{
--	struct i40e_tunnel_filter_conf *tunnel_filter = &filter->consistent_tunnel_filter;
--	int ret;
--
--	ret = i40e_flow_parse_mpls_pattern(dev, pattern,
--					   error, tunnel_filter);
--	if (ret)
--		return ret;
--
--	ret = i40e_flow_parse_tunnel_action(dev, actions, error, tunnel_filter);
--	if (ret)
--		return ret;
--
--	filter->type = RTE_ETH_FILTER_TUNNEL;
--
--	return ret;
--}
--
--/* 1. Last in item should be NULL as range is not supported.
-- * 2. Supported filter types: GTP TEID.
-- * 3. Mask of fields which need to be matched should be
-- *    filled with 1.
-- * 4. Mask of fields which needn't to be matched should be
-- *    filled with 0.
-- * 5. GTP profile supports GTPv1 only.
-- * 6. GTP-C response message ('source_port' = 2123) is not supported.
-- */
--static int
--i40e_flow_parse_gtp_pattern(struct rte_eth_dev *dev,
--			    const struct rte_flow_item *pattern,
--			    struct rte_flow_error *error,
--			    struct i40e_tunnel_filter_conf *filter)
--{
--	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(dev->data->dev_private);
--	const struct rte_flow_item *item = pattern;
--	const struct rte_flow_item_gtp *gtp_spec;
--	const struct rte_flow_item_gtp *gtp_mask;
--	enum rte_flow_item_type item_type;
--
--	if (!pf->gtp_support) {
--		rte_flow_error_set(error, EINVAL,
--				   RTE_FLOW_ERROR_TYPE_ITEM,
--				   item,
--				   "GTP is not supported by default.");
+-	/* action and pattern validation will happen in each respective engine */
+-
+-	if (!pattern) {
+-		rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ITEM_NUM,
+-				   NULL, "NULL pattern.");
 -		return -rte_errno;
 -	}
 -
--	for (; item->type != RTE_FLOW_ITEM_TYPE_END; item++) {
--		if (item->last) {
--			rte_flow_error_set(error, EINVAL,
--					   RTE_FLOW_ERROR_TYPE_ITEM,
--					   item,
--					   "Not support range");
--			return -rte_errno;
--		}
--		item_type = item->type;
--		switch (item_type) {
--		case RTE_FLOW_ITEM_TYPE_ETH:
--			if (item->spec || item->mask) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid ETH item");
--				return -rte_errno;
--			}
--			break;
--		case RTE_FLOW_ITEM_TYPE_IPV4:
--			filter->ip_type = I40E_TUNNEL_IPTYPE_IPV4;
--			/* IPv4 is used to describe protocol,
--			 * spec and mask should be NULL.
--			 */
--			if (item->spec || item->mask) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid IPv4 item");
--				return -rte_errno;
--			}
--			break;
--		case RTE_FLOW_ITEM_TYPE_IPV6:
--			filter->ip_type = I40E_TUNNEL_IPTYPE_IPV6;
--			/* IPv6 is used to describe protocol,
--			 * spec and mask should be NULL.
--			 */
--			if (item->spec || item->mask) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid IPv6 item");
--				return -rte_errno;
--			}
--			break;
--		case RTE_FLOW_ITEM_TYPE_UDP:
--			if (item->spec || item->mask) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid UDP item");
--				return -rte_errno;
--			}
--			break;
--		case RTE_FLOW_ITEM_TYPE_GTPC:
--		case RTE_FLOW_ITEM_TYPE_GTPU:
--			gtp_spec = item->spec;
--			gtp_mask = item->mask;
--
--			if (!gtp_spec || !gtp_mask) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid GTP item");
--				return -rte_errno;
--			}
--
--			if (gtp_mask->hdr.gtp_hdr_info ||
--			    gtp_mask->hdr.msg_type ||
--			    gtp_mask->hdr.plen ||
--			    gtp_mask->hdr.teid != UINT32_MAX) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid GTP mask");
--				return -rte_errno;
--			}
--
--			if (item_type == RTE_FLOW_ITEM_TYPE_GTPC)
--				filter->tunnel_type = I40E_TUNNEL_TYPE_GTPC;
--			else if (item_type == RTE_FLOW_ITEM_TYPE_GTPU)
--				filter->tunnel_type = I40E_TUNNEL_TYPE_GTPU;
--
--			filter->tenant_id = rte_be_to_cpu_32(gtp_spec->hdr.teid);
--
--			break;
--		default:
--			break;
--		}
+-	if (!actions) {
+-		rte_flow_error_set(error, EINVAL,
+-				   RTE_FLOW_ERROR_TYPE_ACTION_NUM,
+-				   NULL, "NULL action.");
+-		return -rte_errno;
 -	}
 -
--	return 0;
--}
+-	/* try parsing as RSS */
+-	filter_ctx->type = RTE_ETH_FILTER_HASH;
 -
--static int
--i40e_flow_parse_gtp_filter(struct rte_eth_dev *dev,
--			   const struct rte_flow_item pattern[],
--			   const struct rte_flow_action actions[],
--			   struct rte_flow_error *error,
--			   struct i40e_filter_ctx *filter)
--{
--	struct i40e_tunnel_filter_conf *tunnel_filter = &filter->consistent_tunnel_filter;
--	int ret;
--
--	ret = i40e_flow_parse_gtp_pattern(dev, pattern,
--					  error, tunnel_filter);
--	if (ret)
--		return ret;
--
--	ret = i40e_flow_parse_tunnel_action(dev, actions, error, tunnel_filter);
--	if (ret)
--		return ret;
--
--	filter->type = RTE_ETH_FILTER_TUNNEL;
--
--	return ret;
--}
--
--/* 1. Last in item should be NULL as range is not supported.
-- * 2. Supported filter types: QINQ.
-- * 3. Mask of fields which need to be matched should be
-- *    filled with 1.
-- * 4. Mask of fields which needn't to be matched should be
-- *    filled with 0.
-- */
--static int
--i40e_flow_parse_qinq_pattern(__rte_unused struct rte_eth_dev *dev,
--			      const struct rte_flow_item *pattern,
--			      struct rte_flow_error *error,
--			      struct i40e_tunnel_filter_conf *filter)
--{
--	const struct rte_flow_item *item = pattern;
--	const struct rte_flow_item_vlan *vlan_spec = NULL;
--	const struct rte_flow_item_vlan *vlan_mask = NULL;
--	const struct rte_flow_item_vlan *i_vlan_spec = NULL;
--	const struct rte_flow_item_vlan *i_vlan_mask = NULL;
--	const struct rte_flow_item_vlan *o_vlan_spec = NULL;
--	const struct rte_flow_item_vlan *o_vlan_mask = NULL;
--
--	enum rte_flow_item_type item_type;
--	bool vlan_flag = 0;
--
--	for (; item->type != RTE_FLOW_ITEM_TYPE_END; item++) {
--		if (item->last) {
--			rte_flow_error_set(error, EINVAL,
--					   RTE_FLOW_ERROR_TYPE_ITEM,
--					   item,
--					   "Not support range");
--			return -rte_errno;
--		}
--		item_type = item->type;
--		switch (item_type) {
--		case RTE_FLOW_ITEM_TYPE_ETH:
--			if (item->spec || item->mask) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ITEM,
--						   item,
--						   "Invalid ETH item");
--				return -rte_errno;
--			}
--			break;
--		case RTE_FLOW_ITEM_TYPE_VLAN:
--			vlan_spec = item->spec;
--			vlan_mask = item->mask;
--
--			if (!(vlan_spec && vlan_mask) ||
--			    vlan_mask->hdr.eth_proto) {
--				rte_flow_error_set(error, EINVAL,
--					   RTE_FLOW_ERROR_TYPE_ITEM,
--					   item,
--					   "Invalid vlan item");
--				return -rte_errno;
--			}
--
--			if (!vlan_flag) {
--				o_vlan_spec = vlan_spec;
--				o_vlan_mask = vlan_mask;
--				vlan_flag = 1;
--			} else {
--				i_vlan_spec = vlan_spec;
--				i_vlan_mask = vlan_mask;
--				vlan_flag = 0;
--			}
--			break;
--
--		default:
--			break;
--		}
--	}
--
--	/* Get filter specification */
--	if (o_vlan_mask != NULL &&  i_vlan_mask != NULL) {
--		filter->outer_vlan = rte_be_to_cpu_16(o_vlan_spec->hdr.vlan_tci);
--		filter->inner_vlan = rte_be_to_cpu_16(i_vlan_spec->hdr.vlan_tci);
--	} else {
--			rte_flow_error_set(error, EINVAL,
--					   RTE_FLOW_ERROR_TYPE_ITEM,
--					   NULL,
--					   "Invalid filter type");
--			return -rte_errno;
--	}
--
--	filter->tunnel_type = I40E_TUNNEL_TYPE_QINQ;
--	return 0;
--}
--
--static int
--i40e_flow_parse_qinq_filter(struct rte_eth_dev *dev,
--			      const struct rte_flow_item pattern[],
--			      const struct rte_flow_action actions[],
--			      struct rte_flow_error *error,
--			      struct i40e_filter_ctx *filter)
--{
--	struct i40e_tunnel_filter_conf *tunnel_filter = &filter->consistent_tunnel_filter;
--	int ret;
--
--	ret = i40e_flow_parse_qinq_pattern(dev, pattern,
--					     error, tunnel_filter);
--	if (ret)
--		return ret;
--
--	ret = i40e_flow_parse_tunnel_action(dev, actions, error, tunnel_filter);
--	if (ret)
--		return ret;
--
--	filter->type = RTE_ETH_FILTER_TUNNEL;
--
--	return ret;
+-	return i40e_hash_parse(dev, pattern, actions, &filter_ctx->rss_conf, error);
 -}
 -
  static int
- i40e_flow_check(struct rte_eth_dev *dev,
+ i40e_flow_validate(struct rte_eth_dev *dev,
  		   const struct rte_flow_attr *attr,
-@@ -1823,11 +290,6 @@ i40e_flow_check(struct rte_eth_dev *dev,
- 		   struct i40e_filter_ctx *filter_ctx,
+@@ -325,16 +192,8 @@ i40e_flow_validate(struct rte_eth_dev *dev,
  		   struct rte_flow_error *error)
  {
--	struct rte_flow_item *items; /* internal pattern w/o VOID items */
--	parse_filter_t parse_filter;
--	uint32_t item_num = 0; /* non-void item number of pattern*/
--	uint32_t i = 0;
--	bool flag = false;
- 	int ret;
+ 	struct i40e_pf *pf = dev->data->dev_private;
+-	/* creates dummy context */
+-	struct i40e_filter_ctx filter_ctx = {0};
+-	int ret;
  
- 	ret = ci_flow_check_attr(attr, NULL, error);
-@@ -1851,51 +313,8 @@ i40e_flow_check(struct rte_eth_dev *dev,
+-	/* try the new engine first */
+-	ret = ci_flow_validate(&pf->flow_engine_conf, attr, pattern, actions, error);
+-	if (ret == 0)
+-		return 0;
+-
+-	return i40e_flow_check(dev, attr, pattern, actions, &filter_ctx, error);
++	return ci_flow_validate(&pf->flow_engine_conf, attr, pattern, actions, error);
+ }
  
- 	/* try parsing as RSS */
- 	filter_ctx->type = RTE_ETH_FILTER_HASH;
--	ret = i40e_hash_parse(dev, pattern, actions, &filter_ctx->rss_conf, error);
--	if (!ret)
--		return ret;
+ static struct rte_flow *
+@@ -345,51 +204,8 @@ i40e_flow_create(struct rte_eth_dev *dev,
+ 		 struct rte_flow_error *error)
+ {
+ 	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(dev->data->dev_private);
+-	struct i40e_filter_ctx filter_ctx = {0};
+-	struct rte_flow *flow = NULL;
+-	int ret;
  
--	i = 0;
--	/* Get the non-void item number of pattern */
--	while ((pattern + i)->type != RTE_FLOW_ITEM_TYPE_END) {
--		if ((pattern + i)->type != RTE_FLOW_ITEM_TYPE_VOID)
--			item_num++;
--		i++;
--	}
--	item_num++;
--	items = calloc(item_num, sizeof(struct rte_flow_item));
--	if (items == NULL) {
+-	/* try the new engine first */
+-	flow = ci_flow_create(&pf->flow_engine_conf, attr, pattern, actions, error);
+-	if (flow != NULL)
+-		return flow;
+-
+-	ret = i40e_flow_check(dev, attr, pattern, actions, &filter_ctx, error);
+-	if (ret < 0)
+-		return NULL;
+-
+-	flow = rte_zmalloc("i40e_flow", sizeof(struct rte_flow), 0);
+-	if (!flow) {
 -		rte_flow_error_set(error, ENOMEM,
--				RTE_FLOW_ERROR_TYPE_ITEM_NUM,
--				NULL,
--				"No memory for PMD internal items.");
--		return -ENOMEM;
+-					RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
+-					"Failed to allocate memory");
+-		return flow;
 -	}
 -
--	i40e_pattern_skip_void_item(items, pattern);
+-	switch (filter_ctx.type) {
+-	case RTE_ETH_FILTER_HASH:
+-		ret = i40e_hash_filter_create(pf, &filter_ctx.rss_conf);
+-		if (ret)
+-			goto free_flow;
+-		flow->rule = TAILQ_LAST(&pf->rss_config_list,
+-					i40e_rss_conf_list);
+-		break;
+-	default:
+-		goto free_flow;
+-	}
 -
--	i = 0;
--	ret = I40E_NOT_SUPPORTED;
--	do {
--		parse_filter = i40e_find_parse_filter_func(items, &i);
--		if (!parse_filter && !flag) {
--			rte_flow_error_set(error, EINVAL,
--					   RTE_FLOW_ERROR_TYPE_ITEM,
--					   pattern, "Unsupported pattern");
+-	flow->filter_type = filter_ctx.type;
+-	TAILQ_INSERT_TAIL(&pf->flow_list, flow, node);
+-	return flow;
 -
--			free(items);
--			return -rte_errno;
--		}
+-free_flow:
+-	rte_flow_error_set(error, -ret,
+-			   RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
+-			   "Failed to create flow.");
 -
--		if (parse_filter)
--			ret = parse_filter(dev, items, actions, error, filter_ctx);
+-	rte_free(flow);
 -
--		flag = true;
--	} while ((ret < 0) && (i < RTE_DIM(i40e_supported_patterns)));
--
--	free(items);
--
--	return ret;
-+	return i40e_hash_parse(dev, pattern, actions, &filter_ctx->rss_conf, error);
+-	return NULL;
++	return ci_flow_create(&pf->flow_engine_conf, attr, pattern, actions, error);
  }
  
  static int
-@@ -1948,14 +367,6 @@ i40e_flow_create(struct rte_eth_dev *dev,
- 	}
- 
- 	switch (filter_ctx.type) {
--	case RTE_ETH_FILTER_TUNNEL:
--		ret = i40e_dev_consistent_tunnel_filter_set(pf,
--				&filter_ctx.consistent_tunnel_filter, 1);
--		if (ret)
--			goto free_flow;
--		flow->rule = TAILQ_LAST(&pf->tunnel.tunnel_list,
--					i40e_tunnel_filter_list);
--		break;
- 	case RTE_ETH_FILTER_HASH:
- 		ret = i40e_hash_filter_create(pf, &filter_ctx.rss_conf);
- 		if (ret)
-@@ -1996,10 +407,6 @@ i40e_flow_destroy(struct rte_eth_dev *dev,
- 		return 0;
- 
- 	switch (filter_type) {
--	case RTE_ETH_FILTER_TUNNEL:
--		ret = i40e_flow_destroy_tunnel_filter(pf,
--			      (struct i40e_tunnel_filter *)flow->rule);
--		break;
- 	case RTE_ETH_FILTER_HASH:
- 		ret = i40e_hash_filter_destroy(pf, flow->rule);
- 		break;
-@@ -2022,65 +429,6 @@ i40e_flow_destroy(struct rte_eth_dev *dev,
- 	return ret;
- }
- 
--static int
--i40e_flow_destroy_tunnel_filter(struct i40e_pf *pf,
--				struct i40e_tunnel_filter *filter)
--{
--	struct i40e_hw *hw = I40E_PF_TO_HW(pf);
--	struct i40e_vsi *vsi;
--	struct i40e_pf_vf *vf;
--	struct i40e_aqc_cloud_filters_element_bb cld_filter;
--	struct i40e_tunnel_rule *tunnel_rule = &pf->tunnel;
--	struct i40e_tunnel_filter *node;
--	bool big_buffer = 0;
+@@ -398,54 +214,16 @@ i40e_flow_destroy(struct rte_eth_dev *dev,
+ 		  struct rte_flow_error *error)
+ {
+ 	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(dev->data->dev_private);
+-	enum rte_filter_type filter_type = flow->filter_type;
 -	int ret = 0;
+ 
+-	/* try the new engine first */
+-	ret = ci_flow_destroy(&pf->flow_engine_conf, flow, error);
+-	if (ret == 0)
+-		return 0;
 -
--	memset(&cld_filter, 0, sizeof(cld_filter));
--	rte_ether_addr_copy((struct rte_ether_addr *)&filter->input.outer_mac,
--			(struct rte_ether_addr *)&cld_filter.element.outer_mac);
--	rte_ether_addr_copy((struct rte_ether_addr *)&filter->input.inner_mac,
--			(struct rte_ether_addr *)&cld_filter.element.inner_mac);
--	cld_filter.element.inner_vlan = filter->input.inner_vlan;
--	cld_filter.element.flags = filter->input.flags;
--	cld_filter.element.tenant_id = filter->input.tenant_id;
--	cld_filter.element.queue_number = filter->queue;
--	memcpy(cld_filter.general_fields,
--		   filter->input.general_fields,
--		   sizeof(cld_filter.general_fields));
--
--	if (!filter->is_to_vf)
--		vsi = pf->main_vsi;
--	else {
--		vf = &pf->vfs[filter->vf_id];
--		vsi = vf->vsi;
+-	switch (filter_type) {
+-	case RTE_ETH_FILTER_HASH:
+-		ret = i40e_hash_filter_destroy(pf, flow->rule);
+-		break;
+-	default:
+-		PMD_DRV_LOG(WARNING, "Filter type (%d) not supported",
+-			    filter_type);
+-		ret = -EINVAL;
+-		break;
 -	}
 -
--	if (((filter->input.flags & I40E_AQC_ADD_CLOUD_FILTER_0X11) ==
--	    I40E_AQC_ADD_CLOUD_FILTER_0X11) ||
--	    ((filter->input.flags & I40E_AQC_ADD_CLOUD_FILTER_0X12) ==
--	    I40E_AQC_ADD_CLOUD_FILTER_0X12) ||
--	    ((filter->input.flags & I40E_AQC_ADD_CLOUD_FILTER_0X10) ==
--	    I40E_AQC_ADD_CLOUD_FILTER_0X10))
--		big_buffer = 1;
+-	if (!ret) {
+-		TAILQ_REMOVE(&pf->flow_list, flow, node);
+-		rte_free(flow);
 -
--	if (big_buffer)
--		ret = i40e_aq_rem_cloud_filters_bb(hw, vsi->seid,
--						&cld_filter, 1);
--	else
--		ret = i40e_aq_rem_cloud_filters(hw, vsi->seid,
--						&cld_filter.element, 1);
--	if (ret < 0)
--		return -ENOTSUP;
--
--	node = i40e_sw_tunnel_filter_lookup(tunnel_rule, &filter->input);
--	if (!node)
--		return -EINVAL;
--
--	ret = i40e_sw_tunnel_filter_del(pf, &node->input);
+-	} else
+-		rte_flow_error_set(error, -ret,
+-				   RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
+-				   "Failed to destroy flow.");
 -
 -	return ret;
--}
--
++	return ci_flow_destroy(&pf->flow_engine_conf, flow, error);
+ }
+ 
  static int
  i40e_flow_flush(struct rte_eth_dev *dev, struct rte_flow_error *error)
  {
-@@ -2092,14 +440,6 @@ i40e_flow_flush(struct rte_eth_dev *dev, struct rte_flow_error *error)
- 	if (ret != 0)
- 		return ret;
+ 	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(dev->data->dev_private);
+-	int ret;
  
--	ret = i40e_flow_flush_tunnel_filter(pf);
--	if (ret) {
+-	/* flush the new engine first */
+-	ret = ci_flow_flush(&pf->flow_engine_conf, error);
+-	if (ret != 0)
+-		return ret;
+-
+-	ret = i40e_hash_filter_flush(pf);
+-	if (ret)
 -		rte_flow_error_set(error, -ret,
 -				   RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
--				   "Failed to flush tunnel flows.");
+-				   "Failed to flush RSS flows.");
+-	return ret;
++	return ci_flow_flush(&pf->flow_engine_conf, error);
+ }
+ 
+ static int
+@@ -454,54 +232,7 @@ i40e_flow_query(struct rte_eth_dev *dev,
+ 		const struct rte_flow_action *actions,
+ 		void *data, struct rte_flow_error *error)
+ {
+-	struct i40e_pf *pf = dev->data->dev_private;
+-	struct i40e_rss_filter *rss_rule = (struct i40e_rss_filter *)flow->rule;
+-	enum rte_filter_type filter_type = flow->filter_type;
+-	struct rte_flow_action_rss *rss_conf = data;
+-	int ret;
++	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(dev->data->dev_private);
+ 
+-	/* try the new engine first */
+-	ret = ci_flow_query(&pf->flow_engine_conf, flow, actions, data, error);
+-	if (ret == 0)
+-		return 0;
+-
+-	if (!rss_rule) {
+-		rte_flow_error_set(error, EINVAL,
+-				   RTE_FLOW_ERROR_TYPE_HANDLE,
+-				   NULL, "Invalid rule");
 -		return -rte_errno;
 -	}
 -
- 	ret = i40e_hash_filter_flush(pf);
- 	if (ret)
- 		rte_flow_error_set(error, -ret,
-@@ -2108,34 +448,6 @@ i40e_flow_flush(struct rte_eth_dev *dev, struct rte_flow_error *error)
- 	return ret;
- }
- 
--/* Flush all tunnel filters */
--static int
--i40e_flow_flush_tunnel_filter(struct i40e_pf *pf)
--{
--	struct i40e_tunnel_filter_list
--		*tunnel_list = &pf->tunnel.tunnel_list;
--	struct i40e_tunnel_filter *filter;
--	struct rte_flow *flow;
--	void *temp;
--	int ret = 0;
--
--	while ((filter = TAILQ_FIRST(tunnel_list))) {
--		ret = i40e_flow_destroy_tunnel_filter(pf, filter);
--		if (ret)
--			return ret;
--	}
--
--	/* Delete tunnel flows in flow list. */
--	RTE_TAILQ_FOREACH_SAFE(flow, &pf->flow_list, node, temp) {
--		if (flow->filter_type == RTE_ETH_FILTER_TUNNEL) {
--			TAILQ_REMOVE(&pf->flow_list, flow, node);
--			rte_free(flow);
+-	for (; actions->type != RTE_FLOW_ACTION_TYPE_END; actions++) {
+-		switch (actions->type) {
+-		case RTE_FLOW_ACTION_TYPE_VOID:
+-			break;
+-		case RTE_FLOW_ACTION_TYPE_RSS:
+-			if (filter_type != RTE_ETH_FILTER_HASH) {
+-				rte_flow_error_set(error, ENOTSUP,
+-						   RTE_FLOW_ERROR_TYPE_ACTION,
+-						   actions,
+-						   "action not supported");
+-				return -rte_errno;
+-			}
+-			*rss_conf = (struct rte_flow_action_rss){
+-				.func = rss_rule->rss_filter_info.func,
+-				.types = rss_rule->rss_filter_info.types,
+-				.key_len = rss_rule->rss_filter_info.key_len,
+-				.queue_num = rss_rule->rss_filter_info.queue_num,
+-				.key = rss_rule->rss_filter_info.key_len ?
+-					rss_rule->rss_filter_info.key : NULL,
+-				.queue = rss_rule->rss_filter_info.queue_num ?
+-					rss_rule->rss_filter_info.queue : NULL,
+-			};
+-			break;
+-		default:
+-			return rte_flow_error_set(error, ENOTSUP,
+-						  RTE_FLOW_ERROR_TYPE_ACTION,
+-						  actions,
+-						  "action not supported");
 -		}
 -	}
 -
--	return ret;
--}
--
- static int
- i40e_flow_query(struct rte_eth_dev *dev,
- 		struct rte_flow *flow,
+-	return 0;
++	return ci_flow_query(&pf->flow_engine_conf, flow, actions, data, error);
+ }
 diff --git a/drivers/net/intel/i40e/i40e_flow.h b/drivers/net/intel/i40e/i40e_flow.h
-index 6823dbef332..28e342210ce 100644
+index 28e342210ce..31269d4d93a 100644
 --- a/drivers/net/intel/i40e/i40e_flow.h
 +++ b/drivers/net/intel/i40e/i40e_flow.h
-@@ -17,5 +17,11 @@ extern const struct ci_flow_engine_list i40e_flow_engine_list;
- 
- extern const struct ci_flow_engine i40e_flow_engine_ethertype;
- extern const struct ci_flow_engine i40e_flow_engine_fdir;
-+extern const struct ci_flow_engine i40e_flow_engine_tunnel_qinq;
-+extern const struct ci_flow_engine i40e_flow_engine_tunnel_vxlan;
-+extern const struct ci_flow_engine i40e_flow_engine_tunnel_nvgre;
-+extern const struct ci_flow_engine i40e_flow_engine_tunnel_mpls;
-+extern const struct ci_flow_engine i40e_flow_engine_tunnel_gtp;
-+extern const struct ci_flow_engine i40e_flow_engine_tunnel_l4;
+@@ -23,5 +23,8 @@ extern const struct ci_flow_engine i40e_flow_engine_tunnel_nvgre;
+ extern const struct ci_flow_engine i40e_flow_engine_tunnel_mpls;
+ extern const struct ci_flow_engine i40e_flow_engine_tunnel_gtp;
+ extern const struct ci_flow_engine i40e_flow_engine_tunnel_l4;
++extern const struct ci_flow_engine i40e_flow_engine_hash_pattern;
++extern const struct ci_flow_engine i40e_flow_engine_hash_vlan;
++extern const struct ci_flow_engine i40e_flow_engine_hash_empty;
  
  #endif /* _I40E_FLOW_H_ */
-diff --git a/drivers/net/intel/i40e/i40e_flow_tunnel.c b/drivers/net/intel/i40e/i40e_flow_tunnel.c
+diff --git a/drivers/net/intel/i40e/i40e_flow_hash.c b/drivers/net/intel/i40e/i40e_flow_hash.c
 new file mode 100644
-index 00000000000..fc7a67bcea7
+index 00000000000..8b3cbdf4602
 --- /dev/null
-+++ b/drivers/net/intel/i40e/i40e_flow_tunnel.c
-@@ -0,0 +1,1590 @@
++++ b/drivers/net/intel/i40e/i40e_flow_hash.c
+@@ -0,0 +1,1441 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright(c) 2026 Intel Corporation
 + */
 +
 +#include "i40e_ethdev.h"
 +#include "i40e_flow.h"
++#include "i40e_hash.h"
 +
 +#include "../common/flow_engine.h"
 +#include "../common/flow_check.h"
 +#include "../common/flow_util.h"
 +
-+struct i40e_tunnel_priv {
-+	struct i40e_tunnel_state *state;
++struct i40e_hash_priv {
++	struct i40e_rss_state *state;
 +};
 +
-+struct i40e_tunnel_ctx {
++struct i40e_hash_ctx {
 +	struct ci_flow_engine_ctx base;
-+	struct i40e_tunnel_filter_conf filter;
++	struct i40e_rte_flow_rss_conf rss_conf;
++	uint32_t pctype;
++	bool customized_ptype;
 +};
 +
-+struct i40e_tunnel_flow {
++struct i40e_flow_engine_hash_flow {
 +	struct rte_flow base;
-+	struct i40e_tunnel_filter_conf filter;
-+	struct i40e_tunnel_filter_match_key match_key;
++	struct i40e_rte_flow_rss_conf rss_conf;
++	struct i40e_rss_flow_node *node;
 +};
 +
-+static int
-+i40e_check_tunnel_filter_type(uint8_t filter_type)
-+{
-+	const uint16_t i40e_supported_tunnel_filter_types[] = {
-+		RTE_ETH_TUNNEL_FILTER_IMAC | RTE_ETH_TUNNEL_FILTER_TENID |
-+		RTE_ETH_TUNNEL_FILTER_IVLAN,
-+		RTE_ETH_TUNNEL_FILTER_IMAC | RTE_ETH_TUNNEL_FILTER_IVLAN,
-+		RTE_ETH_TUNNEL_FILTER_IMAC | RTE_ETH_TUNNEL_FILTER_TENID,
-+		RTE_ETH_TUNNEL_FILTER_OMAC | RTE_ETH_TUNNEL_FILTER_TENID |
-+		RTE_ETH_TUNNEL_FILTER_IMAC,
-+		RTE_ETH_TUNNEL_FILTER_IMAC,
-+	};
-+	uint8_t i;
++#define I40E_HASH_L4_TYPES		(RTE_ETH_RSS_NONFRAG_IPV4_TCP | \
++					RTE_ETH_RSS_NONFRAG_IPV4_UDP | \
++					RTE_ETH_RSS_NONFRAG_IPV4_SCTP | \
++					RTE_ETH_RSS_NONFRAG_IPV6_TCP | \
++					RTE_ETH_RSS_NONFRAG_IPV6_UDP | \
++					RTE_ETH_RSS_NONFRAG_IPV6_SCTP)
 +
-+	for (i = 0; i < RTE_DIM(i40e_supported_tunnel_filter_types); i++) {
-+		if (filter_type == i40e_supported_tunnel_filter_types[i])
-+			return 0;
++#define I40E_HASH_L2_RSS_MASK		(RTE_ETH_RSS_VLAN | RTE_ETH_RSS_ETH | \
++					RTE_ETH_RSS_L2_SRC_ONLY | \
++					RTE_ETH_RSS_L2_DST_ONLY)
++
++#define I40E_HASH_L23_RSS_MASK		(I40E_HASH_L2_RSS_MASK | \
++					RTE_ETH_RSS_L3_SRC_ONLY | \
++					RTE_ETH_RSS_L3_DST_ONLY)
++
++#define I40E_HASH_IPV4_L23_RSS_MASK	(RTE_ETH_RSS_IPV4 | I40E_HASH_L23_RSS_MASK)
++#define I40E_HASH_IPV6_L23_RSS_MASK	(RTE_ETH_RSS_IPV6 | I40E_HASH_L23_RSS_MASK)
++
++#define I40E_HASH_L234_RSS_MASK		(I40E_HASH_L23_RSS_MASK | \
++					RTE_ETH_RSS_PORT | RTE_ETH_RSS_L4_SRC_ONLY | \
++					RTE_ETH_RSS_L4_DST_ONLY)
++
++#define I40E_HASH_IPV4_L234_RSS_MASK	(I40E_HASH_L234_RSS_MASK | RTE_ETH_RSS_IPV4)
++#define I40E_HASH_IPV6_L234_RSS_MASK	(I40E_HASH_L234_RSS_MASK | RTE_ETH_RSS_IPV6)
++
++/* Structure of mapping RSS type to input set */
++struct i40e_hash_map_rss_inset {
++	uint64_t rss_type;
++	uint64_t inset;
++};
++
++static const struct i40e_hash_map_rss_inset i40e_hash_rss_inset[] = {
++	/* IPv4 */
++	{ RTE_ETH_RSS_IPV4, I40E_INSET_IPV4_SRC | I40E_INSET_IPV4_DST },
++	{ RTE_ETH_RSS_FRAG_IPV4, I40E_INSET_IPV4_SRC | I40E_INSET_IPV4_DST },
++
++	{ RTE_ETH_RSS_NONFRAG_IPV4_OTHER,
++	  I40E_INSET_IPV4_SRC | I40E_INSET_IPV4_DST },
++
++	{ RTE_ETH_RSS_NONFRAG_IPV4_TCP, I40E_INSET_IPV4_SRC | I40E_INSET_IPV4_DST |
++	  I40E_INSET_SRC_PORT | I40E_INSET_DST_PORT },
++
++	{ RTE_ETH_RSS_NONFRAG_IPV4_UDP, I40E_INSET_IPV4_SRC | I40E_INSET_IPV4_DST |
++	  I40E_INSET_SRC_PORT | I40E_INSET_DST_PORT },
++
++	{ RTE_ETH_RSS_NONFRAG_IPV4_SCTP, I40E_INSET_IPV4_SRC | I40E_INSET_IPV4_DST |
++	  I40E_INSET_SRC_PORT | I40E_INSET_DST_PORT | I40E_INSET_SCTP_VT },
++
++	/* IPv6 */
++	{ RTE_ETH_RSS_IPV6, I40E_INSET_IPV6_SRC | I40E_INSET_IPV6_DST },
++	{ RTE_ETH_RSS_FRAG_IPV6, I40E_INSET_IPV6_SRC | I40E_INSET_IPV6_DST },
++
++	{ RTE_ETH_RSS_NONFRAG_IPV6_OTHER,
++	  I40E_INSET_IPV6_SRC | I40E_INSET_IPV6_DST },
++
++	{ RTE_ETH_RSS_NONFRAG_IPV6_TCP, I40E_INSET_IPV6_SRC | I40E_INSET_IPV6_DST |
++	  I40E_INSET_SRC_PORT | I40E_INSET_DST_PORT },
++
++	{ RTE_ETH_RSS_NONFRAG_IPV6_UDP, I40E_INSET_IPV6_SRC | I40E_INSET_IPV6_DST |
++	  I40E_INSET_SRC_PORT | I40E_INSET_DST_PORT },
++
++	{ RTE_ETH_RSS_NONFRAG_IPV6_SCTP, I40E_INSET_IPV6_SRC | I40E_INSET_IPV6_DST |
++	  I40E_INSET_SRC_PORT | I40E_INSET_DST_PORT | I40E_INSET_SCTP_VT },
++
++	/* Port */
++	{ RTE_ETH_RSS_PORT, I40E_INSET_SRC_PORT | I40E_INSET_DST_PORT },
++
++	/* Ether */
++	{ RTE_ETH_RSS_L2_PAYLOAD, I40E_INSET_LAST_ETHER_TYPE },
++	{ RTE_ETH_RSS_ETH, I40E_INSET_DMAC | I40E_INSET_SMAC },
++
++	/* VLAN */
++	{ RTE_ETH_RSS_S_VLAN, I40E_INSET_VLAN_OUTER },
++	{ RTE_ETH_RSS_C_VLAN, I40E_INSET_VLAN_INNER },
++};
++
++static uint64_t
++i40e_hash_get_inset(uint64_t rss_types, bool symmetric_enable)
++{
++	uint64_t mask, inset = 0;
++	int i;
++
++	for (i = 0; i < (int)RTE_DIM(i40e_hash_rss_inset); i++) {
++		if (rss_types & i40e_hash_rss_inset[i].rss_type)
++			inset |= i40e_hash_rss_inset[i].inset;
 +	}
-+	return -1;
++
++	if (!inset)
++		return 0;
++
++	/* If SRC_ONLY and DST_ONLY of the same level are used simultaneously,
++	 * it is the same case as none of them are added.
++	 */
++	mask = rss_types & (RTE_ETH_RSS_L2_SRC_ONLY | RTE_ETH_RSS_L2_DST_ONLY);
++	if (mask == RTE_ETH_RSS_L2_SRC_ONLY)
++		inset &= ~I40E_INSET_DMAC;
++	else if (mask == RTE_ETH_RSS_L2_DST_ONLY)
++		inset &= ~I40E_INSET_SMAC;
++
++	mask = rss_types & (RTE_ETH_RSS_L3_SRC_ONLY | RTE_ETH_RSS_L3_DST_ONLY);
++	if (mask == RTE_ETH_RSS_L3_SRC_ONLY)
++		inset &= ~(I40E_INSET_IPV4_DST | I40E_INSET_IPV6_DST);
++	else if (mask == RTE_ETH_RSS_L3_DST_ONLY)
++		inset &= ~(I40E_INSET_IPV4_SRC | I40E_INSET_IPV6_SRC);
++
++	mask = rss_types & (RTE_ETH_RSS_L4_SRC_ONLY | RTE_ETH_RSS_L4_DST_ONLY);
++	if (mask == RTE_ETH_RSS_L4_SRC_ONLY)
++		inset &= ~I40E_INSET_DST_PORT;
++	else if (mask == RTE_ETH_RSS_L4_DST_ONLY)
++		inset &= ~I40E_INSET_SRC_PORT;
++
++	if (rss_types & I40E_HASH_L4_TYPES) {
++		uint64_t l3_mask = rss_types &
++				   (RTE_ETH_RSS_L3_SRC_ONLY | RTE_ETH_RSS_L3_DST_ONLY);
++		uint64_t l4_mask = rss_types &
++				   (RTE_ETH_RSS_L4_SRC_ONLY | RTE_ETH_RSS_L4_DST_ONLY);
++
++		if (l3_mask && !l4_mask)
++			inset &= ~(I40E_INSET_SRC_PORT | I40E_INSET_DST_PORT);
++		else if (!l3_mask && l4_mask)
++			inset &= ~(I40E_INSET_IPV4_DST | I40E_INSET_IPV6_DST |
++				 I40E_INSET_IPV4_SRC | I40E_INSET_IPV6_SRC);
++	}
++
++	/* SCTP Verification Tag is not required in hash computation for SYMMETRIC_TOEPLITZ */
++	if (symmetric_enable) {
++		mask = rss_types & RTE_ETH_RSS_NONFRAG_IPV4_SCTP;
++		if (mask == RTE_ETH_RSS_NONFRAG_IPV4_SCTP)
++			inset &= ~I40E_INSET_SCTP_VT;
++
++		mask = rss_types & RTE_ETH_RSS_NONFRAG_IPV6_SCTP;
++		if (mask == RTE_ETH_RSS_NONFRAG_IPV6_SCTP)
++			inset &= ~I40E_INSET_SCTP_VT;
++	}
++
++	return inset;
 +}
 +
-+/**
-+ * QinQ tunnel filter graph implementation
-+ * Pattern: START -> ETH -> OUTER_VLAN -> INNER_VLAN -> END
++/*
++ * Hash pattern graph implementation
++ * Pattern: START -> ETH -> [VLAN] -> [VLAN] -> (IPv4|IPv6) -> (TCP|UDP|SCTP|ESP|L2TPV3OIP|AH)
++ *          START -> ETH -> [VLAN] -> [VLAN] -> (IPv4|IPv6) frag
++ *          START -> ETH -> [VLAN] -> [VLAN] -> (IPv4|IPv6) -> UDP -> (GTPC|ESP|GTPU)
++ *          START -> ETH -> [VLAN] -> [VLAN] -> (IPv4|IPv6) -> UDP -> GTPU -> (IPv4|IPv6)
 + */
-+enum i40e_tunnel_qinq_node_id {
-+	I40E_TUNNEL_QINQ_NODE_START = FLOW_GRAPH_NODE_FIRST,
-+	I40E_TUNNEL_QINQ_NODE_ETH,
-+	I40E_TUNNEL_QINQ_NODE_OUTER_VLAN,
-+	I40E_TUNNEL_QINQ_NODE_INNER_VLAN,
-+	I40E_TUNNEL_QINQ_NODE_END,
-+	I40E_TUNNEL_QINQ_NODE_MAX,
++enum i40e_hash_pattern_node_id {
++	I40E_HASH_PATTERN_NODE_START = FLOW_GRAPH_NODE_FIRST,
++	I40E_HASH_PATTERN_NODE_ETH,
++	I40E_HASH_PATTERN_NODE_OUTER_VLAN,
++	I40E_HASH_PATTERN_NODE_INNER_VLAN,
++	I40E_HASH_PATTERN_NODE_IPV4,
++	I40E_HASH_PATTERN_NODE_IPV6,
++	I40E_HASH_PATTERN_NODE_IPV6_FRAG,
++	I40E_HASH_PATTERN_NODE_TCP,
++	I40E_HASH_PATTERN_NODE_UDP,
++	I40E_HASH_PATTERN_NODE_SCTP,
++	I40E_HASH_PATTERN_NODE_ESP,
++	I40E_HASH_PATTERN_NODE_GTPU,
++	I40E_HASH_PATTERN_NODE_GTPC,
++	I40E_HASH_PATTERN_NODE_L2TPV3OIP,
++	I40E_HASH_PATTERN_NODE_AH,
++	I40E_HASH_PATTERN_NODE_INNER_IPV4,
++	I40E_HASH_PATTERN_NODE_INNER_IPV6,
++	I40E_HASH_PATTERN_NODE_END,
++	I40E_HASH_PATTERN_NODE_MAX,
 +};
 +
 +static int
-+i40e_tunnel_node_vlan_validate(const void *ctx __rte_unused, const struct rte_flow_item *item,
++i40e_hash_pattern_node_eth_process(void *ctx,
++		const struct rte_flow_item *item __rte_unused,
++		struct rte_flow_error *error __rte_unused)
++{
++	struct i40e_hash_ctx *hash_ctx = ctx;
++	hash_ctx->pctype = I40E_FILTER_PCTYPE_L2_PAYLOAD;
++	return 0;
++}
++
++static int
++i40e_hash_pattern_node_ipv4_process(void *ctx,
++		const struct rte_flow_item *item __rte_unused,
++		struct rte_flow_error *error __rte_unused)
++{
++	struct i40e_hash_ctx *hash_ctx = ctx;
++	/* hash parser does not differentiate between frag and non-frag IPv4 until later */
++	hash_ctx->pctype = I40E_FILTER_PCTYPE_NONF_IPV4_OTHER;
++	return 0;
++}
++
++static int
++i40e_hash_pattern_node_ipv6_process(void *ctx,
++		const struct rte_flow_item *item __rte_unused,
++		struct rte_flow_error *error __rte_unused)
++{
++	struct i40e_hash_ctx *hash_ctx = ctx;
++	hash_ctx->pctype = I40E_FILTER_PCTYPE_NONF_IPV6_OTHER;
++	return 0;
++}
++
++static int
++i40e_hash_pattern_node_ipv6_frag_process(void *ctx,
++		const struct rte_flow_item *item __rte_unused,
++		struct rte_flow_error *error __rte_unused)
++{
++	struct i40e_hash_ctx *hash_ctx = ctx;
++	hash_ctx->pctype = I40E_FILTER_PCTYPE_FRAG_IPV6;
++	return 0;
++}
++
++static int
++i40e_hash_pattern_node_tcp_process(void *ctx,
++		const struct rte_flow_item *item __rte_unused,
++		struct rte_flow_error *error __rte_unused)
++{
++	struct i40e_hash_ctx *hash_ctx = ctx;
++	hash_ctx->pctype = (hash_ctx->pctype == I40E_FILTER_PCTYPE_NONF_IPV4_OTHER) ?
++			  I40E_FILTER_PCTYPE_NONF_IPV4_TCP :
++			  I40E_FILTER_PCTYPE_NONF_IPV6_TCP;
++	return 0;
++}
++
++static int
++i40e_hash_pattern_node_udp_process(void *ctx,
++		const struct rte_flow_item *item __rte_unused,
++		struct rte_flow_error *error __rte_unused)
++{
++	struct i40e_hash_ctx *hash_ctx = ctx;
++	hash_ctx->pctype = (hash_ctx->pctype == I40E_FILTER_PCTYPE_NONF_IPV4_OTHER) ?
++			  I40E_FILTER_PCTYPE_NONF_IPV4_UDP :
++			  I40E_FILTER_PCTYPE_NONF_IPV6_UDP;
++	return 0;
++}
++
++static int
++i40e_hash_pattern_node_sctp_process(void *ctx,
++		const struct rte_flow_item *item __rte_unused,
++		struct rte_flow_error *error __rte_unused)
++{
++	struct i40e_hash_ctx *hash_ctx = ctx;
++	hash_ctx->pctype = (hash_ctx->pctype == I40E_FILTER_PCTYPE_NONF_IPV4_OTHER) ?
++			  I40E_FILTER_PCTYPE_NONF_IPV4_SCTP :
++			  I40E_FILTER_PCTYPE_NONF_IPV6_SCTP;
++	return 0;
++}
++
++static int
++i40e_hash_pattern_node_esp_process(void *ctx,
++		const struct rte_flow_item *item __rte_unused,
++		struct rte_flow_error *error __rte_unused)
++{
++	struct i40e_hash_ctx *hash_ctx = ctx;
++	bool ipv4 = false;
++	bool udp = false;
++
++	/* ESP can be over IP or over UDP */
++	ipv4 = (hash_ctx->pctype == I40E_FILTER_PCTYPE_NONF_IPV4_OTHER ||
++		hash_ctx->pctype == I40E_FILTER_PCTYPE_NONF_IPV4_UDP);
++	udp = (hash_ctx->pctype == I40E_FILTER_PCTYPE_NONF_IPV4_UDP ||
++		hash_ctx->pctype == I40E_FILTER_PCTYPE_NONF_IPV6_UDP);
++	if (udp) {
++		hash_ctx->pctype = ipv4 ? I40E_CUSTOMIZED_ESP_IPV4_UDP : I40E_CUSTOMIZED_ESP_IPV6_UDP;
++	} else {
++		hash_ctx->pctype = ipv4 ? I40E_CUSTOMIZED_ESP_IPV4 : I40E_CUSTOMIZED_ESP_IPV6;
++	}
++	hash_ctx->customized_ptype = true;
++	return 0;
++}
++
++static int
++i40e_hash_pattern_node_gtpu_process(void *ctx,
++		const struct rte_flow_item *item __rte_unused,
++		struct rte_flow_error *error __rte_unused)
++{
++	struct i40e_hash_ctx *hash_ctx = ctx;
++
++	/* GTPU pctype does not differentiate between IPv4 and IPv6 */
++	hash_ctx->pctype = I40E_CUSTOMIZED_GTPU;
++	hash_ctx->customized_ptype = true;
++	return 0;
++}
++
++static int
++i40e_hash_pattern_node_gtpc_process(void *ctx,
++		const struct rte_flow_item *item __rte_unused,
++		struct rte_flow_error *error __rte_unused)
++{
++	struct i40e_hash_ctx *hash_ctx = ctx;
++
++	/* GTPC pctype does not differentiate between IPv4 and IPv6 */
++	hash_ctx->pctype = I40E_CUSTOMIZED_GTPC;
++	hash_ctx->customized_ptype = true;
++	return 0;
++}
++
++static int
++i40e_hash_pattern_node_l2tpv3oip_process(void *ctx,
++		const struct rte_flow_item *item __rte_unused,
++		struct rte_flow_error *error __rte_unused)
++{
++	struct i40e_hash_ctx *hash_ctx = ctx;
++	hash_ctx->pctype = (hash_ctx->pctype == I40E_FILTER_PCTYPE_NONF_IPV4_OTHER) ?
++			  I40E_CUSTOMIZED_IPV4_L2TPV3 :
++			  I40E_CUSTOMIZED_IPV6_L2TPV3;
++	hash_ctx->customized_ptype = true;
++	return 0;
++}
++
++static int
++i40e_hash_pattern_node_ah_process(void *ctx,
++		const struct rte_flow_item *item __rte_unused,
++		struct rte_flow_error *error __rte_unused)
++{
++	struct i40e_hash_ctx *hash_ctx = ctx;
++
++	hash_ctx->pctype = (hash_ctx->pctype == I40E_FILTER_PCTYPE_NONF_IPV4_OTHER) ?
++			  I40E_CUSTOMIZED_AH_IPV4 :
++			  I40E_CUSTOMIZED_AH_IPV6;
++	hash_ctx->customized_ptype = true;
++	return 0;
++}
++
++static int
++i40e_hash_pattern_node_inner_ipv4_process(void *ctx,
++		const struct rte_flow_item *item __rte_unused,
++		struct rte_flow_error *error __rte_unused)
++{
++	struct i40e_hash_ctx *hash_ctx = ctx;
++
++	/* inner IP patterns are always over GTP-U */
++	hash_ctx->pctype = I40E_CUSTOMIZED_GTPU_IPV4;
++	hash_ctx->customized_ptype = true;
++	return 0;
++}
++
++static int
++i40e_hash_pattern_node_inner_ipv6_process(void *ctx,
++		const struct rte_flow_item *item __rte_unused,
++		struct rte_flow_error *error __rte_unused)
++{
++	struct i40e_hash_ctx *hash_ctx = ctx;
++
++	/* inner IP patterns are always over GTP-U */
++	hash_ctx->pctype = I40E_CUSTOMIZED_GTPU_IPV6;
++	hash_ctx->customized_ptype = true;
++	return 0;
++}
++
++static int
++i40e_hash_pattern_node_end_process(void *ctx,
++		const struct rte_flow_item *item __rte_unused,
++		struct rte_flow_error *error __rte_unused)
++{
++	struct i40e_hash_ctx *hash_ctx = ctx;
++
++	/* if RSS hash type for IPv4 frag was requested, change pctype */
++	if (hash_ctx->pctype == I40E_FILTER_PCTYPE_NONF_IPV4_OTHER &&
++	    (hash_ctx->rss_conf.types & RTE_ETH_RSS_FRAG_IPV4))
++		hash_ctx->pctype = I40E_FILTER_PCTYPE_FRAG_IPV4;
++
++	return 0;
++}
++
++static const struct flow_graph i40e_hash_pattern_graph = {
++	.nodes = (struct flow_graph_node[]) {
++		[I40E_HASH_PATTERN_NODE_START] = {
++			.name = "START",
++		},
++		[I40E_HASH_PATTERN_NODE_ETH] = {
++			.name = "ETH",
++			.type = RTE_FLOW_ITEM_TYPE_ETH,
++			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
++			.process = i40e_hash_pattern_node_eth_process,
++		},
++		[I40E_HASH_PATTERN_NODE_OUTER_VLAN] = {
++			.name = "OUTER_VLAN",
++			.type = RTE_FLOW_ITEM_TYPE_VLAN,
++			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
++		},
++		[I40E_HASH_PATTERN_NODE_INNER_VLAN] = {
++			.name = "INNER_VLAN",
++			.type = RTE_FLOW_ITEM_TYPE_VLAN,
++			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
++		},
++		[I40E_HASH_PATTERN_NODE_IPV4] = {
++			.name = "IPv4",
++			.type = RTE_FLOW_ITEM_TYPE_IPV4,
++			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
++			.process = i40e_hash_pattern_node_ipv4_process,
++		},
++		[I40E_HASH_PATTERN_NODE_IPV6] = {
++			.name = "IPv6",
++			.type = RTE_FLOW_ITEM_TYPE_IPV6,
++			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
++			.process = i40e_hash_pattern_node_ipv6_process,
++		},
++		[I40E_HASH_PATTERN_NODE_IPV6_FRAG] = {
++			.name = "IPv6_FRAG",
++			.type = RTE_FLOW_ITEM_TYPE_IPV6,
++			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
++			.process = i40e_hash_pattern_node_ipv6_frag_process,
++		},
++		[I40E_HASH_PATTERN_NODE_TCP] = {
++			.name = "TCP",
++			.type = RTE_FLOW_ITEM_TYPE_TCP,
++			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
++			.process = i40e_hash_pattern_node_tcp_process,
++		},
++		[I40E_HASH_PATTERN_NODE_UDP] = {
++			.name = "UDP",
++			.type = RTE_FLOW_ITEM_TYPE_UDP,
++			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
++			.process = i40e_hash_pattern_node_udp_process,
++		},
++		[I40E_HASH_PATTERN_NODE_SCTP] = {
++			.name = "SCTP",
++			.type = RTE_FLOW_ITEM_TYPE_SCTP,
++			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
++			.process = i40e_hash_pattern_node_sctp_process,
++		},
++		[I40E_HASH_PATTERN_NODE_ESP] = {
++			.name = "ESP",
++			.type = RTE_FLOW_ITEM_TYPE_ESP,
++			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
++			.process = i40e_hash_pattern_node_esp_process,
++		},
++		[I40E_HASH_PATTERN_NODE_GTPU] = {
++			.name = "GTPU",
++			.type = RTE_FLOW_ITEM_TYPE_GTPU,
++			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
++			.process = i40e_hash_pattern_node_gtpu_process,
++		},
++		[I40E_HASH_PATTERN_NODE_GTPC] = {
++			.name = "GTPC",
++			.type = RTE_FLOW_ITEM_TYPE_GTPC,
++			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
++			.process = i40e_hash_pattern_node_gtpc_process,
++		},
++		[I40E_HASH_PATTERN_NODE_L2TPV3OIP] = {
++			.name = "L2TPV3OIP",
++			.type = RTE_FLOW_ITEM_TYPE_L2TPV3OIP,
++			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
++			.process = i40e_hash_pattern_node_l2tpv3oip_process,
++		},
++		[I40E_HASH_PATTERN_NODE_AH] = {
++			.name = "AH",
++			.type = RTE_FLOW_ITEM_TYPE_AH,
++			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
++			.process = i40e_hash_pattern_node_ah_process,
++		},
++		[I40E_HASH_PATTERN_NODE_INNER_IPV4] = {
++			.name = "INNER_IPV4",
++			.type = RTE_FLOW_ITEM_TYPE_IPV4,
++			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
++			.process = i40e_hash_pattern_node_inner_ipv4_process,
++		},
++		[I40E_HASH_PATTERN_NODE_INNER_IPV6] = {
++			.name = "INNER_IPV6",
++			.type = RTE_FLOW_ITEM_TYPE_IPV6,
++			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
++			.process = i40e_hash_pattern_node_inner_ipv6_process,
++		},
++		[I40E_HASH_PATTERN_NODE_END] = {
++			.name = "END",
++			.type = RTE_FLOW_ITEM_TYPE_END,
++			.process = i40e_hash_pattern_node_end_process,
++		},
++	},
++	.edges = (struct flow_graph_edge[]) {
++		[I40E_HASH_PATTERN_NODE_START] = {
++			.next = (size_t[]) {
++				I40E_HASH_PATTERN_NODE_ETH,
++				FLOW_GRAPH_NODE_EDGE_END
++			}
++		},
++		[I40E_HASH_PATTERN_NODE_ETH] = {
++			.next = (size_t[]) {
++				I40E_HASH_PATTERN_NODE_OUTER_VLAN,
++				I40E_HASH_PATTERN_NODE_IPV4,
++				I40E_HASH_PATTERN_NODE_IPV6,
++				FLOW_GRAPH_NODE_EDGE_END
++			}
++		},
++		[I40E_HASH_PATTERN_NODE_OUTER_VLAN] = {
++			.next = (size_t[]) {
++				I40E_HASH_PATTERN_NODE_INNER_VLAN,
++				I40E_HASH_PATTERN_NODE_IPV4,
++				I40E_HASH_PATTERN_NODE_IPV6,
++				FLOW_GRAPH_NODE_EDGE_END
++			}
++		},
++		[I40E_HASH_PATTERN_NODE_INNER_VLAN] = {
++			.next = (size_t[]) {
++				I40E_HASH_PATTERN_NODE_IPV4,
++				I40E_HASH_PATTERN_NODE_IPV6,
++				FLOW_GRAPH_NODE_EDGE_END
++			}
++		},
++		[I40E_HASH_PATTERN_NODE_IPV4] = {
++			.next = (size_t[]) {
++				I40E_HASH_PATTERN_NODE_TCP,
++				I40E_HASH_PATTERN_NODE_UDP,
++				I40E_HASH_PATTERN_NODE_SCTP,
++				I40E_HASH_PATTERN_NODE_ESP,
++				I40E_HASH_PATTERN_NODE_L2TPV3OIP,
++				I40E_HASH_PATTERN_NODE_AH,
++			}
++		},
++		[I40E_HASH_PATTERN_NODE_IPV6] = {
++			.next = (size_t[]) {
++				I40E_HASH_PATTERN_NODE_IPV6_FRAG,
++				I40E_HASH_PATTERN_NODE_TCP,
++				I40E_HASH_PATTERN_NODE_UDP,
++				I40E_HASH_PATTERN_NODE_SCTP,
++				I40E_HASH_PATTERN_NODE_ESP,
++				I40E_HASH_PATTERN_NODE_L2TPV3OIP,
++				I40E_HASH_PATTERN_NODE_AH,
++			}
++		},
++		[I40E_HASH_PATTERN_NODE_IPV6_FRAG] = {
++			.next = (size_t[]) {
++				I40E_HASH_PATTERN_NODE_END,
++				FLOW_GRAPH_NODE_EDGE_END
++			}
++		},
++		[I40E_HASH_PATTERN_NODE_TCP] = {
++			.next = (size_t[]) {
++				I40E_HASH_PATTERN_NODE_END,
++				FLOW_GRAPH_NODE_EDGE_END
++			}
++		},
++		[I40E_HASH_PATTERN_NODE_UDP] = {
++			.next = (size_t[]) {
++				I40E_HASH_PATTERN_NODE_GTPU,
++				I40E_HASH_PATTERN_NODE_GTPC,
++				I40E_HASH_PATTERN_NODE_ESP,
++				I40E_HASH_PATTERN_NODE_END,
++			}
++		},
++		[I40E_HASH_PATTERN_NODE_SCTP] = {
++			.next = (size_t[]) {
++				I40E_HASH_PATTERN_NODE_END,
++				FLOW_GRAPH_NODE_EDGE_END
++			}
++		},
++		[I40E_HASH_PATTERN_NODE_ESP] = {
++			.next = (size_t[]) {
++				I40E_HASH_PATTERN_NODE_END,
++				FLOW_GRAPH_NODE_EDGE_END
++			}
++		},
++		[I40E_HASH_PATTERN_NODE_GTPU] = {
++			.next = (size_t[]) {
++				I40E_HASH_PATTERN_NODE_INNER_IPV4,
++				I40E_HASH_PATTERN_NODE_INNER_IPV6,
++				I40E_HASH_PATTERN_NODE_END,
++				FLOW_GRAPH_NODE_EDGE_END
++			}
++		},
++		[I40E_HASH_PATTERN_NODE_GTPC] = {
++			.next = (size_t[]) {
++				I40E_HASH_PATTERN_NODE_END,
++				FLOW_GRAPH_NODE_EDGE_END
++			}
++		},
++		[I40E_HASH_PATTERN_NODE_L2TPV3OIP] = {
++			.next = (size_t[]) {
++				I40E_HASH_PATTERN_NODE_END,
++				FLOW_GRAPH_NODE_EDGE_END
++			}
++		},
++		[I40E_HASH_PATTERN_NODE_AH] = {
++			.next = (size_t[]) {
++				I40E_HASH_PATTERN_NODE_END,
++				FLOW_GRAPH_NODE_EDGE_END
++			}
++		},
++		[I40E_HASH_PATTERN_NODE_INNER_IPV4] = {
++			.next = (size_t[]) {
++				I40E_HASH_PATTERN_NODE_END,
++				FLOW_GRAPH_NODE_EDGE_END
++			}
++		},
++		[I40E_HASH_PATTERN_NODE_INNER_IPV6] = {
++			.next = (size_t[]) {
++				I40E_HASH_PATTERN_NODE_END,
++				FLOW_GRAPH_NODE_EDGE_END
++			}
++		},
++	},
++};
++
++/*
++ * Hash VLAN graph implementation
++ * Pattern: START -> VLAN -> END
++ */
++enum i40e_hash_vlan_node_id {
++	I40E_HASH_VLAN_NODE_START = FLOW_GRAPH_NODE_FIRST,
++	I40E_HASH_VLAN_NODE_VLAN,
++	I40E_HASH_VLAN_NODE_END,
++	I40E_HASH_VLAN_NODE_MAX,
++};
++
++static int
++i40e_hash_node_vlan_validate(const void *ctx __rte_unused, const struct rte_flow_item *item,
 +		struct rte_flow_error *error)
 +{
 +	const struct rte_flow_item_vlan *vlan_mask = item->mask;
 +
-+	/* matching eth proto not supported */
-+	if (vlan_mask->hdr.eth_proto) {
++	/* only the VLAN priority bits may be matched */
++	if (rte_be_to_cpu_16(vlan_mask->hdr.vlan_tci) != RTE_VLAN_PRI_MASK) {
 +		return rte_flow_error_set(error, EINVAL,
 +				RTE_FLOW_ERROR_TYPE_ITEM, item,
 +				"Invalid VLAN mask");
 +	}
-+
-+	/* VLAN TCI must be fully masked */
-+	if (!CI_FIELD_IS_MASKED(&vlan_mask->hdr.vlan_tci)) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Invalid VLAN mask");
-+	}
-+
 +	return 0;
 +}
 +
-+/* common VLAN processing for both outer and inner VLAN nodes */
 +static int
-+i40e_tunnel_node_vlan_process(struct i40e_tunnel_ctx *tunnel_ctx,
-+		const struct rte_flow_item *item, bool is_inner)
++i40e_hash_node_vlan_process(void *ctx, const struct rte_flow_item *item,
++		struct rte_flow_error *error __rte_unused)
 +{
++	struct i40e_hash_ctx *hash_ctx = ctx;
 +	const struct rte_flow_item_vlan *vlan_spec = item->spec;
-+	struct i40e_tunnel_filter_conf *tunnel_filter = &tunnel_ctx->filter;
 +
-+	/* Store the VLAN ID and set filter flag */
-+	if (is_inner) {
-+		tunnel_filter->inner_vlan = rte_be_to_cpu_16(vlan_spec->hdr.vlan_tci);
-+		tunnel_filter->filter_type |= RTE_ETH_TUNNEL_FILTER_IVLAN;
-+	} else {
-+		tunnel_filter->outer_vlan = rte_be_to_cpu_16(vlan_spec->hdr.vlan_tci);
-+		/* no special flag for outer VLAN matching */
-+	}
++	hash_ctx->rss_conf.region_priority = rte_cpu_to_be_16(vlan_spec->hdr.vlan_tci) >> 13;
 +
 +	return 0;
 +}
 +
-+static int
-+i40e_tunnel_node_outer_vlan_process(void *ctx, const struct rte_flow_item *item,
-+		struct rte_flow_error *error __rte_unused)
-+{
-+	struct i40e_tunnel_ctx *tunnel_ctx = ctx;
-+
-+	return i40e_tunnel_node_vlan_process(tunnel_ctx, item, false);
-+}
-+
-+static int
-+i40e_tunnel_node_inner_vlan_process(void *ctx, const struct rte_flow_item *item,
-+		struct rte_flow_error *error __rte_unused)
-+{
-+	struct i40e_tunnel_ctx *tunnel_ctx = ctx;
-+
-+	return i40e_tunnel_node_vlan_process(tunnel_ctx, item, true);
-+}
-+
-+static int
-+i40e_tunnel_qinq_node_end_process(void *ctx, const struct rte_flow_item *item __rte_unused,
-+		struct rte_flow_error *error __rte_unused)
-+{
-+	struct i40e_tunnel_ctx *tunnel_ctx = ctx;
-+	struct i40e_tunnel_filter_conf *tunnel_filter = &tunnel_ctx->filter;
-+
-+	tunnel_filter->tunnel_type = I40E_TUNNEL_TYPE_QINQ;
-+
-+	/* QinQ filter is not meant to set this flag */
-+	tunnel_filter->filter_type &= ~RTE_ETH_TUNNEL_FILTER_IVLAN;
-+
-+	return 0;
-+}
-+
-+static const struct flow_graph i40e_tunnel_qinq_graph = {
++static const struct flow_graph i40e_hash_vlan_graph = {
 +	.nodes = (struct flow_graph_node[]) {
-+		[I40E_TUNNEL_QINQ_NODE_START] = {
++		[I40E_HASH_VLAN_NODE_START] = {
 +			.name = "START",
 +		},
-+		[I40E_TUNNEL_QINQ_NODE_ETH] = {
-+			.name = "ETH",
-+			.type = RTE_FLOW_ITEM_TYPE_ETH,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
-+		},
-+		[I40E_TUNNEL_QINQ_NODE_OUTER_VLAN] = {
-+			.name = "OUTER_VLAN",
++		[I40E_HASH_VLAN_NODE_VLAN] = {
++			.name = "VLAN",
 +			.type = RTE_FLOW_ITEM_TYPE_VLAN,
 +			.constraints = FLOW_GRAPH_NODE_EXPECT_SPEC_MASK,
-+			.validate = i40e_tunnel_node_vlan_validate,
-+			.process = i40e_tunnel_node_outer_vlan_process,
-+		},
-+		[I40E_TUNNEL_QINQ_NODE_INNER_VLAN] = {
-+			.name = "INNER_VLAN",
-+			.type = RTE_FLOW_ITEM_TYPE_VLAN,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_SPEC_MASK,
-+			.validate = i40e_tunnel_node_vlan_validate,
-+			.process = i40e_tunnel_node_inner_vlan_process,
-+		},
-+		[I40E_TUNNEL_QINQ_NODE_END] = {
-+			.name = "END",
-+			.type = RTE_FLOW_ITEM_TYPE_END,
-+			.process = i40e_tunnel_qinq_node_end_process,
++			.validate = i40e_hash_node_vlan_validate,
++			.process = i40e_hash_node_vlan_process,
 +		},
 +	},
 +	.edges = (struct flow_graph_edge[]) {
-+		[I40E_TUNNEL_QINQ_NODE_START] = {
++		[I40E_HASH_VLAN_NODE_START] = {
 +			.next = (size_t[]) {
-+				I40E_TUNNEL_QINQ_NODE_ETH,
++				I40E_HASH_VLAN_NODE_VLAN,
 +				FLOW_GRAPH_NODE_EDGE_END
 +			}
 +		},
-+		[I40E_TUNNEL_QINQ_NODE_ETH] = {
++		[I40E_HASH_VLAN_NODE_VLAN] = {
 +			.next = (size_t[]) {
-+				I40E_TUNNEL_QINQ_NODE_OUTER_VLAN,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_QINQ_NODE_OUTER_VLAN] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_QINQ_NODE_INNER_VLAN,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_QINQ_NODE_INNER_VLAN] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_QINQ_NODE_END,
++				I40E_HASH_VLAN_NODE_END,
 +				FLOW_GRAPH_NODE_EDGE_END
 +			}
 +		},
 +	},
 +};
 +
-+/**
-+ * VXLAN tunnel filter graph implementation
-+ * Pattern: START -> ETH -> (IPv4 | IPv6) -> UDP -> VXLAN -> ETH -> [VLAN] -> END
-+ */
-+enum i40e_tunnel_vxlan_node_id {
-+	I40E_TUNNEL_VXLAN_NODE_START  = FLOW_GRAPH_NODE_FIRST,
-+	I40E_TUNNEL_VXLAN_NODE_OUTER_ETH,
-+	I40E_TUNNEL_VXLAN_NODE_IPV4,
-+	I40E_TUNNEL_VXLAN_NODE_IPV6,
-+	I40E_TUNNEL_VXLAN_NODE_UDP,
-+	I40E_TUNNEL_VXLAN_NODE_VXLAN,
-+	I40E_TUNNEL_VXLAN_NODE_INNER_ETH,
-+	I40E_TUNNEL_VXLAN_NODE_INNER_VLAN,
-+	I40E_TUNNEL_VXLAN_NODE_END,
-+	I40E_TUNNEL_VXLAN_NODE_MAX,
-+};
++static bool
++i40e_hash_validate_rss_types(uint64_t rss_types)
++{
++	uint64_t type, mask;
++
++	/* Validate L2 */
++	type = RTE_ETH_RSS_ETH & rss_types;
++	mask = (RTE_ETH_RSS_L2_SRC_ONLY | RTE_ETH_RSS_L2_DST_ONLY) & rss_types;
++	if (!type && mask)
++		return false;
++
++	/* Validate L3 */
++	type = (I40E_HASH_L4_TYPES | RTE_ETH_RSS_IPV4 | RTE_ETH_RSS_FRAG_IPV4 |
++	       RTE_ETH_RSS_NONFRAG_IPV4_OTHER | RTE_ETH_RSS_IPV6 |
++	       RTE_ETH_RSS_FRAG_IPV6 | RTE_ETH_RSS_NONFRAG_IPV6_OTHER) & rss_types;
++	mask = (RTE_ETH_RSS_L3_SRC_ONLY | RTE_ETH_RSS_L3_DST_ONLY) & rss_types;
++	if (!type && mask)
++		return false;
++
++	/* Validate L4 */
++	type = (I40E_HASH_L4_TYPES | RTE_ETH_RSS_PORT) & rss_types;
++	mask = (RTE_ETH_RSS_L4_SRC_ONLY | RTE_ETH_RSS_L4_DST_ONLY) & rss_types;
++	if (!type && mask)
++		return false;
++
++	return true;
++}
 +
 +static int
-+i40e_tunnel_node_eth_validate(const void *ctx __rte_unused, const struct rte_flow_item *item,
++i40e_hash_validate_rss_common(const struct rte_flow_action_rss *rss_act,
 +		struct rte_flow_error *error)
 +{
-+	const struct rte_flow_item_eth *eth_spec = item->spec;
-+	const struct rte_flow_item_eth *eth_mask = item->mask;
-+
-+	/* spec/mask is optional */
-+	if (eth_spec == NULL && eth_mask == NULL)
-+		return 0;
-+
-+	/* matching eth type not supported */
-+	if (eth_mask->hdr.ether_type) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Invalid ETH mask");
-+	}
-+
-+	/* source MAC must be fully unmasked */
-+	if (!CI_FIELD_IS_ZERO(&eth_mask->hdr.src_addr)) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Invalid ETH mask");
-+	}
-+	/* destination MAC must be fully masked */
-+	if (!CI_FIELD_IS_MASKED(&eth_mask->hdr.dst_addr)) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Invalid ETH mask");
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+i40e_tunnel_eth_process(struct i40e_tunnel_ctx *tunnel_ctx,
-+		const struct rte_flow_item *item, bool is_inner)
-+{
-+	const struct rte_flow_item_eth *eth_spec = item->spec;
-+	const struct rte_flow_item_eth *eth_mask = item->mask;
-+	struct i40e_tunnel_filter_conf *tunnel_filter = &tunnel_ctx->filter;
-+
-+	/* eth spec/mask is optional */
-+	if (eth_spec == NULL && eth_mask == NULL)
-+		return 0;
-+
-+	/* Store the MAC addresses and set filter flags */
-+	if (is_inner) {
-+		memcpy(&tunnel_filter->inner_mac, &eth_spec->hdr.dst_addr,
-+				sizeof(tunnel_filter->inner_mac));
-+		tunnel_filter->filter_type |= RTE_ETH_TUNNEL_FILTER_IMAC;
-+	} else {
-+		memcpy(&tunnel_filter->outer_mac, &eth_spec->hdr.dst_addr,
-+				sizeof(tunnel_filter->outer_mac));
-+		tunnel_filter->filter_type |= RTE_ETH_TUNNEL_FILTER_OMAC;
-+	}
-+	return 0;
-+}
-+
-+static int
-+i40e_tunnel_node_outer_eth_process(void *ctx, const struct rte_flow_item *item,
-+		struct rte_flow_error *error __rte_unused)
-+{
-+	struct i40e_tunnel_ctx *tunnel_ctx = ctx;
-+
-+	return i40e_tunnel_eth_process(tunnel_ctx, item, false);
-+}
-+
-+static int
-+i40e_tunnel_node_inner_eth_process(void *ctx, const struct rte_flow_item *item,
-+		struct rte_flow_error *error __rte_unused)
-+{
-+	struct i40e_tunnel_ctx *tunnel_ctx = ctx;
-+
-+	return i40e_tunnel_eth_process(tunnel_ctx, item, true);
-+}
-+
-+static int
-+i40e_tunnel_node_ipv4_process(void *ctx, const struct rte_flow_item *item __rte_unused,
-+		struct rte_flow_error *error __rte_unused)
-+{
-+	struct i40e_tunnel_ctx *tunnel_ctx = ctx;
-+	struct i40e_tunnel_filter_conf *tunnel_filter = &tunnel_ctx->filter;
-+
-+	tunnel_filter->ip_type = I40E_TUNNEL_IPTYPE_IPV4;
-+
-+	return 0;
-+}
-+
-+static int
-+i40e_tunnel_node_ipv6_process(void *ctx, const struct rte_flow_item *item __rte_unused,
-+		struct rte_flow_error *error __rte_unused)
-+{
-+	struct i40e_tunnel_ctx *tunnel_ctx = ctx;
-+	struct i40e_tunnel_filter_conf *tunnel_filter = &tunnel_ctx->filter;
-+
-+	tunnel_filter->ip_type = I40E_TUNNEL_IPTYPE_IPV6;
-+
-+	return 0;
-+}
-+
-+static int
-+i40e_tunnel_node_vxlan_validate(const void *ctx __rte_unused,
-+		const struct rte_flow_item *item,
-+		struct rte_flow_error *error)
-+{
-+	const struct rte_flow_item_vxlan *vxlan_spec = item->spec;
-+	const struct rte_flow_item_vxlan *vxlan_mask = item->mask;
-+
-+	/* spec/mask are optional */
-+	if (vxlan_spec == NULL && vxlan_mask == NULL)
-+		return 0;
-+
-+	/* VNI must be fully masked */
-+	if (!CI_FIELD_IS_MASKED(&vxlan_mask->hdr.vni)) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Invalid VXLAN mask");
-+	}
-+	return 0;
-+}
-+
-+static int
-+i40e_tunnel_node_vxlan_process(void *ctx, const struct rte_flow_item *item,
-+		struct rte_flow_error *error __rte_unused)
-+{
-+	const struct rte_flow_item_vxlan *vxlan_spec = item->spec;
-+	const struct rte_flow_item_vxlan *vxlan_mask = item->mask;
-+	struct i40e_tunnel_ctx *tunnel_ctx = ctx;
-+	struct i40e_tunnel_filter_conf *tunnel_filter = &tunnel_ctx->filter;
-+
-+	/* spec/mask are optional */
-+	if (vxlan_spec == NULL && vxlan_mask == NULL)
-+		return 0;
-+
-+	/* Store the VNI and set filter flag */
-+	tunnel_filter->tenant_id = ci_be24_to_cpu(vxlan_spec->hdr.vni);
-+	tunnel_filter->filter_type |= RTE_ETH_TUNNEL_FILTER_TENID;
-+
-+	return 0;
-+}
-+
-+static int
-+i40e_tunnel_node_end_validate(const void *ctx,
-+		const struct rte_flow_item *item,
-+		struct rte_flow_error *error)
-+{
-+	const struct i40e_tunnel_ctx *tunnel_ctx = ctx;
-+	const struct i40e_tunnel_filter_conf *tunnel_filter = &tunnel_ctx->filter;
-+
-+	/* this shouldn't happen but check this just in case */
-+	if (i40e_check_tunnel_filter_type(tunnel_filter->filter_type) != 0) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Invalid tunnel filter configuration");
-+	}
-+	return 0;
-+}
-+
-+static int
-+i40e_tunnel_vxlan_node_end_process(void *ctx, const struct rte_flow_item *item __rte_unused,
-+		struct rte_flow_error *error __rte_unused)
-+{
-+	struct i40e_tunnel_ctx *tunnel_ctx = ctx;
-+	struct i40e_tunnel_filter_conf *tunnel_filter = &tunnel_ctx->filter;
-+
-+	tunnel_filter->tunnel_type = I40E_TUNNEL_TYPE_VXLAN;
-+
-+	return 0;
-+}
-+
-+static const struct flow_graph i40e_tunnel_vxlan_graph = {
-+	.nodes = (struct flow_graph_node[]) {
-+		[I40E_TUNNEL_VXLAN_NODE_START] = {
-+			.name = "START",
-+		},
-+		[I40E_TUNNEL_VXLAN_NODE_OUTER_ETH] = {
-+			.name = "ETH",
-+			.type = RTE_FLOW_ITEM_TYPE_ETH,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY |
-+			               FLOW_GRAPH_NODE_EXPECT_SPEC_MASK,
-+			.validate = i40e_tunnel_node_eth_validate,
-+			.process = i40e_tunnel_node_outer_eth_process,
-+		},
-+		[I40E_TUNNEL_VXLAN_NODE_IPV4] = {
-+			.name = "IPv4",
-+			.type = RTE_FLOW_ITEM_TYPE_IPV4,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
-+			.process = i40e_tunnel_node_ipv4_process,
-+		},
-+		[I40E_TUNNEL_VXLAN_NODE_IPV6] = {
-+			.name = "IPv6",
-+			.type = RTE_FLOW_ITEM_TYPE_IPV6,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
-+			.process = i40e_tunnel_node_ipv6_process,
-+		},
-+		[I40E_TUNNEL_VXLAN_NODE_UDP] = {
-+			.name = "UDP",
-+			.type = RTE_FLOW_ITEM_TYPE_UDP,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
-+		},
-+		[I40E_TUNNEL_VXLAN_NODE_VXLAN] = {
-+			.name = "VXLAN",
-+			.type = RTE_FLOW_ITEM_TYPE_VXLAN,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY |
-+			               FLOW_GRAPH_NODE_EXPECT_SPEC_MASK,
-+			.validate = i40e_tunnel_node_vxlan_validate,
-+			.process = i40e_tunnel_node_vxlan_process,
-+		},
-+		[I40E_TUNNEL_VXLAN_NODE_INNER_ETH] = {
-+			.name = "INNER_ETH",
-+			.type = RTE_FLOW_ITEM_TYPE_ETH,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY |
-+			               FLOW_GRAPH_NODE_EXPECT_SPEC_MASK,
-+			.validate = i40e_tunnel_node_eth_validate,
-+			.process = i40e_tunnel_node_inner_eth_process,
-+		},
-+		[I40E_TUNNEL_VXLAN_NODE_INNER_VLAN] = {
-+			.name = "INNER_VLAN",
-+			.type = RTE_FLOW_ITEM_TYPE_VLAN,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_SPEC_MASK,
-+			.validate = i40e_tunnel_node_vlan_validate,
-+			.process = i40e_tunnel_node_inner_vlan_process,
-+		},
-+		[I40E_TUNNEL_VXLAN_NODE_END] = {
-+			.name = "END",
-+			.type = RTE_FLOW_ITEM_TYPE_END,
-+			.validate = i40e_tunnel_node_end_validate,
-+			.process = i40e_tunnel_vxlan_node_end_process
-+		},
-+	},
-+	.edges = (struct flow_graph_edge[]) {
-+		[I40E_TUNNEL_VXLAN_NODE_START] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_VXLAN_NODE_OUTER_ETH,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_VXLAN_NODE_OUTER_ETH] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_VXLAN_NODE_IPV4,
-+				I40E_TUNNEL_VXLAN_NODE_IPV6,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_VXLAN_NODE_IPV4] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_VXLAN_NODE_UDP,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_VXLAN_NODE_IPV6] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_VXLAN_NODE_UDP,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_VXLAN_NODE_UDP] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_VXLAN_NODE_VXLAN,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_VXLAN_NODE_VXLAN] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_VXLAN_NODE_INNER_ETH,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_VXLAN_NODE_INNER_ETH] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_VXLAN_NODE_INNER_VLAN,
-+				I40E_TUNNEL_VXLAN_NODE_END,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_VXLAN_NODE_INNER_VLAN] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_VXLAN_NODE_END,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+	},
-+};
-+
-+/**
-+ * NVGRE tunnel filter graph implementation
-+ * Pattern: START -> ETH -> (IPv4 | IPv6) -> NVGRE -> ETH -> [VLAN] -> END
-+ */
-+enum i40e_tunnel_nvgre_node_id {
-+	I40E_TUNNEL_NVGRE_NODE_START  = FLOW_GRAPH_NODE_FIRST,
-+	I40E_TUNNEL_NVGRE_NODE_OUTER_ETH,
-+	I40E_TUNNEL_NVGRE_NODE_IPV4,
-+	I40E_TUNNEL_NVGRE_NODE_IPV6,
-+	I40E_TUNNEL_NVGRE_NODE_NVGRE,
-+	I40E_TUNNEL_NVGRE_NODE_INNER_ETH,
-+	I40E_TUNNEL_NVGRE_NODE_INNER_VLAN,
-+	I40E_TUNNEL_NVGRE_NODE_END,
-+	I40E_TUNNEL_NVGRE_NODE_MAX,
-+};
-+
-+static int
-+i40e_tunnel_node_nvgre_validate(const void *ctx __rte_unused,
-+		const struct rte_flow_item *item,
-+		struct rte_flow_error *error)
-+{
-+	const struct rte_flow_item_nvgre *nvgre_spec = item->spec;
-+	const struct rte_flow_item_nvgre *nvgre_mask = item->mask;
-+
-+	/* spec/mask are optional */
-+	if (nvgre_spec == NULL && nvgre_mask == NULL)
-+		return 0;
-+
-+	/* TNI must be fully masked */
-+	if (!CI_FIELD_IS_MASKED(&nvgre_mask->tni)) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM_MASK, item,
-+				"Invalid NVGRE mask");
-+	}
-+	/* protocol must either be unmasked or fully masked */
-+	if (!CI_FIELD_IS_ZERO_OR_MASKED(&nvgre_mask->protocol)) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM_MASK, item,
-+				"Invalid NVGRE mask");
-+	}
-+	/* reserved/version field must either be unmasked or fully masked */
-+	if (!CI_FIELD_IS_ZERO_OR_MASKED(&nvgre_mask->c_k_s_rsvd0_ver)) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM_MASK, item,
-+				"Invalid NVGRE mask");
-+	}
-+	/* if reserved/version field is masked, it must be set to 0x2000 */
-+	if (nvgre_mask->c_k_s_rsvd0_ver &&
-+			nvgre_spec->c_k_s_rsvd0_ver != rte_cpu_to_be_16(0x2000)) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM_MASK, item,
-+				"Invalid NVGRE spec");
-+	}
-+	/* if protocol field is masked, it must be set to 0x6558 */
-+	if (nvgre_mask->protocol &&
-+			nvgre_spec->protocol != rte_cpu_to_be_16(0x6558)) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM_MASK, item,
-+				"Invalid NVGRE spec");
-+	}
-+	return 0;
-+}
-+
-+static int
-+i40e_tunnel_node_nvgre_process(void *ctx, const struct rte_flow_item *item,
-+		struct rte_flow_error *error __rte_unused)
-+{
-+	const struct rte_flow_item_nvgre *nvgre_spec = item->spec;
-+	const struct rte_flow_item_nvgre *nvgre_mask = item->mask;
-+	struct i40e_tunnel_ctx *tunnel_ctx = ctx;
-+	struct i40e_tunnel_filter_conf *tunnel_filter = &tunnel_ctx->filter;
-+
-+	/* spec/mask are optional */
-+	if (nvgre_spec == NULL && nvgre_mask == NULL)
-+		return 0;
-+
-+	/* Store the VNI and set filter flag */
-+	tunnel_filter->tenant_id = ci_be24_to_cpu(nvgre_spec->tni);
-+	tunnel_filter->filter_type |= RTE_ETH_TUNNEL_FILTER_TENID;
-+
-+	return 0;
-+}
-+
-+static int
-+i40e_tunnel_node_nvgre_end_process(void *ctx, const struct rte_flow_item *item __rte_unused,
-+		struct rte_flow_error *error __rte_unused)
-+{
-+	struct i40e_tunnel_ctx *tunnel_ctx = ctx;
-+	struct i40e_tunnel_filter_conf *tunnel_filter = &tunnel_ctx->filter;
-+
-+	tunnel_filter->tunnel_type = I40E_TUNNEL_TYPE_NVGRE;
-+
-+	return 0;
-+}
-+
-+static const struct flow_graph i40e_tunnel_nvgre_graph = {
-+	.nodes = (struct flow_graph_node[]) {
-+		[I40E_TUNNEL_NVGRE_NODE_START] = {
-+			.name = "START",
-+		},
-+		[I40E_TUNNEL_NVGRE_NODE_OUTER_ETH] = {
-+			.name = "ETH",
-+			.type = RTE_FLOW_ITEM_TYPE_ETH,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY |
-+			               FLOW_GRAPH_NODE_EXPECT_SPEC_MASK,
-+			.validate = i40e_tunnel_node_eth_validate,
-+			.process = i40e_tunnel_node_outer_eth_process,
-+		},
-+		[I40E_TUNNEL_NVGRE_NODE_IPV4] = {
-+			.name = "IPv4",
-+			.type = RTE_FLOW_ITEM_TYPE_IPV4,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
-+			.process = i40e_tunnel_node_ipv4_process,
-+		},
-+		[I40E_TUNNEL_NVGRE_NODE_IPV6] = {
-+			.name = "IPv6",
-+			.type = RTE_FLOW_ITEM_TYPE_IPV6,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
-+			.process = i40e_tunnel_node_ipv6_process,
-+		},
-+		[I40E_TUNNEL_NVGRE_NODE_NVGRE] = {
-+			.name = "NVGRE",
-+			.type = RTE_FLOW_ITEM_TYPE_NVGRE,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY |
-+			               FLOW_GRAPH_NODE_EXPECT_SPEC_MASK,
-+			.validate = i40e_tunnel_node_nvgre_validate,
-+			.process = i40e_tunnel_node_nvgre_process,
-+		},
-+		[I40E_TUNNEL_NVGRE_NODE_INNER_ETH] = {
-+			.name = "INNER_ETH",
-+			.type = RTE_FLOW_ITEM_TYPE_ETH,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY |
-+			               FLOW_GRAPH_NODE_EXPECT_SPEC_MASK,
-+			.validate = i40e_tunnel_node_eth_validate,
-+			.process = i40e_tunnel_node_inner_eth_process,
-+		},
-+		[I40E_TUNNEL_NVGRE_NODE_INNER_VLAN] = {
-+			.name = "INNER_VLAN",
-+			.type = RTE_FLOW_ITEM_TYPE_VLAN,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_SPEC_MASK,
-+			.validate = i40e_tunnel_node_vlan_validate,
-+			.process = i40e_tunnel_node_inner_vlan_process,
-+		},
-+		[I40E_TUNNEL_NVGRE_NODE_END] = {
-+			.name = "END",
-+			.type = RTE_FLOW_ITEM_TYPE_END,
-+			.validate = i40e_tunnel_node_end_validate,
-+			.process = i40e_tunnel_node_nvgre_end_process
-+		},
-+	},
-+	.edges = (struct flow_graph_edge[]) {
-+		[I40E_TUNNEL_NVGRE_NODE_START] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_NVGRE_NODE_OUTER_ETH,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_NVGRE_NODE_OUTER_ETH] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_NVGRE_NODE_IPV4,
-+				I40E_TUNNEL_NVGRE_NODE_IPV6,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_NVGRE_NODE_IPV4] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_NVGRE_NODE_NVGRE,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_NVGRE_NODE_IPV6] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_NVGRE_NODE_NVGRE,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_NVGRE_NODE_NVGRE] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_NVGRE_NODE_INNER_ETH,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_NVGRE_NODE_INNER_ETH] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_NVGRE_NODE_INNER_VLAN,
-+				I40E_TUNNEL_NVGRE_NODE_END,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_NVGRE_NODE_INNER_VLAN] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_NVGRE_NODE_END,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+	},
-+};
-+
-+/**
-+ * MPLS tunnel filter graph implementation
-+ * Pattern: START -> ETH -> (IPv4 | IPv6) -> (UDP | GRE) -> MPLS -> END
-+ */
-+enum i40e_tunnel_mpls_node_id {
-+	I40E_TUNNEL_MPLS_NODE_START  = FLOW_GRAPH_NODE_FIRST,
-+	I40E_TUNNEL_MPLS_NODE_ETH,
-+	I40E_TUNNEL_MPLS_NODE_IPV4,
-+	I40E_TUNNEL_MPLS_NODE_IPV6,
-+	I40E_TUNNEL_MPLS_NODE_UDP,
-+	I40E_TUNNEL_MPLS_NODE_GRE,
-+	I40E_TUNNEL_MPLS_NODE_MPLS,
-+	I40E_TUNNEL_MPLS_NODE_END,
-+	I40E_TUNNEL_MPLS_NODE_MAX,
-+};
-+
-+static int
-+i40e_tunnel_mpls_node_udp_process(void *ctx, const struct rte_flow_item *item __rte_unused,
-+		struct rte_flow_error *error __rte_unused)
-+{
-+	struct i40e_tunnel_ctx *tunnel_ctx = ctx;
-+	struct i40e_tunnel_filter_conf *tunnel_filter = &tunnel_ctx->filter;
-+
-+	tunnel_filter->tunnel_type = I40E_TUNNEL_TYPE_MPLSoUDP;
-+
-+	return 0;
-+}
-+
-+static int
-+i40e_tunnel_mpls_node_gre_process(void *ctx, const struct rte_flow_item *item __rte_unused,
-+		struct rte_flow_error *error __rte_unused)
-+{
-+	struct i40e_tunnel_ctx *tunnel_ctx = ctx;
-+	struct i40e_tunnel_filter_conf *tunnel_filter = &tunnel_ctx->filter;
-+
-+	tunnel_filter->tunnel_type = I40E_TUNNEL_TYPE_MPLSoGRE;
-+
-+	return 0;
-+}
-+
-+static int
-+i40e_tunnel_node_mpls_validate(const void *ctx __rte_unused,
-+		const struct rte_flow_item *item,
-+		struct rte_flow_error *error)
-+{
-+	const struct rte_flow_item_mpls *mpls_mask = item->mask;
-+	const uint8_t label_mask[3] = {0xFF, 0xFF, 0xF0};
-+
-+	/* MPLS label and TC must be fully masked */
-+	if (memcmp(mpls_mask->label_tc_s, label_mask, 3)) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Invalid MPLS mask");
-+	}
-+	return 0;
-+}
-+
-+static int
-+i40e_tunnel_node_mpls_process(void *ctx, const struct rte_flow_item *item __rte_unused,
-+		struct rte_flow_error *error __rte_unused)
-+{
-+	const struct rte_flow_item_mpls *mpls_spec = item->spec;
-+	struct i40e_tunnel_ctx *tunnel_ctx = ctx;
-+	struct i40e_tunnel_filter_conf *tunnel_filter = &tunnel_ctx->filter;
-+
-+	tunnel_filter->tenant_id = ci_be24_to_cpu(mpls_spec->label_tc_s) >> 4;
-+
-+	return 0;
-+}
-+
-+static const struct flow_graph i40e_tunnel_mpls_graph = {
-+	.nodes = (struct flow_graph_node[]) {
-+		[I40E_TUNNEL_MPLS_NODE_START] = {
-+			.name = "START",
-+		},
-+		[I40E_TUNNEL_MPLS_NODE_ETH] = {
-+			.name = "ETH",
-+			.type = RTE_FLOW_ITEM_TYPE_ETH,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
-+		},
-+		[I40E_TUNNEL_MPLS_NODE_IPV4] = {
-+			.name = "IPv4",
-+			.type = RTE_FLOW_ITEM_TYPE_IPV4,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
-+			.process = i40e_tunnel_node_ipv4_process,
-+		},
-+		[I40E_TUNNEL_MPLS_NODE_IPV6] = {
-+			.name = "IPv6",
-+			.type = RTE_FLOW_ITEM_TYPE_IPV6,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
-+			.process = i40e_tunnel_node_ipv6_process,
-+		},
-+		[I40E_TUNNEL_MPLS_NODE_UDP] = {
-+			.name = "UDP",
-+			.type = RTE_FLOW_ITEM_TYPE_UDP,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
-+			.process = i40e_tunnel_mpls_node_udp_process,
-+		},
-+		[I40E_TUNNEL_MPLS_NODE_GRE] = {
-+			.name = "GRE",
-+			.type = RTE_FLOW_ITEM_TYPE_GRE,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
-+			.process = i40e_tunnel_mpls_node_gre_process,
-+		},
-+		[I40E_TUNNEL_MPLS_NODE_MPLS] = {
-+			.name = "MPLS",
-+			.type = RTE_FLOW_ITEM_TYPE_MPLS,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_SPEC_MASK,
-+			.validate = i40e_tunnel_node_mpls_validate,
-+			.process = i40e_tunnel_node_mpls_process,
-+		},
-+		[I40E_TUNNEL_MPLS_NODE_END] = {
-+			.name = "END",
-+			.type = RTE_FLOW_ITEM_TYPE_END,
-+		},
-+	},
-+	.edges = (struct flow_graph_edge[]) {
-+		[I40E_TUNNEL_MPLS_NODE_START] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_MPLS_NODE_ETH,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_MPLS_NODE_ETH] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_MPLS_NODE_IPV4,
-+				I40E_TUNNEL_MPLS_NODE_IPV6,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_MPLS_NODE_IPV4] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_MPLS_NODE_UDP,
-+				I40E_TUNNEL_MPLS_NODE_GRE,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_MPLS_NODE_IPV6] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_MPLS_NODE_UDP,
-+				I40E_TUNNEL_MPLS_NODE_GRE,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_MPLS_NODE_UDP] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_MPLS_NODE_MPLS,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_MPLS_NODE_GRE] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_MPLS_NODE_MPLS,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_MPLS_NODE_MPLS] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_MPLS_NODE_END,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+	},
-+};
-+
-+/**
-+ * GTP tunnel filter graph implementation
-+ * Pattern: START -> ETH -> (IPv4 | IPv6) -> UDP -> (GTPC | GTPU) -> END
-+ */
-+enum i40e_tunnel_gtp_node_id {
-+	I40E_TUNNEL_GTP_NODE_START  = FLOW_GRAPH_NODE_FIRST,
-+	I40E_TUNNEL_GTP_NODE_ETH,
-+	I40E_TUNNEL_GTP_NODE_IPV4,
-+	I40E_TUNNEL_GTP_NODE_IPV6,
-+	I40E_TUNNEL_GTP_NODE_UDP,
-+	I40E_TUNNEL_GTP_NODE_GTPC,
-+	I40E_TUNNEL_GTP_NODE_GTPU,
-+	I40E_TUNNEL_GTP_NODE_END,
-+	I40E_TUNNEL_GTP_NODE_MAX,
-+};
-+
-+static int
-+i40e_tunnel_node_gtp_validate(const void *ctx, const struct rte_flow_item *item,
-+		struct rte_flow_error *error)
-+{
-+	const struct rte_flow_item_gtp *gtp_mask = item->mask;
-+	const struct i40e_tunnel_ctx *tunnel_ctx = ctx;
-+	const struct rte_eth_dev_data *dev_data = tunnel_ctx->base.dev_data;
-+	const struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(dev_data->dev_private);
-+
-+	/* does HW support GTP? */
-+	if (!pf->gtp_support) {
++	/* RSS level is not supported */
++	if (rss_act->level != 0) {
 +		return rte_flow_error_set(error, ENOTSUP,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"GTP not supported");
++				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
++				"RSS level is not supported");
 +	}
 +
-+	/* reject unsupported fields */
-+	if (gtp_mask->hdr.gtp_hdr_info ||
-+	    gtp_mask->hdr.msg_type ||
-+	    gtp_mask->hdr.plen) {
++	/* symmetric toeplitz is only supported when a specific pattern is provided */
++	if (rss_act->func == RTE_ETH_HASH_FUNCTION_SYMMETRIC_TOEPLITZ) {
 +		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Invalid GTP mask");
++				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
++				"Symmetric hash function not supported without specific patterns");
 +	}
 +
-+	/* teid must be fully masked */
-+	if (!CI_FIELD_IS_MASKED(&gtp_mask->hdr.teid)) {
++	/*
++	 * When RSS types is not specified in testpmd, it will set up a default
++	 * RSS types value for the flow. Even though no hash engine part calling
++	 * this particular function will use RSS types parameter for anything,
++	 * we cannot reject having it because it is extra effort for testpmd
++	 * user to avoid specifying it.
++	 *
++	 * So, instead, accept types value even though we are not using it for
++	 * anything, but produce a warning for the user.
++	 */
++	if (rss_act->types != 0)
++		PMD_DRV_LOG(WARNING, "RSS types specified but will not be used");
++
++	/* check RSS key length if it is specified */
++	if (rss_act->key_len != 0 && rss_act->key_len != I40E_RSS_KEY_LEN) {
 +		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Invalid GTP mask");
++				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
++				"RSS key length must be 52 bytes");
 +	}
++
 +	return 0;
 +}
 +
 +static int
-+i40e_tunnel_node_gtp_process(void *ctx, const struct rte_flow_item *item,
++i40e_hash_pattern_rss_check(const struct ci_flow_actions *actions,
++		const struct ci_flow_actions_check_param *param __rte_unused,
 +		struct rte_flow_error *error)
 +{
-+	const struct rte_flow_item_gtp *gtp_spec = item->spec;
-+	struct i40e_tunnel_ctx *tunnel_ctx = ctx;
-+	struct i40e_tunnel_filter_conf *tunnel_filter = &tunnel_ctx->filter;
++	const struct rte_flow_action_rss *rss_act = actions->actions[0]->conf;
 +
-+	if (item->type == RTE_FLOW_ITEM_TYPE_GTPC)
-+		tunnel_filter->tunnel_type = I40E_TUNNEL_TYPE_GTPC;
-+	else if (item->type == RTE_FLOW_ITEM_TYPE_GTPU)
-+		tunnel_filter->tunnel_type = I40E_TUNNEL_TYPE_GTPU;
-+	else {
++	/* queue list is not supported */
++	if (rss_act->queue_num != 0) {
 +		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Invalid GTP item type");
++				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
++				"RSS queues not supported when pattern specified");
 +	}
-+	tunnel_filter->tenant_id = rte_be_to_cpu_32(gtp_spec->hdr.teid);
 +
-+	return 0;
-+}
-+
-+static const struct flow_graph i40e_tunnel_gtp_graph = {
-+	.nodes = (struct flow_graph_node[]) {
-+		[I40E_TUNNEL_GTP_NODE_START] = {
-+			.name = "START",
-+		},
-+		[I40E_TUNNEL_GTP_NODE_ETH] = {
-+			.name = "ETH",
-+			.type = RTE_FLOW_ITEM_TYPE_ETH,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
-+		},
-+		[I40E_TUNNEL_GTP_NODE_IPV4] = {
-+			.name = "IPv4",
-+			.type = RTE_FLOW_ITEM_TYPE_IPV4,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
-+			.process = i40e_tunnel_node_ipv4_process,
-+		},
-+		[I40E_TUNNEL_GTP_NODE_IPV6] = {
-+			.name = "IPv6",
-+			.type = RTE_FLOW_ITEM_TYPE_IPV6,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
-+			.process = i40e_tunnel_node_ipv6_process,
-+		},
-+		[I40E_TUNNEL_GTP_NODE_UDP] = {
-+			.name = "UDP",
-+			.type = RTE_FLOW_ITEM_TYPE_UDP,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
-+		},
-+		[I40E_TUNNEL_GTP_NODE_GTPC] = {
-+			.name = "GTPC",
-+			.type = RTE_FLOW_ITEM_TYPE_GTPC,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_SPEC_MASK,
-+			.validate = i40e_tunnel_node_gtp_validate,
-+			.process = i40e_tunnel_node_gtp_process,
-+		},
-+		[I40E_TUNNEL_GTP_NODE_GTPU] = {
-+			.name = "GTPU",
-+			.type = RTE_FLOW_ITEM_TYPE_GTPU,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_SPEC_MASK,
-+			.validate = i40e_tunnel_node_gtp_validate,
-+			.process = i40e_tunnel_node_gtp_process,
-+		},
-+		[I40E_TUNNEL_GTP_NODE_END] = {
-+			.name = "END",
-+			.type = RTE_FLOW_ITEM_TYPE_END,
-+		},
-+	},
-+	.edges = (struct flow_graph_edge[]) {
-+		[I40E_TUNNEL_GTP_NODE_START] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_GTP_NODE_ETH,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_GTP_NODE_ETH] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_GTP_NODE_IPV4,
-+				I40E_TUNNEL_GTP_NODE_IPV6,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_GTP_NODE_IPV4] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_GTP_NODE_UDP,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_GTP_NODE_IPV6] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_GTP_NODE_UDP,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_GTP_NODE_UDP] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_GTP_NODE_GTPC,
-+				I40E_TUNNEL_GTP_NODE_GTPU,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_GTP_NODE_GTPC] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_GTP_NODE_END,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_GTP_NODE_GTPU] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_GTP_NODE_END,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+	},
-+};
-+
-+/**
-+ * L4 tunnel filter graph implementation
-+ * Pattern: START -> ETH -> (IPv4 | IPv6) -> (TCP | UDP | SCTP) -> END
-+ */
-+enum i40e_tunnel_l4_node_id {
-+	I40E_TUNNEL_L4_NODE_START  = FLOW_GRAPH_NODE_FIRST,
-+	I40E_TUNNEL_L4_NODE_ETH,
-+	I40E_TUNNEL_L4_NODE_IPV4,
-+	I40E_TUNNEL_L4_NODE_IPV6,
-+	I40E_TUNNEL_L4_NODE_TCP,
-+	I40E_TUNNEL_L4_NODE_UDP,
-+	I40E_TUNNEL_L4_NODE_SCTP,
-+	I40E_TUNNEL_L4_NODE_END,
-+	I40E_TUNNEL_L4_NODE_MAX,
-+};
-+
-+static int
-+i40e_tunnel_node_tcp_validate(const void *ctx __rte_unused,
-+		const struct rte_flow_item *item,
-+		struct rte_flow_error *error)
-+{
-+	const struct rte_flow_item_tcp *tcp_mask = item->mask;
-+
-+	/* only source/destination ports are supported */
-+	if (tcp_mask->hdr.sent_seq ||
-+	    tcp_mask->hdr.recv_ack ||
-+	    tcp_mask->hdr.data_off ||
-+	    tcp_mask->hdr.tcp_flags ||
-+	    tcp_mask->hdr.rx_win ||
-+	    tcp_mask->hdr.cksum ||
-+	    tcp_mask->hdr.tcp_urp) {
++	/* disallow unsupported hash functions */
++	switch (rss_act->func) {
++	case RTE_ETH_HASH_FUNCTION_SYMMETRIC_TOEPLITZ:
++	case RTE_ETH_HASH_FUNCTION_DEFAULT:
++	case RTE_ETH_HASH_FUNCTION_TOEPLITZ:
++	case RTE_ETH_HASH_FUNCTION_SIMPLE_XOR:
++		break;
++	default:
 +		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Invalid TCP mask");
++				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
++				"RSS hash function not supported when pattern specified");
 +	}
 +
-+	/* src/dst ports have to be fully masked or fully unmasked */
-+	if (!CI_FIELD_IS_ZERO_OR_MASKED(&tcp_mask->hdr.src_port) ||
-+	    !CI_FIELD_IS_ZERO_OR_MASKED(&tcp_mask->hdr.dst_port)) {
++	if (!i40e_hash_validate_rss_types(rss_act->types))
 +		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Invalid TCP mask");
-+	}
-+	/* there can be only one! */
-+	if (tcp_mask->hdr.src_port && tcp_mask->hdr.dst_port) {
++				RTE_FLOW_ERROR_TYPE_ACTION_CONF,
++				rss_act, "RSS types are invalid");
++
++	/* check RSS key length if it is specified */
++	if (rss_act->key_len != 0 && rss_act->key_len != I40E_RSS_KEY_LEN) {
 +		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Invalid TCP mask");
-+	}
-+	return 0;
-+}
-+
-+static int
-+i40e_tunnel_node_tcp_process(void *ctx, const struct rte_flow_item *item,
-+		struct rte_flow_error *error __rte_unused)
-+{
-+	struct i40e_tunnel_ctx *tunnel_ctx = ctx;
-+	struct i40e_tunnel_filter_conf *tunnel_filter = &tunnel_ctx->filter;
-+	const struct rte_flow_item_tcp *tcp_spec = item->spec;
-+	const struct rte_flow_item_tcp *tcp_mask = item->mask;
-+
-+	if (tcp_mask->hdr.src_port) {
-+		tunnel_filter->l4_port_type = I40E_L4_PORT_TYPE_SRC;
-+		tunnel_filter->tenant_id = rte_be_to_cpu_32(tcp_spec->hdr.src_port);
-+	} else if (tcp_mask->hdr.dst_port) {
-+		tunnel_filter->l4_port_type = I40E_L4_PORT_TYPE_DST;
-+		tunnel_filter->tenant_id = rte_be_to_cpu_32(tcp_spec->hdr.dst_port);
-+	}
-+	tunnel_filter->tunnel_type = I40E_CLOUD_TYPE_TCP;
-+
-+	return 0;
-+}
-+
-+static int
-+i40e_tunnel_node_udp_validate(const void *ctx __rte_unused,
-+		const struct rte_flow_item *item,
-+		struct rte_flow_error *error)
-+{
-+	const struct rte_flow_item_udp *udp_mask = item->mask;
-+
-+	/* only source/destination ports are supported */
-+	if (udp_mask->hdr.dgram_len ||
-+	    udp_mask->hdr.dgram_cksum) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Invalid UDP mask");
-+	}
-+
-+	/* src/dst ports have to be fully masked or fully unmasked */
-+	if (!CI_FIELD_IS_ZERO_OR_MASKED(&udp_mask->hdr.src_port) ||
-+	    !CI_FIELD_IS_ZERO_OR_MASKED(&udp_mask->hdr.dst_port)) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Invalid UDP mask");
-+	}
-+	/* there can be only one! */
-+	if (udp_mask->hdr.src_port && udp_mask->hdr.dst_port) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Invalid UDP mask");
-+	}
-+	return 0;
-+}
-+
-+static int
-+i40e_tunnel_node_udp_process(void *ctx, const struct rte_flow_item *item,
-+		struct rte_flow_error *error __rte_unused)
-+{
-+	struct i40e_tunnel_ctx *tunnel_ctx = ctx;
-+	struct i40e_tunnel_filter_conf *tunnel_filter = &tunnel_ctx->filter;
-+	const struct rte_flow_item_udp *udp_spec = item->spec;
-+	const struct rte_flow_item_udp *udp_mask = item->mask;
-+
-+	if (udp_mask->hdr.src_port) {
-+		tunnel_filter->l4_port_type = I40E_L4_PORT_TYPE_SRC;
-+		tunnel_filter->tenant_id = rte_be_to_cpu_32(udp_spec->hdr.src_port);
-+	} else if (udp_mask->hdr.dst_port) {
-+		tunnel_filter->l4_port_type = I40E_L4_PORT_TYPE_DST;
-+		tunnel_filter->tenant_id = rte_be_to_cpu_32(udp_spec->hdr.dst_port);
-+	}
-+	tunnel_filter->tunnel_type = I40E_CLOUD_TYPE_UDP;
-+
-+	return 0;
-+}
-+
-+static int
-+i40e_tunnel_node_sctp_validate(const void *ctx __rte_unused,
-+		const struct rte_flow_item *item,
-+		struct rte_flow_error *error)
-+{
-+	const struct rte_flow_item_sctp *sctp_mask = item->mask;
-+
-+	/* only source/destination ports are supported */
-+	if (sctp_mask->hdr.cksum || sctp_mask->hdr.tag) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Invalid SCTP mask");
-+	}
-+
-+	/* src/dst ports have to be fully masked or fully unmasked */
-+	if (!CI_FIELD_IS_ZERO_OR_MASKED(&sctp_mask->hdr.src_port) ||
-+	    !CI_FIELD_IS_ZERO_OR_MASKED(&sctp_mask->hdr.dst_port)) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Invalid SCTP mask");
-+	}
-+	/* there can be only one! */
-+	if (sctp_mask->hdr.src_port && sctp_mask->hdr.dst_port) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				"Invalid SCTP mask");
-+	}
-+	return 0;
-+}
-+
-+static int
-+i40e_tunnel_node_sctp_process(void *ctx, const struct rte_flow_item *item,
-+		struct rte_flow_error *error __rte_unused)
-+{
-+	struct i40e_tunnel_ctx *tunnel_ctx = ctx;
-+	struct i40e_tunnel_filter_conf *tunnel_filter = &tunnel_ctx->filter;
-+	const struct rte_flow_item_sctp *sctp_spec = item->spec;
-+	const struct rte_flow_item_sctp *sctp_mask = item->mask;
-+
-+	if (sctp_mask->hdr.src_port) {
-+		tunnel_filter->l4_port_type = I40E_L4_PORT_TYPE_SRC;
-+		tunnel_filter->tenant_id = rte_be_to_cpu_32(sctp_spec->hdr.src_port);
-+	} else if (sctp_mask->hdr.dst_port) {
-+		tunnel_filter->l4_port_type = I40E_L4_PORT_TYPE_DST;
-+		tunnel_filter->tenant_id = rte_be_to_cpu_32(sctp_spec->hdr.dst_port);
-+	}
-+	tunnel_filter->tunnel_type = I40E_CLOUD_TYPE_SCTP;
-+
-+	return 0;
-+}
-+
-+static const struct flow_graph i40e_tunnel_l4_graph = {
-+	.nodes = (struct flow_graph_node[]) {
-+		[I40E_TUNNEL_L4_NODE_START] = {
-+			.name = "START",
-+		},
-+		[I40E_TUNNEL_L4_NODE_ETH] = {
-+			.name = "ETH",
-+			.type = RTE_FLOW_ITEM_TYPE_ETH,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
-+		},
-+		[I40E_TUNNEL_L4_NODE_IPV4] = {
-+			.name = "IPv4",
-+			.type = RTE_FLOW_ITEM_TYPE_IPV4,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
-+			.process = i40e_tunnel_node_ipv4_process,
-+		},
-+		[I40E_TUNNEL_L4_NODE_IPV6] = {
-+			.name = "IPv6",
-+			.type = RTE_FLOW_ITEM_TYPE_IPV6,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_EMPTY,
-+			.process = i40e_tunnel_node_ipv6_process,
-+		},
-+		[I40E_TUNNEL_L4_NODE_TCP] = {
-+			.name = "TCP",
-+			.type = RTE_FLOW_ITEM_TYPE_TCP,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_SPEC_MASK,
-+			.validate = i40e_tunnel_node_tcp_validate,
-+			.process = i40e_tunnel_node_tcp_process,
-+		},
-+		[I40E_TUNNEL_L4_NODE_UDP] = {
-+			.name = "UDP",
-+			.type = RTE_FLOW_ITEM_TYPE_UDP,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_SPEC_MASK,
-+			.validate = i40e_tunnel_node_udp_validate,
-+			.process = i40e_tunnel_node_udp_process,
-+		},
-+		[I40E_TUNNEL_L4_NODE_SCTP] = {
-+			.name = "SCTP",
-+			.type = RTE_FLOW_ITEM_TYPE_SCTP,
-+			.constraints = FLOW_GRAPH_NODE_EXPECT_SPEC_MASK,
-+			.validate = i40e_tunnel_node_sctp_validate,
-+			.process = i40e_tunnel_node_sctp_process,
-+		},
-+		[I40E_TUNNEL_L4_NODE_END] = {
-+			.name = "END",
-+			.type = RTE_FLOW_ITEM_TYPE_END,
-+		},
-+	},
-+	.edges = (struct flow_graph_edge[]) {
-+		[I40E_TUNNEL_L4_NODE_START] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_L4_NODE_ETH,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_L4_NODE_ETH] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_L4_NODE_IPV4,
-+				I40E_TUNNEL_L4_NODE_IPV6,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_L4_NODE_IPV4] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_L4_NODE_TCP,
-+				I40E_TUNNEL_L4_NODE_UDP,
-+				I40E_TUNNEL_L4_NODE_SCTP,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_L4_NODE_IPV6] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_L4_NODE_TCP,
-+				I40E_TUNNEL_L4_NODE_UDP,
-+				I40E_TUNNEL_L4_NODE_SCTP,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_L4_NODE_TCP] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_L4_NODE_END,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_L4_NODE_UDP] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_L4_NODE_END,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+		[I40E_TUNNEL_L4_NODE_SCTP] = {
-+			.next = (size_t[]) {
-+				I40E_TUNNEL_L4_NODE_END,
-+				FLOW_GRAPH_NODE_EDGE_END
-+			}
-+		},
-+	},
-+};
-+
-+static int
-+i40e_tunnel_action_check(const struct ci_flow_actions *actions,
-+		const struct ci_flow_actions_check_param *param,
-+		struct rte_flow_error *error)
-+{
-+	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(param->driver_ctx);
-+	const struct rte_flow_action *first, *second;
-+	const struct rte_flow_action_queue *act_q;
-+	bool is_to_vf = false;
-+
-+	first = actions->actions[0];
-+	/* can be NULL */
-+	second = actions->actions[1];
-+
-+	/* first action must be PF or VF */
-+	if (first->type == RTE_FLOW_ACTION_TYPE_VF) {
-+		const struct rte_flow_action_vf *vf = first->conf;
-+		if (vf->id >= pf->vf_num) {
-+			return rte_flow_error_set(error, EINVAL,
-+					RTE_FLOW_ERROR_TYPE_ACTION, first,
-+					"Invalid VF ID for tunnel filter");
-+		}
-+		is_to_vf = true;
-+	} else if (first->type != RTE_FLOW_ACTION_TYPE_PF) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ACTION, first,
-+				"Unsupported action");
-+	}
-+
-+	/* check if second action is QUEUE */
-+	if (second == NULL)
-+		return 0;
-+
-+	if (second->type != RTE_FLOW_ACTION_TYPE_QUEUE) {
-+		return rte_flow_error_set(error, EINVAL,
-+					  RTE_FLOW_ERROR_TYPE_ACTION, second,
-+					  "Unsupported action");
-+	}
-+
-+	act_q = second->conf;
-+	/* check queue ID for PF flow */
-+	if (!is_to_vf && act_q->index >= pf->dev_data->nb_rx_queues) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ACTION_CONF, act_q,
-+				"Invalid queue ID for tunnel filter");
-+	}
-+	/* check queue ID for VF flow */
-+	if (is_to_vf && act_q->index >= pf->vf_nb_qps) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ACTION_CONF, act_q,
-+				"Invalid queue ID for tunnel filter");
++				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
++				"RSS key length must be 52 bytes");
 +	}
 +
 +	return 0;
 +}
 +
 +static int
-+i40e_tunnel_ctx_init(const struct rte_flow_action actions[],
++i40e_hash_pattern_ctx_init(const struct rte_flow_action actions[],
 +		const struct rte_flow_attr *attr,
 +		struct ci_flow_engine_ctx *ctx,
 +		struct rte_flow_error *error)
 +{
-+	struct i40e_tunnel_ctx *tunnel_ctx = (struct i40e_tunnel_ctx *)ctx;
++	struct i40e_hash_ctx *hash_ctx = (struct i40e_hash_ctx *)ctx;
 +	struct ci_flow_actions parsed_actions = {0};
-+	struct ci_flow_actions_check_param ac_param = {
++	struct ci_flow_actions_check_param param = {
 +		.allowed_types = (enum rte_flow_action_type[]) {
-+			RTE_FLOW_ACTION_TYPE_QUEUE,
-+			RTE_FLOW_ACTION_TYPE_PF,
-+			RTE_FLOW_ACTION_TYPE_VF,
++			RTE_FLOW_ACTION_TYPE_RSS,
 +			RTE_FLOW_ACTION_TYPE_END
 +		},
-+		.max_actions = 2,
-+		.check = i40e_tunnel_action_check,
-+		.driver_ctx = ctx->dev_data->dev_private,
++		.max_actions = 1,
++		.check = i40e_hash_pattern_rss_check,
 +	};
-+	const struct rte_flow_action *first, *second;
-+	const struct rte_flow_action_queue *act_q;
++	const struct rte_flow_action_rss *rss_act;
 +	int ret;
 +
 +	ret = ci_flow_check_attr(attr, NULL, error);
-+	if (ret)
++	if (ret != 0)
 +		return ret;
 +
-+	ret = ci_flow_check_actions(actions, &ac_param, &parsed_actions, error);
-+	if (ret)
++	ret = ci_flow_check_actions(actions, &param, &parsed_actions, error);
++	if (ret != 0)
 +		return ret;
 +
-+	first = parsed_actions.actions[0];
-+	/* can be NULL */
-+	second = parsed_actions.actions[1];
++	rss_act = parsed_actions.actions[0]->conf;
 +
-+	if (first->type == RTE_FLOW_ACTION_TYPE_VF) {
-+		const struct rte_flow_action_vf *vf = first->conf;
-+		tunnel_ctx->filter.vf_id = vf->id;
-+		tunnel_ctx->filter.is_to_vf = 1;
-+	} else if (first->type == RTE_FLOW_ACTION_TYPE_PF) {
-+		tunnel_ctx->filter.is_to_vf = 0;
++	hash_ctx->rss_conf.symmetric_enable =
++			rss_act->func == RTE_ETH_HASH_FUNCTION_SYMMETRIC_TOEPLITZ;
++	hash_ctx->rss_conf.func = rss_act->func;
++	hash_ctx->rss_conf.types = rss_act->types;
++
++	if (rss_act->key_len != 0) {
++		/* key length already checked */
++		memcpy(hash_ctx->rss_conf.key, rss_act->key, I40E_RSS_KEY_LEN);
++		hash_ctx->rss_conf.key_len = I40E_RSS_KEY_LEN;
 +	}
 +
-+	/* check if second action is QUEUE */
-+	if (second == NULL)
-+		return 0;
++	hash_ctx->rss_conf.inset = i40e_hash_get_inset(rss_act->types,
++			hash_ctx->rss_conf.symmetric_enable);
 +
-+	act_q = second->conf;
-+	tunnel_ctx->filter.queue_id = act_q->index;
++	return 0;
++}
++
++static uint64_t
++i40e_hash_get_x722_ext_pctypes(uint8_t match_pctype)
++{
++	uint64_t pctypes = 0;
++
++	switch (match_pctype) {
++	case I40E_FILTER_PCTYPE_NONF_IPV4_TCP:
++		pctypes = BIT_ULL(I40E_FILTER_PCTYPE_NONF_IPV4_TCP_SYN_NO_ACK);
++		break;
++
++	case I40E_FILTER_PCTYPE_NONF_IPV4_UDP:
++		pctypes = BIT_ULL(I40E_FILTER_PCTYPE_NONF_UNICAST_IPV4_UDP) |
++			  BIT_ULL(I40E_FILTER_PCTYPE_NONF_MULTICAST_IPV4_UDP);
++		break;
++
++	case I40E_FILTER_PCTYPE_NONF_IPV6_TCP:
++		pctypes = BIT_ULL(I40E_FILTER_PCTYPE_NONF_IPV6_TCP_SYN_NO_ACK);
++		break;
++
++	case I40E_FILTER_PCTYPE_NONF_IPV6_UDP:
++		pctypes = BIT_ULL(I40E_FILTER_PCTYPE_NONF_UNICAST_IPV6_UDP) |
++			  BIT_ULL(I40E_FILTER_PCTYPE_NONF_MULTICAST_IPV6_UDP);
++		break;
++	}
++
++	return pctypes;
++}
++
++static int
++i40e_hash_translate_gtp_inset(struct i40e_rte_flow_rss_conf *rss_conf,
++			      struct rte_flow_error *error)
++{
++	if (rss_conf->inset &
++	    (I40E_INSET_IPV4_SRC | I40E_INSET_IPV6_SRC |
++	    I40E_INSET_DST_PORT | I40E_INSET_SRC_PORT))
++		return rte_flow_error_set(error, ENOTSUP,
++					  RTE_FLOW_ERROR_TYPE_ACTION_CONF,
++					  NULL,
++					  "Only support external destination IP");
++
++	if (rss_conf->inset & I40E_INSET_IPV4_DST)
++		rss_conf->inset = (rss_conf->inset & ~I40E_INSET_IPV4_DST) |
++				  I40E_INSET_TUNNEL_IPV4_DST;
++
++	if (rss_conf->inset & I40E_INSET_IPV6_DST)
++		rss_conf->inset = (rss_conf->inset & ~I40E_INSET_IPV6_DST) |
++				  I40E_INSET_TUNNEL_IPV6_DST;
 +
 +	return 0;
 +}
 +
 +static int
-+i40e_tunnel_ctx_to_flow(const struct ci_flow_engine_ctx *ctx,
-+		struct ci_flow *flow,
++i40e_hash_pattern_ctx_finalize(struct ci_flow_engine_ctx *ctx,
 +		struct rte_flow_error *error)
 +{
-+	const struct i40e_tunnel_ctx *tunnel_ctx = (const struct i40e_tunnel_ctx *)ctx;
-+	struct i40e_tunnel_flow *tunnel_flow = (struct i40e_tunnel_flow *)flow;
-+	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(flow->dev_data->dev_private);
-+	int ret;
++	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(ctx->dev_data->dev_private);
++	struct i40e_hw *hw = I40E_DEV_PRIVATE_TO_HW(ctx->dev_data->dev_private);
++	struct i40e_hash_ctx *hash_ctx = (struct i40e_hash_ctx *)ctx;
++	const struct hash_type_to_pattern {
++		uint32_t pctype;
++		uint64_t valid_rss_flags;
++	} valid_pctype_to_pattern[] = {
++		/* Ether */
++		{I40E_FILTER_PCTYPE_L2_PAYLOAD, I40E_HASH_L2_RSS_MASK | RTE_ETH_RSS_L2_PAYLOAD},
++		/* IP */
++		{I40E_FILTER_PCTYPE_NONF_IPV4_OTHER, RTE_ETH_RSS_NONFRAG_IPV4_OTHER | I40E_HASH_IPV4_L23_RSS_MASK},
++		{I40E_FILTER_PCTYPE_NONF_IPV6_OTHER, RTE_ETH_RSS_NONFRAG_IPV6_OTHER | I40E_HASH_IPV6_L23_RSS_MASK},
++		/* IP fragmented */
++		{I40E_FILTER_PCTYPE_FRAG_IPV4, RTE_ETH_RSS_FRAG_IPV4 | I40E_HASH_IPV4_L23_RSS_MASK},
++		{I40E_FILTER_PCTYPE_FRAG_IPV6, RTE_ETH_RSS_FRAG_IPV6 | I40E_HASH_IPV6_L23_RSS_MASK},
++		/* TCP */
++		{I40E_FILTER_PCTYPE_NONF_IPV4_TCP, RTE_ETH_RSS_NONFRAG_IPV4_TCP | I40E_HASH_IPV4_L234_RSS_MASK},
++		{I40E_FILTER_PCTYPE_NONF_IPV6_TCP, RTE_ETH_RSS_NONFRAG_IPV6_TCP | I40E_HASH_IPV6_L234_RSS_MASK},
++		/* UDP */
++		{I40E_FILTER_PCTYPE_NONF_IPV4_UDP, RTE_ETH_RSS_NONFRAG_IPV4_UDP | I40E_HASH_IPV4_L234_RSS_MASK},
++		{I40E_FILTER_PCTYPE_NONF_IPV6_UDP, RTE_ETH_RSS_NONFRAG_IPV6_UDP | I40E_HASH_IPV6_L234_RSS_MASK},
++		/* SCTP */
++		{I40E_FILTER_PCTYPE_NONF_IPV4_SCTP, RTE_ETH_RSS_NONFRAG_IPV4_SCTP | I40E_HASH_IPV4_L234_RSS_MASK},
++		{I40E_FILTER_PCTYPE_NONF_IPV6_SCTP, RTE_ETH_RSS_NONFRAG_IPV6_SCTP | I40E_HASH_IPV6_L234_RSS_MASK},
++		/* AH */
++		{I40E_CUSTOMIZED_AH_IPV4, RTE_ETH_RSS_AH},
++		{I40E_CUSTOMIZED_AH_IPV6, RTE_ETH_RSS_AH},
++		/* L2TPV3 */
++		{I40E_CUSTOMIZED_IPV4_L2TPV3, RTE_ETH_RSS_L2TPV3},
++		{I40E_CUSTOMIZED_IPV6_L2TPV3, RTE_ETH_RSS_L2TPV3},
++		/* ESP */
++		{I40E_CUSTOMIZED_ESP_IPV4, RTE_ETH_RSS_ESP},
++		{I40E_CUSTOMIZED_ESP_IPV6, RTE_ETH_RSS_ESP},
++		{I40E_CUSTOMIZED_ESP_IPV4_UDP, RTE_ETH_RSS_ESP},
++		{I40E_CUSTOMIZED_ESP_IPV6_UDP, RTE_ETH_RSS_ESP},
++		/* GTPC */
++		{I40E_CUSTOMIZED_GTPC, I40E_HASH_IPV4_L234_RSS_MASK},
++		{I40E_CUSTOMIZED_GTPC, I40E_HASH_IPV6_L234_RSS_MASK},
++		/* GTPU */
++		{I40E_CUSTOMIZED_GTPU, I40E_HASH_IPV4_L234_RSS_MASK},
++		{I40E_CUSTOMIZED_GTPU, I40E_HASH_IPV6_L234_RSS_MASK},
++		/* IP over GTPU */
++		{I40E_CUSTOMIZED_GTPU_IPV4, RTE_ETH_RSS_GTPU},
++		{I40E_CUSTOMIZED_GTPU_IPV6, RTE_ETH_RSS_GTPU},
++	};
++	size_t i;
 +
-+	/* copy filter configuration from context to flow */
-+	tunnel_flow->filter = tunnel_ctx->filter;
++	for (i = 0; i < RTE_DIM(valid_pctype_to_pattern); i++) {
++		uint32_t pctype = valid_pctype_to_pattern[i].pctype;
++		uint64_t flags = valid_pctype_to_pattern[i].valid_rss_flags;
 +
-+	/* compute hash input */
-+	ret = i40e_tunnel_filter_match_key_get(pf, &tunnel_flow->filter,
-+			&tunnel_flow->match_key);
-+	if (ret != 0) {
-+		return rte_flow_error_set(error, -ret,
-+				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+				"Failed to build tunnel filter input");
++		if (pctype != hash_ctx->pctype)
++			continue;
++
++		/* find if our ptype works with specified RSS types */
++		if ((hash_ctx->rss_conf.types & ~flags) != 0) {
++			return rte_flow_error_set(error, EINVAL,
++					RTE_FLOW_ERROR_TYPE_ACTION_CONF, NULL,
++					"Some RSS types are not supported for the specified pattern");
++		}
++
++		/* for customized pctypes, find if it's supported */
++		if (hash_ctx->customized_ptype) {
++			struct i40e_customized_pctype *ct;
++
++			ct = i40e_find_customized_pctype(pf, pctype);
++
++			if (ct == NULL || !ct->valid) {
++				return rte_flow_error_set(error, EINVAL,
++						RTE_FLOW_ERROR_TYPE_ACTION_CONF, NULL,
++						"Specified pattern is not supported by the device");
++			}
++			hash_ctx->rss_conf.config_pctypes |= BIT_ULL(ct->pctype);
++
++			/* GTPC/GTPU endpoints require special handling */
++			return i40e_hash_translate_gtp_inset(&hash_ctx->rss_conf, error);
++		} else {
++			hash_ctx->rss_conf.config_pctypes |= BIT_ULL(pctype);
++
++			/* X722 needs special handling */
++			if (hw->mac.type == I40E_MAC_X722) {
++				uint64_t types = i40e_hash_get_x722_ext_pctypes(pctype);
++				hash_ctx->rss_conf.config_pctypes |= types;
++			}
++		}
 +	}
 +
 +	return 0;
 +}
 +
 +static int
-+i40e_tunnel_flow_register(struct ci_flow *flow, struct rte_flow_error *error)
++i40e_hash_queue_region_check(const struct ci_flow_actions *actions,
++		const struct ci_flow_actions_check_param *param,
++		struct rte_flow_error *error)
 +{
-+	struct i40e_tunnel_flow *tunnel_flow = (struct i40e_tunnel_flow *)flow;
-+	struct i40e_tunnel_priv *priv = flow->engine_priv;
-+	struct i40e_tunnel_state *state = priv->state;
++	const struct rte_flow_action_rss *rss_act = actions->actions[0]->conf;
++	struct rte_eth_dev_data *dev_data = param->driver_ctx;
++	const struct i40e_pf *pf;
++	uint64_t hash_queues;
 +	int ret;
 +
-+	if (rte_hash_lookup(state->hash_table, &tunnel_flow->match_key) >= 0) {
-+		return rte_flow_error_set(error, EEXIST,
-+				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+				"Conflict with existing tunnel rule");
++	ret = i40e_hash_validate_rss_common(rss_act, error);
++	if (ret)
++		return ret;
++
++	RTE_BUILD_BUG_ON(sizeof(hash_queues) != sizeof(pf->hash_enabled_queues));
++
++	/* having RSS key is not supported */
++	if (rss_act->key != NULL) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
++				"RSS key not supported");
 +	}
 +
-+	ret = rte_hash_add_key(state->hash_table, &tunnel_flow->match_key);
-+	if (ret < 0) {
-+		return rte_flow_error_set(error, -ret,
-+				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+				"Tunnel filter table is full");
++	/* queue region must be specified */
++	if (rss_act->queue_num == 0) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
++				"RSS queues missing");
++	}
++
++	/* queue region must be power of two */
++	if (!rte_is_power_of_2(rss_act->queue_num)) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
++				"RSS queue number must be power of two");
++	}
++
++	/* generic checks already filtered out discontiguous/non-unique RSS queues */
++
++	/* queues must not exceed maximum queues per traffic class */
++	if (rss_act->queue[rss_act->queue_num - 1] >= I40E_MAX_Q_PER_TC) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
++				"Invalid RSS queue index");
++	}
++
++	/* queues must be in LUT */
++	pf = I40E_DEV_PRIVATE_TO_PF(dev_data->dev_private);
++	hash_queues = (BIT_ULL(rss_act->queue[0] + rss_act->queue_num) - 1) &
++			~(BIT_ULL(rss_act->queue[0]) - 1);
++
++	if (hash_queues & ~pf->hash_enabled_queues) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ACTION_CONF,
++				rss_act, "Some queues are not in LUT");
 +	}
 +
 +	return 0;
 +}
 +
 +static int
-+i40e_tunnel_flow_unregister(struct ci_flow *flow, struct rte_flow_error *error)
++i40e_hash_vlan_ctx_init(const struct rte_flow_action actions[],
++		const struct rte_flow_attr *attr,
++		struct ci_flow_engine_ctx *ctx,
++		struct rte_flow_error *error)
 +{
-+	struct i40e_tunnel_flow *tunnel_flow = (struct i40e_tunnel_flow *)flow;
-+	struct i40e_tunnel_priv *priv = flow->engine_priv;
-+	struct i40e_tunnel_state *state = priv->state;
++	struct i40e_hash_ctx *hash_ctx = (struct i40e_hash_ctx *)ctx;
++	struct ci_flow_actions parsed_actions = {0};
++	struct ci_flow_actions_check_param param = {
++		.allowed_types = (enum rte_flow_action_type[]) {
++			RTE_FLOW_ACTION_TYPE_RSS,
++			RTE_FLOW_ACTION_TYPE_END
++		},
++		.max_actions = 1,
++		.driver_ctx = ctx->dev_data,
++		.check = i40e_hash_queue_region_check,
++		.rss_queues_contig = true,
++	};
++	const struct rte_flow_action_rss *rss_act;
++	int ret;
 +
-+	if (rte_hash_del_key(state->hash_table, &tunnel_flow->match_key) < 0) {
-+		return rte_flow_error_set(error, ENOENT,
++	ret = ci_flow_check_attr(attr, NULL, error);
++	if (ret != 0)
++		return ret;
++
++	ret = ci_flow_check_actions(actions, &param, &parsed_actions, error);
++	if (ret != 0)
++		return ret;
++
++	rss_act = parsed_actions.actions[0]->conf;
++	hash_ctx->rss_conf.func = rss_act->func;
++	hash_ctx->rss_conf.region_queue_num = rss_act->queue_num;
++	hash_ctx->rss_conf.region_queue_start = rss_act->queue[0];
++
++	return 0;
++}
++
++static int
++i40e_hash_queue_list_check(const struct ci_flow_actions *actions,
++		const struct ci_flow_actions_check_param *param,
++		struct rte_flow_error *error)
++{
++	const struct rte_flow_action_rss *rss_act = actions->actions[0]->conf;
++	struct rte_eth_dev_data *dev_data = param->driver_ctx;
++	struct i40e_pf *pf;
++	struct i40e_hw *hw;
++	uint16_t max_queue;
++	bool has_queue, has_key;
++	int ret;
++
++	ret = i40e_hash_validate_rss_common(rss_act, error);
++	if (ret)
++		return ret;
++
++	has_queue = rss_act->queue != NULL;
++	has_key = rss_act->key != NULL;
++
++	/* if we have queues, we must not have key */
++	if (has_queue && has_key) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
++				"RSS key for queue region is not supported");
++	}
++
++	/* if there are no queues, no further checks needed */
++	if (!has_queue)
++		return 0;
++
++	/* check queue number limits */
++	hw = I40E_DEV_PRIVATE_TO_HW(dev_data->dev_private);
++	if (rss_act->queue_num > hw->func_caps.rss_table_size) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ACTION_CONF,
++				rss_act, "Too many RSS queues");
++	}
++
++	pf = I40E_DEV_PRIVATE_TO_PF(dev_data->dev_private);
++	if (pf->dev_data->dev_conf.rxmode.mq_mode & RTE_ETH_MQ_RX_VMDQ_FLAG)
++		max_queue = i40e_pf_calc_configured_queues_num(pf);
++	else
++		max_queue = pf->dev_data->nb_rx_queues;
++
++	max_queue = RTE_MIN(max_queue, I40E_MAX_Q_PER_TC);
++
++	/* we know RSS queues are monotonic so we only need to check last queue */
++	if (rss_act->queue[rss_act->queue_num - 1] >= max_queue) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
++				"Invalid RSS queue");
++	}
++
++	return 0;
++}
++
++static int
++i40e_hash_empty_ctx_init(const struct rte_flow_action actions[],
++		const struct rte_flow_attr *attr,
++		struct ci_flow_engine_ctx *ctx,
++		struct rte_flow_error *error)
++{
++	struct i40e_hash_ctx *hash_ctx = (struct i40e_hash_ctx *)ctx;
++	struct ci_flow_actions parsed_actions = {0};
++	struct ci_flow_actions_check_param param = {
++		.allowed_types = (enum rte_flow_action_type[]) {
++			RTE_FLOW_ACTION_TYPE_RSS,
++			RTE_FLOW_ACTION_TYPE_END
++		},
++		.max_actions = 1,
++		.driver_ctx = ctx->dev_data,
++		.check = i40e_hash_queue_list_check,
++	};
++	const struct rte_flow_action_rss *rss_act;
++	int ret;
++
++	ret = ci_flow_check_attr(attr, NULL, error);
++	if (ret != 0)
++		return ret;
++
++	ret = ci_flow_check_actions(actions, &param, &parsed_actions, error);
++	if (ret != 0)
++		return ret;
++
++	rss_act = parsed_actions.actions[0]->conf;
++	hash_ctx->rss_conf.func = rss_act->func;
++
++	/* if we have queues, copy them */
++	if (rss_act->queue_num > 0) {
++		memcpy(hash_ctx->rss_conf.queue,
++				rss_act->queue,
++				rss_act->queue_num * sizeof(hash_ctx->rss_conf.queue[0]));
++		hash_ctx->rss_conf.queue_num = rss_act->queue_num;
++	/* if we have key, copy it */
++	} else if (rss_act->key_len > 0) {
++		/* key length already checked */
++		memcpy(hash_ctx->rss_conf.key, rss_act->key, I40E_RSS_KEY_LEN);
++		hash_ctx->rss_conf.key_len = I40E_RSS_KEY_LEN;
++	}
++
++	return 0;
++}
++
++static int
++i40e_hash_ctx_to_flow(const struct ci_flow_engine_ctx *ctx,
++		struct ci_flow *flow,
++		struct rte_flow_error *error __rte_unused)
++{
++	const struct i40e_hash_ctx *hash_ctx = (const struct i40e_hash_ctx *)ctx;
++	struct i40e_flow_engine_hash_flow *hash_flow = (struct i40e_flow_engine_hash_flow *)flow;
++
++	memcpy(&hash_flow->rss_conf, &hash_ctx->rss_conf, sizeof(hash_flow->rss_conf));
++
++	return 0;
++}
++
++/*
++ * Strip from an earlier (prev) filter's owned reset flags anything that a
++ * later (ref) filter now also owns, since the later one takes over ownership
++ * of overlapping HW state.
++ */
++static void
++i40e_hash_invalidate_prev(const struct i40e_rte_flow_rss_conf *ref_conf,
++		const struct i40e_rss_filter_data *ref_data,
++		const struct i40e_rte_flow_rss_conf *prev_conf,
++		struct i40e_rss_filter_data *prev_data)
++{
++	uint32_t reset_flags = prev_data->misc_reset_flags;
++
++	prev_data->misc_reset_flags &= ~ref_data->misc_reset_flags;
++
++	if ((reset_flags & I40E_HASH_FLOW_RESET_FLAG_REGION) &&
++	    (ref_data->misc_reset_flags & I40E_HASH_FLOW_RESET_FLAG_REGION) &&
++	    (prev_conf->region_queue_start != ref_conf->region_queue_start ||
++	     prev_conf->region_queue_num != ref_conf->region_queue_num))
++		prev_data->misc_reset_flags |= I40E_HASH_FLOW_RESET_FLAG_REGION;
++
++	prev_data->reset_config_pctypes &= ~ref_data->reset_config_pctypes;
++	prev_data->reset_symmetric_pctypes &= ~ref_data->reset_symmetric_pctypes;
++}
++
++/*
++ * Recompute the owned-reset-flags metadata for every currently registered
++ * RSS flow. For example, flow A sets up RSS key, flow B sets up RSS hash
++ * function, and flow C sets up a different RSS key.
++ *
++ * When flow C registers, we need to make sure that flow A's reset flags do
++ * not include RSS key, because that is now owned by flow C. This is to make
++ * sure that if flow A is removed, RSS key configuration is not affected.
++ */
++static void
++i40e_hash_reconstruct_metadata(struct i40e_rss_state *state)
++{
++	struct i40e_rss_flow_node *node, *prev;
++
++	TAILQ_FOREACH(node, &state->list, next) {
++		struct i40e_flow_engine_hash_flow *hash_flow =
++				(struct i40e_flow_engine_hash_flow *)node->flow;
++
++		i40e_hash_compute_reset_flags(&hash_flow->rss_conf, &node->filter_data);
++	}
++
++	TAILQ_FOREACH(node, &state->list, next) {
++		struct i40e_flow_engine_hash_flow *hash_flow =
++				(struct i40e_flow_engine_hash_flow *)node->flow;
++
++		TAILQ_FOREACH(prev, &state->list, next) {
++			struct i40e_flow_engine_hash_flow *prev_hash_flow;
++
++			if (prev == node)
++				break;
++
++			prev_hash_flow = (struct i40e_flow_engine_hash_flow *)prev->flow;
++			i40e_hash_invalidate_prev(&hash_flow->rss_conf, &node->filter_data,
++					&prev_hash_flow->rss_conf, &prev->filter_data);
++		}
++	}
++}
++
++static int
++i40e_hash_flow_register(struct ci_flow *flow, struct rte_flow_error *error)
++{
++	struct i40e_flow_engine_hash_flow *hash_flow = (struct i40e_flow_engine_hash_flow *)flow;
++	struct i40e_hash_priv *priv = flow->engine_priv;
++	struct i40e_rss_state *state = priv->state;
++	struct i40e_rss_flow_node *node;
++
++	node = rte_zmalloc("i40e_rss_flow_node", sizeof(*node), 0);
++	if (node == NULL) {
++		return rte_flow_error_set(error, ENOMEM,
 +				RTE_FLOW_ERROR_TYPE_HANDLE, flow,
-+				"Tunnel filter is missing from the filter table");
++				"Failed to allocate RSS flow tracking node");
 +	}
++
++	node->flow = flow;
++	hash_flow->node = node;
++	TAILQ_INSERT_TAIL(&state->list, node, next);
++
++	i40e_hash_reconstruct_metadata(state);
 +
 +	return 0;
 +}
 +
 +static int
-+i40e_tunnel_flow_install(struct ci_flow *flow, struct rte_flow_error *error)
++i40e_hash_flow_unregister(struct ci_flow *flow, struct rte_flow_error *error __rte_unused)
 +{
++	struct i40e_flow_engine_hash_flow *hash_flow = (struct i40e_flow_engine_hash_flow *)flow;
++	struct i40e_hash_priv *priv = flow->engine_priv;
++	struct i40e_rss_state *state = priv->state;
++
++	TAILQ_REMOVE(&state->list, hash_flow->node, next);
++	rte_free(hash_flow->node);
++	hash_flow->node = NULL;
++
++	i40e_hash_reconstruct_metadata(state);
++
++	return 0;
++}
++
++static int
++i40e_hash_flow_install(struct ci_flow *flow,
++		struct rte_flow_error *error)
++{
++	struct i40e_flow_engine_hash_flow *hash_flow = (struct i40e_flow_engine_hash_flow *)flow;
 +	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(flow->dev_data->dev_private);
-+	struct i40e_tunnel_flow *tunnel_flow = (struct i40e_tunnel_flow *)flow;
 +	int ret;
 +
-+	ret = i40e_tunnel_filter_program(pf, &tunnel_flow->filter, 1);
++	ret = i40e_hash_program_hw(pf, &hash_flow->rss_conf);
 +	if (ret) {
 +		return rte_flow_error_set(error, -ret,
-+				RTE_FLOW_ERROR_TYPE_HANDLE, flow,
-+				"Failed to install tunnel filter");
++				RTE_FLOW_ERROR_TYPE_UNSPECIFIED, flow,
++				"Failed to program hash filter");
 +	}
 +	return 0;
 +}
 +
 +static int
-+i40e_tunnel_flow_uninstall(struct ci_flow *flow, struct rte_flow_error *error)
++i40e_hash_flow_uninstall(struct ci_flow *flow,
++		struct rte_flow_error *error)
 +{
++	struct i40e_flow_engine_hash_flow *hash_flow = (struct i40e_flow_engine_hash_flow *)flow;
 +	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(flow->dev_data->dev_private);
-+	struct i40e_tunnel_flow *tunnel_flow = (struct i40e_tunnel_flow *)flow;
 +	int ret;
 +
-+	ret = i40e_tunnel_filter_program(pf, &tunnel_flow->filter, 0);
++	ret = i40e_hash_deprogram_hw(pf, &hash_flow->node->filter_data);
 +	if (ret) {
 +		return rte_flow_error_set(error, -ret,
-+				RTE_FLOW_ERROR_TYPE_HANDLE, flow,
-+				"Failed to uninstall tunnel filter");
++				RTE_FLOW_ERROR_TYPE_UNSPECIFIED, flow,
++				"Failed to reset hash filter");
 +	}
 +	return 0;
 +}
 +
 +static int
-+i40e_tunnel_flow_engine_init(const struct ci_flow_engine *engine __rte_unused,
++i40e_hash_flow_query(struct ci_flow *flow,
++		const struct rte_flow_action *action,
++		void *data,
++		struct rte_flow_error *error __rte_unused)
++{
++	struct i40e_flow_engine_hash_flow *hash_flow = (struct i40e_flow_engine_hash_flow *)flow;
++	struct i40e_rte_flow_rss_conf *rss_conf = data;
++
++	if (action->type != RTE_FLOW_ACTION_TYPE_RSS) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ACTION, action,
++				"Unsupported action for query");
++	}
++
++	memcpy(rss_conf, &hash_flow->rss_conf, sizeof(*rss_conf));
++	return 0;
++}
++
++static int
++i40e_hash_flow_engine_init(const struct ci_flow_engine *engine __rte_unused,
 +		struct rte_eth_dev_data *dev_data,
 +		void *priv)
 +{
-+	struct i40e_tunnel_priv *tunnel_priv = priv;
++	struct i40e_hash_priv *hash_priv = priv;
 +
-+	tunnel_priv->state = i40e_tunnel_state_attach(dev_data);
-+	return tunnel_priv->state == NULL ? -ENOMEM : 0;
++	hash_priv->state = i40e_rss_state_attach(dev_data);
++	return 0;
 +}
 +
 +static void
-+i40e_tunnel_flow_engine_uninit(const struct ci_flow_engine *engine __rte_unused,
++i40e_hash_flow_engine_uninit(const struct ci_flow_engine *engine __rte_unused,
 +		void *priv)
 +{
-+	struct i40e_tunnel_priv *tunnel_priv = priv;
++	struct i40e_hash_priv *hash_priv = priv;
 +
-+	i40e_tunnel_state_detach(tunnel_priv->state);
++	i40e_rss_state_detach(hash_priv->state);
 +}
 +
-+static const struct ci_flow_engine_ops i40e_flow_engine_tunnel_ops = {
-+	.engine_init = i40e_tunnel_flow_engine_init,
-+	.engine_uninit = i40e_tunnel_flow_engine_uninit,
-+	.ctx_init = i40e_tunnel_ctx_init,
-+	.ctx_to_flow = i40e_tunnel_ctx_to_flow,
-+	.flow_register = i40e_tunnel_flow_register,
-+	.flow_unregister = i40e_tunnel_flow_unregister,
-+	.flow_install = i40e_tunnel_flow_install,
-+	.flow_uninstall = i40e_tunnel_flow_uninstall,
++static const struct ci_flow_engine_ops i40e_flow_engine_hash_pattern_ops = {
++	.engine_init = i40e_hash_flow_engine_init,
++	.engine_uninit = i40e_hash_flow_engine_uninit,
++	.ctx_init = i40e_hash_pattern_ctx_init,
++	.ctx_finalize = i40e_hash_pattern_ctx_finalize,
++	.ctx_to_flow = i40e_hash_ctx_to_flow,
++	.flow_register = i40e_hash_flow_register,
++	.flow_unregister = i40e_hash_flow_unregister,
++	.flow_install = i40e_hash_flow_install,
++	.flow_uninstall = i40e_hash_flow_uninstall,
++	.flow_query = i40e_hash_flow_query,
 +};
 +
-+const struct ci_flow_engine i40e_flow_engine_tunnel_nvgre = {
-+	.name = "i40e_tunnel_nvgre",
-+	.ops = &i40e_flow_engine_tunnel_ops,
-+	.ctx_size = sizeof(struct i40e_tunnel_ctx),
-+	.flow_size = sizeof(struct i40e_tunnel_flow),
-+	.priv_size = sizeof(struct i40e_tunnel_priv),
-+	.graph = &i40e_tunnel_nvgre_graph,
++static const struct ci_flow_engine_ops i40e_flow_engine_hash_vlan_ops = {
++	.engine_init = i40e_hash_flow_engine_init,
++	.engine_uninit = i40e_hash_flow_engine_uninit,
++	.ctx_init = i40e_hash_vlan_ctx_init,
++	.ctx_to_flow = i40e_hash_ctx_to_flow,
++	.flow_register = i40e_hash_flow_register,
++	.flow_unregister = i40e_hash_flow_unregister,
++	.flow_install = i40e_hash_flow_install,
++	.flow_uninstall = i40e_hash_flow_uninstall,
++	.flow_query = i40e_hash_flow_query,
 +};
 +
-+const struct ci_flow_engine i40e_flow_engine_tunnel_vxlan = {
-+	.name = "i40e_tunnel_vxlan",
-+	.ops = &i40e_flow_engine_tunnel_ops,
-+	.ctx_size = sizeof(struct i40e_tunnel_ctx),
-+	.flow_size = sizeof(struct i40e_tunnel_flow),
-+	.priv_size = sizeof(struct i40e_tunnel_priv),
-+	.graph = &i40e_tunnel_vxlan_graph,
++static const struct ci_flow_engine_ops i40e_flow_engine_hash_empty_ops = {
++	.engine_init = i40e_hash_flow_engine_init,
++	.engine_uninit = i40e_hash_flow_engine_uninit,
++	.ctx_init = i40e_hash_empty_ctx_init,
++	.ctx_to_flow = i40e_hash_ctx_to_flow,
++	.flow_register = i40e_hash_flow_register,
++	.flow_unregister = i40e_hash_flow_unregister,
++	.flow_install = i40e_hash_flow_install,
++	.flow_uninstall = i40e_hash_flow_uninstall,
++	.flow_query = i40e_hash_flow_query,
 +};
 +
-+const struct ci_flow_engine i40e_flow_engine_tunnel_mpls = {
-+	.name = "i40e_tunnel_mpls",
-+	.ops = &i40e_flow_engine_tunnel_ops,
-+	.ctx_size = sizeof(struct i40e_tunnel_ctx),
-+	.flow_size = sizeof(struct i40e_tunnel_flow),
-+	.priv_size = sizeof(struct i40e_tunnel_priv),
-+	.graph = &i40e_tunnel_mpls_graph,
++const struct ci_flow_engine i40e_flow_engine_hash_pattern = {
++	.name = "i40e_hash_pattern",
++	.ops = &i40e_flow_engine_hash_pattern_ops,
++	.graph = &i40e_hash_pattern_graph,
++	.ctx_size = sizeof(struct i40e_hash_ctx),
++	.flow_size = sizeof(struct i40e_flow_engine_hash_flow),
++	.priv_size = sizeof(struct i40e_hash_priv),
 +};
 +
-+const struct ci_flow_engine i40e_flow_engine_tunnel_gtp = {
-+	.name = "i40e_tunnel_gtp",
-+	.ops = &i40e_flow_engine_tunnel_ops,
-+	.ctx_size = sizeof(struct i40e_tunnel_ctx),
-+	.flow_size = sizeof(struct i40e_tunnel_flow),
-+	.priv_size = sizeof(struct i40e_tunnel_priv),
-+	.graph = &i40e_tunnel_gtp_graph,
++const struct ci_flow_engine i40e_flow_engine_hash_vlan = {
++	.name = "i40e_hash_vlan",
++	.ops = &i40e_flow_engine_hash_vlan_ops,
++	.graph = &i40e_hash_vlan_graph,
++	.ctx_size = sizeof(struct i40e_hash_ctx),
++	.flow_size = sizeof(struct i40e_flow_engine_hash_flow),
++	.priv_size = sizeof(struct i40e_hash_priv),
 +};
 +
-+const struct ci_flow_engine i40e_flow_engine_tunnel_l4 = {
-+	.name = "i40e_tunnel_l4",
-+	.ops = &i40e_flow_engine_tunnel_ops,
-+	.ctx_size = sizeof(struct i40e_tunnel_ctx),
-+	.flow_size = sizeof(struct i40e_tunnel_flow),
-+	.priv_size = sizeof(struct i40e_tunnel_priv),
-+	.graph = &i40e_tunnel_l4_graph,
++const struct ci_flow_engine i40e_flow_engine_hash_empty = {
++	.name = "i40e_hash_empty",
++	.ops = &i40e_flow_engine_hash_empty_ops,
++	.ctx_size = sizeof(struct i40e_hash_ctx),
++	.flow_size = sizeof(struct i40e_flow_engine_hash_flow),
++	.priv_size = sizeof(struct i40e_hash_priv),
 +};
+diff --git a/drivers/net/intel/i40e/i40e_hash.c b/drivers/net/intel/i40e/i40e_hash.c
+index 17adcbaa276..60efdaea609 100644
+--- a/drivers/net/intel/i40e/i40e_hash.c
++++ b/drivers/net/intel/i40e/i40e_hash.c
+@@ -2,239 +2,17 @@
+  * Copyright(c) 2020 Intel Corporation
+  */
+ 
+-#include <sys/queue.h>
+ #include <stdio.h>
+ #include <errno.h>
+ #include <stdint.h>
+ #include <string.h>
+-#include <assert.h>
+ 
+-#include <rte_malloc.h>
+-#include <rte_tailq.h>
+ #include "base/i40e_prototype.h"
+ #include "i40e_logs.h"
+ #include "i40e_ethdev.h"
+ #include "i40e_hash.h"
+ 
+ #include "../common/flow_check.h"
+-
+-#ifndef BIT
+-#define BIT(n)				(1UL << (n))
+-#endif
+-
+-#ifndef BIT_ULL
+-#define BIT_ULL(n)			(1ULL << (n))
+-#endif
+-
+-/* Pattern item headers */
+-#define I40E_HASH_HDR_ETH		0x01ULL
+-#define I40E_HASH_HDR_IPV4		0x10ULL
+-#define I40E_HASH_HDR_IPV6		0x20ULL
+-#define I40E_HASH_HDR_IPV6_FRAG		0x40ULL
+-#define I40E_HASH_HDR_TCP		0x100ULL
+-#define I40E_HASH_HDR_UDP		0x200ULL
+-#define I40E_HASH_HDR_SCTP		0x400ULL
+-#define I40E_HASH_HDR_ESP		0x10000ULL
+-#define I40E_HASH_HDR_L2TPV3		0x20000ULL
+-#define I40E_HASH_HDR_AH		0x40000ULL
+-#define I40E_HASH_HDR_GTPC		0x100000ULL
+-#define I40E_HASH_HDR_GTPU		0x200000ULL
+-
+-#define I40E_HASH_HDR_INNER_SHIFT	32
+-#define I40E_HASH_HDR_IPV4_INNER	(I40E_HASH_HDR_IPV4 << \
+-					I40E_HASH_HDR_INNER_SHIFT)
+-#define I40E_HASH_HDR_IPV6_INNER	(I40E_HASH_HDR_IPV6 << \
+-					I40E_HASH_HDR_INNER_SHIFT)
+-
+-/* ETH */
+-#define I40E_PHINT_ETH			I40E_HASH_HDR_ETH
+-
+-/* IPv4 */
+-#define I40E_PHINT_IPV4			(I40E_HASH_HDR_ETH | I40E_HASH_HDR_IPV4)
+-#define I40E_PHINT_IPV4_TCP		(I40E_PHINT_IPV4 | I40E_HASH_HDR_TCP)
+-#define I40E_PHINT_IPV4_UDP		(I40E_PHINT_IPV4 | I40E_HASH_HDR_UDP)
+-#define I40E_PHINT_IPV4_SCTP		(I40E_PHINT_IPV4 | I40E_HASH_HDR_SCTP)
+-
+-/* IPv6 */
+-#define I40E_PHINT_IPV6			(I40E_HASH_HDR_ETH | I40E_HASH_HDR_IPV6)
+-#define I40E_PHINT_IPV6_FRAG		(I40E_PHINT_IPV6 | \
+-					 I40E_HASH_HDR_IPV6_FRAG)
+-#define I40E_PHINT_IPV6_TCP		(I40E_PHINT_IPV6 | I40E_HASH_HDR_TCP)
+-#define I40E_PHINT_IPV6_UDP		(I40E_PHINT_IPV6 | I40E_HASH_HDR_UDP)
+-#define I40E_PHINT_IPV6_SCTP		(I40E_PHINT_IPV6 | I40E_HASH_HDR_SCTP)
+-
+-/* ESP */
+-#define I40E_PHINT_IPV4_ESP		(I40E_PHINT_IPV4 | I40E_HASH_HDR_ESP)
+-#define I40E_PHINT_IPV6_ESP		(I40E_PHINT_IPV6 | I40E_HASH_HDR_ESP)
+-#define I40E_PHINT_IPV4_UDP_ESP		(I40E_PHINT_IPV4_UDP | \
+-					I40E_HASH_HDR_ESP)
+-#define I40E_PHINT_IPV6_UDP_ESP		(I40E_PHINT_IPV6_UDP | \
+-					I40E_HASH_HDR_ESP)
+-
+-/* GTPC */
+-#define I40E_PHINT_IPV4_GTPC		(I40E_PHINT_IPV4_UDP | \
+-					I40E_HASH_HDR_GTPC)
+-#define I40E_PHINT_IPV6_GTPC		(I40E_PHINT_IPV6_UDP | \
+-					I40E_HASH_HDR_GTPC)
+-
+-/* GTPU */
+-#define I40E_PHINT_IPV4_GTPU		(I40E_PHINT_IPV4_UDP | \
+-					I40E_HASH_HDR_GTPU)
+-#define I40E_PHINT_IPV4_GTPU_IPV4	(I40E_PHINT_IPV4_GTPU | \
+-					I40E_HASH_HDR_IPV4_INNER)
+-#define I40E_PHINT_IPV4_GTPU_IPV6	(I40E_PHINT_IPV4_GTPU | \
+-					I40E_HASH_HDR_IPV6_INNER)
+-#define I40E_PHINT_IPV6_GTPU		(I40E_PHINT_IPV6_UDP | \
+-					I40E_HASH_HDR_GTPU)
+-#define I40E_PHINT_IPV6_GTPU_IPV4	(I40E_PHINT_IPV6_GTPU | \
+-					I40E_HASH_HDR_IPV4_INNER)
+-#define I40E_PHINT_IPV6_GTPU_IPV6	(I40E_PHINT_IPV6_GTPU | \
+-					I40E_HASH_HDR_IPV6_INNER)
+-
+-/* L2TPV3 */
+-#define I40E_PHINT_IPV4_L2TPV3		(I40E_PHINT_IPV4 | I40E_HASH_HDR_L2TPV3)
+-#define I40E_PHINT_IPV6_L2TPV3		(I40E_PHINT_IPV6 | I40E_HASH_HDR_L2TPV3)
+-
+-/* AH */
+-#define I40E_PHINT_IPV4_AH		(I40E_PHINT_IPV4 | I40E_HASH_HDR_AH)
+-#define I40E_PHINT_IPV6_AH		(I40E_PHINT_IPV6 | I40E_HASH_HDR_AH)
+-
+-/* Structure of mapping RSS type to input set */
+-struct i40e_hash_map_rss_inset {
+-	uint64_t rss_type;
+-	uint64_t inset;
+-};
+-
+-const struct i40e_hash_map_rss_inset i40e_hash_rss_inset[] = {
+-	/* IPv4 */
+-	{ RTE_ETH_RSS_IPV4, I40E_INSET_IPV4_SRC | I40E_INSET_IPV4_DST },
+-	{ RTE_ETH_RSS_FRAG_IPV4, I40E_INSET_IPV4_SRC | I40E_INSET_IPV4_DST },
+-
+-	{ RTE_ETH_RSS_NONFRAG_IPV4_OTHER,
+-	  I40E_INSET_IPV4_SRC | I40E_INSET_IPV4_DST },
+-
+-	{ RTE_ETH_RSS_NONFRAG_IPV4_TCP, I40E_INSET_IPV4_SRC | I40E_INSET_IPV4_DST |
+-	  I40E_INSET_SRC_PORT | I40E_INSET_DST_PORT },
+-
+-	{ RTE_ETH_RSS_NONFRAG_IPV4_UDP, I40E_INSET_IPV4_SRC | I40E_INSET_IPV4_DST |
+-	  I40E_INSET_SRC_PORT | I40E_INSET_DST_PORT },
+-
+-	{ RTE_ETH_RSS_NONFRAG_IPV4_SCTP, I40E_INSET_IPV4_SRC | I40E_INSET_IPV4_DST |
+-	  I40E_INSET_SRC_PORT | I40E_INSET_DST_PORT | I40E_INSET_SCTP_VT },
+-
+-	/* IPv6 */
+-	{ RTE_ETH_RSS_IPV6, I40E_INSET_IPV6_SRC | I40E_INSET_IPV6_DST },
+-	{ RTE_ETH_RSS_FRAG_IPV6, I40E_INSET_IPV6_SRC | I40E_INSET_IPV6_DST },
+-
+-	{ RTE_ETH_RSS_NONFRAG_IPV6_OTHER,
+-	  I40E_INSET_IPV6_SRC | I40E_INSET_IPV6_DST },
+-
+-	{ RTE_ETH_RSS_NONFRAG_IPV6_TCP, I40E_INSET_IPV6_SRC | I40E_INSET_IPV6_DST |
+-	  I40E_INSET_SRC_PORT | I40E_INSET_DST_PORT },
+-
+-	{ RTE_ETH_RSS_NONFRAG_IPV6_UDP, I40E_INSET_IPV6_SRC | I40E_INSET_IPV6_DST |
+-	  I40E_INSET_SRC_PORT | I40E_INSET_DST_PORT },
+-
+-	{ RTE_ETH_RSS_NONFRAG_IPV6_SCTP, I40E_INSET_IPV6_SRC | I40E_INSET_IPV6_DST |
+-	  I40E_INSET_SRC_PORT | I40E_INSET_DST_PORT | I40E_INSET_SCTP_VT },
+-
+-	/* Port */
+-	{ RTE_ETH_RSS_PORT, I40E_INSET_SRC_PORT | I40E_INSET_DST_PORT },
+-
+-	/* Ether */
+-	{ RTE_ETH_RSS_L2_PAYLOAD, I40E_INSET_LAST_ETHER_TYPE },
+-	{ RTE_ETH_RSS_ETH, I40E_INSET_DMAC | I40E_INSET_SMAC },
+-
+-	/* VLAN */
+-	{ RTE_ETH_RSS_S_VLAN, I40E_INSET_VLAN_OUTER },
+-	{ RTE_ETH_RSS_C_VLAN, I40E_INSET_VLAN_INNER },
+-};
+-
+-#define I40E_HASH_VOID_NEXT_ALLOW	BIT_ULL(RTE_FLOW_ITEM_TYPE_ETH)
+-
+-#define I40E_HASH_ETH_NEXT_ALLOW	(BIT_ULL(RTE_FLOW_ITEM_TYPE_IPV4) | \
+-					BIT_ULL(RTE_FLOW_ITEM_TYPE_IPV6) | \
+-					BIT_ULL(RTE_FLOW_ITEM_TYPE_VLAN))
+-
+-#define I40E_HASH_IP_NEXT_ALLOW		(BIT_ULL(RTE_FLOW_ITEM_TYPE_TCP) | \
+-					BIT_ULL(RTE_FLOW_ITEM_TYPE_UDP) | \
+-					BIT_ULL(RTE_FLOW_ITEM_TYPE_SCTP) | \
+-					BIT_ULL(RTE_FLOW_ITEM_TYPE_ESP) | \
+-					BIT_ULL(RTE_FLOW_ITEM_TYPE_L2TPV3OIP) |\
+-					BIT_ULL(RTE_FLOW_ITEM_TYPE_AH))
+-
+-#define I40E_HASH_IPV6_NEXT_ALLOW	(I40E_HASH_IP_NEXT_ALLOW | \
+-					BIT_ULL(RTE_FLOW_ITEM_TYPE_IPV6_FRAG_EXT))
+-
+-#define I40E_HASH_UDP_NEXT_ALLOW	(BIT_ULL(RTE_FLOW_ITEM_TYPE_GTPU) | \
+-					BIT_ULL(RTE_FLOW_ITEM_TYPE_GTPC))
+-
+-#define I40E_HASH_GTPU_NEXT_ALLOW	(BIT_ULL(RTE_FLOW_ITEM_TYPE_IPV4) | \
+-					BIT_ULL(RTE_FLOW_ITEM_TYPE_IPV6))
+-
+-static const uint64_t pattern_next_allow_items[] = {
+-	[RTE_FLOW_ITEM_TYPE_VOID] = I40E_HASH_VOID_NEXT_ALLOW,
+-	[RTE_FLOW_ITEM_TYPE_ETH] = I40E_HASH_ETH_NEXT_ALLOW,
+-	[RTE_FLOW_ITEM_TYPE_IPV4] = I40E_HASH_IP_NEXT_ALLOW,
+-	[RTE_FLOW_ITEM_TYPE_IPV6] = I40E_HASH_IPV6_NEXT_ALLOW,
+-	[RTE_FLOW_ITEM_TYPE_UDP] = I40E_HASH_UDP_NEXT_ALLOW,
+-	[RTE_FLOW_ITEM_TYPE_GTPU] = I40E_HASH_GTPU_NEXT_ALLOW,
+-};
+-
+-static const uint64_t pattern_item_header[] = {
+-	[RTE_FLOW_ITEM_TYPE_ETH] = I40E_HASH_HDR_ETH,
+-	[RTE_FLOW_ITEM_TYPE_IPV4] = I40E_HASH_HDR_IPV4,
+-	[RTE_FLOW_ITEM_TYPE_IPV6] = I40E_HASH_HDR_IPV6,
+-	[RTE_FLOW_ITEM_TYPE_IPV6_FRAG_EXT] = I40E_HASH_HDR_IPV6_FRAG,
+-	[RTE_FLOW_ITEM_TYPE_TCP] = I40E_HASH_HDR_TCP,
+-	[RTE_FLOW_ITEM_TYPE_UDP] = I40E_HASH_HDR_UDP,
+-	[RTE_FLOW_ITEM_TYPE_SCTP] = I40E_HASH_HDR_SCTP,
+-	[RTE_FLOW_ITEM_TYPE_ESP] = I40E_HASH_HDR_ESP,
+-	[RTE_FLOW_ITEM_TYPE_GTPC] = I40E_HASH_HDR_GTPC,
+-	[RTE_FLOW_ITEM_TYPE_GTPU] = I40E_HASH_HDR_GTPU,
+-	[RTE_FLOW_ITEM_TYPE_L2TPV3OIP] = I40E_HASH_HDR_L2TPV3,
+-	[RTE_FLOW_ITEM_TYPE_AH] = I40E_HASH_HDR_AH,
+-};
+-
+-/* Structure of matched pattern */
+-struct i40e_hash_match_pattern {
+-	uint64_t pattern_type;
+-	uint64_t rss_mask;	/* Supported RSS type for this pattern */
+-	bool custom_pctype_flag;/* true for custom packet type */
+-	uint8_t pctype;
+-};
+-
+-#define I40E_HASH_MAP_PATTERN(pattern, rss_mask, pctype) { \
+-	pattern, rss_mask, false, pctype  }
+-
+-#define I40E_HASH_MAP_CUS_PATTERN(pattern, rss_mask, cus_pctype) { \
+-	pattern, rss_mask, true, cus_pctype }
+-
+-#define I40E_HASH_L2_RSS_MASK		(RTE_ETH_RSS_VLAN | RTE_ETH_RSS_ETH | \
+-					RTE_ETH_RSS_L2_SRC_ONLY | \
+-					RTE_ETH_RSS_L2_DST_ONLY)
+-
+-#define I40E_HASH_L23_RSS_MASK		(I40E_HASH_L2_RSS_MASK | \
+-					RTE_ETH_RSS_L3_SRC_ONLY | \
+-					RTE_ETH_RSS_L3_DST_ONLY)
+-
+-#define I40E_HASH_IPV4_L23_RSS_MASK	(RTE_ETH_RSS_IPV4 | I40E_HASH_L23_RSS_MASK)
+-#define I40E_HASH_IPV6_L23_RSS_MASK	(RTE_ETH_RSS_IPV6 | I40E_HASH_L23_RSS_MASK)
+-
+-#define I40E_HASH_L234_RSS_MASK		(I40E_HASH_L23_RSS_MASK | \
+-					RTE_ETH_RSS_PORT | RTE_ETH_RSS_L4_SRC_ONLY | \
+-					RTE_ETH_RSS_L4_DST_ONLY)
+-
+-#define I40E_HASH_IPV4_L234_RSS_MASK	(I40E_HASH_L234_RSS_MASK | RTE_ETH_RSS_IPV4)
+-#define I40E_HASH_IPV6_L234_RSS_MASK	(I40E_HASH_L234_RSS_MASK | RTE_ETH_RSS_IPV6)
+-
+-#define I40E_HASH_L4_TYPES		(RTE_ETH_RSS_NONFRAG_IPV4_TCP | \
+-					RTE_ETH_RSS_NONFRAG_IPV4_UDP | \
+-					RTE_ETH_RSS_NONFRAG_IPV4_SCTP | \
+-					RTE_ETH_RSS_NONFRAG_IPV6_TCP | \
+-					RTE_ETH_RSS_NONFRAG_IPV6_UDP | \
+-					RTE_ETH_RSS_NONFRAG_IPV6_SCTP)
+-
+ const uint8_t i40e_rss_key_default[] = {
+ 	0x44, 0x39, 0x79, 0x6b,
+ 	0xb5, 0x4c, 0x50, 0x23,
+@@ -251,395 +29,6 @@ const uint8_t i40e_rss_key_default[] = {
+ 	0x81, 0x15, 0x03, 0x66
+ };
+ 
+-/* Current supported patterns and RSS types.
+- * All items that have the same pattern types are together.
+- */
+-static const struct i40e_hash_match_pattern match_patterns[] = {
+-	/* Ether */
+-	I40E_HASH_MAP_PATTERN(I40E_PHINT_ETH,
+-			      RTE_ETH_RSS_L2_PAYLOAD | I40E_HASH_L2_RSS_MASK,
+-			      I40E_FILTER_PCTYPE_L2_PAYLOAD),
+-
+-	/* IPv4 */
+-	I40E_HASH_MAP_PATTERN(I40E_PHINT_IPV4,
+-			      RTE_ETH_RSS_FRAG_IPV4 | I40E_HASH_IPV4_L23_RSS_MASK,
+-			      I40E_FILTER_PCTYPE_FRAG_IPV4),
+-
+-	I40E_HASH_MAP_PATTERN(I40E_PHINT_IPV4,
+-			      RTE_ETH_RSS_NONFRAG_IPV4_OTHER |
+-			      I40E_HASH_IPV4_L23_RSS_MASK,
+-			      I40E_FILTER_PCTYPE_NONF_IPV4_OTHER),
+-
+-	I40E_HASH_MAP_PATTERN(I40E_PHINT_IPV4_TCP,
+-			      RTE_ETH_RSS_NONFRAG_IPV4_TCP |
+-			      I40E_HASH_IPV4_L234_RSS_MASK,
+-			      I40E_FILTER_PCTYPE_NONF_IPV4_TCP),
+-
+-	I40E_HASH_MAP_PATTERN(I40E_PHINT_IPV4_UDP,
+-			      RTE_ETH_RSS_NONFRAG_IPV4_UDP |
+-			      I40E_HASH_IPV4_L234_RSS_MASK,
+-			      I40E_FILTER_PCTYPE_NONF_IPV4_UDP),
+-
+-	I40E_HASH_MAP_PATTERN(I40E_PHINT_IPV4_SCTP,
+-			      RTE_ETH_RSS_NONFRAG_IPV4_SCTP |
+-			      I40E_HASH_IPV4_L234_RSS_MASK,
+-			      I40E_FILTER_PCTYPE_NONF_IPV4_SCTP),
+-
+-	/* IPv6 */
+-	I40E_HASH_MAP_PATTERN(I40E_PHINT_IPV6,
+-			      RTE_ETH_RSS_FRAG_IPV6 | I40E_HASH_IPV6_L23_RSS_MASK,
+-			      I40E_FILTER_PCTYPE_FRAG_IPV6),
+-
+-	I40E_HASH_MAP_PATTERN(I40E_PHINT_IPV6,
+-			      RTE_ETH_RSS_NONFRAG_IPV6_OTHER |
+-			      I40E_HASH_IPV6_L23_RSS_MASK,
+-			      I40E_FILTER_PCTYPE_NONF_IPV6_OTHER),
+-
+-	I40E_HASH_MAP_PATTERN(I40E_PHINT_IPV6_FRAG,
+-			      RTE_ETH_RSS_FRAG_IPV6 | I40E_HASH_L23_RSS_MASK,
+-			      I40E_FILTER_PCTYPE_FRAG_IPV6),
+-
+-	I40E_HASH_MAP_PATTERN(I40E_PHINT_IPV6_TCP,
+-			      RTE_ETH_RSS_NONFRAG_IPV6_TCP |
+-			      I40E_HASH_IPV6_L234_RSS_MASK,
+-			      I40E_FILTER_PCTYPE_NONF_IPV6_TCP),
+-
+-	I40E_HASH_MAP_PATTERN(I40E_PHINT_IPV6_UDP,
+-			      RTE_ETH_RSS_NONFRAG_IPV6_UDP |
+-			      I40E_HASH_IPV6_L234_RSS_MASK,
+-			      I40E_FILTER_PCTYPE_NONF_IPV6_UDP),
+-
+-	I40E_HASH_MAP_PATTERN(I40E_PHINT_IPV6_SCTP,
+-			      RTE_ETH_RSS_NONFRAG_IPV6_SCTP |
+-			      I40E_HASH_IPV6_L234_RSS_MASK,
+-			      I40E_FILTER_PCTYPE_NONF_IPV6_SCTP),
+-
+-	/* ESP */
+-	I40E_HASH_MAP_CUS_PATTERN(I40E_PHINT_IPV4_ESP,
+-				  RTE_ETH_RSS_ESP, I40E_CUSTOMIZED_ESP_IPV4),
+-	I40E_HASH_MAP_CUS_PATTERN(I40E_PHINT_IPV6_ESP,
+-				  RTE_ETH_RSS_ESP, I40E_CUSTOMIZED_ESP_IPV6),
+-	I40E_HASH_MAP_CUS_PATTERN(I40E_PHINT_IPV4_UDP_ESP,
+-				  RTE_ETH_RSS_ESP, I40E_CUSTOMIZED_ESP_IPV4_UDP),
+-	I40E_HASH_MAP_CUS_PATTERN(I40E_PHINT_IPV6_UDP_ESP,
+-				  RTE_ETH_RSS_ESP, I40E_CUSTOMIZED_ESP_IPV6_UDP),
+-
+-	/* GTPC */
+-	I40E_HASH_MAP_CUS_PATTERN(I40E_PHINT_IPV4_GTPC,
+-				  I40E_HASH_IPV4_L234_RSS_MASK,
+-				  I40E_CUSTOMIZED_GTPC),
+-	I40E_HASH_MAP_CUS_PATTERN(I40E_PHINT_IPV6_GTPC,
+-				  I40E_HASH_IPV6_L234_RSS_MASK,
+-				  I40E_CUSTOMIZED_GTPC),
+-
+-	/* GTPU */
+-	I40E_HASH_MAP_CUS_PATTERN(I40E_PHINT_IPV4_GTPU,
+-				  I40E_HASH_IPV4_L234_RSS_MASK,
+-				  I40E_CUSTOMIZED_GTPU),
+-	I40E_HASH_MAP_CUS_PATTERN(I40E_PHINT_IPV4_GTPU_IPV4,
+-				  RTE_ETH_RSS_GTPU, I40E_CUSTOMIZED_GTPU_IPV4),
+-	I40E_HASH_MAP_CUS_PATTERN(I40E_PHINT_IPV4_GTPU_IPV6,
+-				  RTE_ETH_RSS_GTPU, I40E_CUSTOMIZED_GTPU_IPV6),
+-	I40E_HASH_MAP_CUS_PATTERN(I40E_PHINT_IPV6_GTPU,
+-				  I40E_HASH_IPV6_L234_RSS_MASK,
+-				  I40E_CUSTOMIZED_GTPU),
+-	I40E_HASH_MAP_CUS_PATTERN(I40E_PHINT_IPV6_GTPU_IPV4,
+-				  RTE_ETH_RSS_GTPU, I40E_CUSTOMIZED_GTPU_IPV4),
+-	I40E_HASH_MAP_CUS_PATTERN(I40E_PHINT_IPV6_GTPU_IPV6,
+-				  RTE_ETH_RSS_GTPU, I40E_CUSTOMIZED_GTPU_IPV6),
+-
+-	/* L2TPV3 */
+-	I40E_HASH_MAP_CUS_PATTERN(I40E_PHINT_IPV4_L2TPV3,
+-				  RTE_ETH_RSS_L2TPV3, I40E_CUSTOMIZED_IPV4_L2TPV3),
+-	I40E_HASH_MAP_CUS_PATTERN(I40E_PHINT_IPV6_L2TPV3,
+-				  RTE_ETH_RSS_L2TPV3, I40E_CUSTOMIZED_IPV6_L2TPV3),
+-
+-	/* AH */
+-	I40E_HASH_MAP_CUS_PATTERN(I40E_PHINT_IPV4_AH, RTE_ETH_RSS_AH,
+-				  I40E_CUSTOMIZED_AH_IPV4),
+-	I40E_HASH_MAP_CUS_PATTERN(I40E_PHINT_IPV6_AH, RTE_ETH_RSS_AH,
+-				  I40E_CUSTOMIZED_AH_IPV6),
+-};
+-
+-static int
+-i40e_hash_get_pattern_type(const struct rte_flow_item pattern[],
+-			   uint64_t *pattern_types,
+-			   struct rte_flow_error *error)
+-{
+-	const char *message = "Pattern not supported";
+-	enum rte_flow_item_type prev_item_type = RTE_FLOW_ITEM_TYPE_VOID;
+-	enum rte_flow_item_type last_item_type = prev_item_type;
+-	uint64_t item_hdr, pattern_hdrs = 0;
+-	bool inner_flag = false;
+-	int vlan_count = 0;
+-
+-	for (; pattern->type != RTE_FLOW_ITEM_TYPE_END; pattern++) {
+-		if (pattern->type == RTE_FLOW_ITEM_TYPE_VOID)
+-			continue;
+-
+-		if (pattern->mask || pattern->spec || pattern->last) {
+-			message = "Header info should not be specified";
+-			goto not_sup;
+-		}
+-
+-		/* Check the previous item allows this sub-item. */
+-		if (prev_item_type >= (enum rte_flow_item_type)
+-				RTE_DIM(pattern_next_allow_items) ||
+-		    !(pattern_next_allow_items[prev_item_type] &
+-				BIT_ULL(pattern->type)))
+-			goto not_sup;
+-
+-		/* For VLAN item, it does no matter about to pattern type
+-		 * recognition. So just count the number of VLAN and do not
+-		 * change the value of variable `prev_item_type`.
+-		 */
+-		last_item_type = pattern->type;
+-		if (last_item_type == RTE_FLOW_ITEM_TYPE_VLAN) {
+-			if (vlan_count >= 2)
+-				goto not_sup;
+-			vlan_count++;
+-			continue;
+-		}
+-
+-		prev_item_type = last_item_type;
+-		if (last_item_type >= (enum rte_flow_item_type)
+-				RTE_DIM(pattern_item_header))
+-			goto not_sup;
+-
+-		item_hdr = pattern_item_header[last_item_type];
+-		assert(item_hdr);
+-
+-		if (inner_flag) {
+-			item_hdr <<= I40E_HASH_HDR_INNER_SHIFT;
+-
+-			/* Inner layer should not have GTPU item */
+-			if (last_item_type == RTE_FLOW_ITEM_TYPE_GTPU)
+-				goto not_sup;
+-		} else {
+-			if (last_item_type == RTE_FLOW_ITEM_TYPE_GTPU) {
+-				inner_flag = true;
+-				vlan_count = 0;
+-			}
+-		}
+-
+-		if (item_hdr & pattern_hdrs)
+-			goto not_sup;
+-
+-		pattern_hdrs |= item_hdr;
+-	}
+-
+-	if (pattern_hdrs && last_item_type != RTE_FLOW_ITEM_TYPE_VLAN) {
+-		*pattern_types = pattern_hdrs;
+-		return 0;
+-	}
+-
+-not_sup:
+-	return rte_flow_error_set(error, ENOTSUP, RTE_FLOW_ERROR_TYPE_ITEM,
+-				  pattern, message);
+-}
+-
+-static uint64_t
+-i40e_hash_get_x722_ext_pctypes(uint8_t match_pctype)
+-{
+-	uint64_t pctypes = 0;
+-
+-	switch (match_pctype) {
+-	case I40E_FILTER_PCTYPE_NONF_IPV4_TCP:
+-		pctypes = BIT_ULL(I40E_FILTER_PCTYPE_NONF_IPV4_TCP_SYN_NO_ACK);
+-		break;
+-
+-	case I40E_FILTER_PCTYPE_NONF_IPV4_UDP:
+-		pctypes = BIT_ULL(I40E_FILTER_PCTYPE_NONF_UNICAST_IPV4_UDP) |
+-			  BIT_ULL(I40E_FILTER_PCTYPE_NONF_MULTICAST_IPV4_UDP);
+-		break;
+-
+-	case I40E_FILTER_PCTYPE_NONF_IPV6_TCP:
+-		pctypes = BIT_ULL(I40E_FILTER_PCTYPE_NONF_IPV6_TCP_SYN_NO_ACK);
+-		break;
+-
+-	case I40E_FILTER_PCTYPE_NONF_IPV6_UDP:
+-		pctypes = BIT_ULL(I40E_FILTER_PCTYPE_NONF_UNICAST_IPV6_UDP) |
+-			  BIT_ULL(I40E_FILTER_PCTYPE_NONF_MULTICAST_IPV6_UDP);
+-		break;
+-	}
+-
+-	return pctypes;
+-}
+-
+-static int
+-i40e_hash_translate_gtp_inset(struct i40e_rte_flow_rss_conf *rss_conf,
+-			      struct rte_flow_error *error)
+-{
+-	if (rss_conf->inset &
+-	    (I40E_INSET_IPV4_SRC | I40E_INSET_IPV6_SRC |
+-	    I40E_INSET_DST_PORT | I40E_INSET_SRC_PORT))
+-		return rte_flow_error_set(error, ENOTSUP,
+-					  RTE_FLOW_ERROR_TYPE_ACTION_CONF,
+-					  NULL,
+-					  "Only support external destination IP");
+-
+-	if (rss_conf->inset & I40E_INSET_IPV4_DST)
+-		rss_conf->inset = (rss_conf->inset & ~I40E_INSET_IPV4_DST) |
+-				  I40E_INSET_TUNNEL_IPV4_DST;
+-
+-	if (rss_conf->inset & I40E_INSET_IPV6_DST)
+-		rss_conf->inset = (rss_conf->inset & ~I40E_INSET_IPV6_DST) |
+-				  I40E_INSET_TUNNEL_IPV6_DST;
+-
+-	return 0;
+-}
+-
+-static int
+-i40e_hash_get_pctypes(const struct rte_eth_dev *dev,
+-		      const struct i40e_hash_match_pattern *match,
+-		      struct i40e_rte_flow_rss_conf *rss_conf,
+-		      struct rte_flow_error *error)
+-{
+-	if (match->custom_pctype_flag) {
+-		struct i40e_pf *pf;
+-		struct i40e_customized_pctype *custom_type;
+-
+-		pf = I40E_DEV_PRIVATE_TO_PF(dev->data->dev_private);
+-		custom_type = i40e_find_customized_pctype(pf, match->pctype);
+-		if (!custom_type || !custom_type->valid)
+-			return rte_flow_error_set(error, ENOTSUP,
+-						  RTE_FLOW_ERROR_TYPE_ITEM,
+-						  NULL, "PCTYPE not supported");
+-
+-		rss_conf->config_pctypes |= BIT_ULL(custom_type->pctype);
+-
+-		if (match->pctype == I40E_CUSTOMIZED_GTPU ||
+-		    match->pctype == I40E_CUSTOMIZED_GTPC)
+-			return i40e_hash_translate_gtp_inset(rss_conf, error);
+-	} else {
+-		struct i40e_hw *hw =
+-				I40E_DEV_PRIVATE_TO_HW(dev->data->dev_private);
+-		uint64_t types;
+-
+-		rss_conf->config_pctypes |= BIT_ULL(match->pctype);
+-		if (hw->mac.type == I40E_MAC_X722) {
+-			types = i40e_hash_get_x722_ext_pctypes(match->pctype);
+-			rss_conf->config_pctypes |= types;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-i40e_hash_get_pattern_pctypes(const struct rte_eth_dev *dev,
+-			      const struct rte_flow_item pattern[],
+-			      const struct rte_flow_action_rss *rss_act,
+-			      struct i40e_rte_flow_rss_conf *rss_conf,
+-			      struct rte_flow_error *error)
+-{
+-	uint64_t pattern_types = 0;
+-	bool match_flag = false;
+-	int i, ret;
+-
+-	ret = i40e_hash_get_pattern_type(pattern, &pattern_types, error);
+-	if (ret)
+-		return ret;
+-
+-	for (i = 0; i < (int)RTE_DIM(match_patterns); i++) {
+-		const struct i40e_hash_match_pattern *match =
+-							&match_patterns[i];
+-
+-		/* Check pattern types match. All items that have the same
+-		 * pattern types are together, so if the pattern types match
+-		 * previous item but they doesn't match current item, it means
+-		 * the pattern types do not match all remain items.
+-		 */
+-		if (pattern_types != match->pattern_type) {
+-			if (match_flag)
+-				break;
+-			continue;
+-		}
+-		match_flag = true;
+-
+-		/* Check RSS types match */
+-		if (!(rss_act->types & ~match->rss_mask)) {
+-			ret = i40e_hash_get_pctypes(dev, match,
+-						    rss_conf, error);
+-			if (ret)
+-				return ret;
+-		}
+-	}
+-
+-	if (rss_conf->config_pctypes)
+-		return 0;
+-
+-	if (match_flag)
+-		return rte_flow_error_set(error, ENOTSUP,
+-					  RTE_FLOW_ERROR_TYPE_ACTION_CONF,
+-					  NULL, "RSS types not supported");
+-
+-	return rte_flow_error_set(error, ENOTSUP, RTE_FLOW_ERROR_TYPE_ITEM,
+-				  NULL, "Pattern not supported");
+-}
+-
+-static uint64_t
+-i40e_hash_get_inset(uint64_t rss_types, bool symmetric_enable)
+-{
+-	uint64_t mask, inset = 0;
+-	int i;
+-
+-	for (i = 0; i < (int)RTE_DIM(i40e_hash_rss_inset); i++) {
+-		if (rss_types & i40e_hash_rss_inset[i].rss_type)
+-			inset |= i40e_hash_rss_inset[i].inset;
+-	}
+-
+-	if (!inset)
+-		return 0;
+-
+-	/* If SRC_ONLY and DST_ONLY of the same level are used simultaneously,
+-	 * it is the same case as none of them are added.
+-	 */
+-	mask = rss_types & (RTE_ETH_RSS_L2_SRC_ONLY | RTE_ETH_RSS_L2_DST_ONLY);
+-	if (mask == RTE_ETH_RSS_L2_SRC_ONLY)
+-		inset &= ~I40E_INSET_DMAC;
+-	else if (mask == RTE_ETH_RSS_L2_DST_ONLY)
+-		inset &= ~I40E_INSET_SMAC;
+-
+-	mask = rss_types & (RTE_ETH_RSS_L3_SRC_ONLY | RTE_ETH_RSS_L3_DST_ONLY);
+-	if (mask == RTE_ETH_RSS_L3_SRC_ONLY)
+-		inset &= ~(I40E_INSET_IPV4_DST | I40E_INSET_IPV6_DST);
+-	else if (mask == RTE_ETH_RSS_L3_DST_ONLY)
+-		inset &= ~(I40E_INSET_IPV4_SRC | I40E_INSET_IPV6_SRC);
+-
+-	mask = rss_types & (RTE_ETH_RSS_L4_SRC_ONLY | RTE_ETH_RSS_L4_DST_ONLY);
+-	if (mask == RTE_ETH_RSS_L4_SRC_ONLY)
+-		inset &= ~I40E_INSET_DST_PORT;
+-	else if (mask == RTE_ETH_RSS_L4_DST_ONLY)
+-		inset &= ~I40E_INSET_SRC_PORT;
+-
+-	if (rss_types & I40E_HASH_L4_TYPES) {
+-		uint64_t l3_mask = rss_types &
+-				   (RTE_ETH_RSS_L3_SRC_ONLY | RTE_ETH_RSS_L3_DST_ONLY);
+-		uint64_t l4_mask = rss_types &
+-				   (RTE_ETH_RSS_L4_SRC_ONLY | RTE_ETH_RSS_L4_DST_ONLY);
+-
+-		if (l3_mask && !l4_mask)
+-			inset &= ~(I40E_INSET_SRC_PORT | I40E_INSET_DST_PORT);
+-		else if (!l3_mask && l4_mask)
+-			inset &= ~(I40E_INSET_IPV4_DST | I40E_INSET_IPV6_DST |
+-				 I40E_INSET_IPV4_SRC | I40E_INSET_IPV6_SRC);
+-	}
+-
+-	/* SCTP Verification Tag is not required in hash computation for SYMMETRIC_TOEPLITZ */
+-	if (symmetric_enable) {
+-		mask = rss_types & RTE_ETH_RSS_NONFRAG_IPV4_SCTP;
+-		if (mask == RTE_ETH_RSS_NONFRAG_IPV4_SCTP)
+-			inset &= ~I40E_INSET_SCTP_VT;
+-
+-		mask = rss_types & RTE_ETH_RSS_NONFRAG_IPV6_SCTP;
+-		if (mask == RTE_ETH_RSS_NONFRAG_IPV6_SCTP)
+-			inset &= ~I40E_INSET_SCTP_VT;
+-	}
+-
+-	return inset;
+-}
+-
+ static int
+ i40e_hash_config_func(struct i40e_hw *hw, enum rte_eth_hash_function func)
+ {
+@@ -825,12 +214,10 @@ i40e_hash_config_region(struct i40e_pf *pf,
+ 	return i40e_flush_queue_region_all_conf(dev, hw, pf, 1);
+ }
+ 
+-static int
+-i40e_hash_config(struct i40e_pf *pf,
+-		 struct i40e_rss_filter *filter)
++int
++i40e_hash_program_hw(struct i40e_pf *pf,
++		     struct i40e_rte_flow_rss_conf *rss_conf)
+ {
+-	struct i40e_rte_flow_rss_conf *rss_conf = &filter->rss_filter_info;
+-	struct i40e_rss_filter_data *filter_data = &filter->filter_data;
+ 	struct i40e_hw *hw = &pf->adapter->hw;
+ 	uint64_t pctypes;
+ 	int ret;
+@@ -839,18 +226,12 @@ i40e_hash_config(struct i40e_pf *pf,
+ 		ret = i40e_hash_config_func(hw, rss_conf->func);
+ 		if (ret)
+ 			return ret;
+-
+-		if (rss_conf->func != RTE_ETH_HASH_FUNCTION_TOEPLITZ)
+-			filter_data->misc_reset_flags |=
+-					I40E_HASH_FLOW_RESET_FLAG_FUNC;
+ 	}
+ 
+ 	if (rss_conf->region_queue_num > 0) {
+ 		ret = i40e_hash_config_region(pf, rss_conf);
+ 		if (ret)
+ 			return ret;
+-
+-		filter_data->misc_reset_flags |= I40E_HASH_FLOW_RESET_FLAG_REGION;
+ 	}
+ 
+ 	if (rss_conf->key_len > 0) {
+@@ -858,8 +239,6 @@ i40e_hash_config(struct i40e_pf *pf,
+ 				       rss_conf->key_len);
+ 		if (ret)
+ 			return ret;
+-
+-		filter_data->misc_reset_flags |= I40E_HASH_FLOW_RESET_FLAG_KEY;
+ 	}
+ 
+ 	/* Update lookup table */
+@@ -881,7 +260,6 @@ i40e_hash_config(struct i40e_pf *pf,
+ 			pf->hash_enabled_queues |= BIT_ULL(lut[i]);
+ 
+ 		pf->adapter->rss_reta_updated = 0;
+-		filter_data->misc_reset_flags |= I40E_HASH_FLOW_RESET_FLAG_QUEUE;
+ 	}
+ 
+ 	/* The codes behind configure the input sets and symmetric hash
+@@ -901,504 +279,70 @@ i40e_hash_config(struct i40e_pf *pf,
+ 
+ 	do {
+ 		uint32_t idx = rte_bsf64(pctypes);
+-		uint64_t bit = BIT_ULL(idx);
+ 
+ 		if (rss_conf->symmetric_enable) {
+ 			ret = i40e_hash_config_pctype_symmetric(hw, idx, true);
+ 			if (ret)
+ 				return ret;
+-
+-			filter_data->reset_symmetric_pctypes |= bit;
+ 		}
+ 
+ 		ret = i40e_hash_config_pctype(hw, rss_conf, idx);
+ 		if (ret)
+ 			return ret;
+ 
++		pctypes &= ~BIT_ULL(idx);
++	} while (pctypes);
 +
-+const struct ci_flow_engine i40e_flow_engine_tunnel_qinq = {
-+	.name = "i40e_tunnel_qinq",
-+	.ops = &i40e_flow_engine_tunnel_ops,
-+	.ctx_size = sizeof(struct i40e_tunnel_ctx),
-+	.flow_size = sizeof(struct i40e_tunnel_flow),
-+	.priv_size = sizeof(struct i40e_tunnel_priv),
-+	.graph = &i40e_tunnel_qinq_graph,
-+};
++	return 0;
++}
++
++/*
++ * Compute the reset flags a filter would own if it were the only RSS filter
++ * installed. Pure function of rss_conf; used to reconstruct the ownership of
++ * shared RSS state across all currently registered filters.
++ */
++void
++i40e_hash_compute_reset_flags(const struct i40e_rte_flow_rss_conf *rss_conf,
++			      struct i40e_rss_filter_data *filter_data)
++{
++	uint64_t pctypes;
++
++	*filter_data = (struct i40e_rss_filter_data){0};
++
++	if (rss_conf->func != RTE_ETH_HASH_FUNCTION_DEFAULT &&
++	    rss_conf->func != RTE_ETH_HASH_FUNCTION_TOEPLITZ)
++		filter_data->misc_reset_flags |= I40E_HASH_FLOW_RESET_FLAG_FUNC;
++
++	if (rss_conf->region_queue_num > 0)
++		filter_data->misc_reset_flags |= I40E_HASH_FLOW_RESET_FLAG_REGION;
++
++	if (rss_conf->key_len > 0)
++		filter_data->misc_reset_flags |= I40E_HASH_FLOW_RESET_FLAG_KEY;
++
++	if (rss_conf->queue_num > 0)
++		filter_data->misc_reset_flags |= I40E_HASH_FLOW_RESET_FLAG_QUEUE;
++
++	pctypes = rss_conf->config_pctypes;
++	while (pctypes) {
++		uint32_t idx = rte_bsf64(pctypes);
++		uint64_t bit = BIT_ULL(idx);
++
+ 		filter_data->reset_config_pctypes |= bit;
++		if (rss_conf->symmetric_enable)
++			filter_data->reset_symmetric_pctypes |= bit;
++
+ 		pctypes &= ~bit;
+-	} while (pctypes);
+-
+-	return 0;
+-}
+-
+-static void
+-i40e_hash_parse_key(const struct rte_flow_action_rss *rss_act,
+-		    struct i40e_rte_flow_rss_conf *rss_conf)
+-{
+-	const uint8_t *key = rss_act->key;
+-
+-	if (key == NULL) {
+-		memcpy(rss_conf->key, i40e_rss_key_default, sizeof(rss_conf->key));
+-	} else {
+-		memcpy(rss_conf->key, key, sizeof(rss_conf->key));
+ 	}
+-
+-	rss_conf->key_len = sizeof(rss_conf->key);
+-}
+-
+-static int
+-i40e_hash_parse_pattern_act(const struct rte_eth_dev *dev,
+-			    const struct rte_flow_item pattern[],
+-			    const struct rte_flow_action_rss *rss_act,
+-			    struct i40e_rte_flow_rss_conf *rss_conf,
+-			    struct rte_flow_error *error)
+-{
+-	rss_conf->symmetric_enable = rss_act->func == RTE_ETH_HASH_FUNCTION_SYMMETRIC_TOEPLITZ;
+-
+-	if (rss_act->key_len)
+-		i40e_hash_parse_key(rss_act, rss_conf);
+-
+-	rss_conf->func = rss_act->func;
+-	rss_conf->types = rss_act->types;
+-	rss_conf->inset = i40e_hash_get_inset(rss_act->types, rss_conf->symmetric_enable);
+-
+-	return i40e_hash_get_pattern_pctypes(dev, pattern, rss_act,
+-					     rss_conf, error);
+-}
+-
+-static int
+-i40e_hash_parse_queues(const struct rte_flow_action_rss *rss_act,
+-		       struct i40e_rte_flow_rss_conf *rss_conf)
+-{
+-	memcpy(rss_conf->queue, rss_act->queue,
+-	       rss_act->queue_num * sizeof(rss_conf->queue[0]));
+-	rss_conf->queue_num = rss_act->queue_num;
+-	return 0;
+-}
+-
+-static int
+-i40e_hash_parse_queue_region(const struct rte_flow_item pattern[],
+-			     const struct rte_flow_action_rss *rss_act,
+-			     struct i40e_rte_flow_rss_conf *rss_conf,
+-			     struct rte_flow_error *error)
+-{
+-	const struct rte_flow_item_vlan *vlan_spec, *vlan_mask;
+-
+-	vlan_spec = pattern->spec;
+-	vlan_mask = pattern->mask;
+-
+-	/* VLAN must have spec and mask */
+-	if (vlan_spec == NULL || vlan_mask == NULL) {
+-		return rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ITEM, &pattern[0],
+-				"VLAN pattern spec and mask required");
+-	}
+-	/* for mask, VLAN/TCI must be masked appropriately */
+-	if ((rte_be_to_cpu_16(vlan_mask->hdr.vlan_tci) >> 13) != 0x7) {
+-		return rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ITEM, &pattern[0],
+-				"VLAN pattern mask invalid");
+-	}
+-
+-	/* Use a 64 bit variable to represent all queues in a region. */
+-	RTE_BUILD_BUG_ON(I40E_MAX_Q_PER_TC > 64);
+-
+-	rss_conf->region_queue_num = (uint8_t)rss_act->queue_num;
+-	rss_conf->region_queue_start = rss_act->queue[0];
+-	rss_conf->region_priority = rte_be_to_cpu_16(vlan_spec->hdr.vlan_tci) >> 13;
+-	return 0;
+-}
+-
+-static bool
+-i40e_hash_validate_rss_types(uint64_t rss_types)
+-{
+-	uint64_t type, mask;
+-
+-	/* Validate L2 */
+-	type = RTE_ETH_RSS_ETH & rss_types;
+-	mask = (RTE_ETH_RSS_L2_SRC_ONLY | RTE_ETH_RSS_L2_DST_ONLY) & rss_types;
+-	if (!type && mask)
+-		return false;
+-
+-	/* Validate L3 */
+-	type = (I40E_HASH_L4_TYPES | RTE_ETH_RSS_IPV4 | RTE_ETH_RSS_FRAG_IPV4 |
+-	       RTE_ETH_RSS_NONFRAG_IPV4_OTHER | RTE_ETH_RSS_IPV6 |
+-	       RTE_ETH_RSS_FRAG_IPV6 | RTE_ETH_RSS_NONFRAG_IPV6_OTHER) & rss_types;
+-	mask = (RTE_ETH_RSS_L3_SRC_ONLY | RTE_ETH_RSS_L3_DST_ONLY) & rss_types;
+-	if (!type && mask)
+-		return false;
+-
+-	/* Validate L4 */
+-	type = (I40E_HASH_L4_TYPES | RTE_ETH_RSS_PORT) & rss_types;
+-	mask = (RTE_ETH_RSS_L4_SRC_ONLY | RTE_ETH_RSS_L4_DST_ONLY) & rss_types;
+-	if (!type && mask)
+-		return false;
+-
+-	return true;
+-}
+-
+-static int
+-i40e_hash_validate_rss_pattern(const struct ci_flow_actions *actions,
+-	const struct ci_flow_actions_check_param *param __rte_unused,
+-	struct rte_flow_error *error)
+-{
+-	const struct rte_flow_action_rss *rss_act = actions->actions[0]->conf;
+-
+-	/* queue list is not supported */
+-	if (rss_act->queue_num != 0) {
+-		return rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
+-				"RSS queues not supported when pattern specified");
+-	}
+-
+-	/* disallow unsupported hash functions */
+-	switch (rss_act->func) {
+-	case RTE_ETH_HASH_FUNCTION_SYMMETRIC_TOEPLITZ:
+-	case RTE_ETH_HASH_FUNCTION_DEFAULT:
+-	case RTE_ETH_HASH_FUNCTION_TOEPLITZ:
+-	case RTE_ETH_HASH_FUNCTION_SIMPLE_XOR:
+-		break;
+-	default:
+-		return rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
+-				"RSS hash function not supported when pattern specified");
+-	}
+-
+-	if (!i40e_hash_validate_rss_types(rss_act->types))
+-		return rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ACTION_CONF,
+-				rss_act, "RSS types are invalid");
+-
+-	/* check RSS key length if it is specified */
+-	if (rss_act->key_len != 0 && rss_act->key_len != I40E_RSS_KEY_LEN) {
+-		return rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
+-				"RSS key length must be 52 bytes");
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-i40e_hash_validate_rss_common(const struct rte_flow_action_rss *rss_act,
+-		struct rte_flow_error *error)
+-{
+-	/* RSS level is not supported */
+-	if (rss_act->level != 0) {
+-		return rte_flow_error_set(error, ENOTSUP,
+-				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
+-				"RSS level is not supported");
+-	}
+-
+-	/* for empty patterns, symmetric toeplitz is not supported */
+-	if (rss_act->func == RTE_ETH_HASH_FUNCTION_SYMMETRIC_TOEPLITZ) {
+-		return rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
+-				"Symmetric hash function not supported without specific patterns");
+-	}
+-
+-	/*
+-	 * When RSS types is not specified in testpmd, it will set up a default
+-	 * RSS types value for the flow. Even though no hash engine part calling
+-	 * this particular function will use RSS types parameter for anything,
+-	 * we cannot reject having it because it is extra effort for testpmd
+-	 * user to avoid specifying it.
+-	 *
+-	 * So, instead, accept types value even though we are not using it for
+-	 * anything, but produce a warning for the user.
+-	 */
+-	if (rss_act->types != 0)
+-		PMD_DRV_LOG(WARNING, "RSS types specified but will not be used");
+-
+-	/* check RSS key length if it is specified */
+-	if (rss_act->key_len != 0 && rss_act->key_len != I40E_RSS_KEY_LEN) {
+-		return rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
+-				"RSS key length must be 52 bytes");
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-i40e_hash_validate_queue_region(const struct ci_flow_actions *actions,
+-		const struct ci_flow_actions_check_param *param,
+-		struct rte_flow_error *error)
+-{
+-	const struct rte_flow_action_rss *rss_act = actions->actions[0]->conf;
+-	struct i40e_adapter *adapter = I40E_DEV_PRIVATE_TO_ADAPTER(param->driver_ctx);
+-	struct i40e_pf *pf = &adapter->pf;
+-	uint64_t hash_queues;
+-	int ret;
+-
+-	ret = i40e_hash_validate_rss_common(rss_act, error);
+-	if (ret)
+-		return ret;
+-
+-	RTE_BUILD_BUG_ON(sizeof(hash_queues) != sizeof(pf->hash_enabled_queues));
+-
+-	/* having RSS key is not supported */
+-	if (rss_act->key != NULL) {
+-		return rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
+-				"RSS key not supported");
+-	}
+-
+-	/* queue region must be specified */
+-	if (rss_act->queue_num == 0) {
+-		return rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
+-				"RSS queues missing");
+-	}
+-
+-	/* queue region must be power of two */
+-	if (!rte_is_power_of_2(rss_act->queue_num)) {
+-		return rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
+-				"RSS queue number must be power of two");
+-	}
+-
+-	/* generic checks already filtered out discontiguous/non-unique RSS queues */
+-
+-	/* queues must not exceed maximum queues per traffic class */
+-	if (rss_act->queue[rss_act->queue_num - 1] >= I40E_MAX_Q_PER_TC) {
+-		return rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
+-				"Invalid RSS queue index");
+-	}
+-
+-	/* queues must be in LUT */
+-	hash_queues = (BIT_ULL(rss_act->queue[0] + rss_act->queue_num) - 1) &
+-			~(BIT_ULL(rss_act->queue[0]) - 1);
+-
+-	if (hash_queues & ~pf->hash_enabled_queues) {
+-		return rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ACTION_CONF,
+-				rss_act, "Some queues are not in LUT");
+-	}
+-
+-	return 0;
+-}
+-
+-static int
+-i40e_hash_validate_queue_list(const struct ci_flow_actions *actions,
+-		const struct ci_flow_actions_check_param *param,
+-		struct rte_flow_error *error)
+-{
+-	const struct rte_flow_action_rss *rss_act = actions->actions[0]->conf;
+-	struct i40e_adapter *adapter = I40E_DEV_PRIVATE_TO_ADAPTER(param->driver_ctx);
+-	struct i40e_pf *pf;
+-	struct i40e_hw *hw;
+-	uint16_t max_queue;
+-	bool has_queue, has_key;
+-	int ret;
+-
+-	ret = i40e_hash_validate_rss_common(rss_act, error);
+-	if (ret)
+-		return ret;
+-
+-	has_queue = rss_act->queue != NULL;
+-	has_key = rss_act->key != NULL;
+-
+-	/* if we have queues, we must not have key */
+-	if (has_queue && has_key) {
+-		return rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
+-				"RSS key for queue region is not supported");
+-	}
+-
+-	/* if there are no queues, no further checks needed */
+-	if (!has_queue)
+-		return 0;
+-
+-	/* check queue number limits */
+-	hw = &adapter->hw;
+-	if (rss_act->queue_num > hw->func_caps.rss_table_size) {
+-		return rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ACTION_CONF,
+-				rss_act, "Too many RSS queues");
+-	}
+-
+-	pf = &adapter->pf;
+-	if (pf->dev_data->dev_conf.rxmode.mq_mode & RTE_ETH_MQ_RX_VMDQ_FLAG)
+-		max_queue = i40e_pf_calc_configured_queues_num(pf);
+-	else
+-		max_queue = pf->dev_data->nb_rx_queues;
+-
+-	max_queue = RTE_MIN(max_queue, I40E_MAX_Q_PER_TC);
+-
+-	/* we know RSS queues are contiguous so we only need to check last queue */
+-	if (rss_act->queue[rss_act->queue_num - 1] >= max_queue) {
+-		return rte_flow_error_set(error, EINVAL,
+-				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
+-				"Invalid RSS queue");
+-	}
+-
+-	return 0;
+-}
+-
+-int
+-i40e_hash_parse(struct rte_eth_dev *dev,
+-		const struct rte_flow_item pattern[],
+-		const struct rte_flow_action actions[],
+-		struct i40e_rte_flow_rss_conf *rss_conf,
+-		struct rte_flow_error *error)
+-{
+-	struct ci_flow_actions parsed_actions;
+-	struct ci_flow_actions_check_param ac_param = {
+-		.allowed_types = (enum rte_flow_action_type[]) {
+-			RTE_FLOW_ACTION_TYPE_RSS,
+-			RTE_FLOW_ACTION_TYPE_END
+-		},
+-		.max_actions = 1,
+-		.driver_ctx = dev->data->dev_private,
+-		/* each pattern type will add specific check function */
+-	};
+-	const struct rte_flow_action_rss *rss_act;
+-	int ret;
+-
+-	/*
+-	 * We have two possible paths: global RSS configuration, and an RSS pattern action.
+-	 *
+-	 * For global patterns, we act on two types of flows:
+-	 * - Empty pattern ([END])
+-	 * - VLAN pattern ([VLAN] -> [END])
+-	 *
+-	 * Everything else is handled by pattern action parser.
+-	 */
+-	bool is_empty, is_vlan;
+-
+-	while (pattern->type == RTE_FLOW_ITEM_TYPE_VOID)
+-		pattern++;
+-
+-	is_empty = pattern[0].type == RTE_FLOW_ITEM_TYPE_END;
+-	is_vlan = pattern[0].type == RTE_FLOW_ITEM_TYPE_VLAN &&
+-			pattern[1].type == RTE_FLOW_ITEM_TYPE_END;
+-
+-	/* VLAN path */
+-	if (is_vlan) {
+-		ac_param.check = i40e_hash_validate_queue_region;
+-		/* queue regions must be contiguous */
+-		ac_param.rss_queues_contig = true;
+-		ret = ci_flow_check_actions(actions, &ac_param, &parsed_actions, error);
+-		if (ret)
+-			return ret;
+-		rss_act = parsed_actions.actions[0]->conf;
+-		/* set up RSS functions */
+-		rss_conf->func = rss_act->func;
+-		return i40e_hash_parse_queue_region(pattern, rss_act, rss_conf, error);
+-	}
+-	/* Empty pattern path */
+-	if (is_empty) {
+-		ac_param.check = i40e_hash_validate_queue_list;
+-		ret = ci_flow_check_actions(actions, &ac_param, &parsed_actions, error);
+-		if (ret)
+-			return ret;
+-		rss_act = parsed_actions.actions[0]->conf;
+-		rss_conf->func = rss_act->func;
+-		/* if there is a queue list, take that path */
+-		if (rss_act->queue != NULL)
+-			return i40e_hash_parse_queues(rss_act, rss_conf);
+-
+-		/* otherwise just parse RSS key */
+-		if (rss_act->key != NULL)
+-			i40e_hash_parse_key(rss_act, rss_conf);
+-
+-		return 0;
+-	}
+-	ac_param.check = i40e_hash_validate_rss_pattern;
+-	ret = ci_flow_check_actions(actions, &ac_param, &parsed_actions, error);
+-	if (ret)
+-		return ret;
+-	rss_act = parsed_actions.actions[0]->conf;
+-
+-	/* pattern case */
+-	return i40e_hash_parse_pattern_act(dev, pattern, rss_act, rss_conf, error);
+-}
+-
+-static void
+-i40e_invalid_rss_filter(const struct i40e_rss_filter *ref,
+-			struct i40e_rss_filter *filter)
+-{
+-	const struct i40e_rte_flow_rss_conf *ref_conf = &ref->rss_filter_info;
+-	const struct i40e_rss_filter_data *ref_data = &ref->filter_data;
+-	const struct i40e_rte_flow_rss_conf *conf = &filter->rss_filter_info;
+-	struct i40e_rss_filter_data *data = &filter->filter_data;
+-	uint32_t reset_flags = data->misc_reset_flags;
+-
+-	data->misc_reset_flags &= ~ref_data->misc_reset_flags;
+-
+-	if ((reset_flags & I40E_HASH_FLOW_RESET_FLAG_REGION) &&
+-	    (ref_data->misc_reset_flags & I40E_HASH_FLOW_RESET_FLAG_REGION) &&
+-	    (conf->region_queue_start != ref_conf->region_queue_start ||
+-	     conf->region_queue_num != ref_conf->region_queue_num))
+-		data->misc_reset_flags |= I40E_HASH_FLOW_RESET_FLAG_REGION;
+-
+-	data->reset_config_pctypes &= ~ref_data->reset_config_pctypes;
+-	data->reset_symmetric_pctypes &= ~ref_data->reset_symmetric_pctypes;
+-}
+-
+-int
+-i40e_hash_filter_restore(struct i40e_pf *pf)
+-{
+-	struct i40e_rss_filter *filter;
+-	int ret;
+-
+-	TAILQ_FOREACH(filter, &pf->rss_config_list, next) {
+-		struct i40e_rss_filter *prev;
+-
+-		filter->filter_data = (struct i40e_rss_filter_data){0};
+-
+-		ret = i40e_hash_config(pf, filter);
+-		if (ret) {
+-			pf->hash_filter_enabled = 0;
+-			i40e_pf_disable_rss(pf);
+-			PMD_DRV_LOG(ERR,
+-				    "Re-configure RSS failed, RSS has been disabled");
+-			return ret;
+-		}
+-
+-		/* Invalid previous RSS filter */
+-		TAILQ_FOREACH(prev, &pf->rss_config_list, next) {
+-			if (prev == filter)
+-				break;
+-			i40e_invalid_rss_filter(filter, prev);
+-		}
+-	}
+-
+-	return 0;
+ }
+ 
++/*
++ * Revert to defaults only the registers this filter's filter_data records as
++ * owned. This is the inverse of i40e_hash_program_hw, but only undoes the
++ * owned subset -- it is not a full RSS wipe.
++ */
+ int
+-i40e_hash_filter_create(struct i40e_pf *pf,
+-			struct i40e_rte_flow_rss_conf *rss_conf)
+-{
+-	struct i40e_rss_filter *filter, *prev;
+-	struct i40e_rte_flow_rss_conf *new_conf;
+-	int ret;
+-
+-	filter = rte_zmalloc("i40e_rss_filter", sizeof(*filter), 0);
+-	if (!filter) {
+-		PMD_DRV_LOG(ERR, "Failed to allocate memory.");
+-		return -ENOMEM;
+-	}
+-
+-	new_conf = &filter->rss_filter_info;
+-
+-	memcpy(new_conf, rss_conf, sizeof(*new_conf));
+-
+-	ret = i40e_hash_config(pf, filter);
+-	if (ret) {
+-		rte_free(filter);
+-		if (i40e_pf_config_rss(pf))
+-			return ret;
+-
+-		(void)i40e_hash_filter_restore(pf);
+-		return ret;
+-	}
+-
+-	/* Invalid previous RSS filter */
+-	TAILQ_FOREACH(prev, &pf->rss_config_list, next)
+-		i40e_invalid_rss_filter(filter, prev);
+-
+-	TAILQ_INSERT_TAIL(&pf->rss_config_list, filter, next);
+-	return 0;
+-}
+-
+-static int
+-i40e_hash_reset_conf(struct i40e_pf *pf,
+-		     struct i40e_rss_filter_data *filter_data)
++i40e_hash_deprogram_hw(struct i40e_pf *pf,
++		       struct i40e_rss_filter_data *filter_data)
+ {
+ 	struct i40e_hw *hw = &pf->adapter->hw;
+ 	struct rte_eth_dev *dev;
+@@ -1468,55 +412,3 @@ i40e_hash_reset_conf(struct i40e_pf *pf,
+ 
+ 	return 0;
+ }
+-
+-int
+-i40e_hash_filter_destroy(struct i40e_pf *pf,
+-			 const struct i40e_rss_filter *rss_filter)
+-{
+-	struct i40e_rss_filter *filter;
+-	int ret;
+-
+-	TAILQ_FOREACH(filter, &pf->rss_config_list, next) {
+-		if (rss_filter == filter) {
+-			ret = i40e_hash_reset_conf(pf, &filter->filter_data);
+-			if (ret)
+-				return ret;
+-
+-			TAILQ_REMOVE(&pf->rss_config_list, filter, next);
+-			rte_free(filter);
+-			return 0;
+-		}
+-	}
+-
+-	return -ENOENT;
+-}
+-
+-int
+-i40e_hash_filter_flush(struct i40e_pf *pf)
+-{
+-	struct rte_flow *flow, *next;
+-
+-	RTE_TAILQ_FOREACH_SAFE(flow, &pf->flow_list, node, next) {
+-		if (flow->filter_type != RTE_ETH_FILTER_HASH)
+-			continue;
+-
+-		if (flow->rule) {
+-			struct i40e_rss_filter *filter = flow->rule;
+-			int ret;
+-
+-			ret = i40e_hash_reset_conf(pf,
+-						   &filter->filter_data);
+-			if (ret)
+-				return ret;
+-
+-			TAILQ_REMOVE(&pf->rss_config_list, filter, next);
+-			rte_free(filter);
+-		}
+-
+-		TAILQ_REMOVE(&pf->flow_list, flow, node);
+-		rte_free(flow);
+-	}
+-
+-	assert(!pf->rss_config_list.tqh_first);
+-	return 0;
+-}
+diff --git a/drivers/net/intel/i40e/i40e_hash.h b/drivers/net/intel/i40e/i40e_hash.h
+index 3bf30cdee55..c1ce372b6ea 100644
+--- a/drivers/net/intel/i40e/i40e_hash.h
++++ b/drivers/net/intel/i40e/i40e_hash.h
+@@ -13,19 +13,12 @@
+ extern "C" {
+ #endif
+ 
+-int i40e_hash_parse(struct rte_eth_dev *dev,
+-		    const struct rte_flow_item pattern[],
+-		    const struct rte_flow_action actions[],
+-		    struct i40e_rte_flow_rss_conf *rss_conf,
+-		    struct rte_flow_error *error);
+-
+-int i40e_hash_filter_create(struct i40e_pf *pf,
+-			    struct i40e_rte_flow_rss_conf *rss_conf);
+-
+-int i40e_hash_filter_restore(struct i40e_pf *pf);
+-int i40e_hash_filter_destroy(struct i40e_pf *pf,
+-			     const struct i40e_rss_filter *rss_filter);
+-int i40e_hash_filter_flush(struct i40e_pf *pf);
++int i40e_hash_program_hw(struct i40e_pf *pf,
++			 struct i40e_rte_flow_rss_conf *rss_conf);
++int i40e_hash_deprogram_hw(struct i40e_pf *pf,
++			   struct i40e_rss_filter_data *filter_data);
++void i40e_hash_compute_reset_flags(const struct i40e_rte_flow_rss_conf *rss_conf,
++				   struct i40e_rss_filter_data *filter_data);
+ 
+ extern const uint8_t i40e_rss_key_default[I40E_RSS_KEY_LEN];
+ 
 diff --git a/drivers/net/intel/i40e/meson.build b/drivers/net/intel/i40e/meson.build
-index c07257cb807..0db60c1e99e 100644
+index 0db60c1e99e..07162a93b30 100644
 --- a/drivers/net/intel/i40e/meson.build
 +++ b/drivers/net/intel/i40e/meson.build
-@@ -35,6 +35,7 @@ sources += files(
-         'i40e_flow.c',
+@@ -36,6 +36,7 @@ sources += files(
          'i40e_flow_ethertype.c',
          'i40e_flow_fdir.c',
-+        'i40e_flow_tunnel.c',
+         'i40e_flow_tunnel.c',
++        'i40e_flow_hash.c',
          'i40e_tm.c',
          'i40e_hash.c',
          'i40e_vf_representor.c',
