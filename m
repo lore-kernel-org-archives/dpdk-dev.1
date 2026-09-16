@@ -2,50 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58DDEC88E5C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 10:36:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5510EC88E77
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 10:36:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 21D52427BF;
-	Wed, 16 Sep 2026 12:36:31 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2EFEE42D3F;
+	Wed, 16 Sep 2026 12:36:34 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id C56AE40DD0
- for <dev@dpdk.org>; Wed, 16 Sep 2026 12:36:29 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 6880E40DD0
+ for <dev@dpdk.org>; Wed, 16 Sep 2026 12:36:30 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1789554990; x=1821090990;
+ t=1789554991; x=1821090991;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=RJhP1dlncMsh6yeNWxpwUQLwquaQvgQo3Ilk+U6MFgQ=;
- b=kO1AERbdtz54+DMs0A1Y3rBNEf38jjbeqCrAjddGjXQ5yU2i6yX6Wdb3
- O5t+y8IanjcFtD3wtn6cslUWRFHjlxkUEOGjahrZZqWr+/y0CymjOBRxI
- iizZUA7bfNyaGa/rPkxhO30aSMYsiqtmhN6p90m0e7c9s1byy9Bpasp8M
- ZyUlbA5ytLUL1T8W89ucT4zfTOsBeUx0U+8lZ9BEVIcu5SWfkELVDQg9A
- 9DAZDP9DRhSg9PRUgTVBiR//O6mvUwmJVbWWODwhGs912gAUvGkhB8fHe
- p2tUkVuyTuDyzMVPC/liDCwdiKBdnRfVTZneKYJZ7xnOMwoI+/NA/Sum4 w==;
-X-CSE-ConnectionGUID: 3VJ05E8ESDybrBDWZRJChw==
-X-CSE-MsgGUID: FpQzHretQu2S6CyPXwr0fg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="89867620"
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="89867620"
+ bh=HzcP7jr+JH5Y789qtFA0nIujqdogEivVtsc1YgyT5ZU=;
+ b=dn9RNd7oVRs9zL1ey9678AqN/4LCF9h6/Cd8A/TFIQLCKMj6yz4zBhfj
+ 03a2JKfpZQ72n5NaMmD0FlY4gTkEgF9fWOcFFyNUKrco6nCmAkvtcWbUF
+ 96+5Wo88VVQhCuZBVXMeLRFL0UxEusgsMF71aHXWuVSaEZiHMkeozUCnZ
+ NSrwk+vPAZsDo67od5UXfOMfoIYGcPal4MYT+FSgh5FDy5jxP/OEshscR
+ mJLBj4MNwpdeXzIOyhAOiEyeRp1jfFULhJf//whWj4feaFq5aRfU+GBdi
+ p6LiVPj53tpChtNc2kYcTR4Tv6EXSvWSjOt7csdCf2AQWylwD1eh2z8WP w==;
+X-CSE-ConnectionGUID: vJIOBHOtTiC0dDTioyLlVA==
+X-CSE-MsgGUID: Trtas49XTEiNbLrAPR7MxA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="89867621"
+X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="89867621"
 Received: from fmviesa012.fm.intel.com ([10.60.135.152])
  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
  16 Sep 2026 03:36:29 -0700
-X-CSE-ConnectionGUID: o1KS73HLQeiTZp81F0YtMw==
-X-CSE-MsgGUID: MAXqSC8PTZKQuTtLMZix3g==
+X-CSE-ConnectionGUID: kfkIRVKtSbiCuH6ZIXNVXw==
+X-CSE-MsgGUID: uLj0Zu6PRmWUEc6nFI/Pxg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; 
-   d="scan'208";a="1528116"
+   d="scan'208";a="1528124"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa012.fm.intel.com with ESMTP; 16 Sep 2026 03:36:27 -0700
+ by fmviesa012.fm.intel.com with ESMTP; 16 Sep 2026 03:36:28 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: ciara.loftus@intel.com,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v3 00/15] consolidate ice and iavf Tx vector paths
-Date: Wed, 16 Sep 2026 11:36:07 +0100
-Message-ID: <20260916103622.319874-1-bruce.richardson@intel.com>
+Subject: [PATCH v3 01/15] net/iavf: remove unnecessary alignment calls
+Date: Wed, 16 Sep 2026 11:36:08 +0100
+Message-ID: <20260916103622.319874-2-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260903170140.360477-1-bruce.richardson@intel.com>
+In-Reply-To: <20260916103622.319874-1-bruce.richardson@intel.com>
 References: <20260903170140.360477-1-bruce.richardson@intel.com>
+ <20260916103622.319874-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -61,60 +62,74 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patchset consolidates the ice and iavf vector Tx paths, moving the
-code to net/intel/common. The iavf code is used as the basis for the
-move, because it has a superset of the features. When the common code is
-adopted by the ice driver, it then gains features such as QinQ support
-and tunneling support.
+When we have a context descriptor on Tx of a packet from the vector
+paths, that means that we always have 32-bytes being written per
+descriptor/per packet, so the stores are always 32-bit aligned. This
+means we can use aligned stores for each single descriptor store, and
+that we never need to do an initial descriptor write for alignment when
+doing a burst of descriptors.
 
-V3:
-* fix variable shadowing issue in patch 15 (ci_txq_vec_capable param)
-* update ice.ini with new features
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+Acked-by: Ciara Loftus <ciara.loftus@intel.com>
+---
+ drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c   | 9 ++-------
+ drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c | 9 ++-------
+ 2 files changed, 4 insertions(+), 14 deletions(-)
 
-V2:
-* fix build when iova not in mbuf
-* add extra patch to consolidate the offload flags
-
-
-Bruce Richardson (15):
-  net/iavf: remove unnecessary alignment calls
-  net/intel: make Tx context flag common
-  net/iavf: use separate params for VLAN and QinQ position
-  net/iavf: deduplicate tunnel field fill functions
-  net/intel: define common macros for tunneling bit-shifts
-  net/intel: move iavf descriptor writing functions to common
-  net/intel: use function callback for lldp
-  net/intel: allow building without IOVA in mbuf
-  net/ice: use common descriptor creation functions
-  net/intel: move vector Tx paths to common
-  net/ice: use common AVX Tx functions
-  net/intel: add common vector Tx fns with context handling
-  net/intel: improve Tx path selection logic
-  net/ice: enable context desc offloads for vector Tx
-  net/intel: consolidate Tx vector offload path checks
-
- doc/guides/nics/features/ice.ini              |   8 +-
- doc/guides/rel_notes/release_26_11.rst        |   6 +
- drivers/net/intel/common/tx.h                 | 107 ++-
- drivers/net/intel/common/tx_vec_x86.h         | 781 ++++++++++++++++++
- drivers/net/intel/cpfl/cpfl_rxtx.c            |   3 +-
- drivers/net/intel/i40e/i40e_rxtx.c            |   2 +-
- drivers/net/intel/iavf/iavf_rxtx.c            |  94 +--
- drivers/net/intel/iavf/iavf_rxtx.h            |  53 --
- drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c   | 496 +----------
- drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c | 495 +----------
- drivers/net/intel/iavf/iavf_rxtx_vec_common.h |  79 +-
- drivers/net/intel/iavf/meson.build            |   4 +-
- drivers/net/intel/ice/ice_ethdev.h            |   3 +
- drivers/net/intel/ice/ice_rxtx.c              |  44 +-
- drivers/net/intel/ice/ice_rxtx.h              |  17 +-
- drivers/net/intel/ice/ice_rxtx_vec_avx2.c     | 159 +---
- drivers/net/intel/ice/ice_rxtx_vec_avx512.c   | 154 +---
- drivers/net/intel/ice/ice_rxtx_vec_common.h   |  62 +-
- drivers/net/intel/idpf/idpf_rxtx.c            |   3 +-
- 19 files changed, 1068 insertions(+), 1502 deletions(-)
- create mode 100644 drivers/net/intel/common/tx_vec_x86.h
-
---
+diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
+index 7217f32cef..9b62ef53d3 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
++++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
+@@ -1933,7 +1933,8 @@ ctx_vtx1(volatile struct ci_tx_desc *txdp, struct rte_mbuf *pkt,
+ 	__m256i ctx_data_desc = _mm256_set_epi64x(high_data_qw, pkt->buf_iova + pkt->data_off,
+ 							high_ctx_qw, low_ctx_qw);
+ 
+-	_mm256_storeu_si256(RTE_CAST_PTR(__m256i *, txdp), ctx_data_desc);
++	/* tx_id is always even in ctx mode, so txdp is always 32-byte aligned */
++	_mm256_store_si256(RTE_CAST_PTR(__m256i *, txdp), ctx_data_desc);
+ }
+ 
+ static __rte_always_inline void
+@@ -1944,12 +1945,6 @@ ctx_vtx(volatile struct ci_tx_desc *txdp,
+ 	uint64_t hi_data_qw_tmpl = (IAVF_TX_DESC_DTYPE_DATA |
+ 					((uint64_t)flags  << IAVF_TXD_QW1_CMD_SHIFT));
+ 
+-	/* if unaligned on 32-bit boundary, do one to align */
+-	if (((uintptr_t)txdp & 0x1F) != 0 && nb_pkts != 0) {
+-		ctx_vtx1(txdp, *pkt, flags, offload, vlan_flag, ptype_lldp_enabled);
+-		nb_pkts--; txdp++; pkt++;
+-	}
+-
+ 	for (; nb_pkts > 1; txdp += 4, pkt += 2, nb_pkts -= 2) {
+ 		uint64_t hi_ctx_qw1 = IAVF_TX_DESC_DTYPE_CONTEXT;
+ 		uint64_t hi_ctx_qw0 = IAVF_TX_DESC_DTYPE_CONTEXT;
+diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
+index bf0245e8f4..4609c2245a 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
++++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
+@@ -2078,7 +2078,8 @@ ctx_vtx1(volatile struct ci_tx_desc *txdp, struct rte_mbuf *pkt,
+ 	__m256i ctx_data_desc = _mm256_set_epi64x(high_data_qw, pkt->buf_iova + pkt->data_off,
+ 							high_ctx_qw, low_ctx_qw);
+ 
+-	_mm256_storeu_si256(RTE_CAST_PTR(__m256i *, txdp), ctx_data_desc);
++	/* tx_id is always even in ctx mode, so txdp is always 32-byte aligned */
++	_mm256_store_si256(RTE_CAST_PTR(__m256i *, txdp), ctx_data_desc);
+ }
+ 
+ static __rte_always_inline void
+@@ -2088,12 +2089,6 @@ ctx_vtx(volatile struct ci_tx_desc *txdp,
+ {
+ 	uint64_t hi_data_qw_tmpl = (CI_TX_DESC_DTYPE_DATA | (flags << CI_TXD_QW1_CMD_S));
+ 
+-	/* if unaligned on 32-bit boundary, do one to align */
+-	if (((uintptr_t)txdp & 0x1F) != 0 && nb_pkts != 0) {
+-		ctx_vtx1(txdp, *pkt, flags, offload, vlan_flag, lldp_enabled);
+-		nb_pkts--; txdp++; pkt++;
+-	}
+-
+ 	for (; nb_pkts > 1; txdp += 4, pkt += 2, nb_pkts -= 2) {
+ 		uint64_t hi_ctx_qw1 = IAVF_TX_DESC_DTYPE_CONTEXT;
+ 		uint64_t hi_ctx_qw0 = IAVF_TX_DESC_DTYPE_CONTEXT;
+-- 
 2.53.0
 
