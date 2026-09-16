@@ -2,74 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE886C982C9
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 15:44:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF690C982C9
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 15:45:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F0A3342F03;
-	Wed, 16 Sep 2026 17:44:07 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0948642F03;
+	Wed, 16 Sep 2026 17:45:11 +0200 (CEST)
 Received: from fout-a4-smtp.messagingengine.com
  (fout-a4-smtp.messagingengine.com [103.168.172.147])
- by mails.dpdk.org (Postfix) with ESMTP id BEBDE4028B
- for <dev@dpdk.org>; Wed, 16 Sep 2026 17:44:06 +0200 (CEST)
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
- by mailfout.phl.internal (Postfix) with ESMTP id 65977EC0102;
- Wed, 16 Sep 2026 11:44:06 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-05.internal (MEProxy); Wed, 16 Sep 2026 11:44:06 -0400
+ by mails.dpdk.org (Postfix) with ESMTP id F255C4028B
+ for <dev@dpdk.org>; Wed, 16 Sep 2026 17:45:08 +0200 (CEST)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfout.phl.internal (Postfix) with ESMTP id 9C2A1EC0594;
+ Wed, 16 Sep 2026 11:45:08 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-03.internal (MEProxy); Wed, 16 Sep 2026 11:45:08 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1789573446;
- x=1789659846; bh=xLpFx1B2pxZqO8CA9JlM95prpZEQLnhXtJ+iyENxyXU=; b=
- HpLHCKW93vdKerzLCq7UUIcsUWSYjdd9GoPQkEhtAeX/6wQEqShcy8pqAMycSiiK
- ocDz87LFJvnwBpqrlECZC8sv8yU1lJmc+uepHXfRFwaDAO5JVhvSSc7PqYOnJAKC
- 99+7lAwJV23fCzBa7Dgk3XmA0LWQ53JGh4zt0fwyZyxSweJ+0s+vcT3aUfZHM967
- hvcjIZBgVMha9K8zVx8T6I+/5OF6ymPyUHFuY9dfa99us36BNtE/TV+DzWNoSQFG
- 8tTOatud8iI2kAU8kRk5IxF8320w5HeXKfNvCsrJxPgMtd0/dI1EeFMCD1C48sO/
- //PwaOI8I/zu2PNkp47TeA==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1789573508;
+ x=1789659908; bh=QqGd20JxdUniKV3+bxPGEp3UV52uTdpf+OEFapa65/Y=; b=
+ ghhbIQ3csZqr0YPmTn2+kwep8zp/2TkLis1hp468ikHXuRuXEHRvWr5lG5NHtoJz
+ 3jE/XSVvStHZRr7fSq3Phbq8IFKSmuRItWtjkLDBIZ/S7qsPoHv7shQAG5VXIcll
+ +c6kHrTD3pCT1svJohxEP6V85Q+co6nod0enwzn48d7u+LOuunPvBKxItB5g/qqE
+ nEslX8ynolxpRvPdh1hTQuBigEykNDYK2fKDwqcG9ZdzG/tZN6pjOnA2S4QiE15H
+ v/3Y3D7HgI5ATlRMpoB28uZJ+/a3J2MK9FtEyUAAPMZXzOs2vNgy/HQG3q8y0kjt
+ 24+13ozknPC3EQb6Scak5g==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1789573446; x=
- 1789659846; bh=xLpFx1B2pxZqO8CA9JlM95prpZEQLnhXtJ+iyENxyXU=; b=k
- MoV2A9zKRjSEa+j//LYKVwxbzRSYHGxY/Qm/mBxszMHmQtBAKqS+mRJQ5tuVtLeP
- +HN91DDZlY0owac0Idb0xHvs5NyY1cANlzzHbfNHm3DvinVdOlXkrcQFDVYcKkz5
- ccfN/NLuLvxyEQIFfqKdI0k8Tl2hbBWZjYuPCF07FVOh3bgvwF2WjacywYC9wErm
- O6mmocbyzm8Vxd8b0kIJ8uY5H3f+frbMccELTZqHqIU1LKuauVhauRDHcAVqVmv7
- hCs8HYeM2obvIKWrm5JpYsZpxJ3hEH6Ws2tDuP6z+Qg4BiHTOCPEgR5IC3AJOcRo
- Wo3D8qKH2gtQMiyHGeq2A==
-X-ME-Sender: <xms:RrmqaqYdMQfi_AQndRpCqKo6p5A1A4Sjy3vKMcnfQ9TyySbKtuPYfA>
- <xme:RrmqapuwPzsMUxfRBLz-pbYi_1oOV5o6hQa-GCWcvxXiLuTOlNJAgLKIXMS3Td2t4
- 8xDcHX94a9yQodL23Lpbs7M-Q8Q_MBC-1VrZNfmzubc4jPdBVsXKrg>
-X-ME-Received: <xmr:Rrmqant9rLr3jZZdnKGCxtndvssk-OYrhkWhqDp6tQoUn78Bl5ekvNSa5oiobmKc8IWGTWCVZt9OrQdVx-GlM70>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1789573508; x=
+ 1789659908; bh=QqGd20JxdUniKV3+bxPGEp3UV52uTdpf+OEFapa65/Y=; b=N
+ Vokf/5Bs5jFwU6qHEbBK80tYp2OVy0ZVXHOlcV0GpELLtEpGI7mYprQuyal3gY9s
+ zKXr3Pqct3/86ewPGIhzWmJqQYOLbBKFRSiCDkkCr9up0ONcbT4E43c/M0hs9eSM
+ PMZfjSyakejkd55sZixLOG8wRo6wMYl/zniQtA2e+1nLPVrknjfM+T20nObzhwba
+ YJAkR9iXYu1NrRRoVVgOJ61x8ZuCWnXDsopVtjK14RUK/lQmCwyJWcgeSvOM0LpN
+ zkVSc5tWocUj4vLzwANkNV7HWR7vzjBX3v6Z9qKT1NEjGByg3P2wSuiXnLbhsOOt
+ 5DR0kWg2bf2G27WO3VZtQ==
+X-ME-Sender: <xms:g7mqamelsS03MXQSkf4YGOZlRJ_l7MRZ5N-_M7nmYN_AwRMlR2bVag>
+ <xme:g7mqarpEyCp3xKVYIRFBFPnY0XJLt9RoSGEPo2wPtRrIYDad63RtNVtFc2tLZjkZT
+ cROmgETm0L1yjPebyqd6zuRG7vz7rOmeN2q2CqD8VE52r8Vx03Q_II>
+X-ME-Received: <xmr:g7mqarByZ1Qgqio-f86OexC2drWlJUsB86KZQ-ONyMsEcVNERCW6hQH_tkHMTdhYGbbvr_Zc19F77dG9J7PWoCc>
 X-ME-Proxy-Cause: dmFkZTFFtG8ndmKwT+ikgqIrlLMijC3f+nAs/TlunyfczAms3rnxmD44DFGzi7QfG4e5cm
  M9xkToaAeg/xNEsw15K5/gsIhYhQ4zYN+luhRUT+T5P2mtfvmBSZmPfxU1mT8UBLfo2w/+
  zka24QhdDSd6trmzh0P6og1KXqAfhHOxMVOkOw6gPhGSsYgIEpVURWqE3tf3aLuVspxb8T
  /ZcU+BX1hBOV6UQH+6hDbgnJSrE1Nw6UqFMBNJqzPIvGi08ahqCH5SAWdKPsCks45W+xGS
- KYXB7RFgJWIfh4n1XtvyiWk0DHlRInwsPE7ZvNIbiIHJyK5lZJ9c7kJiAN/xzF8NttvOkw
- MhExcqLCuQLnsLN6wHrpR3JntSshg+Ntkwj9o3L30EIsCOFkx1X8ifXOq6mH23QaWKVbbw
- l83u7XKLOsuk5SjHrQJqlstTkgtadIZQ4M9awBYysOOwUb5cAnmoEt5MexyT7uuAmH8lZP
- FKJrFRcG//amuer872tcZPmTRiX7Vphx/RGAFTfeVzSP3wufX6XYtWTKCREa1nL3ySxunu
- tStWw0ueTdV1yD8T9JLbCwL/Ea3nW40rIuvQsj4o/nm4Wzki3KrTK8vmaSYKFsPUalc9vE
- IOw1CO6ccm5prgvJmvfx+dNaoTmTulTSE85999nz+YMHJ/VfHyeS5EWfSPVg
-X-ME-Proxy: <xmx:RrmqaueOJaSYsT8H3Oz8DHuWRQYV_RH1lv0bvkk98IGujuH3AonofA>
- <xmx:RrmqaoZYnuVfSFam9JjiQuBDp4lHdNiPoq60b9Cy8MusH3v5EqZEBA>
- <xmx:RrmqahVeVv_b5BU4pK7DuqEdQzk7YupHJTP0ouMEZ7CK3Kmutv3t5Q>
- <xmx:RrmqaqhqbyvLGN74fkuri9Bb3AQdWBpjR_UtgdOAAgc7-IFF4UAwOQ>
- <xmx:RrmqahYxnf4KLzqaDIpkpQ65oExRzJYhuMHzsnRwK7mt7KRygqRA-50a>
+ KYXB7RFgJWIfh4n1XtvyiWk0DHlRInwsPE7ZvNIbiIHJyK5lZJ9c7kJiAN/xzF8NttvOq7
+ 4lWTAcQeP7rvAlSZoYJLJjenBQ2YAFKmCdZ+L+trVM0FBDGtIVM6C7dKpQadLisUMAigKL
+ XIBz8K/8P2lxMvUvsjtNPdfcyFGonBbUfXDejnTW9pUAKXv3E+llhFo9DZQEqjOUpaRBnR
+ O4rhXv89pSjj/GIi7L5FLqdGMeNPiHa7m7P3EGQWBiZF12KdqUjn1ZqXwIiTzLJv6Mtg5p
+ EwuytP6W7T6nWapZyp1Vc2bFD8DGlmrNR/uZucE6gYGrOPp9yj67QiWC+tNWRDk7qQoTWz
+ wAv+GQWOYx48voN8TFGWz5wd6WPAD+AzeEvWVAwODwmplK9JmKlkToZp3Mlw
+X-ME-Proxy: <xmx:g7mqaobbglY0e1Ho995CwtmrnmuiIdXWAYzhvebx9GN8xqVroWvTww>
+ <xmx:g7mqau5ujJ33t3KZrWZ7MxnkYKaA8wJh5v9OBRPQV76Mo5NyTOnbfw>
+ <xmx:g7mqapY5fm1x-h1EtJZcE8L7G2EXzPcA2ksvcbpT2mcSj_GNuge6Vw>
+ <xmx:g7mqatgF2WXAjbn-VWSjXDwFxWGWmL0WPKdGcG-DHTXYvgv1_lVBbA>
+ <xmx:hLmqajxaIJJoGjId0UDNy7GUe5kUXyRPXXi-Gp2s-s-eRzLL9WVlU5jW>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 16 Sep 2026 11:44:05 -0400 (EDT)
+ 16 Sep 2026 11:45:07 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH] MAINTAINERS: Remove Long Li
-Date: Wed, 16 Sep 2026 17:44:04 +0200
-Message-ID: <olYc9AjhTxGZQEGP1gY_6g@monjalon.net>
-In-Reply-To: <20260914160220.2283910-1-stephen@networkplumber.org>
-References: <20260914160220.2283910-1-stephen@networkplumber.org>
+To: Marat Khalili <marat.khalili@huawei.com>
+Cc: dev@dpdk.org,
+ "konstantin.v.ananyev@yandex.ru" <konstantin.v.ananyev@yandex.ru>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>, qm2k21@gmail.com
+Subject: Re: [PATCH] maintainers: update for BPF library
+Date: Wed, 16 Sep 2026 17:45:05 +0200
+Message-ID: <s9_SFl7uT76yxANKAH1hDg@monjalon.net>
+In-Reply-To: <0b03434848f148c4ab471a57acf75bc5@huawei.com>
+References: <20260916100203.65373-1-marat.khalili@huawei.com>
+ <0b03434848f148c4ab471a57acf75bc5@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -86,13 +89,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-14/09/2026 18:02, Stephen Hemminger:
-> Mail to Long Li at Microsoft is getting rejected.
-> Confirmed with Wei that Long has left MS.
+16/09/2026 14:48, Konstantin Ananyev:
 > 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> > Marat Khalili will now make contributions to the BPF library
+> > as an individual in his personal capacity.
+> > So, updating his email in the MAINTAINERS file
+> > to be his personal email.
+> > 
+> > Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
+> Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 
-Applied
+Applied, understood.
 
 
 
