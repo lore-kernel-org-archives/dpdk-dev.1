@@ -2,74 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C122EC982CC
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 15:42:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9086C982CC
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 15:42:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0786D42F03;
-	Wed, 16 Sep 2026 17:42:18 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 00E4E42F03;
+	Wed, 16 Sep 2026 17:42:56 +0200 (CEST)
 Received: from fhigh-a7-smtp.messagingengine.com
  (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
- by mails.dpdk.org (Postfix) with ESMTP id F20994028B
- for <dev@dpdk.org>; Wed, 16 Sep 2026 17:42:16 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 3201E4028B
+ for <dev@dpdk.org>; Wed, 16 Sep 2026 17:42:55 +0200 (CEST)
 Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 79C041400106;
- Wed, 16 Sep 2026 11:42:16 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-02.internal (MEProxy); Wed, 16 Sep 2026 11:42:16 -0400
+ by mailfhigh.phl.internal (Postfix) with ESMTP id D59DD14000FA;
+ Wed, 16 Sep 2026 11:42:54 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-02.internal (MEProxy); Wed, 16 Sep 2026 11:42:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1789573336;
- x=1789659736; bh=us8aLytAjkFhadsDBKQObozPKgE11iBCy61pF2ipmTM=; b=
- BledDl9WTxYb2PVZP0bSDOJuiHy80oPJTnIpX9U2KMACysd5wugE601tCy5hGGaI
- Wkr2uWYkiaWSVMoljRAvMdH9IPDlg4J+1eLpyLWroTSvVyPq+y0R56vpjA2I+1A/
- 8WUjG5ywGindtLwyvbf779USdGsIPdrUcDHElsAaeMnjxHVkDchmMpK1r1T/lNxb
- L2cIZ1x+4txo4aJH0iXz01zrD3wfD7p1xCaAdD8zDiIkmpW4YGMhf+YD5io5vmr4
- wfgBzPlbK0bGgCCqLMskgbw+xKbEmVHp61IbSPJNzdUVu/lkTz7Pb+spbJhPrrLy
- MLCoJxGW6ddnk6PE759jQA==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1789573374;
+ x=1789659774; bh=cBK63Lq/MMITGitzIin+lt12tj6X7D+sblx4qTvodbQ=; b=
+ SGeqGJDjIbbJx4ih5eTDcjTA1tlTLa/XCGqgBwoXBX64rG4reOB52ZkDFyDVSiR1
+ xMs9CJaKJLyTOkcPEFQWHd1NiCvMLY3R12+V+qOSWmUb1CXkKGl7PsfKnXlxNSci
+ WV60QUFGnlDVuWIx2EehPE2fw6qa34Uxp46mY0Dq2Qr/EBoqcIezPCQt9+9wlMIL
+ N+SPWfnzYGOh5KPgk5cR+xwKdOjKz3Dr2UXhJI3fiwIEU62no0ep7Mh3G1L7oUCB
+ +5nCgt0gAcxBoYiB9Ay/m+aFlkUgWDHj4KOILo78b4SCLTOyV3Kti7KHC8q+Ched
+ D3n6ni9U1z+e16HgtVRlBQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1789573336; x=
- 1789659736; bh=us8aLytAjkFhadsDBKQObozPKgE11iBCy61pF2ipmTM=; b=M
- V1cmdfulIv9tFiCmYa1DhpfsYf4jGjHYfEX+7A9Kv/Jbh3IwRJFQ3FelaoZii6Qr
- WVExpSbgUQwlZyYzppW0Z5ca1Ss10tX/747oh+pv+r2jxrLTl4o+gC5d1JiO7Mj8
- bLqr089znfJoDFvMAKd0QNS/yoEDF+bGRIz7gaifduOPqVFD9o/f0opmO59DCU6p
- hLNBcn9kYMJCO8HsGM61cmrTn4Uqle3771fJYQCkr9/FtsLIJjip5UfKSohq4T3A
- Er0jCkm0qOpOja53jxjptHjuv8pveYXlXp815jWzPbON3ycLzz67wGzvJyQJ5QNX
- rwoDJBmhPaHhlo0lNHtQA==
-X-ME-Sender: <xms:2LiqarZwQpX5m0WPUobjNUGy4J_5R2MdxEYb_VL96sCjh8QzMMia8Q>
- <xme:2LiqamtuALzS4sKr2LEM6mdGt-HqPXilo9nKb2t5US7_Q-iezyWdZdl7PGW2Swt_z
- eOZMcSSj4ia_VTbdUAWNsDiMW5T1xPZW9RnkxSd_zPQ1dqzyQawx0A>
-X-ME-Received: <xmr:2LiqagsvBhNd7rdqTiSa22b0V3_jBk5ejRJJGRtsD89zBi_dFLqA9kY8FDDTB7_towjppnl4hQLWO9-o-sqMkmU>
-X-ME-Proxy-Cause: dmFkZTFFtG8ndmKwT+ikgqIrlLMijC3f+nAs/TlunyfczAms3rnxmD44DFGzi7QfG4e5cm
- M9xkToaAeg/xNEsw15K5/gsIhYhQ4zYN+luhRUT+T5P2mtfvmBSZmPfxU1mT8UBLfo2w/+
- zka24QhdDSd6trmzh0P6og1KXqAfhHOxMVOkOw6gPhGSsYgIEpVURWqE3tf3aLuVspxb8T
- /ZcU+BX1hBOV6UQH+6hDbgnJSrE1Nw6UqFMBNJqzPIvGi08ahqCH5SAWdKPsCks45W+xGS
- KYXB7RFgJWIfh4n1XtvyiWk0DHlRInwsPE7ZvNIbiIHJyK5lZJ9c7kJiAN/xzF8NttvOdV
- DjeSKAPJX8EEJOCEfbFiqC4ecAZLEOyBeAyDtacS4ZYPIGPtfEFdafZkX0oWEjpaj8jBI1
- jBKniZvZGwiqT7ZljayJTPEQP2qQ1NZcYpG/gtxlYs/rsBk4+yTMPBxIqIareJlwrwD53I
- +OzgiegVdYR9E00MdRWkugbfrMEUmGCSf6wvmBSu43CgH1d7CDDBLAiZcT5SPxQ6MvXaeE
- E3bWPbtZyFtuIJ0Sk684DMQwaYLmo1K5RZyifyhe3H8Bo6LIM4FZssGvH849vCAICGbBvR
- 2skN6gjZU+kw7kP1CebaDRLgybZAPWXC521Rbwu8Qd14ImBzEe2h1xfgyfcQ
-X-ME-Proxy: <xmx:2LiqajeJnWhDpdk6DKEvQk4uHiAYCyqgPg3XK_C6ODDzUennaSY8MQ>
- <xmx:2LiqapbMV3kQUVhZMvFbCDpMIYiSfhwNGXyHk1fccJjp948R1eyQHQ>
- <xmx:2LiqauUoU2KfUYy13szRZhJkh2rvg97DSXzQ1SbdUpxaGvuS7lo2LQ>
- <xmx:2LiqajilCMd_v_LXZVgvwemG3PDlYsr-yWeUrokj750jsNrjnSIF6g>
- <xmx:2LiqaqaQlOKeY8DByD5-X1BzR0TvQ3ZTEQHCiAZc4VbKAKjH8hcKFL1r>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1789573374; x=
+ 1789659774; bh=cBK63Lq/MMITGitzIin+lt12tj6X7D+sblx4qTvodbQ=; b=H
+ JmGrgVvUBxIt2Fn/UhyeJmWf3wEgrtr24xCf1K8FpdUz0MMKfloUeAdGkXDlh3WG
+ nTaCHmKWu+se8Rlq9ys0Ef9Y2ypQhSPwbE150kznYocWhW+h9CEP1L/0vxTdc7AP
+ wuMCkerN/GPOjn5nm8iYAXH4+g1a6rWn54zkL8gmpJ1szAysr2tCGFd2ZBydb9E5
+ Wc31K3TGu4VAXzKulPfnXqRqMal0FjCqTpWHoviKT+TLiFHAR7cVg89DXjQpPSdy
+ 6JEsB2tjrmFBCWZUX4hciQB9cmhlgVGCsdkwgfb7v12jgeolhS+ggtVfMQnPnnaF
+ N/mP9ZNp7TTgobUITfrwA==
+X-ME-Sender: <xms:_riqalRwDeuT5jQB0aLm0jg1yEBb5ir6r6LdDIUUkRqGVGW3Ir_MtQ>
+ <xme:_riqarE4v072f6ojbMvCpxVrgiPEo_NU_85eL21yKKqaEOX6pbqY4Xfg-5T_r6HVT
+ xXdpmNdfg_yexWxmEn_2sDvIAVDqmaV7hOMB2icVGnWM3JgWv3wT-Y>
+X-ME-Received: <xmr:_riqatkyhSTDnXI8cQcpdCgYuVvCsrh89mdA21jBjct8xvaMkgEeBrdeEPqmiUnzN3Eu1f-ueXKQx028AqFa1d8>
+X-ME-Proxy-Cause: dmFkZTGaouHgaVmGIkBnpWaUvvI0oTr1PWoq/uLMDO+NCKbqOW6OL/OeunYNRxZUxG83Pu
+ Sx2Grpdk3ybLL0ns6HYGHu3Sv0LFJzbUDQyTSnitLiAduztBsZPgvbdcL/Jjwvd0O0paej
+ MjQy8YyQ6ppvxOTeag+bPhOb237uKzWpKTWCOaPrpZoVmgUSb9K5J2sB7zGmMgZ9j+8vYk
+ xSTm89PvSk5y+UXYK85PhhpDwqv8G/rseCv7nPJ5KMD9/qR5hZTaIza26jXryl8lgGoIWX
+ T9v91sRobJvlOrVVsNY7jWZqv9CAG4yEmBRjFrZMun70dy0k3BJ5Xg2kibia4vt2MPdXTT
+ V/X4BrsYHSkuAeN81DzDTRsVuVOgeVdOQTGKzD39q0RqZ7FqSltW4HQ/syF77Vew6SAv8z
+ 2vIwQdBx2ZOyCk3mavfKyFcQP5fOeYpNpMhMe4HeBRMW30Z/s9UL44dL4lUZkmQB5g8pYR
+ iwX9znSdnE5wVWAW+qMz2GvELYYijQB26HnYCBndN+P+2n2hurpWY2qPt88OWcAWjqtyoZ
+ jO/Zx+E6eBWD4DmymJj3YSdGIaUX3MtQ8O1J5OQQr8ilNQe/evOY+l+fTpBzFcT5/DtqNg
+ u91Fyb1iAGqlMo17+kdPvPr4aMGMGpmReQrhn4Wa0p8fPI7dfg1b/WXeWTJg
+X-ME-Proxy: <xmx:_riqau07BR_N2osPN5efiVSRbsK_jADqBahrVfULHkEEVaFh_sxtMA>
+ <xmx:_riqahRo1uH808X471jFVCs3-cVOPPVb0R4nJ6kCS7HzTp_Oq6Dd8A>
+ <xmx:_riqaouRFjyEe5FE8pXipZBDPDdstIz2au1d1Fhh8IJ0mTblo8RlvA>
+ <xmx:_riqauZXSXynfltDRjtxxWge2dsPHIRCNu5ycWxugf8uzuFEHNxpZA>
+ <xmx:_riqarSeRGuOx6lz7ujhrq-klnoAB3v8STBIl7hI5VIjZxAy6xvZgLYY>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 16 Sep 2026 11:42:15 -0400 (EDT)
+ 16 Sep 2026 11:42:54 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: Stephen Hemminger <stephen@networkplumber.org>
 Cc: dev@dpdk.org
-Subject: Re: [PATCH] MAINTAINERS: remove one gve maintainer
-Date: Wed, 16 Sep 2026 17:42:14 +0200
-Message-ID: <Mw4Nom6kSb2D7Qr1T78kXg@monjalon.net>
-In-Reply-To: <20260806162558.673588-1-stephen@networkplumber.org>
-References: <20260806162558.673588-1-stephen@networkplumber.org>
+Subject: Re: [PATCH] MAINTAINERS: update for NFP drivers
+Date: Wed, 16 Sep 2026 17:42:52 +0200
+Message-ID: <5b4t-tavSNqwydLzLyjQwg@monjalon.net>
+In-Reply-To: <20260813220631.41472-1-stephen@networkplumber.org>
+References: <20260813220631.41472-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -86,12 +86,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-06/08/2026 18:25, Stephen Hemminger:
-> Mail to jeroendb@google.com bounces now.
+14/08/2026 00:06, Stephen Hemminger:
+> Mail to chaoyong.he@corigine.com now bounces with
+> "Address not found" error.
+> 
+> No other maintainer listed, so this leaves these drivers as
+> unmaintained.
 > 
 > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 
-Applied
+You already sent a patch for this.
 
 
 
