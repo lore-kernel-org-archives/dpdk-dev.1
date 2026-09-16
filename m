@@ -2,142 +2,161 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41327C982C1
-	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 16:38:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61859C982C9
+	for <dpdk-dev@archiver.kernel.org>; Wed, 16 Sep 2026 17:46:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E44F642F7D;
-	Wed, 16 Sep 2026 18:38:47 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
- by mails.dpdk.org (Postfix) with ESMTP id 8C1B94028B
- for <dev@dpdk.org>; Wed, 16 Sep 2026 18:38:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1789576725; x=1821112725;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=Bqd0nOeBNK2rZWzeGi7DteAmSw+HQNRZ5A34P2njV7s=;
- b=FfaPVecD2QrbgjzPeSmZSDCVqZty+bh+Om8IiM8HTzGQJWWGwIesImPf
- uEK4bEVsRU6ftfM0aJvZhdMSIy0lbcKrWxf11b8UnciYcwpMjb6FnIGlQ
- d1JG3FsJm/AHXTiOAT1F+dQlif21IqAX8pp9DOhae1T46iuYvzBo1/nSz
- sQfA1SAzo9u3PNA8l+oU94V2r6U+5uHRrrOlFhbej4wObvsJDqdnjWMCd
- YahdyEUBETO+Bcfm7NDVDB3GbNAp/cLcdsdyoUM8Z74v7xL4O2vr2Z+fc
- FwqPgNgwzQHzqCnafnahFT79bamy6V/5K+OFYzQVTpjdRpR+xKPGTtgWW A==;
-X-CSE-ConnectionGUID: kMIiVhl2SM6eM6BdPqo7hA==
-X-CSE-MsgGUID: yV3UxGRVTOGlakSjTvreNw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11905"; a="93833538"
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="93833538"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
- by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Sep 2026 09:38:44 -0700
-X-CSE-ConnectionGUID: Vow5fQfuTeCa8QYUAdJB1w==
-X-CSE-MsgGUID: Am8XkR+2QwerGHuwTuY4Tg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,103,1787036400"; d="scan'208";a="272916327"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Sep 2026 09:38:44 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Wed, 16 Sep 2026 09:38:44 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46 via Frontend Transport; Wed, 16 Sep 2026 09:38:44 -0700
-Received: from CO1PR03CU002.outbound.protection.outlook.com (52.101.46.48) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Wed, 16 Sep 2026 09:38:41 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 4D26F400D5;
+	Wed, 16 Sep 2026 19:46:55 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id B6E754003C
+ for <dev@dpdk.org>; Wed, 16 Sep 2026 19:46:53 +0200 (CEST)
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 68GFeVu72577880; Wed, 16 Sep 2026 10:46:52 -0700
+Received: from bn1pr04cu002.outbound.protection.outlook.com
+ (mail-eastus2azon11020099.outbound.protection.outlook.com [52.101.56.99])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4gqqujk9v3-1
+ (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+ Wed, 16 Sep 2026 10:46:52 -0700 (PDT)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QnUlJYLvxE3+U69e6kOGNaHYi2IR7PoabvfeaVB0boc5S0LRygfxN/rd1jFnHkyJiYn7dgPOVMJjIN9u2p/DjJf8mZSSG59GKQobpEimrHFQWW83t/A/n8JCr4G+zaJ/FS1PTCJ1Hg/J5QwqcISh0/xkBKv02K7KBKlXlDYKbSCHbP6BZ3PufM6ZCP7hOfN50vxhfyUcU03vrr555lsnZHiWE7hcFT6SM7GbANmygm/AQwy5qKJaGwYFezLibWzK+i48RM6Mv2jVhP/Yl4SXw+jaXf4gwA/I/Q5z5E4qge7qHCM2kxf+bjAx43Uq0i0M/GeTQ8UaBewlc/48fcz+mQ==
+ b=SruAtd+sH5goeYNzPKtTeUZuVC/OCxDBLChTG2QmTDsHBO/eXKnsOVrERsLkmUhM0djBGPzaR8VNf8KbHPeK28UUrmnE6kOYg49iR48spU6ifck+yGYkGjz0XbF06+95Yk79L90AKpUU5nwq7WVcUXyx1PnCvjQRrU/dtEWTupUzQXGtKVZtK/2HBzTkdIUGi1iAC+NBXIbXYUG/pJboZS/vfiNbXTuN1tW9F0EW6FDdSPlnltwa8zzvhovWLTKJZPijtnPZ3BZ1hJj2qYawyurODDQn0+SZSOAFedr7TZqfMjLgJpfvJhaee8pwkCGbTAq0Nap7N1GT/qYarJBeEw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VNUQUqyIA5c+m3/WwzL3gutb+CNLm0Ronjpkm81ABBQ=;
- b=LTXw5q13sX6wmYRAc5gHZVWlW8OM/+PKIqw22UgjPyQH2N0RZYheS7W3Ne7v2d0Bp3kEQ0Fa5LJoAC/Lpb/dceV5Vws1AKxtFIAnHOrT0sT/nWrehzH8AMd7EKwn97+pMLVjEDMWxBzdUACLkXfrFYI9BpKMi0k946NFmjAzWeeRjifCqnG2w17M8SgmCj+009/oGvHmM26jdTPqZGoPkS5cU0RNCR+R4AIPfrggk/oMzUkUjh9+20Hy6GfnmxhpBIJS5d2k2xTBOmZbOD/VcGIm7YOu1+F9/qBQEps3tbVSbO7stx8cHxSgqXw3KAPEkfQOD6A/F9D2AEwCoXEtOw==
+ bh=AKMawvMhUotsyLepeuXtG4EhZGIHn75V7ec1gTmTnWA=;
+ b=cfrjBRyjv/0xl/MAC6n+v1T5X5gPKFd0dd+5rh1PEvXHr/dGx2WTHORNlqqMbUDfVB/ZPkeiNCXDIVCSsok7OvCwTMq+4u6BhXlUAtMm3ch1Uyt4QomjkUWDZsXh2MoFrVRz+TO3C2TdYM57k0eD59o2HMc+zYM20wLkcwetvzjYhvzLT7ymWK0hT8rpDbY0iELfUvXQUZ6cuTcEviGEdaGM/h5i3IJnmK61NV3m3ot3oB9TakbDkURyb+1d5v/IyivFEXSX/KjeDBqHj4e8RdwbKR7TjL3c4IxvrVLmCkqEnb2Vd+5E/yhfb/85DUxlMsaI5hGaxF7q5jWSWa9LXQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
- by CY8PR11MB7746.namprd11.prod.outlook.com (2603:10b6:930:86::22)
- with Microsoft SMTP Server (version=TLS1_2,
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AKMawvMhUotsyLepeuXtG4EhZGIHn75V7ec1gTmTnWA=;
+ b=EzpIUus8aaGlXwNDYgzZMXc1ki4Qwa3aWLhLU4QUw+thIRBeCG5IJxHhIwhIcKOqy4ntUzL7tyrz8NNFC9i49xMVOCy4tu2ArYeNm1kiWcHpPKlHo/yViR+TJWyaozJ9bKjOlSy5sOCRNBT+MElTspNOrVYIQuoVeN0btzXhl/Y=
+Received: from CO1PR18MB4796.namprd18.prod.outlook.com (2603:10b6:303:ef::23)
+ by BL1PPF0A019CCA3.namprd18.prod.outlook.com
+ (2603:10b6:20f:fc04::d88) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.9; Wed, 16 Sep
- 2026 16:38:23 +0000
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0406.007; Wed, 16 Sep 2026
- 16:38:23 +0000
-Date: Wed, 16 Sep 2026 17:38:17 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-CC: <dev@dpdk.org>, <anatoly.burakov@intel.com>
-Subject: Re: [PATCH v2] net/ice: support link flow control
-Message-ID: <aqrF-QLwNCA_91NU@bricha3-mobl1.ger.corp.intel.com>
-References: <20260901151233.1110607-1-vladimir.medvedkin@intel.com>
- <20260910112524.1547156-1-vladimir.medvedkin@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20260910112524.1547156-1-vladimir.medvedkin@intel.com>
-X-ClientProxiedBy: DU2P251CA0001.EURP251.PROD.OUTLOOK.COM
- (2603:10a6:10:230::12) To SN7PR11MB8066.namprd11.prod.outlook.com
- (2603:10b6:806:2df::18)
+ 2026 17:46:38 +0000
+Received: from CO1PR18MB4796.namprd18.prod.outlook.com
+ ([fe80::d463:1ace:3518:f3b7]) by CO1PR18MB4796.namprd18.prod.outlook.com
+ ([fe80::d463:1ace:3518:f3b7%5]) with mapi id 15.21.0382.012; Wed, 16 Sep 2026
+ 17:46:37 +0000
+From: Ashwin Sekhar <asekhar@marvell.com>
+To: Amiya Ranjan Mohakud <amiyaranjan.mohakud@gmail.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, Nithin Kumar Dabilpuram
+ <ndabilpuram@marvell.com>, Jerin Jacob <jerinj@marvell.com>,
+ Sunil Kumar Kori <skori@marvell.com>
+Subject: RE: [EXTERNAL] [PATCH v2] common/cnxk: fix NPA pool RANGE interrupt
+ handling
+Thread-Topic: [EXTERNAL] [PATCH v2] common/cnxk: fix NPA pool RANGE interrupt
+ handling
+Thread-Index: AQHdQ04sGXQ4kNNvFky3nezGJBPtwbbPMj/ggADS4oCAAJvdYIAAFOOAgACf+gCAAABucIAADgCAgAAba0A=
+Date: Wed, 16 Sep 2026 17:46:37 +0000
+Message-ID: <CO1PR18MB4796B5E30122A7268E284287BFB92@CO1PR18MB4796.namprd18.prod.outlook.com>
+References: <20260913040800.60274-1-amiyaranjan.mohakud@gmail.com>
+ <20260913070428.66628-1-amiyaranjan.mohakud@gmail.com>
+ <CO1PR18MB4796E0F85799C486CA837DEFBFBA2@CO1PR18MB4796.namprd18.prod.outlook.com>
+ <CAL+mCpO43LNUa-xzH7_AkSjcyo1Ws2-SdVUhvn6ySQY2_2OhgQ@mail.gmail.com>
+ <CO1PR18MB4796A90FEE9E4C8246846F11BFB92@CO1PR18MB4796.namprd18.prod.outlook.com>
+ <CAL+mCpP35KM98KyydV4VBrCroR41-v1dt61E_dxMfx-3W2AQbA@mail.gmail.com>
+ <CAL+mCpPOPtvn+Si6PvnvpK5e3rQHp81SV-+WDaiiJADt99V--A@mail.gmail.com>
+ <CO1PR18MB47963490DE511C867AC2BB80BFB92@CO1PR18MB4796.namprd18.prod.outlook.com>
+ <CAL+mCpPTgpJd+TUTxJDmt9r70ELAQEPvywC=+afuw69hEPavfw@mail.gmail.com>
+In-Reply-To: <CAL+mCpPTgpJd+TUTxJDmt9r70ELAQEPvywC=+afuw69hEPavfw@mail.gmail.com>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CO1PR18MB4796:EE_|BL1PPF0A019CCA3:EE_
+x-ms-office365-filtering-correlation-id: 5603d939-cdcc-4dc5-2bcb-08df141a7535
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|376014|1800799024|366016|23010399003|22082099003|18002099003|38070700021|4143699003|10067099003|56012099006|11063799006;
+x-microsoft-antispam-message-info: W4AupjfXt3LTqjGKq8+cBhb0aQj3kN5gR2dAG2U5d9H+hpYANLYw0saFyA5M4K6Gv/BiB+B2avqAL6JYmXo9VEowrkyPl+sx8u3krqw1jGDW1Q8iugIBWQB5PXAgG768hrU+GivaEl/xDmFxp6TIak/lAIUVp46syOfBRuE3PMirKvQUB9ySrtOLIHxFwrxY37mj1M7bLpTYR8J5CZ2PQVeIlSpwEZWKs8imPCLTBCJJRmnyQODy26eBlW/vU8Kcn4JfepF7/czIHyYoSWRbCOuK2dATeUM5AXEl8Ba3tjMbY4EOELhLqSgsWRqt84tJG0KNKQvjwefRk/1nZf0BU7xwyAGnO8f10RzlxX3wXULUL9YZ1PtcE7/chBVOQaCVBIeKaRfU0pC78tQCV59IoPLOMsl5XY/eAZarht+2akMU1+si5fnjJCrhsMJLaKqeMzT9nFCG1aq2qBGlyxHtWH6p3hMTd9whfR1J+v+ZsIWtNPcZrd9r+WEN3wptd0twFa5Zmb/JKIqQ7HvqLQ7Wa1zEzM5yBbcV30tdQY0I/shMvjyNiyXPQ11MdVjRbsYEY2Cyy1qKyFSRA4VGz6cGj6FCRYm6pjwpt/+XHLTnB9PNXiToY1eewRRtGEcjVzC6KVwSeZRE+wlpDNdrola4PQEsloh4/YFskEUwpAGpZlkmdIHDMO506A3061zTg1Z3zZ0LFA6ABiGi1GK+Ec8jZ8ImgzbOmIywW7M4vYJOumc=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:CO1PR18MB4796.namprd18.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016)(23010399003)(22082099003)(18002099003)(38070700021)(4143699003)(10067099003)(56012099006)(11063799006);
+ DIR:OUT; SFP:1102; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?WHMvb1hBUzJPTit0R2hZLzZxU3hqY2JWNUFLVkdySWFUYnJNelBjUDEwbzN1?=
+ =?utf-8?B?Qkl2c0diQlhpajRiMjE3TGZtdVFsdGJaNDVXdGlPRlc3Z2Q2SGNramdSejhI?=
+ =?utf-8?B?SEZ5cXNGditzUlVaZHpGTEVjR1RQN1E5SytmVSs5Zmc3a29pTjYrL0tEdTZk?=
+ =?utf-8?B?eTNEMW9ldU1uMVpGSGp2b0Q4N1h3RnY0OFZDOFdsVU8wYXBKK3BYbmtwbG80?=
+ =?utf-8?B?UmFHajFhOElMSHpLb0VSWXVTUm4yRS9NemV3RzVKNUljOE5xRVJ3dlpWUTg0?=
+ =?utf-8?B?R0d2b1ZGdkt3QXNJbVZrQi9udnlDb2t3STF1WmlzSWtnSytyYUJIUFlpbG5y?=
+ =?utf-8?B?aW5nV2J3b0doNEJ2T0pxYTJydjVYc3oxVGN1SEhISmJKdmpqUThQZDNkeTZj?=
+ =?utf-8?B?ZWVsWDBrUUpwZ1M0WW1tQkZLUytidy9kTkwxQ0h2TG53UXU4bGl4cUM1UVl5?=
+ =?utf-8?B?NnVGeC9QeCtLdExSSEZNUkFFK1JCOW9UaU5DQzRqSHZCbkV6ZHdUZ3Vaci9F?=
+ =?utf-8?B?R2JURmdJZExuUWRidkp2bWo4aTRXZnRkWU5lV2tKcmJ5ZXV3V2MyTDJFR3FC?=
+ =?utf-8?B?SE1vMVFRWS8yVGVCTmZCc1NrVHd2eWsvaC9lbW9zaEpHVlg5emRmbmRjN0hZ?=
+ =?utf-8?B?YjBnaXN0OG5icURKSXlOdCtuNzRueHdiR3VDMks2Wk0zVFcxd1h3VW1GeHQv?=
+ =?utf-8?B?dFBCcjI2bWc5c2FYMTZLMzJIcWFPUGtxS2d3ajVINHpqVFVSQ1l3eHFjU01s?=
+ =?utf-8?B?ajBPVlJScGxhdlJacHkzVEtkTlQ5S0dhVjNDUFVUV1hOdEJXaHFlOW14c2F3?=
+ =?utf-8?B?NE81bjVuMWRLQ3BMWVQ1U3JHRUlVYTFWR21TTUsyeTNjSkJMTkY4SHNFbEpU?=
+ =?utf-8?B?ZktVNjhNZ3JCRHR2MzRBSk4zTGpIZmdSbHd3WHRPSklZZGR4bDVIeU1yKzhF?=
+ =?utf-8?B?TXpEamVRbDB5alZYbG9qcU51R3YreXN0WG80ZENWaTEwZnMreHpmR01nWjNj?=
+ =?utf-8?B?L0NMUkQ2SE9kSlJkVU9CazFnVFFtK2w4a3crUTIzWktBTGJNc3dCQkNVRkc3?=
+ =?utf-8?B?QW1EOCtTcVRyUUl1cU42U05EaElmQ0hjbThyanZkRzloVEdDa2p2dHo1NTJM?=
+ =?utf-8?B?bEQ0NjdpeVJuNWxBVlE3MVk3WkwxNHpLM0RFZkIxYUVwa2pSbmN3L2NhOXl3?=
+ =?utf-8?B?MW5VYUJRQ0Jla3hHVGJQSDFVb0JrK2xxc2dpQ1JXMVAwTEV4YXNjMWcrTFNx?=
+ =?utf-8?B?dXZ0OXA2QWc2TGJsTmdlY0lNMTdKdVFBdmZEZm1CeS9XaUxJZ3FDWDRCeW5N?=
+ =?utf-8?B?RGV6SEJBNXhGcFZUQUs1QU9HOVJ3eWtEWGZJTk1WQ1puL2dMWFhQZWVXZUNI?=
+ =?utf-8?B?ZkJYQ2RlRFovL245WHFmcEdXTlUrdWlpZGlETW1vd25KdlJRZW5XRHRNcmMx?=
+ =?utf-8?B?MmhENjBOdGhKbEZsRkJoc3hvR08vNHh1Q1VtTHhEVHlRTGdQUHZEazVTK3Mr?=
+ =?utf-8?B?RVkzajFQSGpLeFdsTXd0RFRQb2VEa3N1VGFMbWFtZWtCMm9YV2lLNG9mMVo0?=
+ =?utf-8?B?VGViWmVEZDhINmp1SWFFM0dYSGxQUzNjb3Rkb3JFUmdqUlg0MDEwTXNOUndJ?=
+ =?utf-8?B?UUxXQkhRVWpwOVpNMmZvTHJkK0s4YlZhRkZ1NDZZOXgrenptK0pUd2VSdDBM?=
+ =?utf-8?B?VWxKblJQQmwxVDJPTkhGYnBmQk9pOGh0T080SFFUQk5FeWhJemtBNm9MaFd0?=
+ =?utf-8?B?TkRxT2NQa2twZ2NYTnlwcENVSU51Znlpb1czZDNuZUIyNmI2QUhiSlRGaE8w?=
+ =?utf-8?B?RWN4dFZWWUN6UFdoclBCKzljQUNvRGdXN09KYXA5N3E2RWFjL1ZMMzdaMzlz?=
+ =?utf-8?B?UWNCUExsVXZXb21tckpBWDZHSnMwRXNETm9BYjdacE5qQlFxWTRrcStxS0N6?=
+ =?utf-8?B?SHJzWjgwRjdJUlpvMmlTR0duM0M5cnRRN1FpTklsdDZNYUg4OHUxTkdYbzRC?=
+ =?utf-8?B?WEM4S0l4M3dQcENwWEZLdll2bUxqeGp2Z1lYaGYzRk1acHZQWXpDeTBycVZh?=
+ =?utf-8?B?d0JJWHMvaUVha1lxRURsL1VkQUdWUXBvSnlNRTZ4UXZhekdFa3JTZG1xbGY4?=
+ =?utf-8?B?eUVlRkdXMGdYamtvK1VFM2xXVU5MRXhxUDRZUUFRSnozN3N6aXcvb2R4UHBp?=
+ =?utf-8?B?RTBlVldTTkFJZndzcE1kYjE3TlBRczJ1TE95L2ZFUVRWYXN4NHViT21QMnNP?=
+ =?utf-8?B?UVA4QlFFMWlldEhnMFB4QmlpcGdZc21CQUtJMVAwVGhaN3VScU41WmdOTEZW?=
+ =?utf-8?Q?Ou2x1zltMhv3A1g/sb?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|CY8PR11MB7746:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8f745a52-6d1a-43a7-ff8e-08df1410ec33
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|366016|23010399003|376014|1800799024|56012099006|4143699003|11063799006|10067099003|18002099003|18092099006|22082099003|6133799003;
-X-Microsoft-Antispam-Message-Info: nXWNkNFDF7c5g7qNj/zTws6Odjx5dFsb90XEPGc2oMzm+pA9UTHUMTsivOXE8kBXyAJRkdY8SDFECsbt3YSp9L89v41ru+rcOfDRN0W9JEMUYe+eWSFB5NsNqH7T35T30nUVCa24EGMwh00NLjm6+oQp/AqdiHxQ8DxFmqp636ZoBBIYbOGW1AVGzw/1JwYg4rFsGjlKIjaywgQWtTVCUYURmzwJ8Rb0jFzHKg5rAm+Mm+FIzpjOaM8mn2aILTovBsO8MA7bKdOnlyOxDgTuZoFQsEbwbJ7Yhu7rmAaQEaCEtSK2tmOsbBeqYgKX42nmar+8ElMu7Rt1JKN0TNnfIDzTSomtZP5V93V/Og+bpP0yIYww650QwYwTMixbW6jGXtijT7+iV7o1jJQI6GK1gOAvOn3qDVzDXA+gBiHbjPnBjwilv/PsIdfXCmbAulkT5wlMdczPN0RIH0NV9qOEworaTZxUCcIDFk0HmT1xrgC0+duLXicGoHU8aPh8kb1/w1TzSj4L443DwZO52TgtGs6/zfeyRFJ7fO2TsaRMDKRlInE44FT/Ki8+21qK+KsR+no/N2YbQQqBkZcLOWQlwXigZcMqBuOX08Im9HIha3qas0kXcZmQvh/GKW7rIOCspIVtz6LtAVaQjuRScAu982ORNLaclAM+Laad/pkUqeE=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(23010399003)(376014)(1800799024)(56012099006)(4143699003)(11063799006)(10067099003)(18002099003)(18092099006)(22082099003)(6133799003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?2Vu7uTd6q75wmV4Rm0Av6fU8P7OVhH7g7SNrYzOfICG696QnnutpgKCMBjQb?=
- =?us-ascii?Q?Y15tm9hXQGRxoe3O8A2ycJZUOMzcPRh7GJxedobLErXx924J0NnN/aIk/vXa?=
- =?us-ascii?Q?uvbx7gyWNLmUPX2S63Ni2s32rhqIa2FV5ysjeYwrJ/FFHn7nAIwjNy8pcAMR?=
- =?us-ascii?Q?yD0w2GPrEN1nFxPMFmI0O7EjxcXvWcCXynBnQuXPKOWITG4cU3Mhwc5cDcTE?=
- =?us-ascii?Q?nuvRtUopKSf84cgyIw8oWHQw7Lj1iB7HfarQQU4yLSOa1Oi605Z8GlPlVrey?=
- =?us-ascii?Q?N6plDFGeTqT125x1pIkhNxj8ZSzgqN62fWy7dnEVcCseSTsOnvjf6gyug3xW?=
- =?us-ascii?Q?1YkXdHvQEVi6ZyLniWHVkV0eYQDq952LOx8PmaSMqJZIM/emv/yEGyegrT66?=
- =?us-ascii?Q?p0T210uIdk7sbzs2+ehYo/C5oOqyp514Y/4KGa9jTdHxuAdXm02CCOeHBSWl?=
- =?us-ascii?Q?sGyaKkgDe2QxEi13wZdMgX4+3Tr3Fa5ywgkHg3MLg1xPpYgJnmgNggKW7kCe?=
- =?us-ascii?Q?KWk9/EeDGWHDZDlWC+a1pKtZ5/U5cWpPIGvexk0pP/LbJ5sicIv3ld2Kos2E?=
- =?us-ascii?Q?PozVWfsjnGvQuyWuQ5EsXgCT4GDvjUEVL/KrExmr7X6IxaIizuQCUj4lLAfg?=
- =?us-ascii?Q?WRJ5n8MXav+FrBxKX6Rpr97Yz0oZy2yO6Nem9P3OhtIIe9iKLXLPJXB5bPk/?=
- =?us-ascii?Q?feRq3Cs5sQCI0dIZ4o+/OjzDKiGaA2aMdrwoXbgoozUogA/uq6MWr2wdXxxG?=
- =?us-ascii?Q?EfbOWOB/RdWypLQKsLKt77kjKKxRcMhh+bwojeIAqxz31SNd1Rnor8MtKI2m?=
- =?us-ascii?Q?7r1lvpBfzBCKLCHkLdzgjcv5955iLATgFjEHOdkTEiDREqv5b/32Ng94ggkm?=
- =?us-ascii?Q?LUVRMCsdHRgyRi6xIakWYDPugVxthXHjlZZxZUgVPqE8gEsgvNZXQ2V/KeV6?=
- =?us-ascii?Q?n9wg2jbj5ezWQ6+iJK6BNkUYEG4fy4GaKnEDegtCjUhGK0yKJ8ltJSVHYCBR?=
- =?us-ascii?Q?kIhbOvaE9qazEtvjTDkv8Zjnzml8eSrQPlKW5+OIfWyvLZLpI4JuQEb9pnPD?=
- =?us-ascii?Q?CQKLkW+VIgEFMpLGIGh0pd0m2RoLbDvlS1g+7REjTIcFEWbv7gE86mD7ADg1?=
- =?us-ascii?Q?sXV7u031eZUUYbPIIFjM35y4cIOzwLhe4nG8qySq+a/bOYaHQh/ItdB+FWZQ?=
- =?us-ascii?Q?YnWSRnRyRwJNY0IbKYeBNHTNyYQHip4lHNoikcn6VjSk6KnF8DKh82tmKR+y?=
- =?us-ascii?Q?uduBratvhHGgIMY7UVFo54+43qxPBdzh1aRE2TMDaQ0ZvnrHCSn0Rt7u2NfJ?=
- =?us-ascii?Q?nX/hjtzCd5ouE5xcf+SJoWmw/8JPu6AI0hpkRZH8G/IFMlHw/nB6/zMsX6ok?=
- =?us-ascii?Q?bUua8j/OFLydqNjcAgwxTZr14ci1N1iam8eeyw3ibA69BARVW6UaREes9seH?=
- =?us-ascii?Q?lCoZDBaAdk5HceeR75LEhhgbuy4YnXNS0d2KIlHgX8Gl52VofxoRXEhOr+mp?=
- =?us-ascii?Q?rq3J6U997/xIWjnjHLPvcc7kXiHRL/2NOD92KX2LXQbDUJ2adUa7xZ35gjTe?=
- =?us-ascii?Q?M/I29geZotVj/6axTAOFCr7dVzjr/2QbvgxY3hEgDCUEdGSe++Je3B0rGplD?=
- =?us-ascii?Q?9KicaRf9DZsTUP1v5jhH1InikgFJcZEyrJHWlRdwy+QT/5WYIjE1Njd8J0Iy?=
- =?us-ascii?Q?4lzy98VjsL1RtiSh1oiHaKv/X7/iawADB/J0P2Tu7MyLoqP74BE4VVHuMRTU?=
- =?us-ascii?Q?HdQDmFfwSt6hbq1AnY10jzTOEMUKokY=3D?=
-X-Exchange-RoutingPolicyChecked: ntb+pgBzVKCkEL6L+W4RdKD+RLkK895HDktSGSVD6B7ODmB3hSLMMqBZzqsT12OSY/BDxwDJd/Y9RzLXFeVLVgl5z7YV05RyB953pyqUA0xxnFPTWFpDN5sRYEex+J6ldLrr2l1e3Ceyfsby5+zDZbRmpZEmmO0yI7daMd4VZmf06eCo4220UOCiJtjwKeq0k716h8uNMmoLGYBePX1q3HrnnWqA4otoi2ZStwjZCNkoytiIHqM+Su2QgMNTrOHD4qJ63JSzIbYLI+iovusOp963/1ZQbXM4Hd98uhzxuK/ubR8mnpAbOTC8HR8ezVLBGhMmMpJPWjJ4+jCbDXgx3w==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8f745a52-6d1a-43a7-ff8e-08df1410ec33
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
+X-Exchange-RoutingPolicyChecked: IhA9NpDdumJtEPZbDtMXhZCky1whQiaB/hkvZy8Uw3N7G46OSgL9UxL6W3b56jxO8vv7pbK+wITs6pH9xQaEVjrGGImElTe04NiiE77NYrtGThQ8aA8JGVUS5G77+EHF24kXJXAhWoB43IeEHD4NDFib8HnT1MnFfHFRE9sl2frRFnBcFR/3lgJRRHtNZsGaqdXVtHGqVZbcrbaH+bKsQn6YtL4V28XHR4zIj9WXrjUjB4zUxkR+hcGYSYs716PpTPBjw636G8aqDzjBCbFrb0lfMaU1qlkP51GpkIvgxmcKuX2vJtyOVCYbqG24I0GdzCYCsRQGVqxVgk3UEjMBkA==
+X-OriginatorOrg: marvell.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Sep 2026 16:38:22.8373 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +jNVf2fEQVIZLR8oo3//WCsWgY2yD1SbeqJ4pSTXi5KVo7HmV7oiFf13yJ9ghhAOghNYfCGOFU6iiir5tfMGq1/ykjbZ8xNGtJ3Io/0+s4w=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7746
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR18MB4796.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5603d939-cdcc-4dc5-2bcb-08df141a7535
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Sep 2026 17:46:37.7962 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: cNyYUJCOiqxgI7wCE7jCULLQhouuYrIuUp+lAJvO+3X5DBZTruztQpEA7ivAeyLsXwPGCKxKhHjOJ4AcLOVafw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PPF0A019CCA3
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwOTE2MDI0MyBTYWx0ZWRfXzrrnJaJ2HwtW
+ peokPptSFenD65yHCbUuLq8XSTzy8VZTwvnnylKXitQHd0hqnLix+7mwUxrTUVeBkDBUOa9a026
+ Th9l/LYq0CTdsgEIFs2dNCgix3Bn099hHwhuy7rghYwrfT8B/SH8BUrVB6JLr8ojGU2cpayzhlX
+ F+UnRlLEBiFirVRaYQ3HIpnbJazk232lqdlrsqYIz4mDbFrz6f3BCvuA6cGnRT1Odo5hn/LuGqB
+ j54MR5oRI0R24vSaCVdDidgGa6/U/7roXDgJRKDDXhTtIRHeVYTMFlpgPwF2/3CbQ8Am+8SoPTg
+ DLLlca2EQLIgZK6FB/a9+oBL7gBkFl2I9grOpCDbSlSNFNpLIRtRlWiRm9C+785bJPGsRrf7cXq
+ aizvXG454IiTgfkVBdznSvv83aB+6ys1Jda2A7f7Jnl6K/ASk5s0cB8p+grDOBkmHWAjsVxmrlP
+ 0jJuIYyvzRtPimuFo9g==
+X-Proofpoint-GUID: kVsysCJ6bURj8Vo2oVTvtgqVYivOl2MP
+X-Proofpoint-Spam-Info: AW1haW4tMjYwOTE2MDI0MyBTYWx0ZWRfX2gMs3aeSzXJ6
+ o24nDWr5ANV9r5BZhdYIHu1p62SBZYsb+FGgRtsuwxafSZaPb/JVE7CN+cchRkHF8sAxQH+w+X6
+ xdQXPvINQRymgk4w3lRxyDFRSpKjKuQ=
+X-Authority-Analysis: v=2.4 cv=F6LC5ahN c=1 sm=1 tr=0 ts=6aaad60c cx=c_pps
+ a=gw0jr/XWmcdhwQv4PjOuaQ==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=VdqzKS8jKosA:10 a=-AAbraWEqlQA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=l0iWHRpgs5sLHlkKQ1IR:22 a=EAYMVhzMl8SCOHhVQcBL:22 a=ZGsNL-sPnIbzrSyfrhEA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: kVsysCJ6bURj8Vo2oVTvtgqVYivOl2MP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1176,Hydra:6.1.134,FMLib:17.12.100.49
+ definitions=2026-09-16_03,2026-09-16_02,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -151,410 +170,7 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Sep 10, 2026 at 11:25:24AM +0000, Vladimir Medvedkin wrote:
-> Add get and set functions for link flow control (802.3x).
-> 
-> Signed-off-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-> ---
-
-A few minor comments inline below.
-
-/Bruce
-
->  doc/guides/nics/features/ice.ini       |   1 +
->  doc/guides/rel_notes/release_26_11.rst |   4 +
->  drivers/net/intel/ice/ice_ethdev.c     | 271 +++++++++++++++++++------
->  drivers/net/intel/ice/ice_ethdev.h     |   1 +
->  4 files changed, 217 insertions(+), 60 deletions(-)
-> 
-> diff --git a/doc/guides/nics/features/ice.ini b/doc/guides/nics/features/ice.ini
-> index 893d09e9ec..309f691f32 100644
-> --- a/doc/guides/nics/features/ice.ini
-> +++ b/doc/guides/nics/features/ice.ini
-> @@ -30,6 +30,7 @@ RSS hash             = Y
->  RSS key update       = Y
->  RSS reta update      = Y
->  VLAN filter          = Y
-> +Flow control         = Y
->  Traffic manager      = Y
->  CRC offload          = Y
->  VLAN offload         = Y
-> diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-> index c8cc86295d..5c4cd8a6df 100644
-> --- a/doc/guides/rel_notes/release_26_11.rst
-> +++ b/doc/guides/rel_notes/release_26_11.rst
-> @@ -55,6 +55,10 @@ New Features
->       Also, make sure to start the actual text at the margin.
->       =======================================================
->  
-> +* **Updated Intel ice driver.**
-> +
-> +  * Added support for getting and setting link (802.3x) flow control.
-> +
->  
->  Removed Items
->  -------------
-> diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
-> index 76b8ff0a72..909b3ef963 100644
-> --- a/drivers/net/intel/ice/ice_ethdev.c
-> +++ b/drivers/net/intel/ice/ice_ethdev.c
-> @@ -211,7 +211,12 @@ static int ice_fec_set(struct rte_eth_dev *dev, uint32_t fec_capa);
->  static const uint32_t *ice_buffer_split_supported_hdr_ptypes_get(struct rte_eth_dev *dev,
->  						size_t *no_of_elements);
->  static int ice_get_dcb_info(struct rte_eth_dev *dev, struct rte_eth_dcb_info *dcb_info);
-> +static void ice_set_dflt_mib(struct rte_eth_dev *dev);
-> +static int ice_flow_ctrl_get(struct rte_eth_dev *dev, struct rte_eth_fc_conf *fc_conf);
-> +static int ice_flow_ctrl_set(struct rte_eth_dev *dev, struct rte_eth_fc_conf *fc_conf);
->  static int ice_priority_flow_ctrl_set(struct rte_eth_dev *dev, struct rte_eth_pfc_conf *pfc_conf);
-> +static int ice_cfg_fc_params(struct rte_eth_dev *dev, uint8_t tc, uint8_t tc_bitmap,
-> +			     const struct rte_eth_fc_conf *fc_conf);
->  
->  static const struct rte_pci_id pci_id_ice_map[] = {
->  	{ RTE_PCI_DEVICE(ICE_INTEL_VENDOR_ID, ICE_DEV_ID_E823L_BACKPLANE) },
-> @@ -352,6 +357,8 @@ static const struct eth_dev_ops ice_eth_dev_ops = {
->  	.fec_set                      = ice_fec_set,
->  	.buffer_split_supported_hdr_ptypes_get = ice_buffer_split_supported_hdr_ptypes_get,
->  	.get_dcb_info                 =	ice_get_dcb_info,
-> +	.flow_ctrl_get                = ice_flow_ctrl_get,
-> +	.flow_ctrl_set                = ice_flow_ctrl_set,
->  	.priority_flow_ctrl_set       = ice_priority_flow_ctrl_set,
->  };
->  
-> @@ -1468,9 +1475,16 @@ ice_handle_aq_msg(struct rte_eth_dev *dev)
->  		switch (opcode) {
->  		case ice_aqc_opc_get_link_status:
->  			ret = ice_link_update(dev, 0);
-> -			if (!ret)
-> +			if (!ret) {
-> +				/* On link-up, reapply the default single-TC configuration. */
-> +				if ((hw->port_info->phy.link_info.link_info & ICE_AQ_LINK_UP) &&
-> +						!(dev->data->dev_conf.rxmode.mq_mode &
-> +							RTE_ETH_MQ_RX_DCB_FLAG))
-> +					ice_set_dflt_mib(dev);
-> +
->  				rte_eth_dev_callback_process
->  					(dev, RTE_ETH_EVENT_INTR_LSC, NULL);
-> +			}
->  			break;
->  		default:
->  			PMD_DRV_LOG(DEBUG, "Request %u is not supported yet",
-> @@ -4073,6 +4087,22 @@ ice_dev_configure(struct rte_eth_dev *dev)
->  	return 0;
->  }
->  
-> +static int
-> +ice_get_link_info_safe(struct ice_pf *pf, bool ena_lse,
-> +		       struct ice_link_status *link)
-> +{
-> +	struct ice_hw *hw = ICE_PF_TO_HW(pf);
-> +	int ret;
-> +
-> +	rte_spinlock_lock(&pf->link_lock);
-> +
-> +	ret = ice_aq_get_link_info(hw->port_info, ena_lse, link, NULL);
-> +
-> +	rte_spinlock_unlock(&pf->link_lock);
-> +
-> +	return ret;
-> +}
-> +
-
-Rather than moving this function up, why not just put a prototype
-declaration for it at the top of the file with all the other static
-functions? It would make the diff smaller.
-
->  static int
->  ice_get_dcb_info(struct rte_eth_dev *dev, struct rte_eth_dcb_info *dcb_info)
->  {
-> @@ -4105,6 +4135,182 @@ ice_get_dcb_info(struct rte_eth_dev *dev, struct rte_eth_dcb_info *dcb_info)
->  	return 0;
->  }
->  
-> +/*
-> + * Program a default single-TC local LLDP MIB configuration. All user priorities
-> + * map to TC0 at 100% bandwidth.
-> + */
-> +static void
-> +ice_set_dflt_mib(struct rte_eth_dev *dev)
-> +{
-> +	struct ice_hw *hw = ICE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-> +	struct ice_dcbx_cfg dcbcfg = { 0 };
-> +	uint8_t lldpmib[ICE_LLDPDU_SIZE] = { 0 };
-> +	uint16_t miblen;
-> +
-> +	dcbcfg.etscfg.willing = 1;
-> +	dcbcfg.etscfg.maxtcs = hw->func_caps.common_cap.maxtc;
-> +	dcbcfg.etscfg.tcbwtable[0] = 100;
-> +	dcbcfg.etscfg.tsatable[0] = ICE_IEEE_TSA_ETS;
-> +	dcbcfg.etsrec = dcbcfg.etscfg;
-> +	dcbcfg.etsrec.willing = 0;
-> +	dcbcfg.pfc.willing = 1;
-> +	dcbcfg.pfc.pfccap = hw->func_caps.common_cap.maxtc;
-> +
-> +	ice_dcb_cfg_to_lldp(lldpmib, &miblen, &dcbcfg, ICE_SET_PFC_SYM);
-> +
-> +	if (ice_aq_set_lldp_mib(hw, SET_LOCAL_MIB_TYPE_LOCAL_MIB, lldpmib, miblen, NULL))
-> +		PMD_DRV_LOG(ERR, "Failed to set default LLDP MIB");
-> +}
-> +
-> +static int
-> +ice_flow_ctrl_get(struct rte_eth_dev *dev, struct rte_eth_fc_conf *fc_conf)
-> +{
-> +	struct ice_pf *pf = ICE_DEV_PRIVATE_TO_PF(dev->data->dev_private);
-> +	struct ice_hw *hw = ICE_PF_TO_HW(pf);
-> +	struct ice_port_info *pi = hw->port_info;
-> +	bool enable_lse = dev->data->dev_conf.intr_conf.lsc ? true : false;
-> +	struct ice_link_status link_status;
-> +	int ret;
-> +
-> +	/* Refresh the negotiated flow control mode from the link status */
-> +	ret = ice_get_link_info_safe(pf, enable_lse, &link_status);
-> +	if (ret != ICE_SUCCESS) {
-> +		PMD_DRV_LOG(ERR, "Failed to get link info");
-> +		return -EIO;
-> +	}
-> +
-> +	*fc_conf = pf->fc_conf;
-> +
-> +	/* report the link flow control mode currently in effect */
-> +	switch (pi->fc.current_mode) {
-> +	case ICE_FC_FULL:
-> +		fc_conf->mode = RTE_ETH_FC_FULL;
-> +		break;
-> +	case ICE_FC_TX_PAUSE:
-> +		fc_conf->mode = RTE_ETH_FC_TX_PAUSE;
-> +		break;
-> +	case ICE_FC_RX_PAUSE:
-> +		fc_conf->mode = RTE_ETH_FC_RX_PAUSE;
-> +		break;
-> +	default:
-> +		fc_conf->mode = RTE_ETH_FC_NONE;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Program the Rx buffer watermarks, pause quanta and MAC control frame
-> + * forwarding shared by link flow control and priority flow control.
-> + * A tc_bitmap of 0 selects link flow control; a single bit selects a PFC
-> + * traffic class. Watermark or quanta values of 0 leave the current setting.
-> + */
-> +static int
-> +ice_cfg_fc_params(struct rte_eth_dev *dev, uint8_t tc, uint8_t tc_bitmap,
-> +		  const struct rte_eth_fc_conf *fc_conf)
-
-Minor nit:
-Looking at how this is used, I don't think you need both a tc_bitmap and a
-tc parameter, since tc_bitmap is passed either as 0, or 1 << tc, so
-therefore the tc is computable from the bitmap.
-
-	tc = tc_bitmap == 0 ? 0 : rte_ctz32(tc_bitmap);
-
-> +{
-> +	struct ice_pf *pf = ICE_DEV_PRIVATE_TO_PF(dev->data->dev_private);
-> +	struct ice_hw *hw = ICE_PF_TO_HW(pf);
-> +	struct ice_port_info *port_info = hw->port_info;
-> +	uint32_t high_water = fc_conf->high_water;
-> +	uint32_t low_water = fc_conf->low_water;
-> +	uint16_t max_frame_size;
-> +	int cgd_idx;
-> +	int ret;
-> +
-> +	if (high_water > ICE_MAC_TC_MAX_WATERMARK)
-> +		high_water = ICE_MAC_TC_MAX_WATERMARK;
-> +	if (low_water > ICE_MAC_TC_MAX_WATERMARK)
-> +		low_water = ICE_MAC_TC_MAX_WATERMARK;
-> +
-> +	cgd_idx = ice_get_cgd_idx(hw, tc);
-> +	if (high_water)
-> +		wr32(hw, GLRPB_TCHW(cgd_idx), high_water);
-> +	if (low_water)
-> +		wr32(hw, GLRPB_TCLW(cgd_idx), low_water);
-> +
-> +	/* Update pause quanta and refresh threshold */
-> +	max_frame_size = pf->dev_data->mtu ?
-> +		pf->dev_data->mtu + ICE_ETH_OVERHEAD :
-> +		ICE_FRAME_SIZE_MAX;
-> +	ret = ice_aq_set_mac_pfc_cfg(hw, max_frame_size, tc_bitmap,
-> +			fc_conf->pause_time, ((u32)fc_conf->pause_time + 1) / 2,
-> +			false, NULL);
-> +	if (ret) {
-> +		PMD_DRV_LOG(ERR, "Can not update MAC configuration");
-> +		return ret;
-> +	}
-> +
-> +	/* Update forwarding of the non FC MAC control frames settings */
-> +	if (hw->mac_type == ICE_MAC_E830) {
-> +#define E830_MAC_COMMAND_CONFIG(pi) (((pi)->phy.link_info.link_speed == ICE_AQ_LINK_SPEED_200GB) ? \
-> +		E830_PRTMAC_200G_COMMAND_CONFIG : E830_PRTMAC_COMMAND_CONFIG)
-> +
-> +		u32 mac_config = rd32(hw, E830_MAC_COMMAND_CONFIG(port_info));
-> +
-> +		if (fc_conf->mac_ctrl_frame_fwd)
-> +			mac_config |= E830_PRTMAC_COMMAND_CONFIG_CNTL_FRM_ENA_M;
-> +		else
-> +			mac_config &= ~E830_PRTMAC_COMMAND_CONFIG_CNTL_FRM_ENA_M;
-> +
-> +		wr32(hw, E830_MAC_COMMAND_CONFIG(port_info), mac_config);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int
-> +ice_flow_ctrl_set(struct rte_eth_dev *dev, struct rte_eth_fc_conf *fc_conf)
-> +{
-> +	struct ice_pf *pf = ICE_DEV_PRIVATE_TO_PF(dev->data->dev_private);
-> +	struct ice_hw *hw = ICE_PF_TO_HW(pf);
-> +	struct ice_port_info *pi = hw->port_info;
-> +	bool link_up;
-> +	u8 aq_failures;
-> +	int ret;
-> +
-> +	/* Link flow control and priority flow control are mutually exclusive */
-> +	if (dev->data->dev_conf.rxmode.mq_mode & RTE_ETH_MQ_RX_DCB_FLAG) {
-> +		PMD_DRV_LOG(ERR, "Priority flow control is enabled, cannot set link flow control");
-> +		return -ENOTSUP;
-> +	}
-> +
-> +	switch (fc_conf->mode) {
-> +	case RTE_ETH_FC_FULL:
-> +		pi->fc.req_mode = ICE_FC_FULL;
-> +		break;
-> +	case RTE_ETH_FC_TX_PAUSE:
-> +		pi->fc.req_mode = ICE_FC_TX_PAUSE;
-> +		break;
-> +	case RTE_ETH_FC_RX_PAUSE:
-> +		pi->fc.req_mode = ICE_FC_RX_PAUSE;
-> +		break;
-> +	default:
-> +		pi->fc.req_mode = ICE_FC_NONE;
-> +	}
-> +
-> +	/* ice_set_fc() reprograms the PHY pause config and, if auto link update
-> +	 * is enabled, restarts the link so the new mode is renegotiated. The
-> +	 * default MIB that arms the MAC for LFC is reapplied from the link-up
-> +	 * event handler.
-> +	 */
-> +	link_up = pi->phy.link_info.link_info & ICE_AQ_LINK_UP;
-
-Is it safe to read this outside the lock? For safety should this be a call
-to ice_get_link_info_safe? AI flags that all other instances in this file
-use the function.
-
-> +
-> +	ret = ice_set_fc(pi, &aq_failures, link_up);
-> +	if (ret != 0 && aq_failures != ICE_SET_FC_AQ_FAIL_UPDATE) {
-> +		PMD_DRV_LOG(ERR, "Failed to set flow control mode, ret %d aq_failures 0x%x",
-> +			    ret, aq_failures);
-> +		return -EIO;
-> +	}
-> +
-> +	pf->fc_conf = *fc_conf;
-> +
-> +	/* Apply the Rx buffer watermarks and pause quanta for the link flow
-> +	 * control traffic class (LFC rides user priority 0).
-> +	 */
-> +	return ice_cfg_fc_params(dev, 0, 0, fc_conf);
-> +}
-
-AI review flags a potential issue here. What happens to pf->fc_conf if the
-application fails? The applied values will not match the stored ones.
-
-> +
->  static int
->  ice_priority_flow_ctrl_set(struct rte_eth_dev *dev, struct rte_eth_pfc_conf *pfc_conf)
->  {
-> @@ -4160,49 +4366,10 @@ ice_priority_flow_ctrl_set(struct rte_eth_dev *dev, struct rte_eth_pfc_conf *pfc
->  		return ret;
->  	}
->  
-> -	/* Update high and low watermarks */
-> -	u32 high_watermark = pfc_conf->fc.high_water;
-> -	if (high_watermark > ICE_MAC_TC_MAX_WATERMARK)
-> -		high_watermark = ICE_MAC_TC_MAX_WATERMARK;
-> -
-> -	u32 low_watermark = pfc_conf->fc.low_water;
-> -	if (low_watermark > ICE_MAC_TC_MAX_WATERMARK)
-> -		low_watermark = ICE_MAC_TC_MAX_WATERMARK;
-> -
-> -	int cgd_idx = ice_get_cgd_idx(hw, tc);
-> -
-> -	if (high_watermark)
-> -		wr32(hw, GLRPB_TCHW(cgd_idx), high_watermark);
-> -	if (low_watermark)
-> -		wr32(hw, GLRPB_TCLW(cgd_idx), low_watermark);
-> -
-> -	/* Update pause quanta */
-> -	uint16_t max_frame_size = pf->dev_data->mtu ?
-> -		pf->dev_data->mtu + ICE_ETH_OVERHEAD :
-> -		ICE_FRAME_SIZE_MAX;
-> -	ret = ice_aq_set_mac_pfc_cfg(hw, max_frame_size, 1 << tc, pfc_conf->fc.pause_time,
-> -			((u32)pfc_conf->fc.pause_time + 1) / 2, false, NULL);
-> -	if (ret) {
-> -		PMD_DRV_LOG(ERR, "Can not update MAC configuration");
-> -		return ret;
-> -	}
-> -
-> -	/* Update forwarding of the non FC MAC control frames settings */
-> -	if ((hw)->mac_type == ICE_MAC_E830) {
-> -#define E830_MAC_COMMAND_CONFIG(pi) (((pi)->phy.link_info.link_speed == ICE_AQ_LINK_SPEED_200GB) ? \
-> -		E830_PRTMAC_200G_COMMAND_CONFIG : E830_PRTMAC_COMMAND_CONFIG)
-> -
-> -		u32 mac_config = rd32(hw, E830_MAC_COMMAND_CONFIG(port_info));
-> -
-> -		if (pfc_conf->fc.mac_ctrl_frame_fwd)
-> -			mac_config |= E830_PRTMAC_COMMAND_CONFIG_CNTL_FRM_ENA_M;
-> -		else
-> -			mac_config &= ~E830_PRTMAC_COMMAND_CONFIG_CNTL_FRM_ENA_M;
-> -
-> -		wr32(hw, E830_MAC_COMMAND_CONFIG(port_info), mac_config);
-> -	}
-> -
-> -	return 0;
-> +	/* Apply the Rx buffer watermarks and pause quanta for the PFC
-> +	 * traffic class selected by the user priority.
-> +	 */
-> +	return ice_cfg_fc_params(dev, tc, 1 << tc, &pfc_conf->fc);
->  }
->  
->  static void
-> @@ -4373,22 +4540,6 @@ ice_rxq_intr_setup(struct rte_eth_dev *dev)
->  	return 0;
->  }
->  
-> -static int
-> -ice_get_link_info_safe(struct ice_pf *pf, bool ena_lse,
-> -		       struct ice_link_status *link)
-> -{
-> -	struct ice_hw *hw = ICE_PF_TO_HW(pf);
-> -	int ret;
-> -
-> -	rte_spinlock_lock(&pf->link_lock);
-> -
-> -	ret = ice_aq_get_link_info(hw->port_info, ena_lse, link, NULL);
-> -
-> -	rte_spinlock_unlock(&pf->link_lock);
-> -
-> -	return ret;
-> -}
-> -
->  static void
->  ice_get_init_link_status(struct rte_eth_dev *dev)
->  {
-> diff --git a/drivers/net/intel/ice/ice_ethdev.h b/drivers/net/intel/ice/ice_ethdev.h
-> index 7ee3ea8a70..3143aca74a 100644
-> --- a/drivers/net/intel/ice/ice_ethdev.h
-> +++ b/drivers/net/intel/ice/ice_ethdev.h
-> @@ -613,6 +613,7 @@ struct ice_pf {
->  	 * and link status update during dev_start.
->  	 */
->  	rte_spinlock_t link_lock;
-> +	struct rte_eth_fc_conf fc_conf; /* cached link flow control config */
->  };
->  
->  #define ICE_MAX_QUEUE_NUM  2048
-> -- 
-> 2.43.0
-> 
+DQo+IE9uIEFRIEluaXQsIHRoZSBjb250ZXh0IGlzIGZpcnN0IGFsbG9jYXRlZCBpbiB0aGUgY2Fj
+aGUuIC0+IERvZXMgdGhlIGhhcmR3YXJlIHRha2UgY2FyZSBvZiBpdD8gQmVmb3JlIHdyaXRpbmcg
+dG8gbWVtb3J5LCBpdCB3cml0ZXMgdG8gTkRDIGZpcnN0Pw0KWWVzLiBUaGUgaGFyZHdhcmUgdGFr
+ZXMgY2FyZS4NCg0KIA0K
