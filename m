@@ -2,73 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 274FCC982C1
-	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Sep 2026 06:24:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BF71C982CD
+	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Sep 2026 06:31:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 046A9402BD;
-	Thu, 17 Sep 2026 08:24:14 +0200 (CEST)
-Received: from mail-wm2-f13.google.com (mail-wm2-f13.google.com
- [74.125.225.141])
- by mails.dpdk.org (Postfix) with ESMTP id 4F40D4003C
- for <dev@dpdk.org>; Thu, 17 Sep 2026 08:24:12 +0200 (CEST)
-Received: by mail-wm2-f13.google.com with SMTP id
- 5b1f17b1804b1-49b912d391aso3334905e9.2
- for <dev@dpdk.org>; Wed, 16 Sep 2026 23:24:12 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id C9371400D6;
+	Thu, 17 Sep 2026 08:31:15 +0200 (CEST)
+Received: from mail-lr2-f12.google.com (mail-lr2-f12.google.com
+ [74.125.230.76]) by mails.dpdk.org (Postfix) with ESMTP id 4250E40264
+ for <dev@dpdk.org>; Wed, 16 Sep 2026 18:29:41 +0200 (CEST)
+Received: by mail-lr2-f12.google.com with SMTP id
+ 38308e7fff4ca-3a2ff16dd47so10639731fa.3
+ for <dev@dpdk.org>; Wed, 16 Sep 2026 09:29:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=weka.io; s=google; t=1789626252; x=1790231052; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=KBvdgbKHOaNZBLR++9aZ68Y+m4kquUG83/hxLrQMDJ8=;
- b=eksXZC4V1bX0ON4irN1tbh6dG+UhOJ1uIoN+hJofEBJVFi+mGkEU2ZOwzYPAChhyo2
- EWmkCsoUg6GcYsoOz3H4BfU20lk+Wi20LwWgIpXPv3PCPT6NQnE3gOwVcJETdwIsTH22
- dlWwEyIPPSD9x8nUwnQbIg/HaxLJ3k7ag9ZM8=
+ d=gmail.com; s=20251104; t=1789576180; x=1790180980; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
+ bh=nfRg/qgcWVidIvhv/bkVG0gkGvxYJeWpkK1uLZ3Qri4=;
+ b=APHZSezAhHSeEK7/o20EaenKhqLHmC2JHo9QdS+MXnNmyv/VHpxSRPJX55ey5PJkfu
+ N0lKO0YnwfHjrJ8AGVTSmBzZIq9Jsylye4T16KGjCJ3Jwd0FQrTmRaO412aRieWb8aJF
+ pdtjCFwVhTao+6lmvZXlLGxtYmxPS4C0QNb2bdkNtIRdfd9EnKjmv8L+mN1Fc3aGFNrg
+ aBKbXvscj3fZnyAH3OGwIqSKRhLnt5CWryuOPxv2W+LMqUHMRNKY4dPUSuwYl1hyDQxN
+ rACWF4/sB6PVD5KMqe0S+3A6MNdeBFjwH47hg3LV+tmENpfnL54Y8aEnADpBqR94soim
+ 6X2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789626252; x=1790231052;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=KBvdgbKHOaNZBLR++9aZ68Y+m4kquUG83/hxLrQMDJ8=;
- b=iQcG5SSNgl51qTstC1JCyqt1lRDVkYWjiuou74DNjyvD6BPpW0ymbciPeGM6E7Go0L
- u4aOUehpTymGj7Fl2Mtzsz3SyMG6xuh2XF8qs+EJIR8rERn6Mjhx28hm+4IrBlPbwwCZ
- 1rbKfa9i0RNoGzu9sQ0a9m5zOuVnLbROvorL/7kNhD45kPAwPc8zHczTicJqbRiRXbEo
- G+dS0DWyw1nBx/MGqIvXKr2uuKKqbdmPHcdp71/gdXFRgkI8ODL5CX0mC/4D//9bZ/Uj
- ZteLj7ezMjMOdNI5D0vtihVMDtcd/luQPWum1k4SxukIWAdK77e+cY2Xtd7v5jLCOCiP
- H39Q==
-X-Gm-Message-State: AFuF++kMrDwhjW9PiJUBLn4chmphmmQ9khyy3wKFB/M68mHBR76FibGG
- xvjj+K3MMI8MH5VPivWism3m0vT1UHb/TtFp8oDwModIzoM2SIaHHVhoaCH7nvH3usT4gOI9J25
- r/Bstxu9T+r9SxyMRATBiuDw+U7qZTKW1PEJzI4P5+q32zBBPgY+aIaGtVD2Ftn07UXecKZNmq4
- 49mdSKiiglME9QdIQC3CjZzTgehIOro4e3ZzWE87SbT8w=
-X-Gm-Gg: AYBFou3uO2wkTbsN05utsN80HriEu4qGlXA+nufqAvvejyMy9xtJP5mthwYPI4lfl+q
- 1FuoxkJC6RZon5siA0+9D0yTtLjwPu1ulgQPKIcScB5Dzq65Sl+GFyMmEiRyqakbKEcL7mfFF5i
- s+kXyVLHzxqr/T+eXH5jhDnnjUOZS5YDz1nPfh5uHNtSzMZzlHjxqZqTIHqr/7QV8AyR0460JOD
- QAYx2zST0+vurpSSo0ybUHt5x72ORxEbtW9ItCmIMuvSnaGoCQVGLWoR1JSJV7w3grNpLq89jPE
- gjDjjorAkLl6GshZq80T7SytRZsqyOMzVVo/O4LdKPv0ImXVhqJMa9amFGmjEvx6CQ7V6U70GI8
- VwIPH8B+8T/Qk/husgsTeZUQYs9xJ8WPxh7mMpDXgDPaRjlpT4BIOGqTU6SQCh1Y6cgXDGPq+dP
- yf2i3fzXpECJClk/buw3S3fn2VE7Z/jaaH0JPkcu9Iu6OFia0azY5ALLYzYeQ+AeMOsBvwPT51f
- RFI4IVor0WPJoC+WhsKg82fQ3VZoP3MKyE1NLa1iccoweVvevYMSLA056uYkg==
-X-Received: by 2002:a05:600c:83c8:b0:49d:28c4:b304 with SMTP id
- 5b1f17b1804b1-49eb7341406mr56334755e9.29.1789626251706; 
- Wed, 16 Sep 2026 23:24:11 -0700 (PDT)
-Received: from rita-ruvinsky-Precision-3490..
- (bzq-79-178-134-78.red.bezeqint.net. [79.178.134.78])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-49fbd17051fsm50143745e9.0.2026.09.16.23.24.08
+ d=1e100.net; s=20260707; t=1789576180; x=1790180980;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=nfRg/qgcWVidIvhv/bkVG0gkGvxYJeWpkK1uLZ3Qri4=;
+ b=YitcY2F/Q120rKJ1bnrk5FBFzJlUH+KFg+H7WFY+by+iOJI8SgT0h8hxj5akSlHCfI
+ GeSUONGdohBgpW8rlZlZSR31/UHlquvJ3gK2Ghlz4kAq0ZQs3hEAja1omdpnTlPp1OYy
+ 4j3gzXKdP2X9XWPvSUD4mwcODHOz+gxJ5JFB1w7WEUAafQ1gUA+s6CEzxkYSnVwT7pqy
+ xFZRr757V9kRMliA+oW6I8zpcKAeVlj4vKJalL3AMmCDhpPBs8+09GQtv0SZJosF1aha
+ benPoLMt+6IsG/917sJw3cD3LPfIx1bnypsncIX6ItON6JIRC56ALBC+6jjI5fcHQYFQ
+ Rrbg==
+X-Gm-Message-State: AFuF++kG1JWhDgKaj+aGQFiyx2/f7c+I6Q882iS69EHbKdrzQb8zM1tu
+ x57rArnWoj4tMKB8Bb6M91S6jPUpnidEd2zpDBYiZxKwoexVjruIws8yL3EaLKv9tlA=
+X-Gm-Gg: AYBFou1bQKea6ptPznHqDcNp+euObdHoHoXSsmkOWLVIsae3xP0th2e+L5+ysEgClmV
+ e4884bTsX79Cx3kBz67VMXqSraxnfDOVEZwtNTww4WbmyR9XNM6zmeOLbiQJumQnChGREFLTd+v
+ xCmjNh/m6DJB+RVbrQQUru4LPElpA60iXoPDlZzFm9FV0r9kHri4H3ypiHDKuFL8pFboD7XuLhg
+ mGA6gjH/M7EyGvQzNDQduTQPYr/yBxPA85uPVty+AEnAoXvUlQsh9Hw/xlfAxXV90s9Mvwn/Rvz
+ CqPumKZlvDTqdrdIIvlGHgy3Xh7rHaxf7N1dMcuvHFlVCS41zq2f/d9EYiKZoeyFElRVitvBiTx
+ jcwUWkM9R3PRHu6LP0UfNv8s+t9zb1G5mZJtfXDg2FKOKFsINTf0QKw4RoVnaZPkGj+anH6R/Wd
+ rPfpqQTehxhxfSc/grVp1m+vS6PxFq4/fiRZVToA5YgsWFiKmGtGGFyU0q8sXXnhKgIg==
+X-Received: by 2002:a05:651c:a16f:b0:3a3:74b9:8a79 with SMTP id
+ 38308e7fff4ca-3a5dc9f2721mr6272061fa.18.1789576180276; 
+ Wed, 16 Sep 2026 09:29:40 -0700 (PDT)
+Received: from fedora ([185.61.79.67]) by smtp.gmail.com with ESMTPSA id
+ 38308e7fff4ca-3a5dafa9cedsm7560801fa.27.2026.09.16.09.29.39
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 16 Sep 2026 23:24:10 -0700 (PDT)
-From: Rita Ruvinsky <rita.ruvinsky@weka.io>
+ Wed, 16 Sep 2026 09:29:39 -0700 (PDT)
+From: Omar Munchaev <omarmunchaev@gmail.com>
 To: dev@dpdk.org
-Cc: stephen@networkplumber.org, weh@microsoft.com, stable@dpdk.org,
- Rita Ruvinsky <rita.ruvinsky@weka.io>
-Subject: [PATCH v2] net/mana: fix Tx stall from send queue free-space unit
- mismatch
-Date: Thu, 17 Sep 2026 09:23:50 +0300
-Message-ID: <20260917062350.1482591-1-rita.ruvinsky@weka.io>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260914105809.919580-1-rita.ruvinsky@weka.io>
-References: <20260914105809.919580-1-rita.ruvinsky@weka.io>
+Cc: Omar Munchaev <omarmunchaev@gmail.com>
+Subject: [PATCH v2] net/intel: use rte_validate_tx_offload function correctly
+ for i40e/iavf/ice drivers
+Date: Wed, 16 Sep 2026 19:29:04 +0300
+Message-ID: <20260916162927.2137856-1-omarmunchaev@gmail.com>
+X-Mailer: git-send-email 2.54.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Mailman-Approved-At: Thu, 17 Sep 2026 08:31:13 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,67 +76,64 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-gdma_post_work_request() subtracted a unit count from an entry count:
+rte_validate_tx_offload() returns 0 on success.
+The i40e, iavf and ice drivers treat any non-zero
+return as an error and drop the packet, causing valid packets to be
+dropped when Tx offload checking is enabled via EAL, e.g.:
 
-  queue_free_units = queue->count - (queue->head - queue->tail);
+    -a 81:00.0,mbuf_check=offload
 
-queue->count is in entries, while head and tail are in WQE alignment
-units. On a 512-entry, 128KB send queue the check saw 512 units of
-capacity instead of queue->size / GDMA_WQE_ALIGNMENT_UNIT_SIZE = 4096,
-and returned -EBUSY with the queue one eighth full. A workload that
-fills that window faster than it drains makes rte_eth_tx_burst() return
-0 for long enough to look like a dead port.
+Only reject the packet when the return value is not 0.
 
-The size is the authoritative capacity: rdma-core derives sq_size from
-sq_count as align_hw_size(max_send_wr * get_wqe_size(max_send_sge)), and
-the kernel mana driver computes the same limit in bytes in
-mana_gd_wq_avail_space(). Derive it from queue->size, which is also what
-the ring wrap in gdma_get_wqe_pointer() uses. Rx is unaffected: its WQEs
-occupy exactly one unit, so entries and units coincide.
-
-Also report the size and computed free space in the -EBUSY debug line,
-since queue->count no longer takes part in the decision.
-
-Fixes: 56dd45c0ce7b ("net/mana: implement hardware layer operations")
-Cc: stable@dpdk.org
-
-Signed-off-by: Rita Ruvinsky <rita.ruvinsky@weka.io>
+Signed-off-by: Omar Munchaev <omarmunchaev@gmail.com>
 ---
 v2:
-  - comment states the invariant rather than the old bug (Stephen Hemminger)
-  - report queue->size and the computed free space in the -EBUSY debug line
-    (Stephen Hemminger, Wei Hu)
-  - reference mana_gd_wq_avail_space() in the commit message (Stephen Hemminger)
+- Fixed From/Signed-off-by email address mismatch
+---
+ drivers/net/intel/i40e/i40e_rxtx.c | 2 +-
+ drivers/net/intel/iavf/iavf_rxtx.c | 2 +-
+ drivers/net/intel/ice/ice_rxtx.c   | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-Independent of patchwork 167383 and 167384 from the same author.
-
- drivers/net/mana/gdma.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/mana/gdma.c b/drivers/net/mana/gdma.c
-index 7f66a7a7cf..a92aef59d2 100644
---- a/drivers/net/mana/gdma.c
-+++ b/drivers/net/mana/gdma.c
-@@ -138,11 +138,16 @@ gdma_post_work_request(struct mana_gdma_queue *queue,
- 				client_oob_size + sgl_data_size,
- 			  GDMA_WQE_ALIGNMENT_UNIT_SIZE);
- 	uint8_t *wq_buffer_pointer;
--	uint32_t queue_free_units = queue->count - (queue->head - queue->tail);
-+	/* head and tail are in WQE alignment units, so the capacity must
-+	 * come from the queue size in bytes, not the entry count.
-+	 */
-+	uint32_t queue_free_units = queue->size / GDMA_WQE_ALIGNMENT_UNIT_SIZE -
-+					(queue->head - queue->tail);
+diff --git a/drivers/net/intel/i40e/i40e_rxtx.c b/drivers/net/intel/i40e/i40e_rxtx.c
+index e29fcff661..ee70f7ce4f 100644
+--- a/drivers/net/intel/i40e/i40e_rxtx.c
++++ b/drivers/net/intel/i40e/i40e_rxtx.c
+@@ -1194,7 +1194,7 @@ i40e_xmit_pkts_check(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts
+ 				break;
+ 			}
  
- 	if (wqe_size / GDMA_WQE_ALIGNMENT_UNIT_SIZE > queue_free_units) {
--		DP_LOG(DEBUG, "WQE size %u queue count %u head %u tail %u",
--		       wqe_size, queue->count, queue->head, queue->tail);
-+		DP_LOG(DEBUG, "WQE size %u queue size %u free %u head %u tail %u",
-+		       wqe_size, queue->size, queue_free_units,
-+		       queue->head, queue->tail);
- 		return -EBUSY;
- 	}
+-			if (!rte_validate_tx_offload(mb)) {
++			if (rte_validate_tx_offload(mb) != 0) {
+ 				PMD_TX_LOG(ERR, "INVALID mbuf: TX offload setup error");
+ 				pkt_error = true;
+ 				break;
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
+index 4f2ffe6188..10d33660d9 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.c
++++ b/drivers/net/intel/iavf/iavf_rxtx.c
+@@ -3813,7 +3813,7 @@ iavf_xmit_pkts_check(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 				break;
+ 			}
  
+-			if (!rte_validate_tx_offload(mb)) {
++			if (rte_validate_tx_offload(mb) != 0) {
+ 				PMD_TX_LOG(ERR, "INVALID mbuf: TX offload setup error");
+ 				pkt_error = true;
+ 				break;
+diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
+index c4b5454c53..3d98d821b2 100644
+--- a/drivers/net/intel/ice/ice_rxtx.c
++++ b/drivers/net/intel/ice/ice_rxtx.c
+@@ -3669,7 +3669,7 @@ ice_xmit_pkts_check(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+ 				break;
+ 			}
+ 
+-			if (!rte_validate_tx_offload(mb)) {
++			if (rte_validate_tx_offload(mb) != 0) {
+ 				PMD_TX_LOG(ERR, "INVALID mbuf: TX offload setup error");
+ 				pkt_error = true;
+ 				break;
 -- 
-2.43.0
+2.54.0
 
