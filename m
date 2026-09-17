@@ -2,44 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F99C88E72
-	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Sep 2026 11:15:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5D12C88E72
+	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Sep 2026 12:48:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BD48642E5E;
-	Thu, 17 Sep 2026 13:15:30 +0200 (CEST)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
- by mails.dpdk.org (Postfix) with ESMTP id 6B8F540299;
- Thu, 17 Sep 2026 13:15:29 +0200 (CEST)
-Received: from inva020.nxp.com (localhost [127.0.0.1])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 219701A000F;
- Thu, 17 Sep 2026 13:15:29 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com
- (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
- by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id DFCF71A0008;
- Thu, 17 Sep 2026 13:15:28 +0200 (CEST)
-Received: from [92.120.147.87] (wsv03115.swis.in-blr01.nxp.com [92.120.147.87])
- by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 0E9BB18000BA;
- Thu, 17 Sep 2026 19:15:26 +0800 (+08)
-Content-Type: multipart/alternative;
- boundary="------------HbSr3gLiwGxtoQlZUHukkkzp"
-Message-ID: <9a314838-0b08-4db1-bf73-aedf1389e308@oss.nxp.com>
-Date: Thu, 17 Sep 2026 16:45:26 +0530
+	by mails.dpdk.org (Postfix) with ESMTP id A6DEB40299;
+	Thu, 17 Sep 2026 14:48:29 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 5C6B6400D5
+ for <dev@dpdk.org>; Thu, 17 Sep 2026 14:48:28 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 249EB20817;
+ Thu, 17 Sep 2026 14:48:28 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 00/23] NXP DPAA driver enhancements and fixes
-To: David Marchand <david.marchand@redhat.com>,
- "stephen@networkplumber.org" <stephen@networkplumber.org>
-Cc: "thomas@monjalon.net" <thomas@monjalon.net>, "dev@dpdk.org"
- <dev@dpdk.org>, ci@dpdk.org, Aaron Conole <aconole@redhat.com>,
- Hemant Agrawal <hemant.agrawal@nxp.com>
-References: <20260820144312.3922316-1-hemant.agrawal@nxp.com>
- <20260901101926.1574209-1-hemant.agrawal@nxp.com>
- <GV1PR04MB107502B059AE97F8E6EB7860589BE2@GV1PR04MB10750.eurprd04.prod.outlook.com>
- <CAJFAV8xvV868a4cCK-b-yUVQioqD_tDHZZitsXC+U24A=kZQQQ@mail.gmail.com>
-Content-Language: en-US
-From: Hemant Agrawal <hemant.agrawal@oss.nxp.com>
-In-Reply-To: <CAJFAV8xvV868a4cCK-b-yUVQioqD_tDHZZitsXC+U24A=kZQQQ@mail.gmail.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: EAL feature request
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Thu, 17 Sep 2026 14:48:24 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65A50@smartserver.smartshare.dk>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: EAL feature request
+Thread-Index: Ad1GotPN4gjQ6ZYES+Sh5fvZHAH79A==
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>,
+ "David Marchand" <david.marchand@redhat.com>
+Cc: "Robin Jarry" <rjarry@redhat.com>,
+	<dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,97 +46,77 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This is a multi-part message in MIME format.
---------------HbSr3gLiwGxtoQlZUHukkkzp
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Bruce, David,
 
-Hi Stephen,
+I don't know if this would be useful or not, but here goes...
 
-On 16/09/2026 15:14, David Marchand wrote:
-> On Fri, 11 Sept 2026 at 07:06, Hemant Agrawal<hemant.agrawal@nxp.com> wrote:
->> Hi @David Marchand @stephen@networkplumber.org
->>
->>     My last series could not be applied as it has dependency on 1 patch, which is already in net-next. (but not in main)
->>
->> If I send a new version with :   Depends-on: patch-168711 ("net/dpaa: fix Rx queue shutdown before init")
->>
->> https://git.dpdk.org/next/dpdk-next-net/commit/?id=6109b26794c6c3639e9be8b2a659ba7d8040d4fb
->>
->>
->> Will it work in CI ?
-> Afaik, unfortunately, the Depends-on: tag is not implemented in all CI.
-> It seems the only good solution is to work and get patches merged in a
-> single tree at a time :-(.
->
+Situation today:
 
-Will you please push the following patch from dpdk-next-net to dpdk 
-main: 
-https://git.dpdk.org/next/dpdk-next-net/commit/?id=6109b26794c6c3639e9be8b2a659ba7d8040d4fb
+DPDK has 3 types of threads with a valid lcore_id:
+1. EAL threads,=20
+2. Service threads,
+3. Non-EAL threads.
 
-This way our new series of dpaa1 patches will not have apply issue?
-https://patches.dpdk.org/project/dpdk/list/?series=39139
---------------HbSr3gLiwGxtoQlZUHukkkzp
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+EAL threads are controlled by DPDK, and associated with physical cores =
+at startup using the --lcores=3D<lcore_id>@<cpu_ids> parameter, and =
+their OS cpuset/affinity etc. is managed by DPDK.
 
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  </head>
-  <body>
-    <p>Hi Stephen,</p>
-    <div class="moz-cite-prefix">On 16/09/2026 15:14, David Marchand
-      wrote:<br>
-    </div>
-    <blockquote type="cite"
-cite="mid:CAJFAV8xvV868a4cCK-b-yUVQioqD_tDHZZitsXC+U24A=kZQQQ@mail.gmail.com">
-      <pre wrap="" class="moz-quote-pre">On Fri, 11 Sept 2026 at 07:06, Hemant Agrawal <a class="moz-txt-link-rfc2396E" href="mailto:hemant.agrawal@nxp.com">&lt;hemant.agrawal@nxp.com&gt;</a> wrote:
-</pre>
-      <blockquote type="cite">
-        <pre wrap="" class="moz-quote-pre">
-Hi @David Marchand @stephen@networkplumber.org
+Service threads are also managed by DPDK.
 
-    My last series could not be applied as it has dependency on 1 patch, which is already in net-next. (but not in main)
+Non-EAL threads are application created threads, which are simply =
+assigned a valid lcore_id, but their OS cpuset/affinity etc. remains =
+managed by the application.
 
-If I send a new version with :   Depends-on: patch-168711 ("net/dpaa: fix Rx queue shutdown before init")
-
-<a class="moz-txt-link-freetext" href="https://git.dpdk.org/next/dpdk-next-net/commit/?id=6109b26794c6c3639e9be8b2a659ba7d8040d4fb">https://git.dpdk.org/next/dpdk-next-net/commit/?id=6109b26794c6c3639e9be8b2a659ba7d8040d4fb</a>
+Furthermore, macros such as RTE_LCORE_FOREACH_WORKER() only iterate over =
+EAL threads, and rte_lcore_is_enabled() is only true for EAL threads.
+AFAIU, this means that DPDK only considers EAL threads as fastpath =
+("WORKER") threads.
+(The main thread is also an EAL thread, although it is usually not a =
+fastpath thread. But its OS cpuset/affinity etc. is managed by DPDK, =
+which is good.)
 
 
-Will it work in CI ?
-</pre>
-      </blockquote>
-      <pre wrap="" class="moz-quote-pre">
-Afaik, unfortunately, the Depends-on: tag is not implemented in all CI.
-It seems the only good solution is to work and get patches merged in a
-single tree at a time :-(.
+Feature request:
 
-</pre>
-    </blockquote>
-    <div style="font-size: 11pt;"><br data-olk-copy-source="MailCompose">
-    </div>
-    <div style="font-size: 11pt;">Will you please push the following
-      patch from dpdk-next-net to dpdk main:  <span
-style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; color: rgb(0, 0, 0);"><a
-href="https://git.dpdk.org/next/dpdk-next-net/commit/?id=6109b26794c6c3639e9be8b2a659ba7d8040d4fb"
-          class="moz-txt-link-freetext">https://git.dpdk.org/next/dpdk-next-net/commit/?id=6109b26794c6c3639e9be8b2a659ba7d8040d4fb</a></span></div>
-    <div style="font-size: 11pt;"><br>
-    </div>
-    <div
-style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);">This
-      way our new series of dpaa1 patches will not have apply issue? </div>
-    <div
-style="font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; color: rgb(0, 0, 0);"><a
-        href="https://patches.dpdk.org/project/dpdk/list/?series=39139"
-        class="moz-txt-link-freetext">https://patches.dpdk.org/project/dpdk/list/?series=39139</a></div>
-    <blockquote type="cite"
-cite="mid:CAJFAV8xvV868a4cCK-b-yUVQioqD_tDHZZitsXC+U24A=kZQQQ@mail.gmail.com">
-      <pre wrap="" class="moz-quote-pre">
-</pre>
-    </blockquote>
-  </body>
-</html>
+Functions to create and destroy EAL threads at runtime, so applications =
+like Grout could dynamically create/destroy threads that:
+1. DPDK considers EAL (i.e. WORKER) threads,
+2. Have their OS cpuset/affinity etc. managed by DPDK.
 
---------------HbSr3gLiwGxtoQlZUHukkkzp--
+Such functions would probably need to take <lcore_id> and <cpu_ids> =
+parameters, for dynamically updating the list of DPDK managed lcores and =
+CPUs at runtime.
+
+Maybe the ability to dynamically manipulate the <lcore_id>@<cpu_ids> =
+mapping could be a separate set of APIs, so rte_thread_create_eal() =
+would not require those parameters. (Don't know, just brainstorming.)
+
+
+Reason for asking:
+
+Because DPDK doesn't provide this feature (hot-plug/remove of EAL =
+threads), Grout has to take on the task of performing its own thread =
+management (OS cpuset/affinity etc.), register its fastpath threads as =
+Non-EAL threads, and cannot use =
+RTE_LCORE_FOREACH_WORKER()/rte_lcore_is_enabled() for them, but =
+considers Non-EAL as fastpath threads.
+
+
+Generally it would be logical for an application to register its control =
+plane threads as Non-EAL threads to get the benefits that come with a =
+valid lcore_id. But how then can DPDK discriminate between control plane =
+and fastpath threads? Only the application knows.
+
+It would be nice if DPDK's perception of which threads are fastpath or =
+control plane was aligned with the application's perception.
+
+
+NB:
+For completeness, I should mention threads with no lcore_id, created via =
+rte_thread_create_control(), and the OS cpuset/affinity etc. managed by =
+the application.
+
+
+Venlig hilsen / Kind regards,
+-Morten Br=F8rup
+
