@@ -2,66 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A360AC982D6
-	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Sep 2026 15:33:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB478C88E72
+	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Sep 2026 15:33:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DB1CE42F27;
-	Thu, 17 Sep 2026 17:33:20 +0200 (CEST)
-Received: from mail-pz2-f42.google.com (mail-pz2-f42.google.com
- [74.125.228.42]) by mails.dpdk.org (Postfix) with ESMTP id 404B642F13
- for <dev@dpdk.org>; Thu, 17 Sep 2026 17:33:19 +0200 (CEST)
-Received: by mail-pz2-f42.google.com with SMTP id
- 41be03b00d2f7-cc1ceb47d55so185251a12.1
- for <dev@dpdk.org>; Thu, 17 Sep 2026 08:33:19 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 4B90042F87;
+	Thu, 17 Sep 2026 17:33:28 +0200 (CEST)
+Received: from mail-pj2-f43.google.com (mail-pj2-f43.google.com
+ [74.125.227.171])
+ by mails.dpdk.org (Postfix) with ESMTP id BAE1642F13
+ for <dev@dpdk.org>; Thu, 17 Sep 2026 17:33:26 +0200 (CEST)
+Received: by mail-pj2-f43.google.com with SMTP id
+ 98e67ed59e1d1-396cccbba92so874274a91.0
+ for <dev@dpdk.org>; Thu, 17 Sep 2026 08:33:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1789659198; x=1790263998; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1789659206; x=1790264006; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=bYyEMLKD34v+JHAZoaBZKHZpimt8mMS20J5pxuoDviI=;
- b=VWGTCkD1ZoJoCE/Cq0/z5L4bbIS9NMSl/StemW2IeRLzcaABV2jYY+ofHyTN4kZ/DS
- Kyd2NlDze4sr5FkFDj9EphUGMU1xAbcm3YuL9Tyt3bZjvyE35i66wRxaHK2cYpil/1sH
- PWT5rD1hR+R2N9v2xi3UyQIsi6GekvjBBjBfIwMiE498y+o8gpjV1MfAs4UQa5kUQguJ
- KjvM0WnGcwJcKxvYxR8rwrRjqFYWFrsCtmfKQdgoGc/Ao/Qef3fiBbNRhnn9ftFZMzmA
- 8H5xR9FA/k2++r3klkEG+LpS+NAZ89pZKQxcY4CZIruvUdqZ4lDkHaldi6zpPTY+CVdZ
- 6LEg==
+ bh=CM+ng/It2Pc9djPxWfU5YzOHj/aFBESVd6QwsOw0b1s=;
+ b=nsYgeUkPnPcmtGXc0JQ9mU/RvSxyFuQRfQScr/TPEsijLCiBvlZk64XA38nXRzL3mW
+ 2yb5ZdysO1hN8tgX8d8YYxEGwtz9ubARFs7vw0c4+AF2DM6wb/xuw1At+lvITwl1fzSz
+ BomrrYVW3Hav4bXTIAlM53wIuk7G43utVAvFWJecqPPOzZqoEvjvEgRmnfcRVHJKNzMH
+ +pweW+yYueVcLgwTBdTioFyZCkTLGWrT9zQUodHMdAan4b9sIBu9fkOrIHk/4C9akvF4
+ CglAT/48XIgJTCLyNyqgCHjQuivCbfnlVdZodp5iw+IRF6ydiTbTvYzKe7jjs+dlUFrC
+ 92Qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789659198; x=1790263998;
+ d=1e100.net; s=20260707; t=1789659206; x=1790264006;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=bYyEMLKD34v+JHAZoaBZKHZpimt8mMS20J5pxuoDviI=;
- b=g42sbarqgAEA4HgkhnGV7EbqnpoUFc4C0zyZyQjF+0ISJ6P5DPuXBFl/GVvDJH8zrB
- jDyXqG5PITMKZ4bcdXS7Z3MXdnUl5HPOGflILsZtl74jag/Rann21CLf8h7aaPDTQ6XE
- ORIj/PirtdwYlxOmGamZtCqpdc0wJrKf/sKkHw9KRnbBmhRplPg0ScNeFETTmXXN8qEf
- 3raC9h6UdZj2kFmKNfbilaO8i9KqMdboWGGp4+pZIqsd7fdnqJ8IZSc0fEGNI9eu9Ske
- FAAnBSjInYqfc5jG4vfpejxdVixje249Iou2isTHpsYuIUhBy152hoDH0YsKXCh3xh+7
- lKIw==
-X-Gm-Message-State: AFuF++nJtS9IUrk5t6gsjhoEqTSwbZh/c//sFqYXGyfwvjlTNJRiXL5J
- AHoli9RzBc3CFI6s8scUPPFbF6yHyx/9qI8oE552xxgaTKdo+uKwjwmf
-X-Gm-Gg: AYBFou0D0C2Eds/Ktj33zkiIev4JRCY7r2++pejEeDNP585cEZce4tp8qpElFWCMAvt
- 5MKfC5AzpJA9HpjTI0Julf692mINdDiriBI5zzLhVlRFxIQ5BRWXlRtnj88oFSUl7ABGm6rNN9u
- ZLRVZ6VZVfZkCZME3xbENZ2kVwHa2AaFxRhen4DV0JOwSQK5zv5rb9xhzaFgjqBpwvkqQsbQYr+
- 2TBv2/vO/rHfoqmHtSk8RxZ2hgw+/RM9jgJRsdKpkscmW7tcrQii3PGdZD5tVYvgpRUl7j2h9qB
- +43aAEX/yneU2AcKJnuETz11/xB6auRse25mOuiY4Xh3x9qr1+BqbgsmmaJy1z8u7Ls/rBxnzFV
- csp9JWvGRCdzuILv52k4qCygMwa+hyy+ey3GdEzvW40ppredZDMHFHuqrsLY3PeYmz0VWS++Odd
- nhOPpt6rm7uIS9fSKGJ0H4gmIL569QASxg77DnfuxfETdwlf8v4RW8VkfImfAjBbHvx/L4I/ZR5
- uGDmyQ=
-X-Received: by 2002:a17:90b:3f87:b0:39e:252b:86c5 with SMTP id
- 98e67ed59e1d1-39e35daaabdmr5163296a91.1.1789659198263; 
- Thu, 17 Sep 2026 08:33:18 -0700 (PDT)
+ bh=CM+ng/It2Pc9djPxWfU5YzOHj/aFBESVd6QwsOw0b1s=;
+ b=OOOvgUgGll6gzxc/NFfbYInk8Op9eEP85JAFeSZYqvDQdA+O5NuLqlYR4E9ZrDCRrd
+ B9l/6W0t63pXVDLJ3kjKXZDt3VUe4V1ykA4ZayVR89rB5+WKSYZjSHJnoVd9/gEL8D2R
+ Sg3Ytpe0FOR4ql18DNzi9iyB/RLWW2hOgYIMOJQUxDYqy7U/cKkb2J/G0Z7sKhDznhXo
+ 7L6xUN9dJwOH4ff5ccwHBVn12cPkHJBKlGGb8fT2iwK2Dbv21TQRkJbpgw7g2KcCRXMH
+ /ywp2HokBcpQ8gvux2rk4cRDLFCW8luwwPju65iZXUf7bsxFzvwY8wGtoBQ/L15Hg/9E
+ WXIQ==
+X-Gm-Message-State: AFuF++kJwdBjxJffUi+YxrVchmMSJWrzDlRN7kFoUndY7+jtaDeN1BFu
+ bICRyboGG3PFxlEbUuB/4fTQVagk7Y5LrsOycn9UZ/xcCiZnB2EQvvAL
+X-Gm-Gg: AYBFou3lb7inUr2MQlK8kbEWQDH8yZZWheu7w1dVCWXOelUfzU4Nx7/ZYqsXwPqvUw4
+ StSOmJP4ziOCcN61WyfjzSjjhIjWQtfBym+d1xgcc8Q1LPMItIJnEcDXy25Ockpcb10bDIC/t8r
+ SkFr0P/pE5AZJMu9N7w/qTkstAc45YhyMLsNMafdtZofL1KqUAA46c5gY31QTOcIk/vbxcrkwwT
+ LrVsKMZAYqvAn1CBBVlBXZNhk9CoVJxaHGofljyHOtMqqP7v1nuXiCno30+VZNmXNyss4Jg/bJ0
+ aDVwzRzXdaWXE+oliqqildhOGqyCuwmMkkP1EOy7SV+sZGeQiRWmMTnUqhoyBlL0aOlU9yOYBNZ
+ CAJRjiwJaSibjoIAPJHG1qbxByRKmezJaJ50fTr9tDLeq5ERksen0mQiuZLELXEHA4rs/dr+ShB
+ 8P/15NzTwUkTGEzACLj4uQobBqvgPBJPIpAMWRoY/Ek1MoAi0IHM4TPWlUvrUx9MFthYmpp75dH
+ yjdty2AHBKsMYcH8A==
+X-Received: by 2002:a17:90b:4e83:b0:39e:4c81:6c66 with SMTP id
+ 98e67ed59e1d1-39e4c817908mr1268405a91.33.1789659205733; 
+ Thu, 17 Sep 2026 08:33:25 -0700 (PDT)
 Received: from OptiPlex (mail.forbuysw.info. [66.175.223.235])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39e35df6112sm5730350a91.7.2026.09.17.08.33.12
+ 98e67ed59e1d1-39e35df6112sm5730350a91.7.2026.09.17.08.33.20
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 17 Sep 2026 08:33:17 -0700 (PDT)
+ Thu, 17 Sep 2026 08:33:25 -0700 (PDT)
 From: Zhang Tengfei <zhtfdev@gmail.com>
 To: Jiawen Wu <jiawenwu@trustnetic.com>, Zaiyu Wang <zaiyuwang@trustnetic.com>
 Cc: dev@dpdk.org, stephen@networkplumber.org,
  Zhang Tengfei <zhtfdev@gmail.com>, stable@dpdk.org
-Subject: [PATCH v3 2/3] net/txgbe: fix leak of filters on flow create
-Date: Thu, 17 Sep 2026 23:32:41 +0800
-Message-ID: <20260917153242.29315-3-zhtfdev@gmail.com>
+Subject: [PATCH v3 3/3] net/txgbe: fix FDIR error handling on flow create
+Date: Thu, 17 Sep 2026 23:32:42 +0800
+Message-ID: <20260917153242.29315-4-zhtfdev@gmail.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260917153242.29315-1-zhtfdev@gmail.com>
 References: <20260916131106.105667-1-zhtfdev@gmail.com>
@@ -81,369 +82,115 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-txgbe_flow_create() programs ntuple, ethertype, SYN, FDIR, L2 tunnel and
-RSS filters into hardware before allocating the software copy.
-If that allocation fails, create returns an error but leaves the
-hardware filter installed. The application has no handle to destroy it.
+On failure, txgbe_flow_create() calls rte_flow_error_set(error, -ret),
+so ret must be a negative errno. The FDIR flex offset mismatch path
+leaves ret at 0, and the application sees errno 0. The global mask
+memcmp path stores memcmp's return value in ret, which is not an
+errno. Set -EINVAL on both paths.
 
-Allocate the software copy first, then program the hardware. On a
-programming failure, free the copy. Set ENOMEM when allocation fails.
-Allocate the FDIR object before installing the global mask so an
-allocation failure cannot leave mask_added set with no rule.
+Reject a mask-only FDIR rule before programming the global input mask,
+so a failed create cannot leave the mask committed.
 
 Fixes: 5c2352b9ece6 ("net/txgbe: support creating consistent filter")
-Fixes: 7eef71080e16 ("net/txgbe: switch to FDIR on VF")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zhang Tengfei <zhtfdev@gmail.com>
 ---
- drivers/net/txgbe/txgbe_flow.c | 233 +++++++++++++++++----------------
- 1 file changed, 121 insertions(+), 112 deletions(-)
+ drivers/net/txgbe/txgbe_flow.c | 56 ++++++++++++++++++----------------
+ 1 file changed, 30 insertions(+), 26 deletions(-)
 
 diff --git a/drivers/net/txgbe/txgbe_flow.c b/drivers/net/txgbe/txgbe_flow.c
-index 76191a7c2d..a1a497fa22 100644
+index a1a497fa22..b4138cdc4e 100644
 --- a/drivers/net/txgbe/txgbe_flow.c
 +++ b/drivers/net/txgbe/txgbe_flow.c
-@@ -3,6 +3,7 @@
-  * Copyright(c) 2010-2017 Intel Corporation
-  */
- 
-+#include <errno.h>
- #include <sys/queue.h>
- #include <bus_pci_driver.h>
- #include <rte_malloc.h>
-@@ -3246,26 +3247,26 @@ txgbe_flow_create(struct rte_eth_dev *dev,
- #endif
- 
- 	if (!ret) {
-+		ntuple_filter_ptr = rte_zmalloc("txgbe_ntuple_filter",
-+			sizeof(struct txgbe_ntuple_filter_ele), 0);
-+		if (!ntuple_filter_ptr) {
-+			PMD_DRV_LOG(ERR, "failed to allocate memory");
-+			ret = -ENOMEM;
-+			goto out;
-+		}
-+		ntuple_filter_ptr->filter_info = ntuple_filter;
- 		ret = txgbe_add_del_ntuple_filter(dev, &ntuple_filter, TRUE);
--		if (!ret) {
--			ntuple_filter_ptr = rte_zmalloc("txgbe_ntuple_filter",
--				sizeof(struct txgbe_ntuple_filter_ele), 0);
--			if (!ntuple_filter_ptr) {
--				PMD_DRV_LOG(ERR, "failed to allocate memory");
--				goto out;
--			}
--			rte_memcpy(&ntuple_filter_ptr->filter_info,
--				&ntuple_filter,
--				sizeof(struct rte_eth_ntuple_filter));
--			TAILQ_INSERT_TAIL(&filter_ntuple_list,
--				ntuple_filter_ptr, entries);
--			flow->rule = ntuple_filter_ptr;
--			flow->filter_type = RTE_ETH_FILTER_NTUPLE;
--			return flow;
--		} else if (filter_info->ntuple_is_full) {
--			goto next;
-+		if (ret) {
-+			rte_free(ntuple_filter_ptr);
-+			if (filter_info->ntuple_is_full)
-+				goto next;
-+			goto out;
- 		}
--		goto out;
-+		TAILQ_INSERT_TAIL(&filter_ntuple_list,
-+			ntuple_filter_ptr, entries);
-+		flow->rule = ntuple_filter_ptr;
-+		flow->filter_type = RTE_ETH_FILTER_NTUPLE;
-+		return flow;
- 	}
- 
- next:
-@@ -3273,51 +3274,49 @@ txgbe_flow_create(struct rte_eth_dev *dev,
- 	ret = txgbe_parse_ethertype_filter(dev, attr, pattern,
- 				actions, &ethertype_filter, error);
- 	if (!ret) {
-+		ethertype_filter_ptr = rte_zmalloc("txgbe_ethertype_filter",
-+			sizeof(struct txgbe_ethertype_filter_ele), 0);
-+		if (!ethertype_filter_ptr) {
-+			PMD_DRV_LOG(ERR, "failed to allocate memory");
-+			ret = -ENOMEM;
-+			goto out;
-+		}
-+		ethertype_filter_ptr->filter_info = ethertype_filter;
- 		ret = txgbe_add_del_ethertype_filter(dev,
- 				&ethertype_filter, TRUE);
--		if (!ret) {
--			ethertype_filter_ptr =
--				rte_zmalloc("txgbe_ethertype_filter",
--				sizeof(struct txgbe_ethertype_filter_ele), 0);
--			if (!ethertype_filter_ptr) {
--				PMD_DRV_LOG(ERR, "failed to allocate memory");
--				goto out;
--			}
--			rte_memcpy(&ethertype_filter_ptr->filter_info,
--				&ethertype_filter,
--				sizeof(struct rte_eth_ethertype_filter));
--			TAILQ_INSERT_TAIL(&filter_ethertype_list,
--				ethertype_filter_ptr, entries);
--			flow->rule = ethertype_filter_ptr;
--			flow->filter_type = RTE_ETH_FILTER_ETHERTYPE;
--			return flow;
-+		if (ret) {
-+			rte_free(ethertype_filter_ptr);
-+			goto out;
- 		}
--		goto out;
-+		TAILQ_INSERT_TAIL(&filter_ethertype_list,
-+			ethertype_filter_ptr, entries);
-+		flow->rule = ethertype_filter_ptr;
-+		flow->filter_type = RTE_ETH_FILTER_ETHERTYPE;
-+		return flow;
- 	}
- 
- 	memset(&syn_filter, 0, sizeof(struct rte_eth_syn_filter));
- 	ret = txgbe_parse_syn_filter(dev, attr, pattern,
- 				actions, &syn_filter, error);
- 	if (!ret) {
-+		syn_filter_ptr = rte_zmalloc("txgbe_syn_filter",
-+			sizeof(struct txgbe_eth_syn_filter_ele), 0);
-+		if (!syn_filter_ptr) {
-+			PMD_DRV_LOG(ERR, "failed to allocate memory");
-+			ret = -ENOMEM;
-+			goto out;
-+		}
-+		syn_filter_ptr->filter_info = syn_filter;
- 		ret = txgbe_syn_filter_set(dev, &syn_filter, TRUE);
--		if (!ret) {
--			syn_filter_ptr = rte_zmalloc("txgbe_syn_filter",
--				sizeof(struct txgbe_eth_syn_filter_ele), 0);
--			if (!syn_filter_ptr) {
--				PMD_DRV_LOG(ERR, "failed to allocate memory");
--				goto out;
--			}
--			rte_memcpy(&syn_filter_ptr->filter_info,
--				&syn_filter,
--				sizeof(struct rte_eth_syn_filter));
--			TAILQ_INSERT_TAIL(&filter_syn_list,
--				syn_filter_ptr,
--				entries);
--			flow->rule = syn_filter_ptr;
--			flow->filter_type = RTE_ETH_FILTER_SYN;
--			return flow;
-+		if (ret) {
-+			rte_free(syn_filter_ptr);
-+			goto out;
- 		}
--		goto out;
-+		TAILQ_INSERT_TAIL(&filter_syn_list,
-+			syn_filter_ptr, entries);
-+		flow->rule = syn_filter_ptr;
-+		flow->filter_type = RTE_ETH_FILTER_SYN;
-+		return flow;
- 	}
- 
- 	memset(&fdir_rule, 0, sizeof(struct txgbe_fdir_rule));
-@@ -3325,19 +3324,22 @@ txgbe_flow_create(struct rte_eth_dev *dev,
- 				actions, &fdir_rule, error);
- 	if (!ret) {
- 		if (!txgbe_is_pf(TXGBE_DEV_HW(dev))) {
--			ret = txgbevf_fdir_filter_program(dev, &fdir_rule, FALSE);
--			if (ret < 0)
--				goto out;
--
- 			fdir_rule_ptr = rte_zmalloc("txgbe_fdir_filter",
--					    sizeof(struct txgbe_fdir_rule_ele), 0);
-+					sizeof(struct txgbe_fdir_rule_ele), 0);
- 			if (!fdir_rule_ptr) {
- 				PMD_DRV_LOG(ERR, "failed to allocate memory");
-+				ret = -ENOMEM;
- 				goto out;
- 			}
--			rte_memcpy(&fdir_rule_ptr->filter_info,
--				   &fdir_rule,
--				   sizeof(struct txgbe_fdir_rule));
-+
-+			ret = txgbevf_fdir_filter_program(dev, &fdir_rule,
-+							  FALSE);
-+			if (ret < 0) {
-+				rte_free(fdir_rule_ptr);
-+				goto out;
-+			}
-+
-+			fdir_rule_ptr->filter_info = fdir_rule;
- 			TAILQ_INSERT_TAIL(&filter_fdir_list,
- 					  fdir_rule_ptr, entries);
- 			flow->rule = fdir_rule_ptr;
-@@ -3345,6 +3347,14 @@ txgbe_flow_create(struct rte_eth_dev *dev,
- 			return flow;
+@@ -3355,6 +3355,12 @@ txgbe_flow_create(struct rte_eth_dev *dev,
+ 			goto out;
  		}
  
-+		fdir_rule_ptr = rte_zmalloc("txgbe_fdir_filter",
-+				sizeof(struct txgbe_fdir_rule_ele), 0);
-+		if (!fdir_rule_ptr) {
-+			PMD_DRV_LOG(ERR, "failed to allocate memory");
-+			ret = -ENOMEM;
++		if (!fdir_rule.b_spec) {
++			rte_free(fdir_rule_ptr);
++			ret = -EINVAL;
 +			goto out;
 +		}
 +
  		/* A mask cannot be deleted. */
  		if (fdir_rule.b_mask) {
  			if (!fdir_info->mask_added) {
-@@ -3366,8 +3376,10 @@ txgbe_flow_create(struct rte_eth_dev *dev,
- 				fdir_info->mask.pkt_type_mask =
- 					fdir_rule.mask.pkt_type_mask;
- 				ret = txgbe_fdir_set_input_mask(dev);
--				if (ret)
-+				if (ret) {
-+					rte_free(fdir_rule_ptr);
- 					goto out;
-+				}
- 
- 				fdir_info->mask_added = TRUE;
- 				first_mask = TRUE;
-@@ -3381,40 +3393,25 @@ txgbe_flow_create(struct rte_eth_dev *dev,
- 					sizeof(struct txgbe_hw_fdir_mask));
- 				if (ret) {
+@@ -3388,12 +3394,12 @@ txgbe_flow_create(struct rte_eth_dev *dev,
+ 				 * Only support one global mask,
+ 				 * all the masks should be the same.
+ 				 */
+-				ret = memcmp(&fdir_info->mask,
++				if (memcmp(&fdir_info->mask,
+ 					&fdir_rule.mask,
+-					sizeof(struct txgbe_hw_fdir_mask));
+-				if (ret) {
++					sizeof(struct txgbe_hw_fdir_mask)) != 0) {
  					PMD_DRV_LOG(ERR, "only support one global mask");
-+					rte_free(fdir_rule_ptr);
+ 					rte_free(fdir_rule_ptr);
++					ret = -EINVAL;
  					goto out;
  				}
  
- 				if (fdir_info->flex_bytes_offset !=
+@@ -3401,37 +3407,35 @@ txgbe_flow_create(struct rte_eth_dev *dev,
  				    fdir_rule.flex_bytes_offset ||
  				    fdir_info->flex_relative !=
--				    fdir_rule.flex_relative)
-+				    fdir_rule.flex_relative) {
-+					rte_free(fdir_rule_ptr);
+ 				    fdir_rule.flex_relative) {
++					PMD_DRV_LOG(ERR,
++						"flex bytes offset mismatch");
+ 					rte_free(fdir_rule_ptr);
++					ret = -EINVAL;
  					goto out;
-+				}
+ 				}
  			}
  		}
  
- 		if (fdir_rule.b_spec) {
- 			ret = txgbe_fdir_filter_program(dev, &fdir_rule,
- 					FALSE, FALSE);
--			if (!ret) {
--				fdir_rule_ptr = rte_zmalloc("txgbe_fdir_filter",
--					sizeof(struct txgbe_fdir_rule_ele), 0);
--				if (!fdir_rule_ptr) {
--					PMD_DRV_LOG(ERR,
--						"failed to allocate memory");
--					goto out;
--				}
--				rte_memcpy(&fdir_rule_ptr->filter_info,
--					&fdir_rule,
--					sizeof(struct txgbe_fdir_rule));
--				TAILQ_INSERT_TAIL(&filter_fdir_list,
--					fdir_rule_ptr, entries);
--				flow->rule = fdir_rule_ptr;
--				flow->filter_type = RTE_ETH_FILTER_FDIR;
--
--				return flow;
--			}
--
- 			if (ret) {
-+				rte_free(fdir_rule_ptr);
- 				/**
- 				 * clean the mask_added flag if fail to
- 				 * program
-@@ -3423,8 +3420,17 @@ txgbe_flow_create(struct rte_eth_dev *dev,
- 					fdir_info->mask_added = FALSE;
- 				goto out;
- 			}
-+
-+			fdir_rule_ptr->filter_info = fdir_rule;
-+			TAILQ_INSERT_TAIL(&filter_fdir_list,
-+				fdir_rule_ptr, entries);
-+			flow->rule = fdir_rule_ptr;
-+			flow->filter_type = RTE_ETH_FILTER_FDIR;
-+
-+			return flow;
- 		}
- 
-+		rte_free(fdir_rule_ptr);
- 		goto out;
- 	}
- 
-@@ -3432,46 +3438,49 @@ txgbe_flow_create(struct rte_eth_dev *dev,
- 	ret = txgbe_parse_l2_tn_filter(dev, attr, pattern,
- 					actions, &l2_tn_filter, error);
- 	if (!ret) {
-+		l2_tn_filter_ptr = rte_zmalloc("txgbe_l2_tn_filter",
-+			sizeof(struct txgbe_eth_l2_tunnel_conf_ele), 0);
-+		if (!l2_tn_filter_ptr) {
-+			PMD_DRV_LOG(ERR, "failed to allocate memory");
-+			ret = -ENOMEM;
-+			goto out;
-+		}
-+		l2_tn_filter_ptr->filter_info = l2_tn_filter;
- 		ret = txgbe_dev_l2_tunnel_filter_add(dev, &l2_tn_filter, FALSE);
--		if (!ret) {
--			l2_tn_filter_ptr = rte_zmalloc("txgbe_l2_tn_filter",
--				sizeof(struct txgbe_eth_l2_tunnel_conf_ele), 0);
--			if (!l2_tn_filter_ptr) {
--				PMD_DRV_LOG(ERR, "failed to allocate memory");
+-		if (fdir_rule.b_spec) {
+-			ret = txgbe_fdir_filter_program(dev, &fdir_rule,
+-					FALSE, FALSE);
+-			if (ret) {
+-				rte_free(fdir_rule_ptr);
+-				/**
+-				 * clean the mask_added flag if fail to
+-				 * program
+-				 **/
+-				if (first_mask)
+-					fdir_info->mask_added = FALSE;
 -				goto out;
 -			}
--			rte_memcpy(&l2_tn_filter_ptr->filter_info,
--				&l2_tn_filter,
--				sizeof(struct txgbe_l2_tunnel_conf));
--			TAILQ_INSERT_TAIL(&filter_l2_tunnel_list,
--				l2_tn_filter_ptr, entries);
--			flow->rule = l2_tn_filter_ptr;
--			flow->filter_type = RTE_ETH_FILTER_L2_TUNNEL;
+-
+-			fdir_rule_ptr->filter_info = fdir_rule;
+-			TAILQ_INSERT_TAIL(&filter_fdir_list,
+-				fdir_rule_ptr, entries);
+-			flow->rule = fdir_rule_ptr;
+-			flow->filter_type = RTE_ETH_FILTER_FDIR;
+-
 -			return flow;
++		ret = txgbe_fdir_filter_program(dev, &fdir_rule,
++				FALSE, FALSE);
 +		if (ret) {
-+			rte_free(l2_tn_filter_ptr);
++			rte_free(fdir_rule_ptr);
++			/**
++			 * clean the mask_added flag if fail to
++			 * program
++			 **/
++			if (first_mask)
++				fdir_info->mask_added = FALSE;
 +			goto out;
  		}
+ 
+-		rte_free(fdir_rule_ptr);
 -		goto out;
-+		TAILQ_INSERT_TAIL(&filter_l2_tunnel_list,
-+			l2_tn_filter_ptr, entries);
-+		flow->rule = l2_tn_filter_ptr;
-+		flow->filter_type = RTE_ETH_FILTER_L2_TUNNEL;
++		fdir_rule_ptr->filter_info = fdir_rule;
++		TAILQ_INSERT_TAIL(&filter_fdir_list,
++			fdir_rule_ptr, entries);
++		flow->rule = fdir_rule_ptr;
++		flow->filter_type = RTE_ETH_FILTER_FDIR;
++
 +		return flow;
  	}
  
- 	memset(&rss_conf, 0, sizeof(struct txgbe_rte_flow_rss_conf));
- 	ret = txgbe_parse_rss_filter(dev, attr,
- 					actions, &rss_conf, error);
- 	if (!ret) {
--		ret = txgbe_config_rss_filter(dev, &rss_conf, TRUE);
--		if (!ret) {
--			rss_filter_ptr = rte_zmalloc("txgbe_rss_filter",
--				sizeof(struct txgbe_rss_conf_ele), 0);
--			if (!rss_filter_ptr) {
--				PMD_DRV_LOG(ERR, "failed to allocate memory");
--				goto out;
--			}
--			txgbe_rss_conf_init(&rss_filter_ptr->filter_info,
--					    &rss_conf.conf);
--			TAILQ_INSERT_TAIL(&filter_rss_list,
--				rss_filter_ptr, entries);
--			flow->rule = rss_filter_ptr;
--			flow->filter_type = RTE_ETH_FILTER_HASH;
--			return flow;
-+		rss_filter_ptr = rte_zmalloc("txgbe_rss_filter",
-+			sizeof(struct txgbe_rss_conf_ele), 0);
-+		if (!rss_filter_ptr) {
-+			PMD_DRV_LOG(ERR, "failed to allocate memory");
-+			ret = -ENOMEM;
-+			goto out;
- 		}
-+		ret = txgbe_config_rss_filter(dev, &rss_conf, TRUE);
-+		if (ret) {
-+			rte_free(rss_filter_ptr);
-+			goto out;
-+		}
-+		txgbe_rss_conf_init(&rss_filter_ptr->filter_info,
-+				    &rss_conf.conf);
-+		TAILQ_INSERT_TAIL(&filter_rss_list,
-+			rss_filter_ptr, entries);
-+		flow->rule = rss_filter_ptr;
-+		flow->filter_type = RTE_ETH_FILTER_HASH;
-+		return flow;
- 	}
- 
- out:
+ 	memset(&l2_tn_filter, 0, sizeof(struct txgbe_l2_tunnel_conf));
 -- 
 2.53.0
 
