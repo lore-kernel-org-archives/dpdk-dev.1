@@ -2,60 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15671C982C1
-	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Sep 2026 07:50:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 985C1C88E72
+	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Sep 2026 07:50:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 124E842D83;
-	Thu, 17 Sep 2026 09:49:50 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 68BB942DF1;
+	Thu, 17 Sep 2026 09:49:51 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 99BF542D83
- for <dev@dpdk.org>; Thu, 17 Sep 2026 09:49:48 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 3048D42DA1
+ for <dev@dpdk.org>; Thu, 17 Sep 2026 09:49:50 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1789631388;
+ s=mimecast20190719; t=1789631389;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=pTO1Gjo7vj0zW1vMQJ/ApcXsgKidUP9QpEwXFuHW8Vw=;
- b=K3BKvLJWVWH5uGXU43Nu8Mk2K6LXZlt6ap1QO3EORADZt8zJ7mGNy26TWeXPuZX9EheCSi
- sAsNPZH6a1HKwZcEyrECM8Lkr/dQinhSHdwAFZkiUadGlvFyWJtJgT2rrs7lzIhuKdhW3a
- b/f3fKFeLZdqZYDN1Jwki3PeOjDi+qQ=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ bh=mO18YDalq4W68ycF90WpTCzIVOOarrm5rx1hf6biMB0=;
+ b=fIi/SivSWv2F0vutTqaq1StWFy8X/1b/UvJ9wnkmH9aZtYYMwqd8JN9KfILUScrttlbniJ
+ 46ilzW9lZWXkuytmAPfCB8PW1fiFB3AS/b8JTQHaRCTeU357IWfqbxSkTMYOZGzNGbi6td
+ uQylKgzGUi4BcSs4HCJjbjJw3lXJTWE=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-689-cpz1Br37PGysEJVzFzTMHA-1; Thu,
- 17 Sep 2026 03:49:44 -0400
-X-MC-Unique: cpz1Br37PGysEJVzFzTMHA-1
-X-Mimecast-MFC-AGG-ID: cpz1Br37PGysEJVzFzTMHA_1789631383
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-187-2JbgEMAWN5StXVAwJUpKkQ-1; Thu,
+ 17 Sep 2026 03:49:48 -0400
+X-MC-Unique: 2JbgEMAWN5StXVAwJUpKkQ-1
+X-Mimecast-MFC-AGG-ID: 2JbgEMAWN5StXVAwJUpKkQ_1789631387
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 75AD819540C8; Thu, 17 Sep 2026 07:49:43 +0000 (UTC)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 0C36D1802176; Thu, 17 Sep 2026 07:49:47 +0000 (UTC)
 Received: from dmarchan.redhat.corp
  (headnet03.pony-001.prod.iad2.dc.redhat.com [10.2.32.114])
- by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 950131800345; Thu, 17 Sep 2026 07:49:41 +0000 (UTC)
+ by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 0E84C30001A2; Thu, 17 Sep 2026 07:49:45 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: hemant.agrawal@nxp.com,
 	dev@dpdk.org
-Cc: stable@dpdk.org, Sachin Saxena <sachin.saxena@nxp.com>,
- Ferruh Yigit <ferruh.yigit@amd.com>,
- Santosh Shukla <santosh.shukla@caviumnetworks.com>,
- Shreyansh Jain <shreyansh.jain@nxp.com>
-Subject: [RFC v2 05/16] bus/fslmc: fix device name leak
-Date: Thu, 17 Sep 2026 09:49:05 +0200
-Message-ID: <20260917074917.595603-6-david.marchand@redhat.com>
+Cc: Sachin Saxena <sachin.saxena@nxp.com>
+Subject: [RFC v2 06/16] bus/fslmc: fix memory leaks in scan
+Date: Thu, 17 Sep 2026 09:49:06 +0200
+Message-ID: <20260917074917.595603-7-david.marchand@redhat.com>
 In-Reply-To: <20260917074917.595603-1-david.marchand@redhat.com>
 References: <20260723135400.3621271-1-david.marchand@redhat.com>
  <20260917074917.595603-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: MV2UiPpldYymmd-mIyXkki3oMzsMVrl7Y2L51DknJZM_1789631383
+X-Mimecast-MFC-PROC-ID: zwG5xnwtZTiLI-IiN_CQqwR_H9oDm_oKT6dKopO_M9Y_1789631387
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -72,63 +69,183 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The device name allocated during scan was never freed.
-Store it to the (unused) name field in the rte_dpaa2_device.
+During the scan phase (more precisely, during device filtering),
+device pointers were leaked.
 
-This simplifies the device freeing to a simple free() call later.
+Add a simple helper so a device pointer is fully freed.
 
-Fixes: 828d51d8fc3e ("bus/fslmc: refactor scan and probe functions")
-Cc: stable@dpdk.org
+As a consequence of the filtering during scan, all blocklisted devices
+are freed from the bus list during scan: there is no need for
+reevaluating if a device is blocklisted during cleanup.
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- drivers/bus/fslmc/bus_fslmc_driver.h | 4 +---
- drivers/bus/fslmc/fslmc_bus.c        | 8 ++++----
- 2 files changed, 5 insertions(+), 7 deletions(-)
+Changes since RFC v1:
+- fixed interrupt handle leak by adding fslmc_free_device helper
+  sooner in the series,
 
-diff --git a/drivers/bus/fslmc/bus_fslmc_driver.h b/drivers/bus/fslmc/bus_fslmc_driver.h
-index 44f81cf662..ead9d6613c 100644
---- a/drivers/bus/fslmc/bus_fslmc_driver.h
-+++ b/drivers/bus/fslmc/bus_fslmc_driver.h
-@@ -39,8 +39,6 @@ extern "C" {
- 
- struct vfio_device_info;
- 
--#define FSLMC_OBJECT_MAX_LEN 32   /**< Length of each device on bus */
--
- #define DPAA2_INVALID_MBUF_SEQN        0
- 
- typedef uint32_t dpaa2_seqn_t;
-@@ -101,7 +99,7 @@ struct rte_dpaa2_device {
- 	uint16_t ep_object_id;                 /**< Endpoint DPAA2 Object ID */
- 	char ep_name[RTE_DEV_NAME_MAX_LEN];
- 	struct rte_intr_handle *intr_handle; /**< Interrupt handle */
--	char name[FSLMC_OBJECT_MAX_LEN];    /**< DPAA2 Object name*/
-+	char name[RTE_DEV_NAME_MAX_LEN];
- };
- 
- typedef int (*rte_dpaa2_obj_create_t)(int vdev_fd,
+---
+ drivers/bus/fslmc/fslmc_bus.c  | 23 ++++++++++++++++++-----
+ drivers/bus/fslmc/fslmc_vfio.c | 33 +++++++++------------------------
+ drivers/bus/fslmc/private.h    |  2 ++
+ 3 files changed, 29 insertions(+), 29 deletions(-)
+
 diff --git a/drivers/bus/fslmc/fslmc_bus.c b/drivers/bus/fslmc/fslmc_bus.c
-index 94ae96f942..4b0896e42e 100644
+index 4b0896e42e..322b023652 100644
 --- a/drivers/bus/fslmc/fslmc_bus.c
 +++ b/drivers/bus/fslmc/fslmc_bus.c
-@@ -179,12 +179,12 @@ scan_one_fslmc_device(char *dev_name)
+@@ -85,6 +85,22 @@ insert_in_device_list(struct rte_dpaa2_device *newdev)
+ 		rte_bus_add_device(&rte_fslmc_bus, &newdev->device);
+ }
+ 
++static void
++fslmc_free_device(struct rte_device *rte_dev)
++{
++	struct rte_dpaa2_device *dev = RTE_BUS_DEVICE(rte_dev, *dev);
++
++	rte_intr_instance_free(dev->intr_handle);
++	free(dev);
++}
++
++void
++fslmc_bus_remove_device(struct rte_dpaa2_device *dev)
++{
++	rte_bus_remove_device(&rte_fslmc_bus, &dev->device);
++	fslmc_free_device(&dev->device);
++}
++
+ static void
+ dump_device_list(void)
+ {
+@@ -402,11 +418,8 @@ rte_fslmc_scan(void)
+ 	closedir(dir);
+ 
+ 	/* Remove all devices in the list */
+-	RTE_BUS_FOREACH_DEV(dev, &rte_fslmc_bus) {
+-		rte_bus_remove_device(&rte_fslmc_bus, &dev->device);
+-		rte_intr_instance_free(dev->intr_handle);
+-		free(dev);
+-	}
++	RTE_BUS_FOREACH_DEV(dev, &rte_fslmc_bus)
++		fslmc_bus_remove_device(dev);
+ scan_fail:
+ 	DPAA2_BUS_DEBUG("FSLMC Bus Not Available. Skipping (%d)", ret);
+ 	/* Irrespective of failure, scan only return success */
+diff --git a/drivers/bus/fslmc/fslmc_vfio.c b/drivers/bus/fslmc/fslmc_vfio.c
+index 165e9444f5..6e0b35f391 100644
+--- a/drivers/bus/fslmc/fslmc_vfio.c
++++ b/drivers/bus/fslmc/fslmc_vfio.c
+@@ -1557,13 +1557,6 @@ fslmc_vfio_close_group(void)
  	}
  
- 	sscanf(t_ptr, "%hu", &dev->object_id);
--	dev->device.name = strdup(dev_name);
--	if (!dev->device.name) {
--		DPAA2_BUS_ERR("Unable to clone device name. Out of memory");
--		ret = -ENOMEM;
-+	if (rte_strscpy(dev->name, dev_name, sizeof(dev->name)) < 0) {
-+		DPAA2_BUS_ERR("Unable to copy device name: %s", rte_strerror(rte_errno));
-+		ret = -rte_errno;
- 		goto cleanup;
- 	}
-+	dev->device.name = dev->name;
- 	dev->device.devargs = rte_bus_find_devargs(&rte_fslmc_bus, dev_name);
+ 	RTE_BUS_FOREACH_DEV(dev, &rte_fslmc_bus) {
+-		if (dev->device.devargs &&
+-		    dev->device.devargs->policy == RTE_DEV_BLOCKED) {
+-			DPAA2_BUS_LOG(DEBUG, "%s Blacklisted, skipping",
+-				      dev->device.name);
+-			rte_bus_remove_device(&rte_fslmc_bus, &dev->device);
+-				continue;
+-		}
+ 		switch (dev->dev_type) {
+ 		case DPAA2_ETH:
+ 		case DPAA2_CRYPTO:
+@@ -1625,8 +1618,7 @@ fslmc_vfio_process_group(void)
+ 			    dev->device.devargs->policy == RTE_DEV_BLOCKED) {
+ 				DPAA2_BUS_LOG(DEBUG, "%s Blocked, skipping",
+ 					      dev->device.name);
+-				rte_bus_remove_device(&rte_fslmc_bus,
+-						&dev->device);
++				fslmc_bus_remove_device(dev);
+ 				continue;
+ 			}
  
- 	/* Update the device found into the device_count table */
+@@ -1634,8 +1626,7 @@ fslmc_vfio_process_group(void)
+ 			    !is_dpmcp_in_blocklist) {
+ 				if (dpmcp_count == 1 ||
+ 				    current_device != dpmcp_count) {
+-					rte_bus_remove_device(&rte_fslmc_bus,
+-						     &dev->device);
++					fslmc_bus_remove_device(dev);
+ 					continue;
+ 				}
+ 			}
+@@ -1649,9 +1640,7 @@ fslmc_vfio_process_group(void)
+ 				found_mportal = 1;
+ 			}
+ 
+-			rte_bus_remove_device(&rte_fslmc_bus, &dev->device);
+-			free(dev);
+-			dev = NULL;
++			fslmc_bus_remove_device(dev);
+ 			/* Ideally there is only a single dpmcp, but in case
+ 			 * multiple exists, looping on remaining devices.
+ 			 */
+@@ -1675,7 +1664,7 @@ fslmc_vfio_process_group(void)
+ 				DPAA2_BUS_ERR("Unable to process dprc");
+ 				return ret;
+ 			}
+-			rte_bus_remove_device(&rte_fslmc_bus, &dev->device);
++			fslmc_bus_remove_device(dev);
+ 		}
+ 	}
+ 
+@@ -1687,7 +1676,7 @@ fslmc_vfio_process_group(void)
+ 		    dev->device.devargs->policy == RTE_DEV_BLOCKED) {
+ 			DPAA2_BUS_LOG(DEBUG, "%s Blocked, skipping",
+ 				      dev->device.name);
+-			rte_bus_remove_device(&rte_fslmc_bus, &dev->device);
++			fslmc_bus_remove_device(dev);
+ 			continue;
+ 		}
+ 		if (rte_eal_process_type() == RTE_PROC_SECONDARY &&
+@@ -1695,7 +1684,7 @@ fslmc_vfio_process_group(void)
+ 		    dev->dev_type != DPAA2_CRYPTO &&
+ 		    dev->dev_type != DPAA2_QDMA &&
+ 		    dev->dev_type != DPAA2_IO) {
+-			rte_bus_remove_device(&rte_fslmc_bus, &dev->device);
++			fslmc_bus_remove_device(dev);
+ 			continue;
+ 		}
+ 		switch (dev->dev_type) {
+@@ -1737,14 +1726,12 @@ fslmc_vfio_process_group(void)
+ 			if (!is_dpio_in_blocklist && dpio_count > 1) {
+ 				if (rte_eal_process_type() == RTE_PROC_SECONDARY
+ 				    && current_device != dpio_count) {
+-					rte_bus_remove_device(&rte_fslmc_bus,
+-						     &dev->device);
++					fslmc_bus_remove_device(dev);
+ 					break;
+ 				}
+ 				if (rte_eal_process_type() == RTE_PROC_PRIMARY
+ 				    && current_device == dpio_count) {
+-					rte_bus_remove_device(&rte_fslmc_bus,
+-						     &dev->device);
++					fslmc_bus_remove_device(dev);
+ 					break;
+ 				}
+ 			}
+@@ -1762,9 +1749,7 @@ fslmc_vfio_process_group(void)
+ 			/* Unknown - ignore */
+ 			DPAA2_BUS_DEBUG("Found unknown device (%s)",
+ 					dev->device.name);
+-			rte_bus_remove_device(&rte_fslmc_bus, &dev->device);
+-			free(dev);
+-			dev = NULL;
++			fslmc_bus_remove_device(dev);
+ 		}
+ 	}
+ 
+diff --git a/drivers/bus/fslmc/private.h b/drivers/bus/fslmc/private.h
+index 20a454c3fc..825a364f1b 100644
+--- a/drivers/bus/fslmc/private.h
++++ b/drivers/bus/fslmc/private.h
+@@ -11,4 +11,6 @@
+ 
+ extern struct rte_bus rte_fslmc_bus;
+ 
++void fslmc_bus_remove_device(struct rte_dpaa2_device *dev);
++
+ #endif /* BUS_FSLMC_PRIVATE_H */
 -- 
 2.54.0
 
