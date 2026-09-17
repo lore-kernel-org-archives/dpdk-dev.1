@@ -2,68 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 853F1C982D2
-	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Sep 2026 17:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2951AC88E72
+	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Sep 2026 17:21:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 84EBA42FBF;
-	Thu, 17 Sep 2026 19:21:25 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1F90242FC7;
+	Thu, 17 Sep 2026 19:21:29 +0200 (CEST)
 Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com
- [74.125.228.12]) by mails.dpdk.org (Postfix) with ESMTP id 9F37C40281
- for <dev@dpdk.org>; Thu, 17 Sep 2026 19:21:22 +0200 (CEST)
+ [74.125.228.12]) by mails.dpdk.org (Postfix) with ESMTP id 20D6F42F9F
+ for <dev@dpdk.org>; Thu, 17 Sep 2026 19:21:27 +0200 (CEST)
 Received: by mail-pz2-f12.google.com with SMTP id
- d2e1a72fcca58-8686f46e4adso957597b3a.0
- for <dev@dpdk.org>; Thu, 17 Sep 2026 10:21:22 -0700 (PDT)
+ d2e1a72fcca58-85a4329731cso977735b3a.3
+ for <dev@dpdk.org>; Thu, 17 Sep 2026 10:21:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789665682;
- x=1790270482; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789665686;
+ x=1790270486; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=kvIFNzXZEq2oO7tnJVK9yiXp7bpxIe1SMsydPwADEH4=;
- b=QoJE1D2H/r59N123w8n/CtH/GlBseNLjx/iqDqLftizoM4KY3bD9hfosVsN3SyB9BF
- dRYSuG+u/jQnHZ37BDe/yrtpDGnzwsu1doeyCMfr9gGK6H6j5MbbH5ud7pGd0wv7Rm1M
- DDtqYW2BuFVTomV7PD8cC0Fo9OtaWrMijTBwC3Mqw4TOzxp/q1ceXAorlhTpXov8SnTT
- Vy1OTCGCgxmRoDG4jNugMqgk+7rxhkMbg/sD2uxXFSs0LTRVBQE6zTGjqZ9ZhkOA7A1L
- d43nIS8Ao0fqQQJmyAwpKjGwgma9L3ULA1oUWB5C0W9yglYuSzBV5TcdofTWXTjz/9F9
- 0JDw==
+ bh=iQAXr/6NDfRx1HQOGgRjEn+n2BXmNFshAPu+8LNw/RQ=;
+ b=Uv53GbtLxkceRVtGd+yZ7mnt6xFpIIKzNnungXRreNx/SFITy89sgEP3MnHHwiEu6B
+ LyIp8UhZ7niV1UWTBpM44axIoZuJZ9WGRMYURVrgcPEmE1IeSoOaWwvmmgPX1OfN2Gwt
+ /UdamEPUZSmwV5w5fFjBFoRxMjYIM94PYyE/alV5IJjxUZWegz+W4RI+y+pJQmXBheDT
+ +OBd1JwddTRG4aeGZ7NyGmuvVItoWA4XcT66/vqSZr5FTFN3G+0S1rldkdD/Yx2rd5XQ
+ ae67RmUrjdSUBQXvjPnN89MAi0Dx/kMMC56fdPMYLA2lkYBNiJYTZdPV9zJmpRozf0Mc
+ Ss0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789665682; x=1790270482;
+ d=1e100.net; s=20260707; t=1789665686; x=1790270486;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=kvIFNzXZEq2oO7tnJVK9yiXp7bpxIe1SMsydPwADEH4=;
- b=mLEOa88DL7DD2EK0Q9XEWxYb4pP1woZVof6zMPFsOjC8sQd8h+DdDfILS8PZ5ecG3K
- +BlmwHw9ULqZZDlEn3wyyWq1ASAvlBgpMRRvhaJm/A32k4UX4/xzQM4Ix4CLSrx8psrc
- RTwPpGw6cTe6lDqZjmhJJKw5orqrDJ+d0FoyrO7VrxP0/eyrk6f949FraAXKlRw0Yau7
- epBLfix5ldKEMnyPhXZFt0aEzW4vfNYN46LxTY+HWCd/lHQeO07e+3eyDNLDLhoENtga
- B0/L7at0vKmJ52c8bdO+9iNyQWqYiPJN60VPSRvf76bw+WdULyzkciA6NrkmozdSXMrk
- 9anA==
-X-Gm-Message-State: AFuF++m33hZ/MsOF6RdVQiC+Rc1bbzkPJWnR1MvqfG2RoDSpB8RhsK/i
- w7HOFq23plDUayHF8bJz7kdflQyPaYTpaoF5Z46QokzfA6K2rwy9RPo0Rgj4Nx7trirfANj2aeo
- zuwAl
-X-Gm-Gg: AYBFou1FJmD4p4s61kcj16lmLZgod8JEyPD3E3N+uNiiKt+3gOtqitjkI8nCkbFIRux
- I5klc/8h7VBxtyLx5e5PIZG/0WfuFNtNksXkLW7LuxbMjNBOLgPg5p/6sRKXq8/Snmr7mRxEvcn
- NadNvs6QcXLDeZF0+oK9l6iMoXFOxh26q3PA09yRhuNYT+ertZZBN2YBk1cMqX0cGCfUV6K0j2n
- 4SX7DcbPGj88prmm263NFxpxEn8lwC/PBx0CxwbOML8DgDJazN0PddK7/KgTQDtaTiXuVKQEpCE
- 8Yq1EulCXthPTMh+U9LxN+JpVjkPCQVO5EHwzd1kwhKEgGLxUfB9/jNP7RFCGPtkZt2dyvmFlTB
- c+VbbfKbVMVQL9Uka27CGHpsReI6hUnTjQDrXM5Cu6bWOInJA6fK5/4ytRK0MLKLd3FltJ11JOC
- 8XxkjVH8mU/2dJMSut58o5bl+kyjaaXKVa3qMP0nnIOO0G/kMNkKJeAN7ZU5FT850G/d/BH1AnK
- 7Ka0tbEuD4/54vOJRPrmsG4NrluPVofOfC4Cg==
-X-Received: by 2002:a05:6a00:1887:b0:85f:1492:61a8 with SMTP id
- d2e1a72fcca58-87236fd6341mr15444177b3a.7.1789665680981; 
- Thu, 17 Sep 2026 10:21:20 -0700 (PDT)
+ bh=iQAXr/6NDfRx1HQOGgRjEn+n2BXmNFshAPu+8LNw/RQ=;
+ b=uo68tk688ezpP4tKT0ECMX4NFlkXKhrQqy/UyVTkRNNmJbDaJWBici3D+diZcPYepv
+ bm3rc7MPpMyB77grwCQ69aRBJyjs6woU7rTbt+u/gRAWZb8S0LUsAgs3TYtRhlrk3N/c
+ /e6MuipmkWjYZASahCwPTtN18RjeS8vtKESWvR2rbUA8SfZGMR+H3vNDNiDd458UpvTz
+ gAqsOypd3AANdheLcjDox0QwVBRqq6rg3JQeFcfHs83eUCM8NtO4rkpodAIRE4NSErld
+ Z06EpOXOQj9sTnUL/Si5KCajy7yp0ITMHIRtmzHC0MthTq++I0ggEcMdMl4cjpcuzLEL
+ KmFA==
+X-Gm-Message-State: AFuF++mT605nz/zBIRt3ZhSbZAjEYCUp6PDb1kaaQTttfzPrblEmu82K
+ GEhUUtik7gOYVkaS1jplDMYfYyOU8OcQTXncDtAFTJDdhJ/dKrVzIQ0WJi4xwURkRBggmnUtWGm
+ zmyVU
+X-Gm-Gg: AYBFou3VIKogH1Ng2qA+fMOZuDiftiP4D8an0PxSvfEqtbFKraEp96HmldECVtubJ6m
+ A2s2MAZsf6d29vHKPb2GDoSarihE1xN96/Km1r+Qy/PBBSmeOu02wP8VQxDiZcDilAnRMhFtA5u
+ CGOTeltEH6QB5ktiANGp7ELU4SZIznH2n6I5GMhHqEakhH6J2HYOx0zy5XZm92NUKyrsqA+SJ8T
+ alWCvU2aSxWJ9XNj0FeFEwgRgMyKqTUIJN7Db9AfPkoPXm/XN0mQgtN96EqKVCdP9wZvXjb7IDQ
+ Pst8TNj4zrtr+gkId8DSmPIjmT4EEofH1dIpNWngQLwF+zDCU7Mshfn5fyBRnLaAp3qyT0WwU7t
+ ChRffkLmPZ7M7clalISbWj6y2a38+zsgHA+aPD0LgHM71ulbT7IB1idKuvYv8iHI4zkcblZAvS6
+ hYCpDmN1x9yBLGF2us/inocLsWNphDd3sbwklpLMjfooLR2QMmUIzEnLfMRDPGnyvm7HxgNc2P+
+ UCvRK4dDznoSBKEm+NHP8EvpnVmEC90e1fkneo=
+X-Received: by 2002:a05:6a00:9094:b0:85a:bc69:bfc4 with SMTP id
+ d2e1a72fcca58-8723412fe92mr17892308b3a.0.1789665686131; 
+ Thu, 17 Sep 2026 10:21:26 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-87379a2e079sm1447408b3a.31.2026.09.17.10.21.20
+ d2e1a72fcca58-87379a2e079sm1447408b3a.31.2026.09.17.10.21.25
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 17 Sep 2026 10:21:20 -0700 (PDT)
+ Thu, 17 Sep 2026 10:21:25 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
-Subject: [PATCH 2/6] eal: add rte_queue.h with full set of list macros
-Date: Thu, 17 Sep 2026 10:19:40 -0700
-Message-ID: <20260917172116.660120-3-stephen@networkplumber.org>
+ Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>,
+ Jie Liu <liujie5@linkdatatechnology.com>,
+ Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
+ Ajit Khaparde <ajit.khaparde@broadcom.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Jingjing Wu <jingjing.wu@intel.com>,
+ Praveen Shetty <praveen.shetty@intel.com>, Wei Hu <weh@microsoft.com>,
+ Devendra Singh Rawat <dsinghrawat@marvell.com>,
+ Alok Prasad <palok@marvell.com>, Rosen Xu <rosen.xu@altera.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Marat Khalili <qm2k21@gmail.com>
+Subject: [PATCH 4/6] build: remove private FOREACH_SAFE definitions
+Date: Thu, 17 Sep 2026 10:19:42 -0700
+Message-ID: <20260917172116.660120-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260917172116.660120-1-stephen@networkplumber.org>
 References: <20260917172116.660120-1-stephen@networkplumber.org>
@@ -82,1612 +93,250 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DPDK code uses the BSD <sys/queue.h> macros, but the available set
-differs per platform. FreeBSD has the complete set, glibc provides only
-a subset (notably none of the _FOREACH_SAFE variants), and musl has no
-such header at all, nor does Windows.
-
-The result is that the _SAFE variants cannot be used in common code.
-RTE_TAILQ_FOREACH_SAFE was added to rte_tailq.h to work around this for
-tail queues, and nine other files carry their own private copy of
-LIST_FOREACH_SAFE, SLIST_FOREACH_SAFE or TAILQ_FOREACH_SAFE.
-
-Windows already bundles a copy of the FreeBSD header for its own use.
-Move it to lib/eal/include/rte_queue.h and use it on all platforms, so
-that the same complete set of macros is available everywhere.
-
-The FreeBSD queue macro debugging support (QUEUE_MACRO_DEBUG and the
-_KERNEL INVARIANTS checks) is dropped: it is there to debug the list
-macros themselves, which is not something DPDK does.
-
-Leave a stub at the old Windows path that includes the new header, so
-that the existing <sys/queue.h> includes keep building on Windows until
-they are converted. It is removed in the next commit.
-
-Define __containerof when the platform does not provide it (it is a
-FreeBSD extension used by STAILQ_LAST, LIST_PREV, TAILQ_LAST_FAST and
-TAILQ_PREV_FAST) and include <stddef.h> for offsetof and NULL, so that
-the full set really is usable everywhere.
+Ten files carried their own copy of LIST_FOREACH_SAFE,
+SLIST_FOREACH_SAFE, STAILQ_FOREACH_SAFE or TAILQ_FOREACH_SAFE, because
+glibc does not provide them. They all now get the macros from
+rte_queue.h, so drop the private copies.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/rel_notes/release_26_11.rst |   7 +
- lib/eal/include/meson.build            |   1 +
- lib/eal/include/rte_queue.h            | 684 ++++++++++++++++++++
- lib/eal/windows/include/sys/queue.h    | 839 +------------------------
- 4 files changed, 697 insertions(+), 834 deletions(-)
- create mode 100644 lib/eal/include/rte_queue.h
+ drivers/bus/fslmc/portal/dpaa2_hw_dpio.c  | 7 -------
+ drivers/common/sxe2/sxe2_osal.h           | 8 +-------
+ drivers/net/bnxt/bnxt_filter.c            | 7 -------
+ drivers/net/intel/iavf/iavf_vchnl.c       | 8 +-------
+ drivers/net/intel/idpf/base/idpf_osdep.h  | 7 -------
+ drivers/net/netvsc/hn_ethdev.c            | 8 +-------
+ drivers/net/nfp/nfp_mtr.c                 | 8 +-------
+ drivers/net/qede/qede_filter.c            | 8 +-------
+ drivers/raw/ifpga/base/opae_intel_max10.c | 8 +-------
+ lib/bpf/bpf_validate_debug.c              | 9 +--------
+ 10 files changed, 7 insertions(+), 71 deletions(-)
 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 4b3e5d995c..0701fbee8d 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -55,6 +55,13 @@ New Features
-      Also, make sure to start the actual text at the margin.
-      =======================================================
+diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
+index 9dbf5f413e..fb7ecff468 100644
+--- a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
++++ b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
+@@ -41,13 +41,6 @@
+ #include "dpaa2_hw_dpio.h"
+ #include <mc/fsl_dpmng.h>
  
-+* **Added rte_queue.h with the full set of list macros.**
-+
-+  Added ``rte_queue.h``, providing the complete set of BSD queue(3) list
-+  macros on all platforms, including the ``_FOREACH_SAFE`` variants which
-+  are not available in the system header on Linux.
-+  Use it instead of ``<sys/queue.h>``.
-+
- 
- Removed Items
- -------------
-diff --git a/lib/eal/include/meson.build b/lib/eal/include/meson.build
-index aef5824e5f..7752c1d766 100644
---- a/lib/eal/include/meson.build
-+++ b/lib/eal/include/meson.build
-@@ -38,6 +38,7 @@ headers += files(
-         'rte_pci_dev_features.h',
-         'rte_per_lcore.h',
-         'rte_pflock.h',
-+        'rte_queue.h',
-         'rte_random.h',
-         'rte_reciprocal.h',
-         'rte_seqcount.h',
-diff --git a/lib/eal/include/rte_queue.h b/lib/eal/include/rte_queue.h
-new file mode 100644
-index 0000000000..a847670470
---- /dev/null
-+++ b/lib/eal/include/rte_queue.h
-@@ -0,0 +1,684 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ *
-+ * Copyright (c) 1991, 1993
-+ *	The Regents of the University of California.  All rights reserved.
-+ */
-+
-+/*
-+ * This is a copy of the FreeBSD <sys/queue.h> used by DPDK on all platforms,
-+ * so that the same set of macros is available everywhere. The system header
-+ * cannot be used directly: glibc provides only a subset (notably no
-+ * _FOREACH_SAFE), musl has no such header at all and on Alpine it comes from
-+ * the bsd-compat-headers package, and Windows provides none either.
-+ *
-+ * Include <rte_queue.h> rather than <sys/queue.h>; direct use of the system
-+ * header is rejected by devtools/checkpatches.sh.
-+ *
-+ * The multiple inclusion guard is intentionally the one used by the system
-+ * header. If an application or third-party header pulls in <sys/queue.h> as
-+ * well, the two suppress each other instead of defining the same macros
-+ * twice. All these implementations share a common origin and the structure
-+ * layouts are identical, so the list types are interchangeable either way.
-+ *
-+ * Which header wins does matter for the set of macros defined. If a system
-+ * <sys/queue.h> is included first, this header expands to nothing and only
-+ * the macros that platform provides are available: on glibc that means no
-+ * _FOREACH_SAFE, _FOREACH_FROM or _SWAP. Conversely, when this header wins,
-+ * the glibc-only CIRCLEQ_ and SIMPLEQ_ families are not defined.
-+ *
-+ * The FreeBSD QUEUE_MACRO_DEBUG and INVARIANTS facilities are omitted: they
-+ * are there to debug the macros themselves, which is not something DPDK does.
-+ */
-+
-+#ifndef _SYS_QUEUE_H_
-+#define	_SYS_QUEUE_H_
-+
-+/*
-+ * This file defines four types of data structures: singly-linked lists,
-+ * singly-linked tail queues, lists and tail queues.
-+ *
-+ * A singly-linked list is headed by a single forward pointer. The elements
-+ * are singly linked for minimum space and pointer manipulation overhead at
-+ * the expense of O(n) removal for arbitrary elements. New elements can be
-+ * added to the list after an existing element or at the head of the list.
-+ * Elements being removed from the head of the list should use the explicit
-+ * macro for this purpose for optimum efficiency. A singly-linked list may
-+ * only be traversed in the forward direction.  Singly-linked lists are ideal
-+ * for applications with large datasets and few or no removals or for
-+ * implementing a LIFO queue.
-+ *
-+ * A singly-linked tail queue is headed by a pair of pointers, one to the
-+ * head of the list and the other to the tail of the list. The elements are
-+ * singly linked for minimum space and pointer manipulation overhead at the
-+ * expense of O(n) removal for arbitrary elements. New elements can be added
-+ * to the list after an existing element, at the head of the list, or at the
-+ * end of the list. Elements being removed from the head of the tail queue
-+ * should use the explicit macro for this purpose for optimum efficiency.
-+ * A singly-linked tail queue may only be traversed in the forward direction.
-+ * Singly-linked tail queues are ideal for applications with large datasets
-+ * and few or no removals or for implementing a FIFO queue.
-+ *
-+ * A list is headed by a single forward pointer (or an array of forward
-+ * pointers for a hash table header). The elements are doubly linked
-+ * so that an arbitrary element can be removed without a need to
-+ * traverse the list. New elements can be added to the list before
-+ * or after an existing element or at the head of the list. A list
-+ * may be traversed in either direction.
-+ *
-+ * A tail queue is headed by a pair of pointers, one to the head of the
-+ * list and the other to the tail of the list. The elements are doubly
-+ * linked so that an arbitrary element can be removed without a need to
-+ * traverse the list. New elements can be added to the list before or
-+ * after an existing element, at the head of the list, or at the end of
-+ * the list. A tail queue may be traversed in either direction.
-+ *
-+ * For details on the use of these macros, see the queue(3) manual page.
-+ *
-+ * Below is a summary of implemented functions where:
-+ *  +  means the macro is available
-+ *  -  means the macro is not available
-+ *  s  means the macro is available but is slow (runs in O(n) time)
-+ *
-+ *				SLIST	LIST	STAILQ	TAILQ
-+ * _HEAD			+	+	+	+
-+ * _CLASS_HEAD			+	+	+	+
-+ * _HEAD_INITIALIZER		+	+	+	+
-+ * _ENTRY			+	+	+	+
-+ * _CLASS_ENTRY			+	+	+	+
-+ * _INIT			+	+	+	+
-+ * _EMPTY			+	+	+	+
-+ * _FIRST			+	+	+	+
-+ * _NEXT			+	+	+	+
-+ * _PREV			-	+	-	+
-+ * _LAST			-	-	+	+
-+ * _LAST_FAST			-	-	-	+
-+ * _FOREACH			+	+	+	+
-+ * _FOREACH_FROM		+	+	+	+
-+ * _FOREACH_SAFE		+	+	+	+
-+ * _FOREACH_FROM_SAFE		+	+	+	+
-+ * _FOREACH_REVERSE		-	-	-	+
-+ * _FOREACH_REVERSE_FROM	-	-	-	+
-+ * _FOREACH_REVERSE_SAFE	-	-	-	+
-+ * _FOREACH_REVERSE_FROM_SAFE	-	-	-	+
-+ * _INSERT_HEAD			+	+	+	+
-+ * _INSERT_BEFORE		-	+	-	+
-+ * _INSERT_AFTER		+	+	+	+
-+ * _INSERT_TAIL			-	-	+	+
-+ * _CONCAT			s	s	+	+
-+ * _REMOVE_AFTER		+	-	+	-
-+ * _REMOVE_HEAD			+	-	+	-
-+ * _REMOVE			s	+	s	+
-+ * _SWAP			+	+	+	+
-+ */
-+
-+#include <stddef.h>
-+
-+/*
-+ * FreeBSD provides __containerof in <sys/cdefs.h>, other platforms do not.
-+ * Used by STAILQ_LAST, LIST_PREV, TAILQ_LAST_FAST and TAILQ_PREV_FAST.
-+ */
-+#ifndef __containerof
-+#define	__containerof(ptr, type, member)				\
-+	((type *)(void *)((char *)(ptr) - offsetof(type, member)))
-+#endif
-+
-+#ifdef __cplusplus
-+/*
-+ * In C++ there can be structure lists and class lists:
-+ */
-+#define	QUEUE_TYPEOF(type) type
-+#else
-+#define	QUEUE_TYPEOF(type) struct type
-+#endif
-+
-+/*
-+ * Singly-linked List declarations.
-+ */
-+#define	SLIST_HEAD(name, type)						\
-+struct name {								\
-+	struct type *slh_first;	/* first element */			\
-+}
-+
-+#define	SLIST_CLASS_HEAD(name, type)					\
-+struct name {								\
-+	class type *slh_first;	/* first element */			\
-+}
-+
-+#define	SLIST_HEAD_INITIALIZER(head)					\
-+	{ NULL }
-+
-+#define	SLIST_ENTRY(type)						\
-+struct {								\
-+	struct type *sle_next;	/* next element */			\
-+}
-+
-+#define	SLIST_CLASS_ENTRY(type)						\
-+struct {								\
-+	class type *sle_next;		/* next element */		\
-+}
-+
-+/*
-+ * Singly-linked List functions.
-+ */
-+
-+#define SLIST_CONCAT(head1, head2, type, field) do {			\
-+	QUEUE_TYPEOF(type) *curelm = SLIST_FIRST(head1);		\
-+	if (curelm == NULL) {						\
-+		if ((SLIST_FIRST(head1) = SLIST_FIRST(head2)) != NULL)	\
-+			SLIST_INIT(head2);				\
-+	} else if (SLIST_FIRST(head2) != NULL) {			\
-+		while (SLIST_NEXT(curelm, field) != NULL)		\
-+			curelm = SLIST_NEXT(curelm, field);		\
-+		SLIST_NEXT(curelm, field) = SLIST_FIRST(head2);		\
-+		SLIST_INIT(head2);					\
-+	}								\
-+} while (0)
-+
-+#define	SLIST_EMPTY(head)	((head)->slh_first == NULL)
-+
-+#define	SLIST_FIRST(head)	((head)->slh_first)
-+
-+#define	SLIST_FOREACH(var, head, field)					\
-+	for ((var) = SLIST_FIRST((head));				\
-+	    (var);							\
-+	    (var) = SLIST_NEXT((var), field))
-+
-+#define	SLIST_FOREACH_FROM(var, head, field)				\
-+	for ((var) = ((var) ? (var) : SLIST_FIRST((head)));		\
-+	    (var);							\
-+	    (var) = SLIST_NEXT((var), field))
-+
-+#define	SLIST_FOREACH_SAFE(var, head, field, tvar)			\
-+	for ((var) = SLIST_FIRST((head));				\
-+	    (var) && ((tvar) = SLIST_NEXT((var), field), 1);		\
-+	    (var) = (tvar))
-+
-+#define	SLIST_FOREACH_FROM_SAFE(var, head, field, tvar)			\
-+	for ((var) = ((var) ? (var) : SLIST_FIRST((head)));		\
-+	    (var) && ((tvar) = SLIST_NEXT((var), field), 1);		\
-+	    (var) = (tvar))
-+
-+#define	SLIST_FOREACH_PREVPTR(var, varp, head, field)			\
-+	for ((varp) = &SLIST_FIRST((head));				\
-+	    ((var) = *(varp)) != NULL;					\
-+	    (varp) = &SLIST_NEXT((var), field))
-+
-+#define	SLIST_INIT(head) do {						\
-+	SLIST_FIRST((head)) = NULL;					\
-+} while (0)
-+
-+#define	SLIST_INSERT_AFTER(slistelm, elm, field) do {			\
-+	SLIST_NEXT((elm), field) = SLIST_NEXT((slistelm), field);	\
-+	SLIST_NEXT((slistelm), field) = (elm);				\
-+} while (0)
-+
-+#define	SLIST_INSERT_HEAD(head, elm, field) do {			\
-+	SLIST_NEXT((elm), field) = SLIST_FIRST((head));			\
-+	SLIST_FIRST((head)) = (elm);					\
-+} while (0)
-+
-+#define	SLIST_NEXT(elm, field)	((elm)->field.sle_next)
-+
-+#define	SLIST_REMOVE(head, elm, type, field) do {			\
-+	if (SLIST_FIRST((head)) == (elm)) {				\
-+		SLIST_REMOVE_HEAD((head), field);			\
-+	}								\
-+	else {								\
-+		QUEUE_TYPEOF(type) *curelm = SLIST_FIRST(head);		\
-+		while (SLIST_NEXT(curelm, field) != (elm))		\
-+			curelm = SLIST_NEXT(curelm, field);		\
-+		SLIST_REMOVE_AFTER(curelm, field);			\
-+	}								\
-+} while (0)
-+
-+#define SLIST_REMOVE_AFTER(elm, field) do {				\
-+	SLIST_NEXT(elm, field) =					\
-+	    SLIST_NEXT(SLIST_NEXT(elm, field), field);			\
-+} while (0)
-+
-+#define	SLIST_REMOVE_HEAD(head, field) do {				\
-+	SLIST_FIRST((head)) = SLIST_NEXT(SLIST_FIRST((head)), field);	\
-+} while (0)
-+
-+#define	SLIST_REMOVE_PREVPTR(prevp, elm, field) do {			\
-+	*(prevp) = SLIST_NEXT(elm, field);				\
-+} while (0)
-+
-+#define SLIST_SWAP(head1, head2, type) do {				\
-+	QUEUE_TYPEOF(type) *swap_first = SLIST_FIRST(head1);		\
-+	SLIST_FIRST(head1) = SLIST_FIRST(head2);			\
-+	SLIST_FIRST(head2) = swap_first;				\
-+} while (0)
-+
-+/*
-+ * Singly-linked Tail queue declarations.
-+ */
-+#define	STAILQ_HEAD(name, type)						\
-+struct name {								\
-+	struct type *stqh_first;/* first element */			\
-+	struct type **stqh_last;/* addr of last next element */		\
-+}
-+
-+#define	STAILQ_CLASS_HEAD(name, type)					\
-+struct name {								\
-+	class type *stqh_first;	/* first element */			\
-+	class type **stqh_last;	/* addr of last next element */		\
-+}
-+
-+#define	STAILQ_HEAD_INITIALIZER(head)					\
-+	{ NULL, &(head).stqh_first }
-+
-+#define	STAILQ_ENTRY(type)						\
-+struct {								\
-+	struct type *stqe_next;	/* next element */			\
-+}
-+
-+#define	STAILQ_CLASS_ENTRY(type)					\
-+struct {								\
-+	class type *stqe_next;	/* next element */			\
-+}
-+
-+/*
-+ * Singly-linked Tail queue functions.
-+ */
-+#define	STAILQ_CONCAT(head1, head2) do {				\
-+	if (!STAILQ_EMPTY((head2))) {					\
-+		*(head1)->stqh_last = (head2)->stqh_first;		\
-+		(head1)->stqh_last = (head2)->stqh_last;		\
-+		STAILQ_INIT((head2));					\
-+	}								\
-+} while (0)
-+
-+#define	STAILQ_EMPTY(head)	((head)->stqh_first == NULL)
-+
-+#define	STAILQ_FIRST(head)	((head)->stqh_first)
-+
-+#define	STAILQ_FOREACH(var, head, field)				\
-+	for((var) = STAILQ_FIRST((head));				\
-+	   (var);							\
-+	   (var) = STAILQ_NEXT((var), field))
-+
-+#define	STAILQ_FOREACH_FROM(var, head, field)				\
-+	for ((var) = ((var) ? (var) : STAILQ_FIRST((head)));		\
-+	   (var);							\
-+	   (var) = STAILQ_NEXT((var), field))
-+
-+#define	STAILQ_FOREACH_SAFE(var, head, field, tvar)			\
-+	for ((var) = STAILQ_FIRST((head));				\
-+	    (var) && ((tvar) = STAILQ_NEXT((var), field), 1);		\
-+	    (var) = (tvar))
-+
-+#define	STAILQ_FOREACH_FROM_SAFE(var, head, field, tvar)		\
-+	for ((var) = ((var) ? (var) : STAILQ_FIRST((head)));		\
-+	    (var) && ((tvar) = STAILQ_NEXT((var), field), 1);		\
-+	    (var) = (tvar))
-+
-+#define	STAILQ_INIT(head) do {						\
-+	STAILQ_FIRST((head)) = NULL;					\
-+	(head)->stqh_last = &STAILQ_FIRST((head));			\
-+} while (0)
-+
-+#define	STAILQ_INSERT_AFTER(head, tqelm, elm, field) do {		\
-+	if ((STAILQ_NEXT((elm), field) = STAILQ_NEXT((tqelm), field)) == NULL)\
-+		(head)->stqh_last = &STAILQ_NEXT((elm), field);		\
-+	STAILQ_NEXT((tqelm), field) = (elm);				\
-+} while (0)
-+
-+#define	STAILQ_INSERT_HEAD(head, elm, field) do {			\
-+	if ((STAILQ_NEXT((elm), field) = STAILQ_FIRST((head))) == NULL)	\
-+		(head)->stqh_last = &STAILQ_NEXT((elm), field);		\
-+	STAILQ_FIRST((head)) = (elm);					\
-+} while (0)
-+
-+#define	STAILQ_INSERT_TAIL(head, elm, field) do {			\
-+	STAILQ_NEXT((elm), field) = NULL;				\
-+	*(head)->stqh_last = (elm);					\
-+	(head)->stqh_last = &STAILQ_NEXT((elm), field);			\
-+} while (0)
-+
-+#define	STAILQ_LAST(head, type, field)				\
-+	(STAILQ_EMPTY((head)) ? NULL :				\
-+	    __containerof((head)->stqh_last,			\
-+	    QUEUE_TYPEOF(type), field.stqe_next))
-+
-+#define	STAILQ_NEXT(elm, field)	((elm)->field.stqe_next)
-+
-+#define	STAILQ_REMOVE(head, elm, type, field) do {			\
-+	if (STAILQ_FIRST((head)) == (elm)) {				\
-+		STAILQ_REMOVE_HEAD((head), field);			\
-+	}								\
-+	else {								\
-+		QUEUE_TYPEOF(type) *curelm = STAILQ_FIRST(head);	\
-+		while (STAILQ_NEXT(curelm, field) != (elm))		\
-+			curelm = STAILQ_NEXT(curelm, field);		\
-+		STAILQ_REMOVE_AFTER(head, curelm, field);		\
-+	}								\
-+} while (0)
-+
-+#define STAILQ_REMOVE_AFTER(head, elm, field) do {			\
-+	if ((STAILQ_NEXT(elm, field) =					\
-+	     STAILQ_NEXT(STAILQ_NEXT(elm, field), field)) == NULL)	\
-+		(head)->stqh_last = &STAILQ_NEXT((elm), field);		\
-+} while (0)
-+
-+#define	STAILQ_REMOVE_HEAD(head, field) do {				\
-+	if ((STAILQ_FIRST((head)) =					\
-+	     STAILQ_NEXT(STAILQ_FIRST((head)), field)) == NULL)		\
-+		(head)->stqh_last = &STAILQ_FIRST((head));		\
-+} while (0)
-+
-+#define STAILQ_SWAP(head1, head2, type) do {				\
-+	QUEUE_TYPEOF(type) *swap_first = STAILQ_FIRST(head1);		\
-+	QUEUE_TYPEOF(type) **swap_last = (head1)->stqh_last;		\
-+	STAILQ_FIRST(head1) = STAILQ_FIRST(head2);			\
-+	(head1)->stqh_last = (head2)->stqh_last;			\
-+	STAILQ_FIRST(head2) = swap_first;				\
-+	(head2)->stqh_last = swap_last;					\
-+	if (STAILQ_EMPTY(head1))					\
-+		(head1)->stqh_last = &STAILQ_FIRST(head1);		\
-+	if (STAILQ_EMPTY(head2))					\
-+		(head2)->stqh_last = &STAILQ_FIRST(head2);		\
-+} while (0)
-+
-+
-+/*
-+ * List declarations.
-+ */
-+#define	LIST_HEAD(name, type)						\
-+struct name {								\
-+	struct type *lh_first;	/* first element */			\
-+}
-+
-+#define	LIST_CLASS_HEAD(name, type)					\
-+struct name {								\
-+	class type *lh_first;	/* first element */			\
-+}
-+
-+#define	LIST_HEAD_INITIALIZER(head)					\
-+	{ NULL }
-+
-+#define	LIST_ENTRY(type)						\
-+struct {								\
-+	struct type *le_next;	/* next element */			\
-+	struct type **le_prev;	/* address of previous next element */	\
-+}
-+
-+#define	LIST_CLASS_ENTRY(type)						\
-+struct {								\
-+	class type *le_next;	/* next element */			\
-+	class type **le_prev;	/* address of previous next element */	\
-+}
-+
-+/*
-+ * List functions.
-+ */
-+
-+
-+#define LIST_CONCAT(head1, head2, type, field) do {			      \
-+	QUEUE_TYPEOF(type) *curelm = LIST_FIRST(head1);			      \
-+	if (curelm == NULL) {						      \
-+		if ((LIST_FIRST(head1) = LIST_FIRST(head2)) != NULL) {	      \
-+			LIST_FIRST(head2)->field.le_prev =		      \
-+			    &LIST_FIRST((head1));			      \
-+			LIST_INIT(head2);				      \
-+		}							      \
-+	} else if (LIST_FIRST(head2) != NULL) {				      \
-+		while (LIST_NEXT(curelm, field) != NULL)		      \
-+			curelm = LIST_NEXT(curelm, field);		      \
-+		LIST_NEXT(curelm, field) = LIST_FIRST(head2);		      \
-+		LIST_FIRST(head2)->field.le_prev = &LIST_NEXT(curelm, field); \
-+		LIST_INIT(head2);					      \
-+	}								      \
-+} while (0)
-+
-+#define	LIST_EMPTY(head)	((head)->lh_first == NULL)
-+
-+#define	LIST_FIRST(head)	((head)->lh_first)
-+
-+#define	LIST_FOREACH(var, head, field)					\
-+	for ((var) = LIST_FIRST((head));				\
-+	    (var);							\
-+	    (var) = LIST_NEXT((var), field))
-+
-+#define	LIST_FOREACH_FROM(var, head, field)				\
-+	for ((var) = ((var) ? (var) : LIST_FIRST((head)));		\
-+	    (var);							\
-+	    (var) = LIST_NEXT((var), field))
-+
-+#define	LIST_FOREACH_SAFE(var, head, field, tvar)			\
-+	for ((var) = LIST_FIRST((head));				\
-+	    (var) && ((tvar) = LIST_NEXT((var), field), 1);		\
-+	    (var) = (tvar))
-+
-+#define	LIST_FOREACH_FROM_SAFE(var, head, field, tvar)			\
-+	for ((var) = ((var) ? (var) : LIST_FIRST((head)));		\
-+	    (var) && ((tvar) = LIST_NEXT((var), field), 1);		\
-+	    (var) = (tvar))
-+
-+#define	LIST_INIT(head) do {						\
-+	LIST_FIRST((head)) = NULL;					\
-+} while (0)
-+
-+#define	LIST_INSERT_AFTER(listelm, elm, field) do {			\
-+	if ((LIST_NEXT((elm), field) = LIST_NEXT((listelm), field)) != NULL)\
-+		LIST_NEXT((listelm), field)->field.le_prev =		\
-+		    &LIST_NEXT((elm), field);				\
-+	LIST_NEXT((listelm), field) = (elm);				\
-+	(elm)->field.le_prev = &LIST_NEXT((listelm), field);		\
-+} while (0)
-+
-+#define	LIST_INSERT_BEFORE(listelm, elm, field) do {			\
-+	(elm)->field.le_prev = (listelm)->field.le_prev;		\
-+	LIST_NEXT((elm), field) = (listelm);				\
-+	*(listelm)->field.le_prev = (elm);				\
-+	(listelm)->field.le_prev = &LIST_NEXT((elm), field);		\
-+} while (0)
-+
-+#define	LIST_INSERT_HEAD(head, elm, field) do {				\
-+	if ((LIST_NEXT((elm), field) = LIST_FIRST((head))) != NULL)	\
-+		LIST_FIRST((head))->field.le_prev = &LIST_NEXT((elm), field);\
-+	LIST_FIRST((head)) = (elm);					\
-+	(elm)->field.le_prev = &LIST_FIRST((head));			\
-+} while (0)
-+
-+#define	LIST_NEXT(elm, field)	((elm)->field.le_next)
-+
-+#define	LIST_PREV(elm, head, type, field)			\
-+	((elm)->field.le_prev == &LIST_FIRST((head)) ? NULL :	\
-+	    __containerof((elm)->field.le_prev,			\
-+	    QUEUE_TYPEOF(type), field.le_next))
-+
-+#define	LIST_REMOVE(elm, field) do {					\
-+	if (LIST_NEXT((elm), field) != NULL)				\
-+		LIST_NEXT((elm), field)->field.le_prev = 		\
-+		    (elm)->field.le_prev;				\
-+	*(elm)->field.le_prev = LIST_NEXT((elm), field);		\
-+} while (0)
-+
-+#define LIST_SWAP(head1, head2, type, field) do {			\
-+	QUEUE_TYPEOF(type) *swap_tmp = LIST_FIRST(head1);		\
-+	LIST_FIRST((head1)) = LIST_FIRST((head2));			\
-+	LIST_FIRST((head2)) = swap_tmp;					\
-+	if ((swap_tmp = LIST_FIRST((head1))) != NULL)			\
-+		swap_tmp->field.le_prev = &LIST_FIRST((head1));		\
-+	if ((swap_tmp = LIST_FIRST((head2))) != NULL)			\
-+		swap_tmp->field.le_prev = &LIST_FIRST((head2));		\
-+} while (0)
-+
-+/*
-+ * Tail queue declarations.
-+ */
-+#define	TAILQ_HEAD(name, type)						\
-+struct name {								\
-+	struct type *tqh_first;	/* first element */			\
-+	struct type **tqh_last;	/* addr of last next element */		\
-+}
-+
-+#define	TAILQ_CLASS_HEAD(name, type)					\
-+struct name {								\
-+	class type *tqh_first;	/* first element */			\
-+	class type **tqh_last;	/* addr of last next element */		\
-+}
-+
-+#define	TAILQ_HEAD_INITIALIZER(head)					\
-+	{ NULL, &(head).tqh_first }
-+
-+#define	TAILQ_ENTRY(type)						\
-+struct {								\
-+	struct type *tqe_next;	/* next element */			\
-+	struct type **tqe_prev;	/* address of previous next element */	\
-+}
-+
-+#define	TAILQ_CLASS_ENTRY(type)						\
-+struct {								\
-+	class type *tqe_next;	/* next element */			\
-+	class type **tqe_prev;	/* address of previous next element */	\
-+}
-+
-+/*
-+ * Tail queue functions.
-+ */
-+
-+#define	TAILQ_CONCAT(head1, head2, field) do {				\
-+	if (!TAILQ_EMPTY(head2)) {					\
-+		*(head1)->tqh_last = (head2)->tqh_first;		\
-+		(head2)->tqh_first->field.tqe_prev = (head1)->tqh_last;	\
-+		(head1)->tqh_last = (head2)->tqh_last;			\
-+		TAILQ_INIT((head2));					\
-+	}								\
-+} while (0)
-+
-+#define	TAILQ_EMPTY(head)	((head)->tqh_first == NULL)
-+
-+#define	TAILQ_FIRST(head)	((head)->tqh_first)
-+
-+#define	TAILQ_FOREACH(var, head, field)					\
-+	for ((var) = TAILQ_FIRST((head));				\
-+	    (var);							\
-+	    (var) = TAILQ_NEXT((var), field))
-+
-+#define	TAILQ_FOREACH_FROM(var, head, field)				\
-+	for ((var) = ((var) ? (var) : TAILQ_FIRST((head)));		\
-+	    (var);							\
-+	    (var) = TAILQ_NEXT((var), field))
-+
-+#define	TAILQ_FOREACH_SAFE(var, head, field, tvar)			\
-+	for ((var) = TAILQ_FIRST((head));				\
-+	    (var) && ((tvar) = TAILQ_NEXT((var), field), 1);		\
-+	    (var) = (tvar))
-+
-+#define	TAILQ_FOREACH_FROM_SAFE(var, head, field, tvar)			\
-+	for ((var) = ((var) ? (var) : TAILQ_FIRST((head)));		\
-+	    (var) && ((tvar) = TAILQ_NEXT((var), field), 1);		\
-+	    (var) = (tvar))
-+
-+#define	TAILQ_FOREACH_REVERSE(var, head, headname, field)		\
-+	for ((var) = TAILQ_LAST((head), headname);			\
-+	    (var);							\
-+	    (var) = TAILQ_PREV((var), headname, field))
-+
-+#define	TAILQ_FOREACH_REVERSE_FROM(var, head, headname, field)		\
-+	for ((var) = ((var) ? (var) : TAILQ_LAST((head), headname));	\
-+	    (var);							\
-+	    (var) = TAILQ_PREV((var), headname, field))
-+
-+#define	TAILQ_FOREACH_REVERSE_SAFE(var, head, headname, field, tvar)	\
-+	for ((var) = TAILQ_LAST((head), headname);			\
-+	    (var) && ((tvar) = TAILQ_PREV((var), headname, field), 1);	\
-+	    (var) = (tvar))
-+
-+#define	TAILQ_FOREACH_REVERSE_FROM_SAFE(var, head, headname, field, tvar) \
-+	for ((var) = ((var) ? (var) : TAILQ_LAST((head), headname));	\
-+	    (var) && ((tvar) = TAILQ_PREV((var), headname, field), 1);	\
-+	    (var) = (tvar))
-+
-+#define	TAILQ_INIT(head) do {						\
-+	TAILQ_FIRST((head)) = NULL;					\
-+	(head)->tqh_last = &TAILQ_FIRST((head));			\
-+} while (0)
-+
-+#define	TAILQ_INSERT_AFTER(head, listelm, elm, field) do {		\
-+	if ((TAILQ_NEXT((elm), field) = TAILQ_NEXT((listelm), field)) != NULL)\
-+		TAILQ_NEXT((elm), field)->field.tqe_prev = 		\
-+		    &TAILQ_NEXT((elm), field);				\
-+	else {								\
-+		(head)->tqh_last = &TAILQ_NEXT((elm), field);		\
-+	}								\
-+	TAILQ_NEXT((listelm), field) = (elm);				\
-+	(elm)->field.tqe_prev = &TAILQ_NEXT((listelm), field);		\
-+} while (0)
-+
-+#define	TAILQ_INSERT_BEFORE(listelm, elm, field) do {			\
-+	(elm)->field.tqe_prev = (listelm)->field.tqe_prev;		\
-+	TAILQ_NEXT((elm), field) = (listelm);				\
-+	*(listelm)->field.tqe_prev = (elm);				\
-+	(listelm)->field.tqe_prev = &TAILQ_NEXT((elm), field);		\
-+} while (0)
-+
-+#define	TAILQ_INSERT_HEAD(head, elm, field) do {			\
-+	if ((TAILQ_NEXT((elm), field) = TAILQ_FIRST((head))) != NULL)	\
-+		TAILQ_FIRST((head))->field.tqe_prev =			\
-+		    &TAILQ_NEXT((elm), field);				\
-+	else								\
-+		(head)->tqh_last = &TAILQ_NEXT((elm), field);		\
-+	TAILQ_FIRST((head)) = (elm);					\
-+	(elm)->field.tqe_prev = &TAILQ_FIRST((head));			\
-+} while (0)
-+
-+#define	TAILQ_INSERT_TAIL(head, elm, field) do {			\
-+	TAILQ_NEXT((elm), field) = NULL;				\
-+	(elm)->field.tqe_prev = (head)->tqh_last;			\
-+	*(head)->tqh_last = (elm);					\
-+	(head)->tqh_last = &TAILQ_NEXT((elm), field);			\
-+} while (0)
-+
-+#define	TAILQ_LAST(head, headname)					\
-+	(*(((struct headname *)((head)->tqh_last))->tqh_last))
-+
-+/*
-+ * The FAST function is fast in that it causes no data access other
-+ * then the access to the head. The standard LAST function above
-+ * will cause a data access of both the element you want and
-+ * the previous element. FAST is very useful for instances when
-+ * you may want to prefetch the last data element.
-+ */
-+#define	TAILQ_LAST_FAST(head, type, field)			\
-+    (TAILQ_EMPTY(head) ? NULL : __containerof((head)->tqh_last, QUEUE_TYPEOF(type), field.tqe_next))
-+
-+#define	TAILQ_NEXT(elm, field) ((elm)->field.tqe_next)
-+
-+#define	TAILQ_PREV(elm, headname, field)				\
-+	(*(((struct headname *)((elm)->field.tqe_prev))->tqh_last))
-+
-+#define	TAILQ_PREV_FAST(elm, head, type, field)				\
-+    ((elm)->field.tqe_prev == &(head)->tqh_first ? NULL :		\
-+     __containerof((elm)->field.tqe_prev, QUEUE_TYPEOF(type), field.tqe_next))
-+
-+#define	TAILQ_REMOVE(head, elm, field) do {				\
-+	if ((TAILQ_NEXT((elm), field)) != NULL)				\
-+		TAILQ_NEXT((elm), field)->field.tqe_prev = 		\
-+		    (elm)->field.tqe_prev;				\
-+	else {								\
-+		(head)->tqh_last = (elm)->field.tqe_prev;		\
-+	}								\
-+	*(elm)->field.tqe_prev = TAILQ_NEXT((elm), field);		\
-+} while (0)
-+
-+#define TAILQ_SWAP(head1, head2, type, field) do {			\
-+	QUEUE_TYPEOF(type) *swap_first = (head1)->tqh_first;		\
-+	QUEUE_TYPEOF(type) **swap_last = (head1)->tqh_last;		\
-+	(head1)->tqh_first = (head2)->tqh_first;			\
-+	(head1)->tqh_last = (head2)->tqh_last;				\
-+	(head2)->tqh_first = swap_first;				\
-+	(head2)->tqh_last = swap_last;					\
-+	if ((swap_first = (head1)->tqh_first) != NULL)			\
-+		swap_first->field.tqe_prev = &(head1)->tqh_first;	\
-+	else								\
-+		(head1)->tqh_last = &(head1)->tqh_first;		\
-+	if ((swap_first = (head2)->tqh_first) != NULL)			\
-+		swap_first->field.tqe_prev = &(head2)->tqh_first;	\
-+	else								\
-+		(head2)->tqh_last = &(head2)->tqh_first;		\
-+} while (0)
-+
-+#endif /* !_SYS_QUEUE_H_ */
-diff --git a/lib/eal/windows/include/sys/queue.h b/lib/eal/windows/include/sys/queue.h
-index 917526531b..0da00d46d7 100644
---- a/lib/eal/windows/include/sys/queue.h
-+++ b/lib/eal/windows/include/sys/queue.h
-@@ -1,840 +1,11 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-- *
-- * Copyright (c) 1991, 1993
-- *	The Regents of the University of California.  All rights reserved.
-+ * Copyright(c) 2026 Stephen Hemminger
-  */
- 
--#ifndef _SYS_QUEUE_H_
--#define	_SYS_QUEUE_H_
--
--/*
-- * This file defines four types of data structures: singly-linked lists,
-- * singly-linked tail queues, lists and tail queues.
-- *
-- * A singly-linked list is headed by a single forward pointer. The elements
-- * are singly linked for minimum space and pointer manipulation overhead at
-- * the expense of O(n) removal for arbitrary elements. New elements can be
-- * added to the list after an existing element or at the head of the list.
-- * Elements being removed from the head of the list should use the explicit
-- * macro for this purpose for optimum efficiency. A singly-linked list may
-- * only be traversed in the forward direction.  Singly-linked lists are ideal
-- * for applications with large datasets and few or no removals or for
-- * implementing a LIFO queue.
-- *
-- * A singly-linked tail queue is headed by a pair of pointers, one to the
-- * head of the list and the other to the tail of the list. The elements are
-- * singly linked for minimum space and pointer manipulation overhead at the
-- * expense of O(n) removal for arbitrary elements. New elements can be added
-- * to the list after an existing element, at the head of the list, or at the
-- * end of the list. Elements being removed from the head of the tail queue
-- * should use the explicit macro for this purpose for optimum efficiency.
-- * A singly-linked tail queue may only be traversed in the forward direction.
-- * Singly-linked tail queues are ideal for applications with large datasets
-- * and few or no removals or for implementing a FIFO queue.
-- *
-- * A list is headed by a single forward pointer (or an array of forward
-- * pointers for a hash table header). The elements are doubly linked
-- * so that an arbitrary element can be removed without a need to
-- * traverse the list. New elements can be added to the list before
-- * or after an existing element or at the head of the list. A list
-- * may be traversed in either direction.
-- *
-- * A tail queue is headed by a pair of pointers, one to the head of the
-- * list and the other to the tail of the list. The elements are doubly
-- * linked so that an arbitrary element can be removed without a need to
-- * traverse the list. New elements can be added to the list before or
-- * after an existing element, at the head of the list, or at the end of
-- * the list. A tail queue may be traversed in either direction.
-- *
-- * For details on the use of these macros, see the queue(3) manual page.
-- *
-- * Below is a summary of implemented functions where:
-- *  +  means the macro is available
-- *  -  means the macro is not available
-- *  s  means the macro is available but is slow (runs in O(n) time)
-- *
-- *				SLIST	LIST	STAILQ	TAILQ
-- * _HEAD			+	+	+	+
-- * _CLASS_HEAD			+	+	+	+
-- * _HEAD_INITIALIZER		+	+	+	+
-- * _ENTRY			+	+	+	+
-- * _CLASS_ENTRY			+	+	+	+
-- * _INIT			+	+	+	+
-- * _EMPTY			+	+	+	+
-- * _FIRST			+	+	+	+
-- * _NEXT			+	+	+	+
-- * _PREV			-	+	-	+
-- * _LAST			-	-	+	+
-- * _LAST_FAST			-	-	-	+
-- * _FOREACH			+	+	+	+
-- * _FOREACH_FROM		+	+	+	+
-- * _FOREACH_SAFE		+	+	+	+
-- * _FOREACH_FROM_SAFE		+	+	+	+
-- * _FOREACH_REVERSE		-	-	-	+
-- * _FOREACH_REVERSE_FROM	-	-	-	+
-- * _FOREACH_REVERSE_SAFE	-	-	-	+
-- * _FOREACH_REVERSE_FROM_SAFE	-	-	-	+
-- * _INSERT_HEAD			+	+	+	+
-- * _INSERT_BEFORE		-	+	-	+
-- * _INSERT_AFTER		+	+	+	+
-- * _INSERT_TAIL			-	-	+	+
-- * _CONCAT			s	s	+	+
-- * _REMOVE_AFTER		+	-	+	-
-- * _REMOVE_HEAD			+	-	+	-
-- * _REMOVE			s	+	s	+
-- * _SWAP			+	+	+	+
-- */
--#ifdef QUEUE_MACRO_DEBUG
--#warn Use QUEUE_MACRO_DEBUG_TRACE and/or QUEUE_MACRO_DEBUG_TRASH
--#define	QUEUE_MACRO_DEBUG_TRACE
--#define	QUEUE_MACRO_DEBUG_TRASH
--#endif
--
--#ifdef QUEUE_MACRO_DEBUG_TRACE
--/* Store the last 2 places the queue element or head was altered */
--struct qm_trace {
--	unsigned long	 lastline;
--	unsigned long	 prevline;
--	const char	*lastfile;
--	const char	*prevfile;
--};
--
--#define	TRACEBUF	struct qm_trace trace;
--#define	TRACEBUF_INITIALIZER	{ __LINE__, 0, __FILE__, NULL } ,
--
--#define	QMD_TRACE_HEAD(head) do {					\
--	(head)->trace.prevline = (head)->trace.lastline;		\
--	(head)->trace.prevfile = (head)->trace.lastfile;		\
--	(head)->trace.lastline = __LINE__;				\
--	(head)->trace.lastfile = __FILE__;				\
--} while (0)
--
--#define	QMD_TRACE_ELEM(elem) do {					\
--	(elem)->trace.prevline = (elem)->trace.lastline;		\
--	(elem)->trace.prevfile = (elem)->trace.lastfile;		\
--	(elem)->trace.lastline = __LINE__;				\
--	(elem)->trace.lastfile = __FILE__;				\
--} while (0)
--
--#else	/* !QUEUE_MACRO_DEBUG_TRACE */
--#define	QMD_TRACE_ELEM(elem)
--#define	QMD_TRACE_HEAD(head)
--#define	TRACEBUF
--#define	TRACEBUF_INITIALIZER
--#endif	/* QUEUE_MACRO_DEBUG_TRACE */
--
--#ifdef QUEUE_MACRO_DEBUG_TRASH
--#define	QMD_SAVELINK(name, link)	void **name = (void *)&(link)
--#define	TRASHIT(x)		do {(x) = (void *)-1;} while (0)
--#define	QMD_IS_TRASHED(x)	((x) == (void *)(intptr_t)-1)
--#else	/* !QUEUE_MACRO_DEBUG_TRASH */
--#define	QMD_SAVELINK(name, link)
--#define	TRASHIT(x)
--#define	QMD_IS_TRASHED(x)	0
--#endif	/* QUEUE_MACRO_DEBUG_TRASH */
--
--#ifdef __cplusplus
--/*
-- * In C++ there can be structure lists and class lists:
-- */
--#define	QUEUE_TYPEOF(type) type
--#else
--#define	QUEUE_TYPEOF(type) struct type
--#endif
--
--/*
-- * Singly-linked List declarations.
-- */
--#define	SLIST_HEAD(name, type)						\
--struct name {								\
--	struct type *slh_first;	/* first element */			\
--}
--
--#define	SLIST_CLASS_HEAD(name, type)					\
--struct name {								\
--	class type *slh_first;	/* first element */			\
--}
--
--#define	SLIST_HEAD_INITIALIZER(head)					\
--	{ NULL }
--
--#define	SLIST_ENTRY(type)						\
--struct {								\
--	struct type *sle_next;	/* next element */			\
--}
--
--#define	SLIST_CLASS_ENTRY(type)						\
--struct {								\
--	class type *sle_next;		/* next element */		\
--}
--
--/*
-- * Singly-linked List functions.
-- */
--#if (defined(_KERNEL) && defined(INVARIANTS))
--#define	QMD_SLIST_CHECK_PREVPTR(prevp, elm) do {			\
--	if (*(prevp) != (elm))						\
--		panic("Bad prevptr *(%p) == %p != %p",			\
--		    (prevp), *(prevp), (elm));				\
--} while (0)
--#else
--#define	QMD_SLIST_CHECK_PREVPTR(prevp, elm)
--#endif
--
--#define SLIST_CONCAT(head1, head2, type, field) do {			\
--	QUEUE_TYPEOF(type) *curelm = SLIST_FIRST(head1);		\
--	if (curelm == NULL) {						\
--		if ((SLIST_FIRST(head1) = SLIST_FIRST(head2)) != NULL)	\
--			SLIST_INIT(head2);				\
--	} else if (SLIST_FIRST(head2) != NULL) {			\
--		while (SLIST_NEXT(curelm, field) != NULL)		\
--			curelm = SLIST_NEXT(curelm, field);		\
--		SLIST_NEXT(curelm, field) = SLIST_FIRST(head2);		\
--		SLIST_INIT(head2);					\
--	}								\
--} while (0)
--
--#define	SLIST_EMPTY(head)	((head)->slh_first == NULL)
--
--#define	SLIST_FIRST(head)	((head)->slh_first)
--
--#define	SLIST_FOREACH(var, head, field)					\
--	for ((var) = SLIST_FIRST((head));				\
--	    (var);							\
--	    (var) = SLIST_NEXT((var), field))
--
--#define	SLIST_FOREACH_FROM(var, head, field)				\
--	for ((var) = ((var) ? (var) : SLIST_FIRST((head)));		\
--	    (var);							\
--	    (var) = SLIST_NEXT((var), field))
--
--#define	SLIST_FOREACH_SAFE(var, head, field, tvar)			\
--	for ((var) = SLIST_FIRST((head));				\
--	    (var) && ((tvar) = SLIST_NEXT((var), field), 1);		\
--	    (var) = (tvar))
--
--#define	SLIST_FOREACH_FROM_SAFE(var, head, field, tvar)			\
--	for ((var) = ((var) ? (var) : SLIST_FIRST((head)));		\
--	    (var) && ((tvar) = SLIST_NEXT((var), field), 1);		\
--	    (var) = (tvar))
--
--#define	SLIST_FOREACH_PREVPTR(var, varp, head, field)			\
--	for ((varp) = &SLIST_FIRST((head));				\
--	    ((var) = *(varp)) != NULL;					\
--	    (varp) = &SLIST_NEXT((var), field))
--
--#define	SLIST_INIT(head) do {						\
--	SLIST_FIRST((head)) = NULL;					\
--} while (0)
--
--#define	SLIST_INSERT_AFTER(slistelm, elm, field) do {			\
--	SLIST_NEXT((elm), field) = SLIST_NEXT((slistelm), field);	\
--	SLIST_NEXT((slistelm), field) = (elm);				\
--} while (0)
--
--#define	SLIST_INSERT_HEAD(head, elm, field) do {			\
--	SLIST_NEXT((elm), field) = SLIST_FIRST((head));			\
--	SLIST_FIRST((head)) = (elm);					\
--} while (0)
--
--#define	SLIST_NEXT(elm, field)	((elm)->field.sle_next)
--
--#define	SLIST_REMOVE(head, elm, type, field) do {			\
--	QMD_SAVELINK(oldnext, (elm)->field.sle_next);			\
--	if (SLIST_FIRST((head)) == (elm)) {				\
--		SLIST_REMOVE_HEAD((head), field);			\
--	}								\
--	else {								\
--		QUEUE_TYPEOF(type) *curelm = SLIST_FIRST(head);		\
--		while (SLIST_NEXT(curelm, field) != (elm))		\
--			curelm = SLIST_NEXT(curelm, field);		\
--		SLIST_REMOVE_AFTER(curelm, field);			\
--	}								\
--	TRASHIT(*oldnext);						\
--} while (0)
--
--#define SLIST_REMOVE_AFTER(elm, field) do {				\
--	SLIST_NEXT(elm, field) =					\
--	    SLIST_NEXT(SLIST_NEXT(elm, field), field);			\
--} while (0)
--
--#define	SLIST_REMOVE_HEAD(head, field) do {				\
--	SLIST_FIRST((head)) = SLIST_NEXT(SLIST_FIRST((head)), field);	\
--} while (0)
--
--#define	SLIST_REMOVE_PREVPTR(prevp, elm, field) do {			\
--	QMD_SLIST_CHECK_PREVPTR(prevp, elm);				\
--	*(prevp) = SLIST_NEXT(elm, field);				\
--	TRASHIT((elm)->field.sle_next);					\
--} while (0)
--
--#define SLIST_SWAP(head1, head2, type) do {				\
--	QUEUE_TYPEOF(type) *swap_first = SLIST_FIRST(head1);		\
--	SLIST_FIRST(head1) = SLIST_FIRST(head2);			\
--	SLIST_FIRST(head2) = swap_first;				\
--} while (0)
--
--/*
-- * Singly-linked Tail queue declarations.
-- */
--#define	STAILQ_HEAD(name, type)						\
--struct name {								\
--	struct type *stqh_first;/* first element */			\
--	struct type **stqh_last;/* addr of last next element */		\
--}
--
--#define	STAILQ_CLASS_HEAD(name, type)					\
--struct name {								\
--	class type *stqh_first;	/* first element */			\
--	class type **stqh_last;	/* addr of last next element */		\
--}
--
--#define	STAILQ_HEAD_INITIALIZER(head)					\
--	{ NULL, &(head).stqh_first }
--
--#define	STAILQ_ENTRY(type)						\
--struct {								\
--	struct type *stqe_next;	/* next element */			\
--}
--
--#define	STAILQ_CLASS_ENTRY(type)					\
--struct {								\
--	class type *stqe_next;	/* next element */			\
--}
--
--/*
-- * Singly-linked Tail queue functions.
-- */
--#define	STAILQ_CONCAT(head1, head2) do {				\
--	if (!STAILQ_EMPTY((head2))) {					\
--		*(head1)->stqh_last = (head2)->stqh_first;		\
--		(head1)->stqh_last = (head2)->stqh_last;		\
--		STAILQ_INIT((head2));					\
--	}								\
--} while (0)
--
--#define	STAILQ_EMPTY(head)	((head)->stqh_first == NULL)
--
--#define	STAILQ_FIRST(head)	((head)->stqh_first)
--
--#define	STAILQ_FOREACH(var, head, field)				\
--	for((var) = STAILQ_FIRST((head));				\
--	   (var);							\
--	   (var) = STAILQ_NEXT((var), field))
--
--#define	STAILQ_FOREACH_FROM(var, head, field)				\
--	for ((var) = ((var) ? (var) : STAILQ_FIRST((head)));		\
--	   (var);							\
--	   (var) = STAILQ_NEXT((var), field))
--
--#define	STAILQ_FOREACH_SAFE(var, head, field, tvar)			\
--	for ((var) = STAILQ_FIRST((head));				\
--	    (var) && ((tvar) = STAILQ_NEXT((var), field), 1);		\
--	    (var) = (tvar))
--
--#define	STAILQ_FOREACH_FROM_SAFE(var, head, field, tvar)		\
--	for ((var) = ((var) ? (var) : STAILQ_FIRST((head)));		\
--	    (var) && ((tvar) = STAILQ_NEXT((var), field), 1);		\
--	    (var) = (tvar))
--
--#define	STAILQ_INIT(head) do {						\
--	STAILQ_FIRST((head)) = NULL;					\
--	(head)->stqh_last = &STAILQ_FIRST((head));			\
--} while (0)
--
--#define	STAILQ_INSERT_AFTER(head, tqelm, elm, field) do {		\
--	if ((STAILQ_NEXT((elm), field) = STAILQ_NEXT((tqelm), field)) == NULL)\
--		(head)->stqh_last = &STAILQ_NEXT((elm), field);		\
--	STAILQ_NEXT((tqelm), field) = (elm);				\
--} while (0)
--
--#define	STAILQ_INSERT_HEAD(head, elm, field) do {			\
--	if ((STAILQ_NEXT((elm), field) = STAILQ_FIRST((head))) == NULL)	\
--		(head)->stqh_last = &STAILQ_NEXT((elm), field);		\
--	STAILQ_FIRST((head)) = (elm);					\
--} while (0)
--
--#define	STAILQ_INSERT_TAIL(head, elm, field) do {			\
--	STAILQ_NEXT((elm), field) = NULL;				\
--	*(head)->stqh_last = (elm);					\
--	(head)->stqh_last = &STAILQ_NEXT((elm), field);			\
--} while (0)
--
--#define	STAILQ_LAST(head, type, field)				\
--	(STAILQ_EMPTY((head)) ? NULL :				\
--	    __containerof((head)->stqh_last,			\
--	    QUEUE_TYPEOF(type), field.stqe_next))
--
--#define	STAILQ_NEXT(elm, field)	((elm)->field.stqe_next)
--
--#define	STAILQ_REMOVE(head, elm, type, field) do {			\
--	QMD_SAVELINK(oldnext, (elm)->field.stqe_next);			\
--	if (STAILQ_FIRST((head)) == (elm)) {				\
--		STAILQ_REMOVE_HEAD((head), field);			\
--	}								\
--	else {								\
--		QUEUE_TYPEOF(type) *curelm = STAILQ_FIRST(head);	\
--		while (STAILQ_NEXT(curelm, field) != (elm))		\
--			curelm = STAILQ_NEXT(curelm, field);		\
--		STAILQ_REMOVE_AFTER(head, curelm, field);		\
--	}								\
--	TRASHIT(*oldnext);						\
--} while (0)
--
--#define STAILQ_REMOVE_AFTER(head, elm, field) do {			\
--	if ((STAILQ_NEXT(elm, field) =					\
--	     STAILQ_NEXT(STAILQ_NEXT(elm, field), field)) == NULL)	\
--		(head)->stqh_last = &STAILQ_NEXT((elm), field);		\
--} while (0)
--
--#define	STAILQ_REMOVE_HEAD(head, field) do {				\
--	if ((STAILQ_FIRST((head)) =					\
--	     STAILQ_NEXT(STAILQ_FIRST((head)), field)) == NULL)		\
--		(head)->stqh_last = &STAILQ_FIRST((head));		\
--} while (0)
--
--#define STAILQ_SWAP(head1, head2, type) do {				\
--	QUEUE_TYPEOF(type) *swap_first = STAILQ_FIRST(head1);		\
--	QUEUE_TYPEOF(type) **swap_last = (head1)->stqh_last;		\
--	STAILQ_FIRST(head1) = STAILQ_FIRST(head2);			\
--	(head1)->stqh_last = (head2)->stqh_last;			\
--	STAILQ_FIRST(head2) = swap_first;				\
--	(head2)->stqh_last = swap_last;					\
--	if (STAILQ_EMPTY(head1))					\
--		(head1)->stqh_last = &STAILQ_FIRST(head1);		\
--	if (STAILQ_EMPTY(head2))					\
--		(head2)->stqh_last = &STAILQ_FIRST(head2);		\
--} while (0)
--
--
--/*
-- * List declarations.
-- */
--#define	LIST_HEAD(name, type)						\
--struct name {								\
--	struct type *lh_first;	/* first element */			\
--}
--
--#define	LIST_CLASS_HEAD(name, type)					\
--struct name {								\
--	class type *lh_first;	/* first element */			\
--}
--
--#define	LIST_HEAD_INITIALIZER(head)					\
--	{ NULL }
--
--#define	LIST_ENTRY(type)						\
--struct {								\
--	struct type *le_next;	/* next element */			\
--	struct type **le_prev;	/* address of previous next element */	\
--}
--
--#define	LIST_CLASS_ENTRY(type)						\
--struct {								\
--	class type *le_next;	/* next element */			\
--	class type **le_prev;	/* address of previous next element */	\
--}
--
--/*
-- * List functions.
-- */
--
--#if (defined(_KERNEL) && defined(INVARIANTS))
--/*
-- * QMD_LIST_CHECK_HEAD(LIST_HEAD *head, LIST_ENTRY NAME)
-- *
-- * If the list is non-empty, validates that the first element of the list
-- * points back at 'head.'
-- */
--#define	QMD_LIST_CHECK_HEAD(head, field) do {				\
--	if (LIST_FIRST((head)) != NULL &&				\
--	    LIST_FIRST((head))->field.le_prev !=			\
--	     &LIST_FIRST((head)))					\
--		panic("Bad list head %p first->prev != head", (head));	\
--} while (0)
--
--/*
-- * QMD_LIST_CHECK_NEXT(TYPE *elm, LIST_ENTRY NAME)
-- *
-- * If an element follows 'elm' in the list, validates that the next element
-- * points back at 'elm.'
-- */
--#define	QMD_LIST_CHECK_NEXT(elm, field) do {				\
--	if (LIST_NEXT((elm), field) != NULL &&				\
--	    LIST_NEXT((elm), field)->field.le_prev !=			\
--	     &((elm)->field.le_next))					\
--	     	panic("Bad link elm %p next->prev != elm", (elm));	\
--} while (0)
--
--/*
-- * QMD_LIST_CHECK_PREV(TYPE *elm, LIST_ENTRY NAME)
-- *
-- * Validates that the previous element (or head of the list) points to 'elm.'
-- */
--#define	QMD_LIST_CHECK_PREV(elm, field) do {				\
--	if (*(elm)->field.le_prev != (elm))				\
--		panic("Bad link elm %p prev->next != elm", (elm));	\
--} while (0)
--#else
--#define	QMD_LIST_CHECK_HEAD(head, field)
--#define	QMD_LIST_CHECK_NEXT(elm, field)
--#define	QMD_LIST_CHECK_PREV(elm, field)
--#endif /* (_KERNEL && INVARIANTS) */
--
--#define LIST_CONCAT(head1, head2, type, field) do {			      \
--	QUEUE_TYPEOF(type) *curelm = LIST_FIRST(head1);			      \
--	if (curelm == NULL) {						      \
--		if ((LIST_FIRST(head1) = LIST_FIRST(head2)) != NULL) {	      \
--			LIST_FIRST(head2)->field.le_prev =		      \
--			    &LIST_FIRST((head1));			      \
--			LIST_INIT(head2);				      \
--		}							      \
--	} else if (LIST_FIRST(head2) != NULL) {				      \
--		while (LIST_NEXT(curelm, field) != NULL)		      \
--			curelm = LIST_NEXT(curelm, field);		      \
--		LIST_NEXT(curelm, field) = LIST_FIRST(head2);		      \
--		LIST_FIRST(head2)->field.le_prev = &LIST_NEXT(curelm, field); \
--		LIST_INIT(head2);					      \
--	}								      \
--} while (0)
--
--#define	LIST_EMPTY(head)	((head)->lh_first == NULL)
--
--#define	LIST_FIRST(head)	((head)->lh_first)
--
--#define	LIST_FOREACH(var, head, field)					\
--	for ((var) = LIST_FIRST((head));				\
--	    (var);							\
--	    (var) = LIST_NEXT((var), field))
--
--#define	LIST_FOREACH_FROM(var, head, field)				\
--	for ((var) = ((var) ? (var) : LIST_FIRST((head)));		\
--	    (var);							\
--	    (var) = LIST_NEXT((var), field))
--
--#define	LIST_FOREACH_SAFE(var, head, field, tvar)			\
--	for ((var) = LIST_FIRST((head));				\
--	    (var) && ((tvar) = LIST_NEXT((var), field), 1);		\
--	    (var) = (tvar))
--
--#define	LIST_FOREACH_FROM_SAFE(var, head, field, tvar)			\
--	for ((var) = ((var) ? (var) : LIST_FIRST((head)));		\
--	    (var) && ((tvar) = LIST_NEXT((var), field), 1);		\
--	    (var) = (tvar))
--
--#define	LIST_INIT(head) do {						\
--	LIST_FIRST((head)) = NULL;					\
--} while (0)
--
--#define	LIST_INSERT_AFTER(listelm, elm, field) do {			\
--	QMD_LIST_CHECK_NEXT(listelm, field);				\
--	if ((LIST_NEXT((elm), field) = LIST_NEXT((listelm), field)) != NULL)\
--		LIST_NEXT((listelm), field)->field.le_prev =		\
--		    &LIST_NEXT((elm), field);				\
--	LIST_NEXT((listelm), field) = (elm);				\
--	(elm)->field.le_prev = &LIST_NEXT((listelm), field);		\
--} while (0)
--
--#define	LIST_INSERT_BEFORE(listelm, elm, field) do {			\
--	QMD_LIST_CHECK_PREV(listelm, field);				\
--	(elm)->field.le_prev = (listelm)->field.le_prev;		\
--	LIST_NEXT((elm), field) = (listelm);				\
--	*(listelm)->field.le_prev = (elm);				\
--	(listelm)->field.le_prev = &LIST_NEXT((elm), field);		\
--} while (0)
--
--#define	LIST_INSERT_HEAD(head, elm, field) do {				\
--	QMD_LIST_CHECK_HEAD((head), field);				\
--	if ((LIST_NEXT((elm), field) = LIST_FIRST((head))) != NULL)	\
--		LIST_FIRST((head))->field.le_prev = &LIST_NEXT((elm), field);\
--	LIST_FIRST((head)) = (elm);					\
--	(elm)->field.le_prev = &LIST_FIRST((head));			\
--} while (0)
--
--#define	LIST_NEXT(elm, field)	((elm)->field.le_next)
--
--#define	LIST_PREV(elm, head, type, field)			\
--	((elm)->field.le_prev == &LIST_FIRST((head)) ? NULL :	\
--	    __containerof((elm)->field.le_prev,			\
--	    QUEUE_TYPEOF(type), field.le_next))
--
--#define	LIST_REMOVE(elm, field) do {					\
--	QMD_SAVELINK(oldnext, (elm)->field.le_next);			\
--	QMD_SAVELINK(oldprev, (elm)->field.le_prev);			\
--	QMD_LIST_CHECK_NEXT(elm, field);				\
--	QMD_LIST_CHECK_PREV(elm, field);				\
--	if (LIST_NEXT((elm), field) != NULL)				\
--		LIST_NEXT((elm), field)->field.le_prev = 		\
--		    (elm)->field.le_prev;				\
--	*(elm)->field.le_prev = LIST_NEXT((elm), field);		\
--	TRASHIT(*oldnext);						\
--	TRASHIT(*oldprev);						\
--} while (0)
--
--#define LIST_SWAP(head1, head2, type, field) do {			\
--	QUEUE_TYPEOF(type) *swap_tmp = LIST_FIRST(head1);		\
--	LIST_FIRST((head1)) = LIST_FIRST((head2));			\
--	LIST_FIRST((head2)) = swap_tmp;					\
--	if ((swap_tmp = LIST_FIRST((head1))) != NULL)			\
--		swap_tmp->field.le_prev = &LIST_FIRST((head1));		\
--	if ((swap_tmp = LIST_FIRST((head2))) != NULL)			\
--		swap_tmp->field.le_prev = &LIST_FIRST((head2));		\
--} while (0)
--
--/*
-- * Tail queue declarations.
-- */
--#define	TAILQ_HEAD(name, type)						\
--struct name {								\
--	struct type *tqh_first;	/* first element */			\
--	struct type **tqh_last;	/* addr of last next element */		\
--	TRACEBUF							\
--}
--
--#define	TAILQ_CLASS_HEAD(name, type)					\
--struct name {								\
--	class type *tqh_first;	/* first element */			\
--	class type **tqh_last;	/* addr of last next element */		\
--	TRACEBUF							\
--}
--
--#define	TAILQ_HEAD_INITIALIZER(head)					\
--	{ NULL, &(head).tqh_first, TRACEBUF_INITIALIZER }
--
--#define	TAILQ_ENTRY(type)						\
--struct {								\
--	struct type *tqe_next;	/* next element */			\
--	struct type **tqe_prev;	/* address of previous next element */	\
--	TRACEBUF							\
--}
--
--#define	TAILQ_CLASS_ENTRY(type)						\
--struct {								\
--	class type *tqe_next;	/* next element */			\
--	class type **tqe_prev;	/* address of previous next element */	\
--	TRACEBUF							\
--}
--
- /*
-- * Tail queue functions.
-+ * Windows has no system <sys/queue.h>. The bundled copy has moved to
-+ * <rte_queue.h>; this stub keeps the existing includes working until they
-+ * are converted, and is removed in the following commit.
-  */
--#if (defined(_KERNEL) && defined(INVARIANTS))
--/*
-- * QMD_TAILQ_CHECK_HEAD(TAILQ_HEAD *head, TAILQ_ENTRY NAME)
-- *
-- * If the tailq is non-empty, validates that the first element of the tailq
-- * points back at 'head.'
-- */
--#define	QMD_TAILQ_CHECK_HEAD(head, field) do {				\
--	if (!TAILQ_EMPTY(head) &&					\
--	    TAILQ_FIRST((head))->field.tqe_prev !=			\
--	     &TAILQ_FIRST((head)))					\
--		panic("Bad tailq head %p first->prev != head", (head));	\
--} while (0)
--
--/*
-- * QMD_TAILQ_CHECK_TAIL(TAILQ_HEAD *head, TAILQ_ENTRY NAME)
-- *
-- * Validates that the tail of the tailq is a pointer to pointer to NULL.
-- */
--#define	QMD_TAILQ_CHECK_TAIL(head, field) do {				\
--	if (*(head)->tqh_last != NULL)					\
--	    	panic("Bad tailq NEXT(%p->tqh_last) != NULL", (head)); 	\
--} while (0)
--
--/*
-- * QMD_TAILQ_CHECK_NEXT(TYPE *elm, TAILQ_ENTRY NAME)
-- *
-- * If an element follows 'elm' in the tailq, validates that the next element
-- * points back at 'elm.'
-- */
--#define	QMD_TAILQ_CHECK_NEXT(elm, field) do {				\
--	if (TAILQ_NEXT((elm), field) != NULL &&				\
--	    TAILQ_NEXT((elm), field)->field.tqe_prev !=			\
--	     &((elm)->field.tqe_next))					\
--		panic("Bad link elm %p next->prev != elm", (elm));	\
--} while (0)
--
--/*
-- * QMD_TAILQ_CHECK_PREV(TYPE *elm, TAILQ_ENTRY NAME)
-- *
-- * Validates that the previous element (or head of the tailq) points to 'elm.'
-- */
--#define	QMD_TAILQ_CHECK_PREV(elm, field) do {				\
--	if (*(elm)->field.tqe_prev != (elm))				\
--		panic("Bad link elm %p prev->next != elm", (elm));	\
--} while (0)
--#else
--#define	QMD_TAILQ_CHECK_HEAD(head, field)
--#define	QMD_TAILQ_CHECK_TAIL(head, headname)
--#define	QMD_TAILQ_CHECK_NEXT(elm, field)
--#define	QMD_TAILQ_CHECK_PREV(elm, field)
--#endif /* (_KERNEL && INVARIANTS) */
--
--#define	TAILQ_CONCAT(head1, head2, field) do {				\
--	if (!TAILQ_EMPTY(head2)) {					\
--		*(head1)->tqh_last = (head2)->tqh_first;		\
--		(head2)->tqh_first->field.tqe_prev = (head1)->tqh_last;	\
--		(head1)->tqh_last = (head2)->tqh_last;			\
--		TAILQ_INIT((head2));					\
--		QMD_TRACE_HEAD(head1);					\
--		QMD_TRACE_HEAD(head2);					\
--	}								\
--} while (0)
--
--#define	TAILQ_EMPTY(head)	((head)->tqh_first == NULL)
--
--#define	TAILQ_FIRST(head)	((head)->tqh_first)
--
--#define	TAILQ_FOREACH(var, head, field)					\
--	for ((var) = TAILQ_FIRST((head));				\
--	    (var);							\
--	    (var) = TAILQ_NEXT((var), field))
--
--#define	TAILQ_FOREACH_FROM(var, head, field)				\
--	for ((var) = ((var) ? (var) : TAILQ_FIRST((head)));		\
--	    (var);							\
--	    (var) = TAILQ_NEXT((var), field))
--
+-#ifndef TAILQ_FOREACH_SAFE
 -#define	TAILQ_FOREACH_SAFE(var, head, field, tvar)			\
 -	for ((var) = TAILQ_FIRST((head));				\
 -	    (var) && ((tvar) = TAILQ_NEXT((var), field), 1);		\
 -	    (var) = (tvar))
+-#endif
 -
--#define	TAILQ_FOREACH_FROM_SAFE(var, head, field, tvar)			\
--	for ((var) = ((var) ? (var) : TAILQ_FIRST((head)));		\
--	    (var) && ((tvar) = TAILQ_NEXT((var), field), 1);		\
--	    (var) = (tvar))
--
--#define	TAILQ_FOREACH_REVERSE(var, head, headname, field)		\
--	for ((var) = TAILQ_LAST((head), headname);			\
--	    (var);							\
--	    (var) = TAILQ_PREV((var), headname, field))
--
--#define	TAILQ_FOREACH_REVERSE_FROM(var, head, headname, field)		\
--	for ((var) = ((var) ? (var) : TAILQ_LAST((head), headname));	\
--	    (var);							\
--	    (var) = TAILQ_PREV((var), headname, field))
--
--#define	TAILQ_FOREACH_REVERSE_SAFE(var, head, headname, field, tvar)	\
--	for ((var) = TAILQ_LAST((head), headname);			\
--	    (var) && ((tvar) = TAILQ_PREV((var), headname, field), 1);	\
--	    (var) = (tvar))
--
--#define	TAILQ_FOREACH_REVERSE_FROM_SAFE(var, head, headname, field, tvar) \
--	for ((var) = ((var) ? (var) : TAILQ_LAST((head), headname));	\
--	    (var) && ((tvar) = TAILQ_PREV((var), headname, field), 1);	\
--	    (var) = (tvar))
--
--#define	TAILQ_INIT(head) do {						\
--	TAILQ_FIRST((head)) = NULL;					\
--	(head)->tqh_last = &TAILQ_FIRST((head));			\
--	QMD_TRACE_HEAD(head);						\
--} while (0)
--
--#define	TAILQ_INSERT_AFTER(head, listelm, elm, field) do {		\
--	QMD_TAILQ_CHECK_NEXT(listelm, field);				\
--	if ((TAILQ_NEXT((elm), field) = TAILQ_NEXT((listelm), field)) != NULL)\
--		TAILQ_NEXT((elm), field)->field.tqe_prev = 		\
--		    &TAILQ_NEXT((elm), field);				\
--	else {								\
--		(head)->tqh_last = &TAILQ_NEXT((elm), field);		\
--		QMD_TRACE_HEAD(head);					\
--	}								\
--	TAILQ_NEXT((listelm), field) = (elm);				\
--	(elm)->field.tqe_prev = &TAILQ_NEXT((listelm), field);		\
--	QMD_TRACE_ELEM(&(elm)->field);					\
--	QMD_TRACE_ELEM(&(listelm)->field);				\
--} while (0)
--
--#define	TAILQ_INSERT_BEFORE(listelm, elm, field) do {			\
--	QMD_TAILQ_CHECK_PREV(listelm, field);				\
--	(elm)->field.tqe_prev = (listelm)->field.tqe_prev;		\
--	TAILQ_NEXT((elm), field) = (listelm);				\
--	*(listelm)->field.tqe_prev = (elm);				\
--	(listelm)->field.tqe_prev = &TAILQ_NEXT((elm), field);		\
--	QMD_TRACE_ELEM(&(elm)->field);					\
--	QMD_TRACE_ELEM(&(listelm)->field);				\
--} while (0)
--
--#define	TAILQ_INSERT_HEAD(head, elm, field) do {			\
--	QMD_TAILQ_CHECK_HEAD(head, field);				\
--	if ((TAILQ_NEXT((elm), field) = TAILQ_FIRST((head))) != NULL)	\
--		TAILQ_FIRST((head))->field.tqe_prev =			\
--		    &TAILQ_NEXT((elm), field);				\
--	else								\
--		(head)->tqh_last = &TAILQ_NEXT((elm), field);		\
--	TAILQ_FIRST((head)) = (elm);					\
--	(elm)->field.tqe_prev = &TAILQ_FIRST((head));			\
--	QMD_TRACE_HEAD(head);						\
--	QMD_TRACE_ELEM(&(elm)->field);					\
--} while (0)
--
--#define	TAILQ_INSERT_TAIL(head, elm, field) do {			\
--	QMD_TAILQ_CHECK_TAIL(head, field);				\
--	TAILQ_NEXT((elm), field) = NULL;				\
--	(elm)->field.tqe_prev = (head)->tqh_last;			\
--	*(head)->tqh_last = (elm);					\
--	(head)->tqh_last = &TAILQ_NEXT((elm), field);			\
--	QMD_TRACE_HEAD(head);						\
--	QMD_TRACE_ELEM(&(elm)->field);					\
--} while (0)
--
--#define	TAILQ_LAST(head, headname)					\
--	(*(((struct headname *)((head)->tqh_last))->tqh_last))
--
--/*
-- * The FAST function is fast in that it causes no data access other
-- * then the access to the head. The standard LAST function above
-- * will cause a data access of both the element you want and
-- * the previous element. FAST is very useful for instances when
-- * you may want to prefetch the last data element.
-- */
--#define	TAILQ_LAST_FAST(head, type, field)			\
--    (TAILQ_EMPTY(head) ? NULL : __containerof((head)->tqh_last, QUEUE_TYPEOF(type), field.tqe_next))
--
--#define	TAILQ_NEXT(elm, field) ((elm)->field.tqe_next)
--
--#define	TAILQ_PREV(elm, headname, field)				\
--	(*(((struct headname *)((elm)->field.tqe_prev))->tqh_last))
--
--#define	TAILQ_PREV_FAST(elm, head, type, field)				\
--    ((elm)->field.tqe_prev == &(head)->tqh_first ? NULL :		\
--     __containerof((elm)->field.tqe_prev, QUEUE_TYPEOF(type), field.tqe_next))
--
--#define	TAILQ_REMOVE(head, elm, field) do {				\
--	QMD_SAVELINK(oldnext, (elm)->field.tqe_next);			\
--	QMD_SAVELINK(oldprev, (elm)->field.tqe_prev);			\
--	QMD_TAILQ_CHECK_NEXT(elm, field);				\
--	QMD_TAILQ_CHECK_PREV(elm, field);				\
--	if ((TAILQ_NEXT((elm), field)) != NULL)				\
--		TAILQ_NEXT((elm), field)->field.tqe_prev = 		\
--		    (elm)->field.tqe_prev;				\
--	else {								\
--		(head)->tqh_last = (elm)->field.tqe_prev;		\
--		QMD_TRACE_HEAD(head);					\
--	}								\
--	*(elm)->field.tqe_prev = TAILQ_NEXT((elm), field);		\
--	TRASHIT(*oldnext);						\
--	TRASHIT(*oldprev);						\
--	QMD_TRACE_ELEM(&(elm)->field);					\
--} while (0)
--
--#define TAILQ_SWAP(head1, head2, type, field) do {			\
--	QUEUE_TYPEOF(type) *swap_first = (head1)->tqh_first;		\
--	QUEUE_TYPEOF(type) **swap_last = (head1)->tqh_last;		\
--	(head1)->tqh_first = (head2)->tqh_first;			\
--	(head1)->tqh_last = (head2)->tqh_last;				\
--	(head2)->tqh_first = swap_first;				\
--	(head2)->tqh_last = swap_last;					\
--	if ((swap_first = (head1)->tqh_first) != NULL)			\
--		swap_first->field.tqe_prev = &(head1)->tqh_first;	\
--	else								\
--		(head1)->tqh_last = &(head1)->tqh_first;		\
--	if ((swap_first = (head2)->tqh_first) != NULL)			\
--		swap_first->field.tqe_prev = &(head2)->tqh_first;	\
--	else								\
--		(head2)->tqh_last = &(head2)->tqh_first;		\
--} while (0)
+ #define NUM_HOST_CPUS RTE_MAX_LCORE
  
--#endif /* !_SYS_QUEUE_H_ */
+ RTE_EXPORT_INTERNAL_SYMBOL(dpaa2_io_portal)
+diff --git a/drivers/common/sxe2/sxe2_osal.h b/drivers/common/sxe2/sxe2_osal.h
+index 9f0ee73b5a..fccc7d35e7 100644
+--- a/drivers/common/sxe2/sxe2_osal.h
++++ b/drivers/common/sxe2/sxe2_osal.h
+@@ -12,6 +12,7 @@
+ #include <stdbool.h>
+ 
+ #include <rte_common.h>
 +#include <rte_queue.h>
+ #include <rte_cycles.h>
+ #include <rte_malloc.h>
+ #include <rte_ether.h>
+@@ -24,13 +25,6 @@
+ #define BIT_WORD(nr)      ((nr) / __BITS_PER_LONG)
+ #define BIT_MASK(nr)      (1UL << ((nr) % __BITS_PER_LONG))
+ 
+-#ifndef TAILQ_FOREACH_SAFE
+-#define TAILQ_FOREACH_SAFE(var, head, field, tvar) \
+-	for ((var) = TAILQ_FIRST((head)); \
+-		(var) && ((tvar) = TAILQ_NEXT((var), field), 1); \
+-		(var) = (tvar))
+-#endif
+-
+ #define upper_32_bits(n) ((uint32_t)(((n) >> 16) >> 16))
+ #define lower_32_bits(n) ((uint32_t)((n) & 0xffffffff))
+ 
+diff --git a/drivers/net/bnxt/bnxt_filter.c b/drivers/net/bnxt/bnxt_filter.c
+index a4df485965..9a1b294dc0 100644
+--- a/drivers/net/bnxt/bnxt_filter.c
++++ b/drivers/net/bnxt/bnxt_filter.c
+@@ -18,13 +18,6 @@
+ #include "bnxt_vnic.h"
+ #include "hsi_struct_def_dpdk.h"
+ 
+-#ifndef STAILQ_FOREACH_SAFE
+-#define	STAILQ_FOREACH_SAFE(var, head, field, tvar)			\
+-	for ((var) = STAILQ_FIRST((head));				\
+-	    (var) && ((tvar) = STAILQ_NEXT((var), field), 1);		\
+-	    (var) = (tvar))
+-#endif
+-
+ /*
+  * Filter Functions
+  */
+diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
+index f8fffa7802..e876e830e7 100644
+--- a/drivers/net/intel/iavf/iavf_vchnl.c
++++ b/drivers/net/intel/iavf/iavf_vchnl.c
+@@ -12,6 +12,7 @@
+ #include <inttypes.h>
+ #include <rte_byteorder.h>
+ #include <rte_common.h>
++#include <rte_queue.h>
+ #include <rte_os_shim.h>
+ 
+ #include <rte_debug.h>
+@@ -52,13 +53,6 @@ static struct iavf_event_handler event_handler = {
+ 	.fd = {-1, -1},
+ };
+ 
+-#ifndef TAILQ_FOREACH_SAFE
+-#define TAILQ_FOREACH_SAFE(var, head, field, tvar) \
+-	for ((var) = TAILQ_FIRST((head)); \
+-		(var) && ((tvar) = TAILQ_NEXT((var), field), 1); \
+-	(var) = (tvar))
+-#endif
+-
+ static uint32_t
+ iavf_dev_event_handle(void *param __rte_unused)
+ {
+diff --git a/drivers/net/intel/idpf/base/idpf_osdep.h b/drivers/net/intel/idpf/base/idpf_osdep.h
+index 207eefd100..f651559475 100644
+--- a/drivers/net/intel/idpf/base/idpf_osdep.h
++++ b/drivers/net/intel/idpf/base/idpf_osdep.h
+@@ -342,13 +342,6 @@ idpf_hweight32(u32 num)
+ #define LIST_ENTRY_TYPE(type)	   LIST_ENTRY(type)
+ #endif
+ 
+-#ifndef LIST_FOREACH_SAFE
+-#define LIST_FOREACH_SAFE(var, head, field, tvar)			\
+-	for ((var) = LIST_FIRST((head));				\
+-	    (var) && ((tvar) = LIST_NEXT((var), field), 1);		\
+-	    (var) = (tvar))
+-#endif
+-
+ #ifndef LIST_FOR_EACH_ENTRY_SAFE
+ #define LIST_FOR_EACH_ENTRY_SAFE(pos, temp, head, entry_type, list)	\
+ 	LIST_FOREACH_SAFE(pos, head, list, temp)
+diff --git a/drivers/net/netvsc/hn_ethdev.c b/drivers/net/netvsc/hn_ethdev.c
+index 9a193e4a7a..2c6a6c5857 100644
+--- a/drivers/net/netvsc/hn_ethdev.c
++++ b/drivers/net/netvsc/hn_ethdev.c
+@@ -17,6 +17,7 @@
+ 
+ #include <rte_ethdev.h>
+ #include <rte_memcpy.h>
++#include <rte_queue.h>
+ #include <rte_string_fns.h>
+ #include <rte_memzone.h>
+ #include <rte_devargs.h>
+@@ -41,13 +42,6 @@
+ #include "hn_nvs.h"
+ #include "ndis.h"
+ 
+-#ifndef LIST_FOREACH_SAFE
+-#define LIST_FOREACH_SAFE(var, head, field, tvar)			\
+-	for ((var) = LIST_FIRST((head));				\
+-	    (var) && ((tvar) = LIST_NEXT((var), field), 1);		\
+-	    (var) = (tvar))
+-#endif
+-
+ /* Spinlock for netvsc_shared_data */
+ static rte_spinlock_t netvsc_shared_data_lock = RTE_SPINLOCK_INITIALIZER;
+ 
+diff --git a/drivers/net/nfp/nfp_mtr.c b/drivers/net/nfp/nfp_mtr.c
+index 4833ebd881..a89214d6e3 100644
+--- a/drivers/net/nfp/nfp_mtr.c
++++ b/drivers/net/nfp/nfp_mtr.c
+@@ -7,18 +7,12 @@
+ 
+ #include <rte_alarm.h>
+ #include <rte_malloc.h>
++#include <rte_queue.h>
+ #include <rte_mtr_driver.h>
+ 
+ #include "flower/nfp_flower_representor.h"
+ #include "nfp_logs.h"
+ 
+-#ifndef LIST_FOREACH_SAFE
+-#define	LIST_FOREACH_SAFE(var, head, field, tvar)			\
+-	for ((var) = LIST_FIRST((head));				\
+-	    (var) && ((tvar) = LIST_NEXT((var), field), 1);		\
+-	    (var) = (tvar))
+-#endif
+-
+ #define NFP_MAX_POLICY_CNT             NFP_MAX_MTR_CNT
+ #define NFP_MAX_PROFILE_CNT            NFP_MAX_MTR_CNT
+ 
+diff --git a/drivers/net/qede/qede_filter.c b/drivers/net/qede/qede_filter.c
+index cecb58c997..799cd535f7 100644
+--- a/drivers/net/qede/qede_filter.c
++++ b/drivers/net/qede/qede_filter.c
+@@ -8,17 +8,11 @@
+ #include <rte_tcp.h>
+ #include <rte_sctp.h>
+ #include <rte_errno.h>
++#include <rte_queue.h>
+ #include <rte_flow_driver.h>
+ 
+ #include "qede_ethdev.h"
+ 
+-#ifndef SLIST_FOREACH_SAFE
+-#define	SLIST_FOREACH_SAFE(var, head, field, tvar)			\
+-	for ((var) = SLIST_FIRST((head));				\
+-	    (var) && ((tvar) = SLIST_NEXT((var), field), 1);		\
+-	    (var) = (tvar))
+-#endif
+-
+ /* VXLAN tunnel classification mapping */
+ const struct _qede_udp_tunn_types {
+ 	uint16_t rte_filter_type;
+diff --git a/drivers/raw/ifpga/base/opae_intel_max10.c b/drivers/raw/ifpga/base/opae_intel_max10.c
+index 58c884a8d8..1a4db13671 100644
+--- a/drivers/raw/ifpga/base/opae_intel_max10.c
++++ b/drivers/raw/ifpga/base/opae_intel_max10.c
+@@ -4,15 +4,9 @@
+ 
+ #include "opae_intel_max10.h"
+ #include <libfdt.h>
++#include <rte_queue.h>
+ #include "opae_osdep.h"
+ 
+-#ifndef TAILQ_FOREACH_SAFE
+-#define TAILQ_FOREACH_SAFE(var, head, field, tvar) \
+-	for ((var) = TAILQ_FIRST((head)); \
+-		(var) && ((tvar) = TAILQ_NEXT((var), field), 1); \
+-	(var) = (tvar))
+-#endif
+-
+ int max10_sys_read(struct intel_max10_device *dev,
+ 	unsigned int offset, unsigned int *val)
+ {
+diff --git a/lib/bpf/bpf_validate_debug.c b/lib/bpf/bpf_validate_debug.c
+index 5d18804a74..5c7c0e19bc 100644
+--- a/lib/bpf/bpf_validate_debug.c
++++ b/lib/bpf/bpf_validate_debug.c
+@@ -10,19 +10,12 @@
+ #include <rte_bpf_validate_debug.h>
+ #include <rte_errno.h>
+ #include <rte_per_lcore.h>
++#include <rte_queue.h>
+ 
+ #include <errno.h>
+ #include <stddef.h>
+ #include <stdlib.h>
+ 
+-#ifndef LIST_FOREACH_SAFE
+-/* We need this macro which neither Linux nor EAL for Linux include yet. */
+-#define	LIST_FOREACH_SAFE(var, head, field, tvar)			\
+-	for ((var) = LIST_FIRST((head));				\
+-	    (var) && ((tvar) = LIST_NEXT((var), field), 1);		\
+-	    (var) = (tvar))
+-#endif
+-
+ #define EVENT_ARRAY_LENGTH RTE_BPF_VALIDATE_DEBUG_EVENT_END
+ 
+ struct rte_bpf_validate_debug_point {
 -- 
 2.53.0
 
