@@ -2,55 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0C37C88E72
-	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Sep 2026 07:49:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70189C88E72
+	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Sep 2026 07:49:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 77701402B8;
-	Thu, 17 Sep 2026 09:49:31 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id AD57242799;
+	Thu, 17 Sep 2026 09:49:35 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 08C1F400D5
- for <dev@dpdk.org>; Thu, 17 Sep 2026 09:49:29 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 6CFF9427D0
+ for <dev@dpdk.org>; Thu, 17 Sep 2026 09:49:33 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1789631369;
+ s=mimecast20190719; t=1789631372;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:mime-version:mime-version:content-type:content-type:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=EcVsmAlcopW2kzezCwvVWpNyjBL+PF7l1fKJGREv8Vs=;
- b=fu+Vv4gueam5wu9SsbceWxUAsZKaDx/WIG51puHiWG9UkVZRGHXQCSH4hutC3YcniGHLTZ
- FxHS2UvbhxuhqOD78XSgYjPEBqnpIJJhrK4HMHQDAhTcVpe1Qm3BT69H/a6tmsCfV4KmQv
- KANWaB9FT+i9Uv/rYrdVfnp0Gz4oag0=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ bh=FOcaDOpmrt0YBzkufgcz79dWUVnNBmRgIbeBIa1txu8=;
+ b=KKiqy+3vX63OoaXKk4CySphUz1rac0SEZu2vNvQ1MSSwsxXYFmSVHQNwE5jXEgljaMGv5A
+ oZ6EI1nRP7kFZGSez1geP89COIV79Yjwqv7TJNXVpYvz82D6WBOyc4VvV1QCr9U8vnc+5M
+ SFUHQ/84wwAsR2u2BAzgQK8jI8RTCvQ=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-493-VYUveTCaOzisEo_A8_UH9A-1; Thu,
- 17 Sep 2026 03:49:25 -0400
-X-MC-Unique: VYUveTCaOzisEo_A8_UH9A-1
-X-Mimecast-MFC-AGG-ID: VYUveTCaOzisEo_A8_UH9A_1789631365
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-556-WD7xy9yDMLKBPukdfl7Tdw-1; Thu,
+ 17 Sep 2026 03:49:29 -0400
+X-MC-Unique: WD7xy9yDMLKBPukdfl7Tdw-1
+X-Mimecast-MFC-AGG-ID: WD7xy9yDMLKBPukdfl7Tdw_1789631368
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id EC4851945108; Thu, 17 Sep 2026 07:49:24 +0000 (UTC)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 690CD1953952; Thu, 17 Sep 2026 07:49:28 +0000 (UTC)
 Received: from dmarchan.redhat.corp
  (headnet03.pony-001.prod.iad2.dc.redhat.com [10.2.32.114])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 14A71180036E; Thu, 17 Sep 2026 07:49:23 +0000 (UTC)
+ by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 5ADC430001A2; Thu, 17 Sep 2026 07:49:27 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: hemant.agrawal@nxp.com,
 	dev@dpdk.org
-Subject: [RFC v2 00/16] Device unplug and bus cleanup refactoring for NXP
-Date: Thu, 17 Sep 2026 09:49:00 +0200
-Message-ID: <20260917074917.595603-1-david.marchand@redhat.com>
-In-Reply-To: <20260723135400.3621271-1-david.marchand@redhat.com>
+Cc: Sachin Saxena <sachin.saxena@nxp.com>
+Subject: [RFC v2 01/16] drivers/bus: cleanup device freeing in NXP bus scan
+Date: Thu, 17 Sep 2026 09:49:01 +0200
+Message-ID: <20260917074917.595603-2-david.marchand@redhat.com>
+In-Reply-To: <20260917074917.595603-1-david.marchand@redhat.com>
 References: <20260723135400.3621271-1-david.marchand@redhat.com>
+ <20260917074917.595603-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: iM1XHPlkKgN8Fl0UEimDBg9krdue38cOuMeR4sCbSHk_1789631365
+X-Mimecast-MFC-PROC-ID: v8H7xbc7foGtz5MUl6FDVEHYjehQEbiwSsrUnvKi4Mk_1789631368
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -67,70 +69,118 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello Hemant,
+Following the scan/probe refactoring, in the DPAA bus driver scan method,
+the device list is empty at the time the pthread key object is allocated.
+This leaves only one location that wants to release the whole device
+list, so remove the dpaa_clean_device_list() helper.
 
-This is a followup to the refactoring started in 26.07.
+Remove the same helper in FSLMC bus for consistency.
 
-I took some time with my best AI friend to cleanup DPAA and FSLMC bus
-drivers.
+Signed-off-by: David Marchand <david.marchand@redhat.com>
+---
+ drivers/bus/dpaa/dpaa_bus.c   | 15 ++-------------
+ drivers/bus/fslmc/fslmc_bus.c | 22 ++++++----------------
+ 2 files changed, 8 insertions(+), 29 deletions(-)
 
-Like the last time, only compilation has been checked.
-I have no hardware to test runtime.
-
-One thing that could be broken is either the order of devices
-initialisation, or bugs in the device filtering that I tried to
-simplify.
-
-I went with the approach of splitting the device list between
-internal bus object (that I called "control" devices, maybe a better
-name can be found), and normal bus device object for which DPDK has a
-driver.
-
-I think it is worth testing and fixing, as it will make the two NXP
-bus drivers similar to other bus drivers (but keep the special IO devices
-handling internal to the FSLMC bus for example).
-
-
--- 
-David Marchand
-
-Changes since RFC v1:
-- fixed FD leak in bus/dpaa pre existing code,
-- fixed device name leak in bus/fslmc pre existing code,
-- fixed other leaks found by AI review,
-- split DPAA2 devices in two list:
-  - one list in the bus object for devices for which a driver exists,
-  - one list local to the fslmc bus code for internal resources that
-    are initialised out of the EAL / bus framework,
-
-David Marchand (16):
-  drivers/bus: cleanup device freeing in NXP bus scan
-  drivers/bus: fix FD leak during scan in NXP drivers
-  bus/dpaa: allocate interrupt during probing
-  bus/dpaa: support unplug and use generic cleanup
-  bus/fslmc: fix device name leak
-  bus/fslmc: fix memory leaks in scan
-  bus/fslmc: fix per type device count
-  bus/fslmc: fix some VFIO device FD and memory leaks
-  bus/fslmc: fix interrupt leak in DPIO cleanup
-  bus/fslmc: simplify device parsing in scan
-  bus/fslmc: release resources on scan failure
-  bus/fslmc: refactor device filtering for multiprocess
-  bus/fslmc: move unplug for some device out of VFIO
-  bus/fslmc: call VFIO setup for some device from bus layer
-  bus/fslmc: allocate interrupt during probing
-  bus/fslmc: use generic cleanup
-
- doc/guides/rel_notes/release_26_11.rst   |   4 +
- drivers/bus/dpaa/dpaa_bus.c              | 146 ++++----
- drivers/bus/fslmc/bus_fslmc_driver.h     |   4 +-
- drivers/bus/fslmc/fslmc_bus.c            | 431 +++++++++++++++++------
- drivers/bus/fslmc/fslmc_vfio.c           | 407 ++++++++++-----------
- drivers/bus/fslmc/fslmc_vfio.h           |   6 +
- drivers/bus/fslmc/portal/dpaa2_hw_dpio.c |   1 +
- drivers/bus/fslmc/private.h              |   6 +
- 8 files changed, 601 insertions(+), 404 deletions(-)
-
+diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
+index 368c8eeb98..06962a5b29 100644
+--- a/drivers/bus/dpaa/dpaa_bus.c
++++ b/drivers/bus/dpaa/dpaa_bus.c
+@@ -193,8 +193,6 @@ dpaa_sec_available(void)
+ 	return -1;
+ }
+ 
+-static void dpaa_clean_device_list(void);
+-
+ static int
+ dpaa_create_device_list(void)
+ {
+@@ -336,21 +334,13 @@ dpaa_create_device_list(void)
+ 	return 0;
+ 
+ cleanup:
+-	dpaa_clean_device_list();
+-	return ret;
+-}
+-
+-static void
+-dpaa_clean_device_list(void)
+-{
+-	struct rte_dpaa_device *dev = NULL;
+-
+ 	RTE_BUS_FOREACH_DEV(dev, &rte_dpaa_bus) {
+ 		rte_bus_remove_device(&rte_dpaa_bus, &dev->device);
+ 		rte_intr_instance_free(dev->intr_handle);
+ 		free(dev);
+-		dev = NULL;
+ 	}
++
++	return ret;
+ }
+ 
+ RTE_EXPORT_INTERNAL_SYMBOL(rte_dpaa_portal_init)
+@@ -699,7 +689,6 @@ rte_dpaa_bus_scan(void)
+ 	ret = pthread_key_create(&dpaa_portal_key, dpaa_portal_finish);
+ 	if (ret) {
+ 		DPAA_BUS_LOG(DEBUG, "Unable to create pthread key. (%d)", ret);
+-		dpaa_clean_device_list();
+ 		return ret;
+ 	}
+ 
+diff --git a/drivers/bus/fslmc/fslmc_bus.c b/drivers/bus/fslmc/fslmc_bus.c
+index 3626b12316..94ae96f942 100644
+--- a/drivers/bus/fslmc/fslmc_bus.c
++++ b/drivers/bus/fslmc/fslmc_bus.c
+@@ -43,19 +43,6 @@ rte_fslmc_get_device_count(enum rte_dpaa2_dev_type device_type)
+ 	return fslmc_bus_device_count[device_type];
+ }
+ 
+-static void
+-cleanup_fslmc_device_list(void)
+-{
+-	struct rte_dpaa2_device *dev;
+-
+-	RTE_BUS_FOREACH_DEV(dev, &rte_fslmc_bus) {
+-		rte_bus_remove_device(&rte_fslmc_bus, &dev->device);
+-		rte_intr_instance_free(dev->intr_handle);
+-		free(dev);
+-		dev = NULL;
+-	}
+-}
+-
+ static int
+ compare_dpaa2_devname(struct rte_dpaa2_device *dev1,
+ 		      struct rte_dpaa2_device *dev2)
+@@ -305,6 +292,7 @@ fslmc_dev_compare(const char *name1, const char *name2)
+ static int
+ rte_fslmc_scan(void)
+ {
++	struct rte_dpaa2_device *dev;
+ 	int ret;
+ 	char fslmc_dirpath[PATH_MAX];
+ 	DIR *dir;
+@@ -314,8 +302,6 @@ rte_fslmc_scan(void)
+ 	char *group_name;
+ 
+ 	if (process_once) {
+-		struct rte_dpaa2_device *dev;
+-
+ 		DPAA2_BUS_DEBUG("Fslmc bus already scanned. Not rescanning");
+ 		RTE_BUS_FOREACH_DEV(dev, &rte_fslmc_bus) {
+ 			dev->device.devargs = rte_bus_find_devargs(&rte_fslmc_bus,
+@@ -416,7 +402,11 @@ rte_fslmc_scan(void)
+ 	closedir(dir);
+ 
+ 	/* Remove all devices in the list */
+-	cleanup_fslmc_device_list();
++	RTE_BUS_FOREACH_DEV(dev, &rte_fslmc_bus) {
++		rte_bus_remove_device(&rte_fslmc_bus, &dev->device);
++		rte_intr_instance_free(dev->intr_handle);
++		free(dev);
++	}
+ scan_fail:
+ 	DPAA2_BUS_DEBUG("FSLMC Bus Not Available. Skipping (%d)", ret);
+ 	/* Irrespective of failure, scan only return success */
 -- 
 2.54.0
 
