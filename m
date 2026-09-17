@@ -2,77 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4F1CC88E72
-	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Sep 2026 19:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4FC4C88E72
+	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Sep 2026 19:56:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A4B2F402D3;
-	Thu, 17 Sep 2026 21:29:33 +0200 (CEST)
-Received: from mail-ej2-f12.google.com (mail-ej2-f12.google.com
- [74.125.228.140])
- by mails.dpdk.org (Postfix) with ESMTP id 237CE402AC
- for <dev@dpdk.org>; Thu, 17 Sep 2026 21:29:32 +0200 (CEST)
-Received: by mail-ej2-f12.google.com with SMTP id
- a640c23a62f3a-c254f9f0b1eso223602566b.1
- for <dev@dpdk.org>; Thu, 17 Sep 2026 12:29:32 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id BC351402D3;
+	Thu, 17 Sep 2026 21:56:57 +0200 (CEST)
+Received: from mail-pj2-f43.google.com (mail-pj2-f43.google.com
+ [74.125.227.171])
+ by mails.dpdk.org (Postfix) with ESMTP id D1B4B402AC
+ for <dev@dpdk.org>; Thu, 17 Sep 2026 21:56:56 +0200 (CEST)
+Received: by mail-pj2-f43.google.com with SMTP id
+ d9443c01a7336-2db18fe459dso109225ad.3
+ for <dev@dpdk.org>; Thu, 17 Sep 2026 12:56:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1789673372; x=1790278172; darn=dpdk.org;
- h=content-transfer-encoding:content-type:in-reply-to:from
- :content-language:references:cc:to:subject:user-agent:mime-version
- :date:message-id:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=dzV1nYUyALPBQsIFOXvGix0VX/U/Wg0zIxgbjWemvl8=;
- b=YdiN9ICzQNmi/aaC3QNyhimjwRuAlwOltAbXgtF/gbUVCwov4FqbN4um/+JeEXo/Px
- ax25JP1MxElpi4hyhUL/qupRNE6P+HlHHUb/XExI4De86P935wW2ax54P5AXKOe5I2U8
- xDvRxvjYr/HjkiJriobL+AjHszHmO1pl6klWn6044gk/kDDsz1ZyZcYbAUJGetuVVbH2
- k/sVzMB5lflW/5fYbV/AN16UF0bce/cffBLZ+/y3K3uuryD28HWSktStIaW2aUyca4zP
- V0WEKdh8z1hi3UwSnYMgVJBsKZHw80Eaqr/BmAcUyuyPsOSQMtT847NyPKcVaug3tIds
- nHQA==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789675015;
+ x=1790279815; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=l58B5zZISP2FE/eZQ5FuJhYnJTBYHm9L+WkKQyrlI7w=;
+ b=siz1wMr4cS7Ir2n/JKGnPExMomyp14mDfWbZXZQkhmbN4RCOY4QyBdiEmKqtQ11YLO
+ LgGOYkwIq0UTFrNybLTu+MPbK/5uu+5g7LrEY9jEwcJdCtaatlSxRI3ukyxA7CKlNQzV
+ vkPmb0Hu/2TSK1a2+Hjiko5K1OmgaNUy4EMdg66wnCF53b2M9b8z1S1kL7MmlBSAEhiY
+ yvmpweUhCetdZqX9wue542MBnltykiWMu1m78mrIj2QacqksV7X8GH2nwBNtksTIYGxZ
+ +wNNbrYx3J77QtUrgIe2YSe4Ok4bpc52KP+NzY+orlyUiZGMsJ7wER3LbVjY8yUL4rGl
+ L/gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789673372; x=1790278172;
- h=content-transfer-encoding:content-type:in-reply-to:from
- :content-language:references:cc:to:subject:user-agent:mime-version
- :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=dzV1nYUyALPBQsIFOXvGix0VX/U/Wg0zIxgbjWemvl8=;
- b=zCVxT6FnTHtbKV6WbTiE1xIWWYlgTI/c91H2Ui+sBo6BcYaLNlb5BCYM32WG/xAzbL
- o+opAcFkbC5tuMKvW9Tph+rgjpoo5gzNmxgYWrX8KhifnvKncNe03fKsW1S7Ts+blRVJ
- M7dUBTo4/1r8EtTfHoauZ+Powce4ZtkTTPiBP5wVdvfcKcPLosQLyp+eco8MBt+JLSqS
- 2hfVpk7mmzH2AP8o8iVUUBTAeX4vTaqSxW9kZKEft/aiWEuwrcDjH+vWCBQodjerVolb
- HvPaP2edPq+My88+RxwZZSK1pbnJvlIr1DxY1oHel48klJ6ZS+2HTrwmyyUOYpSNyTOb
- jURg==
-X-Gm-Message-State: AFuF++nDJkEjVdMmlR32C1CvGBON5yMJQW+b39kFblKPdOHiiPmW22d1
- cl5peW8nyzw4f54gsypM3fNrKWKnVfPAqcbonfnfrlAeyWF/eu41rUf1JCDqNYSIZRM=
-X-Gm-Gg: AYBFou3EhB8bEBXFcGo1sLQsLS+QrR/p5Pm+XIpFHO/TL2tmiJFO5/LjDYOnzSSppDb
- fNW1Kp8iulhWiAG/84ucHU0U2jIn4qtC9G7lzt3GpnISYtsIykdgHw4ZlFevwCI4O/U+bQCbluD
- DyEMkwpBJ4CMMW4nzyTPLE0ziEQSzMSxdI62N+1RZtUnNFH7QWBO71+EDo3MUvxrLy3BMvxcdDH
- 5m+RNiIMPSakRz31ciKejnLZIvz996TWttNQWDWM0thoZ9NSDfWQuHJxjkZ76FtXq9kOr2W5waz
- hOh6D5+EKEwf5ZiKdmVa4A6Idx0/Cw5xc0To8UkdyiI3KUhb1L0CeR0o0jjVVrMfJKdBedCDBGq
- 2344zYk1YJ/iJt509eK3h1fz5MeGJMPEctp2GD8KxaLpHr+anwR3oo+/HngmJKgZlDvy920LAiK
- 2GQUKpu95D8y4yQuKF5uO3NpY6mayFtIKhG68RryGOfRFnyRfPCSh94gjbC4xKmZ7x9qtQDldLX
- fLJ
-X-Received: by 2002:a17:907:3f99:b0:c25:2688:8212 with SMTP id
- a640c23a62f3a-c2a152ea939mr22671766b.0.1789673371474; 
- Thu, 17 Sep 2026 12:29:31 -0700 (PDT)
-Received: from [192.168.0.78] ([80.233.40.14])
+ d=1e100.net; s=20260707; t=1789675015; x=1790279815;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=l58B5zZISP2FE/eZQ5FuJhYnJTBYHm9L+WkKQyrlI7w=;
+ b=tmnvZ5ykTWBgs1p9PsCyvj5QFp8RMJloISP9GV5zfynd0NODkfsNEkRhwyfPe7GLpj
+ llVtX5cJAy7p2GklJlNm+OwM4IHGJgfK8/ITjFvtgHmPXU3vV+WlpKgwDHIxKSrewrsV
+ lqduJWALAmIHExldUTukHBcq/Ci0eQdQqkaA5ab2P+fUJXSbr80mIrPxIK1dF6WHivDh
+ pnMbC3Yfp5LYz92pDuk6yRTriAW/Zbe1gCgOoHfMrP8fe+i1tf3P/w0IQk0b/m3OurM0
+ 6wcLaS0lwwAEsvbzPlzvOknx8YGRp8NddkCigXrnsirTWkONxf03SUPyK9RxLS87mYjW
+ y2kg==
+X-Gm-Message-State: AFuF++nZBqW2q8tY670f7kEW3ZNqmWSirVh+qmXL2lOliv5YDY1TqSmy
+ uzDBmXEGvvc+5rlMOsN4C4Zi7x/P4tDEFuof8Oqp6r5rH2MhhS+s7ILvnEmtXsnbQhg=
+X-Gm-Gg: AYBFou27Jau0CdgbsCBhhrznH9MF4iCbGMy4+gQoV4KybJTfEu4XR3y/0yaAx+hhHqP
+ cPVD6fcAzdOaxHLpCog4O6BuESjs8Lb82k0yGm669usQ4BWLEySF3Zm4dcnsgOoqHdpxId2f5Xo
+ hh/mB+J/FStlXQ0e5ylrGLcJOL0mmuFuOFOXdgaf1VxCr8cc0Ic1N/lpAAhf6VZMxgnyCHRPru5
+ wohAUa99ocbiZLvc7C6omyelgwCAHAWWp7xKVNEryB598aoLbpuaSCew+Om+5fXzx06Np1piqVY
+ K6kSYovzYgvJq1dgiWPMsKG3cEOzFVh3zuO9slDa37jRLko6Dv3EPwp6lSC0PYaF4jnF0XZ7MOU
+ 0VPSYp1Qua6gNdQ+TGedBo6IJfEOrv102RfQCaQRYdXoSiogrdj6jXS8MCj66qUBQY0agymEy3c
+ 9uGMzp84uNlcz2WOGXt0LV+EPGF0HEKgHwBhJTkIrMp53kcNbsxNgOcznsxaAP6EQ0CGUl87kOC
+ PGs3xcJOCyxtwaZGOrxdHDkB0r2niGUQ7e42oX2
+X-Received: by 2002:a17:90b:1d48:b0:39d:ec42:df69 with SMTP id
+ 98e67ed59e1d1-39e54f9da82mr392481a91.20.1789675015492; 
+ Thu, 17 Sep 2026 12:56:55 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-c29de4add55sm322339966b.33.2026.09.17.12.29.29
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Thu, 17 Sep 2026 12:29:30 -0700 (PDT)
-Message-ID: <3babcae5-eb12-4aec-8c27-da50a06b4e65@gmail.com>
-Date: Thu, 17 Sep 2026 20:29:28 +0100
+ 98e67ed59e1d1-39e35e532e4sm6619577a91.10.2026.09.17.12.56.54
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 17 Sep 2026 12:56:55 -0700 (PDT)
+Date: Thu, 17 Sep 2026 12:56:53 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: saeed bishara <saeed.bishara.os@gmail.com>
+Cc: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>, Sachin Saxena
+ <sachin.saxena@nxp.com>
+Subject: Re: [PATCH v5 11/24] drivers: replace rte_atomic16 with stdatomic
+Message-ID: <20260917125653.532c04f1@phoenix.local>
+In-Reply-To: <CAHfVqdVVG-W+PFZdimqwhrUrUZFSeCNodSu-VU7sscMpaiOVeA@mail.gmail.com>
+References: <20260620023134.42877-1-stephen@networkplumber.org>
+ <20260620023134.42877-12-stephen@networkplumber.org>
+ <CAHfVqdVVG-W+PFZdimqwhrUrUZFSeCNodSu-VU7sscMpaiOVeA@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] bpf: make bpf_def.h private
-To: dev@dpdk.org
-Cc: Marat Khalili <marat.khalili@huawei.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>
-References: <20260911124414.63321-1-marat.khalili@huawei.com>
- <20260917151916.48749-1-qm2k21@gmail.com>
- <20260917151916.48749-2-qm2k21@gmail.com>
-Content-Language: en-US
-From: Marat Khalili <qm2k21@gmail.com>
-In-Reply-To: <20260917151916.48749-2-qm2k21@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -87,5 +85,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Apologies, sent the wrong version; please ignore. Will post v4 tomorrow.
 
+ > >         dpbp_node->dpbp_id = dpbp_id;
+> > -       rte_atomic16_init(&dpbp_node->in_use);
+> > +       dpbp_node->in_use = 0;
+>
+> The previous code implies an ordering barrier, so it guarantees that
+> dpbp_node->dpbp_id is visible before in_use, while the new code
+> doesn't. isn't the a problem?
+
+No barrier is lost, because there was never one there.
+
+rte_atomic16_init() was a plain non-atomic store:
+
+    static inline void
+    rte_atomic16_init(rte_atomic16_t *v)
+    {
+            v->cnt = 0;
+    }
+
+That is the generic definition in lib/eal/include/generic/rte_atomic.h,
+and no architecture overrides it -- x86, ppc, arm and the rest only
+override rte_atomic16_test_and_set(), never _init() or _clear(). So the
+old code ordered nothing with respect to the dpbp_id store either.
+
+> aren't rte_atomic_flag_test_and_set_explicit/rte_atomic_flag_clear_explicit
+> a better candidates instead of
+> rte_atomic_compare_exchange_strong_explicit/rte_atomic_store_explicit ?
+
+There are currently no users of rte_atomic_flag_* anywhere in the tree, and that is not an accident.
+atomic_flag exists mainly so C11 could guarantee that at least one atomic type is always lock-free
+on all architectures.  But for DPDK it is a bad fit.
+On every architecture DPDK targets, plain integer atomics are
+already lock-free, so the guarantee buys nothing, and the missing
+operations are a real cost -- you cannot even read the flag without
+modifying it. It is a standards compromise that saw very little use
+anywhere, in DPDK or outside it.
+
+I would recommend deprecating and removing those macros as well.
