@@ -2,87 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 279A9C88E72
-	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Sep 2026 15:22:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C272FC982D6
+	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Sep 2026 15:32:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5FFCC427E3;
-	Thu, 17 Sep 2026 17:22:30 +0200 (CEST)
-Received: from mail-ot1-f98.google.com (mail-ot1-f98.google.com
- [209.85.210.98]) by mails.dpdk.org (Postfix) with ESMTP id A915A427B2
- for <dev@dpdk.org>; Thu, 17 Sep 2026 17:22:28 +0200 (CEST)
-Received: by mail-ot1-f98.google.com with SMTP id
- 46e09a7af769-804872cd1e0so77559a34.0
- for <dev@dpdk.org>; Thu, 17 Sep 2026 08:22:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789658548; x=1790263348;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:dkim-signature:x-gm-gg:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=8cYSRiFKS0iFP/3YRq2wTUuXaazPuk/erfjNpcyds1M=;
- b=ioXDsogaUMbnMEGzNNlDtG5z7eLThhEBhB6UEQ1Xc80umGaKDX81icZ+fYIm1wKfA2
- eiPpOrSMZ9LW4Owfywkln0R11QTJrVsbKT6wsFuL3VWwxlgGegmM2tq/szBZDzsdQw2C
- HO6dcJ17tLDqw3SlUbDhyRQq7sde00FvcCyvoTWnkFxnsLQ/5/a51LHc7BCtRp3DcNRT
- Klm4aPrEd2ZCuIaC9q9nWGQv8IdjhZ67L9YjCjTftw2DM5OzMSe0Q5j0H834p+YgdmlO
- sHyH+3U7moZtl95HaygOznkUbMTV1dC1rvWhLxlVX4TZ1HNZayS3p4I5Z3TQXsMc8kgV
- mkvg==
-X-Forwarded-Encrypted: i=1;
- AKwUvBy18hy+sfsmNkSPWQQFE1e+EyiQl5bzzJAr9wtgm1UN2fBlizF+IvO/EVKqQrwSgUxOmJA=@dpdk.org
-X-Gm-Message-State: AFuF++n/DrGOT/s30vGZ/c3+jBBj1iUZKZhmKxS6pEgTof7650Msx6ql
- hERZHK4JRHxvMsrVjm8feAx+ttaL5y5K9tCK7VwDNnW14u/eYyFHqh638Y0pSy/iuer/2z1YfyK
- u27AUy0DdpmakNV6jNh964a0DhkKT5/xNCAkd73mxhn/+W9CRJPQPBqONTXlXgB7DAmTlK3yb9t
- OJrE13O5T8osjafgB7clROa+Xlk2Oyezo+lBiHqPhQCiYtKp0qcWZuF3NMrWQmb/jLzTu8gwB+U
- Ut6TA==
-X-Gm-Gg: AYBFou2ZfwYJqD/g2NNm0p8pEZCTz3IYDHpDG7aviXMEI6R3/3UCr2n34mngheH83p3
- 6iw1fkwgRiw6fTzGDjhMBw9NABgUxJPGwcA00I/YzV32Xx/FnE3sC09saSl57yVhjPhs0HNl1zl
- 1p4sq5cYLuIxc7mgkpc+BQVAdOg9+tj0qZA4VhLthnAPepPCPEHp3Pm82uKWAj+z6oHY6DR3h1W
- isN2h6qTntlfbp/ssQuXXWIWv6C3yFpjRzJtju/7iYya43ek3xPmbhaibj8OtxZt1Vaqs5llRTf
- yaIq5XCflBvNmUNkFDv0wefySvDfc7I6W/rUOrXdRlzn03WGhjFtrfZaSoXROxyoS+CwNxcEtgU
- FbxfNSOdvf8eGz3juzCBDJCR6woOVkB1VgBVGipyVwqtbXb3jKuniRf9mwuXvd+iQes6d0CAxgE
- LBBojWU+KgL3azdM7SnHfac2QxArvyeI17/aY/9Npx3oA=
-X-Received: by 2002:a05:6830:6d2e:b0:7fa:5c68:d04f with SMTP id
- 46e09a7af769-80b2f2851e4mr7423219a34.25.1789658547774; 
- Thu, 17 Sep 2026 08:22:27 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-25.dlp.protect.broadcom.com. [144.49.247.25])
- by smtp-relay.gmail.com with ESMTPS id
- 46e09a7af769-80c4629eeeasm1745523a34.3.2026.09.17.08.22.27
- for <dev@dpdk.org>
- (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Thu, 17 Sep 2026 08:22:27 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-ed1-f72.google.com with SMTP id
- 4fb4d7f45d1cf-6a9cdcbe249so1236669a12.2
- for <dev@dpdk.org>; Thu, 17 Sep 2026 08:22:27 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id CDC61427E3;
+	Thu, 17 Sep 2026 17:32:57 +0200 (CEST)
+Received: from mail-pj2-f43.google.com (mail-pj2-f43.google.com
+ [74.125.227.171])
+ by mails.dpdk.org (Postfix) with ESMTP id B2038427B2
+ for <dev@dpdk.org>; Thu, 17 Sep 2026 17:32:56 +0200 (CEST)
+Received: by mail-pj2-f43.google.com with SMTP id
+ 98e67ed59e1d1-39b2ad83dc6so872534a91.0
+ for <dev@dpdk.org>; Thu, 17 Sep 2026 08:32:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1789658546; x=1790263346; darn=dpdk.org;
- h=content-type:cc:to:subject:message-id:date:from:in-reply-to
- :references:mime-version:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=8cYSRiFKS0iFP/3YRq2wTUuXaazPuk/erfjNpcyds1M=;
- b=Td3kfhHgjramea4flYyP1ysrjsBKIFknDRTaEb/70xHYQrKC5LjvjT9rQTfuBhWWhb
- nZuqON6eqYo1E6YM7fTffvTCOTKwf4hqd0WPj9y0iKsvIxPlQWccZ0yKytnMj5sQ6hK+
- YQ0lZ32SvatL+21NlVu0Yze82TwPhi28O+kLc=
-X-Forwarded-Encrypted: i=1;
- AKwUvBxvZ7c/Qyn0sRUWuh0DrPmNPHmNUjkTDOw6x6N5nuMUX1RAWzzcOT2KS3r+49JSUDsUVKY=@dpdk.org
-X-Received: by 2002:a05:6402:46d1:b0:6a9:a362:4646 with SMTP id
- 4fb4d7f45d1cf-6aa22252d52mr4781418a12.14.1789658545889; 
- Thu, 17 Sep 2026 08:22:25 -0700 (PDT)
-X-Received: by 2002:a05:6402:46d1:b0:6a9:a362:4646 with SMTP id
- 4fb4d7f45d1cf-6aa22252d52mr4781391a12.14.1789658545435; Thu, 17 Sep 2026
- 08:22:25 -0700 (PDT)
+ d=gmail.com; s=20251104; t=1789659176; x=1790263976; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=6ZC2sakx23j0x4IKxDQBDCFHCIpGg8JqlDgJnh6n/gU=;
+ b=BN6leMKFh6DiDVrByV/18v92FfHjjsBy0fY46e27sGSEQaJ0d8jpumf4bNzJuXmADO
+ JB8W7A7pVAy2Otn++p/nQ+ZgBKpKOI+DAbBkEnOnbTaG3Migwsamv7r9bM2rdtfTEgdY
+ /3fngF75fbrLG/4lUz5heF9nW+FVfE2Y8wJbB/bM3cwyDZW0rnW9cdlv0aTGpvX6krxC
+ qHtwzhVuq6ztoLO3sozTSNEZ/zrsVY6srbIdS8LI/s6EDSikOh9jbXOO711+fXGa6FtZ
+ qm5GrVEKbwsayyNeHzAyjevAhCAZH5cJE/KxuQebLebmIUTDAY7vfDFhIpDauciXRlaR
+ GFtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1789659176; x=1790263976;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=6ZC2sakx23j0x4IKxDQBDCFHCIpGg8JqlDgJnh6n/gU=;
+ b=p8I38m0YFHhN1WFpPp+F/yRKbMTr2ivatyH+kRcwWuHojiAE+TIVtwWm4kX9kpbAJX
+ bAFSNOEYFJiShfbIq7xzaoo8VSM4wpmOPuI5C6r9kPADZ08s0y6k2DUHeY5JNQjniOKL
+ R88MVDk/m0FMq95KK18F9layLs6oYvIsJTsI3ZS+naPpw1QwENvRVrYKIqkvyYNYQqiB
+ qBSP6wUmMGeWsPdtcoQqzOKEMqyoC4milhSpqHYGo2zqSWSqLnEDQeA+TZe5Ktes53QU
+ xhHGPwynKiuK01eZiG3KlcIcf4HkWLQCOKh0U/hccl5Ahq1m04tOAU5tiukLChpAi/XD
+ l30w==
+X-Gm-Message-State: AFuF++kL5usiztK8InFqSxoPw1nMvg24m40Pz3LqBJZpDHtrbm3xr5L1
+ H1KxPsqDaFmyZI2Xo69S9wH3oWQ9n618d6c55+9eIwwYl7+o6uAOmKCF44aZ7w==
+X-Gm-Gg: AYBFou3Ob8Iq3EYg4o/IgUQtrBR93R3+yF82HbQM3PKbdJ5JQ2kD0VDefbjPdN32kta
+ t4tl0z/4TtuuuEFav9LZuimHF1GiXYTpUfwfH0RuaF3YJDuDPZlOeOl4YzHbBrFVMiYTcvVespn
+ rvGMM5IhhTat/xO7ziIWAF1vhsp7YyoD3aLE5e7+MILM73gjDCcUvMuETRQdzyQRioLwbtt+HMF
+ zfDNZrYWUj4mEmYZNlg1cnKwMscVT1bgCxj2zzRf+DdINhYORkF/8KCw8DzAoB8F0NUakSUF5yU
+ VKi/LfbCQzjKWIwYV+KKjo1koU5pWxLkkC2j+538M/KWY8/hTIcOmbi+jjGg8jEPuvHbarrCLC9
+ TTofUWSlJapYlILt5eP0vJQFgN7QdWXltUVtlD5mD9gzfI4p/tEf2cg4zGmCVFoXQcwwysBwVHf
+ P9eqHiJEsBqfCEYq5NzZnGlVcAV9Myz17Hb2ljqHG/LGfULijY+IEaG6ITuQDEgSIo/juqjvmOO
+ j+uphM=
+X-Received: by 2002:a17:90b:4d0e:b0:39e:4c7e:f044 with SMTP id
+ 98e67ed59e1d1-39e4c7efb06mr1214791a91.33.1789659175480; 
+ Thu, 17 Sep 2026 08:32:55 -0700 (PDT)
+Received: from OptiPlex (mail.forbuysw.info. [66.175.223.235])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-39e35df6112sm5730350a91.7.2026.09.17.08.32.51
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 17 Sep 2026 08:32:54 -0700 (PDT)
+From: Zhang Tengfei <zhtfdev@gmail.com>
+To: 
+Cc: dev@dpdk.org, stephen@networkplumber.org, Zhang Tengfei <zhtfdev@gmail.com>
+Subject: [PATCH v3 0/3] net/txgbe: fix flow create errors
+Date: Thu, 17 Sep 2026 23:32:39 +0800
+Message-ID: <20260917153242.29315-1-zhtfdev@gmail.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260916131106.105667-1-zhtfdev@gmail.com>
+References: <20260916131106.105667-1-zhtfdev@gmail.com>
 MIME-Version: 1.0
-References: <20260915084738.430772-1-Evgeny.Sokolov@infotecs.ru>
-In-Reply-To: <20260915084738.430772-1-Evgeny.Sokolov@infotecs.ru>
-From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Date: Thu, 17 Sep 2026 11:22:08 -0400
-X-Gm-Features: AcwNN1VJ_JkjcagFO-ZRtVG-8zQ6M9cp0RRWpyohZKnRRD6Kp_zFYXVlZygSsTs
-Message-ID: <CA+BST0nrO3a1w5EOL1XU4SMKKOyHJBO+oT7bVE_UTX64sOOWoQ@mail.gmail.com>
-Subject: Re: [PATCH] net/bnxt: remove redundant NULL checks in RX path
-To: Evgeny Sokolov <Evgeny.Sokolov@infotecs.ru>
-Cc: Ajit Khaparde <ajit.khaparde@broadcom.com>, dev@dpdk.org, stable@dpdk.org, 
- kalesh-anakkur.purayil@broadcom.com
-Content-Type: multipart/alternative; boundary="000000000000ded980065baf5921"
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -96,115 +80,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000ded980065baf5921
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+v3:
+- reject mask-only FDIR before programming the global mask
+- log flex offset mismatch
+- no code change in 1/3 and 2/3
 
-On Tue, Sep 15, 2026 at 4:47=E2=80=AFAM Evgeny Sokolov <Evgeny.Sokolov@info=
-tecs.ru>
-wrote:
+v2:
+- split L2 tunnel add-failure goto out into its own patch
+- allocate FDIR object before installing the global mask
+- add Fixes tag for the VF FDIR path
+- set -EINVAL on remaining FDIR goto out paths with bad ret
+- use struct assignment instead of rte_memcpy for filter copies
 
-> From: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru>
->
-> rxbd and rx_buf are assigned the addresses of array elements, which
-> cannot be NULL.
->
-> Remove the redundant NULL checks from the jumbo frame receive path.
->
-> Found by InfoTeCS on behalf of Linux Verification Center (linuxtesting.or=
-g)
-> with SVACE.
->
-> Signed-off-by: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru>
-> ---
->  drivers/net/bnxt/bnxt_rxr.c | 9 ---------
->  1 file changed, 9 deletions(-)
->
-> diff --git a/drivers/net/bnxt/bnxt_rxr.c b/drivers/net/bnxt/bnxt_rxr.c
-> index 0fab4ddf78..98bdbc136a 100644
-> --- a/drivers/net/bnxt/bnxt_rxr.c
-> +++ b/drivers/net/bnxt/bnxt_rxr.c
-> @@ -74,15 +74,6 @@ static inline int bnxt_alloc_ag_data(struct
-> bnxt_rx_queue *rxq,
->
->         rxbd =3D &rxr->ag_desc_ring[prod];
->         rx_buf =3D &rxr->ag_buf_ring[prod];
-> -       if (rxbd =3D=3D NULL) {
-> -               PMD_DRV_LOG_LINE(ERR, "Jumbo Frame. rxbd is NULL");
-> -               return -EINVAL;
-> -       }
-> -
-> -       if (rx_buf =3D=3D NULL) {
-> -               PMD_DRV_LOG_LINE(ERR, "Jumbo Frame. rx_buf is NULL");
-> -               return -EINVAL;
-> -       }
->
->         mbuf =3D __bnxt_alloc_rx_data(rxq->agg_mb_pool);
->         if (!mbuf) {
-> --
-> 2.30.2
->
-> Acked-by:  Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+1/3 fix L2 tunnel error on flow create
+2/3 fix leak of filters on flow create
+3/3 fix FDIR error handling on flow create
 
---000000000000ded980065baf5921
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Zhang Tengfei (3):
+  net/txgbe: fix L2 tunnel error on flow create
+  net/txgbe: fix leak of filters on flow create
+  net/txgbe: fix FDIR error handling on flow create
 
-<div dir=3D"ltr"><div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=
-=3D"gmail_quote"><div dir=3D"ltr" class=3D"gmail_attr">On Tue, Sep 15, 2026=
- at 4:47=E2=80=AFAM Evgeny Sokolov &lt;<a href=3D"mailto:Evgeny.Sokolov@inf=
-otecs.ru" target=3D"_blank">Evgeny.Sokolov@infotecs.ru</a>&gt; wrote:<br></=
-div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;bor=
-der-left:1px solid rgb(204,204,204);padding-left:1ex">From: Sokolov Evgeny =
-&lt;<a href=3D"mailto:Evgeny.Sokolov@infotecs.ru" target=3D"_blank">Evgeny.=
-Sokolov@infotecs.ru</a>&gt;<br>
-<br>
-rxbd and rx_buf are assigned the addresses of array elements, which<br>
-cannot be NULL.<br>
-<br>
-Remove the redundant NULL checks from the jumbo frame receive path.<br>
-<br>
-Found by InfoTeCS on behalf of Linux Verification Center (<a href=3D"http:/=
-/linuxtesting.org" rel=3D"noreferrer" target=3D"_blank">linuxtesting.org</a=
->) with SVACE.<br>
-<br>
-Signed-off-by: Sokolov Evgeny &lt;<a href=3D"mailto:Evgeny.Sokolov@infotecs=
-.ru" target=3D"_blank">Evgeny.Sokolov@infotecs.ru</a>&gt;<br>
----<br>
-=C2=A0drivers/net/bnxt/bnxt_rxr.c | 9 ---------<br>
-=C2=A01 file changed, 9 deletions(-)<br>
-<br>
-diff --git a/drivers/net/bnxt/bnxt_rxr.c b/drivers/net/bnxt/bnxt_rxr.c<br>
-index 0fab4ddf78..98bdbc136a 100644<br>
---- a/drivers/net/bnxt/bnxt_rxr.c<br>
-+++ b/drivers/net/bnxt/bnxt_rxr.c<br>
-@@ -74,15 +74,6 @@ static inline int bnxt_alloc_ag_data(struct bnxt_rx_queu=
-e *rxq,<br>
-<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 rxbd =3D &amp;rxr-&gt;ag_desc_ring[prod];<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 rx_buf =3D &amp;rxr-&gt;ag_buf_ring[prod];<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0if (rxbd =3D=3D NULL) {<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0PMD_DRV_LOG_LINE(ER=
-R, &quot;Jumbo Frame. rxbd is NULL&quot;);<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return -EINVAL;<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
--<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0if (rx_buf =3D=3D NULL) {<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0PMD_DRV_LOG_LINE(ER=
-R, &quot;Jumbo Frame. rx_buf is NULL&quot;);<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return -EINVAL;<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 mbuf =3D __bnxt_alloc_rx_data(rxq-&gt;agg_mb_po=
-ol);<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (!mbuf) {<br>
--- <br>
-2.30.2<br>
-<br></blockquote><div><span style=3D"font-family:Calibri;font-size:11pt;bac=
-kground-color:transparent">Acked-by:=C2=A0=C2=A0Kishore
-Padmanabha &lt;<a href=3D"mailto:kishore.padmanabha@broadcom.com" target=3D=
-"_blank">kishore.padmanabha@broadcom.com</a>&gt;</span>=C2=A0</div></div></=
-div>
-</div>
+ drivers/net/txgbe/txgbe_flow.c | 266 +++++++++++++++++----------------
+ 1 file changed, 140 insertions(+), 126 deletions(-)
 
---000000000000ded980065baf5921--
+-- 
+2.53.0
+
