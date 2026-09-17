@@ -2,70 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A886C88E72
-	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Sep 2026 20:11:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBC8CC982D0
+	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Sep 2026 20:11:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 203CA42FD7;
-	Thu, 17 Sep 2026 22:11:30 +0200 (CEST)
-Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com
- [74.125.227.140])
- by mails.dpdk.org (Postfix) with ESMTP id 3E96D42FB5
- for <dev@dpdk.org>; Thu, 17 Sep 2026 22:11:27 +0200 (CEST)
-Received: by mail-pj2-f12.google.com with SMTP id
- d9443c01a7336-2dd77300825so398985ad.1
+	by mails.dpdk.org (Postfix) with ESMTP id 0413442EE5;
+	Thu, 17 Sep 2026 22:11:31 +0200 (CEST)
+Received: from mail-pj2-f13.google.com (mail-pj2-f13.google.com
+ [74.125.227.141])
+ by mails.dpdk.org (Postfix) with ESMTP id 0FE9942FC7
+ for <dev@dpdk.org>; Thu, 17 Sep 2026 22:11:28 +0200 (CEST)
+Received: by mail-pj2-f13.google.com with SMTP id
+ d9443c01a7336-2d8fb334e72so321635ad.1
  for <dev@dpdk.org>; Thu, 17 Sep 2026 13:11:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789675886;
- x=1790280686; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789675887;
+ x=1790280687; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=hraQ4IxZ5IoxEIrc1bfyi+WvtZ2RM1Y3cDQByR5DwFU=;
- b=QNoCONHG34rthNN5nMaX0nDADgowOzfHU4Pmq0qnmxNMv74wQ1gq8BW7jyxTJJSuk0
- HtEqGjKp9S2XQzvue9Yd4zrcrBmr9vlSHXIPJLKq4qbnYb7sRtFt/J/9TTLkKtLdo2Ls
- t3+rA+lgAOGl0aQsTtqXffDe+doWSzhMLH3TDImuMqhlK5V+mqQBhxfBmnXZFtFarzIW
- oGoqq2ENJsDxNxq45tUByHP5nXG7UXzgCUo30643tpD+P6oIZ6geDqDTfw/KsaRDl/pQ
- aDTbkiQRAmUxrq7rB2PJkSbDf2SF93HKGOibx8vQ2MhZkg11p0KFMdVDubJd+j7ceAF2
- WEBA==
+ bh=EID+btdzsQnYPKce2NqjEeot3okjRStHQ0GK8kvxqOg=;
+ b=hfmmgz6QJcS5Aslr49UONvVu8uExh5mUWU3ojxEt0TvK4oq/5QNhBh82oIMK1+vdKg
+ GGTDWkQsX0ioXWaaF41EDEpvg1K2ggzeJOBdGDPKsYUPT/ZuezqKwxmwS7cn6QyOYxww
+ 3wNV/1IZJmiNWr5VvULicUi/cgV6cqnvb3IqU7cIO7b+Eh2KITmKSUbtxR1dIQipCC9g
+ 82h/mMMpwtb1SwsIe2iih29R6MgSx0X99YA99iRIq19zyaTLkqAftb3e9uQpASFSl7Gq
+ u84rdJy18xs2RdFIjrtsR5OHG3Vc/wY/ZPmI7IrNkfD8UblTKStYOIL5VNwohRz9DKiO
+ SyCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789675886; x=1790280686;
+ d=1e100.net; s=20260707; t=1789675887; x=1790280687;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=hraQ4IxZ5IoxEIrc1bfyi+WvtZ2RM1Y3cDQByR5DwFU=;
- b=OhqdmclZndpl3vYx69Z715Wt2tBjhrQIoNKrn0VN3ce71PVPwNTaZAA0AAPObUSihx
- cX/n1OhWIvcGYjtfcsfuqZadrHO0U1+2VKaVnIdCt9Ib3NBcxvUhCGPfHxCVrNGNh2FB
- oCDlsJFeF4dkVnvtdauWV4UTE85GNh/ouytZnRHc0iCj6jUKylp7t6fHHhhepHnO7u0h
- xheCCd4ATr2cx+FdfY4vIKt27V7yZS08aaRdkbHAT9AUxUgCdPjh2NGu7hj4iER8Kj4t
- +pWUDyagEkQmFM+TWfEQF4v+MguvVTQnJg8gCnpMALa4lDWIid7YORyTN0q3FusjqPjB
- KV3Q==
-X-Gm-Message-State: AFuF++nutFrxaK5C9o8rfyUkroPI9BvdXEbuyPlubLPs51FFRv9bzDvk
- eYM4ALMq5+3ocZJc81CwE4Exkbf9ynILNUzQhE5aaroQBO2hgCKx3G/qSRF7FHiWDuq9WMrXc7W
- ptN1v
-X-Gm-Gg: AYBFou0xh/Z9MIcqiJ8aZAirSbWTpkuYA52UaW9Z9rXAcvHVQqkX+NH/pOFNgG16oz6
- ZF9E04H1gtFogpyyqUtsq45IWhe20oYCV++tRdTqDoa1Spoze4E5atQoP65GwXPCBGDHpn3O0Wg
- 1ObiDMT1xEaXYBcw2irKwAwDJby94iF/D2nyjSKL+w2+uubmPZm6bUII3Ybi+Zi3HQpHA/mRLuM
- boSywGOojaQgkm6/Wy3+AYifCxQbxpcyBTyT/7nMlMyXyq1yr6JL6WB6Zzv6ZzODgPKY7Lc6ehy
- RcH9rQ0hFCyDO1JMR3PxILn24QwriCn2EU5HE0u2MlcT3uGnBYT/q8YLWax2sIFK2OCguL2oWfp
- KoZBLPZ4XOM6I/MSmKib+ojHOLql/1z0Mqm6RBPTLsmc04XKNy9Nks1WDqY/oZkWb6YNOI6nhdd
- RFYH+ynQ39GV1c+dBm7rLRW2CbZHMF8u6TNQrGW73SYX9baLEWfJLte8L/Hw5dLua8yqbCVZZbZ
- kT+gyASzaWxVGtkhHZ3dAA9aQlDoMvxSXSxww==
-X-Received: by 2002:a17:903:2ec3:b0:2dd:68a4:16f1 with SMTP id
- d9443c01a7336-2ddb1ade65bmr6503435ad.11.1789675886396; 
- Thu, 17 Sep 2026 13:11:26 -0700 (PDT)
+ bh=EID+btdzsQnYPKce2NqjEeot3okjRStHQ0GK8kvxqOg=;
+ b=slxZVnFpoEgOdLmXC43CugXIpp3khSZdK41P9n0/exauoHfvdqZ9ruUq50sWW3lnM9
+ omPrIAlci8vAgzlvcN3GTFHJQWzxRs5PSfZbJgJVVHI16AjXo/b53TunRD1DTFjsG+Cc
+ QUiEs3W4PrFDxD7XF1I8CIVv5pm2EAPKG85GIqzAKOETfmSbh7XubvYQersB1SaWvCOz
+ fJGi7z3Yw1MwxCc23Y9poOzVVt14jpgVA8jnEr4I17M8AYFXihNVRdnU0zyIMhFsL/J7
+ 7KgouqAVzzGBXOiBu5Me+GtVPQgICdqhjhxS44S4AAVrHcdJZ7sXgbhB4cWHC7uAUKAb
+ EOYA==
+X-Gm-Message-State: AFuF++mccQ9oncYBI8InsUfByB9H7ZOphtLPzKj9KQp2qhVubfg2HLbC
+ dxaCwsdc+p9st6vMr8HHBflDCF0ZS6qVr+gZL8k8IP75/NfH9hy++VIqieLHd26/54JVJ88Z6yY
+ J2H3L
+X-Gm-Gg: AYBFou3Jn2kO8NOumlAauQTVha2BlZ7d4GenSh3QmvUSumfwUzzwJ2Pxnpg/Z6PsA7z
+ WKVRL1GJ2+HfE+xhf2LvhqQ8HpjQDO9M6ZEVnIpJsL2rae6/t3GqPnOGCsxsuUDDcz2x6oRXwUb
+ qTDixTaZ3Gy0OgPrTdQTvrDdN0qiGJ+/fxXJhbQnU2sjdizmd2w5B/vw+0T7o6COlvI91Ujpm+/
+ dK0EhILox5WPlwyEXr1qAFLGlJW2GFCMZWObxq9v6XXHEHYyas1y8blekIfaRKFkqrPutF2K0ii
+ y4Qf6MhOI2ZJN50HGYBFNc9ebswCpUsXSVT590fOtcxaHGpMbEw1wtUXxjt559uMBNztdQ8csPW
+ 2ZmhJe1lTipqrwdmh7C8HM55obv1cjU3f1qsNmQEOlcf5+5KLSvBllNnLjAbCuzvLdmBM2AvYRh
+ NhmCJ0JirwiEpJzfc3VzWPVsuUQOp+DILPJ+5TQtScqfjVYQTKjXtiV+Bq1YfU8pF4gxUnpegvi
+ 8UYOBJT9yOHygFu2nI+6TQi+/+vfc2mzc4XcA==
+X-Received: by 2002:a17:903:4b03:b0:2db:18fe:bb08 with SMTP id
+ d9443c01a7336-2ddb1b99467mr4584835ad.10.1789675887179; 
+ Thu, 17 Sep 2026 13:11:27 -0700 (PDT)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2dd89f0870bsm31368345ad.63.2026.09.17.13.11.25
+ d9443c01a7336-2dd89f0870bsm31368345ad.63.2026.09.17.13.11.26
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
  Thu, 17 Sep 2026 13:11:26 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Shai Brandes <shaibran@amazon.com>, Evgeny Schemeilin <evgenys@amazon.com>,
- Amit Bernstein <amitbern@amazon.com>, Wajeeh Atrash <atrwajee@amazon.com>
-Subject: [PATCH v8 04/25] net/ena: replace use of rte_atomicNN
-Date: Thu, 17 Sep 2026 13:10:08 -0700
-Message-ID: <20260917201119.2168234-5-stephen@networkplumber.org>
+ Gaetan Rivet <grive@u256.net>
+Subject: [PATCH v8 05/25] net/failsafe: convert to stdatomic
+Date: Thu, 17 Sep 2026 13:10:09 -0700
+Message-ID: <20260917201119.2168234-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260917201119.2168234-1-stephen@networkplumber.org>
 References: <20260521042043.1590536-1-stephen@networkplumber.org>
@@ -85,143 +84,158 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Convert the legacy rte_atomicNN operations to stdatomic.
-* Remove variable ena_alloc_cnt is defined by not used.
-  It is a leftover from previous memzone naming scheme.
+The functions rte_atomic64 are deprecated, convert this
+code to use stdatomic for reference count. Use the memory
+order implied by naming P/V.
 
-* Convert the legacy rte_atomic32_t and rte_atomic32_{inc,dec,set,read}
-  macros to C11 stdatomic equivalents.
-  Memory ordering is kept at seq_cst,
-  matching the implicit ordering of the legacy API.
-
-* Do not use rte_atomic for statistics
- The DPDK PMD model is that statistics do not have to be exact
- in face of contention.
+No need for initialization since refcnt is in space
+allocated with rte_zmalloc().
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/ena/base/ena_plat_dpdk.h | 14 +++++++++-----
- drivers/net/ena/ena_ethdev.c         | 21 ++++++---------------
- drivers/net/ena/ena_ethdev.h         |  7 +++----
- 3 files changed, 18 insertions(+), 24 deletions(-)
+ drivers/net/failsafe/failsafe_ops.c     | 12 +++++-----
+ drivers/net/failsafe/failsafe_private.h | 29 ++++++++++++++-----------
+ drivers/net/failsafe/failsafe_rxtx.c    |  2 +-
+ 3 files changed, 22 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/net/ena/base/ena_plat_dpdk.h b/drivers/net/ena/base/ena_plat_dpdk.h
-index c84420de22..83b354d9da 100644
---- a/drivers/net/ena/base/ena_plat_dpdk.h
-+++ b/drivers/net/ena/base/ena_plat_dpdk.h
-@@ -40,7 +40,7 @@ typedef uint64_t dma_addr_t;
+diff --git a/drivers/net/failsafe/failsafe_ops.c b/drivers/net/failsafe/failsafe_ops.c
+index ddc8808ebe..98ecde8786 100644
+--- a/drivers/net/failsafe/failsafe_ops.c
++++ b/drivers/net/failsafe/failsafe_ops.c
+@@ -11,7 +11,7 @@
  #endif
  
- #define ENA_PRIu64 PRIu64
--#define ena_atomic32_t rte_atomic32_t
-+typedef RTE_ATOMIC(int32_t) ena_atomic32_t;
- #define ena_mem_handle_t const struct rte_memzone *
- 
- #define SZ_256 (256U)
-@@ -267,10 +267,14 @@ ena_mem_alloc_coherent(struct rte_eth_dev_data *data, size_t size,
- #define ENA_REG_READ32(bus, reg)					       \
- 	__extension__ ({ (void)(bus); rte_read32_relaxed((reg)); })
- 
--#define ATOMIC32_INC(i32_ptr) rte_atomic32_inc(i32_ptr)
--#define ATOMIC32_DEC(i32_ptr) rte_atomic32_dec(i32_ptr)
--#define ATOMIC32_SET(i32_ptr, val) rte_atomic32_set(i32_ptr, val)
--#define ATOMIC32_READ(i32_ptr) rte_atomic32_read(i32_ptr)
-+#define ATOMIC32_INC(i32_ptr)							\
-+	rte_atomic_fetch_add_explicit((i32_ptr), 1, rte_memory_order_seq_cst)
-+#define ATOMIC32_DEC(i32_ptr)							\
-+	rte_atomic_fetch_sub_explicit((i32_ptr), 1, rte_memory_order_seq_cst)
-+#define ATOMIC32_SET(i32_ptr, val)						\
-+	rte_atomic_store_explicit((i32_ptr), (val), rte_memory_order_seq_cst)
-+#define ATOMIC32_READ(i32_ptr)							\
-+	rte_atomic_load_explicit((i32_ptr), rte_memory_order_seq_cst)
- 
- #define msleep(x) rte_delay_us(x * 1000)
- #define udelay(x) rte_delay_us(x)
-diff --git a/drivers/net/ena/ena_ethdev.c b/drivers/net/ena/ena_ethdev.c
-index ad2ac6dbbf..e874f264b4 100644
---- a/drivers/net/ena/ena_ethdev.c
-+++ b/drivers/net/ena/ena_ethdev.c
-@@ -121,12 +121,6 @@ struct ena_stats {
-  */
- #define ENA_DEVARG_ENABLE_FRAG_BYPASS "enable_frag_bypass"
- 
--/*
-- * Each rte_memzone should have unique name.
-- * To satisfy it, count number of allocation and add it to name.
-- */
--rte_atomic64_t ena_alloc_cnt;
--
- static const struct ena_stats ena_stats_global_strings[] = {
- 	ENA_STAT_GLOBAL_ENTRY(wd_expired),
- 	ENA_STAT_GLOBAL_ENTRY(dev_start),
-@@ -1249,10 +1243,7 @@ static void ena_stats_restart(struct rte_eth_dev *dev)
- {
- 	struct ena_adapter *adapter = dev->data->dev_private;
- 
--	rte_atomic64_init(&adapter->drv_stats->ierrors);
--	rte_atomic64_init(&adapter->drv_stats->oerrors);
--	rte_atomic64_init(&adapter->drv_stats->rx_nombuf);
--	adapter->drv_stats->rx_drops = 0;
-+	memset(adapter->drv_stats, 0, sizeof(struct ena_driver_stats));
- }
- 
- static int ena_stats_get(struct rte_eth_dev *dev,
-@@ -1289,9 +1280,9 @@ static int ena_stats_get(struct rte_eth_dev *dev,
- 
- 	/* Driver related stats */
- 	stats->imissed = adapter->drv_stats->rx_drops;
--	stats->ierrors = rte_atomic64_read(&adapter->drv_stats->ierrors);
--	stats->oerrors = rte_atomic64_read(&adapter->drv_stats->oerrors);
--	stats->rx_nombuf = rte_atomic64_read(&adapter->drv_stats->rx_nombuf);
-+	stats->ierrors = adapter->drv_stats->ierrors;
-+	stats->oerrors = adapter->drv_stats->oerrors;
-+	stats->rx_nombuf = adapter->drv_stats->rx_nombuf;
- 
- 	/* Queue statistics */
- 	if (qstats) {
-@@ -1887,7 +1878,7 @@ static int ena_populate_rx_queue(struct ena_ring *rxq, unsigned int count)
- 	/* get resources for incoming packets */
- 	rc = rte_pktmbuf_alloc_bulk(rxq->mb_pool, mbufs, count);
- 	if (unlikely(rc < 0)) {
--		rte_atomic64_inc(&rxq->adapter->drv_stats->rx_nombuf);
-+		++rxq->adapter->drv_stats->rx_nombuf;
- 		++rxq->rx_stats.mbuf_alloc_fail;
- 		PMD_RX_LOG_LINE(DEBUG, "There are not enough free buffers");
- 		return 0;
-@@ -3014,7 +3005,7 @@ static uint16_t eth_ena_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
- 
- 		if (unlikely(mbuf->ol_flags &
- 				(RTE_MBUF_F_RX_IP_CKSUM_BAD | RTE_MBUF_F_RX_L4_CKSUM_BAD)))
--			rte_atomic64_inc(&rx_ring->adapter->drv_stats->ierrors);
-+			++rx_ring->adapter->drv_stats->ierrors;
- 
- 		rx_pkts[completed] = mbuf;
- 		rx_ring->rx_stats.bytes += mbuf->pkt_len;
-diff --git a/drivers/net/ena/ena_ethdev.h b/drivers/net/ena/ena_ethdev.h
-index 3a66d79384..b204b07767 100644
---- a/drivers/net/ena/ena_ethdev.h
-+++ b/drivers/net/ena/ena_ethdev.h
-@@ -6,7 +6,6 @@
- #ifndef _ENA_ETHDEV_H_
- #define _ENA_ETHDEV_H_
+ #include <rte_debug.h>
+-#include <rte_atomic.h>
++#include <rte_stdatomic.h>
+ #include <ethdev_driver.h>
+ #include <rte_malloc.h>
+ #include <rte_flow.h>
+@@ -440,14 +440,13 @@ fs_rx_queue_setup(struct rte_eth_dev *dev,
+ 	}
+ 	rxq = rte_zmalloc(NULL,
+ 			  sizeof(*rxq) +
+-			  sizeof(rte_atomic64_t) * PRIV(dev)->subs_tail,
++			  sizeof(*rxq->refcnt) * PRIV(dev)->subs_tail,
+ 			  RTE_CACHE_LINE_SIZE);
+ 	if (rxq == NULL) {
+ 		fs_unlock(dev, 0);
+ 		return -ENOMEM;
+ 	}
+-	FOREACH_SUBDEV(sdev, i, dev)
+-		rte_atomic64_init(&rxq->refcnt[i]);
++
+ 	rxq->qid = rx_queue_id;
+ 	rxq->socket_id = socket_id;
+ 	rxq->info.mp = mb_pool;
+@@ -617,14 +616,13 @@ fs_tx_queue_setup(struct rte_eth_dev *dev,
+ 	}
+ 	txq = rte_zmalloc("ethdev TX queue",
+ 			  sizeof(*txq) +
+-			  sizeof(rte_atomic64_t) * PRIV(dev)->subs_tail,
++			  sizeof(uint64_t) * PRIV(dev)->subs_tail,
+ 			  RTE_CACHE_LINE_SIZE);
+ 	if (txq == NULL) {
+ 		fs_unlock(dev, 0);
+ 		return -ENOMEM;
+ 	}
+-	FOREACH_SUBDEV(sdev, i, dev)
+-		rte_atomic64_init(&txq->refcnt[i]);
++
+ 	txq->qid = tx_queue_id;
+ 	txq->socket_id = socket_id;
+ 	txq->info.conf = *tx_conf;
+diff --git a/drivers/net/failsafe/failsafe_private.h b/drivers/net/failsafe/failsafe_private.h
+index babea6016e..aae091e792 100644
+--- a/drivers/net/failsafe/failsafe_private.h
++++ b/drivers/net/failsafe/failsafe_private.h
+@@ -10,7 +10,7 @@
+ #include <sys/queue.h>
+ #include <pthread.h>
  
 -#include <rte_atomic.h>
- #include <rte_ether.h>
++#include <rte_stdatomic.h>
+ #include <dev_driver.h>
  #include <ethdev_driver.h>
- #include <ethdev_pci.h>
-@@ -225,9 +224,9 @@ enum ena_adapter_state {
+ #include <rte_devargs.h>
+@@ -75,7 +75,7 @@ struct rxq {
+ 	int event_fd;
+ 	unsigned int enable_events:1;
+ 	struct rte_eth_rxq_info info;
+-	rte_atomic64_t refcnt[];
++	RTE_ATOMIC(uint64_t) refcnt[];
  };
  
- struct ena_driver_stats {
--	rte_atomic64_t ierrors;
--	rte_atomic64_t oerrors;
--	rte_atomic64_t rx_nombuf;
-+	u64 ierrors;
-+	u64 oerrors;
-+	u64 rx_nombuf;
- 	u64 rx_drops;
+ struct txq {
+@@ -83,7 +83,7 @@ struct txq {
+ 	uint16_t qid;
+ 	unsigned int socket_id;
+ 	struct rte_eth_txq_info info;
+-	rte_atomic64_t refcnt[];
++	RTE_ATOMIC(uint64_t) refcnt[];
  };
  
+ struct rte_flow {
+@@ -320,33 +320,36 @@ extern int failsafe_mac_from_arg;
+  */
+ 
+ /**
+- * a: (rte_atomic64_t)
++ * a: RTE_ATOMIC(uint64_t)
+  */
+ #define FS_ATOMIC_P(a) \
+-	rte_atomic64_set(&(a), 1)
++	rte_atomic_exchange_explicit(&(a), 1, rte_memory_order_acquire)
+ 
+ /**
+- * a: (rte_atomic64_t)
++ * a: RTE_ATOMIC(uint64_t)
+  */
+ #define FS_ATOMIC_V(a) \
+-	rte_atomic64_set(&(a), 0)
++	rte_atomic_store_explicit(&(a), 0, rte_memory_order_release)
+ 
+ /**
+  * s: (struct sub_device *)
+  * i: uint16_t qid
+  */
+ #define FS_ATOMIC_RX(s, i) \
+-	rte_atomic64_read( \
+-	 &((struct rxq *) \
+-	 (fs_dev(s)->data->rx_queues[i]))->refcnt[(s)->sid])
++	rte_atomic_load_explicit( \
++		&((struct rxq *) \
++		  (fs_dev(s)->data->rx_queues[i]))->refcnt[(s)->sid], \
++		rte_memory_order_seq_cst)
++
+ /**
+  * s: (struct sub_device *)
+  * i: uint16_t qid
+  */
+ #define FS_ATOMIC_TX(s, i) \
+-	rte_atomic64_read( \
+-	 &((struct txq *) \
+-	 (fs_dev(s)->data->tx_queues[i]))->refcnt[(s)->sid])
++	rte_atomic_load_explicit( \
++		&((struct txq *) \
++		  (fs_dev(s)->data->tx_queues[i]))->refcnt[(s)->sid], \
++		rte_memory_order_seq_cst)
+ 
+ #ifdef RTE_EXEC_ENV_FREEBSD
+ #define FS_THREADID_TYPE void*
+diff --git a/drivers/net/failsafe/failsafe_rxtx.c b/drivers/net/failsafe/failsafe_rxtx.c
+index fe67293299..500483bda3 100644
+--- a/drivers/net/failsafe/failsafe_rxtx.c
++++ b/drivers/net/failsafe/failsafe_rxtx.c
+@@ -3,7 +3,7 @@
+  * Copyright 2017 Mellanox Technologies, Ltd
+  */
+ 
+-#include <rte_atomic.h>
++#include <rte_stdatomic.h>
+ #include <rte_debug.h>
+ #include <rte_mbuf.h>
+ #include <ethdev_driver.h>
 -- 
 2.53.0
 
