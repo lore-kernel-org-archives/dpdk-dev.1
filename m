@@ -2,58 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 002FEC982C1
-	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Sep 2026 07:50:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D5A2C982C1
+	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Sep 2026 07:50:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5CD6642DC1;
-	Thu, 17 Sep 2026 09:50:02 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 43C1E42DE9;
+	Thu, 17 Sep 2026 09:50:03 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 5298942799
- for <dev@dpdk.org>; Thu, 17 Sep 2026 09:49:59 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id B4D58427D5
+ for <dev@dpdk.org>; Thu, 17 Sep 2026 09:50:00 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1789631398;
+ s=mimecast20190719; t=1789631400;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=CSRqhlFmxFiFpslGeybjQTEJCmBsidJV4Of+C8Fvm98=;
- b=jVf2vapXykOSnESdZZeP++2Aaq09XQyAEUPaGhLwxVHqNGVqsxb33jdIRp5VxIMQJNre5L
- 5PFvXAmO0FcXuGsG1LOJ6qXEUMgiMnUtd4cuPZY/DTp4zkZ3LVtXvIVocUZZLhZUuWHdaf
- 1+7udZsZ4X/4SS0du7jssZYQgKwhdwo=
+ bh=72WOYR4gppb3ZjXoB/pr0++pQD84ksyCCeSKljZnn4s=;
+ b=Pj88OwBo5tq5+UPHNn11T3bOGRFeFuPMcHz7DN5vNB4TwoOzAcJwXRA5ITViENthg6wCLs
+ fzceZSxZ+gfhOVnSJzOdyUrV6XljYDUGLmHM1oPBDfdR8JFUpTxCAs08FhfC1RRQWVqS16
+ Ns70YOGRfj16xGxCX7cqD81DpCtlCXM=
 Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-97-AhiPDkb1O2OdQ_3VJyuU9A-1; Thu,
- 17 Sep 2026 03:49:55 -0400
-X-MC-Unique: AhiPDkb1O2OdQ_3VJyuU9A-1
-X-Mimecast-MFC-AGG-ID: AhiPDkb1O2OdQ_3VJyuU9A_1789631394
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-283-ZmGNiPd9M7GHNDqxAzYtGw-1; Thu,
+ 17 Sep 2026 03:49:58 -0400
+X-MC-Unique: ZmGNiPd9M7GHNDqxAzYtGw-1
+X-Mimecast-MFC-AGG-ID: ZmGNiPd9M7GHNDqxAzYtGw_1789631397
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
  by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 06CA51953952; Thu, 17 Sep 2026 07:49:54 +0000 (UTC)
+ id 98FF419539BD; Thu, 17 Sep 2026 07:49:57 +0000 (UTC)
 Received: from dmarchan.redhat.corp
  (headnet03.pony-001.prod.iad2.dc.redhat.com [10.2.32.114])
  by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id D2480180036E; Thu, 17 Sep 2026 07:49:52 +0000 (UTC)
+ id 66071180049F; Thu, 17 Sep 2026 07:49:56 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: hemant.agrawal@nxp.com,
 	dev@dpdk.org
 Cc: Sachin Saxena <sachin.saxena@nxp.com>,
-	Jun Yang <jun.yang@nxp.com>
-Subject: [RFC v2 08/16] bus/fslmc: fix some VFIO device FD and memory leaks
-Date: Thu, 17 Sep 2026 09:49:08 +0200
-Message-ID: <20260917074917.595603-9-david.marchand@redhat.com>
+	Rohit Raj <rohit.raj@nxp.com>
+Subject: [RFC v2 09/16] bus/fslmc: fix interrupt leak in DPIO cleanup
+Date: Thu, 17 Sep 2026 09:49:09 +0200
+Message-ID: <20260917074917.595603-10-david.marchand@redhat.com>
 In-Reply-To: <20260917074917.595603-1-david.marchand@redhat.com>
 References: <20260723135400.3621271-1-david.marchand@redhat.com>
  <20260917074917.595603-1-david.marchand@redhat.com>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: c9lRCMZe3utIxfOK-uV37CO08UHQ-DQdHgehLT9_sYw_1789631394
+X-Mimecast-MFC-PROC-ID: wuJVwmiuz-tWQ2U21VI1Z6ZEqtHF5G0Epjsa3Bttc30_1789631397
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -70,114 +70,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In case VFIO_DEVICE_GET_INFO fails, the vfio_dev_fd was leaked.
-In a similar way, failing to add this device FD in the group list would
-result in leaking the FD.
+The interrupt handle in the DPIO device is separate from the bus device
+object handle. The cleanup code was leaking this handle.
 
-When uninitialising a device or doing a bus cleanup, the per device VFIO
-FD and the associated memory used for tracking it were leaked.
-
-Fixes: 57cb02edf122 ("bus/fslmc: enhance MC VFIO multi-process support")
+Fixes: 274fd921ff7f ("bus/fslmc: support close operation")
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- drivers/bus/fslmc/fslmc_vfio.c | 45 ++++++++++++++++++++++------------
- 1 file changed, 30 insertions(+), 15 deletions(-)
+ drivers/bus/fslmc/portal/dpaa2_hw_dpio.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/bus/fslmc/fslmc_vfio.c b/drivers/bus/fslmc/fslmc_vfio.c
-index 6e0b35f391..705f5aeffc 100644
---- a/drivers/bus/fslmc/fslmc_vfio.c
-+++ b/drivers/bus/fslmc/fslmc_vfio.c
-@@ -205,13 +205,17 @@ static int
- fslmc_vfio_clear_group(int vfio_group_fd)
- {
- 	struct fslmc_vfio_group *group;
--	struct fslmc_vfio_device *dev;
- 	int clear = 0;
- 
- 	LIST_FOREACH(group, &s_vfio_container.groups, next) {
- 		if (group->fd == vfio_group_fd) {
--			LIST_FOREACH(dev, &group->vfio_devices, next)
-+			while (!LIST_EMPTY(&group->vfio_devices)) {
-+				struct fslmc_vfio_device *dev = LIST_FIRST(&group->vfio_devices);
-+
-+				close(dev->fd);
- 				LIST_REMOVE(dev, next);
-+				rte_free(dev);
-+			}
- 
- 			close(vfio_group_fd);
- 			LIST_REMOVE(group, next);
-@@ -311,6 +315,8 @@ fslmc_vfio_group_add_dev(int vfio_group_fd,
- 		if (group->fd == vfio_group_fd) {
- 			dev = rte_zmalloc(NULL,
- 				sizeof(struct fslmc_vfio_device), 0);
-+			if (dev == NULL)
-+				return -ENOMEM;
- 			dev->fd = dev_fd;
- 			rte_strscpy(dev->dev_name, name, sizeof(dev->dev_name));
- 			LIST_INSERT_HEAD(&group->vfio_devices, dev, next);
-@@ -326,26 +332,25 @@ fslmc_vfio_group_remove_dev(int vfio_group_fd,
- {
- 	struct fslmc_vfio_group *group = NULL;
- 	struct fslmc_vfio_device *dev;
--	int removed = 0;
- 
- 	LIST_FOREACH(group, &s_vfio_container.groups, next) {
- 		if (group->fd == vfio_group_fd)
- 			break;
- 	}
- 
--	if (group) {
--		LIST_FOREACH(dev, &group->vfio_devices, next) {
--			if (!strcmp(dev->dev_name, name)) {
--				LIST_REMOVE(dev, next);
--				removed = 1;
--				break;
--			}
-+	if (group == NULL)
-+		goto err;
-+
-+	LIST_FOREACH(dev, &group->vfio_devices, next) {
-+		if (strcmp(dev->dev_name, name) == 0) {
-+			close(dev->fd);
-+			LIST_REMOVE(dev, next);
-+			rte_free(dev);
-+			return 0;
+diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
+index e17050b625..71996b2b38 100644
+--- a/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
++++ b/drivers/bus/fslmc/portal/dpaa2_hw_dpio.c
+@@ -470,6 +470,7 @@ dpaa2_close_dpio_device(int object_id)
+ 			rte_free(dpio_dev->dpio);
  		}
+ 		TAILQ_REMOVE(&dpio_dev_list, dpio_dev, next);
++		rte_intr_instance_free(dpio_dev->intr_handle);
+ 		rte_free(dpio_dev);
  	}
- 
--	if (removed)
--		return 0;
--
-+err:
- 	return -ENODEV;
  }
- 
-@@ -1240,11 +1245,21 @@ fslmc_vfio_setup_device(const char *dev_addr,
- 	if (ret) {
- 		DPAA2_BUS_ERR("%s cannot get device info err(%d)(%s)",
- 			dev_addr, errno, strerror(errno));
-+		close(*vfio_dev_fd);
-+		*vfio_dev_fd = -1;
- 		return ret;
- 	}
- 
--	return fslmc_vfio_group_add_dev(vfio_group_fd, *vfio_dev_fd,
--			dev_addr);
-+	ret = fslmc_vfio_group_add_dev(vfio_group_fd, *vfio_dev_fd, dev_addr);
-+	if (ret) {
-+		DPAA2_BUS_ERR("%s cannot add device in group err(%d)(%s)",
-+			dev_addr, ret, strerror(-ret));
-+		close(*vfio_dev_fd);
-+		*vfio_dev_fd = -1;
-+		return ret;
-+	}
-+
-+	return 0;
- }
- 
- static intptr_t vfio_map_mcp_obj(const char *mcp_obj)
 -- 
 2.54.0
 
