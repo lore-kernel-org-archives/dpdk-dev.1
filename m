@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DBDC982D8
-	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Sep 2026 14:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECDF5C982D6
+	for <dpdk-dev@archiver.kernel.org>; Thu, 17 Sep 2026 14:36:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D656B427B2;
-	Thu, 17 Sep 2026 16:36:32 +0200 (CEST)
-Received: from mail-ed2-f35.google.com (mail-ed2-f35.google.com
- [74.125.228.99]) by mails.dpdk.org (Postfix) with ESMTP id 5F4CE4278B
- for <dev@dpdk.org>; Thu, 17 Sep 2026 16:36:32 +0200 (CEST)
-Received: by mail-ed2-f35.google.com with SMTP id
- 4fb4d7f45d1cf-6a64c7cdb46so1567272a12.3
- for <dev@dpdk.org>; Thu, 17 Sep 2026 07:36:32 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1759242E5D;
+	Thu, 17 Sep 2026 16:36:36 +0200 (CEST)
+Received: from mail-ed2-f12.google.com (mail-ed2-f12.google.com
+ [74.125.228.76]) by mails.dpdk.org (Postfix) with ESMTP id 90E3542DD0
+ for <dev@dpdk.org>; Thu, 17 Sep 2026 16:36:33 +0200 (CEST)
+Received: by mail-ed2-f12.google.com with SMTP id
+ 4fb4d7f45d1cf-6a98604f6b4so1466402a12.2
+ for <dev@dpdk.org>; Thu, 17 Sep 2026 07:36:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1789655792; x=1790260592; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1789655793; x=1790260593; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=gDapr9N/Uz7Zc4yKsn+q3gfAMF6lfGULMVoh/ISU5bQ=;
- b=re08UoiW01m860QbA2jNmp1gN/zK3ZNYCp0FHfDdyBtkCFc9W0Tn4sZ7SkkfAygvL3
- Fl14gUISOjVNtVK6GpcjaLsS/Dpv3XLhLcQTAYfIMuQPDJr3ZNCWkDnHRBkQAPQO0H2O
- gpgpJWj7wdS36nRM95NBEazsUfWeqohFnigPpMlWcf564WozoggRUt5bkapCc+0fRcm7
- rb29jeHUQLCd/3smEqBXH4ep2nQx2APmBSne0ktXVHggjyIaFMykeUYeYrDZa7T7KYP4
- 9LsweG3pCRl5jQLj8RCvuWJ8V7gY/OOtwa62jVpGraSB5+OCRD2l4Xy99JabmAL29j6P
- 1c1A==
+ bh=0rirXxHnXhmTxV5wTwzbAl8MVBX4+fwxzfzdMKPtgJE=;
+ b=QyjvLK2j7zYtNjx9NfPdqePA9ww0mUfoUCZUK1f7RsqC4i0jcUgzuwvaSZGBi5ySfg
+ 09OexCD3SRit7jaHLuaF6EOrYdUA5w3uy/qsSAXMif4N8thzuwKCIO9hp8Xgi2d06AB4
+ E8QVLjbK4qGMab3/V8nfEbnHGQxcepqVD8Gr2CzE4SLUh5yauo3QvjBmtBXTpb+v93AK
+ Jb9CeDJJ6eQcmCH4QIjFblfo+4Md110p8vBPpcB1AT/DELPozBuK0HCDdxd/swfIMCE4
+ xkPHZ5xXc16MW556zkxbLPMWrW1MoDvSMscwJOgjO5HSrtFrKkZG5RR7gtP1frt3tUu1
+ VDaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789655792; x=1790260592;
+ d=1e100.net; s=20260707; t=1789655793; x=1790260593;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=gDapr9N/Uz7Zc4yKsn+q3gfAMF6lfGULMVoh/ISU5bQ=;
- b=n/4FPX/sNZgA2PzrkiN8oPkD5kjLJszBUC+pTlohfj0qJvCWWdqyjC0JE91HKqlj1H
- F2z3ULvXQqDcs717lYDjvBhaASCaf544pfVNul3EXqL6eP3y5HDI70KhqH82ycVbRQ5O
- MQhg2h0mu37bZdDfI3Ovjmr9PzpWZBuYvqNZWes9Hq0t0mAZOTDq4ou4LCffQHHVSS/D
- uaTx8aDUEFsQtl1bpTJ1Q1Wi4zIFVnxb5oepz0rhdbQJvnAKJVb5NWl+etfw2sGyax+z
- 9uu1rlA14GUd0rjSzFTNZqKEg4qXKNu3oq0O/nHUGGDtWcFDhQCYl1EF7rO+kaHKsnSj
- sJ4g==
-X-Gm-Message-State: AFuF++kVIs2DP1nKyoT3eaBc5DOgfKA0l2yj/N7CcUuscEfKTOU4yZc+
- noVvRLGSVtcmm6pGiiIgXecLT5f3/gOh5eqqn///VowAW+GZV5z0vzL+0+kRbQuHlCg=
-X-Gm-Gg: AYBFou3dxJfTu6VPiYRcKTSul7u+8fS8xwrI17oSkpmBLI0+izITShNFfgTYa8kG5J/
- wh80rQaaol6DfTAZcTx3vf40dF+Nwk+9TTUbb1wJchyU1LR2ZtmN4FTEt7h4dMt/L9sibYc6uw0
- +/2DTScAgvBXCn3l2vXV9BzQX5t2na0FoeBXYb7ZY40rXrY7FHA3TlrPg6HSm/Zl2ULLtiz4mPV
- M5cUiWo0l5qMpY3H6VSDBVe4V1j0r51Ghb2BQTj3vz3rYDRE/V4xEi19Jaz10jDXfokWSPABAi+
- dzg+P6EhDwoCRjQftz1q956vz0OaQk9uwAmF7jFd3/4pmHxvArFknYlRcuKn8haXi+AwPWrulRH
- nyQhTkMpBkfAYMPYVYS0qm4Fd1tf0c6vmymRh8pdgKEKDzjpY727Cfwx/S74m0+Dqmhr8DfEMLi
- lcDEVNDTCD8BlT/tQkzg1vXIB0Y+IIXKuQH8NLtaOwv7vD6eWuXwdQJ2Ycl34=
-X-Received: by 2002:a05:6402:3205:b0:6a7:ea53:f61a with SMTP id
- 4fb4d7f45d1cf-6aa2240fa64mr5283211a12.25.1789655791577; 
- Thu, 17 Sep 2026 07:36:31 -0700 (PDT)
+ bh=0rirXxHnXhmTxV5wTwzbAl8MVBX4+fwxzfzdMKPtgJE=;
+ b=ftImbo1xQdMI4u9M62hNnJ5DsW5hasqZJaeQIeV0pCKk0QcX345Zvj1ZmQB83zcteP
+ UNbIbDm7BTr0yZQt7Jv0UdqybIKV4hAZjKWoiXglWv9Fi3bXLH+5FWHE6LeSfYgLcpbC
+ vZRLUT28IXA5pPP1hJ2lMXuuo64gZkIGtduM+dXRZ9sXaFl15XFwvFh/rXPtADqrxFDn
+ /1rLsBOn+3tqTezEjVwCeQeb46l1WvrL56Ns3RX7TUXY3qKx81BUqSTIG3pWC8rjbe91
+ k5WL3EP5yh1Pi1nDvw7AdrB/LJM+BO7dzYd7f1t7VK2d7AttjHdJKJBWS+oURZzYitW8
+ YzlQ==
+X-Gm-Message-State: AFuF++lfZcIQ7b2PnKBKYxI4Cn2qTA/fmCCshKhcFQ+bNXpjQ5nKForO
+ dXZFEczsdh5G+rIAucigMet752DmzOJqbkDq4OqR2+7MZNKuKKoG0zDk
+X-Gm-Gg: AYBFou2PHSO0vNCB9riT+9NyJO8KqyvKSF1uCC5MfFsyYeO1tmi6fcKFXGb1LR3Nrf3
+ VVvld5Y3V+uefGi/JPm0hIF2mwH6MHTg5P3Be+qWSx9FBKjmYh0skp1sWhu5FgmJE3n+A59nECc
+ ZiodmBK+21+ARfWhAsiPhNLLlD/+4vsgso9nV0vOKpIP5D1OCMZlruWqT+f3g+r/oHlI+AeH3Ji
+ Jf+hYG0MTT7u+OTv1ZaIVHaHaan8boHfe1EOvxq7fE/yQBQtqHAkZRSAP5uzMdn1z6WOPyeFNYd
+ 3Ky6GVTNqhsgztBJaQ26KniRtdvySxkw2AL5Wn09nLJApmrCAg0Go1bv4ozl/0IoP3FGNfTu6Vf
+ neuyFKY4E+mTmtWBeLRam/JpHz/r83z2Pf1RKFzc1w0Gh1V5FY25jTpN4Yb8ncMtJx1Uli7EjvC
+ oFAsAJh0v4kG9rLHJRtxS9OCtUxQRpk3cl+DZcJwVQTOpR0goceV3GIQpDbLU=
+X-Received: by 2002:a05:6402:a0c9:b0:6a9:b800:3347 with SMTP id
+ 4fb4d7f45d1cf-6aa2223bf49mr4797370a12.8.1789655793111; 
+ Thu, 17 Sep 2026 07:36:33 -0700 (PDT)
 Received: from dpdk.lxd ([89.101.57.120]) by smtp.gmail.com with ESMTPSA id
- 4fb4d7f45d1cf-6aa1d2727bfsm3440986a12.20.2026.09.17.07.36.30
+ 4fb4d7f45d1cf-6aa1d2727bfsm3440986a12.20.2026.09.17.07.36.32
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 17 Sep 2026 07:36:30 -0700 (PDT)
+ Thu, 17 Sep 2026 07:36:32 -0700 (PDT)
 From: Marat Khalili <qm2k21@gmail.com>
-To: 
-Cc: dev@dpdk.org, Marat Khalili <marat.khalili@huawei.com>,
- Stephen Hemminger <stephen@networkplumber.org>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+To: Konstantin Ananyev <konstantin.ananyev@huawei.com>,
  Marat Khalili <qm2k21@gmail.com>
-Subject: [PATCH v4 0/7] validate-bpf: add standalone validation debug tool
-Date: Thu, 17 Sep 2026 14:35:30 +0000
-Message-ID: <20260917143539.46951-1-qm2k21@gmail.com>
+Cc: dev@dpdk.org, Marat Khalili <marat.khalili@huawei.com>,
+ Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v4 1/7] bpf/validate: fix finished status on restart
+Date: Thu, 17 Sep 2026 14:35:31 +0000
+Message-ID: <20260917143539.46951-2-qm2k21@gmail.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260915192626.48125-1-marat.khalili@huawei.com>
+In-Reply-To: <20260917143539.46951-1-qm2k21@gmail.com>
 References: <20260915192626.48125-1-marat.khalili@huawei.com>
+ <20260917143539.46951-1-qm2k21@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -80,85 +80,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patchset introduces a new standalone tool for pre-validating eBPF
-programs and debugging validation problems. Its should allow developers
-to trace validator state changes per instruction and understand verifier
-decisions, simplifying the debugging of rejected programs before loading
-them into a real application context.
+From: Marat Khalili <marat.khalili@huawei.com>
 
-v4:
-* addressed reviewer feedback from Konstantin Ananyev:
-  * changed variable and array names to lowercase to follow conventions;
-  * replaced strtoull()/strtoumax() with strtoul() and removed redundant
-    SIZE_MAX checks;
-  * changed return types of point_infos_destroy_* functions to void;
-  * replaced %jd and (intmax_t) cast with PRId32 when printing frame
-    offsets;
-  * refactored the inverted loop in print_frame() for clarity;
-  * replaced return -ENOMEM with RTE_VERIFY() for allocations in debug.c
-    print functions;
-  * simplified token matching logic in parse_decl.c by using strncmp().
+If debug session is reused, requesting evaluation result while
+evaluation is still in progress would successfully return result from
+the previous evaluation instead of expected -EAGAIN error.
 
-v3:
-* addressed another FreeBSD issue (spurious uninitialized warning);
-* addressed more AI comments:
-  * fail if library fails to set step catchpoint on start command;
-  * fail nicer if external variables are too big;
-  * fail nicer if EAL initialization or cleanup fails;
-  * explain why 9 steps are expeced in the test;
-  * explain that non-zero buf_size marks mbuf;
-  * avoid symbols starting with `RTE_` in the app;
+Make evaluation start clear the finished status.
 
-v2:
-* for FreeBSD compatibility switched from Linux to DPDK network structs;
-* addressed small AI comments:
-  * clarified patch 1 commit message;
-  * renamed `rte_validate_bpf_logtype` to `validate_bpf_logtype`;
-  * corrected comment to an internal-use-only function to reflect that
-    next-after-last value of the program counter is no longer allowed;
+Fixes: 6b0da0602cc7 ("bpf/validate: introduce debugging interface")
 
-Marat Khalili (7):
-  bpf/validate: fix finished status on restart
-  bpf/validate: refactor internal step function
-  bpf/validate: formalize call back requirements
-  bpf/validate: add jump notification events
-  bpf/validate: add get current event API
-  app/test: add test for bpf validate debug events
-  app/validate-bpf: add BPF validation application
+Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
+---
+ lib/bpf/bpf_validate_debug.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- MAINTAINERS                            |    2 +
- app/meson.build                        |    1 +
- app/test/test_bpf_validate.c           |  344 +++++++-
- app/validate-bpf/alloc_list.c          |   53 ++
- app/validate-bpf/args.c                |  262 ++++++
- app/validate-bpf/debug.c               | 1087 ++++++++++++++++++++++++
- app/validate-bpf/debug_command.c       |  383 +++++++++
- app/validate-bpf/debug_command.h       |   65 ++
- app/validate-bpf/eal_init_args.c       |   57 ++
- app/validate-bpf/internal.h            |  151 ++++
- app/validate-bpf/main.c                |   90 ++
- app/validate-bpf/meson.build           |   13 +
- app/validate-bpf/parse_decl.c          |  616 ++++++++++++++
- doc/guides/rel_notes/release_26_11.rst |    5 +
- doc/guides/tools/index.rst             |    1 +
- doc/guides/tools/validate_bpf.rst      |   97 +++
- lib/bpf/bpf_validate.c                 |   49 +-
- lib/bpf/bpf_validate_debug.c           |   92 +-
- lib/bpf/bpf_validate_debug.h           |   12 +-
- lib/bpf/rte_bpf_validate_debug.h       |   42 +-
- 20 files changed, 3356 insertions(+), 66 deletions(-)
- create mode 100644 app/validate-bpf/alloc_list.c
- create mode 100644 app/validate-bpf/args.c
- create mode 100644 app/validate-bpf/debug.c
- create mode 100644 app/validate-bpf/debug_command.c
- create mode 100644 app/validate-bpf/debug_command.h
- create mode 100644 app/validate-bpf/eal_init_args.c
- create mode 100644 app/validate-bpf/internal.h
- create mode 100644 app/validate-bpf/main.c
- create mode 100644 app/validate-bpf/meson.build
- create mode 100644 app/validate-bpf/parse_decl.c
- create mode 100644 doc/guides/tools/validate_bpf.rst
-
+diff --git a/lib/bpf/bpf_validate_debug.c b/lib/bpf/bpf_validate_debug.c
+index 5d18804a74..9a03976632 100644
+--- a/lib/bpf/bpf_validate_debug.c
++++ b/lib/bpf/bpf_validate_debug.c
+@@ -568,6 +568,7 @@ __rte_bpf_validate_debug_evaluate_start(struct rte_bpf_validate_debug *debug,
+ 	debug->last_point = NULL;
+ 	debug->pc = 0;
+ 	debug->evaluate_started = true;
++	debug->evaluate_finished = false;
+ 
+ 	const int rc = debug_send_event(debug,
+ 		RTE_BPF_VALIDATE_DEBUG_EVENT_VALIDATION_START);
 -- 
 2.43.0
 
