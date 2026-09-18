@@ -2,154 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BEA3C982DA
-	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Sep 2026 14:00:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38D88C982DA
+	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Sep 2026 14:02:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0666A432DC;
-	Fri, 18 Sep 2026 16:00:04 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id 28DD340285
- for <dev@dpdk.org>; Fri, 18 Sep 2026 16:00:01 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6B57E432DC;
+	Fri, 18 Sep 2026 16:02:02 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+ by mails.dpdk.org (Postfix) with ESMTP id 0B8DE40285
+ for <dev@dpdk.org>; Fri, 18 Sep 2026 16:01:59 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1789740002; x=1821276002;
- h=message-id:date:subject:to:references:from:in-reply-to:
- content-transfer-encoding:mime-version;
- bh=vuqMi6fsUNHhcywxx7L/OvN8YfjoOoTRqeNA2rKau5w=;
- b=nsl105qVQj1xJStMaT0XKsicZneDp7waTOyai+9eJjDoi+vyObm8B05q
- /WIFjJ8fE6QuuOH5m5fGTnO+BuTJQb9ldXLdEC04EOyrhQE8JzNA1kgxx
- JAD0utp7i0Vii4hShVI7/GD1+DZlkW0RfOEfhDIiNQS0lzwQNq9/PJ82o
- tkToH8VolFPNB88LzF6Tir/Qa4v6s+4ujzSIkdP7Bv0qAWUgaXlMaBp2o
- j1SFc1vCAxjz+vDlceijFGrgxtplaG9sqo++d3rvQJHXSDrXJPaDRrhzI
- zw4oUlSmzuFxgXP7VJOM7HwMuoEvg9eAtfPz/0j0sv9bSlOIogYEcnq4Z A==;
-X-CSE-ConnectionGUID: enOn9DGOR6qqrsBoyh09zg==
-X-CSE-MsgGUID: fXutWLAIShOQLiPPrg4D7Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11908"; a="107750854"
-X-IronPort-AV: E=Sophos;i="6.27,109,1787036400"; d="scan'208";a="107750854"
-Received: from fmviesa013.fm.intel.com ([10.60.135.153])
- by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Sep 2026 06:59:39 -0700
-X-CSE-ConnectionGUID: rkfMRSjRRUGWIZwzRtE8sA==
-X-CSE-MsgGUID: UjV6I4znTqeMHSvI+SZmXQ==
+ t=1789740120; x=1821276120;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=hTRE4VU02KBuH1rl3xn8g3FguTrvrbggmLDrb/YccT4=;
+ b=mAxhBjuqyaZoweMNARmUP/NiI5Lb1SElPInxl5QQ3qjQkYVdEm22pnz7
+ ltN4djXBGORgI0NcSEhvOFAh8sD1b+G8BR2KRgP4DIWWlBGr3KhrEGdT4
+ 9S1zQhpiiw6XsUfcfWb9cvbpq9quZEr8QJVeFQi9UhPZ4sRG0x+waQ3Hb
+ TKOnbLUxyfEXAJ9DQ6KVFORY2Tn4PynWlSbVgqhn/IuoKONoA6r3YObdV
+ yULskpIFb5RtRSWIoB+/la5KLL6oxl7ZYBGEQFPF9npzNev+Cnbs4jgXs
+ h4z+eA/ZuArweCrpjHCDLM3G/5gNsuxuecfwQUwAvZNnc4DlSsCDVRYUg Q==;
+X-CSE-ConnectionGUID: l6CRg7PKRJW0phTLjGiyDQ==
+X-CSE-MsgGUID: 7vYgyKqOQd+u5+PCTfsRFA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11908"; a="100844899"
+X-IronPort-AV: E=Sophos;i="6.27,109,1787036400"; d="scan'208";a="100844899"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+ by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 18 Sep 2026 07:01:59 -0700
+X-CSE-ConnectionGUID: P7Ujka10TjeMVCoqnZ+UMg==
+X-CSE-MsgGUID: b2di405PSJm8kbdEtH1Wgw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,109,1787036400"; 
-   d="scan'208";a="2844669"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by fmviesa013.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Sep 2026 06:59:40 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Fri, 18 Sep 2026 06:59:39 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46 via Frontend Transport; Fri, 18 Sep 2026 06:59:39 -0700
-Received: from SA9PR02CU001.outbound.protection.outlook.com (40.93.196.54) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Fri, 18 Sep 2026 06:59:38 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=suvFLyuTlY+NZ+P41VfW5hoQSp+uK3mKWHGVEN4DnFG8hPBf3w+whrofkXFA/HHSXxSVuPrqeuMfnC0fgEWMuNCHaUqSsDc22B+19bd8wHFJHm9DZlWzCQrCJv1Brw5HkIIA/bQTf2ZuImurj52jN3ayVgAfTBt4W6oFbNvZ2tcYhtLWrtjy5+C6/AlDSrIsEsxs1mDFK4ruej7z79VI1IRlffAC9pdi4FNL8UbHW4wFGuwaL+icAOawx+f/pR9zcduhsq6AbMv2NwR7+vKOPjSSeWClQ8iQ/Q3dbB1KbWY7FgMuXkcRv7SUYIlz1qcy9ue3R8eA8Qo5J395++JjYw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vuqMi6fsUNHhcywxx7L/OvN8YfjoOoTRqeNA2rKau5w=;
- b=mYZnYfkfgQYICsOCOc0fp8rvOTOMxH55BGpNvmbEzCNm0tw2tD4Woqx/X9N7tDjqkrTsFyHYYLWVeuS2DTat3KoLfc443itHkyPVviw8RW1R0elMvQXTgP0aUZZTfAaZqnwEMz2IoMo01zH8QS15PueYa/M6mrixhqFdpnqouIxWW9gd0MJ4KvFWrM/c2iNjaO6vkiJb9P00LVBlkaJQrV3bJ7fbOWq3EmHEtHkrvtA9nGyJDKeJovOG6r5cSQm7c2Yr0V/uwLKDF1D4qaz0wMb7tSCpQ6XcqZcoZ9gppgp7qZ0tz4ysOTnKknKNzPOog3mJJKn03M8oNMKZD832Yw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM8PR11MB5653.namprd11.prod.outlook.com (2603:10b6:8:25::8) by
- SABPR11MB9940.namprd11.prod.outlook.com (2603:10b6:806:4ee::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.13; Fri, 18 Sep
- 2026 13:59:37 +0000
-Received: from DM8PR11MB5653.namprd11.prod.outlook.com
- ([fe80::74e3:c0eb:29ee:fffa]) by DM8PR11MB5653.namprd11.prod.outlook.com
- ([fe80::74e3:c0eb:29ee:fffa%3]) with mapi id 15.21.0428.011; Fri, 18 Sep 2026
- 13:59:37 +0000
-Message-ID: <c0085431-fed9-400d-844f-02fb0d8bc363@intel.com>
-Date: Fri, 18 Sep 2026 14:59:33 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] net/iavf: fix resource leak on IPsec init fail
-To: Anatoly Burakov <anatoly.burakov@intel.com>, <dev@dpdk.org>, "Vladimir
- Medvedkin" <vladimir.medvedkin@intel.com>, Qiming Chen
- <chenqiming_huawei@163.com>, Qi Zhang <qi.z.zhang@intel.com>
-References: <049b6e36e7303a5f5c9ce96a3bcb116fc8c25af6.1789461413.git.anatoly.burakov@intel.com>
-Content-Language: en-US
-From: Radu Nicolau <radu.nicolau@intel.com>
-In-Reply-To: <049b6e36e7303a5f5c9ce96a3bcb116fc8c25af6.1789461413.git.anatoly.burakov@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DU7P194CA0025.EURP194.PROD.OUTLOOK.COM
- (2603:10a6:10:553::20) To DM8PR11MB5653.namprd11.prod.outlook.com
- (2603:10b6:8:25::8)
+X-IronPort-AV: E=Sophos;i="6.27,109,1787036400"; d="scan'208";a="276379658"
+Received: from unknown (HELO PAE-31.iind.intel.com) ([10.49.105.104])
+ by fmviesa004.fm.intel.com with ESMTP; 18 Sep 2026 07:01:57 -0700
+From: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
+To: dev@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>,
+ Sandeep Penigalapati <sandeep.penigalapati@intel.com>
+Subject: [PATCH] net/ice: support Rx timestamp offload on vector path
+Date: Fri, 18 Sep 2026 17:03:52 -0400
+Message-Id: <20260918210352.303512-1-sandeep.penigalapati@intel.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM8PR11MB5653:EE_|SABPR11MB9940:EE_
-X-MS-Office365-Filtering-Correlation-Id: ab474687-4cb1-43c3-a347-08df158d1362
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|366016|1800799024|376014|23010399003|56012099006|11063799006|6133799003|10067099003|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info: aC8r4//mUzSCqoZCnbVrZTSIvU93KKZc00k+53nXzqOR6wIn/8w5pdyWOulXNf6oAZDMkQr25VaFwuxhAQQb/8hju6unHx74v8fsVUDob3/+4JgTbYY5MVNsLP3o8MB+yS6JgkX0ncZeUY9DMVgvlQZ8iWhO9iL/KAD5v3Vh29TZlepXeWbZJ7OC1nkrYKQs2P6PC6uEOatO7Da98gOG8shWs0qvG5v+9WXdvD/FTLfNV0FWAkMhrGB9b8cVNCn8L4q4lfKj2vUoQmI4+xzyjdVma9QEQUxTMbz4PuCOXZSw/vcwsbi67swa7tUhItBF2Sv6Zi8xgm++HAbr9dDkN+Mw181S3OHqh0KlUn7F+NATFKIA6yr2NitC72IBSN0ONv6YhibBdzTkqqBDwQYRvA7zOFA0q9nOLA9lEs5Va5unFDEOqHxCIAqsEH5HLtEoYYOo0y4QuNlFtSeBZAXZVzpvGAaAU9AQT3JH2TFlJ5SKYDFmB3CECldm0ITYcwzMBdQm85tqolVGEAGeEJHEYBVp5tVnp5vv9he24221pknqTUaIMiFiepNqVDDBLeMn9WzjqV74J2K5Hz3SN4TiZIsKAdPsRkvOwHW2nARBBnfzP56NII922BB2ZsqdsXeYv+XaSqGcb6vcWl6tJp/J/jtgfPdRAaq0tL0z6skAT44=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DM8PR11MB5653.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014)(23010399003)(56012099006)(11063799006)(6133799003)(10067099003)(18002099003)(22082099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?c084bVNpN0J3aEwvTGNJcWVTTDBLQUdPQWVFekV1RVlmSW8vSmtkOFlGN2dC?=
- =?utf-8?B?b3hiRUpQbUZrUXZmUVBXa2xsUFFURTNoZGVmUUJwcmcvbENCcXVSQzY3ZzhL?=
- =?utf-8?B?UEhZY25UWU9MU21mWmRKVW5tNVJvaUZtL1lUVFRxQWdFZlAxTzNjcG9odkZ3?=
- =?utf-8?B?anB0TVhVMUQ1dG85MEpiZ0RVZjlDOWdycHBGRWFVQ21kZnBhM09RaWRRVGZT?=
- =?utf-8?B?TWIraEVKRzh4K3BUYzBUZ0dyNVQ0cDFmMDRjcHBPRkRxSFVhQUhwRmNQTDc4?=
- =?utf-8?B?aFJsaEV4RlE5eVIzbUlCT2V0Mlh5VGJxalU4R0JUeXJhdXJoZURia1l6eE5W?=
- =?utf-8?B?cTJKQkhMYTBiTTVCMGIxUWxKQmpTQXZvZVpoUnBEaDdabWtoQ1lmNTQ5MS9q?=
- =?utf-8?B?K0JKUUFSc2xQWkRYSVVLZ0o4N3NPelNyUkFCbDNWaTVEN012K1UybW1PVGdN?=
- =?utf-8?B?SVVseVZKY2FSVVRoT2ZySUh3aVFXZWF5YW1YQ2wvRVVHR0hXM0pjeTlvejhI?=
- =?utf-8?B?VG1aODl6cnE1aTVqOWJteFBjZGcrZVZuNVpoNkpoaDhpa3lZOVNOb3kzUmNV?=
- =?utf-8?B?WTlZbkJUY1pMQnR5UWcyRDFKelZhWnB3eVkxY1lvUnNMWHprbTM2NDNvR1kx?=
- =?utf-8?B?SnIyZkF0Yy8rcEVSOHdRczN1NDZ5emZUYkNTRU56Unl5MFdXUHhqekVZYmZ0?=
- =?utf-8?B?QmkxSlJWUkw4RkloYytndVFqTks4NUZlYW01cllFUjVmdkJpQ3BoOXJCcmxh?=
- =?utf-8?B?RVM3YURkNTE3UmxhNkVqa2dlR0RHbUNtMzBuOXUweGdFaDlNNmRFNDNtUW1s?=
- =?utf-8?B?dXA3NmpiVTd6dDk2MGE4dXFnWW82OHkwRTZ4R1NXQUMyaEJ0ZHZlZkZ0eHJK?=
- =?utf-8?B?b3ZOVW9ucE0xU2hpckw0NlJrUmVudXcxeWVhZWFELzdVVzRFOXdwUWcveFp3?=
- =?utf-8?B?NDJYWFkrNHBVN1dKR1ZocnFkbW5wS00vUC81TjV0V01WRkM1MjJQM3NKYU4w?=
- =?utf-8?B?NW5ud3V4RXo0NWdpeER0dU9NNFlqdzYyTE1xOWhXOGRuUjNNZjUyUUVZRENI?=
- =?utf-8?B?NVRMYmd3LzB2ZFlRYldSNmRld044ay9sVFYxQTBpQUh3Z1dXTElOcGZMRnYw?=
- =?utf-8?B?SXhtT0dyRlYwajI2U2NuQmUrKzZCUzR6czkrejZVaVF1Yk4zM2QrQXNVMDZP?=
- =?utf-8?B?aTdOUlBtcmpsc0RET3Z0U3dJWWtPYmFvUVFmdE00NFBucmJoNVM4RnRobStB?=
- =?utf-8?B?ZWcwQzJXQTlXVkt0amY5akswemZUdCtPSUs0cmtaSUd3TzFHeEFyUk93ckh4?=
- =?utf-8?B?WTJQamQvcXBUaTRWN0tXS1daMHRrZUVOMlF3N21GTk9oelBCNlg2SFJRUll4?=
- =?utf-8?B?MW0rRmxQaFdLeDNpemVndFRjc1FhSUNuMnhIY0pLZFEvVDFpMkNla08zWGc4?=
- =?utf-8?B?dE5WeUtlVmxuNXhqQ0VQVmI3Unh2Y0VMeU90azNPbHpEY0Z3TW5GUnhkQmF2?=
- =?utf-8?B?OHlrYmRVZk1vNFNLYTVqcmFNOG1UdTVqZllNS2dOb1ovWURVWSttamd2Qm15?=
- =?utf-8?B?eTBCYkZYZThXNUxrVnF2RnNQQ1d6NHpaM3RlcjNQdkpQTm9RQTAwTmU1Z21O?=
- =?utf-8?B?RWNvSW81V3djd2JDVDdMc0tYV09hanFDelRuWHhxNCs5cm15ditWSlZnVjVo?=
- =?utf-8?B?OEtJdVdFL0JFSnY2a0Mrbk1FTFM0NHlBZEVJWEVFc0FDUHVvWGJFMXlaUktE?=
- =?utf-8?B?WkdPc2tMTzdvdjd3WUo4SmhVMEZDWkJ5SXVoak5JNmlnbUdYS0pSbnhTbzhX?=
- =?utf-8?B?cElwVzJrTEExMzd6VEx2ZUtTUnZ5VzRhTDhHYW1uZ1VsdEt3OS9yR0E1dExU?=
- =?utf-8?B?dDZNVFZwcmNvbC92eUpJVG1BcmNnaDVvSXo1ck5jZGJEN1RhODF5d293b1d0?=
- =?utf-8?B?TzhYbHBDZ2lYSVR5d3VKakIwbjJIRU43U0kxeTdSMVRUWWI2eEtsRkJLSXJ5?=
- =?utf-8?B?ZlRjZllZRlJEdVhON1VXU1lTcFZ5azhZVC9TSkVmalcxQ2Y4bDM5UGJwS1A0?=
- =?utf-8?B?dCt6YlFIamRhemlQU0RZcjBFdFRvN3IybDBCanF2a2dzaTNBRXVBNWdFcExV?=
- =?utf-8?B?VHZsZ2g2K3RuZHE4MndGaW4rZ2dta3ZaNytleEpTbUd2cTdGaHNmcktsWjh0?=
- =?utf-8?B?M2xTU0pQQmlxd2paU0NvZDVUV0NQVklJWDhqWW5tc1A4S0U0U1k3YVdPbkw4?=
- =?utf-8?B?RFFKbHo5U3lxRjdObndxYVpjaXdHelBWNDlHTUZaT0EzVTBqUzJEZ0pkc3V6?=
- =?utf-8?B?ZmpKbTJFV0VnTFJKbjdyVWFiMjNiVzExZnM5VTFtYlRIc1lXTEFHZz09?=
-X-Exchange-RoutingPolicyChecked: Y2CsQIqcG1Oq9YueqQzWIJA4qzJE9kG5H2E7AVrZARqQkWD+b2clUoZG7tmQXu9YW72mMcBkavGraqcUgBFR6kMW6jN4A/OBg/d1/0KEAGrqnXltHing/iNqDBBvHFJhLNxkwOh/tJqSDvAR22lpsVPwaxHG0cI6x3sWpIa/8NKuJqnEA0voLw4Map990bloC9aoCNCDi4JbRuYkRAWbIRzKAZOFZnFyRCvrj3JNDZJfA0Ww6bbO8T4BkLa0rpPvjneJwpttd563XC6HE2eaW+HUCGG1OCQuWbB/ump+/pIEAXsCUXweM/Sg1HC9YYLfK0wUnLnY7STeo7p9EJNbvg==
-X-MS-Exchange-CrossTenant-Network-Message-Id: ab474687-4cb1-43c3-a347-08df158d1362
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR11MB5653.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2026 13:59:37.2211 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yboZK5EpPoWEEd/FbbvTgaFw+wAgEP2fDxcYEl4o2SqJDGAEOltfkAs/x4gBdw4ck5nMNNU9iYfF/A+h4E/iDg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SABPR11MB9940
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -163,19 +58,502 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+The ice PMD only supported Rx hardware timestamp offload
+(RTE_ETH_RX_OFFLOAD_TIMESTAMP) on the scalar Rx path. Enabling the
+offload forced a fallback from the AVX2/AVX512 vector Rx paths to the
+scalar path, causing a significant performance drop on 800 series
+adapters.
 
-On 15-Sep-26 9:37 AM, Anatoly Burakov wrote:
-> Currently, during `dev_init`, we try to create a security context. At that
-> point we have already initialized the rte_flow engines, so any subsequent
-> failures must trigger flow engines uninit. However, if we fail to create a
-> security context (or if its initialization fails), we do not uninit the
-> rte_flow engines. Fix the code to do so on failure.
->
-> Fixes: 45570d7e4439 ("net/iavf: fix resource leak on probing failure")
-> Cc: chenqiming_huawei@163.com
-> Cc: stable@dpdk.org
->
-> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-> ---
->
-Acked-by: Radu Nicolau <radu.nicolau@intel.com>
+Add Rx timestamp support to the AVX2 and AVX512 vector Rx paths,
+mirroring the existing iavf implementation: the 32-bit timestamp is
+read from the flex descriptor in the vectorized loop and converted to
+64 bits, with register rollover tracking, in a scalar pass over the
+received packets after the loop.
+
+Advertise the timestamp offload only on the x86 vector paths that
+implement it, via a new ICE_RX_VECTOR_OFFLOAD_TS_OFFLOADS mask, so on
+Arm the request still falls back to the scalar path.
+
+Signed-off-by: Sandeep Penigalapati <sandeep.penigalapati@intel.com>
+---
+ doc/guides/nics/features/ice.ini            |   2 +-
+ doc/guides/rel_notes/release_26_11.rst      |   5 +
+ drivers/net/intel/ice/ice_rxtx.c            |   8 +-
+ drivers/net/intel/ice/ice_rxtx.h            |   4 +
+ drivers/net/intel/ice/ice_rxtx_vec_avx2.c   | 158 +++++++++++++++-----
+ drivers/net/intel/ice/ice_rxtx_vec_avx512.c | 158 +++++++++++++++-----
+ 6 files changed, 262 insertions(+), 73 deletions(-)
+
+diff --git a/doc/guides/nics/features/ice.ini b/doc/guides/nics/features/ice.ini
+index 893d09e9ec..0ff4af19e0 100644
+--- a/doc/guides/nics/features/ice.ini
++++ b/doc/guides/nics/features/ice.ini
+@@ -36,7 +36,7 @@ VLAN offload         = Y
+ QinQ offload         = P
+ L3 checksum offload  = Y
+ L4 checksum offload  = Y
+-Timestamp offload    = P
++Timestamp offload    = Y
+ Inner L3 checksum    = P
+ Inner L4 checksum    = P
+ Packet type parsing  = Y
+diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
+index 4b3e5d995c..bc5faa5182 100644
+--- a/doc/guides/rel_notes/release_26_11.rst
++++ b/doc/guides/rel_notes/release_26_11.rst
+@@ -56,6 +56,11 @@ New Features
+      =======================================================
+ 
+ 
++* **Updated Intel ice driver.**
++
++  Added support for the Rx hardware timestamp offload
++  (``RTE_ETH_RX_OFFLOAD_TIMESTAMP``) in the AVX2 and AVX512 vector Rx paths.
++
+ Removed Items
+ -------------
+ 
+diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
+index c4b5454c53..2a81b998dc 100644
+--- a/drivers/net/intel/ice/ice_rxtx.c
++++ b/drivers/net/intel/ice/ice_rxtx.c
+@@ -3303,7 +3303,7 @@ static const struct ci_rx_path_info ice_rx_path_infos[] = {
+ 		.pkt_burst = ice_recv_pkts_vec_avx2_offload,
+ 		.info = "Offload Vector AVX2",
+ 		.features = {
+-			.rx_offloads = ICE_RX_VECTOR_OFFLOAD_OFFLOADS,
++			.rx_offloads = ICE_RX_VECTOR_OFFLOAD_TS_OFFLOADS,
+ 			.simd_width = RTE_VECT_SIMD_256,
+ 			.bulk_alloc = true
+ 		}
+@@ -3312,7 +3312,7 @@ static const struct ci_rx_path_info ice_rx_path_infos[] = {
+ 		.pkt_burst = ice_recv_scattered_pkts_vec_avx2_offload,
+ 		.info = "Offload Vector AVX2 Scattered",
+ 		.features = {
+-			.rx_offloads = ICE_RX_VECTOR_OFFLOAD_OFFLOADS,
++			.rx_offloads = ICE_RX_VECTOR_OFFLOAD_TS_OFFLOADS,
+ 			.simd_width = RTE_VECT_SIMD_256,
+ 			.scattered = true,
+ 			.bulk_alloc = true
+@@ -3342,7 +3342,7 @@ static const struct ci_rx_path_info ice_rx_path_infos[] = {
+ 		.pkt_burst = ice_recv_pkts_vec_avx512_offload,
+ 		.info = "Offload Vector AVX512",
+ 		.features = {
+-			.rx_offloads = ICE_RX_VECTOR_OFFLOAD_OFFLOADS,
++			.rx_offloads = ICE_RX_VECTOR_OFFLOAD_TS_OFFLOADS,
+ 			.simd_width = RTE_VECT_SIMD_512,
+ 			.bulk_alloc = true
+ 		}
+@@ -3351,7 +3351,7 @@ static const struct ci_rx_path_info ice_rx_path_infos[] = {
+ 		.pkt_burst = ice_recv_scattered_pkts_vec_avx512_offload,
+ 		.info = "Offload Vector AVX512 Scattered",
+ 		.features = {
+-			.rx_offloads = ICE_RX_VECTOR_OFFLOAD_OFFLOADS,
++			.rx_offloads = ICE_RX_VECTOR_OFFLOAD_TS_OFFLOADS,
+ 			.simd_width = RTE_VECT_SIMD_512,
+ 			.scattered = true,
+ 			.bulk_alloc = true
+diff --git a/drivers/net/intel/ice/ice_rxtx.h b/drivers/net/intel/ice/ice_rxtx.h
+index 999b6b30d6..1ac57c23a4 100644
+--- a/drivers/net/intel/ice/ice_rxtx.h
++++ b/drivers/net/intel/ice/ice_rxtx.h
+@@ -105,6 +105,10 @@
+ 		RTE_ETH_RX_OFFLOAD_VLAN_STRIP |	\
+ 		RTE_ETH_RX_OFFLOAD_VLAN_FILTER |\
+ 		RTE_ETH_RX_OFFLOAD_RSS_HASH)
++/* vector offload paths that also support Rx timestamp (AVX2/AVX512 only) */
++#define ICE_RX_VECTOR_OFFLOAD_TS_OFFLOADS (	\
++		ICE_RX_VECTOR_OFFLOAD_OFFLOADS |\
++		RTE_ETH_RX_OFFLOAD_TIMESTAMP)
+ 
+ /* basic scalar path */
+ #define ICE_TX_SCALAR_OFFLOADS (		\
+diff --git a/drivers/net/intel/ice/ice_rxtx_vec_avx2.c b/drivers/net/intel/ice/ice_rxtx_vec_avx2.c
+index b72f69a47b..a316eae43b 100644
+--- a/drivers/net/intel/ice/ice_rxtx_vec_avx2.c
++++ b/drivers/net/intel/ice/ice_rxtx_vec_avx2.c
+@@ -7,6 +7,7 @@
+ #include "../common/rx_vec_x86.h"
+ 
+ #include <rte_vect.h>
++#include <rte_mbuf_dyn.h>
+ 
+ static __rte_always_inline void
+ ice_rxq_rearm(struct ci_rx_queue *rxq)
+@@ -440,12 +441,16 @@ _ice_recv_raw_pkts_vec_avx2(struct ci_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+ 
+ 		if (offload) {
+ #ifndef RTE_NET_INTEL_USE_16BYTE_DESC
++			const uint64_t rxmode_offloads =
++				rxq->ice_vsi->adapter->pf.dev_data->dev_conf.rxmode.offloads;
+ 			/**
+-			 * needs to load 2nd 16B of each desc for RSS hash parsing,
++			 * needs to load 2nd 16B of each desc for RSS hash parsing
++			 * or Rx timestamp offload,
+ 			 * will cause performance drop to get into this context.
+ 			 */
+-			if (rxq->ice_vsi->adapter->pf.dev_data->dev_conf.rxmode.offloads &
+-					RTE_ETH_RX_OFFLOAD_RSS_HASH) {
++			if (rxmode_offloads &
++					(RTE_ETH_RX_OFFLOAD_RSS_HASH |
++					 RTE_ETH_RX_OFFLOAD_TIMESTAMP)) {
+ 				/* load bottom half of every 32B desc */
+ 				const __m128i raw_desc_bh7 = _mm_load_si128
+ 					(RTE_CAST_PTR(const __m128i *, &rxdp[7].wb.status_error1));
+@@ -488,37 +493,77 @@ _ice_recv_raw_pkts_vec_avx2(struct ci_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+ 						(_mm256_castsi128_si256(raw_desc_bh0),
+ 						raw_desc_bh1, 1);
+ 
+-				/**
+-				 * to shift the 32b RSS hash value to the
+-				 * highest 32b of each 128b before mask
+-				 */
+-				__m256i rss_hash6_7 =
+-					_mm256_slli_epi64(raw_desc_bh6_7, 32);
+-				__m256i rss_hash4_5 =
+-					_mm256_slli_epi64(raw_desc_bh4_5, 32);
+-				__m256i rss_hash2_3 =
+-					_mm256_slli_epi64(raw_desc_bh2_3, 32);
+-				__m256i rss_hash0_1 =
+-					_mm256_slli_epi64(raw_desc_bh0_1, 32);
+-
+-				__m256i rss_hash_msk =
+-					_mm256_set_epi32(0xFFFFFFFF, 0, 0, 0,
+-							 0xFFFFFFFF, 0, 0, 0);
+-
+-				rss_hash6_7 = _mm256_and_si256
+-						(rss_hash6_7, rss_hash_msk);
+-				rss_hash4_5 = _mm256_and_si256
+-						(rss_hash4_5, rss_hash_msk);
+-				rss_hash2_3 = _mm256_and_si256
+-						(rss_hash2_3, rss_hash_msk);
+-				rss_hash0_1 = _mm256_and_si256
+-						(rss_hash0_1, rss_hash_msk);
+-
+-				mb6_7 = _mm256_or_si256(mb6_7, rss_hash6_7);
+-				mb4_5 = _mm256_or_si256(mb4_5, rss_hash4_5);
+-				mb2_3 = _mm256_or_si256(mb2_3, rss_hash2_3);
+-				mb0_1 = _mm256_or_si256(mb0_1, rss_hash0_1);
+-			} /* if() on RSS hash parsing */
++				if (rxmode_offloads & RTE_ETH_RX_OFFLOAD_RSS_HASH) {
++					/**
++					 * to shift the 32b RSS hash value to the
++					 * highest 32b of each 128b before mask
++					 */
++					__m256i rss_hash6_7 =
++						_mm256_slli_epi64(raw_desc_bh6_7, 32);
++					__m256i rss_hash4_5 =
++						_mm256_slli_epi64(raw_desc_bh4_5, 32);
++					__m256i rss_hash2_3 =
++						_mm256_slli_epi64(raw_desc_bh2_3, 32);
++					__m256i rss_hash0_1 =
++						_mm256_slli_epi64(raw_desc_bh0_1, 32);
++
++					__m256i rss_hash_msk =
++						_mm256_set_epi32(0xFFFFFFFF, 0, 0, 0,
++								 0xFFFFFFFF, 0, 0, 0);
++
++					rss_hash6_7 = _mm256_and_si256
++							(rss_hash6_7, rss_hash_msk);
++					rss_hash4_5 = _mm256_and_si256
++							(rss_hash4_5, rss_hash_msk);
++					rss_hash2_3 = _mm256_and_si256
++							(rss_hash2_3, rss_hash_msk);
++					rss_hash0_1 = _mm256_and_si256
++							(rss_hash0_1, rss_hash_msk);
++
++					mb6_7 = _mm256_or_si256(mb6_7, rss_hash6_7);
++					mb4_5 = _mm256_or_si256(mb4_5, rss_hash4_5);
++					mb2_3 = _mm256_or_si256(mb2_3, rss_hash2_3);
++					mb0_1 = _mm256_or_si256(mb0_1, rss_hash0_1);
++				} /* if() on RSS hash parsing */
++
++				if (rxmode_offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP) {
++					/**
++					 * Extract the 32b Rx timestamp (flex_ts.ts_high),
++					 * located in the highest 32b of each 32B desc, and
++					 * stash it (low 32b) into the mbuf timestamp
++					 * dynfield. The 32b->64b conversion with rollover
++					 * tracking is performed in a scalar pass after the
++					 * main loop (see below), matching the scalar path.
++					 */
++					*RTE_MBUF_DYNFIELD(rx_pkts[i + 0],
++						rxq->ts_offset, uint32_t *) =
++						_mm256_extract_epi32(raw_desc_bh0_1, 3);
++					*RTE_MBUF_DYNFIELD(rx_pkts[i + 1],
++						rxq->ts_offset, uint32_t *) =
++						_mm256_extract_epi32(raw_desc_bh0_1, 7);
++					*RTE_MBUF_DYNFIELD(rx_pkts[i + 2],
++						rxq->ts_offset, uint32_t *) =
++						_mm256_extract_epi32(raw_desc_bh2_3, 3);
++					*RTE_MBUF_DYNFIELD(rx_pkts[i + 3],
++						rxq->ts_offset, uint32_t *) =
++						_mm256_extract_epi32(raw_desc_bh2_3, 7);
++					*RTE_MBUF_DYNFIELD(rx_pkts[i + 4],
++						rxq->ts_offset, uint32_t *) =
++						_mm256_extract_epi32(raw_desc_bh4_5, 3);
++					*RTE_MBUF_DYNFIELD(rx_pkts[i + 5],
++						rxq->ts_offset, uint32_t *) =
++						_mm256_extract_epi32(raw_desc_bh4_5, 7);
++					*RTE_MBUF_DYNFIELD(rx_pkts[i + 6],
++						rxq->ts_offset, uint32_t *) =
++						_mm256_extract_epi32(raw_desc_bh6_7, 3);
++					*RTE_MBUF_DYNFIELD(rx_pkts[i + 7],
++						rxq->ts_offset, uint32_t *) =
++						_mm256_extract_epi32(raw_desc_bh6_7, 7);
++
++					mbuf_flags = _mm256_or_si256(mbuf_flags,
++						_mm256_set1_epi32((int)rxq->ts_flag));
++				} /* if() on Rx timestamp parsing */
++			} /* if() on RSS hash or Rx timestamp parsing */
+ #endif
+ 		}
+ 
+@@ -653,6 +698,51 @@ _ice_recv_raw_pkts_vec_avx2(struct ci_rx_queue *rxq, struct rte_mbuf **rx_pkts,
+ 			break;
+ 	}
+ 
++#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
++	/**
++	 * Convert the stashed 32b Rx timestamps to 64b for the packets that
++	 * were actually received, tracking the register rollover. This mirrors
++	 * the scalar Rx path and is only done over valid (received) packets, so
++	 * timestamps of non-DD descriptors never corrupt the rollover state.
++	 */
++	if (offload && received > 0 &&
++			(rxq->offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP)) {
++		struct ice_vsi *vsi = rxq->ice_vsi;
++		struct ice_hw *hw = ICE_VSI_TO_HW(vsi);
++		struct ice_adapter *ad = vsi->adapter;
++		uint64_t ts_ns;
++		bool is_tsinit = false;
++		uint64_t sw_cur_time =
++			rte_get_timer_cycles() / (rte_get_timer_hz() / 1000);
++
++		if (unlikely(sw_cur_time - rxq->hw_time_update > 4))
++			is_tsinit = true;
++
++		for (uint16_t k = 0; k < received; k++) {
++			uint32_t ts_high = *RTE_MBUF_DYNFIELD(rx_pkts[k],
++					rxq->ts_offset, uint32_t *);
++
++			rxq->time_high = ts_high;
++			if (unlikely(is_tsinit)) {
++				ts_ns = ice_tstamp_convert_32b_64b(hw, ad, 1,
++								   ts_high);
++				rxq->hw_time_low = (uint32_t)ts_ns;
++				rxq->hw_time_high = (uint32_t)(ts_ns >> 32);
++				is_tsinit = false;
++			} else {
++				if (ts_high < rxq->hw_time_low)
++					rxq->hw_time_high += 1;
++				ts_ns = (uint64_t)rxq->hw_time_high << 32 | ts_high;
++				rxq->hw_time_low = ts_high;
++			}
++			*RTE_MBUF_DYNFIELD(rx_pkts[k], rxq->ts_offset,
++					   rte_mbuf_timestamp_t *) = ts_ns;
++		}
++		rxq->hw_time_update = rte_get_timer_cycles() /
++				      (rte_get_timer_hz() / 1000);
++	}
++#endif
++
+ 	/* update tail pointers */
+ 	rxq->rx_tail += received;
+ 	rxq->rx_tail &= (rxq->nb_rx_desc - 1);
+diff --git a/drivers/net/intel/ice/ice_rxtx_vec_avx512.c b/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
+index 309ab9fca7..1ebfc064f4 100644
+--- a/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
++++ b/drivers/net/intel/ice/ice_rxtx_vec_avx512.c
+@@ -7,6 +7,7 @@
+ #include "../common/rx_vec_x86.h"
+ 
+ #include <rte_vect.h>
++#include <rte_mbuf_dyn.h>
+ 
+ static __rte_always_inline void
+ ice_rxq_rearm(struct ci_rx_queue *rxq)
+@@ -462,12 +463,16 @@ _ice_recv_raw_pkts_vec_avx512(struct ci_rx_queue *rxq,
+ 
+ 		if (do_offload) {
+ #ifndef RTE_NET_INTEL_USE_16BYTE_DESC
++			const uint64_t rxmode_offloads =
++				rxq->ice_vsi->adapter->pf.dev_data->dev_conf.rxmode.offloads;
+ 			/**
+-			 * needs to load 2nd 16B of each desc for RSS hash parsing,
++			 * needs to load 2nd 16B of each desc for RSS hash parsing
++			 * or Rx timestamp offload,
+ 			 * will cause performance drop to get into this context.
+ 			 */
+-			if (rxq->ice_vsi->adapter->pf.dev_data->dev_conf.rxmode.offloads &
+-					RTE_ETH_RX_OFFLOAD_RSS_HASH) {
++			if (rxmode_offloads &
++					(RTE_ETH_RX_OFFLOAD_RSS_HASH |
++					 RTE_ETH_RX_OFFLOAD_TIMESTAMP)) {
+ 				/* load bottom half of every 32B desc */
+ 				const __m128i raw_desc_bh7 = _mm_load_si128
+ 					(RTE_CAST_PTR(const __m128i *, &rxdp[7].wb.status_error1));
+@@ -510,37 +515,77 @@ _ice_recv_raw_pkts_vec_avx512(struct ci_rx_queue *rxq,
+ 						(_mm256_castsi128_si256(raw_desc_bh0),
+ 						raw_desc_bh1, 1);
+ 
+-				/**
+-				 * to shift the 32b RSS hash value to the
+-				 * highest 32b of each 128b before mask
+-				 */
+-				__m256i rss_hash6_7 =
+-					_mm256_slli_epi64(raw_desc_bh6_7, 32);
+-				__m256i rss_hash4_5 =
+-					_mm256_slli_epi64(raw_desc_bh4_5, 32);
+-				__m256i rss_hash2_3 =
+-					_mm256_slli_epi64(raw_desc_bh2_3, 32);
+-				__m256i rss_hash0_1 =
+-					_mm256_slli_epi64(raw_desc_bh0_1, 32);
+-
+-				__m256i rss_hash_msk =
+-					_mm256_set_epi32(0xFFFFFFFF, 0, 0, 0,
+-							 0xFFFFFFFF, 0, 0, 0);
+-
+-				rss_hash6_7 = _mm256_and_si256
+-						(rss_hash6_7, rss_hash_msk);
+-				rss_hash4_5 = _mm256_and_si256
+-						(rss_hash4_5, rss_hash_msk);
+-				rss_hash2_3 = _mm256_and_si256
+-						(rss_hash2_3, rss_hash_msk);
+-				rss_hash0_1 = _mm256_and_si256
+-						(rss_hash0_1, rss_hash_msk);
+-
+-				mb6_7 = _mm256_or_si256(mb6_7, rss_hash6_7);
+-				mb4_5 = _mm256_or_si256(mb4_5, rss_hash4_5);
+-				mb2_3 = _mm256_or_si256(mb2_3, rss_hash2_3);
+-				mb0_1 = _mm256_or_si256(mb0_1, rss_hash0_1);
+-			} /* if() on RSS hash parsing */
++				if (rxmode_offloads & RTE_ETH_RX_OFFLOAD_RSS_HASH) {
++					/**
++					 * to shift the 32b RSS hash value to the
++					 * highest 32b of each 128b before mask
++					 */
++					__m256i rss_hash6_7 =
++						_mm256_slli_epi64(raw_desc_bh6_7, 32);
++					__m256i rss_hash4_5 =
++						_mm256_slli_epi64(raw_desc_bh4_5, 32);
++					__m256i rss_hash2_3 =
++						_mm256_slli_epi64(raw_desc_bh2_3, 32);
++					__m256i rss_hash0_1 =
++						_mm256_slli_epi64(raw_desc_bh0_1, 32);
++
++					__m256i rss_hash_msk =
++						_mm256_set_epi32(0xFFFFFFFF, 0, 0, 0,
++								 0xFFFFFFFF, 0, 0, 0);
++
++					rss_hash6_7 = _mm256_and_si256
++							(rss_hash6_7, rss_hash_msk);
++					rss_hash4_5 = _mm256_and_si256
++							(rss_hash4_5, rss_hash_msk);
++					rss_hash2_3 = _mm256_and_si256
++							(rss_hash2_3, rss_hash_msk);
++					rss_hash0_1 = _mm256_and_si256
++							(rss_hash0_1, rss_hash_msk);
++
++					mb6_7 = _mm256_or_si256(mb6_7, rss_hash6_7);
++					mb4_5 = _mm256_or_si256(mb4_5, rss_hash4_5);
++					mb2_3 = _mm256_or_si256(mb2_3, rss_hash2_3);
++					mb0_1 = _mm256_or_si256(mb0_1, rss_hash0_1);
++				} /* if() on RSS hash parsing */
++
++				if (rxmode_offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP) {
++					/**
++					 * Extract the 32b Rx timestamp (flex_ts.ts_high),
++					 * located in the highest 32b of each 32B desc, and
++					 * stash it (low 32b) into the mbuf timestamp
++					 * dynfield. The 32b->64b conversion with rollover
++					 * tracking is performed in a scalar pass after the
++					 * main loop (see below), matching the scalar path.
++					 */
++					*RTE_MBUF_DYNFIELD(rx_pkts[i + 0],
++						rxq->ts_offset, uint32_t *) =
++						_mm256_extract_epi32(raw_desc_bh0_1, 3);
++					*RTE_MBUF_DYNFIELD(rx_pkts[i + 1],
++						rxq->ts_offset, uint32_t *) =
++						_mm256_extract_epi32(raw_desc_bh0_1, 7);
++					*RTE_MBUF_DYNFIELD(rx_pkts[i + 2],
++						rxq->ts_offset, uint32_t *) =
++						_mm256_extract_epi32(raw_desc_bh2_3, 3);
++					*RTE_MBUF_DYNFIELD(rx_pkts[i + 3],
++						rxq->ts_offset, uint32_t *) =
++						_mm256_extract_epi32(raw_desc_bh2_3, 7);
++					*RTE_MBUF_DYNFIELD(rx_pkts[i + 4],
++						rxq->ts_offset, uint32_t *) =
++						_mm256_extract_epi32(raw_desc_bh4_5, 3);
++					*RTE_MBUF_DYNFIELD(rx_pkts[i + 5],
++						rxq->ts_offset, uint32_t *) =
++						_mm256_extract_epi32(raw_desc_bh4_5, 7);
++					*RTE_MBUF_DYNFIELD(rx_pkts[i + 6],
++						rxq->ts_offset, uint32_t *) =
++						_mm256_extract_epi32(raw_desc_bh6_7, 3);
++					*RTE_MBUF_DYNFIELD(rx_pkts[i + 7],
++						rxq->ts_offset, uint32_t *) =
++						_mm256_extract_epi32(raw_desc_bh6_7, 7);
++
++					mbuf_flags = _mm256_or_si256(mbuf_flags,
++						_mm256_set1_epi32((int)rxq->ts_flag));
++				} /* if() on Rx timestamp parsing */
++			} /* if() on RSS hash or Rx timestamp parsing */
+ #endif
+ 		}
+ 
+@@ -679,6 +724,51 @@ _ice_recv_raw_pkts_vec_avx512(struct ci_rx_queue *rxq,
+ 			break;
+ 	}
+ 
++#ifndef RTE_NET_INTEL_USE_16BYTE_DESC
++	/**
++	 * Convert the stashed 32b Rx timestamps to 64b for the packets that
++	 * were actually received, tracking the register rollover. This mirrors
++	 * the scalar Rx path and is only done over valid (received) packets, so
++	 * timestamps of non-DD descriptors never corrupt the rollover state.
++	 */
++	if (do_offload && received > 0 &&
++			(rxq->offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP)) {
++		struct ice_vsi *vsi = rxq->ice_vsi;
++		struct ice_hw *hw = ICE_VSI_TO_HW(vsi);
++		struct ice_adapter *ad = vsi->adapter;
++		uint64_t ts_ns;
++		bool is_tsinit = false;
++		uint64_t sw_cur_time =
++			rte_get_timer_cycles() / (rte_get_timer_hz() / 1000);
++
++		if (unlikely(sw_cur_time - rxq->hw_time_update > 4))
++			is_tsinit = true;
++
++		for (uint16_t k = 0; k < received; k++) {
++			uint32_t ts_high = *RTE_MBUF_DYNFIELD(rx_pkts[k],
++					rxq->ts_offset, uint32_t *);
++
++			rxq->time_high = ts_high;
++			if (unlikely(is_tsinit)) {
++				ts_ns = ice_tstamp_convert_32b_64b(hw, ad, 1,
++								   ts_high);
++				rxq->hw_time_low = (uint32_t)ts_ns;
++				rxq->hw_time_high = (uint32_t)(ts_ns >> 32);
++				is_tsinit = false;
++			} else {
++				if (ts_high < rxq->hw_time_low)
++					rxq->hw_time_high += 1;
++				ts_ns = (uint64_t)rxq->hw_time_high << 32 | ts_high;
++				rxq->hw_time_low = ts_high;
++			}
++			*RTE_MBUF_DYNFIELD(rx_pkts[k], rxq->ts_offset,
++					   rte_mbuf_timestamp_t *) = ts_ns;
++		}
++		rxq->hw_time_update = rte_get_timer_cycles() /
++				      (rte_get_timer_hz() / 1000);
++	}
++#endif
++
+ 	/* update tail pointers */
+ 	rxq->rx_tail += received;
+ 	rxq->rx_tail &= (rxq->nb_rx_desc - 1);
+-- 
+2.27.0
+
