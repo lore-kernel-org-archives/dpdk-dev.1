@@ -2,87 +2,87 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE89EC982D2
-	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Sep 2026 03:25:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65D23C982D2
+	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Sep 2026 03:25:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2438A432A6;
-	Fri, 18 Sep 2026 05:24:54 +0200 (CEST)
-Received: from mail-pj1-f97.google.com (mail-pj1-f97.google.com
- [209.85.216.97]) by mails.dpdk.org (Postfix) with ESMTP id ED41D43258
- for <dev@dpdk.org>; Fri, 18 Sep 2026 05:24:52 +0200 (CEST)
-Received: by mail-pj1-f97.google.com with SMTP id
- 98e67ed59e1d1-3964e480f76so201525a91.1
- for <dev@dpdk.org>; Thu, 17 Sep 2026 20:24:52 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 197E1432B0;
+	Fri, 18 Sep 2026 05:24:55 +0200 (CEST)
+Received: from mail-yx1-f98.google.com (mail-yx1-f98.google.com
+ [74.125.224.98]) by mails.dpdk.org (Postfix) with ESMTP id 620E840270
+ for <dev@dpdk.org>; Fri, 18 Sep 2026 05:24:53 +0200 (CEST)
+Received: by mail-yx1-f98.google.com with SMTP id
+ 956f58d0204a3-671471be40bso8798d50.2
+ for <dev@dpdk.org>; Thu, 17 Sep 2026 20:24:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789701892; x=1790306692;
+ d=1e100.net; s=20260707; t=1789701893; x=1790306693;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=ByTTECC1MzXtqzh11FBWDPx3V5SHIJ2nb5S/L9ZLnOU=;
- b=Qc4Jkr79NJLZLwsjJyDY3c4vFiLAbat7gJ/uLwYcZvYTZMGMZA+efG1BrWx+joa2fI
- mbnvrgAlMXuOKrFP+h3S9pkNnwYUCA6D62oHCWD11nufyYrbbtjiGDbBew1vzvI1nwmx
- ixGMokartvAQ5qj1Tf5/LVc2Kbfe1LvEQ0BMx7BIGIi7UEPHdHcoEtJqo8F6c31SNZlv
- AJnl+HhKVKtjubrQ5Uj8MsZAUz8V6LbEs5xLFsmFS/G06qAajcgz8B3tduga+cXbM2hw
- mXdl272mpRuGnwrgRSaHpJN+Hx9tD8q/8I90rlXbdz1o3RRp9XVEubbM4LA1FeDsGrGL
- V5wQ==
-X-Gm-Message-State: AFuF++lXM/hJyiUUPGpkghCHkxnkUQrPhbCBaUCQbK/LpvWhjTefaxwx
- RWwZ5PkjE43NGJQH2ZEQMu43lnFtkOi004P23todAVKf80VydcHcHCDBvRRDZdl4lJlXYFbgx88
- 2ULaqqc9CSH5onGjr02Py6g1jfUqrvU9yaZE7CxI+45DcoxsoRdCbaLFRwHURxBMr6QGmBIsJdW
- kZrFu2l17362NI60PMi3WICb615ENk2KXCsoVaYDldo1NPWqqZsDtK+MDXd3M2U0+3t1Ly1cGQr
- Vk/6h/w7PDU
-X-Gm-Gg: AYBFou1P3gleei35QaHsJD5pgMbcC1dvlQFuiBZoxO4b8Kyfxg0+9NTYpSXS4cfEcji
- 6j+Bd8I0pHlz8crKC6L+6a4E+ntGpN+ghyiXwhcwK8WJ+4bLexHCLOtR3OjLydhi0H2K4fIANc5
- gvFEBwa+rU5lxsmKJXkaKS4ROp5fMY6GIlPZEv/e+feBnZxRFBc7pStug6xgPPJCfzuFSwjqKOM
- sh8TD7+Qab65Gx/5K6M9fO2e8wmadW+7FFFcHwop8Qgl/ugdy0FiJB1rIUZYwqNML6ZAyM0K259
- 1WLCcZ2IJDsuOoGz/edJ34ugDJcEblF7fiuwg/qXXZaz6gaX2O1aeeXow0FjPFl4VDuZhV2u2D8
- ozzRx5MO6JIqf17QDpwJ0wcI2AL28t4Oa+n/73f/WDel2N7lpdjN309b3aY4lI8i74T72IRfrLz
- WgPFIHDJBlHEZlrNBGWaCh+t8ph2VX8yUqcRRVAUcYA4gWTXGVFA==
-X-Received: by 2002:a17:90a:da88:b0:39e:4c81:6c97 with SMTP id
- 98e67ed59e1d1-39e54f91d31mr2660070a91.29.1789701891853; 
- Thu, 17 Sep 2026 20:24:51 -0700 (PDT)
+ bh=kIAz63giobqIehShZkLvIVA4ewc/Ng5L9Mz4ptjEkPk=;
+ b=gQ7oLePOdtvBWK07GB+jYmQv9nWzuTtiHvfrPM2mnPDxIdkbuW0q9zYCt4N+YGc4Qr
+ DJKnresLQEx4W0vV609D3+GlgkJZYRHI6GePjFtQ7FO8T0cZlem1wr3SqMN/UDMnF5a2
+ /6jijuPU02k0mA9RM/NVGZ3762LasYOZtA24qD/d5Tyb71WljptgHguhvc92zUKa9PBY
+ 9bIqg9vzk9qwhpA7jb5zQNyQGMTgMdawjefYvVjTV0cz7fINR70wQq+AN0TvI/fq0Dl7
+ Rrv+V69JJwTlETtWhEsGp0I2J0gyiCoWHVdXrQWHmNbGuAYE8Oc3VcMGIVfvGK6Oy9xz
+ rnAw==
+X-Gm-Message-State: AFuF++nm4mwQ7cuyHOLK/i9DP3p+zgn+bdu0zGnRTKu1Y+guj+Tg393D
+ Bu6bNi4gfOYTePOa3VV/kGCra9W2bImH4FWM1aXN+1gdytGXelOu5SyiW2nfw08hRHQti2yBBpN
+ g/nH/MtL3uaWRF7+7P5UtSKadHbTWQVKerwXOSH8itNL/G3BTdNnZi8fhojgTR0hY2A2hs9iGHF
+ n0CvHxt3WSAOx5O8yKGgZ1SBrLSvOl3pmneWYRzLtye8PetUCVccwS+7Ax5s7zMJluBGI4dSBoD
+ RCy8/CgCZmb
+X-Gm-Gg: AYBFou3k+8v75sgSmlXqw1mTcyeUSiaocaKnHGe1e/mIcPmfhWiSbYWjFq/YdOH8X0Y
+ YVcgIxMwzBx2B+wQfuc++yDqrliEBu1LTP2CBZbKROErpLldNu85ssvsPv1aXBIk0wAvlDaEolr
+ BNMaG3uKk2LXnmhjC2X8gOsfaGsb5IJh9YPWpAITRwdON0JsdkHbbHeqNjvIMerAXL0LRUgUwAA
+ oJl4iwBfFxYiaJgiwm5LiIg9yHGC4KdJkaYC0FhGeTKoOaj88R6//r+JOY7ip9rQb7DNuL6L9u9
+ dWUIGx8q4CVps9feOE3lc1n91+jDSfVBbeRfnoKtVtAWzmFyVY5sc9JRcHO2G2wfIB1wWZBSdvr
+ Jq82DPGq7A4YPI/cVtBoCXz6PLcivGPTCXqy5kSCif/L6zY13AqLdylCaRyb/g98X3Eg4x8ffA5
+ 2BBbA5gh7TPly3J0CUYdERS/8fRYFL6DGHYfhSx+Us72bRY3S4qg==
+X-Received: by 2002:a05:690e:4545:20b0:671:3ecb:62a6 with SMTP id
+ 956f58d0204a3-6717fc90e64mr208459d50.28.1789701892647; 
+ Thu, 17 Sep 2026 20:24:52 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
  (address-144-49-247-25.dlp.protect.broadcom.com. [144.49.247.25])
  by smtp-relay.gmail.com with ESMTPS id
- 98e67ed59e1d1-39e35da8d7csm2640147a91.2.2026.09.17.20.24.51
+ 956f58d0204a3-671833da48esm5476d50.1.2026.09.17.20.24.51
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Thu, 17 Sep 2026 20:24:51 -0700 (PDT)
+ Thu, 17 Sep 2026 20:24:52 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-pj1-f70.google.com with SMTP id
- 98e67ed59e1d1-39512608fb1so846837a91.1
- for <dev@dpdk.org>; Thu, 17 Sep 2026 20:24:50 -0700 (PDT)
+Received: by mail-pl1-f198.google.com with SMTP id
+ d9443c01a7336-2cec4226c70so4200005ad.1
+ for <dev@dpdk.org>; Thu, 17 Sep 2026 20:24:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1789701890; x=1790306690; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1789701891; x=1790306691; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=ByTTECC1MzXtqzh11FBWDPx3V5SHIJ2nb5S/L9ZLnOU=;
- b=ANXycdY5WFRTTvv2mX5D3VUXjsyBmdhrK2VHb8NkBEFaAzMH7BAs9tRBNtjx71++Np
- MgA1ZWzlTAfUg4rBBZvb4haddC+vZtEUzbyvP67QOD3RAVWXqrk221O1AjGUQgSN+HNv
- xqYeHzF9oVk8O4ogNLjmIEzAysQuQmqb6XjnI=
-X-Received: by 2002:a17:90b:4e85:b0:398:b1eb:136c with SMTP id
- 98e67ed59e1d1-39e54d185a6mr2472941a91.9.1789701889841; 
- Thu, 17 Sep 2026 20:24:49 -0700 (PDT)
-X-Received: by 2002:a17:90b:4e85:b0:398:b1eb:136c with SMTP id
- 98e67ed59e1d1-39e54d185a6mr2472884a91.9.1789701889243; 
- Thu, 17 Sep 2026 20:24:49 -0700 (PDT)
+ bh=kIAz63giobqIehShZkLvIVA4ewc/Ng5L9Mz4ptjEkPk=;
+ b=cKLTalpFZaBq9mEbkN8YdQk9MJQKucZWy97rV3brNqvRiWfTbOKXNUZBpwlLvuJyOx
+ mWn+wr278XX6PBT8Zo4AnMryOfBtry3sFFdFiFWkrA8aWgF8h6O6R2FeFvBUgn0U0eSG
+ zQM2RGsUr7jD7t60VWAA9wZ+YC8HvRbl+yc2U=
+X-Received: by 2002:a17:903:178b:b0:2cc:864b:539 with SMTP id
+ d9443c01a7336-2ddb1ac4c42mr22626225ad.6.1789701891064; 
+ Thu, 17 Sep 2026 20:24:51 -0700 (PDT)
+X-Received: by 2002:a17:903:178b:b0:2cc:864b:539 with SMTP id
+ d9443c01a7336-2ddb1ac4c42mr22625815ad.6.1789701890554; 
+ Thu, 17 Sep 2026 20:24:50 -0700 (PDT)
 Received: from nic1-cos.dhcp.broadcom.net ([192.19.220.253])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-33c286d98c6sm537742eec.5.2026.09.17.20.24.48
+ 5a478bee46e88-33c286d98c6sm537742eec.5.2026.09.17.20.24.49
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 17 Sep 2026 20:24:48 -0700 (PDT)
+ Thu, 17 Sep 2026 20:24:49 -0700 (PDT)
 From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 X-Google-Original-From: Mohammad Shuab Siddique
  <Mohammad-Shuab.Siddique@broadcom.com>
 To: dev@dpdk.org
 Cc: kishore.padmanabha@broadcom.com,
- Keegan Freyhof <keegan.freyhof@broadcom.com>,
+ Chenna Arnoori <chenna.arnoori@broadcom.com>, stable@dpdk.org,
  Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-Subject: [PATCH 3/5] net/bnxt: harden sprintf bounds for device memory names
-Date: Thu, 17 Sep 2026 21:27:50 -0600
-Message-ID: <20260918032752.763408-4-Mohammad-Shuab.Siddique@broadcom.com>
+Subject: [PATCH 4/5] net/bnxt: fix bounds in MAC pool index and flow parsing
+Date: Thu, 17 Sep 2026 21:27:51 -0600
+Message-ID: <20260918032752.763408-5-Mohammad-Shuab.Siddique@broadcom.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260918032752.763408-1-Mohammad-Shuab.Siddique@broadcom.com>
 References: <20260918032752.763408-1-Mohammad-Shuab.Siddique@broadcom.com>
@@ -102,341 +102,137 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Keegan Freyhof <keegan.freyhof@broadcom.com>
+From: Chenna Arnoori <chenna.arnoori@broadcom.com>
 
-sprintf() into fixed-size stack buffers such as
-char type[RTE_MEMZONE_NAMESIZE] does not bound the write to the
-buffer, so a long enough formatted string (e.g. from PCI address
-fields) overflows it.
+Two independent out-of-bounds issues in the driver:
 
-Add check_snprintf_rc(), a helper that logs and returns an error on a
-failed snprintf() call and logs (without failing) a truncated one.
-Convert sprintf() calls building a memzone/malloc name to snprintf()
-plus this check, and add the same check to the existing snprintf()
-calls building HWRM CFA pair_name request fields. Unlike a truncated
-memzone/malloc label, a truncated pair_name would be sent to firmware
-and could match the wrong pair or none at all, so
-bnxt_hwrm_cfa_pair_exists()/_alloc()/_free() additionally reject a
-truncated pair_name outright instead of proceeding.
+- bnxt_mac_addr_add_op() indexed bp->vnic_info[pool] with a
+  caller-supplied pool before validating it against bp->max_vnics, and
+  before checking bp->vnic_info was even allocated yet (it is NULL
+  until the port is started). The existing "if (!vnic)" check was
+  always false, since vnic held the address of an array element and
+  is never NULL. Reorder to check dev_started/vnic_info first, then
+  bounds-check pool against max_vnics before indexing.
 
-This change introduces and corrects three bugs of its own.
+- bnxt_flow_non_void_item()/bnxt_flow_non_void_action() looped
+  unconditionally until a non-VOID item/action was found, walking off
+  the end of a pattern/actions array that lacked a terminating END
+  item. Bound the skip loop and stop advancing once the limit is hit.
 
-In bnxt_hwrm_ver_get(), free bp->hwrm_short_cmd_req_addr (and null it)
-before checking the new snprintf's return, instead of after, so an
-early return on a snprintf failure doesn't leak the previous
-allocation; also clear BNXT_FLAG_SHORT_CMD on that same early return,
-since it may already have been set a few lines above and would
-otherwise claim short-command support with no buffer allocated. In
-bnxt_hwrm_cfa_pair_exists()/_alloc()/_free(), the new early-return
-paths exited without releasing bp->hwrm_lock (held since the
-preceding HWRM_PREP()), which would deadlock every later HWRM call;
-added the missing HWRM_UNLOCK() before each return.
+Fixes: 51fafb89a9a ("net/bnxt: get rid of ff pools and use VNIC info array")
+Fixes: 5c1171c972 ("net/bnxt: refactor filter/flow")
+Cc: stable@dpdk.org
 
-Signed-off-by: Keegan Freyhof <keegan.freyhof@broadcom.com>
+Signed-off-by: Chenna Arnoori <chenna.arnoori@broadcom.com>
 Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 ---
- drivers/net/bnxt/bnxt.h        | 15 +++++++
- drivers/net/bnxt/bnxt_ethdev.c | 24 ++++++++----
- drivers/net/bnxt/bnxt_hwrm.c   | 71 +++++++++++++++++++++++++---------
- drivers/net/bnxt/bnxt_stats.c  | 10 +++--
- 4 files changed, 92 insertions(+), 28 deletions(-)
+ drivers/net/bnxt/bnxt_ethdev.c | 16 ++++++++++------
+ drivers/net/bnxt/bnxt_flow.c   | 28 ++++++++++++++++++++--------
+ 2 files changed, 30 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/net/bnxt/bnxt.h b/drivers/net/bnxt/bnxt.h
-index 336de75da0..bfd6cf15b7 100644
---- a/drivers/net/bnxt/bnxt.h
-+++ b/drivers/net/bnxt/bnxt.h
-@@ -1285,6 +1285,21 @@ extern int bnxt_logtype_driver;
- 						       BNXT_LINK_SPEEDS_V2_VF((bp))))
- #define BNXT_MAX_SPEED_LANES 8
- #define BNXT_SUPPORTS_TPA(bp)  (!BNXT_CHIP_P5_P7(bp) || (bp)->max_tpa_v2)
-+
-+static inline int
-+check_snprintf_rc(int rc, size_t max_size, const char *ctx)
-+{
-+	if (rc < 0) {
-+		PMD_DRV_LOG_LINE(ERR, "Error when creating string for %s", ctx);
-+		return rc;
-+	}
-+
-+	if (rc >= (int)max_size)
-+		PMD_DRV_LOG_LINE(INFO, "String truncated when creating string for %s", ctx);
-+
-+	return 0;
-+}
-+
- extern const struct rte_flow_ops bnxt_ulp_rte_flow_ops;
- int32_t bnxt_ulp_port_init(struct bnxt *bp);
- void bnxt_ulp_port_deinit(struct bnxt *bp);
 diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
-index 8e8ead8f61..27cf67c04f 100644
+index 27cf67c04f..db9b49238a 100644
 --- a/drivers/net/bnxt/bnxt_ethdev.c
 +++ b/drivers/net/bnxt/bnxt_ethdev.c
-@@ -647,13 +647,15 @@ static int bnxt_init_fc_ctx_mem(struct bnxt *bp)
+@@ -2113,7 +2113,7 @@ static int bnxt_mac_addr_add_op(struct rte_eth_dev *eth_dev,
+ 				uint32_t index, uint32_t pool)
  {
- 	struct rte_pci_device *pdev = bp->pdev;
- 	char type[RTE_MEMZONE_NAMESIZE];
-+	int rc = 0, snp_rc = 0;
- 	uint16_t max_fc;
--	int rc = 0;
- 
- 	max_fc = bp->flow_stat->max_fc;
- 
--	sprintf(type, "bnxt_rx_fc_in_" PCI_PRI_FMT, pdev->addr.domain,
-+	snp_rc = snprintf(type, sizeof(type), "bnxt_rx_fc_in_" PCI_PRI_FMT, pdev->addr.domain,
- 		pdev->addr.bus, pdev->addr.devid, pdev->addr.function);
-+	if (check_snprintf_rc(snp_rc, sizeof(type), "bnxt_rx_fc_in_") < 0)
-+		return snp_rc;
- 	/* 4 bytes for each counter-id */
- 	rc = bnxt_alloc_ctx_mem_buf(bp, type,
- 				    max_fc * 4,
-@@ -661,8 +663,10 @@ static int bnxt_init_fc_ctx_mem(struct bnxt *bp)
- 	if (rc)
- 		return rc;
- 
--	sprintf(type, "bnxt_rx_fc_out_" PCI_PRI_FMT, pdev->addr.domain,
-+	snp_rc = snprintf(type, sizeof(type), "bnxt_rx_fc_out_" PCI_PRI_FMT, pdev->addr.domain,
- 		pdev->addr.bus, pdev->addr.devid, pdev->addr.function);
-+	if (check_snprintf_rc(snp_rc, sizeof(type), "bnxt_rx_fc_out_") < 0)
-+		return snp_rc;
- 	/* 16 bytes for each counter - 8 bytes pkt_count, 8 bytes byte_count */
- 	rc = bnxt_alloc_ctx_mem_buf(bp, type,
- 				    max_fc * 16,
-@@ -670,8 +674,10 @@ static int bnxt_init_fc_ctx_mem(struct bnxt *bp)
- 	if (rc)
- 		return rc;
- 
--	sprintf(type, "bnxt_tx_fc_in_" PCI_PRI_FMT, pdev->addr.domain,
-+	snp_rc = snprintf(type, sizeof(type), "bnxt_tx_fc_in_" PCI_PRI_FMT, pdev->addr.domain,
- 		pdev->addr.bus, pdev->addr.devid, pdev->addr.function);
-+	if (check_snprintf_rc(snp_rc, sizeof(type), "bnxt_tx_fc_in_") < 0)
-+		return snp_rc;
- 	/* 4 bytes for each counter-id */
- 	rc = bnxt_alloc_ctx_mem_buf(bp, type,
- 				    max_fc * 4,
-@@ -679,8 +685,10 @@ static int bnxt_init_fc_ctx_mem(struct bnxt *bp)
- 	if (rc)
- 		return rc;
- 
--	sprintf(type, "bnxt_tx_fc_out_" PCI_PRI_FMT, pdev->addr.domain,
-+	snp_rc = snprintf(type, sizeof(type), "bnxt_tx_fc_out_" PCI_PRI_FMT, pdev->addr.domain,
- 		pdev->addr.bus, pdev->addr.devid, pdev->addr.function);
-+	if (check_snprintf_rc(snp_rc, sizeof(type), "bnxt_tx_fc_out_") < 0)
-+		return snp_rc;
- 	/* 16 bytes for each counter - 8 bytes pkt_count, 8 bytes byte_count */
- 	rc = bnxt_alloc_ctx_mem_buf(bp, type,
- 				    max_fc * 16,
-@@ -5226,8 +5234,8 @@ int bnxt_alloc_ctx_pg_tbls(struct bnxt *bp)
- {
- 	struct bnxt_ctx_mem_info *ctx = bp->ctx;
- 	struct bnxt_ctx_mem *ctx2;
-+	int rc = 0, snp_rc = 0;
- 	uint16_t type;
--	int rc = 0;
- 
- 	ctx2 = &ctx->ctx_arr[0];
- 	for (type = 0; type < ctx->types && rc == 0; type++) {
-@@ -5248,7 +5256,9 @@ int bnxt_alloc_ctx_pg_tbls(struct bnxt *bp)
- 		for (i = 0; i < w && rc == 0; i++) {
- 			char name[RTE_MEMZONE_NAMESIZE] = {0};
- 
--			sprintf(name, "_%d_%d", i, type);
-+			snp_rc = snprintf(name, sizeof(name), "_%d_%d", i, type);
-+			if (check_snprintf_rc(snp_rc, sizeof(name), "index and type.") < 0)
-+				return snp_rc;
- 
- 			if (ctxm->entry_multiple)
- 				entries = bnxt_roundup(ctxm->max_entries,
-diff --git a/drivers/net/bnxt/bnxt_hwrm.c b/drivers/net/bnxt/bnxt_hwrm.c
-index 1615b36aae..0143da8789 100644
---- a/drivers/net/bnxt/bnxt_hwrm.c
-+++ b/drivers/net/bnxt/bnxt_hwrm.c
-@@ -1583,12 +1583,12 @@ int bnxt_hwrm_func_resc_qcaps(struct bnxt *bp)
- 
- int bnxt_hwrm_ver_get(struct bnxt *bp, uint32_t timeout)
- {
--	int rc = 0;
- 	struct hwrm_ver_get_input req = {.req_type = 0 };
- 	struct hwrm_ver_get_output *resp = bp->hwrm_cmd_resp_addr;
- 	uint32_t fw_version;
- 	uint16_t max_resp_len;
- 	char type[RTE_MEMZONE_NAMESIZE];
-+	int rc = 0, snp_rc = 0;
- 	uint32_t dev_caps_cfg;
- 
- 	bp->max_req_len = HWRM_MAX_REQ_LEN;
-@@ -1669,11 +1669,15 @@ int bnxt_hwrm_ver_get(struct bnxt *bp, uint32_t timeout)
- 	     (dev_caps_cfg &
- 	      HWRM_VER_GET_OUTPUT_DEV_CAPS_CFG_SHORT_CMD_REQUIRED)) ||
- 	    bp->hwrm_max_ext_req_len > HWRM_MAX_REQ_LEN) {
--		sprintf(type, "bnxt_hwrm_short_" PCI_PRI_FMT,
--			bp->pdev->addr.domain, bp->pdev->addr.bus,
--			bp->pdev->addr.devid, bp->pdev->addr.function);
--
-+		snp_rc = snprintf(type, sizeof(type), "bnxt_hwrm_short_" PCI_PRI_FMT,
-+				  bp->pdev->addr.domain, bp->pdev->addr.bus,
-+				  bp->pdev->addr.devid, bp->pdev->addr.function);
- 		rte_free(bp->hwrm_short_cmd_req_addr);
-+		bp->hwrm_short_cmd_req_addr = NULL;
-+		if (check_snprintf_rc(snp_rc, sizeof(type), "bnxt_hwrm_short_") < 0) {
-+			bp->flags &= ~BNXT_FLAG_SHORT_CMD;
-+			return snp_rc;
-+		}
- 
- 		bp->hwrm_short_cmd_req_addr =
- 				rte_malloc(type, bp->hwrm_max_ext_req_len, 0);
-@@ -3541,9 +3545,12 @@ int bnxt_alloc_hwrm_resources(struct bnxt *bp)
- {
- 	struct rte_pci_device *pdev = bp->pdev;
- 	char type[RTE_MEMZONE_NAMESIZE];
-+	int snp_rc = 0;
- 
--	sprintf(type, "bnxt_hwrm_" PCI_PRI_FMT, pdev->addr.domain,
--		pdev->addr.bus, pdev->addr.devid, pdev->addr.function);
-+	snp_rc = snprintf(type, sizeof(type), "bnxt_hwrm_" PCI_PRI_FMT, pdev->addr.domain,
-+			  pdev->addr.bus, pdev->addr.devid, pdev->addr.function);
-+	if (check_snprintf_rc(snp_rc, sizeof(type), "bnxt_hwrm_") < 0)
-+		return snp_rc;
- 	bp->max_resp_len = BNXT_PAGE_SIZE;
- 	bp->hwrm_cmd_resp_addr = rte_malloc(type, bp->max_resp_len, 0);
- 	if (bp->hwrm_cmd_resp_addr == NULL)
-@@ -6780,6 +6787,7 @@ static int bnxt_alloc_all_ctx_pg_info(struct bnxt *bp)
- {
- 	struct bnxt_ctx_mem_info *ctx = bp->ctx;
- 	char name[RTE_MEMZONE_NAMESIZE];
-+	int snp_rc = 0;
- 	uint16_t type;
- 
- 	for (type = 0; type < ctx->types; type++) {
-@@ -6792,8 +6800,10 @@ static int bnxt_alloc_all_ctx_pg_info(struct bnxt *bp)
- 		if (ctxm->instance_bmap)
- 			n = hweight32(ctxm->instance_bmap);
- 
--		sprintf(name, "bnxt_ctx_pgmem_%d_%d",
--			bp->eth_dev->data->port_id, type);
-+		snp_rc = snprintf(name, sizeof(name), "bnxt_ctx_pgmem_%d_%d",
-+				  bp->eth_dev->data->port_id, type);
-+		if (check_snprintf_rc(snp_rc, sizeof(name), "bnxt_ctx_pgmem_") < 0)
-+			return snp_rc;
- 		ctxm->pg_info = rte_malloc(name, sizeof(*ctxm->pg_info) * n,
- 					   RTE_CACHE_LINE_SIZE);
- 		if (!ctxm->pg_info)
-@@ -7751,7 +7761,7 @@ int bnxt_hwrm_cfa_pair_exists(struct bnxt *bp, struct bnxt_representor *rep_bp)
- {
- 	struct hwrm_cfa_pair_info_output *resp = bp->hwrm_cmd_resp_addr;
- 	struct hwrm_cfa_pair_info_input req = {0};
--	int rc = 0;
-+	int rc = 0, snp_rc = 0;
- 
- 	if (!(BNXT_PF(bp) || BNXT_VF_IS_TRUSTED(bp))) {
- 		PMD_DRV_LOG_LINE(DEBUG,
-@@ -7760,8 +7770,16 @@ int bnxt_hwrm_cfa_pair_exists(struct bnxt *bp, struct bnxt_representor *rep_bp)
- 	}
- 
- 	HWRM_PREP(&req, HWRM_CFA_PAIR_INFO, BNXT_USE_CHIMP_MB);
--	snprintf(req.pair_name, sizeof(req.pair_name), "%svfr%d",
--		 bp->eth_dev->data->name, rep_bp->vf_id);
-+	snp_rc = snprintf(req.pair_name, sizeof(req.pair_name), "%svfr%d",
-+			  bp->eth_dev->data->name, rep_bp->vf_id);
-+	if (check_snprintf_rc(snp_rc, sizeof(req.pair_name), "svfr") < 0) {
-+		HWRM_UNLOCK();
-+		return snp_rc;
-+	}
-+	if (snp_rc >= (int)sizeof(req.pair_name)) {
-+		HWRM_UNLOCK();
-+		return -EINVAL;
-+	}
- 	req.flags =
- 		rte_cpu_to_le_32(HWRM_CFA_PAIR_INFO_INPUT_FLAGS_LOOKUP_TYPE);
- 
-@@ -7779,7 +7797,7 @@ int bnxt_hwrm_cfa_pair_alloc(struct bnxt *bp, struct bnxt_representor *rep_bp)
- {
- 	struct hwrm_cfa_pair_alloc_output *resp = bp->hwrm_cmd_resp_addr;
- 	struct hwrm_cfa_pair_alloc_input req = {0};
--	int rc;
-+	int rc, snp_rc = 0;
- 
- 	if (!(BNXT_PF(bp) || BNXT_VF_IS_TRUSTED(bp))) {
- 		PMD_DRV_LOG_LINE(DEBUG,
-@@ -7789,8 +7807,16 @@ int bnxt_hwrm_cfa_pair_alloc(struct bnxt *bp, struct bnxt_representor *rep_bp)
- 
- 	HWRM_PREP(&req, HWRM_CFA_PAIR_ALLOC, BNXT_USE_CHIMP_MB);
- 	req.pair_mode = HWRM_CFA_PAIR_FREE_INPUT_PAIR_MODE_REP2FN_TRUFLOW;
--	snprintf(req.pair_name, sizeof(req.pair_name), "%svfr%d",
--		 bp->eth_dev->data->name, rep_bp->vf_id);
-+	snp_rc = snprintf(req.pair_name, sizeof(req.pair_name), "%svfr%d",
-+			  bp->eth_dev->data->name, rep_bp->vf_id);
-+	if (check_snprintf_rc(snp_rc, sizeof(req.pair_name), "svfr") < 0) {
-+		HWRM_UNLOCK();
-+		return snp_rc;
-+	}
-+	if (snp_rc >= (int)sizeof(req.pair_name)) {
-+		HWRM_UNLOCK();
-+		return -EINVAL;
-+	}
- 
- 	req.pf_b_id = rep_bp->parent_pf_idx;
- 	req.vf_b_id = BNXT_REP_PF(rep_bp) ? rte_cpu_to_le_16(((uint16_t)-1)) :
-@@ -7825,7 +7851,7 @@ int bnxt_hwrm_cfa_pair_free(struct bnxt *bp, struct bnxt_representor *rep_bp)
- {
- 	struct hwrm_cfa_pair_free_output *resp = bp->hwrm_cmd_resp_addr;
- 	struct hwrm_cfa_pair_free_input req = {0};
--	int rc;
-+	int rc, snp_rc = 0;
- 
- 	if (!(BNXT_PF(bp) || BNXT_VF_IS_TRUSTED(bp))) {
- 		PMD_DRV_LOG_LINE(DEBUG,
-@@ -7834,8 +7860,17 @@ int bnxt_hwrm_cfa_pair_free(struct bnxt *bp, struct bnxt_representor *rep_bp)
- 	}
- 
- 	HWRM_PREP(&req, HWRM_CFA_PAIR_FREE, BNXT_USE_CHIMP_MB);
--	snprintf(req.pair_name, sizeof(req.pair_name), "%svfr%d",
--		 bp->eth_dev->data->name, rep_bp->vf_id);
-+	snp_rc = snprintf(req.pair_name, sizeof(req.pair_name), "%svfr%d",
-+			  bp->eth_dev->data->name, rep_bp->vf_id);
-+	if (check_snprintf_rc(snp_rc, sizeof(req.pair_name), "svfr") < 0) {
-+		HWRM_UNLOCK();
-+		return snp_rc;
-+	}
-+	if (snp_rc >= (int)sizeof(req.pair_name)) {
-+		HWRM_UNLOCK();
-+		return -EINVAL;
-+	}
-+
- 	req.pf_b_id = rep_bp->parent_pf_idx;
- 	req.pair_mode = HWRM_CFA_PAIR_FREE_INPUT_PAIR_MODE_REP2FN_TRUFLOW;
- 	req.vf_id = BNXT_REP_PF(rep_bp) ? rte_cpu_to_le_16(((uint16_t)-1)) :
-diff --git a/drivers/net/bnxt/bnxt_stats.c b/drivers/net/bnxt/bnxt_stats.c
-index c4efcb4b17..19153f96ae 100644
---- a/drivers/net/bnxt/bnxt_stats.c
-+++ b/drivers/net/bnxt/bnxt_stats.c
-@@ -1108,7 +1108,7 @@ int bnxt_dev_xstats_get_names_op(struct rte_eth_dev *eth_dev,
- 	struct bnxt *bp = (struct bnxt *)eth_dev->data->dev_private;
- 	unsigned int stat_cnt;
- 	unsigned int i, count = 0, sz;
--	int rc;
-+	int rc, snp_rc = 0;
+ 	struct bnxt *bp = eth_dev->data->dev_private;
+-	struct bnxt_vnic_info *vnic = &bp->vnic_info[pool];
++	struct bnxt_vnic_info *vnic;
+ 	int rc = 0;
  
  	rc = is_bnxt_in_error(bp);
- 	if (rc)
-@@ -1183,12 +1183,16 @@ int bnxt_dev_xstats_get_names_op(struct rte_eth_dev *eth_dev,
- 		for (i = 0; i < bp->max_l2_ctx; i++) {
- 			char buf[RTE_ETH_XSTATS_NAME_SIZE];
+@@ -2125,15 +2125,19 @@ static int bnxt_mac_addr_add_op(struct rte_eth_dev *eth_dev,
+ 		return -ENOTSUP;
+ 	}
  
--			sprintf(buf, "flow_%d_bytes", i);
-+			snp_rc = snprintf(buf, sizeof(buf), "flow_%d_bytes", i);
-+			if (check_snprintf_rc(snp_rc, sizeof(buf), "flow_%d_bytes") < 0)
-+				return snp_rc;
- 			strlcpy(xstats_names[count].name, buf,
- 				sizeof(xstats_names[count].name));
- 			count++;
+-	if (!vnic) {
+-		PMD_DRV_LOG_LINE(ERR, "VNIC not found for pool %d!", pool);
+-		return -EINVAL;
+-	}
+-
+ 	/* Filter settings will get applied when port is started */
+ 	if (!eth_dev->data->dev_started)
+ 		return 0;
  
--			sprintf(buf, "flow_%d_packets", i);
-+			snp_rc = snprintf(buf, sizeof(buf), "flow_%d_packets", i);
-+			if (check_snprintf_rc(snp_rc, sizeof(buf), "flow_%d_packets") < 0)
-+				return snp_rc;
- 			strlcpy(xstats_names[count].name, buf,
- 				sizeof(xstats_names[count].name));
++	if (bp->vnic_info == NULL)
++		return 0;
++
++	if (pool >= bp->max_vnics) {
++		PMD_DRV_LOG_LINE(ERR, "Pool %u exceeds VNIC count %u!", pool, bp->max_vnics);
++		return -EINVAL;
++	}
++	vnic = &bp->vnic_info[pool];
++
+ 	rc = bnxt_add_mac_filter(bp, vnic, mac_addr, index, pool);
  
+ 	return rc;
+diff --git a/drivers/net/bnxt/bnxt_flow.c b/drivers/net/bnxt/bnxt_flow.c
+index a2e590540b..14d52e1818 100644
+--- a/drivers/net/bnxt/bnxt_flow.c
++++ b/drivers/net/bnxt/bnxt_flow.c
+@@ -58,24 +58,36 @@ bnxt_flow_args_validate(const struct rte_flow_attr *attr,
+ 	return 0;
+ }
+ 
++#define BNXT_MAX_FLOW_ITEMS 256
++
+ static const struct rte_flow_item *
+ bnxt_flow_non_void_item(const struct rte_flow_item *cur)
+ {
+-	while (1) {
+-		if (cur->type != RTE_FLOW_ITEM_TYPE_VOID)
+-			return cur;
++	int i = 0;
++
++	if (!cur)
++		return NULL;
++
++	while (cur->type == RTE_FLOW_ITEM_TYPE_VOID && i < BNXT_MAX_FLOW_ITEMS) {
+ 		cur++;
++		i++;
+ 	}
++	return cur;
+ }
+ 
+ static const struct rte_flow_action *
+ bnxt_flow_non_void_action(const struct rte_flow_action *cur)
+ {
+-	while (1) {
+-		if (cur->type != RTE_FLOW_ACTION_TYPE_VOID)
+-			return cur;
++	int i = 0;
++
++	if (!cur)
++		return NULL;
++
++	while (cur->type == RTE_FLOW_ACTION_TYPE_VOID && i < BNXT_MAX_FLOW_ITEMS) {
+ 		cur++;
++		i++;
+ 	}
++	return cur;
+ }
+ 
+ static int
+@@ -109,7 +121,7 @@ bnxt_filter_type_check(const struct rte_flow_item pattern[],
+ 			PMD_DRV_LOG_LINE(DEBUG, "Unknown Flow type");
+ 			use_ntuple |= 0;
+ 		}
+-		item++;
++		item = bnxt_flow_non_void_item(item + 1);
+ 	}
+ 
+ 	if (has_vlan && use_ntuple) {
+@@ -680,7 +692,7 @@ bnxt_validate_and_parse_flow_type(const struct rte_flow_attr *attr,
+ 		default:
+ 			break;
+ 		}
+-		item++;
++		item = bnxt_flow_non_void_item(item + 1);
+ 	}
+ 	filter->enables = en;
+ 	filter->valid_flags = valid_flags;
 -- 
 2.47.3
 
