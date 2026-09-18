@@ -2,86 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF1F9C88E75
-	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Sep 2026 03:23:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ADBAC88E75
+	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Sep 2026 03:24:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D75E942DE4;
-	Fri, 18 Sep 2026 05:23:58 +0200 (CEST)
-Received: from mail-vk1-f225.google.com (mail-vk1-f225.google.com
- [209.85.221.225])
- by mails.dpdk.org (Postfix) with ESMTP id AAD9242759
- for <dev@dpdk.org>; Fri, 18 Sep 2026 05:23:57 +0200 (CEST)
-Received: by mail-vk1-f225.google.com with SMTP id
- 71dfb90a1353d-5c99b575e12so84211e0c.2
- for <dev@dpdk.org>; Thu, 17 Sep 2026 20:23:57 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 4A2B040262;
+	Fri, 18 Sep 2026 05:24:24 +0200 (CEST)
+Received: from mail-vk1-f226.google.com (mail-vk1-f226.google.com
+ [209.85.221.226])
+ by mails.dpdk.org (Postfix) with ESMTP id D82E840262
+ for <dev@dpdk.org>; Fri, 18 Sep 2026 05:24:22 +0200 (CEST)
+Received: by mail-vk1-f226.google.com with SMTP id
+ 71dfb90a1353d-5c98e3f0d74so135057e0c.1
+ for <dev@dpdk.org>; Thu, 17 Sep 2026 20:24:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789701837; x=1790306637;
+ d=1e100.net; s=20260707; t=1789701862; x=1790306662;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:dkim-signature:x-gm-gg:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to:content-type;
- bh=Vt82SvRn2cRRKaYhU8kiR8TQp2A4MNnqYPXc47RNH7w=;
- b=jny/4yshnkik3hNx4Aq/lgNH2AsWPFbtvGNdQL/kAemONxrRxPPkFlkW53b88vveXC
- Zc+wUNZ3NYqXZClgcWZ8IzOJLxrTChxEn7LZ/6gRHSIRxg3hBybRXTp3UkC3/GjvEUQg
- 7NrtrT2eUfju7ix6M5c828BqKGkanobX3RXP2J5lQQPiTEsQcoXAMSAbzwbZu/RdCZ7W
- S+Bqo81fKVmvqrpy8xv4rlD5yQCMnb4OsWFOda4LwW5w+D8g4tvKI6Gqb2uKwNhiSYPH
- XQ6JvHGFf4wnnCwEUYY/hjCt2ShA8gZ3soq+2+Ws2g6Pk1UVO63NHt3p9J2RbndVhdji
- YF3A==
-X-Gm-Message-State: AFuF++kG9cvtb79VMDED8iTETpqCp0FNfx7c0W+rYNurnKCb5JvF3n5N
- 5NVVoOSMsb4UHm5719lEVUNAZO7jD5MyFk+jtguvNOG24P9Hfi22F7e42M1/Jn2HKorfWWlPQQY
- TUP8Yz51zgvQkX0+XkRndJTP/Bsh1r9JwH+BMzrBSCS7btlBJuNtWXvaVn6mYK1ulyud1s7yYe2
- J6zVSAT3UJtTsFERdq186aDJmhnkmsr83ve2p7fL786YTUCyuq3+vrZO2R0FB/1xe0brRNwuXfx
- 1iG0gXDJstv
-X-Gm-Gg: AYBFou2EmEl/rh+D1lSBe/HbNXVRyHup2NF5ZHbN9scE7rHuQyMVtUudhXJtOjkVFwf
- Qjuz7pnxpBRkJSmr5hvQoZwiwO5Z4tJJ5mN7WVR7pqozrN5AdUkTRU5k7lY9cLALrVqoElEAQ3e
- f9KQv60Z1I35uSfsUEx50cs3sFrxOw/535yMwfcswsQOA4iO0miRovcWBZ88moTwP03Jt1gGcrc
- mY05Dpe0DVm5lZ3lzIPSSWadHfIDgoBIRPHfbQbIw6M/8vKItnSRlzlwcWx+PTQliLVJQ0xD5kr
- mOYXjSBnuuKvvI8CgfCk7ruXWKwNW8eKJ24WxP8JHbxZG20JKWiAP9XOObpBC/Qbv36g4er8LlV
- iLdtWOaTy/Q9kquNhuUGDLJh8Sc3MgJvFlKuxu9g1eNS5jZDXttdJ8NB4/wBzkoJIgnPPBWAPcl
- LOb3r/3kR+4V+U6+nGR4xeVmPlUsKN9jNsRMsZDQykflrdrBuwMw==
-X-Received: by 2002:a05:6122:8c5:b0:5c8:2a47:b111 with SMTP id
- 71dfb90a1353d-5c9b58bee96mr559063e0c.3.1789701836938; 
- Thu, 17 Sep 2026 20:23:56 -0700 (PDT)
+ bh=3AT/HddiFnQLyWCn0/GO/uZEsj/2YMO5yMf+sNBTrMw=;
+ b=JZ/FHu4Dp5eXwUydw4/uw9B9bcrMHUZ4fWyf1D+lOW3G1t/zK3GPlGFzrHRWrZFU0R
+ ypJ/YZUiwFILAFLI/jiIohWMtusDv50RkfH22UFDtZmSU4u8nLe7YSicgTwFhirM7tgV
+ yW6HrvPrB/4zjuUSxBHFTedwTXeiBlfWGG0pfYqnpNuiaCpHLvDpbadCRVV6wzrlICQ/
+ kWk1Dy2Yscs0B/7OMRFOV+Moy2Va3dj1LFOM2AtLyH8YBbpniWED59rKD5KEDqGCF52i
+ tA4Ey6f3/041uX5SjNvxqmPsXUg/O25RJJ0YrOpUXBiaGJup7ByC4DPLEWKjTh8L7WkT
+ OZ2g==
+X-Gm-Message-State: AFuF++lndeseXw+1sRLnSB0YoCw7pHA5JT38PCKDInXD+p1THLQXXDuz
+ ZxPZeiM8IHILgA2aB5vgRbrrcdHfElMiMG6UFz1UYLP4vuHfSg7Ppk4qFjrImWZSYqV/wauPBXr
+ q1FpDTquF0T50k6GSIThwt9jcq9SVosvX9y96gxNYVmP3fKSXRF+Ug131nchEO8sOubnqFbE5tm
+ KOEoVEZWRlJGy8uGB0+d9znAhYzjs+umb6dUaNzSN7VRfBZUtKeNMbN/a8hsO9LnWAsoGHWtWLz
+ 0tg16iyb3F7
+X-Gm-Gg: AYBFou3chX7WukI/Ryo6MUBpUAHG4GuO0hvSzNLfeuC3MOHJDKV8uCJMker6MyvgOaO
+ fDJ1szKy//L+UTVr/yTS3SfdbUUVdnA16hOhndQGRIgQcYK9Rj9glUJTO3QqHv+OBCXrLm1NBRv
+ CG0X1iHRZcIRYdZDjDBYjC/B7xyoLD0lvQJqYcLQvRxTJvqMBvVYGVjvAcIZkOp219TricUcUap
+ pSptJT+vbYXIfqG1S29tCKrEwjqYCqnW+ZPfh0731ss49EyJ6KBM/AdxFO1GS3UdWvp7kPXzsOe
+ 1Zp9EaIUzmLNOz00bnO2LR6ftx5vM3RDnZl83XZ1VEAamgekXCq18BBHSB3cQvR+JVgWGevSfkg
+ cWnd8nR3nJ3bWHD8EL7yCoopD5zLWXLvNv3kLxJTq198T5CQseeQtYY8SOafNkXIr0xMU/4Jt5J
+ lirqIOpqpAjnVPYHJVCbrRgNLTh6bRJ8QlMP4hW9rq4A6CTZwkRV1f
+X-Received: by 2002:a05:6122:787:b0:5c6:599d:8730 with SMTP id
+ 71dfb90a1353d-5c9b58cad6bmr416447e0c.3.1789701862129; 
+ Thu, 17 Sep 2026 20:24:22 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-25.dlp.protect.broadcom.com. [144.49.247.25])
+ (address-144-49-247-125.dlp.protect.broadcom.com. [144.49.247.125])
  by smtp-relay.gmail.com with ESMTPS id
- 71dfb90a1353d-5c9b8067c32sm219504e0c.0.2026.09.17.20.23.56
+ 71dfb90a1353d-5c9b834e6basm199463e0c.7.2026.09.17.20.24.21
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Thu, 17 Sep 2026 20:23:56 -0700 (PDT)
+ Thu, 17 Sep 2026 20:24:22 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-pl1-f199.google.com with SMTP id
- d9443c01a7336-2d63bad3d09so5433925ad.3
- for <dev@dpdk.org>; Thu, 17 Sep 2026 20:23:56 -0700 (PDT)
+Received: by mail-pg1-f200.google.com with SMTP id
+ 41be03b00d2f7-cc1b8088202so257693a12.3
+ for <dev@dpdk.org>; Thu, 17 Sep 2026 20:24:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1789701836; x=1790306636; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1789701861; x=1790306661; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=Vt82SvRn2cRRKaYhU8kiR8TQp2A4MNnqYPXc47RNH7w=;
- b=GcoX6crvfPENJqCTwaGS2uuKBWB4ekJaJvPgWg5qUrOW1v6qPRlIR6ehLZPFglz2W0
- x39IdJFQDp4tA1/Lwgw89Krt9xiSB2x9+DUnX5zkQX68UhSgspwmvv5tfaHwvt5bbxR6
- vOIZ0obury5H3ZUH5EpIDUYjH7ktBRPTxunaw=
-X-Received: by 2002:a17:903:2343:b0:2db:3b35:1ac6 with SMTP id
- d9443c01a7336-2ddb1ab24edmr27227615ad.5.1789701835736; 
- Thu, 17 Sep 2026 20:23:55 -0700 (PDT)
-X-Received: by 2002:a17:903:2343:b0:2db:3b35:1ac6 with SMTP id
- d9443c01a7336-2ddb1ab24edmr27226825ad.5.1789701835078; 
- Thu, 17 Sep 2026 20:23:55 -0700 (PDT)
+ bh=3AT/HddiFnQLyWCn0/GO/uZEsj/2YMO5yMf+sNBTrMw=;
+ b=IPpoc9jo5s30yI5a96HDx8pXKi2i2LPGK4GrYJ6s8AY+Njpz0VSzXSp/ZtvoL1wD3O
+ Jpff1Bny9kOgdj7kV7mcFwRDLBh97h4G5qQVWe8ijHhb4TNh9hNW2CtB6LZ1lTeeyiP9
+ z6+BDhEwrmPhN8NIG9h0uNbWjjvjYASSVrAqs=
+X-Received: by 2002:a05:6a20:9f05:b0:3d0:e034:a26f with SMTP id
+ adf61e73a8af0-3dd8c331ce1mr2282803637.17.1789701860947; 
+ Thu, 17 Sep 2026 20:24:20 -0700 (PDT)
+X-Received: by 2002:a05:6a20:9f05:b0:3d0:e034:a26f with SMTP id
+ adf61e73a8af0-3dd8c331ce1mr2282756637.17.1789701860389; 
+ Thu, 17 Sep 2026 20:24:20 -0700 (PDT)
 Received: from nic1-cos.dhcp.broadcom.net ([192.19.220.253])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-33c287b0293sm543856eec.24.2026.09.17.20.23.54
+ 5a478bee46e88-33c287b023bsm597708eec.23.2026.09.17.20.24.19
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 17 Sep 2026 20:23:54 -0700 (PDT)
+ Thu, 17 Sep 2026 20:24:20 -0700 (PDT)
 From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 X-Google-Original-From: Mohammad Shuab Siddique
  <Mohammad-Shuab.Siddique@broadcom.com>
 To: dev@dpdk.org
 Cc: kishore.padmanabha@broadcom.com,
- Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>,
- stable@dpdk.org, Dakota Sicher <dakota.sicher@broadcom.com>
-Subject: [PATCH] net/bnxt: fix flow create segfault
-Date: Thu, 17 Sep 2026 21:27:01 -0600
-Message-ID: <20260918032701.763364-1-Mohammad-Shuab.Siddique@broadcom.com>
+ Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
+Subject: [PATCH 0/5] net/bnxt: fix VF and firmware-facing bounds/leak issues
+Date: Thu, 17 Sep 2026 21:27:21 -0600
+Message-ID: <20260918032726.763384-1-Mohammad-Shuab.Siddique@broadcom.com>
 X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -101,41 +100,39 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 
-When creating a flow that requires a destination queue but none is
-specified in the flow create command, find_matching_vnic() returns
-NULL and the code falls through to insert the new filter into
-vnic->filter, dereferencing the NULL vnic and causing a segfault.
+This series fixes five independent out-of-bounds and memory-leak
+issues in VF- and firmware-facing control-path code in the bnxt PMD:
 
-Check for a NULL vnic and reject the flow create with a clear error
-instead of crashing.
+ - an unvalidated, firmware-controlled VF ID used to index
+   bp->pf->vf_info[] before range-checking it,
+ - firmware-reported ring-group/L2-context counts that were not
+   clamped before being cast down or summed,
+ - a use-after-free in the VNIC filter list walk during cleanup
+   (STAILQ_FOREACH() dereferencing a node this loop had already
+   freed),
+ - a memory leak on the VF VNIC query error path, and
+ - a memory leak on the VF info allocation error path.
 
-Fixes: 59119d49529e ("net/bnxt: fix flow create when RSS is disabled")
-Cc: stable@dpdk.org
+Each patch is independently bisectable and was validated with a
+scoped net/bnxt build (and, for split points, an intermediate-commit
+build) in addition to the full compliance gate.
 
-Signed-off-by: Dakota Sicher <dakota.sicher@broadcom.com>
-Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
----
- drivers/net/bnxt/bnxt_flow.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Joseph Wong (3):
+  net/bnxt: add VF ID boundary check before usage
+  net/bnxt: fix bounds on firmware-reported resource counts
+  net/bnxt: fix VF info alloc error path memory leak
 
-diff --git a/drivers/net/bnxt/bnxt_flow.c b/drivers/net/bnxt/bnxt_flow.c
-index a2e590540b..0a2899fbbd 100644
---- a/drivers/net/bnxt/bnxt_flow.c
-+++ b/drivers/net/bnxt/bnxt_flow.c
-@@ -2148,6 +2148,13 @@ bnxt_flow_create(struct rte_eth_dev *dev,
- 	}
- 
- 	vnic = find_matching_vnic(bp, filter);
-+	if (!vnic) {
-+		rte_flow_error_set(error, EINVAL,
-+				   RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+				   "Missing destination action for flow.");
-+		bnxt_clear_one_vnic_filter(bp, filter);
-+		goto free_filter;
-+	}
- done:
- 	if (!ret || update_flow) {
- 		flow->filter = filter;
+Kishore Padmanabha (1):
+  net/bnxt: fix memory leak in VF VNIC query error path
+
+Mohammad Shuab Siddique (1):
+  net/bnxt: fix use-after-free in VNIC filter cleanup
+
+ drivers/net/bnxt/bnxt.h      |  3 +++
+ drivers/net/bnxt/bnxt_cpr.c  | 25 ++++++++++++++-----------
+ drivers/net/bnxt/bnxt_hwrm.c | 31 +++++++++++++++++++++----------
+ 3 files changed, 38 insertions(+), 21 deletions(-)
+
 -- 
 2.47.3
 
