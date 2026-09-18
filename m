@@ -2,87 +2,87 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E280FC982D2
-	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Sep 2026 03:24:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23FF4C982D2
+	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Sep 2026 03:24:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 48B0E4325A;
-	Fri, 18 Sep 2026 05:24:32 +0200 (CEST)
-Received: from mail-pj1-f98.google.com (mail-pj1-f98.google.com
- [209.85.216.98]) by mails.dpdk.org (Postfix) with ESMTP id 6C62B42FC9
- for <dev@dpdk.org>; Fri, 18 Sep 2026 05:24:30 +0200 (CEST)
-Received: by mail-pj1-f98.google.com with SMTP id
- 98e67ed59e1d1-3990fe066ebso112623a91.1
- for <dev@dpdk.org>; Thu, 17 Sep 2026 20:24:30 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6DB4F42FFB;
+	Fri, 18 Sep 2026 05:24:34 +0200 (CEST)
+Received: from mail-pf1-f226.google.com (mail-pf1-f226.google.com
+ [209.85.210.226])
+ by mails.dpdk.org (Postfix) with ESMTP id 3E4E042FE9
+ for <dev@dpdk.org>; Fri, 18 Sep 2026 05:24:31 +0200 (CEST)
+Received: by mail-pf1-f226.google.com with SMTP id
+ d2e1a72fcca58-86a46577018so272922b3a.2
+ for <dev@dpdk.org>; Thu, 17 Sep 2026 20:24:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789701869; x=1790306669;
+ d=1e100.net; s=20260707; t=1789701870; x=1790306670;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=uF+BcsQsd5BPXnZ5by6cN1lP7pM14JDeynW+GnrK35U=;
- b=yzsQFEF9+I4MTEdX4JV5epuAhstBS9BDgqarLqffyt7xkFA1g7DoA0+AzBH++E2J+J
- EuIJwKavYLCizXpw3KXz87O5BXWL7SjvXNeaPp+luYvDltNPJ26KahzqTtdfs9gXCW/A
- Aui7cCep24CUVoxz3S9Eq+YquSoj3g62o4gJ5cLj3ddiJVbqyL5Cow+qMNy40R2AKyiN
- +UCyToHSj9Ml0ysNOFtOFnrKS+RuRAi7lATEEy6YssC5kcyeFajGJv1b90q5FtyTLynb
- bzw/gt6QOvjXGlvf/gutcDL7PZ8t8y6AoVGkPq2feXK8+mOgvaqO8gJz2euT0KmU4NMO
- Am9A==
-X-Gm-Message-State: AFuF++mSeREZRwxtn+MQnVJP15tc+DqrRb52otoia4DkAuAGlVRIvUYD
- a86A0KiXeiTLBMsXpplRU63CeBWBJQp3AHPA5Ksy+8i8jQEyB/KG1RikoHO2RG9lWXwuEPVvNof
- akcEdgEzEnx+Mpt8leNUZYbwTq7f+AHZIOR7NopBLPKty0KTzoe/f6whZ8xwU79l4maoPL86h4P
- LVe7AN8vmPp3KyEjSYk7Psn4AtAab6nPp13Qe9t9j+yR5Sp1UaNyAh2/SdJi31F/A0iEawVlFIc
- 8q0IUNDflc4
-X-Gm-Gg: AYBFou1hZK01m05bI++bmAKPbi7TZqVPRyzRJpMYnWQdkxNmd5XIhlxJ4U5d8d3w9oO
- eWZw6tfsKw41RI/VSW47DT9NB8Bi82eXsqEKwckRTERAKgAGm2O/8dni9OTS/XYd5+WjZ2DJanB
- Y0yPcC6jEwpGbttdk0E4DvQKHEGQ3L5gmU+r8TJQW7pBRbgxBYRsop+kolgLyWMA48A/tj6Rnwy
- wbx/B4O/ElTOJVxjUgqCzQHNryQQmGb8Qv75gYCQGkJs00sUz08FIGkOL41boF4zEECZM+kX+A4
- bR76PXhkep14yYHskAUsbfRdpJKdAz1saAqG1yzpiG0VuiZoDAxAL8SeESwQC+5uW/NkIXCYLmg
- pjt7ChiQ9asirR8m0gmfVBm198BMebR2zp08KdBjVIUpsRKR1LgiOB97AW3UsHR23LF6xOUhkdJ
- IVF6EDlUdBY2/Vh/9BxdaGUttZzMrw6jJVNxrdLQaaTYfiepUUiw==
-X-Received: by 2002:a17:90b:2243:b0:398:9be9:ab92 with SMTP id
- 98e67ed59e1d1-39e54d56e0fmr2441989a91.23.1789701869443; 
- Thu, 17 Sep 2026 20:24:29 -0700 (PDT)
+ bh=XVyCJRGHMd48gNZ1JAF6/eKiGLLHFJo05fI3+RhCztM=;
+ b=XTZx02f27YH2D+KjHlac5P7hKbQXiU23mkcxaB8EzLQbRXgNUuDNc03Oar0eSTWWTG
+ x6c0oTqZq3Lw6IDvG7TjjbP47zoPsBiiQ/VDcaFMDI5MtZ/20RndgzwUTj6mVwpc5tTK
+ phiyUcB48vSdAP02BqFrSDUx3PtLRkYod/ZC1LV1JzS1SlbOOzNUtXDvpvQyORxTlNp0
+ DBucJ9RL//6Duu9y40CIBAELR2Fk01BV37psjho8EAxdWc2dubIcS099L0//vz1MFr+K
+ lyayXiSsb+LENP0axuEyjg64JeQ4WV5K45FtrKkz4Q2J7MFRRq+V76aT6m2YMurN/NSH
+ /j2w==
+X-Gm-Message-State: AFuF++m0Ey02ABj9VilfxTUNcSn7ea7ydh3SHEvANiYIcsdzLk9c/H18
+ R3ql/baB3NWMh1mM3RjcQGIPZ0KaJjFhldJrroX+Omm9CCRmtJIvq8zdaLXj6Glr4G+/Q/4meUN
+ FsssOv50SdXZW/BM6dmkN4fV91Gf/qE8NzYjBkXB80bWuYBzgiMIu6q0PeBPaRS8sLvorHK+cDO
+ dsp3gpdkAxdF+8/ZxJUlNB+FML0m7yz7HpLyvRx8PHT8ilGHLnurAzWMQ5m86Iw4YD1ybowIgfs
+ xzWr7+aSFSC
+X-Gm-Gg: AYBFou06q8R4WpFTqb/FLe7FWfYUn0dhMwUDOndfO2ij9PMmnoRikuGF7wkRoH6n5/i
+ Cq1XpTBvwXox2fILdN1ERM8tEoVo2Ul1waXBFxifgeeG51R14ZaoRTStVH3V2CyWHjtGrl0nZ8n
+ ZvOcPhT+8eB53unstDqNnxsaSstI0z3Ubp5twNglKz3BoHbQToIiOEUP4KdtkoFTizzmxXF9VL2
+ EJLe3Ll5JN6Es5apGqjtPsOwnrdmQO8KvB2UchnqFR6ai0mcXCSBJbltooMoFzbEHSSo4pYvLJI
+ n+JvTnPzcrhHhufdIwwaOYmXYsnVeEQXNCQ12HdTA0ueFWq4DO00j6EWtHuzXNRW2X7bA0CTbfQ
+ jNxbn1SwKfDsL4Zv8UZQlD99cS1MDx9CPPa9P3o7Uu+WhKHdi3nzR5KeiEcehUyRCuqSlcdESRw
+ 2jV+7iuQYQOscvwWXVrT0dVwzjCEcFHwaKlaaEDBh08H6DWNzRHw==
+X-Received: by 2002:a05:6a20:d04e:b0:3dd:85aa:4531 with SMTP id
+ adf61e73a8af0-3dd8c5d8f31mr2477525637.35.1789701870296; 
+ Thu, 17 Sep 2026 20:24:30 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-98.dlp.protect.broadcom.com. [144.49.247.98])
+ (address-144-49-247-25.dlp.protect.broadcom.com. [144.49.247.25])
  by smtp-relay.gmail.com with ESMTPS id
- 98e67ed59e1d1-39e5a3e902csm280406a91.3.2026.09.17.20.24.28
+ 41be03b00d2f7-cc5c50b0ba0sm175448a12.8.2026.09.17.20.24.29
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Thu, 17 Sep 2026 20:24:29 -0700 (PDT)
+ Thu, 17 Sep 2026 20:24:30 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-pg1-f200.google.com with SMTP id
- 41be03b00d2f7-cc4fc935a11so222744a12.0
- for <dev@dpdk.org>; Thu, 17 Sep 2026 20:24:28 -0700 (PDT)
+Received: by mail-pg1-f199.google.com with SMTP id
+ 41be03b00d2f7-cc18ced1a5aso514984a12.1
+ for <dev@dpdk.org>; Thu, 17 Sep 2026 20:24:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1789701867; x=1790306667; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1789701868; x=1790306668; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=uF+BcsQsd5BPXnZ5by6cN1lP7pM14JDeynW+GnrK35U=;
- b=Db6z3ToTOCmZQ10lQbC8sX+Uan09esMZClNTzKJ5GtEMKk1PhjMvnH/vByC/KQHb9S
- epAyrzoPc2eMj4DjenEeyCfanI4B6d1ME717BySEU+VSQh4trCG/LMqyPsd9FVxSvN8w
- HxbSp/B0i/U8dsqGUOpMk3lXGne5azcYa3QrY=
-X-Received: by 2002:a17:90a:e7c9:b0:39d:f615:725e with SMTP id
- 98e67ed59e1d1-39e54bc3a8emr2529490a91.13.1789701867460; 
- Thu, 17 Sep 2026 20:24:27 -0700 (PDT)
-X-Received: by 2002:a17:90a:e7c9:b0:39d:f615:725e with SMTP id
- 98e67ed59e1d1-39e54bc3a8emr2529428a91.13.1789701866878; 
- Thu, 17 Sep 2026 20:24:26 -0700 (PDT)
+ bh=XVyCJRGHMd48gNZ1JAF6/eKiGLLHFJo05fI3+RhCztM=;
+ b=g7EI3KlqJvbY39yBjAW9IQXtaHl1fA8fzdJsPP9pjs8edYhIpRcEXpCLjOe9IbPKfS
+ P4X/N7tVKzgKYyhodQ9HbgZ144iiV41isDvQEoW4J08UvkWwDFTtyGIRNipDs6PNSzoX
+ mxtoWPzgp5rQkMv9X5zPqq7iSvgAQ6O2dyluo=
+X-Received: by 2002:a05:6a20:c68e:b0:3d3:afeb:880 with SMTP id
+ adf61e73a8af0-3dd8c58df13mr2680787637.28.1789701868654; 
+ Thu, 17 Sep 2026 20:24:28 -0700 (PDT)
+X-Received: by 2002:a05:6a20:c68e:b0:3d3:afeb:880 with SMTP id
+ adf61e73a8af0-3dd8c58df13mr2680735637.28.1789701868172; 
+ Thu, 17 Sep 2026 20:24:28 -0700 (PDT)
 Received: from nic1-cos.dhcp.broadcom.net ([192.19.220.253])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-33c287b023bsm597708eec.23.2026.09.17.20.24.25
+ 5a478bee46e88-33c287b023bsm597708eec.23.2026.09.17.20.24.27
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 17 Sep 2026 20:24:25 -0700 (PDT)
+ Thu, 17 Sep 2026 20:24:27 -0700 (PDT)
 From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 X-Google-Original-From: Mohammad Shuab Siddique
  <Mohammad-Shuab.Siddique@broadcom.com>
 To: dev@dpdk.org
-Cc: kishore.padmanabha@broadcom.com,
- Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>,
- stable@dpdk.org
-Subject: [PATCH 3/5] net/bnxt: fix use-after-free in VNIC filter cleanup
-Date: Thu, 17 Sep 2026 21:27:24 -0600
-Message-ID: <20260918032726.763384-4-Mohammad-Shuab.Siddique@broadcom.com>
+Cc: kishore.padmanabha@broadcom.com, stable@dpdk.org,
+ Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
+Subject: [PATCH 4/5] net/bnxt: fix memory leak in VF VNIC query error path
+Date: Thu, 17 Sep 2026 21:27:25 -0600
+Message-ID: <20260918032726.763384-5-Mohammad-Shuab.Siddique@broadcom.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260918032726.763384-1-Mohammad-Shuab.Siddique@broadcom.com>
 References: <20260918032726.763384-1-Mohammad-Shuab.Siddique@broadcom.com>
@@ -102,44 +102,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
+From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 
-STAILQ_FOREACH()'s own advance step dereferences the current node's
-next field after the loop body runs. The loop body here frees that
-same node (bnxt_free_filter()) before the macro dereferences it on
-the next iteration, so the filter list walk in
-bnxt_clear_hwrm_vnic_filters() reads freed memory to find the
-following entry.
+bnxt_hwrm_func_vf_vnic_query_and_config() allocates vnic_ids before
+calling bnxt_hwrm_func_vf_vnic_query(), but returns without freeing it
+when that call fails.
 
-Walk the list with STAILQ_FIRST()/STAILQ_REMOVE_HEAD() instead,
-removing each filter from the list before freeing it so nothing is
-dereferenced after being freed.
+Free vnic_ids on the error path too.
 
-Fixes: 20ef524432dd ("net/bnxt: set L2 filters")
+Fixes: 49947a13ba9e ("net/bnxt: support Tx loopback, set VF MAC and queues drop")
 Cc: stable@dpdk.org
 
+Signed-off-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 ---
- drivers/net/bnxt/bnxt_hwrm.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/bnxt/bnxt_hwrm.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/bnxt/bnxt_hwrm.c b/drivers/net/bnxt/bnxt_hwrm.c
-index 765aa7c452..99539d3705 100644
+index 99539d3705..dee35758e1 100644
 --- a/drivers/net/bnxt/bnxt_hwrm.c
 +++ b/drivers/net/bnxt/bnxt_hwrm.c
-@@ -3593,9 +3593,10 @@ bnxt_clear_hwrm_vnic_filters(struct bnxt *bp, struct bnxt_vnic_info *vnic)
- 	struct bnxt_filter_info *filter;
- 	int rc = 0;
+@@ -6280,8 +6280,10 @@ int bnxt_hwrm_func_vf_vnic_query_and_config(struct bnxt *bp, uint16_t vf,
  
--	STAILQ_FOREACH(filter, &vnic->filter, next) {
-+	while (!STAILQ_EMPTY(&vnic->filter)) {
-+		filter = STAILQ_FIRST(&vnic->filter);
- 		rc = bnxt_clear_one_vnic_filter(bp, filter);
--		STAILQ_REMOVE(&vnic->filter, filter, bnxt_filter_info, next);
-+		STAILQ_REMOVE_HEAD(&vnic->filter, next);
- 		bnxt_free_filter(bp, filter);
- 	}
- 	return rc;
+ 	num_vnic_ids = bnxt_hwrm_func_vf_vnic_query(bp, vf, vnic_ids);
+ 
+-	if (num_vnic_ids < 0)
++	if (num_vnic_ids < 0) {
++		rte_free(vnic_ids);
+ 		return num_vnic_ids;
++	}
+ 
+ 	/* Retrieve VNIC, update bd_stall then update */
+ 
 -- 
 2.47.3
 
