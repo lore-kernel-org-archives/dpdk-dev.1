@@ -2,85 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43858C982D2
-	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Sep 2026 03:25:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69AE6C982D2
+	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Sep 2026 03:25:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9AE9942FFB;
-	Fri, 18 Sep 2026 05:25:10 +0200 (CEST)
-Received: from mail-vk1-f228.google.com (mail-vk1-f228.google.com
- [209.85.221.228])
- by mails.dpdk.org (Postfix) with ESMTP id 1DD1A42FD9
- for <dev@dpdk.org>; Fri, 18 Sep 2026 05:25:09 +0200 (CEST)
-Received: by mail-vk1-f228.google.com with SMTP id
- 71dfb90a1353d-5c9801823fbso93008e0c.1
- for <dev@dpdk.org>; Thu, 17 Sep 2026 20:25:09 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6ACCB42FDD;
+	Fri, 18 Sep 2026 05:25:24 +0200 (CEST)
+Received: from mail-pl1-f227.google.com (mail-pl1-f227.google.com
+ [209.85.214.227])
+ by mails.dpdk.org (Postfix) with ESMTP id F25E943285
+ for <dev@dpdk.org>; Fri, 18 Sep 2026 05:25:22 +0200 (CEST)
+Received: by mail-pl1-f227.google.com with SMTP id
+ d9443c01a7336-2d9201076b3so1695435ad.0
+ for <dev@dpdk.org>; Thu, 17 Sep 2026 20:25:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789701908; x=1790306708;
+ d=1e100.net; s=20260707; t=1789701922; x=1790306722;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:dkim-signature:x-gm-gg:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to:content-type;
- bh=/NWz71xEgff649Y1N103E6KAWdnbV6D8GwPEywBVBlU=;
- b=D5682jAKQRgxp/UAkokrGvscD3e94KB7p/P+K/cdUffC4OEnBV4P2+zBhwHX/Owmzu
- 1BM1bp8z0MGgWECo1TjKZtX6Sb4ozYU6/xOvifr1ycE1CjayFUXwTLV8onGCNUcj+P5A
- sIicBKMKZMFI6WPDW/dLjcQhvX+w5K/lHLxT5ZD6xWYvtSR2irpsJKDg19Vw2pFuXoPx
- YV615rAe5hTr+izWDoPKxRjpqULSDqrJFFo7+1fu6rrV/VvzUv0C5sCF8y1G8O7CPVF1
- HD4LISuEtV/m2MxMTR8hjB6V3Vrb4NJ/OhER6vLgPDk+mljUnlxDPcWNVUWTD3xBp7Nz
- zzLg==
-X-Gm-Message-State: AFuF++lDD2qNG1C/W451dlT11sT/62EPp7ur9P1auUTKpU3uuZPeTFRY
- rWjdwPiGpO0hcE/34OOcaWdOC7qPTowIq5oVBz8t6gBn1b90CZmLnq80/XYLwxiSxYfxOfmlmYg
- OzNDfkO7ywIs/UvQJ+MSb73pbWIqM2ndauSQw9lz2543VowscPMRBp9ZLoUxYYm4saFibZEfhpj
- lsmeSfqvpuVvoxMWKqg4MwdW8Tr/P1xCj1NscvTO4J8Q/Tl7crEch4PKDh+wnpppSFVeyczfk+f
- o1ny4wK0pur
-X-Gm-Gg: AYBFou0xe8KypzOFEkjr4Hj5BLnqxEdnwOZMY7weqkHB8GB2X7gaY0qLYJxGuV8RIYQ
- f2YJPFzGhDMGj6+bnYrncJagrQyhM1JiAH209pownwsBO2jVkDcm9DREz79jaCRS21osDfUD08j
- Fw1I1AvEWeBXih7aCtf0/LBWatgIG8ghYXehkz0OftctgPwOG7i5TQ5jIUWXgNJQW63E5ixp/7l
- me4h04Gni8PW1n7S5DTMlCoRjj29jwj7s62zrhC9lQEGlQ0wGBhpTEYLs96XgqGHOeHBhDMgXDN
- QZS3CjobODynKFjSdo9dyaq7U0wcUAAq+kF7xCIWkYaoET6y7ErrwblEE1KI6HkwP7QEix6w2Jd
- h745V6hrvZVVmUdozQu1ku6x43RrwpqzC4gB9vxRnzvDlg0V9cpfzZ27k1HVAv0LgnEmVNCq80n
- R6rh208hqiswiiasykjffI+oENCQCBNeUUgXq0vgC1YViTqWtg5g==
-X-Received: by 2002:a05:6102:3f8c:b0:798:8ca:3452 with SMTP id
- ada2fe7eead31-7a55af2f95bmr390850137.1.1789701908255; 
- Thu, 17 Sep 2026 20:25:08 -0700 (PDT)
+ bh=A3GaKIlRneFtdlOoyW/SPxgFDRy4eR+xkgSzJ5lREqM=;
+ b=Kk9zTQPJexOSjxJWo6XpTWLlaoqhZw/JID1Cbvv4Ur7cIO+Gwlx/PHo9dkVM6eNZDy
+ YNhRVZqbPUCcWWK+zEGivwbXWkQ82M5e6eSPQE72r6E4WV2WeoccjLq6Ornnaoz6BX73
+ iAB9059QXjsjc1WWUgCm+qUJ1uObdawXdUEvvteusRKptL9qXCV1naiu+dt6oQMyFqZ1
+ yaxN2lN8Uvf1zGhdwECJxIsYfbkG1jsRnQUdq4lWEWAx5bXlBicpuc+FcX5w/sZVcj8y
+ 6wrkgLySFcsD4C8HWwt2okdcDU6KboW/uX2snGf5uFygERAoKur6V4JljE3EDImrEmQw
+ QSEQ==
+X-Gm-Message-State: AFuF++mi6d4bshe10B0sL+V7tWDYcpKKw68OiXSLLHCI2tj+HUfgi88s
+ hn4rIlBLzR5rNalUu7swnI8PlOoLZrc32vLVW9ZsUGidjNjk+lQJyWmSNTJRWJNK91JK1HtUiME
+ w4z0MiEsTcw3ZyPm0osUYDEMwhp5ObQSMkHkQB4EvcMGCs4kj1W5kOf6YbOUy62NogRHK9mcIK8
+ 5LcOm6uT0mmXWbq2Ldo566haoK/eaDq/h4S4f0/BfAC/7RwndOBH43DVpYdhU81AoDXMX3LXNtW
+ 1Ktn0v8VVsP
+X-Gm-Gg: AYBFou2zggw8d8c72d0VvNSvWg07mpPAnKzXX2++Uvp+1TuzI3yYpRmQT1MtPw5BANu
+ SQbLTO1w9y1D7iZSc+k3BKQp2gxk6jqu9qzIwj5dCG6YB9FHUBrPJZRnSEIZoKycsUm6C3vgTDV
+ JwLXK8HhYAUj/brmM/KzJtmFmO23FXjsFg/NDmRUyzg2aqEtFoqAhQebIKFfLTc0AcLMUE2gQ4l
+ 2Rq+TATzo9OLPW8n+7l1u6+AsRvXlU/nBGkDqk2aQ5saaowmNORF1BbBzJt9fqHQ0tnPnTfel4V
+ CQEQaEJ454F3KEwstEFaxurWA6RzDzvAE0406Beb7P2wp/wyC7DHpw4EL9paDqDxUK5mpLUQ7Qo
+ KecR8b5oMq+F1KEx3UydnabxrvSuY/A6iQPB/rWKDQoZDgBCi2W06v0LjvzmLJdXOU0Aqri2yea
+ tHNASjfPP0uRvoZjRyzdtGEt6HskOKU3YpXq0XzvIaecqiIb4nDg==
+X-Received: by 2002:a05:6a20:258f:b0:3d3:aec2:4dc9 with SMTP id
+ adf61e73a8af0-3dd8c44eb2amr2320231637.21.1789701922047; 
+ Thu, 17 Sep 2026 20:25:22 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-25.dlp.protect.broadcom.com. [144.49.247.25])
+ (address-144-49-247-29.dlp.protect.broadcom.com. [144.49.247.29])
  by smtp-relay.gmail.com with ESMTPS id
- a1e0cc1a2514c-98337dfeb9fsm154585241.6.2026.09.17.20.25.07
+ 41be03b00d2f7-cc5b32ef5e3sm179577a12.0.2026.09.17.20.25.21
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Thu, 17 Sep 2026 20:25:08 -0700 (PDT)
+ Thu, 17 Sep 2026 20:25:22 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-pj1-f72.google.com with SMTP id
- 98e67ed59e1d1-38ea32e57e2so716868a91.1
- for <dev@dpdk.org>; Thu, 17 Sep 2026 20:25:07 -0700 (PDT)
+Received: by mail-pl1-f199.google.com with SMTP id
+ d9443c01a7336-2db3d832827so4372245ad.2
+ for <dev@dpdk.org>; Thu, 17 Sep 2026 20:25:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1789701907; x=1790306707; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1789701920; x=1790306720; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=/NWz71xEgff649Y1N103E6KAWdnbV6D8GwPEywBVBlU=;
- b=HRMjGLUS7j5aeXM3jr7SeIP+P/t8fapBSaJscMMLJtpajS3+9og8TnSw/Azh/NMILO
- HtS0ioaeyuDNBEx8dOF9nMvbSptTCNfNptn8HRkQHFLr2MAne5wb241heiSrIgFpeRYT
- RkZ/Cq8u5GOfZsIHGzPszPvqrUFibRVzIHnsc=
-X-Received: by 2002:a17:90b:2243:b0:39d:f770:774 with SMTP id
- 98e67ed59e1d1-39e54c9c1bamr2461739a91.20.1789701907011; 
- Thu, 17 Sep 2026 20:25:07 -0700 (PDT)
-X-Received: by 2002:a17:90b:2243:b0:39d:f770:774 with SMTP id
- 98e67ed59e1d1-39e54c9c1bamr2461697a91.20.1789701906443; 
- Thu, 17 Sep 2026 20:25:06 -0700 (PDT)
+ bh=A3GaKIlRneFtdlOoyW/SPxgFDRy4eR+xkgSzJ5lREqM=;
+ b=B/zNn0JRMVqGWhwotd9IgObV/nJo3RvNv8+Jh1a9AV/URXdqAdTvIqKraPNNWWDs2S
+ k0pnpZTHuhUZHltMjR592m/NrejX30miSbske+CLff66DZTXD4OZRG6rKJY7EMH1uYii
+ 8ytnS8u1gmI7k0h59zOjc9RzzcWhdgYSIDsbM=
+X-Received: by 2002:a17:902:d58a:b0:2d9:4358:73ab with SMTP id
+ d9443c01a7336-2ddb1b77585mr26919015ad.19.1789701919999; 
+ Thu, 17 Sep 2026 20:25:19 -0700 (PDT)
+X-Received: by 2002:a17:902:d58a:b0:2d9:4358:73ab with SMTP id
+ d9443c01a7336-2ddb1b77585mr26918395ad.19.1789701919265; 
+ Thu, 17 Sep 2026 20:25:19 -0700 (PDT)
 Received: from nic1-cos.dhcp.broadcom.net ([192.19.220.253])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-33c287b0293sm550500eec.24.2026.09.17.20.25.05
+ 5a478bee46e88-33c288f0f12sm514048eec.29.2026.09.17.20.25.18
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 17 Sep 2026 20:25:05 -0700 (PDT)
+ Thu, 17 Sep 2026 20:25:18 -0700 (PDT)
 From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 X-Google-Original-From: Mohammad Shuab Siddique
  <Mohammad-Shuab.Siddique@broadcom.com>
 To: dev@dpdk.org
 Cc: kishore.padmanabha@broadcom.com,
- Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-Subject: [PATCH] net/bnxt: add Tx DMA error stat counter
-Date: Thu, 17 Sep 2026 21:28:12 -0600
-Message-ID: <20260918032812.763436-1-Mohammad-Shuab.Siddique@broadcom.com>
+ Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>,
+ Keegan Freyhof <keegan.freyhof@broadcom.com>
+Subject: [PATCH] net/bnxt: add support for queue size of 16384
+Date: Thu, 17 Sep 2026 21:28:25 -0600
+Message-ID: <20260918032825.763449-1-Mohammad-Shuab.Siddique@broadcom.com>
 X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -100,177 +101,362 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 
-Hardware already reports an invalid/bad DMA address on a Tx BD via
-the TX_CMPL_ERRORS_DMA_ERROR bit in the Tx completion record, but the
-driver never inspected it, so a bad mbuf->buf_iova on Tx completed
-silently with no visibility.
+The driver only supported queue sizes up to 4096 for Tx and 8192 for
+Rx. Raise both to 16384. The completion ring for a Rx ring is sized
+at 2x (4x with aggregation) the Rx ring size, so at 16384 it can
+reach 131072, above uint16_t range - widen the ring index/counter
+variables touched by that path to uint32_t.
 
-Check the bit in bnxt_handle_tx_cp() and in the AVX2/SSE vector
-Tx-completion handlers, and count occurrences in a new per-queue
-tx_dma_err counter. The counter is folded into the standard oerrors
-stat and also exposed as a named xstat (tx_dma_err_pkts) for
-finer-grained visibility.
-
+Signed-off-by: Keegan Freyhof <keegan.freyhof@broadcom.com>
 Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 ---
- drivers/net/bnxt/bnxt_rxtx_vec_avx2.c |  6 ++++++
- drivers/net/bnxt/bnxt_rxtx_vec_sse.c  |  6 ++++++
- drivers/net/bnxt/bnxt_stats.c         | 20 ++++++++++++++++++++
- drivers/net/bnxt/bnxt_stats.h         |  3 +++
- drivers/net/bnxt/bnxt_txq.h           |  1 +
- drivers/net/bnxt/bnxt_txr.c           |  6 ++++++
- 6 files changed, 42 insertions(+)
+ drivers/net/bnxt/bnxt.h               |  8 +++---
+ drivers/net/bnxt/bnxt_ring.h          |  6 ++--
+ drivers/net/bnxt/bnxt_rxq.c           |  4 +--
+ drivers/net/bnxt/bnxt_rxr.c           | 40 +++++++++++++--------------
+ drivers/net/bnxt/bnxt_rxr.h           | 10 +++----
+ drivers/net/bnxt/bnxt_rxtx_vec_avx2.c | 14 +++++-----
+ drivers/net/bnxt/bnxt_rxtx_vec_neon.c |  4 +--
+ drivers/net/bnxt/bnxt_rxtx_vec_sse.c  | 10 +++----
+ 8 files changed, 48 insertions(+), 48 deletions(-)
 
-diff --git a/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c b/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
-index 50b3602839..7f07b0a3e1 100644
---- a/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
-+++ b/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
-@@ -743,6 +743,12 @@ bnxt_handle_tx_cp_vec(struct bnxt_tx_queue *txq)
- 		if (!bnxt_cpr_cmp_valid(txcmp, raw_cons, ring_mask + 1))
- 			break;
+diff --git a/drivers/net/bnxt/bnxt.h b/drivers/net/bnxt/bnxt.h
+index 336de75da0..d2c3e0ffac 100644
+--- a/drivers/net/bnxt/bnxt.h
++++ b/drivers/net/bnxt/bnxt.h
+@@ -91,8 +91,8 @@
+ /* Minimum spec version that supports AUTONEG_PAUSE bit in auto_pause field */
+ #define HWRM_SPEC_CODE_AUTONEG_PAUSE	0x10201
  
-+		uint16_t errors_v = rte_le_to_cpu_16(txcmp->errors_v);
-+
-+		if (unlikely(errors_v & TX_CMPL_ERRORS_DMA_ERROR))
-+			rte_atomic_fetch_add_explicit(&txq->tx_dma_err, 1,
-+						      rte_memory_order_relaxed);
-+
- 		nb_tx_pkts += txcmp->opaque;
- 		raw_cons = NEXT_RAW_CMP(raw_cons);
- 	} while (nb_tx_pkts < ring_mask);
-diff --git a/drivers/net/bnxt/bnxt_rxtx_vec_sse.c b/drivers/net/bnxt/bnxt_rxtx_vec_sse.c
-index 7d455b6f56..a97ff6f5fe 100644
---- a/drivers/net/bnxt/bnxt_rxtx_vec_sse.c
-+++ b/drivers/net/bnxt/bnxt_rxtx_vec_sse.c
-@@ -577,6 +577,12 @@ bnxt_handle_tx_cp_vec(struct bnxt_tx_queue *txq)
- 		if (!bnxt_cpr_cmp_valid(txcmp, raw_cons, ring_mask + 1))
- 			break;
+-#define BNXT_MAX_MTU		9574
+-#define BNXT_NUM_VLANS		2
++#define BNXT_MAX_MTU		9574UL
++#define BNXT_NUM_VLANS		2UL
+ #define BNXT_MAX_PKT_LEN	(BNXT_MAX_MTU + RTE_ETHER_HDR_LEN +\
+ 				 RTE_ETHER_CRC_LEN +\
+ 				 (BNXT_NUM_VLANS * RTE_VLAN_HLEN))
+@@ -105,8 +105,8 @@
+ #define BNXT_VF_RSV_NUM_VNIC	1
+ #define BNXT_MAX_LED		4
+ #define BNXT_MIN_RING_DESC	16
+-#define BNXT_MAX_TX_RING_DESC	4096
+-#define BNXT_MAX_RX_RING_DESC	8192
++#define BNXT_MAX_TX_RING_DESC	16384
++#define BNXT_MAX_RX_RING_DESC	16384
+ #define BNXT_DB_SIZE		0x80
  
-+		uint16_t errors_v = rte_le_to_cpu_16(txcmp->errors_v);
-+
-+		if (unlikely(errors_v & TX_CMPL_ERRORS_DMA_ERROR))
-+			rte_atomic_fetch_add_explicit(&txq->tx_dma_err, 1,
-+						      rte_memory_order_relaxed);
-+
- 		if (likely(CMP_TYPE(txcmp) == TX_CMPL_TYPE_TX_L2))
- 			nb_tx_pkts += txcmp->opaque;
- 		else
-diff --git a/drivers/net/bnxt/bnxt_stats.c b/drivers/net/bnxt/bnxt_stats.c
-index ba858710a5..52d2456b66 100644
---- a/drivers/net/bnxt/bnxt_stats.c
-+++ b/drivers/net/bnxt/bnxt_stats.c
-@@ -697,6 +697,8 @@ static int bnxt_stats_get_ext(struct rte_eth_dev *eth_dev,
+ #define TPA_MAX_AGGS		64
+diff --git a/drivers/net/bnxt/bnxt_ring.h b/drivers/net/bnxt/bnxt_ring.h
+index 496c3e111f..eaa4ec66c1 100644
+--- a/drivers/net/bnxt/bnxt_ring.h
++++ b/drivers/net/bnxt/bnxt_ring.h
+@@ -32,9 +32,9 @@
+ #define AGG_RING_MULTIPLIER	2
  
- 		bnxt_stats->oerrors += rte_atomic_load_explicit(&txq->tx_mbuf_drop,
- 							     rte_memory_order_relaxed);
-+		bnxt_stats->oerrors += rte_atomic_load_explicit(&txq->tx_dma_err,
-+							     rte_memory_order_relaxed);
+ /* These assume 4k pages */
+-#define MAX_RX_DESC_CNT (8 * 1024)
+-#define MAX_TX_DESC_CNT (4 * 1024)
+-#define MAX_CP_DESC_CNT (16 * 1024)
++#define MAX_RX_DESC_CNT (16 * 1024)
++#define MAX_TX_DESC_CNT (16 * 1024)
++#define MAX_CP_DESC_CNT (32 * 1024)
  
- 		if (!txq->tx_started)
- 			continue;
-@@ -774,6 +776,9 @@ int bnxt_stats_get_op(struct rte_eth_dev *eth_dev,
- 		bnxt_stats->oerrors +=
- 				rte_atomic_load_explicit(&txq->tx_mbuf_drop,
- 							 rte_memory_order_relaxed);
-+		bnxt_stats->oerrors +=
-+				rte_atomic_load_explicit(&txq->tx_dma_err,
-+							 rte_memory_order_relaxed);
- 	}
+ #define INVALID_HW_RING_ID      ((uint16_t)-1)
+ #define INVALID_STATS_CTX_ID	((uint16_t)-1)
+diff --git a/drivers/net/bnxt/bnxt_rxq.c b/drivers/net/bnxt/bnxt_rxq.c
+index 023cb0e174..1dae97a695 100644
+--- a/drivers/net/bnxt/bnxt_rxq.c
++++ b/drivers/net/bnxt/bnxt_rxq.c
+@@ -210,7 +210,7 @@ void bnxt_rx_queue_release_mbufs(struct bnxt_rx_queue *rxq)
+ {
+ 	struct rte_mbuf **sw_ring;
+ 	struct bnxt_tpa_info *tpa_info;
+-	uint16_t i;
++	uint32_t i;
  
- 	return rc;
-@@ -824,6 +829,7 @@ int bnxt_stats_reset_op(struct rte_eth_dev *eth_dev)
- 		struct bnxt_tx_queue *txq = bp->tx_queues[i];
+ 	if (!rxq || !rxq->rx_ring)
+ 		return;
+@@ -259,7 +259,7 @@ void bnxt_rx_queue_release_mbufs(struct bnxt_rx_queue *rxq)
+ 	/* Free up mbufs in TPA */
+ 	tpa_info = rxq->rx_ring->tpa_info;
+ 	if (tpa_info) {
+-		int max_aggs = BNXT_TPA_MAX_AGGS(rxq->bp);
++		uint32_t max_aggs = BNXT_TPA_MAX_AGGS(rxq->bp);
  
- 		txq->tx_mbuf_drop = 0;
-+		txq->tx_dma_err = 0;
- 	}
+ 		for (i = 0; i < max_aggs; i++) {
+ 			if (tpa_info[i].mbuf) {
+diff --git a/drivers/net/bnxt/bnxt_rxr.c b/drivers/net/bnxt/bnxt_rxr.c
+index 0fab4ddf78..b260ba9bef 100644
+--- a/drivers/net/bnxt/bnxt_rxr.c
++++ b/drivers/net/bnxt/bnxt_rxr.c
+@@ -37,9 +37,9 @@ static inline struct rte_mbuf *__bnxt_alloc_rx_data(struct rte_mempool *mb)
  
- 	bnxt_clear_prev_stat(bp);
-@@ -927,6 +933,7 @@ int bnxt_dev_xstats_get_op(struct rte_eth_dev *eth_dev,
- 		RTE_DIM(bnxt_tx_stats_strings) + sz +
- 		RTE_DIM(bnxt_rx_ext_stats_strings) +
- 		RTE_DIM(bnxt_tx_ext_stats_strings) +
-+		BNXT_NUM_SW_XSTATS +
- 		bnxt_flow_stats_cnt(bp);
+ static inline int bnxt_alloc_rx_data(struct bnxt_rx_queue *rxq,
+ 				     struct bnxt_rx_ring_info *rxr,
+-				     uint16_t raw_prod)
++				     uint32_t raw_prod)
+ {
+-	uint16_t prod = RING_IDX(rxr->rx_ring_struct, raw_prod);
++	uint32_t prod = RING_IDX(rxr->rx_ring_struct, raw_prod);
+ 	struct rx_prod_pkt_bd *rxbd;
+ 	struct rte_mbuf **rx_buf;
+ 	struct rte_mbuf *mbuf;
+@@ -65,9 +65,9 @@ static inline int bnxt_alloc_rx_data(struct bnxt_rx_queue *rxq,
  
- 	if (n < stat_count || xstats == NULL)
-@@ -1049,6 +1056,14 @@ int bnxt_dev_xstats_get_op(struct rte_eth_dev *eth_dev,
- 		count++;
- 	}
+ static inline int bnxt_alloc_ag_data(struct bnxt_rx_queue *rxq,
+ 				     struct bnxt_rx_ring_info *rxr,
+-				     uint16_t raw_prod)
++				     uint32_t raw_prod)
+ {
+-	uint16_t prod = RING_IDX(rxr->ag_ring_struct, raw_prod);
++	uint32_t prod = RING_IDX(rxr->ag_ring_struct, raw_prod);
+ 	struct rx_prod_pkt_bd *rxbd;
+ 	struct rte_mbuf **rx_buf;
+ 	struct rte_mbuf *mbuf;
+@@ -104,7 +104,7 @@ static inline int bnxt_alloc_ag_data(struct bnxt_rx_queue *rxq,
+ static inline void bnxt_reuse_rx_mbuf(struct bnxt_rx_ring_info *rxr,
+ 			       struct rte_mbuf *mbuf)
+ {
+-	uint16_t prod, raw_prod = RING_NEXT(rxr->rx_raw_prod);
++	uint32_t prod, raw_prod = RING_NEXT(rxr->rx_raw_prod);
+ 	struct rte_mbuf **prod_rx_buf;
+ 	struct rx_prod_pkt_bd *prod_bd;
  
-+	xstats[count].id = count;
-+	xstats[count].value = 0;
-+	for (i = 0; i < bp->tx_cp_nr_rings; i++)
-+		xstats[count].value +=
-+			rte_atomic_load_explicit(&bp->tx_queues[i]->tx_dma_err,
-+						 rte_memory_order_relaxed);
-+	count++;
-+
- 	if (bp->fw_cap & BNXT_FW_CAP_ADV_FLOW_COUNTERS &&
- 	    bp->fw_cap & BNXT_FW_CAP_ADV_FLOW_MGMT &&
- 	    BNXT_FLOW_XSTATS_EN(bp)) {
-@@ -1128,6 +1143,7 @@ int bnxt_dev_xstats_get_names_op(struct rte_eth_dev *eth_dev,
- 				sz +
- 				RTE_DIM(bnxt_rx_ext_stats_strings) +
- 				RTE_DIM(bnxt_tx_ext_stats_strings) +
-+				BNXT_NUM_SW_XSTATS +
- 				bnxt_flow_stats_cnt(bp);
+@@ -125,7 +125,7 @@ static inline void bnxt_reuse_rx_mbuf(struct bnxt_rx_ring_info *rxr,
  
- 	if (xstats_names == NULL || size < stat_cnt)
-@@ -1181,6 +1197,10 @@ int bnxt_dev_xstats_get_names_op(struct rte_eth_dev *eth_dev,
- 		count++;
- 	}
+ static inline
+ struct rte_mbuf *bnxt_consume_rx_buf(struct bnxt_rx_ring_info *rxr,
+-				     uint16_t cons)
++				     uint32_t cons)
+ {
+ 	struct rte_mbuf **cons_rx_buf;
+ 	struct rte_mbuf *mbuf;
+@@ -297,7 +297,7 @@ static void bnxt_tpa_start(struct bnxt_rx_queue *rxq,
+ static int bnxt_agg_bufs_valid(struct bnxt_cp_ring_info *cpr,
+ 		uint8_t agg_bufs, uint32_t raw_cp_cons)
+ {
+-	uint16_t last_cp_cons;
++	uint32_t last_cp_cons;
+ 	struct rx_pkt_cmpl *agg_cmpl;
  
-+	strlcpy(xstats_names[count].name, "tx_dma_err_pkts",
-+		sizeof(xstats_names[count].name));
-+	count++;
-+
- 	if (bp->fw_cap & BNXT_FW_CAP_ADV_FLOW_COUNTERS &&
- 	    bp->fw_cap & BNXT_FW_CAP_ADV_FLOW_MGMT &&
- 	    BNXT_FLOW_XSTATS_EN(bp)) {
-diff --git a/drivers/net/bnxt/bnxt_stats.h b/drivers/net/bnxt/bnxt_stats.h
-index c0508e773a..534b9af5e8 100644
---- a/drivers/net/bnxt/bnxt_stats.h
-+++ b/drivers/net/bnxt/bnxt_stats.h
-@@ -8,6 +8,9 @@
+ 	raw_cp_cons = ADV_RAW_CMP(raw_cp_cons, agg_bufs);
+@@ -311,8 +311,8 @@ static int bnxt_agg_bufs_valid(struct bnxt_cp_ring_info *cpr,
+ static int bnxt_prod_ag_mbuf(struct bnxt_rx_queue *rxq)
+ {
+ 	struct bnxt_rx_ring_info *rxr = rxq->rx_ring;
+-	uint16_t raw_next = RING_NEXT(rxr->ag_raw_prod);
+-	uint16_t bmap_next = RING_IDX(rxr->ag_ring_struct, raw_next);
++	uint32_t raw_next = RING_NEXT(rxr->ag_raw_prod);
++	uint32_t bmap_next = RING_IDX(rxr->ag_ring_struct, raw_next);
  
- #include <ethdev_driver.h>
+ 	/* TODO batch allocation for better performance */
+ 	while (rte_bitmap_get(rxr->ag_bitmap, bmap_next)) {
+@@ -334,7 +334,7 @@ static int bnxt_rx_pages(struct bnxt_rx_queue *rxq,
+ 	struct bnxt_cp_ring_info *cpr = rxq->cp_ring;
+ 	struct bnxt_rx_ring_info *rxr = rxq->rx_ring;
+ 	int i;
+-	uint16_t cp_cons, ag_cons;
++	uint32_t cp_cons, ag_cons;
+ 	struct rx_pkt_cmpl *rxcmp;
+ 	struct rte_mbuf *last = mbuf;
+ 	bool is_p5_tpa = tpa_info && BNXT_CHIP_P5_P7(rxq->bp);
+@@ -1003,7 +1003,7 @@ static int bnxt_rx_pages_crx(struct bnxt_rx_queue *rxq, struct rte_mbuf *mbuf,
+ 	struct bnxt_cp_ring_info *cpr = rxq->cp_ring;
+ 	struct bnxt_rx_ring_info *rxr = rxq->rx_ring;
+ 	int i;
+-	uint16_t cp_cons, ag_cons;
++	uint32_t cp_cons, ag_cons;
+ 	struct rx_pkt_compress_cmpl *rxcmp;
+ 	struct rte_mbuf *last = mbuf;
  
-+/* Number of software (non-HWRM) xstats appended after the FW-reported ones. */
-+#define BNXT_NUM_SW_XSTATS		1
-+
- void bnxt_free_stats(struct bnxt *bp);
- int bnxt_stats_get_op(struct rte_eth_dev *eth_dev,
- 			   struct rte_eth_stats *bnxt_stats, struct eth_queue_stats *qstats);
-diff --git a/drivers/net/bnxt/bnxt_txq.h b/drivers/net/bnxt/bnxt_txq.h
-index ac8af91c57..525f841789 100644
---- a/drivers/net/bnxt/bnxt_txq.h
-+++ b/drivers/net/bnxt/bnxt_txq.h
-@@ -36,6 +36,7 @@ struct bnxt_tx_queue {
- 	struct rte_mbuf **free;
- 	uint64_t offloads;
- 	RTE_ATOMIC(uint64_t)	tx_mbuf_drop;
-+	RTE_ATOMIC(uint64_t)	tx_dma_err;
+@@ -1058,7 +1058,7 @@ static int bnxt_crx_pkt(struct rte_mbuf **rx_pkt,
+ 	struct bnxt_cp_ring_info *cpr = rxq->cp_ring;
+ 	struct bnxt_rx_ring_info *rxr = rxq->rx_ring;
+ 	uint32_t tmp_raw_cons = *raw_cons;
+-	uint16_t cons, raw_prod;
++	uint32_t cons, raw_prod;
+ 	struct rte_mbuf *mbuf;
+ 	int rc = 0;
+ 	uint8_t agg_buf = 0;
+@@ -1119,12 +1119,12 @@ static int bnxt_rx_pkt(struct rte_mbuf **rx_pkt,
+ 	struct rx_pkt_cmpl *rxcmp;
+ 	struct rx_pkt_cmpl_hi *rxcmp1;
+ 	uint32_t tmp_raw_cons = *raw_cons;
+-	uint16_t cons, raw_prod, cp_cons =
++	uint32_t cons, raw_prod, cp_cons =
+ 	    RING_CMP(cpr->cp_ring_struct, tmp_raw_cons);
+ 	struct rte_mbuf *mbuf;
+ 	int rc = 0;
+ 	uint8_t agg_buf = 0;
+-	uint16_t cmp_type;
++	uint32_t cmp_type;
+ 	uint32_t vfr_flag = 0, mark_id = 0;
+ 	struct bnxt *bp = rxq->bp;
+ 
+@@ -1343,7 +1343,7 @@ static void bnxt_reattempt_buffer_alloc(struct bnxt_rx_queue *rxq)
+ {
+ 	struct bnxt_rx_ring_info *rxr = rxq->rx_ring;
+ 	struct bnxt_ring *ring;
+-	uint16_t raw_prod;
++	uint32_t raw_prod;
+ 	uint32_t cnt;
+ 
+ 	/* Assume alloc passes. On failure,
+@@ -1363,7 +1363,7 @@ static void bnxt_reattempt_buffer_alloc(struct bnxt_rx_queue *rxq)
+ 	ring = rxr->rx_ring_struct;
+ 	for (cnt = 0; cnt < ring->ring_size; cnt++) {
+ 		struct rte_mbuf **rx_buf;
+-		uint16_t ndx;
++		uint32_t ndx;
+ 
+ 		ndx = RING_IDX(ring, raw_prod + cnt);
+ 		rx_buf = &rxr->rx_buf_ring[ndx];
+@@ -1387,8 +1387,8 @@ uint16_t bnxt_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 	struct bnxt_rx_queue *rxq = rx_queue;
+ 	struct bnxt_cp_ring_info *cpr = rxq->cp_ring;
+ 	struct bnxt_rx_ring_info *rxr = rxq->rx_ring;
+-	uint16_t rx_raw_prod = rxr->rx_raw_prod;
+-	uint16_t ag_raw_prod = rxr->ag_raw_prod;
++	uint32_t rx_raw_prod = rxr->rx_raw_prod;
++	uint32_t ag_raw_prod = rxr->ag_raw_prod;
+ 	uint32_t raw_cons = cpr->cp_raw_cons;
+ 	uint32_t cons;
+ 	int nb_rx_pkts = 0;
+@@ -1627,7 +1627,7 @@ int bnxt_init_rx_ring_struct(struct bnxt_rx_queue *rxq, unsigned int socket_id)
+ }
+ 
+ static void bnxt_init_rxbds(struct bnxt_ring *ring, uint32_t type,
+-			    uint16_t len)
++			    uint32_t len)
+ {
+ 	uint32_t j;
+ 	struct rx_prod_pkt_bd *rx_bd_ring = (struct rx_prod_pkt_bd *)ring->bd;
+@@ -1647,7 +1647,7 @@ int bnxt_init_one_rx_ring(struct bnxt_rx_queue *rxq)
+ 	struct bnxt_ring *ring;
+ 	uint32_t raw_prod, type;
+ 	unsigned int i;
+-	uint16_t size;
++	uint32_t size;
+ 
+ 	/* Initialize packet type table. */
+ 	bnxt_init_ptype_table();
+diff --git a/drivers/net/bnxt/bnxt_rxr.h b/drivers/net/bnxt/bnxt_rxr.h
+index c971233dc3..c82f44f041 100644
+--- a/drivers/net/bnxt/bnxt_rxr.h
++++ b/drivers/net/bnxt/bnxt_rxr.h
+@@ -114,11 +114,11 @@ struct bnxt_tpa_info {
  };
  
- void bnxt_free_txq_stats(struct bnxt_tx_queue *txq);
-diff --git a/drivers/net/bnxt/bnxt_txr.c b/drivers/net/bnxt/bnxt_txr.c
-index 3fae0824d1..edd99dc84a 100644
---- a/drivers/net/bnxt/bnxt_txr.c
-+++ b/drivers/net/bnxt/bnxt_txr.c
-@@ -782,6 +782,12 @@ static int bnxt_handle_tx_cp(struct bnxt_tx_queue *txq)
- 		if (!bnxt_cpr_cmp_valid(txcmp, raw_cons, ring_mask + 1))
- 			break;
+ struct bnxt_rx_ring_info {
+-	uint16_t		rx_raw_prod;
+-	uint16_t		ag_raw_prod;
+-	uint16_t		ag_cons; /* Needed with compressed CQE */
+-	uint16_t                rx_cons; /* Needed for representor */
+-	uint16_t                rx_next_cons;
++	uint32_t		rx_raw_prod;
++	uint32_t		ag_raw_prod;
++	uint32_t		ag_cons; /* Needed with compressed CQE */
++	uint32_t                rx_cons; /* Needed for representor */
++	uint32_t                rx_next_cons;
+ 	struct bnxt_db_info     rx_db;
+ 	struct bnxt_db_info     ag_db;
  
-+		uint16_t errors_v = rte_le_to_cpu_16(txcmp->errors_v);
-+
-+		if (unlikely(errors_v & TX_CMPL_ERRORS_DMA_ERROR))
-+			rte_atomic_fetch_add_explicit(&txq->tx_dma_err, 1,
-+						      rte_memory_order_relaxed);
-+
- 		if (CMP_TYPE(txcmp) == CMPL_BASE_TYPE_TX_L2_COAL) {
- 			struct tx_cmpl_coal *txcmp_c = (struct tx_cmpl_coal *)txcmp;
+diff --git a/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c b/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
+index 50b3602839..9eca5a519f 100644
+--- a/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
++++ b/drivers/net/bnxt/bnxt_rxtx_vec_avx2.c
+@@ -27,8 +27,8 @@ recv_burst_vec_avx2(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
+ 		_mm256_set_epi64x(0, 0, 0, rxq->mbuf_initializer);
+ 	struct bnxt_cp_ring_info *cpr = rxq->cp_ring;
+ 	struct bnxt_rx_ring_info *rxr = rxq->rx_ring;
+-	uint16_t cp_ring_size = cpr->cp_ring_struct->ring_size;
+-	uint16_t rx_ring_size = rxr->rx_ring_struct->ring_size;
++	uint32_t cp_ring_size = cpr->cp_ring_struct->ring_size;
++	uint32_t rx_ring_size = rxr->rx_ring_struct->ring_size;
+ 	struct cmpl_base *cp_desc_ring = cpr->cp_desc_ring;
+ 	uint64_t valid, desc_valid_mask = ~0ULL;
+ 	const __m256i info3_v_mask = _mm256_set1_epi32(CMPL_BASE_V);
+@@ -393,8 +393,8 @@ crx_burst_vec_avx2(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
+ 		_mm256_set_epi64x(0, 0, 0, rxq->mbuf_initializer);
+ 	struct bnxt_cp_ring_info *cpr = rxq->cp_ring;
+ 	struct bnxt_rx_ring_info *rxr = rxq->rx_ring;
+-	uint16_t cp_ring_size = cpr->cp_ring_struct->ring_size;
+-	uint16_t rx_ring_size = rxr->rx_ring_struct->ring_size;
++	uint32_t cp_ring_size = cpr->cp_ring_struct->ring_size;
++	uint32_t rx_ring_size = rxr->rx_ring_struct->ring_size;
+ 	struct cmpl_base *cp_desc_ring = cpr->cp_desc_ring;
+ 	uint64_t valid, desc_valid_mask = ~0ULL;
+ 	const __m256i info3_v_mask = _mm256_set1_epi32(CMPL_BASE_V);
+@@ -891,7 +891,7 @@ bnxt_xmit_pkts_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	int nb_sent = 0;
+ 	struct bnxt_tx_queue *txq = tx_queue;
+ 	struct bnxt_tx_ring_info *txr = txq->tx_ring;
+-	uint16_t ring_size = txr->tx_ring_struct->ring_size;
++	uint32_t ring_size = txr->tx_ring_struct->ring_size;
  
+ 	/* Tx queue was stopped; wait for it to be restarted */
+ 	if (unlikely(!txq->tx_started)) {
+@@ -942,8 +942,8 @@ recv_burst_vec_avx2_v3(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pk
+ 		_mm256_set_epi64x(0, 0, 0, rxq->mbuf_initializer);
+ 	struct bnxt_cp_ring_info *cpr = rxq->cp_ring;
+ 	struct bnxt_rx_ring_info *rxr = rxq->rx_ring;
+-	uint16_t cp_ring_size = cpr->cp_ring_struct->ring_size;
+-	uint16_t rx_ring_size = rxr->rx_ring_struct->ring_size;
++	uint32_t cp_ring_size = cpr->cp_ring_struct->ring_size;
++	uint32_t rx_ring_size = rxr->rx_ring_struct->ring_size;
+ 	struct cmpl_base *cp_desc_ring = cpr->cp_desc_ring;
+ 	uint64_t valid, desc_valid_mask = ~0ULL;
+ 	uint32_t raw_cons = cpr->cp_raw_cons;
+diff --git a/drivers/net/bnxt/bnxt_rxtx_vec_neon.c b/drivers/net/bnxt/bnxt_rxtx_vec_neon.c
+index 03f39280e5..f015caa018 100644
+--- a/drivers/net/bnxt/bnxt_rxtx_vec_neon.c
++++ b/drivers/net/bnxt/bnxt_rxtx_vec_neon.c
+@@ -164,8 +164,8 @@ recv_burst_vec_neon(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
+ 	struct bnxt_rx_queue *rxq = rx_queue;
+ 	struct bnxt_cp_ring_info *cpr = rxq->cp_ring;
+ 	struct bnxt_rx_ring_info *rxr = rxq->rx_ring;
+-	uint16_t cp_ring_size = cpr->cp_ring_struct->ring_size;
+-	uint16_t rx_ring_size = rxr->rx_ring_struct->ring_size;
++	uint32_t cp_ring_size = cpr->cp_ring_struct->ring_size;
++	uint32_t rx_ring_size = rxr->rx_ring_struct->ring_size;
+ 	struct cmpl_base *cp_desc_ring = cpr->cp_desc_ring;
+ 	uint64_t valid, desc_valid_mask = ~0UL;
+ 	const uint32x4_t info3_v_mask = vdupq_n_u32(CMPL_BASE_V);
+diff --git a/drivers/net/bnxt/bnxt_rxtx_vec_sse.c b/drivers/net/bnxt/bnxt_rxtx_vec_sse.c
+index 7d455b6f56..b03affb9ec 100644
+--- a/drivers/net/bnxt/bnxt_rxtx_vec_sse.c
++++ b/drivers/net/bnxt/bnxt_rxtx_vec_sse.c
+@@ -253,8 +253,8 @@ recv_burst_vec_sse(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
+ 	const __m128i mbuf_init = _mm_set_epi64x(0, rxq->mbuf_initializer);
+ 	struct bnxt_cp_ring_info *cpr = rxq->cp_ring;
+ 	struct bnxt_rx_ring_info *rxr = rxq->rx_ring;
+-	uint16_t cp_ring_size = cpr->cp_ring_struct->ring_size;
+-	uint16_t rx_ring_size = rxr->rx_ring_struct->ring_size;
++	uint32_t cp_ring_size = cpr->cp_ring_struct->ring_size;
++	uint32_t rx_ring_size = rxr->rx_ring_struct->ring_size;
+ 	struct cmpl_base *cp_desc_ring = cpr->cp_desc_ring;
+ 	uint64_t valid, desc_valid_mask = ~0ULL;
+ 	const __m128i info3_v_mask = _mm_set1_epi32(CMPL_BASE_V);
+@@ -393,8 +393,8 @@ crx_burst_vec_sse(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
+ 	const __m128i mbuf_init = _mm_set_epi64x(0, rxq->mbuf_initializer);
+ 	struct bnxt_cp_ring_info *cpr = rxq->cp_ring;
+ 	struct bnxt_rx_ring_info *rxr = rxq->rx_ring;
+-	uint16_t cp_ring_size = cpr->cp_ring_struct->ring_size;
+-	uint16_t rx_ring_size = rxr->rx_ring_struct->ring_size;
++	uint32_t cp_ring_size = cpr->cp_ring_struct->ring_size;
++	uint32_t rx_ring_size = rxr->rx_ring_struct->ring_size;
+ 	struct cmpl_base *cp_desc_ring = cpr->cp_desc_ring;
+ 	uint64_t valid, desc_valid_mask = ~0ULL;
+ 	const __m128i info3_v_mask = _mm_set1_epi32(CMPL_BASE_V);
+@@ -677,7 +677,7 @@ bnxt_xmit_pkts_vec(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	int nb_sent = 0;
+ 	struct bnxt_tx_queue *txq = tx_queue;
+ 	struct bnxt_tx_ring_info *txr = txq->tx_ring;
+-	uint16_t ring_size = txr->tx_ring_struct->ring_size;
++	uint32_t ring_size = txr->tx_ring_struct->ring_size;
+ 
+ 	/* Tx queue was stopped; wait for it to be restarted */
+ 	if (unlikely(!txq->tx_started)) {
 -- 
 2.47.3
 
