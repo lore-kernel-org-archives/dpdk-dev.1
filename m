@@ -2,143 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53575C982D8
-	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Sep 2026 15:42:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BFA9C982D8
+	for <dpdk-dev@archiver.kernel.org>; Fri, 18 Sep 2026 16:06:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 27D004279C;
-	Fri, 18 Sep 2026 17:42:07 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id 59F6940285
- for <dev@dpdk.org>; Fri, 18 Sep 2026 17:42:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1789746125; x=1821282125;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=WcBD6S5CMAa/dxDENGD2M0qRB34WfaROYIBdXcoxGTA=;
- b=nhfgSbXPjU30t4GjHI+8rSetIN+o4V/RnMfL30Y0sw5Z9SYeWrng+ami
- 5X98fzXwv/wFQWc1qKTWwquaGbrngZduuEnhlrMpWbAfzmRZCGcmPZ0KC
- gcu6v/ZAIc6dP23iQABpmeUpG3WnUjpUq9ppfJ6q8jbBBm+1LOn3lWefy
- E1SJ5i2WE9KnCeBPLcSpSW3gBNa8QaYL+M6upD6LtQTXN6Df0Un3+RIDb
- fPL3yBU5OjBnpZ5deeyW4G7XUiNVUz+bqm7r6+uLVQOQhmUcitmXolN8W
- lqjcv4PPDBG5c7sKLWDJXh3g6Hgm4YIRCkbKs2xMjw53aQJGTuwAoDcZy Q==;
-X-CSE-ConnectionGUID: wMDnjMtFQY2bOfoDBiNfPg==
-X-CSE-MsgGUID: f/0i06wURKi9bMFUcMeSCw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11909"; a="77824633"
-X-IronPort-AV: E=Sophos;i="6.27,109,1787036400"; d="scan'208";a="77824633"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
- by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Sep 2026 08:42:04 -0700
-X-CSE-ConnectionGUID: EUb1x3A5TcuA1/rIIoSv/w==
-X-CSE-MsgGUID: +yXTdIRfQJSG2Caw0/afKw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,109,1787036400"; d="scan'208";a="271128519"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
- by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Sep 2026 08:42:04 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Fri, 18 Sep 2026 08:42:03 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46 via Frontend Transport; Fri, 18 Sep 2026 08:42:03 -0700
-Received: from CH1PR05CU001.outbound.protection.outlook.com (52.101.193.18) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Fri, 18 Sep 2026 08:42:02 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tNilFKg6X97OJZ3tAFgYcvmwPOCWz0IK0/utdO1cxwIqv0vwBwm4Uw/WLc38R0fy+FSuGkejTxQnuZOybJQaFeR28xSOzzDMBjk9s6Zf67gKHPEJSZrXfxTs/aH/f8BTlOKj+fch9sjbUfV5B9x+02Um5TXcMHyEjDZEbCVBMQ6mWTlyeHyF5iARa8dG+IJYhjtB7e9pds57zgVYNqqH+jHFZR0cRLdF0+9DuFv+jg1xkvUEhYNawRUhGLpkiGLV3BlZnfoCmOUH2BNLgCdE6wBkJvjKE8MnxsKIaAZe6iJdeX0Qq4EjXvXCTNtxqQYfYJ2kBD51mKh5Ti4XEnylGg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0qT8GzUzEwGzO5dw2o75qXY4vcywNfoeGukzJHbs6z4=;
- b=sm0XFCB/tTI2FNfSGGVITVprmyovOH+Z+WH8KRKq/HNVxn69hAiSbDjweDLeCP85O5bKAmhlZJg78uMugOMvIQ0VkeHqhbwdZdp4HhUA+35KDXJ3YvJM6k/s8bjtr3ki+otae7lZVST4W1TH4u8EJi2AuOPc868AEB2j+SjtKGObSw6F2vas6AxiGysNskINV4Q9GCbxjMYFqSbD/2l0aToPiiynssFwZTMnaVQIv3Wfrok3b9ffOWRHyshOMSbKAyBblBqWGjIOZwlNkQoGh+EpcCMWNzcuSkPtiwE1n8S9rH0b9Ag/s+qU9Ijdy5Hk2OMJVxvI+uFww20ASasHxw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com (2603:10b6:806:2df::18)
- by SA0PR11MB4559.namprd11.prod.outlook.com (2603:10b6:806:9a::19)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.13; Fri, 18 Sep
- 2026 15:42:00 +0000
-Received: from SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9]) by SN7PR11MB8066.namprd11.prod.outlook.com
- ([fe80::983e:d43f:94ff:21f9%6]) with mapi id 15.21.0406.007; Fri, 18 Sep 2026
- 15:41:58 +0000
-Date: Fri, 18 Sep 2026 16:41:53 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: David Marchand <david.marchand@redhat.com>
-CC: <dev@dpdk.org>, Aaron Conole <aconole@redhat.com>
-Subject: Re: [PATCH v2 9/9] ci: run reference binaries against current ABI
-Message-ID: <aq1bwV3yNlXUZeHT@bricha3-mobl1.ger.corp.intel.com>
-References: <20260717093006.229370-1-david.marchand@redhat.com>
- <20260723125559.3087579-1-david.marchand@redhat.com>
- <20260723125559.3087579-10-david.marchand@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20260723125559.3087579-10-david.marchand@redhat.com>
-X-ClientProxiedBy: DUZPR01CA0110.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4bb::7) To SN7PR11MB8066.namprd11.prod.outlook.com
- (2603:10b6:806:2df::18)
+	by mails.dpdk.org (Postfix) with ESMTP id 169684279C;
+	Fri, 18 Sep 2026 18:06:48 +0200 (CEST)
+Received: from mail-pz2-f43.google.com (mail-pz2-f43.google.com
+ [74.125.228.43]) by mails.dpdk.org (Postfix) with ESMTP id 0368540285
+ for <dev@dpdk.org>; Fri, 18 Sep 2026 18:06:45 +0200 (CEST)
+Received: by mail-pz2-f43.google.com with SMTP id
+ d2e1a72fcca58-85469a34908so937391b3a.0
+ for <dev@dpdk.org>; Fri, 18 Sep 2026 09:06:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789747604;
+ x=1790352404; darn=dpdk.org; 
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
+ :date:message-id:reply-to:content-type;
+ bh=nqonN+XljdLUVXaGDrWi0qTxqO1ybHh4m2HPS+MBeKI=;
+ b=UXc8s+V+mWaX2lbDEqXghL/8YaRH06mypQi7KsUhxmeNGsQbgJGZ+QHv7PcE7/suvW
+ +1UUkEewRYcYhZhEygZDJcv/vKeKn5VdZcD98soo4gRuCgfc3GJTVkztfv7m/sZWvW3U
+ beJXDJM99I8DPa/GyFFEYwKjA2B3ICk821S41Zvi7yeZPhyIm/9S63xvn0paQb9d2T59
+ 253lOQsImjGmySvca9eLMh2O7OgGY8TDwJlMJBv43lEAnjNxhJa/cyYZ1BGbnXq5tQqe
+ XmVUUmarENsAecIsQMSfBxhIFbk3N+FAWyTQycBvNkQtbfztxO2LpVtER21dFUMzXHKW
+ vAEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1789747604; x=1790352404;
+ h=content-transfer-encoding:content-type:mime-version:references
+ :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=nqonN+XljdLUVXaGDrWi0qTxqO1ybHh4m2HPS+MBeKI=;
+ b=kcaetYz7MUaEPdNFQnhhOwMdXd6NrOoLEHTzRBnE6jqlMCQKOAWbmHMzXYLzzPavFk
+ bOAdR6dAnl7vIF3UXZcb0rlx7owWDW7bKKKhre7ToZqr30+fl+A76w76rZmFzmaYPhFa
+ 9caJ8LRV/PaRcLsJYsNw4T/N4ZO4qSU3j3T5//dcEsj/lvXiMDBrrpNI5Hea7X02LKLy
+ A9g7K9ANOHGUZojbM2rOS5Y4ydBcpeX4m9zwa02C1qtVGNEeBo3W/JAZI1SX7RvUz1+W
+ 835wIcI1XpQ8nWTh3yFmP2rVGEnMRHPJ+Hgt5gDW831hdE+nvb/xJovQgXoF/hNY6eAE
+ Pqvg==
+X-Gm-Message-State: AFuF++mJqGNLs+aZapzSlH0QB2ZisE6VxUxWY/DY7oolLG+xGVf5NRiz
+ yT7MdyLPyNbXfIYGJ87oZ/mDHBimyA57ZRWs7hSagoy8aLhzAIH9SHKl4l77sAs926Y=
+X-Gm-Gg: AYBFou1a7PYBbkkNiNPS2Ds9fF84IQtjmHVmcagKP3kdVgLrY4Qn/quZbM5WqYbwfw+
+ 3/nTFllixLom9kRv392P/piYds8edNJWgRIZm+SLaiA2iU9dz/eGG51K7zsnpJNM+72ofZDZQTn
+ KFi/L0CmY4JI5uqyX/ALA7owTVJNGdfd3BC6ac3btmzoLjq25elskoxWPXJ3pVFZAK6a1g/tcwY
+ XjGI+STcrJPXBJOFpu/0y7TCmesNXbnoAAGz6oZeLpSpCPHve6UOJHKg4Xa5SxtHvaT35vKJtD+
+ +Ku6eGcY+qNOBVhSqIRHFvxGFwK/ekGxF+DJfDawNanFbFDYQC4keg2H5Uo/pwsJ9BHj4/KjC3J
+ +RUEpMIdRB4YkpXsT/xQ+UNz82PCS85Q3luc5UJRjvqE9kzgOzR1yOwr0UUu6zBSJzLBAMxg5AI
+ 9f03mo4HnuGFcZQgC6dRCftWEzQkkRz6DArWm0QzOJe64fGOKbpFgOuQFDYb80B6E6Uydo9h+VC
+ ak9SsosjzM2tNVnjD3iKVTIuvazrvskbS4+Vlu9iVPLLcP+t5E=
+X-Received: by 2002:a05:6a00:2451:b0:871:fcff:e904 with SMTP id
+ d2e1a72fcca58-874de20b923mr5565859b3a.25.1789747603386; 
+ Fri, 18 Sep 2026 09:06:43 -0700 (PDT)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d2e1a72fcca58-877a6ae7d71sm5460b3a.2.2026.09.18.09.06.42
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 18 Sep 2026 09:06:43 -0700 (PDT)
+Date: Fri, 18 Sep 2026 09:06:40 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Zhang Tengfei <zhtfdev@gmail.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v3 0/3] net/txgbe: fix flow create errors
+Message-ID: <20260918090640.5e576e89@phoenix.local>
+In-Reply-To: <20260917153242.29315-1-zhtfdev@gmail.com>
+References: <20260916131106.105667-1-zhtfdev@gmail.com>
+ <20260917153242.29315-1-zhtfdev@gmail.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR11MB8066:EE_|SA0PR11MB4559:EE_
-X-MS-Office365-Filtering-Correlation-Id: a5642be3-22fa-4e3a-e8f1-08df159b5ff7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|1800799024|366016|23010399003|6133799003|10067099003|5023799004|4143699003|11063799006|56012099006|22082099003|18002099003;
-X-Microsoft-Antispam-Message-Info: XCnB69hCG+nJGtxqYbd1NKi+GSBSPEgmcwoJkqpVHBzs+u7QX0wzwprAb1jW7QFKYiuuI8FM43F6MvV5FWwmB4whLtYamTRktpC+eVrQTLe3Y5kbFvoVEea/DA4YCP5ppockhnLp2v54sJ7R8TajgOwcrlktQ3JjsGDVgoOM2UicPDAWQqbSVxoaZ1vgKJ7skXXo5luE/ZblWVBUzkUBg9Mahdq4H2wnqqzyiK3/8Dh14G8dxeYxFEQ08PW5Aot9hBbS5HRX8jtsifeBM1/raDcwKnPVx9ZMBbW8sYm0ZusOE5QZDIs+0ZVcBe+lvzDpJscuKVHz1OU5B7TOJ9qb2kODvTYKfiAxtJTe1DcEXR6mQ29A3NdCZWyABssLH0G+SjulOiqkXE66zahpvUV9MxorNC1WcLGYjvkfvkOztkg1zuJevD8SA4REafuSi4y+Be9rHRGqUp60iGjFhfh2cpFWmCON8TfB2T2kHmIOxGGikej2aweqDCdcbaZ/b86ZId+jm7jYn3agKeRlwSx6xwkVjfsMDcvBY4OXAwcD/HWFgX6XVSSURkcQuUVu9bC8CQTQnBicltyGo+UVk9crz/iS4zPaKkdjuPC0rbeElvwkUdM20csyidmBDJhcTmTCadWt6Avk2K02JmJxXPPBKb7WU3lPFhGtDKqyrAlu5oU=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SN7PR11MB8066.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(23010399003)(6133799003)(10067099003)(5023799004)(4143699003)(11063799006)(56012099006)(22082099003)(18002099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?3OzN5eDyNPjeTZ2Qb9PQydZXBKWNRYrKaU+1XhdHq5X+K983Gn+vDk1xuhDI?=
- =?us-ascii?Q?KLuB/kiLh35SZVfXIzVD3K9WDxHTwm0f4uZZ/IPIbH3vTVSq2iy3RmWQ5iSh?=
- =?us-ascii?Q?Yk0fZtXz0Al3bTjfn/0o1sLj+rjcgo85/tOTck4N9/HHK4fImV0Icns5rIpB?=
- =?us-ascii?Q?Z5GwO119JaT9JfxceLZZv/hz6PgS58J3ZUIqtQgk9QC6ssSnZ6Z3iBsv9tLq?=
- =?us-ascii?Q?hn443I87crPfQkiO5P49qJeB/3o0tu0UV3Rj9EpB/NpoNt2vanpotGSQPsrM?=
- =?us-ascii?Q?nh3r4Zsh07pJP5tfHIAf56ibEp8ZH6BrAgDAy3ymV6w1AEWrbcdFbDEvEKnC?=
- =?us-ascii?Q?IMTMRFrpqtfJidb2BIockzaQsY4i5aJYNw011Jj3lLl6nuJDNaEVK6bcZMkl?=
- =?us-ascii?Q?uUd+iabif18NPwi8RloiAs4oTa20BiK7QBaIoWnTIZLQhd5JoAxckRmxhGyJ?=
- =?us-ascii?Q?ByxLPU5HjLVIAwpp7Iiygf4pPfevqQ5AVE1/ROme4NLB3Br8CBQpA9ommSHE?=
- =?us-ascii?Q?+TICzeVAj0hYCYeutpZ/r9tNIsNJ7VY9Wdywz7VD8G4/97lIm7P+fUE8F3Q5?=
- =?us-ascii?Q?0sbcsH5+1oep4XF5ZuIBAJisKckYA2wJ3+0QkpR9VwR4DjikMaLWOJlLGIXP?=
- =?us-ascii?Q?Fwc3WNGRsVOlzT3p9IxZHT0OYB5Ut/1retlJGmxu8tccLbInLjFprjpQx9Ly?=
- =?us-ascii?Q?wm6z16/FNaetIEl78rwhSk9qld9sQTVzpRmvBslyCjjtEMGP5zjBqIySJ37o?=
- =?us-ascii?Q?u1XYx7mbVL0koC7xHXbKSM3WUhRIfxMvJ+7pY1X3DDeC6jEh6P5BZzvWmf7V?=
- =?us-ascii?Q?Arz/A94NXTMoMF5NLm760LHnu7Pb3D+8q/r0eRpi1PYfmKRZpcHB3KXLnpzV?=
- =?us-ascii?Q?mLJCIgtqI/rFiM8yVfrgdciLTN99sgC/5ScgfFJDVTYBXoKwEgmOaNQqV3cO?=
- =?us-ascii?Q?S8AcesDuSRw5iQ9VQMNk5kJpi30jF+oV5V6mDPsaSR5z7MCv6eeajnEpga3V?=
- =?us-ascii?Q?VTGjpB3c/iFEMbMfKBfpGTNe0OjVbGCW/DtmQ7s9tACp+/tCh0dTJKdmUFRy?=
- =?us-ascii?Q?2gC5ZHPupmuicKxguUpQfCfexe37JlWv/QlYDQABCaFOfjkzON9erKKODT2G?=
- =?us-ascii?Q?pLSI+xxUiQIHrDEWoOvsoEclzITVZX7iSMJKCxPyIa1VWa0crXgXlBnh+aAw?=
- =?us-ascii?Q?zeLYOHgRcvEcZySFAoJdKu2BUkdHAFdlGk/K5pxY54Cq/cOj66q4ue3Ey+ei?=
- =?us-ascii?Q?YarOm+2G6Acbb8t+k68rL2g8sBf1Wzg/etghAWeqjSJFxKObbwa2jVd22rNd?=
- =?us-ascii?Q?87whxq3wcvUvq4mbaq16wTh1G8ZSfcM1adaVHhnAmhm/UfxhyF2V4emLdpZh?=
- =?us-ascii?Q?EV7WkfxHUhTdBMi2EZkH4sH+9Cje7kYm3wv0hwJDz4Sf1JrzHA1i9x8PBCD7?=
- =?us-ascii?Q?WwrIxXzmfcqM7bgubblCx7ct8suQwcTP3+N3BzzeYwb1H8mytnCiZT2izRak?=
- =?us-ascii?Q?qgocPqw3XXsqYEsd9vJ0Wltmuxh5OiyRPfXx37UgFaaxfIzwZnwB5v22Cm/j?=
- =?us-ascii?Q?yekcB04675CS7h2Ueq/qGc+qsX3QIf8SK/XitPvvQs3rshJ/p4Yqmxw2hsVz?=
- =?us-ascii?Q?XiGN1skUQ4tfVnB17iY9MtGwj14pFu6quCW2ST5VEy2f74f2TBEtRE5UhaC3?=
- =?us-ascii?Q?1FkbvV874hrBi1Jk6jEB+nXsMVYlk7Uqu6F927D36OZKBBta83IQbphAacgs?=
- =?us-ascii?Q?4hej7e79TwqKhUnbvmYQ1rSkYOCZliQ=3D?=
-X-Exchange-RoutingPolicyChecked: vk3cxhqw29tw2y6sUOZtjDKeu0coUzvYrLrQqZYExfJYzEnIHmEcQaMv4OuX7ldvB3cLDIxxF69zk0dv/ff38079sluFkc9gBwGnNmg9jus4eUtrtXT23Upax8Knh4nh8UurL2sHI5gsff+ohZaN7yB1T6DLYoBEY1wL+c5Z8c8v/K0+ur9Tmuhf4fu/1Csk4Fgz7qNcXZ1HzGLj5hUwA5ZP517dnU+m345lUkGP1zo47RP0kT5tqzuA3pwOfGsvRil839n1gVgbjQy+EHxtYwpwem0K49atIqXrJNg9IY7dLGb4DOdSe86CfJIxgPZgKigGyzGug81ZgsGkNhr1kg==
-X-MS-Exchange-CrossTenant-Network-Message-Id: a5642be3-22fa-4e3a-e8f1-08df159b5ff7
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB8066.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Sep 2026 15:41:58.5610 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IqJrjbatWh+ilI5sUaSpzFZKYcz8OxPIFVCv/9hgSeW1NkReBSrzc6rMTPQRymfmQxpyE5+HfRWGfZ46P+Tt6LVwj/42JbRORHAmDX29QHg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR11MB4559
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -152,126 +82,74 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Jul 23, 2026 at 02:55:58PM +0200, David Marchand wrote:
-> Let's check if a testpmd and unit tests from a reference build can run
-> with the current release libraries/drivers.
+On Thu, 17 Sep 2026 23:32:39 +0800
+Zhang Tengfei <zhtfdev@gmail.com> wrote:
+
+> v3:
+> - reject mask-only FDIR before programming the global mask
+> - log flex offset mismatch
+> - no code change in 1/3 and 2/3
 > 
-> This gives another level of ABI checking, like catching regressions on
-> experimental or internal ABI symbols that get promoted to stable.
+> v2:
+> - split L2 tunnel add-failure goto out into its own patch
+> - allocate FDIR object before installing the global mask
+> - add Fixes tag for the VF FDIR path
+> - set -EINVAL on remaining FDIR goto out paths with bad ret
+> - use struct assignment instead of rte_memcpy for filter copies
 > 
-> We may need to skip unit tests that were added since the reference.
-> So add a ABI_SKIP_TESTS environment variable in preparation.
+> 1/3 fix L2 tunnel error on flow create
+> 2/3 fix leak of filters on flow create
+> 3/3 fix FDIR error handling on flow create
 > 
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
-> ---
-> Changes since v1:
-> - dropped hack, testing this patch can't be done in the CI now,
-> - emptied the excluded tests list,
-> - added test-null.sh,
+> Zhang Tengfei (3):
+>   net/txgbe: fix L2 tunnel error on flow create
+>   net/txgbe: fix leak of filters on flow create
+>   net/txgbe: fix FDIR error handling on flow create
 > 
-> ---
-
-This is a good test to run. It's something I believe our internal
-validation team does at times too. Some comments inline below, nothing
-major though.
-
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
-
-
->  .ci/linux-build.sh          | 33 ++++++++++++++++++++++++++++++---
->  .github/workflows/build.yml |  1 +
->  2 files changed, 31 insertions(+), 3 deletions(-)
+>  drivers/net/txgbe/txgbe_flow.c | 266 +++++++++++++++++----------------
+>  1 file changed, 140 insertions(+), 126 deletions(-)
 > 
-> diff --git a/.ci/linux-build.sh b/.ci/linux-build.sh
-> index a5e602ed83..032f3726e8 100755
-> --- a/.ci/linux-build.sh
-> +++ b/.ci/linux-build.sh
-> @@ -206,23 +206,33 @@ if [ "$ABI_CHECKS" = "true" ]; then
->          # don't try to link apps.
->          REF_OPTS="$REF_OPTS -Dcheck_includes=false"
->          REF_OPTS="$REF_OPTS -Ddeveloper_mode=disabled"
-> -        REF_OPTS="$REF_OPTS -Ddisable_apps=*"
-> +        REF_OPTS="$REF_OPTS -Denable_apps=test,test-pmd"
->          REF_OPTS="$REF_OPTS -Denable_docs=false"
->          REF_OPTS="$REF_OPTS -Dexamples="
-> -        REF_OPTS="$REF_OPTS -Dtests=false"
 
-These changes should go in the previous patch, I think - certainly you can
-drop the tests=false one, since it should be a no-op.
+I applied this to next-net.
 
->          refsrcdir=$(readlink -f $(pwd)/../dpdk-$REF_GIT_TAG)
->          git clone --single-branch -b "$REF_GIT_TAG" $REF_GIT_REPO $refsrcdir
->          meson setup $REF_OPTS $refsrcdir $refsrcdir/build
->          ninja -C $refsrcdir/build
->          DESTDIR=$(pwd)/reference meson install -C $refsrcdir/build
->          find reference/usr/local -name '*.a' -delete
-> -        rm -rf reference/usr/local/bin
-> +        rm -rf reference/usr/local/bin/*
-> +        cp $refsrcdir/build/app/dpdk-test reference/usr/local/bin/dpdk-test
-> +        cp $refsrcdir/build/app/dpdk-testpmd reference/usr/local/bin/dpdk-testpmd
+AI review had some Info level observations, if you want to send
+a new version, I will replace the one in next-net.
 
-At this point I'd suggest running "meson test --list --suite=fast-tests" to
-get the list of available tests in the reference implementation.
+Review: [PATCH v3 0/3] net/txgbe: flow create fixes
+Author: Zhang Tengfei <zhtfdev@gmail.com>
 
->          rm -rf reference/usr/local/share
->          echo $REF_GIT_TAG > reference/VERSION
->      fi
->  
->      DESTDIR=$(pwd)/install meson install -C build
->      devtools/check-abi.sh reference install ${ABI_CHECKS_WARN_ONLY:-}
-> +
-> +    failed=
-> +    configure_coredump
-> +    mv -f build/app/dpdk-testpmd build/app/dpdk-testpmd.ori
-> +    cp reference/usr/local/bin/dpdk-testpmd build/app/dpdk-testpmd
-> +    devtools/test-null.sh || failed="true"
-> +    mv -f build/app/dpdk-testpmd.ori build/app/dpdk-testpmd
-> +    catch_coredump
-> +    [ "$failed" != "true" ]
->  fi
->  
->  if [ "$RUN_TESTS" = "true" ]; then
-> @@ -233,6 +243,23 @@ if [ "$RUN_TESTS" = "true" ]; then
->      catch_ubsan DPDK:fast-tests build/meson-logs/testlog.txt
->      check_traces
->      [ "$failed" != "true" ]
-> +
-> +    if [ "$ABI_CHECKS" = "true" ]; then
-> +        failed=
-> +        configure_coredump
-> +        mv -f build/app/dpdk-test build/app/dpdk-test.ori
-> +        cp reference/usr/local/bin/dpdk-test build/app/dpdk-test
-> +        for t in ${ABI_SKIP_TESTS}; do
-> +            DPDK_TEST_SKIP=${DPDK_TEST_SKIP+$DPDK_TEST_SKIP,}$t
-> +        done
+Applies to main, each of the three commits builds with -Dwerror=true.
+Fixes tags resolve; both referenced commits are in released versions,
+so Cc: stable is right.
 
-As well as the ABI_SKIP_TESTS, you could automate the list by again running
-"meson test --list --suite..." and then only running the tests in both
-lists. [using "sort" and "uniq -d" perhaps?]
+Patches 1 and 2 are unchanged from v2 apart from commit message
+wording. The v2 warning is addressed: mask-only FDIR rules are now
+rejected before the global input mask is programmed, so a failed
+create no longer leaves mask_added set. With that check in place the
+b_spec block is unconditional, which reads better than the old
+nesting. The memcmp and flex offset paths now set -EINVAL, and the
+flex mismatch has a log message.
 
-> +        sudo env DPDK_TEST_SKIP="$DPDK_TEST_SKIP" \
-> +            meson test -C build --suite fast-tests -t 3 --no-stdsplit --print-errorlogs || failed="true"
-> +        catch_coredump
-> +        catch_ubsan DPDK:fast-tests build/meson-logs/testlog.txt
-> +        check_traces
-> +        mv -f build/app/dpdk-test.ori build/app/dpdk-test
-> +        [ "$failed" != "true" ]
-> +    fi
->  fi
->  
->  # Test examples compilation with an installed dpdk
-> diff --git a/.github/workflows/build.yml b/.github/workflows/build.yml
-> index c63a9a3982..5ee55f4d27 100644
-> --- a/.github/workflows/build.yml
-> +++ b/.github/workflows/build.yml
-> @@ -39,6 +39,7 @@ jobs:
->      env:
->        AARCH64: ${{ matrix.config.cross == 'aarch64' }}
->        ABI_CHECKS: ${{ contains(matrix.config.checks, 'abi') }}
-> +      ABI_SKIP_TESTS: none
->        ASAN: ${{ contains(matrix.config.checks, 'asan') }}
->        BUILD_32BIT: ${{ matrix.config.cross == 'i386' }}
->        BUILD_DEBUG: ${{ contains(matrix.config.checks, 'debug') }}
-> -- 
-> 2.54.0
-> 
+
+Patch 3/3: net/txgbe: fix FDIR error handling on flow create
+
+Info: the b_spec check sits after the rte_zmalloc(), so it allocates
+  and immediately frees on the reject path. Moving it above the
+  allocation drops the rte_free() and one level of churn:
+
+	if (!fdir_rule.b_spec) {
+		ret = -EINVAL;
+		goto out;
+	}
+
+	fdir_rule_ptr = rte_zmalloc(...);
+
+Info: the VF path still reaches "out" with a base driver status code.
+  txgbevf_fdir_filter_program() propagates TXGBE_ERR_FEATURE_NOT_
+  SUPPORTED (-292) and TXGBE_ERR_NOSUPP from txgbevf_set_fdir(), so
+  rte_flow_error_set(error, -ret) gets 292, not an errno. The PF
+  paths checked out: txgbe_fdir_set_input_mask() and
+  txgbe_fdir_filter_program() return -ENOTSUP, -EINVAL, -ENOMEM or
+  -ETIMEDOUT. Converting the VF codes is a separate patch.
+
+Reviewed-by: Stephen Hemminger <stephen@networkplumber.org>
