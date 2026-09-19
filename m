@@ -2,75 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE1DC982CC
-	for <dpdk-dev@archiver.kernel.org>; Sat, 19 Sep 2026 08:17:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A22D6C982D7
+	for <dpdk-dev@archiver.kernel.org>; Sat, 19 Sep 2026 09:47:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 21B3F40682;
-	Sat, 19 Sep 2026 10:17:39 +0200 (CEST)
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
- [209.85.214.170])
- by mails.dpdk.org (Postfix) with ESMTP id D81E04026A
- for <dev@dpdk.org>; Sat, 19 Sep 2026 00:56:16 +0200 (CEST)
-Received: by mail-pl1-f170.google.com with SMTP id
- d9443c01a7336-2dd1dcdcf95so9223495ad.1
- for <dev@dpdk.org>; Fri, 18 Sep 2026 15:56:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1789772176; x=1790376976; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=joyqVOSlpLpOtvwtShbkeB8TZovNAtLArVymb+qB6zQ=;
- b=mJZGV9uW5FCSyr1mCemPwTEAbfxBmyXbEnM+CZItL5sHVORAHglahfEuZlgtbVfyJ2
- R9F81VHGb8wVVTh+56kfrqiNKX0uK6nwJKgskOQq9Us2iESs8Yg0z9y/4gAUtT9Cv8xV
- fR6GaSO7Q0YoZvUh+UWnMux8wrslm9R/r3LALzKiw07yJ3nCMqQjuHwkYq5+PW3wjafY
- 403/pQEcmJ/PUNn1QZ8zHsORD39AVdurFOFQr4ZkymlAhbjSLpdiVfkhehMHpdsyOI7R
- +0Ow75fSuCGvKEBFDkfn6S6eQDwzexz1Z8piKxPMm11BfefGCGRWzzA663KIxQnCuC09
- 6IZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789772176; x=1790376976;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to:content-type;
- bh=joyqVOSlpLpOtvwtShbkeB8TZovNAtLArVymb+qB6zQ=;
- b=Dljyo306F00j7KrsdQ96P10MpzJdoawUVKMRJRjcxbFPjhj3xU8VjgxrzLqckGSHzx
- fTjs/svQvkTQTj1GaXMKbbjdoCCDkBl+ghUTJKbqE/P94JNNNCpJL4Zkaum/efNkG1xt
- hLtUjcTBwpfSRRJeImphkKzwzIjfUUMr+Ar2Wop3jjdsRtADuDLLUFQIQJpSQZFKqnQ+
- qm35hIwVsAJsLsL/mw+nn9HiucEgewJImqoYRR27QaRYRBzoq3PbEmiKm9agWMRen7DK
- etWI4+GMh47OSfYTnGjIAmWVo0OtBFkQz2WZRnsmCcUClM7OeFEie+CIIn3dwgQC1Mw3
- E6DQ==
-X-Gm-Message-State: AFuF++n/LdxNLNKkqV2t5nCtiWnKS6FLDrxkCvPOOEe6mSIh4UmPyCNh
- 3WV76EaBe8l7EigfryD1nOVQ/AtSSVU6tWJDpXmOXBxI3xB3m5CvB0tbVBjgKPfo
-X-Gm-Gg: AYBFou1dQ+FvKkPoQIkUwk8mInb0Sy1cK8g3Y6dya803po5gBV18ljpI/ZzC/iiCmE5
- 89O84sD7AmctAG0jXmDauhTAm6T6oLQISSzKZ1/sZXj6AvQANYvAzgBz4KV1wpi2G/8zQdd7nDn
- Oith1GU1f0YiQB3uAhBcH6DGYCGEPO7Zqg9xz0QmXGE+w1UYcvojWg30quJ8KZHdLC2Yxdd5zeI
- tdGHlK2rtKb1IznwwBuo+5/JQjm766kSR/59LE9Mw9ymIOxibdxx5xBOPAMdah0AP5UUmezN7yP
- D40i2NRt5caZjKUT5rcVsRT4U4GSy5SvzDko3AjNT+PG/AMezp2MyM3kec81cspJu3t1ek+MprN
- 4UarMa55Wzupbvim5L62orIujymiTIrrGmMH21W66H8LDxGtVZC+oA+zp+UGwIPZsdi+yvASBJN
- Gviv+GXBX5CTH9Fjsi+ZinjA7W3MaBPoZqR2H3EJevggc6S0+DmG6nn9Ot7Cbmg8WYOE9GFFNyh
- g==
-X-Received: by 2002:a17:902:d491:b0:2dd:4438:4290 with SMTP id
- d9443c01a7336-2dd9c6b8750mr115264965ad.3.1789772175719; 
- Fri, 18 Sep 2026 15:56:15 -0700 (PDT)
-Received: from ubuntu-desktop.. ([137.99.252.104])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-33c3314313esm1569423eec.14.2026.09.18.15.56.14
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 18 Sep 2026 15:56:15 -0700 (PDT)
-From: Md Rayhanul Islam <r97yhan@gmail.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, Chuanyu Xue <chuanyu.xue@uconn.edu>,
- Song Han <song.han@uconn.edu>,
- Md Rayhanul Islam <md_rayhanul.islam@uconn.edu>,
- Md Rayhanul Islam <r97yhan@gmail.com>
-Subject: [PATCH 2/2] net/e1000: maintain caches on non-coherent DMA
-Date: Fri, 18 Sep 2026 18:50:44 -0400
-Message-Id: <20260918225045.177125-3-r97yhan@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260918225045.177125-1-r97yhan@gmail.com>
-References: <20260918225045.177125-1-r97yhan@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 652C24026A;
+	Sat, 19 Sep 2026 11:47:58 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 2EA77400EF
+ for <dev@dpdk.org>; Sat, 19 Sep 2026 11:47:56 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id E8A03205CD;
+ Sat, 19 Sep 2026 11:47:55 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mailman-Approved-At: Sat, 19 Sep 2026 10:17:34 +0200
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH 6/6] mempool: no cache size limit
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Date: Sat, 19 Sep 2026 11:47:52 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65A56@smartserver.smartshare.dk>
+In-Reply-To: <47b4d1bbc1644820aec4e9844dbfb96a@huawei.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH 6/6] mempool: no cache size limit
+Thread-Index: AQHdQRBWyXIpNFvS4EakmQe4E/7zIbbUT1vAgAAodBCAACZywIABE0Kg
+References: <20260910103613.808038-1-mb@smartsharesystems.com>
+ <20260910103613.808038-7-mb@smartsharesystems.com>
+ <c5dd813d0e8647289769fc51252b1ac0@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F65A55@smartserver.smartshare.dk>
+ <47b4d1bbc1644820aec4e9844dbfb96a@huawei.com>
+From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Konstantin Ananyev" <konstantin.ananyev@huawei.com>, <dev@dpdk.org>,
+ "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>,
+ "Bruce Richardson" <bruce.richardson@intel.com>,
+ "Stephen Hemminger" <stephen@networkplumber.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,671 +52,324 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When the PCIe bus is not cache coherent, the NIC can read stale memory.
-The kernel's DMA API cleans the cache before handing a buffer to a
-device; DPDK writes descriptors straight into hugepage memory and rings
-the doorbell.
-
-On a BCM2711 (Raspberry Pi Compute Module 4, Cortex-A72, 64-byte cache
-lines) with an Intel I210, the NIC fetched the previous contents of the
-rings -- zeroed descriptors with DD set and null buffer addresses -- so
-transmits never completed and received data was DMA'd to address zero.
-Cleaning to the point of unification was not enough; the device saw the
-CPU's stores only after a clean to the point of coherency.
-
-Cleaning writes back a whole 64-byte line, which holds four descriptors,
-so cleaning one just written also restored stale status for its
-neighbours and erased DD bits the NIC had set.
-
-When the device is described by a device tree and no ancestor declares
-"dma-coherent", on arm64:
-
- - clean the D-cache (DC CVAC) over descriptors and packet data before
-   the tail register lets the NIC read them;
- - invalidate (DC CIVAC) descriptor status and received data before
-   reading what the NIC wrote;
- - take TX completion from the hardware head register instead of the DD
-   bits;
- - write RX buffer addresses back one whole cache line at a time, once
-   every descriptor in that line has been returned and consumed.
-
-This is a no-op on cache-coherent platforms and non-arm64 builds, and
-DPDK_DMA_NONCOHERENT forces it either way.
-
-Signed-off-by: Md Rayhanul Islam <r97yhan@gmail.com>
----
- doc/guides/linux_gsg/bcm2711_platform.rst |  30 +-
- doc/guides/rel_notes/release_26_11.rst    |   8 +
- drivers/net/intel/e1000/igb_rxtx.c        | 356 +++++++++++++++++++++-
- 3 files changed, 381 insertions(+), 13 deletions(-)
-
-diff --git a/doc/guides/linux_gsg/bcm2711_platform.rst b/doc/guides/linux_gsg/bcm2711_platform.rst
-index 5a774607da..3be149e2f7 100644
---- a/doc/guides/linux_gsg/bcm2711_platform.rst
-+++ b/doc/guides/linux_gsg/bcm2711_platform.rst
-@@ -5,8 +5,8 @@ Running DPDK on Broadcom BCM2711 platforms
- ==========================================
- 
- The Broadcom BCM2711, used on the Raspberry Pi 4 and Compute Module 4,
--has a platform property that must be taken into account before a PCIe
--device can DMA correctly.  It is handled automatically; this page
-+needs two platform properties to be taken into account before a PCIe
-+device can DMA correctly.  Both are handled automatically; this page
- describes what happens and how to check it.
- 
- PCIe inbound address translation
-@@ -36,6 +36,32 @@ variable, given in hexadecimal.  Without the translation, a device
- reports link up and counts packets in its own registers while never
- completing a DMA.
- 
-+Non-cache-coherent DMA
-+----------------------
-+
-+The PCIe bus is not cache coherent: neither ``pcie@7d500000`` nor any of
-+its ancestors declares ``dma-coherent``.  A device therefore does not see
-+data the CPU has only written to its caches, and the CPU does not see
-+data the device has written to memory.
-+
-+The ``e1000`` (igb) driver handles this when it detects a
-+device-tree-described device with no ``dma-coherent`` ancestor, on arm64.
-+It cleans the data cache over descriptors and packet data before the tail
-+register is written, and invalidates it before reading what the device
-+wrote.  Because a cache line covers four descriptors, TX completion is
-+taken from the hardware head register rather than the DD bits, and RX
-+descriptors are refilled one whole cache line at a time.
-+
-+This is logged at device probe::
-+
-+   E1000_INIT: 0000:01:00.0: PCIe DMA is not cache coherent,
-+   cleaning 64-byte D-cache lines before each DMA
-+
-+It can be forced on or off with ``DPDK_DMA_NONCOHERENT=1`` or ``0``.
-+
-+Other drivers running on this platform need equivalent handling; only
-+``e1000`` implements it today.
-+
- Recommended settings
- --------------------
- 
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 37452b2a3f..e292cc3714 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -63,6 +63,14 @@ New Features
-   Broadcom BCM2711 on Raspberry Pi 4 and Compute Module 4, can reach
-   system memory.
- 
-+* **Added non-coherent DMA support to the e1000 (igb) driver.**
-+
-+  The driver now performs the cache maintenance required on a PCIe bus
-+  that is not cache coherent, taking TX completion from the hardware head
-+  register and refilling RX descriptors a cache line at a time.  It is
-+  enabled when the device is described by a device tree whose bus does not
-+  declare "dma-coherent", on arm64.
-+
- 
- Removed Items
- -------------
-diff --git a/drivers/net/intel/e1000/igb_rxtx.c b/drivers/net/intel/e1000/igb_rxtx.c
-index 4fda5d57a0..ee81772a0e 100644
---- a/drivers/net/intel/e1000/igb_rxtx.c
-+++ b/drivers/net/intel/e1000/igb_rxtx.c
-@@ -4,6 +4,10 @@
- 
- #include <sys/queue.h>
- 
-+#include <limits.h>
-+#include <stdbool.h>
-+#include <unistd.h>
-+
- #include <stdio.h>
- #include <stdlib.h>
- #include <string.h>
-@@ -42,6 +46,211 @@
- #include "base/e1000_api.h"
- #include "e1000_ethdev.h"
- 
-+/*
-+ * Non-cache-coherent DMA support.
-+ *
-+ * When the PCIe host bridge is not cache coherent -- no "dma-coherent" on the
-+ * device tree bus -- a bus-master read by the NIC can observe stale memory:
-+ * data the CPU has just stored is not yet visible to the device.  The Linux
-+ * DMA API hides this by cleaning the CPU data cache over a buffer before
-+ * handing it to the device (arch_sync_dma_for_device), but DPDK writes
-+ * descriptors and packet data straight into hugepage memory and rings the
-+ * doorbell immediately.
-+ *
-+ * This was developed and tested on one such platform: a BCM2711 (Raspberry Pi
-+ * Compute Module 4, 4GB, Cortex-A72, 64-byte D-cache lines) with an Intel I210
-+ * on uio_pci_generic.  There the NIC fetched the previous contents of the
-+ * rings -- zeroed descriptors with DD set and null buffer addresses -- so
-+ * transmits never completed and received data was DMA'd to address zero.
-+ * Cleaning only to the point of unification (DC CVAU) did not help; the NIC
-+ * saw the CPU's stores only after a clean to the point of coherency.
-+ *
-+ * Mirror the kernel: clean the D-cache to the point of coherency (DC CVAC, as
-+ * arm64 __dma_clean_area does) over every descriptor and packet buffer before
-+ * the tail register tells the NIC it may read them, and discard cached copies
-+ * (DC CIVAC, as __dma_inv_area does) of descriptor status and received data
-+ * before reading what the NIC wrote.
-+ *
-+ * Cleaning a line writes the CPU's copy of the whole line back to RAM, so it
-+ * must never cover memory the NIC may still be writing: with 4 descriptors
-+ * per 64-byte line, flushing a freshly written descriptor also restored stale
-+ * status for its neighbours and erased the DD bits the NIC had just set (the
-+ * kernel avoids this by mapping rings non-cacheable).  Therefore, when DMA is
-+ * non-coherent:
-+ *  - TX completion is taken from the hardware head (TDH), not from DD bits;
-+ *  - RX buffer addresses are written back one whole cache line at a time,
-+ *    and only once every descriptor in that line has been handed back by the
-+ *    NIC and consumed.
-+ * All of this is a no-op on cache-coherent platforms and non-arm64 builds.
-+ */
-+#if defined(RTE_ARCH_ARM64)
-+/* void igb_arm64_dcache_clean(uintptr_t start, uintptr_t end, uint64_t line) */
-+void igb_arm64_dcache_clean(uintptr_t start, uintptr_t end, uint64_t line);
-+/* void igb_arm64_dcache_inval(uintptr_t start, uintptr_t end, uint64_t line) */
-+void igb_arm64_dcache_inval(uintptr_t start, uintptr_t end, uint64_t line);
-+/* uint64_t igb_arm64_read_ctr(void) */
-+uint64_t igb_arm64_read_ctr(void);
-+__asm__(
-+	"	.pushsection .text\n"
-+	"	.p2align 2\n"
-+	"	.globl igb_arm64_dcache_clean\n"
-+	"	.hidden igb_arm64_dcache_clean\n"
-+	"	.type igb_arm64_dcache_clean, %function\n"
-+	"igb_arm64_dcache_clean:\n"
-+	"	sub	x3, x2, #1\n"
-+	"	bic	x0, x0, x3\n"
-+	"1:	dc	cvac, x0\n"
-+	"	add	x0, x0, x2\n"
-+	"	cmp	x0, x1\n"
-+	"	b.lo	1b\n"
-+	"	ret\n"
-+	"	.size igb_arm64_dcache_clean, .-igb_arm64_dcache_clean\n"
-+	"	.globl igb_arm64_dcache_inval\n"
-+	"	.hidden igb_arm64_dcache_inval\n"
-+	"	.type igb_arm64_dcache_inval, %function\n"
-+	"igb_arm64_dcache_inval:\n"
-+	"	sub	x3, x2, #1\n"
-+	"	bic	x0, x0, x3\n"
-+	"1:	dc	civac, x0\n"
-+	"	add	x0, x0, x2\n"
-+	"	cmp	x0, x1\n"
-+	"	b.lo	1b\n"
-+	"	ret\n"
-+	"	.size igb_arm64_dcache_inval, .-igb_arm64_dcache_inval\n"
-+	"	.globl igb_arm64_read_ctr\n"
-+	"	.hidden igb_arm64_read_ctr\n"
-+	"	.type igb_arm64_read_ctr, %function\n"
-+	"igb_arm64_read_ctr:\n"
-+	"	mrs	x0, ctr_el0\n"
-+	"	ret\n"
-+	"	.size igb_arm64_read_ctr, .-igb_arm64_read_ctr\n"
-+	"	.popsection\n");
-+#endif
-+
-+#define IGB_DMA_NONCOHERENT_ENV "DPDK_DMA_NONCOHERENT"
-+
-+/* -1: not yet probed, 0: cache coherent, 1: needs explicit cache cleaning */
-+static int igb_dma_noncoherent = -1;
-+static uint64_t igb_dcache_line;
-+
-+/*
-+ * Linux only instantiates "of_node" links for devices described by a device
-+ * tree.  Walk the PCI device's sysfs ancestry (device -> bridges -> host
-+ * controller -> SoC bus) the way of_dma_is_coherent() walks DT parents, and
-+ * treat the device as non-coherent if it is DT-described and no ancestor
-+ * declares "dma-coherent".  ACPI and x86 systems have no of_node and are left
-+ * alone.
-+ */
-+static void
-+igb_probe_dma_coherence(const char *pci_name)
-+{
-+	const char *env = getenv(IGB_DMA_NONCOHERENT_ENV);
-+	int noncoherent = 0;
-+
-+	if (igb_dma_noncoherent >= 0)
-+		return;
-+
-+	if (env != NULL && env[0] != '\0') {
-+		noncoherent = atoi(env) != 0;
-+	} else {
-+#if defined(RTE_ARCH_ARM64)
-+		char path[PATH_MAX], real[PATH_MAX], probe[PATH_MAX];
-+		bool dt_described = false, coherent = false;
-+		char *slash;
-+
-+		if (snprintf(path, sizeof(path), "/sys/bus/pci/devices/%s",
-+				pci_name) < (int)sizeof(path) &&
-+				realpath(path, real) != NULL) {
-+			while ((slash = strrchr(real, '/')) != NULL &&
-+					slash != real) {
-+				if (snprintf(probe, sizeof(probe), "%s/of_node",
-+						real) < (int)sizeof(probe) &&
-+						access(probe, F_OK) == 0) {
-+					dt_described = true;
-+					if (snprintf(probe, sizeof(probe),
-+							"%s/of_node/dma-coherent",
-+							real) < (int)sizeof(probe) &&
-+							access(probe, F_OK) == 0) {
-+						coherent = true;
-+						break;
-+					}
-+				}
-+				*slash = '\0';
-+			}
-+		}
-+		noncoherent = dt_described && !coherent;
-+#else
-+		RTE_SET_USED(pci_name);
-+#endif
-+	}
-+
-+#if defined(RTE_ARCH_ARM64)
-+	if (noncoherent) {
-+		/* CTR_EL0.DCacheLine is log2 of the line size in words. */
-+		igb_dcache_line = 4ULL << ((igb_arm64_read_ctr() >> 16) & 0xf);
-+		PMD_INIT_LOG(NOTICE,
-+			"%s: PCIe DMA is not cache coherent, cleaning %" PRIu64
-+			"-byte D-cache lines before each DMA",
-+			pci_name, igb_dcache_line);
-+	}
-+#else
-+	if (noncoherent)
-+		PMD_INIT_LOG(WARNING,
-+			"%s: %s set, but cache cleaning is only implemented for arm64",
-+			pci_name, IGB_DMA_NONCOHERENT_ENV);
-+	noncoherent = 0;
-+#endif
-+	igb_dma_noncoherent = noncoherent;
-+}
-+
-+/* Make [addr, addr + len) visible to a bus-master read by the NIC. */
-+static inline void
-+igb_dma_sync_for_device(const volatile void *addr, size_t len)
-+{
-+#if defined(RTE_ARCH_ARM64)
-+	if (unlikely(igb_dma_noncoherent > 0) && len != 0)
-+		igb_arm64_dcache_clean((uintptr_t)addr, (uintptr_t)addr + len,
-+				igb_dcache_line);
-+#else
-+	RTE_SET_USED(addr);
-+	RTE_SET_USED(len);
-+#endif
-+}
-+
-+/*
-+ * Make memory the NIC has written visible to the CPU: discard any cached copy
-+ * (DC CIVAC, as arm64 __dma_inv_area does) so the next read comes from RAM.
-+ */
-+static inline void
-+igb_dma_sync_for_cpu(const volatile void *addr, size_t len)
-+{
-+#if defined(RTE_ARCH_ARM64)
-+	if (unlikely(igb_dma_noncoherent > 0) && len != 0)
-+		igb_arm64_dcache_inval((uintptr_t)addr, (uintptr_t)addr + len,
-+				igb_dcache_line);
-+#else
-+	RTE_SET_USED(addr);
-+	RTE_SET_USED(len);
-+#endif
-+}
-+
-+/* Sync descriptors [from, to) of a ring of nb_desc entries, handling wrap. */
-+static inline void
-+igb_dma_sync_ring(const volatile void *ring, size_t desc_size, uint16_t nb_desc,
-+		uint16_t from, uint16_t to)
-+{
-+	if (likely(igb_dma_noncoherent <= 0) || from == to)
-+		return;
-+	if (from < to) {
-+		igb_dma_sync_for_device(RTE_PTR_ADD(ring, from * desc_size),
-+				(to - from) * desc_size);
-+	} else {
-+		igb_dma_sync_for_device(RTE_PTR_ADD(ring, from * desc_size),
-+				(nb_desc - from) * desc_size);
-+		igb_dma_sync_for_device(ring, to * desc_size);
-+	}
-+}
-+
- #ifdef RTE_LIBRTE_IEEE1588
- #define IGB_TX_IEEE1588_TMST RTE_MBUF_F_TX_IEEE1588_TMST
- #else
-@@ -98,6 +307,11 @@ struct igb_rx_queue {
- 	struct rte_mbuf *pkt_last_seg;  /**< Last segment of current packet. */
- 	uint16_t            nb_rx_desc; /**< number of RX descriptors. */
- 	uint16_t            rx_tail;    /**< current value of RDT register. */
-+	/**
-+	 * Non-coherent DMA only: first consumed descriptor whose refilled
-+	 * buffer address has not been written back to the ring yet.
-+	 */
-+	uint16_t            rx_unwritten;
- 	uint16_t            nb_rx_hold; /**< number of held free RX desc. */
- 	uint16_t            rx_free_thresh; /**< max free RX desc to hold. */
- 	uint16_t            queue_id;   /**< RX queue index. */
-@@ -167,6 +381,7 @@ struct igb_tx_queue {
- 	uint64_t               tx_ring_phys_addr; /**< TX ring DMA address. */
- 	struct igb_tx_entry    *sw_ring; /**< virtual address of SW ring. */
- 	volatile uint32_t      *tdt_reg_addr; /**< Address of TDT register. */
-+	volatile uint32_t      *tdh_reg_addr; /**< Address of TDH register. */
- 	uint32_t               txd_type;      /**< Device-specific TXD type */
- 	uint16_t               nb_tx_desc;    /**< number of TX descriptors. */
- 	uint16_t               tx_tail; /**< Current value of TDT register. */
-@@ -384,6 +599,90 @@ tx_desc_vlan_flags_to_cmdtype(uint64_t ol_flags)
- 	return cmdtype;
- }
- 
-+/*
-+ * Non-coherent DMA: has the NIC completed descriptor desc?  The NIC owns the
-+ * circular range [TDH, tx_tail); everything else has been processed.  *head
-+ * caches one TDH read per burst (-1 = not read yet) and is refreshed once
-+ * before reporting a descriptor as still busy.
-+ */
-+static inline bool
-+igb_tx_desc_done(struct igb_tx_queue *txq, uint16_t desc, int32_t *head)
-+{
-+	uint16_t n = txq->nb_tx_desc;
-+	int pass;
-+
-+	if (likely(igb_dma_noncoherent <= 0))
-+		return (txq->tx_ring[desc].wb.status &
-+			rte_cpu_to_le_32(E1000_TXD_STAT_DD)) != 0;
-+
-+	for (pass = 0; pass < 2; pass++) {
-+		uint16_t owned, dist;
-+
-+		if (*head < 0 || pass > 0)
-+			*head = rte_le_to_cpu_32(E1000_PCI_REG(txq->tdh_reg_addr)) % n;
-+		owned = (uint16_t)((txq->tx_tail + n - *head) % n);
-+		dist = (uint16_t)((desc + n - *head) % n);
-+		if (dist >= owned)
-+			return true;
-+	}
-+	return false;
-+}
-+
-+/* Descriptors covered by one D-cache line, or 0 if lines don't tile rings. */
-+static inline uint16_t
-+igb_rx_desc_per_line(struct igb_rx_queue *rxq)
-+{
-+	uint16_t per_line = igb_dcache_line / sizeof(*rxq->rx_ring);
-+
-+	if (per_line <= 1 || rxq->nb_rx_desc % per_line != 0 ||
-+			((uintptr_t)rxq->rx_ring & (igb_dcache_line - 1)) != 0)
-+		return 1;
-+	return per_line;
-+}
-+
-+/* Write refilled buffer addresses for descriptors [from, to) and flush them. */
-+static inline void
-+igb_rx_write_range(struct igb_rx_queue *rxq, uint16_t from, uint16_t to)
-+{
-+	uint16_t i;
-+
-+	for (i = from; i < to; i++) {
-+		volatile union e1000_adv_rx_desc *rxd = &rxq->rx_ring[i];
-+
-+		rxd->read.hdr_addr = 0;
-+		rxd->read.pkt_addr = rte_cpu_to_le_64(
-+			rte_mbuf_data_iova_default(rxq->sw_ring[i].mbuf));
-+	}
-+	igb_dma_sync_for_device(&rxq->rx_ring[from],
-+			(to - from) * sizeof(*rxq->rx_ring));
-+}
-+
-+/*
-+ * Non-coherent DMA: write back every whole cache line of descriptors that
-+ * lies entirely before the software head rx_id, i.e. that the NIC has
-+ * finished with.  Returns the first descriptor still unwritten, which bounds
-+ * how far RDT may advance.
-+ */
-+static inline uint16_t
-+igb_rx_flush_refills(struct igb_rx_queue *rxq, uint16_t rx_id)
-+{
-+	uint16_t per_line = igb_rx_desc_per_line(rxq);
-+	uint16_t start = rxq->rx_unwritten;
-+	uint16_t end = rx_id - rx_id % per_line;
-+
-+	if (end == start)
-+		return start;
-+	if (end < start) {
-+		/* Wrapped: finish the ring, then the aligned part from 0. */
-+		igb_rx_write_range(rxq, start, rxq->nb_rx_desc);
-+		start = 0;
-+	}
-+	if (end > start)
-+		igb_rx_write_range(rxq, start, end);
-+	rxq->rx_unwritten = end;
-+	return end;
-+}
-+
- uint16_t
- eth_igb_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 	       uint16_t nb_pkts)
-@@ -402,6 +701,7 @@ eth_igb_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 	uint16_t slen;
- 	uint64_t ol_flags;
- 	uint16_t tx_end;
-+	int32_t hw_head = -1;
- 	uint16_t tx_id;
- 	uint16_t tx_last;
- 	uint16_t nb_tx;
-@@ -508,7 +808,7 @@ eth_igb_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 		/*
- 		 * Check that this descriptor is free.
- 		 */
--		if (! (txr[tx_end].wb.status & E1000_TXD_STAT_DD)) {
-+		if (!igb_tx_desc_done(txq, tx_end, &hw_head)) {
- 			if (nb_tx == 0)
- 				return 0;
- 			goto end_of_tx;
-@@ -595,6 +895,8 @@ eth_igb_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 			 */
- 			slen = (uint16_t) m_seg->data_len;
- 			buf_dma_addr = rte_mbuf_data_iova(m_seg);
-+			igb_dma_sync_for_device(rte_pktmbuf_mtod(m_seg, void *),
-+					slen);
- 			txd->read.buffer_addr =
- 				rte_cpu_to_le_64(buf_dma_addr);
- 			txd->read.cmd_type_len =
-@@ -617,6 +919,9 @@ eth_igb_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
-  end_of_tx:
- 	rte_wmb();
- 
-+	igb_dma_sync_ring(txq->tx_ring, sizeof(*txq->tx_ring), txq->nb_tx_desc,
-+			txq->tx_tail, tx_id);
-+
- 	/*
- 	 * Set the Transmit Descriptor Tail (TDT).
- 	 */
-@@ -854,6 +1159,7 @@ eth_igb_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
- 		 * using invalid descriptor fields when read from rxd.
- 		 */
- 		rxdp = &rx_ring[rx_id];
-+		igb_dma_sync_for_cpu(rxdp, sizeof(*rxdp));
- 		staterr = rxdp->wb.upper.status_error;
- 		if (! (staterr & rte_cpu_to_le_32(E1000_RXD_STAT_DD)))
- 			break;
-@@ -923,8 +1229,11 @@ eth_igb_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
- 		rxe->mbuf = nmb;
- 		dma_addr =
- 			rte_cpu_to_le_64(rte_mbuf_data_iova_default(nmb));
--		rxdp->read.hdr_addr = 0;
--		rxdp->read.pkt_addr = dma_addr;
-+		/* Non-coherent DMA defers this to igb_rx_flush_refills(). */
-+		if (likely(igb_dma_noncoherent <= 0)) {
-+			rxdp->read.hdr_addr = 0;
-+			rxdp->read.pkt_addr = dma_addr;
-+		}
- 
- 		/*
- 		 * Initialize the returned mbuf.
-@@ -942,6 +1251,8 @@ eth_igb_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
- 		pkt_len = (uint16_t) (rte_le_to_cpu_16(rxd.wb.upper.length) -
- 				      rxq->crc_len);
- 		rxm->data_off = RTE_PKTMBUF_HEADROOM;
-+		igb_dma_sync_for_cpu((char *)rxm->buf_addr + rxm->data_off,
-+				rte_le_to_cpu_16(rxd.wb.upper.length));
- 		rte_packet_prefetch((char *)rxm->buf_addr + rxm->data_off);
- 		rxm->nb_segs = 1;
- 		rxm->next = NULL;
-@@ -993,6 +1304,8 @@ eth_igb_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
- 			   (unsigned) rxq->port_id, (unsigned) rxq->queue_id,
- 			   (unsigned) rx_id, (unsigned) nb_hold,
- 			   (unsigned) nb_rx);
-+		if (unlikely(igb_dma_noncoherent > 0))
-+			rx_id = igb_rx_flush_refills(rxq, rx_id);
- 		rx_id = (uint16_t) ((rx_id == 0) ?
- 				     (rxq->nb_rx_desc - 1) : (rx_id - 1));
- 		E1000_PCI_REG_WRITE(rxq->rdt_reg_addr, rx_id);
-@@ -1049,6 +1362,7 @@ eth_igb_recv_scattered_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
- 		 * using invalid descriptor fields when read from rxd.
- 		 */
- 		rxdp = &rx_ring[rx_id];
-+		igb_dma_sync_for_cpu(rxdp, sizeof(*rxdp));
- 		staterr = rxdp->wb.upper.status_error;
- 		if (! (staterr & rte_cpu_to_le_32(E1000_RXD_STAT_DD)))
- 			break;
-@@ -1117,8 +1431,11 @@ eth_igb_recv_scattered_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
- 		rxm = rxe->mbuf;
- 		rxe->mbuf = nmb;
- 		dma = rte_cpu_to_le_64(rte_mbuf_data_iova_default(nmb));
--		rxdp->read.pkt_addr = dma;
--		rxdp->read.hdr_addr = 0;
-+		/* Non-coherent DMA defers this to igb_rx_flush_refills(). */
-+		if (likely(igb_dma_noncoherent <= 0)) {
-+			rxdp->read.pkt_addr = dma;
-+			rxdp->read.hdr_addr = 0;
-+		}
- 
- 		/*
- 		 * Set data length & data buffer address of mbuf.
-@@ -1126,6 +1443,8 @@ eth_igb_recv_scattered_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
- 		data_len = rte_le_to_cpu_16(rxd.wb.upper.length);
- 		rxm->data_len = data_len;
- 		rxm->data_off = RTE_PKTMBUF_HEADROOM;
-+		igb_dma_sync_for_cpu((char *)rxm->buf_addr + rxm->data_off,
-+				data_len);
- 
- 		/*
- 		 * If this is the first buffer of the received packet,
-@@ -1255,6 +1574,8 @@ eth_igb_recv_scattered_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
- 			   (unsigned) rxq->port_id, (unsigned) rxq->queue_id,
- 			   (unsigned) rx_id, (unsigned) nb_hold,
- 			   (unsigned) nb_rx);
-+		if (unlikely(igb_dma_noncoherent > 0))
-+			rx_id = igb_rx_flush_refills(rxq, rx_id);
- 		rx_id = (uint16_t) ((rx_id == 0) ?
- 				     (rxq->nb_rx_desc - 1) : (rx_id - 1));
- 		E1000_PCI_REG_WRITE(rxq->rdt_reg_addr, rx_id);
-@@ -1308,18 +1629,17 @@ static int
- igb_tx_done_cleanup(struct igb_tx_queue *txq, uint32_t free_cnt)
- {
- 	struct igb_tx_entry *sw_ring;
--	volatile union e1000_adv_tx_desc *txr;
- 	uint16_t tx_first; /* First segment analyzed. */
- 	uint16_t tx_id;    /* Current segment being processed. */
- 	uint16_t tx_last;  /* Last segment in the current packet. */
- 	uint16_t tx_next;  /* First segment of the next packet. */
-+	int32_t hw_head = -1;
- 	int count = 0;
- 
- 	if (!txq)
- 		return -ENODEV;
- 
- 	sw_ring = txq->sw_ring;
--	txr = txq->tx_ring;
- 
- 	/* tx_tail is the last sent packet on the sw_ring. Goto the end
- 	 * of that packet (the last segment in the packet chain) and
-@@ -1345,8 +1665,7 @@ igb_tx_done_cleanup(struct igb_tx_queue *txq, uint32_t free_cnt)
- 		tx_last = sw_ring[tx_id].last_id;
- 
- 		if (sw_ring[tx_last].mbuf) {
--			if (txr[tx_last].wb.status &
--			    E1000_TXD_STAT_DD) {
-+			if (igb_tx_desc_done(txq, tx_last, &hw_head)) {
- 				/* Increment the number of packets
- 				 * freed.
- 				 */
-@@ -1510,6 +1829,7 @@ eth_igb_tx_queue_setup(struct rte_eth_dev *dev,
- 	offloads = tx_conf->offloads | dev->data->dev_conf.txmode.offloads;
- 
- 	hw = E1000_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	igb_probe_dma_coherence(dev->device->name);
- 
- 	/*
- 	 * Validate number of transmit descriptors.
-@@ -1575,6 +1895,7 @@ eth_igb_tx_queue_setup(struct rte_eth_dev *dev,
- 	txq->port_id = dev->data->port_id;
- 
- 	txq->tdt_reg_addr = E1000_PCI_REG_ADDR(hw, E1000_TDT(txq->reg_idx));
-+	txq->tdh_reg_addr = E1000_PCI_REG_ADDR(hw, E1000_TDH(txq->reg_idx));
- 	txq->tx_ring_phys_addr = tz->iova;
- 
- 	txq->tx_ring = (union e1000_adv_tx_desc *) tz->addr;
-@@ -1642,6 +1963,7 @@ igb_reset_rx_queue(struct igb_rx_queue *rxq)
- 	}
- 
- 	rxq->rx_tail = 0;
-+	rxq->rx_unwritten = 0;
- 	rxq->pkt_first_seg = NULL;
- 	rxq->pkt_last_seg = NULL;
- }
-@@ -1710,6 +2032,7 @@ eth_igb_rx_queue_setup(struct rte_eth_dev *dev,
- 	offloads = rx_conf->offloads | dev->data->dev_conf.rxmode.offloads;
- 
- 	hw = E1000_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-+	igb_probe_dma_coherence(dev->device->name);
- 
- 	/*
- 	 * Validate number of receive descriptors.
-@@ -1801,7 +2124,8 @@ eth_igb_rx_queue_count(void *rx_queue)
- 	rxdp = &(rxq->rx_ring[rxq->rx_tail]);
- 
- 	while ((desc < rxq->nb_rx_desc) &&
--		(rxdp->wb.upper.status_error & E1000_RXD_STAT_DD)) {
-+		(igb_dma_sync_for_cpu(rxdp, sizeof(*rxdp)),
-+		 rxdp->wb.upper.status_error & E1000_RXD_STAT_DD)) {
- 		desc += IGB_RXQ_SCAN_INTERVAL;
- 		rxdp += IGB_RXQ_SCAN_INTERVAL;
- 		if (rxq->rx_tail + desc >= rxq->nb_rx_desc)
-@@ -1830,6 +2154,7 @@ eth_igb_rx_descriptor_status(void *rx_queue, uint16_t offset)
- 		desc -= rxq->nb_rx_desc;
- 
- 	status = &rxq->rx_ring[desc].wb.upper.status_error;
-+	igb_dma_sync_for_cpu(status, sizeof(*status));
- 	if (*status & rte_cpu_to_le_32(E1000_RXD_STAT_DD))
- 		return RTE_ETH_RX_DESC_DONE;
- 
-@@ -1851,8 +2176,15 @@ eth_igb_tx_descriptor_status(void *tx_queue, uint16_t offset)
- 		desc -= txq->nb_tx_desc;
- 
- 	status = &txq->tx_ring[desc].wb.status;
--	if (*status & rte_cpu_to_le_32(E1000_TXD_STAT_DD))
-+	if (unlikely(igb_dma_noncoherent > 0)) {
-+		int32_t hw_head = -1;
-+
-+		RTE_SET_USED(status);
-+		if (igb_tx_desc_done(txq, desc, &hw_head))
-+			return RTE_ETH_TX_DESC_DONE;
-+	} else if (*status & rte_cpu_to_le_32(E1000_TXD_STAT_DD)) {
- 		return RTE_ETH_TX_DESC_DONE;
-+	}
- 
- 	return RTE_ETH_TX_DESC_FULL;
- }
-@@ -2276,6 +2608,8 @@ igb_alloc_rx_queue_mbufs(struct igb_rx_queue *rxq)
- 		rxd->read.pkt_addr = dma_addr;
- 		rxe[i].mbuf = mbuf;
- 	}
-+	igb_dma_sync_for_device(rxq->rx_ring,
-+			rxq->nb_rx_desc * sizeof(*rxq->rx_ring));
- 
- 	return 0;
- }
--- 
-2.34.1
-
+PiA+ID4gPiBkaWZmIC0tZ2l0IGEvbGliL21lbXBvb2wvcnRlX21lbXBvb2wuaA0KPiBiL2xpYi9t
+ZW1wb29sL3J0ZV9tZW1wb29sLmgNCj4gPiA+ID4gaW5kZXggNWE4MWU1M2E5Zi4uNWZjN2NkYjc5
+YyAxMDA2NDQNCj4gPiA+ID4gLS0tIGEvbGliL21lbXBvb2wvcnRlX21lbXBvb2wuaA0KPiA+ID4g
+PiArKysgYi9saWIvbWVtcG9vbC9ydGVfbWVtcG9vbC5oDQo+ID4gPiA+IEBAIC0xMDUsOCArMTA1
+LDcgQEAgc3RydWN0IF9fcnRlX2NhY2hlX2FsaWduZWQgcnRlX21lbXBvb2xfY2FjaGUNCj4gew0K
+PiA+ID4gPiAgCX0gc3RhdHM7ICAgICAgICAgICAgICAgICAgICAgICAgLyoqPCBTdGF0aXN0aWNz
+ICovDQo+ID4gPiA+ICAjZW5kaWYNCj4gPiA+ID4gIAkvKiogQ2FjaGUgb2JqZWN0cyAqLw0KPiA+
+ID4gPiAtCWFsaWduYXMoUlRFX0NBQ0hFX0xJTkVfU0laRSkgdm9pZA0KPiA+ID4gPiAqb2Jqc1tS
+VEVfTUVNUE9PTF9DQUNIRV9NQVhfU0laRV07DQo+ID4gPiA+IC0JUlRFX0NBQ0hFX0dVQVJEOw0K
+PiA+ID4gPiArCWFsaWduYXMoUlRFX0NBQ0hFX0xJTkVfU0laRSkgdm9pZCAqb2Jqc1tdOw0KPiA+
+ID4NCj4gPiA+IExHVE0gdG8gbWUgaW4gZ2VuZXJhbC4NCj4gPiA+IEFnYWluLCBqdXN0IGFzIGEg
+dGhvdWdodDoNCj4gPiA+IFdvdWxkIGl0IGJlIHBsYXVzaWJsZSB0byBoYXZlIGEgcG9pbnRlciBw
+ZXIgbGNvcmUgaW5zdGVhZD8NCj4gPiA+IGkuZS46DQo+ID4gPiBhbGlnbmFzKFJURV9DQUNIRV9M
+SU5FX1NJWkUpIHZvaWQgKm9ianNbUlRFX01BWF9MQ09SRV07DQo+ID4gPiBUaGF0IHdheSB3ZSBj
+YW4gYXZvaWQgbXVsdGlwbHkgb3AgaW4gcnRlX21lbXBvb2xfZGVmYXVsdF9jYWNoZSgpLA0KPiA+
+ID4gYWxzbyBpdCB3aWxsIGFsbG93IHVzIHRvIGFsbG9jYXRlIGxjb3JlIGNhY2hlIG9uIGRlbWFu
+ZCAob25seSBmb3INCj4gPiA+IGVuYWJsZWQgbGNvcmVzKS4NCj4gPiA+IEFzIGEgZG93bnNpZGUg
+LSBzaXplb2YocnRlX21lbXBvb2xfY2FjaGUpIHdpbGwgZ3JvdyBieQ0KPiA+ID4gKFJURV9NQVhf
+TENPUkUgLSAxKSAqIHNpemVvZih1aW50cHRyX3QpLCBidXQgdGhhdCdzIHByb2JhYmx5IG5vdCBh
+DQo+IGJpZw0KPiA+ID4gZGVhbC4NCj4gPg0KPiA+IFRoZSBtdWx0aXBseSBvcCBpcyBub3QgZXhw
+ZW5zaXZlLg0KPiA+DQo+ID4gVGhpcyBwYXRjaCBoYXM6DQo+ID4gc3RydWN0IHJ0ZV9tZW1wb29s
+X2NhY2hlICpjYWNoZSA9DQo+ID4gCShzdHJ1Y3QgcnRlX21lbXBvb2xfY2FjaGUgKikNCj4gPiAJ
+UlRFX1BUUl9BREQoDQo+ID4gCW1wLT5sb2NhbF9jYWNoZSwNCj4gPiAJbGNvcmVfaWQgKiAoc2l6
+ZV90KW1wLT5zaXplb2ZfY2FjaGVfcGVyX2xjb3JlKTsNCj4gPg0KPiA+IFdoaWNoIGNvbXBpbGVz
+IHRvIHNvbWV0aGluZyBsaWtlOg0KPiA+IHB0ciA9IExPQUQobXAgKyBvZmZzZXRvZihjYWNoZV9w
+dHIpKTsNCj4gPiBvZmYgPSBMT0FEKG1wICsgb2Zmc2V0b2Yoc2l6ZW9mX2NhY2hlX3Blcl9sY29y
+ZSkpOw0KPiA+IG9mZiAqPSBsY29yZV9pZDsNCj4gPiBwdHIgKz0gb2ZmOw0KPiA+DQo+ID4NCj4g
+PiBZZXMsIGhhdmluZyBhbiBhcnJheSBvZiBwb2ludGVycyB0byB0aGUgY2FjaGVzIGluIHRoZSBt
+ZW1wb29sIHdvdWxkDQo+IGJlIGEgZ29vZA0KPiA+IGFsdGVybmF0aXZlOg0KPiA+DQo+ID4gc3Ry
+dWN0IF9fcnRlX2NhY2hlX2FsaWduZWQgcnRlX21lbXBvb2wgew0KPiA+IC0Jc3RydWN0IHJ0ZV9t
+ZW1wb29sX2NhY2hlICpsb2NhbF9jYWNoZTsgLyoqPCBQZXItbGNvcmUgbG9jYWwgY2FjaGUNCj4g
+Ki8NCj4gPg0KPiA+IFsuLi5dDQo+ID4gCXN0cnVjdCBydGVfbWVtcG9vbF9kZWJ1Z19zdGF0cyBz
+dGF0c1tSVEVfTUFYX0xDT1JFICsgMV07DQo+ID4gI2VuZGlmDQo+ID4gKwkvKiogUGVyLWxjb3Jl
+IGxvY2FsIGNhY2hlICovDQo+ID4gKwlzdHJ1Y3QgcnRlX21lbXBvb2xfY2FjaGUgKmxvY2FsX2Nh
+Y2hlW1JURV9NQVhfTENPUkVdOw0KPiA+IH07DQo+IA0KPiBZZXMsIHlvdSByaWdodCwgb2ZmLWNv
+dXJzZSBpdCBoYXMgdG8gYmUgdGhhdCB3YXkuDQo+IA0KPiA+DQo+ID4NCj4gPiBMb29rdXAgZm9y
+IHRoYXQgd291bGQgYmVjb21lIHNpbXBsZToNCj4gPiBzdHJ1Y3QgcnRlX21lbXBvb2xfY2FjaGUg
+KmNhY2hlID0NCj4gPiAJbXAtPmxvY2FsX2NhY2hlW2xjb3JlX2lkXTsNCj4gPg0KPiA+IFdoaWNo
+IGNvbXBpbGVzIHRvIHNvbWV0aGluZyBsaWtlOg0KPiA+IG9mZiA9IGxjb3JlX2lkICogc2l6ZW9m
+KHZvaWQqKTsgLy8gU2hpZnQgb3BlcmF0aW9uDQo+ID4gb2ZmICs9IG9mZnNldG9mKGNhY2hlX3B0
+cl9hcnJheSk7DQo+ID4gcHRyID0gTE9BRChtcCArIG9mZik7DQo+ID4NCj4gPiBZZXMsIEkgc3Vw
+cG9zZSB0aGF0IHdvdWxkIGJlIGZhc3Rlci4NCj4gPiBJJ2xsIHRha2UgYSBzdGFiIGF0IGl0Lg0K
+DQpJIHRyaWVkIGl0LCBidXQgdGhlIG1lbXBvb2wgcGVyZiB0ZXN0IHlpZWxkcyBzaW1pbGFyIHJl
+c3VsdHMgb24gb3VyIGJ1aWxkIHNlcnZlciAoYSB2aXJ0dWFsIG1hY2hpbmUpLg0KDQpUaGVyZSBh
+cmUgYWxzbyBhIGNvdXBsZSBvZiBkaXNhZHZhbnRhZ2VzOg0KMS4gVGhlIHRhYmxlIGhhcyBhIGxh
+cmdlciBtZW1vcnkgKGFuZCBjYWNoZSkgZm9vdHByaW50IHRoYW4gdGhlIHNvbHV0aW9uIHdpdGgg
+dGhlIGJhc2UgcG9pbnRlciBhbmQgbXVsdGlwbGllci4gV2Uga25ldyB0aGF0LCBhbmQgY29uc2lk
+ZXIgaXQgaW5zaWduaWZpY2FudC4NCjIuIElmIHRoZSBtZW1wb29sIGNhY2hlIG1pc3NlcywgdGhl
+IGJhY2tlbmQgbXVzdCBiZSBpbnZvbHZlZCwgYW5kIHRoaXMgbmVlZHMgdG8gbG9hZCBtcC0+b3Bz
+X2luZGV4LiBXaXRoIHRoZSBiYXNlL211bHRpcGxpZXIgdmFyaWFudCwgb3BzX2luZGV4IGlzIGlu
+IHRoZSBzYW1lIGNhY2hlIGxpbmUgYXMgdGhlIGxvY2FsX2NhY2hlIHBvaW50ZXIsIGFuZCB0aHVz
+IGFscmVhZHkgaG90IGluIHRoZSBjYWNoZS4gV2l0aCB0aGUgbGNvcmVfaWQgaW5kZXhlZCBsb2Nh
+bF9jYWNoZSBwb2ludGVyIGFycmF5LCBvcHNfaW5kZXggaXMgbm90IGhvdCBpbiB0aGUgY2FjaGUu
+IE9idmlvdXNseSwgd2Ugd2FudCB0byBvcHRpbWl6ZSBmb3IgbWVtcG9vbCBjYWNoZSBoaXRzLCBz
+byB0aGlzIHNob3VsZCBiZSBjb25zaWRlcmVkIGluc2lnbmlmaWNhbnQ7IEkgb25seSBtZW50aW9u
+IGl0IGZvciBjb21wbGV0ZW5lc3MuDQoNCkkgdGhpbmsgd2Ugc2hvdWxkIHN0aWNrIHdpdGggdGhl
+IHBhdGNoIHNlcmllcyBhcyBpcy4NCg0KSWYgeW91IHdhbnQgdG8gcGxheSBhcm91bmQgd2l0aCB0
+aGUgbGNvcmVfaWQgaW5kZXhlZCBsb2NhbF9jYWNoZSBwb2ludGVyIGFycmF5LCBhIHBhdGNoIGlz
+IHByb3ZpZGVkIGF0IHRoZSBib3R0b20gb2YgdGhpcyBlbWFpbC4NCg0KPiA+DQo+ID4gQ2FjaGVz
+IGZvciBhbGwgbGNvcmVzIG11c3QgYmUgYWxsb2NhdGVkIGF0IG1lbXBvb2wgY3JlYXRpb24uIE9y
+IHdlDQo+IHdvdWxkIG5lZWQNCj4gPiBzcGVjaWFsIGhhbmRsaW5nIHRvIGFsbG9jYXRlL2ZyZWUg
+dGhlIHJlbGV2YW50IHBlci1sY29yZSBjYWNoZSBmb3INCj4gYWxsIHJlZ2lzdGVyZWQNCj4gPiBt
+ZW1wb29scyB3aGVuZXZlciBhIG5ldyBsY29yZSBpcyByZWdpc3RlcmVkIGZvciB1c2UgYXQgcnVu
+dGltZSwgZS5nLg0KPiBieQ0KPiA+IHJ0ZV90aHJlYWRfcmVnaXN0ZXIoKS91bnJlZ2lzdGVyKCku
+DQo+IA0KPiBNeSBpbml0aWFsIHRob3VnaHQgd2FzOg0KPiB3ZSBjYW4gYWxsb2NhdGUgY2FjaGVz
+IGZvciBhbGwgbGNvcmVzIHRoYXQgYXJlIGFscmVhZHkgZW5hYmxlZCBhdA0KPiBtZW1wb29sX2lu
+aXQgdGltZS4NCj4gSWYgbGF0ZXIsIHN1Y2ggY29yZSB3aWxsIGJlIGRpc2FibGVkIC0gdGhhdCdz
+IHByb2JhYmx5IG5vdCBhIGJpZyBkZWFsLA0KPiB3ZSBjYW4gc2ltcGx5IGxlZnQgdGhlIGNhY2hl
+IGZvciBpdA0KPiBoYW5naW5nIGFyb3VuZCB1bnVzZWQgdW50aWwgbWVtcG9vbCB3aWxsIGJlIGRl
+c3Ryb3llZC4NCj4gRm9yIGxjb3JlcyB0aGF0IHdpbGwgYmUgZW5hYmxlZCBhZnRlciBtZW1wb29s
+X2luaXQoKSB3ZSBjYW4gdXNlIGxhenkNCj4gYWxsb2NhdGlvbiAoYXQgZmlyc3QgYWNjZXNzIHRv
+IGl0KS4NCj4gQnV0IGFmdGVyIGFub3RoZXIgdGhvdWdodCAtIHRoYXQncyBwcm9iYWJseSBub3Qg
+c3VjaCBnb29kIGlkZWEsIGFzIGluDQo+IHByaW5jaXBsZSBydGVfbWFsbG9jKCkgaGVyZSBjYW4g
+ZmFpbC4NCj4gDQo+ID4gPg0KPiA+ID4gPiAgfTsNCj4gPiA+ID4NCj4gPiA+ID4gIC8qKg0KPiA+
+ID4gPiBAQCAtMjY1LDYgKzI2NCw3IEBAIHN0cnVjdCBfX3J0ZV9jYWNoZV9hbGlnbmVkIHJ0ZV9t
+ZW1wb29sIHsNCj4gPiA+ID4gIAlpbnQzMl90IG9wc19pbmRleDsNCj4gPiA+ID4NCj4gPiA+ID4g
+IAlzdHJ1Y3QgcnRlX21lbXBvb2xfY2FjaGUgKmxvY2FsX2NhY2hlOyAvKio8IFBlci1sY29yZSBs
+b2NhbA0KPiBjYWNoZQ0KPiA+ID4gKi8NCj4gPiA+ID4gKwl1aW50MzJfdCBzaXplb2ZfY2FjaGVf
+cGVyX2xjb3JlOyAvKio8IE11bHRpcGxpZXIgZm9yDQo+IGluZGV4aW5nDQo+ID4gPiBpbnRvIHRo
+ZQ0KPiA+ID4gPiBsb2NhbCBjYWNoZS4gKi8NCj4gPiA+ID4NCj4gPiA+ID4gIAl1aW50MzJfdCBw
+b3B1bGF0ZWRfc2l6ZTsgICAgICAgICAvKio8IE51bWJlciBvZiBwb3B1bGF0ZWQNCj4gPiA+IG9i
+amVjdHMuICovDQo+ID4gPiA+ICAJc3RydWN0IHJ0ZV9tZW1wb29sX29iamhkcl9saXN0IGVsdF9s
+aXN0OyAvKio8IExpc3Qgb2YNCj4gb2JqZWN0cyBpbg0KPiA+ID4gcG9vbCAqLw0KPiA+ID4gPiBA
+QCAtMTA1MCw4ICsxMDUwLDcgQEAgcnRlX21lbXBvb2xfZnJlZShzdHJ1Y3QgcnRlX21lbXBvb2wg
+Km1wKTsNCj4gPiA+ID4gICAqIEBwYXJhbSBjYWNoZV9zaXplDQo+ID4gPiA+ICAgKiAgIElmIGNh
+Y2hlX3NpemUgaXMgbm9uLXplcm8sIHRoZSBydGVfbWVtcG9vbCBsaWJyYXJ5IHdpbGwgdHJ5DQo+
+IHRvDQo+ID4gPiA+ICAgKiAgIGxpbWl0IHRoZSBhY2Nlc3NlcyB0byB0aGUgY29tbW9uIGxvY2ts
+ZXNzIHBvb2wsIGJ5DQo+IG1haW50YWluaW5nDQo+ID4gPiBhDQo+ID4gPiA+IC0gKiAgIHBlci1s
+Y29yZSBvYmplY3QgY2FjaGUuIFRoaXMgYXJndW1lbnQgbXVzdCBiZSBsb3dlciBvcg0KPiBlcXVh
+bCB0bw0KPiA+ID4gPiAtICogICBSVEVfTUVNUE9PTF9DQUNIRV9NQVhfU0laRSBhbmQgbi4NCj4g
+PiA+ID4gKyAqICAgcGVyLWxjb3JlIG9iamVjdCBjYWNoZS4gVGhpcyBhcmd1bWVudCBtdXN0IGJl
+IGxvd2VyIG9yDQo+IGVxdWFsIHRvDQo+ID4gPiBuLg0KPiA+ID4gPiAgICogICBUaGUgYWNjZXNz
+IHRvIHRoZSBwZXItbGNvcmUgdGFibGUgaXMgb2YgY291cnNlDQo+ID4gPiA+ICAgKiAgIGZhc3Rl
+ciB0aGFuIHRoZSBtdWx0aS1wcm9kdWNlci9jb25zdW1lciBwb29sLiBUaGUgY2FjaGUgY2FuDQo+
+IGJlDQo+ID4gPiA+ICAgKiAgIGRpc2FibGVkIGlmIHRoZSBjYWNoZV9zaXplIGFyZ3VtZW50IGlz
+IHNldCB0byAwOyBpdCBjYW4gYmUNCj4gPiA+IHVzZWZ1bCB0bw0KPiA+ID4gPiBAQCAtMTM3MSwx
+NSArMTM3MCwxNyBAQCBydGVfbWVtcG9vbF9jYWNoZV9jcmVhdGUodWludDMyX3Qgc2l6ZSwNCj4g
+aW50DQo+ID4gPiA+IHNvY2tldF9pZCkNCj4gPiA+ID4gIHN0YXRpYyBfX3J0ZV9hbHdheXNfaW5s
+aW5lIHN0cnVjdCBydGVfbWVtcG9vbF9jYWNoZSAqDQo+ID4gPiA+ICBydGVfbWVtcG9vbF9kZWZh
+dWx0X2NhY2hlKHN0cnVjdCBydGVfbWVtcG9vbCAqbXAsIHVuc2lnbmVkDQo+IGxjb3JlX2lkKQ0K
+PiA+ID4gPiAgew0KPiA+ID4gPiAtCWlmICh1bmxpa2VseShtcC0+Y2FjaGVfc2l6ZSA9PSAwKSkN
+Cj4gPiA+ID4gKwlpZiAodW5saWtlbHkobXAtPmxvY2FsX2NhY2hlID09IE5VTEwpKQ0KPiA+ID4g
+PiAgCQlyZXR1cm4gTlVMTDsNCj4gPiA+ID4NCj4gPiA+ID4gIAlpZiAodW5saWtlbHkobGNvcmVf
+aWQgPT0gTENPUkVfSURfQU5ZKSkNCj4gPiA+ID4gIAkJcmV0dXJuIE5VTEw7DQo+ID4gPiA+DQo+
+ID4gPiA+IC0JcnRlX21lbXBvb2xfdHJhY2VfZGVmYXVsdF9jYWNoZShtcCwgbGNvcmVfaWQsDQo+
+ID4gPiA+IC0JCSZtcC0+bG9jYWxfY2FjaGVbbGNvcmVfaWRdKTsNCj4gPiA+ID4gLQlyZXR1cm4g
+Jm1wLT5sb2NhbF9jYWNoZVtsY29yZV9pZF07DQo+ID4gPiA+ICsJc3RydWN0IHJ0ZV9tZW1wb29s
+X2NhY2hlICpjYWNoZSA9IChzdHJ1Y3QgcnRlX21lbXBvb2xfY2FjaGUNCj4gPiA+ID4gKilSVEVf
+UFRSX0FERChtcC0+bG9jYWxfY2FjaGUsDQo+ID4gPiA+ICsJCQlsY29yZV9pZCAqIChzaXplX3Qp
+bXAtPnNpemVvZl9jYWNoZV9wZXJfbGNvcmUpOw0KPiA+ID4gPiArCXJ0ZV9tZW1wb29sX3RyYWNl
+X2RlZmF1bHRfY2FjaGUobXAsIGxjb3JlX2lkLCBjYWNoZSk7DQo+ID4gPiA+ICsJX19ydGVfYXNz
+dW1lKGNhY2hlICE9IE5VTEwpOw0KPiA+ID4gPiArCXJldHVybiBjYWNoZTsNCj4gPiA+ID4gIH0N
+Cj4gPiA+ID4NCj4gPiA+ID4gIC8qKg0KPiA+ID4gPiAtLQ0KPiA+ID4gPiAyLjQzLjANCg0KZGlm
+ZiAtLWdpdCBhL2RvYy9ndWlkZXMvcmVsX25vdGVzL3JlbGVhc2VfMjZfMTEucnN0IGIvZG9jL2d1
+aWRlcy9yZWxfbm90ZXMvcmVsZWFzZV8yNl8xMS5yc3QNCmluZGV4IDY0ZjY4MDJlNTguLjQyZmM1
+ZDJhZDIgMTAwNjQ0DQotLS0gYS9kb2MvZ3VpZGVzL3JlbF9ub3Rlcy9yZWxlYXNlXzI2XzExLnJz
+dA0KKysrIGIvZG9jL2d1aWRlcy9yZWxfbm90ZXMvcmVsZWFzZV8yNl8xMS5yc3QNCkBAIC0xMDUs
+NyArMTA1LDcgQEAgQVBJIENoYW5nZXMNCiAgIGFzIGl0IGlzIG9mdGVuIHVzZWQgZm9yIHRoZSBg
+YGNhY2hlX3NpemVgYCBwYXJhbWV0ZXIgd2hlbiBjcmVhdGluZyBtZW1wb29scy4NCg0KICogbWVt
+cG9vbDogVXBkYXRlZCB0aGUgYGBydGVfbWVtcG9vbGBgIHN0cnVjdHVyZSBhcyBmb2xsb3dzOg0K
+LSAgLSBBZGRlZCB0aGUgYGBzaXplb2ZfY2FjaGVfcGVyX2xjb3JlYGAgZmllbGQsIGZvciBpbmRl
+eGluZyBpbnRvIHRoZSBwZXItbGNvcmUgbG9jYWwgY2FjaGUuDQorICAtIENoYW5nZWQgdGhlIGBg
+bG9jYWxfY2FjaGVgYCBmaWVsZCB0byBhcnJheSBvZiBwb2ludGVycyB0byBwZXItbGNvcmUgbG9j
+YWwgY2FjaGUsIGZvciBpbXByb3ZlZCBsb29rdXAgcGVyZm9ybWFuY2UuDQoNCiAqIG1lbXBvb2w6
+IFVwZGF0ZWQgdGhlIGBgcnRlX21lbXBvb2xfY2FjaGVgYCBzdHJ1Y3R1cmUgYXMgZm9sbG93czoN
+CiAgIC0gUmVtb3ZlZCB0aGUgZGVwcmVjYXRlZCBhbmQgb2Jzb2xldGUgYGBmbHVzaHRocmVzaGBg
+IGZpZWxkLg0KZGlmZiAtLWdpdCBhL2xpYi9tZW1wb29sL3J0ZV9tZW1wb29sLmMgYi9saWIvbWVt
+cG9vbC9ydGVfbWVtcG9vbC5jDQppbmRleCAwNjlhYWJhYTcwLi41NTZlY2ZlMTUwIDEwMDY0NA0K
+LS0tIGEvbGliL21lbXBvb2wvcnRlX21lbXBvb2wuYw0KKysrIGIvbGliL21lbXBvb2wvcnRlX21l
+bXBvb2wuYw0KQEAgLTc1OSw3ICs3NTksNyBAQCBtZW1wb29sX2NhY2hlX2luaXQoc3RydWN0IHJ0
+ZV9tZW1wb29sX2NhY2hlICpjYWNoZSwgdWludDMyX3Qgc2l6ZSkNCiAvKg0KICAqIENyZWF0ZSBh
+bmQgaW5pdGlhbGl6ZSBhIGNhY2hlIGZvciBvYmplY3RzIHRoYXQgYXJlIHJldHJpZXZlZCBmcm9t
+IGFuZA0KICAqIHJldHVybmVkIHRvIGFuIHVuZGVybHlpbmcgbWVtcG9vbC4gVGhpcyBzdHJ1Y3R1
+cmUgaXMgaWRlbnRpY2FsIHRvIHRoZQ0KLSAqIGxvY2FsX2NhY2hlIGVudHJ5IHBvaW50ZWQgdG8g
+YnkgdGhlIG1lbXBvb2wgc3RydWN0dXJlLg0KKyAqIGxvY2FsX2NhY2hlW2xjb3JlX2lkXSBwb2lu
+dGVkIHRvIGJ5IHRoZSBtZW1wb29sIHN0cnVjdHVyZS4NCiAgKi8NCiBSVEVfRVhQT1JUX1NZTUJP
+TChydGVfbWVtcG9vbF9jYWNoZV9jcmVhdGUpDQogc3RydWN0IHJ0ZV9tZW1wb29sX2NhY2hlICoN
+CkBAIC05MzAsNiArOTMwLDcgQEAgcnRlX21lbXBvb2xfY3JlYXRlX2VtcHR5KGNvbnN0IGNoYXIg
+Km5hbWUsIHVuc2lnbmVkIG4sIHVuc2lnbmVkIGVsdF9zaXplLA0KICAgICAgICBtcC0+ZWx0X3Np
+emUgPSBvYmpzei5lbHRfc2l6ZTsNCiAgICAgICAgbXAtPmhlYWRlcl9zaXplID0gb2Jqc3ouaGVh
+ZGVyX3NpemU7DQogICAgICAgIG1wLT50cmFpbGVyX3NpemUgPSBvYmpzei50cmFpbGVyX3NpemU7
+DQorICAgICAgIC8qIFNpemUgb2YgZGVmYXVsdCBjYWNoZXMsIHplcm8gbWVhbnMgZGlzYWJsZWQu
+ICovDQogICAgICAgIG1wLT5jYWNoZV9zaXplID0gY2FjaGVfc2l6ZTsNCiAgICAgICAgbXAtPnBy
+aXZhdGVfZGF0YV9zaXplID0gcHJpdmF0ZV9kYXRhX3NpemU7DQogICAgICAgIFNUQUlMUV9JTklU
+KCZtcC0+ZWx0X2xpc3QpOw0KQEAgLTk1MywxNyArOTU0LDE2IEBAIHJ0ZV9tZW1wb29sX2NyZWF0
+ZV9lbXB0eShjb25zdCBjaGFyICpuYW1lLCB1bnNpZ25lZCBuLCB1bnNpZ25lZCBlbHRfc2l6ZSwN
+CiAgICAgICAgICAgICAgICBnb3RvIGV4aXRfdW5sb2NrOw0KICAgICAgICB9DQoNCi0gICAgICAg
+LyogbG9jYWxfY2FjaGUgcG9pbnRlciBpcyBvbmx5IHNldCBpZiBwZXItbGNvcmUgbG9jYWwgY2Fj
+aGUgaXMgcHJlc2VudCAqLw0KKyAgICAgICAvKiBsb2NhbF9jYWNoZSBwb2ludGVycyBhcmUgb25s
+eSBzZXQgaWYgcGVyLWxjb3JlIGxvY2FsIGNhY2hlIGlzIHByZXNlbnQgKi8NCiAgICAgICAgaWYg
+KGNhY2hlX3NpemUgIT0gMCkgew0KLSAgICAgICAgICAgICAgIG1wLT5sb2NhbF9jYWNoZSA9IChz
+dHJ1Y3QgcnRlX21lbXBvb2xfY2FjaGUgKikNCi0gICAgICAgICAgICAgICAgICAgICAgIFJURV9Q
+VFJfQUREKG1wLCBzaXplb2Yoc3RydWN0IHJ0ZV9tZW1wb29sKSArIHByaXZhdGVfZGF0YV9zaXpl
+KTsNCi0gICAgICAgICAgICAgICBtcC0+c2l6ZW9mX2NhY2hlX3Blcl9sY29yZSA9IHNpemVvZl9j
+YWNoZV9wZXJfbGNvcmU7DQotDQogICAgICAgICAgICAgICAgLyogSW5pdCBhbGwgZGVmYXVsdCBj
+YWNoZXMuICovDQotICAgICAgICAgICAgICAgc3RydWN0IHJ0ZV9tZW1wb29sX2NhY2hlICpjYWNo
+ZSA9IG1wLT5sb2NhbF9jYWNoZTsNCisgICAgICAgICAgICAgICBzdHJ1Y3QgcnRlX21lbXBvb2xf
+Y2FjaGUgKmNhY2hlID0gKHN0cnVjdCBydGVfbWVtcG9vbF9jYWNoZSAqKQ0KKyAgICAgICAgICAg
+ICAgICAgICAgICAgUlRFX1BUUl9BREQobXAsIHNpemVvZihzdHJ1Y3QgcnRlX21lbXBvb2wpICsg
+cHJpdmF0ZV9kYXRhX3NpemUpOw0KICAgICAgICAgICAgICAgIGZvciAodW5zaWduZWQgaW50IGxj
+b3JlX2lkID0gMDsgbGNvcmVfaWQgPCBSVEVfTUFYX0xDT1JFOw0KLSAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICBsY29yZV9pZCsrLCBjYWNoZSA9IFJURV9QVFJfQUREKGNhY2hlLCBzaXpl
+b2ZfY2FjaGVfcGVyX2xjb3JlKSkNCisgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbGNv
+cmVfaWQrKywgY2FjaGUgPSBSVEVfUFRSX0FERChjYWNoZSwgc2l6ZW9mX2NhY2hlX3Blcl9sY29y
+ZSkpIHsNCisgICAgICAgICAgICAgICAgICAgICAgIG1wLT5sb2NhbF9jYWNoZVtsY29yZV9pZF0g
+PSBjYWNoZTsNCiAgICAgICAgICAgICAgICAgICAgICAgIG1lbXBvb2xfY2FjaGVfaW5pdChjYWNo
+ZSwgY2FjaGVfc2l6ZSk7DQorICAgICAgICAgICAgICAgfQ0KICAgICAgICB9DQoNCiAgICAgICAg
+dGUtPmRhdGEgPSBtcDsNCkBAIC0xMDI2LDE3ICsxMDI2LDE2IEBAIFJURV9FWFBPUlRfU1lNQk9M
+KHJ0ZV9tZW1wb29sX2F2YWlsX2NvdW50KQ0KIHVuc2lnbmVkIGludA0KIHJ0ZV9tZW1wb29sX2F2
+YWlsX2NvdW50KGNvbnN0IHN0cnVjdCBydGVfbWVtcG9vbCAqbXApDQogew0KLSAgICAgICB1bnNp
+Z25lZCBpbnQgY291bnQ7DQorICAgICAgIHVuc2lnbmVkIGNvdW50Ow0KKyAgICAgICB1bnNpZ25l
+ZCBsY29yZV9pZDsNCg0KICAgICAgICBjb3VudCA9IHJ0ZV9tZW1wb29sX29wc19nZXRfY291bnQo
+bXApOw0KDQotICAgICAgIGlmIChtcC0+bG9jYWxfY2FjaGUgPT0gTlVMTCkNCisgICAgICAgaWYg
+KG1wLT5jYWNoZV9zaXplID09IDApDQogICAgICAgICAgICAgICAgcmV0dXJuIGNvdW50Ow0KDQot
+ICAgICAgIGNvbnN0IHN0cnVjdCBydGVfbWVtcG9vbF9jYWNoZSAqY2FjaGUgPSBtcC0+bG9jYWxf
+Y2FjaGU7DQotICAgICAgIGZvciAodW5zaWduZWQgaW50IGxjb3JlX2lkID0gMDsgbGNvcmVfaWQg
+PCBSVEVfTUFYX0xDT1JFOw0KLSAgICAgICAgICAgICAgICAgICAgICAgbGNvcmVfaWQrKywgY2Fj
+aGUgPSBSVEVfUFRSX0FERChjYWNoZSwgbXAtPnNpemVvZl9jYWNoZV9wZXJfbGNvcmUpKQ0KLSAg
+ICAgICAgICAgICAgIGNvdW50ICs9IGNhY2hlLT5sZW47DQorICAgICAgIGZvciAobGNvcmVfaWQg
+PSAwOyBsY29yZV9pZCA8IFJURV9NQVhfTENPUkU7IGxjb3JlX2lkKyspDQorICAgICAgICAgICAg
+ICAgY291bnQgKz0gbXAtPmxvY2FsX2NhY2hlW2xjb3JlX2lkXS0+bGVuOw0KDQogICAgICAgIC8q
+DQogICAgICAgICAqIGR1ZSB0byByYWNlIGNvbmRpdGlvbiAoYWNjZXNzIHRvIGxlbiBpcyBub3Qg
+bG9ja2VkKSwgdGhlDQpAQCAtMTA2NCwxMSArMTA2MywxMSBAQCBydGVfbWVtcG9vbF9zdGF0c19y
+ZXNldChzdHJ1Y3QgcnRlX21lbXBvb2wgKm1wKQ0KDQogI2lmZGVmIFJURV9MSUJSVEVfTUVNUE9P
+TF9TVEFUUw0KICAgICAgICBtZW1zZXQoJm1wLT5zdGF0cywgMCwgc2l6ZW9mKG1wLT5zdGF0cykp
+Ow0KLSAgICAgICBpZiAobXAtPmxvY2FsX2NhY2hlICE9IE5VTEwpIHsNCi0gICAgICAgICAgICAg
+ICBzdHJ1Y3QgcnRlX21lbXBvb2xfY2FjaGUgKmNhY2hlID0gbXAtPmxvY2FsX2NhY2hlOw0KLSAg
+ICAgICAgICAgICAgIGZvciAodW5zaWduZWQgaW50IGxjb3JlX2lkID0gMDsgbGNvcmVfaWQgPCBS
+VEVfTUFYX0xDT1JFOw0KLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsY29yZV9pZCsr
+LCBjYWNoZSA9IFJURV9QVFJfQUREKGNhY2hlLCBtcC0+c2l6ZW9mX2NhY2hlX3Blcl9sY29yZSkp
+DQotICAgICAgICAgICAgICAgICAgICAgICBtZW1zZXQoJmNhY2hlLT5zdGF0cywgMCwgc2l6ZW9m
+KGNhY2hlLT5zdGF0cykpOw0KKy0gICAgICBpZiAobXAtPmNhY2hlX3NpemUgIT0gMCkgew0KKy0g
+ICAgICAgICAgICAgIGZvciAodW5zaWduZWQgaW50IGxjb3JlX2lkID0gMDsgbGNvcmVfaWQgPCBS
+VEVfTUFYX0xDT1JFOyBsY29yZV9pZCsrKSB7DQorLSAgICAgICAgICAgICAgICAgICAgICBtZW1z
+ZXQoJm1wLT5sb2NhbF9jYWNoZVtsY29yZV9pZF0tPnN0YXRzLCAwLA0KKy0gICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIHNpemVvZihtcC0+bG9jYWxfY2FjaGVbbGNvcmVfaWRd
+LT5zdGF0cykpOw0KKy0gICAgICAgICAgICAgIH0NCiAgICAgICAgfQ0KDQogICAgICAgIFJURV9N
+RU1QT09MX0xPRyhERUJVRywgIjwlcz5AJXA6IHN0YXRpc3RpY3MgcmVzZXQiLCBtcC0+bmFtZSwg
+bXApOw0KQEAgLTEwODIsMTggKzEwODEsMTggQEAgcnRlX21lbXBvb2xfc3RhdHNfcmVzZXQoc3Ry
+dWN0IHJ0ZV9tZW1wb29sICptcCkNCiBzdGF0aWMgdW5zaWduZWQNCiBydGVfbWVtcG9vbF9kdW1w
+X2NhY2hlKEZJTEUgKmYsIGNvbnN0IHN0cnVjdCBydGVfbWVtcG9vbCAqbXApDQogew0KLSAgICAg
+ICB1bnNpZ25lZCBpbnQgY291bnQgPSAwOw0KKyAgICAgICB1bnNpZ25lZCBsY29yZV9pZDsNCisg
+ICAgICAgdW5zaWduZWQgY291bnQgPSAwOw0KKyAgICAgICB1bnNpZ25lZCBjYWNoZV9jb3VudDsN
+Cg0KICAgICAgICBmcHJpbnRmKGYsICIgIGludGVybmFsIGNhY2hlIGluZm9zIChoaWRlIHplcm8g
+dmFsdWUgaXRlbXMpOlxuIik7DQogICAgICAgIGZwcmludGYoZiwgIiAgICBjYWNoZV9zaXplPSUi
+UFJJdTMyIlxuIiwgbXAtPmNhY2hlX3NpemUpOw0KDQotICAgICAgIGlmIChtcC0+bG9jYWxfY2Fj
+aGUgPT0gTlVMTCkNCisgICAgICAgaWYgKG1wLT5jYWNoZV9zaXplID09IDApDQogICAgICAgICAg
+ICAgICAgcmV0dXJuIGNvdW50Ow0KDQotICAgICAgIGNvbnN0IHN0cnVjdCBydGVfbWVtcG9vbF9j
+YWNoZSAqY2FjaGUgPSBtcC0+bG9jYWxfY2FjaGU7DQotICAgICAgIGZvciAodW5zaWduZWQgaW50
+IGxjb3JlX2lkID0gMDsgbGNvcmVfaWQgPCBSVEVfTUFYX0xDT1JFOw0KLSAgICAgICAgICAgICAg
+ICAgICAgICAgbGNvcmVfaWQrKywgY2FjaGUgPSBSVEVfUFRSX0FERChjYWNoZSwgbXAtPnNpemVv
+Zl9jYWNoZV9wZXJfbGNvcmUpKSB7DQotICAgICAgICAgICAgICAgdW5zaWduZWQgaW50IGNhY2hl
+X2NvdW50ID0gY2FjaGUtPmxlbjsNCisgICAgICAgZm9yIChsY29yZV9pZCA9IDA7IGxjb3JlX2lk
+IDwgUlRFX01BWF9MQ09SRTsgbGNvcmVfaWQrKykgew0KKyAgICAgICAgICAgICAgIGNhY2hlX2Nv
+dW50ID0gbXAtPmxvY2FsX2NhY2hlW2xjb3JlX2lkXS0+bGVuOw0KICAgICAgICAgICAgICAgIGlm
+IChjYWNoZV9jb3VudCA9PSAwKQ0KICAgICAgICAgICAgICAgICAgICAgICAgY29udGludWU7DQog
+ICAgICAgICAgICAgICAgZnByaW50ZihmLCAiICAgIGNhY2hlX2NvdW50WyV1XT0lIlBSSXUzMiJc
+biIsDQpAQCAtMTIzNCwxMiArMTIzMywxNCBAQCBtZW1wb29sX2F1ZGl0X2Nvb2tpZXMoc3RydWN0
+IHJ0ZV9tZW1wb29sICptcCkNCiBzdGF0aWMgdm9pZA0KIG1lbXBvb2xfYXVkaXRfY2FjaGUoY29u
+c3Qgc3RydWN0IHJ0ZV9tZW1wb29sICptcCkNCiB7DQotICAgICAgIGlmIChtcC0+bG9jYWxfY2Fj
+aGUgPT0gTlVMTCkNCisgICAgICAgdW5zaWduZWQgbGNvcmVfaWQ7DQorDQorICAgICAgIGlmICht
+cC0+Y2FjaGVfc2l6ZSA9PSAwKQ0KICAgICAgICAgICAgICAgIHJldHVybjsNCg0KLSAgICAgICBj
+b25zdCBzdHJ1Y3QgcnRlX21lbXBvb2xfY2FjaGUgKmNhY2hlID0gbXAtPmxvY2FsX2NhY2hlOw0K
+LSAgICAgICBmb3IgKHVuc2lnbmVkIGludCBsY29yZV9pZCA9IDA7IGxjb3JlX2lkIDwgUlRFX01B
+WF9MQ09SRTsNCi0gICAgICAgICAgICAgICAgICAgICAgIGxjb3JlX2lkKyssIGNhY2hlID0gUlRF
+X1BUUl9BREQoY2FjaGUsIG1wLT5zaXplb2ZfY2FjaGVfcGVyX2xjb3JlKSkgew0KKyAgICAgICBm
+b3IgKGxjb3JlX2lkID0gMDsgbGNvcmVfaWQgPCBSVEVfTUFYX0xDT1JFOyBsY29yZV9pZCsrKSB7
+DQorICAgICAgICAgICAgICAgY29uc3Qgc3RydWN0IHJ0ZV9tZW1wb29sX2NhY2hlICpjYWNoZTsN
+CisgICAgICAgICAgICAgICBjYWNoZSA9IG1wLT5sb2NhbF9jYWNoZVtsY29yZV9pZF07DQogICAg
+ICAgICAgICAgICAgaWYgKGNhY2hlLT5zaXplID4gbXAtPnNpemUpIHsNCiAgICAgICAgICAgICAg
+ICAgICAgICAgIFJURV9NRU1QT09MX0xPRyhDUklULCAiYmFkbmVzcyBvbiBjYWNoZVsldV0gc2l6
+ZSIsIGxjb3JlX2lkKTsNCiAgICAgICAgICAgICAgICAgICAgICAgIHJ0ZV9wYW5pYygiTUVNUE9P
+TDogaW52YWxpZCBjYWNoZVsldV0gc2l6ZVxuIiwgbGNvcmVfaWQpOw0KQEAgLTEzMzMsMTUgKzEz
+MzQsMTMgQEAgcnRlX21lbXBvb2xfZHVtcChGSUxFICpmLCBzdHJ1Y3QgcnRlX21lbXBvb2wgKm1w
+KQ0KICAgICAgICAgICAgICAgIHN1bS5nZXRfc3VjY2Vzc19ibGtzICs9IG1wLT5zdGF0c1tsY29y
+ZV9pZF0uZ2V0X3N1Y2Nlc3NfYmxrczsNCiAgICAgICAgICAgICAgICBzdW0uZ2V0X2ZhaWxfYmxr
+cyArPSBtcC0+c3RhdHNbbGNvcmVfaWRdLmdldF9mYWlsX2Jsa3M7DQogICAgICAgIH0NCi0gICAg
+ICAgaWYgKG1wLT5sb2NhbF9jYWNoZSAhPSBOVUxMKSB7DQorICAgICAgIGlmIChtcC0+Y2FjaGVf
+c2l6ZSAhPSAwKSB7DQogICAgICAgICAgICAgICAgLyogQWRkIHRoZSBzdGF0aXN0aWNzIHN0b3Jl
+ZCBpbiB0aGUgbWVtcG9vbCBjYWNoZXMuICovDQotICAgICAgICAgICAgICAgY29uc3Qgc3RydWN0
+IHJ0ZV9tZW1wb29sX2NhY2hlICpjYWNoZSA9IG1wLT5sb2NhbF9jYWNoZTsNCi0gICAgICAgICAg
+ICAgICBmb3IgKGxjb3JlX2lkID0gMDsgbGNvcmVfaWQgPCBSVEVfTUFYX0xDT1JFOw0KLSAgICAg
+ICAgICAgICAgICAgICAgICAgbGNvcmVfaWQrKywgY2FjaGUgPSBSVEVfUFRSX0FERChjYWNoZSwg
+bXAtPnNpemVvZl9jYWNoZV9wZXJfbGNvcmUpKSB7DQotICAgICAgICAgICAgICAgICAgICAgICBz
+dW0ucHV0X2J1bGsgKz0gY2FjaGUtPnN0YXRzLnB1dF9idWxrOw0KLSAgICAgICAgICAgICAgICAg
+ICAgICAgc3VtLnB1dF9vYmpzICs9IGNhY2hlLT5zdGF0cy5wdXRfb2JqczsNCi0gICAgICAgICAg
+ICAgICAgICAgICAgIHN1bS5nZXRfc3VjY2Vzc19idWxrICs9IGNhY2hlLT5zdGF0cy5nZXRfc3Vj
+Y2Vzc19idWxrOw0KLSAgICAgICAgICAgICAgICAgICAgICAgc3VtLmdldF9zdWNjZXNzX29ianMg
+Kz0gY2FjaGUtPnN0YXRzLmdldF9zdWNjZXNzX29ianM7DQorICAgICAgICAgICAgICAgZm9yIChs
+Y29yZV9pZCA9IDA7IGxjb3JlX2lkIDwgUlRFX01BWF9MQ09SRTsgbGNvcmVfaWQrKykgew0KKyAg
+ICAgICAgICAgICAgICAgICAgICAgc3VtLnB1dF9idWxrICs9IG1wLT5sb2NhbF9jYWNoZVtsY29y
+ZV9pZF0tPnN0YXRzLnB1dF9idWxrOw0KKyAgICAgICAgICAgICAgICAgICAgICAgc3VtLnB1dF9v
+YmpzICs9IG1wLT5sb2NhbF9jYWNoZVtsY29yZV9pZF0tPnN0YXRzLnB1dF9vYmpzOw0KKyAgICAg
+ICAgICAgICAgICAgICAgICAgc3VtLmdldF9zdWNjZXNzX2J1bGsgKz0gbXAtPmxvY2FsX2NhY2hl
+W2xjb3JlX2lkXS0+c3RhdHMuZ2V0X3N1Y2Nlc3NfYnVsazsNCisgICAgICAgICAgICAgICAgICAg
+ICAgIHN1bS5nZXRfc3VjY2Vzc19vYmpzICs9IG1wLT5sb2NhbF9jYWNoZVtsY29yZV9pZF0tPnN0
+YXRzLmdldF9zdWNjZXNzX29ianM7DQogICAgICAgICAgICAgICAgfQ0KICAgICAgICB9DQogICAg
+ICAgIGZwcmludGYoZiwgIiAgc3RhdHM6XG4iKTsNCkBAIC0xNjM4LDExICsxNjM3LDEwIEBAIG1l
+bXBvb2xfaW5mb19jYihzdHJ1Y3QgcnRlX21lbXBvb2wgKm1wLCB2b2lkICphcmcpDQogICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgbXAtPnBvcHVsYXRlZF9zaXplKTsNCg0KICAgICAg
+ICBjYWNoZV9jb3VudCA9IDA7DQotICAgICAgIGlmIChtcC0+bG9jYWxfY2FjaGUgIT0gTlVMTCkg
+ew0KLSAgICAgICAgICAgICAgIGNvbnN0IHN0cnVjdCBydGVfbWVtcG9vbF9jYWNoZSAqY2FjaGUg
+PSBtcC0+bG9jYWxfY2FjaGU7DQotICAgICAgICAgICAgICAgZm9yICh1bnNpZ25lZCBpbnQgbGNv
+cmVfaWQgPSAwOyBsY29yZV9pZCA8IFJURV9NQVhfTENPUkU7DQotICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgIGxjb3JlX2lkKyssIGNhY2hlID0gUlRFX1BUUl9BREQoY2FjaGUsIG1wLT5z
+aXplb2ZfY2FjaGVfcGVyX2xjb3JlKSkNCi0gICAgICAgICAgICAgICAgICAgICAgIGNhY2hlX2Nv
+dW50ICs9IGNhY2hlLT5sZW47DQorICAgICAgIGlmIChtcC0+Y2FjaGVfc2l6ZSA+IDApIHsNCisg
+ICAgICAgICAgICAgICBpbnQgbGNvcmVfaWQ7DQorICAgICAgICAgICAgICAgZm9yIChsY29yZV9p
+ZCA9IDA7IGxjb3JlX2lkIDwgUlRFX01BWF9MQ09SRTsgbGNvcmVfaWQrKykNCisgICAgICAgICAg
+ICAgICAgICAgICAgIGNhY2hlX2NvdW50ICs9IG1wLT5sb2NhbF9jYWNoZVtsY29yZV9pZF0tPmxl
+bjsNCiAgICAgICAgfQ0KICAgICAgICBydGVfdGVsX2RhdGFfYWRkX2RpY3RfdWludChpbmZvLT5k
+LCAidG90YWxfY2FjaGVfY291bnQiLCBjYWNoZV9jb3VudCk7DQogICAgICAgIGNvbW1vbl9jb3Vu
+dCA9IHJ0ZV9tZW1wb29sX29wc19nZXRfY291bnQobXApOw0KZGlmZiAtLWdpdCBhL2xpYi9tZW1w
+b29sL3J0ZV9tZW1wb29sLmggYi9saWIvbWVtcG9vbC9ydGVfbWVtcG9vbC5oDQppbmRleCA1ZmM3
+Y2RiNzljLi5jYzI1NTA2M2Y1IDEwMDY0NA0KLS0tIGEvbGliL21lbXBvb2wvcnRlX21lbXBvb2wu
+aA0KKysrIGIvbGliL21lbXBvb2wvcnRlX21lbXBvb2wuaA0KQEAgLTI2MywxNCArMjYzLDE4IEBA
+IHN0cnVjdCBfX3J0ZV9jYWNoZV9hbGlnbmVkIHJ0ZV9tZW1wb29sIHsNCiAgICAgICAgICovDQog
+ICAgICAgIGludDMyX3Qgb3BzX2luZGV4Ow0KDQotICAgICAgIHN0cnVjdCBydGVfbWVtcG9vbF9j
+YWNoZSAqbG9jYWxfY2FjaGU7IC8qKjwgUGVyLWxjb3JlIGxvY2FsIGNhY2hlICovDQotICAgICAg
+IHVpbnQzMl90IHNpemVvZl9jYWNoZV9wZXJfbGNvcmU7IC8qKjwgTXVsdGlwbGllciBmb3IgaW5k
+ZXhpbmcgaW50byB0aGUgbG9jYWwgY2FjaGUuICovDQotDQogICAgICAgIHVpbnQzMl90IHBvcHVs
+YXRlZF9zaXplOyAgICAgICAgIC8qKjwgTnVtYmVyIG9mIHBvcHVsYXRlZCBvYmplY3RzLiAqLw0K
+ICAgICAgICBzdHJ1Y3QgcnRlX21lbXBvb2xfb2JqaGRyX2xpc3QgZWx0X2xpc3Q7IC8qKjwgTGlz
+dCBvZiBvYmplY3RzIGluIHBvb2wgKi8NCiAgICAgICAgdWludDMyX3QgbmJfbWVtX2NodW5rczsg
+ICAgICAgICAgLyoqPCBOdW1iZXIgb2YgbWVtb3J5IGNodW5rcyAqLw0KICAgICAgICBzdHJ1Y3Qg
+cnRlX21lbXBvb2xfbWVtaGRyX2xpc3QgbWVtX2xpc3Q7IC8qKjwgTGlzdCBvZiBtZW1vcnkgY2h1
+bmtzICovDQoNCisgICAgICAgLyoqDQorICAgICAgICAqIFBvaW50ZXJzIHRvIHBlci1sY29yZSBs
+b2NhbCBjYWNoZS4NCisgICAgICAgICogTm90ZTogQ2FjaGUgbGluZSBhbGlnbmVkIGZvciBoaWdo
+ZXIgY2FjaGUgaGl0IHJhdGUgd2hlbiBvbmx5IHVzaW5nIHRoZSBmaXJzdCBmZXcgbGNvcmVzLg0K
+KyAgICAgICAgKi8NCisgICAgICAgYWxpZ25hcyhSVEVfQ0FDSEVfTElORV9TSVpFKQ0KKyAgICAg
+ICBzdHJ1Y3QgcnRlX21lbXBvb2xfY2FjaGUgKmxvY2FsX2NhY2hlW1JURV9NQVhfTENPUkVdOw0K
+Kw0KICNpZmRlZiBSVEVfTElCUlRFX01FTVBPT0xfU1RBVFMNCiAgICAgICAgLyoqIFBlci1sY29y
+ZSBzdGF0aXN0aWNzLg0KICAgICAgICAgKg0KQEAgLTEzNzAsMTcgKzEzNzQsMTIgQEAgcnRlX21l
+bXBvb2xfY2FjaGVfY3JlYXRlKHVpbnQzMl90IHNpemUsIGludCBzb2NrZXRfaWQpDQogc3RhdGlj
+IF9fcnRlX2Fsd2F5c19pbmxpbmUgc3RydWN0IHJ0ZV9tZW1wb29sX2NhY2hlICoNCiBydGVfbWVt
+cG9vbF9kZWZhdWx0X2NhY2hlKHN0cnVjdCBydGVfbWVtcG9vbCAqbXAsIHVuc2lnbmVkIGxjb3Jl
+X2lkKQ0KIHsNCi0gICAgICAgaWYgKHVubGlrZWx5KG1wLT5sb2NhbF9jYWNoZSA9PSBOVUxMKSkN
+Ci0gICAgICAgICAgICAgICByZXR1cm4gTlVMTDsNCi0NCiAgICAgICAgaWYgKHVubGlrZWx5KGxj
+b3JlX2lkID09IExDT1JFX0lEX0FOWSkpDQogICAgICAgICAgICAgICAgcmV0dXJuIE5VTEw7DQoN
+Ci0gICAgICAgc3RydWN0IHJ0ZV9tZW1wb29sX2NhY2hlICpjYWNoZSA9IChzdHJ1Y3QgcnRlX21l
+bXBvb2xfY2FjaGUgKilSVEVfUFRSX0FERChtcC0+bG9jYWxfY2FjaGUsDQotICAgICAgICAgICAg
+ICAgICAgICAgICBsY29yZV9pZCAqIChzaXplX3QpbXAtPnNpemVvZl9jYWNoZV9wZXJfbGNvcmUp
+Ow0KLSAgICAgICBydGVfbWVtcG9vbF90cmFjZV9kZWZhdWx0X2NhY2hlKG1wLCBsY29yZV9pZCwg
+Y2FjaGUpOw0KLSAgICAgICBfX3J0ZV9hc3N1bWUoY2FjaGUgIT0gTlVMTCk7DQotICAgICAgIHJl
+dHVybiBjYWNoZTsNCisgICAgICAgcnRlX21lbXBvb2xfdHJhY2VfZGVmYXVsdF9jYWNoZShtcCwg
+bGNvcmVfaWQsDQorICAgICAgICAgICAgICAgbXAtPmxvY2FsX2NhY2hlW2xjb3JlX2lkXSk7DQor
+ICAgICAgIHJldHVybiBtcC0+bG9jYWxfY2FjaGVbbGNvcmVfaWRdOw0KIH0NCg0KIC8qKg0KQEAg
+LTE0NDksOCArMTQ0OCw4IEBAIHJ0ZV9tZW1wb29sX2RvX2dlbmVyaWNfcHV0KHN0cnVjdCBydGVf
+bWVtcG9vbCAqbXAsIHZvaWQgKiBjb25zdCAqb2JqX3RhYmxlLA0KICAgICAgICAgICAgICAgICAq
+IGFyZSBtb3JlIGhvdCwgZnJvbSB0aGUgdXBwZXIgaGFsZiBvZiB0aGUgY2FjaGUuDQogICAgICAg
+ICAgICAgICAgICovDQogICAgICAgICAgICAgICAgX19ydGVfYXNzdW1lKGNhY2hlLT5sZW4gPiBj
+YWNoZS0+c2l6ZSAvIDIpOw0KLSAgICAgICAgICAgICAgIHJ0ZV9tZW1wb29sX29wc19lbnF1ZXVl
+X2J1bGsobXAsICZjYWNoZS0+b2Jqc1swXSwgY2FjaGUtPnNpemUgLyAyKTsNCi0gICAgICAgICAg
+ICAgICBydGVfbWVtY3B5KCZjYWNoZS0+b2Jqc1swXSwgJmNhY2hlLT5vYmpzW2NhY2hlLT5zaXpl
+IC8gMl0sDQorICAgICAgICAgICAgICAgcnRlX21lbXBvb2xfb3BzX2VucXVldWVfYnVsayhtcCwg
+Y2FjaGUtPm9ianMsIGNhY2hlLT5zaXplIC8gMik7DQorICAgICAgICAgICAgICAgcnRlX21lbWNw
+eShjYWNoZS0+b2JqcywgJmNhY2hlLT5vYmpzW2NhY2hlLT5zaXplIC8gMl0sDQogICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgIHNpemVvZih2b2lkICopICogKGNhY2hlLT5sZW4gLSBjYWNo
+ZS0+c2l6ZSAvIDIpKTsNCiAgICAgICAgICAgICAgICBjYWNoZV9vYmpzID0gJmNhY2hlLT5vYmpz
+W2NhY2hlLT5sZW4gLSBjYWNoZS0+c2l6ZSAvIDJdOw0KICAgICAgICAgICAgICAgIGNhY2hlLT5s
+ZW4gPSBjYWNoZS0+bGVuIC0gY2FjaGUtPnNpemUgLyAyICsgbjsNCg==
