@@ -2,60 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10E08C982D8
-	for <dpdk-dev@archiver.kernel.org>; Sat, 19 Sep 2026 16:10:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18A03C982D8
+	for <dpdk-dev@archiver.kernel.org>; Sat, 19 Sep 2026 16:10:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 56BED40695;
-	Sat, 19 Sep 2026 18:10:20 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.6])
- by mails.dpdk.org (Postfix) with ESMTP id 716DA40655
- for <dev@dpdk.org>; Sat, 19 Sep 2026 18:10:18 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5C6B040655;
+	Sat, 19 Sep 2026 18:10:47 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+ by mails.dpdk.org (Postfix) with ESMTP id C0F274064A
+ for <dev@dpdk.org>; Sat, 19 Sep 2026 18:10:45 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1789834219; x=1821370219;
+ t=1789834246; x=1821370246;
  h=message-id:date:from:subject:to:references:in-reply-to:
  content-transfer-encoding:mime-version;
- bh=XcKq3somBixGy2xlcgTlhge04B3z2kADjh1gpUZng9w=;
- b=ae6YrDPM4cvBUElvOaDLhruDQ6fV3GPzNn0NHB34DimZJ8Y63mllOz+8
- ZSelVukv3kTqki81rsE20Dgh5OQH3Ya0b9J/Sfq6C8y28iRDTrW42AFS7
- eRsdSIs3+N3tvpWlwg8FOQPJAFTgPMPKI56IxqZY/Y+hZzdeCvpwIIuPx
- iFmV27hxH6wx8ekhK2NmZCEcoZT6WMs/Z9QrT7SHhFNg+PDCzDlh/cNE6
- dD5qvUdOWxpEawZrklDt2TxIFfoV207OREyoEYaphpwdFlU9nscpi4AwF
- 66H3+nY0F+Wasw1Ovh44Hv+KBrUlb9Alqi1lUxYRLKFudNeChP/6Sh3AH Q==;
-X-CSE-ConnectionGUID: /t56j3jTThaSeht/x3Hzaw==
-X-CSE-MsgGUID: ov9RVBXtTSCFEOqaR9gG5g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11910"; a="871703"
-X-IronPort-AV: E=Sophos;i="6.27,111,1787036400"; 
-   d="scan'208";a="871703"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
- by fmvoesa116.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Sep 2026 09:10:18 -0700
-X-CSE-ConnectionGUID: T6WmSOqJS3asiDzEVwT2og==
-X-CSE-MsgGUID: p4ZW8wTYQmWJNVFCUTByJw==
+ bh=ZLlAhBOL4sG8B6YlGwDFdjG/ieGduZ8sOSiwNzQpHLc=;
+ b=Jvh02lFJeAmrCRC6K8vDpx9nfVhm+C0gCt+rgWljyuBdMXdJNmXsZT2b
+ UULG/7J54611n1f55zjV1UkTOW0hFxD9t6o8LTISRWZGSN7ssqxmj6QBR
+ bbWKo6T9Sx+QNymv+4kIV0FKQi7BtaUBl9m58+dmLLwzW0zicO52D8E3w
+ YRuUwMAgHIFxbVYdVUrtOJndod68U25jlGk/iEcvemRTkpZYA+Tz4pybC
+ BgL7Y+9tL7L7ZznBimbtNcNMHWxoCY2A/PbX3iJCDPiEdzdNoj2M3KJoP
+ FsaGG7h7xHRDVJozAuQDPbceGUm/nNDOYgkvzXJ1BcthPIOsibeIbgnO9 w==;
+X-CSE-ConnectionGUID: drXvzVDLTGeqczcYjqiAgQ==
+X-CSE-MsgGUID: ZBdeLkJ7QYq0BrfppUoOrQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11910"; a="89490820"
+X-IronPort-AV: E=Sophos;i="6.27,111,1787036400"; d="scan'208";a="89490820"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+ by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 19 Sep 2026 09:10:45 -0700
+X-CSE-ConnectionGUID: nGc6tNOUS5eNwxfvGez5rg==
+X-CSE-MsgGUID: mFUew1nzQzCeaar0TtAwVQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.27,111,1787036400"; d="scan'208";a="299943564"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Sep 2026 09:10:17 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+X-IronPort-AV: E=Sophos;i="6.27,111,1787036400"; d="scan'208";a="268545277"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+ by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 19 Sep 2026 09:10:45 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Sat, 19 Sep 2026 09:10:17 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ 15.2.2562.46; Sat, 19 Sep 2026 09:10:44 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46 via Frontend Transport; Sat, 19 Sep 2026 09:10:17 -0700
-Received: from BL0PR03CU003.outbound.protection.outlook.com (52.101.53.15) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ 15.2.2562.46 via Frontend Transport; Sat, 19 Sep 2026 09:10:44 -0700
+Received: from BN1PR04CU002.outbound.protection.outlook.com (52.101.56.45) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.46; Sat, 19 Sep 2026 09:10:16 -0700
+ 15.2.2562.46; Sat, 19 Sep 2026 09:10:43 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ts0b+xvaYze8rdIgjYz82sZkwwMSXVmXtlvxZvEF7MkGQ+yhW10HwaIdAlZ8lEqjdi72xIveSgX2az4aa1zMfLfq7G9YL/qRrp/G1OVCrMyGyhAu9mH0AhVENN3bvceGGb7rz/auX5TnyqSPowxIzl9u5TORvUcf8sfn0f5RAqVqVBZrxPmxw9h3jkfEIrvRqrWJ7oEM3F++VnQEO8+FcKHuS+Qce5a1VFFdMqwv92bbTfOT9LYQhEBIJaI/Ryy4bwoxPhXBQxPCnSD7DtJrKUL9oDeRr+tthN+y0yiF8HU7yEMqP525+z5T3w3c4vsLOr2l9bxaF19dvUaofHx6Ig==
+ b=yPBDImcX+vptADy1ejFzpT6AdCQcLM+pdeBjowApzN6/JpLWSK4ZSxQLEH/5DYDYSGYzL6k9jmVj1Uiup566rmQN2FDtUN5Qivg9RHjy3h7q6WHsfJDy2jLTFejimeMPnfQ6V1aQf+/pDtn2ZGUw89MSzp96WxtW8hMxTzZOZZ+OkOjlnpPqaEqDk9vu/01AvTStjqsSvtgQFhsVx6eGxB+P7sRs5ccSg6TrwfbnLfLqm44HuS5J6z8XXXtlA1zgEhYG9JvjvZw08S81sIH7DgYHIZ0jGIIraDD+OsLzr7P3zFZiK01AUQiAtbjlNCF5TW0Xi6vlemMzpt7S4XoyJA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FuBeqKnzraBzgxt2dSISehR5BKd1P7JqZCUpdqLLTO0=;
- b=H0osNzf8rmaifUmYHtrDJmm+69ljwYaXyToLOT0U/zxQ/iQHVJEGLHK2eQzyMU/JwCuj3tHGGjxyLEh3S7KaUlqL+AFmkFJFa66tlcUUWVLnXhLj5DS3fdQwTdsgXhbVdnEKW2yL37eZYIEMKmhg67IBi6gPIyGij9uma2LGrEa5jigYWgqMkfXoedK9IpYV9fuK5kHNX/GCa/UsUo7kXC++clNGXmAg2MaPX43ohTx2rIyYjtMkMXH3eDJ5pglxLwj/P4NWLFdJijQbSMsiriNl6DfzU0lfXt+XFevHQtN+834Yzor7iF84YOHcxsYGthU/fvDUmKS5KgMZVPe6qw==
+ bh=v9hsYBPYWfRrrwcz/MwWYfaUmGuY53V+OflsDaBpE2Y=;
+ b=kfc9JczkleelYLScxG4l0c3gbqx9e3J7/RChaEHpFyfu57WWAD/zcLXzKr/X+SV/Rg+F7pTwUuHhrdTjUGZTlZAY3/pOhf6yPyzDNQUw5OhqcbcgR4Rz0pyWHGZJ4MGM/inMFZPbdoqhWTU9tRrC8AN+2XI548ckoznvfLz5X8f/+slZl9zd95gqUm21gQ1BgX13g7SXxIbKgL1ha7ZVqIUB/tK+9IOu1ZxMT1Pf7nrWuWxD/V2GVR3jAtEGcwzIDQAeVUpkEIEYTO/17BZVTQn3pA0QPqWgVrYzTYIlxTiYKhchIK/rFP23ZzGTLa0B3gqiVTSNtsMZ9ye8Q723MQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
@@ -65,88 +64,88 @@ Received: from BL0PR11MB2993.namprd11.prod.outlook.com (2603:10b6:208:75::28)
  by CH3PR11MB8444.namprd11.prod.outlook.com (2603:10b6:610:1ba::13)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.428.15; Sat, 19 Sep
- 2026 16:10:14 +0000
+ 2026 16:10:36 +0000
 Received: from BL0PR11MB2993.namprd11.prod.outlook.com
  ([fe80::5877:2021:3cf1:1046]) by BL0PR11MB2993.namprd11.prod.outlook.com
  ([fe80::5877:2021:3cf1:1046%6]) with mapi id 15.21.0428.014; Sat, 19 Sep 2026
- 16:10:14 +0000
-Message-ID: <0baf24e4-ef72-4462-8804-6be86701a423@intel.com>
-Date: Sat, 19 Sep 2026 17:10:11 +0100
+ 16:10:34 +0000
+Message-ID: <9ff39b98-de48-44fd-9d71-d2de44e1ac0c@intel.com>
+Date: Sat, 19 Sep 2026 17:10:31 +0100
 User-Agent: Mozilla Thunderbird
 From: "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>
-Subject: Re: [PATCH v3 05/19] net/ixgbe: reimplement ethertype parser
+Subject: Re: [PATCH v3 06/19] net/ixgbe: reimplement syn parser
 To: Anatoly Burakov <anatoly.burakov@intel.com>, <dev@dpdk.org>
-References: <e389782f585880877bd626cc0a05bac81e418393.1789560945.git.anatoly.burakov@intel.com>
+References: <4daf67ef6722dac1f9a42d736e2b3cc05fd6c537.1789560945.git.anatoly.burakov@intel.com>
 Content-Language: en-US
-In-Reply-To: <e389782f585880877bd626cc0a05bac81e418393.1789560945.git.anatoly.burakov@intel.com>
+In-Reply-To: <4daf67ef6722dac1f9a42d736e2b3cc05fd6c537.1789560945.git.anatoly.burakov@intel.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DU7P189CA0021.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:10:552::17) To BL0PR11MB2993.namprd11.prod.outlook.com
+X-ClientProxiedBy: DU2PR04CA0050.eurprd04.prod.outlook.com
+ (2603:10a6:10:234::25) To BL0PR11MB2993.namprd11.prod.outlook.com
  (2603:10b6:208:75::28)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: BL0PR11MB2993:EE_|CH3PR11MB8444:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1e783dd6-83fd-4086-412d-08df16687d7a
+X-MS-Office365-Filtering-Correlation-Id: d18f149f-ecb5-4a28-6f3a-08df16688923
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
  ARA:13230040|23010399003|376014|366016|1800799024|10067099003|22082099003|18002099003|56012099006|11063799006;
-X-Microsoft-Antispam-Message-Info: sDh64vIx/0OZAgW53QKyMQ37Bufkpr5VGoUanWvkr/To/arpqEJsOUIHg441jJLTOA9Db3XTMjWYn7Iu2HozM2DyKP0+pY56X7qz1N72x2QQNRKPvAqWCy7Q9w1RTNa5iIX/dLHt7vZ6Xms4oTC0vI5G2l+EYBkaJ95p4HwgHuiCuBj3azaGMCSo9wbgfzqS1gNKfr8om3Yo0HO8XlJNG8jEEY+RSqZQdsihuJCZxlHLSqPB3ydkDNbneh/K7KVinvqaToesaYuJp1oy8SqV2ZS0PBypOZtBhscl71xJtb9kkEinsqdVPJowvdBY7szK0jJtUADb5b5+bbHFM2PsHWN1Zwe7vNMTHtGpjVSeR9z6E5pGxo7SLNGOj1ZSEkukFHD6p2ZszV0LSaP10deMMRsqGSObfRbkikRtiSiiF7UyYEIqAYOk2KWjg6PBzDb/E620B5c0NJ0ZBiRtOFC/W9WRt8h9+0PTFldObAgTGt3pMEIz3jY5DCHN4DtzmZK4JtfLeXrLduFAZ7aRmTsuZy4y10+Zthetk5Wv870271xQTd6BRLLNjAdduRk26R5NnUAYVQy7tlCgJBcSrj4LGBpsyxaXfqneEOOfxqoRtDiMWuQUCaDzzJhQN6wRGn5R8X9yi2mNK3xuRmbQpVaJgNcpINFUs4gxVWPOgBHYN1I=
+X-Microsoft-Antispam-Message-Info: sMTwT04kHdXfntPE6hwzmZstKFLvg1cUm4Iqyn40SFS1fc64ErNrXBF9QscD5x99Cs9bMboSh4H7DAlHW5y9DcwpaTdn43y794hw/Obgz01i+MQk0PdUIFkdXUBrNfzFhiG/IqG3CES2/1ZGYCFgKzotAJPgCnql8p+A3XNoZNtYz4UNz14R93p0ekhCNrC7XeXz5UmXboLugOQVCL12j7bn3pGaeTBw5n7CS+jkChlo72/ON3c04CtUZmbQjTR4N2khuY0fyEc4UPMzAd8P+MtanR903ZLoIndAgYUICtEQouYJF/2cwz5JatiPgpC6lfwJbRNv+5t+BUsuTeh01pl5+9fbBIXGhwYsMx7ef686soAudI7iBxDSa6l2pRU3PNy/Brlv5wwlFbTBkvgb1mlpUxg4Y4/1Vy3so0O94IypN+mEV5h4uoUsEjVPd1qZ/35bal5wrzbdUGDsH7o2VyAVbfnmnc2iz2UkrOlaL3vkGFCYGVKwZn8B89QsjqsYIxNwPm2kbgPIquO88FTMj9lpIFqT2aSbuT68427+mpABlv/qXMGd6qEpWpptXa3bND6+Eygc6ktEcB5b209JDtVCiSJCaurCBQJKh6/XGnQb+PIt8Pvkyh8Cy3wt6jfDpj6oNxIWl9VXItecXlhkzu3H5K6kRW6mQ/bUHz2EXfk=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:BL0PR11MB2993.namprd11.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(23010399003)(376014)(366016)(1800799024)(10067099003)(22082099003)(18002099003)(56012099006)(11063799006);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VHVwSVFrdE5YRm5WVFdoUVBYQVp2NmNUS1JuS0pNcDFsRC9RcWZxMFNWMDJ3?=
- =?utf-8?B?MXBWRXJHa1JHVkZBeWNBRDAybUs0Zk5KNVZFcjcwNEFVUWlWRjNFbWlheGUr?=
- =?utf-8?B?dEdDWDdiRFl3NlI2YmthaEhNZDFzQkdPcWZtRFUraWF5UVJyMWQ3bzhWY1Vw?=
- =?utf-8?B?WnJZN3dFV0ZHck0rYkFhZjB0T29UVi8vTUFwL2MyQWtsZ3Jad2RsdHRORHIv?=
- =?utf-8?B?TFlEMDN5YVNsdm9OdENKeUFpeHlsc3BBN2ZXRW93c1V3bGFMdnhvenhsa3ZF?=
- =?utf-8?B?azZPaVVTaGIvWVlCNVBldy9hem4rMzRnSXVwWExXUnhINytLck9YY3dUT3Nm?=
- =?utf-8?B?eGFHaG1BVEkzcS9BZHZYRXlYbGR4Um9henpWWjZFRTNHc3RsQ1FmNnZ1cjFr?=
- =?utf-8?B?SlZmVWRhd3JldFZsMFQ5UDBhWlA2cEJMcDRNeXZQQlMrdjlaYmxpQzFFNk9W?=
- =?utf-8?B?Nmp5KzNuMVVZcEwrZHBQdjc4T1JORzlaQWpUZUh1aWlvS21nSkV6TmNyQm9t?=
- =?utf-8?B?U1JrczB2TG5jYXFwYmhScTlwajN6azE1cG9wY0FwbUpZTjVkVlhWendObW5U?=
- =?utf-8?B?YmtXdm5vclNpNzJ5RGttOVltWFc5R29oTEpLVkM0MTh3b0NuYmtXcUpDdnFh?=
- =?utf-8?B?dUR5RU96cG1jenY4Y3RabVBSWEVNTGtXTDYrNkt1d2tDeTFyY0gwSytxYjFP?=
- =?utf-8?B?VjZobXdDY1BHZDNWNUswZmtqUGFmdFdwSWthVjIzTzlDK3JlejlsV1JCTDBn?=
- =?utf-8?B?eFpVekZYeEZGa2hlOHd6UUxCblJKTXFiSFJsS0oxbFdrZkh0cXhuWjR3Q0xi?=
- =?utf-8?B?UFV0bS9objVhNit1U1QrMmlnNUlTZzFPNG5rekQ2SGpGSTFiemE1MldvdnYr?=
- =?utf-8?B?UFNBeFpRVHF3TG0veXN2UmVRMVVKRno4MmUvVHBnSXUyMFhmUWRNYUoxbWlQ?=
- =?utf-8?B?K0wzMlVDN1dzeHpKTTBpR3IxbmhKQXlySFVlY1pMNDRWZjVWSkgrdjVoTllm?=
- =?utf-8?B?RjhkcmY1VHU1WHJzZHNQOFdqNDhGSkhydnFDcHdsT3crejkxdGIyVGgvNTR1?=
- =?utf-8?B?UDVzdzU2V1c1TXJ6eHJFck92cFlOSTdiS0s4a1ZYZ1pqMGR4NldYVUlVZzlN?=
- =?utf-8?B?RFhCUnp6WVlybXYzSW5wN2dYOXQrRG1wK09SU1lWYkh2dmZzSitkSjRuUmJW?=
- =?utf-8?B?ZnUxek5TdENMalN1VmtrUGpyUk8wdVV1eFlCM0VGeHJXc3VqOWRVM0JaSVVz?=
- =?utf-8?B?dStZbHozcVRPVHVjbTQxTDFycDREZzg4K3R3TjEvU1BYTE82U2hIdHpDTnZa?=
- =?utf-8?B?blFQSVd1VFViNjdDZkh0eHNjelBtendNcTFOa1gvblFTUnQrNTRra2F1YVlR?=
- =?utf-8?B?YlJwOXNYaHNDZTJkNWI5QTRkM2doamxyOXBvMFpmTDFTMEtYZzhIUm1vTi9n?=
- =?utf-8?B?TXBjcEdIcWRndjVEeXRGejRyNVdQTEdDRnRsWlllM0cxSzFmUHRYSUhQbFlj?=
- =?utf-8?B?UEF4OEkrVnF0NWk5dUczVi9POUVycVIwY0tBSHg4NndieWN3ZmxhNnNQd2Zj?=
- =?utf-8?B?Y3I0R1FHR1NCd1lNUjNQZnIrb1E1ZXRZZzBGcUVnY2tqSlJRWHVDakw2OUFv?=
- =?utf-8?B?aVNiemxKRHNiQW80RmZ2OFpJMk5EdHVtUmJBRUxkK1RDS1Vwa0pLaHNJd3ky?=
- =?utf-8?B?ZHB4T2NhRU9hQ01zYThCVDZGME9SclNNcVhiSWhVT3FCbHJwQXZMYmUzRGFM?=
- =?utf-8?B?YXZrcmJjTkUvanBwSExuenRhMWVqek9VZDg1bEQ5OGZuQWRPR0pScWZSU1I5?=
- =?utf-8?B?UTlZM3FlSUs0UHA4c002ZmJsS3psVjVxd2RxS3cwWTg0aTZ3WHUxN0NjaUF1?=
- =?utf-8?B?RngyNVZrZ2pCaktXVTJtUzhZOW90NFZ3REVSeFBqN2FlYjlQL3Ridm83dUNa?=
- =?utf-8?B?M3czbDM5cm9LOFJFWE5SS1JBZEZjSUk0N04vVSsrSWpQa1JBVHltUGFtVkVF?=
- =?utf-8?B?RytNSTJyU0pOUUpFVDNlSlBJaFhxM1M1UlVSUlhNSzQ4dTBIUFhhQlU3ZFFP?=
- =?utf-8?B?bndpTDVKRGYrMUtzSHlzT3hudzBqbnFOSG9rajBCK25LYThxUXVnQXFxY2Jm?=
- =?utf-8?B?UzM4b09EN1ZuZm9UN1FCQ2tzbFBkMHYvVWc2SlVlMldLbURUOEd6VFgzU1Yy?=
- =?utf-8?B?cFlGL2xMWHZRWHZ2d0w1Tlc2ZkkxM1N0L2NDczk1cTBuWUVtVGl4ZGJ3eFVu?=
- =?utf-8?B?RmpKWk14c2pDWXVwcEdod3R3THN2NndOc0RKUHA2T1hjRFk0VlhzakQyTE9N?=
- =?utf-8?B?NFNMcWdsUjFjQjltTGJxUDhLVlBIVG5vN2VHekV2M0lDT1Qrc3ErZ1dkeXJq?=
- =?utf-8?Q?W9uwpyN3pLQ/RQoY=3D?=
-X-Exchange-RoutingPolicyChecked: FiL1WSJbJ/jCqywHgHaM8FbvOcBmoLvZQyfnYcU4I5SMUPPL0ZXx5KmdjaqorOjO6FS0LwRI+AqSbXofZTBPOHOt6JDvjvV9jX+am+kHQwLTT3oUDOTkQ0Rb9T45jt81aLmr+KSHf1r+iWAbiJxVsK6hrlbonQfj0KpzOYdcgpG4fOE+g1rj4YikqclwP5yVZFxAetctxXNfFYo7w2hQfBW61lncCz6Fqh9/bLdRKL1mKviQarf+VEZy9SpO81o+asKInrrHaNllc+YisyNSwl/IjHN9etNeb4DfpKZbxYNtawL2DCM7p2Bo0eliXLwEK3MUtuDbcBDqRXE0zENubQ==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e783dd6-83fd-4086-412d-08df16687d7a
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Z1lBd0hxSC9TODFSSUtVbFhRKzUwU1h6T0NQRTNoZ0k2TzRSbmV0Wk5OZFZZ?=
+ =?utf-8?B?SXNlSEhhbDUzMVAzQTJPSHFaK2t2RnNSVFA3clJxcDJCT01OZUNxdVNwUjVi?=
+ =?utf-8?B?WEp3Z09VOXhMSWNyT1lvc3g1ZkJSdXM4REZsNzBEZW5ZS0xNL3dVbmtEamhq?=
+ =?utf-8?B?L0gvM21OdUUwbVlXVU5VMUl3Z1pxaWJpOWhCK0FIRGtIZW13TTc5MitDV0hC?=
+ =?utf-8?B?MzR3YzhwdGxzYWRHWnQxVWZCTDRUdkpEdEhRVko2bGZ2L3NDMGlFTXMranZx?=
+ =?utf-8?B?eTE1UFM1SHdJeEd2K3JwRkNnWWV5TkpYV2JqNTd1SmF6RGJQMjk2bDJVOWxB?=
+ =?utf-8?B?L1MvQjNaUi9xYklhUERlM3QyT2thSlErcjBYc0hvQWh4RGwycDk4cEwvVFAv?=
+ =?utf-8?B?LzNaY2s0V0xRK1NoWGFTdTZLYXVhY1ZwUTBDVGx3QkJDSEJYZllORWVwR1ov?=
+ =?utf-8?B?MTA1Y29vS0YvSHB2NnFRUFF6UWxFN0xsaGNvWmN2TVAvZEoxYVJMTFcxb1Fh?=
+ =?utf-8?B?MGdLU05XTzdvaEZDS0VRb2ZGTXJUY25DemJLNWxGZ0ZNbU9aNkhPamdoQmNl?=
+ =?utf-8?B?V3NMUHFDaTVXTXJhTWhESzZkVFdyNnZJcThTSG5SZ0hleGlWbDE1QVBLeUJ2?=
+ =?utf-8?B?V1IxemRpTTBKSWpLQ3dxRVlONjdqTlZodmcxaGRYOTNJOTFzN3lzekR6TXFI?=
+ =?utf-8?B?YXpwemhDOVo3NXJCVU1zSDdkOHJjTERJNk9IK1BlaVZXa3lZMHVBK0JHWHg0?=
+ =?utf-8?B?RVhvZ2NqckdHNkdzSE1tc0h3Z1NXZ3hwTEUrbmpQcVVYYmxscWptcGJmbHIw?=
+ =?utf-8?B?S2plZkpjdzRyNXlqVElRemNNRGM0MytPcWF5N1lpZDgyK21tTEd3L2hWY2Iy?=
+ =?utf-8?B?ZlRlNnNBTElUNG5qYU5kc2pUS3F4aERVdVhTWEtuQWFRYUVIUUZFUjZVRHdU?=
+ =?utf-8?B?Wmd1eGFCNDcvTUpZdTQ0LytFbE1GSm1DOGJQem9DdldWZkZRblp3aVJsNkVk?=
+ =?utf-8?B?MnhabDhrWUpsbnhna1cwVTZRT2Q0azlnYUEwYUZvSmxHNzRDWHlhWWlmeGlu?=
+ =?utf-8?B?VWNVQ1VPUmtBSHNzRlZXKzArUzFUT0lBS2JSaHpvbzdsa0FHcHlhNHp4QTli?=
+ =?utf-8?B?Y3BvdHQ5WFVqSk96VWdXdy9rbnRVMGZUNDByem5zY2dXWHBBTXRFRDIrTStF?=
+ =?utf-8?B?ZVFXZTNqWXljUXE3T0w0N1czNHJua05xWXk2M05lcFBOWGVYODB1d2VDTUFs?=
+ =?utf-8?B?RFBrQkE4Rk1KbGJ0TkhXajVSenJyZTllb1BQTlo5SENucVBjTEhRQU9kWDJk?=
+ =?utf-8?B?ME55bzNVeU15d1JvemdvUVdqWW9CbW1pcTMrSEFOVHV2aDc2ZmxHL0ZVRGJO?=
+ =?utf-8?B?ZkxNZ1RwcTlKejFJbUlJaExNTjNsR21WYjA3VTIzOFV5NldERXBPdFRLRjBW?=
+ =?utf-8?B?M2dxakZQNjJVTEtOUEVJaUkvenlwSGlGNnF2UEFRQk1zUXNOWXl6OWEzRU1U?=
+ =?utf-8?B?N3YyeVZpb1FtSGd2TnBnMkpvczJ3NExMYUNIUi9RclZwUUtXQmEvR0FscERZ?=
+ =?utf-8?B?MUVCN1NpYXdsK0FPUXJXUkwzNEg1LzhTc3FyaVJwbXAxOEhkOXpHdkZEOHpB?=
+ =?utf-8?B?YVAyTmxlbmRjazhjSWxOeklPQTNJU2FTUGJDSXlFSGRxaURGWjFrYUFNM2RL?=
+ =?utf-8?B?Q0d6cUhmeDRsVmRYRU1CSWIzS3V5UXFuWG9aaDZBQnp5d045elZnMjZ0Vk9r?=
+ =?utf-8?B?V1NWTS9hKytKak5EZWpKUUFvT1NqMEplWWpPaysxRGt2bUJuWmV6NThWbTYz?=
+ =?utf-8?B?bkVlQnAwdTY0Yk4rUkVXZ2tnRnVKWXZSMlE2aHl4ZHFISHlMYVZSWXRVRkxa?=
+ =?utf-8?B?NjVtUVlRTjhNRWVqSXJDVUlWYTFQK2QwQlVQcEhCNGNNV09HNkNQUkpiSmtm?=
+ =?utf-8?B?UlcyTU5Fd2JOV0hnUkF3RVE2OEZJWEVGamlaWXdwK3E5QWlPTVVKSzJxZzYr?=
+ =?utf-8?B?ZXZ2c2c3bko5UUJnRC9qOXVPbENwYjEvbU1jeGxGVVN4Z21KS1lzMVdjV3dn?=
+ =?utf-8?B?U2xLTytKcTVhcDd6VERTQ3J2cjJEdkJvVFhGOXZlcGE3ZmR0Y1hka0FmUSt2?=
+ =?utf-8?B?ZW96aThJbTUrWGYrRXFxVVNlckQ1NWUxbG5XQUZzQ0FkbUNsQjhGNGdDR2sw?=
+ =?utf-8?B?K2V1T2NCdFdsL0MwaDZwa2NOU2RLWmg4N3djZnNadVNWUzlwaFFOcXhiMTk4?=
+ =?utf-8?B?VTFUUHJ4VVlGNjcwdDFsNVNuN25pWnF2eGtwc3RZTnFlT1hNR2ZTTjB1S1FQ?=
+ =?utf-8?B?VVBxVStmOTF3R0daTEE2RWpLbFdyYzBzUnppSVNWcDdoWGZiL09nU0hUYzJ5?=
+ =?utf-8?Q?SF83Y6dRjDqjoPVI=3D?=
+X-Exchange-RoutingPolicyChecked: qBicOX7Ss+Jsh+ERRlGWPOa/vpDlugNoV04c7w8zgWm6PJlloqD1xqvnO90UGmG2Xk78qGts3DvO8ARPZ4b/S6Cu1HJolm0Ot1Gtv4hBJyyw1v9hkBpUpirTmtO4hiGzYv5aycXWPZmg4n0+V4xvukhI0/NAYelscUddYPIFR0adiK2GrZCVreQxT4634IgiXovb/IXTkGBHEARLIazRaY8khCCjjITQ6kDc4jcOhD1YiJ5gJ/nv7F8JkI8qCVIB8wCEyY1x0SXWamQJRNBQLrN47tbrVhj7cqjf5F2yqY4iPpOthOsbZXPqXiGxZteZFI59T4Ej3wtrfvN8sZumZg==
+X-MS-Exchange-CrossTenant-Network-Message-Id: d18f149f-ecb5-4a28-6f3a-08df16688923
 X-MS-Exchange-CrossTenant-AuthSource: BL0PR11MB2993.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2026 16:10:14.8240 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Sep 2026 16:10:34.5109 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WpBZBQnx5trfQ1VMfglkJQlwMZXTqOP4Phb7KsQQYwJ72gv3i69f7Zb2IM8TMwlti3si4d62hRVi/wDdmksAM4Wc3t8ekVEsapey2JJwln4=
+X-MS-Exchange-CrossTenant-UserPrincipalName: HfKrZlEI+et6BAeCZ/II+2d4HihjhEoH9rKhIfLmsuQrpaMV5mDx+9AH6Wc6txJYq5YMd4gFCYUWVbcF/Ve+ARLZaFkxEVw499Im7TAyIRg=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8444
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
@@ -165,161 +164,63 @@ Errors-To: dev-bounces@dpdk.org
 
 On 9/16/2026 1:18 PM, Anatoly Burakov wrote:
 > Use the new flow graph API and the common parsing framework to implement
-> flow parser for ethertype.
+> flow parser for SYN.
 >
-> The old ethertype parser was accepting certain things that were later
-> rejected by the actual ethertype installation code, in particular DROP
-> action as well as dst MAC address filtering. This was removed from the
-> graph parser.
+> As a result of this migration, queue index validation has changed:
 >
-> The ethertype filter tracking table is used by the rte_flow ethertype
-> engine, but it is also in use by other features, so the filter tracking
-> is refactored to be properly shared between the engine and other features
-> that write into the same table.
+> - queue is now validated at parse time against the configured number of Rx
+>    queues (nb_rx_queues), rather than at install time against the hardware
+>    maximum (IXGBE_MAX_RX_QUEUE_NUM)
+> - the per-function queue bound check in ixgbe_syn_filter_set() has been
+>    removed as it is no longer needed
+>
+> The syn filter tracking infrastructure is moved completely inside the new
+> engine and is removed from the rest of the driver.
 >
 > Signed-off-by: Anatoly Burakov<anatoly.burakov@intel.com>
 > ---
 <snip>
-> @@ -7198,8 +7177,11 @@ static int
->   ixgbe_timesync_enable(struct rte_eth_dev *dev)
->   {
->   	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
-> +	struct ixgbe_filter_info *filter_info =
-> +		IXGBE_DEV_PRIVATE_TO_FILTER_INFO(dev->data->dev_private);
->   	uint32_t tsync_ctl;
->   	uint32_t tsauxc;
-> +	uint32_t etqf;
->   	struct timespec ts;
->   
->   	memset(&ts, 0, sizeof(struct timespec));
-> @@ -7221,10 +7203,19 @@ ixgbe_timesync_enable(struct rte_eth_dev *dev)
->   	ixgbe_start_timecounters(dev);
->   
->   	/* Enable L2 filtering of IEEE1588/802.1AS Ethernet frame types. */
-> -	IXGBE_WRITE_REG(hw, IXGBE_ETQF(IXGBE_ETQF_FILTER_1588),
-> -			(RTE_ETHER_TYPE_1588 |
-> -			 IXGBE_ETQF_FILTER_EN |
-> -			 IXGBE_ETQF_1588));
-> +	etqf = RTE_ETHER_TYPE_1588 | IXGBE_ETQF_FILTER_EN | IXGBE_ETQF_1588;
-> +	if (!filter_info->timesync_installed) {
-> +		int idx = ixgbe_ethertype_table_add(&filter_info->ethertype_table,
-> +				RTE_ETHER_TYPE_1588, etqf, 0);
-if I understood this part correctly, from now Ethertype filters are no 
-longer statically dedicated for predefined set of ethertypes (ref 
-IXGBE_ETQF_FILTER_1588) and now are dynamically managed. It is probably 
-worth to separate this to another commit, or at least mention about in 
-commit message
-> +
-> +		if (idx < 0) {
-> +			PMD_DRV_LOG(ERR, "no free ETQF slot for 1588 timestamping");
-> +			return idx;
-> +		}
-> +		filter_info->timesync_idx = idx;
-> +		filter_info->timesync_installed = true;
-> +	}
-> +	ixgbe_ethertype_filter_program(hw, filter_info->timesync_idx, etqf, 0);
->   
+> -
+> -	/* Support 2 priorities, the lowest or highest. */
+> -	if (!attr->priority) {
+> -		filter->hig_pri = 0;
+> -	} else if (attr->priority == (uint32_t)~0U) {
+> -		filter->hig_pri = 1;
+> -	} else {
+> -		memset(filter, 0, sizeof(struct rte_eth_syn_filter));
+> -		rte_flow_error_set(error, EINVAL,
+> -			RTE_FLOW_ERROR_TYPE_ATTR_PRIORITY,
+> -			attr, "Priority can be 0 or 0xFFFFFFFF");
+> -		return -rte_errno;
+> -	}
+> -
+> -	return 0;
+> -}
 <snip>
 > +
-> +static int
-> +ixgbe_flow_ethertype_register(struct ci_flow *flow, struct rte_flow_error *error)
-> +{
-> +	struct ixgbe_ethertype_flow *ethertype_flow = (struct ixgbe_ethertype_flow *)flow;
-> +	struct ixgbe_filter_info *filter_info =
-> +		IXGBE_DEV_PRIVATE_TO_FILTER_INFO(flow->dev_data->dev_private);
-> +	int idx;
+> +	/* check priority */
+> +	if (attr->priority != 0 && attr->priority != (uint32_t)~0U) {
+> +		return rte_flow_error_set(error, EINVAL,
+> +			RTE_FLOW_ERROR_TYPE_ATTR_PRIORITY,
+> +			attr, "Priority can be 0 or 0xFFFFFFFF");
+> +	}
 > +
-> +	idx = ixgbe_ethertype_table_add(&filter_info->ethertype_table,
-> +			ethertype_flow->ether_type, ethertype_flow->etqf,
-> +			ethertype_flow->etqs);
-
-nit: is it worth to check if idx is negative instead of handling only 2 
-error codes?
-
-> +	if (idx == -EEXIST) {
-> +		return rte_flow_error_set(error, EEXIST,
-> +				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-> +				"Ethertype filter already exists");
-> +	}
-> +	if (idx == -ENOSPC) {
-> +		return rte_flow_error_set(error, ENOSPC,
-> +				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-> +				"Ethertype filters are full");
-> +	}
-> +	ethertype_flow->index = idx;
+> +	/* parse requested actions */
+> +	ret = ci_flow_check_actions(actions, &ap_param, &parsed_actions, error);
+> +	if (ret)
+> +		return ret;
+> +
+> +	q_act = parsed_actions.actions[0]->conf;
+> +
+> +	syn_ctx->syn.queue = q_act->index;
+> +
+> +	/* Support 2 priorities. rte_flow priority 0 is highest */
+> +	syn_ctx->syn.hig_pri = attr->priority == 0;
+seems like inverting priority with the previous implementation
 > +
 > +	return 0;
 > +}
-> +
 <snip>
-> @@ -168,38 +180,29 @@ ixgbe_add_tx_flow_control_drop_filter(struct rte_eth_dev *eth_dev)
->   	struct ixgbe_filter_info *filter_info =
->   		IXGBE_DEV_PRIVATE_TO_FILTER_INFO(eth_dev->data->dev_private);
->   	uint16_t vf_num;
-> +	uint32_t etqf, etqs;
->   	int i;
-> -	struct ixgbe_ethertype_filter ethertype_filter;
->   
->   	if (!hw->mac.ops.set_ethertype_anti_spoofing) {
->   		PMD_DRV_LOG(INFO, "ether type anti-spoofing is not supported.");
->   		return;
->   	}
->   
-> -	i = ixgbe_ethertype_filter_lookup(filter_info,
-> -					  IXGBE_ETHERTYPE_FLOW_CTRL);
-> -	if (i >= 0) {
-> -		PMD_DRV_LOG(ERR, "A ether type filter entity for flow control already exists!");
-> -		return;
-> -	}
-> +	etqf = IXGBE_ETQF_FILTER_EN | IXGBE_ETQF_TX_ANTISPOOF |
-> +			IXGBE_ETHERTYPE_FLOW_CTRL;
-> +	etqs = 0;
-> +	if (!filter_info->antispoof_installed) {
-> +		int idx = ixgbe_ethertype_table_add(&filter_info->ethertype_table,
-> +				IXGBE_ETHERTYPE_FLOW_CTRL, etqf, etqs);
->   
-> -	ethertype_filter.ethertype = IXGBE_ETHERTYPE_FLOW_CTRL;
-> -	ethertype_filter.etqf = IXGBE_ETQF_FILTER_EN |
-> -				IXGBE_ETQF_TX_ANTISPOOF |
-> -				IXGBE_ETHERTYPE_FLOW_CTRL;
-> -	ethertype_filter.etqs = 0;
-> -	ethertype_filter.conf = TRUE;
-> -	i = ixgbe_ethertype_filter_insert(filter_info,
-> -					  &ethertype_filter);
-> -	if (i < 0) {
-> -		PMD_DRV_LOG(ERR, "Cannot find an unused ether type filter entity for flow control.");
-> -		return;
-> +		if (idx < 0) {
-> +			PMD_DRV_LOG(ERR, "no free ETQF slot for Tx anti-spoof filter");
-here and for ixgbe_timesync_enable(), what if 
-ixgbe_ethertype_table_add() returns -EEXIST? It is better to add since 
-ixgbe_ethertype_filter_lookup() was removed
-> +			return;
-> +		}
-> +		filter_info->antispoof_idx = idx;
-> +		filter_info->antispoof_installed = true;
->   	}
-> -
-> -	IXGBE_WRITE_REG(hw, IXGBE_ETQF(i),
-> -			(IXGBE_ETQF_FILTER_EN |
-> -			IXGBE_ETQF_TX_ANTISPOOF |
-> -			IXGBE_ETHERTYPE_FLOW_CTRL));
-> +	ixgbe_ethertype_filter_program(hw, filter_info->antispoof_idx, etqf, etqs);
->   
->   	vf_num = dev_num_vf(eth_dev);
->   	for (i = 0; i < vf_num; i++)
-> diff --git a/drivers/net/intel/ixgbe/meson.build b/drivers/net/intel/ixgbe/meson.build
-> index 0531d37acd3..f2857feab76 100644
-> --- a/drivers/net/intel/ixgbe/meson.build
-> +++ b/drivers/net/intel/ixgbe/meson.build
-> @@ -26,6 +26,7 @@ sources += files(
->           'ixgbe_ethdev.c',
->           'ixgbe_fdir.c',
->           'ixgbe_flow.c',
-> +        'ixgbe_flow_ethertype.c',
->           'ixgbe_ipsec.c',
->           'ixgbe_pf.c',
->           'ixgbe_rxtx.c',
 
 -- 
 Regards,
