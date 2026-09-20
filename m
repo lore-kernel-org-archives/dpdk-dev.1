@@ -2,68 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2752C982D8
-	for <dpdk-dev@archiver.kernel.org>; Sun, 20 Sep 2026 18:14:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5925CC982DA
+	for <dpdk-dev@archiver.kernel.org>; Sun, 20 Sep 2026 18:14:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7FB4D40B9E;
-	Sun, 20 Sep 2026 20:13:59 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B641440DCA;
+	Sun, 20 Sep 2026 20:14:00 +0200 (CEST)
 Received: from mail-pj2-f13.google.com (mail-pj2-f13.google.com
  [74.125.227.141])
- by mails.dpdk.org (Postfix) with ESMTP id CCEC1402D6
- for <dev@dpdk.org>; Sun, 20 Sep 2026 20:13:54 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 10AE6406BB
+ for <dev@dpdk.org>; Sun, 20 Sep 2026 20:13:56 +0200 (CEST)
 Received: by mail-pj2-f13.google.com with SMTP id
- 98e67ed59e1d1-396ccdaea76so968023a91.0
- for <dev@dpdk.org>; Sun, 20 Sep 2026 11:13:54 -0700 (PDT)
+ 98e67ed59e1d1-396ccd66bb4so1995172a91.1
+ for <dev@dpdk.org>; Sun, 20 Sep 2026 11:13:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789928034;
- x=1790532834; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789928035;
+ x=1790532835; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=mCjo1zW/COJ7cysGt/Qj/MjL4vcleEX7sI0sl12GgLc=;
- b=IJ8plVn7JCBnbvdSsJD9lKE/FkN8Qg6GbT0fxwYDUXPMH5QxXwm1QtgUjXn0slCwic
- Vt9VYQbtRBkX9mZn+i8s+vHWVpVVn4jX7/cRn3TvS9yuuPkcLvr9qpxBPkiQgoymFUR0
- gKnc/gX7yvDk85UrNyuo4xM6IM1JFlUzame2vnpFJZkDjG81+1uYhMvj1qE8gchBWrec
- syx6uZ7nN4ahUnrFTfNmfiIachjwr3tiX2Pw5yp36vAEV7knNsgG2LvqKdBV8fYSVz2H
- ktaDS3/zwDPkFQaRJuUIPANpMMFf2JYHmLocNqM2W/Af8zjBrXR63+VDP4tVdSPBDv76
- b+JA==
+ bh=xe9TqH1KWaIRFShQ2jSA3iMbD0dc1xg6g18+WpJzlaw=;
+ b=VWllq9Lp5HX7V53wPpEuviA2ne09zJbwmWSX3NxD+M/njR9dlw7rn/1qZbOnNfkq5B
+ BtURkT5g+xqs0e1jiD3Iqds0Aqz6Zqf7udd+z+JuGD9pDjkO7TrbtYskVNuFTQeJbl8+
+ W7hGm7eQ6IwjcHpBip9a8/nxChsBxGf4+QyU8J+Ef04mLnf2iwoTNNS0GSR4v0Oh/Lxl
+ ZWbN4T2CB1bAjUYrTsARL6Hw4xa+u3y8zyLDg0Yy51ZLx2a+yNeZFxAGVsbepP3dJLDi
+ bMdCPornwdsrw6AAZFCYmZqvBvqUCa3YUzDxyXn9mqp9bgtCjLoApfCSoARPhFgrXHea
+ m1Zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789928034; x=1790532834;
+ d=1e100.net; s=20260707; t=1789928035; x=1790532835;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=mCjo1zW/COJ7cysGt/Qj/MjL4vcleEX7sI0sl12GgLc=;
- b=IQOoZZae0SbJJukDAAALBoS1ob0EPNBXNCYiOHyqkAErV61FYcpTGe49uvuXYUDwCE
- md5X8doZHtifwPAqwTkuFcPczp+floC5OiengzULgzHUyhisRGuHjskbGaJr5KucHScX
- YOIrvUN6YpVPVf5FovJVNyQtYBLOhUoD1ku94w+aTzX5Kc20BoRKKdYBChds0EXg9462
- LS+WAeuUr3gbeDRAU8lHLtPPQXQSLOB8R6eJdHu95XfFcl6IbLHUkZdBgv7d+i/CqIps
- no7OGajXCV5rIXa/SlqaO10CT+KiWxtyzqtfeg0gYzlkbFlpVDuGEJd83OVqsTxfuX3c
- IAVg==
-X-Gm-Message-State: AFuF++mXBw4P85hYKsMcZt5WX9AP0BmisaMuz6biqk4oQUsR/LsuYwQ5
- KqldtEWjhVGfL46s9xPNQMGvPt05zpM1gXZLFz/RTKliFytHPAivm9oo8gBey6/1EYAPUcY8FiU
- uKLE5
-X-Gm-Gg: AYBFou28j8jBPzIv7ooYrGY6hgE6Tpc4DeIoP60xgiw+iRD3bvjwHXXA79XAWrjL4g/
- TnCKGv/Q9fYX7E/BCoXoXJIuOy173Iglf4vdz4VIWOhIbrdjkSMCCsvrXEn7AoohHAWbrpY4RXY
- M+7Dk/OkzLSqpCiQKfRJro+oxLzBEPfbdfPgDROWxNUJ/Uw4GkxB8cs0fvnNUC6gUV94BmqrLJn
- qhhGT8GAdq0w50XnxLzeduB2cBiQ3E8PVCLj8gIv2tDutSkYUNKomaYpLdb0gNNmYqzV0Yc3VeD
- KcZ/j+X+geHCkMcpKweaoBqhBMIjPAz7wtH9DLSe6kmyh39q2vHTKXCkw0DvVGG/nGyc4ZqavIJ
- SLYyaliAmYHfkT1Pdntiqy2n73jU9pIxfnnFNlZZKQKv1afPOtZnA+WUJgi0wqexxw+ygxloXj4
- 0vTAA+WPC8PUHx5Qnl1q6fbQe286Iw3mq1Ctdjp7cIMOLSxC7OAGpuZz8Zuskef6yXDyIr9l18F
- vrmlbPD/z9oeEH51jr0QvyPsIKZIuU+AZgWmg==
-X-Received: by 2002:a17:90b:58c5:b0:39e:6c68:fd8c with SMTP id
- 98e67ed59e1d1-39e6c68fed1mr4769081a91.33.1789928033770; 
- Sun, 20 Sep 2026 11:13:53 -0700 (PDT)
+ bh=xe9TqH1KWaIRFShQ2jSA3iMbD0dc1xg6g18+WpJzlaw=;
+ b=YjIwQK65VLIq7aq+xOazPv8EdiVChzCYLH3mVUl33q5ybMgNR7VEnxZ1aigRzXYhiK
+ WrMAKi5hI/i4Q7OB4Ke0bPsWV++29pRYC4IGQ9rU8pCA7xTqQzh6oVOwE/e3+gGdfAfr
+ sO2veemLnoFwBCdOCKXCrXN0YrU1yjwpU6/596UkCMkihec41K0sh48CCgeC4/Ctpg7a
+ eNGP0LdmzVylOApi5kK3s1WtV68HBlt18gZSOuQvONybk7Piyg2hhf+O/4u4N2hj2sun
+ d+wapYf60IQXGIHI/qVbqCf/S4RuE9Dc6RoqB5IjF1omrqh/bKV7T5JaLrj6GZhyu26E
+ EPlg==
+X-Gm-Message-State: AFuF++nKFHbUhzH8JcDiSUnvdKJMlHcJoHEWQ2C38AWbc1+WzT/k2QYv
+ KEKNtET243YGytxHKy9+TsKwkxATjLZbODTe2oOiujDrdL1RRPJHNyVjrhN5x2Fr5Ozh/R+TKyM
+ b72vE
+X-Gm-Gg: AYBFou2z1UGu2bDGto19CFMYHX04zKqizBuXs6VwKhp5LUTPZSBCoaf8w+QTH1/lx3h
+ 5xuERS5Oc3K622ilVNgwOfycVvQAQWalXANcu3AQUVlViQvch996eLbKf9/KPLkyaveenvFLb0Y
+ 5rGWA6wF74fDjd4pRQY+mhZSY+3EQcGU4PgK37L1P+JX9k9VMOaoAvgi8gELPoTodG/hDheOz78
+ f2g2dy5T6PJ5zlLxJjb3ORWNqBEXrzfzKBOpufx2Xzmb00jH1XvQgZotdstIuGVkWRFKuc+97fi
+ QlUNd47uqiYwOWIe/n4IuMInNQI6/uJ+DDyFwIp4W60xubYmCUjsdbKlCN/tlYI8YE/aHW+TzYV
+ N7rCDW8Vsq5f+PxkI4CAuxAWZb8J+kp2oisDBvF2o4Md5Cr0pdHAbAx8WILlJ6FbTjI4vne48xy
+ wMTEJ4Pe4LLbVIj2eh/kmLkdjaFjcPB+ZGI6PFBZFDFG/9+4vwru3OkBNHqLvxLvI1ZXiFae6Nm
+ YCWqK+cUqcECxTD4gG2MhRQHqIKIxWzgJR2pw==
+X-Received: by 2002:a17:90b:4a4a:b0:39d:f253:5fc4 with SMTP id
+ 98e67ed59e1d1-39e54c9ad06mr14130803a91.17.1789928035121; 
+ Sun, 20 Sep 2026 11:13:55 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39e6c37a88csm10088091a91.8.2026.09.20.11.13.53
+ 98e67ed59e1d1-39e6c37a88csm10088091a91.8.2026.09.20.11.13.54
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 20 Sep 2026 11:13:53 -0700 (PDT)
+ Sun, 20 Sep 2026 11:13:54 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, Wei Hu <weh@microsoft.com>
-Subject: [PATCH v2 02/33] bus/vmbus: remove packed attribute from ring buffer
-Date: Sun, 20 Sep 2026 11:09:54 -0700
-Message-ID: <20260920181347.747210-3-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Long Li <longli@microsoft.com>, Wei Hu <weh@microsoft.com>
+Subject: [PATCH v2 03/33] bus/vmbus: fix ring buffer ordering on weakly
+ ordered CPUs
+Date: Sun, 20 Sep 2026 11:09:55 -0700
+Message-ID: <20260920181347.747210-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260920181347.747210-1-stephen@networkplumber.org>
 References: <20260729175715.165120-1-stephen@networkplumber.org>
@@ -83,43 +85,66 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The attribute came from the FreeBSD structure this was copied from,
-which ends in a flexible array member for the ring data and is
-asserted to be page sized. DPDK computes the data offset from the
-page size instead and never declared that member, so nothing is
-left that packing affects: all remaining members are naturally
-aligned and the layout is identical without it.
+The read index update in vmbus_rxbr_read() was only protected by a
+compiler barrier. On a weakly ordered architecture the store of rindex
+can become visible to the host before the data copy completes, allowing
+the host to reuse and overwrite ring data still being read. Use a
+release store for the read index.
 
-Byte alignment does prevent atomic access to the ring indexes,
-which clang rejects with -Watomic-alignment.
+The barrier in rte_vmbus_chan_signal_tx() must order the earlier ring
+index update against the load of the host interrupt mask, and a write
+barrier does not order stores against loads. Use a full fence, which
+matches virt_mb() in the equivalent Linux and FreeBSD code.
+
+Neither change affects generated code on x86.
+
+Fixes: 831dba47bd36 ("bus/vmbus: add Hyper-V virtual bus support")
+Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Reviewed-by: Long Li <longli@microsoft.com>
 ---
- drivers/bus/vmbus/rte_vmbus_reg.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/bus/vmbus/vmbus_bufring.c | 11 +++++++----
+ drivers/bus/vmbus/vmbus_channel.c |  4 ++--
+ 2 files changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/bus/vmbus/rte_vmbus_reg.h b/drivers/bus/vmbus/rte_vmbus_reg.h
-index 6370a07f95..210328c877 100644
---- a/drivers/bus/vmbus/rte_vmbus_reg.h
-+++ b/drivers/bus/vmbus/rte_vmbus_reg.h
-@@ -69,7 +69,7 @@ struct __rte_packed_begin vmbus_mon_page {
-  * Buffer ring
-  */
- 
--struct __rte_packed_begin vmbus_bufring {
-+struct vmbus_bufring {
- 	volatile uint32_t windex;
- 	volatile uint32_t rindex;
- 
-@@ -111,7 +111,7 @@ struct __rte_packed_begin vmbus_bufring {
- 	 * page aligned and starts at rte_mem_page_size() from the beginning
- 	 * of this structure
+diff --git a/drivers/bus/vmbus/vmbus_bufring.c b/drivers/bus/vmbus/vmbus_bufring.c
+index fcb97287dc..f622869974 100644
+--- a/drivers/bus/vmbus/vmbus_bufring.c
++++ b/drivers/bus/vmbus/vmbus_bufring.c
+@@ -237,10 +237,13 @@ vmbus_rxbr_read(struct vmbus_br *rbr, void *data, size_t dlen, size_t skip)
  	 */
--} __rte_packed_end;
-+};
+ 	rindex = vmbus_br_idxinc(rindex, sizeof(uint64_t), br_dsize);
  
- /*
-  * Channel packets
+-	/* Update the read index _after_ the channel packet is fetched.	 */
+-	rte_compiler_barrier();
+-
+-	vbr->rindex = rindex;
++	/*
++	 * Update the read index after the channel packet is fetched.
++	 * Release store ensures the host can not observe the new read
++	 * index before the data copy is complete.
++	 */
++	rte_atomic_store_explicit((volatile uint32_t __rte_atomic *)&vbr->rindex,
++				  rindex, rte_memory_order_release);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/bus/vmbus/vmbus_channel.c b/drivers/bus/vmbus/vmbus_channel.c
+index 6887fbad46..2648d8e3fd 100644
+--- a/drivers/bus/vmbus/vmbus_channel.c
++++ b/drivers/bus/vmbus/vmbus_channel.c
+@@ -104,8 +104,8 @@ rte_vmbus_chan_signal_tx(struct rte_vmbus_device *dev, const struct vmbus_channe
+ {
+ 	const struct vmbus_br *tbr = &chan->txbr;
+ 
+-	/* Make sure all updates are done before signaling host */
+-	rte_smp_wmb();
++	/* Order ring index update before reading host interrupt mask */
++	rte_atomic_thread_fence(rte_memory_order_seq_cst);
+ 
+ 	/* If host is ignoring interrupts? */
+ 	if (tbr->vbr->imask)
 -- 
 2.53.0
 
