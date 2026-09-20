@@ -2,69 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3F60C982D8
-	for <dpdk-dev@archiver.kernel.org>; Sun, 20 Sep 2026 18:16:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F15C982DA
+	for <dpdk-dev@archiver.kernel.org>; Sun, 20 Sep 2026 18:16:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B8FDA410FA;
-	Sun, 20 Sep 2026 20:14:32 +0200 (CEST)
-Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com
- [74.125.227.140])
- by mails.dpdk.org (Postfix) with ESMTP id 6A96A40ED1
- for <dev@dpdk.org>; Sun, 20 Sep 2026 20:14:23 +0200 (CEST)
-Received: by mail-pj2-f12.google.com with SMTP id
- 98e67ed59e1d1-398cb5615deso2719415a91.3
- for <dev@dpdk.org>; Sun, 20 Sep 2026 11:14:23 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id DAD1641140;
+	Sun, 20 Sep 2026 20:14:33 +0200 (CEST)
+Received: from mail-pj2-f13.google.com (mail-pj2-f13.google.com
+ [74.125.227.141])
+ by mails.dpdk.org (Postfix) with ESMTP id 36CB840EE6
+ for <dev@dpdk.org>; Sun, 20 Sep 2026 20:14:24 +0200 (CEST)
+Received: by mail-pj2-f13.google.com with SMTP id
+ 98e67ed59e1d1-396ccb1a990so2018186a91.3
+ for <dev@dpdk.org>; Sun, 20 Sep 2026 11:14:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789928062;
- x=1790532862; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789928063;
+ x=1790532863; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to:content-type;
- bh=myd8/8w9q5qDu09PDLUwkhGcqZeeVUZbj6n521rFOOs=;
- b=B1lbxBul5vG2URrcE2MRtUPGP8aH/1c79zNOo9DTZCG3xH7cJhnkWrCp6o7PLWEghV
- tCGGAWDW2i+dMWn450oRL71kI2UDnfqLhM8vnTLePwtZ9Ug+1oshays80wJO+jqb/jEV
- es+qMAjSE/dq9Ct2bSGf+jwGZTmr9CCpG8RiNy4X2R9HdRw+UjZMB9GKmD7zjYxbYPe+
- j7uxPHtxvxYHa2ITajeIqn0egDa9P4/z146vJvYYkz4q1+lW+IVC5IlEnEx4+JQ7GvIO
- RvO92fL1x3l+jy3SqBa8qVtVP7YEyTFyFU2FMgAQFB6vtkx5FIMWQUlT0l3LW2nmJFyd
- +feg==
+ bh=e9Z+AlBVLeMASY+A8efzbicNl0fgh+e1duimGjCSeQs=;
+ b=ou5jaX3AcW4jsuNUQWDe46830U7CrfhPPBDttV1Qz/L+LBVPaw+umq1+UTLTODAVJG
+ 8YEpYe06VwFPES87rfsXhc8LkdFD+HvZzvHHeYk/CTkVrJUxiHg+Vmq8WhUi3HIJfl+u
+ Xziqec8LsYsk9enYxAES1pRh81c9EZ9Q7iEpGCBFVQWL5HnRv5LpVFzJjITWKtBfT2kR
+ hGhg0gz4GpjKaoBefax8OG+CahBNVl70Vo3RNJTGx2LptVmeax7Kod50JecBjmnjGMHj
+ thSFvqn2u8gfq/H8G0nJ+sTtXGPk0cbdeJ8nqSChHJkA7mulhLlVHPziLfBu6+zEhSPB
+ 7sIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789928062; x=1790532862;
+ d=1e100.net; s=20260707; t=1789928063; x=1790532863;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to:content-type;
- bh=myd8/8w9q5qDu09PDLUwkhGcqZeeVUZbj6n521rFOOs=;
- b=FVUoXWzgRjKQycXDkH/tzs0H+jv52OAfLp1HgwjNBrxj+3BnIU92FlZjYgx7Uov9v0
- HxuNvPb5MKt2JjNOlLe1iYNJkZNQ1EYo2D1jIccOLLZoQhQD83EGYgwsJ30BQFkbkPY0
- v1HK1zhwdF4Wb/hjacpyaf7lrTzZMSZSzG/wZIHzX9RgBcy79IvotTsZkwRi/jrhpyoo
- rUg4cVnB+QLR6GOsqRoIDJxfKPTteannZbycMkj49SQJQCf3IQJY4JigiCFOemCL1x2c
- iujGyBYc4HZT1SZ5Q1Cugew31FYz40yvBOdVc0cCv7CnywtLZgKue5M1ep5aDjcU7WA3
- EUBg==
-X-Gm-Message-State: AFuF++kZQv/RJEVpKRHzQoVmLOT6dpoPKXhH2KROaCuBb5vfgmKWFOfr
- ZAHukZYUOIQ4tbd4IssT1SBO+mMFjU54wTtla/pgNfrUFrCM5IQcEdm2qlk8hydjUcrM5YqFDqA
- F5FRJ
-X-Gm-Gg: AYBFou3KibsKqphQVUBx3O4aKpT14Fy+eUPiFWe1DJWYYKsiKlCXEdy5gM1w/q3PQfT
- gq/EyrQk1k75B43iIToNlUsIua1x1/Jomiw2+c+k+ML5CvQ+3yVHZcjp6kFA/ftHsq0B2Dp13jY
- kz26Bsr3YAweMIjZt8qdTzIXDky2X21nitvysF7UJJJVGAVjd8TZE95JvgA9nioxvycEPJsr6C5
- CizNM+Qym0Vep5A41BwtGHzvgbIOdN3WMe3RY/gEgebZ/lCvNrV5z6IwLrYYl0oeNFkaFtMz8JI
- fZEUvW7PW2ShIQUK/OwtA+iavuUoM0GrFPXZHNaYEdB8CzoC3iR6GG8N/9BiRH2Uk2QVpvuIF3r
- pg1MMe2oJFiwN2pU4Sp5I2qAuOHi7txWMrBOM9GDhxYn2wLYXkcDp3qFJrfzRKUiKC3Vhrnf28f
- GSpgqsiHupx8ug/Qh5drMN/XytHGwEeZPKVG5ZhPHPe/SCOKlWcWHi53q8AiGA/ezCyUUE/3He8
- kpY8OHO+18YNJmturGbdEwVQ/Hf3P+YY4QI7w==
-X-Received: by 2002:a17:90a:c88d:b0:39e:4c81:6c94 with SMTP id
- 98e67ed59e1d1-39e54f24890mr13943684a91.26.1789928062591; 
- Sun, 20 Sep 2026 11:14:22 -0700 (PDT)
+ bh=e9Z+AlBVLeMASY+A8efzbicNl0fgh+e1duimGjCSeQs=;
+ b=Ez6UhGIOhnZFMrT3EjhGIEbGsqwL7l+wzlJswIA/ObhTO16AaJiqA3E0l8A/i28AVY
+ 9Ie+XfoQ5h0UxJoNxpAxEe+AHrYP5aMYm09nGbEekUYfzzMKdOBZyiRZ/wYCsayRUCer
+ sXI8R5znSDjLM91DHyzMgL+qs6r2eghudCsu9VJo9pVnomnTcbJsyoqfY+wOxMGenZQq
+ ONjaQ5welLWo3QJC4Iss2tQOXb1hPVcigxv/P9kk3LPEVjTKHWtSYR/9xwm2JE+TOtpP
+ p1SZmUOzYcmM+EiMMUEf7gAJrn9I5nkokCKf/XxoPD5x4fQKZUXEgqz9A2Tz3kCPpLtO
+ ehpQ==
+X-Gm-Message-State: AFuF++nRsMs77G/eUJohdo+NB3nAlzpXbADIvnh6+KmEK7nWh+6gYH6m
+ Q16t+maQIxWZcVfvyKb5n1UfQOsjB1wC8vewP357dGw0tRJjazo7OSAVm8ayFyVf6hfHLvd19ZF
+ UivqS
+X-Gm-Gg: AYBFou11Ucf140g3xBl4GTBchpOsDla6fxUzpVfRInpKp48Hr6MqJWXx1DjB09d0vRZ
+ Q/W3yqgRelBJu71fffcZazuaxiNJm8ioH0iJdSJvrpBROfjq0Fhogw4yfSJ3wzlm32TQaAo4O1Z
+ 8fan9qJGcthv6tRPFhQVbHRku8eXRuuzCE0tqb4D0P/P3drA7/RTmDVT+0zeSQzRUCa8pjUn1Ql
+ r4Nj281fCJiYKV/G4FI/Y35CzAxZzsxhBbWQaAAIFPgTEvqPPPjEBSgas2hOo+P7y0OYFAZoTa1
+ 0X8Et4ZOUsib+gwkZQToqR3KEl2f/2ki+ivsmG6hP3uMxGfylcEfx1g5usFdP8eq4zg+vypf7pG
+ 55J/kE9pIRRoy47PGqQVH0n+G6yfxzKHqV0FBJqVS0Zz9GBn6Lt6/HRLAXC/Dkq7awN+mz3Hx0u
+ 1eyvJhnhlXciVRVGUXriNm/slfFT0+Mi1wNiGVH8ZQCLyhTdeNcA9I+v68ESJ5nSBXip54i9w6J
+ Wu68BlWf0tZ/YoDgei476JJDgwqVQ9J+s0ktEaLsB8pKjV7
+X-Received: by 2002:a17:90b:1dce:b0:39d:f064:3a68 with SMTP id
+ 98e67ed59e1d1-39e54d36e3emr14719272a91.21.1789928063327; 
+ Sun, 20 Sep 2026 11:14:23 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39e6c37a88csm10088091a91.8.2026.09.20.11.14.21
+ 98e67ed59e1d1-39e6c37a88csm10088091a91.8.2026.09.20.11.14.22
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 20 Sep 2026 11:14:22 -0700 (PDT)
+ Sun, 20 Sep 2026 11:14:23 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Jerin Jacob <jerinj@marvell.com>, Maciej Czekaj <mczekaj@marvell.com>
-Subject: [PATCH v2 28/33] net/thunderx: replace deprecated SMP barriers
-Date: Sun, 20 Sep 2026 11:10:20 -0700
-Message-ID: <20260920181347.747210-29-stephen@networkplumber.org>
+ Maxime Coquelin <maxime.coquelin@redhat.com>,
+ Chenbo Xia <chenbox@nvidia.com>
+Subject: [PATCH v2 29/33] net/virtio: replace deprecated barrier in avail
+ index update
+Date: Sun, 20 Sep 2026 11:10:21 -0700
+Message-ID: <20260920181347.747210-30-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260920181347.747210-1-stephen@networkplumber.org>
 References: <20260729175715.165120-1-stephen@networkplumber.org>
@@ -84,47 +86,40 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Redefine the nicvf barrier wrappers as C11 fences and add an IO
-variant. The RBDR refill barrier orders descriptor writes in DMA
-memory against the doorbell register write, which is device
-ordering: use the IO barrier there. The mailbox flag barriers are
-genuine inter thread ordering and become release/acquire fences.
+The x86 special case keeps its shape: a release fence is the same
+compiler barrier the SMP write barrier was, so the measured perf
+reason for the branch is preserved.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/thunderx/base/nicvf_hw.c   | 3 ++-
- drivers/net/thunderx/base/nicvf_plat.h | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/virtio/virtqueue.h | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/thunderx/base/nicvf_hw.c b/drivers/net/thunderx/base/nicvf_hw.c
-index 5b1abe2015..d1e31ffdaa 100644
---- a/drivers/net/thunderx/base/nicvf_hw.c
-+++ b/drivers/net/thunderx/base/nicvf_hw.c
-@@ -499,7 +499,8 @@ nicvf_qset_rbdr_precharge(void *dev, struct nicvf *nic,
- 			break;
- 		}
- 	}
--	nicvf_smp_wmb();
-+	/* Descriptors must be visible to the device before the doorbell */
-+	nicvf_io_wmb();
- 	nicvf_queue_reg_write(nic, NIC_QSET_RBDR_0_1_DOOR, ridx, count);
- 	rbdr->tail = nicvf_queue_reg_read(nic,
- 				NIC_QSET_RBDR_0_1_TAIL, ridx) >> 3;
-diff --git a/drivers/net/thunderx/base/nicvf_plat.h b/drivers/net/thunderx/base/nicvf_plat.h
-index 7d22563035..08ebb0cf62 100644
---- a/drivers/net/thunderx/base/nicvf_plat.h
-+++ b/drivers/net/thunderx/base/nicvf_plat.h
-@@ -25,8 +25,9 @@
- 
- /* barrier */
- #include <rte_atomic.h>
--#define nicvf_smp_wmb() rte_smp_wmb()
-+#define nicvf_smp_wmb() rte_atomic_thread_fence(rte_memory_order_release)
- #define nicvf_smp_rmb() rte_atomic_thread_fence(rte_memory_order_acquire)
-+#define nicvf_io_wmb() rte_io_wmb()
- 
- /* utils */
- #include <rte_common.h>
+diff --git a/drivers/net/virtio/virtqueue.h b/drivers/net/virtio/virtqueue.h
+index 37fbd47d42..cd954108a8 100644
+--- a/drivers/net/virtio/virtqueue.h
++++ b/drivers/net/virtio/virtqueue.h
+@@ -474,14 +474,14 @@ static inline void
+ vq_update_avail_idx(struct virtqueue *vq)
+ {
+ 	if (vq->hw->weak_barriers) {
+-	/* x86 prefers to using rte_smp_wmb over rte_atomic_store_explicit as
+-	 * it reports a slightly better perf, which comes from the
+-	 * saved branch by the compiler.
+-	 * The if and else branches are identical with the smp and
+-	 * io barriers both defined as compiler barriers on x86.
++	/* x86 prefers a fence plus plain store over
++	 * rte_atomic_store_explicit as it reports a slightly better
++	 * perf, which comes from the saved branch by the compiler.
++	 * The if and else branches are identical with the release
++	 * and io barriers both compiler barriers on x86.
+ 	 */
+ #ifdef RTE_ARCH_X86_64
+-		rte_smp_wmb();
++		rte_atomic_thread_fence(rte_memory_order_release);
+ 		vq->vq_split.ring.avail->idx = vq->vq_avail_idx;
+ #else
+ 		rte_atomic_store_explicit(&vq->vq_split.ring.avail->idx,
 -- 
 2.53.0
 
