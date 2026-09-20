@@ -2,74 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73E18C982D8
-	for <dpdk-dev@archiver.kernel.org>; Sun, 20 Sep 2026 18:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7784C982D8
+	for <dpdk-dev@archiver.kernel.org>; Sun, 20 Sep 2026 18:14:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0D18A40658;
-	Sun, 20 Sep 2026 20:13:55 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 231F140A81;
+	Sun, 20 Sep 2026 20:13:56 +0200 (CEST)
 Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com
  [74.125.227.140])
- by mails.dpdk.org (Postfix) with ESMTP id A0FB8402D6
- for <dev@dpdk.org>; Sun, 20 Sep 2026 20:13:52 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 0BD5C402D6
+ for <dev@dpdk.org>; Sun, 20 Sep 2026 20:13:54 +0200 (CEST)
 Received: by mail-pj2-f12.google.com with SMTP id
- 98e67ed59e1d1-39d654f02baso1934615a91.3
- for <dev@dpdk.org>; Sun, 20 Sep 2026 11:13:52 -0700 (PDT)
+ 98e67ed59e1d1-398beb616f5so976080a91.1
+ for <dev@dpdk.org>; Sun, 20 Sep 2026 11:13:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789928032;
- x=1790532832; darn=dpdk.org; 
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
- :date:message-id:reply-to:content-type;
- bh=c/NekmSXgyEIlDFaLGAh6uDDZK5sqPgybk6V+/HpP2c=;
- b=hbgZQYn9UVXWFxqGjD9Sogv0oa8DkvMva4rCydZj/21ynOJZ0PzThp8T/Z1YtWEo+W
- b4QrwKTZwp8hS8sTEbpti0pE/z3bpzgOOjl/zIT7EmFHEzvsLXCAz7yQXBZrBjdhiheN
- tT1RHzChghLIC/jyZLYmh4M8lV+9NtBPJrQtcJIU5zNh5VIeDL4gFNNnITn8Y6+dVI8j
- TpyB8qPWBmLVprorpNIQ7ltIubpaWI/gxUrPvl+nTLtWxwYDl3Fgv5L2x9Yr/8meBHle
- 99SaQQnr+4zZe3sWIKYkdK6v5svCBNrIjsesfyJjgQyi0g2ywYYggd8U9pfEfXq16q1k
- nKfA==
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1789928033;
+ x=1790532833; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to:content-type;
+ bh=A0byCcrqRG80fZtY3cCsJ7Lm958MapRpH13CsVKsrZc=;
+ b=QYnPvkB74i2O8+k7lkNnjNuxubKIBrx/UJQxn3hotMGDA9wUf91+RGPIYQ83nGTQGO
+ fjc7W+r1JRCQuhNkafbDg4fXmDhmyrNco6WGtzC5lOwBDi6aVhd0juxD5nh1DPoRnzUl
+ HcTvEfG3zop2BfjJ4gF0I5L12LKm1NdJ/9MKYijD83rVFdWaAAnXsJjTGlwzRkZctVf2
+ vQ7TgpPdapGXMY7MMbA0BcLHwl4oXsKiB/v1/9EeyS7Tj+3RCDjaa2OHKUrWH5Ja8sYb
+ g8/32eeaSnsN5X2amNHcTeWqxjdVrQHESrP5Ch4HJpfmwTMg/YQwgaiUOmGfAbi6onPF
+ ptGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789928032; x=1790532832;
- h=content-transfer-encoding:content-type:mime-version:references
- :in-reply-to:message-id:date:subject:cc:to:from:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
- :content-type;
- bh=c/NekmSXgyEIlDFaLGAh6uDDZK5sqPgybk6V+/HpP2c=;
- b=JCpFwvVDVkuSySzXQGl1KxDaAfuQFbeRI+XQnDE0w6OLVvCpYSqQmH8BMgrO1vnOHG
- ssrrr1iCJl18UcX1HReTbHWD080EuBMYVFWOomit+BZhVXOExJakC4B3SRsVwh+wBggN
- dn6z1+P2cMDWhpgDMKGgU6ob+CzzwtjmNf9NjWL3faGuKpAOV1GVo3mfiIYYmxzkASIT
- gNd5FGZzkRvAIBjXpj40Z24yP3JeUWJPReeL1ab/hsuYTxkE3Mw4mRuMLAfH/TuwoFwh
- WeAAXqfZy2JoPi+UUotVj5dazEUePpMKjUqw+TnQs9DWcqPJnURmX2j8RChqsNlFoooz
- F8UA==
-X-Gm-Message-State: AFuF++lre4GKN4LVLp2nkYqoTPDXRx4APYBefe/eJlue4kimM2tcwf9M
- l9hSh17gcDJ2G4yFFso+M1voWo5kze4rNxYuXXZWiuHAPJhc0MkULoEP3b040I8My8eSU97SlE2
- i/AKz
-X-Gm-Gg: AYBFou2X4jd8hB0XrCBbRneXpdeZKPzsE7NsAHgzLJTc0px+pf4Mvdhq/g8oWCtYEHT
- An4g6/rtOmR+vRAOlLVyCTumlayw0xgM54z6dYysHmn0HJi3dH9bguXq+PRgcnyI8KgT7CzoK/y
- l768OzLnph+0pPchGIQ/hZRZ5GOGU5Tey//ePzPFG3BjfiliOoOvGu5Ao2cIoA4o1WD4Nr0QMFZ
- o+LGIsBUpwneGjXYtZ9iGqYJ+2yCrzf/FcJOdjvAyAF0I8tKdxhWjeNnQQNRbVAHeIDkDkqJnBc
- 3PyO9Rgw4bswVcRvRMTLW/uQmdl/8anDLpbl5kehT4xcoVVAdjLaGaCuUJ8gB1Wk4nuc3Rz5SAt
- ZnMeg3gk8f/RdimKBcwTFXsBoGnampPw2Vu3UNNxZW/gn9fk0DenVHNi4XMo991oJulXwUPpcpg
- DIPpr+lcDwBlb5fwZSOU2PGSCM1C6y9m26Ac2WTwKc9miTK7S6wUp+95HijOYuC0TYqK9LF1Nbz
- 02xB85dR2hBRWKKn2fjsv/7U21SgNc8AbTvNhjTeFKOSqho
-X-Received: by 2002:a17:90a:ec88:b0:39e:6c69:34dd with SMTP id
- 98e67ed59e1d1-39e6c6936f4mr7359265a91.65.1789928031576; 
- Sun, 20 Sep 2026 11:13:51 -0700 (PDT)
+ d=1e100.net; s=20260707; t=1789928033; x=1790532833;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to:content-type;
+ bh=A0byCcrqRG80fZtY3cCsJ7Lm958MapRpH13CsVKsrZc=;
+ b=wM1iTcc9A/BcnNlGtqOVGN7eFAdtFYA5w7c2GpYOV1CWEaz06+/5qYfCwNJpRlZGre
+ CRMVkfMCshYX8QwE7cAY3IMV5tXau/FvH53jkbWWNcnQ23J340mJh3pMrrhlwpLolFa5
+ IsKGxWXRAw6U0gejWELP+GcM4FNiVVM8Tmc0tP4RPqVmfk8zMhYZLlZTOiUAB9Efcnmh
+ bDcF+RJNLD8PMdkwZRmTLzGsK54/9GoCQAPayFzfS+aIBzaTqJ1KjS7iOcRA6jkd1PQO
+ fAyzek+5hSaKt0Kv0LtlzirqDO2f5n1/gUpoWZYgwWbI/nFYbFTGcCcwB5C2/4v//jPU
+ nljg==
+X-Gm-Message-State: AFuF++lYaBlCqzVNPNzlg0dLxNjim/7bouOvZX6m8TRvDvOtQjESjNjX
+ dSAYcYtjflEvXbyunhwmDya++yAkDwEqvzPHAZSc5+Ut+lOICij+F3+8jO4KAkAq7QNGKNqPwZF
+ Um0n3
+X-Gm-Gg: AYBFou2ADOccFBQJuPP5KU5NHTWteBTfm1wImlD1JEUNvIU9YbPXFAcwviS9+YxH0f4
+ Vw/KpNQiAJp8gzXYuV2AoSy6PlGjeVUB8JySBXpFu+8aTh0k7Ag5xf/PtxzhKF8EUWeMVxuCHcX
+ /udta1dJmWw81hzzqXEnZjlb4JwNK99uJ49eSKRszDbiJqXblUZ19JRILC+JvM+f0qk3ngdIXju
+ Gb3d78fDoFnu8F+4ogOGoPVHFC9W7vF/e1OzNIctiv3KGWWavnd8TT2eb3meo+ezE2SXAmTGjpg
+ NBrpFnB0xFWNRcpMHYZop6JtIVIHchcNmtFNzygzgc2XOJ+tmoHqmfhql0Be3OuBknbJAvOIEXO
+ dH0wv2CL68u6hqh1mhLOdkodgzrz7bkMUNlojzD9ba0GDOuT4uxbt553wy/cEiemAqhUph9w1vA
+ hvNXYY6MnKL+JqIdcSlfJVNrvBpkRXOYtfM0SfuTBaVRIqDm3gzbd34QEICeHLOlSjRfapkbR2Z
+ nyeQDoSeEUpVixEtebYxlrVbUWsZCI6KpY8uw==
+X-Received: by 2002:a17:90b:51c1:b0:39e:6c68:fd92 with SMTP id
+ 98e67ed59e1d1-39e6c68fee8mr4960377a91.39.1789928033003; 
+ Sun, 20 Sep 2026 11:13:53 -0700 (PDT)
 Received: from phoenix.lan (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-39e6c37a88csm10088091a91.8.2026.09.20.11.13.50
+ 98e67ed59e1d1-39e6c37a88csm10088091a91.8.2026.09.20.11.13.51
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 20 Sep 2026 11:13:50 -0700 (PDT)
+ Sun, 20 Sep 2026 11:13:52 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v2 00/33] remove rte_smp_XX barrier
-Date: Sun, 20 Sep 2026 11:09:52 -0700
-Message-ID: <20260920181347.747210-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Marat Khalili <qm2k21@gmail.com>
+Subject: [PATCH v2 01/33] bpf: replace deprecated SMP barriers with C11 fences
+Date: Sun, 20 Sep 2026 11:09:53 -0700
+Message-ID: <20260920181347.747210-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260729175715.165120-1-stephen@networkplumber.org>
+In-Reply-To: <20260920181347.747210-1-stephen@networkplumber.org>
 References: <20260729175715.165120-1-stephen@networkplumber.org>
+ <20260920181347.747210-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -84,116 +85,93 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch series completes the removal of rte_smp_XX barrier
-functions that was announced over five years ago (20.05).
+The use counter is a seqcount, not a reference count: odd means the
+datapath is inside the callback, even means it is not. The two
+barriers around it play different roles.
 
-In the process several cases of race conditions were found
-and fixed. See patches 3, 4, and 17. These are marked with Fixes:
-tags and Cc: stable.
+In bpf_eth_cbi_inuse() the counter goes odd and the following loads
+of cb, bpf and jit must not be hoisted above that store. Ordering a
+store against later loads needs a full barrier, so rte_smp_mb()
+becomes a seq_cst thread fence.
 
-Most of this is mechanical with AI assistance, so strongly
-encourage maintainers to take a good look.
+In bpf_eth_cbi_unuse() the read barrier becomes an acquire fence.
+What must not happen there is the critical section loads sinking
+past the store that makes the counter even, which is load/store
+ordering, and that is what a standalone acquire fence provides.
+acq_rel would additionally order prior stores, but the read side
+only loads from the cbi and so has nothing to publish; it would
+only upgrade dmb ishld to dmb ish on the datapath for no benefit.
 
-Functional and build run on x86 and ARM native.
-Should have no functional change, but as previous cleanups of
-atomic have shown performance might be impacted by compiler bugs.
+Same code generated on x86 and arm64.
 
-The lock-free stack patch measured faster than the generic version
-it replaces, up to 63% on a 32-core x86 box; the numbers are in
-that patch's commit message.
+Use relaxed loads and stores for the counter itself. With
+enable_stdatomic, the plain increment of an RTE_ATOMIC() field
+compiled to a seq_cst add, i.e. two locked operations per burst.
 
-The RFC removed the barrier test outright.
-Konstantin pointed out it still covers the custom x86 seq_cst fence,
-so patch 19 now keeps the Peterson lock test and rewrites it around
-rte_atomic_thread_fence(rte_memory_order_seq_cst) instead.
-Need some careful patch series ordering to keep this all bisect
-clean.
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ lib/bpf/bpf_pkt.c | 25 +++++++++++++++++--------
+ 1 file changed, 17 insertions(+), 8 deletions(-)
 
-
-v2 - address review feedback 
-
-Stephen Hemminger (33):
-  bpf: replace deprecated SMP barriers with C11 fences
-  bus/vmbus: remove packed attribute from ring buffer
-  bus/vmbus: fix ring buffer ordering on weakly ordered CPUs
-  bus/vmbus: fix missing acquire on receive ring index
-  bus/vmbus: replace SMP barriers with C11 memory fences
-  drivers/baseband: convert rte_smp_rmb to fence
-  net/hinic: replace rte_smp_rmb
-  net/intel: replace rte_smp_rmb
-  net/virtio: replace rte_smp_rmb
-  net/thunderx: replace rte_smp_rmb
-  stack: always use C11 memory model implementation
-  ring: replace SMP read barrier with C11 acquire fence
-  crypto/virtio: update comment reference to rte_smp_rmb
-  crypto/caam_jr: replace rte_smp_rmb
-  crypto/caam_jr: use IO barrier before job ring doorbell
-  crypto/octeontx: use IO barrier before doorbell
-  event/sw: fix unlinks in progress counter races
-  event/sw: replace SMP barriers with C11 atomics
-  test/barrier: test sequentially consistent fence only
-  eal/x86: move optimized fence out of SMP barrier
-  common/octeontx: remove redundant barrier in mbox
-  mempool/octeontx: use IO barrier in pool destroy
-  event/octeontx: replace deprecated SMP barriers
-  event/dpaa2: replace deprecated barrier in selftest
-  event/dsw: replace SMP barriers with release fences
-  event/opdl: replace SMP barriers with C11 atomics
-  net/netvsc: replace SMP barrier in RNDIS response
-  net/thunderx: replace deprecated SMP barriers
-  net/virtio: replace deprecated barrier in avail index update
-  eal: remove stale SMP barrier in rte_service
-  eal: remove rte_smp_XX
-  checkpatches: no longer warn about rte_smp_XX
-  doc: update release notes about rte_smp_XX removal
-
- app/test/test_barrier.c                       | 105 ++++--------
- devtools/checkpatches.sh                      |   8 -
- doc/guides/rel_notes/deprecation.rst          |   8 -
- doc/guides/rel_notes/release_26_11.rst        |  11 ++
- .../fpga_5gnr_fec/rte_fpga_5gnr_fec.c         |   8 +-
- drivers/baseband/fpga_lte_fec/fpga_lte_fec.c  |  12 +-
- drivers/bus/vmbus/private.h                   |  12 +-
- drivers/bus/vmbus/rte_vmbus_reg.h             |   4 +-
- drivers/bus/vmbus/vmbus_bufring.c             |  17 +-
- drivers/bus/vmbus/vmbus_channel.c             |  10 +-
- drivers/common/octeontx/octeontx_mbox.c       |   6 +-
- drivers/crypto/caam_jr/caam_jr.c              |   5 +-
- .../crypto/octeontx/otx_cryptodev_hw_access.h |   4 +-
- drivers/crypto/virtio/virtqueue.h             |   2 +-
- drivers/event/dpaa2/dpaa2_eventdev_selftest.c |   4 +-
- drivers/event/dsw/dsw_event.c                 |   8 +-
- drivers/event/octeontx/ssovf_evdev_selftest.c |   6 +-
- drivers/event/octeontx/ssovf_worker.c         |   8 +-
- drivers/event/opdl/opdl_evdev.c               |   7 +-
- drivers/event/sw/sw_evdev.c                   |  37 +++--
- drivers/event/sw/sw_evdev.h                   |   2 +-
- drivers/event/sw/sw_evdev_scheduler.c         |  17 +-
- drivers/mempool/octeontx/octeontx_fpavf.c     |   4 +-
- drivers/net/hinic/base/hinic_pmd_cmdq.c       |   3 +-
- drivers/net/hinic/base/hinic_pmd_mgmt.c       |   2 +-
- drivers/net/intel/ice/ice_rxtx.c              |   2 +-
- drivers/net/intel/ixgbe/ixgbe_rxtx.c          |   2 +-
- drivers/net/netvsc/hn_rndis.c                 |   2 +-
- drivers/net/thunderx/base/nicvf_hw.c          |   3 +-
- drivers/net/thunderx/base/nicvf_plat.h        |   5 +-
- drivers/net/virtio/virtqueue.h                |  18 +--
- lib/bpf/bpf_pkt.c                             |  25 ++-
- lib/eal/arm/include/rte_atomic_32.h           |   6 -
- lib/eal/arm/include/rte_atomic_64.h           |   6 -
- lib/eal/common/rte_service.c                  |   1 -
- lib/eal/include/generic/rte_atomic.h          |  61 -------
- lib/eal/loongarch/include/rte_atomic.h        |   6 -
- lib/eal/ppc/include/rte_atomic.h              |   6 -
- lib/eal/riscv/include/rte_atomic.h            |   6 -
- lib/eal/x86/include/rte_atomic.h              |  41 ++---
- lib/ring/rte_ring_gcc_pvt.h                   |   6 +-
- lib/stack/meson.build                         |   1 -
- lib/stack/rte_stack_lf.h                      |   4 -
- lib/stack/rte_stack_lf_generic.h              | 153 ------------------
- 44 files changed, 208 insertions(+), 456 deletions(-)
- delete mode 100644 lib/stack/rte_stack_lf_generic.h
-
+diff --git a/lib/bpf/bpf_pkt.c b/lib/bpf/bpf_pkt.c
+index f072fdaaed..c7b1019239 100644
+--- a/lib/bpf/bpf_pkt.c
++++ b/lib/bpf/bpf_pkt.c
+@@ -80,9 +80,11 @@ static struct bpf_eth_cbh tx_cbh = {
+ static __rte_always_inline void
+ bpf_eth_cbi_inuse(struct bpf_eth_cbi *cbi)
+ {
+-	cbi->use++;
++	rte_atomic_store_explicit(&cbi->use,
++		rte_atomic_load_explicit(&cbi->use, rte_memory_order_relaxed) + 1,
++		rte_memory_order_relaxed);
+ 	/* make sure no store/load reordering could happen */
+-	rte_smp_mb();
++	rte_atomic_thread_fence(rte_memory_order_seq_cst);
+ }
+ 
+ /*
+@@ -91,9 +93,16 @@ bpf_eth_cbi_inuse(struct bpf_eth_cbi *cbi)
+ static __rte_always_inline void
+ bpf_eth_cbi_unuse(struct bpf_eth_cbi *cbi)
+ {
+-	/* make sure all previous loads are completed */
+-	rte_smp_rmb();
+-	cbi->use++;
++	/*
++	 * Make sure all previous loads are completed before the counter
++	 * goes even. Acquire is enough: the read side only loads from the
++	 * cbi, so there are no stores to publish and acq_rel would just
++	 * cost a stronger barrier on weakly ordered CPUs.
++	 */
++	rte_atomic_thread_fence(rte_memory_order_acquire);
++	rte_atomic_store_explicit(&cbi->use,
++		rte_atomic_load_explicit(&cbi->use, rte_memory_order_relaxed) + 1,
++		rte_memory_order_relaxed);
+ }
+ 
+ /*
+@@ -105,9 +114,9 @@ bpf_eth_cbi_wait(const struct bpf_eth_cbi *cbi)
+ 	uint32_t puse;
+ 
+ 	/* make sure all previous loads and stores are completed */
+-	rte_smp_mb();
++	rte_atomic_thread_fence(rte_memory_order_seq_cst);
+ 
+-	puse = cbi->use;
++	puse = rte_atomic_load_explicit(&cbi->use, rte_memory_order_relaxed);
+ 
+ 	/* in use, busy wait till current RX/TX iteration is finished */
+ 	if ((puse & BPF_ETH_CBI_INUSE) != 0) {
+@@ -439,7 +448,7 @@ bpf_eth_cbi_unload(struct bpf_eth_cbi *bc)
+ {
+ 	/* mark this cbi as empty */
+ 	bc->cb = NULL;
+-	rte_smp_mb();
++	rte_atomic_thread_fence(rte_memory_order_seq_cst);
+ 
+ 	/* make sure datapath doesn't use bpf anymore, then destroy bpf */
+ 	bpf_eth_cbi_wait(bc);
 -- 
 2.53.0
 
