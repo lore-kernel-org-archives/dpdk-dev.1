@@ -2,75 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C844C982E1
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 10:06:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF397C982ED
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 10:07:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0AAD14029B;
-	Mon, 21 Sep 2026 12:06:28 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 19FCD4029B;
+	Mon, 21 Sep 2026 12:07:31 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 980CD4021F
- for <dev@dpdk.org>; Mon, 21 Sep 2026 12:06:26 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5BCD84021F
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 12:07:29 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1789985186;
+ s=mimecast20190719; t=1789985248;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=I84anEzrQPuTTLM+ZDBtwwIyp0UbQcuJr4NL70Jrgi8=;
- b=f2ljR6x0TT2QrzWPNfrI4f1z7PGg/OGOZXVS79wwgYVXUal48xfdl72DbiapjQngEf9DWY
- TJPQm/yIBu5268z9E0gwDAy46G7DikscG6Ds6TbmnjB6Jp5sgpIPZI1L9g9z6xiC72DSSU
- 3gfqXVzIilbgPqOEhGamkThzQBTTNSw=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=R4Z4Rpm4YzNX2acfpcusHk11mobqNV3NC21yXJvcW20=;
+ b=CKA6HgsZNBwhntgiQwk5Z65t2Jcg6QB7jfxm4FM92SFFczevjtZ8H2gXqYjIn+pg/kXtOe
+ AjymJPBfmAMU3122wm3vi7QnDIZXNv5EWF0RgRyvoFacywXJUntDQbM5pykG9rMZ5o7KKh
+ ivYGSUAWwAFXW7x9Lf4dBrq1rAb0dyA=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-191-_afXp18aNuWNTc-ttIwUDQ-1; Mon, 21 Sep 2026 06:06:24 -0400
-X-MC-Unique: _afXp18aNuWNTc-ttIwUDQ-1
-X-Mimecast-MFC-AGG-ID: _afXp18aNuWNTc-ttIwUDQ_1789985183
-Received: by mail-lj1-f199.google.com with SMTP id
- 38308e7fff4ca-3a1fa5bb969so12412151fa.0
- for <dev@dpdk.org>; Mon, 21 Sep 2026 03:06:24 -0700 (PDT)
+ us-mta-665-LRTXdcs-N6-92YrW1-TXMw-1; Mon, 21 Sep 2026 06:07:27 -0400
+X-MC-Unique: LRTXdcs-N6-92YrW1-TXMw-1
+X-Mimecast-MFC-AGG-ID: LRTXdcs-N6-92YrW1-TXMw_1789985246
+Received: by mail-lf1-f71.google.com with SMTP id
+ 2adb3069b0e04-5b74cdd0182so1318028e87.0
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 03:07:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789985183; x=1790589983;
+ d=1e100.net; s=20260707; t=1789985246; x=1790590046;
  h=content-transfer-encoding:content-type:cc:to:subject:message-id
  :date:from:in-reply-to:references:mime-version:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=I84anEzrQPuTTLM+ZDBtwwIyp0UbQcuJr4NL70Jrgi8=;
- b=tCgpu9JJYfxUP1bytJoeT+6BffH7lsRU/DUa2h9v1PLr96U9wr0ahqiq4hbU+xIp3f
- 34YQIGr3DhSHVrrPMucxLw8k4mzTbJvqBrE27V0Zbe58wPPR52/+9m4v/qO8Jgi3DYO+
- sJEG6xjBcRiC8D1E5ZoPwvZ+8NsCMDX4gy56ABVYE8TFbLAU5SpKKcWIBHBvyJQWomZm
- mrJf7MtJuwaMvAyzPnhqrB/hG9XEtxPpI6Da/0Sq1e5yNU7PVs0ralIqkUF6LVRwU6ZD
- 4ExS4SWeOrDCaptzy1Xmnxtq5m8Vpl2qqX9rRLTTsm2DDY3jZltOQWC7iVMsVdBz7iEn
- 5Ycg==
-X-Gm-Message-State: AFuF++lzaoMOy/s8rgf1U+b0jrw055vFr4neSef4bOQCwbTiEKaeQQol
- IoT8dCD9G6qBzgAmc94xWBpkqvED82uL6c4r1u03ck0XT+TafwE8Z3Kj45yWIgEmiewEzNoJYtj
- E6FlTmsFn42ks4uLdTb7FvXIFvVxocvAjFxdLbSXqq2Bkxg+k0C2GniaB7saeh60gV7BkYldw6s
- FFkAR/Tg3eGNnEBIVKmHs=
-X-Gm-Gg: AYBFou30qKu0SkWLLFsEKpGYEADpX1C0DUN5Vzosl1E/kS8qUWyOiMI+lg6Wy6zuada
- sPC9e5R/JjrBmXtn5ENTyx0O8sR9aCQrcXTghbzzwwKml+h0av+lsbBOBX7CydS2fe2uR8r5let
- H71e/SD8sb8HBPbfc9z95ipPvCcJsH5eECcElQZzpQsUFr6qInmYw22zM9acZ5GUrY+dPPgigIH
- S4IrcthsqvCWFKzaMYhSVoCXt5l1Yl2AFkh0AUlqZI1K5la
-X-Received: by 2002:a05:6512:39c7:b0:5b6:1a7c:aa22 with SMTP id
- 2adb3069b0e04-5b8c19860f3mr4142333e87.58.1789985183009; 
- Mon, 21 Sep 2026 03:06:23 -0700 (PDT)
-X-Received: by 2002:a05:6512:39c7:b0:5b6:1a7c:aa22 with SMTP id
- 2adb3069b0e04-5b8c19860f3mr4142321e87.58.1789985182471; Mon, 21 Sep 2026
- 03:06:22 -0700 (PDT)
+ bh=R4Z4Rpm4YzNX2acfpcusHk11mobqNV3NC21yXJvcW20=;
+ b=MZ41zpLFKtDCfTvVgIjip/7hLBrDWtig16s4hHyKAbQx7vql81gDHsGALFzaydMv00
+ UnFia0IyxW8yqm5mGX29ofnBIPKlME9ak8wYYZXopCcMFy3iyXYHKq+JbDX+RqaFPwN0
+ 0VvyAzdvzRTXNk/Lq3ppg3Mg8tjL4BHa5L5bsbcW4svO7yBrb/VW0WuZqimZhzj8asu8
+ rfy4FWi1e1HaqqcLu8+Y1AVfMw34OdW728gYCM0B1F2ak3eOBivTSl0m4+fy9Eudpsss
+ dglUSZwrxZGq1zbky7GBaSjQBYArTnS+EsiVpbfzsxmml8Hp42X3HNeq8Cu6WKTfXScc
+ bXDQ==
+X-Gm-Message-State: AFuF++kX3XH9AZ8Y7K/aB2+AX1l8CFTqYq9svKIcsIOb96MIeviasB69
+ wnvmmjn4svNyUZwuVr3BNNhu9PS7/4S+qeUmRcKc9vmosv/a31XcvNGvZg7slH6BtRVTgKHWqKm
+ V02qTIHW7wCXK4A1bpRoSJoJ/83+5yAK+8nGLb/52ei/RJOZLJdEz11NlpZo9Xi6/TuQsQwHVSw
+ T8iQYPQip7JHOO1+etg9A=
+X-Gm-Gg: AYBFou3Xlo3T0e28XhX0juVd8utoeKegNoZ+cXEcyzv2gJ1nNdCShM1yypyByg8zrlw
+ 99yoIiUeABPZtt32VBjej2KYVAOjNMoGltqF4VBMznkIo2V8xsSFJOBfvam0WBQ3aGdhDbB2UWS
+ ugB0B9enom5yrKGin74Wqow4j+vqlQ59SliJGTaCbo4jChQYwQkKarAaRj4N0RhLWeohjNeNboY
+ 8w0ESo/5uCsXpIfVv026kMPGCAo6Ywj9Lpuh03ykoaJXOos
+X-Received: by 2002:a05:6512:b8e:b0:5b4:a2ec:c078 with SMTP id
+ 2adb3069b0e04-5b8c180b408mr3679386e87.21.1789985245887; 
+ Mon, 21 Sep 2026 03:07:25 -0700 (PDT)
+X-Received: by 2002:a05:6512:b8e:b0:5b4:a2ec:c078 with SMTP id
+ 2adb3069b0e04-5b8c180b408mr3679368e87.21.1789985245331; Mon, 21 Sep 2026
+ 03:07:25 -0700 (PDT)
 MIME-Version: 1.0
 References: <20260914144234.1540150-1-david.marchand@redhat.com>
- <20260914144234.1540150-2-david.marchand@redhat.com>
- <20260921083125.40120-2-rasland@nvidia.com>
-In-Reply-To: <20260921083125.40120-2-rasland@nvidia.com>
+ <20260914144234.1540150-3-david.marchand@redhat.com>
+ <20260921083125.40120-3-rasland@nvidia.com>
+In-Reply-To: <20260921083125.40120-3-rasland@nvidia.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Mon, 21 Sep 2026 12:06:10 +0200
-X-Gm-Features: AcwNN1X4FXfNEH-8dm2xPYrTiqnC8M4lFXzcyXL81O2Rz06aF13F8I0pHzEr-eo
-Message-ID: <CAJFAV8xJV5Q4pTEwCcS4ujzj1UmLGwjRVqw2iQ2pZTjWnx_-vQ@mail.gmail.com>
-Subject: Re: [PATCH v7 2/5] net/mlx5: remove redundant MAC address index checks
+Date: Mon, 21 Sep 2026 12:07:13 +0200
+X-Gm-Features: AcwNN1VZyEab9g9sleloYokuFkDISYD72K7cwPt075SpFbMpIhP9xnl5DpMD5Xw
+Message-ID: <CAJFAV8w-Fjd0eHrO-vQmsC+5OP_gRvLExKO9+Y5sEfGQG4tR-Q@mail.gmail.com>
+Subject: Re: [PATCH v7 3/5] net/mlx5: pass maximum number of unicast MAC to
+ common code
 To: Raslan Darawsheh <rasland@nvidia.com>
 Cc: dev@dpdk.org, Dariusz Sosnowski <dsosnowski@nvidia.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 8T16xd_9BUIj6FkkrTbki_WF1XL7nXXttYQAnvLgIyA_1789985183
+X-Mimecast-MFC-PROC-ID: _dxS4kCN-W2t4ZwD9FWjP8WYPhL423qSz7WZG0zc6f4_1789985246
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -87,30 +88,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello Raslan,
-
 On Mon, 21 Sept 2026 at 10:32, Raslan Darawsheh <rasland@nvidia.com> wrote:
->
-> Hi David,
->
 > =F0=9F=A4=96 This review was drafted with assistance from Claude (Anthrop=
 ic) and reviewed by me before posting.
 >
-> In mlx5_os_mac_addr_remove() (drivers/net/mlx5/linux/mlx5_os.c), this
-> patch drops both the netlink `index` arg and the Linux bounds guard:
+> In mlx5_nl_mac_addr_sync() (drivers/common/mlx5/linux/mlx5_nl.c), `n` is
+> now the caller-supplied array size rather than the old fixed
+> MLX5_MAX_MAC_ADDRESSES (256):
 >
-> -       if (index < MLX5_MAX_MAC_ADDRESSES)
-> -               BITFIELD_RESET(priv->mac_own, index);
-> +       BITFIELD_RESET(priv->mac_own, index);
+>         struct rte_ether_addr macs[n];
 >
-> but the Windows counterpart (windows/mlx5_os.c) still has an equivalent
-> check, so the two backends diverge in defensiveness after this patch.
-> The check is indeed redundant given mlx5_mac.c's index validation before
-> calling into the OS helper -- but for consistency the Windows-side check
-> should be dropped too, rather than left as the odd one out. Could you
-> remove it there as well in the next version?
+> This VLA scales with whatever `n` the caller passes, and by the end of
+> the series that can be as large as the device-reported unicast MAC
+> capability (up to ~4096 per the release note added later in the series)
+> -- roughly 25KB on the stack versus ~1.5KB before this series.
+> mlx5_nl_mac_addr_sync() can be reached from interrupt/alarm-thread or
+> hotplug contexts where stack budgets are tighter than the main lcore
+> stack, so this can overflow the stack. Could you switch this to a heap
+> allocation (or a bounded scratch buffer) now that `n` is no longer a
+> small compile-time constant?
 
-Indeed, fixed.
+I don't mind switching to heap, this is control path with netlink
+involved in any case.
 
 
 --=20
