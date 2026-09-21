@@ -2,85 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91EB9C982EA
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 03:01:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 497ECC982EA
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 03:03:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DD73840E25;
-	Mon, 21 Sep 2026 05:01:26 +0200 (CEST)
-Received: from mail-ot1-f97.google.com (mail-ot1-f97.google.com
- [209.85.210.97]) by mails.dpdk.org (Postfix) with ESMTP id 6A10B40E1D
- for <dev@dpdk.org>; Mon, 21 Sep 2026 05:01:25 +0200 (CEST)
-Received: by mail-ot1-f97.google.com with SMTP id
- 46e09a7af769-805453b1c0cso904060a34.1
- for <dev@dpdk.org>; Sun, 20 Sep 2026 20:01:25 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 53931410DC;
+	Mon, 21 Sep 2026 05:03:13 +0200 (CEST)
+Received: from mail-ot1-f100.google.com (mail-ot1-f100.google.com
+ [209.85.210.100])
+ by mails.dpdk.org (Postfix) with ESMTP id E70B540E25
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 05:03:10 +0200 (CEST)
+Received: by mail-ot1-f100.google.com with SMTP id
+ 46e09a7af769-7f4f824de5dso258573a34.2
+ for <dev@dpdk.org>; Sun, 20 Sep 2026 20:03:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789959685; x=1790564485;
+ d=1e100.net; s=20260707; t=1789959790; x=1790564590;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:dkim-signature:x-gm-gg:x-gm-message-state:from:to:cc
  :subject:date:message-id:reply-to:content-type;
- bh=0JpOf4HRhSfp0/hKwgwWRVtpL9O/e9S8DBG6FO/C7a0=;
- b=Ke5m8BN2tlvfznh515oX7H9qD0pYJzc1X8x5wsRSBYof/6C+n/LFO/b1+r1XZxgk0e
- uDmxAgzAZo+BRj+8SkAE4acl/0D4GF1IC54XSN/rfBmfzJY9vda6M0jbxYHNo4AA7od2
- VVMChsaxI+BcZX2dnvdlhyNvL/zztdIAyiYTJFUmAZ7DR+3OrOvBthWVmHgNO+ncRI5U
- yv3d1AnCBaZXe7jZ9+bHGw+GEJHRHe//pHN7NNUK9bYZBjsVsrBQuzJslcM/2JEaGxQ3
- xRrIu/T2TAOud7arPEfk0UoIU/0xkOI6Fc7jY80vI0lFWNOfSKavjRTTOb7JFOqO5T+M
- 6pfQ==
-X-Gm-Message-State: AFuF++nCxDaIvkHgHW2KApHNCEAaw9Fa8XTyWyPAdeYRs7Zsa4GJ1Frd
- r+V4nf/qFOVkI9rQhEYollVd7E6diznpoALHQzoHxvMO41L5J/ORsx9dLKKJj68n1K3vHJ5QzeU
- IE2V8dwX75xMKqOHRyM+pGXshcQFyl6t2VlG8zzF8R1FZ5j3R2sexCscGE12HomRBCFWeORbEXz
- ixkY5fv1Jo/9aAK0w8e9byw6OhAGspLNFaMd2OvC/uUnWaeilmQYc24Dv21RPaC9a2PBa+VUs09
- y2seuDKrXcH
-X-Gm-Gg: AYBFou35qg7uCgJKEi1Di515aqFR/s1+ZWwuK51KQ/f5N7qq2FEV10BCkzGXEF1YDcC
- UvVbmXUbON2CZNbkjJdWRiKX6pRJLMfCJcI/8IuYCPOobfaxos5SS9kjDn8dYQSW2eE2o7hi793
- AS8KqsqcfBjLo73lCswDJEoOBqmQ2cA7s4t8+fcybuSLIwYdXEgLjAVm0VczozzbirOZC/a/LK+
- C2yblLGVeMTTKhDsSmyVe/TeLTJlBMDLjOXMEgGndWyKm6Hnnde55SJrb2obaicPeqjAwG0LcSp
- AkWiEJmTfDTO/N4dcQWQMaTUeWWyjExT1T42rsSyQ7PPpIbaKYMN6NQm3bIsw8XBPA+BM0y8OHi
- ycgKtRcKDnXLGc0jMcu6ukGl1YNbxF/vqGCRHU7m3/oFNiLcoDaKcBM9tIR3VK3tr+kCOqHy7cC
- 5FyimyUQSueydy/Xeyd/1x28enoD647jZiV4uK3EQL7nwdqtnS9Q==
-X-Received: by 2002:a05:6820:188a:b0:6b3:619f:25ce with SMTP id
- 006d021491bc7-6ca9b530193mr8274583eaf.30.1789959684479; 
- Sun, 20 Sep 2026 20:01:24 -0700 (PDT)
+ bh=5oy+3ucYiOoKMDL/XyjABZEm19+WlJ0F5HC3+NOlEG8=;
+ b=YtR3PQ6UimE9V18clhRR7tWIM/cHhzOImDeoofT2f6yfauIAOqJVQGAePaaiiSIJld
+ 238D8GC5WM0noMkwF2QVgtwk+H+6UotYgX+O4V9FSqtGVNbWOS8ON2/RMZ6eTZDbp1O6
+ 1jUivB5Z8py9iriMeSI9wWhrTg6S3WP0r09z3ZzZVK2pNzN3Zjnq/kgd96IZf+tBL7TT
+ w0pAtmNTJPWnN3J9LkGefyrCW84OMQ5bRkN+1osDs3c4WwuLKNImqrPnnRBv3PIPdhwU
+ 3W5diG2Pa9dubuZzk9u/V/p0xMwcnwNcho85pdYVdBSBLEQtji9XAk8vNlQM7TVefgZV
+ 4hSw==
+X-Gm-Message-State: AFuF++maxRfFCEaSMIQOrdblaz69+rv7hswYALT1gtdDvim/fElVU7ec
+ d7dGD016uczv8sEhigLSvmQCGruMXIBAvVLH/NzZ6nC9KsU3aaytFVyx6F8IIL475MtILYW1JLy
+ 3D5VNwPjOs9tA6ut6gYavv3AaU4i7VN/jhsy6w6Kbj4rfP7+2pAykoqLMIcmWF2ZkKx/gbZpvZd
+ O7yki/qes/y1INZtUJ6TINbe4iZr31QZXceq3bXHICqZ0hBeZBEzm8VuzgARfykA4EgoOUOcMkk
+ kovU9lSyyLj
+X-Gm-Gg: AYBFou0T+6sRvdy9r+SURO2ZVTt0ixuAA2oPCX+wOJe/UdM4rPA3U9DVY/F9K+gjFFR
+ Vdp6dsCv/fQ0ufA0Ul2ES/zy0E5vVdHZ+baAvOCFwl2Qm+hEQcxCWQ+fbPDI+LMAcET/X0OdgGJ
+ jcRZOxQnZncCaSDIR8Zn3uyrfnf6fEu5+Y9S5i/JxomKktXanQebLGiBZoZ5GTUAd3tbTFIll6r
+ yCTp1x/DNjCuXolG9BNjtzMaZ8m+MAnJ/VnUC3iUrnkhAfNvQQEIF+pqLnI8OknEiHMXX2JBCsX
+ UfVIL2qBtwt5ErGydnsM7XPCaA68fAbCWmeC5qCVqKcDMXNHgAP/fTxAB/EgTdLSzsc2Mto5flU
+ u59ylbH0/Ta0cMSyhLWQZjsZWNKIDYmk8zzr/eYg8W4OoDV4GRBJIb1k2AemXAeihqu3dKdR8VA
+ j3vMjKOrkJG6haVHqJjgrV4h3F67AJyjmmlgm6lbICx2H+88iW7J0G
+X-Received: by 2002:a05:6830:6415:b0:7fa:ab72:9e04 with SMTP id
+ 46e09a7af769-80de41f6f9cmr10358331a34.28.1789959789919; 
+ Sun, 20 Sep 2026 20:03:09 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-25.dlp.protect.broadcom.com. [144.49.247.25])
+ (address-144-49-247-125.dlp.protect.broadcom.com. [144.49.247.125])
  by smtp-relay.gmail.com with ESMTPS id
- 006d021491bc7-6cd35427dd1sm68216eaf.16.2026.09.20.20.01.23
+ 46e09a7af769-8107b12c278sm3632421a34.1.2026.09.20.20.03.09
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Sun, 20 Sep 2026 20:01:24 -0700 (PDT)
+ Sun, 20 Sep 2026 20:03:09 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-qt1-f199.google.com with SMTP id
- d75a77b69052e-532d29d0976so1138821cf.1
- for <dev@dpdk.org>; Sun, 20 Sep 2026 20:01:23 -0700 (PDT)
+Received: by mail-pj1-f69.google.com with SMTP id
+ 98e67ed59e1d1-38e1118e4abso4717037a91.0
+ for <dev@dpdk.org>; Sun, 20 Sep 2026 20:03:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1789959683; x=1790564483; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1789959788; x=1790564588; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=0JpOf4HRhSfp0/hKwgwWRVtpL9O/e9S8DBG6FO/C7a0=;
- b=B5T60nRFIVR6cPoQ2cE/GDSFZ6xHxgLWVY424sBTzd+UXvOFKQjeiSvlVqOw0T3EmK
- x9vcsw9f5ZATxyxVpB+44nrWqegQvV8DB9WlMPHdA4ru5XeKdIQjjxAWsxitkVmNEibM
- U8fCm9NgFB/ztrDqOI/1UtO3NdDwgGEH+qVNk=
-X-Received: by 2002:a05:622a:a589:b0:532:8950:5e49 with SMTP id
- d75a77b69052e-532b7201d76mr79598831cf.29.1789959683048; 
- Sun, 20 Sep 2026 20:01:23 -0700 (PDT)
-X-Received: by 2002:a05:622a:a589:b0:532:8950:5e49 with SMTP id
- d75a77b69052e-532b7201d76mr79598451cf.29.1789959682268; 
- Sun, 20 Sep 2026 20:01:22 -0700 (PDT)
+ bh=5oy+3ucYiOoKMDL/XyjABZEm19+WlJ0F5HC3+NOlEG8=;
+ b=NHiWEqiLZfVwTTyTvYma9tVDyehr4PYeiRnOAk0tCHyUNne2sNQshld5zx7gUJHh8Y
+ omsfeGHMwXhx5TTJYUMZwipFfXwCsFFumxA+bs30mtseC9WR4suL/c0GB2T3HtAzzW/9
+ yc7XeqyqFw/jeRwsYYNfidUqBeqcJlKDChZKc=
+X-Received: by 2002:a17:90b:17c1:b0:39d:f2a1:3a with SMTP id
+ 98e67ed59e1d1-39e54c19b62mr15208676a91.15.1789959788147; 
+ Sun, 20 Sep 2026 20:03:08 -0700 (PDT)
+X-Received: by 2002:a17:90b:17c1:b0:39d:f2a1:3a with SMTP id
+ 98e67ed59e1d1-39e54c19b62mr15208639a91.15.1789959787547; 
+ Sun, 20 Sep 2026 20:03:07 -0700 (PDT)
 Received: from nic1-cos.dhcp.broadcom.net ([192.19.220.253])
  by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-532ae511210sm53846021cf.2.2026.09.20.20.01.21
+ a92af1059eb24-144d55f299fsm28621856c88.15.2026.09.20.20.03.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 20 Sep 2026 20:01:21 -0700 (PDT)
+ Sun, 20 Sep 2026 20:03:07 -0700 (PDT)
 From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 X-Google-Original-From: Mohammad Shuab Siddique
  <Mohammad-Shuab.Siddique@broadcom.com>
 To: dev@dpdk.org
-Cc: kishore.padmanabha@broadcom.com,
- Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>,
- stable@dpdk.org, Farah Smith <farah.smith@broadcom.com>
-Subject: [PATCH] net/bnxt: fix VF RSS hash mode configuration
-Date: Sun, 20 Sep 2026 21:04:27 -0600
-Message-ID: <20260921030427.1034797-1-Mohammad-Shuab.Siddique@broadcom.com>
+Cc: kishore.padmanabha@broadcom.com, Joseph Wong <joseph.wong@broadcom.com>,
+ stable@dpdk.org, Farah Smith <farah.smith@broadcom.com>,
+ Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
+Subject: [PATCH] net/bnxt: fix NVRAM directory integer overflow
+Date: Sun, 20 Sep 2026 21:06:11 -0600
+Message-ID: <20260921030611.1034818-1-Mohammad-Shuab.Siddique@broadcom.com>
 X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -98,167 +99,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
+From: Joseph Wong <joseph.wong@broadcom.com>
 
-In bnxt_hwrm_vnic_rss_cfg_hash_mode_p5(), the VF path unconditionally
-accessed vnic->fw_grp_ids[0], but fw_grp_ids is NULL when no RSS
-contexts have been allocated (num_lb_ctxts == 0). The
-bnxt_hwrm_vnic_rss_cfg_p5() call just before it skips its loop when
-num_lb_ctxts == 0, so the NULL pointer passed through silently to
-this function and caused a segfault on the next RSS hash-level
-change after port stop.
+Add bounds checking in bnxt_get_nvram_directory() to prevent a length
+underflow when subtracting 2 from the input length, and an integer
+overflow when calculating the required buffer length. Also enforce
+firmware-supplied upper bounds on the directory entry count and entry
+length, guarding against an undersized DMA buffer if firmware reports
+implausible values, and use 64-bit arithmetic for the buffer size
+calculation. The two returned values are each written back as a
+single byte, so their upper bounds are UINT8_MAX, not larger values
+that would let a firmware-reported value above 255 pass validation
+and then silently truncate on the byte store.
 
-A separate HWRM_VNIC_RSS_CFG call to set hash_mode on its own, with
-ring_grp_tbl_addr=0 and hash_type=0, is also unsafe on P5/P7 VFs:
-firmware treats those zeroes literally and wipes the ring table, so
-all traffic lands on queue 0 regardless of the configured RSS level.
-
-Set hash_mode_flags directly in bnxt_hwrm_vnic_rss_cfg_p5() for VFs
-on P5/P7, translating DEFAULT to INNERMOST. Firmware now receives one
-complete call per context with the ring table, hash type, and hash
-mode all set together.
-
-Embedding hash_mode_flags there alone would permanently short-circuit
-the separate hash-mode call in bnxt_hwrm_vnic_rss_cfg_hash_mode_p5()
-for every VF, silently dropping a trusted VF's explicit RSS
-hash-level request (e.g. "rss level-outer") no matter what value was
-requested. Firmware's own gate for that separate call (vnic_id ==
-0xFFFF && rss_ctx_idx == 0xFFFF) explicitly permits trusted VFs, not
-just PFs, to use it. So instead of skipping VFs unconditionally,
-bnxt_hwrm_vnic_rss_cfg_hash_mode_p5() now only short-circuits for a
-VF that is untrusted or has no initialized RSS context (fw_grp_ids/
-num_lb_ctxts), and lets a trusted VF with an initialized context
-reach the same call PFs already use. The per-context ring-table-wipe
-fix above is unchanged either way.
-
-Fixes: 3fd58de5a903 ("net/bnxt: fix RSS hash mode configuration for VF")
+Fixes: 19e6af01bb36 ("net/bnxt: support get/set EEPROM")
 Cc: stable@dpdk.org
 
+Signed-off-by: Joseph Wong <joseph.wong@broadcom.com>
 Signed-off-by: Farah Smith <farah.smith@broadcom.com>
 Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 ---
- drivers/net/bnxt/bnxt_hwrm.c | 79 +++++++++++++-----------------------
- 1 file changed, 28 insertions(+), 51 deletions(-)
+ drivers/net/bnxt/bnxt_hwrm.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/bnxt/bnxt_hwrm.c b/drivers/net/bnxt/bnxt_hwrm.c
-index 1615b36aae..84e2aee863 100644
+index 1615b36aae..bb55de9905 100644
 --- a/drivers/net/bnxt/bnxt_hwrm.c
 +++ b/drivers/net/bnxt/bnxt_hwrm.c
-@@ -2893,15 +2893,16 @@ bnxt_hwrm_vnic_rss_cfg_p5(struct bnxt *bp, struct bnxt_vnic_info *vnic)
+@@ -6049,6 +6049,9 @@ int bnxt_hwrm_nvm_get_dir_info(struct bnxt *bp, uint32_t *entries,
+ 	return rc;
+ }
  
- 		req.vnic_id = rte_cpu_to_le_16(vnic->fw_vnic_id);
- 		req.hash_type = rte_cpu_to_le_32(bnxt_sanitize_rss_type(bp, vnic->hash_type));
--		/* Update req with vnic ring_select_mode for P7 */
- 		if (BNXT_CHIP_P7(bp))
- 			req.ring_select_mode = vnic->ring_select_mode;
--		/* When the vnic_id in the request field is a valid
--		 * one, the hash_mode_flags in the request field must
--		 * be set to DEFAULT. And any request to change the
--		 * default behavior must be done in a separate call
--		 * to HWRM_VNIC_RSS_CFG by exclusively setting hash
--		 * mode and vnic_id, rss_ctx_idx to INVALID.
++#define BNXT_MAX_DIR_ENTRIES   UINT8_MAX
++#define BNXT_MAX_ENTRY_LENGTH  UINT8_MAX
 +
-+		/* Do not embed hash_mode_flags here for VFs. Doing so, plus
-+		 * syncing prev_hash_mode below, permanently short-circuits
-+		 * bnxt_hwrm_vnic_rss_cfg_hash_mode_p5()'s guard for every VF,
-+		 * so a trusted VF's explicit RSS hash-level request (e.g.
-+		 * rss level-outer) is silently dropped. Firmware's own gate
-+		 * (vnic_rss_cfg_cmd()) permits trusted VFs on that call, so
-+		 * treat VFs the same as PFs here.
- 		 */
- 		req.hash_mode_flags = BNXT_HASH_MODE_DEFAULT;
- 
-@@ -2930,70 +2931,46 @@ static int
- bnxt_hwrm_vnic_rss_cfg_hash_mode_p5(struct bnxt *bp, struct bnxt_vnic_info *vnic)
+ int bnxt_get_nvram_directory(struct bnxt *bp, uint32_t len, uint8_t *data)
  {
- 	struct hwrm_vnic_rss_cfg_output *resp = bp->hwrm_cmd_resp_addr;
--	struct hwrm_vnic_rss_cfg_input req = {.req_type = 0 };
-+	struct hwrm_vnic_rss_cfg_input req = {.req_type = 0};
- 	int rc = 0;
+ 	int rc;
+@@ -6060,16 +6063,27 @@ int bnxt_get_nvram_directory(struct bnxt *bp, uint32_t len, uint8_t *data)
+ 	struct hwrm_nvm_get_dir_entries_input req = {0};
+ 	struct hwrm_nvm_get_dir_entries_output *resp = bp->hwrm_cmd_resp_addr;
  
--	/* The reason we are returning success here is that this
--	 * call is in the context of user/stack RSS configuration.
--	 * Even though OUTER RSS is not supported, the normal RSS
--	 * configuration should continue to work.
--	 */
-+	/* Return success when outer RSS is unsupported so normal RSS works. */
- 	if ((BNXT_CHIP_P5(bp) && BNXT_VNIC_OUTER_RSS_UNSUPPORTED(bp)) ||
- 	    (!BNXT_CHIP_P5(bp) && !(bp->vnic_cap_flags & BNXT_VNIC_CAP_OUTER_RSS)))
- 		return 0;
- 
--	/* TODO Revisit for Thor 2 */
--	/* if (BNXT_CHIP_P5_P7(bp))
--	 *	bnxt_hwrm_vnic_rss_cfg_p5(bp, vnic);
--	 */
--	/* Don't call RSS hash level configuration if the current
--	 * hash level is the same as the hash level that is requested.
--	 */
- 	if (vnic->prev_hash_mode == vnic->hash_mode)
- 		return 0;
- 
-+	/* Trusted VFs now reach this call the same as PFs; firmware's own
-+	 * gate (IS_PF_FID() || pcie_func_is_trusted_vf()) restricts which
-+	 * callers it accepts the request from. Firmware would reject a
-+	 * request from an untrusted VF, so keep it a silent no-op here
-+	 * instead of surfacing a new HWRM error.
-+	 * The fw_grp_ids/num_lb_ctxts check guards against a NULL RSS
-+	 * context that is not yet initialized or has been torn down by
-+	 * a port stop.
-+	 */
-+	if (BNXT_VF(bp) &&
-+	    (!BNXT_VF_IS_TRUSTED(bp) || !vnic->fw_grp_ids || !vnic->num_lb_ctxts))
-+		return 0;
++	if (len < 2)
++		return -EINVAL;
 +
- 	HWRM_PREP(&req, HWRM_VNIC_RSS_CFG, BNXT_USE_CHIMP_MB);
+ 	rc = bnxt_hwrm_nvm_get_dir_info(bp, &dir_entries, &entry_length);
+ 	if (rc != 0)
+ 		return rc;
  
--	/* For FW, hash_mode == DEFAULT means that
--	 * the FW is capable of doing INNER & OUTER RSS as well.
--	 * DEFAULT doesn't mean that the FW is
--	 * going to change the hash_mode to INNER. However, for
--	 * the USER, DEFAULT means, change the hash mode to the
--	 * NIC's DEFAULT hash mode which is INNER.
--	 *
--	 * Hence, driver should make the translation of hash_mode
--	 * to INNERMOST when hash_mode from the dpdk stack is
--	 * DEFAULT.
-+	/* FW DEFAULT keeps existing hash level; translate to INNERMOST so
-+	 * the NIC uses its hardware default (inner headers).
- 	 */
- 	if (vnic->hash_mode == BNXT_HASH_MODE_DEFAULT)
- 		req.hash_mode_flags = BNXT_HASH_MODE_INNERMOST;
- 	else
- 		req.hash_mode_flags = vnic->hash_mode;
++	if (dir_entries == 0 || dir_entries > BNXT_MAX_DIR_ENTRIES ||
++	    entry_length == 0 || entry_length > BNXT_MAX_ENTRY_LENGTH) {
++		PMD_DRV_LOG_LINE(ERR,
++			"Invalid dir info: entries=%u length=%u",
++			dir_entries, entry_length);
++		return -EINVAL;
++	}
++
+ 	*data++ = dir_entries;
+ 	*data++ = entry_length;
+ 	len -= 2;
+ 	memset(data, 0xff, len);
  
--	/* VFs must use actual vnic_id for per-VNIC configuration.
--	 * PFs can use INVALID vnic_id for global configuration.
--	 * This is because VFs don't have permission to configure
--	 * global hash mode, even if they're trusted.
--	 */
--	if (BNXT_VF(bp)) {
--		req.vnic_id = rte_cpu_to_le_16(vnic->fw_vnic_id);
--		req.rss_ctx_idx = rte_cpu_to_le_16(vnic->fw_grp_ids[0]);
--		PMD_DRV_LOG_LINE(DEBUG, "VF using per-VNIC RSS config (vnic_id=%u)",
--				vnic->fw_vnic_id);
--	} else {
--		req.vnic_id = rte_cpu_to_le_16(BNXT_DFLT_VNIC_ID_INVALID);
--		req.rss_ctx_idx = rte_cpu_to_le_16(BNXT_RSS_CTX_IDX_INVALID);
--		PMD_DRV_LOG_LINE(DEBUG, "PF using global RSS config");
--	}
--
-+	req.vnic_id = rte_cpu_to_le_16(BNXT_DFLT_VNIC_ID_INVALID);
-+	req.rss_ctx_idx = rte_cpu_to_le_16(BNXT_RSS_CTX_IDX_INVALID);
- 	PMD_DRV_LOG_LINE(DEBUG, "RSS CFG: Hash level %d", req.hash_mode_flags);
--	rc = bnxt_hwrm_send_message(bp, &req, sizeof(req),
--				    BNXT_USE_CHIMP_MB);
-+	rc = bnxt_hwrm_send_message(bp, &req, sizeof(req), BNXT_USE_CHIMP_MB);
- 
- 	HWRM_CHECK_RESULT();
--	/* Store the programmed hash_mode in prev_hash_mode so that
--	 * it can checked against the next user requested hash mode.
--	 */
- 	if (!rc)
- 		vnic->prev_hash_mode = vnic->hash_mode;
- 	HWRM_UNLOCK();
+-	buflen = dir_entries * entry_length;
++	buflen = (size_t)dir_entries * entry_length;
+ 	buf = rte_malloc("nvm_dir", buflen, 0);
+ 	if (buf == NULL)
+ 		return -ENOMEM;
 -- 
 2.47.3
 
