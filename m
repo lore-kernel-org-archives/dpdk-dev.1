@@ -2,63 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6508C982E1
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 11:51:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D7F7C982E1
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 11:52:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EF6B9427D4;
-	Mon, 21 Sep 2026 13:51:05 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4644E427C5;
+	Mon, 21 Sep 2026 13:52:22 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 38A40427C5
- for <dev@dpdk.org>; Mon, 21 Sep 2026 13:51:04 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id D811F40E0F
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 13:52:20 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1789991463;
+ s=mimecast20190719; t=1789991540;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=idpEC/jmZt3FSxyl96NKBzPnB2++BEq/xSWPGVDhxqQ=;
- b=UYrQixbY9CFNC3VPJq880chVv2mB6lsSP9yzbzXCT9uBvQVtW//7hs/2REgJnMC54x9cxx
- 0TG7Ej+JYgsi3y0T3SIcDCzR609iPziOAC34sSt6ppb35PUOWrnJOMj8WrgXRdQIl7kptw
- WheiEYMEIVDGmX1U66H4H+2sAj4l76o=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-519-U7-G3GJTM8WW_KhV7Hat4g-1; Mon,
- 21 Sep 2026 07:51:00 -0400
-X-MC-Unique: U7-G3GJTM8WW_KhV7Hat4g-1
-X-Mimecast-MFC-AGG-ID: U7-G3GJTM8WW_KhV7Hat4g_1789991459
-Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id C0E4C1955F7F; Mon, 21 Sep 2026 11:50:58 +0000 (UTC)
-Received: from dmarchan.redhat.corp
- (headnet05.pony-001.prod.iad2.dc.redhat.com [10.2.32.117])
- by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id A1D9A41B; Mon, 21 Sep 2026 11:50:56 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
-To: dev@dpdk.org
-Cc: rjarry@redhat.com, cfontain@redhat.com,
- Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
- Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
-Subject: [PATCH v8 5/5] net/mlx5: accept more unicast MAC addresses
-Date: Mon, 21 Sep 2026 13:50:33 +0200
-Message-ID: <20260921115033.2335147-5-david.marchand@redhat.com>
-In-Reply-To: <20260921115033.2335147-1-david.marchand@redhat.com>
+ bh=tQUava4sqs9q++yfJxY+7i61jH54Y8j2+nVHhGdF9P8=;
+ b=iuC2OXfygIEpkG4XAaAME1Llmcim2P8L9jmrQLi/9DIBQg90yMr6bXIv1rE2dOH1eiP3xM
+ 2lwK8cgtqwyI68UgmNmqIOKF5p2WNDVY2TdDmoTdLINYLwSyuKzuFxCXw9z9Z69IpvVnbo
+ tIlVbJk5Gn7YwcC627KAr4OcrFY1dqo=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-75-QghLiODOPrS81Wq5TY0k8w-1; Mon, 21 Sep 2026 07:52:19 -0400
+X-MC-Unique: QghLiODOPrS81Wq5TY0k8w-1
+X-Mimecast-MFC-AGG-ID: QghLiODOPrS81Wq5TY0k8w_1789991538
+Received: by mail-lf1-f70.google.com with SMTP id
+ 2adb3069b0e04-5b767658227so1607223e87.2
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 04:52:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20260707; t=1789991537; x=1790596337;
+ h=content-type:cc:to:subject:message-id:date:from:in-reply-to
+ :references:mime-version:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to:content-type;
+ bh=tQUava4sqs9q++yfJxY+7i61jH54Y8j2+nVHhGdF9P8=;
+ b=xVux4SWlRhyakOVyDA1KN3jynqO4ighW81Yndf7sDv6SKmSSxpwtDGq2VVxnRYVmmv
+ jzVb1bsjW1m4TjKr1UzuH8nvRTm90ZLfLrv1ZF4FDQOuK+NaBxhbwQ4DtW9qLos5N9d8
+ u5TB7FqPcvMbACGf6i5KQASNC5ejHGVinWfFGqSYWB6nThIJUGJ/5O1dWdDw/qvVaAwf
+ DCyTJdXprUDL2iYfmtDMG/F6hK5+L3QF6hIawhkBEXBezruJlxktknnBMS+CO9ViSKRE
+ UZG8YFgQpfuFa13cCiOYlQ0s3BG1OiiIqtQLYw5roQcpaQekKVqZCb2STDqqTc4ulO/Y
+ WBbQ==
+X-Gm-Message-State: AFuF++kEUHeG0l9SSdclrldmhfjvsSwlNQ0C++eDXN/WxlIWgyUYiwmn
+ F2QvVsfIdwucHAbiHV4uXzEdtMR1/7vHf13cLVBlA82EaIXxjfIlFzjHzdk3xS+8u0BY5Q2tUHZ
+ jM6ia87xt+1UkYX7YXXuBcoYHA+pTMv1/M94qOxvs9e9N82WEhQk+GZ0+rVVSQ3etM+1lfFzcQf
+ NA0EyUUHzUPFWw9XgkN+3+eVH7fxzGFA==
+X-Gm-Gg: AYBFou1KTMJ81lnW8oy9Xssn40ULDOUvAXVxFM49MrV7LVzR1yPVnPeibhRTELYz4dK
+ 75vuX/AVe8irXRe6CF4QRcvFup0MrFQaXVPBmwSCTr9DpJSwPFC25uCEuqExmNhdxVLEcI2nOci
+ cGVYWhB9kHvDEkWXdzm0IaPFlMlQG3sKI0t9r5Ui9E8DfdLNbUL6pb4eNJKGnJMo5kO6GX8P5pW
+ LM4OV9LdjKwdMSfi1qsjx4/jz4/kuXfhdyGNkxc3z+U8jca
+X-Received: by 2002:a05:6512:6ce:b0:5b6:4ae:3ff6 with SMTP id
+ 2adb3069b0e04-5b8c181900bmr3337335e87.30.1789991537221; 
+ Mon, 21 Sep 2026 04:52:17 -0700 (PDT)
+X-Received: by 2002:a05:6512:6ce:b0:5b6:4ae:3ff6 with SMTP id
+ 2adb3069b0e04-5b8c181900bmr3337321e87.30.1789991536833; Mon, 21 Sep 2026
+ 04:52:16 -0700 (PDT)
+MIME-Version: 1.0
 References: <20260403091836.1073484-1-david.marchand@redhat.com>
  <20260921115033.2335147-1-david.marchand@redhat.com>
-MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
+ <20260921115033.2335147-5-david.marchand@redhat.com>
+In-Reply-To: <20260921115033.2335147-5-david.marchand@redhat.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Mon, 21 Sep 2026 13:52:05 +0200
+X-Gm-Features: AcwNN1UGk0MfXXHW2j-L80w3Cy0ZGtjB7U3n9Pj1C5mxxByQsrOGhrDY7QxgUik
+Message-ID: <CAJFAV8wXu3NFNOkT9kjP126Heamj_j9y6DTsLT-J9rr-M8oYrQ@mail.gmail.com>
+Subject: Re: [PATCH v8 5/5] net/mlx5: accept more unicast MAC addresses
+To: dev@dpdk.org
+Cc: rjarry@redhat.com, cfontain@redhat.com, 
+ Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>, 
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: v2Yjvstd9F3hP-wyGK7nlo1mvyBZK5MFsiSKI3zxREQ_1789991459
+X-Mimecast-MFC-PROC-ID: kFXm6Hu1H8TZ4twq2TB_VSkOcMlu2h47WfSKpjOIENY_1789991538
 X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -72,498 +88,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Starting firmware version 22.49.1014, the number of mac addresses
-per VF is not capped to 128 anymore.
+On Mon, 21 Sept 2026 at 13:51, David Marchand <david.marchand@redhat.com> wrote:
+>
+> Starting firmware version 22.49.1014, the number of mac addresses
+> per VF is not capped to 128 anymore.
+>
+> The value can be increased via devlink:
+> $ devlink dev param set pci/0000:3b:00.2 name max_macs value 4096 \
+>         cmode driverinit
+> $ devlink dev reload pci/0000:3b:00.2
+>
+> On the DPDK side, we must retrieve the maximum number of unicast
+> and multicast addresses supported with a query to the firmware.
+>
+> Then, dynamically allocate the mac addresses arrays and report the
+> limit instead of the previous hardcoded value.
+>
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
 
-The value can be increased via devlink:
-$ devlink dev param set pci/0000:3b:00.2 name max_macs value 4096 \
-	cmode driverinit
-$ devlink dev reload pci/0000:3b:00.2
+Sorry, I forgot to add:
+Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
 
-On the DPDK side, we must retrieve the maximum number of unicast
-and multicast addresses supported with a query to the firmware.
 
-Then, dynamically allocate the mac addresses arrays and report the
-limit instead of the previous hardcoded value.
-
-Signed-off-by: David Marchand <david.marchand@redhat.com>
----
-Changes since v7:
-- updated HWS control path and removed MLX5_MAX_MAC_ADDRESSES constant,
-
-Changes since v6:
-- fixed crash in case of partial init failure in mlx5_dev_spawn,
-  and cleaned mlx5_os_pci_probe_pf,
-- fixed compilation without assert in mlx5_internal_mac_addr_remove,
-
-Changes since v4:
-- added RN update,
-- fixed types of fields added to mlx5_hca_attr and mlx5_dev_cap,
-- used RTE_BIT32,
-- fixed mlx5_nl_mac_addr_sync inverted arguments,
-
----
- doc/guides/rel_notes/release_26_11.rst |  5 +++
- drivers/common/mlx5/mlx5_devx_cmds.c   |  4 +++
- drivers/common/mlx5/mlx5_devx_cmds.h   |  2 ++
- drivers/net/mlx5/linux/mlx5_os.c       | 47 +++++++++++++++++++-------
- drivers/net/mlx5/mlx5.c                |  9 ++---
- drivers/net/mlx5/mlx5.h                | 11 +++---
- drivers/net/mlx5/mlx5_ethdev.c         |  2 +-
- drivers/net/mlx5/mlx5_flow_hw.c        |  5 +--
- drivers/net/mlx5/mlx5_mac.c            | 20 ++++++-----
- drivers/net/mlx5/mlx5_trigger.c        | 10 +++---
- drivers/net/mlx5/windows/mlx5_os.c     | 41 +++++++++++++++++-----
- 11 files changed, 108 insertions(+), 48 deletions(-)
-
-diff --git a/doc/guides/rel_notes/release_26_11.rst b/doc/guides/rel_notes/release_26_11.rst
-index 87c7e81bde..43043cd579 100644
---- a/doc/guides/rel_notes/release_26_11.rst
-+++ b/doc/guides/rel_notes/release_26_11.rst
-@@ -55,6 +55,11 @@ New Features
-      Also, make sure to start the actual text at the margin.
-      =======================================================
- 
-+* **Updated NVIDIA mlx5 ethernet driver.**
-+
-+  * Increased the maximum number of secondary unicast MAC addresses from 128 to up to 4096
-+    (depending on devlink configuration on the associated kernel netdevice).
-+
- 
- Removed Items
- -------------
-diff --git a/drivers/common/mlx5/mlx5_devx_cmds.c b/drivers/common/mlx5/mlx5_devx_cmds.c
-index 140b057ab4..e5d9c92779 100644
---- a/drivers/common/mlx5/mlx5_devx_cmds.c
-+++ b/drivers/common/mlx5/mlx5_devx_cmds.c
-@@ -1110,6 +1110,10 @@ mlx5_devx_cmd_query_hca_attr(void *ctx,
- 	attr->log_max_pd = MLX5_GET(cmd_hca_cap, hcattr, log_max_pd);
- 	attr->log_max_srq = MLX5_GET(cmd_hca_cap, hcattr, log_max_srq);
- 	attr->log_max_srq_sz = MLX5_GET(cmd_hca_cap, hcattr, log_max_srq_sz);
-+	attr->log_max_current_uc_list = MLX5_GET(cmd_hca_cap, hcattr,
-+						 log_max_current_uc_list);
-+	attr->log_max_current_mc_list = MLX5_GET(cmd_hca_cap, hcattr,
-+						 log_max_current_mc_list);
- 	attr->reg_c_preserve =
- 		MLX5_GET(cmd_hca_cap, hcattr, reg_c_preserve);
- 	attr->mmo_regex_qp_en = MLX5_GET(cmd_hca_cap, hcattr, regexp_mmo_qp);
-diff --git a/drivers/common/mlx5/mlx5_devx_cmds.h b/drivers/common/mlx5/mlx5_devx_cmds.h
-index 90beb2e9e6..504b4a4f64 100644
---- a/drivers/common/mlx5/mlx5_devx_cmds.h
-+++ b/drivers/common/mlx5/mlx5_devx_cmds.h
-@@ -356,6 +356,8 @@ struct mlx5_hca_attr {
- 	uint8_t tx_sw_owner_v2:1;
- 	uint8_t esw_sw_owner:1;
- 	uint8_t esw_sw_owner_v2:1;
-+	uint8_t log_max_current_uc_list:5;
-+	uint8_t log_max_current_mc_list:5;
- };
- 
- /* LAG Context. */
-diff --git a/drivers/net/mlx5/linux/mlx5_os.c b/drivers/net/mlx5/linux/mlx5_os.c
-index 7d8ea4acba..9180e9aa20 100644
---- a/drivers/net/mlx5/linux/mlx5_os.c
-+++ b/drivers/net/mlx5/linux/mlx5_os.c
-@@ -389,6 +389,16 @@ mlx5_os_capabilities_prepare(struct mlx5_dev_ctx_shared *sh)
- 	sh->dev_cap.esw_info.regc_mask = 0;
- #endif
- 	sh->dev_cap.esw_info.is_set = 1;
-+	if (hca_attr->log_max_current_uc_list > 0)
-+		sh->dev_cap.max_uc_mac_addrs = RTE_BIT32(hca_attr->log_max_current_uc_list);
-+	else
-+		sh->dev_cap.max_uc_mac_addrs = MLX5_MAX_UC_MAC_ADDRESSES;
-+	if (hca_attr->log_max_current_mc_list > 0)
-+		sh->dev_cap.max_mc_mac_addrs = RTE_BIT32(hca_attr->log_max_current_mc_list);
-+	else
-+		sh->dev_cap.max_mc_mac_addrs = MLX5_MAX_MC_MAC_ADDRESSES;
-+	sh->dev_cap.max_mac_addrs =
-+		sh->dev_cap.max_uc_mac_addrs + sh->dev_cap.max_mc_mac_addrs;
- 	return 0;
- }
- 
-@@ -1464,6 +1474,22 @@ mlx5_dev_spawn(struct rte_device *dpdk_dev,
- 	priv->sh = sh;
- 	priv->dev_port = spawn->phys_port;
- 	priv->pci_dev = spawn->pci_dev;
-+	priv->mac = mlx5_malloc(MLX5_MEM_ZERO | MLX5_MEM_RTE,
-+				sizeof(*priv->mac) * sh->dev_cap.max_mac_addrs,
-+				RTE_CACHE_LINE_SIZE, SOCKET_ID_ANY);
-+	if (priv->mac == NULL) {
-+		DRV_LOG(ERR, "Failed to allocate MAC address array.");
-+		err = ENOMEM;
-+		goto error;
-+	}
-+	priv->mac_own = mlx5_malloc(MLX5_MEM_ZERO | MLX5_MEM_RTE,
-+				    RTE_BITSET_SIZE(sh->dev_cap.max_mac_addrs),
-+				    RTE_CACHE_LINE_SIZE, SOCKET_ID_ANY);
-+	if (priv->mac_own == NULL) {
-+		DRV_LOG(ERR, "Failed to allocate MAC ownership bitmap.");
-+		err = ENOMEM;
-+		goto error;
-+	}
- 	/* Some internal functions rely on Netlink sockets, open them now. */
- 	priv->nl_socket_rdma = nl_rdma;
- 	priv->nl_socket_route =	mlx5_nl_init(NETLINK_ROUTE, 0);
-@@ -1762,8 +1788,8 @@ mlx5_dev_spawn(struct rte_device *dpdk_dev,
- 		mlx5_nl_mac_addr_sync(priv->nl_socket_route,
- 				      mlx5_ifindex(eth_dev),
- 				      eth_dev->data->mac_addrs,
--				      MLX5_MAX_UC_MAC_ADDRESSES,
--				      MLX5_MAX_MAC_ADDRESSES);
-+				      sh->dev_cap.max_uc_mac_addrs,
-+				      sh->dev_cap.max_mac_addrs);
- 	priv->ctrl_flows = 0;
- 	rte_spinlock_init(&priv->flow_list_lock);
- 	TAILQ_INIT(&priv->flow_meters);
-@@ -1963,17 +1989,16 @@ mlx5_dev_spawn(struct rte_device *dpdk_dev,
- 			mlx5_flex_item_port_cleanup(eth_dev);
- 		mlx5_free(priv->ext_rxqs);
- 		mlx5_free(priv->ext_txqs);
-+		mlx5_free(priv->mac);
-+		mlx5_free(priv->mac_own);
- 		mlx5_free(priv);
--		if (eth_dev != NULL)
-+		if (eth_dev != NULL) {
-+			eth_dev->data->mac_addrs = NULL;
- 			eth_dev->data->dev_private = NULL;
-+		}
- 	}
--	if (eth_dev != NULL) {
--		/* mac_addrs must not be freed alone because part of
--		 * dev_private
--		 **/
--		eth_dev->data->mac_addrs = NULL;
-+	if (eth_dev != NULL)
- 		rte_eth_dev_release_port(eth_dev);
--	}
- 	if (sh)
- 		mlx5_free_shared_dev_ctx(sh);
- 	if (nl_rdma >= 0)
-@@ -2979,8 +3004,6 @@ mlx5_os_pci_probe_pf(struct mlx5_common_device *cdev,
- 			if (!list[i].eth_dev)
- 				continue;
- 			mlx5_dev_close(list[i].eth_dev);
--			/* mac_addrs must not be freed because in dev_private */
--			list[i].eth_dev->data->mac_addrs = NULL;
- 			claim_zero(rte_eth_dev_release_port(list[i].eth_dev));
- 		}
- 		/* Restore original error. */
-@@ -3531,7 +3554,7 @@ mlx5_os_mac_addr_flush(struct rte_eth_dev *dev)
- 	const int vf = priv->sh->dev_cap.vf;
- 	int i;
- 
--	for (i = MLX5_MAX_MAC_ADDRESSES - 1; i >= 0; --i) {
-+	for (i = priv->sh->dev_cap.max_mac_addrs - 1; i >= 0; --i) {
- 		if (rte_bitset_test(priv->mac_own, i)) {
- 			if (vf)
- 				mlx5_nl_mac_addr_remove(priv->nl_socket_route,
-diff --git a/drivers/net/mlx5/mlx5.c b/drivers/net/mlx5/mlx5.c
-index c7b0d3ef8b..4bd1c6d1c0 100644
---- a/drivers/net/mlx5/mlx5.c
-+++ b/drivers/net/mlx5/mlx5.c
-@@ -2556,6 +2556,9 @@ mlx5_dev_close(struct rte_eth_dev *dev)
- 		mlx5_list_destroy(priv->hrxqs);
- 	mlx5_free(priv->ext_rxqs);
- 	mlx5_free(priv->ext_txqs);
-+	mlx5_free(priv->mac);
-+	dev->data->mac_addrs = NULL;
-+	mlx5_free(priv->mac_own);
- 	sh->port[priv->dev_port - 1].nl_ih_port_id = RTE_MAX_ETHPORTS;
- 	/*
- 	 * The interrupt handler port id must be reset before priv is reset
-@@ -2590,12 +2593,6 @@ mlx5_dev_close(struct rte_eth_dev *dev)
- 	mlx5_flow_pools_destroy(priv);
- 	memset(priv, 0, sizeof(*priv));
- 	priv->domain_id = RTE_ETH_DEV_SWITCH_DOMAIN_ID_INVALID;
--	/*
--	 * Reset mac_addrs to NULL such that it is not freed as part of
--	 * rte_eth_dev_release_port(). mac_addrs is part of dev_private so
--	 * it is freed when dev_private is freed.
--	 */
--	dev->data->mac_addrs = NULL;
- 	return 0;
- }
- 
-diff --git a/drivers/net/mlx5/mlx5.h b/drivers/net/mlx5/mlx5.h
-index 7f20c811f3..e3df458915 100644
---- a/drivers/net/mlx5/mlx5.h
-+++ b/drivers/net/mlx5/mlx5.h
-@@ -87,9 +87,6 @@
- #define MLX5_MAX_UC_MAC_ADDRESSES 128
- /* Maximum number of simultaneous Multicast MAC addresses. */
- #define MLX5_MAX_MC_MAC_ADDRESSES 128
--/* Maximum number of simultaneous MAC addresses. */
--#define MLX5_MAX_MAC_ADDRESSES \
--	(MLX5_MAX_UC_MAC_ADDRESSES + MLX5_MAX_MC_MAC_ADDRESSES)
- 
- enum mlx5_ipool_index {
- #if defined(HAVE_IBV_FLOW_DV_SUPPORT) || !defined(HAVE_INFINIBAND_VERBS_H)
-@@ -217,6 +214,9 @@ struct mlx5_dev_cap {
- 	} mprq; /* Capability for Multi-Packet RQ. */
- 	char fw_ver[64]; /* Firmware version of this device. */
- 	struct flow_hw_port_info esw_info; /* E-switch manager reg_c0. */
-+	uint32_t max_uc_mac_addrs; /* Maximum unicast MAC addresses. */
-+	uint32_t max_mc_mac_addrs; /* Maximum multicast MAC addresses. */
-+	uint32_t max_mac_addrs; /* Total maximum MAC addresses. */
- };
- 
- #define MLX5_MPESW_PORT_INVALID (-1)
-@@ -2018,9 +2018,8 @@ struct mlx5_priv {
- 	struct mlx5_dev_ctx_shared *sh; /* Shared device context. */
- 	uint32_t dev_port; /* Device port number. */
- 	struct rte_pci_device *pci_dev; /* Backend PCI device. */
--	struct rte_ether_addr mac[MLX5_MAX_MAC_ADDRESSES]; /* MAC addresses. */
--	RTE_BITSET_DECLARE(mac_own, MLX5_MAX_MAC_ADDRESSES);
--	/* Bit-field of MAC addresses owned by the PMD. */
-+	struct rte_ether_addr *mac; /* MAC addresses. */
-+	uint64_t *mac_own; /* Bit-field of MAC addresses owned by the PMD. */
- 	uint16_t vlan_filter[MLX5_MAX_VLAN_IDS]; /* VLAN filters table. */
- 	unsigned int vlan_filter_n; /* Number of configured VLAN filters. */
- 	/* Device properties. */
-diff --git a/drivers/net/mlx5/mlx5_ethdev.c b/drivers/net/mlx5/mlx5_ethdev.c
-index 8160d10e7e..306c1cd734 100644
---- a/drivers/net/mlx5/mlx5_ethdev.c
-+++ b/drivers/net/mlx5/mlx5_ethdev.c
-@@ -392,7 +392,7 @@ mlx5_dev_infos_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *info)
- 	max = RTE_MIN(max, (unsigned int)UINT16_MAX);
- 	info->max_rx_queues = max;
- 	info->max_tx_queues = max;
--	info->max_mac_addrs = MLX5_MAX_UC_MAC_ADDRESSES;
-+	info->max_mac_addrs = priv->sh->dev_cap.max_uc_mac_addrs;
- 	info->rx_queue_offload_capa = mlx5_get_rx_queue_offloads(dev);
- 	info->rx_seg_capa.max_nseg = MLX5_MAX_RXQ_NSEG;
- 	info->rx_seg_capa.multi_pools = !priv->config.mprq.enabled;
-diff --git a/drivers/net/mlx5/mlx5_flow_hw.c b/drivers/net/mlx5/mlx5_flow_hw.c
-index 30ef2f1c2d..887524da9c 100644
---- a/drivers/net/mlx5/mlx5_flow_hw.c
-+++ b/drivers/net/mlx5/mlx5_flow_hw.c
-@@ -16697,10 +16697,11 @@ __flow_hw_ctrl_flows_unicast(struct rte_eth_dev *dev,
- 			     struct rte_flow_template_table *tbl,
- 			     const enum mlx5_flow_ctrl_rx_expanded_rss_type rss_type)
- {
-+	struct mlx5_priv *priv = dev->data->dev_private;
- 	unsigned int i;
- 	int ret;
- 
--	for (i = 0; i < MLX5_MAX_MAC_ADDRESSES; ++i) {
-+	for (i = 0; i < priv->sh->dev_cap.max_mac_addrs; ++i) {
- 		struct rte_ether_addr *mac = &dev->data->mac_addrs[i];
- 
- 		if (rte_is_zero_ether_addr(mac))
-@@ -16767,7 +16768,7 @@ __flow_hw_ctrl_flows_unicast_vlan(struct rte_eth_dev *dev,
- 	unsigned int i;
- 	unsigned int j;
- 
--	for (i = 0; i < MLX5_MAX_MAC_ADDRESSES; ++i) {
-+	for (i = 0; i < priv->sh->dev_cap.max_mac_addrs; ++i) {
- 		struct rte_ether_addr *mac = &dev->data->mac_addrs[i];
- 
- 		if (rte_is_zero_ether_addr(mac))
-diff --git a/drivers/net/mlx5/mlx5_mac.c b/drivers/net/mlx5/mlx5_mac.c
-index 0e5d2be530..9e7bf7f2ec 100644
---- a/drivers/net/mlx5/mlx5_mac.c
-+++ b/drivers/net/mlx5/mlx5_mac.c
-@@ -36,7 +36,7 @@ mlx5_internal_mac_addr_remove(struct rte_eth_dev *dev,
- 			      uint32_t index,
- 			      struct rte_ether_addr *addr)
- {
--	MLX5_ASSERT(index < MLX5_MAX_MAC_ADDRESSES);
-+	MLX5_ASSERT(index < MLX5_SH(dev)->dev_cap.max_mac_addrs);
- 	if (rte_is_zero_ether_addr(&dev->data->mac_addrs[index]))
- 		return false;
- 	mlx5_os_mac_addr_remove(dev, index);
-@@ -63,16 +63,17 @@ static int
- mlx5_internal_mac_addr_add(struct rte_eth_dev *dev, struct rte_ether_addr *mac,
- 			   uint32_t index)
- {
-+	struct mlx5_priv *priv = dev->data->dev_private;
- 	unsigned int i;
- 	int ret;
- 
--	MLX5_ASSERT(index < MLX5_MAX_MAC_ADDRESSES);
-+	MLX5_ASSERT(index < priv->sh->dev_cap.max_mac_addrs);
- 	if (rte_is_zero_ether_addr(mac)) {
- 		rte_errno = EINVAL;
- 		return -rte_errno;
- 	}
- 	/* First, make sure this address isn't already configured. */
--	for (i = 0; (i != MLX5_MAX_MAC_ADDRESSES); ++i) {
-+	for (i = 0; i != priv->sh->dev_cap.max_mac_addrs; ++i) {
- 		/* Skip this index, it's going to be reconfigured. */
- 		if (i == index)
- 			continue;
-@@ -101,10 +102,11 @@ mlx5_internal_mac_addr_add(struct rte_eth_dev *dev, struct rte_ether_addr *mac,
- void
- mlx5_mac_addr_remove(struct rte_eth_dev *dev, uint32_t index)
- {
-+	struct mlx5_priv *priv = dev->data->dev_private;
- 	struct rte_ether_addr addr = { 0 };
- 	int ret;
- 
--	if (index >= MLX5_MAX_UC_MAC_ADDRESSES)
-+	if (index >= priv->sh->dev_cap.max_uc_mac_addrs)
- 		return;
- 	if (mlx5_internal_mac_addr_remove(dev, index, &addr)) {
- 		ret = mlx5_traffic_mac_remove(dev, &addr);
-@@ -133,9 +135,10 @@ int
- mlx5_mac_addr_add(struct rte_eth_dev *dev, struct rte_ether_addr *mac,
- 		  uint32_t index, uint32_t vmdq __rte_unused)
- {
-+	struct mlx5_priv *priv = dev->data->dev_private;
- 	int ret;
- 
--	if (index >= MLX5_MAX_UC_MAC_ADDRESSES) {
-+	if (index >= priv->sh->dev_cap.max_uc_mac_addrs) {
- 		rte_errno = EINVAL;
- 		return -rte_errno;
- 	}
-@@ -217,16 +220,17 @@ int
- mlx5_set_mc_addr_list(struct rte_eth_dev *dev,
- 		      struct rte_ether_addr *mc_addr_set, uint32_t nb_mc_addr)
- {
-+	struct mlx5_priv *priv = dev->data->dev_private;
- 	uint32_t i;
- 	int ret;
- 
--	if (nb_mc_addr >= MLX5_MAX_MC_MAC_ADDRESSES) {
-+	if (nb_mc_addr >= priv->sh->dev_cap.max_mc_mac_addrs) {
- 		rte_errno = ENOSPC;
- 		return -rte_errno;
- 	}
--	for (i = MLX5_MAX_UC_MAC_ADDRESSES; i != MLX5_MAX_MAC_ADDRESSES; ++i)
-+	for (i = priv->sh->dev_cap.max_uc_mac_addrs; i != priv->sh->dev_cap.max_mac_addrs; ++i)
- 		mlx5_internal_mac_addr_remove(dev, i, NULL);
--	i = MLX5_MAX_UC_MAC_ADDRESSES;
-+	i = priv->sh->dev_cap.max_uc_mac_addrs;
- 	while (nb_mc_addr--) {
- 		ret = mlx5_internal_mac_addr_add(dev, mc_addr_set++, i++);
- 		if (ret)
-diff --git a/drivers/net/mlx5/mlx5_trigger.c b/drivers/net/mlx5/mlx5_trigger.c
-index 7f6148f4e1..c5f493117b 100644
---- a/drivers/net/mlx5/mlx5_trigger.c
-+++ b/drivers/net/mlx5/mlx5_trigger.c
-@@ -1916,7 +1916,7 @@ mlx5_traffic_enable(struct rte_eth_dev *dev)
- 		}
- 	}
- 	/* Add MAC address flows. */
--	for (i = 0; i != MLX5_MAX_MAC_ADDRESSES; ++i) {
-+	for (i = 0; i != priv->sh->dev_cap.max_mac_addrs; ++i) {
- 		struct rte_ether_addr *mac = &dev->data->mac_addrs[i];
- 
- 		/* Add flows for unicast and multicast mac addresses added by API. */
-@@ -2186,7 +2186,7 @@ mlx5_traffic_vlan_add(struct rte_eth_dev *dev, const uint16_t vid)
- 		return 0;
- 
- 	/* Add all unicast DMAC flow rules with new VLAN attached. */
--	for (i = 0; i != MLX5_MAX_MAC_ADDRESSES; ++i) {
-+	for (i = 0; i != priv->sh->dev_cap.max_mac_addrs; ++i) {
- 		struct rte_ether_addr *mac = &dev->data->mac_addrs[i];
- 
- 		if (rte_is_zero_ether_addr(mac))
-@@ -2203,7 +2203,7 @@ mlx5_traffic_vlan_add(struct rte_eth_dev *dev, const uint16_t vid)
- 		 * Removing after creating VLAN rules so that traffic "gap" is not introduced.
- 		 */
- 
--		for (i = 0; i != MLX5_MAX_MAC_ADDRESSES; ++i) {
-+		for (i = 0; i != priv->sh->dev_cap.max_mac_addrs; ++i) {
- 			struct rte_ether_addr *mac = &dev->data->mac_addrs[i];
- 
- 			if (rte_is_zero_ether_addr(mac))
-@@ -2241,7 +2241,7 @@ mlx5_traffic_vlan_remove(struct rte_eth_dev *dev, const uint16_t vid)
- 		 * Recreating first to ensure no traffic "gap".
- 		 */
- 
--		for (i = 0; i != MLX5_MAX_MAC_ADDRESSES; ++i) {
-+		for (i = 0; i != priv->sh->dev_cap.max_mac_addrs; ++i) {
- 			struct rte_ether_addr *mac = &dev->data->mac_addrs[i];
- 
- 			if (rte_is_zero_ether_addr(mac))
-@@ -2254,7 +2254,7 @@ mlx5_traffic_vlan_remove(struct rte_eth_dev *dev, const uint16_t vid)
- 	}
- 
- 	/* Remove all unicast DMAC flow rules with this VLAN. */
--	for (i = 0; i != MLX5_MAX_MAC_ADDRESSES; ++i) {
-+	for (i = 0; i != priv->sh->dev_cap.max_mac_addrs; ++i) {
- 		struct rte_ether_addr *mac = &dev->data->mac_addrs[i];
- 
- 		if (rte_is_zero_ether_addr(mac))
-diff --git a/drivers/net/mlx5/windows/mlx5_os.c b/drivers/net/mlx5/windows/mlx5_os.c
-index 0aaed36ace..cc60f07e17 100644
---- a/drivers/net/mlx5/windows/mlx5_os.c
-+++ b/drivers/net/mlx5/windows/mlx5_os.c
-@@ -261,6 +261,16 @@ mlx5_os_capabilities_prepare(struct mlx5_dev_ctx_shared *sh)
- 		 MLX5_GET(initial_seg, pv_iseg, fw_rev_subminor));
- 	DRV_LOG(DEBUG, "Packet pacing is not supported.");
- 	mlx5_rt_timestamp_config(sh, hca_attr);
-+	if (hca_attr->log_max_current_uc_list > 0)
-+		sh->dev_cap.max_uc_mac_addrs = RTE_BIT32(hca_attr->log_max_current_uc_list);
-+	else
-+		sh->dev_cap.max_uc_mac_addrs = MLX5_MAX_UC_MAC_ADDRESSES;
-+	if (hca_attr->log_max_current_mc_list > 0)
-+		sh->dev_cap.max_mc_mac_addrs = RTE_BIT32(hca_attr->log_max_current_mc_list);
-+	else
-+		sh->dev_cap.max_mc_mac_addrs = MLX5_MAX_MC_MAC_ADDRESSES;
-+	sh->dev_cap.max_mac_addrs =
-+		sh->dev_cap.max_uc_mac_addrs + sh->dev_cap.max_mc_mac_addrs;
- 	return 0;
- }
- 
-@@ -396,6 +406,22 @@ mlx5_dev_spawn(struct rte_device *dpdk_dev,
- 	priv->sh = sh;
- 	priv->dev_port = spawn->phys_port;
- 	priv->pci_dev = spawn->pci_dev;
-+	priv->mac = mlx5_malloc(MLX5_MEM_ZERO | MLX5_MEM_RTE,
-+				sizeof(*priv->mac) * sh->dev_cap.max_mac_addrs,
-+				RTE_CACHE_LINE_SIZE, SOCKET_ID_ANY);
-+	if (priv->mac == NULL) {
-+		DRV_LOG(ERR, "Failed to allocate MAC address array.");
-+		err = ENOMEM;
-+		goto error;
-+	}
-+	priv->mac_own = mlx5_malloc(MLX5_MEM_ZERO | MLX5_MEM_RTE,
-+				    RTE_BITSET_SIZE(sh->dev_cap.max_mac_addrs),
-+				    RTE_CACHE_LINE_SIZE, SOCKET_ID_ANY);
-+	if (priv->mac_own == NULL) {
-+		DRV_LOG(ERR, "Failed to allocate MAC ownership bitmap.");
-+		err = ENOMEM;
-+		goto error;
-+	}
- 	priv->mp_id.port_id = port_id;
- 	strlcpy(priv->mp_id.name, MLX5_MP_NAME, RTE_MP_MAX_NAME_LEN);
- 	priv->representor = !!switch_info->representor;
-@@ -612,17 +638,16 @@ mlx5_dev_spawn(struct rte_device *dpdk_dev,
- 			mlx5_l3t_destroy(priv->mtr_profile_tbl);
- 		if (own_domain_id)
- 			claim_zero(rte_eth_switch_domain_free(priv->domain_id));
-+		mlx5_free(priv->mac);
-+		mlx5_free(priv->mac_own);
- 		mlx5_free(priv);
--		if (eth_dev != NULL)
-+		if (eth_dev != NULL) {
-+			eth_dev->data->mac_addrs = NULL;
- 			eth_dev->data->dev_private = NULL;
-+		}
- 	}
--	if (eth_dev != NULL) {
--		/* mac_addrs must not be freed alone because part of
--		 * dev_private
--		 **/
--		eth_dev->data->mac_addrs = NULL;
-+	if (eth_dev != NULL)
- 		rte_eth_dev_release_port(eth_dev);
--	}
- 	if (sh)
- 		mlx5_free_shared_dev_ctx(sh);
- 	MLX5_ASSERT(err > 0);
-@@ -698,7 +723,7 @@ mlx5_os_mac_addr_flush(struct rte_eth_dev *dev)
- 	struct mlx5_priv *priv = dev->data->dev_private;
- 	int i;
- 
--	for (i = MLX5_MAX_MAC_ADDRESSES - 1; i >= 0; --i) {
-+	for (i = priv->sh->dev_cap.max_mac_addrs - 1; i >= 0; --i) {
- 		if (rte_bitset_test(priv->mac_own, i))
- 			rte_bitset_clear(priv->mac_own, i);
- 	}
 -- 
-2.54.0
+David Marchand
 
