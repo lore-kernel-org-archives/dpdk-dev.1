@@ -2,71 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 313EFC982ED
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 15:55:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 143B5C982ED
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 15:55:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 77AB842E1D;
-	Mon, 21 Sep 2026 17:55:11 +0200 (CEST)
-Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com
- [74.125.227.140])
- by mails.dpdk.org (Postfix) with ESMTP id 0E3C442DCB
- for <dev@dpdk.org>; Mon, 21 Sep 2026 17:55:11 +0200 (CEST)
-Received: by mail-pj2-f12.google.com with SMTP id
- 98e67ed59e1d1-396ccd66bb4so2738555a91.1
- for <dev@dpdk.org>; Mon, 21 Sep 2026 08:55:10 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 63C0742E50;
+	Mon, 21 Sep 2026 17:55:17 +0200 (CEST)
+Received: from mail-pz2-f12.google.com (mail-pz2-f12.google.com
+ [74.125.228.12]) by mails.dpdk.org (Postfix) with ESMTP id A0CB342E4E
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 17:55:15 +0200 (CEST)
+Received: by mail-pz2-f12.google.com with SMTP id
+ 41be03b00d2f7-cc4aa0f1a94so2208802a12.2
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 08:55:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790006110;
- x=1790610910; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790006115;
+ x=1790610915; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=Q1wd6nAWW5m+farvJP1+PIgboA/S55k7Fl/n1redwj8=;
- b=gyyPlM57IqJ4X6C1BYaM1VBGs7GfGLNDDKIQwzV48h3+P1nU/VeulBUvkaWlGMKP4t
- pmoGuBMaH1HIpz/kPG980bFm5eMjEGErtT0V8RK+O+vmcwSNFlB75MV4yGX3HptGtw+Y
- R8QXS2HZ/oc3y94LleajlX2RqtPn5ni5pSpTduzQH6xEt2635vBBzjbWQIvVEsGiE+oj
- deaE+NLi3fmK1fZxIa001km+qwnJm+6Jvv6HwtCHXeiBQCJIq97Gy1eebUz/6PamhAjI
- EOHLPJe+FeOSCVVuQxCygHO6ymaNs5oa1Lr85PTLwka3cNu1SU36l4w2ZTFwqcB107qY
- mXFg==
+ bh=wYkyHA5JzAP1x8JPOVMc0yVmsj4gQwIBwVOerpmXfBU=;
+ b=R4b8M7wb6i0yixuvP+J0sLO65wCXqc0cZ3bnzKFuQsqgoJKmI5X/25Mq8JEm/zid9T
+ yFcoi3Gh4oHbNSJUULcP/ALcFVjNY1uZskJeZvfGiKNIOL1iOeP6FMs5ikTFdYGCWm3s
+ dhCoJ2aAexsSTfuIuixA8ss1fnjP+lFxQ5A3fJAlaVpKOVgelsc5M6U2s3bob/cjXQPb
+ ONTPouuDvBeICvuVav+esOIoB6G6YTricvIRiTfN5Jw+rQHRjPw+JlyxBdFJ9Zu9NQpL
+ 5tRPkilOhCCE++noLwfexoE9lwG/yuNoCvwhcZkuOllbg1h1tfNuzLcoljAHMMn14Kuu
+ uU6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790006110; x=1790610910;
+ d=1e100.net; s=20260707; t=1790006115; x=1790610915;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=Q1wd6nAWW5m+farvJP1+PIgboA/S55k7Fl/n1redwj8=;
- b=A2pKWTbEa0hOzR+CdxbLZBQxupJ9hU4obKIenqwg7G3KR0kVOK5Mc4lqWGIZKc159p
- HWmWiIfAwylqbZTYGLx0epRkK+GIZgfUBh74qDXBdi6MZLcFBlFwzjCU36yKi+VXzyfu
- uV8Ke6hVveQuNvUIlihwJ8JSmc27hFfX1kwgh9f/1M0EMqde7b3i/XUJrM9st/mEg2Sd
- f5X5BL2vFxdyaUpoIErtoOm4JuBw8o+BlRufX0ahjUr3NA23fLYU+8BbgJYUBBCZa5vS
- PJvia64ptENSOIhSgG2lITIDOjj1iKe+bvVumOWfqJi2jgySbJGUJXin4DrFU6014qIq
- META==
-X-Gm-Message-State: AFuF++nsrGRXOnQDHmPTMGK4fygJbKtJjsoNCUnNhHx5nVNCFf4U3suM
- m3GJYIwi5P0l7GZOOhvYgbSoyMtxnFCMVMtYDlMP/DKTEEx5w1dimBNrCh9uQNw0fi4=
-X-Gm-Gg: AYBFou2lHEwOJZlY6rvtaDPsfsPV6A3LfMNYjiNxcU2qmHpQbdGHTm0ds/bAWylIzqA
- IV0Y8494xljqd2SVzvpYGqNx+KBySkbGUI+ps1uy/UG3K2z6iwyYYUktl97I804wlacVOfsOaA8
- u+iIZs7XW3nLMwgMGnuS0Tr8kQ9X2K/LmzvVLFxcbTUvdhi+CDb6824fFZUYSQToT5iIT7NjbtZ
- g9IP6E0d5900Tx1i7p5yfgrVZQNx7tz//Rj6uG5172IEW/kZkadUSRAyxw5/2OkBlbwjvLmVbNY
- HjGtdmVYzBfB1S9/aBQAdYirCrL6JxKgR0ZjJgBCnyJ4ucAeIl6NKvoVgqDVOwKnI1c4wJNGgY0
- D+/qrYFjfztZ2dqGqa9Lvl5ZSvG/A4TdPgeFZQXfxlX/UtB5p40Xv6UVjBfpzYEuaAm9Q0Z5qrZ
- yEQdR4I3+lk913q9IAA03MJH+DDzS38BIf69+NwRihHo/82LQ5Tt9BNylJiBcfowr1vrjPsJw/h
- 2MRoTjx+NQvH7kdqvOh++Iq+AkDhPOornBbnJdE
-X-Received: by 2002:a17:90b:4a11:b0:39e:6c69:34d4 with SMTP id
- 98e67ed59e1d1-39e6c69367cmr11414683a91.56.1790006110068; 
- Mon, 21 Sep 2026 08:55:10 -0700 (PDT)
+ bh=wYkyHA5JzAP1x8JPOVMc0yVmsj4gQwIBwVOerpmXfBU=;
+ b=N6GWXFq3RJGolqT5NwRHlH4XieZmYaYQUXWTzNGeJ9huYZ02H/wFRsCSeM9oUOQS6d
+ txwum++zy+qmwDEneYTDkWOc49OPVVenP/J8sqfDxlQHqbUwpLNhskWhp4Et1y5yorY9
+ xLYuY5S+hKYsMzfRcrHe+OVUdyp05YRm2eiASRwUqEjXCXHV0H7RKvvYWrdylHQTO4XZ
+ /cisBgBeGQs0Rn/fdWRS2aiHigqLYj2wrAad76Eiw3X1vLAz6NvWWkA5lv59QfuBHgLk
+ w4YhpBs5qkQYPWnO+QqObUPdctsMJQzaHKmZRRLqJDI/X4fD3UYjXoMUAeaCeu7EwOmM
+ cMwg==
+X-Gm-Message-State: AFuF++lylSEfSX9MrgJ/gZ28CixR+agOMsxnHTzIxiUaPBkwpO6UsD3c
+ /uPkulYi5LcHUx6ebG+Qs5P/MyoQp6ucFNWFW5Bq/RzxQ2cLr1OOBa5Ruhx6wOK8ITM=
+X-Gm-Gg: AYBFou1gLgTA/eiY969U3YRBNar3qA+OZYhjzJMPZ0QQFYoRj+ed3dA83duqwgjx5DD
+ 0u6UuO25MHRE+rSDx5IUa8k7tlrkEblgljC2hTr1M++xXryv0r0ModbhesULRbImfzQXMw89oKh
+ fYnTwliN/a04y3hs4Z3uYwkOOUrMmzdjqeU6MICEogD5isCyOc32NHV75XkdaOsLLYC/PhOqstA
+ E36xGbCptgE3LHqT5PCgdciXvPCz/W2L5AInKdLeoQ39Z2e9+s8Q/+3xj/e+rB4q5iZuRioCzzn
+ V3c6SAPz9/kqSZxOcVWWl5Ms39BLy2uqju7ziiPJC9DvJkgVACcni5svtTulqXv4MZEAax82pzg
+ vHVixPNAJ4XM9wBoUGm99IvVnsWmCCa3CpnohJiV/r6Hp7sTrPVXhYHHXm5TZj1jf7w1iCIAWBr
+ UhKTf/1F3/0UAkJRRiEwekg0OaCyQvLMte8UXUPgfrAtGLvQTrZwGUYgYjbi7VfzeIK+K9iYR5l
+ p79t5HhJrKKAoFfL3722cfIu/jp4sn4DMtHXhIQ
+X-Received: by 2002:a17:90b:4d91:b0:39e:6c69:34db with SMTP id
+ 98e67ed59e1d1-39e6c6936e9mr9620593a91.63.1790006114645; 
+ Mon, 21 Sep 2026 08:55:14 -0700 (PDT)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a063c1994esm735465a91.17.2026.09.21.08.55.09
+ 98e67ed59e1d1-3a063c1994esm735465a91.17.2026.09.21.08.55.13
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 21 Sep 2026 08:55:09 -0700 (PDT)
-Date: Mon, 21 Sep 2026 08:51:25 -0700
+ Mon, 21 Sep 2026 08:55:14 -0700 (PDT)
+Date: Mon, 21 Sep 2026 08:50:50 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-Cc: dev@dpdk.org, kishore.padmanabha@broadcom.com
-Subject: Re: [PATCH v2] net/bnxt: add Tx DMA error stat counter
-Message-ID: <20260921085125.7cc04e04@phoenix.local>
-In-Reply-To: <20260921022703.1034465-1-Mohammad-Shuab.Siddique@broadcom.com>
-References: <20260918032812.763436-1-Mohammad-Shuab.Siddique@broadcom.com>
- <20260921022703.1034465-1-Mohammad-Shuab.Siddique@broadcom.com>
+Cc: dev@dpdk.org, kishore.padmanabha@broadcom.com, Chenna Arnoori
+ <chenna.arnoori@broadcom.com>, stable@dpdk.org
+Subject: Re: [PATCH v2 4/5] net/bnxt: fix bounds in MAC pool index and flow
+ parsing
+Message-ID: <20260921085050.4ec87519@phoenix.local>
+In-Reply-To: <20260921022420.1034071-5-Mohammad-Shuab.Siddique@broadcom.com>
+References: <20260918032752.763408-1-Mohammad-Shuab.Siddique@broadcom.com>
+ <20260921022420.1034071-1-Mohammad-Shuab.Siddique@broadcom.com>
+ <20260921022420.1034071-5-Mohammad-Shuab.Siddique@broadcom.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -83,38 +85,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sun, 20 Sep 2026 20:27:03 -0600
+On Sun, 20 Sep 2026 20:24:19 -0600
 Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com> wrote:
 
-> From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
+> From: Chenna Arnoori <chenna.arnoori@broadcom.com>
 > 
-> Hardware already reports an invalid/bad DMA address on a Tx BD via
-> the TX_CMPL_ERRORS_DMA_ERROR bit in the Tx completion record, but the
-> driver never inspected it, so a bad mbuf->buf_iova on Tx completed
-> silently with no visibility.
+> Two independent out-of-bounds issues in the driver:
 > 
-> Check the bit in bnxt_handle_tx_cp() and in the AVX2/SSE vector
-> Tx-completion handlers, and count occurrences in a new per-queue
-> tx_dma_err counter. The counter is folded into the standard oerrors
-> stat and also exposed as a named xstat (tx_dma_err_pkts) for
-> finer-grained visibility.
+> - bnxt_mac_addr_add_op() indexed bp->vnic_info[pool] with a
+>   caller-supplied pool before validating it against bp->max_vnics, and
+>   before checking bp->vnic_info was even allocated yet (it is NULL
+>   until the port is started). The existing "if (!vnic)" check was
+>   always false, since vnic held the address of an array element and
+>   is never NULL. Reorder to check dev_started/vnic_info first, then
+>   bounds-check pool against max_vnics before indexing.
 > 
+> - bnxt_flow_non_void_item()/bnxt_flow_non_void_action() looped
+>   unconditionally until a non-VOID item/action was found, walking off
+>   the end of a pattern/actions array that lacked a terminating END
+>   item. Bound the skip loop and stop advancing once the limit is hit.
+> 
+> Fixes: 51fafb89a9a0 ("net/bnxt: get rid of ff pools and use VNIC info array")
+> Fixes: 5c1171c97216 ("net/bnxt: refactor filter/flow")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Chenna Arnoori <chenna.arnoori@broadcom.com>
 > Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 > ---
 
-[PATCH v2] net/bnxt: add Tx DMA error stat counter
 
-Warning: tx_dma_err is a per-queue, single-writer counter but uses
-rte_atomic_fetch_add_explicit() in the completion fast path. That is
-a locked RMW for no benefit. Use a plain increment. The existing
-tx_mbuf_drop pattern is not a reason to extend it.
 
-Warning: bnxt_handle_tx_cp_vec() in bnxt_rxtx_vec_neon.c is not
-updated. arm64 never counts DMA errors.
 
-Warning: the release note says "per-queue xstat", but the patch
-exposes a single port-wide sum. Fix one or the other.
+[PATCH v2 4/5] net/bnxt: fix bounds in MAC pool index and flow
+parsing
 
-Info: "tx_dma_err_pkts" counts completions, not packets. Vector
-completions cover opaque packets, and with the following coalescing
-patch one completion covers many. Rename the xstat or count packets.
+Warning: the bounded VOID skip does not bound the walk. The outer
+loops in bnxt_filter_type_check() and
+bnxt_validate_and_parse_flow_type() run while type != END. After 256
+VOIDs the helper returns a VOID item, and the loop calls it again at
+item + 1. A pattern without END is still walked off the end, and
+non-VOID items are never counted. The rte_flow API requires the END
+terminator. Drop this half of the patch.
+
+The added "if (!cur) return NULL" paths return a value that no
+caller checks.
+
+Warning: in bnxt_mac_addr_add_op() the pool bounds check comes after
+the dev_started early return. An invalid pool added while the port
+is stopped returns 0, is recorded in mac_pool_sel, and then fails
+later in bnxt_restore_mac_filters() at dev_start. Validate pool
+against bp->max_vnics before the dev_started test. The
+bp->vnic_info == NULL test after dev_started is dead code.
