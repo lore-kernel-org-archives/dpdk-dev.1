@@ -2,72 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1A6AC982ED
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 16:40:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B312DC982ED
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 16:40:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9EB2D42D9F;
-	Mon, 21 Sep 2026 18:40:01 +0200 (CEST)
-Received: from mail-pj2-f28.google.com (mail-pj2-f28.google.com
- [74.125.227.156])
- by mails.dpdk.org (Postfix) with ESMTP id 4914E42D9F
- for <dev@dpdk.org>; Mon, 21 Sep 2026 18:40:00 +0200 (CEST)
-Received: by mail-pj2-f28.google.com with SMTP id
- d9443c01a7336-2d91c22d27dso18604305ad.1
- for <dev@dpdk.org>; Mon, 21 Sep 2026 09:40:00 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id CB87642E60;
+	Mon, 21 Sep 2026 18:40:03 +0200 (CEST)
+Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com
+ [74.125.227.140])
+ by mails.dpdk.org (Postfix) with ESMTP id 22E8842E4B
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 18:40:03 +0200 (CEST)
+Received: by mail-pj2-f12.google.com with SMTP id
+ 98e67ed59e1d1-39d654f02baso2703050a91.3
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 09:40:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790008799;
- x=1790613599; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790008802;
+ x=1790613602; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=/QpBvtSHLDUltuIF+kGVaUC20haVTVR/MqbmyeeLB+4=;
- b=M++WHmC+t7BxrK1v52CV8wsdu+TPU/aBhnhw9v6PIXiXGwkRBUXAr/eeQMaK0zaxRg
- zV4TFgm1LZNMQmKBLHPyAtWkHHNsghIzjgMzYy0II89YRdSYKjSb2kWCw1kHEcreP8rQ
- 60/ChuYtDbhB5mbsaPkwYIDJjkVGzAYmozX9ObI3p9iImTI3U3TE+vqt6MQB+PjCX/y4
- 21gsWvEkChnOTNOFDAFoqFCuy1Pk2GXai6O0d/8b/sHpE/pdVjJvVJBknjTe4v0D4N7t
- mLydJjmMnLJtPoQE2839qiS4oTrKGFsHFYM2f0Mjf2Fmw2IiEuRBRwa2kxc90KQJjv4p
- AtNA==
+ bh=L4WUzovuQzSOdzJuC/129vx81qzX1aqJncSY42whCcs=;
+ b=Xu5gSJE2jvpMDrlxtpPimUYPSBnEe93tn6zJZRGBLuQOx1tPnXPeyzRNEL2SH8Zc8j
+ U2cF3GxIvSeLpUOetgft0QPWci9wQhLwCd62t8g49nVqtJ5KdjS8yEvLiDhgZ0Yvf7a0
+ UJrPulqe5JN1lNzmfy6j0Z5By1IVg/55ZtqNNCsh6NqlMWVaP/KtU6KYvbcHNrYwDo8p
+ wvejNg5UgohfFQrwWxmuqZyHK+yxZc4UDzXDWMYFmg0RojT0qCmL01BoYr8uYOqTA/Wn
+ Mz/U0acPioHS5b/+Fko9XYgmD+04a5sY1rGHsWZXK/DmU6tUL1iV2m9FDCMPngfddcHK
+ xVZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790008799; x=1790613599;
+ d=1e100.net; s=20260707; t=1790008802; x=1790613602;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=/QpBvtSHLDUltuIF+kGVaUC20haVTVR/MqbmyeeLB+4=;
- b=hJFCBfDztONxIPN8151lNNQV8WRFGayaK8xeUVx+88Xn8PrETNc4/gsnQOOs7//bq6
- 9hZe+M6Bvk3uOFJHv6JozGV7B5wV3xNrNwcifejNjaP9kQEEk9XHQnXmt8BnaO+qTVZJ
- hP3G/HT5toYG4wqIaOqmBRcbUFQXHJOqddMsMCCEm/mroYh8Ts5CBQKZSXfWh/UcP/4A
- ERfw2ENipAQ/2GPTEFPnyS2Ds7a07CgIRDNO20YNmc4w1/w9OiHn/oV7u6c2s+KVcf8s
- Z95tW0NGviyyQzwdJc8PzuXbmBMhHJanbidGn+XYBCjjA0LLRmYHJIF1reUkZh27f0sf
- zpIQ==
-X-Gm-Message-State: AFuF++kkdYq5pFCF3U5NxGYdJiFfZNT9SvXk4NO+a8/qtwhsPGSjk3H2
- /YqardiOPQ+yH57y/3csJBBB20257VK7dVWBeiihE2WHkqs5zfKEld1Y0QsROhmaEN4=
-X-Gm-Gg: AYBFou0KkR5DJqMT38dfMlqXNstcaScoarnggrieqxog37DqSXOrfN+j2ayFrpKSLKt
- d3LtvD7zPhEhxPhc8PIim5uCruRUjQQpRhEuxscDgm7t7doPQh/sTTaKN5gL1z1G1OlPS1d826y
- xHDUV8Twc6Ee9L/1hLvD6pZtDOHYt4Om3C4ZJrGdmOKbjZ3UbhD8docwGh+nZmHgZMAp2WojHCr
- X5ia+1EtbQTINFkxoxd1m9HvAq1TxWww/ItIy7+q/NTC1XCFSCQtZREdRkCpN/a13heYWkojORM
- UUZuuHKBuxWwMox8mZbyYIZGl9V6j4ZKbr3JzxvDPthUySakgmS2gSQPtTEnd7Am7CZRz1idfrp
- XqDdCqdQF0dVWgne6CEEmUw1v03s3/Fx0nQ/s4WReQUS1+99yjSqZiB79mBTKb4qqE1ZteTVWFj
- kaDaasb2o3fCzNWf6AV+uxiRjF4H6bN6I43DpTxPwuZao49I8uvdqSvNC7mDp1ttQYdoNS/t0If
- fWiqya4QcvoAEe3FLN3gDKRMchQFiByxq5Jb2S4fA==
-X-Received: by 2002:a17:90a:da83:b0:39e:6c6a:4b68 with SMTP id
- 98e67ed59e1d1-39e6c6a546fmr9958611a91.50.1790008799367; 
- Mon, 21 Sep 2026 09:39:59 -0700 (PDT)
+ bh=L4WUzovuQzSOdzJuC/129vx81qzX1aqJncSY42whCcs=;
+ b=aqcYudaK2TzoQgiVYkon2ugb9knsRjKWAH2UU2W5PzeDmsUTSEVM0py6VVcyy2UumL
+ rJTkupMyvvFjTtaIFcuOp6cNXSzV7rKhlP+Xen1RhQK1bTwQ/BQKQ1mY/RlZ7nu39E0A
+ txeXGL8oY7rX+WCVLas0VytJ5sTDKoppdj9S6Raaj0ZFv/kkfHWJiQAsnoyAYu4IN0ul
+ qRgJPkTPod+XEGu4obdNnAG+twqVAAon88pfAwZ/1+6TPfzYixAF7LrWnb8sD869u4v9
+ hBLo4+Ro32TdlrwbbwWCZ54ZOmRrnbBOi/zo31QPYJg9mMKmJYq8rsbWwhnzyBNoF4lJ
+ 2vEQ==
+X-Gm-Message-State: AFuF++kZ/MSQezeJbTzTmZ9zpMW2E30zwI5xUeWjjmqMYEI14MGBvbN5
+ BpkKuLMjUXGV6h1eU8fX5getGZ5/cGUJCcU0islYmSvngGYipd8Oaijr6+Spgei78c0=
+X-Gm-Gg: AYBFou3CLwZOEeDBUAF9cUsORHg91UbRKM4XbNRAErdZSR/iSnHybWPkh7LKZ9viZ2v
+ F47IkZDgbExGdLFIbqcBCOMunZY8SzFaHuX7AaA/7z/3NBej+2VGYwqwcFN0mv7xI4Dg8LaXMXP
+ uxiPuz9d67bt89XwGQN8Ml5MJuqazk/86nEOnkneI6YWp1ig8D6j2P4h+31BsqWzq78bxAtXmiP
+ 2RFgPQYpEtyuRCRgXNT4DiHvyJNKmEzISqWEN4Le00MoT8nHq0S2+dRUe+/j/ZNsU1/69KYlqxB
+ XzLW7cNXufD33pOvGUPjES41i5ARdVw8ez3NofGR0emzmuLzQpTBUYDg7LM6PtdFcNppJtezOQW
+ wMiGiDETtAhNx9qNy/HPwSD0nwu/nOrbYwQN77H1uMt2lKQk5NEfnSvMq2SAd4QMasPD+J6xvkJ
+ Jvd8h3w6nXeUIR7lL265ANYIb5dkk6nw75pz8oQZfcOBUDJfyMkxo04NDQ9mQAR+waNFbso6l1t
+ J9ETmNU+2gyJO8N8oC94RZk3ptaVFFoSx8qHyXR
+X-Received: by 2002:a17:90b:588e:b0:39e:6c69:34de with SMTP id
+ 98e67ed59e1d1-39e6c693711mr10706081a91.66.1790008802047; 
+ Mon, 21 Sep 2026 09:40:02 -0700 (PDT)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a0670b410fsm134148a91.9.2026.09.21.09.39.58
+ 98e67ed59e1d1-3a0670b410fsm134148a91.9.2026.09.21.09.40.01
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 21 Sep 2026 09:39:58 -0700 (PDT)
-Date: Mon, 21 Sep 2026 09:38:54 -0700
+ Mon, 21 Sep 2026 09:40:01 -0700 (PDT)
+Date: Mon, 21 Sep 2026 09:39:51 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, bruce.richardson@intel.com
-Subject: Re: [PATCH v3 5/9] test/devargs: rely on net null driver
-Message-ID: <20260921093854.7846ea0e@phoenix.local>
-In-Reply-To: <20260921114737.2334589-6-david.marchand@redhat.com>
+Cc: dev@dpdk.org, bruce.richardson@intel.com, Aaron Conole <aconole@redhat.com>
+Subject: Re: [PATCH v3 9/9] ci: run reference binaries against current ABI
+Message-ID: <20260921093951.61ffe6b7@phoenix.local>
+In-Reply-To: <20260921114737.2334589-10-david.marchand@redhat.com>
 References: <20260717093006.229370-1-david.marchand@redhat.com>
  <20260921114737.2334589-1-david.marchand@redhat.com>
- <20260921114737.2334589-6-david.marchand@redhat.com>
+ <20260921114737.2334589-10-david.marchand@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,21 +84,53 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 21 Sep 2026 13:47:32 +0200
+On Mon, 21 Sep 2026 13:47:36 +0200
 David Marchand <david.marchand@redhat.com> wrote:
 
-> The net/null driver is enabled in all our tests builds in the CI.
-> Standardize on using net/null instead of net/ring.
+> Let's check if a testpmd and unit tests from a reference build can run
+> with the current release libraries/drivers.
 > 
-> This also removes use of an internal API.
+> This gives another level of ABI checking, like catching regressions on
+> experimental or internal ABI symbols that get promoted to stable without
+> providing an alias for existing users.
+> 
+> We may need to skip unit tests that were added since the reference.
+> So add a ABI_SKIP_TESTS environment variable in preparation.
 > 
 > Signed-off-by: David Marchand <david.marchand@redhat.com>
-> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 > ---
 
-Patch 5/9 (test/devargs: rely on net null driver)
+Patch 9/9 (ci: run reference binaries against current ABI)
+Errors:
+- The new DPDK_TEST_SKIP computation in .ci/linux-build.sh never
+  skips anything, defeating the mechanism the commit message says
+  it adds ("We may need to skip unit tests that were added since
+  the reference"):
+ 
+      DPDK_TEST_SKIP=$(grep -vxFf reference/tests.txt build/tests.txt |
+                       sed -n 's,DPDK:.* / ,,p' | tr '\n' ',')
+ 
+  The sed pattern assumes a "DPDK:<suite> / <test>" format, but
+  `meson test --list --suite fast-tests` never produces that. I
+  built the tree and ran the exact command; with meson 1.12.0 the
+  output is "fast-tests - DPDK:acl_autotest" (dash, no slash). I
+  also checked meson 0.57.2 (DPDK's stated minimum): with a single
+  --suite filter, get_pretty_suite() takes the `else` branch and
+  returns the bare test name only ("acl_autotest", no prefix at
+  all). Neither format contains " / ", so the sed substitution
+  never fires and DPDK_TEST_SKIP is always empty, regardless of
+  meson version.
+  Consequence: once this lands, any future series that adds a new
+  fast-tests unit test will fail CI when ABI_CHECKS and RUN_TESTS
+  are both enabled -- the new test name is not filtered out, meson
+  test invokes it (DPDK_TEST=<name>) against the old reference
+  dpdk-test binary, which does not implement it, the command exits
+  non-zero into failed="true", and the trailing
+  `[ "$failed" != "true" ]` fails the `-e` script. This is exactly
+  the scenario the DPDK_TEST_SKIP logic was added to prevent.
+ 
 Info:
-- The removed legacy_ring_list case covered vdev devargs with 3
-  key=value pairs (iface=test,path=...,queues=1). Its replacement
-  ("net_null0") has 0 kv pairs, so multi-key vdev devargs parsing
-  loses its only test coverage with no equivalent added back.
+- The commit message says "add a ABI_SKIP_TESTS environment
+  variable in preparation," but the code implements DPDK_TEST_SKIP.
+  Possibly a rebase/rename artifact worth squashing before merge.
+ 
