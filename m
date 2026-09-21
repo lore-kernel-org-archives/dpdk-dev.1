@@ -2,57 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2704FC982E1
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 11:48:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2FA4C982ED
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 11:48:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 79227427E4;
-	Mon, 21 Sep 2026 13:48:20 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id DCF0942DB4;
+	Mon, 21 Sep 2026 13:48:21 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 3FE03427BD
- for <dev@dpdk.org>; Mon, 21 Sep 2026 13:48:19 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 9DD5242D7F
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 13:48:20 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1789991298;
+ s=mimecast20190719; t=1789991300;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=9p7MeU0ul6Zt0/Rfv37rxdLy26y68exU81D0q2E6TcU=;
- b=WucOn0zA3Evx6uiIk9/NoQatXj7t9WGysMlljSTnxfQOkxH3byrDquFbjEYX5XFPh3B9eK
- 2+hzSvhwR7vRYfHxZeWzlgow1dI0H5MtZx2qO59KGV/Ec5QYIonD+Opd2ogWdPgppzU98f
- 338OGJHD6FuDRv5LVjQIU0YYX/YhFNU=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ bh=4wceXxBIxC2CPuGseR2Djo+FLheOeCvjtmyFbMTGU7U=;
+ b=Y57LnYlrf9pFZWnyXRQ/i/t3DGNTIYJ4UbX/DRUaTV/JTFqDlQUm8IEQa6j8f/rEjAZdJt
+ pQ35Tomj4G0ZUhVMJMtpAOcDOoqXyu8nXw9ChlE61IE/vXcogG+MMgaCAkJPg1AwgKRJi0
+ 2X9eGIsr1+nuWUiuSFvTElS8+2JHw4s=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-135-VT48KHLDMpy7weVPPyiIng-1; Mon,
- 21 Sep 2026 07:48:15 -0400
-X-MC-Unique: VT48KHLDMpy7weVPPyiIng-1
-X-Mimecast-MFC-AGG-ID: VT48KHLDMpy7weVPPyiIng_1789991294
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-167-jC6tiizUPtW_JkITU1RmNg-1; Mon,
+ 21 Sep 2026 07:48:18 -0400
+X-MC-Unique: jC6tiizUPtW_JkITU1RmNg-1
+X-Mimecast-MFC-AGG-ID: jC6tiizUPtW_JkITU1RmNg_1789991298
+Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id C0E0E1800A40; Mon, 21 Sep 2026 11:48:14 +0000 (UTC)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id E7170195608F; Mon, 21 Sep 2026 11:48:17 +0000 (UTC)
 Received: from dmarchan.redhat.corp
  (headnet05.pony-001.prod.iad2.dc.redhat.com [10.2.32.117])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id C62651800348; Mon, 21 Sep 2026 11:48:13 +0000 (UTC)
+ by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id ECF3041B; Mon, 21 Sep 2026 11:48:16 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com,
 	Aaron Conole <aconole@redhat.com>
-Subject: [PATCH v3 8/9] ci: make ABI reference generation faster
-Date: Mon, 21 Sep 2026 13:47:35 +0200
-Message-ID: <20260921114737.2334589-9-david.marchand@redhat.com>
+Subject: [PATCH v3 9/9] ci: run reference binaries against current ABI
+Date: Mon, 21 Sep 2026 13:47:36 +0200
+Message-ID: <20260921114737.2334589-10-david.marchand@redhat.com>
 In-Reply-To: <20260921114737.2334589-1-david.marchand@redhat.com>
 References: <20260717093006.229370-1-david.marchand@redhat.com>
  <20260921114737.2334589-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 2XdMmV2MfAWhgfSleZszs8XeRl-CguYYIg1_zDu42IM_1789991294
+X-Mimecast-MFC-PROC-ID: KOhsm7CmGYCdkGR1FENUAUUN9LxrB5aS6B18vgOOU98_1789991298
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -69,65 +69,94 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Regenerating ABI is not something we do often, but when working on ABI
-topics, a lot of time may be wasted on waiting for the reference being
-generated.
+Let's check if a testpmd and unit tests from a reference build can run
+with the current release libraries/drivers.
 
-We only care about shared libraries, avoid building final applications
-or examples.
-And we don't need to double check headers in the ABI reference.
+This gives another level of ABI checking, like catching regressions on
+experimental or internal ABI symbols that get promoted to stable without
+providing an alias for existing users.
+
+We may need to skip unit tests that were added since the reference.
+So add a ABI_SKIP_TESTS environment variable in preparation.
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
 Changes since v2:
-- removed unneeded -Dtests=
+- automated generation of the tests list,
+
+Changes since v1:
+- dropped hack, testing this patch can't be done in the CI now,
+- emptied the excluded tests list,
+- added test-null.sh,
 
 ---
- .ci/linux-build.sh            | 10 +++++++++-
- devtools/test-meson-builds.sh |  5 ++++-
- 2 files changed, 13 insertions(+), 2 deletions(-)
+ .ci/linux-build.sh | 33 +++++++++++++++++++++++++++++++--
+ 1 file changed, 31 insertions(+), 2 deletions(-)
 
 diff --git a/.ci/linux-build.sh b/.ci/linux-build.sh
-index e0b914a142..c789111a79 100755
+index c789111a79..a15b3d3516 100755
 --- a/.ci/linux-build.sh
 +++ b/.ci/linux-build.sh
-@@ -201,9 +201,17 @@ if [ "$ABI_CHECKS" = "true" ]; then
-     fi
- 
-     if [ ! -d reference ]; then
-+        REF_OPTS="$OPTS"
-+        # We only care about the drivers and libs, disable developer checks and
-+        # don't try to link apps.
-+        REF_OPTS="$REF_OPTS -Dcheck_includes=false"
-+        REF_OPTS="$REF_OPTS -Ddeveloper_mode=disabled"
-+        REF_OPTS="$REF_OPTS -Ddisable_apps=*"
-+        REF_OPTS="$REF_OPTS -Denable_docs=false"
-+        REF_OPTS="$REF_OPTS -Dexamples="
+@@ -206,7 +206,7 @@ if [ "$ABI_CHECKS" = "true" ]; then
+         # don't try to link apps.
+         REF_OPTS="$REF_OPTS -Dcheck_includes=false"
+         REF_OPTS="$REF_OPTS -Ddeveloper_mode=disabled"
+-        REF_OPTS="$REF_OPTS -Ddisable_apps=*"
++        REF_OPTS="$REF_OPTS -Denable_apps=test,test-pmd"
+         REF_OPTS="$REF_OPTS -Denable_docs=false"
+         REF_OPTS="$REF_OPTS -Dexamples="
          refsrcdir=$(readlink -f $(pwd)/../dpdk-$REF_GIT_TAG)
-         git clone --single-branch -b "$REF_GIT_TAG" $REF_GIT_REPO $refsrcdir
--        meson setup $OPTS -Dexamples= $refsrcdir $refsrcdir/build
-+        meson setup $REF_OPTS $refsrcdir $refsrcdir/build
+@@ -215,13 +215,25 @@ if [ "$ABI_CHECKS" = "true" ]; then
          ninja -C $refsrcdir/build
          DESTDIR=$(pwd)/reference meson install -C $refsrcdir/build
          find reference/usr/local -name '*.a' -delete
-diff --git a/devtools/test-meson-builds.sh b/devtools/test-meson-builds.sh
-index 11e4be3f88..501034f398 100755
---- a/devtools/test-meson-builds.sh
-+++ b/devtools/test-meson-builds.sh
-@@ -206,8 +206,11 @@ build () # <directory> <target cc | cross file> <ABI check> [meson options]
- 			fi
+-        rm -rf reference/usr/local/bin
++        rm -rf reference/usr/local/bin/*
++        cp $refsrcdir/build/app/dpdk-test reference/usr/local/bin/dpdk-test
++        meson test -C $refsrcdir/build --list --suite fast-tests | sort > reference/tests.txt
++        cp $refsrcdir/build/app/dpdk-testpmd reference/usr/local/bin/dpdk-testpmd
+         rm -rf reference/usr/local/share
+         echo $REF_GIT_TAG > reference/VERSION
+     fi
  
- 			rm -rf $abirefdir/build
-+			# We only care about the drivers and libs, disable
-+			# developer checks and don't try to link apps.
- 			config $abirefdir/src $abirefdir/build ABI $cross \
--				-Dexamples= $*
-+				$* -Dcheck_includes=false -Ddeveloper_mode=disabled \
-+				-Ddisable_apps=* -Dexamples=
- 			compile $abirefdir/build
- 			install_target $abirefdir/build $abirefdir/$targetdir
+     DESTDIR=$(pwd)/install meson install -C build
+     devtools/check-abi.sh reference install ${ABI_CHECKS_WARN_ONLY:-}
++
++    failed=
++    configure_coredump
++    mv -f build/app/dpdk-testpmd build/app/dpdk-testpmd.ori
++    cp reference/usr/local/bin/dpdk-testpmd build/app/dpdk-testpmd
++    devtools/test-null.sh || failed="true"
++    mv -f build/app/dpdk-testpmd.ori build/app/dpdk-testpmd
++    catch_coredump
++    [ "$failed" != "true" ]
+ fi
  
+ if [ "$RUN_TESTS" = "true" ]; then
+@@ -232,6 +244,23 @@ if [ "$RUN_TESTS" = "true" ]; then
+     catch_ubsan DPDK:fast-tests build/meson-logs/testlog.txt
+     check_traces
+     [ "$failed" != "true" ]
++
++    if [ "$ABI_CHECKS" = "true" ]; then
++        failed=
++        configure_coredump
++        mv -f build/app/dpdk-test build/app/dpdk-test.ori
++        cp reference/usr/local/bin/dpdk-test build/app/dpdk-test
++        meson test -C build --list --suite fast-tests | sort > build/tests.txt
++        DPDK_TEST_SKIP=$(grep -vxFf reference/tests.txt build/tests.txt |
++                         sed -n 's,DPDK:.* / ,,p' | tr '\n' ',')
++        sudo env DPDK_TEST_SKIP="$DPDK_TEST_SKIP" \
++            meson test -C build --suite fast-tests -t 3 --no-stdsplit --print-errorlogs || failed="true"
++        catch_coredump
++        catch_ubsan DPDK:fast-tests build/meson-logs/testlog.txt
++        check_traces
++        mv -f build/app/dpdk-test.ori build/app/dpdk-test
++        [ "$failed" != "true" ]
++    fi
+ fi
+ 
+ # Test examples compilation with an installed dpdk
 -- 
 2.54.0
 
