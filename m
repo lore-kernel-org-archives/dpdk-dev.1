@@ -2,73 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A681CC982FA
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 15:55:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D738CC982ED
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 15:55:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6B77842DD4;
-	Mon, 21 Sep 2026 17:54:54 +0200 (CEST)
-Received: from mail-pj2-f12.google.com (mail-pj2-f12.google.com
- [74.125.227.140])
- by mails.dpdk.org (Postfix) with ESMTP id 3D91A42D91
- for <dev@dpdk.org>; Mon, 21 Sep 2026 17:54:53 +0200 (CEST)
-Received: by mail-pj2-f12.google.com with SMTP id
- 98e67ed59e1d1-396ccb65437so2432266a91.3
- for <dev@dpdk.org>; Mon, 21 Sep 2026 08:54:53 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7490E42D92;
+	Mon, 21 Sep 2026 17:54:58 +0200 (CEST)
+Received: from mail-pj2-f13.google.com (mail-pj2-f13.google.com
+ [74.125.227.141])
+ by mails.dpdk.org (Postfix) with ESMTP id A6B9542D66
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 17:54:57 +0200 (CEST)
+Received: by mail-pj2-f13.google.com with SMTP id
+ 98e67ed59e1d1-398beb616f5so1343385a91.1
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 08:54:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790006092;
- x=1790610892; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1790006097;
+ x=1790610897; darn=dpdk.org; 
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject
  :date:message-id:reply-to:content-type;
- bh=CgtFIlpdW8es0utWghAX8VSaxtXo1AZwF38QcXhvIzY=;
- b=jv0OV1Vu2t00RgoGbQKxMAiGjYACLU+jxAT/tYCYeFGdg5XKVtGo25RdSU5q63EWn5
- UN82N9pu4olVmSlC4h7i1cNW/Ed1eoFtyrJVNgzQmAVonzKc9pJxblgz16AbYbZbKdkk
- 390YyZFKO59l9u2CnBiczbVBw/YkrAp80L/m79Z8bPtKStesFr0CfBuljthRWaaMaqBR
- O6oUsq+oRD6emUNuWt16cL2xNSRKV4r9/D2jZV3DE51HgKrFFwAcMFMXXeK5HhzybL7n
- 7Qhpf13E9eVitzAkg+Cpb/d6isbPaWYxnp0ACteGVCfdIFaj6OIn1cAJZ8+H/MDcAX0X
- AwQQ==
+ bh=HR53cLLpDrgrhXx5tbbTvJKcdQRzKLzY8RQXG2nsZEE=;
+ b=0dvOqPWXqSGIvS45Xirqz0/MGCbFDsMcEsC7tdkBfQGoDOieTD+9XG7FMgR+PPiDwg
+ /JiGEMpr7YbhkwhsoRnG5jubS3vLDE/K6N9sg3485qUTWBCPAZiLS+EWwaQuoA2r8/RU
+ Vo9097U6gEul55KkxZ9vuNvlC/Wy/x1q1ADha45ZhBGEX72WK+usFLW1rz7yve79YbHy
+ F35R5Ok6FMxwKtIUX+aTc+qWrepk2tDiTaeMKVKleOpu53q2ufLs6vlJKtEbhN/d0d/y
+ DD8CywkNe9Z80R/ZTYcCBla8pAt7IBsNZfH4Hxe07PUOKItnkUrtHuI8MoxF4COge9KX
+ 1z2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790006092; x=1790610892;
+ d=1e100.net; s=20260707; t=1790006097; x=1790610897;
  h=content-transfer-encoding:content-type:mime-version:references
  :in-reply-to:message-id:subject:cc:to:from:date:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
  :content-type;
- bh=CgtFIlpdW8es0utWghAX8VSaxtXo1AZwF38QcXhvIzY=;
- b=sSDrhwvsuyY9zLNCqOgNwYayInWrlhfoR4ribdiS+2QRIIT/hQ9ZZwZjP9l3GhbWti
- ExvmDaFJXokml79gwfQffqXeeIy4LQqglwI3UVa7w2rjwCTtt5dNxX3PDnGdT8pcHfUV
- vjw5tuoJjWwY2bSSxYKZt+hVpbHrq/B6eYQwbPS4JSopEHZIK3WVVcavGhLzkTcSM4BD
- 9eF18olyy4o4rF54W7Ez9FAdhmaRdnrMIc5DPOIFdTmlpmUWLSxhebvYLkU4Q5XNRTIK
- grKpthVHrTxYc78gi1ufRKJVMVQpgZEKYMMr26GSBztdlsqGQJOVKFMawEr+QTsauWuE
- HvZA==
-X-Gm-Message-State: AFuF++mN0HVBmExYBZOQ0q4udKZZL3jarq1oj4Cwx5NoXcrlJE+xylXN
- OT+g98VEmYz0Uh1DV8TbRdamWvilxOh4mN9Fg2+V9jddBLiY7R3ERrSZbKNQbCXQrCgZHjiyoUu
- cvUrR
-X-Gm-Gg: AYBFou2VtjjDQ52B7TZeOw/dfhaPz9CX7dXDjzCZ2JrJ8nKGNALuzAVpH8G6aNMECQi
- PAo3bJy6kvkkg6xRuJRdLsAeB5fc4TMMS0QUAbgrhfzbsGJXoDOTkqDsluu1xcobSQQcz2nj8lT
- T3WCqx4p8nHnDo6XKxSWZB3Xgt4PK8CVfz24TNWsl9cxW23ywuewwaKcEjmhV7YvLRr19z5zd6g
- pfZ0DToMSX5Dwedzq/ki/vIgOlxyaIG2Nm7EuBSZt6gKjMlD5pfCv2gtIRJUjdzC1V8+AHIPmDe
- B+7cLFp3CYZJ6wfORKrzKh9QVgzvfcs0MRtFtFpiRTsr/cOtW4/HUj9OUkM93z9uSqzC96BxlSp
- RYwMOwuAA3s02mdVVvw79NURS+kMUPW4w9VNYlkNSwC6sVWH0RMjxl97BZNh/fflgrLG+wfoaJv
- RbFUk0dbtUHL63lb7Lb8gkNkrKUz3lK0nrOORmvuBmWGqT5F6NXeX6u8jmGTiw+7AMjctWsBtUz
- HppSzIfuH187/z+XzQnrykNZMba4DBI4UHXZAVO
-X-Received: by 2002:a17:90b:2681:b0:39e:6c6a:4b75 with SMTP id
- 98e67ed59e1d1-39e6c6a54cbmr10815654a91.63.1790006092292; 
- Mon, 21 Sep 2026 08:54:52 -0700 (PDT)
+ bh=HR53cLLpDrgrhXx5tbbTvJKcdQRzKLzY8RQXG2nsZEE=;
+ b=iASZoJV/7zrHvdwbYxGUO/7q74yhpZ1fqMLTntIO/eldctY7xBqD8n0k2p4SN3kH81
+ FM42QBV26ByL66z07rUO5J0ke9LDNNOL73JiMLwYcOuf/FAGG+3Jn0no8PLmOUwYWA3E
+ 6PPRNmLH2aDAGnUItvaWfGik6SsC5SLZFAup3ik0wXH6QXewLQpt2baCsTTSHXstZOV+
+ I2W4VW9dOlsusBCsKzySVjLN478Dc6eKIe8FgkaVS/XCVyIf5WofMBRuf50mb3gPYKto
+ AiskNZddiVL7sY2BlNmR+nVeHheT8j3g081tfUNBDdz30bUtD3VnSWPFyJxkGYhU5n/i
+ F++Q==
+X-Gm-Message-State: AFuF++mujAELGxSPx3pJrNTXRjvrGxQPxY8vjxgUCgpAkJzDOP3nktZt
+ wety8vARq50m17cnG2WkoxDL/UkF+vDR6dQswlZJWZeVIysi5zvLPor6RsyK0K4y3vFG0WbM3Pc
+ TIwsI
+X-Gm-Gg: AYBFou2kImLd1kxNujwgmpWuZ7kCB7q4ScDPrq5Lcu16q8rADt41rUgGFsjp/5nsJxO
+ m95WA+8a39s1tJI54XwzmlnerkeKP+oMt1maDKj9YWm6crycGxchFzmRroNBVASPJySuK77ZC3U
+ LfmVJDeqejv/youBgcT+CZPxswm0xgeXH0salEDuUEE+3f8K3gWAesDE4zfAzxwqLK4jxVEtsQx
+ lkUowZ3rsA7dtDuDFbthA9sG7uSesQUCLVENkmbGghsqjqnS4UQUNyaqPuyecF9VmBjlkpPKWve
+ AnCdpJ/Ls8xhw/CXQUkjKa+wXrzzKSQ7Jf5HUYBWruQ1fEOQ778Mh9Tp31fpVOUzyaVmvy6/dSj
+ JMMnWAN0oRhmn6fO0WASPFBBsjZYNbU/dZ57WD9D/cd6sbdZGI4GJWILdVvzrOv9Fl4IxWRfee8
+ nl4w3taeZgaL8gNmpw5pgbbsgIl6MObRisAUT7dTN7ZcZVr0COrx0N6joEluToy6FIgTY0kjfKr
+ fWcKv+97usbgFdt496A7l5DY0ObNIArJoD00V2l
+X-Received: by 2002:a17:90b:268c:b0:39e:6a7f:6189 with SMTP id
+ 98e67ed59e1d1-3a066b0f377mr40372a91.26.1790006096677; 
+ Mon, 21 Sep 2026 08:54:56 -0700 (PDT)
 Received: from phoenix.local (204-195-112-43.wavecable.com. [204.195.112.43])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-3a063c1994esm735465a91.17.2026.09.21.08.54.51
+ 98e67ed59e1d1-3a063c1994esm735465a91.17.2026.09.21.08.54.55
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 21 Sep 2026 08:54:51 -0700 (PDT)
-Date: Mon, 21 Sep 2026 08:52:50 -0700
+ Mon, 21 Sep 2026 08:54:56 -0700 (PDT)
+Date: Mon, 21 Sep 2026 08:46:40 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-Cc: dev@dpdk.org, kishore.padmanabha@broadcom.com, Keegan Freyhof
- <keegan.freyhof@broadcom.com>
-Subject: Re: [PATCH v2] net/bnxt: add support for queue size of 16384
-Message-ID: <20260921085250.46018e60@phoenix.local>
-In-Reply-To: <20260921025903.1034720-1-Mohammad-Shuab.Siddique@broadcom.com>
-References: <20260918032825.763449-1-Mohammad-Shuab.Siddique@broadcom.com>
- <20260921025903.1034720-1-Mohammad-Shuab.Siddique@broadcom.com>
+Cc: dev@dpdk.org, kishore.padmanabha@broadcom.com, Dakota Sicher
+ <dakota.sicher@broadcom.com>
+Subject: Re: [PATCH v2] net/bnxt: remove duplicate branches and conditions
+Message-ID: <20260921084640.44fb7603@phoenix.local>
+In-Reply-To: <20260921021711.1033759-1-Mohammad-Shuab.Siddique@broadcom.com>
+References: <20260918032645.763349-1-Mohammad-Shuab.Siddique@broadcom.com>
+ <20260921021711.1033759-1-Mohammad-Shuab.Siddique@broadcom.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -85,28 +85,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sun, 20 Sep 2026 20:59:03 -0600
+On Sun, 20 Sep 2026 20:17:11 -0600
 Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com> wrote:
 
-> From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
+> From: Dakota Sicher <dakota.sicher@broadcom.com>
 > 
-> The driver only supported queue sizes up to 4096 for Tx and 8192 for
-> Rx. Raise both to 16384. The completion ring for a Rx ring is sized
-> at 2x the Rx ring size, further multiplied by 4 when the aggregation
-> ring is in use (8x total), so at 16384 it can reach 131072, above
-> uint16_t range - widen the ring index/counter variables touched by
-> that path to uint32_t.
+> Removed ternary operators with identical results and consolidated
+> identical branches in bnxt_validate_and_parse_flow_type() and
+> bnxt_start_xmit(). The NTUPLE and EM_FLOW variants of several HWRM
+> enable-bit and IP address type macros resolve to identical values,
+> making the use_ntuple-conditioned ternaries redundant; several
+> adjacent if/else-if branches in the Tx checksum-flag dispatch were
+> also textually identical (same action for a checksum-combination
+> flag and each of its constituent single-flag variants) and have
+> been merged.
 > 
-> Signed-off-by: Keegan Freyhof <keegan.freyhof@broadcom.com>
+> Signed-off-by: Dakota Sicher <dakota.sicher@broadcom.com>
 > Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 > ---
-[PATCH v2] net/bnxt: add support for queue size of 16384
 
-Warning: the change of BNXT_MAX_MTU and BNXT_NUM_VLANS to UL is
-unrelated to queue size and is not described. It changes the type of
-BNXT_MAX_PKT_LEN to unsigned long. Drop it, or split it out with a
-reason.
+Better AI review flagged minor nit:
 
-Warning: MAX_CP_DESC_CNT is bumped to 32K and gains a comment saying
-it is unused and the real worst case is 131072. If it is unused,
-delete it.
+
+[PATCH v2] net/bnxt: remove duplicate branches and conditions
+
+Info: the re-indent of the PKT_TX_OIP_IIP_CKSUM,
+RTE_MBUF_F_TX_IP_CKSUM, OUTER_IP_CKSUM and IEEE1588 continuation
+lines misaligns them. Drop the whitespace churn.
+
