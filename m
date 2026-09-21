@@ -2,122 +2,122 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BB73C982E1
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 08:39:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E39BC982E1
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 08:40:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8625E41156;
-	Mon, 21 Sep 2026 10:39:37 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 148ED41156;
+	Mon, 21 Sep 2026 10:40:37 +0200 (CEST)
 Received: from SEYPR02CU001.outbound.protection.outlook.com
- (mail-koreacentralazon11023119.outbound.protection.outlook.com
- [40.107.44.119])
- by mails.dpdk.org (Postfix) with ESMTP id A7EDE4025A;
- Mon, 21 Sep 2026 10:39:35 +0200 (CEST)
+ (mail-koreacentralazon11023113.outbound.protection.outlook.com
+ [40.107.44.113])
+ by mails.dpdk.org (Postfix) with ESMTP id F25574025A;
+ Mon, 21 Sep 2026 10:40:35 +0200 (CEST)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Hw/jxher1fr1OpJDmAKouq4C17h32+pSJbaCQ17m73GtDo/twYV0QZnfz55xsvY6E9qDYm2YTrHPvpB+lzIWTVLLpIb66t6aLyMkOzarBzodolNE0UNgIje0BBz6Vb75RF9mEjbcdnoch3N+JLc2tXL0cnHBZCUvGZ5p1zP0XgZkJFDWngqdidrrcOcKNdZ9DzQM9+e1lmu/1FQzUakF3Cj1DtqHBcRqZ8+3uZyUW4xRcaOh1kzdw5DoeyTZbhK02TId5Cxz2YaRoJUgZ33QqSQhYjF/fTMoyzUy0MoEhAY8B8WpRNBd/hmiE+6zrgRePmjQrplMYFIJq6RNPHyQ4g==
+ b=cEbGIfR8AMytl4qxgDsoo9xm/rONLd/7i0KwYqKc8yfSHswZ24cKa+9HxtUKRLfFOtJBc7l+7uyJPTPd+iFWpp55jpUh8E7rOCbJTcAOlzsNt6myVxIXP4dxM/IXtk2qZjLbE0jbWwYf05GM9JeyydNX7St8/JTuE7w5juh35RnxWcnmtsJ+xBNBhoUAeMrlh6WrwdyoYseKZznzTyV9U5NkTujet1DbBsZZLdzx0YBwBOw1q/pRPmYjIyDMalOllrnWCrso4GVRNzGKQoqzepOAzdJqvc6MQUebRyKMa9myV0f+blk0fo1GDolKy0QxR2rF+3r/980xs/jddRg/wA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:MIME-Version; 
- bh=TXucghRSb7RlOwuW3KteuPFFUPtDokygTE7g63lRWW4=;
- b=eV5VxF+hBEB9g3ss9TQkYZShwJO4oVPgC3wIsv+D90ss3NDlNGD7wweyB07DzsEl1fX5T51xptcnTS42TZYgmd9HYZ79h4pNgKqXgaJqc+AxlNccwK4nyv4OOCHG5AZ2BK5v52eslQi31tk7jN+HaoM5IGRXi4ofDfyweQ7yG+tvIx2ie0jBbSKyE+fFQSgwu1Gd4TK6hwtNE9v4AuiPoaBS2WZ+UMvJITduNvf+9yoG4+vVujUb+SFy9f165zwpkCqUyqgNHCllKYcr7C62p18DAUoGMBUtMVNlYsdT0gp0JcwqLiYJtdXokLxclnH5JAA4ne/huphRatKEvLvdYg==
+ bh=uSs57xo0ypwTcBoB/yk4M5pAo2mfhSuFNDJ30+k8A8M=;
+ b=DvJjzTxDMLZb2Qbb012hs4pWKhno/VuAd9jyJwJ0zm1LO81JAVVqcwoH8EEfIV52pq1kFLGuwpK+yrg+NipQqMEx042HoBQBeyC0u/iEWTUCmgD9Fp+idcFIjqcZcvBUTBSSxjQkOm0iP5IHHQ1cnT/hDA3wbZbcEaxf9k/rAZlEb5wk3VXpPG/IRkvSI33LQrYeFshk9kb/Q8pxGiJab/djtHZs7dRzwZAJhEckN89/DKC25dpIVtMKs84RhBbFhIkHiKxgV1TwSGX9EcL8baaCrEdeopVuMFNd8sVInYpWtQZZaq5FIAsMp3ttI/P0Pks6FSXtCuOFWmuYaF/eGw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=microsoft.com; dmarc=pass action=none
  header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TXucghRSb7RlOwuW3KteuPFFUPtDokygTE7g63lRWW4=;
- b=GRnJKh0BUaL5HMXFh2SMlVlPjY3Kywzwv5fMtHImbP//iQpAS7EVcvfslmTp+1Zr4mLtPGE2hEiCwxC7bkBYbpRwY0ZzqR1XG1gEogVeuTIjfM3Y7nt7Qqv0Sz0I0mqivVPeHMYSYLadIwgnHGg5HQEj2Pq5WaD9bwydGqPDfV8=
+ bh=uSs57xo0ypwTcBoB/yk4M5pAo2mfhSuFNDJ30+k8A8M=;
+ b=RznV+wXJu4AErHWtCDjA3yjMqODlL5NxzJ/yCD44mcvfu9V105q1s91b5NYzwz+/gqnbxq9dj/nbRWDdIDdreFveTdkamxFUaKMK2YW/q0F3ylm4WDJRpsOJigCjQQcyO2FlVJckhtZIJsvKWrlhYuH2kmOUMhTzNHJqjlUwGqQ=
 Received: from SE3P153MB1848.APCP153.PROD.OUTLOOK.COM (2603:1096:101:340::5)
  by SI3P153MB2029.APCP153.PROD.OUTLOOK.COM (2603:1096:4:29d::8) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.472.2; Mon, 21 Sep 2026 08:39:30 +0000
+ 15.21.472.2; Mon, 21 Sep 2026 08:40:13 +0000
 Received: from SE3P153MB1848.APCP153.PROD.OUTLOOK.COM
  ([fe80::8f4e:575a:4706:a56e]) by SE3P153MB1848.APCP153.PROD.OUTLOOK.COM
  ([fe80::8f4e:575a:4706:a56e%6]) with mapi id 15.21.0472.000; Mon, 21 Sep 2026
- 08:39:30 +0000
+ 08:40:13 +0000
 From: Wei Hu <weh@microsoft.com>
 To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
  <dev@dpdk.org>
 CC: "stable@dpdk.org" <stable@dpdk.org>, Long Li <longli@microsoft.com>
-Subject: RE: [EXTERNAL] [PATCH v2 03/33] bus/vmbus: fix ring buffer ordering
- on weakly ordered CPUs
-Thread-Topic: [EXTERNAL] [PATCH v2 03/33] bus/vmbus: fix ring buffer ordering
- on weakly ordered CPUs
-Thread-Index: AQHdSSvRxqeRfDMSEEWFNmEvhOxFvLbYtpgA
-Date: Mon, 21 Sep 2026 08:39:30 +0000
-Message-ID: <SE3P153MB1848B6C194BCFE69AF2A0450BB842@SE3P153MB1848.APCP153.PROD.OUTLOOK.COM>
+Subject: RE: [EXTERNAL] [PATCH v2 04/33] bus/vmbus: fix missing acquire on
+ receive ring index
+Thread-Topic: [EXTERNAL] [PATCH v2 04/33] bus/vmbus: fix missing acquire on
+ receive ring index
+Thread-Index: AQHdSSvUNi085DfTbU2p30GUZmpSMrbYtzyg
+Date: Mon, 21 Sep 2026 08:40:12 +0000
+Message-ID: <SE3P153MB184826ED6E3BF94250EF2DE9BB842@SE3P153MB1848.APCP153.PROD.OUTLOOK.COM>
 References: <20260729175715.165120-1-stephen@networkplumber.org>
  <20260920181347.747210-1-stephen@networkplumber.org>
- <20260920181347.747210-4-stephen@networkplumber.org>
-In-Reply-To: <20260920181347.747210-4-stephen@networkplumber.org>
+ <20260920181347.747210-5-stephen@networkplumber.org>
+In-Reply-To: <20260920181347.747210-5-stephen@networkplumber.org>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=1adfaa95-59da-49a1-ad1d-3230045c81c8;
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=24b05aeb-0e8e-4e22-824b-50c4632c18c0;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2026-09-21T08:37:42Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2026-09-21T08:40:00Z;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10, 3, 0, 1;
 authentication-results: mx.microsoft.com 1; dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=microsoft.com;
 x-ms-publictraffictype: Email
 x-ms-traffictypediagnostic: SE3P153MB1848:EE_|SI3P153MB2029:EE_
-x-ms-office365-filtering-correlation-id: 5a24a2d2-8cd9-46e7-d125-08df17bbda85
+x-ms-office365-filtering-correlation-id: 824cc23d-ce6f-44e8-1fe3-08df17bbf3f3
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
  ARA:13230040|42112799006|1800799024|23010399003|376014|366016|38070700021|4143699003|56012099006|11063799006|18002099003|22082099003|10067099003|7146999003;
-x-microsoft-antispam-message-info: XKj2+ruC18FlvqFh9nAbl0tFMzs/dnxaJuMVi7WJWa9REEPJd4/mneLnLHZIXZEUgPfd2QqJ399flQhQnygQVI/7IlUImtTPnKGYxVHn9WGpyTjp/FAKoDFH5IN4lvjTNPuJr7cvuxjbejTrfKU8IuyGmsulvtarisyhgJnhi7/OwAXA3cjNozmjxJm8SKcjyJTDQFo62Y/ls7ve9l4RLzN9dGyXbXhcfXI8w9qGEYKoe/dFxmLiU47D1JJaaWnL4kpH2VvhWCM5O8SauUr6aIa5O4M94bnr3BtOuKC+6d5CQOarvTPXG+uFSZ/5Oq1McwG2QdArF7XxQSGfwt0tKoTUFe8nBlvEWZiRv8HoW5u7ZC+2yo9OdAFk/ACPVlOMhZ/aOoyMTXCG3JleczHlw+y+PvnNDt5D2/lupt+gekU2Q8HL+6BKHE6a9IhgbeR/YfeOW/FePwS5/n3hqfOYjyLACiGT4dQu02GGoOvAPCZO2maG9BW2V3/AUAbugloLJ3DNp1C9ypNctwS6Kso+C5Eb1j0V0bcKRtlovQOOUIKWrscP4q4cHC0RbwpFpSqSIrg/QkHy1YZBE0IMP+hnPkbid6eRpGXiofqjQVPLBaugnpvHSy/3L5/dn0jd56PMd0np2Gft48ns1T/1KK1VkRvnxMOVGCk2qep8J5Q3MJptWQ6dgY0rHhylxKs66aDBTfTDSm/DJRqJdgRf1JxHQCEV3ujQUi6cKSDlapYekhI=
+x-microsoft-antispam-message-info: cOQS1zgKkY3mq6fCf1b6HwHp9KVwg+mSsj4VQaG00CPlD6kktnUL5oNtkHqFhef29fj38qjhQKipLXe72y6LDtSTqIyUxESPJs5PB4/S401Xf21OTXI9tvhkTaVUn0sbMDFHo4OjFXaL9ExVFoIC1A18nunWSKwyI5gc/JT3QHR15yvv0kqOkHlx7qMijikqtS+opskNW9l98JpkxEXOY0WAlPZi3YnmjhXWqxxKREB/xTCQHbGGLN9qsVRFGxtor0EpSZ20H2Gl+WEAzjTYC4s3ZpkWwbPQ0mmKfNYMS3otQcxMK1v5pBUc33NULCv5sxu4NqemJYYWIjmqDb7ypqOo0Rc2yWcOCjlWex+axYsjq2K7joSOWYwnESb6hzKZeG78seKSzTlr3vVtKoTmLVDFuMpBFwetic8qJfqIOO51gusoH2DbqaP5TG5jsGuGFcj9XIp/wUEt05VvPAx9MAw5yRvJdBCwnsMCace69x10xWBjOknuGCHj/KZK5Lk8ZyBVfZBkZ7+KYrgTUROif/JAk3swpav7B4h6qwsEmNlZW3XxwGNyP9xX3U/ojExrJiEJlWiAvszuplYSoFw2w4o5yaXyGQ6Ss4xm0g0w4dq6srOaipE7zk/JdCfNVWe4Cz3OU0Na6Mjcy0TldH1xg7zkDID3DXidfv4SoZp/Q4p8qdQ0VfzZtg6eN1I08Zrr/wkYdUtofTm1isSSjnX3gYP6TCcCNhRc8L61ZCv+PEE=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:SE3P153MB1848.APCP153.PROD.OUTLOOK.COM; PTR:; CAT:NONE;
  SFS:(13230040)(42112799006)(1800799024)(23010399003)(376014)(366016)(38070700021)(4143699003)(56012099006)(11063799006)(18002099003)(22082099003)(10067099003)(7146999003);
  DIR:OUT; SFP:1102; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?oHdFtAC26dPAjqOJH+FrVrEYET61x0V8UNYdgY3g1O322BCg5ETF/t2FMv6/?=
- =?us-ascii?Q?MPrG1Nug/saaeLeqgvNwaaivPc9kjd0c8lHR3Nh8NCkXzQ2yxsrbHVVWHWd0?=
- =?us-ascii?Q?xfS5vnbMQ1TKJb2mD5wjerVxCBjoP+8xdUy3BWHzjnJuqr3hqte00JBVKKH+?=
- =?us-ascii?Q?9R6BU99HqP2i2b9Y8o2cUu+gDErV2U5XVqDvQT5/ukEs1v+IhprWD4m/0Nyb?=
- =?us-ascii?Q?VySBxX+erQJEhD8aBc3llbcLb2PCZKsqgIMjpW7HkUNPlkjPIRrOAAHMGrJH?=
- =?us-ascii?Q?EQMtDJQ7ovL6g7UomdRuY0LxS4wChFIlQHXV0w+eOw6Qf9sqv+jeC2UYjeWM?=
- =?us-ascii?Q?ylaGsjKS4glMBSBMECcFBNr3Pi0SlggPzUITdGZ5ybax4CtDqy/u8Ze8V/P2?=
- =?us-ascii?Q?1z72nPBOXsNvwyPv6eRrcukf6qOQidC2ixzw8pTrEyZSQIcSUimDaSdSASmC?=
- =?us-ascii?Q?S7DONOu49X37e7AO75m5lhoaz5/XG9bPNbuwhBnNRjD5x6Rbuw5ektn5ncyB?=
- =?us-ascii?Q?QRzKqpnWsknVnPJU8LfbVLEmtyfbl3EKwO/iFjSJxbCsq47wq/966ON/Gyeo?=
- =?us-ascii?Q?SWzrD5wqg6msGN7ujJjnpzutp6co3KRjBEPrESQPzc5LRutXfpIyKgIrbJ+9?=
- =?us-ascii?Q?FYWmWi+HPiaGt+z+AqLrzVW+isKTH8DJB0Yiuyfn23mO3OYI2cUOiZlhJ/fF?=
- =?us-ascii?Q?K9XFGNLUXKaJNF8DeGcVhp9oW+RUgT565sgdR5vKTm6Jk6ZvXg5UKJWYfTD/?=
- =?us-ascii?Q?i1q5dB6X12KPHw+lqKNThLprTkY6NLSVzSM/YWhE4AcIZi+Sh+jI1Vk3TvRi?=
- =?us-ascii?Q?QaZKH1QPTFz4e+FszU3fYQQeqJwG7h0j3KODCP9aEh2lUaT4jGHo+PYOUtHy?=
- =?us-ascii?Q?NALkaUojhks237Ed6V0cQ39kVFguiqbqEr/pzFg4T2Gb61VQz38sCh564yCn?=
- =?us-ascii?Q?BNdFUAViMoQ6o6M2GL4UQ2BTpJOxUpcjyxjwsV12w2zWGEeAauRy8ojjTQ6I?=
- =?us-ascii?Q?GkJ7Rr1R8QE/fSJeSkI50yqpnYvnhVHtVYB4dklDV72mj+pnuoJM8XqziCst?=
- =?us-ascii?Q?kPdBZJPCm3uvyvNyOAeEv+RWKwMXItTVcnOPHekw1lrVIMKxW98HmNzYajiX?=
- =?us-ascii?Q?t3p4uAPxM9jjLUQZb0Heprbbs3HyTR7bE9KgG1tV62pJcnD/SkFzQKnUpgzV?=
- =?us-ascii?Q?l3aDMiYknbnUyjlo4oPty3Jj8MA7QvuPR0v6AT+VVe/4PYU3jaLj983e+DQC?=
- =?us-ascii?Q?hQMVNplu7bvYpGMUQCqPupr6fYtriLnR3lLTa6ONUi6qnTVXYdOqRV8KN0HV?=
- =?us-ascii?Q?/8MtB5ehrnOk0x9msXGKWUKb6yGp2j4rozmf7zE7P39joChbJTG8WCWMV/5q?=
- =?us-ascii?Q?ZpnDLPbChYCsMGwOxpJAkQZ+RJdprge8i9ik0ViOoGHWEsVkFpK222BFlby7?=
- =?us-ascii?Q?058HD7Kes1IiaEpkcvW8BFCVrOk2g8w//IRas8O9AIn8mrFY40cwM0YAjHUJ?=
- =?us-ascii?Q?NalY/TFbR/a4Trp+42XcdO3/wqkXS6bMrFHRC0RaB3PPCUgmoZJWM+5KWmFw?=
- =?us-ascii?Q?doCLgyD4ggQyDWfnbciHwskw7sMFG4QUUN8K+czqRgmkodOumUuSBdnYoOy4?=
- =?us-ascii?Q?W3mVZ4jz50GnmAUhhlUlCWiGWoCa/l5VKkOPs/h0n/Z3C0DKqeQW01NiDbhM?=
- =?us-ascii?Q?CzOcX+rulZfjKz2Ua2dnZQpEnc7bbFscuhoAWcQGKPi1a3/L?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?FVMP0cd4lsJTCFQjWlFxUbGUGpOP8qhY3q/SDO9ATs36RDQ7CY6me4qkhl6g?=
+ =?us-ascii?Q?m3+GMklSupVMqPzNaT9maAeX16dxEzqIKQnDOip8oHxsDFd1YXu3Uvd0rptk?=
+ =?us-ascii?Q?3wmo4z4N0RDtApaSn4AlysFPSxEFMvvGfMzLcEnWcdXY/gWO3H5FAHbLFSp0?=
+ =?us-ascii?Q?0mwYIGPUAsdVYG9/Nlzsu8Q90j2G/hKRoS4VzdkeDEcC4/pznHcwiWrsUyol?=
+ =?us-ascii?Q?dpfE8lF8ZYwxisb0xDwOlGTQxvBXB5iln/0vtRXE8owS7QRI270DrOGRV7D1?=
+ =?us-ascii?Q?1nRxeCuD/252+S9t4c6UkX+DgMsGJ5Gv8ji5zR5efFZAOdikRg+CLIk+FX9u?=
+ =?us-ascii?Q?KrMslcvP+a9fGEH/XFCNYTi8VMGqloRQ24JCsD0jkR9w8IIaR6RlR/HqKrOe?=
+ =?us-ascii?Q?ZNA0tl4r5oIbj8i4n2sPdFPPgK2CUzxevKZs6oWXVoKVobiVkdmpjRVn2SGF?=
+ =?us-ascii?Q?PCZeVILpoa6uuOvto47kqYO2Bjj+A7vgR5YRJSJhXk+Si7iqyeVOJouWMnSX?=
+ =?us-ascii?Q?zNFuLR4C+eeyWSz0gfVICHCz6PU6Cm+VfngrfFymxjb+cdi5xrOgwNTAqsCP?=
+ =?us-ascii?Q?kbd9DjpVDHZxsUJkCfaHqIDMaEfiA6u/a6znKYhdwFnB7D2XqAnfk5OKteBD?=
+ =?us-ascii?Q?q2NLCMGTDn8neHvIhmkZrDMWk9rCRvX180Y1+duzHJF2PW2NZxdAxabVb0ej?=
+ =?us-ascii?Q?oyVf9Py7G38Mqjn5iLC07eNP6EuJwbHjBhVhgebsf5FHKmgWs6JP+Us8rXP7?=
+ =?us-ascii?Q?RSbGs7rYIY9jBUT3U95ZSHEHEcy9CH1TaPcwv+/yyseldzQ/NJWGHmNn99zL?=
+ =?us-ascii?Q?SR1AVH7P5j3rdVneeGjxU5hgGXy5h/rn/N0/jb65ygCUP/Oo49VLdOzFQFP4?=
+ =?us-ascii?Q?vBoFgqmsw5zGZh0ON4NbujZSm3xDNND4Ky5DrebYXmsvA6fU1GX0Q6TfRzix?=
+ =?us-ascii?Q?zq0rGJKdrSyQRmGaWOH+rtuLIXNYK8aRMQ0vNZC5dv2q8U6uqqjxVXZ0wDcG?=
+ =?us-ascii?Q?EeH1oZwJKZ5Ym8GS+nWm7AhsD+MfBrO7A5lCNn6DEHL4CKQJE6HLeVfbYI/M?=
+ =?us-ascii?Q?P9vd+++oTQXbWs+DMfYr6r9B0pkt4xBdw+4gfzpbL7IJDGAKDMcNj7QPR2Tz?=
+ =?us-ascii?Q?ic96X68y26AB1AYWYyVLrcM7rTzszk1IwfzsA0hKeP6b0/vTNj1vqeRmUQsG?=
+ =?us-ascii?Q?45JxaDkdR2Kio4EtU1R6zAQrNrT04yI5YaVxfRx4yTyd7UPlMx04Rw835r0n?=
+ =?us-ascii?Q?nLu5RPAjoQSr9djB9rhNiRxCjY+S6wLQ1OCpNzUHiRPIRmHhgyS6bOZ96yH7?=
+ =?us-ascii?Q?FBbfRwcL0jjaOGYhYiFvZgYNRmlYne1hWt0aSK3vKZE/hzSn+eq9Tkvw/P2D?=
+ =?us-ascii?Q?/m3tnwmo0nZIBRMIHVnaH0HRR5vUG8N3FY3fhMkmtGVpKl+2+UI9mdlaFkh+?=
+ =?us-ascii?Q?Y8cXcixBVyI6T8sZuRAiBfyhk1aF/vetFvHMWtX2cXxouXM6siS4UsgLCODs?=
+ =?us-ascii?Q?lL2+Ar7g4kSZ/cn9r2P4I1awApI7Lc0hXgSsHPJ3wyeX5JYAAejv3VoBZlUA?=
+ =?us-ascii?Q?SlOjY2DPSjqcCNwt48vCLHju6F2JtAw8ro7ejmDA4IHECBmqVy4a+TomJj+0?=
+ =?us-ascii?Q?OZ08ywyMfpx+zzrcPAaaHqen7z76ofjwCu7I0MWR+Mk53tWx2SW7mq1tLWGQ?=
+ =?us-ascii?Q?5osh48rwv2eSgZloHKYFHg/H79ocFEnNiL9rqo+bQ/gTtY1Z?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: SE3P153MB1848.APCP153.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5a24a2d2-8cd9-46e7-d125-08df17bbda85
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Sep 2026 08:39:30.2359 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 824cc23d-ce6f-44e8-1fe3-08df17bbf3f3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Sep 2026 08:40:12.8809 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: v7wj9J4ag8Yq1i2jY8XZmbdRgZHWhhMfyLHEEj1ynsWFgBMXqQ6T3quHMO2+m5otk0MbJbA2WL5ICTfvJ5aapA==
+X-MS-Exchange-CrossTenant-userprincipalname: 8GykTHSLvtbRyje8lr1WWV0Jo5YQxIcNgOIOvFGv/Ph5quwb23lWokrIx9nJOTGIHYoRUEoIkCu39aWcQ7L+bw==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI3P153MB2029
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -140,27 +140,20 @@ Errors-To: dev-bounces@dpdk.org
 > To: dev@dpdk.org
 > Cc: Stephen Hemminger <stephen@networkplumber.org>; stable@dpdk.org;
 > Long Li <longli@microsoft.com>; Wei Hu <weh@microsoft.com>
-> Subject: [EXTERNAL] [PATCH v2 03/33] bus/vmbus: fix ring buffer ordering =
-on
-> weakly ordered CPUs
+> Subject: [EXTERNAL] [PATCH v2 04/33] bus/vmbus: fix missing acquire on
+> receive ring index
 >=20
-> The read index update in vmbus_rxbr_read() was only protected by a compil=
-er
-> barrier. On a weakly ordered architecture the store of rindex can become
-> visible to the host before the data copy completes, allowing the host to =
-reuse
-> and overwrite ring data still being read. Use a release store for the rea=
-d index.
->=20
-> The barrier in rte_vmbus_chan_signal_tx() must order the earlier ring ind=
-ex
-> update against the load of the host interrupt mask, and a write barrier d=
-oes
-> not order stores against loads. Use a full fence, which matches virt_mb()=
- in the
-> equivalent Linux and FreeBSD code.
->=20
-> Neither change affects generated code on x86.
+> The receive path checks available data by reading the write index and the=
+n
+> copies ring data. The link between the two is only the comparison, a cont=
+rol
+> dependency, which does not order load against load on a weakly ordered
+> architecture: packet data can be read before the host has finished writin=
+g it.
+> Load the write index with acquire, pairing with the host's release store.=
+ This is
+> the equivalent of virt_rmb() in the Linux hv_pkt_iter code. No change in
+> generated code on x86.
 >=20
 > Fixes: 831dba47bd36 ("bus/vmbus: add Hyper-V virtual bus support")
 > Cc: stable@dpdk.org
@@ -171,51 +164,40 @@ oes
 Reviewed-by: Wei Hu <weh@microsoft.com>
 
 > ---
->  drivers/bus/vmbus/vmbus_bufring.c | 11 +++++++----
-> drivers/bus/vmbus/vmbus_channel.c |  4 ++--
->  2 files changed, 9 insertions(+), 6 deletions(-)
+>  drivers/bus/vmbus/private.h | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
 >=20
-> diff --git a/drivers/bus/vmbus/vmbus_bufring.c
-> b/drivers/bus/vmbus/vmbus_bufring.c
-> index fcb97287dc..f622869974 100644
-> --- a/drivers/bus/vmbus/vmbus_bufring.c
-> +++ b/drivers/bus/vmbus/vmbus_bufring.c
-> @@ -237,10 +237,13 @@ vmbus_rxbr_read(struct vmbus_br *rbr, void
-> *data, size_t dlen, size_t skip)
->  	 */
->  	rindex =3D vmbus_br_idxinc(rindex, sizeof(uint64_t), br_dsize);
+> diff --git a/drivers/bus/vmbus/private.h b/drivers/bus/vmbus/private.h in=
+dex
+> 6efac86b77..aca5b534f9 100644
+> --- a/drivers/bus/vmbus/private.h
+> +++ b/drivers/bus/vmbus/private.h
+> @@ -12,6 +12,7 @@
+>  #include <bus_driver.h>
+>  #include <bus_vmbus_driver.h>
+>  #include <rte_log.h>
+> +#include <rte_stdatomic.h>
+>  #include <rte_eal_paging.h>
+>  #include <rte_vmbus_reg.h>
 >=20
-> -	/* Update the read index _after_ the channel packet is fetched.	 */
-> -	rte_compiler_barrier();
-> -
-> -	vbr->rindex =3D rindex;
-> +	/*
-> +	 * Update the read index after the channel packet is fetched.
-> +	 * Release store ensures the host can not observe the new read
-> +	 * index before the data copy is complete.
+> @@ -130,7 +131,16 @@ vmbus_br_availwrite(const struct vmbus_br *br,
+> uint32_t windex)  static inline uint32_t  vmbus_br_availread(const struct
+> vmbus_br *br)  {
+> -	return br->dsize - vmbus_br_availwrite(br, br->vbr->windex);
+> +	uint32_t windex;
+> +
+> +	/* Pairs with the host's release store of the write index;
+> +	 * ring data must not be read before the index.
 > +	 */
-> +	rte_atomic_store_explicit((volatile uint32_t __rte_atomic *)&vbr-
-> >rindex,
-> +				  rindex, rte_memory_order_release);
->=20
->  	return 0;
+> +	windex =3D rte_atomic_load_explicit(
+> +		(volatile uint32_t __rte_atomic *)&br->vbr->windex,
+> +		rte_memory_order_acquire);
+> +
+> +	return br->dsize - vmbus_br_availwrite(br, windex);
 >  }
-> diff --git a/drivers/bus/vmbus/vmbus_channel.c
-> b/drivers/bus/vmbus/vmbus_channel.c
-> index 6887fbad46..2648d8e3fd 100644
-> --- a/drivers/bus/vmbus/vmbus_channel.c
-> +++ b/drivers/bus/vmbus/vmbus_channel.c
-> @@ -104,8 +104,8 @@ rte_vmbus_chan_signal_tx(struct rte_vmbus_device
-> *dev, const struct vmbus_channe  {
->  	const struct vmbus_br *tbr =3D &chan->txbr;
 >=20
-> -	/* Make sure all updates are done before signaling host */
-> -	rte_smp_wmb();
-> +	/* Order ring index update before reading host interrupt mask */
-> +	rte_atomic_thread_fence(rte_memory_order_seq_cst);
->=20
->  	/* If host is ignoring interrupts? */
->  	if (tbr->vbr->imask)
+>  int vmbus_txbr_write(struct vmbus_br *tbr, const struct iovec iov[], int
+> iovlen,
 > --
 > 2.53.0
 
