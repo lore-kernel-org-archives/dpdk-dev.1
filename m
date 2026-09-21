@@ -2,89 +2,89 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D949C982EE
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 18:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE11CC982ED
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 19:03:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 96203410DF;
-	Mon, 21 Sep 2026 20:49:57 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A2C5040E2B;
+	Mon, 21 Sep 2026 21:03:29 +0200 (CEST)
 Received: from mail-pl1-f225.google.com (mail-pl1-f225.google.com
  [209.85.214.225])
- by mails.dpdk.org (Postfix) with ESMTP id 78B974067D
- for <dev@dpdk.org>; Mon, 21 Sep 2026 20:49:56 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id F17354067D
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 21:03:27 +0200 (CEST)
 Received: by mail-pl1-f225.google.com with SMTP id
- d9443c01a7336-2dd665f341aso15892805ad.2
- for <dev@dpdk.org>; Mon, 21 Sep 2026 11:49:56 -0700 (PDT)
+ d9443c01a7336-2dd1dcdcf95so1768655ad.1
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 12:03:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790016595; x=1790621395;
+ d=1e100.net; s=20260707; t=1790017407; x=1790622207;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:dkim-signature:x-gm-gg:x-gm-message-state
  :from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=YuvDH1UL3MEvnhrwPxNi9Vpru1rrUsBrTbSXjBMXlMs=;
- b=xfCxp0/2XqJrOnh90xTasjoDkFgP1YaNJpKExPTnlFJJ/eiwBeXrAzcYnr0cH7Exn1
- aaV31T7nt0AwuyL2ooIzQHy8o8kQTIgF9HlEk5CnKVWIFEgWx4I8Tz+iDlv4qtr6neAP
- re/xytg9HCmqBS5KYSd7Up/rE5ovBdx5zwRZ/Jen7r0ILFsxtnH9m8bTlQMcCvCZ7AMq
- R5cPq0ZUURf4YaZjIqpu6v5mw4InPb7BhTUJcuhT3C2fT0B4z59zHocEWRTlrIuk6oVj
- wQBWzj+C7cIBj3rEjCC/czN1yj0nF7dDjl4XoyW5sEF4a4fIA/VekCZUhtmBBFLSNiKo
- AJRA==
+ bh=SlUMyQdvFSYeCUpmQTDDLLwG2OfDvgdhzFNhd9/eOsk=;
+ b=sNgHYycYX8uc57/iwDeNGoklSlVrdPE/oyDaI+FdNDm0DLrwlH1nFUQA/GdPs+I6Dt
+ rfrD1AiFF8meTyC04BfDIzd4nDWIu0U/0IXD96FQkAGcw1TswVjqAVoLEdKSiQbkht2O
+ Pz5FtfGUTunYcYRL91jkEuPq4m85JQZephODb/ZLryb9ligRhAyGd+vpdIn3j89WMcUC
+ JQ58bsV+pXBhQOA3CGgXgp8brBjW1DtCkpv539NiVsLy7WGkBFbISw94TxA3AysVPFR0
+ KImVET5gXWaYgw58SWiVQROGdlTKTt0ed+YgA5yUUNUTaxonszotaKmA6vUOa00KJLOo
+ kG0Q==
 X-Forwarded-Encrypted: i=1;
- AKwUvBywZzvKngAfGYvfa3pbhB9PhN7u4t8dBzzlmTL/zsFdGQwE0an9+AtH2qZF7/wl4v+V8oM=@dpdk.org
-X-Gm-Message-State: AFuF++mYLW6tREwO0O7L4N6t5SiQnh0r/tXQUx4olKlzKSqPEvPr4wFQ
- Idxlrlnce1bnvukKsDb1JZehN0EzRA9KMw3iL2MMR7lzfvwnxSsspK41vRfN/z/OBhR8Hd/Km8f
- s7Dhex8x5NO5mNXMPEpZ5OgYHHiKNCU1/9XUlzyrZQDC98gC0GOcMHJNnrxsSJshteW6eWU+OAS
- adbVpsc0Fq3JO4U26i6jqsrjxEcAnfpDmbrDJ3xCdo792KMjLBKYtHEl+l3dytsYFqqGMJwbydw
- euGoA==
-X-Gm-Gg: AYBFou3mC0Qsgxmfq3Kupkly45EhJwOSg4veiFZQp1grOPIwI+ZJsnAvpoVlfq01h+Y
- fVBaAsFg3+g49BeqqcWaMPNsYYiQHhMJSySZ3STXzPHASOAi32WHnlDytlIFt+d1pMW7ZN73zYG
- hvydnSsoQObEXfkWrqicao2UP2tEaF68cdAv9H3xTgmeZOXuSyzTz2hhRHfmhBwNjENVQrio5LL
- k7Gse0CTHjTedlkxywTp4F04K23nzR+aWd/vgVMXMRR51dDOp/gYF7CfVJHHmFwoeGOXzgHyENf
- P9cRoqicS/BJ8KkYnfXLUc/AyVaSCfVXU+GhUk8rvHHB6Hf9C3bShk/9wagAmgUW2d6chTuZkmD
- rbZeetbO4qu1pxl94LcO7zzc0WtoOU+amgOpsfNCG32+hHrWZPihHMys6g5uT6egdJ0qrtxc0u3
- PRe03FxBoBNecAlyZ5ksJn45qSYhjNX+JeCD/N6WBQOEw=
-X-Received: by 2002:a17:903:2443:b0:2d9:484:861d with SMTP id
- d9443c01a7336-2ddb1af6da8mr163330445ad.10.1790016595288; 
- Mon, 21 Sep 2026 11:49:55 -0700 (PDT)
+ AKwUvBxtVrJZ1Jpe6HrxuGy+ALZxqpdkDJer6YZnfK1HJLmwIkZarLFD4J7d4X3nfltveovzzTc=@dpdk.org
+X-Gm-Message-State: AFuF++ne3TpiLSSzOeU2iS41WILZb90C72FYNQ9GpV9sU6TWCVB19u8K
+ bllXrUxuh6MIj/ZYmpZe8N2H2VLgWC0HPovjUKhNtDKU4l6WnnGIWnAI9I9OAbCn33nznYa56n7
+ RGQNBpqvRDheYeag2PSVHp4bRF3DPyhmyOThzqWn5alDvXAfB0TrZKnFIBYotrVrrokyiGErc63
+ 29/DfCGPIp4EQgF8C7ZonkApA58ZIyutBOa0U0bdReV0+qB0LeYrsvnoXm57Kg4ryTMw2KHlsQc
+ Sjjzw==
+X-Gm-Gg: AYBFou3Mgi4cDkEZWEeiRNdcNT/BM9y8RwbyW+cOC9snD4hfkM2+r6n42mfQeSVdr1O
+ Dj1HFeG9bSKmwAo8JixQISsno6vZD8W2RxOOKZ/gNH7LyA+b+7KWtPYl5icAn+Vieohr0fwDze/
+ LkVIsFljsaPl3Wki2SiZJ8JPhCCzvL/k5WWvOOql7NzeIslhi3lqHaVo4jAe04QdAC9UT9Lj6jf
+ HBNOT7dyoe2O9VhJvl48T0Gp8V1a+MGeFjc2+MLjqDwArLMD1z/FL1FajjmolL+lrUAScpNMqfP
+ gPfTzHlxe7+oO6FMbVc+0Rh39iImUlrkRPrwAIQZWSmeZgztKr201RYZOL/78M4qEf7FyW7X4kg
+ HbuZOniBEXSCUgek3Huc7mZgKxySNreI9acuSRFxkTv+YKxD/UcIa/yIQZvc3vDAe8iM7ENdgSp
+ TGP5HSK8jzmB5oFZ3Ih5c5PTy+h8HjUnlE/T9nTAWGqhI=
+X-Received: by 2002:a17:902:db12:b0:2d8:d4cf:fe49 with SMTP id
+ d9443c01a7336-2df598074e1mr4211465ad.15.1790017406451; 
+ Mon, 21 Sep 2026 12:03:26 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-22.dlp.protect.broadcom.com. [144.49.247.22])
+ (address-144-49-247-29.dlp.protect.broadcom.com. [144.49.247.29])
  by smtp-relay.gmail.com with ESMTPS id
- d9443c01a7336-2df231a531asm2821865ad.43.2026.09.21.11.49.54
+ d9443c01a7336-2ddc17a914csm3019045ad.18.2026.09.21.12.03.25
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 21 Sep 2026 11:49:55 -0700 (PDT)
+ Mon, 21 Sep 2026 12:03:26 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-ed1-f69.google.com with SMTP id
- 4fb4d7f45d1cf-6a6735afb87so3218088a12.2
- for <dev@dpdk.org>; Mon, 21 Sep 2026 11:49:54 -0700 (PDT)
+Received: by mail-ed1-f70.google.com with SMTP id
+ 4fb4d7f45d1cf-6a98570af94so215074a12.1
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 12:03:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1790016593; x=1790621393; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1790017404; x=1790622204; darn=dpdk.org;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=YuvDH1UL3MEvnhrwPxNi9Vpru1rrUsBrTbSXjBMXlMs=;
- b=Kb7OryhtoBXWp0Rzj9GMM7bGdIiRIefjs/t7ItU8ziJbcdtQPx6sR7RCsJZlpjDW51
- OpRKdcTtIuKEqLtWHsdWSvWwZ7fSFKswc0b864Rx6Pv1hAXxIDZZHfPDZA8L7qhsVJDl
- kTtV8OkMVOM9K5bYRnjoSmpyYSC4/c+7LD8LQ=
+ :content-type; bh=SlUMyQdvFSYeCUpmQTDDLLwG2OfDvgdhzFNhd9/eOsk=;
+ b=V0KtdDV1ipbmzG61w2QfyOyzsRKQji5b+0BKgmGGSFOdI1R2dSGq070XGdI3JbbXcv
+ gNCj+exBISPf1c1VPROLaZaY3qDWBJJ1VFhrFDew3IVlKZ5WwgGZULH+GdU1SsAO9EVS
+ K8fJYUA8oufROf20QcQsENOmLfHmaJPBJBPk8=
 X-Forwarded-Encrypted: i=1;
- AKwUvBztCLJDrAaI8QI4EdKqvV2b/uIo0FCGnnMZV4xIeQokI11LU9Yn91zKR6Cgq3i5ugx67WE=@dpdk.org
-X-Received: by 2002:a05:6402:3908:b0:6a9:ae3a:9c9d with SMTP id
- 4fb4d7f45d1cf-6aa531b797emr8640518a12.29.1790016593149; 
- Mon, 21 Sep 2026 11:49:53 -0700 (PDT)
-X-Received: by 2002:a05:6402:3908:b0:6a9:ae3a:9c9d with SMTP id
- 4fb4d7f45d1cf-6aa531b797emr8640508a12.29.1790016592713; Mon, 21 Sep 2026
- 11:49:52 -0700 (PDT)
+ AKwUvBxWcVkg74dz4WNWxeQ09gtzlscAMAq+SmzG1q24HbXsWfElj6LzpJui7ok67gTHJDEfmPU=@dpdk.org
+X-Received: by 2002:a05:6402:1854:b0:6aa:90cb:c8cb with SMTP id
+ 4fb4d7f45d1cf-6aa9fef4d26mr314604a12.11.1790017404307; 
+ Mon, 21 Sep 2026 12:03:24 -0700 (PDT)
+X-Received: by 2002:a05:6402:1854:b0:6aa:90cb:c8cb with SMTP id
+ 4fb4d7f45d1cf-6aa9fef4d26mr314592a12.11.1790017403850; Mon, 21 Sep 2026
+ 12:03:23 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260915085125.430901-1-Evgeny.Sokolov@infotecs.ru>
-In-Reply-To: <20260915085125.430901-1-Evgeny.Sokolov@infotecs.ru>
+References: <20260915085502.430947-1-Evgeny.Sokolov@infotecs.ru>
+In-Reply-To: <20260915085502.430947-1-Evgeny.Sokolov@infotecs.ru>
 From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Date: Mon, 21 Sep 2026 14:49:35 -0400
-X-Gm-Features: AcwNN1VXt1Lpklvm7WoydSWoTvcoCA1FTn7SzzpScud2Dsyazp1Act3PkksHrgw
-Message-ID: <CA+BST0=M0jBQs5brUhvg+7ZJvHiefv03syVc5rQ3GW9rugKbsg@mail.gmail.com>
-Subject: Re: [PATCH] net/bnxt: check TSID retrieval failure
+Date: Mon, 21 Sep 2026 15:03:04 -0400
+X-Gm-Features: AcwNN1U4jVFIYyyRLFE9pUDx3pLR0ZIp5pJ5UkRla8KlAG6Hz5qg8Lt7-x_GRJM
+Message-ID: <CA+BST0motX=TGzzKRmn69kpZ8B0fFmpKW0uwCWPKYzXLK6tfcw@mail.gmail.com>
+Subject: Re: [PATCH] net/bnxt: prevent overflow in alarm timeout calculation
 To: Evgeny Sokolov <Evgeny.Sokolov@infotecs.ru>
 Cc: Ajit Khaparde <ajit.khaparde@broadcom.com>, dev@dpdk.org, stable@dpdk.org, 
- shuanglin.wang@broadcom.com
+ kalesh-anakkur.purayil@broadcom.com, somnath.kotur@broadcom.com
 X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 Content-Type: multipart/signed; protocol="application/pkcs7-signature";
- micalg=sha-256; boundary="0000000000003134fa065c02b757"
+ micalg=sha-256; boundary="0000000000008a9df7065c02e755"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -98,99 +98,151 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000003134fa065c02b757
-Content-Type: multipart/alternative; boundary="00000000000026c4f1065c02b7d1"
+--0000000000008a9df7065c02e755
+Content-Type: multipart/alternative; boundary="0000000000007fbe41065c02e713"
 
---00000000000026c4f1065c02b7d1
+--0000000000007fbe41065c02e713
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 15, 2026 at 4:51=E2=80=AFAM Evgeny Sokolov <Evgeny.Sokolov@info=
+On Tue, Sep 15, 2026 at 4:55=E2=80=AFAM Evgeny Sokolov <Evgeny.Sokolov@info=
 tecs.ru>
 wrote:
 
 > From: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru>
 >
-> Check the return value of bnxt_ulp_cntxt_tsid_get() and log an
-> error when TSID retrieval fails.
+> The alarm timeout is calculated by multiplying wait_msec by
+> US_PER_MS before passing the value to rte_eal_alarm_set().
 >
-> Found by InfoTeCS on behalf of Linux Verification Center (linuxtesting.or=
-g)
-> with SVACE.
+> Since wait_msec is a uint32_t, the multiplication may overflow
+> when performed using 32-bit arithmetic for large timeout values.
+>
+> Cast wait_msec to uint64_t to ensure the multiplication is
+> performed in 64-bit arithmetic.
 >
 > Signed-off-by: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru>
+> Cc: stable@dpdk.org
 > ---
->  drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/net/bnxt/bnxt_ethdev.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 >
-> diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
-> b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
-> index fa98b2bca9..d5ce4c3c18 100644
-> --- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
-> +++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c
-> @@ -309,6 +309,8 @@ ulp_tfc_tbl_scope_deinit(struct bnxt *bp)
->                 return;
+> diff --git a/drivers/net/bnxt/bnxt_ethdev.c
+> b/drivers/net/bnxt/bnxt_ethdev.c
+> index a2429561b9..16a65f9770 100644
+> --- a/drivers/net/bnxt/bnxt_ethdev.c
+> +++ b/drivers/net/bnxt/bnxt_ethdev.c
+> @@ -4855,7 +4855,7 @@ static void bnxt_check_fw_health(void *arg)
 >
->         rc =3D bnxt_ulp_cntxt_tsid_get(bp->ulp_ctx, &tsid);
-> +       if (unlikely(rc))
-> +               BNXT_DRV_DBG(ERR, "Failed to get the table scope\n");
+>         info->last_reset_counter =3D val;
 >
->         rc =3D bnxt_ulp_cntxt_fid_get(bp->ulp_ctx, &fid);
->         if (rc)
+> -       rte_eal_alarm_set(US_PER_MS * info->driver_polling_freq,
+> +       rte_eal_alarm_set(US_PER_MS * (uint64_t)info->driver_polling_freq=
+,
+>                           bnxt_check_fw_health, (void *)bp);
+>
+>         return;
+> @@ -4877,7 +4877,7 @@ static void bnxt_check_fw_health(void *arg)
+>         else
+>                 wait_msec =3D info->normal_func_wait_period;
+>
+> -       rte_eal_alarm_set(US_PER_MS * wait_msec,
+> +       rte_eal_alarm_set(US_PER_MS * (uint64_t)wait_msec,
+>                           bnxt_fw_reset_cb, (void *)bp);
+>  }
+>
+> @@ -4895,7 +4895,7 @@ void bnxt_schedule_fw_health_check(struct bnxt *bp)
+>
+>         polling_freq =3D bp->recovery_info->driver_polling_freq;
+>
+> -       rte_eal_alarm_set(US_PER_MS * polling_freq,
+> +       rte_eal_alarm_set(US_PER_MS * (uint64_t)polling_freq,
+>                           bnxt_check_fw_health, (void *)bp);
+>         bp->flags |=3D BNXT_FLAG_FW_HEALTH_CHECK_SCHEDULED;
+>
 > --
 
- Acked-by:  Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+Acked-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 
 >
 > 2.30.2
 >
 >
 
---00000000000026c4f1065c02b7d1
+--0000000000007fbe41065c02e713
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 <div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
 mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Tue, Sep 15,=
- 2026 at 4:51=E2=80=AFAM Evgeny Sokolov &lt;<a href=3D"mailto:Evgeny.Sokolo=
+ 2026 at 4:55=E2=80=AFAM Evgeny Sokolov &lt;<a href=3D"mailto:Evgeny.Sokolo=
 v@infotecs.ru">Evgeny.Sokolov@infotecs.ru</a>&gt; wrote:<br></div><blockquo=
 te class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px =
 solid rgb(204,204,204);padding-left:1ex">From: Sokolov Evgeny &lt;<a href=
 =3D"mailto:Evgeny.Sokolov@infotecs.ru" target=3D"_blank">Evgeny.Sokolov@inf=
 otecs.ru</a>&gt;<br>
 <br>
-Check the return value of bnxt_ulp_cntxt_tsid_get() and log an<br>
-error when TSID retrieval fails.<br>
+The alarm timeout is calculated by multiplying wait_msec by<br>
+US_PER_MS before passing the value to rte_eal_alarm_set().<br>
 <br>
-Found by InfoTeCS on behalf of Linux Verification Center (<a href=3D"http:/=
-/linuxtesting.org" rel=3D"noreferrer" target=3D"_blank">linuxtesting.org</a=
->) with SVACE.<br>
+Since wait_msec is a uint32_t, the multiplication may overflow<br>
+when performed using 32-bit arithmetic for large timeout values.<br>
+<br>
+Cast wait_msec to uint64_t to ensure the multiplication is<br>
+performed in 64-bit arithmetic.<br>
 <br>
 Signed-off-by: Sokolov Evgeny &lt;<a href=3D"mailto:Evgeny.Sokolov@infotecs=
 .ru" target=3D"_blank">Evgeny.Sokolov@infotecs.ru</a>&gt;<br>
+Cc: <a href=3D"mailto:stable@dpdk.org" target=3D"_blank">stable@dpdk.org</a=
+><br>
 ---<br>
-=C2=A0drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c | 2 ++<br>
-=C2=A01 file changed, 2 insertions(+)<br>
+=C2=A0drivers/net/bnxt/bnxt_ethdev.c | 6 +++---<br>
+=C2=A01 file changed, 3 insertions(+), 3 deletions(-)<br>
 <br>
-diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c b/drivers/net/bnxt/tf_u=
-lp/bnxt_ulp_tfc.c<br>
-index fa98b2bca9..d5ce4c3c18 100644<br>
---- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c<br>
-+++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tfc.c<br>
-@@ -309,6 +309,8 @@ ulp_tfc_tbl_scope_deinit(struct bnxt *bp)<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return;<br>
+diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.=
+c<br>
+index a2429561b9..16a65f9770 100644<br>
+--- a/drivers/net/bnxt/bnxt_ethdev.c<br>
++++ b/drivers/net/bnxt/bnxt_ethdev.c<br>
+@@ -4855,7 +4855,7 @@ static void bnxt_check_fw_health(void *arg)<br>
 <br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 rc =3D bnxt_ulp_cntxt_tsid_get(bp-&gt;ulp_ctx, =
-&amp;tsid);<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0if (unlikely(rc))<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0BNXT_DRV_DBG(ERR, &=
-quot;Failed to get the table scope\n&quot;);<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 info-&gt;last_reset_counter =3D val;<br>
 <br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 rc =3D bnxt_ulp_cntxt_fid_get(bp-&gt;ulp_ctx, &=
-amp;fid);<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (rc)<br>
---</blockquote><div>=C2=A0<span style=3D"font-family:Calibri;font-size:11pt=
-;background-color:transparent">Acked-by:=C2=A0=C2=A0Kishore
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0rte_eal_alarm_set(US_PER_MS * info-&gt;driver_p=
+olling_freq,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0rte_eal_alarm_set(US_PER_MS * (uint64_t)info-&g=
+t;driver_polling_freq,<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 bnxt_check_fw_health, (void *)bp);<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 return;<br>
+@@ -4877,7 +4877,7 @@ static void bnxt_check_fw_health(void *arg)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 else<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 wait_msec =3D info-=
+&gt;normal_func_wait_period;<br>
+<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0rte_eal_alarm_set(US_PER_MS * wait_msec,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0rte_eal_alarm_set(US_PER_MS * (uint64_t)wait_ms=
+ec,<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 bnxt_fw_reset_cb, (void *)bp);<br>
+=C2=A0}<br>
+<br>
+@@ -4895,7 +4895,7 @@ void bnxt_schedule_fw_health_check(struct bnxt *bp)<b=
+r>
+<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 polling_freq =3D bp-&gt;recovery_info-&gt;drive=
+r_polling_freq;<br>
+<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0rte_eal_alarm_set(US_PER_MS * polling_freq,<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0rte_eal_alarm_set(US_PER_MS * (uint64_t)polling=
+_freq,<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 bnxt_check_fw_health, (void *)bp);<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 bp-&gt;flags |=3D BNXT_FLAG_FW_HEALTH_CHECK_SCH=
+EDULED;<br>
+<br>
+--</blockquote><div><span style=3D"font-family:Calibri;font-size:11pt;backg=
+round-color:transparent">Acked-by: Kishore
 Padmanabha &lt;<a href=3D"mailto:kishore.padmanabha@broadcom.com">kishore.p=
 admanabha@broadcom.com</a>&gt;</span></div><blockquote class=3D"gmail_quote=
 " style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);=
@@ -199,9 +251,9 @@ padding-left:1ex"> <br>
 <br>
 </blockquote></div></div>
 
---00000000000026c4f1065c02b7d1--
+--0000000000007fbe41065c02e713--
 
---0000000000003134fa065c02b757
+--0000000000008a9df7065c02e755
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -295,13 +347,13 @@ W8uDQvdvRdxXg4lkBLyifOudYTP3fULjpD6RWQPFlUPlh8F5QQEdKlfKW94rGD+O0u4sWi/msZw0
 6VTvZ6C2BbUMJAo7coFff48NkW2xfICC8Kn1eU1eiWCrPSAls8STm9q25wOQMYICVzCCAlMCAQEw
 YjBSMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEoMCYGA1UEAxMfR2xv
 YmFsU2lnbiBHQ0MgUjYgU01JTUUgQ0EgMjAyMwIMTxuM8PbwRQIs9uJeMA0GCWCGSAFlAwQCAQUA
-oIHHMC8GCSqGSIb3DQEJBDEiBCDQnh4RBTrmv8UxIr5s+OdUH8WwJVGmM3hm707RgkWObzAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjA5MjExODQ5NTNaMFwGCSqG
+oIHHMC8GCSqGSIb3DQEJBDEiBCCE0oROa6xhmLLV7qrvGGg2qPSpVrTMon/jfR6os8cLTDAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjA5MjExOTAzMjRaMFwGCSqG
 SIb3DQEJDzFPME0wCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZI
-hvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQAWmTXS6RY8
-4hm/L58QWUib/P8khEG7qibYJr7PyygjzidfqhKGLfeJ4i8bIdv6MB8O6dA5RR4+aNOI2br2y961
-7TMVKKi95qIzm2+mQxrFZLjDjWD2K+obhtVLYQN1fL6gn8jAmZ3+W4c+8Z/6XL5bwbCO5+Jt+pC7
-p8TQcSXtDhXeiZRYGe4SmF0sZR8VWYB06SF4O1CaByJTfROorKs7oanuSIGCb+XvJ4kL93QYrotp
-OMx5zyOIuGf9jwGaXYg1Z3/gZlWwuC8n4VeNx2JxVW+R9J2LFrynx0l9rFkMUZFQXo/WuewrzYhW
-Pcsjh9ZyD01AX5Im+51hjLIn8XT+
---0000000000003134fa065c02b757--
+hvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQB2fFsl3x1D
+8HJVTH0XvmnM+gu/lH+LCbF9RrWAZXVvVBlxHqqiu9I7p97HsXFATnkVBxW93PpKQOgR4Lrfi147
+XREV/4zjsGvY++p6Vz/zf6vq2VLXi6Jk16nzWITsZvB2HwbJJJOj6zOpuqSwtIP6s98X4f4BHzQh
+wNBk4HA+L42NCZl4Cv+weoaQ8KfNS3Dr0DRlwtm2FlgjzNwaEzl5WR4ctu7/C5T9AvXUAheJQlRu
+5AIw0rV4IXpDyZJmoHzIhzNPsFVp7+D4rq/OXYhVe7B77724JdSh+Vs7bszapqTxzlkopBekwDzG
+WysAKWwVrA4mqxq1hTrde1x44hXa
+--0000000000008a9df7065c02e755--
