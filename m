@@ -2,88 +2,88 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E85EFC982ED
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 19:25:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C36E1C982EE
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 19:32:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0122942DF0;
-	Mon, 21 Sep 2026 21:25:25 +0200 (CEST)
-Received: from mail-pl1-f227.google.com (mail-pl1-f227.google.com
- [209.85.214.227])
- by mails.dpdk.org (Postfix) with ESMTP id D26FE4067D
- for <dev@dpdk.org>; Mon, 21 Sep 2026 21:25:22 +0200 (CEST)
-Received: by mail-pl1-f227.google.com with SMTP id
- d9443c01a7336-2dd68a16955so2838765ad.0
- for <dev@dpdk.org>; Mon, 21 Sep 2026 12:25:22 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id DF8BE40E2B;
+	Mon, 21 Sep 2026 21:32:00 +0200 (CEST)
+Received: from mail-yw1-f225.google.com (mail-yw1-f225.google.com
+ [209.85.128.225])
+ by mails.dpdk.org (Postfix) with ESMTP id 6A15A40B94
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 21:31:59 +0200 (CEST)
+Received: by mail-yw1-f225.google.com with SMTP id
+ 00721157ae682-8828138cc95so871817b3.1
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 12:31:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790018722; x=1790623522;
+ d=1e100.net; s=20260707; t=1790019118; x=1790623918;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:dkim-signature:x-gm-gg:x-gm-message-state
  :from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=n+eB+s/dBze1eEDcZWTKvp2RlC7+cESeJHEdSMzoHAo=;
- b=UDFbfbhoRyEwuVFLtbH7ICuVdIC48Q6nyjzF6YNbF5KtM3HMRlRlgEs2e/SZA3JpNm
- jZMsxxWJCMLVTUmBJgwQ4lNFcrG3oA1t8c+0p71bDpwjsGF7RuMi8Yc5PIBRb//8KUZ3
- a9HJktcpQw8iZj90/FteL6EkiYnvOJ6+WbCghx8uvmOhfvEBTewjUpjFJwDvYpQnztfh
- PcLDEmnpMZrRJmcLFSg2kUctXvKcYv1uIyzzuNtZyzcOmeL43WTN33HS2teAw8gtpylp
- hL+1U/gdhQD30mjUfAPvjUxvAp9oiB8is50sVQgHL6Qzo4msZJEiDt+NzT7YZh6lcCNL
- U+fA==
+ bh=tENoRYkC3SA9/FIWn2M7PvV1n3Q1XIdNxAlbGKtj6Zg=;
+ b=G1gxMr+6+y8m2Esy9Ed83a0yY9+hnNhJQctPpLdHuZ9mkmhOOwygD7eb7LtontvpoM
+ NMyCklDha0maXgY4kGbj3c2PRRTe0wr1uGayPxoHU5DvyjEe7jUW0WTi5yuvDvMUh9iv
+ Op3zTXWGcnUi7Y7qy2ZUW/vXLwdBXamP9Vwj9Yi3TvcSsQxJNZKrox0wLz+UTvHGfwXv
+ epkhBiOvwutB+4rhDBrS9Ks3cWmXcU8ZCLjLtUpSnkNbx5IqsYfwGtrbQemu2TGQN5b3
+ mupa3IAvtRlc8H+4bNQuqO1NlNC7HEUQVhXWE2zP64pPfwJM4qdiVAFtdPrPEq6e4s97
+ MOzQ==
 X-Forwarded-Encrypted: i=1;
- AKwUvBxFl7hgMXUj9RwfxAgMstpsVsmkDVZKLp/bqD/vXfQKOArTQmBFaBJ5YW83pigSV0UEkxA=@dpdk.org
-X-Gm-Message-State: AFuF++lPuS9HY72GPn5+iNKm8YmQM5P3F3zmjo90Zzmpx4rtrr35GqW8
- 6kymIOOPx6GFZth3LzHI0Oy/sRa1MovhcqB3aN+pI1s1glJ4qNsFoqxYDKxn0XKWS1Way8L+lW+
- LY/Wha9PZUss+ghEd+witU6seSPNilmZ2HDFykmwyQeWYuWH145RbW0LQXzWaeYgUCndQ3HC0HP
- wOuU+ZhgBa935cs+vqC4A+j7zMFHh8pGLqtNVdbngtBgY0K2xnle4LS0q3ole64ZEg9AXj1gFhc
- 2YHzA==
-X-Gm-Gg: AYBFou1DHsbDGtekxYFsdJkAOZnci7er3R0x/GLjoYg70VM7dRgx1gzB6snuIS7DqQW
- uYHVunSqozfO9k5VjI8NjBZhBRQ7KIu+CYI58C10dtlxQHeusxQYKAkjgBwqbBVxYeAIy7ZLe8I
- GCxaDRCDYm/O2QqNU7bLGY46agYvMHdNQEbhwGz1cT+we5mT4tR+WNSqbAiqT24P5O1K7wi7wL6
- 5YEjbLEkwaDOd/GjjOsLndxQ0onnZrBSDlYTp1TjxHB7x9myLS5rmji0FBp72JMjN6Yc28UwzLk
- wc4kYTjTAnRAIwlK7XSPPsJDZR3EGPoT/6oEvioV5ZBtenqKuM8pGFpPKHRimIKAwSBoGulnlkv
- wGB+7iQIzNlQc18DoZ+TSYdoZ7uQ/IEpMx6c3PJxAcLhLxAxelc9MVv1fbmF1pXB9ltXRUexCEO
- ysJ9XVBRyEkPDZmwiJNF4dJUFZAnkHOSx1NSoJDWKSwoA=
-X-Received: by 2002:a17:90b:52:b0:39e:4c7e:bc4 with SMTP id
- 98e67ed59e1d1-3a066a75edamr444651a91.18.1790018721424; 
- Mon, 21 Sep 2026 12:25:21 -0700 (PDT)
+ AKwUvBy8dySdCaPMgCG/b3mdJjCfnMzLgZQHWasscjKlL+ev0O9zjdJcv6XpegQdAvwuBzDy1wE=@dpdk.org
+X-Gm-Message-State: AFuF++lqG0f9Y3ikFgDOqyEH4ksR+cCykZN1AUmv1YbEQ19aMoi6QKdI
+ GpPfjTbZcgLzjsKQHNJmIkey2t9UCNuNP7H1A7WiNIOwv6ACCz5Gpus/pHg1zif4zmAaepwE7oN
+ FOJzpnNRBi/wadEQmLs0Dkw9TRwiA8rCjEJBgJwjJgYS0hknnl9+ndrQ9MmXLmKFVKmtiqVKQcJ
+ VhEW84nmN5UQt4kA6LG5Yk76d6fy7JesuwXNWf4PYUBazMx6J97TirDAv5sBr89CXtRuUwDvJll
+ Z8r1g==
+X-Gm-Gg: AYBFou3GUbOfeCSmn0u5OZvF8xzZUDxil+d4tg6qp/tZEfil3Fuw4dIgxkmYmdhp55g
+ 9f2vbtd3w7DGqEnb5VVD4JLTV7YuxwCNIZfzX/4Kk+NvgFzmL3c+yn4ycFhUTOREggYxd676pae
+ pU82r3WDvq+FX/YtrIIztxSve5VMp3MzUrU6WtuLWGJmVcm1ni1OocB414Wyx/bnI2dXFzs+hYP
+ M96ezkBB1R3Xk18D7wqKVlAg+KWn/4s/OvrYbgaSNufqofIZZGVhS+ERwNM3xe1phC0c2Hgo7Ju
+ xdf9Xa+I9ZJHJTHEVPvQxKimYO4xSfcXvGKk42nn0TvvrpX2IbHEHIfAkFjHlY3mb81jeroLW0o
+ tzTcQRKvqYd2vxkCrQBoVcPYWYyOvTaRWZOx1bOlYwZD7dNhBb5rvGMVoDmTuYOWph//PAQN96b
+ 68JzZKW0bmIG3JYjqpgl+WQJAt2PB2CG/AmE9/AgSRVwxdsg==
+X-Received: by 2002:a05:690c:38b:b0:873:5c7b:c0fb with SMTP id
+ 00721157ae682-89736265037mr43305187b3.51.1790019118247; 
+ Mon, 21 Sep 2026 12:31:58 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-22.dlp.protect.broadcom.com. [144.49.247.22])
+ (address-144-49-247-125.dlp.protect.broadcom.com. [144.49.247.125])
  by smtp-relay.gmail.com with ESMTPS id
- 98e67ed59e1d1-3a069a398ecsm89783a91.5.2026.09.21.12.25.20
+ 00721157ae682-8a240faa232sm27857b3.27.2026.09.21.12.31.57
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 21 Sep 2026 12:25:21 -0700 (PDT)
+ Mon, 21 Sep 2026 12:31:58 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-ed1-f70.google.com with SMTP id
- 4fb4d7f45d1cf-6a64cb77b0aso3951672a12.3
- for <dev@dpdk.org>; Mon, 21 Sep 2026 12:25:20 -0700 (PDT)
+Received: by mail-ed1-f69.google.com with SMTP id
+ 4fb4d7f45d1cf-6a9b4e3987aso4122533a12.3
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 12:31:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1790018719; x=1790623519; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1790019116; x=1790623916; darn=dpdk.org;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=n+eB+s/dBze1eEDcZWTKvp2RlC7+cESeJHEdSMzoHAo=;
- b=BHntTxSb3zQmWSMlhgHgOO+4WWrXhcmRMXJkn6sCEGhjcRH4iXPyF0yokeiw9IIL2J
- i2wiaoH/nHTMkW+8coUgs+8AbaqQiBudpxg0c/LVi6qUuGPRVcSnVSylE27hGmaJm1KW
- NNM0PV+1FxcK+l7u+BPSpWORtZ3+TdgxE6AP4=
+ :content-type; bh=tENoRYkC3SA9/FIWn2M7PvV1n3Q1XIdNxAlbGKtj6Zg=;
+ b=ZoKCi0zbduwzPPZTyCYhuTg1ffX1LmEGY6FNBh2JR4bsdWsC2WO/U716JElWNtt8tM
+ GJvVJ2lVCG4Xvvbs/HvaGiGNgREHHIcMjTGSw+bB4x6nwfxr6vFDD10Zpl2qPN0YUqFu
+ eSvIAkDM5JaCrTjpJIyRKND49Ok6nbQtvRd9g=
 X-Forwarded-Encrypted: i=1;
- AKwUvBwp7MhHrj9cKERstyWOwe9dEdHb2n5ybpIQEdrTyhLt5DM+AvT0GMlhmvJfK3onpHNeCio=@dpdk.org
-X-Received: by 2002:a05:6402:3216:b0:6a9:850d:bb38 with SMTP id
- 4fb4d7f45d1cf-6aa53124ec3mr9067862a12.10.1790018719248; 
- Mon, 21 Sep 2026 12:25:19 -0700 (PDT)
-X-Received: by 2002:a05:6402:3216:b0:6a9:850d:bb38 with SMTP id
- 4fb4d7f45d1cf-6aa53124ec3mr9067830a12.10.1790018718397; Mon, 21 Sep 2026
- 12:25:18 -0700 (PDT)
+ AKwUvBx/vhJRI7xHGz6sjrD062s99XpwFNQBNDZezNXI7Pwp1KHBWLHFPdTXAEoEOCnChO3Jmng=@dpdk.org
+X-Received: by 2002:a05:6402:44da:b0:6a7:f2d5:dfcc with SMTP id
+ 4fb4d7f45d1cf-6aa5797a6cfmr8506928a12.36.1790019116699; 
+ Mon, 21 Sep 2026 12:31:56 -0700 (PDT)
+X-Received: by 2002:a05:6402:44da:b0:6a7:f2d5:dfcc with SMTP id
+ 4fb4d7f45d1cf-6aa5797a6cfmr8506912a12.36.1790019116205; Mon, 21 Sep 2026
+ 12:31:56 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260915090524.431183-1-Evgeny.Sokolov@infotecs.ru>
-In-Reply-To: <20260915090524.431183-1-Evgeny.Sokolov@infotecs.ru>
+References: <20260915090715.431258-1-Evgeny.Sokolov@infotecs.ru>
+In-Reply-To: <20260915090715.431258-1-Evgeny.Sokolov@infotecs.ru>
 From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Date: Mon, 21 Sep 2026 15:25:01 -0400
-X-Gm-Features: AcwNN1VmHefLTr-FwLc3XuTRz-YesZwluZUr9I_Y830VJLScixeMZoRVnMxM7xk
-Message-ID: <CA+BST0nU-MwUJa0QOJPC8UvXQy--V-v5S3iyL5uJCZjWcaNdrg@mail.gmail.com>
-Subject: Re: [PATCH] net/bnxt: remove redundant Rx queue array check
+Date: Mon, 21 Sep 2026 15:31:38 -0400
+X-Gm-Features: AcwNN1WdMXdDQw1Rp9vvzLw2ggy_jvCd0b5zVuCdUFLpPchSyR2HtgqyogoxzHk
+Message-ID: <CA+BST0mr39pHcvZnybXGMetR4NBmXYY_vLqfSqKCLU+Ugd7hRw@mail.gmail.com>
+Subject: Re: [PATCH] net/bnxt: remove redundant VNIC NULL check
 To: Evgeny Sokolov <Evgeny.Sokolov@infotecs.ru>
 Cc: Ajit Khaparde <ajit.khaparde@broadcom.com>, dev@dpdk.org, stable@dpdk.org
 X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 Content-Type: multipart/signed; protocol="application/pkcs7-signature";
- micalg=sha-256; boundary="000000000000ebc63b065c03359a"
+ micalg=sha-256; boundary="0000000000009b9109065c034d5e"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -97,53 +97,53 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000ebc63b065c03359a
-Content-Type: multipart/alternative; boundary="000000000000da4ace065c03359f"
+--0000000000009b9109065c034d5e
+Content-Type: multipart/alternative; boundary="000000000000902f43065c034d7a"
 
---000000000000da4ace065c03359f
+--000000000000902f43065c034d7a
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 15, 2026 at 5:05=E2=80=AFAM Evgeny Sokolov <Evgeny.Sokolov@info=
+On Tue, Sep 15, 2026 at 5:07=E2=80=AFAM Evgeny Sokolov <Evgeny.Sokolov@info=
 tecs.ru>
 wrote:
 
 > From: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru>
 >
-> The rx_queues array is allocated during device configuration
-> before nb_rx_queues is set. Since bnxt_rx_queue_setup_op() is
-> called from rte_eth_rx_queue_setup(), which validates the queue
-> index against nb_rx_queues, the rx_queues NULL check is redundant.
+> Since commit 51fafb89a9a ("net/bnxt: get rid of ff pools and use
+> VNIC info array"), VNIC objects are obtained from the VNIC info
+> array.
 >
-> Remove the unnecessary condition.
+> The address of an array element cannot be NULL, making the NULL
+> check redundant.
+>
+> Remove the dead code.
+>
+> Found by InfoTeCS on behalf of Linux Verification Center (linuxtesting.or=
+g)
+> with SVACE.
 >
 > Signed-off-by: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru>
-> Cc: stable@dpdk.org
 > ---
->  drivers/net/bnxt/bnxt_rxq.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
+>  drivers/net/bnxt/bnxt_rxq.c | 5 -----
+>  1 file changed, 5 deletions(-)
 >
 > diff --git a/drivers/net/bnxt/bnxt_rxq.c b/drivers/net/bnxt/bnxt_rxq.c
-> index 023cb0e174..a89d5ab611 100644
+> index 023cb0e174..b7e16c8a14 100644
 > --- a/drivers/net/bnxt/bnxt_rxq.c
 > +++ b/drivers/net/bnxt/bnxt_rxq.c
-> @@ -370,11 +370,9 @@ int bnxt_rx_queue_setup_op(struct rte_eth_dev
-> *eth_dev,
->                 return -EINVAL;
->         }
+> @@ -131,11 +131,6 @@ int bnxt_mq_rx_configure(struct bnxt *bp)
 >
-> -       if (eth_dev->data->rx_queues) {
-> -               rxq =3D eth_dev->data->rx_queues[queue_idx];
-> -               if (rxq)
-> -                       bnxt_rx_queue_release_op(eth_dev, queue_idx);
-> -       }
-> +       rxq =3D eth_dev->data->rx_queues[queue_idx];
-> +       if (rxq)
-> +               bnxt_rx_queue_release_op(eth_dev, queue_idx);
->         rxq =3D rte_zmalloc_socket("bnxt_rx_queue", sizeof(struct
-> bnxt_rx_queue),
->                                  RTE_CACHE_LINE_SIZE, socket_id);
->         if (!rxq) {
+>         for (i =3D 0; i < pools; i++) {
+>                 vnic =3D &bp->vnic_info[i];
+> -               if (!vnic) {
+> -                       PMD_DRV_LOG_LINE(ERR, "VNIC alloc failed");
+> -                       rc =3D -ENOMEM;
+> -                       goto err_out;
+> -               }
+>                 vnic->flags |=3D BNXT_VNIC_INFO_BCAST;
+>                 bp->nr_vnics++;
+>
 > --
 
 Acked-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
@@ -153,74 +153,73 @@ Acked-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 >
 >
 
---000000000000da4ace065c03359f
+--000000000000902f43065c034d7a
 Content-Type: text/html; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 <div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
 mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Tue, Sep 15,=
- 2026 at 5:05=E2=80=AFAM Evgeny Sokolov &lt;<a href=3D"mailto:Evgeny.Sokolo=
+ 2026 at 5:07=E2=80=AFAM Evgeny Sokolov &lt;<a href=3D"mailto:Evgeny.Sokolo=
 v@infotecs.ru">Evgeny.Sokolov@infotecs.ru</a>&gt; wrote:<br></div><blockquo=
 te class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px =
 solid rgb(204,204,204);padding-left:1ex">From: Sokolov Evgeny &lt;<a href=
 =3D"mailto:Evgeny.Sokolov@infotecs.ru" target=3D"_blank">Evgeny.Sokolov@inf=
 otecs.ru</a>&gt;<br>
 <br>
-The rx_queues array is allocated during device configuration<br>
-before nb_rx_queues is set. Since bnxt_rx_queue_setup_op() is<br>
-called from rte_eth_rx_queue_setup(), which validates the queue<br>
-index against nb_rx_queues, the rx_queues NULL check is redundant.<br>
+Since commit 51fafb89a9a (&quot;net/bnxt: get rid of ff pools and use<br>
+VNIC info array&quot;), VNIC objects are obtained from the VNIC info<br>
+array.<br>
 <br>
-Remove the unnecessary condition.<br>
+The address of an array element cannot be NULL, making the NULL<br>
+check redundant.<br>
+<br>
+Remove the dead code.<br>
+<br>
+Found by InfoTeCS on behalf of Linux Verification Center (<a href=3D"http:/=
+/linuxtesting.org" rel=3D"noreferrer" target=3D"_blank">linuxtesting.org</a=
+>) with SVACE.<br>
 <br>
 Signed-off-by: Sokolov Evgeny &lt;<a href=3D"mailto:Evgeny.Sokolov@infotecs=
 .ru" target=3D"_blank">Evgeny.Sokolov@infotecs.ru</a>&gt;<br>
-Cc: <a href=3D"mailto:stable@dpdk.org" target=3D"_blank">stable@dpdk.org</a=
-><br>
 ---<br>
-=C2=A0drivers/net/bnxt/bnxt_rxq.c | 8 +++-----<br>
-=C2=A01 file changed, 3 insertions(+), 5 deletions(-)<br>
+=C2=A0drivers/net/bnxt/bnxt_rxq.c | 5 -----<br>
+=C2=A01 file changed, 5 deletions(-)<br>
 <br>
 diff --git a/drivers/net/bnxt/bnxt_rxq.c b/drivers/net/bnxt/bnxt_rxq.c<br>
-index 023cb0e174..a89d5ab611 100644<br>
+index 023cb0e174..b7e16c8a14 100644<br>
 --- a/drivers/net/bnxt/bnxt_rxq.c<br>
 +++ b/drivers/net/bnxt/bnxt_rxq.c<br>
-@@ -370,11 +370,9 @@ int bnxt_rx_queue_setup_op(struct rte_eth_dev *eth_dev=
-,<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return -EINVAL;<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 }<br>
+@@ -131,11 +131,6 @@ int bnxt_mq_rx_configure(struct bnxt *bp)<br>
 <br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0if (eth_dev-&gt;data-&gt;rx_queues) {<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0rxq =3D eth_dev-&gt=
-;data-&gt;rx_queues[queue_idx];<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (rxq)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 for (i =3D 0; i &lt; pools; i++) {<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 vnic =3D &amp;bp-&g=
+t;vnic_info[i];<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (!vnic) {<br>
 -=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0bnxt_rx_queue_release_op(eth_dev, queue_idx);<br>
--=C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0rxq =3D eth_dev-&gt;data-&gt;rx_queues[queue_id=
-x];<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0if (rxq)<br>
-+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0bnxt_rx_queue_relea=
-se_op(eth_dev, queue_idx);<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 rxq =3D rte_zmalloc_socket(&quot;bnxt_rx_queue&=
-quot;, sizeof(struct bnxt_rx_queue),<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0RTE_CACHE_LINE_SIZE, socket_id=
-);<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 if (!rxq) {<br>
+=A0 =C2=A0PMD_DRV_LOG_LINE(ERR, &quot;VNIC alloc failed&quot;);<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0rc =3D -ENOMEM;<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0goto err_out;<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 vnic-&gt;flags |=3D=
+ BNXT_VNIC_INFO_BCAST;<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 bp-&gt;nr_vnics++;<=
+br>
+<br>
 --</blockquote><div><span style=3D"font-family:Calibri;font-size:11pt;backg=
-round-color:transparent">Acked-by: Kishore
+round-color:transparent">Acked-by:=C2=A0Kishore
 Padmanabha &lt;<a href=3D"mailto:kishore.padmanabha@broadcom.com">kishore.p=
-admanabha@broadcom.com</a>&gt;</span></div><blockquote class=3D"gmail_quote=
-" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);=
-padding-left:1ex"> <br>
+admanabha@broadcom.com</a>&gt;</span>=C2=A0</div><blockquote class=3D"gmail=
+_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204=
+,204);padding-left:1ex"> <br>
 2.30.2<br>
 <br>
 </blockquote></div></div>
 
---000000000000da4ace065c03359f--
+--000000000000902f43065c034d7a--
 
---000000000000ebc63b065c03359a
+--0000000000009b9109065c034d5e
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -314,13 +313,13 @@ W8uDQvdvRdxXg4lkBLyifOudYTP3fULjpD6RWQPFlUPlh8F5QQEdKlfKW94rGD+O0u4sWi/msZw0
 6VTvZ6C2BbUMJAo7coFff48NkW2xfICC8Kn1eU1eiWCrPSAls8STm9q25wOQMYICVzCCAlMCAQEw
 YjBSMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEoMCYGA1UEAxMfR2xv
 YmFsU2lnbiBHQ0MgUjYgU01JTUUgQ0EgMjAyMwIMTxuM8PbwRQIs9uJeMA0GCWCGSAFlAwQCAQUA
-oIHHMC8GCSqGSIb3DQEJBDEiBCA4nTr8bWchPgwCc4NT0jFwSxjIu/+DUs5Zmo9Kz6xUMDAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjA5MjExOTI1MTlaMFwGCSqG
+oIHHMC8GCSqGSIb3DQEJBDEiBCC+50w2B7DHFs1minE7UHpY6ElUNU4APy/5kvZy0JqopzAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjA5MjExOTMxNTZaMFwGCSqG
 SIb3DQEJDzFPME0wCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZI
-hvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQCzi11oP2Rz
-OyqOud3AuYQ74+onFXxVYMInJgEAlCptUQ1UiMYxxJAkZJiOhqV860xq3/B9zhYM0ntAoql8slLZ
-QIguo7BQtX7rn1e0vSUwK3vf036MHAjzazNxUHBKoie7U28TPzcqmBkDM5yrGkdvyM5vcNzUKBo+
-wusqMc0Y8/EqUhcmijkwunKykmrqTHWGQ2o59D/aHpFY+vWkL8UEtjGZkqwshCmiAYdm5wIX+fYl
-IqBRp5bFUabaeCQHb0OdpbyLJ3QsOC3vZYtU/qX9aalN1JeD4RNLJnL/6VHdXLCtXVrl6K+t6t/P
-BHpvtkb1e+nj0cHp1NW9zY5hVHgV
---000000000000ebc63b065c03359a--
+hvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQCd9si6coB5
+Iphcshob5hO6XjBCCnKy2Viq2G/PPi98e3XQ0cyR0ADA3OpjMgU2BtsgdMqft4fmLrFSfLNCjeax
+lj6ze593LVXylzLuxqSEPz8HgfFceSU1qYWGjwWK4qqAk5kEA7Sf+cThTjfBgLJOOfL20l4Xtogq
+zQVhUTKzeXo5O4D8w1eg2HA2FgM7jw7dexheJ9rXEjKAcqVrOeu8XvpiOYgEenRR4a+GmNHfrkKQ
+PPmVkcZv4ieVZgS5AUTjocSqZK725dfeppdtSufc+EQrFsrG40hTCkH6cFMGCNvtXQ0XCar5+vAI
+mkmwve/WUxtmdXBy2yRGa48r1x4h
+--0000000000009b9109065c034d5e--
