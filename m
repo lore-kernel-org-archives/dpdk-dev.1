@@ -2,88 +2,90 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A57DDC982ED
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 19:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F1AFC982EE
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 19:42:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6A05140E2B;
-	Mon, 21 Sep 2026 21:38:25 +0200 (CEST)
-Received: from mail-pj1-f100.google.com (mail-pj1-f100.google.com
- [209.85.216.100])
- by mails.dpdk.org (Postfix) with ESMTP id 9109140B94
- for <dev@dpdk.org>; Mon, 21 Sep 2026 21:38:24 +0200 (CEST)
-Received: by mail-pj1-f100.google.com with SMTP id
- 98e67ed59e1d1-38ec1402b05so802118a91.2
- for <dev@dpdk.org>; Mon, 21 Sep 2026 12:38:24 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6633140E2B;
+	Mon, 21 Sep 2026 21:42:07 +0200 (CEST)
+Received: from mail-qv1-f100.google.com (mail-qv1-f100.google.com
+ [209.85.219.100])
+ by mails.dpdk.org (Postfix) with ESMTP id AA29840B94
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 21:42:05 +0200 (CEST)
+Received: by mail-qv1-f100.google.com with SMTP id
+ 6a1803df08f44-91041ee9230so6291316d6.2
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 12:42:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1790019503; x=1790624303;
+ d=1e100.net; s=20260707; t=1790019725; x=1790624525;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:dkim-signature:x-gm-gg:x-gm-message-state
  :from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=uU0jjVAlVCgthjs/7vbXL6Y/sIyhN2RPsil/Kb2+p9I=;
- b=TY4eQCJpolIw8nZrzrWWefu2RZm6v1ls9FE4MF0S/wRtEO/rMQmyPGf2EOV7X9Lan3
- cycfm8+Eg5VnnmxieypDeLqdLIKgkPvNJttG9KwdrHCAhT6mS/QxCht7Dik7Nnmb60I1
- ZtIfvKtv7Edebz4qPubVzATkwo4o7DALS1dkp0NU9jVrSsTf7EebaLXyeelGgoJkqiFP
- 0pHvxvvLQBZZ6UF1dbNlO2huGrm5uxtuWD9eRvflDDzQPijNDGvH2IRuUIAiGNoxRoGM
- nv9yaQEiHDoXs38jKKOdq5RNsD4haX/8volAztBASZA5Wac27vLuv5Xt8YP0MIyIsmiT
- dW8A==
+ bh=oiRdU9rEQP8DCLGHbzaHTmtnts0KC0SE1b1iT/u9NNQ=;
+ b=VsFLOkC7K8kF0glvQAxjJColdRDD3lZJSIAyFAHsQmL8ZM0rveetCxTmEyh/xEgxMv
+ z9UVVNLNQPyZAONq7tEgb+qMNLOZb8hBPv80z8iCgmeGu79aAY3XvdMYxTs1cEBS9Ya4
+ lrWXN5VSfNJPqrA6WzX4gAH3Hy8iOpmPORZA990dUWxM3zyr0OFx1evqfbOXqmRJ642m
+ zXur9Gh/7sluUrqUHmnaIR7z5Lx301cRWEovw56utfzez/CEvbltTPG+JZ8OM3lhVBO+
+ f2IZHOwYvZtGiqdNkLfcSStQC7qDMCPc4G/I9cDXaTo/k4932qv4fNQZnV2bb9XbwVvR
+ fniA==
 X-Forwarded-Encrypted: i=1;
- AKwUvBzDhiKS9ZwoquDjRmE6qFscK5BVG65VBiubqqqeF9O7ns04WeRpZPEyq5lHOGadjslV2xs=@dpdk.org
-X-Gm-Message-State: AFuF++mvoHoYlNvpWb3pxrp/5UUZSrtK0xBI2KofUoGNUFliqK9kfjhq
- j6frkntz+P28z+8ZdF9+lV3xTK1CEha60tujlpKmZEXHsHyIg5sH0f6mjN47nMryfE+8TrILKXH
- dPPPnaRxqAo8147e2aRdBcZoNSQ5YDX21cp8FYOwwSzsxoyyc0iC7YCS0FqcJ1YZR/6JDW1Z7hQ
- rwLBezO8Gem2+j98ajCXwKJIzAQepVHuIbMhYV1LbF0xH0XJ5ZEXL7IkiNWJY5iXLBYxEU1DIMj
- hcuDA==
-X-Gm-Gg: AYBFou2JsCBuE1ohKcFFmZ0Kh3THjbRmGqMUzMTiWOfMiA7iTZbOXaaNH+TWTO9xYH7
- L/MPciPAPTrRmF4Iwf2Xvu4g7SG0cir6HeGb4geMiHQLRqroTUanAZS6Pmlacwv1WUhXgclT6ak
- kAcltQlom12uJhehuDg/fkrEvmhv4FzRVQ1kTs14LOW1lnDTtO/ocVIwCpWulB/YRfg5NdgD1iy
- Fdp6Dvg7mxYgeBgeO7xOs8rkIfluaG2mLVsBZq+9ddk+x1UIw5ewCeNLYRvYDIfZJGhWl+02v3V
- GA+/8w1rXCxlsvE+58QL+HBonI2N5RqAz64W6kEw2nnEYRJr1hxSHlFAawAt9q/jPCKP5S7J0mH
- h+FGnH/6Dfx3q2i9TEEProysgZgDZy6R1PLHo1F1wN3WfdpdQoOWqHpyE3eRW+KAeMIUkpl70Pv
- sXO1YztTF6GT4/Q4NzPQSLowD4N6Jm7lveaFfIPXj3VAw=
-X-Received: by 2002:a17:90b:17cc:b0:39e:135e:130e with SMTP id
- 98e67ed59e1d1-39e54af6a0emr17475073a91.3.1790019502761; 
- Mon, 21 Sep 2026 12:38:22 -0700 (PDT)
+ AKwUvBzRwoM+2R6MGFPSHATEumHgpGt8Pc4T42kDEt4iUzOPLY34pH1ahTnAMwqlWDmGALpUu30=@dpdk.org
+X-Gm-Message-State: AFuF++ln0xnICXcAGRxJU/MqS/cwtH1tnlkuIRPZYrG8+ijPJQzh410i
+ dI9l0qw6BLKEguOrppk3gpExuIAeFKUKwh0IJwRdir/FNSJq1kpGPEfu0nWECaaeiZ4UM91FBHz
+ LY+rxPj1o5bufav/svH20XV5FlQd3laFpoX/fwBiLqi3uEfhLC7DaOe+T4EKkByAYqnYUefIr9D
+ Xl8gFoIV9TQW/bPdF5spH7ul7gZkutoVbgW5IOADriyrxhPcNjXp+OjegaKFTVjQblTspmqwbXB
+ b3kHA==
+X-Gm-Gg: AYBFou3SsHo7L2VM8RtQ+TL1xXHY+YD0KsgwzEbPOczTT6Ehtwr7RBDKXF2UvFrJNkq
+ CGFySgByLUgA9em5UcHNa3dIlpmeBRa01t75My4ReJnG5fnB/feVDac5FHKDoUtpddIz4u/jUhb
+ 5uB36UqaT0VOXdev0QUNp2GxnFdRRl1nNmJunLJHGIDaF57Nm5gOvdv0HwlByXjd1qBTnV/HbHN
+ rBn/WLJqDCgmu0UjoG/laCbKGMWZ/GOytEWnZHrebNJ17iDX4NQAm8GdO87hC2cmJyXqKKfEGkm
+ M/cTIA463ILe/EJGQVhFd/vw2geL3uh2ZYAAoBz1u1nUuRXhT9MMTD4/LWvZnUK3IsXVzJpTZ0g
+ GCeYEmLCMe9vHms5Dy++L3mULOtYfRmShzzrUa6zKzGzZxLw4UDXzWRcBE3E89DILP2cmGcvED8
+ HYMx3tg6VJwSXO8eF6FTwUGZzPJyA/3C6CEqD77MO35r4=
+X-Received: by 2002:a05:6214:3a89:b0:912:6093:e642 with SMTP id
+ 6a1803df08f44-913fc94834emr20546206d6.33.1790019724761; 
+ Mon, 21 Sep 2026 12:42:04 -0700 (PDT)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-29.dlp.protect.broadcom.com. [144.49.247.29])
+ (address-144-49-247-22.dlp.protect.broadcom.com. [144.49.247.22])
  by smtp-relay.gmail.com with ESMTPS id
- 98e67ed59e1d1-3a06947ce13sm124280a91.0.2026.09.21.12.38.22
+ 6a1803df08f44-91260bcc149sm633126d6.25.2026.09.21.12.42.04
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 21 Sep 2026 12:38:22 -0700 (PDT)
+ Mon, 21 Sep 2026 12:42:04 -0700 (PDT)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-ed1-f71.google.com with SMTP id
- 4fb4d7f45d1cf-6a178080182so4495304a12.2
- for <dev@dpdk.org>; Mon, 21 Sep 2026 12:38:21 -0700 (PDT)
+Received: by mail-ed1-f69.google.com with SMTP id
+ 4fb4d7f45d1cf-6a98570af94so256828a12.1
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 12:42:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1790019500; x=1790624300; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1790019723; x=1790624523; darn=dpdk.org;
  h=content-type:cc:to:subject:message-id:date:from:in-reply-to
  :references:mime-version:from:to:cc:subject:date:message-id:reply-to
- :content-type; bh=uU0jjVAlVCgthjs/7vbXL6Y/sIyhN2RPsil/Kb2+p9I=;
- b=DsXMMWBt6nZF3jGYKyKY4IEHtD950KWjLmSLZO4eq8+NODy8ED8epd888HUbPROKE1
- 7MRzfG6Em2UahWqTGu9NxahuEMF8U+G9Y/P9okzi1KXp2OkyvsxSA01RLYIjxJjtNz6Z
- rcX4uB25ynxssijTDCt99TQWzusNA4RvtCoew=
+ :content-type; bh=oiRdU9rEQP8DCLGHbzaHTmtnts0KC0SE1b1iT/u9NNQ=;
+ b=Xp0kSJSEQHLqCTQDQ3jlrJB5ECLOxRiMpUuOaotRFfsIBVQPvddSWZWdbDFTIxCuP5
+ dbU6lmTvCZI2V3mOHV23qMkzBlksAprF/HV7C8PDC4UBF7TuHu82+tkUiYWKilZUjD18
+ F+3Lpycn06I/On4F0rwzH/6LMxN5tUJ0N8EKU=
 X-Forwarded-Encrypted: i=1;
- AKwUvBz/xegG1qNJSJM8OQfhjteovwric2usMK9jaa8PwZX0NiVwTc7HcJ2E9JmYCreLsZyWKww=@dpdk.org
-X-Received: by 2002:a05:6402:4549:b0:6a9:aa8b:2e30 with SMTP id
- 4fb4d7f45d1cf-6aa53cd7134mr7700070a12.33.1790019500527; 
- Mon, 21 Sep 2026 12:38:20 -0700 (PDT)
-X-Received: by 2002:a05:6402:4549:b0:6a9:aa8b:2e30 with SMTP id
- 4fb4d7f45d1cf-6aa53cd7134mr7700057a12.33.1790019500131; Mon, 21 Sep 2026
- 12:38:20 -0700 (PDT)
+ AKwUvBxho9DxmpgZicF+IRUrnpYP1G2Q+Ml0QfvfijXCVTu7Q9ovjks/w9FEriojlnQdlgR6Of0=@dpdk.org
+X-Received: by 2002:a05:6402:5606:b0:6a6:b2b9:7667 with SMTP id
+ 4fb4d7f45d1cf-6aa9ff2bf95mr413620a12.20.1790019723156; 
+ Mon, 21 Sep 2026 12:42:03 -0700 (PDT)
+X-Received: by 2002:a05:6402:5606:b0:6a6:b2b9:7667 with SMTP id
+ 4fb4d7f45d1cf-6aa9ff2bf95mr413614a12.20.1790019722729; Mon, 21 Sep 2026
+ 12:42:02 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260915090919.431388-1-Evgeny.Sokolov@infotecs.ru>
-In-Reply-To: <20260915090919.431388-1-Evgeny.Sokolov@infotecs.ru>
+References: <20260915091150.431471-1-Evgeny.Sokolov@infotecs.ru>
+In-Reply-To: <20260915091150.431471-1-Evgeny.Sokolov@infotecs.ru>
 From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Date: Mon, 21 Sep 2026 15:38:01 -0400
-X-Gm-Features: AcwNN1VcAApSDFy7qHhC1fWcXo-JuakKYXyLXT3_D8pyNlnpHaVJ6yGqeUp6MI0
-Message-ID: <CA+BST0m5oORRg67AJ=M2LJtcSKZasvA7dbSiFcYGFUQgCU7PYQ@mail.gmail.com>
-Subject: Re: [PATCH] net/bnxt: simplify NVGRE pointer validation
+Date: Mon, 21 Sep 2026 15:41:44 -0400
+X-Gm-Features: AcwNN1VHAamUqBnVVGfU1vNjCr3eM46DP_DGjQk49YzqONskWNF4zVHdrbUNNtc
+Message-ID: <CA+BST0=1h4LWdoGmL-q3yfHZWPMvwBBGWhqd2dN2PhqHHaEwzw@mail.gmail.com>
+Subject: Re: [PATCH] net/bnxt/tf_ulp: use 64-bit shift in burst size
+ calculation
 To: Evgeny Sokolov <Evgeny.Sokolov@infotecs.ru>
-Cc: Ajit Khaparde <ajit.khaparde@broadcom.com>, dev@dpdk.org, stable@dpdk.org
+Cc: Ajit Khaparde <ajit.khaparde@broadcom.com>, dev@dpdk.org, stable@dpdk.org, 
+ stuart.schacher@broadcom.com
 X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 Content-Type: multipart/signed; protocol="application/pkcs7-signature";
- micalg=sha-256; boundary="0000000000007cb92f065c0364f1"
+ micalg=sha-256; boundary="000000000000c16796065c0371b9"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -97,84 +99,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000007cb92f065c0364f1
-Content-Type: multipart/alternative; boundary="00000000000072809c065c03647f"
+--000000000000c16796065c0371b9
+Content-Type: multipart/alternative; boundary="000000000000b7091b065c03711d"
 
---00000000000072809c065c03647f
+--000000000000b7091b065c03711d
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 15, 2026 at 5:09=E2=80=AFAM Evgeny Sokolov <Evgeny.Sokolov@info=
+On Tue, Sep 15, 2026 at 5:11=E2=80=AFAM Evgeny Sokolov <Evgeny.Sokolov@info=
 tecs.ru>
 wrote:
 
 > From: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru>
 >
-> Previous validation guarantees that nvgre_spec and nvgre_mask are
-> both non-NULL when this code is reached.
+> Use 1ULL instead of 1 in the left shift operation when
+> calculating the burst size mantissa.
 >
-> Remove the redundant condition and execute the enclosed code
-> directly.
+> This avoids undefined behavior when the shift count exceeds
+> the width of a 32-bit integer.
 >
 > Signed-off-by: Sokolov Evgeny <Evgeny.Sokolov@infotecs.ru>
 > Cc: stable@dpdk.org
 > ---
->  drivers/net/bnxt/bnxt_flow.c | 36 +++++++++++++++++-------------------
->  1 file changed, 17 insertions(+), 19 deletions(-)
+>  drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/drivers/net/bnxt/bnxt_flow.c b/drivers/net/bnxt/bnxt_flow.c
-> index a2e590540b..4a38c036de 100644
-> --- a/drivers/net/bnxt/bnxt_flow.c
-> +++ b/drivers/net/bnxt/bnxt_flow.c
-> @@ -632,26 +632,24 @@ bnxt_validate_and_parse_flow_type(const struct
-> rte_flow_attr *attr,
->                                 return -rte_errno;
->                         }
->
-> -                       if (nvgre_spec && nvgre_mask) {
-> -                               tni_masked =3D
-> -                                       !!memcmp(nvgre_mask->tni, tni_mas=
-k,
-> -                                                RTE_DIM(tni_mask));
-> -                               if (tni_masked) {
-> -                                       rte_flow_error_set
-> -                                               (error,
-> -                                                EINVAL,
-> -                                                RTE_FLOW_ERROR_TYPE_ITEM=
-,
-> -                                                item,
-> -                                                "Invalid TNI mask");
-> -                                       return -rte_errno;
-> -                               }
-> -                               rte_memcpy(((uint8_t *)&tenant_id_be + 1)=
-,
-> -                                          nvgre_spec->tni, 3);
-> -                               filter->vni =3D
-> -                                       rte_be_to_cpu_32(tenant_id_be);
-> -                               filter->tunnel_type =3D
-> -
-> CFA_NTUPLE_FILTER_ALLOC_REQ_TUNNEL_TYPE_NVGRE;
-> +                       tni_masked =3D
-> +                               !!memcmp(nvgre_mask->tni, tni_mask,
-> +                                        RTE_DIM(tni_mask));
-> +                       if (tni_masked) {
-> +                               rte_flow_error_set
-> +                                       (error,
-> +                                        EINVAL,
-> +                                        RTE_FLOW_ERROR_TYPE_ITEM,
-> +                                        item,
-> +                                        "Invalid TNI mask");
-> +                               return -rte_errno;
->                         }
-> +                       rte_memcpy(((uint8_t *)&tenant_id_be + 1),
-> +                                  nvgre_spec->tni, 3);
-> +                       filter->vni =3D
-> +                               rte_be_to_cpu_32(tenant_id_be);
-> +                       filter->tunnel_type =3D
-> +                        CFA_NTUPLE_FILTER_ALLOC_REQ_TUNNEL_TYPE_NVGRE;
->                         break;
->
->                 case RTE_FLOW_ITEM_TYPE_GRE:
+> diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c
+> b/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c
+> index 7f6a84e699..88a2f30521 100644
+> --- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c
+> +++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c
+> @@ -155,7 +155,7 @@ bnxt_ulp_flow_mtr_xbs_calc(int64_t xbs, uint16_t *reg=
+)
+>          *   =3D round(xbs*2^(8-e) - 2^7)
+>          *
+>          */
+> -       m =3D xbs / (1 << (e - 8)) - (1 << 7);
+> +       m =3D xbs / (1ULL << (e - 8)) - (1ULL << 7);
+>         *reg =3D ((m & 0x7F) << 5) | (e & 0x1F);
+>         *reg =3D rte_cpu_to_be_16(*reg);
+>  }
 > --
 
 Acked-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
@@ -184,102 +148,65 @@ Acked-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 >
 >
 
---00000000000072809c065c03647f
+--000000000000b7091b065c03711d
 Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: quoted-printable
 
-PGRpdiBkaXI9Imx0ciI+PGRpdiBkaXI9Imx0ciI+PGJyPjwvZGl2Pjxicj48ZGl2IGNsYXNzPSJn
-bWFpbF9xdW90ZSBnbWFpbF9xdW90ZV9jb250YWluZXIiPjxkaXYgZGlyPSJsdHIiIGNsYXNzPSJn
-bWFpbF9hdHRyIj5PbiBUdWUsIFNlcCAxNSwgMjAyNiBhdCA1OjA54oCvQU0gRXZnZW55IFNva29s
-b3YgJmx0OzxhIGhyZWY9Im1haWx0bzpFdmdlbnkuU29rb2xvdkBpbmZvdGVjcy5ydSI+RXZnZW55
-LlNva29sb3ZAaW5mb3RlY3MucnU8L2E+Jmd0OyB3cm90ZTo8YnI+PC9kaXY+PGJsb2NrcXVvdGUg
-Y2xhc3M9ImdtYWlsX3F1b3RlIiBzdHlsZT0ibWFyZ2luOjBweCAwcHggMHB4IDAuOGV4O2JvcmRl
-ci1sZWZ0OjFweCBzb2xpZCByZ2IoMjA0LDIwNCwyMDQpO3BhZGRpbmctbGVmdDoxZXgiPkZyb206
-IFNva29sb3YgRXZnZW55ICZsdDs8YSBocmVmPSJtYWlsdG86RXZnZW55LlNva29sb3ZAaW5mb3Rl
-Y3MucnUiIHRhcmdldD0iX2JsYW5rIj5FdmdlbnkuU29rb2xvdkBpbmZvdGVjcy5ydTwvYT4mZ3Q7
-PGJyPg0KPGJyPg0KUHJldmlvdXMgdmFsaWRhdGlvbiBndWFyYW50ZWVzIHRoYXQgbnZncmVfc3Bl
-YyBhbmQgbnZncmVfbWFzayBhcmU8YnI+DQpib3RoIG5vbi1OVUxMIHdoZW4gdGhpcyBjb2RlIGlz
-IHJlYWNoZWQuPGJyPg0KPGJyPg0KUmVtb3ZlIHRoZSByZWR1bmRhbnQgY29uZGl0aW9uIGFuZCBl
-eGVjdXRlIHRoZSBlbmNsb3NlZCBjb2RlPGJyPg0KZGlyZWN0bHkuPGJyPg0KPGJyPg0KU2lnbmVk
-LW9mZi1ieTogU29rb2xvdiBFdmdlbnkgJmx0OzxhIGhyZWY9Im1haWx0bzpFdmdlbnkuU29rb2xv
-dkBpbmZvdGVjcy5ydSIgdGFyZ2V0PSJfYmxhbmsiPkV2Z2VueS5Tb2tvbG92QGluZm90ZWNzLnJ1
-PC9hPiZndDs8YnI+DQpDYzogPGEgaHJlZj0ibWFpbHRvOnN0YWJsZUBkcGRrLm9yZyIgdGFyZ2V0
-PSJfYmxhbmsiPnN0YWJsZUBkcGRrLm9yZzwvYT48YnI+DQotLS08YnI+DQrCoGRyaXZlcnMvbmV0
-L2JueHQvYm54dF9mbG93LmMgfCAzNiArKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0t
-LS08YnI+DQrCoDEgZmlsZSBjaGFuZ2VkLCAxNyBpbnNlcnRpb25zKCspLCAxOSBkZWxldGlvbnMo
-LSk8YnI+DQo8YnI+DQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvYm54dC9ibnh0X2Zsb3cuYyBi
-L2RyaXZlcnMvbmV0L2JueHQvYm54dF9mbG93LmM8YnI+DQppbmRleCBhMmU1OTA1NDBiLi40YTM4
-YzAzNmRlIDEwMDY0NDxicj4NCi0tLSBhL2RyaXZlcnMvbmV0L2JueHQvYm54dF9mbG93LmM8YnI+
-DQorKysgYi9kcml2ZXJzL25ldC9ibnh0L2JueHRfZmxvdy5jPGJyPg0KQEAgLTYzMiwyNiArNjMy
-LDI0IEBAIGJueHRfdmFsaWRhdGVfYW5kX3BhcnNlX2Zsb3dfdHlwZShjb25zdCBzdHJ1Y3QgcnRl
-X2Zsb3dfYXR0ciAqYXR0ciw8YnI+DQrCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCByZXR1cm4gLXJ0ZV9lcnJubzs8YnI+DQrCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCB9PGJyPg0KPGJyPg0KLcKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgaWYgKG52Z3JlX3NwZWMgJmFtcDsmYW1wOyBudmdyZV9tYXNrKSB7PGJyPg0KLcKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgdG5pX21hc2tlZCA9
-PGJyPg0KLcKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgISFtZW1jbXAobnZncmVfbWFzay0mZ3Q7dG5pLCB0bmlfbWFzayw8YnI+DQotwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgUlRFX0RJTSh0bmlfbWFzaykpOzxicj4NCi3CoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoGlmICh0bmlfbWFza2VkKSB7PGJyPg0KLcKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgcnRl
-X2Zsb3dfZXJyb3Jfc2V0PGJyPg0KLcKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgKGVycm9yLDxicj4NCi3CoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCBFSU5WQUwsPGJyPg0KLcKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIFJURV9GTE9XX0VSUk9SX1RZUEVf
-SVRFTSw8YnI+DQotwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgaXRlbSw8YnI+DQotwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgJnF1
-b3Q7SW52YWxpZCBUTkkgbWFzayZxdW90Oyk7PGJyPg0KLcKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgcmV0dXJuIC1ydGVfZXJybm87PGJy
-Pg0KLcKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgfTxicj4N
-Ci3CoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoHJ0ZV9tZW1j
-cHkoKCh1aW50OF90ICopJmFtcDt0ZW5hbnRfaWRfYmUgKyAxKSw8YnI+DQotwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgbnZncmVf
-c3BlYy0mZ3Q7dG5pLCAzKTs8YnI+DQotwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqBmaWx0ZXItJmd0O3ZuaSA9PGJyPg0KLcKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgcnRlX2JlX3RvX2NwdV8zMih0
-ZW5hbnRfaWRfYmUpOzxicj4NCi3CoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoGZpbHRlci0mZ3Q7dHVubmVsX3R5cGUgPTxicj4NCi3CoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBDRkFfTlRVUExFX0ZJTFRFUl9BTExPQ19S
-RVFfVFVOTkVMX1RZUEVfTlZHUkU7PGJyPg0KK8KgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgdG5pX21hc2tlZCA9PGJyPg0KK8KgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgISFtZW1jbXAobnZncmVfbWFzay0mZ3Q7dG5pLCB0bmlfbWFzayw8YnI+
-DQorwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgUlRFX0RJTSh0bmlfbWFzaykpOzxicj4NCivCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoGlmICh0bmlfbWFza2VkKSB7PGJyPg0KK8KgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgcnRlX2Zsb3dfZXJyb3Jfc2V0PGJyPg0KK8KgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgKGVycm9y
-LDxicj4NCivCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCBFSU5WQUwsPGJyPg0KK8KgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIFJURV9GTE9XX0VSUk9SX1RZUEVfSVRFTSw8YnI+
-DQorwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgaXRlbSw8YnI+DQorwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgJnF1b3Q7SW52YWxpZCBUTkkgbWFzayZxdW90Oyk7PGJyPg0K
-K8KgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgcmV0dXJuIC1y
-dGVfZXJybm87PGJyPg0KwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgfTxicj4N
-CivCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoHJ0ZV9tZW1jcHkoKCh1aW50OF90
-ICopJmFtcDt0ZW5hbnRfaWRfYmUgKyAxKSw8YnI+DQorwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgbnZncmVfc3BlYy0mZ3Q7dG5pLCAzKTs8YnI+DQor
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBmaWx0ZXItJmd0O3ZuaSA9PGJyPg0K
-K8KgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgcnRlX2JlX3Rv
-X2NwdV8zMih0ZW5hbnRfaWRfYmUpOzxicj4NCivCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoGZpbHRlci0mZ3Q7dHVubmVsX3R5cGUgPTxicj4NCivCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCBDRkFfTlRVUExFX0ZJTFRFUl9BTExPQ19SRVFfVFVOTkVMX1RZUEVf
-TlZHUkU7PGJyPg0KwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgYnJlYWs7PGJy
-Pg0KPGJyPg0KwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgY2FzZSBSVEVfRkxPV19JVEVNX1RZUEVf
-R1JFOjxicj4NCi0tPC9ibG9ja3F1b3RlPjxkaXY+PHNwYW4gc3R5bGU9ImZvbnQtZmFtaWx5OkNh
-bGlicmk7Zm9udC1zaXplOjExcHQ7YmFja2dyb3VuZC1jb2xvcjp0cmFuc3BhcmVudCI+QWNrZWQt
-Ynk6wqBLaXNob3JlDQpQYWRtYW5hYmhhICZsdDs8YSBocmVmPSJtYWlsdG86a2lzaG9yZS5wYWRt
-YW5hYmhhQGJyb2FkY29tLmNvbSI+a2lzaG9yZS5wYWRtYW5hYmhhQGJyb2FkY29tLmNvbTwvYT4m
-Z3Q7PC9zcGFuPsKgPC9kaXY+PGJsb2NrcXVvdGUgY2xhc3M9ImdtYWlsX3F1b3RlIiBzdHlsZT0i
-bWFyZ2luOjBweCAwcHggMHB4IDAuOGV4O2JvcmRlci1sZWZ0OjFweCBzb2xpZCByZ2IoMjA0LDIw
-NCwyMDQpO3BhZGRpbmctbGVmdDoxZXgiPiA8YnI+DQoyLjMwLjI8YnI+DQo8YnI+DQo8L2Jsb2Nr
-cXVvdGU+PC9kaXY+PC9kaXY+DQo=
---00000000000072809c065c03647f--
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Tue, Sep 15,=
+ 2026 at 5:11=E2=80=AFAM Evgeny Sokolov &lt;<a href=3D"mailto:Evgeny.Sokolo=
+v@infotecs.ru">Evgeny.Sokolov@infotecs.ru</a>&gt; wrote:<br></div><blockquo=
+te class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px =
+solid rgb(204,204,204);padding-left:1ex">From: Sokolov Evgeny &lt;<a href=
+=3D"mailto:Evgeny.Sokolov@infotecs.ru" target=3D"_blank">Evgeny.Sokolov@inf=
+otecs.ru</a>&gt;<br>
+<br>
+Use 1ULL instead of 1 in the left shift operation when<br>
+calculating the burst size mantissa.<br>
+<br>
+This avoids undefined behavior when the shift count exceeds<br>
+the width of a 32-bit integer.<br>
+<br>
+Signed-off-by: Sokolov Evgeny &lt;<a href=3D"mailto:Evgeny.Sokolov@infotecs=
+.ru" target=3D"_blank">Evgeny.Sokolov@infotecs.ru</a>&gt;<br>
+Cc: <a href=3D"mailto:stable@dpdk.org" target=3D"_blank">stable@dpdk.org</a=
+><br>
+---<br>
+=C2=A0drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c | 2 +-<br>
+=C2=A01 file changed, 1 insertion(+), 1 deletion(-)<br>
+<br>
+diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c b/drivers/net/bnxt/tf=
+_ulp/bnxt_ulp_meter.c<br>
+index 7f6a84e699..88a2f30521 100644<br>
+--- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c<br>
++++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_meter.c<br>
+@@ -155,7 +155,7 @@ bnxt_ulp_flow_mtr_xbs_calc(int64_t xbs, uint16_t *reg)<=
+br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0*=C2=A0 =C2=A0=3D round(xbs*2^(8-e) - 2^7=
+)<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0*<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0*/<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0m =3D xbs / (1 &lt;&lt; (e - 8)) - (1 &lt;&lt; =
+7);<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0m =3D xbs / (1ULL &lt;&lt; (e - 8)) - (1ULL &lt=
+;&lt; 7);<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 *reg =3D ((m &amp; 0x7F) &lt;&lt; 5) | (e &amp;=
+ 0x1F);<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 *reg =3D rte_cpu_to_be_16(*reg);<br>
+=C2=A0}<br>
+--</blockquote><div><span style=3D"font-family:Calibri;font-size:11pt;backg=
+round-color:transparent">Acked-by:=C2=A0Kishore
+Padmanabha &lt;<a href=3D"mailto:kishore.padmanabha@broadcom.com">kishore.p=
+admanabha@broadcom.com</a>&gt;</span>=C2=A0</div><blockquote class=3D"gmail=
+_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204=
+,204);padding-left:1ex"> <br>
+2.30.2<br>
+<br>
+</blockquote></div></div>
 
---0000000000007cb92f065c0364f1
+--000000000000b7091b065c03711d--
+
+--000000000000c16796065c0371b9
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -373,13 +300,13 @@ W8uDQvdvRdxXg4lkBLyifOudYTP3fULjpD6RWQPFlUPlh8F5QQEdKlfKW94rGD+O0u4sWi/msZw0
 6VTvZ6C2BbUMJAo7coFff48NkW2xfICC8Kn1eU1eiWCrPSAls8STm9q25wOQMYICVzCCAlMCAQEw
 YjBSMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEoMCYGA1UEAxMfR2xv
 YmFsU2lnbiBHQ0MgUjYgU01JTUUgQ0EgMjAyMwIMTxuM8PbwRQIs9uJeMA0GCWCGSAFlAwQCAQUA
-oIHHMC8GCSqGSIb3DQEJBDEiBCBNIWI1OPh/C4wuE3qXr2QwJfeOmB57oepbrQh3bqTUwzAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjA5MjExOTM4MjBaMFwGCSqG
+oIHHMC8GCSqGSIb3DQEJBDEiBCCIL9nFfFN9SW4msfApHwy63WhP+6dcz4u1AODk+G/54TAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjA5MjExOTQyMDNaMFwGCSqG
 SIb3DQEJDzFPME0wCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZI
-hvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBPVws/oJYc
-R4/l9tx4dZsqgLUT/oTeWZ5wrzzmOnuluIsWyqQpmYMza9/00TvQaiHfFYlH1Swq8Cmn/fjK5sN+
-K1FwLGVGzN6LBzVth+IPmWVkzzDd6uWLlKHeS8NrtdQD+hyk/2Ic55cQgTZYZEmZSaAwQP10xRjp
-gvcEaLQuxtDoFfM0+SC7b3W+0W9jPQYrPm6QSJpNmTi0MVInKXRdBjBAJzHHGe3iwGRuD1dQkqFd
-AUlr47+nHqpZglboEXpZN3uaMnGS6LPGsWEpggqUUXlHHrpcTewTX4/k4NiCN8orpIKFCBce4mcC
-HRIw+RD7JunXOlfDVqv1ZOyLrwZE
---0000000000007cb92f065c0364f1--
+hvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQByZatlA5A5
+CyXOSKyJheS17fxVmpr5HMQrU31EWk+3dw/QfHl4LhnO8JEuvgoYbaVGAbnsP9tsd6CkDuJLI1AY
+A6wbKSkxrKwt5/qnXB3smGxd7uq0hgDnciVRgYwFVDBtbaujCFlQFafDycdpXjxTKUwPzYB0Lqnv
+Z663ZpkAt1VMGdwrSkFCm2SZOx1YEDQ58iax/dq5zeJd9ALfNokhSPd4lyQnmn+7BCvi9ynYiSig
+d9gWnMDPojIoOBlw56A28/eDscnPkE3bx3eEU10jzZIPHilMFfXN+1K0/uBlvVIpHKhpW/Bh+uZq
+R5KEzN4+xuLMINNz3CLVuahKvsno
+--000000000000c16796065c0371b9--
