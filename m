@@ -2,73 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EA8BC982DE
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 09:51:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C844C982E1
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 10:06:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 434314029B;
-	Mon, 21 Sep 2026 11:51:43 +0200 (CEST)
-Received: from mail-ed2-f35.google.com (mail-ed2-f35.google.com
- [74.125.228.99]) by mails.dpdk.org (Postfix) with ESMTP id D886C4021F
- for <dev@dpdk.org>; Mon, 21 Sep 2026 11:51:41 +0200 (CEST)
-Received: by mail-ed2-f35.google.com with SMTP id
- 4fb4d7f45d1cf-6aa053900f5so4562958a12.1
- for <dev@dpdk.org>; Mon, 21 Sep 2026 02:51:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1789984301; x=1790589101; darn=dpdk.org;
- h=content-transfer-encoding:content-type:in-reply-to:from
- :content-language:references:to:subject:user-agent:mime-version:date
- :message-id:from:to:cc:subject:date:message-id:reply-to:content-type;
- bh=iRRDY25bk/lJwI6iGXXIc3Hw0E0xvKQ5nzon9lo63dc=;
- b=LbRnIRPBhfEBRCO9GxQvQNj2OpfhyXuC7A/aqTREFioaT+tVPsxZGmXTqxmBL1wmiM
- Udm41g8AQlUhW57lpvFsrnbf6ZUZEoSY68t1oW5tY8in6bMIUp0OScWUoIVLn/94cbQ9
- 3I1xVySz+wgxD3of7Qb4nIBWy2OvMIpqrXVXtI4mRCXHzi2tPQLukBXM5TsMq+OYOLnR
- vpgKuxtv5KF6oHCuD7rbIlHMNkjbS974fU2Ho2KC4WP5mMaHdaXl9m+YXvPZOM5wIaIV
- NM/ZDo2tvG6a4eyqOQ8e6Z1j14mp93uhL7T3V5+yV+3UBdV61ugCFyacUvcqjVL3jwtS
- I11g==
+	by mails.dpdk.org (Postfix) with ESMTP id 0AAD14029B;
+	Mon, 21 Sep 2026 12:06:28 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 980CD4021F
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 12:06:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1789985186;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=I84anEzrQPuTTLM+ZDBtwwIyp0UbQcuJr4NL70Jrgi8=;
+ b=f2ljR6x0TT2QrzWPNfrI4f1z7PGg/OGOZXVS79wwgYVXUal48xfdl72DbiapjQngEf9DWY
+ TJPQm/yIBu5268z9E0gwDAy46G7DikscG6Ds6TbmnjB6Jp5sgpIPZI1L9g9z6xiC72DSSU
+ 3gfqXVzIilbgPqOEhGamkThzQBTTNSw=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-191-_afXp18aNuWNTc-ttIwUDQ-1; Mon, 21 Sep 2026 06:06:24 -0400
+X-MC-Unique: _afXp18aNuWNTc-ttIwUDQ-1
+X-Mimecast-MFC-AGG-ID: _afXp18aNuWNTc-ttIwUDQ_1789985183
+Received: by mail-lj1-f199.google.com with SMTP id
+ 38308e7fff4ca-3a1fa5bb969so12412151fa.0
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 03:06:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20260707; t=1789984301; x=1790589101;
- h=content-transfer-encoding:content-type:in-reply-to:from
- :content-language:references:to:subject:user-agent:mime-version:date
- :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to:content-type;
- bh=iRRDY25bk/lJwI6iGXXIc3Hw0E0xvKQ5nzon9lo63dc=;
- b=kHwIxuX5/946I8jO/Zhr3hRNLKP77+co+AChNKcpkIXGMqWGxz2Xdxor6X3mwLd+h7
- tUSieywKp/SuLu3IVTE1K98K92405eYKG35DF7SLaaoVSbUtYxlKNpi02QHNTq92im65
- a0pWE2LRvnDc/j/Oxepv4W22gwWL5QRVICTLvL36NOauzAEYipRXj/XDQSAJpESM+XB8
- ChfchU+pysk8w4u7l7o4hRZiVL9fUUNfDaXraHeLj5HfYtUdkDLYtH2KKyxF540bKAt+
- V+s9zrU/RlGbbdGgqXCzGkDKrPfGUrBrWtJmpOeZsQfueIgrikpV3vGmoSl9o19FbFpZ
- 7qQA==
-X-Gm-Message-State: AFuF++mk9FkkyhO8m/VE9Nbxhxldgr+g6lgvl5zTQC1qDlB2EFVU5rxa
- RxyDZkcneDL/k4GxXjAA5uS+mvHG/d9Yop4efgI0bezSNg7aFmkDWo1Qay4uBSNO
-X-Gm-Gg: AYBFou2drOzAaX6VfeCq4f7bXq/RZxGtK5omyDxH6LODRUKNFCQ7GznvYePS2pVst55
- Fq2KBupBCS3vmQDX82GJFdc3YE8upa31t1IxxUY7NujKAwdFlq95JLISCbNAqDSLkYul6kFz4gU
- +V9zoJl3XfcEOtVD3jnRe/1gGAUoAThUm+RUe8rNbav80H1oB6mR32VUa9/odsirag1yafIeBwb
- BjAWPq0hqPthWUs8AfeucyiLmYpdPQdybmHdKL3IQllgWNHqDXzhpsnv2QsMMIC8HoIIKLDwXbB
- CzlDB5JXPiZ+9fxrK3uK4w0DFxoMYKfJDj6EtONpx5eTNy1ie/CcyAlrTA/C6cxMCujuBGaDcFa
- 4nVLmsffK0SJCxu1TY79EUO1uQo8C8egI2BIKT1trvvu+CVgV786xuEfPnXbE/I9eDTqsm+35wB
- USDNCTKKwdyzi7OW+zSTGU5iMg/HO6jJbvrjXjwip119wbAKd7brddH7VRNT8BCwF6NQ1HkIQ=
-X-Received: by 2002:a05:6402:438c:b0:6a3:ee60:b13f with SMTP id
- 4fb4d7f45d1cf-6aa577f8829mr7014973a12.14.1789984301265; 
- Mon, 21 Sep 2026 02:51:41 -0700 (PDT)
-Received: from [192.168.103.32] ([89.101.57.120])
- by smtp.gmail.com with ESMTPSA id
- 4fb4d7f45d1cf-6aa67dc582csm3972319a12.16.2026.09.21.02.51.40
- for <dev@dpdk.org>
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Mon, 21 Sep 2026 02:51:40 -0700 (PDT)
-Message-ID: <2801d980-791c-4552-a9cd-4ad705ebb196@gmail.com>
-Date: Mon, 21 Sep 2026 10:51:39 +0100
+ d=1e100.net; s=20260707; t=1789985183; x=1790589983;
+ h=content-transfer-encoding:content-type:cc:to:subject:message-id
+ :date:from:in-reply-to:references:mime-version:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+ :content-type;
+ bh=I84anEzrQPuTTLM+ZDBtwwIyp0UbQcuJr4NL70Jrgi8=;
+ b=tCgpu9JJYfxUP1bytJoeT+6BffH7lsRU/DUa2h9v1PLr96U9wr0ahqiq4hbU+xIp3f
+ 34YQIGr3DhSHVrrPMucxLw8k4mzTbJvqBrE27V0Zbe58wPPR52/+9m4v/qO8Jgi3DYO+
+ sJEG6xjBcRiC8D1E5ZoPwvZ+8NsCMDX4gy56ABVYE8TFbLAU5SpKKcWIBHBvyJQWomZm
+ mrJf7MtJuwaMvAyzPnhqrB/hG9XEtxPpI6Da/0Sq1e5yNU7PVs0ralIqkUF6LVRwU6ZD
+ 4ExS4SWeOrDCaptzy1Xmnxtq5m8Vpl2qqX9rRLTTsm2DDY3jZltOQWC7iVMsVdBz7iEn
+ 5Ycg==
+X-Gm-Message-State: AFuF++lzaoMOy/s8rgf1U+b0jrw055vFr4neSef4bOQCwbTiEKaeQQol
+ IoT8dCD9G6qBzgAmc94xWBpkqvED82uL6c4r1u03ck0XT+TafwE8Z3Kj45yWIgEmiewEzNoJYtj
+ E6FlTmsFn42ks4uLdTb7FvXIFvVxocvAjFxdLbSXqq2Bkxg+k0C2GniaB7saeh60gV7BkYldw6s
+ FFkAR/Tg3eGNnEBIVKmHs=
+X-Gm-Gg: AYBFou30qKu0SkWLLFsEKpGYEADpX1C0DUN5Vzosl1E/kS8qUWyOiMI+lg6Wy6zuada
+ sPC9e5R/JjrBmXtn5ENTyx0O8sR9aCQrcXTghbzzwwKml+h0av+lsbBOBX7CydS2fe2uR8r5let
+ H71e/SD8sb8HBPbfc9z95ipPvCcJsH5eECcElQZzpQsUFr6qInmYw22zM9acZ5GUrY+dPPgigIH
+ S4IrcthsqvCWFKzaMYhSVoCXt5l1Yl2AFkh0AUlqZI1K5la
+X-Received: by 2002:a05:6512:39c7:b0:5b6:1a7c:aa22 with SMTP id
+ 2adb3069b0e04-5b8c19860f3mr4142333e87.58.1789985183009; 
+ Mon, 21 Sep 2026 03:06:23 -0700 (PDT)
+X-Received: by 2002:a05:6512:39c7:b0:5b6:1a7c:aa22 with SMTP id
+ 2adb3069b0e04-5b8c19860f3mr4142321e87.58.1789985182471; Mon, 21 Sep 2026
+ 03:06:22 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] examples/rpcapd: demo version of packet capture daemon
-To: dev@dpdk.org
-References: <20260908210832.1556291-1-stephen@networkplumber.org>
- <20260920190007.1128720-1-stephen@networkplumber.org>
-Content-Language: en-US
-From: Marat Khalili <qm2k21@gmail.com>
-In-Reply-To: <20260920190007.1128720-1-stephen@networkplumber.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20260914144234.1540150-1-david.marchand@redhat.com>
+ <20260914144234.1540150-2-david.marchand@redhat.com>
+ <20260921083125.40120-2-rasland@nvidia.com>
+In-Reply-To: <20260921083125.40120-2-rasland@nvidia.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Mon, 21 Sep 2026 12:06:10 +0200
+X-Gm-Features: AcwNN1X4FXfNEH-8dm2xPYrTiqnC8M4lFXzcyXL81O2Rz06aF13F8I0pHzEr-eo
+Message-ID: <CAJFAV8xJV5Q4pTEwCcS4ujzj1UmLGwjRVqw2iQ2pZTjWnx_-vQ@mail.gmail.com>
+Subject: Re: [PATCH v7 2/5] net/mlx5: remove redundant MAC address index checks
+To: Raslan Darawsheh <rasland@nvidia.com>
+Cc: dev@dpdk.org, Dariusz Sosnowski <dsosnowski@nvidia.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 8T16xd_9BUIj6FkkrTbki_WF1XL7nXXttYQAnvLgIyA_1789985183
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,41 +87,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Very cool example, demonstrating many advanced DPDK features at once. In 
-this regard, it really excels.
+Hello Raslan,
 
-It could be however useful as a debug tool, and in this case having to 
-deal with a secondary process is a hassle. Could we have this feature in 
-dpdk-testpmd, instead or as well?
-
-Otherwise, having seen the demonstration, I do not have many comments, 
-except for a couple nits below.
-
-On 20/09/2026 19:59, Stephen Hemminger wrote:
-> This example adds RPCAP support over localhost TCP
-> integrated with DPDK. It uses a secondary process that allows
-> connections from using tcpdump defacto protocol rpcap.
+On Mon, 21 Sept 2026 at 10:32, Raslan Darawsheh <rasland@nvidia.com> wrote:
 >
-> See: doc/guides/sample_app_ug/rpcapd.rst for more info
+> Hi David,
 >
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
-> v2 - Build on Linux only
->     - add filter support
->     - fix lots of AI review feedback
+> =F0=9F=A4=96 This review was drafted with assistance from Claude (Anthrop=
+ic) and reviewed by me before posting.
 >
->   MAINTAINERS                            |    2 +
->   doc/guides/rel_notes/release_26_11.rst |    4 +
->   doc/guides/sample_app_ug/index.rst     |    1 +
->   doc/guides/sample_app_ug/rpcapd.rst    |  216 ++++
->   examples/meson.build                   |    1 +
->   examples/rpcapd/main.c                 | 1430 ++++++++++++++++++++++++
+> In mlx5_os_mac_addr_remove() (drivers/net/mlx5/linux/mlx5_os.c), this
+> patch drops both the netlink `index` arg and the Linux bounds guard:
+>
+> -       if (index < MLX5_MAX_MAC_ADDRESSES)
+> -               BITFIELD_RESET(priv->mac_own, index);
+> +       BITFIELD_RESET(priv->mac_own, index);
+>
+> but the Windows counterpart (windows/mlx5_os.c) still has an equivalent
+> check, so the two backends diverge in defensiveness after this patch.
+> The check is indeed redundant given mlx5_mac.c's index validation before
+> calling into the OS helper -- but for consistency the Windows-side check
+> should be dropped too, rather than left as the odd one out. Could you
+> remove it there as well in the next version?
 
-main.c is a bit large and handles many different functions. It would be 
-more readable if different aspects were handled by different files, or 
-at least clearly marked sections of the file, with overall structure 
-explained somewhere at the top.
+Indeed, fixed.
 
->   examples/rpcapd/meson.build            |   19 +
->   examples/rpcapd/rpcap-protocol.h       |  127 +++
-Could we just use one from libpcap?
+
+--=20
+David Marchand
+
