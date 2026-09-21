@@ -2,57 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2FA4C982ED
-	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 11:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4543EC982E1
+	for <dpdk-dev@archiver.kernel.org>; Mon, 21 Sep 2026 11:50:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DCF0942DB4;
-	Mon, 21 Sep 2026 13:48:21 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7A6AD427C5;
+	Mon, 21 Sep 2026 13:50:47 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 9DD5242D7F
- for <dev@dpdk.org>; Mon, 21 Sep 2026 13:48:20 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 073BE40E0F
+ for <dev@dpdk.org>; Mon, 21 Sep 2026 13:50:45 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1789991300;
+ s=mimecast20190719; t=1789991445;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=4wceXxBIxC2CPuGseR2Djo+FLheOeCvjtmyFbMTGU7U=;
- b=Y57LnYlrf9pFZWnyXRQ/i/t3DGNTIYJ4UbX/DRUaTV/JTFqDlQUm8IEQa6j8f/rEjAZdJt
- pQ35Tomj4G0ZUhVMJMtpAOcDOoqXyu8nXw9ChlE61IE/vXcogG+MMgaCAkJPg1AwgKRJi0
- 2X9eGIsr1+nuWUiuSFvTElS8+2JHw4s=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ bh=kll+RbcL7vTlXGyBVaNPOtypXqLrBxUmDmZRfqYSm0k=;
+ b=QtLe49vmN64lkr9yLIVbjoDi5a5prQGF7YRUO/VFJGOAUqsExuEB4d4MliRKKoxd36jdaZ
+ sJDQExwmabiv3aU4CZXVaq1/uGNLt8Nx6D0QUvKPKamVZVk2DJ0Wb7VQxPZBV9NENdHMwH
+ MJ/nhAfEhj8DymVFiVoTq84CFyk0qvA=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-167-jC6tiizUPtW_JkITU1RmNg-1; Mon,
- 21 Sep 2026 07:48:18 -0400
-X-MC-Unique: jC6tiizUPtW_JkITU1RmNg-1
-X-Mimecast-MFC-AGG-ID: jC6tiizUPtW_JkITU1RmNg_1789991298
-Received: from mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.95])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-433-f9wTNkLBM6ajB8xMnWpdWg-1; Mon,
+ 21 Sep 2026 07:50:41 -0400
+X-MC-Unique: f9wTNkLBM6ajB8xMnWpdWg-1
+X-Mimecast-MFC-AGG-ID: f9wTNkLBM6ajB8xMnWpdWg_1789991440
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id E7170195608F; Mon, 21 Sep 2026 11:48:17 +0000 (UTC)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 8CFE418000A2; Mon, 21 Sep 2026 11:50:40 +0000 (UTC)
 Received: from dmarchan.redhat.corp
  (headnet05.pony-001.prod.iad2.dc.redhat.com [10.2.32.117])
- by mx-prod-int-10.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id ECF3041B; Mon, 21 Sep 2026 11:48:16 +0000 (UTC)
+ by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 71BB9300106B; Mon, 21 Sep 2026 11:50:38 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
-Cc: bruce.richardson@intel.com,
-	Aaron Conole <aconole@redhat.com>
-Subject: [PATCH v3 9/9] ci: run reference binaries against current ABI
-Date: Mon, 21 Sep 2026 13:47:36 +0200
-Message-ID: <20260921114737.2334589-10-david.marchand@redhat.com>
-In-Reply-To: <20260921114737.2334589-1-david.marchand@redhat.com>
-References: <20260717093006.229370-1-david.marchand@redhat.com>
- <20260921114737.2334589-1-david.marchand@redhat.com>
+Cc: rjarry@redhat.com, cfontain@redhat.com,
+ Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
+Subject: [PATCH v8 1/5] net/mlx5: remove MAC addresses flush helper on Linux
+Date: Mon, 21 Sep 2026 13:50:29 +0200
+Message-ID: <20260921115033.2335147-1-david.marchand@redhat.com>
+In-Reply-To: <20260403091836.1073484-1-david.marchand@redhat.com>
+References: <20260403091836.1073484-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.6 on 10.30.177.95
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: KOhsm7CmGYCdkGR1FENUAUUN9LxrB5aS6B18vgOOU98_1789991298
+X-Mimecast-MFC-PROC-ID: Dyn65MLe1zjVwQEjIFMrQoWyUDZI0ac0ll1styjXbKw_1789991440
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -69,94 +71,111 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Let's check if a testpmd and unit tests from a reference build can run
-with the current release libraries/drivers.
-
-This gives another level of ABI checking, like catching regressions on
-experimental or internal ABI symbols that get promoted to stable without
-providing an alias for existing users.
-
-We may need to skip unit tests that were added since the reference.
-So add a ABI_SKIP_TESTS environment variable in preparation.
+This helper is exposing internals of net/mlx5 for no good reason.
+All this code does is calling the remove helper.
+Walk through the list in Linux implementation like the Windows
+implementation.
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
+Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
 ---
-Changes since v2:
-- automated generation of the tests list,
+ drivers/common/mlx5/linux/mlx5_nl.c | 40 -----------------------------
+ drivers/common/mlx5/linux/mlx5_nl.h |  5 ----
+ drivers/net/mlx5/linux/mlx5_os.c    | 13 +++++++---
+ 3 files changed, 10 insertions(+), 48 deletions(-)
 
-Changes since v1:
-- dropped hack, testing this patch can't be done in the CI now,
-- emptied the excluded tests list,
-- added test-null.sh,
-
----
- .ci/linux-build.sh | 33 +++++++++++++++++++++++++++++++--
- 1 file changed, 31 insertions(+), 2 deletions(-)
-
-diff --git a/.ci/linux-build.sh b/.ci/linux-build.sh
-index c789111a79..a15b3d3516 100755
---- a/.ci/linux-build.sh
-+++ b/.ci/linux-build.sh
-@@ -206,7 +206,7 @@ if [ "$ABI_CHECKS" = "true" ]; then
-         # don't try to link apps.
-         REF_OPTS="$REF_OPTS -Dcheck_includes=false"
-         REF_OPTS="$REF_OPTS -Ddeveloper_mode=disabled"
--        REF_OPTS="$REF_OPTS -Ddisable_apps=*"
-+        REF_OPTS="$REF_OPTS -Denable_apps=test,test-pmd"
-         REF_OPTS="$REF_OPTS -Denable_docs=false"
-         REF_OPTS="$REF_OPTS -Dexamples="
-         refsrcdir=$(readlink -f $(pwd)/../dpdk-$REF_GIT_TAG)
-@@ -215,13 +215,25 @@ if [ "$ABI_CHECKS" = "true" ]; then
-         ninja -C $refsrcdir/build
-         DESTDIR=$(pwd)/reference meson install -C $refsrcdir/build
-         find reference/usr/local -name '*.a' -delete
--        rm -rf reference/usr/local/bin
-+        rm -rf reference/usr/local/bin/*
-+        cp $refsrcdir/build/app/dpdk-test reference/usr/local/bin/dpdk-test
-+        meson test -C $refsrcdir/build --list --suite fast-tests | sort > reference/tests.txt
-+        cp $refsrcdir/build/app/dpdk-testpmd reference/usr/local/bin/dpdk-testpmd
-         rm -rf reference/usr/local/share
-         echo $REF_GIT_TAG > reference/VERSION
-     fi
+diff --git a/drivers/common/mlx5/linux/mlx5_nl.c b/drivers/common/mlx5/linux/mlx5_nl.c
+index 42ccb73e36..40a8b8a2cc 100644
+--- a/drivers/common/mlx5/linux/mlx5_nl.c
++++ b/drivers/common/mlx5/linux/mlx5_nl.c
+@@ -825,46 +825,6 @@ mlx5_nl_mac_addr_sync(int nlsk_fd, unsigned int iface_idx,
+ 	}
+ }
  
-     DESTDIR=$(pwd)/install meson install -C build
-     devtools/check-abi.sh reference install ${ABI_CHECKS_WARN_ONLY:-}
-+
-+    failed=
-+    configure_coredump
-+    mv -f build/app/dpdk-testpmd build/app/dpdk-testpmd.ori
-+    cp reference/usr/local/bin/dpdk-testpmd build/app/dpdk-testpmd
-+    devtools/test-null.sh || failed="true"
-+    mv -f build/app/dpdk-testpmd.ori build/app/dpdk-testpmd
-+    catch_coredump
-+    [ "$failed" != "true" ]
- fi
+-/**
+- * Flush all added MAC addresses.
+- *
+- * @param[in] nlsk_fd
+- *   Netlink socket file descriptor.
+- * @param[in] iface_idx
+- *   Net device interface index.
+- * @param[in] mac_addrs
+- *   Mac addresses array to flush.
+- * @param n
+- *   @p mac_addrs array size.
+- * @param mac_own
+- *   BITFIELD_DECLARE array to store the mac.
+- * @param vf
+- *   Flag for a VF device.
+- */
+-RTE_EXPORT_INTERNAL_SYMBOL(mlx5_nl_mac_addr_flush)
+-void
+-mlx5_nl_mac_addr_flush(int nlsk_fd, unsigned int iface_idx,
+-		       struct rte_ether_addr *mac_addrs, int n,
+-		       uint64_t *mac_own, bool vf)
+-{
+-	int i;
+-
+-	if (n <= 0 || n > MLX5_MAX_MAC_ADDRESSES)
+-		return;
+-
+-	for (i = n - 1; i >= 0; --i) {
+-		struct rte_ether_addr *m = &mac_addrs[i];
+-
+-		if (BITFIELD_ISSET(mac_own, i)) {
+-			if (vf)
+-				mlx5_nl_mac_addr_remove(nlsk_fd,
+-							iface_idx,
+-							m, i);
+-			BITFIELD_RESET(mac_own, i);
+-		}
+-	}
+-}
+-
+ /**
+  * Enable promiscuous / all multicast mode through Netlink.
+  *
+diff --git a/drivers/common/mlx5/linux/mlx5_nl.h b/drivers/common/mlx5/linux/mlx5_nl.h
+index 8ccdd244b0..0242342c47 100644
+--- a/drivers/common/mlx5/linux/mlx5_nl.h
++++ b/drivers/common/mlx5/linux/mlx5_nl.h
+@@ -65,11 +65,6 @@ __rte_internal
+ void mlx5_nl_mac_addr_sync(int nlsk_fd, unsigned int iface_idx,
+ 			   struct rte_ether_addr *mac_addrs, int n);
+ __rte_internal
+-void mlx5_nl_mac_addr_flush(int nlsk_fd, unsigned int iface_idx,
+-			    struct rte_ether_addr *mac_addrs, int n,
+-			    uint64_t *mac_own,
+-			    bool vf);
+-__rte_internal
+ int mlx5_nl_promisc(int nlsk_fd, unsigned int iface_idx, int enable);
+ __rte_internal
+ int mlx5_nl_allmulti(int nlsk_fd, unsigned int iface_idx, int enable);
+diff --git a/drivers/net/mlx5/linux/mlx5_os.c b/drivers/net/mlx5/linux/mlx5_os.c
+index 592e233844..49a8751761 100644
+--- a/drivers/net/mlx5/linux/mlx5_os.c
++++ b/drivers/net/mlx5/linux/mlx5_os.c
+@@ -3529,10 +3529,17 @@ mlx5_os_mac_addr_flush(struct rte_eth_dev *dev)
+ {
+ 	struct mlx5_priv *priv = dev->data->dev_private;
+ 	const int vf = priv->sh->dev_cap.vf;
++	int i;
  
- if [ "$RUN_TESTS" = "true" ]; then
-@@ -232,6 +244,23 @@ if [ "$RUN_TESTS" = "true" ]; then
-     catch_ubsan DPDK:fast-tests build/meson-logs/testlog.txt
-     check_traces
-     [ "$failed" != "true" ]
-+
-+    if [ "$ABI_CHECKS" = "true" ]; then
-+        failed=
-+        configure_coredump
-+        mv -f build/app/dpdk-test build/app/dpdk-test.ori
-+        cp reference/usr/local/bin/dpdk-test build/app/dpdk-test
-+        meson test -C build --list --suite fast-tests | sort > build/tests.txt
-+        DPDK_TEST_SKIP=$(grep -vxFf reference/tests.txt build/tests.txt |
-+                         sed -n 's,DPDK:.* / ,,p' | tr '\n' ',')
-+        sudo env DPDK_TEST_SKIP="$DPDK_TEST_SKIP" \
-+            meson test -C build --suite fast-tests -t 3 --no-stdsplit --print-errorlogs || failed="true"
-+        catch_coredump
-+        catch_ubsan DPDK:fast-tests build/meson-logs/testlog.txt
-+        check_traces
-+        mv -f build/app/dpdk-test.ori build/app/dpdk-test
-+        [ "$failed" != "true" ]
-+    fi
- fi
+-	mlx5_nl_mac_addr_flush(priv->nl_socket_route, mlx5_ifindex(dev),
+-			       dev->data->mac_addrs,
+-			       MLX5_MAX_MAC_ADDRESSES, priv->mac_own, vf);
++	for (i = MLX5_MAX_MAC_ADDRESSES - 1; i >= 0; --i) {
++		if (BITFIELD_ISSET(priv->mac_own, i)) {
++			if (vf)
++				mlx5_nl_mac_addr_remove(priv->nl_socket_route,
++							mlx5_ifindex(dev),
++							&dev->data->mac_addrs[i], i);
++			BITFIELD_RESET(priv->mac_own, i);
++		}
++	}
+ }
  
- # Test examples compilation with an installed dpdk
+ static bool
 -- 
 2.54.0
 
